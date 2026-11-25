@@ -79,10 +79,4 @@ theorem mti_map_mem_VV (lam : ι → DomWeight n) {F : Pol K ι n} (hF : F ∈ V
 
 end VVMap
 
-section RhoMap
-
-variable {K K' : Type} [Field K] [Field K'] (s : K →+* K') {ι : Type} [Fintype ι] {n : ℕ}
-
-end RhoMap
-
 end Formalism.L2.Col

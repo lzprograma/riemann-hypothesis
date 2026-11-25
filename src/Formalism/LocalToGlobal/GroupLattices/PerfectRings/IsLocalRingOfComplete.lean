@@ -17,19 +17,12 @@ noncomputable section
 
 namespace Formalism.L2.G.IntCl
 
-private theorem ideal_smul_top_le_comap_smul_top {R M N : Type*} [CommRing R] [AddCommGroup M] [Module R M]
-    [AddCommGroup N] [Module R N] (J : Ideal R) (g : M →ₗ[R] N) :
-    (J • ⊤ : Submodule R M) ≤ (J • ⊤ : Submodule R N).comap g :=
-  Submodule.smul_le.mpr fun r hr m _ => by
-    rw [Submodule.mem_comap, map_smul]
-    exact Submodule.smul_mem_smul hr Submodule.mem_top
-
 private theorem sModEq_ideal_smul_top_map {R M N : Type*} [CommRing R] [AddCommGroup M] [Module R M]
     [AddCommGroup N] [Module R N] (J : Ideal R) (g : M →ₗ[R] N) {x y : M}
     (h : x ≡ y [SMOD (J • ⊤ : Submodule R M)]) : g x ≡ g y [SMOD (J • ⊤ : Submodule R N)] := by
   rw [SModEq.sub_mem] at h ⊢
   rw [← map_sub]
-  exact ideal_smul_top_le_comap_smul_top J g h
+  exact Submodule.smul_top_le_comap_smul_top J g h
 
 theorem precomplete_equiv {R M N : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R N]
     (I : Ideal R) (e : M ≃ₗ[R] N) [IsPrecomplete I M] : IsPrecomplete I N := by

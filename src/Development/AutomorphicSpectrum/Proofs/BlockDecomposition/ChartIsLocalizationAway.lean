@@ -3,44 +3,6 @@ module
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AlgebraMapConeRing
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CosieveBot
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
 import Mathlib.Tactic.Linter.HaveILetI
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -53,8 +15,6 @@ section -- clump:auto
 
 open CrystallineSemistableComparison CrystallineSemistableComparison.Onto
 
-set_option autoImplicit false
-set_option backward.isDefEq.respectTransparency false
 set_option linter.unusedVariables false
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.LogCris
@@ -333,7 +293,6 @@ section -- clump:auto
 
 open CrystallineSemistableComparison CrystallineSemistableComparison.Onto
 
-set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.LogCris
@@ -549,25 +508,25 @@ theorem glue_rings {K : Type} [CommRing K] {ι : Type} (A : Type) [CommRing A] [
       (∀ (T : Finset ι) (hT : T.Nonempty) g, b T hT (res (Finset.empty_subset T) (base.symm g)) = τ T hT g) := by
   classical
   let Rf : Finset ι → CommAlgCat.{0} K := fun S => if S.Nonempty then CommAlgCat.of K (B S) else CommAlgCat.of K A
-  let b : ∀ S : Finset ι, S.Nonempty → (Rf S ≃ₐ[K] B S) := fun S hS => eqvOf (if_pos hS)
-  let bA : ∀ S : Finset ι, ¬ S.Nonempty → (Rf S ≃ₐ[K] A) := fun S hS => eqvOf (if_neg hS)
+  let b : ∀ S : Finset ι, S.Nonempty → (Rf S ≃ₐ[K] B S) := fun S hS => eqvOf (ite_eq_left hS)
+  let bA : ∀ S : Finset ι, ¬ S.Nonempty → (Rf S ≃ₐ[K] A) := fun S hS => eqvOf (ite_eq_right hS)
   let res : ∀ {S T : Finset ι}, S ⊆ T → (Rf S →ₐ[K] Rf T) := fun {S T} h =>
     if hS : S.Nonempty then ((b T (hS.mono h)).symm : B T →ₐ[K] Rf T).comp ((ρ h).comp (b S hS : Rf S →ₐ[K] B S))
     else if hT : T.Nonempty then ((b T hT).symm : B T →ₐ[K] Rf T).comp ((τ T hT).comp (bA S hS : Rf S →ₐ[K] A))
     else ((bA T hT).symm : A →ₐ[K] Rf T).comp (bA S hS : Rf S →ₐ[K] A)
   have r1 : ∀ {S T : Finset ι} (h : S ⊆ T) (hS : S.Nonempty) (y : Rf S), res h y = (b T (hS.mono h)).symm (ρ h (b S hS y)) := by
     intro S T h hS y
-    simp only [res, dif_pos hS]
+    simp only [res, dite_eq_left hS]
     rfl
   have r2 : ∀ {S T : Finset ι} (h : S ⊆ T) (hS : ¬ S.Nonempty) (hT : T.Nonempty) (y : Rf S),
       res h y = (b T hT).symm (τ T hT (bA S hS y)) := by
     intro S T h hS hT y
-    simp only [res, dif_neg hS, dif_pos hT]
+    simp only [res, dite_eq_right hS, dite_eq_left hT]
     rfl
   have r3 : ∀ {S T : Finset ι} (h : S ⊆ T) (hS : ¬ S.Nonempty) (hT : ¬ T.Nonempty) (y : Rf S),
       res h y = (bA T hT).symm (bA S hS y) := by
     intro S T h hS hT y
-    simp only [res, dif_neg hS, dif_neg hT]
+    simp only [res, dite_eq_right hS, dite_eq_right hT]
     rfl
   have h0 : ¬ (∅ : Finset ι).Nonempty := Finset.not_nonempty_empty
   refine ⟨Rf, res, bA ∅ h0, b, ?_, ?_, ?_, ?_⟩

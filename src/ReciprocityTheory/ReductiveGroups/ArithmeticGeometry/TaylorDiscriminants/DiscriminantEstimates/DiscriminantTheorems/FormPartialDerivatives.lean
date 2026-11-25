@@ -38,7 +38,7 @@ theorem perpVec_perp (R : Type) [CommRing R] (V : Type) [AddCommGroup V] [Module
           refine Finset.sum_congr rfl fun a' _ => ?_
           ring
       _ = (hMat h e e').det * h g (e c) := by
-          simp only [key, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+          simp only [key, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
           ring
   rw [hsum]
   ring

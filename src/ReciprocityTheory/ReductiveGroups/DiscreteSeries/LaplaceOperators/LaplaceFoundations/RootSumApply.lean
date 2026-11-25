@@ -39,7 +39,7 @@ theorem wt_full (hε : ∀ a : Fin (2 * r + k + 1), a.val < k → ε a = true) {
         (fun p hp => by rw [dite_eq_right hp])]
       refine Finset.sum_congr rfl fun q _ => ?_
       have hq : (fI k r q).val < k := q.2
-      rw [dif_pos hq]
+      rw [dite_eq_left hq]
       rfl
     rw [e, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun a _ => ?_
@@ -99,7 +99,7 @@ theorem wt_cdom (hε : ∀ a : Fin (2 * r + k + 1), a.val < k → ε a = true) {
     intro a b ha hb
     have h1 := (Finset.sum_eq_zero_iff_of_nonpos (fun b _ => hnp a b)).1 (hall a (Finset.mem_univ _)) b
       (Finset.mem_univ _)
-    simp only [g, if_pos ha, if_neg hb] at h1
+    simp only [g, ite_eq_left ha, ite_eq_right hb] at h1
     norm_num at h1
     exact_mod_cast h1
   refine ⟨fun q q' => c (fI k r q) (fI k r q'), fun q q' h => ⟨?_, rfl⟩, ?_⟩
@@ -108,7 +108,7 @@ theorem wt_cdom (hε : ∀ a : Fin (2 * r + k + 1), a.val < k → ε a = true) {
   · funext q
     have hq : (fI k r q).val < k := q.2
     have h1 := he' (fI k r q)
-    simp only [Pi.sub_apply, dif_pos hq] at h1
+    simp only [Pi.sub_apply, dite_eq_left hq] at h1
     have e1 : ∑ b, (c (fI k r q) b : ℝ) = ∑ q', (c (fI k r q) (fI k r q') : ℝ) :=
       sumF' _ (fun p hp => by rw [hzero _ _ hq hp]; simp)
     have e2 : ∑ a, (c a (fI k r q) : ℝ) = ∑ q', (c (fI k r q') (fI k r q) : ℝ) := by
@@ -138,11 +138,11 @@ theorem kE_dgk (t : Fin k → ℝ) :
   simp only [dg, Matrix.diagonal_apply]
   by_cases hi : i.val < k
   · by_cases hj : j.val < k
-    · simp only [kE, dgk, dif_pos hi, dif_pos hj, Matrix.diagonal_apply]
+    · simp only [kE, dgk, dite_eq_left hi, dite_eq_left hj, Matrix.diagonal_apply]
       by_cases hij : i = j
       · subst hij; simp
-      · rw [if_neg hij, if_neg (by intro e; apply hij; exact Fin.ext (by simpa using e))]
-    · rw [kE_col _ _ hj, if_neg (by rintro rfl; exact hj hi)]; simp [show i ≠ j by rintro rfl; exact hj hi]
+      · rw [ite_eq_right hij, ite_eq_right (by intro e; apply hij; exact Fin.ext (by simpa using e))]
+    · rw [kE_col _ _ hj, ite_eq_right (by rintro rfl; exact hj hi)]; simp [show i ≠ j by rintro rfl; exact hj hi]
   · rw [kE_row _ _ hi]
     by_cases hij : i = j
     · subst hij; simp [hi]
@@ -169,7 +169,7 @@ theorem w_wtK : Formalism.MainNotions.S.IsWtOn (Formalism.REAL.Kset (Formalism.M
   refine (sumF' (M := ℝ) (k := k) (r := r) _ (fun p hp => ?_)).trans (Finset.sum_congr rfl fun q _ => ?_)
   · simp [hp]
   · have hq : (fI k r q).val < k := q.2
-    simp only [dif_pos hq]
+    simp only [dite_eq_left hq]
     rfl
 
 theorem rhoK_one (v : T.V) : rhoK (k := k) (r := r) T 1 v = v := by

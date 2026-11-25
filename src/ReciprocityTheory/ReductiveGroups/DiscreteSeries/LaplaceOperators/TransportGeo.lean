@@ -96,19 +96,19 @@ theorem ColStd.midM {X : Mat k r} (hX : X ∈ UH (Hpk k r)) (h : ColStd X) : Mid
     rw [e, mul_Hpk_apply, Hpk_mul_apply, conjTranspose_apply,
       StandardBasisEmbedding.col_of_fix (h.inv hX _ (out_flip hi))]
     by_cases hij : i = j
-    · subst hij; simp only [if_true, star_one, mul_one]; unfold sgnB; split_ifs <;> simp
-    · rw [if_neg hij, if_neg, star_zero, mul_zero, zero_mul]
+    · subst hij; simp only [ite_true, star_one, mul_one]; unfold sgnB; split_ifs <;> simp
+    · rw [ite_eq_right hij, ite_eq_right, star_zero, mul_zero, zero_mul]
       intro h2; exact hij (by rw [← flipB_flipB i, ← h2, flipB_flipB])
   · exact StandardBasisEmbedding.col_of_fix (h j hj) i
 
 theorem MidM.mul {X Y : Mat k r} (hX : MidM X) (hY : MidM Y) : MidM (X * Y) := by
   rintro i j (hi | hj)
   · rw [Matrix.mul_apply, sum_eq_single i (fun c _ hc => by
-      rw [hX i c (Or.inl hi), if_neg (Ne.symm hc), zero_mul]) (by simp), hX i i (Or.inl hi),
-      if_pos rfl, one_mul, hY i j (Or.inl hi)]
+      rw [hX i c (Or.inl hi), ite_eq_right (Ne.symm hc), zero_mul]) (by simp), hX i i (Or.inl hi),
+      ite_eq_left rfl, one_mul, hY i j (Or.inl hi)]
   · rw [Matrix.mul_apply, sum_eq_single j (fun c _ hc => by
-      rw [hY c j (Or.inr hj), if_neg hc, mul_zero]) (by simp), hY j j (Or.inr hj),
-      if_pos rfl, mul_one, hX i j (Or.inr hj)]
+      rw [hY c j (Or.inr hj), ite_eq_right hc, mul_zero]) (by simp), hY j j (Or.inr hj),
+      ite_eq_left rfl, mul_one, hX i j (Or.inr hj)]
 
 theorem midM_blockW (h : Matrix (Fin k) (Fin k) ℂ) : MidM (Formalism.MainNotions.S.blockW k r h) := by
   rintro i j (hi | hj)
@@ -121,7 +121,7 @@ theorem herm_bvec (j : Fin (2 * r + k + 1)) (v : Fin (2 * r + k + 1) → ℂ) (h
   refine sum_eq_zero fun i _ => ?_
   by_cases hi : Out k r i
   · rw [hv i hi, star_zero, zero_mul]
-  · rw [Hpk_apply, if_neg, mul_zero]
+  · rw [Hpk_apply, ite_eq_right, mul_zero]
     rintro rfl
     exact hi (by simpa only [flipB_flipB] using out_flip hj)
 
@@ -199,7 +199,7 @@ theorem Lev0.conj {a b X : Mat k r} (ha : Lev0 a) (hb : Lev0 b) (hX : X ∈ levF
 
 theorem MidM.lev0 {X : Mat k r} (hX : MidM X) : Lev0 X := by
   intro i j h
-  rw [hX i j, if_neg (by rintro rfl; omega)]
+  rw [hX i j, ite_eq_right (by rintro rfl; omega)]
   unfold levB at h; unfold Out; split_ifs at h <;> omega
 
 theorem conj_mem_N {a : Mat k r} (ha : a ∈ UH (Hpk k r)) (h1 : Lev0 a) (h2 : Lev0 a⁻¹) {m : Mat k r}
@@ -259,7 +259,7 @@ theorem conj_data {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {c c' : Fin r
     · exact inv_ne_zero (star_ne_zero.mpr (hδ0 _))
     · exact one_ne_zero
   have hdmid : ∀ i, ¬ Out k r i → dv i = 1 := fun i hi => by
-    unfold Out at hi; simp only [dv]; rw [if_neg (by omega), if_neg (by omega)]
+    unfold Out at hi; simp only [dv]; rw [ite_eq_right (by omega), ite_eq_right (by omega)]
   set d : Mat k r := diagonal dv with hd
   have hdU : d ∈ UH (Hpk k r) := by
     show dᴴ * Hpk k r * d = Hpk k r
@@ -318,7 +318,7 @@ theorem conj_data {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {c c' : Fin r
       have ho : Out k r (eI k r p) := Or.inl p.isLt
       rw [← Matrix.mulVec_mulVec, hd, Matrix.mulVec_diagonal]
       simp only [Matrix.mulVec, dotProduct, fun j => hbM (eI k r p) j (Or.inl ho), ite_mul, one_mul,
-        zero_mul, sum_ite_eq, mem_univ, if_true]
+        zero_mul, sum_ite_eq, mem_univ, ite_true]
       simp [dv, eI]
     unfold Formalism.MainNotions.S.psiGen
     congr 4

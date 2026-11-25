@@ -1,5 +1,7 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalSectionVerticalFactor
+import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagGapHolomorphicPullbackSecond
 public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsMuMeasureLimit
 public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
 public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
@@ -20,53 +22,8 @@ import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PMuRegSmooth
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PTopNPoly
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PVertFactorPos
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PVertFactorSmooth
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
 import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasureA
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
@@ -89,39 +46,10 @@ variable {e : ℕ} {X : Type} [TopologicalSpace X]
 
 theorem holo_cont {A : FinHolAtlas e X} {V : Set X} (hV : IsOpen V) {g : X → ℂ} (h : A.HoloOn V g) :
     ContinuousOn g V := by
-  intro y hy
-  obtain ⟨k, hk⟩ := A.cover y
-  have hz : A.chart k y ∈ (A.chart k).target ∩ (A.chart k).symm ⁻¹' V :=
-    ⟨(A.chart k).map_source hk, by
-      show (A.chart k).symm (A.chart k y) ∈ V
-      rw [(A.chart k).left_inv hk]; exact hy⟩
-  have h1 : ContinuousAt (g ∘ (A.chart k).symm) (A.chart k y) := (h k _ hz).continuousAt
-  have h2 : ContinuousAt (A.chart k) y := (A.chart k).continuousAt hk
-  have h3 : ContinuousAt ((g ∘ (A.chart k).symm) ∘ (A.chart k)) y := ContinuousAt.comp h1 h2
-  refine (h3.congr ?_).continuousWithinAt
-  filter_upwards [(A.chart k).open_source.mem_nhds hk] with u hu
-  simp [(A.chart k).left_inv hu]
+  apply _root_.GlobalTheory.CompanionTheory.Ar.PB.StepW.PshW.continuousOn_of_holoOn <;> assumption
 
 theorem holo_mono {A : FinHolAtlas e X} {V W : Set X} {g : X → ℂ} (h : A.HoloOn V g) (hW : W ⊆ V) :
     A.HoloOn W g := fun j y hy => h j y ⟨hy.1, hW hy.2⟩
-
-theorem holo_eval {σ : Type} {A : FinHolAtlas e X} {V : Set X} {s : X → σ → ℂ}
-    (hs : ∀ q, A.HoloOn V fun y => s y q) (f : MvPolynomial σ ℂ) :
-    A.HoloOn V fun y => eval (s y) f := by
-  induction f using MvPolynomial.induction_on with
-  | C a =>
-    intro j y _
-    simpa [Function.comp_def] using (analyticAt_const : AnalyticAt ℂ (fun _ : Fin e → ℂ => a) y)
-  | add p q hp hq =>
-    intro j y hy
-    show AnalyticAt ℂ (fun x => eval (s ((A.chart j).symm x)) (p + q)) y
-    simp only [map_add (f := _)]
-    exact (hp j y hy).add (hq j y hy)
-  | mul_X p i hp =>
-    intro j y hy
-    show AnalyticAt ℂ (fun x => eval (s ((A.chart j).symm x)) (p * MvPolynomial.X i)) y
-    simp only [map_mul, eval_X]
-    exact (hp j y hy).mul (hs i j y hy)
 
 theorem rsmul_one (Θ : LocPot X) : Θ.rsmul 1 = Θ := by
   cases Θ
@@ -213,62 +141,8 @@ theorem vert_re (M : XModel D) {p : ℕ} (hp : p ∈ D.S) {U : Set M.Xc} (hU : I
     (hh : ∀ q, M.atlas.HoloOn U fun y => s y q) {y₀ : M.Xc} (hy : y₀ ∈ U) :
     ∃ W : Set M.Xc, IsOpen W ∧ y₀ ∈ W ∧ W ⊆ U ∧ ∃ G : M.Xc → ℂ, M.atlas.HoloOn W G ∧
       ∀ y ∈ W, Real.log (D.vertFactor p (s y)) = (G y).re := by
-  obtain ⟨dG, dH, Gp, Hp, hG, hH, hdeg, hrel, hHz⟩ := VertFactorSmooth.exists_forms D hp (hs y₀ hy)
-  set a : M.Xc → ℂ := fun y => eval (s y) (map (Int.castRingHom ℂ) Gp) with ha
-  set b : M.Xc → ℂ := fun y => eval (s y) (map (Int.castRingHom ℂ) Hp) with hb
-  have haH : M.atlas.HoloOn U a := holo_eval hh _
-  have hbH : M.atlas.HoloOn U b := holo_eval hh _
-  have hvf : ∀ y ∈ U, b y ≠ 0 → D.vertFactor p (s y) = ‖a y / b y‖ := fun y hyU hb0 =>
-    VertFactorSmooth.vertFactor_eq D hp (hs y hyU) hG hH hdeg hrel hb0
-  have hpos := VertFactorPos.proof II Ψ K ι Ω E D p hp (s y₀) (hs y₀ hy)
-  set v : ℂ := a y₀ / b y₀ with hv
-  have hv0 : v ≠ 0 := by
-    intro h0
-    rw [hvf y₀ hy hHz, ← hv, h0, norm_zero] at hpos
-    exact lt_irrefl _ hpos
-  have hU1 : IsOpen (U ∩ b ⁻¹' {0}ᶜ) :=
-    (holo_cont hU hbH).isOpen_inter_preimage hU isOpen_compl_singleton
-  set u : M.Xc → ℂ := fun y => a y / b y / v with hu
-  have hcu : ContinuousOn u (U ∩ b ⁻¹' {0}ᶜ) :=
-    (((holo_cont hU haH).mono Set.inter_subset_left).div ((holo_cont hU hbH).mono Set.inter_subset_left)
-      fun y hy => hy.2).div_const v
-  have hW : IsOpen ((U ∩ b ⁻¹' {0}ᶜ) ∩ u ⁻¹' Metric.ball 1 1) :=
-    hcu.isOpen_inter_preimage hU1 Metric.isOpen_ball
-  refine ⟨_, hW, ⟨⟨hy, hHz⟩, ?_⟩, fun y hy => hy.1.1,
-    fun y => Complex.log (u y) + ((Real.log ‖v‖ : ℝ) : ℂ), ?_, ?_⟩
-  · show u y₀ ∈ Metric.ball 1 1
-    have : u y₀ = 1 := div_self hv0
-    rw [this]
-    exact Metric.mem_ball_self one_pos
-  · intro j y hyW
-    have hyU : (M.atlas.chart j).symm y ∈ U := hyW.2.1.1
-    have hb0 : b ((M.atlas.chart j).symm y) ≠ 0 := hyW.2.1.2
-    have hA : AnalyticAt ℂ (a ∘ (M.atlas.chart j).symm) y := haH j y ⟨hyW.1, hyU⟩
-    have hB : AnalyticAt ℂ (b ∘ (M.atlas.chart j).symm) y := hbH j y ⟨hyW.1, hyU⟩
-    have hUa : AnalyticAt ℂ (fun x => u ((M.atlas.chart j).symm x)) y :=
-      (hA.div hB hb0).div analyticAt_const hv0
-    have hslit : u ((M.atlas.chart j).symm y) ∈ Complex.slitPlane := by
-      have hm : u ((M.atlas.chart j).symm y) ∈ Metric.ball (1 : ℂ) 1 := hyW.2.2
-      rw [Metric.mem_ball, Complex.dist_eq] at hm
-      left
-      have := Complex.abs_re_le_norm (u ((M.atlas.chart j).symm y) - 1)
-      have h2 := abs_lt.1 (lt_of_le_of_lt this hm)
-      simp only [Complex.sub_re, Complex.one_re] at h2
-      linarith [h2.1]
-    exact (hUa.clog hslit).add analyticAt_const
-  · intro y hyW
-    have hyU : y ∈ U := hyW.1.1
-    have hb0 : b y ≠ 0 := hyW.1.2
-    have hm : u y ∈ Metric.ball (1 : ℂ) 1 := hyW.2
-    have hu0 : u y ≠ 0 := by
-      intro h0
-      rw [h0, Metric.mem_ball, dist_zero_left, norm_one] at hm
-      exact lt_irrefl _ hm
-    have hab : a y / b y = u y * v := by
-      simp only [hu]
-      field_simp
-    rw [hvf y hyU hb0, hab, norm_mul, Real.log_mul (norm_ne_zero_iff.2 hu0) (norm_ne_zero_iff.2 hv0)]
-    simp [Complex.log_re]
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.Ar.Giv.Mix.log_vertFactor_eq_re_holo <;> assumption
 
 theorem vert_sum_re (M : XModel D) (T : Finset ℕ) (hT : T ⊆ D.S) {U : Set M.Xc} (hU : IsOpen U)
     {s : M.Xc → (Σ k, ι k) → ℂ} (hs : ∀ y ∈ U, s y ∈ mcPts (mCoordIdeal D.y))

@@ -8,53 +8,6 @@ public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GNonneg
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GroupFactorizationHolds
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.ReverseCauchySchwarzHolds
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -88,7 +41,7 @@ theorem matrix_action_evaluation_holds : RankTwoSkewMatrixApply := by
   have key : ∀ w : Fin n → ℂ, ∑ j, herm H (Pi.single j 1) w * x j = herm H x w := by
     intro w
     simp only [herm, dotProduct, Matrix.mulVec, Pi.single_apply, mul_ite, mul_one, mul_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true, Finset.sum_mul, Finset.mul_sum]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true, Finset.sum_mul, Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
   ext i
@@ -263,16 +216,8 @@ lemma s1c2_UH_of_isom {ι : Type*} [Fintype ι] [DecidableEq ι] (H p : Matrix �
   ext i j
   rw [← s1c2_herm_single (pᴴ * H * p) i j, ← s1c2_herm_conj, h, s1c2_herm_single]
 
-section ext
-variable {ι σ : Type*} [Fintype ι] [DecidableEq ι] [Fintype σ] [DecidableEq σ]
-
-end ext
-
-open Formalism.QuantumDeterminants.WeylGroupFacts in
-lemma s1c2_Hh (k r : ℕ) : (Hpk k r)ᴴ = Hpk k r := Formalism.QuantumDeterminants.GBasic.Hpk_herm k r
-
 lemma s1c2_hzz (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) : herm (Hpk k r) z z = -((Tz k r z : ℝ) : ℂ) := by
-  have h := ggHerm_swap (Hpk k r) (s1c2_Hh k r) z z
+  have h := ggHerm_swap (Hpk k r) (Formalism.QuantumDeterminants.GBasic.Hpk_herm k r) z z
   have him : (herm (Hpk k r) z z).im = 0 := by
     have h2 := congrArg Complex.im h
     simp only [Complex.star_def, Complex.conj_im] at h2
@@ -287,9 +232,9 @@ lemma s1c2_gram_f (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z
   rw [ggBlockA k r z hz b a, Matrix.smul_apply, smul_eq_mul, s1c2_hzz]
   by_cases h : a = Fin.last r ∧ b = Fin.last r
   · obtain ⟨rfl, rfl⟩ := h; simp [ggLastU]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     unfold ggLastU
-    rw [if_neg (fun h' => h ⟨h'.2, h'.1⟩), mul_zero]
+    rw [ite_eq_right (fun h' => h ⟨h'.2, h'.1⟩), mul_zero]
 
 lemma s1c2_upper_last {r : ℕ} (a : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) (ha : IsUpperUnitriangular a) (b : Fin (r + 1)) :
     a (Fin.last r) b = if b = Fin.last r then 1 else 0 := by
@@ -304,7 +249,7 @@ lemma s1c2_adj_last {r : ℕ} (B : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) (hB :
   rw [hdet, one_smul, Matrix.mul_apply, Finset.sum_eq_single (Fin.last r)] at h
   · rw [hB.1, one_mul] at h
     simpa [Matrix.one_apply, eq_comm] using h
-  · intro d _ hd; rw [s1c2_upper_last B hB, if_neg hd, zero_mul]
+  · intro d _ hd; rw [s1c2_upper_last B hB, ite_eq_right hd, zero_mul]
   · intro h'; exact absurd (Finset.mem_univ _) h'
 
 lemma transform_upper_unitriangular_change {ι : Type} [Fintype ι] [DecidableEq ι] (H η : Matrix ι ι ℂ) (hη : η ∈ UH H)
@@ -333,8 +278,8 @@ lemma transform_upper_unitriangular_change {ι : Type} [Fintype ι] [DecidableEq
     have h1 := congrFun (congrFun hadj (Fin.last r)) e
     have h2 : ∑ j, B.adjugate (Fin.last r) j * M.adjugate j e = M.adjugate (Fin.last r) e := by
       rw [Finset.sum_eq_single (Fin.last r)]
-      · rw [s1c2_adj_last B hBu, if_pos rfl, one_mul]
-      · intro d _ hd; rw [s1c2_adj_last B hBu, if_neg hd, zero_mul]
+      · rw [s1c2_adj_last B hBu, ite_eq_left rfl, one_mul]
+      · intro d _ hd; rw [s1c2_adj_last B hBu, ite_eq_right hd, zero_mul]
       · intro h'; exact absurd (Finset.mem_univ _) h'
     rw [Matrix.mul_apply, Matrix.mul_apply, h2] at h1
     exact h1
@@ -387,7 +332,7 @@ lemma s1c2_om_eq (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (hz' : inWb k 
 
 lemma s1c2_herm_mid (k r : ℕ) (z' d : Fin (2 * r + k + 1) → ℂ) (hz' : inWb k r z')
     (hd : ∀ i : Fin (2 * r + k + 1), r ≤ i.val → i.val ≤ r + k → d i = 0) : herm (Hpk k r) d z' = 0 := by
-  rw [ggHerm_swap _ (s1c2_Hh k r)]
+  rw [ggHerm_swap _ (Formalism.QuantumDeterminants.GBasic.Hpk_herm k r)]
   have : herm (Hpk k r) z' d = 0 := by
     simp only [herm, dotProduct, ggHpk_mulVec_Wb k r z' hz', Pi.star_apply]
     refine Finset.sum_eq_zero fun i _ => ?_
@@ -418,7 +363,7 @@ lemma s1c2_x_top (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ)
   have hb : 2 * r + k - i.val < r := by omega
   have h := orthogonality_relation _ (hermitianSesquilinearForm (Hpk k r)) r (fun a => g⁻¹ *ᵥ fvec k r z a) (fvec k r z')
     ⟨2 * r + k - i.val, by omega⟩
-  rw [if_neg (by intro h'; have := congrArg Fin.val h'; simp at this; omega), s1c2_hL_apply, ← s1c2_N3xM_eq,
+  rw [ite_eq_right (by intro h'; have := congrArg Fin.val h'; simp at this; omega), s1c2_hL_apply, ← s1c2_N3xM_eq,
     s1c2_fvec_lt k r z' _ hb, s1c2_herm_e] at h
   have e : esI k r ⟨2 * r + k - i.val, hb⟩ = i := by
     apply Fin.ext; simp only [esI]; omega
@@ -431,7 +376,7 @@ theorem omega_decomposition : OrthogonalComplementDecomposition := by
   have hW : inWb k r (N3om k r z z' g) := by
     intro i hi
     simp only [N3om]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
   refine ⟨hW, ?_, ?_⟩
   · intro b
     by_cases hb : b.val < r
@@ -447,20 +392,20 @@ theorem omega_decomposition : OrthogonalComplementDecomposition := by
     simp only [Pi.add_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
     by_cases hi : i.val < r
     · rw [hW i (Or.inl hi), add_zero, Finset.sum_eq_single ⟨i.val, by omega⟩]
-      · rw [fvec_apply_lt z' hz' _ i hi, if_pos rfl, mul_one, dite_eq_left hi]; rfl
+      · rw [fvec_apply_lt z' hz' _ i hi, ite_eq_left rfl, mul_one, dite_eq_left hi]; rfl
       · intro c _ hc
-        rw [fvec_apply_lt z' hz' _ i hi, if_neg (fun h => hc (Fin.ext h)), mul_zero]
+        rw [fvec_apply_lt z' hz' _ i hi, ite_eq_right (fun h => hc (Fin.ext h)), mul_zero]
       · intro h; exact absurd (Finset.mem_univ _) h
     · push Not at hi
       rw [Finset.sum_eq_single (Fin.last r)]
-      · rw [fvec_apply_ge z' _ i hi, if_pos (by simp), dite_eq_right (by simp)]
+      · rw [fvec_apply_ge z' _ i hi, ite_eq_left (by simp), dite_eq_right (by simp)]
         by_cases hk : i.val ≤ r + k
         · simp only [N3om]
-          rw [if_pos ⟨hi, hk⟩]; ring
+          rw [ite_eq_left ⟨hi, hk⟩]; ring
         · rw [hW i (Or.inr (by omega)), hz' i (Or.inr (by omega)), mul_zero, add_zero]
           exact s1c2_x_top k r z z' g i (by omega)
       · intro c _ hc
-        rw [fvec_apply_ge z' _ i hi, if_neg (fun h => hc (Fin.ext (by simp; omega))), mul_zero]
+        rw [fvec_apply_ge z' _ i hi, ite_eq_right (fun h => hc (Fin.ext (by simp; omega))), mul_zero]
       · intro h; exact absurd (Finset.mem_univ _) h
 
 lemma s1c2_N_sub_S (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z)
@@ -486,11 +431,11 @@ theorem dual_vector_unipotent_invariant : DualVectorUnipotentInvariant := by
     simp only [Matrix.mulVec, dotProduct]
     rw [Finset.sum_eq_single i]
     · by_cases hk : i.val ≤ r + k
-      · rw [hcol i i hk (Or.inr hi), if_pos rfl, one_mul]
+      · rw [hcol i i hk (Or.inr hi), ite_eq_left rfl, one_mul]
       · rw [htop i (by omega), mul_zero]
     · intro j _ hj
       by_cases hk : j.val ≤ r + k
-      · rw [hcol i j hk (Or.inr hi), if_neg (Ne.symm hj), zero_mul]
+      · rw [hcol i j hk (Or.inr hi), ite_eq_right (Ne.symm hj), zero_mul]
       · rw [htop j (by omega), mul_zero]
     · intro h; exact absurd (Finset.mem_univ _) h
   have hP : reflectFlagCoordinates k r (n'⁻¹ *ᵥ X) = reflectFlagCoordinates k r X := by
@@ -512,12 +457,12 @@ theorem dual_vector_equivariant : DualVectorEquivariant := by
   have hP : reflectFlagCoordinates k r (h'⁻¹ *ᵥ X) = h'⁻¹ *ᵥ reflectFlagCoordinates k r X := by
     funext i
     by_cases hi : r ≤ i.val ∧ i.val ≤ r + k
-    · simp only [reflectFlagCoordinates, if_pos hi, Matrix.mulVec, dotProduct]
+    · simp only [reflectFlagCoordinates, ite_eq_left hi, Matrix.mulVec, dotProduct]
       refine Finset.sum_congr rfl fun j _ => ?_
       split_ifs with hj
       · rfl
-      · rw [hb.1 i j (by omega), if_neg (by intro e; rw [e] at hi; exact hj hi), zero_mul, mul_zero]
-    · simp only [reflectFlagCoordinates, if_neg hi, Matrix.mulVec, dotProduct]
+      · rw [hb.1 i j (by omega), ite_eq_right (by intro e; rw [e] at hi; exact hj hi), zero_mul, mul_zero]
+    · simp only [reflectFlagCoordinates, ite_eq_right hi, Matrix.mulVec, dotProduct]
       symm
       refine Finset.sum_eq_zero fun j _ => ?_
       rw [hb.2 i j (by omega)]
@@ -548,9 +493,9 @@ theorem dual_vector_norm_on_group : DualVectorNormOnGroup := by
     ext a b
     simp only [Matrix.of_apply, Matrix.map_apply, s1c2_hL_apply, Zhat]
     rw [← ggHerm_unitary _ g hg, Matrix.mulVec_mulVec, Matrix.mul_nonsing_inv g hgu, Matrix.one_mulVec,
-      ggHerm_swap _ (s1c2_Hh k r)]
+      ggHerm_swap _ (Formalism.QuantumDeterminants.GBasic.Hpk_herm k r)]
   have key := dual_vector_norm_sq _ (hermitianSesquilinearForm (Hpk k r))
-    (fun x y => by simp only [s1c2_hL_apply]; exact ggHerm_swap _ (s1c2_Hh k r) y x) r
+    (fun x y => by simp only [s1c2_hL_apply]; exact ggHerm_swap _ (Formalism.QuantumDeterminants.GBasic.Hpk_herm k r) y x) r
     (fun a => g⁻¹ *ᵥ fvec k r z a) (fvec k r z') (Tz k r z) (Tz k r z') hT'.ne'
     (fun a b => by simp only [s1c2_hL_apply]; rw [ggHerm_unitary _ _ hgi, s1c2_gram_f k r z hz])
     (fun a b => by simp only [s1c2_hL_apply]; rw [s1c2_gram_f k r z' hz'])
@@ -601,7 +546,7 @@ open Formalism.QuantumDeterminants.WeylGroupFacts in
 theorem nilpotent_model_computation_holds : RankTwoNilpotentGroup := by
   intro k r z hz a e v he hv
   set H := Hpk k r with hHdef
-  have hH : Hᴴ = H := s1c2_Hh k r
+  have hH : Hᴴ = H := Formalism.QuantumDeterminants.GBasic.Hpk_herm k r
   set Y := rankTwoSkewMatrix H e v with hY
   obtain ⟨heX, hX, hYf, hY0, -, hYe, hYv⟩ := lie_algebra_nilpotent_part_holds _ (hermitianSesquilinearForm H)
     (fun x y => by simp only [s1c2_hL_apply]; exact ggHerm_swap _ hH y x) r (fvec k r z) (Tz k r z)
@@ -662,7 +607,7 @@ theorem nilpotent_model_computation_holds : RankTwoNilpotentGroup := by
       ?_ ?_ ?_ ?_ hy
     · rintro y ⟨b, hb, rfl⟩ i hi
       have hb' : b.val < a.val := hb
-      rw [gj_fvec_apply k r z b (by omega), if_neg (by omega)]
+      rw [gj_fvec_apply k r z b (by omega), ite_eq_right (by omega)]
     · intro i _; rfl
     · intro y w _ _ h1 h2 i hi; rw [Pi.add_apply, h1 i hi, h2 i hi, add_zero]
     · intro c y _ h1 i hi; rw [Pi.smul_apply, h1 i hi, smul_zero]
@@ -692,7 +637,7 @@ theorem nilpotent_model_computation_holds : RankTwoNilpotentGroup := by
       intro b
       rw [s1c2_fvec_lt k r z b.castSucc (by simp), s1c2_herm_e]
       simp only [bvec, Pi.single_apply, esI]
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h'
       have := congrArg Fin.val h'
       simp at this
@@ -708,7 +653,7 @@ theorem nilpotent_model_computation_holds : RankTwoNilpotentGroup := by
         have hbj : bvec j = fvec k r z ⟨j.val, by omega⟩ := by
           rw [s1c2_fvec_lt k r z ⟨j.val, by omega⟩ hjr]; rfl
         rw [hbj, hv ⟨j.val, by omega⟩ (by rw [Fin.le_def]; simpa using hja), mul_zero, zero_mul]
-      · rw [hei i (by omega), if_neg (by omega), mul_zero]
+      · rw [hei i (by omega), ite_eq_right (by omega), mul_zero]
     rw [hz0, add_zero]
     simp only [bvec, Pi.single_apply]
   · unfold ell
@@ -722,15 +667,15 @@ theorem nilpotent_model_computation_holds : RankTwoNilpotentGroup := by
           simp [fvec, h]
         rw [this]
     rw [Finset.sum_congr rfl fun b _ => hterm b, Finset.sum_eq_single a]
-    · rw [hEf, Pi.add_apply, Pi.smul_apply, smul_eq_mul, hei _ (by simp [eI]), if_pos (by simp [eI]),
-        fvec_apply_lt z hz _ _ (by simp [eI]), if_neg (by simp [eI]), zero_add, mul_one]
+    · rw [hEf, Pi.add_apply, Pi.smul_apply, smul_eq_mul, hei _ (by simp [eI]), ite_eq_left (by simp [eI]),
+        fvec_apply_lt z hz _ _ (by simp [eI]), ite_eq_right (by simp [eI]), zero_add, mul_one]
     · intro b _ hb
       rw [hEf, Pi.add_apply, Pi.smul_apply, smul_eq_mul, fvec_apply_lt z hz _ _ (by simp [eI]),
-        if_neg (by simp [eI]), zero_add]
+        ite_eq_right (by simp [eI]), zero_add]
       rcases lt_or_gt_of_ne hb with h | h
       · rw [hv b.succ (by rw [Fin.le_def]; simpa using h), mul_zero, zero_mul]
       · have h' : a.val < b.val := h
-        rw [hei _ (by simp only [eI]; omega), if_neg (by simp only [eI]; omega), mul_zero]
+        rw [hei _ (by simp only [eI]; omega), ite_eq_right (by simp only [eI]; omega), mul_zero]
     · intro h; exact absurd (Finset.mem_univ _) h
 
 theorem derivative_of_psi_holds : CharacterDerivativeNorm := by

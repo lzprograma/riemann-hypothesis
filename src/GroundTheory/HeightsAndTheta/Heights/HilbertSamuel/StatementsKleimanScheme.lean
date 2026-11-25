@@ -19,18 +19,6 @@ def KleimanScheme.Statement : Prop :=
     IsFieldIntersection I → IsMultiHomogIdeal V → KH.NefOnF I V α → 1 ≤ b → 1 ≤ a →
     KH.AmpleV F V (b • α + fun _ => (a : ℤ))
 
-section Inhabitants
-
-end Inhabitants
-
-section Ample
-
-end Ample
-
-section InhabitantCurve
-
-end InhabitantCurve
-
 end
 
 end GroundTheory.Heights₂.Heights.HilbertSamuel

@@ -9,46 +9,8 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Decompo
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DecEmb
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsUniqueUnramifiedCocycleFrobeniusValue
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IotaFacts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
 import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.MapRepApply
 
@@ -77,40 +39,19 @@ theorem UpperTheory.exists_unique_unramified_hom_of_frobenius_value :
       c ∈ Z1 ρ ↔ Continuous c ∧ ∀ g h, c (g * h) = c g + c h := by
     intro c
     exact Iff.rfl
-  have hsurj : ∀ g : ↥(Dec (F := ℚ) (placeJ j)), ∃ x, iota j x = (g : G ℚ Ω) := by
-    intro g
-    have hg : (g : G ℚ Ω) ∈ (iota j).range := by
-      rw [hrange]
-      exact g.2
-    exact hg
-  choose inv hinv using hsurj
-  have hinj : Function.Injective (iota j) := hemb.injective
-  have hinv_mul : ∀ g h, inv (g * h) = inv g * inv h := by
-    intro g h
-    apply hinj
-    rw [map_mul, hinv, hinv, hinv]
-    rfl
-  have hinv_cont : Continuous inv := by
+  let φ : Formalism.BasicNotions.Loc.GQ v ≃* ↥(Dec (F := ℚ) (placeJ j)) :=
+    (MonoidHom.ofInjective hemb.injective).trans (MulEquiv.subgroupCongr hrange)
+  have hφ_symm_val : ∀ g, iota j (φ.symm g) = g := fun g =>
+    congrArg Subtype.val (φ.apply_symm_apply g)
+  have hφ_cont : Continuous φ := continuous_induced_rng.2 hemb.continuous
+  have hφ_symm_cont : Continuous φ.symm := by
     rw [hemb.isInducing.continuous_iff]
-    have hfun : (iota j ∘ inv) = fun g : ↥(Dec (F := ℚ) (placeJ j)) => (g : G ℚ Ω) := funext hinv
+    have hfun : (iota j ∘ φ.symm) = fun g : ↥(Dec (F := ℚ) (placeJ j)) => (g : G ℚ Ω) :=
+      funext hφ_symm_val
     rw [hfun]
-    exact continuous_subtype_val
-  have hmemr : ∀ x, iota j x ∈ Dec (F := ℚ) (placeJ j) := by
-    intro x
-    rw [← hrange]
-    exact ⟨x, rfl⟩
-  let ψ : Formalism.BasicNotions.Loc.GQ v → ↥(Dec (F := ℚ) (placeJ j)) := fun x => ⟨iota j x, hmemr x⟩
-  have hψ_cont : Continuous ψ := hemb.continuous.subtype_mk _
-  have hψ_mul : ∀ x y, ψ (x * y) = ψ x * ψ y := by
-    intro x y
-    apply Subtype.ext
-    simp [ψ]
-  have hψinv : ∀ g, ψ (inv g) = g := fun g => Subtype.ext (hinv g)
-  obtain ⟨τ, hτ⟩ : (σ : G ℚ Ω) ∈ (iota j).range := by
-    rw [hrange]
-    exact σ.2
-  have hτF : UpperTheory.V.Loc.IsFrob τ := (hfrob τ).2 (hτ ▸ hσ)
-  have hinvσ : inv σ = τ := hinj (by rw [hinv, hτ])
+    exact continuous_subtypeVal
+  let τ := φ.symm σ
+  have hτF : UpperTheory.V.Loc.IsFrob τ := (hfrob τ).2 (hφ_symm_val σ ▸ hσ)
   have hIq : ∀ x, x ∈ Iq v ↔ iota j x ∈ Ine (F := ℚ) (placeJ j) := by
     intro x
     rw [← hcomap]
@@ -119,27 +60,26 @@ theorem UpperTheory.exists_unique_unramified_hom_of_frobenius_value :
   · intro e
     obtain ⟨c, ⟨hcZ, hcI, hcσ⟩, -⟩ := UpperTheory.V.Loc.existsUnique_unramified_cocycle_frobenius_value (l := l) (A := ℚ_[l]) ρ hcont hI τ hτF e
     obtain ⟨hcc, hcm⟩ := (hmem c).1 hcZ
-    refine ⟨fun g => c (inv g), ?_, ?_, ?_, ?_⟩
-    · exact hcc.comp hinv_cont
+    refine ⟨fun g => c (φ.symm g), ?_, ?_, ?_, ?_⟩
+    · exact hcc.comp hφ_symm_cont
     · intro g h
-      simp only [hinv_mul, hcm]
+      simp only [map_mul, hcm]
     · intro g hg
       apply hcI
-      rw [hIq, hinv]
+      rw [hIq, hφ_symm_val]
       exact hg
-    · simp only [hinvσ, hcσ]
+    · exact hcσ
   · intro u hu hum huI huσ
     obtain ⟨c0, -, huniq⟩ := UpperTheory.V.Loc.existsUnique_unramified_cocycle_frobenius_value (l := l) (A := ℚ_[l]) ρ hcont hI τ hτF 0
-    have hc : (fun x => u (ψ x)) = 0 := by
-      have h1 : (fun x => u (ψ x)) = c0 := by
+    have hc : (fun x => u (φ x)) = 0 := by
+      have h1 : (fun x => u (φ x)) = c0 := by
         apply huniq
-        refine ⟨(hmem _).2 ⟨hu.comp hψ_cont, ?_⟩, ?_, ?_⟩
+        refine ⟨(hmem _).2 ⟨hu.comp hφ_cont, ?_⟩, ?_, ?_⟩
         · intro g h
-          simp only [hψ_mul, hum]
+          simp only [map_mul, hum]
         · intro g hg
           exact huI _ ((hIq g).1 hg)
-        · have : ψ τ = σ := Subtype.ext hτ
-          simp only [this, huσ]
+        · simp only [τ, φ.apply_symm_apply, huσ]
       have h2 : (0 : Formalism.BasicNotions.Loc.GQ v → E) = c0 := by
         apply huniq
         refine ⟨(hmem _).2 ⟨continuous_const, ?_⟩, ?_, ?_⟩
@@ -150,6 +90,6 @@ theorem UpperTheory.exists_unique_unramified_hom_of_frobenius_value :
         · rfl
       rw [h1, h2]
     funext g
-    have := congrFun hc (inv g)
-    simp only [hψinv] at this
+    have := congrFun hc (φ.symm g)
+    simp only [φ.apply_symm_apply] at this
     exact this

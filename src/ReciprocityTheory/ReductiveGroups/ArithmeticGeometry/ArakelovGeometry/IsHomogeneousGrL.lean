@@ -43,9 +43,6 @@ theorem mHom_eq (a : K → ℕ) : mHom ι a = grL ι (lexDeg a) := by
     exact (mem_grL_iff s a).symm
   rw [this, Submodule.span_eq]
 
-theorem mem_mHom_iff_via_grL (f : MRing ι) (a : K → ℕ) : f ∈ mHom ι a ↔ IsMultiHomog f a := by
-  rw [mHom_eq, mem_grL_iff]
-
 theorem isHomogeneous_grL {J : Ideal (MRing ι)} (hJ : IsMultiHomogIdeal J) :
     J.IsHomogeneous (grL ι) := (isHomogeneous_lex_iff _ J).mpr hJ
 

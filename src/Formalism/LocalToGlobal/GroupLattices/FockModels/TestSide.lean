@@ -58,7 +58,7 @@ theorem testSide_of_core (hC : FormCore) : TestSide := by
     unfold Vsp
     congr 1
     funext s
-    rw [if_pos (hanti s)]
+    rw [ite_eq_left (hanti s)]
   obtain ⟨Ψ, hΨ⟩ := ten_side O Kf p lam0 hd (fun s => expN p m (lamAt lam0 s)) β hβ (Vsp Kf lam0) hV
   have hκ : (p : Kf) ^ ((kap1 p lam0 : ℕ) : ℤ) = (p : Kf) ^ (∑ s, expN p m (lamAt lam0 s)) := by
     rw [zpow_natCast]

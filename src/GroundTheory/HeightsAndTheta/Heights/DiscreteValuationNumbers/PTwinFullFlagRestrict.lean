@@ -393,8 +393,7 @@ theorem cover_rs (hPQ : redIdeal O (mcIdeal O x) ≤ Q) {s : ∀ k, ι k} (hs : 
       rs_mul hPQ (chartRing_sub hPQ hs (hc l)).1 (chartRing_sub hPQ hs (hf l)).1
   rw [hsum, rs_one hPQ] at h
   refine ⟨h.symm, ?_⟩
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   simp [hne] at h
 
 

@@ -61,11 +61,11 @@ theorem locChart (k r : ℕ) (hk : 1 ≤ k) (z z' : Fin (2 * r + k + 1) → ℂ)
     simp only [Formalism.FourierDecayAlt.C2.monoP, Matrix.of_apply]
     by_cases hai : a = w i
     · have hia : i = w a := by rw [hai, wPt_invol]
-      rw [if_pos hai, if_pos hia]
+      rw [ite_eq_left hai, ite_eq_left hia]
       simp only [d, star_mul', star_pow, star_neg, star_one]
       rw [← hia]
     · have hia : ¬ i = w a := fun h => hai (by rw [h, wPt_invol])
-      rw [if_neg hai, if_neg hia, mul_zero, star_zero]
+      rw [ite_eq_right hai, ite_eq_right hia, mul_zero, star_zero]
   have hset : Formalism.FourierDecayAlt.C6.Rset g₀⁻¹ = Formalism.MainNotions.S.Rset (k0 + 1) r g₀ := by
     ext x
     simp only [Formalism.FourierDecayAlt.C6.Rset, Formalism.MainNotions.S.Rset, Set.mem_setOf_eq, Matrix.nonsing_inv_nonsing_inv _ hu]
@@ -97,8 +97,6 @@ open MeasureTheory Finset NumberField Formalism.BasicNotions Formalism.MainNotio
   Formalism.L2.SG.LocWSOf
 
 namespace Formalism.L2.S.Pv.Chart
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {X : HidaSetting D} {θ : ℝ} (C : Formalism.L2.SG.LocWSOf.Choice X θ) (u u' : D.what₂.Word)
   (w : Point D.host.E (D.R.rS + 1)) (γ : X.B.I.Ginf) (τ : D.what₂.Tau)

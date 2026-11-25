@@ -87,10 +87,10 @@ theorem eigenLengthProductStatement_holds : EigenLengthProductStatement := by
     rw [hPmv, e1, e2, mulVec_mulVec, mulVec_mulVec, ← transpose_mul, hLo, hLo]
     by_cases hki : k = i
     · subst hki
-      simp only [if_true]
+      simp only [ite_true]
       rw [← e1, ← e2, Sum.elim_comp_inl_inr]
     · have hne : π i ≠ π k := fun h => hki (π.injective h).symm
-      simp only [hki, hne, if_false, transpose_zero, zero_mulVec]
+      simp only [hki, hne, ite_false, transpose_zero, zero_mulVec]
       ext s; cases s <;> rfl
   have hT : ∑ i, (εL (π i))ᵀ = 1 := by
     rw [← transpose_sum, Equiv.sum_comp π εL, hLs, transpose_one]

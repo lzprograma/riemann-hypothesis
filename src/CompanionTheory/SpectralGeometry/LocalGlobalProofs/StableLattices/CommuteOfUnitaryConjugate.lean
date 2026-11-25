@@ -21,21 +21,21 @@ theorem sum_pick {R : Type} [AddCommGroup R] [Module ℂ R] (f : Fin n → Fin n
     (hQ : ∀ k, Q k ↔ P ∧ k.1.1 = a ∧ k.1.2 = b) :
     ∑ k : NC ε, (if Q k then (1 : ℂ) else 0) • f k.1.1 k.1.2 = if P then f a b else 0 := by
   by_cases hp : P
-  · rw [if_pos hp]
+  · rw [ite_eq_left hp]
     let k0 : NC ε := ⟨(a, b), hP hp⟩
     rw [Finset.sum_eq_single k0]
-    · rw [if_pos ((hQ k0).mpr ⟨hp, rfl, rfl⟩), one_smul]
+    · rw [ite_eq_left ((hQ k0).mpr ⟨hp, rfl, rfl⟩), one_smul]
     · intro k _ hk
-      rw [if_neg, zero_smul]
+      rw [ite_eq_right, zero_smul]
       intro hq
       obtain ⟨_, h1, h2⟩ := (hQ k).mp hq
       exact hk (Subtype.ext (Prod.ext h1 h2))
     · intro h
       exact absurd (Finset.mem_univ _) h
-  · rw [if_neg hp]
+  · rw [ite_eq_right hp]
     apply Finset.sum_eq_zero
     intro k _
-    rw [if_neg (fun hq => hp ((hQ k).mp hq).1), zero_smul]
+    rw [ite_eq_right (fun hq => hp ((hQ k).mp hq).1), zero_smul]
 
 section Abstract
 
@@ -196,7 +196,7 @@ theorem bdFacts : CAR → BdFacts := by
       rw [h', i.2.1] at a
       exact absurd a (by decide)
     have h := hGl i.1.1 i.1.2 j.1.1 j.1.2
-    rw [if_neg h1, if_neg h2, sub_zero, sub_eq_zero] at h
+    rw [ite_eq_right h1, ite_eq_right h2, sub_zero, sub_eq_zero] at h
     exact h
   refine ⟨sq_zero (fun i : NC ε => (lift ε (E i.1.1 i.1.2) : Module.End ℂ (Ch ε V))) ann hLL
     (fun i j => lift_ann _ j) hAA, ?_⟩

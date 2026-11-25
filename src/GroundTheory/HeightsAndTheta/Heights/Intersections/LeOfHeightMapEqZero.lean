@@ -28,16 +28,11 @@ theorem RegularityDivisorSupportClosed.not_add_add {m : ℕ} {a b : ℕ∞} (ha 
     (h : ((m : WithBot ℕ∞) + (a : WithBot ℕ∞)) + (b : WithBot ℕ∞) = ((m + 1 : ℕ) : WithBot ℕ∞)) :
     False := by
   have h' : (m : ℕ∞) + a + b = ((m + 1 : ℕ) : ℕ∞) := by exact_mod_cast h
-  induction a using ENat.recTopCoe with
-  | top => simp at h'; exact ENat.natCast_ne_top (m + 1) (by exact_mod_cast h'.symm)
-  | coe a =>
-    induction b using ENat.recTopCoe with
-    | top => simp at h'; exact ENat.natCast_ne_top (m + 1) (by exact_mod_cast h'.symm)
-    | coe b =>
-      have : m + a + b = m + 1 := by exact_mod_cast h'
-      have : a ≠ 0 := by exact_mod_cast ha
-      have : b ≠ 0 := by exact_mod_cast hb
-      omega
+  have hle : (m : ℕ∞) + 1 + 1 ≤ ((m + 1 : ℕ) : ℕ∞) :=
+    (add_le_add (add_le_add (le_refl (m : ℕ∞)) (Order.one_le_iff_ne_zero.2 ha))
+      (Order.one_le_iff_ne_zero.2 hb)).trans_eq h'
+  have : m + 1 + 1 ≤ m + 1 := by exact_mod_cast hle
+  omega
 
 theorem RegularityDivisorSupportClosed.proof : RegularityDivisorSupportClosed.Statement := by
   intro K _ ι _ P s a W hP hs hsP

@@ -197,10 +197,10 @@ lemma ok_of_blk {y : Matrix (Fin r) (Fin r) ℂ}
     · have hs : sv p0 a * sv p0 k = 1 := by
         unfold sv
         by_cases hk : (k : ℕ) < p0 <;> by_cases ha : (a : ℕ) < p0
-        · rw [if_pos ha, if_pos hk]; norm_num
+        · rw [ite_eq_left ha, ite_eq_left hk]; norm_num
         · exact absurd (hka.1 hk) ha
         · exact absurd (hka.2 ha) hk
-        · rw [if_neg ha, if_neg hk]; norm_num
+        · rw [ite_eq_right ha, ite_eq_right hk]; norm_num
       calc sv p0 a * (y k a * sv p0 k * (starRingEnd ℂ) (y k b))
           = (sv p0 a * sv p0 k) * (y k a * (starRingEnd ℂ) (y k b)) := by ring
         _ = y k a * (starRingEnd ℂ) (y k b) := by rw [hs, one_mul]

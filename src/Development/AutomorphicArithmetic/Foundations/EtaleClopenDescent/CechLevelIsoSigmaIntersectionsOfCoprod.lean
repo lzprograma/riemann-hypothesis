@@ -210,7 +210,7 @@ theorem nat_sq {Y X : Scheme.{0}} (g : Y ⟶ X) (O : X.Opens) {ι : Type} (V : �
     (hV : ∀ j, V j ≤ O) (n : ℕ)
     (hW : ∀ (j : Fin (n + 1) → ι) x, x ∈ (⨅ k, V (j k)) ↔ ∀ k, x ∈ V (j k))
     (hW' : ∀ (j : Fin (n + 1) → ι) x, x ∈ g ⁻¹ᵁ (⨅ k, V (j k)) ↔ ∀ k, x ∈ g ⁻¹ᵁ V (j k)) :
-    Limits.Sigma.desc (cmp (g ⁻¹ᵁ O) (fun j => g ⁻¹ᵁ V j) (fun j => pre_le g (hV j)) _ hW') ≫
+    Limits.Sigma.desc (cmp (g ⁻¹ᵁ O) (fun j => g ⁻¹ᵁ V j) (fun j => g.preimage_mono (hV j)) _ hW') ≫
         wpMap (sqS g O V hV) n =
       Limits.Sigma.map (fun j : Fin (n + 1) → ι => g ∣_ (⨅ k, V (j k))) ≫
         Limits.Sigma.desc (cmp O V hV _ hW) := by
@@ -240,5 +240,5 @@ theorem UpperTheory.Cb.cechLevel_iso_sigma_intersections_of_coprod :
   have hW' : ∀ (j : Fin (n + 1) → ι) x, x ∈ g ⁻¹ᵁ (⨅ k, V (j k)) ↔ ∀ k, x ∈ g ⁻¹ᵁ V (j k) :=
     fun j x => mem_iInf_fin (fun k => V (j k)) (g x)
   exact ⟨(Arrow.isoMk (asIso (Limits.Sigma.desc (cmp (g ⁻¹ᵁ O) (fun j => g ⁻¹ᵁ V j)
-    (fun j => pre_le g (hV j)) _ hW'))) (asIso (Limits.Sigma.desc (cmp O V hV _ hW)))
+    (fun j => g.preimage_mono (hV j)) _ hW'))) (asIso (Limits.Sigma.desc (cmp O V hV _ hW)))
     (nat_sq g O V hV n hW hW')).symm⟩

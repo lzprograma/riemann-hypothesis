@@ -137,17 +137,17 @@ theorem sum_omegaStd_single (h : ℕ) (i j : Fin (2 * (8 * h))) :
     have h3 := hinj u v a b
     simp only [omegaStd, Out.stdSymp, Pi.single_apply, Equiv.apply_eq_iff_eq, Prod.mk.injEq,
       sharpIndex_inl, sharpIndex_inr, Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq, and_false,
-      if_false, mul_zero, zero_mul, sub_zero, zero_sub, Finset.sum_const_zero, sub_self]
+      ite_false, mul_zero, zero_mul, sub_zero, zero_sub, Finset.sum_const_zero, sub_self]
     generalize (finProdFinEquiv (u, a) : ℕ) = m at *
     generalize (finProdFinEquiv (v, b) : ℕ) = n at *
-  · rw [if_neg (by omega), if_neg (by omega)]
+  · rw [ite_eq_right (by omega), ite_eq_right (by omega)]
   · by_cases huv : u = v ∧ a = b
     · obtain ⟨rfl, rfl⟩ := huv
       have : m = n := h3.2 ⟨rfl, rfl⟩
-      rw [if_pos (by omega)]
+      rw [ite_eq_left (by omega)]
       simp [ite_and]
     · have : m ≠ n := fun e => huv (h3.1 e)
-      rw [if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega)]
       refine Finset.sum_eq_zero fun w _ => Finset.sum_eq_zero fun c _ => ?_
       split_ifs with p q
       · exact absurd ⟨p.1.symm.trans q.1, p.2.symm.trans q.2⟩ huv
@@ -155,15 +155,15 @@ theorem sum_omegaStd_single (h : ℕ) (i j : Fin (2 * (8 * h))) :
   · by_cases huv : u = v ∧ a = b
     · obtain ⟨rfl, rfl⟩ := huv
       have : m = n := h3.2 ⟨rfl, rfl⟩
-      rw [if_neg (by omega), if_pos (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_left (by omega)]
       simp [ite_and]
     · have : m ≠ n := fun e => huv (h3.1 e)
-      rw [if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega)]
       refine Finset.sum_eq_zero fun w _ => Finset.sum_eq_zero fun c _ => ?_
       split_ifs with p q
       · exact absurd ⟨p.1.symm.trans q.1, p.2.symm.trans q.2⟩ huv
       all_goals simp
-  · rw [if_neg (by omega), if_neg (by omega)]
+  · rw [ite_eq_right (by omega), ite_eq_right (by omega)]
 
 def sharpReindex (h : ℕ) : (Fin (2 * (8 * h)) → ℤ) ≃ₗ[ℤ] (Fin 8 → (Fin h ⊕ Fin h → ℤ)) where
   toFun x := fun u c => x (sharpIndex h (u, c))

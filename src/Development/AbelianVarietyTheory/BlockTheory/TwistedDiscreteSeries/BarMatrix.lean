@@ -47,8 +47,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formali
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.BarMatrix
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def SignCompat {p q n : ℕ} (ε : Fin n → Bool) (e : Ix p q ≃ Fin n) : Prop := ∀ a, ε (e a) = a.isLeft
 
 def plainMat {p q n : ℕ} (e : Ix p q ≃ Fin n) (g : Mat p q) : Matrix (Fin n) (Fin n) ℂ := Matrix.reindex e e g

@@ -4,44 +4,8 @@ public import Formalism.LocalToGlobal.ProjectiveLattices.CurveComp
 public import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
 public import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
 public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.GenFrExAndGenFromTest
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -93,16 +57,16 @@ theorem exists_isFrame [IsScalarTower (𝓞 K) K V] (hK : ∀ σ : K →+* ℂ, 
     exacts [hd _, hdc _]
   · simp only [hmk]
     by_cases h : (InfinitePlace.mk σ).embedding = σ
-    · rw [if_pos h, if_neg fun h' => hK σ (h'.symm.trans h), frameNorm_conj (hd _)]
-    · rw [if_neg h, if_pos (hor σ h), ← frameNorm_conj (hd _)]
+    · rw [ite_eq_left h, ite_eq_right fun h' => hK σ (h'.symm.trans h), frameNorm_conj (hd _)]
+    · rw [ite_eq_right h, ite_eq_left (hor σ h), ← frameNorm_conj (hd _)]
       simp only [Complex.conj_conj]
   · by_cases h : (InfinitePlace.mk σ).embedding = σ
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       have := hn (InfinitePlace.mk σ) x
       rwa [h] at this
     · have := hn (InfinitePlace.mk σ) x
       rw [hor σ h, hc, ← frameNorm_conj (hd _)] at this
-      rw [if_neg h, ← this]
+      rw [ite_eq_right h, ← this]
       simp only [RingHom.comp_apply, Complex.conj_conj]
 
 structure IsShortGen {κ : Type} (Nm : κ → V → ℝ) (L : Submodule (𝓞 K) V) {n : ℕ} (w : Fin n → V) (abelian₂ : ℝ) : Prop where
@@ -112,13 +76,6 @@ structure IsShortGen {κ : Type} (Nm : κ → V → ℝ) (L : Submodule (𝓞 K)
   le : ∀ i k, Nm k (w i) ≤ abelian₂
 
   one_le : 1 ≤ abelian₂
-
-theorem exists_isShortGen {κ : Type} [Finite κ] (Nm : κ → V → ℝ) {L : Submodule (𝓞 K) V} (hL : L.FG) :
-    ∃ (n : ℕ) (w : Fin n → V) (abelian₂ : ℝ), IsShortGen Nm L w abelian₂ := by
-  obtain ⟨n, w, hw⟩ := Submodule.fg_iff_exists_fin_generating_family.1 (hL.restrictScalars (R := ℤ))
-  obtain ⟨B, hB⟩ := (Set.finite_range fun p : Fin n × κ => Nm p.2 (w p.1)).bddAbove
-  exact ⟨n, w, max B 1, fun x => by rw [hw]; rfl, fun i k => (hB ⟨(i, k), rfl⟩).trans (le_max_left _ _),
-    le_max_right _ _⟩
 
 
 end Generic
@@ -189,10 +146,10 @@ theorem not_goodEmb_conj {σ : c.F →+* ℂ} (h : GoodEmb c σ) : ¬ GoodEmb c 
 theorem goodOf_conj (σ : c.F →+* ℂ) : goodOf c ((starRingEnd ℂ).comp σ) = goodOf c σ := by
   have e : (starRingEnd ℂ).comp ((starRingEnd ℂ).comp σ) = σ := RingHom.ext fun a => Complex.conj_conj _
   by_cases h : GoodEmb c σ
-  · rw [goodOf, goodOf, if_pos h, if_neg (not_goodEmb_conj h), e]
+  · rw [goodOf, goodOf, ite_eq_left h, ite_eq_right (not_goodEmb_conj h), e]
   · have h' := goodEmb_goodOf c σ
-    rw [goodOf, if_neg h] at h'
-    rw [goodOf, goodOf, if_neg h, if_pos h']
+    rw [goodOf, ite_eq_right h] at h'
+    rw [goodOf, goodOf, ite_eq_right h, ite_eq_left h']
 
 theorem conj_comp_ne (σ : c.F →+* ℂ) : (starRingEnd ℂ).comp σ ≠ σ := fun e => by
   have h := goodEmb_goodOf c σ
@@ -205,9 +162,6 @@ theorem petOn_conj (Z : Comp Xo c) (G : WTZ E) (σ : c.F →+* ℂ) (f : Rul Xo 
   congrArg (fun s => petAt (U s) x (V s) (dict s) (muOn (U s) (V s) (dict s) Z) G f) (goodOf_conj σ)
 
 
-
-def CompShortGen (G : WTZ E) {n : ℕ} (w : Fin n → cuspW Xo c U G) (abelian₂ : ℝ) : Prop :=
-  IsShortGen (fun (k : (c.F →+* ℂ) × Comp Xo c) (f : cuspW Xo c U G) => petOn U x V dict k.2 G k.1 f) (latW U G) w abelian₂
 
 def depth_vw (G : WTZ E) (v : Rul Xo c → EReal) : EReal := ⨅ w ∈ latW U G, v w
 

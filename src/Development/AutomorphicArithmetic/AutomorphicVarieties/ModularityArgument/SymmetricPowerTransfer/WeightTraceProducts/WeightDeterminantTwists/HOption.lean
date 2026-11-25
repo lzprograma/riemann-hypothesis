@@ -68,9 +68,7 @@ private theorem h_option {σ : Type} [Fintype σ] [DecidableEq σ] (x : Option �
 private theorem h_equiv {σ τ : Type} [Fintype σ] [DecidableEq σ] [Fintype τ] [DecidableEq τ] (e : σ ≃ τ)
     (x : τ → ℂ) (n : ℕ) :
     MvPolynomial.eval x (MvPolynomial.hsymm τ ℂ n) = MvPolynomial.eval (x ∘ e) (MvPolynomial.hsymm σ ℂ n) := by
-  rw [ev_h, ev_h, ← Equiv.sum_comp (Sym.equivCongr e)]
-  refine Finset.sum_congr rfl fun s _ => ?_
-  simp [Sym.equivCongr, Multiset.map_map]
+  rw [← MvPolynomial.rename_hsymm σ ℂ n e, MvPolynomial.eval_rename]
 
 private theorem h_succ (d : ℕ) (x : Fin (d + 1) → ℂ) (n : ℕ) :
     MvPolynomial.eval x (MvPolynomial.hsymm (Fin (d + 1)) ℂ (n + 1)) =

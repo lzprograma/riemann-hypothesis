@@ -73,33 +73,6 @@ private lemma vecV_cutoff_lemma {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup W
 
 open Filter Topology MeasureTheory in
 open scoped Matrix.Norms.Elementwise in
-private lemma foldr_RdV_zero {k r : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
-    (w : List (_root_.Formalism.FourierDecayAlt.B.Mat k r)) : List.foldr _root_.Formalism.REAL.RdV (fun _ => (0 : E)) w = fun _ => 0 := by
-  induction w with
-  | nil => rfl
-  | cons X w ih =>
-    rw [List.foldr_cons, ih]
-    funext g
-    unfold _root_.Formalism.REAL.RdV
-    simp
-
-open Filter Topology MeasureTheory in
-open scoped Matrix.Norms.Elementwise in
-private lemma opApply_zero {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp]
-    [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq]
-    [FiniteDimensional ℂ Wq] (D : _root_.Formalism.FourierDecayAlt.B.DiffOp k r Wp Wq) (g : _root_.Formalism.FourierDecayAlt.B.Mat k r) :
-    _root_.Formalism.FourierDecayAlt.B.opApply D (fun _ => 0) g = 0 := by
-  unfold _root_.Formalism.FourierDecayAlt.B.opApply
-  apply List.sum_eq_zero
-  intro x hx
-  simp only [List.mem_map] at hx
-  obtain ⟨T, -, rfl⟩ := hx
-  unfold _root_.Formalism.FourierDecayAlt.B.Rw
-  rw [foldr_RdV_zero]
-  simp
-
-open Filter Topology MeasureTheory in
-open scoped Matrix.Norms.Elementwise in
 theorem _root_.GlobalTheory.TopVec.tv_cutF (Wp Wq : Type) [NormedAddCommGroup Wp]
     [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq]
     [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (P : _root_.Formalism.FourierDecayAlt.M.Par) (p : _root_.Formalism.FourierDecayAlt.KB.Pl P Wp Wq)
@@ -152,7 +125,7 @@ theorem _root_.GlobalTheory.TopVec.tv_cutF (Wp Wq : Type) [NormedAddCommGroup Wp
     have h1 : ∀ H, _root_.Formalism.FourierDecayAlt.D.vecV p.T.base p.ν' p.m₀ H q = _root_.Formalism.FourierDecayAlt.D.vecV p.T.base p.ν' p.m₀
         (_root_.Formalism.FourierDecayAlt.D.cutF p.T.base (fun x => if ε / G < x then 1 else 0) H G) q := by
       intro H
-      rw [vecV_cutoff_lemma, ← hG, div_self hGpos.ne', if_pos ((div_lt_one hGpos).mpr hlt)]
+      rw [vecV_cutoff_lemma, ← hG, div_self hGpos.ne', ite_eq_left ((div_lt_one hGpos).mpr hlt)]
       simp
     rw [h1, h1 (p.Θ.Θ w e F)]
     apply _root_.Formalism.FourierDecayAlt.P.PBE.vecV_congrGPos
@@ -180,7 +153,7 @@ theorem _root_.GlobalTheory.TopVec.tv_cutF (Wp Wq : Type) [NormedAddCommGroup Wp
     have h1 : ∀ H, _root_.Formalism.FourierDecayAlt.D.vecV p.T.base p.ν' p.m₀ H q = _root_.Formalism.FourierDecayAlt.D.vecV p.T.base p.ν' p.m₀
         (_root_.Formalism.FourierDecayAlt.D.cutF p.T.base (fun x => if x < δ * ε / G then 1 else 0) H G) q := by
       intro H
-      rw [vecV_cutoff_lemma, ← hG, div_self hGpos.ne', if_pos ((one_lt_div hGpos).mpr hlt)]
+      rw [vecV_cutoff_lemma, ← hG, div_self hGpos.ne', ite_eq_left ((one_lt_div hGpos).mpr hlt)]
       simp
     rw [h1]
     have h2 : _root_.Formalism.FourierDecayAlt.D.vecV p.T.base p.ν' p.m₀ (_root_.Formalism.FourierDecayAlt.D.cutF p.T.base
@@ -198,7 +171,8 @@ theorem _root_.GlobalTheory.TopVec.tv_cutF (Wp Wq : Type) [NormedAddCommGroup Wp
           have hx' : _root_.Formalism.QuantumDeterminants.Gf P.k P.r p.T.base.z p.T.base.z' x < δ * ε := hx
           rw [hcut, hδ _ ((div_lt_iff₀ hε).mpr hx')]
           simp
-        rw [hDop _ g hOQ, hloc, opApply_zero]
+        rw [hDop _ g hOQ, hloc, _root_.Formalism.FourierDecayAlt.P.PBE.opApply_zero_near Dop
+          (F := fun _ => 0) isOpen_univ (fun _ _ _ => rfl) g hg.1 trivial]
       · have : ¬ (_root_.Formalism.QuantumDeterminants.Gf P.k P.r p.T.base.z p.T.base.z' g / G < δ * ε / G) := by
           rw [div_lt_div_iff_of_pos_right hGpos]; exact hgd
         simp [this]

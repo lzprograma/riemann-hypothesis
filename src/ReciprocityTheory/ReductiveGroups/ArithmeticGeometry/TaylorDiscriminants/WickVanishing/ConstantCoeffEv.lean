@@ -8,8 +8,6 @@ import Mathlib.Topology.Separation.CompletelyRegular
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
@@ -82,7 +80,7 @@ theorem ev_pt (f : PS k m d) : ev (fun j => pt k (n := m) d j) f = f := by
   rw [show (fun p : Fin m × Fin d => (X p : PS k m d)) = X from rfl, MvPowerSeries.subst_self]
   rfl
 
-theorem CZ.pt : CZ (fun j => pt k (n := n) d j) := fun j i => MvPowerSeries.constantCoeff_X _
+theorem CZ.pt : CZ (fun j => pt k (n := n) d j) := fun _ _ => MvPowerSeries.constantCoeff_X _
 
 open scoped MvPowerSeries.WithPiTopology in
 theorem pderiv_ev {a : Fin m → Pt k n d} (ha : CZ a) (f : PS k m d) (v : Fin n × Fin d) :

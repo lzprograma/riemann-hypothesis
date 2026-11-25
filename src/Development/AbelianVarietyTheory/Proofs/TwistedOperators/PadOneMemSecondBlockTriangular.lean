@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HeisOAdd
 public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
 public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
@@ -67,7 +68,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Lev Formalism.IndefR.Datum
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.DiagLiftFix
 
@@ -241,25 +241,6 @@ theorem isLattice_of_isFrame {β : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)}
 
 end Frame
 
-section Mat
-
-open GlobalTheory.StepLaw.TypeDatum
-
-variable {κ : Type} [CommRing κ] {r a b : ℕ}
-
-end Mat
-
-section Dat
-
-open GlobalTheory.StepLaw.TypeDatum
-
-variable {D : D7} {a b : ℕ} (L : LevDat D.host.E ℂ a) (hL : L.P = LevelP.triv L.Pg L.r ℂ)
-  (χj : ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ) (y : ∀ PP : Pl D.host.E, Matrix (Fin b) (Fin a) (kP PP))
-
-include hL
-
-end Dat
-
 section Dual
 
 open GlobalTheory.PlaceModel GlobalTheory.PlaceDatum GlobalTheory.SplitHecke
@@ -345,9 +326,9 @@ theorem halfInd_dualLat (hc : a * cA D a = 0) : halfInd a (dualLat ψ a Λ) = ha
   by_cases ht : IsHalf a t
   · have e := mem_dualLat_half (ψ := ψ) (Λ := Λ) hc ht
     by_cases h : t ∈ Λ
-    · rw [if_pos ⟨e.2 h, ht⟩, if_pos ⟨h, ht⟩]
-    · rw [if_neg (fun h' => h (e.1 h'.1)), if_neg (fun h' => h h'.1)]
-  · rw [if_neg (fun h' => ht h'.2), if_neg (fun h' => ht h'.2)]
+    · rw [ite_eq_left ⟨e.2 h, ht⟩, ite_eq_left ⟨h, ht⟩]
+    · rw [ite_eq_right (fun h' => h (e.1 h'.1)), ite_eq_right (fun h' => h h'.1)]
+  · rw [ite_eq_right (fun h' => ht h'.2), ite_eq_right (fun h' => ht h'.2)]
 
 theorem isPlaceModel_dualLat (hc : a * cA D a = 0) {f₀ : WO S T → ℂ} {Tm : (WO S T → ℂ) →ₗ[ℂ] (WO S T → ℂ)}
     (h : IsPlaceModel ψ (symplO S T) (heisO ψ S T) a Λ 1 f₀ Tm) :
@@ -494,7 +475,7 @@ theorem latO_bidual (hψ : IsStdChar D ψ (-1)) (hS : Submodule.IsFullLattice D.
     have hnot : ¬ ∀ y ∈ (latO S T (GlobalTheory.PlaceModel.latFrame S : Set (Fin S.rank → D.host.E))
         (GlobalTheory.PlaceModel.latFrame T : Set (Fin T.rank → D.host.E)) fun _ => True), IsHalf (cA D a) y →
           ψ (symplO S T ((M1 * M2) • x) y) = 1 := fun h => hxM ⟨hbid _ (hXo _ hMx) h, hMx⟩
-    push_neg at hnot
+    push Not at hnot
     obtain ⟨y, hyL, hyY, hy1⟩ := hnot
     refine ⟨(M1 * M2) • y, ?_, ?_, ?_⟩
     · exact (GlobalTheory.PlaceModel.isHalf_iff S T).2 (AddSubgroup.nsmul_mem _ ((GlobalTheory.PlaceModel.isHalf_iff S T).1 hyY) _)
@@ -517,17 +498,8 @@ private theorem isThetaFunO_zero_twisted_operators : IsThetaFunO ψ S T (0 : WO 
 
 private theorem isThetaFunO_add_twisted_operators {f g : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) :
     IsThetaFunO ψ S T (f + g) := by
-  obtain ⟨U, hU, hUf⟩ := hf.level
-  obtain ⟨V, hV, hVg⟩ := hg.level
-  constructor
-  case quasi => intro γ w; simp only [Pi.add_apply, hf.quasi γ w, hg.quasi γ w, mul_add]
-  case level =>
-    refine ⟨U ⊓ V, ?_, fun u hu h0 => ?_⟩
-    · rw [AddSubgroup.coe_inf]; exact hU.inter hV
-    · rw [← GlobalTheory.SplitScalar.heisL_apply, map_add (f := _), GlobalTheory.SplitScalar.heisL_apply, GlobalTheory.SplitScalar.heisL_apply,
-        hUf u hu.1 h0, hVg u hu.2 h0]
-  case cont => exact hf.cont.add hg.cont
-  case smooth => intro k L hL hL0 w; exact (hf.smooth k L hL hL0 w).add (hg.smooth k L hL hL0 w)
+  intros
+  apply _root_.GlobalTheory.DownLift.GenFinite.theta_add <;> assumption
 
 private theorem isThetaFunO_smul_twisted_operators (c : ℂ) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) :
     IsThetaFunO ψ S T (c • f) := by

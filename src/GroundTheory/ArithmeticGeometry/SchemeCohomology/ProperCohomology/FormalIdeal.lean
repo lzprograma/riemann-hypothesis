@@ -244,20 +244,6 @@ def idealPowSucc (n : ℕ) : idealPow I F (n + 1) ⟶ idealPow I F n :=
 lemma idealPowSucc_ι (n : ℕ) : idealPowSucc I F n ≫ idealPowι I F n = idealPowι I F (n + 1) := by
   rw [idealPowSucc, imageMapOf_ι, map_one, smulHom_one, Category.comp_id]
 
-def idealPowMul {k n : ℕ} (a : A) (ha : a ∈ I ^ k) : idealPow I F n ⟶ idealPow I F (n + k) :=
-  imageMapOf _ _ (smulHom F (algebraMap A Γ(X, ⊤) a))
-    (exists_idealSumMap_smulHom F (I ^ n) (I ^ (n + k)) a fun i => by
-      have := Ideal.mul_mem_mul ha (idealGen_mem (I ^ n) i)
-      rwa [← pow_add, add_comm] at this).choose
-    (exists_idealSumMap_smulHom F (I ^ n) (I ^ (n + k)) a fun i => by
-      have := Ideal.mul_mem_mul ha (idealGen_mem (I ^ n) i)
-      rwa [← pow_add, add_comm] at this).choose_spec
-
-lemma idealPowMul_ι {k n : ℕ} (a : A) (ha : a ∈ I ^ k) :
-    idealPowMul I F a ha ≫ idealPowι I F (n + k) =
-      idealPowι I F n ≫ smulHom F (algebraMap A Γ(X, ⊤) a) :=
-  imageMapOf_ι _ _ _ _ _
-
 abbrev quotPow (n : ℕ) : X.Modules := cokernel (idealPowι I F (n + 1))
 
 abbrev quotPowπ (n : ℕ) : F ⟶ quotPow I F n := cokernel.π _
@@ -349,12 +335,6 @@ theorem quotPowπ_app_eq_zero_iff {V : X.Opens} (hV : IsAffineOpen V) (n : ℕ) 
   rfl
 
 end Qcoh
-
-section Coherent
-
-variable {F}
-
-end Coherent
 
 end
 

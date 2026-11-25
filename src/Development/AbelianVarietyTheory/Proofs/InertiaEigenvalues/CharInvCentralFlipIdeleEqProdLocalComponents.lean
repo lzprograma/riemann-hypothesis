@@ -7,45 +7,7 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBas
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFinitePlaceIdempotentBaseChangeAdeles
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeCharEqProdLocalComponentsApproximating
 import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.Divisors.PerCEmb
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IntFormsSubset
@@ -64,7 +26,6 @@ open GlobalTheory.SW hiding Level IsSB
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.IndefR.FWT Formalism.L2.Pj
 open GlobalTheory.SingleDatum GlobalTheory.CoverRead
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open GlobalTheory.LevelSeries
 
@@ -208,11 +169,11 @@ theorem char_inv_eq_prod_locK_of_flip : ∀ (D : D7) (V : HSp D) (χW : (AE D)ˣ
     intro P
     have hc := hcomp P
     by_cases hP : P ∈ T
-    · rw [if_pos hP, one_mul, sub_self, add_zero] at hc
-      rw [show k P = (u⁻¹) ^ V.rank from if_pos hP, Units.val_pow_eq_pow_val, Units.val_inv_eq_inv_val, hu,
+    · rw [ite_eq_left hP, one_mul, sub_self, add_zero] at hc
+      rw [show k P = (u⁻¹) ^ V.rank from ite_eq_left hP, Units.val_pow_eq_pow_val, Units.val_inv_eq_inv_val, hu,
         map_pow, map_inv₀, map_natCast, eq_inv_of_mul_eq_one_left hc, Nat.cast_pow, inv_pow]
-    · rw [if_neg hP, zero_mul, sub_zero, zero_add, mul_one] at hc
-      rw [show k P = 1 from if_neg hP, Units.val_one, map_one]
+    · rw [ite_eq_right hP, zero_mul, sub_zero, zero_add, mul_one] at hc
+      rw [show k P = 1 from ite_eq_right hP, Units.val_one, map_one]
       exact hc
   have hI : Ideal.span {((N : ℕ) : 𝓞 D.host.E)} ≠ 0 := by
     rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
@@ -224,16 +185,16 @@ theorem char_inv_eq_prod_locK_of_flip : ∀ (D : D7) (V : HSp D) (χW : (AE D)ˣ
     (fun P hP => by
       have hPT : P ∉ T := fun h => hP (Finset.mem_union_left _ h)
       refine ⟨?_, ?_⟩
-      · rw [hxk P, show k P = 1 from if_neg hPT, Units.val_one, map_one, map_one]
+      · rw [hxk P, show k P = 1 from ite_eq_right hPT, Units.val_one, map_one, map_one]
       · intro hNP
         apply hP
         apply Finset.mem_union_right
         rw [Set.Finite.mem_toFinset]
         exact Ideal.dvd_span_singleton.mpr hNP)
   rw [key, ← Finset.prod_subset (Finset.subset_union_left)
-    (fun P _ hPT => by rw [show k P = 1 from if_neg hPT, map_one, Units.val_one])]
+    (fun P _ hPT => by rw [show k P = 1 from ite_eq_right hPT, map_one, Units.val_one])]
   rw [Finset.prod_congr rfl (fun P hP => by
-    rw [show k P = (u⁻¹) ^ V.rank from if_pos hP, map_pow, map_inv, Units.val_pow_eq_pow_val,
+    rw [show k P = (u⁻¹) ^ V.rank from ite_eq_left hP, map_pow, map_inv, Units.val_pow_eq_pow_val,
       Units.val_inv_eq_inv_val, inv_pow])]
   rw [Finset.prod_inv_distrib, inv_inv]
 

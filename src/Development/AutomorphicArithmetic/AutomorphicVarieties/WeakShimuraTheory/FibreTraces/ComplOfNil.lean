@@ -2,47 +2,9 @@ module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -83,30 +45,8 @@ private theorem co_pow {Λ A : Type} [CommRing Λ] [IsLocalRing Λ] [CommRing A]
       (res Λ (A ⧸ I ^ (n + 1))).comp (Ideal.Quotient.mkₐ Λ (I ^ (n + 1))) = x := by
   classical
   have hJle : I ^ (n + 1) ≤ I := Ideal.pow_le_self (Nat.succ_ne_zero n)
-  have hunit : ∀ z : A, IsUnit (Ideal.Quotient.mk (I ^ (n + 1)) z) ↔ z ∉ I := by
-    intro z
-    constructor
-    · intro hu hz
-      obtain ⟨v, hv⟩ := hu.exists_right_inv
-      obtain ⟨w, rfl⟩ := Ideal.Quotient.mk_surjective v
-      rw [← map_mul, ← map_one (Ideal.Quotient.mk (I ^ (n + 1))), Ideal.Quotient.eq] at hv
-      have h1 : z * w - 1 ∈ I := hJle hv
-      have h2 : z * w ∈ I := Ideal.mul_mem_right _ _ hz
-      have h3 : (1 : A) ∈ I := by
-        have := Ideal.sub_mem _ h2 h1
-        rwa [sub_sub_cancel] at this
-      exact hI.ne_top ((Ideal.eq_top_iff_one _).2 h3)
-    · intro hz
-      obtain ⟨w, i, hi, hwi⟩ := hI.exists_inv hz
-      have hnil : IsNilpotent (Ideal.Quotient.mk (I ^ (n + 1)) i) :=
-        ⟨n + 1, by rw [← map_pow, Ideal.Quotient.eq_zero_iff_mem]; exact Ideal.pow_mem_pow hi _⟩
-      have e : Ideal.Quotient.mk (I ^ (n + 1)) z * Ideal.Quotient.mk (I ^ (n + 1)) w = 1 - Ideal.Quotient.mk (I ^ (n + 1)) i := by
-        rw [← map_mul, ← map_one (Ideal.Quotient.mk (I ^ (n + 1))), ← map_sub]
-        congr 1
-        linear_combination hwi
-      have hu := hnil.isUnit_one_sub
-      rw [← e] at hu
-      exact isUnit_of_mul_isUnit_left hu
+  have hunit : ∀ z : A, IsUnit (Ideal.Quotient.mk (I ^ (n + 1)) z) ↔ z ∉ I :=
+    fun _ => Ideal.Quotient.isUnit_mk_pow_iff_notMem I (Nat.succ_ne_zero n)
   have hne : I ^ (n + 1) ≠ ⊤ := by
     intro ht
     rw [ht] at hJle

@@ -137,8 +137,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formali
 open Formalism.DegreeFormula Formalism.MJ GlobalTheory.HodgeDomain GlobalTheory.TrueCx
 open ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up GlobalTheory.FramePairGram
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.FramePairGram.Comb
@@ -176,7 +174,7 @@ theorem perFr_comb (X : Data E r) {x x' : Frame X.Ψ r} (hx : x ∈ X.dom)
     have e1 : Formalism.L2.PjFree.perFr X x' v ρ b = ∑ c : Fin r, ((mat x' ⟨ρ, h⟩)⁻¹ * mat x ⟨ρ, h⟩) ⟨_, hb'⟩ c *
         ((mat x ⟨ρ, h⟩)⁻¹.mulVec (Data.emb ρ v)) c := by
       unfold Formalism.L2.PjFree.perFr
-      rw [dif_pos h, dif_pos hb']
+      rw [dite_eq_left h, dite_eq_left hb']
       conv_lhs => rw [← mul_nonsing_inv_cancel_right (mat x ⟨ρ, h⟩) (mat x' ⟨ρ, h⟩)⁻¹ hd, ← mulVec_mulVec]
       rfl
     rw [e1, sum_shift (p := X.p0) (m := m) (by omega) _
@@ -184,10 +182,10 @@ theorem perFr_comb (X : Data E r) {x x' : Frame X.Ψ r} (hx : x ∈ X.dom)
     refine Finset.sum_congr rfl fun i _ => ?_
     have hi : X.p0 + (i : ℕ) < r := by have := i.2; omega
     congr 1
-    · simp only [coef, dif_pos h, ent]
-      rw [dif_pos (And.intro hb' hi)]
+    · simp only [coef, dite_eq_left h, ent]
+      rw [dite_eq_left (And.intro hb' hi)]
     · unfold Formalism.L2.PjFree.perFr
-      rw [dif_pos h, dif_pos hi]
+      rw [dite_eq_left h, dite_eq_left hi]
   · obtain rfl := hm' h
     have h' : conjEmb ρ ∈ X.Ψ := by_contra fun h' => h ((X.cmType ρ).2 h')
     have hd : IsUnit (mat x ⟨_, h'⟩).det := (hx _).1.isUnit
@@ -195,7 +193,7 @@ theorem perFr_comb (X : Data E r) {x x' : Frame X.Ψ r} (hx : x ∈ X.dom)
     have e1 : Formalism.L2.PjFree.perFr X x' v ρ b = ∑ c : Fin r, ((mat x ⟨_, h'⟩)⁻¹ * mat x' ⟨_, h'⟩) c ⟨_, hb'⟩ *
         hermC (conjEmb ρ) X.Gm (ReciprocityTheory.ChartRestriction.G.FD.col (mat x ⟨_, h'⟩) c) (Data.emb (conjEmb ρ) v) := by
       unfold Formalism.L2.PjFree.perFr
-      rw [dif_neg h, dif_pos h', dif_pos hb']
+      rw [dite_eq_right h, dite_eq_left h', dite_eq_left hb']
       conv_lhs => rw [← mul_nonsing_inv_cancel_left (mat x ⟨_, h'⟩) (mat x' ⟨_, h'⟩) hd]
       generalize (mat x ⟨_, h'⟩)⁻¹ * mat x' ⟨_, h'⟩ = n
       change Matrix (Fin r) (Fin r) ℂ at n
@@ -213,10 +211,10 @@ theorem perFr_comb (X : Data E r) {x x' : Frame X.Ψ r} (hx : x ∈ X.dom)
     have hi : X.p0 - 1 - (i : ℕ) < r := by omega
     have hi2 : (i : ℕ) < X.p0 := by have := i.2; omega
     congr 1
-    · simp only [coef, dif_neg h, dif_pos h', ent]
-      rw [dif_pos (And.intro hi hb')]
+    · simp only [coef, dite_eq_right h, dite_eq_left h', ent]
+      rw [dite_eq_left (And.intro hi hb')]
     · unfold Formalism.L2.PjFree.perFr
-      rw [dif_neg h, dif_pos h', dif_pos hi]
+      rw [dite_eq_right h, dite_eq_left h', dite_eq_left hi]
 
 def hmap {T : Type} {μ : T → ℕ} {g : ℕ} (e : Fin g ≃ Σ τ : T, Fin (μ τ)) (C : T → ℕ → ℕ → ℂ) :
     (Fin g → ℂ) →ₗ[ℂ] (Fin g → ℂ) where
@@ -251,8 +249,8 @@ theorem hmap_single {T : Type} {μ : T → ℕ} {g : ℕ} (e : Fin g ≃ Σ τ :
       by_cases hab : a = b
       · subst hab
         simp
-      · rw [if_neg hab, Pi.single_eq_of_ne (fun h => hab (by simpa using h.symm))]
-    simp only [hs, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      · rw [ite_eq_right hab, Pi.single_eq_of_ne (fun h => hab (by simpa using h.symm))]
+    simp only [hs, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   · rw [Finset.sum_eq_zero, Finset.sum_eq_zero]
     · intro c _
       rw [Pi.single_eq_of_ne (fun h => hτ (by simpa using congrArg Sigma.fst (e.symm.injective h))), mul_zero]
@@ -287,8 +285,8 @@ theorem GlobalTheory.FramePairGram.lie_comb_of_block : ∀ {E : Type} [Field E] 
   let C : (E →+* ℂ) → ℕ → ℕ → ℂ := fun τ b i => coef (U.X k) x.1 x'.1 (Formalism.L2.PjFree.relab c σ τ) b i
   have hL : ∀ a, P' a = hmap e C (P a) := fun a => funext fun j => by
     rw [hP', perFr_comb (U.X k) x.2 h1 h2 _ (Dw.mult (e j).1)
-      (fun h => (if_pos ((hrt _).1 ((hty _).1 h))).trans (by omega))
-      (fun h => (if_neg (fun h' => h ((hty _).2 ((hrt _).2 h')))).trans hp0.symm) _ _ (e j).2.2]
+      (fun h => (ite_eq_left ((hrt _).1 ((hty _).1 h))).trans (by omega))
+      (fun h => (ite_eq_right (fun h' => h ((hty _).2 ((hrt _).2 h')))).trans hp0.symm) _ _ (e j).2.2]
     simp only [hmap, LinearMap.coe_mk, AddHom.coe_mk]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [hP, Equiv.apply_symm_apply]

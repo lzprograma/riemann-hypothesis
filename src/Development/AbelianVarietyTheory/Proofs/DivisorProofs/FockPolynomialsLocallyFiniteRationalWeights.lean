@@ -83,7 +83,7 @@ theorem omE_mem {p q r s : ℕ} (d : ℕ) (l l' : Ln p q r s) (h : linePos l = l
   refine Submodule.add_mem _ ?_ ?_
   · cases hl : linePos l
     · have hl' : linePos l' = false := h ▸ hl
-      simp only [raiB, lowB, hl, hl', Bool.false_eq_true, if_false]
+      simp only [raiB, lowB, hl, hl', Bool.false_eq_true, ite_false]
       change -(pderiv l ((X l' : Pol p q r s) * P)) ∈ _
       refine Submodule.neg_mem _ ?_
       rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
@@ -92,7 +92,7 @@ theorem omE_mem {p q r s : ℕ} (d : ℕ) (l l' : Ln p q r s) (h : linePos l = l
       · subst e; rw [pderiv_X_self, mul_one]; exact hP
       · rw [pderiv_X_of_ne e, mul_zero]; exact Submodule.zero_mem _
     · have hl' : linePos l' = true := h ▸ hl
-      simp only [raiB, lowB, hl, hl', if_true]
+      simp only [raiB, lowB, hl, hl', ite_true]
       exact X_mul_pderiv_mem d _ _ P hP
   · split_ifs
     · exact Submodule.smul_mem _ _ hP

@@ -131,9 +131,9 @@ theorem hilbFn_sub_le_of_regular {P : Ideal (MRing ι F)} (hP : IsMultiProjPrime
   have hfin := (FieldNumbers.GradedFinite.proof F K ι P M).1
   have hfin' := (FieldNumbers.GradedFinite.proof F K ι P M').1
   have e1 : hilbFn P m = Module.finrank F (gradedPiece P M) := by
-    unfold hilbFn; rw [if_pos hm0]
+    unfold hilbFn; rw [ite_eq_left hm0]
   have e2 : hilbFn P (m - b) = Module.finrank F (gradedPiece P M') := by
-    unfold hilbFn; rw [if_pos hmb0]
+    unfold hilbFn; rw [ite_eq_left hmb0]
   rw [e1, e2, Nat.cast_le]
 
   let φ : MRing ι F → (MRing ι F ⧸ P) →ₗ[F] (MRing ι F ⧸ P) := fun a =>

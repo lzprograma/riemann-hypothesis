@@ -84,8 +84,6 @@ open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestrictio
   Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AllWt
 open scoped TensorProduct
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 section Action
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H}
@@ -120,7 +118,6 @@ variable (Xo' : Moduli Dw l') (c' : Coeff l') {K : Type} [Field K] (ι : K →+*
   (e : Basis (Fin r) (Rs l) (LaMod Dw l))
 
 
-set_option synthInstance.maxHeartbeats 400000 in
 def typeSub (ψ₀ : AddChar (Rs l) K) : Submodule c'.F (Rul Xo' c') where
   carrier := {f | ∀ (γ : LaMod Dw l' ≃ₗ[𝓞 E] LaMod Dw l') (u : Matrix (Fin r) (Fin r) (Rs l)), Reads e γ u → IsUnip u →
     ∀ (p : TRing c'.F) (y y' : FrPt Xo' c' p.R), levR (liftLa γ, LinearMap.id) y y' →
@@ -140,25 +137,8 @@ def actG (g : Gz l r) : Rul Xo' c' →ₗ[c'.F] Rul Xo' c' :=
   actL (K := c'.F) (fun S _ _ => FrPt Xo' c' S)
     (fun {S : Type} [CommRing S] [Algebra c'.F S] (g' : Gz l r) (y y' : FrPt Xo' c' S) => MoveG Xo' c' e g' y y') g
 
-def idemCoeff (X : Finset (Gz l r → K)) (χ : (Rs l)ˣ →* Kˣ) (k : Gz l r) : K :=
-  (Formalism.L2.DIV.idemOf X).coeff k * (((χ (Matrix.GeneralLinearGroup.det k))⁻¹ : Kˣ) : K)
-
-
-set_option synthInstance.maxHeartbeats 400000 in
-def idemOp (X : Finset (Gz l r → K)) (χ : (Rs l)ˣ →* Kˣ) : Rul Xo' c' →ₗ[c'.F] Rul Xo' c' :=
-  ∑ k : Gz l r, HSMul.hSMul (α := c'.F) (ι (idemCoeff X χ k)) (actG Xo' c' e k)
 
 variable {Xo' c'} {n : ℕ} (U' : ∀ σ : c'.F →+* ℂ, Unf Xo' c' σ n)
-
-def typeLat (ψ₀ : AddChar (Rs l) K) (G : WTZ E) : Submodule (𝓞 c'.F) (cuspW Xo' c' U' G) :=
-  latW U' G ⊓ ((typeSub Xo' c' ι e ψ₀).comap (cuspW Xo' c' U' G).subtype).restrictScalars (𝓞 c'.F)
-
-def goodLat (ψ₀ : AddChar (Rs l) K) (X : Finset (Gz l r → K)) (χ : (Rs l)ˣ →* Kˣ) (G : WTZ E) :
-    Submodule (𝓞 c'.F) (cuspW Xo' c' U' G) :=
-  typeLat ι e U' ψ₀ G ⊓
-    (((Submodule.span c'.F (typeLat ι e U' ψ₀ G : Set (cuspW Xo' c' U' G))).map
-      (idemOp Xo' c' ι e X χ ∘ₗ (cuspW Xo' c' U' G).subtype)).comap
-        (cuspW Xo' c' U' G).subtype).restrictScalars (𝓞 c'.F)
 
 
 
@@ -174,8 +154,6 @@ variable (T : CoreJ D) (i : Fin D.R.m)
 
 variable {T i} {l' : Level T.Q.H} {Xo' : Moduli (T.Q.Dw ((i : ℕ) + 1)) l'} {c' : Coeff l'}
 
-def ringCost (K : Type) [Field K] [NumberField K] : ℝ := Real.log (finrank ℚ K) + Real.log (rootDiscr K)
-
 end Record
 
 end GlobalTheory.IndefiniteRowSideFullHecke.HalfLatticeTypes
@@ -188,8 +166,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Definitions.Foundations.FacWithCsNonneg", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.ThetaExponentIdentities\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.NonnegOfMemCStarSet\npublic import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.HalfLatticeTypes\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFlatSecRankZero\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.MemRangeOfIsAlgebraicRatFun\nimport Formalism.LocalToGlobal.ProjectiveLattices.CompFin\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -210,80 +186,12 @@ abbrev gKapMinus (T : Par D) (j : ℕ) : WTZ D.host.E := thetaExp D (T.Dw j) (ka
 
 abbrev gTw (T : Par D) (j : ℕ) : WTZ D.host.E := plainExp D (T.Dw j) (twW D j)
 
-abbrev gMinus (T : Par D) (j : ℕ) : WTZ D.host.E := plainExp D (T.Dw j) (uMinus D j)
-
-abbrev gOne (T : Par D) (j : ℕ) : WTZ D.host.E := plainExp D (T.Dw j) (uOne Q j)
-
-abbrev gTop (T : Par D) (j : ℕ) : WTZ D.host.E := plainExp D (T.Dw j) (uTop Q j)
-
 abbrev nrmAt (G : WTZ D.host.E) : (c.F →+* ℂ) → cuspW Xo c U G → ℝ := normW U (xiR D) (fun _ => D.sp.W j) dict G
-
-def refConst : ℝ := 1 / 2500
-
-def ccOf : ℝ := (refSum U refConst (gOne Q T j)).toReal + aSum Q j + cInf Q j
-
-theorem comp_nonempty (h : T.Pins) (hj : InR D j) : Nonempty (Comp Xo c) :=
-  (GlobalTheory.GeomIrr.compNe_and_exists_fnAlgClosed _ _ _ _ Xo c (by
-    rw [(sig_eq h hj).2.2]
-    have := D.R.m_add_three_le_k
-    simp only [Ranks.r]; omega)).1
-
-set_option synthInstance.maxHeartbeats 100000
 
 variable [StarRing c.F] (h : T.Pins) (hj : InR D j) (CI C2 : ℝ) (Vs : ValFam Xo c) (Hb : Type) [Fintype Hb]
   (NN : Submodule (𝓞 c.F) (cuspW Xo c U (gKap T j)))
   (Ph : cuspW Xo c U (gKapMinus T j) →ₗ[c.F] (Hb → cuspW Xo c U (gKap T j)))
   (e : cuspW Xo c U (gKap T j) →ₗ[c.F] cuspW Xo c U (gKap T j)) (g : ℕ)
-
-def facWith : SlopeBoundLiftData c.F (pageOf Q) where
-  w τ := wAn D j τ
-  w0 τ := wj D j τ
-  c1 τ := GlobalTheory.FlatLine.c1 U (xiR D) (psiOf h.1 τ)
-  ua τ := nrm D (uAn D j τ)
-  kap := nKap D j
-  q' := qq D j
-  pq := (pp D j : ℝ) - qq D j
-  ι := Comp Xo c
-  fι := haveI := CompFin.finite_comp Xo c; Fintype.ofFinite _
-  nι := comp_nonempty h hj
-  DY := dY D
-  A := cA Q j
-  cs := cStarInf U (xiR D) (fun _ => D.sp.W j) dict (gOne Q T j)
-  X := CI * placeRankTwoOne.LL0 D L * nPrW Q j
-  cc := ccOf Q U
-  E0 := eZero D j
-  Qcc := (numAt Q j).Qc
-  ρ := rhoB Q j
-  R1 := rOne Q C2 j
-  R2 := rTwo Q j
-  Bn := ((tN Q - 1).choose (placeRankTwoOne.dimY D) : ℕ)
-  δ' := compMean fun Z => delPrime U Z (toWt (T.Dw j) (uOne Q j))
-  h Z := compHeight U (xiR D) (fun _ => D.sp.W j) dict Z (gOne Q T j)
-  sl Z := (compVolSlope U (xiR D) 8 Vs Z (toWt (T.Dw j) (uPr Q j))).toReal
-  δc Z := compDeg U Z (gOne Q T j)
-  dc Z := rankOn U Z (gTop Q T j)
-  degc Z := degOn U (xiR D) (fun _ => D.sp.W j) dict Z (gTop Q T j)
-  PPf := (numAt Q j).Pfl
-  mv := shift D
-  muU := slopeW_sq U (xiR D) (fun _ => D.sp.W j) dict (gMinus T j)
-  nA := cDim (nrmAt U dict (gKapMinus T j))
-  nB := cDim (piNorm Hb (nrmAt U dict (gKap T j)))
-  nN := cDim (nrmAt U dict (gKap T j))
-  XA := frameCo _
-  XB := frameCo _
-  XN := frameCo _
-  LA := latCo _ (latW U (gKapMinus T j))
-  LB := latCo _ (piLat Hb NN)
-  NN := latCo _ NN
-  Mk := latCo _ (latW U (gKap T j))
-  φ := mapCo _ _ Ph
-  e := mapCo _ _ e
-  g := g
-  PPh := 3 / 2 * Real.log (Fintype.card Hb) + (numAt Q j).U0
-  abelian₂ := lamKap Q j + Real.log (Fintype.card Hb)
-  δ := del D
-  o' := GlobalTheory.IndefiniteRowSideFullHecke.HalfLatticeTypes.ringCost c.F
-  n2 := measureMove D L
 
 variable {U dict}
 
@@ -297,8 +205,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Definitions.Foundations.ExistsIsDeepOfField", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.FacWithCsNonneg\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.MemLevEigenIffTransl\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.IsLatBasisHtLatIffSpanEq\npublic import Formalism.LocalToGlobal.ProjectiveLattices.CuspMulOf\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.SiegelSpaceAlgebraHolds\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -382,8 +288,6 @@ structure LiftData (T : CoreJ D) (i : Fin D.R.m) : Type 1 where
 
   u₀ : cuspW Xo c U (gTw T.Q ((i : ℕ) + 1))
 
-theorem inR_succ (i : Fin D.R.m) : InR D ((i : ℕ) + 1) := ⟨Nat.le_add_left _ _, i.2⟩
-
 namespace LiftData
 
 variable {T : CoreJ D} {i : Fin D.R.m} (Y : LiftData T i)
@@ -408,26 +312,6 @@ end LiftData
 
 variable {T : CoreJ D} (h : T.Q.Pins) {i : Fin D.R.m} (Y : LiftData T i) [StarRing Y.c.F] (CI C2 : ℝ)
 
-def facOf : SlopeBoundLiftData Y.c.F (pageOf Q) :=
-  facWith Q Y.U Y.dict h (inR_succ i) CI C2 (mixVals Y.Xo Y.c (bZero Q ((i : ℕ) + 1))) Y.Hb Y.NN Y.Ph Y.eGood
-    (Nat.card (LevelGroup D.host))
-
-
-open Classical in
-def LiftData.ofCore (hT : LawsJ T) (i : Fin D.R.m) (ψ : ∀ v : Sq D.host, AddChar (ZMod (D.host.g v.1)) T.Q.c.F)
-    (om : ∀ k : Fin 2, (ZMod (D.host.g k))ˣ →* (T.Q.c.F)ˣ)
-    (u₀ : cuspW (T.Q.Xo ((i : ℕ) + 1)) T.Q.c (T.U ((i : ℕ) + 1)) (gTw T.Q ((i : ℕ) + 1))) : LiftData T i where
-  l := T.Q.l
-  typeLevel := (isTypeLevel_of_pin hT.pins.2.1).1
-  Xo := T.Q.Xo _
-  c := T.Q.c
-  U := T.U _
-  dict σ g := if hσ : GoodEmb T.Q.c σ then T.dict _ σ (cast (congrArg (GA D) (hT.spaceW _ (inR_succ i) σ hσ)).symm g)
-    else T.dict _ σ 1
-  fr := ((isTypeLevel_of_pin hT.pins.2.1).1.nonempty_typeFrame (sig_eq hT.pins (inR_succ i)).2.2).some
-  ψ := ψ
-  om := om
-  u₀ := u₀
 
 end GlobalTheory.SlopeRec
 end -- clump:auto

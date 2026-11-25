@@ -171,8 +171,6 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped Matrix
 
-set_option autoImplicit false
-
 noncomputable section
 
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -224,8 +222,6 @@ theorem exists_int_sub_eq_mul_of_exp_neg_two_pi_I_div_eq (x y : ℝ) (k : ℕ) (
   obtain ⟨n, hn⟩ := Complex.exp_eq_exp_iff_exists_int.mp h
   refine ⟨n, ?_⟩
   have hk' : (k : ℂ) ≠ 0 := by exact_mod_cast hk.ne'
-  have hpi : (2 * Real.pi * Complex.I : ℂ) ≠ 0 := by
-    simp [Real.pi_ne_zero, Complex.I_ne_zero]
   have : ((y - x : ℝ) : ℂ) = ((n * k : ℝ) : ℂ) := by
     push_cast
     field_simp at hn
@@ -467,13 +463,6 @@ open scoped Matrix
 open GlobalTheory.UPel.HT
 
 namespace GlobalTheory.HTIso
-
-theorem one_comp_monHom {S : Scheme.{0}} {A A' : Over S} [GrpObj A] [GrpObj A'] (f : A ⟶ A') [IsMonHom f] :
-    (1 : A ⟶ A) ≫ f = 1 := by
-  rw [Hom.one_def, Hom.one_def, Category.assoc, IsMonHom.one_hom]
-
-theorem comp_one' {S : Scheme.{0}} {A A' : Over S} [GrpObj A'] (f : A ⟶ A') : f ≫ (1 : A' ⟶ A') = 1 := by
-  rw [Hom.one_def, Hom.one_def, ← Category.assoc, comp_toUnit]
 
 theorem pull_birig : ∀ (S : Scheme.{0}) (A A' : Over S) [GrpObj A] [IsCommMonObj A] [GrpObj A'] [IsCommMonObj A']
     (f : A ⟶ A'), IsMonHom f → ∀ P : LB (G2 A').left, P.IsLB →

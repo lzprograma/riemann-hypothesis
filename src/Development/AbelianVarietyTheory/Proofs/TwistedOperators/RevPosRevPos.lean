@@ -50,8 +50,6 @@ open scoped TensorProduct ComplexConjugate
 
 namespace GlobalTheory.AdSpan
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {S T : HSp D}
 
 def RealScal (C : Ctx S T) (om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)) (B : C.Bas) (a : GA D T) (z : ℂ) : Prop :=
@@ -79,9 +77,9 @@ theorem revPos_revPos {n : ℕ} (p : ℕ) (a : Fin n) : revPos p (revPos p a) = 
   by_cases h : (a : ℕ) < p ∧ p ≤ n
   · have h' : p - 1 - (a : ℕ) < p ∧ p ≤ n := ⟨by omega, h.2⟩
     ext
-    simp only [revPos, dif_pos h, Fin.val_mk, dif_pos h']
+    simp only [revPos, dite_eq_left h, Fin.val_mk, dite_eq_left h']
     omega
-  · simp only [revPos, dif_neg h]
+  · simp only [revPos, dite_eq_right h]
 
 def revB {ι : Type} {n : ℕ} (p : ℕ) (B : ι → Matrix (Fin n) (Fin n) ℂ) : ι → Matrix (Fin n) (Fin n) ℂ :=
   fun τ => (B τ).submatrix id (revPos p)

@@ -67,9 +67,6 @@ theorem appLinear_apply (φ : M ⟶ N) (U : X.Opens) (s : Γ(M, U)) :
 
 theorem coe_appLinear (φ : M ⟶ N) (U : X.Opens) : ⇑(appLinear φ U) = φ.app U := rfl
 
-theorem appLinear_comp (φ : M ⟶ N) (ψ : N ⟶ P) (U : X.Opens) :
-    appLinear (φ ≫ ψ) U = appLinear ψ U ∘ₗ appLinear φ U := rfl
-
 theorem app_app (φ : M ⟶ N) (ψ : N ⟶ P) (U : X.Opens) (s : Γ(M, U)) :
     ψ.app U (φ.app U s) = (φ ≫ ψ).app U s := rfl
 
@@ -322,10 +319,6 @@ theorem exact_app_of_exact {S : ShortComplex X.Modules} (hS : S.Exact) [S.X₁.I
   haveI := (S.exact_iff_epi_kernel_lift).mp hS
   (exact_app_iff_surjective_lift S U).mpr (surjective_app_of_epi _ hU)
 
-theorem surjective_factorThruImage_app (φ : M ⟶ N) [M.IsQuasicoherent] [N.IsQuasicoherent]
-    (hU : IsAffineOpen U) : Function.Surjective ((factorThruImage φ).app U) :=
-  surjective_app_of_epi _ hU
-
 end Affine
 
 section Cover
@@ -385,9 +378,6 @@ end Cover
 section Subcategory
 
 
-variable (X) in
-abbrev qcoh : ObjectProperty X.Modules := fun M ↦ M.IsQuasicoherent
-
 end Subcategory
 
 section Equivs
@@ -395,12 +385,6 @@ section Equivs
 theorem range_kernel_ι_app (φ : M ⟶ N) (U : X.Opens) :
     LinearMap.range (appLinear (kernel.ι φ) U) = LinearMap.ker (appLinear φ U) :=
   Submodule.ext fun s ↦ (exact_kernel_ι_app φ U s).symm
-
-def kernelSectionsEquiv (φ : M ⟶ N) (U : X.Opens) :
-    Γ(kernel φ, U) ≃ₗ[Γ(X, U)] LinearMap.ker (appLinear φ U) :=
-  (LinearEquiv.ofInjective (appLinear (kernel.ι φ) U) (injective_kernel_ι_app φ U)).trans
-    (LinearEquiv.ofEq _ _ (range_kernel_ι_app φ U))
-
 
 theorem app_sum {ι : Type w} (t : Finset ι) (φ : ι → (M ⟶ N)) (U : X.Opens) (s : Γ(M, U)) :
     (∑ i ∈ t, φ i).app U s = ∑ i ∈ t, (φ i).app U s := by
@@ -452,11 +436,6 @@ end Equivs
 section AllAffine
 
 variable [M.IsQuasicoherent] [N.IsQuasicoherent]
-
-theorem isZero_iff_forall_affine :
-    IsZero M ↔ ∀ U, IsAffineOpen U → Subsingleton Γ(M, U) :=
-  (isZero_iff_affineCover (fun i : X.affineOpens ↦ i.1) (iSup_affineOpens_eq_top X)
-    fun i ↦ i.2).trans Subtype.forall
 
 theorem epi_iff_forall_affine (φ : M ⟶ N) :
     Epi φ ↔ ∀ U, IsAffineOpen U → Function.Surjective (φ.app U) :=

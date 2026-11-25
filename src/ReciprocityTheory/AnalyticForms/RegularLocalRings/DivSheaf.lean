@@ -102,34 +102,6 @@ lemma dsJ_basicOpen (hV : ∀ x : W, ∃ c, x ∈ V c)
 
 end LocGen
 
-theorem exists_idealSheaf_of_locGen {W : Scheme.{0}} {ι' : Type} (V : ι' → W.Opens)
-    (hV : ∀ x : W, ∃ c, x ∈ V c) (g : ∀ c, Γ(W, V c))
-    (hg : ∀ c c' (x : W) (hx : x ∈ V c) (hx' : x ∈ V c'), ∃ u : (W.presheaf.stalk x)ˣ,
-      W.presheaf.germ (V c) x hx (g c) = u * W.presheaf.germ (V c') x hx' (g c')) :
-    ∃ G : W.IdealSheafData, ∀ c (x : W) (hx : x ∈ V c),
-      FinalTheorems.stalkId G x = Ideal.span {W.presheaf.germ (V c) x hx (g c)} := by
-  refine ⟨⟨fun U => dsJ V g U, fun U f => dsJ_basicOpen hV hg U f, _, rfl⟩, fun c x hx => ?_⟩
-  obtain ⟨U', hU', hxU', hsub⟩ := exists_isAffineOpen_mem_and_subset hx
-  rw [ds_stalkId_eq_map _ ⟨U', hU'⟩ x hxU']
-  change Ideal.map _ (dsJ V g ⟨U', hU'⟩) = _
-  apply le_antisymm
-  · rw [Ideal.map_le_iff_le_comap]
-    intro f hf
-    rw [Ideal.mem_comap, ← dsK_eq hg c hx]
-    exact (mem_dsJ.1 hf) x hxU'
-  · rw [Ideal.span_le, Set.singleton_subset_iff]
-    have hle : U' ≤ V c := hsub
-    have hr : W.presheaf.map (homOfLE hle).op (g c) ∈ dsJ V g ⟨U', hU'⟩ := by
-      rw [mem_dsJ]
-      intro y hy
-      rw [dsK_eq hg c (hsub hy)]
-      apply Ideal.subset_span
-      simp
-    have e : W.presheaf.germ U' x hxU' (W.presheaf.map (homOfLE hle).op (g c)) =
-        W.presheaf.germ (V c) x hx (g c) := by simp
-    rw [← e]
-    exact Ideal.mem_map_of_mem _ hr
-
 theorem effCartier_of_stalkId {W : Scheme.{0}} [IsNoetherian W] (G : W.IdealSheafData)
     (hG : ∀ x : W, ∃ t ∈ nonZeroDivisors (W.presheaf.stalk x), FinalTheorems.stalkId G x = Ideal.span {t}) :
     FinalTheorems.EffCartier G := by
@@ -172,8 +144,7 @@ theorem mem_support_iff_stalkId {W : Scheme.{0}} (G : W.IdealSheafData) (x : W) 
   constructor
   · intro h htop
     obtain ⟨f, hf, hu⟩ : ∃ f ∈ G.ideal ⟨U', hU'⟩, IsUnit (W.presheaf.germ U' x hxU' f) := by
-      by_contra hno
-      push_neg at hno
+      by_contra! hno
       have hle : Ideal.map (W.presheaf.germ U' x hxU').hom (G.ideal ⟨U', hU'⟩) ≤
           IsLocalRing.maximalIdeal _ := by
         rw [Ideal.map_le_iff_le_comap]

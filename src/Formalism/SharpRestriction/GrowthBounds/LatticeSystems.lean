@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.GlobalTheory.MemIffOfLocBasisG
 import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CmpCMemFunMod
 public import Formalism.SharpRestriction.GrowthBounds.SelectionLemmas
 public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
@@ -9,53 +10,7 @@ public import Formalism.SubspaceCounting.ChoiceOfTopsRefined
 public import Formalism.SubspaceCounting.SubspaceCountingProofs.LengthLayers
 public import Formalism.SubspaceCounting.SubspaceCountingProofs.ManyOrbits
 public import Formalism.SubspaceCounting.SubspaceCountingProofs.ManyOrbitsRefined
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Bool
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -95,7 +50,7 @@ theorem inj_clause {O X : Type} [CommRing O] [AddCommGroup X] [Module O X]
     (Nst M M' : Submodule O X) (h : M' ≤ M) :
     Function.Injective (Submodule.mapQ (Submodule.comap M'.subtype Nst) (Submodule.comap M.subtype Nst)
       (Submodule.inclusion h) (fun _ hx => hx)) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x
   induction x using Submodule.Quotient.induction_on with
   | H x =>
@@ -144,11 +99,11 @@ theorem pr_list {V : ℕ} (e : Fin V → Fin G.P.nV) (m : ℕ) (Sv : Fin G.P.nV 
     rw [List.map_cons, List.prod_cons, Module.End.mul_apply, ih]
     cases hε : ε i with
     | true =>
-      simp only [hε, if_true, List.filter_cons, Bool.not_true, Bool.false_eq_true, if_false,
+      simp only [hε, ite_true, List.filter_cons, Bool.not_true, Bool.false_eq_true, ite_false,
         List.map_cons, List.foldr_cons, Function.comp_apply]
       rw [map_smul, pr_iter G y hy]
     | false =>
-      simp only [hε, Bool.false_eq_true, if_false, List.filter_cons, Bool.not_false, if_true,
+      simp only [hε, Bool.false_eq_true, ite_false, List.filter_cons, Bool.not_false, ite_true,
         List.map_cons, List.sum_cons, LinearMap.smul_apply, Module.End.one_apply]
       rw [pow_mul, hπ, smul_smul, pow_add]
 
@@ -464,7 +419,7 @@ theorem kp_ssIdx_nonempty (k : ℕ) (ν : Fin k → ℕ) (hν : Antitone ν) : (
       have hlj : l ≤ j := by
         rw [Fin.le_def]
         omega
-      simp only [h, hl, if_true]
+      simp only [h, hl, ite_true]
       exact hν hlj
     · simp [h]
   · intro t
@@ -492,7 +447,7 @@ theorem kp_dimV_pos (Kf : Type) [Field Kf] {n' m : ℕ} (lam0 : Fin n' → Fin (
     unfold Vsp
     congr 1
     funext s
-    rw [if_pos (kp_lamAt_antitone lam0 hdom s)]
+    rw [ite_eq_left (kp_lamAt_antitone lam0 hdom s)]
   have hb := fun s : Fin n' => Formalism.GradedWeylDivisibility.sSBasis Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s))
   choose b hb1 _ using hb
   have : IsFractionRing Kf Kf :=
@@ -1355,7 +1310,7 @@ theorem H0_le_twisted_nabla {O Kf : Type} [CommRing O] [Field Kf] [Algebra O Kf]
     (hlam : Antitone lam) (g : Matrix (Fin (m + 1)) (Fin (m + 1)) Kf) (hg : IsUnit g.det) :
     H0 O m lam (colSpan O g) ≤ nablaLTw O Kf m lam g := by
   unfold H0
-  rw [if_pos hlam]
+  rw [ite_eq_left hlam]
   exact iInf₂_le g ⟨hg, rfl⟩
 
 theorem la_nablaLTw_le {O Kf : Type} [CommRing O] [Field Kf] [Algebra O Kf] (m : ℕ) (lam : Fin (m + 1) → ℤ)
@@ -1389,7 +1344,7 @@ theorem la_H_le_V (G : GAtP p) (v : Fin G.P.nV) (Lv : Submodule (G.P.W v) (Fin (
     refine ⟨F, fun s => ?_, rfl⟩
     have hanti := kp_lamAt_antitone (G.P.lam0 v) (G.P.dom v) s
     beta_reduce
-    rw [if_pos hanti]
+    rw [ite_eq_left hanti]
     have h1 := hF s
     beta_reduce at h1
     rw [la_extO_G] at h1
@@ -1458,7 +1413,7 @@ theorem H0_eq_twisted_nabla {O Kf : Type} [CommRing O] [Field Kf] [Algebra O Kf]
     (hg : IsUnit g.det) : H0 O m lam (colSpan O g) = nablaLTw O Kf m lam g := by
   apply le_antisymm (H0_le_twisted_nabla m lam hlam g hg)
   unfold H0
-  rw [if_pos hlam]
+  rw [ite_eq_left hlam]
   exact le_iInf₂ fun h hh => hI m lam g h hg hh.1 hh.2
 
 theorem la_basis {O Kf : Type} [CommRing O] [IsDomain O] [Field Kf] [Algebra O Kf]
@@ -1507,7 +1462,7 @@ theorem la_reflexive_of (G : GAtP p) (hI : H0IndepOfBasis G.O G.Kf) (v : Fin G.P
     unfold Vsp
     congr 1
     funext s
-    rw [if_pos (hanti s)]
+    rw [ite_eq_left (hanti s)]
   have hH : Hten G.O (G.P.lam0 v) (fun s => extO G.O (G.P.ι v) (G.P.σ v) s.val (colSpan (G.P.W v) g)) =
       tensorLat G.O G.Kf (fun s => nablaLTw G.O G.Kf G.P.m (lamAt (G.P.lam0 v) s)
         (la_tw (G.P.ι v) (G.P.σ v) s.val g)) := by
@@ -1807,7 +1762,7 @@ theorem lb_pos (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O Kf]
   have hgD : IsUnit (g * lb_D (m + 1) r (algebraMap O Kf w)).det := by
     rw [Matrix.det_mul]; exact hg.mul (lb_D_det _ _ _ hw)
   unfold H0 at hF ⊢
-  rw [if_pos hlam] at hF ⊢
+  rw [ite_eq_left hlam] at hF ⊢
   have h1 : F ∈ nablaLTw O Kf m lam g := (iInf₂_le g ⟨hg, rfl⟩ : _ ≤ nablaLTw O Kf m lam g) hF
   have h2 := lb_P O Kf hinj m r lam hlam w hw g hg F h1
   exact (le_iInf₂ fun h hh => lb_indep O Kf hinj m lam _ h hgD hh.1 hh.2 :
@@ -2007,14 +1962,14 @@ theorem lb_edgeLat_of_basis (G : GAtP p) (v : Fin G.P.nV) (hB : RestEdgeBasis G 
         show c⁻¹ • twistVec (G.P.ι v) (G.P.σ v) s
           ((p : G.P.W v) • fun i => (g * Matrix.diagonal dQ) i j) i = (gK * Matrix.diagonal dK) i j
         rw [lb_tw_p, Matrix.mul_diagonal, Matrix.mul_diagonal, smul_eq_mul, hgK, lb_tw_apply]
-        simp only [hdQ, hdK, hj, if_true, map_mul, map_inv₀, map_natCast]
+        simp only [hdQ, hdK, hj, ite_true, map_mul, map_inv₀, map_natCast]
         field_simp
     · apply Submodule.mem_sup_left
       apply Submodule.subset_span
       refine ⟨fun i => g i j, ?_, ?_⟩
       · rw [hsrc]; exact Submodule.subset_span ⟨j, rfl⟩
       · funext i
-        simp only [twistVec, Matrix.mul_diagonal, hdK, hj, if_false, mul_one, lb_tw_apply]
+        simp only [twistVec, Matrix.mul_diagonal, hdK, hj, ite_false, mul_one, lb_tw_apply]
 
 theorem restLocD_of_edgeBasis (G : GAtP p) (v : Fin G.P.nV) (hB : RestEdgeBasis G v) : RestLocD G v :=
   fun Lv hLv => ⟨la_H_le_V G v Lv hLv,
@@ -2039,7 +1994,7 @@ theorem smith_normal_form_card {W : Type} [CommRing W] [IsDomain W] [IsPrincipal
     intro c hc i
     have h1 := congrFun hc i
     simp only [Finset.sum_apply, Pi.smul_apply, Pi.basisFun_apply, Pi.single_apply, smul_eq_mul, mul_ite,
-      mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true, Pi.zero_apply] at h1
+      mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true, Pi.zero_apply] at h1
     exact (mul_eq_zero.1 h1).resolve_right hp0
   have hrank : Module.finrank W N = Module.finrank W (Fin k → W) := by
     apply le_antisymm (Submodule.finrank_le N)
@@ -2072,7 +2027,7 @@ theorem smith_normal_form_card {W : Type} [CommRing W] [IsDomain W] [IsPrincipal
     have h3 := congrArg (fun z => bT.repr z i) h1
 
     simp only [map_smul, map_sum, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply,
-    Finsupp.coe_finsetSum, Finset.sum_apply, smul_eq_mul, if_true, mul_ite, mul_one, mul_zero,
+    Finsupp.coe_finsetSum, Finset.sum_apply, smul_eq_mul, ite_true, mul_ite, mul_one, mul_zero,
     Finset.sum_ite_eq', Finset.mem_univ] at h3
     exact ⟨bB.repr ⟨_, hmem⟩ i, h3.trans (mul_comm _ _)⟩
   · rw [Nat.card_congr (Submodule.quotientEquivPiSpan N (Pi.basisFun W (Fin k)) hrank).toEquiv, Nat.card_pi, ha]
@@ -2091,7 +2046,7 @@ theorem lc_snf {W Qq : Type} [CommRing W] [IsDomain W] [IsPrincipalIdealRing W] 
   have hφr : LinearMap.range φ = e.tgt := by
     rw [hL, hφ]; exact Fintype.range_linearCombination W _
   have hφi : Function.Injective φ := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     have h1 : gL.mulVec (fun c => algebraMap W Qq (x c)) = 0 := by
       funext i
@@ -2215,7 +2170,7 @@ theorem lc_main {W Qq : Type} [CommRing W] [IsDomain W] [IsPrincipalIdealRing W]
       funext i
       rw [hentry]
       show (a (σ c) • b' (σ c)) i * (if c.val < r then ((p : Qq))⁻¹ else 1) = _
-      rw [if_pos hc]
+      rw [ite_eq_left hc]
       simp only [Pi.smul_apply, Algebra.smul_def]
       have hpQ : (p : Qq) = algebraMap W Qq (a (σ c)) * algebraMap W Qq x := by
         rw [← map_mul, ← hx, map_natCast]
@@ -2229,7 +2184,7 @@ theorem lc_main {W Qq : Type} [CommRing W] [IsDomain W] [IsPrincipalIdealRing W]
       funext i
       rw [hentry]
       show (a (σ c) • b' (σ c)) i * (if c.val < r then ((p : Qq))⁻¹ else 1) = _
-      rw [if_neg hc, mul_one]
+      rw [ite_eq_right hc, mul_one]
       rfl
   have hTg : e.tgt = colSpan W (g * Matrix.diagonal d) := by
     rw [hT]
@@ -2286,15 +2241,7 @@ theorem fn_prod_fg {R A ι : Type*} [CommSemiring R] [CommSemiring A] [Algebra R
 
 theorem fn_prod_mem {R A ι : Type*} [CommSemiring R] [CommSemiring A] [Algebra R A] (s : Finset ι)
     (N : ι → Submodule R A) (a : ι → A) (h : ∀ i ∈ s, a i ∈ N i) : ∏ i ∈ s, a i ∈ ∏ i ∈ s, N i := by
-  classical
-  induction s using Finset.induction_on with
-  | empty =>
-    simp only [Finset.prod_empty]
-    exact Submodule.one_le.1 le_rfl
-  | insert b s hb ih =>
-    rw [Finset.prod_insert hb, Finset.prod_insert hb]
-    exact Submodule.mul_mem_mul (h b (Finset.mem_insert_self _ _))
-      (ih fun i hi => h i (Finset.mem_insert_of_mem hi))
+  apply _root_.Formalism.L2.GlobalTheoryTheory.ColValS.prod_mem_prod' <;> assumption
 
 theorem H0_le_finitely_generated (G : GAtP p) (v : Fin G.P.nV) (s : Fin (G.P.n' v))
     (Lv : Submodule (G.P.W v) (Fin (G.P.m + 1) → G.P.Qq v)) (hLv : IsLattice (G.P.W v) Lv) :
@@ -2368,7 +2315,7 @@ theorem mna_finite_of (G : GAtP p) (hH : RestHfin G) (h2 : G.FinClasses) : Modul
   have : ∀ x : (Σ i : G.comp, ↥(R i)), IsNoetherian G.O ↥(Submodule.span G.O (↑(S x) : Set G.P.Xsp)) :=
     fun x => isNoetherian_of_fg_of_noetherian _ (Submodule.fg_span (Finset.finite_toSet _))
   apply Module.Finite.of_injective f
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro F hF0
   apply Subtype.ext
   funext i L
@@ -2758,7 +2705,7 @@ theorem jd_apply (G : GAtP p) (h1 : G.TrivStab) (i : G.comp) (L0 : G.P.Tup) (γ 
   have hex : ∃ γ' : (G.lev i).Γ, (G.lev i).smul γ L0 = (G.lev i).smul γ' L0 := ⟨γ, rfl⟩
   have hc : hex.choose = γ := (jd_uniq G h1 i L0 hL0 _ _ hex.choose_spec).symm
   simp only [delta]
-  rw [dite_eq_left hex, if_pos trivial, hc]
+  rw [dite_eq_left hex, ite_eq_left trivial, hc]
 
 theorem jd_self (G : GAtP p) (h1 : G.TrivStab) (i : G.comp) (L0 : G.P.Tup) (ξ : G.P.Xsp)
     (hL0 : G.P.IsLatTup L0) : delta G i L0 ξ i L0 = ξ := by
@@ -3522,7 +3469,7 @@ theorem jm_count {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O
   let ψ : (Fin n → O) →ₗ[O] ({i : Fin nS // a i ∣ q} → O) :=
     (Matrix.of fun (i : {i : Fin nS // a i ∣ q}) (k : Fin n) => X i.1 k).mulVecLin
   have hψ : Function.Injective ψ := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     have hx' : ∀ i : Fin nS, a i ∣ q → ∑ k, X i k * x k = 0 := by
       intro i hi
@@ -3590,7 +3537,7 @@ theorem jm_basis {I : Type} [Finite I] (b0 : Module.Basis I Kf V) (c : O) (hc : 
       (fun x => hHP x x.2)
   have h2 : Module.finrank O (Submodule.span O (Set.range b0)) ≤ Module.finrank O P := by
     refine LinearMap.finrank_le_finrank_of_injective (f := φ) ?_
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     have : c • (x : V) = 0 := congrArg Subtype.val hx
     exact Subtype.ext (jm_tors (Kf := Kf) c hc _ this)
@@ -3714,7 +3661,7 @@ theorem jm_HL_basis (G : GAtP p) (v : Fin G.P.nV) (Lv : Lat G v) (hLv : IsLattic
     unfold Vsp
     congr 1
     funext s
-    rw [if_pos (hanti s)]
+    rw [ite_eq_left (hanti s)]
   have hH : Hten G.O (G.P.lam0 v) (fun s => extO G.O (G.P.ι v) (G.P.σ v) s.val (colSpan (G.P.W v) g)) =
       tensorLat G.O G.Kf (fun s => nablaLTw G.O G.Kf G.P.m (lamAt (G.P.lam0 v) s)
         (la_tw (G.P.ι v) (G.P.σ v) s.val g)) := by
@@ -4021,7 +3968,7 @@ theorem jLocal (G : GAtP p) (t : Fin G.P.nV → ℕ) (B : Finset (Fin G.P.nV)) (
       _ ≤ ∏ v, ((if v ∈ B then κ v else 1) * (dimV G.Kf (G.P.lam0 v) : ℝ)) := by
           refine Finset.prod_le_prod₀ (fun v _ => Nat.cast_nonneg _) (fun v _ => ?_)
           by_cases hv : v ∈ B
-          · simp only [hv, if_true]
+          · simp only [hv, ite_true]
             exact (hbad v hv).1
           · simp [hv]
       _ = (∏ v ∈ B, κ v) * ((∏ v, dimV G.Kf (G.P.lam0 v) : ℕ) : ℝ) := by
@@ -4037,7 +3984,7 @@ theorem jLocal (G : GAtP p) (t : Fin G.P.nV → ℕ) (B : Finset (Fin G.P.nV)) (
           rw [Fintype.mem_piFinset]
           intro v
           by_cases hv : v ∈ B
-          · simp only [hv, if_true]
+          · simp only [hv, ite_true]
             exact hall v hv
           · simp [hv]
         refine ⟨0, (p : G.O) ^ Dd • prodOf a, by simp [prodOf], ?_, ?_⟩
@@ -4077,15 +4024,12 @@ abbrev jr_I (G : GAtP p) (v : Fin G.P.nV) (s : Fin (G.P.n' v)) : Type :=
 instance jr_fin (G : GAtP p) (v : Fin G.P.nV) (s : Fin (G.P.n' v)) : Finite (jr_I G v s) :=
   (sSIdxFinite (G.P.m + 1) (G.P.m + 1) (nuOf (lamAt (G.P.lam0 v) s))).to_subtype
 
-theorem jr_KK (K : Type) [Field K] : IsFractionRing K K :=
-  IsLocalization.of_le_isUnit (fun x hx => IsUnit.mk0 x (nonZeroDivisors.ne_zero hx))
-
 theorem jr_Vsp (G : GAtP p) (v : Fin G.P.nV) : Vsp G.Kf (G.P.lam0 v) = tensorLat G.Kf G.Kf
     (fun s => dualWeyl G.Kf (G.P.m + 1) (G.P.m + 1) (nuOf (lamAt (G.P.lam0 v) s))) := by
   unfold Vsp
   congr 1
   funext s
-  rw [if_pos (kp_lamAt_antitone (G.P.lam0 v) (G.P.dom v) s)]
+  rw [ite_eq_left (kp_lamAt_antitone (G.P.lam0 v) (G.P.dom v) s)]
 
 theorem jr_loc (G : GAtP p) (v : Fin G.P.nV) (Lv : Lat G v) (hLv : IsLattice (G.P.W v) Lv) :
     ∃ B : ∀ s : Fin (G.P.n' v), jr_I G v s → MvPolynomial (Fin (G.P.m + 1) × Fin (G.P.m + 1)) G.Kf,
@@ -4118,7 +4062,7 @@ theorem jr_dim (G : GAtP p) (v : Fin G.P.nV) :
   classical
   have hb := fun s : Fin (G.P.n' v) => sSBasis G.Kf (G.P.m + 1) (G.P.m + 1) (nuOf (lamAt (G.P.lam0 v) s))
   choose b hb1 _ using hb
-  have := jr_KK G.Kf
+  have := instIsFractionRing (R := G.Kf)
   obtain ⟨hli, hsp⟩ := tensorBasis G.Kf G.Kf (Fin (G.P.n' v)) (G.P.m + 1) (G.P.m + 1)
     (fun s => jr_I G v s)
     (fun s => dualWeyl G.Kf (G.P.m + 1) (G.P.m + 1) (nuOf (lamAt (G.P.lam0 v) s))) b
@@ -4165,7 +4109,7 @@ theorem jr_tuple (G : GAtP p) (v0 : Fin G.P.nV) (L : G.P.Tup) (hL : G.P.IsLatTup
   classical
   have hB := fun v => jr_loc G v (L v) (hL v)
   choose B b3 b4 bH using hB
-  have := jr_KK G.Kf
+  have := instIsFractionRing (R := G.Kf)
   obtain ⟨hli, -⟩ := tensorBasis G.Kf G.Kf (jr_S G) (G.P.m + 1) (G.P.m + 1)
     (fun x => jr_I G x.1 x.2)
     (fun x => dualWeyl G.Kf (G.P.m + 1) (G.P.m + 1) (nuOf (lamAt (G.P.lam0 x.1) x.2)))
@@ -4210,9 +4154,9 @@ theorem jRank (G : GAtP p) (v0 : Fin G.P.nV) (h2 : G.FinClasses) (hE : JEquiv G)
     intro r r0 j
     by_cases h : r = r0
     · subst h
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact d_self _ _ _ (r1 _ r.2)
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       apply d_zero
       by_contra hc
       have hc1 := not_not.1 (not_or.1 hc).1
@@ -4225,7 +4169,7 @@ theorem jRank (G : GAtP p) (v0 : Fin G.P.nV) (h2 : G.FinClasses) (hE : JEquiv G)
     rw [Fintype.sum_prod_type] at hev
     simp only [Finset.sum_apply, Pi.smul_apply, hval, Pi.zero_apply] at hev
     rw [Finset.sum_eq_single x0.1] at hev
-    · simp only [if_true] at hev
+    · simp only [ite_true] at hev
       exact Fintype.linearIndependent_iff.1 (q1 x0.1) (fun j => c (x0.1, j)) hev x0.2
     · intro r _ hr
       simp [hr]
@@ -4418,9 +4362,5 @@ theorem restJAll (G : GAtP p) : RestJAll G :=
 
 theorem theta_kernel_expansion (D : Formalism.BasicNotions.D7) (G : GAtP p) (hA : admitted D G) : Conclusion1 D G :=
   instance_of_lemma_J D G hA (restJAll G)
-
-end Formalism.MainNotions.G.LatticeSystems
-
-namespace Formalism.MainNotions.G.LatticeSystems
 
 end Formalism.MainNotions.G.LatticeSystems

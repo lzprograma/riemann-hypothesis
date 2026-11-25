@@ -17,8 +17,8 @@ theorem wdenSucc : WdenSuccStatement := by
   unfold wden
   rw [Fin.prod_univ_castSucc]
   have hlast : ∀ j : Fin (n + 1), ¬ (Fin.last n < j) := fun j => not_lt.mpr (Fin.le_last j)
-  simp only [hlast, if_false, Finset.prod_const_one, mul_one]
-  simp only [Fin.prod_univ_castSucc, Fin.castSucc_lt_castSucc_iff, Fin.castSucc_lt_last, if_true]
+  simp only [hlast, ite_false, Finset.prod_const_one, mul_one]
+  simp only [Fin.prod_univ_castSucc, Fin.castSucc_lt_castSucc_iff, Fin.castSucc_lt_last, ite_true]
   rw [Finset.prod_mul_distrib]
 
 theorem prod_zpow_eq {K : Type*} [Field K] {y : K} (hy : y ≠ 0) {ι : Type*} (s : Finset ι) (f : ι → ℤ) :
@@ -96,7 +96,7 @@ theorem altBranch : AltBranchStatement := by
       have hkj' : k < j := OrderDual.toDual_lt_toDual.mp hkj
       have hv := Fin.lt_def.mp hkj'
       simp only [U, Matrix.of_apply]
-      rw [if_neg (ne_of_lt hkj'), if_neg (by omega)]
+      rw [ite_eq_right (ne_of_lt hkj'), ite_eq_right (by omega)]
   have hexp1 : ∀ j : Fin n, a j.castSucc = lam j.castSucc + 1 + delta n j := by
     intro j; simp only [ha, Pi.add_apply, delta, Fin.val_castSucc]; push_cast; ring
   have hexp2 : ∀ j : Fin n, a j.succ = lam j.succ + delta n j := by
@@ -109,8 +109,8 @@ theorem altBranch : AltBranchStatement := by
     · simp [M, U]
     · intro k hk
       have hk' := Fin.is_le k
-      simp only [U, Matrix.of_apply, if_neg hk]
-      rw [if_neg (by simp only [Fin.val_last]; omega), mul_zero]
+      simp only [U, Matrix.of_apply, ite_eq_right hk]
+      rw [ite_eq_right (by simp only [Fin.val_last]; omega), mul_zero]
   have hMU_cs : ∀ i (j : Fin n), (M * U) i j.castSucc =
       t i ^ a j.castSucc - y ^ (a j.castSucc - a j.succ) * t i ^ a j.succ := by
     intro i j
@@ -119,11 +119,11 @@ theorem altBranch : AltBranchStatement := by
     · have h2 : ((j.succ : Fin (n + 1)) : ℕ) = (j.castSucc : ℕ) + 1 := by simp
       have hU1 : U j.castSucc j.castSucc = 1 := by simp [U]
       have hU2 : U j.succ j.castSucc = -(y ^ (a j.castSucc - a j.succ)) := by
-        simp only [U, Matrix.of_apply]; rw [if_neg hne.symm, if_pos h2]
+        simp only [U, Matrix.of_apply]; rw [ite_eq_right hne.symm, ite_eq_left h2]
       rw [hU1, hU2]; simp only [M, Matrix.of_apply]; ring
     · rintro k ⟨hk1, hk2⟩
-      simp only [U, Matrix.of_apply, if_neg hk1]
-      rw [if_neg, mul_zero]
+      simp only [U, Matrix.of_apply, ite_eq_right hk1]
+      rw [ite_eq_right, mul_zero]
       intro h; apply hk2; ext; simp only [Fin.val_castSucc, Fin.val_succ] at h ⊢; omega
 
   have hrow : ∀ j : Fin n, (M * U) (Fin.last n) j.castSucc = 0 := by

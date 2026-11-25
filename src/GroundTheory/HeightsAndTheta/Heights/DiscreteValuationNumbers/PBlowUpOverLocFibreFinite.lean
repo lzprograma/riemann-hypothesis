@@ -244,8 +244,7 @@ theorem eq_of_le_of_mem_fibre (P W : Ideal (MRing ι R)) [P.IsPrime]
 
   obtain ⟨F, hFQ, hFQ₀⟩ := SetLike.exists_of_lt (lt_of_le_of_ne hle hne)
   obtain ⟨b, hbQ₀⟩ : ∃ b, weightedHomogeneousComponent (blockWeight (extIdx ι J)) b F ∉ Q₀ := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     apply hFQ₀
     rw [← sum_weightedHomogeneousComponent (blockWeight (extIdx ι J)) F]
     exact finsum_induction (· ∈ Q₀) (Submodule.zero_mem _) (fun _ _ => Submodule.add_mem _) h

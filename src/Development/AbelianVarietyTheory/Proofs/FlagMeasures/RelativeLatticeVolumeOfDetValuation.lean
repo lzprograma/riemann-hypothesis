@@ -151,7 +151,7 @@ section -- clump:auto
 @[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Yzb5.resQ :
-    {F : Type} → [inst : Field F] → [inst_1 : ValuativeRel F] → ↥(ValuativeRel.valuation F).integer → ℕ :=
+    {F : Type} → [Field F] → [ValuativeRel F] → ↥(ValuativeRel.valuation F).integer → ℕ :=
     fun {F : Type} [Field F] [ValuativeRel F] (ϖ : ↥(ValuativeRel.valuation F).integer) ↦
       Nat.card (↥(ValuativeRel.valuation F).integer ⧸ Ideal.span {ϖ})
 
@@ -251,10 +251,10 @@ private lemma UpperTheory.Reformulated.B.Yzb5.card_coker {R : Type*} [CommRing R
   rw [hs, UpperTheory.Reformulated.B.Yzb5.card_quot_pow p hp.ne_zero]
 
 theorem UpperTheory.Reformulated.B.Yzb5.relIndex_map :
-    ∀ {F : Type} [inst : Field F] [inst_1 : ValuativeRel F] [inst_2 : TopologicalSpace F] [IsNonarchimedeanLocalField F]
+    ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
       {ϖ : ↥(ValuativeRel.valuation F).integer},
       Irreducible ϖ →
-        ∀ {W : Type} [inst_4 : AddCommGroup W] [inst_5 : _root_.Module F W] {ι : Type} [Fintype ι] (b : Module.Basis ι F W)
+        ∀ {W : Type} [AddCommGroup W] [_root_.Module F W] {ι : Type} [Fintype ι] (b : Module.Basis ι F W)
           (ψ : W →ₗ[F] W) (a : ℤ) (u : (↥(ValuativeRel.valuation F).integer)ˣ),
           (LinearMap.det : (W →ₗ[F] W) → F) ψ = (↑ϖ : F) ^ a * (↑(↑u : ↥(ValuativeRel.valuation F).integer) : F) →
             ∀ (W0 : AddSubgroup W),

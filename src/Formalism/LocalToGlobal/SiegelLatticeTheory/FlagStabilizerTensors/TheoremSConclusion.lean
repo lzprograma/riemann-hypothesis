@@ -4,6 +4,7 @@ public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowsInputPOfTermsFiniteSig
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.FullExistsTiedHolds
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.UnipotentInLevelSubgroup
+import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LinkSFinal
 
 @[expose] public section
 
@@ -42,14 +43,6 @@ theorem theoremS_of_conj (h : TheoremSClosedHypotheses) (Cthr : ℝ) :
   exact theoremS_closedP h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 Cthr
 
 theorem kExpTiedS_holds : KernelExponentAgreement := by
-  intro D X Y u u' hT
-  have f1 := Formalism.L2.SG.Closed.FoldOKC_outright D X Y u hT.1 hT.2.2.2.2.1
-  have f2 := Formalism.L2.SG.Closed.FoldOKC_outright D X Y u' hT.1 hT.2.2.2.2.1
-  have hFE := Formalism.L2.SG.Pf.fundExistsC_holds D X Y u u'
-  have hOO := Formalism.L2.SG.Closed.OOIntAllC_outright D X Y u u' f1 f2 hFE
-  exact Formalism.L2.SG.Closed.KExpansionC_holds D X Y u u' f1 f2
-    (_root_.Formalism.L2.SG.Pf.inHHC_holds D X Y u hT.2.2.2.2.2.1 f1) (_root_.Formalism.L2.SG.Pf.inHHC_holds D X Y u' hT.2.2.2.2.2.1 f2) hFE hOO
-    (Formalism.L2.SG.Closed.OOFundIndepC_holds D X Y u u' hFE hOO) (Formalism.L2.SG.Closed.AmpWellDefC_holds D X Y u u' hOO)
-    (Formalism.L2.SG.Closed.AbsConvC_outright D X Y u u' f1 f2 hFE hOO)
+  apply _root_.Formalism.L2.SG.ThmSOwn.kExpTied_holds <;> assumption
 
 end Formalism.L2.SG.TheoremSConclusion

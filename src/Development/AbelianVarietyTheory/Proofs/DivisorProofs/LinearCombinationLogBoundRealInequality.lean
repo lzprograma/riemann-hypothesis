@@ -6,52 +6,8 @@ public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.N
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ZetaValueIdeals
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsValCharTwist
 public import Formalism.SharpRestriction.AdmissibleParameterJoins.SfromGLu
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalRingCardinality.HostCls
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -108,10 +64,10 @@ theorem sum_ceil_off_le {E : Type} [Field E] [NumberField E] {I : Type} [Fintype
     by_cases h : c_vp 𝔣 l = 0
     · left
       unfold n_vp
-      rw [if_pos h]
+      rw [ite_eq_left h]
     · right
       unfold n_vp
-      rw [if_neg h]
+      rw [ite_eq_right h]
       rfl
   have hn0 : ∀ l, 0 ≤ n_vp d s κ 𝔣 l := by
     intro l
@@ -144,7 +100,7 @@ theorem sum_ceil_off_le {E : Type} [Field E] [NumberField E] {I : Type} [Fintype
     · rfl
     · have h0 : n_vp d s κ 𝔣 l = 0 := by
         unfold n_vp
-        rw [if_pos (not_not.mp h)]
+        rw [ite_eq_left (not_not.mp h)]
       simp [h0]
   have hsubS : S.filter (fun l => c_vp 𝔣 l ≠ 0) ⊆ S := Finset.filter_subset _ _
   have hcA : ∑ l ∈ S.filter (fun l => c_vp 𝔣 l ≠ 0), c_vp 𝔣 l * Real.log l ≤ A := by
@@ -244,8 +200,8 @@ theorem n_vp_log_le (d s : ℕ) (κ : I → ℕ) (𝔣 : Ideal (GlobalTheory.CMV
   have hΛ : 0 ≤ Λ := hl.trans hlΛ
   unfold n_vp
   by_cases h : c_vp 𝔣 l = 0
-  · rw [if_pos h, zero_mul]; positivity
-  · rw [if_neg h]
+  · rw [ite_eq_left h, zero_mul]; positivity
+  · rw [ite_eq_right h]
     unfold Formalism.PairingDivisionLocalBalance.nl
     exact linear_combination_log_bound_real_inequality _ _ _ _ _ _ (by positivity) (by positivity) (by split_ifs <;> norm_num) (by split_ifs <;> norm_num) hl hcΛ hlΛ
 
@@ -253,7 +209,6 @@ theorem ceil_log_le (d s : ℕ) (κ : I → ℕ) (𝔣 : Ideal (GlobalTheory.CMV
     {Λ : ℝ} (hl : 0 ≤ Real.log l) (hcΛ : c_vp 𝔣 l * Real.log l ≤ Λ) (hlΛ : Real.log l ≤ Λ) (ha : a0 𝔣 l ≤ 2) :
     ((⌈betaBound_vp d s κ 𝔣 z l / 12⌉₊ : ℕ) : ℝ) * Real.log l ≤ (cE_vp l z : ℝ) * Real.log l +
       (((2 * s * Fintype.card I : ℕ) : ℝ) + 5 * (Formalism.PairingDivisionLocalBalance.absK κ : ℝ) + 2 * (Formalism.PairingDivisionLocalBalance.wtM (2 * s) κ : ℝ) + 1) * Λ := by
-  have hΛ : 0 ≤ Λ := hl.trans hlΛ
   have hn0 := n_vp_nonneg d s κ 𝔣 l
   have hn := n_vp_log_le d s κ 𝔣 l hl hcΛ hlΛ
   rw [toricBetaDenominatorBound_div_twelve_eq, add_comm, Nat.ceil_add_natCast hn0]
@@ -433,7 +388,6 @@ theorem kap_le (large₂ : SizeData₂ D) (hR : GlobalTheory.IndefiniteRowSideFu
     linarith
   have hb : 0 ≤ large₂.sc.b := (Real.exp_pos _).le
   unfold kap
-  have hs : (0 : ℝ) ≤ s := by positivity
   rcases le_or_gt 0 ((num D 1 τ).e (j + 1) + cen D 1 τ (D.R.m - i) - s) with h | h
   · have e : (((num D 1 τ).e (j + 1) + cen D 1 τ (D.R.m - i) - s).toNat : ℝ) =
         (((num D 1 τ).e (j + 1) + cen D 1 τ (D.R.m - i) - s : ℤ) : ℝ) := by

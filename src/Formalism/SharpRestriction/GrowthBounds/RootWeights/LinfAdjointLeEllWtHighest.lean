@@ -12,55 +12,11 @@ public import Formalism.SharpRestriction.GrowthBounds.RootWeights.RaiseLowerPowC
 public import Formalism.SharpRestriction.GrowthBounds.RootWeights.RestAOfHighestVectorIntegrality
 public import Formalism.SharpRestriction.GrowthBounds.RootWeights.InvariantDenominatorLinftyBound
 public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExistsIntegralWeightProjections
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 import Mathlib.RingTheory.PicardGroup
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightEntriesBetweenExtremeHighest
 import Mathlib.Algebra.Order.Star.Int
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.TraceProjectionIsInvProj
@@ -579,13 +535,13 @@ theorem raising_dividedPower_loweringSpan [CharZero (KK O)] {E : GLOps n (KK O) 
       · have hda : d ≠ a := fun e => hcase ⟨hbc.symm, e⟩
         subst hbc
         refine key (E a d) ?_ ?_ ?_ ?_
-        · rw [if_pos rfl, if_neg hda, sub_zero] at hr
+        · rw [ite_eq_left rfl, ite_eq_right hda, sub_zero] at hr
           rw [← hr]; abel
         · have := hE.1 a d b d
-          rw [if_neg (ne_of_lt hdc), if_neg hda, sub_zero] at this
+          rw [ite_eq_right (ne_of_lt hdc), ite_eq_right hda, sub_zero] at this
           exact sub_eq_zero.1 this
         · have := hE.1 a b a d
-          rw [if_neg (ne_of_gt hab), if_neg hda, sub_zero] at this
+          rw [ite_eq_right (ne_of_gt hab), ite_eq_right hda, sub_zero] at this
           exact sub_eq_zero.1 this
         · intro j y hy
           rw [dividedPower_eq_divPowE]
@@ -600,13 +556,13 @@ theorem raising_dividedPower_loweringSpan [CharZero (KK O)] {E : GLOps n (KK O) 
       · by_cases hda : d = a
         · subst hda
           refine key (-E c b) ?_ ?_ ?_ ?_
-          · rw [if_neg hbc, if_pos rfl, zero_sub] at hr
+          · rw [ite_eq_right hbc, ite_eq_left rfl, zero_sub] at hr
             rw [← hr]; abel
           · have := hE.1 c b c d
-            rw [if_neg hbc, if_neg (ne_of_lt hdc), sub_zero] at this
+            rw [ite_eq_right hbc, ite_eq_right (ne_of_lt hdc), sub_zero] at this
             rw [neg_mul, mul_neg, sub_eq_zero.1 this]
           · have := hE.1 d b c b
-            rw [if_neg hbc, if_neg (ne_of_gt hab), sub_zero] at this
+            rw [ite_eq_right hbc, ite_eq_right (ne_of_gt hab), sub_zero] at this
             rw [neg_mul, mul_neg, sub_eq_zero.1 this]
           · intro j y hy
             rw [dividedPower_neg_sign, LinearMap.smul_apply, dividedPower_eq_divPowE]
@@ -620,7 +576,7 @@ theorem raising_dividedPower_loweringSpan [CharZero (KK O)] {E : GLOps n (KK O) 
               have : (0 : ℤ) ≤ (j : ℤ) := by positivity
               nlinarith
         · refine key 0 ?_ (by simp) (by simp) ?_
-          · rw [if_neg hbc, if_neg hda, sub_zero] at hr
+          · rw [ite_eq_right hbc, ite_eq_right hda, sub_zero] at hr
             rw [add_zero]; exact sub_eq_zero.1 hr
           · intro j y hy
             rcases Nat.eq_zero_or_pos j with rfl | hj

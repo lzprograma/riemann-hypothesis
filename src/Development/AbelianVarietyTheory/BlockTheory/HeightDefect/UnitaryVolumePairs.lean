@@ -46,21 +46,9 @@ open scoped TensorProduct
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.UnitaryVolumePairs
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Volume
 
 variable {D : D7}
-
-def volBox (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (V : HSp D) {P Q : ℕ}
-    (A : D.what₂.Tau → Matrix (Fin P ⊕ Fin Q) (Fin V.rank) ℂ) (B : D.what₂.Tau → Set (UpqT P Q)) : Set (GA D V) :=
-  {h | ∃ k ∈ KsphC V ∅, ∃ g ∈ GinfC V, h = k * g ∧
-    ∀ ρ, ∃ b ∈ B ρ, UpqT.mat b * A ρ = A ρ * infMat D.sp.cm.sig V.gram (θ ρ) g}
-
-def IsProductForm (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (V : HSp D) {P Q : ℕ}
-    (A : D.what₂.Tau → Matrix (Fin P ⊕ Fin Q) (Fin V.rank) ℂ) (μ : Measure (GA D V)) : Prop :=
-  ∀ B : D.what₂.Tau → Set (UpqT P Q), (∀ ρ, MeasurableSet (B ρ)) →
-    μ (volBox θ V A B) = ∏ ρ, D.cd.cd P Q (B ρ)
 
 variable (D)
 
@@ -101,14 +89,6 @@ variable {D}
 variable (D)
 
 end Hecke
-
-section Witt
-
-variable {D : D7}
-
-variable (D)
-
-end Witt
 
 end GlobalTheory.IndefiniteRowSideFullHecke.UnitaryVolumePairs
 

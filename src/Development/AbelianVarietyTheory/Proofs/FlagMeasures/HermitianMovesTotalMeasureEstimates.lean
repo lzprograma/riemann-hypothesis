@@ -175,7 +175,7 @@ theorem exists_coords (g : Fin (r + 1) → S.V) (gs : Fin r → S.V)
     simpa using this
   · have h0 : hf L S.Hm (n (n.symm x) - n.symm x) (gs j) = 0 :=
       hf_spanTo S g hd fun i hi => by
-        rw [dual, if_neg]
+        rw [dual, ite_eq_right]
         rintro rfl
         simp at hi
     rw [hf_sub_l, LinearEquiv.apply_symm_apply, sub_eq_zero] at h0
@@ -242,8 +242,8 @@ theorem total_moves : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpac
     ⟨B, fine_mul hB (fun w => ind (fun u => ¬ S.NoLeak Λ u) w.2.1) fun w hw b hb => by
       have := (hinv w hw b hb).2.2
       by_cases h : S.NoLeak Λ w.2.1
-      · simp only [ind, h, this.2 h, not_true, if_false]
-      · simp only [ind, h, mt this.1 h, not_false_iff, if_true]⟩
+      · simp only [ind, h, this.2 h, not_true, ite_false]
+      · simp only [ind, h, mt this.1 h, not_false_iff, ite_true]⟩
   have n3 : Nice (S.refA (j + 1) Λ) fun w => ind (S.Mv (j + 1) d Λ) w * S.chiM j d Λ w.1 w.2.1 :=
     ⟨B, fine_mul hB (fun w => S.chiM j d Λ w.1 w.2.1) fun w hw b hb => (hinv w hw b hb).2.1⟩
   refine ⟨⟨B, hB⟩, e2 ▸ n2, n3, ?_, ?_, ?_⟩

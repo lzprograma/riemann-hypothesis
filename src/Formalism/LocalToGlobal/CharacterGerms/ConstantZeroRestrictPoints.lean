@@ -4,8 +4,6 @@ public import Formalism.LocalToGlobal.CharacterGerms.RowTiePGerm
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators
@@ -50,14 +48,14 @@ theorem coeff_rz (m : ℕ) (f : PS C (m + 1) dd) (ν : Fin m × Fin dd →₀ �
       simp only [one_pow, Finsupp.prod, Finset.prod_const_one, one_smul] at h1
       rw [Finsupp.prod, h1]
       rfl
-    rw [e, coeff_monomial, if_pos rfl, smul_eq_mul, mul_one]
+    rw [e, coeff_monomial, ite_eq_left rfl, smul_eq_mul, mul_one]
   · intro d hd
     by_cases hx : ∃ j, d ((0 : Fin (m + 1)), j) ≠ 0
     · obtain ⟨j, hj⟩ := hx
       rw [Finsupp.prod, Finset.prod_eq_zero (i := ((0 : Fin (m + 1)), j)) (Finsupp.mem_support_iff.2 hj)
         (by show (rz (C := C) (dd := dd) m 0 j) ^ _ = 0; rw [rz_zero]; exact zero_pow hj),
         map_zero, smul_zero]
-    · push_neg at hx
+    · push Not at hx
       have hsub : ↑d.support ⊆ Set.range (up (dd := dd) m) := by
         intro s hs
         obtain ⟨s1, s2⟩ := s
@@ -76,7 +74,7 @@ theorem coeff_rz (m : ℕ) (f : PS C (m + 1) dd) (ν : Fin m × Fin dd →₀ �
         simp only [one_pow, Finsupp.prod, Finset.prod_const_one, one_smul] at h1
         rw [Finsupp.prod, h1]
         rfl
-      rw [e2, coeff_monomial, if_neg (Ne.symm hne), smul_zero]
+      rw [e2, coeff_monomial, ite_eq_right (Ne.symm hne), smul_zero]
 
 theorem coeff_iter_pderiv {σ : Type} (q : σ) (L : ℕ) (f : MvPowerSeries σ C) (n : σ →₀ ℕ) :
     coeff n ((pderiv (R := C) q)^[L] f) =

@@ -163,7 +163,7 @@ theorem lat_summable (hP : Ext.PackingCount) (hA : Ext.GaussianTailBound) (Y : G
       -(q * Real.pi / 4) * ‖(γ : EuclideanSpace ℂ ι)‖ ^ 2 := by ring
   by_cases h0 : (γ : EuclideanSpace ℂ ι) = 0
   · simp [h0]
-  · simp only [h0, if_false, add_zero]
+  · simp only [h0, ite_false, add_zero]
     rw [hform]
     calc _ ≤ K * Real.exp (-(q * Real.pi / 4 / 2) * ‖(γ : EuclideanSpace ℂ ι)‖ ^ 2) := hle
       _ ≤ K * Real.exp (-(q * Real.pi) * ‖(γ : EuclideanSpace ℂ ι)‖ ^ 2 / 16) := by

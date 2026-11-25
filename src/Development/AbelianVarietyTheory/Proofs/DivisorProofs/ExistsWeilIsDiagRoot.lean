@@ -61,8 +61,6 @@ open scoped CategoryTheory.Obj
 
 noncomputable section
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace GlobalTheory.DiagPairing
 
 open GlobalTheory.CechPic

@@ -47,9 +47,6 @@ noncomputable section
 open NumberField IsDedekindDomain UpperTheory.V.Z.Gam
 open scoped Classical
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
-
 namespace UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter
 
 private lemma window_mul (q : ℕ) (hq : q ≠ 0) (t a : ℝ) (x y : ℂ)

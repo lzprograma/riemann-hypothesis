@@ -6,45 +6,7 @@ public import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
 public import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
 public import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
 public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -52,20 +14,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 noncomputable section
 
 namespace Formalism.MainNotions.WeightDegreeSizes
-
-section PartG
-
-open Formalism.BasicNotions Formalism.BasicNotions.DV
-
-
-section Proof
-
-open Formalism.FrobeniusOrbits
-
-
-end Proof
-
-end PartG
 
 section PartA
 
@@ -81,7 +29,7 @@ theorem gain_above {L : SizeData₂ D} (X : Inst D L) (K : Consts) (hF : ∀ w, 
   · by_cases hin : IsResidueClassZero D (D.what₂.places.resChar w) ∨ IsSg D (D.what₂.places.resChar w)
     · rw [(hF w).2.2.2.1 hs hin j hj]
       unfold gainP
-      rw [if_pos (Or.inr hX)]
+      rw [ite_eq_left (Or.inr hX)]
     · exact (L.not_inert w (fun h => hin (Or.inr h)) (fun h => hin (Or.inl h))).1 j
   · exact L.gain_supp j w hs
 
@@ -214,7 +162,7 @@ theorem Eval_atG (L : SizeData₂ D) (X : ErrX D) (K : Consts) (c : ErrC) (hT : 
     (w : D.what₂.places.Pl) (hw : D.what₂.places.resChar w = D.host.g i) :
     Eval L X K c u j w = (padicValNat (D.host.g i) (D.mem u).C.DGam : ℝ) + EatG L X c i u j w := by
   unfold Eval
-  simp only [hw, if_neg (hT u i)]
+  simp only [hw, ite_eq_right (hT u i)]
   fin_cases i
   · simp
   · have : D.host.g 1 ≠ D.host.g 0 := D.host.g_ne.symm
@@ -357,22 +305,22 @@ theorem Eval_off (L : SizeData₂ D) (X : ErrX D) (K : Consts) (c : ErrC) (u : D
   have h1 : D.what₂.places.resChar w ≠ D.host.g 1 := fun h => hg (by simp [SizeData₂.gTypes, h])
   have hv : (0 : ℝ) ≤ (padicValNat (D.what₂.places.resChar w) (D.mem u).C.DGam : ℝ) := Nat.cast_nonneg _
   unfold Eval hOff EatCI
-  simp only [if_neg h0, if_neg h1, if_neg hT]
+  simp only [ite_eq_right h0, ite_eq_right h1, ite_eq_right hT]
   refine (abs_add_le _ _).trans ?_
   rw [abs_of_nonneg hv]
   by_cases hr : D.host.cls (D.what₂.places.resChar w) = PrimeClass.ramD
-  · simp only [if_pos hr]
+  · simp only [ite_eq_left hr]
     have : 0 ≤ (if (IsResidueClassZero D (D.what₂.places.resChar w) ∨ IsSg D (D.what₂.places.resChar w)) ∧
         (D.what₂.places.resChar w : ℝ) ≤ L.sc.X'' D.R.n then
         |if IsResidueClassZero D (D.what₂.places.resChar w) ∧ hP D (D.what₂.places.resChar w) = 0 then
           EatC L c j (D.what₂.places.resChar w) else EatI L K c j (D.what₂.places.resChar w)| else 0) := by
       split_ifs <;> simp
     linarith
-  · simp only [if_neg hr]
+  · simp only [ite_eq_right hr]
     by_cases hi : (IsResidueClassZero D (D.what₂.places.resChar w) ∨ IsSg D (D.what₂.places.resChar w)) ∧
         (D.what₂.places.resChar w : ℝ) ≤ L.sc.X'' D.R.n
-    · simp only [if_pos hi]; linarith
-    · simp only [if_neg hi]; simp
+    · simp only [ite_eq_left hi]; linarith
+    · simp only [ite_eq_right hi]; simp
 
 theorem EatT_nonneg (u : D.what₂.Word) (w : D.what₂.places.Pl) : 0 ≤ EatT D u w := by
   unfold EatT
@@ -401,7 +349,7 @@ theorem C2off_of (L : SizeData₂ D) (X : ErrX D) (K : Consts) (c : ErrC) (CT CG
       intro w hw
       have hw' := (Finset.mem_filter.1 hw).2
       have : L.E u j w = EatT D u w := by
-        rw [hE u j hj w]; unfold Eval; simp only [if_pos hw']
+        rw [hE u j hj w]; unfold Eval; simp only [ite_eq_left hw']
       rw [this, abs_of_nonneg]
       unfold SizeData₂.sz
       have := logWeight_nonneg w
@@ -489,33 +437,12 @@ section PartB
 open scoped BigOperators
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.BasicNotions.DV Formalism.MainNotions.G Formalism.MainNotions.WeilJacquetShalikaLaw
 
-def PairAtT (D : D7) (Dx : DivX D) (T : TwForms D) : Prop :=
-  DGamDef D → (∀ u (w : D.what₂.places.Pl), D.what₂.places.resChar w = (D.mem u).A.T →
-    ∀ z ∈ locW D.what₂.places w ((D.fm u).lat D.R.m).L,
-    ∀ F ∈ (D.what₂.Mtilde D.what₂.mu0).carrier, F ∈ D.what₂.V0 D.what₂.mu0 →
-      ∃ y : D.what₂.LL, D.what₂.embLL y = (D.mem u).P.Ptil ((D.fm u).emb D.R.m z) ((D.eMt u).symm F) ∧
-        (y = 0 ∨ -ur D w (vDG D u w) ≤ (vAdd (D.plEq w) y : ℝ))) ∧
-  ∀ u μ, μ ≠ D.what₂.mu0 → ∀ w : D.what₂.places.Pl, D.what₂.places.resChar w = (D.mem u).A.T →
-    D.what₂.places.resChar w ∉ Dx.Qp μ → ∀ z ∈ locW D.what₂.places w ((T.fm u μ).lat D.R.m).L,
-    ∀ F ∈ (D.what₂.Mtilde μ).carrier, F ∈ D.what₂.V0 μ →
-      ∃ y : D.what₂.LL, D.what₂.embLL y = (D.PTw u μ).Ptil ((T.fm u μ).emb D.R.m z) ((D.eMtTw u μ).symm F) ∧
-        (y = 0 ∨ -ur D w (vDG D u w) ≤ (vAdd (D.plEq w) y : ℝ))
-
 def MemberChainIntegral (D : D7) : Prop := ∀ u, Formalism.MainNotions.product_first_zeroth_parts.Conclusion6 D u
-
-def TwistedChainIntegral (D : D7) (T : TwForms D) : Prop :=
-  ∀ u μ, μ ≠ D.what₂.mu0 → ∃ h : (T.fm u μ).PRat, (T.fm u μ).PtilIntegral h
 
 def PeriodClassSumWeyl (D : D7) : Prop :=
   DGamDef D → ∀ u, ∀ x ∈ (D.fm u).ptLat.L, ∀ F ∈ (D.what₂.Mtilde D.what₂.mu0).carrier, F ∈ D.what₂.V0 D.what₂.mu0 →
     ∃ y : D.what₂.LL, D.what₂.embLL y = (D.mem u).P.period ((D.fm u).ptEmb x) ((D.eMt u).symm F) ∧
       ∀ w : D.what₂.places.Pl, y = 0 ∨ -ur D w (vDG D u w) ≤ (vAdd (D.plEq w) y : ℝ)
-
-def TwistedPeriodIntegral (D : D7) (Dx : DivX D) (T : TwForms D) : Prop :=
-  DGamDef D → ∀ u μ, μ ≠ D.what₂.mu0 → ∀ x ∈ (T.fm u μ).ptLat.L, ∀ F ∈ (D.what₂.Mtilde μ).carrier, F ∈ D.what₂.V0 μ →
-    ∃ y : D.what₂.LL, D.what₂.embLL y = (D.PTw u μ).period ((T.fm u μ).ptEmb x) ((D.eMtTw u μ).symm F) ∧
-      ∀ w : D.what₂.places.Pl, D.what₂.places.resChar w ∉ Dx.Qp μ →
-        y = 0 ∨ -ur D w (vDG D u w) ≤ (vAdd (D.plEq w) y : ℝ)
 
 theorem pair_add_ge (D : D7) (w : D.what₂.places.Pl) {a b : D.what₂.LL} {B : ℝ}
     (ha : a = 0 ∨ B ≤ (vAdd (D.plEq w) a : ℝ)) (hb : b = 0 ∨ B ≤ (vAdd (D.plEq w) b : ℝ)) :
@@ -736,90 +663,13 @@ def RationalMapValues : Prop :=
 
 end Rat
 
-section C5
-
-variable {D : D7} {T : ThetaX D}
-
-end C5
-
-section Family
-
-variable {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
-  (XF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), ZetaProductPairs.Loc (Fm.D x i) (Fm.ex x hx i).th)
-
-end Family
-
 end PartC
-
-section PartE
-
-open Formalism.BasicNotions NumberField IsDedekindDomain
-
-section Lat
-
-variable {K : Type} [Field K] [NumberField K] {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V]
-  [IsScalarTower (𝓞 K) K V]
-
-end Lat
-
-section Form
-
-variable {K : Type} [Field K] {σ : K →+* ℂ} {V : Type} [AddCommGroup V] [Module K V]
-  {E : Type} [AddCommGroup E] [Module ℂ E] {ι : Type} [Fintype ι] [DecidableEq ι]
-  (b : Module.Basis ι K V) (j : V →ₛₗ[σ] E)
-
-end Form
-
-section Side
-
-variable {D : D7} {EE : Type} [NormedAddCommGroup EE] [InnerProductSpace ℂ EE] [FiniteDimensional ℂ EE]
-  (S : RowSide D EE)
-
-end Side
-
-section SideAI
-
-variable {D : D7} {EE : Type} [NormedAddCommGroup EE] [InnerProductSpace ℂ EE] [FiniteDimensional ℂ EE]
-  (S : RowSide D EE)
-
-end SideAI
-
-section Fam
-
-variable {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
-
-end Fam
-
-end PartE
-
-section PartEJ
-
-open Formalism.BasicNotions NumberField IsDedekindDomain
-
-end PartEJ
-
-section PartF
-
-open Formalism.BasicNotions Formalism.BasicNotions.DV
-
-variable (D : D7)
-
-
-
-
-end PartF
 
 section PartF2
 
 open Formalism.BasicNotions Formalism.BasicNotions.DV
 
 variable (D : D7)
-
-section Fam
-
-variable {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
-
-end Fam
 
 
 section IV
@@ -848,13 +698,6 @@ theorem vAdd_lpow (D : D7) (w : D.what₂.places.Pl) (k : ℕ) :
 end IV
 
 
-
-section FamJ
-
-variable {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
-
-
-end FamJ
 
 end PartF2
 

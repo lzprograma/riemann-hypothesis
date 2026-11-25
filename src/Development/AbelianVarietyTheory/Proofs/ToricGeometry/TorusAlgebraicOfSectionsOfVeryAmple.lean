@@ -274,7 +274,7 @@ theorem exists_normal_form {g : ℕ} (τ : Matrix (Fin g) (Fin g) ℂ) (hτ : τ
       w = τ *ᵥ ofIntVec p.1 + ofIntVec p.2 then h.choose.1 ⬝ᵥ h.choose.2 else 0, fun n n' => ?_⟩
     have h : ∃ p : (Fin g → ℤ) × (Fin g → ℤ),
       τ *ᵥ ofIntVec n + ofIntVec n' = τ *ᵥ ofIntVec p.1 + ofIntVec p.2 := ⟨(n, n'), rfl⟩
-    simp only [dif_pos h]
+    simp only [dite_eq_left h]
     have h1 := h.choose_spec
     generalize h.choose = p at h1
     obtain ⟨h2, h3⟩ := huniq (p.1 + -n) (p.2 + -n') (by
@@ -607,11 +607,11 @@ namespace GlobalTheory
 
 private lemma valAt'_mul_of_preimage_whole {Y : Scheme.{0}} (x : Sp ℂ ⟶ Y) (U : Y.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U)
     (f f' : Γ(Y, U)) : valAt' x U (f * f') = valAt' x U f * valAt' x U f' := by
-  simp only [valAt', dif_pos h, valAt, map_mul]
+  simp only [valAt', dite_eq_left h, valAt, map_mul]
 
 private lemma valAt'_one' {Y : Scheme.{0}} (x : Sp ℂ ⟶ Y) (U : Y.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) :
     valAt' x U 1 = 1 := by
-  simp only [valAt', dif_pos h, valAt, map_one]
+  simp only [valAt', dite_eq_left h, valAt, map_one]
 
 private lemma preimage_whole_of_le {Y : Scheme.{0}} (x : Sp ℂ ⟶ Y) {V W : Y.Opens} (hVW : V ≤ W)
     (h : ⊤ ≤ x ⁻¹ᵁ V) : ⊤ ≤ x ⁻¹ᵁ W :=
@@ -627,7 +627,7 @@ private lemma valAt'_presheaf_map' {Y : Scheme.{0}} (x : Sp ℂ ⟶ Y) {V W : Y.
   have hW : ⊤ ≤ x ⁻¹ᵁ W := preimage_whole_of_le x hVW h
   have key : Y.presheaf.map (homOfLE hVW).op ≫ x.appLE V ⊤ h = x.appLE W ⊤ hW := by
     rw [Scheme.Hom.map_appLE]
-  simp only [valAt', dif_pos h, dif_pos hW, valAt]
+  simp only [valAt', dite_eq_left h, dite_eq_left hW, valAt]
   rw [← key]
   rfl
 
@@ -769,7 +769,7 @@ theorem exists_mem_thetaLevelChar_apply_ne_zero (hτ : τ ∈ SiegelH (Fin g)) (
   · have hsum : ∑ i ∈ (Finset.univ : Finset (Fin (k + 1))), ((fun _ => 1 : Fin (k + 1) → ℕ) i : ℂ) •
         (fun i : Fin (k + 1) => if i = 0 then (-(k : ℂ)) • w else w) i = 0 := by
       rw [Fin.sum_univ_succ]
-      simp only [Nat.cast_one, one_smul, if_pos, Fin.succ_ne_zero, if_false, Finset.sum_const,
+      simp only [Nat.cast_one, one_smul, ite_eq_left, Fin.succ_ne_zero, ite_false, Finset.sum_const,
         Finset.card_univ, Fintype.card_fin]
       rw [← Nat.cast_smul_eq_nsmul ℂ, neg_smul, neg_add_cancel]
     have := prod_translate_mem_thetaLevelChar (a := a) (b := b) (τ := τ)

@@ -50,8 +50,6 @@ import Mathlib.RingTheory.MvPolynomial
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.MatChain
@@ -243,14 +241,14 @@ theorem foldr_add_single {ι β : Type} [DecidableEq ι] (D : ι → β → β) 
     rw [List.foldr_cons, List.foldr_cons, ih hL.2]
     by_cases h : l = a
     · subst h
-      rw [if_neg hL.1, if_pos List.mem_cons_self, Finsupp.add_apply, Finsupp.single_eq_same,
+      rw [ite_eq_right hL.1, ite_eq_left List.mem_cons_self, Finsupp.add_apply, Finsupp.single_eq_same,
         Function.iterate_succ_apply']
     · rw [Finsupp.add_apply, Finsupp.single_eq_of_ne' h, add_zero]
       by_cases h2 : l ∈ L
-      · rw [if_pos h2, if_pos (List.mem_cons_of_mem _ h2)]
+      · rw [ite_eq_left h2, ite_eq_left (List.mem_cons_of_mem _ h2)]
         have hc : Function.Commute (D a) (D l) := fun g => hD a l g
         exact (hc.iterate_left (m a)) _
-      · rw [if_neg h2, if_neg (by simp [h, h2])]
+      · rw [ite_eq_right h2, ite_eq_right (by simp [h, h2])]
 
 open Formalism.MainNotions.ModuliIntegralCharts.H1.FormalGroupCopies in
 theorem dpoly_mul_X (G : FGLaw k d) {ι : Type} [Fintype ι] (cp : ι → Fin n) (u : ι → Fin d → k)
@@ -264,7 +262,7 @@ theorem dpoly_mul_X (G : FGLaw k d) {ι : Type} [Fintype ι] (cp : ι → Fin n)
     unfold DmonN
     rw [foldr_add_single (fun l => DofN G.F (cp l) (u l))
       (fun a b g => Formalism.MainNotions.ModuliIntegralCharts.H1.FoldPermutation.dofN_comm G _ _ _ _ g) m l _ (Finset.nodup_toList _),
-      if_pos (Finset.mem_toList.2 (Finset.mem_univ l))]
+      ite_eq_left (Finset.mem_toList.2 (Finset.mem_univ l))]
   | add P Q hP hQ => rw [add_mul, dpoly_add, dpoly_add, dofN_add, hP, hQ]
 
 open Formalism.MainNotions.ModuliIntegralCharts.H1.FormalGroupCopies in
@@ -302,7 +300,6 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ GlobalTheory.PtTie
 open ReciprocityTheory.ChartRestriction.G.TB (dAct dLin)
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.PlaceInt
 open ReciprocityTheory.ChartRestriction.G.TB.PointMapComposition ReciprocityTheory.ChartRestriction.G.TB.WickVanishing.Nab
 
@@ -347,8 +344,8 @@ theorem tan_matV {n : ℕ} (mu : Matrix (Fin n) (Fin n) O) (j : Fin n) (v : Fin 
       rw [mapPt_comp1 K _ _ (GlobalTheory.DerivEndo.cc_pt s), mapPt_pt]
       exact (tan_pt (lawK K B) j v s).comp _ ((actKO K B).const (mu b s)) ((actKO K B).hom (mu b s)))
     (List.finRange n)).2
-  rw [← Fin.sum_univ_def, Finset.sum_eq_single j (fun s _ hs => by rw [if_neg hs, Matrix.mulVec_zero]) (by simp),
-    if_pos rfl] at h
+  rw [← Fin.sum_univ_def, Finset.sum_eq_single j (fun s _ hs => by rw [ite_eq_right hs, Matrix.mulVec_zero]) (by simp),
+    ite_eq_left rfl] at h
   unfold matV
   simp only [e, List.ofFn_eq_map]
   exact h

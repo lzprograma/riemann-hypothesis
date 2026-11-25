@@ -20,8 +20,6 @@ open scoped InnerProductSpace TensorProduct
 
 namespace Formalism.L2.SG.EvalTPh
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem phLoc_int_of_gap (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (hG : Formalism.L2.SG.ConcreteSettingExists.GapHyp D)

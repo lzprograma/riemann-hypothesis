@@ -42,8 +42,6 @@ import Development.AbelianVarietyTheory.Definitions.CMLattices.IsCyclotomicExten
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
@@ -77,17 +75,6 @@ theorem Indep.of_eigBasis {O : Type} [CommRing O] {A : Over (Sp K)} [GrpObj A] [
   exact congrArg (fun z : Serre.Lie act => z.hom.left) this
 
 variable {f : R →+* K} {G : Over (Sp R)} [GrpObj G] {A : Over (Sp K)} [GrpObj A] {φ : A.left ⟶ G.left}
-
-theorem exists_frame [IsLocalRing R] (hG : IsSemiAbelian G) (hφ : IsGrpPullback A G (spMap f) φ) {m : ℕ}
-    {x : Fin m → (epsR K ⟶ A)} (hx : ∀ i, IsTangent (x i)) :
-    ∃ (n : ℕ) (e : Fin n → (epsR R ⟶ G)) (e' : Fin n → (epsR K ⟶ A)) (P : Matrix (Fin m) (Fin n) K),
-      IsLieBasis e ∧ IsLieBasis e' ∧ (∀ j, IsVecOver f φ (e j) (e' j)) ∧ ∀ i, IsLieComb (P i) e' (x i) := by
-  have := hG.smooth
-  obtain ⟨n, e, he⟩ := Chart.exists_isLieBasis G hG.smooth
-  choose e' h _ using fun j => existsUnique_isVecOver hφ.1 (e j)
-  have he' := Chart.isLieBasis_baseChange f hφ he h
-  choose P hP _ using fun i => he'.2 _ (hx i)
-  exact ⟨n, e, e', P, he, he', h, hP⟩
 
 end Lie
 

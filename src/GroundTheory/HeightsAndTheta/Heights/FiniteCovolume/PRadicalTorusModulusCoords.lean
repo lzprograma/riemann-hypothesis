@@ -1,7 +1,6 @@
 module
 
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentModulusCoords
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -28,7 +27,6 @@ theorem heisMat_conj_scale {g : Matrix ι ι ℂ} (hg : gᴴ * H * g = H) {α : 
     Complex.conj_conj, Complex.normSq_eq_conj_mul_self]
   simp only [mulVec_add, mulVec_sub, mulVec_smul, hga, hgy]
   module
-
 
 omit [DecidableEq ι] in
 theorem heisS_conj_smul (α : ℂ) (y : ι → ℂ) (t : ℝ) :

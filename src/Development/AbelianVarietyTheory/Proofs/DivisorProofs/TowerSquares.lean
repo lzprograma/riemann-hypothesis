@@ -49,8 +49,6 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.BaseIdealIdeal
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.AbLaw GlobalTheory.FormalAlg
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.FormalAlg.TowerSq

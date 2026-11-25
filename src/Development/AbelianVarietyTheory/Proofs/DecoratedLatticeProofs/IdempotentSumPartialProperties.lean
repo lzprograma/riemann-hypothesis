@@ -75,6 +75,6 @@ theorem sum_mul_sum_of_subset {D : D7} (S S' : Finset (Formalism.L2.DIV.Pl D.hos
     (∑ P ∈ S, f P) * ∑ P ∈ S', g P = ∑ P ∈ S, f P := by
   rw [Finset.sum_mul]
   refine Finset.sum_congr rfl fun P hP => ?_
-  rw [mul_sum_of_isIdemAt (hf P hP) S' g hg, if_pos (hS hP)]
+  rw [mul_sum_of_isIdemAt (hf P hP) S' g hg, ite_eq_left (hS hP)]
 
 end GlobalTheory.PartialIdemSum

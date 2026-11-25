@@ -34,11 +34,11 @@ variable {ε : Fin n → Bool} {lam : Fin n → ℝ} {T : S7.KType ε (lowK ε l
   {Ψ : Matrix (Fin n) (Fin n) ℂ → (T.V →L[ℂ] T.V)} {v₀ : T.V}
 
 theorem ccA_sqInt (hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) :
-    Formalism.MainNotions.S.IsSqIntOn ε (closRep (rreg ε) (closGen (smE ε (rreg ε)) (datumV ε Ψ v₀))) :=
+    Formalism.MainNotions.S.IsSqIntOn ε (ReciprocityTheory.ChartRestriction.DS.tfClRep (rreg ε) (closGen (smE ε (rreg ε)) (datumV ε Ψ v₀))) :=
   (isDS_sigLam hgap hP hv₀).2.2.2.2.1
 
 theorem ccA_fdeg_eq (w : Hlam ε Ψ v₀) : Formalism.MainNotions.S.fdegOf (Formalism.REAL.muG ε) (sigLam ε Ψ v₀) w =
-    Formalism.MainNotions.S.fdegOf (Formalism.REAL.muG ε) (closRep (rreg ε) (closGen (smE ε (rreg ε)) (datumV ε Ψ v₀))) w := rfl
+    Formalism.MainNotions.S.fdegOf (Formalism.REAL.muG ε) (ReciprocityTheory.ChartRestriction.DS.tfClRep (rreg ε) (closGen (smE ε (rreg ε)) (datumV ε Ψ v₀))) w := rfl
 
 theorem ccA_fdeg_pos (hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) {w : Hlam ε Ψ v₀} (hw : w ≠ 0) :
     0 < Formalism.MainNotions.S.fdegOf (Formalism.REAL.muG ε) (sigLam ε Ψ v₀) w := by

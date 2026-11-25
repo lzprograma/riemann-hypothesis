@@ -13,8 +13,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.KerInert.AdmLoc
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.PairingIndexBounds.F
 
 section Gen

@@ -6,42 +6,7 @@ import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsAffineLie
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAffineStableLieEigenspaceFrame
 import Formalism.LocalToGlobal.ProjectiveLattices.GenFrPfB
 import Formalism.LocalToGlobal.ProjectiveLattices.GenSpecLocFrM
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankPf
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.BcField
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeB
@@ -50,8 +15,6 @@ import Mathlib.Algebra.Azumaya.Basic
 import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -62,8 +25,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestric
 open GlobalTheory.IndefiniteRowSideFullHecke.HermitianCompactForm (epsAt IsEigBasisAt)
 open scoped CategoryTheory.Obj Matrix
 open ReciprocityTheory.ChartRestriction.G.Chart (IsUnivChart sp)
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {S : Scheme.{0}} {t : SAB H S}
 
@@ -130,88 +91,7 @@ theorem exists_affine_bases {X : Scheme.{0}} (π : X ⟶ S) (s : X ⟶ Sp c.F) (
   have hφ₀ : spMap φ₀ = j ≫ s := Spec.map_preimage _
   have hov : ∀ {R : Type} [CommRing R] (ψ : Γ(X, U₀) →+* R), (spMap ψ ≫ j) ≫ s = spMap (ψ.comp φ₀) :=
     fun ψ => by rw [Category.assoc, ← hφ₀, ReciprocityTheory.ChartRestriction.G.PullbackSections.spMap_comp_spMap]
-  open ReciprocityTheory.ChartRestriction.G.Chart in
-  let Compat (t : SAB H S) {R R' : Type} [CommRing R] [CommRing R'] (ψ : R →+* R') {x : Sp R ⟶ S} {x' : Sp R' ⟶ S} {n : ℕ}
-      (xc : ∀ m : ℕ, sp (R₀ := R) (ReciprocityTheory.ChartRestriction.G.Chart.JetR R (Fin n) m) ⟶ (Over.pullback x).obj t.G)
-      (xc' : ∀ m : ℕ, sp (R₀ := R') (ReciprocityTheory.ChartRestriction.G.Chart.JetR R' (Fin n) m) ⟶ (Over.pullback x').obj t.G) : Prop :=
-    ∀ cc : Fin n → R, vec t x' xc' (ψ ∘ cc) = spMap (ReciprocityTheory.ChartRestriction.G.Chart.dualMapR ψ) ≫ vec t x xc cc
-  
-  have vec_bc_of_chart {R : Type} [CommRing R] {x : Sp R ⟶ S} {n : ℕ}
-      {xc : ∀ m : ℕ, sp (R₀ := R) (ReciprocityTheory.ChartRestriction.G.Chart.JetR R (Fin n) m) ⟶ (Over.pullback x).obj t.G}
-      (C : ReciprocityTheory.ChartRestriction.G.Chart.Chart ((Over.pullback x).obj t.G)) (hx : IsUnivChart _ n xc)
-      {R' : Type} [CommRing R'] (ψ : R →+* R') {x' : Sp R' ⟶ S} (h : x' = spMap ψ ≫ x) :
-      ∃ (xc' : ∀ m : ℕ, sp (R₀ := R') (ReciprocityTheory.ChartRestriction.G.Chart.JetR R' (Fin n) m) ⟶ (Over.pullback x').obj t.G),
-        IsUnivChart _ n xc' ∧ Compat t ψ xc xc' := by
-    subst h
-    letI : Algebra R R' := ψ.toAlgebra
-    obtain ⟨x₁, hx₁, hcomp⟩ := LieChart.univChart_baseChange_of_chart (R := R) (R' := R') _ C n xc hx
-    have h₁ := IsGrpPullback.comp
-      (isGrpPullback_pullback ((Over.pullback x).obj t.G) (ReciprocityTheory.ChartRestriction.G.Chart.fB R R'))
-      (isGrpPullback_pullback t.G x)
-    obtain ⟨e, he, hφ⟩ := grpPullback_iso h₁
-      (isGrpPullback_pullback t.G (ReciprocityTheory.ChartRestriction.G.Chart.fB R R' ≫ x))
-    refine ⟨fun m => x₁ m ≫ e.hom, gfp_chart_iso e hx₁, fun cc => ?_⟩
-    have key : (tvec (x := fun m => x₁ m ≫ e.hom) (algebraMap R R' ∘ cc)).left =
-        (tvec (x := x₁) (algebraMap R R' ∘ cc)).left ≫ e.hom.left := by
-      show (_ ≫ x₁ 1 ≫ e.hom).left = (_ ≫ x₁ 1).left ≫ e.hom.left
-      rw [Over.comp_left, Over.comp_left, Over.comp_left, Category.assoc]
-    show (tvec (x := fun m => x₁ m ≫ e.hom) (algebraMap R R' ∘ cc)).left ≫ pullback.fst _ _ = _
-    rw [key, Category.assoc, hφ, ← Category.assoc, hcomp cc, Category.assoc]
-    rfl
-  open ReciprocityTheory.ChartRestriction.G.Chart in
-  have exists_projectors {L : Type} [CommRing L] (φ : c.F →+* L) {x : Sp L ⟶ S} {n : ℕ}
-      {xc : ∀ m : ℕ, sp (R₀ := L) (ReciprocityTheory.ChartRestriction.G.Chart.JetR L (Fin n) m) ⟶ (Over.pullback x).obj t.G}
-      (hx : IsUnivChart _ n xc) :
-      ∃ P : (E →+* ℂ) → Matrix (Fin n) (Fin n) L, ∀ {k : Type} [CommRing k] (ψ : L →+* k) {x' : Sp k ⟶ S}
-        {xc' : ∀ m : ℕ, sp (R₀ := k) (ReciprocityTheory.ChartRestriction.G.Chart.JetR k (Fin n) m) ⟶ (Over.pullback x').obj t.G}
-        (hx' : IsUnivChart _ n xc'), Compat t ψ xc xc' → ∀ τ v, (P τ).map ψ *ᵥ v ∈ eig c (ψ.comp φ) hx' τ ∧
-          (v ∈ eig c (ψ.comp φ) hx' τ → (P τ).map ψ *ᵥ v = v) := by
-    classical
-    have : CharZero c.F := RingHom.charZero c.F.val.toRingHom
-    obtain ⟨α, hinj, ⟨f, hf, hfs⟩, hN⟩ :=
-      exists_sepElt (E := E) (F := c.F) c.F.val.toRingHom (embK c) (fun τ a => embK_coe c τ a)
-    letI : Algebra c.F L := φ.toAlgebra
-    refine ⟨fun τ => LinearMap.toMatrix' (proj (rho hx) (embK c) α τ), fun {k} _ ψ {x' xc'} hx' hv τ => ?_⟩
-    letI : Algebra c.F k := (ψ.comp φ).toAlgebra
-    have e₁ : ∀ m, ReciprocityTheory.ChartRestriction.G.PullbackSections.IsEigV (rho hx') (embK c τ) (proj (rho hx') (embK c) α τ m) := fun m =>
-      eig_of_alpha _ _ α hN τ (proj_eig_alpha _ _ α hinj f hf hfs τ m)
-    have e₂ : ∀ m, ReciprocityTheory.ChartRestriction.G.PullbackSections.IsEigV (rho hx') (embK c τ) m → proj (rho hx') (embK c) α τ m = m := fun m hm => by
-      have := proj_sum_eig (rho hx') (embK c) α hinj (Pi.single τ m) (fun τ' => by
-        by_cases h : τ' = τ
-        · subst h; rwa [Pi.single_eq_same]
-        · rw [Pi.single_eq_of_ne h]; intro a; simp) τ
-      rwa [Finset.sum_pi_single', if_pos (Finset.mem_univ _), Pi.single_eq_same] at this
-    have htm : ∀ (a : 𝓞 E) (cc : Fin n → L), rho hx' a (ψ ∘ cc) = ψ ∘ rho hx a cc :=
-      fun a cc => vec_inj hx' (by
-        show vec t _ xc' (tmap hx' _ _) = vec t _ xc' (_ ∘ tmap hx _ _)
-        rw [vec_tmap hx', hv, hv, vec_tmap hx, Category.assoc])
-    have pw : ∀ (j : ℕ) cc, (rho hx' α ^ j) (ψ ∘ cc) = ψ ∘ (rho hx α ^ j) cc := fun j => by
-      induction j with
-      | zero => exact fun _ => rfl
-      | succ j ih => intro cc; rw [pow_succ', pow_succ', Module.End.mul_apply, Module.End.mul_apply, ih]; exact htm α _
-    have pr : ∀ (Q : Polynomial c.F) cc, Polynomial.aeval (rho hx' α) (Q.map (algebraMap c.F k)) (ψ ∘ cc) =
-        ψ ∘ Polynomial.aeval (rho hx α) (Q.map (algebraMap c.F L)) cc := fun Q cc => by
-      induction Q using Polynomial.induction_on' with
-      | add p q hp hq =>
-        rw [Polynomial.map_add (f := _), Polynomial.map_add (f := _), map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hp, hq]
-        funext j; simp
-      | monomial j a =>
-        rw [Polynomial.map_monomial, Polynomial.map_monomial, Polynomial.aeval_monomial, Polynomial.aeval_monomial,
-          Module.End.mul_apply, Module.End.mul_apply, pw, Module.algebraMap_end_apply, Module.algebraMap_end_apply]
-        funext i
-        exact (map_mul ψ _ _).symm
-    have hP : (LinearMap.toMatrix' (proj (rho hx) (embK c) α τ)).map ψ =
-        LinearMap.toMatrix' (proj (rho hx') (embK c) α τ) := by
-      ext i j
-      have s : (Pi.single j 1 : Fin n → k) = ψ ∘ Pi.single j 1 := funext fun r => by
-        by_cases hj : r = j <;> simp [hj]
-      rw [Matrix.map_apply, LinearMap.toMatrix'_apply, LinearMap.toMatrix'_apply, s]
-      exact (congrFun (pr _ _) i).symm
-    intro v
-    rw [hP, ← Matrix.toLin'_apply, Matrix.toLin'_toMatrix', ReciprocityTheory.ChartRestriction.G.Chart.mem_eigLat_iff,
-      ReciprocityTheory.ChartRestriction.G.Chart.mem_eigLat_iff]
-    exact ⟨e₁ v, e₂ v⟩
-  obtain ⟨P, hP⟩ := exists_projectors φ₀ hx
+  obtain ⟨P, hP⟩ := exists_projectors c φ₀ hx
   let L : Type := X.presheaf.stalk z
   letI : Algebra Γ(X, U₀) L := TopCat.Presheaf.algebra_section_stalk X.presheaf ⟨z, hz⟩
   have hloc := hU₀.isLocalization_stalk ⟨z, hz⟩
@@ -260,7 +140,7 @@ theorem lieMult_univ (Xo : Moduli D l) (k : Type) [Field k] [IsAlgClosed k] (φ 
   · exact hd.2 fun h' => h (congrArg Subtype.val (φ.injective h'))
 
 theorem mult_conj {τ : E →+* ℂ} (hτ : τ (H.rt : E) = H.rt0) : D.mult (conjEmb τ) = D.q := by
-  refine if_neg fun h => ?_
+  refine ite_eq_right fun h => ?_
   have h3 : starRingEnd ℂ (τ (H.rt : E)) = H.rt0 := h
   rw [hτ] at h3
   have h5 : H.rt0.im = 0 := Complex.conj_eq_iff_im.1 h3
@@ -280,7 +160,7 @@ theorem GlobalTheory.DetLine.frameCover_univ : ∀ (E : Type) [Field E] [NumberF
     exists_affine_bases (t := Xo.univ.t) c (toX Xo c) (toF Xo c) D.mult (lieMult_univ c Xo) U z hz
   have h₁ := hb τ
   have h₂ := hb (conjEmb τ)
-  rw [show D.mult τ = D.p from if_pos hτ] at h₁
+  rw [show D.mult τ = D.p from ite_eq_left hτ] at h₁
   rw [mult_conj hτ] at h₂
   obtain ⟨v, hv⟩ := h₁
   obtain ⟨w, hw⟩ := h₂

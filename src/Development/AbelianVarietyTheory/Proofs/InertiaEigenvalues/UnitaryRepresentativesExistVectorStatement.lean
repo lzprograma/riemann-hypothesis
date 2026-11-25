@@ -123,7 +123,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DownLift
 
 namespace GlobalTheory.UnitaryToGl
@@ -221,7 +220,7 @@ theorem gder_single_X (p : D.what₂.Tau → ℕ) (τ : D.what₂.Tau) (c : Fin 
   rw [gder_X]
   by_cases hσ : σ = τ
   · subst hσ
-    simp only [if_true]
+    simp only [ite_true]
     by_cases hd : d = c
     · subst hd
       by_cases hi : (i : ℕ) < p σ <;> simp [ex, hi, Matrix.single_apply]
@@ -418,7 +417,7 @@ theorem sop_eq (w : GlobalTheory.ExportSeries.Weight D n) (τ : D.what₂.Tau) (
       · intro i _ hij
         by_cases hi : (i : ℕ) < w.p σ <;> simp [T, hi, hij]
       · simp
-    · rw [if_neg hσ, neg_zero]
+    · rw [ite_eq_right hσ, neg_zero]
       refine Finset.sum_eq_zero fun i _ => ?_
       by_cases hi : (i : ℕ) < w.p τ <;> simp [T, hi, Ne.symm hσ]
   have hA : GlobalTheory.LowestKType.sop (m := m) w τ a b = ∑ i : Fin m,
@@ -446,7 +445,7 @@ theorem sop_eq (w : GlobalTheory.ExportSeries.Weight D n) (τ : D.what₂.Tau) (
   · simp [T, hi, GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators.raiO, GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators.lowO, GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators.sgn]
     by_cases hab : a = b
     · subst hab
-      simp only [if_true, Pi.single_eq_same, mul_one, LinearMap.smul_apply, Module.End.one_apply]
+      simp only [ite_true, Pi.single_eq_same, mul_one, LinearMap.smul_apply, Module.End.one_apply]
       module
     · simp [hab]
 
@@ -495,24 +494,24 @@ theorem subst_comp_gder (p : D.what₂.Tau → ℕ) (τ : D.what₂.Tau) (g : Gl
     by_cases hσ : σ = τ
     · subst hσ
       rw [gder_X, hS]
-      simp only [if_true]
+      simp only [ite_true]
       by_cases hi : (i : ℕ) < p σ
-      · rw [if_pos hi, if_pos hi, map_neg, linS, lin, ← hgi]
+      · rw [ite_eq_left hi, ite_eq_left hi, map_neg, linS, lin, ← hgi]
         have h1 : ∀ d, GlobalTheory.ExportSeries.fockSubst (m := m) p g (X (σ, i, d)) = ∑ b, C (gi d b) * X (σ, i, b) := by
-          intro d; rw [hS, if_pos hi, hgi]
+          intro d; rw [hS, ite_eq_left hi, hgi]
         have h2 : ∀ b, gder (m := m) p σ Z' (X (σ, i, b)) = -∑ e, C (Z' b e) * X (σ, i, e) := by
-          intro b; rw [gder_X]; simp only [if_true]; rw [if_pos hi]
+          intro b; rw [gder_X]; simp only [ite_true]; rw [ite_eq_left hi]
         have key : ∀ b, ∑ d, Z c d * gi d b = ∑ d, gi c d * Z' d b := fun b => congrFun (congrFun e1 c) b
         have d1 := dsum (Z c) gi (fun b => X (σ, i, b))
         have d2 := dsum (gi c) Z' (fun b => X (σ, i, b))
         simp only [h1, h2, mul_neg, Finset.sum_neg_distrib] at d1 d2 ⊢
         rw [d1, d2]
         simp only [key]
-      · rw [if_neg hi, if_neg hi, linS, lin, ← hg0]
+      · rw [ite_eq_right hi, ite_eq_right hi, linS, lin, ← hg0]
         have h1 : ∀ d, GlobalTheory.ExportSeries.fockSubst (m := m) p g (X (σ, i, d)) = ∑ b, C (g0 b d) * X (σ, i, b) := by
-          intro d; rw [hS, if_neg hi, hg0]
+          intro d; rw [hS, ite_eq_right hi, hg0]
         have h2 : ∀ b, gder (m := m) p σ Z' (X (σ, i, b)) = ∑ e, C (Z' e b) * X (σ, i, e) := by
-          intro b; rw [gder_X]; simp only [if_true]; rw [if_neg hi]
+          intro b; rw [gder_X]; simp only [ite_true]; rw [ite_eq_right hi]
         have key : ∀ e, ∑ d, Z d c * g0 e d = ∑ b, g0 b c * Z' e b := by
           intro e
           have := congrFun (congrFun e2 e) c
@@ -525,8 +524,8 @@ theorem subst_comp_gder (p : D.what₂.Tau → ℕ) (τ : D.what₂.Tau) (g : Gl
         rw [d1, d2]
         simp only [key]
     · have h0 : ∀ b, gder (m := m) p τ Z' (X (σ, i, b)) = 0 := by
-        intro b; rw [gder_X]; exact if_neg hσ
-      rw [gder_X, if_neg hσ, map_zero, hS]
+        intro b; rw [gder_X]; exact ite_eq_right hσ
+      rw [gder_X, ite_eq_right hσ, map_zero, hS]
       split_ifs <;> simp only [lin, h0, mul_zero, Finset.sum_const_zero]
   refine LinearMap.ext fun P => ?_
   change GlobalTheory.ExportSeries.fockSubst (m := m) p g (gder p τ Z P) = gder p τ Z' (GlobalTheory.ExportSeries.fockSubst (m := m) p g P)
@@ -756,11 +755,8 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DownLift
 
-theorem _root_.GlobalTheory.T.unitary_representatives_exist_vector : ∀ (D : D7) (n m : ℕ) (w : GlobalTheory.ExportSeries.Weight D n) (BS : GlobalTheory.ExportSeries.GLR D n) (K : Type) [Group K] (r : K →* GlobalTheory.ExportSeries.GLR D n), (∀ g : GlobalTheory.ExportSeries.GLR D n, (∀ τ, ((GlobalTheory.ExportSeries.inBasis BS g τ : GL (Fin n) ℂ) : Matrix (Fin n) (Fin n) ℂ) ∈ Matrix.unitaryGroup (Fin n) ℂ) → ∃ k, r k = g) → ∀ (W : Type) [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W] (ρ : K →* Module.End ℂ W) (ψ : W →ₗ[ℂ] PolF D m n), Function.Injective ψ → (∀ (k : K) (x : W), ψ (ρ k x) = GlobalTheory.ExportSeries.fockGL m w BS (r k) (ψ x)) → ∀ (τ : D.what₂.Tau) (a b : Fin n), ∃ A : Module.End ℂ W, ∀ φ : W →ₗ[ℂ] PolF D m n, (∀ (k : K) (x : W), φ (ρ k x) = GlobalTheory.ExportSeries.fockGL m w BS (r k) (φ x)) → φ ∘ₗ A = GlobalTheory.LowestKType.sop w τ a b ∘ₗ φ := by
-  first | exact @GlobalTheory.UnitaryToGl.exists_transport_sop
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitaryRepresentativesExistVectorStatement =====

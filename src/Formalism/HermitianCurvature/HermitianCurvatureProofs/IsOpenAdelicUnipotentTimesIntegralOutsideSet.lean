@@ -6,54 +6,9 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentHei
 import Formalism.FormalDegreeBessel.FinalG
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CmHalfIntegralGeneratorMemAlgebraicClosure
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeisenbergLeviConjugationMeasure
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 @[expose] public section
@@ -129,7 +84,7 @@ lemma herm_e_right (u : Fin (2 * r + k + 1) → ℂ) (a : Fin r) : ⟪u, bvec (e
   have h1 : WeylGroupFacts.tau k r (eI k r a) = esI k r a := by
     apply Fin.ext; rw [B2x6.tau_out _ (by simp only [eI]; omega)]; simp [eI, esI]
   have h2 : WeylGroupFacts.sgn k r (eI k r a) = 1 := by
-    unfold WeylGroupFacts.sgn; rw [if_neg (by simp only [eI]; omega)]
+    unfold WeylGroupFacts.sgn; rw [ite_eq_right (by simp only [eI]; omega)]
   rw [h1, h2, one_mul]
 
 lemma herm_es_right (u : Fin (2 * r + k + 1) → ℂ) (a : Fin r) : ⟪u, bvec (esI k r a)⟫ = u (eI k r a) := by
@@ -137,7 +92,7 @@ lemma herm_es_right (u : Fin (2 * r + k + 1) → ℂ) (a : Fin r) : ⟪u, bvec (
   have h1 : WeylGroupFacts.tau k r (esI k r a) = eI k r a := by
     apply Fin.ext; rw [B2x6.tau_out _ (by simp only [esI]; omega)]; simp only [eI, esI]; omega
   have h2 : WeylGroupFacts.sgn k r (esI k r a) = 1 := by
-    unfold WeylGroupFacts.sgn; rw [if_neg (by simp only [esI]; omega)]
+    unfold WeylGroupFacts.sgn; rw [ite_eq_right (by simp only [esI]; omega)]
   rw [h1, h2, one_mul]
 
 lemma eI_ne_esI (a b : Fin r) : eI k r a ≠ esI k r b := by
@@ -158,12 +113,12 @@ lemma h_e_es (a b : Fin r) : ⟪bvec (eI k r a), bvec (esI k r b)⟫ = if a = b 
   rw [herm_es_right]; simp only [bvec, Pi.single_apply, eI_inj]
   by_cases h : a = b
   · simp [h]
-  · rw [if_neg h, if_neg (Ne.symm h)]
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
 lemma h_es_e (a b : Fin r) : ⟪bvec (esI k r a), bvec (eI k r b)⟫ = if a = b then 1 else 0 := by
   rw [herm_e_right]; simp only [bvec, Pi.single_apply, esI_inj]
   by_cases h : a = b
   · simp [h]
-  · rw [if_neg h, if_neg (Ne.symm h)]
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
 
 lemma uh_one : (1 : Mx k r) ∈ UH (Hpk k r) := B2x8.al_one_mem k r
 lemma uh_mul {g h : Mx k r} (hg : g ∈ UH (Hpk k r)) (hh : h ∈ UH (Hpk k r)) : g * h ∈ UH (Hpk k r) :=
@@ -292,15 +247,15 @@ lemma hx_up {x : Fin (2 * r + k + 1) → ℂ} (hx' : IsX k r l x) : hx k r l x �
   have h1' : ⟪𝐞, x⟫ = 1 := by rw [← h_conj _ Hh, h1, map_one]
   have h4 : ⟪𝐬, x⟫ = conj ⟪x, 𝐬⟫ := (h_conj _ Hh _ _).symm
   have hvp : ⟪x - 𝐬 - ⟪x, 𝐬⟫ • 𝐞, 𝐞⟫ = 0 := by
-    simp only [h_sub_left, h_smul_left, h1, h_es_e, h_e_e, if_true]; ring
+    simp only [h_sub_left, h_smul_left, h1, h_es_e, h_e_e, ite_true]; ring
   refine ⟨hs_glev (h_e_e l l) hvp ?_ ?_ ?_, ?_, fun y hy => ?_⟩
-  · simp only [h_sub_left, h_sub_right, h_smul_left, h_smul_right, h1, h1', h2, h4, h_es_e, h_e_e, h_e_es, h_es_es, if_true]
+  · simp only [h_sub_left, h_sub_right, h_smul_left, h_smul_right, h1, h1', h2, h4, h_es_e, h_e_e, h_e_es, h_es_es, ite_true]
     ring
   · intro a ha
-    exact ⟨h_e_e a l, by rw [h_es_e, if_neg (ne_of_val_lt ha)]⟩
+    exact ⟨h_e_e a l, by rw [h_es_e, ite_eq_right (ne_of_val_lt ha)]⟩
   · intro a ha
     simp only [h_sub_right, h_smul_right, (h3 a ha).1, (h3 a ha).2, h_e_e, h_es_es, h_e_es, h_es_e,
-      if_neg (ne_of_val_lt ha)]
+      ite_eq_right (ne_of_val_lt ha)]
     constructor <;> ring
   · unfold hx; rw [hs_act, h_e_e]
     have : ⟪𝐞, x - 𝐬 - ⟪x, 𝐬⟫ • 𝐞⟫ = 0 := by rw [← h_conj _ Hh, hvp, map_zero]
@@ -313,17 +268,17 @@ lemma hx_es {x : Fin (2 * r + k + 1) → ℂ} (hx' : IsX k r l x) : hx k r l x *
   have h4 : ⟪𝐬, x⟫ = conj ⟪x, 𝐬⟫ := (h_conj _ Hh _ _).symm
   unfold hx; rw [hs_act]
   have : ⟪𝐬, x - 𝐬 - ⟪x, 𝐬⟫ • 𝐞⟫ = 0 := by
-    simp only [h_sub_right, h_smul_right, h4, h_es_es, h_es_e, if_true]; ring
-  rw [this, h_es_e, if_pos rfl]
+    simp only [h_sub_right, h_smul_right, h4, h_es_es, h_es_e, ite_true]; ring
+  rw [this, h_es_e, ite_eq_left rfl]
   simp
 
 lemma isX_of_glev {g : Mx k r} (hg : g ∈ Glev k r l.castSucc) (he : g *ᵥ 𝐞 = 𝐞) : IsX k r l (g *ᵥ 𝐬) := by
   refine ⟨?_, ?_, fun a ha => ⟨?_, ?_⟩⟩
   · conv_lhs => rw [← he]
-    rw [uh_herm hg.1, h_es_e, if_pos rfl]
+    rw [uh_herm hg.1, h_es_e, ite_eq_left rfl]
   · rw [uh_herm hg.1, h_es_es]
   · conv_lhs => rw [← (hg.2 a (by simpa using ha)).1]
-    rw [uh_herm hg.1, h_e_es, if_neg (ne_of_val_lt ha)]
+    rw [uh_herm hg.1, h_e_es, ite_eq_right (ne_of_val_lt ha)]
   · conv_lhs => rw [← (hg.2 a (by simpa using ha)).2]
     rw [uh_herm hg.1, h_es_es]
 
@@ -331,14 +286,14 @@ lemma up_unique {u u' : Mx k r} (hu : u ∈ UP k r l) (hu' : u' ∈ UP k r l) (h
   apply mat_ext
   intro y
   have hy0 : ⟪y - ⟪y, 𝐞⟫ • 𝐬, 𝐞⟫ = 0 := by
-    simp only [h_sub_left, h_smul_left, h_es_e, if_true]; ring
+    simp only [h_sub_left, h_smul_left, h_es_e, ite_true]; ring
   obtain ⟨t, ht⟩ := hu.2.2 _ hy0
   obtain ⟨t', ht'⟩ := hu'.2.2 _ hy0
   have e1 := uh_herm hu.1.1 (y - ⟪y, 𝐞⟫ • 𝐬) 𝐬
   have e2 := uh_herm hu'.1.1 (y - ⟪y, 𝐞⟫ • 𝐬) 𝐬
   have e3 : ⟪𝐞, u' *ᵥ 𝐬⟫ = 1 := by
     conv_lhs => rw [← hu'.2.1]
-    rw [uh_herm hu'.1.1, h_e_es, if_pos rfl]
+    rw [uh_herm hu'.1.1, h_e_es, ite_eq_left rfl]
   rw [ht, h, h_add_left, h_smul_left, e3] at e1
   rw [ht', h_add_left, h_smul_left, e3] at e2
   have htt : t = t' := by linear_combination e1 - e2
@@ -389,39 +344,30 @@ lemma weyl_cell_mulVec (c : ℂ) (y : Fin (2 * r + k + 1) → ℂ) :
   simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, bvec, Pi.single_apply, mulVec, dotProduct]
   by_cases h2 : p = esI k r l
   · subst h2
-    simp only [weyl_cell_apply_dual_basis, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, (eI_ne_esI l l).symm, if_false]
+    simp only [weyl_cell_apply_dual_basis, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, (eI_ne_esI l l).symm, ite_false]
     ring
   · by_cases h1 : p = eI k r l
     · subst h1
-      simp only [weyl_cell_apply_basis, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, eI_ne_esI l l, if_false]
+      simp only [weyl_cell_apply_basis, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, eI_ne_esI l l, ite_false]
       rw [Complex.star_def]; ring
-    · simp only [weyl_cell_apply_other c h1 h2, ite_mul, zero_mul, one_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, h1, h2,
-        if_false]
+    · simp only [weyl_cell_apply_other c h1 h2, ite_mul, zero_mul, one_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, h1, h2,
+        ite_false]
       ring
 
 lemma w1_mulVec_bvec_eI (c : ℂ) : w1 k r l c *ᵥ 𝐞 = c • 𝐬 := by
-  rw [weyl_cell_mulVec, h_e_e, h_e_es, if_pos rfl]
+  rw [weyl_cell_mulVec, h_e_e, h_e_es, ite_eq_left rfl]
   simp
 
 lemma w1_mulVec_bvec_esI (c : ℂ) : w1 k r l c *ᵥ 𝐬 = (conj c)⁻¹ • 𝐞 := by
-  rw [weyl_cell_mulVec, h_es_e, h_es_es, if_pos rfl]
+  rw [weyl_cell_mulVec, h_es_e, h_es_es, ite_eq_left rfl]
   simp
 
 lemma weyl_cell_mem_level_group {c : ℂ} (hc : c ≠ 0) : w1 k r l c ∈ Glev k r l.castSucc := by
   apply PI.IsotropicReflections.reflection_mem_Glev_castSucc <;> assumption
 
 lemma w1_commute_of_mem_Glev (c : ℂ) {g : Mx k r} (hg : g ∈ Glev k r l.succ) : w1 k r l c * g = g * w1 k r l c := by
-  obtain ⟨hg0, h1, h2⟩ := (glev_succ_iff l g).1 hg
-  apply mat_ext
-  intro y
-  have e1 : ⟪g *ᵥ y, 𝐞⟫ = ⟪y, 𝐞⟫ := by
-    conv_lhs => rw [← h1]
-    exact uh_herm hg0.1 _ _
-  have e2 : ⟪g *ᵥ y, 𝐬⟫ = ⟪y, 𝐬⟫ := by
-    conv_lhs => rw [← h2]
-    exact uh_herm hg0.1 _ _
-  rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, weyl_cell_mulVec, weyl_cell_mulVec, e1, e2, Matrix.mulVec_add, Matrix.mulVec_add,
-    Matrix.mulVec_smul, Matrix.mulVec_smul, h1, h2]
+  intros
+  apply _root_.PI.IsotropicReflections.w1_commute_of_mem_Glev <;> assumption
 
 lemma weyl_cell_mul_conj {c : ℂ} (hc : c ≠ 0) : w1 k r l c * w1 k r l (conj c) = 1 := by
   have hc' : conj c ≠ 0 := (map_ne_zero _).2 hc
@@ -462,7 +408,7 @@ lemma dec_exists {g : Mx k r} (hg : g ∈ Glev k r l.castSucc) (hc : ⟪g *ᵥ �
       rw [uh_herm hg.1, h_e_e, mul_zero]
     · rw [h_smul_right]
       conv_lhs => rw [← (hg.2 a (by simpa using ha)).2]
-      rw [uh_herm hg.1, h_es_e, if_neg (ne_of_val_lt ha), mul_zero]
+      rw [uh_herm hg.1, h_es_e, ite_eq_right (ne_of_val_lt ha), mul_zero]
   have hu := hx_up hX
   set u := hx k r l (c⁻¹ • (g *ᵥ 𝐞))
   have hues : u *ᵥ 𝐬 = c⁻¹ • (g *ᵥ 𝐞) := hx_es hX
@@ -568,7 +514,7 @@ lemma nlev_e {n : Mx k r} (hn : n ∈ Nlev k r l.castSucc) : n *ᵥ 𝐞 = 𝐞 
     have hne : l ≠ ⟨i.val, by omega⟩ := fun h => hi (by rw [h])
     rw [← e, ← herm_es_right (n *ᵥ bvec (eI k r l))]
     conv_lhs => rw [← (hn.2.2 _ ha).2]
-    rw [uh_herm hn.2.1, h_e_es, if_neg hne]
+    rw [uh_herm hn.2.1, h_e_es, ite_eq_right hne]
     symm
     apply Pi.single_eq_of_ne
     intro h; exact hne (eI_inj.1 h).symm
@@ -917,7 +863,7 @@ lemma ell_lev (z : Fin (2 * r' + k + 1) → ℂ) (g : Mx k r') :
       exact ⟨⟨a.val - 1, by omega⟩, Fin.ext (by simp only; omega)⟩
     have e : eI k (1 + r') a = B2x6.iF k r' := Fin.ext (by rw [B2x6.iF_val]; exact ha0)
     split_ifs with h
-    · rw [e, B2x6.lev_F, if_neg]
+    · rw [e, B2x6.lev_F, ite_eq_right]
       intro h2
       have := congrArg Fin.val h2
       rw [B2x6.iF_val] at this

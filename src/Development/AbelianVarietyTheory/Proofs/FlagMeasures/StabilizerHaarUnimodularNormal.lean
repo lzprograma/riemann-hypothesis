@@ -118,7 +118,7 @@ theorem strIn_apply (β : Fin r → ℕ) (x : UTin β → ℂ) (a b : Fin r) :
     strIn β x a b = if h : a < b ∧ β a = β b then x ⟨⟨(a, b), h.1⟩, h.2⟩ else 0 := rfl
 
 theorem strIn_zero (β : Fin r → ℕ) (x : UTin β → ℂ) {a b : Fin r} (h : ¬ (a < b ∧ β a = β b)) : strIn β x a b = 0 :=
-  dif_neg h
+  dite_eq_right h
 
 theorem upperIn_eq (β : Fin r → ℕ) (x : UTin β → ℂ) : upperIn β x = 1 + strIn β x := by
   ext a b
@@ -201,7 +201,7 @@ theorem unitary_embed_parabolic_commute (v : Matrix (Fin r) (Fin r) ℂ) (B B' :
   induction x using Rad.cases3 <;> induction y using Rad.cases3 <;>
     simp only [Rad.pEl_ee, Rad.pEl_ew, Rad.pEl_es, Rad.pEl_we, Rad.pEl_ww, Rad.pEl_ws, Rad.pEl_se, Rad.pEl_sw, Rad.pEl_ss,
       UEmb.u_ee, UEmb.u_es, UEmb.u_se, UEmb.u_ss, em, me, mm, ms, sm, mul_zero, zero_mul, Finset.sum_const_zero,
-      add_zero, zero_add, mul_ite, ite_mul, mul_one, one_mul, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      add_zero, zero_add, mul_ite, ite_mul, mul_one, one_mul, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   · simp [e1, Finset.sum_mul, mul_assoc]
   · exact e2 _ _
   · exact e3 _ _
@@ -258,7 +258,7 @@ def TopC (j : ℕ) (y : Amb k r) : Prop :=
   (∀ a : Fin r, a.val < j → y.1 a = 0) ∧ y.2ᴴ = -y.2 ∧ ∀ a b : Fin r, a.val < j → y.2 a b = 0
 
 theorem topC_topL (q : PTop k r j) : TopC j (topL k r j q) := by
-  refine ⟨fun a ha => by rw [topL_fst, dif_neg (by omega)], Rad.skewM_skew _ _, fun a b ha => ?_⟩
+  refine ⟨fun a ha => by rw [topL_fst, dite_eq_right (by omega)], Rad.skewM_skew _ _, fun a b ha => ?_⟩
   simp only [topL_snd, skewM]
   split_ifs with h1 h2 h3 h4 h5
   · omega

@@ -4,53 +4,6 @@ public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerPr
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LocalQuadraticDensityNearOne
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.StandardLocalHaarProperties
 import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -108,51 +61,9 @@ theorem pi_const_smul (ι : Type) [Fintype ι] {X : Type} [MeasurableSpace X] (�
 
 private theorem sigmaFinite_of_isStdV {lam : Measure (Fv F v)} (hstd : IsStdV v lam) :
     SigmaFinite lam := by
-  have := borel_Fv (F := F) (v := v)
-  obtain ⟨π, hπ⟩ := exists_unif v
-  obtain ⟨-, hmap, -, -⟩ := _root_.GlobalTheory.CompanionTheory.SW.Vol.volumes_in_completion F v lam hstd
-  have hm := hmap π hπ
-  have hO : MeasurableSet (v.adicCompletionIntegers F : Set (Fv F v)) :=
-    (Valued.isOpen_valuationSubring (Fv F v)).measurableSet
-  have hpk : ∀ k : ℕ, Valued.v (π ^ k) = WithZero.exp (-(k : ℤ)) := by
-    intro k
-    induction k with
-    | zero => simp
-    | succ k ihk =>
-      rw [pow_succ, map_mul, ihk, hπ, ← WithZero.exp_add]
-      congr 1
-      push_cast
-      ring
-  let S : ℕ → Set (Fv F v) := fun n => (fun x => π ^ n * x) ⁻¹' (v.adicCompletionIntegers F : Set (Fv F v))
-  have hSmeas : ∀ n, MeasurableSet (S n) := fun n => (measurable_const_mul _) hO
-  have hSfin : ∀ n, lam (S n) = (Ideal.absNorm v.asIdeal : ℝ≥0∞) ^ n := by
-    intro n
-    induction n with
-    | zero =>
-      show lam ((fun x => π ^ 0 * x) ⁻¹' (v.adicCompletionIntegers F : Set (Fv F v))) = _
-      simp only [pow_zero, one_mul, Set.preimage_id', hstd.2]
-    | succ n ihn =>
-      have hS : S (n + 1) = (fun t => π * t) ⁻¹' S n := by
-        ext x
-        simp only [S, Set.mem_preimage, pow_succ, mul_assoc]
-      rw [hS, ← Measure.map_apply (measurable_const_mul π) (hSmeas n), hm, Measure.smul_apply, ihn,
-        smul_eq_mul, pow_succ, mul_comm]
-  refine ⟨⟨⟨S, fun _ => trivial, fun n => ?_, ?_⟩⟩⟩
-  · rw [hSfin]
-    exact ENNReal.pow_lt_top (ENNReal.natCast_lt_top _)
-  · refine Set.eq_univ_of_forall fun x => Set.mem_iUnion.mpr ?_
-    rcases eq_or_ne x 0 with rfl | hx
-    · refine ⟨0, ?_⟩
-      show Valued.v (π ^ 0 * 0) ≤ 1
-      rw [mul_zero, map_zero]
-      exact zero_le
-    · have hvx : Valued.v x ≠ 0 := (Valuation.ne_zero_iff _).mpr hx
-      refine ⟨(WithZero.log (Valued.v x)).toNat, ?_⟩
-      show Valued.v (π ^ (WithZero.log (Valued.v x)).toNat * x) ≤ 1
-      rw [map_mul, hpk, ← WithZero.exp_log hvx, ← WithZero.exp_add]
-      refine (WithZero.exp_le_exp.mpr ?_).trans_eq WithZero.exp_zero
-      rw [WithZero.log_exp]
-      omega
+  obtain ⟨-, hl, hs, -⟩ := _root_.GlobalTheory.CompanionTheory.SW.LocFv.isLocR_Fv F v
+  haveI := hstd.1
+  exact sigmaFinite_of_locallyFinite
 
 theorem pi_scale {lam : Measure (Fv F v)} (hstd : IsStdV v lam) {π : Fv F v}
     (hπ : Valued.v π = WithZero.exp (-1 : ℤ)) (T : Set (ι → Fv F v)) :

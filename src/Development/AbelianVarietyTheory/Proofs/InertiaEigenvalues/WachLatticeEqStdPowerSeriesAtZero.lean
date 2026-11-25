@@ -57,7 +57,7 @@ import Mathlib.Tactic.Linter.HaveILetI
 -- Members: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionLatticeFullDescends, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeEqStdPowerSeriesAtZero
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionLatticeFullDescends =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionLatticeFullDescends", "h": "module\n\npublic import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\npublic import Mathlib.RingTheory.PowerSeries.Inverse\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionLatticeFullDescends", "h": "module\n\npublic import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\npublic import Mathlib.RingTheory.PowerSeries.Inverse\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\nimport Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnramifiedSubfieldLeCyclotomicExt\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -115,10 +115,6 @@ theorem conv_X_pow (a : ℕ) (u : ℤ → M) (k : ℤ) :
   · simp
   · intro j hj
     simp [PowerSeries.coeff_X_pow, hj]
-
-theorem conv_one (u : ℤ → M) : conv (1 : PowerSeries L) u = u := by
-  funext k
-  simpa using conv_X_pow (L := L) 0 u k
 
 theorem conv_mul (a b : PowerSeries L) {u : ℤ → M} (hu : Bd u) :
     conv (a * b) u = conv a (conv b u) := by
@@ -430,7 +426,7 @@ theorem full_down_generic (W : LocWach PD LL O v n) {RW : Type} [CommRing RW] [A
         (Tw (PD.p : LL) (φVB PD (LL := LL) (V := T.V)) (C.levB T (i - 1) (ζ ^ PD.p) x)) :=
       funext fun k => C.levB_φ T hT i ζ hζ x m hx k
     rw [this]
-    exact hΛ _ _ ⟨_, Submodule.subset_span ⟨1, x, (conv_one _).symm⟩, rfl⟩)
+    exact hΛ _ _ ⟨_, Submodule.subset_span ⟨1, x, (GlobalTheory.NL.Model.conv_one _).symm⟩, rfl⟩)
   refine full_of_conv hp _ (phi_inj T) _ _ (phi_mem W T i) _ _ (W.lev i ζ (W.Q ^ k)) ?_ ?_ hF
   · rw [map_pow]
     exact pow_ne_zero _ (lev_Q_ne W C.lev_φ _ i ζ hζ)
@@ -443,11 +439,11 @@ end Generic
 
 
 
-theorem full_down : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let W := (HW l).W K s LL h; let E := ((F l).E K s LL h).tie; let C := Cm l; ∀ T : Lt K LL, IsCrys ((D.loc l).PD K) T.ρ → ∀ (i : Let K) (ζ : ↥LL.1), (∃ j : ℕ, IsPrimitiveRoot ζ (l ^ j)) → Full (Di (HW l) h T i) (Lat C h T i ζ) → Full (Di (HW l) h T (i - 1)) (Lat C h T (i - 1) (ζ ^ l)) := by
-  intro D HW F Cm l _ K s LL h W E C T hT i ζ hζ hF
-  have hp : ((D.loc l).PD K).p = l := (D.loc l).PD_p K
+theorem full_down : ∀ (loc : LocTheory) (locA : ∀ (l : ℕ) [Fact l.Prime], LocAinf l (loc l)) (HW : HWOf loc) (F : FonOf loc locA HW) (Cm : CmpOf loc locA HW F) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let W := (HW l).W K s LL h; let E := ((F l).E K s LL h).tie; let C := Cm l; ∀ T : Lt K LL, IsCrys ((loc l).PD K) T.ρ → ∀ (i : Let K) (ζ : ↥LL.1), (∃ j : ℕ, IsPrimitiveRoot ζ (l ^ j)) → Full (Di (HW l) h T i) (Lat C h T i ζ) → Full (Di (HW l) h T (i - 1)) (Lat C h T (i - 1) (ζ ^ l)) := by
+  intro loc locA HW F Cm l _ K s LL h W E C T hT i ζ hζ hF
+  have hp : ((loc l).PD K).p = l := (loc l).PD_p K
   have := full_down_generic W (C.C K s LL h).tie T hT i ζ (by rw [hp]; exact hζ) hF
-  have e : ζ ^ ((D.loc l).PD K).p = ζ ^ l := by rw [hp]
+  have e : ζ ^ ((loc l).PD K).p = ζ ^ l := by rw [hp]
   rw [e] at this
   exact this
 
@@ -651,8 +647,8 @@ theorem lower (C : LocCmpT l P AI H F) (h : Good K s LL) (T : Lt K LL) (hT : IsC
 
 end Concrete
 
-theorem lat_one_std : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let W := (HW l).W K s LL h; let E := ((F l).E K s LL h).tie; let C := Cm l; ∀ T : Lt K LL, IsCrys ((D.loc l).PD K) T.ρ → ∀ i : Let K, Std (Di (HW l) h T i) (Lat C h T i 1) := by
-  intro D HW F Cm l _ K s LL h W E C T hT i
+theorem lat_one_std : ∀ (loc : LocTheory) (locA : ∀ (l : ℕ) [Fact l.Prime], LocAinf l (loc l)) (locT : ∀ (l : ℕ) [Fact l.Prime], Formalism.BasicNotions.LocTied l (loc l) (locA l)) (HW : HWOf loc) (F : FonOf loc locA HW) (Cm : CmpOf loc locA HW F) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let W := (HW l).W K s LL h; let E := ((F l).E K s LL h).tie; let C := Cm l; ∀ T : Lt K LL, IsCrys ((loc l).PD K) T.ρ → ∀ i : Let K, Std (Di (HW l) h T i) (Lat C h T i 1) := by
+  intro loc locA locT HW F Cm l _ K s LL h W E C T hT i
   have down : ∀ (n : ℕ) (i : Let K) (ζ : ↥LL.1), IsPrimitiveRoot ζ (l ^ n) →
       Full (Di (HW l) h T (i + n)) (Lat C h T (i + n) ζ) → Full (Di (HW l) h T i) (Lat C h T i 1) := by
     intro n
@@ -663,21 +659,21 @@ theorem lat_one_std : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F :
       simpa using hF
     | succ n ih =>
       intro i ζ hζ hF
-      have h1 := _root_.GlobalTheory.NL.FullDown.full_down D HW F Cm l K s LL h T hT _ ζ ⟨_, hζ⟩ hF
+      have h1 := _root_.GlobalTheory.NL.FullDown.full_down loc locA HW F Cm l K s LL h T hT _ ζ ⟨_, hζ⟩ hF
       have e : i + ((n + 1 : ℕ) : Let K) - 1 = i + n := by push_cast; ring
       rw [e] at h1
       exact ih i (ζ ^ l) (hζ.pow (pow_pos (Fact.out : l.Prime).pos _) (pow_succ' l n)) h1
   obtain ⟨ζ, -, -, hζ⟩ := GlobalTheory.exists_isPt_primitiveRoot (HW l) h i
-  have hF := down s i ζ hζ (_root_.GlobalTheory.NL.FullLevel.full_lat D HW F Cm l K s LL h T hT _ ζ hζ)
-  have hG := _root_.GlobalTheory.NL.GradedLat.graded_of_level_le D HW F Cm l K s LL h T hT i 1 (one_pow _) hF
+  have hF := down s i ζ hζ (_root_.GlobalTheory.NL.FullLevel.full_lat loc locA locT HW F Cm l K s LL h T hT _ ζ hζ)
+  have hG := _root_.GlobalTheory.NL.GradedLat.graded_of_level_le loc locA HW F Cm l K s LL h T hT i 1 (one_pow _) hF
   haveI : Module.Finite (AA K LL) ↥(W.N T) := Module.Finite.iff_fg.2 (W.N_fg T)
   set_option synthInstance.maxHeartbeats 200000 in
   have hex : ∀ (a : AA K LL) (x : ↥(W.N T)),
       ex C h T i 1 (a • x) = conv (W.lev i 1 a) (ex C h T i 1 x) := by
     intro a x
     funext k
-    have hinj : Function.Injective (ιV ((D.loc l).PD K) : T.V ⊗[ℚ_[l]] (D.loc l).R.B →ₗ[↥LL.1] T.V ⊗[ℚ_[l]] (D.loc l).R.BdR) := by
-      have hf : Function.Injective ((((D.loc l).PD K).ι.toLinearMap).restrictScalars ℚ_[l]) := ((D.loc l).PD K).ι_inj
+    have hinj : Function.Injective (ιV ((loc l).PD K) : T.V ⊗[ℚ_[l]] (loc l).R.B →ₗ[↥LL.1] T.V ⊗[ℚ_[l]] (loc l).R.BdR) := by
+      have hf : Function.Injective ((((loc l).PD K).ι.toLinearMap).restrictScalars ℚ_[l]) := ((loc l).PD K).ι_inj
       exact Module.Flat.lTensor_preserves_injective_linearMap (M := T.V) _ hf
     apply hinj
     obtain ⟨m, hm⟩ := (C.C K s LL h).tie.levB_supp T i 1 x

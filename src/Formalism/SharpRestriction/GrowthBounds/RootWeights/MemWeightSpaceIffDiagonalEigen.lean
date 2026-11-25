@@ -1,54 +1,9 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.RootWeights.NontrivialIsotypicWeightZeroKilled
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.Eigenspace.Minpoly
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
 public import Mathlib.LinearAlgebra.Eigenspace.Basic
 
@@ -195,14 +150,14 @@ private theorem exists_binomial_transform_inverse (f : ℕ → ℤ) (M : ℕ) : 
     rcases Nat.lt_or_ge N (M + 1) with h | h
     · have e : ∑ k ∈ Finset.range (N + 1), (N.choose k : ℤ) * (if k = M + 1 then f (M + 1) - s else d k)
           = ∑ k ∈ Finset.range (N + 1), (N.choose k : ℤ) * d k :=
-        Finset.sum_congr rfl fun k hk => by rw [if_neg (by simp at hk; omega)]
+        Finset.sum_congr rfl fun k hk => by rw [ite_eq_right (by simp at hk; omega)]
       rw [e, hd N (by omega)]
     · obtain rfl : N = M + 1 := by omega
       rw [Finset.sum_range_succ]
       have e : ∑ k ∈ Finset.range (M + 1), ((M + 1).choose k : ℤ) *
           (if k = M + 1 then f (M + 1) - s else d k) = s := by
         rw [hs]
-        exact Finset.sum_congr rfl fun k hk => by rw [if_neg (by simp at hk; omega)]
+        exact Finset.sum_congr rfl fun k hk => by rw [ite_eq_right (by simp at hk; omega)]
       rw [e]
       simp
 
@@ -256,17 +211,17 @@ theorem weight_projections_integral_findim [CharZero K] [FiniteDimensional K V] 
       | cons b L ih =>
         rw [List.map_cons, List.prod_cons, Module.End.mul_apply, ih]
         by_cases hL : ∀ a ∈ L, ν a = μ a
-        · rw [if_pos hL, hux μ b ν x hx]
+        · rw [ite_eq_left hL, hux μ b ν x hx]
           by_cases hb : ν b = μ b
-          · rw [if_pos hb, if_pos (fun a ha => by rcases List.mem_cons.mp ha with rfl | ha; exacts [hb, hL a ha])]
-          · rw [if_neg hb, if_neg (fun h => hb (h b (List.mem_cons.mpr (Or.inl rfl))))]
-        · rw [if_neg hL, map_zero, if_neg (fun h => hL fun a ha => h a (List.mem_cons_of_mem _ ha))]
+          · rw [ite_eq_left hb, ite_eq_left (fun a ha => by rcases List.mem_cons.mp ha with rfl | ha; exacts [hb, hL a ha])]
+          · rw [ite_eq_right hb, ite_eq_right (fun h => hb (h b (List.mem_cons.mpr (Or.inl rfl))))]
+        · rw [ite_eq_right hL, map_zero, ite_eq_right (fun h => hL fun a ha => h a (List.mem_cons_of_mem _ ha))]
     show ((List.finRange n).map (u μ)).prod x = _
     rw [key]
     by_cases h : ν = μ
     · subst h
       simp
-    · rw [if_neg h, if_neg]
+    · rw [ite_eq_right h, ite_eq_right]
       intro h'
       exact h (funext fun a => h' a (List.mem_finRange a))
 

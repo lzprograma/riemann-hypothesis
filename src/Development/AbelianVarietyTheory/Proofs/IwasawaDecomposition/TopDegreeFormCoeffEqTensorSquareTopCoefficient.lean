@@ -121,7 +121,7 @@ theorem topCoeff_prod {m : ℕ} (x : Fin m → Fin n × Fin n) :
     rw [h0]
     simp only [AlternatingMap.zero_apply, mul_zero]
     refine Finset.sum_eq_zero fun w _ => ?_
-    rw [if_neg, mul_zero]
+    rw [ite_eq_right, mul_zero]
     intro heq
     have := congrArg Multiset.card heq
     simp at this
@@ -158,7 +158,7 @@ theorem topCoeff_prod {m : ℕ} (x : Fin m → Fin n × Fin n) :
       · rw [det_single_not_inj b h, mul_zero]
     rw [this]
     refine Finset.sum_eq_zero fun w _ => ?_
-    rw [if_neg, mul_zero]
+    rw [ite_eq_right, mul_zero]
     exact fun heq => hab (hcond w heq)
   obtain ⟨ha, hb⟩ := hab
   let π : Equiv.Perm (Fin m) := Equiv.ofBijective a (Finite.injective_iff_bijective.mp ha)
@@ -172,11 +172,11 @@ theorem topCoeff_prod {m : ℕ} (x : Fin m → Fin n × Fin n) :
   have hmap : Finset.univ.val.map x = Finset.univ.val.map (fun c => (c, (τ * π⁻¹) c)) := by
     rw [hx, ← Multiset.map_map, Multiset.map_univ_val_equiv]
   rw [Finset.sum_eq_single (τ * π⁻¹)]
-  · rw [if_pos hmap, mul_one, Equiv.Perm.sign_mul, Equiv.Perm.sign_inv]
+  · rw [ite_eq_left hmap, mul_one, Equiv.Perm.sign_mul, Equiv.Perm.sign_inv]
     push_cast
     ring
   · intro w _ hw
-    rw [if_neg, mul_zero]
+    rw [ite_eq_right, mul_zero]
     intro heq
     apply hw
     ext c

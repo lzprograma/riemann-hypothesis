@@ -72,8 +72,8 @@ theorem heisOp_eq_sum_mul_pderiv : ∀ {P Q R S : ℕ} (c : Matrix (Ix P Q) (Ix 
   refine Finset.sum_congr rfl ?_
   rintro ⟨a, b⟩ -
   rcases a with a | a <;> rcases b with b | b <;>
-    simp only [raiB, lowB, linePos, lineSign, coefM_one, coefM_neg_one, coefD_one, coefD_neg_one, if_true,
-      Bool.false_eq_true, if_false] <;>
+    simp only [raiB, lowB, linePos, lineSign, coefM_one, coefM_neg_one, coefD_one, coefD_neg_one, ite_true,
+      Bool.false_eq_true, ite_false] <;>
     module
 
 end GlobalTheory.CCRFock

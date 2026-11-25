@@ -41,11 +41,11 @@ def symPerm (n k rS : ℕ) : Equiv.Perm (Fin n) :=
   else Equiv.refl _
 
 theorem symPerm_val {n k rS : ℕ} (h : k + rS ≤ n) (i : Fin n) : (symPerm n k rS i).val = symIdx k rS i.val := by
-  rw [symPerm, dif_pos h]
+  rw [symPerm, dite_eq_left h]
   rfl
 
 theorem symPerm_symm_val {n k rS : ℕ} (h : k + rS ≤ n) (i : Fin n) : ((symPerm n k rS).symm i).val = symIdxInv k rS i.val := by
-  rw [symPerm, dif_pos h]
+  rw [symPerm, dite_eq_left h]
   rfl
 
 variable (κ : Type) [CommRing κ]
@@ -107,7 +107,7 @@ variable {κ : Type} [CommRing κ]
 
 theorem fine_self_lt {n i : ℕ} (h : i < n) : fine n [] i = i := by
   unfold fine
-  rw [if_pos h]
+  rw [ite_eq_left h]
 
 theorem mem_HPsymF_iff {n k rS : ℕ} (h : k + rS ≤ n) {M : GL (Fin n) κ} :
     M ∈ HPsymF κ n k rS ↔
@@ -156,21 +156,21 @@ def insEquiv (N c k N' : ℕ) (hk : k ≤ N) (hN : N' = N + c) : Fin N' ≃ Fin 
     | Sum.inr j => ⟨k + j.val, by omega⟩
   left_inv a := by
     by_cases h1 : a.val < k
-    · simp only [dif_pos h1]; apply Fin.ext; simp [h1]
+    · simp only [dite_eq_left h1]; apply Fin.ext; simp [h1]
     · by_cases h2 : a.val < k + c
-      · simp only [dif_neg h1, dif_pos h2]; apply Fin.ext; simp; omega
-      · simp only [dif_neg h1, dif_neg h2]; apply Fin.ext; simp; split_ifs <;> omega
+      · simp only [dite_eq_right h1, dite_eq_left h2]; apply Fin.ext; simp; omega
+      · simp only [dite_eq_right h1, dite_eq_right h2]; apply Fin.ext; simp; split_ifs <;> omega
   right_inv x := by
     rcases x with i | j
     · by_cases h : i.val < k
       · simp [h]
       · have h1 : ¬ i.val + c < k := by omega
         have h2 : ¬ i.val + c < k + c := by omega
-        simp only [if_neg h, dif_neg h1, dif_neg h2]
+        simp only [ite_eq_right h, dite_eq_right h1, dite_eq_right h2]
         congr 1; apply Fin.ext; simp
     · have h1 : ¬ k + j.val < k := by omega
       have h2 : k + j.val < k + c := by omega
-      simp only [dif_neg h1, dif_pos h2]
+      simp only [dite_eq_right h1, dite_eq_left h2]
       congr 1; apply Fin.ext; simp
 
 variable (κ : Type) [CommRing κ]
@@ -194,55 +194,6 @@ end InsId
 section SymNonVac
 
 variable {κ : Type} [CommRing κ]
-
-def elemGL {n : ℕ} (i j : Fin n) (hij : i ≠ j) (c : κ) : GL (Fin n) κ :=
-  ⟨Matrix.transvection i j c, Matrix.transvection i j (-c),
-    (Matrix.transvection_mul_transvection_same i j hij c (-c)).trans (by rw [add_neg_cancel, Matrix.transvection_zero]),
-    (Matrix.transvection_mul_transvection_same i j hij (-c) c).trans (by rw [neg_add_cancel, Matrix.transvection_zero])⟩
-
-theorem elemGL_apply {n : ℕ} (i j : Fin n) (hij : i ≠ j) (c : κ) (a b : Fin n) :
-    ((elemGL i j hij c : GL (Fin n) κ) : Matrix (Fin n) (Fin n) κ) a b = (1 : Matrix (Fin n) (Fin n) κ) a b + if a = i ∧ b = j then c else 0 := by
-  show (Matrix.transvection i j c) a b = _
-  rw [Matrix.transvection, Matrix.add_apply]
-  congr 1
-  by_cases h1 : a = i
-  · subst h1
-    by_cases h2 : b = j
-    · subst h2; simp
-    · simp [h2, Ne.symm h2]
-  · simp [h1, Ne.symm h1]
-
-theorem HPsymF_not_le_HU [Nontrivial κ] {n k rS : ℕ} (hn : n = k + 2 * rS + 1) (hk : 1 ≤ k) (hr : 1 ≤ rS) :
-    ¬ HPsymF κ n k rS ≤ HU κ n := by
-  intro hle
-  have hkn : k < n := by omega
-  have h0n : 0 < n := by omega
-  have hne : (⟨k, hkn⟩ : Fin n) ≠ ⟨0, h0n⟩ := by
-    intro e; have := congrArg Fin.val e; simp at this; omega
-  have hmem : elemGL (⟨k, hkn⟩ : Fin n) ⟨0, h0n⟩ hne (1 : κ) ∈ HPsymF κ n k rS := by
-    rw [mem_HPsymF_iff (by omega)]
-    refine ⟨fun i j hij => ?_, fun i => ?_, fun i j hi hj => ?_⟩
-    · rw [elemGL_apply]
-      have hij' : i ≠ j := fun e => by rw [e] at hij; exact lt_irrefl _ hij
-      rw [Matrix.one_apply_ne hij', zero_add, if_neg]
-      rintro ⟨rfl, rfl⟩
-      simp only [symIdx] at hij
-      split_ifs at hij <;> omega
-    · rw [elemGL_apply, Matrix.one_apply_eq, if_neg, add_zero]
-      rintro ⟨h1, h2⟩
-      have := congrArg Fin.val (h1.symm.trans h2)
-      simp at this; omega
-    · rw [elemGL_apply, Matrix.one_apply_ne, zero_add, if_neg]
-      · rintro ⟨h1, -⟩; have := congrArg Fin.val h1; simp at this; omega
-      · intro e; have := congrArg Fin.val e; omega
-  have hU := hle hmem
-  have h1 : ((elemGL (⟨k, hkn⟩ : Fin n) ⟨0, h0n⟩ hne (1 : κ) : GL (Fin n) κ) : Matrix (Fin n) (Fin n) κ)
-      ⟨k, hkn⟩ ⟨0, h0n⟩ = 0 := by
-    apply hU.1
-    show fine n [] 0 < fine n [] k
-    rw [fine_self_lt h0n, fine_self_lt hkn]; omega
-  rw [elemGL_apply, Matrix.one_apply_ne hne, zero_add, if_pos ⟨rfl, rfl⟩] at h1
-  exact one_ne_zero h1
 
 end SymNonVac
 

@@ -170,15 +170,6 @@ structure FullerData (II : IntersectionSystem) (Ψ : Type) [Fintype Ψ] (K : Typ
   ht_away : ∀ p ∈ S, ∀ τ c, segreCoord y c ≠ 0 → ∀ e : E τ,
     (∃ m : ℕ, ((p : Ω) ^ m) • e ∈ (W τ).lat c) ↔ ∃ m : ℕ, ((p : Ω) ^ m) • e ∈ (htLat p τ).lat c
 
-namespace FullerData
-
-variable {II : IntersectionSystem} {Ψ : Type} [Fintype Ψ] {K : Type} [Fintype K] {ι : K → Type}
-  [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω] [Algebra ℚ Ω] {E : Ψ → Type} [∀ τ, AddCommGroup (E τ)]
-  [∀ τ, Module Ω (E τ)] {Em : Type} [Field Em] [NumberField Em] [IsCMField Em]
-  (D : FullerData II Ψ K ι Ω E Em)
-
-end FullerData
-
 end GroundTheory.Heights₂.Heights.NineStatements
 end -- clump:auto
 end -- clump:auto

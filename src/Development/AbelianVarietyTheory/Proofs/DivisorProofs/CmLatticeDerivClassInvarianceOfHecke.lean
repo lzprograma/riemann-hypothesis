@@ -236,7 +236,7 @@ theorem fderiv_eq_sum_wirt' (h : (Φ → ℂ) → ℂ) (y u : Φ → ℂ) :
   rw [map_sum]
   refine Finset.sum_congr rfl fun τ _ => ?_
   rw [map_add (f := _), map_smul, map_smul]
-  simp only [wirt, Bool.false_eq_true, if_false, if_true, real_smul]
+  simp only [wirt, Bool.false_eq_true, ite_false, ite_true, real_smul]
   set A := fderiv ℝ h y (Pi.single τ 1)
   set B := fderiv ℝ h y (Pi.single τ I)
   have hc : (starRingEnd ℂ) (u τ) = (u τ).re - (u τ).im * I := by
@@ -380,7 +380,6 @@ theorem ExpSum.deriv {D : Set ℂ} {V : Set (Φ → ℂ)} (hU : IsOpen U) (hV : 
       ring
 
 end Deriv
-
 
 open Classical in
 theorem differentiableOn_wirtWord_mul_exp_comp : ∀ (Φ I : Type) [Fintype Φ] [Fintype I] (U : Set (I → ℂ)) (V : Set (Φ → ℂ)) (D : Set ℂ) (G : ℂ → (Φ → ℂ) → ℂ) (t : (I → ℂ) → Φ → ℂ) (b l : (I → ℂ) → ℂ), IsOpen U → IsOpen V → Set.MapsTo t U V → ContDiffOn ℝ ∞ t U → ContDiffOn ℝ ∞ b U → ContDiffOn ℝ ∞ l U → (∀ σ ∈ D, ContDiffOn ℝ ∞ (G σ) V) → (∀ w : List (Φ × Bool), ∀ y ∈ V, DifferentiableOn ℂ (fun σ => wirtWord w (G σ) y) D) → ∀ w : List (I × Bool), ∀ z ∈ U, DifferentiableOn ℂ (fun σ => wirtWord w (fun z' => b z' * Complex.exp (-σ * l z') * G σ (t z')) z) D := by
@@ -552,8 +551,7 @@ theorem riemannCl_linInd (ξ : E) (hξ : ξ ≠ 0) :
     funext j
     have := LinearMap.congr_fun hc (Module.finBasis ℚ E j)
     simpa [Matrix.vecMul, dotProduct, Gc, gram_apply, riemannCl_apply] using this
-  by_contra h
-  push_neg at h
+  by_contra! h
   obtain ⟨i, hi⟩ := h
   exact hdet (Matrix.exists_vecMul_eq_zero_iff.mp ⟨c, fun h0 => hi (by simp [h0]), hv⟩)
 
@@ -631,13 +629,13 @@ theorem bilin_eq_zero_of_span {V : Type} [AddCommGroup V] [Module ℂ V] (B : Li
 
 theorem dualFormValue_of_values : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (I : Type) [Fintype I] [DecidableEq I]
     (φ : I → E →+* ℂ), IsCMType φ → (∀ ξ : E, ξ ≠ 0 → ∃! B : LinearMap.BilinForm ℂ (Coh E), IsDualForm ξ B) →
-    (∀ ξ : E, ξ ≠ 0 → IsCMField.complexConj E ξ = -ξ → ∀ B : LinearMap.BilinForm ℂ (Coh E), IsDualForm ξ B →
+    (∀ ξ : E, ξ ≠ 0 → ∀ B : LinearMap.BilinForm ℂ (Coh E), IsDualForm ξ B →
       ∀ ρ ρ' : E →+* ℂ, (ρ' = ComplexEmbedding.conjugate ρ → B ρ.toRatAlgHom.toLinearMap ρ'.toRatAlgHom.toLinearMap = (ρ ξ)⁻¹) ∧
         (ρ' ≠ ComplexEmbedding.conjugate ρ → B ρ.toRatAlgHom.toLinearMap ρ'.toRatAlgHom.toLinearMap = 0)) →
     DualFormValue φ := by
-  intro E _ _ _ I _ _ φ hφ hex hval ξ hξ hc
+  intro E _ _ _ I _ _ φ hφ hex hval ξ hξ _
   refine ⟨hex ξ hξ, fun B hB ε => ?_⟩
-  have hv := hval ξ hξ hc B hB
+  have hv := hval ξ hξ B hB
   have key : ∀ i j, i ≠ j → ∀ σ : E →+* ℂ, (σ = φ i ∨ σ = ComplexEmbedding.conjugate (φ i)) →
       (σ = φ j ∨ σ = ComplexEmbedding.conjugate (φ j)) → False :=
     fun i j hij σ h1 h2 => hij ((hφ σ).unique h1 h2)
@@ -713,10 +711,6 @@ theorem exists_equiv (E : Type) [Field E] [NumberField E] [IsCMField E] (I : Typ
       exact (hk i (Or.inr h.symm)).trans (hk j (Or.inl rfl)).symm
   · intro f
     let fc : F →+* ℂ := Complex.ofRealHom.comp f
-    have hfc : ComplexEmbedding.IsReal fc := by
-      rw [ComplexEmbedding.isReal_iff]
-      ext a
-      simp [fc]
     let w : InfinitePlace E := (IsCMField.equivInfinitePlace E).symm (InfinitePlace.mk fc)
     obtain ⟨i, hi, _⟩ := hφ w.embedding
     have hmk : InfinitePlace.mk (φ i) = w := by
@@ -862,15 +856,6 @@ namespace GlobalTheory.WeightTwoCompare
 
 variable {E : Type} [Field E] [NumberField E] {I : Type} [Fintype I]
 
-theorem prodCpow {J : Type} (t : Finset J) (f : J → ℝ) (hf : ∀ j, 0 ≤ f j) (w : ℂ) :
-    ∏ j ∈ t, ((f j : ℝ) : ℂ) ^ w = (((∏ j ∈ t, f j : ℝ)) : ℂ) ^ w := by
-  classical
-  induction t using Finset.induction_on with
-  | empty => simp
-  | insert a s ha ih =>
-    rw [Finset.prod_insert ha, Finset.prod_insert ha, ih, Complex.ofReal_mul,
-      Complex.mul_cpow_ofReal_nonneg (hf a) (Finset.prod_nonneg fun j _ => hf j)]
-
 theorem norm_cpow_eq_exp {h : ℂ} (hh : h ≠ 0) (σ : ℂ) :
     ((‖h‖ : ℝ) : ℂ) ^ (-2 * σ) = Complex.exp (-σ * ((Real.log (Complex.normSq h) : ℝ) : ℂ)) := by
   have hn : ((‖h‖ : ℝ) : ℂ) ≠ 0 := by exact_mod_cast norm_ne_zero_iff.2 hh
@@ -888,9 +873,6 @@ theorem defCoord_eq (φ : I → E →+* ℂ) (e : I ≃ Emb (maximalRealSubfield
     defCoord φ z ((a : E) + (b : E) * θ) i =
       (1 + z i) / (2 * (Real.pi : ℂ) * Complex.I) * latPt (modPt φ e θ z) (a, b) (e i) := by
   have h1 := one_add_ne_zero hz i
-  have hπ : (2 * (Real.pi : ℂ) * Complex.I) ≠ 0 := by
-    have : (Real.pi : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
-    exact mul_ne_zero (mul_ne_zero two_ne_zero this) Complex.I_ne_zero
   simp only [defCoord, latPt, modPt, Equiv.symm_apply_apply, map_add (f := _), map_mul, he, Complex.conj_ofReal]
   field_simp
   ring
@@ -914,7 +896,7 @@ theorem defTerm_eq (φ : I → E →+* ℂ) (e : I ≃ Emb (maximalRealSubfield 
     rw [mul_inv, mul_pow]
   have h2 : ∏ i, ((‖c i * w (e i)‖ : ℝ) : ℂ) ^ (-2 * σ) =
       ((‖homFac z‖ : ℝ) : ℂ) ^ (-2 * σ) * ((‖∏ τ, w τ‖ : ℝ) : ℂ) ^ (-2 * σ) := by
-    rw [prodCpow _ _ (fun i => norm_nonneg _), hc, hw, norm_prod, norm_prod,
+    rw [GlobalTheory.CMVal.ObjModel.prod_cpow _ _ (fun i => norm_nonneg _), hc, hw, norm_prod, norm_prod,
       ← Complex.mul_cpow_ofReal_nonneg (Finset.prod_nonneg fun i _ => norm_nonneg _)
         (Finset.prod_nonneg fun i _ => norm_nonneg _), ← Complex.ofReal_mul, ← Finset.prod_mul_distrib]
     simp only [norm_mul]
@@ -1059,7 +1041,7 @@ theorem wirt_false_eq_lineDeriv {I : Type} [Fintype I] [DecidableEq I] (i : I) (
   rw [hd.lineDeriv_eq_fderiv]
   unfold wirt
   rw [hd.fderiv_restrictScalars ℝ]
-  simp only [ContinuousLinearMap.coe_restrictScalars', Bool.false_eq_true, if_false]
+  simp only [ContinuousLinearMap.coe_restrictScalars', Bool.false_eq_true, ite_false]
   rw [clm_single_I]
   have e : ∀ a b : ℂ, a = b → (a + -Complex.I * (Complex.I * a)) / 2 = b := by
     rintro a b rfl
@@ -1379,7 +1361,7 @@ theorem riemannCl_eq_sum (ξ x : E) :
   simp [IsCMField.complexEmbedding_complexConj, ComplexEmbedding.conjugate_coe_eq]
 
 theorem dualForm_values (E : Type) [Field E] [NumberField E] [IsCMField E] (ξ : E) (hξ : ξ ≠ 0)
-    (_hc : IsCMField.complexConj E ξ = -ξ) (B : LinearMap.BilinForm ℂ (Coh E)) (hB : IsDualForm ξ B)
+    (B : LinearMap.BilinForm ℂ (Coh E)) (hB : IsDualForm ξ B)
     (ρ ρ' : E →+* ℂ) :
     (ρ' = ComplexEmbedding.conjugate ρ →
       B ρ.toRatAlgHom.toLinearMap ρ'.toRatAlgHom.toLinearMap = (ρ ξ)⁻¹) ∧
@@ -1401,7 +1383,7 @@ theorem dualForm_values (E : Type) [Field E] [NumberField E] [IsCMField E] (ξ :
       refine Finset.sum_congr rfl fun σ _ => ?_
       simp [IsCMField.complexEmbedding_complexConj, ComplexEmbedding.conjugate_coe_eq]
     rw [h2] at h1
-    simp only [c, sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [c, sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [sub_eq_zero]
     have h3 : ∑ τ₁, ∑ τ₂, τ₁ ξ * τ₂ ξ * b (ComplexEmbedding.conjugate τ₁) (ComplexEmbedding.conjugate τ₂) *
         (τ₁ x * τ₂ y) = ∑ σ : E →+* ℂ, σ ξ * σ x * ComplexEmbedding.conjugate σ y := by
@@ -1422,7 +1404,7 @@ theorem dualForm_values (E : Type) [Field E] [NumberField E] [IsCMField E] (ξ :
   simp only [c, b, hcc] at hc
   constructor
   · rintro rfl
-    rw [hcc, if_pos rfl] at hc
+    rw [hcc, ite_eq_left rfl] at hc
     have h0 := hz (ComplexEmbedding.conjugate ρ)
     have h4 : ComplexEmbedding.conjugate ρ ξ *
         (ρ ξ * B ρ.toRatAlgHom.toLinearMap (ComplexEmbedding.conjugate ρ).toRatAlgHom.toLinearMap - 1) = 0 := by
@@ -1431,7 +1413,7 @@ theorem dualForm_values (E : Type) [Field E] [NumberField E] [IsCMField E] (ξ :
     exact eq_inv_of_mul_eq_one_right (sub_eq_zero.1 h5)
   · intro hne
     have hne' : ComplexEmbedding.conjugate ρ' ≠ ρ := fun h => hne (by rw [← h, hcc])
-    rw [if_neg hne', sub_zero] at hc
+    rw [ite_eq_right hne', sub_zero] at hc
     exact (mul_eq_zero.1 hc).resolve_left (mul_ne_zero (hz _) (hz _))
 
 end GlobalTheory.DualFormValues
@@ -1635,7 +1617,7 @@ theorem series_weightTwo : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
     dzbar_apply, smul_eq_mul]
   rw [Finset.sum_eq_single i (fun j _ hj => by simp [Pi.single_apply, hj]) (by simp),
     Finset.sum_eq_single i (fun j _ hj => by simp [Pi.single_apply, hj]) (by simp)]
-  simp only [Pi.single_eq_same, map_one, Complex.conj_I, Bool.false_eq_true, if_false]
+  simp only [Pi.single_eq_same, map_one, Complex.conj_I, Bool.false_eq_true, ite_false]
   linear_combination (eTerm φ (m + Pi.single i 1) σ z q.1.out / 2 -
     eTerm φ m σ z q.1.out * (-σ * φ i q.1.out / starRingEnd ℂ (defCoord φ z q.1.out i)) / 2) * Complex.I_mul_I
 

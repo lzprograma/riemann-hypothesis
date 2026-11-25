@@ -11,7 +11,7 @@ noncomputable section
 open MeasureTheory Formalism.MainNotions.S Formalism.MainNotions.BridgeCPX
 open scoped InnerProductSpace
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 namespace Formalism.L2.SG.HCReprodM
 
@@ -39,27 +39,22 @@ theorem finsetSup_kstable (s : Finset (Submodule ℂ H))
     (hs : ∀ S ∈ s, FiniteDimensional ℂ S ∧ IsKStableOn ε σ S) :
     FiniteDimensional ℂ ↥(s.sup (id : Submodule ℂ H → Submodule ℂ H)) ∧
       IsKStableOn ε σ (s.sup (id : Submodule ℂ H → Submodule ℂ H)) := by
-  unfold IsKStableOn at hs ⊢
-  revert hs
-  refine Finset.induction_on s ?_ ?_
-  · intro _
-    rw [Finset.sup_empty]
-    refine ⟨inferInstance, fun g _ v hv => ?_⟩
-    rw [Submodule.mem_bot] at hv ⊢
-    rw [hv, map_zero]
-  · intro a s _ ih hs
-    have h1 := hs a (Finset.mem_insert_self a s)
-    have h2 := ih (fun S hS => hs S (Finset.mem_insert_of_mem hS))
-    rw [Finset.sup_insert]
-    refine ⟨?_, ?_⟩
-    · haveI := h1.1
-      haveI := h2.1
-      show FiniteDimensional ℂ ↥(a ⊔ s.sup (id : Submodule ℂ H → Submodule ℂ H))
-      infer_instance
-    · intro g hg v hv
-      obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hv
-      rw [map_add (f := _)]
-      exact Submodule.add_mem_sup (h1.2 g hg y hy) (h2.2 g hg z hz)
+  refine Finset.sup_induction
+    (p := fun S : Submodule ℂ H => FiniteDimensional ℂ S ∧ IsKStableOn ε σ S) ?_ ?_ hs
+  · refine ⟨inferInstance, ?_⟩
+    unfold IsKStableOn
+    intro g _ v hv
+    rw [(Submodule.mem_bot ℂ).1 hv, map_zero]
+    exact zero_mem _
+  · rintro S₁ ⟨hfd1, hst1⟩ S₂ ⟨hfd2, hst2⟩
+    have := hfd1
+    have := hfd2
+    refine ⟨inferInstance, ?_⟩
+    unfold IsKStableOn at hst1 hst2 ⊢
+    intro g hg v hv
+    obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hv
+    rw [map_add (f := _)]
+    exact Submodule.add_mem_sup (hst1 g hg y hy) (hst2 g hg z hz)
 
 theorem isKFin_of_mem_lowKSub {lam : Fin n → ℝ} {w : H} (hw : w ∈ lowKSub ε lam σ) : IsKFin ε σ w := by
   unfold IsKFin lowKSub at *

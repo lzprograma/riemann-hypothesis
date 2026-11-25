@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.GlobalTheory.BlockActions.HformSmulRightB
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLandSt
@@ -123,8 +124,6 @@ open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat 
   Formalism.L2.SG.LocVol Formalism.L2.SG.MassDataConc Formalism.L2.SG.TypedSets Formalism.L2.SG.Sub Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory NumberField
   Formalism.L2.SG.Pf.HasProdFiniteSupport Formalism.L2.SG.Pf.NcVal
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Loc
 
 variable {D : D7} (X : HidaSetting D)
@@ -164,12 +163,12 @@ theorem aP_split (k N t : ℕ) (hk : k + 1 ≤ N) (v : PlX X) :
     aP (E := X.B.I.E) v k N t = (∏ i ∈ Finset.Icc (k + 1) N, fac X i v) * tf X k t v := by
   unfold aP tf
   by_cases ht : ((t : ℕ) : 𝓞 X.B.I.F) ∈ v.asIdeal
-  · rw [if_pos ht, if_pos ht, Finset.Icc_eq_cons_Ioc (show k ≤ N by omega), Finset.prod_cons]
+  · rw [ite_eq_left ht, ite_eq_left ht, Finset.Icc_eq_cons_Ioc (show k ≤ N by omega), Finset.prod_cons]
     have hIo : Finset.Ioc k N = Finset.Icc (k + 1) N := by
       ext i; simp only [Finset.mem_Ioc, Finset.mem_Icc]; omega
     rw [hIo, mul_comm]
     rfl
-  · rw [if_neg ht, if_neg ht, mul_one]
+  · rw [ite_eq_right ht, ite_eq_right ht, mul_one]
     rfl
 
 theorem aPlus_pos (k N t : ℕ) (hk : 1 ≤ k) (v : PlX X) : 0 < aP (E := X.B.I.E) v k N t := by
@@ -196,7 +195,6 @@ theorem absV_nonneg (v : PlX X) : 0 ≤ absV v (dV v) := by
   · positivity
 
 end Loc
-
 
 variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
 theorem normalizing_arithmetic_holds : NcArith := by
@@ -243,9 +241,9 @@ theorem normalizing_arithmetic_holds : NcArith := by
   have hSf := finite_dvd X (Tw u) hT0
   have hSf' := finite_dvd X (Tw u') hT0'
   have hTHPf : HasProd (tf X D.R.k (Tw u)) (∏ v ∈ hSf.toFinset, tf X D.R.k (Tw u) v) :=
-    hasProd_of_finite_support _ hSf (fun v hv => by simp only [tf, Set.mem_ofPred_eq] at hv ⊢; rw [if_neg hv])
+    hasProd_of_finite_support _ hSf (fun v hv => by simp only [tf, Set.mem_ofPred_eq] at hv ⊢; rw [ite_eq_right hv])
   have hTHP' : HasProd (tf X D.R.k (Tw u')) (∏ v ∈ hSf'.toFinset, tf X D.R.k (Tw u') v) :=
-    hasProd_of_finite_support _ hSf' (fun v hv => by simp only [tf, Set.mem_ofPred_eq] at hv ⊢; rw [if_neg hv])
+    hasProd_of_finite_support _ hSf' (fun v hv => by simp only [tf, Set.mem_ofPred_eq] at hv ⊢; rw [ite_eq_right hv])
   have hPTpos : 0 < PT := by
     rw [hTHP.unique hTHPf]
     exact Finset.prod_pos fun v _ => tf_pos X D.R.k (Tw u) (by omega) v
@@ -279,10 +277,10 @@ theorem normalizing_arithmetic_holds : NcArith := by
   have hal_def : (bCF X hb hK FdN FdN' u u' X0 ψ T sd C Th vR Q M δ i0 i0' νq).al =
       (∏ p : TypX X, alX X u u' p.1) * ∏' v : OrdX X, alX X u u' v.1 := rfl
   have halT : ∀ v : PlX X, TypAt X v → alX X u u' v = aP (E := X.B.I.E) v D.R.k X.B.I.n (Tw u) := by
-    intro v hv; unfold alX; rw [if_pos hv]
+    intro v hv; unfold alX; rw [ite_eq_left hv]
   have halO : ∀ v : PlX X, ¬ TypAt X v → alX X u u' v =
       aP (E := X.B.I.E) v D.R.k X.B.I.n (Tw u) * aP (E := X.B.I.E) v D.R.k X.B.I.n (Tw u') := by
-    intro v hv; unfold alX; rw [if_neg hv]
+    intro v hv; unfold alX; rw [ite_eq_right hv]
   have hordHP := hasProd_compl_of' (typSet X.B.I.F (D.host.g 0) (D.host.g 1)) (hATHP.mul hA'HP)
     (fun v _ => (mul_pos (aPlus_pos X D.R.k X.B.I.n (Tw u) (by omega) v)
       (aPlus_pos X D.R.k X.B.I.n (Tw u') (by omega) v)).ne')
@@ -341,8 +339,8 @@ theorem normalizing_arithmetic_holds : NcArith := by
         (if TypAt X v then (gAt X v : ℝ) ^ ((D.R.rS + 1) * (2 * D.R.rS + 3)) else 1) := by
     intro v
     by_cases hv : TypAt X v
-    · rw [if_pos hv, ← div_eq_mul_inv, hVt hχ hstd hcong v hv, htδ ⟨v, hv⟩, Real.one_rpow, one_mul]
-    · rw [if_neg hv, ← div_eq_mul_inv, hVo hχ hstd v hv, mul_one]
+    · rw [ite_eq_left hv, ← div_eq_mul_inv, hVt hχ hstd hcong v hv, htδ ⟨v, hv⟩, Real.one_rpow, one_mul]
+    · rw [ite_eq_right hv, ← div_eq_mul_inv, hVo hχ hstd v hv, mul_one]
   have hgHP : HasProd (fun v : PlX X => if TypAt X v then (gAt X v : ℝ) ^ ((D.R.rS + 1) * (2 * D.R.rS + 3)) else 1)
       (∏ p : TypX X, (gAt X p.1 : ℝ) ^ ((D.R.rS + 1) * (2 * D.R.rS + 3))) := by
     have h0 := hasProd_of_compl' (typSet X.B.I.F (D.host.g 0) (D.host.g 1))
@@ -351,10 +349,10 @@ theorem normalizing_arithmetic_holds : NcArith := by
         convert (hasProd_one : HasProd (fun _ : {i // i ∉ typSet X.B.I.F (D.host.g 0) (D.host.g 1)} => (1 : ℝ)) 1)
           using 1
         funext v
-        exact if_neg v.2)
+        exact ite_eq_right v.2)
     convert h0 using 1
     rw [one_mul]
-    exact Fintype.prod_congr _ _ (fun p => (if_pos p.2).symm)
+    exact Fintype.prod_congr _ _ (fun p => (ite_eq_left p.2).symm)
   have hδX := hasProd_rpow' (-(((D.R.rS : ℝ) + 1) * (8 * (D.R.rS : ℝ) ^ 2 + 10 * D.R.rS + 3) / 3))
     (fun v => absV_nonneg X v) hDP (inv_ne_zero hdX.ne')
   have hval : HasProd (fun v : PlX X => localVolumeUnit X ψ v * (ZZX X u u' ψ v)⁻¹)
@@ -425,11 +423,6 @@ noncomputable section
 
 namespace PI.UnitaryGroupMassFormula.CntFormula.WbDefC
 
-theorem cT_eq_conjTranspose {m k : Type} (P : Matrix m k ℂ) :
-    Formalism.UG.cT (starRingEnd ℂ) P = Pᴴ := by
-  ext i j
-  simp [Formalism.UG.cT, Matrix.conjTranspose_apply]
-
 theorem jpq_mulVec_of_inr {p q : ℕ} (w : Fin p ⊕ Fin q → ℂ) (hw : ∀ j, w (Sum.inr j) = 0) :
     Formalism.UG.Jpq p q *ᵥ w = w := by
   have hr : w ∘ Sum.inr = 0 := funext hw
@@ -445,7 +438,7 @@ theorem sigNeg_card_le {n ι : Type} [Fintype n] [DecidableEq n] [Fintype ι]
     Fintype.card ι ≤ q := by
   classical
   obtain ⟨e, P, hP⟩ := hJ
-  rw [cT_eq_conjTranspose] at hP
+  rw [Formalism.UG.P.cT_conj_eq] at hP
   set Q : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ := (P : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) with hQ
   set Qi : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ := ((P⁻¹ : GL (Fin p ⊕ Fin q) ℂ) : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) with hQi
   have hQQi : Q * Qi = 1 := by
@@ -461,8 +454,7 @@ theorem sigNeg_card_le {n ι : Type} [Fintype n] [DecidableEq n] [Fintype ι]
         ← Matrix.star_mulVec, hv, Matrix.reindex_apply, Matrix.submatrix_mulVec_equiv]
     simp only [dotProduct]
     exact Fintype.sum_equiv e _ _ (fun i => by simp [Function.comp_def])
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   let L : (ι → ℂ) →ₗ[ℂ] (Fin q → ℂ) :=
     (LinearMap.funLeft ℂ ℂ Sum.inr) ∘ₗ (Matrix.mulVecLin Qi) ∘ₗ
       (LinearMap.funLeft ℂ ℂ e.symm) ∘ₗ (Fintype.linearCombination ℂ u)
@@ -517,14 +509,7 @@ def ctau (S : HSpace E) (τ : E →+* ℂ) (x : S.V) : Fin S.rank → ℂ := fun
 
 theorem hT_coord (S : HSpace E) (x y : S.V) :
     S.hT x y = ∑ i, ∑ j, star (S.frame.repr x i) * (S.gram i j * S.frame.repr y j) := by
-  conv_lhs => rw [← S.frame.sum_repr x, ← S.frame.sum_repr y]
-
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
-  Finset.mul_sum, starRingEnd_apply]
-  conv_lhs => rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  simp only [HSpace.gram, RingHom.id_apply]
-  ring
+  apply _root_.Formalism.L2.GlobalTheoryTheory.TraceIntegrality.hT_expand <;> assumption
 
 theorem tau_hT (S : HSpace E) (τ : E →+* ℂ) (hτ : ∀ a, τ (star a) = starRingEnd ℂ (τ a)) (x y : S.V) :
     τ (S.hT x y) = star (ctau S τ x) ⬝ᵥ ((S.gram.map τ) *ᵥ ctau S τ y) := by
@@ -581,8 +566,6 @@ open Classical
 noncomputable section
 
 namespace PI.UnitaryGroupMassFormula.CntFormula.RowsMassW
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem tn_ne_zero (D : D7) (u : D.what₂.Word) : (Tn u : D.host.E) ≠ 0 := by
   unfold Tn
@@ -914,16 +897,9 @@ theorem tprod_supT {T : ℕ} (hT : 0 < T) (g : Ideal (𝓞 F) → ℝ) :
     rw [Finset.prod_subtype_eq_prod_filter (f := fun P => if ((T : ℕ) : 𝓞 F) ∈ P then g P else 1)]
     rw [Finset.filter_true_of_mem (fun P hP => isMaximal_of_mem_nfT hT (Multiset.mem_toFinset.1 hP))]
     refine Finset.prod_congr rfl fun P hP => ?_
-    rw [if_pos ((mem_nfT_iff hT P).1 (Multiset.mem_toFinset.1 hP)).2]
+    rw [ite_eq_left ((mem_nfT_iff hT P).1 (Multiset.mem_toFinset.1 hP)).2]
   · intro 𝔭 h𝔭
-    rw [if_neg (fun h => h𝔭 ((mem_supT hT 𝔭).2 h))]
-
-theorem absNorm_span_natCast (T : ℕ) :
-    Ideal.absNorm (Ideal.span {((T : ℕ) : 𝓞 F)}) = T ^ finrank ℚ F := by
-  rw [Ideal.absNorm_span_singleton]
-  have e : ((T : ℕ) : 𝓞 F) = algebraMap ℤ (𝓞 F) (T : ℤ) := by simp
-  rw [e, Algebra.norm_algebraMap, RingOfIntegers.rank]
-  simp [Int.natAbs_pow]
+    rw [ite_eq_right (fun h => h𝔭 ((mem_supT hT 𝔭).2 h))]
 
 theorem prod_absNorm_pow {T : ℕ} (hT : 0 < T) :
     ∏ P ∈ (nfT F T).toFinset, (Ideal.absNorm P : ℝ) ^ (vT F T P) = (T : ℝ) ^ finrank ℚ F := by
@@ -936,7 +912,7 @@ theorem prod_absNorm_pow {T : ℕ} (hT : 0 < T) :
   have h4 : ∏ P ∈ (nfT F T).toFinset, (Ideal.absNorm P) ^ (vT F T P) = T ^ finrank ℚ F := by
     have : ∀ P, vT F T P = Multiset.count P (nfT F T) := fun P => rfl
     simp only [this]
-    rw [h1, h2, h3, absNorm_span_natCast]
+    rw [h1, h2, h3, Formalism.HN.DualPolygon.twist_absNorm_nat]
   exact_mod_cast h4
 
 end Arith
@@ -1074,9 +1050,9 @@ theorem glued_lattice_mass_formula {h1 : V1 →ₗ⋆[K] V1 →ₗ[K] K} {z : V1
       have hiff : vF 𝔭.1 (-((t : ℕ) : 𝓞 F)) ≠ 0 ↔ ((t : ℕ) : 𝓞 F) ∈ 𝔭.1 := by
         rw [vF_neg, ← Nat.one_le_iff_ne_zero, ← Formalism.L2.SG.Pf.G1.mem_pow_iff 𝔭.2 ht0 1, pow_one]
       by_cases h : ((t : ℕ) : 𝓞 F) ∈ 𝔭.1
-      · rw [if_pos h, Finset.filter_true_of_mem (fun i _ => hiff.2 h), Finset.card_univ,
+      · rw [ite_eq_left h, Finset.filter_true_of_mem (fun i _ => hiff.2 h), Finset.card_univ,
           Fintype.card_fin, h1r]
-      · rw [if_neg h, Finset.filter_false_of_mem (fun i _ => fun hh => h (hiff.1 hh)),
+      · rw [ite_eq_right h, Finset.filter_false_of_mem (fun i _ => fun hh => h (hiff.1 hh)),
           Finset.card_empty]
   have hnM : Formalism.L2.SG.Pf.Cnt.nM F h1 (Submodule.span K {z}) (Submodule.span (𝓞 K) {z}) =
       (t : ℝ) ^ finrank ℚ F := by
@@ -1087,8 +1063,8 @@ theorem glued_lattice_mass_formula {h1 : V1 →ₗ⋆[K] V1 →ₗ[K] K} {z : V1
     refine tprod_congr fun 𝔭 => ?_
     rw [(hJ 𝔭).1]
     by_cases h : ((t : ℕ) : 𝓞 F) ∈ 𝔭.1
-    · rw [if_pos h]
-    · rw [if_neg h, ← vF_eq_vT 𝔭.2 ht, Formalism.L2.SG.Pf.G1.vF_of_notMem 𝔭.2 h, pow_zero]
+    · rw [ite_eq_left h]
+    · rw [ite_eq_right h, ← vF_eq_vT 𝔭.2 ht, Formalism.L2.SG.Pf.G1.vF_of_notMem 𝔭.2 h, pow_zero]
   have hratio : (∏' 𝔭 : {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}, alphaStd K 𝔭.1 k /
       alphaStd K 𝔭.1 (k - Formalism.L2.SG.Pf.Cnt.cJ h1 (Submodule.span K {z}) (Submodule.span (𝓞 K) {z}) 𝔭.1)) =
       ∏' 𝔭 : {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}, (if ((t : ℕ) : 𝓞 F) ∈ 𝔭.1 then
@@ -1096,8 +1072,8 @@ theorem glued_lattice_mass_formula {h1 : V1 →ₗ⋆[K] V1 →ₗ[K] K} {z : V1
     refine tprod_congr fun 𝔭 => ?_
     rw [(hJ 𝔭).2]
     by_cases h : ((t : ℕ) : 𝓞 F) ∈ 𝔭.1
-    · rw [if_pos h, if_pos h, alphaStd_ratio hK hF 𝔭.2 hk]
-    · rw [if_neg h, if_neg h, Nat.sub_zero, div_self (alphaStd_pos hK hF 𝔭.2 k).ne']
+    · rw [ite_eq_left h, ite_eq_left h, alphaStd_ratio hK hF 𝔭.2 hk]
+    · rw [ite_eq_right h, ite_eq_right h, Nat.sub_zero, div_self (alphaStd_pos hK hF 𝔭.2 k).ne']
   rw [hnM, hratio, ← pow_mul, mul_comm (finrank ℚ F) k]
 
 end GluedLatticeMass
@@ -1164,8 +1140,7 @@ theorem exists_one {K : Type} [Field K] [NumberField K] [StarRing K]
           star (algebraMap (𝓞 K) K (a * b))
         rw [map_mul, star_mul'] }
   have memI : ∀ o : 𝓞 K, o ∈ I ↔ ∃ m ∈ M, h m z = star (o : K) := fun o => Iff.rfl
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   have hI : I ≠ ⊤ := by
     intro htop
     have h1 : (1 : 𝓞 K) ∈ I := by rw [htop]; exact Submodule.mem_top
@@ -1202,8 +1177,6 @@ theorem exists_one {K : Type} [Field K] [NumberField K] [StarRing K]
   rw [FractionalIdeal.mem_one_iff]
   exact ⟨o', by change (o' : K) = c; rw [ho', ho, star_star]⟩
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem row_unit_condition : RowZUnit := by
   intro D u F0 Λ hrow
   obtain ⟨_, hMU, hzM, hprim⟩ := row_lattice_mass_holds D u F0 Λ hrow
@@ -1232,8 +1205,6 @@ open Classical
 noncomputable section
 
 namespace PI.UnitaryGroupMassFormula.CntFormula.RowsMassW
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem trace_one_unramified : TraceOne := fun D =>
   Formalism.MainNotions.BridgeLemma.l_theta D.host.E D.sp.cm.cmUnram
@@ -1359,20 +1330,6 @@ namespace PI.UnitaryGroupMassFormula.CntFormula.RowsMassW
 
 open Formalism.HermitianLattices.Ext.L3
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-section Pos
-
-end Pos
-
-section Generic
-
-variable {K F : Type} [Field K] [NumberField K] [StarRing K] [Field F] [NumberField F] [Algebra F K]
-variable {V1 : Type} [AddCommGroup V1] [Module K V1] [FiniteDimensional K V1] [Module (𝓞 K) V1]
-  [IsScalarTower (𝓞 K) K V1]
-
-end Generic
-
 section Bridge
 
 variable (D : D7) {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T)
@@ -1421,8 +1378,6 @@ noncomputable section
 namespace PI.UnitaryGroupMassFormula.CntFormula.RowsMassW
 
 open Formalism.HermitianLattices.Ext.L3
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
 theorem row_lattice_mass : RowsMass := by
@@ -1484,8 +1439,6 @@ namespace Formalism.L2.SG.Pf.NcLeaves
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.AdBridge Formalism.L2.SG.LocVol Formalism.L2.SG.MassDataConc
   Formalism.L2.SG.TypedSets Formalism.L2.SG.Sub Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : HidaSetting D) (hb : AdBridgeIso X.B.I) (hK : X.LevelSubgroupCharacter) (FdN FdN' : Set X.B.I.Ginf)
   (u u' : D.what₂.Word) (X0 : Fin (2 * D.R.rS + 2) → Fin X.B.I.n → X.B.I.E)

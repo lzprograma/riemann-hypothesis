@@ -443,18 +443,6 @@ theorem fibre_card_stab (x : D₀) (y : fibre pr hpr x) :
 
 end Fib
 
-namespace GSD
-
-variable (S : GSD K)
-
-end GSD
-
-namespace BiPair
-
-variable {S S' : GSD K} (P : BiPair S S')
-
-end BiPair
-
 namespace GFam
 
 variable (F : GFam K)
@@ -501,19 +489,6 @@ theorem coordOf_mem_delLat (h : F.Ok) (s : ∀ b, (F.mem b).Sec) (φ : F.Forms) 
 
 def Good (n : ℕ) : Prop := ∀ b, (F.mem b).Good n
 
-theorem toCSDOf_good {n : ℕ} [Nonempty F.β] (G : F.Good n) (s : ∀ b, (F.mem b).Sec) :
-    (F.toCSDOf (fun b => (G b).ok) s).Good n := by
-  exact
-    { symm := (G (Classical.arbitrary F.β)).symm
-      nondeg := (G (Classical.arbitrary F.β)).nondeg
-      inv := fun c γ x y => ((F.mem c.1).toCSDOf_good (G c.1) (s c.1)).inv c.2 γ x y
-      nab_lat := fun c => (G c.1).nab_lat _
-      del_le := fun c => (G c.1).del_le _
-      del_stable := fun c γ y hy => ((F.mem c.1).toCSDOf_good (G c.1) (s c.1)).del_stable c.2 γ y hy
-      s_pos := (G (Classical.arbitrary F.β)).s_pos
-      dual_le := fun c => (G c.1).dual_le _
-      del_dual := fun c => (G c.1).del_dual _ }
-
 theorem toCSDOf_rat [Nonempty F.β] (h : F.Ok) (R : ∀ b, (F.mem b).Rat) (s : ∀ b, (F.mem b).Sec) :
     (F.toCSDOf h s).Rat := by
   exact
@@ -522,11 +497,5 @@ theorem toCSDOf_rat [Nonempty F.β] (h : F.Ok) (R : ∀ b, (F.mem b).Rat) (s : �
       pos := (R (Classical.arbitrary F.β)).pos }
 
 end GFam
-
-namespace GSD
-
-variable (K)
-
-end GSD
 
 end Formalism.L2.Col

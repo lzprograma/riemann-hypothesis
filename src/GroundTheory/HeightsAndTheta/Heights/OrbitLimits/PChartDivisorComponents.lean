@@ -170,7 +170,7 @@ theorem ChartDivisorComponents.proof (hNot : ChartSectionNotMem.Statement) : Cha
           (SetLike.not_le_iff_exists.1 (hcon W h.1 W'' h.2)).choose else 1
       have hg : ∀ W W'', (W ∈ divSupp P s ∧ IsHorizontal W) → W'' ∈ segreChartComponents W σ i →
           g W W'' ∈ W'' ∧ g W W'' ∉ W' := fun W W'' hW hW'' => by
-        simp only [g, dif_pos (And.intro hW hW'')]
+        simp only [g, dite_eq_left (And.intro hW hW'')]
         exact (SetLike.not_le_iff_exists.1 (hcon W hW W'' hW'')).choose_spec
       set T := (divSupp_finite P s).toFinset.filter IsHorizontal
       have hT : ∀ W, W ∈ T ↔ W ∈ divSupp P s ∧ IsHorizontal W := fun W => by simp [T]

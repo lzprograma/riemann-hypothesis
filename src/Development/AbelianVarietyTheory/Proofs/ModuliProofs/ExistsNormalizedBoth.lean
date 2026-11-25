@@ -160,17 +160,4 @@ theorem lbIso_iff_pull_id (L M : LB X) :
 
 end Cech
 
-section Clauses
-
-variable {S : Scheme.{0}} (G : Over S) [GrpObj G] [IsCommMonObj G]
-
-end Clauses
-
-section Triples
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Geo.Tor.Host E}
-  {S S' : Scheme.{0}}
-
-end Triples
-
 end GlobalTheory.TripleCompare

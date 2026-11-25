@@ -96,8 +96,7 @@ theorem inversion_at_zero : ∀ (G : Type) [AddCommGroup G] [TopologicalSpace G]
       simp [hχ0, hvol]
     · have hc' : b - a ≠ 0 := sub_ne_zero.2 (Ne.symm hab)
       obtain ⟨x₀, hx₀⟩ : ∃ x₀, χ (b - a) x₀ ≠ 1 := by
-        by_contra h
-        push_neg at h
+        by_contra! h
         exact hc' (hinj _ h)
       have key := setIntegral_translate Γ μ 𝓕 h𝓕 (χ (b - a)) (hperχ _) x₀
       simp_rw [hx _ _ x₀] at key

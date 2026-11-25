@@ -35,11 +35,11 @@ theorem killB_monomial (T : Finset K) (m : (Σ k, ι k) →₀ ℕ) (c : ℤ) :
     rw [Finsupp.prod]
     apply Finset.prod_eq_zero (Finsupp.mem_support_iff.mpr hp)
     simp [hpT, hp]
-  · push_neg at h
+  · push Not at h
     rw [Finsupp.prod]
     have hc : ∀ p ∈ m.support, (if p.1 ∈ T then (0 : MRing ι) else X p) ^ m p = X p ^ m p := by
       intro p hp
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hT
       exact (Finsupp.mem_support_iff.mp hp) (h p hT)
     rw [Finset.prod_congr rfl hc, ← Finsupp.prod, MvPolynomial.monomial_eq, MvPolynomial.algebraMap_eq]
@@ -57,12 +57,12 @@ theorem killB_multiHomog (T : Finset K) {s : MRing ι} {c : K → ℕ} (hs : IsM
     have h := hs m hm k
     rw [← h] at hck
     obtain ⟨i, -, hi⟩ := Finset.exists_ne_zero_of_sum_ne_zero hck
-    rw [killB_monomial, if_pos ⟨⟨k, i⟩, hkT, hi⟩]
+    rw [killB_monomial, ite_eq_left ⟨⟨k, i⟩, hkT, hi⟩]
   · right
-    push_neg at hT
+    push Not at hT
     have key : ∀ m ∈ s.support, killB T (monomial m (AddMonoidAlgebra.coeff s m)) = monomial m (AddMonoidAlgebra.coeff s m) := by
       intro m hm
-      rw [killB_monomial, if_neg]
+      rw [killB_monomial, ite_eq_right]
       rintro ⟨p, hpT, hp⟩
       have h := hs m hm p.1
       rw [hT p.1 hpT] at h
@@ -89,7 +89,7 @@ theorem killB_comp {T T' : Finset K} (h : T ⊆ T') :
   intro p
   rw [AlgHom.comp_apply, killB_X]
   split_ifs with hp
-  · rw [map_zero, killB_X, if_pos (h hp)]
+  · rw [map_zero, killB_X, ite_eq_left (h hp)]
   · rfl
 
 theorem comap_killB_mono {P : Ideal (MRing ι)} (hP : IsMultiHomogIdeal P) {T T' : Finset K}
@@ -123,10 +123,10 @@ theorem card_le_dim {P : Ideal (MRing ι)} (hPp : P.IsPrime) (hPm : IsMultiHomog
     have hout : k ∉ T j := by
       simp only [T, Finset.mem_filter, Finset.mem_univ, true_and]; omega
     have h1 : (X ⟨k, i⟩ : MRing ι) ∈ Q (j + 1) := by
-      rw [Ideal.mem_comap, killB_X, if_pos hin]
+      rw [Ideal.mem_comap, killB_X, ite_eq_left hin]
       exact P.zero_mem
     have h2 : (X ⟨k, i⟩ : MRing ι) ∉ Q j := by
-      rw [Ideal.mem_comap, killB_X, if_neg hout]
+      rw [Ideal.mem_comap, killB_X, ite_eq_right hout]
       exact hi
     exact h2 (heq ▸ h1)
   let f : Fin (Fintype.card K + 1) → PrimeSpectrum.zeroLocus (P : Set (MRing ι)) :=

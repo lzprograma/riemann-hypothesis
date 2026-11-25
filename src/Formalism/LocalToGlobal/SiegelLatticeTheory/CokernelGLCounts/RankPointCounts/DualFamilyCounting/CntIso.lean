@@ -44,8 +44,6 @@ namespace PI.UnitaryGroupMassFormula.CntFormula
 open NumberField Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.CntLocal
 open Classical
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem orbitFinite_of (hA : UnipotentIntegralIsGroup) (hB : OrbitReps) : OrbitFinite := by
   intro D δ M hAg L u u' hc F0 what₂ hr Z Λ hΛ
   obtain ⟨K, hKf, hK⟩ := hB D δ M hAg L u u' hc F0 what₂ hr Z Λ hΛ
@@ -87,8 +85,6 @@ open Classical
 noncomputable section
 
 namespace Formalism.L2.SG.Pf.Cnt
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def CntIsoInv : Prop :=
   ∀ (D : Formalism.BasicNotions.D7) (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (hβ : β ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT) {T : D.host.E}
@@ -132,9 +128,6 @@ open Classical
 noncomputable section
 
 namespace Formalism.L2.SG.Pf.Cnt
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 open PI.RepsIndep.Tr in
 theorem ci_EZ_map {D : Formalism.BasicNotions.D7} {β : (VS D).V ≃ₗ[D.host.E] (VS D).V} (hβ : β ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT)

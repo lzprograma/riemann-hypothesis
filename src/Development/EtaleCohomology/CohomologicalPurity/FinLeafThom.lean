@@ -51,9 +51,6 @@ namespace LateralTheory.Fin.LeafThom
 theorem etale_boundary_monomorphism_of_thom_isomorphism : LateralTheory.CohomologicalPurity.Bd.LeafMono :=
   LateralTheory.CohomologicalPurity.Bd.LeafMono_of
 
-theorem etale_relative_boundary_pushout_property_holds : LateralTheory.CohomologicalPurity.Bd.LeafPush :=
-  LateralTheory.CohomologicalPurity.Bd.LeafPush_of
-
 theorem etale_boundary_good_pair_of_thom_isomorphism : LateralTheory.CohomologicalPurity.Bd.LeafGood :=
   LateralTheory.CohomologicalPurity.Bd.LeafGood_of
 
@@ -75,7 +72,7 @@ theorem etale_boundary_image_of_thom_isomorphism : LateralTheory.CohomologicalPu
 theorem etale_boundary_map_of_thom_isomorphism : LateralTheory.CohomologicalPurity.LeafBd :=
   LateralTheory.CohomologicalPurity.Bd.goal_of
     etale_boundary_monomorphism_of_thom_isomorphism
-    etale_relative_boundary_pushout_property_holds
+    LateralTheory.CohomologicalPurity.Bd.LeafPush_of
     etale_boundary_good_pair_of_thom_isomorphism
     etale_boundary_connecting_of_thom_isomorphism
     etale_boundary_exact_of_thom_isomorphism

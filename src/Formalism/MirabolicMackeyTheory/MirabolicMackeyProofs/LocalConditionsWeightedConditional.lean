@@ -3,45 +3,6 @@ module
 public import Formalism.MirabolicMackeyTheory.StatementL
 public import Formalism.MirabolicMackeyTheory.StatementT
 public import Formalism.MirabolicMackeyTheory.MirabolicIsMackey
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Algebra.Order.Star.Real
 import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.IdxRules
 import Mathlib.Tactic.TypeStar
@@ -62,47 +23,6 @@ noncomputable section
 namespace Formalism.EigenvalueLevelCeiling
 
 open Formalism.DivisionValues
-
-def LocalIndexLoc : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [StarRing K],
-    (∀ (Z : Type) [AddCommGroup Z] [Module K Z] [Module (𝓞 K) Z]
-      (w : HeightOneSpectrum (𝓞 K)) (A B A' B' : Submodule (𝓞 K) Z),
-      lix w A B = lix w (Formalism.HermitianLatticesTheory.localization₂ w.asIdeal A) (Formalism.HermitianLatticesTheory.localization₂ w.asIdeal B) ∧
-      (Formalism.HermitianLatticesTheory.localization₂ w.asIdeal A = Formalism.HermitianLatticesTheory.localization₂ w.asIdeal A' →
-        Formalism.HermitianLatticesTheory.localization₂ w.asIdeal B = Formalism.HermitianLatticesTheory.localization₂ w.asIdeal B' → lix w A B = lix w A' B')) ∧
-    (∀ (d : ℕ) (w : HeightOneSpectrum (𝓞 K)) (A B A' B' : Submodule (𝓞 K) (Fin d → K)),
-      idx w A B = idx w (Formalism.HermitianLatticesTheory.localization₂ w.asIdeal A) (Formalism.HermitianLatticesTheory.localization₂ w.asIdeal B) ∧
-      (Formalism.HermitianLatticesTheory.localization₂ w.asIdeal A = Formalism.HermitianLatticesTheory.localization₂ w.asIdeal A' →
-        Formalism.HermitianLatticesTheory.localization₂ w.asIdeal B = Formalism.HermitianLatticesTheory.localization₂ w.asIdeal B' → idx w A B = idx w A' B'))
-
-def OnLocalAt : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (Z : Type) [AddCommGroup Z] [Module K Z]
-    [Module (𝓞 K) Z] [IsScalarTower (𝓞 K) K Z] [FiniteDimensional K Z]
-    (w : HeightOneSpectrum (𝓞 K)) (P : Type) [Group P] [Finite P] (ρ : Representation K P Z)
-    (U : Subgroup P) (ψ : P → 𝓞 K), IsMackey U ψ →
-    ∀ (V₀ : Submodule K Z) (e : Z →ₗ[K] Z), e ∘ₗ e = e → LinearMap.range e = V₀ →
-    ∀ (M Th ThK Th0 X₃ X₄ : Submodule (𝓞 K) Z),
-    IsLatIn ⊤ M → IsLatIn ⊤ Th → IsLatIn ⊤ ThK → Th ≤ M → Th0.FG →
-    Th0 ≤ (eig ρ U ψ).restrictScalars (𝓞 K) →
-    (∀ g : P, M.map ((ρ g).restrictScalars (𝓞 K)) ≤ M) →
-    (∀ g : P, Th.map ((ρ g).restrictScalars (𝓞 K)) ≤ Th) →
-    ∀ (σ : K), σ ≠ 0 → Th ≤ sc σ ThK →
-    sc ((Nat.card U : ℕ) : K) (cut (eig ρ U ψ) ThK) ≤ Th0 →
-    ∀ (a : K) (E : ℕ) (r : ℝ), a ≠ 0 → vw w a = (E : ℤ) →
-    (∀ W : Submodule K Z, (lix w (cut W M) (cut W Th) : ℝ) ≤ (E : ℝ) * (finrank K W : ℝ) + r) →
-    IsLatIn (eig ρ U ψ ⊓ V₀) (Th0.map (e.restrictScalars (𝓞 K))) →
-    IsLatIn (eig ρ U ψ ⊓ V₀) X₃ → IsLatIn (eig ρ U ψ ⊓ V₀) X₄ → Formalism.HermitianLatticesTheory.localization₂ w.asIdeal X₃ ≤ Formalism.HermitianLatticesTheory.localization₂ w.asIdeal X₄ →
-    ∀ (ε : ℝ),
-    (lix w (cut (eig ρ U ψ ⊓ V₀) M) X₃ : ℝ) ≤
-      (lix w (cut (eig ρ U ψ ⊓ V₀) M) (Th0.map (e.restrictScalars (𝓞 K))) : ℝ) + ε →
-    ∀ (d : ℕ) (φ : (Fin d → K) →ₗ[K] Z), Function.Injective φ →
-    LinearMap.range φ = eig ρ U ψ ⊓ V₀ →
-    ∀ (Mj Tj : Submodule (𝓞 K) (Fin d → K)),
-    Mj.map (φ.restrictScalars (𝓞 K)) = cut (eig ρ U ψ ⊓ V₀) M →
-    Tj.map (φ.restrictScalars (𝓞 K)) = X₄ →
-      (idx w Mj Tj : ℝ) ≤
-        ((E : ℝ) - (vw w σ : ℝ) + (vw w ((Nat.card U : ℕ) : K) : ℝ)) * (d : ℝ) +
-          (r + (finrank K Z : ℝ) * (vw w ((Nat.card U : ℕ) : K) : ℝ)) / (U.index : ℝ) + ε
 
 def LocalConditionsWeightedAtPlace : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (Z : Type) [AddCommGroup Z] [Module K Z]
@@ -424,12 +344,6 @@ theorem theta_identity_orthogonal : ThetaIdentityOrth := by
       exact ⟨θ m, ⟨m, hm, rfl⟩, (key m).symm⟩
     · rintro ⟨z, ⟨m, hm, rfl⟩, rfl⟩
       exact ⟨eX (p m), ⟨p m, ⟨m, hm, rfl⟩, rfl⟩, key m⟩
-
-private theorem vw_mul_lemma (K : Type) [Field K] [NumberField K] [StarRing K] (w : HeightOneSpectrum (𝓞 K))
-    (a b : K) (ha : a ≠ 0) (hb : b ≠ 0) : vw w (a * b) = vw w a + vw w b := by
-  unfold vw
-  rw [← FractionalIdeal.spanSingleton_mul_spanSingleton]
-  apply FractionalIdeal.count_mul <;> rwa [Ne, FractionalIdeal.spanSingleton_eq_zero_iff]
 
 theorem constant_b_bound : ConstB := by
   intro RR PP DF d' n1 nW g' qmin hRR hDF hd hn1 hn hq hqg hPP

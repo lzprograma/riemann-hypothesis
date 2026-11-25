@@ -47,16 +47,16 @@ theorem alX_eq (hEta : EtaTie X) (u u' : D.what₂.Word) (v : HeightOneSpectrum 
         Finset.Icc (if ((T : 𝓞 D.host.F) ∈ (plEquiv X v).asIdeal) then D.R.k else D.R.k + 1) D.R.r := by
       rw [X.n_eq]
       by_cases hm : ((T : 𝓞 X.B.I.F) ∈ v.asIdeal)
-      · rw [if_pos hm, if_pos ((natCast_mem_plEquiv X v T).2 hm)]
-      · rw [if_neg hm, if_neg (fun h => hm ((natCast_mem_plEquiv X v T).1 h))]
+      · rw [ite_eq_left hm, ite_eq_left ((natCast_mem_plEquiv X v T).2 hm)]
+      · rw [ite_eq_right hm, ite_eq_right (fun h => hm ((natCast_mem_plEquiv X v T).1 h))]
     rw [hI]
     refine Finset.prod_congr rfl fun i _ => ?_
     rw [hEta v, absNorm_plEquiv]
   unfold alX alpD Tw
   rw [haP, haP]
   by_cases h : TypAt X v
-  · rw [if_pos h, if_pos ((typAt_iff X v).1 h)]
-  · rw [if_neg h, if_neg (fun h' => h ((typAt_iff X v).2 h'))]
+  · rw [ite_eq_left h, ite_eq_left ((typAt_iff X v).1 h)]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h ((typAt_iff X v).2 h'))]
 
 theorem summable_log_alpD (hk : 2 * D.R.rS + 2 + D.R.f + 5 ≤ D.R.k) (u u' : D.what₂.Word) :
     (∀ p, 0 < alpD u u' p) ∧ Summable fun p => Real.log (alpD u u' p) := by
@@ -120,8 +120,6 @@ namespace Formalism.L2.SG.Pf
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef Formalism.L2.SG.HidaSetting Formalism.L2.SG.AdBridge Formalism.L2.SG.TypedSets
   Formalism.L2.SG.MassDataConc Formalism.L2.SG.MassDataForm Formalism.L2.SG.Pf.RowForm MeasureTheory
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem AlTieC_of {D : D7} (X : HidaSetting D) (hb : AdBridgeIso X.B.I) (Y : Formalism.L2.SG.Full.Full X)
     (u u' : D.what₂.Word) (X0 : Fin (2 * D.R.rS + 2) → Fin X.B.I.n → X.B.I.E)

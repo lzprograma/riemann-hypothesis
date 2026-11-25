@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.ExistsOpenNormalSubgroupKillsOfGroupDetLawIsCont
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.IsSymb
 public import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
 public import Mathlib.RingTheory.Flat.TorsionFree
@@ -339,16 +340,16 @@ theorem exists_extend [Algebra.IsAlgebraic F Ω] {N : ℕ} {ζ α β : Ω} {x y 
         (∀ z, B.valuation z ≤ 1 → B.valuation (g z - z) < 1) → g ∈ geo F K Ω → η' g = 0 := by
   classical
   refine ⟨fun g => if h : g ∈ geo F K Ω then η (toK ⟨g, h⟩) else 0, fun g hg h hh => ?_, ?_, fun B g hB hi hg => ?_⟩
-  · simp only [dif_pos hg, dif_pos hh, dif_pos (mul_mem hg hh)]
+  · simp only [dite_eq_left hg, dite_eq_left hh, dite_eq_left (mul_mem hg hh)]
     rw [hx, hy]
     have e : toK (⟨g * h, mul_mem hg hh⟩ : geo F K Ω) = toK ⟨g, hg⟩ * toK ⟨h, hh⟩ := map_mul toK ⟨g, hg⟩ ⟨h, hh⟩
     rw [e]
     exact h2 (toK ⟨g, hg⟩) (toK ⟨h, hh⟩)
   · have e : (fun g : geo F K Ω => if h : (g : Ω ≃ₐ[F] Ω) ∈ geo F K Ω then η (toK ⟨(g : Ω ≃ₐ[F] Ω), h⟩) else 0) = η ∘ toK :=
-      funext fun g => by rw [dif_pos g.2]; rfl
+      funext fun g => by rw [dite_eq_left g.2]; rfl
     rw [e]
     exact h1.comp_continuous continuous_toK
-  · simp only [dif_pos hg]
+  · simp only [dite_eq_left hg]
     exact h3 B hB _ hi
 
 end General
@@ -455,13 +456,6 @@ theorem spec_of_units [IsAlgClosure ℚ Ω] (X : Tower Ω ε) {M l n : ℕ} (hM 
 
 end GlobalTheory.K4.TopEta
 
-namespace GlobalTheory.K4
-
-open GlobalTheory.KZ
-
-attribute [local instance] algMdl
-
-end GlobalTheory.K4
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -722,19 +716,7 @@ open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.V.Z.Kato.Sym UpperTheory.V.Z.Ka
 
 private theorem unif_lc {G A : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
     {f : G → A} (hf : IsLocallyConstant f) : ∀ᶠ h in nhds (1 : G), ∀ g : G, f (g * h) = f g := by
-  choose V hVo hV1 hVm using fun g : G => exists_open_nhds_one_mul_subset
-    (show {y : G | f (g * y) = f g} ∈ nhds (1 : G) from
-      ((hf.isOpen_fiber (f g)).preimage (continuous_const_mul g)).mem_nhds (by simp))
-  obtain ⟨t, ht⟩ := isCompact_univ.elim_finite_subcover (fun g : G => (fun x => g⁻¹ * x) ⁻¹' V g)
-    (fun g => (hVo g).preimage (continuous_const_mul g⁻¹))
-    (fun x _ => Set.mem_iUnion.2 ⟨x, by simpa using hV1 x⟩)
-  filter_upwards [(Filter.biInter_finset_mem t).2 (fun g _ => (hVo g).mem_nhds (hV1 g))] with h hh x
-  obtain ⟨g, hg, hx⟩ : ∃ g ∈ t, g⁻¹ * x ∈ V g := by
-    simpa using ht (Set.mem_univ x)
-  have h1 : f (g * (g⁻¹ * x * h)) = f g := hVm g (Set.mul_mem_mul hx (Set.mem_iInter₂.1 hh g hg))
-  have h2 : f (g * (g⁻¹ * x * 1)) = f g := hVm g (Set.mul_mem_mul hx (hV1 g))
-  simp only [mul_one, ← mul_assoc, mul_inv_cancel, one_mul] at h1 h2
-  rw [h1, h2]
+  apply _root_.lc_nhds <;> assumption
 
 theorem UpperTheory.V.Z.Kato.Sym.PT.lcGeo :
     UpperTheory.V.Z.Kato.Sym.PT.LcGeo := by

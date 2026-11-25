@@ -60,8 +60,7 @@ theorem metricW_of (hR : NfacRmulStatement (E := E)) (hLa : NfacLactStatement (E
     have h1 := hnpos (rmul x b) (OntoS.dom_rmul (X := X) hx hb)
     rw [hR r X la x hx b hb] at h1
     have hinv : 0 < ‖bchar la b‖⁻¹ := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       nlinarith
     refine ⟨inv_pos.mp hinv, ?_⟩
     unfold phla

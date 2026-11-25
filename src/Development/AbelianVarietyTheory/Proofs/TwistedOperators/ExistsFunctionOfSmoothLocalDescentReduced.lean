@@ -1,5 +1,7 @@
 module
 
+
+import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EvaluationLemmaForNablaLevels
 public import Mathlib.Algebra.Ring.Pi
 public import Mathlib.Data.Fintype.Defs
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -66,7 +68,6 @@ import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsPoint
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsCan
 import Formalism.LocalToGlobal.ProjectiveLattices.ErealAddIInf
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.NonzeroLocus
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFactorThroughProjection, Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFunctionOfSmoothLocalDescentReduced
 
@@ -132,18 +133,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.FibrePushforwardExistenceTori (IsLi
 
 namespace GlobalTheory.SmoothLocalDescent
 
-theorem eq_of_forall_geom {R : Type} [CommRing R] [_root_.IsReduced R] (a b : R)
-    (h : ∀ (k : Type) [Field k] [IsAlgClosed k] (χ : R →+* k), χ a = χ b) : a = b := by
-  rw [← sub_eq_zero]
-  apply IsNilpotent.eq_zero
-  rw [nilpotent_iff_mem_prime]
-  intro J hJ
-  have := h (AlgebraicClosure J.ResidueField)
-    ((algebraMap J.ResidueField _).comp (algebraMap R J.ResidueField))
-  rw [← sub_eq_zero, ← map_sub, RingHom.comp_apply, map_eq_zero,
-    Ideal.algebraMap_residueField_eq_zero] at this
-  exact this
-
 open scoped TensorProduct in
 theorem exists_lift_geom (R S : Type) [CommRing R] [CommRing S] [Algebra R S]
     [Algebra.FiniteType R S] [Module.FaithfullyFlat R S] (k : Type) [Field k] [IsAlgClosed k]
@@ -176,17 +165,7 @@ theorem exists_preimage_of_geom (R S : Type) [CommRing R] [CommRing S] [Algebra 
     (h : ∀ (k : Type) [Field k] [IsAlgClosed k] (χ₁ χ₂ : S →+* k),
       χ₁.comp (algebraMap R S) = χ₂.comp (algebraMap R S) → χ₁ w = χ₂ w) :
     ∃ u : R, algebraMap R S u = w := by
-  haveI := GlobalTheory.isReduced_algebra_of_smooth_of_isReduced R S
-  haveI := GlobalTheory.isReduced_algebra_of_smooth_of_isReduced S (S ⊗[R] S)
-  have key : w ⊗ₜ[R] (1 : S) = (1 : S) ⊗ₜ[R] w := by
-    refine eq_of_forall_geom _ _ fun k _ _ χ => ?_
-    refine h k (χ.comp Algebra.TensorProduct.includeLeftRingHom)
-      (χ.comp (Algebra.TensorProduct.includeRight (R := R) (A := S) (B := S)).toRingHom) ?_
-    ext x
-    change χ (algebraMap R S x ⊗ₜ[R] (1 : S)) = χ ((1 : S) ⊗ₜ[R] algebraMap R S x)
-    rw [Algebra.algebraMap_eq_smul_one, TensorProduct.smul_tmul]
-  exact (Algebra.IsEffective.of_faithfullyFlat R S w).1 (by
-    rw [Algebra.TensorProduct.includeLeftSubRight_apply, key, sub_self])
+  first | exact _root_.GlobalTheory.CoverDescent.exists_preimage_of_geometric | exact @_root_.GlobalTheory.CoverDescent.exists_preimage_of_geometric | apply _root_.GlobalTheory.CoverDescent.exists_preimage_of_geometric <;> assumption
 
 end GlobalTheory.SmoothLocalDescent
 

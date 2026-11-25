@@ -140,9 +140,9 @@ theorem expCover_mem_ball {n a : ℕ} (h : a ≤ n) {w : Fin n → ℂ} (hw : w 
   · have hre := hw.1 ⟨k.val, hk⟩
     have hkk : Fin.castLE h ⟨k.val, hk⟩ = k := Fin.ext rfl
     rw [hkk] at hre
-    simp only [expCover, hk, if_true, Complex.norm_exp]
+    simp only [expCover, hk, ite_true, Complex.norm_exp]
     simpa using Real.exp_lt_exp.mpr hre
-  · simp only [expCover, hk, if_false]
+  · simp only [expCover, hk, ite_false]
     exact hw.2 k (not_lt.1 hk)
 
 theorem expCover_castLE {n a : ℕ} (h : a ≤ n) (w : Fin n → ℂ) (i : Fin a) :

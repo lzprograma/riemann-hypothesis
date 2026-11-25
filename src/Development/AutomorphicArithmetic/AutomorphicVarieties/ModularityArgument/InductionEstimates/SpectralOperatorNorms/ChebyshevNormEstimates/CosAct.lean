@@ -125,18 +125,6 @@ private theorem fin_facts {K : Type} [Field K] [NumberField K] {n : ℕ} {k : Ad
   · rw [MultiplicityOne.finProj_of_mem (maxCompact_le_normOneGL (finEmb_mem_maxCompact hk))]
   · exact (AdelicGLn.prodEquiv K n).apply_symm_apply _
 
-private theorem fix_inv {K : Type} [Field K] [NumberField K] {n : ℕ} {D : TypeDat K n}
-    {Kf : Subgroup (AdelicGLn.FiniteAdelicGL K n)} (hL : D.Level Kf) (hle : Kf ≤ AdelicGLn.integralFiniteGL K n)
-    {f : G1 K n → ℂ} (hf : D.Fix f) {k : AdelicGLn.FiniteAdelicGL K n} (hk : k ∈ Kf) (g : G1 K n) :
-    f (g * MultiplicityOne.finProj K n k) = f g := by
-  obtain ⟨h1, h2, h3⟩ := fin_facts (hle hk)
-  have h4 : (AdelicGLn.prodEquiv K n (MultiplicityOne.finProj K n k : G1 K n)).1 = 1 := by rw [h1, h3]
-  have hU : MultiplicityOne.finProj K n k ∈ D.U := (hL.1 _ h4).2 (by rw [h1, h3]; exact hk)
-  rw [← hf g, ← hf (g * _), ← (D.inv _ hU).integral_comp (measurableEmbedding_mulLeft _) fun y => D.e y * f (g * y)]
-  refine integral_congr_ae ?_
-  filter_upwards [D.supp] with y hy
-  rw [hL.2.2 _ hU h4 y hy, mul_assoc]
-
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.cosAct :
     ForAllC fun K _ _ μ _ _ _ _ _ D d _ A A' => ∀ (Kf : Subgroup (AdelicGLn.FiniteAdelicGL K (2 + 2))), D.Level Kf → Kf ≤ AdelicGLn.integralFiniteGL K (2 + 2) →
       ∀ (h : AdelicGLn.FiniteAdelicGL K (2 + 2)) (Y : L2 μ →L[ℂ] L2 μ),
@@ -203,7 +191,8 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.cosAct :
       rw [h1]
       exact h2
     unfold flat
-    rw [fix_inv hL hle hfix hk, show HP 2 2 (y * MultiplicityOne.finProj K (2 + 2) k) = HP 2 2 y from (hK _ h3).2 y]
+    rw [FinA.fix_inv hL hle hfix y hk,
+      show HP 2 2 (y * MultiplicityOne.finProj K (2 + 2) k) = HP 2 2 y from (hK _ h3).2 y]
   rw [← hsz, finsum_mem_eq_finite_toFinset_sum _ hfin]
   refine (hint ℂ (fun g => flat z (A.sec v) (x * MultiplicityOne.finProj K (2 + 2) g))
     (hfl.comp (continuous_const.mul MultiplicityOne.continuous_finProj))).trans (Finset.sum_congr rfl fun c _ => ?_)

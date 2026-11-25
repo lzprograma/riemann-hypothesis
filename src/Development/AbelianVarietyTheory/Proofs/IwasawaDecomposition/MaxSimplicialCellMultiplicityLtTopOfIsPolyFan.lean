@@ -7,41 +7,6 @@ public import Mathlib.NumberTheory.NumberField.Basic
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinitelyManyIsoClassesProjectiveNumberField
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntBilinFormToRealMemBalancedPsdCone
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HomExtNormalSt
 import Mathlib.Tactic.Linter.Style
 
@@ -124,7 +89,7 @@ theorem GlobalTheory.PolFan.cell_gen_on_ray : ∀ (O : Type) [CommRing O] (bar :
         have := LinearMap.congr_fun₂ hkd a b
         simp only [LinearMap.smul_apply, LinearMap.sum_apply, toReal_apply, nsmul_eq_mul] at this ⊢
         simp only [Pi.single_apply, ite_smul, zero_smul, LinearMap.smul_apply, toReal_apply, smul_eq_mul,
-          Finset.sum_ite_eq', Finset.mem_univ, if_true, ite_mul, zero_mul]
+          Finset.sum_ite_eq', Finset.mem_univ, ite_true, ite_mul, zero_mul]
         exact_mod_cast this.symm) j (by exact_mod_cast hd)
     exact ⟨kj, e, hkj, fun _ => he⟩
   choose kk e hkk he using hB
@@ -149,16 +114,16 @@ theorem GlobalTheory.PolFan.cell_gen_on_ray : ∀ (O : Type) [CommRing O] (bar :
     exact Finset.sum_congr rfl fun l _ => (Finset.sum_smul).symm
   have hFG := Fintype.linearIndependent_iffₛ.1 hli (fun l => ((∑ j, d j * Kj j * e j l : ℕ) : ℤ))
     (fun l => if l = i then ((K * k : ℕ) : ℤ) else 0) (by
-      simp only [Nat.cast_smul_eq_nsmul, ite_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      simp only [Nat.cast_smul_eq_nsmul, ite_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
       exact key.symm)
   have hoff : ∀ l, l ≠ i → ∀ j, d j * Kj j * e j l = 0 := by
     intro l hl j
     have := hFG l
-    simp only [if_neg hl, Nat.cast_eq_zero] at this
+    simp only [ite_eq_right hl, Nat.cast_eq_zero] at this
     exact (Finset.sum_eq_zero_iff.1 this) j (Finset.mem_univ _)
   have hon : ∑ j, d j * Kj j * e j i ≠ 0 := by
     have := hFG i
-    rw [if_pos rfl, Nat.cast_inj] at this
+    rw [ite_eq_left rfl, Nat.cast_inj] at this
     rw [this]
     exact (Nat.mul_pos hKpos hk).ne'
   obtain ⟨j, -, hj⟩ := Finset.exists_ne_zero_of_sum_ne_zero hon

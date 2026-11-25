@@ -361,13 +361,6 @@ private theorem coe_support_eq_range_subschemeι {X : Scheme.{u}} (I : X.IdealSh
     (↑I.support : Set ↥X) = Set.range (⇑I.subschemeι.base) := by
   simp
 
-private theorem isEmpty_subscheme_top (X : Scheme.{u}) :
-    IsEmpty ↥((⊤ : X.IdealSheafData).subscheme) := by
-  have h2 : (↑(⊤ : X.IdealSheafData).support : Set ↥X) = ∅ :=
-    (Scheme.IdealSheafData.eq_top_iff_support_eq_empty (⊤ : X.IdealSheafData)).mp rfl
-  rw [coe_support_eq_range_subschemeι] at h2
-  exact Set.range_eq_empty_iff.mp h2
-
 theorem eq_top_of_imageIdealSheaf_eq_top {S X : Scheme.{u}} (σ : S ⟶ X) (J : S.IdealSheafData)
     (h : _root_.FunctorialResolution.Blowup.schemeImageIdeal σ J = ⊤) : J = ⊤ := by
   have hker : (J.subschemeι ≫ σ).ker = ⊤ := by
@@ -377,7 +370,7 @@ theorem eq_top_of_imageIdealSheaf_eq_top {S X : Scheme.{u}} (σ : S ⟶ X) (J : 
     le_of_eq (by rw [AlgebraicGeometry.Scheme.IdealSheafData.ker_subschemeι, hker])
   have hZ : IsEmpty ↥J.subscheme := by
     refine ⟨fun z => ?_⟩
-    exact (isEmpty_subscheme_top X).elim
+    exact (AlgebraicGeometry.Scheme.IdealSheafData.instIsEmptyCarrierCarrierCommRingCatSubschemeTop (X := X)).elim
       ((IsClosedImmersion.lift (⊤ : X.IdealSheafData).subschemeι (J.subschemeι ≫ σ) hle).base z)
   rw [Scheme.IdealSheafData.eq_top_iff_support_eq_empty, coe_support_eq_range_subschemeι,
     Set.range_eq_empty_iff]

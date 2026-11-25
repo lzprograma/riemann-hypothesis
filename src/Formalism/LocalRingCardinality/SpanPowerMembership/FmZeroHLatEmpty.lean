@@ -1,52 +1,10 @@
 module
 
 public import Formalism.LocalRingCardinality.DataForms
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -72,9 +30,9 @@ def wtQ (j : ℕ) (hj : j ≤ R.m) (i : Fin (R.N j)) : ℚ :=
 
 theorem wtQ_eq_wtN (j : ℕ) (hj : j ≤ R.m) (i : Fin (R.N j)) : wtQ P j hj i = wtN P i.1 := by
   by_cases h : i.1 < R.k
-  · simp only [wtQ, wtN, dif_pos h]
+  · simp only [wtQ, wtN, dite_eq_left h]
   · have hb : blkN R i.1 < R.m := R.blk_lt hj i h
-    rw [wtQ, wtN, dite_eq_right h, dite_eq_right h, dif_pos hb]
+    rw [wtQ, wtN, dite_eq_right h, dite_eq_right h, dite_eq_left hb]
     rfl
 
 theorem u_step (i : ℕ) (hi : i + 1 < R.k) : P.u ⟨i + 1, hi⟩ + 1 ≤ P.u ⟨i, by omega⟩ := by
@@ -97,7 +55,7 @@ theorem u_step (i : ℕ) (hi : i + 1 < R.k) : P.u ⟨i + 1, hi⟩ + 1 ≤ P.u �
 private theorem wtN_eq_neg_wG_blkN (n : ℕ) (hn : ¬ n < R.k) (hb : blkN R n < R.m) :
     wtN P n = -wG R (P.e ⟨blkN R n, hb⟩) (blkN R n + 1) := by
   unfold wtN
-  rw [dite_eq_right hn, dif_pos hb]
+  rw [dite_eq_right hn, dite_eq_left hb]
 
 private theorem neg_wG_le_of_adjacent_blocks (c c' : ℕ) (hc : c < R.m) (hc' : c' < R.m) (h : c' = c ∨ c' = c + 1) :
     -wG R (P.e ⟨c', hc'⟩) (c' + 1) ≤ -wG R (P.e ⟨c, hc⟩) (c + 1) := by
@@ -114,7 +72,7 @@ theorem wtN_step (n : ℕ) (hn : n + 1 < R.N R.m) : wtN P (n + 1) ≤ wtN P n :=
   · by_cases hA : n + 1 < R.k
     · have hs := u_step P n hA
       unfold wtN
-      rw [dif_pos hA, dif_pos hn0]
+      rw [dite_eq_left hA, dite_eq_left hn0]
       simp only [hcToWeightQ, rhoVec]
       push_cast
       linarith
@@ -138,7 +96,7 @@ theorem wtN_step (n : ℕ) (hn : n + 1 < R.N R.m) : wtN P (n + 1) ≤ wtN P n :=
       have h2 : ((R.t : ℚ) + 3) / 2 ≤ P.e ⟨0, hm0⟩ - P.b ⟨0, hm0⟩ := P.gap_be ⟨0, hm0⟩
       have hnq : (n : ℚ) + 1 = R.k := by exact_mod_cast hk
       unfold wtN
-      rw [dif_pos hn0]
+      rw [dite_eq_left hn0]
       simp only [wG, hcToWeightQ, rhoVec]
       push_cast
       linarith
@@ -182,7 +140,7 @@ theorem wtQ_int (j : ℕ) (hj : j ≤ R.m) (i : Fin (R.N j)) : ∃ z : ℤ, wtQ 
   by_cases h : i.1 < R.k
   · obtain ⟨z, hz⟩ := P.u_half ⟨i.1, h⟩
     refine ⟨z + 1 - a + i.1, ?_⟩
-    rw [wtQ, dif_pos h]
+    rw [wtQ, dite_eq_left h]
     simp only [hcToWeightQ, rhoVec, hz]
     rw [hk]
     push_cast
@@ -202,7 +160,7 @@ def lamOf (j : ℕ) : DomWeight (R.N j) :=
 
 theorem lamOf_eq (j : ℕ) (hj : j ≤ R.m) (i : Fin (R.N j)) : ((lamOf P j).w i : ℚ) = wtQ P j hj i := by
   obtain ⟨z, hz⟩ := wtQ_int P j hj i
-  simp only [lamOf, dif_pos hj, hz, Int.floor_intCast]
+  simp only [lamOf, dite_eq_left hj, hz, Int.floor_intCast]
 
 end Weights
 
@@ -240,68 +198,6 @@ variable {R : Ranks} {LL : Type} [Field LL] [NumberField LL] [StarRing LL] (embL
   {hc : Tau → HCParam R} (C : ColumnChain R Tau hc) [hE : ∀ i, IsEmpty (C.cls i)]
   (A : ColumnsAtT R C) (P : PeriodMap R C)
 
-def formsToy : MemberForms LL embLL Pl Tau hc C A P where
-  lv := fun i v _ => Fin (R.N i) → A.Fv v
-  lv_rank := fun i v _ => Module.finrank_fin_fun (A.Fv v)
-  fv := fun i v _ => LinearMap.proj ⟨0, R.N_pos i⟩
-  fv_ne := fun _ _ c => isEmptyElim c
-  up := fun _ _ c _ => c
-  upT := fun _ _ _ _ => LinearEquiv.refl ℂ _
-  lk := fun i v _ => Fin (R.N i) → A.Fv v
-  lk_rank := fun i v _ => Module.finrank_fin_fun (A.Fv v)
-  te := fun i v _ => Pi.single ⟨0, R.N_pos i⟩ 1
-  te_ne := fun _ _ c => isEmptyElim c
-  dn := fun _ _ c _ => c
-  dnT := fun _ _ _ _ => LinearEquiv.refl ℂ _
-  dil := fun _ _ _ c => c
-  dilT := fun _ _ _ _ => LinearEquiv.refl ℂ _
-  dil_one := fun _ _ _ => rfl
-  dil_mul := fun _ _ _ _ _ => rfl
-  dil_fv := fun _ _ _ c => isEmptyElim c
-  dil_stab := fun _ _ _ _ => rfl
-  rhoT_dil := fun _ _ _ c => isEmptyElim c
-  tauOf := fun _ => Fintype.equivOfCardEq (by rw [A.card_vT, hTau])
-  seenP := fun _ => true
-  lam := fun j τ => lamOf (hc τ) j
-  lam_eq := fun j hj τ i => lamOf_eq (hc τ) j hj i
-  sg := fun _ => ⟨fun _ => 0, fun _ _ _ => le_rfl⟩
-  Fi := fun _ => ⊥
-  Fi_zero := Subsingleton.elim _ _
-  ipV := fun _ _ => 0
-  lat := fun _ => fmZeroHLat LL
-  lat_good := fun _ => fmZeroHLat_good LL
-  emb := fun _ => 0
-  emb_basis := fun _ => ⟨linearIndependent_empty_type, by
-    rw [Set.range_eq_empty, Submodule.span_empty]⟩
-  emb_norm := fun i x => by
-    rw [fmZeroHLat_maj]
-    simp
-  rhoT_lat := fun _ _ _ _ => ⟨0, Submodule.zero_mem _, Subsingleton.elim _ _⟩
-  Bw := fun _ _ _ => ⊤
-  Bw_span := fun _ _ _ => Subsingleton.elim _ _
-  clsP := Empty
-  stabilizer₂ := fun _ => Unit
-  til := fun c => c.elim
-  stabMap := fun c => c.elim
-  stabMap_inj := fun c => c.elim
-  evz_til := fun φ ψ _ => by rw [Subsingleton.elim φ ψ]
-  ptC := ⊥
-  ipP := 0
-  ptLat := fmZeroHLat LL
-  ptLat_good := fmZeroHLat_good LL
-  ptEmb := 0
-  ptEmb_basis := ⟨linearIndependent_empty_type, by rw [Set.range_eq_empty, Submodule.span_empty]⟩
-  ptEmb_norm := fun x => by
-    rw [fmZeroHLat_maj]
-    simp
-  beOn := fun _ => 0
-  beOn_nonneg := fun _ => le_rfl
-  thFree := fun _ _ _ _ => 0
-  thFree_nonneg := fun _ _ _ _ => le_rfl
-
 end Forms
-
-def gxExample (LL : Type) [Field LL] [NumberField LL] (Tau : Type) : GlobalExtra LL Tau :=
-  ⟨fun _ _ => 1, fun _ _ => one_pos, fun _ => 1, fun _ => one_pos⟩
 
 end Formalism.BasicNotions.Examples₂

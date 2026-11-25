@@ -15,8 +15,6 @@ open scoped TensorProduct ContDiff
 
 namespace Formalism.IndefR.Eqv
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem mt_mul (V : HSp D) (g h : GA D V) :

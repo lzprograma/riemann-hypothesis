@@ -11,53 +11,16 @@ public import Mathlib.LinearAlgebra.Eigenspace.Pi
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TZero
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MonomialCoefficientComparison
 public import Mathlib.Algebra.DirectSum.LinearMap
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Monoid.Prod
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Sheaves.Presheaf
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Topology.Sheaves.Init
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLoc
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -111,9 +74,9 @@ theorem exists_top_add (φ : (Fin n → ℤ) →+ ℤ) (f g : LP n) (hf : f ≠ 
     simp only [Finsupp.sum]
     rw [Finset.sum_eq_single a]
     · rw [Finset.sum_eq_single b]
-      · rw [if_pos rfl]
+      · rw [ite_eq_left rfl]
       · intro y _ hne
-        rw [if_neg]
+        rw [ite_eq_right]
         intro he
         exact hne (add_left_cancel he)
       · intro h
@@ -122,7 +85,7 @@ theorem exists_top_add (φ : (Fin n → ℤ) →+ ℤ) (f g : LP n) (hf : f ≠ 
     · intro x hx hne
       apply Finset.sum_eq_zero
       intro y hy
-      rw [if_neg]
+      rw [ite_eq_right]
       intro he
       have h1 : D x < D a := lt_of_le_of_ne (hamax x hx) (hD.ne hne)
       have h2 : D y ≤ D b := hbmax y hy
@@ -154,7 +117,7 @@ theorem Bd.mul {φ : (Fin n → ℤ) →+ ℤ} {f g : LP n} {B C : ℤ} (hf : Bd
   by_cases he : x + y = ν
   · rw [← he, map_add (f := _)]
     exact add_le_add (hf x (Finsupp.mem_support_iff.1 hx)) (hg y (Finsupp.mem_support_iff.1 hy))
-  · exact absurd (if_neg he) hy'
+  · exact absurd (ite_eq_right he) hy'
 
 theorem Bd.add {φ : (Fin n → ℤ) →+ ℤ} {f g : LP n} {B : ℤ} (hf : Bd φ f B) (hg : Bd φ g B) :
     Bd φ (f + g) B := by
@@ -176,7 +139,7 @@ theorem bd_single (φ : (Fin n → ℤ) →+ ℤ) (m : Fin n → ℤ) (r : ℂ) 
   rw [AddMonoidAlgebra.coeff_single, Finsupp.single_apply] at hν
   by_cases h : m = ν
   · rw [h]
-  · exact absurd (if_neg h) hν
+  · exact absurd (ite_eq_right h) hν
 
 theorem Bd.sum {ι : Type*} {φ : (Fin n → ℤ) →+ ℤ} (s : Finset ι) (F : ι → LP n) {B : ℤ}
     (h : ∀ i ∈ s, Bd φ (F i) B) : Bd φ (∑ i ∈ s, F i) B := by
@@ -244,7 +207,7 @@ theorem coeff_altL_delZ : (altL (delZ n)).coeff (delZ n) = 1 := by
   · simp
   · intro σ _ hσ
     rw [AddMonoidAlgebra.coeff_smul, Finsupp.smul_apply, AddMonoidAlgebra.coeff_single, Finsupp.single_apply,
-      if_neg, smul_zero]
+      ite_eq_right, smul_zero]
     intro he
     apply hσ
     ext i
@@ -303,11 +266,11 @@ theorem range_sums (k N : ℕ) :
   | succ N ih =>
     rw [Finset.sum_range_succ, Finset.sum_range_succ, ih.1, ih.2]
     by_cases hN : N < k
-    · rw [if_pos hN, min_eq_left hN.le, min_eq_left (Nat.succ_le_of_lt hN)]
+    · rw [ite_eq_left hN, min_eq_left hN.le, min_eq_left (Nat.succ_le_of_lt hN)]
       push_cast
       constructor <;> ring
-    · rw [if_neg hN]
-      push_neg at hN
+    · rw [ite_eq_right hN]
+      push Not at hN
       rw [min_eq_right hN, min_eq_right (by omega)]
       simp
 
@@ -356,7 +319,7 @@ theorem domLE_of_mul_eq : ∀ {n : ℕ} (lam : Fin n → ℤ), Antitone lam → 
     exact Finset.sum_congr rfl fun a _ => by simp only [wk]; split_ifs <;> simp
   have hm0 : ∀ a, m0 lam a = ((2 * lam a + ((n : ℤ) - 1 - 2 * ((a : ℕ) : ℤ)) : ℤ) : ℝ) := by
     intro a; simp only [m0]; push_cast; ring
-  have hw1 : ∀ a : Fin n, wk n a = 1 := fun a => if_pos a.isLt
+  have hw1 : ∀ a : Fin n, wk n a = 1 := fun a => ite_eq_left a.isLt
   have htot : ∑ a : Fin n, ((n : ℤ) - 1 - 2 * ((a : ℕ) : ℤ)) = 0 := by
     have := sum_max_eq (n := n) n
     simp only [hw1, sub_self, max_self, Finset.sum_const_zero, one_mul] at this
@@ -1015,7 +978,7 @@ theorem topeG : ∀ {n : ℕ} (lam : Fin n → ℤ), Antitone lam → ∀ (E : K
   have hmem : ∀ μ, wtDual E μ ≠ ⊥ → μ ∈ s := fun μ h => by simpa [hs] using h
   obtain ⟨h1, -⟩ := _root_.GlobalTheory.CompanionTheory.RealCount.Tope.Ident.lefK_laurent_ident lam E T hT hspan hind s hmem
   refine ⟨hspan, fun μ hμ => _root_.GlobalTheory.CompanionTheory.RealCountG.DomA.domLE_of_mul_eq lam hlam _ h1 μ ?_⟩
-  rw [cPoly_coeff, if_pos (hmem μ hμ), trOn_dualT_id]
+  rw [cPoly_coeff, ite_eq_left (hmem μ hμ), trOn_dualT_id]
   have : Module.finrank ℂ (wtDual E μ) ≠ 0 := fun h0 => hμ (Submodule.finrank_eq_zero.1 h0)
   exact_mod_cast this
 

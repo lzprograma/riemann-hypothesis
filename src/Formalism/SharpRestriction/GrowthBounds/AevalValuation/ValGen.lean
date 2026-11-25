@@ -4,44 +4,6 @@ public import Formalism.SharpRestriction.GrowthBounds.AevalValuation.PlDefs
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDefs
 public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.TwistedMonomialFiltration.TMemLaurentFiltration
 public import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeMapFractionField
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.TwiceValuationFactorialProduct
 import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.TlNonempty
 
@@ -168,21 +130,20 @@ theorem twist_aeval (LL : Letters ι) (LL' : Letters κ) (S L : Set ι) (S' : Se
     by_cases hS : v.1 ∈ S
     · obtain ⟨hg, hf, hvec⟩ := h1 v hv hS
       rw [hg]
-      simp only [twistSub, eval₂Hom_X', if_pos hS, if_pos hf, hvec]
+      simp only [twistSub, eval₂Hom_X', ite_eq_left hS, ite_eq_left hf, hvec]
       split_ifs
       · set_option synthInstance.maxHeartbeats 100000 in
           simp only [thetaG, map_sum, map_mul, eval₂Hom_C, eval₂Hom_X']
         apply Finset.sum_congr rfl
         intro b _
         rw [(h1 (v.1, b) hv hS).1, map_X]
-      · set_option synthInstance.maxHeartbeats 100000 in
-          simp only [thetaG, map_sum, map_mul, eval₂Hom_C, eval₂Hom_X']
+      · simp only [thetaG, map_sum, map_mul, eval₂Hom_C, eval₂Hom_X']
         apply Finset.sum_congr rfl
         intro b _
         rw [(h1 (v.1, b) hv hS).1, map_X]
     · have hgv := h2 v hv hS
       have hx : twistSub LL S j (X v : MvPolynomial (ι × Fin n) Kf) = X v := by
-        simp only [twistSub, eval₂Hom_X', if_neg hS]
+        simp only [twistSub, eval₂Hom_X', ite_eq_right hS]
       rw [hx, thetaG, eval₂Hom_X']
       refine ringHom_eq_of_mem_supported_of_eqOn (twistSub LL' S' j) (MvPolynomial.map (coefL Kf n))
         {u | u.1 ∉ S'} ?_ ?_ hgv
@@ -190,7 +151,7 @@ theorem twist_aeval (LL : Letters ι) (LL' : Letters κ) (S L : Set ι) (S' : Se
         simp [twistSub]
       · intro u hu
         have hu' : u.1 ∉ S' := hu
-        simp only [twistSub, eval₂Hom_X', if_neg hu', map_X]
+        simp only [twistSub, eval₂Hom_X', ite_eq_right hu', map_X]
 
 theorem thetaG_mem (g : ι × Fin n → MvPolynomial (κ × Fin n) Kf) (e t : ℤ)
     (P : MvPolynomial (ι × Fin n) (GLLaurent Kf n)) (hP : P ∈ (laurentCoeffFiltration Kf n (ι × Fin n) e).F t) :
@@ -210,7 +171,7 @@ end Aeval
 
 theorem valAeval : ValAeval := by
   intro Kf _ ι κ n _ LL LL' S L S' f g F hF h1 h2
-  have := flt_withTop_le (a := valS LL S F) (b := valS LL' S' (aeval g F)) (N := 0) ?_
+  have := Formalism.MainNotions.G.GLWeightTheory.flt_withTop_le (a := valS LL S F) (b := valS LL' S' (aeval g F)) (N := 0) ?_
   · simpa using this
   · intro t ht
     rw [flt_le_valS] at ht

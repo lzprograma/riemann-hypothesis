@@ -45,6 +45,7 @@ import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
 import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GlobSet
 import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramePairCoordinatesTransportInnerLattices
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalTermLatticeOverInnerDatumFgSpan, Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalTermLatticeOverInnerDatumFgSpanStatement
@@ -56,7 +57,6 @@ section -- clump:auto
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc GlobalTheory.Unfold GlobalTheory.LocOver GlobalTheory.GenMass
 open scoped Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -172,28 +172,12 @@ theorem prF_smul (c : E) (u : V) : Fr.prF (c • u) = c • Fr.prF u := by
   rw [← prL_apply, map_smul, prL_apply]
 
 theorem mem_perpX {u : V} : u ∈ H.perp (H.X Fr.f) ↔ ∀ a, H.h u (Fr.e a) = 0 := by
-  constructor
-  · intro hu a
-    exact hu (Fr.e a) (Submodule.subset_span ⟨a, rfl⟩)
-  · intro hu x hx
-    have hle : H.X Fr.f ≤ LinearMap.ker (hl H u) := by
-      refine Submodule.span_le.2 ?_
-      rintro _ ⟨a, rfl⟩
-      simp only [SetLike.mem_coe, LinearMap.mem_ker, hl_apply]
-      exact h_eq_zero_comm H (hu a)
-    exact h_eq_zero_comm H (hle hx)
+  apply _root_.GlobalTheory.HL.CoordInnerSnd.mem_perpX <;> assumption
 
 theorem prF_perp (v : V) : Fr.prF v ∈ H.perp (H.X Fr.f) := (mem_perpX Fr).2 (prF_e Fr v)
 
 theorem prF_X {ξ : V} (hξ : ξ ∈ H.X Fr.f) : Fr.prF ξ = 0 := by
-  have hle : H.X Fr.f ≤ LinearMap.ker (prL Fr) := by
-    refine Submodule.span_le.2 ?_
-    rintro _ ⟨a, rfl⟩
-    simp only [SetLike.mem_coe, LinearMap.mem_ker]
-    show (prL Fr) (Fr.e a) = 0
-    rw [prL_apply]
-    simp [FrameD.prF, h_e_es, h_e_e, ite_smul, Finset.sum_ite_eq]
-  rw [← prL_apply]; exact hle hξ
+  apply _root_.GlobalTheory.HL.CoordInnerSnd.prF_X <;> assumption
 
 theorem prF_e_self (a : Fin r) : Fr.prF (Fr.e a) = 0 := prF_X Fr (Submodule.subset_span ⟨a, rfl⟩)
 
@@ -372,7 +356,6 @@ section -- clump:auto
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc GlobalTheory.Unfold GlobalTheory.LocOver GlobalTheory.GenMass
 open scoped Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem _root_.GlobalTheory.T.localTermLattice_over_innerDatum_fg_span : ∀ (D : D7) (Z : LocDat D) (FP : ∀ p : PlF D, LocNG.FPair (locH Z p) D.R.rS) (p : PlF D) (d : LocNG.Datum (FP p)) (t : Loc.Term (Vp D p) (Z.M p) D.R.rS), LocNG.IsTermOver (FP p) d t → t.abelian₂.FG ∧ Submodule.span (D.s.atP p).Ep (t.abelian₂ : Set (Vp D p)) = ⊤ := by
   first | exact @GlobalTheory.GenMass.Fibre.termLat

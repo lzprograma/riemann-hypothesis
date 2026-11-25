@@ -81,7 +81,6 @@ def toTildeCocy (n : ℕ) :
   map_add' y y' := Subtype.ext (funext fun I => Subtype.ext (chartVal_add M c y.1 y'.1 I))
   map_smul' a y := Subtype.ext (funext fun I => Subtype.ext (chartVal_smul M c a y.1 I))
 
-set_option synthInstance.maxHeartbeats 200000 in
 def toTildeH (n : ℕ) : cohom M.coneGradedE n c →ₗ[S] (M.tildeSys c).H n :=
   Submodule.liftQ _ ((Submodule.mkQ _).comp (toTildeCocy M c n)) (by
     intro y hy
@@ -148,7 +147,6 @@ theorem chartVal_liftCochain {n : ℕ} (t : Cech.Cochain (fun I : Chart x => ↥
   rw [e1]
   exact (congrArg (coeffE S x E c) e2).trans (coeffE_singleE_same _ _)
 
-set_option synthInstance.maxHeartbeats 200000 in
 theorem toTildeH_surjective (n : ℕ) : Function.Surjective (toTildeH M c n) := by
   intro q
   obtain ⟨t, rfl⟩ := Submodule.Quotient.mk_surjective _ q

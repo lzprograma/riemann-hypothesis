@@ -29,11 +29,8 @@ theorem mem_dual_iff (h : V →ₗ⋆[K] V →ₗ[K] K) (L : Submodule (𝓞 K) 
   simp only [Formalism.HermitianLatticesTheory.dual, Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap,
     LinearMap.restrictScalars_apply]
 
-private theorem coe_iota_eq_algebraMap_coe (a : 𝓞 F) : jK (ι a) = algebraMap F K (a : F) := by
-  rw [← IsScalarTower.algebraMap_apply (𝓞 F) (𝓞 K) K, IsScalarTower.algebraMap_apply (𝓞 F) F K]
-
 private theorem jK_iota_ne_zero {a : 𝓞 F} (ha : a ≠ 0) : jK (ι a) ≠ 0 := by
-  rw [coe_iota_eq_algebraMap_coe]
+  rw [Formalism.HermitianLattices.Ext.L3.MeanB.algebraMap_comp]
   exact (map_ne_zero (algebraMap F K)).mpr ((map_ne_zero_iff _ (IsFractionRing.injective (𝓞 F) F)).mpr ha)
 
 private theorem jK_ne_zero_of_mem_closure_prime_compl {𝔭 : Ideal (𝓞 F)} {s : 𝓞 K}
@@ -54,13 +51,9 @@ private theorem star_jK_eq_of_mem_closure_prime_compl (hF : IsFixF K F) {𝔭 : 
   induction hs using Submonoid.closure_induction with
   | mem y hy =>
     obtain ⟨t, _, rfl⟩ := hy
-    exact (hF _).2 ⟨(t : F), (coe_iota_eq_algebraMap_coe t).symm⟩
+    exact (hF _).2 ⟨(t : F), (Formalism.HermitianLattices.Ext.L3.MeanB.algebraMap_comp t).symm⟩
   | one => simp
   | mul y z _ _ hy hz => rw [map_mul, star_mul', hy, hz]
-
-private theorem star_mem_HU_SP (hF : IsFixF K F) {𝔭 : Ideal (𝓞 F)} [𝔭.IsPrime] {a : K}
-    (ha : a ∈ HU.SP K 𝔭) : star a ∈ HU.SP K 𝔭 :=
-  HU.InP.conj hF ha
 
 theorem smul_eq_jK (c : 𝓞 K) (v : V) : c • v = jK c • v := (algebraMap_smul K c v).symm
 
@@ -109,14 +102,14 @@ theorem coords (h𝔭 : 𝔭.IsPrime) (hL : IsLatIn X L) {x : V} (hx : x ∈ X) 
     exact locF_le_spanK h𝔭 h1
   obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun K).mp hxs
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [h_sum horth (fun j => by rw [hdiag j]; exact (coe_iota_eq_algebraMap_coe (a j)).symm) c i,
+  rw [h_sum horth (fun j => by rw [hdiag j]; exact (Formalism.HermitianLattices.Ext.L3.MeanB.algebraMap_comp (a j)).symm) c i,
     mul_div_cancel_right₀ _ (jK_iota_ne_zero (ha i))]
 
 theorem mem_B_iff (h𝔭 : 𝔭.IsPrime) (hL : IsLatIn X L) (x : V) :
     x ∈ locF 𝔭 L ↔ x ∈ X ∧ ∀ i, h (b i) x / jK (ι (a i)) ∈ HU.SP K 𝔭 := by
   haveI := h𝔭
   have hdiag' : ∀ i, h (b i) (b i) = jK (ι (a i)) := fun i => by
-    rw [hdiag i]; exact (coe_iota_eq_algebraMap_coe (a i)).symm
+    rw [hdiag i]; exact (Formalism.HermitianLattices.Ext.L3.MeanB.algebraMap_comp (a i)).symm
   have key : ∀ w ∈ Submodule.span (𝓞 K) (Set.range b), ∀ i,
       h (b i) w / jK (ι (a i)) ∈ (1 : Submodule (𝓞 K) K) := by
     intro w hw i
@@ -181,7 +174,7 @@ theorem mem_locF_dualIn_iff (hF : IsFixF K F) (h𝔭 : 𝔭.IsMaximal) (hL : IsL
       rw [coords hbX hloc horth hdiag ha h𝔭.isPrime hL hyX, map_sum, LinearMap.sum_apply]
       refine Subring.sum_mem _ fun i _ => ?_
       rw [LinearMap.map_smulₛₗ₂, starRingEnd_apply, smul_eq_mul]
-      exact Subring.mul_mem _ (star_mem_HU_SP hF (hc i)) (hq i)
+      exact Subring.mul_mem _ (HU.InP.conj hF (hc i)) (hq i)
     obtain ⟨S, hS⟩ := hL.1
     have hex : ∀ g : S, ∃ t : 𝓞 F, t ∉ 𝔭 ∧ ∃ z : 𝓞 K, jK z = jK (ι t) * h g x := fun g =>
       HU.mem_SP.mp (hgx g (hS ▸ Submodule.subset_span g.2))

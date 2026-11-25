@@ -1,5 +1,7 @@
 module
 
+import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HomogeneousFormNonvanishingPoint
 public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ValRPullbackTwistingSheafTransition
@@ -19,56 +21,8 @@ public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBirationalMode
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegularValuesInAdjoinedField
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StandardSmoothChartOfNonzero
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ZarhinBundleKernelFirstCoordEquations
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.AlgebraicGeometry.Morphisms.SchemeTheoreticallyDominant
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Henselian
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.MetricProofs.MultihomogeneousLiftToJoin, Development.AutomorphicSpectrum.Proofs.MetricProofs.MultihomogeneousNonvanishingOnJoin, Development.AutomorphicSpectrum.Proofs.MetricProofs.ResolutionExistsOfResolutionStatement, Development.AutomorphicSpectrum.Proofs.MetricProofs.ResolutionExistsOfResolutionStatementStatement
@@ -523,21 +477,6 @@ theorem sameOrbit_comp_inl {z z' : (Σ k, joinIdx ι ι₂ k) → ℂ} (h : Same
   obtain ⟨c, hc, rfl⟩ := h
   exact ⟨fun k => c (Sum.inl k), fun k => hc _, rfl⟩
 
-theorem cone_homog {Ω : Type} [Field Ω] (y : (Σ k, ι k) → Ω) {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) :
-    mConeMap y f = C (aeval y f) * ∏ k, X k ^ a k := by
-  unfold mConeMap
-
-  rw [aeval_def, aeval_def, eval₂_eq', eval₂_eq', map_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun d hd => ?_
-  have hc : (∏ i : (Σ k, ι k), (X i.1 : MvPolynomial K Ω) ^ d i) = ∏ k, X k ^ a k := by
-    rw [Fintype.prod_sigma]
-    refine Finset.prod_congr rfl fun k _ => ?_
-    show ∏ y, (X k : MvPolynomial K Ω) ^ d ⟨k, y⟩ = _
-    rw [Finset.prod_pow_eq_pow_sum, hf d hd k]
-  simp only [mul_pow, Finset.prod_mul_distrib, hc, map_mul, map_prod, map_pow]
-  rw [mul_assoc]
-  congr 1
-
 theorem evC_smul {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) (c : K → ℂ) (z : (Σ k, ι k) → ℂ) :
     evC (fun p => c p.1 * z p) f = (∏ k, c k ^ a k) * evC z f :=
   eval_smul_homog f a hf c z
@@ -568,7 +507,7 @@ theorem cross_mem (hG : ∀ i, IsMultiHomog (G i) g)
     simp only [AlgHom.comp_apply, AlgHom.restrictScalars_apply] at h1
     have h2 : mConeMap (joinVec y y') (rename (joinInl ι 𝔅) f) =
         rename (Sum.inl : K → K ⊕ Unit) (mConeMap y f) := h1
-    rw [h2, cone_homog y hf, map_mul, rename_C, map_prod]
+    rw [h2, GroundTheory.Heights₂.Heights.HilbertSamuel.ProjLine.mConeMap_eq_of_isMultiHomog y hf, map_mul, rename_C, map_prod]
     exact congrArg _ (Finset.prod_congr rfl fun k _ => by rw [map_pow, rename_X])
   have hX : ∀ i : Fin M, mConeMap (joinVec y y') (X (⟨Sum.inr (), i⟩ : Σ k, joinIdx ι 𝔅 k)) =
       C (y' ⟨(), i⟩) * X (Sum.inr ()) := by
@@ -682,7 +621,7 @@ theorem subst_mem {Ω : Type} [Field Ω] (y : (Σ k, ι k) → Ω) (y' : (Σ _ :
       have h2 : mConeMap (joinVec y y') (X (⟨Sum.inr (), i⟩ : Σ k, joinIdx ι 𝔅 k)) =
           C (y' ⟨(), i⟩) * X (Sum.inr ()) := by simp [mConeMap, joinVec]
       simp only [AlgHom.comp_apply, AlgHom.restrictScalars_apply]
-      rw [h1, h2, cone_homog y (hG i), hlam i]
+      rw [h1, h2, GroundTheory.Heights₂.Heights.HilbertSamuel.ProjLine.mConeMap_eq_of_isMultiHomog y (hG i), hlam i]
       simp [S, map_mul, mul_assoc]
   have h0 := AlgHom.congr_fun hc F
   have hF' : mConeMap (joinVec y y') F = 0 := hF
@@ -824,7 +763,6 @@ theorem eval_rename_inl (z : (Σ k, joinIdx ι 𝔅 k) → ℂ) (f : MRing ι) :
 
 end ResProj
 
-
 open ResProj in
 theorem anLogRes_of_embedded_join : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (Ω : Type) [Field Ω] [CharZero Ω] (y : (Σ k, ι k) → Ω) (e : ℕ) (M : ℕ) (y' : (Σ _ : Unit, Fin M) → Ω) (J : Ideal (MRing (joinIdx ι fun _ : Unit => Fin M))) (R : AnLogRes (mCoordIdeal (joinVec y y')) J e) (γ : MRing ι) (c : K → ℕ), IsEmbedded R.A (mCoordIdeal (joinVec y y')) R.U R.lift → (∃ i, y' ⟨(), i⟩ ≠ 0) → (∀ k, ∃ i, y ⟨k, i⟩ ≠ 0) → IsMultiHomog γ c → γ ∉ mCoordIdeal y → (∀ z ∈ mcPts (mCoordIdeal (joinVec y y')), evC z (rename (joinInl ι fun _ : Unit => Fin M) γ) = 0 → z ∈ mcPts J) → (∀ z ∈ mcPts (mCoordIdeal y), evC z γ ≠ 0 → ∃ (G : Fin M → MRing ι) (g : K → ℕ), (∀ i, IsMultiHomog (G i) g) ∧ (∀ i j, y' ⟨(), i⟩ * aeval y (G j) = y' ⟨(), j⟩ * aeval y (G i)) ∧ ∃ i, evC z (G i) ≠ 0) → Nonempty (AnLogRes (mCoordIdeal y) (Ideal.span {γ}) e) := by
   intro K _ ι _ Ω _ _ y e M y' J R γ c hE hy' hy hγ hγP hJ hGex
@@ -952,7 +890,6 @@ alias evC_rename_inl := _root_.GlobalTheory.CompanionTheory.Ar.Giv.ResProj.evC_r
 alias comp_inl_mem := _root_.GlobalTheory.CompanionTheory.Ar.Giv.ResProj.comp_inl_mem
 
 end ResTop
-
 
 open ResTop in
 theorem resExists_of_resK : ReciprocityTheory.ChartRestriction.G.Geo.ResK.ResKStatement → ResExistsStatement := by

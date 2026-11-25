@@ -11,45 +11,8 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Unitary
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteDimensionalForms
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CmFieldAdeleSplitPlaceSupportIntegral
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIntegerUnitSplitPlaceConjugatePrime
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsWildInertiaCyclotomicElement
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.RowsExhaust
 
@@ -83,7 +46,6 @@ alias mem_GLint_iff := _root_.GlobalTheory.HeckeStdFacts.mem_GLint_iff
 alias proj_mem := _root_.GlobalTheory.HeckeStdFacts.proj_mem
 alias loc_mem_GLint_iff := _root_.GlobalTheory.HeckeStdFacts.loc_mem_GLint_iff
 alias exists_tSet_eq := _root_.GlobalTheory.HeckeStdFacts.exists_tSet_eq
-alias exists_cong_conj := _root_.GlobalTheory.HeckeStdFacts.exists_cong_conj
 alias exists_reps := _root_.GlobalTheory.HeckeStdFacts.exists_reps
 alias finite_dc := _root_.GlobalTheory.HeckeStdFacts.finite_dc
 alias exists_repsU := _root_.GlobalTheory.HeckeStdFacts.exists_repsU
@@ -117,7 +79,7 @@ theorem heckeD_eq_sum {v : HeightOneSpectrum (𝓞 L⁺)} {D : Set (GAf L n)} (h
     Finset.sum_image]
   · refine Finset.sum_congr rfl fun γ hγ => ?_
     have hc : ∃ x ∈ D, (x : GAf L n ⧸ Umax L n) = γ := ⟨γ, h1 γ hγ, rfl⟩
-    rw [dif_pos hc]
+    rw [dite_eq_left hc]
     have hu : γ⁻¹ * hc.choose ∈ Umax L n := QuotientGroup.eq.1 hc.choose_spec.2.symm
     have := congrFun (hf _ hu (triv_mul (triv_inv (hD γ (h1 γ hγ))) (hD _ hc.choose_spec.1))) (g * γ)
     refine Eq.trans ?_ this
@@ -131,7 +93,7 @@ theorem heckeD_eq_sum {v : HeightOneSpectrum (𝓞 L⁺)} {D : Set (GAf L n)} (h
     · obtain ⟨x, hx, rfl⟩ := h
       obtain ⟨γ, ⟨hγ, e⟩, -⟩ := h2 x hx
       exact Finset.mem_coe.2 (Finset.mem_image.2 ⟨γ, hγ, QuotientGroup.eq.2 e⟩)
-    · exact absurd (dif_neg h) hc
+    · exact absurd (dite_eq_right h) hc
 
 theorem countable_range_rt {f : GAf L n → W} {N : ℕ} (hN : 0 < N)
     (hf : ∀ κ, NG.Cong L n N κ → ∀ g, f (g * κ) = f g) :
@@ -144,7 +106,7 @@ theorem countable_range_rt {f : GAf L n → W} {N : ℕ} (hN : 0 < N)
   have key : ∀ g, NG.rt L n g f = Ψ (p g) := by
     intro g
     have hq : ∃ g', p g' = p g := ⟨g, rfl⟩
-    simp only [Ψ, dif_pos hq]
+    simp only [Ψ, dite_eq_left hq]
     have e := hq.choose_spec
     have h3 := hp3 hq.choose
     rw [e] at h3

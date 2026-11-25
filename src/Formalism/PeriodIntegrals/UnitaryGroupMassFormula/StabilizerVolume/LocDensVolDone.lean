@@ -11,61 +11,12 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.UnifVSpec
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensSA
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensChLift
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DensFibV
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TensTop
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
 import Mathlib.Tactic.Linter.HaveILetI
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.LocDensVolT
-import Mathlib.Algebra.Order.Star.Real
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.LocDensVolS
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.LocDensVolT
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensSAInt, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolC, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVol, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolT, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolS, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolTop, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolDone
@@ -384,7 +335,7 @@ end -- clump:auto
 -- ===== end clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVol =====
 
 -- ===== clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolT =====
--- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolT", "h": "module\n\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.LocDensVolT\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolA\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Real\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolT", "h": "module\n\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.LocDensVolT\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolA\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Real\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -397,41 +348,18 @@ namespace VolAAW
 open scoped TensorProduct
 open NumberField IsDedekindDomain MeasureTheory Topology Filter Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes SdUniqW
 
-theorem eq_one_of_pow (z : ℂ) (hz : ‖z‖ = 1) (h : ∀ k : ℕ, 1 / 2 < (z ^ (2 ^ k)).re) : z = 1 := by
-  apply PI.VolStabSW.VolAAW.eq_one_of_pow <;> assumption
+export PI.VolStabSW.VolAAW (eq_one_of_pow)
 
 variable {F : Type} [Field F] [NumberField F]
 
-theorem psiV_nsmul (ψ : AddChar (AF F) ℂ) (v : HeightOneSpectrum (𝓞 F)) (n : ℕ) (y : Fv F v) :
-    psiV F ψ v (n • y) = psiV F ψ v y ^ n := by
-  induction n with
-  | zero =>
-    simp only [zero_smul, pow_zero, psiV]
-    have : pairA F 0 (singleV F v 0) = 0 := by
-      have h := singleV_add (F := F) v 0 0
-      rw [add_zero] at h
-      have h0 : singleV F v 0 = 0 := by
-        have := congrArg (fun x => x - singleV F v 0) h
-        exact (by simpa using this : (0 : Af F) = singleV F v 0).symm
-      rw [h0]
-      rfl
-    rw [this, AddChar.map_zero_eq_one]
-  | succ n ih => rw [succ_nsmul, psiV_add, ih, pow_succ]
-
-theorem ev_triv (ψ : AddChar (AF F) ℂ) (hψ : IsCharAF F ψ) :
-    ∀ᶠ v in cofinite, ∀ y ∈ v.adicCompletionIntegers F, psiV F ψ v y = 1 := by
-  apply PI.VolStabSW.VolAAW.ev_triv <;> assumption
+export PI.VolStabSW.VolAAW (psiV_nsmul ev_triv)
 
 def CondExact : Prop :=
   ∀ (F : Type) [Field F] [NumberField F] (ψ : AddChar (AF F) ℂ), IsCharAF F ψ →
     ∀ᶠ v in cofinite, ∀ t : Fv F v,
       (∀ s ∈ v.adicCompletionIntegers F, psiV F ψ v (s * t) = 1) → t ∈ v.adicCompletionIntegers F
 
-theorem condAA_of (hE : CondExact) : CondAA := by
-  intro F _ _ ψ hψ
-  filter_upwards [hE F ψ hψ, ev_triv ψ hψ] with v h1 h2
-  intro t
-  refine ⟨h1 t, fun ht s hs => h2 _ (mul_mem hs ht)⟩
+export PI.VolStabSW.VolAAW (condAA_of)
 
 end VolAAW
 
@@ -442,7 +370,7 @@ end -- clump:auto
 -- ===== end clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolT =====
 
 -- ===== clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolS =====
--- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolS", "h": "module\n\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.LocDensVolS\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolT\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.UnifVSpec\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensSA\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensSAChar\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolS", "h": "module\n\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolT\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.UnifVSpec\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensSA\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensSAChar\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -524,12 +452,95 @@ def U0 (I : Finset (HeightOneSpectrum (𝓞 F))) (n : HeightOneSpectrum (𝓞 F)
 
 theorem isOpen_adelic_neighbourhood (I : Finset (HeightOneSpectrum (𝓞 F))) (n : HeightOneSpectrum (𝓞 F) → ℕ) :
     IsOpen (U0 I n : Set (Af F)) := by
-  apply PI.VolStabSW.VolAAW.isOpen_adelic_neighbourhood
+  have hO : ∀ w : HeightOneSpectrum (𝓞 F), IsOpen (w.adicCompletionIntegers F : Set (Fv F w)) := by
+    intro w
+    first
+      | exact Valued.isOpen_valuationSubring _
+  have hev : ∀ w : HeightOneSpectrum (𝓞 F), Continuous fun y : Af F => y w := by
+    intro w
+    first
+      | exact RestrictedProduct.continuous_eval w
+  have h1 : IsOpen {y : Af F | ∀ w, y w ∈ w.adicCompletionIntegers F} := by
+    first
+      | exact RestrictedProduct.isOpen_forall_mem hO
+  have h2 : IsOpen {y : Af F | ∀ w ∈ I, (unifV w ^ n w)⁻¹ * y w ∈ w.adicCompletionIntegers F} := by
+    have e : {y : Af F | ∀ w ∈ I, (unifV w ^ n w)⁻¹ * y w ∈ w.adicCompletionIntegers F} =
+        ⋂ w ∈ I, {y : Af F | (unifV w ^ n w)⁻¹ * y w ∈ w.adicCompletionIntegers F} := by
+      ext y
+      simp
+    rw [e]
+    exact isOpen_biInter_finset fun w _ => (hO w).preimage (continuous_const.mul (hev w))
+  exact h1.inter h2
 
 theorem adele_character_trivial_open (ψ : AddChar (AF F) ℂ) (hψ : IsCharAF F ψ) :
     ∃ (I : Finset (HeightOneSpectrum (𝓞 F))) (n : HeightOneSpectrum (𝓞 F) → ℕ),
       ∀ y ∈ U0 I n, ψ (pairA F 0 y) = 1 := by
-  apply PI.VolStabSW.VolAAW.adele_character_trivial_open <;> assumption
+  classical
+  set U : Set (AF F) := {x | 1 / 2 < (ψ x).re} with hUdef
+  have hU : IsOpen U := isOpen_lt continuous_const (Complex.continuous_re.comp hψ.1)
+  let Φ : (∀ v : HeightOneSpectrum (𝓞 F),
+      ((v.adicCompletionIntegers F : Set (v.adicCompletion F)))) → AF F :=
+    fun x => pairA F 0 (RestrictedProduct.structureMap _ _ Filter.cofinite x)
+  have hΦ : Continuous Φ :=
+    continuous_const.prodMk RestrictedProduct.isEmbedding_structureMap.continuous
+  let x0 : ∀ v : HeightOneSpectrum (𝓞 F), ((v.adicCompletionIntegers F : Set (v.adicCompletion F))) :=
+    fun v => ⟨0, zero_mem _⟩
+  have hx0 : Φ x0 = 0 := by
+    show pairA F 0 _ = 0
+    have : (RestrictedProduct.structureMap _ _ Filter.cofinite x0 : Af F) = 0 := by
+      apply RestrictedProduct.ext
+      intro j
+      rfl
+    rw [this]
+    rfl
+  have hx0U : x0 ∈ Φ ⁻¹' U := by
+    simp only [Set.mem_preimage, hx0, hUdef, Set.mem_setOf_eq, AddChar.map_zero_eq_one,
+      Complex.one_re]
+    norm_num
+  obtain ⟨I, u, hu, hsub⟩ := isOpen_pi_iff.1 (hU.preimage hΦ) x0 hx0U
+  have hn : ∀ w : HeightOneSpectrum (𝓞 F), ∃ m : ℕ, w ∈ I → ∀ s ∈ w.adicCompletionIntegers F,
+      ∃ h : unifV w ^ m * s ∈ ((w.adicCompletionIntegers F : Set (w.adicCompletion F))),
+        (⟨unifV w ^ m * s, h⟩ : ((w.adicCompletionIntegers F : Set (w.adicCompletion F)))) ∈ u w := by
+    intro w
+    by_cases hw : w ∈ I
+    · obtain ⟨t, ht, hte⟩ := isOpen_induced_iff.1 (hu w hw).1
+      have h0 : (0 : Fv F w) ∈ t := by
+        have := (hu w hw).2
+        rw [← hte] at this
+        exact this
+      obtain ⟨m, hm⟩ := ev_pow_mul_sub w (ht.mem_nhds h0)
+      refine ⟨m, fun _ s hs => ⟨mul_mem (pow_mem (unifV_spec w).2.2 m) hs, ?_⟩⟩
+      rw [← hte]
+      exact hm s hs
+    · exact ⟨0, fun h => absurd h hw⟩
+  choose n hn using hn
+  refine ⟨I, n, ?_⟩
+  have hbig : ∀ y ∈ U0 I n, 1 / 2 < (ψ (pairA F 0 y)).re := by
+    intro y hy
+    let x : ∀ v : HeightOneSpectrum (𝓞 F), ((v.adicCompletionIntegers F : Set (v.adicCompletion F))) :=
+      fun w => ⟨y w, hy.1 w⟩
+    have hx : x ∈ (I : Set _).pi u := by
+      intro w hw
+      have hne : unifV w ^ n w ≠ 0 := pow_ne_zero _ (unifV_spec w).1
+      obtain ⟨h, hmem⟩ := hn w hw _ (hy.2 w hw)
+      have e : (⟨unifV w ^ n w * ((unifV w ^ n w)⁻¹ * y w), h⟩ :
+          ((w.adicCompletionIntegers F : Set (w.adicCompletion F)))) = x w := by
+        apply Subtype.ext
+        show unifV w ^ n w * ((unifV w ^ n w)⁻¹ * y w) = y w
+        rw [mul_inv_cancel_left₀ hne]
+      rw [← e]
+      exact hmem
+    have e : Φ x = pairA F 0 y := by
+      show pairA F 0 _ = _
+      congr 1
+    have := hsub hx
+    simp only [Set.mem_preimage, e, hUdef, Set.mem_setOf_eq] at this
+    exact this
+  intro y hy
+  apply eq_one_of_pow _ (hψ.2.1 _)
+  intro k
+  rw [← AddChar.map_nsmul_eq_pow, ← pairA_nsmul0]
+  exact hbig _ (AddSubgroup.nsmul_mem _ hy _)
 
 def lamPsi (ψ : AddChar (AF F) ℂ) : Submodule (𝓞 F) F where
   carrier := {a | ∀ r : 𝓞 F, ψ (pairA F 0 (algebraMap F (Af F) ((r : F) * a))) = 1}
@@ -580,7 +591,128 @@ theorem psi_fin_of_char (ψ : AddChar (AF F) ℂ) (hψ : IsCharAF F ψ) (a : F) 
   exact h1
 
 theorem condExact_of (hS : SAf) (hC : ChInf) : CondExact := by
-  apply PI.VolStabSW.VolAAW.condExact_of <;> assumption
+  intro F _ _ ψ hψ
+  classical
+  obtain ⟨I, n, hU⟩ := adele_character_trivial_open ψ hψ
+  by_contra hne
+  rw [Filter.not_eventually, Filter.frequently_cofinite_iff_infinite] at hne
+  set X := {v : HeightOneSpectrum (𝓞 F) | ¬∀ t : Fv F v,
+    (∀ s ∈ v.adicCompletionIntegers F, psiV F ψ v (s * t) = 1) → t ∈ v.adicCompletionIntegers F}
+    with hX
+
+  have key : ∀ v ∈ X, v ∉ I → ∃ a : F, 1 < Valued.v (algebraMap F (Fv F v) a) ∧ a ∈ lamPsi ψ := by
+    intro v hvX hvI
+    simp only [hX, Set.mem_setOf_eq, not_forall] at hvX
+    obtain ⟨t, ht, htO⟩ := hvX
+    have ht1 : 1 < Valued.v t := (HeightOneSpectrum.notMem_adicCompletionIntegers (𝓞 F) F v).1 htO
+    obtain ⟨a, ha⟩ := hS F (U0 I n) (isOpen_adelic_neighbourhood I n) (singleV F v t)
+    have hdv : (singleV F v t - algebraMap F (Af F) a) v = t - algebraMap F (Fv F v) a := by
+      rw [af_sub, singleV_self]
+      rfl
+    have hdw : ∀ w, w ≠ v → (singleV F v t - algebraMap F (Af F) a) w = - algebraMap F (Fv F w) a := by
+      intro w hw
+      rw [af_sub, singleV_ne v w hw, zero_sub]
+      rfl
+    have hta : Valued.v (t - algebraMap F (Fv F v) a) < Valued.v t := by
+      have := ha.1 v
+      rw [hdv, HeightOneSpectrum.mem_adicCompletionIntegers] at this
+      exact lt_of_le_of_lt this ht1
+    have hav : Valued.v (algebraMap F (Fv F v) a) = Valued.v t := by
+      have := Valuation.map_sub_eq_of_lt_left Valued.v hta
+      rwa [sub_sub_cancel] at this
+    refine ⟨a, hav ▸ ht1, ?_⟩
+    intro r
+    have hrint : ∀ w : HeightOneSpectrum (𝓞 F),
+        algebraMap F (Fv F w) (r : F) ∈ w.adicCompletionIntegers F := by
+      intro w
+      rw [HeightOneSpectrum.mem_adicCompletionIntegers]
+      have e : Valued.v (((r : F) : w.adicCompletion F)) = w.valuation F (r : F) :=
+        HeightOneSpectrum.valuedAdicCompletion_eq_valuation' w (r : F)
+      exact (e ▸ w.valuation_le_one r : Valued.v (((r : F) : w.adicCompletion F)) ≤ 1)
+    set y : Af F := algebraMap F (Af F) ((r : F) * a) with hy
+    have hyw : ∀ w, y w = algebraMap F (Fv F w) (r : F) * algebraMap F (Fv F w) a := by
+      intro w
+      rw [hy, map_mul]
+      rfl
+    have hz : y - singleV F v (y v) ∈ U0 I n := by
+      refine ⟨fun w => ?_, fun w hw => ?_⟩
+      · rw [af_sub]
+        by_cases hwv : w = v
+        · subst hwv
+          rw [singleV_self, sub_self]
+          exact zero_mem _
+        · rw [singleV_ne v w hwv, sub_zero, hyw]
+          refine mul_mem (hrint w) ?_
+          have := neg_mem (ha.1 w)
+          rwa [hdw w hwv, neg_neg] at this
+      · have hwv : w ≠ v := fun h => hvI (h ▸ hw)
+        rw [af_sub, singleV_ne v w hwv, sub_zero, hyw, mul_left_comm]
+        refine mul_mem (hrint w) ?_
+        have := neg_mem (ha.2 w hw)
+        rwa [hdw w hwv, mul_neg, neg_neg] at this
+    have hsplit : pairA F 0 y = pairA F 0 (y - singleV F v (y v)) + pairA F 0 (singleV F v (y v)) := by
+      rw [← adele_pairing_zero_add, sub_add_cancel]
+    show ψ (pairA F 0 y) = 1
+    rw [hsplit, AddChar.map_add_eq_mul, hU _ hz, one_mul]
+    show psiV F ψ v (y v) = 1
+    have ht0 : t ≠ 0 := by
+      rintro rfl
+      simp at ht1
+    have hq : y v / t ∈ v.adicCompletionIntegers F := by
+      rw [HeightOneSpectrum.mem_adicCompletionIntegers, map_div₀, hyw, map_mul, hav,
+        mul_div_assoc, div_self ((Valuation.ne_zero_iff _).2 ht0), mul_one]
+      exact (HeightOneSpectrum.mem_adicCompletionIntegers (𝓞 F) F v).1 (hrint v)
+    have := ht _ hq
+    rwa [div_mul_cancel₀ _ ht0] at this
+
+  have hne' : ∀ c : F, ∃ v, v ∈ X ∧ v ∉ I ∧ v ∉ HeightOneSpectrum.Support (𝓞 F) c := by
+    intro c
+    obtain ⟨v, hv⟩ := ((hne.diff I.finite_toSet).diff (HeightOneSpectrum.Support.finite (𝓞 F) c)).nonempty
+    exact ⟨v, hv.1.1, hv.1.2, hv.2⟩
+  have h0 : ∃ c : F, c ≠ 0 ∧ c ∈ lamPsi ψ := by
+    obtain ⟨v, hvX, hvI, -⟩ := hne' 1
+    obtain ⟨a, ha1, ha⟩ := key v hvX hvI
+    refine ⟨a, ?_, ha⟩
+    rintro rfl
+    simp at ha1
+  have hb : ∀ c : F, c ≠ 0 → ¬ ∀ a ∈ lamPsi ψ, ∃ r : 𝓞 F, a = c * r := by
+    intro c _ hall
+    obtain ⟨v, hvX, hvI, hvc⟩ := hne' c
+    obtain ⟨a, ha1, ha⟩ := key v hvX hvI
+    obtain ⟨r, rfl⟩ := hall a ha
+    simp only [HeightOneSpectrum.Support, Set.mem_setOf_eq, not_lt] at hvc
+    have hc : Valued.v (algebraMap F (Fv F v) c) ≤ 1 := by
+      have e : Valued.v ((c : v.adicCompletion F)) = v.valuation F c :=
+        HeightOneSpectrum.valuedAdicCompletion_eq_valuation' v c
+      exact (e ▸ hvc : Valued.v ((c : v.adicCompletion F)) ≤ 1)
+    have hr : Valued.v (algebraMap F (Fv F v) (r : F)) ≤ 1 := by
+      have e : Valued.v (((r : F) : v.adicCompletion F)) = v.valuation F (r : F) :=
+        HeightOneSpectrum.valuedAdicCompletion_eq_valuation' v (r : F)
+      exact (e ▸ v.valuation_le_one r : Valued.v (((r : F) : v.adicCompletion F)) ≤ 1)
+    rw [map_mul, map_mul] at ha1
+    have : Valued.v (algebraMap F (Fv F v) c) * Valued.v (algebraMap F (Fv F v) (r : F)) ≤ 1 :=
+      mul_le_one' hc hr
+    exact absurd ha1 (not_lt.2 this)
+  have hχc : Continuous (chiInf ψ) := hψ.1.comp (continuous_id.prodMk continuous_const)
+  have hΛ : ∀ a ∈ lamPsi ψ, chiInf ψ (algebraMap F (InfiniteAdeleRing F) a) = 1 := by
+    intro a ha
+    apply psi_fin_of_char ψ hψ a
+    have := ha 1
+    simpa using this
+  have hall := hC F (lamPsi ψ) h0 hb (chiInf ψ) hχc hΛ
+  obtain ⟨x, hx⟩ := hψ.2.2.2
+  apply hx
+  obtain ⟨a, ha⟩ := hS F (U0 I n) (isOpen_adelic_neighbourhood I n) x.2
+  have e : x = algebraMap F (AF F) a + pairA F (x.1 - algebraMap F (Ainf F) a) 0 +
+      pairA F 0 (x.2 - algebraMap F (Af F) a) := by
+    rw [algebraMap_AF]
+    refine Prod.ext ?_ ?_
+    · show x.1 = algebraMap F (Ainf F) a + 0 + (x.1 - algebraMap F (Ainf F) a) + 0
+      abel
+    · show x.2 = 0 + algebraMap F (Af F) a + 0 + (x.2 - algebraMap F (Af F) a)
+      abel
+  rw [e, AddChar.map_add_eq_mul, AddChar.map_add_eq_mul, hψ.2.2.1 a, hU _ ha, one_mul, mul_one]
+  exact hall _
 
 end VolAAW
 

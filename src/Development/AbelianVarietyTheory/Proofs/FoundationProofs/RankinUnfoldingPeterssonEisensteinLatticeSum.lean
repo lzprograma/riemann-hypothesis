@@ -21,52 +21,10 @@ public import Mathlib.Analysis.MellinTransform
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RankinMeanSquareCuspForm
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SummableCardDivisorsSqDivOneAddRpow
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Newform
 import Aesop.Main
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Tactic.Linter.Style
 import Mathlib.Topology.Separation.CompletelyRegular
 import Mathlib.Algebra.Order.Star.Real
@@ -159,7 +117,7 @@ theorem GlobalTheory.EisM.lattice_sum_gcd_out (j L : ℕ) (s : ℝ) (φ : Dirich
     rintro ⟨δ, ⟨⟨a, b⟩, hab, ha⟩⟩
     have hδ : 0 < (δ : ℕ) := δ.pos
     simp only [F, f, g, scl, latF]
-    rw [if_pos (dvd_mul_of_dvd_right ha _), LSeries.term_of_ne_zero hδ.ne', cpow_split j s _ hδ]
+    rw [ite_eq_left (dvd_mul_of_dvd_right ha _), LSeries.term_of_ne_zero hδ.ne', cpow_split j s _ hδ]
     have e : ((((δ : ℕ) : ℤ) * a : ℤ) : ℂ) * (τ : ℂ) + ((((δ : ℕ) : ℤ) * b : ℤ) : ℂ)
         = ((δ : ℕ) : ℂ) * ((a : ℂ) * τ + b) := by push_cast; ring
     rw [e, trm_smul]
@@ -176,7 +134,7 @@ theorem GlobalTheory.EisM.lattice_sum_gcd_out (j L : ℕ) (s : ℝ) (φ : Dirich
     by_cases hL1 : (L : ℤ) ∣ x1
     swap
     · simp [hL1] at hx
-    rw [if_pos hL1, one_mul] at hx
+    rw [ite_eq_left hL1, one_mul] at hx
     have hφ : φ (x2 : ZMod L) ≠ 0 := left_ne_zero_of_mul hx
     have ht : trm j s ((x1 : ℂ) * τ + x2) ≠ 0 := right_ne_zero_of_mul hx
     have hgpos : 0 < Int.gcd x1 x2 := by
@@ -353,7 +311,7 @@ theorem stripLow_integrableOn_im_rpow : ∀ (s : ℝ), 0 < s →
     rw [lintegral_const, Measure.restrict_apply_univ, Real.volume_Ico]
     simp only [sub_zero, ENNReal.ofReal_one, mul_one]
     by_cases h : y < 1
-    · simp only [Set.indicator, Set.mem_Iio, h, if_true]
+    · simp only [Set.indicator, Set.mem_Iio, h, ite_true]
       rw [← ENNReal.ofReal_mul (Real.rpow_nonneg hy0.le _)]
       congr 1
       have : y ^ (s + 1) = y ^ (s - 1) * y ^ 2 := by
@@ -802,12 +760,6 @@ open scoped MatrixGroups Real ComplexConjugate Manifold ModularForm
 
 namespace GlobalTheory.EisM
 
-private theorem im_ofComplex_pt (x y : ℝ) (hy : 0 < y) :
-    (ofComplex ((x : ℂ) + (y : ℂ) * Complex.I)).im = y := by
-  have h : 0 < ((x : ℂ) + (y : ℂ) * Complex.I).im := by simpa using hy
-  rw [ofComplex_apply_of_im_pos h]
-  simp [UpperHalfPlane.im]
-
 theorem strip_eq_LSeries : ∀ (h b : ℕ → ℂ) (w : ℝ), 0 < w → PolyB h → PolyB b → h 0 = 0 →
     LSeriesSummable (fun n => conj (h n) * b n) w →
     IntegrableOn (fun τ : ℍ => conj (qs h τ) * qs b τ * ((τ.im ^ (w + 1) : ℝ) : ℂ)) strip →
@@ -825,7 +777,7 @@ theorem strip_eq_LSeries : ∀ (h b : ℕ → ℂ) (w : ℝ), 0 < w → PolyB h 
     refine setIntegral_congr_fun measurableSet_Ioi (fun y hy => ?_)
     have hy : 0 < y := hy
     have hy' : (y : ℂ) ≠ 0 := by exact_mod_cast hy.ne'
-    simp only [im_ofComplex_pt _ _ hy, hPd, smul_eq_mul]
+    simp only [GlobalTheory.EisM.im_ofComplex_xy _ _ hy, hPd, smul_eq_mul]
     rw [intervalIntegral.integral_mul_const]
     have e : ((y : ℂ) ^ ((w : ℂ) - 1)) = ((y ^ (w + 1) : ℝ) : ℂ) / (y : ℂ) ^ 2 := by
       have e1 : (w : ℂ) - 1 = ((w - 1 : ℝ) : ℂ) := by push_cast; ring
@@ -841,7 +793,7 @@ theorem strip_eq_LSeries : ∀ (h b : ℕ → ℂ) (w : ℝ), 0 < w → PolyB h 
     rw [LSeries.norm_term_eq, Complex.ofReal_re]
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · simp [ha0]
-    · rw [if_neg hn.ne', Real.mul_rpow h4.le (Nat.cast_nonneg n), div_div, mul_comm ((n : ℝ) ^ w)]
+    · rw [ite_eq_right hn.ne', Real.mul_rpow h4.le (Nat.cast_nonneg n), div_div, mul_comm ((n : ℝ) ^ w)]
   have h2 := hasSum_mellin (a := a) (p := fun n : ℕ => 4 * π * n) (F := P) (s := (w : ℂ))
     (fun n => by
       rcases Nat.eq_zero_or_pos n with rfl | hn
@@ -943,7 +895,7 @@ theorem latF_kills (L : ℕ) (φ : DirichletCharacter ℂ L) (hφ : φ ≠ 1) :
   have e1 : ∀ r : ℕ, (x - (r : ℤ) • ((0 : ℤ), (1 : ℤ))).1 = x.1 := by intro r; simp
   by_cases hx : ((n + 1 : ℕ) : ℤ) ∣ x.1
   · have e2 : ∀ r : ℕ, (x - (r : ℤ) • ((0 : ℤ), (1 : ℤ))).2 = x.2 - r := by intro r; simp
-    simp only [e1, e2, hx, if_true, one_mul]
+    simp only [e1, e2, hx, ite_true, one_mul]
     rw [← h0]
     refine Finset.sum_nbij' (fun r : ℕ => (((x.2 - r : ℤ)) : ZMod (n + 1)))
       (fun z => ((x.2 : ZMod (n + 1)) - z).val) (fun _ _ => Finset.mem_univ _)
@@ -953,7 +905,7 @@ theorem latF_kills (L : ℕ) (φ : DirichletCharacter ℂ L) (hφ : φ ≠ 1) :
       simp [ZMod.val_cast_of_lt hr']
     · intro z _
       simp
-  · simp only [e1, hx, if_false, Finset.sum_const_zero]
+  · simp only [e1, hx, ite_false, Finset.sum_const_zero]
 
 theorem rankin_summ (e : ℕ) (h b : ℕ → ℂ) (s : ℝ) (he : 1 ≤ e) (hs : 0 < s)
     (hb : ∃ C : ℝ, ∀ n, n ≠ 0 → ‖b n‖ ≤ C * n.divisors.card * (n : ℝ) ^ (e - 1))

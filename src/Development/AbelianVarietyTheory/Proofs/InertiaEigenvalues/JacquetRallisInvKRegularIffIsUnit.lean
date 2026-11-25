@@ -1,55 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
 
 @[expose] public section
@@ -98,16 +50,16 @@ theorem leftMulMatrix_eq_companion (bb : Module.Basis (Fin r) F K) (hb : ∀ i, 
   rw [Algebra.leftMulMatrix_eq_repr_mul, hb, ← pow_succ']
   simp only [companion, Matrix.of_apply]
   by_cases hj : (j : ℕ) + 1 = r
-  · rw [if_pos hj, hj, eq_neg_of_add_eq_zero_left hr]
+  · rw [ite_eq_left hj, hj, eq_neg_of_add_eq_zero_left hr]
     have : ∑ k, p k • τ ^ (k : ℕ) = ∑ k, p k • bb k := by simp [hb]
     rw [this, map_neg, Finsupp.neg_apply, bb.repr_sum_self]
-  · rw [if_neg hj]
+  · rw [ite_eq_right hj]
     have hlt : (j : ℕ) + 1 < r := by omega
     have : τ ^ ((j : ℕ) + 1) = bb ⟨(j : ℕ) + 1, hlt⟩ := by rw [hb]
     rw [this, bb.repr_self, Finsupp.single_apply]
     by_cases hi : (i : ℕ) = (j : ℕ) + 1
-    · rw [if_pos (Fin.ext hi.symm), if_pos hi]
-    · rw [if_neg (fun h => hi (by rw [← h])), if_neg hi]
+    · rw [ite_eq_left (Fin.ext hi.symm), ite_eq_left hi]
+    · rw [ite_eq_right (fun h => hi (by rw [← h])), ite_eq_right hi]
 
 theorem companion_pow_mulVec (bb : Module.Basis (Fin r) F K) (hb : ∀ i, bb i = τ ^ (i : ℕ))
     (hr : τ ^ r + ∑ i, p i • τ ^ (i : ℕ) = 0) (n : ℕ) :
@@ -121,8 +73,8 @@ theorem companion_pow_mulVec (bb : Module.Basis (Fin r) F K) (hb : ∀ i, bb i =
     have h1 : (1 : K) = bb ⟨0, hr0⟩ := by rw [hb]; simp
     rw [h1, bb.repr_self, Finsupp.single_apply]
     by_cases hi : (i : ℕ) = 0
-    · rw [if_pos hi, if_pos (Fin.ext hi.symm)]
-    · rw [if_neg hi, if_neg (fun h => hi (by rw [← h]))]
+    · rw [ite_eq_left hi, ite_eq_left (Fin.ext hi.symm)]
+    · rw [ite_eq_right hi, ite_eq_right (fun h => hi (by rw [← h]))]
   | succ n ih =>
     rw [pow_succ', ← Matrix.mulVec_mulVec, ih, ← leftMulMatrix_eq_companion bb hb hr,
       Algebra.leftMulMatrix_apply, LinearMap.toMatrix_mulVec_repr, pow_succ']

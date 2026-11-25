@@ -88,47 +88,18 @@ def Shh (p : Mt k r × Mt k r) : Mt k r × Mt k r := (p.1, conjM (Matrix.of p.1)
 
 def Ivh (p : Mt k r × Mt k r) : Mt k r × Mt k r := (invM (Shh p).1, (Shh p).2)
 
-theorem bh_sf {U : Set (Mat k r)} {μ : Measure (Mt k r)} (h : IsHaarOn U μ) : SigmaFinite μ := by
-  have : IsFiniteMeasureOnCompacts μ := ⟨h.finite_compact⟩
-  infer_instance
-
-theorem bh_ae_mem {U : Set (Mat k r)} {μ : Measure (Mt k r)} (h : IsHaarOn U μ) :
-    ∀ᵐ x ∂μ, (Matrix.of x : Mat k r) ∈ U := by
-  rw [ae_iff]; exact h.conc
-
 theorem bh_ae_prod_and {α β : Type*} [MeasurableSpace α] [MeasurableSpace β] {μ : Measure α}
     {ν : Measure β} [SFinite μ] [SFinite ν] {P : α → Prop} {Q : β → Prop} (hP : ∀ᵐ x ∂μ, P x)
     (hQ : ∀ᵐ y ∂ν, Q y) : ∀ᵐ p ∂(μ.prod ν), P p.1 ∧ Q p.2 :=
   (Measure.quasiMeasurePreserving_fst.ae hP).and (Measure.quasiMeasurePreserving_snd.ae hQ)
 
-theorem bh_meas_inv : Measurable (invM (k := k) (r := r)) := by
-  have hc : Continuous (fun g : Mt k r => (Matrix.of g : Mat k r)) := continuous_id
-  have h1 : Measurable (fun g : Mt k r => ((Matrix.of g : Mat k r).det)⁻¹) :=
-    (hc.matrix_det).measurable.inv
-  have h2 : Continuous (fun g : Mt k r => Matrix.of.symm (Matrix.of g : Mat k r).adjugate) :=
-    hc.matrix_adjugate
-  have h3 : Measurable (fun g : Mt k r =>
-      ((Matrix.of g : Mat k r).det)⁻¹ • Matrix.of.symm (Matrix.of g : Mat k r).adjugate) :=
-    h1.smul h2.measurable
-  convert h3 using 1
-  funext g
-  change Matrix.of.symm ((Matrix.of g : Mat k r)⁻¹) = _
-  rw [Matrix.inv_def, Ring.inverse_eq_inv']
-  rfl
-
-theorem bh_cont_mul : Continuous (mulM (k := k) (r := r)) := by
-  unfold mulM
-  exact (continuous_fst (X := Mt k r) (Y := Mt k r)).matrix_mul continuous_snd
-
-theorem bh_meas_conj (a : Mat k r) : Measurable (conjM (k := k) (r := r) a) := by
-  apply Continuous.measurable
-  show Continuous fun x : Mat k r => a * x * a⁻¹
-  exact (continuous_const.matrix_mul continuous_id).matrix_mul continuous_const
+theorem bh_meas_inv : Measurable (invM (k := k) (r := r)) :=
+  _root_.Formalism.FourierDecayAlt.P.B7.measurable_invM
 
 theorem bh_meas_Shh : Measurable (Shh (k := k) (r := r)) := by
   refine measurable_fst.prodMk ?_
   change Measurable fun p : Mt k r × Mt k r => mulM (mulM (invM p.1, invM p.2), invM (invM p.1))
-  exact bh_cont_mul.measurable.comp ((bh_cont_mul.measurable.comp
+  exact Formalism.FourierDecayAlt.P.RankOneEmbeddings.R1.mulM_cont.measurable.comp ((Formalism.FourierDecayAlt.P.RankOneEmbeddings.R1.mulM_cont.measurable.comp
     ((bh_meas_inv.comp measurable_fst).prodMk (bh_meas_inv.comp measurable_snd))).prodMk
     (bh_meas_inv.comp (bh_meas_inv.comp measurable_fst)))
 
@@ -137,35 +108,35 @@ section meas
 variable {Wp : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] (D : RealPlaceData k r Wp Wp)
 
 theorem ae_SSh : ∀ᵐ p ∂(D.μW.prod D.μN), p ∈ SSh D.z := by
-  have := bh_sf D.haarW
-  have := bh_sf D.haarN
-  exact bh_ae_prod_and (bh_ae_mem D.haarW) (bh_ae_mem D.haarN)
+  have := Formalism.FourierDecayAlt.P.B2x9.sigmaFinite_of_haar D.haarW
+  have := Formalism.FourierDecayAlt.P.B2x9.sigmaFinite_of_haar D.haarN
+  exact bh_ae_prod_and (ReciprocityTheory.ChartRestriction.DS.Mult1.bc_isHaarOn_ae_mem D.haarW) (ReciprocityTheory.ChartRestriction.DS.Mult1.bc_isHaarOn_ae_mem D.haarN)
 
 theorem mp_Shh (hCI : ConjInv D) (hInv : HaarInv) (hCW : ClosedW) (hCN : ClosedN) :
     MeasurePreserving (Shh (k := k) (r := r)) (D.μW.prod D.μN) (D.μW.prod D.μN) := by
-  have := bh_sf D.haarW
-  have := bh_sf D.haarN
+  have := Formalism.FourierDecayAlt.P.B2x9.sigmaFinite_of_haar D.haarW
+  have := Formalism.FourierDecayAlt.P.B2x9.sigmaFinite_of_haar D.haarN
   refine ⟨bh_meas_Shh, ?_⟩
   ext s hs
   rw [Measure.map_apply bh_meas_Shh hs, Measure.prod_apply (bh_meas_Shh hs), Measure.prod_apply hs]
   refine lintegral_congr_ae ?_
-  filter_upwards [bh_ae_mem D.haarW] with h hh
+  filter_upwards [ReciprocityTheory.ChartRestriction.DS.Mult1.bc_isHaarOn_ae_mem D.haarW] with h hh
   have hi : (Matrix.of h : Mat k r)⁻¹ ∈ UWset k r D.z := (hCW k r D.z).inv_mem _ hh
   have hm : Measurable fun n : Mt k r => conjM (Matrix.of h : Mat k r)⁻¹ (invM n) :=
-    (bh_meas_conj _).comp bh_meas_inv
+    (ReciprocityTheory.ChartRestriction.DS.Mult1.BesselPositivity.meas_conj _).comp bh_meas_inv
   have e : Prod.mk h ⁻¹' (Shh ⁻¹' s) = (fun n : Mt k r => conjM (Matrix.of h : Mat k r)⁻¹ (invM n)) ⁻¹'
       (Prod.mk h ⁻¹' s) := rfl
   have hmap : D.μN.map (fun n : Mt k r => conjM (Matrix.of h : Mat k r)⁻¹ (invM n)) = D.μN := by
     have e2 : (fun n : Mt k r => conjM (Matrix.of h : Mat k r)⁻¹ (invM n)) =
         conjM (Matrix.of h : Mat k r)⁻¹ ∘ invM := rfl
-    rw [e2, ← Measure.map_map (bh_meas_conj _) bh_meas_inv, hInv k r _ _ (hCN k r) D.haarN]
+    rw [e2, ← Measure.map_map (ReciprocityTheory.ChartRestriction.DS.Mult1.BesselPositivity.meas_conj _) bh_meas_inv, hInv k r _ _ (hCN k r) D.haarN]
     exact hCI _ (Or.inl hi)
   rw [e, ← Measure.map_apply hm (measurable_prodMk_left hs), hmap]
 
 theorem mp_Ivh (hCI : ConjInv D) (hInv : HaarInv) (hCW : ClosedW) (hCN : ClosedN) :
     MeasurePreserving (Ivh (k := k) (r := r)) (D.μW.prod D.μN) (D.μW.prod D.μN) := by
-  have := bh_sf D.haarW
-  have := bh_sf D.haarN
+  have := Formalism.FourierDecayAlt.P.B2x9.sigmaFinite_of_haar D.haarW
+  have := Formalism.FourierDecayAlt.P.B2x9.sigmaFinite_of_haar D.haarN
   have h1 : MeasurePreserving (invM (k := k) (r := r)) D.μW D.μW :=
     ⟨bh_meas_inv, hInv k r _ _ (hCW k r D.z) D.haarW⟩
   exact (h1.prod (MeasurePreserving.id D.μN)).comp (mp_Shh D hCI hInv hCW hCN)
@@ -377,26 +348,6 @@ theorem inCC_five_four {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {A
   obtain ⟨c, hc⟩ := h
   exact ⟨c, ccle_five_four hc⟩
 
-theorem continuous_lam (z : Fin (2 * r + k + 1) → ℂ) :
-    Continuous fun n : Mt k r => lam k r z (Matrix.of n) := by
-  unfold Formalism.FourierDecayAlt.B.lam Formalism.QuantumDeterminants.ell
-  refine Complex.continuous_re.comp (continuous_const.mul (continuous_finsetSum _ fun a _ => ?_))
-  split_ifs
-  · exact (continuous_apply _).comp (continuous_apply _)
-  · simp only [Matrix.mulVec, dotProduct, Matrix.of_apply]
-    fun_prop
-
-theorem continuous_xiTau_prod (D : RealPlaceData k r Wp Wq) :
-    Continuous fun x : (ℝ × ℝ) × SS k r => xiTau D x.1 x.2 := by
-  have h1 := continuous_lam (k := k) (r := r) D.z
-  have h2 := continuous_lam (k := k) (r := r) D.z'
-  unfold Formalism.FourierDecayAlt.B.xiTau
-  refine Complex.continuous_exp.comp (continuous_const.mul (Complex.continuous_ofReal.comp ?_))
-  exact ((continuous_fst.comp continuous_fst).mul
-      (h1.comp (continuous_snd.comp (continuous_fst.comp continuous_snd)))).sub
-    ((continuous_snd.comp continuous_fst).mul
-      (h2.comp (continuous_snd.comp (continuous_snd.comp continuous_snd))))
-
 theorem norm_xiTau (D : RealPlaceData k r Wp Wq) (τ : ℝ × ℝ) (p : SS k r) : ‖xiTau D τ p‖ = 1 := by
   unfold Formalism.FourierDecayAlt.B.xiTau
   rw [mul_comm]
@@ -405,20 +356,13 @@ theorem norm_xiTau (D : RealPlaceData k r Wp Wq) (τ : ℝ × ℝ) (p : SS k r) 
 theorem continuous_cf (D : RealPlaceData k r Wp Wq) {P : SS k r → ℂ} (hP : Integrable P D.μSS) :
     Continuous fun τ : ℝ × ℝ => ∫ p, xiTau D τ p * P p ∂D.μSS := by
   refine continuous_of_dominated (bound := fun p => ‖P p‖) (fun τ => ?_) (fun τ => ?_) hP.norm ?_
-  · exact ((continuous_xiTau_prod D).comp (continuous_const.prodMk continuous_id)).aestronglyMeasurable.mul
+  · exact ((Formalism.FourierDecayAlt.P.B7.continuous_xi D).comp (continuous_const.prodMk continuous_id)).aestronglyMeasurable.mul
       hP.aestronglyMeasurable
   · exact Filter.Eventually.of_forall fun p => by simp only [norm_mul, norm_xiTau, one_mul, le_refl]
   · exact Filter.Eventually.of_forall fun p =>
-      ((continuous_xiTau_prod D).comp (continuous_id.prodMk continuous_const)).mul continuous_const
+      ((Formalism.FourierDecayAlt.P.B7.continuous_xi D).comp (continuous_id.prodMk continuous_const)).mul continuous_const
 
 theorem integrable_test {w : ℝ → ℝ} (hw : IsTest w) : Integrable (fun x => (w x : ℂ)) volume := (hw.1.continuous.integrable_of_hasCompactSupport hw.2.1).ofReal
-
-theorem integrable_test2 {w₁ w₂ : ℝ → ℝ} (h₁ : IsTest w₁) (h₂ : IsTest w₂) :
-    Integrable (fun τ : ℝ × ℝ => ((w₁ τ.1 * w₂ τ.2 : ℝ) : ℂ)) volume := by
-  have h := MeasureTheory.Integrable.mul_prod (integrable_test h₁) (integrable_test h₂)
-  rw [Measure.volume_eq_prod]
-  push_cast
-  exact h
 
 theorem inner_om (w₁ w₂ : ℝ → ℝ) (a b : ℝ) :
     ∫ τ : ℝ × ℝ, ((w₁ τ.1 * w₂ τ.2 : ℝ) : ℂ) *
@@ -437,29 +381,17 @@ theorem inner_om (w₁ w₂ : ℝ → ℝ) (a b : ℝ) :
     (fun x : ℝ => (w₁ x : ℂ) * Complex.exp (Complex.I * ((x * a : ℝ) : ℂ)))
     (fun y : ℝ => (w₂ y : ℂ) * Complex.exp (Complex.I * ((y * -b : ℝ) : ℂ)))
 
-theorem sigmaFinite_haarOn {U : Set (Mat k r)} {μ : Measure (Mt k r)} (h : IsHaarOn U μ) :
-    SigmaFinite μ := by
-  haveI : IsFiniteMeasureOnCompacts μ := ⟨fun K hK => h.finite_compact K hK⟩
-  infer_instance
-
-theorem sigmaFinite_SS (D : RealPlaceData k r Wp Wq) : SigmaFinite D.μSS := by
-  haveI := sigmaFinite_haarOn D.haarW
-  haveI := sigmaFinite_haarOn D.haarN
-  haveI := sigmaFinite_haarOn D.haarW'
-  unfold RealPlaceData.μSS
-  infer_instance
-
 theorem fubini_cf (D : RealPlaceData k r Wp Wq) {P : SS k r → ℂ} (hP : Integrable P D.μSS)
     {w₁ w₂ : ℝ → ℝ} (h₁ : IsTest w₁) (h₂ : IsTest w₂) :
     ∫ τ : ℝ × ℝ, ((w₁ τ.1 * w₂ τ.2 : ℝ) : ℂ) * ∫ p, xiTau D τ p * P p ∂D.μSS =
       ∫ p, om w₁ (lam k r D.z (Matrix.of p.1.2)) * om w₂ (-lam k r D.z' (Matrix.of p.2.2)) * P p ∂D.μSS := by
-  haveI := sigmaFinite_SS D
+  haveI := Formalism.FourierDecayAlt.P.B7.sfSS D
   have hint : Integrable (fun x : (ℝ × ℝ) × SS k r =>
       ((w₁ x.1.1 * w₂ x.1.2 : ℝ) : ℂ) * (xiTau D x.1 x.2 * P x.2)) (volume.prod D.μSS) := by
-    refine (MeasureTheory.Integrable.mul_prod (integrable_test2 h₁ h₂) hP).mono ?_ ?_
+    refine (MeasureTheory.Integrable.mul_prod (Formalism.FourierDecayAlt.P.B7.w_hW h₁ h₂) hP).mono ?_ ?_
     · haveI : OpensMeasurableSpace ((ℝ × ℝ) × SS k r) := Prod.opensMeasurableSpace
-      exact (integrable_test2 h₁ h₂).aestronglyMeasurable.comp_fst.mul
-        ((continuous_xiTau_prod D).aestronglyMeasurable.mul hP.aestronglyMeasurable.comp_snd)
+      exact (Formalism.FourierDecayAlt.P.B7.w_hW h₁ h₂).aestronglyMeasurable.comp_fst.mul
+        ((Formalism.FourierDecayAlt.P.B7.continuous_xi D).aestronglyMeasurable.mul hP.aestronglyMeasurable.comp_snd)
     · exact Filter.Eventually.of_forall fun x => by simp only [norm_mul, norm_xiTau, one_mul, le_refl]
   simp_rw [← integral_const_mul]
   rw [integral_integral_swap (f := fun τ p => ((w₁ τ.1 * w₂ τ.2 : ℝ) : ℂ) * (xiTau D τ p * P p)) hint]
@@ -838,11 +770,6 @@ theorem frameMat_col (k : ℕ) (u : Fin (k + 1) → ℂ) (i : Fin (k + 1)) :
   · subst h; simp [frameMat]
   · simp [frameMat, h]
 
-theorem frameMat_star_mul_self (t : ℂ) : star t * t = ((‖t‖ ^ 2 : ℝ) : ℂ) := by
-  rw [Complex.star_def, Complex.conj_mul']
-  push_cast
-  ring
-
 section
 variable (k : ℕ) (u : Fin (k + 1) → ℂ)
 
@@ -872,10 +799,10 @@ theorem frameMat_unitary (k : ℕ) (u : Fin (k + 1) → ℂ)
   set n : ℝ := ‖t‖ with hn
   set c : ℝ := (1 + n)⁻¹ with hc
   set m : ℝ := n⁻¹ with hm
-  have ht2 : star t * t = (n : ℂ) ^ 2 := by rw [frameMat_star_mul_self]; push_cast; rfl
+  have ht2 : star t * t = (n : ℂ) ^ 2 := by rw [Formalism.FourierDecayAlt.P.B2x3.normsq_eq]; push_cast; rfl
   have hreal : (∑ l : Fin k, ‖u l.castSucc‖ ^ 2 : ℝ) = n ^ 2 - 1 := by
     have h1 := hu
-    simp only [frameMat_star_mul_self] at h1
+    simp only [Formalism.FourierDecayAlt.P.B2x3.normsq_eq] at h1
     exact_mod_cast h1
   have hn1 : 1 ≤ n ^ 2 := by
     have : 0 ≤ (∑ l : Fin k, ‖u l.castSucc‖ ^ 2 : ℝ) := Finset.sum_nonneg (fun _ _ => by positivity)
@@ -904,10 +831,10 @@ theorem frameMat_unitary (k : ℕ) (u : Fin (k + 1) → ℂ)
   | last =>
     cases j using Fin.lastCases with
     | last =>
-      simp only [frameMat_ll, frameMat_cl, Matrix.diagonal_apply, hne', if_true, if_false, mul_one]
+      simp only [frameMat_ll, frameMat_cl, Matrix.diagonal_apply, hne', ite_true, ite_false, mul_one]
       rw [hu]; ring
     | cast j =>
-      simp only [frameMat_ll, frameMat_cl, frameMat_lc, frameMat_cc, Matrix.diagonal_apply, hne, hne', if_true, if_false, mul_one,
+      simp only [frameMat_ll, frameMat_cl, frameMat_lc, frameMat_cc, Matrix.diagonal_apply, hne, hne', ite_true, ite_false, mul_one,
         ← ht, ← hn, ← hc, ← hm]
       have hpt : ∀ x : Fin k, star (u x.castSucc) * ((if x = j then (1 : ℂ) else 0) +
           u x.castSucc * star (u j.castSucc) * (c : ℂ)) =
@@ -915,13 +842,13 @@ theorem frameMat_unitary (k : ℕ) (u : Fin (k + 1) → ℂ)
             (star (u j.castSucc) * (c : ℂ)) := by
         intro x; split_ifs with h <;> [subst h; skip] <;> ring
       rw [Finset.sum_congr rfl (fun x _ => hpt x)]
-      simp only [Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true, ← Finset.sum_mul, hu]
+      simp only [Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true, ← Finset.sum_mul, hu]
       linear_combination (star (u j.castSucc)) * key2 +
         (star (u j.castSucc) * (c : ℂ) - star (u j.castSucc) * (m : ℂ)) * ht2
   | cast i =>
     cases j using Fin.lastCases with
     | last =>
-      simp only [frameMat_ll, frameMat_cl, frameMat_lc, frameMat_cc, Matrix.diagonal_apply, hne', if_true, if_false, mul_one,
+      simp only [frameMat_ll, frameMat_cl, frameMat_lc, frameMat_cc, Matrix.diagonal_apply, hne', ite_true, ite_false, mul_one,
         ← ht, ← hn, ← hc, ← hm]
       have hpt : ∀ x : Fin k, star ((if x = i then (1 : ℂ) else 0) +
           u x.castSucc * star (u i.castSucc) * (c : ℂ)) * u x.castSucc =
@@ -930,12 +857,12 @@ theorem frameMat_unitary (k : ℕ) (u : Fin (k + 1) → ℂ)
         intro x; split_ifs with h <;> [subst h; skip] <;> simp only [star_add, star_mul, frameMat_star_ofReal, star_star,
           star_one, star_zero] <;> ring
       rw [Finset.sum_congr rfl (fun x _ => hpt x)]
-      simp only [Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true, ← Finset.sum_mul, hu,
+      simp only [Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true, ← Finset.sum_mul, hu,
         star_mul, frameMat_star_ofReal, star_star]
       linear_combination (u i.castSucc) * key2 +
         (u i.castSucc * (c : ℂ) - u i.castSucc * (m : ℂ)) * ht2
     | cast j =>
-      simp only [frameMat_lc, frameMat_cc, Matrix.diagonal_apply, hne', if_true, if_false, mul_one,
+      simp only [frameMat_lc, frameMat_cc, Matrix.diagonal_apply, hne', ite_true, ite_false, mul_one,
         Fin.castSucc_inj, ← ht, ← hn, ← hc, ← hm]
       have hpt : ∀ x : Fin k, star ((if x = i then (1 : ℂ) else 0) +
           u x.castSucc * star (u i.castSucc) * (c : ℂ)) * ((if x = j then (1 : ℂ) else 0) +
@@ -947,7 +874,7 @@ theorem frameMat_unitary (k : ℕ) (u : Fin (k + 1) → ℂ)
           | exact (‹¬ _ = _› rfl).elim
           | (simp only [star_add, star_mul, frameMat_star_ofReal, star_star, star_one, star_zero]; ring)
       rw [Finset.sum_congr rfl (fun x _ => hpt x)]
-      simp only [Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true, ← Finset.sum_mul, hu,
+      simp only [Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true, ← Finset.sum_mul, hu,
         star_mul, frameMat_star_ofReal, star_star]
       linear_combination (u i.castSucc * star (u j.castSucc)) * key +
         (u i.castSucc * star (u j.castSucc) * (c : ℂ) ^ 2 - u i.castSucc * star (u j.castSucc) * (m : ℂ) ^ 2) * ht2
@@ -961,13 +888,13 @@ theorem frame_Hpk_mul (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k
     Hpk k r i j * z j = if j = i then frameCoef k r i * z i else 0 := by
   by_cases hij : j = i
   · subst hij
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     by_cases hj : j.val < r ∨ r + k < j.val
     · rw [hz j hj, mul_zero, mul_zero]
     · congr 1
       unfold Hpk frameCoef
       split_ifs <;> first | rfl | (exfalso; omega)
-  · rw [if_neg hij]
+  · rw [ite_eq_right hij]
     by_cases hj : j.val < r ∨ r + k < j.val
     · rw [hz j hj, mul_zero]
     · have hv : j.val ≠ i.val := fun h => hij (Fin.ext h)
@@ -1037,7 +964,7 @@ theorem stFrame : StFrame := by
 
   have hTeq : T = ‖z (wI k r (Fin.last k))‖ ^ 2 - ∑ l : Fin k, ‖z (wI k r l.castSucc)‖ ^ 2 := by
     have h := frame_herm k r z hz
-    simp only [frameMat_star_mul_self] at h
+    simp only [Formalism.FourierDecayAlt.P.B2x3.normsq_eq] at h
     rw [hTdef, Tz, h, ← Complex.ofReal_sum, ← Complex.ofReal_sub, Complex.ofReal_re]
     ring
   have hsT : s ^ 2 * T = 1 := by
@@ -1047,7 +974,7 @@ theorem stFrame : StFrame := by
   unfold IsZFrame
   constructor
   · apply frameMat_unitary
-    simp only [frameMat_star_mul_self]
+    simp only [Formalism.FourierDecayAlt.P.B2x3.normsq_eq]
     have key : ∑ l : Fin k, ‖(s : ℂ) * z (wI k r l.castSucc)‖ ^ 2 =
         ‖(s : ℂ) * z (wI k r (Fin.last k))‖ ^ 2 - 1 := by
       simp only [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hs0, mul_pow,
@@ -1057,7 +984,7 @@ theorem stFrame : StFrame := by
   · have hlast : (wI k r (Fin.last k)).val = r + k := by simp [frame_wI_val]
     funext i
     simp only [bvec, Matrix.mulVec, dotProduct, Pi.single_apply, mul_ite, mul_one, mul_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true, Pi.smul_apply, smul_eq_mul]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true, Pi.smul_apply, smul_eq_mul]
     unfold embWb
     by_cases hi : r ≤ i.val ∧ i.val ≤ r + k
     · rw [dite_eq_left ⟨hi, by omega, by omega⟩]
@@ -1070,7 +997,7 @@ theorem stFrame : StFrame := by
       have hne : ¬ (i = wI k r (Fin.last k) ∧ ¬ (r ≤ i.val ∧ i.val ≤ r + k)) := by
         rintro ⟨rfl, h⟩
         exact h ⟨by omega, by omega⟩
-      rw [if_neg hne, hz i (by omega), mul_zero]
+      rw [ite_eq_right hne, hz i (by omega), mul_zero]
 
 end ReciprocityTheory.ChartRestriction.DS.Mult1
 end -- clump:auto
@@ -1115,14 +1042,6 @@ theorem gN_le_gbar {γ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ} (hE : IsUnit (e
         exact (gN_mul_le _ _).trans (mul_le_mul_of_nonneg_right (gN_mul_le _ _) hE0)
     _ = (gN E * gN E⁻¹) ^ 2 * gN y' := by ring
 
-theorem rpow_bound {A B K a : ℝ} (hA : 0 < A) (hK : 0 < K) (ha : 0 ≤ a) (h : A ≤ K * B) :
-    B ^ (-a) ≤ K ^ a * A ^ (-a) := by
-  have hB : A / K ≤ B := by rw [div_le_iff₀ hK, mul_comm]; exact h
-  have hAK : 0 < A / K := div_pos hA hK
-  calc B ^ (-a) ≤ (A / K) ^ (-a) := Real.rpow_le_rpow_of_nonpos hAK hB (by linarith)
-    _ = K ^ a * A ^ (-a) := by
-      rw [Real.div_rpow hA.le hK.le, Real.rpow_neg hK.le, div_eq_mul_inv, inv_inv, mul_comm]
-
 theorem inner_sig_sig (X : SigData k r) {h : Mat k r} (hh : h ∈ GV k r) (a b : X.Hs) :
     ⟪X.σ h a, X.σ h b⟫_ℂ = ⟪a, b⟫_ℂ := (⟨(X.σ h).toLinearMap, X.rep.2.1 h hh⟩ : X.Hs →ₗᵢ[ℂ] X.Hs).inner_map_map a b
 
@@ -1139,8 +1058,7 @@ theorem inner_sig_left (X : SigData k r) (hG : IsClosedSubgroup (GV k r)) {h : M
 
 theorem exists_inner_ne (X : SigData k r) (hG : IsClosedSubgroup (GV k r)) (v : X.Hs) (hv : v ≠ 0) :
     ∃ g ∈ GV k r, ⟪v, X.σ g X.w⟫_ℂ ≠ 0 := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   let S : Submodule ℂ X.Hs :=
     { carrier := {u | ∀ g ∈ GV k r, ⟪v, X.σ g u⟫_ℂ = 0}
       add_mem' := by
@@ -1250,7 +1168,7 @@ theorem stMixed (h : UnitaryGroupStructuralFacts) : StMixed := by
     rw [e, norm_inner_symm]
     have hb1 : ‖⟪X.w, X.σ (gbar k r γ y) u⟫_ℂ‖ ≤ C₁ * gN (gbar k r γ y) ^ (-X.a) := hC₁ _ hgb
     have hy1 := hLow k r y hy
-    have hrb := rpow_bound (by linarith) hK0 ha0 (gN_le_gbar hE y)
+    have hrb := ReciprocityTheory.ChartRestriction.DS.Mult1.ReproducingFormula.rpow_inv_le (by linarith) hK0 ha0 (gN_le_gbar hE y)
     calc ‖⟪X.w, X.σ (gbar k r γ y) u⟫_ℂ‖ ≤ C₁ * gN (gbar k r γ y) ^ (-X.a) := hb1
       _ ≤ max C₁ 0 * gN (gbar k r γ y) ^ (-X.a) :=
           mul_le_mul_of_nonneg_right (le_max_left _ _) (Real.rpow_nonneg (gN_nonneg _) _)
@@ -1269,7 +1187,7 @@ theorem stMixed (h : UnitaryGroupStructuralFacts) : StMixed := by
         _ ≤ c * (gN g₂⁻¹ * gN (g₂⁻¹ * g)) :=
             mul_le_mul_of_nonneg_right (le_max_left _ _) (mul_nonneg (gN_nonneg _) (gN_nonneg _))
         _ = Lc * gN (g₂⁻¹ * g) := by rw [hLc]; ring
-    have hrb := rpow_bound (by linarith [hLow k r g hg]) hL0 ha0 hle
+    have hrb := ReciprocityTheory.ChartRestriction.DS.Mult1.ReproducingFormula.rpow_inv_le (by linarith [hLow k r g hg]) hL0 ha0 hle
     calc ‖⟪X.w, X.σ (g₂⁻¹ * g) X.w⟫_ℂ‖ ≤ X.Cw * gN (g₂⁻¹ * g) ^ (-X.a) := hb1
       _ ≤ max X.Cw 0 * gN (g₂⁻¹ * g) ^ (-X.a) :=
           mul_le_mul_of_nonneg_right (le_max_left _ _) (Real.rpow_nonneg (gN_nonneg _) _)
@@ -1369,7 +1287,7 @@ theorem rankOneMinors : RankOneMinors := by
       congr 1
       exact Complex.conj_ofReal _
     rw [hst, div_mul_div_comm, hs, ← hk0, hmin x x0 x0 y, mul_div_assoc, div_self hx0, mul_one]
-  · push_neg at h
+  · push Not at h
     refine ⟨fun _ => 0, fun x y => ?_⟩
     simp only [zero_mul]
     have h1 := hmin x y y x
@@ -1514,26 +1432,8 @@ attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 variable {k r : ℕ}
 
 theorem deriv_smul_const_any {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] (h : ℝ → ℂ) (T : E) :
-    deriv (fun t => h t • T) 0 = deriv h 0 • T := by
-  by_cases hT : T = 0
-  · subst hT
-    simp
-  by_cases hd : DifferentiableAt ℝ h 0
-  · exact deriv_smul_const hd T
-  · have hnd : ¬ DifferentiableAt ℝ (fun t => h t • T) 0 := by
-      intro hd'
-      apply hd
-      obtain ⟨φ, -, hφ⟩ := exists_dual_vector ℂ T (norm_ne_zero_iff.mpr hT)
-      have hφT : φ T ≠ 0 := by
-        rw [hφ]
-        exact Complex.ofReal_ne_zero.mpr (norm_ne_zero_iff.mpr hT)
-      have he : h = fun t => (φ T)⁻¹ * φ (h t • T) := by
-        funext t
-        rw [map_smul, smul_eq_mul]
-        field_simp
-      rw [he]
-      exact DifferentiableAt.const_mul ((φ.restrictScalars ℝ).differentiableAt.comp (0 : ℝ) hd') _
-    rw [deriv_zero_of_not_differentiableAt hnd, deriv_zero_of_not_differentiableAt hd, zero_smul]
+    deriv (fun t => h t • T) 0 = deriv h 0 • T :=
+  _root_.ReciprocityTheory.ChartRestriction.DS.Mult1.SmulConstantLinearity.deriv_smul_const_all h T
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
@@ -1598,13 +1498,8 @@ theorem inCC_five_four' {A : ℝ} {f : Mat k r → E} (h : InCC A 5 f) : InCC A 
   exact ⟨U, f', hU, hgU, hcd.of_le (WithTop.coe_le_coe.mpr (Nat.cast_le.mpr (by norm_num))), heq⟩
 
 theorem continuousOn_of_ckOn {m : ℕ∞} {f : Mat k r → E} (h : CkOn m (GV k r) f) :
-    ContinuousOn f (GV k r) := by
-  intro g₀ hg₀
-  obtain ⟨U, f', hU, hgU, hcd, heq⟩ := h g₀ hg₀
-  have hc : ContinuousAt f' g₀ := hcd.continuousOn.continuousAt (hU.mem_nhds hgU)
-  refine (hc.continuousWithinAt (s := GV k r)).congr_of_eventuallyEq ?_ (heq g₀ hgU hg₀)
-  filter_upwards [inter_mem_nhdsWithin (GV k r) (hU.mem_nhds hgU)] with g hg
-  exact heq g hg.2 hg.1
+    ContinuousOn f (GV k r) :=
+  _root_.Formalism.FourierDecayAlt.P.B5.ckOn_continuousOn h
 
 theorem integrable_of_inCC (hInt : GNIntSharp) (hLow : GNLower) (hCl : ClosedG) {Wp Wq : Type}
     [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq]
@@ -1695,7 +1590,7 @@ theorem stSymBeta (h : UnitaryGroupStructuralFacts) : StSymBeta := by
   have hle : Tz k r D.z * Tz k r D.z ≤ Complex.normSq q.2 := by
     by_contra hc
     apply hw
-    rw [bcWeight, hD.z_eq, if_neg hc]
+    rw [bcWeight, hD.z_eq, ite_eq_right hc]
   have hlt : Tz k r D.z * Tz k r D.z < Complex.normSq q.2 :=
     lt_of_le_of_ne hle (fun e => hq2 e.symm)
   have hEf : Ef D (scalF Wp f) q ≠ ⊤ := (hq hQ).2.ne

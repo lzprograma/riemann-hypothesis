@@ -109,7 +109,3 @@ theorem isDedekindDomain_cycAway (n : ℕ) : IsDedekindDomain (cycAway n) := by
   · exact isDedekindDomain_cycAway_of_ne_zero hn.ne'
 
 end GlobalTheory.CycAwayReg
-
-namespace GlobalTheory.CycAwayReg
-
-end GlobalTheory.CycAwayReg

@@ -151,7 +151,7 @@ theorem eichler_mem_unip : ∀ {F : Type} [Field F] [ValuativeRel F] [Topologica
       rw [sub_eq_iff_eq_add, ← h1] at h3
       have h4 : i.succ ≠ i.castSucc := (Fin.castSucc_lt_succ).ne'
       simp only [Frames.coef, Frames.h]
-      rw [h3, hf_add_l, hf_smul_l, hdual, if_neg h4]
+      rw [h3, hf_add_l, hf_smul_l, hdual, ite_eq_right h4]
       ring
     have hsum : ∑ i, S.coef g gs n i = S.h x (gs j) * S.h (m (g j.succ)) u := by
       simp only [Frames.h]
@@ -163,7 +163,7 @@ theorem eichler_mem_unip : ∀ {F : Type} [Field F] [ValuativeRel F] [Topologica
           rw [hf_symm0 S (hu _ (mem_spanTo S g i.succ (by simp; omega))), mul_zero]
         · have h' : (j : ℕ) < i := h
           rw [hf_spanTo S g (gs i) (fun a ha => ?_) hx, zero_mul]
-          rw [hdual, if_neg]
+          rw [hdual, ite_eq_right]
           rintro rfl
           simp at ha
           omega

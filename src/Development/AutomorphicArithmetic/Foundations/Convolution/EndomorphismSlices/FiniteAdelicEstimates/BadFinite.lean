@@ -23,49 +23,10 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityA
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramifiedFactorEqProductAbove
 public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.CuspReadPTrue
 public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.SatCard
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
 import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.LocAlg
 import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.PositionTest
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
 import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.TwTrSum
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.PowerBoundFastDecay
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
@@ -92,8 +53,6 @@ open scoped Classical
 
 
 namespace UpperTheory.Zero.ConvolutionTheory.EB
-
-attribute [local instance] borelG borelF borelA borelH
 
 private theorem zVal_ite' {m : ℕ} (c : Prop) [Decidable c] (L : List (Bool × ℕ)) (χ : Inf m) :
     zVal (if c then L else []) χ = if c then zVal L χ else 1 := by
@@ -167,8 +126,6 @@ open scoped Classical
 
 namespace UpperTheory.Zero.ConvolutionTheory.EB
 
-attribute [local instance] borelG borelF borelA borelH
-
 private theorem position_off {E : Type} [Field E] [NumberField E] [IsCMField E] {a b : ℕ} {Z : Finset (Pl E)} (L : Lv a b Z)
     {w i : Pl E} (e : Pl E → Ex (Fin (a + 1) × Fin (b + 1))) (hi : i ≠ w) :
     intersection_update_fsHerm_neg_one Z {w} L.ln e i = intersection_update_fsHerm_neg_one Z ∅ L.ln (fun _ => .one) i := by
@@ -213,9 +170,9 @@ theorem hkLin : HkLin := by
   refine ⟨?_, ?_, fun hs => ⟨?_, ?_⟩, fun hs => ?_⟩ <;> funext u v h
   · simp only [Matrix.add_apply, Pi.add_apply, key, fn2, ex_add]; ring
   · simp only [Matrix.smul_apply, Pi.smul_apply, smul_eq_mul, key, fn2, ex_smul]; ring
-  · simp only [Matrix.add_apply, Pi.add_apply, key, fn2, ex_add, if_pos hs]; ring
-  · simp only [Matrix.smul_apply, Pi.smul_apply, smul_eq_mul, key, fn2, ex_smul, if_pos hs]; ring
-  · simp only [key, if_neg hs]
+  · simp only [Matrix.add_apply, Pi.add_apply, key, fn2, ex_add, ite_eq_left hs]; ring
+  · simp only [Matrix.smul_apply, Pi.smul_apply, smul_eq_mul, key, fn2, ex_smul, ite_eq_left hs]; ring
+  · simp only [key, ite_eq_right hs]
 
 end UpperTheory.Zero.ConvolutionTheory.EB
 end -- clump:auto
@@ -400,8 +357,6 @@ open scoped Classical
 
 
 open UpperTheory.Zero.ConvolutionTheory.EB PositivityTheory.Rg.BcB.F.RS
-
-attribute [local instance] borelG borelF borelA borelH
 
 theorem UpperTheory.Zero.ConvolutionTheory.EB.satRead₁ :
     UpperTheory.Zero.ConvolutionTheory.EB.SatRead₁ := by
@@ -608,8 +563,6 @@ open scoped Classical
 
 open UpperTheory.Zero.ConvolutionTheory.EB PositivityTheory.Rg.BcB.F.RS
 
-attribute [local instance] borelG borelF borelA borelH
-
 section Back
 
 open PositivityTheory.Rg.BcB.F.RS.JetMatrixAlgebra GlobalTheory.ThetaSatake
@@ -696,8 +649,6 @@ open scoped Classical
 
 open UpperTheory.Zero.ConvolutionTheory.EB PositivityTheory.Rg.BcB.F.RS
 
-attribute [local instance] borelG borelF borelA borelH
-
 theorem UpperTheory.Zero.ConvolutionTheory.EB.satRead₂ :
     UpperTheory.Zero.ConvolutionTheory.EB.SatRead₂ := by
   intro E _ _ _ a b l₁ l₂ D A S Z L hS hZ f hf _ hL _ w hw hwZ hs t ht
@@ -742,8 +693,7 @@ theorem UpperTheory.Zero.ConvolutionTheory.EB.readOne :
   obtain ⟨-, hPl, -, hSec⟩ := UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.places E
 
   obtain ⟨i, x, hx⟩ : ∃ i x, f i x ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hE.ne (funext fun i => funext fun x => h i x)
   obtain ⟨φ₁, hφ₁⟩ := hSm.1 i x.2
   obtain ⟨φ₂, hφ₂⟩ := hSm.2 i x.1
@@ -762,12 +712,12 @@ theorem UpperTheory.Zero.ConvolutionTheory.EB.readOne :
     if h : w ∈ S ∧ w ∉ Z then s (.inr (.inr (.inl (⟨w, h⟩, p, true)))) / s (.inl ()) else 0
   have ht₁ : ∀ w, w ∈ S → w ∉ Z → ∀ p, convF A.ν (A.hk1 S L w p false) f = t₁ w p • f := by
     intro w hw hwZ p
-    have h : t₁ w p = s (.inr (.inr (.inl (⟨w, hw, hwZ⟩, p, false)))) / s (.inl ()) := dif_pos ⟨hw, hwZ⟩
+    have h : t₁ w p = s (.inr (.inr (.inl (⟨w, hw, hwZ⟩, p, false)))) / s (.inl ()) := dite_eq_left ⟨hw, hwZ⟩
     rw [h]
     exact hv (.inl (⟨w, hw, hwZ⟩, p, false))
   have ht₂ : ∀ w, w ∈ S → w ∉ Z → ∀ p, convF A.ν (A.hk1 S L w p true) f = t₂ w p • f := by
     intro w hw hwZ p
-    have h : t₂ w p = s (.inr (.inr (.inl (⟨w, hw, hwZ⟩, p, true)))) / s (.inl ()) := dif_pos ⟨hw, hwZ⟩
+    have h : t₂ w p = s (.inr (.inr (.inl (⟨w, hw, hwZ⟩, p, true)))) / s (.inl ()) := dite_eq_left ⟨hw, hwZ⟩
     rw [h]
     exact hv (.inl (⟨w, hw, hwZ⟩, p, true))
 
@@ -864,8 +814,6 @@ open scoped Classical
 
 namespace UpperTheory.Zero.ConvolutionTheory.EB
 
-attribute [local instance] borelG borelF borelA borelH
-
 private theorem ev_tendsto {ι : Type} (e : Ex ι) {x : ℕ → ι → ℂ} {y : ι → ℂ}
     (h : ∀ i, Tendsto (fun k => x k i) atTop (𝓝 (y i))) :
     Tendsto (fun k => e.ev (x k)) atTop (𝓝 (e.ev y)) := by
@@ -937,8 +885,6 @@ open scoped Classical
 
 
 namespace UpperTheory.Zero.ConvolutionTheory.EB
-
-attribute [local instance] borelG borelF borelA borelH
 
 private theorem bad_finite {E : Type} [Field E] [NumberField E] [IsCMField E] (Z : Finset (Pl E)) :
     {w : Pl E | ¬ Off Z w}.Finite := by

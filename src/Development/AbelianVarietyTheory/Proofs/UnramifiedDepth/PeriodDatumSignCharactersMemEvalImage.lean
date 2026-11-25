@@ -315,14 +315,12 @@ theorem chart_p_smul_lift_eq_bt :
     rw [B.tg_nat (Tw.π 1) D.wd.πW (Tw.sqZero 1) hsq, ← hpth, smul_comm p, ← map_nsmul,
       smul_smul, pow_two]
   refine ⟨∑ i, n i • B.map D.wd.ψ (p • th i), ?_, ?_⟩
-  · set_option synthInstance.maxHeartbeats 100000 in
-      simp only [ptOf, map_sum, map_nsmul]
+  · simp only [ptOf, map_sum, map_nsmul]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← B.map_comp, hc1, B.map_comp, hth, ← B.map_comp, hc2, D.L.τ_compat i 0, map_nsmul]
   · refine ⟨hpt ▸ map_tg_ker B _ _ hsq _ D.wd.ρW_eq v, fun k => ?_⟩
     refine ⟨∑ i, n i • D.wd.ψ.1 (btTanCrd D.ch.gb _ k (w i)), ?_, ?_⟩
-    · set_option synthInstance.maxHeartbeats 100000 in
-        simp only [map_sum, map_nsmul, Matrix.mulVec, dotProduct, map_mul, Function.comp_apply]
+    · simp only [map_sum, map_nsmul, Matrix.mulVec, dotProduct, map_mul, Function.comp_apply]
       refine Finset.sum_congr rfl fun i _ => ?_
       have h1 := congrArg (btTanCrd D.ch.gb _ k) (hw i)
       rw [btTanCrd_nat, btTanCrd_nat] at h1
@@ -591,7 +589,7 @@ private lemma polCoef_span {R : Type} [CommRing R] {g N : ℕ} (f : MvPolynomial
   intro m hm
   rw [MvPolynomial.coeff_sum]
   refine Finset.sum_eq_zero fun j _ => ?_
-  rw [MvPolynomial.X_pow_eq_monomial, MvPolynomial.coeff_mul_monomial', if_neg]
+  rw [MvPolynomial.X_pow_eq_monomial, MvPolynomial.coeff_mul_monomial', ite_eq_right]
   intro h
   have := h j
   simp only [Finsupp.single_eq_same] at this
@@ -673,7 +671,6 @@ variable {R₀ : Type} [CommRing R₀] {p : ℕ} [Fact p.Prime] {g : ℕ} {B : B
 
 end
 
-
 open TensorProduct IsLocalRing Matrix in
 theorem _root_.GlobalTheory.evImg_isLat_subring :
   (∀ {R₀ : Type} [CommRing R₀] {p : ℕ} [Fact p.Prime] {g : ℕ} {B : _root_.ReciprocityTheory.PGsh.BX R₀} {Tw : _root_.ReciprocityTheory.PGsh.ATowerL R₀ p} {Dt : _root_.ReciprocityTheory.PGsh.DualTower Tw} [Algebra ℤ_[p] (Tw.O : Type)] {Oe : Type} [CommRing Oe] [Algebra ℤ_[p] Oe] {σ : Oe ≃ₐ[ℤ_[p]] Oe} {cp : (Tw.O : Type)} (D : _root_.ReciprocityTheory.PGsh.Be2.Dat p g B Tw Dt Oe σ cp), _root_.ReciprocityTheory.PGsh.Be2.EvLatStatement D) := by
@@ -703,7 +700,7 @@ theorem _root_.GlobalTheory.evImg_isLat_subring :
     change Submodule.span _ (Set.range ⇑f) = _
     rw [← LinearMap.coe_range, Submodule.span_eq]
   have hinjΨ : Function.Injective Ψ := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro F hF
     funext i
     apply D.fin.sep i
@@ -810,7 +807,6 @@ private lemma btPoly_map_tEval {R₀ : Type} [CommRing R₀] {ι : Type} [Fintyp
     (N : ℕ) (f : MvPowerSeries ι R₀) {S S' : Type} [CommRing S] [Algebra R₀ S] [CommRing S']
     [Algebra R₀ S'] (φ : S →ₐ[R₀] S') (a : ι → S) :
     φ (tEval N f a) = tEval N f (fun i => φ (a i)) := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [tEval, map_sum, map_prod]
 
 private lemma btPoly_unif {ι S : Type} [Fintype ι] [CommRing S] (a : ι → S)
@@ -1305,7 +1301,7 @@ private lemma pSerOf_trunc {R₀ : Type} [CommRing R₀] {g : ℕ} (N : ℕ) (G�
     · by_cases h0 : AddMonoidAlgebra.coeff G₁ m = 0
       · simp [h0]
       · simp [h, h0]
-    · rw [if_neg h, if_neg]
+    · rw [ite_eq_right h, ite_eq_right]
       intro hm
       exact h (Finset.mem_filter.1 hm).2
   · intro S _ _ a ha
@@ -1713,13 +1709,6 @@ private lemma val_sum_mul_smul {M ι : Type} [AddCommGroup M] [Fintype ι] (x : 
   rw [h, val_natCast_smul x hx, Finset.sum_smul]
   simp only [mul_smul]
 
-private lemma ptMap_spec (D : Dat p g B Tw Dt Oe σ cp) (t : Nb p g) :
-    (D.ptMap t).comp (D.fin.sO _) = LHom.id Tw.O ∧ B.map (D.ptMap t) (D.fin.y _) = ptOf B D.L.τ t ∧
-      ∀ j (φ' : LHom (D.fin.AAx j) Tw.O), φ'.comp (D.fin.sO j) = LHom.id Tw.O →
-        B.map φ' (D.fin.y j) = ptOf B D.L.τ t → j = D.ptIdx t ∧ HEq φ' (D.ptMap t) :=
-  Classical.choose_spec (Classical.choose_spec
-    (D.fin.univ Tw.O (LHom.id Tw.O) (ptOf B D.L.τ t) (D.pt_p t)))
-
 private lemma tau_p (D : Dat p g B Tw Dt Oe σ cp) (j : Ix g) : p • D.L.τ j 0 = 0 := by
   have h := D.L.τ_tors j 0
   rwa [zero_add, pow_one] at h
@@ -1760,8 +1749,8 @@ private lemma evAll_act (D : Dat p g B Tw Dt Oe σ cp) (C : Type) [Field C]
     ((mem_torP B p _).1 (Subtype.property _))
   choose m α hs hy _ using key
   refine ⟨fun i => (α i).1 (F (m i)), fun t => ?_⟩
-  obtain ⟨h1, h2, -⟩ := ptMap_spec D t
-  obtain ⟨-, -, h3⟩ := ptMap_spec D (((D.H.ρ a).map PadicInt.toZMod) *ᵥ t)
+  obtain ⟨h1, h2, -⟩ := GlobalTheory.CotPoints.ptMap_spec D t
+  obtain ⟨-, -, h3⟩ := GlobalTheory.CotPoints.ptMap_spec D (((D.H.ρ a).map PadicInt.toZMod) *ᵥ t)
   have e1 : ((D.ptMap t).comp (α (D.ptIdx t))).comp (D.fin.sO _) = LHom.id Tw.O := by
     rw [← h1, ← hs (D.ptIdx t)]
     rfl

@@ -11,8 +11,6 @@ open scoped TensorProduct
 
 namespace Formalism.IndefR.RecTie
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section FromLinks
 
 open Formalism.IndefR.Links

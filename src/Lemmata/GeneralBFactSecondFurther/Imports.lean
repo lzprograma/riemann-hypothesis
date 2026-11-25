@@ -8,8 +8,8 @@ public import Mathlib.RingTheory.Localization.FractionRing
 namespace Bl.general_b_fact_second''
 
 theorem goal1 :
-  ∀ {O K X : Type} [inst : CommRing.{0} O] [IsDomain.{0} O] [inst_2 : Field.{0} K] [inst_3 : Algebra.{0, 0} O K]
-  [IsFractionRing.{0, 0} O K] [inst_5 : AddCommGroup.{0} X] [inst_6 : Module.{0, 0} K X] [inst_7 : Module.{0, 0} O X]
+  ∀ {O K X : Type} [CommRing.{0} O] [IsDomain.{0} O] [Field.{0} K] [Algebra.{0, 0} O K]
+  [IsFractionRing.{0, 0} O K] [AddCommGroup.{0} X] [Module.{0, 0} K X] [Module.{0, 0} O X]
   [IsScalarTower.{0, 0, 0} O K X] (B : Submodule.{0, 0} O X),
   Eq.{1} (Submodule.span.{0, 0} K (SetLike.coe.{0, 0} B)) Top.top.{0} →
     ∀ (x : X), Exists.{1} fun (d : O) ↦ And (Ne.{1} d 0) (Membership.mem.{0, 0} B (HSMul.hSMul.{0, 0, 0} d x)) := by

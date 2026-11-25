@@ -102,8 +102,8 @@ theorem cab_jet_eq {ι : Type} [Fintype ι] [DecidableEq ι] {c : ℕ} {β P : E
       omega
     have h1 := h α hdeg
     unfold polyDeriv at h1
-    simp only [MvPolynomial.support_monomial, if_neg one_ne_zero, Finset.sum_singleton,
-      MvPolynomial.coeff_monomial, if_true, one_mul] at h1
+    simp only [MvPolynomial.support_monomial, ite_eq_right one_ne_zero, Finset.sum_singleton,
+      MvPolynomial.coeff_monomial, ite_true, one_mul] at h1
     rw [cab_iter_cast β 0 hn, cab_iter_cast P 0 hn] at h1
     set g : Fin c → ι := fun k => (Finsupp.toMultiset α).toList.get
       ((Fin.cast hn.symm k).cast (Multiset.length_toList _).symm) with hg

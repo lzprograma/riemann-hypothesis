@@ -6,53 +6,8 @@ public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockVa
 public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SLetCastSucc
 public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.GoodCountMem
 public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ValFactSumLe
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.DegSubSingle, Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockValuationZpOfValuationBound, Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockValuationZpOfNumericBound, Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ProdProdIte, Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.FinPosEqCast, Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockValuationOverZpHolds
@@ -88,9 +43,9 @@ theorem pderiv_glAct (LL : M.Letters N) (J : ℕ) (a : Fin N) (c c' d' : Fin r)
       · subst huv
         rfl
       · have h1 : (s - Finsupp.single v 1 : Fin N × Fin r →₀ ℕ) u = s u := by
-          rw [Finsupp.tsub_apply, Finsupp.single_apply, if_neg (Ne.symm huv), Nat.sub_zero]
+          rw [Finsupp.tsub_apply, Finsupp.single_apply, ite_eq_right (Ne.symm huv), Nat.sub_zero]
         have h2 : (s - Finsupp.single u 1 : Fin N × Fin r →₀ ℕ) v = s v := by
-          rw [Finsupp.tsub_apply, Finsupp.single_apply, if_neg huv, Nat.sub_zero]
+          rw [Finsupp.tsub_apply, Finsupp.single_apply, ite_eq_right huv, Nat.sub_zero]
         rw [h1, h2, tsub_right_comm, mul_assoc, mul_assoc, mul_comm ((s u : ℚ_[p]))]
     · simp only [map_add (f := _), hq, hq']
   have hg : ∀ y, M.glAct p LL J c' d' y = ∑ i : Fin N, (if (i : ℕ) < J then
@@ -108,7 +63,7 @@ theorem pderiv_glAct (LL : M.Letters N) (J : ℕ) (a : Fin N) (c c' d' : Fin r)
     intro i
     by_cases hi : (i : ℕ) < J
     · by_cases hv : LL.vec i
-      · simp only [hi, hv, if_true, pderiv_mul, pderiv_X, Pi.single_apply]
+      · simp only [hi, hv, ite_true, pderiv_mul, pderiv_X, Pi.single_apply]
         rw [hcomm (a, c) (i, d') x]
         by_cases hai : a = i
         · subst hai
@@ -119,7 +74,7 @@ theorem pderiv_glAct (LL : M.Letters N) (J : ℕ) (a : Fin N) (c c' d' : Fin r)
           · simp [hcc, Ne.symm hcc]
         · have hne : (i, c') ≠ (a, c) := fun h' => hai (congrArg Prod.fst h').symm
           simp [hai, hne]
-      · simp only [hi, hv, if_true, Bool.false_eq_true, if_false, map_neg, pderiv_mul, pderiv_X,
+      · simp only [hi, hv, ite_true, Bool.false_eq_true, ite_false, map_neg, pderiv_mul, pderiv_X,
           Pi.single_apply]
         rw [hcomm (a, c) (i, c') x]
         by_cases hai : a = i
@@ -164,9 +119,9 @@ theorem wt_sub_single (LL : M.Letters N) (J : ℕ) (a : Fin N) (c c0 : Fin r) (m
     rw [Finsupp.tsub_apply, Finsupp.single_apply]
     by_cases hh : i = a ∧ c = c0
     · obtain ⟨rfl, rfl⟩ := hh
-      rw [if_pos rfl, if_pos ⟨rfl, rfl⟩, Nat.cast_sub h]
+      rw [ite_eq_left rfl, ite_eq_left ⟨rfl, rfl⟩, Nat.cast_sub h]
       simp
-    · rw [if_neg, if_neg hh]
+    · rw [ite_eq_right, ite_eq_right hh]
       · simp
       · intro h'
         apply hh
@@ -271,12 +226,12 @@ theorem tieF_ycond (LL : M.Letters N) (J : ℕ) (Mt : WithTop ℤ) (W E : Fin N)
         (if c0 = d then -pderiv (W, c0) (pderiv (E, c) y) else 0) := by
       intro c0
       rw [pderiv_glAct LL J E c0 c d y, map_add (f := _), pderiv_glAct LL J W c0 c d (pderiv (E, c0) y)]
-      simp only [hE, hW, hvW, hvE, if_true, Bool.false_eq_true, if_false]
+      simp only [hE, hW, hvW, hvE, ite_true, Bool.false_eq_true, ite_false]
       split_ifs <;> simp [map_neg]
 
     rw [ht, ht, map_sum, Finset.sum_congr rfl (fun c0 _ => step c0), Finset.sum_add_distrib,
     Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq']
-    simp only [Finset.mem_univ, if_true, add_assoc, add_neg_cancel, add_zero]
+    simp only [Finset.mem_univ, ite_true, add_assoc, add_neg_cancel, add_zero]
   · intro z hz
     rw [ht]
     refine Submodule.sum_mem _ fun c0 _ => ?_
@@ -345,10 +300,10 @@ theorem hypU_proved (hB : G.BlockOK) : Formalism.InvariantFactorPaths.KP.LL.HypU
           rw [Finsupp.tsub_apply, Finsupp.single_apply]
           by_cases hc : c' = c
           · subst hc
-            rw [if_pos rfl, if_pos rfl]
+            rw [ite_eq_left rfl, ite_eq_left rfl]
             omega
           · have hne : ¬ (i, c) = (i, c') := fun h => hc (congrArg Prod.snd h).symm
-            rw [if_neg hne, if_neg hc]
+            rw [ite_eq_right hne, ite_eq_right hc]
             simp
         have hs : ∑ c', (((m - Finsupp.single (i, c) 1 : (Fin N × Fin r) →₀ ℕ) (i, c')) + (if c' = c then 1 else 0)) =
             ∑ c', m (i, c') := Finset.sum_congr rfl fun c' _ => key c'
@@ -359,14 +314,14 @@ theorem hypU_proved (hB : G.BlockOK) : Formalism.InvariantFactorPaths.KP.LL.HypU
       · rw [hdo i hi, ← hmd i]
         refine Finset.sum_congr rfl fun c' _ => ?_
         rw [Finsupp.tsub_apply, Finsupp.single_apply,
-          if_neg (fun h => hi (congrArg Prod.fst h).symm), Nat.sub_zero]
+          ite_eq_right (fun h => hi (congrArg Prod.fst h).symm), Nat.sub_zero]
   intro j jp c y hy
   simp only [M.Y, Submodule.mem_inf, Submodule.mem_iInf] at hy ⊢
   refine ⟨hpol _ _ G.uPos c ?_ ?_ y hy.1, fun k => ?_⟩
-  · simp only [M.BlockData.lettersAt, if_true]
+  · simp only [M.BlockData.lettersAt, ite_true]
     omega
   · intro i hi
-    simp only [M.BlockData.lettersAt, if_neg hi]
+    simp only [M.BlockData.lettersAt, ite_eq_right hi]
   · rw [ycond_vec (p := p) (r := r) (G.lettersAt j (jp + 1)) (G.lettersAt j jp) rfl]
     exact pderiv_ycond (p := p) _ _ _ G.uPos (fun _ => hB.2.2.1) c y (hy.2 k)
 
@@ -380,7 +335,7 @@ theorem sum_update_ite {t : ℕ} (P : Fin t → Prop) [DecidablePred P] (j : Fin
     · subst hi
       rw [Function.update_self]
       split_ifs <;> simp_all
-    · rw [Function.update_of_ne hi, if_neg hi, add_zero]
+    · rw [Function.update_of_ne hi, ite_eq_right hi, add_zero]
   rw [Finset.sum_congr rfl fun i' _ => h i', Finset.sum_add_distrib]
   simp
 
@@ -412,10 +367,10 @@ theorem hypTie_proved (hB : G.BlockOK) : Formalism.InvariantFactorPaths.KP.LL.Hy
           rw [Finsupp.tsub_apply, Finsupp.single_apply]
           by_cases hc : c' = c
           · subst hc
-            rw [if_pos rfl, if_pos rfl]
+            rw [ite_eq_left rfl, ite_eq_left rfl]
             omega
           · have hne : ¬ (i, c) = (i, c') := fun h => hc (congrArg Prod.snd h).symm
-            rw [if_neg hne, if_neg hc]
+            rw [ite_eq_right hne, ite_eq_right hc]
             simp
         have hs : ∑ c', (((m - Finsupp.single (i, c) 1 : (Fin N × Fin r) →₀ ℕ) (i, c')) + (if c' = c then 1 else 0)) =
             ∑ c', m (i, c') := Finset.sum_congr rfl fun c' _ => key c'
@@ -426,7 +381,7 @@ theorem hypTie_proved (hB : G.BlockOK) : Formalism.InvariantFactorPaths.KP.LL.Hy
       · rw [hdo i hi, ← hmd i]
         refine Finset.sum_congr rfl fun c' _ => ?_
         rw [Finsupp.tsub_apply, Finsupp.single_apply,
-          if_neg (fun h => hi (congrArg Prod.fst h).symm), Nat.sub_zero]
+          ite_eq_right (fun h => hi (congrArg Prod.fst h).symm), Nat.sub_zero]
   intro j jp i y hy
   obtain ⟨hlt, hvW, hvE⟩ := hB.1.2.1 i
   set W := G.letterAt (G.T.pos i) with hWdef
@@ -469,19 +424,19 @@ theorem hypTie_proved (hB : G.BlockOK) : Formalism.InvariantFactorPaths.KP.LL.Hy
     refine Submodule.sum_mem _ fun c _ => ?_
     let L1 : M.Letters N := ⟨G.LL.vec, fun x =>
       if x = E then (G.lettersAt j jp).deg x - 1 else (G.lettersAt j jp).deg x⟩
-    have h1 := hpol (G.lettersAt j jp) L1 E c (by show (if E = E then _ else _) = _; rw [if_pos rfl])
-      (fun x hx => by show (if x = E then _ else _) = _; rw [if_neg hx]) y hy.1
+    have h1 := hpol (G.lettersAt j jp) L1 E c (by show (if E = E then _ else _) = _; rw [ite_eq_left rfl])
+      (fun x hx => by show (if x = E then _ else _) = _; rw [ite_eq_right hx]) y hy.1
     refine hpol L1 _ W c ?_ ?_ _ h1
-    · rw [hdeg W, if_pos (Or.inl hWv)]
+    · rw [hdeg W, ite_eq_left (Or.inl hWv)]
       show _ = (if W = E then _ else _) - 1
-      rw [if_neg hWE]
+      rw [ite_eq_right hWE]
     · intro x hx
       rw [hdeg x]
       show _ = (if x = E then _ else _)
       by_cases hxE : x = E
       · have hxv : (x : ℕ) = G.T.pos i + 1 := by rw [hxE]; exact hEv
-        rw [if_pos hxE, if_pos (Or.inr hxv)]
-      · rw [if_neg hxE, if_neg, Nat.sub_zero]
+        rw [ite_eq_left hxE, ite_eq_left (Or.inr hxv)]
+      · rw [ite_eq_right hxE, ite_eq_right, Nat.sub_zero]
         rintro (h | h)
         · exact hx (Fin.ext (h.trans hWv.symm))
         · exact hxE (Fin.ext (h.trans hEv.symm))
@@ -708,7 +663,7 @@ theorem chDeg_cast (LL : M.Letters N) (a0 : Fin N) : chDeg LL (Fin.castSucc a0) 
   rw [Finset.sum_eq_single a0]
   · simp
   · intro b _ hb
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hb (Fin.castSucc_injective _ h)
   · intro h
@@ -718,7 +673,7 @@ theorem chDeg_last (LL : M.Letters N) : chDeg LL (Fin.last N) = 0 := by
   unfold chDeg
   apply Finset.sum_eq_zero
   intro b _
-  rw [if_neg]
+  rw [ite_eq_right]
   exact Fin.castSucc_ne_last b
 
 theorem finPos_eq_cast (k : ℕ) (hk : k < N) (a0 : Fin N) : M.finPos N k = Fin.castSucc a0 ↔ (a0 : ℕ) = k := by
@@ -749,25 +704,25 @@ theorem level_room (hB : G.BlockOK) (j : Fin G.T.t → ℕ) (jp : ℕ) (hl : G.L
     rw [hbf] at hct
     exact Bool.false_ne_true hct
   by_cases hu : a0 = G.uPos
-  · rw [if_pos hu, Finset.sum_eq_zero]
+  · rw [ite_eq_left hu, Finset.sum_eq_zero]
     · rw [hu]
       omega
     intro i _
-    rw [if_neg]
+    rw [ite_eq_right]
     have h1 := hlt i
     have h2 : (a0 : ℕ) = G.uPos := by rw [hu]
     omega
-  · rw [if_neg hu, add_zero]
+  · rw [ite_eq_right hu, add_zero]
     by_cases hex : ∃ i, (a0 : ℕ) = G.T.pos i ∨ (a0 : ℕ) = G.T.pos i + 1
     · obtain ⟨i0, hi0⟩ := hex
       rw [Finset.sum_eq_single i0]
-      · rw [if_pos hi0]
+      · rw [ite_eq_left hi0]
         obtain ⟨hN0, _, _⟩ := hvec i0
         rcases hi0 with h | h
         · exact (hj i0).1.trans_eq (congrArg G.LL.deg (Fin.ext (by simp; omega)))
         · exact (hj i0).2.trans_eq (congrArg G.LL.deg (Fin.ext (by simp; omega)))
       · intro b _ hb
-        rw [if_neg]
+        rw [ite_eq_right]
         intro hb'
         rcases hb' with h1 | h1 <;> rcases hi0 with h2 | h2
         · exact hb (hmono.injective (by omega))
@@ -776,11 +731,11 @@ theorem level_room (hB : G.BlockOK) (j : Fin G.T.t → ℕ) (jp : ℕ) (hl : G.L
         · exact hb (hmono.injective (by omega))
       · intro h'
         exact absurd (Finset.mem_univ i0) h'
-    · push_neg at hex
+    · push Not at hex
       rw [Finset.sum_eq_zero]
       · exact Nat.zero_le _
       intro i _
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       rcases h with h | h
       · exact (hex i).1 h
@@ -797,11 +752,11 @@ theorem dLvl_eq (hB : G.BlockOK) (j : Fin G.T.t → ℕ) (jp : ℕ) (hl : G.Leve
         (if M.finPos N (G.T.pos i + 1) = Fin.last N then 1 else 0))) = 0 := by
       apply Finset.sum_eq_zero
       intro i _
-      rw [if_neg (finPos_ne_last _ (by have := hposN i; omega)), if_neg (finPos_ne_last _ (hposN i))]
+      rw [ite_eq_right (finPos_ne_last _ (by have := hposN i; omega)), ite_eq_right (finPos_ne_last _ (hposN i))]
       simp
     have hu : ¬ Fin.castSucc G.uPos = Fin.last N := Fin.castSucc_ne_last _
     unfold dLvl dTot
-    rw [hA, chDeg_last, chDeg_last, if_neg hu, if_pos rfl, if_pos rfl, if_pos rfl]
+    rw [hA, chDeg_last, chDeg_last, ite_eq_right hu, ite_eq_left rfl, ite_eq_left rfl, ite_eq_left rfl]
     simp only [smul_eq_mul]
     omega
   | cast a0 =>
@@ -814,21 +769,21 @@ theorem dLvl_eq (hB : G.BlockOK) (j : Fin G.T.t → ℕ) (jp : ℕ) (hl : G.Leve
       have e2 := finPos_eq_cast (G.T.pos i + 1) (hposN i) a0
       by_cases h1 : (a0 : ℕ) = G.T.pos i
       · have h2 : ¬ (a0 : ℕ) = G.T.pos i + 1 := by omega
-        simp only [e1, e2, h1, if_true]
+        simp only [e1, e2, h1, ite_true]
         simp
       · by_cases h2 : (a0 : ℕ) = G.T.pos i + 1
-        · simp only [e1, e2, h2, if_true, or_true]
+        · simp only [e1, e2, h2, ite_true, or_true]
           simp
-        · simp only [e1, e2, h1, h2, if_false, or_false]
+        · simp only [e1, e2, h1, h2, ite_false, or_false]
           simp
     have hB' : jp • ((if Fin.castSucc G.uPos = Fin.castSucc a0 then 1 else 0) +
         (if Fin.last N = Fin.castSucc a0 then 1 else 0)) = if a0 = G.uPos then jp else 0 := by
       have hL : ¬ Fin.last N = Fin.castSucc a0 := fun h => Fin.castSucc_ne_last a0 h.symm
-      rw [if_neg hL]
+      rw [ite_eq_right hL]
       by_cases h : a0 = G.uPos
-      · rw [if_pos (by rw [h]), if_pos h]
+      · rw [ite_eq_left (by rw [h]), ite_eq_left h]
         simp
-      · rw [if_neg (fun e => h (Fin.castSucc_injective _ e).symm), if_neg h]
+      · rw [ite_eq_right (fun e => h (Fin.castSucc_injective _ e).symm), ite_eq_right h]
         simp
     have hC : chDeg (G.lettersAt j jp) (Fin.castSucc a0) =
         (G.LL.deg a0 - ∑ i, if (a0 : ℕ) = G.T.pos i ∨ (a0 : ℕ) = G.T.pos i + 1 then j i else 0) -
@@ -838,7 +793,7 @@ theorem dLvl_eq (hB : G.BlockOK) (j : Fin G.T.t → ℕ) (jp : ℕ) (hl : G.Leve
     have hD := level_room G hB j jp hl a0
     have hL : ¬ Fin.last N = Fin.castSucc a0 := fun h => Fin.castSucc_ne_last a0 h.symm
     unfold dLvl dTot
-    rw [hA, hB', hC, chDeg_cast, if_neg hL, if_neg hL]
+    rw [hA, hB', hC, chDeg_cast, ite_eq_right hL, ite_eq_right hL]
     omega
 
 theorem sum_ite_inj_le {ι α : Type} [Fintype ι] [DecidableEq α] (x : ι → α) (hx : Function.Injective x) (n : ι → ℕ)
@@ -848,13 +803,13 @@ theorem sum_ite_inj_le {ι α : Type} [Fintype ι] [DecidableEq α] (x : ι → 
     rw [Finset.sum_eq_single i0]
     · simp [hi0, h i0]
     · intro b _ hb
-      rw [if_neg]
+      rw [ite_eq_right]
       · simp
       intro hba
       exact hb (hx (hba.trans hi0.symm))
     · intro h'
       exact absurd (Finset.mem_univ i0) h'
-  · push_neg at hex
+  · push Not at hex
     rw [Finset.sum_eq_zero]
     · exact Nat.zero_le _
     intro i _

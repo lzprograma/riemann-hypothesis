@@ -3,59 +3,14 @@ module
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IqBasic
 import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.IdealValuations.LocRootsY
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.GroupTheory.Abelianization.Finite
 public import Mathlib.GroupTheory.FiniteAbelian.Duality
 public import Mathlib.GroupTheory.Nilpotent
 import Mathlib.LinearAlgebra.Matrix.CharP
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.Ideal.Quotient.Index
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -278,7 +233,7 @@ private theorem eq_zero_of_twisted_commutation {A : Type} [CommRing A] [IsLocalR
   exact key N i j
 
 theorem UpperTheory.V.Loc.v0b :
-    ∀ {p l : ℕ} [Fact p.Prime] [Fact l.Prime], p ≠ l → ∀ {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] (φ : G →* GQ p) (hφ : IsOpenEmbedding φ) (A : Type) [CommRing A] [IsDomain A] [IsDiscreteValuationRing A] [IsAdicComplete (IsLocalRing.maximalIdeal A) A] [Finite (IsLocalRing.ResidueField A)] [CharP (IsLocalRing.ResidueField A) l] [Algebra ℤ_[l] A] (κ : G →* (IsLocalRing.ResidueField A)ˣ), (∀ g, φ g ∈ Iq p → κ g = 1) → (∃ g, IsLocalRing.residue A (cycA p l A (φ g) : A) ≠ 1) → ∀ {n : ℕ} (r : G →* GL (Fin n) A), (∀ (N : ℕ) i j, IsLocallyConstant fun g => Ideal.Quotient.mk (IsLocalRing.maximalIdeal A ^ N) ((r g : Matrix (Fin n) (Fin n) A) i j)) → (∀ g, ((r g : Matrix (Fin n) (Fin n) A).map (IsLocalRing.residue A)).charpoly = (Polynomial.X - Polynomial.C (κ g : IsLocalRing.ResidueField A)) ^ n) → (∀ g, φ g ∈ Iq p → r g = 1) ∧ ∀ (K : Type) [Field K] [Algebra A K] [IsFractionRing A K] (X : Matrix (Fin n) (Fin n) K), (∀ g, algebraMap A K (cycA p l A (φ g) : A) • ((r g : Matrix (Fin n) (Fin n) A).map (algebraMap A K) * X) = X * (r g : Matrix (Fin n) (Fin n) A).map (algebraMap A K)) → X = 0 := by
+    ∀ {p l : ℕ} [Fact p.Prime] [Fact l.Prime], p ≠ l → ∀ {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] (φ : G →* GQ p) (_ : IsOpenEmbedding φ) (A : Type) [CommRing A] [IsDomain A] [IsDiscreteValuationRing A] [IsAdicComplete (IsLocalRing.maximalIdeal A) A] [Finite (IsLocalRing.ResidueField A)] [CharP (IsLocalRing.ResidueField A) l] [Algebra ℤ_[l] A] (κ : G →* (IsLocalRing.ResidueField A)ˣ), (∀ g, φ g ∈ Iq p → κ g = 1) → (∃ g, IsLocalRing.residue A (cycA p l A (φ g) : A) ≠ 1) → ∀ {n : ℕ} (r : G →* GL (Fin n) A), (∀ (N : ℕ) i j, IsLocallyConstant fun g => Ideal.Quotient.mk (IsLocalRing.maximalIdeal A ^ N) ((r g : Matrix (Fin n) (Fin n) A) i j)) → (∀ g, ((r g : Matrix (Fin n) (Fin n) A).map (IsLocalRing.residue A)).charpoly = (Polynomial.X - Polynomial.C (κ g : IsLocalRing.ResidueField A)) ^ n) → (∀ g, φ g ∈ Iq p → r g = 1) ∧ ∀ (K : Type) [Field K] [Algebra A K] [IsFractionRing A K] (X : Matrix (Fin n) (Fin n) K), (∀ g, algebraMap A K (cycA p l A (φ g) : A) • ((r g : Matrix (Fin n) (Fin n) A).map (algebraMap A K) * X) = X * (r g : Matrix (Fin n) (Fin n) A).map (algebraMap A K)) → X = 0 := by
   intro p l _ _ hpl G _ _ _ φ hφ A _ _ _ _ _ _ _ κ hκ ⟨g, hg⟩ n r hr hch
   have hl : l.Prime := Fact.out
   have hp : p.Prime := Fact.out

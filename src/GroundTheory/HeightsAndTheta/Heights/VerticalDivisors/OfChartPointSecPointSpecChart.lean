@@ -221,18 +221,6 @@ noncomputable section
 
 namespace GenSecKer
 
-theorem genPar_algIndep (k : Type*) [Field k] (e n : ℕ) :
-    AlgebraicIndependent k (genPar k e n) := by
-  have hinj : Function.Injective (IsScalarTower.toAlgHom k (MvPolynomial (Par e n) k)
-      (GenParField k e n)) :=
-    IsFractionRing.injective (MvPolynomial (Par e n) k) (GenParField k e n)
-  have h := (MvPolynomial.algebraicIndependent_X (Par e n) k).map' hinj
-  have hc : (⇑(IsScalarTower.toAlgHom k (MvPolynomial (Par e n) k) (GenParField k e n)) ∘ X) =
-      genPar k e n := by
-    funext p
-    simp only [Function.comp_apply, IsScalarTower.coe_toAlgHom', genPar]
-  rwa [hc] at h
-
 theorem coeff_mem_of_sum {k L : Type*} [Field k] [Field L] [Algebra k L] (K : IntermediateField k L)
     {n : ℕ} (x c : Fin n → L) (b : L) (j₀ : Fin n) (hx : ∀ j, x j ∈ K) (hx0 : x j₀ ≠ 0)
     (hsum : ∑ j, c j * x j = b) (hb : b ∈ K) (hc : ∀ j, j ≠ j₀ → c j ∈ K) : c j₀ ∈ K := by
@@ -325,7 +313,8 @@ theorem ker_eq {k L : Type} [Field k] [CommRing L] (hL : IsField L) [Algebra k L
     (faithfulSMul_iff_algebraMap_injective k L).2 (algebraMap k L).injective
   obtain ⟨u, hut, hu⟩ := exists_isTranscendenceBasis_subset (R := k) t
   have hyind : AlgebraicIndependent k y :=
-    (genPar_algIndep k e n).map' (f := IsScalarTower.toAlgHom k (GenParField k e n) L)
+    (GroundTheory.Heights₂.Heights.Vertical.genPar_algebraicIndependent k e n).map' (f :=
+        IsScalarTower.toAlgHom k (GenParField k e n) L)
       (algebraMap (GenParField k e n) L).injective
   have hPar : #(Par e n) ≤ Algebra.trdeg k L := hyind.cardinalMk_le_trdeg
   have hucard : #u = Algebra.trdeg k L := hu.cardinalMk_eq_trdeg

@@ -73,8 +73,6 @@ namespace Formalism.L2.S.Pv.Mom
 
 open Formalism.BasicNotions Formalism.QuantumDeterminants Formalism.MainNotions Formalism.MainNotions.S Formalism.MainNotions.S.Bridge Formalism.MainNotions.CayleySignature
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def ParamTieG (D : D7) (Cn : ℝ) : Prop :=
   0 < kaS D ∧ ∀ (τ : D.what₂.Tau) (lam' : Fin (2 * D.R.rS + D.R.k + 1) → ℝ),
     l1dist lam' (lamD D τ) ≤ Cn * D.R.k * (D.R.m : ℝ) ^ 3 → IsHCParam lam' →

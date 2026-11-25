@@ -84,15 +84,6 @@ theorem eq_of_pow_eq (hI : I ^ 2 = ⊥) {N : ℕ} (hN : IsUnit (N : B)) {u v : B
   have h4 := hN.mul_left_cancel h3
   linear_combination h4
 
-private lemma isUnit_of_isUnit_quotient_of_sq_eq_bot (hI : I ^ 2 = ⊥) {a : B} (h : IsUnit (Ideal.Quotient.mk I a)) :
-    IsUnit a := by
-  obtain ⟨v, hv⟩ := h.exists_right_inv
-  obtain ⟨w, rfl⟩ := Ideal.Quotient.mk_surjective v
-  have hm : a * w - 1 ∈ I := Ideal.Quotient.eq.1 (by rw [map_mul, map_one]; exact hv)
-  have hsq : (a * w - 1) * (a * w - 1) = 0 := mul_eq_zero_of_mem_of_sq_eq_bot hI hm hm
-  have h : a * (w * (2 - a * w)) = 1 := by linear_combination (-1 : B) * hsq
-  exact ⟨⟨a, w * (2 - a * w), h, by rw [mul_comm]; exact h⟩, rfl⟩
-
 theorem exists_lift_splitting (hI : I ^ 2 = ⊥) {C : Type} [CommGroup C] [Finite C]
     (hN : IsUnit ((Nat.card C : ℕ) : B)) (c : C → C → Bˣ)
     (hc : ∀ x y z, c x y * c (x * y) z = c y z * c x (y * z)) (b : C → B ⧸ I)
@@ -103,7 +94,8 @@ theorem exists_lift_splitting (hI : I ^ 2 = ⊥) {C : Type} [CommGroup C] [Finit
   have := Fintype.ofFinite C
   rw [Nat.card_eq_fintype_card] at hN
   choose a₀ ha₀ using fun x => Ideal.Quotient.mk_surjective (b x)
-  have hu : ∀ x, IsUnit (a₀ x) := fun x => isUnit_of_isUnit_quotient_of_sq_eq_bot hI (by rw [ha₀]; exact hb x)
+  have hu : ∀ x, IsUnit (a₀ x) := fun x =>
+    (IsNilpotent.isUnit_quotient_mk_iff ⟨2, hI⟩).mp (by rw [ha₀]; exact hb x)
   set δ : C → C → B := fun x y =>
     ((c x y : B) * a₀ (x * y) - a₀ x * a₀ y) * ↑(hu x).unit⁻¹ * ↑(hu y).unit⁻¹ with hδeq
   have hδI : ∀ x y, δ x y ∈ I := by
@@ -344,7 +336,8 @@ theorem etale_of_twisted_basis {R : Type} [CommRing R] {C : Type} [CommGroup C] 
       simpa [hcpeq] using this
     obtain ⟨a, ha, hac⟩ := exists_lift_splitting hI hN' c' hc' (fun x => f (e x))
       (fun x => (hu x).map f) hbc
-    have ha1u : IsUnit (a 1) := isUnit_of_isUnit_quotient_of_sq_eq_bot hI (by rw [ha]; exact (hu 1).map f)
+    have ha1u : IsUnit (a 1) :=
+      (IsNilpotent.isUnit_quotient_mk_iff ⟨2, hI⟩).mp (by rw [ha]; exact (hu 1).map f)
     have ha1 : a 1 = algebraMap R B (c 1 1) := by
       have h := hac 1 1
       rw [one_mul] at h

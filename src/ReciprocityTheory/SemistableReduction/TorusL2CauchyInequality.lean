@@ -29,63 +29,6 @@ public import ReciprocityTheory.SemistableReduction.TorusMeanC
 public import ReciprocityTheory.SemistableReduction.TorusMeanA
 public import ReciprocityTheory.SemistableReduction.TorusMeanB
 public import ReciprocityTheory.SemistableReduction.LagrangeIdealLiftsFact
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.MeasureTheory.Measure.RegularityCompacts
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Topology.UniformSpace.Uniformizable
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: ReciprocityTheory.SemistableReduction.ExpTorusMeanLeL2OfLex, ReciprocityTheory.SemistableReduction.GramOfLinearOrder, ReciprocityTheory.SemistableReduction.HeightLowerBound, ReciprocityTheory.SemistableReduction.IntCoresB, ReciprocityTheory.SemistableReduction.IntCores, ReciprocityTheory.SemistableReduction.SJCore, ReciprocityTheory.SemistableReduction.LogNormEvalZeroLeCircleAverage, ReciprocityTheory.SemistableReduction.SjHolds, ReciprocityTheory.SemistableReduction.SphereTorusB, ReciprocityTheory.SemistableReduction.SphereTorus, ReciprocityTheory.SemistableReduction.TorusLexA, ReciprocityTheory.SemistableReduction.TorusLexB, ReciprocityTheory.SemistableReduction.TorusLexC, ReciprocityTheory.SemistableReduction.TorusLex, ReciprocityTheory.SemistableReduction.TorusMeanD, ReciprocityTheory.SemistableReduction.TorusMean, ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
@@ -109,7 +52,7 @@ theorem exp_torus_mean_le_l2_of_lex {ι : Type} [Fintype ι] [LinearOrder ι]
   have hsQ : s ∉ Q.support := fun h => lt_irrefl _ (hQ s h)
   have hQs : Q.coeff s = 0 := MvPolynomial.notMem_support_iff.mp hsQ
   have hPs : P.coeff s = 1 := by
-    rw [hPdef, MvPolynomial.coeff_sub, MvPolynomial.coeff_monomial, if_pos rfl, hQs, sub_zero]
+    rw [hPdef, MvPolynomial.coeff_sub, MvPolynomial.coeff_monomial, ite_eq_left rfl, hQs, sub_zero]
   have hP0 : P ≠ 0 := fun h => by rw [h, MvPolynomial.coeff_zero] at hPs; exact zero_ne_one hPs
   have hsupp : s ∈ P.support := by rw [MvPolynomial.mem_support_iff, hPs]; exact one_ne_zero
   have hlex : Real.log ‖P.coeff s‖ ≤ torusMean P := by
@@ -118,7 +61,7 @@ theorem exp_torus_mean_le_l2_of_lex {ι : Type} [Fintype ι] [LinearOrder ι]
     have htQ : t ∈ Q.support := by
       by_contra h
       have h0 : P.coeff t = 0 := by
-        rw [hPdef, MvPolynomial.coeff_sub, MvPolynomial.coeff_monomial, if_neg (Ne.symm hts),
+        rw [hPdef, MvPolynomial.coeff_sub, MvPolynomial.coeff_monomial, ite_eq_right (Ne.symm hts),
           MvPolynomial.notMem_support_iff.mp h, sub_zero]
       exact (MvPolynomial.mem_support_iff.mp ht) h0
     obtain ⟨i, h1, h2⟩ := hQ t htQ
@@ -1045,7 +988,7 @@ theorem scaledTorusMean_le_torusMean {ι : Type} [Fintype ι] [DecidableEq ι]
       rw [e] at hle
       exact hle
   have hu := key Finset.univ
-  simp only [Finset.mem_univ, if_true] at hu
+  simp only [Finset.mem_univ, ite_true] at hu
   rwa [scaledTorusMean_one] at hu
 
 end ReciprocityTheory.MultiplicativeHeights
@@ -1187,18 +1130,18 @@ theorem coeff_coeffIn {ι : Type} (i : ι) (k : ℕ) (f : MvPolynomial ι ℂ) (
   split_ifs with hu
   · have hsp := (erase_eq_and_apply_eq_iff_eq_add_single i k (u + Finsupp.single i k) u hu).mpr rfl
     rw [Finset.sum_eq_single (u + Finsupp.single i k)]
-    · rw [if_pos hsp.1]
+    · rw [ite_eq_left hsp.1]
     · intro t ht hne
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hte
       exact hne ((erase_eq_and_apply_eq_iff_eq_add_single i k t u hu).mp ⟨hte, (Finset.mem_filter.mp ht).2⟩)
     · intro hnot
-      rw [if_pos hsp.1]
+      rw [ite_eq_left hsp.1]
       by_contra hc
       exact hnot (Finset.mem_filter.mpr ⟨MvPolynomial.mem_support_iff.mpr hc, hsp.2⟩)
   · apply Finset.sum_eq_zero
     intro t _
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro rfl
     exact hu (by simp)
 
@@ -1207,9 +1150,9 @@ private theorem apply_eq_zero_and_add_single_mem_support_of_coeffIn {ι : Type} 
     u i = 0 ∧ u + Finsupp.single i k ∈ f.support := by
   rw [MvPolynomial.mem_support_iff, coeff_coeffIn] at hu
   by_cases h : u i = 0
-  · rw [if_pos h] at hu
+  · rw [ite_eq_left h] at hu
     exact ⟨h, MvPolynomial.mem_support_iff.mpr hu⟩
-  · rw [if_neg h] at hu
+  · rw [ite_eq_right h] at hu
     exact absurd rfl hu
 
 private theorem eq_monomial_of_vars_eq_empty {ι : Type} [LinearOrder ι] (g : MvPolynomial ι ℂ)
@@ -1270,7 +1213,7 @@ theorem torusLex_of (hBasic : TorusMeanBasicStatement) (hCoeff : TorusCoeffState
     have hsplit : s = s.erase i + Finsupp.single i (s i) :=
       (erase_eq_and_apply_eq_iff_eq_add_single i (s i) s (s.erase i) h0).mp ⟨rfl, rfl⟩
     have hcoef : (coeffIn i (s i) g).coeff (s.erase i) = g.coeff s := by
-      rw [coeff_coeffIn, if_pos h0, ← hsplit]
+      rw [coeff_coeffIn, ite_eq_left h0, ← hsplit]
     have hne' : coeffIn i (s i) g ≠ 0 := by
       intro hz
       have h2 := hcoef
@@ -1316,7 +1259,7 @@ theorem torusLex_of (hBasic : TorusMeanBasicStatement) (hCoeff : TorusCoeffState
         rintro rfl
         exact (Finsupp.mem_support_iff.mp hjt) ht0
       refine Finset.mem_erase.mpr ⟨hji, (MvPolynomial.mem_vars_iff_mem_support j).mpr ⟨_, ht, ?_⟩⟩
-      rw [Finsupp.mem_support_iff, Finsupp.add_apply, Finsupp.single_apply, if_neg (Ne.symm hji),
+      rw [Finsupp.mem_support_iff, Finsupp.add_apply, Finsupp.single_apply, ite_eq_right (Ne.symm hji),
         add_zero]
       exact Finsupp.mem_support_iff.mp hjt
     have hcard' : (coeffIn i (s i) g).vars.card ≤ n := by
@@ -1402,9 +1345,9 @@ theorem torus_orth {ι : Type} [Fintype ι] (s t : ι →₀ ℕ) :
   split_ifs with hts
   · subst hts; simp
   · have : ∃ i, t i ≠ s i := by
-      by_contra hc; push_neg at hc; exact hts (Finsupp.ext hc)
+      by_contra hc; push Not at hc; exact hts (Finsupp.ext hc)
     obtain ⟨i, hi⟩ := this
-    exact Finset.prod_eq_zero (Finset.mem_univ i) (if_neg hi)
+    exact Finset.prod_eq_zero (Finset.mem_univ i) (ite_eq_right hi)
 
 theorem integrable_of_bdd {ι : Type} [Fintype ι] {E : Type*} [NormedAddCommGroup E]
     {g : (ι → ℝ) → E} (hg : Continuous g) (C : ℝ) (hC : ∀ θ, ‖g θ‖ ≤ C) :

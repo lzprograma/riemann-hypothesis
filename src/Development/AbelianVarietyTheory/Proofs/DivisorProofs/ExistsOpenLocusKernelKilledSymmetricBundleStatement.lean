@@ -453,9 +453,6 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.SiegelTor GlobalTheory.EndLoc
 open scoped CategoryTheory.Obj
 
-
-theorem _root_.GlobalTheory.T.exists_finite_kernel_near_diagonal_ample : ∀ (S' : Scheme.{0}) [IsLocallyNoetherian S'] (G : Over S') [GrpObj G] [IsCommMonObj G] (P : LB (G2 G).left), IsAbelianScheme G → P.IsLB → (∃ s : (P.pull (lift (1 : G ⟶ G) (𝟙 G)).left).Gen, s.IsGen) → (∃ s : (P.pull (lift (𝟙 G) (1 : G ⟶ G)).left).Gen, s.IsGen) → LBIso P (P.pull (lift (snd G G) (fst G G)).left) → ∀ W : S'.Opens, (∀ V : S'.Opens, V ≤ W → Out.RelAmple ((Over.pullback V.ι).obj G) ((P.pull (Pdiv.PullbackComparison.pφ₂ V.ι G)).pull (lift (𝟙 ((Over.pullback V.ι).obj G)) (𝟙 ((Over.pullback V.ι).obj G))).left)) → ∀ s ∈ W, ∃ (V₀ : S'.Opens) (Z : Over S') (i : Z ⟶ G), s ∈ V₀ ∧ Mono i ∧ IsFinite (Z.hom ∣_ V₀) ∧ (∀ T : Over S', Set.range T.hom.base ⊆ (V₀ : Set S') → ∃ z : T ⟶ Z, z ≫ i = 1) ∧ (∀ (T : Over S') (a b : T ⟶ Z), Set.range T.hom.base ⊆ (V₀ : Set S') → ∃ c : T ⟶ Z, c ≫ i = (a ≫ i) * (b ≫ i)) ∧ (∀ (T : Over S') (a : T ⟶ Z), Set.range T.hom.base ⊆ (V₀ : Set S') → ∃ c : T ⟶ Z, c ≫ i = (a ≫ i)⁻¹) ∧ (∀ (T : Over S') (x : T ⟶ G), Set.range T.hom.base ⊆ (V₀ : Set S') → (∃ c : (P.pull (lift (snd G T ≫ x) (fst G T)).left).Gen, c.IsGen) → ∃ z : T ⟶ Z, z ≫ i = x) ∧ (∀ (T : Over S') (z : T ⟶ Z), Set.range T.hom.base ⊆ (V₀ : Set S') → ∀ p : T.left, ∃ U : T.left.Opens, p ∈ U ∧ ∃ c : (P.pull (lift (snd G (Over.mk (U.ι ≫ T.hom)) ≫ (Over.homMk U.ι : Over.mk (U.ι ≫ T.hom) ⟶ T) ≫ z ≫ i) (fst G (Over.mk (U.ι ≫ T.hom)))).left).Gen, c.IsGen) := by
-  first | (exact @GlobalTheory.KernelNear.exists_finite_kernel_near)
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteKernelNearDiagonalAmpleStatement =====
@@ -805,8 +802,6 @@ section -- clump:auto
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped CategoryTheory.Obj TensorProduct
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.FiniteKilled
@@ -887,7 +882,6 @@ theorem exists_alg [Algebra A B] (hφ : φ = CommRingCat.ofHom (algebraMap A B))
   obtain ⟨εc, hε, rfl⟩ := hfac A (𝟙 A) e0
   let ε : B →ₐ[A] A :=
     { εc.hom with commutes' := fun a => congrArg (fun f => f.hom a) hε }
-  have hεc : CommRingCat.ofHom ε.toRingHom = εc := rfl
   have hunit : ∀ (R : CommRingCat.{0}) (χ : A ⟶ R) (σ : A ⟶ R) (h : CommRingCat.ofHom (algebraMap A B) ≫ εc ≫ σ = χ),
       pt hc (εc ≫ σ) h ≫ i = 1 := by
     intro R χ σ h
@@ -959,18 +953,6 @@ end
 
 namespace GlobalTheory.FiniteKilled
 
-theorem isUnit_of_basicOpen_eq_top' (X : Scheme.{0}) (r : Γ(X, ⊤)) (h : X.basicOpen r = ⊤) : IsUnit r := by
-  have hu := X.toRingedSpace.isUnit_res_basicOpen r
-  have := hu.map (X.presheaf.map (homOfLE h.ge).op).hom
-  have e : ∀ y, (X.presheaf.map (homOfLE h.ge).op).hom
-      ((X.presheaf.map (homOfLE (X.basicOpen_le r)).op).hom y) = y := by
-    intro y
-    rw [← CommRingCat.comp_apply, ← Functor.map_comp]
-    rw [show (homOfLE (X.basicOpen_le r)).op ≫ (homOfLE h.ge).op = 𝟙 (Opposite.op (⊤ : X.Opens)) from
-      Quiver.Hom.unop_inj (Subsingleton.elim _ _), CategoryTheory.Functor.map_id]
-    rfl
-  exact (e r) ▸ this
-
 theorem spec_inv_appTop {B : CommRingCat.{0}} (t : B ⟶ B) :
     (Scheme.ΓSpecIso B).inv ≫ (Spec.map t).appTop = t ≫ (Scheme.ΓSpecIso B).inv := by
   have := Scheme.ΓSpecIso_naturality t
@@ -1004,7 +986,7 @@ theorem isUnit_of_range {X S : Scheme.{0}} {U : S.Opens} (hU : IsAffineOpen U) {
     congr 2
     exact congrArg φ.hom (Iso.inv_hom_id_apply (Scheme.ΓSpecIso Γ(S, U)) g).symm
   rw [e1]
-  apply isUnit_of_basicOpen_eq_top'
+  apply GlobalTheory.UnitLocus.isUnit_of_basicOpen_eq_top'
   have e2 := Scheme.preimage_basicOpen (k ≫ Spec.map φ) ((Scheme.ΓSpecIso Γ(S, U)).inv.hom g)
   have e3 := Scheme.preimage_basicOpen hU.fromSpec g
   rw [IsAffineOpen.fromSpec_app_self, CommRingCat.comp_apply, Scheme.basicOpen_res_eq] at e3
@@ -1160,7 +1142,6 @@ section -- clump:auto
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped CategoryTheory.Obj
 
-
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteSubgroupKilledNearPointOfFibreStatement =====
@@ -1200,7 +1181,6 @@ theorem unit_residue : ∀ (S' : Scheme.{0}) (W : S'.Opens) (s : S'), s ∈ W �
   have := congrArg (Scheme.Hom.residueFieldMap W.ι x).hom (hx ▸ h0 : ((d : ℕ) : S'.residueField (W.ι.base x)) = 0)
   simpa using this
 
-
 open ReciprocityTheory.ChartRestriction.G.Pdiv.PullbackComparison GlobalTheory.KerKilledLocal in
 theorem kerKilledOn_of_global : ∀ (d : ℕ) (S' : Scheme.{0}) (G : Over S') [GrpObj G] [IsCommMonObj G] (P : LB (G2 G).left) (V : S'.Opens), (∀ (T : Over S') (x : T ⟶ G), Set.range T.hom.base ⊆ (V : Set S') → (∃ c : (P.pull (lift (snd G T ≫ x) (fst G T)).left).Gen, c.IsGen) → x ^ d = 1) → GlobalTheory.KerKilledLocus.KerKilledOn d G P V := by
   intro d S' G _ _ P V h T x hs
@@ -1237,7 +1217,7 @@ theorem kerKilledOn_of_global : ∀ (d : ℕ) (S' : Scheme.{0}) (G : Over S') [G
 
 theorem kerKilledOn_near_of_fibre : ∀ (d : ℕ) (S' : Scheme.{0}) [IsLocallyNoetherian S'] (G : Over S') [GrpObj G] [IsCommMonObj G] (P : LB (G2 G).left), IsAbelianScheme G → P.IsLB → (∃ s : (P.pull (lift (1 : G ⟶ G) (𝟙 G)).left).Gen, s.IsGen) → (∃ s : (P.pull (lift (𝟙 G) (1 : G ⟶ G)).left).Gen, s.IsGen) → LBIso P (P.pull (lift (snd G G) (fst G G)).left) → ∀ W : S'.Opens, (∀ V : S'.Opens, V ≤ W → Out.RelAmple ((Over.pullback V.ι).obj G) ((P.pull (Pdiv.PullbackComparison.pφ₂ V.ι G)).pull (lift (𝟙 ((Over.pullback V.ι).obj G)) (𝟙 ((Over.pullback V.ι).obj G))).left)) → IsUnit ((d : ℕ) : Γ(W.toScheme, ⊤)) → ∀ s ∈ W, GlobalTheory.KerKilledNear.FibreKilled d G P s → ∃ V : S'.Opens, s ∈ V ∧ GlobalTheory.KerKilledLocus.KerKilledOn d G P V := by
   intro d S' _ G _ _ P hA hP hg₁ hg₂ hsym W hamp hd s hs hfib
-  obtain ⟨V₀, Z, i, hs₀, hmono, hfin, h1, hmul, hinv, hfac, hloc⟩ := GlobalTheory.T.exists_finite_kernel_near_diagonal_ample S' G P hA hP hg₁ hg₂ hsym W hamp s hs
+  obtain ⟨V₀, Z, i, hs₀, hmono, hfin, h1, hmul, hinv, hfac, hloc⟩ := GlobalTheory.KernelNear.exists_finite_kernel_near S' G P hA hP hg₁ hg₂ hsym W hamp s hs
   have hfibZ : ∀ (T : Over S') (z : T ⟶ Z), (∃ f : T.left ⟶ Spec (S'.residueField s),
       T.hom = f ≫ S'.fromSpecResidueField s) → (z ≫ i) ^ d = 1 := by
     rintro T z ⟨f, hf⟩

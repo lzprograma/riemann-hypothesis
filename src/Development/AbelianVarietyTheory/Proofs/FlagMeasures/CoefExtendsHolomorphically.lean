@@ -217,8 +217,7 @@ lemma sepAlg_dense (ε : Fin n → Bool) : (sepAlg ε).topologicalClosure = ⊤ 
   intro x y hxy
   have hne : toMK x ≠ toMK y := fun h => hxy ((isEmb ε).injective h)
   obtain ⟨i, j, hij⟩ : ∃ i j, toMK x i j ≠ toMK y i j := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hne (Matrix.ext hcon)
   have hmem : ent ε i j ∈ sepAlg ε := ⟨Sep.entry i j, Sep.conjEntry i j⟩
   exact ⟨_, ⟨ent ε i j, hmem, rfl⟩, hij⟩

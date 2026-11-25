@@ -49,20 +49,10 @@ import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument
 
 open QuadraticAlgebra UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc
 
-private theorem stab_smul_comm {T Y : Type} [CommGroup T] [MulAction T Y] (t : T) (y : Y) :
-    MulAction.stabilizer T (t • y) = MulAction.stabilizer T y := by
-  ext s
-  simp only [MulAction.mem_stabilizer_iff]
-  rw [smul_smul, mul_comm, ← smul_smul, smul_left_cancel_iff]
-
 private theorem out_mk_smul {T Y : Type} [Group T] [MulAction T Y] (y : Y) :
     ∃ t : T, (Quotient.mk (MulAction.orbitRel T Y) y).out = t • y := by
   obtain ⟨t, ht⟩ := MulAction.orbitRel_apply.mp (Quotient.mk_out (s := MulAction.orbitRel T Y) y)
   exact ⟨t, ht.symm⟩
-
-private theorem mk_smul_eq {T Y : Type} [Group T] [MulAction T Y] (t : T) (y : Y) :
-    Quotient.mk (MulAction.orbitRel T Y) (t • y) = Quotient.mk (MulAction.orbitRel T Y) y := by
-  exact Quotient.sound (MulAction.orbitRel_apply.mpr (MulAction.mem_orbit y t))
 
 private theorem wcount_sub {T Y : Type} [Group T] [MulAction T Y] (C : Subgroup T) (k : Y → ℂ) :
     wcount C k = ∑ᶠ o : {o : MulAction.orbitRel.Quotient T Y | k o.out ≠ 0},
@@ -125,7 +115,7 @@ theorem UpperTheory.V.Z.Sym.Loc.wTrans :
       exact hR t _ _ (pick_R o2)
     have h3 : t • o2.1.out = o1.1.out := (hex' _ (pick_k o1)).unique h2 (pick_R o1)
     apply Subtype.ext
-    rw [← Quotient.out_eq o1.1, ← Quotient.out_eq o2.1, ← h3, mk_smul_eq]
+    rw [← Quotient.out_eq o1.1, ← Quotient.out_eq o2.1, ← h3, MulAction.orbitRel.Quotient.quotient_smul_eq]
   · rintro ⟨o', ho'⟩
     obtain ⟨z, hz, -⟩ := hex' o'.out ho'
     have hkz : k z ≠ 0 := by
@@ -145,9 +135,9 @@ theorem UpperTheory.V.Z.Sym.Loc.wTrans :
     have h2 : pick ⟨_, hmem⟩ = s • o'.out := (hex _ hmem).unique (pick_R ⟨_, hmem⟩) h1
     apply Subtype.ext
     show Quotient.mk _ (pick ⟨_, hmem⟩) = o'
-    rw [h2, mk_smul_eq, Quotient.out_eq]
+    rw [h2, MulAction.orbitRel.Quotient.quotient_smul_eq, Quotient.out_eq]
   · intro o
     obtain ⟨t, ht⟩ := out_mk_smul (T := T) (pick o)
     show _ = ((MulAction.stabilizer T (Quotient.mk (MulAction.orbitRel T Y') (pick o)).out).relIndex C : ℂ) *
       k' (Quotient.mk (MulAction.orbitRel T Y') (pick o)).out
-    rw [ht, stab_smul_comm, hk', ← hkk _ _ (pick_R o), stab_eq _ _ (pick_R o) o.2 (pick_k o)]
+    rw [ht, MulAction.stabilizer_smul_eq_right, hk', ← hkk _ _ (pick_R o), stab_eq _ _ (pick_R o) o.2 (pick_k o)]

@@ -1,50 +1,8 @@
 module
 
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.RightHolRightHolEq
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Topology.Algebra.Group.Units
@@ -144,8 +102,7 @@ theorem entry_le_of_lg_le {R : ℝ} {y : Mat n} (hy : lg y ≤ R) :
   have h2 := hs_nonneg y⁻¹
   have key : ∀ t : ℝ, 0 ≤ t → t ^ 2 ≤ Real.exp R → 1 ≤ Real.exp R → t ≤ Real.exp R := by
     intro t ht h h'
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     nlinarith
   have hE : 1 ≤ Real.exp R := by linarith
   exact ⟨fun a b => key _ (norm_nonneg _) ((sq_entry_le_hs y a b).trans (by linarith)) hE,
@@ -307,7 +264,7 @@ theorem lg_unitary (x : Mat n) (k₁ k₂ : Matrix.unitaryGroup (Fin n) ℂ) : l
     hs_left_unitary (k := star k₂.1) (by rw [s₂]; exact u₂),
     hs_right_unitary (k := star k₁.1) (by rw [s₁]; exact v₁)]
 
-theorem lgFacts : LgFacts := fun n =>
+theorem lgFacts : LgFacts := fun _ =>
   ⟨fun x _ y _ => lg_mul_le x y, fun _ hx => lg_inv hx, fun x _ k₁ k₂ => lg_unitary x k₁ k₂,
     contDiffOn_lg, isCompact_G, isCompact_Mat, 2, fun _ hx p => fderiv_lg_le hx (hs_bs p)⟩
 

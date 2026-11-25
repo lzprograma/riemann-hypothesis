@@ -13,8 +13,6 @@ open scoped TensorProduct ContDiff ENNReal
 
 namespace Formalism.IndefR.Eqv
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {S T : HSp D} {k : ℕ}
 
 theorem continuous_psiT (τ : D.what₂.Tau) : Continuous (psiT D τ) := by

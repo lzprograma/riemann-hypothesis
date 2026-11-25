@@ -4,8 +4,6 @@ public import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace Formalism.L2.Pj
@@ -13,8 +11,6 @@ namespace Formalism.L2.Pj
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor NumberField
 open MvPolynomial (X C)
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 section Exp
 

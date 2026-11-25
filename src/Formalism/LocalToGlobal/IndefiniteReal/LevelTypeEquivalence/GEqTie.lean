@@ -15,8 +15,6 @@ namespace Formalism.IndefR.Eqv.Act
 
 open Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Links.RealDat
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Lift
 
 variable {D : D7} (V : HSp D)
@@ -43,12 +41,6 @@ theorem exists_finLift (q : Bridge.Gf V) : ∃ κ ∈ GfC V, finHom V κ = q := 
     rw [map_mul, map_inv, h1, inv_one, one_mul, hκ0]
 
 end Lift
-
-section Ad
-
-variable {G Γ W : Type} [Group G] [Group Γ] [NormedAddCommGroup W] [InnerProductSpace ℂ W] (ι : Γ →* G)
-
-end Ad
 
 section Coef
 

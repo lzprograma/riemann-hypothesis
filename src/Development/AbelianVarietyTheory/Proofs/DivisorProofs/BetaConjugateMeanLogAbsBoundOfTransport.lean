@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHeckeLBoundedInVerticalStrips
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LatticeNormTransport
 public import Formalism.LocalRingCardinality.DataParams₂
 public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.DedekindZetaEqSumRealEisenstein
@@ -17,56 +18,9 @@ public import Formalism.SharpRestriction.GlobalSchurBounds.QuadraticLogDerivCong
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsValCharTwist
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToricSumEqHeckeLValueMulAuxiliaryFactors
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsHeckeLOfHasInf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitOpenAndCongrOpen
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Topology.Algebra.Group.Units
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
 
@@ -262,21 +216,7 @@ theorem injective_of_isCMType {φ : I → E →+* ℂ} (h : IsCMType φ) : Funct
 
 theorem bijective_of_isCMType {φ : I → E →+* ℂ} (h : IsCMType φ) :
     Function.Bijective fun i => InfinitePlace.mk (φ i) := by
-  constructor
-  · intro i j hij
-    have e := InfinitePlace.mk_eq_iff.1 hij
-    refine (h (φ j)).unique ?_ (Or.inl rfl)
-    rcases e with e | e
-    · exact Or.inl e.symm
-    · exact Or.inr e.symm
-  · intro w
-    obtain ⟨i, hi, -⟩ := h w.embedding
-    refine ⟨i, ?_⟩
-    rcases hi with e | e
-    · show InfinitePlace.mk (φ i) = w
-      rw [← e, InfinitePlace.mk_embedding]
-    · show InfinitePlace.mk (φ i) = w
-      rw [← InfinitePlace.mk_conjugate_eq, ← e, InfinitePlace.mk_embedding]
+  apply _root_.GlobalTheory.CMVal.Model.IsCMType.bijective <;> assumption
 
 theorem exists_perm {K : Type} [Field K] [Algebra K E] {φK : K →+* ℂ} {φ : I → E →+* ℂ} {σ : ℂ ≃+* ℂ}
     (hφ : IsCMType φ) (hK : ∀ i, (φ i).comp (algebraMap K E) = φK) (hc : (starRingEnd ℂ).comp φK ≠ φK)
@@ -780,7 +720,6 @@ theorem sizes : ∀ ε : ℝ, ∃ Cx x₁ : ℝ, ∀ (D : Formalism.BasicNotions
       one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le hm1 hf1) (one_le_pow₀ hN)
     exact (le_mul_of_one_le_left (by linarith) h1).trans hmfNd
   have hlogd : Real.log D.host.d ≤ large₂.sc.L := hbL ▸ Real.log_le_log (by linarith) hdb
-  have hlogd0 : 0 ≤ Real.log D.host.d := Real.log_nonneg hd1
   have hdl : |large₂.logDerivativeAtOne| ≤ large₂.sc.L := hR.dlog
 
   have hdF : |(discr (maximalRealSubfield D.host.E) : ℝ)| = (2 * D.host.v) ^ D.R.f := by
@@ -800,7 +739,6 @@ theorem sizes : ∀ ε : ℝ, ∃ Cx x₁ : ℝ, ∀ (D : Formalism.BasicNotions
   set b := large₂.sc.b
   set L := large₂.sc.L
   set F : ℝ := (D.R.f : ℝ) with hF
-  have hb0 : 0 ≤ b := by linarith
   have hk : ((2 * s : ℕ) : ℝ) ≤ 2 * b := by push_cast; linarith
   have hk1 : (1 : ℝ) ≤ ((2 * s : ℕ) : ℝ) := by exact_mod_cast (show 1 ≤ 2 * s by omega)
 
@@ -839,7 +777,6 @@ theorem sizes : ∀ ε : ℝ, ∃ Cx x₁ : ℝ, ∀ (D : Formalism.BasicNotions
     refine (Finset.sum_le_sum fun τ _ => hκ τ).trans ?_
     rw [Finset.sum_const, Finset.card_univ, hcard, nsmul_eq_mul]
     linarith
-  have hsumκ0 : (0 : ℝ) ≤ Formalism.PairingDivisionLocalBalance.absK (kap D 1 i j s) := Nat.cast_nonneg _
   have T3 : (Formalism.PairingDivisionLocalBalance.absK (kap D 1 i j s) : ℝ) * 8 ≤ 40 * (F * b * L) := by
     have : F * b ≤ F * b * L := le_mul_of_one_le_right (by positivity) hL1
     linarith
@@ -861,7 +798,6 @@ theorem sizes : ∀ ε : ℝ, ∃ Cx x₁ : ℝ, ∀ (D : Formalism.BasicNotions
   have e : 200 * (D.R.f : ℝ) * b * (L + Real.log large₂.sc.x) = 200 * (F * b * L) + 200 * (F * b * Real.log large₂.sc.x) := by
     rw [hF]; ring
   rw [e]
-  have hP : 0 ≤ F * b * L := by positivity
   linarith
 
 end GlobalTheory.SizesArch
@@ -905,7 +841,6 @@ theorem exists_field {K : Type} [Field K] [NumberField K] (φK : K →+* ℂ) (a
   refine ⟨_, inferInstance, {}, fun x => hle (hR ⟨x, rfl⟩), hle (hA (IntermediateField.subset_adjoin ℚ _ (by simp))),
     hle (hA (IntermediateField.subset_adjoin ℚ _ (by simp)))⟩
 
-
 open IntermediateField in
 theorem sum_log_emb (L : IntermediateField ℚ ℂ) [FiniteDimensional ℚ L] [NumberField L] (β : ℂ) (hβ : β ∈ L)
     (h0 : β ≠ 0) :
@@ -942,14 +877,12 @@ theorem sum_log_emb (L : IntermediateField ℚ ℂ) [FiniteDimensional ℚ L] [N
 theorem emb_two {K : Type} [Field K] [NumberField K] (φK : K →+* ℂ) (hK2 : Module.finrank ℚ K = 2)
     (hc : (starRingEnd ℂ).comp φK ≠ φK) (g : K →+* ℂ) : g = φK ∨ g = (starRingEnd ℂ).comp φK := by
   classical
-  by_contra h
-  push_neg at h
+  by_contra! h
   have h3 : ({g, φK, (starRingEnd ℂ).comp φK} : Finset (K →+* ℂ)).card = 3 :=
     Finset.card_eq_three.2 ⟨g, φK, _, h.1, h.2, hc.symm, rfl⟩
   have := Finset.card_le_univ ({g, φK, (starRingEnd ℂ).comp φK} : Finset (K →+* ℂ))
   rw [h3, NumberField.Embeddings.card, hK2] at this
   omega
-
 
 open Classical in
 theorem sum_halve {K : Type} [Field K] [NumberField K] (φK : K →+* ℂ) (hK2 : Module.finrank ℚ K = 2)
@@ -983,7 +916,6 @@ theorem sum_halve {K : Type} [Field K] [NumberField K] (φK : K →+* ℂ) (hK2 
   · intro a _; exact hcc a
   · intro a _; exact hcc a
   · intro a _; exact (hf a).symm
-
 
 open Classical in
 theorem cover {K : Type} [Field K] [NumberField K] (φK : K →+* ℂ) (j₀ : ℂ)
@@ -1166,7 +1098,6 @@ theorem condQ_empty {E : Type} [Field E] [NumberField E] (𝔣 : Ideal (OF E)) :
 end GlobalTheory.BetaArchPf
 
 namespace GlobalTheory.SqTop
-
 
 open GlobalTheory.BetaArchPf in
 theorem betaArch_of_transport : GlobalTheory.IndefiniteRowSideFullHecke.LatticeNormTransport.Transport → FieldDat → LBound → TorEx → BetaArch := by

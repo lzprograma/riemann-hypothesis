@@ -16,11 +16,7 @@ open CategoryTheory MonoidalCategory
 
 universe u
 
-attribute [local instance 2000] Rep.hV2
-
 section ULiftInt
-
-attribute [-instance] ULift.smulLeft ULift.module
 
 variable {A B : Type*} [AddCommGroup A] [AddCommGroup B] [Module (ULift.{u} ℤ) A]
   [Module (ULift.{u} ℤ) B]
@@ -139,26 +135,6 @@ instance isDiscreteRep_cartierDual [Algebra.IsIntegral K L] (M : Rep.{u} (ULift.
 
 
 end Finite
-
-section Pairing
-
-variable (K L) [Algebra.IsIntegral K L]
-
-
-end Pairing
-
-section Biduality
-
-
-
-end Biduality
-
-section Exact
-
-attribute [local instance 3000] Submodule.Quotient.module
-
-
-end Exact
 
 section ZMod
 

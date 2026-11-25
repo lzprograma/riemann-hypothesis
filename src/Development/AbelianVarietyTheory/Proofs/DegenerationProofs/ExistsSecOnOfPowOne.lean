@@ -56,7 +56,6 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.ZH ReciprocityTheory.ChartRestriction.G.Out Classical
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 
@@ -87,7 +86,7 @@ theorem exists_secOn_of_pow_one {X : Scheme.{0}} (L : LB X) (V : X.Opens)
 
 theorem mem_basicOpen_of_valF {K : Type} [Field K] {X : Scheme.{0}} (g : Sp K ⟶ X) {U : X.Opens} (f : Γ(X, U))
     (h : valF g U f ≠ 0) (w : Sp K) : g w ∈ X.basicOpen f :=
-  (GlobalTheory.Points.le_preimage_basicOpen_iff g (by_contra fun hn => h (dif_neg hn)) f).2 (isUnit_iff_ne_zero.2 h)
+  (GlobalTheory.Points.le_preimage_basicOpen_iff g (by_contra fun hn => h (dite_eq_right hn)) f).2 (isUnit_iff_ne_zero.2 h)
     (x := w) trivial
 
 theorem exists_geomPoint {X : Scheme.{0}} (y : X) :

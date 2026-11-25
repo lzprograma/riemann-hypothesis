@@ -100,8 +100,8 @@ theorem gbamix_maDensity_interp {m₀ m₁ : ConeMetric (C := ℂ) (ι := Ix κ)
     intro i
     funext k
     by_cases hk : k.val < i
-    · simp only [mixPot, hk, if_true]; rfl
-    · simp only [mixPot, hk, if_false]; rfl
+    · simp only [mixPot, hk, ite_true]; rfl
+    · simp only [mixPot, hk, ite_false]; rfl
   have hpure : (fun k => cxHessian (fun y' => purePot (interp m₀ m₁ t) D k (γ y')) y) =
       fun _ => (1 - (t : ℂ)) • H₀ + (t : ℂ) • H₁ := by
     funext k

@@ -13,6 +13,7 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticInt
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemMinimalPrimesOfMemDivSuppDivSupp
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterPCProof
+import GroundTheory.HeightsAndTheta.Heights.Intersections.NotLtLtOfMemMinimalPrimes
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.LengthCokerEqKerAddDimOneOrderSum
 
 @[expose] public section
@@ -30,50 +31,13 @@ namespace SwapCyclesAlt
 
 theorem not_lt_lt {R : Type*} [CommRing R] [IsNoetherianRing R] {V W W' : Ideal R} [V.IsPrime]
     [W'.IsPrime] {x : R} (hW : W ∈ (V ⊔ Ideal.span {x}).minimalPrimes) (hVW' : V < W')
-    (hW'W : W' < W) : False := by
-  have hWp : W.IsPrime := hW.isPrime
-  have h1 := Ideal.map_height_le_one_of_mem_minimalPrimes hW
-  set q := Ideal.Quotient.mk V
-  have hker : RingHom.ker q = V := Ideal.mk_ker
-  have hW'm : (W'.map q).IsPrime :=
-    Ideal.map_isPrime_of_surjective Ideal.Quotient.mk_surjective (by rw [hker]; exact hVW'.le)
-  have hWm : (W.map q).IsPrime :=
-    Ideal.map_isPrime_of_surjective Ideal.Quotient.mk_surjective
-      (by rw [hker]; exact hVW'.le.trans hW'W.le)
-  have hlt : W'.map q < W.map q := by
-    refine lt_of_le_of_ne (Ideal.map_mono hW'W.le) fun he => hW'W.ne ?_
-    have := congrArg (Ideal.comap q) he
-    rwa [Ideal.comap_map_of_surjective' q Ideal.Quotient.mk_surjective,
-      Ideal.comap_map_of_surjective' q Ideal.Quotient.mk_surjective, hker,
-      sup_eq_left.mpr hVW'.le, sup_eq_left.mpr (hVW'.le.trans hW'W.le)] at this
-  have h2 := Ideal.height_add_one_le_of_lt_of_isPrime hlt
-  have h0 : (W'.map q).height = 0 := by
-    have h3 := h2.trans h1
-    generalize (W'.map q).height = a at h3
-    cases a with
-    | top => simp at h3
-    | coe a => norm_cast at h3 ⊢; omega
-  haveI : IsDomain (R ⧸ V) := Ideal.Quotient.isDomain V
-  rw [Ideal.height_eq_zero_iff_eq_bot] at h0
-  apply hVW'.ne
-  apply le_antisymm hVW'.le
-  intro y hy
-  have : q y ∈ W'.map q := Ideal.mem_map_of_mem q hy
-  rw [h0, Ideal.mem_bot, Ideal.Quotient.eq_zero_iff_mem] at this
-  exact this
+    (hW'W : W' < W) : False :=
+  not_lt_lt_of_mem_minimalPrimes' hW hVW' hW'W
 
 theorem mem_minimalPrimes_of_mem {R : Type*} [CommRing R] [IsNoetherianRing R] {P W : Ideal R}
     [P.IsPrime] {a b : R} (hW : W ∈ (P ⊔ Ideal.span {a}).minimalPrimes) (hbP : b ∉ P)
-    (hbW : b ∈ W) : W ∈ (P ⊔ Ideal.span {b}).minimalPrimes := by
-  have hPW : P ≤ W := le_sup_left.trans hW.1.2
-  refine ⟨⟨hW.1.1, sup_le hPW (Ideal.span_le.mpr (by simpa using hbW))⟩,
-    fun Q ⟨hQ, hQle⟩ hQW => ?_⟩
-  by_contra hWQ
-  have hlt : Q < W := lt_of_le_of_ne hQW fun e => hWQ (le_of_eq e.symm)
-  have hbQ : b ∈ Q := hQle (Ideal.mem_sup_right (Ideal.mem_span_singleton_self b))
-  have hPQ : P < Q := lt_of_le_of_ne (le_sup_left.trans hQle) fun e => hbP (by rw [e]; exact hbQ)
-  haveI := hQ
-  exact not_lt_lt hW hPQ hlt
+    (hbW : b ∈ W) : W ∈ (P ⊔ Ideal.span {b}).minimalPrimes :=
+  GroundTheory.Heights₂.Heights.Inter.mem_minimalPrimes_of_mem hW hbP hbW
 
 theorem mem_minimalPrimes_sup {R : Type*} [CommRing R] {V W Z : Ideal R} {f t : R}
     (hZ : Z ∈ (V ⊔ Ideal.span {f} ⊔ Ideal.span {t}).minimalPrimes)

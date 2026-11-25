@@ -13,24 +13,14 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar.Uniq
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Generic
 
 variable {K : Type*} [Field K]
 
 theorem adjugate_last (r : ℕ) (M : Matrix (Fin (r + 1)) (Fin (r + 1)) K) :
     M.adjugate (Fin.last r) (Fin.last r) = (M.submatrix Fin.castSucc Fin.castSucc).det := by
-  rw [adjugate_apply, det_succ_row _ (Fin.last r), Finset.sum_eq_single (Fin.last r)]
-  · have hsub : ((M.updateRow (Fin.last r) (Pi.single (Fin.last r) 1)).submatrix
-        (Fin.last r).succAbove (Fin.last r).succAbove) = M.submatrix Fin.castSucc Fin.castSucc := by
-      ext i j
-      simp [Fin.succAbove_last]
-    rw [hsub]
-    simp [← two_mul, pow_mul]
-  · intro j _ hj
-    simp [hj]
-  · simp
+  rw [Matrix.adjugate_fin_succ_eq_det_submatrix, Fin.succAbove_last, Fin.val_last, ← two_mul, pow_mul,
+    neg_one_sq, one_pow, one_mul]
 
 theorem det_sub_single (r : ℕ) (W : Matrix (Fin (r + 1)) (Fin (r + 1)) K) (c : K) :
     (W - single (Fin.last r) (Fin.last r) c).det =
@@ -186,7 +176,6 @@ theorem mem_orth_of_span {ι : Type*} (v : ι → (VS D).V) (w : (VS D).V) (hw :
 
 theorem hT_sum {ι : Type*} [Fintype ι] (x : (VS D).V) (c : ι → D.host.E) (v : ι → (VS D).V) :
     (VS D).hT x (∑ i, c i • v i) = ∑ i, c i * (VS D).hT x (v i) := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [map_sum, map_smul]
 
 theorem eq_zero_of_gram {ι : Type*} [Fintype ι] [DecidableEq ι] (v : ι → (VS D).V)

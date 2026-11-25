@@ -257,8 +257,7 @@ theorem Hf_add_right (a b c : EuclideanSpace ℂ ι) : Hf a (b + c) = Hf a b + H
   simp [Hf, mul_add, Finset.sum_add_distrib]
 
 theorem Hf_swap (a b : EuclideanSpace ℂ ι) : Hf b a = (starRingEnd ℂ) (Hf a b) := by
-
-  simp [Hf, map_sum, mul_comm]
+  exact (ReciprocityTheory.ChartRestriction.G.I2.FPw.Hf_conj a b).symm
 
 theorem pa_factor (q : ℕ) (v g g' : EuclideanSpace ℂ ι) (kk : ℤ) (hkk : (Hf g' g).im = kk) :
     cexp (-(Real.pi * q * (Hf g g').im) * I) *

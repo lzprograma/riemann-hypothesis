@@ -82,12 +82,6 @@ structure JointsS {ex : Extra D L hT Gi Gl K Y cX} (T : LinkedFamilyData ex) : P
 
   div : Nonempty (Formalism.L2.Host.DivisorCharacterCompatibility D T.n.cf ex.nch T.n.tp Y)
 
-namespace JointsS
-
-variable {ex : Extra D L hT Gi Gl K Y cX} {T : LinkedFamilyData ex}
-
-end JointsS
-
 section
 
 end
@@ -125,7 +119,6 @@ structure RecT (ex : Extra D L hT Gi Gl K Y cX) where
 
   host : HostDatumS T.toTiedDataS
 
-  weq : Theta.WeilCompatibleEquivariance T.toTiedDataS.theta.W
 
 end
 

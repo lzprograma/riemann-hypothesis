@@ -6,8 +6,6 @@ import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace Formalism.L2.Pj.GenericSectionMinimum
@@ -168,7 +166,7 @@ theorem dL_w0inv : dL X la w l (w0inv X la w) =
     -(w0inv X la w ^ 2 * algebraMap (Rp X la N) (Lw X la w) (emb X la N (X.inc wL (w l)))) := by
   have h := section_mul_inverse_eq_one X la w
   have e1 := (dL_isDer X la w l).mul (algebraMap (Rp X la N) (Lw X la w) (sec X la w 0)) (w0inv X la w)
-  rw [h, (dL_isDer X la w l).der_one, dL_alg, dR_sec, if_pos rfl] at e1
+  rw [h, (dL_isDer X la w l).der_one, dL_alg, dR_sec, ite_eq_left rfl] at e1
   linear_combination (-(w0inv X la w)) * e1 - dL X la w l (w0inv X la w) * h
 
 theorem dL_w0inv_pow (k : ℕ) : dL X la w l (w0inv X la w ^ k) =
@@ -228,7 +226,7 @@ theorem dF_Jid {x : Frac0 X la w} (hx : x ∈ Jid X la w) : dF X la w l x ∈ Ji
       apply Subtype.ext
       show dL X la w l (frac X la w 1 (sec X la w i.succ)) = -(frac X la w 1 (sec X la w i.succ) *
         frac X la w 1 (emb X la N (X.inc wL (w l))))
-      rw [dL_frac, dR_sec, if_neg (Fin.succ_ne_zero i), map_zero, zero_sub, frac_mul, Nat.cast_one, one_mul,
+      rw [dL_frac, dR_sec, ite_eq_right (Fin.succ_ne_zero i), map_zero, zero_sub, frac_mul, Nat.cast_one, one_mul,
         mul_comm (emb X la N _)]
     rw [e]
     exact neg_mem (Ideal.mul_mem_right _ _ (sfr_succ_mem_Jid X la w i))

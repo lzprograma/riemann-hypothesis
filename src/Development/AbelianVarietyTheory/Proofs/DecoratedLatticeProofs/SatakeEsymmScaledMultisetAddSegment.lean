@@ -62,7 +62,6 @@ open GlobalTheory.FinZeta (Gv embV Kv VacFin IsLocKer KerU)
 open GlobalTheory.SphTheta (IsStd CayleyRule intMat liftPar)
 open Formalism.UG (IsUnifV qV IsUnramInv GU KU IsInertAt Hecke IsCommensurated Tj SatU ordL Ov)
 open Formalism.MainNotions.SchurIrreducible (IsSplit)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -191,7 +190,7 @@ theorem satEig_map_add_seg : ∀ (E : Type) [Field E] [NumberField E] (w : Heigh
     simp only [hF, satEig, esymm_eq_zero_of_lt _ (hBc ▸ hj), mul_zero]
   have hFk : ∀ j, k < j → F j = 0 := by
     intro j hj
-    simp only [hF, if_neg (show ¬ j ≤ k by omega), zero_mul]
+    simp only [hF, ite_eq_right (show ¬ j ≤ k by omega), zero_mul]
   have hR : ∑ j ∈ Finset.range (a + 1), F j = ∑ j ∈ Finset.range (k + 1), F j := by
     rw [Finset.sum_subset (Finset.range_mono (show a + 1 ≤ a + k + 1 by omega))
         (fun j _ hn => hFa j (by simp at hn; omega)),
@@ -202,7 +201,7 @@ theorem satEig_map_add_seg : ∀ (E : Type) [Field E] [NumberField E] (w : Heigh
   have hjk : j ≤ k := Nat.lt_succ_iff.1 (Finset.mem_range.1 hj)
   rw [esymm_map_mul_C, esymm_string Q s z hs hsQ t]
   by_cases hja : j ≤ a
-  · simp only [hF, if_pos hjk, satEig]
+  · simp only [hF, ite_eq_left hjk, satEig]
     have c1 : (Q : ℂ) ^ (((k : ℂ) * (((a + t : ℕ) : ℂ) - k)) / 2) = s ^ ((k : ℤ) * ((a : ℤ) + t - k)) := by
       rw [← natCast_cpow_half]; congr 1; push_cast; ring
     have c2 : (Q : ℂ) ^ (((j : ℂ) * ((a : ℂ) - j)) / 2) = s ^ ((j : ℤ) * ((a : ℤ) - j)) := by

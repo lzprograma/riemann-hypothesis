@@ -1,57 +1,16 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsQuasicoherentEigenQuot
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Definitions.Divisors.IsEquivariantToBidual
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntEmbCoe
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry Limits
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.VB GlobalTheory.LieVB GlobalTheory.CurveRootGeometry
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.TwoSeq
 
@@ -90,43 +49,6 @@ variable (α : O →+* End A) (β : O →+* End B) (α' : O →+* End A') (β' :
 
 variable {α β α' β' r}
 
-def biprodAct (α : O →+* End A) (β : O →+* End B) : O →+* End (A ⊞ B) where
-  toFun x := End.of (biprod.map (act α x) (act β x))
-  map_one' := by
-    refine End.ext (biprod.hom_ext _ _ ?_ ?_) <;> simp [act]
-  map_mul' x y := by
-    refine End.ext (biprod.hom_ext _ _ ?_ ?_) <;> simp [act, Category.assoc]
-  map_zero' := by
-    refine End.ext (biprod.hom_ext _ _ ?_ ?_) <;> simp [act]
-  map_add' x y := by
-    refine End.ext (biprod.hom_ext _ _ ?_ ?_) <;> simp [act]
-
-def Datum.split (α : O →+* End A) (β : O →+* End B) {m n : ℕ} (hA : IsVB A m) (hB : IsVB B n) :
-    Datum α β β α (m + n) where
-  D := A ⊞ B
-  ρ := biprodAct α β
-  a := biprod.inl
-  b := biprod.snd
-  u := biprod.inr
-  v := biprod.fst
-  w₁ := by simp
-  w₂ := by simp
-  isVB := hA.biprod hB
-  exact₁ := (ShortComplex.Splitting.ofHasBinaryBiproduct A B).shortExact
-  exact₂ := (ShortComplex.Splitting.mk (S := ShortComplex.mk (biprod.inr : B ⟶ A ⊞ B) biprod.fst (by simp))
-    biprod.snd biprod.inl (by simp) (by simp) (by rw [add_comm]; exact biprod.total)).shortExact
-  equiv_a x := by simp [act, biprodAct]
-  equiv_b x := by simp [act, biprodAct]
-  equiv_u x := by simp [act, biprodAct]
-  equiv_v x := by simp [act, biprodAct]
-
 end General
-
-section Dieu
-
-variable {O : Type} [CommRing O] (q : ℕ) [Fact q.Prime] (k : Type) [Field k] [CharP k q] (c : O →+* O) {C : Scheme.{0}}
-  [Algebra k Γ(C, ⊤)] {G : Over C} [GrpObj G] [QuasiSeparated G.hom] (i : OAct O G)
-
-end Dieu
 
 end GlobalTheory.TwoSeq

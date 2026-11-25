@@ -87,7 +87,7 @@ theorem subst_ev_kill (h : PS C 2 dd) (g : Fin 2) (a : Fin 2 → Pt C 1 dd) (hag
   · have h1 : a s.1 s.2 = MvPowerSeries.X ((0 : Fin 1), s.2) := by rw [hao _ hs]; rfl
     rw [h1, MvPowerSeries.subst_X hbS]
     have h2 : s = (1 - g, s.2) := Prod.ext (fin_two_eq_one_sub_of_ne' g s.1 hs) rfl
-    simp only [Pi.smul_apply', if_neg hs, one_smul]
+    simp only [Pi.smul_apply', ite_eq_right hs, one_smul]
     rw [← h2]
 
 theorem coeff_eval_second_zero (G : PS C 2 dd) (μ : Fin dd →₀ ℕ) :
@@ -117,17 +117,10 @@ theorem coeff_eval_second_zero (G : PS C 2 dd) (μ : Fin dd →₀ ℕ) :
     rw [Finset.mem_image] at hs'
     obtain ⟨x, _, rfl⟩ := hs'
     show (if (0 : Fin 2) = 1 then (0 : C) else 1) ^ _ = 1
-    rw [if_neg (by decide), one_pow]
+    rw [ite_eq_right (by decide), one_pow]
   rw [h3, one_mul]
 
 end Kill
-
-section SgSec
-
-variable [CharZero C] {V : VF C} {O : Type} [CommRing O] [StarRing O] {dd : ℕ} {d : ℕ} {I : Fin 2 → Type}
-  [∀ g, Fintype (I g)] (Y : FBChart C V O dd) (p : PairData Y d I)
-
-end SgSec
 
 section AddSec
 

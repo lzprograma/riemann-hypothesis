@@ -1,5 +1,7 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.IneChar
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LinkEx
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.AdjointLowWeight.SymmetricCubeSymplecticSimilitude
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.RankFourAutomorphyOfTensor
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.OverOf4
@@ -73,28 +75,9 @@ private theorem aux_one {Ω : Type} [Field Ω] (A : ValuationSubring Ω) {m : �
   have h1 : A.valuation ζ ^ m = 1 := by rw [← map_pow, h, map_one]
   exact (pow_eq_one_iff_left hm).1 h1
 
-private theorem power_bounds_of_between {Ω : Type} [Field Ω] (A : ValuationSubring Ω) {η : Ω} (h1 : A.valuation η = 1)
-    (h : A.valuation (η - 1) < 1) (i : ℕ) : A.valuation (1 - η ^ i) < 1 := by
-  induction i with
-  | zero => rw [pow_zero, sub_self, map_zero]; exact Units.zero_lt 1
-  | succ i ih =>
-    have e : 1 - η ^ (i + 1) = η * (1 - η ^ i) - (η - 1) := by ring
-    rw [e]
-    refine A.valuation.map_sub_lt ?_ h
-    rw [map_mul, h1, one_mul]; exact ih
-
 private theorem root_of_unity_eq_one_of_close_residue {Ω : Type} [Field Ω] (A : ValuationSubring Ω) {m : ℕ} (hm : m ≠ 0)
     (hv : ¬ A.valuation (m : Ω) < 1) {η : Ω} (hη : η ^ m = 1) (h : A.valuation (η - 1) < 1) : η = 1 := by
-  by_contra hne
-  apply hv
-  have hs : ∑ i ∈ Finset.range m, η ^ i = 0 := by
-    have := mul_geom_sum η m
-    rw [hη, sub_self] at this
-    exact (mul_eq_zero.1 this).resolve_left (sub_ne_zero.2 hne)
-  have e : (m : Ω) = ∑ i ∈ Finset.range m, (1 - η ^ i) := by
-    rw [Finset.sum_sub_distrib, hs]; simp
-  rw [e]
-  exact A.valuation.map_sum_lt (Units.zero_lt 1).ne' fun i _ => power_bounds_of_between A (aux_one A hm hη) h i
+  apply _root_.root_of_unity_eq_one_of_close_residue <;> assumption
 
 private theorem inertia_fixes_prime_to_roots {Ω : Type} [Field Ω] [CharZero Ω] (A : ValuationSubring Ω) {m : ℕ} (hm : m ≠ 0)
     (hA : ¬ A.valuation (m : Ω) < 1) {g : G ℚ Ω} (hg : g ∈ Ine (F := ℚ) A) {ζ : Ω} (hζ : ζ ^ m = 1) : g ζ = ζ := by
@@ -111,17 +94,7 @@ private theorem inertia_fixes_prime_to_roots {Ω : Type} [Field Ω] [CharZero Ω
 
 private theorem open_kernel_killing_roots_of_unity {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {w : ℕ} (hw : w ≠ 0) {C : Type} [Group C]
     (θ : G ℚ Ω →* C) (hk : KillsMu w θ) : IsOpen (θ.ker : Set (G ℚ Ω)) := by
-  have hfin : {ζ : Ω | ζ ^ w = 1}.Finite := by
-    refine (nthRoots w (1 : Ω)).finite_toSet.subset fun ζ hζ => ?_
-    exact (mem_nthRoots (Nat.pos_of_ne_zero hw)).2 hζ
-  haveI : Finite {ζ : Ω | ζ ^ w = 1} := hfin
-  haveI : Algebra.IsAlgebraic ℚ Ω := IsAlgClosure.isAlgebraic
-  haveI : FiniteDimensional ℚ (IntermediateField.adjoin ℚ {ζ : Ω | ζ ^ w = 1}) :=
-    IntermediateField.finiteDimensional_adjoin fun x _ => Algebra.IsIntegral.isIntegral x
-  refine Subgroup.isOpen_mono (H₁ := (IntermediateField.adjoin ℚ {ζ : Ω | ζ ^ w = 1}).fixingSubgroup) (fun g hg => ?_)
-    (IntermediateField.fixingSubgroup_isOpen _)
-  refine hk g fun ζ hζ => ?_
-  exact (IntermediateField.mem_fixingSubgroup_iff _ _).1 hg ζ (IntermediateField.subset_adjoin _ _ hζ)
+  apply _root_.kills_open <;> assumption
 
 theorem UpperTheory.theta_unramified_of_kills_roots_of_unity :
     UpperTheory.V.Sd.S3.ThetaUnr := by

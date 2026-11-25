@@ -45,9 +45,9 @@ theorem tubeDeep_term (hR : TubeDeepRankOne.Statement) {n d : ℕ} {J : Ideal (M
       poincareDeepWeight (deepMap P s I y 0) = (‖eval y P‖ ^ 2 * logAbsSq P y ^ 2)⁻¹ := by
     intro I
     simp only [deepMap, Matrix.cons_val_zero, poincareDeepWeight]
-    exact if_pos hy
+    exact ite_eq_left hy
   have ht : tubeWeight P y = (logAbsSq P y ^ 2)⁻¹ :=
-    if_pos (by linarith [Real.add_one_le_exp (1 : ℝ)])
+    ite_eq_left (by linarith [Real.add_one_le_exp (1 : ℝ)])
   simp only [hw]
   by_cases hxR : x ∈ Metric.closedBall (0 : Fin n → ℂ) R
   · rw [Set.indicator_of_mem hxR, Set.indicator_of_mem hxR, hAx, ht, one_mul]
@@ -83,7 +83,7 @@ theorem TubeDeepMass.proof (hR : TubeDeepRankOne.Statement) (hC : TubeDeepAreaCo
       have hw0 : ∀ (s : (Fin (d + 1) → ℂ) → Fin n → ℂ) (I : Fin d → Fin n), g (deepMap P s I y) = 0 := by
         intro s I
         simp only [hg, deepMap, Matrix.cons_val_zero, poincareDeepWeight]
-        exact mul_eq_zero_of_right _ (if_neg hy)
+        exact mul_eq_zero_of_right _ (ite_eq_right hy)
       simp [sheetSum, hw0]
   obtain ⟨N, hN⟩ := hC n d J A P R hJ hdim hA
   refine ⟨((measurable_tubeDens hA P R _).indicator (measurableSet_lt hl measurable_const)).aestronglyMeasurable,

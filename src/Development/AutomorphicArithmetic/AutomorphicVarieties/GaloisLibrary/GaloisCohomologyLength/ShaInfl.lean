@@ -3,45 +3,7 @@ module
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.LevelInertiaLeLevelDec
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthCyclotomicBlockCocyclesLeSha
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.InfUnram
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -61,46 +23,6 @@ theorem UpperTheory.V.LDataCardLeFinrank.shaInfl :
     simp only [Set.mem_iUnion]
     exact ⟨v, hv, A, hA, hτ⟩
 
-  have vanishAll {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω]
-      {S : Set (HeightOneSpectrum (𝓞 F))} {R : Type} [CommRing R] {M : Type}
-      [AddCommGroup M] [Module R M] [TopologicalSpace M] [IsTopologicalAddGroup M]
-      [ContinuousConstSMul R M] [T2Space M] (rhoS : Representation R (GS Ω S) M)
-      {f : G F Ω → M} (hf : f ∈ Z1 (rhoS.comp (toGS Ω S) : Representation R (G F Ω) M))
-      (hv0 : ∀ v ∉ S, ∀ A : ValuationSubring Ω, IsPlaceOver A v →
-        ∃ m, ∀ g ∈ Ine (F := F) A, f g = rhoS (toGS Ω S g) m - m) (n : G F Ω)
-      (hn : n ∈ NS Ω S) : f n = 0 := by
-    have htriv : ∀ n ∈ NS Ω S, ∀ x, rhoS (toGS Ω S n) x = x := by
-      intro n hn x
-      have : toGS Ω S n = 1 := (QuotientGroup.eq_one_iff n).2 hn
-      rw [this, map_one]
-      rfl
-    have h1 : f 1 = 0 := by
-      have := hf.2 1 1
-      rw [one_mul, map_one] at this
-      exact left_eq_add.1 this
-    let N : Subgroup (G F Ω) :=
-      { carrier := {n | n ∈ NS Ω S ∧ f n = 0}
-        one_mem' := ⟨one_mem _, h1⟩
-        mul_mem' := fun {a b} ha hb => ⟨mul_mem ha.1 hb.1, by rw [hf.2, ha.2, hb.2, map_zero, add_zero]⟩
-        inv_mem' := fun {a} ha => ⟨inv_mem ha.1, by
-          have := hf.2 a⁻¹ a
-          rw [inv_mul_cancel, h1, ha.2, map_zero, add_zero] at this
-          exact this.symm⟩ }
-    haveI hN : N.Normal := ⟨fun a ha g => by
-      have hc := (normal_NS (Ω := Ω) S).conj_mem a ha.1 g
-      refine ⟨hc, ?_⟩
-      rw [GlobalTheory.Cut.ShaBound.coc_conj _ f hf.2 g a 0 (by rw [ha.2, map_zero, sub_zero])]
-      exact sub_eq_zero.2 (htriv _ hc _)⟩
-    have hcl : IsClosed (N : Set (G F Ω)) :=
-      (isClosed_NS Ω _).inter (isClosed_singleton.preimage hf.1)
-    refine (Subgroup.topologicalClosure_minimal _ (Subgroup.normalClosure_le_normal ?_) hcl hn).2
-    intro τ hτ
-    simp only [Set.mem_iUnion] at hτ
-    obtain ⟨v, hv, A, hA, hτ⟩ := hτ
-    have h4 : τ ∈ NS Ω S := ine_le_NS hv hA hτ
-    refine ⟨h4, ?_⟩
-    obtain ⟨m, hm⟩ := hv0 v hv A hA
-    rw [hm _ hτ, htriv _ h4, sub_self]
 
   have infUnram := @UpperTheory.V.LDataCardLeFinrank.infUnram
   have hI := (infUnram F Ω (S : Set (HeightOneSpectrum (𝓞 F))) R M ρ hρ).2

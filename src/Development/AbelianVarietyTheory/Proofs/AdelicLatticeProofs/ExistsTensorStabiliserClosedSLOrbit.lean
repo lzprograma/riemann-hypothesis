@@ -97,19 +97,6 @@ def vanC (S : Set (Matrix ι ι ℂ)) : Ideal (MvPolynomial (ι × ι) ℂ) wher
 
 
 omit [DecidableEq ι] in
-lemma evC_ltr (g y : Matrix ι ι ℂ) (f : MvPolynomial (ι × ι) ℂ) : evC (ltr g f) y = evC f (g * y) := by
-  induction f using MvPolynomial.induction_on with
-  | C a => simp [evC, ltr]
-  | add p q hp hq =>
-    simp only [evC] at hp hq ⊢
-    rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
-  | mul_X p ij hp =>
-    simp only [evC] at hp ⊢
-    rw [map_mul, map_mul, map_mul, hp]
-    congr 1
-    simp [ltr, Matrix.mul_apply]
-
-omit [DecidableEq ι] in
 lemma exists_rtr (h : Matrix ι ι ℂ) (f : MvPolynomial (ι × ι) ℂ) :
     ∃ f' : MvPolynomial (ι × ι) ℂ, ∀ z, evC f' z = evC f (z * h) := by
   induction f using MvPolynomial.induction_on with
@@ -299,7 +286,7 @@ theorem hilbert_finiteness : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (Γ :
       intro f hf hn
       rcases Nat.eq_zero_or_pos n with rfl | hpos
       · have : f = C (AddMonoidAlgebra.coeff f 0) := by
-          rw [← homogeneousComponent_zero, homogeneousComponent_of_mem hn, if_pos rfl]
+          rw [← homogeneousComponent_zero, homogeneousComponent_of_mem hn, ite_eq_left rfl]
         rw [this]
         exact Subalgebra.algebraMap_mem _ _
       · have hmem : f ∈ Submodule.span (MvPolynomial (ι × ι) ℂ) (s : Set (MvPolynomial (ι × ι) ℂ)) := by
@@ -312,7 +299,7 @@ theorem hilbert_finiteness : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (Γ :
           refine Finset.sum_congr rfl fun F hF => ?_
           rw [smul_eq_mul, mul_comm, hR.mul _ _ (hsS hF).1]
         have h2 : f = homogeneousComponent n f := by
-          rw [homogeneousComponent_of_mem hn, if_pos rfl]
+          rw [homogeneousComponent_of_mem hn, ite_eq_left rfl]
 
         rw [h2, h1, map_sum]
         refine Subalgebra.sum_mem _ fun F hF => ?_

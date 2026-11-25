@@ -9,8 +9,6 @@ import Mathlib.Algebra.Order.Star.Real
 open MeasureTheory Matrix Filter Topology
 open scoped InnerProductSpace ComplexConjugate
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace Formalism.L2.SG.Pf.admitted.BoundedOperators

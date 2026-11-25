@@ -193,7 +193,7 @@ theorem exists_pow_mul_mem_codimOne_regular_chart : ∀ (σ : Setup) (x : Sp σ.
   by_cases hzP : z ∈ P
   · have hle : N z ≤ hF.toFinset.sup N := Finset.le_sup (hF.mem_toFinset.2 (key z hz hzP))
     have hN : RegAt z (g ^ N z * v) := by
-      simp only [N, dif_pos hz]; exact Classical.choose_spec (hpt z hz)
+      simp only [N, dite_eq_left hz]; exact Classical.choose_spec (hpt z hz)
     rw [← Nat.sub_add_cancel hle, pow_add, _root_.mul_assoc]
     exact (regAt_pow hgz _).mul hN
   · exact (regAt_pow hgz _).mul (not_not.1 hzP)

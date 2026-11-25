@@ -1,7 +1,6 @@
 module
 
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.MajorantInvolutionDiagonalForm
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 

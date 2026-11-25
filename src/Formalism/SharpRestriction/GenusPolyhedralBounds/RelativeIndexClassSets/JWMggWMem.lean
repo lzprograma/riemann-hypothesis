@@ -11,47 +11,8 @@ public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClas
 public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.IsLatticeOfAdmissible
 public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.IteratedWeightAtVanishingOrder
 public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.LevelsQDesc
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LogFactorialIndices.SignedSubspaceIndex.IdxBase
-import Mathlib.Tactic.Lemma
 import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.QlenEqZeroOfLe
 import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ThetaLeMsupOfSetC
 import Mathlib.Tactic.Linter.HaveILetI
@@ -90,7 +51,7 @@ theorem ind_mono (hy : ∀ l l', Δ l (y l') = if l = l' then 1 else 0) (l : Fin
       map_nsmul, smul_eq_mul, smul_eq_mul, map_mul, map_pow, aeval_X]
     by_cases h : l = i
     · subst h; simp
-    · rw [if_neg h, Pi.single_eq_of_ne (Ne.symm h), map_zero]
+    · rw [ite_eq_right h, Pi.single_eq_of_ne (Ne.symm h), map_zero]
 
 theorem aeval_monomial_eq_smul (m : Fin n →₀ ℕ) (c : K) :
     aeval y (monomial m c) = c • aeval y (monomial m (1 : K)) := by
@@ -176,8 +137,8 @@ theorem ind_claim (hy : ∀ l l', Δ l (y l') = if l = l' then 1 else 0) (hθ : 
         · intro i m hm
           rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_sub, coeff_homogeneousComponent] at hm
           by_cases hd : m.degree = a
-          · rw [if_pos hd, sub_self] at hm; exact absurd rfl hm
-          · rw [if_neg hd, sub_zero] at hm
+          · rw [ite_eq_left hd, sub_self] at hm; exact absurd rfl hm
+          · rw [ite_eq_right hd, sub_zero] at hm
             have := hc i m (MvPolynomial.mem_support_iff.mpr hm)
             omega
         · have e : ∑ i, aeval y (c i - homogeneousComponent a (c i)) * θ i =
@@ -255,7 +216,7 @@ theorem pdLw_mem (p : Idx D j N) (u : WeightFamilies.Wt D j) (a : ℕ) {x : Lw X
 
 theorem pdLw_w0inv (p : Idx D j N) (hp : p.1 ≠ 0) : pdLw X la w p (w0inv X la w) = 0 := by
   have h := congrArg (pdLw X la w p) (section_mul_inverse_eq_one X la w)
-  rw [Derivation.leibniz, Derivation.map_one_eq_zero, pdLw_algebraMap, pdRp_sec, if_neg hp, map_zero, smul_zero,
+  rw [Derivation.leibniz, Derivation.map_one_eq_zero, pdLw_algebraMap, pdRp_sec, ite_eq_right hp, map_zero, smul_zero,
     add_zero, smul_eq_mul] at h
   calc pdLw X la w p (w0inv X la w)
       = (algebraMap (Rp X la N) (Lw X la w) (sec X la w 0) * w0inv X la w) * pdLw X la w p (w0inv X la w) := by
@@ -285,12 +246,12 @@ theorem dSec_ySec (l l' : Fin (WeightFamilies.dimY D j)) : dSec X la w l (ySec X
     rw [coe_sfr, frac_apply, pow_one, Derivation.leibniz, pdLw_w0inv X la w _ (Fin.succ_ne_zero l), smul_zero, zero_add,
       pdLw_algebraMap, pdRp_sec, smul_eq_mul]
     by_cases h : l = l'
-    · rw [if_pos h, if_pos (by rw [h]), mul_comm]
-    · rw [if_neg h, if_neg (fun e => h (Fin.succ_injective _ e)), map_zero, mul_zero]
+    · rw [ite_eq_left h, ite_eq_left (by rw [h]), mul_comm]
+    · rw [ite_eq_right h, ite_eq_right (fun e => h (Fin.succ_injective _ e)), map_zero, mul_zero]
   rw [dSec_apply]
   simp only [h1]
   by_cases h : l = l'
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     rw [← section_mul_inverse_eq_one X la w]
     unfold sec
 
@@ -300,7 +261,7 @@ theorem dSec_ySec (l l' : Fin (WeightFamilies.dimY D j)) : dSec X la w l (ySec X
     congr 1
     rw [Algebra.smul_def, Algebra.smul_def, map_mul, ← IsScalarTower.algebraMap_apply (Kp X la N) (Rp X la N) (Lw X la w)]
     rfl
-  · simp only [if_neg h, smul_zero, Finset.sum_const_zero]
+  · simp only [ite_eq_right h, smul_zero, Finset.sum_const_zero]
 
 theorem dSec_emb (l : Fin (WeightFamilies.dimY D j)) (F : X.Forms) :
     dSec X la w l (algebraMap (Rp X la N) (Lw X la w) (emb X la N F)) = 0 := by
@@ -357,10 +318,6 @@ open MvPolynomial
 
 variable (X : PJ D B P j) (la : HeightOneSpectrum (𝓞 B.KO)) {N : ℕ} {wL : WeightFamilies.Wt D j} (w : Fin N → B.Cusp j wL)
   (wF : WeightFamilies.Wt D j) (T : ℕ)
-
-theorem Kp_charZero' : CharZero (Kp X la N) :=
-  have := Kl_charZero X la
-  charZero_of_injective_algebraMap (algebraMap (X.Kl la) (Kp X la N)).injective
 
 def gN (θ : B.Cusp j wF) (m : Fin (WeightFamilies.dimY D j) →₀ ℕ) : Rp X la N :=
   secPow X la w m * sec X la w 0 ^ (T - m.degree) * emb X la N (X.inc wF θ)
@@ -423,21 +380,21 @@ theorem exists_coeff_of_mem_span {x : ↥(Vw X la G.N (addL wF wL T))}
     · intro i' m hm
       dsimp only at hm
       by_cases h : i' = i
-      · rw [if_pos h] at hm
+      · rw [ite_eq_left h] at hm
         have := Finset.mem_singleton.mp (support_monomial_subset hm)
         rw [this, Finsupp.degree_eq_sum]
         exact hal
-      · rw [if_neg h, support_zero] at hm
+      · rw [ite_eq_right h, support_zero] at hm
         exact absurd hm (Finset.notMem_empty _)
     · rw [Finset.sum_eq_single i]
       · dsimp only
-        rw [if_pos rfl, phiN_monomial, one_smul, hx]
+        rw [ite_eq_left rfl, phiN_monomial, one_smul, hx]
         unfold gN
         rw [Finsupp.degree_eq_sum]
         rfl
       · intro i' _ h
         dsimp only
-        rw [if_neg h, map_zero]
+        rw [ite_eq_right h, map_zero]
       · intro h; exact absurd (Finset.mem_univ _) h
   | zero => exact ⟨0, fun i m hm => by simp at hm, by simp⟩
   | add x y _ _ hx hy =>
@@ -460,7 +417,7 @@ attribute [local instance] LwAlgKl
 theorem in64 (hB : InBasis G la) : ∀ x ∈ Submodule.span (Kp X la G.N) (sectionMonomialGenerators G la),
     rhoK X la G.w wF (a0 D j T) T x = 0 → x = 0 := by
   intro x hx h0
-  have := Kp_charZero' X la (N := G.N)
+  have := Formalism.MainNotions.Gaps.EtaleWeightGaps.Kp_charZero X la (N := G.N)
   obtain ⟨c, hc, hxc⟩ := exists_coeff_of_mem_span G la hx
 
   have hbase : ∀ b : Fin G.del → Kp X la G.N,
@@ -560,11 +517,6 @@ theorem locToCompl_algebraMap (a : R) :
     locToCompl K v (algebraMap R (Localization.AtPrime v.asIdeal) a) = algebraMap R (v.adicCompletionIntegers K) a := by
   exact IsLocalization.lift_eq (M := v.asIdeal.primeCompl) _ a
 
-private lemma irreducible_algebraMap_int_lemma (x : v.adicCompletionIntegers K) :
-    IsUnit x ↔ Valued.v (x : v.adicCompletion K) = 1 := by
-  rw [ValuationSubring.valuation_eq_one_iff]
-  exact (Valuation.isEquiv_valuation_valuationSubring Valued.v).symm.eq_one_iff_eq_one
-
 theorem irreducible_algebraMap_int {π : R} (h : v.intValuation π = WithZero.exp (-1)) :
     Irreducible (algebraMap R (v.adicCompletionIntegers K) π) := by
   have hv : Valued.v ((algebraMap R (v.adicCompletionIntegers K) π : v.adicCompletionIntegers K) :
@@ -572,7 +524,7 @@ theorem irreducible_algebraMap_int {π : R} (h : v.intValuation π = WithZero.ex
     rw [valued_algebraMap_int]
     exact h
   refine ⟨fun hu => ?_, ?_⟩
-  · rw [irreducible_algebraMap_int_lemma, hv] at hu
+  · rw [IsDedekindDomain.HeightOneSpectrum.adicCompletionIntegers.isUnit_iff_valued_eq_one, hv] at hu
     have h1 : (-1 : ℤ) = 0 := WithZero.exp_inj.mp (hu.trans WithZero.exp_zero.symm)
     omega
   · intro y z hyz
@@ -601,10 +553,10 @@ theorem irreducible_algebraMap_int {π : R} (h : v.intValuation π = WithZero.ex
     rw [← WithZero.exp_log hy0, ← WithZero.exp_log hz0, ← WithZero.exp_add, WithZero.exp_inj] at hyz'
     by_cases hm0 : (Valued.v (y : v.adicCompletion K)).log = 0
     · left
-      rw [irreducible_algebraMap_int_lemma, ← WithZero.exp_log hy0, hm0, WithZero.exp_zero]
+      rw [IsDedekindDomain.HeightOneSpectrum.adicCompletionIntegers.isUnit_iff_valued_eq_one, ← WithZero.exp_log hy0, hm0, WithZero.exp_zero]
     · right
       have hn0 : (Valued.v (z : v.adicCompletion K)).log = 0 := by omega
-      rw [irreducible_algebraMap_int_lemma, ← WithZero.exp_log hz0, hn0, WithZero.exp_zero]
+      rw [IsDedekindDomain.HeightOneSpectrum.adicCompletionIntegers.isUnit_iff_valued_eq_one, ← WithZero.exp_log hz0, hn0, WithZero.exp_zero]
 
 theorem exists_irreducible_locToCompl :
     ∃ ϖ : Localization.AtPrime v.asIdeal, Irreducible ϖ ∧ Irreducible (locToCompl K v ϖ) := by

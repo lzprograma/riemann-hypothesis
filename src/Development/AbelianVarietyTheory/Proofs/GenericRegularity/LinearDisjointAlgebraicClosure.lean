@@ -187,7 +187,7 @@ theorem ReadOn.eventually {U : Formalism.L2.PjFree.Unf Xo c σ r} (hσ : Formali
     else ψ₀
   have hψ' : ∀ b ∈ B, ∀ a, Formalism.L2.PjFree.toC (ψ' b a) = ψ b a := by
     intro b hb a
-    simp only [ψ', dif_pos hb]
+    simp only [ψ', dite_eq_left hb]
     rfl
   choose z hz using fun b => hL.bc _ _ (ψ' b) yA
   obtain ⟨h1, h2⟩ := hnear φ₀ hφ₀ (fun a _ => by simpa using hε)

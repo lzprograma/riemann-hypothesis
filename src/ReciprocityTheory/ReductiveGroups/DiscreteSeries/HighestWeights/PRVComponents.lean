@@ -69,7 +69,7 @@ theorem kIrrHW_int' (ε : Fin n → Bool) {M : Type*} [AddCommGroup M] [Module �
     | zero => rw [hv0, hwt a]; simp
     | succ k ih =>
       have c := compactRelations_apply_comm hF (a := a) (b := a) (c := b) (d := a) rfl hε.symm (v k)
-      simp only [hne, if_false, if_true, add_zero] at c
+      simp only [hne, ite_false, ite_true, add_zero] at c
       rw [hvs, c, ih, map_smul]
       push_cast
       module
@@ -80,7 +80,7 @@ theorem kIrrHW_int' (ε : Fin n → Bool) {M : Type*} [AddCommGroup M] [Module �
     | zero => rw [hv0, hwt b]; simp
     | succ k ih =>
       have c := compactRelations_apply_comm hF (a := b) (b := b) (c := b) (d := a) rfl hε.symm (v k)
-      simp only [hne, if_false, if_true, sub_zero] at c
+      simp only [hne, ite_false, ite_true, sub_zero] at c
       rw [hvs, c, ih, map_smul]
       push_cast
       module
@@ -90,13 +90,13 @@ theorem kIrrHW_int' (ε : Fin n → Bool) {M : Type*} [AddCommGroup M] [Module �
     induction k with
     | zero =>
       have c := compactRelations_apply_comm hF (a := a) (b := b) (c := b) (d := a) hε hε.symm w
-      simp only [if_true] at c
+      simp only [ite_true] at c
       rw [hvs 0, hv0, c, hwh a b hab hε, map_zero, hwt a, hwt b]
       push_cast
       module
     | succ k ih =>
       have c := compactRelations_apply_comm hF (a := a) (b := b) (c := b) (d := a) hε hε.symm (v (k + 1))
-      simp only [if_true] at c
+      simp only [ite_true] at c
       rw [hvs (k + 1), c, ih, map_smul, ← hvs k, hA (k + 1), hB (k + 1)]
       push_cast
       module

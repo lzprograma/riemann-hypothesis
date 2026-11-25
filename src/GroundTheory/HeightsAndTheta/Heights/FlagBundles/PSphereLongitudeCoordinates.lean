@@ -160,11 +160,11 @@ lemma SphereLongitudeCoordinates.radial (g : ℝ → ℝ≥0∞) (hg : Measurabl
               have e : ρ ^ 2 < 1 - c ^ 2 ↔ ρ ∈ Iio w := by
                 rw [mem_Iio, hwdef, Real.lt_sqrt (le_of_lt hρ)]
               by_cases h : ρ ^ 2 < 1 - c ^ 2
-              · rw [if_pos h, indicator_of_mem (e.1 h), ← mul_assoc,
+              · rw [ite_eq_left h, indicator_of_mem (e.1 h), ← mul_assoc,
                   ← ENNReal.ofReal_mul (le_of_lt hρ)]
                 congr 2
                 ring
-              · rw [if_neg h, indicator_of_notMem (fun h' => h (e.2 h'))]
+              · rw [ite_eq_right h, indicator_of_notMem (fun h' => h (e.2 h'))]
                 simp
           _ = (∫⁻ ρ in Ioi (0 : ℝ),
               (Iio w).indicator (fun ρ => ENNReal.ofReal (ρ ^ 2 / w ^ 3)) ρ) * g c :=
@@ -224,11 +224,11 @@ lemma SphereLongitudeCoordinates.cone_volume {s : Set E3} (hs : MeasurableSet s)
       s.indicator 1 (spherePoint (z / Real.sqrt (p.1 ^ 2 + z ^ 2)) p.2) else 0
     by_cases h1 : p.1 ^ 2 + z ^ 2 < 1 <;>
       by_cases h2 : spherePoint (z / Real.sqrt (p.1 ^ 2 + z ^ 2)) p.2 ∈ s
-    · rw [if_pos h1, indicator_of_mem (hmem.2 ⟨h1, h2⟩), indicator_of_mem h2]
+    · rw [ite_eq_left h1, indicator_of_mem (hmem.2 ⟨h1, h2⟩), indicator_of_mem h2]
       rfl
-    · rw [if_pos h1, indicator_of_notMem (fun h => h2 (hmem.1 h).2), indicator_of_notMem h2]
-    · rw [if_neg h1, indicator_of_notMem (fun h => h1 (hmem.1 h).1)]
-    · rw [if_neg h1, indicator_of_notMem (fun h => h1 (hmem.1 h).1)]
+    · rw [ite_eq_left h1, indicator_of_notMem (fun h => h2 (hmem.1 h).2), indicator_of_notMem h2]
+    · rw [ite_eq_right h1, indicator_of_notMem (fun h => h1 (hmem.1 h).1)]
+    · rw [ite_eq_right h1, indicator_of_notMem (fun h => h1 (hmem.1 h).1)]
   have hK : Measurable fun p : ℝ × ℝ => ENNReal.ofReal p.1 * ∫⁻ z, H (p, z) :=
     (by fun_prop : Measurable fun p : ℝ × ℝ => ENNReal.ofReal p.1).mul hH.lintegral_prod_right'
   have step : volume C =

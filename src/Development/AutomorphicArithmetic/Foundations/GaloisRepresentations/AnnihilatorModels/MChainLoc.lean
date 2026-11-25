@@ -1,45 +1,6 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.OrdReadOf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -47,7 +8,6 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.ES
 open GlobalTheory.IwLevel (InSub IsIsogDeg)
 open GlobalTheory.AbDual (evc IsAdditive swap)
-attribute [local instance] Ideal.Quotient.field
 open UpperTheory.Gal.crystallineComparison UpperTheory.Gal.crystallineComparison.Mod
 
 private theorem finrank_quotient_eq_add_finrank_ker_factor (κ Λ : Type) [Field κ] [CommRing Λ] [Algebra κ Λ]
@@ -78,9 +38,6 @@ private theorem ideal_eq_span_pow_of_finrank (κ Λ : Type) [Field κ] [CommRing
     rw [ht, Ideal.mem_span_singleton']
   have mem_pow : ∀ k x, x ∈ Ideal.span {t ^ k} ↔ ∃ a, a * t ^ k = x := fun k x ↦
     Ideal.mem_span_singleton'
-  have unit_of : ∀ a : Λ, a ∉ IsLocalRing.maximalIdeal Λ → IsUnit a := fun a ha ↦ by
-    by_contra hu
-    exact ha ((IsLocalRing.mem_maximalIdeal a).2 hu)
   have hker : ∀ a : Λ, a - algebraMap κ Λ (ε a) ∈ IsLocalRing.maximalIdeal Λ := by
     intro a
     rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
@@ -94,12 +51,8 @@ private theorem ideal_eq_span_pow_of_finrank (κ Λ : Type) [Field κ] [CommRing
   have drop : ∀ k, t ^ k ∈ Ideal.span {t ^ (k + 1)} → t ^ k = 0 := by
     intro k hk
     obtain ⟨a, ha⟩ := (mem_pow _ _).1 hk
-    have hu : IsUnit (1 - a * t) := unit_of _ (fun h ↦ by
-      have h1 : (1 : Λ) ∈ IsLocalRing.maximalIdeal Λ := by
-        have := (IsLocalRing.maximalIdeal Λ).add_mem h
-          ((IsLocalRing.maximalIdeal Λ).mul_mem_left a tm)
-        simpa using this
-      exact (IsLocalRing.mem_maximalIdeal _).1 h1 isUnit_one)
+    have hu : IsUnit (1 - a * t) := IsLocalRing.isUnit_one_sub_self_of_mem_nonunits _
+      ((IsLocalRing.mem_maximalIdeal _).1 ((IsLocalRing.maximalIdeal Λ).mul_mem_left a tm))
     have e : t ^ k * (1 - a * t) = 0 := by
       calc t ^ k * (1 - a * t) = t ^ k - a * t ^ (k + 1) := by ring
         _ = 0 := by rw [ha, sub_self]
@@ -182,7 +135,7 @@ private theorem ideal_eq_span_pow_of_finrank (κ Λ : Type) [Field κ] [CommRing
         apply hx
         rw [mem_pow]
         exact ⟨b, by ring⟩
-      obtain ⟨u, hu⟩ := unit_of a ha
+      obtain ⟨u, hu⟩ := IsLocalRing.notMem_maximalIdeal.1 ha
       refine ⟨k, by omega, le_antisymm hJk ?_⟩
       rw [Ideal.span_le, Set.singleton_subset_iff]
       have e : t ^ k = ↑u⁻¹ * (a * t ^ k) := by

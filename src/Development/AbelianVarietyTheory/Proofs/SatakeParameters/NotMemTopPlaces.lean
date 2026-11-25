@@ -2,43 +2,7 @@ module
 
 public import Formalism.SharpRestriction.ParConsts
 public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -60,7 +24,7 @@ theorem not_mem_topPlaces (D : D7) (z : Bool × HH D) (h : ¬ IsTopPl D z) :
     simp [plGG, Formalism.HC.Frame.tau1, Formalism.HC.Frame.tau2] at h1
   | false =>
     have h1 := congrArg (fun g : D.R.GG => g.2) hte
-    simp only [plGG, Formalism.HC.Frame.tau1, Bool.false_eq_true, if_false] at h1
+    simp only [plGG, Formalism.HC.Frame.tau1, Bool.false_eq_true, ite_false] at h1
     have := D.R.toFrame.iota_bijective.1 h1
     subst this
     exact h ⟨rfl, ht⟩
@@ -93,14 +57,14 @@ theorem u_bounds_off {D : D7} {L : SizeData₂ D} (P : ParameterChoice' D L) (u 
   have hk : 5 ≤ D.R.k := by have := D.R.m_add_three_le_k; have := D.R.two_le_m; omega
   by_cases h0 : r = 0
   · subst h0
-    rw [if_pos rfl, D.hcW_first u τ hr]
+    rw [ite_eq_left rfl, D.hcW_first u τ hr]
     have h1 := P.cloud_place_bound τ (by omega) hτ
     have h2 := L.cloud_v τ ⟨0, by omega⟩
     have h3 : (((D.hc τ).v ⟨0, by omega⟩ : ℚ) : ℝ) < (((D.hc τ).u ⟨0, hr⟩ : ℚ) : ℝ) := by
       exact_mod_cast (D.hc τ).u_gt_v ⟨0, by omega⟩
     push_cast at h1
     constructor <;> linarith [h2.1, h2.2]
-  · rw [if_neg h0]
+  · rw [ite_eq_right h0]
     by_cases hl : r + 1 < D.R.k
     · have := L.cloud_u u τ ⟨r, hr⟩ (by show 1 ≤ r; omega) hl
       constructor <;> linarith [this.1, this.2]

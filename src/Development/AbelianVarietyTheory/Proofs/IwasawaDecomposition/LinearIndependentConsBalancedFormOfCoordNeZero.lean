@@ -92,7 +92,7 @@ theorem linearIndependent_cons_of_coord_ne_zero :
     simp
   have hr : r = 0 := eq_zero_of_toReal_rel hind hrel
   have hsj : s j = 0 := Finset.sum_eq_zero fun k _ => by
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hj ⟨k, h⟩
   have hg0 : g 0 = 0 := by
@@ -107,7 +107,7 @@ theorem linearIndependent_cons_of_coord_ne_zero :
     rw [Finset.sum_eq_single k]
     · simp
     · intro k' _ hk'
-      rw [if_neg]
+      rw [ite_eq_right]
       exact fun h => hk' (e.injective h)
     · simp
   simp only [r, hs, hg0, Int.cast_zero, zero_mul, zero_add, Pi.zero_apply] at this

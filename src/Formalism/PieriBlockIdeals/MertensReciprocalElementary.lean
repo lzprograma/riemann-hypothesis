@@ -1,45 +1,6 @@
 module
 
 public import Formalism.PieriBlockIdeals.Statement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -53,20 +14,7 @@ open Classical
 
 def pr (y : ℝ) : Finset ℕ := (Finset.range (⌊y⌋₊ + 1)).filter Nat.Prime
 
-def ChebyshevThetaUpperBound : Prop := ∀ y : ℝ, 0 < y → ∑ p ∈ pr y, Real.log (p : ℝ) < 1.02 * y
-
-def MertensLogBound : Prop := ∀ y : ℝ, 1 < y → ∑ p ∈ pr y, Real.log (p : ℝ) / (p : ℝ) < Real.log y
-
-def MertensLogLowerBound : Prop := ∀ y : ℝ, 1 < y →
-  Real.log y - 1.34 - 1 / (2 * Real.log y) < ∑ p ∈ pr y, Real.log (p : ℝ) / (p : ℝ)
-
 def PrimeCountingBound : Prop := ∀ y : ℝ, 1 < y → ((pr y).card : ℝ) < 1.26 * y / Real.log y
-
-def MertensReciprocalBound : Prop := ∀ y : ℝ, 1 < y →
-  ∑ p ∈ pr y, 1 / (p : ℝ) < Real.log (Real.log y) + 0.27 + 1 / (Real.log y) ^ 2
-
-def RS2' : Prop := ∀ y : ℝ, 1 < y →
-  ∑ p ∈ pr y, Real.log (p : ℝ) / ((p : ℝ) - 1) < Real.log y + 0.76
 
 structure Par where
   k : ℕ
@@ -315,18 +263,6 @@ def totalBound (P : Par) (T : ℕ) (X : ℝ) : ℝ :=
   (T : ℝ) * (X + 2 * (P.k : ℝ) * (P.S + 1) * (P.L + 2))
     + 1.3 * (P.f : ℝ) * (P.Nr : ℝ) ^ 2 * P.b'
     + (P.S + P.η + (P.t : ℝ) + 2 * (P.kmax : ℝ) + 6) * (P.f : ℝ) * (P.Nr : ℝ) ^ 2 * P.L
-
-def TotalWeightBound : Prop :=
-  ChebyshevThetaUpperBound → MertensLogBound → RS2' → PrimeCountingBound → MertensReciprocalBound → ∀ P : Par, P.Hyp → P.Large →
-    ∀ (ι : Type) [Fintype ι] (D : SizeData₂ ι), D.Inputs P → D.NoWindow P →
-    ∀ Q : Finset ℕ, (∀ l ∈ Q, l.Prime) →
-      ∑ l ∈ Q, (D.J l : ℝ) * Real.log (l : ℝ) ≤ totalBound P D.T2.card (30 * (P.m : ℝ) * P.b * P.L ^ 2)
-
-def ShortPrimeSum : Prop :=
-  MertensLogBound → MertensLogLowerBound → ∀ P : Par, P.Hyp → P.Large → ∀ Q : Finset ℕ,
-    (∀ l ∈ Q, l.Prime ∧ P.lJ < (l : ℝ) ∧ (l : ℝ) ≤ P.h + (P.Nr : ℝ)) →
-    ∑ l ∈ Q, Real.log (l : ℝ) / (l : ℝ) ≤ Real.log ((P.h + (P.Nr : ℝ)) / P.lJ) + 2 ∧
-      Real.log ((P.h + (P.Nr : ℝ)) / P.lJ) ≤ Real.log (12 * (P.k : ℝ) * (P.t : ℝ))
 
 def ConvolutionKernelIntegrable : Prop := ∀ y : ℝ, 0 ≤ y → ∑ p ∈ pr y, Real.log (p : ℝ) ≤ Real.log 4 * y
 

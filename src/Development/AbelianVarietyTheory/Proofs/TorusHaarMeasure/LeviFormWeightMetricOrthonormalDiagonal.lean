@@ -75,10 +75,6 @@ def dDir (ξ : Fin n → ℂ) (f : V n → ℂ) (x : V n) : ℂ := ∑ j, wd n j
 
 def dbDir (ξ : Fin n → ℂ) (f : V n → ℂ) (x : V n) : ℂ := ∑ k, wdb n k f x * conj (ξ k)
 
-theorem wd_congr' {j : Fin n} {f g : V n → ℂ} {x : V n} (h : f =ᶠ[𝓝 x] g) :
-    wd n j f x = wd n j g x := by
-  simp only [wd, h.fderiv_eq]
-
 theorem leviV_add' {f g : V n → ℂ} {x : V n} (hf : ContDiffAt ℝ 2 f x) (hg : ContDiffAt ℝ 2 g x)
     (ξ : Fin n → ℂ) : leviV n (fun y => f y + g y) x ξ = leviV n f x ξ + leviV n g x ξ := by
   have hev : ∀ k : Fin n, wdb n k (fun y => f y + g y) =ᶠ[𝓝 x]
@@ -87,7 +83,7 @@ theorem leviV_add' {f g : V n → ℂ} {x : V n} (hf : ContDiffAt ℝ 2 f x) (hg
     filter_upwards [eventually_differentiableAt_of_contDiffAt hf,
       eventually_differentiableAt_of_contDiffAt hg] with y h1 h2
     exact wdb_add h1 h2
-  simp only [leviV, wd_congr' (hev _), wd_add (differentiableAt_wdb hf) (differentiableAt_wdb hg),
+  simp only [leviV, ReciprocityTheory.L2DbarEstimates.wd_congr (hev _), wd_add (differentiableAt_wdb hf) (differentiableAt_wdb hg),
     ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun k _ => ?_
   ring
@@ -108,7 +104,7 @@ theorem leviV_mul' {f g : V n → ℂ} {x : V n} (hf : ContDiffAt ℝ 2 f x) (hg
       wd n j (wdb n k f) x * g x + wdb n k f x * wd n j g x +
         (wd n j f x * wdb n k g x + f x * wd n j (wdb n k g) x) := by
     intro j k
-    rw [wd_congr' (hev k), wd_add (f := fun y => wdb n k f y * g y) (g := fun y => f y * wdb n k g y)
+    rw [ReciprocityTheory.L2DbarEstimates.wd_congr (hev k), wd_add (f := fun y => wdb n k f y * g y) (g := fun y => f y * wdb n k g y)
       ((differentiableAt_wdb hf).mul hg1) (hf1.mul (differentiableAt_wdb hg)),
       wd_mul (differentiableAt_wdb hf) hg1, wd_mul hf1 (differentiableAt_wdb hg)]
   rw [mul_comm (dbDir ξ f x)]
@@ -356,9 +352,9 @@ theorem jet_nM (ξ : Fin (nd X) → ℂ) (τ : X.Ψ) (a b : Fin r) :
     HasJet ξ 0 (fun z => ExF.nM X z τ a b) ((if a = b then 1 else 0) + sJ * cH (zMat X ξ τ a b)) := by
   simp only [ExF.nM, mat, nmat, zMat, Matrix.of_apply]
   by_cases h : b < a
-  · simp only [dif_pos h, if_neg h.ne', zero_add]
+  · simp only [dite_eq_left h, ite_eq_right h.ne', zero_add]
     exact HasJet.coord _
-  · simp only [dif_neg h, map_zero, mul_zero, add_zero]
+  · simp only [dite_eq_right h, map_zero, mul_zero, add_zero]
     have := HasJet.const (ξ := ξ) (x := 0) (if a = b then 1 else 0)
     rw [cJ_eq] at this
     split_ifs at this ⊢ <;> simpa using this
@@ -368,9 +364,9 @@ theorem jet_conj_nM (ξ : Fin (nd X) → ℂ) (τ : X.Ψ) (a b : Fin r) :
       ((if a = b then 1 else 0) + tJ * cH (conj (zMat X ξ τ a b))) := by
   simp only [ExF.nM, mat, nmat, zMat, Matrix.of_apply]
   by_cases h : b < a
-  · simp only [dif_pos h, if_neg h.ne', zero_add]
+  · simp only [dite_eq_left h, ite_eq_right h.ne', zero_add]
     exact HasJet.conj_coord _
-  · simp only [dif_neg h, map_zero, mul_zero, add_zero]
+  · simp only [dite_eq_right h, map_zero, mul_zero, add_zero]
     have := HasJet.const (ξ := ξ) (x := 0) (if a = b then 1 else 0)
     rw [cJ_eq] at this
     split_ifs at this ⊢ <;> simpa using this
@@ -438,14 +434,14 @@ theorem leviV_Lm {x0 : Frame X.Ψ r} (ho : IsOrth X x0) (ξ : Fin (nd X) → ℂ
     simp only [Matrix.of_apply, Matrix.add_apply, Matrix.smul_apply, Matrix.mul_diagonal,
       Matrix.diagonal_mul, Matrix.transpose_apply, Matrix.diagonal_apply, smul_eq_mul,
       add_mul, mul_add, Finset.sum_add_distrib, ite_mul, mul_ite, one_mul, zero_mul, mul_one,
-      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true, Finset.mul_sum, hκi]
+      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Finset.mul_sum, hκi]
     have e1 : ∑ a, sJ * cH (Z a (κ b)) * cH (ε a) * (tJ * cH (conj (Z a (κ c)))) =
         ∑ a, sJ * tJ * (cH (Z a (κ b)) * cH (ε a) * cH (conj (Z a (κ c)))) :=
       Finset.sum_congr rfl fun a _ => by ring
     rw [e1]
     by_cases hbc : b = c
-    · subst hbc; simp only [if_true]; ring
-    · simp only [if_neg hbc, if_neg (Ne.symm hbc)]; ring
+    · subst hbc; simp only [ite_true]; ring
+    · simp only [ite_eq_right hbc, ite_eq_right (Ne.symm hbc)]; ring
   rw [hmat, hdet] at hjet
 
   simp only [Matrix.of_apply, ← map_mul, ← map_sum, ← map_sub, ← map_prod] at hjet
@@ -460,11 +456,11 @@ theorem leviV_Lm {x0 : Frame X.Ψ r} (ho : IsOrth X x0) (ξ : Fin (nd X) → ℂ
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [sum_castLE hi (fun a => Z a b * ε a * conj (Z a b))]
   by_cases hb : (b : ℕ) < i
-  · rw [if_pos hb, ← Finset.sum_sub_distrib, Finset.mul_sum]
+  · rw [ite_eq_left hb, ← Finset.sum_sub_distrib, Finset.mul_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     by_cases ha : (a : ℕ) < i
     · simp [ha, not_le.2 ha]
-    · simp only [if_neg ha, hb, not_lt.1 ha, and_self, if_true, hε]
+    · simp only [ite_eq_right ha, hb, not_lt.1 ha, and_self, ite_true, hε]
       push_cast
       rw [← Complex.mul_conj']
       ring
@@ -501,7 +497,7 @@ theorem levi_phla_zero (r : ℕ) (X : Data E r) (la : Wt X.Ψ r) (x : Frame X.Ψ
       if b < a then ((la τ b : ℝ) - (la τ a : ℝ)) * w a b else 0), ← Finset.sum_filter,
       Finset.sum_subtype (p := fun p : Fin r × Fin r => p.2 < p.1) _ (by simp)]
     refine Finset.sum_congr rfl fun y _ => ?_
-    simp only [hw, zMat, dif_pos y.2]
+    simp only [hw, zMat, dite_eq_left y.2]
     ring
   rw [hR]
   simp only [Finset.mul_sum, ← Finset.sum_add_distrib]
@@ -520,8 +516,8 @@ theorem levi_phla_zero (r : ℕ) (X : Data E r) (la : Wt X.Ψ r) (x : Frame X.Ψ
       simp only [Fin.val_succ, Fin.val_castSucc, Fin.ext_iff]
       split_ifs <;> first | omega | ring
     simp only [hw] at hi
-    rw [Finset.sum_congr rfl fun i _ => hi i, Finset.sum_sub_distrib, if_pos hba]
-    simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true, ← sub_mul, hw]
+    rw [Finset.sum_congr rfl fun i _ => hi i, Finset.sum_sub_distrib, ite_eq_left hba]
+    simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true, ← sub_mul, hw]
     norm_cast
   · simp [hba, zMat]
 

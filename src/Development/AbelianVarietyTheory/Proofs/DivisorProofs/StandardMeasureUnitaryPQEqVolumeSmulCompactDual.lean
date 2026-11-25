@@ -54,7 +54,6 @@ import Formalism.LocalToGlobal.ProjectiveLattices.ErealAddIInf
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Formalism.L2.Pj Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues GlobalTheory.AdelicScalar GlobalTheory.LiftRows GlobalTheory.LowRow
 
 noncomputable section
@@ -63,10 +62,7 @@ namespace GlobalTheory.LowRow.CompactDualScale
 
 theorem omegaDensity_smul {P Q : ℕ} {μ : Measure (UpqT P Q)} {c : ENNReal} (a : ENNReal) (ha : a ≠ ⊤)
     (h : OmegaDensity μ c) : OmegaDensity (a • μ) (a * c) := by
-  obtain ⟨lam, hlam, hl⟩ := h
-  refine ⟨lam, hlam, ?_⟩
-  refine (ENNReal.Tendsto.const_mul hl (Or.inr ha)).congr fun r => ?_
-  rw [Measure.smul_apply, smul_eq_mul, mul_div_assoc]
+  apply Formalism.BasicNotions.Examples₂.CD.omegaDensity_smul <;> assumption
 
 theorem omegaDensity_unique {P Q : ℕ} {μ : Measure (UpqT P Q)} {c c' : ENNReal}
     (h : OmegaDensity μ c) (h' : OmegaDensity μ c') : c = c' := by

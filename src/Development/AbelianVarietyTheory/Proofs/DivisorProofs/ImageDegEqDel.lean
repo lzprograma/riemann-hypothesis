@@ -53,8 +53,6 @@ open GlobalTheory.HSCore GlobalTheory.QCoh
 open GlobalTheory
 open Formalism.L2.Pj Formalism.NormVectorIdentities.Items
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.HSCore.ImageDegree

@@ -82,7 +82,7 @@ theorem ie_taylor_lin {m : ℕ} (c : Fin m → ℂ) (G : Fin m → VC D N N' →
 
 variable {p : ℕ} [Fact p.Prime]
 
-theorem ie_lamC_of_mem (lam : Qbar →+* ℂ_[p]) {x : ℂ} (h : x ∈ Qbar) : lamC lam x = lam ⟨x, h⟩ := dif_pos h
+theorem ie_lamC_of_mem (lam : Qbar →+* ℂ_[p]) {x : ℂ} (h : x ∈ Qbar) : lamC lam x = lam ⟨x, h⟩ := dite_eq_left h
 
 theorem ie_lamC_mul (lam : Qbar →+* ℂ_[p]) {x y : ℂ} (hx : x ∈ Qbar) (hy : y ∈ Qbar) :
     lamC lam (x * y) = lamC lam x * lamC lam y := by

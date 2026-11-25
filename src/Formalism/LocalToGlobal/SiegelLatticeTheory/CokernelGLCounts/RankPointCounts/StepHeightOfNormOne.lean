@@ -14,8 +14,6 @@ set_option linter.dupNamespace false
 
 namespace Formalism.L2.SG.NGCut
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def Ctx (Cg cb Cw cT CT C0 C' Cl : ℝ) (D : D7) (large₂ : SizeData₂ D) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word) :
     Prop :=
   Formalism.MainNotions.S.Cnt.Hyp0 D large₂ C' Cl Cg cb Cw cT CT C0 ∧ Formalism.MainNotions.S.Cnt.Stand D u u' ∧ ConcTie X Y
@@ -67,22 +65,6 @@ def StepHeight : Prop :=
       Ctx Cg cb Cw cT CT C0 C' Cl D large₂ X Y u u' →
       ∀ (νL νB : X.B.I.Ginf → Measure X.B.I.Ginf) (ng : PN.Pts D.host.E D.R.rS → ℝ),
         PN.HeightInput (Y.tO u u') (NOf2 Y u u' νL νB ng) ((X.B.g : ℝ) ^ D.R.f)
-
-def StepAnalytic : Prop :=
-  ∀ Cg cb Cw cT CT C0 : ℝ, ∃ C1 C0n : ℕ, ∀ A : ℕ, ∃ CB CSt : ℝ, 0 ≤ CB ∧ 0 ≤ CSt ∧
-    ∃ C'₀ Cl₀ : ℝ, ∀ C' Cl : ℝ, C'₀ ≤ C' → Cl₀ ≤ Cl →
-    ∀ (D : D7) (large₂ : SizeData₂ D) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word),
-      Ctx Cg cb Cw cT CT C0 C' Cl D large₂ X Y u u' →
-      ∀ (P : Type) [Fintype P] (B : S3.MassData P) (Irat Ire : ℝ), MassDataAdmissible X Y u u' B Irat Ire →
-      ∃ (νL νB : X.B.I.Ginf → Measure X.B.I.Ginf) (ng : PN.Pts D.host.E D.R.rS → ℝ) (cSt e1 : ℝ),
-        Formalism.L2.SG.RealObj.NuQOK X u u' νL ∧ Formalism.L2.SG.RealObj.NuQOK X u u' νB ∧
-        0 ≤ cSt ∧ cSt ≤ large₂.sc.b ^ (CSt * ((2 * D.R.rS + 2 : ℕ) : ℝ) ^ 3 * D.R.f) ∧ 0 ≤ e1 ∧ e1 ≤ 2 ∧
-        AmpVanish Y u u' νL ∧
-        PN.LocalInput (Y.tO u u') (NOf2 Y u u' νL νB ng) C1 C0n D.R.k ∧
-        PN.GenMassInput (Y.tO u u') (NOf2 Y u u' νL νB ng) (PN.abelian₂ (2 * D.host.v) D.R.rS D.R.k D.R.f * B.AA) e1 ∧
-        PN.MeasureInput (Y.tO u u') (NOf2 Y u u' νL νB ng) cSt ∧
-        PN.PointSumInput (Y.tO u u') (NOf2 Y u u' νL νB ng) (A * (D.R.rS + 1) ^ 2)
-          (Real.exp (CB * ((2 * D.R.rS + 2 : ℕ) : ℝ) ^ 5 * D.R.f * Real.log large₂.sc.b) * Ire)
 
 theorem sizes_of_hypotheses : StepSizes := by
   intro Cg cb Cw cT CT C0

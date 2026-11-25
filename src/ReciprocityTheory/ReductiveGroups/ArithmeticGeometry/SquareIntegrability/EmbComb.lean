@@ -38,10 +38,10 @@ lemma emb_comb [IsCMField E] (σ : E →+* ℂ) (c : ℂ) :
   have hy : y.2 ⟨mk τ, hcx τ⟩ = if mk τ = mk σ then c' else 0 := by
     simp only [y]
     by_cases h : mk τ = mk σ
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       have : (⟨mk τ, hcx τ⟩ : {w : InfinitePlace E // w.IsComplex}) = wc := Subtype.ext h
       rw [this, Pi.single_eq_same]
-    · rw [if_neg h, Pi.single_eq_of_ne]
+    · rw [ite_eq_right h, Pi.single_eq_of_ne]
       intro h'; exact h (congrArg Subtype.val h')
   have hemb := embedding_mk_eq τ
 
@@ -49,22 +49,22 @@ lemma emb_comb [IsCMField E] (σ : E →+* ℂ) (c : ℂ) :
       if (mk τ).embedding = τ then (if mk τ = mk σ then c' else 0)
       else (starRingEnd ℂ) (if mk τ = mk σ then c' else 0) := by
     rcases hemb with h | h
-    · rw [if_pos h, ← hy, ← hcoord, h]
+    · rw [ite_eq_left h, ← hy, ← hcoord, h]
     · by_cases h' : (mk τ).embedding = τ
-      · rw [if_pos h', ← hy, ← hcoord, h']
-      · rw [if_neg h', ← hy, ← hcoord, map_sum]
+      · rw [ite_eq_left h', ← hy, ← hcoord, h']
+      · rw [ite_eq_right h', ← hy, ← hcoord, map_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [h, map_mul, Complex.conj_ofReal, ComplexEmbedding.conjugate_coe_eq]
         simp
   rw [hval]
   by_cases hτ : τ = σ
   · subst hτ
-    simp only [if_true, c']
+    simp only [ite_true, c']
     split_ifs with h1 <;> simp
   · by_cases hτ' : τ = ComplexEmbedding.conjugate σ
     · subst hτ'
       have hm : mk (ComplexEmbedding.conjugate σ) = mk σ := mk_conjugate_eq σ
-      simp only [if_neg hτ, if_true, hm, c']
+      simp only [ite_eq_right hτ, ite_true, hm, c']
       rcases embedding_mk_eq σ with h | h
       · have : (mk σ).embedding ≠ ComplexEmbedding.conjugate σ := by rw [h]; exact hne.symm
         simp [h, hne.symm]

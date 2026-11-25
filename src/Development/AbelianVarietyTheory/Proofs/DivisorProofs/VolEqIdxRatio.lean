@@ -43,6 +43,7 @@ import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Init
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StableTwistedOrbitalProduct
 
 @[expose] public section
 
@@ -56,31 +57,7 @@ open GlobalTheory.BCT GlobalTheory.BCT.OrbProd
 
 theorem finsum_prod_mul {α β : Type} (u : α → ℂ) (v : β → ℂ) :
     ∑ᶠ z : α × β, u z.1 * v z.2 = (∑ᶠ a, u a) * ∑ᶠ b, v b := by
-  by_cases hu : (Function.support u).Finite
-  · by_cases hv : (Function.support v).Finite
-    · exact finsum_prod_mul_of_finite u v hu hv
-    · rw [finsum_of_infinite_support hv, mul_zero]
-      by_cases h0 : ∀ a, u a = 0
-      · simp [h0]
-      · push_neg at h0
-        obtain ⟨a, ha⟩ := h0
-        apply finsum_of_infinite_support
-        intro hfin
-        apply hv
-        refine (hfin.image Prod.snd).subset ?_
-        intro b hb
-        exact ⟨(a, b), by simp only [Function.mem_support] at hb ⊢; exact mul_ne_zero ha hb, rfl⟩
-  · rw [finsum_of_infinite_support hu, zero_mul]
-    by_cases h0 : ∀ b, v b = 0
-    · simp [h0]
-    · push_neg at h0
-      obtain ⟨b, hb⟩ := h0
-      apply finsum_of_infinite_support
-      intro hfin
-      apply hu
-      refine (hfin.image Prod.fst).subset ?_
-      intro a ha
-      exact ⟨(a, b), by simp only [Function.mem_support] at ha ⊢; exact mul_ne_zero ha hb, rfl⟩
+  apply _root_.GlobalTheory.BCT.StTwTens.finsum_prod_mul' <;> assumption
 
 section Vol
 

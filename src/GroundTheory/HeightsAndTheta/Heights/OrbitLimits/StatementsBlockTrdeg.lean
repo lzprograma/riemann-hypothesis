@@ -23,8 +23,4 @@ def BlockTrdeg.Statement : Prop :=
           ((Fintype.card K' - Fintype.card K : ℕ) : Cardinal) ≤
         Algebra.trdeg ℚ (Algebra.adjoin ℚ (Set.range fun q : Σ k', ι' k' ↦ φ (X q)))
 
-section Examples
-
-end Examples
-
 end GroundTheory.Heights₂.Heights

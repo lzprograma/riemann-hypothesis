@@ -10,7 +10,10 @@ public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsType
 public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarLieIsHaarOnUnipotentRadical
 public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselDatumBothSidesAreSides
-public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselSettingUniformConstant
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselNormSqEqConstMulArchPairing
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BetaInfEqIntegralOfIntegrableCoefficient
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DecayThresholdsOfSpectralGapCondition
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentUpperFacts
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Admissible
 import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselTorusElementProperties
@@ -84,8 +87,8 @@ variable (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ)
 theorem mul_bigCell_low (M : B.Mat k r) (i j : Fin (2 * r + k + 1)) (hj : j.val < r) :
     (M * bigCell k r c μ) i j = M i (esI k r ⟨j.val, hj⟩) * c ⟨j.val, hj⟩ := by
   rw [Matrix.mul_apply, Finset.sum_eq_single (esI k r ⟨j.val, hj⟩)]
-  · unfold bigCell; rw [dite_eq_left hj, if_pos rfl]
-  · intro l _ hl; unfold bigCell; rw [dite_eq_left hj, if_neg hl, mul_zero]
+  · unfold bigCell; rw [dite_eq_left hj, ite_eq_left rfl]
+  · intro l _ hl; unfold bigCell; rw [dite_eq_left hj, ite_eq_right hl, mul_zero]
   · simp
 
 theorem bigCell_row (i j : Fin (2 * r + k + 1)) (hi : i.val < r) (h : i.val + j.val ≠ 2 * r + k) :
@@ -104,7 +107,7 @@ theorem bigCell_row (i j : Fin (2 * r + k + 1)) (hi : i.val < r) (h : i.val + j.
 theorem bigCell_col (i j : Fin (2 * r + k + 1)) (hj : r + k < j.val) (h : i.val + j.val ≠ 2 * r + k) :
     bigCell k r c μ i j = 0 := by
   unfold bigCell
-  rw [dite_eq_right (by omega), dite_eq_right (by omega), if_neg (by omega)]
+  rw [dite_eq_right (by omega), dite_eq_right (by omega), ite_eq_right (by omega)]
 
 theorem rStab_bigCell (hc : ∀ a, c a ≠ 0) (hg : bigCell k r c μ ∈ UH (Hpk k r)) :
     RStab k r (bigCell k r c μ) = {1} := by
@@ -137,7 +140,7 @@ theorem rStab_bigCell (hc : ∀ a, c a ≠ 0) (hg : bigCell k r c μ ∈ UH (Hpk
     · rw [Matrix.mul_apply, hgdef, bigCell_row c μ i j hi h.ne']
       refine Finset.sum_eq_zero fun l _ => ?_
       by_cases hl : l.val + j.val = 2 * r + k
-      · rw [ua i l (by rw [Fin.le_def]; omega), if_neg (by rw [Fin.ext_iff]; omega), zero_mul]
+      · rw [ua i l (by rw [Fin.le_def]; omega), ite_eq_right (by rw [Fin.ext_iff]; omega), zero_mul]
       · rw [bigCell_col c μ l j (by omega) hl, mul_zero]
   ext i j
   rw [Matrix.one_apply]
@@ -156,7 +159,7 @@ theorem rStab_bigCell (hc : ∀ a, c a ≠ 0) (hg : bigCell k r c μ ∈ UH (Hpk
   have h1 := mul_bigCell_low c μ a i m hm
   have e1 : esI k r ⟨m.val, hm⟩ = j := Fin.ext (by simp only [esI, m]; omega)
   rw [e1, ← hgdef, e, Matrix.mul_apply, Finset.sum_eq_zero] at h1
-  · rw [if_neg (by rw [Fin.ext_iff]; omega)]
+  · rw [ite_eq_right (by rw [Fin.ext_iff]; omega)]
     exact (mul_eq_zero.1 h1.symm).resolve_right (hc _)
   · intro l _
     rcases le_or_gt l m with hl | hl
@@ -165,35 +168,14 @@ theorem rStab_bigCell (hc : ∀ a, c a ≠ 0) (hg : bigCell k r c μ ∈ UH (Hpk
       have : g i l = 0 := by
         rw [hgdef]
         unfold bigCell
-        rw [dite_eq_left hl', if_neg]
+        rw [dite_eq_left hl', ite_eq_right]
         rw [Fin.ext_iff]
         simp only [esI, m] at hl ⊢
         omega
       rw [this, zero_mul]
-    · rw [ub l m hl.le, if_neg hl.ne', mul_zero]
+    · rw [ub l m hl.le, ite_eq_right hl.ne', mul_zero]
 
 end stab
-
-theorem haar_smul {U : Set (B.Mat k r)} {μ : Measure (Mt k r)} (h : B.IsHaarOn U μ) {x : ℝ} (hx : 0 < x) :
-    B.IsHaarOn U (ENNReal.ofReal x • μ) := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · rw [Measure.smul_apply, h.conc, smul_zero]
-  · intro a ha
-    have hcont : Continuous (lmulM a : Mt k r → Mt k r) :=
-      continuous_const.matrix_mul continuous_id
-    rw [Measure.map_smul _ hcont.measurable.aemeasurable, h.left a ha]
-  · intro a ha
-    have hcont : Continuous (B.rmulF a : Mt k r → Mt k r) :=
-      continuous_id.matrix_mul continuous_const
-    rw [Measure.map_smul _ hcont.measurable.aemeasurable, h.right a ha]
-  · intro K hK
-    rw [Measure.smul_apply, smul_eq_mul]
-    exact ENNReal.mul_lt_top ENNReal.ofReal_lt_top (h.finite_compact K hK)
-  · intro h0
-    apply h.ne_zero
-    have h1 := Measure.measure_univ_eq_zero.2 h0
-    rw [Measure.smul_apply, smul_eq_mul] at h1
-    exact Measure.measure_univ_eq_zero.1 ((mul_eq_zero.1 h1).resolve_left (ENNReal.ofReal_pos.2 hx).ne')
 
 theorem lintegral_weight_scale (T T' s : ℝ) (hs : 0 < s) (F : (Fin r → ℂ) × ℂ → ℝ) :
     ∫⁻ q, ENNReal.ofReal (bcWeight k r T T' q * F (B7.d_S r s q)) =
@@ -289,7 +271,7 @@ theorem cellData_bigCell (L : LocBessel k r) (μG : Measure (Mt k r)) (D : B.Rea
     rw [Matrix.diagonal_apply]
     show _ = if i = j then _ else _
     by_cases h : i = j
-    · rw [if_pos h, if_pos h, h]
-    · rw [if_neg h, if_neg h]
+    · rw [ite_eq_left h, ite_eq_left h, h]
+    · rw [ite_eq_right h, ite_eq_right h]
 
 end GlobalTheory.AmpNorm

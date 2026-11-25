@@ -125,7 +125,7 @@ theorem lie_mem_Zalg (x : Cinf E) : lie E a (scL a x) ∈ Zalg E a := by
   have e : x = ∑ w : InfinitePlace E, atEmb w.embedding (x w) := by
     have : ∀ w : InfinitePlace E, atEmb w.embedding (x w) = Pi.single w (x w) := fun w => by
       unfold atEmb
-      simp only [InfinitePlace.mk_embedding, if_true]
+      simp only [InfinitePlace.mk_embedding, ite_true]
     simp [this, Finset.univ_sum_single]
   have e2 : lie E a (scL a x) = ∑ i, lieS E a i i x := by
 

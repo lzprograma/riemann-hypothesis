@@ -467,8 +467,6 @@ theorem plane_lattice_reduction_step (e₁ e₂ : ℂ)
       calc |J| ^ 2 ≤ (N / 2) ^ 2 := pow_le_pow_left₀ (abs_nonneg J) hJ 2
         _ = N ^ 2 / 4 := by ring
     have h4 : N * (2 * M) ≤ N * N := by
-      have hNN : N * N = N ^ 2 := (sq N).symm
-      have h2M : N * (2 * M) = 2 * (N * M) := by ring
       linarith
     exact le_of_mul_le_mul_left h4 hN
 
@@ -534,7 +532,7 @@ theorem normSq_eq [_root_.NumberField.IsTotallyComplex K] (h2 : Module.finrank �
   haveI : Subsingleton (InfinitePlace K) := ⟨place_unique h2⟩
   have hprod := InfinitePlace.prod_eq_abs_norm (x : K)
   rw [Fintype.prod_subsingleton _ (InfinitePlace.mk φ), InfinitePlace.apply,
-    InfinitePlace.mult, if_neg (InfinitePlace.not_isReal_iff_isComplex.2
+    InfinitePlace.mult, ite_eq_right (InfinitePlace.not_isReal_iff_isComplex.2
       (IsTotallyComplex.isComplex _))] at hprod
   rw [hprod, Ideal.absNorm_span_singleton, Nat.cast_natAbs, Int.cast_abs,
     ← Algebra.coe_norm_int]
@@ -955,7 +953,6 @@ theorem aRay_eq_ncard_qForm : ∀ (K : Type) [Field K] [NumberField K] (d M : �
   have hImb : |((starRingEnd ℂ) (φ ((b 0 : 𝓞 K) : K)) * φ ((b 1 : 𝓞 K) : K)).im| = √(d : ℝ) / 2 := by
     rw [← Real.sqrt_sq_eq_abs, hb, Real.sqrt_div' _ (by norm_num : (0 : ℝ) ≤ 4),
       show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
-  have hMr : (3 : ℝ) ≤ M := by exact_mod_cast hM
   have hIme : |((starRingEnd ℂ) e₁ * e₂).im| = (M : ℝ) ^ 2 * Nr * (√(d : ℝ) / 2) := by
     rw [hIm, map_mul, hNnorm, hImb, hNr]
     push_cast
@@ -1032,10 +1029,6 @@ theorem aRay_eq_ncard_qForm : ∀ (K : Type) [Field K] [NumberField K] (d M : �
     have h1 : ‖f₁‖ ^ 2 ≤ 2 * Iv := by rw [hImf]; exact hshort
     have h2' : 2 * Nr ≤ Iv := by
       have hM2 : (9 : ℝ) ≤ (M : ℝ) ^ 2 := by exact_mod_cast hM9
-      have hd10 : (10 : ℝ) ≤ √(d : ℝ) := by
-        rw [Real.le_sqrt (by norm_num) (Nat.cast_nonneg _)]
-        norm_num
-        exact_mod_cast hd100
       have hk : (2 : ℝ) ≤ (M : ℝ) ^ 2 * (√(d : ℝ) / 2) := by
         calc (2 : ℝ) ≤ 9 * (10 / 2) := by norm_num
           _ ≤ (M : ℝ) ^ 2 * (√(d : ℝ) / 2) :=

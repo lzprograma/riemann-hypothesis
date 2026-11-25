@@ -404,12 +404,6 @@ def AmbOfHyp : Prop :=
     ∀ (a b : ℕ) (N : Submodule (𝓞 X.E) (Formalism.L2.Col.Sp X.E a)) (N' : Submodule (𝓞 X.E) (Formalism.L2.Col.Sp X.E b)),
       s.push ((ambOf s B χ cD).e a b N N') = B.eNat χ a b (s.lat N) (s.lat N')
 
-section ReadBack
-
-open Formalism.L2.Col Formalism.HermitianLatticesTheory Formalism.L2.DIV
-
-end ReadBack
-
 def SeamLat : Prop :=
   ∀ (D : D7) (X : Formalism.L2.Col.Fields) (s : Seam D X) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (B : Base D cc δ) (χ : TaylorLogMetric.IdE D → ℂ) (cD : D.what₂.Tau → ℂ),
     s.Ok → ∀ (a b : ℕ) (N : Submodule (𝓞 X.E) (Formalism.L2.Col.Sp X.E a)) (N' : Submodule (𝓞 X.E) (Formalism.L2.Col.Sp X.E b)),

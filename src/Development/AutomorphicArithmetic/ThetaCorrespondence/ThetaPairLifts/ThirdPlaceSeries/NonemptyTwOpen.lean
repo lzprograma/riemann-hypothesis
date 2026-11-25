@@ -3,39 +3,6 @@ module
 public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SideMultiplicityCharacter
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValSqNonsplit
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -59,8 +26,7 @@ theorem nonempty_twOpen_alt : ∀ (D : D7) (cf : CharFrame D) (jE : D.host.E →
              choice := ?_
              off := ch.off
              adm := ch.adm
-             psi := ch.psi
-             eMt_level := ch.eMt_level }
+             psi := ch.psi }
     · refine { twOf_eq := Sp.twOf_eq
                twSide_eq := Sp.twSide_eq
                Q_eq := ?_
@@ -75,7 +41,6 @@ theorem nonempty_twOpen_alt : ∀ (D : D7) (cf : CharFrame D) (jE : D.host.E →
   have h0 : ∀ x, K.etaT.χ x = (cfL L cf).eta.1 x := Bs.eta_eq
   have h1 : ∀ (j : Fin (withLoc L).R.m) x, (K.mu0 (j.1 + 1)).χ x = ((cfL L cf).mu0 j).1 x := Bs.ringSpec_normalisedCharacter_eq
   have h2 : ∀ s x, (K.del s).χ x = ((cfL L cf).delAt ((withLoc L).ntw.l s)).1 x := Bs.del_eq
-  have h3 : ∀ a x, (K.psi a).χ x = ((tpL L tp).psi ((withLoc L).nd.w a)).1 x := fun _ _ => rfl
   have hg := psiL_gal' (_root_.GlobalTheory.HeightCounting.FitTw.chrL_alt Au) ch'.nct ch'.psi K h0 h1 h2 Bs.chi.chi1
   have hp := psi_is (tpL L tp) ch'.nct
   exact ⟨{
@@ -85,14 +50,6 @@ theorem nonempty_twOpen_alt : ∀ (D : D7) (cf : CharFrame D) (jE : D.host.E →
     tw := twTiedL L Bs.tw
     exp := expL L Bs.exp
     ch := ch'
-    eta_eq := h0
-    ringSpec_normalisedCharacter_eq := h1
-    del_eq := h2
-    psi_eq := h3
-    etaT_link := etaT_link (_root_.GlobalTheory.HeightCounting.FitTw.chrL_alt Au) _ h0
-    muC_link := fun i => Filter.Eventually.of_forall fun w => muC_link (_root_.GlobalTheory.HeightCounting.FitTw.chrL_alt Au) K h1 h2 h3 i w
-    iCq_embO := Bs.iCq_embO
-    embO_star := Bs.embO_star
     chrN := _root_.GlobalTheory.HeightCounting.FitTw.chrL_alt Au
     chrGal := ⟨hp, hg, deltaReadL L Bs.deltaRead⟩ }⟩
 end GlobalTheory.HeightCounting.FitTw

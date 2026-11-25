@@ -34,7 +34,7 @@ theorem coeff_eq_zero_of_isBigO {P : Polynomial ℂ} {k : ℕ}
     intro d hd
     rcases Nat.lt_succ_iff_lt_or_eq.mp hd with hd | hd
     · exact hk d hd
-    rw [hd, hQ, Polynomial.coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self, Polynomial.coeff_zero_eq_eval_zero]
+    rw [hd, hQ, Polynomial.coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self, Polynomial.coeff_zero_eq_eval_zero]
     obtain ⟨c, hc⟩ := h.bound
     have h1 : ∀ᶠ t in 𝓝[≠] (0 : ℂ), ‖Q.eval t‖ ≤ c * ‖t‖ := by
       filter_upwards [nhdsWithin_le_nhds hc, self_mem_nhdsWithin] with t ht ht0
@@ -134,7 +134,7 @@ theorem mem_pow_ker_of_isBigO {k : ℕ} {q : MvPolynomial σ ℂ}
       simp [norm_smul, mul_pow, mul_comm]
     have hc := coeff_eq_zero_of_isBigO hPO d hd
     simp only [P, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial,
-      Finsupp.single_apply, Finset.sum_ite_eq', if_pos hdT] at hc
+      Finsupp.single_apply, Finset.sum_ite_eq', ite_eq_left hdT] at hc
     simpa using hc
   have hmem : q' ∈ idealOfVars σ ℂ ^ k := by
     refine (mem_pow_idealOfVars_iff' k q').mpr fun x hx => ?_

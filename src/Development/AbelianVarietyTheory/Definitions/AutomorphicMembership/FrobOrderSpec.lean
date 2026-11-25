@@ -49,7 +49,7 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formal
 
 namespace GlobalTheory.Mem.LocalPack
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar Formalism.BasicNotions.factResChar
+attribute [local instance] Formalism.BasicNotions.factResChar
 
 abbrev frobOrder (D : D7) (p : ℕ) : ℕ := orderOf (zH D.R.toFrame (hP D p))
 

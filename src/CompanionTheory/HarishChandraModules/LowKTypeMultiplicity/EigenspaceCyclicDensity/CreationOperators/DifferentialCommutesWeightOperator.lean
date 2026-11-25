@@ -34,7 +34,7 @@ theorem Ft_ann {ε : Fin n → Bool} (E : Fin n → Fin n → Module.End ℂ V) 
   simp only [Ft_apply, ann_apply, Pi.sub_apply, Pi.smul_apply]
   by_cases h : i ∈ A
   · simp [h]
-  · rw [if_neg h, if_neg h, filter_insert, if_pos hi, wt_insert (fun hh => h (mem_filter.1 hh).1), map_smul]
+  · rw [ite_eq_right h, ite_eq_right h, filter_insert, ite_eq_left hi, wt_insert (fun hh => h (mem_filter.1 hh).1), map_smul]
     push_cast
     module
 
@@ -44,8 +44,8 @@ theorem Ft_cre {ε : Fin n → Bool} (E : Fin n → Fin n → Module.End ℂ V) 
   simp only [Ft_apply, cre_apply, Pi.add_apply, Pi.smul_apply]
   by_cases h : i ∈ A
   · have e : A.filter (cpt ε) = insert i ((A.erase i).filter (cpt ε)) := by
-      conv_lhs => rw [← insert_erase h, filter_insert, if_pos hi]
-    rw [if_pos h, if_pos h, e, wt_insert (fun hh => notMem_erase i A (mem_filter.1 hh).1), map_smul]
+      conv_lhs => rw [← insert_erase h, filter_insert, ite_eq_left hi]
+    rw [ite_eq_left h, ite_eq_left h, e, wt_insert (fun hh => notMem_erase i A (mem_filter.1 hh).1), map_smul]
     push_cast
     module
   · simp [h]
@@ -142,8 +142,8 @@ theorem genCO_of (hS : BdSq) (hC : Cover2) : GenCO := by
     have hw' : Sup ε₀ B (0 + 1) w' := by
       intro A hA
       obtain ⟨i, -, hi⟩ := exists_ne_zero_of_sum_ne_zero hA
-      obtain ⟨h1, rfl⟩ : cpt ε₀ i ∧ A = insert i B := by by_contra h; exact hi (if_neg h)
-      rw [filter_insert, if_neg (not_not.2 h1), filter_true_of_mem hBn, filter_insert, if_pos h1, hBc]
+      obtain ⟨h1, rfl⟩ : cpt ε₀ i ∧ A = insert i B := by by_contra h; exact hi (ite_eq_right h)
+      rw [filter_insert, ite_eq_right (not_not.2 h1), filter_true_of_mem hBn, filter_insert, ite_eq_left h1, hBc]
       simp
     refine ⟨w', hw', funext fun A => ?_⟩
     by_cases hA : A = B
@@ -156,12 +156,12 @@ theorem genCO_of (hS : BdSq) (hC : Cover2) : GenCO := by
       · refine Finset.sum_congr rfl fun i _ => ?_
         split_ifs with hi
         · have hiA : i ∉ A := fun h => hBn i h hi
-          rw [ann_apply, if_neg hiA]
+          rw [ann_apply, ite_eq_right hiA]
           congr 1
           simp only [w']
-          rw [Finset.sum_eq_single i, if_pos ⟨hi, rfl⟩, smul_smul, sg_mul_self, one_smul]
+          rw [Finset.sum_eq_single i, ite_eq_left ⟨hi, rfl⟩, smul_smul, sg_mul_self, one_smul]
           · intro k _ hk
-            refine if_neg fun h => ?_
+            refine ite_eq_right fun h => ?_
             rcases mem_insert.1 (h.2 ▸ mem_insert_self i A) with h' | h'
             · exact hk h'.symm
             · exact hiA h'
@@ -194,14 +194,14 @@ theorem genCO_of (hS : BdSq) (hC : Cover2) : GenCO := by
       split_ifs at this ⊢ <;> simpa [EK] using this
     classical
     let x' : Cn n Y := fun A => if x A = 0 then 0 else (hs (x A)).choose
-    have hz : ∀ A, x A = 0 → x' A = 0 := fun A h => if_pos h
+    have hz : ∀ A, x A = 0 → x' A = 0 := fun A h => ite_eq_left h
     have hx' : Sup ε₀ B (j + 1) x' := sup_of_supp hx hz
     have hr' : Ref ε₀ ε x' := fun A hA => hr A fun h => hA (hz A h)
     have hπx : lift n π x' = x := by
       funext A
       by_cases hA : x A = 0
       · simp [x', hA]
-      · simp only [lift_apply, x', if_neg hA]
+      · simp only [lift_apply, x', ite_eq_right hA]
         exact (hs (x A)).choose_spec
     have hy : ∀ A, bd ε₀ EY x' A ∈ LinearMap.ker π := by
       intro A

@@ -46,8 +46,6 @@ import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry KaehlerDifferential DividedPowers
@@ -199,10 +197,6 @@ structure IsTheta (I : Ideal R) {B B₀ B' : Type} [CommRing B] [Algebra R B] [C
   der : ∀ b, θ (D R₀ B₀ (p b)) = α b - β b
   mem : ∀ w, θ w ∈ I.map (algebraMap R B')
 
-theorem isTheta_zero (I : Ideal R) {B B₀ B' : Type} [CommRing B] [Algebra R B] [CommRing B₀] [Algebra R₀ B₀]
-    [CommRing B'] [Algebra R B'] (p : B →+* B₀) (α : B →ₐ[R] B') : IsTheta (R₀ := R₀) I p α α 0 :=
-  ⟨fun _ _ ↦ by simp, fun _ ↦ by simp, fun _ ↦ by simp⟩
-
 def Sys.LocIso.IsDefect {S S' : Sys I π s₀} (Φ : S.LocIso S')
     (θ : ∀ (U V : AffOp X₀) (_ : U ⟶ V), Ω[Sec s₀ U.unop.1⁄R₀] →+ S'.F.obj V) : Prop :=
   ∀ (U V : AffOp X₀) (a : U ⟶ V), IsTheta I (S.p U) ((mp S'.F a).comp (Φ.φ U : S.F.obj U →ₐ[R] S'.F.obj U))
@@ -252,15 +246,6 @@ theorem smooth_sec_affine [Smooth s] (U : X.affineOpens) : Algebra.Smooth R (Sec
   have h : Smooth (affPt s U ≫ s) := inferInstance
   rw [affPt_w] at h
   exact RingHom.smooth_algebraMap.1 ((HasRingHomProperty.Spec_iff (P := @Smooth)).1 h)
-
-def Sys.self [Smooth s] : Sys (⊥ : Ideal R) (RingHom.id R) s where
-  F := OAff s
-  p _ := RingHom.id _
-  semi _ := fun _ _ ↦ rfl
-  nat _ _ := rfl
-  surj _ := Function.surjective_id
-  ker U b := by simp [Ideal.map_bot]
-  smooth U := smooth_sec_affine s U.unop
 
 end Self
 

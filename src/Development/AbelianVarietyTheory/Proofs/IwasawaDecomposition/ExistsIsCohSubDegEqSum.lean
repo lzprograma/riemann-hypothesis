@@ -44,8 +44,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.VB
@@ -141,7 +139,7 @@ theorem IsTriangular.spn_le (H : IsTriangular v rk e g) {S : Finset α}
   by_cases hb : b = a ∨ rk b < rk a
   · have hbS : b ∈ S := hb.elim (fun hba => hba ▸ ha) (hS a ha b)
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨b, hbS, rfl⟩)
-  · push_neg at hb
+  · push Not at hb
     rw [h2 b hb.1 hb.2, zero_smul]
     exact zero_mem _
 
@@ -168,8 +166,8 @@ theorem IsTriangular.repr_eq (H : IsTriangular v rk e g) (hv : ∀ j, IsFrame (v
     have hcf : cf a = resG C (le_inf h h') (g a j j') * (if b = a then 1 else 0) := by
       by_cases hab : b = a
       · subst hab
-        rw [if_pos rfl, mul_one, h1]
-      · rw [if_neg hab, mul_zero]
+        rw [ite_eq_left rfl, mul_one, h1]
+      · rw [ite_eq_right hab, mul_zero]
         exact h2 a (Ne.symm hab) (ha b hb)
     have hB : ∀ i, resM F h (v j i) = (hv j).basis h i := fun i => ((hv j).basis_apply h i).symm
     have hr : ((hv j').basis h').repr (resM F h' (v j' (e j' b))) (e j' a) = if b = a then 1 else 0 := by
@@ -181,7 +179,7 @@ theorem IsTriangular.repr_eq (H : IsTriangular v rk e g) (hv : ∀ j, IsFrame (v
     rw [hr, h3, map_sum, Finset.sum_apply']
     simp only [hB, map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply,
       (e j).injective.eq_iff, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
     rwa [mul_ite, mul_one, mul_zero] at hcf
   | zero => simp
   | add x y _ _ hx hy =>

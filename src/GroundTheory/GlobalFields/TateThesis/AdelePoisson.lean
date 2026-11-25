@@ -280,7 +280,7 @@ theorem summable_norm_iff_and_tsum_eq_of_coset (J : (FractionalIdeal (𝓞 K)⁰
     e.symm.injective (Subtype.ext (add_left_cancel hαβ))
   have hsupp : ∀ ξ ∉ Set.range h, f ξ = 0 := by
     intro ξ hξ
-    rw [hf, if_neg]
+    rw [hf, ite_eq_right]
     intro hm
     refine hξ ⟨e ⟨ξ - c, hm⟩, ?_⟩
     simp only [h, Equiv.symm_apply_apply]
@@ -290,7 +290,7 @@ theorem summable_norm_iff_and_tsum_eq_of_coset (J : (FractionalIdeal (𝓞 K)⁰
     have hm : h α - c ∈ (J : FractionalIdeal (𝓞 K)⁰ K) := by
       simp only [h, add_sub_cancel_left]
       exact (e.symm α).2
-    rw [hf, if_pos hm]
+    rw [hf, ite_eq_left hm]
     congr 1
     have he := coe_idealLatticeEquiv J (e.symm α)
     rw [Equiv.apply_symm_apply] at he
@@ -332,9 +332,9 @@ theorem poisson_schwartzBruhatTensor_cosetIndicator (φ : 𝓢(mixedSpace K, ℂ
     (fun ξ ↦ schwartzBruhatTensor φ (cosetIndicator I b) (algebraMap K 𝔸[K] ξ)) fun ξ ↦ by
       rw [schwartzBruhatTensor_algebraMap, cosetIndicator_apply]
       by_cases hξ : ξ - ξ₀ ∈ (I : FractionalIdeal (𝓞 K)⁰ K)
-      · rw [if_pos ((algebraMap_sub_mem_idealFiniteAdeles_iff hξ₀ ξ).mpr hξ), if_pos hξ, mul_one]
-      · rw [if_neg (fun h ↦ hξ ((algebraMap_sub_mem_idealFiniteAdeles_iff hξ₀ ξ).mp h)),
-          if_neg hξ, mul_zero]
+      · rw [ite_eq_left ((algebraMap_sub_mem_idealFiniteAdeles_iff hξ₀ ξ).mpr hξ), ite_eq_left hξ, mul_one]
+      · rw [ite_eq_right (fun h ↦ hξ ((algebraMap_sub_mem_idealFiniteAdeles_iff hξ₀ ξ).mp h)),
+          ite_eq_right hξ, mul_zero]
 
   have hR := summable_norm_iff_and_tsum_eq_of_coset (traceDualIdeal K I) 0
     (fun x ↦ μ * (mixedFourier K φ x * 𝐞 (mixedTraceForm K x a)))
@@ -345,7 +345,7 @@ theorem poisson_schwartzBruhatTensor_cosetIndicator (φ : 𝓢(mixedSpace K, ℂ
       by_cases hη : η ∈ (traceDualIdeal K I : FractionalIdeal (𝓞 K)⁰ K)
       · have hη' : algebraMap K 𝔸ᶠ[K] η ∈ idealFiniteAdeles (traceDualIdeal K I) :=
           (algebraMap_mem_idealFiniteAdeles_iff _ η).mpr hη
-        rw [if_pos hη, Set.indicator_of_mem (SetLike.mem_coe.mpr hη'), Pi.one_apply, mul_one]
+        rw [ite_eq_left hη, Set.indicator_of_mem (SetLike.mem_coe.mpr hη'), Pi.one_apply, mul_one]
         have hb : b * algebraMap K 𝔸ᶠ[K] η = algebraMap K 𝔸ᶠ[K] ξ₀ * algebraMap K 𝔸ᶠ[K] η +
             (b - algebraMap K 𝔸ᶠ[K] ξ₀) * algebraMap K 𝔸ᶠ[K] η := by ring
         rw [hb, AddChar.map_add_eq_mul,
@@ -354,7 +354,7 @@ theorem poisson_schwartzBruhatTensor_cosetIndicator (φ : 𝓢(mixedSpace K, ℂ
         ring
       · have hη' : algebraMap K 𝔸ᶠ[K] η ∉ idealFiniteAdeles (traceDualIdeal K I) :=
           fun h ↦ hη ((algebraMap_mem_idealFiniteAdeles_iff _ η).mp h)
-        rw [if_neg hη, Set.indicator_of_notMem (by simpa using hη'), mul_zero, mul_zero, mul_zero]
+        rw [ite_eq_right hη, Set.indicator_of_notMem (by simpa using hη'), mul_zero, mul_zero, mul_zero]
   simp only [map_zero, add_zero] at hR
   refine ⟨hL.1.mpr (idealLattice_summable_norm K I φ a), hR.1.mpr ?_, ?_⟩
   · simpa only [norm_mul] using (traceDualIdeal_summable_norm K I φ a).mul_left ‖μ‖

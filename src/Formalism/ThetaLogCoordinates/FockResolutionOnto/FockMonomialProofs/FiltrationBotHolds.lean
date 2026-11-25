@@ -4,52 +4,7 @@ public import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementB
 public import Formalism.MahlerMeasure.MahlerMeasureProofs.MeanGam
 public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.InitPartZeroXMul
 public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.MulEarlyLettersHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -72,7 +27,7 @@ theorem pow_mul_mem (v : σ) (e : ℕ) (Q : Set (σ →₀ ℕ)) (g : MvPolynomi
     simp only [Finsupp.single_le_iff, one_mul]
   have c2 : ∀ (m : σ →₀ ℕ) (g' : MvPolynomial σ ℚ_[p]), AddMonoidAlgebra.coeff (X v ^ e * g') (m + Finsupp.single v e) = AddMonoidAlgebra.coeff g' m := by
     intro m g'
-    rw [c1, if_pos (by simp), add_tsub_cancel_right]
+    rw [c1, ite_eq_left (by simp), add_tsub_cancel_right]
   rw [mem_restrictSupport_iff, mem_restrictSupport_iff]
   constructor
   · intro h m hm
@@ -203,9 +158,9 @@ theorem multiDeg_pow (ρ : Fin r) (e : ℕ) (he : e ≤ LL.deg (Fin.last K)) (m 
     simp only [Function.update_apply]
     split_ifs with hi
     · subst hi
-      simp only [if_true] at h1
+      simp only [ite_true] at h1
       omega
-    · simp only [hi, if_false, add_zero] at h1
+    · simp only [hi, ite_false, add_zero] at h1
       exact h1
   · intro h i
     have h1 := h i
@@ -213,9 +168,9 @@ theorem multiDeg_pow (ρ : Fin r) (e : ℕ) (he : e ≤ LL.deg (Fin.last K)) (m 
     rw [hsum]
     split_ifs at h1 with hi
     · subst hi
-      simp only [if_true]
+      simp only [ite_true]
       omega
-    · simp only [hi, if_false, add_zero]
+    · simp only [hi, ite_false, add_zero]
       exact h1
 
 theorem pol_pow (ρ : Fin r) (e : ℕ) (he : e ≤ LL.deg (Fin.last K)) (h : MvPolynomial (Fin (K + 1) × Fin r) ℚ_[p]) :
@@ -242,9 +197,9 @@ theorem wtSpC_pow (hv : LL.vec (Fin.last K) = true) (ρ : Fin r) (e o : ℕ) (Cs
     refine forall₂_congr fun c _ => ?_
     by_cases hc : c = ρ
     · subst hc
-      rw [if_pos rfl, if_pos rfl]
+      rw [ite_eq_left rfl, ite_eq_left rfl]
       omega
-    · rw [if_neg (Ne.symm hc), if_neg hc, add_zero]
+    · rw [ite_eq_right (Ne.symm hc), ite_eq_right hc, add_zero]
   rw [hset]
 
 theorem glAct_pow (hv : LL.vec (Fin.last K) = true) (ρ c d : Fin r) (hd : d ≠ ρ) (e : ℕ)
@@ -289,14 +244,14 @@ theorem yCond_pow [NeZero r] (hv : LL.vec (Fin.last K) = true) (ρ : Fin r) (e j
     X (Fin.last K, ρ) ^ e * h ∈ YCond p LL j M ↔
       h ∈ YCond p LL j (if K + 1 ≤ j then M + ((-(e : ℤ) : ℤ) : WithTop ℤ) else M) := by
   by_cases hj : K + 1 ≤ j
-  · rw [if_pos hj]
+  · rw [ite_eq_left hj]
     induction e generalizing M with
     | zero => simp
     | succ e ih =>
       rw [pow_succ', mul_assoc, mul_last_letter_holds p K r LL j M ρ _ hj hv, ih, add_assoc, ← WithTop.coe_add]
       have : (-1 : ℤ) + -(e : ℤ) = -((e + 1 : ℕ) : ℤ) := by push_cast; ring
       rw [this]
-  · rw [if_neg hj]
+  · rw [ite_eq_right hj]
     induction e with
     | zero => simp
     | succ e ih => rw [pow_succ', mul_assoc, mul_early_letters_holds p K r LL j M ρ _ (by omega), ih]

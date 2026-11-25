@@ -34,10 +34,6 @@ def locIdealPart {S : Type*} [CommRing S] {K : Type*} [Fintype K] {ι : K → Ty
   Submodule.span S {w | ∃ (p : MRingOver S ι) (a : K → ℕ) (y : LocalizedModule T M), p ∈ P ∧ IsMultiHomog p a ∧
     y ∈ KH.locPart ι 𝓜 T (d - fun k => (a k : ℤ)) ∧ w = p • y}
 
-section Point
-
-end Point
-
 end
 
 end GroundTheory.Heights₂.Heights.HilbertSamuel

@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.Columns.ChainTwOk
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRatDatum
 public import Formalism.LocalToGlobal.Columns.ChainTw
@@ -47,7 +48,6 @@ public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FrameTo
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Forms
 open NumberField IsDedekindDomain Matrix MeasureTheory ValuativeRel GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.Core.Rk GlobalTheory.AdForm GlobalTheory.SeeSaw
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 namespace GlobalTheory.SeeSaw.StdMatch
@@ -150,20 +150,7 @@ theorem twSt_h {X : Formalism.L2.Col.Fields} {Pr : Formalism.L2.Col.Primes X} {R
     (mu : Formalism.L2.DIV.Tup X.F X.E X.K S₀) (cst : Formalism.L2.Col.LocCst X (Formalism.L2.Col.rowSG Pr sel mu)) (m2 j : ℕ)
     (al : (Formalism.L2.Col.twSt Ch sel mu cst m2 j).β) (P : Formalism.L2.Col.rowSG Pr sel mu) (hP : P.1 ∈ Pr.vGs) :
     (Formalism.L2.Col.twSt Ch sel mu cst m2 j).h al P = 1 := by
-  revert al
-  cases j with
-  | zero => exact fun _ => rfl
-  | succ i =>
-    rw [Formalism.L2.Col.twSt]
-    by_cases h1 : i + 1 ≤ m2
-    · rw [if_pos h1]
-      exact fun _ => dif_neg fun h => (@Finset.mem_sdiff _ (_) _ _ _).1 h |>.2 hP
-    · rw [if_neg h1]
-      by_cases h2 : i + 1 = m2 + 1
-      · rw [if_pos h2]
-        exact fun _ => rfl
-      · rw [if_neg h2]
-        exact fun al => al.elim
+  apply _root_.Formalism.L2.Col.twSt_h_g <;> assumption
 
 section World
 open Formalism.L2.Col

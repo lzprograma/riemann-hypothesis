@@ -146,8 +146,8 @@ theorem prod_exOf_flatWt (hq : Dw.q = 0) (τ : Psi H) {G : Type} [CommGroup G] (
     refine (wtOf_big (flatWt Dw τ) 0 ⟨ρ, hρ⟩ i (by simpa [Datum.mult, hρ] using hi)).trans ?_
     simp only [flatWt, parWt, sub_zero]
     by_cases h1 : ρ = τ.1
-    · rw [if_pos h1, if_pos (Subtype.ext h1)]
-    · rw [if_neg h1, if_neg fun h2 => h1 (congrArg Subtype.val h2)]
+    · rw [ite_eq_left h1, ite_eq_left (Subtype.ext h1)]
+    · rw [ite_eq_right h1, ite_eq_right fun h2 => h1 (congrArg Subtype.val h2)]
   have h0 : exOf Dw (flatWt Dw τ) 0 none = 0 := rfl
   rw [Fintype.prod_option, h0, zpow_zero, one_mul, Fintype.prod_sigma, Finset.prod_eq_single τ.1
     (fun ρ _ hρ => by simp [h, hρ]) (by simp)]

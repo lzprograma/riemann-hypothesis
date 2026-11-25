@@ -3,55 +3,8 @@ module
 public import Mathlib.RingTheory.AdjoinRoot
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import Mathlib.RingTheory.LocalRing.ResidueField.Defs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
 public import Mathlib.RingTheory.Ideal.Quotient.Index
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Algebra.MvPolynomial.Funext
 public import Mathlib.FieldTheory.IntermediateField.Adjoin.Algebra
@@ -167,18 +120,18 @@ theorem exists_point {ι L : Type} [Fintype ι] [Field L] [Infinite L] (K : Set 
     refine Finset.sum_congr rfl fun m' _ => ?_
     by_cases hd : m'.degree = m.degree
     · by_cases hz : ∀ q ∈ K, m' q = 0
-      · rw [if_pos ⟨hd, hz⟩, if_pos hd, MvPolynomial.eval_monomial,
+      · rw [ite_eq_left ⟨hd, hz⟩, ite_eq_left hd, MvPolynomial.eval_monomial,
           Finsupp.prod_fintype _ _ (fun i => pow_zero _)]
         congr 1
         refine Finset.prod_congr rfl fun q _ => ?_
         by_cases hq : q ∈ K
         · simp [hq, hz q hq]
         · simp [hq]
-      · rw [if_neg (fun h => hz h.2), if_pos hd, map_zero]
+      · rw [ite_eq_right (fun h => hz h.2), ite_eq_left hd, map_zero]
         push Not at hz
         obtain ⟨q, hq, hq0⟩ := hz
         rw [Finset.prod_eq_zero (Finset.mem_univ q) (by simp [hq, hq0]), mul_zero]
-    · rw [if_neg (fun h => hd h.1), if_neg hd, map_zero]
+    · rw [ite_eq_right (fun h => hd h.1), ite_eq_right hd, map_zero]
   rw [aeval_C_mul_X_coeff, ← key]
   exact hxH
 
@@ -306,12 +259,12 @@ theorem exists_truncation {R L : Type} [CommRing R] [Finite R] [Field L] (ψ : R
   have hQ : X ^ d0 ∣ P - C π * A' := by
     rw [Polynomial.X_pow_dvd_iff]
     intro j hj
-    rw [Polynomial.coeff_sub, Polynomial.coeff_C_mul, hc j hj, hA'coeff, if_pos hj, sub_self]
+    rw [Polynomial.coeff_sub, Polynomial.coeff_C_mul, hc j hj, hA'coeff, ite_eq_left hj, sub_self]
   obtain ⟨V, hV⟩ := hQ
   have hV0 : V.coeff 0 = P.coeff d0 := by
     have h1 : (X ^ d0 * V).coeff d0 = V.coeff 0 := by
-      rw [Polynomial.coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self]
-    rw [← h1, ← hV, Polynomial.coeff_sub, Polynomial.coeff_C_mul, hA'coeff, if_neg (lt_irrefl d0),
+      rw [Polynomial.coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self]
+    rw [← h1, ← hV, Polynomial.coeff_sub, Polynomial.coeff_C_mul, hA'coeff, ite_eq_right (lt_irrefl d0),
       mul_zero, sub_zero]
   have hu : IsUnit (AdjoinRoot.mk (X ^ (N + 1) : R[X]) V) := by
     refine isUnit_of_map_ne_zero _ hnil' ?_
@@ -413,7 +366,7 @@ theorem exists_finite_local_ring (O : Type) [CommRing O] [IsDomain O] [IsDiscret
   choose s hs using hψsurj
   have : Nontrivial S := ψ.domain_nontrivial
   obtain ⟨a, haK, hanK⟩ : ∃ a : ι → S, (∀ q ∈ K, a q = 0) ∧ (∀ q ∉ K, a q = s q) :=
-    ⟨fun q => if q ∈ K then 0 else s q, fun q hq => if_pos hq, fun q hq => if_neg hq⟩
+    ⟨fun q => if q ∈ K then 0 else s q, fun q hq => ite_eq_left hq, fun q hq => ite_eq_right hq⟩
   have hψa : ∀ q, ψ (a q) = b q := by
     intro q
     by_cases hq : q ∈ K

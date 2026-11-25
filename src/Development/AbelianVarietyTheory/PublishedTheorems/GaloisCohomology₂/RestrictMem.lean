@@ -55,7 +55,6 @@ import ReciprocityTheory.GaloisValuations.GlobalA
 
 noncomputable section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial GlobalTheory.WeilDeligne GlobalTheory.LocGL GlobalTheory.LocLanglands GlobalTheory.GLq
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.Published.DepthZeroTypeModel
 open GlobalTheory.SerSys.TameGen GlobalTheory.Published.DepthZeroModel

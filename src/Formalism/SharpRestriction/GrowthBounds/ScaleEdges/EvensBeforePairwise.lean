@@ -2,43 +2,7 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.FramesOf
 public import Formalism.SharpRestriction.GrowthBounds.SourceCleaning
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -50,15 +14,13 @@ open Formalism.MainNotions.G Formalism.MainNotions.SourceCleaning Formalism.Main
 
 theorem getElem_ge_of_many (D : List ℤ) (hD : D.Pairwise (· > ·)) (T : Finset ℤ) (b : ℤ)
     (hT : ∀ z ∈ T, z ∈ D ∧ b ≤ z) (l : ℕ) (hl : l < T.card) (hlen : l < D.length) : b ≤ D[l] := by
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have hsub : T ⊆ (D.take l).toFinset := by
     intro z hz
     obtain ⟨hzD, hbz⟩ := hT z hz
     obtain ⟨i, hi, rfl⟩ := List.getElem_of_mem hzD
     have hil : i < l := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       rcases h.lt_or_eq with h | h
       · have := List.pairwise_iff_getElem.1 hD l i hlen hi h
         linarith
@@ -79,14 +41,8 @@ variable {n' r : ℕ} [NeZero n']
 
 theorem fr_lt {F : Frames n' r} {L₁ N₁ : ℕ} (hV : F.Valid L₁ N₁) (j : ℤ) :
     ∀ k i, i < k → k < r → F.fr j i < F.fr j k := by
-  intro k i hik hk
-  induction k with
-  | zero => omega
-  | succ k ih =>
-    rcases Nat.lt_succ_iff_lt_or_eq.1 hik with h | h
-    · exact lt_trans (ih h (by omega)) (hV.2.2.1 j k hk)
-    · subst h
-      exact hV.2.2.1 j i hk
+  intros
+  apply Formalism.MainNotions.G.WittFrameLocaliserOrders.frame_entries_strictMono <;> assumption
 
 theorem seg_of {F : Frames n' r} {L₁ N₁ : ℕ} (hV : F.Valid L₁ N₁) (hr : 1 ≤ r) (s : ℤ) :
     ∃ j : ℤ, F.fr (j - 1) (r - 1) < s ∧ s ≤ F.fr j (r - 1) := by
@@ -123,14 +79,12 @@ theorem seg_of {F : Frames n' r} {L₁ N₁ : ℕ} (hV : F.Valid L₁ N₁) (hr 
   have hB : ∃ b : ℤ, ∀ j : ℤ, s ≤ F.fr j (r - 1) → b ≤ j := by
     refine ⟨-(((F.fr 0 (r - 1) - s + 1).toNat : ℤ) * F.J), fun j hj => ?_⟩
     have h1 := hdown (F.fr 0 (r - 1) - s + 1).toNat
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have h2 : F.fr j (r - 1) < F.fr (-(((F.fr 0 (r - 1) - s + 1).toNat : ℤ) * F.J)) (r - 1) := hmono hlt
     omega
   obtain ⟨j, hj, hmin⟩ := Int.exists_least_of_bdd hB hP
   refine ⟨j, ?_, hj⟩
-  by_contra h
-  push_neg at h
+  by_contra! h
   have := hmin (j - 1) h
   omega
 

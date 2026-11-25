@@ -43,8 +43,8 @@ theorem Jm_comm_zM {a b : Fin n} (hab : ε a = ε b) (c : ℂ) : Jm ε * zM a b 
   · have hz : zM a b c i j = 0 := by
       unfold zM
       simp only [Matrix.sub_apply, Matrix.single_apply]
-      push_neg at hij
-      rw [if_neg, if_neg, sub_zero]
+      push Not at hij
+      rw [ite_eq_right, ite_eq_right, sub_zero]
       · exact fun h => hij.2 h.1.symm h.2.symm
       · exact fun h => hij.1 h.1.symm h.2.symm
     rw [hz, mul_zero, zero_mul]

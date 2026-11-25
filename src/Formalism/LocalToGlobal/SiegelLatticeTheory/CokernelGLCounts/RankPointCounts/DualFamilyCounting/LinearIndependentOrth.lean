@@ -67,8 +67,8 @@ theorem family_top_holds : FamTop := by
         Submodule.span K (Set.range (glueFam K 𝔭 b a π w τ)) := Submodule.subset_span ⟨Sum.inl i, rfl⟩
     simp only [glueFam, Sum.elim_inl] at hg'
     by_cases hi : vF 𝔭 (a i) = 0
-    · rwa [if_pos hi] at hg'
-    · rw [if_neg hi] at hg'
+    · rwa [ite_eq_left hi] at hg'
+    · rw [ite_eq_right hi] at hg'
       have h0 : (algebraMap F K (π : F))⁻¹ ^ vF 𝔭 (a i) ≠ 0 := by
         apply pow_ne_zero; apply inv_ne_zero; rw [← jι_eq']; exact jι_ne_zero hu.ne_zero
       have h1 := (Submodule.smul_mem_iff _ h0).1 hg'

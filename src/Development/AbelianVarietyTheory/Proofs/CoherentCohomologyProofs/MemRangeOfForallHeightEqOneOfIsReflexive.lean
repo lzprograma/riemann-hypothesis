@@ -478,21 +478,6 @@ theorem mem_primeLocalSubalgebra_iff_heightOneOrd_vw_nonneg {x : K} (hx : x ≠ 
   obtain ⟨y, rfl⟩ := IsDiscreteValuationRing.exists_lift_of_le_one h1
   exact y.2
 
-theorem heightOneOrd_vw_algebraMap_pos_iff {a : A} (ha : a ≠ 0) :
-    0 < heightOneOrd_vw p hp (algebraMap A K a) ↔ a ∈ p := by
-  have ha' : algebraMap A K a ≠ 0 := IsFractionRing.to_map_eq_zero_iff.not.mpr ha
-  refine ⟨fun h => by_contra fun hn => h.ne' (heightOneOrd_vw_algebraMap_of_notMem p hp hn),
-    fun hap => lt_of_not_ge fun h => ?_⟩
-  have h1 : (algebraMap A K a)⁻¹ ∈ primeLocalSubalgebra K p := by
-    rw [mem_primeLocalSubalgebra_iff_heightOneOrd_vw_nonneg p hp (inv_ne_zero ha'),
-      heightOneOrd_vw_inv]
-    omega
-  obtain ⟨s, hs, c, e⟩ := (mem_primeLocalSubalgebra_iff p _).mp h1
-  have : s = c * a := by
-    apply IsFractionRing.injective A K
-    rw [map_mul, e, Algebra.smul_def, inv_mul_cancel_right₀ ha']
-  exact hs (this ▸ p.mul_mem_left c hap)
-
 end Ord
 
 theorem mem_range_algebraMap_iff_heightOneOrd_vw_nonneg {x : K} (hx : x ≠ 0) :

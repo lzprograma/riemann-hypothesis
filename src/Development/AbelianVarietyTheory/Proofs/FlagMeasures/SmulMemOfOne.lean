@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLocalizedModuleSubtype
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AdaptSelf
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIntegerAddStarEqOneOfIsCMUnram
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagFramesSameGradedDefinitePartLatticeEq
@@ -143,16 +144,7 @@ section Form
 variable {K V : Type} [Field K] [StarRing K] [AddCommGroup V] [Module K V] {H : HermSpace K V} {r : ℕ}
 
 theorem exists_rep [FiniteDimensional K V] (H : HermSpace K V) (f : V →ₗ[K] K) : ∃ y, ∀ x, H.B x y = f x := by
-  have h1 : (LinearMap.range H.B.flip).dualCoannihilator = ⊥ := by
-    rw [eq_bot_iff]
-    intro x hx
-    rw [Submodule.mem_dualCoannihilator] at hx
-    exact H.nondeg x fun y => hx _ ⟨y, rfl⟩
-  have h2 := Subspace.dualCoannihilator_dualAnnihilator_eq (W := LinearMap.range H.B.flip)
-  rw [h1, Submodule.dualAnnihilator_bot] at h2
-  have h3 : f ∈ LinearMap.range H.B.flip := h2 ▸ Submodule.mem_top
-  obtain ⟨y, hy⟩ := h3
-  exact ⟨y, fun x => by rw [← hy]; rfl⟩
+  apply _root_.GlobalTheory.UnimodQuot.exists_rep <;> assumption
 
 theorem swap_zero {x y : V} (h : H.B x y = 0) : H.B y x = 0 := by rw [← H.herm, h, star_zero]
 

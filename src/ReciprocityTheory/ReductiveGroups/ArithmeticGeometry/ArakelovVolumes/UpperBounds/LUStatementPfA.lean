@@ -50,7 +50,7 @@ theorem row_expand (N M : Matrix (Fin n) (Fin n) ℂ) (i j : Fin n)
 theorem Lm_up (M : Matrix (Fin n) (Fin n) ℂ) (i k : Fin n) (h : i < k) : Lm M i k = 0 := by
   simp only [Lm, Matrix.of_apply]
   have h' : ¬ ((k : ℕ) < i) := by rw [Fin.lt_iff_val_lt_val] at h; omega
-  rw [dite_eq_right h', if_neg (ne_of_gt h)]
+  rw [dite_eq_right h', ite_eq_right (ne_of_gt h)]
 
 theorem Lm_diag (M : Matrix (Fin n) (Fin n) ℂ) (i : Fin n) : Lm M i i = 1 := by
   simp [Lm]

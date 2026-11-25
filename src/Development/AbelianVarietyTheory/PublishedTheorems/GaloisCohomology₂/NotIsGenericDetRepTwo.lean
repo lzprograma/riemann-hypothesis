@@ -70,13 +70,6 @@ namespace GlobalTheory.Published
 
 open GlobalTheory.Whittaker
 
-def JacquetShalikaLocalBound : Prop :=
-  ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (ψ : AddChar k Circle), Continuous ψ → ψ ≠ 1 →
-    ∀ (n : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin n) k) V)
-      (α : Fin n → ℂˣ), HasSatake π α → IsUnitarisable π → IsGeneric ψ π →
-      ∀ i, (resCard k : ℝ) ^ (-(1 / 2) : ℝ) < ‖(α i : ℂ)‖ ∧ ‖(α i : ℂ)‖ < (resCard k : ℝ) ^ (1 / 2 : ℝ)
-
 namespace JacquetShalikaLocalBound
 
 variable (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]

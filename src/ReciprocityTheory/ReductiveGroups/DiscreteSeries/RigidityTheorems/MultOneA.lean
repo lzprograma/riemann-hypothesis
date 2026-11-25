@@ -28,9 +28,9 @@ theorem matrixAction_smul {M : Type*} [AddCommGroup M] [Module ℂ M] (E : Fin n
 theorem matrixAction_single {M : Type*} [AddCommGroup M] [Module ℂ M] (E : Fin n → Fin n → Module.End ℂ M)
     (a b : Fin n) : actM E (Matrix.single a b (1 : ℂ)) = E a b := by
   simp only [actM, Matrix.single_apply, ite_smul, one_smul, zero_smul]
-  rw [Finset.sum_eq_single a (fun x _ hx => Finset.sum_eq_zero (fun y _ => if_neg (fun h => hx h.1.symm)))
+  rw [Finset.sum_eq_single a (fun x _ hx => Finset.sum_eq_zero (fun y _ => ite_eq_right (fun h => hx h.1.symm)))
     (by simp)]
-  rw [Finset.sum_eq_single b (fun y _ hy => if_neg (fun h => hy h.2.symm)) (by simp)]
+  rw [Finset.sum_eq_single b (fun y _ hy => ite_eq_right (fun h => hy h.2.symm)) (by simp)]
   simp
 
 theorem signMatrix_conjTranspose (ε : Fin n → Bool) : (Jm ε)ᴴ = Jm ε := by

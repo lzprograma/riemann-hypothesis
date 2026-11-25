@@ -169,7 +169,6 @@ theorem exists_schwartz_cexp_neg_form : ∀ (V : Type) [NormedAddCommGroup V] [N
     obtain ⟨C, hC⟩ := _root_.GlobalTheory.PolynomialGaussianBounded.poly_mul_gaussian_bounded c hc (k + 2 * n)
     refine ⟨n ! * (2 * (‖B‖ + 1)) ^ n * C, fun x => ?_⟩
     have hx0 := norm_nonneg x
-    have hB0 := norm_nonneg B
     have hfb := GlobalTheory.GaussExpSeries.norm_iteratedFDeriv_gauss_le B c hB n x
     calc ‖x‖ ^ k * ‖iteratedFDeriv ℝ n (fun y : V => Complex.exp (B y y)) x‖
         ≤ (1 + ‖x‖) ^ k * (n ! * Real.exp (-(c * ‖x‖ ^ 2)) * (2 * (‖B‖ + 1) * (1 + ‖x‖) ^ 2) ^ n) := by

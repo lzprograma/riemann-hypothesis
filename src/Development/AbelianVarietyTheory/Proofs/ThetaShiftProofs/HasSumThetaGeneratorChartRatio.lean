@@ -398,7 +398,7 @@ theorem cut_complex (hT : Out.SecTwistSt) {z : Sp ℂ ⟶ Xo.XF c} {x : Sp ℂ �
   have hpt' : pt ≫ (fst (Over.mk x) Xo.univ.t.G).left = 𝟙 _ := hpt
   have hU : ⊤ ≤ pt ⁻¹ᵁ (PPx x).U (fun _ => j₀) := by
     by_contra h
-    exact hne (dif_neg h)
+    exact hne (dite_eq_right h)
   obtain ⟨f, e₁, e₂⟩ := exists_lift' (Y := Y) z hx pt
   have e₃ : f ≫ Y.oF.t.G.hom = z := by rw [e₂, reassoc_of% hpt']
   let p : Sp ℂ := IsLocalRing.closedPoint ℂ
@@ -452,7 +452,7 @@ theorem const_eq {g : ℕ} {D₀ : Out.DegPre ℂ} {e : (Fin g → ℂ) → (Sp 
     filter_upwards [hn] with u hu using (hρ _ u hu).trans (div_eq_mul_inv _ _)
   have hU : ⊤ ≤ e z₀ ⁻¹ᵁ D₀.P.L.U j := by
     by_contra h
-    exact hne (dif_neg h)
+    exact hne (dite_eq_right h)
   have hn := (op j).mem_nhds hU
   have cv : ContinuousAt (fun z => valAt' (e z) (D₀.P.L.U j) (th.f j)) z₀ :=
     ((he _ (th.f j)).2.differentiableAt (by simpa using hn)).continuousAt
@@ -612,8 +612,8 @@ theorem hasSum_generator_ratio : Out.Laws → Out.Laws2 → ∀ (E : Type) [Fiel
     ⟨ju, fun h0 => hu (by
       rw [h0]
       by_cases h : ⊤ ≤ (show Sp ℂ ⟶ _ from (Ha.ex₀ z₀).b.left) ⁻¹ᵁ a.D₀.P.L.U ju
-      · exact (dif_pos h).trans ((congrArg _ (map_zero _)).trans (map_zero _))
-      · exact dif_neg h)⟩
+      · exact (dite_eq_left h).trans ((congrArg _ (map_zero _)).trans (map_zero _))
+      · exact dite_eq_right h)⟩
     hexp hpull Θ.sympl Θ.ker Θ.per Θ.half₁ Θ.half₂ hw₂ h₁ h₀ ⟨_, fr₀, hw0, hfr₀⟩
   obtain rfl : κ = Θ.κ := const_eq Ha.hol_b (onB _ hw0) (Θ.onB _ hw0) z₀ ju hu
   obtain ⟨T', hT'⟩ := hmain V s₀ r.val hV hgen.1 hr

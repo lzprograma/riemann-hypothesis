@@ -12,8 +12,6 @@ open scoped TensorProduct
 
 namespace Formalism.IndefR.Fin
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.IndefR.Datum
 
 def TwoSplits (D : D7) : Prop :=

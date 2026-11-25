@@ -49,7 +49,7 @@ theorem coset_sum_eq (J : Subgroup G) (hJ : ∀ h, ι h ∈ J ↔ h ∈ K) (d : 
     intro hc
     obtain ⟨x, hx, rfl⟩ : ∃ x ∈ D, (x : G ⧸ J) = c := by
       by_contra h
-      exact hc (dif_neg h)
+      exact hc (dite_eq_right h)
     obtain ⟨h, -, rfl⟩ := (hD _).1 hx
     exact ⟨(h : H ⧸ K), (heq _ _).2 (QuotientGroup.eq.1 (QuotientGroup.out_eq' _))⟩
 

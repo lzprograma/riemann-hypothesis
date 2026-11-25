@@ -131,8 +131,6 @@ private theorem ent_inf {n : ℕ} (w : InfinitePlace K) (x : AdelicGLn.AdelicGL 
 private theorem ent_fin {n : ℕ} (v : Pl K) (x : AdelicGLn.AdelicGL K n) (i j) :
     finEval v (x.val i j) = (finAt v x).val i j := rfl
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 private theorem lev_fst (w : Pl K) (x : PW w) (i j : Fin 2) :
     (lev₂ w x).1.val i j = x.1.val (finSumFinEquiv (Sum.inl i)) (finSumFinEquiv (Sum.inl j)) := rfl
 

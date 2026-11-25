@@ -134,7 +134,7 @@ private lemma leading_polynomial_eq_zero_iff_lt_weightedOrder {k : Type} [Field 
     rw [Polynomial.finsetSum_coeff, Finset.sum_eq_single e]
     · simp
     · intro e' he' hne
-      rw [Polynomial.coeff_C_mul_X_pow, if_neg]
+      rw [Polynomial.coeff_C_mul_X_pow, ite_eq_right]
       intro h1
       apply hne
       have w1 := (hS e').1 he'
@@ -150,8 +150,7 @@ private lemma leading_polynomial_eq_zero_iff_lt_weightedOrder {k : Type} [Field 
     · intro h; exact absurd he h
   constructor
   · intro h0
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have heq : MvPowerSeries.weightedOrder (![m, n] : Fin 2 → ℕ) f = D := le_antisymm hlt hD
     obtain ⟨e, hne, hwe⟩ := MvPowerSeries.exists_coeff_ne_zero_and_weightedOrder
       (![m, n] : Fin 2 → ℕ) (f := f) (by rw [heq]; rfl)
@@ -185,9 +184,9 @@ private lemma coeff_pow_mul_pow_of_le_order {k : Type} [Field k] {m n : ℕ} {z 
   have hprod : (X ^ m * z') ^ a * (X ^ n * w') ^ b = X ^ (m * a + n * b) * (z' ^ a * w' ^ b) := by
     rw [mul_pow, mul_pow, ← pow_mul, ← pow_mul, pow_add]; ring
   rw [hprod]
-  refine ⟨fun j hj => by rw [coeff_X_pow_mul', if_neg (by omega)], ?_⟩
-  rw [coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self, coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self,
-    coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self, coeff_zero_eq_constantCoeff, map_mul, map_pow,
+  refine ⟨fun j hj => by rw [coeff_X_pow_mul', ite_eq_right (by omega)], ?_⟩
+  rw [coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self, coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self,
+    coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self, coeff_zero_eq_constantCoeff, map_mul, map_pow,
     map_pow]
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry in
@@ -290,7 +289,7 @@ theorem _root_.GlobalTheory.SS.exists_polynomial_leading_quotient_subst :
         coeff_subst_eq_zero_of_lt hz hw hsub hf hj
       refine ⟨g, hg, ?_⟩
       have := coeff_subst_eq_pow_mul_eval_leading hz hw hsub hzs hwt hf S hS
-      rw [hg, PowerSeries.coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self,
+      rw [hg, PowerSeries.coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self,
         PowerSeries.coeff_zero_eq_constantCoeff] at this
       exact this
     obtain ⟨gd, hgd, hgd0⟩ := factor d hDd
@@ -770,7 +769,7 @@ def sig (z : PowerSeries k) : FractionRing (PowerSeries k) →ₐ[k] FractionRin
 
 theorem sig_apply {z : PowerSeries k} (h : PowerSeries.constantCoeff z = 0) (h0 : z ≠ 0) (x : PowerSeries k) :
     sig z (algebraMap _ _ x) = toK k (x.subst z) := by
-  rw [sig, dif_pos ⟨h, h0⟩]
+  rw [sig, dite_eq_left ⟨h, h0⟩]
   exact (exists_sig ⟨h, h0⟩).choose_spec x
 
 section Rel
@@ -963,7 +962,7 @@ theorem TwoVar.shear (hc : IsChart G j ε f) (ht : TwoVar j f a h d) (hd : (MvPo
   obtain ⟨χ, h1, h2⟩ := ht.rel hc z0 (by rwa [map_sub, z0, sub_zero] at w0)
     (ne_zero_of_coeff (n := m) (by rw [cz]; exact pow_ne_zero _ hs)) hw0 hD y (fun i => (hy i).1)
   have e : ∃ χ : A →ₐ[k] k, ∀ i, χ (f i) * Pd.eval t = (P i).eval t := ⟨χ, fun i => by rw [h1, (hy i).2]⟩
-  simp only [dif_pos e]
+  simp only [dite_eq_left e]
   have : e.choose = χ := hc.hom_ext fun i =>
     mul_right_cancel₀ hp (by rw [e.choose_spec i, h1, (hy i).2])
   exact ⟨e.choose_spec, by rwa [this]⟩
@@ -1104,10 +1103,9 @@ theorem infinite_torsion_or_cocharacter : ∀ (k : Type) [Field k] [IsAlgClosed 
   refine (dichotomy_alg (a := a') p hG ?_).imp_left fun (hI : Infinite {x : (algOver k k ⟶ G) // x ^ p = 1}) => ?_
   · rintro ⟨b, hb⟩
     exact hna ⟨b.left, congrArg (fun x => x.left) hb⟩
-  · let e : 𝟙_ (Over (Sp k)) ≅ algOver k k := Over.isoMk (Iso.refl _) (by
-      change 𝟙 _ ≫ spMap (RingHom.id k) = 𝟙 _
-      rw [Category.id_comp]
-      exact Spec.map_id _)
+  · -- `selfIso` is built from `Iso.refl (Sp k)`; with `Iso.refl _` here the kernel is slow to
+    -- identify the underlying schemes of `𝟙_ (Over (Sp k))` and `algOver k k`.
+    let e : 𝟙_ (Over (Sp k)) ≅ algOver k k := (selfIso k).symm
     refine @Infinite.of_injective _ _ hI (fun x : {x : (algOver k k ⟶ G) // x ^ p = 1} =>
       (⟨e.hom ≫ x.1, by rw [← MonObj.comp_pow, x.2, MonObj.comp_one]⟩ : {x : (𝟙_ (Over (Sp k)) ⟶ G) // x ^ p = 1})) ?_
     intro x y hxy

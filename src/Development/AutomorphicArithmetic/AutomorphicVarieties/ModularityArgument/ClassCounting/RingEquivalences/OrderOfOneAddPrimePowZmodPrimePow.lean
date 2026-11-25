@@ -175,18 +175,6 @@ section -- clump:auto
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum
 
-namespace UpperTheory.V.Kum
-
-section
-
-variable {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω] (l : ℕ) [Fact l.Prime]
-
-variable [IsAlgClosure F Ω] {R M : Type} [CommRing R] [AddCommGroup M] [Module R M]
-
-end
-
-end UpperTheory.V.Kum
-
 private theorem cycZ_eq_of_intertwined {F Ω : Type} [Field F] [Field Ω] [Algebra F Ω] (l : ℕ) [Fact l.Prime]
     (σ : Ω ≃+* Ω) (u v : G F Ω) (h : ∀ x, v (σ x) = σ (u x)) : cycZ F Ω l v = cycZ F Ω l u := by
   have key : MulSemiringAction.toRingAut (G F Ω) Ω v * σ = σ * MulSemiringAction.toRingAut (G F Ω) Ω u := by
@@ -755,7 +743,7 @@ theorem procyc_of_top (L Ω : Type) [Field L] [NumberField L] [Field Ω] [Algebr
   · refine hM.2.2.2.2.2 (Or.inr (hM.2.2.1.2 ?_))
     have hc : c ≤ Tower.cZero l L := (hM.1 c).1 h.2.2.1
     have hq : qExp l ≤ c := by
-      unfold qExp; rw [if_pos h2]; exact h.2.1 h2
+      unfold qExp; rw [ite_eq_left h2]; exact h.2.1 h2
     omega
   · exact Or.inl h2
 

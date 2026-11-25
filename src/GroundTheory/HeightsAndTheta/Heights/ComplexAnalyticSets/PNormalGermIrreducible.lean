@@ -79,9 +79,9 @@ theorem NormalGermIrreducible.proof (hreg : RegularLocusIdentity.Statement)
     refine ⟨V, hVo, hzV, ?_⟩
     rcases hcase with h0 | h1
     · refine ⟨fun _ => 0, differentiableOn_const _, fun u hu => ?_⟩
-      simp only [hφ, if_pos (h0 u ⟨hu.1.1.1, hu.2⟩)]
+      simp only [hφ, ite_eq_left (h0 u ⟨hu.1.1.1, hu.2⟩)]
     · refine ⟨fun _ => 1, differentiableOn_const _, fun u hu => ?_⟩
-      simp only [hφ, if_neg (h1 u ⟨hu.1.1.1, hu.2⟩).1]
+      simp only [hφ, ite_eq_right (h1 u ⟨hu.1.1.1, hu.2⟩).1]
   have hφb : Bornology.IsBounded (φ '' S) := by
     refine ((Set.finite_singleton (1 : ℂ)).insert 0).isBounded.subset ?_
     rintro _ ⟨z, -, rfl⟩
@@ -113,7 +113,7 @@ theorem NormalGermIrreducible.proof (hreg : RegularLocusIdentity.Statement)
     have hEy : E y := by
       by_contra hnE
       have h1 := hφN y hy hhy
-      simp only [hφ, if_neg hnE] at h1
+      simp only [hφ, ite_eq_right hnE] at h1
       have : ‖(1 : ℂ)‖ < 1 := by
         calc ‖(1 : ℂ)‖ = ‖(1 - F w) + F w‖ := by ring_nf
           _ ≤ ‖1 - F w‖ + ‖F w‖ := norm_add_le _ _
@@ -126,7 +126,7 @@ theorem NormalGermIrreducible.proof (hreg : RegularLocusIdentity.Statement)
     have hnE : ¬ E y := by
       intro hEy
       have h1 := hφN y hy hhy
-      simp only [hφ, if_pos hEy, zero_sub, norm_neg] at h1
+      simp only [hφ, ite_eq_left hEy, zero_sub, norm_neg] at h1
       exact hc h1
     obtain ⟨V', -, hyV', -, hcase⟩ := key y ⟨hy.1, hVU hy.2.1⟩ hhy
     rcases hcase with h0 | h1

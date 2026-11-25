@@ -53,7 +53,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct Kronecker ComplexOrder
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.OneMapRef.RealMove
 
@@ -243,7 +242,7 @@ theorem exists_root {θ : InfFam D} (hθ : IsInfFam θ) (V : HSp D) (hV : ∀ τ
     refine Finset.prod_congr rfl fun τ _ => ?_
     obtain ⟨n, hn, -, h⟩ := hc τ
     have e : n = 2 * c τ := by exact_mod_cast hn
-    rw [h θ hθ (x τ) (hx1 τ) (fun τ' h' => by rw [hx2, if_neg h']), hx2, if_pos rfl, hw2, e, ← hw1, _root_.zpow_mul]
+    rw [h θ hθ (x τ) (hx1 τ) (fun τ' h' => by rw [hx2, ite_eq_right h']), hx2, ite_eq_left rfl, hw2, e, ← hw1, _root_.zpow_mul]
     simp
 
 end GlobalTheory.OneMapRef.RealMove

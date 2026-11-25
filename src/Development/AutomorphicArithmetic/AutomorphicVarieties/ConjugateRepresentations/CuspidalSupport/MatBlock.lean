@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.UpperTriangularEqUnipotentMulLevi
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -61,35 +62,11 @@ private theorem cn_ne {r s : ℕ} (i : Fin r) (j : Fin s) : Fin.castAdd s i ≠ 
 
 private theorem block_embedding_first_val {R : Type} [CommRing R] {r s : ℕ} (m : GL (Fin r) R) :
     (emb (e1 r s) m).val = Matrix.reindex finSumFinEquiv finSumFinEquiv (Matrix.fromBlocks m.val 0 0 1) := by
-  ext i j
-  rw [coe_emb, Matrix.add_apply]
-  refine Fin.addCases (fun i => ?_) (fun i => ?_) i <;> refine Fin.addCases (fun j => ?_) (fun j => ?_) j
-  · have := matrixExtendByZero_apply (e1 r s) (m.val - 1) i j
-    simp only [orderedCechToCatCochainsOne_apply_valueAtSubset] at this
-    rw [this]
-    simp [Matrix.one_apply]
-  · rw [matrixExtendByZero_apply_of_outside_col _ _ _ fun k => (cn_ne k j).symm]
-    simp [Matrix.one_apply_ne (cn_ne i j)]
-  · rw [extendByZero_apply_eq_zero_of_row_not_mem _ _ fun k => (cn_ne k i).symm]
-    simp [Matrix.one_apply_ne (cn_ne j i).symm]
-  · rw [extendByZero_apply_eq_zero_of_row_not_mem _ _ fun k => (cn_ne k i).symm]
-    simp [Matrix.one_apply]
+  apply _root_.block_embedding_first_val <;> assumption
 
 private theorem block_embedding_second_val {R : Type} [CommRing R] {r s : ℕ} (m : GL (Fin s) R) :
     (emb (e2 r s) m).val = Matrix.reindex finSumFinEquiv finSumFinEquiv (Matrix.fromBlocks 1 0 0 m.val) := by
-  ext i j
-  rw [coe_emb, Matrix.add_apply]
-  refine Fin.addCases (fun i => ?_) (fun i => ?_) i <;> refine Fin.addCases (fun j => ?_) (fun j => ?_) j
-  · rw [extendByZero_apply_eq_zero_of_row_not_mem _ _ fun k => (cn_ne i k)]
-    simp [Matrix.one_apply]
-  · rw [extendByZero_apply_eq_zero_of_row_not_mem _ _ fun k => (cn_ne i k)]
-    simp [Matrix.one_apply_ne (cn_ne i j)]
-  · rw [matrixExtendByZero_apply_of_outside_col _ _ _ fun k => (cn_ne j k)]
-    simp [Matrix.one_apply_ne (cn_ne j i).symm]
-  · have := matrixExtendByZero_apply (e2 r s) (m.val - 1) i j
-    simp only [alternatingToOrderedCechDegreeTwo_apply_valueAtSubset] at this
-    rw [this]
-    simp [Matrix.one_apply]
+  apply _root_.block_embedding_second_val <;> assumption
 
 private theorem unip_val {R : Type} [CommRing R] {r s : ℕ} (Y : Matrix (Fin r) (Fin s) R) :
     ∃ X : UPos (r + s) r → R,

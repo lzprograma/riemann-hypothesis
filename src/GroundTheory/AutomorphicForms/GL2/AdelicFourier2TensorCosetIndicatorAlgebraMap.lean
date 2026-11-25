@@ -113,78 +113,21 @@ theorem finiteTensor2_cosetIndicator_apply (I : (FractionalIdeal (𝓞 K)⁰ K)�
 
 theorem exists_forall_add_eq_of_mem_finiteSchwartzBruhat2 {f : (Fin 2 → 𝔸ᶠ[K]) → ℂ}
     (hf : f ∈ finiteSchwartzBruhat2 K) :
-    ∃ I : (FractionalIdeal (𝓞 K)⁰ K)ˣ, ∀ x, ∀ h ∈ idealFiniteAdeles2 I, f (x + h) = f x := by
-  have hloc : ∀ x : Fin 2 → 𝔸ᶠ[K], ∃ J : (FractionalIdeal (𝓞 K)⁰ K)ˣ,
-      ∀ h ∈ idealFiniteAdeles2 J, f (x + h) = f x := by
-    intro x
-    have h1 : ∀ᶠ h in 𝓝 (0 : Fin 2 → 𝔸ᶠ[K]), f (x + h) = f x :=
-      ((continuous_const_add x).tendsto' 0 x (add_zero x)).eventually (hf.1.eventually_eq x)
-    obtain ⟨J, hJ⟩ := exists_idealFiniteAdeles2_subset h1
-    exact ⟨J, fun h hh ↦ hJ hh⟩
-  choose J hJ using hloc
-  obtain ⟨t, ht⟩ := hf.2.isCompact.elim_finite_subcover
-    (fun x ↦ x +ᵥ (idealFiniteAdeles2 (J x) : Set (Fin 2 → 𝔸ᶠ[K])))
-    (fun x ↦ (isOpen_idealFiniteAdeles2 (J x)).vadd x)
-    (fun x _ ↦ Set.mem_iUnion.mpr ⟨x, by
-      rw [Set.mem_vadd_set_iff_neg_vadd_mem, vadd_eq_add, neg_add_cancel]
-      exact zero_mem _⟩)
-  have hW : (⋂ x ∈ t, (idealFiniteAdeles2 (J x) : Set (Fin 2 → 𝔸ᶠ[K]))) ∈ 𝓝 0 :=
-    (biInter_finset_mem t).mpr fun x _ ↦
-      (isOpen_idealFiniteAdeles2 (J x)).mem_nhds (zero_mem _)
-  obtain ⟨I, hI⟩ := exists_idealFiniteAdeles2_subset hW
-  have hmain : ∀ x ∈ tsupport f, ∀ h ∈ idealFiniteAdeles2 I, f (x + h) = f x := by
-    intro x hx h hh
-    obtain ⟨x₀, hx₀t, hxx₀⟩ := Set.mem_iUnion₂.mp (ht hx)
-    rw [Set.mem_vadd_set_iff_neg_vadd_mem, vadd_eq_add, neg_add_eq_sub, SetLike.mem_coe] at hxx₀
-    have hh' : h ∈ idealFiniteAdeles2 (J x₀) := Set.mem_iInter₂.mp (hI hh) x₀ hx₀t
-    have e1 := hJ x₀ (x - x₀) hxx₀
-    have e2 := hJ x₀ (x + h - x₀) (by
-      have : x + h - x₀ = (x - x₀) + h := by abel
-      rw [this]
-      exact add_mem hxx₀ hh')
-    rw [add_sub_cancel] at e1 e2
-    rw [e1, e2]
-  refine ⟨I, fun x h hh ↦ ?_⟩
-  by_cases hx : x ∈ tsupport f
-  · exact hmain x hx h hh
-  · by_cases hxh : x + h ∈ tsupport f
-    · have := hmain (x + h) hxh (-h) (neg_mem hh)
-      rw [add_neg_cancel_right] at this
-      exact this.symm
-    · rw [image_eq_zero_of_notMem_tsupport hx, image_eq_zero_of_notMem_tsupport hxh]
+    ∃ I : (FractionalIdeal (𝓞 K)⁰ K)ˣ, ∀ x, ∀ h ∈ idealFiniteAdeles2 I, f (x + h) = f x :=
+  GroundTheory.Global.exists_forall_add_eq_of_locallyConstant_compactSupport idealFiniteAdeles2
+    isOpen_idealFiniteAdeles2 exists_idealFiniteAdeles2_subset hf.1 hf.2
 
 theorem exists_eq_sum_finiteTensor2_cosetIndicator {f : (Fin 2 → 𝔸ᶠ[K]) → ℂ}
     (hf : f ∈ finiteSchwartzBruhat2 K) :
     ∃ (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) (s : Finset (Fin 2 → 𝔸ᶠ[K])),
       f = ∑ a ∈ s, f a • finiteTensor2 (fun i ↦ cosetIndicator I (a i)) := by
-  classical
   obtain ⟨I, hI⟩ := exists_forall_add_eq_of_mem_finiteSchwartzBruhat2 hf
-  let H := idealFiniteAdeles2 I
-  have : DiscreteTopology ((Fin 2 → 𝔸ᶠ[K]) ⧸ H) :=
-    QuotientAddGroup.discreteTopology (isOpen_idealFiniteAdeles2 I)
-  have hS : ((QuotientAddGroup.mk : (Fin 2 → 𝔸ᶠ[K]) → (Fin 2 → 𝔸ᶠ[K]) ⧸ H) '' tsupport f).Finite :=
-    (hf.2.isCompact.image continuous_quotient_mk').finite_of_discrete
-  have hmk : ∀ a x : Fin 2 → 𝔸ᶠ[K], x - a ∈ idealFiniteAdeles2 I ↔
-      (QuotientAddGroup.mk x : (Fin 2 → 𝔸ᶠ[K]) ⧸ H) = QuotientAddGroup.mk a := by
-    intro a x
-    rw [QuotientAddGroup.eq, ← neg_mem_iff, neg_sub, sub_eq_neg_add]
-  have hinj : Set.InjOn (fun q : (Fin 2 → 𝔸ᶠ[K]) ⧸ H ↦ q.out) ↑hS.toFinset :=
-    fun q _ q' _ h ↦ by simpa using congrArg (QuotientAddGroup.mk (s := H)) h
-  refine ⟨I, hS.toFinset.image fun q ↦ q.out, ?_⟩
-  rw [Finset.sum_image hinj]
-  funext x
-  rw [Finset.sum_apply]
-  simp only [Pi.smul_apply, smul_eq_mul, finiteTensor2_cosetIndicator_apply, mul_ite, mul_one,
-    mul_zero, hmk, QuotientAddGroup.out_eq']
-  rw [Finset.sum_ite_eq]
-  split_ifs with hx
-  · have hq := QuotientAddGroup.out_eq' (s := H) (QuotientAddGroup.mk x)
-    rw [← hmk] at hq
-    have := hI x (Quotient.out (QuotientAddGroup.mk x : (Fin 2 → 𝔸ᶠ[K]) ⧸ H) - x) hq
-    rw [add_sub_cancel] at this
-    exact this.symm
-  · exact image_eq_zero_of_notMem_tsupport fun hx' ↦ hx ((Set.Finite.mem_toFinset hS).mpr
-      ⟨x, hx', rfl⟩)
+  obtain ⟨s, hs⟩ := GroundTheory.Global.exists_eq_sum_indicator_of_forall_add_eq
+    (idealFiniteAdeles2 I) (isOpen_idealFiniteAdeles2 I) hf.2 hI
+    (fun a ↦ finiteTensor2 fun i ↦ cosetIndicator I (a i))
+    (fun a x h ↦ by simp [finiteTensor2_cosetIndicator_apply, h])
+    (fun a x h ↦ by simp [finiteTensor2_cosetIndicator_apply, h])
+  exact ⟨I, s, hs⟩
 
 theorem finiteSchwartzBruhat2_eq_span :
     finiteSchwartzBruhat2 K = Submodule.span ℂ (Set.range fun p : (FractionalIdeal (𝓞 K)⁰ K)ˣ ×
@@ -703,14 +646,14 @@ theorem finiteFourier_cosetIndicator_algebraMap {I : (FractionalIdeal (𝓞 K)�
   by_cases hη : η ∈ (traceDualIdeal K I : FractionalIdeal (𝓞 K)⁰ K)
   · have hη' : algebraMap K 𝔸ᶠ[K] η ∈ idealFiniteAdeles (traceDualIdeal K I) :=
       (algebraMap_mem_idealFiniteAdeles_iff _ η).mpr hη
-    rw [if_pos hη, Set.indicator_of_mem (SetLike.mem_coe.mpr hη'), Pi.one_apply, mul_one]
+    rw [ite_eq_left hη, Set.indicator_of_mem (SetLike.mem_coe.mpr hη'), Pi.one_apply, mul_one]
     have hb : b * algebraMap K 𝔸ᶠ[K] η = algebraMap K 𝔸ᶠ[K] c * algebraMap K 𝔸ᶠ[K] η +
         (b - algebraMap K 𝔸ᶠ[K] c) * algebraMap K 𝔸ᶠ[K] η := by ring
     rw [hb, AddChar.map_add_eq_mul, (forall_finiteAdelicChar_mul_eq_one_iff I _).mpr hη' _ hc,
       mul_one, finiteAdelicChar_algebraMap_mul, mixedTraceForm_comm K (mixedEmbedding K c)]
   · have hη' : algebraMap K 𝔸ᶠ[K] η ∉ idealFiniteAdeles (traceDualIdeal K I) :=
       fun h ↦ hη ((algebraMap_mem_idealFiniteAdeles_iff _ η).mp h)
-    rw [if_neg hη, Set.indicator_of_notMem (by simpa using hη'), mul_zero, mul_zero]
+    rw [ite_eq_right hη, Set.indicator_of_notMem (by simpa using hη'), mul_zero, mul_zero]
 
 theorem adelicFourier2_tensor_cosetIndicator_algebraMap (φ : 𝓢(Fin 2 → mixedSpace K, ℂ))
     {I : (FractionalIdeal (𝓞 K)⁰ K)ˣ} {b : Fin 2 → 𝔸ᶠ[K]} {c : Fin 2 → K}

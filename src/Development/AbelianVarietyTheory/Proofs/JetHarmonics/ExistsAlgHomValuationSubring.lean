@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsAdicCompleteOfPowLeOfPowLe
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import Mathlib.GroupTheory.Divisible
 public import Mathlib.Algebra.Category.Grp.Injective
@@ -102,7 +103,6 @@ noncomputable section
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Pdiv ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.Out
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.TorsionCharacter
 
@@ -151,23 +151,8 @@ theorem exists_algHom_valuationSubring {F : Type} [Field F] (W : ValuationSubrin
 
 theorem isAdicComplete_of_pow_le {I J : Ideal O} [IsAdicComplete I O] {a b : ℕ} (h₁ : I ^ a ≤ J) (h₂ : J ^ b ≤ I) :
     IsAdicComplete J O := by
-  letI : TopologicalSpace O := I.adicTopology
-  haveI : IsTopologicalRing O := (I.ringFilterBasis).isTopologicalRing
-  letI : UniformSpace O := IsTopologicalAddGroup.rightUniformSpace O
-  haveI : IsUniformAddGroup O := isUniformAddGroup_of_addCommGroup
-  have hI : IsAdic I := rfl
-  have hJ : IsAdic J := by
-    rw [isAdic_iff] at hI ⊢
-    refine ⟨fun n => ?_, fun s hs => ?_⟩
-    · refine AddSubgroup.isOpen_mono (H₁ := (I ^ (a * n)).toAddSubgroup) (H₂ := (J ^ n).toAddSubgroup) ?_ (hI.1 _)
-      intro x hx
-      rw [pow_mul] at hx
-      exact Ideal.pow_right_mono h₁ n hx
-    · obtain ⟨n, hn⟩ := hI.2 s hs
-      refine ⟨b * n, fun x hx => hn ?_⟩
-      rw [pow_mul] at hx
-      exact Ideal.pow_right_mono h₂ n hx
-  exact hJ.isAdicComplete_iff.2 (hI.isAdicComplete_iff.1 inferInstance)
+  intros
+  apply _root_.GlobalTheory.isAdicComplete_of_pow_le_of_pow_le <;> assumption
 
 section Val
 variable {F : Type} [Field F] (v : AddValuation F (WithTop ℚ))

@@ -7,50 +7,7 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEPairAtD
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSliceCut
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveOperatorLeL2Subspace
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.BFCell
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.DerivativeRulesA1
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.FsvMulFsvNeg
@@ -61,7 +18,6 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.SendsToAlgMulAlg
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThmPActualCptOfStepForm
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Linter.Style
 import Mathlib.Tactic.TypeStar
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SfiniteOfIsHaarOn
 
@@ -554,8 +510,8 @@ theorem rr_picC (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P.
   have hN' : ∀ b', JC.NiceCoef D ε (F' b') := by
     intro b'
     by_cases h : b' = b
-    · simp only [F', if_pos h]; exact hN
-    · simp only [F', if_neg h]; exact Formalism.FourierDecayAlt.P.JCx2.mn_nice_zero
+    · simp only [F', ite_eq_left h]; exact hN
+    · simp only [F', ite_eq_right h]; exact Formalism.FourierDecayAlt.P.JCx2.mn_nice_zero
   let x : Ix S → Mx P.k P.r → (Wq →L[ℂ] Wp) := fun b' => B.JF D (F' b')
   let Φv : Ix S → RadSp P.k P.r D.z D.z' D.π D.π' := fun b' => if b' = b then Φ else 0
   have hx : ∀ b', x b' ∈ FFl P.k P.r D.z D.z' D.π D.π' 0 (OmPlus P.k P.r D.z D.z') := fun b' =>
@@ -564,16 +520,16 @@ theorem rr_picC (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P.
       (Φv b' : Fn P.k P.r (Wq →L[ℂ] Wp)) y.1 y.2 = resG P.k P.r (Fin.last P.r) (x b') y.1 y.2 := by
     intro b' y hy
     by_cases h : b' = b
-    · simp only [Φv, x, F', if_pos h]; exact hΦ y hy
-    · simp only [Φv, x, F', if_neg h]
+    · simp only [Φv, x, F', ite_eq_left h]; exact hΦ y hy
+    · simp only [Φv, x, F', ite_eq_right h]
       simp only [resG, Formalism.FourierDecayAlt.P.JCx2.bc_JF_zero, smul_zero]
       rfl
   have key := Formalism.FourierDecayAlt.P.JCx2.rma_main D.z_mem D.z'_mem X L st (M.sgn P l0) hD.2.2.1 hD.2.2.2.1 w x Φv hx hΦv
   have hsingle : act (RRi L st 0 w) Φv a = ((RRi L st 0 w) a b).1 Φ := by
     unfold act
-    rw [Finset.sum_eq_single b (fun b' _ hb' => by simp only [Φv, if_neg hb', map_zero])
+    rw [Finset.sum_eq_single b (fun b' _ hb' => by simp only [Φv, ite_eq_right hb', map_zero])
       (fun h => absurd (Finset.mem_univ b) h)]
-    simp only [Φv, if_pos rfl]
+    simp only [Φv, ite_eq_left rfl]
   have hR := Formalism.FourierDecayAlt.P.JCx2.mn_rrop_closure Formalism.FourierDecayAlt.P.JCx2.bcGood_closed
     (Formalism.FourierDecayAlt.P.JCx2.rma_Qop P.k P.r D.z D.z' (M.sgn P l0))
     (fun Y p q => Formalism.FourierDecayAlt.P.JCx2.bcGood_tL (Bs := D) (ε := ε) (M.sgn P l0) Y p q) w
@@ -590,8 +546,8 @@ theorem rr_picC (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P.
     rw [Finset.sum_apply]
     refine Finset.sum_eq_zero fun b' _ => hS a b' (F' b') g fun hg' => ?_
     by_cases h : b' = b
-    · simp only [F', if_pos h] at hg'; exact hgG hg'
-    · simp only [F', if_neg h] at hg'; simp at hg'
+    · simp only [F', ite_eq_left h] at hg'; exact hgG hg'
+    · simp only [F', ite_eq_right h] at hg'; simp at hg'
   · intro y hy
     rw [← hsingle, key a y hy]
     have hGV : wCell P.k P.r (Fin.last _) y.1 * y.2 ∈ B.GV P.k P.r := by

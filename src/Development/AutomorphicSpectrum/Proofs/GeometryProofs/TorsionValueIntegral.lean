@@ -1,5 +1,7 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionValueUniqueBaseChange
+
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsThetaMeanSquareNorm
 public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsIsUUOver
 public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsFrameIff
@@ -31,44 +33,7 @@ public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.Exist
 import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpBijFAndExpandsFLin
 import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TwistedPrincipalPolarisationSectionsBaseChange
 public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DegenerationDataCoordsNeZeroLatticesIsomorphic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExistsRosatiGen
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBPull
@@ -76,8 +41,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRin
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ValExt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.CubePullbacks.CubePull
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
-import Mathlib.Algebra.Azumaya.Basic
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
@@ -696,42 +659,7 @@ namespace GlobalTheory.CompanionTheory.Ar.Sl.IntTors
 theorem torsVal_map {S : Scheme.{0}} {G : Over S} [GrpObj G] [IsCommMonObj G] (P : RigLB G) (s : H0 P.L 1) {F F' : Type}
     [Field F] [Field F'] (f : F →+* F') {b : Sp F ⟶ S} (y : Over.mk b ⟶ G) (y' : Over.mk (spMap f ≫ b) ⟶ G)
     (hy : y'.left = spMap f ≫ y.left) (N : ℕ) (T : F) (h : TorsVal P s y N T) : TorsVal P s y' N (f T) := by
-  obtain ⟨hN, hyN, wg, i₀, i, hg, h₀, h₁, heq⟩ := h
-  let hh : Over.mk (spMap f ≫ b) ⟶ Over.mk b := Over.homMk (spMap f) rfl
-  have eY : y' = hh ≫ y := Over.OverMorphism.ext hy
-  have hone : (1 : Over.mk (spMap f ≫ b) ⟶ G).left = spMap f ≫ (1 : Over.mk b ⟶ G).left := by
-    rw [GlobalTheory.TorsFrame.one_left, GlobalTheory.TorsFrame.one_left]
-    exact Category.assoc _ _ _
-  have a₀ : (1 : Over.mk b ⟶ G).left ≫ ((𝟙 G : G ⟶ G) ^ N).left = (1 : Over.mk b ⟶ G).left := by
-    rw [← Over.comp_left, MonObj.comp_pow, Category.comp_id, one_pow]
-  have b₀ : y.left ≫ ((𝟙 G : G ⟶ G) ^ N).left = (1 : Over.mk b ⟶ G).left := by
-    rw [← Over.comp_left, MonObj.comp_pow, Category.comp_id, hyN]
-  have mem₂ : ∀ (r : (Over.mk b).left ⟶ G.left) (p : (Over.mk b).left) (c d : P.L.ι),
-      (r ≫ ((𝟙 G : G ⟶ G) ^ N).left) p ∈ P.L.U c → r p ∈ P.L.U d →
-      r p ∈ LB.wchart P.L (![((𝟙 G : G ⟶ G) ^ N).left, 𝟙 G.left] : Fin 2 → _) ![c, d] := fun r p c d hc hd => Set.mem_iInter.2 fun k => by
-    fin_cases k
-    · exact hc
-    · exact hd
-  have mo : ∀ p, (1 : Over.mk b ⟶ G).left p ∈ P.L.U i₀ := fun p => h₀ (show p ∈ (⊤ : (Over.mk b).left.Opens) from trivial)
-  have my : ∀ p, y.left p ∈ P.L.U i := fun p => h₁ (show p ∈ (⊤ : (Over.mk b).left.Opens) from trivial)
-  have wA : ⊤ ≤ (1 : Over.mk b ⟶ G).left ⁻¹ᵁ (LB.LinComb P.L (![((𝟙 G : G ⟶ G) ^ N).left, 𝟙 G.left] : Fin 2 → _) ![1, -((N : ℤ) ^ 2)]).U ![i₀, i₀] := fun p _ =>
-    mem₂ _ p i₀ i₀ (by rw [a₀]; exact mo p) (mo p)
-  have wY : ⊤ ≤ y.left ⁻¹ᵁ (LB.LinComb P.L (![((𝟙 G : G ⟶ G) ^ N).left, 𝟙 G.left] : Fin 2 → _) ![1, -((N : ℤ) ^ 2)]).U ![i₀, i] := fun p _ =>
-    mem₂ _ p i₀ i (by rw [b₀]; exact mo p) (my p)
-  have wS : ⊤ ≤ y.left ⁻¹ᵁ (LB.LinComb P.L (K := Fin 1) (fun _ => 𝟙 G.left) (fun _ => ((1 : ℕ) : ℤ))).U (fun _ => i) := fun p _ =>
-    Set.mem_iInter.2 fun _ => my p
-  have wR : ⊤ ≤ b ⁻¹ᵁ (P.L.pull (eSec G)).U (fun _ => i₀) := fun p _ => Set.mem_iInter.2 fun _ => mo p
-  refine ⟨hN, ?_, wg, i₀, i, hg, ?_, ?_, ?_⟩
-  · rw [eY, ← MonObj.comp_pow, hyN]
-    exact Over.OverMorphism.ext hone.symm
-  · rw [hone]
-    exact fun p _ => mo (spMap f p)
-  · rw [hy]
-    exact fun p _ => my (spMap f p)
-  · rw [hone, hy, GlobalTheory.ArcExt.valF_ext f _ _ wA, GlobalTheory.ArcExt.valF_ext f _ _ wR, GlobalTheory.ArcExt.valF_ext f _ _ wS,
-      GlobalTheory.ArcExt.valF_ext f _ _ wY]
-    have := congrArg f heq
-    simpa only [map_mul, map_pow] using this
+  apply _root_.GlobalTheory.CompanionTheory.Ar.Sl.TorsExist.torsVal_map <;> assumption
 
 end GlobalTheory.CompanionTheory.Ar.Sl.IntTors
 

@@ -6,56 +6,10 @@ public import Mathlib.RingTheory.FractionalIdeal.Basic
 public import Mathlib.RingTheory.FractionalIdeal.Inverse
 public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TateUnramifiedOfTorsionUnramified
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.RingTheory.Valuation.LocalSubring
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.Invariant.Basic
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import Development.AbelianVarietyTheory.PublishedTheorems.RelativeAmpleness.RelAmpleAndKTrivIff
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -74,8 +28,7 @@ theorem main {Ω : Type} [Field Ω] (S : Type) [CommRing S] [IsDomain S] [IsDede
     [Algebra S Ω] [IsFractionRing S Ω] (A : ValuationSubring Ω)
     (hS : ∀ s : S, algebraMap S Ω s ∈ A) {x : Ω} (hx : x ∈ A) :
     ∃ s t : S, A.valuation (algebraMap S Ω s) = 1 ∧ algebraMap S Ω s * x = algebraMap S Ω t := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hSle : ∀ c : S, A.valuation (algebraMap S Ω c) ≤ 1 := fun c => (A.valuation_le_one_iff _).2 (hS c)
   let M : Submodule S Ω :=
     { carrier := {z | A.valuation z < 1}
@@ -180,7 +133,6 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open scoped CategoryTheory.Obj CategoryTheory.MonObj Pointwise
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.HTLat GlobalTheory.Published GlobalTheory.Published.AbVarRed IsLocalRing
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 
@@ -232,72 +184,6 @@ instance isPrime_primeBelow (A : ValuationSubring Ω) (hS : ∀ s : S, algebraMa
 end general
 
 section galois
-
-theorem smul_valuation_lt_one_iff {K Ω : Type} [Field K] [Field Ω] [Algebra K Ω] (g : Ω ≃ₐ[K] Ω)
-    (A : ValuationSubring Ω) (y : Ω) :
-    (g • A).valuation y < 1 ↔ A.valuation ((g⁻¹ : Ω ≃ₐ[K] Ω) y) < 1 := by
-  rw [← ValuationSubring.mem_nonunits_iff, ← ValuationSubring.mem_nonunits_iff,
-    ValuationSubring.mem_nonunits_iff_or, ValuationSubring.mem_nonunits_iff_or,
-    ValuationSubring.mem_pointwise_smul_iff_inv_smul_mem, AlgEquiv.smul_def, map_inv₀,
-    map_eq_zero_iff _ (g⁻¹ : Ω ≃ₐ[K] Ω).injective]
-
-theorem exists_smul_eq_of_isAbove : ∀ (R K : Type) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
-    [Field K] [Algebra R K] [IsFractionRing R K] (Ω : Type) [Field Ω] [Algebra K Ω] [IsGalois K Ω]
-    [FiniteDimensional K Ω] (V V' : ValuationSubring Ω), IsAbove R K V.toSubring →
-    IsAbove R K V'.toSubring → ∃ g : Ω ≃ₐ[K] Ω, g • V = V' := by
-  intro R K _ _ _ _ _ _ Ω _ _ _ _ V V' hV hV'
-  letI : Algebra R Ω := ((algebraMap K Ω).comp (algebraMap R K)).toAlgebra
-  haveI : IsScalarTower R K Ω := IsScalarTower.of_algebraMap_eq (fun _ => rfl)
-  haveI hc : SMulCommClass (Ω ≃ₐ[K] Ω) R Ω := ⟨fun g r x => by
-    rw [← IsScalarTower.algebraMap_smul K r x, ← IsScalarTower.algebraMap_smul K r (g • x)]
-    exact map_smul g _ _⟩
-  haveI : IsDedekindDomain (integralClosure R Ω) := integralClosure.isDedekindDomain R K Ω
-  haveI : IsFractionRing (integralClosure R Ω) Ω :=
-    integralClosure.isFractionRing_of_finite_extension K Ω
-  haveI : Algebra.IsInvariant R (integralClosure R Ω) (Ω ≃ₐ[K] Ω) := by
-    constructor
-    intro b hb
-    obtain ⟨k, hk⟩ := (InfiniteGalois.mem_range_algebraMap_iff_fixed (k := K) (b : Ω)).2
-      fun g => congrArg Subtype.val (hb g)
-    have hint : IsIntegral R k := by
-      have h2 : IsIntegral R (algebraMap K Ω k) := hk ▸ b.2
-      exact (isIntegral_algebraMap_iff ).1 h2
-    obtain ⟨v, hv⟩ := IsIntegrallyClosed.isIntegral_iff.1 hint
-    refine ⟨v, Subtype.ext ?_⟩
-    rw [← hk, ← hv, ← IsScalarTower.algebraMap_apply]
-    rfl
-  have key : ∀ W : ValuationSubring Ω, IsAbove R K W.toSubring → ∀ k : K,
-      (W.valuation (algebraMap K Ω k) < 1 ↔ k⁻¹ ∉ (algebraMap R K).range ∨ k = 0) := by
-    intro W hW k
-    rw [← ValuationSubring.mem_nonunits_iff, ValuationSubring.mem_nonunits_iff_or, ← map_inv₀,
-      map_eq_zero_iff _ (algebraMap K Ω).injective, ← hW]
-    exact or_comm
-  have hR : ∀ W : ValuationSubring Ω, IsAbove R K W.toSubring → ∀ r : R, algebraMap R Ω r ∈ W := by
-    intro W hW r
-    have : algebraMap R K r ∈ W.toSubring.comap (algebraMap K Ω) := by rw [hW]; exact ⟨r, rfl⟩
-    exact this
-  have hS : ∀ W : ValuationSubring Ω, IsAbove R K W.toSubring →
-      ∀ s : integralClosure R Ω, algebraMap (integralClosure R Ω) Ω s ∈ W :=
-    fun W hW s => mem_of_isIntegral W (hR W hW) s.2
-  have hunder : (primeBelow (integralClosure R Ω) V (hS V hV)).under R =
-      (primeBelow (integralClosure R Ω) V' (hS V' hV')).under R := by
-    ext r
-    rw [Ideal.under_def, Ideal.mem_comap, Ideal.mem_comap, mem_primeBelow, mem_primeBelow]
-    exact (key V hV (algebraMap R K r)).trans (key V' hV' (algebraMap R K r)).symm
-  obtain ⟨g, hg⟩ := Algebra.IsInvariant.exists_smul_of_under_eq (A := R) (B := integralClosure R Ω)
-    (G := Ω ≃ₐ[K] Ω) _ _ hunder
-  have hgS : ∀ s : integralClosure R Ω, algebraMap (integralClosure R Ω) Ω s ∈ g • V := by
-    intro s
-    rw [ValuationSubring.mem_pointwise_smul_iff_inv_smul_mem]
-    exact hS V hV (g⁻¹ • s)
-  have hmem : ∀ s : integralClosure R Ω, (g • V).valuation (algebraMap (integralClosure R Ω) Ω s) < 1 ↔
-      V'.valuation (algebraMap (integralClosure R Ω) Ω s) < 1 := by
-    intro s
-    rw [smul_valuation_lt_one_iff, ← mem_primeBelow (integralClosure R Ω) (hS V' hV'), hg,
-      Ideal.mem_pointwise_smul_iff_inv_smul_mem, mem_primeBelow]
-    rfl
-  exact ⟨g, le_antisymm (le_of_valuation_lt_one_iff (integralClosure R Ω) hgS (hS V' hV') hmem)
-    (le_of_valuation_lt_one_iff (integralClosure R Ω) (hS V' hV') hgS fun s => (hmem s).symm)⟩
 
 end galois
 

@@ -48,8 +48,6 @@ namespace GlobalTheory.Mem.Col2.TC
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.Mem.Chr Formalism.UG Formalism.L2.Forms
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 structure CarH {D : D7} (H : Formalism.L2.Herm.HermColsCh D) (F : ∀ u, FormsTiedSym D u (H.Ch u) (H.chOf u)) : Prop where
   eV : ∀ u, (F u).atT.eV = H.vT u
   fv : ∀ u v (a : 𝓞 D.host.F), H.Fv u v ((F u).atT.res v (algebraMap (𝓞 D.host.F) (𝓞 D.host.E) a)) = Ideal.Quotient.mk _ a

@@ -93,7 +93,6 @@ theorem coe_eqn (y : (Σ k, ι k) → Ω) (c c' : ∀ k, ι k) :
 end HyperplaneRegularSection
 
 
-set_option synthInstance.maxHeartbeats 400000 in
 open HyperplaneRegularSection in
 theorem HyperplaneRegularSection.proof : HyperplaneRegularSection.Statement := by
   intro K _ ι _ Ω _ _ y c e hc

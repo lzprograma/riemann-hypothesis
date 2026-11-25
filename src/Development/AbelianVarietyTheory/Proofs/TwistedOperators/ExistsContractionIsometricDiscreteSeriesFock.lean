@@ -49,7 +49,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Matrix GlobalTheory.Chain GlobalTheory.Chain.RealIt
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -149,8 +148,7 @@ theorem exists_isCoverIt : ∀ (p q r s : ℕ) (T₀ : GrpData (p * r + q * s) (
     rintro _ ⟨k, rfl⟩
     exact ⟨_, Submodule.subset_span ⟨k, rfl⟩, (hsrc _ y _).symm⟩
   · intro y hy
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     haveI := R₁.nontriv
     obtain ⟨x, hx⟩ := exists_ne (0 : R₁.U.H)
     have hz : (fun v : F.H => inner ℂ v (Tm x y)) = fun _ => 0 := by

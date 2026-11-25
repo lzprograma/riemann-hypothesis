@@ -82,7 +82,7 @@ theorem _root_.GlobalTheory.adele_idem_prime_criterion : ∀ (F E : Type) [Field
       ∃ Q, (Φ e).2 Q = 1 ∧ x ∈ Q.asIdeal) := by
     intro x hx
     rw [hint, map_mul, hΦ]
-    push_neg
+    push Not
     constructor
     · rintro ⟨Q, hQ⟩
       change 1 < Valued.v ((Φ e).2 Q * (algebraMap E (FiniteAdeleRing (𝓞 E) E) (x : E)⁻¹) Q) at hQ

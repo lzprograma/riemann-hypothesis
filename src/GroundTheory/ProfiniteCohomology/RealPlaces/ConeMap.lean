@@ -2,46 +2,6 @@ module
 
 public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology
 public import GroundTheory.ProfiniteCohomology.RealPlaces.ConeDefs
-import Mathlib.Algebra.Homology.HomologicalComplexAbelian
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -91,13 +51,6 @@ theorem degZeroShortComplex_shortExact {S : ShortComplex (ModuleCat.{u} k)} (hS 
               epi_g := (ModuleCat.epi_iff_surjective _).2 fun y =>
                 ⟨PUnit.unit, Subsingleton.elim (α := PUnit) _ y⟩ }
 
-noncomputable def prodShortComplex (S T : ShortComplex (CochainComplex (ModuleCat.{u} k) ℕ)) :
-    ShortComplex (CochainComplex (ModuleCat.{u} k) ℕ) :=
-  ShortComplex.mk (prodMapCx S.f T.f) (prodMapCx S.g T.g)
-    (HomologicalComplex.hom_ext _ _ fun n => ModuleCat.hom_ext (LinearMap.ext fun x => Prod.ext
-      (hom_apply_hom_apply_of_comp_eq (congrArg (·.f n) S.zero) x.1)
-      (hom_apply_hom_apply_of_comp_eq (congrArg (·.f n) T.zero) x.2)))
-
 private theorem shortExact_prodMapCx
     {M₁ M₂ M₃ N₁ N₂ N₃ : CochainComplex (ModuleCat.{u} k) ℕ}
     {fM : M₁ ⟶ M₂} {gM : M₂ ⟶ M₃} {zM : fM ≫ gM = 0}
@@ -125,10 +78,6 @@ private theorem shortExact_prodMapCx
       obtain ⟨y1, hy1⟩ := (ModuleCat.epi_iff_surjective _).1 h1.epi_g z.1
       obtain ⟨y2, hy2⟩ := (ModuleCat.epi_iff_surjective _).1 h2.epi_g z.2
       exact ⟨(show (prodComplex M₂ N₂).X n from (y1, y2)), Prod.ext hy1 hy2⟩
-
-theorem prodShortComplex_shortExact {S T : ShortComplex (CochainComplex (ModuleCat.{u} k) ℕ)}
-    (hS : S.ShortExact) (hT : T.ShortExact) : (prodShortComplex S T).ShortExact :=
-  shortExact_prodMapCx hS hT
 
 end Complexes
 
@@ -372,16 +321,6 @@ theorem tateCompactCohomologyMap_f_g (n : ℕ) :
     ((congrArg (HomologicalComplex.homologyMap · n)
       (tateCompactCochainsMap₁₂_₂₃ φ ψ S Sᵥ s Sᵣ sr)).trans
       (HomologicalComplex.homologyMap_zero _ _ n))
-
-theorem mapShortComplex_tateResShortComplex_f :
-    (mappingCoconeNat.mapShortComplex (tateResShortComplex φ ψ S Sᵥ s Sᵣ sr)).f =
-      tateCompactCochainsMap₁₂ φ ψ S Sᵥ s Sᵣ sr :=
-  rfl
-
-theorem mapShortComplex_tateResShortComplex_g :
-    (mappingCoconeNat.mapShortComplex (tateResShortComplex φ ψ S Sᵥ s Sᵣ sr)).g =
-      tateCompactCochainsMap₂₃ φ ψ S Sᵥ s Sᵣ sr :=
-  rfl
 
 variable {S Sᵥ Sᵣ}
 

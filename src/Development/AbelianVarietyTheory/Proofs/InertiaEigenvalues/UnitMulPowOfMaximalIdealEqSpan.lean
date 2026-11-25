@@ -110,12 +110,6 @@ open IsLocalRing GlobalTheory.Pat
 
 namespace GlobalTheory.Pat
 
-theorem unit_mul_pow_of_maximalIdeal_eq_span {S : Type} [CommRing S] [IsLocalRing S] [IsNoetherianRing S]
-    {π : S} (hm : maximalIdeal S = Ideal.span {π}) {x : S} (hx : x ≠ 0) :
-    ∃ (k : ℕ) (u : S), IsUnit u ∧ x = π ^ k * u := by
-  first
-  | (apply _root_.GlobalTheory.PowMulUnit.exists_eq_pow_mul_unit <;> assumption)
-
 theorem dvr_of_maximalIdeal_eq_span {S : Type} [CommRing S] [IsLocalRing S] [IsNoetherianRing S]
     {π : S} (hm : maximalIdeal S = Ideal.span {π}) (hreg : ∀ a : S, π * a = 0 → a = 0) :
     ∃ _ : IsDomain S, IsDiscreteValuationRing S ∧ Irreducible π := by
@@ -126,8 +120,7 @@ theorem dvr_of_maximalIdeal_eq_span {S : Type} [CommRing S] [IsLocalRing S] [IsN
     | succ k ih => intro a h; exact ih a (hreg _ (by rw [← h, pow_succ]; ring))
   have hnzd : NoZeroDivisors S := by
     refine ⟨fun {x y} hxy => ?_⟩
-    by_contra h
-    push_neg at h
+    by_contra! h
     obtain ⟨a, u, hu, rfl⟩ := _root_.GlobalTheory.PowMulUnit.exists_eq_pow_mul_unit hm h.1
     obtain ⟨b, v, hv, rfl⟩ := _root_.GlobalTheory.PowMulUnit.exists_eq_pow_mul_unit hm h.2
     have : π ^ (a + b) * (u * v) = 0 := by rw [← hxy, pow_add]; ring

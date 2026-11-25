@@ -182,7 +182,7 @@ theorem measure_localSiegel_lt_top (w : InfinitePlace K) {n : ℕ}
       funext i
       have hm : w.mult = 1 := by simp [InfinitePlace.mult, hw]
       simp only [posRealToUnits, MonoidHom.coe_mk, OneHom.coe_mk, Units.val_mk0, posRealElem,
-        dif_pos hw, RingEquiv.apply_symm_apply, hm, pow_one]
+        dite_eq_left hw, RingEquiv.apply_symm_apply, hm, pow_one]
       rfl
     · have hc := InfinitePlace.not_isReal_iff_isComplex.1 hw
       have hφ : ∀ x, ‖InfinitePlace.Completion.ringEquivComplexOfIsComplex hc x‖ = ‖x‖ := fun x =>
@@ -197,7 +197,7 @@ theorem measure_localSiegel_lt_top (w : InfinitePlace K) {n : ℕ}
       funext i
       have hm : w.mult = 2 := by simp [InfinitePlace.mult, hw]
       simp only [posRealToUnits, MonoidHom.coe_mk, OneHom.coe_mk, Units.val_mk0, posRealElem,
-        dif_neg hw, RingEquiv.apply_symm_apply, hm]
+        dite_eq_right hw, RingEquiv.apply_symm_apply, hm]
       rw [Real.sqrt_sq (r.2 i).le]
       rfl
 

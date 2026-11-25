@@ -49,7 +49,7 @@ theorem ideleSymbol_apply_of_mem_positiveSubgroup (y : RationalIdeles.positiveSu
         pow_zero, pow_one],
     Finset.prod_singleton, infiniteLocalSymbol_apply_of_pow_eq_one L _ _ hn hζ,
     extensionEmbeddingOfIsReal_infiniteProj,
-    if_neg (not_lt.2 (RationalIdeles.mem_positiveSubgroup.1 y.2).2.le)]
+    ite_eq_right (not_lt.2 (RationalIdeles.mem_positiveSubgroup.1 y.2).2.le)]
   exact localSymbol_apply_of_pow_eq_one_of_prime_pow v₀ L _ (unitAt y v₀) 0
     (by rw [padicRingEquiv_finiteProj y v₀, pow_zero, zpow_zero]) hζ
 

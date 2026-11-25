@@ -6,47 +6,7 @@ public import Mathlib.RingTheory.Valuation.ValuationSubring
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartPrimeExistsUniquePoint
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtChartLocalization
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -104,7 +64,7 @@ theorem exists_domBy_chart : ∀ (K : Type) [Fintype K] (J : K → Type) [∀ k,
     (i.comp (chRing ℤ x c).toSubring.subtype).codRestrict W.toSubring fun a => hch a a.2
   let P : Ideal (chRing ℤ x c) := (IsLocalRing.maximalIdeal W).comap φ
   have hPp : P.IsPrime := Ideal.comap_isPrime _ _
-  obtain ⟨q, ⟨hq, hP⟩, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.chart_prime_point ℤ Ω _ x M c hxc P hPp
+  obtain ⟨q, ⟨hq, hP⟩, -⟩ := _root_.PositivityTheory.HtPt.Ma.prime_pt ℤ Ω _ x M c hxc P hPp
   have hu : ∀ u (hu : u ∈ chRing ℤ x c), i u ≠ 0 → (i u)⁻¹ ∈ W → unitAt M.ξ q u := by
     intro u hu h0 h1
     by_contra hn
@@ -118,7 +78,7 @@ theorem exists_domBy_chart : ∀ (K : Type) [Fintype K] (J : K → Type) [∀ k,
       by_contra hn
       exact hm ((IsLocalRing.mem_maximalIdeal _).2 hn)
     exact ((isUnit_valuationSubring_iff W (φ ⟨v, hv⟩)).1 this).2
-  have hdesc := (_root_.GlobalTheory.CompanionTheory.Ar.chart_regAt_localisation ℤ Ω _ x M c q hq).2
+  have hdesc := (_root_.PositivityTheory.HtPt.Ma.regat_loc ℤ Ω _ x M c q hq).2
   refine ⟨q, hq, fun a ha => ?_, fun a ha ha0 hinv => ?_⟩
   · obtain ⟨u, huc, v, hvc, hvu, rfl⟩ := (hdesc a).1 ha
     rw [map_div₀, div_eq_mul_inv]

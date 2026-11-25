@@ -5,45 +5,6 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IterPrincipa
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHatMxHomLatIff
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlacesApart
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -57,8 +18,6 @@ open scoped TensorProduct nonZeroDivisors Pointwise
 namespace GlobalTheory.FunObj.Comparison₂
 
 open GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StepData GlobalTheory.StdFrames Formalism.L2.Host Formalism.L2.DIV ValuativeRel
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField GlobalTheory.FunObj.borelKw GlobalTheory.FunObj.borelSpaceKw
 
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts}
 
@@ -343,8 +302,8 @@ def IsIx {j a : ℕ} (e : Ix (Fin r) (Fin t) j ≃ Fin a) : Prop :=
 theorem IsIx.blkOf {j a : ℕ} {e : Ix (Fin r) (Fin t) j ≃ Fin a} (h : IsIx e) (i : Ix (Fin r) (Fin t) j) :
     blkOf r t (e i) = i.blk := by
   rcases i with i | ⟨c, s⟩
-  · rw [Formalism.L2.DIV.blkOf, if_pos (by rw [h.2.1]; exact i.2)]; rfl
-  · rw [Formalism.L2.DIV.blkOf, h.2.2, if_neg (by omega), Nat.add_sub_cancel_left, Nat.add_mul_div_left _ _ s.pos,
+  · rw [Formalism.L2.DIV.blkOf, ite_eq_left (by rw [h.2.1]; exact i.2)]; rfl
+  · rw [Formalism.L2.DIV.blkOf, h.2.2, ite_eq_right (by omega), Nat.add_sub_cancel_left, Nat.add_mul_div_left _ _ s.pos,
       Nat.div_eq_of_lt s.2, zero_add]; rfl
 
 variable {j j' a b : ℕ} {ea : Ix (Fin r) (Fin t) j ≃ Fin a} {eb : Ix (Fin r) (Fin t) j' ≃ Fin b}
@@ -353,7 +312,7 @@ theorem topL_r (ha : IsIx ea) (hb : IsIx eb) (y : Matrix (Fin b) (Fin a) κ) :
     topL r y = (y.submatrix eb ea).toBlocks₁₁ := by
   ext i l
   have h : i.val < b ∧ l.val < a := ⟨hb.2.1 i ▸ (eb _).2, ha.2.1 l ▸ (ea _).2⟩
-  rw [topL, dif_pos h]
+  rw [topL, dite_eq_left h]
   exact congrArg₂ y (Fin.ext (hb.2.1 i).symm) (Fin.ext (ha.2.1 l).symm)
 
 
@@ -395,7 +354,7 @@ theorem val_succ_inl (ha : IsIx ea) (hb : IsIx eb) (i : Ix (Fin r) (Fin t) j) :
 theorem topL_a (ha : IsIx ea) (hb : IsIx eb) (y : Matrix (Fin b) (Fin a) κ) (i l : Ix (Fin r) (Fin t) j) :
     topL a y (ea i) (ea l) = y (eb (ixSucc _ _ j (.inl i))) (ea l) := by
   have h : (ea i).val < b ∧ (ea l).val < a := ⟨val_succ_inl ha hb i ▸ (eb _).2, (ea l).2⟩
-  rw [topL, dif_pos h]
+  rw [topL, dite_eq_left h]
   exact congrArg₂ y (Fin.ext (val_succ_inl ha hb i).symm) rfl
 
 
@@ -575,8 +534,8 @@ theorem omegaQ_eq_prod {a b : ℕ} (r : ℕ) (Q : Finset (Pl D.host.E)) (ξ : �
   rw [omegaQ]
   split_ifs with H
   · rw [← Finset.prod_attach Q]
-    exact Finset.prod_congr rfl fun w _ => by rw [dif_pos (H w.1 w.2), zpow_one]
-  · exact (Finset.prod_eq_zero_iff.2 (by_contra fun h0 => H fun w hw => by_contra fun h => h0 ⟨w, hw, dif_neg h⟩)).symm
+    exact Finset.prod_congr rfl fun w _ => by rw [dite_eq_left (H w.1 w.2), zpow_one]
+  · exact (Finset.prod_eq_zero_iff.2 (by_contra fun h0 => H fun w hw => by_contra fun h => h0 ⟨w, hw, dite_eq_right h⟩)).symm
 
 section Steps
 
@@ -588,15 +547,15 @@ def ixOf {j a : ℕ} (h : a = D.R.r + j * D.R.t) : Ix (Fin D.R.r) (Fin D.R.t) j 
 theorem isIx_ixOf {j a : ℕ} (h : a = D.R.r + j * D.R.t) : IsIx (ixOf G t w h) := ⟨h, fun _ => rfl, fun _ _ => rfl⟩
 
 theorem stepFn_of_mem_Pg (hw : w ∈ L.Pg) (j : ℕ) : stepFn L t w j = (TypeDatum.principal (Kw w) (Fin D.R.r)).iterPhi
-    (Fin D.R.t) (fun c => ((muBase L c).loc w)⁻¹) (isTame_muBase w) j := if_pos hw
+    (Fin D.R.t) (fun c => ((muBase L c).loc w)⁻¹) (isTame_muBase w) j := ite_eq_left hw
 
 theorem stepFn_of_mem_Q (hw : w ∉ L.Pg) (hw' : w ∈ L.Q t) (j : ℕ) : stepFn L t w j = parPhi ((L.xiH t).loc w)⁻¹ :=
-  (if_neg hw).trans (if_pos hw')
+  (ite_eq_right hw).trans (ite_eq_left hw')
 
 theorem compat_chi {μ₀ : T} (hL : L.Is μ₀) (hw : w ∈ L.Pg) {c : ℕ} (hc : c < D.R.m) :
     Compat (resS D.host.F w) (cptO w) (L.chi (c + 1) w) ((muBase L (c + 1)).loc w)⁻¹ := fun s u k hu hk => by
   have h := compat_of_isRes ((L.C.isMu0 ⟨c, hc⟩).tame w) (hL.chi ⟨c, hc⟩ w hw) s u k hu hk
-  rw [muBase, dif_pos hc, MonoidHom.inv_apply, ← h, MonoidHom.inv_apply, inv_inv]
+  rw [muBase, dite_eq_left hc, MonoidHom.inv_apply, ← h, MonoidHom.inv_apply, inv_inv]
 
 
 open Classical in
@@ -619,7 +578,7 @@ theorem omega_eq_prod_stepFn {μ₀ : T} (hL : L.Is μ₀) {j a b : ℕ} (hj : j
   have hd := (GlobalTheory.StepLifts.places_apart L hL t).2
   obtain ⟨N', h1, h2⟩ : ∃ N' : Matrix (Fin b) (Fin a) (OA D), (fun PP => redM PP N) = (fun PP => N'.map (resS D.host.F PP)) ∧
       ∀ w, N.map (cpt (D := D) w) = N'.map (cptO w) :=
-    ⟨fun i l => ⟨N i l, hN i l⟩, funext fun PP => Matrix.ext fun i l => dif_pos (hN i l),
+    ⟨fun i l => ⟨N i l, hN i l⟩, funext fun PP => Matrix.ext fun i l => dite_eq_left (hN i l),
       fun w => Matrix.ext fun i l => (cptO_apply w ⟨N i l, hN i l⟩).symm⟩
   simp only [h2]
   rw [h1, Finset.prod_union hd, omegaQ_eq_prod]

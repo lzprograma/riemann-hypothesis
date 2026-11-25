@@ -154,10 +154,10 @@ theorem lineAt_eq {θ : InfFam D} {σ : (D.what₂.Tau → ℂ) →+ AE D} (hσ 
   funext τ'
   refine (hL.2.2 t τ').trans ?_
   by_cases h : τ' = τ
-  · rw [if_pos h, h, Pi.smul_apply, h1]
+  · rw [ite_eq_left h, h, Pi.smul_apply, h1]
     funext i j
     exact (Complex.real_smul).symm
-  · rw [if_neg h, Pi.smul_apply, h2 τ' h, smul_zero]
+  · rw [ite_eq_right h, Pi.smul_apply, h2 τ' h, smul_zero]
     rfl
 
 theorem exists_ne_zero (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ)

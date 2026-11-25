@@ -1,49 +1,11 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogIndexOfOrthogonalFamily
+import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EmbeddingTypes
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdNA
 public import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
 public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -199,29 +161,7 @@ theorem dual_eq (hP : Formalism.BasicNotions.FactPrincipalDatum) (D : D7) :
 
 theorem exists_smul_mem_base_lattice (D : D7) (j : ℕ) (v : (D.sp.W j).V) :
     ∃ t ∈ nonZeroDivisors (𝓞 D.host.E), t • v ∈ (D.sp.W j).L0 := by
-  classical
-  obtain ⟨s, hs⟩ := (D.sp.W j).standardTuple_isLattice.fg
-  obtain ⟨n, hn, hint⟩ := exists_integral_multiples ℤ ℚ (s.image fun x => (D.sp.W j).hT x v)
-  refine ⟨(n : 𝓞 D.host.E), mem_nonZeroDivisors_of_ne_zero (Int.cast_ne_zero.mpr hn), ?_⟩
-  rw [Int.cast_smul_eq_zsmul, ← (D.sp.W j).baseLattice_isUnimodular]
-  simp only [Formalism.HermitianLatticesTheory.dual, Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap]
-  intro x hx
-  rw [← hs] at hx
-  show (D.sp.W j).hT x (n • v) ∈ (1 : Submodule (𝓞 D.host.E) D.host.E)
-  induction hx using Submodule.span_induction with
-  | mem x hx =>
-    rw [map_zsmul]
-    exact Submodule.mem_one.2 ⟨⟨_, hint _ (Finset.mem_image_of_mem _ hx)⟩, rfl⟩
-  | zero => simp
-  | add x y _ _ hx hy =>
-    rw [map_add, LinearMap.add_apply]
-    exact add_mem hx hy
-  | smul c x _ hx =>
-    rw [← algebraMap_smul D.host.E c x, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul]
-    have hc : (starRingEnd D.host.E) (algebraMap (𝓞 D.host.E) D.host.E c) =
-        algebraMap (𝓞 D.host.E) D.host.E (barE D c) := (barE_eq_star D c).symm
-    rw [hc, ← Algebra.smul_def]
-    exact Submodule.smul_mem _ _ hx
+  apply _root_.UpperTheory.Reformulated.B.EmbeddingTypes.exists_smul_mem_base_lattice_alt <;> assumption
 
 theorem trace_sep (D : D7) {w : D.host.E}
     (h : ∀ c : 𝓞 D.host.E, Algebra.trace ℚ D.host.E (w * algebraMap (𝓞 D.host.E) D.host.E c) = 0) : w = 0 := by
@@ -270,16 +210,8 @@ local instance instStarModuleHost (D : D7) : StarRing D.host.E := D.host.cmStar
 theorem isUnit_end {E W : Type} [Field E] [NumberField E] [AddCommGroup W] [Module E W] [Module (𝓞 E) W]
     [IsScalarTower (𝓞 E) E W] (s : nonZeroDivisors (𝓞 E)) :
     IsUnit (algebraMap (𝓞 E) (Module.End (𝓞 E) W) s) := by
-  have hs : algebraMap (𝓞 E) E s ≠ 0 := by
-    intro h0
-    exact nonZeroDivisors.ne_zero s.2 (IsFractionRing.injective _ E (h0.trans (map_zero _).symm))
-  rw [Module.End.isUnit_iff]
-  refine ⟨fun x y hxy => ?_, fun y => ⟨(algebraMap (𝓞 E) E s)⁻¹ • y, ?_⟩⟩
-  · simp only [Module.algebraMap_end_apply] at hxy
-    rw [← algebraMap_smul E (s : 𝓞 E) x, ← algebraMap_smul E (s : 𝓞 E) y] at hxy
-    exact smul_right_injective W hs hxy
-  · simp only [Module.algebraMap_end_apply]
-    rw [← algebraMap_smul E (s : 𝓞 E), smul_smul, mul_inv_cancel₀ hs, one_smul]
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.Ar.EigLat.isUnit_end <;> assumption
 
 theorem int_exists_smul_mem_latW (hP : Formalism.BasicNotions.FactPrincipalDatum) (D : D7) (j : ℕ) (v : (D.sp.W j).V) :
     ∃ s ∈ nonZeroDivisors (𝓞 D.host.E), s • v ∈ latW D j := by
@@ -433,8 +365,8 @@ theorem efW_unimod_of (hP : Formalism.BasicNotions.FactPrincipalDatum) (D : D7) 
   have hb : Function.Bijective (intForm (efQ D j) hI) := ⟨efQ_inj hP D j hI, fun f => efQ_surj hP D j hI f⟩
   unfold efW
   by_cases h : ∃ hI' : DatInt D j, DomFor D j (intForm (efQ D j) hI')
-  · rw [sgnW, if_pos h, one_smul]; exact hb
-  · rw [sgnW, if_neg h]
+  · rw [sgnW, ite_eq_left h, one_smul]; exact hb
+  · rw [sgnW, ite_eq_right h]
     have e : ⇑((-1 : ℤ) • intForm (efQ D j) hI) = Neg.neg ∘ ⇑(intForm (efQ D j) hI) := by
       funext y; simp
     rw [e]; exact neg_involutive.bijective.comp hb

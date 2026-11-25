@@ -67,17 +67,11 @@ theorem ChowFormExists.proof (h₁ : IncIdealDim.Statement) (h₂ : IncIdealPrim
     ⟨_, rfl, by generalize k * n = N at hkn ⊢; omega⟩
   rw [hm1, ← hm2] at hsum
   have hht : (incIdeal P k).height = 1 := by
-    generalize (incIdeal P k).height = h at hsum
-    have h' : (h + m : ℕ∞) = ((m + 1 : ℕ) : ℕ∞) := by
-      have : ((h + m : ℕ∞) : WithBot ℕ∞) = (((m + 1 : ℕ) : ℕ∞) : WithBot ℕ∞) := by
-        push_cast at hsum ⊢
-        exact hsum
-      exact_mod_cast this
-    induction h using ENat.recTopCoe with
-    | top => exact (ENat.natCast_ne_top (m + 1) h'.symm).elim
-    | coe a =>
-      norm_cast at h' ⊢
-      omega
+    have h' : (incIdeal P k).height + m = 1 + m := by
+      rw [add_comm 1 (m : ℕ∞), ← Nat.cast_succ]
+      exact WithBot.coe_inj.mp (by push_cast at hsum ⊢; exact hsum)
+    exact le_antisymm ((ENat.add_le_add_iff_right (ENat.natCast_ne_top m)).mp h'.le)
+      ((ENat.add_le_add_iff_right (ENat.natCast_ne_top m)).mp h'.ge)
   have hne : incIdeal P k ≠ ⊥ := Ideal.ne_bot_of_height_eq_one hht
   obtain ⟨g, hgmem, hgp⟩ := Ideal.IsPrime.exists_mem_prime_of_ne_bot hQ hne
   have hspan := Ideal.eq_span_singleton_of_height_eq_one hht hgmem hgp

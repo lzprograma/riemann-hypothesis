@@ -1,5 +1,7 @@
 module
 
+import Formalism.LocalToGlobal.NormalizedHeckeFactors.TypesDefs
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.OmVBadTOfFfX
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataInst
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramLoc
@@ -25,8 +27,6 @@ open scoped Classical TensorProduct
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.UG Formalism.UG.P Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp
 
 namespace Formalism.L2.SG.Pf.SatGram
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Red
 
@@ -95,12 +95,7 @@ theorem prV_algebraMap (v : HeightOneSpectrum (𝓞 X.B.I.F)) (c : X.B.I.F) :
      exact (Algebra.TensorProduct.map (AlgHom.id X.B.I.F X.B.I.E) (evalV X.B.I.F v)).commutes c)
 
 theorem le_exp_neg_one {x : WithZero (Multiplicative ℤ)} (h : x < 1) : x ≤ WithZero.exp (-1 : ℤ) := by
-  rcases eq_or_ne x 0 with rfl | hx
-  · exact zero_le'
-  · obtain ⟨n, rfl⟩ : ∃ n : ℤ, x = WithZero.exp n := ⟨WithZero.log x, (WithZero.exp_log hx).symm⟩
-    rw [← WithZero.exp_zero, WithZero.exp_lt_exp] at h
-    rw [WithZero.exp_le_exp]
-    omega
+  apply _root_.PI.OmVg.le_exp_neg_one <;> assumption
 
 theorem tens_one_mem_intV (v : HeightOneSpectrum (𝓞 X.B.I.F)) (c : v.adicCompletion X.B.I.F)
     (hc : c ∈ v.adicCompletionIntegers X.B.I.F) : (1 : X.B.I.E) ⊗ₜ[X.B.I.F] c ∈ intV X.B.I.E v :=
@@ -437,11 +432,11 @@ theorem corankPos_tO (u u' : D.what₂.Word) : (Y.tO u u').CorankPos := by
   have hlam' : t.lam' = t'.lam' := congrArg (fun r => (r.2.1 : Submodule (𝓞 D.host.E) (VS D).V)) hr
   show 1 ≤ s0T t t'
   unfold s0T
-  rw [if_pos ⟨hlam, hlam'⟩]
+  rw [ite_eq_left ⟨hlam, hlam'⟩]
   have hΛ := (Y.rowsOK u).1 t.lam t.mem
   have hGv : Gval (lf D (X.Fu u)) t.frame ≠ 0 := by
     rw [← gterm_G Y t]
-    intro h; apply hG; show TermOp.Gt t = 0; unfold TermOp.Gt; rw [if_pos h]
+    intro h; apply hG; show TermOp.Gt t = 0; unfold TermOp.Gt; rw [ite_eq_left h]
   exact pair_corank_pos D.host.E (VS D) D.R.rS D.R.k (Formalism.L2.SG.Corank.finrank_VS D) t.lam
     hΛ.1.1 _ _ (lf D (X.Fu u)) t.frame t'.frame (t'.lin * t.lin⁻¹) hΛ.2.1.2.2.1 t.rep.2.2.2.2.1 hGv
 
@@ -454,7 +449,7 @@ theorem idDegenerate_tO (u u' : D.what₂.Word) : (Y.tO u u').IdDegenerate := by
   have hG' : t.G = 0 := hG
   show TermOp.Gt t = 0
   unfold TermOp.Gt
-  rw [if_pos hG']
+  rw [ite_eq_left hG']
 
 end Corank
 
@@ -482,7 +477,7 @@ theorem zs_map (S : Set τ) (intersection_update_fsHerm_neg_one : τ → Q) (ιt
     · have h' : ¬ (φ t ∈ S ∧ intersection_update_fsHerm_neg_one (φ t) = q) := fun h'' => h ((hS t).2 h'')
       have e1 : ¬ (φ t ∈ S ∧ intersection_update_fsHerm_neg_one (φ t) = q ∧ ιt (φ t) = f i) := fun h3 => h' ⟨h3.1, h3.2.1⟩
       have e2 : ¬ (t ∈ S ∧ intersection_update_fsHerm_neg_one t = q ∧ ιt t = i) := fun h3 => h ⟨h3.1, h3.2.1⟩
-      rw [if_neg e1, if_neg e2, map_zero]
+      rw [ite_eq_right e1, ite_eq_right e2, map_zero]
   simp_rw [hpt]
   exact (U.toContinuousLinearEquiv.map_tsum).symm
 
@@ -501,8 +496,6 @@ end GramInv
 section Sat
 
 open Formalism.L2.SG.NormCut Formalism.MainNotions.S.Lat
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {X : HidaSetting D} {u u' : D.what₂.Word}
   {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)} {F0' : FlagG (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)}
@@ -765,7 +758,7 @@ theorem gamma_one_eq_prod_card_ratio (TR : TypedRed X) :
     intro v
     have hU1 : Formalism.L2.SG.GGMirabolic.psiNat (TR.psi0 v) (1 : GL (Fin D.R.k) (TR.Fq v)) = 1 := by
       unfold Formalism.L2.SG.GGMirabolic.psiNat
-      rw [if_pos]
+      rw [ite_eq_left]
       · have h0 : (∑ i : Fin D.R.k, ∑ j : Fin D.R.k, if (j : ℕ) = (i : ℕ) + 1 then
             (1 : Matrix (Fin D.R.k) (Fin D.R.k) (TR.Fq v)) i j else 0) = 0 := by
           apply Finset.sum_eq_zero
@@ -901,33 +894,8 @@ open Formalism.L2.SG.Pf.SatGramLoc
 theorem ncard_places_eq {K L : Type} [Field K] [NumberField K] [Field L] [NumberField L] (e : K ≃+* L) (p : ℕ) :
     {w : HeightOneSpectrum (𝓞 K) | ((p : ℕ) : 𝓞 K) ∈ w.asIdeal}.ncard =
       {w : HeightOneSpectrum (𝓞 L) | ((p : ℕ) : 𝓞 L) ∈ w.asIdeal}.ncard := by
-  set f := RingOfIntegers.mapRingEquiv e
-  have hne : ∀ w : HeightOneSpectrum (𝓞 K), w.asIdeal.comap (f.symm : 𝓞 L →+* 𝓞 K) ≠ ⊥ := by
-    intro w h
-    apply w.ne_bot
-    rw [← Ideal.map_comap_of_surjective (f.symm : 𝓞 L →+* 𝓞 K) f.symm.surjective w.asIdeal, h, Ideal.map_bot]
-  refine Set.ncard_congr (fun w _ => (⟨w.asIdeal.comap (f.symm : 𝓞 L →+* 𝓞 K), Ideal.comap_isPrime _ _, hne w⟩ :
-    HeightOneSpectrum (𝓞 L))) ?_ ?_ ?_
-  · intro w hw
-    show ((p : ℕ) : 𝓞 L) ∈ w.asIdeal.comap (f.symm : 𝓞 L →+* 𝓞 K)
-    rw [Ideal.mem_comap, map_natCast]; exact hw
-  · intro a b _ _ hab
-    have h := congrArg HeightOneSpectrum.asIdeal hab
-    simp only at h
-    exact HeightOneSpectrum.ext (Ideal.comap_injective_of_surjective _ f.symm.surjective h)
-  · intro w hw
-    refine ⟨⟨w.asIdeal.comap (f : 𝓞 K →+* 𝓞 L), Ideal.comap_isPrime _ _, ?_⟩, ?_, ?_⟩
-    · intro h
-      apply w.ne_bot
-      rw [← Ideal.map_comap_of_surjective (f : 𝓞 K →+* 𝓞 L) f.surjective w.asIdeal, h, Ideal.map_bot]
-    · show ((p : ℕ) : 𝓞 K) ∈ w.asIdeal.comap (f : 𝓞 K →+* 𝓞 L)
-      rw [Ideal.mem_comap, map_natCast]; exact hw
-    · apply HeightOneSpectrum.ext
-      show (w.asIdeal.comap (f : 𝓞 K →+* 𝓞 L)).comap (f.symm : 𝓞 L →+* 𝓞 K) = w.asIdeal
-      rw [Ideal.comap_comap]
-      have : (f : 𝓞 K →+* 𝓞 L).comp (f.symm : 𝓞 L →+* 𝓞 K) = RingHom.id _ := by
-        ext x; simp
-      rw [this, Ideal.comap_id]
+  intros
+  apply _root_.Formalism.L2.NT.ncard_places_of_equiv <;> assumption
 
 variable {D : D7} (X : HidaSetting D)
 
@@ -1035,17 +1003,7 @@ end Formalism.L2.SG.Pf.SatGram
 
 namespace Formalism.L2.SG.Pf
 
-alias typedRed_exists := SatGram.typedRed_exists
-alias typedRed_exists' := SatGram.typedRed_exists'
-alias corankPos_tO := SatGram.corankPos_tO
-alias idDegenerate_tO := SatGram.idDegenerate_tO
-alias satGram_of := SatGram.satGram_of
 alias typed_count := SatGram.typed_count
-alias typed_count' := SatGram.typed_count'
-alias tt_eq := SatGram.tt_eq
-alias tt_eq' := SatGram.tt_eq'
 alias gamma_one_eq_prod_typed_places := SatGram.gamma_one_eq_prod_typed_places
-alias gsplit_X := SatGram.gsplit_X
-alias one_sub_ew := SatGram.one_sub_ew
 
 end Formalism.L2.SG.Pf

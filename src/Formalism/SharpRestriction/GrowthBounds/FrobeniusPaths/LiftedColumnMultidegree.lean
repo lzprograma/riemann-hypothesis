@@ -1,47 +1,8 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.ColumnKernelComponentsIntegral
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -136,7 +97,7 @@ private theorem dgS_eq_zero_of_none_used (p : ℕ) (pos : Fin N → ℤ) (mu : F
     (h : ∀ i : Fin N, i.val < j → ¬ IsUsed mu c i) : dgS p pos mu c j s = 0 := by
   funext i
   simp only [dgS, Pi.zero_apply]
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro ⟨h1, h2⟩
   exact h i h1 h2
 
@@ -168,7 +129,7 @@ private theorem eI_eq_dgS_succ_of_first_used (p : ℕ) (pos : Fin N → ℤ) (mu
     subst e
     simp [hu]
   · have hne : i ≠ ⟨j, hj⟩ := fun e => hij (by rw [e])
-    rw [if_neg hne, if_neg]
+    rw [ite_eq_right hne, ite_eq_right]
     rintro ⟨h1, h2⟩
     exact h i (by omega) h2
 
@@ -183,14 +144,14 @@ private theorem eI_add_pow_smul_dgS_eq_dgS_succ_of_used (p : ℕ) (pos : Fin N �
     subst e
     simp [hu]
   · have hne : i ≠ ⟨j, hj⟩ := fun e => hij (by rw [e])
-    rw [if_neg hne, zero_add]
+    rw [ite_eq_right hne, zero_add]
     by_cases hU : IsUsed mu c i
     · by_cases hlt : i.val < j
-      · rw [if_pos ⟨hlt, hU⟩, if_pos ⟨by omega, hU⟩]
+      · rw [ite_eq_left ⟨hlt, hU⟩, ite_eq_left ⟨by omega, hU⟩]
         exact pow_toNat_mul_pow_toNat_eq_of_le p (hle i hlt hU) hsl
-      · rw [if_neg (fun h => hlt h.1), if_neg (fun h => by have := h.1; omega)]
+      · rw [ite_eq_right (fun h => hlt h.1), ite_eq_right (fun h => by have := h.1; omega)]
         simp
-    · rw [if_neg (fun h => hU h.2), if_neg (fun h => hU h.2)]
+    · rw [ite_eq_right (fun h => hU h.2), ite_eq_right (fun h => hU h.2)]
       simp
 
 private theorem pow_smul_dgS_eq_dgS_of_le (p : ℕ) (pos : Fin N → ℤ) (mu : Fin (N + 1) → Fin k → ℤ) (c : ℤ) (j : ℕ) (s sl : ℤ)
@@ -229,7 +190,7 @@ private theorem homD_KKs_and_slot_properties (p : ℕ) (x : Fin N → Fin k → 
     by_cases heq : colH (mu ⟨j, by omega⟩) c = colH (mu ⟨j + 1, by omega⟩) c
     · have hu : ¬ IsUsed mu c ⟨j, hjN⟩ := fun h => h heq
       have hK : KKs p x pos mu c (j + 1) = KKs p x pos mu c j := by
-        simp only [KKs, dif_pos hjN, if_pos heq]
+        simp only [KKs, dite_eq_left hjN, ite_eq_left heq]
       rw [hK]
       refine ⟨fun hn => ?_, fun sl hs => ?_⟩
       · obtain ⟨h1, h2⟩ := ihN hn
@@ -256,7 +217,7 @@ private theorem homD_KKs_and_slot_properties (p : ℕ) (x : Fin N → Fin k → 
         have hK : KKs p x pos mu c (j + 1) =
             (colStep c (colH (mu ⟨j, by omega⟩) c) (colH (mu ⟨j + 1, by omega⟩) c) (x ⟨j, hjN⟩)
               (powC 1 (KKs p x pos mu c j).1), some (pos ⟨j, hjN⟩)) := by
-          simp only [KKs, dif_pos hjN, if_neg heq, hst]
+          simp only [KKs, dite_eq_left hjN, ite_eq_right heq, hst]
         rw [hK]
         refine ⟨fun hn => by simp at hn, fun sl hs => ?_⟩
         simp at hs
@@ -269,7 +230,7 @@ private theorem homD_KKs_and_slot_properties (p : ℕ) (x : Fin N → Fin k → 
         have hK : KKs p x pos mu c (j + 1) =
             (colStep c (colH (mu ⟨j, by omega⟩) c) (colH (mu ⟨j + 1, by omega⟩) c) (x ⟨j, hjN⟩)
               (powC (p ^ (pos ⟨j, hjN⟩ - sl0).toNat) (KKs p x pos mu c j).1), some (pos ⟨j, hjN⟩)) := by
-          simp only [KKs, dif_pos hjN, if_neg heq, hst]
+          simp only [KKs, dite_eq_left hjN, ite_eq_right heq, hst]
         rw [hK]
         refine ⟨fun hn => by simp at hn, fun sl hs => ?_⟩
         simp at hs

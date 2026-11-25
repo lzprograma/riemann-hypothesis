@@ -135,7 +135,7 @@ theorem isUnit_det_gram (h : HermitianForm F E V) (v : Basis ι E V) :
   have hxj : h.toSesq x (v j) = w j := by rw [hx, Basis.constr_basis]
   rw [← hxj, sesq_eq_sum h.toSesq v]
   simp only [vecMul, dotProduct, Basis.repr_self, Finsupp.single_apply, mul_ite, mul_one,
-    mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 theorem sesq_apply_map_basis (B : V →ₛₗ[conjHom F E] V →ₗ[E] E) (v : Basis ι E V)
     (g : V →ₗ[E] V) (i j : ι) :

@@ -1,46 +1,8 @@
 module
 
 public import ReciprocityTheory.Automorphisms.SplitCoeAlgebraMap
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -149,44 +111,6 @@ theorem muV_int_eq_one_iff (s : SplitPlace L) (r : 𝓞 L) :
   rw [← muV_int_lt_one_iff, not_lt]
   exact ⟨fun h => h.ge, fun h => le_antisymm (muV_int_le_one s r) h⟩
 
-private theorem exists_ringOfIntegers_not_mem_mul_eq_of_valuation_le (s : SplitPlace L) (x : L) (hx : s.w.valuation L x ≤ 1) :
-    ∃ c t : 𝓞 L, c ∉ s.w.asIdeal ∧ algebraMap (𝓞 L) L c * x = algebraMap (𝓞 L) L t := by
-  obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (A := 𝓞 L) x
-  have hb0 : b ≠ 0 := nonZeroDivisors.ne_zero hb
-  have hbL : algebraMap (𝓞 L) L b ≠ 0 :=
-    (map_ne_zero_iff _ (IsFractionRing.injective (𝓞 L) L)).2 hb0
-  have hvb : s.w.intValuation b ≠ 0 := s.w.intValuation_ne_zero b hb0
-  rw [map_div₀, s.w.valuation_of_algebraMap, s.w.valuation_of_algebraMap] at hx
-  have hab : s.w.intValuation a ≤ s.w.intValuation b := (div_le_one₀ (zero_lt_iff.2 hvb)).1 hx
-  have hk0 : WithZero.log (s.w.intValuation b) ≤ 0 := by
-    have := (WithZero.log_le_log hvb one_ne_zero).2 (s.w.intValuation_le_one b)
-    rwa [WithZero.log_one] at this
-  have hbe : s.w.intValuation b = WithZero.exp (-(((-WithZero.log (s.w.intValuation b)).toNat : ℕ) : ℤ)) := by
-    rw [Int.toNat_of_nonneg (by omega), neg_neg, WithZero.exp_log hvb]
-  set e : ℕ := (-WithZero.log (s.w.intValuation b)).toNat with he
-  have ha_mem : a ∈ s.w.asIdeal ^ e := (s.w.intValuation_le_pow_iff_mem a e).1 (hab.trans hbe.le)
-  have hb_mem : b ∈ s.w.asIdeal ^ e := (s.w.intValuation_le_pow_iff_mem b e).1 hbe.le
-  have hb_not : b ∉ s.w.asIdeal ^ (e + 1) := by
-    rw [← s.w.intValuation_le_pow_iff_mem, hbe, WithZero.exp_le_exp]
-    push_cast
-    omega
-  obtain ⟨J, hJ⟩ : s.w.asIdeal ^ e ∣ Ideal.span {b} :=
-    Ideal.dvd_iff_le.2 ((Ideal.span_singleton_le_iff_mem _).2 hb_mem)
-  have hJw : ¬ J ≤ s.w.asIdeal := by
-    intro hle
-    apply hb_not
-    have : Ideal.span {b} ≤ s.w.asIdeal ^ (e + 1) := by
-      rw [hJ, pow_succ]
-      exact Ideal.mul_mono_right hle
-    exact (Ideal.span_singleton_le_iff_mem _).1 this
-  obtain ⟨c, hcJ, hcw⟩ := SetLike.not_le_iff_exists.1 hJw
-  have hca : a * c ∈ Ideal.span {b} := by
-    rw [hJ]
-    exact Ideal.mul_mem_mul ha_mem hcJ
-  obtain ⟨t, ht⟩ := Ideal.mem_span_singleton'.1 hca
-  refine ⟨c, t, hcw, ?_⟩
-  rw [mul_div_assoc', div_eq_iff hbL, ← map_mul, ← map_mul, ht, mul_comm]
-
 theorem muV_le_one_iff (s : SplitPlace L) (x : L) : muV s x ≤ 1 ↔ s.w.valuation L x ≤ 1 := by
   have hμint : ∀ r : 𝓞 L, r ∉ s.w.asIdeal → muV s (algebraMap (𝓞 L) L r) = 1 :=
     fun r hr => (muV_int_eq_one_iff s r).2 hr
@@ -198,29 +122,29 @@ theorem muV_le_one_iff (s : SplitPlace L) (x : L) : muV s x ≤ 1 ↔ s.w.valuat
   constructor
   · intro hμ
     by_contra hν
-    push_neg at hν
+    push Not at hν
     have hx0 : x ≠ 0 := by
       rintro rfl
       simp at hν
     have hν' : s.w.valuation L x⁻¹ ≤ 1 := by
       rw [map_inv₀]
       exact inv_le_one_of_one_le₀ hν.le
-    obtain ⟨c, t, hc, ht⟩ := exists_ringOfIntegers_not_mem_mul_eq_of_valuation_le s x⁻¹ hν'
+    obtain ⟨t, ⟨c, hc⟩, ht⟩ := s.w.exists_primeCompl_mul_eq_of_integer x⁻¹ hν'
     have hνt : s.w.valuation L (algebraMap (𝓞 L) L t) < 1 := by
-      rw [← ht, map_mul, hνint c hc, one_mul, map_inv₀]
+      rw [← ht, map_mul, hνint c hc, mul_one, map_inv₀]
       exact inv_lt_one_of_one_lt₀ hν
     have htw : t ∈ s.w.asIdeal := by
       rw [s.w.valuation_of_algebraMap] at hνt
       exact (s.w.intValuation_lt_one_iff_mem t).1 hνt
     have hμt : muV s (algebraMap (𝓞 L) L t) < 1 := (muV_int_lt_one_iff s t).2 htw
-    rw [← ht, map_mul, hμint c hc, one_mul, map_inv₀] at hμt
+    rw [← ht, map_mul, hμint c hc, mul_one, map_inv₀] at hμt
     have hμx0 : muV s x ≠ 0 := (muV s).ne_zero_iff.2 hx0
     have h1 := (inv_lt_one₀ (zero_lt_iff.2 hμx0)).1 hμt
     exact absurd hμ (not_le.2 h1)
   · intro hν
-    obtain ⟨c, t, hc, ht⟩ := exists_ringOfIntegers_not_mem_mul_eq_of_valuation_le s x hν
+    obtain ⟨t, ⟨c, hc⟩, ht⟩ := s.w.exists_primeCompl_mul_eq_of_integer x hν
     have h1 := muV_int_le_one s t
-    rw [← ht, map_mul, hμint c hc, one_mul] at h1
+    rw [← ht, map_mul, hμint c hc, mul_one] at h1
     exact h1
 
 theorem muV_eq (s : SplitPlace L) (x : L) : muV s x = s.w.valuation L x := by

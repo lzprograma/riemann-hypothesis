@@ -541,11 +541,6 @@ theorem word_mem_of_lyndon_mem [CharZero K] (B : Subalgebra K (ShuffleAlgebra K 
   rw [eq_sub_of_add_eq hsum]
   exact B.sub_mem hxB hrest
 
-theorem monomial_eq_prod {σ : Type} (d : σ →₀ ℕ) :
-    (MvPolynomial.monomial d (1 : K)) = ((Finsupp.toMultiset d).map MvPolynomial.X).prod := by
-  classical
-  simp [Finset.prod_multiset_map_count, MvPolynomial.prod_X_pow_eq_monomial]
-
 theorem aeval_injective [CharZero K] : Function.Injective
     (MvPolynomial.aeval (fun l : {w : List A // IsLyndon w} => word K l.1) :
       MvPolynomial {w : List A // IsLyndon w} K →ₐ[K] ShuffleAlgebra K A) := by
@@ -565,7 +560,7 @@ theorem aeval_injective [CharZero K] : Function.Injective
     rw [MvPolynomial.aeval_monomial, Algebra.smul_def, ← Multiset.prod_coe,
       ← Multiset.map_coe, hΛ, Multiset.map_map]
     simp [Finset.prod_multiset_map_count, Finsupp.prod]
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro p hp
   by_contra hne
   obtain ⟨d₀, hd₀, hmax⟩ := p.support.exists_max_image (fun d => (Λ d).flatten)
@@ -598,10 +593,7 @@ namespace Published
 /-- **Radford's theorem on shuffle algebras**: over a field `K` of characteristic zero, the shuffle
 algebra on a totally ordered alphabet `A` is freely generated as a commutative polynomial algebra
 by the Lyndon words: the canonical evaluation homomorphism from the polynomial algebra on Lyndon
-words to the shuffle algebra is an isomorphism (bijective).
-
-Proposed reference:
-[Radford, *A natural ring basis for the shuffle algebra and an application to group schemes* (Theorem 2.1, p. 437)][radford1979]. -/
+words to the shuffle algebra is an isomorphism (bijective). -/
 def RadfordShufflePolynomial : Prop :=
   ∀ (K : Type) [Field K] [CharZero K] (A : Type) [LinearOrder A],
     Function.Bijective

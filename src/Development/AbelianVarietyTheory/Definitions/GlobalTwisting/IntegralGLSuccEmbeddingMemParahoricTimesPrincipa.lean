@@ -2,47 +2,7 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.RedPDivOfUnit
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSmulOfDecoEq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -319,10 +279,10 @@ def tilTop (H : TilOk Pr sel mu u) (d : RowPt Pr R sel mu) : TopPt R sel mu u :=
     fun P => (tilFr_isLiftFr H d (inQ Pr sel mu P)).1⟩
 
 theorem frsF_tilTop_g (H : TilOk Pr sel mu u) (d : RowPt Pr R sel mu) (P : rowSG Pr sel mu) (h : P.1 ∈ Pr.vGs) :
-    frsF sel mu (tilTop H d) P = frsT sel mu u d P := dif_pos h
+    frsF sel mu (tilTop H d) P = frsT sel mu u d P := dite_eq_left h
 
 theorem frsF_tilTop_Q (H : TilOk Pr sel mu u) (d : RowPt Pr R sel mu) (P : rowSG Pr sel mu) (h : P.1 ∉ Pr.vGs) :
-    frsF sel mu (tilTop H d) P = tilFr H d P := dif_neg h
+    frsF sel mu (tilTop H d) P = tilFr H d P := dite_eq_right h
 
 theorem frsF_mem {j : ℕ} (p : ChPt (R := R) sel mu u j) (P : rowSG Pr sel mu) (x : Sp X.E (R.N j)) :
     frsF sel mu p P x ∈ p.deco.1.at P.1 ↔ x ∈ stdAt X.E (R.N j) P.1 := by
@@ -463,12 +423,12 @@ def topDegreeKTwo (p : ChPt (R := R) sel mu u (m2 + 1)) (Y : Set (Sp X.E (R.N (m
 
 theorem atNL_last (x : Sp X.E (R.N R.m)) : atNL X.E (R.N R.m) (R.N R.m - 1) x = x (Br.iL (N_m_succ R)) := by
   unfold atNL
-  rw [dif_pos (show R.N R.m - 1 < R.N R.m from (Br.iL (N_m_succ R)).2)]
+  rw [dite_eq_left (show R.N R.m - 1 < R.N R.m from (Br.iL (N_m_succ R)).2)]
   rfl
 
 theorem cond_of_ite_ne_zero {c : Prop} {i : Decidable c} {a : X.K} (h : @ite _ c i a 0 ≠ 0) : c := by
   by_contra hc
-  exact h (if_neg hc)
+  exact h (ite_eq_right hc)
 
 theorem castAdd_single {n' c' : ℕ} (i : Fin n') :
     LinearMap.funLeft X.E X.E (Fin.castAdd c') (Pi.single (Fin.castAdd c' i) 1) = (Pi.single i 1 : Sp X.E n') := by
@@ -501,14 +461,14 @@ theorem locTop_supp (hm : R.m = m2 + 2) {P : rowSG Pr sel mu} (hP : P.1 ∈ Pr.v
   · have key : IntAt P.1 (LocE.entB (qOf P.1) R.k (cOf R (m2 + 1)) (R.N (m2 + 1)) 0 (R.N R.m - 1) (fun i => i + 1) (fun i => i + 1)
         (prXp X.E R ∘ₗ y ∘ₗ LinearMap.funLeft X.E X.E (Fin.castAdd (cOf R (m2 + 1)))) i.1 s.1) := by
       unfold PhiTop at h1
-      rw [if_pos hP] at h1
+      rw [ite_eq_left hP] at h1
       split_ifs at h1
       · exact (cond_of_ite_ne_zero h1).1 i.1 s.1 i.2 (by rw [rank_add_mul_eq_penultimate_rank hm]; exact s.2)
       · exact (cond_of_ite_ne_zero h1).1 i.1 s.1 i.2 (by rw [rank_add_mul_eq_penultimate_rank hm]; exact s.2)
-    rw [entB_top hm, dif_pos ⟨i.2, s.2⟩] at key
+    rw [entB_top hm, dite_eq_left ⟨i.2, s.2⟩] at key
     exact key
   · unfold ftY at h2
-    rw [if_pos hP] at h2
+    rw [ite_eq_left hP] at h2
     have := cond_of_ite_ne_zero h2 s
     rwa [LinearMap.comp_apply, atNL_last] at this
 
@@ -528,7 +488,7 @@ theorem locTop_congr (hm : R.m = m2 + 2) (hc : cst.Ok) {P : rowSG Pr sel mu} (hP
       · exact h _ _
       · exact congQ_zero
     unfold PhiTop
-    rw [if_pos hP]
+    rw [ite_eq_left hP]
     split_ifs
     · exact PhiGS_congr _ _ _ _ _ _ _ _ _ _ _ he
     · exact PhiG_congr _ _ _ _ _ _ _ _ _ _ _ he
@@ -538,8 +498,8 @@ theorem locTop_congr (hm : R.m = m2 + 2) (hc : cst.Ok) {P : rowSG Pr sel mu} (hP
         ∑ j, y' j * w (Pi.single j 1) (Br.iL (N_m_succ R)) := fun w => by
       rw [LinearMap.comp_apply, atNL_last, apply_eq_sum]
     have he : IntAt P.1 ((epsSg : ℤ) : X.E) := intCast_mem (intRing P.1) _
-    rw [if_pos hP, if_pos hP, if_pos (fun i => by rw [LinearMap.comp_apply, atNL_last]; exact (h _ _).1),
-      if_pos (fun i => by rw [LinearMap.comp_apply, atNL_last]; exact (h _ _).2.1), ev, ev]
+    rw [ite_eq_left hP, ite_eq_left hP, ite_eq_left (fun i => by rw [LinearMap.comp_apply, atNL_last]; exact (h _ _).1),
+      ite_eq_left (fun i => by rw [LinearMap.comp_apply, atNL_last]; exact (h _ _).2.1), ev, ev]
     have hd : IntAt P.1 ((epsSg : X.E) * ∑ j, ((qOf P.1 : X.E) * y' j) *
         ((y (Pi.single j 1) (Br.iL (N_m_succ R)) - z (Pi.single j 1) (Br.iL (N_m_succ R))) / (qOf P.1 : X.E))) :=
       he.mul (intAt_sum _ fun j _ => (hy' j).mul (h _ _).2.2)
@@ -589,7 +549,7 @@ theorem repY_int {j : ℕ} (p : ChPt (R := R) sel mu u j) {Y : Set (Sp X.E (R.N 
   have h1' : repY Y - y ∈ locLat (rowSG Pr sel mu) p.deco.1.N _ := (Set.ext_iff.1 hY _).1 h1
   have h2 := (mem_locLat _ _ _ _).1 h1' P
   have h3 := (mem_locLat _ _ _ _).1 hy P
-  simp only [if_pos hP, zpow_zero, inv_one, one_smul, zpow_neg, zpow_one, inv_inv] at h2 h3
+  simp only [ite_eq_left hP, zpow_zero, inv_one, one_smul, zpow_neg, zpow_one, inv_inv] at h2 h3
   have h4 : (qOf P.1 : X.E) • repY Y ∈ p.deco.1.at P.1 := by
     have := add_mem (smul_mem_locP (intAt_nat (P := P.1) (qOf P.1)) h2) h3
     rwa [← smul_add, sub_add_cancel] at this
@@ -668,9 +628,9 @@ theorem topEquiv_iff_on : TopEquiv W Ch sel mu cst L T b hY P c ↔ TopEquivOn W
   refine ⟨fun h g g₁ p Y p' _ => h g g₁ p Y p', fun h g g₁ p Y p' => ?_⟩
   by_cases hp : Y ∈ (ybCpl W sel mu cst L u m2 b hY).ys p
   · exact h g g₁ p Y p' hp
-  · have h1 : topDegreeKTwo W Ch sel mu cst T p Y p' = 0 := if_neg hp
+  · have h1 : topDegreeKTwo W Ch sel mu cst T p Y p' = 0 := ite_eq_right hp
     have h2 : topDegreeKTwo W Ch sel mu cst T (g • p) ((fun v => g.1.1 v) '' Y) (g₁ • p') = 0 :=
-      if_neg fun hh => hp (((ybCpl W sel mu cst L u m2 b hY).equiv g p Y).1 hh)
+      ite_eq_right fun hh => hp (((ybCpl W sel mu cst L u m2 b hY).equiv g p Y).1 hh)
     refine h2.trans ?_
     rw [h1, LinearMap.zero_comp, LinearMap.comp_zero]
 
@@ -686,27 +646,10 @@ theorem TopEquiv.cp2Equiv (h : TopEquiv W Ch sel mu cst L T b hY P c) (hX : X.Ok
   rw [e1]
   rfl
 
-def topCpl (h1 : Cp1Equiv W Ch sel mu cst L T b hY) (h2 : TopEquiv W Ch sel mu cst L T b hY P c) (al : L.β m2) :
-    CplKer ((chF W sel mu L u m2).mem al) (midGSD W sel mu L u m2 b) (topGSD W Ch sel mu P u c) (ybCpl W sel mu cst L u m2 b hY) :=
-  CplKer.mk (cp1K W Ch sel mu cst L T al) (topDegreeKTwo W Ch sel mu cst T) (h1 al) h2
-
-
 open Classical in
 def matFam (hM : MatEquiv W Ch sel mu cst L T) : KerFam (chF W sel mu L u) := fun i al be =>
   if h : i < m2 then ClsKer.mk (matK W Ch sel mu cst L T i al be) (hM i h al be) else zeroKer _ _
 
-def colTop (hM : MatEquiv W Ch sel mu cst L T) (h1 : Cp1Equiv W Ch sel mu cst L T b hY) (h2 : TopEquiv W Ch sel mu cst L T b hY P c)
-    (hF : ∀ j, (chF W sel mu L u j).Ok) {G : ChGlob X R.m} (hL : L.Ok Ch sel mu cst G m2) :
-    MfV W Ch u →ₗ[X.K] (topGSD W Ch sel mu P u c).EqFun :=
-  colCpl (matFam hM) hF m2 (topCpl h1 h2) (hF (m2 + 1) b) ∘ₗ startC hL u
-
 end Col
-
-section Checks
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S)
-
-end Checks
 
 end GlobalTheory.TopStep

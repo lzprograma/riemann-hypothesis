@@ -49,7 +49,8 @@ CLUMP_MARK = "-- This file was produced by scripts/clump.py from the modules lis
 # Modules in these libraries are never clumped (protected statement / solution files).
 PROTECTED_LIBS = {"Main", "Challenge"}
 
-IMPORT_RE = re.compile(r"^((?:(?:public|private|meta)\s+)*)import\s+((?:all\s+)?)(\S+)\s*$")
+IMPORT_RE = re.compile(
+    r"^((?:(?:public|private|meta)\s+)*)import\s+((?:all\s+)?)(\S+?)(?:\s*--.*)?\s*$")
 
 
 def lib_of(mod):
@@ -71,12 +72,16 @@ class Module:
         self.name = name
         self.path = path
         lines = text.split("\n")
+        # The header ends after the last `module` or `import` line and the blank lines that
+        # follow it. Comment lines between imports are passed over, so they stay in the header;
+        # comment lines after the last import belong to the body. A clump file has its marker
+        # and its first member's records there, and they must not be taken for header.
         h = 0
         imports = []  # (module, public: bool)
         exotic = False
         for i, l in enumerate(lines):
             s = l.strip()
-            if s == "" or s == "module":
+            if s == "" or s.startswith("--"):
                 continue
             m = IMPORT_RE.match(s)
             if m:
@@ -84,11 +89,11 @@ class Module:
                 if m.group(2) or "meta" in mods:
                     exotic = True
                 imports.append((m.group(3), "public" in mods))
-                continue
-            h = i
-            break
-        else:
-            h = len(lines)
+            elif s != "module":
+                break
+            h = i + 1
+        while h < len(lines) and lines[h].strip() == "":
+            h += 1
         self.header = "\n".join(lines[:h]) + ("\n" if h < len(lines) else "")
         self.body = "\n".join(lines[h:])
         self.imports = imports
@@ -359,6 +364,7 @@ def unclump(root):
             continue
         for name, content in unclump_text(text).items():
             q = os.path.join(root, "src", *name.split(".")) + ".lean"
+            os.makedirs(os.path.dirname(q), exist_ok=True)
             with open(q, "w", encoding="utf-8") as f:
                 f.write(content)
         n += 1

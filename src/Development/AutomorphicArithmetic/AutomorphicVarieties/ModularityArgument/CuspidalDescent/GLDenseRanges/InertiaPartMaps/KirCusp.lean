@@ -66,8 +66,6 @@ open UpperTheory.V.Z.Desc.V0
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GlobalTheory.CuspRep GlobalTheory.CuspGeneric
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.V.Z.Desc.V0.KC
 
 variable {E : Type} [Field E] [NumberField E] {a : ℕ} {ψ : AddChar (Ad E) ℂ}
@@ -210,7 +208,7 @@ private theorem isMirL_mul {k : Type} [Field k] {p q : GL (Fin a) k} (hp : IsMir
   change (p.val * q.val) i j = _
   rw [Matrix.mul_apply]
   simp_rw [hp i _ hi]
-  simp only [Matrix.one_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [Matrix.one_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   exact hq i j hi
 
 omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in

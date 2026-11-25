@@ -63,8 +63,7 @@ theorem exists_isChar_eq_add_of_pair_ne_zero : ∀ (K L : Type) [Field K] [Field
   have h := _root_.GlobalTheory.BI.pair_character_eq_finrank K L G (Fin m → K) (Fin n → K) σ ρ
   rw [← hφ', ← ha'] at h
   have hex : ∃ f : Representation.IntertwiningMap σ ρ, f ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     haveI : Subsingleton (Representation.IntertwiningMap σ ρ) :=
       ⟨fun x y => (hne x).trans (hne y).symm⟩
     apply hp

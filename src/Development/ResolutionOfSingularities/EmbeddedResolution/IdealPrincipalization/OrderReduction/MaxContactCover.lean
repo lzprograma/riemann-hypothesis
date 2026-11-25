@@ -5,46 +5,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.Derivativ
 public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FiniteKrullDim
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.TunedMarkedBlowupSeq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.QuasiAffine
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -168,59 +129,6 @@ theorem isLocalIsomorphism_coverMap (T : MarkedIdealWithBoundary.{u}) (hv : T.Is
     infer_instance
   exact ⟨coverTripleOpen T hv i, hxi, hψ⟩
 
-private theorem coverPieceIso_inv_comp_map_comp_affineSpaceFinToSpec (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible)
-    (i : (MaxContactCoverData.chosenCoverData T hv).idx) {n : ℕ}
-    (c : EtaleChart T.structMap ((MaxContactCoverData.chosenCoverData T hv).opens i) n) :
-    ((coverPieceIso T hv i).inv ≫ c.map) ≫ affineSpaceFinToSpec T.base n =
-      (coverTripleOpen T hv i).ι ≫ (MaxContactCoverData.coverMap T hv ≫ T.structMap) := by
-  have h1 : c.map ≫ affineSpaceFinToSpec T.base n =
-      ((MaxContactCoverData.chosenCoverData T hv).opens i).ι ≫ T.structMap := c.comp_struct
-  have h2 := coverTripleOpen_ι_comp_coverMap T hv i
-  calc ((coverPieceIso T hv i).inv ≫ c.map) ≫ affineSpaceFinToSpec T.base n
-      = (coverPieceIso T hv i).inv ≫ (c.map ≫ affineSpaceFinToSpec T.base n) := Category.assoc _ _ _
-    _ = (coverPieceIso T hv i).inv ≫ (((MaxContactCoverData.chosenCoverData T hv).opens i).ι ≫ T.structMap) := by
-        rw [h1]
-    _ = ((coverPieceIso T hv i).inv ≫ ((MaxContactCoverData.chosenCoverData T hv).opens i).ι) ≫ T.structMap :=
-        (Category.assoc _ _ _).symm
-    _ = ((coverTripleOpen T hv i).ι ≫ MaxContactCoverData.coverMap T hv) ≫ T.structMap := by rw [h2]
-    _ = (coverTripleOpen T hv i).ι ≫ (MaxContactCoverData.coverMap T hv ≫ T.structMap) :=
-        Category.assoc _ _ _
-
-theorem etale_coverPieceIso_inv_comp_map (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible)
-    (i : (MaxContactCoverData.chosenCoverData T hv).idx) {n : ℕ}
-    (c : EtaleChart T.structMap ((MaxContactCoverData.chosenCoverData T hv).opens i) n) :
-    AlgebraicGeometry.Etale ((coverPieceIso T hv i).inv ≫ c.map) := by
-  have : AlgebraicGeometry.Etale c.map := c.isEtale
-  have : IsIso (coverPieceIso T hv i).inv := inferInstance
-  have : IsOpenImmersion (coverPieceIso T hv i).inv := inferInstance
-  have : AlgebraicGeometry.Etale (coverPieceIso T hv i).inv := inferInstance
-  infer_instance
-
-def coverEtaleChart (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible)
-    (i : (MaxContactCoverData.chosenCoverData T hv).idx) {n : ℕ}
-    (c : EtaleChart T.structMap ((MaxContactCoverData.chosenCoverData T hv).opens i) n) :
-    EtaleChart (MaxContactCoverData.coverMap T hv ≫ T.structMap) (coverTripleOpen T hv i) n where
-  map := (coverPieceIso T hv i).inv ≫ c.map
-  comp_struct := by
-    exact coverPieceIso_inv_comp_map_comp_affineSpaceFinToSpec T hv i c
-  isEtale := etale_coverPieceIso_inv_comp_map T hv i c
-
-theorem coverEtaleChart_coordIdeal (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible)
-    (i : (MaxContactCoverData.chosenCoverData T hv).idx) {n : ℕ}
-    (c : EtaleChart T.structMap ((MaxContactCoverData.chosenCoverData T hv).opens i) n)
-    (S : Finset (Fin n)) :
-    (coverEtaleChart T hv i c).coordIdeal S = (c.coordIdeal S).comap (coverPieceIso T hv i).inv := by
-  have key : (coordSubspaceIdeal T.base n S).comap ((coverPieceIso T hv i).inv ≫ c.map)
-      = ((coordSubspaceIdeal T.base n S).comap c.map).comap (coverPieceIso T hv i).inv := by
-    rw [Scheme.IdealSheafData.comap_comp]
-  have h1 : (coverEtaleChart T hv i c).coordIdeal S
-      = (coordSubspaceIdeal T.base n S).comap ((coverPieceIso T hv i).inv ≫ c.map) :=
-    EtaleChart.coordIdeal_eq_comap_coordSubspaceIdeal (coverEtaleChart T hv i c) S
-  have h2 : (c.coordIdeal S).comap (coverPieceIso T hv i).inv
-      = ((coordSubspaceIdeal T.base n S).comap c.map).comap (coverPieceIso T hv i).inv :=
-    congrArg (fun J => J.comap (coverPieceIso T hv i).inv) (EtaleChart.coordIdeal_eq_comap_coordSubspaceIdeal c S)
-  exact h1.trans (key.trans h2.symm)
-
 private theorem compactSpace_of_quasiCompact_toSpec {X : Scheme.{u}} {R : CommRingCat.{u}}
     (f : X ⟶ Spec R) (hf : AlgebraicGeometry.QuasiCompact f) : CompactSpace ↥X := by
   have := hf
@@ -329,7 +237,6 @@ theorem quasiCompact_coverMap_comp_structureMorphism (T : MarkedIdealWithBoundar
     isAffine_coverTriple_scheme T hv hgood
   have : AlgebraicGeometry.IsAffine (MaxContactCoverData.coverTriple T hv).scheme :=
     isAffine_coverTriple_scheme T hv hgood
-  have : Subsingleton ↥(AlgebraicGeometry.Spec (CommRingCat.of T.base)) := inferInstance
   constructor
   intro U _hU _hUc
   by_cases hUe : U = ∅

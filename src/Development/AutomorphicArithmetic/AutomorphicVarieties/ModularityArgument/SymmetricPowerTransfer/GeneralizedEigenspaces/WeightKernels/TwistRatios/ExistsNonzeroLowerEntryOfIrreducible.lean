@@ -132,8 +132,6 @@ open UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd UpperTheory.V.Z.Sym UpperTh
 open UpperTheory.V.W (Plc Lp)
 open scoped Matrix
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.V.Z.Sym.Ga.S4
 
 variable {k : Type} [Field k]
@@ -205,8 +203,7 @@ private theorem eig_basis (A : Matrix (Fin 2) (Fin 2) k) (a b : k) (hab : a ≠ 
 
 private theorem exists_nonzero_lower_entry_of_irreducible {Γ : Type} [Group Γ] (r : Γ →* GL (Fin 2) k) (h : IsIrr r) :
     ∃ x, (r x : Matrix (Fin 2) (Fin 2) k) 1 0 ≠ 0 := by
-  by_contra hno
-  push_neg at hno
+  by_contra! hno
   obtain ⟨-, -, hmin⟩ := h
   let W : Submodule k (Fin 2 → k) := LinearMap.ker (LinearMap.proj (1 : Fin 2))
   have hW : ∀ v, v ∈ W ↔ v 1 = 0 := fun v => by simp [W]
@@ -224,8 +221,7 @@ private theorem exists_nonzero_lower_entry_of_irreducible {Γ : Type} [Group Γ]
 
 private theorem exists_nonzero_upper_entry_of_irreducible {Γ : Type} [Group Γ] (r : Γ →* GL (Fin 2) k) (h : IsIrr r) :
     ∃ x, (r x : Matrix (Fin 2) (Fin 2) k) 0 1 ≠ 0 := by
-  by_contra hno
-  push_neg at hno
+  by_contra! hno
   obtain ⟨-, -, hmin⟩ := h
   let W : Submodule k (Fin 2 → k) := LinearMap.ker (LinearMap.proj (0 : Fin 2))
   have hW : ∀ v, v ∈ W ↔ v 0 = 0 := fun v => by simp [W]
@@ -296,8 +292,7 @@ private theorem exists_full [TopologicalSpace H] [IsTopologicalGroup H] [Topolog
     (h10 : ∀ K : Subgroup H, IsOpen (K : Set H) → ∃ x ∈ K, (r x : Matrix (Fin 2) (Fin 2) k) 1 0 ≠ 0)
     (h01 : ∀ K : Subgroup H, IsOpen (K : Set H) → ∃ x ∈ K, (r x : Matrix (Fin 2) (Fin 2) k) 0 1 ≠ 0) :
     ∃ g, ∀ i j, (r g : Matrix (Fin 2) (Fin 2) k) i j ≠ 0 := by
-  by_contra hno
-  push_neg at hno
+  by_contra! hno
   obtain ⟨h0, hh0⟩ : ∃ h0 : H, ∀ x, (r x : Matrix (Fin 2) (Fin 2) k) 0 0 = 0 → h0⁻¹ * x ∈ stabilizerLowerTriangular r := by
     by_cases h : ∃ y, (r y : Matrix (Fin 2) (Fin 2) k) 0 0 = 0
     · obtain ⟨y, hy⟩ := h

@@ -483,9 +483,9 @@ private theorem ge_add_matrix_mul_entry_of_ge {C : Type} [Field C] {V : VF C} {n
 private theorem ge_zero_matrix_one_entry {C : Type} [Field C] (V : VF C) (n : ℕ) (i j : Fin n) :
     V.Ge 0 ((1 : Matrix (Fin n) (Fin n) C) i j) := by
   by_cases h : i = j
-  · simp only [Matrix.one_apply, h, if_true]
+  · simp only [Matrix.one_apply, h, ite_true]
     exact VF.Ge.one
-  · simp only [Matrix.one_apply, h, if_false]
+  · simp only [Matrix.one_apply, h, ite_false]
     exact VF.Ge.zero 0
 
 private theorem ge_zero_matrix_pow_entry_of_ge_zero {C : Type} [Field C] {V : VF C} {n : ℕ} {P : Matrix (Fin n) (Fin n) C}

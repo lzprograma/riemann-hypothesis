@@ -48,8 +48,6 @@ import Formalism.LocalToGlobal.ProjectiveLattices.ErealAddIInf
 
 open AlgebraicGeometry CategoryTheory MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Toroidal GlobalTheory.ShFam GlobalTheory.ProjVar GlobalTheory.FlagBundle GlobalTheory.GoodMetric
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.BlockSymm
@@ -100,7 +98,6 @@ theorem splitEquiv_symm_C (c : MvPolynomial (Root (fun τ : {τ // τ ≠ τ₀}
 theorem splitEquiv_symm_esymm (j : ℕ) :
     (splitEquiv R τ₀).symm (esymm (Fin (m τ₀)) (MvPolynomial (Root (fun τ : {τ // τ ≠ τ₀} => m τ.1)) R) j) =
       chernRootsOver R m (X (τ₀, j)) := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [chernRootsOver, esymm, map_sum, map_prod, splitEquiv_symm_X]
 
 theorem splitEquiv_rename_update (σ : Equiv.Perm (Fin (m τ₀))) (S : MvPolynomial (Root m) R) :

@@ -8,54 +8,9 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriTraceOfBorelCasselman
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IwMemMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
 import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
 import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ValuationDetOfMemKO
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -245,18 +200,18 @@ theorem UpperTheory.diagonal_conjugate_mem :
   · intro i j
     rw [hent]
     rcases lt_trichotomy i j with hij | rfl | hij
-    · rw [if_pos hij, map_mul, hg0', map_pow, mul_right_comm, hpow i j hij]
+    · rw [ite_eq_left hij, map_mul, hg0', map_pow, mul_right_comm, hpow i j hij]
       rfl
-    · rw [if_neg (lt_irrefl _), if_pos rfl, hd, map_one, mul_one, ← Units.val_mul]
+    · rw [ite_eq_right (lt_irrefl _), ite_eq_left rfl, hd, map_one, mul_one, ← Units.val_mul]
       simp
-    · rw [if_neg hij.not_gt, if_neg hij.ne', hb hij]
+    · rw [ite_eq_right hij.not_gt, ite_eq_right hij.ne', hb hij]
       simp
   · intro i j hij
-    rw [if_neg hij.not_gt, if_neg hij.ne']
+    rw [ite_eq_right hij.not_gt, ite_eq_right hij.ne']
   · intro i
     simp
   · intro i j hij
-    rw [if_pos hij]
+    rw [ite_eq_left hij]
     apply Ideal.mul_mem_right
     have hpos : (j : ℕ) - (i : ℕ) ≠ 0 := by
       have : (i : ℕ) < (j : ℕ) := hij
@@ -328,7 +283,6 @@ section -- clump:auto
 @[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 section SlopeTestRemainingChoices
 
@@ -542,10 +496,10 @@ private theorem br_index (j : ℕ) (hj : j ≤ n) :
     · have : (b : ℕ) < a := hab
       show (1 + nilM _ : Matrix _ _ k) a b = 0
       simp only [nilM, Matrix.add_apply, Matrix.of_apply]
-      rw [dif_neg (fun h => by omega), add_zero, Matrix.one_apply_ne hab.ne']
+      rw [dite_eq_right (fun h => by omega), add_zero, Matrix.one_apply_ne hab.ne']
     · show (1 + nilM _ : Matrix _ _ k) a a = 1
       simp only [nilM, Matrix.add_apply, Matrix.of_apply]
-      rw [dif_neg (fun h => by omega), add_zero, Matrix.one_apply_eq]
+      rw [dite_eq_right (fun h => by omega), add_zero, Matrix.one_apply_eq]
     · show (1 + nilM _ : Matrix _ _ k) a b ∈ 𝒪[k]
       refine add_mem (GlobalTheory.StepData.intM_one a b) ?_
       simp only [nilM, Matrix.of_apply]
@@ -558,7 +512,7 @@ private theorem br_index (j : ℕ) (hj : j ≤ n) :
     rw [al, br_memNconj]
     refine ⟨fun h p => ?_, fun h => ⟨h1, fun a b => ?_⟩⟩
     · have := h.2 p.1.1 p.1.2
-      rwa [if_pos p.2.1, if_neg p.2.2.not_gt, sub_zero, zpow_one, le_uniformizer_iff] at this
+      rwa [ite_eq_left p.2.1, ite_eq_right p.2.2.not_gt, sub_zero, zpow_one, le_uniformizer_iff] at this
     · split_ifs with ha hb hb
       · simpa using h2 a b
       · simpa [le_uniformizer_iff] using h ⟨(a, b), ha, not_lt.1 hb⟩
@@ -580,7 +534,7 @@ private theorem br_index (j : ℕ) (hj : j ≤ n) :
     congr 2
     show (1 + nilM _ : Matrix _ _ k) _ _ = _
     simp only [nilM, Matrix.add_apply, Matrix.of_apply]
-    rw [dif_pos p.2, Matrix.one_apply_ne (fun h => by have := p.2; rw [h] at this; omega), zero_add]
+    rw [dite_eq_left p.2, Matrix.one_apply_ne (fun h => by have := p.2; rw [h] at this; omega), zero_add]
   have h2 : r.range = ⊤ := by
     refine MonoidHom.range_eq_top.2 fun y => ?_
     choose x hx using fun p => IsLocalRing.residue_surjective (y.toAdd p)
@@ -624,7 +578,7 @@ private theorem br_index (j : ℕ) (hj : j ≤ n) :
         refine (Finset.sum_eq_zero fun l _ => ?_).symm
         by_cases hl : (a : ℕ) < j ∧ j ≤ (l : ℕ)
         · rw [((mem_unipB k).1 (inv_mem hx).1).1 l b (show (b : ℕ) < l by omega), mul_zero]
-        · simp only [B, nilM, Matrix.of_apply, dif_neg hl, zero_mul]
+        · simp only [B, nilM, Matrix.of_apply, dite_eq_right hl, zero_mul]
     refine ⟨((⟨f (.ofAdd y), _, rfl⟩ : f.range) : _ ⧸ _), ?_⟩
     rw [Subgroup.quotientSubgroupOfEmbeddingOfLE_apply_mk, QuotientGroup.eq, Subgroup.mem_subgroupOf,
       hmem _ (Subtype.mem _)]
@@ -634,7 +588,7 @@ private theorem br_index (j : ℕ) (hj : j ≤ n) :
       rw [e, Matrix.sub_mul, Matrix.one_mul, Matrix.mul_assoc, Units.inv_mul, Matrix.mul_one]
     show valuation k (((f (.ofAdd y))⁻¹ * x).val _ _) < 1
     rw [e2]
-    simp only [B, nilM, Matrix.sub_apply, Matrix.of_apply, dif_pos p.2, sub_self, map_zero, zero_lt_one]
+    simp only [B, nilM, Matrix.sub_apply, Matrix.of_apply, dite_eq_left p.2, sub_self, map_zero, zero_lt_one]
   rw [← h4, ← Subgroup.index_comap, h1, Subgroup.index_ker, h2, Subgroup.card_top, ← h3]
   exact Nat.card_fun
 

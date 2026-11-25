@@ -14,8 +14,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.KappaOffDiagonal
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Attr
 
 variable {D : D7} {X : HidaSetting D}

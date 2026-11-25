@@ -4,45 +4,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrin
 public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderPullback
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FiniteKrullDim
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.SupportsAlongSequence
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -67,7 +29,6 @@ private theorem toSequenceOfBlowups_eq_of_heq {k : Type u} [Field k] {X : Scheme
 theorem subschemeι_comap_comp_comp_eq {A B C : Scheme.{u}} (e : A ⟶ B) (J : B.IdealSheafData)
     (f g : B ⟶ C) (h : J.subschemeι ≫ f = J.subschemeι ≫ g) :
     (J.comap e).subschemeι ≫ (e ≫ f) = (J.comap e).subschemeι ≫ (e ≫ g) := by
-  have : IsClosedImmersion (Limits.pullback.fst e J.subschemeι) := inferInstance
   have hker : J.comap e = Scheme.Hom.ker (Limits.pullback.fst e J.subschemeι) := rfl
   have hc := Limits.pullback.condition (f := e) (g := J.subschemeι)
   have key : Limits.pullback.fst e J.subschemeι ≫ (e ≫ f)
@@ -110,9 +71,7 @@ theorem isAdmissible_and_isStrictPullbackBlowupSeq_of_etale
   have : AlgebraicGeometry.Smooth T.structMap := hV.smooth
   have : AlgebraicGeometry.Etale ψ := hψ
   have : AlgebraicGeometry.QuasiCompact q := hq
-  have : AlgebraicGeometry.Smooth ψ := inferInstance
   have := hV.isNoetherian
-  have : AlgebraicGeometry.IsLocallyNoetherian T.scheme := inferInstance
   have hVal : (T.pullbackAlong V q ψ).IsAdmissible := hin.valid_pullbackAlong T hV V q ψ hcomp
   have hftq : AlgebraicGeometry.LocallyOfFiniteType q := hVal.locallyOfFiniteType
   have hOT : T.IsOrderBoundedByMult := (T.isOrderBoundedByMult_iff).2 hO

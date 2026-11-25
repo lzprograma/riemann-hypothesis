@@ -1,52 +1,9 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.KTypeGeneratedByHighest
+import all ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.BridgeHW
 public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DefsRep
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -63,24 +20,7 @@ variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] {ε : Fin 
 
 private lemma exp_smul_mem_Kset_of_skew_of_commute_Jm (X : Matrix (Fin n) (Fin n) ℂ) (hX : Xᴴ = -X)
     (hJ : X * Jm ε = Jm ε * X) (t : ℝ) : NormedSpace.exp ((t : ℂ) • X) ∈ Kset ε := by
-  have hs : ((t : ℂ) • X)ᴴ = -((t : ℂ) • X) := by
-    rw [Matrix.conjTranspose_smul, hX, smul_neg]
-    first
-    | simp
-  show NormedSpace.exp ((t : ℂ) • X) ∈ Matrix.unitaryGroup (Fin n) ℂ ∧
-    NormedSpace.exp ((t : ℂ) • X) * Jm ε = Jm ε * NormedSpace.exp ((t : ℂ) • X)
-  refine ⟨?_, ?_⟩
-  · rw [Matrix.mem_unitaryGroup_iff', Matrix.star_eq_conjTranspose, ← Matrix.exp_conjTranspose, hs]
-    have hc : Commute (-((t : ℂ) • X)) ((t : ℂ) • X) := Commute.neg_left (Commute.refl _)
-    have he : NormedSpace.exp (-((t : ℂ) • X) + (t : ℂ) • X) =
-        NormedSpace.exp (-((t : ℂ) • X)) * NormedSpace.exp ((t : ℂ) • X) := by
-      first
-      | exact Matrix.exp_add_of_commute _ _ hc
-    rw [← he, neg_add_cancel]
-    first
-    | exact NormedSpace.exp_zero
-  · first
-    | exact ((show Commute X (Jm ε) from hJ).smul_left (t : ℂ)).exp_left
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.exp_real_smul_mem_Kset_of_skewHermitian_commute_Jm <;> assumption
 
 private lemma mem_UJset_of_mem_Kset' {g : Matrix (Fin n) (Fin n) ℂ} (hg : g ∈ Kset ε) : g ∈ UJset ε := by
   have hg' : g ∈ Matrix.unitaryGroup (Fin n) ℂ ∧ g * Jm ε = Jm ε * g := hg
@@ -105,20 +45,7 @@ private lemma deriv_mem_submodule_of_forall_mem {S : Submodule ℂ H} [FiniteDim
 private lemma exp_smul_diagonal_I (φ : Fin n → ℝ) (t : ℝ) :
     NormedSpace.exp ((t : ℂ) • Matrix.diagonal (fun b => (φ b : ℂ) * Complex.I)) =
       Matrix.diagonal (fun b => Complex.exp (((t * φ b : ℝ) : ℂ) * Complex.I)) := by
-  have h : (t : ℂ) • Matrix.diagonal (fun b => (φ b : ℂ) * Complex.I) =
-      Matrix.diagonal (fun b => ((t * φ b : ℝ) : ℂ) * Complex.I) := by
-    ext i j
-    by_cases hij : i = j
-    · subst hij
-      simp only [Matrix.smul_apply, Matrix.diagonal_apply_eq, smul_eq_mul]
-      push_cast
-      ring
-    · simp [Matrix.diagonal_apply_ne _ hij]
-  rw [h, Matrix.exp_diagonal]
-  congr 1
-  funext b
-  first
-  | simp [Complex.exp_eq_exp_ℂ]
+  apply _root_.GlobalTheory.KTypeHighest.exp_diag <;> assumption
 
 private lemma diagonal_I_conjTranspose_eq_neg (φ : Fin n → ℝ) :
     (Matrix.diagonal (fun b => (φ b : ℂ) * Complex.I))ᴴ =

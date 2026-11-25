@@ -20,12 +20,6 @@ private theorem norm_le_one_of_integral {p : ℕ} [Fact p.Prime] {y : ℂ_[p]}
   have hval : IsIntegral val.integer y := hy.tower_top
   exact NNReal.coe_le_coe.2 ((Valuation.integer.integers val).isIntegral_iff_v_le_one.1 hval)
 
-theorem norm_le_one_of_monic {p : ℕ} [Fact p.Prime] {f : Polynomial ℤ} (hf : f.Monic) {y : ℂ_[p]}
-    (h : Polynomial.eval₂ (Int.castRingHom ℂ_[p]) y f = 0) : ‖y‖ ≤ 1 := by
-  refine norm_le_one_of_integral ⟨f, hf, ?_⟩
-  rw [RingHom.ext_int (algebraMap ℤ ℂ_[p]) (Int.castRingHom ℂ_[p])]
-  exact h
-
 theorem eig_norm_det_le_one {p : ℕ} [Fact p.Prime] {κ : Type*} [Fintype κ] [DecidableEq κ]
     (M : Matrix κ κ ℂ_[p]) (hM : ∀ i j, ‖M i j‖ ≤ 1) : ‖M.det‖ ≤ 1 := by
   rw [Matrix.det_apply']
@@ -98,7 +92,7 @@ theorem eigenFrameDual : EigenFrameDual.{u, v} := by
     by_cases hc : φ = τ₀
     · subst hc
       simp [j, j₀]
-    · rw [if_neg hc, if_neg]
+    · rw [ite_eq_right hc, ite_eq_right]
       intro hj
       apply hc
       have h2 : τ₀.toRatAlgHom = φ.toRatAlgHom := e.symm.injective hj

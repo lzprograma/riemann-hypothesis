@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntertwinerSelfDualVacuumIsVacuum
 public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.Reduction
 public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
 public import Formalism.SharpRestriction.GlobalSchurBounds.StandardIntegralLatticeExists
@@ -35,15 +36,7 @@ theorem mem_ThSp_of' (D : D7) (T : TaylorLogMetric.Tor D) {N N' : ℕ} (La' : Ad
 theorem Iop_smul' (D : D7) (T : TaylorLogMetric.Tor D) {N N' : ℕ} (La₁ La₂ : AddSubgroup (TaylorLogMetric.VC D N N'))
     (c : ℂ) (G : TaylorLogMetric.VC D N N' → ℂ) (z : TaylorLogMetric.VC D N N') :
     TaylorLogMetric.Iop D T La₁ La₂ (fun v => c * G v) z = c * TaylorLogMetric.Iop D T La₁ La₂ G z := by
-  unfold TaylorLogMetric.Iop
-  have : ∀ q : La₂ ⧸ La₁.addSubgroupOf La₂,
-      TaylorLogMetric.al D T ((Quotient.out q : La₂) : TaylorLogMetric.VC D N N') *
-        TaylorLogMetric.U D T ((Quotient.out q : La₂) : TaylorLogMetric.VC D N N') (fun v => c * G v) z
-      = c • (TaylorLogMetric.al D T ((Quotient.out q : La₂) : TaylorLogMetric.VC D N N') *
-        TaylorLogMetric.U D T ((Quotient.out q : La₂) : TaylorLogMetric.VC D N N') G z) := by
-    intro q; simp only [TaylorLogMetric.U, smul_eq_mul]; ring
-  simp only [this]
-  rw [← smul_finsum, smul_eq_mul]; ring
+  apply _root_.GlobalTheory.VacuumMove.Iop_mul <;> assumption
 
 def SmulSD (D : D7) : Prop :=
   letI := D.host.cmStar

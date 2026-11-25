@@ -77,7 +77,7 @@ theorem exists_indicator (S : Finset (HeightOneSpectrum (𝓞 F))) :
     ∃ e : FiniteAdeleRing (𝓞 F) F, (∀ v ∈ S, e v = 1) ∧ ∀ v ∉ S, e v = 0 := by
   classical
   refine ⟨⟨fun v => if v ∈ S then 1 else 0, Filter.Eventually.of_forall fun v => ?_⟩,
-    fun v hv => if_pos hv, fun v hv => if_neg hv⟩
+    fun v hv => ite_eq_left hv, fun v hv => ite_eq_right hv⟩
   beta_reduce
   split_ifs
   · exact one_mem (v.adicCompletionIntegers F)

@@ -2,52 +2,8 @@ module
 
 public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsLiftGraphMetric
 public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsLiftGraphFactor
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithModel
 
@@ -190,12 +146,12 @@ theorem proof (hF : LiftGraphFactor.Statement) : LiftGraphMetric.Statement := by
     { a := unitDeg none
       h := fun z => if z ∈ U then F z else 0
       pos := fun z hz => by
-        simp only [if_pos (show z ∈ U from hz)]
+        simp only [ite_eq_left (show z ∈ U from hz)]
         exact hFpos z hz
       smul := by
         intro c z hc
         by_cases hz : z ∈ U
-        · rw [if_pos ((hmemU c hc z).2 hz), if_pos hz]
+        · rw [ite_eq_left ((hmemU c hc z).2 hz), ite_eq_left hz]
           let c' : K → ℂ := fun k => c (some k)
           have hc' : ∀ k, c' k ≠ 0 := fun k => hc _
           have h1 : N.h (basePart₂ (fun p => c p.1 * z p)) = (∏ k, ‖c' k‖ ^ N.a k) * N.h (basePart₂ z) :=
@@ -223,7 +179,7 @@ theorem proof (hF : LiftGraphFactor.Statement) : LiftGraphMetric.Statement := by
           simp only [F]
           rw [hprod, hs1, hs2, h1, mul_pow, hpow]
           field_simp
-        · rw [if_neg (mt (hmemU c hc z).1 hz), if_neg hz, mul_zero] }
+        · rw [ite_eq_right (mt (hmemU c hc z).1 hz), ite_eq_right hz, mul_zero] }
   have hAh : ∀ z, A.h z = if z ∈ U then F z else 0 := fun z => rfl
   have h2le : (2 : WithTop ℕ∞) ≤ ((⊤ : ℕ∞) : WithTop ℕ∞) := WithTop.coe_le_coe.2 (le_top : (2 : ℕ∞) ≤ ⊤)
   have hoR : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun z : (Σ k, addIdx ι r k) → ℂ => basePart₂ z) :=
@@ -238,7 +194,7 @@ theorem proof (hF : LiftGraphFactor.Statement) : LiftGraphMetric.Statement := by
   have hFs : ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) F U :=
     ((hNo.pow a).mul (hS.contDiffOn.sqrt fun z hz => (hSpos z hz).ne')).div
       (hΦo.sqrt fun z hz => (hΦpos z hz).ne') fun z hz => (Real.sqrt_pos.2 (hΦpos z hz)).ne'
-  have hAs : IsSmoothHerm A := hFs.congr fun z hz => by rw [hAh, if_pos hz]
+  have hAs : IsSmoothHerm A := hFs.congr fun z hz => by rw [hAh, ite_eq_left hz]
   refine ⟨A, rfl, ?_, ⟨hAs, ?_⟩, ?_⟩
   ·
     intro z
@@ -246,13 +202,13 @@ theorem proof (hF : LiftGraphFactor.Statement) : LiftGraphMetric.Statement := by
       simp only [U, Set.mem_setOf_eq, ne_eq, map_eq_zero]
     rw [hAh, hAh]
     by_cases hz : z ∈ U
-    · rw [if_pos (hmem.2 hz), if_pos hz]
+    · rw [ite_eq_left (hmem.2 hz), ite_eq_left hz]
       have e1 : N.h (basePart₂ fun p => (starRingEnd ℂ) (z p)) = N.h (basePart₂ z) := hNc (basePart₂ z)
       have e2 : Φ (basePart₂ fun p => (starRingEnd ℂ) (z p)) = Φ (basePart₂ z) := hΦc (basePart₂ z)
       simp only [F, S]
       rw [e1, e2]
       simp only [Complex.norm_conj]
-    · rw [if_neg (mt hmem.1 hz), if_neg hz]
+    · rw [ite_eq_right (mt hmem.1 hz), ite_eq_right hz]
   ·
     intro z hz ξ hξ
     have hzU : z ∈ U := hz.1
@@ -262,7 +218,7 @@ theorem proof (hF : LiftGraphFactor.Statement) : LiftGraphMetric.Statement := by
         (a : ℝ) * Real.log (N.h (basePart₂ x)) +
           (1 / 2 : ℝ) * (Real.log (S x) + (-1 : ℝ) * Real.log (Φ (basePart₂ x))) := by
       filter_upwards [hUo.mem_nhds hzU] with x hx
-      rw [hAh, if_pos hx]
+      rw [hAh, ite_eq_left hx]
       have hN0 := hNpos x hx
       have hS0 := hSpos x hx
       have hΦ0 := hΦpos x hx
@@ -302,7 +258,7 @@ theorem proof (hF : LiftGraphFactor.Statement) : LiftGraphMetric.Statement := by
     have hzU : z ∈ U := hz.1
     have h := hΦv z hz j
     have hΦ0 : 0 < Real.sqrt (Φ (basePart₂ z)) := Real.sqrt_pos.2 (hΦpos z hzU)
-    rw [hAh, if_pos hzU]
+    rw [hAh, ite_eq_left hzU]
     simp only [F]
     rw [mul_div_assoc', ← mul_assoc, h, mul_div_assoc, div_self hΦ0.ne', mul_one]
 

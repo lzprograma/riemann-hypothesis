@@ -1,40 +1,6 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SignAtBasePlaceEqEmbedding
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 public import Lean.Meta.Injective
 
 @[expose] public section
@@ -611,7 +577,7 @@ structure RestY (Y₀ : NExp R H rows₀ LL₀ N₀ X₀) (what₂ : Rows.Data R
   eAlg_def : ∀ i b (g : G0g N₀), (Y₀.eAlg i b).coeff g =
     IsFractionRing.map (A := X₀.O0 i) (B := X₀.O i) (K := FractionRing (X₀.O0 i))
       (L := FractionRing (X₀.O i)) (X₀.O_inj i) ((if b then x.emb0 i else x.emb0b i) (eLL0 g))
-  twPsi : ∀ i j b k (ψ : G H.E N₀.Om →* (X₀.Ok i k)ˣ),
+  twPsi : ∀ i j b k (_ : G H.E N₀.Om →* (X₀.Ok i k)ˣ),
     Y₀.Fm i j b →ₗ[X₀.O i] (X₀.Ok i k ⊗[X₀.O i] Y₀.Fm i j b)
   twPsi_one : ∀ i j b k (f : Y₀.Fm i j b), twPsi i j b k 1 f = (1 : X₀.Ok i k) ⊗ₜ[X₀.O i] f
   twDel : ∀ i j b (Q : Finset (PlE H)) (M : ℕ),
@@ -1142,8 +1108,6 @@ open scoped TensorProduct
 
 
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.TwInputs.Move
 
 variable {D D' : D7}
@@ -1199,9 +1163,6 @@ theorem SameTwist.eq {A : Type} [CommGroup A] {t t' : Twist D A} (h : SameTwist 
   cases h1; cases h2; cases h3
   rfl
 
-theorem SameBase.refl {S T : HSp D} (B : Base S T) : SameBase B B :=
-  ⟨.rfl, .rfl, .rfl, .rfl, .rfl, .rfl, .rfl, .rfl, .rfl, .rfl, .rfl, .rfl, .rfl, .refl _, .rfl, .rfl, .rfl, .rfl, .rfl, .rfl, .rfl, .rfl⟩
-
 theorem SameBase.eq {S T : HSp D} {B B' : Base S T} (h : SameBase B B') : B = B' := by
   obtain ⟨_, ⟨_, _, _, _, _, _, _, _, _, _⟩, ⟨_, _, _⟩, _, ⟨_, _, _, _, _, _⟩, _, _⟩ := B
   obtain ⟨_, ⟨_, _, _, _, _, _, _, _, _, _⟩, ⟨_, _, _⟩, _, ⟨_, _, _, _, _, _⟩, _, _⟩ := B'
@@ -1210,11 +1171,6 @@ theorem SameBase.eq {S T : HSp D} {B B' : Base S T} (h : SameBase B B') : B = B'
   dsimp only at *
   cases a0; cases a1; cases a2; cases a3; cases a4; cases a5; cases a6; cases a7; cases a8; cases a9; cases a10; cases a11; cases a12; cases a14; cases a15; cases a16; cases a17; cases a18; cases a19; cases a20; cases a21; cases a
   rfl
-
-theorem SameData.refl (ρ : Setup D.ntw) : SameData ρ ρ :=
-  ⟨.rfl, .rfl, .rfl, .rfl, .rfl, .rfl, fun _ _ hi _ _ hj _ => by cases hi; cases Fin.ext hj; exact .refl _, .rfl,
-    fun _ _ hi _ _ hj _ _ _ ht => by cases hi; cases Fin.ext hj; cases ht.eq; exact ⟨rfl, .rfl⟩, .rfl,
-    fun _ _ hi _ _ hj _ => by cases hi; cases Fin.ext hj; exact .rfl⟩
 
 theorem SameData.eq {ρ ρ' : Setup D.ntw} (h : SameData ρ ρ') : ρ = ρ' := by
   have hB : ρ.B = ρ'.B := funext fun i => funext fun j => funext fun b => (h.B i i .rfl j j rfl b).eq

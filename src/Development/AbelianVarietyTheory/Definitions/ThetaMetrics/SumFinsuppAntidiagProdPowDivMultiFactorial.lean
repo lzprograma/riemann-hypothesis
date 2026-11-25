@@ -7,53 +7,7 @@ public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
 public import Mathlib.Algebra.Order.Antidiag.FinsuppEquiv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Algebra.Order.Chebyshev
 public import Mathlib.Data.Nat.Choose.Bounds
@@ -76,8 +30,6 @@ variable [NormedCommRing K]
 def l1Norm (P : MvPolynomial σ K) : ℝ := ∑ α ∈ P.support, ‖P.coeff α‖
 
 def l2Norm (P : MvPolynomial σ K) : ℝ := √(∑ α ∈ P.support, ‖P.coeff α‖ ^ 2)
-
-def supCoeff (P : MvPolynomial σ K) : ℝ := ((P.support.sup fun α ↦ ‖P.coeff α‖₊ : NNReal) : ℝ)
 
 def multiFactorial (α : σ →₀ ℕ) : ℕ := α.prod fun _ n ↦ n.factorial
 
@@ -102,12 +54,6 @@ theorem l1Norm_eq_sum_of_subset {P : MvPolynomial σ K} {s : Finset (σ →₀ �
 
 theorem l1Norm_nonneg (P : MvPolynomial σ K) : 0 ≤ l1Norm P :=
   sum_nonneg fun _ _ ↦ norm_nonneg _
-
-theorem sum_norm_coeff_le_l1Norm (P : MvPolynomial σ K) (s : Finset (σ →₀ ℕ)) :
-    ∑ α ∈ s, ‖P.coeff α‖ ≤ l1Norm P := by
-  classical
-  rw [l1Norm_eq_sum_of_subset (s := P.support ∪ s) subset_union_left]
-  exact sum_le_sum_of_subset_of_nonneg subset_union_right fun _ _ _ ↦ norm_nonneg _
 
 @[simp] theorem l1Norm_zero : l1Norm (0 : MvPolynomial σ K) = 0 := by simp [l1Norm]
 
@@ -357,20 +303,6 @@ theorem l1Norm_le_sqrt_choose_mul_l2Norm [Fintype σ] {P : MvPolynomial σ K} {d
     (h : P.totalDegree ≤ d) : l1Norm P ≤ √((Fintype.card σ + d).choose d) * l2Norm P :=
   (l1Norm_le_sqrt_card_mul_l2Norm P).trans <| mul_le_mul_of_nonneg_right
     (Real.sqrt_le_sqrt (by exact_mod_cast card_support_le_choose h)) (l2Norm_nonneg P)
-
-theorem supCoeff_nonneg (P : MvPolynomial σ K) : 0 ≤ supCoeff P := NNReal.coe_nonneg _
-
-theorem norm_coeff_le_supCoeff (P : MvPolynomial σ K) (α : σ →₀ ℕ) :
-    ‖P.coeff α‖ ≤ supCoeff P := by
-  by_cases h : α ∈ P.support
-  · exact NNReal.coe_le_coe.mpr (Finset.le_sup (f := fun α ↦ ‖P.coeff α‖₊) h)
-  · rw [notMem_support_iff.mp h, norm_zero]; exact supCoeff_nonneg P
-
-theorem supCoeff_le_iff {P : MvPolynomial σ K} {B : ℝ} (hB : 0 ≤ B) :
-    supCoeff P ≤ B ↔ ∀ α, ‖P.coeff α‖ ≤ B := by
-  refine ⟨fun h α ↦ (norm_coeff_le_supCoeff P α).trans h, fun h ↦ ?_⟩
-  lift B to NNReal using hB
-  exact NNReal.coe_le_coe.mpr (Finset.sup_le fun α _ ↦ h α)
 
 end L2
 

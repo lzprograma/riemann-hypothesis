@@ -266,7 +266,6 @@ theorem invV_decay : ∀ (F : Type) [Field F] [NumberField F] (N : ℕ) [Inverti
       refine ⟨∑ l, ∑ w₀ : {w : InfinitePlace F // w.IsReal},
         (C' (l, w₀) / (2 * Real.pi * |lam w₀.1|) + |rc w₀ (fstA F (x l))| * C₀), fun t => ?_⟩
       set g := ‖invV ψ ν 𝓓 f (x + embR t)‖ with hgdef
-      have hg : 0 ≤ g := norm_nonneg _
       have term : ∀ l w₀, |(t l).1 w₀| * (‖t‖ ^ k * g) ≤
           C' (l, w₀) / (2 * Real.pi * |lam w₀.1|) + |rc w₀ (fstA F (x l))| * C₀ := by
         intro l w₀

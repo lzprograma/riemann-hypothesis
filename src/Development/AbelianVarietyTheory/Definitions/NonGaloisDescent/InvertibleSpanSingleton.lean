@@ -2,54 +2,7 @@ module
 
 public import Mathlib.NumberTheory.Padics.PadicIntegers
 public import Mathlib.RingTheory.PicardGroup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.GroupTheory.Nilpotent
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
 public import Mathlib.NumberTheory.Padics.RingHoms
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -281,28 +234,6 @@ def FCrys.pullback {R' : Type} [CommRing R'] (g : R →+* R') (E : FCrys l R) : 
   Φ P := E.Φ (P.restrict g)
   Φ_bc P := E.Φ_bc (P.restrict g)
   Φ_nat f := E.Φ_nat (f.restrict g)
-
-def Obj.crys (l : ℕ) [hl : Fact l.Prime] : Obj l ℤ_[l] where
-  A := ℤ_[l]
-  D := Delta.ofLift l (RingHom.id _)
-    (fun x hx => (mul_eq_zero.1 hx).resolve_left (by exact_mod_cast hl.out.ne_zero))
-    (fun a => by
-      have : a - a ^ l ∈ RingHom.ker (PadicInt.toZMod (p := l)) := by
-        simp [RingHom.mem_ker]
-      rw [PadicInt.ker_toZMod, PadicInt.maximalIdeal_eq_span_p, Ideal.mem_span_singleton] at this
-      obtain ⟨b, hb⟩ := this
-      exact ⟨b, by simp only [RingHom.id_apply]; linear_combination hb⟩)
-  I := Ideal.span {(l : ℤ_[l])}
-  inv := invertible_span_singleton (mem_nonZeroDivisors_of_ne_zero (by exact_mod_cast hl.out.ne_zero))
-  complete := by
-    rw [sup_idem, ← PadicInt.maximalIdeal_eq_span_p]; infer_instance
-  l_mem := Ideal.mem_sup_left (Ideal.mem_span_singleton_self _)
-  bdd := ⟨1, fun x _ => by
-    have : ((l : ℕ) : ℤ_[l] ⧸ Ideal.span {(l : ℤ_[l])}) = 0 := by
-      rw [← map_natCast (Ideal.Quotient.mk _), Ideal.Quotient.eq_zero_iff_mem]
-      exact Ideal.mem_span_singleton_self _
-    simp [this]⟩
-  str := Ideal.Quotient.mk _
 
 theorem semiBC_self {A B : Type} [CommRing A] [CommRing B] (f : A →+* B) : SemiBC f.toSemilinearMap := by
   intro Q _ _ v

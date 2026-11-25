@@ -19,9 +19,6 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {r : �
 def OmV {T T' : E} (F : FlagG S r T) (F' : FlagG S r T') (v : S.V) : Prop :=
   v ∈ Submodule.span E (Set.range F'.fvec) ∧ ∀ a, S.hT (F.fvec a) v = if a = Fin.last r then 1 else 0
 
-theorem fvec_cs {T : E} (F : FlagG S r T) (i : Fin r) : F.fvec i.castSucc = F.e i := by
-  simp [FlagG.fvec]
-
 alias fvec_last := _root_.PI.ScalarPairDr.W.fvec_last
 
 theorem hT_comb {T T' : E} (F : FlagG S r T) (F' : FlagG S r T') (c : Fin (r + 1) → E) (a : Fin (r + 1)) :
@@ -65,7 +62,7 @@ theorem comb_eq {T T' : E} (F : FlagG S r T) (F' : FlagG S r T') (hdet : (Zhat F
       rw [map_sub, map_smul, hΩ.2, smul_eq_mul]
       refine Fin.lastCases ?_ (fun i => ?_) a
       · rw [fvec_last]; simp
-      · rw [fvec_cs, hc i]; simp [Fin.castSucc_ne_last]
+      · rw [PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc, hc i]; simp [Fin.castSucc_ne_last]
   exact sub_eq_zero.1 this
 
 end OmP
@@ -75,8 +72,6 @@ open OmP
 section Cls
 
 variable {D : Formalism.BasicNotions.D7}
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem omCls_of_om {T T' : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (F'₂ F' : LFlag (D.sp.Y 0) D.R.rS T')
     (hZ : ZhatL (lf D F0) F'₂ = ZhatL (lf D F0) F') (hdet : (ZhatL (lf D F0) F'₂).det ≠ 0) {Ω₂ Ω' : (VS D).V}
@@ -88,7 +83,7 @@ theorem omCls_of_om {T T' : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (F'₂ F' : L
   have hc₂ : ∀ i, (VS D).hT (F0.e i) (∑ b, c b • F'₂.fl.fvec b) = 0 := hc
   have hc' : ∀ i, (VS D).hT (F0.e i) (∑ b, c b • F'.fl.fvec b) = 0 := by
     intro i
-    rw [← fvec_cs, hT_comb, ← hZ', ← hT_comb, fvec_cs]
+    rw [← PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc, hT_comb, ← hZ', ← hT_comb, PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc]
     exact hc₂ i
   have hμ : (VS D).hT F0.z (∑ b, c b • F'.fl.fvec b) = (VS D).hT F0.z (∑ b, c b • F'₂.fl.fvec b) := by
     rw [← fvec_last, hT_comb, hT_comb, hZ']

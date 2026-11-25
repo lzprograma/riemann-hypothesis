@@ -1,45 +1,6 @@
 module
 
 public import Formalism.PeriodIntegrals.WeylProd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Data.Fintype.BigOperators
@@ -82,7 +43,7 @@ theorem row_eq (x : ℕ → ℝ) (n i : ℕ) :
     exact Finset.prod_congr rfl (fun j hj => by
       rw [mem_Ico] at hj
       simp [wg, show i < j by omega])
-  · push_neg at hin
+  · push Not at hin
     rw [Finset.Ico_eq_empty_of_le (by omega), Finset.prod_empty]
     exact Finset.prod_eq_one (fun j hj => by
       rw [mem_range] at hj
@@ -97,7 +58,7 @@ theorem weylProd : PI.WeylProd := by
     unfold wg
     by_cases h : i < j
     · have h' : (i : ℕ) < (j : ℕ) := h
-      rw [if_pos h, if_pos h']
+      rw [ite_eq_left h, ite_eq_left h']
       have hi : shiftSeq w (i : ℕ) = ((w i : ℤ) : ℝ) - ((i : ℕ) : ℝ) := by
         simp [shiftSeq]
       have hj : shiftSeq w (j : ℕ) = ((w j : ℤ) : ℝ) - ((j : ℕ) : ℝ) := by
@@ -106,7 +67,7 @@ theorem weylProd : PI.WeylProd := by
       push_cast
       ring
     · have h' : ¬ (i : ℕ) < (j : ℕ) := h
-      rw [if_neg h, if_neg h', Rat.cast_one]
+      rw [ite_eq_right h, ite_eq_right h', Rat.cast_one]
   rw [Rat.cast_prod]
   simp only [Rat.cast_prod]
   rw [Finset.prod_congr rfl (fun i _ => Finset.prod_congr rfl (fun j _ => hterm i j))]

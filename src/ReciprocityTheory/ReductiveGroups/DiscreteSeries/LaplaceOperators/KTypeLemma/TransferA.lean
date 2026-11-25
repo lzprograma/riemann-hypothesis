@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CasChainB
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
 public import Mathlib.Analysis.Normed.Algebra.MatrixExponential
 import Mathlib.RingTheory.PiTensorProduct
@@ -54,25 +55,11 @@ lemma ta_inG_cpart1 (ε : Fin n → Bool) (Z : Matrix (Fin n) (Fin n) ℂ) : inG
   module
 
 lemma ta_inG_cpart2 (ε : Fin n → Bool) (Z : Matrix (Fin n) (Fin n) ℂ) : inG ε (cpart2 ε Z) := by
-  unfold inG cpart2
-  rw [conjTranspose_smul, conjTranspose_add, conjTranspose_mul, conjTranspose_mul, _root_.ReciprocityTheory.ChartRestriction.DS.S7.Jm_conjTranspose,
-    conjTranspose_conjTranspose]
-  simp only [smul_mul_assoc, mul_smul_comm, add_mul, mul_add, mul_assoc, _root_.ReciprocityTheory.ChartRestriction.DS.S7.Jm_mul_self, ta_Jm_Jm, mul_one]
-  have h2 : star (1 / (2 * Complex.I)) = -(1 / (2 * Complex.I)) := by
-    rw [star_div₀, star_one, star_mul', Complex.star_def, Complex.conj_I]
-    rw [map_ofNat]
-    rw [mul_neg, div_neg]
-  rw [h2]
-  module
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.S7.ccb_inG_cpart2 <;> assumption
 
 lemma ta_cpart_sum (ε : Fin n → Bool) (Z : Matrix (Fin n) (Fin n) ℂ) :
     cpart1 ε Z + Complex.I • cpart2 ε Z = Z := by
-  unfold cpart1 cpart2
-  rw [smul_smul]
-  have h : Complex.I * (1 / (2 * Complex.I)) = 1 / 2 := by
-    field_simp
-  rw [h]
-  module
+  exact ReciprocityTheory.ChartRestriction.DS.S7.ccb_cpart_sum ε Z
 
 lemma ta_exp_conjT (ε : Fin n → Bool) {X : Matrix (Fin n) (Fin n) ℂ} (hX : inG ε X) (t : ℝ) :
     (NormedSpace.exp ((t : ℂ) • X))ᴴ = Jm ε * NormedSpace.exp (-((t : ℂ) • X)) * Jm ε := by

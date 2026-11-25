@@ -3,56 +3,8 @@ module
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SesqAsym
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertPlaceKappaOrbitalUnitEqSignedLatticeSumImpo
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedQuadraticNormsTraceUniformizerFacts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -60,9 +12,6 @@ open GlobalTheory.UnitLemma Polynomial Matrix
 
 noncomputable section
 namespace GlobalTheory.InertUnitOrb.ModelOfN
-
-theorem sigma_smul {K : UQ} (B : InvAlg K) (e : K.E) (y : B.A) : B.σ (e • y) = K.c e • B.σ y := by
-  rw [Algebra.smul_def, map_mul, B.σ_alg, ← Algebra.smul_def]
 
 theorem trace_sigma {K : UQ} (B : InvAlg K) (w : B.A) :
     Algebra.trace K.E B.A (B.σ w) = K.c (Algebra.trace K.E B.A w) := by
@@ -101,8 +50,7 @@ theorem exists_unit_vector [FiniteDimensional K.E V] (h : V → V → K.E)
   have hinj : Function.Injective (algebraMap K.O K.E) := IsFractionRing.injective _ _
   set ι := algebraMap K.O K.E with hι
   set m := IsLocalRing.maximalIdeal K.O with hm
-  by_contra hno
-  push_neg at hno
+  by_contra! hno
   have c1 : ∀ v ∈ L, ∃ a ∈ m, h v v = ι a := by
     intro v hv
     obtain ⟨a, ha⟩ := (hdual v).1 hv v hv
@@ -263,8 +211,7 @@ theorem exists_orthonormal (n : ℕ) : ∀ (V : Type) [AddCommGroup V] [Module K
 end Induction
 
 theorem exists_mem_X_of_N_ne_zero {K : UQ} (B : InvAlg K) (x : B.A) (hN : B.N x ≠ 0) : ∃ L, L ∈ B.X x := by
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   apply hN
   haveI : IsEmpty (Orb K.O B.T (B.X x)) := ⟨fun o => by
     induction o using Quot.ind with
@@ -323,7 +270,7 @@ theorem exists_model : ∀ (K : GlobalTheory.UnitLemma.UQ) (B : GlobalTheory.Uni
   have hcol : ∀ i z, B.herm x (b i) z = K.c (b.repr z i) := by
     intro i z
     rw [hsym, hexp z (b i)]
-    simp only [hb, hv, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [hb, hv, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   refine ⟨LinearMap.toMatrix b b (LinearMap.mulLeft K.E B.g), b.equivFun, hσx, fun y => ?_, fun y z => ?_⟩
   · rw [Module.Basis.equivFun_apply, Module.Basis.equivFun_apply, LinearMap.toMatrix_mulVec_repr]
     rfl

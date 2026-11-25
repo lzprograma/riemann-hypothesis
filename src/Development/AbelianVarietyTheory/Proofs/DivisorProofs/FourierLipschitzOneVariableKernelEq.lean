@@ -159,12 +159,12 @@ theorem fourier_phi1_eq_factorial_mul_zpow : ∀ (k : ℕ), 2 ≤ k → Even k �
       simp only [phi1, smul_eq_mul, Set.indicator, Set.mem_Ioi, sign_neg hneg, SignType.coe_neg,
         SignType.coe_one, Nat.add_sub_cancel]
       by_cases hv : 0 < v
-      · rw [if_pos (by linarith), if_pos hv, abs_neg, abs_of_pos hv]
+      · rw [ite_eq_left (by linarith), ite_eq_left hv, abs_neg, abs_of_pos hv]
         push_cast
         rw [← mul_assoc, mul_comm _ ((v : ℂ) ^ m), mul_assoc, ← Complex.exp_add]
         congr 2
         rw [hrdef]; ring
-      · rw [if_neg (by linarith), if_neg hv, mul_zero]
+      · rw [ite_eq_right (by linarith), ite_eq_right hv, mul_zero]
     rw [← integral_neg_eq_self, e, integral_indicator measurableSet_Ioi,
       integral_pow_mul_cexp_neg m hr, hrdef, mul_pow, zpow_neg, zpow_natCast]
     field_simp
@@ -178,12 +178,12 @@ theorem fourier_phi1_eq_factorial_mul_zpow : ∀ (k : ℕ), 2 ≤ k → Even k �
       simp only [phi1, smul_eq_mul, Set.indicator, Set.mem_Ioi, sign_pos hpos,
         SignType.coe_one, one_mul, Nat.add_sub_cancel]
       by_cases hv : 0 < v
-      · rw [if_pos hv, if_pos hv, abs_of_pos hv]
+      · rw [ite_eq_left hv, ite_eq_left hv, abs_of_pos hv]
         push_cast
         rw [← mul_assoc, mul_comm _ ((v : ℂ) ^ m), mul_assoc, ← Complex.exp_add]
         congr 2
         rw [hrdef]; ring
-      · rw [if_neg hv, if_neg hv, mul_zero]
+      · rw [ite_eq_right hv, ite_eq_right hv, mul_zero]
     rw [e, integral_indicator measurableSet_Ioi, integral_pow_mul_cexp_neg m hr, hrdef,
       hke.neg_pow, mul_pow, zpow_neg, zpow_natCast]
     field_simp

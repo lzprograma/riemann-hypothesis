@@ -7,46 +7,7 @@ public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsG
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OpenCellUnipotentUniquenessClosed
 public import GroundTheory.AutomorphicForms.GeometricLemmaCellSurjective
 public import GroundTheory.AutomorphicForms.IwahoriFactorization
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
 
@@ -77,11 +38,11 @@ theorem exists_smInd_bump {G W : Type} [Group G] [TopologicalSpace G] [IsTopolog
   let pick : G → H := fun x => if h : S x then h.choose else 1
   have pick_spec : ∀ x, S x → ((pick x : H) : G)⁻¹ * x ∈ K := by
     intro x h
-    simp only [pick, dif_pos h]
+    simp only [pick, dite_eq_left h]
     exact h.choose_spec
   let F : G → W := fun x => if S x then σ (pick x) v else 0
-  have F_pos : ∀ x, S x → F x = σ (pick x) v := fun x h => if_pos h
-  have F_neg : ∀ x, ¬ S x → F x = 0 := fun x h => if_neg h
+  have F_pos : ∀ x, S x → F x = σ (pick x) v := fun x h => ite_eq_left h
+  have F_neg : ∀ x, ¬ S x → F x = 0 := fun x h => ite_eq_right h
   have S_left : ∀ (q : H) x, S x → S (q * x) := by
     rintro q x ⟨p, hp⟩
     exact ⟨q * p, by simpa [mul_assoc] using hp⟩

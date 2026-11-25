@@ -239,7 +239,7 @@ theorem MS_pl (ρ' ρ : Fin N) (w : WVO (IS I0)) (col : Fin 2) (i : Fin dd) :
 theorem MS_off (x : Fin N × WVO (IS I0)) (b : Fin n) (hb : b ∉ Set.range pl) (i : Fin dd) :
     MS Y p pl x (b, i) = 0 := by
   simp only [MS]
-  exact Finset.sum_eq_zero fun col _ => if_neg fun h => hb ⟨_, h⟩
+  exact Finset.sum_eq_zero fun col _ => ite_eq_right fun h => hb ⟨_, h⟩
 
 theorem linPt_pl (ρ : Fin N) (col : Fin 2) (i : Fin dd) :
     linPt Y (MS Y p pl) (pl (ρ, col), i) = rowOf ρ (linPt Y (uS Y p) (col, i)) := by
@@ -249,7 +249,7 @@ theorem linPt_pl (ρ : Fin N) (col : Fin 2) (i : Fin dd) :
   funext j
   simp only [linS, map_sum, map_smul, MvPowerSeries.rename_X]
   rw [Fintype.sum_prod_type, Finset.sum_eq_single ρ]
-  · simp only [colLin, MS_pl, if_true]
+  · simp only [colLin, MS_pl, ite_true]
     rfl
   · intro ρ' _ hρ'
     simp [colLin, MS_pl, hρ']
@@ -360,7 +360,7 @@ theorem hco_of_img {ι : Type} (cp : ι → Fin n) (uv : ι → Fin dd → C) (�
     by_cases hb' : pl (ρ, c) = b
     · have h1 := congrFun hvec (c, i)
       simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul] at h1
-      simp only [hb', if_true]
+      simp only [hb', ite_true]
       rw [h1]
       rfl
     · simp [hb']
@@ -368,7 +368,7 @@ theorem hco_of_img {ι : Type} (cp : ι → Fin n) (uv : ι → Fin dd → C) (�
   rw [Finset.sum_comm]
   simp only [key]
   rw [Finset.sum_eq_single col (fun c _ hc => by simp [hc]) (by simp)]
-  simp only [if_true]
+  simp only [ite_true]
   by_cases hb : b = cp ℓ
   · simp [hb, hpl]
   · have h2 : pl (ρ, col) ≠ b := fun h' => hb (h'.symm.trans hpl)

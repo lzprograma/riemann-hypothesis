@@ -125,7 +125,7 @@ private theorem crLin_wt (h : IsChart 𝒜 x wt φ) (i : τ) {j : X} (hij : wt i
 private theorem crLin_const (φ : A →ₐ[O] MvPowerSeries τ (FractionRing O)) (i : τ) (c : O) :
     crLin φ i (algebraMap O A c) = 0 := by
   classical
-  rw [crLin_apply, AlgHom.commutes, MvPowerSeries.algebraMap_apply, MvPowerSeries.coeff_C, if_neg (by simp)]
+  rw [crLin_apply, AlgHom.commutes, MvPowerSeries.algebraMap_apply, MvPowerSeries.coeff_C, ite_eq_right (by simp)]
 
 private theorem cr_fixed (h : IsChart 𝒜 x wt φ) {j : X} (hj : j ≠ 0) {f : A} (hf : f ∈ 𝒜 j) : x f = 0 := by
   have h1 := h.graded j f hf 0 (by simpa using hj.symm)
@@ -167,7 +167,7 @@ theorem UpperTheory.V.Alg.chart_rank :
   apply Module.finrank_eq_of_rank_eq
   apply le_antisymm
   · have hinj : Function.Injective ψ := by
-      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+      rw [injective_iff_map_eq_zero]
       rintro ⟨_, f, hf, rfl⟩ h0
       apply Subtype.ext
       refine (Submodule.Quotient.mk_eq_zero _).2 (h.inj f hf.2 fun i => ?_)
@@ -267,18 +267,18 @@ theorem UpperTheory.V.Alg.cot_fg :
       simp only [map_smul, coeff_X, smul_eq_mul, mul_ite, mul_one, mul_zero]
       by_cases hw : Finsupp.weight W.wt m = j
       · rcases deg_lt_two m (not_le.1 fun h2 => hm ⟨hw, h2⟩) with rfl | ⟨s, rfl⟩
-        · rw [Finset.sum_eq_zero fun s _ => if_neg (Finsupp.single_ne_zero.2 one_ne_zero).symm]
+        · rw [Finset.sum_eq_zero fun s _ => ite_eq_right (Finsupp.single_ne_zero.2 one_ne_zero).symm]
           simpa using h0
         · have hs : W.wt s = j := by simpa [Finsupp.weight_single] using hw
-          rw [Finset.sum_eq_single (⟨s, hs⟩ : {s // W.wt s = j}), if_pos rfl, sub_self]
+          rw [Finset.sum_eq_single (⟨s, hs⟩ : {s // W.wt s = j}), ite_eq_left rfl, sub_self]
           · intro t _ ht
-            rw [if_neg]
+            rw [ite_eq_right]
             intro h2
             exact ht (Subtype.ext (Finsupp.single_left_injective one_ne_zero h2).symm)
           · simp
       · rw [hf m hw, Finset.sum_eq_zero, sub_self]
         intro s _
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro rfl
         exact hw (by simpa [Finsupp.weight_single] using s.2)
     have h2 : (satSq (W.originA h)).mkQ x = (satSq (W.originA h)).mkQ
@@ -434,9 +434,9 @@ private theorem prj_fst {O : Type} [CommRing O] (c : Fin 4 → O) (X : M4 (DualN
     by_cases hai : a = i
     · subst hai
       simp
-    · rw [if_pos rfl, if_neg (fun h => hai h.1)]
+    · rw [ite_eq_left rfl, ite_eq_right (fun h => hai h.1)]
       exact Finset.prod_eq_zero (Finset.mem_erase.2 ⟨hai, Finset.mem_univ _⟩) (sub_self _)
-  · rw [if_neg hab, if_neg (fun h => hab (h.1.trans h.2.symm))]
+  · rw [ite_eq_right hab, ite_eq_right (fun h => hab (h.1.trans h.2.symm))]
 
 private theorem triple {O : Type} [CommRing O] (A B C : M4 (DualNumber O)) (p q : Fin 4) (α γ : O) (β : Fin 4 → O)
     (hA : ∀ a b, (A a b).fst = if a = p ∧ b = p then α else 0)
@@ -922,7 +922,7 @@ private theorem cotangent_rank_le_weight_count [Fintype τ] (h : IsChart 𝒜 x 
   let ψ : cotLat x 𝒜 j →ₗ[O] ({i // wt i = j} → FractionRing O) :=
     LinearMap.pi fun i => ((satSq x).liftQ (powerSeriesCoefficientLinear φ i.1) (m1bLin_sat h i.1)) ∘ₗ (cotLat x 𝒜 j).subtype
   have hinj : Function.Injective ψ := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     rintro ⟨_, f, hf, rfl⟩ h0
     apply Subtype.ext
     refine (Submodule.Quotient.mk_eq_zero _).2 (h.inj f hf.2 fun i => ?_)

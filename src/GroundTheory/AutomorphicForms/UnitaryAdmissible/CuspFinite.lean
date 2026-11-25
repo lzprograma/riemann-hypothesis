@@ -18,8 +18,6 @@ namespace UnitaryAdmissible
 open MeasureTheory Filter Topology NumberField AutomorphicForm CuspidalSpectrum Reduction RightCosetSpace
 open scoped NumberField.AdeleRing
 
-attribute [local instance 100] LieRing.ofAssociativeRing
-
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
 local notation "Γ₁" => rationalGLOne (K := K) (n := n)

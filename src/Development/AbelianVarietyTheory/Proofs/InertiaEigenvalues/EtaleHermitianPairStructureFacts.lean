@@ -246,7 +246,7 @@ theorem finite_units_quot_sq_normed (F : Type) [NontriviallyNormedField F] [Comp
           (hcu.unit⁻¹).isUnit
       exact (isUnit_pow_iff two_ne_zero).mp this
     refine ⟨c, hct, ?_⟩
-    simp only [f, dif_pos hcu]
+    simp only [f, dite_eq_left hcu]
     rw [QuotientGroup.eq, MonoidHom.mem_range]
     let bu : Rˣ := Units.map (algebraMap F R).toMonoidHom (Units.mk0 _ hβ0)
     have hs' : hsU.unit ^ 2 = bu ^ 2 * u * hcu.unit⁻¹ := by
@@ -426,11 +426,11 @@ theorem okCompact : ∀ (F E : Type) [NontriviallyNormedField F] [NontriviallyNo
       ext k
       rw [Polynomial.coeff_X_pow]
       rcases lt_trichotomy k n with hk | hk | hk
-      · rw [if_neg hk.ne]; exact hz k hk
-      · rw [if_pos hk]
+      · rw [ite_eq_right hk.ne]; exact hz k hk
+      · rw [ite_eq_left hk]
         have := (LinearMap.charpoly_monic (Algebra.lmul F A.K z)).coeff_natDegree
         rwa [LinearMap.charpoly_natDegree, hn, ← hk] at this
-      · rw [if_neg hk.ne']
+      · rw [ite_eq_right hk.ne']
         apply Polynomial.coeff_eq_zero_of_natDegree_lt
         rw [LinearMap.charpoly_natDegree, hn]; exact hk
     have hCH := LinearMap.aeval_self_charpoly (Algebra.lmul F A.K z)
@@ -447,8 +447,7 @@ theorem okCompact : ∀ (F E : Type) [NontriviallyNormedField F] [NontriviallyNo
   have hc : Continuous h := continuous_finsetSum _ fun k _ => continuous_norm.comp ((hPc k).comp hes)
   have hpos : ∀ v ∈ T, 0 < h v := by
     intro v hv
-    by_contra hle
-    push_neg at hle
+    by_contra! hle
     have hsum : h v = 0 := le_antisymm hle (Finset.sum_nonneg fun k _ => norm_nonneg _)
     have h0 : ∀ k < n, P k (e.symm v) = 0 := by
       intro k hk
@@ -489,7 +488,7 @@ theorem okCompact : ∀ (F E : Type) [NontriviallyNormedField F] [NontriviallyNo
     · calc ‖e z‖ = ‖d⁻¹‖ * ‖d • e z‖ := hnv
         _ ≤ 1 * ‖a‖ := mul_le_mul hc1 hwT.2 (norm_nonneg _) zero_le_one
         _ ≤ _ := by rw [one_mul]; exact hR
-    · push_neg at hc1
+    · push Not at hc1
       have hlow : ‖d⁻¹‖ * m ≤ h (e z) := by
         calc ‖d⁻¹‖ * m ≤ ‖d⁻¹‖ * h (d • e z) := mul_le_mul_of_nonneg_left (hm _ hwT) (norm_nonneg _)
           _ = ∑ k ∈ Finset.range n, ‖d⁻¹‖ * ‖P k (e.symm (d • e z))‖ := Finset.mul_sum _ _ _
@@ -607,11 +606,11 @@ theorem eta_NL [U : Unram F E] (A : Et F E) (y : A.L) : A.etaK (A.NL y) = 1 := b
   obtain ⟨x, hx⟩ := U.unram (Algebra.norm E y)
   have hx2 : ‖Algebra.norm F (Algebra.norm E y)‖ = ‖x‖ ^ 2 := by
     rw [← norm_algebraMap' E, normE, norm_mul, U.norm_star, hx, sq]
-  rw [if_pos ⟨x, hx2⟩]
+  rw [ite_eq_left ⟨x, hx2⟩]
 
 theorem eta_neg_one [Unram F E] (A : Et F E) : A.etaK (-1) = 1 := by
   rw [Et.etaK, eta]
-  refine if_pos ⟨1, ?_⟩
+  refine ite_eq_left ⟨1, ?_⟩
   have h : Algebra.norm F (-1 : A.K) * Algebra.norm F (-1 : A.K) = 1 := by
     rw [← map_mul]; simp
   have h' := congrArg norm h

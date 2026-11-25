@@ -64,9 +64,6 @@ open GlobalTheory.ZM GlobalTheory.ZV
 
 namespace GlobalTheory.EmbCut
 
-theorem powIsLB {X : Scheme.{0}} {L : LB X} (hL : L.IsLB) (n : ℕ) : (lbPow L n).IsLB :=
-  DVR.linComb_isLB L hL _ _
-
 theorem isoPullAlong {X Y : Scheme.{0}} {L M : LB X} (h : LBIso L M) (j : Y ⟶ X) : LBIso (L.pull j) (M.pull j) :=
   LBIso.chartPull (Geo.Tor.chartPullPull L j j rfl) (Geo.Tor.chartPullPull M j j rfl) h
 
@@ -87,14 +84,14 @@ theorem sectionsHaveFiniteDimension_of_iso_pulled_pow {K : Type} [Field K] {X Y 
     (hr : SectionsHaveFiniteDimension p (lbPow L (N * n)) r) : SectionsHaveFiniteDimension (e.hom ≫ p) (lbPow M n) r := by
   have hN := _root_.GlobalTheory.isLB_lbPow hL N
   have h1 : SectionsHaveFiniteDimension p (lbPow (lbPow L N) n) r :=
-    ((_root_.GlobalTheory.SecDim.lbPow_mul_and_pull_and_sectionsFiniteDim_iso_invariant K X p _ (powIsLB hL (N * n))).2.1 _ (powIsLB hN n)
+    ((_root_.GlobalTheory.SecDim.lbPow_mul_and_pull_and_sectionsFiniteDim_iso_invariant K X p _ (GlobalTheory.isLB_lbPow hL (N * n))).2.1 _ (GlobalTheory.isLB_lbPow hN n)
       ((_root_.GlobalTheory.SecDim.lbPow_mul_and_pull_and_sectionsFiniteDim_iso_invariant K X p L hL).2.2.1 N n).symm).1 r hr
-  have h2 := ((_root_.GlobalTheory.SecDim.lbPow_mul_and_pull_and_sectionsFiniteDim_iso_invariant K X p _ (powIsLB hN n)).2.2.2.2.2 Y e r).1 h1
+  have h2 := ((_root_.GlobalTheory.SecDim.lbPow_mul_and_pull_and_sectionsFiniteDim_iso_invariant K X p _ (GlobalTheory.isLB_lbPow hN n)).2.2.2.2.2 Y e r).1 h1
   have h3 : LBIso (lbPow M n) ((lbPow (lbPow L N) n).pull e.hom) :=
-    LBIso.trans (powIsLB hM n) (powIsLB (LB.isLB_pull hN _) n) (LB.isLB_pull (powIsLB hN n) _)
+    LBIso.trans (GlobalTheory.isLB_lbPow hM n) (GlobalTheory.isLB_lbPow (LB.isLB_pull hN _) n) (LB.isLB_pull (GlobalTheory.isLB_lbPow hN n) _)
       (((_root_.GlobalTheory.SecDim.lbPow_mul_and_pull_and_sectionsFiniteDim_iso_invariant K Y (e.hom ≫ p) M hM).2.1 _ (LB.isLB_pull hN _) h).2 n)
       ((_root_.GlobalTheory.SecDim.lbPow_mul_and_pull_and_sectionsFiniteDim_iso_invariant K X p _ hN).2.2.2.2.1 Y e.hom n)
-  exact ((_root_.GlobalTheory.SecDim.lbPow_mul_and_pull_and_sectionsFiniteDim_iso_invariant K Y (e.hom ≫ p) _ (LB.isLB_pull (powIsLB hN n) _)).2.1 _ (powIsLB hM n) h3.symm).1 r h2
+  exact ((_root_.GlobalTheory.SecDim.lbPow_mul_and_pull_and_sectionsFiniteDim_iso_invariant K Y (e.hom ≫ p) _ (LB.isLB_pull (GlobalTheory.isLB_lbPow hN n) _)).2.1 _ (GlobalTheory.isLB_lbPow hM n) h3.symm).1 r h2
 
 end GlobalTheory.EmbCut
 

@@ -1,48 +1,7 @@
 module
 
-import Mathlib.Analysis.SumIntegralComparisons
 public import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+public import Mathlib.Analysis.SumIntegralComparisons
 
 @[expose] public section
 
@@ -64,7 +23,7 @@ lemma rpow_le_integral {x σ : ℝ} (hx : 0 < x) (hσ : 0 < σ) :
     intro u hu v hv huv
     exact Real.rpow_le_rpow_of_nonpos (hx.trans_le hu.1) huv (by linarith)
   calc (x + 1) ^ (-σ - 1) ≤ ∫ t in x..x + 1, t ^ (-σ - 1) := by
-        simpa using hanti.sum_le_integral
+        simpa using AntitoneOn.sum_le_integral hanti
     _ = (x ^ (-σ) - (x + 1) ^ (-σ)) / σ := by
       rw [integral_rpow (Or.inr ⟨by linarith, ?_⟩), sub_add_cancel]
       · ring
@@ -99,7 +58,7 @@ lemma tsum_rpow_le {σ : ℝ} (hσ : 0 < σ) :
 
 lemma norm_term_one_succ (s : ℂ) (n : ℕ) :
     ‖term (1 : ℕ → ℂ) s (n + 1)‖ = ((n : ℝ) + 1) ^ (-(s.re - 1) - 1) := by
-  rw [LSeries.norm_term_eq, if_neg (Nat.succ_ne_zero n)]
+  rw [LSeries.norm_term_eq, ite_eq_right (Nat.succ_ne_zero n)]
   simp only [Pi.one_apply, norm_one]
   push_cast
   rw [show -(s.re - 1) - 1 = -s.re by ring, Real.rpow_neg (by positivity), one_div]

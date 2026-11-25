@@ -6,6 +6,7 @@ public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenTwistGenera
 import Mathlib.Order.Interval.Finset.Box
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenNearMul
 
 @[expose] public section
 
@@ -33,19 +34,6 @@ def chartMon (c : ∀ k, ι k) (n : K → ℕ) : MRingOver S ι :=
 theorem chartMon_homog (c : ∀ k, ι k) (n : K → ℕ) : IsMultiHomog (chartMon (S := S) c n) n :=
   GenTwistGenerated.isMultiHomog_monomial _ _ _ fun k => by simp [chartExp]
 
-theorem chartMon_mem {I : ∀ k, Finset (ι k)} {c : ∀ k, ι k} (hc : ∀ k, c k ∈ I k) (n : K → ℕ) :
-    chartMon (S := S) c n ∈ KH.cellMon S I := by
-  unfold chartMon
-  rw [MvPolynomial.monomial_eq, MvPolynomial.C_1, one_mul]
-  refine Submonoid.prod_mem _ fun q hq => Submonoid.pow_mem _ (Submonoid.subset_closure ?_) _
-  have hq' : q.2 = c q.1 := by
-    by_contra h
-    simp [chartExp, h] at hq
-  obtain ⟨k, i⟩ := q
-  simp only at hq'
-  subst hq'
-  exact ⟨k, c k, hc k, rfl⟩
-
 variable {V : Ideal (MRingOver S ι)}
 
 theorem smul_quot (f : MRingOver S ι) (m : MRingOver S ι ⧸ V) : f • m = Ideal.Quotient.mk V f * m := by
@@ -72,8 +60,8 @@ theorem generatedV_of_generatedMod {d : K → ℤ} (h : GeneratedMod S ι (KH.qu
   have hd : ∀ k, (dp k : ℤ) - dm k = d k := fun k => Int.toNat_sub_toNat_neg (d k)
   let P : MRingOver S ι := chartMon c dp
   let Q : MRingOver S ι := chartMon c dm
-  have hP : P ∈ KH.cellMon S I.1 := chartMon_mem hc dp
-  have hQ : Q ∈ KH.cellMon S I.1 := chartMon_mem hc dm
+  have hP : P ∈ KH.cellMon S I.1 := GroundTheory.Heights₂.Heights.HilbertSamuel.GenNearMul.chartMon_mem hc dp
+  have hQ : Q ∈ KH.cellMon S I.1 := GroundTheory.Heights₂.Heights.HilbertSamuel.GenNearMul.chartMon_mem hc dm
   have hpart : ∀ (f : MRingOver S ι) (a : K → ℕ), IsMultiHomog f a →
       Ideal.Quotient.mk V f ∈ KH.quotPart S V (fun k => (a k : ℤ)) := fun f a hf =>
     Submodule.subset_span ⟨f, ⟨fun k => Int.natCast_nonneg _, by simpa using hf⟩, rfl⟩

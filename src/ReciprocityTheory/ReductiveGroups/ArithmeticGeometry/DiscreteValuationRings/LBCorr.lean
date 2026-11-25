@@ -10,8 +10,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValua
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Opposite
@@ -126,7 +124,7 @@ lemma corr_trans (hL : L.IsLB) {t : LB.Gen (LB.LinComb L φ ε)} {t₂ : LB.Gen 
   let ρ : ((Y ⟶ X) → L.ι) → (Y ⟶ X) → L.ι := fun ρ₀ ψ =>
     if h₁ : ∃ k, φ k = ψ then j h₁.choose else if h₃ : ∃ k', φ' k' = ψ then j' h₃.choose else ρ₀ ψ
   have hρ1 : ∀ ρ₀ k, ρ ρ₀ (φ k) = j k := fun ρ₀ k => by
-    simp only [ρ, dif_pos (⟨k, rfl⟩ : ∃ k₀, φ k₀ = φ k)]
+    simp only [ρ, dite_eq_left (⟨k, rfl⟩ : ∃ k₀, φ k₀ = φ k)]
     exact hj _ _ (⟨k, rfl⟩ : ∃ k₀, φ k₀ = φ k).choose_spec
   have hρ3 : ∀ ρ₀ k', ρ ρ₀ (φ' k') = j' k' := fun ρ₀ k' => by
     simp only [ρ]

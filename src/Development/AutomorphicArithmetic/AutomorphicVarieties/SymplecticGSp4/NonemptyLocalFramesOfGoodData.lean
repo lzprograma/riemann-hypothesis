@@ -13,6 +13,7 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeT
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExDefs
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.Descend
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.Descend
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -83,7 +84,7 @@ section -- clump:auto
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
 theorem UpperTheory.V.Alg.framed_origin :
-    ∀ (O : Type) [CommRing O] [IsLocalRing O] [IsNoetherianRing O] [IsAdicComplete (maximalIdeal O) O] (ι X : Type) [Fintype ι] [DecidableEq ι] [AddCommGroup X] (w : ι → X) (Φ : FormData O w), IsUnit (2 : O) → ∀ (Γ : Type) [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] (rbar : Γ →* Matrix ι ι (ResidueField O)) (r0 : Lift O rbar O) (hbar : Φ.Normalises rbar), Φ.Normalises r0.hom → ∀ (F : Frame Γ) (L : ∀ q, Cond O (rbar.comp (F.ψ q))), (∀ q, ∀ n ∈ F.N q, rbar (F.ψ q n) = 1) → (∀ q, Φ.IsLocCond (r0.hom.comp (F.ψ q)) (F.N q) (L q)) → (∀ q, L q O (r0.comap (F.ψ q) (F.hψ q))) →
+    ∀ (O : Type) [CommRing O] [IsLocalRing O] [IsNoetherianRing O] [IsAdicComplete (maximalIdeal O) O] (ι X : Type) [Fintype ι] [DecidableEq ι] [AddCommGroup X] (w : ι → X) (Φ : FormData O w), IsUnit (2 : O) → ∀ (Γ : Type) [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] (rbar : Γ →* Matrix ι ι (ResidueField O)) (r0 : Lift O rbar O) (_ : Φ.Normalises rbar), Φ.Normalises r0.hom → ∀ (F : Frame Γ) (L : ∀ q, Cond O (rbar.comp (F.ψ q))), (∀ q, ∀ n ∈ F.N q, rbar (F.ψ q n) = 1) → (∀ q, Φ.IsLocCond (r0.hom.comp (F.ψ q)) (F.N q) (L q)) → (∀ q, L q O (r0.comap (F.ψ q) (F.hψ q))) →
       ∀ (B : Type) [CommRing B] [Algebra O B] [IsCO O B] (ρ : ∀ v, Lift O (rbar.comp (F.φ v)) B), (∀ v, Φ.InH (r0.hom.comp (F.φ v)) B (ρ v)) → ∀ (WB : WPres O X B) (hB : WB.HasOrigin), (∀ v s a b, WB.origin hB ((ρ v).hom s a b) = r0.hom (F.φ v s) a b) →
       ∀ (R : Type) [CommRing R] [Algebra O R] [IsCO O R] (i : B →ₐ[O] R) (r : Lift O rbar R) (α : F.T → Matrix ι ι R), IsUnivFramed Φ r0.hom F L ρ i r α → ∀ (W : WPres O X R) (τ : Type) (e : WB.σ ⊕ τ ≃ W.σ), (∀ s, W.z (e (.inl s)) = i (WB.z s)) →
       (∀ t, ∃ a b, (∃ s, W.z (e (.inr t)) = r.hom s a b - algebraMap O R (r0.hom s a b)) ∨ ∃ v, W.z (e (.inr t)) = (α v - 1) a b) →
@@ -338,13 +339,6 @@ namespace UpperTheory.V.GradeZeroInterpolatingElement.SymplecticFrames
 
 open Matrix
 
-private theorem totDisc_quot {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
-    [TotallyDisconnectedSpace G] (N : Subgroup G) [N.Normal] (hN : IsClosed (N : Set G)) :
-    TotallyDisconnectedSpace (G ⧸ N) := by
-  first
-  | exact _root_.Formalism.SharedLemmas.totDisc_quot
-  | (apply _root_.Formalism.SharedLemmas.totDisc_quot <;> assumption)
-
 section Form
 
 variable {O R : Type} [CommRing O] [CommRing R] [Algebra O R]
@@ -380,45 +374,13 @@ private theorem gsp_diag (ν : R) (d : Fin 4 → R) (h : ∀ i, d i * d i.rev = 
 
 private theorem pres_iff {J X Y Y' : M4 R} {ν : R} (h1 : Y * Y' = 1) (h2 : Y' * Y = 1) (hY : Yᵀ * J * Y = ν • J) :
     (X * Y')ᵀ * J * (X * Y') = J ↔ Xᵀ * J * X = ν • J := by
-  have h3 : Y'ᵀ * Yᵀ = 1 := by rw [← transpose_mul, h1, transpose_one]
-  have h4 : Yᵀ * Y'ᵀ = 1 := by rw [← transpose_mul, h2, transpose_one]
-  have e : (X * Y')ᵀ * J * (X * Y') = Y'ᵀ * (Xᵀ * J * X) * Y' := by
-    simp only [transpose_mul, mul_assoc]
-  rw [e, ← hY]
-  constructor
-  · intro h
-    calc Xᵀ * J * X = (Yᵀ * Y'ᵀ) * (Xᵀ * J * X) * (Y' * Y) := by rw [h4, h2, one_mul, mul_one]
-      _ = Yᵀ * (Y'ᵀ * (Xᵀ * J * X) * Y') * Y := by simp only [mul_assoc]
-      _ = _ := by rw [h]
-  · intro h
-    rw [h]
-    calc Y'ᵀ * (Yᵀ * J * Y) * Y' = (Y'ᵀ * Yᵀ) * J * (Y * Y') := by simp only [mul_assoc]
-      _ = J := by rw [h3, h1, one_mul, mul_one]
+  apply _root_.UpperTheory.V.GradeZeroInterpolatingElement.DescentNormaliser.pres_iff <;> assumption
 
 private theorem hh_iff [IsLocalRing O] [IsNoetherianRing O] [IsAdicComplete (maximalIdeal O) O] [IsCO O R]
     {Γ : Type} [Group Γ] [TopologicalSpace Γ] {rb : Γ →* M4 (ResidueField O)} (r0 : Lift O rb O) (r : Lift O rb R)
     (s : Γ) (ν : O) (h : IsGSp ν (r0.hom s)) :
     (form O).HH (r.hom s * (r0.hom s⁻¹).map (algebraMap O R)) ↔ IsGSp (algebraMap O R ν) (r.hom s) := by
-  have h1 : (r0.hom s).map (algebraMap O R) * (r0.hom s⁻¹).map (algebraMap O R) = 1 := by
-    rw [← Matrix.map_mul, ← map_mul, mul_inv_cancel, map_one, Matrix.map_one _ (map_zero _) (map_one _)]
-  have h2 : (r0.hom s⁻¹).map (algebraMap O R) * (r0.hom s).map (algebraMap O R) = 1 := by
-    rw [← Matrix.map_mul, ← map_mul, inv_mul_cancel, map_one, Matrix.map_one _ (map_zero _) (map_one _)]
-  have h3 : ((r0.hom s).map (algebraMap O R))ᵀ * J4 R * (r0.hom s).map (algebraMap O R) = algebraMap O R ν • J4 R := by
-    rw [gsp_iff] at h
-    have e : J4 R = (J4 O).map (algebraMap O R) := (JR_eq (O := O)).symm
-    rw [e, ← Matrix.transpose_map, ← Matrix.map_mul, ← Matrix.map_mul, h]
-    ext i j
-    simp
-  have h4 : (r.hom s * (r0.hom s⁻¹).map (algebraMap O R)).map (res O R) = 1 := by
-    have e1 : (r.hom s).map (res O R) = rb s := Matrix.ext fun a b => r.red s a b
-    have e2 : ((r0.hom s⁻¹).map (algebraMap O R)).map (res O R) = rb s⁻¹ := Matrix.ext fun a b => by
-      rw [← r0.red s⁻¹ a b]
-      exact res_map (Algebra.ofId O R) _
-    rw [Matrix.map_mul, e1, e2, ← map_mul, mul_inv_cancel, map_one]
-  rw [gsp_iff, ← pres_iff h1 h2 h3]
-  unfold FormData.HH
-  rw [JR_eq]
-  exact ⟨fun h => h.1, fun h => ⟨h, fun a b hab => absurd rfl hab, h4⟩⟩
+  apply _root_.UpperTheory.V.GradeZeroInterpolatingElement.DescentNormaliser.hh_iff <;> assumption
 
 private theorem hh_sp [IsLocalRing O] [IsCO O R] (h : M4 R) : (form O).HH h ↔ Sp1 O h := by
   unfold FormData.HH Sp1
@@ -450,7 +412,7 @@ theorem UpperTheory.nonempty_local_frames_of_good_data :
   haveI hcl := isClosed_NS Ω D.SP
   haveI : CompactSpace D.Gam := inferInstance
   haveI : T2Space D.Gam := inferInstance
-  haveI : TotallyDisconnectedSpace D.Gam := totDisc_quot _ hcl
+  haveI : TotallyDisconnectedSpace D.Gam := Formalism.SharedLemmas.totDisc_quot _ hcl
   have hs : Function.Surjective (toGS Ω D.SP) := QuotientGroup.mk_surjective
   have hb' : ∀ g, rb (toGS Ω D.SP g) = D.rbar g := fun g => DFunLike.congr_fun hb g
   have h0' : ∀ g, r0.hom (toGS Ω D.SP g) = D.r0 g := fun g => DFunLike.congr_fun h0 g

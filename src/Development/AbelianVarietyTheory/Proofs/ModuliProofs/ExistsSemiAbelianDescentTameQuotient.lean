@@ -1455,8 +1455,7 @@ namespace GlobalTheory.TameResidue
 theorem exists_sum_ne_zero {D k K : Type} [Group D] [Fintype D] [Field k] [Field K] [Algebra k K]
     (φ : D →* (K ≃ₐ[k] K)) (h : (Nat.card φ.ker : K) ≠ 0) : ∃ w : K, ∑ g, φ g w ≠ 0 := by
   classical
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hf : Function.Injective (fun σ : K ≃ₐ[k] K => (σ : K →* K)) :=
     fun σ τ hστ => AlgEquiv.ext fun x => DFunLike.congr_fun hστ x
   have hli := (linearIndependent_monoidHom K K).comp _ hf
@@ -1668,8 +1667,7 @@ theorem residue_finite_separable : ∀ (Γ : Type) [Group Γ] [Finite Γ] (A B :
     set c0 := algebraMap (B ⧸ q) K v * algebraMap (B ⧸ q) K (Ideal.Quotient.mk q y) with hc0def
     have hc0 : c0 ≠ 0 := mul_ne_zero hv0 hyq'
     have ht : ∃ t : B ⧸ q, ∑ g, φ g (c0 * algebraMap (B ⧸ q) K t) ≠ 0 := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       apply hw0
       obtain ⟨t1, t2, ht2, hdiv⟩ := IsFractionRing.div_surjective (A := B ⧸ q) (w0 / c0)
       have ht20 : t2 ≠ 0 := nonZeroDivisors.ne_zero ht2
@@ -1757,7 +1755,7 @@ theorem isFractionRing_residueField {X : Scheme.{0}} {U : X.Opens} (hU : IsAffin
   have hmk : ∀ a, algebraMap (Γ(X, U) ⧸ q) (X.residueField x) (Ideal.Quotient.mk q a) =
       X.evaluation U x hx a := fun a => Ideal.Quotient.lift_mk _ _ _
   have hinj : Function.Injective (algebraMap (Γ(X, U) ⧸ q) (X.residueField x)) := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro c hc
     obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective c
     rw [hmk] at hc

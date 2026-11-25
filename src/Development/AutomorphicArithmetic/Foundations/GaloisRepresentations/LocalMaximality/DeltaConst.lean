@@ -1,60 +1,13 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
-
-set_option autoImplicit false
 
 namespace UpperTheory.Gal.productCup_of_system
 
@@ -84,7 +37,7 @@ private theorem delta_const' {ι E : Type} [LinearOrder ι] [AddCommGroup E] [Mo
         rw [Finset.card_erase_of_mem (by simp), h2]
       have e2 : (({a, b} : Finset ι).erase b).card = 1 := by
         rw [Finset.card_erase_of_mem (by simp), h2]
-      rw [if_pos e1, if_pos e2]; simp
+      rw [ite_eq_left e1, ite_eq_left e2]; simp
     · have s1 : GlobalTheory.cubeSign ({a, b} : Finset ι) b = 1 := GlobalTheory.cubeSign_eq_one_of_forall_le (by
         intro j hj; simp only [Finset.mem_insert, Finset.mem_singleton] at hj
         rcases hj with rfl | rfl
@@ -104,7 +57,7 @@ private theorem delta_const' {ι E : Type} [LinearOrder ι] [AddCommGroup E] [Mo
         rw [Finset.card_erase_of_mem (by simp), h2]
       have e2 : (({a, b} : Finset ι).erase b).card = 1 := by
         rw [Finset.card_erase_of_mem (by simp), h2]
-      rw [if_pos e1, if_pos e2]; simp
+      rw [ite_eq_left e1, ite_eq_left e2]; simp
   · refine Finset.sum_eq_zero fun i hi => ?_
     have : (t.erase i).card ≠ 1 := by
       rw [Finset.card_erase_of_mem hi]
@@ -235,7 +188,7 @@ theorem yXi_of :
           have hcard : ((L.card : ℤ) = (d : ℤ) + 2 - I.card - ({j} : Finset (Fin (d + 1))).card) := by
             simp only [Finset.card_singleton]
             omega
-          rw [if_pos hcard, pk_zero h0I]
+          rw [ite_eq_left hcard, pk_zero h0I]
           refine ⟨(((-1 : ℤ) ^ ((0 + 1) * L.card)) * (ε : ℤ)) • ((∏ m ∈ Iᶜ, algebraMap F K' ((x m : F) / x 0)) • v),
             Submodule.smul_of_tower_mem _ _ (hcore I j h0I), ?_⟩
           have hU : (((∏ l ∈ L, (sysY x j2 d).u n10 0 (pk {j}) l : K'ˣ)) : K') = algebraMap F K' (x 0 : F) ^ L.card := by
@@ -246,13 +199,13 @@ theorem yXi_of :
               rw [Finset.card_compl, Fintype.card_fin]; omega
             rw [← hcc, ← prod_X]
             exact hε
-          have hb : b {j} = v := if_pos (Finset.card_singleton j)
+          have hb : b {j} = v := ite_eq_left (Finset.card_singleton j)
           change (((∏ l ∈ L, (sysY x j2 d).u n10 0 (pk {j}) l : K'ˣ)) : K') • ((((-1 : ℤ) ^ ((0 + 1) * L.card)) * (ε : ℤ)) • ((∏ m ∈ Iᶜ, algebraMap F K' ((x m : F) / x 0)) • v)) = _
           rw [hU, hθ, hb, Units.smul_def, smul_assoc]
           simp only [mul_smul]
           rw [smul_comm (algebraMap F K' (x 0 : F) ^ L.card) ((-1 : ℤ) ^ ((0 + 1) * L.card)),
             smul_comm (algebraMap F K' (x 0 : F) ^ L.card) (ε : ℤ)]
-      · have : b J = 0 := if_neg hJ
+      · have : b J = 0 := ite_eq_right hJ
         simp [this]
     · refine (Submodule.mem_bot _).2 (funext fun L => ?_)
       change (sysY x j2 d).mj 0 θ b (uni (uni I J) L) = 0
@@ -263,21 +216,21 @@ theorem yXi_of :
         · have : θ (uni I L) = 0 := hz
           simp [this]
         · exact absurd ⟨0, h0I⟩ hI
-      · have : b J = 0 := if_neg hJ
+      · have : b J = 0 := ite_eq_right hJ
         simp [this]
-  · exact hMJ d K' (DR ℂ K') (sysY x j2 d) (Fin d) (gT x j2) 0 θ b hw (delta_const' v) (fun J hJ => if_neg hJ)
+  · exact hMJ d K' (DR ℂ K') (sysY x j2 d) (Fin d) (gT x j2) 0 θ b hw (delta_const' v) (fun J hJ => ite_eq_right hJ)
   · funext s
     change (sysY x j2 d).mj 0 θ b (uni s ∅) = edge1 (locCoch ℂ K' (xv x) h) s
     simp only [Sys.mj, lft_uni', rgt_uni', edge1, Finset.card_empty, mul_zero, pow_zero, one_smul]
     by_cases hc : (rgt s).card = 1
-    · rw [if_pos hc]
-      have hb : b (rgt s) = v := if_pos hc
+    · rw [ite_eq_left hc]
+      have hb : b (rgt s) = v := ite_eq_left hc
       rw [hb]
       by_cases hu : lft s = Finset.univ
       · have hθ : θ (uni Finset.univ ∅) = 1 := h1
-        rw [hu, hθ, locCoch, if_pos rfl, hv]
+        rw [hu, hθ, locCoch, ite_eq_left rfl, hv]
         simp [sysY]
-      · rw [locCoch, if_neg hu]
+      · rw [locCoch, ite_eq_right hu]
         rcases hL (lft s) ∅ with hz | ⟨-, hc', -⟩
         · have : θ (uni (lft s) ∅) = 0 := hz
           rw [this]
@@ -286,12 +239,12 @@ theorem yXi_of :
           apply hu
           apply Finset.eq_univ_of_card
           simpa using hc'
-    · rw [if_neg hc]
-      have hb : b (rgt s) = 0 := if_neg hc
+    · rw [ite_eq_right hc]
+      have hb : b (rgt s) = 0 := ite_eq_right hc
       rw [hb, map_zero]
   · intro j
     rw [hval]
-    have hb : b {j} = v := if_pos (Finset.card_singleton j)
+    have hb : b {j} = v := ite_eq_left (Finset.card_singleton j)
     have hθ : θ (uni {0} Finset.univ) = ∏ l : Fin d, algebraMap F K' (x l.succ : F) := h0
     rw [hb, hθ, prod_tt_X, hv, hvol, hom, Finset.card_univ, Fintype.card_fin, zero_add, one_mul,
       ← Int.cast_smul_eq_zsmul K', smul_smul, smul_smul, smul_smul]

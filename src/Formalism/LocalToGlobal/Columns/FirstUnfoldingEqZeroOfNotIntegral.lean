@@ -222,12 +222,12 @@ theorem ocbS_eN_single {N s : ℕ} (hs : s < N) : Loc.eN k N s = Pi.single (⟨s
   funext j
   unfold Loc.eN
   by_cases h : j.1 = s
-  · rw [if_pos h, Pi.single_apply, if_pos (Fin.ext h)]
-  · rw [if_neg h, Pi.single_apply, if_neg (fun e => h (congrArg Fin.val e))]
+  · rw [ite_eq_left h, Pi.single_apply, ite_eq_left (Fin.ext h)]
+  · rw [ite_eq_right h, Pi.single_apply, ite_eq_right (fun e => h (congrArg Fin.val e))]
 
 theorem ocbS_atN_of_lt {N l : ℕ} (v : Fin N → k) (hl : l < N) : Loc.atN v l = v ⟨l, hl⟩ := by
   unfold Loc.atN
-  rw [dif_pos hl]
+  rw [dite_eq_left hl]
 
 theorem ocbS_atN_toLin' {a b : ℕ} (M : Matrix (Fin b) (Fin a) k) {l s : ℕ} (hl : l < b) (hs : s < a) :
     Loc.atN (Matrix.toLin' M (Loc.eN k a s)) l = M ⟨l, hl⟩ ⟨s, hs⟩ := by
@@ -268,26 +268,26 @@ theorem ocbS_scE_free {n' n c l s : ℕ} (hl : l < n + c) (hs : s < n' + (c + 1)
   have hs' : ¬ n' + u < n' := by omega
   have h1 : LocE.scE n' (fun i => i + 1) (n' + u) = ((u + 1 : ℕ) : ℤ) := by
     unfold LocE.scE
-    rw [if_neg hs']
+    rw [ite_eq_right hs']
     simp
   by_cases hln : l < n
   · have h2 : LocE.scE n (fun i => i + 1) l = 0 := by
       unfold LocE.scE
-      rw [if_pos hln]
+      rw [ite_eq_left hln]
     have h3 : ocbD n' n l (n' + u) = u + 1 := by
       unfold ocbD
-      rw [if_pos hln]
+      rw [ite_eq_left hln]
       omega
     rw [h1, h2, h3]
     refine ⟨by push_cast; ring, by omega, by omega⟩
   · obtain ⟨v, rfl⟩ : ∃ v, l = n + v := ⟨l - n, by omega⟩
     have h2 : LocE.scE n (fun i => i + 1) (n + v) = ((v + 1 : ℕ) : ℤ) := by
       unfold LocE.scE
-      rw [if_neg hln]
+      rw [ite_eq_right hln]
       simp
     have h3 : ocbD n' n (n + v) (n' + u) = u - v := by
       unfold ocbD
-      rw [if_neg hln]
+      rw [ite_eq_right hln]
       omega
     have hvu : v < u := by omega
     rw [h1, h2, h3]
@@ -309,22 +309,22 @@ theorem scaledEntry_unipotentExtension {n' n c q : ℕ} (xj : (Fin n' → E) →
   unfold ocbBEnt
   rw [coord_unipotentExtension_basisVec xj t hl hs]
   by_cases hf : Loc.IsFree n' n c l s
-  · rw [dif_pos hf, dif_pos hf, (ocbS_scE_free hl hs hf).1, zpow_natCast]
+  · rw [dite_eq_left hf, dite_eq_left hf, (ocbS_scE_free hl hs hf).1, zpow_natCast]
   · rw [dite_eq_right hf, dite_eq_right hf]
     by_cases hs' : s < n'
-    · rw [if_pos hs']
+    · rw [ite_eq_left hs']
       by_cases hln : l < n
-      · rw [if_pos hln]
+      · rw [ite_eq_left hln]
         unfold LocE.scE
-        rw [if_pos hs', if_pos hln, sub_zero, zpow_zero, mul_one]
-      · rw [if_neg hln, zero_mul]
-    · rw [if_neg hs']
+        rw [ite_eq_left hs', ite_eq_left hln, sub_zero, zpow_zero, mul_one]
+      · rw [ite_eq_right hln, zero_mul]
+    · rw [ite_eq_right hs']
       by_cases he : l = n + (s - n')
-      · rw [if_pos he]
+      · rw [ite_eq_left he]
         unfold LocE.scE
-        rw [if_neg hs', if_neg (show ¬ l < n by omega), he]
+        rw [ite_eq_right hs', ite_eq_right (show ¬ l < n by omega), he]
         simp
-      · rw [if_neg he, zero_mul]
+      · rw [ite_eq_right he, zero_mul]
 
 theorem ocbS_chArg {n' c' n c q : ℕ} (hq0 : (q : E) ≠ 0) (y : (Fin (n' + c') → E) →ₗ[E] (Fin (n + c) → E)) :
     Loc.chArg y = (∑ i ∈ Finset.range c, ocbBEnt n' n q y (n + i) (n' + i + 1)) / (q : E) := by
@@ -333,7 +333,7 @@ theorem ocbS_chArg {n' c' n c q : ℕ} (hq0 : (q : E) ≠ 0) (y : (Fin (n' + c')
   refine Finset.sum_congr rfl fun i _ => ?_
   have e : LocE.scE n' (fun i => i + 1) (n' + i + 1) - LocE.scE n (fun i => i + 1) (n + i) = 1 := by
     unfold LocE.scE
-    rw [if_neg (by omega), if_neg (by omega)]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega)]
     push_cast
     omega
   rw [e, zpow_one]
@@ -367,7 +367,7 @@ theorem firstUnfolding_eq_zero_of_not_integral {n' c' n c : ℕ} (hc' : c' = c +
     intro l s hl hs
     have h1 := hsupp _ hne l s (by omega) (by omega)
     rw [scaledEntry_unipotentExtension xj t (by omega) (by omega), dite_eq_right (fun hf => by unfold Loc.IsFree at hf; omega),
-      if_pos hs, if_pos hl] at h1
+      ite_eq_left hs, ite_eq_left hl] at h1
     exact h1
   rw [h0, zero_mul]
 
@@ -405,52 +405,52 @@ theorem firstUnfolding_reduction_eq (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (h
       have hr : (fun f => r f (t f)) = fun f => some (ρ f) := by
         funext f
         rw [hρ]
-        exact if_pos (hall f)
+        exact ite_eq_left (hall f)
       rw [hr]
       have hW : W (fun f => some (ρ f)) = G ρ := by
         simp only [W]
-        exact dif_pos (fun _ => rfl)
+        exact dite_eq_left (fun _ => rfl)
       rw [hW]
       have hint : ∀ l s, l < n + c → s < n' + (c + 1) → IntAt P (ocbBEnt n' n q (Loc.xx1 xj t) l s) := by
         intro l s hl hs
         rw [scaledEntry_unipotentExtension xj t hl hs]
         by_cases hf : Loc.IsFree n' n c l s
-        · rw [dif_pos hf, mul_comm]
+        · rw [dite_eq_left hf, mul_comm]
           exact hall ⟨(⟨l, hl⟩, ⟨s, hs⟩), hf⟩
         · rw [dite_eq_right hf]
           by_cases hs' : s < n'
-          · rw [if_pos hs']
+          · rw [ite_eq_left hs']
             by_cases hln : l < n
-            · rw [if_pos hln]
+            · rw [ite_eq_left hln]
               exact hx l s hln hs'
-            · rw [if_neg hln]
+            · rw [ite_eq_right hln]
               exact ciIntAt_zero
-          · rw [if_neg hs']
+          · rw [ite_eq_right hs']
             by_cases he : l = n + (s - n')
-            · rw [if_pos he]
+            · rw [ite_eq_left he]
               exact ciIntAt_one
-            · rw [if_neg he]
+            · rw [ite_eq_right he]
               exact ciIntAt_zero
       have hrd : ∀ l s, l < n + c → s < n' + (c + 1) →
           Loc.atN (Loc.xx1 xbj ρ (Loc.eN _ _ s)) l = redP P (ocbBEnt n' n q (Loc.xx1 xj t) l s) := by
         intro l s hl hs
         rw [scaledEntry_unipotentExtension xj t hl hs, coord_unipotentExtension_basisVec xbj ρ hl hs]
         by_cases hf : Loc.IsFree n' n c l s
-        · rw [dif_pos hf, dif_pos hf, hρ]
+        · rw [dite_eq_left hf, dite_eq_left hf, hρ]
           exact congrArg (redP P) (mul_comm _ _)
         · rw [dite_eq_right hf, dite_eq_right hf]
           by_cases hs' : s < n'
-          · rw [if_pos hs', if_pos hs']
+          · rw [ite_eq_left hs', ite_eq_left hs']
             by_cases hln : l < n
-            · rw [if_pos hln, if_pos hln]
+            · rw [ite_eq_left hln, ite_eq_left hln]
               exact hxr l s hln hs'
-            · rw [if_neg hln, if_neg hln]
+            · rw [ite_eq_right hln, ite_eq_right hln]
               exact redP_zero.symm
-          · rw [if_neg hs', if_neg hs']
+          · rw [ite_eq_right hs', ite_eq_right hs']
             by_cases he : l = n + (s - n')
-            · rw [if_pos he, if_pos he]
+            · rw [ite_eq_left he, ite_eq_left he]
               exact redP_one.symm
-            · rw [if_neg he, if_neg he]
+            · rw [ite_eq_right he, ite_eq_right he]
               exact redP_zero.symm
       rw [map_mul, hred _ _ hint hrd]
       simp only [G]
@@ -478,7 +478,7 @@ theorem firstUnfolding_reduction_eq (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (h
       have h0 : Ψ (Loc.xx1 xj t) = 0 := by
         by_contra hne
         have h1 := hsupp _ hne f.1.1.1 f.1.2.1 f.1.1.2 f.1.2.2
-        rw [scaledEntry_unipotentExtension xj t f.1.1.2 f.1.2.2, dif_pos f.2, mul_comm] at h1
+        rw [scaledEntry_unipotentExtension xj t f.1.1.2 f.1.2.2, dite_eq_left f.2, mul_comm] at h1
         exact hf h1
       rw [h0, zero_mul, map_zero]
   have hcardf : ∀ (f : Loc.FC n' (c + 1) n c) (ρ : 𝓞 E ⧸ P.asIdeal),
@@ -505,7 +505,7 @@ theorem firstUnfolding_reduction_eq (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (h
       refine Finset.sum_congr rfl fun ρ _ => ?_
       have hW : W (fun f => some (ρ f)) = G ρ := by
         simp only [W]
-        exact dif_pos (fun _ => rfl)
+        exact dite_eq_left (fun _ => rfl)
       rw [hW]
       congr 1
       exact Finset.prod_congr rfl fun f _ => hcardf f (ρ f)

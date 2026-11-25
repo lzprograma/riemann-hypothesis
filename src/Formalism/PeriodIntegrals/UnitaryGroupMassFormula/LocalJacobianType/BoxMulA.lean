@@ -3,50 +3,8 @@ module
 public import Formalism.PeriodIntegrals.LocJacTyp
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JacobianTransvectionSplitting.DiscreteHaar
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import ReciprocityTheory.ClassFieldTheory.GlobalClassField.LocPowB
+import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GlobalProductGramFiberRankOne
 
 @[expose] public section
 
@@ -79,16 +37,7 @@ abbrev Ov : Set (Fv F v) := (v.adicCompletionIntegers F : Set (Fv F v))
 theorem mem_Ov {x : Fv F v} : x ∈ Ov v ↔ Valued.v x ≤ 1 := Iff.rfl
 
 theorem isOpen_Ov : IsOpen (Ov v) := by
-  rw [isOpen_iff_mem_nhds]
-  intro x hx
-  rw [Valued.mem_nhds]
-  refine ⟨1, fun y hy => ?_⟩
-  have hy' : Valued.v (y - x) < 1 := by simpa using hy
-  have hx' : Valued.v x ≤ 1 := (mem_Ov v).1 hx
-  refine (mem_Ov v).2 ?_
-  calc Valued.v y = Valued.v ((y - x) + x) := by rw [sub_add_cancel]
-    _ ≤ max (Valued.v (y - x)) (Valued.v x) := Valuation.map_add _ _ _
-    _ ≤ 1 := max_le hy'.le hx'
+  apply _root_.GlobalTheory.CompanionTheory.SW.EulerDens.isOpen_int <;> assumption
 
 theorem isCompact_Ov : IsCompact (Ov v) := PI.AdicCompletionValuation.isCompact_adicCompletionIntegers F v
 
@@ -234,20 +183,6 @@ private theorem exists_unif_lemma : ∃ ϖ : Fv F v, Valued.v ϖ = WithZero.exp 
   exact ⟨(π : Fv F v), by
     rw [IsDedekindDomain.HeightOneSpectrum.valuedAdicCompletion_eq_valuation', hπ]⟩
 
-private theorem exp_zpow_lemma_2 (k : ℤ) :
-    (WithZero.exp (-1 : ℤ)) ^ k = WithZero.exp (-k) := by
-  have hne : (WithZero.exp (-1 : ℤ)) ≠ 0 := by
-    first
-    | exact WithZero.exp_ne_zero
-  refine Int.induction_on k ?_ (fun i ih => ?_) (fun i ih => ?_)
-  · simp [WithZero.exp_zero]
-  · rw [zpow_add_one₀ hne, ih, ← WithZero.exp_add]
-    congr 1
-    ring
-  · rw [zpow_sub_one₀ hne, ih, ← WithZero.exp_neg, ← WithZero.exp_add]
-    congr 1
-    ring
-
 theorem modF_Fv (a : Fv F v) (ha : a ≠ 0) :
     PI.NglqJacSplitW.modF (Fv F v) a = ENNReal.ofReal (absV v a) := by
   obtain ⟨ϖ, hϖ⟩ := exists_unif_lemma v
@@ -260,14 +195,15 @@ theorem modF_Fv (a : Fv F v) (ha : a ≠ 0) :
     first
     | exact (map_ne_zero _).mpr ha
   unfold PI.NglqJacSplitW.modF PI.LocJacTyp.absV
-  simp only [dif_neg ha, dif_neg hva]
+  simp only [dite_eq_right ha, dite_eq_right hva]
   obtain ⟨m, hm, hmdef⟩ : ∃ m : ℤ, Valued.v a = WithZero.exp m ∧
       Multiplicative.toAdd (WithZero.unzero hva) = m :=
     ⟨_, (WithZero.coe_unzero hva).symm, rfl⟩
   rw [hmdef]
   have hW : Valued.v ((Units.mk0 a ha * (Units.mk0 ϖ hϖ0) ^ m : (Fv F v)ˣ) : Fv F v) = 1 := by
     rw [Units.val_mul, Units.val_zpow_eq_zpow_val, Units.val_mk0, Units.val_mk0, map_mul,
-      map_zpow₀, hϖ, exp_zpow_lemma_2, hm, ← WithZero.exp_add, add_neg_cancel, WithZero.exp_zero]
+      map_zpow₀, hϖ, ← WithZero.exp_zsmul, Int.zsmul_eq_mul, mul_neg_one, hm,
+      ← WithZero.exp_add, add_neg_cancel, WithZero.exp_zero]
   have hsplit : Units.mk0 a ha =
       (Units.mk0 a ha * (Units.mk0 ϖ hϖ0) ^ m) * (Units.mk0 ϖ hϖ0) ^ (-m) := by
     rw [mul_assoc, ← zpow_add, add_neg_cancel, zpow_zero, mul_one]

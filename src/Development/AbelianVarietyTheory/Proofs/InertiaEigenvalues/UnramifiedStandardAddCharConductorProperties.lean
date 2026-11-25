@@ -206,8 +206,7 @@ theorem conductor [IsUltrametricDist F] {ψ : AddChar F ℂ} (hψ : IsStdChar ψ
     (∀ e : F, ‖e‖ ≤ 1 → ψ (e * y) = 1) ↔ ‖y‖ ≤ 1 := by
   constructor
   · intro h
-    by_contra hy
-    push_neg at hy
+    by_contra! hy
     obtain ⟨x, hx, hxy⟩ := hψ.2
     have hy0 : y ≠ 0 := by rintro rfl; simp at hy; linarith
     have hypos : 0 < ‖y‖ := norm_pos_iff.2 hy0
@@ -233,8 +232,7 @@ theorem conductor_trace [hU : Unram F E]
   haveI := hU.ultraE
   constructor
   · intro h
-    by_contra hy
-    push_neg at hy
+    by_contra! hy
     obtain ⟨x, hx, hxy⟩ := hψ.2
     obtain ⟨e₀, he₀, hsum⟩ := he
     obtain ⟨a, ha⟩ := hU.unram y

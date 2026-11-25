@@ -68,10 +68,6 @@ variable {F : Type} [Field F] [NumberField F] {N : ℕ}
 theorem rat_add (ξ η : Fin N → F) : (rat (ξ + η) : Fin N → AF F) = rat ξ + rat η := by
   funext l; simp [rat]
 
-alias rat_neg := _root_.GlobalTheory.SWQ.FZero.rat_neg
-
-alias Bd_add_left := _root_.GlobalTheory.SWQ.FZero.Bd_add_left
-
 theorem Bd_neg_right (a : Fin N → F) (u w : Fin N → AF F) :
     Bd (AF F) a u (-w) = -Bd (AF F) a u w := by
   simp only [Bd, ← Finset.sum_neg_distrib]
@@ -79,8 +75,6 @@ theorem Bd_neg_right (a : Fin N → F) (u w : Fin N → AF F) :
 
 theorem Bd_zero_left (a : Fin N → F) (w : Fin N → AF F) : Bd (AF F) a 0 w = 0 := by
   simp [Bd]
-
-alias Bd_rat := _root_.GlobalTheory.SWQ.Bd_rat_rat
 
 alias continuous_Bd_right := _root_.GlobalTheory.SWQ.FZero.cont_Bd
 
@@ -117,9 +111,9 @@ theorem GlobalTheory.SWQ.poisson_summation : ∀ (F : Type) [Field F] [NumberFie
       (hint _ hHaar).norm.mono' hgc.aestronglyMeasurable (Eventually.of_forall fun u => (hgn u).le)
     have hshift : ∀ η u, g (rat η + u) = Φ (rat η + u) * ψ (-(Bd (AF F) a u (rat ξ))) := by
       intro η u
-      simp only [hg, Bd_add_left, Bd_rat, neg_add, AddChar.map_add_eq_mul, ← map_neg, hψ.2.2.1, one_mul]
+      simp only [hg, GlobalTheory.SWQ.Bd_add_left_AF, GlobalTheory.SWQ.Bd_rat_rat, neg_add, AddChar.map_add_eq_mul, ← map_neg, hψ.2.2.1, one_mul]
     have hFo : Fo ψ ν a Φ (rat (-ξ)) = ∫ u, g u ∂(muV N ν) := by
-      simp only [Fo, hg, rat_neg, Bd_neg_right]
+      simp only [Fo, hg, GlobalTheory.SWQ.FZero.rat_neg, Bd_neg_right]
     rw [hFo, hD.integral_eq_tsum'' g hgi, ← e.tsum_eq]
     have hvadd : ∀ η u, (e η +ᵥ u : Fin N → AF F) = rat η + u := fun η u => rfl
     simp_rw [hvadd, hshift]

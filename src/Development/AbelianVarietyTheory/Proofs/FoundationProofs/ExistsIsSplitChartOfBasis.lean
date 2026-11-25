@@ -414,15 +414,6 @@ theorem isParamVec_conj (hE : IsCMExt F E σ) (hJ : IsHermND σ J) (hL : IsSelfD
     exact Or.inl ⟨hv, _, he', isSatVecGL_invT c hc hq hx⟩
   · exact absurd (isSplit_of_ne hne h h') (not_isSplit_of_isInertAt hw)
 
-theorem hasParam_conj (hE : IsCMExt F E σ) (hJ : IsHermND σ J) (hL : IsSelfDualAt σ J L v) (hne : w ≠ w')
-    (h : w.under (𝓞 F) = v) (h' : w'.under (𝓞 F) = v) (hρ : HasParam σ J L h ρ B) :
-    HasParam σ J L h' ρ (B.map (·⁻¹)) := by
-  obtain ⟨x, hx⟩ := hρ.exists_vec
-  rcases isParamVec_conj hE hJ hL hne h h' hx with ⟨hv, e, he, hx'⟩ | ⟨hw, -⟩
-  · exact Or.inl ⟨hv, e, he, (Submodule.ne_bot_iff _).2 ⟨x, hx'.2.1, hx'.1⟩, fun y hy h0 =>
-      (isParamVec_conj hE hJ hL hne h h' (hρ.isParamVec ((mem_fixed_comp_symm e he.2).1 hy) h0)).isSatVecGL hv he⟩
-  · exact absurd (isSplit_of_ne hne h h') (not_isSplit_of_isInertAt hw)
-
 theorem eq_map_inv_of_isParamVec (hE : IsCMExt F E σ) (hJ : IsHermND σ J) (hL : IsSelfDualAt σ J L v) (hne : w ≠ w')
     {h : w.under (𝓞 F) = v} {h' : w'.under (𝓞 F) = v} (hx : IsParamVec σ J L h ρ x B)
     (hx' : IsParamVec σ J L h' ρ x B') : B' = B.map (·⁻¹) :=

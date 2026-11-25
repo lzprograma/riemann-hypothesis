@@ -97,7 +97,7 @@ theorem isMultiHomog_one : IsMultiHomog (1 : MRing ι) 0 := by
   have hm0 : m = 0 := by
     rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_one] at hm
     by_contra h
-    exact hm (if_neg (Ne.symm h))
+    exact hm (ite_eq_right (Ne.symm h))
   simp [hm0]
 
 attribute [local instance] MvPolynomial.weightedGradedAlgebra
@@ -154,15 +154,6 @@ theorem exists_colon_prime (J : Ideal (MRing ι)) (hJ : IsMultiHomogIdeal J) (hJ
     rw [Submodule.mem_colon_singleton, smul_eq_mul] at hxy
     rw [← mul_assoc, mul_comm y x]
     exact hxy
-
-theorem isMultiHomogIdeal_sup_span_via_span_union {J : Ideal (MRing ι)} (hJ : IsMultiHomogIdeal J) {f : MRing ι}
-    {c : K → ℕ} (hf : IsMultiHomog f c) : IsMultiHomogIdeal (J ⊔ Ideal.span {f}) := by
-  obtain ⟨S, hS, rfl⟩ := hJ
-  refine ⟨S ∪ {f}, ?_, (Ideal.span_union _ _).symm⟩
-  rintro g (hg | hg)
-  · exact hS g hg
-  · rw [Set.mem_singleton_iff.mp hg]
-    exact ⟨c, hf⟩
 
 theorem exists_primeFiltration_of_isMultiHomogIdeal (J : Ideal (MRing ι)) (hJ : IsMultiHomogIdeal J) :
     ∃ (N : ℕ) (F : Fin (N + 1) → Ideal (MRing ι)) (f : Fin N → MRing ι) (c : Fin N → K → ℕ)

@@ -26,7 +26,7 @@ def FinGradedSub.cellCone (I : StdCell N) : LocMod S N M.coneSub I.1 →ₗ[Poly
   if h : I.1 ⊆ support x then locCone M I.1 h else 0
 
 theorem FinGradedSub.cellCone_of_subset {I : StdCell N} (h : I.1 ⊆ support x) :
-    M.cellCone I = locCone M I.1 h := dif_pos h
+    M.cellCone I = locCone M I.1 h := dite_eq_left h
 
 theorem Cech.sgn_mul_self {n : ℕ} (J : Finset (Fin n)) (j : Fin n) : Cech.sgn J j * Cech.sgn J j = 1 := by
   rw [Cech.sgn, ← mul_pow, neg_one_mul, neg_neg, one_pow]
@@ -127,7 +127,7 @@ theorem FinGradedSub.exists_cocycle_of_mem_secs {c : ℤ} {v : Ω} (hv : v ∈ (
     by_cases hJ : J.1 ⊆ support x
     · apply locCone_injective M J.1 hJ
       have hI : I.1 ⊆ support x := h.trans hJ
-      simp only [u, dif_pos hJ, dif_pos hI]
+      simp only [u, dite_eq_left hJ, dite_eq_left hI]
       rw [hwv J hJ]
       exact (locCone_locRes M h hJ (w I hI)).trans (hwv I hI)
     · obtain ⟨i, hiJ, hi⟩ : ∃ i ∈ J.1, x i = 0 := by
@@ -140,10 +140,10 @@ theorem FinGradedSub.exists_cocycle_of_mem_secs {c : ℤ} {v : Ω} (hv : v ∈ (
     fun K hK => ?_⟩
   · change u K.1 ∈ degLoc M.coneGraded c K.1
     by_cases hK : K.1.1 ⊆ support x
-    · simp only [u, dif_pos hK]; exact hw K.1 hK
-    · simp only [u, dif_neg hK]; exact zero_mem _
+    · simp only [u, dite_eq_left hK]; exact hw K.1 hK
+    · simp only [u, dite_eq_right hK]; exact zero_mem _
   · change M.cellCone K.1 (u K.1) = _
-    simp only [u, dif_pos hK, M.cellCone_of_subset hK]
+    simp only [u, dite_eq_left hK, M.cellCone_of_subset hK]
     exact hwv K.1 hK
 
 end Cocycles

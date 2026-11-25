@@ -86,10 +86,10 @@ theorem maps_D (hd : ∀ a : E, IntAt P a → redP P a = 0 → IntAt P (a / (qOf
   have ha := glint_entry κ l b
   have hxb := intAt_of_ite (hx b)
   by_cases hl : D l.1
-  · rw [if_pos hl, zpow_one]
+  · rw [ite_eq_left hl, zpow_one]
     by_cases hb : D b.1
     · have h1 := hx b
-      rw [if_pos hb, zpow_one] at h1
+      rw [ite_eq_left hb, zpow_one] at h1
       have := h1.mul ha
       convert this using 1
       ring
@@ -97,7 +97,7 @@ theorem maps_D (hd : ∀ a : E, IntAt P a → redP P a = 0 → IntAt P (a / (qOf
       have := hxb.mul (hd _ ha h0)
       convert this using 1
       ring
-  · rw [if_neg hl, zpow_zero, inv_one, one_mul]
+  · rw [ite_eq_right hl, zpow_zero, inv_one, one_mul]
     exact hxb.mul ha
 
 theorem stab_D (hd : ∀ a : E, IntAt P a → redP P a = 0 → IntAt P (a / (qOf P : E))) (κ : GLint E n P)
@@ -118,7 +118,7 @@ theorem mem_symmetricFlagLattice_iff_of_no_extra (k rS s : ℕ) (x : Sp E (n + 0
   refine forall_congr' fun l => ?_
   have hl : l.1 < n := l.2
   have hf : LocE.fPos k 0 n l.1 = l.1 := by unfold LocE.fPos; split_ifs <;> omega
-  have hs : LocE.scE n (fun i => i + 1) l.1 = 0 := by unfold LocE.scE; rw [if_pos hl]
+  have hs : LocE.scE n (fun i => i + 1) l.1 = 0 := by unfold LocE.scE; rw [ite_eq_left hl]
   rw [hf, hs, zero_add]
 
 omit [StarRing E] in
@@ -126,7 +126,7 @@ theorem symmetricFlagBasisVector_eq_single_of_no_extra (k rS s : ℕ) (h : symId
     LocE.bvecS E (qOf P) k rS n 0 s = (Pi.single (⟨symIdxInv k rS s, h⟩ : Fin n) 1 : Sp E n) := by
   unfold LocE.bvecS LocE.bvecG
   have hf : LocE.fIdx k 0 n (symIdxInv k rS s) = symIdxInv k rS s := by unfold LocE.fIdx; split_ifs <;> omega
-  have hs : LocE.scE n (fun i => i + 1) (symIdxInv k rS s) = 0 := by unfold LocE.scE; rw [if_pos h]
+  have hs : LocE.scE n (fun i => i + 1) (symIdxInv k rS s) = 0 := by unfold LocE.scE; rw [ite_eq_left h]
   rw [hf, hs, zpow_zero, one_smul]
   funext l
   unfold Loc.eN
@@ -163,7 +163,7 @@ theorem lv_flag {k rS t s l b : ℕ} (hs : s < rSym k rS ∨ ∃ i, s = rSym k r
       have : LocE.bd5 k rS s ≤ s := by unfold LocE.bd5; split_ifs <;> omega
       omega
     · have hd : LocE.bd5 k rS (rSym k rS + i * t) = rSym k rS + i * t := by
-        unfold LocE.bd5 rSym; rw [if_neg (by omega)]
+        unfold LocE.bd5 rSym; rw [ite_eq_right (by omega)]
       rw [hd] at hl hb
       have hlr : ¬ l < rSym k rS := by
         intro h; unfold symIdx rSym at *; split_ifs at hl <;> omega
@@ -171,7 +171,7 @@ theorem lv_flag {k rS t s l b : ℕ} (hs : s < rSym k rS ∨ ∃ i, s = rSym k r
       rw [hsb] at hb
       rw [hsl] at hl
       unfold lvSym
-      rw [if_neg hbr, if_neg hlr]
+      rw [ite_eq_right hbr, ite_eq_right hlr]
       have ht : 0 < t := by
         rcases Nat.eq_zero_or_pos t with h0 | h0
         · subst h0; simp at hb; omega
@@ -234,13 +234,13 @@ theorem mem_JGsym0 (hd : ∀ a : E, IntAt P a → redP P a = 0 → IntAt P (a / 
           by_cases hlk : l.1 < k
           · exact h3 l b hlk hb1
           · refine h1 l b (lv_lt (by rw [hb1]; unfold rSym; omega) ?_)
-            have hd5 : LocE.bd5 k rS s = rS := by unfold LocE.bd5; rw [if_pos hsk]
+            have hd5 : LocE.bd5 k rS s = rS := by unfold LocE.bd5; rw [ite_eq_left hsk]
             rw [hd5] at hl
             have : l.1 ≠ b.1 := fun e => hlb (Fin.ext e)
             rw [hsb]
             unfold symIdx at hl ⊢
             split_ifs at hl ⊢ <;> omega
-        · have hd5 : LocE.bd5 k rS s = s := by unfold LocE.bd5; rw [if_neg hsk]
+        · have hd5 : LocE.bd5 k rS s = s := by unfold LocE.bd5; rw [ite_eq_right hsk]
           rw [hd5] at hl
           refine h1 l b (lv_lt hbr ?_)
           have hne : symIdx k rS l.1 ≠ symIdx k rS b.1 := fun e => hlb (Fin.ext (by
@@ -306,7 +306,7 @@ theorem mem_levG_last : ∀ {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars
   have o : ∀ a, e a = 1 → a = 1 := fun a h => e.injective (h.trans (map_one e).symm)
   have hJ : GlobalTheory.CongLevel.extE (cOf R (m2 + 1)) k0.1 ∈ Jat (Pr := Pr) (R := R) cst.sharp (m2 + 1) w.1 := by
     unfold Jat
-    rw [if_pos w.2, hs, if_pos rfl, ← hr]
+    rw [ite_eq_left w.2, hs, ite_eq_left rfl, ← hr]
     refine mem_JGsym_c hd hc hn k0 (fun x y hxy => ?_) (fun x y hxy => ?_) (fun x hx => ?_) (fun x y hx hy => ?_)
     · rw [eM]; exact z _ (by rw [← ent]; exact hA.1 x y hxy)
     · rw [eMi]; exact z _ (by rw [← ent']; exact hB.1 x y hxy)

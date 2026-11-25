@@ -32,11 +32,8 @@ theorem VeroneseGraphImage.proof : VeroneseGraphImage.Statement := by
     Ideal.Quotient.lift P f₀ fun a ha => by
       rw [Ideal.mem_bot] at ha
       simp [ha]
-  have hφ : Function.Injective φ := by
-    refine (injective_iff_map_eq_zero φ).2 fun a ha => ?_
-    obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective a
-    have : a = 0 := hf₀ (by rw [map_zero]; exact (Ideal.Quotient.lift_mk _ _ _).symm.trans ha)
-    rw [this, map_zero]
+  have hφ : Function.Injective φ :=
+    RingHom.lift_injective_of_ker_le_ideal _ _ ((RingHom.injective_iff_ker_eq_bot f₀).mp hf₀).le
 
   let ψ : Polynomial (Veronese.Fld D) →+* MvPolynomial Unit (Veronese.Fld D) :=
     Polynomial.eval₂RingHom C (X ())

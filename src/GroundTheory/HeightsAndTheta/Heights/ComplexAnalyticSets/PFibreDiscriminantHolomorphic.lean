@@ -31,22 +31,14 @@ theorem continuous_pairProd {N : ℕ} (l : (σ → ℂ) →L[ℂ] ℂ) : Continu
 
 theorem exists_enum {α : Type*} {S : Set α} {N : ℕ} (h : S.encard = N) :
     ∃ p : Fin N → α, Function.Injective p ∧ range p = S := by
-  have hfin := Set.finite_of_encard_eq_coe h
-  have hc : hfin.toFinset.card = N := by
-    have := hfin.encard_eq_coe_toFinset_card
-    rw [h] at this
-    exact_mod_cast this.symm
-  let e := hfin.toFinset.equivFin
-  refine ⟨fun i => (e.symm (Fin.cast hc.symm i)).1, ?_, ?_⟩
-  · intro i j hij
-    exact Fin.cast_injective _ (e.symm.injective (Subtype.ext hij))
-  · ext x
-    constructor
-    · rintro ⟨i, rfl⟩
-      exact hfin.mem_toFinset.1 (e.symm _).2
-    · intro hx
-      refine ⟨Fin.cast hc (e ⟨x, hfin.mem_toFinset.2 hx⟩), ?_⟩
-      simp
+  let hfin := Set.finite_of_encard_eq_coe h
+  have hc : hfin.toFinset.card = N :=
+    ENat.natCast_inj.mp (hfin.encard_eq_coe_toFinset_card.symm.trans h)
+  let e := (Finset.equivFinOfCardEq hc).symm
+  refine ⟨Subtype.val ∘ e, Subtype.val_injective.comp e.injective, ?_⟩
+  rw [Set.range_comp, e.surjective.range_eq, Set.image_univ,
+    Subtype.range_coe_subtype]
+  exact hfin.coe_toFinset
 
 theorem fibreDiscr_eq_pairProd {Y : Set (σ → ℂ)} {d : ℕ} {A : (σ → ℂ) →L[ℂ] (Fin d → ℂ)} {N : ℕ}
     (l : (σ → ℂ) →L[ℂ] ℂ) {y : Fin d → ℂ} (hle : {x | x ∈ Y ∧ A x = y}.encard ≤ N)
@@ -55,35 +47,25 @@ theorem fibreDiscr_eq_pairProd {Y : Set (σ → ℂ)} {d : ℕ} {A : (σ → ℂ
   have hsub : range p ⊆ {x | x ∈ Y ∧ A x = y} := by
     rintro _ ⟨i, rfl⟩
     exact hpY i
-  have hr : (range p).encard = N := by
-    rw [← image_univ, hp.encard_image, encard_univ]
-    simp
+  have hr : (range p).encard = N := by simpa using hp.encard_range
   have heq : range p = {x | x ∈ Y ∧ A x = y} :=
     (Set.finite_range p).eq_of_subset_of_encard_le hsub (by rw [hr]; exact hle)
   have hN : {x | x ∈ Y ∧ A x = y}.encard = N := heq ▸ hr
-  unfold fibreDiscr
-  rw [dite_eq_left hN]
-  unfold pairProd
-  symm
-  refine Finset.prod_bij (fun q _ => (p q.1, p q.2)) ?_ ?_ ?_ ?_
-  · intro q hq
-    simp only [Finset.mem_offDiag, Finset.mem_univ, true_and] at hq
-    simp only [Finset.mem_offDiag, Set.Finite.mem_toFinset]
-    exact ⟨hpY _, hpY _, fun h => hq (hp h)⟩
-  · intro a _ b _ hab
-    simp only [Prod.mk.injEq] at hab
-    exact Prod.ext (hp hab.1) (hp hab.2)
-  · intro b hb
-    simp only [Finset.mem_offDiag, Set.Finite.mem_toFinset] at hb
-    obtain ⟨i, hi⟩ : b.1 ∈ range p := heq ▸ hb.1
-    obtain ⟨j, hj⟩ : b.2 ∈ range p := heq ▸ hb.2.1
-    refine ⟨(i, j), ?_, ?_⟩
-    · simp only [Finset.mem_offDiag, Finset.mem_univ, true_and]
-      rintro rfl
-      exact hb.2.2 (hi.symm.trans hj)
-    · simp [hi, hj]
-  · intro q _
-    rfl
+  let e : Fin N ↪ (σ → ℂ) := ⟨p, hp⟩
+  have hmap : (Finset.univ : Finset (Fin N)).offDiag.map (e.prodMap e) =
+      (Set.finite_of_encard_eq_coe hN).toFinset.offDiag := by
+    ext ⟨x, y⟩
+    simp only [Finset.mem_map, Finset.mem_offDiag, Finset.mem_univ, true_and,
+      Set.Finite.mem_toFinset, ← heq, Set.mem_range]
+    constructor
+    · rintro ⟨⟨i, j⟩, hij, h⟩
+      change (p i, p j) = (x, y) at h
+      cases h
+      exact ⟨⟨i, rfl⟩, ⟨j, rfl⟩, hp.ne hij⟩
+    · rintro ⟨⟨i, rfl⟩, ⟨j, rfl⟩, hij⟩
+      exact ⟨(i, j), fun h => hij (congrArg p h), rfl⟩
+  rw [fibreDiscr, dite_eq_left hN, ← hmap, Finset.prod_map]
+  rfl
 
 theorem norm_prod_le_pow {ι : Type*} (s : Finset ι) (F : ι → ℂ) {C : ℝ} (hC : 1 ≤ C) {n : ℕ}
     (hs : s.card ≤ n) (hF : ∀ i ∈ s, ‖F i‖ ≤ C) : ‖∏ i ∈ s, F i‖ ≤ C ^ n := by

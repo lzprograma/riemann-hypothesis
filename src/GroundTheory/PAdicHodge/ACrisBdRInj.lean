@@ -70,14 +70,14 @@ theorem span_p_pow_map (k : ℕ) :
 
 theorem exists_eq_pow_mul_of_iota_eq_zero {y : ACris K p} (hy : iota K p y = 0) {k : ℕ}
     {yk : ACrisZero K p}
-    (ha : y - _root_.AdicCompletion.of _ _ yk ∈
+    (ha : y - algebraMap (ACrisZero K p) (ACris K p) yk ∈
       (Ideal.span {(p : ACrisZero K p)} ^ k).map (algebraMap (ACrisZero K p) (ACris K p))) :
     ∃ z ∈ ACrisZero K p, (yk : 𝔸) = (p : 𝔸) ^ k * z := by
   have hu := isUnit_natCast (K := K) (p := p) hp.out.ne_zero
   refine ⟨↑(hu.unit⁻¹ ^ k) * (yk : 𝔸), ?_, ?_⟩
   · refine mem_acrisZero_of_forall_dvd fun m => ?_
 
-    have h1 : embedding₂ K p m (y - _root_.AdicCompletion.of _ _ yk) ∈ Ideal.span {(p : acrisQ K p m)} ^ k := by
+    have h1 : embedding₂ K p m (y - algebraMap (ACrisZero K p) (ACris K p) yk) ∈ Ideal.span {(p : acrisQ K p m)} ^ k := by
       have hle : (Ideal.span {(p : ACrisZero K p)} ^ k).map
           ((embedding₂ K p m).comp (algebraMap (ACrisZero K p) (ACris K p))) ≤
           Ideal.span {(p : acrisQ K p m)} ^ k := by
@@ -94,7 +94,9 @@ theorem exists_eq_pow_mul_of_iota_eq_zero {y : ACris K p} (hy : iota K p y = 0) 
     have h3 := congrArg (fun x : acrisQ K p m => (x : 𝔸 ⧸ kerAway K p ^ m)) ht
     simp only [NegMemClass.coe_neg, SubringClass.coe_natCast, SubmonoidClass.coe_pow,
       MulMemClass.coe_mul] at h3
-    rw [embedding₂, AdicCompletion.extendRingHom_of, coe_iotaZero, ← hst] at h3
+    have hemb : embedding₂ K p m (algebraMap (ACrisZero K p) (ACris K p) yk) =
+        iotaZero K p m yk := AdicCompletion.extendRingHom_of _ _ _ _ yk
+    rw [hemb, coe_iotaZero, ← hst] at h3
     refine ⟨-s, neg_mem hs, ?_⟩
     have h4 : Ideal.Quotient.mk (kerAway K p ^ m) ((yk : 𝔸) - (p : 𝔸) ^ k * (-s)) = 0 := by
       rw [map_sub, map_mul, map_pow, map_natCast, map_neg, mul_neg, sub_neg_eq_add, ← h3,
@@ -111,27 +113,23 @@ theorem exists_eq_pow_mul_of_iota_eq_zero {y : ACris K p} (hy : iota K p y = 0) 
 
 
 theorem iota_injective : Function.Injective (iota K p) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro y hy
   refine IsHausdorff.haus' (I := Ideal.span {(p : ACris K p)}) y fun k => ?_
   rw [SModEq.sub_mem, sub_zero, smul_eq_mul, Ideal.mul_top, ← span_p_pow_map]
 
-  obtain ⟨yk, hyk⟩ := Ideal.Quotient.mk_surjective
-    (_root_.AdicCompletion.evalₐ (Ideal.span {(p : ACrisZero K p)}) k y)
-  have hker : y - _root_.AdicCompletion.of _ _ yk ∈
+  obtain ⟨yk, z, hyk⟩ := Reformulated.AutPerF.Acris.exists_eq_add k y
+  have hker : y - algebraMap (ACrisZero K p) (ACris K p) yk ∈
       (Ideal.span {(p : ACrisZero K p)} ^ k).map
         (algebraMap (ACrisZero K p) (ACris K p)) := by
-    rw [← ker_adicCompletion_evalₐ (Submodule.fg_span_singleton _), RingHom.mem_ker]
-    simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, RingHom.map_sub]
-    rw [← hyk]
-    exact sub_eq_zero.2 (_root_.AdicCompletion.evalₐ_of _ k yk).symm
+    rw [span_p_pow_map, Ideal.span_singleton_pow, Ideal.mem_span_singleton]
+    exact ⟨z, by rw [hyk]; ring⟩
   obtain ⟨z, hz, hzk⟩ := exists_eq_pow_mul_of_iota_eq_zero hy hker
   have hyk' : yk ∈ Ideal.span {(p : ACrisZero K p)} ^ k := by
     rw [Ideal.span_singleton_pow, Ideal.mem_span_singleton]
     exact ⟨⟨z, hz⟩, Subtype.ext (by simpa using hzk)⟩
   have := add_mem hker (Ideal.mem_map_of_mem (algebraMap (ACrisZero K p) (ACris K p)) hyk')
-  rwa [show (algebraMap (ACrisZero K p) (ACris K p)) yk = _root_.AdicCompletion.of _ _ yk from rfl,
-    sub_add_cancel] at this
+  simpa only [sub_add_cancel] using this
 
 end ACris
 

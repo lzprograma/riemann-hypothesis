@@ -109,7 +109,7 @@ theorem singOne_eq_zero {J : ∀ k, Finset (ι k)} (hJ : ∀ k, J k = ∅) {n : 
     singOne S J n = 0 := by
   funext I
   simp only [singOne, Pi.zero_apply]
-  rw [if_neg]
+  rw [ite_eq_right]
   intro h
   have h1 : ∀ k, (I.1.1 k).card - 1 = 0 := fun k => by rw [h k (hJ k)]
   have hs := I.1.2.2
@@ -120,7 +120,7 @@ theorem singOne_eq_zero {J : ∀ k, Finset (ι k)} (hJ : ∀ k, J k = ∅) {n : 
 omit [LinearOrder K] [∀ k, LinearOrder (ι k)] in
 theorem singOne_zero {J : ∀ k, Finset (ι k)} (I : CombCell ι J 0) : singOne S J 0 I = 1 := by
   simp only [singOne]
-  rw [if_pos]
+  rw [ite_eq_left]
   intro k _
   have hs := I.1.2.2
   have hk := (Finset.sum_eq_zero_iff.mp hs) k (Finset.mem_univ k)

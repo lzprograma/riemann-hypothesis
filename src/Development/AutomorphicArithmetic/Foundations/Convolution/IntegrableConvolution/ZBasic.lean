@@ -6,44 +6,6 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.Integrab
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensOp
 public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.EigAdm
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -133,11 +95,6 @@ variable (μ : Measure (normOneGL (K := E) (n := n))) [μ.IsHaarMeasure]
 private theorem under_of_over {v : Pl F} (u : PlacesOver E v) : u.1.under (𝓞 F) = v := by
   ext1
   exact (Ideal.over_def u.1.asIdeal v.asIdeal).symm
-
-private theorem finite_over (v : Pl F) : {w : Pl E | w.under (𝓞 F) = v}.Finite := by
-  refine (Set.finite_range fun u : PlacesOver E v => u.1).subset fun w hw => ?_
-  subst hw
-  exact ⟨⟨w, ⟨rfl⟩⟩, rfl⟩
 
 private theorem mem_Z (T : Ty σ n q w₀) (V : Submodule ℂ (LL μ)) (O : Fin (m + 1) → LL μ →L[ℂ] LL μ) (y : ℝ) (v : LL μ) :
     v ∈ T.Z μ V O y ↔ v ∈ V ∧ (∀ i, O i v = (y : ℂ) • v) ∧ ∀ w ∉ T.marked, v ∈ eigL μ w (T.J w) (T.χ w) := by
@@ -230,20 +187,13 @@ private theorem Z_fin (hn : 0 < n) (μ : Measure (normOneGL (K := E) (n := n))) 
   have hop : Oinf μ (Measure.map (glueA D n) (Measure.pi fun _ => νF)) β =
       (List.ofFn fun i => OComponent μ (s i) (hs i) νF a).prod :=
     UpperTheory.ConvolutionTheory.L1.tensOp F E σ m D n (Measure.map (glueA D n) (Measure.pi fun _ => νF)) νF rfl s hs hposition (LL μ) _ (fun _ => a) β hβ
-  have hfin : {w : Pl E | w.under (𝓞 F) ∈ insert q T.S}.Finite := by
-    have : {w : Pl E | w.under (𝓞 F) ∈ insert q T.S} = ⋃ v ∈ insert q T.S, {w : Pl E | w.under (𝓞 F) = v} := by
-      ext w
-      simp
-    rw [this]
-    exact (Finset.finite_toSet _).biUnion fun v _ => finite_over v
-  set P : Finset (Pl E) := hfin.toFinset with hP
-  have hPm : ∀ w, w ∈ P ↔ w.under (𝓞 F) ∈ insert q T.S := fun w => by simp [hP]
+  obtain ⟨P, hPm⟩ := (_root_.GlobalTheory.QNorm.places_over F E).1 (insert q T.S)
   let U' : ∀ w : Pl E, Subgroup (Gw n w) := fun w =>
     if w ∈ T.marked then U w else kerS (T.J w) (T.χ w) (T.chr w)
   have hU' : ∀ w ∈ P, CO (U' w) := fun w _ => by
     by_cases hw : w ∈ T.marked
-    · simpa only [U', if_pos hw] using hU w hw
-    · simpa only [U', if_neg hw] using kerS_co (T.co w) (T.chr w)
+    · simpa only [U', ite_eq_left hw] using hU w hw
+    · simpa only [U', ite_eq_right hw] using kerS_co (T.co w) (T.chr w)
   haveI := UpperTheory.ConvolutionTheory.C.eigAdm E n hn μ (Measure.map (glueA D n) (Measure.pi fun _ => νF)) β (y ^ (m + 1)) (pow_ne_zero _ hy.ne') P U' hU'
   refine Submodule.finiteDimensional_of_le (fun v hv => ?_)
     (S₂ := eigIn (cuspidalL2 μ) (Oinf μ (Measure.map (glueA D n) (Measure.pi fun _ => νF)) β) (y ^ (m + 1)) ⊓ sphOff μ P ⊓
@@ -267,8 +217,8 @@ private theorem Z_fin (hn : 0 < n) (μ : Measure (normOneGL (K := E) (n := n))) 
     simp
   · refine (Submodule.mem_iInf _).2 fun w => (Submodule.mem_iInf _).2 fun _ => ?_
     by_cases hw : w ∈ T.marked
-    · simpa only [U', if_pos hw] using hf' w hw
-    · simp only [U', if_neg hw]
+    · simpa only [U', ite_eq_left hw] using hf' w hw
+    · simp only [U', ite_eq_right hw]
       refine (mem_fixL' μ _ _ _).2 fun x hx => ?_
       rw [(mem_eigL' μ _ _ _ _).1 (h3 w hw) x hx.1, hx.2, one_smul]
 

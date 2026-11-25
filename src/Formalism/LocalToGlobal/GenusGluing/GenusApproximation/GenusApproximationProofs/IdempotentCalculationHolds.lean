@@ -61,11 +61,11 @@ theorem eP_mul_mem (P : HeightOneSpectrum (𝓞 F) → Prop) (c : 𝓞 F) (hc : 
       ((Formalism.L2.DIV.idemAd P : Formalism.UG.intAd F) : Formalism.L2.Herm.Af F) w
     rw [hwA, Formalism.L2.DIV.mkAd_apply]
     by_cases h : P w
-    · rw [if_pos h, Formalism.L2.DIV.idemAd_pos h]
+    · rw [ite_eq_left h, Formalism.L2.DIV.idemAd_pos h]
       refine mul_inv_cancel₀ (Formalism.UG.P.levelaf_algebraMap_ne_zero w c ?_)
       rintro rfl
       exact hc w h (Ideal.zero_mem _)
-    · rw [if_neg h, Formalism.L2.DIV.idemAd_neg h, mul_zero]
+    · rw [ite_eq_right h, Formalism.L2.DIV.idemAd_neg h, mul_zero]
   have key : eP E P = (1 : E) ⊗ₜ[F] (wA : Formalism.L2.Herm.Af F) * iA F E (algebraMap (𝓞 F) E c) := by
     rw [iA_algebraMap, Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_comm, hprod]
     rfl

@@ -46,7 +46,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.ZH
-attribute [local instance] SplitExt.free SplitExt.finite MvPolynomial.gradedAlgebra
 
 namespace GlobalTheory.SecRatio
 
@@ -65,10 +64,7 @@ variable {X : Scheme.{0}} {H : LB X}
 
 theorem compat_res (s : H.Sec) (i j : H.ι) {V : X.Opens} (hi : V ≤ H.U i) (hj : V ≤ H.U j) :
     resG X hi (s.f i) = resG X (le_inf hi hj) (H.g i j : Γ(X, H.U i ⊓ H.U j)) * resG X hj (s.f j) := by
-  have := congrArg (resG X (le_inf hi hj)) (s.compat i j)
-  rw [map_mul] at this
-  erw [rr, rr] at this
-  exact this
+  exact GlobalTheory.Cartier.sec_compat s i j hi hj
 
 theorem isUnit_res (t : H.Sec) (l : H.ι) {V : X.Opens} (hV : V ≤ Out.nonzeroLocus t)
     (hl : V ≤ H.U l) : IsUnit (resG X hl (t.f l)) := by

@@ -67,29 +67,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
 
-section Curve
-
-variable {R R' : Type} [CommRing R] [CommRing R'] {ω : R} {ω' : R'}
-
-variable {M : Type} [Field M] [NumberField M] {w : 𝓞 M}
-
-end Curve
-
-section Family
-
-variable {R : Type} [CommRing R] {ω : R}
-
-variable {C : Ell H R ω} {T : PAT H (Sp R)} {D : Datum H} {L : Submodule (𝓞 E) D.La} {φ : L → (C.P.A ⟶ T.t.G)}
-  {ε : ℤˣ} {h : D.La → D.La → OK H}
-
-end Family
-
-section Degree
-
-variable {K : Type} [Field K] [NumberField K]
-
-end Degree
-
 section Lattice
 
 variable {D : Datum H} {g : ℕ} {ty : Fin g → (E →+* ℂ)} {Pe : D.La →+ (Fin g → ℂ)} {hP : IsPeriod D ty Pe} {p q : ℕ}

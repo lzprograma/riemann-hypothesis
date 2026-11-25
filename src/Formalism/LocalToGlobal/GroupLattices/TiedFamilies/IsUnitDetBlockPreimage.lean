@@ -142,8 +142,8 @@ theorem zAt_frameOf (h : P.m + 1 = n) (pos : (Σ v : Fin P.nV, Fin (P.n' v)) ≃
   rw [key]
   unfold blockPreimageMatrix
   by_cases hs : Even s.val
-  · simp only [hs, if_true]
-  · simp only [hs, if_false]
+  · simp only [hs, ite_true]
+  · simp only [hs, ite_false]
     exact cRev_spec P (z v s) (hz v s)
 
 theorem evC_inj (h : P.m + 1 = n) (pos : (Σ v : Fin P.nV, Fin (P.n' v)) ≃ Tau) (G : Tau → Matrix (Fin n) (Fin n) ℂ)
@@ -175,8 +175,6 @@ theorem evInj_pf (emb : Tau → E →+* ℂ) (G : GAtP p) (A : LocAt F E n G)
   fun Q hQ => evC_inj G.P A.rk pos (gramC J emb) (crdB emb A.B) (isUnit_det_crdB emb A.B) Q hQ
 
 end Loc
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem evInj_rec {D : D7} {X : Formalism.L2.Herm.Herm0 D} (Gt : GatTies D) (I : CmpIn D X) (u : D.what₂.Word)
     (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) :

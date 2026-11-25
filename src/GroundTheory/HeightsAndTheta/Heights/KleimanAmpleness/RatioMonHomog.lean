@@ -74,7 +74,7 @@ theorem ResidueGen.proof : ResidueGen.Statement := by
   have hG0 : (∏ k, y ⟨k, d₀ k⟩ ^ (-β k)) ≠ 0 :=
     Finset.prod_ne_zero_iff.mpr fun k _ => zpow_ne_zero _ (hy0 k)
   obtain ⟨ext, ext_eq⟩ : ∃ e : Ω → K', ∀ z (hz : z ∈ R), e z = σ ⟨z, hz⟩ :=
-    ⟨fun z => if hz : z ∈ R then σ ⟨z, hz⟩ else 0, fun z hz => dif_pos hz⟩
+    ⟨fun z => if hz : z ∈ R then σ ⟨z, hz⟩ else 0, fun z hz => dite_eq_left hz⟩
   obtain ⟨a, ha⟩ := ResidueGen.ratioMon_homog (F := F) (ι := ι) β
 
   have key : ∀ h ∈ secOver F y β, ∀ c : ∀ k, ι k, (∀ k, y' ⟨k, c k⟩ ≠ 0) →

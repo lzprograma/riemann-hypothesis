@@ -77,10 +77,10 @@ theorem det_compl {n : Type} [Fintype n] [DecidableEq n] (M Y : Matrix n n ℝ) 
   have hMZ : ∀ i k, (M * Z) i k = if p k then M i k else (1 : Matrix n n ℝ) i k := by
     intro i k
     by_cases hk : p k
-    · simp only [hk, if_true]
+    · simp only [hk, ite_true]
       rw [Matrix.mul_apply]
       simp [Z, hk, Matrix.one_apply]
-    · simp only [hk, if_false]
+    · simp only [hk, ite_false]
       rw [← h, Matrix.mul_apply, Matrix.mul_apply]
       simp [Z, hk]
   have hZ : Z.det = (toSquareBlockProp Y (fun k => ¬ p k)).det := by

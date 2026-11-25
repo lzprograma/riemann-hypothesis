@@ -295,7 +295,7 @@ theorem exists_schwartz_coeff {Ω : Set (EuclideanSpace ℝ (Fin n))} (hΩ : IsO
       (tsupport_bump x₀ hr)
   refine ⟨ε / 4, hr, hsub, fun α ↦ if h : α ∈ A then cutMul hΩ (ha α h) (bump x₀ hr) hχc hχΩ else 0,
     fun α hα y hy ↦ ?_⟩
-  simp only [dif_pos hα]
+  simp only [dite_eq_left hα]
   rw [cutMul_apply, bump_eq_one x₀ hr hy, one_mul]
 
 theorem sum_smulLeft_apply_eq_diffOp (A : Finset (Fin n → ℕ))

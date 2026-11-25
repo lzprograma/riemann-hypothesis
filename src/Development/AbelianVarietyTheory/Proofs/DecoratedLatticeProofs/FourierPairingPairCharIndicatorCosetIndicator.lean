@@ -160,13 +160,13 @@ theorem fpair_charInd_cosetInd (k : Type) [Field k] [ValuativeRel k] [Topologica
     rw [cosetInd_add q hF, h]
     by_cases hη : InDual Q.lat η
     swap
-    · rw [dualInd, if_neg hη, mul_zero, mul_zero]
+    · rw [dualInd, ite_eq_right hη, mul_zero, mul_zero]
     congr 2
     funext y
     by_cases hy : y ∈ Q.lat
     · rw [char_coset hχ q he hF (h ▸ hη) (h ▸ hy), charInd, AddChar.map_add_eq_mul]
       ring
-    · rw [charInd, vecInd, if_neg hy, mul_zero, zero_mul, zero_mul]
+    · rw [charInd, vecInd, ite_eq_right hy, mul_zero, zero_mul, zero_mul]
   rw [key]
   constructor
   · rintro rfl
@@ -175,7 +175,7 @@ theorem fpair_charInd_cosetInd (k : Type) [Field k] [ValuativeRel k] [Topologica
     funext η
     by_cases hη : InDual Q.lat η
     swap
-    · rw [dualInd, if_neg hη, mul_zero, mul_zero]
+    · rw [dualInd, ite_eq_right hη, mul_zero, mul_zero]
     congr 2
     funext y
     by_cases hy : y ∈ Q.lat
@@ -184,7 +184,7 @@ theorem fpair_charInd_cosetInd (k : Type) [Field k] [ValuativeRel k] [Topologica
       rw [hi] at h1
       rw [char_dual hχ (he.imp And.left And.left) hη hy, ← h1, neg_add_cancel]
       simp
-    · rw [vecInd, if_neg hy, zero_mul, zero_mul]
+    · rw [vecInd, ite_eq_right hy, zero_mul, zero_mul]
   · intro hne
     obtain ⟨y₀, hy₀, hc⟩ := exists_char_ne hχ q hε h hne
     have e1 := integral_add_right_eq_self (μ := μ)
@@ -192,12 +192,12 @@ theorem fpair_charInd_cosetInd (k : Type) [Field k] [ValuativeRel k] [Topologica
     have e2 : ∀ y, vecInd Q.lat (y + y₀) * resChar χ hχ q (-Q.ev (y + y₀) + ε * Q''.ev (y + y₀)) =
         resChar χ hχ q (-Q.ev y₀ + ε * Q''.ev y₀) * (vecInd Q.lat y * resChar χ hχ q (-Q.ev y + ε * Q''.ev y)) := fun y => by
       by_cases hy : y ∈ Q.lat
-      · rw [vecInd, vecInd, if_pos hy, if_pos (add_mem hy hy₀), one_mul, one_mul, ← AddChar.map_add_eq_mul,
+      · rw [vecInd, vecInd, ite_eq_left hy, ite_eq_left (add_mem hy hy₀), one_mul, one_mul, ← AddChar.map_add_eq_mul,
           ((Pair.hasVal_ev hy).add (Pair.hasVal_ev hy₀)).ev_eq,
           ((Pair.hasVal_ev (h ▸ hy : y ∈ Q''.lat)).add (Pair.hasVal_ev (h ▸ hy₀ : y₀ ∈ Q''.lat))).ev_eq]
         congr 1
         ring
-      · rw [vecInd, vecInd, if_neg hy, if_neg fun h' => hy ((Q.lat.add_mem_iff_left hy₀).1 h')]
+      · rw [vecInd, vecInd, ite_eq_right hy, ite_eq_right fun h' => hy ((Q.lat.add_mem_iff_left hy₀).1 h')]
         simp
     simp only [e2] at e1
     rw [integral_const_mul] at e1

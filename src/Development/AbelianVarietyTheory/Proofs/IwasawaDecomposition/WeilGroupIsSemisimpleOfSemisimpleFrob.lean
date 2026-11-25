@@ -109,42 +109,6 @@ private theorem isSemisimple_of_mul_eq_one' {V : Type*} [AddCommGroup V] [Module
   · conv_rhs => rw [h1]
     rw [smul_smul, inv_mul_cancel₀ hα, one_smul]
 
-open NumberField IsDedekindDomain Polynomial Module in
-private theorem isSemisimple_of_isUnit_of_pow_isSemisimple {V : Type*} [AddCommGroup V]
-    [Module ℂ V] [FiniteDimensional ℂ V] {f : End ℂ V} (hf : IsUnit f) {m : ℕ} (hm : 0 < m)
-    (hfm : (f ^ m).IsSemisimple) : f.IsSemisimple := by
-  have hint : IsIntegral ℂ (f ^ m) := Algebra.IsIntegral.isIntegral _
-  have hX : ¬ X ∣ minpoly ℂ (f ^ m) := by
-    rintro ⟨q, hq⟩
-    have h0 : aeval (f ^ m) q = 0 := by
-      have h1 := minpoly.aeval ℂ (f ^ m)
-      rw [hq, map_mul, aeval_X] at h1
-      exact (hf.pow m).mul_right_eq_zero.1 h1
-    have hq0 : q ≠ 0 := by
-      rintro rfl
-      exact minpoly.ne_zero hint (by simpa using hq)
-    have hdeg := natDegree_le_of_dvd (minpoly.dvd ℂ (f ^ m) h0) hq0
-    rw [hq, natDegree_mul X_ne_zero hq0, natDegree_X] at hdeg
-    omega
-  have hsep : (minpoly ℂ (f ^ m)).Separable :=
-    PerfectField.separable_iff_squarefree.2 hfm.minpoly_squarefree
-  have hXe : ¬ X ∣ expand ℂ m (minpoly ℂ (f ^ m)) := by
-    rw [X_dvd_iff, coeff_expand hm]
-    rw [X_dvd_iff] at hX
-    simpa using hX
-  have hunit : IsUnit ((m : ℂ[X])) := by
-    rw [← map_natCast C]
-    exact isUnit_C.2 (Ne.isUnit (by exact_mod_cast hm.ne'))
-  have hP : (expand ℂ m (minpoly ℂ (f ^ m))).Separable := by
-    rw [separable_def, derivative_expand]
-    refine IsCoprime.mul_right
-      (((separable_def _).1 hsep).map (expand ℂ m).toRingHom) (IsCoprime.mul_right ?_ ?_)
-    · exact isCoprime_one_right.of_isCoprime_of_dvd_right (hunit.dvd)
-    · exact IsCoprime.pow_right ((Irreducible.coprime_iff_not_dvd irreducible_X).2 hXe).symm
-  apply Module.End.isSemisimple_of_squarefree_aeval_eq_zero hP.squarefree
-  rw [expand_aeval]
-  exact minpoly.aeval ℂ (f ^ m)
-
 
 open NumberField IsDedekindDomain Polynomial Module in
 theorem _root_.GlobalTheory.WeilDeligne.isSemisimple_of_isSemisimple_frob :
@@ -173,7 +137,7 @@ theorem _root_.GlobalTheory.WeilDeligne.isSemisimple_of_isSemisimple_frob :
         exact hinv.of_mem_adjoin_singleton (pow_mem (Algebra.self_mem_adjoin_singleton ℂ _) k)
   obtain ⟨m, hm, hpow⟩ :=
     _root_.GlobalTheory.WeilDeligne.exists_pow_eq_pow_of_deg_eq E Ω A w h V ρ hρ σ τ hτdeg.symm
-  apply isSemisimple_of_isUnit_of_pow_isSemisimple hunit hm
+  apply FrobSemisimple.isSemisimple_of_pow hunit hm
   rw [hpow]
   exact hτ.of_mem_adjoin_singleton (pow_mem (Algebra.self_mem_adjoin_singleton ℂ _) m)
 

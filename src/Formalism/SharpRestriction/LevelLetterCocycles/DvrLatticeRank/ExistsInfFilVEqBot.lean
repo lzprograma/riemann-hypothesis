@@ -1,55 +1,15 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfForallMemFilV
 public import Formalism.WeaklyAdmissibleFiltrations.Statement
 public import Mathlib.RingTheory.PowerSeries.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Etale.Weakly
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -78,8 +38,7 @@ theorem smulS_eq_sum {m : ℤ} {f : ℤ → V} (hf : LB m f) (g : PowerSeries LL
   intro j hj
   rw [Function.mem_support] at hj
   rw [Finset.coe_range, Set.mem_Iio]
-  by_contra hjN
-  push_neg at hjN
+  by_contra! hjN
   apply hj
   rw [hf (k - j) (by omega), smul_zero]
 
@@ -95,7 +54,7 @@ theorem smulS_X_pow {m : ℤ} {f : ℤ → V} (hf : LB m f) (K : ℕ) :
   rw [finsum_eq_single _ K]
   · rw [PowerSeries.coeff_X_pow_self, one_smul]
   · intro j hj
-    rw [PowerSeries.coeff_X_pow, if_neg hj, zero_smul]
+    rw [PowerSeries.coeff_X_pow, ite_eq_right hj, zero_smul]
 
 theorem smulS_mul {m : ℤ} {f : ℤ → V} (hf : LB m f) (g h : PowerSeries LL) :
     smulS (g * h) f = smulS g (smulS h f) := by
@@ -403,27 +362,10 @@ private theorem tmul_mem_FilV_of_mem_Fil (a : ℤ) (x : V) {y : BdR} (hy : y ∈
   rfl
 
 theorem filVB_anti : Antitone (FilV PD (LL := LL) (V := V)) := by
-  intro a b hab z hz
-  obtain ⟨w, rfl⟩ := LinearMap.mem_range.mp hz
-  clear hz
-  induction w using TensorProduct.induction_on with
-  | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | tmul x y =>
-    rw [AlgebraTensorModule.map_tmul]
-    exact tmul_mem_FilV_of_mem_Fil PD a _ (filB_anti PD hab y.2)
-  | add u v hu hv => rw [map_add (f := _)]; exact Submodule.add_mem _ hu hv
+  apply +allowSynthFailures _root_.GlobalTheory.DRFil.FilV_antitone <;> assumption
 
 theorem filV_exh (z : V ⊗[Qp] BdR) : ∃ a : ℤ, z ∈ FilV PD (LL := LL) (V := V) a := by
-  induction z using TensorProduct.induction_on with
-  | zero => exact ⟨0, Submodule.zero_mem _⟩
-  | tmul x y =>
-    obtain ⟨a, ha⟩ := PD.Fil_exh y
-    exact ⟨a, tmul_mem_FilV_of_mem_Fil PD a x ha⟩
-  | add u v hu hv =>
-    obtain ⟨a, ha⟩ := hu
-    obtain ⟨b, hb⟩ := hv
-    exact ⟨min a b, Submodule.add_mem _ (filVB_anti PD (min_le_left a b) ha)
-      (filVB_anti PD (min_le_right a b) hb)⟩
+  apply +allowSynthFailures _root_.GlobalTheory.DRFil.exists_mem_FilV <;> assumption
 
 theorem coord_mem {ι : Type} (b : Basis ι Qp V) (a : ℤ) (z : V ⊗[Qp] BdR)
     (hz : z ∈ FilV PD (LL := LL) (V := V) a) (i : ι) :
@@ -440,11 +382,7 @@ theorem coord_mem {ι : Type} (b : Basis ι Qp V) (a : ℤ) (z : V ⊗[Qp] BdR)
     exact Submodule.add_mem _ hu hv
 
 theorem filV_sep (z : V ⊗[Qp] BdR) (hz : ∀ a : ℤ, z ∈ FilV PD (LL := LL) (V := V) a) : z = 0 := by
-  obtain ⟨ι, b⟩ : Σ ι : Type, Basis ι Qp V := ⟨_, Basis.ofVectorSpace Qp V⟩
-  have key : ∀ i, TensorProduct.equivFinsuppOfBasisLeft b z i = 0 := fun i =>
-    PD.Fil_sep _ fun a => coord_mem PD (LL := LL) b a z (hz a) i
-  have key2 : TensorProduct.equivFinsuppOfBasisLeft b z = 0 := Finsupp.ext key
-  exact (LinearEquiv.map_eq_zero_iff _).mp key2
+  apply +allowSynthFailures _root_.GlobalTheory.DRFil.eq_zero_of_forall_mem_FilV <;> assumption
 
 theorem exists_le_filV (D : Submodule LL (V ⊗[Qp] BdR)) [FiniteDimensional LL D] :
     ∃ a : ℤ, D ≤ FilV PD (LL := LL) (V := V) a := by

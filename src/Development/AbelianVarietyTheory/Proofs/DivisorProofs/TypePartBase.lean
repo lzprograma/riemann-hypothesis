@@ -51,8 +51,6 @@ open scoped TensorProduct InnerProductSpace Matrix
 
 namespace GlobalTheory.LiftLower
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def csumAt {K : Type} [Field K] [NumberField K] [StarRing K] (S : CSD K) (σ : K →+* ℂ) (f g : S.Forms) : ℂ :=
   star (fun a => σ (S.basis.repr f a)) ⬝ᵥ (S.H.map σ) *ᵥ fun a => σ (S.basis.repr g a)
 

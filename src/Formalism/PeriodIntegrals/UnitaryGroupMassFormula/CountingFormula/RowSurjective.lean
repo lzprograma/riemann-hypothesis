@@ -1,7 +1,7 @@
 module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.UnimodOneGenus
-public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegralHeckeForms
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DifferentCoprimeSplit
 public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsIsomFrame
 public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsNormOneOfPair
@@ -13,65 +13,15 @@ public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepre
 public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsHermSemilocalLocRing
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularGenus.StdLatEqSpan
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.ZMemPerp
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
 import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsSqAbsNormOfInert
 import Formalism.HermitianLattices.HermitianLatticesProofs.LocDual
-import Mathlib.Tactic.Lemma
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.CoordLInjective, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RsMemPerpIff, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.LatticeFlagExists, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.LatticeUnimodular, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.PartnerVectorExists, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowSurjOfGenus, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.ExistsIsomMove, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.ExistsIsomSelfDual, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.ExistsTraceNotMem, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.UnimodularOneGenus, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowSurjective
 
 -- ===== clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.CoordLInjective =====
--- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.CoordLInjective", "h": "module\n\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.UnimodOneGenus\npublic import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegralHeckeForms\nimport Mathlib.Algebra.AffineMonoid.Basic\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.CoordLInjective", "h": "module\n\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.UnimodOneGenus\npublic import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic\nimport Mathlib.Algebra.AffineMonoid.Basic\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -82,69 +32,9 @@ noncomputable section
 
 namespace PI.UnitaryGroupMassFormula.CntFormula.RowsMassW
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Lat
 
 variable (D : D7)
-
-theorem ddS_ne_zero : ddS D ≠ 0 := by
-  unfold ddS
-  rw [Ne, FractionalIdeal.coeIdeal_eq_zero]
-  exact Ideal.map_ne_bot_of_ne_bot differentIdeal_ne_bot
-
-theorem aaI_ne_zero (a : Fin D.R.rS) : aaI D a ≠ 0 := by
-  unfold aaI
-  exact zpow_ne_zero _ (ddS_ne_zero D)
-
-theorem int_mul_of_ne {b : 𝓞 D.host.E} (hb : b ≠ 0) : ∃ k : ℕ, k ≠ 0 ∧ ∃ c : 𝓞 D.host.E, (k : 𝓞 D.host.E) = b * c := by
-  refine ⟨Ideal.absNorm (Ideal.span {b}), ?_, ?_⟩
-  · rw [Ne, Ideal.absNorm_eq_zero_iff, Ideal.span_singleton_eq_bot]; exact hb
-  · obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.1 (Ideal.absNorm_mem (Ideal.span {b}))
-    exact ⟨c, by rw [← hc, mul_comm]⟩
-
-theorem fi_nat_mul {I : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E} (hI : I ≠ 0) (x : D.host.E) :
-    ∃ k : ℕ, k ≠ 0 ∧ (k : D.host.E) * x ∈ I := by
-  obtain ⟨y, hyI, hy0⟩ : ∃ y ∈ I, y ≠ 0 := by
-    by_contra h
-    push Not at h
-    apply hI
-    ext z
-    rw [FractionalIdeal.mem_zero_iff]
-    exact ⟨h z, fun hz => hz ▸ fi_zero D I⟩
-  obtain ⟨a0, b0, hb0, rfl⟩ := IsFractionRing.div_surjective (𝓞 D.host.E) y
-  have hb0' : algebraMap (𝓞 D.host.E) D.host.E b0 ≠ 0 := by
-    rw [Ne, map_eq_zero_iff _ (IsFractionRing.injective (𝓞 D.host.E) D.host.E)]
-    exact nonZeroDivisors.ne_zero hb0
-  have ha0I : algebraMap (𝓞 D.host.E) D.host.E a0 ∈ I := by
-    have := fi_mul D b0 hyI
-    have e : (b0 : D.host.E) * (algebraMap (𝓞 D.host.E) D.host.E a0 / algebraMap (𝓞 D.host.E) D.host.E b0) =
-        algebraMap (𝓞 D.host.E) D.host.E a0 := by
-      rw [show (b0 : D.host.E) = algebraMap (𝓞 D.host.E) D.host.E b0 from rfl, mul_div_cancel₀ _ hb0']
-    rwa [e] at this
-  have ha00 : a0 ≠ 0 := by
-    rintro rfl
-    simp at hy0
-  obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (𝓞 D.host.E) x
-  have hbne : b ≠ 0 := nonZeroDivisors.ne_zero hb
-  have hb' : algebraMap (𝓞 D.host.E) D.host.E b ≠ 0 := by
-    rw [Ne, map_eq_zero_iff _ (IsFractionRing.injective (𝓞 D.host.E) D.host.E)]
-    exact hbne
-  obtain ⟨k, hk, c, hc⟩ := int_mul_of_ne D hbne
-  obtain ⟨k0, hk0, c0, hc0⟩ := int_mul_of_ne D ha00
-  refine ⟨k0 * k, mul_ne_zero hk0 hk, ?_⟩
-  have hcE : (k : D.host.E) = algebraMap (𝓞 D.host.E) D.host.E b * algebraMap (𝓞 D.host.E) D.host.E c := by
-    rw [← map_mul, ← hc]; simp
-  have hc0E : (k0 : D.host.E) = algebraMap (𝓞 D.host.E) D.host.E a0 * algebraMap (𝓞 D.host.E) D.host.E c0 := by
-    rw [← map_mul, ← hc0]; simp
-  have e : ((k0 * k : ℕ) : D.host.E) * (algebraMap (𝓞 D.host.E) D.host.E a / algebraMap (𝓞 D.host.E) D.host.E b) =
-      ((c0 * c * a : 𝓞 D.host.E) : D.host.E) * algebraMap (𝓞 D.host.E) D.host.E a0 := by
-    rw [Nat.cast_mul, hcE, hc0E]
-    show _ = algebraMap (𝓞 D.host.E) D.host.E (c0 * c * a) * _
-    rw [map_mul, map_mul]
-    field_simp
-  rw [e]
-  exact fi_mul D _ ha0I
 
 variable {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (f : Fin D.R.rS → (VS D).V)
 
@@ -199,7 +89,7 @@ theorem coordL_injective (hf : PartnerOK D F0 f) : Function.Injective (coordL D 
       intro b
       rw [map_smul, smul_eq_mul, ← (VS D).herm.eq (F0.e b) (f a), hf.1 b a]
       split_ifs <;> simp
-    simp only [e, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
+    simp only [e, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
     exact h
   rw [← hc]
   simp [hc0]
@@ -256,49 +146,6 @@ theorem lamC_fg (hf : PartnerOK D F0 f) (M : Submodule (𝓞 D.host.E) (WbQ D F0
   exact Submodule.fg_of_fg_map_injective ((coordL D F0 f hf).restrictScalars (𝓞 D.host.E)) (coordL_injective D F0 f hf)
     (Submodule.FG.of_le (S := (lamC D F0 f M).map ((coordL D F0 f hf).restrictScalars (𝓞 D.host.E))) hPfg hle)
 
-theorem lamC_span (hf : PartnerOK D F0 f) (M : Submodule (𝓞 D.host.E) (WbQ D F0))
-    (hsp : Submodule.span D.host.E (M : Set (WbQ D F0)) = ⊤) :
-    Submodule.span D.host.E (lamC D F0 f M : Set (VS D).V) = ⊤ := by
-  rw [eq_top_iff]
-  intro v _
-  choose kα hkα hα using fun a => fi_nat_mul D (aaI_ne_zero D a) ((VS D).hT (f a) (vPr D F0 f v))
-  choose kβ hkβ hβ using fun a => fi_nat_mul D (inv_ne_zero (aaI_ne_zero D a)) (star ((VS D).hT (F0.e a) v))
-  obtain ⟨kM, hkM, hM⟩ := _root_.UpperTheory.Reformulated.B.IntegralHeckeForms.M_nat_smul D F0 M hsp
-    (Submodule.Quotient.mk (⟨vPr D F0 f v, vPr_perp D F0 f hf v⟩ : perpS (VS D) F0.X))
-  set K : ℕ := (∏ a, kα a) * kM * ∏ a, kβ a with hK
-  have hK0 : K ≠ 0 := by
-    rw [hK]
-    refine mul_ne_zero (mul_ne_zero (Finset.prod_ne_zero_iff.2 fun a _ => hkα a) hkM)
-      (Finset.prod_ne_zero_iff.2 fun a _ => hkβ a)
-  have hdvd : ∀ {k : ℕ} {I : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E} {x : D.host.E},
-      k ∣ K → (k : D.host.E) * x ∈ I → (K : D.host.E) * x ∈ I := by
-    rintro k I x ⟨m, hm⟩ hx
-    rw [hm, Nat.cast_mul, mul_comm (k : D.host.E) (m : D.host.E), mul_assoc]
-    have := fi_mul D (m : 𝓞 D.host.E) hx
-    simpa using this
-  have hmem : (K : 𝓞 D.host.E) • v ∈ lamC D F0 f M := by
-    have hs : (K : 𝓞 D.host.E) • v = (K : D.host.E) • v := by
-      rw [← algebraMap_smul D.host.E (K : 𝓞 D.host.E) v, map_natCast]
-    rw [hs]
-    refine ⟨fun a => ?_, ⟨(K : 𝓞 D.host.E) • ⟨vPr D F0 f v, vPr_perp D F0 f hf v⟩, ?_, ?_⟩, fun a => ?_⟩
-    · rw [map_smul, smul_eq_mul, star_mul, star_natCast, mul_comm]
-      exact hdvd (Finset.dvd_prod_of_mem _ (Finset.mem_univ a) |>.trans (dvd_mul_left _ _)) (hβ a)
-    · rw [vPr_smul]
-      show (K : 𝓞 D.host.E) • vPr D F0 f v = _
-      rw [← algebraMap_smul D.host.E (K : 𝓞 D.host.E), map_natCast]
-    · rw [Submodule.Quotient.mk_smul]
-      obtain ⟨m, hm⟩ : kM ∣ K := by
-        rw [hK]; exact (dvd_mul_left _ _).mul_right _
-      rw [hm, Nat.cast_mul, mul_comm, mul_smul]
-      exact M.smul_mem _ hM
-    · rw [vPr_smul, map_smul, smul_eq_mul]
-      exact hdvd ((Finset.dvd_prod_of_mem _ (Finset.mem_univ a)).mul_right _ |>.mul_right _) (hα a)
-  have hK' : (K : D.host.E) ≠ 0 := Nat.cast_ne_zero.2 hK0
-  have e : v = (K : D.host.E)⁻¹ • ((K : 𝓞 D.host.E) • v) := by
-    rw [← algebraMap_smul D.host.E (K : 𝓞 D.host.E) v, map_natCast, smul_smul, inv_mul_cancel₀ hK', one_smul]
-  rw [e]
-  exact Submodule.smul_mem _ _ (Submodule.subset_span hmem)
-
 theorem lattice_integral : LamLattice := by
   intro D u F0 f M hf hM
   exact Submodule.IsLattice.of_fg D.host.E (lamC_fg D F0 f hf M hM.1.fg)
@@ -322,8 +169,6 @@ open Classical
 noncomputable section
 
 namespace PI.UnitaryGroupMassFormula.CntFormula.RowsMassW
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Coord
 
@@ -387,8 +232,6 @@ open Classical
 noncomputable section
 
 namespace PI.UnitaryGroupMassFormula.CntFormula.RowsMassW
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Flag
 
@@ -468,7 +311,7 @@ theorem rs_xlam (hf : PartnerOK D F0 f) : XLam (lamC D F0 f M) (lf D F0) = XS D 
 
       rw [← hc, map_sum] at h
       simp only [map_smul, rs_hT_f_e hf, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-        Finset.mem_univ, if_true] at h
+        Finset.mem_univ, ite_true] at h
       exact h
     rw [← hc]
     refine Submodule.sum_mem _ fun a _ => Submodule.subset_span ⟨a, c a, hca a, rfl⟩
@@ -531,7 +374,7 @@ theorem rs_hT_f_lift (hf : PartnerOK D F0 f) (w : perpS (VS D) F0.X) (b : Fin D.
     split_ifs <;> simp
 
   simp only [rsLift, map_sub, map_sum, map_smul, hfe, smul_eq_mul, mul_ite, mul_one, mul_zero,
-  Finset.sum_ite_eq', Finset.mem_univ, if_true, sub_self]
+  Finset.sum_ite_eq', Finset.mem_univ, ite_true, sub_self]
 
 theorem rs_lift_mem (hf : PartnerOK D F0 f) (w : perpS (VS D) F0.X)
     (hw : (Submodule.Quotient.mk w : WbQ D F0) ∈ M) : rsLift (f := f) w ∈ lamC D F0 f M := by
@@ -575,8 +418,6 @@ open Classical
 noncomputable section
 
 namespace PI.UnitaryGroupMassFormula.CntFormula.RowsMassW
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Unimod
 
@@ -638,12 +479,8 @@ private theorem hT_eq_hT_vPr_left_add_sum (x z : (VS D).V) : (VS D).hT x z =
 
 private theorem mem_perpS_X_of_hT_e_eq_zero (z : (VS D).V) (hz : ∀ b, (VS D).hT (F0.e b) z = 0) :
     z ∈ perpS (VS D) F0.X := by
-  have hK : F0.X ≤ LinearMap.ker ((VS D).hT z) := by
-    rw [FlagG.X, Submodule.span_le]
-    rintro _ ⟨b, rfl⟩
-    rw [SetLike.mem_coe, LinearMap.mem_ker, ← hs_lemma_2, hz b, star_zero]
-  intro x hx
-  rw [← hs_lemma_2, LinearMap.mem_ker.1 (hK hx), star_zero]
+  intros
+  refine (@_root_.PI.UnitaryGroupMassFormula.CntFormula.RowsMassW.rs_mem_perp_iff' ?_ ?_ ?_ ?_).mpr ?_ <;> first | assumption | infer_instance
 
 private theorem hT_e_vPr_eq_zero_of_partnerOK (hf : PartnerOK D F0 f) (z : (VS D).V) (b : Fin D.R.rS) :
     (VS D).hT (F0.e b) (vPr D F0 f z) = 0 := by
@@ -687,8 +524,8 @@ theorem rs_smul_f_mem (hf : PartnerOK D F0 f) {a : Fin D.R.rS} {s : D.host.E} (h
   refine mem_lamC_iff.2 ⟨fun b => ?_, ⟨0, ?_, ?_⟩, fun b => ?_⟩
   · rw [map_smul, hf.1, smul_eq_mul]
     by_cases hab : b = a
-    · subst hab; rw [if_pos rfl, mul_one, star_star]; exact hs
-    · rw [if_neg hab, mul_zero, star_zero]; exact fi_zero D _
+    · subst hab; rw [ite_eq_left rfl, mul_one, star_star]; exact hs
+    · rw [ite_eq_right hab, mul_zero, star_zero]; exact fi_zero D _
   · simp [rs_vPr_smul_f hf]
   · rw [Submodule.Quotient.mk_zero]; exact M.zero_mem
   · rw [rs_vPr_smul_f hf, map_zero]; exact fi_zero D _
@@ -817,8 +654,6 @@ noncomputable section
 
 namespace PI.UnitaryGroupMassFormula.CntFormula.RowsMassW
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Gen
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] (S : HSpace E)
@@ -917,7 +752,7 @@ theorem partner_exists {r : ℕ} {T : E} (F0 : FlagG S r T) (hT0 : T ≠ 0) :
     rw [hT_sub_sum_left]
     simp only [hf1]
     rw [hT_sub_sum_right]
-    simp only [hgeE, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [hgeE, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     have hs : star (c a b) = S.hT (g a) (g b) / 2 := by
       simp only [c]
       rw [← star_hT_eq_hT_swap (S := S) (g a) (g b)]
@@ -1017,8 +852,7 @@ theorem exists_pair (hS : IsHermSemilocal S) (hM : IsSelfDualMod S h M) {ι : Ty
   refine ⟨α, hα0, hrM, m₀ - ∑ i, (h (x i) m₀ * (h (x i) (x i))⁻¹) • x i, ?_, ?_, ?_⟩
   · refine M.sub_mem hm₀ (M.sum_mem fun i _ => hM.smul_mem _ ?_ _ (hxM i))
     exact S.mul_mem (hM.int _ (hxM i) _ hm₀) (hxu i).2.2
-  · set_option synthInstance.maxHeartbeats 100000 in
-      simp only [map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply,
+  · simp only [map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply,
         map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, RingHom.id_apply, hrx, mul_zero,
         Finset.sum_const_zero, sub_zero]
     rw [hα, inv_mul_cancel₀ hα0]

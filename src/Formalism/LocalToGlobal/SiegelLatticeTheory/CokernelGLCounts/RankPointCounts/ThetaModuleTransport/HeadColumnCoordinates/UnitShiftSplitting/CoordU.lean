@@ -22,7 +22,7 @@ def CoordGU : Prop :=
   ∀ (r n : ℕ) (V : Type) [AddCommGroup V] [Module E V] (H : HermSp M V), Module.finrank E V = n →
   ∀ (t₁ : Term V M r) (f₂ f₂' : Fin (r + 1) → V)
     (φ : H.Wb t₁.f ≃ₗ[E] H.Wb f₂) (φ' : H.Wb t₁.f' ≃ₗ[E] H.Wb f₂'), LocalCountHypotheses H t₁ f₂ f₂' φ φ' →
-    IsUnit (H.Dl t₁.f t₁.f' r) → IsUnit (H.Dl f₂ f₂' (r + 1)) →
+    IsUnit (H.Dl f₂ f₂' (r + 1)) →
     (∀ a b, HermSp.ZZplusOf M (H.Zhat f₂ f₂') t₁.T t₁.T' a b ∈ M.R) →
     Nat.card (Theta H t₁ ⟨⊥, f₂, f₂', t₁.T, t₁.T'⟩ φ φ') =
       Nat.card (ThetaGC M.L.O (M.L.cj : E →+* E) (algebraMap F E (g.q : F))

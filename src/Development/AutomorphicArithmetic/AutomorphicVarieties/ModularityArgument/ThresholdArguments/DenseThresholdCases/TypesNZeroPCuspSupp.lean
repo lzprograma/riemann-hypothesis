@@ -47,9 +47,6 @@ public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.Cus
 section
 noncomputable section
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL ValuativeRel Matrix
-namespace UpperTheory.TNZ.CuspidalSupport₂
-variable {k : Type} [Field k]
-end UpperTheory.TNZ.CuspidalSupport₂
 namespace UpperTheory.TNZ
 open CuspidalSupport₂ in
 theorem step_cuspSupp_alt : _root_.UpperTheory.TNZ.Step_cuspSupp_alt := by

@@ -1,45 +1,6 @@
 module
 
 public import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 
 @[expose] public section
 
@@ -64,11 +25,11 @@ def mulS (E Z : Spc) : Spc where
   map_comp f g := by ext T x <;> simp
 
 def mulS.fst (E Z : Spc) : mulS E Z ⟶ E where
-  app k := { app := fun T => TypeCat.ofHom fun x => x.1, naturality := fun _ _ _ => rfl }
+  app _ := { app := fun _ => TypeCat.ofHom fun x => x.1, naturality := fun _ _ _ => rfl }
   naturality _ _ _ := rfl
 
 def mulS.snd (E Z : Spc) : mulS E Z ⟶ Z where
-  app k := { app := fun T => TypeCat.ofHom fun x => x.2, naturality := fun _ _ _ => rfl }
+  app _ := { app := fun _ => TypeCat.ofHom fun x => x.2, naturality := fun _ _ _ => rfl }
   naturality _ _ _ := rfl
 
 def mulS.lift {S E Z : Spc} (f : S ⟶ E) (g : S ⟶ Z) : S ⟶ mulS E Z where
@@ -112,9 +73,9 @@ theorem Ob.hom_heq {a : Act} {A : CommRingCat.{0}} {x x' y y' : Ob a A} (hx : x 
 
 def Ob.map (a : Act) {A B : CommRingCat.{0}} (f : A ⟶ B) : Ob a A ⥤ Ob a B where
   obj x := ⟨a.D.map f x.pt⟩
-  map {x y} g := ⟨a.G.map f g.1, (congrArg (a.D.map f) g.2).trans (a.nat f g.1 y.pt)⟩
-  map_id x := Subtype.ext (map_one (a.G.map f).hom)
-  map_comp g h := Subtype.ext (map_mul (a.G.map f).hom _ _)
+  map {_ y} g := ⟨a.G.map f g.1, (congrArg (a.D.map f) g.2).trans (a.nat f g.1 y.pt)⟩
+  map_id _ := Subtype.ext (map_one (a.G.map f).hom)
+  map_comp _ _ := Subtype.ext (map_mul (a.G.map f).hom _ _)
 
 def Act.cat (a : Act) : CommRingCat.{0} ⥤ Cat.{0,0} where
   obj A := Cat.of (Ob a A)
@@ -148,9 +109,9 @@ def Act.Hom.comp {a b c : Act} (φ : Act.Hom a b) (ψ : Act.Hom b c) : Act.Hom a
 
 def Act.Hom.fn {a b : Act} (φ : Act.Hom a b) (A : CommRingCat.{0}) : Ob a A ⥤ Ob b A where
   obj x := ⟨φ.d.app A x.pt⟩
-  map {x y} f := ⟨φ.g.app A f.1, (congrArg (φ.d.app A) f.2).trans (φ.eq A f.1 y.pt)⟩
-  map_id x := Subtype.ext (map_one (φ.g.app A).hom)
-  map_comp f g := Subtype.ext (map_mul (φ.g.app A).hom _ _)
+  map {_ y} f := ⟨φ.g.app A f.1, (congrArg (φ.d.app A) f.2).trans (φ.eq A f.1 y.pt)⟩
+  map_id _ := Subtype.ext (map_one (φ.g.app A).hom)
+  map_comp _ _ := Subtype.ext (map_mul (φ.g.app A).hom _ _)
 
 def Act.Hom.cat {a b : Act} (φ : Act.Hom a b) : a.cat ⟶ b.cat where
   app A := (φ.fn A).toCatHom
@@ -262,7 +223,7 @@ def Act.sub (a : Act) (Q : Pred a) : Act where
   nat f g x := Subtype.ext (a.nat f g x.1)
 
 def incl {a : Act} (Q : Pred a) : Act.Hom (a.sub Q) a where
-  d := { app := fun A => TypeCat.ofHom fun x => x.1, naturality := fun _ _ _ => rfl }
+  d := { app := fun _ => TypeCat.ofHom fun x => x.1, naturality := fun _ _ _ => rfl }
   g := 𝟙 _
   eq _ _ _ := rfl
 
@@ -314,7 +275,7 @@ def umD (M : ℕ) : CommRingCat.{0} ⥤ Type where
 def XC (M : ℕ) : Act where
   D := umD M
   G := gmF
-  smul A u v := Um.scale (fun _ => u) v
+  smul _ u v := Um.scale (fun _ => u) v
   one_smul A v := Um.scale_one (A := A) v
   mul_smul A g h v := Um.scale_mul (A := A) (fun _ => g) (fun _ => h) v
   nat f g x := Um.map_scale f.hom (fun _ => g) x
@@ -369,24 +330,18 @@ def BC (N : ℕ) : Act where
 def Um.join {N : ℕ} {A : Type} [CommRing A] (x : Um N A × Um 2 A) : Um (N + 1) A :=
   ⟨Fin.snoc (α := fun _ => A) (fun i => x.2.1 0 * x.1.1 i) (x.2.1 1), by
     set I := Ideal.span (Set.range (Fin.snoc (α := fun _ => A) (fun i => x.2.1 0 * x.1.1 i) (x.2.1 1))) with hI
-    have h0 : ∀ y ∈ Ideal.span (Set.range x.1.1), x.2.1 0 * y ∈ I := fun y hy => by
-      refine Submodule.span_induction ?_ ?_ ?_ ?_ hy
-      · rintro _ ⟨i, rfl⟩
-        refine Ideal.subset_span ⟨Fin.castSucc i, ?_⟩
-        simp
-      · simp
-      · intro a b _ _ ha hb
-        rw [mul_add]
-        exact I.add_mem ha hb
-      · intro r a _ ha
-        rw [smul_eq_mul, mul_left_comm]
-        exact I.mul_mem_left r ha
+    have h0 : x.2.1 0 ∈ I := by
+      have hm : x.2.1 0 * 1 ∈ I := (Ideal.span_le.2 (by
+        rintro _ ⟨i, rfl⟩
+        exact Ideal.subset_span ⟨Fin.castSucc i, by simp⟩) :
+          Ideal.span (Set.range x.1.1) ≤ Submodule.comap (LinearMap.mulLeft A (x.2.1 0)) I)
+        (by rw [x.1.2]; trivial)
+      rwa [mul_one] at hm
     have h1 : x.2.1 1 ∈ I := Ideal.subset_span ⟨Fin.last N, by simp⟩
     refine top_le_iff.1 (le_trans (le_of_eq x.2.2.symm) (Ideal.span_le.2 ?_))
     rintro _ ⟨j, rfl⟩
     fin_cases j
-    · have := h0 1 (by rw [x.1.2]; trivial)
-      simpa using this
+    · exact h0
     · exact h1⟩
 
 theorem Um.join_map {N : ℕ} {A B : Type} [CommRing A] [CommRing B] (f : A →+* B) (x : Um N A × Um 2 A) :
@@ -408,8 +363,8 @@ theorem Um.join_bAct {N : ℕ} {A : Type} [CommRing A] (u : Aˣ × Aˣ) (x : Um 
       _ = (u.2 : A) * (x.2.1 0 * x.1.1 i) := by rw [hu, mul_one]
 
 def pC (N : ℕ) : Act.Hom (BC N) (XC N) where
-  d := { app := fun A => TypeCat.ofHom fun x => x.1, naturality := fun _ _ _ => rfl }
-  g := { app := fun A => GrpCat.ofHom (MonoidHom.fst _ _), naturality := fun _ _ _ => rfl }
+  d := { app := fun _ => TypeCat.ofHom fun x => x.1, naturality := fun _ _ _ => rfl }
+  g := { app := fun _ => GrpCat.ofHom (MonoidHom.fst _ _), naturality := fun _ _ _ => rfl }
   eq _ _ _ := rfl
 
 def βC (N : ℕ) : Act.Hom (BC N) (XC (N + 1)) where

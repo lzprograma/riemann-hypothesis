@@ -136,7 +136,7 @@ theorem finite_charpoly_and_ratPts : ∀ (F E : Type) [Field F] [NumberField F] 
       ext i
       by_cases hi : i ≤ n
       · exact congrFun h ⟨i, Nat.lt_succ_of_le hi⟩
-      · push_neg at hi
+      · push Not at hi
         rw [coeff_eq_zero_of_natDegree_lt (by rw [hdeg P hP]; exact hi),
           coeff_eq_zero_of_natDegree_lt (by rw [hdeg Q hQ]; exact hi)]
     have himg : φ '' S ⊆ Set.pi Set.univ T := by

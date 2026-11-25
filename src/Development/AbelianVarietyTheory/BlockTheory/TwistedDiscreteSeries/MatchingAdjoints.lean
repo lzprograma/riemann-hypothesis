@@ -47,8 +47,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints
 
 open GlobalTheory.Grid GlobalTheory.Doubling
@@ -73,8 +71,6 @@ section Route
 variable (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (ε : Bool) (V M V₁ : Node D)
 
 abbrev Pair : Type := (WO M.V V.V → ℂ) × (WO V₁.V M.V → ℂ)
-
-def IsFinPair (f : Pair V M V₁) : Prop := IsFinVec ψ θ ε M V f.1 ∧ IsFinVec ψ θ (!ε) V₁ M f.2
 
 variable {V M V₁}
 

@@ -43,13 +43,10 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.DVR
-attribute [local instance] Over.cartesianMonoidalCategory
 open scoped CategoryTheory.Obj
 
 namespace GlobalTheory.ZH.AdaptedSpan
@@ -131,8 +128,8 @@ theorem exists_comb (hG : GlobalFnsSt) (U : Unif I D A G) {k : ℕ} (hk : 1 ≤ 
           (map_sum (chartLin D.toPre.P.A.hom _ j) (fun i : {i // cls i = cls i₀} => a i • f i (cls i₀)) _).symm
       rw [e, ← Fintype.sum_subtype_add_sum_subtype (fun i => cls i = cls i₀),
         Finset.sum_eq_zero (s := (Finset.univ : Finset {i // ¬ cls i = cls i₀}))
-          (fun i _ => by rw [if_neg i.2, zero_smul]), add_zero]
-      exact Finset.sum_congr rfl fun i _ => by rw [if_pos i.2]; beta_reduce; rw [dite_eq_left i.2]
+          (fun i _ => by rw [ite_eq_right i.2, zero_smul]), add_zero]
+      exact Finset.sum_congr rfl fun i _ => by rw [ite_eq_left i.2]; beta_reduce; rw [dite_eq_left i.2]
     · exact ⟨0, fun h => absurd h hc⟩
   choose b hb using hb
   have key : toF V (FractionRing V) r • F = ∑ i, toF V (FractionRing V) (b (cls i) i) • t i := by

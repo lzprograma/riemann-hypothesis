@@ -6,45 +6,6 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedB
 public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.IdealSheafFlatDescent
 public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.PullbackBlowupSequenceComposition
 public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.StrictTransformFlatBaseChange
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -53,23 +14,6 @@ universe u
 open CategoryTheory AlgebraicGeometry CategoryTheory.Limits
 
 namespace FunctorialResolution.EmbeddedResolution
-
-private theorem flat_of_isPullback {A B C D : Scheme.{u}}
-    {a : A ⟶ B} {b : A ⟶ C} {c : B ⟶ D} {d : C ⟶ D}
-    (sq : IsPullback a b c d) (hd : AlgebraicGeometry.Flat d) :
-    AlgebraicGeometry.Flat a := by
-  have := hd
-  have : AlgebraicGeometry.Flat (pullback.snd d c) := inferInstance
-  rw [← sq.flip.isoPullback_hom_snd]
-  infer_instance
-
-private theorem isClosedImmersion_of_isPullback {A B C D : Scheme.{u}}
-    {a : A ⟶ B} {b : A ⟶ C} {c : B ⟶ D} {d : C ⟶ D}
-    (sq : IsPullback a b c d) (hd : IsClosedImmersion d) : IsClosedImmersion a := by
-  have := hd
-  have : IsClosedImmersion (pullback.snd d c) := inferInstance
-  rw [← sq.flip.isoPullback_hom_snd]
-  infer_instance
 
 theorem comp_projectionToBase_of_comp_blowupMorphism {S X : Scheme.{u}} (s : SequenceOfBlowups S) (t : SequenceOfBlowups X)
     (L : ℕ) (j : S ⟶ X) (σ : ∀ i : ℕ, i ≤ L → (s.schemeAt i ⟶ t.schemeAt i))
@@ -112,7 +56,7 @@ theorem of_flat_isPullback {S X S' X' : Scheme.{u}}
   have Ps := isPullback_projectionToBase_of_isPullback_blowupMorphism p s' s s'.length τ hτ0 hτstep
   have hσS := comp_projectionToBase_of_comp_blowupMorphism s t s.length j σ hσ0 hσstep
   have hflatρ : ∀ i : ℕ, ∀ hi : i ≤ t'.length, AlgebraicGeometry.Flat (ρ i hi) := fun i hi =>
-    flat_of_isPullback (Pt i hi) inferInstance
+    MorphismProperty.of_isPullback (P := @AlgebraicGeometry.Flat) (Pt i hi).flip inferInstance
   have hw : ∀ i : ℕ, ∀ hi : i ≤ s'.length,
       (τ i hi ≫ σ i (hA i hi)) ≫ t.projectionToBase i = (s'.projectionToBase i ≫ j') ≫ g := by
     intro i hi
@@ -134,7 +78,7 @@ theorem of_flat_isPullback {S X S' X' : Scheme.{u}}
     rw [hσ'2 i hi, hσS i (hA i hi)]
     exact ((Ps i hi).flip).paste_horiz hsq
   have hci' : ∀ i : ℕ, ∀ hi : i ≤ s'.length, IsClosedImmersion (σ' i hi) := fun i hi =>
-    isClosedImmersion_of_isPullback (Psq i hi) (hσci i (hA i hi))
+    MorphismProperty.of_isPullback (P := @IsClosedImmersion) (Psq i hi).flip (hσci i (hA i hi))
   have hzero' : σ' 0 (Nat.zero_le _) ≫ t'.isoZero.hom = s'.isoZero.hom ≫ j' := by
     have h := hσ'2 0 (Nat.zero_le _)
     rwa [SequenceOfBlowups.projectionToBase_zero, SequenceOfBlowups.projectionToBase_zero] at h

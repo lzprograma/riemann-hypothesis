@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagGapHolomorphicPullbackSecond
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PullbackPullback
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GenericBlockMatrixIsBlockDiag
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ElementaryTwistMinorOtherSteps
@@ -21,59 +22,12 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FubiniStudyMet
 public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
 public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFsInvPow
 public import ReciprocityTheory.AnalyticForms.LeviForms.TailCutA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsBlkCover
-import Mathlib.Order.CompletePartialOrder
 import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.GenericFibreKerTarget
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.IsRatSectionOn
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.Topology.OpenPartialHomeomorph.Composition
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.PermFinTwoUniv
 import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.StatementsIntDim
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodD
@@ -128,9 +82,9 @@ theorem holoOn_minor' {N : ℕ} {V : Set X} {m : X → Matrix (Fin N) (Fin N) �
     A.HoloOn V fun y => minorIJ (m y) I J := by
   unfold minorIJ
   by_cases e : I.card = J.card
-  · simp only [dif_pos e, Matrix.det_apply']
+  · simp only [dite_eq_left e, Matrix.det_apply']
     exact holoOn_sum' _ fun s => holoOn_mul' (holoOn_const' _ _) (holoOn_prod' _ fun a => h _ _)
-  · simp only [dif_neg e]
+  · simp only [dite_eq_right e]
     exact holoOn_const' _ _
 
 theorem holoOn_of_chart {ψ : OpenPartialHomeomorph X (Fin e → ℂ)} (hψ : IsCompatChart A ψ)
@@ -145,8 +99,8 @@ theorem holoOn_transv {N : ℕ} {V : Set X} {h : X → Matrix (Fin N) (Fin N) �
   simp only [Matrix.add_apply, Matrix.single_apply]
   refine holoOn_add' (holoOn_const' _ _) ?_
   by_cases e : cb = c ∧ ca = b
-  · simpa only [if_pos e] using ht
-  · simpa only [if_neg e] using holoOn_const' V 0
+  · simpa only [ite_eq_left e] using ht
+  · simpa only [ite_eq_right e] using holoOn_const' V 0
 
 end Holo
 
@@ -274,7 +228,7 @@ theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι 
   have hzH : ∀ q, RW.A.HoloOn V₁ fun w => z₀ w q := fun q => by
     by_cases hq : ∀ p, M.blk p ≠ some q.1
     · exact holoOn_mono' (hbase ⟨q.1, hq⟩ q.2) hV₁W
-    · push_neg at hq
+    · push Not at hq
       obtain ⟨⟨τ', i⟩, hp⟩ := hq
       exact holoOn_step hV₁o (v := fun I w => valAt M.x (F.u q I) (basePart M.blk (z₀ w)))
         (h := fun w => H τ' (ψ w)) (S := stepCols N j i) (fun I => hvV q I)
@@ -287,7 +241,7 @@ theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι 
       (fun r s => holoOn_transv (fun r s => holoOn_mono' (hHH τ r s) hV₁S) (holoOn_mono' hti hV₁S) cb ca r s)
       fun w hwV => ?_
     have h1 := ((hz w (hV₁S hwV)).2.2 τ a).2.2 k₀ hk m
-    rw [if_pos rfl, hbeq w (hV₁S hwV)] at h1
+    rw [ite_eq_left rfl, hbeq w (hV₁S hwV)] at h1
     exact h1
   choose mk hmk using (hpb x hx).2.2.1
   obtain ⟨m₁, hm₁⟩ := (hpb x hx).2.2.2 k₀
@@ -340,7 +294,7 @@ theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι 
     refine ⟨(hz w hwS).1, (hz w hwS).2.1, (hz w hwS).2.2, fun q hq₀ => ?_, fun q => ?_, fun m => ?_⟩
     · by_cases hq : ∀ p, M.blk p ≠ some q.1
       · exact congrFun (hbeq w hwS) ⟨⟨q.1, hq⟩, q.2⟩
-      · push_neg at hq
+      · push Not at hq
         obtain ⟨⟨τ', i⟩, hp⟩ := hq
         have e₀ := ((hz w hwS).2.2 τ' i).1.2 q.1 hp q.2
         have e₁ := ((hz w hwS).2.2 τ' i).2.2 q.1 hp q.2
@@ -350,12 +304,12 @@ theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι 
         congr 1
         by_cases ht : τ' = τ
         · subst ht
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl]
           have hia : i ≠ a := fun hia => hq₀ (by
             subst hia
             exact Option.some_injective _ (hp.symm.trans hk))
           exact _root_.GlobalTheory.CompanionTheory.Ar.PB.WSq.Sec.TransvOther.minorIJ_other_step N j a b ca cb M.j_le hb hab hca hcb _ _ i hia I
-        · rw [if_neg ht]
+        · rw [ite_eq_right ht]
     · obtain ⟨d, hd, hq'⟩ := hb₀ w (hVW hwV)
       rw [hcs' w hwV d hq' q.1]
       exact hq' q
@@ -412,22 +366,8 @@ theorem holoOn_prod (A : FinHolAtlas e S) {U : Set S} {κ : Type} (s : Finset κ
 theorem holoOn_minor (A : FinHolAtlas e S) {U : Set S} {N : ℕ} {H : S → Matrix (Fin N) (Fin N) ℂ}
     (hH : ∀ r s, A.HoloOn U fun w => H w r s) (I J : Finset (Fin N)) :
     A.HoloOn U fun w => minorIJ (H w) I J := by
-  have h := StepW.ValHolo.holoOn_eval A (b := fun w (q : Fin N × Fin N) => H w q.1 q.2) (fun q => hH q.1 q.2)
-    (minorIJ (Matrix.of fun r s => (MvPolynomial.X (r, s) : MvPolynomial (Fin N × Fin N) ℤ)) I J)
-  have e : (fun w => minorIJ (H w) I J) = fun w => eval (fun q : Fin N × Fin N => H w q.1 q.2)
-      (map (Int.castRingHom ℂ)
-        (minorIJ (Matrix.of fun r s => (MvPolynomial.X (r, s) : MvPolynomial (Fin N × Fin N) ℤ)) I J)) := by
-    funext w
-    let f : MvPolynomial (Fin N × Fin N) ℤ →+* ℂ :=
-      (eval fun q : Fin N × Fin N => H w q.1 q.2).comp (map (Int.castRingHom ℂ))
-    have hm : (Matrix.of fun r s => (MvPolynomial.X (r, s) : MvPolynomial (Fin N × Fin N) ℤ)).map f = H w := by
-      ext r s
-      simp [f]
-    have := minorIJ_map f (Matrix.of fun r s => (MvPolynomial.X (r, s) : MvPolynomial (Fin N × Fin N) ℤ)) I J
-    rw [hm] at this
-    exact this
-  rw [e]
-  exact h
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.Ar.PB.StepW.PshW.holoOn_minorIJ <;> assumption
 
 theorem prod_local (A : FinHolAtlas e S) {V : Set S} {y₀ : S} {N : ℕ} (hV : IsOpen V) (hy : y₀ ∈ V)
     (g : Fin N → S → ℂ) (n : Fin N → ℤ)
@@ -447,13 +387,13 @@ end Holo
 theorem minor_w_ne {N j : ℕ} (hj : j ≤ N) (i : Fin N) (hi : (i : ℕ) + 1 = j) {T : Matrix (Fin N) (Fin N) ℂ}
     (hT : IsBlockDiag j T) (hd : T.det ≠ 0) : minorIJ T (wIdx N j) (wIdx N j) ≠ 0 := by
   have h := FrameChange.detFac_ne_zero hj i hT hd
-  rw [detFac, if_pos hi.ge] at h
+  rw [detFac, ite_eq_left hi.ge] at h
   exact left_ne_zero_of_mul h
 
 theorem minor_om_ne {N j : ℕ} (hj : j ≤ N) (i : Fin N) (hi : (i : ℕ) + 1 = N) {T : Matrix (Fin N) (Fin N) ℂ}
     (hT : IsBlockDiag j T) (hd : T.det ≠ 0) : minorIJ T (omIdx N j) (omIdx N j) ≠ 0 := by
   have h := FrameChange.detFac_ne_zero hj i hT hd
-  rw [detFac, if_pos hi] at h
+  rw [detFac, ite_eq_left hi] at h
   exact right_ne_zero_of_mul h
 
 theorem val_ne {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω]
@@ -471,9 +411,9 @@ theorem improper_factor : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, F
       else minorIJ (Hm w) (omIdx N j) (omIdx N j))) (fun i => xiCoef τ a (τ, i)) fun i => ?_
   by_cases hp : IsProperStep N j i
   · refine ⟨V, hV, hy, subset_rfl, ?_, fun w _ => ?_⟩
-    · simp only [if_pos hp]
+    · simp only [ite_eq_left hp]
       exact holoOn_const A V 1
-    · simp only [if_pos hp]
+    · simp only [ite_eq_left hp]
       exact one_ne_zero
   · have hnone : M.blk (τ, i) = none := (M.blk_none (τ, i)).2 hp
     obtain ⟨W, hW, hyW, hWV, hval⟩ := StepW.ValHolo.holoOn_valAt _ _ M.Ω M.x (F.υ (τ, i)) e X A V zb y₀ hV hy hzb hpt
@@ -483,16 +423,16 @@ theorem improper_factor : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, F
       have hH : ∀ r s, A.HoloOn W fun w => Hm w r s := fun r s => holoOn_mono A (hHm r s) hWV
       by_cases h1 : (i : ℕ) + 1 = j
       · by_cases h2 : (a : ℕ) < j
-        · simp only [if_pos h1, if_pos h2]
+        · simp only [ite_eq_left h1, ite_eq_left h2]
           exact holoOn_minor A hH _ _
-        · simp only [if_pos h1, if_neg h2]
+        · simp only [ite_eq_left h1, ite_eq_right h2]
           exact holoOn_const A W 1
-      · simp only [if_neg h1]
+      · simp only [ite_eq_right h1]
         exact holoOn_minor A hH _ _
     refine ⟨W, hW, hyW, hWV, ?_, fun w hw => ?_⟩
-    · simp only [if_neg hp]
+    · simp only [ite_eq_right hp]
       exact holoOn_mul A hval hm
-    · simp only [if_neg hp]
+    · simp only [ite_eq_right hp]
       have hwV := hWV hw
       have hv : valAt M.x (F.υ (τ, i)) (zb w) ≠ 0 :=
         val_ne (hpt w hwV) ((hgood w hwV).2.2 _ hnone).1 ((hgood w hwV).2.2 _ hnone).2.1
@@ -500,11 +440,11 @@ theorem improper_factor : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, F
       refine mul_ne_zero hv ?_
       by_cases h1 : (i : ℕ) + 1 = j
       · by_cases h2 : (a : ℕ) < j
-        · simp only [if_pos h1, if_pos h2]
+        · simp only [ite_eq_left h1, ite_eq_left h2]
           exact minor_w_ne M.j_le i h1 (hdiag w hwV).1 (hdiag w hwV).2
-        · simp only [if_pos h1, if_neg h2]
+        · simp only [ite_eq_left h1, ite_eq_right h2]
           exact one_ne_zero
-      · simp only [if_neg h1]
+      · simp only [ite_eq_right h1]
         have h3 : (i : ℕ) + 1 = N := by
           by_contra h3
           exact hp ⟨h1, h3⟩
@@ -550,10 +490,10 @@ theorem xiDeg_self (M : FlagModel y Ψ N j) {τ : Ψ} {a : Fin N} {k₀ : K} (hk
     unfold FlagModel.dy
     rw [dite_eq_right hn]
     by_cases hp : p = (τ, a)
-    · rw [if_pos (hp ▸ hk), if_pos hp]
-    · rw [if_neg fun e => hp (M.blk_inj _ _ k₀ e hk), if_neg hp]
+    · rw [ite_eq_left (hp ▸ hk), ite_eq_left hp]
+    · rw [ite_eq_right fun e => hp (M.blk_inj _ _ k₀ e hk), ite_eq_right hp]
   unfold xiDeg
-  simp only [hd, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [hd, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   simp [xiCoef]
 
 theorem log_potA : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (Φ : Type) [Field Φ] (y : (Σ k, ι k) → Φ) (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N j : ℕ) (M : FlagModel y Ψ N j) (τ : Ψ) (a : Fin N) (k₀ : K), M.blk (τ, a) = some k₀ → ∀ zz : (Σ o : Option K, ι (o.getD k₀)) → ℂ, (∀ o, ∃ i, zz ⟨o, i⟩ ≠ 0) → Real.log ((potA M τ a k₀).h zz) = -(1 / 2) * ∑ p, (xiCoef τ a p : ℝ) * (Real.log ((fsHerm ι (M.dy p)).h (fstPt k₀ zz)) + Real.log ((fsHerm ι (M.dy p)).h (sndPt k₀ zz))) := by
@@ -602,16 +542,16 @@ theorem log_potA : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype 
       if k = k₀ then -(1 / 2) * Ln else 0 := fun k => by
     by_cases e : k = k₀
     · subst e
-      rw [if_pos rfl, hB₀, xiDeg_self M hk]
-      simp only [aDeg, if_true]
+      rw [ite_eq_left rfl, hB₀, xiDeg_self M hk]
+      simp only [aDeg, ite_true]
       push_cast
       ring
-    · rw [if_neg e, hBne k e]
-      simp only [aDeg, if_neg e]
+    · rw [ite_eq_right e, hBne k e]
+      simp only [aDeg, ite_eq_right e]
       push_cast
       ring
   have hsum := Finset.sum_congr (rfl : (Finset.univ : Finset K) = _) fun k _ => hterm k
-  rw [Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_ite_eq' Finset.univ k₀, if_pos (Finset.mem_univ _)] at hsum
+  rw [Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_ite_eq' Finset.univ k₀, ite_eq_left (Finset.mem_univ _)] at hsum
   linarith
 
 end GlobalTheory.CompanionTheory.Ar.PB.WSq.Sec
@@ -763,7 +703,7 @@ theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι 
         · subst e'
           have h1 := (hex τ a).1.2 k hk m
           have h2 := (hex τ a).2.2 k hk m
-          rw [if_pos rfl, h0, Matrix.single_zero, add_zero, mul_one, hbase] at h2
+          rw [ite_eq_left rfl, h0, Matrix.single_zero, add_zero, mul_one, hbase] at h2
           exact h2.trans h1.symm
         · exact hoff ⟨k, m⟩ e'
       rw [hz] at ho₁
@@ -895,22 +835,7 @@ namespace GlobalTheory.CompanionTheory.Ar.PB.WSq.Sec.SncProd
 theorem holoOn_comp {e n : ℕ} {X Z : Type} [TopologicalSpace X] [TopologicalSpace Z] (A : FinHolAtlas e X)
     (B : FinHolAtlas n Z) (pr : X → Z) (hp : HoloMap A B pr) (S : Set Z) (g : Z → ℂ) (hg : B.HoloOn S g) :
     A.HoloOn (pr ⁻¹' S) (fun y => g (pr y)) := by
-  rintro j z ⟨hzt, hzS⟩
-  obtain ⟨k, hk⟩ := B.cover (pr ((A.chart j).symm z))
-  have h1 : AnalyticAt ℂ (B.chart k ∘ pr ∘ (A.chart j).symm) z := hp.2 j k z ⟨hzt, hk⟩
-  have h2 : AnalyticAt ℂ (g ∘ (B.chart k).symm) ((B.chart k ∘ pr ∘ (A.chart j).symm) z) := by
-    refine hg k _ ⟨(B.chart k).map_source hk, ?_⟩
-    have : (B.chart k).symm ((B.chart k) (pr ((A.chart j).symm z))) = pr ((A.chart j).symm z) :=
-      (B.chart k).left_inv hk
-    simpa [this] using hzS
-  have h3 := h2.comp h1
-  refine h3.congr ?_
-  have hc : ContinuousAt (pr ∘ (A.chart j).symm) z :=
-    hp.1.continuousAt.comp ((A.chart j).continuousAt_symm hzt)
-  filter_upwards [hc.preimage_mem_nhds ((B.chart k).open_source.mem_nhds hk)] with w hw
-  have : (B.chart k).symm ((B.chart k) (pr ((A.chart j).symm w))) = pr ((A.chart j).symm w) :=
-    (B.chart k).left_inv hw
-  simp [this]
+  apply _root_.GlobalTheory.CompanionTheory.Ar.PB.StepW.PshW.holoOn_comp <;> assumption
 
 theorem snoc_inj {r n e : ℕ} (σb : Fin r → Option (Fin n)) (s : Fin n ↪ Fin e) (i₀ : Fin e)
     (hne : ∀ i, s i ≠ i₀) (hσ : ∀ k k' i, σb k = some i → σb k' = some i → k = k') (k k' : Fin (r + 1)) (i : Fin e)

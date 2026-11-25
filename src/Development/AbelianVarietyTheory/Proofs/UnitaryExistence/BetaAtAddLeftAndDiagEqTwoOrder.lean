@@ -55,7 +55,6 @@ noncomputable section
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.BetaAdd
 
@@ -193,7 +192,7 @@ theorem main : ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocalRing R] [CharZer
   have hex := exists_coord Dg
   let r : D.X → R := fun χ => (hex χ).choose
   have hr : ∀ χ, PsiCoord D χ (r χ) := fun χ => (hex χ).choose_spec
-  have hv : ∀ χ, vPsiAt D f p χ = -Real.logb p ‖f (r χ)‖ := fun χ => dif_pos (hex χ)
+  have hv : ∀ χ, vPsiAt D f p χ = -Real.logb p ‖f (r χ)‖ := fun χ => dite_eq_left (hex χ)
   have hn : ∀ χ, ‖f (r χ)‖ ≠ 0 := fun χ => norm_ne_zero_iff.2 (hne χ _ (hr χ))
   choose u hu hur using fun χ => coord_val hI hJ (hr χ)
   let Q := QuotientGroup.mk' (intU z)

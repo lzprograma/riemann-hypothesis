@@ -6,54 +6,6 @@ public import GroundTheory.GlobalFields.TateThesis.GaussianComplex
 public import Mathlib.Basic.Real.Sign
 public import GroundTheory.GlobalFields.TateThesis.ArchCharsUnitary
 import GroundTheory.GlobalFields.TateThesis.Gaussian
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -149,7 +101,7 @@ theorem integral_infinitePlaceUnitsMeasure_of_isReal {w : InfinitePlace K} (hw :
     rw [← Real.norm_eq_abs, ← (isometryEquivRealOfIsReal hw).symm.isometry.norm_map_of_map_zero]
     change (ringEquivRealOfIsReal hw).symm 0 = 0
     exact map_zero _
-  simp only [mult, if_pos hw, pow_one, hn, Complex.real_smul]
+  simp only [mult, ite_eq_left hw, pow_one, hn, Complex.real_smul]
   push_cast
   rw [div_eq_inv_mul]
 
@@ -171,7 +123,7 @@ theorem integral_infinitePlaceUnitsMeasure_of_isComplex {w : InfinitePlace K} (h
     rw [← (isometryEquivComplexOfIsComplex hw).symm.isometry.norm_map_of_map_zero]
     change (ringEquivComplexOfIsComplex hw).symm 0 = 0
     exact map_zero _
-  simp only [mult, if_neg (not_isReal_iff_isComplex.2 hw), hn,
+  simp only [mult, ite_eq_right (not_isReal_iff_isComplex.2 hw), hn,
     Complex.real_smul]
   push_cast
   rw [div_eq_inv_mul]
@@ -216,7 +168,7 @@ theorem exists_infiniteParams (w : InfinitePlace K) :
       exact ((isometry_extensionEmbeddingOfIsReal hw).norm_map_of_map_zero (map_zero _) _).symm
     have hx0 : x ≠ 0 := (map_ne_zero_iff _ e.injective).2 a.ne_zero
     simp only [Units.coe_map, MonoidHom.coe_coe]
-    rw [hι, hn, mult, if_pos hw, pow_one, zpow_natCast, ofReal_div_abs_eq_sign hx0]
+    rw [hι, hn, mult, ite_eq_left hw, pow_one, zpow_natCast, ofReal_div_abs_eq_sign hx0]
   · have hc := not_isReal_iff_isComplex.1 hw
     set e := ringEquivComplexOfIsComplex hc
     have hec : Continuous e.symm := (isometryEquivComplexOfIsComplex hc).symm.continuous
@@ -237,7 +189,7 @@ theorem exists_infiniteParams (w : InfinitePlace K) :
       (isometry_extensionEmbedding w).norm_map_of_map_zero (map_zero _) _
     have hpos : 0 < ‖(a : w.Completion)‖ := norm_pos_iff.2 a.ne_zero
     simp only [Units.coe_map, MonoidHom.coe_coe]
-    rw [hn, hι, mult, if_neg hw, ofReal_pow_cpow hpos]
+    rw [hn, hι, mult, ite_eq_right hw, ofReal_pow_cpow hpos]
     congr 2
     push_cast
     ring
@@ -294,8 +246,8 @@ theorem integral_infiniteTest (w : InfinitePlace K) {s : ℂ} (hs : 0 < s.re) :
   have hs' : 0 < (s + χ.infiniteTau w * I).re := by simpa using hs
   rw [hfun]
   by_cases hw : w.IsReal
-  · rw [integral_infinitePlaceUnitsMeasure_of_isReal hw, infiniteConst, infiniteGamma, if_pos hw,
-      if_pos hw, one_mul]
+  · rw [integral_infinitePlaceUnitsMeasure_of_isReal hw, infiniteConst, infiniteGamma, ite_eq_left hw,
+      ite_eq_left hw, one_mul]
     obtain ⟨hm0, hm2⟩ := χ.infiniteWeight_of_isReal hw
     set e := isometryEquivRealOfIsReal hw
     have hι : ∀ x : ℝ, extensionEmbedding w (e.symm x) = (x : ℂ) := fun x ↦ by
@@ -305,8 +257,8 @@ theorem integral_infiniteTest (w : InfinitePlace K) {s : ℂ} (hs : 0 < s.re) :
       rw [← Real.norm_eq_abs, ← e.symm.isometry.norm_map_of_map_zero]
       change (ringEquivRealOfIsReal hw).symm 0 = 0
       exact map_zero _
-    have hmult : (w.mult : ℝ) = 1 := by rw [mult, if_pos hw, Nat.cast_one]
-    have hmult' : w.mult = 1 := by rw [mult, if_pos hw]
+    have hmult : (w.mult : ℝ) = 1 := by rw [mult, ite_eq_left hw, Nat.cast_one]
+    have hmult' : w.mult = 1 := by rw [mult, ite_eq_left hw]
     rcases (show χ.infiniteWeight w = 0 ∨ χ.infiniteWeight w = 1 by omega) with h0 | h1
     · rw [h0, Int.cast_zero, add_zero, ← integral_realGaussian_mul_abs_cpow hs']
       refine integral_congr_ae (Filter.Eventually.of_forall fun x ↦ ?_)
@@ -323,21 +275,21 @@ theorem integral_infiniteTest (w : InfinitePlace K) {s : ℂ} (hs : 0 < s.re) :
       · simp [hx]
       have hx' : (0 : ℝ) < |x| := abs_pos.2 hx
       simp only [h, infiniteTest, h1, hι, hn, hmult', pow_one, zpow_one,
-        Int.natAbs_one, if_pos zero_lt_one, conj_ofReal, realGaussianOdd, sq_abs]
+        Int.natAbs_one, ite_eq_left zero_lt_one, conj_ofReal, realGaussianOdd, sq_abs]
       rw [← cpow_add _ _ (by exact_mod_cast hx'.ne'), ofReal_div_abs_eq_sign hx, ofReal_exp]
       push_cast
       ring_nf
   · have hc := not_isReal_iff_isComplex.1 hw
-    rw [integral_infinitePlaceUnitsMeasure_of_isComplex hc, infiniteConst, infiniteGamma, if_neg hw,
-      if_neg hw]
+    rw [integral_infinitePlaceUnitsMeasure_of_isComplex hc, infiniteConst, infiniteGamma, ite_eq_right hw,
+      ite_eq_right hw]
     set e := isometryEquivComplexOfIsComplex hc
     have hι : ∀ z : ℂ, extensionEmbedding w (e.symm z) = z := fun z ↦ e.apply_symm_apply z
     have hn : ∀ z : ℂ, ‖e.symm z‖ = ‖z‖ := fun z ↦ by
       rw [← e.symm.isometry.norm_map_of_map_zero]
       change (ringEquivComplexOfIsComplex hc).symm 0 = 0
       exact map_zero _
-    have hmult : (w.mult : ℝ) = 2 := by rw [mult, if_neg hw, Nat.cast_ofNat]
-    have hmult' : w.mult = 2 := by rw [mult, if_neg hw]
+    have hmult : (w.mult : ℝ) = 2 := by rw [mult, ite_eq_right hw, Nat.cast_ofNat]
+    have hmult' : w.mult = 2 := by rw [mult, ite_eq_right hw]
     have hs'' : 0 < (s + χ.infiniteTau w * I).re + ((-χ.infiniteWeight w).natAbs : ℝ) / 2 := by
       positivity
     have key := integral_complexGaussian_mul_zpow_mul_cpow (-χ.infiniteWeight w) hs''
@@ -355,8 +307,8 @@ theorem integral_infiniteTest (w : InfinitePlace K) {s : ℂ} (hs : 0 < s.re) :
       rw [hexp]
       congr 1
       by_cases hm0 : 0 < χ.infiniteWeight w
-      · rw [if_pos hm0, if_neg (by omega)]
-      · rw [if_neg hm0, if_pos (by omega)]
+      · rw [ite_eq_left hm0, ite_eq_right (by omega)]
+      · rw [ite_eq_right hm0, ite_eq_left (by omega)]
     simp only [h, htest, hι, hn, hmult']
     rw [← cpow_add _ _ (by exact_mod_cast hz'.ne')]
     ring_nf

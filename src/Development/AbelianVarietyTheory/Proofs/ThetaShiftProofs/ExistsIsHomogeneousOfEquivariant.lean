@@ -467,7 +467,7 @@ theorem Equivariant.isHomogeneous {a : ι × ℕ → ℕ} {Q : MvPolynomial (Lt 
     rw [map_mul, map_pow, mul_comm]
     exact key
   have k3 := coeff_scale Q (∑ τ, ∑ i : Fin (m τ), a (τ, (i : ℕ)))
-  rw [k2, Polynomial.coeff_C_mul_X_pow, if_pos rfl] at k3
+  rw [k2, Polynomial.coeff_C_mul_X_pow, ite_eq_left rfl] at k3
   rw [k3]
   exact homogeneousComponent_isHomogeneous _ _
 

@@ -2,132 +2,41 @@ module
 
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsTransition
 public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PrincipalRootReZeroImSq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
-open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
-open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-open Matrix GlobalTheory GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
-open scoped ComplexOrder
+open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.CompanionTheory.Ar.Fl Submodule
 
 namespace PositivityTheory.Xgf
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
 
 theorem symplectic_form_skew (D : Datum H) (x y : D.La) : D.EF x y = -D.EF y x := by
-  have h := D.alt (x + y)
-  simp only [map_add (f := _), LinearMap.add_apply, D.alt x, D.alt y, zero_add, add_zero] at h
-  linarith
+  have := D.alt (x + y); simp [D.alt] at this; linarith
 
-theorem Host_rt0_ne_neg : H.rt0 ≠ -H.rt0 := by
-  intro h
-  have h0 : H.rt0 = 0 := by linear_combination h / 2
-  have hs := H.sqrt_neg_disc_sq
-  rw [h0] at hs
-  have hd : (H.d : ℂ) ≠ 0 := by exact_mod_cast H.d_prime.ne_zero
-  apply hd
-  linear_combination hs
+theorem Host_rt0_ne_neg : H.rt0 ≠ -H.rt0 := fun h =>
+  H.d_prime.ne_zero (Nat.cast_eq_zero.1 (by grind [H.sqrt_neg_disc_sq] : (H.d : ℂ) = 0))
 
 theorem pure_type_lattices_orthogonal : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (g : ℕ) (ty : Fin g → (E →+* ℂ)) (P : D.La →+ (Fin g → ℂ)) (hP : IsPeriod D ty P) (a b : D.La), a ∈ PureType.lat hP (sgnRt H true) → b ∈ PureType.lat hP (sgnRt H false) → sesq D a b = 0 ∧ sesq D b a = 0 := by
   intro E _ _ _ H D g ty P hP a b ha hb
-  simp only [sgnRt, if_true, Bool.false_eq_true, if_false] at ha hb
-  constructor
-  · unfold sesq
-    refine Finset.sum_eq_zero fun k _ => ?_
-    rw [GlobalTheory.CM.FamCompare.orth_of_pure hP ((PureType.lat hP H.rt0).smul_mem _ ha) hb]
-    simp
-  · unfold sesq
-    refine Finset.sum_eq_zero fun k _ => ?_
-    rw [symplectic_form_skew D, GlobalTheory.CM.FamCompare.orth_of_pure hP ha ((PureType.lat hP (-H.rt0)).smul_mem _ hb)]
-    simp
+  constructor <;> refine Finset.sum_eq_zero fun k _ => ?_
+  · simp [CM.FamCompare.orth_of_pure hP (smul_mem _ _ ha) hb]
+  · rw [symplectic_form_skew D]
+    simp [CM.FamCompare.orth_of_pure hP ha (smul_mem _ _ hb)]
 
 theorem pure_family_decomposition : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (g : ℕ) (ty : Fin g → (E →+* ℂ)) (P : D.La →+ (Fin g → ℂ)) (hP : IsPeriod D ty P) (p q : ℕ) (x : Fin p ⊕ Fin q → D.La) (n : ℕ), IsPure hP x → (∀ y : D.La, n • y ∈ Submodule.span (𝓞 E) (Set.range x)) → (∀ y : D.La, ∃ a ∈ PureType.lat hP (sgnRt H true), ∃ b ∈ PureType.lat hP (sgnRt H false), n • y = a + b) ∧ (∀ y ∈ PureType.lat hP (sgnRt H true), n • y ∈ Submodule.span (𝓞 E) (Set.range (x ∘ Sum.inl))) ∧ ∀ y ∈ PureType.lat hP (sgnRt H false), n • y ∈ Submodule.span (𝓞 E) (Set.range (x ∘ Sum.inr)) := by
   intro E _ _ _ H D g ty P hP p q x n hx hn
-
-  have hsplit : ∀ y : D.La, ∃ a ∈ Submodule.span (𝓞 E) (Set.range (x ∘ Sum.inl)),
-      ∃ b ∈ Submodule.span (𝓞 E) (Set.range (x ∘ Sum.inr)), n • y = a + b := by
-    intro y
-    have h := hn y
-    have e : Set.range x = Set.range (x ∘ Sum.inl) ∪ Set.range (x ∘ Sum.inr) := by
-      ext z; constructor
-      · rintro ⟨(i | j), rfl⟩
-        · exact Or.inl ⟨i, rfl⟩
-        · exact Or.inr ⟨j, rfl⟩
-      · rintro (⟨i, rfl⟩ | ⟨j, rfl⟩)
-        · exact ⟨_, rfl⟩
-        · exact ⟨_, rfl⟩
-    rw [e, Submodule.span_union, Submodule.mem_sup] at h
-    obtain ⟨a, ha, b, hb, hab⟩ := h
-    exact ⟨a, ha, b, hb, hab.symm⟩
-  have hlatL : Submodule.span (𝓞 E) (Set.range (x ∘ Sum.inl)) ≤ PureType.lat hP (sgnRt H true) :=
-    Submodule.span_le.2 (by rintro _ ⟨i, rfl⟩; exact hx.1 i)
-  have hlatR : Submodule.span (𝓞 E) (Set.range (x ∘ Sum.inr)) ≤ PureType.lat hP (sgnRt H false) :=
-    Submodule.span_le.2 (by rintro _ ⟨j, rfl⟩; exact hx.2 j)
-  have hboth : ∀ z, z ∈ PureType.lat hP (sgnRt H true) → z ∈ PureType.lat hP (sgnRt H false) → z = 0 := by
-    intro z h1 h2
-    apply hP.2.1
-    rw [map_zero]
-    funext j
-    by_cases hj : ty j (H.rt : E) = H.rt0
-    · have : ty j (H.rt : E) ≠ -H.rt0 := by rw [hj]; exact Host_rt0_ne_neg
-      exact h2 j (by simpa [sgnRt] using this)
-    · exact h1 j (by simpa [sgnRt] using hj)
-  refine ⟨fun y => ?_, fun y hy => ?_, fun y hy => ?_⟩
-  · obtain ⟨a, ha, b, hb, e⟩ := hsplit y
-    exact ⟨a, hlatL ha, b, hlatR hb, e⟩
-  · obtain ⟨a, ha, b, hb, e⟩ := hsplit y
-    have hb0 : b = 0 := hboth b (by
-      have : b = n • y - a := by rw [e]; abel
-      rw [this]
-      exact Submodule.sub_mem _ (Submodule.smul_of_tower_mem _ _ hy) (hlatL ha)) (hlatR hb)
-    rw [e, hb0, add_zero]; exact ha
-  · obtain ⟨a, ha, b, hb, e⟩ := hsplit y
-    have ha0 : a = 0 := hboth a (hlatL ha) (by
-      have : a = n • y - b := by rw [e]; abel
-      rw [this]
-      exact Submodule.sub_mem _ (Submodule.smul_of_tower_mem _ _ hy) (hlatR hb))
-    rw [e, ha0, zero_add]; exact hb
+  have hL := span_le.2 (Set.range_subset_iff.2 hx.1)
+  have hR := span_le.2 (Set.range_subset_iff.2 hx.2)
+  have hd := disjoint_def.1 (PureType.disjoint_lat hP (Host_rt0_ne_neg (H := H)))
+  simp_rw [Sum.range_eq, span_union, mem_sup] at hn
+  refine ⟨?_, ?_, ?_⟩ <;> intro y <;> obtain ⟨a, ha, b, hb, e⟩ := hn y
+  · exact ⟨a, hL ha, b, hR hb, e.symm⟩
+  · intro hy
+    have := hd _ (eq_sub_of_add_eq' e ▸ sub_mem (nsmul_mem hy n) (hL ha)) (hR hb)
+    grind
+  · intro hy
+    have := hd _ (hL ha) (eq_sub_of_add_eq e ▸ sub_mem (nsmul_mem hy n) (hR hb))
+    grind
 
 end PositivityTheory.Xgf

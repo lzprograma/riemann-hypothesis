@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntPull
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHAlg
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
@@ -172,8 +173,8 @@ theorem card_odd_range (s : ℕ) : ((range (2 * s)).filter fun t => t % 2 = 1).c
     have h2 : ¬ (2 * s) % 2 = 1 := by omega
     have h3 : 2 * s + 1 ∉ (range (2 * s)).filter fun t => t % 2 = 1 := by
       simp only [Finset.mem_filter, Finset.mem_range]; omega
-    rw [e, Finset.range_add_one, Finset.range_add_one, Finset.filter_insert, Finset.filter_insert, if_pos h1,
-      if_neg h2, Finset.card_insert_eq_ite, if_neg h3, ih]
+    rw [e, Finset.range_add_one, Finset.range_add_one, Finset.filter_insert, Finset.filter_insert, ite_eq_left h1,
+      ite_eq_right h2, Finset.card_insert_eq_ite, ite_eq_right h3, ih]
 
 end Pure2
 
@@ -209,8 +210,6 @@ end Sig
 
 section SettingDef
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem phi_hform (I : AutInst) (v : InfinitePlace I.F) (x y : Fin I.n → I.E) :
     I.φ v (Formalism.UG.hform (starRingEnd I.E) I.J x y) = hJ (I.ε v) (rv I v x) (rv I v y) := by
   have hP := I.P_spec v
@@ -240,17 +239,6 @@ theorem hJ_sub_right {n : ℕ} (ε : Fin n → Bool) (a b c : Fin n → ℂ) : h
 
 variable {D : D7} (X : HidaSetting D) (u : D.what₂.Word)
 
-private lemma host_conj_eq_star (D : D7) (c : D.host.E) : D.host.conj c = star c := by
-  haveI := D.host.isCMField_hostE
-  apply D.host.φ₀.injective
-  have h1 : D.host.φ₀ (D.host.conj c) = starRingEnd ℂ (D.host.φ₀ c) := by
-    rw [← D.embE_φ₀]
-    simp only [RingHom.comp_apply]
-    rw [D.embE_conj, D.starLL_cx]
-  have h2 : D.host.φ₀ (star c) = starRingEnd ℂ (D.host.φ₀ c) :=
-    NumberField.IsCMField.complexEmbedding_complexConj _ D.host.φ₀ c
-  rw [h1, h2]
-
 theorem hJ_crd (v : InfinitePlace X.B.I.F) (p q : (VS D).V) :
     hJ (X.B.I.ε v) (rv X.B.I v (X.crd p)) (rv X.B.I v (X.crd q)) = embS D (X.pl v) ((VS D).hT p q) := by
   rw [← phi_hform, X.φ_eq]
@@ -264,7 +252,7 @@ theorem hJ_crd (v : InfinitePlace X.B.I.F) (p q : (VS D).V) :
   RingHom.id_apply, starRingEnd_apply]
   conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  have hc : D.host.conj ((X.bas.repr p) i) = star ((X.bas.repr p) i) := host_conj_eq_star D _
+  have hc : D.host.conj ((X.bas.repr p) i) = star ((X.bas.repr p) i) := _root_.Formalism.L2.KerInert.PullbackComparison.conj_eq_star D _
   rw [hc]
   ring
 
@@ -318,8 +306,7 @@ theorem wuDefinite_holds : WuDefinite X u := by
     rw [← phi_hform, ← ha, X.B.I.φ_over v a, hemb]; rfl
   have hre : ι a = (hJ (X.B.I.ε v) (rv X.B.I v x) (rv X.B.I v x)).re := by rw [← hval]; simp
   rw [hre]
-  by_contra hle
-  push_neg at hle
+  by_contra! hle
 
   let nv : Fin (D.R.rS + 1) → Fin X.B.I.n → ℂ := fun j =>
     if h : j.1 < D.R.rS then rv X.B.I v (X.eR ⟨j.1, h⟩) - rv X.B.I v (X.fR ⟨j.1, h⟩) else rv X.B.I v (X.zR u)
@@ -351,7 +338,7 @@ theorem wuDefinite_holds : WuDefinite X u := by
     simp only [nv]
     split_ifs with hj
     · rw [hJ_sub_left, hJ_sub_right, hJ_sub_right]
-      simp only [HidaSetting.eR, HidaSetting.fR, hJ_crd, X.ee, X.ff, X.ef, hT_f_e, if_true, map_zero, map_one]
+      simp only [HidaSetting.eR, HidaSetting.fR, hJ_crd, X.ee, X.ff, X.ef, hT_f_e, ite_true, map_zero, map_one]
       norm_num
     · simp only [HidaSetting.zR, hJ_crd, X.zu_norm, map_neg, map_natCast]
       simp only [Complex.neg_re, Complex.natCast_re, Left.neg_neg_iff]

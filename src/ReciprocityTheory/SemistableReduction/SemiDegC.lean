@@ -113,8 +113,8 @@ theorem spanIdx_eq_vecIdx {K : Type} [Field K] [NumberField K] {r k : ℕ} {B : 
     · rintro _ ⟨i, rfl⟩
       refine ⟨Pi.single i 1, (Submodule.mem_pi).2 fun j _ => ?_, ?_⟩
       · rcases eq_or_ne j i with rfl | hj
-        · rw [Pi.single_apply, if_pos rfl]; exact Submodule.mem_one.2 ⟨1, map_one _⟩
-        · rw [Pi.single_apply, if_neg hj]; exact zero_mem _
+        · rw [Pi.single_apply, ite_eq_left rfl]; exact Submodule.mem_one.2 ⟨1, map_one _⟩
+        · rw [Pi.single_apply, ite_eq_right hj]; exact zero_mem _
       · show combMap b (Pi.single i 1) = b i
         simp [combMap_apply, Pi.single_apply, ite_smul]
   have e1 : (Submodule.span (𝓞 K) (Set.range b)).toAddSubgroup =

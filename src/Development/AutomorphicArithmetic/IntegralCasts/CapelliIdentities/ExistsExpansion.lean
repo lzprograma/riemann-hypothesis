@@ -55,7 +55,7 @@ private lemma UpperTheory.Reformulated.B.Qn12.step {R ι : Type*} [CommRing R] [
     p * x = e * a + ∑ i, (c i * a + if i = j then p else 0) * y i := by
   have h1 : ∑ i, (c i * a + if i = j then p else 0) * y i = (∑ i, c i * y i) * a + p * y j := by
     simp only [add_mul, Finset.sum_add_distrib, ite_mul, zero_mul, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true, Finset.sum_mul, mul_right_comm]
+      Finset.mem_univ, ite_true, Finset.sum_mul, mul_right_comm]
   rw [h1, hy]
   linear_combination a * hc
 

@@ -114,8 +114,7 @@ theorem dixmier_schur_of_rank_le_aleph0 :
       (∀ N : Submodule ℂ V, (∀ i, ∀ x ∈ N, ρ i x ∈ N) → N = ⊥ ∨ N = ⊤) →
       (∀ i, T * ρ i = ρ i * T) → ∃ c : ℂ, T = c • 1 := by
   intro V ι _ _ ρ T hV hrank hirr hcomm
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   have hunit : ∀ c : ℂ, IsUnit (T - algebraMap ℂ (Module.End ℂ V) c) := by
     intro c
     set S := T - algebraMap ℂ (Module.End ℂ V) c with hS

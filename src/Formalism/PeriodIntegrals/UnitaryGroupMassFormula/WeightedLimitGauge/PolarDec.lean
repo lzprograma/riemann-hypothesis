@@ -5,54 +5,9 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGau
 public import Mathlib.Analysis.Normed.Algebra.MatrixExponential
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.TransW
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.Unimod
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ConstPair
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.MBaseMem
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.RhsTest
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.BallConj, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.PolarDec
@@ -128,7 +83,7 @@ theorem norm_realE (X : Matrix (Fin m) (Fin m) ℂ) :
   rw [Fintype.sum_prod_type]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [Fintype.sum_bool]
-  simp only [realE_apply, realifyFun, Real.norm_eq_abs, sq_abs, if_true, Bool.false_eq_true, if_false,
+  simp only [realE_apply, realifyFun, Real.norm_eq_abs, sq_abs, ite_true, Bool.false_eq_true, ite_false,
     Complex.normSq_apply]
   ring
 
@@ -243,8 +198,8 @@ theorem uwb_emb {p : Mat k r} (hp : p ∈ UWb k r) :
     unfold embWb
     rw [dite_eq_right (by omega)]
     by_cases hij : i = j
-    · subst hij; rw [if_pos rfl, if_pos ⟨rfl, by omega⟩]
-    · rw [if_neg hij, if_neg (fun h => hij h.1)]
+    · subst hij; rw [ite_eq_left rfl, ite_eq_left ⟨rfl, by omega⟩]
+    · rw [ite_eq_right hij, ite_eq_right (fun h => hij h.1)]
   · push Not at hj
     obtain ⟨j', rfl⟩ : ∃ j' : Fin (k + 1), wI k r j' = j :=
       ⟨⟨j.val - r, by omega⟩, by apply Fin.ext; simp only [wI]; omega⟩
@@ -260,8 +215,8 @@ theorem uwb_emb {p : Mat k r} (hp : p ∈ UWb k r) :
           have ht : HU.tau k r (esI k r a) = i := by
             unfold HU.tau esI; apply Fin.ext; simp only [a]; split_ifs <;> omega
           have hs : HU.sgn k r (esI k r a) = 1 := by
-            unfold HU.sgn esI; simp only [a]; rw [if_neg (by omega)]
-          rw [ht, hs, one_mul, one_mul, MB.bvec_apply, if_neg] at h1
+            unfold HU.sgn esI; simp only [a]; rw [ite_eq_right (by omega)]
+          rw [ht, hs, one_mul, one_mul, MB.bvec_apply, ite_eq_right] at h1
           · exact h1
           · intro h; have := congrArg Fin.val h; simp only [wI] at this; omega
         · set a : Fin r := ⟨2 * r + k - i.val, by omega⟩
@@ -271,14 +226,14 @@ theorem uwb_emb {p : Mat k r} (hp : p ∈ UWb k r) :
           have ht : HU.tau k r (eI k r a) = i := by
             unfold HU.tau eI; apply Fin.ext; simp only [a]; split_ifs <;> omega
           have hs : HU.sgn k r (eI k r a) = 1 := by
-            unfold HU.sgn eI; simp only [a]; rw [if_neg (by omega)]
-          rw [ht, hs, one_mul, one_mul, MB.bvec_apply, if_neg] at h1
+            unfold HU.sgn eI; simp only [a]; rw [ite_eq_right (by omega)]
+          rw [ht, hs, one_mul, one_mul, MB.bvec_apply, ite_eq_right] at h1
           · exact h1
           · intro h; have := congrArg Fin.val h; simp only [wI] at this; omega
       rw [MB.mulVec_bvec] at hw
       rw [hw]
       unfold embWb
-      rw [dite_eq_right (by omega), if_neg (fun h => by have := congrArg Fin.val h.1; simp only [wI] at this; omega)]
+      rw [dite_eq_right (by omega), ite_eq_right (fun h => by have := congrArg Fin.val h.1; simp only [wI] at this; omega)]
     · push Not at hi
       obtain ⟨i', rfl⟩ : ∃ i' : Fin (k + 1), wI k r i' = i :=
         ⟨⟨i.val - r, by omega⟩, by apply Fin.ext; simp only [wI]; omega⟩
@@ -292,7 +247,7 @@ theorem col_unitary (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (hμ : μᴴ *
     intro j hj
     have h := congrFun (congrFun hμ (Fin.last k)) j
     rw [form_apply] at h
-    simp only [hcol, Fin.castSucc_ne_last, if_false, map_zero, zero_mul, Finset.sum_const_zero, if_true,
+    simp only [hcol, Fin.castSucc_ne_last, ite_false, map_zero, zero_mul, Finset.sum_const_zero, ite_true,
       zero_sub, Hb, Matrix.diagonal_apply_ne _ (Ne.symm hj)] at h
     have : conj l * μ (Fin.last k) j = 0 := by linear_combination -h
     exact (mul_eq_zero.1 this).resolve_left hl0
@@ -308,7 +263,7 @@ theorem col_unitary (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (hμ : μᴴ *
   by_cases hi : i = Fin.last k
   · by_cases hj : j = Fin.last k
     · subst hi; subst hj
-      rw [hcol, if_pos rfl, hl]
+      rw [hcol, ite_eq_left rfl, hl]
       simp [Hb]; norm_num
     · rw [hrow j hj, mul_zero, mul_zero, add_zero, Hb, Matrix.diagonal_apply_ne _ (fun h => hj (h.symm.trans hi)),
         Matrix.one_apply_ne (fun h => hj (h.symm.trans hi))]
@@ -333,7 +288,7 @@ theorem boost_herm (y : Fin k → ℂ) (n : ℝ) (hn : 0 < n) : (boost y (n : �
         Complex.conj_ofReal, map_one]
       by_cases h : i = j
       · subst h; simp; ring
-      · rw [if_neg (Ne.symm h), if_neg h]; simp; ring
+      · rw [ite_eq_right (Ne.symm h), ite_eq_right h]; simp; ring
 
 theorem polarDecW : PolarDecW := by
   intro k r p hp
@@ -345,7 +300,7 @@ theorem polarDecW : PolarDecW := by
   have hform := congrFun (congrFun hμ (Fin.last k)) (Fin.last k)
   rw [form_apply] at hform
   have hS0 : ∑ l, conj (y l) * y l = conj c * c - 1 := by
-    simp only [Hb, Matrix.diagonal_apply_eq, if_true] at hform
+    simp only [Hb, Matrix.diagonal_apply_eq, ite_true] at hform
     simp only [hy, hc]; linear_combination hform
   have hA : ∑ l, conj (y l) * y l = ((∑ l, Complex.normSq (y l) : ℝ) : ℂ) := by
     push_cast [Complex.normSq_eq_conj_mul_self]; rfl

@@ -49,28 +49,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
-private theorem list_neg {α : Type} (d : α → ℤ × ℤ) (L : List α) (h : ((L.map d).sum).2 < 0) :
-    ∃ a ∈ L, (d a).2 < 0 := by
-  induction L with
-  | nil => simp at h
-  | cons b L ih =>
-    simp only [List.map_cons, List.sum_cons, Prod.snd_add] at h
-    by_cases hb : (d b).2 < 0
-    · exact ⟨b, by simp, hb⟩
-    · obtain ⟨a, ha, h'⟩ := ih (by omega)
-      exact ⟨a, List.mem_cons_of_mem _ ha, h'⟩
-
-private theorem list_pos {α : Type} (d : α → ℤ × ℤ) (L : List α) (h : 0 < ((L.map d).sum).2) :
-    ∃ a ∈ L, 0 < (d a).2 := by
-  induction L with
-  | nil => simp at h
-  | cons b L ih =>
-    simp only [List.map_cons, List.sum_cons, Prod.snd_add] at h
-    by_cases hb : 0 < (d b).2
-    · exact ⟨b, by simp, hb⟩
-    · obtain ⟨a, ha, h'⟩ := ih (by omega)
-      exact ⟨a, List.mem_cons_of_mem _ ha, h'⟩
-
 private theorem span_zero {O S K : Type} [CommRing O] [CommRing S] [Algebra O S] [CommRing K] [Algebra O K]
     (B : Subalgebra O S) (ξ : B →ₐ[O] K) (T : Set S) (hT : ∀ y ∈ T, ∃ h : y ∈ B, ξ ⟨y, h⟩ = 0)
     (x : B) (hx : x.1 ∈ Submodule.span O T) : ξ x = 0 := by
@@ -132,12 +110,19 @@ theorem UpperTheory.V.GradeZeroInterpolatingElement.signs :
     have := M.entry_mem g i j
     rw [he] at this
     exact this
+  have hsnd : ∀ L : List (G ℚ Ω × Fin 4 × Fin 4),
+      (L.map fun a => (wt a.2.1 a.2.2).2).sum = ((L.map fun a => wt a.2.1 a.2.2).sum).2 :=
+    fun L => by
+      simpa [Function.comp_def] using
+        (map_list_sum (AddMonoidHom.snd ℤ ℤ) (L.map fun a => wt a.2.1 a.2.2)).symm
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · intro hneg n hn f hf
     change ξ (M.toSS f) = 0
     apply zero_of n f hf
     intro L hsum
-    obtain ⟨a, ha, hlt⟩ := list_neg (fun a => wt a.2.1 a.2.2) L (by rw [hsum]; exact hn)
+    obtain ⟨a, ha, hlt⟩ := List.exists_lt_of_sum_lt (l := L)
+      (fun a => (wt a.2.1 a.2.2).2) (fun _ => 0)
+      (by simpa [hsnd, hsum, List.sum_map_zero] using hn)
     refine ⟨a, ha, ?_⟩
     by_contra hne
     exact hneg _ _ hlt ⟨a.1, hne⟩
@@ -145,7 +130,9 @@ theorem UpperTheory.V.GradeZeroInterpolatingElement.signs :
     change ξ (M.toSS f) = 0
     apply zero_of n f hf
     intro L hsum
-    obtain ⟨a, ha, hlt⟩ := list_pos (fun a => wt a.2.1 a.2.2) L (by rw [hsum]; exact hn)
+    obtain ⟨a, ha, hlt⟩ := List.exists_lt_of_sum_lt (l := L)
+      (fun _ => 0) (fun a => (wt a.2.1 a.2.2).2)
+      (by simpa [hsnd, hsum, List.sum_map_zero] using hn)
     refine ⟨a, ha, ?_⟩
     by_contra hne
     exact hpos _ _ hlt ⟨a.1, hne⟩

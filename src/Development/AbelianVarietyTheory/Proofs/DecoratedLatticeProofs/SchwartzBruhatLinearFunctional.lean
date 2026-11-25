@@ -89,8 +89,7 @@ theorem exists_dot_ne_one {ψ : AddChar k Circle} {c : kˣ} (h : HasConductor ψ
     (s : kˣ) {y : n → k} (hy : y ∉ box n s) : ∃ b ∈ box n (c * s⁻¹), ψ (b ⬝ᵥ y) ≠ 1 := by
   classical
   obtain ⟨i, hi⟩ : ∃ i, y i ∉ cball s := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     exact hy fun i _ => hne i
   have hcs : c * (c * s⁻¹)⁻¹ = s := by
     rw [_root_.mul_inv_rev, inv_inv, mul_comm s, mul_inv_cancel_left]
@@ -344,7 +343,6 @@ theorem map_eq_zero_of_translation_invariant_of_fibre_integral_eq_zero : ∀ (k 
       simpa using this
   have hz : (S.card : ℂ) • l Φ = 0 := by
     have h1 : l (∑ b ∈ S, T b) = (S.card : ℂ) • l Φ := by
-      set_option synthInstance.maxHeartbeats 100000 in
         rw [map_sum, Finset.sum_congr rfl fun b _ => hT b, Finset.sum_const, Nat.cast_smul_eq_nsmul]
     rw [← h1, hsum, map_zero]
   exact (smul_eq_zero.mp hz).resolve_left (by exact_mod_cast hSne.card_ne_zero)

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryThetaConstantEqInverseDeterminantPhase
 public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.Reduction
 public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.GaussDegenerate
 public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.NormOneUnitIdealAlt
@@ -18,46 +19,8 @@ public import Formalism.LocalToGlobal.KernelLattices.ColumnData.BaseLinkOfNonzer
 public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SplitPairGen
 public import Formalism.LocalToGlobal.KernelLattices.ColumnData.StdOKP
 public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitPairGen
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.HenselQuad
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalToGlobal.KernelLattices.ColumnData.ThIndep
 import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
@@ -168,8 +131,6 @@ namespace Formalism.L2.Ker.Cd.PairingIndexBounds.Eq.Mu
 open Formalism.L2.PairingIndexBounds.Eq.Mu Formalism.L2.PairingIndexBounds.Eq Formalism.L2.PairingIndexBounds
 
 open Formalism.MainNotions Formalism.L2.Th1.H Formalism.L2.Ker.Cd.PairingIndexBounds.Eq Formalism.L2.PairingIndexBounds.Eq
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Car}
 
@@ -380,10 +341,10 @@ theorem rowProjection_mem_lattice {M : Submodule (𝓞 D.host.E) (Fin N → D.ho
     refine mem_stdL.2 fun i => ?_
     by_cases hi : i.val < N' / 2
     · have e : (rowPM N N' A *ᵥ x) i = (A *ᵥ x) i := by
-        simp only [rowPM, LinearMap.coe_mk, AddHom.coe_mk, mulVec, dotProduct, of_apply, if_pos hi]
+        simp only [rowPM, LinearMap.coe_mk, AddHom.coe_mk, mulVec, dotProduct, of_apply, ite_eq_left hi]
       rw [e]; exact h i
     · have e : (rowPM N N' A *ᵥ x) i = 0 := by
-        simp only [rowPM, LinearMap.coe_mk, AddHom.coe_mk, mulVec, dotProduct, of_apply, if_neg hi, zero_mul,
+        simp only [rowPM, LinearMap.coe_mk, AddHom.coe_mk, mulVec, dotProduct, of_apply, ite_eq_right hi, zero_mul,
           Finset.sum_const_zero]
       rw [e]; exact Submodule.zero_mem _
 
@@ -550,8 +511,6 @@ namespace Formalism.L2.Ker.Cd.PairingIndexBounds.Eq.Mu
 open Formalism.L2.PairingIndexBounds.Eq.Mu Formalism.L2.PairingIndexBounds.Eq Formalism.L2.PairingIndexBounds
 
 open Formalism.MainNotions Formalism.L2.Th1.H Formalism.L2.Ker.Cd.PairingIndexBounds.Eq Formalism.L2.PairingIndexBounds.Eq
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Car}
 
@@ -895,16 +854,7 @@ theorem al_of_q {z : TaylorLogMetric.VC D N N'} {m : ℤ} (h : qq D cc δ N N' z
 private theorem exists_int_eq_add_two_mul_of_exp_eq {a b : ℝ}
     (h : Complex.exp ((Real.pi : ℂ) * Complex.I * (a : ℂ)) = Complex.exp ((Real.pi : ℂ) * Complex.I * (b : ℂ))) :
     ∃ n : ℤ, a = b + 2 * n := by
-  obtain ⟨n, hn⟩ := Complex.exp_eq_exp_iff_exists_int.mp h
-  refine ⟨n, ?_⟩
-  have h2 : ((a : ℂ) - b - 2 * n) * ((Real.pi : ℂ) * Complex.I) = 0 := by
-    linear_combination hn
-  have hpi : (Real.pi : ℂ) * Complex.I ≠ 0 :=
-    mul_ne_zero (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero) Complex.I_ne_zero
-  have h3 := (mul_eq_zero.mp h2).resolve_right hpi
-  have h4 : ((a - b - 2 * n : ℝ) : ℂ) = 0 := by push_cast; exact h3
-  have h5 := Complex.ofReal_eq_zero.mp h4
-  linarith
+  apply _root_.GlobalTheory.SymConst.ex_eq <;> assumption
 
 private theorem cp_eq_qq_add_sub {x y : TaylorLogMetric.VC D N N'} {mx my mxy : ℤ} (hx : qq D cc δ N N' x = mx)
     (hy : qq D cc δ N N' y = my) (hxy : qq D cc δ N N' (x + y) = mxy) :
@@ -1177,7 +1127,7 @@ theorem splitPair_of_gen (h : SplitPairGen) (D : Formalism.L2.Ker.Car) : SquareS
     · have hne : P ≠ ⊥ :=
         Ring.ne_bot_of_isMaximal_of_not_isField hP (NumberField.RingOfIntegers.not_isField _)
       have h2 := Formalism.HC.HostDer.unramEF D.host.der P hP.isPrime hne
-      push_neg at h2
+      push Not at h2
       obtain ⟨x, hx⟩ := h2
       refine ⟨x, D.host.conj • x, ?_, ?_⟩
       · exact hcj (x : D.host.E)

@@ -7,50 +7,11 @@ import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
 public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
 public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLemma3
 public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Commute
 import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.FamilyProjectorSectionLocal
 import Formalism.SharpRestriction.CuspSpanNormBounds.LocalBesselAndTopKernel
@@ -443,28 +404,6 @@ end
 
 end PartG3
 
-section PartA1
-
-noncomputable section
-
-namespace Formalism.MainNotions.SchurRelationsDiscreteSeries
-
-open MeasureTheory Matrix Finset
-open scoped InnerProductSpace ENNReal
-open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.QuantumDeterminants
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-section MultOne
-
-end MultOne
-
-end Formalism.MainNotions.SchurRelationsDiscreteSeries
-
-end
-
-end PartA1
-
 section PartA2
 
 noncomputable section
@@ -656,91 +595,6 @@ end
 
 end PartG4
 
-section PartR1
-
-noncomputable section
-
-namespace Formalism.MainNotions.SchurRelationsDiscreteSeries
-
-open Formalism.MainNotions.S.Loc Formalism.MainNotions.BridgeLemma ValuativeRel IsDedekindDomain NumberField Topology
-
-section Resid
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-  {sig : E →ₐ[F] E} {p : HeightOneSpectrum (𝓞 F)} (A : LocAt F E sig p)
-
-end Resid
-
-end Formalism.MainNotions.SchurRelationsDiscreteSeries
-
-end
-
-end PartR1
-
-section PartR2
-
-noncomputable section
-
-namespace Formalism.MainNotions.SchurRelationsDiscreteSeries
-
-open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.MainNotions.BridgeLemma ValuativeRel IsDedekindDomain NumberField Ideal
-
-section PrimeSum
-
-end PrimeSum
-
-end Formalism.MainNotions.SchurRelationsDiscreteSeries
-
-end
-
-end PartR2
-
-section PartS1
-
-noncomputable section
-
-namespace Formalism.MainNotions.SchurRelationsDiscreteSeries
-
-open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.MainNotions.LocalBesselAndTopKernel Formalism.MainNotions.BridgeLemma
-
-section S27
-
-end S27
-
-end Formalism.MainNotions.SchurRelationsDiscreteSeries
-
-end
-
-end PartS1
-
-section PartM1
-
-noncomputable section
-
-namespace Formalism.MainNotions.SchurRelationsDiscreteSeries
-
-open MeasureTheory Matrix Finset
-open scoped InnerProductSpace ENNReal
-open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.QuantumDeterminants
-
-section Homog
-
-variable {k r : ℕ}
-
-end Homog
-
-section Scale
-
-variable (D : D7)
-
-end Scale
-
-end Formalism.MainNotions.SchurRelationsDiscreteSeries
-
-end
-
-end PartM1
-
 section PartM2
 
 noncomputable section
@@ -750,8 +604,6 @@ namespace Formalism.MainNotions.SchurRelationsDiscreteSeries
 open MeasureTheory Matrix Finset
 open scoped InnerProductSpace ENNReal
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.QuantumDeterminants Formalism.MainNotions.UniformConstantsAndStatements ValuativeRel IsDedekindDomain NumberField
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Main
 
@@ -791,29 +643,3 @@ end Formalism.MainNotions.SchurRelationsDiscreteSeries
 end
 
 end PartM2
-
-section PartM3
-
-noncomputable section
-
-namespace Formalism.MainNotions.SchurRelationsDiscreteSeries
-
-open MeasureTheory Matrix Finset
-open scoped InnerProductSpace ENNReal
-open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.QuantumDeterminants Formalism.MainNotions.UniformConstantsAndStatements ValuativeRel IsDedekindDomain NumberField
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-section Main2
-
-variable {D : D7}
-
-variable {eps : ℝ} (Fm : FamP eps)
-
-end Main2
-
-end Formalism.MainNotions.SchurRelationsDiscreteSeries
-
-end
-
-end PartM3

@@ -1,5 +1,6 @@
 module
 
+import Formalism.PieriBlockIdeals.PieriColumnMinors.ProdInitialMinorsMemDetSpan
 public import Formalism.LocalToGlobal.Columns.PolyFn
 import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
 public import Formalism.GradedWeylDivisibility.FinalB
@@ -83,9 +84,9 @@ theorem bigM_conjTranspose (g : ι → Matrix (Fin n) (Fin n) ℂ) : (bigM g)ᴴ
   simp only [bigM]
   by_cases h : x.1 = y.1 ∧ x.2.2 = y.2.2
   · have h' : y.1 = x.1 ∧ y.2.2 = x.2.2 := ⟨h.1.symm, h.2.symm⟩
-    rw [if_pos h', if_pos h, Matrix.conjTranspose_apply, h.1]
+    rw [ite_eq_left h', ite_eq_left h, Matrix.conjTranspose_apply, h.1]
   · have h' : ¬ (y.1 = x.1 ∧ y.2.2 = x.2.2) := fun h' => h ⟨h'.1.symm, h'.2.symm⟩
-    rw [if_neg h', if_neg h, star_zero]
+    rw [ite_eq_right h', ite_eq_right h, star_zero]
 
 theorem fockF_blockAct (g : ι → Matrix (Fin n) (Fin n) ℂ) (f h : MvPolynomial (ι × Fin n × Fin n) ℂ) :
     fockF (blockAct ℂ g f) h = fockF f (blockAct ℂ (fun τ => (g τ)ᴴ) h) := by
@@ -380,18 +381,7 @@ variable {K : Type} [Field K] [CharZero K] {ι : Type} [Fintype ι] {n : ℕ}
 theorem map_mem_weyl {S : Type} [CommRing S] {r m : ℕ} (hm : m ≤ r) (ν : Fin m → ℕ)
     (f : MvPolynomial (Fin r × Fin m) ℤ) (hf : f ∈ Formalism.GradedWeylDivisibility.weyl ℤ r m hm ν) :
     MvPolynomial.map (Int.castRingHom S) f ∈ Formalism.GradedWeylDivisibility.weyl S r m hm ν := by
-  unfold Formalism.GradedWeylDivisibility.weyl at hf ⊢
-  induction hf using Submodule.span_induction with
-  | mem x hx =>
-    obtain ⟨w, rfl⟩ := hx
-    refine Submodule.subset_span ⟨w, ?_⟩
-    simp only
-    rw [← Formalism.GradedWeylDivisibility.lclosedeq_applyWord_map, Formalism.GradedWeylDivisibility.lclosedeq_hw_map]
-  | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
-  | smul c x _ hx =>
-    rw [MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C, ← MvPolynomial.smul_eq_C_mul]
-    exact Submodule.smul_mem _ _ hx
+  apply _root_.Formalism.CohomologicalDescent.LA.la_map_weyl <;> assumption
 
 theorem dualWeyl_eq_weyl (K : Type) [Field K] [CharZero K] {r m : ℕ} (hm : m ≤ r) (ν : Fin m → ℕ) (hν : Antitone ν) :
     Formalism.GradedWeylDivisibility.dualWeyl K r m ν = Formalism.GradedWeylDivisibility.weyl K r m hm ν := by
@@ -677,9 +667,5 @@ theorem ipFr_evV (emb : ι → E →+* K) (J : Matrix (Fin n) (Fin n) E) (lam : 
     ← nfL_apply, map_smul, map_smulₛₗ, LinearMap.smul_apply, nfL_apply, smul_smul, starRingEnd_apply, hc, smul_eq_mul]
 
 end Metric2
-
-section Examples
-
-end Examples
 
 end Formalism.L2.Col

@@ -64,12 +64,6 @@ theorem gen_coprime (U : Subgroup (GL (Fin k) 𝒜)) (g : ℕ) (hg : g.Prime) (v
   have e := congrArg (fun A : GL (Fin k) (v.adicCompletion F) => A.1 i j) hγ1
   simpa [bc, Matrix.one_apply, apply_ite] using e
 
-private lemma inv_mul_mul_pow {G : Type} [Group G] (x y : G) (n : ℕ) :
-    (x⁻¹ * y * x) ^ n = x⁻¹ * y ^ n * x := by
-  induction n with
-  | zero => simp
-  | succ n ih => rw [pow_succ, ih, pow_succ]; group
-
 theorem gen_triv (σ : E →ₐ[F] E) (J : Matrix (Fin k) (Fin k) E)
     (hτ : ∀ τ : E →+* ℂ, τ.comp (σ : E →+* E) = (starRingEnd ℂ).comp τ)
     (hH : IsHerm (σ : E →+* E) J) (hdet : IsUnit J.det) (hdef : IsTotDef σ J)
@@ -87,10 +81,11 @@ theorem gen_triv (σ : E →ₐ[F] E) (J : Matrix (Fin k) (Fin k) E)
   have hyR : bc (inclE (F := F) 𝔸) γ ∈ ratPts σ J 𝔸 := ⟨γ, hγJ, rfl⟩
   have hyU : bc (inclE (F := F) 𝔸) γ ∈ UPts σ J 𝔸 :=
     Formalism.UG.P.rational_points_le_holds F E (Fin k) σ J 𝔸 hyR
-  have hpowU : ∀ m : ℕ, (x : GL (Fin k) 𝒜)⁻¹ * bc (inclE (F := F) 𝔸) γ ^ m * x ∈ U := by
-    intro m
-    rw [← inv_mul_mul_pow]
-    exact U.pow_mem hγ m
+  have hpowU : ∀ m : ℕ, (x : GL (Fin k) 𝒜)⁻¹ * bc (inclE (F := F) 𝔸) γ ^ m * x ∈ U := fun m => by
+    have h1 : MulAut.conj (x : GL (Fin k) 𝒜)⁻¹ (bc (inclE (F := F) 𝔸) γ ^ m) ∈ U := by
+      rw [map_pow]
+      simpa using U.pow_mem hγ m
+    simpa using h1
   have hfinS :
       Finite (stabAt ((ratPts σ J 𝔸).subgroupOf (UPts σ J 𝔸)) (U.subgroupOf (UPts σ J 𝔸)) x) := by
     have levelafC_int : ∀ m : ℤ, levelafC E (m : 𝓞 F) = inclE (F := F) 𝔸 (m : E) := by

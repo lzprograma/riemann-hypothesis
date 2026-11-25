@@ -4,52 +4,9 @@ public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.We
 public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.RowActWeylMemDescentLattice
 public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.IsUnitDetBlockPreimage
 import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.CoreDesc, Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.WeylLatticeDescentOfIntegralModels
@@ -118,7 +75,7 @@ theorem exists_pivot {α : Type} [DecidableEq α] (R0 : Subring LL) (hv : ∀ x 
           have e : f y / f j * (f j / f a) = f y / f a := by
             field_simp
           rwa [e] at h3
-    · push_neg at hex
+    · push Not at hex
       have hfa : f a ≠ 0 := by
         rcases Finset.mem_insert.mp hx with rfl | hx'
         · exact hfx
@@ -132,8 +89,7 @@ theorem exists_pivot {α : Type} [DecidableEq α] (R0 : Subring LL) (hv : ∀ x 
         exact R0.zero_mem
 
 theorem exists_dual_ne {v : Kf} (hv : v ≠ 0) : ∃ ℓ : Kf →ₗ[LL] LL, ℓ v ≠ 0 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   exact hv ((Module.forall_dual_apply_eq_zero_iff LL v).mp hc)
 
 theorem desc_main (A : Subring Kf) (hA : ∀ x : Kf, x ∈ A ∨ x⁻¹ ∈ A) (R0 : Subring LL)
@@ -174,7 +130,7 @@ theorem desc_main (A : Subring Kf) (hA : ∀ x : Kf, x ∈ A ∨ x⁻¹ ∈ A) (
         obtain ⟨φ, hφ⟩ : ∃ φ : Module.Dual LL (Kf ⧸ Submodule.span LL {(1 : Kf)}),
             φ ((Submodule.span LL {(1 : Kf)}).mkQ (c x0)) ≠ 0 := by
           by_contra hc'
-          push_neg at hc'
+          push Not at hc'
           exact hmk ((Module.forall_dual_apply_eq_zero_iff LL _).mp hc')
         set ℓ : Kf →ₗ[LL] LL := φ.comp (Submodule.span LL {(1 : Kf)}).mkQ with hℓ
         have hℓ1 : ℓ 1 = 0 := by
@@ -407,7 +363,7 @@ theorem even_mat (v : Fin P.nV) (s : Fin (P.n' v)) (hs : Even s.val)
     (niAt P rfl pos N v s).map embLL * zAt P rfl pos (mcOf M embLL) y v s =
       kcOf M N embLL (pos ⟨v, s⟩) * y (pos ⟨v, s⟩) := by
   unfold niAt zAt reM
-  rw [if_pos hs, if_pos hs, sub_rfl, sub_rfl]
+  rw [ite_eq_left hs, ite_eq_left hs, sub_rfl, sub_rfl]
   show _ = ((((N (pos ⟨v, s⟩))⁻¹ * M (pos ⟨v, s⟩) : GL (Fin (P.m + 1)) LL) :
     Matrix (Fin (P.m + 1)) (Fin (P.m + 1)) LL).map embLL) * _
   rw [Units.val_mul, Matrix.map_mul, Matrix.mul_assoc]
@@ -428,7 +384,7 @@ theorem odd_mat (v : Fin P.nV) (s : Fin (P.n' v)) (hs : ¬ Even s.val)
       Matrix (Fin (P.m + 1)) (Fin (P.m + 1)) LL).map embLL) * y (pos ⟨v, s⟩))⁻¹ = _
     rw [Units.val_mul, Matrix.map_mul, Matrix.mul_assoc, Matrix.mul_inv_rev, hN]
   unfold niAt zAt reM revCol
-  rw [if_neg hs, if_neg hs, sub_rfl, sub_rfl, hK, Matrix.transpose_mul,
+  rw [ite_eq_right hs, ite_eq_right hs, sub_rfl, sub_rfl, hK, Matrix.transpose_mul,
     Matrix.submatrix_mul _ _ id id Fin.rev Function.bijective_id, Matrix.submatrix_id_id, Matrix.transpose_map]
 
 theorem blk_ev (hodd : ∀ (m : ℕ) (lam : Fin (m + 1) → ℤ), Antitone lam → OddFact (K := ℂ) ℤ m lam)

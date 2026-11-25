@@ -9,49 +9,6 @@ import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.Logarithm
 import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.OneAddMulDerivLogSubst
 import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.WeierstrassSeriesIntegral
 import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.LogarithmEquivalence
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -280,7 +237,7 @@ private theorem coeff_single_one_at1_eq_ite {ι : Type} [DecidableEq ι] (x y : 
       simp [MvPowerSeries.coeff_X]
     · simp [MvPowerSeries.coeff_X, Finsupp.single_left_inj one_ne_zero, Ne.symm hxy]
   · intro d hd
-    rw [MvPowerSeries.coeff_X_pow, if_neg, smul_zero]
+    rw [MvPowerSeries.coeff_X_pow, ite_eq_right, smul_zero]
     intro he
     rw [Finsupp.single_eq_single_iff] at he
     rcases he with ⟨-, h1⟩ | ⟨h1, -⟩
@@ -292,7 +249,7 @@ theorem inVar_ne_zero {ι : Type} {l : PowerSeries K} (hl1 : PowerSeries.coeff 1
   classical
   intro h0
   have e := coeff_single_one_at1_eq_ite x x l
-  rw [h0, map_zero, if_pos rfl, hl1] at e
+  rw [h0, map_zero, ite_eq_left rfl, hl1] at e
   exact zero_ne_one e
 
 theorem sum_log_three_variables_ne_zero {l : PowerSeries K} (hl1 : PowerSeries.coeff 1 l = 1) :
@@ -387,8 +344,8 @@ theorem X_sub_ne_zero {j k : Fin 3} (h : j ≠ k) :
     (MvPowerSeries.X j - MvPowerSeries.X k : MvPowerSeries (Fin 3) K) ≠ 0 := by
   intro h0
   have h1 := congrArg (MvPowerSeries.coeff (Finsupp.single j 1)) h0
-  rw [map_sub, map_zero, MvPowerSeries.coeff_X, MvPowerSeries.coeff_X, if_pos rfl,
-    if_neg (fun hh => h (Finsupp.single_left_injective one_ne_zero hh))] at h1
+  rw [map_sub, map_zero, MvPowerSeries.coeff_X, MvPowerSeries.coeff_X, ite_eq_left rfl,
+    ite_eq_right (fun hh => h (Finsupp.single_left_injective one_ne_zero hh))] at h1
   simp at h1
 
 theorem parallelogram_three_weierstrass_key (hA : FrobStickStar) {g2 g3 s2 c0 a1 a3 : K} {P l i ep : PowerSeries K}

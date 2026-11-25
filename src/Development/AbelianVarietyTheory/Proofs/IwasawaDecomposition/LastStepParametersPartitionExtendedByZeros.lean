@@ -50,7 +50,6 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeS
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.Chain GlobalTheory.CompactHowe Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LastStepParam
 
@@ -152,7 +151,7 @@ lemma partition {n t : ℕ} (e s p : ℤ) (ht : (t : ℤ) = 2 * s + 1) (hn : (n 
     have ha : (⟨n - 1 - c, by omega⟩ : Fin n) = a := Fin.ext (by simp only; omega)
     have ha' : n - 1 - c = a := by omega
     have : (ν c : ℤ) = e + z a - (s + 1) - (a : ℕ) := by
-      simp only [ν, dif_pos hc, ha]
+      simp only [ν, dite_eq_left hc, ha]
       rw [ha']
       exact Int.toNat_of_nonneg (hpos a)
     exact_mod_cast this
@@ -183,7 +182,7 @@ lemma partition {n t : ℕ} (e s p : ℤ) (ht : (t : ℤ) = 2 * s + 1) (hn : (n 
     · have h0 : ν (Fin.rev b) = 0 := by
         simp only [ν]
         rw [dite_eq_right (by simp only [Fin.val_rev]; omega)]
-      rw [dif_pos hc, h0]
+      rw [dite_eq_left hc, h0]
       push_cast
       rw [htR, hnR]
       ring
@@ -273,22 +272,22 @@ theorem lastStep_param : ∀ (D : D7) (k : Fin D.R.m) (τ : D.what₂.Tau) (n N 
   have A : ∀ x b, (∃ a, (q a, ε a) = (x, b)) ↔ b = true ∧ IsEntry (D.hc τ) k (-x + 1 / 2) := by
     intro x b
     have := mem_parB D k (by omega) τ x b
-    rw [hS, if_pos hkodd, sub_neg_eq_add] at this
+    rw [hS, ite_eq_left hkodd, sub_neg_eq_add] at this
     simpa using this
   have B : ∀ x b, (∃ a, (q' a, ε' a) = (x, b)) ↔ b = true ∧ IsEntry (D.hc τ) D.R.m (-x) := by
     intro x b
     have := mem_parB D D.R.m (by omega) τ x b
-    rw [hS', if_neg hmno, sub_zero] at this
+    rw [hS', ite_eq_right hmno, sub_zero] at this
     simpa using this
   have hε : ∀ a, ε a = true := fun a => ((A _ _).mp ⟨a, rfl⟩).1
   have hε' : ∀ a, ε' a = true := fun a => ((B _ _).mp ⟨a, rfl⟩).1
   have hE : ∀ a, IsEntry (D.hc τ) k (-q a + 1 / 2) := fun a => ((A _ _).mp ⟨a, rfl⟩).2
   choose z hz using fun a => entry_int _ _ _ (hE a)
   refine ⟨funext hε, funext hε', -e + p, e - p - s, ?_, ?_, ?_⟩
-  · simp only [expS, if_neg hkne, he, hpQ]
+  · simp only [expS, ite_eq_right hkne, he, hpQ]
     push_cast
     ring
-  · simp only [expT, if_neg hkne, he]
+  · simp only [expT, ite_eq_right hkne, he]
     push_cast
     rw [hpQ, hsQ]
     ring

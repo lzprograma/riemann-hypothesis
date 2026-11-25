@@ -39,7 +39,7 @@ theorem homPt_eq_of (Q : isogHom E E') {R : E.toAffine.Point} {c : E'.toAffine.P
   rw [map_translate_hom, add_right_inj] at h
   exact constMap_injective _ _ h
 
-theorem homPt_zero : homPt (0 : isogHom E E') = 0 := by rw [homPt, dif_pos rfl]
+theorem homPt_zero : homPt (0 : isogHom E E') = 0 := by rw [homPt, dite_eq_left rfl]
 
 theorem homPt_toHom (φ : Isogeny E E') : homPt φ.toHom = φ.pointHom := by
   ext R

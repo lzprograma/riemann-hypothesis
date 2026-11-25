@@ -16,8 +16,6 @@ open scoped ENNReal
 
 namespace Formalism.L2.SG.Pf.ThmBChain6
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def AmplitudeBoundsAllChoices {D : D7} (large₂ : SizeData₂ D) {X : HidaSetting D} (Y : Full X) (u u' : D.what₂.Word)
     (ν : X.B.I.Ginf → Measure X.B.I.Ginf) (C1 Cn Ire : ℝ) : Prop :=
   0 ≤ Ire ∧ ∃ θ : ℝ, 0 < θ ∧ normWin D large₂ C1 θ ∧ ∀ (C : Choice X θ) (hB : WuBessel C),

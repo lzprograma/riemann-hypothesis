@@ -18,8 +18,6 @@ open scoped TensorProduct InnerProductSpace
 
 namespace Formalism.IndefR.Links
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 section Three2
@@ -131,20 +129,11 @@ theorem phase_cancel {E F : Type} [NormedAddCommGroup E] [InnerProductSpace ℂ 
   simp only [adjoint_smul', LinearMap.smul_apply, map_smul, smul_smul]
   rw [hc, one_smul]
 
-private theorem adjoint_tw_map {s : Bool} {E F : Type} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
-    [FiniteDimensional ℂ E] [NormedAddCommGroup F] [InnerProductSpace ℂ F] [FiniteDimensional ℂ F] (f : E →ₗ[ℂ] F) :
-    LinearMap.adjoint (Tw.map s f) = Tw.map s (LinearMap.adjoint f) := by
-  symm
-  rw [LinearMap.eq_adjoint_iff]
-  intro x y
-  rw [Tw.inner_eq, Tw.inner_eq]
-  exact congrArg (cj s) (LinearMap.adjoint_inner_left f (Tw.out y) (Tw.out x))
-
 private theorem tw_map_adjoint_apply_of_eigen {s : Bool} {E F : Type} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
     [FiniteDimensional ℂ E] [NormedAddCommGroup F] [InnerProductSpace ℂ F] [FiniteDimensional ℂ F] (f : E →ₗ[ℂ] F)
     (l : ℝ) (e : Tw s F) (he : f (LinearMap.adjoint f (Tw.out e)) = (l : ℂ) • Tw.out e) :
     Tw.map s f (LinearMap.adjoint (Tw.map s f) e) = (l : ℂ) • e := by
-  rw [adjoint_tw_map]
+  rw [Tw.adjoint_map]
   show Tw.mk s (f (LinearMap.adjoint f (Tw.out e))) = cj s (l : ℂ) • Tw.out e
   rw [he, cj_ofReal]
   rfl
@@ -169,16 +158,9 @@ theorem thmAop_of (hph : R.phase) (h : R.PThmA) (b : Bool) : (R.toCx3 F).ThmAop 
 
 theorem thmBop_of (h : R.PThmB) (b : Bool) : (R.toCx3 F).ThmBop b := by
   intro t p e he
-  have he1 : Tw.out (s := twAt D.what₂.embLL A3.A.v0) (E := R.HE.H) e ∈ R.EEp3 p := he.1
-  have key : Tw.map (twAt D.what₂.embLL A3.A.v0) (R.Th t) (LinearMap.adjoint (Tw.map (twAt D.what₂.embLL A3.A.v0) (R.Th t)) e) =
-      ((R.kap * ∏ j : Fin D.R.m, R.lam3 j t p A3.A.v0 : ℝ) : ℂ) • e := by
-    rw [Tw.adjoint_map]
-    show Tw.mk _ (R.Th t (LinearMap.adjoint (R.Th t) (Tw.out (s := twAt D.what₂.embLL A3.A.v0) (E := R.HE.H) e))) = _
-    have h2 := h t p (Tw.out (s := twAt D.what₂.embLL A3.A.v0) (E := R.HE.H) e) he1
-    rw [LinearMap.comp_apply] at h2
-    rw [h2, Tw.mk_smul, cj_ofReal, prod_lamN]
-    rfl
-  exact key
+  refine tw_map_adjoint_apply_of_eigen (R.Th t) (R.kap * ∏ j : Fin D.R.m, R.lam3 j t p A3.A.v0) e ?_
+  rw [← prod_lamN]
+  exact h t p _ he.1
 
 end RealDat3
 
@@ -294,15 +276,6 @@ theorem base_lifts_package_of_primitive_links {s : ℕ} (hOk : A3.fam3.Ok3 s) (h
   }
 
 end Three2
-
-section Geo3
-
-open Formalism.L2.Geo Formalism.MainNotions Formalism.IndefR.Cx
-
-variable {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type} {A3 : FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T D.R.m}
-  {Gm : DV.Geo D.what₂.LL} {Lv : Type} {Fam : ShimFam D Gm Lv} (Kp : FormsKPkg Fam) [Algebra Kp.fs.KO D.what₂.LL]
-
-end Geo3
 
 end Formalism.IndefR.Links
 

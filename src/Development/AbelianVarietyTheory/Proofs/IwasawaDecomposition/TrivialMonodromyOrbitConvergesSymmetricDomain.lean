@@ -69,7 +69,7 @@ theorem exists_tendsto_norm_lt {T h c : ℝ} (hh : 0 < h) {f : ℂ → ℂ} (hd 
     ∃ L, Tendsto f imTop (𝓝 L) ∧ ‖L‖ < c := by
   classical
   let g : ℂ → ℂ := fun w => if T < w.im then f w else 0
-  have hg : ∀ w : ℂ, T < w.im → g w = f w := fun w hw => if_pos hw
+  have hg : ∀ w : ℂ, T < w.im → g w = f w := fun w hw => ite_eq_left hw
   have hgp : Function.Periodic g h := fun w => by
     by_cases hw : T < w.im
     · rw [hg w hw, hg _ (by simpa using hw), hp w hw]

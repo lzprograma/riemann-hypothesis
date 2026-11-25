@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryCongruentOneDetSubOneMemIdealMulConj
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodIdemEmpty
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardLatticeDoubleCosetClassesStabilisers
 public import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
@@ -52,7 +53,6 @@ open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTh
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.NormSum (Pair Tup)
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.BotSmallDict GlobalTheory.NormExact
 open scoped Pointwise
 
@@ -156,15 +156,7 @@ theorem inId_iff (I : Ideal (𝓞 D.host.E)) (z : Formalism.L2.Theta.AE D) :
 
 theorem sgA_hatId {I : Ideal (𝓞 D.host.E)} {x : Formalism.MainNotions.StandardLatticesGL3.AE D} (hx : x ∈ hatId D I) :
     sgA D x ∈ hatId D (D.host.conj • I) := by
-  induction hx using AddSubgroup.closure_induction with
-  | mem z hz =>
-    obtain ⟨b, hb, s, hs, rfl⟩ := hz
-    refine AddSubgroup.subset_closure ⟨D.host.conj • b, Ideal.smul_mem_pointwise_smul _ _ _ hb, sgA D s, Formalism.UG.P.csDual_sig_mem _ hs, ?_⟩
-    rw [map_mul]
-    rfl
-  | zero => rw [map_zero]; exact zero_mem _
-  | add u v _ _ hu hv => rw [map_add]; exact add_mem hu hv
-  | neg u _ hu => rw [map_neg]; exact neg_mem hu
+  apply _root_.GlobalTheory.FunObj.StdDatum.DetCong.sgA_mem_hatId <;> assumption
 
 theorem conj_idem {e : Formalism.L2.Theta.AE D} {P : Finset (Formalism.L2.DIV.Pl D.host.E)} (c : Formalism.L2.DIV.Pl D.host.E → ℕ)
     (he : IsIdemSum e P) : finQ D (cA D e) ∈ OhE D ∧ 1 - finQ D (cA D e) ∈ hatId D (D.host.conj • modul P c) := by

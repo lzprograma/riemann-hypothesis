@@ -49,6 +49,7 @@ import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Init
+import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SmoothAddSmul
 
 @[expose] public section
 
@@ -77,14 +78,7 @@ lemma smooth_congr {f f' : Matrix (Fin n) (Fin n) ℂ → E} (hf : SmoothOnGV ε
 
 lemma smooth_comb {f f' : Matrix (Fin n) (Fin n) ℂ → E} (hf : SmoothOnGV ε f)
     (hf' : SmoothOnGV ε f') (c : ℂ) : SmoothOnGV ε (fun g => f g + c • f' g) := by
-  intro g₀ hg₀
-  obtain ⟨U, F, hU, hgU, hF, hfF⟩ := hf g₀ hg₀
-  obtain ⟨U', F', hU', hgU', hF', hfF'⟩ := hf' g₀ hg₀
-  refine ⟨U ∩ U', fun x => F x + c • F' x, hU.inter hU', ⟨hgU, hgU'⟩,
-    (hF.mono Set.inter_subset_left).add ((hF'.mono Set.inter_subset_right).const_smul c), ?_⟩
-  intro x hx hxJ
-  show f x + c • f' x = F x + c • F' x
-  rw [hfF x hx.1 hxJ, hfF' x hx.2 hxJ]
+  apply _root_.GlobalTheory.CapelliCentral.smooth_add_smul <;> assumption
 
 lemma smooth_zero : SmoothOnGV ε (fun _ : Matrix (Fin n) (Fin n) ℂ => (0 : E)) :=
   fun _ _ => ⟨Set.univ, fun _ => 0, isOpen_univ, trivial, contDiffOn_const, fun _ _ _ => rfl⟩
@@ -118,11 +112,6 @@ lemma eabV_comb {f f' : Matrix (Fin n) (Fin n) ℂ → E} (hf : SmoothOnGV ε f)
     (rdLinV_of vector_right_derivative_extends n ε E f f' _ _ 0 c g hf hf' h2 h2 hg).2.2]
   module
 
-lemma hasDerivAt_rdV {f : Matrix (Fin n) (Fin n) ℂ → E} (hf : SmoothOnGV ε f)
-    {X : Matrix (Fin n) (Fin n) ℂ} (hX : inG ε X) :
-    HasDerivAt (fun t : ℝ => f (NormedSpace.exp ((t : ℂ) • X))) (RdV X f 1) 0 := by
-  apply GlobalTheory.UnitaryDerived.hasDerivAt_rdV <;> assumption
-
 end Gen
 
 section Rep
@@ -151,7 +140,7 @@ lemma rep_inner (hσ : IsURepOn (UJset ε) σ) {g : Matrix (Fin n) (Fin n) ℂ} 
 lemma rep_skew (hσ : IsURepOn (UJset ε) σ) {u v : H} (hu : SmoothOnGV ε (fun g => σ g u))
     (hv : SmoothOnGV ε (fun g => σ g v)) {X : Matrix (Fin n) (Fin n) ℂ} (hX : inG ε X) :
     ⟪RdV X (fun x => σ x u) 1, v⟫_ℂ = -⟪u, RdV X (fun x => σ x v) 1⟫_ℂ := by
-  have h := (hasDerivAt_rdV hu hX).inner ℂ (hasDerivAt_rdV hv hX)
+  have h := (GlobalTheory.UnitaryDerived.hasDerivAt_rdV hu hX).inner ℂ (GlobalTheory.UnitaryDerived.hasDerivAt_rdV hv hX)
   have e : (fun t : ℝ => ⟪σ (NormedSpace.exp ((t : ℂ) • X)) u,
       σ (NormedSpace.exp ((t : ℂ) • X)) v⟫_ℂ) = fun _ => ⟪u, v⟫_ℂ := by
     funext t
@@ -228,7 +217,7 @@ theorem smoothVec_unitary_module : ∀ (n : ℕ) (ε : Fin n → Bool) (H : Type
   · intro a b c d
     ext u
     have h := eabGlV_of (rdLinV_of vector_right_derivative_extends)
-      (rdBracketV_of vector_right_derivative_extends (rdSmoothV_of vector_right_derivative_extends)) (rdSmoothV_of vector_right_derivative_extends)
+      (rdBracketV_of vector_right_derivative_extends) (rdSmoothV_of vector_right_derivative_extends)
       n ε H (fun g => σ g u) a b c d 1 u.2 inUJ_one
     rw [← eabV_congr (key c d u) a b inUJ_one, ← eabV_congr (key a b u) c d inUJ_one] at h
     simp only [LinearMap.sub_apply, Module.End.mul_apply, Submodule.coe_sub]
@@ -247,6 +236,6 @@ theorem smoothVec_unitary_module : ∀ (n : ℕ) (ε : Fin n → Bool) (H : Type
       rw [h]
       simp [unitAct_coe]
     rw [e]
-    exact hasDerivAt_rdV u.2 hX
+    exact GlobalTheory.UnitaryDerived.hasDerivAt_rdV u.2 hX
 
 end GlobalTheory.SmoothVecMod

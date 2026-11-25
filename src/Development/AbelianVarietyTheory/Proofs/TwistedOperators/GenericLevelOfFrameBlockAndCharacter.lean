@@ -199,7 +199,7 @@ private lemma superSum_framePos_eq_simpleSum_of_mem_N {k : Type} [Field k] {κ l
   have h₃ : ∑ i : Fin l, ∑ j : Fin κ, (if (j : ℕ) = κ + i + 1 then
       (u : Matrix (Fin κ ⊕ Fin l) (Fin κ ⊕ Fin l) k) (Sum.inr i) (Sum.inl j) else 0) = 0 := by
     refine Finset.sum_eq_zero fun i _ => Finset.sum_eq_zero fun j _ => ?_
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
   have h₄ : ∀ i j : Fin l, (κ + (j : ℕ) = κ + i + 1) ↔ ((j : ℕ) = i + 1) := fun i j => by omega
   rw [Finset.sum_add_distrib, Finset.sum_add_distrib]
   simp only [h₄]

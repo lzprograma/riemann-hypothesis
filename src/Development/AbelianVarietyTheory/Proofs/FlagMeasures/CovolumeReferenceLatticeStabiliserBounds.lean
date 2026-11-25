@@ -121,8 +121,8 @@ theorem herm_esI {k r : ℕ} (u : Fin (2 * r + k + 1) → ℂ) (a : Fin r) :
   have ha := a.2
   have ht : WeylGroupFacts.tau k r (esI k r a) = eI k r a := by
     have h1 : (esI k r a).val < r ∨ r + k < (esI k r a).val := Or.inr (by simp only [esI]; omega)
-    apply Fin.ext; unfold WeylGroupFacts.tau; dsimp only; rw [if_pos h1]; simp only [esI, eI]; omega
-  have hs : WeylGroupFacts.sgn k r (esI k r a) = 1 := if_neg (by simp only [esI]; omega)
+    apply Fin.ext; unfold WeylGroupFacts.tau; dsimp only; rw [ite_eq_left h1]; simp only [esI, eI]; omega
+  have hs : WeylGroupFacts.sgn k r (esI k r a) = 1 := ite_eq_right (by simp only [esI]; omega)
   unfold herm bvec
   rw [← Pi.single_star, star_one, single_one_dotProduct]
   simp only [mulVec, dotProduct, WeylGroupFacts.hpk_row, ht, hs]
@@ -153,7 +153,7 @@ theorem coords_skew : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [A
       (((ρ ^ (r - a.val))⁻¹ : ℝ) : ℂ) * ((((ρ ^ (r - b.val))⁻¹ : ℝ) : ℂ) * S a b) := by
     intro a b ha hb
     rw [← hr.2.2.1, hsb b hb, hi a ha, RealMat.herm_smul_right, herm_esI, Pi.smul_apply, Pi.add_apply, sum_eI_apply,
-      Rad.bvec_apply, if_neg (Rad.eI_ne_esI a b), zero_add, smul_eq_mul, Complex.star_def, Complex.conj_ofReal]
+      Rad.bvec_apply, ite_eq_right (Rad.eI_ne_esI a b), zero_add, smul_eq_mul, Complex.star_def, Complex.conj_ofReal]
   refine ⟨fun b hb => ?_, fun p => ?_, fun a => ?_⟩
   · have hΦy : Φ (s (N.ist b) - N.ist b) = ∑ a, ((((ρ ^ (r - b.val))⁻¹ : ℝ) : ℂ) * S a b) • bvec (eI k r a) := by
       rw [RealMat.phi_sub hr, hsb b hb, hi b hb, smul_add, add_sub_cancel_left, Finset.smul_sum]
@@ -216,12 +216,6 @@ open GlobalTheory.Amp.Swap GlobalTheory.DegVol.Swap
 
 variable {k r j : ℕ}
 
-theorem upperIn_0 (β : Fin r → ℕ) : upperIn β 0 = 1 := by
-  ext a b
-  by_cases h : a < b
-  · simp [upperIn, upper, h, h.ne]
-  · simp [upperIn, upper, h, Matrix.one_apply]
-
 private lemma wI_eq_mI (m : Fin (k + 1)) : wI k r m = UEmb.mI k r m := Fin.ext (by simp [wI, UEmb.mI])
 
 theorem pOf_mul_we (q : PPar k r) (u : Matrix (Fin r) (Fin r) ℂ) (a : Fin (k + 1)) (b : Fin r) :
@@ -279,7 +273,7 @@ theorem upper_mul_entry (x y : UT r → ℂ) (i : UT r)
     (upper x * upper y) i.1.1 i.1.2 = x i + y i := by
   obtain ⟨⟨a, b⟩, hab⟩ := i
   rw [Matrix.mul_apply, Fintype.sum_eq_add a b hab.ne]
-  · simp only [upper, lt_irrefl, dif_neg, not_false_eq_true, if_true, dif_pos hab, one_mul, mul_one]
+  · simp only [upper, lt_irrefl, dite_eq_right, not_false_eq_true, ite_true, dite_eq_left hab, one_mul, mul_one]
     exact add_comm _ _
   · rintro c ⟨hca, hcb⟩
     simp only [upper]
@@ -287,9 +281,9 @@ theorem upper_mul_entry (x y : UT r → ℂ) (i : UT r)
     · by_cases h2 : c < b
       · have hl : c.val - a.val < b.val - a.val := by
           have := Fin.lt_def.mp h1; have := Fin.lt_def.mp h2; omega
-        rw [dif_pos h1, hx ⟨(a, c), h1⟩ hl, zero_mul]
-      · rw [dif_neg h2, if_neg hcb, mul_zero]
-    · rw [dif_neg h1, if_neg (Ne.symm hca), zero_mul]
+        rw [dite_eq_left h1, hx ⟨(a, c), h1⟩ hl, zero_mul]
+      · rw [dite_eq_right h2, ite_eq_right hcb, mul_zero]
+    · rw [dite_eq_right h1, ite_eq_right (Ne.symm hca), zero_mul]
 
 theorem first (β : Fin r → ℕ) (p q w : (UTin β → ℂ) × PTop k r j)
     (h : crd k r j β p * crd k r j β q = crd k r j β w) (i : UTin β)
@@ -308,7 +302,7 @@ theorem cancel (β : Fin r → ℕ) (p q w : (UTin β → ℂ) × PTop k r j)
     (h : crd k r j β p * crd k r j β q = crd k r j β w) (hp : p.1 = 0) :
     pTop k r j p.2 * pTop k r j q.2 = pTop k r j w.2 := by
   have hm := upperIn_mul β p q w h
-  rw [hp, upperIn_0, one_mul] at hm
+  rw [hp, GlobalTheory.DegVol.RefCovTop.upperIn_of_zero, one_mul] at hm
   set U := upperIn β q.1 with hUdef
   have hT : U.IsUpperTriangular := by
     intro a b hba
@@ -322,7 +316,7 @@ theorem cancel (β : Fin r → ℕ) (p q w : (UTin β → ℂ) × PTop k r j)
     rw [← UEmb.uEmb_mul, Matrix.mul_nonsing_inv _ hU, UEmb.uEmb_one]
   have h' : pTop k r j p.2 * pTop k r j q.2 * uEmb k r U = pTop k r j w.2 * uEmb k r U := by
     have h2 := h
-    simp only [crd, hp, upperIn_0, UEmb.uEmb_one, mul_one, hm] at h2
+    simp only [crd, hp, GlobalTheory.DegVol.RefCovTop.upperIn_of_zero, UEmb.uEmb_one, mul_one, hm] at h2
     rw [mul_assoc]
     exact h2
   calc pTop k r j p.2 * pTop k r j q.2
@@ -349,7 +343,7 @@ theorem crd_mul : ∀ (k r j : ℕ) (β : Fin r → ℕ), crd k r j β 0 = 1 ∧
       ext a b
       simp only [skewM, Matrix.zero_apply]
       split_ifs <;> simp
-    simp only [crd, Prod.fst_zero, Prod.snd_zero, upperIn_0, UEmb.uEmb_one, mul_one, pTop, pOf,
+    simp only [crd, Prod.fst_zero, Prod.snd_zero, GlobalTheory.DegVol.RefCovTop.upperIn_of_zero, UEmb.uEmb_one, mul_one, pTop, pOf,
       Pi.zero_apply, dite_eq_ite, ite_self, hS]
     exact Rad.pEl_zero
   · have hc := cancel β p q w h hp
@@ -620,7 +614,7 @@ theorem mem_smul_iff {K W : Type} [Field K] [NumberField K] [AddCommGroup W] [Mo
       rw [map_smul, e.repr_self, Finsupp.smul_apply, smul_eq_mul]
       by_cases hj : i = j
       · subst hj; simpa using hs
-      · rw [Finsupp.single_apply, if_neg hj, mul_zero]; exact FractionalIdeal.zero_mem _
+      · rw [Finsupp.single_apply, ite_eq_right hj, mul_zero]; exact FractionalIdeal.zero_mem _
     · rw [add_smul]; exact Submodule.add_mem _ ht hu
 
 theorem exists_coordLat (K : Type) [Field K] [NumberField K] (hK : IsTotallyComplex K) (ι : Type) [Fintype ι]
@@ -683,7 +677,7 @@ theorem unimod_coords {K W : Type} [Field K] [NumberField K] [StarRing K] [AddCo
     rw [map_smul, e.repr_self, Finsupp.smul_apply, smul_eq_mul]
     by_cases hj : i = j
     · subst hj; simpa using ht
-    · rw [Finsupp.single_apply, if_neg hj, mul_zero]; exact FractionalIdeal.zero_mem _
+    · rw [Finsupp.single_apply, ite_eq_right hj, mul_zero]; exact FractionalIdeal.zero_mem _
   set x : W := e.equivFun.symm y with hxdef
   have hrx : ∀ i, e.repr x i = y i := fun i => by
     show e.equivFun (e.equivFun.symm y) i = y i
@@ -1853,8 +1847,8 @@ theorem covol_ref : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [Add
       choose y hy hyb using fun a => hb a trivial
       obtain ⟨s, hs, he, h⟩ := d2 (fun a => if h : N.j ≤ a.val then y ⟨a, h⟩ else 0) fun a => by
         by_cases h : N.j ≤ a.val
-        · rw [dif_pos h]; exact hy ⟨a, h⟩
-        · rw [dif_neg h]; exact Submodule.zero_mem _
+        · rw [dite_eq_left h]; exact hy ⟨a, h⟩
+        · rw [dite_eq_right h]; exact Submodule.zero_mem _
       obtain ⟨p, hp⟩ := hex s hs
       have h1 := hu0 s p hp he
       refine ⟨p, ⟨s, hs, hp⟩, h1, funext fun a => ?_⟩
@@ -1862,7 +1856,7 @@ theorem covol_ref : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [Add
       funext v
       refine (htop v s _ (hp v)).2.2 (h10 p h1 v) a (y a) ?_
       have := h a.1 a.2
-      rwa [dif_pos a.2] at this
+      rwa [dite_eq_left a.2] at this
     · rintro d ⟨hd1, hd2⟩
       choose t ht htd using fun a => hd1 a trivial
       choose t' ht' htd' using fun a => hd2 a trivial
@@ -1874,16 +1868,16 @@ theorem covol_ref : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [Add
         intro a b
         by_cases h : N.j ≤ a.val ∧ N.j ≤ b.val
         · rcases lt_trichotomy a b with h1 | rfl | h1
-          · simp only [S, dif_pos h, dif_pos h.symm, dif_pos h1, dif_neg h1.not_gt]
+          · simp only [S, dite_eq_left h, dite_eq_left h.symm, dite_eq_left h1, dite_eq_right h1.not_gt]
             exact ⟨ht ⟨⟨(a, b), h1⟩, h.1⟩, by simp⟩
-          · simp only [S, dif_pos h, dif_neg (lt_irrefl a)]
+          · simp only [S, dite_eq_left h, dite_eq_right (lt_irrefl a)]
             rw [← hcast]
             exact ht' ⟨a, h.1⟩
-          · simp only [S, dif_pos h, dif_pos h.symm, dif_pos h1, dif_neg h1.not_gt]
+          · simp only [S, dite_eq_left h, dite_eq_left h.symm, dite_eq_left h1, dite_eq_right h1.not_gt]
             refine ⟨neg_mem (LiftS.ipow_star _ N.𝔡_ne N.𝔡_star _ ?_), by simp⟩
             rw [show -((r : ℤ) - a.val) - ((r : ℤ) - b.val) = -((r : ℤ) - b.val) - ((r : ℤ) - a.val) by ring]
             exact ht ⟨⟨(b, a), h1⟩, h.2⟩
-        · simp [S, dif_neg h, dif_neg (mt And.symm h)]
+        · simp [S, dite_eq_right h, dite_eq_right (mt And.symm h)]
       obtain ⟨s, hs, he, h⟩ := d4 S hS
       obtain ⟨p, hp⟩ := hex s hs
       have h1 := hu0 s p hp he
@@ -1911,12 +1905,12 @@ theorem covol_ref : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [Add
           have hi : N.j ≤ i.1.1.2.val := i.2.trans (le_of_lt i.1.2)
           refine ((h3 v).2.1 i).trans ?_
           rw [hSB _ _ i.2 hi]
-          simp only [S, dif_pos (And.intro i.2 hi), dif_pos i.1.2]
+          simp only [S, dite_eq_left (And.intro i.2 hi), dite_eq_left i.1.2]
           exact congrFun (htd i) v
         · funext a v
           refine ((h3 v).2.2 a).trans ?_
           rw [hSB _ _ a.2 a.2]
-          simp only [S, dif_pos (And.intro a.2 a.2), dif_neg (lt_irrefl a.1)]
+          simp only [S, dite_eq_left (And.intro a.2 a.2), dite_eq_right (lt_irrefl a.1)]
           exact congrFun (htd' a) v
       exact h4 ▸ ⟨s, hs, hp⟩
   · have hsc : ∀ (n : ℕ) (m : ℤ), m = -(n : ℤ) → (Ideal.absNorm N.𝔡 : ℝ) ^ m * (ρ ^ n) ^ (2 * Fintype.card ι) = 1 := by

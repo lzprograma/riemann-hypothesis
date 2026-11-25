@@ -126,7 +126,7 @@ def mono (e : ℕ) : M e →ₗ[K] polyAlg M where
 
 theorem mono_val (e : ℕ) (a : M e) : (mono M e a : A[X]) = monomial e (a : A) := rfl
 
-theorem mono_injective (e : ℕ) : Function.Injective (mono M e) := fun a b h =>
+theorem mono_injective (e : ℕ) : Function.Injective (mono M e) := fun _ _ h =>
   Subtype.ext (monomial_injective e (congrArg Subtype.val h))
 
 def piece (e : ℕ) : Submodule K (polyAlg M) := LinearMap.range (mono M e)

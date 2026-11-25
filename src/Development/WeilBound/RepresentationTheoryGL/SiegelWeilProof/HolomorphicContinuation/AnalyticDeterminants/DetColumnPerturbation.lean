@@ -60,7 +60,7 @@ open scoped ContDiff
 
 namespace PositivityTheory.Rg.Sw.LVs.CK
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {N : ℕ}
 
@@ -75,14 +75,6 @@ def colQ (X : Matrix (Fin N) (Fin (N + 1)) ℂ) (c : Fin N) : Matrix (Fin N) (Fi
 
 @[simp] theorem phiF_succ_row (X : Matrix (Fin N) (Fin (N + 1)) ℂ) (k : Fin N) (j : Fin (N + 1)) :
     phiF X k.succ j = X k j := rfl
-
-def phiL (N : ℕ) : Matrix (Fin N) (Fin (N + 1)) ℂ →L[ℂ] Matrix (Fin (N + 1)) (Fin (N + 1)) ℂ :=
-  LinearMap.toContinuousLinearMap
-    { toFun := phiF
-      map_add' := fun X Y => by
-        ext i j; refine Fin.cases ?_ (fun k => ?_) i <;> simp
-      map_smul' := fun a X => by
-        ext i j; refine Fin.cases ?_ (fun k => ?_) i <;> simp }
 
 def piL (N : ℕ) : Matrix (Fin N) (Fin (N + 1)) ℂ →L[ℂ] Matrix (Fin N) (Fin N) ℂ :=
   LinearMap.toContinuousLinearMap
@@ -105,7 +97,7 @@ theorem piF_single_succ (k : Fin N) (j : Fin N) :
 
 theorem piF_single_zero (k : Fin N) : piF (Matrix.single k (0 : Fin (N + 1)) (1 : ℂ)) = 0 := by
   ext a b; simp only [piF, Matrix.single_apply, Matrix.zero_apply]
-  rw [if_neg]; rintro ⟨_, h⟩; exact Fin.succ_ne_zero b h.symm
+  rw [ite_eq_right]; rintro ⟨_, h⟩; exact Fin.succ_ne_zero b h.symm
 
 theorem det_first_row_expansion (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℂ) (a : ℂ) (h : ∀ j, A 0 j = if j = 0 then a else 0) :
     A.det = a * (A.submatrix Fin.succ Fin.succ).det := by

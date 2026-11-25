@@ -2,53 +2,8 @@ module
 
 public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Sub.Prod
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -167,7 +122,7 @@ theorem finrank_step (L : Ideal (MRing ι F)) (f : MRing ι F) (s : K → ℕ)
         exact Ideal.mem_sup_right (Ideal.mem_span_singleton'.mpr ⟨y, mul_comm _ _⟩)
       · intro a ha
         obtain ⟨c, hc⟩ := hker_mem a ha
-        rw [if_pos hsn] at hc
+        rw [ite_eq_left hsn] at hc
         exact ⟨⟨_, weightedHomogeneousComponent_mem _ c (n - s)⟩, Subtype.ext hc.symm⟩
     have h2 := LinearMap.finrank_range_add_finrank_ker μ
     have h3 := LinearMap.finrank_range_add_finrank_ker ν
@@ -175,16 +130,16 @@ theorem finrank_step (L : Ideal (MRing ι F)) (f : MRing ι F) (s : K → ℕ)
     have e : Module.finrank F (LinearMap.range μ) = Module.finrank F (LinearMap.range ν) :=
       Nat.add_right_cancel (h2.trans h3.symm)
     rw [hμg, hν] at e
-    rw [if_pos hsn, ← e]
+    rw [ite_eq_left hsn, ← e]
     exact h1.symm
   · have hk : LinearMap.ker g = ⊥ := by
       rw [LinearMap.ker_eq_bot']
       intro a ha
       obtain ⟨c, hc⟩ := hker_mem a ha
-      rw [if_neg hsn, map_zero] at hc
+      rw [ite_eq_right hsn, map_zero] at hc
       exact Subtype.ext hc
     rw [hk, finrank_bot] at h1
-    rw [if_neg hsn]
+    rw [ite_eq_right hsn]
     omega
 
 end FiltrationStepHilb
@@ -208,7 +163,7 @@ theorem FiltrationStepHilb.proof : FiltrationStepHilb.Statement.{u} := by
         change s k ≤ (m k).toNat at h1
         omega
     unfold hilbFn
-    rw [if_pos hm, if_pos hm]
+    rw [ite_eq_left hm, ite_eq_left hm]
     by_cases hsn : s ≤ fun k => (m k).toNat
     · have hn : (fun k => ((m - fun k => (s k : ℤ)) k).toNat) = (fun k => (m k).toNat) - s := by
         funext k
@@ -217,17 +172,17 @@ theorem FiltrationStepHilb.proof : FiltrationStepHilb.Statement.{u} := by
         change s k ≤ (m k).toNat at h1
         simp only [Pi.sub_apply]
         omega
-      rw [if_pos (hms.mpr hsn), hn, key, if_pos hsn]
+      rw [ite_eq_left (hms.mpr hsn), hn, key, ite_eq_left hsn]
       push_cast
       rfl
-    · rw [if_neg (fun h => hsn (hms.mp h)), key, if_neg hsn]
+    · rw [ite_eq_right (fun h => hsn (hms.mp h)), key, ite_eq_right hsn]
       simp
   · have hm' : ¬ ∀ k, 0 ≤ (m - fun k => (s k : ℤ)) k := fun h => hm fun k => by
       have h1 := h k
       simp only [Pi.sub_apply] at h1
       omega
     unfold hilbFn
-    simp only [if_neg hm, if_neg hm']
+    simp only [ite_eq_right hm, ite_eq_right hm']
     simp
 
 end

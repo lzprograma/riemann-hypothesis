@@ -15,47 +15,8 @@ public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.Heisenber
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RelIndexIntegralMatricesUnitaryDiagonalTranslate
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemIntMat
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SumDiagOrderEqOfIntegralTranslateIndicatorRelati
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawa
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FiniteCosetsInDoset
@@ -286,7 +247,7 @@ theorem exists_bad_entry (x : Matrix (Fin n') (Fin n) L)
     ∃ r c, x r c ∉ intL L ∧ (n' - n' / 2 ≤ r.1 ∨ n' / 2 ≤ r.1 ∧ c.1 < n - n / 2) := by
   by_contra hc
   refine hx ⟨fun r c => if n' - n' / 2 ≤ r.1 ∨ n' / 2 ≤ r.1 ∧ c.1 < n - n / 2 then 0 else x r c, fun r c =>
-    ⟨fun e => by dsimp only; rw [if_pos (by omega)], fun e e' => by dsimp only; rw [if_pos (by omega)]; exact zero_mem _⟩,
+    ⟨fun e => by dsimp only; rw [ite_eq_left (by omega)], fun e e' => by dsimp only; rw [ite_eq_left (by omega)]; exact zero_mem _⟩,
     fun r c => ?_⟩
   show x r c - (if n' - n' / 2 ≤ r.1 ∨ n' / 2 ≤ r.1 ∧ c.1 < n - n / 2 then 0 else x r c) ∈ intL L
   split_ifs with hb
@@ -358,8 +319,7 @@ theorem exists_mixLat_form : ∀ (L : Type) [Field L] [Valued L (WithZero (Multi
         exacts [hzi _ _, zero_mem _]
       rw [h.fixes _ hm, h1]
     · obtain ⟨i, j, hij⟩ : ∃ i j, z i j ∉ intL L := by
-        by_contra hc
-        push_neg at hc
+        by_contra! hc
         exact hzi hc
       have he : embLow n' n z (hi n' i) (hi n j) = z i j := by
         simp [embLow, hi]
@@ -513,19 +473,19 @@ theorem cayley_torus_inv : ∀ (L : Type) [Field L] [Valued L (WithZero (Multipl
     intro i
     by_cases hi : i.val < n' / 2
     · by_cases hik : (⟨i.val, hi⟩ : Fin (n' / 2)) = k
-      · have : d i = ϖ := by simp only [hd, dif_pos hi, hik, Pi.single_eq_same, zpow_one]
-        rw [this, v_one_add_inv_unif hv, if_pos (show i = ⟨k.val, hk⟩ from Fin.ext (by have e := congrArg Fin.val hik; simpa using e))]
-      · have : d i = 1 := by simp only [hd, dif_pos hi, Pi.single_eq_of_ne hik, zpow_zero]
-        rw [this, inv_one, one_add_one_eq_two, h2, if_neg]
+      · have : d i = ϖ := by simp only [hd, dite_eq_left hi, hik, Pi.single_eq_same, zpow_one]
+        rw [this, v_one_add_inv_unif hv, ite_eq_left (show i = ⟨k.val, hk⟩ from Fin.ext (by have e := congrArg Fin.val hik; simpa using e))]
+      · have : d i = 1 := by simp only [hd, dite_eq_left hi, Pi.single_eq_of_ne hik, zpow_zero]
+        rw [this, inv_one, one_add_one_eq_two, h2, ite_eq_right]
         intro e; apply hik; ext; simp [e]
-    · rw [if_neg (fun e => hi (by rw [e]; exact k.2))]
+    · rw [ite_eq_right (fun e => hi (by rw [e]; exact k.2))]
       by_cases h' : n' - n' / 2 ≤ i.val ∧ n' - 1 - i.val < n' / 2
       · by_cases hik : (⟨n' - 1 - i.val, h'.2⟩ : Fin (n' / 2)) = k
-        · have : d i = ϖ⁻¹ := by simp only [hd, dif_neg hi, dif_pos h', hik, Pi.single_eq_same, _root_.zpow_neg, zpow_one]
+        · have : d i = ϖ⁻¹ := by simp only [hd, dite_eq_right hi, dite_eq_left h', hik, Pi.single_eq_same, _root_.zpow_neg, zpow_one]
           rw [this, inv_inv, v_one_add_unif hv]
-        · have : d i = 1 := by simp only [hd, dif_neg hi, dif_pos h', Pi.single_eq_of_ne hik, neg_zero, zpow_zero]
+        · have : d i = 1 := by simp only [hd, dite_eq_right hi, dite_eq_left h', Pi.single_eq_of_ne hik, neg_zero, zpow_zero]
           rw [this, inv_one, one_add_one_eq_two, h2]
-      · have : d i = 1 := by simp only [hd, dif_neg hi, dif_neg h']
+      · have : d i = 1 := by simp only [hd, dite_eq_right hi, dite_eq_right h']
         rw [this, inv_one, one_add_one_eq_two, h2]
   have hfne : ∀ i, 1 + (d i)⁻¹ ≠ 0 := by
     intro i e
@@ -553,7 +513,7 @@ theorem cayley_torus_inv : ∀ (L : Type) [Field L] [Valued L (WithZero (Multipl
   · have hne : Valued.v (1 + (t⁻¹).1.1).det ≠ 0 := by rw [hdet]; exact WithZero.coe_ne_zero
     have hu : WithZero.unzero hne = Multiplicative.ofAdd (1 : ℤ) :=
       WithZero.coe_inj.mp ((WithZero.coe_unzero hne).trans hdet)
-    rw [ordL, dif_neg hne, hu]; rfl
+    rw [ordL, dite_eq_right hne, hu]; rfl
 
 end GlobalTheory.CayleyTorus
 end -- clump:auto
@@ -703,17 +663,17 @@ theorem GlobalTheory.SphTheta.mixed_torus_value : ∀ (L : Type) [Field L] [Valu
       intro i
       by_cases hfi : f i ∈ intMat L (Fin n') (Fin n)
       · have : i = i0 := huniq i (by show 0 - f i ∈ _; rw [zero_sub]; exact neg_mem hfi)
-        rw [if_pos this, hS.fixes _ hfi, hℓs]
+        rw [ite_eq_left this, hS.fixes _ hfi, hℓs]
       · have hne : i ≠ i0 := by
           rintro rfl
           apply hfi
           have := neg_mem hi0
           rwa [zero_sub, neg_neg] at this
-        rw [if_neg hne]
+        rw [ite_eq_right hne]
         apply hℓzero
         rintro ⟨a, ha, hxa⟩
         exact hfi (mem_of_mixLat hϖle k t hT (hf i) ha hxa)
-    simp only [key, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [key, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   obtain ⟨hd, hint, hord⟩ := _root_.GlobalTheory.CayleyTorus.cayley_torus_inv L ϖ σ q hU hS.v_two n' k t ht
   have hev := hC e heinv t⁻¹ hd hint
   rw [inv_inv, hord, he1, mul_one] at hev
@@ -882,11 +842,11 @@ theorem card_sum_vanish {F : Type} [Fintype F] [Zero F] [DecidableEq F] (N m : �
     split_ifs with h
     · refine (Finset.prod_eq_one fun r _ => ?_).symm
       by_cases hr : m ≤ r.val
-      · rw [if_pos hr, if_pos (h r hr)]
-      · rw [if_neg hr]
-    · push_neg at h
+      · rw [ite_eq_left hr, ite_eq_left (h r hr)]
+      · rw [ite_eq_right hr]
+    · push Not at h
       obtain ⟨r, hr, hy⟩ := h
-      exact (Finset.prod_eq_zero (Finset.mem_univ r) (by rw [if_pos hr, if_neg hy])).symm
+      exact (Finset.prod_eq_zero (Finset.mem_univ r) (by rw [ite_eq_left hr, ite_eq_right hy])).symm
   simp_rw [h1]
   rw [← Fintype.prod_sum (fun (r : Fin N) (c : F) => if m ≤ r.val then (if c = 0 then (1 : ℂ) else 0) else 1)]
   have h2 : ∀ r : Fin N, ∑ c : F, (if m ≤ r.val then (if c = 0 then (1 : ℂ) else 0) else 1) =
@@ -896,8 +856,8 @@ theorem card_sum_vanish {F : Type} [Fintype F] [Zero F] [DecidableEq F] (N m : �
   simp_rw [h2]
   rw [Fin.prod_univ_eq_prod_range (fun i => if m ≤ i then (1 : ℂ) else (Fintype.card F : ℂ)) N,
     ← Finset.prod_range_mul_prod_Ico _ hm,
-    Finset.prod_congr rfl (fun i hi => if_neg (by simp only [Finset.mem_range] at hi; omega)), Finset.prod_const,
-    Finset.card_range, Finset.prod_eq_one (fun i hi => if_pos (by simp only [Finset.mem_Ico] at hi; omega)), mul_one]
+    Finset.prod_congr rfl (fun i hi => ite_eq_right (by simp only [Finset.mem_range] at hi; omega)), Finset.prod_const,
+    Finset.card_range, Finset.prod_eq_one (fun i hi => ite_eq_left (by simp only [Finset.mem_Ico] at hi; omega)), mul_one]
 
 theorem val_one_add_dInv {ϖ : L} {σ : L →+* L} {q : ℕ} (hU : IsUnramInv ϖ σ q) (h2 : Valued.v (2 : L) = 1) {n : ℕ}
     (k : Fin (n / 2)) (j : Fin n) :
@@ -908,12 +868,12 @@ theorem val_one_add_dInv {ϖ : L} {σ : L →+* L} {q : ℕ} (hU : IsUnramInv ϖ
   by_cases h1 : j = lo n k
   · subst h1
     have hi : Valued.v ϖ⁻¹ = WithZero.exp (1 : ℤ) := by rw [map_inv₀, hϖ, ← WithZero.exp_neg, neg_neg]
-    rw [if_pos rfl, if_pos rfl, Valuation.map_add_eq_of_lt_right, hi]
+    rw [ite_eq_left rfl, ite_eq_left rfl, Valuation.map_add_eq_of_lt_right, hi]
     rw [hi, map_one, ← WithZero.exp_zero, WithZero.exp_lt_exp]; norm_num
   by_cases h2' : j = (lo n k).rev
-  · rw [if_neg h1, if_pos h2', if_neg h1, Valuation.map_add_eq_of_lt_left, map_one]
+  · rw [ite_eq_right h1, ite_eq_left h2', ite_eq_right h1, Valuation.map_add_eq_of_lt_left, map_one]
     rw [hϖ, map_one, ← WithZero.exp_zero, WithZero.exp_lt_exp]; norm_num
-  · rw [if_neg h1, if_neg h2', if_neg h1, one_add_one_eq_two, h2]
+  · rw [ite_eq_right h1, ite_eq_right h2', ite_eq_right h1, one_add_one_eq_two, h2]
 
 theorem ordL_of_val {x : L} (hx : Valued.v x = WithZero.exp (1 : ℤ)) : ordL x = -1 := by
   have key : ∀ (w : WithZero (Multiplicative ℤ)) (h : w ≠ 0), w = WithZero.exp (1 : ℤ) →
@@ -980,12 +940,12 @@ theorem fT_unique {ϖ : L} {σ : L →+* L} {q : ℕ} (hU : IsUnramInv ϖ σ q) 
   have hlo : ∀ r, ϖ * b r (lo n k) ∈ intL L := fun r => by
     have := hb' r (lo n k)
     unfold dTor at this
-    rw [if_pos rfl, mul_comm] at this
+    rw [ite_eq_left rfl, mul_comm] at this
     exact this
   have hother : ∀ r j, j ≠ lo n k → b r j ∈ intL L := fun r j hj => by
     have := hb' r j
     unfold dTor at this
-    rw [if_neg hj] at this
+    rw [ite_eq_right hj] at this
     split_ifs at this with h
     · have e : b r j = b r j * ϖ⁻¹ * ϖ := by rw [mul_assoc, inv_mul_cancel₀ hϖ, mul_one]
       rw [e]; exact mul_mem this hϖi
@@ -1002,7 +962,7 @@ theorem fT_unique {ϖ : L} {σ : L →+* L} {q : ℕ} (hU : IsUnramInv ϖ σ q) 
     have := hy r (lo n k)
     change b r (lo n k) - fT ϖ n n' k y r (lo n k) ∈ intL L at this
     unfold fT at this
-    rw [if_pos rfl] at this
+    rw [ite_eq_left rfl] at this
     exact (sub_mem_iff hU hϖ (hlo r) _).1 this
 
 theorem value_torus_first : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))] (ϖ : L) (σ : L →+* L) (q : ℕ) (δ : L) (ψ : AddChar L ℂ) (n n' : ℕ) (M : Type) [AddCommGroup M] [Module ℂ M] (ρ : Matrix (Fin n') (Fin n) L → Module.End ℂ M) (ω : GU σ n × GU σ n' →* Module.End ℂ M) (s : M), IsStd ϖ σ q δ ψ ρ ω s → CayleyRule q n' ρ (ω.comp (MonoidHom.inl _ _)) s → ∀ ℓ : M →ₗ[ℂ] ℂ, ℓ s = 1 → (∀ a ∈ mixLat L n' n, ∀ v, ℓ (ρ a v) = ℓ v) → (∀ x, (¬ ∃ a ∈ mixLat L n' n, x - a ∈ intMat L (Fin n') (Fin n)) → ℓ (ρ x s) = 0) → ∀ (k : Fin (n / 2)) (t : GU σ n), t.1.1 = tMat ϖ n (n / 2) (Pi.single k 1) → ℓ (ω (t, 1) s) = (-1) ^ n' * (q : ℂ) ^ (2 * ((n' / 2 : ℕ) : ℤ) - n') := by
@@ -1052,7 +1012,7 @@ theorem value_torus_first : ∀ (L : Type) [Field L] [Valued L (WithZero (Multip
         · rw [hy r hr, liftR_zero, mul_zero]
         · rfl
       refine ⟨fun hr => h0 (by omega), fun hr _ => by rw [h0 hr]; exact zero_mem _⟩
-    · push_neg at hy
+    · push Not at hy
       obtain ⟨r, hr, hyr⟩ := hy
       refine hℓ0 _ ?_
       rintro ⟨a, ha, hxa⟩
@@ -1061,7 +1021,7 @@ theorem value_torus_first : ∀ (L : Type) [Field L] [Valued L (WithZero (Multip
       change fT ϖ n n' k y r (lo n k) - a r (lo n k) ∈ intL L at h1
       rw [h2, sub_zero] at h1
       unfold fT at h1
-      rw [if_pos rfl] at h1
+      rw [ite_eq_left rfl] at h1
       have h3 := (sub_mem_iff hU hϖ0 (z := 0) (by rw [mul_zero]; exact zero_mem _) (y r)).1
         (by rw [zero_sub]; exact neg_mem h1)
       exact hyr (h3.trans ((Ideal.Quotient.eq_zero_iff_mem).2 ((Valuation.mem_maximalIdeal_iff _ _).2 (by simp))))

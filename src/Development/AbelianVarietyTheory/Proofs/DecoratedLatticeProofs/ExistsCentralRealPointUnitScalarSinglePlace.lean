@@ -52,7 +52,6 @@ import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.SeeSaw
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open Classical
 
 noncomputable section
@@ -129,8 +128,8 @@ theorem exists_central_of_norm_one : ∀ (D : D7) (θ : InfFam D), IsInfFam θ �
   intro D θ hθ S τ ζ hζ
   obtain ⟨a, a1, a2, ac⟩ := exists_unit hθ τ hζ
   refine ⟨scalarElt S ac, scalarElt_mem_GinfC S ac a1, scalarElt_mem_center S ac, ?_, fun ρ hρ => ?_⟩
-  · rw [compAt_scalarElt, a2, if_pos rfl]
-  · rw [compAt_scalarElt, a2, if_neg hρ, one_smul]
+  · rw [compAt_scalarElt, a2, ite_eq_left rfl]
+  · rw [compAt_scalarElt, a2, ite_eq_right hρ, one_smul]
 
 end GlobalTheory.CentralUnit
 

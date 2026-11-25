@@ -58,8 +58,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.LevelCuspCharacters (Sq LevelGroup 
 open GlobalTheory.LevPull (CongMod)
 open scoped TensorProduct Matrix
 
-set_option autoImplicit false
-
 
 
 noncomputable section

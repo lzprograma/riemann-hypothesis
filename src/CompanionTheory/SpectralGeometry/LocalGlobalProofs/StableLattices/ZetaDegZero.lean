@@ -198,7 +198,7 @@ theorem co_of (hB : BdFacts) (hG : GFacts) (hC : Cover) (h0 : CapelliDeterminant
     let w' : Ch ε V := fun A => ∑ i : NC ε, if A = {i} then w i else 0
     have hw' : Deg (0 + 1) w' := by
       intro A hA
-      refine Finset.sum_eq_zero fun i _ => if_neg ?_
+      refine Finset.sum_eq_zero fun i _ => ite_eq_right ?_
       rintro rfl
       simp at hA
     refine ⟨w', hw', ?_⟩
@@ -227,11 +227,11 @@ theorem co_of (hB : BdFacts) (hG : GFacts) (hC : Cover) (h0 : CapelliDeterminant
       have := LinearMap.congr_fun (hY a b c d) (y : Y)
       split_ifs at this ⊢ <;> simpa [EK] using this
     let x' : Ch ε Y := fun A => if A.card = j + 1 then (hs (x A)).choose else 0
-    have hx' : Deg (j + 1) x' := fun A hA => if_neg hA
+    have hx' : Deg (j + 1) x' := fun A hA => ite_eq_right hA
     have hπx : lift ε π x' = x := by
       funext A
       by_cases hA : A.card = j + 1
-      · simp only [lift_apply, x', if_pos hA]
+      · simp only [lift_apply, x', ite_eq_left hA]
         exact (hs (x A)).choose_spec
       · simp [x', hA, hx A hA]
     have hy : ∀ A, bd ε EY x' A ∈ LinearMap.ker π := by

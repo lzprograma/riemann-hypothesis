@@ -175,7 +175,7 @@ theorem fibTri : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Rec
       have i2 := hix (idx.symm (τ, a))
       rw [Equiv.apply_symm_apply, Equiv.apply_symm_apply] at h1
       rw [Equiv.apply_symm_apply] at i1 i2
-      simp only [hc, ha, if_true] at i1 i2
+      simp only [hc, ha, ite_true] at i1 i2
       rw [Fin.lt_def] at hca
       exact (h1 rfl hc ha).symm.trans (hT (by simp only; omega))
     · exact hb0 τ a c' hc (not_lt.1 ha)
@@ -187,7 +187,7 @@ theorem fibTri : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Rec
     have i2 := hix (idx.symm (τ, a))
     rw [Equiv.apply_symm_apply, Equiv.apply_symm_apply] at h1
     rw [Equiv.apply_symm_apply] at i1 i2
-    simp only [not_lt.2 hc, not_lt.2 ha, if_false] at i1 i2
+    simp only [not_lt.2 hc, not_lt.2 ha, ite_false] at i1 i2
     exact (h1 rfl ha hc).symm.trans (hT (by simp only; omega))
 
 end GlobalTheory.FibreFlag

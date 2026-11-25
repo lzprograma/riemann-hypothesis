@@ -122,7 +122,7 @@ instance : IsMulLeftInvariant (invHaar I) := by
     funext i
     have hsb : scaleMap s⁻¹ b i ≠ 0 := by
       rw [scaleMap_apply]; exact mul_ne_zero (s⁻¹ i).ne_zero (hb i)
-    simp only [Function.comp, invUnits, Pi.mul_apply, dif_neg (hb i), dif_neg hsb]
+    simp only [Function.comp, invUnits, Pi.mul_apply, dite_eq_right (hb i), dite_eq_right hsb]
     ext
     simp only [Units.val_mul, Units.val_inv_eq_inv_val, Units.val_mk0, scaleMap_apply, Pi.inv_apply,
       mul_inv, inv_inv]

@@ -134,7 +134,7 @@ theorem adv_mul (a b : O) (x x' y : T ⟶ A) :
     refine (Eq.trans ?_ (val_cub c (lift x y) hJ (pzero A _) (x2 A 0) (x2 A 1)).symm).trans e
     congr 1 <;> simp [x2, pzero, Hom.one_def]
   have key := ratio_pow hp L.isLB (fun U _ h => (prod_sum₂ (K := K) (K' := K) (U := U) _ (hW a ((powPr A (0 : Fin 3)) ≫ o.act b) (powPr A (2 : Fin 3)) U h) (hW b (powPr A (0 : Fin 3)) ((powPr A (2 : Fin 3)) ≫ o.act (star a)) U h)).trans (Eq.trans (by
-      simp only [star_mul, mul_comm (star b), mul_comm a b, o.mul, Category.assoc]
+      simp only [star_mul, mul_comm a b, o.mul, Category.assoc]
       apply Additive.ofMul.injective
       simp only [ofMul_mul, ofMul_inv]
       abel) (hW (a * b) (powPr A (0 : Fin 3)) (powPr A (2 : Fin 3)) U h).symm))

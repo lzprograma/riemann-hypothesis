@@ -1,53 +1,13 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentLevelZeroEqOne
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX2
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGInt
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SlicesFiniteRegularityBuilt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -57,8 +17,6 @@ open Matrix MeasureTheory Formalism.REAL Formalism.QuantumDeterminants Formalism
 open scoped ContDiff
 
 namespace Formalism.FourierDecayAlt.P.CutEX.MkCptPf
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 section casts
 
@@ -89,22 +47,11 @@ theorem glev_last_iff {k ρ : ℕ} (hρ : ρ = 0) (g : B.Mat k ρ) :
 
 theorem gf_eq_ggl {k ρ : ℕ} (hρ : ρ = 0) (z z' : Fin (2 * ρ + k + 1) → ℂ) (g : B.Mat k ρ) :
     Gf k ρ z z' g = Q.GGl k ρ z z' g := by
-  subst hρ
-  have h0 : Dmin k 0 z z' g ⟨0, by omega⟩ = 1 := by
-    unfold Dmin
-    exact Matrix.det_isEmpty
-  have h1 : Dmin k 0 z z' g (Fin.last 1) = Zhat k 0 z z' g (Fin.last 0) (Fin.last 0) := by
-    unfold Dmin
-    exact Matrix.det_fin_one _
-  unfold Gf Q.GGl
-  rw [Formalism.FourierDecayAlt.P.PBI.zetaL_eq_zhat, h0, h1]
-  simp
+  apply _root_.Formalism.FourierDecayAlt.P.PBI.gram_function_level_zero <;> assumption
 
 end Formalism.FourierDecayAlt.P.CutEX.MkCptPf
 
 namespace Formalism.FourierDecayAlt.P.CutEX.MkCptPf
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 section top
 
@@ -135,16 +82,9 @@ theorem mkCpt : MkCpt := by
     rw [castBS_z_eq_castV]; exact lowV_top p.T e
   have hz' : U.lowV P.k P.r (P.r - P.r) (castBS e p.T.base).z' = (p.T.bs P.r).z' := by
     rw [castBS_z'_eq_castV]; exact lowV_top' p.T e
-  have hUTo : IsOpen (UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z') := by
-    have c1 : Continuous (fun q : (Fin P.r → Fin P.r → ℂ) × Mt P.k (P.r - P.r) => (Matrix.of q.1).det) :=
-      Continuous.matrix_det continuous_fst
-    have c2 : Continuous (fun q : (Fin P.r → Fin P.r → ℂ) × Mt P.k (P.r - P.r) =>
-        Q.GGl P.k (P.r - P.r) (p.T.bs P.r).z (p.T.bs P.r).z' (Matrix.of q.2)) :=
-      (Formalism.FourierDecayAlt.P.Qx5.GGl_continuous _ _ _ _).comp continuous_snd
-    exact (isOpen_ne_fun c1 continuous_const).inter (isOpen_lt continuous_const c2)
   have hCpt : KB.CptCoef (castBS e p.T.base) (PBI.chartCoefficient b b' Φ) := by
     refine PBI.chartCoefficient_hasCompactSupport (castBS e p.T.base) b b' hb hbc hb' hb'c Φ (UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z')
-      hUTo ?_ K hK hKU ?_ ?_
+      ?_ K hK hKU ?_ ?_
     · intro q₀ hq₀ hG
       obtain ⟨U', F, hU', hq, hF, hEq⟩ := hΦ q₀ hq₀ ((glev_last_iff hρ _).2 hG)
       exact ⟨U', F, hU', hq, hF, fun q hqU hqG => hEq q hqU ((glev_last_iff hρ _).2 hqG)⟩
@@ -164,11 +104,11 @@ theorem mkCpt : MkCpt := by
     have hg' : D.castM e g ∈ B.GV P.k (P.r + (P.r - P.r)) := Formalism.FourierDecayAlt.P.PBE.castM_GV e hg
     have hne' : PBI.chartCoefficient b b' Φ (D.castM e g) ≠ 0 := hne
     have hD : U.DjU P.k P.r (P.r - P.r) (D.castM e g) ≠ 0 := by
-      intro h0; apply hne'; unfold PBI.chartCoefficient; rw [if_neg (not_not.2 h0)]
+      intro h0; apply hne'; unfold PBI.chartCoefficient; rw [ite_eq_right (not_not.2 h0)]
     obtain ⟨-, hμ, heq⟩ := PBI.chart_spec (D.castM e g) hg' hD
     have hmk := hne'
     unfold PBI.chartCoefficient at hmk
-    rw [if_pos hD] at hmk
+    rw [ite_eq_left hD] at hmk
     obtain ⟨-, hΦne⟩ := smul_ne_zero_iff.1 hmk
     have hμ' : Matrix.of (PBI.chart (Matrix.of.symm (D.castM e g))).2.2 ∈ B.GV P.k (P.r - P.r) := by
       simpa only [PBI.chart, Equiv.apply_symm_apply] using hμ

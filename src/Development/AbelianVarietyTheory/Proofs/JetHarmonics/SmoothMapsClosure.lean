@@ -169,26 +169,8 @@ theorem dsigW_lin (hK : PI.KFinSmooth) (hR : R.IsDS ε mu) (W : List (Mx k r))
     rw [ih hW']
     exact dsig_lin hK hR (hW X List.mem_cons_self) a (dsigW_mem hK hR W hW' hv) (dsigW_mem hK hR W hW' hw)
 
-theorem inLie_conj {g X : Mx k r} (hg : g ∈ GG k r) (hX : InLieHpk k r X) : InLieHpk k r (g⁻¹ * X * g) := by
-  obtain ⟨hu, hi, -⟩ := PI.UnitaryGroupMassFormula.CapelliEig.unitary_Hecke_group k r g hg
-  have hdet : IsUnit g.det := (Matrix.isUnit_iff_isUnit_det _).mp hu
-  have h1 : g * g⁻¹ = 1 := Matrix.mul_nonsing_inv _ hdet
-  have hg' : gᴴ * Hpk k r * g = Hpk k r := hg
-  have hX' : Xᴴ * Hpk k r + Hpk k r * X = 0 := hX
-  have e1 : Hpk k r * g⁻¹ = gᴴ * Hpk k r := by
-    calc Hpk k r * g⁻¹ = gᴴ * Hpk k r * g * g⁻¹ := by rw [hg']
-      _ = gᴴ * Hpk k r := by rw [Matrix.mul_assoc, h1, Matrix.mul_one]
-  have e2 : (g⁻¹)ᴴ * Hpk k r = Hpk k r * g := by
-    calc (g⁻¹)ᴴ * Hpk k r = (g⁻¹)ᴴ * (gᴴ * Hpk k r * g) := by rw [hg']
-      _ = (g * g⁻¹)ᴴ * Hpk k r * g := by simp only [Matrix.conjTranspose_mul, Matrix.mul_assoc]
-      _ = Hpk k r * g := by rw [h1, Matrix.conjTranspose_one, Matrix.one_mul]
-  show (g⁻¹ * X * g)ᴴ * Hpk k r + Hpk k r * (g⁻¹ * X * g) = 0
-  calc (g⁻¹ * X * g)ᴴ * Hpk k r + Hpk k r * (g⁻¹ * X * g)
-      = gᴴ * Xᴴ * ((g⁻¹)ᴴ * Hpk k r) + (Hpk k r * g⁻¹) * X * g := by
-        simp only [Matrix.conjTranspose_mul, Matrix.mul_assoc]
-    _ = gᴴ * (Xᴴ * Hpk k r + Hpk k r * X) * g := by
-        rw [e1, e2]; simp only [Matrix.mul_add, Matrix.add_mul, Matrix.mul_assoc]
-    _ = 0 := by rw [hX', Matrix.mul_zero, Matrix.zero_mul]
+theorem inLie_conj {g X : Mx k r} (hg : g ∈ GG k r) (hX : InLieHpk k r X) : InLieHpk k r (g⁻¹ * X * g) :=
+  _root_.GlobalTheory.DerivedAction.lie_conj hX hg
 
 theorem norm_sigma (hR : R.IsDS ε mu) {g : Mx k r} (hg : g ∈ GG k r) (v : R.H) : ‖R.σ g v‖ = ‖v‖ := by
   obtain ⟨P₀, ⟨⟨hunit, hcay⟩, _⟩, hds⟩ := hR.2

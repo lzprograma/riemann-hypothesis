@@ -14,8 +14,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDesc
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace Formalism.L2.Pj
@@ -72,37 +70,6 @@ theorem gfp_over_bc (htow : ∀ r : c.F, algebraMap c.F L' r = algebraMap L L' (
     RingHom.ext fun r => (htow r).symm
   rw [Category.assoc, hx0, sOf, sOf, ← ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap_comp, ← RingHom.comp_assoc, h2]
 
-private theorem li_bc_lemma {K K' : Type} [Field K] [Field K'] [Algebra K K'] {m n : ℕ}
-    (d : Fin m → Fin n → K) (hd : LinearIndependent K d) :
-    LinearIndependent K' (fun i => algebraMap K K' ∘ d i) := by
-  classical
-  let A : Matrix (Fin m) (Fin n) K := Matrix.of d
-  have hinj : Function.Injective fun v => Matrix.vecMul v A := Matrix.vecMul_injective_iff.2 hd
-  obtain ⟨g, hg⟩ := LinearMap.exists_leftInverse_of_injective (Matrix.vecMulLinear A)
-    (LinearMap.ker_eq_bot.2 hinj)
-  have key : ∀ v, Matrix.vecMul v (A * (LinearMap.toMatrix' g).transpose) = v := by
-    intro v
-    rw [← Matrix.vecMul_vecMul, Matrix.vecMul_transpose, LinearMap.toMatrix'_mulVec]
-    exact LinearMap.congr_fun hg v
-  have hAB : A * (LinearMap.toMatrix' g).transpose = 1 := by
-    ext i j
-    have := congrFun (key (Pi.single i 1)) j
-    simpa [Matrix.vecMul, dotProduct, Pi.single_apply, Matrix.one_apply, eq_comm] using this
-  rw [Fintype.linearIndependent_iff]
-  intro w hw
-  have hAB' : A.map (algebraMap K K') * ((LinearMap.toMatrix' g).transpose).map (algebraMap K K') = 1 := by
-    rw [← Matrix.map_mul, hAB, Matrix.map_one _ (map_zero _) (map_one _)]
-  have hv : Matrix.vecMul w (A.map (algebraMap K K')) = 0 := by
-    funext j
-    have := congrFun hw j
-    simpa [Matrix.vecMul, dotProduct, A, Finset.sum_apply] using this
-  have hw' : w = Matrix.vecMul (Matrix.vecMul w (A.map (algebraMap K K')))
-      (((LinearMap.toMatrix' g).transpose).map (algebraMap K K')) := by
-    rw [Matrix.vecMul_vecMul, hAB', Matrix.vecMul_one]
-  intro i
-  rw [hw', hv, Matrix.zero_vecMul]
-  rfl
-
 theorem gfp_frPt_gen (hT : ReciprocityTheory.ChartRestriction.G.Out.SecTwistSt)
     (htow : ∀ r : c.F, algebraMap c.F L' r = algebraMap L L' (algebraMap c.F L r))
     (x : Sp L ⟶ Xo.X) (hx0 : x ≫ Xo.s = sOf c L) (M : ∀ τ : E →+* ℂ, Fin (Dw.mult τ) → Fin (Dw.mult τ) → L')
@@ -119,7 +86,7 @@ theorem gfp_frPt_gen (hT : ReciprocityTheory.ChartRestriction.G.Out.SecTwistSt)
     (bas τ).linearIndependent.map' (gfpEig (c := c) hx τ).subtype (Submodule.ker_subtype _)
   have hdW : ∀ τ i, d τ i ∈ gfpEig (c := c) hx τ := fun τ i => (bas τ i).2
   let d' : ∀ τ : E →+* ℂ, Fin (Dw.mult τ) → Fin n → L' := fun τ i => algebraMap L L' ∘ d τ i
-  have hd' : ∀ τ, LinearIndependent L' (d' τ) := fun τ => li_bc_lemma (d τ) (hd τ)
+  have hd' : ∀ τ, LinearIndependent L' (d' τ) := fun τ => (linearIndependent_algebraMap_comp_iff (v := d τ)).mpr (hd τ)
   have hdW' : ∀ τ i, d' τ i ∈ gfpEig (c := c) hx' τ := by
     intro τ i
     have h := hdW τ i

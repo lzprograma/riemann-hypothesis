@@ -94,8 +94,6 @@ end GlobalTheory.St.Lat
 namespace GlobalTheory.St.Lat
 open Formalism.L2.SG.Pf Formalism.L2.SG.Pf.LatEx
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def IsoW (D : D7) : Prop :=
   ∃ w : (VS D).V, w ≠ 0 ∧ (VS D).hT w w = 0 ∧ ∀ i, (VS D).hT (D.sp.hypE i) w = 0 ∧ (VS D).hT (D.sp.hypF i) w = 0
 
@@ -179,10 +177,10 @@ theorem decomp {r : ℕ} (e f : Fin r → S.V) (hee : ∀ a b, S.hT (e a) (e b) 
   constructor
 
   · simp only [map_sub, map_sum, map_smul, hee, hef, smul_eq_mul, mul_zero, Finset.sum_const_zero, sub_zero,
-    mul_ite, mul_one, Finset.sum_ite_eq, Finset.mem_univ, if_true, sub_self]
+    mul_ite, mul_one, Finset.sum_ite_eq, Finset.mem_univ, ite_true, sub_self]
 
   · simp only [map_sub, map_sum, map_smul, hff, hfe, smul_eq_mul, mul_zero, Finset.sum_const_zero,
-    mul_ite, mul_one, Finset.sum_ite_eq, Finset.mem_univ, if_true, sub_self]
+    mul_ite, mul_one, Finset.sum_ite_eq, Finset.mem_univ, ite_true, sub_self]
 
 theorem key_split (Λ : Submodule (𝓞 E) S.V) {r : ℕ} (e f : Fin r → S.V)
     (P Q : Fin r → FractionalIdeal (nonZeroDivisors (𝓞 E)) E) (hee : ∀ a b, S.hT (e a) (e b) = 0)
@@ -257,7 +255,7 @@ theorem zero_of_dual {r : ℕ} {e f : Fin r → S.V} (hfe : ∀ a b, S.hT (f a) 
     have h := h0 b
 
     simp only [map_sum, map_smul, hfe, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true] at h
+    Finset.mem_univ, ite_true] at h
     exact h
   simp [ht]
 
@@ -335,7 +333,7 @@ theorem genFrame_holds : GenFrame := by
     obtain ⟨x, hx, rfl⟩ := (mem_latSpan c e y).1 hy'
 
     simp only [map_sum, map_smul, hcf, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
     exact hx b
   have hw := fun b : Fin n =>
     PI.SRW.sesquilinearRepresentation E S.V S.hT S.nondeg Λ hlat (((cf b).restrictScalars (𝓞 E)).comp ρ)
@@ -426,9 +424,6 @@ end GlobalTheory.St.Lat
 
 noncomputable section
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat IsDedekindDomain
-
-namespace GlobalTheory.St.Lat
-end GlobalTheory.St.Lat
 
 noncomputable section
 
@@ -532,8 +527,6 @@ theorem satBasis_holds : SatBasis := by
 
 section D7sec
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7)
 
 theorem ddG_of (hU : Unram) (hSD : LatEx.SplitDiff) : DdG D := by
@@ -561,8 +554,6 @@ namespace GlobalTheory.St.Lat
 open Formalism.L2.SG.Pf Formalism.L2.SG.Pf.LatEx
 
 section D7asm
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable (D : D7)
 
@@ -614,8 +605,6 @@ open Formalism.L2.SG.Pf Formalism.L2.SG.Pf.LatEx
 
 section D7main
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7)
 
 theorem lat_riesz (φ : (VS D).V →ₗ[D.host.E] D.host.E) : ∃ μ : (VS D).V, ∀ v, (VS D).hT μ v = φ v := by
@@ -634,7 +623,7 @@ theorem lat_riesz (φ : (VS D).V →ₗ[D.host.E] D.host.E) : ∃ μ : (VS D).V,
       congr 1
       rw [← (VS D).herm.eq ((VS D).frame i) (bs j), hbs]
       split_ifs <;> simp
-    simp only [hs, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [hs, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   rw [key]
 
 private theorem lat_span_eq_top_of_unimodular {Λ : Submodule (𝓞 D.host.E) (VS D).V}
@@ -695,7 +684,7 @@ theorem latExists_of_steps (hSB : SatBasis) (hH : HypRep) (hI : IsoW D) (hDd : D
 
       rw [map_sum, map_zero, Fin.sum_univ_castSucc] at h1
       simp only [wf, map_smul, Fin.snoc_castSucc, Fin.snoc_last, (hwo j).2, hfe_hyp, smul_eq_mul, mul_zero,
-        add_zero, mul_ite, mul_one, Finset.sum_ite_eq, Finset.mem_univ, if_true] at h1
+        add_zero, mul_ite, mul_one, Finset.sum_ite_eq, Finset.mem_univ, ite_true] at h1
       exact h1
     have hl : g (Fin.last _) = 0 := by
       rw [Fin.sum_univ_castSucc] at hg
@@ -756,9 +745,9 @@ theorem latExists_of_steps (hSB : SatBasis) (hH : HypRep) (hI : IsoW D) (hDd : D
   have hflc : ∀ y ∈ (VS D).L0, (VS D).hT fl y ∈ c := fun y hy => by simpa [cc] using hf'Λ (Fin.last _) y hy
   have hl1 : ∀ a, (VS D).hT (eX a) el = 0 := fun a => he'iso _ _
   have hl2 : ∀ a, (VS D).hT (eX a) fl = 0 := fun a => by
-    simp only [eX, fl, he'f']; rw [if_neg (Fin.castSucc_ne_last a)]
+    simp only [eX, fl, he'f']; rw [ite_eq_right (Fin.castSucc_ne_last a)]
   have hl3 : ∀ a, (VS D).hT (fY a) el = 0 := fun a => by
-    rw [← hconj]; simp only [fY, el, he'f']; rw [if_neg (Fin.castSucc_ne_last a).symm, star_zero]
+    rw [← hconj]; simp only [fY, el, he'f']; rw [ite_eq_right (Fin.castSucc_ne_last a).symm, star_zero]
   have hl4 : ∀ a, (VS D).hT (fY a) fl = 0 := fun a => hf'iso _ _
   have hz : ∀ u : D.what₂.Word, ∃ z : (VS D).V, z ∈ Submodule.span D.host.E {el, fl} ∧ z ∈ (VS D).L0 ∧
       (VS D).hT z z = -(((D.mem u).A.T : ℕ) : D.host.E) ∧

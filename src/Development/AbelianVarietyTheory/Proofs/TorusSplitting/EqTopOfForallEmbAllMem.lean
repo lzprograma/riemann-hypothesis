@@ -104,7 +104,7 @@ lemma exists_real_combination (Ψ : Finset (E →+* ℂ))
     have h3 := h τ.1 τ.2
     have h4 : ComplexEmbedding.conjugate (ComplexEmbedding.conjugate τ.1) ∈ Ψ := by
       rw [conjugate_conjugate]; exact τ.2
-    simp only [z, dif_neg h3, dif_pos h4]
+    simp only [z, dite_eq_right h3, dite_eq_left h4]
     congr 2
     exact Subtype.ext (conjugate_conjugate τ.1).symm
   have h5 : y τ = ∑ i, (starRingEnd ℂ) (B.repr z i) * τ.1 (integralBasis E i) := by

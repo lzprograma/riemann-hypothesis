@@ -1,50 +1,7 @@
 module
 
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.IsLevPairA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.IsCoreMod
 
@@ -159,7 +116,7 @@ theorem annL_annL (i j : Lt n) : (annL i * annL j + annL j * annL i : Module.End
   · simp [hi]
   by_cases hj : j ∈ A
   · simp [hj]
-  simp only [hi, hj, Finset.mem_insert, hij, hji, or_self, if_false]
+  simp only [hi, hj, Finset.mem_insert, hij, hji, or_self, ite_false]
   rw [sgL_insert j hi, sgL_insert i hj, twL_swap hij, Finset.insert_comm j i, smul_smul, smul_smul, ← add_smul]
   have : sgL i A * (-twL i j * sgL j A) + sgL j A * (twL i j * sgL i A) = 0 := by ring
   rw [this, zero_smul]
@@ -178,7 +135,7 @@ theorem creL_creL (i j : Lt n) : (creL i * creL j + creL j * creL i : Module.End
   by_cases hj : j ∈ A
   swap
   · simp [hj]
-  simp only [hi, hj, Finset.mem_erase, ne_eq, hij, hji, not_false_eq_true, and_self, if_true]
+  simp only [hi, hj, Finset.mem_erase, ne_eq, hij, hji, not_false_eq_true, and_self, ite_true]
   rw [sgL_erase j hi, sgL_erase i hj, twL_swap hij, Finset.erase_right_comm (a := j) (b := i), smul_smul, smul_smul,
     ← add_smul]
   have : sgL i A * (-twL i j * sgL j A) + sgL j A * (twL i j * sgL i A) = 0 := by ring
@@ -188,18 +145,18 @@ theorem annL_creL (i j : Lt n) :
     (annL i * creL j + creL j * annL i : Module.End ℂ (Cq n V)) = if i = j then 1 else 0 := by
   by_cases hij : i = j
   · subst hij
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     refine LinearMap.ext fun x => funext fun A => ?_
     simp only [LinearMap.add_apply, Module.End.mul_apply, Pi.add_apply, annL_apply, creL_apply,
       Module.End.one_apply]
     by_cases hi : i ∈ A
     · have h1 : i ∉ A.erase i := Finset.notMem_erase i A
-      rw [if_pos hi, if_pos hi, if_neg h1, sgL_erase i hi, twL_self, one_mul, Finset.insert_erase hi,
+      rw [ite_eq_left hi, ite_eq_left hi, ite_eq_right h1, sgL_erase i hi, twL_self, one_mul, Finset.insert_erase hi,
         smul_smul, sgL_mul_self, one_smul, zero_add]
     · have h1 : i ∈ insert i A := Finset.mem_insert_self i A
-      rw [if_neg hi, if_pos h1, if_neg hi, sgL_insert i hi, twL_self, one_mul, Finset.erase_insert hi,
+      rw [ite_eq_right hi, ite_eq_left h1, ite_eq_right hi, sgL_insert i hi, twL_self, one_mul, Finset.erase_insert hi,
         smul_smul, sgL_mul_self, one_smul, add_zero]
-  · rw [if_neg hij]
+  · rw [ite_eq_right hij]
     refine LinearMap.ext fun x => funext fun A => ?_
     simp only [LinearMap.add_apply, Module.End.mul_apply, LinearMap.zero_apply, Pi.add_apply,
       Pi.zero_apply, annL_apply, creL_apply]
@@ -209,7 +166,7 @@ theorem annL_creL (i j : Lt n) :
     · by_cases hj : j ∈ A
       · have hj' : j ∈ insert i A := Finset.mem_insert_of_mem hj
         have hi' : i ∉ A.erase j := fun hm => hi (Finset.mem_of_mem_erase hm)
-        rw [if_neg hi, if_pos hj', if_pos hj, if_neg hi', sgL_insert j hi, sgL_erase i hj,
+        rw [ite_eq_right hi, ite_eq_left hj', ite_eq_left hj, ite_eq_right hi', sgL_insert j hi, sgL_erase i hj,
           twL_swap hij, Finset.erase_insert_of_ne hij, smul_smul, smul_smul, ← add_smul]
         have e : sgL i A * (-twL i j * sgL j A) + sgL j A * (twL i j * sgL i A) = 0 := by ring
         rw [e, zero_smul]

@@ -69,49 +69,10 @@ theorem hasDerivAt_orbit {G : Type*} [Group G] [TopologicalSpace G] [IsTopologic
     (D : ℝ → G → ℂ) (hD : Continuous fun p : ℝ × G => D p.1 p.2)
     (hd : ∀ s y, HasDerivAt (fun t => a ((e t)⁻¹ * y)) (D s y) s) :
     HasCompactSupport (D 0) ∧ HasDerivAt (fun s => ρ (e s) v) (∫ y, D 0 y • ρ y w ∂μ) 0 := by
-  have hint : Integrable (fun y => a y • ρ y w) μ :=
-    (ha.smul hc).integrable_of_hasCompactSupport hs.smul_right
-  have hform : (fun s => ρ (e s) v) = fun s => ∫ y, a ((e s)⁻¹ * y) • ρ y w ∂μ := by
-    funext s
-    rw [← integral_mul_left_eq_self (fun y => a ((e s)⁻¹ * y) • ρ y w) (e s)]
-    conv_lhs => rw [← hw]
-    rw [← ContinuousLinearMap.integral_comp_comm _ hint]
-    simp only [inv_mul_cancel_left, hmul, map_smul]
-  have hzero : ∀ s y, (e s)⁻¹ * y ∉ tsupport a → D s y = 0 := by
-    intro s y hy
-    have h1 : ∀ᶠ t in 𝓝 s, (e t)⁻¹ * y ∈ (tsupport a)ᶜ :=
-      (he.inv.mul continuous_const).continuousAt.preimage_mem_nhds
-        ((isClosed_tsupport a).isOpen_compl.mem_nhds hy)
-    have h2 : HasDerivAt (fun t => a ((e t)⁻¹ * y)) 0 s :=
-      (hasDerivAt_const s (0 : ℂ)).congr_of_eventuallyEq
-        (h1.mono fun t ht => image_eq_zero_of_notMem_tsupport ht)
-    exact (hd s y).unique h2
-  have hK : IsCompact ((fun p : ℝ × G => e p.1 * p.2) '' (Set.Icc (-1) 1 ×ˢ tsupport a)) :=
-    (isCompact_Icc.prod hs.isCompact).image ((he.comp continuous_fst).mul continuous_snd)
-  set K := (fun p : ℝ × G => e p.1 * p.2) '' (Set.Icc (-1) 1 ×ˢ tsupport a) with hKdef
-  have hcD : Continuous fun p : ℝ × G => D p.1 p.2 • ρ p.2 w := hD.smul (hc.comp continuous_snd)
-  obtain ⟨M, hM⟩ := ((isCompact_Icc (a := (-1 : ℝ)) (b := 1)).prod hK).exists_bound_of_continuousOn
-    hcD.continuousOn
-  have key := hasDerivAt_integral_of_dominated_loc_of_deriv_le (μ := μ) (𝕜 := ℝ)
-    (F := fun s y => a ((e s)⁻¹ * y) • ρ y w) (F' := fun s y => D s y • ρ y w) (x₀ := 0)
-    (bound := K.indicator fun _ => M) (s := Set.Icc (-1) 1) (Icc_mem_nhds (by norm_num) (by norm_num))
-    (Filter.Eventually.of_forall fun s =>
-      ((ha.comp (continuous_const.mul continuous_id)).smul hc).aestronglyMeasurable)
-    (by simpa [he0] using hint)
-    (hcD.comp (Continuous.prodMk_right 0)).aestronglyMeasurable
-    (Filter.Eventually.of_forall fun y s hs' => by
-      by_cases hy : y ∈ K
-      · rw [Set.indicator_of_mem hy]; exact hM (s, y) ⟨hs', hy⟩
-      · rw [Set.indicator_of_notMem hy, hzero s y, zero_smul, norm_zero]
-        intro h
-        exact hy ⟨(s, (e s)⁻¹ * y), ⟨hs', h⟩, by simp⟩)
-    ((integrable_indicator_iff hK.isClosed.measurableSet).2 (integrableOn_const hK.measure_lt_top.ne))
-    (Filter.Eventually.of_forall fun y s _ => (hd s y).smul_const _)
-  refine ⟨HasCompactSupport.intro hs.isCompact fun y hy => hzero 0 y (by simpa [he0] using hy), ?_⟩
-  rw [hform]
-  exact key.2
+  obtain ⟨h0, hder⟩ := GlobalTheory.GardingVec.hasDerivAt_orbit_aux μ ρ w v hmul hc a ha hs hw e he he0 D hD hd
+  exact ⟨HasCompactSupport.intro hs.isCompact h0, hder⟩
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ} {ε : Fin n → Bool}
 variable {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
@@ -195,53 +156,16 @@ theorem garding_step : ∀ (n : ℕ) (ε : Fin n → Bool) (H : Type) [NormedAdd
   refine ⟨smooth_coef hσ hα hs hw, fun X hX => ?_⟩
   obtain ⟨F, hF, hFα⟩ := smoothOnG_exists_contDiff_extension n ε α hα
   have hu : Continuous fun g : UJ ε => umat g := (isClosedEmbeddingMatrix n ε).1.continuous
-  have hmem : ∀ g : UJ ε, umat g ∈ UJset ε := fun g => g.2
-  have hum : ∀ a b : UJ ε, umat (a * b) = umat a * umat b := fun _ _ => rfl
-  have hmul : ∀ a b : UJ ε, σ (umat (a * b)) w = σ (umat a) (σ (umat b) w) := by
-    intro a b
-    rw [hum, hσ.1.2 _ (hmem a) _ (hmem b)]; rfl
-  have hc : Continuous fun y : UJ ε => σ (umat y) w := (hσ.2.2 w).comp_continuous hu hmem
-  have hFα' : ∀ g : UJ ε, α (umat g) = F (umat g) := fun g => (hFα _ g.2).symm
-  have ha : Continuous fun g : UJ ε => α (umat g) := by
-    simp only [hFα']; exact hF.continuous.comp hu
-  have hint : Integrable (fun y : UJ ε => α (umat y) • σ (umat y) w) (muG ε) :=
-    (ha.smul hc).integrable_of_hasCompactSupport hs.smul_right
-  have hw' : ∫ y : UJ ε, α (umat y) • σ (umat y) w ∂(muG ε) = v := by
-    refine ext_inner_left ℂ fun u => ?_
-    rw [← integral_inner hint, ← hw u]
-    simp only [inner_smul_right]
-  have hfd : Continuous (fderiv ℝ F) := hF.continuous_fderiv (by simp)
-  let e : ℝ → UJ ε := fun t =>
-    ⟨(Matrix.isUnit_exp ((t : ℂ) • X)).unit, exp_indefinite_unitary_holds n ε X hX t⟩
-  have hev : ∀ t, umat (e t) = NormedSpace.exp ((t : ℂ) • X) := fun t => rfl
-  have hei : ∀ t, umat (e t)⁻¹ = NormedSpace.exp ((t : ℂ) • (-X)) := fun t => by
-    rw [smul_neg, Matrix.exp_neg, ← hev]
-    exact Matrix.coe_units_inv _
-  have he : Continuous e := by
-    rw [(isClosedEmbeddingMatrix n ε).1.isInducing.continuous_iff]
-    exact _root_.Formalism.REAL.continuous_exp_real_smul X
-  have he0 : e 0 = 1 := by
-    apply Subtype.ext; apply Units.ext
-    show umat (e 0) = 1
-    rw [hev]; simp
-  have hcE := _root_.Formalism.REAL.continuous_exp_real_smul (-X)
-  have key := hasDerivAt_orbit (muG ε) (fun g => σ (umat g)) w v hmul hc _ ha hs hw' e he he0
-    (fun s y => fderiv ℝ F (NormedSpace.exp ((s : ℂ) • (-X)) * umat y : Matrix _ _ ℂ)
-      (NormedSpace.exp ((s : ℂ) • (-X)) * (-X) * umat y : Matrix _ _ ℂ))
-    ((hfd.comp ((hcE.comp continuous_fst).matrix_mul (hu.comp continuous_snd))).clm_apply
-      (((hcE.comp continuous_fst).matrix_mul continuous_const).matrix_mul (hu.comp continuous_snd)))
-    (fun s y => by
-      simp only [hFα']
-      simp only [hum, hei]
-      exact ((hF.differentiable (by simp)) _).hasFDerivAt.comp_hasDerivAt s
-        (GlobalTheory.GardingVec.hasDerivAt_exp_mul (-X) (umat y) s))
-  simp only [hev, Complex.ofReal_zero, zero_smul, NormedSpace.exp_zero, Matrix.one_mul] at key
+  have hc : Continuous fun y : UJ ε => σ (umat y) w := (hσ.2.2 w).comp_continuous hu fun g => g.2
+  obtain ⟨h0, hder⟩ := GlobalTheory.GardingVec.garding_deriv_core hσ hs hw hF hFα hX
+  have hcs : HasCompactSupport (fun y : UJ ε => fderiv ℝ F (umat y) (-X * umat y : Matrix _ _ ℂ)) :=
+    HasCompactSupport.intro hs.isCompact h0
   have hβ := contDiff_fderiv_mul hF (-X)
   refine ⟨fun y => fderiv ℝ F y (-X * y : Matrix _ _ ℂ), _,
-    fun g _ => ⟨Set.univ, _, isOpen_univ, trivial, hβ.contDiffOn, fun _ _ _ => rfl⟩, key.1, fun u => ?_, key.2⟩
+    fun g _ => ⟨Set.univ, _, isOpen_univ, trivial, hβ.contDiffOn, fun _ _ _ => rfl⟩, hcs, fun u => ?_, hder⟩
   have hβi : Integrable (fun y : UJ ε => fderiv ℝ F (umat y) (-X * umat y : Matrix _ _ ℂ) • σ (umat y) w)
       (muG ε) :=
-    ((hβ.continuous.comp hu).smul hc).integrable_of_hasCompactSupport key.1.smul_right
+    ((hβ.continuous.comp hu).smul hc).integrable_of_hasCompactSupport hcs.smul_right
   rw [← integral_inner hβi]
   simp only [inner_smul_right]
 

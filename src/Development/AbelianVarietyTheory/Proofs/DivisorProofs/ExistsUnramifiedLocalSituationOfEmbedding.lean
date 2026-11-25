@@ -2,7 +2,8 @@ module
 
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RankOfMulEqOne
 public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
-public import Development.AbelianVarietyTheory.Definitions.Divisors.HeightTrivialParameterEqZero
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DenseRangeOfIsAlgClosed
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalAdjoinRange
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
 public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsNormSubEqOne
@@ -49,8 +50,6 @@ public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowS
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ResEqIff
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 

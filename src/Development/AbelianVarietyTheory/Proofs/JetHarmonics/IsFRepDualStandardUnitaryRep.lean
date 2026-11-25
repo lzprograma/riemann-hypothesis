@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.ReproducingKernels.OneLeGN
 public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPrAlt
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
 import Mathlib.Algebra.Order.Floor.Extended
@@ -72,15 +73,7 @@ theorem inv_eq {H g : Matrix (Fin n) (Fin n) ℂ} (h2 : H * H = 1) (hg : gᴴ * 
   Matrix.inv_eq_left_inv (left_inv h2 hg)
 
 theorem entry_le {k r : ℕ} (g : Mx k r) (a b : Fin (2 * r + k + 1)) : ‖g a b‖ ≤ B.gN g := by
-  unfold B.gN
-  apply Real.le_sqrt_of_sq_le
-  rw [← Complex.normSq_eq_norm_sq]
-  calc Complex.normSq (g a b) ≤ ∑ j, Complex.normSq (g a j) :=
-        Finset.single_le_sum (f := fun j => Complex.normSq (g a j))
-          (fun j _ => Complex.normSq_nonneg _) (Finset.mem_univ b)
-    _ ≤ ∑ i, ∑ j, Complex.normSq (g i j) :=
-        Finset.single_le_sum (f := fun i => ∑ j, Complex.normSq (g i j))
-          (fun i _ => Finset.sum_nonneg fun j _ => Complex.normSq_nonneg _) (Finset.mem_univ a)
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.Lap.S0.DecA.gN_entry <;> assumption
 
 end DualFRep
 

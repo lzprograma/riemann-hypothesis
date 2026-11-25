@@ -132,7 +132,7 @@ theorem expand_of_dual {ι : Type*} [Fintype ι] [DecidableEq ι] (φ d : ι →
     ?_ ?_ ?_ ?_ hx
   · rintro _ ⟨j, rfl⟩
     rw [hJ_sub_right, hJ_sum_right]
-    simp only [hJ_smul_right, hd, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true,
+    simp only [hJ_smul_right, hd, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true,
       sub_self]
   · exact hJ_zero_left ε _
   · intro x y _ _ hx hy; rw [hJ_add_left, hx, hy, add_zero]
@@ -214,7 +214,7 @@ theorem rotM_mulVec (ω : Fin n → ℂ) (φ : ℂ) (v : Fin n → ℂ) :
     rotM ε ω φ *ᵥ v = v + ((φ - 1) * hJ ε ω v) • ω := by
   funext i
   simp only [rotM, mulVec, dotProduct, of_apply, add_mul, Finset.sum_add_distrib, ite_mul, one_mul,
-    zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true, Pi.add_apply, Pi.smul_apply, smul_eq_mul,
+    zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true, Pi.add_apply, Pi.smul_apply, smul_eq_mul,
     hJ_apply]
   congr 1
   rw [Finset.mul_sum, Finset.sum_mul]

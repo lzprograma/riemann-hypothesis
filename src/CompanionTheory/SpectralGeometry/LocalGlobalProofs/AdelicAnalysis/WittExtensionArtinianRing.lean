@@ -224,8 +224,7 @@ variable (hs : ∀ z, s (s z) = z) (hR : ∀ r, s (algebraMap R A r) = algebraMa
 include hs ht hfix hθ hsθ h2 in
 theorem exists_value_notMem [Nonempty ι] {S : Matrix ι ι A} (hS : cT s S = S) (hdet : IsUnit S.det)
     (m : MaximalSpectrum R) : ∃ x, t (bf s S x x) ∉ m.asIdeal := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   set I : Ideal A := m.asIdeal.map (algebraMap R A) with hI
   have hv : ∀ x, bf s S x x ∈ I := fun x => by
     rw [← hfix _ (bf_conj hs hS x x)]

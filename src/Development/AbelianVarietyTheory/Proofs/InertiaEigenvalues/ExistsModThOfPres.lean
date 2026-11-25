@@ -94,8 +94,6 @@ theorem aeval_apply_comm {O : Type} [CommRing O] {k : Type} [Field k] [Algebra O
       Module.End.mul_apply, Module.End.mul_apply, Module.algebraMap_end_apply,
       Module.algebraMap_end_apply, hJ, pow_apply_comm J ν μ hνμ]
 
-alias main := _root_.GlobalTheory.AevalCommute.aeval_apply_comm
-
 end GlobalTheory.AevalCommute
 end -- clump:auto
 end -- clump:auto

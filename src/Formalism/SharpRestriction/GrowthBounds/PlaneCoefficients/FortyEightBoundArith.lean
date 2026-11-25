@@ -4,49 +4,10 @@ public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlaneCoe
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.FrMemLetters
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.LeCubeMul
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PosULeIff
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Sheaves.Presheaf
 import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.TwiceValuationFactorialProduct
 import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SlackBoundJoint
 import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SlackBoundReal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.OldestFar, Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.FortyEightBoundArith
@@ -139,8 +100,7 @@ theorem first_gap (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) : Fr.fr (j 
   have hfin := hgap _ hyl hxI.1.1 ?_
   · omega
   intro z hz hzx
-  by_contra hzy
-  push_neg at hzy
+  by_contra! hzy
   unfold Frames.letters at hz
   rw [Finset.mem_filter, Finset.mem_Icc] at hz
   apply hmin z _ hzx
@@ -148,26 +108,12 @@ theorem first_gap (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) : Fr.fr (j 
   rw [Finset.mem_filter, Finset.mem_Ioo]
   exact ⟨⟨hzy, hzx.trans hxI.1.2⟩, hz.2⟩
 
-private theorem llPos_mem_LLset (j : ℤ) (l : ℕ) (hl : l < (Fr.LLset j).card) :
-    llPos Fr j l ∈ Fr.LLset j := by
-  unfold llPos
-  rw [List.getD_eq_getElem _ _ (by rw [Finset.length_sort]; exact hl)]
-  exact (Finset.mem_sort _).mp (List.getElem_mem _)
-
-private theorem llPos_injOn (j : ℤ) (a b : ℕ) (ha : a < (Fr.LLset j).card)
-    (hb : b < (Fr.LLset j).card) (h : llPos Fr j a = llPos Fr j b) : a = b := by
-  unfold llPos at h
-  rw [List.getD_eq_getElem _ _ (by rw [Finset.length_sort]; exact ha),
-    List.getD_eq_getElem _ _ (by rw [Finset.length_sort]; exact hb)] at h
-  exact (List.Nodup.getElem_inj_iff (Finset.sort_nodup _ _)).mp h
-
 private theorem llPos_zero_le_of_mem (j : ℤ) (hc : 0 < (Fr.LLset j).card) :
     ∀ z ∈ Fr.LLset j, llPos Fr j 0 ≤ z := by
   classical
   intro z hz
-  by_contra hzx
-  push_neg at hzx
-  have hx := llPos_mem_LLset (Fr := Fr) j 0 hc
+  by_contra! hzx
+  have hx := Formalism.MainNotions.Proposition5Numerics.llPos_mem (Fr := Fr) j 0 hc
   have hf := filt_card (Fr := Fr) j 0 hc
   have hsub : ({z, llPos Fr j 0} : Finset ℤ) ⊆ (Fr.LLset j).filter (· ≤ llPos Fr j 0) := by
     intro w hw
@@ -189,8 +135,7 @@ private theorem lt_sort_getD_of_le_card_filter_gt (S : Finset ℤ) (c : ℤ) (k 
   have hpw : s.Pairwise (· ≤ ·) := Finset.pairwise_sort _ _
   have hi : s.length - k < s.length := by omega
   rw [List.getD_eq_getElem _ _ hi]
-  by_contra hle
-  push_neg at hle
+  by_contra! hle
   have hsub : S.filter (c < ·) ⊆ (s.drop (s.length - k + 1)).toFinset := by
     intro z hz
     rw [Finset.mem_filter] at hz
@@ -198,8 +143,7 @@ private theorem lt_sort_getD_of_le_card_filter_gt (S : Finset ℤ) (c : ℤ) (k 
     obtain ⟨m, hm, rfl⟩ := List.getElem_of_mem hzs
     rw [List.mem_toFinset]
     have hmk : s.length - k < m := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       have h1 : s[m] ≤ s[s.length - k] := by
         rcases hc.lt_or_eq with hlt | heq
         · exact List.pairwise_iff_getElem.mp hpw m _ hm hi hlt
@@ -219,9 +163,6 @@ theorem oldest_far (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (i : ℕ) 
   classical
   have hfg := first_gap hV hr j
   have hcard : r ≤ (Fr.LLset j).card := (hV.2.2.2.2.2.2.1 j).1
-  have hsep' : Fr.fr (j - 1) (r - 1) < Fr.fr j 0 := by
-    have h := hV.2.2.2.1 (j - 1)
-    rwa [sub_add_cancel] at h
   dsimp only [Frames.oldest]
   apply lt_sort_getD_of_le_card_filter_gt _ _ r hr
   have hsub : (Finset.range r).image (llPos Fr j) ⊆
@@ -230,7 +171,7 @@ theorem oldest_far (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (i : ℕ) 
     rw [Finset.mem_image] at hz
     obtain ⟨l, hl, rfl⟩ := hz
     rw [Finset.mem_range] at hl
-    have hm := llPos_mem_LLset (Fr := Fr) j l (by omega)
+    have hm := Formalism.MainNotions.Proposition5Numerics.llPos_mem (Fr := Fr) j l (by omega)
     have hev := ((hV.2.2.2.2.2.2.1 j).2.1 _ hm
       (Or.inl (le_trans (filt_card (Fr := Fr) j l (by omega)) (by omega)))).1
     have h0 := llPos_zero_le_of_mem (Fr := Fr) j (by omega) _ hm
@@ -248,7 +189,7 @@ theorem oldest_far (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (i : ℕ) 
   refine le_trans ?_ (Finset.card_le_card hsub)
   rw [Finset.card_image_of_injOn, Finset.card_range]
   intro a ha b hb hab
-  exact llPos_injOn (Fr := Fr) j a b (by simp at ha; omega) (by simp at hb; omega) hab
+  exact Formalism.MainNotions.Proposition5Numerics.llPos_inj (Fr := Fr) j a b (by simp at ha; omega) (by simp at hb; omega) hab
 
 end Geo
 
@@ -363,8 +304,6 @@ theorem forty_eight_bound_arith (Y k N P : ℝ) (hY : 2 ≤ Y) (hk : 1 ≤ k) (h
 
 end Ar
 
-
-
 theorem arithCondition_of_one_le (C CLa : ℝ) (hC : 1 ≤ C) : RestArithStep C CLa := by
   intro p W Qq O Kf _ _ _ _ _ _ _ _ _ _ ι σ j w n' m r _ _ TT L₁ L₂ de h x lam0 aT bT a Y cpp c0 Dp cStar K _ _ hk
     F nb B hD
@@ -426,7 +365,7 @@ theorem arithCondition_of_one_le (C CLa : ℝ) (hC : 1 ≤ C) : RestArithStep C 
     have hG2 : G2d F (flatDeg lam0) E' (posOf n' (posTL F (⟨jj - 1, Sum.inr m'⟩ : TL J Dt.nL r))) ≤
         flatDeg lam0 (posOf n' (posTL F (⟨jj - 1, Sum.inr m'⟩ : TL J Dt.nL r))) := by
       unfold G2d
-      rw [if_pos htop]
+      rw [ite_eq_left htop]
       exact Nat.sub_le _ _
     have hfd := (flatDeg_bounds (by have := hB.m_ge; omega) ha0 h5 _ (hTT ▸ htop)).2
     have s1 := hs (r - 1)

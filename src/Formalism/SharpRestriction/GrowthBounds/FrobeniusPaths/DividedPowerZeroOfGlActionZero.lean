@@ -1,51 +1,8 @@
 module
 
+import Formalism.ThetaLogCoordinates.DualWeylCoordinates.DualWeylProofs.QaRowStrictMono
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.PolarizationDividedPowerSumSucc
 public import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -101,29 +58,7 @@ theorem map_Psi' {R R' : Type*} [CommRing R] [CommRing R'] (φ : R →+* R') {N 
 
 theorem column_height_lt_iff {n : ℕ} {mu : Fin n → ℤ} (hmu : Dominant mu) (c : ℤ) (m : Fin n) :
     m.val < colH mu c ↔ c ≤ mu m := by
-  constructor
-  · intro h
-    by_contra hc
-    have hsub : (univ.filter fun x => c ≤ mu x) ⊆ Finset.Iio m := by
-      intro x hx
-      rw [Finset.mem_filter] at hx
-      rw [Finset.mem_Iio]
-      by_contra hxm
-      exact hc (hx.2.trans (hmu (not_lt.1 hxm)))
-    have := Finset.card_le_card hsub
-    rw [Fin.card_Iio] at this
-    unfold colH at h
-    omega
-  · intro h
-    have hsub : Finset.Iic m ⊆ (univ.filter fun x => c ≤ mu x) := by
-      intro x hx
-      rw [Finset.mem_Iic] at hx
-      rw [Finset.mem_filter]
-      exact ⟨mem_univ _, h.trans (hmu hx)⟩
-    have := Finset.card_le_card hsub
-    rw [Fin.card_Iic] at this
-    unfold colH
-    omega
+  apply _root_.Formalism.InvariantFactorPaths.ColumnFamilies.qa_lt_colH <;> assumption
 
 theorem abs_entry_le_total {N n : ℕ} (mu : Fin (N + 1) → Fin n → ℤ) (i : Fin (N + 1)) (m : Fin n) :
     |mu i m| ≤ ∑ i, ∑ m, |mu i m| := by
@@ -133,12 +68,12 @@ theorem abs_entry_le_total {N n : ℕ} (mu : Fin (N + 1) → Fin n → ℤ) (i :
 
 theorem canonical_column_positive {N n : ℕ} {mu : Fin (N + 1) → Fin n → ℤ} (hd : Dominant (pEnd mu)) {c : ℤ} (hc : 1 ≤ c) :
     Ican mu c = univ.filter fun m => c ≤ pEnd mu m := by
-  unfold Ican; rw [if_pos hc]
+  unfold Ican; rw [ite_eq_left hc]
   exact Finset.filter_congr fun m _ => column_height_lt_iff hd c m
 
 theorem canonical_column_nonpositive {N n : ℕ} {mu : Fin (N + 1) → Fin n → ℤ} (hd : Dominant (pEnd mu)) {c : ℤ} (hc : ¬ 1 ≤ c) :
     Ican mu c = univ.filter fun m => ¬ c ≤ pEnd mu m := by
-  unfold Ican; rw [if_neg hc]
+  unfold Ican; rw [ite_eq_right hc]
   refine Finset.filter_congr fun m _ => ?_
   rw [← column_height_lt_iff hd c m, not_lt]
 
@@ -146,8 +81,8 @@ theorem tableau_column_canonical_eq {N n : ℕ} {mu : Fin (N + 1) → Fin n → 
     tabCol (Ican mu) c = univ.filter fun m => c ≤ pEnd mu m := by
   unfold tabCol
   by_cases hc : 1 ≤ c
-  · rw [if_pos hc, canonical_column_positive hd hc]
-  · rw [if_neg hc, canonical_column_nonpositive hd hc]
+  · rw [ite_eq_left hc, canonical_column_positive hd hc]
+  · rw [ite_eq_right hc, canonical_column_nonpositive hd hc]
     ext m; simp
 
 theorem canonical_tableau_standard {N n : ℕ} {mu : Fin (N + 1) → Fin n → ℤ} (hd : Dominant (pEnd mu)) : IsSt mu (Ican mu) := by
@@ -172,8 +107,8 @@ theorem canonical_tableau_standard {N n : ℕ} {mu : Fin (N + 1) → Fin n → �
       rcases hc with hc | hc <;> omega
   · intro c
     by_cases h1 : 1 ≤ c
-    · rw [canonical_column_positive hd h1, if_pos h1]; rfl
-    · rw [canonical_column_nonpositive hd h1, if_neg h1]
+    · rw [canonical_column_positive hd h1, ite_eq_left h1]; rfl
+    · rw [canonical_column_nonpositive hd h1, ite_eq_right h1]
       have := Finset.card_filter_add_card_filter_not (s := (univ : Finset (Fin n))) (fun m => c ≤ pEnd mu m)
       rw [Finset.card_univ, Fintype.card_fin] at this
       unfold colH
@@ -220,9 +155,9 @@ theorem derivation_divided_power_term (sg : ι → R) (src dst : ι → σ) (hs 
     by_cases hv : src l = v
     · subst hv
       have h3 := hd l l
-      simp only [h1, h2, h3, if_true, if_false]
+      simp only [h1, h2, h3, ite_true, ite_false]
       omega
-    · simp only [hv, if_false]
+    · simp only [hv, ite_false]
       omega
   have he : dividedPowerShiftedExponent src dst m f (src l) = m (src l) - f l := by
     simp [dividedPowerShiftedExponent, h1, h2]
@@ -474,8 +409,8 @@ theorem exterior_sign_insert (a b : Fin n) (J : Finset (Fin n)) :
   · rw [Finset.insert_eq_of_mem ha]; simp [ha]
   · rw [Finset.filter_insert]
     by_cases hb : b < a
-    · rw [if_pos hb, Finset.card_insert_of_notMem (by simp [ha]), if_pos ⟨ha, hb⟩, pow_succ]; ring
-    · rw [if_neg hb, if_neg (by tauto), one_mul]
+    · rw [ite_eq_left hb, Finset.card_insert_of_notMem (by simp [ha]), ite_eq_left ⟨ha, hb⟩, pow_succ]; ring
+    · rw [ite_eq_right hb, ite_eq_right (by tauto), one_mul]
 
 def exteriorWedge (P : Type*) [CommRing P] {n : ℕ} (m : Fin n) : Module.End P (Finset (Fin n) → P) where
   toFun K := fun J => if m ∈ J then exteriorSign P J m * K (J.erase m) else 0
@@ -495,8 +430,8 @@ theorem exterior_contraction_apply (m : Fin n) (K : Finset (Fin n) → P) (J : F
 
 theorem sign_flip_of_ne {a b : Fin n} (hab : a ≠ b) : (if b < a then (-1 : P) else 1) = -(if a < b then (-1 : P) else 1) := by
   rcases lt_or_gt_of_ne hab with h | h
-  · rw [if_neg (not_lt.2 h.le), if_pos h]; ring
-  · rw [if_pos h, if_neg (not_lt.2 h.le)]
+  · rw [ite_eq_right (not_lt.2 h.le), ite_eq_left h]; ring
+  · rw [ite_eq_left h, ite_eq_right (not_lt.2 h.le)]
 
 theorem wedge_contraction_anticommute (a b : Fin n) :
     exteriorWedge P a * exteriorContraction P b + exteriorContraction P b * exteriorWedge P a = if a = b then 1 else 0 := by
@@ -504,20 +439,20 @@ theorem wedge_contraction_anticommute (a b : Fin n) :
   simp only [LinearMap.add_apply, Module.End.mul_apply, Pi.add_apply, exterior_wedge_apply, exterior_contraction_apply]
   by_cases hab : a = b
   · subst hab
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     by_cases ha : a ∈ J
-    · simp only [ha, if_true, Finset.mem_erase, ne_eq, not_true_eq_false, false_and, if_false, exterior_sign_erase,
+    · simp only [ha, ite_true, Finset.mem_erase, ne_eq, not_true_eq_false, false_and, ite_false, exterior_sign_erase,
         lt_self_iff_false, and_false, one_mul, Finset.insert_erase ha, add_zero, ← mul_assoc, exterior_sign_mul_self,
         Module.End.one_apply]
-    · simp only [ha, if_false, Finset.mem_insert, true_or, if_true, exterior_sign_insert,
+    · simp only [ha, ite_false, Finset.mem_insert, true_or, ite_true, exterior_sign_insert,
         lt_self_iff_false, and_false, one_mul, Finset.erase_insert ha, zero_add, ← mul_assoc, exterior_sign_mul_self,
         Module.End.one_apply]
-  · rw [if_neg hab]
+  · rw [ite_eq_right hab]
     have hba : b ≠ a := fun h => hab h.symm
     by_cases ha : a ∈ J <;> by_cases hb : b ∈ J
     · simp [ha, hb, hba]
     · have e : (insert b J).erase a = insert b (J.erase a) := Finset.erase_insert_of_ne hba
-      simp only [ha, hb, if_true, if_false, Finset.mem_erase, Finset.mem_insert, and_false, or_true, exterior_sign_erase,
+      simp only [ha, hb, ite_true, ite_false, Finset.mem_erase, Finset.mem_insert, and_false, or_true, exterior_sign_erase,
         exterior_sign_insert, true_and, not_false_eq_true, e, sign_flip_of_ne hab, LinearMap.zero_apply, Pi.zero_apply]
       ring
     · simp [ha, hb]
@@ -530,7 +465,7 @@ theorem wedge_anticommute (a b : Fin n) : exteriorWedge P a * exteriorWedge P b 
   · subst hab; simp
   · have hba : b ≠ a := fun h => hab h.symm
     by_cases ha : a ∈ J <;> by_cases hb : b ∈ J
-    · simp only [ha, hb, if_true, Finset.mem_erase, ne_eq, hab, hba, not_false_eq_true, and_self, exterior_sign_erase,
+    · simp only [ha, hb, ite_true, Finset.mem_erase, ne_eq, hab, hba, not_false_eq_true, and_self, exterior_sign_erase,
         true_and, Finset.erase_right_comm (a := a) (b := b), sign_flip_of_ne hab]
       ring
     · simp [ha, hb]
@@ -547,7 +482,7 @@ theorem contraction_anticommute (a b : Fin n) : exteriorContraction P a * exteri
     · simp [ha, hb]
     · simp [ha, hb]
     · simp [ha, hb]
-    · simp only [ha, hb, if_false, Finset.mem_insert, hab, hba, or_self, exterior_sign_insert,
+    · simp only [ha, hb, ite_false, Finset.mem_insert, hab, hba, or_self, exterior_sign_insert,
         true_and, not_false_eq_true, Finset.insert_comm a b, sign_flip_of_ne hab]
       ring
 
@@ -587,9 +522,9 @@ theorem right_wedge_eq_sum (x : Fin n → P) (K : Finset (Fin n) → P) : wedgeR
   unfold wedgeR
   rw [← Finset.sum_subset (Finset.subset_univ J)]
   · refine Finset.sum_congr rfl fun m hm => ?_
-    rw [Pi.smul_apply, exterior_wedge_apply, if_pos hm, smul_eq_mul]; unfold exteriorSign; ring
+    rw [Pi.smul_apply, exterior_wedge_apply, ite_eq_left hm, smul_eq_mul]; unfold exteriorSign; ring
   · intro m _ hm
-    rw [Pi.smul_apply, exterior_wedge_apply, if_neg hm, smul_zero]
+    rw [Pi.smul_apply, exterior_wedge_apply, ite_eq_right hm, smul_zero]
 
 theorem right_contraction_eq_sum (x : Fin n → P) (K : Finset (Fin n) → P) : contrR x K = ∑ m, x m • exteriorContraction P m K := by
   funext J
@@ -598,10 +533,10 @@ theorem right_contraction_eq_sum (x : Fin n → P) (K : Finset (Fin n) → P) : 
   rw [← Finset.sum_subset (Finset.subset_univ (univ \ J))]
   · refine Finset.sum_congr rfl fun m hm => ?_
     have hm' : m ∉ J := (Finset.mem_sdiff.1 hm).2
-    rw [Pi.smul_apply, exterior_contraction_apply, if_neg hm', smul_eq_mul]; unfold exteriorSign; ring
+    rw [Pi.smul_apply, exterior_contraction_apply, ite_eq_right hm', smul_eq_mul]; unfold exteriorSign; ring
   · intro m _ hm
     have hm' : m ∈ J := by simpa using hm
-    rw [Pi.smul_apply, exterior_contraction_apply, if_pos hm', smul_zero]
+    rw [Pi.smul_apply, exterior_contraction_apply, ite_eq_left hm', smul_zero]
 
 end car
 
@@ -730,18 +665,18 @@ theorem gl_action_column_kernel {B : Fin N → ℕ} (Pa : PPath n N LL B) (a b :
         gl_action_X LL a b _ m
       have hmul := gl_action_mul (R := R) LL Set.univ a b
       by_cases hv : LL.vec ⟨j, h⟩ = true
-      · rw [if_pos hv] at hst
+      · rw [ite_eq_left hv] at hst
         have hle : colH (Pa.mu ⟨j, by omega⟩) c ≤ colH (Pa.mu ⟨j + 1, by omega⟩) c := column_height_mono hst.1 c
-        simp only [hv, if_true] at hDx
+        simp only [hv, ite_true] at hDx
         unfold colStep
         by_cases hlt : colH (Pa.mu ⟨j, by omega⟩) c < colH (Pa.mu ⟨j + 1, by omega⟩) c
-        · rw [if_pos hlt]
+        · rw [ite_eq_left hlt]
           by_cases hc : 1 ≤ c
-          · rw [if_pos hc, right_wedge_eq_sum]
+          · rw [ite_eq_left hc, right_wedge_eq_sum]
             refine derivation_exterior_induction (glAct R LL Set.univ a b).toAddMonoidHom hmul (exteriorWedge _) (linear_map_exterior_wedge _) _ x K ih ?_ J
-            simp only [columnOperator, if_pos hc, commutator_wedge, LinearMap.toAddMonoidHom_coe, hDx]
+            simp only [columnOperator, ite_eq_left hc, commutator_wedge, LinearMap.toAddMonoidHom_coe, hDx]
             rw [sum_ite_eq_left_smul, sum_ite_eq_right_smul]
-          · rw [if_neg hc, right_contraction_eq_sum]
+          · rw [ite_eq_right hc, right_contraction_eq_sum]
             refine derivation_exterior_induction (glAct R LL Set.univ a b).toAddMonoidHom hmul (exteriorContraction _) (linear_map_exterior_contraction _) _ x K ih ?_ J
             have e : ∀ m, (-(exteriorWedge (MvPolynomial (Fin N × Fin n) R) a * exteriorContraction _ b)) * exteriorContraction _ m -
                 exteriorContraction _ m * (-(exteriorWedge _ a * exteriorContraction _ b)) = if m = a then exteriorContraction _ b else 0 := by
@@ -749,25 +684,25 @@ theorem gl_action_column_kernel {B : Fin N → ℕ} (Pa : PPath n N LL B) (a b :
               have := commutator_contraction (P := MvPolynomial (Fin N × Fin n) R) b a m
               rw [neg_mul, mul_neg, sub_neg_eq_add, neg_add_eq_sub, ← neg_sub, this]
               split_ifs <;> simp
-            simp only [columnOperator, if_neg hc, e, LinearMap.toAddMonoidHom_coe, hDx]
+            simp only [columnOperator, ite_eq_right hc, e, LinearMap.toAddMonoidHom_coe, hDx]
             rw [sum_ite_eq_left_smul', sum_ite_eq_right_smul]
-        · rw [if_neg hlt, if_neg (by omega)]
+        · rw [ite_eq_right hlt, ite_eq_right (by omega)]
           exact ih J
-      · rw [if_neg hv] at hst
+      · rw [ite_eq_right hv] at hst
         have hle : colH (Pa.mu ⟨j + 1, by omega⟩) c ≤ colH (Pa.mu ⟨j, by omega⟩) c := column_height_mono hst.1 c
         have hv' : LL.vec ⟨j, h⟩ = false := by simpa using hv
-        simp only [hv', Bool.false_eq_true, if_false] at hDx
+        simp only [hv', Bool.false_eq_true, ite_false] at hDx
         unfold colStep
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
         by_cases hlt : colH (Pa.mu ⟨j + 1, by omega⟩) c < colH (Pa.mu ⟨j, by omega⟩) c
-        · rw [if_pos hlt]
+        · rw [ite_eq_left hlt]
           by_cases hc : 1 ≤ c
-          · rw [if_pos hc, right_contraction_eq_sum]
+          · rw [ite_eq_left hc, right_contraction_eq_sum]
             refine derivation_exterior_induction (glAct R LL Set.univ a b).toAddMonoidHom hmul (exteriorContraction _) (linear_map_exterior_contraction _) _ x K ih ?_ J
-            simp only [columnOperator, if_pos hc, commutator_contraction, LinearMap.toAddMonoidHom_coe, hDx]
+            simp only [columnOperator, ite_eq_left hc, commutator_contraction, LinearMap.toAddMonoidHom_coe, hDx]
             rw [sum_ite_eq_left_smul', sum_ite_eq_right_smul]
             simp
-          · rw [if_neg hc, right_wedge_eq_sum]
+          · rw [ite_eq_right hc, right_wedge_eq_sum]
             refine derivation_exterior_induction (glAct R LL Set.univ a b).toAddMonoidHom hmul (exteriorWedge _) (linear_map_exterior_wedge _) _ x K ih ?_ J
             have e : ∀ m, (-(exteriorWedge (MvPolynomial (Fin N × Fin n) R) a * exteriorContraction _ b)) * exteriorWedge _ m -
                 exteriorWedge _ m * (-(exteriorWedge _ a * exteriorContraction _ b)) = if b = m then -exteriorWedge _ a else 0 := by
@@ -775,10 +710,10 @@ theorem gl_action_column_kernel {B : Fin N → ℕ} (Pa : PPath n N LL B) (a b :
               have := commutator_wedge (P := MvPolynomial (Fin N × Fin n) R) b a m
               rw [neg_mul, mul_neg, sub_neg_eq_add, neg_add_eq_sub, ← neg_sub, this]
               split_ifs <;> simp
-            simp only [columnOperator, if_neg hc, e, LinearMap.toAddMonoidHom_coe, hDx]
+            simp only [columnOperator, ite_eq_right hc, e, LinearMap.toAddMonoidHom_coe, hDx]
             rw [sum_ite_eq_left_smul, sum_ite_eq_right_smul]
             simp
-        · rw [if_neg hlt]
+        · rw [ite_eq_right hlt]
           exact ih J
     · exact ih J
 
@@ -786,7 +721,7 @@ theorem column_operator_canonical_eq_zero {P : Type*} [CommRing P] {mu : Fin (N 
     (K : Finset (Fin n) → P) : columnOperator P a b c K (Ican mu c) = 0 := by
   unfold columnOperator Ican
   by_cases hc : 1 ≤ c
-  · simp only [if_pos hc, Module.End.mul_apply, exterior_wedge_apply, exterior_contraction_apply]
+  · simp only [ite_eq_left hc, Module.End.mul_apply, exterior_wedge_apply, exterior_contraction_apply]
     split_ifs with h1 h2
     · rw [mul_zero]
     · exfalso
@@ -795,7 +730,7 @@ theorem column_operator_canonical_eq_zero {P : Type*} [CommRing P] {mu : Fin (N 
       rw [Finset.mem_erase, Finset.mem_filter]
       exact ⟨hab.ne, mem_univ _, lt_trans (Fin.lt_def.1 hab) h1.2⟩
     · rfl
-  · simp only [if_neg hc, LinearMap.neg_apply, Pi.neg_apply, Module.End.mul_apply, exterior_wedge_apply, exterior_contraction_apply]
+  · simp only [ite_eq_right hc, LinearMap.neg_apply, Pi.neg_apply, Module.End.mul_apply, exterior_wedge_apply, exterior_contraction_apply]
     split_ifs with h1 h2
     · simp
     · exfalso
@@ -862,14 +797,14 @@ theorem column_operator_diag {P : Type*} [CommRing P] (a : Fin n) (c : ℤ) (K :
   have key : (exteriorWedge P a * exteriorContraction P a) K J = if a ∈ J then K J else 0 := by
     rw [Module.End.mul_apply, exterior_wedge_apply, exterior_contraction_apply]
     by_cases ha : a ∈ J
-    · rw [if_pos ha, if_pos ha, if_neg (Finset.notMem_erase a J), exterior_sign_erase, Finset.insert_erase ha]
-      simp only [lt_self_iff_false, and_false, if_false, one_mul]
+    · rw [ite_eq_left ha, ite_eq_left ha, ite_eq_right (Finset.notMem_erase a J), exterior_sign_erase, Finset.insert_erase ha]
+      simp only [lt_self_iff_false, and_false, ite_false, one_mul]
       rw [← mul_assoc, exterior_sign_mul_self, one_mul]
-    · rw [if_neg ha, if_neg ha]
+    · rw [ite_eq_right ha, ite_eq_right ha]
   unfold columnOperator
   by_cases hc : 1 ≤ c
-  · rw [if_pos hc, if_pos hc, key]; split_ifs <;> simp
-  · rw [if_neg hc, if_neg hc, LinearMap.neg_apply, Pi.neg_apply, key]; split_ifs <;> simp
+  · rw [ite_eq_left hc, ite_eq_left hc, key]; split_ifs <;> simp
+  · rw [ite_eq_right hc, ite_eq_right hc, LinearMap.neg_apply, Pi.neg_apply, key]; split_ifs <;> simp
 
 theorem signed_column_count_eq (T x : ℤ) (h1 : -T ≤ x) (h2 : x ≤ T) :
     ∑ c ∈ Finset.Icc (-T) T, (if 1 ≤ c then (if c ≤ x then (1 : ℤ) else 0) else (if ¬ c ≤ x then -1 else 0)) = x := by
@@ -913,8 +848,8 @@ theorem weight_of_canonical_Psi_support {B : Fin N → ℕ} (Pa : PPath n N LL B
     rw [← signed_column_count_eq _ (pEnd Pa.mu a) hT.1 hT.2]
     refine Finset.sum_congr rfl fun c _ => ?_
     by_cases hc : 1 ≤ c
-    · rw [if_pos hc, if_pos hc, canonical_column_positive hd hc]; simp
-    · rw [if_neg hc, if_neg hc, canonical_column_nonpositive hd hc]; simp
+    · rw [ite_eq_left hc, ite_eq_left hc, canonical_column_positive hd hc]; simp
+    · rw [ite_eq_right hc, ite_eq_right hc, canonical_column_nonpositive hd hc]; simp
   rw [hs] at h
   exact h
 

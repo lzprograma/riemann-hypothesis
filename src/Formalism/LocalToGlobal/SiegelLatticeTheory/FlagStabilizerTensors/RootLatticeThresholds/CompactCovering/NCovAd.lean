@@ -1,5 +1,6 @@
 module
 
+import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicBoxesCompactExhaust
 public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictRing
 
@@ -17,17 +18,7 @@ variable {F : Type} [Field F] [NumberField F]
 
 theorem NCovAd_ball_compact (v : InfinitePlace F) (R : ℝ) :
     IsCompact (closedBall (0 : v.Completion) R) := by
-  first
-  | exact (by
-      have hi := NumberField.InfinitePlace.Completion.isometry_extensionEmbedding v
-      have hc := (hi.isClosedEmbedding).isCompact_preimage (isCompact_closedBall (0 : ℂ) R)
-      have e : (NumberField.InfinitePlace.Completion.extensionEmbedding v) ⁻¹' closedBall 0 R =
-          closedBall (0 : v.Completion) R := by
-        ext z
-        simp only [Set.mem_preimage, mem_closedBall, dist_zero_right]
-        rw [hi.norm_map_of_map_zero (map_zero _)]
-      rw [e] at hc
-      exact hc)
+  apply _root_.GlobalTheory.CompanionTheory.SW.BoxF.ball_cpt <;> assumption
 
 theorem NCovAd_inf_approx : ∃ R : ℝ, ∀ x : Ainf F, ∃ β : 𝓞 F,
     ∀ v : InfinitePlace F, ‖(x - algebraMap F (Ainf F) (β : F)) v‖ ≤ R := by

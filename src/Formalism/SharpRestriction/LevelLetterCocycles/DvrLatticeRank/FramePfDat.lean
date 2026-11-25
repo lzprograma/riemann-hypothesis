@@ -23,53 +23,7 @@ public import Mathlib.RingTheory.PowerSeries.Substitution
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfAlpha
 import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfNat
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfA
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Order.Interval.Finset.Box
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.TypeStar
 import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfB
 import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.InvLiftPfA
 
@@ -126,8 +80,6 @@ theorem framepf_mkLA_eq {T : LocLat G Qp LL O} {x x' : LA W T π' c} (hx : x ∈
     (hx' : x' ∈ LamLA W T π' Eπ h' c ⊤) :
     mkLA W T π' Eπ h' M c x hx = mkLA W T π' Eπ h' M c x' hx' ↔ x - x' ∈ JLA W T π' Eπ h' M c :=
   Submodule.Quotient.eq _
-
-
 
 theorem framepf_frameA (hK : W.gamK = W.gam) (hu : IsUnit (algebraMap (LetA O n) W.EE π'))
     (huE : IsUnit (algebraMap (LetA O n) W.EE Eπ)) (hΔπ : ∀ δ ∈ W.DelF, W.γA δ π' = π')
@@ -250,32 +202,6 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     (γ0 : ∀ δ ∈ W.DelF, PowerSeries.constantCoeff (W.γ₀ δ PowerSeries.X) = 0)
     (hu : IsUnit (algebraMap (LetA O n) W.EE π'))
 
-include hπ0 hΔπ γ0 in
-theorem framepf_hhx_ι_Δ (i : ZMod n) (g : PowerSeries O) (δ : W.Gam) (hδ : δ ∈ W.DelF) :
-    W.γA δ (framepf_ι π' i g) = framepf_ι π' i g := by
-  have h := framepf_ι_letγ π' i (hπ0 i) (W.γ₀ δ) (γ0 δ hδ) PowerSeries.X (by simp)
-    (by rw [PowerSeries.subst_X (PowerSeries.HasSubst.of_constantCoeff_zero' (hπ0 i))];
-        exact congrFun (hΔπ δ hδ) i) g
-  rw [PowerSeries.X_subst] at h
-  exact h
-
-include hπ0 hΔπ γ0 in
-theorem framepf_hhx_vec_mem (H : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) (k : Fin Bs.r) :
-    framepf_vec Bs π' (c - 1) H k ∈ NcS W T (c - 1) := by
-  unfold framepf_vec
-  refine Submodule.sum_mem _ fun m _ => ?_
-  rw [mem_NcS]
-  obtain ⟨hN, hΔ⟩ := Bs.mem m
-  refine ⟨(W.N T).smul_mem _ hN, fun δ hδ => ?_, ?_⟩
-  · rw [_root_.Formalism.MainNotions.LiftingTheory.gammaD_semilinear, framepf_hhx_ι_Δ π' hπ0 hΔπ γ0 _ _ δ hδ, hΔ δ hδ]
-  · rw [smul_smul, framepf_letE_ι π' (c - 1) hπ0]
-
-theorem framepf_hhx_mem (H : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) (ℓ : LcQ W T π' c) :
-    framepf_hh Bs π' c hπ0 hΔπ hR2 γ0 hu H ℓ ∈ NcS W T (c - 1) := by
-  unfold framepf_hh
-  rw [LinearMap.comp_apply, Fintype.linearCombination_apply]
-  exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (framepf_hhx_vec_mem Bs π' c hπ0 hΔπ γ0 H k)
-
 include hπ0 in
 theorem framepf_hhx_vec_pow (i : ZMod n) (Hm : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) (M : ℕ)
     (k : Fin Bs.r) :
@@ -309,7 +235,7 @@ theorem framepf_hhx_γ (Gs : PowerSeries O) (hGs0 : PowerSeries.constantCoeff Gs
     rw [map_smul, framepf_γ_vec Bs π' (c - 1) hπ0 Gs hGs0 hGs Γ hΓ, sub_eq_iff_eq_add.1 hH,
       framepf_vec_add Bs π' (c - 1) hπ0, framepf_hhx_vec_pow Bs π' hπ0, smul_add, add_sub_cancel_right,
       smul_comm]
-  have hm := (mem_NcS W T (c - 1) _).1 (framepf_hhx_mem Bs π' c hπ0 hΔπ hR2 γ0 hu Km ℓ)
+  have hm := (mem_NcS W T (c - 1) _).1 (Formalism.MainNotions.N.Ln34.framepf_hh_mem Bs π' c hπ0 hΔπ hR2 γ0 hu Km ℓ)
   rw [e, mem_PiNS]
   refine ⟨⟨_, hm.1, rfl⟩, fun δ hδ => ?_⟩
   rw [_root_.Formalism.MainNotions.LiftingTheory.gammaD_semilinear, map_pow, hΔπ δ hδ, hm.2.1 δ hδ]
@@ -321,23 +247,23 @@ theorem framepf_hhx_mod (lσ : O) (H Km : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSer
     framepf_hh Bs π' c hπ0 hΔπ hR2 γ0 hu H (mkL W T π' c z hz) - lσ • z ∈ PiNS W T π' 1 := by
   set ℓ := mkL W T π' c z hz with hℓ
   have hv : ∀ k, framepf_coordL Bs π' c hπ0 hΔπ hR2 γ0
-      ⟨_, framepf_hhx_vec_mem Bs π' c hπ0 hΔπ γ0 H k⟩ = lσ • Pi.single k 1 := by
+      ⟨_, Formalism.MainNotions.N.Ln34.framepf_vec_mem Bs π' c hπ0 hΔπ γ0 H k⟩ = lσ • Pi.single k 1 := by
     intro k
-    have e := framepf_gco_eq Bs π' c hπ0 hΔπ hR2 γ0 ⟨_, framepf_hhx_vec_mem Bs π' c hπ0 hΔπ γ0 H k⟩
+    have e := framepf_gco_eq Bs π' c hπ0 hΔπ hR2 γ0 ⟨_, Formalism.MainNotions.N.Ln34.framepf_vec_mem Bs π' c hπ0 hΔπ γ0 H k⟩
       (fun m => H m k) rfl
     funext m
     rw [framepf_coordL_apply, e, hH]
     by_cases hmk : m = k
     · subst hmk; simp
     · simp [Matrix.one_apply_ne hmk, Pi.single_eq_of_ne hmk]
-  have hsum : (⟨_, framepf_hhx_mem Bs π' c hπ0 hΔπ hR2 γ0 hu H ℓ⟩ : ↥(NcS W T (c - 1))) =
+  have hsum : (⟨_, Formalism.MainNotions.N.Ln34.framepf_hh_mem Bs π' c hπ0 hΔπ hR2 γ0 hu H ℓ⟩ : ↥(NcS W T (c - 1))) =
       ∑ k, framepf_Lbas Bs π' c hπ0 hΔπ hR2 γ0 hu ℓ k •
-        (⟨_, framepf_hhx_vec_mem Bs π' c hπ0 hΔπ γ0 H k⟩ : ↥(NcS W T (c - 1))) := by
+        (⟨_, Formalism.MainNotions.N.Ln34.framepf_vec_mem Bs π' c hπ0 hΔπ γ0 H k⟩ : ↥(NcS W T (c - 1))) := by
     apply Subtype.ext
     rw [Submodule.coe_sum]
     exact framepf_hhx_apply Bs π' c hπ0 hΔπ hR2 γ0 hu H ℓ
   have key := (framepf_coordL_ker Bs π' c hπ0 hΔπ hR2 γ0 hu
-    (⟨_, framepf_hhx_mem Bs π' c hπ0 hΔπ hR2 γ0 hu H ℓ⟩ - lσ • ⟨z, hz⟩)).1 (by
+    (⟨_, Formalism.MainNotions.N.Ln34.framepf_hh_mem Bs π' c hπ0 hΔπ hR2 γ0 hu H ℓ⟩ - lσ • ⟨z, hz⟩)).1 (by
 
       rw [map_sub, map_smul, hsum, map_sum, ← framepf_Lbas_mk Bs π' c hπ0 hΔπ hR2 γ0 hu ⟨z, hz⟩]
       simp only [map_smul, hv]
@@ -373,7 +299,7 @@ variable {LL V : Type} [Field LL] [AddCommGroup V] [Module LL V]
 
 theorem framepf_serC_neg (f : PowerSeries LL) (d : V) (i : ℤ) (hi : i < 0) : serC f d i = 0 := by
   simp only [serC]
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 theorem framepf_serMul_serC (g f : PowerSeries LL) (d : V) (i : ℤ) :
     serMul g (serC f d) i = serC (g * f) d i := by
@@ -396,10 +322,10 @@ theorem framepf_serMul_serC (g f : PowerSeries LL) (d : V) (i : ℤ) :
       intro j hj
       rw [Finset.mem_range] at hj
       simp only [serC]
-      rw [if_pos (by omega), show ((n : ℤ) - j).toNat = n - j by omega, smul_smul]
+      rw [ite_eq_left (by omega), show ((n : ℤ) - j).toNat = n - j by omega, smul_smul]
     rw [Finset.sum_congr rfl h1, ← Finset.sum_smul]
     simp only [serC]
-    rw [if_pos hi, PowerSeries.coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]
+    rw [ite_eq_left hi, PowerSeries.coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]
     simp
 
 theorem framepf_serMul_congr (g : PowerSeries LL) (m : ℕ) (hg : ∀ j < m, PowerSeries.coeff j g = 0)
@@ -517,7 +443,6 @@ theorem framepf_Qpow_mem {p : W.DD T} {m₀ m : ℕ} (h : W.Q ^ m₀ • p ∈ W
   rw [pow_add, mul_comm, mul_smul]
   exact Submodule.smul_mem _ _ h
 
-
 include Ct in
 theorem framepf_span_vanish (hc : IsCrys PD T.ρ) (c : ZMod n) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD.p)
     (hQ0 : PowerSeries.constantCoeff (W.lev c ζ W.Q) = 0)
@@ -561,7 +486,6 @@ theorem framepf_span_vanish (hc : IsCrys PD T.ρ) (c : ZMod n) (ζ : LL) (hζ : 
     have : (⟨_, hN⟩ : ↥(W.N T)) = s • ⟨_, a₁⟩ := Subtype.ext (smul_comm _ _ _)
     rw [this, ModelFPf.levN_eq_serMul, framepf_serMul_congr _ 0 (fun j hj => by omega) _ (fun _ => 0) m
       b₁ i (by omega), framepf_serMul_zero]
-
 
 include Ct in
 theorem framepf_loc_core (hc : IsCrys PD T.ρ) (c : ZMod n) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD.p)
@@ -614,7 +538,6 @@ theorem framepf_loc_core (hc : IsCrys PD T.ρ) (c : ZMod n) (ζ : LL) (hζ : IsP
   congr 1
   ring
 
-
 include Ct in
 theorem framepf_valAt_mod (hc : IsCrys PD T.ρ) (c : ZMod n) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD.p)
     (hQ0 : PowerSeries.constantCoeff (W.lev c ζ W.Q) = 0)
@@ -644,7 +567,6 @@ theorem framepf_valAt_mod (hc : IsCrys PD T.ρ) (c : ZMod n) (ζ : LL) (hζ : Is
 theorem framepf_lev_π_one (i : ZMod n) : PowerSeries.constantCoeff (W.lev i 1 letπ) = 0 := by
   obtain ⟨E, hE1, -, hE⟩ := W.lev_π i 1 ⟨0, by rw [pow_zero]; exact IsPrimitiveRoot.one⟩
   simpa [hE1] using congrArg PowerSeries.constantCoeff hE
-
 
 include Ct in
 theorem framepf_locC (hc : IsCrys PD T.ρ) (hs : W.s = 1) (c : ZMod n) (ζ : LL)
@@ -696,7 +618,7 @@ theorem framepf_locC (hc : IsCrys PD T.ρ) (hs : W.s = 1) (c : ZMod n) (ζ : LL)
         PowerSeries.X ^ (s' * M) * (W.lev (c - 1) 1 w ^ M * f ^ (s' * M)) := by
       rw [hπ, map_pow, map_mul, map_pow, hf]
       ring
-    rw [this, PowerSeries.coeff_X_pow_mul', if_neg (by omega)]
+    rw [this, PowerSeries.coeff_X_pow_mul', ite_eq_right (by omega)]
   have key := framepf_loc_core Ct T hc c ζ hζ hQ0 hQ1 hneg (4 * h') (fun j => (a j : LetA O n))
     (fun j => ⟨_, hN (mkL W T π' c (z j) (hz j))⟩) (fun j => hmid _)
     (-(π' ^ M * Eπ ^ (4 * h'))) (fun j hj => by
@@ -705,7 +627,7 @@ theorem framepf_locC (hc : IsCrys PD T.ρ) (hs : W.s = 1) (c : ZMod n) (ζ : LL)
           PowerSeries.X ^ (4 * h') * (-(W.lev c ζ π' ^ M * f ^ (4 * h'))) := by
         rw [map_neg, map_mul, map_pow, map_pow, hf]
         ring
-      rw [this, PowerSeries.coeff_X_pow_mul', if_neg (by omega)]) p
+      rw [this, PowerSeries.coeff_X_pow_mul', ite_eq_right (by omega)]) p
     (Submodule.span_mono (Set.image_mono fun _ hx => Formalism.MainNotions.LiftingTheory.wmap_Nl_le W T (c - 1) hx) hp.1.1)
     (Eπ ^ h' • y) (by
       rw [← hΛ, show y = Ψ x - (π' ^ M * Eπ ^ (3 * h')) • p by rw [hpe']; abel, smul_sub, smul_smul,
@@ -1309,7 +1231,6 @@ def FramepfBack {T : LocLat G Qp LL O} (Bs : FramepfBas W T) (π' : LetA O n) (c
       ∀ y ∈ LamPS W T Eπ h' c,
         framepf_Ψα Bs π' c hπ0 hΔπ hR2 γ0 hu H (Φ y) - lam • y ∈ JP W T π' Eπ h' M c
 
-
 include Ct in
 
 theorem framepf_data [IsDomain O] (hι : Function.Injective (algebraMap O LL)) (hT : IsCrys PD T.ρ)
@@ -1370,7 +1291,7 @@ theorem framepf_data [IsDomain O] (hι : Function.Injective (algebraMap O LL)) (
       (fun j => (Bs.mem j).1) Bs.uniq 1 r₀ d hr₀ hd (by rw [pow_one]; exact hrd)
   · refine framepf_locC Ct T hT hs c ζ (hprim τ ζ hpt) (fun x k hk => ?_) ?_ (fun r hr h => ?_)
       π' _ w w' s' h' M σ hs' hw w'.isUnit hw' hM _
-      (fun ℓ => ((mem_NcS W T (c - 1) _).1 (framepf_hhx_mem Bs π' c hπ0 hΔπ hR2 γ0 hu H ℓ)).1) hγ hmod
+      (fun ℓ => ((mem_NcS W T (c - 1) _).1 (Formalism.MainNotions.N.Ln34.framepf_hh_mem Bs π' c hπ0 hΔπ hR2 γ0 hu H ℓ)).1) hγ hmod
       _ (framepf_Ψα_tmul Bs π' c hπ0 hΔπ hR2 γ0 hu H) x y hxy m a z hrep k hk i hi
     · exact ((h4.1 (c - 1) 1 ⟨0, one_pow _⟩
         (by rw [Formalism.MainNotions.LiftingTheory.wmap_X_one W hs]; exact framepf_lev_π_one _)).1 x k).2 hk

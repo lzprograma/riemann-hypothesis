@@ -9,6 +9,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions
 
 namespace Formalism.L2.Ker
 
-alias Base.stdOK := _root_.Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.stdOK
+alias Base.stdOK := _root_.GlobalTheory.FourthRootStd.stdOK
 
 end Formalism.L2.Ker

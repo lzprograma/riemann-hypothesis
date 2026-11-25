@@ -1,47 +1,10 @@
 module
 
+import Formalism.PeriodIntegrals.AdmissibleModel.WeylDim
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.RankDefs
 public import Formalism.GradedWeylDivisibility.FinalD
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.Interval.Finset.Box
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -106,9 +69,9 @@ theorem wprod_vec (m d : ℕ) : wprod (m + 1) (fun i => if i = 0 then d else 0) 
     · exact ratio_one h _
     · rfl
   rw [h2, mul_one, Fin.prod_univ_succ, ← prodUp]
-  simp only [lt_self_iff_false, if_false, one_mul, if_true]
+  simp only [lt_self_iff_false, ite_false, one_mul, ite_true]
   refine Finset.prod_congr rfl fun j _ => ?_
-  rw [if_pos (Fin.succ_pos j), if_neg (Fin.succ_ne_zero j)]
+  rw [ite_eq_left (Fin.succ_pos j), ite_eq_right (Fin.succ_ne_zero j)]
   simp only [Fin.val_succ, Fin.val_zero, Nat.cast_zero, sub_zero, Nat.cast_add, Nat.cast_one]
   congr 1
   ring
@@ -122,7 +85,7 @@ theorem wprod_cov (m d : ℕ) :
         ((((if Fin.last m = Fin.last m then 0 else d : ℕ)) : ℚ) - (((if j = Fin.last m then 0 else d : ℕ)) : ℚ) +
           (j : ℚ) - ((Fin.last m : Fin (m + 1)) : ℚ)) / ((j : ℚ) - ((Fin.last m : Fin (m + 1)) : ℚ)) else 1) = 1 := by
     apply Finset.prod_eq_one; intro j _
-    rw [if_neg (not_lt.mpr (Fin.le_last j))]
+    rw [ite_eq_right (not_lt.mpr (Fin.le_last j))]
   rw [h2, mul_one, ← prodDown]
   refine Finset.prod_congr rfl fun i _ => ?_
   rw [Fin.prod_univ_castSucc]
@@ -131,13 +94,13 @@ theorem wprod_cov (m d : ℕ) :
         ((((if i.castSucc = Fin.last m then 0 else d : ℕ)) : ℚ) - (((if j.castSucc = Fin.last m then 0 else d : ℕ)) : ℚ) +
           (j.castSucc : ℚ) - (i.castSucc : ℚ)) / ((j.castSucc : ℚ) - (i.castSucc : ℚ)) else 1) = 1 := by
     apply Finset.prod_eq_one; intro j _
-    rw [if_neg (Fin.castSucc_lt_last i).ne, if_neg (Fin.castSucc_lt_last j).ne]
+    rw [ite_eq_right (Fin.castSucc_lt_last i).ne, ite_eq_right (Fin.castSucc_lt_last j).ne]
     by_cases h : i.castSucc < j.castSucc
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       exact ratio_one h _
-    · rw [if_neg h]
-  rw [h3, one_mul, if_pos (Fin.castSucc_lt_last i)]
-  simp only [if_neg (Fin.castSucc_lt_last i).ne, if_true, Fin.val_castSucc, Fin.val_last, Nat.cast_zero, sub_zero]
+    · rw [ite_eq_right h]
+  rw [h3, one_mul, ite_eq_left (Fin.castSucc_lt_last i)]
+  simp only [ite_eq_right (Fin.castSucc_lt_last i).ne, ite_true, Fin.val_castSucc, Fin.val_last, Nat.cast_zero, sub_zero]
 
 theorem last_ne_zero {m : ℕ} (hm : 1 ≤ m) : Fin.last m ≠ 0 := by
   intro h
@@ -153,7 +116,7 @@ theorem finrank_letter {D : Formalism.BasicNotions.D7} (h3 : adm3 D) (K : Type) 
     | true =>
       have hnu : nuOf (letterWt m d true) = fun i => if i = 0 then d else 0 := by
         funext i
-        simp only [nuOf, letterWt, if_true, if_neg (last_ne_zero hm), sub_zero]
+        simp only [nuOf, letterWt, ite_true, ite_eq_right (last_ne_zero hm), sub_zero]
         split_ifs <;> simp
       have hanti : Antitone (nuOf (letterWt m d true)) := by
         rw [hnu]
@@ -166,16 +129,16 @@ theorem finrank_letter {D : Formalism.BasicNotions.D7} (h3 : adm3 D) (K : Type) 
     | false =>
       have hnu : nuOf (letterWt m d false) = fun i => if i = Fin.last m then 0 else d := by
         funext i
-        simp only [nuOf, letterWt, Bool.false_eq_true, if_false, if_true]
+        simp only [nuOf, letterWt, Bool.false_eq_true, ite_false, ite_true]
         split_ifs <;> simp
       have hanti : Antitone (nuOf (letterWt m d false)) := by
         rw [hnu]
         intro i j hij
         simp only
         by_cases hj : j = Fin.last m
-        · rw [if_pos hj]; exact Nat.zero_le _
+        · rw [ite_eq_left hj]; exact Nat.zero_le _
         · have hi : i ≠ Fin.last m := fun h => hj (le_antisymm (Fin.le_last _) (h ▸ hij))
-          rw [if_neg hj, if_neg hi]
+          rw [ite_eq_right hj, ite_eq_right hi]
       rw [h3 K _ _ hanti, hnu]
       exact wprod_cov m d
   exact_mod_cast hq
@@ -184,17 +147,7 @@ theorem finrank_tensor (Kf : Type) [Field Kf] (S : Type) [Fintype S] [DecidableE
     (ν : S → Fin n → ℕ) :
     Module.finrank Kf (Formalism.GradedWeylDivisibility.tensorLat Kf Kf fun s => Formalism.GradedWeylDivisibility.dualWeyl Kf k n (ν s)) =
       ∏ s, Module.finrank Kf (Formalism.GradedWeylDivisibility.dualWeyl Kf k n (ν s)) := by
-  classical
-  have hb := fun s : S => Formalism.GradedWeylDivisibility.sSBasis Kf k n (ν s)
-  choose b hb1 _ using hb
-  have : IsFractionRing Kf Kf :=
-    IsLocalization.of_le_isUnit (fun x hx => IsUnit.mk0 x (nonZeroDivisors.ne_zero hx))
-  obtain ⟨hli, hsp⟩ := Formalism.GradedWeylDivisibility.tensorBasis Kf Kf S k n (fun s => ↥(Formalism.GradedWeylDivisibility.ssIdx k n (ν s)))
-    (fun s => Formalism.GradedWeylDivisibility.dualWeyl Kf k n (ν s)) b (fun s => (hb1 s).1) (fun s => (hb1 s).2.1)
-  have : ∀ s : S, Fintype ↥(Formalism.GradedWeylDivisibility.ssIdx k n (ν s)) := fun s => (Formalism.GradedWeylDivisibility.sSIdxFinite k n (ν s)).fintype
-  rw [← hsp, finrank_span_eq_card hli, Fintype.card_pi]
-  refine Finset.prod_congr rfl fun s _ => ?_
-  rw [← (hb1 s).2.1, finrank_span_eq_card (hb1 s).1]
+  apply _root_.Formalism.L2.G.Model.finrank_tensor' <;> assumption
 
 theorem dimHH_of {D : Formalism.BasicNotions.D7} (h3 : adm3 D) : DimHHAt := by
   intro Kf _ _ n' m TT aT bT hm

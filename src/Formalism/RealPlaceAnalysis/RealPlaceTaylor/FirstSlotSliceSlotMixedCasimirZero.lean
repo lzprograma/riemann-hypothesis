@@ -1,50 +1,6 @@
 module
 
 public import Formalism.RealPlaceAnalysis.StatementU
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -119,13 +75,13 @@ private theorem sum_update_ite_eq_sum_update_ite_of_involution {X M : Type*} [Fi
       ∑ α : Fin j → X, (if P (α i) then f (Function.update α i (σ (α i))) α else 0) := by
     refine Finset.sum_congr rfl fun α _ => ?_
     by_cases h : P (α i)
-    · rw [if_pos h, if_pos h, hτ _ h]
-    · rw [if_neg h, if_neg h]
+    · rw [ite_eq_left h, ite_eq_left h, hτ _ h]
+    · rw [ite_eq_right h, ite_eq_right h]
   rw [h1, sum_update_involution i σ hσ P f]
   refine Finset.sum_congr rfl fun β _ => ?_
   by_cases h : Q (β i)
-  · rw [if_pos ((hQ _).1 h), if_pos h, hτ' _ h]
-  · rw [if_neg (fun h' => h ((hQ _).2 h')), if_neg h]
+  · rw [ite_eq_left ((hQ _).1 h), ite_eq_left h, hτ' _ h]
+  · rw [ite_eq_right (fun h' => h ((hQ _).2 h')), ite_eq_right h]
 
 theorem inner_positionAction (i : Fin j) (c d : Fin n) (F G : Arr V n j) :
     ⟪factorAction i c d F, G⟫_ℂ = ⟪F, factorAction i d c G⟫_ℂ := by
@@ -193,8 +149,8 @@ theorem compactCasimir_add (ε : Fin n → Bool) (S P : Fin n → Fin n → Modu
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
     by_cases h : ε a = ε b
-    · rw [if_pos h.symm, if_pos h, hc]
-    · rw [if_neg (Ne.symm h), if_neg h]
+    · rw [ite_eq_left h.symm, ite_eq_left h, hc]
+    · rw [ite_eq_right (Ne.symm h), ite_eq_right h]
   have expand : ∀ a b, (if ε a = ε b then (S a b + P a b) * (S b a + P b a) else 0) =
       (if ε a = ε b then S a b * S b a else 0) + (if ε a = ε b then P a b * P b a else 0) +
       ((if ε a = ε b then S a b * P b a else 0) + (if ε a = ε b then P a b * S b a else 0)) := by
@@ -254,7 +210,7 @@ theorem admissibleArrays_apply_eq_zero {ε : Fin n → Bool} {E : Fin n → Fin 
     (hF : F ∈ arrV0 ε E u j) (α : Fin j → Fin n × Fin n) (hα : ¬ ∀ i, ε (α i).1 ≠ ε (α i).2) :
     F α = 0 := by
   have h := (mem_admissibleArrays ε E u F).1 hF α
-  rw [if_neg hα, Submodule.mem_bot] at h
+  rw [ite_eq_right hα, Submodule.mem_bot] at h
   exact h
 
 theorem compactCasimir_pointwiseAction_apply (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ V) (F : Arr V n j)
@@ -390,11 +346,11 @@ theorem firstPositionSlice_positionAction_succ (α' : Fin j → Fin n × Fin n) 
   rw [hf, map_sub, ← hf, ← hf]
   congr 1
   · by_cases h1 : (α' k).1 = a
-    · rw [if_pos h1, if_pos h1, firstPositionSlice_apply]
-    · rw [if_neg h1, if_neg h1, hf, map_zero]
+    · rw [ite_eq_left h1, ite_eq_left h1, firstPositionSlice_apply]
+    · rw [ite_eq_right h1, ite_eq_right h1, hf, map_zero]
   · by_cases h2 : (α' k).2 = b
-    · rw [if_pos h2, if_pos h2, firstPositionSlice_apply]
-    · rw [if_neg h2, if_neg h2, hf, map_zero]
+    · rw [ite_eq_left h2, ite_eq_left h2, firstPositionSlice_apply]
+    · rw [ite_eq_right h2, ite_eq_right h2, hf, map_zero]
 
 end U3Succ
 
@@ -423,7 +379,7 @@ theorem factorAction_mem_admissibleArrays {ε : Fin n → Bool} {E : Fin n → F
   intro α
   rw [factorAction_apply]
   by_cases hα : ∀ k, ε (α k).1 ≠ ε (α k).2
-  · rw [if_pos hα]
+  · rw [ite_eq_left hα]
     refine Submodule.sub_mem _ ?_ ?_
     · split_ifs
       · exact admissibleArrays_apply_mem hF _
@@ -431,8 +387,8 @@ theorem factorAction_mem_admissibleArrays {ε : Fin n → Bool} {E : Fin n → F
     · split_ifs
       · exact admissibleArrays_apply_mem hF _
       · exact Submodule.zero_mem _
-  · rw [if_neg hα, Submodule.mem_bot]
-    push_neg at hα
+  · rw [ite_eq_right hα, Submodule.mem_bot]
+    push Not at hα
     obtain ⟨k, hk⟩ := hα
     have t1 : (if (α i).1 = a then F (Function.update α i (b, (α i).2)) else 0) = 0 := by
       split_ifs with h1
@@ -465,9 +421,9 @@ theorem pointwiseAction_mem_admissibleArrays {ε : Fin n → Bool} {E : Fin n �
   intro α
   rw [pointwiseAction_apply]
   by_cases hα : ∀ k, ε (α k).1 ≠ ε (α k).2
-  · rw [if_pos hα]
+  · rw [ite_eq_left hα]
     exact compactSpan_invariant ε E u a b hab _ (admissibleArrays_apply_mem hF α)
-  · rw [if_neg hα, Submodule.mem_bot, admissibleArrays_apply_eq_zero hF α hα, map_zero]
+  · rw [ite_eq_right hα, Submodule.mem_bot, admissibleArrays_apply_eq_zero hF α hα, map_zero]
 
 theorem admissibleArrays_invariant (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ V) (u : V) (j : ℕ) :
     KStable ε (arrE E j) (arrV0 ε E u j) := by

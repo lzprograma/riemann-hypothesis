@@ -81,7 +81,7 @@ lemma cechH_cls (Φ : CechFamily U P P') {n : ℕ} (σ : Cochain P U n) (hσ : d
 
 def ofHom (f : P ⟶ P') : CechFamily U P P' where
   φ i := (f.app (op (inter U i))).hom
-  res_comm i j h x := app_res f h x
+  res_comm _ _ h x := app_res f h x
 
 lemma ofHom_cechH (f : P ⟶ P') (n : ℕ) (x : GroundTheory.Arith.SchemeCoh.cechH P U n) :
     (ofHom (U := U) f).cechH n x = cechHMap U f n x := by

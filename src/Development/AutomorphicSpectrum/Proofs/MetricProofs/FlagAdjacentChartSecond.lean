@@ -2,46 +2,7 @@ module
 
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsBaseChart
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockDiagonalMinorVanishing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -72,13 +33,13 @@ theorem minorIJ_mul_one_add_single (H : Matrix (Fin N) (Fin N) ℂ) (I C : Finse
   · have h1 : minorIJ (1 + Matrix.single cb ca t : Matrix (Fin N) (Fin N) ℂ) C C = 1 := by
       rw [minorIJ_eq_det _ C C _ rfl rfl, Matrix.det_of_lowerTriangular]
       · refine Finset.prod_eq_one fun x _ => ?_
-        rw [Matrix.submatrix_apply, hent, if_pos rfl, if_neg, add_zero]
+        rw [Matrix.submatrix_apply, hent, ite_eq_left rfl, ite_eq_right, add_zero]
         rintro ⟨e1, e2⟩
         exact hne _ ⟨e1, e2⟩
       · intro x y hxy
         have hxy' : x < y := hxy
         have hs := (C.orderEmbOfFin rfl).strictMono hxy'
-        rw [Matrix.submatrix_apply, hent, if_neg hs.ne, if_neg, add_zero]
+        rw [Matrix.submatrix_apply, hent, ite_eq_right hs.ne, ite_eq_right, add_zero]
         rintro ⟨e1, e2⟩
         rw [e1, e2] at hs
         exact absurd hs (not_lt.mpr hlt.le)
@@ -87,7 +48,7 @@ theorem minorIJ_mul_one_add_single (H : Matrix (Fin N) (Fin N) ℂ) (I C : Finse
     have hkc : k ≠ c := by
       rintro rfl
       exact hk hc
-    rw [hent, if_neg hkc, if_neg, add_zero]
+    rw [hent, ite_eq_right hkc, ite_eq_right, add_zero]
     rintro ⟨e1, e2⟩
     rw [e1] at hk
     rw [e2] at hc
@@ -114,7 +75,7 @@ variable {Ψ : Type} {N j : ℕ}
 theorem lowMat_isBlockDiag (c : LowIdx Ψ N j → ℂ) (τ : Ψ) : IsBlockDiag j (lowMat c τ) := by
   intro x y hxy
   unfold lowMat
-  rw [_root_.dite_eq_right (fun e => hxy e.2), if_neg]
+  rw [_root_.dite_eq_right (fun e => hxy e.2), ite_eq_right]
   rintro rfl
   exact hxy Iff.rfl
 
@@ -122,11 +83,11 @@ theorem lowMat_det (c : LowIdx Ψ N j → ℂ) (τ : Ψ) : (lowMat c τ).det = 1
   rw [Matrix.det_of_lowerTriangular]
   · refine Finset.prod_eq_one fun x _ => ?_
     unfold lowMat
-    rw [_root_.dite_eq_right (fun e => lt_irrefl _ e.1), if_pos rfl]
+    rw [_root_.dite_eq_right (fun e => lt_irrefl _ e.1), ite_eq_left rfl]
   · intro x y hxy
     have hxy' : x < y := hxy
     unfold lowMat
-    rw [_root_.dite_eq_right (fun e => lt_asymm hxy' e.1), if_neg hxy'.ne]
+    rw [_root_.dite_eq_right (fun e => lt_asymm hxy' e.1), ite_eq_right hxy'.ne]
 
 theorem analytic_wH {n e : ℕ} (h : Ψ → Matrix (Fin N) (Fin N) ℂ) (ε : Fin n ⊕ LowIdx Ψ N j ⊕ Unit ≃ Fin e) (τ' : Ψ)
     (r s : Fin N) (S : Set (Fin e → ℂ)) : AnalyticOnNhd ℂ (fun w => wH h ε τ' w r s) S := by
@@ -134,7 +95,7 @@ theorem analytic_wH {n e : ℕ} (h : Ψ → Matrix (Fin N) (Fin N) ℂ) (ε : Fi
     intro x
     unfold lowMat
     by_cases hh : s < x ∧ ((x : ℕ) < N - j ↔ (s : ℕ) < N - j)
-    · simp only [dif_pos hh, wL]
+    · simp only [dite_eq_left hh, wL]
       exact (ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : Fin e => ℂ)
         (ε (Sum.inr (Sum.inl ⟨(τ', x, s), hh⟩)))).analyticOnNhd _
     · simp only [_root_.dite_eq_right hh]
@@ -162,7 +123,7 @@ theorem flagZ_step {p : Ψ × Fin N} {k : K} (hp : M.blk p = some k) (m : ι k) 
   have e : ∃ p, M.blk p = some k := ⟨p, hp⟩
   have hc : e.choose = p := M.blk_inj _ _ _ e.choose_spec hp
   unfold flagZ
-  simp only [dif_pos e, hc]
+  simp only [dite_eq_left e, hc]
 
 variable {k₀ : K} {τ : Ψ} {ca cb : Fin N} {t : ℂ}
 
@@ -212,7 +173,7 @@ theorem exact_snd {a : Fin N} (hk₀ : M.blk (τ, a) = some k₀) (hlt : ca < cb
   · subst hkk
     have hp : (τ', i) = (τ, a) := M.blk_inj _ _ _ hk hk₀
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hp
-    rw [snd_sqZ_self, flagZ_step hk₀, if_pos rfl, Function.update_self]
+    rw [snd_sqZ_self, flagZ_step hk₀, ite_eq_left rfl, Function.update_self]
   · rw [snd_sqZ_ne hkk, flagZ_step hk]
     refine Finset.sum_congr rfl fun I _ => ?_
     by_cases hτ : τ' = τ
@@ -220,8 +181,8 @@ theorem exact_snd {a : Fin N} (hk₀ : M.blk (τ, a) = some k₀) (hlt : ca < cb
       have hia : i ≠ a := by
         rintro rfl
         exact hkk (Option.some_injective _ (hk.symm.trans hk₀))
-      rw [if_pos rfl, minorIJ_mul_one_add_single _ _ _ hlt (hiff i hia)]
-    · rw [if_neg hτ]
+      rw [ite_eq_left rfl, minorIJ_mul_one_add_single _ _ _ hlt (hiff i hia)]
+    · rw [ite_eq_right hτ]
 
 end Flag
 

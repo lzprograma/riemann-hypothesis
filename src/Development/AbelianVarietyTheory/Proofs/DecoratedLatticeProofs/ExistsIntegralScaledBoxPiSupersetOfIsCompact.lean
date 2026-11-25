@@ -70,7 +70,7 @@ theorem exists_box_superset_of_isCompact (k : Type) [Field k] [ValuativeRel k] [
       by_cases hle : valuation k (x i0) ≤ valuation k (r : k)
       · refine ⟨⟨r, le_rfl⟩, fun i _ => ?_⟩
         exact le_trans (hi0 i (Finset.mem_univ i)) hle
-      · push_neg at hle
+      · push Not at hle
         have hx0 : x i0 ≠ 0 := by
           intro h0
           rw [h0, map_zero] at hle

@@ -23,10 +23,6 @@ variable {n : ℕ}
 
 open MeasureTheory
 
-def coefMap {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] (dual : Bool)
-    (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)) (η f : Fin n → H) (g : Matrix (Fin n) (Fin n) ℂ) : ℂ :=
-  ∑ c, inner ℂ (η c) (tensGrp dual σ g f c)
-
 theorem coef_embed (dual : Bool) {lam : Fin n → ℝ} {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] {ε : Fin n → Bool}
     {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} {D : Submodule ℂ H} {E : Fin n → Fin n → Module.End ℂ D}
     (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E) (hsm : ∀ v : D, IsSmoothVecU ε σ v)
@@ -36,14 +32,14 @@ theorem coef_embed (dual : Bool) {lam : Fin n → ℝ} {H : Type*} [NormedAddCom
       ((Real.sqrt (S7.hs (Formalism.MainNotions.S.umat g)) : ℝ) : ℂ) * inner ℂ ((w : D) : H) (σ (Formalism.MainNotions.S.umat g) ((v : D) : H)))
       2 (Formalism.REAL.muG ε)) (η : Fin n → D) (hη : η ∈ tensSub (genSub E V)) :
     ∀ f ∈ tensSub (genSub E V),
-      IsSmoothL2 ε (coefMap dual σ (fun c => ((η c : D) : H)) (fun c => ((f c : D) : H))) ∧
+      IsSmoothL2 ε (ReciprocityTheory.ChartRestriction.DS.occCoef dual σ (fun c => ((η c : D) : H)) (fun c => ((f c : D) : H))) ∧
       (∀ a b, ∀ g, Formalism.REAL.inUJ ε g →
-        Formalism.REAL.Eab ε a b (coefMap dual σ (fun c => ((η c : D) : H)) (fun c => ((f c : D) : H))) g =
-          coefMap dual σ (fun c => ((η c : D) : H)) (fun c => ((tensF dual E a b f c : D) : H)) g) ∧
+        Formalism.REAL.Eab ε a b (ReciprocityTheory.ChartRestriction.DS.occCoef dual σ (fun c => ((η c : D) : H)) (fun c => ((f c : D) : H))) g =
+          ReciprocityTheory.ChartRestriction.DS.occCoef dual σ (fun c => ((η c : D) : H)) (fun c => ((tensF dual E a b f c : D) : H)) g) ∧
       ∀ k ∈ Kset ε, ∀ f' ∈ tensSub (genSub E V),
         (fun c => ((f' c : D) : H)) = kDiag dual σ k (fun c => ((f c : D) : H)) →
-        ∀ g ∈ UJset ε, coefMap dual σ (fun c => ((η c : D) : H)) (fun c => ((f c : D) : H)) (g * k) =
-          coefMap dual σ (fun c => ((η c : D) : H)) (fun c => ((f' c : D) : H)) g := by
+        ∀ g ∈ UJset ε, ReciprocityTheory.ChartRestriction.DS.occCoef dual σ (fun c => ((η c : D) : H)) (fun c => ((f c : D) : H)) (g * k) =
+          ReciprocityTheory.ChartRestriction.DS.occCoef dual σ (fun c => ((η c : D) : H)) (fun c => ((f' c : D) : H)) g := by
   intro f hf
   refine ⟨⟨occA_coef_smooth dual hσ _ _ (fun d => hsm (f d)), fun w => ?_⟩,
     fun a b g hg => occA_coef_Eab dual hσ hD _ f a b hg, ?_⟩

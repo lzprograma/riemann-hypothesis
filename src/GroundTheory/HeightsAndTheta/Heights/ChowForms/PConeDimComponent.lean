@@ -68,27 +68,11 @@ theorem ConeDimComponent.proof_closed : ConeDimComponent.Statement := by
   rw [hquot] at hform hdrop
   change ringKrullDim B = _ at hdim
   rw [hdim] at hform hdrop
-  obtain ⟨y, hy⟩ : ∃ y : ℕ∞, ringKrullDim (MvPolynomial (Fin n) F ⧸ W) = y := by
-    cases h : ringKrullDim (MvPolynomial (Fin n) F ⧸ W) with
-    | bot =>
-      have := ringKrullDim_nonneg_of_nontrivial (R := MvPolynomial (Fin n) F ⧸ W)
-      rw [h] at this
-      exact absurd this (by simp)
-    | coe y => exact ⟨y, rfl⟩
-  rw [hy] at hform hdrop ⊢
-  have h1 : y + 1 ≤ ((e + 1 : ℕ) : ℕ∞) := by exact_mod_cast hdrop
-  have h2 : W'.height + y = ((e + 1 : ℕ) : ℕ∞) := by exact_mod_cast hform
-  have hyle : y ≤ e := by
-    have : y + 1 ≤ (e : ℕ∞) + 1 := by exact_mod_cast h1
-    exact (ENat.add_le_add_iff_right ENat.one_ne_top).mp this
-  obtain ⟨m, rfl⟩ : ∃ m : ℕ, (m : ℕ∞) = y := ENat.ne_top_iff_exists.mp (ne_top_of_le_ne_top
-    (ENat.natCast_ne_top e) hyle)
-  have h3 : ((e + 1 : ℕ) : ℕ∞) ≤ 1 + m := by rw [← h2]; gcongr
-  have h4 : e + 1 ≤ 1 + m := by exact_mod_cast h3
-  have h5 : m ≤ e := by exact_mod_cast hyle
-  have : m = e := by omega
-  subst this
-  rfl
+  refine le_antisymm
+    (ENat.WithBot.add_le_add_one_right_iff.mp (hdrop.trans_eq (Nat.cast_succ e)))
+    (ENat.WithBot.add_le_add_one_right_iff.mp ?_)
+  rw [← Nat.cast_succ e, ← hform, add_comm (W'.height : WithBot ℕ∞), ← WithBot.coe_one]
+  exact add_le_add le_rfl (WithBot.coe_le_coe.mpr hht)
 
 theorem ConeDimComponent.proof (_h₁ : MinimalPrimeHomog.Statement) : ConeDimComponent.Statement :=
   ConeDimComponent.proof_closed

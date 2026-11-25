@@ -1,43 +1,6 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.PathWeight.GeneratorImageIsSymbol
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -77,7 +40,7 @@ theorem lattice_path_nonneg_prefix {n N : ℕ} {LL : Letters (Fin N)} {B : Fin N
     intro hs hv a
     have hsN : s < N := by omega
     have h1 := P.step ⟨s, hsN⟩
-    rw [if_pos (hv ⟨s, hsN⟩ (by simp))] at h1
+    rw [ite_eq_left (hv ⟨s, hsN⟩ (by simp))] at h1
     exact le_trans (ih (by omega) (fun i hi => hv i (by omega)) a) (h1.1 a)
 
 theorem lattice_path_zero_prefix {n N : ℕ} {LL : Letters (Fin N)} {B : Fin N → ℕ} (P : PPath n N LL B) :
@@ -92,7 +55,7 @@ theorem lattice_path_zero_prefix {n N : ℕ} {LL : Letters (Fin N)} {B : Fin N �
     intro hs hv
     have hsN : s < N := by omega
     have h1 := P.step ⟨s, hsN⟩
-    rw [if_pos (hv ⟨s, hsN⟩ (by simp)).1, (hv ⟨s, hsN⟩ (by simp)).2] at h1
+    rw [ite_eq_left (hv ⟨s, hsN⟩ (by simp)).1, (hv ⟨s, hsN⟩ (by simp)).2] at h1
     have h2 : P.mu (Fin.castSucc ⟨s, hsN⟩) = 0 := ih (by omega) (fun i hi => hv i (by omega))
     obtain ⟨g1, _, g3⟩ := h1
     have g4 := (Finset.sum_eq_zero_iff_of_nonneg (fun a _ => sub_nonneg.2 (g1 a))).1 (by simpa using g3)
@@ -220,7 +183,7 @@ theorem generator_pair_conditions_of_admitted (D : Formalism.BasicNotions.D7) (h
         intro i' hi'
         show decide (Even (eL X.Fr j i')) = true
         exact decide_eq_true (even_of_lower_letter X.Fr X.hV hr j _ (letter_enum_mem X.Fr j i') (hWle i' hi'))
-      rw [if_pos (hvec i (by omega))]
+      rw [ite_eq_left (hvec i (by omega))]
       have hz : P2.mu i.succ = 0 :=
         lattice_path_zero_prefix P2 (i.val + 1) (by have := i.2; omega) (fun i' hi' => ⟨hvec i' hi', hW i' (hWle i' hi')⟩)
       have hn : 0 ≤ P1.mu i.castSucc (lastIdx r) :=
@@ -231,7 +194,7 @@ theorem generator_pair_conditions_of_admitted (D : Formalism.BasicNotions.D7) (h
       obtain ⟨c1, c2⟩ := hC i hiW
       by_cases hE : Even (eL X.Fr j i)
       · have hv : (LLs X.Fr j).toLetters.vec i = true := decide_eq_true hE
-        rw [if_pos hv]
+        rw [ite_eq_left hv]
         obtain ⟨g1, g2⟩ := c1 hE
         rw [add_zero, e3] at g2
         have k1 : P2.mu i.succ 0 ≤ Mx i := le_trans (h2 i).2 (unbotD_le_of_le_coe g1 (min_le_left _ _))
@@ -241,7 +204,7 @@ theorem generator_pair_conditions_of_admitted (D : Formalism.BasicNotions.D7) (h
         exact le_trans k1 k2
       · have hv : ¬ (LLs X.Fr j).toLetters.vec i = true := by
           intro h; exact hE (of_decide_eq_true h)
-        rw [if_neg hv]
+        rw [ite_eq_right hv]
         obtain ⟨g1, g2⟩ := c2 hE
         rw [add_zero] at g2
         rw [e3] at g1

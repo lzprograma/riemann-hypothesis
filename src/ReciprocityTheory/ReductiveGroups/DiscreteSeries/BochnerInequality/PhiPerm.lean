@@ -99,7 +99,7 @@ theorem phi_permute_sub_mem (hE : IsGlRep E) (hV : IsKStableSub ε E V) {k : ℕ
   refine Submodule.sum_mem _ (fun κ _ => ?_)
   have hFκ := (mem_ncV_iff_apply.1 hF) κ
   by_cases hc : ∀ i, ε (κ i).1 ≠ ε (κ i).2
-  · rw [if_pos hc] at hFκ
+  · rw [ite_eq_left hc] at hFκ
     rw [word_eq_listProd, word_eq_listProd]
     have hp : (List.ofFn κ).Perm (List.ofFn (κ ∘ σ.symm)) := (Equiv.Perm.ofFn_comp_perm σ.symm κ).symm
     have hnc : ∀ p ∈ List.ofFn κ, ε p.1 ≠ ε p.2 := fun p hp' => by
@@ -109,7 +109,7 @@ theorem phi_permute_sub_mem (hE : IsGlRep E) (hV : IsKStableSub ε E V) {k : ℕ
     have := listProd_perm_sub_mem hE hV hp hnc (show F κ ∈ layer ε E V 0 from hFκ) k (by simp)
     rw [zero_add] at this
     exact this
-  · rw [if_neg hc] at hFκ
+  · rw [ite_eq_right hc] at hFκ
     rw [(Submodule.mem_bot ℂ).1 hFκ]
     simp
 

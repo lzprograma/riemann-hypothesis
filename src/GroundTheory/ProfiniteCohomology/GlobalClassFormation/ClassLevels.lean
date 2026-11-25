@@ -27,7 +27,6 @@ section Level
 
 variable {F : FiniteSubfield} [Fact (K ≤ F)] [F.1.fixingSubgroup.Normal]
 
-set_option synthInstance.maxHeartbeats 400000 in
 theorem classSmul_of_restrictHom (g : K.1.fixingSubgroup) (c : IdeleClassGroup F.1) :
     (g : ℚ̄ ≃ₐ[ℚ] ℚ̄) • IdeleClassLimit.of F c = IdeleClassLimit.of F (restrictHom (E := F) g • c) := by
   obtain ⟨x, rfl⟩ := IdeleClassGroup.mk_surjective F.1 c
@@ -48,15 +47,6 @@ def classLevelInfl (n : ℕ) : cohomology (ideleClassRep K.1 F.1) n ⟶ cohomolo
   cohomologyMapAlong restrictHom continuous_restrictHom (classLevelMor K F) n
 
 end Level
-
-section Transition
-
-variable {F E : FiniteSubfield} [Fact (K ≤ F)] [Fact (K ≤ E)] [Fact (F ≤ E)]
-  [F.1.fixingSubgroup.Normal] [E.1.fixingSubgroup.Normal]
-
-
-
-end Transition
 
 section Colimit
 

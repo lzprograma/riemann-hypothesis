@@ -1,49 +1,7 @@
 module
 
 public import Formalism.MahlerMeasure.MahlerMeasureProofs.WeightSpaceDimensionMonotone
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -79,24 +37,24 @@ theorem glAct_whe (LL : Letters N) (j : ℕ) (e : Fin n ↪o Fin r) (a b : Fin n
   rw [glAct_apply]
   refine Submodule.sum_mem _ fun i _ => ?_
   by_cases hij : (i : ℕ) < j
-  · rw [if_pos hij]
+  · rw [ite_eq_left hij]
     by_cases hv : LL.vec i
-    · rw [if_pos hv]
+    · rw [ite_eq_left hv]
       have := wh_XD (K := ℚ_[p]) (fun x => (wv LL j x) ∘ e) (i, e b) (i, e a) d (AddMonoidAlgebra.coeff x d)
       have e' : ν + dl a b = Finsupp.weight (fun x => (wv LL j x) ∘ e) d - (wv LL j (i, e b)) ∘ e
           + (wv LL j (i, e a)) ∘ e := by
-        rw [hdw]; simp only [wv, hij, hv, if_true, dl, single_comp_emb]; abel
+        rw [hdw]; simp only [wv, hij, hv, ite_true, dl, single_comp_emb]; abel
       rw [e']; exact this
-    · rw [if_neg hv]
+    · rw [ite_eq_right hv]
       refine Submodule.neg_mem _ ?_
       have := wh_XD (K := ℚ_[p]) (fun x => (wv LL j x) ∘ e) (i, e a) (i, e b) d (AddMonoidAlgebra.coeff x d)
       have hn : ∀ c : Fin n, (-(Pi.single (e c) (1 : ℤ) : Fin r → ℤ)) ∘ e = -Pi.single c 1 := by
         intro c; rw [← single_comp_emb e c]; rfl
       have e' : ν + dl a b = Finsupp.weight (fun x => (wv LL j x) ∘ e) d - (wv LL j (i, e a)) ∘ e
           + (wv LL j (i, e b)) ∘ e := by
-        rw [hdw]; simp only [wv, hij, hv, if_true, if_false, Bool.false_eq_true, dl, hn]; abel
+        rw [hdw]; simp only [wv, hij, hv, ite_true, ite_false, Bool.false_eq_true, dl, hn]; abel
       rw [e']; exact this
-  · rw [if_neg hij]; exact Submodule.zero_mem _
+  · rw [ite_eq_right hij]; exact Submodule.zero_mem _
 
 noncomputable def GAe (p : ℕ) [Fact p.Prime] (LL : Letters N) (j : ℕ) (e : Fin n ↪o Fin r) :
     GlW ℚ_[p] (MvPolynomial (Fin N × Fin r) ℚ_[p]) n where
@@ -184,7 +142,7 @@ theorem GAe_isWt_iff (LL : Letters N) (j : ℕ) (e : Fin n ↪o Fin r) (μ : Fin
     have hm' : AddMonoidAlgebra.coeff x m ≠ 0 := mem_support_iff.mp hm
     rw [← h, coeff_weightedHomogeneousComponent] at hm'
     have hw : Finsupp.weight (fun x => (wv LL j x) ∘ e) m = μ := by
-      by_contra hne; exact hm' (if_neg hne)
+      by_contra hne; exact hm' (ite_eq_right hne)
     rw [← weight_comp_apply, hw]
   · intro h
     ext m

@@ -72,7 +72,7 @@ theorem one_sub_mul_geom (a : ℂ) :
   rcases k with _ | k
   · simp
   · rw [PowerSeries.coeff_succ_X_mul, PowerSeries.coeff_mk, PowerSeries.coeff_mk, PowerSeries.coeff_one,
-      if_neg (Nat.succ_ne_zero k), pow_succ, mul_comm, sub_self]
+      ite_eq_right (Nat.succ_ne_zero k), pow_succ, mul_comm, sub_self]
 
 theorem prod_one_sub_mul_hSeries (x : σ → ℂ) :
     (∏ i, (1 - PowerSeries.C (x i) * PowerSeries.X)) * hSeries x = 1 := by

@@ -56,14 +56,14 @@ lemma contDiff_lead (i : ℕ) : ContDiff ℂ 1 (fun z : 𝕄 => lead i z) := by
         ∑ σ : Equiv.Perm (Fin i), ((Equiv.Perm.sign σ : ℤ) : ℂ) *
           ∏ j, z (Fin.castLE h (σ j)) (Fin.castLE h j) := by
       funext z
-      simp only [lead, dif_pos h, Matrix.det_apply']
+      simp only [lead, dite_eq_left h, Matrix.det_apply']
       rfl
     rw [e]
     exact ContDiff.sum fun σ _ => contDiff_const.mul
       (contDiff_prod fun j _ => contDiff_apply_apply ℂ _ _)
   · have e : (fun z : 𝕄 => lead i z) = fun _ => 0 := by
       funext z
-      simp only [lead, dif_neg h]
+      simp only [lead, dite_eq_right h]
     rw [e]
     exact contDiff_const
 

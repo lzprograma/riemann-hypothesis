@@ -83,10 +83,6 @@ end Gen
 
 variable {D : D7} {u : D.what₂.Word}
 
-def DiamondElementsExist (Tf : FormsTied D u) : Prop :=
-  ∀ i (hi : i ≤ D.R.m) (v : (D.mem u).A.vT) (a : ((D.mem u).A.Fv v)ˣ), ∃ k : ℤ, (k : (D.mem u).A.Fv v) = a ∧
-    ∃ δ, IsDia (Tf.cls i hi).lev (Tf.atT.eV v).1 (Tf.atT.eV v).2 k δ
-
 theorem level_prime_ne_type_prime (A : AtTTied u) (j : Fin 2) : (D.mem u).A.T ≠ D.host.g j := by
   intro hTg
   obtain ⟨r, hr⟩ := Ideal.mem_span_singleton'.1 A.piU_cong

@@ -20,59 +20,8 @@ public import Mathlib.Basic.Complex.Basic
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValueLocallyRegularFunction
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.WedgeEigenLineGenerator
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.TypeStar
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.TotallySplit
 import Mathlib.Tactic.Linter.Style
 import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLatticeVectorBundle
@@ -118,7 +67,7 @@ theorem isComb_one {S : Scheme.{0}} {R : Type} [CommRing R] {G : Over S} [GrpObj
   · by_cases h : i = j
     · have h1 : epsMul (1 : R) = RingHom.id _ := by ext z <;> simp [epsMul]
       simp [h, Matrix.one_apply, h1, spMap]
-    · simp only [h, Matrix.one_apply, if_false]
+    · simp only [h, Matrix.one_apply, ite_false]
       exact (epsMul_zero_comp (hv j)).symm
   · induction n with
     | zero => exact i.elim0
@@ -126,7 +75,7 @@ theorem isComb_one {S : Scheme.{0}} {R : Type} [CommRing R] {G : Over S} [GrpObj
       rw [List.ofFn_succ, List.prod_cons]
       refine Fin.cases ?_ (fun i => ?_) i
       · simp [List.prod_eq_one, (Fin.succ_ne_zero _).symm]
-      · simp only [Fin.succ_ne_zero, if_false, _root_.one_mul, Fin.succ_inj]
+      · simp only [Fin.succ_ne_zero, ite_false, _root_.one_mul, Fin.succ_inj]
         exact ih (v := fun j => v j.succ) (fun j => hv _) i
 
 
@@ -169,7 +118,7 @@ private lemma isDomain_away {A L B : Type*} [CommRing A] [CommRing L] [IsDomain 
   have hφ : ∀ a, φ (algebraMap A B a) = algebraMap A L a := fun a =>
     IsLocalization.Away.lift_eq s hu a
   have hinj : Function.Injective φ := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro b hb
     obtain ⟨⟨a, m⟩, hm⟩ := IsLocalization.surj (Submonoid.powers s) b
     have h0 : algebraMap A L a = 0 := by
@@ -247,9 +196,9 @@ theorem anChart_span {k A : Type} [Field k] [CommRing A] [Algebra k A] (D : ℕ)
   have pt : ∀ ψ : A →+* ℂ, ψ.comp (algebraMap k A) = σ → ∀ p, ψ (algebraMap P.Ring A p) = ev (fun i => ψ (P.val i)) p := fun ψ hψ p => by
     rw [P.algebraMap_apply, aeval_def, ← coe_eval₂Hom, map_eval₂Hom, hψ]
   let q : I → MvPolynomial I k := fun i => if h : i ∈ Set.range P.map then P.relation h.choose else X i
-  have q₁ : ∀ j, q (P.map j) = P.relation j := fun j => (dif_pos ⟨j, rfl⟩).trans
+  have q₁ : ∀ j, q (P.map j) = P.relation j := fun j => (dite_eq_left ⟨j, rfl⟩).trans
     (congrArg _ (P.map_inj (⟨j, rfl⟩ : P.map j ∈ Set.range P.map).choose_spec))
-  have q₂ : ∀ i : {i : I // i ∉ Set.range P.map}, q i = X i.1 := fun i => dif_neg i.2
+  have q₂ : ∀ i : {i : I // i ∉ Set.range P.map}, q i = X i.1 := fun i => dite_eq_right i.2
   let Φ : (I → ℂ) → I → ℂ := fun x i => eval x (map σ (q i))
   have Φe : ∀ x i, Φ x i = ev x (q i) := fun x i => MvPolynomial.eval_map _ _ _
   let x₀ : I → ℂ := fun i => ψ₀ (P.val i)
@@ -286,7 +235,7 @@ theorem anChart_span {k A : Type} [Field k] [CommRing A] [Algebra k A] (D : ℕ)
   let em : (Fin D → ℂ) →L[ℂ] (I → ℂ) := ContinuousLinearMap.pi fun i =>
     if h : i ∈ Set.range P.map then 0 else ContinuousLinearMap.proj (e.symm ⟨i, h⟩)
   have m₁ : ∀ b j, em b (P.map j) = 0 := fun b j => by simp [em]
-  have m₂ : ∀ b i, em b (e i) = b i := fun b i => by simp only [em, ContinuousLinearMap.pi_apply, dif_neg (e i).2]; simp
+  have m₂ : ∀ b i, em b (e i) = b i := fun b i => by simp only [em, ContinuousLinearMap.pi_apply, dite_eq_right (e i).2]; simp
   have lf : ∀ x : I → ℂ, (∀ j, ev x (P.relation j) = 0) → ∃ ψ : A →+* ℂ, ∀ p, ψ (algebraMap P.Ring A p) = ev x p := fun x hx =>
     ⟨(algebraMap P.Ring A).liftOfSurjective P.algebraMap_surjective ⟨ev x, by
       show P.ker ≤ _
@@ -300,7 +249,7 @@ theorem anChart_span {k A : Type} [Field k] [CommRing A] [Algebra k A] (D : ℕ)
   let n := Fintype.equivFin I
   refine ⟨_, fun j => P.val (n.symm j), fun i => P.val (e i), em ⁻¹' O, ε, fun b => if h : em b ∈ O then Ψ _ (rel b h) else ψ₀, ε0,
     oO.preimage em.continuous, fun b hb => ?_, fun a => ?_, fun ψ hψ hg => ?_, ?_⟩
-  · simp only [dif_pos (show em b ∈ O from hb)]
+  · simp only [dite_eq_left (show em b ∈ O from hb)]
     refine ⟨RingHom.ext fun r => ?_, fun i => ?_⟩
     · rw [RingHom.comp_apply, IsScalarTower.algebraMap_apply k P.Ring A, hΨ]; exact eval₂Hom_C _ _ _
     · rw [show P.val (e i) = algebraMap P.Ring A (X (e i).1) by simp, hΨ, ← q₂, ← Φe,
@@ -310,7 +259,7 @@ theorem anChart_span {k A : Type} [Field k] [CommRing A] [Algebra k A] (D : ℕ)
     · have c₁ : ContDiffAt ℂ 1 T.symm (em b) := interior_subset hb.2
       have c₂ : DifferentiableAt ℂ (fun x : I → ℂ => eval x (map σ p)) (T.symm (em b)) := (hasFDerivAt_eval _ _).differentiableAt
       exact (c₂.comp b ((c₁.differentiableAt one_ne_zero).comp b em.differentiableAt)).differentiableWithinAt
-    · simp only [dif_pos (show em b ∈ O from hb)]; rw [hΨ, MvPolynomial.eval_map]; rfl
+    · simp only [dite_eq_left (show em b ∈ O from hb)]; rw [hΨ, MvPolynomial.eval_map]; rfl
   · have hx := hε (show (fun i => ψ (P.val i)) ∈ Metric.ball x₀ ε from (dist_pi_lt_iff ε0).2 fun i => by
       simpa [dist_eq_norm] using hg (n i))
     have e₁ : em (fun i => ψ (P.val (e i))) = Φ fun i => ψ (P.val i) := funext fun i => by
@@ -322,7 +271,7 @@ theorem anChart_span {k A : Type} [Field k] [CommRing A] [Algebra k A] (D : ℕ)
         rw [m₂, Φe, q₂]
         simp only [ev, eval₂Hom_X']
     have mB : em (fun i => ψ (P.val (e i))) ∈ O := by rw [e₁]; exact hx.2
-    refine ⟨mB, (dif_pos mB).trans (RingHom.ext fun a => ?_)⟩
+    refine ⟨mB, (dite_eq_left mB).trans (RingHom.ext fun a => ?_)⟩
     obtain ⟨p, rfl⟩ := P.algebraMap_surjective a
     rw [hΨ, pt ψ hψ, e₁, show T.symm (Φ fun i => ψ (P.val i)) = _ from T.left_inv hx.1]
   · rw [eq_top_iff, ← P.basisKaehler.span_eq]
@@ -659,8 +608,7 @@ theorem exists_near {X : Scheme.{0}} {V : X.Opens} (hV : IsAffineOpen V) {d : �
     (hpW : p ∈ W) {ε : ℝ} (hε : 0 < ε) :
     ∃ z ∈ ball (0 : Fin d → ℂ) 1, z ∈ ball (0 : Fin d → ℂ) ε ∧ ⊤ ≤ (spMap (ψ z) ≫ hV.fromSpec) ⁻¹ᵁ W := by
   obtain ⟨g, hg, hpg⟩ := hV.exists_basicOpen_le (V := W) ⟨p, hpW⟩ hpV
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hz : ∀ z ∈ ball (0 : Fin d → ℂ) 1, z ∈ ball (0 : Fin d → ℂ) ε → ψ z g = 0 := by
     intro z h₁ h₂
     by_contra hne

@@ -77,10 +77,6 @@ abbrev res (F : Sheaf J AddCommGrpCat.{v}) (n : ℕ) {U V : C} (i : V ⟶ U) :
     F.H' n U ⟶ F.H' n V :=
   (F.cohomologyPresheaf n).map i.op
 
-lemma extEquiv_map {F G : Sheaf J AddCommGrpCat.{v}} (f : F ⟶ G) (n : ℕ) (U : C)
-    (x : F.H' n U) :
-    extEquiv G n U (map f n U x) = (extEquiv F n U x).comp (Ext.mk₀ f) (add_zero n) := rfl
-
 instance cohomologyPresheafFunctor_additive (n : ℕ) :
     (Sheaf.cohomologyPresheafFunctor.{w} J n).Additive where
   map_add {F G f g} := by
@@ -99,18 +95,6 @@ private lemma extAddEquiv₀_comp_mk₀ {D : Type*} [Category D] [Abelian D] [Ha
     Ext.addEquiv₀ (x.comp (Ext.mk₀ f) (add_zero 0)) = Ext.addEquiv₀ x ≫ f := by
   apply (Ext.mk₀_bijective X Z).injective
   rw [Ext.mk₀_addEquiv₀_apply, ← Ext.mk₀_comp_mk₀, Ext.mk₀_addEquiv₀_apply]
-
-private lemma trans_extAddEquiv₀_apply_mk₀ {D : Type*} [Category D] [Abelian D] [HasExt.{w} D]
-    {X F : D} {A S : Type*} [Add A] [Add S] (a : A ≃+ Ext.{w} X F 0)
-    (s : (X ⟶ F) ≃+ S) (φ : X ⟶ F) :
-    (a.trans (Ext.addEquiv₀.trans s)) (a.symm (Ext.mk₀ φ)) = s φ := by
-  change s (Ext.addEquiv₀ (a (a.symm (Ext.mk₀ φ)))) = s φ
-  rw [a.apply_symm_apply]
-  exact congrArg s (Ext.addEquiv₀.apply_symm_apply φ)
-
-lemma zeroEquiv_mk₀ (F : Sheaf J AddCommGrpCat.{v}) (U : C) (φ : (freeSheaf J).obj U ⟶ F) :
-    zeroEquiv F U ((extEquiv F 0 U).symm (Ext.mk₀ φ)) = freeSheafHomEquiv U F φ :=
-  trans_extAddEquiv₀_apply_mk₀ (extEquiv F 0 U) (freeSheafHomEquiv U F) φ
 
 lemma zeroEquiv_map {F G : Sheaf J AddCommGrpCat.{v}} (f : F ⟶ G) (U : C) (x : F.H' 0 U) :
     zeroEquiv G U (map f 0 U x) = f.hom.app (op U) (zeroEquiv F U x) := by
@@ -277,9 +261,6 @@ instance linearModules : Linear Γ(X, ⊤) X.Modules where
   comp_smul F G H φ r ψ := (Category.assoc _ _ _).symm
 
 lemma smul_hom_def {F G : X.Modules} (r : Γ(X, ⊤)) (φ : F ⟶ G) : r • φ = φ ≫ smulHom G r := rfl
-
-lemma smulHom_eq_smul_id (F : X.Modules) (r : Γ(X, ⊤)) : smulHom F r = r • 𝟙 F :=
-  (Category.id_comp _).symm
 
 @[reducible] def addCommGroupOfAction {A M : Type*} [CommRing A] (inst : AddCommGroup M)
     (ρ : A →+* AddMonoid.End M) : AddCommGroup M :=
@@ -525,9 +506,6 @@ lemma toH'_res (h : V ≤ U) (x : cohOn F U n) :
     toH' F V n (res R F h n x) =
       SiteCoh.res ((toAbSheaf (X := X)).obj F) n (homOfLE h) (toH' F U n x) := rfl
 
-lemma smul_eq_map (r : R) (x : cohOn F U n) :
-    r • x = map R (smulHom F (algebraMap R Γ(X, ⊤) r)) U n x := rfl
-
 
 variable (F U n) in
 @[simp] lemma map_id : map R (𝟙 F) U n = LinearMap.id := by
@@ -565,9 +543,6 @@ variable (F G U n) in
 variable (F G U n) in
 @[simp] lemma map_zero_hom : map R (0 : F ⟶ G) U n = 0 := map_zero (mapAddHom R F G U n)
 
-
-variable (U n) in
-lemma map_neg_hom (φ : F ⟶ G) : map R (-φ) U n = -map R φ U n := map_neg (mapAddHom R F G U n) φ
 
 
 
@@ -785,10 +760,6 @@ lemma toΓ_zeroEquiv (x : cohOn F U 0) :
       SiteCoh.zeroEquiv ((toAbSheaf (X := X)).obj F) U (toH' F U 0 x) := rfl
 
 
-def zeroEquivSpec {A : CommRingCat.{u}} (F : (Spec A).Modules) (U : (Spec A).Opens) :
-    cohOn F U 0 ≃ₗ[A] Γ(F, U) :=
-  (zeroEquiv A F U).trans (sectionsOn.specEquiv F U)
-
 end cohOn
 
 abbrev structureModule (X : Scheme.{u}) : X.Modules := SheafOfModules.unit X.ringCatSheaf
@@ -819,15 +790,6 @@ def zeroUnitEquiv (X : Scheme.{u}) :
     coh (structureModule X) 0 ≃ₗ[Γ(X, ⊤)] Γ(X, ⊤) :=
   (zeroEquiv (structureModule X)).trans (structureModuleΓEquiv X ⊤)
 
-def zeroUnitSpecEquiv (A : CommRingCat.{u}) :
-    coh (structureModule (Spec A)) 0 ≃ₗ[A] A :=
-  ((zeroUnitEquiv (Spec A)).restrictScalars A).trans
-    (LinearEquiv.ofBijective (Algebra.linearMap A Γ(Spec A, ⊤)) (by
-      have h : ⇑(Algebra.linearMap A Γ(Spec A, ⊤)) = (Scheme.ΓSpecIso A).inv :=
-        funext fun r ↦ restrictGlobal_top ((Scheme.ΓSpecIso A).inv r)
-      rw [h]
-      exact ConcreteCategory.bijective_of_isIso (Scheme.ΓSpecIso A).inv)).symm
-
 end coh
 
 section Functors
@@ -854,8 +816,6 @@ abbrev algebraΓOfHom {R : Type u} [CommRing R] (f : X ⟶ Spec (.of R)) : Algeb
 lemma algebraΓOfHom_algebraMap {R : Type u} [CommRing R] (f : X ⟶ Spec (.of R)) (r : R) :
     (letI := algebraΓOfHom f; algebraMap R Γ(X, ⊤) r =
       f.appTop ((Scheme.ΓSpecIso (.of R)).inv r)) := rfl
-
-abbrev algebraΓSpec (A : CommRingCat.{u}) : Algebra A Γ(Spec A, ⊤) := inferInstance
 
 abbrev algebraΓOfOver (R : Type u) [CommRing R] (X : Scheme.{u}) [X.Over (Spec (.of R))] :
     Algebra R Γ(X, ⊤) :=

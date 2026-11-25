@@ -58,12 +58,6 @@ public import Formalism.SharedLemmas.PrecompleteFinite
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
-private theorem spanMono_prec {R M : Type} [CommRing R] [AddCommGroup M] [Module R M]
-    [Module.Finite R M] (I : Ideal R) [IsPrecomplete I R] : IsPrecomplete I M := by
-  first
-  | exact _root_.Formalism.SharedLemmas.isPrecomplete_of_moduleFinite
-  | (apply _root_.Formalism.SharedLemmas.isPrecomplete_of_moduleFinite <;> assumption)
-
 private theorem exists_pow_mem_map_maxIdeal_of_monic_aeval_mem {O B : Type} [CommRing O] [IsLocalRing O] [CommRing B] [IsLocalRing B]
     [Algebra O B] (x : B) (hx : x ∈ maximalIdeal B)
     (hJ : (maximalIdeal O).map (algebraMap O B) ≤ maximalIdeal B) :
@@ -196,7 +190,7 @@ private theorem spanMono_top {O B : Type} [CommRing O] [IsLocalRing O] [IsAdicCo
       · exact Submodule.mem_sup_left (A.algebraMap_mem c)
       · exact Submodule.mem_sup_right (Ideal.mem_sup_left hj)
       · simpa using hP s hs 1
-  haveI : IsPrecomplete (maximalIdeal O) A := spanMono_prec (maximalIdeal O)
+  haveI : IsPrecomplete (maximalIdeal O) A := Formalism.SharedLemmas.isPrecomplete_of_moduleFinite (maximalIdeal O)
   haveI : IsAdicComplete (maximalIdeal B) B := IsCO.complete (O := O)
   haveI : IsHausdorff (maximalIdeal O) B := by
     refine ⟨fun x hx => IsHausdorff.haus' (I := maximalIdeal B) x fun n => ?_⟩
@@ -332,33 +326,33 @@ private theorem spanMono_lift {O R H : Type} [CommRing O] [IsLocalRing O] [IsNoe
     by_cases hab : a = b
     · subst hab
       dsimp only [z']
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact hc (g, a, a)
     · dsimp only [z']
-      rw [if_neg hab, ← res_eq_zero_iff O R, r.red, hbar g a b hab]
+      rw [ite_eq_right hab, ← res_eq_zero_iff O R, r.red, hbar g a b hab]
   have hz'part : ∀ t, z' t ∈ W.part (wt t.2.1 t.2.2) := by
     rintro ⟨g, a, b⟩
     by_cases hab : a = b
     · subst hab
       dsimp only [z']
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       refine Submodule.sub_mem _ (hr g a a) ?_
       rw [(wt_eq_zero a a).2 rfl, Algebra.algebraMap_eq_smul_one]
       exact Submodule.smul_mem _ _ h1W
     · dsimp only [z']
-      rw [if_neg hab]
+      rw [ite_eq_right hab]
       exact hr g a b
   have hz'N : ∀ t, z' t ∈ Submodule.span O (mono r.hom (wt t.2.1 t.2.2)) := by
     rintro ⟨g, a, b⟩
     by_cases hab : a = b
     · subst hab
       dsimp only [z']
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       refine Submodule.sub_mem _ (Submodule.subset_span (hm3 g a a)) ?_
       rw [(wt_eq_zero a a).2 rfl, Algebra.algebraMap_eq_smul_one]
       exact Submodule.smul_mem _ _ (Submodule.subset_span hm2)
     · dsimp only [z']
-      rw [if_neg hab]
+      rw [ite_eq_right hab]
       exact Submodule.subset_span (hm3 g a b)
   haveI : IsCO O (DualNumber (ResidueField O)) := (co_res O).2
   have hcot : maximalIdeal R ≤ Ideal.span (Set.range z') ⊔ Ideal.map (Algebra.ofId O R) (maximalIdeal O) ⊔
@@ -375,10 +369,10 @@ private theorem spanMono_lift {O R H : Type} [CommRing O] [IsLocalRing O] [IsNoe
       by_cases hab : a = b
       · subst hab
         dsimp only [z'] at hfs
-        rw [if_pos rfl, map_sub, map_sub, AlgHom.commutes, AlgHom.commutes] at hfs
+        rw [ite_eq_left rfl, map_sub, map_sub, AlgHom.commutes, AlgHom.commutes] at hfs
         exact sub_left_inj.1 hfs
       · dsimp only [z'] at hfs
-        rwa [if_neg hab] at hfs
+        rwa [ite_eq_right hab] at hfs
   have hcot' : maximalIdeal R ≤ Ideal.span (Set.range z') ⊔ Ideal.map (algebraMap O R) (maximalIdeal O) ⊔
       maximalIdeal R ^ 2 := hcot
   obtain ⟨U, hUsub, hUspan⟩ :=

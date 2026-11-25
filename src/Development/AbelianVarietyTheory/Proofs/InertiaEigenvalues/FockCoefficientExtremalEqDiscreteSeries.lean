@@ -32,45 +32,7 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsFockVacAtOfIsT
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocallyCompactSecondCountableBorelCountable
 import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
 import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemElt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Compactness.Paracompact
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ComplexEmbeddingHermitianQuadrupleSum
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqTopOfTranslates
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfPderivStable
@@ -81,7 +43,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff ComplexOrder
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DefLift GlobalTheory.RawLift
 
 namespace GlobalTheory.RawLift.FockCoef
@@ -207,52 +168,6 @@ theorem Killed.coef (hom : IsWeilDatumO ψ S T χS χT om) (hc : IsCovolOne (rat
   have e : om (1, g) (L f) = 0 := funext fun w => congrFun (((hL f hf).1 1 w).symm.trans (hk τ Z hZ 1 w)) g
   simp [e, thetaIP]
 
-
-open GlobalTheory.FockKill GlobalTheory.FockIndep GlobalTheory.OrientedHeis in
-theorem killed_of_harmonic (hom : IsWeilDatumO ψ S T χS χT om) (hθ : IsInfFam θ) (kS : S.SigOK) (kT : T.SigOK)
-    (BS : D.what₂.Tau → Mt S.rank) (hBS : ∀ τ, IsONBasis (gramAt D S τ) 1 (BS τ) S.rank) (M : DSModel T Sp)
-    (p : D.what₂.Tau → ℕ) (hp : ∀ τ a, M.ε τ a = decide ((a : ℕ) < p τ)) (f : WO S T → ℂ) (hf : IsThetaFunO ψ S T f)
-    (hv : ∀ τ, IsFockVacAt (heisO ψ S T) θ τ (cplxO 1 (cart M τ)) f) (P : PolF D T.rank S.rank)
-    (hP : ∀ τ, ∀ a b : Fin T.rank, p τ ≤ (a : ℕ) → (b : ℕ) < p τ →
-      ∑ c : Fin S.rank, MvPolynomial.pderiv (τ, a, c) (MvPolynomial.pderiv (τ, b, c) P) = 0) :
-    Killed om θ M (pureTensorO ψ θ S T (fun _ => 1) (cart M) BS (onb M) f P) := by
-  intro τ Z hZ h w
-  have hψ := hom.std
-  have hT := GlobalTheory.Chain.VacVec.cart_isCartanInv M
-  have hB : ∀ τ, (BS τ)ᴴ * gramAt D S τ * BS τ = 1 := fun τ => by
-    obtain ⟨ε, h1, h2, -⟩ := hBS τ
-    rw [h2, ← Matrix.diagonal_one]
-    congr 1
-    funext a
-    rcases h1 a with h | h
-    · rw [h.1, Complex.ofReal_one]
-    · exact absurd a.2 (not_lt.2 h.2)
-  have hS := fun τ => isCartanInv_one (hB τ)
-  obtain ⟨h1, h2⟩ := pMinus_laws hZ
-  obtain ⟨ha, eY⟩ := parts (GlobalTheory.SmoothAutCheck.gramAt_unit T τ) (hT τ) h1 h2
-  obtain ⟨lX, lY⟩ := GlobalTheory.SmoothAutCheck.parts_mem T τ Z
-  unfold RderC
-  unfold conjAt at lX lY ⊢
-  rw [eY] at lY ⊢
-  generalize (1 / 2 : ℂ) • (Z + -((gramAt D T τ)⁻¹ * Zᴴ * gramAt D T τ)) = X at ha lX lY
-  obtain ⟨GX, hX⟩ : ∃ G, IsGen ψ om θ τ X G := GlobalTheory.T.exists_weilDatum_generator_realOneParamGroup D ψ S T χS χT om hom θ hθ τ _ lX
-  obtain ⟨GY, hY⟩ : ∃ G, IsGen ψ om θ τ (Complex.I • (cart M τ * X)) G :=
-    GlobalTheory.T.exists_weilDatum_generator_realOneParamGroup D ψ S T χS χT om hom θ hθ τ _ lY
-  have hφ : IsThetaFunO ψ S T (pureTensorO ψ θ S T (fun _ => 1) (cart M) BS (onb M) f P) :=
-    pure_mem (P := IsThetaFunO ψ S T) (fun _ _ => theta_add) (fun a _ => theta_smul a)
-      (fun _ _ h => aPlus_theta hψ hθ _ _ _ h) hf _
-  have key := gen_kill hψ hθ hB (hp τ) hX hY lX lY ha hf (hv τ)
-    (gen_kill_vac hom hθ kS kT hS hT hX hY lX lY ha hf hv) (hP τ)
-  generalize pureTensorO ψ θ S T (fun _ => 1) (cart M) BS (onb M) f P = φ at key hφ
-  funext g
-  have a1 := ((hX φ hφ).2.2.2 (h, g) w).deriv
-  have a2 := ((hY φ hφ).2.2.2 (h, g) w).deriv
-  simp only [Prod.mk_mul_mk, mul_one] at a1 a2
-  have a3 := congrFun (congrArg (om (h, g)) key) w
-  rw [LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), map_smul, map_zero] at a3
-  simp only [Pi.add_apply, Pi.smul_apply, Rder]
-  rw [a1, a2]
-  exact a3
 
 def killedSub (hom : IsWeilDatumO ψ S T χS χT om) (hθ : IsInfFam θ) (M : DSModel T Sp) {Y : Type} [AddCommGroup Y]
     [Module ℂ Y] (pt : Y →ₗ[ℂ] (WO S T → ℂ)) (hpt : ∀ P, IsThetaFunO ψ S T (pt P)) : Submodule ℂ Y where
@@ -452,37 +367,6 @@ theorem coef_eq (hom : IsWeilDatumO ψ S T χS χT om) (hcv : IsCovolOne (ratL T
   rwa [hLinv u₀ hu₀] at key
 
 
-
-theorem coef_extremal : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T : Type) (A : FamIn D.what₂.LL G Pl0 T D.R.m) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), Laws R F → R.FullP → ∀ (i : Fin D.R.m) (t : T) μ 𝓕, IsCovolOne (ratL (Wc D i) (Vc D i)) μ 𝓕 → ∀ v : (∀ ρ, lowT (R.MW i (sg0 D A)) ρ), Formalism.IndefR.FWT.IsExtVec (R.MW i (sg0 D A)) (fun ρ => ((v ρ : (R.MW i (sg0 D A)).sm ρ))) → ∀ w, ∀ u ∈ GinfC (Wc D i),
-    thetaIP μ 𝓕 (jointVec R i t v w) (R.ωP i t (1, u) (jointVec R i t v w)) =
-      thetaIP μ 𝓕 (jointVec R i t v w) (jointVec R i t v w) *
-        ∏ ρ, ⟪((v ρ : (R.MW i (sg0 D A)).sm ρ) : (R.MW i (sg0 D A)).H ρ),
-          (R.MW i (sg0 D A)).rep ρ (infMat D.sp.cm.sig (Wc D i).gram (R.θ ρ) u)
-            ((v ρ : (R.MW i (sg0 D A)).sm ρ) : (R.MW i (sg0 D A)).H ρ)⟫_ℂ := by
-  intro D G _ _ Pl0 T A Ks _ _ _ R F hR _ i t μ 𝓕 hcv v hext w u hu
-  have hm := hR.models
-  have hω := hR.thP.ωP
-  have hv := hR.thP.vP
-  have hp := hR.thP.pt_theta
-  have hio := hR.thP.ioP
-  have hth : IsThetaFunO R.ψ (Vc D i) (Wc D i) (R.vP i t) := by
-    have := hp i t 1
-    rwa [RealDat.ptP, GlobalTheory.DefLift.ThetaMap.pureTensorO_one] at this
-  obtain ⟨hM, wt, hw⟩ := GlobalTheory.DefLift.holShape_fixed D G Pl0 T A Ks R hm.order i
-  have hpq : ∀ τ, ((Wc D i).sig (tauE D τ)).1 + ((Wc D i).sig (tauE D τ)).2 ≤ (Vc D i).rank := fun τ => by
-    have e := GlobalTheory.IndefiniteRowSideFullHecke.HolomorphicLowestType.pW_add_qW i τ
-    have e' := rank_Wc i
-    have := r_le_V i
-    simp only [GlobalTheory.IndefiniteRowSideFullHecke.HolomorphicLowestType.pW, GlobalTheory.IndefiniteRowSideFullHecke.HolomorphicLowestType.qW] at e
-    omega
-  have hΔ := killed_of_harmonic (hω i t) hm.inf (D.sp.V_sig _) (D.sp.W_sig _)
-    (R.BV i) (hm.BV i) (R.MW i (sg0 D A)) (fun τ => ((Wc D i).sig (tauE D τ)).1) (hm.order i) (R.vP i t) hth
-    (GlobalTheory.DatumFock.isFockVacAt_thPVec _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ (hv i t) hth) (RealDat.Delta i)
-    (fun τ => GlobalTheory.T.mixed_laplacian_kills_product_of_minors D _ _ _ _ _ _ hpq τ)
-  exact coef_eq (hω i t) hcv hm.inf _ hM hw hext (hp i t _) (fun a ha =>
-    holAd_coef (hω i t) hcv hm.inf _ hM hw _ (hm.cV i)
-      (pureTensorO R.ψ R.θ (Vc D i) (Wc D i) (fun _ => 1) (cart (R.MW i (sg0 D A))) (R.BV i) (onb (R.MW i (sg0 D A)))
-        (R.vP i t)) (hp i t) _ _ (hio i t) hΔ v hext w ha) u hu
 
 end GlobalTheory.RawLift.FockCoef
 

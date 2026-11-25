@@ -275,7 +275,7 @@ section Gen
 variable {U : Type} [AddCommGroup U] [Module ℂ U]
 
 private theorem adjoin_comm {s t : Set (Module.End ℂ U)} (h : ∀ a ∈ s, ∀ b ∈ t, Commute a b) :
-    ∀ a ∈ Algebra.adjoin ℂ s, ∀ b ∈ Algebra.adjoin ℂ t, Commute a b := fun a ha b hb =>
+    ∀ a ∈ Algebra.adjoin ℂ s, ∀ b ∈ Algebra.adjoin ℂ t, Commute a b := fun _ ha _ hb =>
   Algebra.commute_of_mem_adjoin_of_forall_mem_commute hb fun y hy =>
     (Algebra.commute_of_mem_adjoin_of_forall_mem_commute ha fun x hx => (h x hx y hy).symm).symm
 

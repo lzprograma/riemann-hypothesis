@@ -15,8 +15,6 @@ noncomputable section
 universe u
 
 
-set_option synthInstance.maxHeartbeats 100000 in
-set_option synthInstance.maxHeartbeats 400000 in
 def SemilocalLength.Statement : Prop :=
   ∀ (F : Type u) [Field F] (K K' : Type) [Fintype K] [DecidableEq K] [Fintype K']
     [DecidableEq K'] (j : K ↪ K') (ι' : K' → Type) [∀ k, Fintype (ι' k)]

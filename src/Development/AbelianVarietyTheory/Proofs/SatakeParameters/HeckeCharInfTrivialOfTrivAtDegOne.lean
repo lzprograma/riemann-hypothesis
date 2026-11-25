@@ -15,50 +15,9 @@ public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DegOne
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ContinuousIdeleCharLocalFactorization
 public import Mathlib.RingTheory.Ideal.Maps
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ResidueDegreeOneOfLinearMem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.Convex.Contractible
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
@@ -471,7 +430,6 @@ theorem exists_integer_near (F : Type) [Field F] [NumberField F] :
       mixedEmbedding_apply_isReal, hτ, b, c, v]
   have hz : τ (((∑ i, round (c i) • b i : 𝓞 F)) : F)
       = ∑ i, (round (c i) : ℝ) * τ ((b i : 𝓞 F) : F) := by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp [map_sum]
   rw [hz, hw, ← Finset.sum_sub_distrib]
   calc |∑ i, ((round (c i) : ℝ) * τ ((b i : 𝓞 F) : F) - c i * τ ((b i : 𝓞 F) : F))|
@@ -623,8 +581,7 @@ theorem infinitePlace_eq_of_embedding_comp_algebraMap_eq (F E : Type) [Field F] 
   have hcard : Fintype.card (E →ₐ[F] ℂ) = 2 := by
     rw [AlgHom.card, Algebra.IsQuadraticExtension.finrank_eq_two]
   have hcab : c = a ∨ c = b := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     have h3 : ({a, b, c} : Finset (E →ₐ[F] ℂ)).card = 3 := by
       rw [Finset.card_insert_of_notMem, Finset.card_pair]
       · exact fun e => hne.2 e.symm
@@ -770,11 +727,6 @@ namespace GlobalTheory.HeckeInfTriv
 section Inf
 variable (E : Type) [Field E] [NumberField E]
 
-theorem continuous_mixedSymm : Continuous (InfiniteAdeleRing.ringEquiv_mixedSpace E).symm := by
-  first
-  | exact _root_.PositivityTheory.ThKF0.Split.continuous_ofMixed
-  | (apply _root_.PositivityTheory.ThKF0.Split.continuous_ofMixed <;> assumption)
-
 theorem continuous_infIdele : Continuous (infIdele E) :=
   Continuous.units_map _ (continuous_id.prodMk continuous_const)
 
@@ -791,7 +743,7 @@ def infUnit : ({w : InfinitePlace E // w.IsComplex} → ℂˣ) →* (InfiniteAde
   (Units.map (InfiniteAdeleRing.ringEquiv_mixedSpace E).symm.toRingHom.toMonoidHom).comp (cplxUnit E)
 
 theorem continuous_infUnit : Continuous (infUnit E) := by
-  refine (Continuous.units_map ((InfiniteAdeleRing.ringEquiv_mixedSpace E).symm.toRingHom.toMonoidHom) (continuous_mixedSymm E)).comp (f := cplxUnit E) ?_
+  refine (Continuous.units_map ((InfiniteAdeleRing.ringEquiv_mixedSpace E).symm.toRingHom.toMonoidHom) (PositivityTheory.ThKF0.Split.continuous_ofMixed E)).comp (f := cplxUnit E) ?_
   refine Units.continuous_iff.2 ⟨?_, ?_⟩
   · exact continuous_const.prodMk (continuous_pi fun w => Units.continuous_val.comp (continuous_apply w))
   · exact continuous_const.prodMk (continuous_pi fun w => Units.continuous_coe_inv.comp (continuous_apply w))
@@ -954,7 +906,7 @@ theorem inf_trivial_of_trivAt_degOne : ∀ (F E : Type) [Field F] [NumberField F
     refine (pi_norm_le_iff_of_nonneg (le_max_right _ _)).2 fun i => ?_
     have hy' : y' (τ i) = y i := by
       have h : ∃ j, τ j = τ i := ⟨i, rfl⟩
-      simp only [y', dif_pos h]
+      simp only [y', dite_eq_left h]
       rw [hτinj h.choose_spec]
     rw [Pi.sub_apply, Real.norm_eq_abs, ← hy']
     exact (hbC (τ i)).trans (le_max_left _ _)

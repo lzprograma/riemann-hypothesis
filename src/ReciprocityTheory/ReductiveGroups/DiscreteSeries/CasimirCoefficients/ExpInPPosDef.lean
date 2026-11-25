@@ -25,7 +25,7 @@ namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ}
 
@@ -33,24 +33,9 @@ variable {ε : Fin n → Bool}
 
 open PolarDecomposition
 
-private lemma Jm_mul_self_eq_one' : Jm ε * Jm ε = 1 := by
-  unfold Jm
-  rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-  congr 1
-  funext a
-  split_ifs <;> norm_num
-
-private lemma Jm_conjTranspose_eq_self' : (Jm ε)ᴴ = Jm ε := by
-  unfold Jm
-  rw [Matrix.diagonal_conjTranspose]
-  congr 1
-  funext a
-  change star (if ε a = true then (1 : ℂ) else -1) = _
-  split_ifs <;> simp
-
 lemma isHermitian_of_mem_noncompactPart' {X : Matrix (Fin n) (Fin n) ℂ} (hX : inP ε X) : Xᴴ = X := by
   obtain ⟨hG, hXJ⟩ := hX
-  have hJ := Jm_mul_self_eq_one' (ε := ε)
+  have hJ := Jm_mul_self ε
   have h1 : Xᴴ * Jm ε = X * Jm ε := by
     rw [hXJ]
     unfold inG at hG
@@ -60,7 +45,7 @@ lemma isHermitian_of_mem_noncompactPart' {X : Matrix (Fin n) (Fin n) ℂ} (hX : 
     _ = X := by rw [mul_assoc, hJ, mul_one]
 
 lemma inP_JXJ {X : Matrix (Fin n) (Fin n) ℂ} (hX : inP ε X) : Jm ε * X * Jm ε = -X := by
-  rw [mul_assoc, hX.2, mul_neg, ← mul_assoc, Jm_mul_self_eq_one', one_mul]
+  rw [mul_assoc, hX.2, mul_neg, ← mul_assoc, Jm_mul_self, one_mul]
 
 lemma toMK_facts (k : KG ε) : (toMK k)ᴴ * toMK k = 1 ∧ toMK k * (toMK k)ᴴ = 1 ∧
     toMK k * Jm ε = Jm ε * toMK k := by
@@ -123,13 +108,6 @@ theorem polar_unique {k k' : KG ε} {X X' : Matrix (Fin n) (Fin n) ℂ} (hX : in
   exact Subtype.ext (Subtype.ext (Units.ext hm))
 
 theorem inUJ_kexp (k : KG ε) {X : Matrix (Fin n) (Fin n) ℂ} (hX : inP ε X) : inUJ ε (toMK k * NormedSpace.exp X) := by
-  have hJ := Jm_mul_self_eq_one' (ε := ε)
-  have hJinv : (Jm ε)⁻¹ = Jm ε := Matrix.inv_eq_left_inv hJ
-  have hJu : IsUnit (Jm ε) := ⟨⟨Jm ε, Jm ε, hJ, hJ⟩, rfl⟩
-  have hconj : Jm ε * NormedSpace.exp X * Jm ε = NormedSpace.exp (-X) := by
-    have h := Matrix.exp_conj (Jm ε) X hJu
-    rw [hJinv, inP_JXJ hX] at h
-    exact h.symm
   have hf := toMK_facts k
   unfold inUJ
   rw [Matrix.conjTranspose_mul, ← Matrix.exp_conjTranspose, isHermitian_of_mem_noncompactPart' hX]
@@ -141,8 +119,9 @@ theorem inUJ_kexp (k : KG ε) {X : Matrix (Fin n) (Fin n) ℂ} (hX : inP ε X) :
     _ = NormedSpace.exp X * Jm ε * NormedSpace.exp X := by
         rw [← mul_assoc (toMK k)ᴴ, hf.1, one_mul]
     _ = Jm ε * (Jm ε * NormedSpace.exp X * Jm ε) * NormedSpace.exp X := by
-        simp only [← mul_assoc, hJ, one_mul]
-    _ = Jm ε * NormedSpace.exp (-X) * NormedSpace.exp X := by rw [hconj]
+        simp only [← mul_assoc, Jm_mul_self, one_mul]
+    _ = Jm ε * NormedSpace.exp (-X) * NormedSpace.exp X := by
+        rw [← polar_exp_Jconj ε X, inP_JXJ hX]
     _ = Jm ε := by
         rw [mul_assoc, ← Matrix.exp_add_of_commute _ _ ((Commute.refl X).neg_left), neg_add_cancel,
           NormedSpace.exp_zero, mul_one]
@@ -155,7 +134,7 @@ theorem inP_conj (k : KG ε) {X : Matrix (Fin n) (Fin n) ℂ} (hX : inP ε X) :
   have hu : IsUnit (toMK k) := ⟨⟨toMK k, (toMK k)ᴴ, hf.2.1, hf.1⟩, rfl⟩
   have hcJ : (toMK k)ᴴ * Jm ε = Jm ε * (toMK k)ᴴ := by
     have h := congrArg Matrix.conjTranspose hf.2.2
-    simp only [Matrix.conjTranspose_mul, Jm_conjTranspose_eq_self'] at h
+    simp only [Matrix.conjTranspose_mul, Jm_conjTranspose] at h
     exact h.symm
   have h2 : toMK k * X * (toMK k)ᴴ * Jm ε = -(Jm ε * (toMK k * X * (toMK k)ᴴ)) := by
     calc toMK k * X * (toMK k)ᴴ * Jm ε = toMK k * (X * Jm ε) * (toMK k)ᴴ := by

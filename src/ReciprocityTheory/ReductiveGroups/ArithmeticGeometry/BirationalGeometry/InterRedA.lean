@@ -39,7 +39,7 @@ theorem isSectionOn_inv_one {P : Ideal (MRing ι)} (hP : P.IsPrime) {B : HermLin
   · intro m hm k
     have hm0 : m = 0 := by
       by_contra h
-      exact (MvPolynomial.mem_support_iff.1 hm) (by rw [MvPolynomial.coeff_one, if_neg (Ne.symm h)])
+      exact (MvPolynomial.mem_support_iff.1 hm) (by rw [MvPolynomial.coeff_one, ite_eq_right (Ne.symm h)])
     subst hm0
     simp
   · intro h
@@ -113,9 +113,6 @@ theorem contDiffOn_potOf (R : AnLogRes P J e) {L : HermLine ι} (hL : IsSmoothHe
     fun y hy => (R.mem x _ hy.2).1
   have hL' : ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) L.h {z | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0} := hL
   exact (hL'.comp hl hmaps).log fun y hy => (L.pos _ (hmaps hy)).ne'
-
-theorem smoothOn_potOf (R : AnLogRes P J e) {L : HermLine ι} (hL : IsSmoothHerm L) (x : R.X) :
-    R.A.SmoothOn ((potOf R L).U x) ((potOf R L).φ x) := fun j => contDiffOn_potOf R hL x j
 
 theorem smooth_diag (R : AnLogRes P J e) {B : HermLine ι} (hB : IsSmoothHerm B) (hB0 : B.a = 0) :
     R.A.Smooth (fun x => Real.log (B.h (R.lift x x))) := by

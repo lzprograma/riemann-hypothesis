@@ -35,7 +35,7 @@ theorem det_gram_eq_prod_gramSchmidt {E : Type*} [NormedAddCommGroup E] [InnerPr
         · simp [A, h, h']
         · simp [A, h, h']
     rw [Finset.sum_congr rfl (fun i _ => h1 i), Finset.sum_add_distrib]
-    simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [← Finset.sum_filter, hc j]
     congr 1
     refine Finset.sum_congr ?_ (fun _ _ => rfl)
@@ -46,17 +46,17 @@ theorem det_gram_eq_prod_gramSchmidt {E : Type*} [NormedAddCommGroup E] [InnerPr
     intro k l
     by_cases h : k = l
     · subst h
-      rw [if_pos rfl, inner_self_eq_norm_sq_to_K]
+      rw [ite_eq_left rfl, inner_self_eq_norm_sq_to_K]
       push_cast
       rfl
-    · rw [if_neg h, gramSchmidt_orthogonal (𝕜 := ℂ) v h]
+    · rw [ite_eq_right h, gramSchmidt_orthogonal (𝕜 := ℂ) v h]
   have hG : Matrix.gram ℂ v =
       Matrix.conjTranspose A * Matrix.diagonal (fun k => (((‖gramSchmidt ℂ v k‖ ^ 2 : ℝ)) : ℂ)) * A := by
     ext i j
     show ⟪v i, v j⟫_ℂ = _
     rw [hA i, hA j]
     simp only [sum_inner, inner_sum, inner_smul_left, inner_smul_right, horth, mul_ite, mul_zero,
-      Finset.mem_univ, if_true, Matrix.mul_apply, Matrix.diagonal_apply, Finset.sum_ite_eq',
+      Finset.mem_univ, ite_true, Matrix.mul_apply, Matrix.diagonal_apply, Finset.sum_ite_eq',
       Matrix.conjTranspose_apply, starRingEnd_apply]
     refine Finset.sum_congr rfl fun k _ => ?_
     ring

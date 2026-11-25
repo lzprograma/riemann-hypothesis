@@ -98,8 +98,8 @@ theorem lamConj_spec (hU : Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensit
     (ρ : M →ₐ[ℚ] ℂ) (Λ : AddSubgroup ℂ) (h2 : g2 Λ ∈ M) (h3 : g3 Λ ∈ M) (h1 : Formalism.MainNotions.TaylorLogMetric.discr Λ = 1) :
     g2 (lamConj M ρ Λ) = ρ ⟨g2 Λ, h2⟩ ∧ g3 (lamConj M ρ Λ) = ρ ⟨g3 Λ, h3⟩ ∧
       Formalism.MainNotions.TaylorLogMetric.discr (lamConj M ρ Λ) = 1 := by
-  have hl2 : liftM M (g2 Λ) = ⟨g2 Λ, h2⟩ := dif_pos h2
-  have hl3 : liftM M (g3 Λ) = ⟨g3 Λ, h3⟩ := dif_pos h3
+  have hl2 : liftM M (g2 Λ) = ⟨g2 Λ, h2⟩ := dite_eq_left h2
+  have hl3 : liftM M (g3 Λ) = ⟨g3 Λ, h3⟩ := dite_eq_left h3
   have hdM : (⟨g2 Λ, h2⟩ : M) ^ 3 - 27 * (⟨g3 Λ, h3⟩ : M) ^ 2 = 1 := by
     apply M.val.injective
     rw [map_sub, map_mul, map_pow, map_pow, map_ofNat, map_one]

@@ -6,49 +6,6 @@ public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.Surject
 public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RelationsAreFunctions
 public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ZeroFLeftExt
 public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsNsmulIffEq
 
 @[expose] public section
@@ -386,27 +343,6 @@ theorem mem_Theta (j : ℕ) (α : A.X) (θ : (Fin A.gB → ℂ) → ℂ) : θ �
   ⟨by
     rw [show θ = fun _ => θ 0 from funext fun z => congrArg θ (Subsingleton.elim _ _)]
     exact differentiable_const _, fun l z => by simp [lam_eq_zero A l, AnArc.ah]⟩
-
-def secFn : (dict A q hq h).SecFn where
-  fn j _ α := Equiv.ofBijective
-    (fun s => ⟨fun _ => valAt' (𝟙 (Sp ℂ)) _ (s.f fun _ => PUnit.unit), mem_Theta A j α _⟩) (by
-      constructor
-      · rintro ⟨f, _⟩ ⟨f', _⟩ e
-        have e' := congrFun (congrArg Subtype.val e) 0
-        congr 1
-        funext i
-        refine ComplexPoints.eq_of_valAt'_eq (𝟙 (Sp ℂ)) _ _ _ fun x hx _ => ?_
-        obtain rfl : x = 𝟙 _ := (Category.comp_id _).symm.trans hx
-        exact e'
-      · intro θ
-        refine ⟨⟨fun i => constFn (𝟙 (Sp ℂ)) _ (θ.1 0), fun i i' => ?_⟩, Subtype.ext (funext fun z => ?_)⟩
-        · obtain rfl : i = i' := funext fun _ => rfl
-          erw [linComb_triv_g]
-          exact (_root_.one_mul _).symm
-        · exact (valAt'_constFn _ _ (Category.comp_id _) _ _ (wchart_triv _ _).ge).trans
-            (congrArg θ.1 (Subsingleton.elim (α := Fin A.gB → ℂ) _ _)))
-  fn_val j _ α s z i _ :=
-    (_root_.mul_one _).symm.trans (congrArg _ (frameProd_zeroUnif A _ _ _).symm)
 
 def psiFrac (x : A.X) : (FractionRing ℂ)ˣ := Units.map (algebraMap ℂ (FractionRing ℂ)).toMonoidHom (A.psi x)
 

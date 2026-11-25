@@ -3,55 +3,9 @@ module
 public import Formalism.CharacterColumnKernels.StatementN
 public import Mathlib.Data.Finsupp.Interval
 public import Mathlib.RingTheory.PowerSeries.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 public import Mathlib.RingTheory.PowerSeries.Inverse
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.LinearAlgebra.Matrix.Charpoly.Coeff
 
@@ -213,12 +167,12 @@ lemma coeff_psi (m : ℕ) (P : MvPolynomial (Fin m) K) :
       simp)
   have h2 : ∑ e ∈ Finset.Iic (bnd m), (if wt e = m then AddMonoidAlgebra.coeff P e else 0) =
       ∑ e ∈ P.support ∪ Finset.Iic (bnd m), (if wt e = m then AddMonoidAlgebra.coeff P e else 0) :=
-    Finset.sum_subset Finset.subset_union_right (fun e _ he => if_neg (fun h => he (hbnd e h)))
+    Finset.sum_subset Finset.subset_union_right (fun e _ he => ite_eq_right (fun h => he (hbnd e h)))
   rw [h1, h2]
   refine Finset.sum_congr rfl fun e _ => ?_
   by_cases h : wt e = m
-  · rw [if_pos h, if_pos h.symm]
-  · rw [if_neg h, if_neg (Ne.symm h)]
+  · rw [ite_eq_left h, ite_eq_left h.symm]
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
 end Trunc
 
 section Good
@@ -255,7 +209,7 @@ lemma coeff_det_eq (R' : Subalgebra O (X' → Matrix d d (FractionRing O)))
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [pow_succ]
     ring_nf
-  rw [hL, RingHom.map_det, hmat, Matrix.det_smul, PowerSeries.coeff_X_pow_mul', if_pos (by omega),
+  rw [hL, RingHom.map_det, hmat, Matrix.det_smul, PowerSeries.coeff_X_pow_mul', ite_eq_left (by omega),
     Nat.add_sub_cancel]
   symm
   apply coeff_det_congr
@@ -265,10 +219,10 @@ lemma coeff_det_eq (R' : Subalgebra O (X' → Matrix d d (FractionRing O)))
   simp only [Matrix.sum_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul, map_sum,
   RingHom.mapMatrix_apply, PowerSeries.coeff_map]
   rw [Finset.sum_eq_single ⟨k, by omega⟩]
-  · rw [mul_comm, PowerSeries.coeff_C_mul_X_pow, if_pos rfl]
+  · rw [mul_comm, PowerSeries.coeff_C_mul_X_pow, ite_eq_left rfl]
     rfl
   · intro b _ hb
-    rw [mul_comm, PowerSeries.coeff_C_mul_X_pow, if_neg]
+    rw [mul_comm, PowerSeries.coeff_C_mul_X_pow, ite_eq_right]
     intro h
     exact hb (Fin.ext h.symm)
   · intro h
@@ -292,9 +246,9 @@ lemma detGood (T' : Subalgebra O (X' → O)) (R' : Subalgebra O (X' → Matrix d
       rw [coeff_det_eq R' a ha n x', coeff_psi, Finset.sum_apply, map_sum]
       refine Finset.sum_congr rfl fun e _ => ?_
       by_cases h : wt e = n + Fintype.card d
-      · rw [if_pos h, if_pos h]
+      · rw [ite_eq_left h, ite_eq_left h]
         exact hFx e x'
-      · rw [if_neg h, if_neg h]
+      · rw [ite_eq_right h, ite_eq_right h]
         simp
 end Good
 

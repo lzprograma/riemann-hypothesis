@@ -80,21 +80,10 @@ variable {F : Type} [Field F] {n : ℕ} (I : Ideal (MvPolynomial (Fin n) F)) (t 
 theorem aeval_smul_hom {B : Type*} [CommSemiring B] [Algebra F B] (π : MvPolynomial (Fin n) F →ₐ[F] B) (c : B)
     {g : MvPolynomial (Fin n) F} {d : ℕ} (hg : g.IsHomogeneous d) :
     aeval (fun m => c * π (X m)) g = c ^ d * π g := by
-  have key : aeval (fun m => c * π (X m)) g = c ^ d * aeval (fun m => π (X m)) g := by
-    conv_lhs => rw [g.as_sum]
-    conv_rhs => rw [g.as_sum]
-
-    rw [map_sum, map_sum, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun s hs => ?_
-    have hd := hg (mem_support_iff.mp hs)
-    simp only [aeval_monomial, mul_pow]
-    rw [Finsupp.prod_mul, Finsupp.prod_pow, Finsupp.prod_pow, Finset.prod_pow_eq_pow_sum, ← hd,
-      Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by simp)]
-    simp only [smul_eq_mul, Pi.one_apply, mul_one]
-    ring
-  rw [key]
-  congr 1
-  exact (DFunLike.congr_fun (MvPolynomial.aeval_unique π) g).symm
+  rw [aeval_def, eval₂_eq_eval_map,
+    show (fun m => c * π (X m)) = c • fun m => π (X m) from rfl,
+    (hg.map (algebraMap F B)).eval_smul, ← eval₂_eq_eval_map, ← aeval_def]
+  exact congrArg (c ^ d * ·) (DFunLike.congr_fun (MvPolynomial.aeval_unique π) g).symm
 
 theorem map_eq_zero_of_components {B G : Type*} [CommRing B] [FunLike G (MvPolynomial (Fin n) F) B]
     [RingHomClass G (MvPolynomial (Fin n) F) B] (f : G)

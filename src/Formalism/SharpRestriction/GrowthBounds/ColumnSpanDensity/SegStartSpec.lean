@@ -1,44 +1,9 @@
 module
 
+import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.InitialLevelFormula
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.NumBase
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FourDepthLtConductorOfBounds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -49,13 +14,7 @@ namespace Formalism.MainNotions.flipOneThree.Pf
 open Formalism.MainNotions.G Formalism.MainNotions.flipOneThree
 
 theorem posAdd_cdist {n' : ℕ} (x y : Fin n') : posAdd x (cdist x y) = y := by
-  apply Fin.ext
-  show (x.val + (y.val + n' - x.val) % n') % n' = y.val
-  rw [Nat.add_mod_mod]
-  have h : x.val + (y.val + n' - x.val) = y.val + n' := by
-    have := x.isLt
-    omega
-  rw [h, Nat.add_mod_right, Nat.mod_eq_of_lt y.isLt]
+  apply _root_.Formalism.MainNotions.ColumnSystems.Pf.posAdd_cdist <;> assumption
 
 theorem mem_segDists {n' : ℕ} (TT : Finset (Fin n')) (j : Fin (numSeg TT)) (d : ℕ) :
     d ∈ segDists TT j ↔ ∃ s ∈ TT, ¬ Even s.val ∧ 0 < cdist (segStart TT j) s ∧
@@ -82,8 +41,7 @@ theorem segPos_spec {n' : ℕ} (TT : Finset (Fin n')) (j : Fin (numSeg TT)) (i :
   exact ⟨hs, h1, h4, h4 ▸ h2, h4 ▸ h3⟩
 
 theorem mem_evenTops {n' : ℕ} (TT : Finset (Fin n')) (x : Fin n') : x ∈ evenTops TT ↔ x ∈ TT ∧ Even x.val := by
-  unfold evenTops
-  rw [Finset.mem_sort, Finset.mem_filter]
+  exact Formalism.MainNotions.ColumnSystems.Pf.ev_mem TT x
 
 theorem segStart_spec {n' : ℕ} (TT : Finset (Fin n')) (j : Fin (numSeg TT)) :
     segStart TT j ∈ TT ∧ Even (segStart TT j).val :=
@@ -99,7 +57,6 @@ theorem ex_cast {n' : ℕ} {TT : Finset (Fin n')} (z : Fin n' → ℤ) (c : ℕ)
   exact h'
 
 theorem min_shift (b a c P : ℝ) (hc : 0 ≤ c) (hP : 1 ≤ P) : min (b + c) ((a + c) / P) ≤ min b (a / P) + c := by
-  have hP0 : 0 < P := by linarith
   have h1 : c / P ≤ c := div_le_self hc hP
   have h2 : (a + c) / P = a / P + c / P := add_div _ _ _
   rw [← min_add_add_right]
@@ -187,8 +144,6 @@ theorem tle_of (hO : RestOddTops) {K : Cst} (hK : K.Pos) {CH : ℝ} {C : ℝ} (h
   have hx0 : 0 ≤ X.t0 K (fun s => (aw s + X.ccl).toNat) (fun s => (bw s + X.ccl).toNat) + X.N * X.J0 K := by
     rw [initial_level_formula, hJ]
     have hCt : 0 < K.Ct := hK.2.2.2.2.2.2.2.1
-    have hk0 : 0 < X.k := by linarith
-    have hQ0 : (0 : ℝ) < (X.p : ℝ) ^ X.G' := by positivity
     have := hS'0
     positivity
   have hceil : (X.tStar K (fun s => (aw s + X.ccl).toNat) (fun s => (bw s + X.ccl).toNat) : ℝ) ≤

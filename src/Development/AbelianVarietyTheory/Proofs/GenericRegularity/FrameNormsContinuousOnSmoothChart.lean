@@ -213,23 +213,6 @@ open scoped Matrix
 
 namespace GlobalTheory.TriSqrt
 
-lemma det_eq_prod_diag {n α : Type*} [Fintype n] [DecidableEq n] [Fintype α] (t : n → α) (w : n → ℕ)
-    (hinj : ∀ j j', t j = t j' → w j = w j' → j = j')
-    (h : Matrix n n ℂ) (hs : ∀ j j', h j j' ≠ 0 → t j = t j' ∧ w j ≤ w j') :
-    h.det = ∏ j, h j j := by
-  have hi : Function.Injective (fun j => toLex (Fintype.equivFin α (t j), w j)) := by
-    intro k l hkl
-    have h' := toLex.injective hkl
-    rw [Prod.mk.injEq] at h'
-    exact hinj _ _ ((Fintype.equivFin α).injective h'.1) h'.2
-  letI : LinearOrder n := LinearOrder.lift' _ hi
-  refine Matrix.det_of_upperTriangular fun k l hkl => ?_
-  by_contra hne
-  obtain ⟨h1, h2⟩ := hs k l hne
-  have hkl' : toLex (Fintype.equivFin α (t l), w l) < toLex (Fintype.equivFin α (t k), w k) := hkl
-  simp only [h1, Prod.Lex.toLex_lt_toLex, lt_self_iff_false, true_and, false_or] at hkl'
-  omega
-
 lemma det_minor {n α : Type*} [Fintype n] [DecidableEq n] [Fintype α] (t : n → α) (w : n → ℕ)
     (hinj : ∀ j j', t j = t j' → w j = w j' → j = j') (d : n → ℝ)
     (S : Matrix n n ℂ) (hs : ∀ j j', S j j' ≠ 0 → t j = t j' ∧ w j ≤ w j')
@@ -244,7 +227,7 @@ lemma det_minor {n α : Type*} [Fintype n] [DecidableEq n] [Fintype α] (t : n �
     ext a a'
     simp only [Matrix.submatrix_apply, Matrix.mul_apply, Matrix.transpose_apply, hT,
       Matrix.diagonal_apply, Matrix.map_apply, ite_mul, zero_mul, Finset.sum_ite_eq,
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
     rw [← Finset.sum_subtype (Finset.univ.filter p) (by simp)
       (fun c => S c a * ((d c : ℂ) * (starRingEnd ℂ) (S c a')))]
     symm
@@ -254,7 +237,7 @@ lemma det_minor {n α : Type*} [Fintype n] [DecidableEq n] [Fintype α] (t : n �
       exact hc (by simpa using hp c a hne a.2)
     rw [this, zero_mul]
   have hdT : T.det = ∏ c, T c c :=
-    det_eq_prod_diag (fun c => t c.1) (fun c => w c.1)
+    GlobalTheory.PerBor.det_of_support (fun c => t c.1) (fun c => w c.1)
       (fun c c' h1 h2 => Subtype.ext (hinj _ _ h1 h2)) T fun c c' hne => hs _ _ hne
   have hdT' : (T.map (starRingEnd ℂ)).det = (starRingEnd ℂ) T.det := by
     rw [RingHom.map_det]; rfl
@@ -290,7 +273,7 @@ theorem GlobalTheory.continuousOn_norm_diag_of_triangular_sqrt : ∀ (g : ℕ) (
   have hne : ∀ b ∈ B, ∀ c, S b c c ≠ 0 := by
     intro b hb c
     obtain ⟨h1, h2, -⟩ := hS b hb
-    rw [GlobalTheory.TriSqrt.det_eq_prod_diag t w hinj _ h2, isUnit_iff_ne_zero] at h1
+    rw [GlobalTheory.PerBor.det_of_support t w hinj _ h2, isUnit_iff_ne_zero] at h1
     exact Finset.prod_ne_zero_iff.1 h1 c (Finset.mem_univ _)
   have hne' : ∀ b ∈ B, (∏ c ∈ Finset.univ.filter (fun c => t c = t j ∧ w c < w j),
       ‖S b c c‖ ^ 2 * d c) * d j ≠ 0 := fun b hb =>
@@ -603,7 +586,7 @@ theorem fn_continuousOn_good {E : Type} [Field E] [NumberField E] [IsCMField E] 
     else φ x₀
   have hψ' : ∀ b ∈ B, ∀ a, Formalism.L2.PjFree.toC (ψ' b a) = ψ b a := by
     intro b hb a
-    simp only [ψ', dif_pos hb]
+    simp only [ψ', dite_eq_left hb]
     rfl
   choose z hz using fun b => GlobalTheory.Frames.FramedBaseChange.exists_frMap GlobalTheory.lawsFieldsSeparately.2.1 E H Dw l Xo c A (CAt σ) (ψ' b) yA
   have hcont := _root_.GlobalTheory.FrameNorm.fn_continuousOn_hol E H Dw l Xo c r U hU xR fn hx hfn σ hσ A yA m B ψ' z hB
@@ -642,7 +625,7 @@ theorem fn_continuousOn_smooth : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
   · have hσ' : Formalism.L2.PjFree.GoodEmb c ((starRingEnd ℂ).comp σ) := by
       have := Formalism.L2.PjFree.goodEmb_goodOf c σ
       unfold Formalism.L2.PjFree.goodOf at this
-      rwa [if_neg hσ] at this
+      rwa [ite_eq_right hσ] at this
     choose z hz using fun x => GlobalTheory.Frames.FramedBaseChange.exists_frMap GlobalTheory.lawsFieldsSeparately.2.1 E H Dw l Xo c (CAt σ)
       (CAt ((starRingEnd ℂ).comp σ)) (conjAlg σ) (y x)
     have h := fn_continuousOn_good U hU xR fn hx hfn _ hσ' A yA X W (fun x => (conjAlg σ).comp (φ x)) z

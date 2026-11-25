@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.GroupLattices.LevelCharts.AtGGlob
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareInHH
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Volumes
 public import Formalism.HermitianCurvature.MemParahoricTimesPrincipalCongruenceIff
@@ -21,16 +22,10 @@ def IsTyped (g1 g2 : ℕ) (v : HeightOneSpectrum (𝓞 F)) : Prop :=
   (g1 : 𝓞 F) ∈ v.asIdeal ∨ (g2 : 𝓞 F) ∈ v.asIdeal
 
 theorem finite_over (g : ℕ) (hg : g ≠ 0) : {v : HeightOneSpectrum (𝓞 F) | (g : 𝓞 F) ∈ v.asIdeal}.Finite := by
-  have hg' : ((g : 𝓞 F)) ≠ 0 := Nat.cast_ne_zero.mpr hg
-  have hI : Ideal.span {(g : 𝓞 F)} ≠ 0 := by
-    rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]; exact hg'
-  refine (Ideal.finite_factors hI).subset fun v hv => ?_
-  simp only [Set.mem_setOf_eq] at hv ⊢
-  rw [Ideal.dvd_iff_le, Ideal.span_singleton_le_iff_mem]
-  exact hv
+  apply _root_.Formalism.L2.G.finite_placesOver <;> assumption
 
 theorem typed_finite (g1 g2 : ℕ) (h1 : g1 ≠ 0) (h2 : g2 ≠ 0) :
-    {v : HeightOneSpectrum (𝓞 F) | IsTyped F g1 g2 v}.Finite := ((finite_over F g1 h1).union (finite_over F g2 h2)).subset fun v hv => hv
+    {v : HeightOneSpectrum (𝓞 F) | IsTyped F g1 g2 v}.Finite := ((finite_over F g1 h1).union (finite_over F g2 h2)).subset fun _ hv => hv
 
 def typSet (g1 g2 : ℕ) : Finset (HeightOneSpectrum (𝓞 F)) :=
   if h : {v : HeightOneSpectrum (𝓞 F) | IsTyped F g1 g2 v}.Finite then h.toFinset else ∅

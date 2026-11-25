@@ -51,7 +51,6 @@ import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LawLoc
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.LocMod GlobalTheory.LocOm
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.SplitSelfDual
 
@@ -150,7 +149,7 @@ theorem selfDual_lattice_split : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel
     intro y hy hyΛ
     have hyx : p.up FS FT (p.down FS FT y) = y := Witness.up_down p FS FT hy
     have hx : ¬ ∀ r q, p.down FS FT y r q ∈ 𝒪[k] := fun hx => hyΛ (hyx ▸ up_mem_lat p ψ FS FT hx)
-    push_neg at hx
+    push Not at hx
     obtain ⟨r, q, hrq⟩ := hx
     set a := p.down FS FT y r q with ha
     have hrq' : ¬ valuation k a ≤ 1 := fun h => hrq ((Valuation.mem_integer_iff _ _).2 h)
@@ -161,7 +160,7 @@ theorem selfDual_lattice_split : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel
       have h' : valuation k (c : k) * valuation k a ≤ valuation k (c : k) * 1 := by rwa [mul_one]
       exact hrq' ((mul_le_mul_iff_of_pos_left hc0).1 h')
     obtain ⟨z, hz, hzne⟩ : ∃ z, valuation k z ≤ valuation k (c * a) ∧ ψk z ≠ 1 := by
-      by_contra hcon; push_neg at hcon; exact hcv ((hc _).1 hcon)
+      by_contra hcon; push Not at hcon; exact hcv ((hc _).1 hcon)
     have hsum : ∀ t : Matrix Y Y' k, ∑ r', ∑ q', Matrix.single r q (z / a) r' q' * t r' q' = z / a * t r q := by
       intro t; simp [Matrix.single_apply, ite_and]
     obtain ⟨y', hy'c, hy'p⟩ := hpair (Matrix.single r q (z / a))
@@ -183,7 +182,7 @@ theorem selfDual_lattice_split : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel
     have hyd : y ∉ dualHalf p ψ S T FS FT := fun h => hyΛ (dualHalf_le_lat p ψ FS FT h)
     have : ¬ ∀ t : Matrix Y Y' k, (∀ r q, t r q ∈ 𝒪[k]) → ψ (symplO S T (p.up FS FT t) y) = 1 :=
       fun h => hyd ⟨hy, h⟩
-    push_neg at this
+    push Not at this
     obtain ⟨t, ht, hne⟩ := this
     exact ⟨p.up FS FT t, up_mem_lat p ψ FS FT ht, Witness.up_half p FS FT t, hne⟩
   ·

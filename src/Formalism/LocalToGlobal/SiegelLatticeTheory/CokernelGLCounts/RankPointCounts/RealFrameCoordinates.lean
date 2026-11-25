@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierBase
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StepPinExistsOfPlace
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LocWSOf
 
@@ -11,8 +12,6 @@ open scoped Classical
 open MeasureTheory NumberField Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.ThB Formalism.L2.SG.HidaSetting Formalism.L2.SG.LocWSOf
 
 namespace Formalism.L2.SG.RealFrameCoordinates
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {X : HidaSetting D} {θ : ℝ} (C : Choice X θ) (u u' : D.what₂.Word)
 
@@ -92,9 +91,9 @@ private theorem ptEntry_locBlocksFrom_eq (D : D7) (τ : D.what₂.Tau) :
     intro A i j
     simp only [locBlocksFrom, ptEntry]
     by_cases h1 : i < s ∧ j < s
-    · rw [if_pos h1, if_pos h1]
+    · rw [ite_eq_left h1, ite_eq_left h1]
       by_cases h2 : i + j + 1 = s
-      · rw [if_pos h2, if_pos h2]
+      · rw [ite_eq_left h2, ite_eq_left h2]
         have hz : rhoReal D (A + 1) s = D.host.rdE ^ (-((D.R.rS : ℤ) - ((A + i : ℕ) : ℤ))) *
             D.host.rdE ^ (-((D.R.rS : ℤ) - ((A + j : ℕ) : ℤ))) := by
           rw [← zpow_add₀ hne]
@@ -103,13 +102,13 @@ private theorem ptEntry_locBlocksFrom_eq (D : D7) (τ : D.what₂.Tau) :
           push_cast
           omega
         rw [hz]
-      · rw [if_neg h2, if_neg h2, map_zero, mul_zero]
-    · rw [if_neg h1, if_neg h1]
+      · rw [ite_eq_right h2, ite_eq_right h2, map_zero, mul_zero]
+    · rw [ite_eq_right h1, ite_eq_right h1]
       by_cases h3 : s ≤ i ∧ s ≤ j
-      · rw [if_pos h3, if_pos h3, ih]
+      · rw [ite_eq_left h3, ite_eq_left h3, ih]
         obtain ⟨h3i, h3j⟩ := h3
         rw [show A + s + (i - s) = A + i by omega, show A + s + (j - s) = A + j by omega]
-      · rw [if_neg h3, if_neg h3, map_zero, mul_zero]
+      · rw [ite_eq_right h3, ite_eq_right h3, map_zero, mul_zero]
 
 theorem zhat_conjugator_eq_point (w : Point D.host.E (D.R.rS + 1)) (γ : X.B.I.Ginf) (hrep : Formalism.L2.SG.RealObj.IsPtRep X u u' w γ)
     (τ : D.what₂.Tau) :
@@ -140,21 +139,7 @@ theorem rho_eq (D : D7) (b : Fin (D.R.rS + 1)) :
 
 theorem hpk_esI (k r : ℕ) (a : Fin r) (v : Fin (2 * r + k + 1) → ℂ) :
     (Formalism.QuantumDeterminants.Hpk k r *ᵥ v) (Formalism.QuantumDeterminants.esI k r a) = v (Formalism.QuantumDeterminants.eI k r a) := by
-  have ha := a.isLt
-  simp only [Matrix.mulVec, dotProduct]
-  rw [Finset.sum_eq_single (Formalism.QuantumDeterminants.eI k r a)]
-  · have h1 : Formalism.QuantumDeterminants.Hpk k r (Formalism.QuantumDeterminants.esI k r a) (Formalism.QuantumDeterminants.eI k r a) = 1 := by
-      simp only [Formalism.QuantumDeterminants.Hpk, Formalism.QuantumDeterminants.esI, Formalism.QuantumDeterminants.eI, Fin.ext_iff, Fin.val_mk]
-      split_ifs <;> first | rfl | (exfalso; omega)
-    rw [h1, one_mul]
-  · intro j _ hj
-    have hj' : j.val ≠ a.val := fun h => hj (Fin.ext (by simp [Formalism.QuantumDeterminants.eI, h]))
-    have h0 : Formalism.QuantumDeterminants.Hpk k r (Formalism.QuantumDeterminants.esI k r a) j = 0 := by
-      simp only [Formalism.QuantumDeterminants.Hpk, Formalism.QuantumDeterminants.esI, Fin.ext_iff, Fin.val_mk]
-      split_ifs <;> first | rfl | (exfalso; omega)
-    rw [h0, zero_mul]
-  · intro h
-    exact absurd (Finset.mem_univ _) h
+  apply _root_.Formalism.L2.SG.Pf.CarrierBase.hpk_mulVec_esI <;> assumption
 
 def cMg (γ : X.B.I.Ginf) (τ : D.what₂.Tau) (y : Formalism.REAL.UJ (X.B.I.ε (vOf X τ))) :
     Matrix (Fin (2 * D.R.rS + D.R.k + 1)) (Fin (2 * D.R.rS + D.R.k + 1)) ℂ :=

@@ -5,53 +5,8 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVecto
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFusionForms
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -89,17 +44,7 @@ theorem mMap_zero (k j ρ : ℕ) (hj : j = 0) (Z : Matrix (Fin j) (Fin j) ℂ) (
   congr 1 <;> ext <;> simp [eB_val]
 
 theorem psi_one (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (c : ℂ) : psi k r z c 1 = 1 := by
-  have hell : ell k r z 1 = 0 := by
-    unfold ell
-    refine Finset.sum_eq_zero fun a _ => ?_
-    split_ifs with h
-    · rw [Matrix.one_apply_ne]
-      intro he
-      have := congrArg Fin.val he
-      simp [eI] at this
-    · rw [Matrix.one_mulVec]
-      exact hz _ (Or.inl (by simp [eI]))
-  simp [psi, hell]
+  apply _root_.Formalism.FourierDecayAlt.P.Qx8.psi_one <;> assumption
 
 theorem psiH_zero (β : ℂ) (σ : Equiv.Perm (Fin 0)) (η : U.XiH 0 0 σ) : U.psiH β σ η = 1 := by
   simp [U.psiH, U.subS, U.supS, U.cornerA, U.cornerB, G.psi]
@@ -258,18 +203,18 @@ theorem residue_matrix_column (b : S) {D : ℂ} (hD : D ≠ 1) (m : Fin 2) (u : 
     (Wd.Rh0 b D : Wd.M2 (Wd.SlopeTestRemainingChoices S ℂ)) m 0 u Wd.e1 = if m = 0 ∧ u = Wd.e1 then 1 else 0 := by
   rw [residue_matrix_apply, unit_matrix_first_column]
   by_cases h : m = 0 ∧ u = Wd.e1
-  · rw [if_pos h, mul_one]
+  · rw [ite_eq_left h, mul_one]
     exact inv_mul_cancel₀ (sub_ne_zero.mpr hD)
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     simp
 
 theorem rht0_zero_zero_apply_e1_eq_indicator (b : S) {d : ℂ} (hd : d ≠ 1) (x : Wd.Ix S) :
     (Wd.Rht0 b d : Wd.M2 (Wd.SlopeTestRemainingChoices S ℂ)) 0 0 x Wd.e1 = if x = Wd.e1 then 1 else 0 := by
   rw [conj_residue_matrix_apply, unit_matrix_first_column]
   by_cases hx : x = Wd.e1
-  · rw [if_pos ⟨rfl, hx⟩, if_pos hx, mul_one]
+  · rw [ite_eq_left ⟨rfl, hx⟩, ite_eq_left hx, mul_one]
     exact inv_mul_cancel₀ (sub_ne_zero.mpr hd)
-  · rw [if_neg (fun h => hx h.2), if_neg hx]
+  · rw [ite_eq_right (fun h => hx h.2), ite_eq_right hx]
     simp
 
 theorem conj_residue_off_row (b : S) (d : ℂ) (x u : Wd.Ix S) (hu : u b ≠ 1) :
@@ -282,7 +227,7 @@ theorem residue_matrix_other_site {a b : S} (hab : a ≠ b) (D : ℂ) (m j : Fin
   rw [residue_matrix_apply, eU_apply]
   have h1 : ¬ (m = j ∧ u = y) := fun h' => h (by rw [h'.2])
   have h2 : ¬ (u b = j ∧ y b = m ∧ ∀ c, c ≠ b → u c = y c) := fun h' => h (h'.2.2 a hab)
-  rw [if_neg h1, if_neg h2]
+  rw [ite_eq_right h1, ite_eq_right h2]
   simp
 
 theorem conj_residue_other_site {a b : S} (hab : a ≠ b) (d : ℂ) (m j : Fin 2) {u y : Wd.Ix S} (h : u a ≠ y a) :
@@ -290,7 +235,7 @@ theorem conj_residue_other_site {a b : S} (hab : a ≠ b) (d : ℂ) (m j : Fin 2
   rw [conj_residue_matrix_apply, eU_apply]
   have h1 : ¬ (m = j ∧ u = y) := fun h' => h (by rw [h'.2])
   have h2 : ¬ (u b = m ∧ y b = j ∧ ∀ c, c ≠ b → u c = y c) := fun h' => h (h'.2.2 a hab)
-  rw [if_neg h1, if_neg h2]
+  rw [ite_eq_right h1, ite_eq_right h2]
   simp
 
 variable (QQ : ℂ → Wd.M2 (Op X))
@@ -303,13 +248,13 @@ theorem TTop_plus (l : Wd.Letter ℂ S) (w : List (Wd.Letter ℂ S)) (Y : ℂ) (
     (i j : Fin 2) (x y : Wd.Ix S) :
     TTop QQ (l :: w) Y i j x y =
       ∑ m, ∑ u, TTop QQ w Y i m x u * cOp ((Wd.Rh0 l.intersection_update_fsHerm_neg_one (Y - l.pt) : Wd.M2 (Wd.SlopeTestRemainingChoices S ℂ)) m j u y) := by
-  simp only [TTop, hl, if_true, Matrix.mul_apply, Matrix.sum_apply, scal, Matrix.map_apply]
+  simp only [TTop, hl, ite_true, Matrix.mul_apply, Matrix.sum_apply, scal, Matrix.map_apply]
 
 theorem TTop_minus (l : Wd.Letter ℂ S) (w : List (Wd.Letter ℂ S)) (Y : ℂ) (hl : l.plus = false)
     (i j : Fin 2) (x y : Wd.Ix S) :
     TTop QQ (l :: w) Y i j x y =
       ∑ m, ∑ u, cOp ((Wd.Rht0 l.intersection_update_fsHerm_neg_one (l.pt - Y) : Wd.M2 (Wd.SlopeTestRemainingChoices S ℂ)) i m x u) * TTop QQ w Y m j u y := by
-  simp only [TTop, hl, Bool.false_eq_true, if_false, Matrix.mul_apply, Matrix.sum_apply, scal, Matrix.map_apply]
+  simp only [TTop, hl, Bool.false_eq_true, ite_false, Matrix.mul_apply, Matrix.sum_apply, scal, Matrix.map_apply]
 
 variable {QQ}
 
@@ -331,7 +276,7 @@ theorem free_TTop (hQ : ∀ Y a b, Z0 (QQ Y a b)) :
       ∀ (Y : ℂ) (i j : Fin 2), Free a (TTop QQ w Y i j)
   | [], a, _, Y, i, j => fun x y hxy => by
     have hne : x ≠ y := fun e => hxy (by rw [e])
-    rw [TTop_nil, if_neg hne]
+    rw [TTop_nil, ite_eq_right hne]
   | l :: w, a, ha, Y, i, j => fun x y hxy => by
     have ha1 : a ≠ l.intersection_update_fsHerm_neg_one := fun e => ha (by simp [e])
     have ha2 : a ∉ w.map Wd.Letter.intersection_update_fsHerm_neg_one := fun h => ha (List.mem_cons_of_mem _ h)
@@ -372,23 +317,23 @@ theorem transfer_corner_column (hQ : ∀ Y a b, Z0 (QQ Y a b)) :
         · rw [free_TTop hQ w l.intersection_update_fsHerm_neg_one hN.1 Y 1 0 u Wd.e1 (by rw [hu, orderedCechToCatCochainsOne_apply_valueAtSubset]; decide), cOp_mul_zero]
         · rw [conj_residue_off_row _ _ _ _ hu, cOp_zero_mul]
       rw [h1, add_zero, Finset.sum_eq_single Wd.e1]
-      · rw [rht0_zero_zero_apply_e1_eq_indicator _ hd, IH, if_pos rfl]
+      · rw [rht0_zero_zero_apply_e1_eq_indicator _ hd, IH, ite_eq_left rfl]
         split_ifs
         · exact cOp_one_mul _
         · exact cOp_zero_mul _
       · intro u _ hu
-        rw [IH, if_neg hu, cOp_mul_zero]
+        rw [IH, ite_eq_right hu, cOp_mul_zero]
       · simp
     · have hD : Y - l.pt ≠ 1 := by simpa [Wd.RegL, hp] using hl
       rw [TTop_plus QQ l w Y hp, Finset.sum_eq_single 0]
       · rw [Finset.sum_eq_single Wd.e1]
-        · rw [residue_matrix_column _ hD, if_pos ⟨rfl, rfl⟩, mul_cOp_one, IH]
+        · rw [residue_matrix_column _ hD, ite_eq_left ⟨rfl, rfl⟩, mul_cOp_one, IH]
         · intro u _ hu
-          rw [residue_matrix_column _ hD, if_neg (fun hh => hu hh.2), mul_cOp_zero (z0_TTop hQ w Y _ _ _ _)]
+          rw [residue_matrix_column _ hD, ite_eq_right (fun hh => hu hh.2), mul_cOp_zero (z0_TTop hQ w Y _ _ _ _)]
         · simp
       · intro m _ hm
         refine Finset.sum_eq_zero fun u _ => ?_
-        rw [residue_matrix_column _ hD, if_neg (fun hh => hm hh.1), mul_cOp_zero (z0_TTop hQ w Y _ _ _ _)]
+        rw [residue_matrix_column _ hD, ite_eq_right (fun hh => hm hh.1), mul_cOp_zero (z0_TTop hQ w Y _ _ _ _)]
       · simp
 
 theorem insOp_apply (a : S) (M : Wd.M2 (Wd.SlopeTestRemainingChoices S (Op X))) (x y : Wd.Ix S) :
@@ -407,14 +352,14 @@ theorem free_insOp {a b : S} (hab : a ≠ b) (M : Wd.M2 (Wd.SlopeTestRemainingCh
   refine Finset.sum_eq_zero fun i _ => Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun u _ => ?_
   by_cases hu : x a = u a
   · rw [hM i j u y (by rwa [← hu]), cOp_mul_zero]
-  · rw [eU_apply, if_neg (fun h => hu (h.2.2 a hab)), cOp_zero_mul]
+  · rw [eU_apply, ite_eq_right (fun h => hu (h.2.2 a hab)), cOp_zero_mul]
 
 theorem ins_col {a : S} (M : Wd.M2 (Wd.SlopeTestRemainingChoices S (Op X))) (hM : ∀ i j, Free a (M i j)) {u : Wd.Ix S}
     (hu : u a = 0) : insOp a M u Wd.e1 = M 0 0 u Wd.e1 := by
   rw [insOp_apply, Fintype.sum_eq_single (0 : Fin 2), Fintype.sum_eq_single (0 : Fin 2), Fintype.sum_eq_single u]
-  · rw [eU_apply, if_pos ⟨hu, hu, fun _ _ => rfl⟩, cOp_one_mul]
+  · rw [eU_apply, ite_eq_left ⟨hu, hu, fun _ _ => rfl⟩, cOp_one_mul]
   · intro v hv
-    rw [eU_apply, if_neg ?_, cOp_zero_mul]
+    rw [eU_apply, ite_eq_right ?_, cOp_zero_mul]
     rintro ⟨_, h2, h3⟩
     apply hv
     funext c
@@ -427,10 +372,10 @@ theorem ins_col {a : S} (M : Wd.M2 (Wd.SlopeTestRemainingChoices S (Op X))) (hM 
     by_cases hv : v a = j
     · have hne : v a ≠ (Wd.e1 : Wd.Ix S) a := by rw [hv, orderedCechToCatCochainsOne_apply_valueAtSubset]; exact hj
       rw [hM 0 j v Wd.e1 hne, cOp_mul_zero]
-    · rw [eU_apply, if_neg (fun h => hv h.2.1), cOp_zero_mul]
+    · rw [eU_apply, ite_eq_right (fun h => hv h.2.1), cOp_zero_mul]
   · intro i hi
     refine Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun v _ => ?_
-    rw [eU_apply, if_neg (fun h => hi (h.1.symm.trans hu)), cOp_zero_mul]
+    rw [eU_apply, ite_eq_right (fun h => hi (h.1.symm.trans hu)), cOp_zero_mul]
 
 theorem RRop_nil (x y : Wd.Ix S) : RRop (S := S) QQ [] x y = if x = y then 1 else 0 := by
   simp only [RRop, Matrix.one_apply]
@@ -455,7 +400,7 @@ theorem free_RRop (hQ : ∀ Y a b, Z0 (QQ Y a b)) :
     ∀ (w : List (Wd.Letter ℂ S)) (a : S), a ∉ w.map Wd.Letter.intersection_update_fsHerm_neg_one → Free a (RRop QQ w)
   | [], a, _ => fun x y hxy => by
     have hne : x ≠ y := fun e => hxy (by rw [e])
-    rw [RRop_nil, if_neg hne]
+    rw [RRop_nil, ite_eq_right hne]
   | l :: w, a, ha => fun x y hxy => by
     have ha1 : a ≠ l.intersection_update_fsHerm_neg_one := fun e => ha (by simp [e])
     have ha2 : a ∉ w.map Wd.Letter.intersection_update_fsHerm_neg_one := fun h => ha (List.mem_cons_of_mem _ h)
@@ -483,10 +428,10 @@ theorem RRop_step (hQ : ∀ Y a b, Z0 (QQ Y a b)) (l : Wd.Letter ℂ S) (w : Lis
   have h00 : (if l.plus then TTop QQ w l.pt else (TTop QQ w l.pt).transpose) 0 0 = TTop QQ w l.pt 0 0 := by
     split_ifs <;> rfl
   rw [RRop_cons, Fintype.sum_eq_single Wd.e1]
-  · rw [ins_col _ hF (orderedCechToCatCochainsOne_apply_valueAtSubset _), h00, transfer_corner_column hQ w l.pt hN' hR Wd.e1, if_pos rfl]
+  · rw [ins_col _ hF (orderedCechToCatCochainsOne_apply_valueAtSubset _), h00, transfer_corner_column hQ w l.pt hN' hR Wd.e1, ite_eq_left rfl]
   · intro u hu
     by_cases hus : u l.intersection_update_fsHerm_neg_one = 0
-    · rw [ins_col _ hF hus, h00, transfer_corner_column hQ w l.pt hN' hR u, if_neg hu, mul_zero' (z0_RRop hQ w Wd.e1 u)]
+    · rw [ins_col _ hF hus, h00, transfer_corner_column hQ w l.pt hN' hR u, ite_eq_right hu, mul_zero' (z0_RRop hQ w Wd.e1 u)]
     · rw [free_RRop hQ w l.intersection_update_fsHerm_neg_one hlw Wd.e1 u (by rw [orderedCechToCatCochainsOne_apply_valueAtSubset]; exact Ne.symm hus), zero_mul']
 
 theorem residue_operator_at_first (hQ : ∀ Y a b, Z0 (QQ Y a b)) :
@@ -496,7 +441,7 @@ theorem residue_operator_at_first (hQ : ∀ Y a b, Z0 (QQ Y a b)) :
   induction w with
   | nil =>
     intro _ F
-    rw [RRop_nil, if_pos rfl]
+    rw [RRop_nil, ite_eq_left rfl]
     rfl
   | cons l w ih =>
     intro hG F
@@ -540,7 +485,7 @@ theorem vLet_00 (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (hj : 0 ≤ r) 
     vLet k r z z' 0 hj l 0 f = f := by
   funext g
   unfold vLet
-  rw [if_neg (by simp)]
+  rw [ite_eq_right (by simp)]
   split_ifs
   · rw [dmin_zero, inv_one, one_smul, aaop_zero _ _ _ _ (by simp)]
   · rw [dmin_zero, map_one, inv_one, one_smul, aavop_zero _ _ _ _ (by simp)]
@@ -549,13 +494,13 @@ theorem vLet_01 (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (hj : 0 ≤ r) 
     vLet k r z z' 0 hj l 1 f = 0 := by
   funext g
   unfold vLet
-  rw [if_pos ⟨rfl, rfl⟩]
+  rw [ite_eq_left ⟨rfl, rfl⟩]
   rfl
 
 theorem uwG_zero (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (F : B.Mat k r → E) (hj : 0 ≤ r) :
     ∀ (w : List C.Letter) (a : Wd.Ix (Fin w.length)), uwG k r z z' F 0 hj w a = if a = Wd.e1 then F else 0
   | [], a => by
-    rw [if_pos (funext fun i => i.elim0)]
+    rw [ite_eq_left (funext fun i => i.elim0)]
     rfl
   | l :: w, a => by
     have IH := uwG_zero k r z z' F hj w (fun i => a i.succ)
@@ -574,9 +519,9 @@ theorem uwG_zero (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (F : B.Mat k r
           rw [h]
           rfl
       by_cases ha : a = Wd.e1
-      · rw [if_pos (hiff.2 ha), if_pos ha]
-      · rw [if_neg (fun h => ha (hiff.1 h)), if_neg ha]
-    · rw [h0, vLet_01, if_neg]
+      · rw [ite_eq_left (hiff.2 ha), ite_eq_left ha]
+      · rw [ite_eq_right (fun h => ha (hiff.1 h)), ite_eq_right ha]
+    · rw [h0, vLet_01, ite_eq_right]
       intro ha
       rw [ha, orderedCechToCatCochainsOne_apply_valueAtSubset] at h0
       exact absurd h0 (by decide)
@@ -735,15 +680,15 @@ theorem formLev_delta (T : LevTower k r Wp Wq) (s : ℂ) (h0 : 0 < r + 1) (w : L
   · have hact : actOp (RRlev T s ⟨0, h0⟩ w) x Wd.e1 = ap (RRlev T s ⟨0, h0⟩ w Wd.e1 Wd.e1) F := by
       unfold actOp
       rw [Finset.sum_eq_single Wd.e1]
-      · rw [hx, if_pos rfl]
+      · rw [hx, ite_eq_left rfl]
       · intro b _ hb
-        rw [hx, if_neg hb]
+        rw [hx, ite_eq_right hb]
         exact z0_RRop (fun Y a b => z0_QQlev T s _ Y a b) _ _ _
       · simp
-    rw [hact, hx, if_pos rfl]
+    rw [hact, hx, ite_eq_left rfl]
     rfl
   · intro a _ ha
-    rw [hx a, if_neg ha]
+    rw [hx a, ite_eq_right ha]
     exact beta_zero_right _ _
   · simp
 
@@ -769,7 +714,7 @@ theorem levelZero_of (hSN : ∀ (E : Type) [NormedAddCommGroup E] [NormedSpace �
   have h0 : 0 < r + 1 := Nat.succ_pos r
   have hloc : IsLocPt ([] : C.LPt) 0 := ⟨by simp, rfl⟩
   unfold RRplace
-  rw [dif_pos ⟨hloc, hloc⟩, dif_pos (Nat.zero_le r)]
+  rw [dite_eq_left ⟨hloc, hloc⟩, dite_eq_left (Nat.zero_le r)]
   refine (formLev_delta T s h0 w _ F ?_).trans ?_
   · intro a
     funext γ
@@ -857,21 +802,21 @@ private theorem hasDerivAt_exp_smul_apply_zero : ∀ (p : C.LPt) (i a : ℕ), a 
     rw [ptSize_cons] at ha
     by_cases has : a < s
     · rw [pp_lt has]
-      simp only [ptEntry, ptScal, if_pos has]
+      simp only [ptEntry, ptScal, ite_eq_left has]
       by_cases his : i < s
-      · rw [if_pos ⟨his, has⟩]
+      · rw [ite_eq_left ⟨his, has⟩]
         by_cases he : i + a + 1 = s
-        · rw [if_pos he, if_pos (by omega)]
-        · rw [if_neg he, if_neg (by omega)]
-      · rw [if_neg (fun h => his h.1), if_neg (fun h => by omega), if_neg (by omega)]
+        · rw [ite_eq_left he, ite_eq_left (by omega)]
+        · rw [ite_eq_right he, ite_eq_right (by omega)]
+      · rw [ite_eq_right (fun h => his h.1), ite_eq_right (fun h => by omega), ite_eq_right (by omega)]
     · rw [pp_ge has]
-      simp only [ptEntry, ptScal, if_neg has]
+      simp only [ptEntry, ptScal, ite_eq_right has]
       by_cases his : i < s
-      · rw [if_neg (fun h => has h.2), if_neg (fun h => by omega), if_neg (by omega)]
-      · rw [if_neg (fun h => his h.1), if_pos ⟨by omega, by omega⟩, ih (i - s) (a - s) (by omega)]
+      · rw [ite_eq_right (fun h => has h.2), ite_eq_right (fun h => by omega), ite_eq_right (by omega)]
+      · rw [ite_eq_right (fun h => his h.1), ite_eq_left ⟨by omega, by omega⟩, ih (i - s) (a - s) (by omega)]
         by_cases he : i - s = ptPartner rest (a - s)
-        · rw [if_pos he, if_pos (by omega)]
-        · rw [if_neg he, if_neg (by omega)]
+        · rw [ite_eq_left he, ite_eq_left (by omega)]
+        · rw [ite_eq_right he, ite_eq_right (by omega)]
 
 theorem entry_spec : ∀ (p : C.LPt) (i a : ℕ), i < ptSize p → a < ptSize p →
     ptEntry p i a = if i = ptPartner p a then ptScal p a else 0 := by
@@ -887,7 +832,7 @@ theorem partnerF_invol (p : C.LPt) : Function.Involutive (ptPartnerF p) := by
   simp [ptPartnerF, h1.2]
 
 theorem ptPerm_apply (p : C.LPt) (a : Fin (ptSize p)) : ptPerm p a = ptPartnerF p a := by
-  rw [ptPerm, dif_pos (partnerF_invol p).bijective]
+  rw [ptPerm, dite_eq_left (partnerF_invol p).bijective]
   rfl
 
 theorem ptPerm_val (p : C.LPt) (a : Fin (ptSize p)) : ((ptPerm p a : Fin (ptSize p)) : ℕ) = ptPartner p a := by
@@ -903,16 +848,16 @@ theorem ptMat_monoP (p : C.LPt) : ptMat p = C2.monoP (ptPerm p) (ptDiag p) := by
   simp only [ptMat, ptMatN, C2.monoP, Matrix.of_apply, ptDiag]
   rw [entry_spec p i a i.2 a.2]
   by_cases h : i = ptPerm p a
-  · rw [if_pos h, if_pos (by rw [h, ptPerm_val])]
-  · rw [if_neg h, if_neg (fun h' => h (Fin.ext (by rw [h', ptPerm_val])))]
+  · rw [ite_eq_left h, ite_eq_left (by rw [h, ptPerm_val])]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h (Fin.ext (by rw [h', ptPerm_val])))]
 
 theorem monomialMatrix_eq_hMat {m : ℕ} (σ : Equiv.Perm (Fin m)) (d : Fin m → ℂ) (hσ : ∀ a, σ (σ a) = a) :
     C2.monoP σ d = U.hMat σ d := by
   ext i a
   simp only [C2.monoP, U.hMat, U.wP, Matrix.mul_diagonal, Matrix.of_apply]
   by_cases h : i = σ a
-  · rw [if_pos h, if_pos (by rw [h, hσ]), one_mul]
-  · rw [if_neg h, if_neg (fun h' => h (by rw [← h', hσ])), zero_mul]
+  · rw [ite_eq_left h, ite_eq_left (by rw [h, hσ]), one_mul]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h (by rw [← h', hσ])), zero_mul]
 
 theorem d_ptPermSpec : PtPermSpec := by
   intro p i _
@@ -1115,10 +1060,10 @@ theorem corr_TT (Qop : ℂ → Wd.M2 (Op X)) (QQ : ℂ → Wd.M2 A)
   | cons l w ih =>
     intro Y
     cases hl : l.plus
-    · simp only [TTop, Wd.TTw, hl, Bool.false_eq_true, if_false]
+    · simp only [TTop, Wd.TTw, hl, Bool.false_eq_true, ite_false]
       rw [Rht0_map (A := A)]
       exact corrM_mul K res φ (corrM_scal K res φ _) (ih Y)
-    · simp only [TTop, Wd.TTw, hl, if_true]
+    · simp only [TTop, Wd.TTw, hl, ite_true]
       rw [Rh0_map (A := A)]
       exact corrM_mul K res φ (ih Y) (corrM_scal K res φ _)
 
@@ -1288,19 +1233,19 @@ theorem d_thmPPosOfModule : ThmPPosOfModule := by
         funext p q
         simp only [hRdef, RRplace]
         by_cases hp : IsLocPt p i <;> by_cases hq : IsLocPt q i
-        · rw [dif_pos ⟨hp, hq⟩, dif_pos hir]
-          simp only [vec, dif_pos hp, dif_pos hq]
+        · rw [dite_eq_left ⟨hp, hq⟩, dite_eq_left hir]
+          simp only [vec, dite_eq_left hp, dite_eq_left hq]
           rfl
-        · rw [dif_neg (fun h => hq h.2)]
-          have : vec q = 0 := by simp only [vec, dif_neg hq]
+        · rw [dite_eq_right (fun h => hq h.2)]
+          have : vec q = 0 := by simp only [vec, dite_eq_right hq]
           rw [this]
           exact (sesq_zero_right hS (hvec p)).symm
-        · rw [dif_neg (fun h => hp h.1)]
-          have : vec p = 0 := by simp only [vec, dif_neg hp]
+        · rw [dite_eq_right (fun h => hp h.1)]
+          have : vec p = 0 := by simp only [vec, dite_eq_right hp]
           rw [this]
           exact (sesq_zero_left hS (hvec q)).symm
-        · rw [dif_neg (fun h => hp h.1)]
-          have : vec p = 0 := by simp only [vec, dif_neg hp]
+        · rw [dite_eq_right (fun h => hp h.1)]
+          have : vec p = 0 := by simp only [vec, dite_eq_right hp]
           rw [this]
           exact (sesq_zero_left hS (hvec q)).symm
       rw [hR]
@@ -1314,13 +1259,13 @@ theorem d_thmPPosOfModule : ThmPPosOfModule := by
         funext p q
         simp only [hRdef, RRplace, ind, K]
         by_cases hp : IsLocPt p i <;> by_cases hq : IsLocPt q i
-        · rw [dif_pos ⟨hp, hq⟩, dif_neg hir, if_pos hir1, if_pos hp, if_pos hq]
+        · rw [dite_eq_left ⟨hp, hq⟩, dite_eq_right hir, ite_eq_left hir1, ite_eq_left hp, ite_eq_left hq]
           simp [LevTower.base]
-        · rw [dif_neg (fun h => hq h.2), if_neg hq]
+        · rw [dite_eq_right (fun h => hq h.2), ite_eq_right hq]
           simp
-        · rw [dif_neg (fun h => hp h.1), if_neg hp]
+        · rw [dite_eq_right (fun h => hp h.1), ite_eq_right hp]
           simp
-        · rw [dif_neg (fun h => hp h.1), if_neg hp]
+        · rw [dite_eq_right (fun h => hp h.1), ite_eq_right hp]
           simp
       rw [hR]
       refine psd_scale Z K ?_ ind
@@ -1391,26 +1336,26 @@ theorem partner_spec : ∀ (p : C.LPt) (a : ℕ), a < ptSize p →
     · have hp : ptPartner ((s, t) :: rest) a = s - 1 - a := by simp [ptPartner, ha]
       rw [hp]
       refine ⟨by omega, ?_, ?_⟩
-      · simp only [ptPartner, show s - 1 - a < s by omega, if_true]; omega
+      · simp only [ptPartner, show s - 1 - a < s by omega, ite_true]; omega
       · intro i
         by_cases hi : i < s
-        · simp only [ptEntry, ptScal, ha, hi, and_self, if_true]
+        · simp only [ptEntry, ptScal, ha, hi, and_self, ite_true]
           split_ifs <;> first | rfl | (exfalso; omega)
-        · simp only [ptEntry, ptScal, ha, hi, and_true, if_false, if_true]
+        · simp only [ptEntry, ptScal, ha, hi, and_true, ite_false, ite_true]
           split_ifs <;> first | rfl | (exfalso; omega)
     · have ih := partner_spec rest (a - s) (by omega)
       have hp : ptPartner ((s, t) :: rest) a = s + ptPartner rest (a - s) := by simp [ptPartner, ha]
       rw [hp]
       refine ⟨by omega, ?_, ?_⟩
-      · simp only [ptPartner, show ¬ (s + ptPartner rest (a - s) < s) by omega, if_false]
+      · simp only [ptPartner, show ¬ (s + ptPartner rest (a - s) < s) by omega, ite_false]
         rw [show s + ptPartner rest (a - s) - s = ptPartner rest (a - s) by omega, ih.2.1]; omega
       · intro i
         by_cases hi : s ≤ i
-        · simp only [ptEntry, ptScal, ha, show ¬ i < s by omega, if_false,
-            show s ≤ a by omega, hi, and_self, if_true]
+        · simp only [ptEntry, ptScal, ha, show ¬ i < s by omega, ite_false,
+            show s ≤ a by omega, hi, and_self, ite_true]
           rw [ih.2.2 (i - s)]
           split_ifs <;> first | rfl | (exfalso; omega)
-        · simp only [ptEntry, ptScal, ha, show i < s by omega, and_false, hi, false_and, if_false]
+        · simp only [ptEntry, ptScal, ha, show i < s by omega, and_false, hi, false_and, ite_false]
           split_ifs <;> first | rfl | (exfalso; omega)
 
 theorem scal_ne : ∀ (p : C.LPt), (∀ b ∈ p, 1 ≤ b.1 ∧ b.2 ≠ 0) → ∀ a, a < ptSize p → ptScal p a ≠ 0
@@ -1418,8 +1363,8 @@ theorem scal_ne : ∀ (p : C.LPt), (∀ b ∈ p, 1 ≤ b.1 ∧ b.2 ≠ 0) → �
   | (s, t) :: rest, hb, a, h => by
     rw [ptSize_cons] at h
     by_cases ha : a < s
-    · simp only [ptScal, ha, if_true]; exact (hb (s, t) (by simp)).2
-    · simp only [ptScal, ha, if_false]
+    · simp only [ptScal, ha, ite_true]; exact (hb (s, t) (by simp)).2
+    · simp only [ptScal, ha, ite_false]
       exact scal_ne rest (fun b hb' => hb b (by simp [hb'])) (a - s) (by omega)
 
 theorem block : ∀ (p : C.LPt) (a : ℕ), a + 1 < ptSize p →
@@ -1430,14 +1375,14 @@ theorem block : ∀ (p : C.LPt) (a : ℕ), a + 1 < ptSize p →
     rw [ptSize_cons] at h
     by_cases ha : a + 1 < s
     · left
-      simp only [ptPartner, ptScal, ha, show a < s by omega, if_true, and_true]
+      simp only [ptPartner, ptScal, ha, show a < s by omega, ite_true, and_true]
       omega
     · by_cases ha' : a < s
       · right
-        simp only [ptPartner, ha', ha, if_true, if_false]
+        simp only [ptPartner, ha', ha, ite_true, ite_false]
         omega
       · have ih := block rest (a - s) (by omega)
-        simp only [ptPartner, ptScal, ha, ha', if_false]
+        simp only [ptPartner, ptScal, ha, ha', ite_false]
         rw [show a + 1 - s = a - s + 1 by omega]
         rcases ih with ⟨h1, h2⟩ | h1
         · left; exact ⟨by omega, h2⟩
@@ -1500,7 +1445,7 @@ theorem core (r : ℕ) (P : Fin (r + 1) → Fin (r + 1)) (hP : ∀ a, P (P a) = 
     · simpa [Z, Matrix.conjTranspose_apply, hP] using this
     · intro j _ hj
       simp only [Z, Matrix.of_apply]
-      rw [if_neg (fun e => hj (by rw [e, hP]))]; simp
+      rw [ite_eq_right (fun e => hj (by rw [e, hP]))]; simp
     · simp
     · intro j _ hj
       simp [Z, hj]
@@ -1511,11 +1456,11 @@ theorem core (r : ℕ) (P : Fin (r + 1) → Fin (r + 1)) (hP : ∀ a, P (P a) = 
     have e := E (P b.castSucc) b.succ
     rw [hP, hsup] at e
     rcases hblk b with ⟨h1, h2⟩ | h1
-    · rw [if_pos h1]
+    · rw [ite_eq_left h1]
       rw [h2] at e
       have := mul_right_cancel₀ (ht b.castSucc) (by rw [e]; ring : star (B (P b.succ) (P b.castSucc)) * t b.castSucc = (-A b.castSucc b.succ) * t b.castSucc)
       rw [this]; ring
-    · rw [if_neg (by rw [Fin.lt_def] at h1; omega)]
+    · rw [ite_eq_right (by rw [Fin.lt_def] at h1; omega)]
       rw [hBu _ _ h1, star_zero, zero_mul] at e
       have := (mul_eq_zero.mp e.symm).resolve_left (ht _)
       linear_combination -this
@@ -1542,12 +1487,12 @@ theorem core (r : ℕ) (P : Fin (r + 1) → Fin (r + 1)) (hP : ∀ a, P (P a) = 
     rw [hWB, Finset.mem_filter] at hb
     have := (P b.castSucc).isLt; omega
   have hφc : ∀ b ∈ WB, (φ b).castSucc = P b.succ := by
-    intro b hb; simp only [φ, dif_pos (hφlt b hb)]; ext; simp
+    intro b hb; simp only [φ, dite_eq_left (hφlt b hb)]; ext; simp
   have hφs : ∀ b ∈ WB, (φ b).succ = P b.castSucc := by
     intro b hb
     have hb' := hb
     rw [hWB, Finset.mem_filter] at hb'
-    simp only [φ, dif_pos (hφlt b hb)]; ext; simp [hb'.2]
+    simp only [φ, dite_eq_left (hφlt b hb)]; ext; simp [hb'.2]
   have hφmem : ∀ b ∈ WB, φ b ∈ WB := by
     intro b hb
     rw [hWB, Finset.mem_filter]
@@ -1558,7 +1503,7 @@ theorem core (r : ℕ) (P : Fin (r + 1) → Fin (r + 1)) (hP : ∀ a, P (P a) = 
     have h1 : (P (φ b).succ).val < r := hφlt _ (hφmem b hb)
     have h2 := hφs b hb
     simp only [φ] at h1 h2 ⊢
-    rw [dif_pos h1]
+    rw [dite_eq_left h1]
     ext
     simp [h2, hP]
   have s3 : ∑ b ∈ WB, star (B (P b.succ) (P b.castSucc)) = ∑ a ∈ WB, star (B a.castSucc a.succ) := by
@@ -1585,11 +1530,11 @@ def Bm (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (ρ : Matrix (Fin (2 * r + 
 
 theorem fvec_lt (z : Fin (2 * r + k + 1) → ℂ) (a : Fin (r + 1)) (h : a.val < r) :
     fvec k r z a = bvec (eI k r ⟨a.val, h⟩) := by
-  rw [fvec, dif_pos h]
+  rw [fvec, dite_eq_left h]
 
 theorem fvec_last (z : Fin (2 * r + k + 1) → ℂ) (a : Fin (r + 1)) (h : ¬ a.val < r) :
     fvec k r z a = z := by
-  rw [fvec, dif_neg h]
+  rw [fvec, dite_eq_right h]
 
 theorem mulVec_apply_eq_of_mem_Nset_of_inWb_of_le (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z)
     (ρ : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) (hρ : ρ ∈ Nset k r)
@@ -1598,13 +1543,13 @@ theorem mulVec_apply_eq_of_mem_Nset_of_inWb_of_le (z : Fin (2 * r + k + 1) → �
   simp only [Matrix.mulVec, dotProduct]
   rw [Finset.sum_eq_single j]
   · by_cases hjk : j.val ≤ r + k
-    · rw [hN3 j j hj hjk hj, if_pos rfl, one_mul]
+    · rw [hN3 j j hj hjk hj, ite_eq_left rfl, one_mul]
     · rw [hz j (Or.inr (by omega)), mul_zero]
   · intro i _ hij
     by_cases hi : i.val < r ∨ r + k < i.val
     · rw [hz i hi, mul_zero]
-    · push_neg at hi
-      rw [hN3 j i hi.1 hi.2 hj, if_neg (Ne.symm hij), zero_mul]
+    · push Not at hi
+      rw [hN3 j i hi.1 hi.2 hj, ite_eq_right (Ne.symm hij), zero_mul]
   · intro h
     exact absurd (Finset.mem_univ j) h
 
@@ -1620,13 +1565,13 @@ theorem expandAt (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z)
         simp [bvec, eI]
       rw [hb, one_mul]
       simp only [Bm, Matrix.of_apply]
-      rw [dif_pos hj]
+      rw [dite_eq_left hj]
     · intro i _ hi
       by_cases hir : i.val < r
       · rw [fvec_lt z i hir]
         have hb : bvec (eI k r ⟨i.val, hir⟩) j = 0 := by
           simp only [bvec, Pi.single_apply]
-          rw [if_neg]
+          rw [ite_eq_right]
           intro h
           apply hi
           have h2 := congrArg Fin.val h
@@ -1636,17 +1581,17 @@ theorem expandAt (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z)
       · rw [fvec_last z i hir, hz j (Or.inl hj), zero_mul]
     · intro h
       exact absurd (Finset.mem_univ _) h
-  · push_neg at hj
+  · push Not at hj
     rw [Finset.sum_eq_single (Fin.last r)]
     · rw [fvec_last z (Fin.last r) (by simp)]
       simp only [Bm, Matrix.of_apply]
-      rw [dif_neg (by simp)]
+      rw [dite_eq_right (by simp)]
       by_cases hc : c.val < r
       · rw [fvec_lt z c hc, mulVec_bvec, hN2 ⟨c.val, hc⟩ j (by show c.val ≤ j.val; omega),
-          if_neg (fun h => by have h2 := congrArg Fin.val h; simp [eI] at h2; omega), if_neg (by omega)]
+          ite_eq_right (fun h => by have h2 := congrArg Fin.val h; simp [eI] at h2; omega), ite_eq_right (by omega)]
         simp
       · rw [fvec_last z c hc, mulVec_apply_eq_of_mem_Nset_of_inWb_of_le z hz ρ ⟨hN1, hN2, hN3⟩ j hj]
-        rw [if_pos (by simp at hc ⊢; omega), mul_one]
+        rw [ite_eq_left (by simp at hc ⊢; omega), mul_one]
     · intro i _ hi
       have hir : i.val < r := by
         have h1 := i.isLt
@@ -1655,7 +1600,7 @@ theorem expandAt (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z)
       rw [fvec_lt z i hir]
       have hb : bvec (eI k r ⟨i.val, hir⟩) j = 0 := by
         simp only [bvec, Pi.single_apply]
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h
         have h2 := congrArg Fin.val h
         simp [eI] at h2
@@ -1681,7 +1626,7 @@ theorem Bm_upper (z : Fin (2 * r + k + 1) → ℂ)
   split_ifs with h1 h2
   · have ha : a.val < r := by omega
     rw [fvec_lt z a ha, mulVec_bvec, hN2 ⟨a.val, ha⟩ ⟨i.val, by omega⟩ (by show a.val ≤ i.val; omega)]
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h3
     have h4 := congrArg Fin.val h3
     simp [eI] at h4
@@ -1714,11 +1659,11 @@ theorem ell_eq (z : Fin (2 * r + k + 1) → ℂ) (ρ : Matrix (Fin (2 * r + k + 
     ell k r z ρ = ∑ a : Fin r, Bm k r z ρ a.castSucc a.succ := by
   simp only [ell, Bm, Matrix.of_apply]
   refine Finset.sum_congr rfl fun a _ => ?_
-  rw [dif_pos (by simp : ((Fin.castSucc a : Fin (r + 1)) : ℕ) < r)]
+  rw [dite_eq_left (by simp : ((Fin.castSucc a : Fin (r + 1)) : ℕ) < r)]
   by_cases h : a.val + 1 < r
-  · rw [dif_pos h, fvec_lt z a.succ (by simpa using h), mulVec_bvec]
+  · rw [dite_eq_left h, fvec_lt z a.succ (by simpa using h), mulVec_bvec]
     rfl
-  · rw [dif_neg h, fvec_last z a.succ (by simpa using h)]
+  · rw [dite_eq_right h, fvec_last z a.succ (by simpa using h)]
     rfl
 
 end geo

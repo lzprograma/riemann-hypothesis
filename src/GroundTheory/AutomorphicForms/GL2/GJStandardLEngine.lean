@@ -25,24 +25,52 @@ namespace GJStandardL
 open GodementJacquet GLnLocal
 
 theorem hasProd_of_hasProd_compl {ι : Type*} {f : ι → ℂ} {b : ℂ} (S : Finset ι)
-    (h : HasProd (fun i : {i // i ∉ S} ↦ f i) b) : HasProd f ((∏ i ∈ S, f i) * b) := by
-  have h1 : HasProd ((S : Set ι).mulIndicator f) (∏ i ∈ S, f i) := by
-    have : HasProd ((S : Set ι).mulIndicator f) (∏ i ∈ S, (S : Set ι).mulIndicator f i) :=
-      hasProd_prod_of_ne_finset_one fun i hi ↦ Set.mulIndicator_of_notMem (by simpa using hi) _
-    rwa [Finset.prod_congr rfl fun i hi ↦ Set.mulIndicator_of_mem (by simpa using hi) f] at this
-  have h2 : HasProd (({i | i ∉ S} : Set ι).mulIndicator f) b :=
-    (hasProd_subtype_iff_mulIndicator (s := {i | i ∉ S})).1 h
-  have h3 := h1.mul h2
-  have heq : (fun i ↦ (S : Set ι).mulIndicator f i * ({i | i ∉ S} : Set ι).mulIndicator f i) = f := by
-    funext i
-    by_cases hi : i ∈ S
-    · rw [Set.mulIndicator_of_mem (by simpa using hi), Set.mulIndicator_of_notMem (by simpa using hi),
-        mul_one]
-    · rw [Set.mulIndicator_of_notMem (by simpa using hi), Set.mulIndicator_of_mem (by simpa using hi),
-        one_mul]
-  rwa [heq] at h3
+    (h : HasProd (fun i : {i // i ∉ S} ↦ f i) b) : HasProd f ((∏ i ∈ S, f i) * b) :=
+  (S.hasProd f).mul_compl h
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
+
+theorem factor_nonvanishing {f : AdelicGLn.AdelicGL K n → ℂ} (hfc : Continuous f)
+    (S : Finset (HeightOneSpectrum (𝓞 K)))
+    {V : HeightOneSpectrum (𝓞 K) → Type*} [∀ v, AddCommGroup (V v)] [∀ v, Module ℂ (V v)]
+    (π : ∀ v, Representation ℂ (GL (Fin n) (v.adicCompletion K)) (V v)) (ξ : ∀ v, V v)
+    (ℓ : ∀ v, Module.Dual ℂ (V v))
+    (hsph : ∀ v ∉ S, ξ v ∈ fixedVectors (π v) (integralGL (v.adicCompletion K) n) ∧ ℓ v (ξ v) = 1)
+    (fi : AdelicGLn.InfiniteAdelicGL K n → ℂ)
+    (hf : ∀ g, f g = fi (archComp K n g) *
+      ∏ᶠ v : HeightOneSpectrum (𝓞 K), Parabolic.matrixCoeff (F := v.adicCompletion K) (π v) (ξ v) (ℓ v)
+        (localComp n v g))
+    {g₀ : AdelicGLn.AdelicGL K n} (hg₀ : f g₀ ≠ 0) :
+    Continuous fi ∧ fi (archComp K n g₀) ≠ 0 ∧ ∀ v : HeightOneSpectrum (𝓞 K),
+      Parabolic.matrixCoeff (F := v.adicCompletion K) (π v) (ξ v) (ℓ v) (localComp n v g₀) ≠ 0 := by
+  set c₀ := ∏ᶠ v : HeightOneSpectrum (𝓞 K),
+    Parabolic.matrixCoeff (F := v.adicCompletion K) (π v) (ξ v) (ℓ v) (localComp n v g₀) with hc₀
+  have hsupp : (Function.mulSupport fun v : HeightOneSpectrum (𝓞 K) ↦
+      Parabolic.matrixCoeff (F := v.adicCompletion K) (π v) (ξ v) (ℓ v) (localComp n v g₀)).Finite := by
+    refine ((finite_setOf_not_mem g₀).union S.finite_toSet).subset fun v hv ↦ ?_
+    by_contra hc
+    simp only [mem_union, Finset.mem_coe, not_or] at hc
+    have hK : localComp n v g₀ ∈ integralGL (v.adicCompletion K) n := by
+      by_contra h
+      exact hc.1 h
+    apply hv
+    show ℓ v (π v (localComp n v g₀) (ξ v)) = 1
+    rw [(hsph v hc.2).1 _ hK, (hsph v hc.2).2]
+  rw [hf g₀] at hg₀
+  have hfi0 : fi (archComp K n g₀) ≠ 0 := left_ne_zero_of_mul hg₀
+  have hc₀0 : c₀ ≠ 0 := right_ne_zero_of_mul hg₀
+  refine ⟨?_, hfi0, fun v h ↦ hc₀0 (finprod_eq_zero _ v h hsupp)⟩
+  have key : ∀ x, fi x = f ((AdelicGLn.prodEquiv K n).symm (x, finComp K n g₀)) / c₀ := by
+    intro x
+    have : f ((AdelicGLn.prodEquiv K n).symm (x, finComp K n g₀)) = fi x * c₀ := by
+      rw [hf, archComp_prodEquiv_symm]
+      simp_rw [localComp_prodEquiv_symm]
+      rfl
+    rw [this, mul_div_cancel_right₀ _ hc₀0]
+  have hc : Continuous fun x ↦ f ((AdelicGLn.prodEquiv K n).symm (x, finComp K n g₀)) / c₀ :=
+    (hfc.comp ((AdelicGLn.prodEquiv K n).symm.continuous.comp
+      (continuous_id.prodMk continuous_const))).div_const c₀
+  exact hc.congr fun x ↦ (key x).symm
 
 theorem exists_sphericalIntegrable (ν : Measure (AdelicGLn.AdelicGL K n)) [ν.IsHaarMeasure]
     {f : AdelicGLn.AdelicGL K n → ℂ} (hfc : Continuous f)
@@ -68,37 +96,7 @@ theorem exists_sphericalIntegrable (ν : Measure (AdelicGLn.AdelicGL K n)) [ν.I
           (integralIndicator ((v : HeightOneSpectrum (𝓞 K)).adicCompletion K) n)
           (Parabolic.matrixCoeff (F := (v : HeightOneSpectrum (𝓞 K)).adicCompletion K) (π v) (ξ v) (ℓ v)) s := by
   obtain ⟨g₀, hg₀⟩ := hf0
-  set c₀ := ∏ᶠ v : HeightOneSpectrum (𝓞 K),
-    Parabolic.matrixCoeff (F := v.adicCompletion K) (π v) (ξ v) (ℓ v) (localComp n v g₀) with hc₀
-  have hsupp : (Function.mulSupport fun v : HeightOneSpectrum (𝓞 K) ↦
-      Parabolic.matrixCoeff (F := v.adicCompletion K) (π v) (ξ v) (ℓ v) (localComp n v g₀)).Finite := by
-    refine ((finite_setOf_not_mem g₀).union S.finite_toSet).subset fun v hv ↦ ?_
-    by_contra hc
-    simp only [mem_union, Finset.mem_coe, not_or] at hc
-    have hK : localComp n v g₀ ∈ integralGL (v.adicCompletion K) n := by
-      by_contra h
-      exact hc.1 h
-    apply hv
-    show ℓ v (π v (localComp n v g₀) (ξ v)) = 1
-    rw [(hsph v hc.2).1 _ hK, (hsph v hc.2).2]
-  rw [hf g₀] at hg₀
-  have hfi0 : fi (archComp K n g₀) ≠ 0 := left_ne_zero_of_mul hg₀
-  have hc₀0 : c₀ ≠ 0 := right_ne_zero_of_mul hg₀
-  have hloc0 : ∀ v : HeightOneSpectrum (𝓞 K),
-      Parabolic.matrixCoeff (F := v.adicCompletion K) (π v) (ξ v) (ℓ v) (localComp n v g₀) ≠ 0 :=
-    fun v h ↦ hc₀0 (finprod_eq_zero _ v h hsupp)
-  have hfic : Continuous fi := by
-    have key : ∀ x, fi x = f ((AdelicGLn.prodEquiv K n).symm (x, finComp K n g₀)) / c₀ := by
-      intro x
-      have : f ((AdelicGLn.prodEquiv K n).symm (x, finComp K n g₀)) = fi x * c₀ := by
-        rw [hf, archComp_prodEquiv_symm]
-        simp_rw [localComp_prodEquiv_symm]
-        rfl
-      rw [this, mul_div_cancel_right₀ _ hc₀0]
-    have hc : Continuous fun x ↦ f ((AdelicGLn.prodEquiv K n).symm (x, finComp K n g₀)) / c₀ :=
-      (hfc.comp ((AdelicGLn.prodEquiv K n).symm.continuous.comp
-        (continuous_id.prodMk continuous_const))).div_const c₀
-    exact hc.congr fun x ↦ (key x).symm
+  obtain ⟨hfic, hfi0, hloc0⟩ := factor_nonvanishing hfc S π ξ ℓ hsph fi hf hg₀
   set μi : Measure (AdelicGLn.InfiniteAdelicGL K n) := Measure.haar
   obtain ⟨φ, -, hφne, -, -⟩ := exists_archBump μi hfic hfi0
   have hbump : ∀ v ∈ S, ∃ Φ : Matrix (Fin n) (Fin n) (v.adicCompletion K) → ℂ, IsSchwartzBruhat Φ ∧
@@ -115,10 +113,10 @@ theorem exists_sphericalIntegrable (ν : Measure (AdelicGLn.AdelicGL K n)) [ν.I
   choose Φb hΦbSB a ha hΦb using hbump
   set Φ : ∀ v : HeightOneSpectrum (𝓞 K), Matrix (Fin n) (Fin n) (v.adicCompletion K) → ℂ :=
     fun v ↦ if h : v ∈ S then Φb v h else integralIndicator (v.adicCompletion K) n with hΦdef
-  have hΦS : ∀ v (hv : v ∈ S), Φ v = Φb v hv := fun v hv ↦ by simp only [hΦdef, dif_pos hv]
+  have hΦS : ∀ v (hv : v ∈ S), Φ v = Φb v hv := fun v hv ↦ by simp only [hΦdef, dite_eq_left hv]
   have hSB : ∀ v ∈ S, IsSchwartzBruhat (Φ v) := fun v hv ↦ by rw [hΦS v hv]; exact hΦbSB v hv
   have hS0 : ∀ v ∉ S, Φ v = integralIndicator (v.adicCompletion K) n :=
-    fun v hv ↦ by simp only [hΦdef, dif_neg hv]
+    fun v hv ↦ by simp only [hΦdef, dite_eq_right hv]
   obtain ⟨σ₀, hσ₀⟩ := hP _ (matrixTensor_mem φ S Φ hSB hS0)
   refine ⟨σ₀, fun s hs ↦ ?_⟩
   obtain ⟨-, hE2⟩ := globalZeta_eq_euler ν μi φ hSB hS0 hξ hsph hfic hf (hσ₀ s hs)

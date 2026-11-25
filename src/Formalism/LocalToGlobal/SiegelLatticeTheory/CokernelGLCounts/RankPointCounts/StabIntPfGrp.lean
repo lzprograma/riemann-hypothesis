@@ -129,8 +129,6 @@ theorem zhatOM_zhatOM {K : Type*} [CommRing K] {r : ℕ} (Z : Matrix (Fin (r + 1
   simp only [ZhatOM]
   rw [← mul_assoc, ← mul_pow, neg_one_mul, neg_neg, one_pow, one_mul]
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7) (u u' : D.what₂.Word) (δ : ∀ p : Formalism.MainNotions.S.LocalSplitGroups.PlF D, (D.s.atP p).Fp)
   (M : ∀ p : Formalism.MainNotions.S.LocalSplitGroups.PlF D, Formalism.MainNotions.S.Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
   (w : Point D.host.E (D.R.rS + 1))

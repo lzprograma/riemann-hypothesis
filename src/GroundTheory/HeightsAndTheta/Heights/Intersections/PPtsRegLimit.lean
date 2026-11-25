@@ -51,9 +51,9 @@ theorem PtsRegLimit.proof (hInt : PtsIntegrableStatement) (hAbs : PtsAbsIntegrab
   unfold ptsIntegral
   by_cases hΨ : ∃ Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) → ℂ), IsGoodProj Q Ψ
   swap
-  · simp only [dif_neg hΨ]
+  · simp only [dite_eq_right hΨ]
     exact tendsto_const_nhds
-  simp only [dif_pos hΨ]
+  simp only [dite_eq_left hΨ]
   have hgood := hΨ.choose_spec
   generalize hΨ.choose = Ψ at hgood ⊢
   unfold ptsIntegralAt
@@ -70,9 +70,9 @@ theorem PtsRegLimit.proof (hInt : PtsIntegrableStatement) (hAbs : PtsAbsIntegrab
       -sheetDensity Q Ψ (pot M) (logNorm B 1) y w := by
     intro B y w
     by_cases hγ : ∃ γ, IsSheet Q Ψ y w γ
-    · simp only [sheetDensity, dif_pos hγ, logNorm, map_one, norm_one, one_div, Real.log_inv]
+    · simp only [sheetDensity, dite_eq_left hγ, logNorm, map_one, norm_one, one_div, Real.log_inv]
       ring
-    · simp only [sheetDensity, dif_neg hγ, neg_zero]
+    · simp only [sheetDensity, dite_eq_right hγ, neg_zero]
   have hFint : ∀ ε, 0 < ε → Integrable (fun y => ∑ᶠ w ∈ fibre Q Ψ y,
       sheetDensity Q Ψ (pot M) (fun z => Real.log ((regLine E t ht ε).h z)) y w) := by
     intro ε hε
@@ -114,11 +114,11 @@ theorem PtsRegLimit.proof (hInt : PtsIntegrableStatement) (hAbs : PtsAbsIntegrab
       ← Finset.sum_add_distrib]
     refine (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum fun w _ => ?_)
     by_cases hγ : ∃ γ, IsSheet Q Ψ y w γ
-    · simp only [sheetDensity, dif_pos hγ, abs_mul, ← add_mul]
+    · simp only [sheetDensity, dite_eq_left hγ, abs_mul, ← add_mul]
       refine mul_le_mul_of_nonneg_right ?_ (abs_nonneg _)
       rw [hB1, log_regLine_h, logNorm_eq_log_secNorm]
       exact PtsRegLimit.abs_half_log_le (hpt y hy w hγ) hε.1 hε.2.le
-    · simp only [sheetDensity, dif_neg hγ, abs_zero, add_zero, le_refl]
+    · simp only [sheetDensity, dite_eq_right hγ, abs_zero, add_zero, le_refl]
   ·
     have hts : IsSectionOn Q E t := ⟨a, haE, hta, htQ⟩
     refine (hAbs K ι Q e Ψ M E t hQ hgood hM hE hts).add ((hAbs K ι Q e Ψ M (regLine E t ht 1) 1 hQ hgood hM
@@ -130,11 +130,11 @@ theorem PtsRegLimit.proof (hInt : PtsIntegrableStatement) (hAbs : PtsAbsIntegrab
     simp only [finsum_mem_eq_finite_toFinset_sum _ (hfin y)]
     refine tendsto_finsetSum _ fun w _ => ?_
     by_cases hγ : ∃ γ, IsSheet Q Ψ y w γ
-    · simp only [sheetDensity, dif_pos hγ]
+    · simp only [sheetDensity, dite_eq_left hγ]
       refine Tendsto.mul_const _ ?_
       simp only [log_regLine_h, logNorm_eq_log_secNorm]
       exact PtsRegLimit.tendsto_half_log (hpt y hy w hγ)
-    · simp only [sheetDensity, dif_neg hγ]
+    · simp only [sheetDensity, dite_eq_right hγ]
       exact tendsto_const_nhds
 
 end GroundTheory.Heights₂.Heights.Inter

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HeckeCharOnIdMulSqrtAbsNormInvMemSubring
 public import Formalism.LocalToGlobal.IndefiniteReal.ThPinsR
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsGaloisGe
 import Mathlib.Algebra.Order.Floor.Extended
@@ -43,7 +44,6 @@ import Mathlib.Tactic.ReduceModChar
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT Formalism.L2.Pj
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.Mem.BVal
 
@@ -56,15 +56,7 @@ variable {L : Type} [Field L] [NumberField L]
 
 theorem onId_mul (χ : HChar L) {I J : FractionalIdeal (𝓞 L)⁰ L} (hI : I ≠ 0) (hJ : J ≠ 0) :
     χ.onId (I * J) = χ.onId I * χ.onId J := by
-  have hf : ∀ K : FractionalIdeal (𝓞 L)⁰ L,
-      (Function.mulSupport fun v : HeightOneSpectrum (𝓞 L) => χ.val v ^ FractionalIdeal.count L v K).Finite := fun K => by
-    refine (FractionalIdeal.finite_factors (K := L) K).subset fun v hv h => hv ?_
-    have h' : FractionalIdeal.count L v K = 0 := h
-    simp [h']
-  unfold HChar.onId
-  rw [← finprod_mul_distrib (hf I) (hf J)]
-  refine finprod_congr fun v => ?_
-  rw [FractionalIdeal.count_mul L v hI hJ, _root_.zpow_add]
+  apply _root_.GlobalTheory.HeckeIdealValue.onId_mul <;> assumption
 
 theorem onId_one (χ : HChar L) : χ.onId 1 = 1 := by
   unfold HChar.onId
@@ -150,7 +142,7 @@ theorem exists_field_BIs : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T0
   classical
   refine ⟨fun cc => if h : cc ≠ ⊥ ∧ cc ⊔ Ideal.span {((bad : ℕ) : 𝓞 D.host.E)} = ⊤ then
     ⟨_, mem_of_primes _ M' _ key cc h.1 h.2⟩ else 0, fun cc h0 h1 => ?_⟩
-  simp only [dif_pos (And.intro h0 h1)]
+  simp only [dite_eq_left (And.intro h0 h1)]
   rfl
 
 end GlobalTheory.Mem.BVal

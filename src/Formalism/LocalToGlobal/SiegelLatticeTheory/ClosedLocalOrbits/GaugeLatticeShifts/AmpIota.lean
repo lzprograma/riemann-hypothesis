@@ -19,8 +19,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.Pf.AmpIota
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 variable {X} (TR : TypedRed X)
@@ -64,8 +62,6 @@ end Formalism.L2.SG.Pf.AmpIota
 namespace Formalism.L2.SG.Pf
 
 open Formalism.L2.SG.Pf.AmpIota
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem iotaRepC_holds : Formalism.L2.SG.Pf.SatGramRep.IotaRepC := by
   intro D X Y u u' Λ Λ' hΛ hΛ' p q hpq

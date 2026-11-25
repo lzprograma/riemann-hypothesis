@@ -58,8 +58,6 @@ namespace Formalism.L2.SG.Pf.Cnt
 
 open Formalism.HermitianLattices.Ext.L3
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def EtaLocAt (D : Formalism.BasicNotions.D7) : Prop :=
   ∀ p : PlF D, (if ∀ x : (D.s.atP p).Ep, x ≠ 0 → IsUnit x then (-1 : ℝ) else 1) = etaF D.host.E D.host.F p.asIdeal
 
@@ -193,7 +191,7 @@ theorem densLocBound_of_tied {D : Formalism.BasicNotions.D7} (hL : Formalism.L2.
 
 def DensInputT : Prop := ∀ D : Formalism.BasicNotions.D7, Formalism.L2.SG.Pf.LocCP.LocTied D → Formalism.L2.SG.DataInst.DensInputAt D
 
-theorem densInputT_holds : DensInputT := fun D hL => Formalism.L2.SG.DataCut.densInputAt_of_loc (densLocBound_of_tied hL)
+theorem densInputT_holds : DensInputT := fun _ hL => Formalism.L2.SG.DataCut.densInputAt_of_loc (densLocBound_of_tied hL)
 
 end Formalism.L2.SG.Pf.Cnt
 end -- clump:auto

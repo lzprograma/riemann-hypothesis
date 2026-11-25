@@ -10,46 +10,7 @@ public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSe
 public import Development.WeilBound.ThetaLifts.CartanFactorisation.PolCount
 public import Development.WeilBound.ThetaLifts.CartanFactorisation.TensMax
 public import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
 
 @[expose] public section
@@ -73,19 +34,13 @@ theorem fockFirstAction_matrixUnit_eq (p q r s : ℕ) : FockH1Action.fockAct1 p 
 theorem fockSecondAction_matrixUnit_eq (p q r s : ℕ) : FockH1Action.fockAct2 p q r s = fockAct2 p q r s := by
   rw [FockH1Action.fockAct2, fockAct2, omAct_eq]
 
-theorem Jm_sq (p q : ℕ) : Jm p q * Jm p q = 1 := by
-  simp [Jm, Formalism.UG.Jpq, Matrix.fromBlocks_multiply]
-
-theorem Jm_ct (p q : ℕ) : (Jm p q)ᴴ = Jm p q := by
-  simp [Jm, Formalism.UG.Jpq, Matrix.fromBlocks_conjTranspose]
-
 theorem decomp {p q : ℕ} (Z : Mat p q) :
     ∃ Z₁ ∈ upq p q, ∃ Z₂ ∈ upq p q, Z = Z₁ + Complex.I • Z₂ ∧ Jm p q * Zᴴ * Jm p q = -Z₁ + Complex.I • Z₂ := by
   have a1 : (Jm p q * Zᴴ * Jm p q)ᴴ * Jm p q = Jm p q * Z := by
-    rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, Jm_ct, Matrix.conjTranspose_conjTranspose, Matrix.mul_assoc,
-      Matrix.mul_assoc, Jm_sq, Matrix.mul_one]
+    rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, PositivityTheory.RL.Jm_conjTranspose, Matrix.conjTranspose_conjTranspose, Matrix.mul_assoc,
+      Matrix.mul_assoc, PositivityTheory.RL.Jm_mul_self, Matrix.mul_one]
   have a2 : Jm p q * (Jm p q * Zᴴ * Jm p q) = Zᴴ * Jm p q := by
-    rw [← Matrix.mul_assoc, ← Matrix.mul_assoc, Jm_sq, Matrix.one_mul]
+    rw [← Matrix.mul_assoc, ← Matrix.mul_assoc, PositivityTheory.RL.Jm_mul_self, Matrix.one_mul]
   generalize Jm p q * Zᴴ * Jm p q = S at a1 a2
   refine ⟨(1 / 2 : ℂ) • (Z - S), ?_, (-Complex.I / 2) • (Z + S), ?_, ?_, ?_⟩
   · show _ + _ = 0
@@ -102,7 +57,7 @@ theorem decomp {p q : ℕ} (Z : Mat p q) :
 theorem tr_upq {p q : ℕ} {Y : Mat p q} (h : Y ∈ upq p q) : starRingEnd ℂ Y.trace = -Y.trace := by
   have h1 : Jm p q * (Yᴴ * Jm p q + Jm p q * Y) = 0 := by rw [show _ + _ = (0 : Mat p q) from h, Matrix.mul_zero]
   have h2 := congrArg Matrix.trace h1
-  rw [Matrix.mul_add, Matrix.trace_add, Matrix.trace_mul_comm, Matrix.mul_assoc, Jm_sq, Matrix.mul_one, ← Matrix.mul_assoc, Jm_sq,
+  rw [Matrix.mul_add, Matrix.trace_add, Matrix.trace_mul_comm, Matrix.mul_assoc, PositivityTheory.RL.Jm_mul_self, Matrix.mul_one, ← Matrix.mul_assoc, PositivityTheory.RL.Jm_mul_self,
     Matrix.one_mul, Matrix.trace_conjTranspose, Matrix.trace_zero] at h2
   exact eq_neg_of_add_eq_zero_left h2
 

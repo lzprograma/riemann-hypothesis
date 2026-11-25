@@ -1,5 +1,7 @@
 module
 
+import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.SelfTwistEigenvalues.OneUnitTF
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KerGen
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.LinearAlgebra.Matrix.Trace
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CornerUnits
@@ -261,40 +263,14 @@ open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 private theorem mem_of_forall_sup_pow {B : Type} [CommRing B] [IsLocalRing B] [IsNoetherianRing B]
     (P : Ideal B) (b : B) (h : ∀ N : ℕ, ∃ y ∈ P, b - y ∈ maximalIdeal B ^ N) : b ∈ P := by
-  by_cases hP : P = ⊤
-  · rw [hP]
-    exact Submodule.mem_top
-  haveI : Nontrivial (B ⧸ P) := Ideal.Quotient.nontrivial_iff.2 hP
-  haveI : IsLocalRing (B ⧸ P) := IsLocalRing.of_surjective' (Ideal.Quotient.mk P) Ideal.Quotient.mk_surjective
-  have hPm : P ≤ maximalIdeal B := IsLocalRing.le_maximalIdeal hP
-  have hmap : maximalIdeal B ≤ (maximalIdeal (B ⧸ P)).comap (Ideal.Quotient.mk P) := by
-    intro x hx
-    rw [Ideal.mem_comap, IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
-    rintro ⟨u, hu⟩
-    obtain ⟨y, hy⟩ := Ideal.Quotient.mk_surjective (↑u⁻¹ : B ⧸ P)
-    have h1 : Ideal.Quotient.mk P (x * y - 1) = 0 := by
-      rw [map_sub, map_mul, hy, ← hu, Units.mul_inv, map_one, sub_self]
-    have h2 := hPm (Ideal.Quotient.eq_zero_iff_mem.1 h1)
-    have h3 := (maximalIdeal B).sub_mem ((maximalIdeal B).mul_mem_right y hx) h2
-    rw [sub_sub_cancel] at h3
-    exact (IsLocalRing.maximalIdeal.isMaximal B).ne_top ((Ideal.eq_top_iff_one _).2 h3)
-  have hb : Ideal.Quotient.mk P b ∈ ⨅ N : ℕ, (maximalIdeal (B ⧸ P)) ^ N := by
-    rw [Ideal.mem_iInf]
-    intro N
-    obtain ⟨y, hy, hby⟩ := h N
-    have h3 := Ideal.mem_map_of_mem (Ideal.Quotient.mk P) hby
-    rw [Ideal.map_pow] at h3
-    have h4 := Ideal.pow_right_mono (Ideal.map_le_iff_le_comap.2 hmap) N h3
-    rwa [map_sub, Ideal.Quotient.eq_zero_iff_mem.2 hy, sub_zero] at h4
-  rw [Ideal.iInf_pow_eq_bot_of_isLocalRing _ (IsLocalRing.maximalIdeal.isMaximal _).ne_top, Ideal.mem_bot,
-    Ideal.Quotient.eq_zero_iff_mem] at hb
-  exact hb
+  apply _root_.ker_gen_closed <;> assumption
 
 theorem UpperTheory.V.Fr.frobenius_corner_maximalIdeal_le :
     ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsCoef l O] {F : Frame l (ResidueField O)} {C₀ : ℕ} {n : ℕ}, F.Ok C₀ → (n = 2 ∨ n = 3) → ∀ (S : Space O F n) (P : Ideal S.B), (maximalIdeal O).map (algebraMap O S.B) ≤ P → (∀ x : S.B, (x : S.R) ∈ S.ρ.mon 0 → ∃ c : O, x - algebraMap O S.B c ∈ P) → (∀ v i g, ∃ c : O, S.ψB v i g - algebraMap O S.B c ∈ P) → S.mB ≤ P := by
   intro l _ O _ _ _ _ F C₀ n hF hn S P hO hmon hψ
   obtain ⟨hco, hmax⟩ := co_B hF hn S
   haveI := hco
+  haveI : IsNoetherianRing S.B := UpperTheory.V.Alg.IsCO.toIsNoetherian O
   obtain ⟨-, -, h0, -, -, -, -⟩ := gr_A hF hn S
   obtain ⟨-, -, -, hcl⟩ := cont_u hF hn S
   have hinj : Function.Injective (algebraMap S.B S.A) := by
@@ -454,26 +430,8 @@ open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 private theorem exists_prime_power_pow_eq_one {l : ℕ} [Fact l.Prime] {D : Type} [CommRing D] [IsDomain D] [IsLocalRing D]
     [CharP D l] {x : D} (hx : x - 1 ∈ maximalIdeal D) {h : ℕ} (hh : h ≠ 0) (hp : x ^ h = 1) : x = 1 := by
-  have hl : l.Prime := Fact.out
-  obtain ⟨a, m, hm, rfl⟩ := Nat.exists_eq_pow_mul_and_not_dvd hh l hl.ne_one
-  have h1 : (x ^ m - 1) ^ l ^ a = 0 := by
-    rw [sub_pow_char_pow, one_pow, ← pow_mul, mul_comm, hp, sub_self]
-  have h2 : x ^ m - 1 = 0 := (pow_eq_zero_iff (pow_ne_zero _ hl.ne_zero)).1 h1
-  rw [← mul_geom_sum, mul_eq_zero] at h2
-  rcases h2 with h2 | h2
-  · exact sub_eq_zero.1 h2
-  · exfalso
-    have h3 : residue D x = 1 := by
-      have := (residue_eq_zero_iff _).2 hx
-      rwa [map_sub, map_one, sub_eq_zero] at this
-    have h4 := congrArg (residue D) h2
-
-    simp only [map_sum, map_pow, h3, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one,
-    map_zero] at h4
-    have h5 : (l : ResidueField D) = 0 := by
-      rw [← map_natCast (residue D), CharP.cast_eq_zero, map_zero]
-    haveI : CharP (ResidueField D) l := (CharP.charP_iff_prime_eq_zero hl).2 h5
-    exact hm ((CharP.cast_eq_zero_iff _ l m).1 h4)
+  intros
+  apply _root_.UpperTheory.V.Pr.T.oneUnitTF <;> assumption
 
 theorem UpperTheory.V.Fr.frobenius_corner_middle_trivial :
     ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsCoef l O] {F : Frame l (ResidueField O)} {C₀ : ℕ}, F.Ok C₀ → ∀ (D : Type) [CommRing D] [IsDomain D] [Algebra O D] [IsCO O D], (∀ c ∈ maximalIdeal O, algebraMap O D c = 0) → ∀ χ : F.G0 →* D, AdicCont (maximalIdeal D) χ → (∀ g, χ g - 1 ∈ maximalIdeal D) → (∀ g, χ (F.star g) = χ g) → (∀ v g, g ∈ F.Iv v → F.Ψ (F.loc v g) = 1 → χ (F.loc0 v g) = 1) → ∀ g, χ g = 1 := by

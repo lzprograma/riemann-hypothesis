@@ -127,7 +127,7 @@ theorem GlobalTheory.Mem.Lift.exists_isCCR_xOp_dOp : ∀ (ι : Type) [Fintype ι
   · simp only [smul_mul_assoc, mul_smul_comm]
     rw [hc (Pi.single k 1), pair_inv hH hd, ← smul_sub, sub_add_cancel_left, ← neg_smul, smul_smul]
     by_cases h : k = l
-    · simp only [h, if_true, one_im, one_re, ofReal_zero, ofReal_one]
+    · simp only [h, ite_true, one_im, one_re, ofReal_zero, ofReal_one]
       have hp : (π : ℂ) ≠ 0 := by simp [Real.pi_ne_zero]
       have : (-(1 / (4 * π)) : ℂ) * -(2 * π * I * ((1 + -I * I) * 0 + (-I - I) * 1)) = 1 := by
         field_simp

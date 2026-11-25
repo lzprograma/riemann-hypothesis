@@ -302,8 +302,7 @@ theorem exists_aeval_laplacian_eq_zero [DecidableEq ι] (K : Subgroup G)
     · simp
   refine ⟨Q * Polynomial.C Q.leadingCoeff⁻¹, Polynomial.monic_mul_leadingCoeff_inv hQ0, ?_, ?_⟩
   · rw [Polynomial.natDegree_mul_C (inv_ne_zero (Polynomial.leadingCoeff_ne_zero.2 hQ0))]
-    by_contra hdeg
-    push_neg at hdeg
+    by_contra! hdeg
     have hQc := Polynomial.eq_C_of_natDegree_le_zero hdeg
     have hc : Q.coeff 0 ≠ 0 := by
       intro hc; apply hQ0; rw [hQc, hc, map_zero]

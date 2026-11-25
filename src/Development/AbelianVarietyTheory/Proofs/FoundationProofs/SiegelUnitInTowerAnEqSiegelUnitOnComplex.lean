@@ -178,7 +178,7 @@ theorem exp_int {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosed Ω] (ε : �
       Complex.exp (2 * Real.pi * Complex.I * (m : ℂ) * τ / M)) ∘ (fun j : ℕ => (j : ℤ) + k) =
       fun j : ℕ => ee ((k : ℂ) / M * (τ : ℂ)) * (A j * Complex.exp (2 * Real.pi * Complex.I * j * τ / M)) := by
     funext j
-    simp only [Function.comp_apply, le_add_iff_nonneg_left, Nat.cast_nonneg, if_true, add_sub_cancel_right,
+    simp only [Function.comp_apply, le_add_iff_nonneg_left, Nat.cast_nonneg, ite_true, add_sub_cancel_right,
       Int.toNat_natCast, hε]
     rw [mul_left_comm, ee, ← Complex.exp_add]
     congr 2

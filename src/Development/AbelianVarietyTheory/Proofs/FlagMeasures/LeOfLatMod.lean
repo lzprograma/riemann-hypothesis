@@ -241,11 +241,6 @@ theorem latIn_isFullLattice {M : Submodule (𝓞 K) V} (hM : IsLatMod M S I) :
     obtain ⟨y, hy, he⟩ := key x hx
     have : y = x := Subtype.ext (he.trans (hC x x.2))
     simpa [this] using hy
-omit [StarRing K] [FiniteDimensional K V] in
-include hCS hpC hpI hI hC in
-theorem latIn_isLattice {M : Submodule (𝓞 K) V} (hM : IsLatMod M S I) :
-    Submodule.IsLattice K (latIn C M) :=
-  (latIn_isFullLattice p hCS hpC hpI hI hC hM).toIsLattice
 end Compl
 
 theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (H : HermSpace K V), Formalism.HermitianLatticesTheory.IsCMUnram K → ∀ (M M' : Submodule (𝓞 K) V) (S I : Submodule K V), I ≤ S → (∀ x ∈ S, (∀ y ∈ S, H.B x y = 0) ↔ x ∈ I) → IsLatMod M S I → IsLatMod M' S I → 0 < del H M ∧ 0 < gidx M M' ∧ del H M' = gidx M M' * del H M ∧ (IsIntegralLat H M → 1 ≤ del H M ∧ del H M ^ 2 = idx (dual H M) M) := by

@@ -46,8 +46,6 @@ import Mathlib.Tactic.Polynomial.Basic
 open NumberField MvPolynomial ReciprocityTheory.MultiplicativeHeights ReciprocityTheory.GeometryOfNumbersTheory
 open GlobalTheory GlobalTheory.ChowHt GlobalTheory.Adelic GlobalTheory.HermTools GlobalTheory.HilbertSamuel GlobalTheory.HSChoice GlobalTheory.HSShort
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.HSShort.DeepStep
@@ -86,19 +84,11 @@ theorem ofFn_prod_comm : ∀ (n : ℕ) (g' : Fin n → Module.End E A') (g : Fin
       ih _ _ (fun i => hg i.succ), hg 0]
 
 theorem pow_comm (f' : Module.End E A') (f : Module.End F A) (h : ∀ x, f' (ι x) = ι (f x)) :
-    ∀ (n : ℕ) x, (f' ^ n) (ι x) = ι ((f ^ n) x) := by
-  intro n
-  induction n with
-  | zero => intro x; simp
-  | succ n ih => intro x; rw [pow_succ, pow_succ, mul_apply_eq_comp, mul_apply_eq_comp, h, ih]
+    ∀ (n : ℕ) x, (f' ^ n) (ι x) = ι ((f ^ n) x) := fun n x =>
+  LinearMap.congr_fun (Module.End.commute_pow_left_of_commute (f := ι) (g := f) (g₂ := f') (LinearMap.ext h) n) x
 
-theorem mem_span_image (Y : Set A) : ∀ y ∈ Submodule.span F Y, ι y ∈ Submodule.span E (ι '' Y) := by
-  intro y hy
-  induction hy using Submodule.span_induction with
-  | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
-  | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
-  | smul c x _ hx => rw [map_smulₛₗ]; exact Submodule.smul_mem _ _ hx
+theorem mem_span_image (Y : Set A) : ∀ y ∈ Submodule.span F Y, ι y ∈ Submodule.span E (ι '' Y) :=
+  fun y hy => Submodule.image_span_subset_span ι Y ⟨y, hy, rfl⟩
 
 end Inter
 

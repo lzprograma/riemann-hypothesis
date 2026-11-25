@@ -13,43 +13,6 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsWei
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeisenbergRelativeIndexTranslateCompletedLattice
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddnessConditionHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumOpTransversal
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -85,34 +48,6 @@ theorem mem_of_local {G : Type} [AddCommGroup G] (T : AddSubgroup G) (x : G)
 
 variable {D : D7}
 
-def vanish (D : D7) (q : ℕ) (hq : q.Prime) : Ideal (AE D) where
-  carrier := {x | ZeroAt D q x}
-  zero_mem' := fun k => ⟨1, one_pos, by simp, 0, zero_mem _, by simp⟩
-  add_mem' := by
-    intro x y hx hy k
-    obtain ⟨m, hm, hc, s, hs, h⟩ := hx k
-    obtain ⟨m', hm', hc', s', hs', h'⟩ := hy k
-    refine ⟨m * m', Nat.mul_pos hm hm', Nat.Coprime.mul_left hc hc', m' * s + m * s',
-      add_mem (mul_mem (natCast_mem _ _) hs) (mul_mem (natCast_mem _ _) hs'), ?_⟩
-    push_cast
-    linear_combination (m' : AE D) * h + (m : AE D) * h'
-  smul_mem' := fun c x hx => by
-    have := zeroAt_mul D hq hx c
-    rwa [mul_comm] at this
-
-theorem eq_zero_of_zeroAt (x : AE D) (h : ∀ q : ℕ, q.Prime → ZeroAt D q x) : x = 0 := by
-  apply _root_.GlobalTheory.VacuumScalar.eq_zero_of_zeroAt <;> assumption
-
-theorem zeroAt_det {N q : ℕ} (hq : q.Prime) {g : GL (Fin N) (AE D)} (h : TrivAt D q g) :
-    ZeroAt D q (((Matrix.GeneralLinearGroup.det g : (AE D)ˣ) : AE D) - 1) := by
-  have h1 : (Ideal.Quotient.mk (vanish D q hq)).mapMatrix (g : Matrix (Fin N) (Fin N) (AE D)) =
-      (Ideal.Quotient.mk (vanish D q hq)).mapMatrix 1 := by
-    ext i j
-    exact Ideal.Quotient.eq.2 (h i j)
-  have h2 := congrArg Matrix.det h1
-  rw [← RingHom.map_det, ← RingHom.map_det, Matrix.det_one] at h2
-  exact Ideal.Quotient.eq.1 h2
-
 def cutHom {R : Type} [CommRing R] (ε : R) (h : ε * ε = ε) : R →* R where
   toFun u := (1 - ε) + ε * u
   map_one' := by ring
@@ -125,14 +60,14 @@ theorem exists_split_character : ∀ (D : D7) (N₀ : ℕ) (χ : HeckeU D N₀) 
   refine ⟨χ.f.comp ((Units.map (cutHom ε h1)).comp
     ((Matrix.GeneralLinearGroup.det (n := Fin N) (R := AE D)).comp (GA D N).subtype)), fun k hk => ?_, fun g x hx hg => ?_⟩
   · have h0 : ε * (((Matrix.GeneralLinearGroup.det (k : GL (Fin N) (AE D)) : (AE D)ˣ) : AE D) - 1) = 0 := by
-      refine eq_zero_of_zeroAt _ fun q hq => ?_
+      refine GlobalTheory.VacuumScalar.eq_zero_of_zeroAt _ fun q hq => ?_
       by_cases hi : InertQ D q
       · have := zeroAt_mul D hq ((h3 q hq).1 hi)
           (ε * (((Matrix.GeneralLinearGroup.det (k : GL (Fin N) (AE D)) : (AE D)ˣ) : AE D) - 1))
         convert this using 1
         linear_combination (-(((Matrix.GeneralLinearGroup.det (k : GL (Fin N) (AE D)) : (AE D)ˣ) : AE D) - 1)) * (h1 + h2)
       · rw [mul_comm]
-        exact zeroAt_mul D hq (zeroAt_det hq (hk q hq hi)) ε
+        exact zeroAt_mul D hq (GlobalTheory.VacuumScalar.zeroAt_det hq (hk q hq hi)) ε
     have h4 : Units.map (cutHom ε h1) (Matrix.GeneralLinearGroup.det (k : GL (Fin N) (AE D))) = 1 := by
       ext
       change (1 - ε) + ε * ((Matrix.GeneralLinearGroup.det (k : GL (Fin N) (AE D)) : (AE D)ˣ) : AE D) = 1
@@ -140,7 +75,7 @@ theorem exists_split_character : ∀ (D : D7) (N₀ : ℕ) (χ : HeckeU D N₀) 
     change χ.f (Units.map (cutHom ε h1) (Matrix.GeneralLinearGroup.det (k : GL (Fin N) (AE D)))) = 1
     rw [h4, map_one]
   · have h0 : (1 - (ε + sgA D ε)) * ((x : AE D) - 1) = 0 := by
-      refine eq_zero_of_zeroAt _ fun q hq => ?_
+      refine GlobalTheory.VacuumScalar.eq_zero_of_zeroAt _ fun q hq => ?_
       by_cases hi : InertQ D q
       · rw [mul_comm]
         exact zeroAt_mul D hq (hx q hq hi) _
@@ -210,7 +145,7 @@ theorem exists_weil_of_vacuum (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (
     if h : F ∈ TTs D (tor0 D cc δ) N N' then
       ((((c' g' * c g : ℂˣ) : ℂ) • Om (g, g') ⟨F, h⟩ : TTs D (tor0 D cc δ) N N') : VC D N N' → ℂ) else 0
   have hO : ∀ g g' (F : TTs D (tor0 D cc δ) N N'), O g g' F =
-      ((((c' g' * c g : ℂˣ) : ℂ) • Om (g, g') F : TTs D (tor0 D cc δ) N N') : VC D N N' → ℂ) := fun g g' F => dif_pos F.2
+      ((((c' g' * c g : ℂˣ) : ℂ) • Om (g, g') F : TTs D (tor0 D cc δ) N N') : VC D N N' → ℂ) := fun g g' F => dite_eq_left F.2
   refine ⟨{ nz := h0, chV := χ, chV' := χ', ep := 1, ep' := 1, ep_pm := ⟨Or.inl rfl, Or.inl rfl⟩, Om := O,
             maps := ?_, add := ?_, smul := ?_, one := ?_, mul := ?_, lift := ?_, inert := ?_, split := ?_ }, rfl, rfl, rfl, rfl⟩
   · intro g g' F hF

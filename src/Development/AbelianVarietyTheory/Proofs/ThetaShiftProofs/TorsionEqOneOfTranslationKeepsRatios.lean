@@ -55,14 +55,10 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomolo
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
   TopologicalSpace
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.ThetaScalar
 
@@ -374,7 +370,7 @@ theorem cross_of_dense (hL : L.IsLB) (θ : ThetaGrp A L k T) {I : Type*} {Z : Sc
       ∀ (Z : Scheme.{0}) (r : Z ⟶ (T ⊗ A).left) (z : Z) J, Good L z J →
         secVal (SecM.toSec A u) r z J = secVal a r z J * secVal b r z J := fun a b => by
     obtain ⟨u, hu⟩ := exists_sec hL (K' := Fin 1) (φ' := fun _ => (snd T A).left) (ε' := fun _ => k + k)
-      (formEq_of_add fun U _ h => by simp [Fintype.sum_sum_type, add_smul, two_nsmul])
+      (formEq_of_add fun U _ h => by simp [add_smul, two_nsmul])
       (mulSec (K := Fin 1) (φ := fun _ => (snd T A).left) (ε := fun _ => k) (K' := Fin 1)
         (φ' := fun _ => (snd T A).left) (ε' := fun _ => k) a b)
     exact ⟨SecM.ofSec A u, fun Z r z J hJ => (hu Z r z J hJ).trans (sval_mulSec _ _ r z hJ)⟩

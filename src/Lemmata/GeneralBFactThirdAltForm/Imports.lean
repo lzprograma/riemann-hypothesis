@@ -41,7 +41,7 @@ theorem exists_matrix_leftInverse_of_span_eq {R V ι κ : Type*} [CommSemiring R
     (fun k => ((Matrix.of fun k i => d i k) * (Matrix.of fun i j => c j i)) k j)
     (fun k => (1 : Matrix ι ι R) k j) (by
       simp only [key, Matrix.one_apply, ite_smul, one_smul, zero_smul,
-        Finset.sum_ite_eq', Finset.mem_univ, if_true]) k
+        Finset.sum_ite_eq', Finset.mem_univ, ite_true]) k
 
 theorem goal1 :
   ∀ {E : Type} [inst : CommRing.{0} E] {O : Subring.{0} E} {V : Type} [inst_1 : AddCommGroup.{0} V]

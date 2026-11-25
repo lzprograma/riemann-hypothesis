@@ -69,7 +69,7 @@ theorem step_V0fin {n : ℕ} (G : Grp k n) : FixedSubspaceFiniteProp G := by
     refine ⟨fun q => if hq : ∃ g, φ g = q then f (Classical.choose hq) else 0, ?_⟩
     funext g
     have hq : ∃ g', φ g' = φ g := ⟨g, rfl⟩
-    simp only [LinearMap.funLeft_apply, dif_pos hq]
+    simp only [LinearMap.funLeft_apply, dite_eq_left hq]
     have hk := P_V0fin.mem_KC_of_red_eq G.lev (Classical.choose hq) g (Classical.choose_spec hq)
     have := hf.2 (Classical.choose hq) ((Classical.choose hq)⁻¹ * g) hk
     rw [mul_inv_cancel_left] at this

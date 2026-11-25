@@ -129,8 +129,6 @@ namespace GlobalTheory.RootEx.ChainLattice
 
 alias exists_smul_mem := _root_.GlobalTheory.SmulMemOfMemSpan.exists_smul_mem_of_mem_span
 
-alias span_eq_top_of_smul_mem := _root_.GlobalTheory.LemmaTwoFortyThirteen.main
-
 theorem isLattice_chainLat_and_comap :
     ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
       (n : Type) [Fintype n] [DecidableEq n] (c : ℕ),

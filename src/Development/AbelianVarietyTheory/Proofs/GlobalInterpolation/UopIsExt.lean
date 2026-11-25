@@ -172,7 +172,7 @@ theorem uop_isExt : ∀ (D : D7) (u : D.what₂.Word) (X : Ch D u) (i : ℕ) (M 
       if hy : X.fm.fv i v c y = 1 then (huniq (M.rep c) _ (hf y hy)).exists.choose else (M.rep c).2 v
     have ht : ∀ y, X.fm.fv i v c y = 1 → ((M.rep c).2 v).IsUp (s y) (t y) := by
       intro y hy
-      simp only [t, dif_pos hy]
+      simp only [t, dite_eq_left hy]
       exact (huniq (M.rep c) _ (hf y hy)).exists.choose_spec
     let P : X.fm.lv i v c → M.Pt := fun y => ((M.rep c).1, Function.update (M.rep c).2 v (t y))
     have hbij : Set.BijOn P

@@ -25,47 +25,8 @@ public import GroundTheory.ProfiniteCohomology.RealPlaces.LocalDualityPlace
 public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.GEqAddOfExactOfFiniteCokernel
 public import GroundTheory.ProfiniteCohomology.RealPlaces.GSDefs
 public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.LemmaX
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
 import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.CoprimeRegular
 import GroundTheory.ProfiniteCohomology.PoitouTate.ZmodToQZCompactCohomologyResMapOfLocalInv
@@ -73,7 +34,6 @@ import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseKummerDefs
 import Mathlib.Tactic.Linter.HaveILetI
 import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.OrbitInvariants
 import GroundTheory.ProfiniteCohomology.RestrictedRamification.MulDistribMulActionGalUnitsFiniteSubfield
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.Devissage
 import GroundTheory.ProfiniteCohomology.PoincareDuality.TensorHomZmodDualIsoZmodMulPairing
 import GroundTheory.ProfiniteCohomology.RestrictedRamification.Brauer
@@ -114,7 +74,6 @@ theorem pow_ratio_eq_one {ι : Type*} [Fintype ι] (ℓ : ℕ) (hl0 : (ℓ : ℚ
     push_cast
     linarith
   exact_mod_cast h'
-
 
 open scoped Classical in
 theorem ratio_eq_one_of_altSum [Finite S] (hℓS : ∀ v ∉ S, ((ℓ : ℕ) : 𝓞 K.1) ∉ v.asIdeal)
@@ -186,7 +145,6 @@ theorem cast_sum_add_mul {ι : Type*} [Fintype ι] (f : ι → ℕ) (c n m : ℕ
     (((∑ i, f i) + c * n : ℕ) : ℤ) = ∑ i, (f i : ℤ) + (c : ℤ) * (m : ℤ) := by
   subst h; push_cast; rfl
 
-
 open scoped Classical in
 theorem dInf_eq (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal}, ℚ̄ →ₐ[K.1] AlgebraicClosure v.1.Completion)
     (hℓS : ∀ v ∉ S, ((ℓ : ℕ) : 𝓞 K.1) ∉ v.asIdeal) :
@@ -221,8 +179,6 @@ open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheo
 namespace PositivityTheory.Lit1.GEN.X
 
 local notation "ℚ̄" => AlgebraicClosure ℚ
-
-attribute [local instance 2000] Rep.hV2
 
 variable {K L : FiniteSubfield} [Fact (K ≤ L)] {S : Set (HeightOneSpectrum (𝓞 K.1))} {ℓ : ℕ} [Fact ℓ.Prime]
   (hL : ∀ x : L.1, algebraMap L.1 ℚ̄ x ∈ maxUnramifiedOutside K.1 ℚ̄ S) [Normal K.1 L.1]
@@ -531,8 +487,6 @@ open CategoryTheory GroundTheory.ProfCoh
 
 namespace PositivityTheory.Lit1.GEN.X
 
-attribute [local instance 2000] Rep.hV2
-
 theorem natCard_invariants_eq_of_addEquiv {k k' H V W : Type*} [CommRing k] [CommRing k'] [Group H]
     [AddCommGroup V] {_mV : Module k V} [AddCommGroup W] {_mW : Module k' W}
     (ρ : Representation k H V) (σ : Representation k' H W) (e : V ≃+ W)
@@ -607,8 +561,6 @@ open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheo
 
 namespace PositivityTheory.Lit1.GEN.X
 
-attribute [local instance 2000] Rep.hV2
-
 local notation "ℚ̄" => AlgebraicClosure ℚ
 
 section Cards
@@ -681,7 +633,7 @@ theorem finite_cohomology_two_int [Finite S] (hℓS : ∀ v ∉ S, ((ℓ : ℕ) 
   have : Finite (cohomology A 2) :=
     finite_cohomology_of_forall_trivial ℓ 2 W₀
       (fun V hV A _ _ htriv hA r hr =>
-        finite_cohomology_of_trivial_of_cyclic ℓ r
+        UpperTheory.Reformulated.B.Gua5.finite_cohomology_of_trivial_of_cyclic ℓ r
           (fun C _ _ _ htrivC hC => hcyc V hV C htrivC hC r hr) A htriv hA)
       U A (nsmul_intRep M) 2 le_rfl
   exact finite_cohomology_of_res_top (intRep M) 2
@@ -796,7 +748,6 @@ theorem modNRep_actA_one_apply (g : galUnramifiedOutside K.1 ℚ̄ S) :
     (QuotientGroup.mk'_surjective _) (QuotientGroup.ker_mk' _).le (galSUnitsMax K.1 ℚ̄ S) 1 g y
   exact congrArg Submodule.Quotient.mk (h1.trans h2.symm)
 
-
 omit [Module.Finite (ZMod ℓ) M] in
 theorem nRep_gsRestrictGal (g : galUnramifiedOutside K.1 ℚ̄ S) :
     nRep hL hζ M hM (gsRestrictGal hL g) =
@@ -810,7 +761,6 @@ theorem nRep_gsRestrictGal (g : galUnramifiedOutside K.1 ℚ̄ S) :
   exact congrArg (quotientRep (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S))
     (homRep (gsRootsZMod S ℓ) M)
     (homRep_ρ_of_mem (gsOpenSubgroup S hL) (gsRootsZMod S ℓ) M (roots_trivial hL hζ) hM)) h1
-
 
 omit [Module.Finite (ZMod ℓ) M] in
 theorem tprod_gsRestrictGal (g : galUnramifiedOutside K.1 ℚ̄ S) :
@@ -910,8 +860,6 @@ namespace PositivityTheory.Lit1.GEN.X
 
 local notation "ℚ̄" => AlgebraicClosure ℚ
 
-attribute [local instance 2000] Rep.hV2
-
 variable {K L : FiniteSubfield} [Fact (K ≤ L)] {S : Set (HeightOneSpectrum (𝓞 K.1))} {ℓ : ℕ} [Fact ℓ.Prime]
   (hL : ∀ x : L.1, algebraMap L.1 ℚ̄ x ∈ maxUnramifiedOutside K.1 ℚ̄ S) [Normal K.1 L.1]
   (hζ : ∃ ζ : L.1, IsPrimitiveRoot ζ ℓ)
@@ -949,8 +897,6 @@ theorem poitou_tate_H2_nat [Fintype S] (hℓS : ∀ v ∉ S, ((ℓ : ℕ) : 𝓞
           ((dualRep (gsRootsZMod S ℓ) M).ρ.comp (gsFinFamily S ιs v).toMonoidHom)) :=
         congrArg₂ (· * ·) (card_sha_int M hℓS ιs) (Finset.prod_congr rfl fun v _ => card_H0_dual_local M ιs v)
     _ = _ := by rw [Finset.prod_pow_eq_pow_sum]
-
-
 
 theorem poitou_tate_H2_int [Fintype S] (hℓS : ∀ v ∉ S, ((ℓ : ℕ) : 𝓞 K.1) ∉ v.asIdeal)
     (hcop : Nat.Coprime (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)).index ℓ)
@@ -1000,7 +946,7 @@ theorem finrank_H2_euler_formula [Finite S] (hℓS : ∀ v ∉ S, ((ℓ : ℕ) :
     (hcop : Nat.Coprime (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)).index ℓ)
     (hK : ℓ ≠ 2 ∨ IsTotallyComplex L.1) [Finite (ModN (AA hL 1) ℓ)] :
     (Module.finrank (ZMod ℓ) (cohomology M 2) : ℤ) =
-      dMod hL (dN hL hζ M hM hΓ) 1 + dPlaces (S := S) (dN hL hζ M hM hΓ) - (dN hL hζ M hM hΓ).one := set_option synthInstance.maxHeartbeats 200000 in by
+      dMod hL (dN hL hζ M hM hΓ) 1 + dPlaces (S := S) (dN hL hζ M hM hΓ) - (dN hL hζ M hM hΓ).one := by
   classical
   haveI : Fintype S := Fintype.ofFinite S
   have ιs : ∀ v : S, ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1) :=
@@ -1165,15 +1111,12 @@ theorem symm_gsRestrictGal (σ : galUnramifiedOutside K.1 ℚ̄ S) :
     (gsQuotientGalEquiv hL).symm (gsRestrictGal hL σ) = QuotientGroup.mk σ :=
   (gsQuotientGalEquiv hL).symm_apply_eq.2 (gsQuotientGalEquiv_mk hL σ).symm
 
-
 omit [Module.Finite (ZMod ℓ) M] in
 theorem nRep_gsRestrictGal (σ : galUnramifiedOutside K.1 ℚ̄ S) :
     nRep hL hζ M hM (gsRestrictGal hL σ) = (homRep (gsRootsZMod S ℓ) M).ρ σ :=
   (congrArg (quotientRep (PP hL) (homRep (gsRootsZMod S ℓ) M)
     (homRep_ρ_of_mem (gsOpenSubgroup S hL) (gsRootsZMod S ℓ) M (roots_trivial hL hζ) hM))
     (symm_gsRestrictGal hL σ)).trans (QuotientGroup.lift_mk _ _ _)
-
-
 
 theorem real_place_H0_finrank_b (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal}, ℚ̄ →ₐ[K.1] AlgebraicClosure v.1.Completion)
     (hℓS : ∀ v ∉ S, ((ℓ : ℕ) : 𝓞 K.1) ∉ v.asIdeal)
@@ -1258,8 +1201,6 @@ theorem real_place_H0_finrank_b (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsRea
 end Main
 
 end PositivityTheory.Lit1.GEN.X.RealC
-
-open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheory.Global
 
 namespace PositivityTheory.Lit1.GEN.X
 
@@ -1419,7 +1360,6 @@ variable {K L : FiniteSubfield} [Fact (K ≤ L)] {S : Set (HeightOneSpectrum (�
 theorem sum_eq_card_mul_sub {ι : Type*} [Fintype ι] (a b : ι → ℤ) (m : ℤ) (h : ∀ i, a i = m - b i) :
     ∑ i, a i = Fintype.card ι * m - ∑ i, b i := by
   rw [Finset.sum_congr rfl fun i _ => h i, Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-
 
 open scoped Classical in
 theorem altSum [Finite S] (hℓS : ∀ v ∉ S, ((ℓ : ℕ) : 𝓞 K.1) ∉ v.asIdeal)

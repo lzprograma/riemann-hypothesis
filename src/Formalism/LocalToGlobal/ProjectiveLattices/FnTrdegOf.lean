@@ -66,18 +66,8 @@ theorem fnFG_of (h : KapFG Xo c) : FnFG Xo c := by
   exact K.div_mem (hP p₁) (hP p₂)
 
 private lemma isAlgebraic_frac_lemma {A K : Type} [CommRing A] [IsDomain A] [Field K] [Algebra A K]
-    [IsFractionRing A K] (x : K) : IsAlgebraic A x := by
-  obtain ⟨⟨p, q⟩, rfl⟩ := IsLocalization.mk'_surjective (nonZeroDivisors A) x
-  dsimp only
-  have hq : algebraMap A K (q : A) ≠ 0 :=
-    IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors q.2
-  refine ⟨Polynomial.C (q : A) * Polynomial.X - Polynomial.C p, ?_, ?_⟩
-  · intro h0
-    have h1 := congrArg (fun f : Polynomial A => f.coeff 1) h0
-    simp at h1
-  · rw [IsFractionRing.mk'_eq_div]
-    simp only [map_sub, map_mul, Polynomial.aeval_C, Polynomial.aeval_X]
-    rw [mul_div_cancel₀ _ hq, sub_self]
+    [IsFractionRing A K] (x : K) : IsAlgebraic A x :=
+  (IsLocalization.isAlgebraic K (nonZeroDivisors A)).isAlgebraic x
 
 theorem fnTrdeg_of (d : ℕ) (h : KapTrdeg Xo c d) : FnTrdeg Xo c (d + Nat.card (FlagVar Dw)) := by
   intro Z

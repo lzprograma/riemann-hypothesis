@@ -113,7 +113,7 @@ theorem integral_form_sq (D n : ℕ) (c : (Fin (D + 1) → ℕ) → ℂ) :
     intro a ha
     rw [MeasureTheory.integral_finsetSum _ (fun b _ => (supSt_integrable a b).const_mul _)]
     simp_rw [integral_const_mul, supSt_gram]
-    simp only [mul_ite, mul_zero, Finset.sum_ite_eq, ha, if_true]
+    simp only [mul_ite, mul_zero, Finset.sum_ite_eq, ha, ite_true]
     rw [Complex.conj_mul']
     push_cast
     ring

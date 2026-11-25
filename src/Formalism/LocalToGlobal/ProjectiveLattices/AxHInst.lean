@@ -56,12 +56,4 @@ theorem htConcl_dataOf (h : GenFrEx Xo c)
   (dataOf h δ fn yP Dd N T i g0 cc uL uF uka ude uet uta1 uta2 wR jc np thpR n0 th0R uF0 nk thkR MR etR ta1R ta2R nu ip wsize DF PN PQ tableDegreeThreeBase PP0' Pd Gc PI4 Pet tableLineDegreeFive tableLineDegreeTwo Prw PO f r).heights (axHOf h δ fn yP Dd N T i g0 cc uL uF uka ude uet uta1 uta2 wR jc np thpR n0 th0R uF0 nk thkR MR etR ta1R ta2R nu ip wsize DF PN PQ tableDegreeThreeBase PP0' Pd Gc PI4 Pet tableLineDegreeFive tableLineDegreeTwo Prw PO f r hne hfg htr hac hwb het hta1 hta2 huet huta1 huta2 hfn hconj hbdd ha1 ha2 ha3' sel ha4 hnum ha13)
     ((dataOf h δ fn yP Dd N T i g0 cc uL uF uka ude uet uta1 uta2 wR jc np thpR n0 th0R uF0 nk thkR MR etR ta1R ta2R nu ip wsize DF PN PQ tableDegreeThreeBase PP0' Pd Gc PI4 Pet tableLineDegreeFive tableLineDegreeTwo Prw PO f r).genericSection_of_axioms (axHOf h δ fn yP Dd N T i g0 cc uL uF uka ude uet uta1 uta2 wR jc np thpR n0 th0R uF0 nk thkR MR etR ta1R ta2R nu ip wsize DF PN PQ tableDegreeThreeBase PP0' Pd Gc PI4 Pet tableLineDegreeFive tableLineDegreeTwo Prw PO f r hne hfg htr hac hwb het hta1 hta2 huet huta1 huta2 hfn hconj hbdd ha1 ha2 ha3' sel ha4 hnum ha13)) hH1 hF1d hLAM hSup hI2et hI2be
 
-section Of
-
-open IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.WeightAlgebra Formalism.MainNotions.Gaps.EtaleWeightGaps Formalism.L2.Pj.abelian₂ Formalism.L2.LamCM ReciprocityTheory.ChartRestriction.G.FD
-
-variable {D : D7} {Tc : Core D}
-
-end Of
-
 end Formalism.L2.Pj

@@ -3,42 +3,6 @@ module
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RingEquivPlaceCorrespondencePlaceUnder
 public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
 
 @[expose] public section
@@ -145,6 +109,255 @@ theorem hasSatGL_of_ringEquiv (c : v.adicCompletion K ≃+* w.adicCompletion M) 
 
 end Sat
 
+section PullCore
+
+variable {K M : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K]
+  [Field M] [NumberField M] [_root_.NumberField.IsTotallyComplex M] {a : ℕ}
+
+structure PullData (K M : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K]
+    [Field M] [NumberField M] [_root_.NumberField.IsTotallyComplex M] (a : ℕ) where
+  eRat : K →+* M
+  eAd : Ad K ≃+* Ad M
+  cont_eAd : Continuous eAd
+  cont_eAd_symm : Continuous eAd.symm
+  eAd_alg : ∀ x, eAd (algebraMap K (Ad K) x) = algebraMap M (Ad M) (eRat x)
+  eAd_rat : ∀ {r : ℕ} {x : BlockIx a r → Ad K}, x ∈ ratN K a r → (fun p => eAd (x p)) ∈ ratN M a r
+  eAd_symm_rat : ∀ {r : ℕ} {x : BlockIx a r → Ad M}, x ∈ ratN M a r → (fun p => eAd.symm (x p)) ∈ ratN K a r
+  eInf : Cinf K →+* Cinf M
+  eFin : Af K →+* Af M
+  cont_eFin : Continuous eFin
+  pInf_eAd : ∀ x, pInf M (eAd x) = eInf (pInf K x)
+  pFin_eAd : ∀ x, pFin M (eAd x) = eFin (pFin K x)
+  mapL : Lie K a →L[ℝ] Lie M a
+  mapL_apply : ∀ X i j, mapL X i j = eInf (X i j)
+  mapOp : Op K a → Op M a
+  mapOp_fin : ∀ k, mapOp (.fin k) = .fin (GeneralLinearGroup.map eFin k)
+  mapOp_cpt : ∀ k, ∃ k', mapOp (.cpt k) = .cpt k' ∧
+    GeneralLinearGroup.map eInf (Unitary.toUnits k) = Unitary.toUnits k'
+  mapOp_lie : ∀ X, mapOp (.lie X) = .lie (mapL X)
+  height_le : ∃ C : ℝ, 1 ≤ C ∧ ∀ y : GL (Fin a) (Cinf K), height (GeneralLinearGroup.map eInf y) ≤ C * height y
+  embMap : (K →+* ℂ) → (M →+* ℂ)
+  eInf_atEmb : ∀ τ z, eInf (atEmb τ z) = atEmb (embMap τ) z
+
+namespace PullData
+
+variable (D : PullData K M a)
+
+def mapA : GA K a →* GA M a := GeneralLinearGroup.map D.eAd.toRingHom
+
+theorem mapA_infGL (y : GL (Fin a) (Cinf K)) :
+    D.mapA (infGL K a y) = infGL M a (GeneralLinearGroup.map D.eInf y) :=
+  ga_ext (by rw [mapA, map_map_comm _ _ _ _ D.pInf_eAd, pInf_infGL, pInf_infGL])
+    (by rw [mapA, map_map_comm _ _ _ _ D.pFin_eAd, pFin_infGL, pFin_infGL, map_one])
+
+theorem mapA_finGL (k : GL (Fin a) (Af K)) :
+    D.mapA (finGL K a k) = finGL M a (GeneralLinearGroup.map D.eFin k) :=
+  ga_ext (by rw [mapA, map_map_comm _ _ _ _ D.pInf_eAd, pInf_finGL, pInf_finGL, map_one])
+    (by rw [mapA, map_map_comm _ _ _ _ D.pFin_eAd, pFin_finGL, pFin_finGL])
+
+theorem mapA_ratGL (γ : GL (Fin a) K) :
+    D.mapA (ratGL K a γ) = ratGL M a (GeneralLinearGroup.map D.eRat γ) :=
+  Units.ext (Matrix.ext fun _ _ => D.eAd_alg _)
+
+theorem chart_map (φ : GA M a → ℂ) (g : GA K a) {x : Lie K a} (hx : x ∈ invSet K a) :
+    chart (fun g => φ (D.mapA g)) g x = chart φ (D.mapA g) (D.mapL x) ∧ D.mapL x ∈ invSet M a := by
+  obtain ⟨u, hu⟩ := id hx
+  obtain rfl : x = toL u.val := hu.symm
+  have hm : D.mapL (toL u.val) = toL (GeneralLinearGroup.map D.eInf u).val :=
+    funext₂ fun i j => D.mapL_apply _ i j
+  rw [hm, chart_val, chart_val, map_mul, D.mapA_infGL]
+  exact ⟨rfl, val_mem_invSet _⟩
+
+theorem map_mem_Sm {φ : GA M a → ℂ} (hφ : φ ∈ Sm M a) : (fun g => φ (D.mapA g)) ∈ Sm K a := fun g =>
+  ((hφ (D.mapA g)).comp D.mapL.contDiff.contDiffOn
+    fun _ hx => (D.chart_map φ g hx).2).congr fun _ hx => (D.chart_map φ g hx).1
+
+def pull (hinv : ∀ {φ : GA K a → ℂ}, φ ∈ Sm K a →
+    (fun g => φ (GeneralLinearGroup.map D.eAd.symm.toRingHom g)) ∈ Sm M a) : Sm M a ≃ₗ[ℂ] Sm K a where
+  toFun φ := ⟨fun g => φ.1 (D.mapA g), D.map_mem_Sm φ.2⟩
+  invFun φ := ⟨fun g => φ.1 (GeneralLinearGroup.map D.eAd.symm.toRingHom g), hinv φ.2⟩
+  map_add' _ _ := rfl
+  map_smul' _ _ := rfl
+  left_inv φ := Subtype.ext <| funext fun _ => congrArg φ.1 (Units.ext (Matrix.ext fun _ _ => D.eAd.apply_symm_apply _))
+  right_inv φ := Subtype.ext <| funext fun _ => congrArg φ.1 (Units.ext (Matrix.ext fun _ _ => D.eAd.symm_apply_apply _))
+
+variable {D}
+
+theorem rt_pull {hinv} (h : GA K a) (φ : Sm M a) :
+    rt K a h (D.pull hinv φ) = D.pull hinv (rt M a (D.mapA h) φ) :=
+  Subtype.ext <| funext fun g => congrArg φ.1 (map_mul D.mapA g h)
+
+theorem lie_pull {hinv} (X : Lie K a) (φ : Sm M a) :
+    lie K a X (D.pull hinv φ) = D.pull hinv (lie M a (D.mapL X) φ) := by
+  refine Subtype.ext <| funext fun g => ?_
+  have e1 : chart (D.pull hinv φ).1 g =ᶠ[𝓝 (oneL K a)] chart φ.1 (D.mapA g) ∘ D.mapL :=
+    Filter.eventually_of_mem (isOpen_invSet.mem_nhds isUnit_one) fun x hx => (D.chart_map φ.1 g hx).1
+  have h1 : D.mapL (oneL K a) = oneL M a := by
+    funext i j
+    rw [D.mapL_apply]
+    change D.eInf ((1 : Matrix (Fin a) (Fin a) (Cinf K)) i j) = (1 : Matrix (Fin a) (Fin a) (Cinf M)) i j
+    rw [Matrix.one_apply, Matrix.one_apply]
+    split_ifs <;> simp
+  have h2 := HasFDerivAt.comp (oneL K a) (f := D.mapL)
+    (by rw [h1]; exact (differentiableAt_chart φ.2 (D.mapA g)).hasFDerivAt) D.mapL.hasFDerivAt
+  change fderiv ℝ _ _ X = fderiv ℝ _ _ _
+  rw [e1.fderiv_eq, h2.fderiv]
+  rfl
+
+theorem act_pull {hinv} (o : Op K a) (φ : Sm M a) :
+    act o (D.pull hinv φ) = D.pull hinv (act (D.mapOp o) φ) := by
+  cases o with
+  | fin k => rw [D.mapOp_fin]; exact (D.rt_pull _ φ).trans (by rw [D.mapA_finGL]; rfl)
+  | cpt k =>
+    obtain ⟨k', hk1, hk2⟩ := D.mapOp_cpt k
+    rw [hk1]
+    exact (D.rt_pull (infGL K a (Unitary.toUnits k)) φ).trans (by rw [D.mapA_infGL, hk2]; rfl)
+  | lie X => rw [D.mapOp_lie]; exact D.lie_pull X φ
+
+theorem Eop_pull {hinv} (τ : K →+* ℂ) (i j : Fin a) (φ : Sm M a) :
+    Eop τ i j (D.pull hinv φ) = D.pull hinv (Eop (D.embMap τ) i j φ) := by
+  have h2 : ∀ z, lieS K a i j (atEmb τ z) (D.pull hinv φ) =
+      D.pull hinv (lieS M a i j (atEmb (D.embMap τ) z) φ) := fun z => by
+    have e' : ∀ x, D.mapL (toL (Matrix.single i j x)) = toL (Matrix.single i j (D.eInf x)) := fun x => by
+      funext k l
+      rw [D.mapL_apply]
+      change D.eInf (Matrix.single i j x k l) = Matrix.single i j (D.eInf x) k l
+      rw [Matrix.single_apply, Matrix.single_apply]
+      split_ifs <;> simp
+    rw [lieS_apply, D.lie_pull, e', D.eInf_atEmb, lieS_apply]
+  have hsub (x y : Sm M a) : D.pull hinv (x - y) = D.pull hinv x - D.pull hinv y :=
+    (D.pull hinv).toLinearMap.map_sub x y
+  simp only [Eop, LinearMap.smul_apply, LinearMap.sub_apply, h2, (D.pull hinv).map_smul, hsub]
+
+theorem cap_pull {hinv} (σ : K →+* ℂ) (u : ℂ) (φ : Sm M a) :
+    cap σ u (D.pull hinv φ) = D.pull hinv (cap (D.embMap σ) u φ) := by
+  have h := map_qdet ((D.pull hinv).conjAlgEquiv ℂ).toAlgHom (Eop (D.embMap σ)) (u + ((a : ℂ) - 1) / 2)
+  have e1 : (fun i j => ((D.pull hinv).conjAlgEquiv ℂ).toAlgHom (Eop (D.embMap σ) i j)) = Eop σ := by
+    funext i j
+    refine LinearMap.ext fun ψ => ?_
+    obtain ⟨ψ, rfl⟩ := (D.pull hinv).surjective ψ
+    rw [D.Eop_pull]
+    change D.pull hinv (Eop (D.embMap σ) i j ((D.pull hinv).symm (D.pull hinv ψ))) = _
+    rw [LinearEquiv.symm_apply_apply]
+  rw [e1] at h
+  rw [cap, ← h, cap]
+  generalize Formalism.REAL.qdet (Eop (a := a) (D.embMap σ)) (u + ((a : ℂ) - 1) / 2) = z
+  change D.pull hinv (z ((D.pull hinv).symm (D.pull hinv φ))) = _
+  rw [LinearEquiv.symm_apply_apply]
+
+theorem Zalg_pull {hinv} {z : Module.End ℂ (Sm K a)} (hz : z ∈ Zalg K a) :
+    ∃ z' ∈ Zalg M a, ∀ φ, z (D.pull hinv φ) = D.pull hinv (z' φ) := by
+  induction hz using Algebra.adjoin_induction with
+  | mem x hx =>
+    obtain ⟨τ, u, rfl⟩ := hx
+    exact ⟨_, Algebra.subset_adjoin ⟨_, _, rfl⟩, D.cap_pull τ u⟩
+  | algebraMap c => exact ⟨_, Subalgebra.algebraMap_mem _ c, fun φ => by simp⟩
+  | add x y _ _ hx hy =>
+    obtain ⟨x', h1, h2⟩ := hx
+    obtain ⟨y', h3, h4⟩ := hy
+    exact ⟨x' + y', add_mem h1 h3, fun φ => by simp [h2, h4]⟩
+  | mul x y _ _ hx hy =>
+    obtain ⟨x', h1, h2⟩ := hx
+    obtain ⟨y', h3, h4⟩ := hy
+    exact ⟨x' * y', mul_mem h1 h3, fun φ => by simp [h2, h4]⟩
+
+theorem isAutForm_pull {hinv} {φ : Sm M a} (h : IsAutForm φ) : IsAutForm (D.pull hinv φ) := by
+  refine { left := ?_, level := ?_, kfin := ?_, zfin := ?_, growth := ?_ }
+  · intro γ g
+    change φ.1 (D.mapA (ratGL K a γ * g)) = φ.1 (D.mapA g)
+    rw [map_mul, D.mapA_ratGL, h.left]
+  · convert h.level.preimage (continuous_mapGL D.eFin D.cont_eFin) using 1
+    ext k
+    have hact := D.act_pull (hinv := hinv) (.fin k) φ
+    rw [D.mapOp_fin] at hact
+    exact (Eq.congr_left hact).trans (D.pull hinv).injective.eq_iff
+  · have := h.kfin
+    refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ (Set.range fun k => cptRep M a k φ)).map
+      (D.pull hinv).toLinearMap) (Submodule.span_le.2 ?_)
+    rintro _ ⟨k, rfl⟩
+    obtain ⟨k', hk1, -⟩ := D.mapOp_cpt k
+    exact ⟨_, Submodule.subset_span ⟨k', rfl⟩, (hk1 ▸ D.act_pull (.cpt k) φ).symm⟩
+  · have := h.zfin
+    refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ ((fun z : Module.End ℂ (Sm M a) => z φ) ''
+      Zalg M a)).map (D.pull hinv).toLinearMap) (Submodule.span_le.2 ?_)
+    rintro _ ⟨z, hz, rfl⟩
+    obtain ⟨z', h1, h2⟩ := D.Zalg_pull hz
+    exact ⟨_, Submodule.subset_span ⟨z', h1, rfl⟩, (h2 φ).symm⟩
+  · intro g
+    obtain ⟨C, N, h1⟩ := h.growth (D.mapA g)
+    obtain ⟨K₀, hK1, hK⟩ := D.height_le
+    refine ⟨C * K₀ ^ N, N, fun y => ?_⟩
+    change ‖φ.1 (D.mapA (g * infGL K a y))‖ ≤ _
+    rw [map_mul, D.mapA_infGL]
+    have h1ge : ∀ {F : Type} [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F]
+        (z : GL (Fin a) (Cinf F)), 1 ≤ height z := fun z => by
+      unfold height; linarith [norm_nonneg (toL z.val), norm_nonneg (toL (z⁻¹).val)]
+    have hy := h1 (GeneralLinearGroup.map D.eInf y)
+    have hC : 0 ≤ C := by
+      by_contra hc
+      have hpos : 0 < height (GeneralLinearGroup.map D.eInf y) ^ N :=
+        pow_pos (lt_of_lt_of_le one_pos (h1ge _)) N
+      linarith [mul_neg_of_neg_of_pos (lt_of_not_ge hc) hpos,
+        norm_nonneg (φ.1 (D.mapA g * infGL M a (GeneralLinearGroup.map D.eInf y)))]
+    refine hy.trans ?_
+    rw [mul_assoc, ← mul_pow]
+    exact mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (le_trans zero_le_one (h1ge _)) (hK y) N) hC
+
+open MeasureTheory in
+theorem isCuspidal_pull (D : PullData K M a) {φ : GA M a → ℂ} (hφ : IsCuspidal φ) :
+    IsCuspidal fun g => φ (D.mapA g) := by
+  intro r h0 h1 _ _ μ 𝓕 hμ hF g
+  borelize (BlockIx a r → Ad M)
+  let β : (BlockIx a r → Ad K) ≃ₜ+ (BlockIx a r → Ad M) :=
+    { toFun := fun x p => D.eAd (x p)
+      invFun := fun x p => D.eAd.symm (x p)
+      left_inv := fun x => funext fun p => D.eAd.symm_apply_apply _
+      right_inv := fun x => funext fun p => D.eAd.apply_symm_apply _
+      map_add' := fun x y => funext fun p => map_add D.eAd _ _
+      continuous_toFun := continuous_pi fun p => D.cont_eAd.comp (continuous_apply p)
+      continuous_invFun := continuous_pi fun p => D.cont_eAd_symm.comp (continuous_apply p) }
+  let q : ratN M a r ≃ ratN K a r :=
+    { toFun := fun y => ⟨β.symm y, D.eAd_symm_rat y.2⟩
+      invFun := fun x => ⟨β x, D.eAd_rat x.2⟩
+      left_inv := fun y => Subtype.ext (β.apply_symm_apply y)
+      right_inv := fun x => Subtype.ext (β.symm_apply_apply x) }
+  let m := β.toHomeomorph.toMeasurableEquiv
+  have h2 := hφ r h0 h1 (μ.map m) (m '' 𝓕) (β.isAddHaarMeasure_map μ)
+    (hF.image_of_equiv m.toEquiv (MeasurePreserving.symm m ⟨m.measurable, rfl⟩).quasiMeasurePreserving q fun y x => by
+      change β (β.symm y + x) = y + β x
+      rw [map_add (f := _), β.apply_symm_apply]) (D.mapA g)
+  rw [m.measurableEmbedding.setIntegral_map, m.injective.preimage_image] at h2
+  rw [← h2]
+  congr 1
+  funext x
+  beta_reduce
+  rw [map_mul, mapA, map_unip]
+  rfl
+
+def pullSub (D : PullData K M a) {hinv}
+    (hpull_act : ∀ (o : Op M a), ∃ o' : Op K a, ∀ φ, D.pull hinv (act o φ) = act o' (D.pull hinv φ))
+    (π : CuspSub M a) : CuspSub K a where
+  V := π.V.map (D.pull hinv).toLinearMap
+  cusp := by rintro _ ⟨φ, hφ, rfl⟩; exact ⟨D.isAutForm_pull (π.cusp φ hφ).1, D.isCuspidal_pull (π.cusp φ hφ).2⟩
+  stable := by
+    rintro o _ ⟨φ, hφ, rfl⟩
+    exact ⟨_, π.stable _ φ hφ, (D.act_pull o φ).symm⟩
+  ne_bot h := π.ne_bot ((Submodule.map_eq_bot_iff (e := D.pull hinv)).1 h)
+  irred W hW hs := by
+    have h := π.irred (W.comap (D.pull hinv).toLinearMap) (fun φ hφ => by
+      obtain ⟨ψ, h1, h2⟩ := hW hφ
+      rwa [← (D.pull hinv).injective h2]) fun o φ hφ => by
+      change D.pull hinv (act o φ) ∈ W
+      obtain ⟨o', ho'⟩ := hpull_act o
+      rw [ho']
+      exact hs o' _ hφ
+    have e1 := Submodule.map_comap_eq_of_surjective (f := (D.pull hinv).toLinearMap) (D.pull hinv).surjective W
+    exact h.imp (fun h => by rw [← e1, h, Submodule.map_bot]) fun h => by rw [← e1, h]
+
+end PullData
+
+end PullCore
+
 variable {K M : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field M] [NumberField M] [_root_.NumberField.IsTotallyComplex M]
   {a : ℕ} (e : K ≃+* M)
 
@@ -173,136 +386,6 @@ theorem mapOp_symm (o : Op K a) : mapOp e.symm (mapOp e o) = o := by
   | cpt k => exact congrArg Op.cpt (Subtype.ext (Matrix.ext fun i j => cInf_symm e _))
   | lie X => exact congrArg Op.lie (funext₂ fun i j => cInf_symm e _)
 
-
-variable (a) in
-def mapA : GA K a →* GA M a := GeneralLinearGroup.map (cAd e)
-
-theorem mapA_symm (g : GA K a) : mapA a e.symm (mapA a e g) = g := by
-  ext i j : 2
-  exact cAd_symm e _
-
-theorem mapA_infGL (y : GL (Fin a) (Cinf K)) :
-    mapA a e (infGL K a y) = infGL M a (GeneralLinearGroup.map (cInf e) y) :=
-  ga_ext (by rw [mapA, map_map_comm _ _ _ _ (pInf_cAd e), pInf_infGL, pInf_infGL])
-    (by rw [mapA, map_map_comm _ _ _ _ (pFin_cAd e), pFin_infGL, pFin_infGL, map_one])
-
-theorem mapA_finGL (k : GL (Fin a) (Af K)) : mapA a e (finGL K a k) = finGL M a (GeneralLinearGroup.map (cFin e) k) :=
-  ga_ext (by rw [mapA, map_map_comm _ _ _ _ (pInf_cAd e), pInf_finGL, pInf_finGL, map_one])
-    (by rw [mapA, map_map_comm _ _ _ _ (pFin_cAd e), pFin_finGL, pFin_finGL])
-
-theorem mapA_ratGL (γ : GL (Fin a) K) :
-    mapA a e (ratGL K a γ) = ratGL M a (GeneralLinearGroup.map e.toRingHom γ) :=
-  Units.ext (Matrix.ext fun _ _ => cAd_algebraMap e _)
-
-theorem chart_map (φ : GA M a → ℂ) (g : GA K a) {x : Lie K a} (hx : x ∈ invSet K a) :
-    chart (fun g => φ (mapA a e g)) g x = chart φ (mapA a e g) (mapL e x) ∧ mapL e x ∈ invSet M a := by
-  obtain ⟨u, hu⟩ := id hx
-  obtain rfl : x = toL u.val := hu.symm
-  rw [show mapL e (toL u.val) = toL (GeneralLinearGroup.map (cInf e) u).val from rfl,
-    chart_val, chart_val, map_mul, mapA_infGL]
-  exact ⟨rfl, val_mem_invSet _⟩
-
-theorem map_mem_Sm {φ : GA M a → ℂ} (hφ : φ ∈ Sm M a) : (fun g => φ (mapA a e g)) ∈ Sm K a := fun g =>
-  ((hφ (mapA a e g)).comp (mapL (a := a) e).contDiff.contDiffOn
-    fun _ hx => (chart_map e φ g hx).2).congr fun _ hx => (chart_map e φ g hx).1
-
-
-variable (a) in
-def pull : Sm M a ≃ₗ[ℂ] Sm K a where
-  toFun φ := ⟨fun g => φ.1 (mapA a e g), map_mem_Sm e φ.2⟩
-  invFun φ := ⟨fun g => φ.1 (mapA a e.symm g), map_mem_Sm e.symm φ.2⟩
-  map_add' _ _ := rfl
-  map_smul' _ _ := rfl
-  left_inv φ := Subtype.ext <| funext fun g => congrArg φ.1 (mapA_symm e.symm g)
-  right_inv φ := Subtype.ext <| funext fun g => congrArg φ.1 (mapA_symm e g)
-
-theorem pull_apply (φ : Sm M a) (g : GA K a) : (pull a e φ).1 g = φ.1 (mapA a e g) := rfl
-
-theorem rt_pull (h : GA K a) (φ : Sm M a) : rt K a h (pull a e φ) = pull a e (rt M a (mapA a e h) φ) :=
-  Subtype.ext <| funext fun g => congrArg φ.1 (map_mul (mapA a e) g h)
-
-theorem lie_pull (X : Lie K a) (φ : Sm M a) : lie K a X (pull a e φ) = pull a e (lie M a (mapL e X) φ) := by
-  refine Subtype.ext <| funext fun g => ?_
-  have e1 : chart (pull a e φ).1 g =ᶠ[𝓝 (oneL K a)] chart φ.1 (mapA a e g) ∘ mapL e :=
-    Filter.eventually_of_mem (isOpen_invSet.mem_nhds isUnit_one) fun x hx => (chart_map e φ.1 g hx).1
-  have h1 : mapL e (oneL K a) = oneL M a := by
-    funext i j
-    change cInf e ((1 : Matrix (Fin a) (Fin a) (Cinf K)) i j) = (1 : Matrix (Fin a) (Fin a) (Cinf M)) i j
-    rw [Matrix.one_apply, Matrix.one_apply]
-    split_ifs <;> simp
-  have h2 := HasFDerivAt.comp (oneL K a) (f := mapL e)
-    (by rw [h1]; exact (differentiableAt_chart φ.2 (mapA a e g)).hasFDerivAt) (mapL e).hasFDerivAt
-  change fderiv ℝ _ _ X = fderiv ℝ _ _ _
-  rw [e1.fderiv_eq, h2.fderiv]
-  rfl
-
-theorem act_pull (o : Op K a) (φ : Sm M a) : act o (pull a e φ) = pull a e (act (mapOp e o) φ) := by
-  cases o with
-  | fin k => exact (rt_pull e _ φ).trans (by rw [mapA_finGL]; rfl)
-  | cpt k =>
-    have e1 : GeneralLinearGroup.map (cInf e) (Unitary.toUnits k) = Unitary.toUnits (mapK e k) :=
-      Units.ext rfl
-    exact (rt_pull e (infGL K a (Unitary.toUnits k)) φ).trans (by rw [mapA_infGL, e1]; rfl)
-  | lie X => exact lie_pull e X φ
-
-theorem pull_act (o : Op M a) (φ : Sm M a) : pull a e (act o φ) = act (mapOp e.symm o) (pull a e φ) := by
-  rw [act_pull]
-  exact congrArg (fun o => pull a e (act o φ)) (mapOp_symm e.symm o).symm
-
-theorem Eop_pull (τ : M →+* ℂ) (i j : Fin a) (φ : Sm M a) :
-    Eop (τ.comp e.toRingHom) i j (pull a e φ) = pull a e (Eop τ i j φ) := by
-  have h2 : ∀ z, lieS K a i j (atEmb (τ.comp e.toRingHom) z) (pull a e φ) =
-      pull a e (lieS M a i j (atEmb τ z) φ) := fun z => by
-    have e' : ∀ x, mapL e (toL (Matrix.single i j x)) = toL (Matrix.single i j (cInf e x)) := fun x => by
-      funext k l
-      change cInf e (Matrix.single i j x k l) = Matrix.single i j (cInf e x) k l
-      rw [Matrix.single_apply, Matrix.single_apply]
-      split_ifs <;> simp
-    rw [lieS_apply, lie_pull, e', cInf_atEmb, lieS_apply]
-  have hsub (x y : Sm M a) : pull a e (x - y) = pull a e x - pull a e y :=
-    (pull a e).toLinearMap.map_sub x y
-  simp only [Eop, LinearMap.smul_apply, LinearMap.sub_apply, h2, (pull a e).map_smul, hsub]
-
-theorem cap_pull (τ : M →+* ℂ) (u : ℂ) (φ : Sm M a) :
-    cap (τ.comp e.toRingHom) u (pull a e φ) = pull a e (cap τ u φ) := by
-  have h := map_qdet ((pull a e).conjAlgEquiv ℂ).toAlgHom (Eop τ) (u + ((a : ℂ) - 1) / 2)
-  have e1 : (fun i j => ((pull a e).conjAlgEquiv ℂ).toAlgHom (Eop τ i j)) = Eop (τ.comp e.toRingHom) := by
-    funext i j
-    refine LinearMap.ext fun ψ => ?_
-    obtain ⟨ψ, rfl⟩ := (pull a e).surjective ψ
-    rw [Eop_pull]
-    change pull a e (Eop τ i j ((pull a e).symm (pull a e ψ))) = _
-    rw [LinearEquiv.symm_apply_apply]
-  rw [e1] at h
-  rw [cap, ← h, cap]
-  generalize Formalism.REAL.qdet (Eop (a := a) τ) (u + ((a : ℂ) - 1) / 2) = z
-  change pull a e (z ((pull a e).symm (pull a e φ))) = _
-  rw [LinearEquiv.symm_apply_apply]
-
-theorem cap_pull' (σ : K →+* ℂ) (u : ℂ) (φ : Sm M a) :
-    cap σ u (pull a e φ) = pull a e (cap (σ.comp e.symm.toRingHom) u φ) := by
-  rw [← cap_pull]
-  congr 2
-  ext x
-  simp
-
-theorem Zalg_pull {z : Module.End ℂ (Sm K a)} (hz : z ∈ Zalg K a) :
-    ∃ z' ∈ Zalg M a, ∀ φ, z (pull a e φ) = pull a e (z' φ) := by
-  induction hz using Algebra.adjoin_induction with
-  | mem x hx =>
-    obtain ⟨τ, u, rfl⟩ := hx
-    exact ⟨_, Algebra.subset_adjoin ⟨_, _, rfl⟩, cap_pull' e τ u⟩
-  | algebraMap c => exact ⟨_, Subalgebra.algebraMap_mem _ c, fun φ => by simp⟩
-  | add x y _ _ hx hy =>
-    obtain ⟨x', h1, h2⟩ := hx
-    obtain ⟨y', h3, h4⟩ := hy
-    exact ⟨x' + y', add_mem h1 h3, fun φ => by simp [h2, h4]⟩
-  | mul x y _ _ hx hy =>
-    obtain ⟨x', h1, h2⟩ := hx
-    obtain ⟨y', h3, h4⟩ := hy
-    exact ⟨x' * y', mul_mem h1 h3, fun φ => by simp [h2, h4]⟩
-
-
 omit [_root_.NumberField.IsTotallyComplex K] [_root_.NumberField.IsTotallyComplex M] in
 theorem height_map_le (y : GL (Fin a) (Cinf K)) : height (GeneralLinearGroup.map (cInf e) y) ≤ height y := by
   have h1 : ∀ y : GL (Fin a) (Cinf K), ‖toL (GeneralLinearGroup.map (cInf e) y).val‖ ≤ ‖toL y.val‖ := fun y =>
@@ -316,82 +399,113 @@ theorem height_map (y : GL (Fin a) (Cinf K)) : height (GeneralLinearGroup.map (c
   refine le_antisymm (height_map_le e y) (le_of_eq_of_le ?_ (height_map_le e.symm _))
   exact congrArg height (Units.ext (Matrix.ext fun i j => (cInf_symm e _).symm))
 
-theorem isAutForm_pull {φ : Sm M a} (h : IsAutForm φ) : IsAutForm (pull a e φ) := by
-  refine { left := ?_, level := ?_, kfin := ?_, zfin := ?_, growth := ?_ }
-  · intro γ g
-    rw [pull_apply, map_mul, mapA_ratGL, h.left, pull_apply]
-  · convert h.level.preimage (continuous_mapGL (cFin e) (continuous_cFin e)) using 1
-    ext k
-    exact (Eq.congr_left (act_pull e (.fin k) φ)).trans (pull a e).injective.eq_iff
-  · have := h.kfin
-    refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ (Set.range fun k => cptRep M a k φ)).map
-      (pull a e).toLinearMap) (Submodule.span_le.2 ?_)
-    rintro _ ⟨k, rfl⟩
-    exact ⟨_, Submodule.subset_span ⟨_, rfl⟩, (act_pull e (.cpt k) φ).symm⟩
-  · have := h.zfin
-    refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ ((fun z : Module.End ℂ (Sm M a) => z φ) ''
-      Zalg M a)).map (pull a e).toLinearMap) (Submodule.span_le.2 ?_)
-    rintro _ ⟨z, hz, rfl⟩
-    obtain ⟨z', h1, h2⟩ := Zalg_pull e hz
-    exact ⟨_, Submodule.subset_span ⟨z', h1, rfl⟩, (h2 φ).symm⟩
-  · intro g
-    obtain ⟨C, N, h1⟩ := h.growth (mapA a e g)
-    refine ⟨C, N, fun y => ?_⟩
-    rw [pull_apply, map_mul, mapA_infGL, ← height_map e]
-    exact h1 _
-
 theorem map_mem_ratN {r : ℕ} {x : BlockIx a r → Ad K} (hx : x ∈ ratN K a r) :
     (fun p => cAd e (x p)) ∈ ratN M a r := by
   obtain ⟨y, rfl⟩ := hx
   exact ⟨fun p => e (y p), funext fun p => (cAd_algebraMap e (y p)).symm⟩
 
+def isoData (a : ℕ) : PullData K M a where
+  eRat := e.toRingHom
+  eAd :=
+    { toFun := cAd e
+      invFun := cAd e.symm
+      left_inv := cAd_symm e
+      right_inv := cAd_symm e.symm
+      map_mul' := map_mul (cAd e)
+      map_add' := map_add (cAd e) }
+  cont_eAd := continuous_cAd e
+  cont_eAd_symm := continuous_cAd e.symm
+  eAd_alg := cAd_algebraMap e
+  eAd_rat := map_mem_ratN e
+  eAd_symm_rat := map_mem_ratN e.symm
+  eInf := cInf e
+  eFin := cFin e
+  cont_eFin := continuous_cFin e
+  pInf_eAd := pInf_cAd e
+  pFin_eAd := pFin_cAd e
+  mapL := mapL e
+  mapL_apply _ _ _ := rfl
+  mapOp := mapOp e
+  mapOp_fin _ := rfl
+  mapOp_cpt k := ⟨mapK e k, rfl, Units.ext rfl⟩
+  mapOp_lie _ := rfl
+  height_le := ⟨1, le_rfl, fun y => by rw [one_mul, height_map e]⟩
+  embMap σ := σ.comp e.symm.toRingHom
+  eInf_atEmb σ z := by
+    have h : (σ.comp e.symm.toRingHom).comp e.toRingHom = σ := by ext x; simp
+    simpa only [h] using cInf_atEmb e (σ.comp e.symm.toRingHom) z
 
-open MeasureTheory in
-theorem isCuspidal_pull {φ : GA M a → ℂ} (hφ : IsCuspidal φ) : IsCuspidal fun g => φ (mapA a e g) := by
-  intro r h0 h1 _ _ μ 𝓕 hμ hF g
-  borelize (BlockIx a r → Ad M)
-  let β : (BlockIx a r → Ad K) ≃ₜ+ (BlockIx a r → Ad M) :=
-    { toFun := fun x p => cAd e (x p)
-      invFun := fun x p => cAd e.symm (x p)
-      left_inv := fun x => funext fun p => cAd_symm e _
-      right_inv := fun x => funext fun p => cAd_symm e.symm _
-      map_add' := fun x y => funext fun p => map_add (cAd e) _ _
-      continuous_toFun := continuous_pi fun p => (continuous_cAd e).comp (continuous_apply p)
-      continuous_invFun := continuous_pi fun p => (continuous_cAd e.symm).comp (continuous_apply p) }
-  let q : ratN M a r ≃ ratN K a r :=
-    { toFun := fun y => ⟨β.symm y, map_mem_ratN e.symm y.2⟩
-      invFun := fun x => ⟨β x, map_mem_ratN e x.2⟩
-      left_inv := fun y => Subtype.ext (β.apply_symm_apply y)
-      right_inv := fun x => Subtype.ext (β.symm_apply_apply x) }
-  let m := β.toHomeomorph.toMeasurableEquiv
-  have h2 := hφ r h0 h1 (μ.map m) (m '' 𝓕) (β.isAddHaarMeasure_map μ)
-    (hF.image_of_equiv m.toEquiv (MeasurePreserving.symm m ⟨m.measurable, rfl⟩).quasiMeasurePreserving q fun y x => by
-      change β (β.symm y + x) = y + β x
-      rw [map_add (f := _), β.apply_symm_apply]) (mapA a e g)
-  rw [m.measurableEmbedding.setIntegral_map, m.injective.preimage_image] at h2
-  rw [← h2]
-  congr 1
-  funext x
-  beta_reduce
-  rw [map_mul, mapA, map_unip]
-  rfl
+variable (a) in
+def mapA : GA K a →* GA M a := GeneralLinearGroup.map (cAd e)
 
-def pullSub (π : CuspSub M a) : CuspSub K a where
-  V := π.V.map (pull a e).toLinearMap
-  cusp := by rintro _ ⟨φ, hφ, rfl⟩; exact ⟨isAutForm_pull e (π.cusp φ hφ).1, isCuspidal_pull e (π.cusp φ hφ).2⟩
-  stable := by
-    rintro o _ ⟨φ, hφ, rfl⟩
-    exact ⟨_, π.stable _ φ hφ, (act_pull e o φ).symm⟩
-  ne_bot h := π.ne_bot ((Submodule.map_eq_bot_iff (e := pull a e)).1 h)
-  irred W hW hs := by
-    have h := π.irred (W.comap (pull a e).toLinearMap) (fun φ hφ => by
-      obtain ⟨ψ, h1, h2⟩ := hW hφ
-      rwa [← (pull a e).injective h2]) fun o φ hφ => by
-      change pull a e (act o φ) ∈ W
-      rw [pull_act]
-      exact hs _ _ hφ
-    have e1 := Submodule.map_comap_eq_of_surjective (f := (pull a e).toLinearMap) (pull a e).surjective W
-    exact h.imp (fun h => by rw [← e1, h, Submodule.map_bot]) fun h => by rw [← e1, h]
+theorem mapA_symm (g : GA K a) : mapA a e.symm (mapA a e g) = g := by
+  ext i j : 2
+  exact cAd_symm e _
+
+theorem mapA_infGL (y : GL (Fin a) (Cinf K)) :
+    mapA a e (infGL K a y) = infGL M a (GeneralLinearGroup.map (cInf e) y) :=
+  (isoData e a).mapA_infGL y
+
+theorem mapA_finGL (k : GL (Fin a) (Af K)) : mapA a e (finGL K a k) = finGL M a (GeneralLinearGroup.map (cFin e) k) :=
+  (isoData e a).mapA_finGL k
+
+theorem mapA_ratGL (γ : GL (Fin a) K) :
+    mapA a e (ratGL K a γ) = ratGL M a (GeneralLinearGroup.map e.toRingHom γ) :=
+  (isoData e a).mapA_ratGL γ
+
+theorem chart_map (φ : GA M a → ℂ) (g : GA K a) {x : Lie K a} (hx : x ∈ invSet K a) :
+    chart (fun g => φ (mapA a e g)) g x = chart φ (mapA a e g) (mapL e x) ∧ mapL e x ∈ invSet M a :=
+  (isoData e a).chart_map φ g hx
+
+theorem map_mem_Sm {φ : GA M a → ℂ} (hφ : φ ∈ Sm M a) : (fun g => φ (mapA a e g)) ∈ Sm K a :=
+  (isoData e a).map_mem_Sm hφ
+
+variable (a) in
+def pull : Sm M a ≃ₗ[ℂ] Sm K a := (isoData e a).pull (map_mem_Sm e.symm)
+
+theorem pull_apply (φ : Sm M a) (g : GA K a) : (pull a e φ).1 g = φ.1 (mapA a e g) := rfl
+
+theorem rt_pull (h : GA K a) (φ : Sm M a) : rt K a h (pull a e φ) = pull a e (rt M a (mapA a e h) φ) :=
+  (isoData e a).rt_pull h φ
+
+theorem lie_pull (X : Lie K a) (φ : Sm M a) : lie K a X (pull a e φ) = pull a e (lie M a (mapL e X) φ) :=
+  (isoData e a).lie_pull X φ
+
+theorem act_pull (o : Op K a) (φ : Sm M a) : act o (pull a e φ) = pull a e (act (mapOp e o) φ) :=
+  (isoData e a).act_pull o φ
+
+theorem pull_act (o : Op M a) (φ : Sm M a) : pull a e (act o φ) = act (mapOp e.symm o) (pull a e φ) := by
+  rw [act_pull]
+  exact congrArg (fun o => pull a e (act o φ)) (mapOp_symm e.symm o).symm
+
+theorem Eop_pull (τ : M →+* ℂ) (i j : Fin a) (φ : Sm M a) :
+    Eop (τ.comp e.toRingHom) i j (pull a e φ) = pull a e (Eop τ i j φ) := by
+  have h := (isoData e a).Eop_pull (hinv := map_mem_Sm e.symm) (τ.comp e.toRingHom) i j φ
+  change Eop (τ.comp e.toRingHom) i j (pull a e φ) =
+    pull a e (Eop ((τ.comp e.toRingHom).comp e.symm.toRingHom) i j φ) at h
+  rwa [show (τ.comp e.toRingHom).comp e.symm.toRingHom = τ from by ext x; simp] at h
+
+theorem cap_pull' (σ : K →+* ℂ) (u : ℂ) (φ : Sm M a) :
+    cap σ u (pull a e φ) = pull a e (cap (σ.comp e.symm.toRingHom) u φ) :=
+  (isoData e a).cap_pull σ u φ
+
+theorem cap_pull (τ : M →+* ℂ) (u : ℂ) (φ : Sm M a) :
+    cap (τ.comp e.toRingHom) u (pull a e φ) = pull a e (cap τ u φ) := by
+  simpa only [show (τ.comp e.toRingHom).comp e.symm.toRingHom = τ from by ext x; simp] using
+    cap_pull' e (τ.comp e.toRingHom) u φ
+
+theorem Zalg_pull {z : Module.End ℂ (Sm K a)} (hz : z ∈ Zalg K a) :
+    ∃ z' ∈ Zalg M a, ∀ φ, z (pull a e φ) = pull a e (z' φ) :=
+  (isoData e a).Zalg_pull hz
+
+theorem isAutForm_pull {φ : Sm M a} (h : IsAutForm φ) : IsAutForm (pull a e φ) :=
+  (isoData e a).isAutForm_pull h
+
+theorem isCuspidal_pull {φ : GA M a → ℂ} (hφ : IsCuspidal φ) : IsCuspidal fun g => φ (mapA a e g) :=
+  (isoData e a).isCuspidal_pull hφ
+
+def pullSub (π : CuspSub M a) : CuspSub K a :=
+  (isoData e a).pullSub (fun o => ⟨mapOp e.symm o, pull_act e o⟩) π
 
 theorem hasInfChar_pullSub {π : CuspSub M a} {σ : K →+* ℂ} {m : Multiset ℂ}
     (h : π.HasInfChar (σ.comp e.symm.toRingHom) m) : (pullSub e π).HasInfChar σ m := by

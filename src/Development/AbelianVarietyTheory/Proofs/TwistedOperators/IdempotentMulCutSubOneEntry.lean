@@ -51,7 +51,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.WeilSplit
 
@@ -83,8 +82,8 @@ theorem mix_unitary {n : Type} [Fintype n] [DecidableEq n] (σ : R →+* R) {b :
     simp only [Matrix.transpose_apply, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul,
       map_add, map_mul, map_sub, map_one, hc, Matrix.one_apply]
     by_cases hij : i = j
-    · rw [if_pos hij, if_pos hij.symm, map_one]
-    · rw [if_neg hij, if_neg (Ne.symm hij), map_zero]
+    · rw [ite_eq_left hij, ite_eq_left hij.symm, map_one]
+    · rw [ite_eq_right hij, ite_eq_right (Ne.symm hij), map_zero]
   rw [e]
   conv_lhs => rw [← mix_self b J]
   rw [mix_mul hb, mix_mul hb, h, Matrix.one_mul, Matrix.mul_one, mix_self]

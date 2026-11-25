@@ -44,7 +44,7 @@ theorem projPerp_mulVec (g w : Fin p → ℂ) :
   ext i
   rw [mulVec, dotProduct]
   simp only [projPerp_apply, sub_mul, Finset.sum_sub_distrib, ite_mul, one_mul, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
     dotProduct, Pi.star_apply]
   congr 1
   rw [Finset.mul_sum, Finset.sum_mul]

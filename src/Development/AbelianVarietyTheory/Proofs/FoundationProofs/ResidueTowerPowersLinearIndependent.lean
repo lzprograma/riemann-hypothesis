@@ -4,53 +4,11 @@ public import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboun
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CompletedLaurentIsDVRStatement
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPowDivPrimeZpowIntegralClosureUnit
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnramifiedIntegersAdicComplete
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -85,7 +43,7 @@ theorem field_indep {k : Type} [Field k] (p : ℕ) [hp : Fact p.Prime] [CharP k 
     rw [← hs, map_sum]
     refine Finset.sum_congr rfl fun j hj => ?_
     rw [aeval_monomial]
-    simp only [c', dif_pos (Finset.mem_range.1 hj)]
+    simp only [c', dite_eq_left (Finset.mem_range.1 hj)]
     rfl
   have hP0 : P = 0 := by
     by_contra h
@@ -104,7 +62,7 @@ theorem field_indep {k : Type} [Field k] (p : ℕ) [hp : Fact p.Prime] [CharP k 
     simp [P, coeff_monomial, Finsupp.single_apply] <;> omega
   rw [hP0, coeff_zero] at h1
   have h2 := congrArg Subtype.val h1
-  simp only [c', dif_pos hj] at h2
+  simp only [c', dite_eq_left hj] at h2
   exact h2.symm
 
 variable {p : ℕ} [hp : Fact p.Prime] {Ω : Type} [Field Ω] [Algebra (O0 p) Ω]
@@ -188,71 +146,5 @@ theorem rad_isMaximal (h : IsClo p Ω) :
       Subtype.ext (inv_mul_cancel₀ h0).symm
     rw [this]
     exact J.mul_mem_left _ hxJ
-
-theorem residue_indep : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
-  ∀ E : Subfield Ω, Set.range (algebraMap (O0 p) Ω) ⊆ (E : Set Ω) →
-  (∀ y ∈ E, IsInt (p := p) y →
-    ¬ ∃ m : ℕ, 0 < m ∧ IsInt (p := p) ((y ^ p - algebraMap (O0 p) Ω (qO p)) ^ m / (p : Ω))) →
-  ∀ (T : Tower p Ω) (N : ℕ) (d : ℕ → Ω), (∀ j < p ^ N, d j ∈ E ∧ IsInt (p := p) (d j)) →
-  (∃ m : ℕ, 0 < m ∧ IsInt (p := p) ((∑ j ∈ Finset.range (p ^ N), d j * T.qq N ^ j) ^ m / (p : Ω))) →
-  ∀ j < p ^ N, ∃ m : ℕ, 0 < m ∧ IsInt (p := p) (d j ^ m / (p : Ω)) := by
-  intro p hp Ω _ _ h E hE hq T N d hd hs
-  classical
-  set M := (Ideal.span {(p : integralClosure (O0 p) Ω)}).radical with hM
-  have hmem : ∀ x : integralClosure (O0 p) Ω, Ideal.Quotient.mk M x = 0 ↔
-      ∃ m : ℕ, 0 < m ∧ IsInt (p := p) ((x : Ω) ^ m / (p : Ω)) := fun x => by
-    rw [Ideal.Quotient.eq_zero_iff_mem, hM, mem_rad_iff h]
-  haveI : M.IsMaximal := rad_isMaximal h
-  letI : Field (integralClosure (O0 p) Ω ⧸ M) := Ideal.Quotient.field M
-  haveI : CharP (integralClosure (O0 p) Ω ⧸ M) p := by
-    rw [CharP.charP_iff_prime_eq_zero hp.out, ← map_natCast (Ideal.Quotient.mk M),
-      Ideal.Quotient.eq_zero_iff_mem]
-    exact Ideal.le_radical (Ideal.mem_span_singleton_self _)
-  let K : Subfield (integralClosure (O0 p) Ω ⧸ M) :=
-    { (E.toSubring.comap (integralClosure (O0 p) Ω).val.toRingHom).map (Ideal.Quotient.mk M) with
-      inv_mem' := by
-        rintro _ ⟨y, hy, rfl⟩
-        by_cases h0 : Ideal.Quotient.mk M y = 0
-        · exact ⟨0, E.zero_mem, by rw [h0, inv_zero, map_zero]⟩
-        · obtain ⟨h1, h2⟩ := isInt_inv h (y : Ω) (fun hh => h0 ((hmem y).2 hh))
-          refine ⟨⟨_, h2⟩, E.inv_mem hy, ?_⟩
-          refine eq_inv_of_mul_eq_one_left ?_
-          rw [← map_mul, ← map_one (Ideal.Quotient.mk M)]
-          congr 1
-          exact Subtype.ext (inv_mul_cancel₀ h1) }
-  have hqi : IsIntegral (O0 p) (T.qq N) :=
-    IsIntegral.of_pow (pow_pos hp.out.pos N) (by rw [Basic.qq_pow]; exact isIntegral_algebraMap)
-  let t : integralClosure (O0 p) Ω := ⟨_, hqi⟩
-  have ht : ((t ^ p ^ N : integralClosure (O0 p) Ω) : Ω) = algebraMap (O0 p) Ω (qO p) := by
-    rw [← Basic.qq_pow T N]; rfl
-  let d' : ℕ → integralClosure (O0 p) Ω := fun j => if hj : j < p ^ N then ⟨d j, (hd j hj).2⟩ else 0
-  have hd' : ∀ j < p ^ N, (d' j : Ω) = d j := fun j hj => by simp only [d', dif_pos hj]
-  have key := field_indep p K N (Ideal.Quotient.mk M t)
-    ⟨t ^ p ^ N, by
-      show ((t ^ p ^ N : integralClosure (O0 p) Ω) : Ω) ∈ E
-      rw [ht]; exact hE ⟨_, rfl⟩, map_pow _ _ _⟩
-    (by
-      rintro _ ⟨y, hy, rfl⟩ hb
-      refine hq y hy y.2 ?_
-      rw [← ht]
-      have hz : Ideal.Quotient.mk M (y ^ p - t ^ p ^ N) = 0 := by
-        rw [RingHom.map_sub, RingHom.map_pow, RingHom.map_pow, hb, sub_self]
-      have := (hmem (y ^ p - t ^ p ^ N)).1 hz
-      exact this)
-    (fun j => Ideal.Quotient.mk M (d' j))
-    (fun j hj => ⟨d' j, by
-      show (d' j : Ω) ∈ E
-      rw [hd' j hj]; exact (hd j hj).1, rfl⟩)
-    (by
-      have e : ((∑ j ∈ Finset.range (p ^ N), d' j * t ^ j : integralClosure (O0 p) Ω) : Ω) =
-          ∑ j ∈ Finset.range (p ^ N), d j * T.qq N ^ j := by
-        push_cast
-        exact Finset.sum_congr rfl fun j hj => by rw [hd' j (Finset.mem_range.1 hj)]
-      have := (hmem _).2 (e ▸ hs)
-      set_option synthInstance.maxHeartbeats 100000 in
-        simpa only [map_sum, map_mul, map_pow] using this)
-  intro j hj
-  rw [← hd' j hj]
-  exact (hmem _).1 (key j hj)
 
 end GlobalTheory.K5.ResidueIndep

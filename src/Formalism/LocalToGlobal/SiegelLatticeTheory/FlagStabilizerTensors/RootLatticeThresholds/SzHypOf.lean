@@ -37,18 +37,18 @@ theorem deOf_eq (h5 : ∀ (u : D.what₂.Word) τ, ¬ IsTop D τ → uOne D u τ
   have hk := Formalism.MainNotions.BridgeLemma.five_le_k D
   unfold Formalism.L2.SG.SpectralTiesReal.deOf
   by_cases hl : 1 ≤ l ∧ l + 2 ≤ D.R.k
-  · rw [if_pos hl]
+  · rw [ite_eq_left hl]
     have hu := Formalism.MainNotions.BridgeLemma.cfg_u D u τ (h5 u τ) (l + 1) (by omega) (by omega)
     have hv := Formalism.MainNotions.BridgeLemma.cfg_v D τ l hl.1 (by omega)
     have hne1 : l + 1 ≠ 1 := by omega
     have hnek : l + 1 ≠ (Formalism.MainNotions.BridgeLemma.cfgOf D τ).k := by show l + 1 ≠ D.R.k; omega
     unfold Sz.Cfg.u at hu
-    rw [if_neg hne1, if_neg hnek, Nat.add_sub_cancel, hv] at hu
+    rw [ite_eq_right hne1, ite_eq_right hnek, Nat.add_sub_cancel, hv] at hu
     have hD : (Formalism.MainNotions.BridgeLemma.cfgOf D τ).Del = (D.s.Del : ℝ) := rfl
     rw [hD] at hu
     field_simp
     linarith
-  · rw [if_neg hl]
+  · rw [ite_eq_right hl]
     unfold Formalism.MainNotions.BridgeLemma.deOf
     rw [dite_eq_right (by omega)]
 
@@ -240,7 +240,7 @@ theorem sizesAt_of {large₂ : SizeData₂ D} {C0 C' Cl Cg cb Cu CT CA Cn : ℝ}
   have hex := exists_continuousLinearMap_tens_update d5 d8 huu τ0
   have hlOf : Formalism.L2.SG.SpectralTiesReal.lOf D (Formalism.MainNotions.BridgeLemma.deOf D u) (Formalism.MainNotions.BridgeLemma.deOf D u') = Nat.find hex := by
     unfold Formalism.L2.SG.SpectralTiesReal.lOf
-    exact dif_pos hex
+    exact dite_eq_left hex
   have hsl := Nat.find_spec hex
   obtain ⟨Th, hTh, hG⟩ := hThr
   refine ⟨e, τ0, C', Th, 256, fun x => Formalism.L2.SG.Pf.CarrierTop.placeTie_ePl T.X x, hk0, ?_, ?_, ?_, ?_, ?_, hDs u _ _ _, ?_⟩

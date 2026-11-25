@@ -6,48 +6,9 @@ public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.ConjugateTransposeDerivatives.CfSandwich
 public import Mathlib.Analysis.Calculus.Deriv.Prod
 public import Mathlib.Analysis.Calculus.Deriv.Star
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.ConjugateTransposeDerivatives.TraceSingleMulSingle
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
+import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.KbCurve
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContDiffAdjugateEntry, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.ConjugateTransposeDerivatives.HasDerivAtConjTranspose
@@ -190,30 +151,8 @@ theorem hasDerivAt_line (X : Mat n) : HasDerivAt (fun t : ℝ => (1 : Mat n) + t
   rw [one_smul] at h
   exact h
 
-theorem hasDerivAt_inv_line (X : Mat n) : HasDerivAt (fun t : ℝ => ((1 : Mat n) + t • X)⁻¹) (-X) 0 := by
-  have h1 : (1 : Mat n) ∈ GLs n := by simp [GLs]
-  have hdiff : DifferentiableAt ℝ (fun y : Mat n => y⁻¹) 1 :=
-    ((GlobalTheory.CompanionTheory.WaveCp.Rep.Mol.HfSmooth.contDiffOn_inv (n := n)).differentiableOn (by simp)).differentiableAt
-      (isOpen_GLs.mem_nhds h1)
-  have hm := hasDerivAt_line X
-  have hc : HasDerivAt (fun t : ℝ => ((1 : Mat n) + t • X)⁻¹) (fderiv ℝ (fun y : Mat n => y⁻¹) 1 X) 0 := by
-    have := hdiff.hasFDerivAt.comp_hasDerivAt_of_eq (0 : ℝ) hm (by simp)
-    exact this
-  set c' := fderiv ℝ (fun y : Mat n => y⁻¹) 1 X
-  have hprod := hasDerivAt_matmul hm hc
-  simp only [zero_smul, add_zero, inv_one, Matrix.mul_one, Matrix.one_mul] at hprod
-  have hev : (fun t : ℝ => ((1 : Mat n) + t • X) * ((1 : Mat n) + t • X)⁻¹) =ᶠ[nhds 0] fun _ => (1 : Mat n) := by
-    have hcont : Continuous fun t : ℝ => ((1 : Mat n) + t • X).det :=
-      (continuous_const.add (continuous_id.smul continuous_const)).matrix_det
-    have h0 : ((1 : Mat n) + (0 : ℝ) • X).det ≠ 0 := by simp
-    filter_upwards [hcont.continuousAt.eventually_ne h0] with t ht
-    exact Matrix.mul_nonsing_inv _ (isUnit_iff_ne_zero.2 ht)
-  have hconst : HasDerivAt (fun t : ℝ => ((1 : Mat n) + t • X) * ((1 : Mat n) + t • X)⁻¹) 0 0 :=
-    (hasDerivAt_const (0 : ℝ) (1 : Mat n)).congr_of_eventuallyEq hev
-  have e := hprod.unique hconst
-  have : c' = -X := by rw [← sub_eq_zero, sub_neg_eq_add, add_comm]; exact e
-  rw [this] at hc
-  exact hc
+theorem hasDerivAt_inv_line (X : Mat n) : HasDerivAt (fun t : ℝ => ((1 : Mat n) + t • X)⁻¹) (-X) 0 :=
+  _root_.PositivityTheory.RgBcC.LfSt.Kchain.KbCurve.hasDerivAt_lineInv X
 
 theorem hasDerivAt_entry' {ι : Type} [Fintype ι] {f : ℝ → Matrix ι ι ℂ} {f' : Matrix ι ι ℂ} {t : ℝ} :
     HasDerivAt f f' t ↔ ∀ i j, HasDerivAt (fun s => f s i j) (f' i j) t := by
@@ -247,7 +186,7 @@ theorem cf_hbM (m : Md n) : cf n (hbM m) = Pi.single m 1 := by
   rw [cf_apply, (hbOrtho n).1, Pi.single_apply]
   by_cases h : m = m'
   · subst h; simp
-  · rw [if_neg h, if_neg (Ne.symm h)]; simp
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]; simp
 
 end PositivityTheory.RgBcC.Cxa
 

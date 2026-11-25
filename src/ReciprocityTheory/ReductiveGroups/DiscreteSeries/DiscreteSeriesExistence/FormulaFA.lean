@@ -25,7 +25,7 @@ section General
 
 section Smooth
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 theorem ffa_continuousOn {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {f : Matrix (Fin n) (Fin n) ℂ → E} (hf : S7.SmoothOnGV ε f) : ContinuousOn f (UJset ε) := by
@@ -43,20 +43,8 @@ theorem ffa_Kset {k : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε) : ∃ k' 
   apply ReciprocityTheory.ChartRestriction.DS.S7.exists_toMK <;> assumption
 
 theorem ffa_UJ_lift {g : Matrix (Fin n) (Fin n) ℂ} (hg : g ∈ UJset ε) :
-    ∃ y : Formalism.REAL.UJ ε, Formalism.MainNotions.S.umat y = g := by
-  have hg' : inUJ ε g := hg
-  have hJ : (Jm ε).det ≠ 0 := by
-    rw [Jm, Matrix.det_diagonal]
-    refine Finset.prod_ne_zero_iff.2 fun a _ => ?_
-    split_ifs <;> norm_num
-  have hdet : IsUnit g.det := by
-    rw [isUnit_iff_ne_zero]
-    intro h0
-    have h := congrArg Matrix.det hg'
-    rw [Matrix.det_mul, Matrix.det_mul, h0, mul_zero] at h
-    exact hJ h.symm
-  first
-  | exact ⟨⟨Matrix.nonsingInvUnit g hdet, hg'⟩, rfl⟩
+    ∃ y : Formalism.REAL.UJ ε, Formalism.MainNotions.S.umat y = g :=
+  by apply _root_.ReciprocityTheory.ChartRestriction.DS.exists_unitary_preimage; assumption
 
 theorem ffa_toMK_mem (k : S7.KG ε) : S7.toMK k ∈ UJset ε := by
   unfold S7.toMK

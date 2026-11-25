@@ -108,8 +108,6 @@ open scoped CategoryTheory.Obj TensorProduct
 
 noncomputable section
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace GlobalTheory.WeilRootLocal
 
 theorem exists_weilIs_root_local : ∀ (S : Scheme.{0}) (A : Over S) [GrpObj A] [IsCommMonObj A],
@@ -156,35 +154,6 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT
 
 noncomputable section
-
-namespace GlobalTheory.HTSpecTate
-
-theorem transport_algO {p : ℕ} [Fact p.Prime] (D : Datum p)
-    {R k k' QR Q Q' : Type} [CommRing R] [Field k] [Field k'] [Group QR] [Group Q] [Group Q']
-    (hcomm : ∀ a b : QR, a * b = b * a)
-    (actR : D.O → QR → QR) (act : D.O → Q → Q) (act' : D.O → Q' → Q')
-    (e : ℕ → Q → Q → kˣ → Prop) (e' : ℕ → Q' → Q' → k'ˣ → Prop)
-    (ρ : QR →* Q) (ρ' : QR →* Q') (φ : Rˣ →* kˣ) (φ' : Rˣ →* k'ˣ)
-    (hρi : ∀ n, 0 < n → n.Coprime p → ∀ g h : QR, g ^ n = 1 → h ^ n = 1 → ρ g = ρ h → g = h)
-    (hρs : ∀ n, 0 < n → n.Coprime p → ∀ x : Q, x ^ n = 1 → ∃ g : QR, g ^ n = 1 ∧ ρ g = x)
-    (hρ'i : ∀ n, 0 < n → n.Coprime p → ∀ g h : QR, g ^ n = 1 → h ^ n = 1 → ρ' g = ρ' h → g = h)
-    (hρ's : ∀ n, 0 < n → n.Coprime p → ∀ x : Q', x ^ n = 1 → ∃ g : QR, g ^ n = 1 ∧ ρ' g = x)
-    (hφi : ∀ n, 0 < n → n.Coprime p → ∀ u v : Rˣ, u ^ n = 1 → v ^ n = 1 → φ u = φ v → u = v)
-    (hφs : ∀ n, 0 < n → n.Coprime p → ∀ z : kˣ, z ^ n = 1 → ∃ u : Rˣ, u ^ n = 1 ∧ φ u = z)
-    (hφ'i : ∀ n, 0 < n → n.Coprime p → ∀ u v : Rˣ, u ^ n = 1 → v ^ n = 1 → φ' u = φ' v → u = v)
-    (hactR : ∀ c g h, actR c (g * h) = actR c g * actR c h)
-    (hρact : ∀ c g, ρ (actR c g) = act c (ρ g)) (hρ'act : ∀ c g, ρ' (actR c g) = act' c (ρ' g))
-    (hact'1 : ∀ c, act' c 1 = 1)
-    (hpair : ∀ n, 0 < n → n.Coprime p → ∀ g h : QR, g ^ n = 1 → h ^ n = 1 →
-      ∃ u : Rˣ, u ^ n = 1 ∧ e n (ρ g) (ρ h) (φ u) ∧ e' n (ρ' g) (ρ' h) (φ' u))
-    (huniq : ∀ n, 0 < n → n.Coprime p → ∀ x y c c', e n x y c → e n x y c' → c = c')
-    (I : TateIsoO D k Q act e) :
-    ∃ I' : TateIsoO D k' Q' act' e', ∀ n, 0 < n → n.Coprime p → ∀ a (g : QR), g ^ n = 1 →
-      ρ g = I.ev n a → ρ' g = I'.ev n a := by
-  exact _root_.GlobalTheory.TateTransportPrimeToP.transport_algO D hcomm actR act act' e e' ρ ρ' φ φ'
-    hρi hρs hρ'i hρ's hφi hφs hφ'i hactR hρact hρ'act hact'1 hpair huniq I
-
-end GlobalTheory.HTSpecTate
 
 noncomputable section
 
@@ -297,15 +266,15 @@ theorem tateCond_transport (D : Datum p) (R : Type) [CommRing R] (b : Base D R) 
       | succ m ih => rw [succ_nsmul, hadd, ih, pow_succ]
     rw [← this]; exact hker a
   have h1 : ∀ n, 0 < n → n.Coprime p → ∀ g h : Over.mk t ⟶ o.A, g ^ n = 1 → h ^ n = 1 → ρ g = ρ h → g = h :=
-    fun n hn hnp => (GlobalTheory.T.abelian_scheme_torsion_points_restrict_bijective S o.A hA n hn (hS n hnp) Rh t k φ).1
+    fun n hn hnp => (GlobalTheory.TorsLift.torsion_points_restrict_bijective S o.A hA n hn (hS n hnp) Rh t k φ).1
   have h2 : ∀ n, 0 < n → n.Coprime p → ∀ x : Over.mk (spMap φ ≫ t) ⟶ o.A, x ^ n = 1 →
       ∃ g : Over.mk t ⟶ o.A, g ^ n = 1 ∧ ρ g = x :=
-    fun n hn hnp => (GlobalTheory.T.abelian_scheme_torsion_points_restrict_bijective S o.A hA n hn (hS n hnp) Rh t k φ).2
+    fun n hn hnp => (GlobalTheory.TorsLift.torsion_points_restrict_bijective S o.A hA n hn (hS n hnp) Rh t k φ).2
   have h3 : ∀ n, 0 < n → n.Coprime p → ∀ g h : Over.mk t ⟶ o.A, g ^ n = 1 → h ^ n = 1 → ρ' g = ρ' h → g = h :=
-    fun n hn hnp => (GlobalTheory.T.abelian_scheme_torsion_points_restrict_bijective S o.A hA n hn (hS n hnp) Rh t k' φ').1
+    fun n hn hnp => (GlobalTheory.TorsLift.torsion_points_restrict_bijective S o.A hA n hn (hS n hnp) Rh t k' φ').1
   have h4 : ∀ n, 0 < n → n.Coprime p → ∀ x : Over.mk (spMap φ' ≫ t) ⟶ o.A, x ^ n = 1 →
       ∃ g : Over.mk t ⟶ o.A, g ^ n = 1 ∧ ρ' g = x :=
-    fun n hn hnp => (GlobalTheory.T.abelian_scheme_torsion_points_restrict_bijective S o.A hA n hn (hS n hnp) Rh t k' φ').2
+    fun n hn hnp => (GlobalTheory.TorsLift.torsion_points_restrict_bijective S o.A hA n hn (hS n hnp) Rh t k' φ').2
   have h5 := fun n (hn : 0 < n) (hnp : n.Coprime p) =>
     GlobalTheory.rootsOfUnity_map_bijective_of_henselian Rh k φ n hn (hRu n hnp)
   have h6 := fun n (hn : 0 < n) (hnp : n.Coprime p) =>
@@ -327,7 +296,7 @@ theorem tateCond_transport (D : Datum p) (R : Type) [CommRing R] (b : Base D R) 
   have h10 : ∀ n : ℕ, 0 < n → n.Coprime p → ∀ (x y : Over.mk (spMap φ ≫ t) ⟶ o.A) (c c' : kˣ),
       Out.WeilIs o.A L (n : ℤ) x y (unitOn c) → Out.WeilIs o.A L (n : ℤ) x y (unitOn c') → c = c' :=
     fun n _ _ x y c c' h h' => GlobalTheory.weilIs_unique_fieldPoint S o.A L hL k (spMap φ ≫ t) n x y c c' h h'
-  obtain ⟨I', hI'⟩ := transport_algO D (R := Rh) (k := k) (k' := k')
+  obtain ⟨I', hI'⟩ := GlobalTheory.TateTransportPrimeToP.transport_algO D (R := Rh) (k := k) (k' := k')
     (QR := Over.mk t ⟶ o.A) (Q := Over.mk (spMap φ ≫ t) ⟶ o.A) (Q' := Over.mk (spMap φ' ≫ t) ⟶ o.A)
     (fun a b => mul_comm a b) (fun c g => g ≫ o.act.act c) (fun c g => g ≫ o.act.act c)
     (fun c g => g ≫ o.act.act c)

@@ -4,44 +4,6 @@ public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.LocTie
 public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.ExistsMapEqOfPowMul
 public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.AinfMapSurjective
 import Development.WeilBound.CoreStatements.CrystallinePeriodRings.FrobAinfMapFrobenius
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -77,16 +39,6 @@ theorem untilt_ε_root_ne_one (AI : LocAinf l P) :
   rw [untilt_ε_root]
   exact fun h => AI.ζ_one ((Per6.intEquiv l).injective (h.trans (map_one _).symm))
 
-theorem ιB_algebraMap_K0 (P : LocPrime l) (K : FinExt l) (c : ↥(K0 K)) :
-    P.ιB (algebraMap ↥(K0 K) P.R.B c) = algebraMap (Om l) P.R.BdR (c : Om l) :=
-  (P.PD_ι K _).symm.trans ((P.PD K).ι.commutes c)
-
-theorem ιB_algebraMap (P : LocPrime l) (c : ↥(MaximalUnramifiedExtension l)) :
-    P.ιB (algebraMap ↥(MaximalUnramifiedExtension l) P.R.B c) = algebraMap (Om l) P.R.BdR (c : Om l) :=
-  ιB_algebraMap_K0 P ⟨IntermediateField.adjoin ℚ_[l] {(c : Om l)},
-    IntermediateField.adjoin.finiteDimensional (Algebra.IsIntegral.isIntegral _)⟩
-    ⟨c, IntermediateField.subset_adjoin _ _ (Set.mem_singleton _), c.2⟩
-
 variable (T : LocTied6 l P AI)
 
 theorem tie_ι (b : P.R.B) : T.eD (P.ιB b) = ιCD l (T.eB b) := by
@@ -119,12 +71,6 @@ theorem tie_o (x : Om l) : T.eD (algebraMap (Om l) P.R.BdR x) = oD l x := by
   have hf : f = algClToBdR l := eq_algClToBdR l f hθ
   rw [hy, frob_oD_apply, ← hf]
   rfl
-
-theorem tie_u (c : ↥(MaximalUnramifiedExtension l)) : T.eB (algebraMap ↥(MaximalUnramifiedExtension l) P.R.B c) = uB l c :=
-  ιCD_injective (by rw [← tie_ι, ιB_algebraMap, tie_o, ιCD_uB])
-
-theorem tie_q (q : ℚ_[l]) : T.eB (algebraMap ℚ_[l] P.R.B q) = qB l q := by
-  rw [IsScalarTower.algebraMap_apply ℚ_[l] ↥(MaximalUnramifiedExtension l) P.R.B, tie_u, uB_algebraMap]
 
 theorem tie_t : T.eD (P.ιB P.tB) =
     algebraMap (Per6.BdRp l) (Per6.BdR l) (fontaineT (Per6.tiltMap l AI.ε) (untilt_ε AI)) := by

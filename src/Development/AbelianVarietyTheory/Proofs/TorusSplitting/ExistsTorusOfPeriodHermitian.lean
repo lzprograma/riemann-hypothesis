@@ -94,8 +94,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 namespace GlobalTheory.PeriodTorus
 
 section LinAlg
@@ -183,7 +181,7 @@ theorem exists_root (Hm : Matrix (Fin g) (Fin g) ℂ) (hH : Hm.IsHermitian)
     rw [hermForm, ← hSS, ← mulVec_mulVec, dotProduct_mulVec, ← this]
     rfl
   have hinj : Function.Injective (S.vecMulLinear) := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro z hz
     by_contra h
     have := hpos z h
@@ -215,7 +213,6 @@ end LinAlg
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.L2.PjFree GlobalTheory.EtaForm GlobalTheory.EtaAn GlobalTheory.ArcQ
-attribute [local instance] Over.cartesianMonoidalCategory
 
 section Host
 
@@ -231,8 +228,8 @@ theorem mult_add_mult_conj (D : Datum H) (τ : E →+* ℂ) :
     exact H.d_prime.ne_zero (by simpa using this)
   simp only [Datum.mult, ComplexEmbedding.conjugate_coe_eq, h2]
   rcases sq_eq_sq_iff_eq_or_eq_neg.1 (h1.trans H.sqrt_neg_disc_sq.symm) with h | h
-  · rw [h, if_pos rfl, if_neg h3.symm]
-  · rw [h, neg_neg, if_pos rfl, if_neg h3.symm, add_comm]
+  · rw [h, ite_eq_left rfl, ite_eq_right h3.symm]
+  · rw [h, neg_neg, ite_eq_left rfl, ite_eq_right h3.symm, add_comm]
 
 theorem coe_one_sub_w0 : ((1 - H.w0 : 𝓞 E) : E) = cc (H.w0 : E) := by
   obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance

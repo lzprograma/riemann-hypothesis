@@ -2,55 +2,8 @@ module
 
 public import Formalism.PieriBlockIdeals.IntegralQuotient
 public import Mathlib.CategoryTheory.Category.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.GroupTheory.Perm.DomMulAct
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -312,7 +265,6 @@ theorem integral_quotient_holds : IntegralQuotient := by
 
 end Formalism.CohomologicalDescent.Symmetrization
 
-open Polynomial
 
 namespace Formalism.CohomologicalDescent.Symmetrization
 
@@ -370,7 +322,7 @@ theorem unitSecond_mul_unitSecond (j : Fin n) (a b c d : R) :
   refine LinearMap.ext fun z => funext fun g => ?_
   simp only [Module.End.mul_apply, unitOnTensor_apply, Function.update_self, Function.update_idem]
   by_cases h : b = c
-  · simp only [h, if_true, unitOnTensor_apply]
+  · simp only [h, ite_true, unitOnTensor_apply]
   · simp [h]
 
 theorem unitSecond_commute_of_ne {i j : Fin n} (h : i ≠ j) (a b c d : R) :
@@ -437,7 +389,7 @@ theorem sum_unitSecond_products_eq_swap {i j : Fin n} (h : i ≠ j) :
   simp only [LinearMap.sum_apply, Finset.sum_apply, Module.End.mul_apply, unitOnTensor_apply,
     permSecond_apply, Function.update_of_ne h.symm]
   rw [Finset.sum_comm]
-  simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   congr 1
   funext s
   by_cases hs : s = j
@@ -457,7 +409,7 @@ theorem glRel_factorGenerator {EM : R → R → Module.End k M} (h : GlRel EM) (
   | succ j =>
     intro a b c d
     by_cases hj : j < n
-    · simp only [factorGenerator, dif_pos hj]
+    · simp only [factorGenerator, dite_eq_left hj]
       rw [unitSecond_mul_unitSecond, unitSecond_mul_unitSecond]
     · simp [factorGenerator, hj]
 
@@ -492,7 +444,7 @@ theorem jucysMurphy_eq_sum_position_products (EM : R → R → Module.End k M) (
       ∑ a ∈ Finset.range (j.val + 1), ∑ b, ∑ b', factorGenerator k EM n a b b' * factorGenerator k EM n (j.val + 1) b' b := by
   have h0 : (Om k EM j : Module.End k (Tens R P M n)) =
       ∑ b, ∑ b', factorGenerator k EM n 0 b b' * factorGenerator k EM n (j.val + 1) b' b := by
-    simp only [factorGenerator, dif_pos j.2, Fin.eta]
+    simp only [factorGenerator, dite_eq_left j.2, Fin.eta]
     rw [Om, Finset.sum_comm]
     exact Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun b' _ =>
       (onModule_commute_unitSecond k _ _ _ _).eq.symm
@@ -500,7 +452,7 @@ theorem jucysMurphy_eq_sum_position_products (EM : R → R → Module.End k M) (
       ∑ b, ∑ b', factorGenerator k EM n (j'.val + 1) b b' * factorGenerator k EM n (j.val + 1) b' b =
         (permY k (Equiv.swap j' j) : Module.End k (Tens R P M n)) := by
     intro j' hj'
-    simp only [factorGenerator, dif_pos j'.2, dif_pos j.2, Fin.eta]
+    simp only [factorGenerator, dite_eq_left j'.2, dite_eq_left j.2, Fin.eta]
     exact sum_unitSecond_products_eq_swap k (ne_of_lt hj')
   have h1 : ∑ j' ∈ Finset.univ.filter (· < j), (permY k (Equiv.swap j' j) : Module.End k (Tens R P M n)) =
       ∑ a ∈ Finset.range j.val, ∑ b, ∑ b', factorGenerator k EM n (a + 1) b b' * factorGenerator k EM n (j.val + 1) b' b := by
@@ -675,7 +627,6 @@ theorem AAComm_of (h1 : SymCommAbstract) (h2 : JMCommAbstract) : AAComm := by
 
 end Formalism.CohomologicalDescent.Symmetrization
 
-open Polynomial
 
 namespace Formalism.CohomologicalDescent.Symmetrization
 
@@ -752,7 +703,7 @@ theorem sum_pairs_split_first_index {G : Type*} [AddCommGroup G] (n : ℕ) (A : 
       (A 0 - ∑ t : Fin n, B 0 t.succ) +
         (∑ j : Fin n, A j.succ - ∑ j : Fin n, ∑ l ∈ Finset.univ.filter (j < ·), B j.succ l.succ) := by
   simp only [Finset.sum_filter, Fin.sum_univ_succ, Fin.succ_lt_succ_iff, Fin.succ_pos,
-    if_true, if_false, Fin.not_lt_zero, zero_add]
+    ite_true, ite_false, Fin.not_lt_zero, zero_add]
   abel
 
 theorem sum_ordered_pairs_eq_sum_succAbove {G : Type*} [AddCommGroup G] (n : ℕ) (φ : Fin (n + 1) → Fin (n + 1) → G) :
@@ -761,7 +712,7 @@ theorem sum_ordered_pairs_eq_sum_succAbove {G : Type*} [AddCommGroup G] (n : ℕ
       ∑ t', (if s < t' then φ s t' else 0) + ∑ t', (if t' < s then φ s t' else 0) := by
     intro s
     rw [← Finset.sum_add_distrib, Fin.sum_univ_succAbove _ s]
-    simp only [lt_self_iff_false, if_false, add_zero, zero_add]
+    simp only [lt_self_iff_false, ite_false, add_zero, zero_add]
     refine Finset.sum_congr rfl fun t _ => ?_
     rcases lt_or_gt_of_ne (Fin.succAbove_ne s t) with h | h
     · simp [h, not_lt_of_gt h]
@@ -794,12 +745,12 @@ variable {k V P R : Type*} [CommRing k] [AddCommGroup V] [Module k V] [Decidable
 
 theorem lowering_operators_commute_pair (u v : R × P) : S.f u * S.f v = S.f v * S.f u := by
   have h := S.comm (Sum.inr u.1) (Sum.inl u.2) (Sum.inr v.1) (Sum.inl v.2)
-  simp only [reduceCtorEq, if_false, sub_zero] at h
+  simp only [reduceCtorEq, ite_false, sub_zero] at h
   exact sub_eq_zero.mp h
 
 theorem raising_operators_commute (u v : R × P) : S.e u * S.e v = S.e v * S.e u := by
   have h := S.comm (Sum.inl u.2) (Sum.inr u.1) (Sum.inl v.2) (Sum.inr v.1)
-  simp only [reduceCtorEq, if_false, sub_zero] at h
+  simp only [reduceCtorEq, ite_false, sub_zero] at h
   exact sub_eq_zero.mp h
 
 theorem raising_lowering_commutator (v0 v : R × P) (x : V) : S.e v0 (S.f v x) = S.f v (S.e v0 x) +
@@ -819,7 +770,7 @@ theorem raising_lowering_commutator (v0 v : R × P) (x : V) : S.e v0 (S.f v x) =
 theorem diagSecond_lowering_commutator (c d : R) (v : R × P) (x : V) : S.E (Sum.inr c) (Sum.inr d) (S.f v x) =
     S.f v (S.E (Sum.inr c) (Sum.inr d) x) + (if d = v.1 then S.f (c, v.2) x else 0) := by
   have h := S.comm (Sum.inr c) (Sum.inr d) (Sum.inr v.1) (Sum.inl v.2)
-  simp only [Sum.inr.injEq, reduceCtorEq, if_false, sub_zero] at h
+  simp only [Sum.inr.injEq, reduceCtorEq, ite_false, sub_zero] at h
   have h2 := congrArg (fun T : Module.End k V => T x) h
   simp only [LinearMap.sub_apply, Module.End.mul_apply] at h2
   have h3 : S.E (Sum.inr c) (Sum.inr d) (S.f v x) = S.f v (S.E (Sum.inr c) (Sum.inr d) x) +
@@ -833,7 +784,7 @@ theorem diagSecond_lowering_commutator (c d : R) (v : R × P) (x : V) : S.E (Sum
 theorem diagFirst_lowering_commutator (α β : P) (v : R × P) (x : V) : S.E (Sum.inl α) (Sum.inl β) (S.f v x) =
     S.f v (S.E (Sum.inl α) (Sum.inl β) x) - (if v.2 = α then S.f (v.1, β) x else 0) := by
   have h := S.comm (Sum.inl α) (Sum.inl β) (Sum.inr v.1) (Sum.inl v.2)
-  simp only [Sum.inl.injEq, reduceCtorEq, if_false, zero_sub] at h
+  simp only [Sum.inl.injEq, reduceCtorEq, ite_false, zero_sub] at h
   have h2 := congrArg (fun T : Module.End k V => T x) h
   simp only [LinearMap.sub_apply, Module.End.mul_apply] at h2
   have h3 : S.E (Sum.inl α) (Sum.inl β) (S.f v x) = S.f v (S.E (Sum.inl α) (Sum.inl β) x) +
@@ -922,9 +873,9 @@ theorem contract_zero_diagSecond (n : ℕ) (c d : R) (v : R × P) (z : Tens R P 
     Finset.sum_apply, onModule_apply_eval, _root_.Formalism.CohomologicalDescent.Symmetrization.unitOnTensor_apply, Fin.sum_univ_succ, Fin.cons_zero,
     Fin.cons_succ, Fin.update_cons_zero, ← Fin.cons_update]
   by_cases hc : v.1 = c
-  · simp only [hc, if_true, contract_zero_apply_cons]
+  · simp only [hc, ite_true, contract_zero_apply_cons]
     abel
-  · simp only [hc, if_false, Pi.zero_apply]
+  · simp only [hc, ite_false, Pi.zero_apply]
     abel
 
 theorem contract_zero_diagFirst (n : ℕ) (w : k) (α β : P) (v : R × P) (z : Tens R P S.W (n + 1)) :
@@ -941,9 +892,9 @@ theorem contract_zero_diagFirst (n : ℕ) (w : k) (α β : P) (v : R × P) (z : 
     · simp
   rw [h1]
   by_cases hc : v.2 = β
-  · simp only [hc, if_true, contract_zero_apply_cons]
+  · simp only [hc, ite_true, contract_zero_apply_cons]
     abel
-  · simp only [hc, if_false, Pi.zero_apply]
+  · simp only [hc, ite_false, Pi.zero_apply]
     abel
 
 theorem symMap_diagSecond_intertwines : ∀ (n : ℕ) (c d : R) (z : Tens R P S.W n),
@@ -1079,7 +1030,7 @@ theorem contraction_remainder_eq (n : ℕ) (v0 : R × P) (z : Tens R P S.W (n + 
   simp only [Finset.sum_sub_distrib, Finset.sum_add_distrib, contract_zero_apply_cons, Pi.smul_apply,
     Pi.sub_apply, mixedCasimir_apply_sum, Fin.cons_zero, Fin.update_cons_zero]
   rw [Finset.sum_comm (s := (Finset.univ : Finset P)), Finset.sum_comm (s := (Finset.univ : Finset R))]
-  simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   abel
 
 theorem symMap_swap_contraction_eq (m : ℕ) (v0 : R × P) (z : Tens R P S.W (m + 2)) (t : Fin (m + 1)) :
@@ -1233,7 +1184,6 @@ theorem one_step_invariance_holds : OneStepInv := by
 
 end Formalism.CohomologicalDescent.Symmetrization
 
-open Polynomial
 
 namespace Formalism.CohomologicalDescent.Symmetrization
 
@@ -1241,8 +1191,6 @@ section
 variable {k R P M : Type*} [CommRing k] [AddCommGroup M] [Module k M] {n : ℕ}
 
 theorem permOnTensor_apply (σ : Equiv.Perm (Fin n)) (z : Tens R P M n) (g) : perm k σ z g = z (g ∘ σ) := rfl
-theorem permSecond_apply_formula (σ : Equiv.Perm (Fin n)) (z : Tens R P M n) (g) :
-    permY k σ z g = z (fun s => ((g (σ s)).1, (g s).2)) := rfl
 theorem contract_apply_eq_insertNth (j : Fin (n + 1)) (v : R × P) (z : Tens R P M (n + 1)) (g) :
     contr k j v z g = z (j.insertNth v g) := rfl
 theorem contract_last_apply_snoc (v : R × P) (z : Tens R P M (n + 1)) (g) :
@@ -1274,7 +1222,7 @@ theorem jucysMurphy_apply (EM : R → R → Module.End k M) (j : Fin n) (z : Ten
       ∑ j' ∈ Finset.univ.filter (· < j), z (fun s => ((g (Equiv.swap j' j s)).1, (g s).2)) := by
   unfold xJM
   simp only [LinearMap.add_apply, LinearMap.sum_apply, Pi.add_apply, Finset.sum_apply, mixedCasimir_apply,
-    permSecond_apply_formula]
+    permSecond_apply]
 
 theorem filter_lt_castSucc_eq_map (j : Fin n) :
     (Finset.univ.filter (· < j.castSucc) : Finset (Fin (n + 1))) =
@@ -1430,7 +1378,6 @@ theorem Iteration_of (h1 : OneStepInv) (h2 : AAComm) (h3 : MuEquivariant) : Iter
 
 end Formalism.CohomologicalDescent.Symmetrization
 
-open Polynomial
 
 namespace Formalism.CohomologicalDescent.Symmetrization
 
@@ -1555,10 +1502,10 @@ theorem toSym_single_eq_single_content (g : Fin n → R × P) (u : M) :
     · simp
     · intro b _ hb; simp [hb]
     · intro hg; simp at hg
-  · rw [Pi.single_apply, if_neg (fun h' => h h'.symm)]
+  · rw [Pi.single_apply, ite_eq_right (fun h' => h h'.symm)]
     refine Finset.sum_eq_zero fun b hb => ?_
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hb
-    rw [Pi.single_apply, if_neg]
+    rw [Pi.single_apply, ite_eq_right]
     rintro rfl; exact h hb
 
 theorem toSym_surjective : Function.Surjective (toSym k : Tens R P M n →ₗ[k] (Sym (R × P) n → M)) := by
@@ -1637,7 +1584,6 @@ end Fld
 
 end Formalism.CohomologicalDescent.Symmetrization
 
-open Polynomial
 
 namespace Formalism.CohomologicalDescent.Symmetrization
 
@@ -1663,7 +1609,7 @@ theorem prod_X_sub_C_coeff_top {A : Type*} [Ring A] : ∀ (n : ℕ) (x : Fin n �
   | zero =>
     intro x
     refine ⟨by simp, fun a ha => ?_⟩
-    rw [List.ofFn_zero, List.prod_nil, coeff_one, if_neg (by omega)]
+    rw [List.ofFn_zero, List.prod_nil, coeff_one, ite_eq_right (by omega)]
   | succ n ih =>
     intro x
     rw [List.ofFn_succ, List.prod_cons]
@@ -1792,10 +1738,10 @@ theorem coefficient_operators_hold : CoeffOps := by
     have hzy : toSym K z = y := by
       funext m'
       rw [toSym_apply_sum_fiber, Finset.sum_eq_single (rep m')]
-      · simp only [z, hrep, if_true]
+      · simp only [z, hrep, ite_true]
       · intro g hg hne
         simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hg
-        simp only [z, hg, if_neg hne]
+        simp only [z, hg, ite_eq_right hne]
       · intro h
         exact absurd (by simp [hrep]) h
     have hcy : descendToCoinvariants (p.coeff a.val) y = toSym K (p.coeff a.val z) := by rw [← h1, hzy]
@@ -1808,7 +1754,6 @@ theorem coefficient_operators_hold : CoeffOps := by
 
 end Formalism.CohomologicalDescent.Symmetrization
 
-open Polynomial
 
 namespace Formalism.CohomologicalDescent.Symmetrization
 
@@ -1972,7 +1917,6 @@ theorem ActLattice_of (h3 : MuEquivariant) (h4 : WordSpec) : ActLattice := by
 
 end Formalism.CohomologicalDescent.Symmetrization
 
-open Polynomial
 
 namespace Formalism.CohomologicalDescent.Symmetrization
 
@@ -2007,9 +1951,9 @@ theorem casimir_on_tensor_holds : CasimirY := by
   refine LinearMap.ext fun z => ?_
   funext g
   simp only [LinearMap.sum_apply, Finset.sum_apply, Module.End.mul_apply, unitSecond_apply, Function.update_self,
-    Function.update_idem, if_true, LinearMap.smul_apply, Module.End.one_apply, Pi.smul_apply]
+    Function.update_idem, ite_true, LinearMap.smul_apply, Module.End.one_apply, Pi.smul_apply]
   rw [Finset.sum_comm]
-  simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true, Prod.mk.eta, Function.update_eq_self, Finset.sum_const,
+  simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true, Prod.mk.eta, Function.update_eq_self, Finset.sum_const,
     Finset.card_univ]
 
 theorem casimir_content_holds : CasimirContent := by
@@ -2027,7 +1971,6 @@ theorem casimir_content_holds : CasimirContent := by
 
 end Formalism.CohomologicalDescent.Symmetrization
 
-open Polynomial
 
 namespace Formalism.CohomologicalDescent.Symmetrization
 
@@ -2120,7 +2063,6 @@ theorem LemmaDSkeleton_of (hCo : CoeffOps) (hXL : XLattice) (hXW : XWeight) (hIW
 
 end Formalism.CohomologicalDescent.Symmetrization
 
-open Polynomial
 
 namespace Formalism.CohomologicalDescent.Symmetrization
 

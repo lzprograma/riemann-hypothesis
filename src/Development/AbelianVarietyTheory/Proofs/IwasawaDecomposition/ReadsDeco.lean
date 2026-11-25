@@ -47,8 +47,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH NumberField IsDedekindDoma
 
 namespace GlobalTheory.Mem.R3.RowAd
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (X : Stages)
 
 theorem rank_X' : X.toD7.sp.X'.rank = X.B.R.N X.B.R.m - 1 := by

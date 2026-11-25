@@ -13,8 +13,6 @@ open scoped TensorProduct InnerProductSpace
 
 namespace Formalism.IndefR.Links
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 section Err
@@ -148,7 +146,7 @@ theorem scalars_exist (R : RealDat3 D A3 Ks) : ∃ kap lam, (R.updS kap lam).IsS
   · intro i t p l hb hl
     have hE : R.Eig0 i t p l := ⟨hb, hl⟩
     show lam i t p A3.A.v0 = l
-    rw [hlam, if_pos rfl, dite_eq_left ⟨l, hE⟩]
+    rw [hlam, ite_eq_left rfl, dite_eq_left ⟨l, hE⟩]
     exact RealDat3.base_eigenvalue_unique (R := R) _ _ (Exists.choose_spec _) hE
   · intro κ hk hnd
     exact hkap κ hk hnd
@@ -157,21 +155,21 @@ theorem scalars_exist (R : RealDat3 D A3 Ks) : ∃ kap lam, (R.updS kap lam).IsS
     have hSX : SimX F.cr (R.toCx3 F) false i p v l := (RealDat3.sim_updS kap lam i p v l).1 hS
     have hE : R.EigOff F i p v l := ⟨hPX, hSX⟩
     show lam i A3.A.μ0 p v = l
-    rw [hlam, if_neg hv, dite_eq_left ⟨l, hE⟩]
+    rw [hlam, ite_eq_right hv, dite_eq_left ⟨l, hE⟩]
     exact RealDat3.eigOff_unique (R := R) _ _ (Exists.choose_spec _) hE
   · intro i t p hb
     show lam i t p A3.A.v0 = Real.exp ((F.Zsc ((R.updS kap lam).toCx3 F).zs).l6m i)
-    rw [RealDat3.zs_updS, hlam, if_pos rfl, dite_eq_right]
+    rw [RealDat3.zs_updS, hlam, ite_eq_left rfl, dite_eq_right]
     rintro ⟨l, hl⟩
     exact hl.1 hb
   · intro i p v hv hnP
     show lam i A3.A.μ0 p v = Real.exp ((F.Zsc ((R.updS kap lam).toCx3 F).zs).l6m i)
-    rw [RealDat3.zs_updS, hlam, if_neg hv, dite_eq_right]
+    rw [RealDat3.zs_updS, hlam, ite_eq_right hv, dite_eq_right]
     rintro ⟨l, hl⟩
     exact hnP ((RealDat3.partAt_updS kap lam i p v).2 hl.1)
   · intro i t p v hv
     show lam i t p v = lam i A3.A.μ0 p v
-    rw [hlam, hlam, if_neg hv, if_neg hv]
+    rw [hlam, hlam, ite_eq_right hv, ite_eq_right hv]
 
 
 end Three

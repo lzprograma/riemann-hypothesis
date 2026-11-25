@@ -168,11 +168,7 @@ noncomputable instance instAddGroupPoint : AddGroup (F.Point σ) :=
     neg_add_cancel := fun x => by
       have h1 := add_neg_point F x
       have h2 := add_neg_point F (-x)
-      have hx : x = -(-x) :=
-        calc x = x + 0 := (add_zero x).symm
-          _ = x + (-x + -(-x)) := by rw [h2]
-          _ = (x + -x) + -(-x) := (add_assoc _ _ _).symm
-          _ = -(-x) := by rw [h1, zero_add]
+      have hx : x = -(-x) := left_neg_eq_right_neg h1 h2
       calc -x + x = -x + -(-x) := congrArg (-x + ·) hx
         _ = 0 := h2 }
 

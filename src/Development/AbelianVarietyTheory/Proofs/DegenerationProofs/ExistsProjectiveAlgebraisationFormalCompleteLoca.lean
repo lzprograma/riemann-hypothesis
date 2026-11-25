@@ -73,7 +73,6 @@ section -- clump:auto
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 namespace GlobalTheory.Degen.FormOnto
@@ -83,100 +82,59 @@ open MvPolynomial
 variable {X X' Z : Scheme.{0}} {R R' : Type} [CommRing R] [CommRing R']
 
 theorem eval₂_scale {σ A : Type} [CommRing A] (φ : R →+* A) (c : A) (x : σ → A) {F : MvPolynomial σ R}
-    {e : ℕ} (hF : F.IsHomogeneous e) : eval₂ φ (fun j => c * x j) F = c ^ e * eval₂ φ x F := by
-  rw [eval₂_eq, eval₂_eq, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun a ha => ?_
-  have hd : ∑ j ∈ a.support, a j = e := by
-    have := hF (mem_support_iff.1 ha)
-    rw [← this, Finsupp.weight_apply, Finsupp.sum]
-    simp
-  simp only [mul_pow, Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum, hd]
-  ring
+    {e : ℕ} (hF : F.IsHomogeneous e) : eval₂ φ (fun j => c * x j) F = c ^ e * eval₂ φ x F :=
+  _root_.GlobalTheory.Unif.PolyStep.eval₂_scale φ c x hF
 
 theorem exists_lift {σ : Type} (g : R →+* R') (hg : Function.Surjective g) {F : MvPolynomial σ R'} {t : ℕ}
-    (hF : F.IsHomogeneous t) : ∃ G : MvPolynomial σ R, G.IsHomogeneous t ∧ map g G = F := by
-  obtain ⟨G, rfl⟩ := map_surjective g hg F
-  refine ⟨homogeneousComponent t G, homogeneousComponent_isHomogeneous t G, ?_⟩
-  ext d
-  rw [coeff_map, coeff_homogeneousComponent]
-  split_ifs with h
-  · rw [coeff_map]
-  · rw [map_zero, hF.coeff_eq_zero h]
+    (hF : F.IsHomogeneous t) : ∃ G : MvPolynomial σ R, G.IsHomogeneous t ∧ map g G = F :=
+  _root_.GlobalTheory.Unif.PolyStep.exists_lift g hg hF
 
 def gsHom (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U) : Γ(X, U) →+* Z.presheaf.stalk z :=
-  (Z.presheaf.germ (r ⁻¹ᵁ U) z h).hom.comp (r.app U).hom
+  _root_.GlobalTheory.Unif.PolyStep.gsHom r z U h
 
 theorem gsHom_apply (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U) (a : Γ(X, U)) :
     gsHom r z U h a = gs r z U a := (gs_eq r z U h a).symm
 
 def cstGerm (p : Z ⟶ Spec (CommRingCat.of R)) (z : Z) : R →+* Z.presheaf.stalk z :=
-  (gsHom p z ⊤ trivial).comp (Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom
+  _root_.GlobalTheory.Unif.PolyStep.cstGerm p z
 
 theorem gs_eval {σ : Type} (p : X ⟶ Spec (CommRingCat.of R)) (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U)
     (x : σ → Γ(X, U)) (F : MvPolynomial σ R) :
-    gs r z U (eval₂Hom (AbLaw.cst p U) x F) = eval₂ (cstGerm (r ≫ p) z) (fun j => gs r z U (x j)) F := by
-  rw [← gsHom_apply r z U h, coe_eval₂Hom, eval₂_comp_left]
-  congr 1
-  · ext a
-    exact (gsHom_apply r z U h _).trans (((gs_res r z le_top h _).trans (gs_pull r p z ⊤ trivial _)).trans
-      (gsHom_apply (r ≫ p) z ⊤ trivial _).symm)
-  · ext j
-    exact gsHom_apply r z U h _
+    gs r z U (eval₂Hom (AbLaw.cst p U) x F) = eval₂ (cstGerm (r ≫ p) z) (fun j => gs r z U (x j)) F :=
+  _root_.GlobalTheory.Unif.PolyStep.gs_eval p r z U h x F
 
 theorem cst_specMap (p : X ⟶ Spec (CommRingCat.of R')) (g : R →+* R') (U : X.Opens) :
-    AbLaw.cst (p ≫ Spec.map (CommRingCat.ofHom g)) U = (AbLaw.cst p U).comp g := by
-  ext a
-  have := congrArg (fun q => q.hom a) (Scheme.ΓSpecIso_inv_naturality (CommRingCat.ofHom g))
-  simp only [CommRingCat.hom_comp, RingHom.comp_apply, CommRingCat.hom_ofHom] at this
-  simp only [AbLaw.cst, RingHom.comp_apply, Scheme.Hom.comp_appTop, CommRingCat.hom_comp]
-  rw [this]
+    AbLaw.cst (p ≫ Spec.map (CommRingCat.ofHom g)) U = (AbLaw.cst p U).comp g :=
+  _root_.GlobalTheory.Unif.PolyStep.cst_comp p g U
 
 alias gs_sec := _root_.GlobalTheory.SecPullIso.gs_sec_trans
 
 def formSec {σ : Type} (p : X ⟶ Spec (CommRingCat.of R)) {H : LB X} (s : σ → LB.Sec H) {F : MvPolynomial σ R}
-    {t : ℕ} (hF : F.IsHomogeneous t) : LB.Sec (AbLaw.pw H t) where
-  f := fun k => eval₂Hom (AbLaw.cst p (H.U k)) (fun j => (s j).f k) F
-  compat := fun i j => fn_ext fun y hy => by
-    refine (gs_res _ y _ hy _).trans (Eq.trans ?_ ((gs_mul _ y _ hy _ _).trans (congrArg₂ (· * ·)
-      (gs_unit _ y _ hy _) (gs_res _ y _ hy _))).symm)
-    refine (gs_eval p (𝟙 X) y (H.U i) hy.1 _ F).trans (Eq.trans ?_ (congrArg₂ (· * ·)
-      (congrArg Units.val (map_zpow (gm (𝟙 X) y (H.U i ⊓ H.U j)) (H.g i j) t))
-      (gs_eval p (𝟙 X) y (H.U j) hy.2 _ F)).symm)
-    rw [zpow_natCast, Units.val_pow_eq_pow_val, ← eval₂_scale _ _ _ hF]
-    congr 1
-    exact funext fun a => gs_sec (s a) _ y hy.1 hy.2
+    {t : ℕ} (hF : F.IsHomogeneous t) : LB.Sec (AbLaw.pw H t) :=
+  _root_.GlobalTheory.Unif.PolyStep.formSec p s hF
 
 def pwIso {H : LB X} {H' : LB X'} {β : X' ⟶ X} (w : LB.Iso H' (H.pull β)) (t : ℤ) :
-    LB.Iso (AbLaw.pw H' t) ((AbLaw.pw H t).pull β) := ⟨fun p => w.s p ^ t⟩
+    LB.Iso (AbLaw.pw H' t) ((AbLaw.pw H t).pull β) :=
+  _root_.GlobalTheory.Unif.PolyStep.pwIso w t
 
 theorem gw_pwIso {H : LB X} {H' : LB X'} {β : X' ⟶ X} (w : LB.Iso H' (H.pull β)) (t : ℤ) (r : Z ⟶ X') (z : Z)
     (j : H.ι) (k : H'.ι) : gw (pwIso w t) r z j k = gw w r z j k ^ t :=
-  map_zpow (gm r z ((H.pull β).U (fun _ => j) ⊓ H'.U k)) (w.s (fun _ => j, k)) t
+  _root_.GlobalTheory.Unif.PolyStep.gw_pwIso w t r z j k
 
 theorem pgen_pwIso {H : LB X} {H' : LB X'} {β : X' ⟶ X} {w : LB.Iso H' (H.pull β)} (hw : PGen w) (t : ℤ) :
-    PGen (pwIso w t) := by
-  intro Y f y j j' k k' hj hj' hk hk'
-  have e := congrArg (· ^ t) (hw Y f y j j' k k' hj hj' hk hk')
-  simp only [mul_zpow, inv_zpow] at e
-  refine (gw_pwIso w t f y j k).trans (e.trans (congrArg₂ (· * ·) (congrArg₂ (· * ·) ?_ (congrArg (·⁻¹) ?_))
-    (gw_pwIso w t f y j' k').symm))
-  · exact (map_zpow _ _ _).symm
-  · exact (map_zpow _ _ _).symm
+    PGen (pwIso w t) :=
+  _root_.GlobalTheory.Unif.PolyStep.pgen_pwIso hw t
 
 def Rel {H : LB X} {H' : LB X'} (β : X' ⟶ X) (w : LB.Iso H' (H.pull β)) (s : LB.Sec H) (s' : LB.Sec H') : Prop :=
-  ∀ z (k : H.ι) (k' : H'.ι), β z ∈ H.U k → z ∈ H'.U k' →
-    gs β z _ (s.f k) = (gw w (𝟙 _) z k k').val * gs (𝟙 _) z _ (s'.f k')
+  _root_.GlobalTheory.Unif.PolyStep.Rel β w s s'
 
 theorem Rel.form {σ : Type} {H : LB X} {H' : LB X'} {β : X' ⟶ X} {w : LB.Iso H' (H.pull β)} {s : σ → LB.Sec H}
     {s' : σ → LB.Sec H'} (h : ∀ j, Rel β w (s j) (s' j)) (p : X ⟶ Spec (CommRingCat.of R))
     {F : MvPolynomial σ R} {t : ℕ} (hF : F.IsHomogeneous t) (z : X') (k : H.ι) (k' : H'.ι) (hk : β z ∈ H.U k)
     (hk' : z ∈ H'.U k') :
     gs β z _ (eval₂Hom (AbLaw.cst p (H.U k)) (fun j => (s j).f k) F) = (gw w (𝟙 _) z k k' ^ (t : ℤ)).val *
-      gs (𝟙 _) z _ (eval₂Hom (AbLaw.cst (β ≫ p) (H'.U k')) (fun j => (s' j).f k') F) := by
-  rw [gs_eval p β z _ hk, gs_eval (β ≫ p) (𝟙 _) z _ hk', Category.id_comp, zpow_natCast, Units.val_pow_eq_pow_val,
-    ← eval₂_scale _ _ _ hF]
-  congr 1
-  exact funext fun j => h j z k k' hk hk'
+      gs (𝟙 _) z _ (eval₂Hom (AbLaw.cst (β ≫ p) (H'.U k')) (fun j => (s' j).f k') F) :=
+  _root_.GlobalTheory.Unif.PolyStep.Rel.form h p hF z k k' hk hk'
 
 def selfIso (L : LB X) : LB.Iso L (L.pull (𝟙 X)) :=
   ⟨fun p => res (show (L.pull (𝟙 X)).U p.1 ⊓ L.U p.2 ≤ L.U (p.1 PUnit.unit) ⊓ L.U p.2 from
@@ -280,7 +238,6 @@ section -- clump:auto
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem _root_.GlobalTheory.T.sections_pow_veryAmple_are_forms_of_closedFibre : ∀ (A : Type) [CommRing A] [IsLocalRing A] [IsNoetherianRing A] (X : Scheme.{0}) (f : X ⟶ Spec (CommRingCat.of A)), Flat f → ∀ (H : LB X) (n : ℕ) (s : Fin (n + 1) → LB.Sec H), H.IsLB → VeryAmpleBy f H s → ∀ (K : Type) [Field K] (g₀ : A →+* K), Function.Surjective g₀ → ∀ (X₀ : Scheme.{0}) (π : X₀ ⟶ X) (f₀ : X₀ ⟶ Spec (CommRingCat.of K)), IsPullback π f₀ f (Spec.map (CommRingCat.ofHom g₀)) → ∀ (H₀ : LB X₀) (w₀ : LB.Iso H₀ (H.pull π)) (s₀ : Fin (n + 1) → LB.Sec H₀), H₀.IsLB → w₀.IsGen → (∀ j, (∀ z (k : (H).ι) (k' : (H₀).ι), (π) z ∈ (H).U k → z ∈ (H₀).U k' → gs (π) z _ ((s j).f k) = (Geo.Tor.gw (w₀) (𝟙 _) z k k').val * gs (𝟙 _) z _ ((s₀ j).f k'))) → ∀ t : ℕ, FirstCohomologyVanishes (pw H₀ t) → (∀ σ : LB.Sec (pw H₀ t), ∃ P : MvPolynomial (Fin (n + 1)) K, P.IsHomogeneous t ∧ ∀ k : H₀.ι, σ.f k = MvPolynomial.eval₂Hom (cst (f₀) ((H₀).U k)) (fun j => (s₀ j).f k) (P)) → ∀ σ : LB.Sec (pw H t), ∃ P : MvPolynomial (Fin (n + 1)) A, P.IsHomogeneous t ∧ ∀ k : H.ι, σ.f k = MvPolynomial.eval₂Hom (cst (f) ((H).U k)) (fun j => (s j).f k) (P) := by
   first | exact @GlobalTheory.Degen.sections_pw_are_forms_of_closed_fibre
@@ -296,7 +253,6 @@ section -- clump:auto
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 namespace GlobalTheory.FormCorr
@@ -309,84 +265,56 @@ variable {X X' Z : Scheme.{0}} {R R' : Type} [CommRing R] [CommRing R']
 alias eval₂_scale := _root_.GlobalTheory.Degen.FormOnto.eval₂_scale
 
 def gsHom (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U) : Γ(X, U) →+* Z.presheaf.stalk z :=
-  (Z.presheaf.germ (r ⁻¹ᵁ U) z h).hom.comp (r.app U).hom
+  _root_.GlobalTheory.Unif.PolyStep.gsHom r z U h
 
 theorem gsHom_apply (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U) (a : Γ(X, U)) :
     gsHom r z U h a = gs r z U a := (gs_eq r z U h a).symm
 
 def cstGerm (p : Z ⟶ Spec (CommRingCat.of R)) (z : Z) : R →+* Z.presheaf.stalk z :=
-  (gsHom p z ⊤ trivial).comp (Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom
+  _root_.GlobalTheory.Unif.PolyStep.cstGerm p z
 
 theorem gs_eval {σ : Type} (p : X ⟶ Spec (CommRingCat.of R)) (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U)
     (x : σ → Γ(X, U)) (F : MvPolynomial σ R) :
-    gs r z U (eval₂Hom (AbLaw.cst p U) x F) = eval₂ (cstGerm (r ≫ p) z) (fun j => gs r z U (x j)) F := by
-  rw [← gsHom_apply r z U h, coe_eval₂Hom, eval₂_comp_left]
-  congr 1
-  · ext a
-    exact (gsHom_apply r z U h _).trans (((gs_res r z le_top h _).trans (gs_pull r p z ⊤ trivial _)).trans
-      (gsHom_apply (r ≫ p) z ⊤ trivial _).symm)
-  · ext j
-    exact gsHom_apply r z U h _
+    gs r z U (eval₂Hom (AbLaw.cst p U) x F) = eval₂ (cstGerm (r ≫ p) z) (fun j => gs r z U (x j)) F :=
+  _root_.GlobalTheory.Unif.PolyStep.gs_eval p r z U h x F
 
 alias gs_sec := _root_.GlobalTheory.SecPullIso.gs_sec_trans
 
 def formSec {σ : Type} (p : X ⟶ Spec (CommRingCat.of R)) {H : LB X} (s : σ → LB.Sec H) {F : MvPolynomial σ R}
-    {t : ℕ} (hF : F.IsHomogeneous t) : LB.Sec (AbLaw.pw H t) where
-  f := fun k => eval₂Hom (AbLaw.cst p (H.U k)) (fun j => (s j).f k) F
-  compat := fun i j => fn_ext fun y hy => by
-    refine (gs_res _ y _ hy _).trans (Eq.trans ?_ ((gs_mul _ y _ hy _ _).trans (congrArg₂ (· * ·)
-      (gs_unit _ y _ hy _) (gs_res _ y _ hy _))).symm)
-    refine (gs_eval p (𝟙 X) y (H.U i) hy.1 _ F).trans (Eq.trans ?_ (congrArg₂ (· * ·)
-      (congrArg Units.val (map_zpow (gm (𝟙 X) y (H.U i ⊓ H.U j)) (H.g i j) t))
-      (gs_eval p (𝟙 X) y (H.U j) hy.2 _ F)).symm)
-    rw [zpow_natCast, Units.val_pow_eq_pow_val, ← eval₂_scale _ _ _ hF]
-    congr 1
-    exact funext fun a => gs_sec (s a) _ y hy.1 hy.2
+    {t : ℕ} (hF : F.IsHomogeneous t) : LB.Sec (AbLaw.pw H t) :=
+  _root_.GlobalTheory.Unif.PolyStep.formSec p s hF
 
 def pwIso {H : LB X} {H' : LB X'} {β : X' ⟶ X} (w : LB.Iso H' (H.pull β)) (t : ℤ) :
-    LB.Iso (AbLaw.pw H' t) ((AbLaw.pw H t).pull β) := ⟨fun p => w.s p ^ t⟩
+    LB.Iso (AbLaw.pw H' t) ((AbLaw.pw H t).pull β) :=
+  _root_.GlobalTheory.Unif.PolyStep.pwIso w t
 
 theorem gw_pwIso {H : LB X} {H' : LB X'} {β : X' ⟶ X} (w : LB.Iso H' (H.pull β)) (t : ℤ) (r : Z ⟶ X') (z : Z)
     (j : H.ι) (k : H'.ι) : gw (pwIso w t) r z j k = gw w r z j k ^ t :=
-  map_zpow (gm r z ((H.pull β).U (fun _ => j) ⊓ H'.U k)) (w.s (fun _ => j, k)) t
+  _root_.GlobalTheory.Unif.PolyStep.gw_pwIso w t r z j k
 
 theorem pgen_pwIso {H : LB X} {H' : LB X'} {β : X' ⟶ X} {w : LB.Iso H' (H.pull β)} (hw : PGen w) (t : ℤ) :
-    PGen (pwIso w t) := by
-  intro Y f y j j' k k' hj hj' hk hk'
-  have e := congrArg (· ^ t) (hw Y f y j j' k k' hj hj' hk hk')
-  simp only [mul_zpow, inv_zpow] at e
-  refine (gw_pwIso w t f y j k).trans (e.trans (congrArg₂ (· * ·) (congrArg₂ (· * ·) ?_ (congrArg (·⁻¹) ?_))
-    (gw_pwIso w t f y j' k').symm))
-  · exact (map_zpow _ _ _).symm
-  · exact (map_zpow _ _ _).symm
+    PGen (pwIso w t) :=
+  _root_.GlobalTheory.Unif.PolyStep.pgen_pwIso hw t
 
 def Rel {H : LB X} {H' : LB X'} (β : X' ⟶ X) (w : LB.Iso H' (H.pull β)) (s : LB.Sec H) (s' : LB.Sec H') : Prop :=
-  ∀ z (k : H.ι) (k' : H'.ι), β z ∈ H.U k → z ∈ H'.U k' →
-    gs β z _ (s.f k) = (gw w (𝟙 _) z k k').val * gs (𝟙 _) z _ (s'.f k')
+  _root_.GlobalTheory.Unif.PolyStep.Rel β w s s'
 
 theorem Rel.form {σ : Type} {H : LB X} {H' : LB X'} {β : X' ⟶ X} {w : LB.Iso H' (H.pull β)} {s : σ → LB.Sec H}
     {s' : σ → LB.Sec H'} (h : ∀ j, Rel β w (s j) (s' j)) (p : X ⟶ Spec (CommRingCat.of R))
     {F : MvPolynomial σ R} {t : ℕ} (hF : F.IsHomogeneous t) (z : X') (k : H.ι) (k' : H'.ι) (hk : β z ∈ H.U k)
     (hk' : z ∈ H'.U k') :
     gs β z _ (eval₂Hom (AbLaw.cst p (H.U k)) (fun j => (s j).f k) F) = (gw w (𝟙 _) z k k' ^ (t : ℤ)).val *
-      gs (𝟙 _) z _ (eval₂Hom (AbLaw.cst (β ≫ p) (H'.U k')) (fun j => (s' j).f k') F) := by
-  rw [gs_eval p β z _ hk, gs_eval (β ≫ p) (𝟙 _) z _ hk', Category.id_comp, zpow_natCast, Units.val_pow_eq_pow_val,
-    ← eval₂_scale _ _ _ hF]
-  congr 1
-  exact funext fun j => h j z k k' hk hk'
+      gs (𝟙 _) z _ (eval₂Hom (AbLaw.cst (β ≫ p) (H'.U k')) (fun j => (s' j).f k') F) :=
+  _root_.GlobalTheory.Unif.PolyStep.Rel.form h p hF z k k' hk hk'
 
 theorem gs_cst (p : X ⟶ Spec (CommRingCat.of R)) (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U) (a : R) :
-    gs r z U (AbLaw.cst p U a) = cstGerm (r ≫ p) z a := by
-  have e := gs_eval (σ := Empty) p r z U h Empty.elim (MvPolynomial.C a)
-  rwa [MvPolynomial.eval₂Hom_C, MvPolynomial.eval₂_C] at e
+    gs r z U (AbLaw.cst p U a) = cstGerm (r ≫ p) z a :=
+  _root_.GlobalTheory.Degen.FormOnto.gs_cst p r z U h a
 
 theorem gs_lin {n : ℕ} (p : X ⟶ Spec (CommRingCat.of R)) (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U)
     (c : Fin n → R) (x : Fin n → Γ(X, U)) :
-    gs r z U (∑ i, AbLaw.cst p U (c i) * x i) = ∑ i, cstGerm (r ≫ p) z (c i) * gs r z U (x i) := by
-
-  rw [← gsHom_apply r z _ h, map_sum]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_mul, gsHom_apply, gsHom_apply, gs_cst p r z _ h]
+    gs r z U (∑ i, AbLaw.cst p U (c i) * x i) = ∑ i, cstGerm (r ≫ p) z (c i) * gs r z U (x i) :=
+  _root_.GlobalTheory.Degen.FormOnto.gs_comb p r z U h c x
 
 theorem germ_rel {n : ℕ} {M : LB X} {M' : LB X'} {β : X' ⟶ X} {w : LB.Iso M' (M.pull β)} {σ : LB.Sec M}
     {σ' : LB.Sec M'} {τ : Fin n → LB.Sec M} {τ' : Fin n → LB.Sec M'} (hσ : Rel β w σ σ')
@@ -469,7 +397,6 @@ section -- clump:auto
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem _root_.GlobalTheory.T.exists_form_correction_of_vanishing_after_baseChange : ∀ (A : Type) [CommRing A] [IsLocalRing A] [IsNoetherianRing A] (X : Scheme.{0}) (f : X ⟶ Spec (CommRingCat.of A)), Flat f → ∀ (H : LB X) (n : ℕ) (s : Fin (n + 1) → LB.Sec H), H.IsLB → VeryAmpleBy f H s → ∀ (K : Type) [Field K] (g₀ : A →+* K), Function.Surjective g₀ → ∀ (X₀ : Scheme.{0}) (π : X₀ ⟶ X) (f₀ : X₀ ⟶ Spec (CommRingCat.of K)), IsPullback π f₀ f (Spec.map (CommRingCat.ofHom g₀)) → ∀ (H₀ : LB X₀) (w₀ : LB.Iso H₀ (H.pull π)) (s₀ : Fin (n + 1) → LB.Sec H₀), H₀.IsLB → w₀.IsGen → (∀ j, (∀ z (k : (H).ι) (k' : (H₀).ι), (π) z ∈ (H).U k → z ∈ (H₀).U k' → gs (π) z _ ((s j).f k) = (Geo.Tor.gw (w₀) (𝟙 _) z k k').val * gs (𝟙 _) z _ ((s₀ j).f k'))) → ∀ t : ℕ, FirstCohomologyVanishes (pw H₀ t) → (∀ σ : LB.Sec (pw H₀ t), ∃ P : MvPolynomial (Fin (n + 1)) K, P.IsHomogeneous t ∧ ∀ k : H₀.ι, σ.f k = MvPolynomial.eval₂Hom (cst (f₀) ((H₀).U k)) (fun j => (s₀ j).f k) (P)) → ∀ (A' : Type) [CommRing A'] (g : A →+* A') (X' : Scheme.{0}) (β : X' ⟶ X) (f' : X' ⟶ Spec (CommRingCat.of A')), IsPullback β f' f (Spec.map (CommRingCat.ofHom g)) → ∀ (H' : LB X') (w : LB.Iso H' (H.pull β)) (s' : Fin (n + 1) → LB.Sec H'), H'.IsLB → w.IsGen → (∀ j, (∀ z (k : (H).ι) (k' : (H').ι), (β) z ∈ (H).U k → z ∈ (H').U k' → gs (β) z _ ((s j).f k) = (Geo.Tor.gw (w) (𝟙 _) z k k').val * gs (𝟙 _) z _ ((s' j).f k'))) → ∀ F : MvPolynomial (Fin (n + 1)) A, F.IsHomogeneous t → (∀ k : (H').ι, MvPolynomial.eval₂Hom (cst (β ≫ f) ((H').U k)) (fun j => (s' j).f k) (F) = 0) → ∃ G : MvPolynomial (Fin (n + 1)) A, G.IsHomogeneous t ∧ (∀ d, g (AddMonoidAlgebra.coeff G d) = 0) ∧ (∀ k : (H).ι, MvPolynomial.eval₂Hom (cst (f) ((H).U k)) (fun j => (s j).f k) (F - G) = 0) := by
   first | exact @GlobalTheory.FormCorr.exists_form_correction
@@ -485,7 +412,6 @@ section -- clump:auto
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.Degen.PolyStepLocal
 
@@ -523,14 +449,8 @@ theorem exists_h1Zero_pw (R : Type) [CommRing R] [IsNoetherianRing R] (X : Schem
 
 theorem exists_form_lift {σ R R' : Type} [CommRing R] [CommRing R'] (g : R →+* R') (hg : Function.Surjective g)
     {F : MvPolynomial σ R'} {t : ℕ} (hF : F.IsHomogeneous t) :
-    ∃ G : MvPolynomial σ R, G.IsHomogeneous t ∧ MvPolynomial.map g G = F := by
-  obtain ⟨G, rfl⟩ := MvPolynomial.map_surjective g hg F
-  refine ⟨MvPolynomial.homogeneousComponent t G, MvPolynomial.homogeneousComponent_isHomogeneous t G, ?_⟩
-  ext d
-  rw [MvPolynomial.coeff_map, MvPolynomial.coeff_homogeneousComponent]
-  split_ifs with h
-  · rw [MvPolynomial.coeff_map]
-  · rw [map_zero, hF.coeff_eq_zero h]
+    ∃ G : MvPolynomial σ R, G.IsHomogeneous t ∧ MvPolynomial.map g G = F :=
+  _root_.GlobalTheory.Unif.PolyStep.exists_lift g hg hF
 
 alias cst_comp_spec := _root_.GlobalTheory.Degen.FormOnto.cst_specMap
 
@@ -620,7 +540,6 @@ section -- clump:auto
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem _root_.GlobalTheory.T.exists_form_correction_next_thickening_local : ∀ (R : Type) [CommRing R] [IsLocalRing R] [IsNoetherianRing R] (I : Ideal R), I ≠ ⊤ → ∀ (Y : ∀ e : ℕ, Over (Spec (CommRingCat.of (R ⧸ I ^ (e + 1))))) (β : ∀ e, (Y e).left ⟶ (Y (e + 1)).left), (∀ e, IsPullback (β e) (Y e).hom (Y (e + 1)).hom (thickTrans R I e)) → (∀ e, Flat (Y e).hom) → ∀ (H : ∀ e, LB (Y e).left) (v : ∀ e, LB.Iso (H e) ((H (e + 1)).pull (β e))), (∀ e, (H e).IsLB ∧ (v e).IsGen) → ∀ (n : ℕ) (s : ∀ e, Fin (n + 1) → LB.Sec (H e)), (∀ e j, (∀ z (k : (H (e + 1)).ι) (k' : (H e).ι), (β e) z ∈ (H (e + 1)).U k → z ∈ (H e).U k' → gs (β e) z _ ((s (e + 1) j).f k) = (Geo.Tor.gw (v e) (𝟙 _) z k k').val * gs (𝟙 _) z _ ((s e j).f k'))) → VeryAmpleBy (Y 0).hom (H 0) (s 0) → ∃ t₀ : ℕ, ∀ t, t₀ ≤ t → ∀ (e : ℕ) (F : MvPolynomial (Fin (n + 1)) R), F.IsHomogeneous t → (∀ k : (H e).ι, MvPolynomial.eval₂Hom (cst ((Y (e)).hom ≫ thick R I (e)) ((H e).U k)) (fun j => (s e j).f k) (F) = 0) → ∃ G : MvPolynomial (Fin (n + 1)) R, G.IsHomogeneous t ∧ (∀ d, AddMonoidAlgebra.coeff G d ∈ I ^ (e + 1)) ∧ (∀ k : (H (e + 1)).ι, MvPolynomial.eval₂Hom (cst ((Y (e + 1)).hom ≫ thick R I (e + 1)) ((H (e + 1)).U k)) (fun j => (s (e + 1) j).f k) (F - G) = 0) := by
   first | exact @GlobalTheory.Degen.exists_form_correction_local
@@ -636,7 +555,6 @@ section -- clump:auto
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 namespace GlobalTheory.Degen.FormalEmb
@@ -650,66 +568,46 @@ variable {X X' X'' Z : Scheme.{0}} {R R' : Type} [CommRing R] [CommRing R']
 alias eval₂_scale := _root_.GlobalTheory.Degen.FormOnto.eval₂_scale
 
 def gsHom (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U) : Γ(X, U) →+* Z.presheaf.stalk z :=
-  (Z.presheaf.germ (r ⁻¹ᵁ U) z h).hom.comp (r.app U).hom
+  _root_.GlobalTheory.Unif.PolyStep.gsHom r z U h
 
 theorem gsHom_apply (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U) (a : Γ(X, U)) :
     gsHom r z U h a = gs r z U a := (gs_eq r z U h a).symm
 
 def cstGerm (p : Z ⟶ Spec (CommRingCat.of R)) (z : Z) : R →+* Z.presheaf.stalk z :=
-  (gsHom p z ⊤ trivial).comp (Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom
+  _root_.GlobalTheory.Unif.PolyStep.cstGerm p z
 
 theorem gs_eval_poly {σ : Type} (p : X ⟶ Spec (CommRingCat.of R)) (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U)
     (x : σ → Γ(X, U)) (F : MvPolynomial σ R) :
-    gs r z U (eval₂Hom (AbLaw.cst p U) x F) = eval₂ (cstGerm (r ≫ p) z) (fun j => gs r z U (x j)) F := by
-  rw [← gsHom_apply r z U h, coe_eval₂Hom, eval₂_comp_left]
-  congr 1
-  · ext a
-    exact (gsHom_apply r z U h _).trans (((gs_res r z le_top h _).trans (gs_pull r p z ⊤ trivial _)).trans
-      (gsHom_apply (r ≫ p) z ⊤ trivial _).symm)
-  · ext j
-    exact gsHom_apply r z U h _
+    gs r z U (eval₂Hom (AbLaw.cst p U) x F) = eval₂ (cstGerm (r ≫ p) z) (fun j => gs r z U (x j)) F :=
+  _root_.GlobalTheory.Unif.PolyStep.gs_eval p r z U h x F
 
 alias cst_comp_spec := _root_.GlobalTheory.Degen.FormOnto.cst_specMap
 
 alias gs_sec_chart := _root_.GlobalTheory.SecPullIso.gs_sec_trans
 
 def Rel {H : LB X} {H' : LB X'} (β : X' ⟶ X) (w : LB.Iso H' (H.pull β)) (s : LB.Sec H) (s' : LB.Sec H') : Prop :=
-  ∀ z (k : H.ι) (k' : H'.ι), β z ∈ H.U k → z ∈ H'.U k' →
-    gs β z _ (s.f k) = (gw w (𝟙 _) z k k').val * gs (𝟙 _) z _ (s'.f k')
+  _root_.GlobalTheory.Unif.PolyStep.Rel β w s s'
 
 alias gs_stalkMap_comp := _root_.GlobalTheory.Unif.PolyStep.gs_stalkMap
 
 theorem Rel.pull {H : LB X} {H' : LB X'} {β : X' ⟶ X} {w : LB.Iso H' (H.pull β)} {s : LB.Sec H} {s' : LB.Sec H'}
     (h : Rel β w s s') (r : Z ⟶ X') (z : Z) (k : H.ι) (k' : H'.ι) (hk : β (r z) ∈ H.U k) (hk' : r z ∈ H'.U k') :
-    gs (r ≫ β) z _ (s.f k) = (gw w r z k k').val * gs r z _ (s'.f k') := by
-  have hm : r z ∈ (H.pull β).U (fun _ => k) ⊓ H'.U k' := ⟨mem_pull.2 hk, hk'⟩
-  have e := congrArg (r.stalkMap z).hom (h (r z) k k' hk hk')
-  rw [map_mul, gs_stalkMap_comp r β z _ hk, gs_stalkMap_comp r (𝟙 _) z _ hk', Category.comp_id] at e
-  refine e.trans (congrArg (· * _) ?_)
-  refine (congrArg (r.stalkMap z).hom (gs_unit (𝟙 X') (r z) _ hm _).symm).trans
-    ((gs_stalkMap_comp r (𝟙 _) z _ hm _).trans ?_)
-  rw [Category.comp_id]
-  exact gs_unit r z _ hm _
+    gs (r ≫ β) z _ (s.f k) = (gw w r z k k').val * gs r z _ (s'.f k') :=
+  _root_.GlobalTheory.Unif.PolyStep.Rel.pull h r z k k' hk hk'
 
 theorem Rel.comp {H : LB X} {H' : LB X'} {H'' : LB X''} {β : X' ⟶ X} {β' : X'' ⟶ X'} {w : LB.Iso H' (H.pull β)}
     {w' : LB.Iso H'' (H'.pull β')} {w'' : LB.Iso H'' (H.pull (β' ≫ β))} (T : Tri w w' w'') (hH' : H'.IsLB)
     {s : LB.Sec H} {s' : LB.Sec H'} {s'' : LB.Sec H''} (h : Rel β w s s') (h' : Rel β' w' s' s'') :
-    Rel (β' ≫ β) w'' s s'' := by
-  intro z k k'' hk hk''
-  obtain ⟨i, hi⟩ := exists_chart hH' (β' z)
-  rw [h.pull β' z k i hk hi, h' z i k'' hi hk'', T _ (𝟙 _) z k i k'' hk hi hk'', Category.id_comp, Units.val_mul,
-    _root_.mul_assoc]
+    Rel (β' ≫ β) w'' s s'' :=
+  _root_.GlobalTheory.Unif.PolyStep.Rel.comp T hH' h h'
 
 theorem Rel.form {σ : Type} {H : LB X} {H' : LB X'} {β : X' ⟶ X} {w : LB.Iso H' (H.pull β)} {s : σ → LB.Sec H}
     {s' : σ → LB.Sec H'} (h : ∀ j, Rel β w (s j) (s' j)) (p : X ⟶ Spec (CommRingCat.of R))
     {F : MvPolynomial σ R} {t : ℕ} (hF : F.IsHomogeneous t) (z : X') (k : H.ι) (k' : H'.ι) (hk : β z ∈ H.U k)
     (hk' : z ∈ H'.U k') :
     gs β z _ (eval₂Hom (AbLaw.cst p (H.U k)) (fun j => (s j).f k) F) = (gw w (𝟙 _) z k k' ^ (t : ℤ)).val *
-      gs (𝟙 _) z _ (eval₂Hom (AbLaw.cst (β ≫ p) (H'.U k')) (fun j => (s' j).f k') F) := by
-  rw [gs_eval_poly p β z _ hk, gs_eval_poly (β ≫ p) (𝟙 _) z _ hk', Category.id_comp, zpow_natCast, Units.val_pow_eq_pow_val,
-    ← eval₂_scale _ _ _ hF]
-  congr 1
-  exact funext fun j => h j z k k' hk hk'
+      gs (𝟙 _) z _ (eval₂Hom (AbLaw.cst (β ≫ p) (H'.U k')) (fun j => (s' j).f k') F) :=
+  _root_.GlobalTheory.Unif.PolyStep.Rel.form h p hF z k k' hk hk'
 
 theorem tower {σ : Type} (I : Ideal R) (Y : ∀ e : ℕ, Over (Spec (CommRingCat.of (R ⧸ I ^ (e + 1)))))
     (β : ∀ e, (Y e).left ⟶ (Y (e + 1)).left)
@@ -718,76 +616,37 @@ theorem tower {σ : Type} (I : Ideal R) (Y : ∀ e : ℕ, Over (Spec (CommRingCa
     (s : ∀ e, σ → LB.Sec (H e)) (hs : ∀ e j, Rel (β e) (v e) (s (e + 1) j) (s e j)) (e : ℕ) :
     ∃ j₀ : (Y 0).left ⟶ (Y (e + 1)).left, IsPullback j₀ (Y 0).hom (Y (e + 1)).hom (Spec.map (CommRingCat.ofHom
       (Ideal.Quotient.factor (Ideal.pow_le_pow_right (by omega) : I ^ (e + 1 + 1) ≤ I ^ (0 + 1))))) ∧
-      ∃ w : LB.Iso (H 0) ((H (e + 1)).pull j₀), PGen w ∧ ∀ j, Rel j₀ w (s (e + 1) j) (s 0 j) := by
-  induction e with
-  | zero => exact ⟨β 0, hβ 0, v 0, (isGen_iff _).1 (hH 0).2, hs 0⟩
-  | succ e ih =>
-    obtain ⟨j₀, hj, w, hw, hr⟩ := ih
-    have hv := (isGen_iff _).1 (hH (e + 1)).2
-    obtain ⟨w'', T⟩ := exists_comp (hH (e + 1)).1 (v (e + 1)) w hv hw (hH (e + 1 + 1)).1 (hH 0).1
-    refine ⟨j₀ ≫ β (e + 1), ?_, w'', T.pgen_comp (hH (e + 1)).1 hv hw,
-      fun j => Rel.comp T (hH (e + 1)).1 (hs (e + 1) j) (hr j)⟩
-    convert hj.paste_horiz (hβ (e + 1)) using 1
-    rw [← Spec.map_comp, ← CommRingCat.ofHom_comp, Ideal.Quotient.factor_comp]
+      ∃ w : LB.Iso (H 0) ((H (e + 1)).pull j₀), PGen w ∧ ∀ j, Rel j₀ w (s (e + 1) j) (s 0 j) :=
+  _root_.GlobalTheory.Unif.PolyStep.tower I Y β hβ H v hH s hs e
 
 end Germs
 
 variable {X X' : Scheme.{0}} {R : Type} [CommRing R] {σ : Type}
 
 def vanIdeal (p : X ⟶ Spec (CommRingCat.of R)) {H : LB X} (s : σ → LB.Sec H) : Ideal (MvPolynomial σ R) :=
-  ⨅ k : H.ι, RingHom.ker (eval₂Hom (AbLaw.cst p (H.U k)) (fun j => (s j).f k))
+  _root_.GlobalTheory.Unif.FormalEmb.vanIdeal p s
 
 theorem mem_vanIdeal (p : X ⟶ Spec (CommRingCat.of R)) {H : LB X} (s : σ → LB.Sec H) (F : MvPolynomial σ R) :
-    F ∈ vanIdeal p s ↔ ∀ k : H.ι, eval₂Hom (AbLaw.cst p (H.U k)) (fun j => (s j).f k) F = 0 := by
-  simp only [vanIdeal, Ideal.mem_iInf, RingHom.mem_ker]
+    F ∈ vanIdeal p s ↔ ∀ k : H.ι, eval₂Hom (AbLaw.cst p (H.U k)) (fun j => (s j).f k) F = 0 :=
+  _root_.GlobalTheory.Unif.FormalEmb.mem_vanIdeal p s F
 
 theorem mem_vanIdeal_of_sat (p : X ⟶ Spec (CommRingCat.of R)) {H : LB X} (s : σ → LB.Sec H)
     (hs : ⨆ i, nonzeroLocus (s i) = ⊤) {F : MvPolynomial σ R}
-    (h : ∀ i, ∃ m : ℕ, MvPolynomial.X i ^ m * F ∈ vanIdeal p s) : F ∈ vanIdeal p s := by
-  rw [mem_vanIdeal]
-  intro k
-  refine fn_ext fun y hy => ?_
-  obtain ⟨i, hi⟩ := TopologicalSpace.Opens.mem_iSup.1 (show y ∈ ⨆ i, nonzeroLocus (s i) by rw [hs]; trivial)
-  obtain ⟨k', hk'⟩ := TopologicalSpace.Opens.mem_iSup.1 hi
-  have hy' : y ∈ H.U k' := X.basicOpen_le _ hk'
-  have u' : IsUnit (gs (𝟙 X) y _ ((s i).f k')) := by
-    rw [gs_eq (𝟙 X) y _ hy']
-    exact (X.mem_basicOpen _ y hy').1 hk'
-  have u : IsUnit (gs (𝟙 X) y _ ((s i).f k)) := by
-    rw [gs_sec_chart (s i) (𝟙 X) y hy hy']
-    exact (Units.isUnit _).mul u'
-  obtain ⟨m, hm⟩ := h i
-  have e := congrArg (gsHom (𝟙 X) y _ hy) ((mem_vanIdeal p s _).1 hm k)
-  rw [map_mul, map_pow, eval₂Hom_X', map_mul, map_pow, map_zero, gsHom_apply (𝟙 X) y _ hy,
-    gsHom_apply (𝟙 X) y _ hy] at e
-  rw [(u.pow m).mul_right_eq_zero.1 e, ← gsHom_apply (𝟙 X) y _ hy, map_zero]
+    (h : ∀ i, ∃ m : ℕ, MvPolynomial.X i ^ m * F ∈ vanIdeal p s) : F ∈ vanIdeal p s :=
+  _root_.GlobalTheory.Unif.FormalEmb.mem_vanIdeal_of_sat p s hs h
 
 theorem mem_vanIdeal_pull {H : LB X} {H' : LB X'} (hH : H.IsLB) {β : X' ⟶ X} {w : LB.Iso H' (H.pull β)}
     {s : σ → LB.Sec H} {s' : σ → LB.Sec H'} (h : ∀ j, Rel β w (s j) (s' j)) (p : X ⟶ Spec (CommRingCat.of R))
-    {F : MvPolynomial σ R} {t : ℕ} (hF : F.IsHomogeneous t) (h0 : F ∈ vanIdeal p s) : F ∈ vanIdeal (β ≫ p) s' := by
-  rw [mem_vanIdeal] at h0 ⊢
-  intro k'
-  refine fn_ext fun z hz => ?_
-  obtain ⟨k, hk⟩ := exists_chart hH (β z)
-  have e := Rel.form h p hF z k k' hk hz
-  rw [h0 k, ← gsHom_apply β z _ hk, map_zero] at e
-  rw [(Units.isUnit _).mul_right_eq_zero.1 e.symm, ← gsHom_apply (𝟙 X') z _ hz, map_zero]
+    {F : MvPolynomial σ R} {t : ℕ} (hF : F.IsHomogeneous t) (h0 : F ∈ vanIdeal p s) : F ∈ vanIdeal (β ≫ p) s' :=
+  _root_.GlobalTheory.Unif.FormalEmb.mem_vanIdeal_pull hH h p hF h0
 
 alias component_mem_span := _root_.GlobalTheory.Unif.FormalEmb.component_mem_span
 
 end GlobalTheory.Degen.FormalEmb
 
 theorem GlobalTheory.Degen.isNilpotent_ker_factor_pow {R : Type} [CommRing R] (I : Ideal R) {n : ℕ}
-    (h : I ^ n ≤ I ^ (0 + 1)) : IsNilpotent (RingHom.ker (Ideal.Quotient.factor h)) := by
-  have h₁ : RingHom.ker (Ideal.Quotient.factor h) ≤ I.map (Ideal.Quotient.mk (I ^ n)) := by
-    intro x hx
-    obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective x
-    rw [RingHom.mem_ker, Ideal.Quotient.factor_mk, Ideal.Quotient.eq_zero_iff_mem, zero_add, pow_one] at hx
-    exact Ideal.mem_map_of_mem _ hx
-  refine ⟨n, ?_⟩
-  rw [Ideal.zero_eq_bot, eq_bot_iff]
-  refine (Ideal.pow_right_mono h₁ n).trans ?_
-  rw [← Ideal.map_pow, Ideal.map_quotient_self]
+    (h : I ^ n ≤ I ^ (0 + 1)) : IsNilpotent (RingHom.ker (Ideal.Quotient.factor h)) :=
+  _root_.GlobalTheory.Degen.PolyStepLocal.nilpotent_ker I h
 
 
 open GlobalTheory.Degen.FormalEmb in

@@ -23,48 +23,7 @@ import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraS
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraSeriesLabelMulOfConstituent
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemPrincipalCongruenceFixedVectorsIff
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParIndJacPlacing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -91,7 +50,7 @@ theorem label_exists (L : LabelDatum g) (hA : AllLab L) {n : ℕ} (χ : Gn g n �
     obtain ⟨c, hc, rfl⟩ := List.mem_map.1 hp
     have h4 := hA c.1 c.2 (hC c hc)
     show IsCuspOf L (Label.lab L c) c.2
-    rw [Label.lab, dif_pos h4]; exact h4.choose_spec
+    rw [Label.lab, dite_eq_left h4]; exact h4.choose_spec
   · rw [hs]; exact hd
   · rw [hs]; exact hi
 
@@ -122,7 +81,7 @@ theorem eSerC_laws (L : LabelDatum g) (hg : 5 ≤ g) (hA : AllLab L) (n : ℕ) :
     rw [Finset.sum_eq_single_of_mem χ hχ]
     · simp
     · intro b _ hb
-      rw [if_neg (Ne.symm hb)]
+      rw [ite_eq_right (Ne.symm hb)]
   · intro f a
     rw [eSerC_eq_sum L n hfin, Finset.sum_mul, Finset.mul_sum]
     refine Finset.sum_congr rfl fun χ hχ => ?_
@@ -132,7 +91,7 @@ theorem eSerC_laws (L : LabelDatum g) (hg : 5 ≤ g) (hA : AllLab L) (n : ℕ) :
     refine Finset.sum_eq_zero fun χ hχ => Finset.sum_eq_zero fun χ' hχ' => ?_
     obtain ⟨h1, h2⟩ := (hmem f χ).1 hχ
     obtain ⟨h3, h4⟩ := (hmem f' χ').1 hχ'
-    rw [(horth χ χ' h1 h3).1, if_neg]
+    rw [(horth χ χ' h1 h3).1, ite_eq_right]
     rintro rfl
     exact hne ((huniq χ h1).unique h2 h4)
   · intro f hf
@@ -150,9 +109,9 @@ theorem eSerC_laws (L : LabelDatum g) (hg : 5 ≤ g) (hA : AllLab L) (n : ℕ) :
     refine Finset.sum_congr rfl fun χ hχ => ?_
     have hirr : IsIrr χ := by simpa using hχ
     obtain ⟨f, hf, hu⟩ := huniq χ hirr
-    rw [Finset.sum_eq_single_of_mem f (by simpa using hmon χ f hf), if_pos hf]
+    rw [Finset.sum_eq_single_of_mem f (by simpa using hmon χ f hf), ite_eq_left hf]
     intro b _ hb
-    exact if_neg fun h => hb (hu b h)
+    exact ite_eq_right fun h => hb (hu b h)
 
 theorem ser_vanish (L : LabelDatum g) (h5 : 5 ≤ g) {k l n : ℕ} (σ : Fin k ⊕ Fin l ≃ Fin n)
     (f f₁ f₂ : (ZMod g)[X]) (hf : f ≠ f₁ * f₂) :
@@ -231,7 +190,7 @@ theorem isCuspOf_of_series (L : LabelDatum g) (h5 : 5 ≤ g) (hA : AllLab L) {d 
   have : f = P := by
     by_contra hne
     obtain ⟨h1, h2⟩ := Bridge.tr_eSerC_eq L hP.2.1.2.1 (Bridge.hasLabel_of_isCuspOf L hP)
-    rw [← Bridge.trace_alg] at h1
+    rw [← GlobalTheory.GLq.TrIdem.trace_asAlgebraHom] at h1
     have h0 : Representation.asAlgebraHom τ.ρ ((sysOf L h5 hA).e d P) = 0 := by
       rw [← one_mul (Representation.asAlgebraHom τ.ρ _), ← he, ← map_mul, (sysOf L h5 hA).orth _ _ _ hne, map_zero]
     exact h2 (h1.symm.trans ((congrArg _ h0).trans (map_zero _)))
@@ -244,7 +203,7 @@ theorem eSerC_mul_zOf (L : LabelDatum g) {n : ℕ} {χ : Gn g n → ℂ} {f : (Z
   · simpa using (_root_.GlobalTheory.GLq.ZOrth.zorth _ χ χ hχ hχ).1
   · intro b hb hne
     have hb' : IsIrr b := by simpa using (Finset.mem_filter.1 hb).1
-    rw [(_root_.GlobalTheory.GLq.ZOrth.zorth _ b χ hb' hχ).1, if_neg hne]
+    rw [(_root_.GlobalTheory.GLq.ZOrth.zorth _ b χ hb' hχ).1, ite_eq_right hne]
 
 end Finite
 
@@ -394,7 +353,7 @@ theorem series_prod₂ (S : Sys g) {a b : ℕ} {W W' : Type} [AddCommGroup W] [M
         have hi : (i : ℕ) < a + b := by omega
         have hj : (j : ℕ) < a + b := by omega
         rw [hx]
-        simp only [Formalism.MainNotions.ArithmeticCylinders.entN, hi, hj, and_self, dif_pos]
+        simp only [Formalism.MainNotions.ArithmeticCylinders.entN, hi, hj, and_self, dite_eq_left]
         rfl
       · refine Units.ext (Matrix.ext fun i j => ?_)
         rw [leviProj_apply]
@@ -402,7 +361,7 @@ theorem series_prod₂ (S : Sys g) {a b : ℕ} {W W' : Type} [AddCommGroup W] [M
         have hi : a + (i : ℕ) < a + b := by omega
         have hj : a + (j : ℕ) < a + b := by omega
         rw [hy]
-        simp only [Formalism.MainNotions.ArithmeticCylinders.entN, hi, hj, and_self, dif_pos]
+        simp only [Formalism.MainNotions.ArithmeticCylinders.entN, hi, hj, and_self, dite_eq_left]
         rfl
     have key := parInd_law _ _ v ⟨p, hp⟩ 1
     rw [hl, deltaHalf_two] at key

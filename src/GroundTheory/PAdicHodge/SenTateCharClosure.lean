@@ -62,7 +62,7 @@ theorem exists_mem_inertiaGal_unitsOneAdd_two (K : IntermediateField ℚ_[p] (Pa
   rintro _ ⟨τ, hτ, rfl⟩
   refine ⟨(τ : Gal(PadicAlgCl p/K) ⧸ U), ?_⟩
   have h : ∃ τ' ∈ inertiaGal K, (τ' : Gal(PadicAlgCl p/K) ⧸ U) = τ := ⟨τ, hτ, rfl⟩
-  simp only [f, dif_pos h]
+  simp only [f, dite_eq_left h]
   obtain ⟨hτ', hτ'U⟩ := h.choose_spec
   have hq : (h.choose)⁻¹ * τ ∈ U := QuotientGroup.eq.1 hτ'U
   have hI : (h.choose)⁻¹ * τ ∈ inertiaGal K := mul_mem (inv_mem hτ') hτ

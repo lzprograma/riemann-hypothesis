@@ -81,15 +81,6 @@ namespace GlobalTheory.OrdLoc.Dcmp
 
 open ReciprocityTheory.Gal (H0 H1 H2 Z2 B1 B2 ContAction charRep twDual cup20 TDual)
 
-section Abstract
-
-variable {n : ℕ} [NeZero n] {G : Type} [Group G] [TopologicalSpace G] {R : Type} [CommRing R] [Finite R]
-  [Algebra (ZMod n) R] [TopologicalSpace R] [DiscreteTopology R]
-
-
-
-end Abstract
-
 open NumberField IsDedekindDomain in
 private lemma span_prime_isMaximal_ratRingOfIntegers {l : ℕ} [hl : Fact l.Prime] :
     (Ideal.span {((l : ℕ) : 𝓞 ℚ)}).IsMaximal := by
@@ -206,7 +197,6 @@ private def repOverZMod {O Γ M : Type} [CommRing O] [Group Γ] [AddCommGroup M]
 
 theorem local_character_h1_bound : LocalFiniteness → LocalTateDuality → LocalEulerChar → ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (c : Coef l) (A : ValuationSubring Ω), OverL l A → ∀ θ : ↥(Dec (F := ℚ) A) →* c.Oˣ, Continuous (fun g => ((θ g : c.Oˣ) : c.O)) → (∃ g, θ g ≠ 1) → (∃ g, θ g ≠ (UpperTheory.V.Base.chiO ℚ Ω l c.O).comp (Dec (F := ℚ) A).subtype g) → ∃ C : ℕ, ∀ n : ℕ, 1 ≤ n → Finite (H1 (Formalism.GaloisCohomology.scalRep (UpperTheory.V.X.Lev (((l : ℕ) : c.O) ^ n)) θ)) ∧ Nat.card (H1 (Formalism.GaloisCohomology.scalRep (UpperTheory.V.X.Lev (((l : ℕ) : c.O) ^ n)) θ)) ≤ C * Nat.card (UpperTheory.V.X.Lev (((l : ℕ) : c.O) ^ n)) := by
   open Formalism.GaloisCohomology IsLocalRing UpperTheory.V.Base UpperTheory.V.X in
-  set_option synthInstance.maxHeartbeats 200000 in
   intro hF hT hE l _ Ω _ _ _ c A hA θ hθc hne₁ hne₂
   obtain ⟨g₁, hne₁⟩ := hne₁
   obtain ⟨g₂, hne₂⟩ := hne₂

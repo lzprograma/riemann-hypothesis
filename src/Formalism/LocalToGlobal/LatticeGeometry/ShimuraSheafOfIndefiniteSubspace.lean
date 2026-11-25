@@ -86,8 +86,6 @@ structure CompatiblePlaces' (X : DivX D) (ePl : ∀ (p : ℕ) [Fact p.Prime], X.
   jc : ∀ (p : ℕ) [Fact p.Prime] (la : X.PlP p), X.jC p la = jC p (ePl p la)
   mp : ∀ (w : Dat D X.Lev), w.Indef → ∀ (p : ℕ) [Fact p.Prime] (la : X.PlP p),
     X.Mp w.S w.κ p la = (U w).pad.Mp p (ePl p la)
-  md : ∀ (w : Dat D X.Lev), w.Indef → ∀ (p : ℕ) [Fact p.Prime] (la : X.PlP p),
-    HEq (X.md w.S w.κ p la) ((U w).pad.md p (ePl p la))
   curveM : ∀ (w : Dat D X.Lev), w.Indef → ∀ (p : ℕ) [Fact p.Prime] (la : X.PlP p),
     HEq (X.CurveM w.S w.κ p la) ((U w).pad.CurveM p (ePl p la))
   degM : ∀ (w : Dat D X.Lev), w.Indef → ∀ (p : ℕ) [Fact p.Prime] (la : X.PlP p),
@@ -102,7 +100,6 @@ structure CompatiblePlaces' (X : DivX D) (ePl : ∀ (p : ℕ) [Fact p.Prime], X.
 structure CompatibleGeometry (X : DivX D) (κg : X.Lev) (U : ∀ w : Dat D X.Lev, ShimU D X.geo jC ng w)
     (eC : ∀ j, 1 ≤ j → j ≤ D.R.m → X.Comp j ≃ (U (datW D κg j)).Comp) : Prop where
   yv : ∀ j (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) c, X.Yv j c = (U (datW D κg j)).alg.Yv (eC j h1 h2 c)
-  ybd : ∀ j (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) c, HEq (X.Ybd j c) ((U (datW D κg j)).alg.Ybd (eC j h1 h2 c))
   lw : ∀ j (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) c (la : D.what₂.Tau → Fin D.R.r → ℤ),
     HEq (X.Lw j c la) ((U (datW D κg j)).alg.Lw (eC j h1 h2 c)
       (fun τ i => la τ (Fin.cast (datW_N D κg j) i)))

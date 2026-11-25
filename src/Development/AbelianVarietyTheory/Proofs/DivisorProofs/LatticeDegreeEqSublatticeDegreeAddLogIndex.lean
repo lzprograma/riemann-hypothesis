@@ -45,7 +45,6 @@ public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.ArakelovDegre
 
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.LatIndexDeg
 open NumberField IsDedekindDomain ReciprocityTheory.GeometryOfNumbersTheory GlobalTheory.FlatCM
@@ -189,12 +188,8 @@ theorem span_eq_of_latRank_eq [FiniteDimensional K V] {N L : Submodule (𝓞 K) 
 
 
 omit [IsScalarTower (𝓞 K) K V] in
-theorem fg_of_le_fg' {N L : Submodule (𝓞 K) V} (hNL : N ≤ L) (hL : L.FG) : N.FG := by
-  have : IsNoetherian (𝓞 K) L := isNoetherian_of_fg_of_noetherian L hL
-  have hfg := IsNoetherian.noetherian (N.comap L.subtype)
-  have e : (N.comap L.subtype).map L.subtype = N := by
-    rw [Submodule.map_comap_subtype, inf_eq_right.2 hNL]
-  exact e ▸ hfg.map _
+theorem fg_of_le_fg' {N L : Submodule (𝓞 K) V} (hNL : N ≤ L) (hL : L.FG) : N.FG :=
+  hL.of_le hNL
 
 theorem relIndex_eq_absNorm_idx [FiniteDimensional K V] {N L : Submodule (𝓞 K) V} (hNL : N ≤ L) (hL : L.FG)
     (hrL : latRank K L = m) (hrN : latRank K N = m) :

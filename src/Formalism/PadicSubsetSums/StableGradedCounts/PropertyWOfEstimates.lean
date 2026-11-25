@@ -9,60 +9,13 @@ public import Formalism.PadicSubsetSums.CentralIdempotents.GaloisIrreducibility
 public import Formalism.PadicSubsetSums.StableGradedCounts.IRRPrimeToPartSpec
 public import Formalism.PadicSubsetSums.StableGradedCounts.CoeffZeroNeZeroOfIrreducible
 public import Mathlib.Algebra.Order.Field.GeomSum
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.PadicSubsetSums.StableGradedCounts.IRRIrredCountUpper
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Linter.Style
-import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.TypeStar
 import Formalism.PadicSubsetSums.StableGradedCounts.IRRSamePartCount
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Analysis.Complex.ExponentialBounds
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -402,7 +355,6 @@ theorem key (P : K[X]) (hP : Irreducible P) (hm : P.Monic) (x : L) (hx : aeval x
   · rw [map_sub, map_pow, Polynomial.aeval_X, Polynomial.aeval_C, map_pow, sub_eq_zero]
     rw [div_pow, div_eq_one_iff_eq (pow_ne_zero _ hcL)] at hyl'
     exact hyl'
-
 
 open Classical in
 noncomputable def Bset (K : Type) [Field K] [Fintype K] (δ : ℕ) (c₀ : Kˣ) : Finset (Fin δ → K) := by
@@ -772,22 +724,9 @@ theorem primeToPart_eq_self_of_not_dvd {M : Type} [Monoid M] {l n : ℕ} (hl : l
   have h0 : (orderOf x).factorization l = 0 := Nat.factorization_eq_zero_of_not_dvd hnd
   simp only [primeToPart, h0, pow_zero, one_pow, pow_one]
 
-theorem sqWeight_irreducible {K : Type} [Field K] [Fintype K] (P : K[X]) (hP : Irreducible P)
-    (hm : P.Monic) : sqWeight P = ((Fintype.card K : ℝ) ^ P.natDegree - 1)⁻¹ := by
-  unfold sqWeight
-  classical
-  have h1 := UniqueFactorizationMonoid.normalizedFactors_irreducible hP
-  rw [hm.normalize_eq_self] at h1
-  have h2 : (Multiset.map (fun P : K[X] => ((Fintype.card K : ℝ) ^ P.natDegree - 1)⁻¹)
-      (UniqueFactorizationMonoid.normalizedFactors P)).prod =
-      ((Fintype.card K : ℝ) ^ P.natDegree - 1)⁻¹ := by
-    rw [h1]; simp
-  convert h2
-
 section sets
 
 variable (K L : Type) [Field K] [Fintype K] [Field L] [Algebra K L] [IsAlgClosed L]
-
 
 open Classical in
 noncomputable def e3A (δ l : ℕ) : Finset (Fin δ → K) := by
@@ -795,12 +734,10 @@ noncomputable def e3A (δ l : ℕ) : Finset (Fin δ → K) := by
   exact Finset.univ.filter (fun c => Irreducible (monicOf c) ∧
       ¬ Set.InjOn (primeToPart l) ((monicOf c).rootSet L))
 
-
 open Classical in
 noncomputable def e3I (δ : ℕ) : Finset (Fin δ → K) := by
   classical
   exact Finset.univ.filter (fun c => Irreducible (monicOf c) ∧ (monicOf c).coeff 0 ≠ 0)
-
 
 open Classical in
 noncomputable def e3C (δ l : ℕ) (P' : K[X]) : Finset (Fin δ → K) := by
@@ -879,7 +816,7 @@ theorem wt_caseA (N δ l : ℕ) (hl : l.Prime) (hδ : 2 ≤ δ)
         refine Finset.sum_le_sum (fun c' hc' => ?_)
         have hirr : Irreducible (monicOf c') := ((mem_e3A L).mp hc').1
         refine (wt_e3D_le K N _ (monicOf_monic c')).trans_eq ?_
-        rw [sqWeight_irreducible _ hirr (monicOf_monic c'), monicOf_natDegree]
+        rw [Formalism.IrreducibleCountingLemmas.GaloisIrreducibility.E4.sqWeight_irred _ hirr (monicOf_monic c'), monicOf_natDegree]
     _ = ((e3A K L δ l).card : ℝ) * ((Fintype.card K : ℝ) ^ δ - 1)⁻¹ := by
         rw [Finset.sum_const, nsmul_eq_mul]
     _ ≤ _ := mul_le_mul_of_nonneg_right (same_factor_count K L δ l hl hδ hBB)
@@ -906,8 +843,8 @@ theorem wt_caseB (N δ δ' l : ℕ) (hl : l.Prime) (hδ : 1 ≤ δ) (hδ' : 1 �
           have hirr : Irreducible (monicOf c') := ((mem_e3C L).mp hc').1
           refine (wt_e3D_le K N _ ((monicOf_monic c').mul (monicOf_monic c''))).trans_eq ?_
           rw [sqWeight_mul _ _ (monicOf_monic c').ne_zero (monicOf_monic c'').ne_zero,
-            sqWeight_irreducible _ hirr (monicOf_monic c'),
-            sqWeight_irreducible _ hirr'' (monicOf_monic c''), monicOf_natDegree,
+            Formalism.IrreducibleCountingLemmas.GaloisIrreducibility.E4.sqWeight_irred _ hirr (monicOf_monic c'),
+            Formalism.IrreducibleCountingLemmas.GaloisIrreducibility.E4.sqWeight_irred _ hirr'' (monicOf_monic c''), monicOf_natDegree,
             monicOf_natDegree]
       _ = ((e3C K L δ l (monicOf c'')).card : ℝ) * ((G ^ δ - 1)⁻¹ * (G ^ δ' - 1)⁻¹) := by
           rw [Finset.sum_const, nsmul_eq_mul]
@@ -1014,8 +951,7 @@ theorem mem_e3SB {N : ℕ} {c : Fin N → K} (hc : c ∈ sqSet K N) {l : ℕ} (h
   have hxp := pow_card_pow_sub_one_eq_one_of_aeval_monicOf hi' h0' hx
   have hyp := pow_card_pow_sub_one_eq_one_of_aeval_monicOf hi'' h0'' hy
   have hldiv : l ∣ Fintype.card K ^ δ - 1 ∨ l ∣ Fintype.card K ^ δ' - 1 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hne
     calc x = primeToPart l x := (primeToPart_eq_self_of_not_dvd hl (hn δ hδ1) hxp hcon.1).symm
       _ = primeToPart l y := hxy
@@ -1048,8 +984,7 @@ theorem square_set_mem_exceptional_union {N : ℕ} {c : Fin N → K} (hc : c ∈
       l ^ (4 * padicValNat l (Fintype.card K ^ d - 1)) ≤ Fintype.card K ^ d := by
     intro d hd
     have hd' := Finset.mem_Icc.1 hd
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have hqd : 1 ≤ Fintype.card K ^ d := Nat.one_le_pow _ _ (by omega)
     have hv : padicValNat l (Fintype.card K ^ d - 1) ≠ 0 := by
       intro hv
@@ -1070,7 +1005,7 @@ theorem square_set_mem_exceptional_union {N : ℕ} {c : Fin N → K} (hc : c ∈
       Finset.mem_filter.2 ⟨Finset.mem_range.2 (by omega), hl, d, hd, hlt⟩
     convert hmem
   simp only [Set.InjOn] at hninj
-  push_neg at hninj
+  push Not at hninj
   obtain ⟨x, hxr, y, hyr, hxy, hne⟩ := hninj
   have hxa : aeval x (monicOf c) = 0 := (mem_rootSet.1 hxr).2
   have hya : aeval y (monicOf c) = 0 := (mem_rootSet.1 hyr).2
@@ -1205,8 +1140,7 @@ theorem local_estimate_second : LocalEstimateII := by
     rw [hsdef, show (4 : ℝ)⁻¹ = ((4 : ℕ) : ℝ)⁻¹ by norm_num]
     exact Real.rpow_inv_natCast_pow hQ0 (by norm_num)
   have hs8 : 8 ≤ s := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have h2 : s ^ 2 < 64 := by nlinarith
     have h4 : s ^ 4 < 4096 := by
       nlinarith [mul_pos (by linarith : (0 : ℝ) < 64 - s ^ 2) (by positivity : (0 : ℝ) < 64 + s ^ 2)]

@@ -257,12 +257,12 @@ theorem tsum_fin (hω : ∀ u ∈ U, ω u = 1) {B M M' : Set G} (hB : Summable (
   simp only [cs, Set.indicator_apply, Set.mem_setOf_eq]
   by_cases a : z.out ∈ M'
   · obtain ⟨r, ⟨hr, hr'⟩, hu⟩ := h1 _ a
-    rw [if_pos a, Finset.sum_eq_single r, if_pos hr']
+    rw [ite_eq_left a, Finset.sum_eq_single r, ite_eq_left hr']
     · intro b hb hne
-      exact if_neg fun hh => hne (hu b ⟨hb, hh⟩)
+      exact ite_eq_right fun hh => hne (hu b ⟨hb, hh⟩)
     · exact fun hh => absurd hr hh
-  · rw [if_neg a]
-    exact (Finset.sum_eq_zero fun r hr => if_neg fun hh => a (h2 r hr _ hh)).symm
+  · rw [ite_eq_right a]
+    exact (Finset.sum_eq_zero fun r hr => ite_eq_right fun hh => a (h2 r hr _ hh)).symm
 
 theorem tendsto_tsum_one (hω : ∀ u ∈ U, ω u = 1) {B : Set G} (hB : Summable (cs U ω B)) {ι : Type} (l : Filter ι)
     (M : ι → Set G) (h : ∀ s, M s ⊆ B) (h1 : ∀ y ∈ U, ∀ s, y ∈ M s) (h2 : ∀ y ∉ U, ∀ᶠ s in l, y ∉ M s) :
@@ -274,10 +274,10 @@ theorem tendsto_tsum_one (hω : ∀ u ∈ U, ω u = 1) {B : Set G} (hB : Summabl
     (Eventually.of_forall fun s z => norm_indicator_le_of_subset (h s) _ _)
   have h4 : z.out ∈ U ↔ z = 1 := by rw [← QuotientGroup.eq_one_iff, QuotientGroup.out_eq']
   by_cases a : z = 1
-  · rw [if_pos a]
+  · rw [ite_eq_left a]
     refine tendsto_const_nhds.congr fun s => ?_
     rw [cs, Set.indicator_of_mem (h1 _ (h4.2 a) s), hω _ (h4.2 a)]
-  · rw [if_neg a]
+  · rw [ite_eq_right a]
     refine tendsto_const_nhds.congr' ?_
     filter_upwards [h2 _ (fun hh => a (h4.1 hh))] with s hs
     rw [cs, Set.indicator_of_notMem hs]
@@ -627,7 +627,7 @@ theorem GlobalTheory.CMVal.exists_idele_section_of_ideal : ∀ (E : Type) [Field
   refine ⟨fun J => if h : ∃ y : (Af E)ˣ, (∀ w, Valued.v ((y : Af E) w) ≤ 1) ∧ idealOf y = J then h.choose else 1,
     fun y hy => ⟨idealOf y, modF_eq hy, fun w => ?_⟩⟩
   have h : ∃ y' : (Af E)ˣ, (∀ w, Valued.v ((y' : Af E) w) ≤ 1) ∧ idealOf y' = idealOf y := ⟨y, hy, rfl⟩
-  simp only [dif_pos h]
+  simp only [dite_eq_left h]
   rw [Units.val_mul, mul_coord, inv_coord, map_mul, map_inv₀,
     val_eq_of_idealOf_eq h.choose_spec.1 hy h.choose_spec.2 w, inv_mul_cancel₀ (IdeleModule.coord_ne y w)]
 end -- clump:auto
@@ -818,9 +818,9 @@ theorem exists_split_unif_idele : ∀ (E : Type) [Field E] [NumberField E] [IsCM
   set S := Formalism.L2.Host.aboveF (L := E) (maximalRealSubfield E) v with hS
   have hmem : ∀ P, P ∈ S ↔ Over P v := fun P => mem_aboveF P v
   have hin : ∀ P, Over P v → ((∏ P ∈ S, single P (coord P y) : (Af E)ˣ) : Af E) P = iota x P := fun P hP => by
-    rw [Fibre.prod_single_apply, if_pos ((hmem P).2 hP), hy]
+    rw [Fibre.prod_single_apply, ite_eq_left ((hmem P).2 hP), hy]
   have hout : ∀ P, ¬ Over P v → ((∏ P ∈ S, single P (coord P y) : (Af E)ˣ) : Af E) P = 1 := fun P hP => by
-    rw [Fibre.prod_single_apply, if_neg (fun h => hP ((hmem P).1 h))]
+    rw [Fibre.prod_single_apply, ite_eq_right (fun h => hP ((hmem P).1 h))]
   refine ⟨∏ P ∈ S, single P (coord P y), hin, hout, ?_, fun χ hχ => ?_⟩
   · have hS2 : S = {P₁, P₂} := by
       ext R
@@ -1102,7 +1102,7 @@ theorem FS_union (T s : Finset (HeightOneSpectrum (𝓞 E))) (hs : ∀ w ∈ s, 
     obtain ⟨h1, h2, h3⟩ := hs w (Finset.mem_insert_self _ _)
     have h4 := tsum_split hω hB (MS_subset m (s ∪ T)) (MS_anti m (Finset.subset_insert w _)) (stable_MS hm (s ∪ T)) (unifAt w)
       (unif_shift h1 (by simp [hw, h2]))
-    have h5 : eulerFactor χ S w = (1 - omega χ S (unifAt w))⁻¹ := by rw [eulerFactor, if_pos h3, omega_unifAt]
+    have h5 : eulerFactor χ S w = (1 - omega χ S (unifAt w))⁻¹ := by rw [eulerFactor, ite_eq_left h3, omega_unifAt]
     have h6 := one_sub_omega_ne hu hS w
     rw [ih fun w' hw' => hs w' (Finset.mem_insert_of_mem hw'), Finset.prod_insert hw, Finset.insert_union, h5]
     have h7 : FS c χ S m (insert w (s ∪ T)) = (1 - omega χ S (unifAt w)) * FS c χ S m (s ∪ T) := by
@@ -1204,7 +1204,7 @@ theorem FS_ram (hF : TrivOnF χ) (T : Finset (HeightOneSpectrum (𝓞 E))) {v : 
     (hr : ∀ w, Over w v → ¬ UnrAt χ w) :
     FS c χ S m T = (∏ w ∈ fib v, eulerFactor χ S w) * FS c χ S m (fib v ∪ T) := by
   rw [FS_step hω hB hm hF T hv hk hT, FS_zero hω (update_le hm v hk) T hP (by rwa [Function.update_self]),
-    Finset.prod_eq_one fun w hw => by rw [eulerFactor, if_neg (hr w ((mem_aboveF w v).1 hw))]]
+    Finset.prod_eq_one fun w hw => by rw [eulerFactor, ite_eq_right (hr w ((mem_aboveF w v).1 hw))]]
   ring
 
 def eFactor (χ : HChar E) (S : ℂ) (q : HeightOneSpectrum (OF E)) (P : HeightOneSpectrum (𝓞 E)) : ℂ :=
@@ -1241,7 +1241,7 @@ theorem FS_unr (hF : TrivOnF χ) (T : Finset (HeightOneSpectrum (𝓞 E))) {v : 
   rw [FS_step hω hB hm hF T hv hk hT, h1, h2]
   conv => enter [1, 2, 2, 1]; rw [hfib]
   conv => enter [2, 1, 2]; rw [hfib]
-  rw [Finset.prod_pair hne, eulerFactor, eulerFactor, if_pos h, if_pos h', (s2 P hP).1, (s2 P' hP').1, hval,
+  rw [Finset.prod_pair hne, eulerFactor, eulerFactor, ite_eq_left h, ite_eq_left h', (s2 P hP).1, (s2 P' hP').1, hval,
     Units.val_inv_eq_inv_val, eFactor]
   generalize (1 - (val χ P : ℂ) * (Ideal.absNorm v.asIdeal : ℂ) ^ (-S)) = a at *
   generalize (1 - (val χ P : ℂ)⁻¹ * (Ideal.absNorm v.asIdeal : ℂ) ^ (-S)) = b at *

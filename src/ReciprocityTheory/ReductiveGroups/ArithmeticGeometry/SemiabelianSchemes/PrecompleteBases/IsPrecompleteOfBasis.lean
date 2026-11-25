@@ -12,8 +12,6 @@ import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
-set_option autoImplicit false
-
 open IsLocalRing Polynomial
 
 namespace ReciprocityTheory.ChartRestriction.G.Semi
@@ -224,8 +222,7 @@ theorem nbMain (n : ℕ) : ∀ (V' : Type) [CommRing V'] [IsDomain V'] [IsDiscre
     rw [RingHom.comp_apply, ResidueField.map_residue]
     exact e0.symm_apply_apply (residue V' y)
   · obtain ⟨a, ha⟩ : ∃ a : k'', a ∉ (algebraMap (ResidueField V') k'').range := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hs fun x => RingHom.mem_range.mp (h x)
     have hint : IsIntegral (ResidueField V') a := Algebra.IsIntegral.isIntegral a
     obtain ⟨f, hfg, -, hf⟩ := exists_monic_lift (minpoly (ResidueField V') a) (minpoly.monic hint)

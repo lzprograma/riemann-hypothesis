@@ -91,15 +91,14 @@ theorem kerProj_isUnit_reg (T : E →L[ℂ] F) {t : ℝ} (ht : 0 < t) :
   rw [ContinuousLinearMap.isUnit_iff_bijective]
   set B := ContinuousLinearMap.adjoint T ∘L T + (t : ℂ) • (1 : E →L[ℂ] E) with hB
   have hinj : Function.Injective B := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro w hw
     have h := kerProj_re_inner_reg T t w
     rw [← hB, hw] at h
     simp only [inner_zero_right, Complex.zero_re] at h
     have h1 : t * ‖w‖ ^ 2 ≤ 0 := by nlinarith [sq_nonneg ‖T w‖]
     have h2 : ‖w‖ ^ 2 ≤ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       nlinarith [mul_pos ht hc]
     have : ‖w‖ = 0 := by nlinarith [norm_nonneg w]
     exact norm_eq_zero.mp this

@@ -156,7 +156,7 @@ private theorem w_arch (w : InfinitePlace K) : wGL w.Completion ∈ archCompact 
     Fintype.sum_sum_type, Fintype.sum_sum_type, add_comm]
   simp only [wGL_val, vec_l, Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁,
       Matrix.fromBlocks_apply₂₂, Matrix.zero_apply, mul_zero, Finset.sum_const_zero, add_zero, zero_add,
-      Matrix.one_apply, mul_ite, mul_one, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Matrix.one_apply, mul_ite, mul_one, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 private theorem blk_max {a b : ℕ} {x : AdelicGLn.AdelicGL K a} {y : AdelicGLn.AdelicGL K b}
     (hx : x ∈ (maxCompact : Subgroup (AdelicGLn.AdelicGL K a)))

@@ -16,6 +16,4 @@ def IsLat (Λ : AddSubgroup ℂ) : Prop := ∃ L : PeriodPair, L.lattice.toAddSu
 
 def HasCM (d : ℕ) (Λ : AddSubgroup ℂ) : Prop := ∀ x ∈ Λ, F.cmTheta 1 d * x ∈ Λ
 
-def AreaEq : Prop := ∀ L : PeriodPair, TaylorLogMetric.area L.lattice.toAddSubgroup = F.area L
-
 end Formalism.L2.Th1.F2

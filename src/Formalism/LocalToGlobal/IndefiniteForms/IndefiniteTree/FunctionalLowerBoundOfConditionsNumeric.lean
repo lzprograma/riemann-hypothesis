@@ -9,59 +9,10 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalGlobalInclu
 public import Formalism.LocalToGlobal.IndefiniteForms.IndefSide
 public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneqMean
 public import Formalism.LocalToGlobal.LatticeGeometry.OperatorNormFibers.PDescentCutA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.PairingDivisors.PairingDivisorProofs.Height
 import Formalism.PairingDivisors.PairingDivisorProofs.SumValuationNat
 import Formalism.HarderNarasimhan.HarderNarasimhanProofs.TwistFinrankEq
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -420,13 +371,13 @@ theorem gridHeightBoundIndexed : GridHeightBoundIndexed := by
     ⟨_, fun _ _ _ => rfl⟩
   have hN1in : ∀ ij (s : ℤ) l, 1 ≤ s → s ≤ (hh ij : ℤ) → l ∈ S → N1 ij s l = N0 ij s l := by
     intro ij s l a1 a2 a3
-    rw [hN1, if_pos ⟨a1, a2, a3⟩]
+    rw [hN1, ite_eq_left ⟨a1, a2, a3⟩]
   have hN1S : ∀ ij (s : ℤ) l, l ∉ S → N1 ij s l = 0 := by
     intro ij s l a3
-    rw [hN1, if_neg (fun h => a3 h.2.2)]
+    rw [hN1, ite_eq_right (fun h => a3 h.2.2)]
   have hN1s : ∀ ij (s : ℤ) l, ¬ (1 ≤ s ∧ s ≤ (hh ij : ℤ)) → N1 ij s l = 0 := by
     intro ij s l a3
-    rw [hN1, if_neg (fun h => a3 ⟨h.1, h.2.1⟩)]
+    rw [hN1, ite_eq_right (fun h => a3 ⟨h.1, h.2.1⟩)]
   have hN1nn : ∀ ij s l, 0 ≤ N1 ij s l := by
     intro ij s l
     rw [hN1]
@@ -444,8 +395,8 @@ theorem gridHeightBoundIndexed : GridHeightBoundIndexed := by
         apply Finset.sum_congr rfl
         intro l _
         by_cases hl : l ∈ S
-        · rw [if_pos hl, hN1in ij s l hs.1 hs.2 hl]
-        · rw [if_neg hl, hN1S ij s l hl, zero_mul]
+        · rw [ite_eq_left hl, hN1in ij s l hs.1 hs.2 hl]
+        · rw [ite_eq_right hl, hN1S ij s l hl, zero_mul]
       rw [h1]
       apply Finset.sum_le_sum_of_subset_of_nonneg
       · intro l hl
@@ -488,8 +439,8 @@ theorem gridHeightBoundIndexed : GridHeightBoundIndexed := by
         rw [Finset.mem_Icc] at hs
         rw [j3Wt K ell hell S (N0 ij s) hS w]
         by_cases hl : ell w ∈ S
-        · rw [if_pos hl, hN1in ij s _ hs.1 hs.2 hl]
-        · rw [if_neg hl, hN1S ij s _ hl]
+        · rw [ite_eq_left hl, hN1in ij s _ hs.1 hs.2 hl]
+        · rw [ite_eq_right hl, hN1S ij s _ hl]
       rw [hs3, j3Wt K ell hell Se (fun l => 1 / (l : ℝ) ^ 2) hSe w] at h0
       simp only [habs]
       have hs1 : ∑ s ∈ Icc (1 : ℤ) (hh ij),

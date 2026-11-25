@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.KFactsA
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedEmbeddingToM
 import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
 import Mathlib.RingTheory.SimpleRing.Principal
@@ -68,18 +69,7 @@ lemma continuous_blkDiag (ε : Fin n → Bool) : Continuous (blkDiag ε) := by
 
 lemma commJ_iff (ε : Fin n → Bool) (M : Matrix (Fin n) (Fin n) ℂ) :
     M * Jm ε = Jm ε * M ↔ ∀ a b, ε a ≠ ε b → M a b = 0 := by
-  constructor
-  · intro h a b hab
-    have h1 := congrFun (congrFun h a) b
-    rw [Jm, Matrix.mul_diagonal, Matrix.diagonal_mul] at h1
-    cases ha : ε a <;> cases hb : ε b <;> simp [ha, hb] at hab h1 ⊢ <;>
-      first | exact h1 | linear_combination h1 / 2 | linear_combination -h1 / 2
-  · intro h
-    ext a b
-    rw [Jm, Matrix.mul_diagonal, Matrix.diagonal_mul]
-    by_cases hab : ε a = ε b
-    · rw [hab, mul_comm]
-    · rw [h a b hab, zero_mul, mul_zero]
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.S7.kfa_comm_iff_block <;> assumption
 
 lemma blkDiag_commJ (ε : Fin n → Bool)
     (v : ∀ s : Bool, Matrix (Fin (blkP ε s)) (Fin (blkP ε s)) ℂ) :

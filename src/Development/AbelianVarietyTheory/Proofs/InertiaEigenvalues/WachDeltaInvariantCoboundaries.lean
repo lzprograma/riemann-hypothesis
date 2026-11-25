@@ -818,7 +818,7 @@ theorem exists_sysTie (R : Fr l O) (j : O⟦X⟧ →ₐ[O] O⟦X⟧) (jE : (ZMod
   obtain ⟨b, hb⟩ := GlobalTheory.WachTie.exists_invariant_basis W T hc hb
   obtain ⟨t1, t2, t3⟩ := GlobalTheory.WachTie.coord_injective_range_mem W R j jE T b h hE hb hT
   obtain ⟨Gm, g1, g2⟩ := GlobalTheory.WachTie.exists_matrix_gamma W R j jE T b h hE hb
-  obtain ⟨M, Φ, f1, f2⟩ := GlobalTheory.WachTie.MatF.exists_matrix_frobenius W R j jE T b h hE hb hs hc
+  obtain ⟨M, Φ, f1, f2⟩ := GlobalTheory.WachTie.MatF.exists_matrix_frobenius W R j T b h hb hs hc
   let S : Sys R n r := ⟨M, Φ, Gm, g1, f1, GlobalTheory.WachTie.matrices_comm W R j jE T b h hE hb M Φ Gm g2 f2⟩
   obtain ⟨s1, s2⟩ := GlobalTheory.WachTie.coord_comm_φ_γ W R j jE T b h hE hb S g2 f2
   have hK := W.gamK_eq_one hs hp

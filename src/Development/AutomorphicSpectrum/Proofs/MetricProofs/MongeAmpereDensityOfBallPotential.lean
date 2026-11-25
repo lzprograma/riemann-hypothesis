@@ -3,48 +3,7 @@ module
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsFundSet
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Mathlib.Analysis.Matrix.Normed
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 public import Mathlib.Topology.Algebra.Module.FiniteDimensionBilinear
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ComplexHessianTransposeIsHermitian
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -343,11 +302,11 @@ theorem ballMat_single (q : Ψ × Fin j × Fin j' ≃ Fin n) [DecidableEq Ψ] (x
   have e : q (τ, a, b) = x ↔ (τ, a, b) = q.symm x := by
     rw [Equiv.eq_symm_apply]
   by_cases h : (q.symm x).1 = τ
-  · simp only [h, if_true, ballMat, Matrix.of_apply, Pi.single_apply, e]
+  · simp only [h, ite_true, ballMat, Matrix.of_apply, Pi.single_apply, e]
     simp only [Matrix.single_apply, Prod.ext_iff, h, true_and]
     by_cases h1 : a = (q.symm x).2.1 <;> by_cases h2 : b = (q.symm x).2.2 <;> simp [h1, h2, eq_comm]
-  · simp only [h, if_false, ballMat, Matrix.of_apply, Pi.single_apply, e, Matrix.zero_apply]
-    rw [if_neg]
+  · simp only [h, ite_false, ballMat, Matrix.of_apply, Pi.single_apply, e, Matrix.zero_apply]
+    rw [ite_eq_right]
     intro h'
     exact h (by rw [← h'])
 
@@ -397,12 +356,12 @@ theorem cxHessian_ball [DecidableEq Ψ] (q : Ψ × Fin j × Fin j' ≃ Fin n) (t
       ((1 - ballMat q t (q.symm x).1 * (ballMat q t (q.symm x).1)ᴴ)⁻¹ : Matrix (Fin j) (Fin j) ℂ) (q.symm y).2.1 (q.symm x).2.1 *
        ((1 - (ballMat q t (q.symm x).1)ᴴ * ballMat q t (q.symm x).1)⁻¹ : Matrix (Fin j') (Fin j') ℂ) (q.symm x).2.2 (q.symm y).2.2 else 0 := by
     rw [Finset.sum_eq_single (q.symm x).1]
-    · rw [ballMat_single q x, if_pos rfl, ballMat_single q y]
+    · rw [ballMat_single q x, ite_eq_left rfl, ballMat_single q y]
       by_cases h : (q.symm x).1 = (q.symm y).1
-      · rw [if_pos h.symm, if_pos h, trace_single, mul_comm]
-      · rw [if_neg (Ne.symm h), if_neg h]; simp
+      · rw [ite_eq_left h.symm, ite_eq_left h, trace_single, mul_comm]
+      · rw [ite_eq_right (Ne.symm h), ite_eq_right h]; simp
     · intro τ _ hτ
-      rw [ballMat_single q x, if_neg (Ne.symm hτ)]; simp
+      rw [ballMat_single q x, ite_eq_right (Ne.symm hτ)]; simp
     · simp
   rw [← e2, ← Finset.sum_congr rfl fun τ _ => key τ]
   exact comb_sum _ _ _ _

@@ -12,49 +12,8 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVo
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolUFinal
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DiffProd
 import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolUHaar
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolUTr
 import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.CondAllPf
@@ -304,12 +263,12 @@ theorem det_famL_mul (hfin : Module.finrank F E = 2) (g : Fv F v) (θ Δ : Fv F 
   rcases lt_trichotomy i j with h | h | h
   · have h1 : ¬ j < i := not_lt.2 h.le
     have h2 : j ≠ i := h.ne'
-    simp only [famL, if_pos h, if_neg h1, if_neg h2, hs, LinearMap.det_id, mul_one]
+    simp only [famL, ite_eq_left h, ite_eq_right h1, ite_eq_right h2, hs, LinearMap.det_id, mul_one]
   · subst h
-    simp only [famL, lt_irrefl, if_false, if_true, ha, sq]
+    simp only [famL, lt_irrefl, ite_false, ite_true, ha, sq]
   · have h1 : ¬ i < j := not_lt.2 h.le
     have h2 : i ≠ j := h.ne'
-    simp only [famL, if_pos h, if_neg h1, if_neg h2, hs, LinearMap.det_id, one_mul]
+    simp only [famL, ite_eq_left h, ite_eq_right h1, ite_eq_right h2, hs, LinearMap.det_id, one_mul]
 
 theorem det_bigL_sq (hfin : Module.finrank F E = 2) (g : Fv F v) (θ Δ : Fv F v ⊗[F] E)
     (hθ : Algebra.trace (Fv F v) (Fv F v ⊗[F] E) θ = 1) (hΔ : Algebra.trace (Fv F v) (Fv F v ⊗[F] E) Δ = 0)
@@ -449,7 +408,7 @@ theorem hermBox_eq
     VolUHm.hermBox σ v g r c =
       {Y | (fun p => Y p - ctr v r θ c p) ∈ {Y : Fin (r + 1) × Fin (r + 1) → Fv F v ⊗[F] E |
         ∀ p, Y p ∈ pSet σ v r g p}} := by
-  have hgO : sc (E := E) v (g : Fv F v) ∈ OEv (E := E) v := VolUTr.TrW.alg_mem v (VolTU.natCast_memO v g)
+  have hgO : sc (E := E) v (g : Fv F v) ∈ OEv (E := E) v := Formalism.L2.SG.Pf.NcVal.TrW.alg_mem v (VolTU.natCast_memO v g)
   ext Y
   simp only [VolUHm.hermBox, Set.mem_setOf_eq]
   constructor
@@ -457,40 +416,40 @@ theorem hermBox_eq
     obtain ⟨i, j⟩ := p
     obtain ⟨hO, hup, hdg⟩ := h i j
     rcases lt_trichotomy i j with hij | hij | hij
-    · simp only [ctr, pSet, if_pos hij, Set.mem_setOf_eq]
+    · simp only [ctr, pSet, ite_eq_left hij, Set.mem_setOf_eq]
       exact hup hij
     · subst hij
-      simp only [ctr, pSet, lt_irrefl, if_false, if_true, Set.mem_setOf_eq]
-      refine ⟨Submodule.sub_mem _ hO (VolUTr.TrW.mul_mem v (hc.2 i i) hθO), ?_⟩
+      simp only [ctr, pSet, lt_irrefl, ite_false, ite_true, Set.mem_setOf_eq]
+      refine ⟨Submodule.sub_mem _ hO (Formalism.L2.SG.Pf.NcVal.TrW.mul_mem v (hc.2 i i) hθO), ?_⟩
       rw [diag_key σ v htr hθ _ _ (hc.1 i i).symm]
       exact hdg rfl
     · have h1 : ¬ i < j := not_lt.2 hij.le
       have h2 : i ≠ j := hij.ne'
-      simp only [ctr, pSet, if_neg h1, if_neg h2, sub_zero]
+      simp only [ctr, pSet, ite_eq_right h1, ite_eq_right h2, sub_zero]
       exact hO
   · intro h i j
     have hp := h (i, j)
     rcases lt_trichotomy i j with hij | hij | hij
-    · simp only [ctr, pSet, if_pos hij, Set.mem_setOf_eq] at hp
+    · simp only [ctr, pSet, ite_eq_left hij, Set.mem_setOf_eq] at hp
       have hO : Y (i, j) ∈ OEv (E := E) v := by
         have e : Y (i, j) = sc (E := E) v (g : Fv F v) * ((Y (i, j) - c i j) * sc (E := E) v (g : Fv F v)⁻¹) +
             c i j := by
           rw [mul_comm, mul_assoc, ← VolTU.sc_mul, inv_mul_cancel₀ (VolTU.natCast_ne_zero v hg0), VolTU.sc_one,
             mul_one, sub_add_cancel]
         rw [e]
-        exact Submodule.add_mem _ (VolUTr.TrW.mul_mem v hgO hp) (hc.2 i j)
+        exact Submodule.add_mem _ (Formalism.L2.SG.Pf.NcVal.TrW.mul_mem v hgO hp) (hc.2 i j)
       exact ⟨hO, fun _ => hp, fun h => absurd h hij.ne⟩
     · subst hij
-      simp only [ctr, pSet, lt_irrefl, if_false, if_true, Set.mem_setOf_eq] at hp
+      simp only [ctr, pSet, lt_irrefl, ite_false, ite_true, Set.mem_setOf_eq] at hp
       have hO : Y (i, i) ∈ OEv (E := E) v := by
         rw [← sub_add_cancel (Y (i, i)) (c i i * θ)]
-        exact Submodule.add_mem _ hp.1 (VolUTr.TrW.mul_mem v (hc.2 i i) hθO)
+        exact Submodule.add_mem _ hp.1 (Formalism.L2.SG.Pf.NcVal.TrW.mul_mem v (hc.2 i i) hθO)
       refine ⟨hO, fun h => absurd h (lt_irrefl _), fun _ => ?_⟩
       rw [← diag_key σ v htr hθ _ _ (hc.1 i i).symm]
       exact hp.2
     · have h1 : ¬ i < j := not_lt.2 hij.le
       have h2 : i ≠ j := hij.ne'
-      simp only [ctr, pSet, if_neg h1, if_neg h2, sub_zero] at hp
+      simp only [ctr, pSet, ite_eq_right h1, ite_eq_right h2, sub_zero] at hp
       exact ⟨hp, fun h => absurd h h1, fun h => absurd h h2⟩
 
 theorem hermBox_meas (hfin : Module.finrank F E = 2)
@@ -516,11 +475,11 @@ theorem theta_exists (hinv : ∀ y, σ (σ y) = y) (hnt : ∃ x, σ x ≠ x) (hf
   have hst : σ (t : E) = a := by rw [← ht, hinv]
   have hTa : Algebra.trace F E ((a : E) - t) = 0 := by
     apply (algebraMap F E).injective
-    rw [VolUTr.TrW.trace_eq_add σ hinv hnt hfin, map_sub, ht, hst, map_zero]
+    rw [Formalism.L2.SG.Pf.NcVal.TrW.trace_eq_add σ hinv hnt hfin, map_sub, ht, hst, map_zero]
     ring
   have hTb : Algebra.trace F E ((a : E) * ((a : E) - t)) = e := by
     apply (algebraMap F E).injective
-    rw [VolUTr.TrW.trace_eq_add σ hinv hnt hfin, map_mul, map_sub, ht, hst, ← he]
+    rw [Formalism.L2.SG.Pf.NcVal.TrW.trace_eq_add σ hinv hnt hfin, map_mul, map_sub, ht, hst, ← he]
     ring
   set ev := algebraMap F (Fv F v) (e : F) with hevdef
   have hval : Valued.v ev = 1 := by
@@ -535,14 +494,14 @@ theorem theta_exists (hinv : ∀ y, σ (σ y) = y) (hnt : ∃ x, σ x ≠ x) (hf
     rw [HeightOneSpectrum.mem_adicCompletionIntegers, map_inv₀, hval, inv_one]
   have hθ1 : Algebra.trace (Fv F v) (Fv F v ⊗[F] E)
       (sc (E := E) v ev⁻¹ * inclR (F := F) (Fv F v) ((a : E) * ((a : E) - t))) = 1 := by
-    rw [VolUTr.TrW.sc_eq, ← Algebra.smul_def, map_smul, PI.UnitaryGroupMassFormula.LocJacTyp.Sd.trace_inclR, hTb, smul_eq_mul,
+    rw [Formalism.L2.SG.Pf.NcVal.TrW.sc_eq, ← Algebra.smul_def, map_smul, PI.UnitaryGroupMassFormula.LocJacTyp.Sd.trace_inclR, hTb, smul_eq_mul,
       inv_mul_cancel₀ he0]
   refine ⟨sc (E := E) v ev⁻¹ * inclR (F := F) (Fv F v) ((a : E) * ((a : E) - t)),
     inclR (F := F) (Fv F v) ((a : E) - t), ?_, hθ1, ?_, ?_⟩
-  · refine VolUTr.TrW.mul_mem v (VolUTr.TrW.alg_mem v hinvm) ?_
+  · refine Formalism.L2.SG.Pf.NcVal.TrW.mul_mem v (Formalism.L2.SG.Pf.NcVal.TrW.alg_mem v hinvm) ?_
     have e1 : (((a * (a - t) : 𝓞 E)) : E) = (a : E) * ((a : E) - t) := by push_cast; ring
     rw [← e1]
-    exact VolUTr.TrW.inclR_mem' (E := E) v (a * (a - t))
+    exact Formalism.L2.SG.Pf.NcVal.TrW.inclR_mem' (E := E) v (a * (a - t))
   · rw [PI.UnitaryGroupMassFormula.LocJacTyp.Sd.trace_inclR, hTa, map_zero]
   · intro h0
     rw [show inclR (F := F) (Fv F v) ((a : E) * ((a : E) - t)) =
@@ -567,8 +526,6 @@ namespace Formalism.L2.SG.Pf.NcVal
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.LocVol Formalism.L2.SG.TypedSets Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
   NumberField IsDedekindDomain
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem volUHermBox_holds {D : D7} (X : HidaSetting D) (ψ : AddChar (AF X.B.I.F) ℂ) : VolUHermBox X ψ := by
   intro hψ hs v hv
@@ -622,7 +579,7 @@ theorem volUHermBox_holds {D : D7} (X : HidaSetting D) (ψ : AddChar (AF X.B.I.F
     rw [heq] at hm'
     exact hnot (hPmax.isPrime.mem_of_pow_mem 2 hm')
   obtain ⟨θ0, Δ, hθO, hθ, hΔ, hΔ0⟩ := VolV.theta_exists σ v hinv hnt hfin θ t ht e he2 hev
-  have htr := VolUTr.TrW.trace_v v σ hinv hnt hfin
+  have htr := Formalism.L2.SG.Pf.NcVal.TrW.trace_v v σ hinv hnt hfin
   intro c hc
   exact VolV.hermBox_meas σ v _ hfin htr (gAt_prime X v).ne_zero hg hθO hθ hΔ hΔ0 _ hO c hc
 
@@ -642,8 +599,6 @@ noncomputable section
 namespace Formalism.L2.SG.Pf.NcVal
 
 open Formalism.BasicNotions Formalism.L2.SG.HidaSetting Formalism.L2.SG.LocVol Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem volTypV_holds {D : D7} (X : HidaSetting D) (u u' : D.what₂.Word) (ψ : AddChar (AF X.B.I.F) ℂ) :
     VolTypV X u u' ψ :=

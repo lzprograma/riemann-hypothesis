@@ -19,8 +19,6 @@ namespace CurveContinuity
 
 open Formalism.QuantumDeterminants
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 section Der
 
 variable {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} {μW μN : Measure (Mt k r)}
@@ -156,7 +154,7 @@ theorem jsj {n : ℕ} (ε : Fin n → Bool) (a b : Fin n) :
     rw [Matrix.single_apply_same]
     unfold sg
     split_ifs <;> push_cast <;> ring_nf
-  · simp only [Matrix.single_apply, if_neg h, mul_zero, zero_mul]
+  · simp only [Matrix.single_apply, ite_eq_right h, mul_zero, zero_mul]
 
 theorem cpart1_rel {n : ℕ} (ε : Fin n → Bool) (a b : Fin n) :
     Formalism.REAL.cpart1 ε (Matrix.single b a 1) = ((-sg ε a b : ℝ) : ℂ) • Formalism.REAL.cpart1 ε (Matrix.single a b 1) := by

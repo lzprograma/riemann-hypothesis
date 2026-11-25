@@ -29,17 +29,6 @@ variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
 def boxP (e : HeightOneSpectrum (𝓞 F) → ℤ) (v : Fin 2 → Ad F) : Prop :=
   ∀ w, ∀ i, Valued.v (pLoc F w (pFin F (v i))) ≤ WithZero.exp (e w)
 
-theorem norm_omega_eq_one {ω : HChar F} (h : IsOfFinOrder ω) (x : Ideles F) :
-    ‖((ω.1 x : ℂˣ) : ℂ)‖ = 1 := by
-  obtain ⟨n, hn, hpow⟩ := h.exists_pow_eq_one
-  have h1 : (ω.1 x) ^ n = 1 := by
-    have := congrArg (fun χ : HChar F => (χ.1 x)) hpow
-    simpa using this
-  have h2 : ((ω.1 x : ℂˣ) : ℂ) ^ n = 1 := by
-    rw [← Units.val_pow_eq_pow_val, h1, Units.val_one]
-  have h3 : ‖((ω.1 x : ℂˣ) : ℂ)‖ ^ n = 1 := by rw [← norm_pow, h2, norm_one]
-  exact (pow_eq_one_iff_of_nonneg (norm_nonneg _) hn.ne').1 h3
-
 theorem absD_scalar_mul (t : {r : ℝ // 0 < r}) (u : normOneSubgroup F) (h : GA F 2) :
     absD (Matrix.GeneralLinearGroup.scalar (Fin 2) (moduleSection (w0 F) t * (u : Ideles F)) * h) =
       (t : ℝ) ^ 2 * absD h := by
@@ -91,7 +80,7 @@ theorem ideleModule_infId (d : (UpperTheory.V.TR.Rinf F)ˣ) :
   refine Finset.prod_congr rfl fun w _ => ?_
   have hm : w.mult = 1 := by
     unfold InfinitePlace.mult
-    rw [if_pos (IsTotallyReal.isReal w)]
+    rw [ite_eq_left (IsTotallyReal.isReal w)]
   have e : ((UpperTheory.V.TR.infId F d : Ideles F) : Ad F).1 w = (UpperTheory.V.TR.infEq F d.val) w := by
     rw [infId_fst]
   rw [hm, pow_one, e, norm_infEq_apply]

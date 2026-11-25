@@ -47,7 +47,7 @@ theorem measurableEmbedding_aR : MeasurableEmbedding aR := by
   exact aRh.measurableEmbedding
 
 theorem mult_wR : wR.mult = 1 := by
-  rw [InfinitePlace.mult, if_pos wR_isReal]
+  rw [InfinitePlace.mult, ite_eq_left wR_isReal]
 
 theorem map_eRu : Measure.map eRu (infinitePlaceUnitsMeasure wR) = mulR := by
   set e := InfinitePlace.Completion.isometryEquivRealOfIsReal wR_isReal

@@ -6,8 +6,6 @@ public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankP
 
 namespace Formalism.L2.SG.Pf.Cnt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem field_dictionary_holds : HostDict := by
   intro D
   refine ⟨D.sp.cm.cmUnram, ?_, ?_⟩

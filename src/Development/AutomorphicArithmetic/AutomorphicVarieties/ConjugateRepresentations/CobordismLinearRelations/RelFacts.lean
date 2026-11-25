@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CobordismLinearRelations.ExactSub
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CobordismLinearRelations.ClozelConjCOfSteps
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CobordismLinearRelations.CobLin
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PerKer
@@ -242,20 +243,7 @@ private theorem oc_inf {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalG
 private theorem oc_conj {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] {U : Subgroup G}
     (h1 : IsOpen (U : Set G)) (h2 : IsCompact (U : Set G)) (x : G) :
     ∃ U' : Subgroup G, IsOpen (U' : Set G) ∧ IsCompact (U' : Set G) ∧ ∀ u ∈ U', x⁻¹ * u * x ∈ U := by
-  refine ⟨U.comap (MulAut.conj x⁻¹).toMonoidHom, ?_, ?_, fun u hu => by simpa using hu⟩
-  · have : ((U.comap (MulAut.conj x⁻¹).toMonoidHom : Subgroup G) : Set G) = (fun u => x⁻¹ * u * x) ⁻¹' U := by
-      ext u; simp
-    rw [this]
-    exact h1.preimage (by fun_prop)
-  · have : ((U.comap (MulAut.conj x⁻¹).toMonoidHom : Subgroup G) : Set G) = (fun u => x * u * x⁻¹) '' U := by
-      ext u
-      constructor
-      · intro hu
-        exact ⟨x⁻¹ * u * x, by simpa using hu, by group⟩
-      · rintro ⟨v, hv, rfl⟩
-        simpa [mul_assoc] using hv
-    rw [this]
-    exact h2.image (by fun_prop)
+  apply _root_.conj_level <;> assumption
 
 theorem UpperTheory.V.Cj.relFacts :
     UpperTheory.V.Cj.RelFacts := by

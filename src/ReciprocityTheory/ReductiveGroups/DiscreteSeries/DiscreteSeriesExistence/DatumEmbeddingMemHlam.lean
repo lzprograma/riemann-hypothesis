@@ -11,6 +11,7 @@ import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.PropsLowK
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.RregRep
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.RigidityTheorems.ClosGenStable
+import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.AdmissibleOfFiniteRank
 
 @[expose] public section
 
@@ -133,18 +134,26 @@ theorem datumEmbedding_mem_Hlam (hP : IsPsiFor ε lam T Ψ) (v : T.V) : uniformi
   unfold Hlam closGen
   exact Submodule.le_topologicalClosure _ (Submodule.mem_map_of_mem hG)
 
-theorem rreg_mem_Hlam (hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) :
+theorem rreg_mem_Hlam_of (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) :
     ∀ g ∈ UJset ε, ∀ x ∈ Hlam ε Ψ v₀, rreg ε g x ∈ Hlam ε Ψ v₀ :=
-  closGen_stable hgap (rreg_isURepOn ε) (isDerivedOn_smE (rreg_isURepOn ε))
-    (datumV_isKIrrHW hP hv₀) (datumV_casimir hP v₀) (datumV_kStable hP v₀)
+  closure_genSub_stable (rreg_isURepOn ε) (isDerivedOn_smE (rreg_isURepOn ε))
+    (datumV_isKIrrHW hP hv₀).1 (datumV_isKIrrHW hP hv₀).2.1 (datumV_casimir hP v₀)
 
-theorem sigLam_coe (hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) {g : Matrix (Fin n) (Fin n) ℂ} (hg : g ∈ UJset ε) (x : Hlam ε Ψ v₀) :
+theorem rreg_mem_Hlam (_hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) :
+    ∀ g ∈ UJset ε, ∀ x ∈ Hlam ε Ψ v₀, rreg ε g x ∈ Hlam ε Ψ v₀ :=
+  rreg_mem_Hlam_of hP hv₀
+
+theorem sigLam_coe_of (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) {g : Matrix (Fin n) (Fin n) ℂ} (hg : g ∈ UJset ε) (x : Hlam ε Ψ v₀) :
     ((sigLam ε Ψ v₀ g x : Hlam ε Ψ v₀) : L2 ε) = rreg ε g x := by
-  have hm := rreg_mem_Hlam hgap hP hv₀ g hg x x.2
+  have hm := rreg_mem_Hlam_of hP hv₀ g hg x x.2
   exact congrArg (fun z : Hlam ε Ψ v₀ => (z : L2 ε))
     (Submodule.orthogonalProjectionOnto_mem_subspace_eq_self ⟨rreg ε g x, hm⟩)
 
-theorem sigLam_isURepOn (hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) : IsURepOn (UJset ε) (sigLam ε Ψ v₀) := by
+theorem sigLam_coe (_hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) {g : Matrix (Fin n) (Fin n) ℂ} (hg : g ∈ UJset ε) (x : Hlam ε Ψ v₀) :
+    ((sigLam ε Ψ v₀ g x : Hlam ε Ψ v₀) : L2 ε) = rreg ε g x :=
+  sigLam_coe_of hP hv₀ hg x
+
+theorem sigLam_isURepOn_of (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) : IsURepOn (UJset ε) (sigLam ε Ψ v₀) := by
   have hR := rreg_isURepOn ε
   refine ⟨⟨?_, ?_⟩, ?_, ?_⟩
   · ext x : 1
@@ -155,19 +164,27 @@ theorem sigLam_isURepOn (hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv�
     ext x : 1
     apply Subtype.ext
     have hy : rreg ε a (rreg ε b (x : L2 ε)) ∈ Hlam ε Ψ v₀ :=
-      rreg_mem_Hlam hgap hP hv₀ a ha _ (rreg_mem_Hlam hgap hP hv₀ b hb _ x.2)
+      rreg_mem_Hlam_of hP hv₀ a ha _ (rreg_mem_Hlam_of hP hv₀ b hb _ x.2)
     have e1 : sigLam ε Ψ v₀ (a * b) x = ⟨_, hy⟩ := by
       show (Hlam ε Ψ v₀).orthogonalProjectionOnto (rreg ε (a * b) (x : L2 ε)) = _
       rw [hR.1.2 a ha b hb]
       exact Submodule.orthogonalProjectionOnto_mem_subspace_eq_self ⟨_, hy⟩
-    rw [e1, ContinuousLinearMap.comp_apply, sigLam_coe hgap hP hv₀ ha, sigLam_coe hgap hP hv₀ hb]
+    rw [e1, ContinuousLinearMap.comp_apply, sigLam_coe_of hP hv₀ ha, sigLam_coe_of hP hv₀ hb]
   · intro g hg v
     show ‖((sigLam ε Ψ v₀ g v : Hlam ε Ψ v₀) : L2 ε)‖ = ‖(v : L2 ε)‖
-    rw [sigLam_coe hgap hP hv₀ hg v, hR.2.1 g hg]
+    rw [sigLam_coe_of hP hv₀ hg v, hR.2.1 g hg]
   · intro v
     exact (Hlam ε Ψ v₀).orthogonalProjectionOnto.continuous.comp_continuousOn (hR.2.2 (v : L2 ε))
 
-theorem sigLam_irred (hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) : Formalism.MainNotions.S.IsIrredOn (Formalism.MainNotions.S.UJset ε) (sigLam ε Ψ v₀) := by
+theorem sigLam_isURepOn (_hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) : IsURepOn (UJset ε) (sigLam ε Ψ v₀) :=
+  sigLam_isURepOn_of hP hv₀
+
+theorem sigLam_irred_of (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0)
+    (hrigid : ∀ S : Submodule ℂ (L2 ε), S ≤ closGen (smE ε (rreg ε)) (datumV ε Ψ v₀) →
+      IsClosed (S : Set (L2 ε)) →
+      (∀ g ∈ UJset ε, ∀ x ∈ S, rreg ε g x ∈ S) →
+      S = ⊥ ∨ S = closGen (smE ε (rreg ε)) (datumV ε Ψ v₀)) :
+    Formalism.MainNotions.S.IsIrredOn (Formalism.MainNotions.S.UJset ε) (sigLam ε Ψ v₀) := by
   intro S hSc hSG
   have hinj : Function.Injective (Hlam ε Ψ v₀).subtype := Subtype.val_injective
   have hcl : IsClosed ((S.map (Hlam ε Ψ v₀).subtype : Submodule ℂ (L2 ε)) : Set (L2 ε)) := by
@@ -178,9 +195,8 @@ theorem sigLam_irred (hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ :
     exact Submodule.map_subtype_le _ S
   have hst : ∀ g ∈ UJset ε, ∀ x ∈ S.map (Hlam ε Ψ v₀).subtype, rreg ε g x ∈ S.map (Hlam ε Ψ v₀).subtype := by
     rintro g hg _ ⟨x, hx, rfl⟩
-    exact ⟨sigLam ε Ψ v₀ g x, hSG g (by rw [mir_UJset_eq]; exact hg) x hx, sigLam_coe hgap hP hv₀ hg x⟩
-  rcases rigid_irred hgap (rreg_isURepOn ε) (isDerivedOn_smE (rreg_isURepOn ε)) (datumV_isKIrrHW hP hv₀)
-      (datumV_casimir hP v₀) (datumV_kStable hP v₀) _ hle hcl hst with h | h
+    exact ⟨sigLam ε Ψ v₀ g x, hSG g (by rw [mir_UJset_eq]; exact hg) x hx, sigLam_coe_of hP hv₀ hg x⟩
+  rcases hrigid _ hle hcl hst with h | h
   · left
     exact Submodule.map_injective_of_injective hinj (h.trans (Submodule.map_bot _).symm)
   · right
@@ -188,7 +204,12 @@ theorem sigLam_irred (hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ :
     rw [h, Submodule.map_top, Submodule.range_subtype]
     rfl
 
-theorem Hlam_nontrivial (hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) : Nontrivial (Hlam ε Ψ v₀) := by
+theorem sigLam_irred (hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) : Formalism.MainNotions.S.IsIrredOn (Formalism.MainNotions.S.UJset ε) (sigLam ε Ψ v₀) :=
+  sigLam_irred_of hP hv₀
+    (rigid_irred hgap (rreg_isURepOn ε) (isDerivedOn_smE (rreg_isURepOn ε)) (datumV_isKIrrHW hP hv₀)
+      (datumV_casimir hP v₀) (datumV_kStable hP v₀))
+
+theorem Hlam_nontrivial_of (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) : Nontrivial (Hlam ε Ψ v₀) := by
   obtain ⟨-, -, -, w, hw, hw0, -⟩ := datumV_isKIrrHW hP hv₀
   have hm : ((w : smD ε (rreg ε)) : L2 ε) ∈ Hlam ε Ψ v₀ := by
     unfold Hlam closGen
@@ -197,18 +218,18 @@ theorem Hlam_nontrivial (hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv�
   refine ⟨⟨⟨w, hm⟩, 0, fun h => hw0 ?_⟩⟩
   exact Subtype.ext (congrArg (fun z : Hlam ε Ψ v₀ => (z : L2 ε)) h)
 
-private theorem Kset_subset_UJset_mem {g : Matrix (Fin n) (Fin n) ℂ}
-    (hg : g ∈ Formalism.REAL.Kset ε) : g ∈ UJset ε := by
-  obtain ⟨hu, hc⟩ := hg
-  have h1 : star g * g = 1 := Matrix.mem_unitaryGroup_iff'.mp hu
-  have hJ : ReciprocityTheory.ChartRestriction.DS.Jm ε = Formalism.REAL.Jm ε := rfl
-  show gᴴ * ReciprocityTheory.ChartRestriction.DS.Jm ε * g = ReciprocityTheory.ChartRestriction.DS.Jm ε
-  rw [hJ, mul_assoc, ← hc, ← mul_assoc, ← Matrix.star_eq_conjTranspose, h1, one_mul]
+theorem Hlam_nontrivial (_hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) : Nontrivial (Hlam ε Ψ v₀) :=
+  Hlam_nontrivial_of hP hv₀
 
-theorem subtype_sigLam (hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) :
+theorem subtype_sigLam_of (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) :
     ∀ g ∈ Formalism.REAL.Kset ε, ∀ x, (Hlam ε Ψ v₀).subtype (sigLam ε Ψ v₀ g x) =
-      rreg ε g ((Hlam ε Ψ v₀).subtype x) := by
-  exact fun g hg x => sigLam_coe hgap hP hv₀ (Kset_subset_UJset_mem hg) x
+      rreg ε g ((Hlam ε Ψ v₀).subtype x) :=
+  fun g hg x => sigLam_coe_of hP hv₀ (CompanionTheory.D.gk.admitted.Kset_sub hg) x
+
+theorem subtype_sigLam (_hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) :
+    ∀ g ∈ Formalism.REAL.Kset ε, ∀ x, (Hlam ε Ψ v₀).subtype (sigLam ε Ψ v₀ g x) =
+      rreg ε g ((Hlam ε Ψ v₀).subtype x) :=
+  subtype_sigLam_of hP hv₀
 
 theorem map_lowKSubLam : (lowKSubLam ε Ψ v₀).map (Hlam ε Ψ v₀).subtype =
     (datumV ε Ψ v₀).map (smD ε (rreg ε)).subtype := by

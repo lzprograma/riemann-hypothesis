@@ -83,8 +83,8 @@ theorem trace_hcRep_eq_hcL : ∀ (g : ℕ) [Fact g.Prime] (r s : ℕ) (b : Fin r
     unfold GlobalTheory.BI.ext0
     beta_reduce
     by_cases h : y⁻¹ * x * y ∈ parab (ZMod g) b
-    · rw [dite_eq_left h, if_pos h]
-    · rw [dite_eq_right h, if_neg h]
+    · rw [dite_eq_left h, ite_eq_left h]
+    · rw [dite_eq_right h, ite_eq_right h]
   · intro q hq
     obtain ⟨c, -, rfl⟩ := List.mem_map.1 hq
     intro y z

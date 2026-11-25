@@ -44,13 +44,10 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.LevelOfPairing
 
@@ -97,14 +94,14 @@ theorem exists_column (g : ℕ) (i : Fin (2 * g)) :
     have : (i' : ℕ) ≠ i := fun e => hi' (Fin.ext e)
     have := i'.2
     unfold stdSymp
-    rw [if_neg (by simp only; omega), if_neg (by simp only; omega)]
+    rw [ite_eq_right (by simp only; omega), ite_eq_right (by simp only; omega)]
   · refine ⟨⟨i - g, by omega⟩, Or.inr ?_, fun i' hi' => ?_⟩
     · unfold stdSymp
-      rw [if_neg (by simp only; omega), if_pos (by simp only; omega)]
+      rw [ite_eq_right (by simp only; omega), ite_eq_left (by simp only; omega)]
     · have : (i' : ℕ) ≠ i := fun e => hi' (Fin.ext e)
       have := i'.2
       unfold stdSymp
-      rw [if_neg (by simp only; omega), if_neg (by simp only; omega)]
+      rw [ite_eq_right (by simp only; omega), ite_eq_right (by simp only; omega)]
 
 theorem injective_comb (cm : ∀ a b : G, Commute a b)
     (hu : ∀ x y : G, x ^ M = 1 → y ^ M = 1 → ∃! c, R x y c)

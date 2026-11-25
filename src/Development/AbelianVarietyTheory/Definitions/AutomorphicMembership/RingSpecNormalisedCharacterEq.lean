@@ -83,7 +83,6 @@ structure AUSide (D : D7) where
       galPol D.naut (D.naut.lpTw (D.nbc.locAU j (cls j h1 h2 π) w) ((1 - (D.R.nV : ℝ)) / 2))
 
 section
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 def IsLocS {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ} {W : Type} [AddCommGroup W] [Module ℂ W]
     (S : Submodule ℂ (GAf L n → W)) (s : SplitPlace L) (σ : GlobalTheory.SmGL.IrrRep (GL (Fin n) (s.w.adicCompletion L))) : Prop :=
@@ -274,18 +273,6 @@ structure ChoiceSide (D : D7) (cf : CharFrame D) (mt : MtFam D) (exp : NExpTied 
   off : ∀ w, ¬ TwistedAt D w → C.Q w = ∅
   adm : ∀ w, TwistedAt D w → NX.AdmTw D (C.twI w) (C.k' w) (C.Q w) ((C.psi' w).comp (D.ntw.art (C.twI w) (C.Q w)))
   psi : PsiChoiceCompatible D cf C tp
-  eMt_level : ∀ (w : D.what₂.places.Pl) (j : ℕ) (h1 : 1 ≤ j) (h2 : j ≤ D.R.m)
-    (hw : TwistedAt D w) (hA : NX.AdmTw D (C.twI w) (C.k' w) (C.Q w) ((C.psi' w).comp (D.ntw.art (C.twI w) (C.Q w)))),
-    ∃ ι : FractionRing (C.Oe w) →+* ℂ, (∀ x : D.what₂.LL, ι (C.embW w x) = D.what₂.embLL x) ∧
-      (mt (D.what₂.muTw w) j h1 h2).J =
-        (exp.mtV (C.twI w) j (C.sd w) (C.k' w) (C.Q w) ((C.psi' w).comp (D.ntw.art (C.twI w) (C.Q w))) h1 h2 hA).J ∧
-      ∀ (κ : Formalism.AUTREP.GAf D.host.E D.R.nV) (h : κ ∈ (mt (D.what₂.muTw w) j h1 h2).J)
-        (h' : κ ∈ (exp.mtV (C.twI w) j (C.sd w) (C.k' w) (C.Q w)
-          ((C.psi' w).comp (D.ntw.art (C.twI w) (C.Q w))) h1 h2 hA).J),
-        (((mt (D.what₂.muTw w) j h1 h2).χ ⟨κ, h⟩ : ℂˣ) : ℂ) =
-          ι (C.kMapE w (((exp.mtV (C.twI w) j (C.sd w) (C.k' w) (C.Q w)
-            ((C.psi' w).comp (D.ntw.art (C.twI w) (C.Q w))) h1 h2 hA).χ ⟨κ, h'⟩ : (NX.Kk D (C.twI w) (C.k' w))ˣ) :
-              NX.Kk D (C.twI w) (C.k' w)))
 
 section Loc
 variable {D : D7}
@@ -325,7 +312,7 @@ structure NdSpec (Pl : PlSide D) (M : MtFam D) (C : NChoice D) (big : D.what₂.
     y ∈ NCov.part (heckeAlg B j w) (mx j w i) ↔ ∃ z, Psi j w i h z = y
   Psi_pr : ∀ j w i (h : i ∈ X.nd.locs j w) (x : D.what₂.MtL (X.nd.mu i) (X.nd.j i)),
     Psi j w i h (X.nd.prMt i x) - B.iV j w (castX X h x) ∈ NCov.off (heckeAlg B j w) (mx j w i)
-  ptX : ∀ j w i (h : i ∈ X.nd.locs j w), X.nd.X i ≃
+  ptX : ∀ j w i (_ : i ∈ X.nd.locs j w), X.nd.X i ≃
     {ψ : heckeAlg B j w →ₐ[B.Oc j w] B.Oc j w //
       NCov.cls ψ = mx j w i ∧ NCov.W (heckeAlg B j w) (NCov.pt ψ) ≠ ⊥}
   ptX_hT : ∀ j w i (h : i ∈ X.nd.locs j w) (x : X.nd.X i) (v : PlE D.host) (k : ℕ)
@@ -364,11 +351,6 @@ structure NdSpec (Pl : PlSide D) (M : MtFam D) (C : NChoice D) (big : D.what₂.
   nbr_iq : ∀ i w (hw : w ∈ placesOver D.host.E (X.nd.l i)) (x : X.nd.O i),
     iq i (algebraMap (X.nd.O i) (FractionRing (X.nd.O i)) x) = (((nbr i w hw).toLL x : ↥(nbr i w hw).LL.1) : Loc.Om (X.nd.l i))
   bj : ∀ i, (D.what₂.MjLat (X.nd.j i)).gen → X.nd.Bj i
-  bj_span : ∀ i, Submodule.span (X.nd.O i) (Set.range (bj i)) = ⊤
-  bj_rel : ∀ i (s : D.what₂.O →+* X.nd.O i),
-    (∀ y, algebraMap (X.nd.O i) (FractionRing (X.nd.O i)) (s y) = X.nd.embK i (D.what₂.OtoLL y)) →
-    ∀ c : (D.what₂.MjLat (X.nd.j i)).gen → X.nd.O i, ∑ g, c g • bj i g = 0 ↔
-      c ∈ Submodule.span (X.nd.O i) ((fun r => s ∘ r) '' latRel (D.what₂.MjLat (X.nd.j i)))
 
 
 
@@ -468,17 +450,6 @@ structure TwOpen (D : D7) (C : NChoice D) (cf : CharFrame D) (tp : TupTied D cf 
   tw : TwistFrameLowIndexCompatibility D twF low
   exp : NExpTied D
   ch : ChoiceSide D cf mt exp C tp
-  eta_eq : ∀ x, chiD.etaT.χ x = cf.eta.1 x
-  ringSpec_normalisedCharacter_eq : ∀ (j : Fin D.R.m) x, (chiD.mu0 (j.1 + 1)).χ x = (cf.mu0 j).1 x
-  del_eq : ∀ s x, (chiD.del s).χ x = (cf.delAt (D.ntw.l s)).1 x
-  psi_eq : ∀ a x, (chiD.psi a).χ x = (tp.psi (D.nd.w a)).1 x
-  etaT_link : ∀ (w : PlE D.host) (α : ℂ), chiD.etaT.At w α →
-    D.naut.frobEig (D.naut.locG D.naut.etaT w) = {α⁻¹}
-  muC_link : ∀ i : D.nd.Loc, ∀ᶠ w in Filter.cofinite, ∀ α : ℂ,
-    (chiD.mu0 (D.nd.j i) * chiD.del (D.ntw.twOf i) * chiD.psi i).At w α →
-    D.naut.frobEig (D.naut.locG (D.naut.muC i) w) = {α⁻¹}
-  iCq_embO : ∀ s (x : ↥D.LL0), twF.iCq s (chiD.embO s true x) = D.what₂.embLL (x : D.what₂.LL)
-  embO_star : ∀ s (x y : ↥D.LL0), (y : D.what₂.LL) = star (x : D.what₂.LL) → chiD.embO s false x = chiD.embO s true y
   chrN : NCharTied D cf C tp
   chrGal : NGalChrTied D cf C tp
 

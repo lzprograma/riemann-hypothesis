@@ -3,56 +3,7 @@ module
 import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.IwaChol
 public import Mathlib.Analysis.Matrix.LDL
 public import GroundTheory.AutomorphicForms.RealGroupsPolar
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 public import Mathlib.Topology.Algebra.Star.Unitary
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -75,14 +26,8 @@ theorem mul_apply_self_of_isUpperTriangular {A B : Matrix n n 𝕜} (hA : A.IsUp
   · intro h; exact absurd (Finset.mem_univ i) h
 
 theorem isUpperTriangular_conjTranspose_iff {A : Matrix n n 𝕜} :
-    Aᴴ.IsUpperTriangular ↔ A.IsLowerTriangular := by
-  constructor
-  · intro h i j hij
-    have := h (i := j) (j := i) (OrderDual.toDual_lt_toDual.1 hij)
-    simpa [conjTranspose_apply] using this
-  · intro h i j hij
-    have := h (show OrderDual.toDual i < OrderDual.toDual j from hij)
-    simp [conjTranspose_apply, this]
+    Aᴴ.IsUpperTriangular ↔ A.IsLowerTriangular :=
+  CompanionTheory.D.gk.admitted.CholeskyDecomposition.isUpperTriangular_conjTranspose_iff
 
 theorem eq_one_of_mem_unitaryGroup_of_isUpperTriangular {t : Matrix n n 𝕜}
     (ht : t ∈ unitaryGroup n 𝕜) (hu : t.IsUpperTriangular) (hpos : ∀ i, 0 < t i i) : t = 1 := by
@@ -118,46 +63,14 @@ section Existence
 variable [WellFoundedLT n] [LocallyFiniteOrderBot n]
 
 theorem exists_isUpperTriangular_conjTranspose_mul_self {S : Matrix n n 𝕜} (hS : S.PosDef) :
-    ∃ R : Matrix n n 𝕜, R.IsUpperTriangular ∧ Rᴴ * R = S := by
-  have hLi : (LDL.lowerInv hS).IsLowerTriangular := LDL.isLowerTriangular_lowerInv hS
-  have hL : (LDL.lower hS).IsLowerTriangular := blockTriangular_inv_of_blockTriangular hLi
-  have hD : (LDL.diag hS).PosDef := by
-    rw [LDL.diag_eq_lowerInv_conj]
-    exact hS.mul_mul_conjTranspose_same
-      (vecMul_injective_iff_isUnit.2 (isUnit_of_invertible (LDL.lowerInv hS)))
-  have hpos : ∀ i, 0 < LDL.diagEntries hS i := fun i => by
-    simpa [LDL.diag] using hD.diag_pos (i := i)
-  set d : n → ℝ := fun i => RCLike.re (LDL.diagEntries hS i)
-  have hd : ∀ i, LDL.diagEntries hS i = (d i : 𝕜) := fun i => by
-    obtain ⟨_, him⟩ := RCLike.pos_iff.1 (hpos i)
-    rw [← RCLike.re_add_im (LDL.diagEntries hS i), him]; simp [d]
-  have hd0 : ∀ i, 0 ≤ d i := fun i => (RCLike.pos_iff.1 (hpos i)).1.le
-  refine ⟨diagonal (fun i => (Real.sqrt (d i) : 𝕜)) * (LDL.lower hS)ᴴ,
-    (blockTriangular_diagonal _).mul (isUpperTriangular_conjTranspose_iff.2 hL), ?_⟩
-  have hsq : (diagonal (fun i => (Real.sqrt (d i) : 𝕜)))ᴴ * diagonal (fun i => (Real.sqrt (d i) : 𝕜))
-      = LDL.diag hS := by
-    rw [diagonal_conjTranspose, diagonal_mul_diagonal, LDL.diag]
-    congr 1; funext i
-    rw [hd i, Pi.star_apply, RCLike.star_def, RCLike.conj_ofReal, ← RCLike.ofReal_mul,
-      Real.mul_self_sqrt (hd0 i)]
-  rw [conjTranspose_mul, conjTranspose_conjTranspose]
-  calc LDL.lower hS * (diagonal fun i => (Real.sqrt (d i) : 𝕜))ᴴ *
-        (diagonal (fun i => (Real.sqrt (d i) : 𝕜)) * (LDL.lower hS)ᴴ)
-      = LDL.lower hS * ((diagonal fun i => (Real.sqrt (d i) : 𝕜))ᴴ *
-        diagonal (fun i => (Real.sqrt (d i) : 𝕜))) * (LDL.lower hS)ᴴ := by
-        simp only [Matrix.mul_assoc]
-    _ = S := by rw [hsq, LDL.lower_conj_diag]
+    ∃ R : Matrix n n 𝕜, R.IsUpperTriangular ∧ Rᴴ * R = S :=
+  CompanionTheory.D.gk.admitted.CholeskyDecomposition.exists_isUpperTriangular_conjTranspose_mul_self hS
 
 end Existence
 
 section Existence2
 
 variable [WellFoundedLT n] [LocallyFiniteOrderBot n]
-
-theorem star_mul_self_norm_div {x : 𝕜} (hx : x ≠ 0) :
-    star ((‖x‖ : 𝕜) / x) * ((‖x‖ : 𝕜) / x) = 1 := by
-  rw [star_div₀, RCLike.star_def, RCLike.conj_ofReal, div_mul_div_comm, RCLike.conj_mul, ← sq]
-  exact div_self (pow_ne_zero 2 (by simpa using hx))
 
 theorem exists_cholesky {S : Matrix n n 𝕜} (hS : S.PosDef) :
     ∃ B : Matrix n n 𝕜, ∃ a : n → ℝ, B.IsUpperTriangular ∧ (∀ i, 0 < a i) ∧
@@ -441,14 +354,5 @@ theorem continuous_iwasawaK : Continuous (iwasawaK : GL n 𝕜 → unitaryGroup 
   exact ⟨(iwasawaK g, g), hUV ⟨hgU, hgV⟩, g, rfl⟩
 
 end Homeomorph2
-
-section Homeomorph3
-
-open scoped Matrix.Norms.L2Operator Topology
-open Filter Set
-
-variable [WellFoundedLT n] [LocallyFiniteOrderBot n]
-
-end Homeomorph3
 
 end GroundTheory.Automorphic

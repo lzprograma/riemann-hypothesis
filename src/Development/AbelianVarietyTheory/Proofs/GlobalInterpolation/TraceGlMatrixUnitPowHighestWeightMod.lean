@@ -162,7 +162,7 @@ theorem hw_pow_entries {R V : Type} [CommRing R] [AddCommGroup V] [Module R V] {
         have h2 := M.smul_mem (hwRowSum R μ k l) (hup i l hij)
         simpa using M.add_mem h1 h2
       · have h1 := key i j l (hij.trans h)
-        rw [if_neg hij.ne'] at h1
+        rw [ite_eq_right hij.ne'] at h1
         simpa using M.add_mem h1 (ih1 i j hij)
     · intro i
       rw [pow_succ', Matrix.mul_apply, LinearMap.sum_apply, hwRowSum_succ, Finset.sum_smul,
@@ -184,7 +184,7 @@ theorem hw_pow_entries {R V : Type} [CommRing R] [AddCommGroup V] [Module R V] {
         rw [e] at h3
         simpa using h3
       · have h1 := key i i l h
-        rw [if_pos rfl] at h1
+        rw [ite_eq_left rfl] at h1
         have h3 := M.sub_mem (M.add_mem h1 (ih2 i)) (ih2 l)
         have e : E i l ((E ^ k) l i v) - ((E ^ k) i i v - (E ^ k) l l v) +
             ((E ^ k) i i v - hwRowSum R μ k i • v) - ((E ^ k) l l v - hwRowSum R μ k l • v) =

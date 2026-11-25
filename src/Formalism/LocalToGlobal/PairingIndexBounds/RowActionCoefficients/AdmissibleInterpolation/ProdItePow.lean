@@ -35,20 +35,8 @@ theorem prod_sign {ι K : Type*} [CommRing K] (s : Finset ι) (ε : ι → K) (h
     rcases h a with h1 | h1 <;> rcases ih with h2 | h2 <;> rw [h1, h2] <;> simp
 
 theorem map_rowAct {R S : Type*} [CommRing R] [CommRing S] (f : R →+* S) {r n : ℕ} (g : Matrix (Fin r) (Fin r) R)
-    (P : MvPolynomial (Fin r × Fin n) R) : map f (rowAct R g P) = rowAct S (g.map f) (map f P) := by
-  induction P using MvPolynomial.induction_on with
-  | C a =>
-    rw [map_C, show (C a : MvPolynomial (Fin r × Fin n) R) = algebraMap R _ a from rfl, AlgHom.commutes,
-      show (C (f a) : MvPolynomial (Fin r × Fin n) S) = algebraMap S _ (f a) from rfl, AlgHom.commutes]
-    exact map_C f a
-  | add p q hp hq => simp only [map_add (f := _), hp, hq]
-  | mul_X p v hp =>
-    simp only [map_mul, hp, map_X]
-    congr 1
-    unfold rowAct
-    rw [aeval_X, aeval_X]
-
-    simp [map_sum, map_mul, map_C, map_X]
+    (P : MvPolynomial (Fin r × Fin n) R) : map f (rowAct R g P) = rowAct S (g.map f) (map f P) :=
+  by apply _root_.Formalism.GradedWeylDivisibility.ldtwist_map_rowAct
 
 theorem sum_C_mul {σ K : Type*} [CommRing K] (κ : K) (R0 : MvPolynomial σ K) (d : (σ →₀ ℕ) → K) :
     ∑ n ∈ (C κ * R0).support, d n * AddMonoidAlgebra.coeff (C κ * R0) n = κ * ∑ n ∈ R0.support, d n * AddMonoidAlgebra.coeff R0 n := by
@@ -399,7 +387,7 @@ theorem blkX (hS : XShape) (j : ℕ) (b : BX X) (i0 : X.Pl → ℕ)
   by_cases ho : IsOddPos b.2
   · obtain ⟨J, ε, hε, H⟩ := blk_odd Kc (p : Kc) (NJ X (j + 1)) (NJ_pos X (j + 1)) (muX X j (NJ X (j + 1)) b) (hanti _)
       (cX X j b) (hle _) (X.colHt b.1 (j + 1) b.2) hcol (i0 b.1) (szT X j b) (szT_le X j b)
-      (by funext k; unfold szT; rw [if_pos ho]) I hI
+      (by funext k; unfold szT; rw [ite_eq_left ho]) I hI
     refine ⟨J, ε, hε, fun Γ Γi Γ' Γ'i h1 h2 d0 y => ?_⟩
     have h3 : (Γ' * DgX X Kc j i0 b.1) *
         (Matrix.diagonal (fun a : Fin (NJ X (j + 1)) => if a.val < i0 b.1 then (p : Kc) else 1) * Γ'i) = 1 := by
@@ -407,11 +395,11 @@ theorem blkX (hS : XShape) (j : ℕ) (b : BX X) (i0 : X.Pl → ℕ)
     have h4 := H _ _ h3 (mulC (Γi.transpose * d0 * Γ'.transpose).transpose (mulC Γ y)) (mulC d0.transpose y)
       (by rw [z_odd Γ Γi Γ' Γ'i _ (mul_eq_one_comm.1 h1) (mul_eq_one_comm.1 h2), mulC_diag])
     unfold tgtN nuT xT
-    simp only [if_pos ho]
+    simp only [ite_eq_left ho]
     exact h4
   · obtain ⟨J, H⟩ := blk_even Kc (p : Kc) (p_ne Kc) (NJ X (j + 1)) (NJ_pos X (j + 1)) (muX X j (NJ X (j + 1)) b) (hanti _)
       (cX X j b) (hle _) (X.colHt b.1 (j + 1) b.2) hcol (i0 b.1) (szT X j b) (szT_le X j b)
-      (by funext k; unfold szT; rw [if_neg ho]) I hI
+      (by funext k; unfold szT; rw [ite_eq_right ho]) I hI
     refine ⟨J, 1, Or.inl rfl, fun Γ Γi Γ' Γ'i h1 h2 d0 y => ?_⟩
     have h4 := H (Γ' * DgX X Kc j i0 b.1) (mulC (Γ.transpose.transpose * d0 * Γ'i).transpose (mulC Γi.transpose y))
       (mulC d0.transpose y)
@@ -420,7 +408,7 @@ theorem blkX (hS : XShape) (j : ℕ) (b : BX X) (i0 : X.Pl → ℕ)
         unfold DgX
         rw [mulC_diag])
     unfold tgtN nuT xT
-    simp only [if_neg ho, one_mul]
+    simp only [ite_eq_right ho, one_mul]
     exact h4
 
 end BlkX

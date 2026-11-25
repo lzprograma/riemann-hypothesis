@@ -83,6 +83,7 @@ import Mathlib.Topology.Algebra.Group.Units
 import Mathlib.Topology.Compactness.Paracompact
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.Linter.Style
+import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AbsPowValEqZpow
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFinsetIntegral, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.GenValAddSegL, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CardSubspacesContainingRangeQVandermonde, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumIntegralIndicatorCosetsKernelSubspaces, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumIntegralIndicatorCosetsKernelSubspacesStatement, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumIntegralIndicatorCosetsSubspacesContaining, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumIntegralIndicatorCosetsSubspacesContainingStatement, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeckeIdentityIntegral, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.InSuppMulLeft, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OmTwoTorusLeft, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CardParahoricDoubleCosetRepsInvEq, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumEqGenVal, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumNegIndic, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CardFilterParahoricCosetsEqSchurCount, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CardFilterParahoricCosetsEqSchurCountStatement, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ParahoricHeckeSumTermAtCoset, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumRepsDatumEq, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LowerBlockParameterTransferInvariantPairing
@@ -103,19 +104,7 @@ variable (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 
 theorem absPow_eq_zpow (s : ℂ) (x : kˣ) :
     (absPow k s x : ℂ) = ((resCard k : ℂ) ^ (-s)) ^ (SmGL.ord k x : ℤ) := by
-  have hq : (0 : ℝ) < (resCard k : ℝ) := by
-    unfold resCard
-    exact_mod_cast Nat.card_pos
-  have hq0 : (resCard k : ℂ) ≠ 0 := by exact_mod_cast hq.ne'
-  have hz : (resCard k : ℝ) ^ (-SmGL.ord k x) ≠ 0 := (zpow_pos hq _).ne'
-  unfold absPow
-  simp only [MonoidHom.coe_toHomUnits, MonoidHom.coe_mk, OneHom.coe_mk]
-  rw [GlobalTheory.LGrp.nabs_eq_zpow, Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.2 hz),
-    Complex.cpow_def_of_ne_zero hq0, ← Complex.exp_int_mul, ← Complex.ofReal_log (zpow_pos hq _).le,
-    Real.log_zpow, ← Complex.ofReal_natCast, ← Complex.ofReal_log hq.le]
-  push_cast
-  congr 1
-  ring
+  apply _root_.GlobalTheory.TotDisjUnlinked.absPow_val_eq_zpow <;> assumption
 
 end GlobalTheory.MellinPoly
 end -- clump:auto
@@ -171,7 +160,7 @@ theorem genVal_add_segL : ∀ (k : Type) [Field k] [ValuativeRel k] [Topological
     simp only [hF, genVal, esymm_eq_zero_of_lt _ (hBc ▸ hj), mul_zero]
   have hFk : ∀ j, n₀ < j → F j = 0 := by
     intro j hj
-    simp only [hF, if_neg (show ¬ j ≤ n₀ by omega), zero_mul]
+    simp only [hF, ite_eq_right (show ¬ j ≤ n₀ by omega), zero_mul]
   have hR : ∑ j ∈ Finset.range (N + 1), F j = ∑ j ∈ Finset.range (n₀ + 1), F j := by
     rw [Finset.sum_subset (Finset.range_mono (show N + 1 ≤ N + n₀ + 1 by omega))
         (fun j _ hn => hFa j (by simp at hn; omega)),
@@ -181,7 +170,7 @@ theorem genVal_add_segL : ∀ (k : Type) [Field k] [ValuativeRel k] [Topological
   refine Finset.sum_congr rfl fun j hj => ?_
   have hjk : j ≤ n₀ := Nat.lt_succ_iff.1 (Finset.mem_range.1 hj)
   rw [esymm_map_mul_C, esymm_string Q s zS hs hsQ t]
-  simp only [hF, if_pos hjk, genVal]
+  simp only [hF, ite_eq_left hjk, genVal]
   by_cases hjN : j ≤ N
   · by_cases hat : n₀ - j ≤ t
     · have hsI : s ^ (r * n₀ + n₀ * (N + t - n₀)) * s ^ (-(((n₀ - j : ℕ) : ℤ) * ((t : ℤ) - ((n₀ - j : ℕ) : ℤ)))) =
@@ -262,7 +251,7 @@ theorem card_above_range_eq_sum : ∀ (κ : Type) [Field κ] [Finite κ] (U U' :
     Finset.sum_subset (Finset.range_mono (by omega)) fun n _ hn => by
       rw [Finset.mem_range] at hn
       simp only [hg]
-      rw [if_neg (by omega), zero_mul]
+      rw [ite_eq_right (by omega), zero_mul]
   have h3 : ∑ n ∈ Finset.range (Module.finrank κ U + 1), g n =
       ∑ n ∈ Finset.range (e + Module.finrank κ U + 1), g n :=
     Finset.sum_subset (Finset.range_mono (by omega)) fun n _ hn => by
@@ -273,7 +262,7 @@ theorem card_above_range_eq_sum : ∀ (κ : Type) [Field κ] [Finite κ] (U U' :
   refine Finset.sum_congr rfl fun n hn => ?_
   rw [Finset.mem_range] at hn
   simp only [hg]
-  rw [if_pos (by omega), show e + 1 - 1 - n = e - n by omega, show e - (e - n) = n by omega]
+  rw [ite_eq_left (by omega), show e + 1 - 1 - n = e - n by omega, show e - (e - n) = n by omega]
   ring
 
 end GlobalTheory.RangeKerCount
@@ -401,9 +390,9 @@ theorem int_mul_torus_iff {ϖ : kˣ} (hϖ : valuation k (ϖ : k) = uniformizer k
   rw [mul_diagonal, mul_diagonal]
   by_cases h : j ∈ s
   · have := div_mem_iff hϖ (M i j)
-    simp only [indic, h, Pi.neg_apply, if_true, _root_.zpow_neg, zpow_one, mul_one, map_apply, Matrix.zero_apply]
+    simp only [indic, h, Pi.neg_apply, ite_true, _root_.zpow_neg, zpow_one, mul_one, map_apply, Matrix.zero_apply]
     exact this
-  · simp only [indic, h, Pi.neg_apply, if_false, neg_zero, zpow_zero, mul_one, mul_zero, map_apply, Matrix.zero_apply, iff_true]
+  · simp only [indic, h, Pi.neg_apply, ite_false, neg_zero, zpow_zero, mul_one, mul_zero, map_apply, Matrix.zero_apply, iff_true]
     exact (M i j).2
 
 omit [DecidableEq D] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
@@ -522,7 +511,7 @@ theorem sum_intInd_cosets : ∀ (k : Type) [Field k] [ValuativeRel k] [Topologic
   constructor
   · intro hy
     refine Finset.sum_eq_zero fun g hgR => ?_
-    rw [ParHecke.intInd, if_neg]
+    rw [ParHecke.intInd, ite_eq_right]
     intro h
     apply hy
     have e : g = incG (κ ⟨g, hgR⟩) * g₀ * κ' ⟨g, hgR⟩ := hg ⟨g, hgR⟩
@@ -584,61 +573,12 @@ open MeasureTheory ValuativeRel Matrix GlobalTheory.PRep GlobalTheory.SplitWeil 
 
 namespace GlobalTheory.ParHecke.CosetSubL
 
-theorem exists_equiv_map_eq {F V : Type} [Field F] [AddCommGroup V]
-    [Module F V] [FiniteDimensional F V] (W W' : Submodule F V)
-    (h : Module.finrank F W = Module.finrank F W') :
-    ∃ e : V ≃ₗ[F] V, W.map e.toLinearMap = W' := by
-  obtain ⟨U, hU⟩ := W.exists_isCompl
-  obtain ⟨U', hU'⟩ := W'.exists_isCompl
-  have h1 := Submodule.finrank_add_eq_of_isCompl hU
-  have h2 := Submodule.finrank_add_eq_of_isCompl hU'
-  have h3 : Module.finrank F U = Module.finrank F U' := by omega
-  let a : W ≃ₗ[F] W' := LinearEquiv.ofFinrankEq _ _ h
-  let b : U ≃ₗ[F] U' := LinearEquiv.ofFinrankEq _ _ h3
-  let e : V ≃ₗ[F] V := (Submodule.prodEquivOfIsCompl W U hU).symm ≪≫ₗ (a.prodCongr b) ≪≫ₗ
-    Submodule.prodEquivOfIsCompl W' U' hU'
-  have he : ∀ w : W, e w = a w := by
-    intro w
-    simp [e]
-  refine ⟨e, ?_⟩
-  apply le_antisymm
-  · rintro _ ⟨w, hw, rfl⟩
-    have := he ⟨w, hw⟩
-    change e w ∈ W'
-    simp only at this
-    rw [this]
-    exact (a ⟨w, hw⟩).2
-  · intro w hw
-    refine ⟨a.symm ⟨w, hw⟩, (a.symm ⟨w, hw⟩).2, ?_⟩
-    change e _ = w
-    rw [he]
-    simp
-
 theorem exists_gl_map_eq (O : Type) [CommRing O] [IsLocalRing O] (n : Type) [Fintype n] [DecidableEq n]
     (W W' : Submodule (IsLocalRing.ResidueField O) (n → IsLocalRing.ResidueField O))
     (h : Module.finrank (IsLocalRing.ResidueField O) W =
       Module.finrank (IsLocalRing.ResidueField O) W') :
     ∃ g : GL n O, W.map (g.1.map (IsLocalRing.residue O)).mulVecLin = W' := by
-  obtain ⟨e, he⟩ := exists_equiv_map_eq W W' h
-  let M : Matrix n n (IsLocalRing.ResidueField O) := LinearMap.toMatrix' e.toLinearMap
-  choose A hA using fun i j => IsLocalRing.residue_surjective (R := O) (M i j)
-  have hAM : (Matrix.of A).map (IsLocalRing.residue O) = M := by
-    ext i j
-    exact hA i j
-  have hM : M.det ≠ 0 := by
-    have : M.det = LinearMap.det e.toLinearMap := LinearMap.det_toMatrix' _
-    rw [this]
-    exact (LinearEquiv.isUnit_det' e).ne_zero
-  have hu : IsUnit (Matrix.of A).det := by
-    rw [← IsLocalRing.residue_ne_zero_iff_isUnit, RingHom.map_det]
-    change ((Matrix.of A).map (IsLocalRing.residue O)).det ≠ 0
-    rw [hAM]
-    exact hM
-  obtain ⟨g, hg⟩ := (Matrix.isUnit_iff_isUnit_det _).2 hu
-  refine ⟨g, ?_⟩
-  rw [hg, hAM, ← he]
-  congr 1
-  exact Matrix.toLin'_toMatrix' e.toLinearMap
+  apply _root_.GlobalTheory.ParHecke.CosetSub.exists_gl_map_eq <;> assumption
 
 theorem exists_range_eq (F : Type) [Field F] (n : Type) [Fintype n] [DecidableEq n] (U : Submodule F (n → F)) :
     ∃ M : Matrix n n F, LinearMap.range M.mulVecLin = U := by
@@ -652,12 +592,8 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 def projE (F : Type) [Field F] (s : Finset n) : Matrix n n F := diagonal fun i => if i ∈ s then 1 else 0
 
 theorem rank_projE (F : Type) [Field F] (s : Finset n) : (projE F s).rank = s.card := by
-  classical
-  rw [projE, rank_diagonal]
-  rw [Fintype.card_subtype]
-  congr 1
-  ext i
-  by_cases h : i ∈ s <;> simp [h]
+  intros
+  apply _root_.GlobalTheory.ParHecke.CosetSub.rank_projE <;> assumption
 
 abbrev red {a b : Type} (M : Matrix a b 𝒪[k]) : Matrix a b 𝓀[k] := M.map (IsLocalRing.residue 𝒪[k])
 
@@ -713,9 +649,9 @@ theorem torus_inv_mul_int_iff {ϖ : kˣ} (hϖ : valuation k (ϖ : k) = uniformiz
   rw [diagonal_mul, diagonal_mul]
   by_cases h : i ∈ s
   · have := inv_mul_mem_iff hϖ (M i j)
-    simp only [indic, h, Pi.neg_apply, if_true, _root_.zpow_neg, zpow_one, one_mul, map_apply, Matrix.zero_apply]
+    simp only [indic, h, Pi.neg_apply, ite_true, _root_.zpow_neg, zpow_one, one_mul, map_apply, Matrix.zero_apply]
     exact this
-  · simp only [indic, h, Pi.neg_apply, if_false, neg_zero, zpow_zero, one_mul, zero_mul, map_apply, Matrix.zero_apply, iff_true]
+  · simp only [indic, h, Pi.neg_apply, ite_false, neg_zero, zpow_zero, one_mul, zero_mul, map_apply, Matrix.zero_apply, iff_true]
     exact (M i j).2
 
 omit [DecidableEq n] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
@@ -730,19 +666,7 @@ theorem int_of_KO {g : GL n k} (hg : g ∈ KO k n) : ∀ i j, g.1 i j ∈ 𝒪[k
   exact (κ.1 i j).2
 
 theorem KO_of_int {g : GL n k} (hg : ∀ i j, g.1 i j ∈ 𝒪[k]) (hg' : ∀ i j, (g⁻¹).1 i j ∈ 𝒪[k]) : g ∈ KO k n := by
-  let A : Matrix n n 𝒪[k] := fun i j => ⟨_, hg i j⟩
-  let B : Matrix n n 𝒪[k] := fun i j => ⟨_, hg' i j⟩
-  have hA : inc A = g.1 := rfl
-  have hB : inc B = (g⁻¹).1 := rfl
-  have inj : Function.Injective (inc : Matrix n n 𝒪[k] → Matrix n n k) := map_injective Subtype.val_injective
-  have h1 : inc (1 : Matrix n n 𝒪[k]) = 1 := Matrix.map_one _ (map_zero _) (map_one _)
-  refine ⟨⟨A, B, inj ?_, inj ?_⟩, Units.ext hA⟩
-  · rw [h1, inc, Matrix.map_mul]
-    change g.1 * (g⁻¹).1 = 1
-    simp
-  · rw [h1, inc, Matrix.map_mul]
-    change (g⁻¹).1 * g.1 = 1
-    simp
+  apply _root_.GlobalTheory.ParHecke.CosetSub.KO_of_int <;> assumption
 
 theorem KO_mul_int_iff {A : Matrix n m k} {g : GL n k} (hg : g ∈ KO k n) :
     (∀ i j, (g.1 * A) i j ∈ 𝒪[k]) ↔ ∀ i j, A i j ∈ 𝒪[k] := by
@@ -847,7 +771,7 @@ theorem GlobalTheory.ParHecke.CosetSubL.sum_intInd_cosets_up : ∀ (k : Type) [F
   constructor
   · intro hy
     refine Finset.sum_eq_zero fun g hgR => ?_
-    rw [ParHecke.intInd, if_neg]
+    rw [ParHecke.intInd, ite_eq_right]
     intro h
     apply hy
     have hgi : ∀ i j, g.1 i j ∈ 𝒪[k] := by
@@ -1541,7 +1465,7 @@ theorem card_filter_eq : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalS
     fun j hj => by
       have hY : (c * j)⁻¹ ∈ parahoric k A D' := inv_mem (mul_mem hc hj)
       have h := (hRK.2 _ (inv_mem (lowerDiagonalBlockAsGL_mem_integralGeneralLinear hY))).exists
-      simp only [pick, dif_pos h]; exact h.choose_spec
+      simp only [pick, dite_eq_left h]; exact h.choose_spec
   have uniq : ∀ j ∈ parahoric k A D', ∀ g ∈ RK, g⁻¹ * ((lowerDiagonalBlockAsGL ((c * j)⁻¹))⁻¹ * T) ∈ KO k D' → pick j = g :=
     fun j hj g hg h => (hRK.2 _ (inv_mem (lowerDiagonalBlockAsGL_mem_integralGeneralLinear (inv_mem (mul_mem hc hj))))).unique (spec j hj) ⟨hg, h⟩
   apply Finset.card_nbij pick
@@ -1678,14 +1602,7 @@ theorem inSupp_mul_left {y : Matrix (A ⊕ D') (A ⊕ D) k} (hy : InSupp y) {u :
 omit [Fintype A] [DecidableEq A] [Fintype D] [DecidableEq D] in
 theorem torusElt_indic_int {ϖ : kˣ} (hϖ : valuation k (ϖ : k) = uniformizer k) (s : Finset D') :
     IsIntM (torusElt k D' ϖ (indic s)).val := by
-  have hlt : valuation k (ϖ : k) < 1 := hϖ ▸ uniformizer_lt_one
-  rw [val_torusElt]
-  intro i j
-  rw [diagonal_apply]; split_ifs
-  · show valuation k _ ≤ 1
-    rw [map_zpow₀]
-    exact zpow_le_one₀ (zero_lt_iff.2 (by simp)) hlt.le (by unfold indic; split_ifs <;> norm_num)
-  · exact zero_mem _
+  apply _root_.GlobalTheory.ParHeckeTarget.torus_int <;> assumption
 
 theorem inSupp_diag_mul {y : Matrix (A ⊕ D') (A ⊕ D) k} (hy : InSupp y) {t : Matrix D' D' k} (ht : IsIntM t) :
     InSupp ((fromBlocks (1 : Matrix A A k) 0 0 t : Matrix (A ⊕ D') (A ⊕ D') k) * y) ∧
@@ -1703,7 +1620,7 @@ open Classical in
 theorem coset_term : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (A D D' : Type) [Fintype A] [DecidableEq A] [Fintype D] [DecidableEq D] [Fintype D'] [DecidableEq D'] (ϖ : kˣ), valuation k (ϖ : k) = uniformizer k → ∀ (ξ : kˣ →* ℂˣ), IsTame ξ → ∀ (s : Finset D') (j : GL (A ⊕ D') k), j ∈ parahoric k A D' → ∀ d : kˣ, (d : k) = j.1.toBlocks₂₂.det → ∀ x : Matrix (A ⊕ D') (A ⊕ D) k, (InSupp (((j * mtor ϖ (indic s))⁻¹).1 * x) → ((ξ d * (ξ (GeneralLinearGroup.det j))⁻¹ : ℂˣ) : ℂ) * datum ξ (((j * mtor ϖ (indic s))⁻¹).1 * x) = datum ξ x) ∧ (¬ InSupp (((j * mtor ϖ (indic s))⁻¹).1 * x) → datum ξ (((j * mtor ϖ (indic s))⁻¹).1 * x) = 0) := by
   intro k _ _ _ _ A D D' _ _ _ _ _ _ ϖ hϖ ξ hξ s j hj d hd x
   set y := ((j * mtor ϖ (indic s))⁻¹).1 * x with hydef
-  refine ⟨fun hW => ?_, fun hW => by simp only [datum, dif_neg hW]⟩
+  refine ⟨fun hW => ?_, fun hW => by simp only [datum, dite_eq_right hW]⟩
   set T := torusElt k D' ϖ (indic s) with hT
   have hg0 : (mtor (A := A) ϖ (indic s)).val = fromBlocks (1 : Matrix A A k) 0 0 T.val := by
     rw [mtor_eq_dg, val_dg]
@@ -1728,7 +1645,7 @@ theorem coset_term : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace
     show valuation k (x.toBlocks₁₁.det - y.toBlocks₁₁.det * j.val.toBlocks₁₁.det) < 1
     rw [mul_comm (y.toBlocks₁₁.det)]
     exact hc
-  simp only [datum, dif_pos hs, dif_pos hW]
+  simp only [datum, dite_eq_left hs, dite_eq_left hW]
   rw [t1, t2, ← Units.val_mul]
   congr 1
   simp only [map_mul]
@@ -1771,7 +1688,7 @@ theorem sum_reps_datum_eq : ∀ (k : Type) [Field k] [ValuativeRel k] [Topologic
     Finset.sum_const, Finset.sum_const]
   by_cases hx : InSupp x
   · rw [GlobalTheory.T.card_filter_parahoric_cosets_eq_schur_count k A D D' ϖ hϖ s R d hR RK hRK x hx]
-  · have h0 : datum ξ x = 0 := by simp only [datum, dif_neg hx]
+  · have h0 : datum ξ x = 0 := by simp only [datum, dite_eq_right hx]
     simp [h0]
 
 end GlobalTheory.ParHeckeTarget

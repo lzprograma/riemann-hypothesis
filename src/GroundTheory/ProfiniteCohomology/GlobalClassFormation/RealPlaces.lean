@@ -81,8 +81,8 @@ theorem exists_brauerLocal_sub_globalCupClass_iChar_inl_eq_zero (x : cohomology 
     have hs := ha ⟨v, hv⟩
     simp only [decide_eq_true_eq] at hs
     rcases placeInv_inl_eq_zero_or_eq_half v (brauerLocal ι x (.inl v)) with h | h
-    · rw [if_neg (fun hneg => (hs.1 hneg) h), h]
-    · rw [if_pos (hs.2 (by rw [h]; exact QZ.mk_half_ne_zero)), h]
+    · rw [ite_eq_right (fun hneg => (hs.1 hneg) h), h]
+    · rw [ite_eq_left (hs.2 (by rw [h]; exact QZ.mk_half_ne_zero)), h]
   · have := subsingleton_cohomology_two_of_isComplex v (InfinitePlace.not_isReal_iff_isComplex.1 hv)
     exact Subsingleton.elim (α := cohomology (galUnitsZ v.Completion (AlgebraicClosure v.Completion)) 2) _ _
 

@@ -155,8 +155,7 @@ theorem _root_.GlobalTheory.HenQ.Regroup.fiber_split (E : Type) [Field E] [Numbe
     (hv : IsDedekindDomain.HeightOneSpectrum.under (NumberField.RingOfIntegers ℚ) v =
         IsDedekindDomain.HeightOneSpectrum.under (NumberField.RingOfIntegers ℚ) w)
     (hne : w' ≠ w) : v = w ∨ v = w' := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have h1 : w.asIdeal ≠ w'.asIdeal := fun he => hne (HeightOneSpectrum.ext he).symm
   have h2 : w.asIdeal ≠ v.asIdeal := fun he => hcon.1 (HeightOneSpectrum.ext he).symm
   have h3 : w'.asIdeal ≠ v.asIdeal := fun he => hcon.2 (HeightOneSpectrum.ext he).symm
@@ -218,14 +217,6 @@ theorem _root_.GlobalTheory.HenQ.Regroup.fiber_inert (E : Type) [Field E] [Numbe
   rw [Finset.sum_pair hne', hf] at hle
   rw [hf] at hww
   omega
-
-end GlobalTheory.HenQ.Regroup
-
-namespace GlobalTheory.HenQ.Regroup
-
-end GlobalTheory.HenQ.Regroup
-
-namespace GlobalTheory.HenQ.Regroup
 
 end GlobalTheory.HenQ.Regroup
 

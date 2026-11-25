@@ -112,7 +112,7 @@ theorem capEntry_frameAB (A B : Matrix (Fin n) (Fin n) ℂ) (hAB : A * B = 1) (E
   have h1 : capEntry (frameAB A B E) x a b = ∑ i, ∑ j, (A a i * B j b) • capEntry E x i j := by
     simp only [capEntry, frameAB, smul_add, Finset.sum_add_distrib]
     congr 1
-    simp only [smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     rw [← Finset.sum_smul]
     have : (∑ i, A a i * B i b) = if a = b then 1 else 0 := by
       rw [← Matrix.mul_apply, hAB, Matrix.one_apply]

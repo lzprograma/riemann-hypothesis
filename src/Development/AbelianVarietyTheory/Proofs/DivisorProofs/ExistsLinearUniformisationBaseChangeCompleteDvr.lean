@@ -112,12 +112,6 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
 
-section Ext
-
-variable {V : Type} [CommRing V] [IsDomain V] [IsDiscreteValuationRing V]
-
-end Ext
-
 section Move
 
 variable {R : Type} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
@@ -185,7 +179,6 @@ open scoped CategoryTheory.Obj
 open GlobalTheory.UPoinc Formalism.L2.Pj
 open GlobalTheory
 open Classical
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 

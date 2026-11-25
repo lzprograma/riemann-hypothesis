@@ -24,14 +24,10 @@ theorem TrdegBaseAlgebraic.proof : TrdegBaseAlgebraic.Statement := by
   have hAB : ∀ w ∈ A, w ∈ B := by
     intro w hw
     rw [hA] at hw
-    rw [hB]
-    induction hw using Algebra.adjoin_induction with
-    | mem w hw => exact Algebra.subset_adjoin hw
-    | algebraMap c =>
-      rw [IsScalarTower.algebraMap_apply F K Ω c]
-      exact Subalgebra.algebraMap_mem _ _
-    | add u v _ _ hu hv => exact Subalgebra.add_mem _ hu hv
-    | mul u v _ _ hu hv => exact Subalgebra.mul_mem _ hu hv
+    rw [hB, ← Subalgebra.mem_restrictScalars F]
+    refine Algebra.adjoin_le ?_ hw
+    rw [Subalgebra.coe_restrictScalars]
+    exact Algebra.subset_adjoin
 
   let i : A →+* B :=
     { toFun := fun a => ⟨a, hAB a a.2⟩

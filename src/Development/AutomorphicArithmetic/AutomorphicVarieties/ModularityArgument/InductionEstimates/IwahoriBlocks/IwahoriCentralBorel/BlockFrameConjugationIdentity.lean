@@ -54,8 +54,6 @@ open scoped TensorProduct Classical
 
 namespace UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.IwahoriBlocks
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 private lemma fixA_comb {K : Type} [Field K] [NumberField K] {n : ℕ} {κ : Measure (archCompact K n)}
     {e : archCompact K n → ℂ} (he : IdemA κ e) (hc : CompactSpace (archCompact K n))
     (ha : Continuous (arc1 : archCompact K n → G1 K n)) {f f' : G1 K n → ℂ} (hf : Continuous f)
@@ -86,7 +84,7 @@ private lemma block_frame_conjugation_identity {G H : Type} [Group G] [Group H] 
 
 private lemma lev_exists (K : Type) [Field K] [NumberField K] (n : ℕ) :
     ∃ U : ∀ w : Pl K, Subgroup (Gw n w), Lev U :=
-  ⟨fun w => GLnLocal.integralGL (w.adicCompletion K) n, fun w =>
+  ⟨fun w => GLnLocal.integralGL (w.adicCompletion K) n, fun _ =>
     ⟨⟨GLnLocal.isCompact_integralGL _ n, GLnLocal.isOpen_integralGL _ n⟩, le_rfl⟩⟩
 
 end UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.IwahoriBlocks

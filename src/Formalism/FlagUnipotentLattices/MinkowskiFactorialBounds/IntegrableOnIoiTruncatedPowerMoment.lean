@@ -4,57 +4,15 @@ import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.BlockMinorSumCou
 public import Formalism.FlagUnipotentLattices.UnipotentStabiliserCharacterisation
 public import Formalism.FormalDegreeBessel.StatementG
 public import Mathlib.Analysis.Fourier.FourierTransform
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.Fourier.Inversion
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.MeasureTheory.Constructions.HaarToSphere
 public import Mathlib.MeasureTheory.Measure.Lebesgue.VolumeOfBalls
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
 import Mathlib.Algebra.Group.ForwardDiff
@@ -71,7 +29,7 @@ lemma gl_cut_scale (x t : ℝ) : TruncationCutoff 3 x (π * t) = TruncationCutof
   by_cases ht : t = 0
   · simp [ht]
   · have hpt : π * t ≠ 0 := mul_ne_zero Real.pi_ne_zero ht
-    rw [if_neg hpt, if_neg ht, div_mul_eq_div_div]
+    rw [ite_eq_right hpt, ite_eq_right ht, div_mul_eq_div_div]
 
 lemma gl_fourier_eq (φ : ℂ → ℂ) (w : ℂ) :
     𝓕 φ w = ∫ c : ℂ, Complex.exp (2 * Complex.I *
@@ -118,14 +76,14 @@ theorem lemSSupBound_of (hE : Formalism.HermitianLatticeCounting.ExpansionTerms.
 
 lemma gl_cut_le {K L y : ℝ} (hK : 0 ≤ K) (hy : 0 < y) (h : y ≤ L) : y * TruncationCutoff K L y = y := by
   unfold TruncationCutoff
-  rw [if_neg hy.ne', min_eq_left, mul_one]
+  rw [ite_eq_right hy.ne', min_eq_left, mul_one]
   exact Real.one_le_rpow ((one_le_div hy).mpr h) hK
 
 lemma gl_cut_gt {K L y : ℝ} (hK : 0 ≤ K) (hL : 0 < L) (h : L < y) :
     y * TruncationCutoff K L y = L ^ K * y ^ (1 - K) := by
   have hy : 0 < y := hL.trans h
   unfold TruncationCutoff
-  rw [if_neg hy.ne', min_eq_right]
+  rw [ite_eq_right hy.ne', min_eq_right]
   · rw [Real.div_rpow hL.le hy.le, Real.rpow_sub hy, Real.rpow_one]
     ring
   · exact Real.rpow_le_one (div_nonneg hL.le hy.le) ((div_le_one hy).mpr h.le) hK
@@ -196,7 +154,7 @@ lemma gg_antidiag_det {R : Type*} [CommRing R] (t : R) (s : ℕ) :
         congr 1
         exact propext ⟨fun h => by omega, fun h => by omega⟩
       rw [this, ih]
-      simp only [Matrix.of_apply, Fin.val_zero, Fin.val_last, zero_add, if_true]
+      simp only [Matrix.of_apply, Fin.val_zero, Fin.val_last, zero_add, ite_true]
       have hc : (s + 1).choose 2 = s + s.choose 2 := by
         rw [Nat.choose_succ_succ' s 1, Nat.choose_one_right]
       rw [hc]
@@ -208,7 +166,7 @@ lemma gg_antidiag_det {R : Type*} [CommRing R] (t : R) (s : ℕ) :
         ext
         simp at h ⊢
         omega
-      simp only [Matrix.of_apply, this, if_false]
+      simp only [Matrix.of_apply, this, ite_false]
       ring
     · intro h; exact absurd (Finset.mem_univ _) h
 
@@ -263,7 +221,7 @@ theorem leading_minor_vanishes_off_block_ends : Formalism.HermitianLatticeCounti
   have hidx : (c.index ⟨c.sizeUpTo a, by omega⟩ : ℕ) = a :=
     gg_index_eq c _ a le_rfl (by simp; omega)
   simp only [Matrix.submatrix_apply, blockAntidiagonalMatrix]
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro ⟨-, h⟩
   rw [hidx] at h
   omega
@@ -288,7 +246,7 @@ theorem leading_minor_at_block_end : Formalism.HermitianLatticeCounting.Expansio
       · intro i j hi1 hi2 hj
         have hidx : (c.index i : ℕ) = p := gg_index_eq c i p hi1 (by omega)
         simp only [blockAntidiagonalMatrix]
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨h, -⟩
         have := c.sizeUpTo_index_le j
         rw [← h, hidx] at this
@@ -330,8 +288,7 @@ lemma gf_lower_sub {R : Type*} [CommRing R] {d : ℕ} {α β β' : Type*} [Finty
   rw [← e1]
   refine (Finset.sum_subset (Finset.subset_univ _) fun x _ hx => ?_).symm
   have hlt : ρ a < x := by
-    by_contra hle
-    push_neg at hle
+    by_contra! hle
     obtain ⟨b, hb⟩ := hdown a x hle
     exact hx (Finset.mem_image.mpr ⟨b, Finset.mem_univ _, hb⟩)
   rw [hl.2 _ _ hlt, zero_mul]
@@ -348,8 +305,7 @@ lemma gf_upper_sub {R : Type*} [CommRing R] {d : ℕ} {α β β' : Type*} [Finty
   rw [← e1]
   refine (Finset.sum_subset (Finset.subset_univ _) fun x _ hx => ?_).symm
   have hlt : ρ a < x := by
-    by_contra hle
-    push_neg at hle
+    by_contra! hle
     obtain ⟨b, hb⟩ := hdown a x hle
     exact hx (Finset.mem_image.mpr ⟨b, Finset.mem_univ _, hb⟩)
   rw [hu.2 _ _ hlt, mul_zero]
@@ -449,11 +405,11 @@ theorem mixed_minor_vanishing : Formalism.HermitianLatticeCounting.ExpansionTerm
         rw [Matrix.submatrix_apply, hlast, hκlast, Matrix.mul_apply, Finset.sum_eq_single j']
         · rw [hu.1, mul_one]
           unfold blockAntidiagonalMatrix
-          rw [if_pos]
+          rw [ite_eq_left]
           exact ⟨hj'.symm, by omega⟩
         · intro x _ hx
           unfold blockAntidiagonalMatrix
-          rw [if_neg, zero_mul]
+          rw [ite_eq_right, zero_mul]
           rintro ⟨_, h2⟩
           apply hx
           apply Fin.ext
@@ -587,7 +543,7 @@ theorem dual_vector_norm_sq : Formalism.HermitianLatticeCounting.ExpansionTerms.
     induction hx using Submodule.span_induction with
     | mem x hx =>
       obtain ⟨c, hc, rfl⟩ := hx
-      rw [hf, if_neg (fun hh => hc hh.1)]
+      rw [hf, ite_eq_right (fun hh => hc hh.1)]
     | zero => simp
     | add x y _ _ hx hy => simp [hx, hy]
     | smul a x _ hx => simp [hx]
@@ -607,7 +563,7 @@ theorem dual_vector_norm_sq : Formalism.HermitianLatticeCounting.ExpansionTerms.
   have e0o : h x0 om = 0 := by rw [hh, eo0, map_zero]
   have eof : h om (f' L) = 0 := hom L
   have efo : h (f' L) om = 0 := by rw [hh, eof, map_zero]
-  have eff : h (f' L) (f' L) = -(T' : ℂ) := by rw [hf, if_pos ⟨rfl, rfl⟩]
+  have eff : h (f' L) (f' L) = -(T' : ℂ) := by rw [hf, ite_eq_left ⟨rfl, rfl⟩]
   set x' : V := ∑ a, M.adjugate L a • y a with hx'
 
   have p1 : h x' (f' L) = M.det := by
@@ -625,13 +581,13 @@ theorem dual_vector_norm_sq : Formalism.HermitianLatticeCounting.ExpansionTerms.
 
   have n1 : h x' x' = M.adjugate L L * conj (M.adjugate L L) * -(T : ℂ) := by
     rw [hx', gi_sesq_sum, Finset.sum_eq_single L, Finset.sum_eq_single L]
-    · rw [hy, if_pos ⟨rfl, rfl⟩]
+    · rw [hy, ite_eq_left ⟨rfl, rfl⟩]
     · intro a _ ha
-      rw [hy, if_neg (fun hh => ha hh.1), mul_zero]
+      rw [hy, ite_eq_right (fun hh => ha hh.1), mul_zero]
     · simp
     · intro b _ hb
       refine Finset.sum_eq_zero fun a _ => ?_
-      rw [hy, if_neg (fun hh => hb hh.2), mul_zero]
+      rw [hy, ite_eq_right (fun hh => hb hh.2), mul_zero]
     · simp
   have n2 : h x' x' = al * conj al * -(T' : ℂ) + h om om := by
     rw [hx]
@@ -680,7 +636,7 @@ lemma gj_cols {m n : ℕ} (s : Matrix (Fin m) (Fin m) ℂ) (F : Matrix (Fin m) (
 
 lemma gj_fvec_apply (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (c : Fin (r + 1)) (hc : c.val < r)
     (i : Fin (2 * r + k + 1)) : fvec k r z c i = if i.val = c.val then 1 else 0 := by
-  simp only [fvec, dif_pos hc, bvec, eI, Pi.single_apply, Fin.ext_iff]
+  simp only [fvec, dite_eq_left hc, bvec, eI, Pi.single_apply, Fin.ext_iff]
 
 end GJ
 end Formalism.HermitianLatticeCounting.P
@@ -707,17 +663,6 @@ lemma gk_herm_smul_right {ι : Type*} [Fintype ι] (H : Matrix ι ι ℂ) (c : �
   simp only [herm, star_smul, smul_dotProduct, smul_eq_mul]
 
 end GK
-
-end Formalism.HermitianLatticeCounting.P
-
-namespace Formalism.HermitianLatticeCounting.P
-
-section GD
-open Formalism.HermitianLatticeCounting.ExpansionTerms
-open Finset Matrix Polynomial
-open scoped ComplexConjugate TensorProduct
-
-end GD
 
 end Formalism.HermitianLatticeCounting.P
 

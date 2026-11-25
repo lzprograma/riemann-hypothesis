@@ -1,5 +1,6 @@
 module
 
+import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ZetaEulerProducts.SummablePrimesRpow
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.DataInst
 public import Mathlib.Algebra.Order.Field.GeomSum
 import Mathlib.Algebra.Order.Star.Real
@@ -46,8 +47,7 @@ theorem exists_int_approx (x : F) (hx : p.valuation F x ≤ 1) :
   have hp0 : p.asIdeal ≠ ⊥ := p.ne_bot
   have htop : p.asIdeal ≠ ⊤ := p.isPrime.ne_top
   have hex : ∃ n : ℕ, (s : 𝓞 F) ∉ p.asIdeal ^ (n + 1) := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     apply hs0
     have hmem : (s : 𝓞 F) ∈ ⨅ i, p.asIdeal ^ i := by
       rw [Ideal.mem_iInf]
@@ -112,15 +112,9 @@ theorem card_res_le (L : Formalism.MainNotions.S.Loc.LocAt F E sig p) :
     intro w
     obtain ⟨y, rfl⟩ := IsLocalRing.residue_surjective w
     have hU : IsOpen {z : L.Fp | valuation L.Fp (z - (y : L.Fp)) < 1} := by
-      rw [isOpen_iff_mem_nhds]
-      intro z0 hz0
-      rw [IsValuativeTopology.mem_nhds_iff]
-      refine ⟨1, ?_⟩
-      rintro _ ⟨z, hz, rfl⟩
-      simp only [Set.mem_setOf_eq, Units.val_one] at hz hz0 ⊢
-      have : z0 + z - (y : L.Fp) = (z0 - y) + z := by ring
-      rw [this]
-      exact Valuation.map_add_lt _ hz0 hz
+      have hB : IsOpen {x : L.Fp | valuation L.Fp x < 1} := by
+        simpa only [Valuation.restrict_lt_one_iff] using (valuation L.Fp).isOpen_ball 1
+      exact hB.preimage (continuous_sub_right _)
     obtain ⟨x, hx⟩ := L.dense.exists_mem_open hU ⟨(y : L.Fp), by simp⟩
     simp only [Set.mem_setOf_eq] at hx
     have hxI : valuation L.Fp (L.ιF x) ≤ 1 := by
@@ -239,13 +233,7 @@ theorem etaP_pm {D : Formalism.BasicNotions.D7} (p : PlF D) : eta₃ p = 1 ∨ e
 
 theorem absNorm_two_le {F : Type} [Field F] [NumberField F] (p : HeightOneSpectrum (𝓞 F)) :
     2 ≤ Ideal.absNorm p.asIdeal := by
-  have h0 : Ideal.absNorm p.asIdeal ≠ 0 := by
-    rw [Ne, Ideal.absNorm_eq_zero_iff]
-    exact p.ne_bot
-  have h1 : Ideal.absNorm p.asIdeal ≠ 1 := by
-    rw [Ne, Ideal.absNorm_eq_one_iff]
-    exact p.isPrime.ne_top
-  omega
+  apply _root_.PositivityTheory.Lord.two_le_absNorm' <;> assumption
 
 theorem aPD_bounds {D : Formalism.BasicNotions.D7} (p : PlF D) (T : ℕ) (hk : 1 ≤ D.R.k) :
     Real.exp (-(4 * ((Ideal.absNorm p.asIdeal : ℕ) : ℝ)⁻¹ ^ D.R.k)) ≤ aPD p T ∧

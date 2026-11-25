@@ -80,8 +80,6 @@ def RecUnit (rc : ∀ n, Irr k n → WD h) : Prop :=
 
 end Local
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 variable {R : Ranks} {H : Host R} {what₂ : Rows.Data R} {N : NData R H what₂} {A : NAut N}
   {T : WDTie N A} (S : Reading T)
 

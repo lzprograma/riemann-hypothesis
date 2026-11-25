@@ -82,18 +82,4 @@ variable {Ω : Type} [NormedField Ω] [NormedAlgebra ℚ_[l] Ω]
 
 end Local
 
-section Place
-
-variable {F : Type} [Field F] [NumberField F] {Ω : Type} [NormedField Ω] [IsUltrametricDist Ω]
-
-end Place
-
-section Ext
-
-variable {F : Type} [Field F] [NumberField F] {l : ℕ} [Fact l.Prime]
-  {K : Type} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
-  [Algebra ℚ_[l] K] {Ω : Type} [NormedField Ω] [NormedAlgebra ℚ_[l] Ω]
-
-end Ext
-
 end GlobalTheory.LocalTraceSum

@@ -5,46 +5,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.Resolutio
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FunctorialPrincipalization
 public import Mathlib.CategoryTheory.Functor.OfSequence
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.SetTheory.ZFC.PSet
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -240,37 +201,16 @@ private theorem exists_coprodInitialIso_inl_comp_eq_subschemeι {Z W : Scheme.{u
     rw [Iso.trans_hom, ← Category.assoc, hunit, Category.id_comp, Iso.symm_hom]
   rw [← Category.assoc, h1, ← he0, ← Category.assoc, e0.inv_hom_id, Category.id_comp]
 
-private theorem exists_iso_ker_subscheme {W V : Scheme.{u}} (f : W ⟶ V)
-    [AlgebraicGeometry.IsClosedImmersion f] :
-    ∃ e : W ≅ (Scheme.Hom.ker f).subscheme,
-      e.hom ≫ (Scheme.Hom.ker f).subschemeι = f := by
-  have hci2 : AlgebraicGeometry.IsClosedImmersion (Scheme.Hom.ker f).subschemeι := inferInstance
-  have hk : Scheme.Hom.ker (Scheme.Hom.ker f).subschemeι = Scheme.Hom.ker f :=
-    Scheme.IdealSheafData.ker_subschemeι _
-  have hα : AlgebraicGeometry.IsClosedImmersion.lift (Scheme.Hom.ker f).subschemeι f
-      (le_of_eq hk) ≫ (Scheme.Hom.ker f).subschemeι = f :=
-    AlgebraicGeometry.IsClosedImmersion.lift_fac _ _ _
-  have hβ : AlgebraicGeometry.IsClosedImmersion.lift f (Scheme.Hom.ker f).subschemeι
-      (le_of_eq hk.symm) ≫ f = (Scheme.Hom.ker f).subschemeι :=
-    AlgebraicGeometry.IsClosedImmersion.lift_fac _ _ _
-  have hm1 : CategoryTheory.Mono f := inferInstance
-  have hm2 : CategoryTheory.Mono (Scheme.Hom.ker f).subschemeι := inferInstance
-  refine ⟨⟨AlgebraicGeometry.IsClosedImmersion.lift (Scheme.Hom.ker f).subschemeι f (le_of_eq hk),
-      AlgebraicGeometry.IsClosedImmersion.lift f (Scheme.Hom.ker f).subschemeι (le_of_eq hk.symm),
-      ?_, ?_⟩, hα⟩
-  · rw [← cancel_mono f, Category.assoc, hβ, hα, Category.id_comp]
-  · rw [← cancel_mono (Scheme.Hom.ker f).subschemeι, Category.assoc, hα, hβ, Category.id_comp]
-
 theorem exists_totalSpaceZeroIso :
     ∃ e : S.totalSpace 0 ≅ Y,
       (coprod.inl : S.strictTransform 0 ⟶ S.totalSpace 0) ≫ e.hom ≫
           (S.emb ≫ S.ambientBlowups.isoZero.inv) = S.strictTransformι 0 := by
   have := S.emb_closedImmersion
-  have hci : AlgebraicGeometry.IsClosedImmersion (S.emb ≫ S.ambientBlowups.isoZero.inv) :=
-    inferInstance
-  obtain ⟨e0, he0⟩ := exists_iso_ker_subscheme (S.emb ≫ S.ambientBlowups.isoZero.inv)
-  exact exists_coprodInitialIso_inl_comp_eq_subschemeι (Scheme.Hom.ker (S.emb ≫ S.ambientBlowups.isoZero.inv))
-    (S.emb ≫ S.ambientBlowups.isoZero.inv) e0 he0
+  exact exists_coprodInitialIso_inl_comp_eq_subschemeι
+    (Scheme.Hom.ker (S.emb ≫ S.ambientBlowups.isoZero.inv))
+    (S.emb ≫ S.ambientBlowups.isoZero.inv)
+    (asIso (S.emb ≫ S.ambientBlowups.isoZero.inv).toImage)
+    (Scheme.Hom.toImage_imageι _)
 
 def totalSpaceZeroIso : S.totalSpace 0 ≅ Y := S.exists_totalSpaceZeroIso.choose
 

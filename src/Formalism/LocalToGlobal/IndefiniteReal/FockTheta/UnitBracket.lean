@@ -11,8 +11,6 @@ open scoped ComplexOrder
 
 namespace Formalism.IndefR.Fock.Sk
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Abstract
 
 variable {m n : ℕ}

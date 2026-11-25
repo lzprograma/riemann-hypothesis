@@ -1,5 +1,7 @@
 module
 
+import Formalism.SharpRestriction.AdmissibleParameterJoins.SfromGLb
+import Formalism.SharpRestriction.CuspSpanNormBounds.ThresholdCubicInequalitySignPattern
 public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalBesselAndTopKernel
 public import Formalism.HermitianCurvature.StatementSz
 public import Formalism.HermitianLattices.HermitianLatticesProofs.MassTelescope
@@ -8,47 +10,8 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CorollaryAOf
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.MassRatioFormula
 public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
 public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.NcardPrimesOverOfSplitsCompl
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -57,8 +20,6 @@ noncomputable section
 namespace Formalism.MainNotions.BridgeLemma
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S NumberField IsDedekindDomain Finset
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem sza_finrank_host (D : D7) : Module.finrank ℚ D.host.E = 2 * D.R.f := by
   have h2 : Nat.card (D.host.E →+* ℂ) = Module.finrank ℚ D.host.E := by
@@ -89,11 +50,7 @@ theorem sza_card_Tau (D : D7) : Fintype.card D.what₂.Tau = D.R.f := by
   rw [← Nat.card_eq_fintype_card, Nat.card_congr D.eTau]
   exact (factCardPsi D.R D.host).1
 
-theorem sza_m_eq (D : D7) : 2 * D.R.rS + 2 = D.R.m := by
-  obtain ⟨j, hj⟩ := D.R.m_even
-  have h2 := D.R.two_le_m
-  unfold Formalism.BasicNotions.Ranks.rS
-  omega
+theorem sza_m_eq (D : D7) : 2 * D.R.rS + 2 = D.R.m := Formalism.MainNotions.two_rS_add_two D
 
 def szaMass (D : D7) (M : ℕ) : ℝ :=
   Formalism.HermitianLatticesTheory.mass (Formalism.HermitianLatticesTheory.massTelescope_form D.host.E M) (Formalism.HermitianLatticesTheory.massTelescope_lat D.host.E M)
@@ -124,20 +81,7 @@ theorem szaData_n (D : D7) (u : D.what₂.Word) : (szaData D u).n = D.R.r := by
   omega
 
 theorem sza_u_anti (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau) : StrictAnti (uS D u τ) := by
-  have step : ∀ (i : ℕ) (h : i + 1 < D.R.k),
-      uS D u τ ⟨i + 1, h⟩ < uS D u τ ⟨i, by omega⟩ := by
-    intro i h
-    have h1 := (D.hcW u τ).u_gt_v ⟨i, by omega⟩
-    have h2 := (D.hcW u τ).v_gt_u ⟨i, by omega⟩
-    unfold Formalism.MainNotions.S.uS
-    exact_mod_cast h2.trans h1
-  intro ⟨a, ha⟩ ⟨b, hb⟩ hab
-  simp only [Fin.mk_lt_mk] at hab
-  replace hab : a + 1 ≤ b := hab
-  revert hb
-  induction b, hab using Nat.le_induction with
-  | base => intro hb; exact step a hb
-  | succ n hn ih => intro hb; exact (step n hb).trans (ih (by omega))
+  apply _root_.Formalism.MainNotions.uS_dec <;> assumption
 
 theorem sza_vand_pos (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau) : 0 < vand (uS D u τ) := by
   unfold Formalism.MainNotions.S.vand
@@ -561,17 +505,7 @@ theorem family_level_ratio_bound {eps : ℝ} (Fm : FamP eps) (C0 Cg cb Cu cT CT 
   exact level_ratio_bound_mono (level_ratio_bound (Fm.D x i) C0 C1 hD hC0 ha' hb') hC2
 
 theorem sza_zeta (M : ℕ) (hM : 2 ≤ M) : (riemannZeta (M : ℂ)).re = ∑' n : ℕ, 1 / ((n : ℝ) + 1) ^ M := by
-  have h1 : 1 < ((M : ℂ)).re := by
-    rw [Complex.natCast_re]
-    exact_mod_cast (by omega : 1 < M)
-  rw [zeta_eq_tsum_one_div_nat_add_one_cpow h1]
-  have e : ∀ n : ℕ, (1 : ℂ) / ((n : ℂ) + 1) ^ (M : ℂ) = (((1 : ℝ) / ((n : ℝ) + 1) ^ M : ℝ) : ℂ) := by
-    intro n
-    rw [Complex.cpow_natCast]
-    push_cast
-    try ring
-  simp_rw [e]
-  rw [← Complex.ofReal_tsum, Complex.ofReal_re]
+  apply _root_.Formalism.MainNotions.J.zetaR_eq <;> assumption
 
 theorem sza_stMassL (D : D7) : UnitaryVolumeMass.stMassL D := by
   intro M hM

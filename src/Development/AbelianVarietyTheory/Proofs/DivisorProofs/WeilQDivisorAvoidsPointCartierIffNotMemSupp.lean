@@ -50,12 +50,9 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
 open GlobalTheory GlobalTheory.CechPic GlobalTheory.Cartier GlobalTheory.TopForm GlobalTheory.QCoh GlobalTheory.Discrepancy GlobalTheory.PairStep
 
-set_option autoImplicit false
-
 namespace GlobalTheory.PairStep
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace in
-set_option autoImplicit false in
 private lemma exists_coheight_one_generalization_not_unitAt {X : Scheme.{0}} [IsIntegral X]
     [IsLocallyNoetherian X] {z : X} {f : X.functionField} (hf : f ≠ 0)
     (hreg : _root_.GlobalTheory.Cartier.RegAt z f) (hnu : ¬ _root_.GlobalTheory.Cartier.UnitAt z f) :
@@ -112,7 +109,6 @@ private lemma exists_coheight_one_generalization_not_unitAt {X : Scheme.{0}} [Is
 
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace in
-set_option autoImplicit false in
 theorem _root_.GlobalTheory.PairStep.off_qWeil_iff_notMem_supp : ∀ (X : Scheme.{0}) [IsIntegral X]
     [IsLocallyNoetherian X] (D₀ : _root_.GlobalTheory.Cartier.CartierDiv X) (m : ℕ) (z : X),
     D₀.Eff → 0 < m →

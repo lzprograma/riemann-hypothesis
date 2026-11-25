@@ -5,8 +5,6 @@ import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights
 
 namespace RestTerms
@@ -59,7 +57,7 @@ theorem SchurSignCoefficient.proof (h : SchurPowerSumCoefficient.Statement) :
       simp only
       omega
     · intro b _ hb
-      rw [Finsupp.single_apply, if_neg (Ne.symm hb), pow_zero]
+      rw [Finsupp.single_apply, ite_eq_right (Ne.symm hb), pow_zero]
     · intro hn
       exact absurd (Finset.mem_univ _) hn
 

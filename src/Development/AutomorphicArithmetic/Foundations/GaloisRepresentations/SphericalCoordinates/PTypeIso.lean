@@ -2,46 +2,8 @@ module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
@@ -186,12 +148,12 @@ private noncomputable def ty0 (idx : InfinitePlace F' × Fin n) : F →+* ℂ :=
 
 private theorem cmType_apply_positive {idx : InfinitePlace F' × Fin n} (h : sS e w r v i₀ idx) (x : F) :
     ty0 e w r v i₀ idx x = idx.1.embedding (e x) := by
-  rw [ty0, if_pos h]
+  rw [ty0, ite_eq_left h]
   rfl
 
 private theorem cmType_apply_negative {idx : InfinitePlace F' × Fin n} (h : ¬ sS e w r v i₀ idx) (x : F) :
     ty0 e w r v i₀ idx x = (starRingEnd ℂ) (idx.1.embedding (e x)) := by
-  rw [ty0, if_neg h]
+  rw [ty0, ite_eq_right h]
   rfl
 
 private theorem cmType_infinitePlace (idx : InfinitePlace F' × Fin n) :
@@ -282,7 +244,7 @@ private theorem cmType_card_fiber (t₀ : F →+* ℂ) (hr : ∀ τ : F →+* �
           exact (cmType_at_place_iff e w r v i₀ hr hne idx).1 (by rw [h, hτ])
         · rintro rfl
           rw [hB, h0]
-      rw [hf, typeMult, if_pos h0, Finset.card_singleton]
+      rw [hf, typeMult, ite_eq_left h0, Finset.card_singleton]
     · have hf : (Finset.univ.filter fun idx => ty0 e w r v i₀ idx = τ) = ∅ := by
         ext idx
         simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.notMem_empty, iff_false]
@@ -294,7 +256,7 @@ private theorem cmType_card_fiber (t₀ : F →+* ℂ) (hr : ∀ τ : F →+* �
         intro h
         rw [h, hconj] at hτ
         exact hne hτ
-      rw [hf, typeMult, if_neg h0, if_neg h1, if_pos hτ]
+      rw [hf, typeMult, ite_eq_right h0, ite_eq_right h1, ite_eq_left hτ]
       simp
   · have hτ' : τ w = (starRingEnd ℂ) r := (hr τ).resolve_left hτ
     have h0 : τ ≠ t₀ := fun h => hτ (by rw [h, ht])
@@ -329,12 +291,12 @@ private theorem cmType_card_fiber (t₀ : F →+* ℂ) (hr : ∀ τ : F →+* �
     rw [hf]
     by_cases h1 : τ = ComplexEmbedding.conjugate t₀
     · have h2 : InfinitePlace.mk (τ.comp (e.symm : F' →+* F)) = v := by rw [h1, hpc]
-      rw [typeMult, if_neg h0, if_pos h1, h2, Finset.card_erase_of_mem (by simp)]
+      rw [typeMult, ite_eq_right h0, ite_eq_left h1, h2, Finset.card_erase_of_mem (by simp)]
       simp
     · have h2 : InfinitePlace.mk (τ.comp (e.symm : F' →+* F)) ≠ v := by
         intro h
         exact h1 (emb_sep e w r hr hne _ _ (by rw [h, hpc]) (by rw [hτ', hconj]))
-      rw [typeMult, if_neg h0, if_neg h1, if_neg hτ, Finset.erase_eq_of_notMem (by simp [h2])]
+      rw [typeMult, ite_eq_right h0, ite_eq_right h1, ite_eq_right hτ, Finset.erase_eq_of_notMem (by simp [h2])]
       simp
 
 end Count
@@ -371,17 +333,17 @@ theorem UpperTheory.Gal.W2.typeIso_of :
     rintro ⟨v', i⟩
     by_cases h1 : v' = v ∧ i = i₀ <;> by_cases h2 : v'.embedding (L.e (D.ω : D.F)) = D.ρc
     · have h3 : sS L.e (D.ω : D.F) D.ρc v i₀ (v', i) := ⟨fun _ => h2, fun _ => by rw [h1.1, h1.2]⟩
-      rw [if_pos h3, if_pos h1, sgnV, if_pos h2]
+      rw [ite_eq_left h3, ite_eq_left h1, sgnV, ite_eq_left h2]
       ring
     · have h3 : ¬ sS L.e (D.ω : D.F) D.ρc v i₀ (v', i) := fun h => h2 (h.1 (by rw [h1.1, h1.2]))
-      rw [if_neg h3, if_pos h1, sgnV, if_neg h2]
+      rw [ite_eq_right h3, ite_eq_left h1, sgnV, ite_eq_right h2]
       ring
     · have h3 : ¬ sS L.e (D.ω : D.F) D.ρc v i₀ (v', i) := fun h => h1 (by simpa using h.2 h2)
-      rw [if_neg h3, if_neg h1, sgnV, if_pos h2]
+      rw [ite_eq_right h3, ite_eq_right h1, sgnV, ite_eq_left h2]
       ring
     · have h3 : sS L.e (D.ω : D.F) D.ρc v i₀ (v', i) :=
         ⟨fun h => absurd (by simpa using h) h1, fun h => absurd h h2⟩
-      rw [if_pos h3, if_neg h1, sgnV, if_neg h2]
+      rw [ite_eq_left h3, ite_eq_right h1, sgnV, ite_eq_right h2]
       ring
   refine ⟨(LinearEquiv.curry ℝ ℂ (InfinitePlace G.F) (Fin G.n)).symm ≪≫ₗ R₁, fun x => ?_, fun c x => ?_⟩
   · rw [hR, hR, ← Matrix.mulVec_smul]
@@ -390,17 +352,17 @@ theorem UpperTheory.Gal.W2.typeIso_of :
     have h := hsign (E j)
     simp only [Pi.smul_apply, smul_eq_mul]
     by_cases hs : sS L.e (D.ω : D.F) D.ρc v i₀ (E j)
-    · rw [if_pos hs] at h
-      rw [if_pos hs, if_pos hs, h]
-    · rw [if_neg hs] at h
-      rw [if_neg hs, if_neg hs, h]
+    · rw [ite_eq_left hs] at h
+      rw [ite_eq_left hs, ite_eq_left hs, h]
+    · rw [ite_eq_right hs] at h
+      rw [ite_eq_right hs, ite_eq_right hs, h]
       simp
   · rw [hR, hR, Matrix.mulVec_mulVec, hD.2.1 c, ← Matrix.mulVec_mulVec]
     congr 1
     funext j
     rw [Matrix.mulVec_diagonal, ← hE j]
     by_cases hs : sS L.e (D.ω : D.F) D.ρc v i₀ (E j)
-    · rw [if_pos hs, if_pos hs, cmType_apply_positive L.e _ _ v i₀ hs]
+    · rw [ite_eq_left hs, ite_eq_left hs, cmType_apply_positive L.e _ _ v i₀ hs]
       simp
-    · rw [if_neg hs, if_neg hs, cmType_apply_negative L.e _ _ v i₀ hs]
+    · rw [ite_eq_right hs, ite_eq_right hs, cmType_apply_negative L.e _ _ v i₀ hs]
       simp

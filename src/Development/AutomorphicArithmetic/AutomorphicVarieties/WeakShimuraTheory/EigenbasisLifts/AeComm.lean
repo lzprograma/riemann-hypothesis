@@ -1,51 +1,8 @@
 module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.IsTanZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.TrivialOnInertiaOfUnr
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
 import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
@@ -184,7 +141,7 @@ theorem UpperTheory.V.Ws.Eb.adExt :
     if h : F.η γ = 1 then Loc.adGL ρ ⟨γ, h⟩ else Loc.adGL ρ ⟨γ * F.c, hker γ h⟩ * θ
   refine ⟨{ toFun := f, map_one' := ?_, map_mul' := ?_ }, ⟨?_, ?_⟩⟩
   · show f 1 = 1
-    simp only [f, dif_pos (map_one F.η)]
+    simp only [f, dite_eq_left (map_one F.η)]
     exact map_one (Loc.adGL ρ)
   · intro a b
     show f (a * b) = f a * f b
@@ -192,35 +149,35 @@ theorem UpperTheory.V.Ws.Eb.adExt :
     rcases Int.units_eq_one_or (F.η a) with ha | ha <;>
       rcases Int.units_eq_one_or (F.η b) with hb | hb
     · have h1 : F.η (a * b) = 1 := by rw [hab, ha, hb, one_mul]
-      simp only [f, dif_pos ha, dif_pos hb, dif_pos h1]
+      simp only [f, dite_eq_left ha, dite_eq_left hb, dite_eq_left h1]
       rw [← map_mul (Loc.adGL ρ)]
       exact hAd _ _ rfl
     · have hb' : F.η b ≠ 1 := by rw [hb]; exact hne
       have h1 : F.η (a * b) ≠ 1 := by rw [hab, ha, hb, one_mul]; exact hne
-      simp only [f, dif_pos ha, dif_neg hb', dif_neg h1]
+      simp only [f, dite_eq_left ha, dite_eq_right hb', dite_eq_right h1]
       rw [← mul_assoc, ← map_mul (Loc.adGL ρ)]
       congr 1
       exact hAd _ _ (by simp [mul_assoc])
     · have ha' : F.η a ≠ 1 := by rw [ha]; exact hne
       have h1 : F.η (a * b) ≠ 1 := by rw [hab, ha, hb, mul_one]; exact hne
-      simp only [f, dif_neg ha', dif_pos hb, dif_neg h1]
+      simp only [f, dite_eq_right ha', dite_eq_left hb, dite_eq_right h1]
       rw [mul_assoc (Loc.adGL ρ _) θ, hkey, ← mul_assoc, ← map_mul (Loc.adGL ρ)]
       congr 1
       exact hAd _ _ (by simp [hconjv, mul_assoc, hcc'])
     · have ha' : F.η a ≠ 1 := by rw [ha]; exact hne
       have hb' : F.η b ≠ 1 := by rw [hb]; exact hne
       have h1 : F.η (a * b) = 1 := by rw [hab, ha, hb]; exact Int.units_mul_self _
-      simp only [f, dif_neg ha', dif_neg hb', dif_pos h1]
+      simp only [f, dite_eq_right ha', dite_eq_right hb', dite_eq_left h1]
       rw [mul_assoc (Loc.adGL ρ _) θ, ← mul_assoc θ, hkey, mul_assoc (Loc.adGL ρ _) θ θ, hθθ,
         mul_one, ← map_mul (Loc.adGL ρ)]
       exact hAd _ _ (by simp [hconjv, mul_assoc, hcc, hcc'])
   · intro g X
     show f ↑g X = _
-    simp only [f, dif_pos (MonoidHom.mem_ker.mp g.2)]
+    simp only [f, dite_eq_left (MonoidHom.mem_ker.mp g.2)]
   · intro X
     show f F.c X = _
     have hn : ¬ F.η F.c = 1 := by rw [F.η_c]; exact hne
-    simp only [f, dif_neg hn]
+    simp only [f, dite_eq_right hn]
     rw [Module.End.mul_apply]
     have h1 : ∀ p, (⟨F.c * F.c, p⟩ : F.G₀) = 1 := fun p => Subtype.ext hcc
     rw [h1, map_one]

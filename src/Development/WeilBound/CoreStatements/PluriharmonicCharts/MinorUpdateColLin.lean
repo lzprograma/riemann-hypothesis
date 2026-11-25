@@ -4,52 +4,7 @@ public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GenericB
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockDiagValuationNormalization
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockDiagonalMinorVanishing
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.Valuation.LocalSubring
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -171,13 +126,13 @@ theorem exists_rows {k : Type} [Field k] (M : Matrix (Fin N) (Fin N) k) (hM : Is
           · show M r c * _ = 0
             rw [hM r c fun e' => hc (e'.trans e), zero_mul]
           · show _ * v' c = 0
-            simp only [v', if_neg e, mul_zero]
+            simp only [v', ite_eq_right e, mul_zero]
         have hr' : (M *ᵥ v) r ≠ 0 := by
           refine fun e => hr (Eq.trans (show ∑ c, M r c * v' c = ∑ c, M r c * v c from
             Finset.sum_congr rfl fun c _ => ?_) e)
           by_cases e : ((c : ℕ) < N - j ↔ (b : ℕ) < N - j)
           · show _ * v' c = _
-            simp only [v', if_pos e]
+            simp only [v', ite_eq_left e]
           · show M r c * _ = M r c * _
             rw [hM r c fun e' => e (e'.symm.trans hrb), zero_mul, zero_mul]
         have hup : ∀ a : Fin N, (a : ℕ) < n → Function.update ρ b r a = ρ a := fun a ha =>
@@ -212,14 +167,14 @@ theorem exists_rows {k : Type} [Field k] (M : Matrix (Fin N) (Fin N) k) (hM : Is
   obtain ⟨w, hw0, hw⟩ := Matrix.exists_mulVec_eq_zero_iff.2 h0
   let P : Fin N → Prop := fun a => a ≤ b ∧ ((a : ℕ) < N - j ↔ (b : ℕ) < N - j)
   let v : Fin N → k := fun a => if h : P a then w ⟨a, h⟩ else 0
-  have hv := H (b + 1) b.2 v (fun a ha => dif_neg fun h => by have : (a : ℕ) ≤ b := h.1; omega) fun a ha => by
+  have hv := H (b + 1) b.2 v (fun a ha => dite_eq_right fun h => by have : (a : ℕ) ≤ b := h.1; omega) fun a ha => by
     have e1 : (M *ᵥ v) (ρ a) = ∑ c : {c // P c}, M (ρ a) c * w c := by
       show ∑ c, M (ρ a) c * v c = _
       rw [← Finset.sum_filter_add_sum_filter_not Finset.univ P,
         Finset.sum_eq_zero (s := Finset.univ.filter fun c => ¬ P c) (fun c hc => by
-          rw [show v c = 0 from dif_neg (Finset.mem_filter.1 hc).2, mul_zero]), add_zero,
+          rw [show v c = 0 from dite_eq_right (Finset.mem_filter.1 hc).2, mul_zero]), add_zero,
         Finset.sum_subtype (p := P) _ (by simp)]
-      exact Finset.sum_congr rfl fun c _ => by rw [show v c = w c from dif_pos c.2]
+      exact Finset.sum_congr rfl fun c _ => by rw [show v c = w c from dite_eq_left c.2]
     rw [e1]
     by_cases e : ((a : ℕ) < N - j ↔ (b : ℕ) < N - j)
     · exact congrFun hw ⟨a, (by omega : (a : ℕ) ≤ b), e⟩
@@ -227,7 +182,7 @@ theorem exists_rows {k : Type} [Field k] (M : Matrix (Fin N) (Fin N) k) (hM : Is
         rw [hM _ _ fun e' => e ((hρ a).symm.trans (e'.trans c.2.2)), zero_mul]
   refine hw0 (funext fun c => ?_)
   have := congrFun hv c
-  rwa [show v c = w c from dif_pos c.2] at this
+  rwa [show v c = w c from dite_eq_left c.2] at this
 
 theorem exists_step_of_lt (hj : j ≤ N) {r c : Fin N} (h : c < r) (hs : ((r : ℕ) < N - j ↔ (c : ℕ) < N - j)) :
     ∃ i, IsProperStep N j i ∧ c ∈ stepCols N j i ∧ ∀ a ∈ stepCols N j i, a ≤ c := by
@@ -237,16 +192,16 @@ theorem exists_step_of_lt (hj : j ≤ N) {r c : Fin N} (h : c < r) (hs : ((r : �
   · have := hs.2 e
     refine ⟨⟨c + j, by omega⟩, ⟨by simp only; omega, by simp only; omega⟩, ?_, fun a ha => ?_⟩
     · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-      rw [if_neg (by omega)]; omega
+      rw [ite_eq_right (by omega)]; omega
     · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and] at ha
-      rw [if_neg (by omega)] at ha
+      rw [ite_eq_right (by omega)] at ha
       show (a : ℕ) ≤ c
       omega
   · refine ⟨⟨c - (N - j), by omega⟩, ⟨by simp only; omega, by simp only; omega⟩, ?_, fun a ha => ?_⟩
     · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-      rw [if_pos (by omega)]; omega
+      rw [ite_eq_left (by omega)]; omega
     · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and] at ha
-      rw [if_pos (by omega)] at ha
+      rw [ite_eq_left (by omega)] at ha
       show (a : ℕ) ≤ c
       omega
 

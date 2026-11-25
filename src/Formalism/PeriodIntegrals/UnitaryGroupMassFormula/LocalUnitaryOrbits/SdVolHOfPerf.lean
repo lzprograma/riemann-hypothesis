@@ -13,53 +13,13 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbi
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.TraceEqAdd
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.BasIntSmulMem
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.CondAllPf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.IsCompactSpanRange
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.LatCpt
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.LatStab
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.SelfDualMeasureSFinite
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -205,43 +165,6 @@ section TopWs
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   (v : HeightOneSpectrum (𝓞 F)) {n : ℕ}
 
-theorem sdc_exists_int_smul_mem (L : Submodule (𝓞 E) (Fin n → E))
-    (hL : Submodule.span E (L : Set (Fin n → E)) = ⊤) (x : Fin n → E) :
-    ∃ y : ℤ, y ≠ 0 ∧ y • x ∈ L := by
-  classical
-  have hx : x ∈ Submodule.span E (L : Set (Fin n → E)) := hL ▸ Submodule.mem_top
-  obtain ⟨m, f, g, rfl⟩ := Submodule.mem_span_set'.1 hx
-  obtain ⟨y, hy, hint⟩ := exists_integral_multiples ℤ ℚ (Finset.univ.image f)
-  refine ⟨y, hy, ?_⟩
-  rw [Finset.smul_sum]
-  refine Submodule.sum_mem _ fun i _ => ?_
-  have hi : IsIntegral ℤ (y • f i) := hint _ (Finset.mem_image_of_mem _ (Finset.mem_univ i))
-  convert L.smul_mem (⟨y • f i, hi⟩ : 𝓞 E) (g i).2 using 1
-  rw [← smul_assoc]
-  rfl
-
-theorem exists_int_smul_mem_all (L : Submodule (𝓞 E) (Fin n → E))
-    (hL : Submodule.span E (L : Set (Fin n → E)) = ⊤) {ι : Type} [Fintype ι] (w : ι → Fin n → E) :
-    ∃ y : ℤ, y ≠ 0 ∧ ∀ j, y • w j ∈ L := by
-  classical
-  choose y hy hw using fun j => sdc_exists_int_smul_mem L hL (w j)
-  refine ⟨∏ j, y j, Finset.prod_ne_zero_iff.2 fun j _ => hy j, fun j => ?_⟩
-  rw [← Finset.prod_erase_mul _ _ (Finset.mem_univ j), mul_smul]
-  exact zsmul_mem (hw j) _
-
-theorem ratV_single (i : Fin n) (e : E) :
-    ratV (F := F) (Fv F v) (Pi.single i e : Fin n → E) =
-      (Pi.single i (inclR (F := F) (Fv F v) e) : Fin n → Fv F v ⊗[F] E) := by
-  funext j
-  by_cases h : j = i
-  · subst h
-    simp [ratV]
-  · simp [ratV, Pi.single_eq_of_ne h]
-
-theorem ratV_mem_latLoc {Λ : Set (Fin n → E)} {x : Fin n → E} (hx : x ∈ Λ) :
-    ratV (F := F) (Fv F v) x ∈ latLoc (E := E) v Λ :=
-  Submodule.subset_span ⟨x, hx, rfl⟩
-
 theorem sdc_isOpen_latLoc (Λ : Set (Fin n → E))
     (hL : ∃ L : Submodule (𝓞 E) (Fin n → E), Submodule.IsFullLattice E L ∧ (L : Set (Fin n → E)) = Λ) :
     IsOpen (latLoc (E := E) v Λ : Set (Fin n → Fv F v ⊗[F] E)) := by
@@ -338,12 +261,12 @@ theorem hm_apply_ne {a : ℕ} (hinv : ∀ y, σ (σ y) = y) {k l i j : Fin a} (c
     (h1 : ¬(k = i ∧ l = j)) (h2 : ¬(l = i ∧ k = j)) :
     (hm σ v hinv k l c : Matrix (Fin a) (Fin a) (Fv F v ⊗[F] E)) i j = 0 := by
   show (Matrix.single k l c + Matrix.single l k (sigR (Fv F v) σ c)) i j = 0
-  rw [Matrix.add_apply, Matrix.single_apply, Matrix.single_apply, if_neg h1, if_neg h2, add_zero]
+  rw [Matrix.add_apply, Matrix.single_apply, Matrix.single_apply, ite_eq_right h1, ite_eq_right h2, add_zero]
 
 theorem hd_apply_ne {a : ℕ} {k i j : Fin a} (h : ¬(k = i ∧ k = j)) :
     (hd σ v k : Matrix (Fin a) (Fin a) (Fv F v ⊗[F] E)) i j = 0 := by
   show Matrix.single k k (1 : Fv F v ⊗[F] E) i j = 0
-  rw [Matrix.single_apply, if_neg h]
+  rw [Matrix.single_apply, ite_eq_right h]
 
 def hb {a : ℕ} (hinv : ∀ y, σ (σ y) = y) (β : Fin 2 → Fv F v ⊗[F] E) (p : Fin a × Fin a) : HermR (Fv F v) σ a :=
   if p.1 < p.2 then hm σ v hinv p.1 p.2 (β 0) else if p.2 < p.1 then hm σ v hinv p.2 p.1 (β 1) else hd σ v p.1
@@ -363,41 +286,41 @@ theorem hb_zero {a : ℕ} (hinv : ∀ y, σ (σ y) = y) (β : Fin 2 → Fv F v �
 theorem hermitian_basis_above_first {a : ℕ} (hinv : ∀ y, σ (σ y) = y) (β : Fin 2 → Fv F v ⊗[F] E) {i j : Fin a} (h : i < j) :
     (hb σ v hinv β (i, j) : Matrix (Fin a) (Fin a) (Fv F v ⊗[F] E)) i j = β 0 := by
   unfold hb
-  rw [if_pos h]
+  rw [ite_eq_left h]
   show (Matrix.single i j (β 0) + Matrix.single j i (sigR (Fv F v) σ (β 0))) i j = β 0
-  rw [Matrix.add_apply, Matrix.single_apply, Matrix.single_apply, if_pos ⟨rfl, rfl⟩,
-    if_neg (fun e => h.ne e.2), add_zero]
+  rw [Matrix.add_apply, Matrix.single_apply, Matrix.single_apply, ite_eq_left ⟨rfl, rfl⟩,
+    ite_eq_right (fun e => h.ne e.2), add_zero]
 
 theorem hermitian_basis_above_second {a : ℕ} (hinv : ∀ y, σ (σ y) = y) (β : Fin 2 → Fv F v ⊗[F] E) {i j : Fin a} (h : i < j) :
     (hb σ v hinv β (j, i) : Matrix (Fin a) (Fin a) (Fv F v ⊗[F] E)) i j = β 1 := by
   unfold hb
-  rw [if_neg (not_lt.2 h.le), if_pos h]
+  rw [ite_eq_right (not_lt.2 h.le), ite_eq_left h]
   show (Matrix.single i j (β 1) + Matrix.single j i (sigR (Fv F v) σ (β 1))) i j = β 1
-  rw [Matrix.add_apply, Matrix.single_apply, Matrix.single_apply, if_pos ⟨rfl, rfl⟩,
-    if_neg (fun e => h.ne e.2), add_zero]
+  rw [Matrix.add_apply, Matrix.single_apply, Matrix.single_apply, ite_eq_left ⟨rfl, rfl⟩,
+    ite_eq_right (fun e => h.ne e.2), add_zero]
 
 theorem hermitian_basis_below_first {a : ℕ} (hinv : ∀ y, σ (σ y) = y) (β : Fin 2 → Fv F v ⊗[F] E) {i j : Fin a} (h : j < i) :
     (hb σ v hinv β (i, j) : Matrix (Fin a) (Fin a) (Fv F v ⊗[F] E)) i j = sigR (Fv F v) σ (β 1) := by
   unfold hb
-  rw [if_neg (not_lt.2 h.le), if_pos h]
+  rw [ite_eq_right (not_lt.2 h.le), ite_eq_left h]
   show (Matrix.single j i (β 1) + Matrix.single i j (sigR (Fv F v) σ (β 1))) i j = sigR (Fv F v) σ (β 1)
-  rw [Matrix.add_apply, Matrix.single_apply, Matrix.single_apply, if_neg (fun e => h.ne e.1),
-    if_pos ⟨rfl, rfl⟩, zero_add]
+  rw [Matrix.add_apply, Matrix.single_apply, Matrix.single_apply, ite_eq_right (fun e => h.ne e.1),
+    ite_eq_left ⟨rfl, rfl⟩, zero_add]
 
 theorem hermitian_basis_below_second {a : ℕ} (hinv : ∀ y, σ (σ y) = y) (β : Fin 2 → Fv F v ⊗[F] E) {i j : Fin a} (h : j < i) :
     (hb σ v hinv β (j, i) : Matrix (Fin a) (Fin a) (Fv F v ⊗[F] E)) i j = sigR (Fv F v) σ (β 0) := by
   unfold hb
-  rw [if_pos h]
+  rw [ite_eq_left h]
   show (Matrix.single j i (β 0) + Matrix.single i j (sigR (Fv F v) σ (β 0))) i j = sigR (Fv F v) σ (β 0)
-  rw [Matrix.add_apply, Matrix.single_apply, Matrix.single_apply, if_neg (fun e => h.ne e.1),
-    if_pos ⟨rfl, rfl⟩, zero_add]
+  rw [Matrix.add_apply, Matrix.single_apply, Matrix.single_apply, ite_eq_right (fun e => h.ne e.1),
+    ite_eq_left ⟨rfl, rfl⟩, zero_add]
 
 theorem hb_eq {a : ℕ} (hinv : ∀ y, σ (σ y) = y) (β : Fin 2 → Fv F v ⊗[F] E) (i : Fin a) :
     (hb σ v hinv β (i, i) : Matrix (Fin a) (Fin a) (Fv F v ⊗[F] E)) i i = 1 := by
   unfold hb
-  rw [if_neg (lt_irrefl i), if_neg (lt_irrefl i)]
+  rw [ite_eq_right (lt_irrefl i), ite_eq_right (lt_irrefl i)]
   show Matrix.single i i (1 : Fv F v ⊗[F] E) i i = 1
-  rw [Matrix.single_apply, if_pos ⟨rfl, rfl⟩]
+  rw [Matrix.single_apply, ite_eq_left ⟨rfl, rfl⟩]
 
 theorem coe_sum_hb {a : ℕ} (hinv : ∀ y, σ (σ y) = y) (β : Fin 2 → Fv F v ⊗[F] E) (c : Fin a × Fin a → Fv F v)
     (i j : Fin a) :
@@ -595,12 +518,6 @@ theorem oEv_basis2 (hfin : Module.finrank F E = 2) : ∃ β : Fin 2 → Fv F v �
   rw [hfin] at h
   exact h
 
-theorem sigR_smulF (c : Fv F v) (x : Fv F v ⊗[F] E) : sigR (Fv F v) σ (c • x) = c • sigR (Fv F v) σ x := by
-  induction x using TensorProduct.induction_on with
-  | zero => rw [smul_zero, map_zero, smul_zero]
-  | tmul a b => simp [sigR, TensorProduct.smul_tmul']
-  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
-
 theorem hb_li {a : ℕ} (hinv : ∀ y, σ (σ y) = y) (β : Fin 2 → Fv F v ⊗[F] E) (hβ : LinearIndependent (Fv F v) β) :
     LinearIndependent (Fv F v) (hb σ v hinv β (a := a)) := by
   rw [Fintype.linearIndependent_iff]
@@ -661,7 +578,7 @@ theorem hb_mem {a : ℕ} (hcm : IsCMExt F E σ) (β : Fin 2 → Fv F v ⊗[F] E)
       simp [h, not_lt.2 h.le]
     · rw [sum_diag σ v hinv β _ i, hrT i]
       simp
-    · rw [sum_gt σ v hinv β _ h, ← hH i j, hd j i, Fin.sum_univ_two, map_add (f := _), sigR_smulF, sigR_smulF, add_comm]
+    · rw [sum_gt σ v hinv β _ h, ← hH i j, hd j i, Fin.sum_univ_two, map_add (f := _), LocMassOrdLat.sigR_smul, LocMassOrdLat.sigR_smul, add_comm]
       simp [h, not_lt.2 h.le]
   · rintro ⟨c, rfl⟩
     intro i j
@@ -673,7 +590,7 @@ theorem hb_mem {a : ℕ} (hcm : IsCMExt F E σ) (β : Fin 2 → Fv F v ⊗[F] E)
     · rw [sum_gt σ v hinv β _ h]
       have hm := b_sigR_mem v σ ((hβ ((c (j, i) : Fv F v) • β 0 + (c (i, j) : Fv F v) • β 1)).2
         ⟨![c (j, i), c (i, j)], by simp [Fin.sum_univ_two]⟩)
-      rwa [map_add, sigR_smulF, sigR_smulF, add_comm] at hm
+      rwa [map_add, LocMassOrdLat.sigR_smul, LocMassOrdLat.sigR_smul, add_comm] at hm
 
 theorem idxPiH_std (a : ℕ) (hS : StdHyp σ J ψ) : IdxPiH σ v a := by
   intro _ ϖ hϖ
@@ -691,7 +608,7 @@ end -- clump:auto
 -- ===== end clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.SigRSmulF =====
 
 -- ===== clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.SdVolWOfCond =====
--- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.SdVolWOfCond", "h": "module\n\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.LatCpt\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.ProdEta\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.TraceEqAdd\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.SelfDualMeasureSFinite\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.BHRSmulRight\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.BasIntSmulMem\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.IdxPiWStd\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.SdVolHOfPi\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.SigRSmulF\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.PairHermSmulRight\n\n"}
+-- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.SdVolWOfCond", "h": "module\n\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.LatCpt\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.LatStab\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.ProdEta\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.TraceEqAdd\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.SelfDualMeasureSFinite\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.BHRSmulRight\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.BasIntSmulMem\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.IdxPiWStd\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.SdVolHOfPi\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.SigRSmulF\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.PairHermSmulRight\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -717,45 +634,56 @@ theorem condV_of_all (h : CondAllF) : CondV σ J ψ v := by
   exact forall₂_congr fun s _ => by rw [mul_comm]
 
 attribute [local instance] LocMassOrdSF.isModTop_tens in
-private theorem fullLattice_of_isSDLoc (L : Submodule (𝓞 E) (Fin n → E))
-    (hL : Submodule.IsLattice E L) (hSD : IsSDLoc σ J v (L : Set (Fin n → E))) :
-    Submodule.IsFullLattice E L := by
+/-- An integral submodule spans the global vector space exactly when its localization
+at the chosen finite place is open. Neither finite generation nor self-duality is assumed. -/
+theorem span_eq_top_iff_isOpen_latLoc (L : Submodule (𝓞 E) (Fin n → E)) :
+    Submodule.span E (L : Set (Fin n → E)) = ⊤ ↔
+      IsOpen (latLoc (E := E) v (L : Set (Fin n → E)) : Set (Fin n → Fv F v ⊗[F] E)) := by
   classical
-  refine { toIsLattice := hL, span_eq_top := ?_ }
-  rw [eq_top_iff]
-  intro x _
-  by_contra hx
-  obtain ⟨φ, hφx, hφ⟩ := Submodule.exists_le_ker_of_notMem hx
-  let A := Fv F v ⊗[F] E
-  let ι : E →+* A := inclR (F := F) (Fv F v)
-  let f : (Fin n → A) →ₗ[A] A :=
-    ∑ i : Fin n, ι (φ (Pi.single i 1)) • LinearMap.proj i
-  have hf (y : Fin n → E) : f (ratV (F := F) (Fv F v) y) = ι (φ y) := by
-    simp only [f, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.proj_apply, ratV,
-      smul_eq_mul]
-    change (∑ i : Fin n, ι (φ (Pi.single i 1)) * ι (y i)) = _
-    simp_rw [← map_mul, ← map_sum]
-    congr 1
-    conv_rhs => rw [← Finset.univ_sum_single y, map_sum]
-    apply Finset.sum_congr rfl
-    intro i _
-    rw [mul_comm, ← smul_eq_mul, ← map_smul, ← Pi.single_smul', smul_eq_mul, mul_one]
-  let fF := f.restrictScalars (Fv F v)
-  let fO := fF.restrictScalars (v.adicCompletionIntegers F)
-  have hfL : latLoc (E := E) v (L : Set (Fin n → E)) ≤ LinearMap.ker fO := by
-    rw [latLoc, Submodule.span_le]
-    rintro _ ⟨y, hy, rfl⟩
-    change f (ratV (F := F) (Fv F v) y) = 0
-    rw [hf, LinearMap.mem_ker.mp (hφ (Submodule.subset_span hy)), map_zero]
-  have hOpen := LocMassOrdLat.isOpen_latLoc σ J v (L : Set (Fin n → E)) hSD (basLat_fg v L hL)
-  obtain ⟨t, ht, htx⟩ := LocMassOrdLat.exists_scale v (hOpen.mem_nhds (Submodule.zero_mem _))
-    (fun _ : Unit => ratV (F := F) (Fv F v) x)
-  have hz := LinearMap.mem_ker.mp (hfL (htx ()))
-  change fF (t • ratV (F := F) (Fv F v) x) = 0 at hz
-  rw [map_smul] at hz
-  change t • f (ratV (F := F) (Fv F v) x) = 0 at hz
-  rw [hf] at hz
-  exact ((map_ne_zero ι).2 hφx) ((smul_eq_zero.mp hz).resolve_left ht)
+  constructor
+  · exact MassDataLevelSSteps.LatTop.isOpen_latLoc v L
+  · intro hOpen
+    rw [eq_top_iff]
+    intro x _
+    by_contra hx
+    obtain ⟨φ, hφx, hφ⟩ := Submodule.exists_le_ker_of_notMem hx
+    let A := Fv F v ⊗[F] E
+    let ι : E →+* A := inclR (F := F) (Fv F v)
+    let f : (Fin n → A) →ₗ[A] A :=
+      ∑ i : Fin n, ι (φ (Pi.single i 1)) • LinearMap.proj i
+    have hf (y : Fin n → E) : f (ratV (F := F) (Fv F v) y) = ι (φ y) := by
+      simp only [f, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.proj_apply, ratV,
+        smul_eq_mul]
+      change (∑ i : Fin n, ι (φ (Pi.single i 1)) * ι (y i)) = _
+      simp_rw [← map_mul, ← map_sum]
+      congr 1
+      conv_rhs => rw [← Finset.univ_sum_single y, map_sum]
+      apply Finset.sum_congr rfl
+      intro i _
+      rw [mul_comm, ← smul_eq_mul, ← map_smul, ← Pi.single_smul', smul_eq_mul, mul_one]
+    let fF := f.restrictScalars (Fv F v)
+    let fO := fF.restrictScalars (v.adicCompletionIntegers F)
+    have hfL : latLoc (E := E) v (L : Set (Fin n → E)) ≤ LinearMap.ker fO := by
+      rw [latLoc, Submodule.span_le]
+      rintro _ ⟨y, hy, rfl⟩
+      change f (ratV (F := F) (Fv F v) y) = 0
+      rw [hf, LinearMap.mem_ker.mp (hφ (Submodule.subset_span hy)), map_zero]
+    obtain ⟨t, ht, htx⟩ := LocMassOrdLat.exists_scale v (hOpen.mem_nhds (Submodule.zero_mem _))
+      (fun _ : Unit => ratV (F := F) (Fv F v) x)
+    have hz := LinearMap.mem_ker.mp (hfL (htx ()))
+    change fF (t • ratV (F := F) (Fv F v) x) = 0 at hz
+    rw [map_smul] at hz
+    change t • f (ratV (F := F) (Fv F v) x) = 0 at hz
+    rw [hf] at hz
+    exact ((map_ne_zero ι).2 hφx) ((smul_eq_zero.mp hz).resolve_left ht)
+
+attribute [local instance] LocMassOrdSF.isModTop_tens in
+theorem fullLattice_of_isSDLoc (L : Submodule (𝓞 E) (Fin n → E))
+    (hL : Submodule.IsLattice E L) (hSD : IsSDLoc σ J v (L : Set (Fin n → E))) :
+    Submodule.IsFullLattice E L :=
+  { toIsLattice := hL
+    span_eq_top := (span_eq_top_iff_isOpen_latLoc v L).2
+      (LocMassOrdLat.isOpen_latLoc σ J v (L : Set (Fin n → E)) hSD (basLat_fg v L hL)) }
 
 theorem sdVolW_of_cond (a : ℕ) (hC : CondAllF) (hP : TrPerf σ J ψ v) : SdVolW σ J ψ v Λ a := by
   intro hS hLat hSD hU hμ

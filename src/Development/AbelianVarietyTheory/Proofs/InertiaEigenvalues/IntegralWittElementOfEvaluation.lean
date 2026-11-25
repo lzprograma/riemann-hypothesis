@@ -2,48 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinFlatRadiusIdealFacts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PowerSeries.Inverse
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.DiscreteValuationRing
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -84,7 +42,7 @@ theorem dec {a : ℕ} [NeZero a] (s : (Wq l a)⟦X⟧) :
     ext k
     rw [hl', coeff_C_mul, coeff_mk, ← hd]
   · right
-    push_neg at h
+    push Not at h
     let j := Nat.find h
     have hj : ¬ (l : Wq l a) ∣ coeff j s := Nat.find_spec h
     have hlt : ∀ i < j, (l : Wq l a) ∣ coeff i s := fun i hi => by
@@ -98,11 +56,11 @@ theorem dec {a : ℕ} [NeZero a] (s : (Wq l a)⟦X⟧) :
       rw [map_add (f := _), coeff_X_pow_mul', hl', coeff_C_mul]
       simp only [coeff_mk]
       by_cases hk : j ≤ k
-      · rw [if_pos hk, if_neg (not_lt.2 hk), mul_zero, add_zero, Nat.sub_add_cancel hk]
+      · rw [ite_eq_left hk, ite_eq_right (not_lt.2 hk), mul_zero, add_zero, Nat.sub_add_cancel hk]
       · have hk' : k < j := not_le.1 hk
-        rw [if_neg hk, if_pos hk', zero_add]
+        rw [ite_eq_right hk, ite_eq_left hk', zero_add]
         have hdk : (l : Wq l a) ∣ coeff k s := hlt k hk'
-        simp only [d, dif_pos hdk]
+        simp only [d, dite_eq_left hdk]
         exact hdk.choose_spec
 
 variable (bk : BK K)

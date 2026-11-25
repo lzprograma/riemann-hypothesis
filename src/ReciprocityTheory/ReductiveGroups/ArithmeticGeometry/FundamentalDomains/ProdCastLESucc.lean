@@ -66,7 +66,7 @@ lemma gram_u_eq {x : Frame X.Ψ r} (hx : x ∈ X.dom) (τ : X.Ψ) :
       rw [← hH.apply c a, uOf, gram_mul, uGu_lower _ (blk_det X hx τ) h', star_zero]
     · rw [uOf, gram_mul, uGu_lower _ (blk_det X hx τ) h']
 
-lemma dOf_real {x : Frame X.Ψ r} (_hx : x ∈ X.dom) (τ : X.Ψ) (k : Fin r) : (dOf X x τ k).im = 0 := by
+lemma dOf_real {x : Frame X.Ψ r} (τ : X.Ψ) (k : Fin r) : (dOf X x τ k).im = 0 := by
   have hH := gram_isHermitian τ.1 X.Gm_herm (mat x τ * uOf X x τ)
   exact Complex.conj_eq_iff_im.mp (hH.apply k k)
 
@@ -89,11 +89,10 @@ lemma sgn_dOf_pos {x : Frame X.Ψ r} (hx : x ∈ X.dom) (τ : X.Ψ) (k : Fin r) 
     0 < sgn X.p0 k * (dOf X x τ k).re := by
   have h1 := ((X.mem_dom_iff x).1 hx τ).2 k.castSucc
   have h2 := ((X.mem_dom_iff x).1 hx τ).2 k.succ
-  rw [dmin_succ X hx τ k, Complex.mul_re, dOf_real X hx τ k, mul_zero, sub_zero] at h2
+  rw [dmin_succ X hx τ k, Complex.mul_re, dOf_real X τ k, mul_zero, sub_zero] at h2
   rw [Fin.val_succ, psgn_succ] at h2
   rw [Fin.coe_castSucc] at h1
-  by_contra hneg
-  push_neg at hneg
+  by_contra! hneg
   nlinarith
 
 def sOf (x : Frame X.Ψ r) (τ : X.Ψ) (k : Fin r) : ℂ := ((Real.sqrt |(dOf X x τ k).re|)⁻¹ : ℝ)
@@ -135,7 +134,7 @@ lemma ortho_bOf {x : Frame X.Ψ r} (hx : x ∈ X.dom) : X.IsOrtho (rmul x (bOf X
   congr 1
   funext a
   have hd : dOf X x τ a = ((dOf X x τ a).re : ℂ) :=
-    Complex.ext (by simp) (by simp [dOf_real X hx τ a])
+    Complex.ext (by simp) (by simp [dOf_real X τ a])
   have hpos := sgn_dOf_pos X hx τ a
   have habs := abs_re_pos X hx τ a
   rw [hd]

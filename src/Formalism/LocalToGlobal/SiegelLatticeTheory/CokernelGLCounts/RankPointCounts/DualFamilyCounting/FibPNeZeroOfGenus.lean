@@ -11,6 +11,7 @@ import Formalism.HermitianLattices.HermitianLatticesProofs.GenusCovol
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.FibSEqSingleton
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.GmapEqSelfOfFix
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.LocFSubspace
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NondegenerateOnOrthCompl
 
 @[expose] public section
 
@@ -28,16 +29,7 @@ variable {K F V : Type} [Field K] [NumberField K] [StarRing K] [Field F] [Number
 
 theorem isLatIn_cut {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsFullLattice K Λ) (X : Submodule K V) :
     IsLatIn X (Λ ⊓ X.restrictScalars (𝓞 K)) := by
-  refine ⟨?_, le_antisymm (Submodule.span_le.mpr fun x hx => hx.2) fun x hx => ?_⟩
-  · have := isNoetherian_of_fg_of_noetherian _ hΛ.fg
-    exact Submodule.FG.of_le_of_isNoetherian (inf_le_left : Λ ⊓ X.restrictScalars (𝓞 K) ≤ Λ)
-  · obtain ⟨r, hr, hrx⟩ := StabilizerLattices.exists_smul_mem hΛ x
-    have h1 : r • x ∈ Λ ⊓ X.restrictScalars (𝓞 K) := ⟨hrx, (X.restrictScalars (𝓞 K)).smul_mem r hx⟩
-    have hr' : algebraMap (𝓞 K) K r ≠ 0 := by simpa using hr
-    have e : x = (algebraMap (𝓞 K) K r)⁻¹ • (r • x) := by
-      rw [← algebraMap_smul K r x, smul_smul, inv_mul_cancel₀ hr', one_smul]
-    rw [e]
-    exact Submodule.smul_mem _ _ (Submodule.subset_span h1)
+  apply _root_.Formalism.L2.SG.Pf.G9.cut_isLatIn <;> assumption
 
 theorem nondegenerate_of {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hnd : Nondeg h) :
     h.Nondegenerate := by

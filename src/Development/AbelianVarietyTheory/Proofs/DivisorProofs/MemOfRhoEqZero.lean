@@ -22,42 +22,6 @@ public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Normal
 public import Development.AbelianVarietyTheory.Definitions.Divisors.RealisedChainTorusEq
 public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.NormComparisonConstants
 public import Development.AbelianVarietyTheory.Definitions.Divisors.ReadsOnlyOmegaFree
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPsiTieOfValues
 import Development.AbelianVarietyTheory.Proofs.HeightProofs.MarkedIsometryHalf
@@ -76,7 +40,6 @@ import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbedding
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.WeightZeroSectionValueConjPoint
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
-import Mathlib.Tactic.Polynomial.Basic
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCoversOfHalves
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PrimeDvdAbsNormHalfDifferent
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAlgebraMapOfSigRFixed
@@ -198,13 +161,13 @@ theorem adjoint_comp_isometry : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
 theorem topL_mul {κ : Type} [CommRing κ] {n r : ℕ} (hrn : r ≤ n) (A : Matrix (Fin n) (Fin r) κ) (B : Matrix (Fin r) (Fin r) κ) :
     topL r (A * B) = topL r A * B := by
   ext i j
-  simp only [topL, Matrix.mul_apply, dif_pos (And.intro (lt_of_lt_of_le i.2 hrn) j.2), j.2, true_and,
+  simp only [topL, Matrix.mul_apply, dite_eq_left (And.intro (lt_of_lt_of_le i.2 hrn) j.2), j.2, true_and,
     lt_of_lt_of_le i.2 hrn, Fin.is_lt, dite_true]
 
 theorem topL_of {κ : Type} [Zero κ] {n r : ℕ} (hrn : r ≤ n) (A : Matrix (Fin n) (Fin r) κ) :
     topL r A = Matrix.of fun b a => A (Fin.castLE hrn b) a := by
   ext i j
-  simp only [topL, dif_pos (And.intro (lt_of_lt_of_le i.2 hrn) j.2), Matrix.of_apply]
+  simp only [topL, dite_eq_left (And.intro (lt_of_lt_of_le i.2 hrn) j.2), Matrix.of_apply]
   rfl
 
 theorem image_eq_range {α : Type} {n r : ℕ} (hrn : r ≤ n) (x : Fin n → α) :
@@ -241,7 +204,7 @@ theorem exists_const_eq_inv_char : ∀ (E : Type) [Field E] [NumberField E] [IsC
   let u : ∀ P : Pl E, (kP P)ˣ := fun P =>
     if h : IsUnit (topL (Dw.p + Dw.q) (Matrix.of fun b a => ρ P a (X₀ b))).det then h.unit else 1
   have hu : ∀ P ∈ Q, ((u P : (kP P)ˣ) : kP P) = (topL (Dw.p + Dw.q) (Matrix.of fun b a => ρ P a (X₀ b))).det :=
-    fun P hP => by simp only [u, dif_pos (hX₀u P hP), IsUnit.unit_spec]
+    fun P hP => by simp only [u, dite_eq_left (hX₀u P hP), IsUnit.unit_spec]
   refine ⟨u, fun x => ?_⟩
   split_ifs with h
   ·
@@ -315,7 +278,6 @@ open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G Reciproci
 open AlgebraicGeometry CategoryTheory Limits ReciprocityTheory.ChartRestriction.G.Semi
 open scoped TensorProduct Matrix
 open GlobalTheory.ShortMove GlobalTheory.ShortMoveIso GlobalTheory.TwistTie
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (V : HSp D) {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E} {Dw : Datum H}
   {l : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H} {Xo : Moduli Dw l} {c : Coeff l} {σ : c.F →+* ℂ}
@@ -422,7 +384,6 @@ section Value
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism Formalism.IndefR Formalism.IndefR.FWT Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.L2.Pj Formalism.IndefR.Datum
 open scoped TensorProduct Matrix
 open GlobalTheory.GeoLevel GlobalTheory.DatumInverseCharacter GlobalTheory.PinnedClassSum Formalism.L2.Host
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem exists_isometry_inGam {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E}
     {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {n : ℕ} (d : DeltaDat Xo c n) (hd : d.IsLev)
@@ -511,7 +472,6 @@ section Move
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism Formalism.IndefR Formalism.IndefR.FWT Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.L2.Pj Formalism.IndefR.Datum
 open scoped TensorProduct Matrix
 open GlobalTheory.GeoLevel GlobalTheory.DatumInverseCharacter GlobalTheory.PinnedClassSum Formalism.L2.Host
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E} {Dw : Datum H}
 
@@ -782,7 +742,7 @@ theorem mem_of_rho_eq_zero (hτ : ∀ t, τ (τ t) = t) {S U : Finset (Pl E)} (h
     rw [Ideal.prod_eq_iInf_of_pairwise_isCoprime fun x _ y _ h => HeightOneSpectrum.isCoprime_of_ne _ _ h]
     simp only [Submodule.mem_iInf]
     intro P hP
-    rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_one, τ.apply_symm_apply, map_sub, map_one, ht P (hSU hP), if_pos hP,
+    rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_one, τ.apply_symm_apply, map_sub, map_one, ht P (hSU hP), ite_eq_left hP,
       sub_self]
   have h3 := Ideal.mem_map_of_mem (τ : 𝓞 E →+* 𝓞 E) h2
   rw [show (τ : 𝓞 E →+* 𝓞 E) (τ (1 - τ.symm t)) = 1 - τ.symm t from hτ _] at h3
@@ -832,7 +792,6 @@ open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions F
 open Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.FWT Formalism.IndefR.Datum Formalism.IndefR.Lev
 open GlobalTheory.FormTies GlobalTheory.OnTies GlobalTheory.TraceClassRank
 open scoped TensorProduct Matrix
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.OnCmp GlobalTheory.BigOn GlobalTheory.RealIndexBound
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Datum Level Moduli Coeff)
 
@@ -1049,7 +1008,7 @@ theorem datum_eq_hat_free : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T
     obtain ⟨m, hm, h⟩ := isOfFinOrder_iff_pow_eq_one.1 this
     exact ⟨m, hm, by rw [← Units.val_pow_eq_pow_val, h, Units.val_one]⟩
   · refine GlobalTheory.CoverTransform.hatC_eq_datum _ _ _ _ _ _ _ d hd ph ψ xJ hpin x₀ _ φc (fun z => ?_) fun x hx b => ?_
-    · rw [hφ, ← hu z, omegaFree, if_pos, one_mul]
+    · rw [hφ, ← hu z, omegaFree, ite_eq_left, one_mul]
       · convert topDatum_congr Q ξR _ _ fun P hP => Matrix.ext fun b a => ?_
         rw [Matrix.of_apply, Matrix.of_apply, map_add (f := _), rho_eq_zero T.Q.H.bar ρ hs (hQI P hP) hbb (hpmem _), zero_add, map_nsmul,
           AddMonoidHom.nsmul_apply]
@@ -1060,7 +1019,7 @@ theorem datum_eq_hat_free : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T
     · rw [hφ, omegaFree] at hx
       have h1 : ∀ P ∈ R.Pg, (Matrix.of fun b a => ρ P a (x b)) = y₀ P := by
         by_contra h
-        exact hx (by rw [if_neg h, zero_mul])
+        exact hx (by rw [ite_eq_right h, zero_mul])
       rw [Mfr, hMb]
       refine mem_of_rho_eq_zero T.Q.H.bar ρ hs hbb Finset.subset_union_left hk0 _ fun P hP a => ?_
       rw [map_sub, sub_eq_zero]

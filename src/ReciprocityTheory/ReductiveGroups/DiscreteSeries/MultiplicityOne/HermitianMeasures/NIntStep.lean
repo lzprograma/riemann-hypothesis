@@ -78,24 +78,24 @@ theorem nh_iota_lst_row (n' : Mat k r') (q : Fin (2 * (1 + r') + k + 1)) :
     ιLev k 1 r' n' (nhLst k r') q = if q = nhLst k r' then 1 else 0 := by
   unfold ιLev
   have h : ¬ (1 ≤ (nhLst k r').val ∧ (nhLst k r').val < 2 * r' + k + 1 + 1) := by simp [nhLst]; omega
-  rw [dif_neg h]
+  rw [dite_eq_right h]
   by_cases hq : q = nhLst k r'
   · simp [hq]
-  · rw [if_neg (Ne.symm hq), if_neg hq]
+  · rw [ite_eq_right (Ne.symm hq), ite_eq_right hq]
 
 theorem nh_iota_sh (n' : Mat k r') (i j : Fin (2 * r' + k + 1)) :
     ιLev k 1 r' n' (nhSh k r' i) (nhSh k r' j) = n' i j := by
   unfold ιLev
   have hi : 1 ≤ (nhSh k r' i).val ∧ (nhSh k r' i).val < 2 * r' + k + 1 + 1 := by simp [nhSh]; omega
   have hj : 1 ≤ (nhSh k r' j).val ∧ (nhSh k r' j).val < 2 * r' + k + 1 + 1 := by simp [nhSh]; omega
-  rw [dif_pos hi, dif_pos hj]
+  rw [dite_eq_left hi, dite_eq_left hj]
   congr 1
 
 theorem nh_lift_sh (y : Fin (2 * r' + k + 1) → ℂ) (i : Fin (2 * r' + k + 1)) :
     liftVec k 1 r' y (nhSh k r' i) = y i := by
   unfold liftVec
   have hi : 1 ≤ (nhSh k r' i).val ∧ (nhSh k r' i).val < 2 * r' + k + 1 + 1 := by simp [nhSh]; omega
-  rw [dif_pos hi]
+  rw [dite_eq_left hi]
   congr 1
 
 theorem nh_lift_fst (y : Fin (2 * r' + k + 1) → ℂ) : liftVec k 1 r' y (nhFst k r') = 0 := by
@@ -104,17 +104,17 @@ theorem nh_lift_fst (y : Fin (2 * r' + k + 1) → ℂ) : liftVec k 1 r' y (nhFst
 theorem nh_row (x : HPar k r') (n' : Mat k r') (p q : Fin (2 * (1 + r') + k + 1)) (hp : p ≠ nhFst k r') :
     (heis0 k r' x * ιLev k 1 r' n') p q =
       ιLev k 1 r' n' p q + liftVec k 1 r' x.1 p * ιLev k 1 r' n' (nhLst k r') q := by
-  have he : e0 k r' p = 0 := by rw [e0_eq_single_nhFst, Pi.single_apply, if_neg hp]
+  have he : e0 k r' p = 0 := by rw [e0_eq_single_nhFst, Pi.single_apply, ite_eq_right hp]
   rw [heis0, Matrix.mul_apply]
   simp only [nh_heisG_apply, he, zero_mul, sub_zero, mul_zero, add_zero, add_mul, ite_mul, one_mul,
-    zero_mul, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true, mul_assoc]
+    zero_mul, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, ite_true, mul_assoc]
   rw [← Finset.mul_sum]
   simp [Finset.sum_ite_eq']
 
 theorem nh_corner (x : HPar k r') (n' : Mat k r') :
     (heis0 k r' x * ιLev k 1 r' n') (nhFst k r') (nhLst k r') = hb k r' x.1 x.2 := by
   rw [heis0, Matrix.mul_apply]
-  simp only [nh_iota_lst, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [nh_iota_lst, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [nh_heisG_apply, nh_herm_lst_lift, nh_lift_fst, e0_eq_single_nhFst]
   have : nhFst k r' ≠ nhLst k r' := by simp [nhFst, nhLst, Fin.ext_iff]; omega
   simp [this]
@@ -151,13 +151,13 @@ theorem nh_sh_ne_lst (i : Fin (2 * r' + k + 1)) : nhSh k r' i ≠ nhLst k r' := 
 
 theorem nh_entry_sh (x : HPar k r') (n' : Mat k r') (i j : Fin (2 * r' + k + 1)) :
     (heis0 k r' x * ιLev k 1 r' n') (nhSh k r' i) (nhSh k r' j) = n' i j := by
-  rw [nh_row k r' x n' _ _ (nh_sh_ne_fst k r' i), nh_iota_sh, nh_iota_lst_row, if_neg (nh_sh_ne_lst k r' j),
+  rw [nh_row k r' x n' _ _ (nh_sh_ne_fst k r' i), nh_iota_sh, nh_iota_lst_row, ite_eq_right (nh_sh_ne_lst k r' j),
     mul_zero, add_zero]
 
 theorem nh_entry_col (x : HPar k r') (n' : Mat k r') (i : Fin (2 * r' + k + 1)) :
     (heis0 k r' x * ιLev k 1 r' n') (nhSh k r' i) (nhLst k r') = x.1 i := by
-  rw [nh_row k r' x n' _ _ (nh_sh_ne_fst k r' i), nh_iota_lst, if_neg (nh_sh_ne_lst k r' i), nh_iota_lst_row,
-    if_pos rfl, mul_one, zero_add, nh_lift_sh]
+  rw [nh_row k r' x n' _ _ (nh_sh_ne_fst k r' i), nh_iota_lst, ite_eq_right (nh_sh_ne_lst k r' i), nh_iota_lst_row,
+    ite_eq_left rfl, mul_one, zero_add, nh_lift_sh]
 
 theorem nh_gN_sq {a b : ℕ} (M : Mat a b) : gN M ^ 2 = ∑ p, ∑ q, Complex.normSq (M p q) := by
   rw [gN]
@@ -171,8 +171,8 @@ theorem nh_hb_normSq (y : Fin (2 * r' + k + 1) → ℂ) (s : ℝ) : s ^ 2 ≤ Co
 theorem nh_cont_lift : Continuous (fun y : Fin (2 * r' + k + 1) → ℂ => liftVec k 1 r' y) := by
   refine continuous_pi fun p => ?_
   by_cases hp : 1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1
-  · simp only [liftVec, dif_pos hp]; exact continuous_apply _
-  · simp only [liftVec, dif_neg hp]; exact continuous_const
+  · simp only [liftVec, dite_eq_left hp]; exact continuous_apply _
+  · simp only [liftVec, dite_eq_right hp]; exact continuous_const
 
 theorem nh_cont_herm {m : ℕ} (H : Matrix (Fin m) (Fin m) ℂ) (w : Fin m → ℂ) :
     Continuous (fun v : Fin m → ℂ => herm H w v) := by

@@ -133,7 +133,7 @@ theorem recSubMul : RecSubMulSt := by
     simpa [AddMonoidAlgebra.coeff_single] using h1
   show cutN T.C T.Ns j (Formalism.MainNotions.WeightAlgebra.wadd w w') σ H ≤ cutN T.C T.Ns j w σ F * cutN T.C T.Ns j w' σ G
   unfold cutN
-  rw [if_pos hj, if_pos hj, if_pos hj]
+  rw [ite_eq_left hj, ite_eq_left hj, ite_eq_left hj]
   unfold Core.Ns
   rw [hprod, wtA_wadd]
   exact supCMul _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ (goodEmb_goodOf _ σ) w.n_even w'.n_even

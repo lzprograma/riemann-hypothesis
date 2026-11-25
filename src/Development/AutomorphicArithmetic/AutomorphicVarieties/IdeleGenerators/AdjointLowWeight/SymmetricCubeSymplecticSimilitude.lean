@@ -2,43 +2,6 @@ module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.SlopeTestRemainingChoices
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -103,53 +66,9 @@ def toB {Γ : Type} [Group Γ] (χ : Γ →* c.Oˣ) : Γ →* (Qbar l)ˣ :=
 def toC {Γ : Type} [Group Γ] {c₁ : Coef l} (h : c.O ≤ c₁.O) (χ : Γ →* c.Oˣ) : Γ →* c₁.Oˣ :=
   (Units.map (inc h).toMonoidHom).comp χ
 
-structure Tw {D : Raw Ω c} (T₀ : Tower D) (k : ℕ) (δ : G ℚ Ω →* c.Oˣ) : Prop where
-  cont : AdicCont (maximalIdeal c.O) fun g => (δ g : c.O)
-  mul : ∀ g ∈ T₀.F.fixingSubgroup, δ g ^ 2 * (chiO ℚ Ω l c.O g ^ (k - 1) * D.ξ g) ^ 3 = D.th g
-  red : ∀ g ∈ T₀.F.fixingSubgroup, ∀ i : Fin 4, Raw.bar (chi D T₀.pr i) g = Raw.bar δ g * Raw.bar D.ξ g ^ (3 - (i : ℕ))
-  kill : ∀ g, cycZ ℚ Ω l g = 1 → D.rbar g = 1 → δ g = 1 ∧ D.ξ g = 1
-  wt : ∃ (U : Subgroup (G ℚ Ω)) (j : ℤ), IsOpen (U : Set (G ℚ Ω)) ∧ ∀ g ∈ U, δ g ^ 2 = chiO ℚ Ω l c.O g ^ j
-
-structure Mod (D : Raw Ω c) (θ : G ℚ Ω →* (Qbar l)ˣ) (k : ℕ) (g0 : G ℚ Ω) (ρ : G ℚ Ω →* GL (Fin 2) (Qbar l)) {c₁ : Coef l}
-    (h : c.O ≤ c₁.O) (ρ₁ : G ℚ Ω →* M2 c₁.O) (x : ValuationSubring Ω → c₁.O) : Prop where
-  iso : RepIso ρ (mapRep (algebraMap c₁.O (PadicAlgCl l)) ρ₁).toHomUnits
-  cont : ∀ i j, AdicCont (maximalIdeal c₁.O) fun g => ρ₁ g i j
-  red : ∀ g, ρ₁ g 0 0 - inc h (D.ξ g) ∈ maximalIdeal c₁.O ∧ ρ₁ g 1 1 - 1 ∈ maximalIdeal c₁.O ∧ ρ₁ g 0 1 ∈ maximalIdeal c₁.O
-  ne : ∃ g, ρ₁ g 1 0 ∉ maximalIdeal c₁.O
-  nrm : ρ₁ g0 0 1 = 0 ∧ ρ₁ g0 1 0 = 0
-  det : ∀ g, θ g = 1 → (ρ₁ g).det = inc h ((chiO ℚ Ω l c.O g ^ (k - 1) * D.ξ g : c.Oˣ) : c.O)
-  away : ∀ A : ValuationSubring Ω, ¬ A.valuation (l : Ω) < 1 → ∀ g ∈ Ine (F := ℚ) A, D.ξ g = 1 → θ g = 1 → ρ₁ g = 1
-  flag : ∀ A : ValuationSubring Ω, A.valuation (l : Ω) < 1 → ∀ s ∈ Dec (F := ℚ) A,
-    ρ₁ s 1 0 + ρ₁ s 1 1 * x A = (ρ₁ s 0 0 + ρ₁ s 0 1 * x A) * x A
-  ine : ∀ A : ValuationSubring Ω, A.valuation (l : Ω) < 1 → ∀ s ∈ Ine (F := ℚ) A,
-    ρ₁ s 0 0 + ρ₁ s 0 1 * x A = (chiO ℚ Ω l c₁.O s ^ (k - 1) : c₁.Oˣ) ∧ ρ₁ s 1 1 - x A * ρ₁ s 0 1 = 1
-
 def pd {D : Raw Ω c} (T : Tower D) {c₁ : Coef l} (h : c.O ≤ c₁.O) {u : c₁.O} (hu : 3 * u = 1) (δ : G ℚ Ω →* c.Oˣ)
     (ρ₁ : G ℚ Ω →* M2 c₁.O) (x : ValuationSubring Ω → c₁.O) : PD T.ι (G T.F Ω) c₁.O :=
   ⟨(rep hu (toC h δ) ρ₁).comp (resQ T.F), fun v => s3 u (low (x (T.pl v)))⟩
-
-structure Dat (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (l : ℕ) [Fact l.Prime] where
-  c : Coef l
-  D : Raw Ω c
-  T₀ : Tower D
-  good : D.Good
-  k : ℕ
-  three : 3 ≤ k
-  cong : k ≡ 1 [MOD l - 1]
-  δ : G ℚ Ω →* c.Oˣ
-  tw : Tw T₀ k δ
-  θ : G ℚ Ω →* (Qbar l)ˣ
-  ρ : G ℚ Ω →* GL (Fin 2) (Qbar l)
-  c₁ : Coef l
-  h : c.O ≤ c₁.O
-  ρ₁ : G ℚ Ω →* M2 c₁.O
-  x : ValuationSubring Ω → c₁.O
-  mod : Mod D θ k (resQ T₀.F T₀.g0) ρ h ρ₁ x
-  u : c₁.O
-  hu : 3 * u = 1
-
-abbrev Dat.Q (d : Dat Ω l) (T : Tower d.D) : PD T.ι (G T.F Ω) d.c₁.O := pd T d.h d.hu d.δ d.ρ₁ d.x
-
 def KillsN : Prop :=
   ∀ (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (l : ℕ) [Fact l.Prime] (c : Coef l) (D : Raw Ω c), Ctx3 D →
     ∃ N : ℕ, 0 < N ∧ ¬ l ∣ N ∧ KillsMu N D.ξ

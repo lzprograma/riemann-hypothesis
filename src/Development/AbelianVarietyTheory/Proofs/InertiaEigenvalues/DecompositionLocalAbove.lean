@@ -1,43 +1,6 @@
 module
 
 public import Formalism.SharpRestriction.LevelLetterCocycles.AdmissibleParameterJ
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -65,7 +28,7 @@ open AdmissibleParameterJ
 
 theorem JW_sub_JJ (up : Bool) (j : ℕ) (ρ : D.what₂.Tau) : JW D up j ρ ⊆ JJ D up j ρ := by
   intro q hq
-  cases up <;> simp only [JW, cloudT, lowT, JJ, Jp, Jm, reflS, Bool.false_eq_true, if_true, if_false,
+  cases up <;> simp only [JW, cloudT, lowT, JJ, Jp, Jm, reflS, Bool.false_eq_true, ite_true, ite_false,
     Set.mem_union, Set.mem_setOf_eq] at hq ⊢ <;> tauto
 
 theorem exists_finset_JW (up : Bool) (j : ℕ) (ρ : D.what₂.Tau) :
@@ -89,20 +52,20 @@ theorem exists_finset_JW (up : Bool) (j : ℕ) (ρ : D.what₂.Tau) :
   · refine ⟨(cl ∪ lw).image (AdmissibleParameterJ.refl D), Finset.card_image_le.trans hcard, ?_⟩
     intro q hq
     have hq' : AdmissibleParameterJ.refl D q ∈ cloudJ D j ρ ∪ lowJ D j ρ := by
-      simpa only [JW, cloudT, lowT, reflS, Bool.false_eq_true, if_false, Set.mem_union,
+      simpa only [JW, cloudT, lowT, reflS, Bool.false_eq_true, ite_false, Set.mem_union,
         Set.mem_setOf_eq] using hq
     refine Finset.mem_image.2 ⟨AdmissibleParameterJ.refl D q, hmem _ hq', ?_⟩
     simp only [AdmissibleParameterJ.refl]; ring
   · refine ⟨cl ∪ lw, hcard, ?_⟩
     intro q hq
-    exact hmem q (by simpa only [JW, cloudT, lowT, if_true] using hq)
+    exact hmem q (by simpa only [JW, cloudT, lowT, ite_true] using hq)
 
 theorem zero_not_mem_JW (L : SizeData₂ D) (hc : jcCondition L) (up : Bool) (j : ℕ) (hj1 : 1 ≤ j) (hj2 : j ≤ D.R.m)
     (ρ : D.what₂.Tau) : (0 : ℚ) ∉ JW D up j ρ := by
   obtain ⟨hlow, -, hcl, h0⟩ := hc j hj1 hj2 ρ
   cases up
   · intro h
-    simp only [JW, cloudT, lowT, reflS, Bool.false_eq_true, if_false, Set.mem_union,
+    simp only [JW, cloudT, lowT, reflS, Bool.false_eq_true, ite_false, Set.mem_union,
       Set.mem_setOf_eq] at h
     have ht : (0 : ℚ) ≤ (D.R.t : ℚ) := Nat.cast_nonneg _
     rcases h with h | h
@@ -114,7 +77,7 @@ theorem zero_not_mem_JW (L : SizeData₂ D) (hc : jcCondition L) (up : Bool) (j 
         linarith
       · simp only [AdmissibleParameterJ.refl] at h'
         linarith
-  · simpa only [JW, cloudT, lowT, if_true] using h0
+  · simpa only [JW, cloudT, lowT, ite_true] using h0
 
 theorem natAbs_le_of_mem_JJ (L : SizeData₂ D) (he : JumpAbsoluteBound L) (up : Bool) (j : ℕ) (hj1 : 1 ≤ j)
     (hj2 : j ≤ D.R.m) (ρ : D.what₂.Tau) (a : ℤ) (ha : (a : ℚ) ∈ JJ D up j ρ) :

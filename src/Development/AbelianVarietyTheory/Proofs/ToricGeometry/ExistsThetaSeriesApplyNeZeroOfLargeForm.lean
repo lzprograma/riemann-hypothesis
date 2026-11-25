@@ -82,7 +82,7 @@ theorem exists_tsum_gauss_lt_one [NormedSpace ℝ E] [FiniteDimensional ℝ E]
     exact ⟨a, h1, h2⟩
   · by_cases hl : l = 0
     · simp [hl]
-    · simp only [hl, if_false]
+    · simp only [hl, ite_false]
       have hn : 0 < ‖(l : E)‖ ^ 2 := pow_pos (norm_pos_iff.2 (by simpa using hl)) 2
       exact Real.tendsto_exp_atBot.comp (tendsto_neg_atTop_atBot.atBot_mul_const hn)
   · filter_upwards [eventually_ge_atTop (1 : ℝ)] with a ha l

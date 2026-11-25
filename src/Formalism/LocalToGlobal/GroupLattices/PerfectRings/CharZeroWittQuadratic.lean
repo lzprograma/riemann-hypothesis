@@ -60,11 +60,6 @@ def extOf : ExtOf (OO p n) (KO p n) (OL p n L) L where
   frac := IntCl.frac (OO p n) (KO p n) L
   complete := IntCl.complete (OO p n) (KO p n) L (completeOO p n)
 
-theorem settingOL (h5 : 5 ≤ p) (h2 : 2 ≤ n) (he : Even n) :
-    HidaSetting p n (WQ p n) (QQ p n) (OL p n L) L ((extOf p n L).φK.comp (iota p n)) (sig p n)
-      ((extOf p n L).φ.comp (jO p n)) ((extOf p n L).φ (wU p n)) :=
-  setting_ext (settingStd p n h5 h2 he) (extOf p n L)
-
 end Fin
 
 section NF

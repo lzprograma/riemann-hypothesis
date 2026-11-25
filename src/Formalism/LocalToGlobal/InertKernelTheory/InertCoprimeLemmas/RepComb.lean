@@ -16,8 +16,6 @@ namespace Formalism.L2.KerInert.RepComb
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Ker Formalism.L2.Th1.H
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem xiL_expand {V : Type} [AddCommGroup V] [Module ℂ V] (H : Sesq V) (α : V → ℂ) (vol : ℝ)
     (SX SA SB : Finset V) (Φ e : V → ℂ) (z : V) :
     xiL H α vol SX SA SB Φ e z = ∑ x ∈ SX, ∑ y ∈ SB,
@@ -252,18 +250,15 @@ theorem laFacts_of_adm {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (B : Base D cc δ
 
 theorem half_smul_aaOf (cc : Ideal (𝓞 D.host.K)) {t₀ : 𝓞 D.host.E} (h₀ : t₀ ∈ D.host.𝔟) {r : D.host.E}
     (hr : r ∈ Formalism.L2.PairingIndexBounds.F.aaOf D cc) : t₀ • r ∈ (1 : Submodule (𝓞 D.host.E) D.host.E) := by
-  induction hr using Submodule.span_induction with
-  | mem r hr =>
-    obtain ⟨c, -, t, ht, rfl⟩ := hr
-    obtain ⟨w, hw⟩ := exists_integral_mul_order_element h₀ ht
-    refine Submodule.mem_one.2 ⟨algebraMap (𝓞 D.host.K) (𝓞 D.host.E) c * w, ?_⟩
-    rw [Algebra.smul_def]
-    show (((c : 𝓞 D.host.K) : D.host.K) : D.host.E) * (w : D.host.E) = (t₀ : D.host.E) * _
-    rw [hw]
-    ring
-  | zero => rw [smul_zero]; exact zero_mem _
-  | add x y _ _ h1 h2 => rw [smul_add]; exact add_mem h1 h2
-  | smul o x _ h => rw [smul_comm]; exact Submodule.smul_mem _ o h
+  unfold Formalism.L2.PairingIndexBounds.F.aaOf at hr
+  refine (Submodule.span_le (p := (1 : Submodule (𝓞 D.host.E) D.host.E).comap
+    (LinearMap.lsmul (𝓞 D.host.E) D.host.E t₀))).2 ?_ hr
+  rintro _ ⟨c, -, t, ht, rfl⟩
+  obtain ⟨w, hw⟩ := exists_integral_mul_order_element h₀ ht
+  refine Submodule.mem_one.2 ⟨algebraMap (𝓞 D.host.K) (𝓞 D.host.E) c * w, ?_⟩
+  rw [LinearMap.lsmul_apply, Algebra.smul_def]
+  show (((c : 𝓞 D.host.K) : D.host.K) : D.host.E) * (w : D.host.E) = (t₀ : D.host.E) * _
+  rw [hw]; ring
 
 theorem aaOf_fg (cc : Ideal (𝓞 D.host.K)) : (Formalism.L2.PairingIndexBounds.F.aaOf D cc).FG := by
   obtain ⟨t₀, h₀, hne⟩ := Submodule.exists_mem_ne_zero_of_ne_bot (half_ne_bot D)

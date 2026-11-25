@@ -47,8 +47,6 @@ theorem stdB_core {E : Type} [Field E] [NumberField E] {V : Type} [AddCommGroup 
     rw [e2]
     rfl
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem hermitian_form_frame_coordinates (D : D7) (x y : (D.sp.X 0).V) :
     (D.sp.X 0).hT x y = hform (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _))
       (crdN D 0 (Nat.zero_le _) x) (crdN D 0 (Nat.zero_le _) y) := by

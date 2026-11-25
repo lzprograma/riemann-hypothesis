@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.OFRepGood
 public import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEnds
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfA
 import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
@@ -13,8 +14,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar.SpanOmPf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7}
 
 theorem hsw' (x y : (VS D).V) : (VS D).hT y x = star ((VS D).hT x y) := ((VS D).herm.eq x y).symm
@@ -27,17 +26,7 @@ theorem fvec_last {T : D.host.E} (F : FlagG (VS D) D.R.rS T) : F.fvec (Fin.last 
 
 theorem hff {T : D.host.E} (F : FlagG (VS D) D.R.rS T) (a b : Fin (D.R.rS + 1)) :
     (VS D).hT (F.fvec a) (F.fvec b) = if a = Fin.last D.R.rS ∧ b = Fin.last D.R.rS then -T else 0 := by
-  induction a using Fin.lastCases with
-  | last =>
-    induction b using Fin.lastCases with
-    | last => rw [fvec_last, F.z_norm, if_pos ⟨rfl, rfl⟩]
-    | cast j =>
-      rw [fvec_last, fvec_cs, if_neg (fun h => Fin.castSucc_ne_last j h.2), hsw', F.z_orth, star_zero]
-  | cast i =>
-    rw [if_neg (fun h => Fin.castSucc_ne_last i h.1)]
-    induction b using Fin.lastCases with
-    | last => rw [fvec_cs, fvec_last, F.z_orth]
-    | cast j => rw [fvec_cs, fvec_cs, F.e_iso]
+  apply _root_.PI.UnitaryGroupMassFormula.CntFormula.flag_gram <;> assumption
 
 theorem iso_X {T : D.host.E} (F : FlagG (VS D) D.R.rS T) {x y : (VS D).V} (hx : x ∈ F.X) (hy : y ∈ F.X) :
     (VS D).hT x y = 0 := by

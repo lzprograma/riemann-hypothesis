@@ -21,53 +21,12 @@ public import Mathlib.MeasureTheory.Measure.Haar.DistribChar
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalFactorSandwichApprox
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BinaryMassMeans.MeanVal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.NumberTheory.NumberField.Discriminant.Basic
@@ -103,8 +62,7 @@ theorem exists_pow_mul (v : HeightOneSpectrum (𝓞 F)) {D : Ideal (𝓞 F)} (hD
     ∃ (m : ℕ) (B : Ideal (𝓞 F)), D = v.asIdeal ^ m * B ∧ ¬ B ≤ v.asIdeal := by
   have hv : v.asIdeal ≠ ⊤ := v.isPrime.ne_top
   have hex : ∃ m : ℕ, ¬ D ≤ v.asIdeal ^ (m + 1) := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     apply hD
     have h' : D ≤ ⨅ i : ℕ, v.asIdeal ^ i := by
       refine le_iInf fun i => ?_
@@ -118,7 +76,7 @@ theorem exists_pow_mul (v : HeightOneSpectrum (𝓞 F)) {D : Ideal (𝓞 F)} (hD
     rcases Nat.eq_zero_or_pos (Nat.find hex) with h0 | hpos
     · simp [h0]
     · have h1 := Nat.find_min hex (Nat.sub_lt hpos Nat.one_pos)
-      push_neg at h1
+      push Not at h1
       have e : Nat.find hex - 1 + 1 = Nat.find hex := by omega
       rwa [e] at h1
   obtain ⟨B, hB⟩ := Ideal.dvd_iff_le.mpr hle
@@ -128,8 +86,7 @@ theorem exists_pow_mul (v : HeightOneSpectrum (𝓞 F)) {D : Ideal (𝓞 F)} (hD
 
 theorem exists_mem_pow_not_mem {v w : HeightOneSpectrum (𝓞 F)} (hw : w ≠ v) (k : ℕ) :
     ∃ e ∈ v.asIdeal ^ k, e ∉ w.asIdeal := by
-  by_contra h
-  push_neg at h
+  by_contra! h
   have hle : v.asIdeal ^ k ≤ w.asIdeal := fun e he => h e he
   have hvw : v.asIdeal ≤ w.asIdeal := w.isPrime.le_of_pow_le hle
   exact hw (HeightOneSpectrum.ext (v.isMaximal.eq_of_le w.isPrime.ne_top hvw).symm)
@@ -1480,8 +1437,8 @@ theorem pointwise (v : HeightOneSpectrum (𝓞 F)) (ι : Type) [Fintype ι] (k :
       by_cases hne : c' = c
       · subst hne
         simp [boxInd, hcy]
-      · rw [if_neg hne]
-        refine if_neg fun h' => hne (hdisj c' hc' c hc fun i => ?_)
+      · rw [ite_eq_right hne]
+        refine ite_eq_right fun h' => hne (hdisj c' hc' c hc fun i => ?_)
         simpa using add_mem_ball v k (hcy i) (neg_mem_ball v k (h' i))
     have s1 : ∑ c' ∈ C, ψ c' * boxInd v k c' y = ψ c := by
       rw [Finset.sum_congr rfl fun c' hc' => by rw [key c' hc']]
@@ -1493,7 +1450,7 @@ theorem pointwise (v : HeightOneSpectrum (𝓞 F)) (ι : Type) [Fintype ι] (k :
     exact hunif y c hcy
   · have hz : ∀ c ∈ C, boxInd v k c y = 0 := by
       intro c hc
-      exact if_neg fun h' => h ⟨c, hc, h'⟩
+      exact ite_eq_right fun h' => h ⟨c, hc, h'⟩
     have hy : ψ y = 0 := by
       by_contra h0
       exact h (hcov y h0)
@@ -1522,7 +1479,7 @@ theorem boxInd_eq (v : HeightOneSpectrum (𝓞 F)) {ι : Type} (k : ℕ) (c : ι
   · rw [Set.indicator_of_mem ((mem_boxS v k c y).2 h)]
     simp [boxInd, h]
   · rw [Set.indicator_of_notMem (fun h' => h ((mem_boxS v k c y).1 h'))]
-    exact if_neg h
+    exact ite_eq_right h
 
 theorem real_boxS {v : HeightOneSpectrum (𝓞 F)} {lam : Measure (Fv F v)} (hstd : IsStdV v lam)
     {ι : Type} [Fintype ι] (k : ℕ) (c : ι → Fv F v) :
@@ -1736,7 +1693,7 @@ theorem indicator_box {ι : Type} {A A' : Set (ι → F)} {v : HeightOneSpectrum
     · have hA' : x ∉ A' := fun e => hA ((h x).2 e).1
       simp [Set.indicator, hA, hA']
   · have hA' : x ∉ A' := fun e => hb ((h x).2 e).2
-    have hz : boxInd v k c (yV v x) = 0 := by simp only [boxInd, yV]; rw [if_neg hb]
+    have hz : boxInd v k c (yV v x) = 0 := by simp only [boxInd, yV]; rw [ite_eq_right hb]
     simp [Set.indicator, hA', hz]
 
 theorem est {ι : Type} (θ : ℝ →+* Ainf F) {S : Finset (HeightOneSpectrum (𝓞 F))} {v : HeightOneSpectrum (𝓞 F)} (hv : v ∉ S)

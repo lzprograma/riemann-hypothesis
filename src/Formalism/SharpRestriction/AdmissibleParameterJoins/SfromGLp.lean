@@ -1,46 +1,6 @@
 module
 
 public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GapAtLeast
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -63,11 +23,11 @@ theorem pat_det (S : Finset (Fin n × Fin n)) (hS : ∀ p ∈ S, p.1 < p.2) (A :
     intro i j hij
     have hn : (i, j) ∉ S := fun hm => absurd (hS _ hm) (not_lt.mpr (le_of_lt hij))
     have hij' : j < i := hij
-    rw [h i j hn, if_neg (ne_of_gt hij')]
+    rw [h i j hn, ite_eq_right (ne_of_gt hij')]
   rw [Matrix.det_of_isUpperTriangular ht]
   refine Finset.prod_eq_one fun i _ => ?_
   have hn : (i, i) ∉ S := fun hm => lt_irrefl _ (hS _ hm)
-  rw [h i i hn, if_pos rfl]
+  rw [h i i hn, ite_eq_left rfl]
 
 def patMat (S : Finset (Fin n × Fin n)) (φ : S → F) : Matrix (Fin n) (Fin n) F :=
   Matrix.of fun i j => if h : (i, j) ∈ S then φ ⟨(i, j), h⟩ else if i = j then 1 else 0
@@ -148,11 +108,11 @@ theorem isUnitri_iff {n : ℕ} {F : Type} [Field F] (A : Matrix (Fin n) (Fin n) 
     simp only [upS, mem_filter, mem_univ, true_and, not_lt] at hij
     rcases eq_or_lt_of_le hij with h | h
     · subst h; simp [h2]
-    · rw [h1 i j h, if_neg (ne_of_gt h)]
+    · rw [h1 i j h, ite_eq_right (ne_of_gt h)]
   · intro h
     refine ⟨fun i j hij => ?_, fun i => ?_⟩
-    · rw [h i j (by simp [upS, le_of_lt hij]), if_neg (ne_of_gt hij)]
-    · rw [h i i (by simp [upS]), if_pos rfl]
+    · rw [h i j (by simp [upS, le_of_lt hij]), ite_eq_right (ne_of_gt hij)]
+    · rw [h i i (by simp [upS]), ite_eq_left rfl]
 
 theorem isRowLev_iff {n : ℕ} {F : Type} [Field F] (k rS : ℕ) (A : Matrix (Fin n) (Fin n) F) :
     StandardLattice.IsRowLev k rS A ↔ Pat (rowS k rS n) A := by
@@ -160,7 +120,7 @@ theorem isRowLev_iff {n : ℕ} {F : Type} [Field F] (k rS : ℕ) (A : Matrix (Fi
   · rintro ⟨h1, h2, h3, h4⟩ i j hij
     by_cases e : i = j
     · subst e; simp [h2]
-    rw [if_neg e]
+    rw [ite_eq_right e]
     have e' : i.val ≠ j.val := fun h => e (Fin.ext h)
     simp only [rowS, upS, mem_filter, mem_univ, true_and, not_and] at hij
     by_cases hlt : i < j
@@ -187,15 +147,15 @@ theorem isRowLev_iff {n : ℕ} {F : Type} [Field F] (k rS : ℕ) (A : Matrix (Fi
       have hlt2 : ¬ i < j := fun hh => by
         have : i.val < j.val := hh
         omega
-      rw [h i j (by simp [rowS, upS, hlt2]), if_neg (fun e => by subst e; omega)]
-    · rw [h i i (by simp [rowS, upS]), if_pos rfl]
+      rw [h i j (by simp [rowS, upS, hlt2]), ite_eq_right (fun e => by subst e; omega)]
+    · rw [h i i (by simp [rowS, upS]), ite_eq_left rfl]
     · have hlt2 : ¬ i < j := not_lt.mpr (le_of_lt hij)
-      rw [h i j (by simp [rowS, upS, hlt2]), if_neg (ne_of_gt hij)]
+      rw [h i j (by simp [rowS, upS, hlt2]), ite_eq_right (ne_of_gt hij)]
     · have hi : rS ≤ i.val := by
         revert hb
         unfold StandardLattice.blk
         split_ifs <;> omega
-      rw [h i j (by simp [rowS, hj, hi]), if_neg hne]
+      rw [h i j (by simp [rowS, hj, hi]), ite_eq_right hne]
 
 end Formalism.MainNotions.J
 

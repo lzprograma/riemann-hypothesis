@@ -66,7 +66,7 @@ theorem schA_riesz (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hVf : FiniteDimens
     inner_self_eq_zero.mp (h z hz)
   refine ⟨u', u'.2.1, ⟨?_, ?_⟩, hrep y₀ ⟨hy₀, hm⟩, fun v hv => hrep v ⟨hv.1, hVle m hv.2⟩⟩
   · intro a
-    have hsa : adjSign ε a a = 1 := if_pos rfl
+    have hsa : adjSign ε a a = 1 := ite_eq_left rfl
     have hmem : E a a u' - (μ a : ℂ) • (u' : M) ∈ F :=
       F.sub_mem (hFk a a rfl _ u'.2) (F.smul_mem _ u'.2)
     have h0 := hzero _ hmem (fun y hy => by

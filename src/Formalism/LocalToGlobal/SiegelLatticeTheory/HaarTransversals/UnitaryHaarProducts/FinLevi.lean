@@ -14,8 +14,6 @@ open Matrix
 
 namespace Formalism.L2.SG.Pf.FinLeviPf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG Formalism.L2.SG.PoincareInHH Formalism.L2.SG.Pf
 
 section Form
@@ -60,49 +58,8 @@ theorem hA_z_e (a : Fin D.R.rS) : hA X.B.I (zA X u) (eA X a) = 0 := by
 theorem hA_z_f (a : Fin D.R.rS) : hA X.B.I (zA X u) (fA X a) = 0 := by
   have h := Level.hE_z_f X u a; unfold Level.hE at h; rw [unitaryCongruence.hA_incl, h, map_zero]
 
-theorem hA_sub_right (x y y' : VA X.B.I) : hA X.B.I x (y - y') = hA X.B.I x y - hA X.B.I x y' := by
-  simp only [hA, Formalism.UG.hform, Pi.sub_apply, mul_sub, Finset.sum_sub_distrib]
-
 theorem hA_zero_left (y : VA X.B.I) : hA X.B.I 0 y = 0 := by
   simp [hA, Formalism.UG.hform]
-
-private theorem hA_smul_right_lemma (x y : VA X.B.I) (c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) :
-    hA X.B.I x (c • y) = c * hA X.B.I x y := by
-  simp only [hA, Formalism.UG.hform, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  ring
-
-private theorem hA_add_right_lemma_2 (x y y' : VA X.B.I) : hA X.B.I x (y + y') = hA X.B.I x y + hA X.B.I x y' := by
-  simp only [hA, Formalism.UG.hform, Pi.add_apply, mul_add, Finset.sum_add_distrib]
-
-private theorem hA_zero_right_lemma_7 (x : VA X.B.I) : hA X.B.I x 0 = 0 := by
-  simp [hA, Formalism.UG.hform]
-
-private theorem hA_sum_right_lemma_3 {ι : Type*} (s : Finset ι) (x : VA X.B.I) (f : ι → VA X.B.I) :
-    hA X.B.I x (∑ i ∈ s, f i) = ∑ i ∈ s, hA X.B.I x (f i) := by
-  classical
-  refine Finset.induction_on s ?_ ?_
-  · simp only [Finset.sum_empty, hA_zero_right_lemma_7]
-  · intro a s ha ih
-    rw [Finset.sum_insert ha, Finset.sum_insert ha, hA_add_right_lemma_2, ih]
-
-private theorem hA_add_left_lemma_4 (x x' y : VA X.B.I) : hA X.B.I (x + x') y = hA X.B.I x y + hA X.B.I x' y := by
-  simp only [hA, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
-
-private theorem hA_sum_left_lemma_5 {ι : Type*} (s : Finset ι) (f : ι → VA X.B.I) (y : VA X.B.I) :
-    hA X.B.I (∑ i ∈ s, f i) y = ∑ i ∈ s, hA X.B.I (f i) y := by
-  classical
-  refine Finset.induction_on s ?_ ?_
-  · simp only [Finset.sum_empty, hA_zero_left]
-  · intro a s ha ih
-    rw [Finset.sum_insert ha, Finset.sum_insert ha, hA_add_left_lemma_4, ih]
-
-private theorem hA_smul_left_zero_lemma_6 (c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) (x y : VA X.B.I)
-    (h : hA X.B.I x y = 0) : hA X.B.I (c • x) y = 0 := by
-  simp only [hA, Formalism.UG.hform, Pi.smul_apply, smul_eq_mul, map_mul, mul_assoc] at h ⊢
-  simp only [← Finset.mul_sum] at h ⊢
-  first
-  | rw [h, mul_zero]
 
 theorem hA_symm_zero {x y : VA X.B.I} (h : hA X.B.I x y = 0) : hA X.B.I y x = 0 := by
   rw [unitaryCongruence.hA_symm, h, map_zero]
@@ -118,17 +75,22 @@ theorem PWl_apply (y : VA X.B.I) : PWl X u y = y - ∑ a, hA X.B.I (fA X a) y �
   | simp [PWl, unitaryCongruence.hL, LinearMap.smulRight_apply]
 
 theorem hA_e_PW (a : Fin D.R.rS) (y : VA X.B.I) : hA X.B.I (eA X a) (PWl X u y) = 0 := by
-  rw [PWl_apply]
-  simp [hA_sub_right, hA_sum_right_lemma_3, hA_smul_right_lemma, hA_e_e, hA_e_f, adelicHermitian_hyperbolicE_anisotropic_eq_zero]
+  rw [PWl_apply, ← unitaryCongruence.hL_apply]
+  simp only [map_sub, map_sum, map_smul, smul_eq_mul]
+  simp [unitaryCongruence.hL_apply, hA_e_e, hA_e_f,
+    adelicHermitian_hyperbolicE_anisotropic_eq_zero]
 
 theorem hA_f_PW (a : Fin D.R.rS) (y : VA X.B.I) : hA X.B.I (fA X a) (PWl X u y) = 0 := by
-  rw [PWl_apply]
-  simp [hA_sub_right, hA_sum_right_lemma_3, hA_smul_right_lemma, hA_f_f, hA_f_e, adelicHermitian_hyperbolicF_anisotropic_eq_zero]
+  rw [PWl_apply, ← unitaryCongruence.hL_apply]
+  simp only [map_sub, map_sum, map_smul, smul_eq_mul]
+  simp [unitaryCongruence.hL_apply, hA_f_f, hA_f_e,
+    adelicHermitian_hyperbolicF_anisotropic_eq_zero]
 
 theorem hA_z_PW (y : VA X.B.I) : hA X.B.I (zA X u) (PWl X u y) = 0 := by
-  rw [PWl_apply]
-  simp only [hA_sub_right, hA_sum_right_lemma_3, hA_smul_right_lemma, hA_z_e, hA_z_f, mul_zero, Finset.sum_const_zero,
-    sub_zero]
+  rw [PWl_apply, ← unitaryCongruence.hL_apply]
+  simp only [map_sub, map_sum, map_smul, smul_eq_mul]
+  simp only [unitaryCongruence.hL_apply, hA_z_e, hA_z_f, mul_zero,
+    Finset.sum_const_zero, sub_zero]
   linear_combination (-(hA X.B.I (zA X u) y)) * hermitian_z_normalized X u
 
 theorem PW_fix (w : VA X.B.I) (he : ∀ a, hA X.B.I (eA X a) w = 0) (hf : ∀ a, hA X.B.I (fA X a) w = 0)
@@ -174,11 +136,11 @@ theorem hA_perp_sub (p y : VA X.B.I) (he : ∀ a, hA X.B.I (eA X a) p = 0)
   have hpe : ∀ a, hA X.B.I p (eA X a) = 0 := fun a => hA_symm_zero X (he a)
   have hpf : ∀ a, hA X.B.I p (fA X a) = 0 := fun a => hA_symm_zero X (hf a)
   have hpz : hA X.B.I p (zA X u) = 0 := hA_symm_zero X hz
-  rw [sub_PW]
-  constructor
-  · simp only [hA_add_left_lemma_4, hA_sum_left_lemma_5, hA_smul_left_zero_lemma_6, he, hf, hz, Finset.sum_const_zero, add_zero]
-  · simp only [hA_add_right_lemma_2, hA_sum_right_lemma_3, hA_smul_right_lemma, hpe, hpf, hpz, mul_zero, Finset.sum_const_zero,
-      add_zero]
+  have hright : hA X.B.I p (y - PWl X u y) = 0 := by
+    rw [sub_PW, ← unitaryCongruence.hL_apply]
+    simp only [map_add (f := _), map_sum, map_smul, smul_eq_mul]
+    simp [unitaryCongruence.hL_apply, hpe, hpf, hpz]
+  exact ⟨hA_symm_zero X hright, hright⟩
 
 theorem hA_span_left (s w : VA X.B.I)
     (hs : s ∈ Submodule.span (X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) (Set.range (eA X)))
@@ -187,8 +149,8 @@ theorem hA_span_left (s w : VA X.B.I)
   | (induction hs using Submodule.span_induction with
       | mem x hx => obtain ⟨a, rfl⟩ := hx; exact hw a
       | zero => exact hA_zero_left X w
-      | add x y _ _ hx hy => rw [hA_add_left_lemma_4, hx, hy, add_zero]
-      | smul c x _ hx => exact hA_smul_left_zero_lemma_6 X c x w hx)
+      | add x y _ _ hx hy => rw [unitaryCongruence.hA_add_left, hx, hy, add_zero]
+      | smul c x _ hx => rw [unitaryCongruence.hA_smul_left, hx, mul_zero])
 
 theorem hA_span_right (x s : VA X.B.I)
     (hs : s ∈ Submodule.span (X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) (Set.range (eA X)))
@@ -196,9 +158,9 @@ theorem hA_span_right (x s : VA X.B.I)
   first
   | (induction hs using Submodule.span_induction with
       | mem y hy => obtain ⟨a, rfl⟩ := hy; exact hx a
-      | zero => exact hA_zero_right_lemma_7 X x
-      | add y z _ _ hy hz => rw [hA_add_right_lemma_2, hy, hz, add_zero]
-      | smul c y _ hy => rw [hA_smul_right_lemma, hy, mul_zero])
+      | zero => exact map_zero (unitaryCongruence.hL X.B.I x)
+      | add y z _ _ hy hz => rw [unitaryCongruence.hA_add_right, hy, hz, add_zero]
+      | smul c y _ hy => rw [unitaryCongruence.hA_smul_right, hy, mul_zero])
 
 theorem e_mem_span (a : Fin D.R.rS) :
     eA X a ∈ Submodule.span (X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) (Set.range (eA X)) := by
@@ -213,7 +175,8 @@ theorem hA_sub_PW_self (y y' : VA X.B.I) :
   have hy : y = PWl X u y + (y - PWl X u y) := by abel
   have hy' : y' = PWl X u y' + (y' - PWl X u y') := by abel
   conv_lhs => rw [hy, hy']
-  simp only [hA_add_left_lemma_4, hA_add_right_lemma_2, h1, h2, add_zero, zero_add]
+  simp only [unitaryCongruence.hA_add_left, unitaryCongruence.hA_add_right, h1, h2,
+    add_zero, zero_add]
 
 theorem unit_of_formA (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) (X.B.I.E ⊗[X.B.I.F] Af X.B.I.F))
     (hM : ∀ x y, hA X.B.I (M *ᵥ x) (M *ᵥ y) = hA X.B.I x y) :
@@ -394,7 +357,8 @@ theorem SA.perp (h : SA (u := u) G G') (w : VA X.B.I) (he : ∀ a, hA X.B.I (eA 
     have e1 : G' *ᵥ zA X u = zA X u + (G' - 1) *ᵥ zA X u := by
       rw [Matrix.sub_mulVec, Matrix.one_mulVec]
       abel
-    rw [e1, hA_add_left_lemma_4, hz, hA_span_left X _ w h.coordinate_inverse_zeta he, add_zero]
+    rw [e1, unitaryCongruence.hA_add_left, hz, hA_span_left X _ w h.coordinate_inverse_zeta he,
+      add_zero]
 
 theorem SA.sub_PW_mem (h : SA (u := u) G G') (w : VA X.B.I) (he : ∀ a, hA X.B.I (eA X a) w = 0)
     (hz : hA X.B.I (zA X u) w = 0) :
@@ -465,7 +429,8 @@ theorem SA.hA_H (h : SA (u := u) G G') (x y : VA X.B.I) :
     have ex : PWl X u (G *ᵥ PWl X u x) + ((G *ᵥ PWl X u x) - PWl X u (G *ᵥ PWl X u x)) = (G *ᵥ PWl X u x) := by abel
     have ey : PWl X u (G *ᵥ PWl X u y) + ((G *ᵥ PWl X u y) - PWl X u (G *ᵥ PWl X u y)) = (G *ᵥ PWl X u y) := by abel
     rw [← ex, ← ey] at h0
-    simp only [hA_add_left_lemma_4, hA_add_right_lemma_2, z1, z2, z3, add_zero] at h0
+    simp only [unitaryCongruence.hA_add_left, unitaryCongruence.hA_add_right, z1, z2, z3,
+      add_zero] at h0
     exact h0
   rw [hA_sub_PW_self X u (Hm X u G *ᵥ x) (Hm X u G *ᵥ y), hRH, hRH, hPH, hPH, core, ← hA_sub_PW_self X u x y]
 

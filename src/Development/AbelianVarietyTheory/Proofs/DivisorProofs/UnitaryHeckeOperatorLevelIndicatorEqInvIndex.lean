@@ -48,7 +48,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 
@@ -57,7 +56,7 @@ namespace GlobalTheory.BCT.HopLev
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
 theorem toSub_of_mem {G : Type} [Group G] (H : Subgroup G) {g : G} (h : g ∈ H) : toSub H g = ⟨g, h⟩ := by
-  unfold toSub; rw [dif_pos h]
+  unfold toSub; rw [dite_eq_left h]
 
 def comp (hU : Unr E) (n : ℕ) (w : Pl E) : finU (E := E) (n := n) →* UL n w :=
   ((cLoc w).comp (finU (E := E) (n := n)).subtype).codRestrict (UL n w) (fun x => cLoc_mem_UL E hU n w x)
@@ -81,13 +80,13 @@ theorem globFn_indicator (hU : Unr E) (S : Set (Pl E)) (K' : ∀ w : Pl E, Subgr
   unfold globFn
   simp_rw [← comp_eq hU]
   by_cases hx : x ∈ globLev S K'
-  · rw [if_pos hx]
+  · rw [ite_eq_left hx]
     refine finprod_mem_of_eqOn_one fun w hw => ?_
     rw [Set.indicator_of_mem ((mem_globLev hU S K' x).1 hx w hw)]
     rfl
-  · rw [if_neg hx, finprod_mem_def]
+  · rw [ite_eq_right hx, finprod_mem_def]
     obtain ⟨w₀, hw₀, hn⟩ : ∃ w ∈ S, comp hU n w x ∉ K' w := by
-      by_contra h; push_neg at h; exact hx ((mem_globLev hU S K' x).2 h)
+      by_contra h; push Not at h; exact hx ((mem_globLev hU S K' x).2 h)
     refine finprod_eq_zero _ w₀ ?_ ?_
     · rw [Set.mulIndicator_of_mem hw₀, Set.indicator_of_notMem hn]
     · have h1 := Filter.eventually_cofinite.1 hK
@@ -154,7 +153,7 @@ theorem relIndex_globLev (hU : Unr E) (S : Set (Pl E)) (hS : IsSection S) (K' : 
       exact (mem_globLev hU S (KL n) g).1 hg i.1 (hTS _ i.2)
     · intro x hx
       obtain ⟨y, hyT, hyn⟩ : ∃ y : ∀ w : Pl E, UL n w, (∀ i : T, y i.1 = x i) ∧ ∀ w, w ∉ T → y w = 1 :=
-        ⟨fun w => if h : w ∈ T then x ⟨w, h⟩ else 1, fun i => dif_pos i.2, fun w h => dif_neg h⟩
+        ⟨fun w => if h : w ∈ T then x ⟨w, h⟩ else 1, fun i => dite_eq_left i.2, fun w h => dite_eq_right h⟩
       have hy : ∀ w, y w ∈ KL n w := fun w => by
         by_cases h : w ∈ T
         · have := hx ⟨w, h⟩
@@ -206,8 +205,8 @@ theorem GlobalTheory.BCT.hop_indicator_level : ∀ (E : Type) [Field E] [NumberF
     rw [QuotientGroup.eq] at this
     simpa using this
   rw [finsum_eq_single _ ((1 : finU (E := E) (n := n)) : finU (E := E) (n := n) ⧸ H)]
-  · rw [globFn_indicator hU S K' hK.2, if_pos h1, one_smul, LinearMap.comp_id]
+  · rw [globFn_indicator hU S K' hK.2, ite_eq_left h1, one_smul, LinearMap.comp_id]
     have := hφ ⟨_, h1⟩
     simpa using this
   · intro q hne
-    rw [globFn_indicator hU S K' hK.2, if_neg (hq q hne), zero_smul]
+    rw [globFn_indicator hU S K' hK.2, ite_eq_right (hq q hne), zero_smul]

@@ -63,15 +63,11 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj
   AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.Poinc.Sep
 
@@ -112,7 +108,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.AnForm.R GlobalTheory.ZH GlobalTheory.Poinc GlobalTheory.Poinc.Sep
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 
@@ -250,39 +245,6 @@ section Terms
 
 open GlobalTheory.UT GlobalTheory.UT.SymFrame ReciprocityTheory.ChartRestriction.G.DVR
 
-theorem term_val {V₁ : Type} [CommRing V₁] [IsDomain V₁] (D : DegPre V₁) (F : Type) [Field F]
-    [Algebra (FractionRing V₁) F] (th : Fam D F 1)
-    (θ : FieldBaseChange.SecOver D.P.A.hom (LB.LinComb D.P.L (D.famφB 0) (DegPre.famε 1))) (lam : F)
-    (h : FieldBaseChange.famProj D F 1 0 th = lam • ThetaOne.termF D F 1 0 θ) (χ : D.X) (β : TF (R := V₁) F ⟶ D.P.A)
-    (z : (TF (R := V₁) F).left) (J) (hJ : Good D.P.L z J) :
-    sval (th.s χ) (lift (𝟙 _) β).left z J = cst F z lam * sval θ (cP D _ χ * β).left z J *
-      (@id ((TF (R := V₁) F).left.presheaf.stalk z)ˣ (val (D.psi χ) (jFK (R := V₁) F) z J) *
-        (@id ((TF (R := V₁) F).left.presheaf.stalk z)ˣ (val (D.psi 0) (jFK (R := V₁) F) z J))⁻¹).val := by
-  have hG := GlobalTheory.abelianSchemeLaws_all.1.globalFns
-  obtain ⟨⟨u, hu, hc⟩, hv⟩ := gen_fe (D := D) (F := F) hG 1 χ 0
-  have e := (secRel_iff D.P.isLB _ _ _ _ _ _ _ _ _ u).1 (th.fe χ 0 u hu hc) _ (lift (𝟙 _) β).left z J hJ
-  have e₀ : ∀ x, x = 0 + 1 • χ → sval (th.s x) (lift (𝟙 _) β).left z J =
-      sval (th.s (0 + 1 • χ)) (lift (𝟙 _) β).left z J := by rintro _ rfl; rfl
-  refine (e₀ χ (by rw [zero_add, one_smul])).trans (e.trans (congrArg₂ (· * ·) ?_ (congrArg Units.val ?_)))
-  · refine (congrArg (fun s : FieldBaseChange.FamTerm D F 1 0 => sval (show LB.Sec _ from s) _ z J) h).trans ?_
-    refine (FieldBaseChange.sval_smul' hJ _ lam _).trans (congrArg₂ (· * ·) ?_ ?_)
-    · have : ((lift (𝟙 _) β).left ≫ (DegPre.trF D F χ).left) ≫ FieldBaseChange.famBase D F = 𝟙 _ := by
-        rw [Category.assoc, FieldBaseChange.trF_famBase]
-        exact congrArg (fun m => m.left) (lift_fst (𝟙 (TF (R := V₁) F)) β)
-      rw [this]
-      rfl
-    · refine (FieldBaseChange.sval_pullOver _ _ θ _ hJ).trans (congrArg (fun x => sval θ x z J) ?_)
-      show ((lift (𝟙 _) β ≫ DegPre.trF D F χ) ≫ DegPre.prB D F).left = _
-      rw [Category.assoc, trF_eq, tr_pr, MonObj.comp_mul, lift_snd, lift_fst_assoc, Category.id_comp, mul_comm]
-  · rw [hv u hu hc _ (lift (𝟙 _) β) z J hJ, val_famMult _ hJ, GlobalTheory.TauTwist.val_tau D _ _ _ hJ, lift_fst]
-    have c : ∀ x y : TF (R := V₁) F ⟶ D.P.A, DVR.th D z J 1 x y = 1 := (isCub_cubV D.cub hJ).face
-    rw [uVal, cubN, Finset.prod_range_one, cPoint_zero, pow_zero, _root_.mul_one, c, c,
-      GlobalTheory.RatioVal.val_powGen, GlobalTheory.RatioVal.val_powGen, add_zero, pow_one, pow_one, Over.id_left, Category.id_comp]
-    simp only [id]
-    apply Additive.ofMul.injective
-    simp only [ofMul_mul, ofMul_inv, ofMul_one]
-    abel
-
 theorem root_mem {K : Type} [Field K] {k₀ : Subfield K} (hk₀ : IsAlgClosed k₀) {z : Sp K} {s : (Sp K).presheaf.stalk z}
     {n : ℕ} (hn : 1 ≤ n) (h : ∃ c ∈ k₀, s ^ n = toStk z c) : ∃ c ∈ k₀, s = toStk z c := by
   obtain ⟨y, rfl⟩ := _root_.GlobalTheory.Ex.GtValues.toStk_surj z s
@@ -315,32 +277,11 @@ variable {V₁ W₀ K : Type} [CommRing V₁] [IsDomain V₁] [CommRing W₀] [F
   {X₂ : Scheme.{0}} {L₂ : LB X₂} {I : Type} [Fintype I] {π : I → (D.P.A.left ⟶ X₂)} {e : I → ℤ}
   {u : LB.Iso D.P.L (LB.LinComb L₂ π e)}
 
-theorem gs_gen (a : Γ(Sp V₁, ⊤)) (z : (TF (R := V₁) (FractionRing V₁)).left) :
-    gs (toUnit (TF (R := V₁) (FractionRing V₁))).left z ⊤ a = cst (FractionRing V₁) z
-      (algebraMap V₁ (FractionRing V₁) ((Scheme.ΓSpecIso (CommRingCat.of V₁)).hom.hom a)) := by
-  rw [Frames.toUnit_left_eq, GlobalTheory.RatioVal.gs_specMap]
-  exact (GlobalTheory.RatioVal.gs_id_const z _).symm
-
 omit [IsDomain V₁] [IsAlgClosed K] in
 theorem gs_ev (ev : V₁ →+* K) (a : Γ(Sp V₁, ⊤)) (z : Sp K) :
     gs (Y := Sp K) (toUnit (Over.mk (spMap ev))).left z ⊤ a = toStk z (ev ((Scheme.ΓSpecIso (CommRingCat.of V₁)).hom.hom a)) :=
   GlobalTheory.RatioVal.gs_specMap ev z a
 
-
-omit [IsAlgClosed K] in
-theorem triv_elt (ev : V₁ →+* K) {P v} (G : GRep D.P.L (𝟙_ (Over (Sp V₁))) P v)
-    (hP : ∀ (U : Type) [CommGroup U] (h : _ → U), P U h = 1) :
-    ∃ a : V₁, (∀ z J, Good D.P.L z J → (v (TF (R := V₁) (FractionRing V₁)) (toUnit _) z J).val =
-      cst (FractionRing V₁) z (algebraMap V₁ (FractionRing V₁) a)) ∧
-      ∀ (z : Sp K) J, Good D.P.L z J → (v (Over.mk (spMap ev)) (toUnit _) z J).val = toStk z (ev a) := by
-  obtain ⟨s, hs, vs⟩ := G.out D.P.isLB (K := PEmpty) PEmpty.elim PEmpty.elim
-    (fun U _ h => (hP U h).trans (Fintype.prod_empty _).symm)
-  obtain ⟨ρ, hρ⟩ := Geo.Tor.exists_ratio D.P.isLB rfl s (LB.oneGen D.P.L) hs (Frames.oneGen_gen _)
-  refine ⟨(Scheme.ΓSpecIso (CommRingCat.of V₁)).hom.hom ρ.val, fun z J hJ => ?_, fun z J hJ => ?_⟩
-  · rw [← vs _ _ z J hJ, hρ _ _ z J hJ, val_one, _root_.mul_one, ← gs_unit _ z ⊤ trivial]
-    exact gs_gen _ z
-  · rw [← vs (Over.mk (spMap ev)) _ z J hJ, hρ (Over.mk (spMap ev)).left _ z J hJ, val_one, _root_.mul_one]
-    exact (gs_unit _ _ ⊤ trivial _).symm.trans (gs_ev ev _ z)
 
 theorem tele {A U : Type} [CommGroup A] [CommGroup U] (h : A → U) (c b : A) (N : ℕ) (hb : b ^ N = 1) :
     ∏ i ∈ Finset.range N, (h (c * b ^ i * b) * (h (c * b ^ i))⁻¹ * (h (c * b))⁻¹ * (h (b ^ i * b))⁻¹ * h c * h (b ^ i) *
@@ -356,115 +297,6 @@ theorem tele {A U : Type} [CommGroup A] [CommGroup U] (h : A → U) (c b : A) (N
   rw [Finset.prod_congr rfl (fun i _ => hP i), Finset.prod_mul_distrib,
     Finset.prod_range_div (fun i => h (c * b ^ i) / h (b ^ i)), Finset.prod_const, Finset.card_range, hb, pow_zero]
   simp
-
-theorem prod_gt {Z : Scheme.{0}} {U : Type} [CommGroup U] (c b : 𝟙_ (Over (Sp V₁)) ⟶ D.P.A)
-    (h : ((𝟙_ (Over (Sp V₁))).left ⟶ D.P.A.left) → U) :
-    ∏ k : Fin 4, h (𝟙 _ ≫ ![(c * b).left, c.left, b.left, (η[D.P.A]).left] k) ^ DegPre.gtε k =
-      (h (c * b).left)⁻¹ * h c.left * h b.left * (h (1 : 𝟙_ (Over (Sp V₁)) ⟶ D.P.A).left)⁻¹ := by
-  rw [Fin.prod_univ_four, ← SymFrame.eta_eq]
-  simp [DegPre.gtε, zpow_neg]
-
-theorem prod_ln {U : Type} [CommGroup U] (b : 𝟙_ (Over (Sp V₁)) ⟶ D.P.A)
-    (h : ((𝟙_ (Over (Sp V₁))).left ⟶ D.P.A.left) → U) :
-    ∏ k : Fin 2, h (𝟙 _ ≫ ![(η[D.P.A]).left, b.left] k) ^ DegPre.lineε 1 k =
-      h (1 : 𝟙_ (Over (Sp V₁)) ⟶ D.P.A).left * (h b.left)⁻¹ := by
-  rw [Fin.prod_univ_two, ← SymFrame.eta_eq]
-  simp [DegPre.lineε, zpow_neg]
-
-theorem char_mem [IsIntegrallyClosed V₁] (H : Desc f q ev k₀ u) {N : ℕ} (hN : 1 ≤ N)
-    (htor : ∀ x : Over.mk (spMap ev) ⟶ D.P.A, x ^ N = 1 → RatP q k₀ x.left)
-    (g : GtPtF D (FractionRing V₁)) (b : 𝟙_ (Over (Sp V₁)) ⟶ D.P.A)
-    (hgb : g.b = toUnit _ ≫ b) (ho : ∃ o, GtPtF.IsNsmul N g o ∧ o.IsZero) (χ : D.X)
-    (hχ : RatP q k₀ (toUnit (Over.mk (spMap ev)) ≫ D.c χ).left)
-    (t : LB.Gen (LB.LinComb D.P.L ![(D.c χ * b).left, (D.c χ).left, b.left, (η[D.P.A]).left] DegPre.gtε))
-    (ht : t.IsGen) :
-    ∃ a : V₁ˣ, (∀ z J, Good D.P.L z J → (val (g.s χ) (𝟙 _) z J).val =
-      cst (FractionRing V₁) z (algebraMap V₁ (FractionRing V₁) a) *
-        (val t (toUnit (TF (R := V₁) (FractionRing V₁))).left z J).val) ∧
-      ∀ (z : Sp K) J J₂, Good D.P.L z J → Good L₂ z J₂ → ∃ c ∈ k₀, toStk z (ev a) *
-        ((om (Z := Sp K) u z J J₂ (toUnit (Over.mk (spMap ev)) ≫ (D.c χ * b)).left)⁻¹ *
-          om (Z := Sp K) u z J J₂ (toUnit (Over.mk (spMap ev)) ≫ D.c χ).left *
-          om (Z := Sp K) u z J J₂ (toUnit (Over.mk (spMap ev)) ≫ b).left *
-          (om (Z := Sp K) u z J J₂ (1 : Over.mk (spMap ev) ⟶ D.P.A).left)⁻¹ *
-          val (Z := Sp K) t (toUnit (Over.mk (spMap ev))).left z J).val = toStk z c := by
-  obtain ⟨a, ha, hrel⟩ := Frames.char_unit hN g b hgb ho χ t ht
-  have hbN := (Frames.torsion_of_nsmul g b hgb ho).2
-  refine ⟨a, ha, fun z J J₂ hJ hJ₂ => root_mem H.hk₀ hN ?_⟩
-  obtain ⟨p, hp, hp'⟩ := triv_elt ev ((Frames.grep_cubProd (D.c χ) b N).mul ((grep_gen t ht (𝟙 _)).pow N).inv)
-    (fun U _ h => by
-      rw [prod_gt (Z := Sp K), tele (fun x : 𝟙_ (Over (Sp V₁)) ⟶ D.P.A => h x.left) _ _ N hbN, mul_inv_cancel])
-  have pa : p = (a : V₁) ^ N := by
-    obtain ⟨y⟩ := CoefBasic.exists_pt (R := V₁) (F := FractionRing V₁)
-    obtain ⟨I, hI⟩ := CoefBasic.exists_good' D.P.isLB y
-    have e₁ := hp y I hI
-    simp only [Category.comp_id] at e₁
-    rw [Units.val_mul, hrel y I hI, _root_.mul_assoc, ← Units.val_mul, mul_inv_cancel, Units.val_one, _root_.mul_one,
-      CoefBasic.cst_eq, CoefBasic.cst_eq, ← map_pow, ← map_pow] at e₁
-    exact (IsFractionRing.injective V₁ (FractionRing V₁) (CoefBasic.cstH_inj y e₁)).symm
-  have hb' : (toUnit (Over.mk (spMap ev)) ≫ b) ^ N = 1 := by rw [← MonObj.comp_pow, hbN, MonObj.comp_one]
-  obtain ⟨c, hc, ec⟩ := prod_mem (Finset.range N) (fun i => cub_mem H (toUnit _ ≫ D.c χ) ((toUnit _ ≫ b) ^ i) (toUnit _ ≫ b) hχ
-    (htor _ (by rw [← pow_mul, mul_comm, pow_mul, hb', one_pow])) (htor _ hb') z J J₂ hJ hJ₂)
-  refine ⟨c, hc, Eq.trans ?_ ec⟩
-  have e₂ := hp' z J hJ
-  simp only [Category.comp_id, MonObj.comp_pow] at e₂
-  rw [Finset.prod_mul_distrib, tele (fun x : Over.mk (spMap ev) ⟶ D.P.A => om (Z := Sp K) u z J J₂ x.left) _ _ N hb',
-    mul_pow, ← map_pow, ← map_pow, ← pa, ← e₂, MonObj.comp_mul, ← Units.val_pow_eq_pow_val]
-  refine (Units.val_mul _ _).symm.trans (congrArg Units.val ?_)
-  simp only [id, mul_pow]
-  exact (mul_left_comm _ _ _).trans (congrArg₂ (· * ·) rfl (inv_mul_cancel_right _ _))
-
-theorem frame_mem [IsNoetherianRing V₁] [IsIntegrallyClosed V₁] (H : Desc f q ev k₀ u) {N : ℕ} (hN : 1 ≤ N)
-    (htor : ∀ x : Over.mk (spMap ev) ⟶ D.P.A, x ^ N = 1 → RatP q k₀ x.left)
-    (g : GtPtF D (FractionRing V₁)) (b : 𝟙_ (Over (Sp V₁)) ⟶ D.P.A)
-    (hgb : g.b = toUnit _ ≫ b) (ho : ∃ o, GtPtF.IsNsmul N g o ∧ o.IsZero) (w : Frm D (FractionRing V₁) 1 g.b)
-    (hw : w.IsGen ∧ ∀ κ : LB.Gen (kapLB D (𝟙 D.P.A ^ N) (N ^ 2) 1), Normd κ → ∀ z J, Good D.P.L z J →
-      val w (𝟙 _) z J ^ (N ^ 2) * val κ g.b.left z J = 1)
-    (t : LB.Gen (LB.LinComb D.P.L ![(η[D.P.A]).left, b.left] (DegPre.lineε 1))) (ht : t.IsGen) :
-    ∃ a : V₁ˣ, (∀ z J, Good D.P.L z J → (val w (𝟙 _) z J).val =
-      cst (FractionRing V₁) z (algebraMap V₁ (FractionRing V₁) a) *
-        (val t (toUnit (TF (R := V₁) (FractionRing V₁))).left z J).val) ∧
-      ∀ (z : Sp K) J J₂, Good D.P.L z J → Good L₂ z J₂ → ∃ c ∈ k₀, toStk z (ev a) *
-        (om (Z := Sp K) u z J J₂ (1 : Over.mk (spMap ev) ⟶ D.P.A).left *
-          (om (Z := Sp K) u z J J₂ (toUnit (Over.mk (spMap ev)) ≫ b).left)⁻¹ *
-          val (Z := Sp K) t (toUnit (Over.mk (spMap ev))).left z J).val = toStk z c := by
-  obtain ⟨a, ha, hrel⟩ := Frames.frame_unit hN g b hgb ho w hw t ht
-  have hbN := (Frames.torsion_of_nsmul g b hgb ho).2
-  obtain ⟨κ, hκ⟩ := exists_kap (D := D) GlobalTheory.abelianSchemeLaws_all.1.mulPull N
-  refine ⟨a, ha, fun z J J₂ hJ hJ₂ => root_mem H.hk₀ (n := N ^ 2) (Nat.one_le_pow _ _ (by omega)) ?_⟩
-  have alg : ∀ {U : Type} [CommGroup U] (o x : U), (o * x⁻¹) ^ (N ^ 2) *
-      (x ^ ((N : ℤ) ^ 2) * o⁻¹ * o ^ (1 - (N : ℤ) ^ 2)) = 1 := fun o x => by
-    apply Additive.ofMul.injective
-    simp only [ofMul_mul, ofMul_inv, ofMul_zpow, ofMul_pow, ofMul_one]
-    rw [← natCast_zsmul]
-    push_cast
-    module
-  obtain ⟨p, hp, hp'⟩ := triv_elt ev (((grep_gen t ht (𝟙 _)).pow (N ^ 2)).mul (grep_kap κ hκ.1 b))
-    (fun U _ h => by rw [prod_ln, hbN]; exact alg _ _)
-  have pa : (a : V₁) ^ (N ^ 2) * p = 1 := by
-    obtain ⟨y⟩ := CoefBasic.exists_pt (R := V₁) (F := FractionRing V₁)
-    obtain ⟨I, hI⟩ := CoefBasic.exists_good' D.P.isLB y
-    have e₁ := hp y I hI
-    simp only [Category.comp_id] at e₁
-    have e₂ := hrel κ hκ y I hI
-    rw [hgb, mul_comm (val κ _ _ _), e₁, CoefBasic.cst_eq, CoefBasic.cst_eq, ← map_pow, ← map_pow, ← map_mul, ← map_mul,
-      ← map_one (CoefBasic.cstH y), ← map_one (algebraMap V₁ (FractionRing V₁))] at e₂
-    exact IsFractionRing.injective V₁ (FractionRing V₁) (CoefBasic.cstH_inj y e₂)
-  have hb' : (toUnit (Over.mk (spMap ev)) ≫ b) ^ N = 1 := by rw [← MonObj.comp_pow, hbN, MonObj.comp_one]
-  obtain ⟨c, hc, ec⟩ := zpow_mem (kap_mem H κ hκ _ (htor _ hb') z J J₂ hJ hJ₂) (-1)
-  refine ⟨c, hc, Eq.trans ?_ ec⟩
-  have e₂ := hp' z J hJ
-  simp only [Category.comp_id] at e₂
-  rw [hb', zpow_neg_one]
-  refine Units.eq_inv_of_mul_eq_one_right ?_
-  have e₃ := congrArg Units.val (alg (om (Z := Sp K) u z J J₂ (1 : Over.mk (spMap ev) ⟶ D.P.A).left)
-    (om (Z := Sp K) u z J J₂ (toUnit (Over.mk (spMap ev)) ≫ b).left))
-  have e₄ : toStk z (ev a) ^ (N ^ 2) * toStk z (ev p) = 1 := by rw [← map_pow, ← map_pow, ← map_mul, ← map_mul, pa, map_one, map_one]
-  have e₅ : (val (Z := Sp K) t (toUnit (Over.mk (spMap ev))).left z J ^ (N ^ 2) *
-    val (Z := Sp K) κ (toUnit (Over.mk (spMap ev)) ≫ b).left z J).val = toStk z (ev p) := e₂
-  rw [← e₅] at e₄
-  simp only [Units.val_mul, Units.val_pow_eq_pow_val, mul_pow, Units.val_one] at e₃ e₄ ⊢
-  linear_combination e₄ + (toStk z (ev a) ^ (N ^ 2) * (val (Z := Sp K) t (toUnit (Over.mk (spMap ev))).left z J).val ^ (N ^ 2) *
-    (val (Z := Sp K) κ (toUnit (Over.mk (spMap ev)) ≫ b).left z J).val) * e₃
 
 end Terms
 

@@ -68,21 +68,21 @@ theorem exists_le_sum_eq_of_le_sum (S : Finset ℕ) (e : ℕ → ℕ) :
     · intro k
       by_cases hk : k = a
       · subst hk
-        simp only [if_true]
+        simp only [ite_true]
         omega
-      · simp only [hk, if_false]
+      · simp only [hk, ite_false]
         exact hge k
-    · rw [Finset.sum_insert ha, if_pos rfl]
+    · rw [Finset.sum_insert ha, ite_eq_left rfl]
       have hS : ∑ k ∈ S, (if k = a then n - min n (∑ k ∈ S, e k) else g k) = ∑ k ∈ S, g k := by
         refine Finset.sum_congr rfl fun k hk => ?_
         have : k ≠ a := fun h => ha (h ▸ hk)
-        simp only [this, if_false]
+        simp only [this, ite_false]
       rw [hS, hgs]
       omega
     · intro k hk
       have hka : k ≠ a := fun h => hk (h ▸ Finset.mem_insert_self _ _)
       have hkS : k ∉ S := fun h => hk (Finset.mem_insert_of_mem h)
-      simp only [hka, if_false]
+      simp only [hka, ite_false]
       exact hgo k hkS
 
 theorem exists_cut_into_bounded_groups_finset (S : Finset ℕ) (B : ℕ) :

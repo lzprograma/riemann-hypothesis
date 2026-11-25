@@ -93,19 +93,19 @@ theorem _root_.GlobalTheory.AmpCS.ampSq_le_card_mul_sum : ∀ {F : Type} [Field 
     by_cases ht : S.IsTerm (Quotient.out o) (Quotient.out a)
     · by_cases hq : Q (Quotient.out o) (Quotient.out a)
       · obtain ⟨i, hi, hPi⟩ := (hQ _ _ ht).mp hq
-        rw [if_pos ⟨ht, hq⟩, Finset.sum_eq_single_of_mem i hi, if_pos ⟨ht, hPi⟩]
+        rw [ite_eq_left ⟨ht, hq⟩, Finset.sum_eq_single_of_mem i hi, ite_eq_left ⟨ht, hPi⟩]
         intro j hj hji
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨-, hPj⟩
         exact hji (hdisj _ _ ht j hj i hi hPj hPi)
-      · rw [if_neg (fun h => hq h.2)]
+      · rw [ite_eq_right (fun h => hq h.2)]
         refine (Finset.sum_eq_zero fun i hi => ?_).symm
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨-, hPi⟩
         exact hq ((hQ _ _ ht).mpr ⟨i, hi, hPi⟩)
-    · rw [if_neg (fun h => ht h.1)]
+    · rw [ite_eq_right (fun h => ht h.1)]
       refine (Finset.sum_eq_zero fun i _ => ?_).symm
-      rw [if_neg (fun h => ht h.1)]
+      rw [ite_eq_right (fun h => ht h.1)]
   · intro i hi a
     split_ifs with h1 h2
     · exact le_rfl

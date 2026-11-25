@@ -80,7 +80,6 @@ theorem tendsto_rank_div_pow_of_choose_bounds (D e δ : ℕ) (r : ℕ → ℕ) (
   have hcC' : ∀ s, s < e → c' s ≤ C' := fun s hs =>
     Finset.single_le_sum (f := c') (fun _ _ => Nat.zero_le _) (Finset.mem_range.2 hs)
   have heR : (0 : ℝ) < e := by exact_mod_cast he
-  have hDf : (0 : ℝ) < D.factorial := by exact_mod_cast D.factorial_pos
   have hlim : ∀ K : ℝ, Tendsto (fun m : ℕ => (δ : ℝ) / D.factorial *
       (((m : ℝ) / e + K) ^ D / (m : ℝ) ^ D)) atTop (𝓝 (δ / ((e : ℝ) ^ D * D.factorial))) := by
     intro K
@@ -122,14 +121,12 @@ theorem tendsto_rank_div_pow_of_choose_bounds (D e δ : ℕ) (r : ℕ → ℕ) (
         = (δ : ℝ) / D.factorial * ((m : ℝ) / e + -(C : ℝ)) ^ D / (m : ℝ) ^ D := by ring
       _ ≤ (r m : ℝ) / (m : ℝ) ^ D := by gcongr
   · filter_upwards [eventually_ge_atTop 1] with m hm
-    have hmpos : (0 : ℝ) < m := by exact_mod_cast (show 0 < m by omega)
     have hs : m % e < e := Nat.mod_lt _ he
     have hm_eq : e * (m / e) + m % e = m := Nat.div_add_mod m e
     have h1 := (hc (m % e) hs (m / e)).2
     rw [hm_eq] at h1
     have h2 := Nat.choose_le_pow_div (α := ℝ) D (m / e + c' (m % e) + D)
     have hmR : (m : ℝ) = e * ((m / e : ℕ) : ℝ) + ((m % e : ℕ) : ℝ) := by exact_mod_cast hm_eq.symm
-    have hs0 : (0 : ℝ) ≤ ((m % e : ℕ) : ℝ) := Nat.cast_nonneg _
     have hle : ((m / e : ℕ) : ℝ) ≤ (m : ℝ) / e := by
       rw [le_div_iff₀ heR]; nlinarith
     have hcsR : (c' (m % e) : ℝ) ≤ C' := by exact_mod_cast hcC' (m % e) hs

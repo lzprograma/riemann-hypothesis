@@ -91,7 +91,7 @@ theorem gauss_height_const_eq_zero {K : Type*} [Field K] [NumberField K] (B n : 
       · exact le_rfl
       · rw [map_zero]; exact apply_nonneg w c
     · have := coeff_le_gauss_abs w (MvPolynomial.C c : MvPolynomial (Fin B × Fin n) K) 0
-      rwa [MvPolynomial.coeff_C, if_pos rfl] at this
+      rwa [MvPolynomial.coeff_C, ite_eq_left rfl] at this
   simp_rw [hG]
 
   have hP : IsProbabilityMeasure (blockSphereProb B n) := by

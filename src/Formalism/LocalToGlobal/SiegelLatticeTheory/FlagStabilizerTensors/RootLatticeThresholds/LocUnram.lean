@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.EmbeddingIntegerAlgebraMap
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocalAdditiveCharContinuous
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
 import Mathlib.Algebra.Order.Floor.Extended
@@ -56,7 +57,7 @@ namespace Formalism.L2.SG.Pf.LocUnramP
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups ValuativeRel Formalism.L2.SG.Pf.LocCP
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar factRes
+attribute [local instance] factRes
 
 variable {D : D7} (p : PlF D)
 
@@ -116,45 +117,28 @@ namespace Formalism.L2.SG.Pf.LocUnramP
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups ValuativeRel Formalism.L2.SG.Pf.LocCP
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar factRes
+attribute [local instance] factRes
 
 variable {D : D7} (p : PlF D)
 
-private theorem mem_integers_iff_valuation_le_one (z : (D.s.atP p).Fp) :
-    z ∈ 𝒪[(D.s.atP p).Fp] ↔ ValuativeRel.valuation (D.s.atP p).Fp z ≤ 1 := by
-  first
-  | exact Valuation.mem_integer_iff _ _
-
-private theorem valuative_le_iff_valuation_le (y z : (D.s.atP p).Fp) :
-    y ≤ᵥ z ↔ ValuativeRel.valuation (D.s.atP p).Fp y ≤ ValuativeRel.valuation (D.s.atP p).Fp z :=
-  Valuation.Compatible.vle_iff_le y z
-
 theorem iotaF_mem (x : 𝓞 D.host.F) : (D.s.atP p).ιF (x : D.host.F) ∈ 𝒪[(D.s.atP p).Fp] := by
-  rw [mem_integers_iff_valuation_le_one p, ← (ValuativeRel.valuation (D.s.atP p).Fp).map_one, ← valuative_le_iff_valuation_le p,
-    ← map_one (D.s.atP p).ιF, (D.s.atP p).val, map_one]
-  first
-  | exact p.valuation_le_one x
+  rw [Valuation.mem_integer_iff, ← (ValuativeRel.valuation (D.s.atP p).Fp).map_one,
+    ← Valuation.Compatible.vle_iff_le, ← map_one (D.s.atP p).ιF, (D.s.atP p).val, map_one]
+  exact p.valuation_le_one x
 
 theorem iotaF_inv_mem (x : 𝓞 D.host.F) (hx : x ∉ p.asIdeal) :
     ((D.s.atP p).ιF (x : D.host.F))⁻¹ ∈ 𝒪[(D.s.atP p).Fp] := by
   have h1 : ValuativeRel.valuation (D.s.atP p).Fp ((D.s.atP p).ιF (x : D.host.F)) ≤ 1 :=
-    (mem_integers_iff_valuation_le_one p _).1 (iotaF_mem p x)
+    (Valuation.mem_integer_iff _ _).1 (iotaF_mem p x)
   have h2 : 1 ≤ ValuativeRel.valuation (D.s.atP p).Fp ((D.s.atP p).ιF (x : D.host.F)) := by
-    rw [← (ValuativeRel.valuation (D.s.atP p).Fp).map_one, ← valuative_le_iff_valuation_le p, ← map_one (D.s.atP p).ιF,
-      (D.s.atP p).val, map_one]
+    rw [← (ValuativeRel.valuation (D.s.atP p).Fp).map_one, ← Valuation.Compatible.vle_iff_le,
+      ← map_one (D.s.atP p).ιF, (D.s.atP p).val, map_one]
     refine not_lt.1 (fun h => hx ?_)
-    first
-    | exact (p.valuation_lt_one_iff_mem x).1 h
-  rw [mem_integers_iff_valuation_le_one p, map_inv₀, le_antisymm h1 h2, inv_one]
+    exact (p.valuation_lt_one_iff_mem x).1 h
+  rw [Valuation.mem_integer_iff, map_inv₀, le_antisymm h1 h2, inv_one]
 
 theorem iotaF_ne (x : 𝓞 D.host.F) (hx : x ∉ p.asIdeal) : (D.s.atP p).ιF (x : D.host.F) ≠ 0 := by
-  intro h
-  apply hx
-  have h0 : (x : D.host.F) = 0 := (map_eq_zero (D.s.atP p).ιF).1 h
-  have h1 : x = 0 := by
-    first
-    | exact_mod_cast h0
-  rw [h1]; exact p.asIdeal.zero_mem
+  apply _root_.Formalism.L2.SG.Pf.LocalDenominators.iF_t_ne <;> assumption
 
 theorem iotaE_alg (x : D.host.F) :
     (D.s.atP p).ιE ((x : D.host.E)) = algebraMap (D.s.atP p).Fp (D.s.atP p).Ep ((D.s.atP p).ιF x) := (D.s.atP p).compat x
@@ -164,30 +148,14 @@ theorem iotaE_mem (θ : D.host.E) (hθ : IsIntegral ℤ θ) : (D.s.atP p).ιE θ
   have h1 : IsIntegral ℤ ((D.s.atP p).ιE θ) := hθ.map ((D.s.atP p).ιE.toIntAlgHom)
   exact h1.tower_top
 
-private theorem isScalarTower_integers_Fp_Ep : IsScalarTower 𝒪[(D.s.atP p).Fp] (D.s.atP p).Fp (D.s.atP p).Ep := by
-  first
-  | infer_instance
+private theorem algebraMap_Fp_Ep_injective :
+    Function.Injective (algebraMap (D.s.atP p).Fp (D.s.atP p).Ep) :=
+  (algebraMap (D.s.atP p).Fp (D.s.atP p).Ep).injective
 
-private theorem algebraMap_Fp_Ep_injective : Function.Injective (algebraMap (D.s.atP p).Fp (D.s.atP p).Ep) := by
-  haveI : Nontrivial (D.s.atP p).Ep := by
-    by_contra hn
-    rw [not_nontrivial_iff_subsingleton] at hn
-    haveI := hn
-    have h := (D.s.atP p).rank
-    rw [Module.finrank_zero_of_subsingleton] at h
-    exact absurd h (by norm_num)
-  exact (algebraMap (D.s.atP p).Fp (D.s.atP p).Ep).injective
-
-private theorem mem_integers_of_isIntegral_algebraMap (s : (D.s.atP p).Fp) (hs : IsIntegral 𝒪[(D.s.atP p).Fp] (algebraMap (D.s.atP p).Fp (D.s.atP p).Ep s)) :
-    s ∈ 𝒪[(D.s.atP p).Fp] := by
-  haveI := isScalarTower_integers_Fp_Ep p
-  have h1 : IsIntegral 𝒪[(D.s.atP p).Fp] s := (isIntegral_algebraMap_iff ).1 hs
-  first
-  | exact (Valuation.integer.integers _).mem_of_integral h1
-
-private theorem algebraMap_mem_O_of_mem_integers (a : (D.s.atP p).Fp) (ha : a ∈ 𝒪[(D.s.atP p).Fp]) :
+private theorem algebraMap_mem_O_of_mem_integers (a : (D.s.atP p).Fp)
+    (ha : a ∈ 𝒪[(D.s.atP p).Fp]) :
     algebraMap (D.s.atP p).Fp (D.s.atP p).Ep a ∈ (D.s.atP p).O := by
-  haveI := isScalarTower_integers_Fp_Ep p
+  haveI : IsScalarTower 𝒪[(D.s.atP p).Fp] (D.s.atP p).Fp (D.s.atP p).Ep := inferInstance
   rw [(D.s.atP p).O_def]
   have h := isIntegral_algebraMap (R := 𝒪[(D.s.atP p).Fp]) (A := (D.s.atP p).Ep) (x := (⟨a, ha⟩ : 𝒪[(D.s.atP p).Fp]))
   first
@@ -229,7 +197,7 @@ private theorem exists_eq_algebraMap_add_mul_omega (ω : (D.s.atP p).Ep) (hne : 
 
 theorem trace_mem (y : (D.s.atP p).Ep) (hy : y ∈ (D.s.atP p).O) :
     ∃ s ∈ 𝒪[(D.s.atP p).Fp], y + (D.s.atP p).cj y = algebraMap (D.s.atP p).Fp (D.s.atP p).Ep s := by
-  haveI := isScalarTower_integers_Fp_Ep p
+  haveI : IsScalarTower 𝒪[(D.s.atP p).Fp] (D.s.atP p).Fp (D.s.atP p).Ep := inferInstance
   obtain ⟨θ, c, tr, nm, hθ, hc, hcp, htr, hnm⟩ := exists_theta p
   have hc' : ((D.s.atP p).ιE θ - (D.s.atP p).cj ((D.s.atP p).ιE θ)) ^ 2 =
       algebraMap (D.s.atP p).Fp (D.s.atP p).Ep ((D.s.atP p).ιF (c : D.host.F)) := by
@@ -245,7 +213,8 @@ theorem trace_mem (y : (D.s.atP p).Ep) (hy : y ∈ (D.s.atP p).O) :
     exact iotaF_ne p c hcp (algebraMap_Fp_Ep_injective p (hc'.symm.trans (map_zero _).symm))
   obtain ⟨a, b, hab⟩ := exists_eq_algebraMap_add_mul_omega p _ hne y
   refine ⟨a + a + b * (D.s.atP p).ιF (tr : D.host.F), ?_, ?_⟩
-  · apply mem_integers_of_isIntegral_algebraMap p
+  · refine (Valuation.integer.integers _).mem_of_integral
+      ((isIntegral_algebraMap_iff (B := (D.s.atP p).Ep)).1 ?_)
     have e : algebraMap (D.s.atP p).Fp (D.s.atP p).Ep (a + a + b * (D.s.atP p).ιF (tr : D.host.F)) =
         y + (D.s.atP p).cj y := by
       rw [hab]
@@ -264,7 +233,7 @@ namespace Formalism.L2.SG.Pf.LocUnramP
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups ValuativeRel Formalism.L2.SG.Pf.LocCP
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar factRes
+attribute [local instance] factRes
 
 variable {D : D7} (p : PlF D)
 
@@ -321,7 +290,7 @@ namespace Formalism.L2.SG.Pf.LocUnramP
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups ValuativeRel Formalism.L2.SG.Pf.LocCP
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar factRes
+attribute [local instance] factRes
 
 variable {D : D7} (p : PlF D)
 
@@ -376,7 +345,9 @@ theorem coords_mem (θ : D.host.E) (c tr nm : 𝓞 D.host.F) (hθ : IsIntegral �
     rw [e]
     exact Subring.mul_mem _ hs (iotaF_inv_mem p c hcp)
   refine ⟨?_, hb⟩
-  apply mem_integers_of_isIntegral_algebraMap p
+  haveI : IsScalarTower 𝒪[(D.s.atP p).Fp] (D.s.atP p).Fp (D.s.atP p).Ep := inferInstance
+  refine (Valuation.integer.integers _).mem_of_integral
+    ((isIntegral_algebraMap_iff (B := (D.s.atP p).Ep)).1 ?_)
   have e : algebraMap (D.s.atP p).Fp (D.s.atP p).Ep a = y - algebraMap (D.s.atP p).Fp (D.s.atP p).Ep b * (D.s.atP p).ιE θ := by
     rw [hab]; ring
   rw [e, ← (D.s.atP p).O_def]
@@ -388,7 +359,7 @@ namespace Formalism.L2.SG.Pf.LocUnramP
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups ValuativeRel Formalism.L2.SG.Pf.LocCP
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar factRes
+attribute [local instance] factRes
 
 theorem core {R : Type*} [CommRing R] (ϖ A B T N K C Dd : R) (hpr : Prime ϖ) (hK : IsUnit K)
     (hKe : K = T ^ 2 - (N + N + N + N)) (e1 : A ^ 2 - B ^ 2 * N = C * ϖ)

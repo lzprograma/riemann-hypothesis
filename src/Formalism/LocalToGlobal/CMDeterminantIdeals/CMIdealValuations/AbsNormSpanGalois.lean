@@ -283,10 +283,9 @@ theorem coeff_cauchy_bound : CoeffCauchy := by
       split_ifs with h
       · simp [h]
       · obtain ⟨v, hv⟩ : ∃ v, ν v ≠ μ v := by
-          by_contra hc
-          push_neg at hc
+          by_contra! hc
           exact h (Finsupp.ext hc)
-        exact Finset.prod_eq_zero (Finset.mem_univ v) (if_neg hv)
+        exact Finset.prod_eq_zero (Finset.mem_univ v) (ite_eq_right hv)
     rw [hsum1, hsumk, Finset.prod_congr rfl (fun v _ => hgeom v), hprodif]
     split_ifs with h
     · rw [h]
@@ -299,13 +298,13 @@ theorem coeff_cauchy_bound : CoeffCauchy := by
   have key : ∑ k : V → Fin N, MvPolynomial.eval (z k) G * ∏ v, ζ⁻¹ ^ ((k v : ℕ) * μ v) =
       (N : ℂ) ^ Fintype.card V * (AddMonoidAlgebra.coeff G μ * ∏ v, (ρ v : ℂ) ^ μ v) := by
     rw [Finset.sum_congr rfl (fun k _ => hexp k), Finset.sum_comm, Finset.sum_congr rfl inner]
-    rw [Finset.sum_eq_single μ (fun ν _ hν => if_neg hν) (fun hμ => by
+    rw [Finset.sum_eq_single μ (fun ν _ hν => ite_eq_right hν) (fun hμ => by
       have h0 : AddMonoidAlgebra.coeff G μ = 0 := by
         by_contra h
         exact hμ (MvPolynomial.mem_support_iff.mpr h)
-      rw [if_pos rfl, h0]
+      rw [ite_eq_left rfl, h0]
       simp)]
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
   have hbound : ‖(N : ℂ) ^ Fintype.card V * (AddMonoidAlgebra.coeff G μ * ∏ v, (ρ v : ℂ) ^ μ v)‖ ≤
       (N : ℝ) ^ Fintype.card V * S := by
     rw [← key]
@@ -424,11 +423,5 @@ theorem coeff_mem_of_local : CoeffMemOfLoc := by
         = p.valuation K (cf * ∏ v, cl (c v) ^ μ v) * (p.valuation K (∏ v, cl (c v) ^ μ v))⁻¹ := by
           rw [map_mul, mul_assoc, mul_inv_cancel₀ hne, mul_one]
       _ ≤ _ := by gcongr
-
-section galois
-
-variable {K : Type} [Field K] [NumberField K]
-
-end galois
 
 end Formalism.L2.LamCM

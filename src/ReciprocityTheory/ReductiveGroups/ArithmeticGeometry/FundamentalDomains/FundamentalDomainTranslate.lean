@@ -34,8 +34,7 @@ theorem orth (L : AddSubgroup (ι → ℝ)) [Countable L] (D : Set (ι → ℝ))
   · subst h0
     simp [Measure.real]
   · obtain ⟨j, hj⟩ : ∃ j, μ j ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact h0 (funext h)
     classical
     set e : (ι → ℝ) → ℂ := fun s => cexp (4 * Real.pi * I * ∑ i, (μ i : ℂ) * s i) with he
@@ -55,7 +54,7 @@ theorem orth (L : AddSubgroup (ι → ℝ)) [Countable L] (D : Set (ι → ℝ))
 
     let v : ι → ℝ := Pi.single j (1 / (4 * μ j))
     have hsumR : ∑ i, μ i * v i = 1 / 4 := by
-      rw [Finset.sum_eq_single j (fun i _ hi => by simp [v, Pi.single_apply, hi]) (by simp)]
+      rw [Finset.sum_eq_single j (fun i _ hi => by simp [v, hi]) (by simp)]
       simp only [v, Pi.single_eq_same]
       field_simp
     have hsum : ∑ i, (μ i : ℂ) * (v i : ℂ) = 1 / 4 := by

@@ -60,14 +60,14 @@ theorem secIdeal_le_ker :
     simp only [SetLike.mem_coe, RingHom.mem_ker, secForm, linForm, map_sum, map_mul]
     simp only [evalF, coe_eval₂Hom, eval₂_C, eval₂Hom_X', parVal]
     simp only [sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ,
-      if_true]
+      ite_true]
     linear_combination (-(∑ m, X (.inl (i, m)) * cx Q j e m)) * cx_mul_cinv Q j (e := e)
   · rw [Ideal.span_le, Set.singleton_subset_iff]
 
     simp only [SetLike.mem_coe, RingHom.mem_ker, chartForm, linForm, map_sub, map_one, map_sum, map_mul]
     simp only [evalF, coe_eval₂Hom, eval₂_C, eval₂Hom_X', parVal]
     simp only [sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ,
-      if_true]
+      ite_true]
     linear_combination (-(∑ m, X (.inr m) * cx Q j e m - 1)) * cx_mul_cinv Q j (e := e)
 
 abbrev secI (e : ℕ) : Ideal (MvPolynomial (Fin n) (MvPolynomial (Par e n) D)) :=

@@ -43,7 +43,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 open Topology
 
@@ -79,14 +78,14 @@ theorem tendsto_af {α : Type} {l : Filter α} (g : α → Af E) (c : Af E)
     intro v
     apply tendsto_const_nhds.congr'
     filter_upwards [h2, h3 v] with a ha hav
-    simp only [g', dif_pos ha]
+    simp only [g', dite_eq_left ha]
     exact Subtype.ext hav.symm
   have hmap := (tendsto_map (f := RestrictedProduct.structureMap (fun v : HeightOneSpectrum (𝓞 E) => v.adicCompletion E)
       (fun v => (v.adicCompletionIntegers E : Set (v.adicCompletion E))) cofinite)).comp hg'
   rw [← RestrictedProduct.nhds_eq_map_structureMap (fun v => isOpen_intAt v), hcc] at hmap
   apply hmap.congr'
   filter_upwards [h2] with a ha
-  simp only [Function.comp_apply, g', dif_pos ha]
+  simp only [Function.comp_apply, g', dite_eq_left ha]
   apply RestrictedProduct.ext
   intro v
   rfl
@@ -149,11 +148,8 @@ theorem mem_of_isOpen_of_eq_one_on_finset : ∀ (E : Type) [Field E] [NumberFiel
     (∀ (v : Pl E) (i j : Fin n), (cLoc v (u : UA E n))⁻¹ i j ∈ v.adicCompletionIntegers E)}
   have hanti : ∀ T₁ T₂ : Finset (Pl E), T₁ ⊆ T₂ → S T₂ ⊆ S T₁ := fun T₁ T₂ h u hu =>
     ⟨fun v hv => hu.1 v (h hv), hu.2.1, hu.2.2⟩
-  have hdir : Directed (fun x1 x2 => x1 ≥ x2) (fun T => 𝓟 (S T)) := by
-    intro T₁ T₂
-    refine ⟨T₁ ∪ T₂, ?_, ?_⟩
-    · exact principal_mono.mpr (hanti _ _ Finset.subset_union_left)
-    · exact principal_mono.mpr (hanti _ _ Finset.subset_union_right)
+  have hdir : Directed (fun x1 x2 => x1 ≥ x2) (fun T => 𝓟 (S T)) :=
+    directed_of_isDirected_le fun T₁ T₂ h => principal_mono.mpr (hanti T₁ T₂ h)
   let l : Filter (finU (E := E) (n := n)) := ⨅ T, 𝓟 (S T)
   have hmem : ∀ T, S T ∈ l := fun T => mem_iInf_of_mem T (mem_principal_self _)
   let ι : finU (E := E) (n := n) → GA E n := fun u => ((u : UA E n) : GA E n)

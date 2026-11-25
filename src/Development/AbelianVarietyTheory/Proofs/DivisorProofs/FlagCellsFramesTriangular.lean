@@ -201,7 +201,7 @@ theorem col_tri (hZ : Cells A π g κ) (k k' : A.B × Pm Dw.mult) (σ : E →+* 
   refine ⟨((a0⁻¹ : Lˣ) : L) • av, fun i hi => ?_, ?_⟩
   · simp only [av, Pi.smul_apply, Finset.sum_apply, Pi.single_apply, smul_eq_mul]
     rw [Finset.sum_eq_zero fun l _ => ?_, mul_zero]
-    rw [if_neg, mul_zero]
+    rw [ite_eq_right, mul_zero]
     intro h
     have := congrArg Fin.val h
     simp only [Fin.coe_castLE] at this

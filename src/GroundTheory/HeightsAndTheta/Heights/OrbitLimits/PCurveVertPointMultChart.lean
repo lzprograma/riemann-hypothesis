@@ -2,13 +2,13 @@ module
 
 public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveVertPointNagata
 public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveVertPointLengthSteps
-public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PVertPointMultChart
 public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.CurveCountObjects
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.Smooth.Flat
 import Mathlib.Tactic.TypeStar
+import GroundTheory.HeightsAndTheta.Heights.BlockScaling
 
 @[expose] public section
 
@@ -22,24 +22,41 @@ noncomputable section
 
 namespace CurveVerticalPointMultiplicity
 
+theorem length_localizedModule_quotient {R : Type*} [CommRing R] (p : Ideal R) [p.IsPrime] (I : Ideal R) :
+    Module.length (Localization.AtPrime p) (LocalizedModule p.primeCompl (R ⧸ I)) =
+      Module.length (Localization.AtPrime p)
+        (Localization.AtPrime p ⧸ I.map (algebraMap R (Localization.AtPrime p))) := by
+  have := IsLocalization.linearMap_compatibleSMul p.primeCompl
+  let e := (IsLocalizedModule.linearEquiv p.primeCompl
+    (I.toLocalizedQuotient' (Localization.AtPrime p) p.primeCompl
+      (Algebra.linearMap R (Localization.AtPrime p)))
+    (LocalizedModule.mkLinearMap p.primeCompl (R ⧸ I))).restrictScalars (Localization.AtPrime p)
+  rw [← e.length_eq]
+  exact (Submodule.quotEquivOfEq _ _ (Ideal.localized'_eq_map _ _ I)).length_eq
+
+theorem length_quotient_of_surjective {A N : Type*} [CommRing A] [CommRing N] (Φ : A →+* N)
+    (hΦ : Function.Surjective Φ) (J : Ideal A) (hJ : RingHom.ker Φ ≤ J) :
+    Module.length A (A ⧸ J) = Module.length N (N ⧸ J.map Φ) := by
+  let _ := Φ.toAlgebra
+  have hs : Function.Surjective (algebraMap A (N ⧸ J.map Φ)) :=
+    (Ideal.Quotient.mk_surjective).comp hΦ
+  have hker : RingHom.ker (Algebra.ofId A (N ⧸ J.map Φ)) = J := by
+    ext x
+    rw [RingHom.mem_ker]
+    change Ideal.Quotient.mk _ (Φ x) = 0 ↔ _
+    rw [Ideal.Quotient.eq_zero_iff_mem, ← Ideal.mem_comap, Ideal.comap_map_of_surjective _ hΦ,
+      ← RingHom.ker_eq_comap_bot, sup_eq_left.mpr hJ]
+  let e := (Ideal.quotientEquivAlgOfEq A hker.symm).trans
+    (Ideal.quotientKerAlgEquivOfSurjective (f := Algebra.ofId A (N ⧸ J.map Φ)) hs)
+  rw [e.toLinearEquiv.length_eq]
+  exact Module.length_eq_of_surjective hΦ
+
 variable {K : Type} {ι : K → Type}
 
 theorem aeval_mul_of_homog [Fintype K] [∀ k, Fintype (ι k)] {S : Type*} [CommRing S] [Algebra ℤ S] (r : (Σ k, ι k) → S) (t : K → S) {f : MRing ι}
     {d : K → ℕ} (hf : IsMultiHomog f d) :
-    aeval (fun p => r p * t p.1) f = aeval r f * ∏ k, t k ^ d k := by
-  classical
-
-  rw [f.as_sum, map_sum, map_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun m hm => ?_
-  rw [aeval_monomial, aeval_monomial, mul_assoc]
-  congr 1
-  rw [Finsupp.prod_fintype _ _ (by simp), Finsupp.prod_fintype _ _ (by simp)]
-  simp_rw [mul_pow, Finset.prod_mul_distrib]
-  congr 1
-  rw [Fintype.prod_sigma]
-  refine Finset.prod_congr rfl fun k _ => ?_
-  dsimp only
-  rw [Finset.prod_pow_eq_pow_sum, hf m hm k]
+    aeval (fun p => r p * t p.1) f = aeval r f * ∏ k, t k ^ d k :=
+  BlockScaling.eval₂_mul_block_right (algebraMap ℤ S) r t hf
 
 theorem map_aeval_int {S T : Type*} [CommRing S] [CommRing T] [Algebra ℤ S] [Algebra ℤ T] (φ : S →+* T) (r : (Σ k, ι k) → S)
     (f : MRing ι) : φ (aeval r f) = aeval (fun p => φ (r p)) f := by
@@ -51,16 +68,33 @@ theorem map_aeval_int {S T : Type*} [CommRing S] [CommRing T] [Algebra ℤ S] [A
 end CurveVerticalPointMultiplicity
 
 
-open CurveVerticalPointMultiplicity GroundTheory.Heights₂.Heights.VerticalPointMultiplicityChart in
-theorem CurveVertPointMultChart.proof (hCh : CurveVertPointChart.Statement)
-    (hN : CurveVertPointNagata.Statement) : CurveVertPointMultChart.Statement := by
+open CurveVerticalPointMultiplicity in
+theorem CurveVertPointMultChart.of_single
+    {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω]
+    {y : (Σ k, ι k) → Ω} {s : MRing ι} {d : K → ℕ}
+    (hs : IsMultiHomog s d) {W : Ideal (MRing ι)} (hW : W ∈ divSupp (mCoordIdeal y) s)
+    (c : ∀ k, ι k) (hc : ∀ k, (X ⟨k, c k⟩ : MRing ι) ∉ W) (a b : curveRing y)
+    (hb : b ∉ curvePtIdeal y W) (hab : (b : Ω) * aeval y s = (a : Ω) * ∏ k, y ⟨k, c k⟩ ^ d k)
+    (hmax : (curvePtIdeal y W).IsMaximal)
+    (hrat : ∀ p : Σ k, ι k, ∃ a' b' : curveRing y, b' ∉ curvePtIdeal y W ∧
+      (b' : Ω) * (y p / y ⟨p.1, c p.1⟩) = a')
+    (hN : ∀ [W.IsPrime] [(curvePtIdeal y W).IsPrime] (a' b' : (Σ k, ι k) → curveRing y)
+      (hb' : ∀ p, b' p ∉ curvePtIdeal y W), (∀ p, (b' p : Ω) * (y p / y ⟨p.1, c p.1⟩) = a' p) →
+        ∃ Φ : Localization.AtPrime W →+* mNagataRing K (Localization.AtPrime (curvePtIdeal y W)),
+          Function.Surjective Φ ∧
+          RingHom.ker Φ = (mCoordIdeal y).map (algebraMap (MRing ι) _) ∧
+          ∀ f : MRing ι, Φ (algebraMap _ _ f) =
+            algebraMap (MvPolynomial K (Localization.AtPrime (curvePtIdeal y W))) _
+              (aeval (fun p : (Σ k, ι k) => MvPolynomial.C (IsLocalization.mk'
+                (Localization.AtPrime (curvePtIdeal y W)) (a' p)
+                (⟨b' p, hb' p⟩ : (curvePtIdeal y W).primeCompl)) * MvPolynomial.X p.1) f)) :
+    multAt (mCoordIdeal y ⊔ Ideal.span {s}) W =
+      locLen (curvePtIdeal y W) (curveRing y ⧸ Ideal.span {a}) := by
   classical
-  intro K _ ι _ Ω _ y s d hP hs hsP W hW c hc a b hb hab
-  obtain ⟨hmax, hrat, -⟩ := hCh K ι Ω y s d hP hs hsP W hW c hc
   have hWp : W.IsPrime := hW.1.1.1
   have hmp : (curvePtIdeal y W).IsPrime := hmax.isPrime
   choose a' b' hb' hab' using hrat
-  obtain ⟨Φ, hsurj, hker, hΦ⟩ := hN K ι Ω y s d hP hs hsP W hW c hc a' b' hb' hab'
+  obtain ⟨Φ, hsurj, hker, hΦ⟩ := hN a' b' hb' hab'
   have hPW : mCoordIdeal y ≤ W := le_sup_left.trans hW.1.1.2
   have hyc : ∀ k, y ⟨k, c k⟩ ≠ 0 := fun k => ne_zero_of_X_notMem fun h => hc k (hPW h)
 
@@ -98,7 +132,7 @@ theorem CurveVertPointMultChart.proof (hCh : CurveVertPointChart.Statement)
       ((IsLocalRing.maximalIdeal (Localization.AtPrime (curvePtIdeal y W))).map
         (MvPolynomial.C : _ →+* MvPolynomial K _)).primeCompl := fun k h => by
     have h1 := MvPolynomial.mem_map_C_iff.mp h (Finsupp.single k 1)
-    rw [MvPolynomial.coeff_X, if_pos rfl] at h1
+    rw [MvPolynomial.coeff_X, ite_eq_left rfl] at h1
     exact (IsLocalRing.maximalIdeal _).ne_top_iff_one.mp (IsLocalRing.maximalIdeal.isMaximal _).ne_top h1
   have hprod : (∏ k, X k ^ d k : MvPolynomial K (Localization.AtPrime (curvePtIdeal y W))) ∈
       ((IsLocalRing.maximalIdeal (Localization.AtPrime (curvePtIdeal y W))).map
@@ -168,6 +202,13 @@ theorem CurveVertPointMultChart.proof (hCh : CurveVertPointChart.Statement)
     (Algebra.TensorProduct.quotIdealMapEquivTensorQuot (mNagataRing K (Localization.AtPrime (curvePtIdeal y W)))
       (Ideal.span {algebraMap (curveRing y) (Localization.AtPrime (curvePtIdeal y W)) a})).toLinearEquiv.length_eq,
     IsLocalRing.length_baseChange, hfib, mul_one, Ideal.map_span, Set.image_singleton]
+
+theorem CurveVertPointMultChart.proof (hCh : CurveVertPointChart.Statement)
+    (hN : CurveVertPointNagata.Statement) : CurveVertPointMultChart.Statement := by
+  intro K _ ι _ Ω _ y s d hP hs hsP W hW c hc a b hb hab
+  obtain ⟨hmax, hrat, -⟩ := hCh K ι Ω y s d hP hs hsP W hW c hc
+  exact CurveVertPointMultChart.of_single hs hW c hc a b hb hab hmax hrat
+    (fun a' b' hb' hab' => hN K ι Ω y s d hP hs hsP W hW c hc a' b' hb' hab')
 
 end
 

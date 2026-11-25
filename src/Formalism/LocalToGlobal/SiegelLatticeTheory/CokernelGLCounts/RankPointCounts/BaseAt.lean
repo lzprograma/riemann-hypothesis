@@ -23,8 +23,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.CountAt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (p : PlF D)
 
 def sgnU : GLp p :=
@@ -78,8 +76,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.CountAt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (p : PlF D)
 
 theorem sconj_apply (ρ : MP p) (a b : Fin (D.R.rS + 1)) :
@@ -126,7 +122,7 @@ theorem phi_smul (δ : ∀ p : PlF D, (D.s.atP p).Fp) (T T' : ℕ) (w : Point D.
     refine Formalism.L2.SG.Pf.FibQ.corner_fix p (fun a b h => (hx.1 a b).1 h) (fun a => (hx.1 a a).2 rfl)
       (fun a b h => (hu a b).1 h) (fun a => (hu a a).2 rfl) (fun a b h => ?_)
     simp only [Formalism.L2.SG.Pf.LocOrbSumPf.shM, Matrix.of_apply]
-    rw [if_neg h]
+    rw [ite_eq_right h]
   simp only [phi, smul_def, tau_second_value]
   show ((x.1 : GLp p) : MP p) * Z * ((x.2.unop : GLp p) : MP p) * Formalism.L2.SG.LsDatumB.sgnP p +
       Formalism.L2.SG.Pf.LocOrbSumPf.shM δ T T' p w =
@@ -163,8 +159,6 @@ open scoped Classical
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.Pf.ProdE Formalism.L2.SG.Pf.ProdEP2Cut
 
 namespace Formalism.L2.SG.Pf.CountAt
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (δ : ∀ p : PlF D, (D.s.atP p).Fp)
   (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D)

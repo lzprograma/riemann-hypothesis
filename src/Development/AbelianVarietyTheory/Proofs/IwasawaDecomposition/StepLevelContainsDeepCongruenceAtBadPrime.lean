@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPosNatMemOpenAdeleSubgroup
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsInvOne
 public import Formalism.LocalToGlobal.Columns.RecLevelTop
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
@@ -48,7 +49,6 @@ import Mathlib.Tactic.ReduceModChar
 @[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.Mem.Col2.AdT Matrix
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -59,34 +59,11 @@ open Filter Topology
 
 theorem tendsto_fact_loc (F : Type) [Field F] [NumberField F] (v : HeightOneSpectrum (𝓞 F)) :
     Tendsto (fun n : ℕ => ((n.factorial : ℕ) : v.adicCompletion F)) atTop (𝓝 0) := by
-  have hle : ∀ m : ℕ, ‖(m : v.adicCompletion F)‖ ≤ 1 := fun m => by
-    have := FinitePlace.norm_le_one F v (m : 𝓞 F)
-    simpa using this
-  set M := Ideal.absNorm v.asIdeal with hM
-  have hlt : ‖(M : v.adicCompletion F)‖ < 1 := by
-    have := (FinitePlace.norm_lt_one_iff_mem F v (M : 𝓞 F)).2 (Ideal.absNorm_mem _)
-    simpa using this
-  have hM0 : 0 < M := lt_trans one_pos (NumberField.HeightOneSpectrum.one_lt_absNorm v)
-  rw [Metric.tendsto_atTop]
-  intro ε hε
-  obtain ⟨k, hk⟩ := exists_pow_lt_of_lt_one hε hlt
-  refine ⟨M ^ k, fun n hn => ?_⟩
-  obtain ⟨c, hc⟩ := Nat.dvd_factorial (pow_pos hM0 k) hn
-  rw [dist_zero_right, hc, Nat.cast_mul, Nat.cast_pow, norm_mul, norm_pow]
-  exact lt_of_le_of_lt (mul_le_of_le_one_right (by positivity) (hle c)) hk
+  first | exact _root_.GlobalTheory.AdelicFactorial.tendsto_factorial_adicCompletion | exact @_root_.GlobalTheory.AdelicFactorial.tendsto_factorial_adicCompletion | apply _root_.GlobalTheory.AdelicFactorial.tendsto_factorial_adicCompletion <;> assumption
 
 theorem tendsto_fact (F : Type) [Field F] [NumberField F] :
     Tendsto (fun n : ℕ => ((n.factorial : ℕ) : FiniteAdeleRing (𝓞 F) F)) atTop (𝓝 0) := by
-  have h1 : Tendsto (fun n : ℕ => fun v : HeightOneSpectrum (𝓞 F) =>
-      ((n.factorial : ℕ) : v.adicCompletionIntegers F)) atTop (𝓝 0) := by
-    refine tendsto_pi_nhds.2 fun v => ?_
-    rw [tendsto_subtype_rng]
-    simpa using tendsto_fact_loc F v
-  have h2 := ((RestrictedProduct.isEmbedding_structureMap
-    (R := fun v : HeightOneSpectrum (𝓞 F) => v.adicCompletion F)
-    (A := fun v : HeightOneSpectrum (𝓞 F) => (v.adicCompletionIntegers F : Set (v.adicCompletion F)))
-    (𝓕 := cofinite)).continuous.tendsto _).comp h1
-  exact h2
+  exact GlobalTheory.AdelicFactorial.tendsto_factorial_finiteAdele F
 
 theorem val_inv_le {K Γ : Type} [CommRing K] [LinearOrderedCommGroupWithZero Γ] (w : Valuation K Γ) {n : ℕ}
     (X Y : Matrix (Fin n) (Fin n) K) (h : (1 + X) * (1 + Y) = 1) (ε : Γ) (hε : ε < 1) (hY : ∀ a b, w (Y a b) ≤ ε) (a b : Fin n) :

@@ -188,7 +188,7 @@ private theorem B_slash [H.FiniteIndex] {α : GL (Fin 2) ℝ} (hα : 0 < α.det.
     (hG' : Good H k (G ∣[k] α)) :
     quotInt H (petersson k (F ∣[k] α) (G ∣[k] α)) = (α.det.val : ℂ) ^ (k - 2) * quotInt H (petersson k F G) := by
   have e : ∀ z, petersson k (F ∣[k] α) (G ∣[k] α) z = (α.det.val : ℂ) ^ (k - 2) * petersson k F G (α • z) := fun z => by
-    rw [petersson_slash, σ, if_pos hα, abs_of_pos hα]; rfl
+    rw [petersson_slash, σ, ite_eq_left hα, abs_of_pos hα]; rfl
   have h0 : (α.det.val : ℂ) ^ (k - 2) ≠ 0 := zpow_ne_zero _ (by exact_mod_cast hα.ne')
   obtain ⟨C, hC⟩ := hF.pbd hG
   rw [funext e, quotInt_mul, quotInt_conj H α h1 h2 (hF.cont hG) hC (hF.pinv hG) fun γ hγ z => ?_]
@@ -249,7 +249,7 @@ private theorem dg_fin' (H : Subgroup SL(2, ℤ)) [H.FiniteIndex] (m n : ℕ) (h
 private theorem dg_slash (m n : ℕ) (h : m * n ≠ 0) (k : ℤ) (F : ℍ → ℂ) (z : ℍ) :
     (F ∣[k] dg m n h) z = ((m * n : ℕ) : ℂ) ^ (k - 1) * (n : ℂ) ^ (-k) * F (ofComplex (m * (z : ℂ) / n)) := by
   have hpos : 0 < (dg m n h).det.val := by rw [dg_det]; exact_mod_cast Nat.pos_of_ne_zero h
-  rw [slash_apply, σ, if_pos hpos, dg_det, ← ofComplex_apply (dg m n h • z), coe_smul_of_det_pos hpos]
+  rw [slash_apply, σ, ite_eq_left hpos, dg_det, ← ofComplex_apply (dg m n h • z), coe_smul_of_det_pos hpos]
   simp [num, denom, dg_val]
   ring
 
@@ -557,8 +557,7 @@ theorem pet_self_pos (N l : ℕ) (k : ℤ) (hN : 0 < N) (hl : 0 < l) (f : CuspFo
   have hI0 : ∀ q, 0 ≤ I q := fun q => integral_nonneg fun z => hr0 _
 
   obtain ⟨z₀, hz₀⟩ : ∃ z, f z ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hf (CuspForm.ext h)
   obtain ⟨g, hg⟩ := ModularGroup.exists_smul_mem_fd z₀
   obtain ⟨h, hh⟩ := QuotientGroup.mk_out_eq_mul (lev N l) g
@@ -608,18 +607,12 @@ open scoped MatrixGroups ModularForm Manifold
 
 namespace GlobalTheory.Hk
 
-theorem lev_finiteIndex' (N l : ℕ) (hN : 0 < N) (hl : 0 < l) : (lev N l).FiniteIndex := by
-  haveI : NeZero N := ⟨hN.ne'⟩
-  haveI : NeZero l := ⟨hl.ne'⟩
-  unfold lev
-  infer_instance
-
 theorem pet_eq_quotInt (Γ : Subgroup SL(2, ℤ)) (k : ℤ) (f g : ℍ → ℂ) :
     pet Γ k f g = UpperTheory.V.Lit.KT.quotInt Γ (petersson k f g) := rfl
 
 theorem pet_sesq : ∀ (N l : ℕ) (k : ℤ), 0 < N → 0 < l → ∀ (f g h : CuspForm (GlobalTheory.Hk.lev N l) k) (c : ℂ), GlobalTheory.Hk.pet (GlobalTheory.Hk.lev N l) k ⇑f (⇑g + c • ⇑h) = GlobalTheory.Hk.pet (GlobalTheory.Hk.lev N l) k ⇑f ⇑g + c * GlobalTheory.Hk.pet (GlobalTheory.Hk.lev N l) k ⇑f ⇑h ∧ GlobalTheory.Hk.pet (GlobalTheory.Hk.lev N l) k ⇑g ⇑f = (starRingEnd ℂ) (GlobalTheory.Hk.pet (GlobalTheory.Hk.lev N l) k ⇑f ⇑g) := by
   intro N l k hN hl f g h c
-  haveI := lev_finiteIndex' N l hN hl
+  haveI := GlobalTheory.Hk.lev_finiteIndex N l hN hl
   haveI : Fintype (SL(2, ℤ) ⧸ lev N l) := Fintype.ofFinite _
   refine ⟨?_, ?_⟩
   · have e : petersson k ⇑f (⇑g + c • ⇑h) = fun z => petersson k f g z + c * petersson k f h z := by

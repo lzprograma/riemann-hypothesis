@@ -86,8 +86,7 @@ section Uniq
 
 theorem exists_pos_fin {β : Type*} [MeasurableSpace β] (ν : Measure β) [SigmaFinite ν] (h : ν ≠ 0) :
     ∃ t, MeasurableSet t ∧ ν t ≠ 0 ∧ ν t ≠ ∞ := by
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   apply h
   rw [← Measure.measure_univ_eq_zero, ← iUnion_spanningSets ν]
   refine measure_iUnion_null fun n => ?_

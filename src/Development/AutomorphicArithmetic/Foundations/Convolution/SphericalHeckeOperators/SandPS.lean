@@ -15,63 +15,10 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.Spherica
 public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.Mac
 public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.ThPMul
 public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.VandSum
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.AutomorphicForms.GLnLocal
 import GroundTheory.AutomorphicForms.Iwasawa
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import GroundTheory.AutomorphicForms.MacdonaldFormula
 import GroundTheory.LocalFields.LocalFourierHaar
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.EigBasis, Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.PsDimDecomp, Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SandPS
@@ -193,7 +140,7 @@ theorem UpperTheory.ConvolutionTheory.H.eigBasis :
   have hB : ∀ σ, B σ = v σ := fun σ => by
     simp [B, coe_basisOfLinearIndependentOfCardEqFinrank]
   have hΦinj : Function.Injective Φ := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     rw [← B.sum_repr x] at hx ⊢
 
@@ -277,7 +224,7 @@ theorem UpperTheory.ConvolutionTheory.H.psDim :
       map_add' := fun _ _ => rfl
       map_smul' := fun _ _ => rfl }
   have hL : Function.Injective L := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro f hf
     refine Subtype.ext (funext fun g => ?_)
     obtain ⟨p, σ, y, hy, rfl⟩ := psDim_decomp g
@@ -454,7 +401,7 @@ private theorem exists_eig (hK : μ (integralGL F n : Set (GL (Fin n) F)) = 1) (
   have hθ : ∀ a (ha : Antitone a) (x : Vz F z),
       ((θ a x : Vz F z) : Wz F z) = heckeAct μ (rz F z) (th μ a) x := by
     intro a ha x
-    simp only [θ, dif_pos ha]
+    simp only [θ, dite_eq_left ha]
     rfl
   have h0 : θ 0 = 1 := by
     refine LinearMap.ext fun x => Subtype.ext ?_
@@ -578,13 +525,13 @@ private theorem key (hK : μ (integralGL F n : Set (GL (Fin n) F)) = 1) {ν₁ �
     ring
   simp only [← Finset.sum_smul, hcol]
   rw [Finset.sum_eq_single τ]
-  · rw [if_pos rfl, monomialChar_add]
+  · rw [ite_eq_left rfl, monomialChar_add]
     congr 1
     have := e4 τ
     rw [← this]
     ring
   · intro σ _ hσ
-    rw [if_neg hσ, mul_zero, zero_smul]
+    rw [ite_eq_right hσ, mul_zero, zero_smul]
   · simp
 
 end SlopeTestRemainingChoices

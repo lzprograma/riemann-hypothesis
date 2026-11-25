@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralEqSumSmallerLevel
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.OrbitalCosetFiniteness.CvGelfandAlt
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralTwistedConjInvariant
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.CvHecke
@@ -55,16 +56,7 @@ section SlopeTestRemainingChoices
 variable {G : Type} [Group G]
 
 private theorem avg_const {H : Type} [Group H] (u : H → ℂ) (c : ℂ) (hu : ∀ h, u h = c) : avg u = c := by
-  have e : u = fun _ => c := funext hu
-  subst e
-  have hs : rStab (fun _ : H => c) = ⊤ := by
-    ext k
-    simp [rStab]
-  unfold avg
-  rw [hs]
-  haveI : Subsingleton (H ⧸ (⊤ : Subgroup H)) := QuotientGroup.subsingleton_quotient_top
-  haveI : Unique (H ⧸ (⊤ : Subgroup H)) := Unique.mk' _
-  simp [finsum_unique]
+  apply _root_.GlobalTheory.BCT.OrbLev.avg_const' <;> assumption
 
 private theorem cv_sum (K : Subgroup G) (f g : G → ℂ)
     (hf : ∀ k ∈ K, ∀ x, f (x * k) = f x) (hg : ∀ k ∈ K, ∀ x, g (k * x) = g x) (y : G) :

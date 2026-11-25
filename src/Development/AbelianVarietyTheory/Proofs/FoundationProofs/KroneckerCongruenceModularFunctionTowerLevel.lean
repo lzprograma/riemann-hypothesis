@@ -874,8 +874,7 @@ private lemma exists_prim_mul_of_mem_bddRing {X : _root_.GlobalTheory.KZ.Tower �
   haveI : Algebra.IsAlgebraic ℚ Ω := IsAlgClosure.isAlgebraic
   obtain ⟨F, hF, hcoef⟩ := _root_.GlobalTheory.KZ.ES.NF.coeff_numberField ε X x
   have hne : ∃ r, (X.exp x).coeff r ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     apply hx0
     apply (X.exp : X.K →+* HahnSeries ℚ Ω).injective
     rw [map_zero]

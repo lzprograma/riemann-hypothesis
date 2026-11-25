@@ -195,9 +195,9 @@ theorem UpperTheory.V.Z.Sym.Wt.contRep :
         split_ifs <;> rfl
       rw [hfun]
       by_cases hk : k.2 = true
-      · simp only [hk, if_true]
+      · simp only [hk, ite_true]
         exact entci 3 k.1 i' i
-      · simp only [if_neg hk]
+      · simp only [ite_eq_right hk]
         exact entc 3 k.1 i i'
     exact cont_m (fun k : I × Bool => dg j S k.1) (fun g : I → GL (Fin 3) ℂ => dbl 3 g) hent (x S)
       (f ∘ₗ LinearMap.single ℂ (fun S => ↥(Bi 3 (dg j S))) S)
@@ -232,7 +232,6 @@ open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory
 open UpperTheory.V.W (Plc Lp)
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open UpperTheory.V.Z.Sym.Al
 
 theorem UpperTheory.V.Z.Sym.Al.contE :
@@ -264,7 +263,6 @@ open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory
 open UpperTheory.V.W (Plc Lp)
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open UpperTheory.V.Z.Sym.Al
 
 theorem UpperTheory.V.Z.Sym.Al.eigTS :
@@ -272,8 +270,6 @@ theorem UpperTheory.V.Z.Sym.Al.eigTS :
   intro L _ _ _ V _ _ φ w W ψ h t ht
   have hd : Sig.SDom ![t, t⁻¹] := by
     intro i j hij
-    haveI : Nontrivial (ValueGroupWithZero (Kw w)) :=
-      (inferInstance : LinearOrderedCommGroupWithZero (ValueGroupWithZero (Kw w))).toNontrivial
     have h0 : valuation (Kw w) (t : Kw w) ≠ 0 := (Valuation.ne_zero_iff _).2 t.ne_zero
     fin_cases i <;> fin_cases j <;> simp at hij ⊢
     exact ht.trans ((one_lt_inv₀ (zero_lt_iff.2 h0)).2 ht)
@@ -293,17 +289,11 @@ open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory
 open UpperTheory.V.W (Plc Lp)
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open UpperTheory.V.Z.Sym.Al
 
 namespace UpperTheory.V.Z.Sym.Al.ExtChar
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {n : ℕ}
-
-private theorem val_eq (x : kˣ) : valuation k (x : k) = uniformizer k ^ ord k x := by
-  have h := UpperTheory.V.Hi.GlAx.val_div_ord x
-  rw [Units.val_div_eq_div_val, map_div₀, UpperTheory.V.Hi.GlAx.val_zpow] at h
-  exact (div_eq_one_iff_eq (zpow_pos UpperTheory.V.Hi.GlAx.unif_pos _).ne').1 h
 
 private theorem sdom_of_exp (u : Fin n → kˣ) (e : Fin n → ℤ)
     (hv : ∀ i, valuation k (u i : k) = uniformizer k ^ e i) (he : ∀ i j, i < j → e j < e i) : Sig.SDom u := by
@@ -338,7 +328,7 @@ private theorem exists_div (t : Fin n → kˣ) : ∃ a b : Fin n → kˣ, Sig.SD
   have hm : 0 < 2 * B + 1 := by omega
   refine ⟨t * rho n k (2 * B + 1), rho n k (2 * B + 1), ?_, rho_sdom hm, by simp⟩
   refine sdom_of_exp _ (fun i => ord k (t i) + -((2 * B + 1) * ((i : ℕ) : ℤ))) (fun i => ?_) fun i j hij => ?_
-  · rw [Pi.mul_apply, Units.val_mul, map_mul, val_eq, rho, UpperTheory.V.Hi.GlAx.val_zpow,
+  · rw [Pi.mul_apply, Units.val_mul, map_mul, UpperTheory.V.Z.Sym.Sig.val_ord, rho, UpperTheory.V.Hi.GlAx.val_zpow,
       zpow_add₀ UpperTheory.V.Hi.GlAx.unif_pos.ne']
   · have h0 : ((i : ℕ) : ℤ) + 1 ≤ ((j : ℕ) : ℤ) := by exact_mod_cast hij
     have h1 := abs_le.1 (hB i)
@@ -442,7 +432,6 @@ open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory
 open UpperTheory.V.W (Plc Lp)
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open UpperTheory.V.Z.Sym.Al
 
 section SlopeTestRemainingChoices
@@ -582,7 +571,7 @@ theorem UpperTheory.V.Z.Sym.Al.afOps :
   have hu : ∀ w, w ∈ S → ∀ d (φ : AF R (lev U S iw)),
       ((u w d φ : AF R (lev U S iw)) : UA L n → V) = op w (iw w) d φ := by
     intro w hw d φ
-    simp only [u, dif_pos hw]
+    simp only [u, dite_eq_left hw]
     rfl
   refine ⟨u, fun w hw d _ φ => hu w hw d φ, fun w hw d d' hd hd' => ?_, fun w hw d hd => ?_,
     fun w hw w' hw' hne d d' _ _ => ?_⟩
@@ -659,7 +648,6 @@ open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory
 open UpperTheory.V.W (Plc Lp)
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open UpperTheory.V.Z.Sym.Al
 
 namespace UpperTheory.V.Z.Sym.Al
@@ -667,8 +655,6 @@ namespace UpperTheory.V.Z.Sym.Al
 private theorem sdom_pair {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     (t : kˣ) (ht : valuation k (t : k) < 1) : Sig.SDom ![t, t⁻¹] := by
   intro i j hij
-  haveI : Nontrivial (ValueGroupWithZero k) :=
-    (inferInstance : LinearOrderedCommGroupWithZero (ValueGroupWithZero k)).toNontrivial
   have h0 : valuation k (t : k) ≠ 0 := (Valuation.ne_zero_iff _).2 t.ne_zero
   have h1 : valuation k (t : k) < (valuation k (t : k))⁻¹ :=
     ht.trans (one_lt_inv₀ (zero_lt_iff.2 h0) |>.2 ht)
@@ -697,8 +683,6 @@ private theorem loc_char {k M : Type} [Field k] [ValuativeRel k] [TopologicalSpa
     ∃ ψ : Fin 2 → kˣ →* ℂˣ, (∀ i, ∀ x ∈ Hi.Uo k, ψ i x = 1) ∧ ψ 0 / ψ 1 = b ∧
       ∀ d, Sig.SDom d → u d v = expo ψ d • v := by
   classical
-  haveI : Nontrivial (ValueGroupWithZero k) :=
-    (inferInstance : LinearOrderedCommGroupWithZero (ValueGroupWithZero k)).toNontrivial
   choose! χ hχ using heig
   have uniq : ∀ c c' : ℂ, c • v = c' • v → c = c' := fun c c' h => smul_left_injective ℂ hv h
   have hmulχ : ∀ d d', AlgebraTools.Dom d → AlgebraTools.Dom d' → χ (d * d') = χ d * χ d' := by
@@ -836,7 +820,6 @@ open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory
 open UpperTheory.V.W (Plc Lp)
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open UpperTheory.V.Z.Sym.Al
 
 theorem UpperTheory.V.Z.Sym.Al.smoothDepth :
@@ -872,116 +855,9 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
-
 section
 open NumberField IsDedekindDomain ValuativeRel Matrix GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL Formalism.BasicNotions
 open UpperTheory.V.Hi UpperTheory.V.AlgebraTools UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict
-section General
-variable {G V : Type} [CommGroup G] [AddCommGroup V] [Module ℂ V]
-private theorem pow_comm_rep (ρ : Representation ℂ G V) (t g : G) (c : ℂ) (m : ℕ) (v : V) :
-    ((ρ t - algebraMap ℂ (Module.End ℂ V) c) ^ m) (ρ g v) =
-      ρ g (((ρ t - algebraMap ℂ (Module.End ℂ V) c) ^ m) v) := by
-  have h : Commute (ρ t - algebraMap ℂ (Module.End ℂ V) c) (ρ g) :=
-    Commute.sub_left ((Commute.all t g).map ρ) (Algebra.commutes c (ρ g))
-  exact LinearMap.congr_fun (h.pow_left m).eq v
-private theorem pow_mem_sub (ρ : Representation ℂ G V) (N : Subrepresentation ρ) (t : G) (c : ℂ) (m : ℕ)
-    (v : V) (hv : v ∈ N.toSubmodule) : ((ρ t - algebraMap ℂ (Module.End ℂ V) c) ^ m) v ∈ N.toSubmodule := by
-  induction m with
-  | zero => simpa using hv
-  | succ m ih =>
-    rw [pow_succ', Module.End.mul_apply, LinearMap.sub_apply, Module.algebraMap_end_apply]
-    exact sub_mem (N.apply_mem_toSubmodule t ih) (N.toSubmodule.smul_mem c ih)
-private theorem exists_nil {ρ : Representation ℂ G V} (hl : HasFiniteLength ρ) {c : G → ℂ} {x : V} (hx : x ≠ 0)
-    (hxc : ∀ t, ∃ m : ℕ, ((ρ t - algebraMap ℂ (Module.End ℂ V) (c t)) ^ m) x = 0) :
-    ∃ N : Subrepresentation ρ, N ≠ ⊤ ∧
-      ∀ t, ∃ m : ℕ, ∀ v, ((ρ t - algebraMap ℂ (Module.End ℂ V) (c t)) ^ m) v ∈ N.toSubmodule := by
-  haveI := ((hasFiniteLength_iff_wellFounded ρ).1 hl).1
-  obtain ⟨N, hN, hmax⟩ := (wellFounded_gt (α := Subrepresentation ρ)).has_min {N | x ∉ N.toSubmodule}
-    ⟨⊥, fun h => hx ((Submodule.mem_bot ℂ).1 h)⟩
-  refine ⟨N, fun h => hN (by rw [h]; trivial), fun t => ?_⟩
-  set f := ρ t - algebraMap ℂ (Module.End ℂ V) (c t) with hf
-  let K : ℕ →o Subrepresentation ρ :=
-    ⟨fun m => ⟨N.toSubmodule.comap (f ^ m), fun g v hv => by
-        show (f ^ m) (ρ g v) ∈ N.toSubmodule
-        rw [hf, pow_comm_rep]
-        exact N.apply_mem_toSubmodule g hv⟩,
-      monotone_nat_of_le_succ fun m v hv => by
-        show (f ^ (m + 1)) v ∈ N.toSubmodule
-        rw [add_comm, pow_add, Module.End.mul_apply]
-        exact pow_mem_sub ρ N t _ 1 _ hv⟩
-  obtain ⟨a, ha⟩ := WellFoundedGT.monotone_chain_condition K
-  obtain ⟨b, hb⟩ := hxc t
-  let R : Subrepresentation ρ := ⟨N.toSubmodule ⊔ LinearMap.range (f ^ (a + b)), fun g v hv => by
-    obtain ⟨y, hy, _, ⟨z, rfl⟩, rfl⟩ := Submodule.mem_sup.1 hv
-    rw [map_add (f := _)]
-    exact Submodule.add_mem_sup (N.apply_mem_toSubmodule g hy) ⟨ρ g z, by rw [hf, pow_comm_rep]⟩⟩
-  have hR : x ∉ R.toSubmodule := fun hv => by
-    obtain ⟨y, hy, _, ⟨z, rfl⟩, h⟩ := Submodule.mem_sup.1 hv
-    have h1 : z ∈ (K (b + (a + b))).toSubmodule := by
-      show (f ^ (b + (a + b))) z ∈ N.toSubmodule
-      rw [pow_add, Module.End.mul_apply, eq_sub_of_add_eq' h, map_sub, hb, zero_sub]
-      exact neg_mem (pow_mem_sub ρ N t _ b _ hy)
-    rw [← ha _ (by omega), ha (a + b) (by omega)] at h1
-    exact hN (h ▸ add_mem hy h1)
-  have hNR : N ≤ R := fun v hv => Submodule.mem_sup_left (S := N.toSubmodule) hv
-  have hE : N = R := by
-    by_contra hne
-    exact hmax R hR (lt_of_le_of_ne hNR hne)
-  refine ⟨a + b, fun v => ?_⟩
-  rw [hE]
-  exact Submodule.mem_sup_right ⟨v, rfl⟩
-variable [TopologicalSpace G] [IsTopologicalGroup G] [TopologicalSpace.SeparableSpace G]
-private theorem exists_form {ρ : Representation ℂ G V} (hρ : IsSmooth ρ) (hl : HasFiniteLength ρ) {χ : G →* ℂˣ}
-    {x : V} (hx : x ≠ 0)
-    (hxc : ∀ t, ∃ m : ℕ, ((ρ t - algebraMap ℂ (Module.End ℂ V) (χ t : ℂ)) ^ m) x = 0) :
-    IsSmoothChar χ ∧ ∃ l : V →ₗ[ℂ] ℂ, l ≠ 0 ∧ ∀ g v, l (ρ g v) = (χ g : ℂ) * l v := by
-  obtain ⟨T, hT, hnil⟩ := exists_nil hl hx hxc
-  haveI := ((hasFiniteLength_iff_wellFounded ρ).1 hl).1
-  obtain ⟨M, hM, hTM⟩ := (eq_top_or_exists_le_coatom T).resolve_left hT
-  have hi := isIrreducible_subQuot hM.covBy_top
-  let p : (⊤ : Subrepresentation ρ).toRepresentation.IntertwiningMap (subQuot ⊤ M) :=
-    ⟨Submodule.mkQ _, fun _ => rfl⟩
-  have hs : IsSmooth (subQuot ⊤ M) :=
-    IsSubquotient.isSmooth ⟨⊤, p, Submodule.Quotient.mk_surjective _⟩ hρ
-  obtain ⟨μ, hμ⟩ := GlobalTheory.TorusEigenform.exists_char_of_isIrreducible hs hi
-  have hμM : ∀ g v, ρ g v - (μ g : ℂ) • v ∈ M.toSubmodule := fun g v => by
-    have := hμ g (Submodule.Quotient.mk ⟨v, trivial⟩)
-    exact (Submodule.Quotient.eq (M.toSubmodule.comap (⊤ : Subrepresentation ρ).toSubmodule.subtype)
-      (x := ⟨ρ g v, trivial⟩) (y := ⟨(μ g : ℂ) • v, trivial⟩)).1 this
-  have hM' : M.toSubmodule < ⊤ := lt_top_iff_ne_top.2 fun h =>
-    hM.1 (Subrepresentation.toSubmodule_injective h)
-  obtain ⟨l, hl0, hlM⟩ := Submodule.exists_le_ker_of_lt_top _ hM'
-  have hle : ∀ g v, l (ρ g v) = (μ g : ℂ) * l v := fun g v => by
-    have := hlM (hμM g v)
-    rwa [LinearMap.mem_ker, map_sub, map_smul, sub_eq_zero] at this
-  obtain ⟨v, hv⟩ : ∃ v, l v ≠ 0 := by
-    by_contra hn
-    push Not at hn
-    exact hl0 (LinearMap.ext hn)
-  have hμχ : μ = χ := MonoidHom.ext fun t => by
-    obtain ⟨m, hm⟩ := hnil t
-    have h1 : ∀ m : ℕ, l (((ρ t - algebraMap ℂ (Module.End ℂ V) (χ t : ℂ)) ^ m) v) =
-        ((μ t : ℂ) - χ t) ^ m * l v := fun m => by
-      induction m with
-      | zero => simp
-      | succ m ih =>
-        rw [pow_succ', Module.End.mul_apply, LinearMap.sub_apply, Module.algebraMap_end_apply, map_sub, hle,
-          map_smul, ih, smul_eq_mul]
-        ring
-    have h2 := hlM (hTM (hm v))
-    rw [LinearMap.mem_ker, h1] at h2
-    exact Units.ext (sub_eq_zero.1 (pow_eq_zero_iff'.1 ((mul_eq_zero.1 h2).resolve_right hv)).1)
-  subst hμχ
-  refine ⟨?_, l, hl0, hle⟩
-  refine Subgroup.isOpen_of_mem_nhds _ (g := 1) (Filter.mem_of_superset ((hρ v).mem_nhds (by simp)) ?_)
-  intro g hg
-  have hg' : ρ g v = v := hg
-  have h := hle g v
-  rw [hg'] at h
-  exact Units.ext (mul_right_cancel₀ hv (h.symm.trans (one_mul _).symm))
-end General
 private theorem smul_cancel {M : Type} [AddCommGroup M] [Module ℂ M] {c : ℂ} (hc : c ≠ 0) {a b : M}
     (h : c • a = c • b) : a = b :=
   smul_right_injective M hc h
@@ -1282,14 +1158,10 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
-
 section
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL Formalism.BasicNotions
 open UpperTheory.V.W (Plc Lp)
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open UpperTheory.V.Z.Sym.Al
 private theorem compD :
     _root_.GlobalTheory.Mem.LiteralAutomorphy.LiteratureRankNHypothesis → ∀ (L : Type) [Field L] [NumberField L] [IsCMField L], Unr L → ∀ n : ℕ, 1 ≤ n → ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (π : Submodule ℂ (UA L n → ℂ)), IsAutRepU π → ∀ w, IsSplitAt w → ∀ W : Sig.Lev (Kw w),
@@ -1440,8 +1312,8 @@ theorem UpperTheory.V.Z.Sym.W.adjoint_lift_w_of_literal_automorphy_spec_out : _r
       have hsub : ((S₀ : Set (Plc L)) ∪ S₁) ⊆ (S₀ : Set (Plc L)) ∪ P := Set.union_subset_union_right _ fun w hw => (h1 w hw).1
       have hp1 : Places (S₁ : Set (Plc L)) := mono fun w hw => Or.inr (h1 w hw).1
       let W : ∀ w : Plc L, Sig.Lev (Kw w) := fun w => if w ∈ S₀ then deep c w else iw w
-      have W0 : ∀ w ∈ S₀, W w = deep c w := fun w hw => if_pos hw
-      have W1 : ∀ w ∈ S₁, W w = iw w := fun w hw => if_neg (hn w hw)
+      have W0 : ∀ w ∈ S₀, W w = deep c w := fun w hw => ite_eq_left hw
+      have W1 : ∀ w ∈ S₁, W w = iw w := fun w hw => ite_eq_right (hn w hw)
       obtain ⟨e, φ, h0, hAF, hE⟩ := _root_.UpperTheory.V.Z.Sym.Al.inVec_alt H L π hπ j hwt (S₀ ∪ S₁) (by rw [Finset.coe_union]; exact mono hsub)
         (fun w hw => hunr w fun w' hw' => hw w' (Finset.mem_union_left _ hw')) W ψ fun w hw => by
           rcases Finset.mem_union.1 hw with hw | hw

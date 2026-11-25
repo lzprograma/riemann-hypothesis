@@ -297,11 +297,11 @@ theorem ord_of_step {d l : ℕ} (hl : 2 ≤ l) (al : Fin d → ℕ → Fin d →
         fun c n => by
           refine coeff_pow_congr (h3 c) (ht c) ?_ (fun β hβ => ?_) α hα
           · exact le_trans hl (Nat.le_self_pow (by omega) l)
-          · rw [map_add (f := _), hν, if_pos hβ, map_sub]; ring
+          · rw [map_add (f := _), hν, ite_eq_left hβ, map_sub]; ring
       have h5 := coeff_lgSum hl al t ht e α (D + 2 + 1) (by omega)
       rw [hz, Finset.sum_range_succ'] at h5
       simp only [h0, pow_zero, pow_one, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq',
-        Finset.mem_univ, if_true] at h5
+        Finset.mem_univ, ite_true] at h5
       convert h2 using 2
 
       simp only [map_sub, map_sum, coeff_C_mul, h4, h5]
@@ -436,16 +436,16 @@ theorem chain :
   have hsel : ∀ (f : ℕ → MvPowerSeries (Fin M) C) s, s ≤ s₀ → ∀ c ∈ Gs s,
       (∑ s ∈ Finset.range (s₀ + 1), if c ∈ Gs s then f s else 0) = f s := by
     intro f s hs c hc
-    rw [Finset.sum_eq_single s, if_pos hc]
+    rw [Finset.sum_eq_single s, ite_eq_left hc]
     · intro b hb hbs
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       exact hbs (huniq b s c (by simpa [Nat.lt_succ_iff] using hb) hs h hc)
     · intro h
       exact absurd (Finset.mem_range.2 (by omega)) h
   have hsel0 : ∀ (f : ℕ → MvPowerSeries (Fin M) C) c, (∀ s ≤ s₀, c ∉ Gs s) →
       (∑ s ∈ Finset.range (s₀ + 1), if c ∈ Gs s then f s else 0) = 0 := fun f c hc =>
-    Finset.sum_eq_zero fun s hs => if_neg (hc s (by simpa [Nat.lt_succ_iff] using hs))
+    Finset.sum_eq_zero fun s hs => ite_eq_right (hc s (by simpa [Nat.lt_succ_iff] using hs))
   have main : ∀ c, OrdGe v (fun _ => ρ + σ) (t c - μ c) (1 + ρ) := by
     refine ord_of_step (by omega) al h0 t μ _ ht (fun c => ?_) hz _ ?_
     · set_option synthInstance.maxHeartbeats 100000 in
@@ -521,7 +521,7 @@ theorem chain :
             (fun j => kap C l s * π s c j) (t' c - pure l π s c) (by linarith)
             (fun j => le_trans (WithTop.coe_le_coe.2 (by linarith)) (hlev s c 0 (hint s c) j)) hν
           have h2 := ord_C_mul (hg2 2 e (by norm_num)) h1
-          rw [if_pos rfl, hGc]
+          rw [ite_eq_left rfl, hGc]
           refine ord_mono (w := _) (by
             convert h2 using 1
             simp only [F, pure, add_sub_cancel, mul_sub]) ?_
@@ -529,7 +529,7 @@ theorem chain :
           rcases min_cases (1 + (1 + ρ)) ((l : ℝ) ^ 2 * 1 + (1 + ρ)) with h | h <;>
             rw [h.1] <;> push_cast <;> nlinarith
         | k + 2 =>
-          rw [if_neg (by omega), sub_zero]
+          rw [ite_eq_right (by omega), sub_zero]
           have h1 : OrdGe v (fun _ => ρ + σ) (t' c) ρ := by
             have := ord_add (ord_mono hν (by linarith : ρ ≤ 1 + ρ))
               (ord_mono (hP s c 0 (hint s c)) (by linarith : ρ ≤ _))
@@ -537,7 +537,7 @@ theorem chain :
           refine ord_mono (ord_C_mul (hg2 _ e (by omega)) (ord_pow h1 _)) ?_
           rw [hρ]
           exact high_real hl k
-      · push_neg at hc
+      · push Not at hc
         have hν := ht' c
         have hμ : μ c = 0 := hsel0 (fun s => pure l π s c) c hc
         have hGc : G c = 0 := hsel0 (fun s => F s c) c hc
@@ -554,7 +554,7 @@ theorem chain :
     have hi : ∑ n ∈ Finset.range (N + 2), ∑ c, (if n = 1 then G c else 0) = ∑ c, G c := by
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun c _ => ?_
-      rw [Finset.sum_ite_eq', if_pos (by simp)]
+      rw [Finset.sum_ite_eq', ite_eq_left (by simp)]
     have hs : ∑ s ∈ Finset.range (s₀ + 1), pure l π (s + 1) e + pure l π 0 e =
         ∑ s ∈ Finset.range (s₀ + 1), pure l π s e + pure l π (s₀ + 1) e := by
       rw [← Finset.sum_range_succ' (fun s => pure l π s e), Finset.sum_range_succ]

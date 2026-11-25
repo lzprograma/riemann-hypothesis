@@ -6,62 +6,15 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFil
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.HilbertSlashRationalMatrixProperties
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.DualLatticeIndexEqDiscrPowMulDetPow
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.ThetaSeriesHolomorphicQExpansionOfBoundedCoeff
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.Matrix.PosDef
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
 import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Newform
 import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
 import Development.AutomorphicArithmetic.IntegralCasts.IsOpenStabOfMemNhds
 import Formalism.ConjugateSelfDual.Statement
 import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
 import ReciprocityTheory.NeutralLocalFields.Reciprocity
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.Tactic.Linter.HaveILetI
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.ExistsRealMatrixForLatticeAndDualWithDet, Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.PoissonSummationGaussianConstantOnEvenBlocks, Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.HilbertThetaSeriesCosetInversionFormula, Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.HilbertThetaSeriesPeriodicInversionFormula
@@ -79,14 +32,6 @@ namespace GlobalTheory.HilbertThetaSeries.LatBasis
 section Emb
 variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
 
-theorem rhom_eq (v : InfinitePlace F) (x : F) : rhom x v = reAt v x := by
-  show InfinitePlace.embedding_of_isReal (IsTotallyReal.isReal v) x = (v.embedding x).re
-  rw [← InfinitePlace.embedding_of_isReal_apply (IsTotallyReal.isReal v) x, Complex.ofReal_re]
-
-theorem coe_reAt (v : InfinitePlace F) (x : F) : ((reAt v x : ℝ) : ℂ) = v.embedding x := by
-  rw [← rhom_eq]
-  exact InfinitePlace.embedding_of_isReal_apply (IsTotallyReal.isReal v) x
-
 theorem emb_bij : Function.Bijective (fun v : InfinitePlace F => RingHom.equivRatAlgHom F ℂ v.embedding) := by
   refine (RingHom.equivRatAlgHom F ℂ).bijective.comp
     ⟨fun v w h => InfinitePlace.embedding_injective F h, fun φ => ?_⟩
@@ -96,22 +41,6 @@ theorem emb_bij : Function.Bijective (fun v : InfinitePlace F => RingHom.equivRa
   · exact h
   · rw [h] at hr ⊢
     exact ComplexEmbedding.isReal_iff.1 (ComplexEmbedding.isReal_conjugate_iff.1 hr)
-
-theorem sum_reAt (x : F) : ∑ v, reAt v x = ((Algebra.trace ℚ F x : ℚ) : ℝ) := by
-  apply Complex.ofReal_injective
-  rw [Complex.ofReal_sum]
-  simp_rw [coe_reAt]
-  rw [show (((Algebra.trace ℚ F x : ℚ) : ℝ) : ℂ) = algebraMap ℚ ℂ (Algebra.trace ℚ F x) by simp,
-    trace_eq_sum_embeddings]
-  exact Fintype.sum_bijective _ emb_bij _ _ (fun v => rfl)
-
-theorem prod_reAt (x : F) : ∏ v, reAt v x = ((Algebra.norm ℚ x : ℚ) : ℝ) := by
-  apply Complex.ofReal_injective
-  rw [Complex.ofReal_prod]
-  simp_rw [coe_reAt]
-  rw [show (((Algebra.norm ℚ x : ℚ) : ℝ) : ℂ) = algebraMap ℚ ℂ (Algebra.norm ℚ x) by simp,
-    Algebra.norm_eq_prod_embeddings]
-  exact Fintype.prod_bijective _ emb_bij _ _ (fun v => rfl)
 
 theorem card_places : Fintype.card (InfinitePlace F) = Module.finrank ℚ F := by
   rw [← AlgHom.card ℚ F ℂ]
@@ -164,7 +93,7 @@ variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F] {κ : Type} [Fin
 
 noncomputable def em (v : InfinitePlace F) : F →+* ℝ := InfinitePlace.embedding_of_isReal (IsTotallyReal.isReal v)
 
-theorem reAt_eq (v : InfinitePlace F) (x : F) : reAt v x = em v x := (rhom_eq v x).symm
+theorem reAt_eq (v : InfinitePlace F) (x : F) : reAt v x = em v x := (GlobalTheory.HilbertThetaSeries.RatSlash.rhom_apply v x).symm
 
 noncomputable def eM (R : Matrix κ κ ℝ) : (κ → F) →+ (InfinitePlace F × κ → ℝ) where
   toFun x p := ∑ j, R p.2 j * em p.1 (x j)
@@ -213,7 +142,7 @@ theorem det_aM_one (ω : Module.Basis (InfinitePlace F) ℚ F) : (aM ω 1).det ^
     simp only [Algebra.embeddingsMatrixReindex, Algebra.embeddingsMatrix, Matrix.reindex_apply,
       Matrix.submatrix_apply, Matrix.of_apply, Equiv.refl_symm, Equiv.coe_refl, id,
       Equiv.symm_symm, Matrix.map_apply, Matrix.transpose_apply, aM, one_mul]
-    rw [← reAt_eq, coe_reAt]
+    rw [← reAt_eq, GlobalTheory.HilbertThetaSeries.RatSlash.ofReal_reAt]
     rfl
   have hdet : (((aM ω 1)ᵀ).map (fun r : ℝ => (r : ℂ))).det = (((aM ω 1).det : ℝ) : ℂ) := by
     have h3 := RingHom.map_det Complex.ofRealHom (aM ω 1)ᵀ
@@ -232,7 +161,7 @@ theorem det_aM (ω : Module.Basis (InfinitePlace F) ℚ F) (a : F) :
     simp [aM, Matrix.diagonal_mul, map_mul]
   rw [h, Matrix.det_mul, Matrix.det_diagonal]
   congr 1
-  rw [← prod_reAt]
+  rw [← GlobalTheory.HilbertThetaSeries.RatSlash.prod_reAt]
   exact Finset.prod_congr rfl (fun v _ => (reAt_eq v a).symm)
 
 noncomputable def bM (ω : Module.Basis (InfinitePlace F) ℚ F) (a : F) (R : Matrix κ κ ℝ) :
@@ -262,9 +191,9 @@ theorem bM_transpose (G : Matrix κ κ ℤ) (R : Matrix κ κ ℝ) (hR : Rᵀ * 
     exact Finset.sum_congr rfl fun l _ => mul_comm _ _
   have hB : BF G (a • y) (Pi.single q.2 (ω q.1)) = ∑ i, a * y i * ((G i q.2 : ℤ) : F) * ω q.1 := by
     simp only [BF, dotProduct, Matrix.mulVec, Pi.single_apply, Matrix.map_apply, Pi.smul_apply, smul_eq_mul,
-      mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     exact Finset.sum_congr rfl fun i _ => by ring
-  rw [hB, ← sum_reAt]
+  rw [hB, ← GlobalTheory.HilbertThetaSeries.RatSlash.sum_reAt]
 
   simp only [reAt_eq, map_sum, map_mul, map_intCast, Matrix.mulVec, dotProduct, Matrix.transpose_apply,
   bM, aM, eM, Matrix.kroneckerMap_apply, Matrix.of_apply, AddMonoidHom.coe_mk, ZeroHom.coe_mk,
@@ -491,9 +420,6 @@ theorem lattice_matrix : ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal
     rw [pow_mul, pow_mul, sq_abs]
 
 end GlobalTheory.HilbertThetaSeries.LatBasis
-
-open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd GlobalTheory.HilbertThetaSeries
-open scoped Matrix
 
 end -- clump:auto
 end -- clump:auto
@@ -747,7 +673,7 @@ theorem wcos : ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (κ : 
       have h1 : (a / (c : F)) • (c : F) • (β m : κ → F) ∈ dualL F G := by
         rw [smul_smul, div_mul_cancel₀ _ hc]
         exact (β m).2
-      rw [wT, if_pos h1, Finset.sum_singleton, one_mul, (hsm _ _ x₀).1, (hsm _ _ x₀).2.1, mul_div_cancel_left₀ _ hc,
+      rw [wT, ite_eq_left h1, Finset.sum_singleton, one_mul, (hsm _ _ x₀).1, (hsm _ _ x₀).2.1, mul_div_cancel_left₀ _ hc,
         ez_QF G e he, et_BF G e he, hβ, mul_assoc, mul_comm (Complex.exp _)]
       simp only [map_pow, Complex.ofReal_pow]
     · intro y hy
@@ -758,12 +684,9 @@ theorem wcos : ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (κ : 
       simp [smul_smul, hc]
   unfold sl0
   simp only [denom_wm]
-  rw [hL _ (fun x h => if_pos h) (fun x h => if_neg h), hP, hR, ← mul_assoc, const_eq k t a c z _ hdet]
+  rw [hL _ (fun x h => ite_eq_left h) (fun x h => ite_eq_right h), hP, hR, ← mul_assoc, const_eq k t a c z _ hdet]
 
 end GlobalTheory.WCos
-
-open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd GlobalTheory.HilbertThetaSeries
-open scoped Matrix
 
 end -- clump:auto
 end -- clump:auto
@@ -798,7 +721,7 @@ theorem thetaSeries_periodic_slash_frickeMatrix : ∀ (F : Type) [Field F] [Numb
       rw [Finset.sum_eq_single y]
       · simp [hy]
       · intro x₀ hx₀ hne
-        rw [if_neg]
+        rw [ite_eq_right]
         intro hm
         exact hne (huniq x₀ ⟨hx₀, hm⟩)
       · intro h
@@ -816,7 +739,7 @@ theorem thetaSeries_periodic_slash_frickeMatrix : ∀ (F : Type) [Field F] [Numb
     · intro x hx
       have hm : x - x₀ ∈ aL κ a := by
         by_contra hm
-        exact hx (if_neg hm)
+        exact hx (ite_eq_right hm)
       have := (aL κ b).add_mem (hab hm) (hT.1 x₀ hx₀)
       simpa using this
     · intro x
@@ -870,9 +793,6 @@ theorem thetaSeries_periodic_slash_frickeMatrix : ∀ (F : Type) [Field F] [Numb
   ring
 
 end GlobalTheory.HilbertThetaSeries
-
-open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd GlobalTheory.HilbertThetaSeries
-open scoped Matrix
 
 end -- clump:auto
 end -- clump:auto

@@ -66,12 +66,6 @@ theorem ideleModule_eq_realPart_of_mem {u : IdeleGroup ℚ} (hu : u ∈ positive
 
 end Rational
 
-section Ratio
-
-variable {K : Type*} [Field K] [NumberField K]
-
-end Ratio
-
 end GL2Classical
 
 end

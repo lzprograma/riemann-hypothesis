@@ -7,45 +7,10 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.Compactif
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FlatSectionAndDegree
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FramePointCombinationMatrix
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieModel
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsAbelianGaloisHost
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GramTransformOfCoordinateChangeImports
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -87,9 +52,9 @@ theorem exists_matrix (F F' : EigFrame Y φ x) (τ : E →+* ℂ) {m : ℕ} (h :
 
 end Frames
 
-theorem mult_big (τ : Psi H) : Dw.p = Dw.mult τ.1 := by rw [Datum.mult, if_pos τ.2]
+theorem mult_big (τ : Psi H) : Dw.p = Dw.mult τ.1 := by rw [Datum.mult, ite_eq_left τ.2]
 
-theorem mult_small (τ : Psi H) : Dw.q = Dw.mult (conjEmb τ.1) := by rw [Datum.mult, if_neg (conj_not_mem τ)]
+theorem mult_small (τ : Psi H) : Dw.q = Dw.mult (conjEmb τ.1) := by rw [Datum.mult, ite_eq_right (conj_not_mem τ)]
 
 theorem prod_flat {G : Type} [CommGroup G] (τ : Psi H) (t : Ix Dw → G) :
     ∏ i, t i ^ exOf Dw (flatWt Dw τ) 0 i =
@@ -307,7 +272,7 @@ theorem exists_reads : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H
     rw [← hV, h2]
     exact h1
   have h3 : evR Xo c f₀ y = val sig y :=
-    (dif_pos ht).trans (val_map hU hs ht.choose_spec.choose_spec.choose_spec).symm
+    (dite_eq_left ht).trans (val_map hU hs ht.choose_spec.choose_spec.choose_spec).symm
   have h4 := evalAt_mul (K := c.F) (fun S _ _ => FrPt Xo c S) (fun φ y z => FrMap φ y z) (idem Z) f₀ y
   exact h4.trans ((congrArg₂ (· * ·) (evR_idem hon ht) h3).trans ((one_mul _).trans (val_eq hU hs ha)))
 

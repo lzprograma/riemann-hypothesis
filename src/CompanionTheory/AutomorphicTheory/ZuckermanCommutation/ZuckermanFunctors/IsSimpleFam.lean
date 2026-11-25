@@ -138,11 +138,11 @@ def URep.dsig (U : URep k r) (X : Mx k r) : Module.End ℂ U.R.smSub :=
 
 theorem URep.sig_coe (U : URep k r) {g : Mx k r} (hg : g ∈ GG k r) (v : U.R.smSub) :
     (U.sig g v : U.R.H) = U.R.σ g v := by
-  simp only [URep.sig, dif_pos hg]; rfl
+  simp only [URep.sig, dite_eq_left hg]; rfl
 
 theorem URep.dsig_coe (U : URep k r) {X : Mx k r} (hX : InLieHpk k r X) (v : U.R.smSub) :
     (U.dsig X v : U.R.H) = PI.UpqRep.dsig (k := k) (r := r) U.R.σ X v := by
-  simp only [URep.dsig, dif_pos hX]; rfl
+  simp only [URep.dsig, dite_eq_left hX]; rfl
 
 abbrev Obj (k r : ℕ) : Type 1 := FRep k r × URep k r
 

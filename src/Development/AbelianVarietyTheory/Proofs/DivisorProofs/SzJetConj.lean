@@ -265,7 +265,6 @@ theorem sz_invDiff : ∀ (l : ℕ) [Fact l.Prime] (lam : algebraicClosure ℚ �
     rw [one_div, ← zpow_neg, neg_neg, zpow_natCast] at this
     rwa [Real.rpow_natCast]
   have hn : 0 < n := Module.finrank_pos
-  have hnr : (0 : ℝ) < n := by exact_mod_cast hn
   calc ‖χ y‖ = (‖χ y‖ ^ n) ^ ((n : ℝ)⁻¹) := (Real.pow_rpow_inv_natCast (norm_nonneg _) hn.ne').symm
     _ ≤ ((l : ℝ) ^ (v : ℝ)) ^ ((n : ℝ)⁻¹) := Real.rpow_le_rpow (by positivity) hpow (by positivity)
     _ = (l : ℝ) ^ ((v : ℝ) / n) := by rw [← Real.rpow_mul hl0.le, div_eq_mul_inv]
@@ -633,8 +632,6 @@ open scoped Classical MatrixGroups nonZeroDivisors
 open GlobalTheory.LatVal (Sz)
 open GlobalTheory.LatJet (EisExp IsEis FR)
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.HilbFam.TwistSize
@@ -920,8 +917,8 @@ variable {l : ℕ} [Fact l.Prime] {lam : algebraicClosure ℚ ℂ →+* ℂ_[l]}
 theorem qAll_const {r : ℝ} {c : ℂ} (hc : Sz l lam r c) : QAll (Sz l lam r) N fun _ => c := by
   refine ⟨_, (_root_.GlobalTheory.QFam.hasQ_linear N).2.2.2.1 c, fun n => ?_⟩
   by_cases h : n = 0
-  · simpa only [h, if_true] using hc
-  · simpa only [h, if_false] using (_root_.GlobalTheory.QFam.SzSum.sz_ring l lam).1 r
+  · simpa only [h, ite_true] using hc
+  · simpa only [h, ite_false] using (_root_.GlobalTheory.QFam.SzSum.sz_ring l lam).1 r
 
 theorem qAll_mono {r s : ℝ} {f : ℍ → ℂ} (h : r ≤ s) (hf : QAll (Sz l lam r) N f) : QAll (Sz l lam s) N f := by
   obtain ⟨a, ha, hs⟩ := hf

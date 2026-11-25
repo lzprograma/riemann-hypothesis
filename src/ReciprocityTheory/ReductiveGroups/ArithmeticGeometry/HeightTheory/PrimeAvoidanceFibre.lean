@@ -133,7 +133,7 @@ theorem avoid {B : Type*} [CommRing B] [IsNoetherianRing B] (M q : Ideal B) [hM 
     obtain ⟨p, hpT, hpM⟩ := Ideal.IsPrime.prod_mem_iff.mp hmem
     simp only [T, Finset.mem_filter, Set.Finite.mem_toFinset] at hpT
     have h1 := (hex p hpT.1 hpT.2).choose_spec.2
-    simp only [f, dif_pos hpT] at hpM
+    simp only [f, dite_eq_left hpT] at hpM
     exact h1 hpM
   · intro P hP hqP hwP hsP
     have hIP : I ≤ P := sup_le hqP ((Ideal.span_singleton_le_iff_mem P).mpr hwP)
@@ -147,7 +147,7 @@ theorem avoid {B : Type*} [CommRing B] [IsNoetherianRing B] (M q : Ideal B) [hM 
       refine ⟨p, ?_, ?_⟩
       · simp only [T, Finset.mem_filter, Set.Finite.mem_toFinset]
         exact ⟨hp, hpM⟩
-      · simp only [f, dif_pos (And.intro hp hpM)]
+      · simp only [f, dite_eq_left (And.intro hp hpM)]
         exact hpP (hex p hp hpM).choose_spec.1
 
 theorem finite_of_fibre {O T : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]

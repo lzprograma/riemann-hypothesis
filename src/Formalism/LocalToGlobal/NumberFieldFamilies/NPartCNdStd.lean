@@ -27,29 +27,6 @@ variable {R : Ranks} {H : Host R} {what₂ : Rows.Data R} (B : LocBase0 H what�
 def bjC (hI : OsInt B) (i : LocT B) (g : (what₂.MjLat (jOf B i)).gen) : BjC B hI i :=
   (bjRel B hI i).mkQ (Pi.basisFun (OOf B i) _ g)
 
-theorem bjC_sum (hI : OsInt B) (i : LocT B) (c : (what₂.MjLat (jOf B i)).gen → OOf B i) :
-    ∑ g, c g • bjC B hI i g = Submodule.Quotient.mk c := by
-  have e : ∑ g, c g • Pi.basisFun (OOf B i) _ g = c := by
-    simpa using (Pi.basisFun (OOf B i) ((what₂.MjLat (jOf B i)).gen)).sum_repr c
-
-  simp only [bjC, ← map_smul, ← map_sum, e]
-  rfl
-
-theorem bjC_span (hI : OsInt B) (i : LocT B) :
-    Submodule.span (OOf B i) (Set.range (bjC B hI i)) = ⊤ := by
-  rw [eq_top_iff]
-  rintro x -
-  induction x using Submodule.Quotient.induction_on with
-  | H c =>
-    rw [← bjC_sum]
-    exact Submodule.sum_mem _ (fun g _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨g, rfl⟩))
-
-theorem bjC_rel (hI : OsInt B) (i : LocT B) (c : (what₂.MjLat (jOf B i)).gen → OOf B i) :
-    ∑ g, c g • bjC B hI i g = 0 ↔
-      c ∈ Submodule.span (OOf B i) ((fun r => (sOfC B hI i) ∘ r) '' Formalism.L2.latRel (what₂.MjLat (jOf B i))) := by
-  rw [bjC_sum, Submodule.Quotient.mk_eq_zero]
-  rfl
-
 def idealAt {j : ℕ} {w : what₂.places.Pl} (p : ℕ × what₂.places.Pl) (hp : p = (j, w))
     (I : Ideal (heckeAlg0 B p.1 p.2)) : Ideal (heckeAlg0 B j w) := by
   subst hp; exact I
@@ -60,7 +37,7 @@ def mxC (j : ℕ) (w : what₂.places.Pl) (i : LocT B) : Ideal (heckeAlg0 B j w)
 
 theorem mxC_self (i : LocT B) : mxC B (jOf B i) (wOf B i) i = i.2.1 := by
   unfold mxC
-  exact (dif_pos (rfl : i.1 = (jOf B i, wOf B i))).trans rfl
+  exact (dite_eq_left (rfl : i.1 = (jOf B i, wOf B i))).trans rfl
 
 theorem mxC_max (i : LocT B) : (mxC B (jOf B i) (wOf B i) i).IsMaximal := by
   rw [mxC_self]; exact i.2.2.1
@@ -109,7 +86,7 @@ theorem PsiC_pr (hC : PartCompl B) (hL : MtLoc B hC) (i : LocT B) (x : what₂.M
 
 theorem ptX_val (i : LocT B) (v : HeightOneSpectrum (𝓞 H.E)) (k : ℕ) (hvk : GenAt0 H (lOf B i) (B.Qw (wOf B i)) v k)
     (x : XOf B i) : (hTOf B i v k : XOf B i → OOf B i) x = x.1 ⟨B.hK (jOf B i) (wOf B i) v k, Algebra.subset_adjoin ⟨v, k, hvk, rfl⟩⟩ := by
-  simp [hTOf, hTfun, dif_pos hvk]
+  simp [hTOf, hTfun, dite_eq_left hvk]
 
 end Gen
 
@@ -220,8 +197,7 @@ theorem locsFin_of (hs : HeckeStd0 B) (hd : FinDimV B) : LocsFin B := by
 
 theorem tSep (i : LocT B) (x y : XOf B i) (hxy : x ≠ y) :
     ∃ f ∈ TOf B i, (f : XOf B i → OOf B i) x ≠ (f : XOf B i → OOf B i) y := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   apply hxy
   apply Subtype.ext
   refine AlgHom.ext_of_adjoin_eq_top Algebra.adjoin_adjoin_coe_preimage ?_
@@ -230,7 +206,7 @@ theorem tSep (i : LocT B) (x y : XOf B i) (hxy : x ≠ y) :
   have hz' : z = ⟨B.hK (jOf B i) (wOf B i) v k, Algebra.subset_adjoin ⟨v, k, hvk, rfl⟩⟩ := Subtype.ext hzv
   have := hcon (hTfun B i v k) (Algebra.subset_adjoin ⟨v, k, hvk, rfl⟩)
   rw [hz']
-  simpa [hTfun, dif_pos hvk] using this
+  simpa [hTfun, dite_eq_left hvk] using this
 
 end Gen
 

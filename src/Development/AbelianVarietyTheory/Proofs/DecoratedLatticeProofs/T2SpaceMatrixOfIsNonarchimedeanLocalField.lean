@@ -88,7 +88,7 @@ theorem ite_mem_SB {P : X → Prop} (hK : IsCompact {x | P x}) (ho : IsOpen {x |
     (fun x => if P x then (1 : ℂ) else 0) ∈ SB X := by
   have hc : IsClosed {x | P x} := hK.isClosed
   change IsLocallyConstant _ ∧ HasCompactSupport _
-  refine ⟨fun t => ?_, HasCompactSupport.intro hK fun x hx => if_neg hx⟩
+  refine ⟨fun t => ?_, HasCompactSupport.intro hK fun x hx => ite_eq_right hx⟩
   have ht : (fun x => if P x then (1 : ℂ) else 0) ⁻¹' t =
       ({x | P x} ∩ {_x | (1 : ℂ) ∈ t}) ∪ ({x | P x}ᶜ ∩ {_x | (0 : ℂ) ∈ t}) := by
     ext x
@@ -315,7 +315,7 @@ theorem fpair_ne_zero (χ : AddChar k Circle) (hχ : Continuous χ) (ε : k) (h�
       T.indicator (fun _ => ((μ.real (L : Set (n → k)) : ℝ) : ℂ)) η := by
     intro η
     by_cases hη : η ∈ T
-    · rw [Set.indicator_apply, if_pos hη]
+    · rw [Set.indicator_apply, ite_eq_left hη]
       have hη' := (hmT η).mp hη
       have : (fun y => vecInd L y * (χ (ε * (η ⬝ᵥ y)) : ℂ)) = (L : Set (n → k)).indicator fun _ => (1 : ℂ) := by
         funext y
@@ -324,10 +324,9 @@ theorem fpair_ne_zero (χ : AddChar k Circle) (hχ : Continuous χ) (ε : k) (h�
         · simp [vecInd, hy]
       rw [this, integral_indicator_const _ hLm]
       simp
-    · rw [Set.indicator_apply, if_neg hη]
+    · rw [Set.indicator_apply, ite_eq_right hη]
       have hex : ∃ y ∈ L, χ (ε * (η ⬝ᵥ y)) ≠ 1 := by
-        by_contra hcon
-        push_neg at hcon
+        by_contra! hcon
         exact hη ((hmT η).mpr hcon)
       obtain ⟨y₀, hy₀, hne⟩ := hex
       have hc : (χ (ε * (η ⬝ᵥ y₀)) : ℂ) ≠ 1 := fun h => hne (Circle.coe_injective (h.trans Circle.coe_one.symm))

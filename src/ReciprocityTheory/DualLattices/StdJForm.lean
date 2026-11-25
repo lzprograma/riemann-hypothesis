@@ -96,8 +96,8 @@ theorem u1 : IsotypicAveragingStatement := by
       intro j
       by_cases h : j = i
       · subst h
-        rw [if_pos rfl, ← Matrix.mul_assoc, ← Matrix.mul_assoc, hL, if_pos rfl]
-      · rw [if_neg h, ← Matrix.mul_assoc, ← Matrix.mul_assoc, hL, if_neg (Ne.symm h),
+        rw [ite_eq_left rfl, ← Matrix.mul_assoc, ← Matrix.mul_assoc, hL, ite_eq_left rfl]
+      · rw [ite_eq_right h, ← Matrix.mul_assoc, ← Matrix.mul_assoc, hL, ite_eq_right (Ne.symm h),
           Matrix.zero_mul, Matrix.zero_mul]
     rw [hBt', Matrix.sum_mul, Matrix.mul_sum]
     simp only [l, r]
@@ -119,7 +119,7 @@ theorem u1 : IsotypicAveragingStatement := by
       intro i
       rw [Matrix.mul_assoc ((εT i)ᵀ) Btᵀ Ht, Matrix.mul_assoc ((εT i)ᵀ) Htᵀ Bt, ← Matrix.sub_mul,
         ← Matrix.mul_sub, hBH, Matrix.mul_smul, hE i, Matrix.smul_mul, Matrix.mul_assoc, hT,
-        if_pos rfl]
+        ite_eq_left rfl]
     simp only [h]
     rw [← Finset.smul_sum, ← Matrix.mul_sum, Equiv.sum_comp π εT, hT1, Matrix.mul_one]
   have hJ : (Matrix.fromRows Ht Bt')ᵀ * stdJ S g * Matrix.fromRows Ht Bt' = cp • E := by

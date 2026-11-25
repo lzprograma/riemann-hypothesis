@@ -49,7 +49,6 @@ import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CoeffRingsH
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin GlobalTheory.PendOf
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.DepthZeroRankOneLabel
 
@@ -224,11 +223,7 @@ theorem residue_of_cong {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Alge
   have h0 : (a : Formalism.CyclotomicNorms.Fbar g) = 0 := (CharP.cast_eq_zero_iff (Formalism.CyclotomicNorms.Fbar g) g a).2 hd
   have ho := (hζ 1 one_pos).1
   rw [hz, h0, pow_one] at ho
-  have hz0 : orderOf (0 : Formalism.CyclotomicNorms.Fbar g) = 0 := by
-    rw [orderOf_eq_zero_iff']
-    intro n hn
-    rw [zero_pow (Nat.pos_iff_ne_zero.mp hn)]
-    exact zero_ne_one
+  have hz0 : orderOf (0 : Formalism.CyclotomicNorms.Fbar g) = 0 := orderOf_zero _
   omega
 
 end GlobalTheory.DepthZeroRankOneLabel

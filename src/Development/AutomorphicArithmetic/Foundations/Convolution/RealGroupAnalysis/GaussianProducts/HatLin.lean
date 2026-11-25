@@ -4,43 +4,6 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGrou
 public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaReindexing.HatMem
 import GroundTheory.HeightsAndTheta.Theta.AdelicFourierCoord
 import GroundTheory.HeightsAndTheta.Theta.Weil.PartialFourierAdelicPi
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianProducts.ExistsRowSec
 
 @[expose] public section
@@ -118,21 +81,20 @@ private theorem integrable_term (φ : S4 F) (v : V4 F) :
   exact hs.mono (hs.1.mul hc.aestronglyMeasurable)
     (Eventually.of_forall fun s => by rw [norm_mul, ψ, Circle.norm_coe, mul_one])
 
+theorem hat_add (φ χ : S4 F) (v : V4 F) :
+    hat (φ + χ).1 v = hat φ.1 v + hat χ.1 v := by
+  simp only [hat, Submodule.coe_add, Pi.add_apply, add_mul]
+  exact integral_add (integrable_term φ v) (integrable_term χ v)
+
+theorem hat_smul (c : ℂ) (φ : V4 F → ℂ) (v : V4 F) : hat (c • φ) v = c * hat φ v := by
+  simp only [hat, Pi.smul_apply, smul_eq_mul, mul_assoc]
+  exact integral_const_mul c _
+
 end UpperTheory.ConvolutionTheory.R2.G
 
 theorem UpperTheory.ConvolutionTheory.R2.G.hatLin :
     ∀ (F : Type) [Field F] [NumberField F], ∃ H : S4 F →ₗ[ℂ] S4 F, ∀ φ, (H φ).1 = hat φ.1 := by
   intro F _ _
-  have hadd : ∀ φ χ : S4 F, hat (φ + χ).1 = hat φ.1 + hat χ.1 := by
-    intro φ χ
-    funext v
-    simp only [hat, Submodule.coe_add, Pi.add_apply, add_mul]
-    exact integral_add (integrable_term φ v) (integrable_term χ v)
-  have hsmul : ∀ (c : ℂ) (φ : S4 F), hat (c • φ).1 = c • hat φ.1 := by
-    intro c φ
-    funext v
-    simp only [hat, Submodule.coe_smul, Pi.smul_apply, smul_eq_mul, mul_assoc]
-    exact integral_const_mul c _
   refine ⟨{ toFun := fun φ => ⟨hat φ.1, (UpperTheory.ConvolutionTheory.R2.D.hatMem F φ).1⟩
-            map_add' := fun φ χ => Subtype.ext (hadd φ χ)
-            map_smul' := fun c φ => Subtype.ext (hsmul c φ) }, fun φ => rfl⟩
+            map_add' := fun φ χ => Subtype.ext (funext (hat_add φ χ))
+            map_smul' := fun c φ => Subtype.ext (funext (hat_smul c φ.1)) }, fun φ => rfl⟩

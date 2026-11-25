@@ -33,7 +33,7 @@ theorem prod_ofFn_update_eq {p : ℕ} (f : Fin p → 𝒰) (j : Fin p) :
         funext i
         simp only [Function.update_apply, Fin.succ_inj]
       have e2 : Function.update f j'.succ v 0 = f 0 := by
-        simp only [Function.update_apply, (Fin.succ_ne_zero j').symm, if_false]
+        simp only [Function.update_apply, (Fin.succ_ne_zero j').symm, ite_false]
       rw [List.ofFn_succ, List.prod_cons, e1, e2, h]
       simp only [mul_assoc]
 
@@ -56,7 +56,7 @@ theorem comm_prod_ofFn (y : 𝒰) {p : ℕ} (f : Fin p → 𝒰) :
         funext i
         simp only [Function.update_apply, Fin.succ_inj]
       have e2 : Function.update f j'.succ (y * f j'.succ - f j'.succ * y) 0 = f 0 := by
-        simp only [Function.update_apply, (Fin.succ_ne_zero j').symm, if_false]
+        simp only [Function.update_apply, (Fin.succ_ne_zero j').symm, ite_false]
       rw [List.ofFn_succ, List.prod_cons, e1, e2]
     have hih := ih (fun i => f i.succ)
     rw [Fin.sum_univ_succ, h0, Finset.sum_congr rfl (fun j' _ => hs j'), ← Finset.mul_sum, ← hih,
@@ -130,7 +130,7 @@ theorem cminor_comm (hE : GlRelR E) (a b : Fin n) {p : ℕ} (R C : Fin p → Fin
     conv_rhs => rw [sum_comp_perm_eq_sum σ]
     refine Finset.sum_congr rfl fun j _ => ?_
     by_cases h : R (σ j) = b
-    · rw [if_pos h.symm, if_pos h]
+    · rw [ite_eq_left h.symm, ite_eq_left h]
       congr 1
       congr 1
       congr 1
@@ -139,12 +139,12 @@ theorem cminor_comm (hE : GlRelR E) (a b : Fin n) {p : ℕ} (R C : Fin p → Fin
       · subst hk
         simp
       · simp [hk, σ.injective.ne hk]
-    · rw [if_neg (Ne.symm h), if_neg h, smul_zero]
+    · rw [ite_eq_right (Ne.symm h), ite_eq_right h, smul_zero]
   · rw [sum_ite_sum_comm]
     refine Finset.sum_congr rfl fun σ _ => ?_
     refine Finset.sum_congr rfl fun j _ => ?_
     by_cases h : C j = a
-    · rw [if_pos h, if_pos h]
+    · rw [ite_eq_left h, ite_eq_left h]
       congr 1
       congr 1
       congr 1
@@ -153,6 +153,6 @@ theorem cminor_comm (hE : GlRelR E) (a b : Fin n) {p : ℕ} (R C : Fin p → Fin
       · subst hk
         simp
       · simp [hk]
-    · rw [if_neg h, if_neg h, smul_zero]
+    · rw [ite_eq_right h, ite_eq_right h, smul_zero]
 
 end ReciprocityTheory.ChartRestriction.DS.Lap.Capelli

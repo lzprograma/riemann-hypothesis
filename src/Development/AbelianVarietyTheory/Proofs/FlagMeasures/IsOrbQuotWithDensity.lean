@@ -43,6 +43,7 @@ import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Sheaves.Init
+import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BlochKatoDuality
 
 @[expose] public section
 
@@ -57,17 +58,7 @@ private lemma continuous_of_symm_of_continuous {X : Type*} [TopologicalSpace X] 
 
 private lemma measurable_inv_apply_of_measurable_entries {n : ℕ} :
     Measurable (fun a : Fin n → Fin n → ℂ => (Matrix.of.symm ((Matrix.of a)⁻¹) : Fin n → Fin n → ℂ)) := by
-  have hc : Continuous (fun a : Fin n → Fin n → ℂ => Matrix.of a) := continuous_id
-  have hdet : Measurable (fun a : Fin n → Fin n → ℂ => ((Matrix.of a).det)⁻¹) :=
-    hc.matrix_det.measurable.inv
-  refine measurable_pi_iff.mpr fun i => measurable_pi_iff.mpr fun j => ?_
-  have e : (fun a : Fin n → Fin n → ℂ => (Matrix.of.symm ((Matrix.of a)⁻¹) : Fin n → Fin n → ℂ) i j)
-      = fun a => ((Matrix.of a).det)⁻¹ * (Matrix.of a).adjugate i j := by
-    funext a
-    show ((Matrix.of a)⁻¹) i j = _
-    rw [Matrix.inv_def, Ring.inverse_eq_inv, Matrix.smul_apply, smul_eq_mul]
-  rw [e]
-  exact hdet.mul (hc.matrix_adjugate.matrix_elem i j).measurable
+  apply _root_.UpperTheory.measurable_matrix_inv <;> assumption
 
 private lemma measurable_mul_apply_of_measurable_entries {n : ℕ} : Measurable (fun q : (Fin n → Fin n → ℂ) × (Fin n → Fin n → ℂ) =>
     (Matrix.of.symm (Matrix.of q.1 * Matrix.of q.2) : Fin n → Fin n → ℂ)) := by

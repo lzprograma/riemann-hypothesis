@@ -5,43 +5,6 @@ public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAd
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsArchEquivEq
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBasisAdaptedToCartanInvolution
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsLatticeFrameIsMajorantFrame
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -63,14 +26,6 @@ theorem diagonal_sign_mul_self (ε : Fin n → Bool) :
   rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
   congr 1
   funext i
-  split_ifs <;> simp
-
-theorem diagonal_sign_conjTranspose (ε : Fin n → Bool) :
-    (Matrix.diagonal fun i => if ε i then (1 : ℂ) else -1)ᴴ = Matrix.diagonal fun i => if ε i then 1 else -1 := by
-  rw [Matrix.diagonal_conjTranspose]
-  congr 1
-  funext i
-  change star (if ε i then (1 : ℂ) else -1) = _
   split_ifs <;> simp
 
 theorem mul_conjTranspose_mul_eq (hbc : b * c = 1) (h : bᴴ * G * b = d) : b * bᴴ * G = b * d * c := by
@@ -225,8 +180,6 @@ theorem mem_stabArch_iff_unitary (h : IsCMExt F E σ) (τ : EmbOver E w) (J : Ma
 
 end Place
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def frameInv (θ : InfFam D) (V : HSp D) (a : GL (Fin V.rank) (AE D)) (τ : D.what₂.Tau) :
@@ -252,11 +205,6 @@ theorem isMaj_iff (hθ : IsInfFam θ) : IsMaj V a ↔ ∀ τ, ∃ ε : Fin V.ran
   refine (placeOf_bijective D).2.forall.trans (forall_congr' fun τ => exists_congr fun ε => ?_)
   rw [compAt_eq_map hθ]
   exact frame_local_iff (isCMExt_host D) (embOverOf D τ) V.gram _ ε
-
-theorem IsMaj.isCartanInv (h : IsMaj V a) (hθ : IsInfFam θ) (τ : D.what₂.Tau) :
-    IsCartanInv (gramAt D V τ) (frameInv θ V a τ) := by
-  obtain ⟨ε, hε⟩ := (isMaj_iff hθ).1 h τ
-  exact isCartanInv_of_frame (compAt_mul_inv τ a) hε (diagonal_sign_mul_self ε) (diagonal_sign_conjTranspose ε)
 
 theorem infMat_isometry (hθ : IsInfFam θ) (τ : D.what₂.Tau) (g : GA D V) :
     (infMat D.sp.cm.sig V.gram (θ τ) g)ᴴ * gramAt D V τ * infMat D.sp.cm.sig V.gram (θ τ) g = gramAt D V τ := by

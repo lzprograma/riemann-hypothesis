@@ -32,12 +32,12 @@ lemma term_eq (N : Type) [AddCommGroup N] [Module R N] (m : Ideal R) [hm : m.IsM
     term R N m = ((Module.length (Localization.AtPrime m)
       (LocalizedModule m.primeCompl N)).toNat : ℝ) * Real.log (Nat.card (R ⧸ m)) := by
   classical
-  rw [term, finsum_eq_if, if_pos hm, locLen, dite_eq_left hm.isPrime]
+  rw [term, finsum_eq_if, ite_eq_left hm, locLen, dite_eq_left hm.isPrime]
 
 lemma term_of_not (N : Type) [AddCommGroup N] [Module R N] (m : Ideal R) (hm : ¬ m.IsMaximal) :
     term R N m = 0 := by
   classical
-  rw [term, finsum_eq_if, if_neg hm]
+  rw [term, finsum_eq_if, ite_eq_right hm]
 
 lemma length_loc_add {N₀ N₁ N₂ : Type} [AddCommGroup N₀] [AddCommGroup N₁] [AddCommGroup N₂]
     [Module R N₀] [Module R N₁] [Module R N₂] (f : N₀ →ₗ[R] N₁) (g : N₁ →ₗ[R] N₂)
@@ -110,7 +110,7 @@ lemma term_simple (M : Type) [AddCommGroup M] [Module R M] [IsSimpleModule R M]
     split_ifs with h
     · subst h; simp [hcard]
     · simp
-  · rw [term_of_not M m hm, if_neg (fun (h : m = I) => hm (h ▸ hI))]
+  · rw [term_of_not M m hm, ite_eq_right (fun (h : m = I) => hm (h ▸ hI))]
 
 theorem main (n : ℕ) : ∀ (N : Type) [AddCommGroup N] [Module R N] [Finite N], Nat.card N = n →
     FinLoc R N ∧ (Function.support (term R N)).Finite ∧
@@ -168,7 +168,7 @@ theorem main (n : ℕ) : ∀ (N : Type) [AddCommGroup N] [Module R N] [Finite N]
     have hSs : (Function.support (term R S)).Finite := by
       refine (Set.finite_singleton I).subset fun m hm => ?_
       by_contra h
-      exact hm (by rw [hSt, if_neg (by simpa using h)])
+      exact hm (by rw [hSt, ite_eq_right (by simpa using h)])
     refine ⟨fun m _ => ?_, ?_, ?_⟩
     · rw [hadd, length_loc_simple S I hI hkill m]
       split_ifs <;> simpa using hQf m
@@ -177,7 +177,7 @@ theorem main (n : ℕ) : ∀ (N : Type) [AddCommGroup N] [Module R N] [Finite N]
         exact Function.support_add _ _)
     · rw [show term R N = fun m => term R S m + term R (N ⧸ S) m from funext hterm,
         finsum_add_distrib hSs hQs, ← hQl,
-        finsum_eq_single _ I (fun m hm => by rw [hSt, if_neg hm]), hSt, if_pos rfl, hcard,
+        finsum_eq_single _ I (fun m hm => by rw [hSt, ite_eq_right hm]), hSt, ite_eq_left rfl, hcard,
         Nat.cast_mul, Real.log_mul (by positivity) (by positivity)]
 
 end logCardLength

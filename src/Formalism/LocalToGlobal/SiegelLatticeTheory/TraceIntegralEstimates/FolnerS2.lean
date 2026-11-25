@@ -87,8 +87,7 @@ theorem haarSub_prop {S : Set G} {μ ν : Measure G} (hμ : LeftHaarSub S μ) (h
   set μ' := μ.comap (Subtype.val : H → G) with hμ'
   set ν' := ν.comap (Subtype.val : H → G) with hν'
   obtain ⟨n, hn⟩ : ∃ n, ν' (spanningSets (μ' + ν') n) ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hν0
     rw [← Measure.measure_univ_eq_zero, ← iUnion_spanningSets (μ' + ν')]
     exact measure_iUnion_null hcon
@@ -213,8 +212,7 @@ theorem isFolner_of_contract {S : Set G} {μS : Measure G} (hS : IsHaarSub S μS
     exact ⟨hx.1.trans h, hx.2⟩
   intro K hK hKS ε hε
   obtain ⟨n₀, hn₀⟩ : ∃ n : ℕ, μS (L n) ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hS0
     have hsub : (Set.univ : Set G) ⊆ (⋃ n : ℕ, L n) ∪ Sᶜ := by
       intro x _
@@ -229,8 +227,7 @@ theorem isFolner_of_contract {S : Set G} {μS : Measure G} (hS : IsHaarSub S μS
   have hcount : Set.Countable {t : ℝ | 0 < μS {x | f x = t}} :=
     Measure.countable_meas_level_set_pos hf.measurable
   obtain ⟨ρ, hρI, hρN⟩ : ∃ ρ ∈ Set.Icc (n₀ : ℝ) (n₀ + 1), ρ ∉ {t : ℝ | 0 < μS {x | f x = t}} := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have h0 : volume (Set.Icc (n₀ : ℝ) (n₀ + 1)) = 0 :=
       measure_mono_null hcon (hcount.measure_zero volume)
     rw [Real.volume_Icc] at h0

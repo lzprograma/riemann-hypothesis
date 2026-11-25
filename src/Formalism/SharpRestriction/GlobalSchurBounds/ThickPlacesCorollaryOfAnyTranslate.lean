@@ -19,61 +19,10 @@ public import Formalism.HermitianLattices.FinalMass
 public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
 public import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.InclusionInjective
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.Style
 import Formalism.HermitianLattices.HermitianLatticesProofs.MassBasic
 import Formalism.LogVandermondeBounds.LogVandermondeProofs.CardStabilizerVector
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -86,35 +35,6 @@ section -- clump:auto
 @[expose] public section
 
 namespace Formalism.HermitianLattices.CumulantEstimateDefs.CumulantEstimates
-
-section A
-open Finset
-
-end A
-
-section B
-open Finset
-open scoped ComplexOrder
-
-end B
-
-section C
-open Finset MeasureTheory
-open scoped ComplexOrder
-
-
-end C
-
-section D
-open Finset
-open scoped Nat
-
-end D
-
-section E
-open Finset Matrix Unitary
-
-end E
 
 section F
 open Finset
@@ -198,9 +118,6 @@ theorem global_arithmetic_identity : GlobalArithmeticIdentity := by
     (((M - 1).factorial : ℝ) * (v / Real.pi) ^ M) ^ f / Real.sqrt ((2 * v) ^ f) * Lv)
   have hd : (0 : ℝ) < (2 * v) ^ f := by positivity
   rw [Real.rpow_sub hd, Real.rpow_natCast, ← Real.sqrt_eq_rpow]
-  have hs : 0 < Real.sqrt ((2 * v) ^ f) := Real.sqrt_pos.2 hd
-  have hfac : (0 : ℝ) < ((M - 1).factorial : ℝ) := by exact_mod_cast Nat.factorial_pos _
-  have hpi := Real.pi_pos
   have key : ((2 * v) ^ f) ^ M = ((2 * Real.pi) ^ M / ((M - 1).factorial : ℝ)) ^ f *
       (((M - 1).factorial : ℝ) * (v / Real.pi) ^ M) ^ f := by
     rw [← pow_mul, mul_comm f M, pow_mul, ← mul_pow]
@@ -213,8 +130,6 @@ theorem global_arithmetic_identity : GlobalArithmeticIdentity := by
   have hB : (0 : ℝ) < ((M - 1).factorial : ℝ) * (v / Real.pi) ^ M := by positivity
   generalize (2 * Real.pi) ^ M / ((M - 1).factorial : ℝ) = A at hA ⊢
   generalize ((M - 1).factorial : ℝ) * (v / Real.pi) ^ M = B at hB ⊢
-  have hAf : 0 < A ^ f := pow_pos hA f
-  have hBf : 0 < B ^ f := pow_pos hB f
   field_simp
 
 end Formalism.HermitianLattices.GenusMassVolumes
@@ -238,7 +153,6 @@ theorem finrank_host (D : D7) : Module.finrank ℚ D.host.E = 2 * D.R.f := by
   have h1 : Nat.card (D.R.GG) = Nat.card (D.host.E →+* ℂ) := Nat.card_congr (Equiv.ofBijective _ hb)
   have h2 : Nat.card (D.host.E →+* ℂ) = Module.finrank ℚ D.host.E := by
     rw [Nat.card_eq_fintype_card]; exact NumberField.Embeddings.card D.host.E ℂ
-  have h3 := (factCardPsi D.R D.host).1
   have h4 : Nat.card (D.R.GG) = 4 * D.R.ord := D.R.natCard_GG
   rw [← h2, ← h1, h4]
   show 4 * D.R.ord = 2 * (2 * D.R.ord)
@@ -384,7 +298,7 @@ theorem isLevel_iff_free_support (k rS n : ℕ) {F : Type} [Zero F] [One F] (A :
   · rintro ⟨h1, h2, h3, h4⟩ i j hS
     by_cases hij : i = j
     · subst hij; simp [h2]
-    · rw [if_neg hij]
+    · rw [ite_eq_right hij]
       have hne : i.val ≠ j.val := fun h => hij (Fin.ext h)
       unfold IsFreePosition Formalism.HermitianLattices.CumulantEstimateDefs.CumulantEstimates.bb at hS
       simp only at hS
@@ -404,21 +318,21 @@ theorem isLevel_iff_free_support (k rS n : ℕ) {F : Type} [Zero F] [One F] (A :
   · intro h
     refine ⟨fun i j c => ?_, fun i => ?_, fun i j c c2 => ?_, fun i j c hij c2 => ?_⟩
     · have hne : i ≠ j := by rintro rfl; exact lt_irrefl _ c
-      rw [h i j ?_, if_neg hne]
+      rw [h i j ?_, ite_eq_right hne]
       unfold IsFreePosition Formalism.HermitianLattices.CumulantEstimateDefs.CumulantEstimates.bb
       unfold blk at c
       simp only
       split_ifs at c ⊢ <;> omega
-    · rw [h i i ?_, if_pos rfl]
+    · rw [h i i ?_, ite_eq_left rfl]
       unfold IsFreePosition
       simp
     · have c2' : j.val < i.val := c2
-      rw [h i j ?_, if_neg (ne_of_gt c2)]
+      rw [h i j ?_, ite_eq_right (ne_of_gt c2)]
       unfold IsFreePosition Formalism.HermitianLattices.CumulantEstimateDefs.CumulantEstimates.bb
       unfold blk at c
       simp only
       split_ifs at c ⊢ <;> omega
-    · rw [h i j ?_, if_neg hij]
+    · rw [h i j ?_, ite_eq_right hij]
       unfold IsFreePosition Formalism.HermitianLattices.CumulantEstimateDefs.CumulantEstimates.bb
       unfold blk at c2
       simp only
@@ -596,11 +510,11 @@ theorem line_param_apply (D : D7) (ρ : D.what₂.Tau) (a : Fin (D.R.k - 1 + D.R
   | left i =>
     have hi : (Fin.castAdd D.R.m i).val = i.val := rfl
     unfold rowLam Formalism.LogVandermondeBounds.StandardLattice.rowPar vN
-    rw [Fin.append_left, hi, if_pos i.2, dite_eq_left i.2]
+    rw [Fin.append_left, hi, ite_eq_left i.2, dite_eq_left i.2]
   | right j =>
     have hj : (Fin.natAdd (D.R.k - 1) j).val = D.R.k - 1 + j.val := rfl
     unfold rowLam Formalism.LogVandermondeBounds.StandardLattice.rowPar bN
-    rw [Fin.append_right, hj, if_neg (by omega), Nat.add_sub_cancel_left, dite_eq_left j.2]
+    rw [Fin.append_right, hj, ite_eq_right (by omega), Nat.add_sub_cancel_left, dite_eq_left j.2]
 
 theorem line_sign_apply (D : D7) (a : Fin (D.R.k - 1 + D.R.m)) :
     rowSgn D a = Formalism.LogVandermondeBounds.StandardLattice.plusSign D.R.k a.val := by
@@ -618,7 +532,6 @@ theorem gap_bound_mono (D : D7) (C C' ep0 : ℝ) (h : C ≤ C') : gap3 D C ep0 �
   have hr : (1 : ℝ) ≤ D.R.r := by
     have := D.R.k_ge; have := D.R.r_eq; have := D.R.two_le_m
     exact_mod_cast (by omega : 1 ≤ D.R.r)
-  have hl : 0 ≤ Real.log (D.R.r : ℝ) := Real.log_nonneg hr
   gcongr
 
 theorem exponent_pos_of_rank_le_pow (D : D7) (sc : Scale) (C0 : ℝ) (h5 : (D.R.k : ℝ) ≤ sc.x ^ C0) : 0 < C0 := by
@@ -635,7 +548,6 @@ theorem gap_bound_at_one_third (D : D7) (C : ℝ) (hC : 0 ≤ C) : gap3 D C (1 /
   have ep : pY D ≤ D.R.r := by unfold pY; simp only [Ranks.sigY0]; omega
   have eq : qY D ≤ D.R.r := by unfold qY; simp only [Ranks.sigY0]; omega
   have hr : (1 : ℝ) ≤ D.R.r := by exact_mod_cast (by omega : 1 ≤ D.R.r)
-  have hl0 : 0 ≤ Real.log (D.R.r : ℝ) := Real.log_nonneg hr
   have hl : Real.log (D.R.r : ℝ) ≤ D.R.r := by
     have := Real.log_le_sub_one_of_pos (show (0 : ℝ) < (D.R.r : ℝ) by linarith)
     linarith
@@ -748,9 +660,9 @@ theorem param_vector_eq_line_param (D : D7) (ρ : D.what₂.Tau) :
   unfold lamSH lamS Formalism.LogVandermondeBounds.StandardLattice.rowPar vN bN
   simp only [Fin.val_cast]
   by_cases h : i.val < D.R.k - 1
-  · rw [dite_eq_left h, if_pos h, dite_eq_left h]
+  · rw [dite_eq_left h, ite_eq_left h, dite_eq_left h]
   · have h' : i.val - (D.R.k - 1) < D.R.m := by omega
-    rw [dite_eq_right h, if_neg h, dite_eq_left h', dite_eq_left h']
+    rw [dite_eq_right h, ite_eq_right h, dite_eq_left h', dite_eq_left h']
 
 theorem sign_vector_eq_line_sign (D : D7) : epsSH D.R = fun i => rowSgn D (Fin.cast (rank_dimension_identity D.R) i) := by
   funext i
@@ -773,7 +685,7 @@ theorem sum_indicator_even_range (c : ℕ) : ∑ j ∈ range (2 * c), (if j % 2 
 theorem count_plus_line_sign (D : D7) : nPlus (rowSgn D) = pY D := by
   unfold nPlus rowSgn
   rw [Finset.card_filter, Fin.sum_univ_add]
-  simp only [Fin.append_left, Fin.append_right, if_true, decide_eq_true_eq]
+  simp only [Fin.append_left, Fin.append_right, ite_true, decide_eq_true_eq]
   rw [Fin.sum_univ_eq_sum_range (fun j => if j % 2 = 0 then 1 else 0) D.R.m]
   obtain ⟨c, hc⟩ := D.R.m_even
   have hc' : D.R.m = 2 * c := by omega
@@ -812,7 +724,6 @@ theorem line_param_harish_chandra (D : D7) (ρ : D.what₂.Tau) : Formalism.Quan
   refine ⟨strictAnti_comp_finCast _ _ (line_param_strictAnti D ρ), fun a => ?_⟩
   obtain ⟨c, hc⟩ := D.R.m_even
   obtain ⟨c', hc'⟩ := D.R.k_even
-  have hrS := D.R.rS_two
   have hN : (((2 * D.R.rS + D.R.k + 1 : ℕ) : ℝ) - 1) / 2 = ((D.R.rS + c' : ℕ) : ℝ) := by
     rw [hc']; push_cast; ring
   rw [hN]
@@ -987,12 +898,6 @@ theorem volume_eq_mass_of_definite (D : D7) (h2 : Conclusion2 D) (hv : DefiniteV
     have hpos := massI_pos D (P + Q)
     field_simp at hr
     exact hr
-
-section Landherr
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E]
-
-end Landherr
 
 end Formalism.MainNotions.StandardLattice
 
@@ -1391,7 +1296,7 @@ theorem formal_degree_line_eq (D : D7) (ρ : D.what₂.Tau) :
     · have hc' : a.val < b.val ∧
           Formalism.LogVandermondeBounds.StandardLattice.plusSign D.R.k b.val = Formalism.LogVandermondeBounds.StandardLattice.plusSign D.R.k a.val :=
         ⟨hc.1, by rw [← line_sign_apply, ← line_sign_apply]; exact hc.2.symm⟩
-      simp only [if_pos hc, if_pos hc']
+      simp only [ite_eq_left hc, ite_eq_left hc']
       have h1 := rho_sub_eq_card_opposite (rowSgn D) a b hc.1 hc.2
       rw [card_opposite_sign_between] at h1
       rw [line_param_apply, line_param_apply]
@@ -1400,7 +1305,7 @@ theorem formal_degree_line_eq (D : D7) (ρ : D.what₂.Tau) :
           Formalism.LogVandermondeBounds.StandardLattice.plusSign D.R.k b.val = Formalism.LogVandermondeBounds.StandardLattice.plusSign D.R.k a.val) := by
         rintro ⟨h1, h2⟩
         exact hc ⟨h1, by rw [line_sign_apply, line_sign_apply]; exact h2.symm⟩
-      simp only [if_neg hc, if_neg hc']
+      simp only [ite_eq_right hc, ite_eq_right hc']
   rw [e, h, ← Finset.prod_filter, ← Finset.prod_filter]
   refine Finset.prod_congr ?_ fun _ _ => rfl
   ext j
@@ -1417,10 +1322,10 @@ theorem abs_param_sup_le (D : D7) (ρ : D.what₂.Tau) :
   have : Nonempty (Fin (D.R.k - 1 + D.R.m)) := ⟨⟨0, hN⟩⟩
   have hanti := (line_param_strictAnti D ρ).antitone
   have h0 : rowLam D ρ ⟨0, hN⟩ = vN D ρ 0 := by
-    rw [line_param_apply]; unfold Formalism.LogVandermondeBounds.StandardLattice.rowPar; rw [if_pos (by show 0 < D.R.k - 1; omega)]
+    rw [line_param_apply]; unfold Formalism.LogVandermondeBounds.StandardLattice.rowPar; rw [ite_eq_left (by show 0 < D.R.k - 1; omega)]
   have h1 : rowLam D ρ ⟨D.R.k - 1 + D.R.m - 1, by omega⟩ = - bN D ρ (D.R.m - 1) := by
     rw [line_param_apply]; unfold Formalism.LogVandermondeBounds.StandardLattice.rowPar
-    rw [if_neg (by show ¬ (D.R.k - 1 + D.R.m - 1 < D.R.k - 1); omega)]
+    rw [ite_eq_right (by show ¬ (D.R.k - 1 + D.R.m - 1 < D.R.k - 1); omega)]
     congr 2
     show D.R.k - 1 + D.R.m - 1 - (D.R.k - 1) = D.R.m - 1
     omega
@@ -1564,8 +1469,6 @@ theorem formalDegreeFactor_pos_of_strictAnti {N : ℕ} (s : Fin N → Bool) (lam
     rw [Finset.mem_filter] at hb
     have h1 := rho_sub_eq_card_opposite s a b hb.2.1 hb.2.2
     have h2 : lam b < lam a := h hb.2.1
-    have h3 : (0 : ℝ) ≤ ((univ.filter (fun c : Fin N => a < c ∧ c < b ∧ s c ≠ s a)).card : ℝ) :=
-      Nat.cast_nonneg _
     linarith
   · exact mul_pos (factorial_product_pos _) (factorial_product_pos _)
 

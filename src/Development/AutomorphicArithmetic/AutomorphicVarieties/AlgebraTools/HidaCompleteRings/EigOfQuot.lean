@@ -1,48 +1,6 @@
 module
 
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.IsOrdProjZeroOfIsNilpotent
 public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 public import Mathlib.RingTheory.Artinian.Module
@@ -66,7 +24,7 @@ private theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.common_ker_
   by_cases hall : ∀ i, ∀ y ∈ V, T i y = 0
   · obtain ⟨y, hyV, hy0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hV
     exact ⟨y, hy0, fun i => hall i y hyV⟩
-  push_neg at hall
+  push Not at hall
   obtain ⟨i, z, hzV, hz⟩ := hall
   have hpowmem : ∀ k : ℕ, (T i ^ k) z ∈ V := by
     intro k
@@ -128,7 +86,7 @@ private theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.common_ker_
     exact ⟨u, huV, fun h0 => hu (by rw [h0, map_zero])⟩
   by_cases hall : ∀ i, ∀ y ∈ V, ∃ n : ℕ, (T i ^ n) y = 0
   · exact UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.common_ker_of_nilpotent T hc V hVne hinv hall
-  push_neg at hall
+  push Not at hall
   obtain ⟨i, z, hzV, hz⟩ := hall
   let f : Module.End K V := (T i).restrict (hinv i)
   obtain ⟨n, hn⟩ := Filter.eventually_atTop.mp (LinearMap.eventually_codisjoint_ker_pow_range_pow f)
@@ -193,8 +151,7 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.eigOfQuot :
     intro i y
     rw [hT, map_sub, map_smul, hφ, sub_self]
   have hu : ∃ u ∈ (⊤ : Submodule K Y), φ u ≠ 0 := by
-    by_contra hno
-    push_neg at hno
+    by_contra! hno
     exact hφ0 (LinearMap.ext fun y => by simpa using hno y Submodule.mem_top)
   obtain ⟨y, hy0, hy⟩ := UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.common_ker_of_quot T hc φ hφT ⊤ hu
     (fun _ _ _ => Submodule.mem_top)

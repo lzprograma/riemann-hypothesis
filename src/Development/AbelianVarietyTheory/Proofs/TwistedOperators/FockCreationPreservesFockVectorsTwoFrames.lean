@@ -44,11 +44,11 @@ import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Bool
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockVectorsOfThetaDatumInjective
 
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FockCreaDir
 
@@ -111,16 +111,7 @@ theorem cplxO_unitMap_fr (A : Fr V) (B : Fr W) (τ : D.what₂.Tau) (i : Fin W.r
     _ = _ := by rw [Jm_single_Jm, Matrix.mul_smul, Matrix.smul_mul]
 
 theorem fockScale_ne_zero (D : D7) (τ : D.what₂.Tau) : ((fockScale D τ : ℝ) : ℂ) ≠ 0 := by
-  have h0 : 0 < ‖tauE D τ D.host.xi0‖ := by
-    refine norm_pos_iff.2 fun h => ?_
-    have := Formalism.L2.Theta.xi_zero_im_pos D τ
-    rw [h] at this
-    simp at this
-  have : 0 < fockScale D τ := by
-    unfold fockScale
-    have := Real.sqrt_pos.2 (mul_pos (mul_pos two_pos Real.pi_pos) h0)
-    positivity
-  exact_mod_cast this.ne'
+  apply _root_.GlobalTheory.FockInj.fockScale_ne <;> assumption
 
 end GlobalTheory.FockCreaDir
 

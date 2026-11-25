@@ -14,52 +14,13 @@ public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PderivEqZeroOfColOp
 public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DerivationProdPow
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Etale.Weakly
 import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Lemma
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LineKroneckerRightMatrixConjTranspose
 import Mathlib.Algebra.Order.Star.Rat
@@ -142,12 +103,12 @@ private theorem sum_filter_not_lt_eq_sum_range_sub (n i : ℕ) (G : ℕ → ℤ)
     have hj' := Finset.mem_range.mp hj
     have e1 : ¬ (n - 1 - j < i) := by omega
     have e2 : n - 1 - (n - 1 - j) = j := by omega
-    rw [if_pos e1, e2]
+    rw [ite_eq_left e1, e2]
   · intro j hj hj'
     have h1 := Finset.mem_range.mp hj
     have h2 : ¬ j < n - i := fun h => hj' (Finset.mem_range.mpr h)
     have e1 : n - 1 - j < i := by omega
-    rw [if_neg (not_not.mpr e1)]
+    rw [ite_eq_right (not_not.mpr e1)]
 
 theorem sum_filter_pad_rev' {n q : ℕ} (b : Fin q → ℕ) (hb : ∀ i : Fin q, n ≤ i → b i = 0)
     (i : ℕ) :
@@ -417,7 +378,7 @@ theorem harmonic_rowOp {σ I I' J : Type} [Fintype J] (z : I × J → σ) (y : I
       X (z (a, k)) * pderiv (z (i, t)) (pderiv (y (j, t)) (pderiv (z (b, k)) Q)) +
         (if i = a ∧ t = k then pderiv (y (j, t)) (pderiv (z (b, k)) Q) else 0) := by
     intro t k
-    rw [pderiv_X_mul', if_neg (fun h => hzy _ _ h.symm), add_zero, pderiv_X_mul']
+    rw [pderiv_X_mul', ite_eq_right (fun h => hzy _ _ h.symm), add_zero, pderiv_X_mul']
     congr 1
     simp only [hz.eq_iff, Prod.mk.injEq]
   have hA : ∑ t, ∑ k, X (z (a, k)) * pderiv (z (i, t)) (pderiv (y (j, t)) (pderiv (z (b, k)) Q))
@@ -435,7 +396,7 @@ theorem harmonic_rowOp {σ I I' J : Type} [Fintype J] (z : I × J → σ) (y : I
   have hB : ∑ t, ∑ k, (if i = a ∧ t = k then pderiv (y (j, t)) (pderiv (z (b, k)) Q) else 0)
       = 0 := by
     by_cases hia : i = a
-    · simp only [hia, true_and, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    · simp only [hia, true_and, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
       rw [← hQ b j]
       exact Finset.sum_congr rfl fun t _ => pderiv_swap _ _ _
     · simp [hia]
@@ -473,7 +434,7 @@ theorem commute_euler {σ : Type} {k n : ℕ} (z : Fin k × Fin n → σ) (hz : 
   show (∑ i, rowOp ℂ z i i) * rowOp ℂ z a b = rowOp ℂ z a b * ∑ i, rowOp ℂ z i i
   rw [← sub_eq_zero, Finset.sum_mul, Finset.mul_sum, ← Finset.sum_sub_distrib]
   simp only [rowOp_lie z hz, Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true, sub_self]
+    Finset.mem_univ, ite_true, sub_self]
 
 theorem weight_nat {σ : Type} {k n : ℕ} (z : Fin k × Fin n → σ) (v : MvPolynomial σ ℂ)
     (hv : v ≠ 0) (a : Fin k → ℤ) (ha : ∀ i, rowOp ℂ z i i v = (a i : ℂ) • v) :
@@ -1093,14 +1054,14 @@ theorem sum_range_extZero {p : ℕ} (a : Fin p → ℕ) (i : ℕ) :
         simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert, Fin.ext_iff]
         omega
       rw [hset, Finset.sum_insert (by simp), add_comm]
-      simp only [extZero, dif_pos h]
+      simp only [extZero, dite_eq_left h]
     · have hset : Finset.univ.filter (fun b : Fin p => (b : ℕ) < n + 1) =
           Finset.univ.filter (fun b : Fin p => (b : ℕ) < n) := by
         ext b
         simp only [Finset.mem_filter, Finset.mem_univ, true_and]
         omega
       rw [hset]
-      simp only [extZero, dif_neg h, add_zero]
+      simp only [extZero, dite_eq_right h, add_zero]
 
 theorem partial_sum_le {σ : Type} [DecidableEq σ] {p r : ℕ} (z : Fin p × Fin r → σ)
     (hz : Function.Injective z) (P : MvPolynomial σ ℂ) (a : Fin p → ℕ) (a' : Fin r → ℕ)
@@ -1192,9 +1153,9 @@ theorem row_col_weights_agree : ∀ (σ : Type) [DecidableEq σ] (p r : ℕ) (z 
   · intro i j hij
     unfold extZero
     by_cases hj : j < p
-    · rw [dif_pos hj, dif_pos (lt_of_le_of_lt hij hj)]
+    · rw [dite_eq_left hj, dite_eq_left (lt_of_le_of_lt hij hj)]
       exact hanti (Fin.mk_le_mk.mpr hij)
-    · rw [dif_neg hj]
+    · rw [dite_eq_right hj]
       exact Nat.zero_le _
   · intro i hi
     by_cases hp : p ≤ i
@@ -1340,7 +1301,7 @@ theorem IsSide.homog_of_type [DecidableEq σ] {H : Type} [NormedAddCommGroup H]
   obtain ⟨W, hfin, hPW, hst, hμ⟩ := ht
   have kc : ∀ a b : Ix p q, sameBlock a b → IsKC (Eab a b) := by
     intro a b hab c d hcd
-    rw [Eab, Matrix.single_apply, if_neg]
+    rw [Eab, Matrix.single_apply, ite_eq_right]
     rintro ⟨rfl, rfl⟩
     exact hcd hab
   let W₁ := W ⊓ (harmSub (zA e) (zB e) ⊓ harmSub (zC e) (zD e))

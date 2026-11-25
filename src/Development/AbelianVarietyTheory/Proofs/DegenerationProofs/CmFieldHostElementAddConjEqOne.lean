@@ -56,7 +56,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.T
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory GlobalTheory.Ex GlobalTheory.Ex.Arch
 
 noncomputable section
@@ -90,7 +89,7 @@ theorem cmField_host_element_add_conj_eq_one {E : Type} [Field E] [NumberField E
 
 theorem rg_ne_zero {R : Type} [CommRing R] [IsDomain R] {D : DegPre R} {F : Type} [Field F] [Algebra (FractionRing R) F]
     {N : NumD F} (ν : NumOf D F N) : ν.rg ≠ 0 := fun h =>
-  (((Units.isUnit _).map _).map _).ne_zero ((dif_pos (fun z _ =>
+  (((Units.isUnit _).map _).map _).ne_zero ((dite_eq_left (fun z _ =>
     Good.mem (L := D.P.L) (z := z) (J := ν.J) (fun ψ => ν.good ψ trivial) (fun _ : PUnit => eSec D.P.A)
       (TF (R := R) F).hom)).symm.trans h)
 

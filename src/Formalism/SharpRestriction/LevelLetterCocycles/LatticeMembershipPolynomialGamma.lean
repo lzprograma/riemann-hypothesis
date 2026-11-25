@@ -7,48 +7,7 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.AnnihilatorGeneralO
 public import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfFrame
 public import Formalism.SharpRestriction.LevelLetterCocycles.PsCoprimeOf
 import Formalism.SharpRestriction.LevelLetterCocycles.SecondComparisonInCoordinates
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -275,7 +234,6 @@ theorem dvO_mem_FilS (hCA : Formalism.MainNotions.LiftingTheory.CaseA W) (T : Lo
 
 end W
 
-open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 
 def dExp : Formalism.MainNotions.LocalTheoryWindows.LT → ℕ
   | .up b => b
@@ -667,12 +625,11 @@ theorem invNL_outside (hCA : Formalism.MainNotions.LiftingTheory.CaseA W) (h5 : 
     exact univNN W hCA h5 A hA c hc T hT d b sol hb (Pi.single k 1) (hupO k hk') _ (hgnn k hk')
   · by_cases hk : k ∈ Rst
     · simp [hk, g]
-    · simp only [hk, if_false, g]
+    · simp only [hk, ite_false, g]
       rw [← mul_assoc, mul_comm (ιE W.π₀) πi, hinv, one_mul]
 
 end W
 
-open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.ArcLiftingSetup Formalism.MainNotions.UnusedSlot80.KL
 
 section Core
 
@@ -776,8 +733,8 @@ theorem univCore_of (PD : PeriodData G Qp K₀ K B BdR) [Fintype (K →ₐ[Qp] L
   convert this using 1
   funext k
   by_cases hk : k ∈ Rst
-  · simp only [Pi.sub_apply, if_pos hk, sub_zero]; rfl
-  · simp only [Pi.sub_apply, if_neg hk, sub_self]
+  · simp only [Pi.sub_apply, ite_eq_left hk, sub_zero]; rfl
+  · simp only [Pi.sub_apply, ite_eq_right hk, sub_self]
 
 end Core
 
@@ -805,7 +762,7 @@ def UnivLiftL (D : D7) (HW : HWOf D.loc) : Prop :=
 
 theorem universal_general_of_frame_sections (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW)
     (Cm : CmpOf D.loc D.locA HW F) (hAdm : AdmUnivA D HW F Cm) (h9 : Formalism.MainNotions.DeltaInvariantLattices.P9 D HW F)
-    (_hH : Formalism.MainNotions.LiftingTheory.ConclusionH D HW F) (hFr : UnivFrameL D HW) (hSec : UnivSecL D HW)
+    (hFr : UnivFrameL D HW) (hSec : UnivSecL D HW)
     (hGen : UnivGenL D HW) (hLift : UnivLiftL D HW) : UniversalComponentCaseA D HW F Cm := by
   intro l _ K LL hG hA h5
   have hR := ring_condition_uniformizer_polynomial D HW F h9 l K LL hA

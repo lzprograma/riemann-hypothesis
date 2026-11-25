@@ -163,12 +163,6 @@ theorem seenBarC.T_mem (hX : X.Ok) (hPr : Pr.Ok) {u : Pr.Word} {w : HeightOneSpe
   obtain ⟨τ⟩ := hX.nonempty_Tau
   exact owedS_T_mem hPr (Or.inr (h τ))
 
-theorem seenC_of_one (hPr : Pr.Ok) {u : Pr.Word} {w : HeightOneSpectrum (𝓞 X.K)} {τ : X.Tau}
-    (h : pullW τ w ∈ Pr.vT u) : seenC Pr u w := by
-  intro τ'
-  rw [embO_of_Kq (hPr.piT_Kq u) τ' τ]
-  exact (pullW_mem_vT hPr u τ w).1 h
-
 theorem pullW_bijective (hX : X.Ok) (hPr : Pr.Ok) (u : Pr.Word) (w : HeightOneSpectrum (𝓞 X.K)) (h : seenC Pr u w) :
     Function.Bijective fun τ : X.Tau => (⟨pullW τ w, (seenC_iff hPr u w).1 h τ⟩ : {P // P ∈ Pr.vT u}) := by
   rw [Fintype.bijective_iff_injective_and_card]
@@ -255,11 +249,5 @@ variable {R : Ranks} (W : Wts X Pr.Word R)
 
 
 end Seen
-
-section Exist
-
-variable {X : Fields} {Pr : Primes X}
-
-end Exist
 
 end Formalism.L2.Col

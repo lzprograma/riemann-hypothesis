@@ -3,46 +3,7 @@ module
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.HeckeFixedPointCMCycleClass
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComplexUniformisationsSamePointDifferByIsometryStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
@@ -61,11 +22,6 @@ private theorem coordA_of_dvd {p : ℕ} [Fact p.Prime] {D : Datum p} {G : HTGrou
   refine ⟨k • w, AddSubgroup.nsmul_mem _ hw k, ?_⟩
   rw [hw', smul_smul]
 
-private theorem eq_of_nsmul_eq_of_ne_zero {g m : ℕ} (hm : m ≠ 0) {a b : Fin g → ℂ} (h : m • a = m • b) : a = b := by
-  have hm' : (m : ℂ) ≠ 0 := by exact_mod_cast hm
-  rw [← Nat.cast_smul_eq_nsmul ℂ m a, ← Nat.cast_smul_eq_nsmul ℂ m b] at h
-  exact smul_right_injective _ hm' h
-
 private theorem fix_line_ext {p : ℕ} [Fact p.Prime] {D : Datum p} {G : HTGroup p} (L : Link D G)
     {β : G.Cˣ} (y : GlobalTheory.LKCx.grp G β) {D' : PLat D.O D.inv} {j : D'.La →+ VQ D}
     (hdiv : ∀ w, ∃ (m : ℕ) (u : D'.La), m ≠ 0 ∧ m • w = j u)
@@ -76,7 +32,7 @@ private theorem fix_line_ext {p : ℕ} [Fact p.Prime] {D : Datum p} {G : HTGroup
   rw [LinearMap.toMatrix'_mulVec]
   show Q (actY L y w) = hh (Q w)
   obtain ⟨m, u, hm, hmu⟩ := hdiv w
-  apply eq_of_nsmul_eq_of_ne_zero hm
+  apply (nsmul_right_inj hm).1
   have e1 : m • Q (actY L y w) = Q (actY L y (j u)) := by
     rw [← hmu, map_nsmul, map_nsmul]
   have e2 : m • hh (Q w) = hh (Q (j u)) := by
@@ -110,7 +66,7 @@ theorem UpperTheory.Gal.W2.fixFwd_of :
       rw [← map_nsmul, ← map_nsmul, ← hdu, hjinc]
     have e2 : d • P'' u'' = P u := by
       rw [← map_nsmul, ← hdu, hPinc]
-    apply eq_of_nsmul_eq_of_ne_zero hd0
+    apply (nsmul_right_inj hd0).1
     rw [e1, e2, hQP]
   have hl : ∀ u, Q (actY L Y (j u)) = hh (Q (j u)) := by
     intro u

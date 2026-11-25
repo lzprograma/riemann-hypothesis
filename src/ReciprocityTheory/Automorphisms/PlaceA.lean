@@ -45,8 +45,7 @@ theorem adic_exists_approx (y : v.adicCompletion K) (hy : Valued.v y ≤ 1) :
     have hb0 : algebraMap R K b ≠ 0 := IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors hb
     haveI := v.isPrime
     have hex : ∃ N, b ∉ v.asIdeal ^ N := by
-      by_contra hall
-      push_neg at hall
+      by_contra! hall
       have hmem : b ∈ ⨅ i, v.asIdeal ^ i := Submodule.mem_iInf _ |>.mpr hall
       rw [Ideal.iInf_pow_eq_bot_of_isDomain _ v.isPrime.ne_top, Ideal.mem_bot] at hmem
       exact hb0 (by rw [hmem, map_zero])

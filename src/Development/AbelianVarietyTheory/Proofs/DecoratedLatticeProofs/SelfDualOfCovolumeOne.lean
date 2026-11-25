@@ -188,8 +188,7 @@ theorem inversion_zero {Φ : G → ℂ} (hΦ : Continuous Φ) (hs : HasCompactSu
   have horth : ∀ ξ : Γ, ξ ≠ 0 → ∫ y in 𝓕, B ξ y ∂μ = 0 := by
     intro ξ hξ
     obtain ⟨u, hu⟩ : ∃ u, B ξ u ≠ 1 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hξ (Subtype.ext (hinj ξ ξ.2 h))
     have key := GlobalTheory.CompactQuotientFourier.setIntegral_translate Γ μ 𝓕 hF (B ξ)
       (fun γ hγ w => by rw [hadd', (hker γ).2 hγ ξ ξ.2, one_mul]) u

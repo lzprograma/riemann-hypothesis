@@ -141,34 +141,12 @@ theorem IsHolFamily.der_mul (h : IsHolFamily ex) {U : X.Opens} {z : E} (hz : ⊤
   rw [e]
   rw [fderiv_fun_mul (h.differentiableAt hz f) (h.differentiableAt hz f')]
   simp only [_root_.add_apply, _root_.smul_apply, smul_eq_mul]
-private theorem valAt'_constFn_of_section {Y : Scheme.{0}} (x : Sp ℂ ⟶ Y) (p : Y ⟶ Sp ℂ) (U : Y.Opens) (a : ℂ)
-    (hx : ⊤ ≤ x ⁻¹ᵁ U) (hp : x ≫ p = 𝟙 _) : valAt' x U (constFn p U a) = a := by
-  unfold valAt'
-  rw [dite_eq_left hx]
-  unfold valAt constFn
-  have key : p.appLE ⊤ U (fun _ _ => trivial) ≫ x.appLE U ⊤ hx = (x ≫ p).appLE ⊤ ⊤ (by simp) := by
-    exact Scheme.Hom.appLE_comp_appLE x p _ _ _ _ _
-  have e := congrArg (fun φ => (Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom
-    (φ.hom ((Scheme.ΓSpecIso (CommRingCat.of ℂ)).inv.hom a))) key
-  simp only [CommRingCat.hom_comp, RingHom.comp_apply] at e
-  rw [e]
-  have gen : ∀ (q : Sp ℂ ⟶ Sp ℂ) (hq : q = 𝟙 _) (e' : ⊤ ≤ q ⁻¹ᵁ ⊤),
-      (Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom ((q.appLE ⊤ ⊤ e').hom
-        ((Scheme.ΓSpecIso (CommRingCat.of ℂ)).inv.hom a)) = a := by
-    rintro q rfl e'
-    have hid : Scheme.Hom.appLE (𝟙 (Sp ℂ)) ⊤ ⊤ e' = 𝟙 _ := by
-      simp [Scheme.Hom.appLE]
-      exact (Sp ℂ).presheaf.map_id _
-    rw [hid]
-    simp
-  exact gen _ hp _
-
 theorem IsHolFamily.der_constFn (h : IsHolFamily ex) {U : X.Opens} {z : E} (hz : ⊤ ≤ ex z ⁻¹ᵁ U) (ξ : E)
     (p : X ⟶ Sp ℂ) (hp : ∀ w, ex w ≫ p = 𝟙 _) (a : ℂ) : h.der hz ξ (constFn p U a) = 0 := by
   rw [h.der_apply]
   have hev : (fun w => valAt' (ex w) U (constFn p U a)) =ᶠ[𝓝 z] fun _ => a := by
     filter_upwards [h.eventually hz] with w hw
-    exact valAt'_constFn_of_section (ex w) p U a hw (hp w)
+    exact GlobalTheory.valAt'_constFn (ex w) p (hp w) U a hw
   rw [hev.fderiv_eq]
   simp
 

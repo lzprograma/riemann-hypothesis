@@ -321,12 +321,12 @@ theorem subD_subst (g : ι → Matrix (Fin a) (Fin a) K) (h : ι → Matrix (Fin
   obtain ⟨τ, α, s⟩ := v
   by_cases hs : s.1 < b
   · set_option synthInstance.maxHeartbeats 100000 in
-    simp only [AlgHom.comp_apply, Formalism.GradedWeylDivisibility.blockAct, subD, aeval_X, map_sum, map_mul, algHom_C, dif_pos hs, Sum.elim_inl,
+    simp only [AlgHom.comp_apply, Formalism.GradedWeylDivisibility.blockAct, subD, aeval_X, map_sum, map_mul, algHom_C, dite_eq_left hs, Sum.elim_inl,
       Sum.elim_inr, rename_X, algebraMap_eq, Finset.mul_sum, Finset.sum_mul]
     rw [Finset.sum_comm, Finset.sum_congr rfl fun _ _ => Finset.sum_comm, Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun β _ => ?_
     ring
-  · simp [Formalism.GradedWeylDivisibility.blockAct, subD, dif_neg hs]
+  · simp [Formalism.GradedWeylDivisibility.blockAct, subD, dite_eq_right hs]
 
 theorem blockAct_frDet (g : ι → Matrix (Fin a) (Fin a) K) (τ : ι) :
     Formalism.GradedWeylDivisibility.blockAct K g (frDet K a τ) = C (g τ).det * frDet K a τ := by
@@ -529,7 +529,7 @@ theorem xi_unr (hξ : GlobalTheory.Mem.Col2.Reads σ₀ (mu : Chr X.F X.E X.K) �
   by_contra hn
   have hf := auxiliary_primes_finite X.F X.E X.K (mu : Chr X.F X.E X.K) mu.2.1.1.1.1.2
   apply h
-  rw [QE, dif_pos hf]
+  rw [QE, dite_eq_left hf]
   exact Finset.mem_image_of_mem _ (hf.mem_toFinset.2 ((GlobalTheory.Mem.ReadTwist.mem_qprime_iff hξ _).2 ⟨P, rfl, hn⟩))
 
 theorem muAtT_eq (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (u : Pr.Word) (hT : Pr.T u ∈ S) (hg : ∀ k, Pr.g k ∈ S)
@@ -550,11 +550,11 @@ theorem muAtT_eq (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (u : Pr.Word) (h
   refine _root_.GlobalTheory.LocCharComp.locChar_eq_locK X.E X.K σ₀ P.1 (m0 j * ξ)⁻¹ _ _ bad.2.2.1 (fun q hq => ?_) (fun x y c h1 h2 => ?_) a
   · rw [lk]
     by_cases hP : P.1 ∈ Pr.vGs
-    · rw [if_pos hP, hc j.1 j.2 P hP q hq, Units.val_inv_eq_inv_val, map_inv₀, tw q hq]
+    · rw [ite_eq_left hP, hc j.1 j.2 P hP q hq, Units.val_inv_eq_inv_val, map_inv₀, tw q hq]
     · have hg' := GlobalTheory.MuConj.g_notMem hPr P.1 hP fun h => bad.1 (Finset.mem_union_right _ (Finset.mem_union_left _ h))
       have hv : ordE P.1 (q : X.E) = 1 := by
         rw [hq, ordE, GlobalTheory.CharVal.val_natCast_of_notMem_sq (Ideal.absNorm_mem _) bad.2.2.1, WithZero.log_exp, neg_neg]
-      rw [if_neg hP, muqT, dif_pos j.2, Units.val_mul, map_mul, Units.val_inv_eq_inv_val, Units.val_inv_eq_inv_val, map_inv₀,
+      rw [ite_eq_right hP, muqT, dite_eq_left j.2, Units.val_mul, map_mul, Units.val_inv_eq_inv_val, Units.val_inv_eq_inv_val, map_inv₀,
         map_inv₀, tw q hq, ht.muVal j P.1 hg', locK_eq_zpow ((ht.mu0 j).unr _ hg'), hv, zpow_one]
   · rw [lk]
     by_cases hP : P.1 ∈ Pr.vGs
@@ -563,10 +563,10 @@ theorem muAtT_eq (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (u : Pr.Word) (h
           (HeightOneSpectrum.ext (hsel (P.1.under (𝓞 X.F)))) with e | e
         · exact Finset.disjoint_left.1 (GlobalTheory.NormOneUnit.disjoint_vGs_QE mu hPr hsel hg) hP (e ▸ h)
         · exact bad.1 (Finset.mem_union_right _ (Finset.mem_union_right _ (e ▸ h)))
-      rw [if_pos hP, GlobalTheory.NormOneUnit.locK_unr h3 (un x y c h1 h2), (ht.mu0 j).atg ⟨P.1, hP⟩ x y c h1 h2, chiP, dif_pos hP, chiAt,
-        extChi, dif_pos j.2, Units.val_inv_eq_inv_val, map_inv₀, inv_inv, Units.val_one, inv_one, mul_one]
+      rw [ite_eq_left hP, GlobalTheory.NormOneUnit.locK_unr h3 (un x y c h1 h2), (ht.mu0 j).atg ⟨P.1, hP⟩ x y c h1 h2, chiP, dite_eq_left hP, chiAt,
+        extChi, dite_eq_left j.2, Units.val_inv_eq_inv_val, map_inv₀, inv_inv, Units.val_one, inv_one, mul_one]
     · have hg' := GlobalTheory.MuConj.g_notMem hPr P.1 hP fun h => bad.1 (Finset.mem_union_right _ (Finset.mem_union_left _ h))
-      rw [if_neg hP, GlobalTheory.NormOneUnit.locK_unr ((ht.mu0 j).unr _ hg') (un x y c h1 h2), MonoidHom.inv_apply,
+      rw [ite_eq_right hP, GlobalTheory.NormOneUnit.locK_unr ((ht.mu0 j).unr _ hg') (un x y c h1 h2), MonoidHom.inv_apply,
         Units.val_inv_eq_inv_val, map_inv₀, GlobalTheory.NormOneUnit.resChar_eq hξ (xi_tame hξ) P.1 c y x h1 h2.symm, Units.val_one, inv_one,
         one_mul]
 
@@ -621,7 +621,7 @@ theorem muProdLaw (hD : X.AbelianUnramifiedExtensionConditions) (hPr : Pr.Ok) (h
   let rep : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E) := fun v => if h : B v then h.choose else sel v
   have rep_mem : ∀ P ∈ rowSG Pr sel mu, rep (P.under (𝓞 X.F)) = P := fun P hP => by
     have h : B (P.under (𝓞 X.F)) := ⟨P, hP, rfl⟩
-    simp only [rep, dif_pos h]
+    simp only [rep, dite_eq_left h]
     exact ((hu P _).1 (HeightOneSpectrum.ext h.choose_spec.2)).resolve_right fun e => nc P hP (e ▸ h.choose_spec.1)
   have hfin : {P : HeightOneSpectrum (𝓞 X.E) | P.valuation X.E (x : X.E) ≠ 1}.Finite := by
     refine ((HeightOneSpectrum.Support.finite (𝓞 X.E) (x : X.E)).union
@@ -650,9 +650,9 @@ theorem muProdLaw (hD : X.AbelianUnramifiedExtensionConditions) (hPr : Pr.Ok) (h
       exact nc Q hQ (hP.symm ▸ hQ))
     (fun v => by
       by_cases h : B v
-      · simp only [rep, dif_pos h]
+      · simp only [rep, dite_eq_left h]
         exact HeightOneSpectrum.ext h.choose_spec.2
-      · simp only [rep, dif_neg h, hsel'])
+      · simp only [rep, dite_eq_right h, hsel'])
     hx fun P hP => ⟨unr P fun h => hP (vB _ h), vx P hP⟩
   rw [HChar.inf_mul, GlobalTheory.NormOneUnit.inf_eq_one hξ, mul_one] at key
   have hinf := inf_eq hX (ez := ez) (by simpa only [hez] using hμ.inf) hx
@@ -674,8 +674,8 @@ theorem muProdLaw (hD : X.AbelianUnramifiedExtensionConditions) (hPr : Pr.Ok) (h
     rw [← finprod_eq_prod_of_mulSupport_subset _ s1, muOff, muOff, ← finprod_mul_distrib (V.finite_toSet.subset s1) s2]
     refine finprod_congr fun v => ?_
     by_cases h : B v
-    · rw [if_pos h, if_pos h, if_pos h, one_mul]
-    · rw [if_neg h, if_neg h, if_neg h, ordDet_gmap _ _ hN, zpow_add, Units.val_mul]
+    · rw [ite_eq_left h, ite_eq_left h, ite_eq_left h, one_mul]
+    · rw [ite_eq_right h, ite_eq_right h, ite_eq_right h, ordDet_gmap _ _ hN, zpow_add, Units.val_mul]
   have at1 : ∀ P : rowSG Pr sel mu, muAtT Ch sel mu cst j.1 P ((LinearEquiv.det (γ.1 * fr P) : X.Eˣ) : X.E) =
       muAtT Ch sel mu cst j.1 P (z : X.E) * muAtT Ch sel mu cst j.1 P ((LinearEquiv.det (fr P) : X.Eˣ) : X.E) := fun P => by
     apply σ₀.injective
@@ -692,20 +692,20 @@ theorem muProdLaw (hD : X.AbelianUnramifiedExtensionConditions) (hPr : Pr.Ok) (h
         fun P hP => by rw [rep_mem P hP]
       · exact Finset.mem_filter.2 ⟨vB _ ⟨P, hP, rfl⟩, P, hP, rfl⟩
       · have h := (Finset.mem_filter.1 hv).2
-        simp only [rep, dif_pos h]
+        simp only [rep, dite_eq_left h]
         exact h.choose_spec.1
       · have h := (Finset.mem_filter.1 hv).2
-        simp only [rep, dif_pos h]
+        simp only [rep, dite_eq_left h]
         exact HeightOneSpectrum.ext h.choose_spec.2
     rw [map_mul, a1, map_prod, ← Finset.prod_mul_distrib, ← hinf, eq_inv_of_mul_eq_one_left key, ← Finset.prod_inv_distrib,
       Units.coe_prod]
     refine Finset.prod_congr rfl fun v _ => ?_
     by_cases h : B v
-    · rw [if_pos h, if_pos h, map_one, one_mul]
+    · rw [ite_eq_left h, ite_eq_left h, map_one, one_mul]
     · have h' : ¬ B ((sel v).under (𝓞 X.F)) := by rwa [hsel']
       have o := unr_off hX hPr hsel hξ h'
-      simp only [rep, dif_neg h, if_neg h]
-      rw [mul_one, locK_eq_zpow (unr _ h'), Units.val_zpow_eq_zpow_val, map_zpow₀, mUof, dif_pos j.2, Units.val_mul, map_mul,
+      simp only [rep, dite_eq_right h, ite_eq_right h]
+      rw [mul_one, locK_eq_zpow (unr _ h'), Units.val_zpow_eq_zpow_val, map_zpow₀, mUof, dite_eq_left j.2, Units.val_mul, map_mul,
         Units.val_inv_eq_inv_val, Units.val_inv_eq_inv_val, map_inv₀, map_inv₀, ht.muVal j _ o.1,
         (_root_.GlobalTheory.TwistVal.main X.F X.E X.K σ₀ _ ξ hξ (xi_tame hξ) _).1 o.2, HChar.val_mul, Units.val_inv_eq_inv_val,
         Units.val_zpow_eq_zpow_val, Units.val_mul, ← mul_inv, inv_zpow]
@@ -728,7 +728,7 @@ theorem weights {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (
     ring
   constructor
   · have h1 := GlobalTheory.GO.ChSrc.nuEnd_cast (W.hc u) hi τ
-    rw [GlobalTheory.GO.ChSrc.nuEnd_eq W u hi, GlobalTheory.GO.ChSrc.trueWt_eq, GlobalTheory.GO.ChSrc.sS, dif_pos hi] at h1
+    rw [GlobalTheory.GO.ChSrc.nuEnd_eq W u hi, GlobalTheory.GO.ChSrc.trueWt_eq, GlobalTheory.GO.ChSrc.sS, dite_eq_left hi] at h1
     have h2 := GlobalTheory.GO.ChSrc.zOf_spec R _ ((W.hc u τ).e_int ⟨i, hi⟩) (i + 1)
     rw [h1, add_sub_cancel_left]
     apply Int.cast_injective (α := ℚ)
@@ -737,7 +737,7 @@ theorem weights {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (
   · have hN : R.N i < R.N (i + 1) := by unfold Ranks.N; rw [add_mul]; omega
     have h1 := W.lamTrue_new u hi τ ⟨R.N (i + 1) - 1, by omega⟩ (by show ¬ R.N (i + 1) - 1 < R.N i; omega)
     apply Int.cast_injective (α := ℚ)
-    rw [DomWeight.detShift, dif_pos (R.N_pos _), h1, Int.cast_sub, half, ← hz, sExp, Nat.add_sub_cancel, neg_sub]
+    rw [DomWeight.detShift, dite_eq_left (R.N_pos _), h1, Int.cast_sub, half, ← hz, sExp, Nat.add_sub_cancel, neg_sub]
 
 theorem ratStep : ∀ (Z : Dat) (H : D7) (s : Seam H Z.X) (cc : Ideal (𝓞 H.host.K)) (δ : ℂ) (B : Base H cc δ) (χ : TaylorLogMetric.IdE H → ℂ) (cD : H.what₂.Tau → ℂ) (sel : HeightOneSpectrum (𝓞 Z.X.F) → HeightOneSpectrum (𝓞 Z.X.E)) (S : Set ℕ) (mu : Tup Z.X.F Z.X.E Z.X.K S) (cst : LocCst Z.X (rowSG Z.Pr sel mu)) (u : Z.Pr.Word) (i : ℕ), i < Z.R.m → Hyp Z s cc δ χ cD sel S mu cst u → B.EqP χ → B.VecP χ → MuqTie Z.Ch sel mu cst → (∀ N N' c x, InRange (Sall sel mu u) (cAof sel mu cst * cBof sel mu cst u) c N N' x → ∀ m : DVar Z.X.Tau (Z.R.N i) (Z.R.N (i + 1)) →₀ ℕ, (∀ τ, (GlobalTheory.IndefiniteRowSideFullHecke.IndexExponentDegree.degAt m τ : ℤ) = GlobalTheory.IndefiniteRowSideFullHecke.IndexExponentDegree.degNu (Z.W.lamTrue u i) (nuLast Z.W u i) τ) → ∃ k : Z.X.K, (ambOf s B χ cD).σ₀ k = ((ambOf s B χ cD).chiF _ _ N N')⁻¹ * jetC (ambOf s B χ cD).cD ((ambOf s B χ cD).thInd (Sall sel mu u) N N' c x) m) → RatStep Z.W Z.Ch sel mu cst (ambOf s B χ cD) u i (i + 1) := by
   intro Z H s cc δ B χ cD sel S mu cst u i hi h hE hv _ hJ γ γ' N fr N' fr' c x hR
@@ -781,7 +781,7 @@ theorem ratStep : ∀ (Z : Dat) (H : D7) (s : Seam H Z.X) (cc : Ideal (𝓞 H.ho
         map_zpow₀, map_prod, map_prod]
       rfl) h₁ (hJ _ _ _ _ hR)
   unfold stepT thDistC Amb.jetK
-  rw [if_pos hR'.2.2.2, if_pos hR.2.2.2, funext hth, key, hmu _ γ N fr hR.1, hmu _ γ' N' fr' hR.2.1, smul_smul,
+  rw [ite_eq_left hR'.2.2.2, ite_eq_left hR.2.2.2, funext hth, key, hmu _ γ N fr hR.1, hmu _ γ' N' fr' hR.2.1, smul_smul,
     LinearMap.smul_comp, LinearMap.comp_smul]
   congr 1
   have e1 : (∏ τ, d τ ^ (-ez τ)) * (∏ τ, d τ ^ ((Z.R.N (i + 1) / 2 : ℕ) : ℤ)) *

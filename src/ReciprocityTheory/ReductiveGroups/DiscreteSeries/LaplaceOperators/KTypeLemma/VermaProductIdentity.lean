@@ -44,7 +44,7 @@ theorem vk_stepV (E : Fin n → Fin n → Module.End ℂ M) (lam : Fin n → ℝ
     have h1 : ∀ d ∈ Ioi c, E c d ((Pi.single d φ : Fin n → M) c) = 0 := fun d hd => by
       rw [Pi.single_eq_of_ne (ne_of_lt (mem_Ioi.1 hd)), map_zero]
     rw [Finset.sum_eq_zero h1, hdiag]
-    simp only [Pi.single_eq_same, if_true, Finset.sum_const, Fin.card_Ioi, zero_add]
+    simp only [Pi.single_eq_same, ite_true, Finset.sum_const, Fin.card_Ioi, zero_add]
     rw [← Nat.cast_smul_eq_nsmul ℂ, ← sub_smul]
     congr 1
     have := vk_natCast_Ioi c
@@ -75,7 +75,7 @@ theorem vk_stepVd (E : Fin n → Fin n → Module.End ℂ M) (lam : Fin n → �
     have h1 : ∀ d ∈ Iio c, E d c ((Pi.single d φ : Fin n → M) c) = 0 := fun d hd => by
       rw [Pi.single_eq_of_ne (ne_of_gt (mem_Iio.1 hd)), map_zero]
     rw [Finset.sum_eq_zero h1, hdiag]
-    simp only [Pi.single_eq_same, if_true, Finset.sum_const, Fin.card_Iio, zero_sub, neg_neg]
+    simp only [Pi.single_eq_same, ite_true, Finset.sum_const, Fin.card_Iio, zero_sub, neg_neg]
     rw [← Nat.cast_smul_eq_nsmul ℂ, ← neg_smul, ← sub_smul]
     congr 1
     simp only [rho, thVd]

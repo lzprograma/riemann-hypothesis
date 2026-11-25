@@ -1,44 +1,9 @@
 module
 
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Algebra.Group.Units
-import Mathlib.Topology.Sheaves.Init
+import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevIntegrationByParts
+import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveSolutionExistence
 
 @[expose] public section
 
@@ -52,7 +17,7 @@ namespace PositivityTheory.RgBcC.LfSt.ChainPf.Loc
 open PositivityTheory.RgBcC
 open PositivityTheory.RgTw (Mat G th tw hb)
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ} {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
@@ -60,36 +25,19 @@ theorem isOpen_GLs (n : ℕ) : IsOpen (GLs n) :=
   isOpen_ne_fun (Continuous.matrix_det continuous_id) continuous_const
 
 theorem rd_congr {U : Set (Mat n)} (hU : IsOpen U) {f f' : Mat n → V} (h : Set.EqOn f f' U) (X : Mat n) :
-    Set.EqOn (Rd X f) (Rd X f') U := by
-  intro x hx
-  simp only [Rd]
-  rw [Filter.EventuallyEq.fderiv_eq (Filter.eventuallyEq_of_mem (hU.mem_nhds hx) h)]
+    Set.EqOn (Rd X f) (Rd X f') U := GlobalTheory.CompanionTheory.WaveAll.Rd_congr hU h X
 
 theorem eu_congr {U : Set (Mat n)} (hU : IsOpen U) {f f' : Mat n → V} (h : Set.EqOn f f' U) (s : Bool) (a b : Fin n) :
     Set.EqOn (Eu s a b f) (Eu s a b f') U := by
-  intro x hx
-  simp only [Eu, Pi.smul_apply, Pi.add_apply]
-  rw [rd_congr hU h _ hx, rd_congr hU h _ hx]
+  exact GlobalTheory.CompanionTheory.WaveAll.Eu_congr hU h s a b
 
 theorem epow_congr {U : Set (Mat n)} (hU : IsOpen U) (s : Bool) (m : ℕ) : ∀ (a b : Fin n) {f f' : Mat n → V},
     Set.EqOn f f' U → Set.EqOn (Epow s m a b f) (Epow s m a b f') U := by
-  induction m with
-  | zero =>
-    intro a b f f' h x hx
-    simp only [Epow]
-    split_ifs
-    · exact h hx
-    · rfl
-  | succ m ih =>
-    intro a b f f' h x hx
-    simp only [Epow, Finset.sum_apply]
-    exact Finset.sum_congr rfl fun c _ => eu_congr hU (ih c b h) s a c hx
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.WaveAll.Epow_congr <;> assumption
 
 theorem gel_congr {U : Set (Mat n)} (hU : IsOpen U) {f f' : Mat n → V} (h : Set.EqOn f f' U) (s : Bool) (m : ℕ) :
-    Set.EqOn (gel s m f) (gel s m f') U := by
-  intro x hx
-  simp only [gel, Finset.sum_apply]
-  exact Finset.sum_congr rfl fun a _ => epow_congr hU s m a a h hx
+    Set.EqOn (gel s m f) (gel s m f') U := GlobalTheory.CompanionTheory.WaveAll.gel_congr hU h s m
 
 theorem zop_congr {U : Set (Mat n)} (hU : IsOpen U) : ∀ (w : List (Bool × ℕ)) {f f' : Mat n → V},
     Set.EqOn f f' U → Set.EqOn (zOp w f) (zOp w f') U := by
@@ -101,21 +49,6 @@ theorem zop_congr {U : Set (Mat n)} (hU : IsOpen U) : ∀ (w : List (Bool × ℕ
 theorem integrable_cpt (hL : LgFacts) [MeasurableSpace (G n)] [BorelSpace (G n)] (μ : Measure (G n)) [μ.IsHaarMeasure]
     {W : Type} [NormedAddCommGroup W] [NormedSpace ℝ W] (F : Mat n → W) (hF : ContinuousOn F (GLs n))
     (hc : Cpt F) : Integrable (fun y : G n => F y.val) μ := by
-  obtain ⟨R, hR⟩ := hc
-  have hcont : Continuous fun y : G n => F y.val := by
-    refine hF.comp_continuous (Units.continuous_val) fun y => ?_
-    show (y.val).det ≠ 0
-    exact (Matrix.isUnit_iff_isUnit_det _).1 y.isUnit |>.ne_zero
-  have hlg : ContinuousOn (lg (n := n)) (GLs n) := (hL n).2.2.2.1.continuousOn
-  have hK : IsCompact {y : G n | lg y.val ≤ R} := (hL n).2.2.2.2.1 R
-  have hclosed : IsClosed {y : G n | lg y.val ≤ R} := by
-    have : Continuous fun y : G n => lg y.val :=
-      hlg.comp_continuous Units.continuous_val fun y => (Matrix.isUnit_iff_isUnit_det _).1 y.isUnit |>.ne_zero
-    exact isClosed_le this continuous_const
-  refine hcont.integrable_of_hasCompactSupport ?_
-  refine HasCompactSupport.intro hK ?_
-  intro y hy
-  simp only [Set.mem_setOf_eq, not_le] at hy
-  exact hR _ ((Matrix.isUnit_iff_isUnit_det _).1 y.isUnit |>.ne_zero) hy
+  apply _root_.GlobalTheory.CompanionTheory.WeightIbp.integrable_of_continuousOn <;> assumption
 
 end PositivityTheory.RgBcC.LfSt.ChainPf.Loc

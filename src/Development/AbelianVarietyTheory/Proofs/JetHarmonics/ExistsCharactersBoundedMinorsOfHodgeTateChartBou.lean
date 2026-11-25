@@ -64,7 +64,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscrim
 
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 
 namespace GlobalTheory.ChartCharacter
@@ -150,7 +149,6 @@ section Jets
 
 open CategoryTheory MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.Pdiv.ChartF
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem exists_isChartJ {R : Type} [CommRing R] (G : Over (Sp R)) [GrpObj G] {d : ℕ} (x : JetSer.Fam G (Fin d))
     (hx : Chart.IsUnivChart G d x) (F : FGLaw R d) (hF : JetSer.IsLawOf x F.F) : ∃ x', IsChartJ G F x' := by
@@ -189,9 +187,9 @@ theorem exists_columns {C : Type} [Field C] (v : Valuation C NNReal) {O : Type} 
     if col σ.1 σ.2 = b then fun l => (if σ.1 = l.1 then 1 else 0) * f (g σ.1 σ.2) l else 0
   have hY : ∀ b σ, Has (Y b σ) := fun b σ => by
     by_cases hb : col σ.1 σ.2 = b
-    · simp only [Y, if_pos hb]
+    · simp only [Y, ite_eq_left hb]
       exact hf _ _
-    · simp only [Y, if_neg hb]
+    · simp only [Y, ite_eq_right hb]
       exact h0
   refine ⟨fun q => (∑ σ, Y q.2 σ) q.1, fun b => Finset.sum_induction _ Has hadd h0 fun σ _ => hY b σ, ?_⟩
   have key : ∀ t (a i : Fin (r t)), (∑ σ, Y (col t i) σ) ⟨t, a⟩ = u t i a := by
@@ -327,7 +325,6 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.DVR.QForm Formalism.MainNotions.ModuliIntegralCharts.H1 Formalism.MainNotions.ModuliIntegralCharts.H1.ExpBijectiveUniformisation Formalism.MainNotions.ModuliIntegralCharts.H1.GSt
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
-attribute [local instance] Over.cartesianMonoidalCategory
 open Formalism.MainNotions.ModuliIntegralCharts.H1.BoxTuple Formalism.MainNotions.ModuliIntegralCharts.H1.BidegreeTwoJet GlobalTheory GlobalTheory.PowGerm
 open ReciprocityTheory.ChartRestriction.G.TB (colM dAct)
 open IsDedekindDomain

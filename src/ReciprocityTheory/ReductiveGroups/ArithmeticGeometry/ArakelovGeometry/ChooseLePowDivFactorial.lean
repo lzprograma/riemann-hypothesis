@@ -1,6 +1,7 @@
 module
 
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.EqZeroOfSecTraceMulEqZero
+import all ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.EqZeroOfSecTraceMulEqZero
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.RingTheory.PiTensorProduct
@@ -23,13 +24,7 @@ theorem prod_div_pow_degree (x : κ → Ω) (j : κ) (m : κ →₀ ℕ) :
   rfl
 
 theorem coord_ne_zero_of_free (y : Fin (D + 1) → Ω) (hy : coordIdeal ℤ y = ⊥) (l : Fin (D + 1)) : y l ≠ 0 := by
-  intro h0
-  have hX : (MvPolynomial.X l : MvPolynomial (Fin (D + 1)) ℤ) ∈ coordIdeal ℤ y := by
-    unfold ReciprocityTheory.ChartRestriction.G.Geo.coordIdeal
-    rw [RingHom.mem_ker]
-    simp [ReciprocityTheory.ChartRestriction.G.Geo.coneMap, h0]
-  rw [hy] at hX
-  exact MvPolynomial.X_ne_zero l (Ideal.mem_bot.1 hX)
+  apply _root_.ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.TraceNormBounds.coord_ne_zero_of_coordIdeal_eq_bot <;> assumption
 
 theorem alpha_mem (x : κ → Ω) (e : Fin (D + 1) → κ) {k n δ : ℕ} (ε : Fin δ → Ω)
     (hε : ∀ l, ε l ∈ sec ℤ x k) (P : Fin δ → Ω) (hP : ∀ l, P l ∈ sec ℤ (x ∘ e) n) :

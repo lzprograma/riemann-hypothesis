@@ -4,7 +4,6 @@ public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountabl
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsDoubleCoset
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsAdelicLattices
 public import Mathlib.Topology.Algebra.Group.Units
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -79,7 +78,7 @@ theorem AdelicCovolumeFinite.proof (h : HermitianForm F E W) (v : Basis ι E W)
   let r : AddSubgroup W → unitaryPoints F E (gram h.toSesq v) (FiniteAdeleRing (𝓞 F) F) := fun L₀ => if hL : ∃ y, L y = L₀ then hL.choose else 1
   have hr : ∀ y, L (r (L y)) = L y := fun y => by
     have hL : ∃ y', L y' = L y := ⟨y, rfl⟩
-    simp only [r, dif_pos hL]
+    simp only [r, dite_eq_left hL]
     exact hL.choose_spec
 
   have hstab : ∀ (γ : h.unitaryGroup) (s : unitaryPoints F E (gram h.toSesq v) (FiniteAdeleRing (𝓞 F) F)),

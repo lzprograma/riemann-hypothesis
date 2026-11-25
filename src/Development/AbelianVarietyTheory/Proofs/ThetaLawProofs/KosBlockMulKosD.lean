@@ -4,49 +4,9 @@ public import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscAA
 public import Mathlib.LinearAlgebra.Matrix.Block
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -239,7 +199,7 @@ theorem kosBlock_det_sub (C : ∀ j, Matrix (Fin (N j)) (Fin (N j)) R) (P : Matr
         (fun p : {p // s (kdeg p)} => p.1) (fun p : {p // s (kdeg p)} => p.1) := by
     ext p q
     exact kosBlock_congr (fun j => if s (j + 1) then C j else 1) C (if s 0 then P else 1) P p.1 q.1
-      (fun j hj => if_pos (hj ▸ p.2)) (fun hj => if_pos (hj ▸ p.2))
+      (fun j hj => ite_eq_left (hj ▸ p.2)) (fun hj => ite_eq_left (hj ▸ p.2))
   have e2 : Matrix.toSquareBlockProp
       (kosBlock (fun j => if s (j + 1) then C j else 1) (if s 0 then P else 1) :
       Matrix (KIx g d N) (KIx g d N) R) (fun p => ¬ s (kdeg p)) = 1 := by
@@ -247,7 +207,7 @@ theorem kosBlock_det_sub (C : ∀ j, Matrix (Fin (N j)) (Fin (N j)) R) (P : Matr
       Subtype.val_injective, ← kosBlock_one]
     ext p q
     exact kosBlock_congr (fun j => if s (j + 1) then C j else 1) (fun _ => 1) (if s 0 then P else 1) 1
-      p.1 q.1 (fun j hj => if_neg (hj ▸ p.2)) (fun hj => if_neg (hj ▸ p.2))
+      p.1 q.1 (fun j hj => ite_eq_right (hj ▸ p.2)) (fun hj => ite_eq_right (hj ▸ p.2))
   rw [e1, e2, Matrix.det_one, mul_one, kosBlock_det] at h
   rw [← h]
   congr 1
@@ -307,8 +267,8 @@ theorem kosBlock_mul_kosD (m m' : Fin g → ∀ j j', Matrix (Fin (N j)) (Fin (N
         omega
       have := congrFun (congrFun (hm' i _ _ hl hc) a) b
       simp only [Matrix.mul_apply] at this
-      simp only [if_pos h, mul_left_comm (C _ _ _), mul_assoc, ← Finset.mul_sum, this]
-    · simp only [if_neg h, mul_zero, zero_mul, Finset.sum_const_zero]
+      simp only [ite_eq_left h, mul_left_comm (C _ _ _), mul_assoc, ← Finset.mul_sum, this]
+    · simp only [ite_eq_right h, mul_zero, zero_mul, Finset.sum_const_zero]
   · rw [kosBlock_mul_inl, mul_kosBlock_inr]
     simp [kosD]
   · rw [kosBlock_mul_inr, mul_kosBlock_inl]
@@ -318,7 +278,7 @@ theorem kosBlock_mul_kosD (m m' : Fin g → ∀ j j', Matrix (Fin (N j)) (Fin (N
           ev (∅ : Finset (Fin g)).card * C (∅ : Finset (Fin g)).card := he
       have := congrFun (congrFun he' a) b
       rw [Matrix.mul_apply, Matrix.mul_apply] at this
-      simp only [kosD, if_true]
+      simp only [kosD, ite_true]
       exact this
     · simp [kosD, h]
   · rw [kosBlock_mul_inr, mul_kosBlock_inr]
@@ -344,7 +304,7 @@ theorem torsSq_kosD_conj : ∀ (R : Type) [CommRing R] (g d : ℕ) (N : ℕ → 
   set O : Rˣ := ∏ j ∈ Finset.range (g + 1), if ¬ Even (j + 1) then u j else 1 with hO
   set p : Rˣ := Matrix.GeneralLinearGroup.det Pm with hp
   have h3 : t' * ((E * p) ^ 2 : Rˣ) = ((t * O ^ 2 : Rˣ) : R) := by
-    simp only [Even.zero, if_true, not_true, if_false, mul_one] at h2
+    simp only [Even.zero, ite_true, not_true, ite_false, mul_one] at h2
     simp only [Units.val_mul, Units.val_pow_eq_pow_val, hE, hO, hp, hu, Units.coe_prod,
       apply_ite Units.val, Units.val_one, Matrix.GeneralLinearGroup.val_det_apply]
     exact h2
@@ -359,11 +319,11 @@ theorem torsSq_kosD_conj : ∀ (R : Type) [CommRing R] (g d : ℕ) (N : ℕ → 
     refine Finset.prod_congr rfl fun j _ => ?_
     rcases Nat.even_or_odd j with hj | hj
     · have : ¬ Even (j + 1) := by rw [Nat.even_add_one]; simpa using hj
-      rw [if_pos this, if_neg this, hj.neg_one_pow, one_pow, inv_one, mul_one, mul_one, hu,
+      rw [ite_eq_left this, ite_eq_right this, hj.neg_one_pow, one_pow, inv_one, mul_one, mul_one, hu,
         ← pow_mul, ← zpow_natCast]
       congr 1; push_cast; ring
     · have : Even (j + 1) := hj.add_one
-      rw [if_pos this, if_neg (not_not.mpr this), hj.neg_one_pow, one_pow, one_mul, hu,
+      rw [ite_eq_left this, ite_eq_right (not_not.mpr this), hj.neg_one_pow, one_pow, one_mul, hu,
         ← pow_mul, ← zpow_natCast, ← zpow_neg]
       congr 1; push_cast; ring
   rw [h5, mul_pow, mul_inv, ← mul_assoc, mul_assoc _ (p ^ 2)⁻¹, inv_mul_cancel, mul_one, mul_assoc]

@@ -36,8 +36,7 @@ theorem dI_sheets [CompactSpace Y] [T2Space Y] [T2Space X]
   have hO : ∃ O : Set X, IsOpen O ∧ x ∈ O ∧ Disjoint O S := by
     obtain ⟨W, hWo, hxW, r, f, hf, hSW⟩ := hd.1 x
     have hex : ∃ i, f i x ≠ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       have hm : x ∈ {y ∈ W | ∀ i, f i y = 0} := ⟨hxW, hc⟩
       rw [← hSW] at hm
       exact hx hm.1
@@ -202,7 +201,7 @@ theorem dI_sum_ind_le (E : ℕ → Set X) (hd : Pairwise (Function.onFun Disjoin
       simp [hxm]
     · intro h'
       exact absurd hm0 h'
-  · push_neg at hx
+  · push Not at hx
     refine le_trans (le_of_eq (Finset.sum_eq_zero fun m hm => ?_)) (abs_nonneg _)
     simp [hx m hm]
 

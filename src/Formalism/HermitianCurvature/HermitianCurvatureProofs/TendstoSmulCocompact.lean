@@ -7,53 +7,9 @@ public import Mathlib.Analysis.CStarAlgebra.Module.Constructions
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermRealisation
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LastBlockDecay
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormOfMemRootSetOne
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Presheaf
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.TendstoIntegralPsiMoving, Formalism.HermitianCurvature.HermitianCurvatureProofs.TendstoSmulCocompact
@@ -211,7 +167,7 @@ theorem psi_conj_mul (β a b : ℂ) : conj (G.psi β a) * G.psi β b = G.psi β 
 def termZ (s : ℕ) (β : ℂ) (bt bt' : ℂ → H) (x x' ρ ζ z : ℂ) : ℂ :=
   G.psi β ((s : ℂ) * (ζ * ρ * x' - x) * z) • ⟪bz s bt z, ((‖ρ‖ : ℝ) : ℂ) • bz s bt' (ζ * ρ * z)⟫_ℂ
 
-theorem integrable_termZ {s : ℕ} (_hs : s ≠ 0) (β : ℂ) {bt bt' : ℂ → H} (hb : MemLp (bz s bt) 2 volume)
+theorem integrable_termZ {s : ℕ} (β : ℂ) {bt bt' : ℂ → H} (hb : MemLp (bz s bt) 2 volume)
     (hb' : MemLp (bz s bt') 2 volume) (x x' ρ ζ : ℂ) (hρ : ρ ≠ 0) (hζ : ζ ≠ 0) :
     Integrable (termZ s β bt bt' x x' ρ ζ) := by
   have hd : MemLp (fun z => ((‖ρ‖ : ℝ) : ℂ) • bz s bt' (ζ * ρ * z)) 2 volume :=
@@ -251,7 +207,7 @@ theorem pairD_eq {s : ℕ} (hs : s ≠ 0) (β : ℂ) {ε : ℂ} (hε : ‖ε‖ 
     ring
   have hint : Integrable (fun z => ‖ε⁻¹ * ((s : ℂ) * z ^ (s - 1))‖ ^ 2 • Φ z) := by
     simp_rw [hjac]
-    exact integrable_finsetSum _ fun ζ hζ => integrable_termZ hs β hb hb' x x' ρ ζ hρ (hζ0 ζ hζ)
+    exact integrable_finsetSum _ fun ζ hζ => integrable_termZ β hb hb' x x' ρ ζ hρ (hζ0 ζ hζ)
   obtain ⟨-, hch⟩ := integral_sum_rootSet s hs ε hε0 Φ hint
 
   have hD : ∀ D : ℂ, D ≠ 0 → ⟪mainD s β ε bt x D, ((‖ρ‖ ^ s : ℝ) : ℂ) • mainD s β ε bt' x' (ρ ^ s * D)⟫_ℂ =
@@ -272,7 +228,7 @@ theorem pairD_eq {s : ℕ} (hs : s ≠ 0) (β : ℂ) {ε : ℂ} (hε : ‖ε‖ 
     exact hD D hD0
   rw [pairD, integral_congr_ae hDae, hch]
   simp_rw [hjac]
-  exact integral_finsetSum _ fun ζ hζ => integrable_termZ hs β hb hb' x x' ρ ζ hρ (hζ0 ζ hζ)
+  exact integral_finsetSum _ fun ζ hζ => integrable_termZ β hb hb' x x' ρ ζ hρ (hζ0 ζ hζ)
 
 theorem tendsto_smul_cocompact {α : Type} {l : Filter α} (c : ℂ) (hc : c ≠ 0) (y : α → ℂ)
     (hy : Tendsto y l (cocompact ℂ)) : Tendsto (fun a => c * y a) l (cocompact ℂ) := by
@@ -308,16 +264,16 @@ theorem tendsto_pairD {s : ℕ} (hs : s ≠ 0) {β : ℂ} (hβ : β ≠ 0) {ε :
       simp only [Function.comp_apply, norm_mul, hζn, one_mul, Complex.ofReal_one, one_smul]
     by_cases h1 : ζ = 1
     · subst h1
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       have hw : Tendsto (fun a => (s : ℂ) * (1 * ρ a * x' a - x a)) l (𝓝 σ) := by simpa using hsh
       have := tendsto_integral_psi_conv β _ _ hf0 hfi hL1 _ σ hw
       simpa [termZ, hL] using this
-    · rw [if_neg h1]
+    · rw [ite_eq_right h1]
       have hw := tendsto_smul_cocompact (s : ℂ) hs0 _ (hne ζ hζ h1)
       have := tendsto_integral_psi_moving β hβ _ _ hf0 hfi hL1 _ hw
       simpa [termZ, mul_assoc] using this
   have hsum := tendsto_finsetSum (G.rootSet s 1) hlim
-  rw [Finset.sum_ite_eq' (G.rootSet s 1) 1 (fun _ => L), if_pos (one_mem_rootSet_one hs)] at hsum
+  rw [Finset.sum_ite_eq' (G.rootSet s 1) 1 (fun _ => L), ite_eq_left (one_mem_rootSet_one hs)] at hsum
   refine hsum.congr' ?_
   filter_upwards [hρ0] with a ha
   exact (pairD_eq hs β hε hb hb' (x a) (x' a) (ρ a) ha).symm

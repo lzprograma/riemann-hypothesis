@@ -229,7 +229,7 @@ theorem exists_riem_contDiffOn : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
   classical
   let Hm : ReciprocityTheory.L2DbarEstimates.V d → Matrix (Fin g) (Fin g) ℂ :=
     fun b => if h : b ∈ B then Classical.choose (hper b h).2.2.2.2 else 0
-  have hHm : ∀ b (h : b ∈ B), Hm b = Classical.choose (hper b h).2.2.2.2 := fun b h => dif_pos h
+  have hHm : ∀ b (h : b ∈ B), Hm b = Classical.choose (hper b h).2.2.2.2 := fun b h => dite_eq_left h
   have hR : ∀ b ∈ B, IsRiem Fu i (P b) (Hm b) := fun b h => by
     rw [hHm b h]
     exact Classical.choose_spec (hper b h).2.2.2.2
@@ -256,8 +256,6 @@ open Formalism.DegreeFormula Formalism.MJ GlobalTheory.HodgeDomain GlobalTheory.
 open scoped ComplexOrder ContDiff
 open ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Up
 open CategoryTheory.Limits
-
-set_option autoImplicit false
 
 theorem GlobalTheory.ShFam.chart_lift_periods : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (O : Type) [CommRing O] (β : O →+* c.F) (Z : Model Xo c β) (σ : c.F →+* ℂ) (d g : ℕ) (ty : Fin g → (E →+* ℂ)) (Fu : FamilyUnif Xo (σ.comp (IntermediateField.inclusion c.le).toRingHom) ty) (ch : AlgChart (genStr Z) σ d) (y₀ : FrPt Xo c (Formalism.L2.Pj.CAt σ)), cxPt Z y₀ ∈ ch.e.source → ∃ (i : Fin Fu.n) (B : Set (ReciprocityTheory.L2DbarEstimates.V d)) (P : ReciprocityTheory.L2DbarEstimates.V d → ((Fu.Di i).La →+ (Fin g → ℂ))), IsOpen B ∧ ch.e (cxPt Z y₀) ∈ B ∧ B ⊆ ch.e.target ∧ (∀ b ∈ B, IsPeriod (Fu.Di i) ty (P b)) ∧ (∀ x, DifferentiableOn ℂ (fun b => P b x) B) ∧ ∀ b ∈ B, ∀ y : FrPt Xo c (Formalism.L2.Pj.CAt σ), ch.e.symm b = cxPt Z y → Fu.u i (P b) = y.x := by
   intro E _ _ _ H Dw l Xo c O _ β Z σ d g ty Fu ch y₀ hy₀
@@ -310,8 +308,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 section SlopeTestRemainingChoices
@@ -321,8 +317,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestric
 open GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.ProjVar.Var GlobalTheory.ShFam.Pad
 open ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Up GlobalTheory.ArcQ GlobalTheory.FrameNormLie GlobalTheory.ShFam GlobalTheory.LieBase
 open scoped ComplexOrder ContDiff
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.HodgeSmooth
 
@@ -428,8 +422,6 @@ open ReciprocityTheory.ChartRestriction.G.PullbackSections.ExpRows (isDerivAt0_c
 open GlobalTheory.TrueCx.TorFrHolo (isDerivAt0_of_cart isHolTo_lift)
 open GlobalTheory.ShFam.Hor.LogCh
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 theorem exists_expCoord_of_base : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (O : Type) [CommRing O] (β : O →+* c.F) (Z : Model Xo c β) (σ : c.F →+* ℂ) (d g : ℕ) (ty : Fin g → (E →+* ℂ)) (Fu : FamilyUnif Xo (σ.comp (IntermediateField.inclusion c.le).toRingHom) ty) (ch : AlgChart (genStr Z) σ d) (i : Fin Fu.n) (B : Set (ReciprocityTheory.L2DbarEstimates.V d)) (P : ReciprocityTheory.L2DbarEstimates.V d → ((Fu.Di i).La →+ (Fin g → ℂ))), IsOpen B → B ⊆ ch.e.target → (∀ b ∈ B, IsPeriod (Fu.Di i) ty (P b)) → (∀ v, DifferentiableOn ℂ (fun b => P b v) B) → (∀ b ∈ B, ∀ y : FrPt Xo c (CAt σ), ch.e.symm b = cxPt Z y → Fu.u i (P b) = y.x) → ∀ (V : (gen Z).affineOpens) (φ : c.F →+* Γ(gen Z, V.1)) (F : EigFrame Z φ (LogKS.chart V ≫ genι Z)), LogKS.chart V ≫ genStr Z = spMap φ → ∃ z : ReciprocityTheory.L2DbarEstimates.V d → ∀ τ : E →+* ℂ, Fin (Dw.mult τ) → (Fin g → ℂ), (∀ τ k, DifferentiableOn ℂ (fun b => z b τ k) {b ∈ B | ch.e.symm b ∈ ptsIn (genStr Z) σ V.1 ∧ ¬ LiesIn (ch.e.symm b) (genBd Z)}) ∧ ∀ b ∈ B, ∀ (hy : ch.e.symm b ∈ ptsIn (genStr Z) σ V.1) (f : EigFrame Z σ ((ch.e.symm b).1 ≫ genι Z)), (fun mapψ dstFrame => ∀ embτ basisIdx, _root_.GlobalTheory.ShFam.EigFrame.v dstFrame embτ basisIdx = _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (_root_.Formalism.L2.Pj.dualMap mapψ) ≫ _root_.GlobalTheory.ShFam.EigFrame.v F embτ basisIdx) (evHom hy) f → ∀ q : FrPt Xo c (CAt σ), cxPt Z q = ch.e.symm b → ∀ τ k (w : Sp (DualNumber ℂ) ⟶ Z.oF.t.G.left), IsTanAtG Z.oF.t (GlobalTheory.AllWt.ptF (S := CAt σ) q) w → w ≫ Z.m.φ = f.v τ k → IsDerivAt0 (fun v => (Fu.ex i (P b) v).left) (z b τ k) (w ≫ Z.m0.toSABMap.φ) := by
   classical
   intro E _ _ _ H Dw l Xo c O _ β Z σ d g ty Fu ch i B P hB hBt hPer hPd hPu V φ F hstr
@@ -447,13 +439,13 @@ theorem exists_expCoord_of_base : ∀ (E : Type) [Field E] [NumberField E] [IsCM
   let P₂ : (Fin d → ℂ) → ((Fu.Di i).La →+ (Fin g → ℂ)) := fun x => if L.symm x ∈ B then P (L.symm x) else P b₀
   have hP₂ : ∀ x, IsPeriod (Fu.Di i) ty (P₂ x) := fun x => by
     by_cases h : L.symm x ∈ B
-    · simp only [P₂, if_pos h]; exact hPer _ h
-    · simp only [P₂, if_neg h]; exact hPer _ hb₀
+    · simp only [P₂, ite_eq_left h]; exact hPer _ h
+    · simp only [P₂, ite_eq_right h]; exact hPer _ hb₀
   have hP₂d : ∀ a, DifferentiableOn ℂ (fun x => P₂ x a) B₁ := fun a =>
     ((hPd a).comp L.symm.differentiableOn fun x hx => hx).congr fun x hx => by
-      simp only [P₂, if_pos (show L.symm x ∈ B from hx), Function.comp_apply]
+      simp only [P₂, ite_eq_left (show L.symm x ∈ B from hx), Function.comp_apply]
   have hP₂L : ∀ b ∈ B, P₂ (L b) = P b := fun b hb => by
-    simp only [P₂, ContinuousLinearEquiv.symm_apply_apply, if_pos hb]
+    simp only [P₂, ContinuousLinearEquiv.symm_apply_apply, ite_eq_left hb]
   have hover : ∀ x, Fu.u i (P₂ x) ≫ Xo.s = spMap σ ≫ spMap (IntermediateField.inclusion c.le).toRingHom := fun x => by
     rw [Fu.over_σ i _ (hP₂ x), ← Spec.map_comp]
     rfl
@@ -546,8 +538,8 @@ theorem exists_diag_riem {U : Formalism.L2.PjFree.Unf Xo c σ r} (hσ : Formalis
   obtain ⟨hbij, hrt, -, -⟩ := GlobalTheory.Relab.relab_good E H l c σ hσ
   obtain ⟨f, hf⟩ := FrameUnif.exists_letter_equiv (U.X k).Ψ (U.X k).cmType Dw.p Dw.q r hU.1
     (Formalism.L2.PjFree.relab c σ) hbij Dw.mult
-    (fun τ h => by unfold Datum.mult; rw [if_pos ((hrt τ).1 ((hty _).1 h))])
-    (fun τ h => by unfold Datum.mult; rw [if_neg (fun h' => h ((hty _).2 ((hrt τ).2 h')))])
+    (fun τ h => by unfold Datum.mult; rw [ite_eq_left ((hrt τ).1 ((hty _).1 h))])
+    (fun τ h => by unfold Datum.mult; rw [ite_eq_right (fun h' => h ((hty _).2 ((hrt τ).2 h')))])
   rw [← hp0] at hf
   have hper (v) : W.Pm k x v = perVec (U.X k) (W.e.trans f) x.1 (W.φ k v : Fin r → E) := funext fun j => by
     rw [W.Pm_eq, perVec, Equiv.trans_apply]
@@ -556,9 +548,9 @@ theorem exists_diag_riem {U : Formalism.L2.PjFree.Unf Xo c σ r} (hσ : Formalis
     obtain ⟨⟨τ, hτ⟩, ⟨n, hn⟩⟩ := t
     dsimp only at h ⊢
     rcases h with ⟨a, rfl, rfl⟩ | ⟨a, rfl, rfl, d⟩
-    · rw [if_neg (by omega), Formalism.L2.PjFree.perFr, dif_pos a, dif_pos hn]
-    · rw [if_pos (by omega), Formalism.L2.PjFree.perFr, dite_eq_right a,
-        dif_pos (show conjEmb (Formalism.L2.PjFree.relab c σ (W.e j).1) ∈ (U.X k).Ψ from hτ), dif_pos hn]
+    · rw [ite_eq_right (by omega), Formalism.L2.PjFree.perFr, dite_eq_left a, dite_eq_left hn]
+    · rw [ite_eq_left (by omega), Formalism.L2.PjFree.perFr, dite_eq_right a,
+        dite_eq_left (show conjEmb (Formalism.L2.PjFree.relab c σ (W.e j).1) ∈ (U.X k).Ψ from hτ), dite_eq_left hn]
       rfl
   set D := diagXi (U.X k) (W.e.trans f) with hDdef
   have hD : ∀ j : Fin (Dw.mult τ), D (W.e.symm ⟨τ, j⟩) = ((2 * ((ρ k τ) (-(U.X k).ξ0)).im : ℝ) : ℂ) := by
@@ -566,9 +558,9 @@ theorem exists_diag_riem {U : Formalism.L2.PjFree.Unf Xo c σ r} (hσ : Formalis
     rw [hDdef, diagXi, Equiv.trans_apply, Equiv.apply_symm_apply]
     rcases hf ⟨τ, j⟩ with ⟨a, h1, -⟩ | ⟨a, h1, -, -⟩
     · rw [h1]
-      simp only [ρ, if_pos a]
+      simp only [ρ, ite_eq_left a]
     · rw [h1]
-      simp only [ρ, if_neg a]
+      simp only [ρ, ite_eq_right a]
   have him : ∀ v w, (hermForm (diagonal D) (W.Pm k x v) (W.Pm k x w)).im = (W.F.Di (W.ik k)).EF v w := by
     intro v w
     rw [hper, hper, im_diag_ortho _ _ _ hx, ← W.iso]
@@ -600,7 +592,7 @@ theorem exists_diag_riem {U : Formalism.L2.PjFree.Unf Xo c σ r} (hσ : Formalis
     by_cases hp : ∃ j, W.e.symm ⟨τ, j⟩ = p'
     · obtain ⟨j, rfl⟩ := hp
       rw [hD j]
-    · push_neg at hp
+    · push Not at hp
       have : (∑ j, T j b • (Pi.single (W.e.symm ⟨τ, j⟩) 1 : Fin W.g → ℂ)) p' = 0 := by
         rw [Finset.sum_apply]
         exact Finset.sum_eq_zero fun j _ => by rw [Pi.smul_apply, Pi.single_eq_of_ne (hp j).symm, smul_zero]
@@ -708,7 +700,7 @@ theorem gram_smooth_near {U : Formalism.L2.PjFree.Unf Xo c σ (Dw.p + Dw.q)} (h�
       rw [← hkx]
       exact ⟨_, isHodgeFrame_cxFrame (U := unfFam U) hσ hx⟩
     have hg : (hodgeMet Z U).gram (ch.e.symm c0) f τ =
-        ((2 * Real.pi : ℝ) : ℂ) • ((hex.choose.co f τ)ᴴ * hex.choose.co f τ) := dif_pos hex
+        ((2 * Real.pi : ℝ) : ℂ) • ((hex.choose.co f τ)ᴴ * hex.choose.co f τ) := dite_eq_left hex
     obtain ⟨k, x, hx, hkx, hv⟩ := hodgeFrame_comp hσ hex.choose_spec
     have hk : k = k₀ := hinj ((hik c0 hc0.1 k x hkx).trans hk₀.symm)
     subst hk
@@ -777,7 +769,7 @@ theorem smoothOn_of_locally {σ : c.F →+* ℂ} (G : EigMet Z σ) (S : Set (CxP
     if h : y ∈ ptsIn (genStr Z) σ V.1 then G.gram y (hex h).choose τ a b else 0
   have hg : ∀ y (hy : y ∈ ptsIn (genStr Z) σ V.1) (f : EigFrame Z σ (y.1 ≫ genι Z)),
       (_root_.GlobalTheory.ShFam.EigFrame.IsMap F) (evHom hy) f → G.gram y f τ a b = g y := fun y hy f hf => by
-    simp only [g, dif_pos hy]
+    simp only [g, dite_eq_left hy]
     rw [gram_eq_of_isMap G (hex hy).choose_spec hf τ]
   let ι := {y₀ // y₀ ∈ S ∧ y₀ ∈ ptsIn (genStr Z) σ V.1}
   choose T gl hT hmem hre him hagree using fun j : ι => hloc V φ F τ a b hV j.1 j.2.1 j.2.2

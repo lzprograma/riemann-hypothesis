@@ -14,57 +14,10 @@ public import Formalism.HermitianLattices.HermitianLatticesProofs.IndexBasic
 import Formalism.HermitianLattices.HermitianLatticesProofs.LocBasic
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureConjugationInvariant
 public import Formalism.SharpRestriction.CuspSpanNormBounds.JExistsNatSmulMemL
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.GroupTheory.FiniteAbelian.Basic
 public import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -329,8 +282,6 @@ end Gen
 
 section D7
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem p_starConj (D : D7) : StarConj D.host.E := D.sp.cm.cmUnram.2.1
 
 theorem p_posX (D : D7) (T : ℕ) (hT : 0 < T) (F : LFlag (D.sp.Y 0) D.R.rS (T : D.host.E)) : PosX F :=
@@ -385,8 +336,6 @@ end Gen2
 
 section D7b
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem p_rankV (D : D7) : finrank D.host.E (hS D).V = D.R.k + 2 * D.R.rS + 1 := by
   rw [(hS D).rank_eq, D.sp.Y_rank 0 (Nat.zero_le _)]
   have h1 := D.R.m_even
@@ -437,7 +386,7 @@ theorem a_full (Λ : Submodule (𝓞 E) S.V) (hL : Submodule.IsLattice E Λ)
       congr 1
       rw [← S.herm.eq (S.frame i) (bs j), hbs]
       split_ifs <;> simp
-    simp only [hs, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [hs, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   have hμ₀ : μ ≠ 0 := by
     intro h
     apply hφ₀
@@ -1011,7 +960,7 @@ theorem base_vector_mem_orth {T T' : E} (hT : T ≠ 0) (F : LFlag S r T) (F' : L
     normalLiftBaseVector F F' ∈ orth S (Xplus F) := by
   have hz : S.hT F.fl.z (normalLiftBaseVector F F') = 0 := by
     have := b_om_pair F F' (Fin.last r)
-    rw [_root_.Formalism.MainNotions.LatticeGluingRadicals.a_frame_last, if_pos rfl] at this
+    rw [_root_.Formalism.MainNotions.LatticeGluingRadicals.a_frame_last, ite_eq_left rfl] at this
     unfold normalLiftBaseVector
     rw [map_add (f := _), map_smul, this, F.fl.z_norm, smul_eq_mul]
     field_simp
@@ -1019,7 +968,7 @@ theorem base_vector_mem_orth {T T' : E} (hT : T ≠ 0) (F : LFlag S r T) (F' : L
   have he : ∀ a, S.hT (F.fl.e a) (normalLiftBaseVector F F') = 0 := by
     intro a
     have := b_om_pair F F' a.castSucc
-    rw [_root_.Formalism.MainNotions.LatticeGluingRadicals.a_frame_castSucc, if_neg (Fin.castSucc_lt_last a).ne] at this
+    rw [_root_.Formalism.MainNotions.LatticeGluingRadicals.a_frame_castSucc, ite_eq_right (Fin.castSucc_lt_last a).ne] at this
     unfold normalLiftBaseVector
     rw [map_add (f := _), map_smul, this, F.fl.z_orth a]
     simp
@@ -1076,12 +1025,12 @@ theorem b_cramer {T T' : E} (F : LFlag S r T) (F' : LFlag S r T') (hz : F.zt = F
   have hpair : ∀ a, S.hT (frame F a) w = if a = Fin.last r then T * al else 0 := by
     intro a
     refine Fin.lastCases ?_ (fun a => ?_) a
-    · rw [if_pos rfl, _root_.Formalism.MainNotions.LatticeGluingRadicals.a_frame_last]
+    · rw [ite_eq_left rfl, _root_.Formalism.MainNotions.LatticeGluingRadicals.a_frame_last]
       have h0 : S.hT F.fl.z y = 0 :=
         b_mem_orth.1 hy _ (Submodule.mem_sup_right (Submodule.mem_span_singleton_self _))
       rw [hyw, map_add (f := _), map_add (f := _), map_smul, F.fl.z_norm, (flag_span_orth_normal F hx).2, smul_eq_mul] at h0
       linear_combination h0
-    · rw [if_neg (Fin.castSucc_lt_last a).ne, _root_.Formalism.MainNotions.LatticeGluingRadicals.a_frame_castSucc]
+    · rw [ite_eq_right (Fin.castSucc_lt_last a).ne, _root_.Formalism.MainNotions.LatticeGluingRadicals.a_frame_castSucc]
       have h0 : S.hT (F.fl.e a) y = 0 :=
         b_mem_orth.1 hy _ (Submodule.mem_sup_left (Submodule.subset_span ⟨a, rfl⟩))
       rw [hyw, map_add (f := _), map_add (f := _), map_smul, F.fl.z_orth a,
@@ -1095,7 +1044,7 @@ theorem b_cramer {T T' : E} (F : LFlag S r T) (F' : LFlag S r T') (hz : F.zt = F
     rw [map_smul, smul_eq_mul, b_Zhat_apply, mul_comm]
   have hcof := _root_.Formalism.HermitianLatticeCounting.P.cofactor_vector_formula E r (ZhatL F F')
   have h1 : ∑ a, (ZhatL F F').adjugate (Fin.last r) a * S.hT (frame F a) w = Dr F F' * (T * al) := by
-    simp only [hpair, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [hpair, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [hcof.2, ← _root_.Formalism.MainNotions.LatticeGluingRadicals.a_Dr]
   have h2 : ∑ a, (ZhatL F F').adjugate (Fin.last r) a * S.hT (frame F a) w = Dr1 F F' * al' := by
     simp only [hpair2, Finset.mul_sum]
@@ -1105,7 +1054,7 @@ theorem b_cramer {T T' : E} (F : LFlag S r T) (F' : LFlag S r T') (hz : F.zt = F
       intro b
       rw [← hcof.1 b, Finset.sum_mul]
       exact Finset.sum_congr rfl fun a _ => by ring
-    simp only [this, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [this, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [_root_.Formalism.MainNotions.LatticeGluingRadicals.discriminant_eq_det_lift_alt, hc']
     simp
   rw [← h2, h1]
@@ -1134,7 +1083,7 @@ theorem lemma_two_norm_scaling (hc : StarConj E) {T T' : ℕ} (hT : 0 < T) (hT' 
     have hal : al' = 0 := by
       rw [hD, zero_mul] at hcr
       exact (mul_eq_zero.1 hcr).resolve_left hD1
-    simp only [chSh, invSh, if_pos hD]
+    simp only [chSh, invSh, ite_eq_left hD]
     rw [hn, hal]
     simp
   · have hd : 0 < ‖τ (Dr F F')‖ := norm_pos_iff.2 ((map_ne_zero τ).2 hD)
@@ -1160,7 +1109,7 @@ theorem lemma_two_norm_scaling (hc : StarConj E) {T T' : ℕ} (hT : 0 < T) (hT' 
       rw [hch, ha]
       field_simp
     have hne : ch T T' F F' τ ^ 2 - 1 ≠ 0 := by linarith
-    simp only [chSh, invSh, if_neg hD]
+    simp only [chSh, invSh, ite_eq_right hD]
     rw [div_pow, div_pow, one_pow, hsh, hn, key]
     constructor
     · field_simp
@@ -1213,16 +1162,16 @@ theorem b_chSh_symm (hc : StarConj E) {T T' : ℕ} (F : LFlag S r (T : E)) (F' :
   unfold chSh
   rw [b_ch_symm hc F F', b_sh_symm hc F F']
   by_cases h : Dr F F' = 0
-  · rw [if_pos h, if_pos ((b_Dr_zero_symm F F').2 h)]
-  · rw [if_neg h, if_neg (fun h' => h ((b_Dr_zero_symm F F').1 h'))]
+  · rw [ite_eq_left h, ite_eq_left ((b_Dr_zero_symm F F').2 h)]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h ((b_Dr_zero_symm F F').1 h'))]
 
 theorem b_invSh_symm (hc : StarConj E) {T T' : ℕ} (F : LFlag S r (T : E)) (F' : LFlag S r (T' : E))
     (τ : E →+* ℂ) : invSh T' T F' F τ = invSh T T' F F' τ := by
   unfold invSh
   rw [b_sh_symm hc F F']
   by_cases h : Dr F F' = 0
-  · rw [if_pos h, if_pos ((b_Dr_zero_symm F F').2 h)]
-  · rw [if_neg h, if_neg (fun h' => h ((b_Dr_zero_symm F F').1 h'))]
+  · rw [ite_eq_left h, ite_eq_left ((b_Dr_zero_symm F F').2 h)]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h ((b_Dr_zero_symm F F').1 h'))]
 
 theorem lemma_two_norm_scaling_right (hc : StarConj E) {T T' : ℕ} (hT : 0 < T) (hT' : 0 < T') (F : LFlag S r (T : E))
     (F' : LFlag S r (T' : E)) (hz : F.zt = F.fl.z) (hz' : F'.zt = F'.fl.z) (hG : Gval F F' ≠ 0)
@@ -1267,8 +1216,6 @@ noncomputable section
 namespace Formalism.MainNotions.LatticeGluingRadicals
 
 open Formalism.BasicNotions Formalism.MainNotions.S.Lat NumberField Module
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem lemma_two_norm_identities (D : D7) (u : D.what₂.Word) (T' : ℕ) (Λ : VanishingOnXAndXPlusGluing.LatS D) (F : VanishingOnXAndXPlusGluing.FlS D (Tu D u))
     (F' : VanishingOnXAndXPlusGluing.FlS D T') (hF : FixedHyp D Λ F) (hPr : PrimeHyp D u T') (hT : IsTerm Λ (gS D) F F') :
@@ -1316,8 +1263,6 @@ namespace Formalism.MainNotions.LatticeGluingRadicals
 
 open Formalism.BasicNotions Formalism.MainNotions.S.Lat NumberField Module
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem lemma_one_det_index_le_gram (D : D7) (Λ : VanishingOnXAndXPlusGluing.LatS D) (g : ℕ) {T T' : ℕ} (F : VanishingOnXAndXPlusGluing.FlS D T) (F' : VanishingOnXAndXPlusGluing.FlS D T')
     (h : VanishingOnXAndXPlusGluing.Lem1 D Λ g F F') :
     latDet (hS D) (La Λ g F F') * (iIdx Λ g F F' : ℝ) ^ 2 ≤ G0 Λ g F F' := by
@@ -1334,10 +1279,6 @@ theorem lemma_one_det_index_le_gram (D : D7) (Λ : VanishingOnXAndXPlusGluing.La
   · have hi' : 0 < (iIdx Λ g F F' : ℝ) := by exact_mod_cast hi
     have hle : (iIdx Λ g F F' : ℝ) ≤
         (Nat.card (BQ Λ F F') : ℝ) / NE (E := D.host.E) g ^ (D.R.rS + 1) := h1.trans h2
-    have hNpos : 0 < NE (E := D.host.E) g ^ (D.R.rS + 1) := by
-      rcases hN.lt_or_eq with h | h
-      · exact h
-      · rw [← h, div_zero] at hle; linarith
     have e1 : NG Λ F F' / ((Nat.card (BQ Λ F F') : ℝ) * (iIdx Λ g F F' : ℝ)) * (iIdx Λ g F F' : ℝ) ^ 2 =
         NG Λ F F' * ((iIdx Λ g F F' : ℝ) / (Nat.card (BQ Λ F F') : ℝ)) := by
       field_simp
@@ -1430,11 +1371,6 @@ open Formalism.BasicNotions Formalism.MainNotions.S.Lat NumberField Module
 section Gen
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {r : ℕ}
-
-theorem m_exists_smul_mem (M : Submodule (𝓞 E) S.V) {x : S.V} (hx : x ∈ Submodule.span E (M : Set S.V)) :
-    ∃ d : 𝓞 E, d ≠ 0 ∧ d • x ∈ M := by
-  first
-  | (apply Formalism.MainNotions.LatticeGluingRadicals.m_exists_smul_memL <;> assumption)
 
 omit [StarRing E] in
 theorem m_fin_quot {M : Type} [AddCommGroup M] [Module (𝓞 E) M] [Module.Finite (𝓞 E) M]
@@ -1991,7 +1927,7 @@ theorem c_finrank_Th (hU : HU Λ F F'') (hN : HNd F F'') :
     finrank E (Th Λ F F' F'' β) = finrank E (ThPairs Λ F F' F'' β) := by
   have inj : Function.Injective
       ((LinearMap.fst E S.V S.V).domRestrict (ThPairs Λ F F' F'' β)) := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     rintro ⟨p, hp⟩ h
     have h0 : p.1 = 0 := h
     obtain ⟨⟨_, hb⟩, hc, _⟩ := c_mem_ThPairs.1 hp
@@ -2008,7 +1944,7 @@ theorem c_finrank_Th'' (hU : HU Λ F F') (hN : HNd F F') :
     finrank E (Th'' Λ F F' F'' β) = finrank E (ThPairs Λ F F' F'' β) := by
   have inj : Function.Injective
       ((LinearMap.snd E S.V S.V).domRestrict (ThPairs Λ F F' F'' β)) := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     rintro ⟨p, hp⟩ h
     have h0 : p.2 = 0 := h
     obtain ⟨⟨ha, _⟩, hc, _⟩ := c_mem_ThPairs.1 hp
@@ -2867,8 +2803,6 @@ end C
 
 section D7
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem radical_setting_second_of (D : D7) (Λ : VanishingOnXAndXPlusGluing.LatS D) (g : ℕ) {T T' : ℕ} (F : VanishingOnXAndXPlusGluing.FlS D T)
     (F' F'' : VanishingOnXAndXPlusGluing.FlS D T') (β : (hS D).V ≃ₗ[D.host.E] (hS D).V)
     (W : Submodule D.host.E (hS D).V)
@@ -2907,8 +2841,6 @@ noncomputable section
 namespace Formalism.MainNotions.LatticeGluingRadicals
 
 open Formalism.BasicNotions Formalism.MainNotions.S.Lat NumberField Module IsDedekindDomain
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem d_isComplex (D : D7) (w : InfinitePlace D.host.E) : w.IsComplex := by
   have := D.host.isCMField_hostE
@@ -2976,7 +2908,7 @@ theorem d_prod_emb {K : Type} [Field K] [NumberField K] (hc : ∀ w : InfinitePl
     rw [Finset.prod_congr rfl (g := fun _ => X w.embedding)
       (fun τ hτ => by rw [h1 τ, (Finset.mem_filter.1 hτ).2]), Finset.prod_const,
       InfinitePlace.card_filter_mk_eq, InfinitePlace.mult,
-      if_neg (InfinitePlace.not_isReal_iff_isComplex.2 (hc w))]
+      ite_eq_right (InfinitePlace.not_isReal_iff_isComplex.2 (hc w))]
   rw [h2, Finset.prod_pow, Real.sqrt_sq (Finset.prod_nonneg fun w _ => h0 _)]
 
 section Vec
@@ -3573,9 +3505,9 @@ theorem d_comp_frameAct (ξ : Matrix (Fin (r + 1)) (Fin (r + 1)) (𝓞 E)) (b : 
 theorem d_comp_frame' (b : Fin (r + 1)) :
     d_Comp F F' (frame F' b) 0 (if b = Fin.last r then 1 else 0) := by
   refine Fin.lastCases ?_ (fun i => ?_) b
-  · rw [a_frame_last, if_pos rfl]
+  · rw [a_frame_last, ite_eq_left rfl]
     exact d_comp_alt_alt
-  · rw [a_frame_castSucc, if_neg (Fin.castSucc_lt_last i).ne]
+  · rw [a_frame_castSucc, ite_eq_right (Fin.castSucc_lt_last i).ne]
     exact d_comp_X' (Submodule.subset_span ⟨i, rfl⟩)
 
 theorem d_compMplus (hz : F.zt = F.fl.z) {g : ℕ} (hg : g ≠ 0)
@@ -3598,10 +3530,10 @@ theorem d_compMplus (hz : F.zt = F.fl.z) {g : ℕ} (hg : g ≠ 0)
         (d_comp_frameAct (F := F) (F' := F') ξ b)
       refine Fin.lastCases ?_ (fun i => ?_) b
       · have h1 := h1 (Fin.last r)
-        rw [hξ.2.1, if_pos rfl] at h1
+        rw [hξ.2.1, ite_eq_left rfl] at h1
         exact ⟨0, 1, by simpa using h1⟩
       · have h1 := h1 i.castSucc
-        rw [hξ.1 _ _ (Fin.castSucc_lt_last i), if_neg (Fin.castSucc_lt_last i).ne] at h1
+        rw [hξ.1 _ _ (Fin.castSucc_lt_last i), ite_eq_right (Fin.castSucc_lt_last i).ne] at h1
         exact ⟨0, 0, by simpa using h1⟩
   | zero => exact ⟨0, 0, by simpa using d_comp_X (F := F) (F' := F') (zero_mem _)⟩
   | add x y _ _ hx hy =>
@@ -4174,7 +4106,7 @@ theorem local_lift_at_prime (H : d_TermHyp Λ g F F') (P : HeightOneSpectrum (�
     · have h1 := d_comp_add (d_comp_smul (al + al') (d_comp_alt (F := F) (F' := F')))
         (d_comp_smul al' (d_comp_sub (d_comp_frame' (F := F) (F' := F') (Fin.last r))
           (d_comp_frameAct (F := F) (F' := F') ξ (Fin.last r))))
-      rw [hξ.2.1, if_pos rfl] at h1
+      rw [hξ.2.1, ite_eq_left rfl] at h1
       convert h1 using 1
       · push_cast; ring
       · ring
@@ -4780,8 +4712,6 @@ end Main
 
 section D7
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem e_gS_pos (D : D7) : 0 < gS D :=
   Nat.mul_pos (D.host.g_prime 0).pos (D.host.g_prime 1).pos
 
@@ -5048,7 +4978,7 @@ instance i_isLoc : IsLocalizedModule p.primeCompl (i_g p A B) where
       have : (s : 𝓞 E) ≠ 0 := fun h => s.2 (h ▸ p.zero_mem)
       simpa using this
     constructor
-    · set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    · rw [injective_iff_map_eq_zero]
       intro q hq
       obtain ⟨x, rfl⟩ := Submodule.mkQ_surjective _ q
       rw [Module.algebraMap_end_apply, Submodule.mkQ_apply, ← Submodule.Quotient.mk_smul,
@@ -5143,8 +5073,6 @@ theorem i_gluing (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsFullLattice E 
 end I
 
 section D7
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem i_stGlue (D : D7) : Formalism.MainNotions.S.UnitaryVolumeMass.stGlue D :=
   fun Λ hΛ hu U hU => i_gluing Λ (a_full Λ hΛ hu) hu U hU
@@ -5302,8 +5230,7 @@ theorem g_simple_len_ne {A B : Submodule (𝓞 E) W} {P₀ : Ideal (𝓞 E)} (hP
     (e : (A ⧸ B.comap A.subtype) ≃ₗ[𝓞 E] (𝓞 E ⧸ P₀)) (p : Ideal (𝓞 E)) [hp : p.IsPrime] (hne : p ≠ P₀) :
     locLen p A B = 0 := by
   have : ∃ s ∈ P₀, s ∉ p := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hne (hP.eq_of_le hp.ne_top hcon).symm
   obtain ⟨s, hs, hsp⟩ := this
   exact g_locLen_zero p hsp (fun x hx => g_simple_kill e hs hx)
@@ -5812,8 +5739,6 @@ end Gen
 
 section D7
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def g_DetIndex (D : D7) : Prop := g_DetIndexG (hS D)
 
 def g_GlueDet (D : D7) : Prop :=
@@ -5906,8 +5831,6 @@ end Fin
 
 section D7
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem g_detIndex (D : D7) : g_DetIndex D := g_detIndexG g_starInt
 
 theorem g_glueDet (D : D7) : g_GlueDet D :=
@@ -5942,7 +5865,7 @@ theorem h_quot_equiv {A B A' B' : Submodule (𝓞 E) S.V} (hle : A ≤ A') (hB :
   let f : (A ⧸ B.comap A.subtype) →ₗ[𝓞 E] (A' ⧸ B'.comap A'.subtype) :=
     Submodule.mapQ _ _ (Submodule.inclusion hle) (fun x hx => hB hx)
   refine ⟨LinearEquiv.ofBijective f ⟨?_, ?_⟩⟩
-  · set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  · rw [injective_iff_map_eq_zero]
     intro q hq
     obtain ⟨x, rfl⟩ := Submodule.mkQ_surjective _ q
     rw [Submodule.mkQ_apply] at hq ⊢
@@ -6231,7 +6154,7 @@ def h_Pr (L : Submodule (𝓞 E) S.V) (Hs Θ : Submodule E S.V) : Submodule (�
 
 theorem h_smul_inj (d : 𝓞 E) (hd : d ≠ 0) :
     Function.Injective (LinearMap.lsmul (𝓞 E) S.V d) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   have hd' : (algebraMap (𝓞 E) E d) ≠ 0 := by
     simpa using (map_ne_zero_iff (algebraMap (𝓞 E) E) (IsFractionRing.injective (𝓞 E) E)).2 hd
@@ -6521,8 +6444,6 @@ end H4
 
 section D7
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem h_a2det (D : D7) (u : D.what₂.Word) (T' : ℕ) (Λ : Submodule (𝓞 D.host.E) (hS D).V)
     (F : LFlag (D.sp.Y 0) D.R.rS (((D.mem u).A.T : ℕ) : D.host.E)) (F' F'' : LFlag (D.sp.Y 0) D.R.rS ((T' : ℕ) : D.host.E))
     (β : (hS D).V ≃ₗ[D.host.E] (hS D).V)
@@ -6580,8 +6501,6 @@ end H5
 
 section D7
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem h_existsW (D : D7) (T : ℕ) (F : LFlag (D.sp.Y 0) D.R.rS ((T : ℕ) : D.host.E)) (hT : 0 < T) :
     ∃ W : Submodule D.host.E (hS D).V, WHyp D F W :=
   h_existsW_gen F (by exact_mod_cast hT.ne') D.R.k (p_rankV D)
@@ -6597,8 +6516,6 @@ noncomputable section
 namespace Formalism.MainNotions.LatticeGluingRadicals
 
 open Formalism.BasicNotions Formalism.MainNotions.S.Lat NumberField Module
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem lattice_lemma_two (D : D7) : VanishingOnXAndXPlusGluing.Conclusion2 D := by
   intro u T' Λ F F' hF hPr hT
@@ -7833,8 +7750,6 @@ end J9
 
 section D7
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem j_finrank (D : D7) : finrank ℚ D.host.E = 2 * D.R.f := by
   have h1 : Module.finrank ℚ D.host.E = 4 * D.R.ord :=
     D.host.finrank_cmField
@@ -7891,8 +7806,6 @@ noncomputable section
 namespace Formalism.MainNotions.LatticeGluingRadicals
 
 open Formalism.BasicNotions Formalism.MainNotions.S.Lat NumberField Module
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def ThmADeg (D : D7) : Prop :=
   ∀ (u : D.what₂.Word) (T' : ℕ) (Λ : VanishingOnXAndXPlusGluing.LatS D) (F : VanishingOnXAndXPlusGluing.FlS D (Tu D u)) (F' F'' : VanishingOnXAndXPlusGluing.FlS D T')
@@ -7963,7 +7876,7 @@ theorem k_zc_exists {F : LFlag S r T} {F'' : LFlag S r T'} (hI : HInd F F'') :
       obtain ⟨a, rfl⟩ := hx
       have := key (Sum.inl a.castSucc)
       rw [Sum.elim_inl, a_frame_castSucc] at this
-      rw [this, if_neg]
+      rw [this, ite_eq_right]
       intro h
       exact (Fin.castSucc_lt_last a).ne (Sum.inl.inj h)
     | zero => simp
@@ -7976,7 +7889,7 @@ theorem k_zc_exists {F : LFlag S r T} {F'' : LFlag S r T'} (hI : HInd F F'') :
       obtain ⟨a, rfl⟩ := hx
       have := key (Sum.inr a)
       rw [Sum.elim_inr] at this
-      rw [this, if_neg (by simp)]
+      rw [this, ite_eq_right (by simp)]
     | zero => simp
     | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
     | smul c x _ hx => rw [map_smul, hx, smul_zero]
@@ -8374,7 +8287,7 @@ theorem k_idx_cyc {v : W} (hv : v ≠ 0) (d : 𝓞 E) :
     obtain ⟨o, rfl⟩ := Submodule.mem_span_singleton.1 hx
     exact ⟨o, rfl⟩
   have hφi : Function.Injective φ := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro o ho
     exact hinj o (congrArg Subtype.val ho)
   let e : 𝓞 E ≃ₗ[𝓞 E] (Submodule.span (𝓞 E) {v}) := LinearEquiv.ofBijective φ ⟨hφi, hφs⟩
@@ -9022,8 +8935,6 @@ namespace Formalism.MainNotions.LatticeGluingRadicals
 
 open Formalism.BasicNotions Formalism.MainNotions.S.Lat NumberField Module
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem lemma_one_det_index_le_gram_div (D : D7) (Λ : VanishingOnXAndXPlusGluing.LatS D) (g : ℕ) {T T' : ℕ} (F : VanishingOnXAndXPlusGluing.FlS D T) (F' : VanishingOnXAndXPlusGluing.FlS D T')
     (h : VanishingOnXAndXPlusGluing.Lem1 D Λ g F F') (Nr : ℕ) (hNr : 0 < Nr) (hc : iIdx Λ g F F' * Nr ≤ Nat.card (gB Λ g F F')) :
     latDet (hS D) (La Λ g F F') * (iIdx Λ g F F' : ℝ) ^ 2 ≤ G0 Λ g F F' / (Nr : ℝ) := by
@@ -9155,8 +9066,6 @@ noncomputable section
 namespace Formalism.MainNotions.LatticeGluingRadicals
 
 open Formalism.BasicNotions Formalism.MainNotions.S.Lat NumberField Module
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem z_ThmADeg (D : D7) : ThmADeg D :=
   fun u T' Λ F F' F'' β hF hPr hT' hT'' hP hs hnd => k_thmA_deg D u T' Λ F F' F'' β hF hPr hT' hT'' hP hs hnd

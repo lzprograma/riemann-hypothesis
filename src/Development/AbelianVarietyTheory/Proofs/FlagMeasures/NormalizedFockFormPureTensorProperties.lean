@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormLeOfCoord
 public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
 public import Formalism.LocalToGlobal.Divisibility.CoefMod
 public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
@@ -53,17 +54,7 @@ open scoped InnerProductSpace TensorProduct
 namespace GlobalTheory.FockTen
 
 theorem fockF_eq_fockL {σ : Type} (f g : MvPolynomial σ ℂ) : Formalism.REAL.fockF f g = Formalism.L2.DIV.fockL g f := by
-  classical
-  rw [Formalism.L2.DIV.fockL_apply,
-    Formalism.L2.DIV.fockS_eq_sum g f (f.support ∪ g.support) Finset.subset_union_right]
-  unfold Formalism.REAL.fockF
-  rw [Finset.sum_subset (Finset.subset_union_left : f.support ⊆ f.support ∪ g.support)]
-  · refine Finset.sum_congr rfl fun m _ => ?_
-    simp only [Formalism.L2.DIV.mfact]
-    ring
-  · intro m _ hm
-    have hf : f.coeff m = 0 := by simpa [MvPolynomial.mem_support_iff] using hm
-    rw [hf, zero_mul, zero_mul]
+  first | exact _root_.GlobalTheory.LvT.PtNorm.fockF_eq | exact @_root_.GlobalTheory.LvT.PtNorm.fockF_eq | apply _root_.GlobalTheory.LvT.PtNorm.fockF_eq <;> assumption
 
 theorem fockF_ten {ι : Type} [Fintype ι] {n : ℕ} (f g : ι → MvPolynomial (Fin n × Fin n) ℂ) :
     Formalism.REAL.fockF (ten f) (ten g) = ∏ τ, Formalism.REAL.fockF (f τ) (g τ) := by

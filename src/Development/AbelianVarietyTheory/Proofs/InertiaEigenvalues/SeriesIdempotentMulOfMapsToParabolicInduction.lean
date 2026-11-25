@@ -5,47 +5,7 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemChainV
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LabelEqOfSuppAdds
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUpperMulInc
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ReductionActionOnFixK1
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -209,15 +169,6 @@ private theorem inc_apply_eq_algebraMap {n : ℕ} (k : GL (Fin n) ℤ_[g]) (i j 
     ((inc g n k : GL (Fin n) ℚ_[g]) : Matrix (Fin n) (Fin n) ℚ_[g]) i j =
       algebraMap ℤ_[g] ℚ_[g] ((k : Matrix (Fin n) (Fin n) ℤ_[g]) i j) := rfl
 
-private theorem det_inc_eq_map_det {n : ℕ} (k : GL (Fin n) ℤ_[g]) :
-    Matrix.GeneralLinearGroup.det (inc g n k) =
-      Units.map (algebraMap ℤ_[g] ℚ_[g]).toMonoidHom (Matrix.GeneralLinearGroup.det k) := by
-  apply Units.ext
-  show ((inc g n k : GL (Fin n) ℚ_[g]) : Matrix (Fin n) (Fin n) ℚ_[g]).det =
-    algebraMap ℤ_[g] ℚ_[g] ((k : Matrix (Fin n) (Fin n) ℤ_[g]).det)
-  rw [RingHom.map_det]
-  rfl
-
 private theorem levi_par_of_apply_eq_zero_of_lt {a b : ℕ} {V₀ W₀ W₁ : Type} [AddCommGroup V₀] [Module ℂ V₀] [AddCommGroup W₀]
     [Module ℂ W₀] [AddCommGroup W₁] [Module ℂ W₁] (π : Representation ℂ (GL (Fin (a + b)) ℚ_[g]) V₀)
     (σ : Representation ℂ (GL (Fin a) ℚ_[g]) W₀) (ρ : Representation ℂ (GL (Fin b) ℚ_[g]) W₁)
@@ -259,7 +210,7 @@ private theorem levi_par_of_apply_eq_zero_of_lt {a b : ℕ} {V₀ W₀ W₁ : Ty
     have ei : (⟨a + i, Nat.add_lt_add_left i.isLt a⟩ : Fin (a + b)) = finSumFinEquiv (Sum.inr i) := Fin.ext (by simp)
     have ej : (⟨a + j, Nat.add_lt_add_left j.isLt a⟩ : Fin (a + b)) = finSumFinEquiv (Sum.inr j) := Fin.ext (by simp)
     rw [ei, ej, inc_apply_eq_algebraMap, inc_apply_eq_algebraMap, parZ_apply, Matrix.fromBlocks_apply₂₂]
-  rw [hΛ _ _ _ c1 c2 c3 w, det_inc_eq_map_det, det_inc_eq_map_det, h₁, h₂, mul_one, Units.val_one, one_smul]
+  rw [hΛ _ _ _ c1 c2 c3 w, GlobalTheory.GLp.ParInd.det_inc, GlobalTheory.GLp.ParInd.det_inc, h₁, h₂, mul_one, Units.val_one, one_smul]
 
 private theorem exists_blocks_entN_eq {a b : ℕ} (p : GL (Fin (a + b)) ℚ_[g])
     (hp : ∀ i j : Fin (a + b), j < i → (p : Matrix (Fin (a + b)) (Fin (a + b)) ℚ_[g]) i j = 0) :

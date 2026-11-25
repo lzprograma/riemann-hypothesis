@@ -47,7 +47,7 @@ def decompRestrict :
       MulAction.stabilizer (F.1 ≃ₐ[K.1] F.1) w.1.asIdeal where
   toFun σ := ⟨levelRestrict K F E σ, levelRestrict_mem_stabilizer w w' σ.2⟩
   map_one' := Subtype.ext (map_one _)
-  map_mul' σ τ := Subtype.ext (map_mul _ _ _)
+  map_mul' _ _ := Subtype.ext (map_mul _ _ _)
 
 @[simp]
 theorem coe_decompRestrict (σ : MulAction.stabilizer (E.1 ≃ₐ[K.1] E.1) w'.1.asIdeal) :
@@ -124,7 +124,7 @@ def infDecompRestrict :
     MulAction.stabilizer (E.1 ≃ₐ[K.1] E.1) w'.1 →* MulAction.stabilizer (F.1 ≃ₐ[K.1] F.1) w.1 where
   toFun σ := ⟨levelRestrict K F E σ, levelRestrict_mem_stabilizer_infinite w w' σ.2⟩
   map_one' := Subtype.ext (map_one _)
-  map_mul' σ τ := Subtype.ext (map_mul _ _ _)
+  map_mul' _ _ := Subtype.ext (map_mul _ _ _)
 
 @[simp]
 theorem coe_infDecompRestrict (σ : MulAction.stabilizer (E.1 ≃ₐ[K.1] E.1) w'.1) :

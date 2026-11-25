@@ -11,64 +11,8 @@ public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOp
 public import Mathlib.AlgebraicGeometry.Morphisms.Etale
 public import Mathlib.AlgebraicGeometry.Morphisms.FlatRank
 public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsUnitSmulEqOfBijectiveToSpanSingleton
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Invariant.Basic
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsFreeRingActionIffInertiaEqBotOfIsPrime, Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsDomainAndIsIntegrallyClosedLocalizationOfIsInv
@@ -109,16 +53,6 @@ theorem isFreeRingAction_iff_inertia_eq_bot :
       AddSubgroup.mem_inertia.mpr fun a ↦ hle (Ideal.subset_span ⟨a, rfl⟩)
     rw [h P hP] at this
     exact hg this
-
-theorem isFreeRingAction_of_field (K : Type*) [Field K] [MulSemiringAction G K]
-    [FaithfulSMul G K] : IsFreeRingAction G K := by
-  intro g hg
-  rcases Ideal.eq_bot_or_top (Ideal.span (Set.range fun a : K ↦ g • a - a)) with h | h
-  · refine absurd (eq_of_smul_eq_smul (α := K) fun a ↦ ?_) hg
-    have : g • a - a ∈ Ideal.span (Set.range fun a : K ↦ g • a - a) := Ideal.subset_span ⟨a, rfl⟩
-    rw [h, Ideal.mem_bot, sub_eq_zero] at this
-    rw [this, one_smul]
-  · exact h
 
 variable (B : Type*) [CommRing B] [Algebra B A] [SMulCommClass G B A]
 
@@ -270,30 +204,6 @@ theorem sum_smul_sum_smul (s : Finset (A × A)) (m : M) :
 
 end Tame
 
-section DualBasis
-
-variable {G : Type*} [Group G] [Fintype G] {A : Type*} [CommRing A] [MulSemiringAction G A]
-  {M : Type*} [AddCommGroup M] [Module A M] [DistribMulAction G M] [SMulDistribClass G A M]
-  {N : Type*} [AddCommGroup N] [Module A N] [DistribMulAction G N] [SMulDistribClass G A N]
-
-
-variable (B : Type*) [CommRing B] [Algebra B A] [SMulCommClass G B A]
-  [FaithfulSMul B A] [Algebra.IsInvariant B A G]
-  [Module B M] [IsScalarTower B A M] [SMulCommClass G B M]
-
-
-end DualBasis
-
-section TameDescent
-
-variable {G : Type*} [Group G] [Finite G] {A : Type*} [CommRing A] [MulSemiringAction G A]
-  (B : Type*) [CommRing B] [Algebra B A] [SMulCommClass G B A]
-  [FaithfulSMul B A] [Algebra.IsInvariant B A G]
-  (M : Type*) [AddCommGroup M] [Module A M] [DistribMulAction G M] [SMulDistribClass G A M]
-  [Module B M] [IsScalarTower B A M] [SMulCommClass G B M]
-
-end TameDescent
-
 section Free
 
 variable {G : Type*} [Group G] {A : Type*} [CommRing A] [MulSemiringAction G A]
@@ -367,47 +277,10 @@ theorem etale (h : IsFreeRingAction G A) : Algebra.Etale B A :=
   haveI : Algebra.Etale A (A ⊗[B] A) := .of_equiv (galoisEquiv B h).symm
   Algebra.Etale.of_etale_tensorProduct_of_faithfullyFlat A
 
-theorem rankAtStalk_eq_card (h : IsFreeRingAction G A) (p : PrimeSpectrum B) :
-    Module.rankAtStalk A p = Nat.card G := by
-  cases nonempty_fintype G
-  haveI := (finite_and_projective B h).1
-  haveI := (finite_and_projective B h).2
-  obtain ⟨q, rfl⟩ := Algebra.IsIntegral.comap_surjective B A p
-  haveI : Nontrivial A := q.nontrivial
-  rw [← Module.rankAtStalk_baseChange,
-    Module.rankAtStalk_eq_of_equiv (galoisEquiv B h).toLinearEquiv,
-    Module.rankAtStalk_eq_finrank_of_free]
-  simp
-
 variable (M : Type*) [AddCommGroup M] [Module A M] [DistribMulAction G M] [SMulDistribClass G A M]
   [Module B M] [IsScalarTower B A M] [SMulCommClass G B M]
 
 end Free
-
-section FullyFaithful
-
-variable {G : Type*} [Group G] {A : Type*} [CommRing A] [MulSemiringAction G A]
-  {B : Type*} [CommRing B] [Algebra B A]
-  {M : Type*} [AddCommGroup M] [Module A M] [DistribMulAction G M] [SMulDistribClass G A M]
-  [Module B M] [IsScalarTower B A M] [SMulCommClass G B M]
-  {N : Type*} [AddCommGroup N] [Module A N] [DistribMulAction G N] [SMulDistribClass G A N]
-  [Module B N] [IsScalarTower B A N] [SMulCommClass G B N]
-
-end FullyFaithful
-
-section BaseChange
-
-variable (G : Type*) [Group G] (A : Type*) [CommRing A] [MulSemiringAction G A]
-  (B : Type*) [CommRing B] [Algebra B A] [SMulCommClass B G A]
-  (N : Type*) [AddCommGroup N] [Module B N]
-
-variable [SMulCommClass G B A]
-
-variable [FaithfulSMul B A] [Algebra.IsInvariant B A G]
-
-
-
-end BaseChange
 
 end FreeQuotient
 
@@ -981,33 +854,6 @@ theorem IsFreeAction.of_isAlgClosed {ρ : G →* Aut X}
   h (AlgebraicClosure k) (Spec.map (CommRingCat.ofHom (algebraMap k _)) ≫ x) g
     (by rw [Category.assoc, hx])
 
-theorem IsFreeAction.of_equivariant {ρ : G →* Aut X} (h : IsFreeAction ρ) {ρ' : G →* Aut Y}
-    (p : Y ⟶ X) (hp : ∀ g, (ρ' g).asIso.hom ≫ p = p ≫ (ρ g).asIso.hom) : IsFreeAction ρ' := fun k _ x g hx ↦
-  h k (x ≫ p) g (by rw [Category.assoc, ← hp, reassoc_of% hx])
-
-theorem isFreeAction_specAction_iff (A : Type u) [CommRing A] [MulSemiringAction G A] :
-    IsFreeAction (specAction G A) ↔ IsFreeRingAction G A := by
-  constructor
-  · intro h
-    refine (FreeQuotient.isFreeRingAction_iff_inertia_eq_bot G A).mpr fun P hP ↦ ?_
-    rw [Subgroup.eq_bot_iff_forall]
-    intro g hg
-    let := Ideal.Quotient.field P
-    refine inv_eq_one.mp (h (A ⧸ P) (Spec.map (CommRingCat.ofHom (Ideal.Quotient.mk P))) g⁻¹ ?_)
-    rw [specAction_hom, ← Spec.map_comp, inv_inv]
-    congr 1
-    ext a
-    exact Ideal.Quotient.eq.mpr (AddSubgroup.mem_inertia.mp hg a)
-  · intro h k _ x g hx
-    obtain ⟨φ, rfl⟩ := Spec.map_surjective x
-    rw [specAction_hom, ← Spec.map_comp, Spec.map_inj] at hx
-    by_contra hg
-    have := h g⁻¹ (by simpa using hg)
-    refine RingHom.ker_ne_top φ.hom (top_le_iff.mp ?_)
-    rw [← this, Ideal.span_le]
-    rintro _ ⟨a, rfl⟩
-    exact (RingHom.sub_mem_ker_iff _).mpr congr($hx a)
-
 theorem specAction_fromSpec (ρ : G →* Aut X) {U : X.Opens} (hU : IsAffineOpen U)
     (hst : ∀ g, U ≤ (ρ g).asIso.hom ⁻¹ᵁ U) (g : G) :
     (letI := sectionsAction ρ U hst;
@@ -1071,23 +917,6 @@ theorem etale_of_isFreeAction : Etale π := by
   obtain ⟨_, _, _⟩ := h.isInvariant W
   rw [Scheme.Hom.appLE_eq_app]
   exact FreeQuotient.etale Γ(Y, W) (hρ.isFreeRingAction (hW.preimage π) (h.preimage_le W))
-
-theorem finrank_of_isFreeAction (y : Y) : π.finrank y = Nat.card G := by
-  have := h.isFinite_of_isFreeAction hρ
-  have := h.etale_of_isFreeAction hρ
-  obtain ⟨_, ⟨W, hW, rfl⟩, hy, -⟩ :=
-    Y.isBasis_affineOpens.exists_subset_of_mem_open (Set.mem_univ y) isOpen_univ
-  have hW : IsAffineOpen W := hW
-  let := sectionsAction ρ _ (h.preimage_le W)
-  let := (π.app W).hom.toAlgebra
-  obtain ⟨_, _, _⟩ := h.isInvariant W
-  have hf := hρ.isFreeRingAction (hW.preimage π) (h.preimage_le W)
-  obtain ⟨_, _⟩ := FreeQuotient.finite_and_projective Γ(Y, W) hf
-  obtain ⟨z, rfl⟩ : y ∈ Set.range hW.fromSpec := by rwa [hW.range_fromSpec]
-  rw [← Scheme.Hom.finrank_of_isPullback _ _ _ _
-    (isPullback_fromSpec_app π hW (hW.preimage π)),
-    ← FreeQuotient.rankAtStalk_eq_card Γ(Y, W) hf z]
-  exact Scheme.Hom.finrank_SpecMap_algebraMap Γ(Y, W) Γ(X, π ⁻¹ᵁ W) _
 
 end IsAffineQuotient
 

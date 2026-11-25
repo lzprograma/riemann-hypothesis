@@ -2,59 +2,8 @@ module
 
 public import ReciprocityTheory.DualLattices.FischerAdjointStatement
 public import Mathlib.Tactic.Continuity
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.GroupTheory.Perm.DomMulAct
 public import Mathlib.LinearAlgebra.Matrix.Permutation
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.BitVec
-import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Algebra.MvPolynomial.Funext
 public import Mathlib.Basic.PEquiv
 public import Mathlib.Data.Matrix.PEquiv
@@ -78,12 +27,12 @@ theorem deriv_finsetProd {ι : Type*} [DecidableEq ι] (D : Derivation R A A) (t
   | empty => simp
   | @insert a t ha ih =>
     have h1 : ∏ k ∈ t, (if k = a then D (P k) else P k) = ∏ k ∈ t, P k :=
-      Finset.prod_congr rfl fun k hk => if_neg fun h => ha (by rw [← h]; exact hk)
+      Finset.prod_congr rfl fun k hk => ite_eq_right fun h => ha (by rw [← h]; exact hk)
     have h2 : ∀ k₀ ∈ t, ∏ k ∈ insert a t, (if k = k₀ then D (P k) else P k) =
         P a * ∏ k ∈ t, (if k = k₀ then D (P k) else P k) := fun k₀ hk₀ => by
-      rw [Finset.prod_insert ha, if_neg fun h => ha (by rw [h]; exact hk₀)]
+      rw [Finset.prod_insert ha, ite_eq_right fun h => ha (by rw [h]; exact hk₀)]
     rw [Finset.prod_insert ha, Derivation.leibniz, ih, Finset.sum_insert ha,
-      Finset.prod_insert ha, if_pos (rfl : a = a), h1, Finset.sum_congr rfl h2,
+      Finset.prod_insert ha, ite_eq_left (rfl : a = a), h1, Finset.sum_congr rfl h2,
       smul_eq_mul, smul_eq_mul, Finset.mul_sum]
     ring
 
@@ -153,12 +102,12 @@ theorem pderiv_linSub (g : Matrix (Fin n) (Fin n) R) (a b : Fin n)
     congr 1
     · simp only [hs, mul_ite, mul_one, mul_zero]
       by_cases hb : v.2 = b
-      · rw [if_pos hb, Finset.sum_eq_single v.1]
-        · rw [if_pos (by ext <;> simp [hb])]; ring
-        · intro i _ hi; rw [if_neg (fun h => hi (congrArg Prod.fst h).symm)]
+      · rw [ite_eq_left hb, Finset.sum_eq_single v.1]
+        · rw [ite_eq_left (by ext <;> simp [hb])]; ring
+        · intro i _ hi; rw [ite_eq_right (fun h => hi (congrArg Prod.fst h).symm)]
         · simp
-      · rw [if_neg hb]; symm
-        exact Finset.sum_eq_zero fun i _ => if_neg (fun h => hb (congrArg Prod.snd h))
+      · rw [ite_eq_right hb]; symm
+        exact Finset.sum_eq_zero fun i _ => ite_eq_right (fun h => hb (congrArg Prod.snd h))
     · exact Finset.sum_congr rfl fun i _ => by ring
 
 def dOp {m : ℕ} (r c : Fin m → Fin n) : Module.End R (MvPolynomial (Fin n × Fin n) R) :=
@@ -347,8 +296,7 @@ theorem prod_det_funMat {s : ℕ} (σ : Equiv.Perm (Fin n)) (φ : Fin n → Fin 
         fun l => map_list_prod (Matrix.detMonoidHom) l, List.map_map]
     try rfl
   · have hex : ∃ b, φ (σ b) ≠ φ b := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact h (funext hc)
     obtain ⟨b, hb⟩ := hex
     apply Finset.prod_eq_zero (Finset.mem_univ (φ b))
@@ -449,7 +397,7 @@ theorem sum_prod_factorial_add_ite {s : ℕ} (c : Fin s → ℕ) :
       split_ifs
       · rw [Nat.factorial_succ, mul_comm]
       · simp
-    simp only [e, Finset.prod_mul_distrib, Finset.prod_ite_eq, Finset.mem_univ, if_true]
+    simp only [e, Finset.prod_mul_distrib, Finset.prod_ite_eq, Finset.mem_univ, ite_true]
   rw [Finset.sum_congr rfl fun k₀ _ => h k₀, ← Finset.mul_sum, Finset.sum_add_distrib]
   simp
 

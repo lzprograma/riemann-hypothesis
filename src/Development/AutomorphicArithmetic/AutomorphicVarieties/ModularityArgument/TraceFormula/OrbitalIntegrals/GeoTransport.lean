@@ -108,7 +108,7 @@ def GeoTransport : Prop :=
     [IsTopologicalRing S] [IsTopologicalRing S'] (e : S ≃+* S'), Continuous e → Continuous e.symm →
     ∀ (ι : R →+* S) (ι' : R →+* S') (s : S →+* S) (s' : S' →+* S'), (∀ x, e (ι x) = ι' x) → (∀ y, e (s y) = s' (e y)) →
     ∀ (n l : ℕ) [MeasurableSpace (GL (Fin n) R)] [MeasurableSpace (GL (Fin n) S)] [BorelSpace (GL (Fin n) S)]
-      [MeasurableSpace (GL (Fin n) S')] [BorelSpace (GL (Fin n) S')] (μ : Measure (GL (Fin n) S)) (μR : Measure (GL (Fin n) R)),
+      [MeasurableSpace (GL (Fin n) S')] [BorelSpace (GL (Fin n) S')] (μ : Measure (GL (Fin n) S)) (_ : Measure (GL (Fin n) R)),
       (μ.IsHaarMeasure → (μ.map (mapGL n (e : S →+* S'))).IsHaarMeasure) ∧
       ∀ (γ : GL (Fin n) R), (∀ δ : GL (Fin n) S, twNorm (mapGL n s) l δ = mapGL n ι γ ↔
           twNorm (mapGL n s') l (mapGL n (e : S →+* S') δ) = mapGL n ι' γ) ∧

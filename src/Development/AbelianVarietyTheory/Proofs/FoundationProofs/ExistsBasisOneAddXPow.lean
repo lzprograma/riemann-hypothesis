@@ -67,11 +67,7 @@ open PowerSeries in
 private theorem subsingleton_of_isUnit_natCast_of_isAdicComplete {R : Type} [CommRing R] (p : ℕ)
     (hR : IsAdicComplete (Ideal.span {(p : R)}) R) (hu : IsUnit (p : R)) : Subsingleton R := by
   have htop : Ideal.span {(p : R)} = ⊤ := Ideal.span_singleton_eq_top.2 hu
-  constructor
-  intro a b
-  have h := hR.toIsHausdorff.haus (a - b) (fun n => by
-    rw [htop, Ideal.top_pow, Submodule.top_smul]; exact SModEq.top)
-  exact sub_eq_zero.1 h
+  exact IsHausdorff.subsingleton (htop ▸ hR.toIsHausdorff)
 
 
 open PowerSeries in

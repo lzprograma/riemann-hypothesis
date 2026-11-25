@@ -5,43 +5,7 @@ public import ReciprocityTheory.Automorphisms.InstMainA
 public import ReciprocityTheory.ResidueCardinality.ArtinOntoB
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.GOfPrime
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.LocDegOneBelow
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolUTyp
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.ValNatCastOf, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SplitTransport
@@ -61,25 +25,7 @@ variable {F : Type} [Field F] [NumberField F] (v : HeightOneSpectrum (𝓞 F))
 
 theorem val_natCast_of (g : ℕ) (hg1 : (g : 𝓞 F) ∈ v.asIdeal) (hg2 : (g : 𝓞 F) ∉ v.asIdeal ^ 2) :
     Valued.v (((g : v.adicCompletionIntegers F) : v.adicCompletion F)) = WithZero.exp (-1 : ℤ) := by
-  have h0 : (g : 𝓞 F) ≠ 0 := fun h => hg2 (by rw [h]; exact zero_mem _)
-  have key := IsDedekindDomain.HeightOneSpectrum.valuedAdicCompletion_eq_valuation (K := F) v (g : 𝓞 F)
-  rw [IsDedekindDomain.HeightOneSpectrum.valuation_of_algebraMap] at key
-  have e : (((g : v.adicCompletionIntegers F) : v.adicCompletion F)) =
-      algebraMap (𝓞 F) (v.adicCompletion F) (g : 𝓞 F) := by
-    rw [map_natCast]
-    simp
-  rw [e, show Valued.v (algebraMap (𝓞 F) (v.adicCompletion F) (g : 𝓞 F)) = v.intValuation (g : 𝓞 F) from key]
-  have h1 : v.intValuation (g : 𝓞 F) ≤ WithZero.exp (-((1 : ℕ) : ℤ)) :=
-    (v.intValuation_le_pow_iff_mem _ 1).2 (by simpa using hg1)
-  have h2 : ¬ v.intValuation (g : 𝓞 F) ≤ WithZero.exp (-((2 : ℕ) : ℤ)) :=
-    fun h => hg2 ((v.intValuation_le_pow_iff_mem _ 2).1 h)
-  have hne : v.intValuation (g : 𝓞 F) ≠ 0 := by
-    exact v.intValuation_ne_zero _ h0
-  rw [← WithZero.exp_log hne] at h1 h2 ⊢
-  rw [WithZero.exp_le_exp] at h1 h2
-  congr 1
-  push_cast at h1 h2
-  omega
+  apply _root_.Formalism.L2.SG.Pf.NcVal.VolUAr.val_natCast_of <;> assumption
 
 theorem resZ_of (g : ℕ) [hgp : Fact g.Prime] (hcard : Nat.card (𝓞 F ⧸ v.asIdeal) = g)
     (hg1 : (g : 𝓞 F) ∈ v.asIdeal) (hg2 : (g : 𝓞 F) ∉ v.asIdeal ^ 2) :
@@ -155,53 +101,10 @@ namespace MassDataIdxRes
 
 open NumberField IsDedekindDomain Ideal
 
-private theorem comap_ringEquiv_ne_bot {A B : Type} [CommRing A] [CommRing B] (f : A ≃+* B)
-    (I : Ideal B) (hI : I ≠ ⊥) : I.comap (f : A →+* B) ≠ ⊥ := by
-  intro h
-  apply hI
-  ext y
-  constructor
-  · intro hy
-    have h1 : f.symm y ∈ I.comap (f : A →+* B) := by
-      rw [Ideal.mem_comap]
-      simpa using hy
-    rw [h, Ideal.mem_bot] at h1
-    simpa using h1
-  · intro hy
-    rw [Ideal.mem_bot] at hy
-    rw [hy]
-    exact I.zero_mem
-
 theorem split_transport {K L : Type} [Field K] [NumberField K] [Field L] [NumberField L] (e : K ≃+* L)
     (l : ℕ) (h : {w : HeightOneSpectrum (𝓞 L) | ((l : ℕ) : 𝓞 L) ∈ w.asIdeal}.ncard = Module.finrank ℚ L) :
     {w : HeightOneSpectrum (𝓞 K) | ((l : ℕ) : 𝓞 K) ∈ w.asIdeal}.ncard = Module.finrank ℚ K := by
-  classical
-  have hrk : Module.finrank ℚ K = Module.finrank ℚ L :=
-    (e.toRatAlgEquiv.toLinearEquiv).finrank_eq
-  rw [hrk, ← h]
-  let g : 𝓞 K ≃+* 𝓞 L := NumberField.RingOfIntegers.mapRingEquiv e
-  refine Set.ncard_congr
-    (fun w _ => (⟨w.asIdeal.comap (g.symm : 𝓞 L →+* 𝓞 K),
-      (by haveI := w.isPrime; infer_instance),
-      comap_ringEquiv_ne_bot g.symm w.asIdeal w.ne_bot⟩ : HeightOneSpectrum (𝓞 L))) ?_ ?_ ?_
-  · intro w hw
-    simp only [Set.mem_setOf_eq, Ideal.mem_comap] at hw ⊢
-    simpa using hw
-  · intro a b _ _ hab
-    have h1 := congrArg HeightOneSpectrum.asIdeal hab
-    apply HeightOneSpectrum.ext
-    ext x
-    have h2 := SetLike.ext_iff.mp h1 (g x)
-    simpa [Ideal.mem_comap] using h2
-  · intro w hw
-    refine ⟨⟨w.asIdeal.comap (g : 𝓞 K →+* 𝓞 L), (by haveI := w.isPrime; infer_instance),
-      comap_ringEquiv_ne_bot g w.asIdeal w.ne_bot⟩, ?_, ?_⟩
-    · simp only [Set.mem_setOf_eq, Ideal.mem_comap] at hw ⊢
-      simpa using hw
-    · apply HeightOneSpectrum.ext
-      ext x
-      rw [Ideal.mem_comap, Ideal.mem_comap]
-      simp
+  apply +allowSynthFailures _root_.Formalism.L2.SG.Pf.NcVal.VolUAr.split_transport <;> assumption
 
 end MassDataIdxRes
 

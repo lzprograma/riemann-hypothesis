@@ -124,11 +124,11 @@ theorem _root_.GlobalTheory.DegCnt.Absorb.exists_coord (F : _root_.Formalism.Her
       intro h
       omega
     · rw [Finset.sum_eq_single ⟨c, hca⟩]
-      · simp only [if_true, one_smul]
+      · simp only [ite_true, one_smul]
         congr 1
       · intro b _ hb
         dsimp only
-        rw [if_neg (fun h => hb (Fin.ext h)), zero_smul]
+        rw [ite_eq_right (fun h => hb (Fin.ext h)), zero_smul]
       · intro h
         exact absurd (Finset.mem_univ _) h
   | zero => exact ⟨0, fun _ _ => rfl, by simp⟩

@@ -6,53 +6,9 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermZeroOfTr
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermSumRight
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermSelfNeZero
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermZeroRight
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedLocSec
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerPairs.IsUnitDetOfMemGV
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
-import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJfSSymbolW, Formalism.HermitianCurvature.HermitianCurvatureProofs.FltZeroEq, Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJfSSymbolLevi
@@ -255,7 +211,7 @@ theorem pw_mulVec (x : Fin (2 * r + k + 1) → ℂ) (i : Fin (2 * r + k + 1)) :
 
 theorem pw_inWb (x : Fin (2 * r + k + 1) → ℂ) : inWb k r (diagonal (pw (k := k) (r := r)) *ᵥ x) := by
   intro i hi
-  rw [pw_mulVec, pw, if_neg (by omega), zero_mul]
+  rw [pw_mulVec, pw, ite_eq_right (by omega), zero_mul]
 
 theorem pw_fix {u : Fin (2 * r + k + 1) → ℂ} (hu : inWb k r u) : diagonal (pw (k := k) (r := r)) *ᵥ u = u := by
   funext i
@@ -282,9 +238,9 @@ theorem flt_sub_pw (x : Fin (2 * r + k + 1) → ℂ) (hx : ∀ b : Fin r, x (esI
   intro i hi
   rw [Pi.sub_apply, pw_mulVec, pw]
   by_cases h : i.val ≤ r + k
-  · rw [if_pos ⟨hi, h⟩, one_mul, sub_self]
+  · rw [ite_eq_left ⟨hi, h⟩, one_mul, sub_self]
   · have e : i = esI k r ⟨2 * r + k - i.val, by omega⟩ := by apply Fin.ext; simp [esI]; omega
-    rw [if_neg (by omega), zero_mul, sub_zero, e, hx]
+    rw [ite_eq_right (by omega), zero_mul, sub_zero, e, hx]
 
 theorem flt_of_orth (x : Fin (2 * r + k + 1) → ℂ)
     (h : ∀ v : Fin (2 * r + k + 1) → ℂ, (∀ b : Fin r, v (esI k r b) = 0) → herm (Hpk k r) x v = 0) : Flt r x := by
@@ -413,7 +369,7 @@ theorem symbolNil_direct : SymbolNil := by
       intro i hi
       by_cases h2 : i.val ≤ r + k
       · have := congrFun hc i
-        rw [pw_mulVec, pw, if_pos ⟨hi, h2⟩, one_mul] at this
+        rw [pw_mulVec, pw, ite_eq_left ⟨hi, h2⟩, one_mul] at this
         exact this
       · have e : i = esI k r ⟨2 * r + k - i.val, by omega⟩ := by apply Fin.ext; simp [esI]; omega
         rw [e]; exact hrange u _

@@ -15,8 +15,6 @@ namespace Formalism.L2.Th1.F
 def pOf {K : Type} [Field K] (g2 g3 : K) : PowerSeries K :=
   PowerSeries.mk fun n => PowerSeries.coeff (n + 2) (wpNum g2 g3)
 
-def shortW {K : Type} [Field K] (g2 g3 : K) : WeierstrassCurve K := ⟨0, 0, 0, -g2 / 4, -g3 / 4⟩
-
 def POfIsWp : Prop :=
   ∀ (K : Type) [Field K] [CharZero K] (g2 g3 : K), Formalism.L2.Th1.B.IsWp g2 g3 (pOf g2 g3)
 

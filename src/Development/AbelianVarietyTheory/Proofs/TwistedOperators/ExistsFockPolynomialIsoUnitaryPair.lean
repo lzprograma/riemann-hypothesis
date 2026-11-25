@@ -52,8 +52,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Matrix GlobalTheory.Chain GlobalTheory.Chain.RealIt
 open scoped TensorProduct InnerProductSpace
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.Chain.RealIt.PolyIso
 
 open MvPolynomial GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators GlobalTheory.IndefiniteRowSideFullHecke.BarMatrix
@@ -118,18 +116,18 @@ theorem fwd_rai (h : SignCompat ε e) (h' : SignCompat ε' e') (x : Ix p q) (c :
     fwd ε e e' (rai ε ε' (e' c) (e x) P) = raiB (x, c) (fwd ε e e' P) := by
   unfold rai raiB
   by_cases hl : ε' (e' c) = ε (e x)
-  · rw [if_pos hl, if_pos ((linePos_iff h h' x c).2 hl)]
+  · rw [ite_eq_left hl, ite_eq_left ((linePos_iff h h' x c).2 hl)]
     exact fwd_mulX c x P
-  · rw [if_neg hl, if_neg (mt (linePos_iff h h' x c).1 hl)]
+  · rw [ite_eq_right hl, ite_eq_right (mt (linePos_iff h h' x c).1 hl)]
     simp [pderiv_fwd]
 
 theorem fwd_low (h : SignCompat ε e) (h' : SignCompat ε' e') (x : Ix p q) (c : Ix r s) (P : LPol b a) :
     fwd ε e e' (low ε ε' (e' c) (e x) P) = lowB (x, c) (fwd ε e e' P) := by
   unfold low lowB
   by_cases hl : ε' (e' c) = ε (e x)
-  · rw [if_pos hl, if_pos ((linePos_iff h h' x c).2 hl)]
+  · rw [ite_eq_left hl, ite_eq_left ((linePos_iff h h' x c).2 hl)]
     simp [pderiv_fwd]
-  · rw [if_neg hl, if_neg (mt (linePos_iff h h' x c).1 hl)]
+  · rw [ite_eq_right hl, ite_eq_right (mt (linePos_iff h h' x c).1 hl)]
     exact fwd_mulX c x P
 
 theorem act_eq_sum {V : Type*} [AddCommGroup V] [Module ℂ V] (f : Mat p q →ₗ[ℂ] V) (Z : Mat p q) :

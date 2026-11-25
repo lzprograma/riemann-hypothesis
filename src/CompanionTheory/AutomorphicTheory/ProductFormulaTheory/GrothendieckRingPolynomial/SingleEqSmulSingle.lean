@@ -1,7 +1,6 @@
 module
 
 public import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.GrothendieckRingPolynomial.ProdList
-import Mathlib.Tactic.TypeStar
 import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyInterleaving.LInjective
 
 @[expose] public section
@@ -9,8 +8,6 @@ import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.Zelevin
 noncomputable section
 
 open GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult Zc Zc.M Zc.Cos
-
-
 
 namespace CompanionTheory.Groth
 

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
 public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
 public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
 import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField
@@ -59,25 +60,7 @@ theorem _root_.GlobalTheory.SmGL.LeviInt.nabs_det_eq_one {k : Type} [Field k] [V
     [IsNonarchimedeanLocalField k] {n : Type} [Fintype n] [DecidableEq n] {g : GL n k}
     (hg : g ∈ _root_.GlobalTheory.SplitWeil.KO k n) :
     _root_.GlobalTheory.SplitWeil.nabs k (GeneralLinearGroup.det g) = 1 := by
-  obtain ⟨h1, h2⟩ := (_root_.GlobalTheory.SplitFlip.mem_KO_iff g).1 hg
-  have hdet : ∀ M : Matrix n n k, (∀ i j, M i j ∈ (valuation k).integer) →
-      M.det ∈ (valuation k).integer := by
-    intro M hM
-    rw [Matrix.det_apply]
-    refine sum_mem fun σ _ => ?_
-    rw [Units.smul_def]
-    exact zsmul_mem (prod_mem fun i _ => hM _ _) _
-  apply _root_.GlobalTheory.SmGL.nabs_eq_one
-  have hd1 : valuation k ((GeneralLinearGroup.det g : kˣ) : k) ≤ 1 := by
-    rw [← Valuation.mem_integer_iff, Matrix.GeneralLinearGroup.val_det_apply]
-    exact hdet _ h1
-  have hd2 : valuation k (((GeneralLinearGroup.det g)⁻¹ : kˣ) : k) ≤ 1 := by
-    rw [← map_inv, ← Valuation.mem_integer_iff, Matrix.GeneralLinearGroup.val_det_apply]
-    exact hdet _ h2
-  have hprod : valuation k ((GeneralLinearGroup.det g : kˣ) : k) *
-      valuation k (((GeneralLinearGroup.det g)⁻¹ : kˣ) : k) = 1 := by
-    rw [← map_mul, Units.mul_inv, map_one]
-  exact le_antisymm hd1 (hprod ▸ mul_le_of_le_one_right' hd2)
+  first | exact _root_.GlobalTheory.LGrp.nabs_det_of_mem_KO | exact @_root_.GlobalTheory.LGrp.nabs_det_of_mem_KO | apply _root_.GlobalTheory.LGrp.nabs_det_of_mem_KO <;> assumption
 
 
 open MeasureTheory Topology in

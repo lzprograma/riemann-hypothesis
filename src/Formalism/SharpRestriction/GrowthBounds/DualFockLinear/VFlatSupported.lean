@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.Tensor
 public import Formalism.GradedWeylDivisibility.StatementD
 public import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
 public import Formalism.GradedWeylDivisibility.FinalD
@@ -12,53 +13,9 @@ public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgeLatticeMulO
 public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.CloudBAtOfRho
 public import Formalism.LocalToGlobal.GroupLattices.FockModels.DualInclusionLattices
 public import Formalism.LocalToGlobal.GroupLattices.FockModels.MulMemRiemannRochSpaceAdd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetLemmas
 import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.DvdOfAdd
 import Formalism.LocalToGlobal.GroupLattices.FockModels.ElementaryDivisorBasis
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Linter.Style
 import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.GoodRankOfPrim
 import Mathlib.RingTheory.PiTensorProduct
 
@@ -253,7 +210,7 @@ theorem anti_zero (m : ℕ) : Antitone (0 : Fin (m + 1) → ℤ) := fun _ _ _ =>
 theorem one_mem_H0_weight_zero (O Kf : Type) [CommRing O] [Field Kf] [Algebra O Kf] (m : ℕ) (Λ : Submodule O (Fin (m + 1) → Kf)) :
     (1 : MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf) ∈ H0 O m 0 Λ := by
   unfold H0
-  rw [if_pos (anti_zero m)]
+  rw [ite_eq_left (anti_zero m)]
   simp only [Submodule.mem_iInf]
   rintro g ⟨hg, -⟩
   rw [nablaLTwMem O Kf m 0 g hg]
@@ -278,8 +235,8 @@ theorem slice_V (hP : Peel A X XT sp)
     (fun s => if Antitone (lamAt XT s) then dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt XT s)) else ⊥)
     (fun s => if Antitone (lamAt sp s) then dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt sp s)) else ⊥)
     (fun s hs => ⟨by rw [lamAt_congr (hP.top s hs).1], by
-      rw [lamAt_zero (hP.top s hs).2, if_pos (anti_zero m), nuOf_zero]; exact one_mem_dualWeyl⟩)
-    (fun s hs => ⟨by rw [lamAt_zero (hP.off s hs).1, if_pos (anti_zero m), nuOf_zero]; exact one_mem_dualWeyl, by
+      rw [lamAt_zero (hP.top s hs).2, ite_eq_left (anti_zero m), nuOf_zero]; exact one_mem_dualWeyl⟩)
+    (fun s hs => ⟨by rw [lamAt_zero (hP.off s hs).1, ite_eq_left (anti_zero m), nuOf_zero]; exact one_mem_dualWeyl, by
       rw [lamAt_congr (hP.off s hs).2]⟩)
     γ 1 (fun Q _ => ⟨γ Q, by simp⟩) u hu
   rw [he, one_smul]
@@ -315,7 +272,7 @@ theorem Hten_le_V (hd : IsDominant X) (Λ : Fin n' → Submodule O (Fin (m + 1) 
   have : (fun s => if Antitone (lamAt X s) then dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt X s)) else ⊥) =
       fun s => dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt X s)) := by
     funext s
-    rw [if_pos (kp_lamAt_antitone X hd s)]
+    rw [ite_eq_left (kp_lamAt_antitone X hd s)]
   rw [this]
   exact h2
 
@@ -455,23 +412,7 @@ end Lat
 
 theorem dualWeyl_zero_const {R : Type} [CommRing R] {r n : ℕ} (F : MvPolynomial (Fin r × Fin n) R)
     (hF : F ∈ dualWeyl R r n 0) : F = C (AddMonoidAlgebra.coeff F 0) := by
-  classical
-  have h1 : IsWeightedHomogeneous (colW r n) F 0 := (mem_dualWeyl_iff.1 hF).1
-  ext e
-  rw [coeff_C]
-  split_ifs with he
-  · rw [he]
-  · apply h1.coeff_eq_zero
-    intro hwt
-    apply he
-    symm
-    ext v
-    have h2 := congrFun hwt v.2
-    rw [Finsupp.weight_apply, Finsupp.sum, Finset.sum_apply] at h2
-    by_contra hv
-    have h3 := (Finset.sum_eq_zero_iff.1 h2) v (Finsupp.mem_support_iff.2 (by simpa using hv))
-    simp [colW] at h3
-    exact hv (by simpa using h3)
+  apply +allowSynthFailures _root_.Formalism.MainNotions.flipOneThree.Pf.tn_const <;> assumption
 
 end Formalism.MainNotions.TestSideCounting
 end -- clump:auto
@@ -539,7 +480,7 @@ theorem V_flat_supported {Kf : Type} [Field Kf] {n' m : ℕ} (TT : Finset (Fin n
         rw [hd0 s hs]
         simp
       have h1 := hF s
-      simp only [lamAt_zero h0, if_pos (anti_zero m), nuOf_zero] at h1
+      simp only [lamAt_zero h0, ite_eq_left (anti_zero m), nuOf_zero] at h1
       rw [dualWeyl_zero_const _ h1]
       unfold blockEmb
       rw [rename_C]
@@ -649,23 +590,23 @@ theorem rho_peel (D : Formalism.BasicNotions.D7) {p n' : ℕ} {W Qq O Kf : Type}
         have hQ : ∏ s, blockEmb Kf s (if s ∈ TT then 1 else F s) ∈ Vsp Kf sp := by
           refine Submodule.subset_span ⟨_, fun s => ?_, rfl⟩
           by_cases hs : s ∈ TT
-          · simp only [if_pos hs, lamAt_zero (hPl.top s hs).2, if_pos (anti_zero m), nuOf_zero]
+          · simp only [ite_eq_left hs, lamAt_zero (hPl.top s hs).2, ite_eq_left (anti_zero m), nuOf_zero]
             exact one_mem_dualWeyl
           · have := hF s
-            simp only [if_neg hs, lamAt_congr (hPl.off s hs).2]
+            simp only [ite_eq_right hs, lamAt_congr (hPl.off s hs).2]
             exact this
         have hPs : ∏ s, blockEmb Kf s (if s ∈ TT then F s else 1) ∈
             supported Kf {v : Fin n' × (Fin (m + 1) × Fin (m + 1)) | v.1 ∈ TT} := by
           refine Subalgebra.prod_mem _ fun s _ => ?_
           by_cases hs : s ∈ TT
-          · rw [if_pos hs]; exact blockEmb_supported s _ (fun s => s ∈ TT) hs
-          · rw [if_neg hs, map_one]; exact Subalgebra.one_mem _
+          · rw [ite_eq_left hs]; exact blockEmb_supported s _ (fun s => s ∈ TT) hs
+          · rw [ite_eq_right hs, map_one]; exact Subalgebra.one_mem _
         have hQs : ∏ s, blockEmb Kf s (if s ∈ TT then 1 else F s) ∈
             supported Kf {v : Fin n' × (Fin (m + 1) × Fin (m + 1)) | v.1 ∉ TT} := by
           refine Subalgebra.prod_mem _ fun s _ => ?_
           by_cases hs : s ∈ TT
-          · rw [if_pos hs, map_one]; exact Subalgebra.one_mem _
-          · rw [if_neg hs]; exact blockEmb_supported s _ (fun s => s ∉ TT) hs
+          · rw [ite_eq_left hs, map_one]; exact Subalgebra.one_mem _
+          · rw [ite_eq_right hs]; exact blockEmb_supported s _ (fun s => s ∉ TT) hs
         have e1 : (⟨_, hQ⟩ : Vsp Kf sp) = ∑ i, (cp * Gv i ⟨_, hQ⟩) • spv i := by
           conv_lhs => rw [← x.sum_repr ⟨_, hQ⟩]
           refine Finset.sum_congr rfl fun i _ => ?_

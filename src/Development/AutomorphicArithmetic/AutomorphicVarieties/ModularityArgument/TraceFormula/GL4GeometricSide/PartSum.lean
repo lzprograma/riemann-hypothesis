@@ -1,5 +1,6 @@
 module
 
+import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.JacobiMinorProof
 public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.ExpansionTerms
 public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.DominantRearrangementProperties
@@ -96,20 +97,7 @@ open Formalism.REAL (GlRel IsWeight KHighest Cas)
 
 private theorem mem_lo {n : ℕ} (S : Finset (Fin n)) (hS : ∀ b ∈ S, ∀ c, c ≤ b → c ∈ S) (c : Fin n) :
     c ∈ S ↔ (c : ℕ) < S.card := by
-  constructor
-  · intro hc
-    have hsub : Finset.Iic c ⊆ S := fun b hb => hS c hc b (Finset.mem_Iic.1 hb)
-    have h := Finset.card_le_card hsub
-    rw [Fin.card_Iic] at h
-    omega
-  · intro hlt
-    by_contra hc
-    have hsub : S ⊆ Finset.Iio c := fun b hb => Finset.mem_Iio.2 (by
-      by_contra h
-      exact hc (hS b hb c (not_lt.1 h)))
-    have h := Finset.card_le_card hsub
-    rw [Fin.card_Iio] at h
-    omega
+  apply _root_.Formalism.InvariantFactorPaths.GelfandTsetlinBases.leadingTermLemmas.lower_card <;> assumption
 
 private theorem mem_hi {n : ℕ} (S : Finset (Fin n)) (hS : ∀ b ∈ S, ∀ c, b ≤ c → c ∈ S) (c : Fin n) :
     c ∈ S ↔ n ≤ (c : ℕ) + S.card := by
@@ -1209,7 +1197,7 @@ private theorem domLE_of {ν m : Fin n → ℝ} (h : inCone (fun a => (a : ℕ))
     · omega
     · simp
   · have hs := part_sum c (m - ν) hQ univ
-    simp only [Pi.sub_apply, mem_univ, if_true, sub_self, mul_zero, Finset.sum_const_zero,
+    simp only [Pi.sub_apply, mem_univ, ite_true, sub_self, mul_zero, Finset.sum_const_zero,
       Finset.sum_sub_distrib] at hs
     linarith
 

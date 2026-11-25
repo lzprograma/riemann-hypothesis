@@ -27,10 +27,6 @@ def PFAt (I : AllFam) (r : ℕ) : Prop :=
 def PFStep.Statement : Prop :=
   ∀ (I : AllFam), I.IsFamily → ∀ r : ℕ, PFAt I r → PFAt I (r + 1)
 
-section Inhabitants
-
-end Inhabitants
-
 end
 
 end GroundTheory.Heights₂.Heights.Inter

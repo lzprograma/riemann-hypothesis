@@ -2,45 +2,7 @@ module
 
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
 
 @[expose] public section
@@ -50,7 +12,6 @@ noncomputable section
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.Mum.Two
 
@@ -75,14 +36,13 @@ theorem IsPart.trans {N : LB X} {M : LB X₁} {M' : LB X₂} {e : X₁ ⟶ X} {�
 def cGen {A' A : LB Y} (c : ChartPull A' A (𝟙 Y)) (t : LB.Gen A) : LB.Gen A' :=
   ⟨fun i => res (c.le i) (t.s (c.idx i))⟩
 
-theorem cGen_isGen {A' A : LB Y} (c : ChartPull A' A (𝟙 Y)) {t : LB.Gen A} (ht : t.IsGen) : (cGen c t).IsGen := by
-  intro i j
-  refine unit_ext fun y hy => ?_
-  have hm : (𝟙 Y : Y ⟶ Y) y ∈ A.U (c.idx i) ⊓ A.U (c.idx j) := ⟨c.le i hy.1, c.le j hy.2⟩
-  have e := congrArg (gm (𝟙 Y) y (A.U (c.idx i) ⊓ A.U (c.idx j))) (ht (c.idx i) (c.idx j))
-  rw [map_mul, gm_res _ y _ hm, gm_res _ y _ hm, ← c.g y i j hy.1 hy.2] at e
-  rw [map_mul, gm_res _ y _ hy, gm_res _ y _ hy]
-  exact (gm_res _ y _ hy.1 _).trans (e.trans (congrArg _ (gm_res _ y _ hy.2 _).symm))
+theorem cGen_isGen {A' A : LB Y} (c : ChartPull A' A (𝟙 Y)) {t : LB.Gen A} (ht : t.IsGen) : (cGen c t).IsGen := fun i j =>
+  unit_ext fun y hy => by
+    have hm : (𝟙 Y : Y ⟶ Y) y ∈ A.U (c.idx i) ⊓ A.U (c.idx j) := ⟨c.le i hy.1, c.le j hy.2⟩
+    have e := congrArg (gm (𝟙 Y) y (A.U (c.idx i) ⊓ A.U (c.idx j))) (ht (c.idx i) (c.idx j))
+    rw [map_mul, gm_res _ y _ hm, gm_res _ y _ hm, ← c.g y i j hy.1 hy.2] at e
+    rw [map_mul, gm_res _ y _ hy, gm_res _ y _ hy]
+    exact (gm_res _ y _ hy.1 _).trans (e.trans (congrArg _ (gm_res _ y _ hy.2 _).symm))
 
 def cSec {A' A : LB Y} (c : ChartPull A' A (𝟙 Y)) (s : LB.Sec A) : LB.Sec A' where
   f i := (Y.presheaf.map (homOfLE (c.le i : A'.U i ≤ A.U (c.idx i))).op).hom (s.f (c.idx i))
@@ -104,30 +64,25 @@ def IsPart.up (φ : K → (Y ⟶ X₁)) (ε : K → ℤ) :
     ChartPull (LB.LinComb N (fun k => φ k ≫ e) ε) (LB.LinComb M φ ε) (𝟙 Y) :=
   have le : ∀ j : K → N.ι, LB.wchart N (fun k => φ k ≫ e) j ≤ LB.wchart M φ (fun k => π (j k)) :=
     fun _ _ hy => Set.mem_iInter.2 fun k => (h.mem _ _).1 (Set.mem_iInter.1 hy k)
-  { idx := fun j k => π (j k)
-    le := le
-    g := fun y j j' hj hj' => by
-      refine (gm_linComb N _ ε (𝟙 Y) y j j' hj hj').trans
-        (Eq.trans (Finset.prod_congr rfl fun k _ => congrArg (· ^ ε k) ?_)
-          (gm_linComb M φ ε (𝟙 Y) y _ _ (le j hj) (le j' hj')).symm)
-      rw [← Category.assoc]
-      exact h.g _ _ y _ _ (Set.mem_iInter.1 (le j hj) k) (Set.mem_iInter.1 (le j' hj') k) }
+  { idx := fun j k => π (j k), le
+    g := fun y j j' hj hj' => (gm_linComb N _ ε (𝟙 Y) y j j' hj hj').trans
+      ((Finset.prod_congr rfl fun k _ => congrArg (· ^ ε k) (by
+        rw [← Category.assoc]
+        exact h.g _ _ y _ _ (Set.mem_iInter.1 (le j hj) k) (Set.mem_iInter.1 (le j' hj') k))).trans
+        (gm_linComb M φ ε (𝟙 Y) y _ _ (le j hj) (le j' hj')).symm) }
 
 def IsPart.down (σ : M.ι → N.ι) (hσ : ∀ i, π (σ i) = i) (φ : K → (Y ⟶ X₁)) (ε : K → ℤ) :
     ChartPull (LB.LinComb M φ ε) (LB.LinComb N (fun k => φ k ≫ e) ε) (𝟙 Y) :=
   have le : ∀ j : K → M.ι, LB.wchart M φ j ≤ LB.wchart N (fun k => φ k ≫ e) (fun k => σ (j k)) :=
     fun _ _ hy => Set.mem_iInter.2 fun k => (h.mem _ _).2 (by rw [hσ]; exact Set.mem_iInter.1 hy k)
-  { idx := fun j k => σ (j k)
-    le := le
-    g := fun y j j' hj hj' => by
-      refine (gm_linComb M φ ε (𝟙 Y) y j j' hj hj').trans
-        (Eq.trans (Finset.prod_congr rfl fun k _ => congrArg (· ^ ε k) ?_)
-          (gm_linComb N _ ε (𝟙 Y) y _ _ (le j hj) (le j' hj')).symm)
-      rw [← Category.assoc, h.g _ _ y _ _ (by rw [hσ]; exact Set.mem_iInter.1 hj k)
-        (by rw [hσ]; exact Set.mem_iInter.1 hj' k)]
-      have : ∀ a b a' b', a = a' → b = b' → gm (𝟙 Y ≫ φ k) y (M.U a ⊓ M.U b) (M.g a b) =
-          gm (𝟙 Y ≫ φ k) y (M.U a' ⊓ M.U b') (M.g a' b') := by rintro _ _ _ _ rfl rfl; rfl
-      exact this _ _ _ _ (hσ _).symm (hσ _).symm }
+  { idx := fun j k => σ (j k), le
+    g := fun y j j' hj hj' => (gm_linComb M φ ε (𝟙 Y) y j j' hj hj').trans
+      ((Finset.prod_congr rfl fun k _ => congrArg (· ^ ε k) (by
+        rw [← Category.assoc, h.g _ _ y _ _ (by rw [hσ]; exact Set.mem_iInter.1 hj k)
+          (by rw [hσ]; exact Set.mem_iInter.1 hj' k)]
+        have : ∀ a b a' b', a = a' → b = b' → gm (𝟙 Y ≫ φ k) y (M.U a ⊓ M.U b) (M.g a b) =
+            gm (𝟙 Y ≫ φ k) y (M.U a' ⊓ M.U b') (M.g a' b') := by rintro _ _ _ _ rfl rfl; rfl
+        exact this _ _ _ _ (hσ _).symm (hσ _).symm)).trans (gm_linComb N _ ε (𝟙 Y) y _ _ (le j hj) (le j' hj')).symm) }
 
 def IsPart.gen (t : LB.Gen (LB.LinComb M φ ε)) : LB.Gen (LB.LinComb N (fun k => φ k ≫ e) ε) := cGen (h.up φ ε) t
 
@@ -146,12 +101,18 @@ theorem IsPart.sval_sec (s : LB.Sec (LB.LinComb M φ ε)) (r : Z ⟶ Y) (z : Z) 
     (sval_of s r z _ _ (fun k => by rw [rs, Category.assoc]; rfl)).symm
 
 theorem IsPart.trF_eq_one (hM : M.IsLB) (r : Z ⟶ Y) (z : Z) {j j' : K → N.ι} (e₀ : ∀ k, π (j k) = π (j' k))
-    (hj : ∀ k, φ k (r z) ∈ M.U (π (j k))) : trF (fun k => φ k ≫ e) ε r z j j' = 1 := by
-  refine Finset.prod_eq_one fun k _ => ?_
-  rw [← Category.assoc, h.g _ _ z _ _ (hj k) (e₀ k ▸ hj k)]
-  have : ∀ b, π (j k) = b → gm (r ≫ φ k) z (M.U (π (j k)) ⊓ M.U b) (M.g (π (j k)) b) = 1 := by
-    rintro _ rfl; exact gm_self hM _ z (hj k)
-  rw [this _ (e₀ k), one_zpow]
+    (hj : ∀ k, φ k (r z) ∈ M.U (π (j k))) : trF (fun k => φ k ≫ e) ε r z j j' = 1 :=
+  Finset.prod_eq_one fun k _ => by
+    rw [← Category.assoc, h.g _ _ z _ _ (hj k) (e₀ k ▸ hj k)]
+    have : ∀ b, π (j k) = b → gm (r ≫ φ k) z (M.U (π (j k)) ⊓ M.U b) (M.g (π (j k)) b) = 1 := by
+      rintro _ rfl; exact gm_self hM _ z (hj k)
+    rw [this _ (e₀ k), one_zpow]
+
+private theorem trF_down_eq_one (hM : M.IsLB) (σ : M.ι → N.ι) (hσ : ∀ i, π (σ i) = i)
+    (r : Z ⟶ Y) (z : Z) {J : (Z ⟶ X) → N.ι} (hJ : Good N z J) :
+    trF (fun k => φ k ≫ e) ε r z (fun k => σ (rs e π J (r ≫ φ k))) (fun k => J (r ≫ φ k ≫ e)) = 1 :=
+  h.trF_eq_one hM r z (fun k => (hσ _).trans (by rw [rs, Category.assoc]))
+    fun k => by rw [hσ]; exact Set.mem_iInter.1 ((h.good hJ).mem φ r) k
 
 theorem IsPart.exists_sec (hM : M.IsLB) (hπ : Function.Surjective π) (s : LB.Sec (LB.LinComb N (fun k => φ k ≫ e) ε)) :
     ∃ s' : LB.Sec (LB.LinComb M φ ε), ∀ (Z : Scheme.{0}) (r : Z ⟶ Y) (z : Z) (J), Good N z J →
@@ -159,11 +120,9 @@ theorem IsPart.exists_sec (hM : M.IsLB) (hπ : Function.Surjective π) (s : LB.S
   choose σ hσ using hπ
   refine ⟨cSec (h.down σ hσ φ ε) s, fun Z r z J hJ => ?_⟩
   have m := (h.good hJ).mem φ r
-  have m' := (h.down σ hσ φ ε).le _ m
-  refine (gs_res r z _ m _).trans ((sec_trans s r z m' (hJ.mem (fun k => φ k ≫ e) r)).trans ?_)
-  have e₁ := h.trF_eq_one (φ := φ) (ε := ε) hM r z (j := fun k => σ (rs e π J (r ≫ φ k))) (j' := fun k => J (r ≫ φ k ≫ e))
-    (fun k => (hσ _).trans (by rw [rs, Category.assoc])) (fun k => by rw [hσ]; exact Set.mem_iInter.1 m k)
-  exact (congrArg (fun u : (Z.presheaf.stalk z)ˣ => u.val * _) e₁).trans (_root_.one_mul _)
+  refine (gs_res r z _ m _).trans ((sec_trans s r z ((h.down σ hσ φ ε).le _ m) (hJ.mem _ r)).trans ?_)
+  dsimp only [IsPart.down]
+  rw [trF_down_eq_one h hM σ hσ r z hJ, Units.val_one, _root_.one_mul]; rfl
 
 theorem IsPart.exists_gen (hM : M.IsLB) (hπ : Function.Surjective π) (t : LB.Gen (LB.LinComb N (fun k => φ k ≫ e) ε))
     (ht : t.IsGen) : ∃ t' : LB.Gen (LB.LinComb M φ ε), t'.IsGen ∧ ∀ (Z : Scheme.{0}) (r : Z ⟶ Y) (z : Z) (J), Good N z J →
@@ -171,11 +130,9 @@ theorem IsPart.exists_gen (hM : M.IsLB) (hπ : Function.Surjective π) (t : LB.G
   choose σ hσ using hπ
   refine ⟨cGen (h.down σ hσ φ ε) t, cGen_isGen _ ht, fun Z r z J hJ => ?_⟩
   have m := (h.good hJ).mem φ r
-  have m' := (h.down σ hσ φ ε).le _ m
-  refine (gm_res r z _ m _).trans ((gen_trans ht r z m' (hJ.mem (fun k => φ k ≫ e) r)).trans ?_)
-  have e₁ := h.trF_eq_one (φ := φ) (ε := ε) hM r z (j := fun k => σ (rs e π J (r ≫ φ k))) (j' := fun k => J (r ≫ φ k ≫ e))
-    (fun k => (hσ _).trans (by rw [rs, Category.assoc])) (fun k => by rw [hσ]; exact Set.mem_iInter.1 m k)
-  exact (congrArg (· * _) e₁).trans (_root_.one_mul _)
+  refine (gm_res r z _ m _).trans ((gen_trans ht r z ((h.down σ hσ φ ε).le _ m) (hJ.mem _ r)).trans ?_)
+  dsimp only [IsPart.down]
+  rw [trF_down_eq_one h hM σ hσ r z hJ, _root_.one_mul]; rfl
 
 end Part
 
@@ -211,12 +168,12 @@ theorem trF_two (p : Z ⟶ Y) (z : Z) (j j' : K ⊕ K' → N.ι)
   rw [trF, trF, trF, Fintype.prod_sum_type, ← Finset.prod_inv_distrib]
   refine congrArg₂ (· * ·) (Finset.prod_congr rfl fun k _ => congrArg (· ^ ε k) ?_)
     (Finset.prod_congr rfl fun k _ => (zpow_neg _ _).trans (congrArg (fun u => (u ^ ε' k)⁻¹) ?_))
-  · refine Eq.trans ?_ (h.g _ ((p ≫ β) ≫ φ k) z _ _ ((h.mem _ _).1 (Set.mem_iInter.1 hj (.inl k)))
-      ((h.mem _ _).1 (Set.mem_iInter.1 hj' (.inl k))))
-    simp only [Sum.elim_inl, Category.assoc]
-  · refine Eq.trans ?_ (h'.g _ (p ≫ φ' k) z _ _ ((h'.mem _ _).1 (Set.mem_iInter.1 hj (.inr k)))
-      ((h'.mem _ _).1 (Set.mem_iInter.1 hj' (.inr k))))
-    simp only [Sum.elim_inr, Category.assoc]
+  · simp only [Sum.elim_inl, ← Category.assoc]
+    exact h.g _ ((p ≫ β) ≫ φ k) z _ _ ((h.mem _ _).1 (Set.mem_iInter.1 hj (.inl k)))
+      ((h.mem _ _).1 (Set.mem_iInter.1 hj' (.inl k)))
+  · simp only [Sum.elim_inr, ← Category.assoc]
+    exact h'.g _ (p ≫ φ' k) z _ _ ((h'.mem _ _).1 (Set.mem_iInter.1 hj (.inr k)))
+      ((h'.mem _ _).1 (Set.mem_iInter.1 hj' (.inr k)))
 
 theorem exists_gen_of_iso (w : LB.Iso (LB.LinComb M' φ' ε') ((LB.LinComb M φ ε).pull β)) (hw : w.IsGen) :
     ∃ t : LB.Gen (LB.LinComb N (Sum.elim (fun k => β ≫ φ k ≫ e) (fun k => φ' k ≫ e')) (Sum.elim ε (fun k => - ε' k))),
@@ -229,17 +186,12 @@ theorem exists_gen_of_iso (w : LB.Iso (LB.LinComb M' φ' ε') ((LB.LinComb M φ 
       Set.mem_iInter.2 fun k => (h'.mem _ _).1 (Set.mem_iInter.1 hy (.inr k))⟩
   let c : ChartPull (LB.LinComb N (Sum.elim (fun k => β ≫ φ k ≫ e) (fun k => φ' k ≫ e')) (Sum.elim ε (fun k => - ε' k)))
       (LB.div ((LB.LinComb M φ ε).pull β) (LB.LinComb M' φ' ε')) (𝟙 Y) :=
-    { idx := fun j => (fun _ k => π (j (.inl k)), fun k => π' (j (.inr k)))
-      le := le
+    { idx := fun j => (fun _ k => π (j (.inl k)), fun k => π' (j (.inr k))), le
       g := fun y j j' hj hj' => (gm_linComb N _ _ (𝟙 Y) y j j' hj hj').trans ((trF_two h h' (𝟙 Y) y j j' hj hj').trans
         (gm_div_pull (𝟙 Y) y _ _ (le j hj) (le j' hj')).symm) }
   refine ⟨cGen c w, cGen_isGen c hw, fun Z p z J hJ => (gm_res p z _ (hJ.mem _ p) _).trans ?_⟩
-  have : ∀ a b, a = b → gm p z _ (w.s a) = gm p z _ (w.s b) := by rintro _ _ rfl; rfl
-  refine this _ _ (Prod.ext (funext fun _ => funext fun k => ?_) (funext fun k => ?_))
-  · show π (J (p ≫ β ≫ φ k ≫ e)) = π (J ((p ≫ β ≫ φ k) ≫ e))
-    simp only [Category.assoc]
-  · show π' (J (p ≫ φ' k ≫ e')) = π' (J ((p ≫ φ' k) ≫ e'))
-    simp only [Category.assoc]
+  simp only [isoVal, rs, c]
+  rfl
 
 theorem exists_iso_of_gen (hM : M.IsLB) (hM' : M'.IsLB) (hπ : Function.Surjective π) (hπ' : Function.Surjective π')
     (t : LB.Gen (LB.LinComb N (Sum.elim (fun k => β ≫ φ k ≫ e) (fun k => φ' k ≫ e')) (Sum.elim ε (fun k => - ε' k))))
@@ -260,8 +212,7 @@ theorem exists_iso_of_gen (hM : M.IsLB) (hM' : M'.IsLB) (hπ : Function.Surjecti
   have i₂ : ∀ a, (fun k => π' (ix a (.inr k))) = a.2 := fun a => funext fun k => hσ' _
   let c : ChartPull (LB.div ((LB.LinComb M φ ε).pull β) (LB.LinComb M' φ' ε'))
       (LB.LinComb N (Sum.elim (fun k => β ≫ φ k ≫ e) (fun k => φ' k ≫ e')) (Sum.elim ε (fun k => - ε' k))) (𝟙 Y) :=
-    { idx := ix
-      le := le
+    { idx := ix, le
       g := fun y a b ha hb => (gm_div_pull (𝟙 Y) y _ _ ha hb).trans (Eq.symm
         ((gm_linComb N _ _ (𝟙 Y) y _ _ (le a ha) (le b hb)).trans ((trF_two h h' (𝟙 Y) y _ _ (le a ha) (le b hb)).trans
           (congrArg₂ (· * ·) (congrArg₂ (trF φ ε (𝟙 Y ≫ β) y) (i₁ a) (i₁ b))
@@ -282,9 +233,8 @@ theorem exists_iso_of_gen (hM : M.IsLB) (hM' : M'.IsLB) (hπ : Function.Surjecti
     (mul_eq_left.1 (trF_trans hM φ ε (p ≫ β) z m₁ m₁ m₁))
   have b₂ := (congrArg₂ (trF φ' ε' p z) (i₂ (fun _ k => rs e π J (p ≫ β ≫ φ k), fun k => rs e' π' J (p ≫ φ' k))) a₂).trans
     (mul_eq_left.1 (trF_trans hM' φ' ε' p z m₂ m₂ m₂))
-  have b := (trF_two (ε := ε) (ε' := ε') h h' p z _ _ (le _ m) n).trans
-    ((congrArg₂ (fun u v => u * v⁻¹) b₁ b₂).trans (mul_inv_cancel 1))
-  exact (congrArg (· * val t p z J) b).trans (_root_.one_mul _)
+  exact (congrArg (· * val t p z J) ((trF_two h h' p z _ _ (le _ m) n).trans
+    ((congrArg₂ (fun u v => u * v⁻¹) b₁ b₂).trans (mul_inv_cancel 1)))).trans (_root_.one_mul _)
 
 end Iso
 
@@ -302,17 +252,15 @@ theorem inl_or_inr (p : (X₁ ⨿ X₂ : Scheme.{0})) :
 def jU (U₁ : X₁.Opens) (U₂ : X₂.Opens) : (X₁ ⨿ X₂).Opens :=
   (coprod.inl : X₁ ⟶ X₁ ⨿ X₂) ''ᵁ U₁ ⊔ (coprod.inr : X₂ ⟶ X₁ ⨿ X₂) ''ᵁ U₂
 
-theorem mem_jU_inl (U₁ : X₁.Opens) (U₂ : X₂.Opens) (x : X₁) : (coprod.inl : X₁ ⟶ X₁ ⨿ X₂) x ∈ jU U₁ U₂ ↔ x ∈ U₁ := by
-  refine ⟨?_, fun h => Or.inl ⟨x, h, rfl⟩⟩
-  rintro (⟨y, hy, e⟩ | ⟨y, -, e⟩)
-  · exact (coprod.inl : X₁ ⟶ X₁ ⨿ X₂).isOpenEmbedding.injective e ▸ hy
-  · exact (inl_ne_inr x y e.symm).elim
+theorem mem_jU_inl (U₁ : X₁.Opens) (U₂ : X₂.Opens) (x : X₁) : (coprod.inl : X₁ ⟶ X₁ ⨿ X₂) x ∈ jU U₁ U₂ ↔ x ∈ U₁ :=
+  ⟨fun | Or.inl ⟨_, hy, e⟩ => (coprod.inl : X₁ ⟶ X₁ ⨿ X₂).isOpenEmbedding.injective e ▸ hy
+       | Or.inr ⟨_, _, e⟩ => (inl_ne_inr x _ e.symm).elim,
+   fun h => Or.inl ⟨x, h, rfl⟩⟩
 
-theorem mem_jU_inr (U₁ : X₁.Opens) (U₂ : X₂.Opens) (x : X₂) : (coprod.inr : X₂ ⟶ X₁ ⨿ X₂) x ∈ jU U₁ U₂ ↔ x ∈ U₂ := by
-  refine ⟨?_, fun h => Or.inr ⟨x, h, rfl⟩⟩
-  rintro (⟨y, -, e⟩ | ⟨y, hy, e⟩)
-  · exact (inl_ne_inr y x e).elim
-  · exact (coprod.inr : X₂ ⟶ X₁ ⨿ X₂).isOpenEmbedding.injective e ▸ hy
+theorem mem_jU_inr (U₁ : X₁.Opens) (U₂ : X₂.Opens) (x : X₂) : (coprod.inr : X₂ ⟶ X₁ ⨿ X₂) x ∈ jU U₁ U₂ ↔ x ∈ U₂ :=
+  ⟨fun | Or.inl ⟨_, _, e⟩ => (inl_ne_inr _ x e).elim
+       | Or.inr ⟨_, hy, e⟩ => (coprod.inr : X₂ ⟶ X₁ ⨿ X₂).isOpenEmbedding.injective e ▸ hy,
+   fun h => Or.inr ⟨x, h, rfl⟩⟩
 
 theorem exists_glue (W : (X₁ ⨿ X₂).Opens) (U₁ : X₁.Opens) (U₂ : X₂.Opens)
     (h₁ : ∀ x, (coprod.inl : X₁ ⟶ X₁ ⨿ X₂) x ∈ W → x ∈ U₁) (h₂ : ∀ x, (coprod.inr : X₂ ⟶ X₁ ⨿ X₂) x ∈ W → x ∈ U₂)
@@ -323,37 +271,26 @@ theorem exists_glue (W : (X₁ ⨿ X₂).Opens) (U₁ : X₁.Opens) (U₂ : X₂
         gm (ψ ≫ coprod.inr) z W a = gm ψ z U₂ a₂ := by
   obtain ⟨b₁, e₁⟩ := exists_ext_unit (coprod.inl : X₁ ⟶ X₁ ⨿ X₂) ((coprod.inl : X₁ ⟶ X₁ ⨿ X₂) ⁻¹ᵁ W) (res h₁ a₁)
   obtain ⟨b₂, e₂⟩ := exists_ext_unit (coprod.inr : X₂ ⟶ X₁ ⨿ X₂) ((coprod.inr : X₂ ⟶ X₁ ⨿ X₂) ⁻¹ᵁ W) (res h₂ a₂)
-  let V : Bool → (X₁ ⨿ X₂).Opens := fun b => Bool.rec
+  let V : Bool → (X₁ ⨿ X₂).Opens := Bool.rec
     ((coprod.inl : X₁ ⟶ X₁ ⨿ X₂) ''ᵁ ((coprod.inl : X₁ ⟶ X₁ ⨿ X₂) ⁻¹ᵁ W))
-    ((coprod.inr : X₂ ⟶ X₁ ⨿ X₂) ''ᵁ ((coprod.inr : X₂ ⟶ X₁ ⨿ X₂) ⁻¹ᵁ W)) b
+    ((coprod.inr : X₂ ⟶ X₁ ⨿ X₂) ''ᵁ ((coprod.inr : X₂ ⟶ X₁ ⨿ X₂) ⁻¹ᵁ W))
   have le : ∀ b, V b ≤ W := by rintro (_ | _) _ ⟨y, hy, rfl⟩ <;> exact hy
-  obtain ⟨a, ha⟩ := glue_unit W V le (fun p hp => by
-      rcases inl_or_inr p with ⟨x, rfl⟩ | ⟨x, rfl⟩
-      · exact TopologicalSpace.Opens.mem_iSup.2 ⟨false, x, hp, rfl⟩
-      · exact TopologicalSpace.Opens.mem_iSup.2 ⟨true, x, hp, rfl⟩)
-    (fun b => Bool.rec (motive := fun b => Γ(X₁ ⨿ X₂, V b)ˣ) b₁ b₂ b) (by
-      rintro (_ | _) (_ | _) p ⟨hp, hp'⟩
-      · rfl
-      · obtain ⟨x, -, e⟩ := hp
-        obtain ⟨y, -, e'⟩ := hp'
-        exact (inl_ne_inr x y (e.trans e'.symm)).elim
-      · obtain ⟨x, -, e⟩ := hp
-        obtain ⟨y, -, e'⟩ := hp'
-        exact (inl_ne_inr y x (e'.trans e.symm)).elim
-      · rfl)
-  refine ⟨a, fun Z ψ z hz => ?_, fun Z ψ z hz => ?_⟩
-  · exact (gm_res _ z (le false) ⟨ψ z, hz, rfl⟩ a).symm.trans ((congrArg _ (ha false)).trans
-      ((e₁ Z ψ z hz).trans (gm_res ψ z _ hz _)))
-  · exact (gm_res _ z (le true) ⟨ψ z, hz, rfl⟩ a).symm.trans ((congrArg _ (ha true)).trans
-      ((e₂ Z ψ z hz).trans (gm_res ψ z _ hz _)))
+  obtain ⟨a, ha⟩ := glue_unit W V le (fun p hp => TopologicalSpace.Opens.mem_iSup.2 <|
+      (inl_or_inr p).elim (fun ⟨x, hx⟩ => by subst hx; exact ⟨false, x, hp, rfl⟩)
+        (fun ⟨x, hx⟩ => by subst hx; exact ⟨true, x, hp, rfl⟩))
+    (Bool.rec (motive := fun b => Γ(X₁ ⨿ X₂, V b)ˣ) b₁ b₂) (by
+      rintro (_ | _) (_ | _) p ⟨hp, hp'⟩ <;> try rfl
+      · obtain ⟨x, -, e⟩ := hp; obtain ⟨y, -, e'⟩ := hp'; exact (inl_ne_inr x y (e.trans e'.symm)).elim
+      · obtain ⟨x, -, e⟩ := hp; obtain ⟨y, -, e'⟩ := hp'; exact (inl_ne_inr y x (e'.trans e.symm)).elim)
+  exact ⟨a,
+    fun Z ψ z hz => (gm_res _ z (le false) ⟨ψ z, hz, rfl⟩ a).symm.trans ((congrArg _ (ha false)).trans ((e₁ Z ψ z hz).trans (gm_res ψ z _ hz _))),
+    fun Z ψ z hz => (gm_res _ z (le true) ⟨ψ z, hz, rfl⟩ a).symm.trans ((congrArg _ (ha true)).trans ((e₂ Z ψ z hz).trans (gm_res ψ z _ hz _)))⟩
 
 theorem unit_ext_coprod {W : (X₁ ⨿ X₂).Opens} {a b : Γ(X₁ ⨿ X₂, W)ˣ}
     (h₁ : ∀ x, (coprod.inl : X₁ ⟶ X₁ ⨿ X₂) x ∈ W → gm coprod.inl x W a = gm coprod.inl x W b)
     (h₂ : ∀ x, (coprod.inr : X₂ ⟶ X₁ ⨿ X₂) x ∈ W → gm coprod.inr x W a = gm coprod.inr x W b) : a = b :=
-  unit_ext fun p hp => by
-    rcases inl_or_inr p with ⟨x, rfl⟩ | ⟨x, rfl⟩
-    · exact gm_inj _ x hp hp (h₁ x hp)
-    · exact gm_inj _ x hp hp (h₂ x hp)
+  unit_ext fun p hp => (inl_or_inr p).elim (fun ⟨x, e⟩ => e ▸ gm_inj _ x (e ▸ hp) (e ▸ hp) (h₁ x (e ▸ hp)))
+    (fun ⟨x, e⟩ => e ▸ gm_inj _ x (e ▸ hp) (e ▸ hp) (h₂ x (e ▸ hp)))
 
 variable (M₁ : LB X₁) (M₂ : LB X₂)
 
@@ -394,55 +331,50 @@ theorem fst_surjective (h₂ : M₂.IsLB) [Nonempty X₂] : Function.Surjective 
 theorem snd_surjective (h₁ : M₁.IsLB) [Nonempty X₁] : Function.Surjective (Prod.snd : (join M₁ M₂).ι → M₂.ι) :=
   fun j => (nonempty_idx h₁).elim fun i => ⟨(i, j), rfl⟩
 
+private theorem join_unit_compat {X X' : Scheme.{0}} {N : LB X} {M : LB X'} (hM : M.IsLB) {f : X' ⟶ X} {π : N.ι → M.ι}
+    (p : IsPart N M f π) {i : N.ι} {x : X'} (hsub : N.U i ≤ N.U i ⊓ N.U i) (hx : f x ∈ N.U i) :
+    gm f x (N.U i) (res hsub (N.g i i)) = gm f x (N.U i) 1 := by
+  have m := (p.mem _ _).1 hx
+  have g := p.g _ (𝟙 X') x i i m m
+  rw [Category.id_comp] at g
+  exact (gm_res _ x _ hx _).trans (g.trans ((gm_self hM (𝟙 _) x m).trans (map_one _).symm))
+
+private theorem join_cocycle_compat {X X' : Scheme.{0}} {N : LB X} {M : LB X'} (hM : M.IsLB) {f : X' ⟶ X} {π : N.ι → M.ι}
+    (p : IsPart N M f π) {i j k : N.ι} {x : X'}
+    (h₁ : (N.U i ⊓ N.U j) ⊓ N.U k ≤ N.U i ⊓ N.U j)
+    (h₂ : (N.U i ⊓ N.U j) ⊓ N.U k ≤ N.U j ⊓ N.U k)
+    (h₃ : (N.U i ⊓ N.U j) ⊓ N.U k ≤ N.U i ⊓ N.U k)
+    (hx : f x ∈ (N.U i ⊓ N.U j) ⊓ N.U k) :
+    gm f x ((N.U i ⊓ N.U j) ⊓ N.U k) (res h₁ (N.g i j) * res h₂ (N.g j k)) =
+      gm f x ((N.U i ⊓ N.U j) ⊓ N.U k) (res h₃ (N.g i k)) := by
+  have a := (p.mem _ _).1 hx.1.1; have b := (p.mem _ _).1 hx.1.2; have c := (p.mem _ _).1 hx.2
+  have g := fun i' j' hi' hj' => by simpa only [Category.id_comp] using p.g _ (𝟙 X') x i' j' hi' hj'
+  exact (map_mul _ _ _).trans ((congrArg₂ (· * ·) ((gm_res _ x _ hx _).trans (g i j a b))
+    ((gm_res _ x _ hx _).trans (g j k b c))).trans ((gm_cocycle hM (𝟙 _) x a b c).trans
+      ((gm_res _ x _ hx _).trans (g i k a c)).symm))
+
 theorem join_isLB (h₁ : M₁.IsLB) (h₂ : M₂.IsLB) [Nonempty X₁] [Nonempty X₂] : (join M₁ M₂).IsLB := by
-  have p₁ := isPart_inl M₁ M₂
-  have p₂ := isPart_inr M₁ M₂
-  have g₁ := fun x => p₁.g _ (𝟙 X₁) x
-  have g₂ := fun x => p₂.g _ (𝟙 X₂) x
-  simp only [Category.id_comp] at g₁ g₂
-  refine ⟨top_le_iff.1 fun p _ => TopologicalSpace.Opens.mem_iSup.2 ?_, fun i => unit_ext_coprod (fun x hx => ?_)
-    (fun x hx => ?_), fun i j k => unit_ext_coprod (fun x hx => ?_) (fun x hx => ?_)⟩
-  · rcases inl_or_inr p with ⟨x, rfl⟩ | ⟨x, rfl⟩
-    · obtain ⟨i, hi⟩ := exists_chart h₁ x
-      obtain ⟨j⟩ := nonempty_idx h₂
-      exact ⟨(i, j), (mem_jU_inl _ _ x).2 hi⟩
-    · obtain ⟨j, hj⟩ := exists_chart h₂ x
-      obtain ⟨i⟩ := nonempty_idx h₁
-      exact ⟨(i, j), (mem_jU_inr _ _ x).2 hj⟩
-  · have m := (p₁.mem _ _).1 hx
-    exact (gm_res _ x _ hx _).trans ((g₁ x i i m m).trans ((gm_self h₁ (𝟙 _) x m).trans (map_one _).symm))
-  · have m := (p₂.mem _ _).1 hx
-    exact (gm_res _ x _ hx _).trans ((g₂ x i i m m).trans ((gm_self h₂ (𝟙 _) x m).trans (map_one _).symm))
-  · have a := (p₁.mem _ _).1 hx.1.1
-    have b := (p₁.mem _ _).1 hx.1.2
-    have c := (p₁.mem _ _).1 hx.2
-    exact (map_mul _ _ _).trans ((congrArg₂ (· * ·) ((gm_res _ x _ hx _).trans (g₁ x i j a b))
-      ((gm_res _ x _ hx _).trans (g₁ x j k b c))).trans ((gm_cocycle h₁ (𝟙 _) x a b c).trans
-        ((gm_res _ x _ hx _).trans (g₁ x i k a c)).symm))
-  · have a := (p₂.mem _ _).1 hx.1.1
-    have b := (p₂.mem _ _).1 hx.1.2
-    have c := (p₂.mem _ _).1 hx.2
-    exact (map_mul _ _ _).trans ((congrArg₂ (· * ·) ((gm_res _ x _ hx _).trans (g₂ x i j a b))
-      ((gm_res _ x _ hx _).trans (g₂ x j k b c))).trans ((gm_cocycle h₂ (𝟙 _) x a b c).trans
-        ((gm_res _ x _ hx _).trans (g₂ x i k a c)).symm))
+  refine ⟨top_le_iff.1 fun p _ => TopologicalSpace.Opens.mem_iSup.2 ?_,
+    fun i => unit_ext_coprod (fun _ hx => join_unit_compat h₁ (isPart_inl M₁ M₂) _ hx)
+      (fun _ hx => join_unit_compat h₂ (isPart_inr M₁ M₂) _ hx),
+    fun i j k => unit_ext_coprod (fun _ hx => join_cocycle_compat h₁ (isPart_inl M₁ M₂) _ _ _ hx)
+      (fun _ hx => join_cocycle_compat h₂ (isPart_inr M₁ M₂) _ _ _ hx)⟩
+  rcases inl_or_inr p with ⟨x, rfl⟩ | ⟨x, rfl⟩
+  · obtain ⟨i, hi⟩ := exists_chart h₁ x; obtain ⟨j⟩ := nonempty_idx h₂; exact ⟨(i, j), (mem_jU_inl _ _ x).2 hi⟩
+  · obtain ⟨j, hj⟩ := exists_chart h₂ x; obtain ⟨i⟩ := nonempty_idx h₁; exact ⟨(i, j), (mem_jU_inr _ _ x).2 hj⟩
 
 theorem exists_good_join (h₁ : M₁.IsLB) (h₂ : M₂.IsLB) [Nonempty X₁] [Nonempty X₂] {z : Z} {J₁ : (Z ⟶ X₁) → M₁.ι}
     {J₂ : (Z ⟶ X₂) → M₂.ι} (g₁ : Good M₁ z J₁) (g₂ : Good M₂ z J₂) :
     ∃ J, Good (join M₁ M₂) z J ∧ rl J = J₁ ∧ rr J = J₂ := by
-  obtain ⟨i₀⟩ := nonempty_idx h₁
-  obtain ⟨j₀⟩ := nonempty_idx h₂
+  obtain ⟨i₀⟩ := nonempty_idx h₁; obtain ⟨j₀⟩ := nonempty_idx h₂
   obtain ⟨J, hJ, e⟩ := exists_good (join M₁ M₂) (join_isLB h₁ h₂) z (K := (Z ⟶ X₁) ⊕ (Z ⟶ X₂))
     (Sum.elim (· ≫ coprod.inl) (· ≫ coprod.inr)) (Sum.elim (fun ψ => (J₁ ψ, j₀)) (fun ψ => (i₀, J₂ ψ))) (by
       rintro (a | a) (b | b) e
-      · obtain rfl : a = b := (cancel_mono (coprod.inl : X₁ ⟶ X₁ ⨿ X₂)).1 e
-        rfl
+      · rw [(cancel_mono (coprod.inl : X₁ ⟶ X₁ ⨿ X₂)).1 e]
       · exact (inl_ne_inr (a z) (b z) (congrArg (fun q : Z ⟶ X₁ ⨿ X₂ => q z) e)).elim
       · exact (inl_ne_inr (b z) (a z) (congrArg (fun q : Z ⟶ X₁ ⨿ X₂ => q z) e).symm).elim
-      · obtain rfl : a = b := (cancel_mono (coprod.inr : X₂ ⟶ X₁ ⨿ X₂)).1 e
-        rfl) (by
-      rintro (a | a)
-      · exact (mem_jU_inl _ _ _).2 (g₁ a)
-      · exact (mem_jU_inr _ _ _).2 (g₂ a))
+      · rw [(cancel_mono (coprod.inr : X₂ ⟶ X₁ ⨿ X₂)).1 e])
+    (by rintro (a | a) <;> [exact (mem_jU_inl _ _ _).2 (g₁ a); exact (mem_jU_inr _ _ _).2 (g₂ a)])
   exact ⟨J, hJ, funext fun ψ => congrArg Prod.fst (e (.inl ψ)), funext fun ψ => congrArg Prod.snd (e (.inr ψ))⟩
 
 end Join

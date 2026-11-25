@@ -61,7 +61,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta GlobalTheory.Mem.Th MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.BesselData GlobalTheory.RootExch
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.BesselClosed
 
@@ -194,7 +193,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta GlobalTheory.Mem.Th MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.BesselData GlobalTheory.RootExch
 open scoped TensorProduct ENNReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.Mem.BesselCoeffIndep
 
@@ -266,7 +264,7 @@ theorem actE_eq_of_conj_related (d : BesselDatum A B ι) {n : GA D B} (hn : n �
     rw [this, Fin.snoc_castSucc]
     obtain ⟨c, hc, e⟩ := hn.1 ⟨i.1 + 1, hlt⟩
     refine ⟨?_, c, fun l hl => hc l (show i.1 + 1 ≤ l.1 from hl), e⟩
-    rw [d.ef, if_neg (fun h => by have : i.1 + 1 = i.1 := congrArg Fin.val h; omega)]
+    rw [d.ef, ite_eq_right (fun h => by have : i.1 + 1 = i.1 := congrArg Fin.val h; omega)]
 
 theorem simpleSum_mul (d : BesselDatum A B ι) {n n' : GA D B} (hn : n ∈ d.NSet) (hn' : n' ∈ d.NSet) :
     d.simpleSum (n * n') = d.simpleSum n + d.simpleSum n' := by
@@ -281,12 +279,12 @@ theorem simpleSum_mul (d : BesselDatum A B ι) {n n' : GA D B} (hn : n ∈ d.NSe
     rfl
   rw [e1, e, hA_add, hA_add, hA_coeff B d.e d.f d.ef, hA_vec, h0, RingHom.map_zero, zero_add, hA_sum,
     Finset.sum_eq_single i]
-  · rw [hA_smul, hA_act_e d hn le_rfl, if_pos rfl, mul_one]
+  · rw [hA_smul, hA_act_e d hn le_rfl, ite_eq_left rfl, mul_one]
   · intro l _ hl
     rw [hA_smul]
     rcases lt_or_ge i l with h | h
     · rw [hc l h, zero_mul]
-    · rw [hA_act_e d hn h, if_neg hl, mul_zero]
+    · rw [hA_act_e d hn h, ite_eq_right hl, mul_zero]
   · exact fun h => absurd (Finset.mem_univ _) h
 
 theorem psiN_mul (d : BesselDatum A B ι) (ψ : AddChar (AF D.host.F) ℂ) {n n' : GA D B} (hn : n ∈ d.NSet)

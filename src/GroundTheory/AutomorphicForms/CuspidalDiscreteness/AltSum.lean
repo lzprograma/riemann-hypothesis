@@ -38,7 +38,7 @@ theorem altSum_eq_sum : ∀ (k : ℕ) (h : V → W) (y : Fin k → V) (s : V),
       Fintype.sum_prod_type, Fintype.sum_bool, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun ε _ => ?_
     simp only [Fin.consEquiv_apply, altSign, altPoint, Fin.prod_univ_succ, Fin.sum_univ_succ,
-      Fin.cons_zero, Fin.cons_succ, if_true, Bool.false_eq_true, if_false, one_mul, zero_add,
+      Fin.cons_zero, Fin.cons_succ, ite_true, Bool.false_eq_true, ite_false, one_mul, zero_add,
       Fin.tail]
     rw [smul_sub, neg_mul, one_mul, neg_smul, add_comm (y 0), ← add_assoc]
     abel

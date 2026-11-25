@@ -423,7 +423,7 @@ theorem cls_abs_unit {D M Γ G : Type} [Ring D] [IsDomain D] [CharZero D] [Ring 
   obtain ⟨g', hg'⟩ : ∃ g', g' = hex.choose := ⟨_, rfl⟩
   have hq : qf g' = qf g := hg' ▸ hex.choose_spec
   have hrep : rep (qf g) = (ι (γf g'))⁻¹ * g' := by
-    simp only [rep, dif_pos hex, hg']
+    simp only [rep, dite_eq_left hex, hg']
   refine ⟨γf g, rep (qf g), Finset.mem_image_of_mem _ (Finset.mem_univ _),
     (rep (qf g))⁻¹ * ((ι (γf g))⁻¹ * g), ?_, by group⟩
   rw [hrep]
@@ -755,7 +755,7 @@ private theorem fSv_apply_ne_zero_of_fs_ne_zero (D : Dat Δ) (t : Dat.Par F) (g 
   simp only [Set.mem_union, Finset.mem_coe, Set.mem_setOf_eq, not_or, not_not] at hc
   apply hw
   unfold Dat.fSv
-  rw [if_neg hc.1]
+  rw [ite_eq_right hc.1]
   simp [one, hc.2]
 
 
@@ -804,7 +804,7 @@ theorem finS_test : ∀ (F : Type) [Field F] [NumberField F] (Δ : F) (D : Dat �
       rw [((hD.sig v.1 v.2).S_inv (t v.1) (ht v.1 v.2) _ hjm _).2]
       have hne := fSv_apply_ne_zero_of_fs_ne_zero D t _ hq v.1
       unfold Dat.fSv at hne
-      rw [if_pos v.2] at hne
+      rw [ite_eq_left v.2] at hne
       exact hne
     · intro q1 hq1 q2 hq2 heq
       rw [← QuotientGroup.out_eq' q1, ← QuotientGroup.out_eq' q2, QuotientGroup.eq, hB.U]
@@ -819,7 +819,7 @@ theorem finS_test : ∀ (F : Type) [Field F] [NumberField F] (Δ : F) (D : Dat �
         intro q hq hv
         have hne := fSv_apply_ne_zero_of_fs_ne_zero D t _ hq v
         unfold Dat.fSv at hne
-        rw [if_neg hv] at hne
+        rw [ite_eq_right hv] at hne
         simpa [one] using hne
       have key : (((x⁻¹ * ↑(Quotient.out q1) * x : DA Δ) : ∀ v, ↥(DX (cv v Δ))) v)⁻¹ *
           ((x⁻¹ * ↑(Quotient.out q2) * x : DA Δ) : ∀ v, ↥(DX (cv v Δ))) v ∈ D.J2v v := by

@@ -90,14 +90,6 @@ theorem continuousOn_sq {X E : Type} [TopologicalSpace X] [NormedAddCommGroup E]
     (hg : ContinuousOn g s) : ContinuousOn (fun x => (‖g x‖₊ : ℝ≥0∞) ^ 2) s :=
   ((ENNReal.continuous_pow 2).comp (ENNReal.continuous_coe.comp continuous_nnnorm)).comp_continuousOn hg
 
-private theorem mul_mem_UH_Hpk' {a b : Mat k r} (ha : a ∈ GG k r) (hb : b ∈ GG k r) : a * b ∈ GG k r := by
-  have ha' : aᴴ * Hpk k r * a = Hpk k r := ha
-  have hb' : bᴴ * Hpk k r * b = Hpk k r := hb
-  show (a * b)ᴴ * Hpk k r * (a * b) = Hpk k r
-  calc (a * b)ᴴ * Hpk k r * (a * b) = bᴴ * (aᴴ * Hpk k r * a) * b := by
-        rw [Matrix.conjTranspose_mul]; simp only [Matrix.mul_assoc]
-    _ = Hpk k r := by rw [ha', hb']
-
 private theorem aemeasurable_comp_of_continuousOn_closed {S : Set (Mat k r)} (hS : IsClosed S) {μ : Measure (Mt k r)}
     (hμ : μ {x | Matrix.of x ∉ S} = 0) {g : Mat k r → ℝ≥0∞} (hg : ContinuousOn g S) :
     AEMeasurable (fun x => g (Matrix.of x)) μ := by
@@ -196,7 +188,7 @@ theorem one_piece : ∀ (k r : ℕ) {Wp : Type} [NormedAddCommGroup Wp] [InnerPr
             exact ⟨_, hh, _, hn, rfl⟩
           have hSQ : lmulM (Matrix.of h * Matrix.of n) x ∈ Q := (hQinv _ hs x hxg).2 hxQ
           have hSG : lmulM (Matrix.of h * Matrix.of n) x ∈ grp k r :=
-            mul_mem_UH_Hpk' (mul_mem_UH_Hpk' hh.1 hn.1) hxg
+            WeylGroupFacts.uh_mul (WeylGroupFacts.uh_mul hh.1 hn.1) hxg
           have hΦS : Φ (Matrix.of (lmulM (Matrix.of h * Matrix.of n) x)) =
               ψ (Matrix.of n) • π (Matrix.of h) (Φ (Matrix.of x)) := hE _ hh _ hn _ hxg
           have hψ1 : ‖ψ (Matrix.of n)‖₊ = 1 := by ext; simpa using hψ _ hn
@@ -225,7 +217,7 @@ theorem one_piece : ∀ (k r : ℕ) {Wp : Type} [NormedAddCommGroup Wp] [InnerPr
             _ = ∫⁻ n, f (rmulM (Matrix.of h * Matrix.of x) n) ∂(μN.map (conjM (Matrix.of h))) :=
                 (lintegral_map (hf.comp hrc.measurable) (continuous_conj _).measurable).symm
             _ = ∫⁻ n, f (rmulM (Matrix.of h * Matrix.of x) n) ∂μN := by rw [hinv]
-            _ ≤ Vol := hVol _ (mul_mem_UH_Hpk' hh.1 hxg)
+            _ ≤ Vol := hVol _ (WeylGroupFacts.uh_mul hh.1 hxg)
         have hAEM : AEMeasurable (fun h : Mt k r =>
             (‖⟪w, π (Matrix.of h) (Φ (Matrix.of x))⟫_ℂ‖₊ : ℝ≥0∞) ^ 2) μW :=
           aemeasurable_comp_of_continuousOn_closed (isClosedSub_UWset z).2.1 hW.2.2.1
@@ -262,7 +254,7 @@ theorem one_piece : ∀ (k r : ℕ) {Wp : Type} [NormedAddCommGroup Wp] [InnerPr
     · refine zero_case fun h hh n hn => ?_
       have hS : lmulM (Matrix.of h * Matrix.of n) x ∉ grp k r := fun hS =>
         hxg (mem_GG_of_mul (s := Matrix.of h * Matrix.of n) (x := Matrix.of x)
-          (mul_mem_UH_Hpk' hh.1 hn.1) hS)
+          (WeylGroupFacts.uh_mul hh.1 hn.1) hS)
       rw [hFdef, hAdef]
       by_cases hSQ : lmulM (Matrix.of h * Matrix.of n) x ∈ Q
       · simp only [Set.indicator_of_mem hSQ, Set.indicator_of_notMem hS, mul_zero]

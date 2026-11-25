@@ -32,63 +32,11 @@ public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishi
 public import Mathlib.FieldTheory.KrullTopology
 public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyFieldEqGaloisCohomologyStatement
-public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCohomologySpecTwistIndependentStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.WittVector.IsPoly
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCohomologySpecTwistIndependent
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.FieldTheory.Galois.Profinite
 import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
+import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TsenLangRatFunc
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.COneH2UnitsSubsingleton, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroZeroFormPolynomialIsAlgClosed, Development.AbelianVarietyTheory.Proofs.DivisorProofs.TsenAlgebraicExtensionRatFunc, Development.AbelianVarietyTheory.Proofs.DivisorProofs.CdpGaloisLeOneOfAlgebraicRatFunc, Development.AbelianVarietyTheory.Proofs.DivisorProofs.CdpGaloisLeOneOfAlgebraicRatFuncStatement, Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyVanishingAlgebraicOverRatFunc
@@ -202,32 +150,13 @@ end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroZeroFormPolynomialIsAlgClosed =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.TsenAlgebraicExtensionRatFunc =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.TsenAlgebraicExtensionRatFunc", "h": "module\n\npublic import Mathlib.FieldTheory.IsAlgClosed.Basic\npublic import Mathlib.FieldTheory.RatFunc.Basic\npublic import Mathlib.RingTheory.MvPolynomial.Homogeneous\npublic import Mathlib.RingTheory.SimpleRing.Principal\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.COnePropertyFiniteExtension\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroZeroFormPolynomialIsAlgClosed\nimport Mathlib.Algebra.AffineMonoid.UniqueSums\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.Order.CompletePartialOrder\nimport Mathlib.RingTheory.Coalgebra.IsFrobenius\nimport Mathlib.RingTheory.HopfAlgebra.Basic\npublic import Mathlib.RingTheory.Ideal.KrullsHeightTheorem\npublic import Mathlib.RingTheory.Nullstellensatz\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\npublic import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField\nimport Std.Tactic.BVDecide.Normalize.Prop\npublic import Mathlib.RingTheory.Ideal.Height\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.TsenAlgebraicExtensionRatFunc", "h": "module\n\npublic import Mathlib.FieldTheory.IsAlgClosed.Basic\npublic import Mathlib.FieldTheory.RatFunc.Basic\npublic import Mathlib.RingTheory.MvPolynomial.Homogeneous\npublic import Mathlib.RingTheory.SimpleRing.Principal\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.COnePropertyFiniteExtension\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroZeroFormPolynomialIsAlgClosed\nimport Mathlib.Algebra.AffineMonoid.UniqueSums\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.Order.CompletePartialOrder\nimport Mathlib.RingTheory.Coalgebra.IsFrobenius\nimport Mathlib.RingTheory.HopfAlgebra.Basic\npublic import Mathlib.RingTheory.Ideal.KrullsHeightTheorem\npublic import Mathlib.RingTheory.Nullstellensatz\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\npublic import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField\nimport Std.Tactic.BVDecide.Normalize.Prop\npublic import Mathlib.RingTheory.Ideal.Height\nimport Development.AbelianVarietyTheory.Proofs.FoundationProofs.TsenLangRatFunc\n\n"}
 section -- clump:auto
 @[expose] public section
 
 open Polynomial
 
 namespace GlobalTheory
-
-open Polynomial in
-private theorem isHomogeneous_of_map_of_injective {R S : Type} [CommRing R] [CommRing S] {φ : R →+* S}
-    (hφ : Function.Injective φ) {n d : ℕ} {p : MvPolynomial (Fin n) R}
-    (hp : (MvPolynomial.map φ p).IsHomogeneous d) : p.IsHomogeneous d := by
-  intro ν hν
-  apply hp
-  rw [MvPolynomial.coeff_map]
-  intro h
-  exact hν (hφ (h.trans (map_zero φ).symm))
-
-open Polynomial in
-private theorem mvPolynomial_eval_map_comp {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) {n : ℕ}
-    (x : Fin n → R) (p : MvPolynomial (Fin n) R) :
-    MvPolynomial.eval (φ ∘ x) (MvPolynomial.map φ p) = φ (MvPolynomial.eval x p) := by
-  induction p using MvPolynomial.induction_on with
-  | C a => simp
-  | add p q hp hq => simp [hp, hq]
-  | mul_X p i hp => simp [hp]
 
 open Polynomial in
 private theorem exists_ne_zero_homogeneous_zero_of_forall_subfield {F K : Type} [Field F] [Field K] [Algebra F K]
@@ -244,268 +173,24 @@ private theorem exists_ne_zero_homogeneous_zero_of_forall_subfield {F K : Type} 
     rw [MvPolynomial.mem_range_map_iff_coeffs_subset]
     intro a ha
     exact ⟨⟨a, IntermediateField.subset_adjoin F _ ha⟩, rfl⟩
-  have hfEh : fE.IsHomogeneous d :=
-    isHomogeneous_of_map_of_injective (algebraMap E K).injective (hfE ▸ hf)
+  have hfEh : fE.IsHomogeneous d := .of_map (algebraMap E K).injective (hfE ▸ hf)
   obtain ⟨x, hx0, hx⟩ := _root_.GlobalTheory.c_one_of_finite_extension F E hF n d fE hfEh hd hdn
   refine ⟨algebraMap E K ∘ x, ?_, ?_⟩
   · intro h
     apply hx0
     funext i
     exact (algebraMap E K).injective (by simpa using congrFun h i)
-  · rw [← hfE, mvPolynomial_eval_map_comp, hx, map_zero]
-
-open Polynomial in
-variable {σ k : Type} [CommRing k] in
-private theorem coeffHom_sum {ι : Type} (s : Finset ι) {e : ℕ} (p : ι → (MvPolynomial σ k)[X])
-    (hp : ∀ i ∈ s, _root_.GlobalTheory.TsenCount.CoeffHom e (p i)) :
-    _root_.GlobalTheory.TsenCount.CoeffHom e (∑ i ∈ s, p i) := fun j => by
-  rw [Polynomial.finsetSum_coeff]
-  exact MvPolynomial.IsHomogeneous.sum _ _ _ fun i hi => hp i hi j
-
-open Polynomial in
-variable {σ k : Type} [CommRing k] in
-private theorem coeffHom_mul {e e' : ℕ} {p q : (MvPolynomial σ k)[X]}
-    (hp : _root_.GlobalTheory.TsenCount.CoeffHom e p) (hq : _root_.GlobalTheory.TsenCount.CoeffHom e' q) :
-    _root_.GlobalTheory.TsenCount.CoeffHom (e + e') (p * q) := fun j => by
-  rw [Polynomial.coeff_mul]
-  exact MvPolynomial.IsHomogeneous.sum _ _ _ fun x _ => (hp x.1).mul (hq x.2)
-
-open Polynomial in
-variable {σ k : Type} [CommRing k] in
-private theorem coeffHom_prod {ι : Type} [DecidableEq ι] (s : Finset ι) (e : ι → ℕ)
-    (p : ι → (MvPolynomial σ k)[X]) (hp : ∀ i ∈ s, _root_.GlobalTheory.TsenCount.CoeffHom (e i) (p i)) :
-    _root_.GlobalTheory.TsenCount.CoeffHom (∑ i ∈ s, e i) (∏ i ∈ s, p i) := by
-  induction s using Finset.induction_on with
-  | empty =>
-    intro j
-    rw [Finset.prod_empty, Finset.sum_empty, Polynomial.coeff_one]
-    split_ifs
-    · exact MvPolynomial.isHomogeneous_one _ _
-    · exact MvPolynomial.isHomogeneous_zero _ _ _
-  | insert a s ha ih =>
-    rw [Finset.prod_insert ha, Finset.sum_insert ha]
-    exact coeffHom_mul (hp a (Finset.mem_insert_self a s))
-      (ih fun i hi => hp i (Finset.mem_insert_of_mem hi))
-
-open Polynomial in
-variable {σ k : Type} [CommRing k] in
-private theorem coeffHom_pow {e : ℕ} {p : (MvPolynomial σ k)[X]}
-    (hp : _root_.GlobalTheory.TsenCount.CoeffHom e p) (m : ℕ) :
-    _root_.GlobalTheory.TsenCount.CoeffHom (m * e) (p ^ m) := by
-  have := coeffHom_prod (Finset.range m) (fun _ => e) (fun _ => p) (fun _ _ => hp)
-  simpa using this
-
-private theorem exists_ne_zero_common_zero_of_lt {k : Type} [Field k] [IsAlgClosed k] {m r : ℕ}
-    (g : Fin r → MvPolynomial (Fin m) k) (hg : ∀ i, MvPolynomial.eval 0 (g i) = 0) (hr : r < m) :
-    ∃ x : Fin m → k, x ≠ 0 ∧ ∀ i, MvPolynomial.eval x (g i) = 0 := by
-  classical
-  have hM0 : (MvPolynomial.vanishingIdeal k {(0 : Fin m → k)}).IsMaximal :=
-    MvPolynomial.isMaximal_iff_eq_vanishingIdeal_singleton.2 ⟨0, rfl⟩
-  have hIM : Ideal.span (Set.range g) ≤ MvPolynomial.vanishingIdeal k {(0 : Fin m → k)} := by
-    rw [Ideal.span_le]
-    rintro _ ⟨i, rfl⟩
-    rw [SetLike.mem_coe, MvPolynomial.mem_vanishingIdeal_singleton_iff, MvPolynomial.aeval_eq_eval]
-    exact hg i
-  obtain ⟨Q, hQmin, hQM⟩ := Ideal.exists_minimalPrimes_le hIM
-  have hQprime : Q.IsPrime := hQmin.1.1
-  have hht : Q.height ≤ r := by
-    refine (Ideal.height_le_spanRank_toENat_of_mem_minimalPrimes _ Q hQmin).trans ?_
-    have h1 := Submodule.spanRank_span_le_card (R := MvPolynomial (Fin m) k) (Set.range g)
-    have h2 : Cardinal.mk (Set.range g) ≤ r := by
-      simpa using Cardinal.mk_range_le (f := g)
-    calc Cardinal.toENat (Submodule.spanRank (Ideal.span (Set.range g)))
-        ≤ Cardinal.toENat (r : Cardinal) := Cardinal.toENat.monotone' (h1.trans h2)
-      _ = r := by simp
-  have hQne : Q ≠ MvPolynomial.vanishingIdeal k {(0 : Fin m → k)} := by
-    intro hQ
-    have hm := (_root_.ReciprocityTheory.CA.height_maximal_mvPolynomial_field k m (MvPolynomial.vanishingIdeal k {(0 : Fin m → k)})).2
-    have hm' : Q.height = m := hQ ▸ hm
-    rw [hm'] at hht
-    have : m ≤ r := by exact_mod_cast hht
-    omega
-  have hex : ∃ J : Ideal (MvPolynomial (Fin m) k), J.IsMaximal ∧ Q ≤ J ∧
-      J ≠ MvPolynomial.vanishingIdeal k {(0 : Fin m → k)} := by
-    by_contra hcon
-    push_neg at hcon
-    have hjac : Q.jacobson = Q := isJacobsonRing_iff_prime_eq.1 inferInstance Q hQprime
-    have hle : MvPolynomial.vanishingIdeal k {(0 : Fin m → k)} ≤ Q.jacobson := by
-      rw [Ideal.jacobson]
-      refine le_sInf ?_
-      rintro J ⟨hQJ, hJ⟩
-      rw [hcon J hJ hQJ]
-    exact hQne (le_antisymm hQM (hjac ▸ hle))
-  obtain ⟨J, hJ, hQJ, hJne⟩ := hex
-  obtain ⟨x, rfl⟩ := MvPolynomial.isMaximal_iff_eq_vanishingIdeal_singleton.1 hJ
-  refine ⟨x, ?_, fun i => ?_⟩
-  · rintro rfl
-    exact hJne rfl
-  · have hx : g i ∈ MvPolynomial.vanishingIdeal k {x} :=
-      hQJ (hQmin.1.2 (Ideal.subset_span ⟨i, rfl⟩))
-    rwa [MvPolynomial.mem_vanishingIdeal_singleton_iff, MvPolynomial.aeval_eq_eval] at hx
-
-open Polynomial in
-private theorem exists_ne_zero_polynomial_zero_of_homogeneous {k : Type} [Field k] [IsAlgClosed k] {n d : ℕ}
-    (F : MvPolynomial (Fin n) k[X]) (hF : F.IsHomogeneous d) (hd : 0 < d) (hdn : d < n) :
-    ∃ x : Fin n → k[X], x ≠ 0 ∧ MvPolynomial.eval x F = 0 := by
-  classical
-  set D := F.support.sup fun ν => (F.coeff ν).natDegree with hD
-  have hDle : ∀ ν, (F.coeff ν).natDegree ≤ D := by
-    intro ν
-    by_cases hν : ν ∈ F.support
-    · exact Finset.le_sup (f := fun ν => (F.coeff ν).natDegree) hν
-    · rw [MvPolynomial.notMem_support_iff.1 hν]
-      simp
-  set s := D
-  set m := n * (s + 1)
-  set e : Fin n × Fin (s + 1) ≃ Fin m := finProdFinEquiv
-  let y : Fin n → (MvPolynomial (Fin m) k)[X] := fun i =>
-    ∑ j : Fin (s + 1), Polynomial.C (MvPolynomial.X (e (i, j))) * Polynomial.X ^ (j : ℕ)
-  let Φ : (MvPolynomial (Fin m) k)[X] :=
-    MvPolynomial.eval₂ (Polynomial.mapRingHom (MvPolynomial.C)) y F
-  have hy : ∀ i, _root_.GlobalTheory.TsenCount.CoeffHom 1 (y i) := by
-    intro i
-    refine coeffHom_sum _ _ fun j _ => ?_
-    intro l
-    rw [Polynomial.coeff_C_mul_X_pow]
-    split_ifs
-    · exact MvPolynomial.isHomogeneous_X _ _
-    · exact MvPolynomial.isHomogeneous_zero _ _ _
-  have hyd : ∀ i, (y i).natDegree ≤ s := by
-    intro i
-    refine Polynomial.natDegree_sum_le_of_forall_le _ _ fun j _ => ?_
-    exact (Polynomial.natDegree_C_mul_X_pow_le _ _).trans (Nat.lt_succ_iff.1 j.2)
-  have hΦ : _root_.GlobalTheory.TsenCount.CoeffHom d Φ := by
-    simp only [Φ, MvPolynomial.eval₂_eq']
-    refine coeffHom_sum _ _ fun ν hν => ?_
-    have hdeg : ∑ i, ν i = d := by
-      have := hF (MvPolynomial.mem_support_iff.1 hν)
-      rw [← this]
-      simp [Finsupp.weight_apply, Finsupp.sum_fintype]
-    have h1 : _root_.GlobalTheory.TsenCount.CoeffHom 0
-        ((Polynomial.mapRingHom (MvPolynomial.C (σ := Fin m))) (F.coeff ν)) := by
-      intro l
-      rw [Polynomial.coe_mapRingHom, Polynomial.coeff_map]
-      exact MvPolynomial.isHomogeneous_C _ _
-    have h2 := coeffHom_prod Finset.univ (fun i => ν i * 1) (fun i => y i ^ ν i)
-      (fun i _ => coeffHom_pow (hy i) (ν i))
-    have h3 := coeffHom_mul h1 h2
-    simpa [hdeg] using h3
-  have hΦdeg : Φ.natDegree ≤ D + d * s := by
-    simp only [Φ, MvPolynomial.eval₂_eq']
-    refine Polynomial.natDegree_sum_le_of_forall_le _ _ fun ν hν => ?_
-    have hdeg : ∑ i, ν i = d := by
-      have := hF (MvPolynomial.mem_support_iff.1 hν)
-      rw [← this]
-      simp [Finsupp.weight_apply, Finsupp.sum_fintype]
-    refine (Polynomial.natDegree_mul_le).trans (add_le_add ?_ ?_)
-    · exact (Polynomial.natDegree_map_le).trans (hDle ν)
-    · refine (Polynomial.natDegree_prod_le _ _).trans ?_
-      calc ∑ i, (y i ^ ν i).natDegree ≤ ∑ i, ν i * s :=
-            Finset.sum_le_sum fun i _ => (Polynomial.natDegree_pow_le).trans
-              (Nat.mul_le_mul_left _ (hyd i))
-        _ = d * s := by rw [← Finset.sum_mul, hdeg]
-  set r := D + d * s + 1
-  have hrm : r < m := by
-    simp only [r, m, s]
-    nlinarith
-  obtain ⟨a, ha0, ha⟩ := exists_ne_zero_common_zero_of_lt (k := k) (m := m) (r := r)
-    (fun j => Φ.coeff j) (fun j => by
-      rw [MvPolynomial.eval_zero]
-      exact (hΦ j).coeff_eq_zero (by simp; omega)) hrm
-  let x : Fin n → k[X] := fun i =>
-    ∑ j : Fin (s + 1), Polynomial.C (a (e (i, j))) * Polynomial.X ^ (j : ℕ)
-  have hmapΦ : Polynomial.map (MvPolynomial.eval a) Φ = 0 := by
-    ext j
-    rw [Polynomial.coeff_map, Polynomial.coeff_zero]
-    by_cases hj : j < r
-    · exact ha ⟨j, hj⟩
-    · rw [Polynomial.coeff_eq_zero_of_natDegree_lt (by omega), map_zero]
-  have hΦx : Polynomial.map (MvPolynomial.eval a) Φ = MvPolynomial.eval x F := by
-    have h1 := MvPolynomial.eval₂_comp_left (Polynomial.mapRingHom (MvPolynomial.eval a))
-      (Polynomial.mapRingHom (MvPolynomial.C (σ := Fin m))) y F
-    rw [Polynomial.coe_mapRingHom] at h1
-    simp only [Φ]
-    rw [h1]
-    have h2 : (Polynomial.mapRingHom (MvPolynomial.eval a)).comp
-        (Polynomial.mapRingHom (MvPolynomial.C (σ := Fin m))) = RingHom.id k[X] := by
-      refine RingHom.ext fun p => ?_
-      have hc : (MvPolynomial.eval a).comp (MvPolynomial.C (σ := Fin m)) = RingHom.id k := by
-        ext c
-        simp
-      rw [RingHom.comp_apply, Polynomial.coe_mapRingHom, Polynomial.coe_mapRingHom, Polynomial.map_map, hc,
-        Polynomial.map_id, RingHom.id_apply]
-    have h3 : Polynomial.map (MvPolynomial.eval a) ∘ y = x := by
-      funext i
-
-      simp [y, x, Polynomial.map_sum]
-    rw [h2, h3]
-    rfl
-  refine ⟨x, ?_, hΦx ▸ hmapΦ⟩
-  obtain ⟨t, ht⟩ : ∃ t, a t ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
-    exact ha0 (funext hcon)
-  obtain ⟨⟨i, j⟩, rfl⟩ := e.surjective t
-  intro hx
-  have hxi : (x i).coeff j = 0 := by
-    rw [congrFun hx i]
-    simp
-  have hc : (x i).coeff j = a (e (i, j)) := by
-    simp only [x, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow]
-    rw [Finset.sum_eq_single j]
-    · simp
-    · intro b _ hb
-      rw [if_neg]
-      intro h
-      exact hb (Fin.ext h.symm)
-    · simp
-  exact ht (hc.symm.trans hxi)
-
-open Polynomial in
-private theorem exists_ne_zero_ratFunc_homogeneous_zero {k : Type} [Field k] [IsAlgClosed k] (n d : ℕ)
-    (f : MvPolynomial (Fin n) (RatFunc k)) (hf : f.IsHomogeneous d) (hd : 0 < d) (hdn : d < n) :
-    ∃ x : Fin n → RatFunc k, x ≠ 0 ∧ MvPolynomial.eval x f = 0 := by
-  classical
-  obtain ⟨b, hb⟩ := IsLocalization.exist_integer_multiples_of_finset (nonZeroDivisors k[X]) f.coeffs
-  have hc0 : algebraMap k[X] (RatFunc k) b ≠ 0 :=
-    IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors b.2
-  obtain ⟨F, hF⟩ : MvPolynomial.C (algebraMap k[X] (RatFunc k) b) * f ∈
-      Set.range (MvPolynomial.map (algebraMap k[X] (RatFunc k))) := by
-    rw [MvPolynomial.mem_range_map_iff_coeffs_subset]
-    intro a ha
-    obtain ⟨ν, hν, rfl⟩ := MvPolynomial.mem_coeffs_iff.1 ha
-    rw [MvPolynomial.coeff_C_mul]
-    have hν' : f.coeff ν ∈ f.coeffs := by
-      refine MvPolynomial.coeff_mem_coeffs ν ?_
-      intro h
-      rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_C_mul, h, mul_zero] at hν
-      exact hν rfl
-    obtain ⟨p, hp⟩ := hb _ hν'
-    exact ⟨p, hp.trans (Algebra.smul_def _ _)⟩
-  have hFh : F.IsHomogeneous d := by
-    refine isHomogeneous_of_map_of_injective (IsFractionRing.injective k[X] (RatFunc k)) ?_
-    rw [hF]
-    simpa using (MvPolynomial.isHomogeneous_C (Fin n) (algebraMap k[X] (RatFunc k) b)).mul hf
-  obtain ⟨x, hx0, hx⟩ := exists_ne_zero_polynomial_zero_of_homogeneous F hFh hd hdn
-  refine ⟨algebraMap k[X] (RatFunc k) ∘ x, ?_, ?_⟩
-  · intro h
-    apply hx0
-    funext i
-    exact IsFractionRing.injective k[X] (RatFunc k) (by simpa using congrFun h i)
-  · have key := mvPolynomial_eval_map_comp (algebraMap k[X] (RatFunc k)) x F
-    rw [hF, hx, map_zero] at key
-    simp only [map_mul, MvPolynomial.eval_C] at key
-    exact (mul_eq_zero.1 key).resolve_left hc0
-
+  · rw [← hfE, MvPolynomial.eval_map, ← MvPolynomial.eval₂_comp, hx, map_zero]
 
 open Polynomial in
 theorem _root_.GlobalTheory.tsen_algebraic_extension_ratFunc :
     ∀ (k K : Type) [Field k] [IsAlgClosed k] [Field K] [Algebra (RatFunc k) K]
       [Algebra.IsAlgebraic (RatFunc k) K] (n d : ℕ) (f : MvPolynomial (Fin n) K),
       f.IsHomogeneous d → 0 < d → d < n → ∃ x : Fin n → K, x ≠ 0 ∧ MvPolynomial.eval x f = 0 := by
-  intro k K _ _ _ _ _ n d f hf hd hdn
-  exact exists_ne_zero_homogeneous_zero_of_forall_subfield (F := RatFunc k)
-    (fun n d f hf hd hdn => exists_ne_zero_ratFunc_homogeneous_zero (k := k) n d f hf hd hdn) n d f hf hd hdn
+  intro k K _ _ _ _ _
+  refine exists_ne_zero_homogeneous_zero_of_forall_subfield (F := RatFunc k) fun n d f hf hd hdn => ?_
+  obtain ⟨x, hx0, hx⟩ := tsenLang_ratFunc k n 1 d (fun _ => f) (fun _ => hf) hd (by omega)
+  exact ⟨x, hx0, hx 0⟩
 
 end GlobalTheory
 end -- clump:auto
@@ -563,15 +248,12 @@ theorem cdp_le_one_of_ne_char (k K Ω : Type) [Field k] [IsAlgClosed k] [Field K
 
 section ArtinSchreier
 
-attribute [local instance 2000] Rep.hV2
-
 open Polynomial
 
 theorem exists_zmod_cast_eq_of_pow_sub_self {p : ℕ} [hp : Fact p.Prime] {Ω : Type} [Field Ω] [CharP Ω p]
     (y : Ω) (hy : y ^ p - y = 0) : ∃ a : ZMod p, ZMod.castHom (dvd_refl p) Ω a = y := by
   classical
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   set f := ZMod.castHom (dvd_refl p) Ω
   set P : Polynomial Ω := X ^ p - X
   have hP : P ≠ 0 := Polynomial.X_pow_sub_X_ne_zero hp.out.one_lt
@@ -617,8 +299,6 @@ theorem exists_pow_sub_self_eq {p : ℕ} [hp : Fact p.Prime] {Ω : Type} [Field 
 end ArtinSchreier
 
 section Sequence
-
-attribute [local instance 2000] Rep.hV2
 
 variable (E Ω : Type) [Field E] [Field Ω] [Algebra E Ω] [IsGalois E Ω] (p : ℕ) [Fact p.Prime] [CharP Ω p]
 
@@ -738,7 +418,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.CdpGaloisLeOneOfAlgebraicRatFuncStatement =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyVanishingAlgebraicOverRatFunc =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyVanishingAlgebraicOverRatFunc", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition\npublic import GroundTheory.ProfiniteCohomology.CohomologicalDimension.PrimaryComponentCohomologyEqBotOfScdpLt\npublic import GroundTheory.ProfiniteCohomology.DiscreteModules.IsDiscreteRepIffForallExistsOpenNormalSubgroup\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CdpGaloisLeOneOfAlgebraicRatFuncStatement\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyFieldEqGaloisCohomologyStatement\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCohomologySpecTwistIndependentStatement\nimport GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite\nimport GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.Vanishing\nimport GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Scalars\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyVanishingAlgebraicOverRatFunc", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition\npublic import GroundTheory.ProfiniteCohomology.CohomologicalDimension.PrimaryComponentCohomologyEqBotOfScdpLt\npublic import GroundTheory.ProfiniteCohomology.DiscreteModules.IsDiscreteRepIffForallExistsOpenNormalSubgroup\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CdpGaloisLeOneOfAlgebraicRatFuncStatement\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyFieldEqGaloisCohomologyStatement\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.PullHlComp\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCohomologySpecTwistIndependent\nimport GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite\nimport GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.Vanishing\nimport GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Scalars\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\n\n"}
 section -- clump:auto
 @[expose] public section
 

@@ -62,17 +62,14 @@ theorem Wts.divided_weight_small_block_le_neg_three_mul {ι : Type} [Fintype ι]
     have hg := ((GlobalTheory.T.dividedWeight_gaps_block_and_bar ι N W hH hD τ ⟨W.p - 1, by omega⟩ ⟨W.p + 0, hk⟩ (by simp; omega)).2.1 (by simp)).2
     have he := (_root_.GlobalTheory.MeanTop.divided_entries ι N W hH hD τ ⟨W.p - 1, by omega⟩).2.1 (by simp; omega)
     have h3 := hH.h2.2
-    have hN : (0 : ℤ) ≤ 24 * (N : ℤ) * W.T := by positivity
     have h4 : 0 ≤ W.u1 τ ⟨W.p - 1, by omega⟩ - W.u1 τ ⟨W.p + 0, hk⟩ - 3 * N := by
-      by_contra hneg
-      push_neg at hneg
+      by_contra! hneg
       nlinarith
     linarith
   | succ k ih =>
     intro hk
     have h1 := ih (by omega)
     have hg := (GlobalTheory.T.dividedWeight_gaps_block_and_bar ι N W hH hD τ ⟨W.p + k, by omega⟩ ⟨W.p + (k + 1), hk⟩ (by simp; omega)).1 (by simp)
-    have hN : (0 : ℤ) ≤ (W.T : ℤ) + W.Dd + 2 + 2 * N := by positivity
     linarith
 
 theorem Wts.abs_u'_le {ι : Type} [Fintype ι] {N : ℕ} (W : Wts ι N) (hH : W.Hyp) (hD : W.IsDiv) (τ : ι) (i : Fin N) :
@@ -85,7 +82,6 @@ theorem Wts.abs_u'_le {ι : Type} [Fintype ι] {N : ℕ} (W : Wts ι N) (hH : W.
     have hi : i = ⟨W.p + k, hlt⟩ := Fin.ext hk
     have h1 := W.divided_weight_small_block_le_neg_three_mul hH hD τ k hlt
     rw [← hi] at h1
-    have hN : (0 : ℤ) ≤ N := by positivity
     rw [abs_of_nonpos (by linarith), abs_of_nonpos (by linarith)]
     linarith
 

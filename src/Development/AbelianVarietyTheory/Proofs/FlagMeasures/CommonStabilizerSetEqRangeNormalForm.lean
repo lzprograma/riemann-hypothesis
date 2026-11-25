@@ -164,7 +164,7 @@ theorem col_zero {hj : j ≤ r} {β : Fin r → ℕ} {c : ℂ} {z z' : Fin (2 * 
       · exact this
       · rw [hβ, hβ']; exact hmon (by rw [Fin.le_def]; simpa using hp)
     · intro p hp
-      rw [mv, hρ.2.2.1 a p hp.le, if_neg]
+      rw [mv, hρ.2.2.1 a p hp.le, ite_eq_right]
       rintro rfl
       exact lt_irrefl _ hp
   rw [← e1, hG, Matrix.mulVec_smul, Pi.smul_apply, mv, smul_eq_mul] at e2
@@ -262,7 +262,7 @@ theorem subset_range {hj : j ≤ r} {β : Fin r → ℕ} {c : ℂ} {z z' : Fin (
     split_ifs with hp
     · rfl
     · have := hu' (i := p.1.1) (j := p.1.2) (show β p.1.1 < β p.1.2 from lt_of_le_of_ne (hmon p.2.le) hp)
-      simp only [upper, p.2, dif_pos] at this
+      simp only [upper, p.2, dite_eq_left] at this
       exact this.symm
   · funext a
     dsimp only
@@ -274,7 +274,7 @@ theorem subset_range {hj : j ≤ r} {β : Fin r → ℕ} {c : ℂ} {z z' : Fin (
     split_ifs with hp
     · rfl
     · have := hS p.1.2 p.1.1 (by omega)
-      simp only [skewM, p.2, p.2.not_gt, dif_pos, dif_neg, not_false_eq_true, neg_eq_zero, star_eq_zero] at this
+      simp only [skewM, p.2, p.2.not_gt, dite_eq_left, dite_eq_right, not_false_eq_true, neg_eq_zero, star_eq_zero] at this
       exact this.symm
   · funext a
     dsimp only
@@ -291,16 +291,16 @@ theorem range_subset {hj : j ≤ r} {β : Fin r → ℕ} {c c' : ℂ} {z z' : Fi
   obtain ⟨y, hy⟩ : ∃ y, upperIn β x = upper y := ⟨_, rfl⟩
   obtain ⟨B, s, t, hp, hB, hS⟩ : ∃ B s t, pTop k r j q = pEl k r B (skewM s t) ∧ (∀ a : Fin r, a.val < j → B a = 0) ∧
       ∀ a b : Fin r, b.val < j → skewM s t a b = 0 := by
-    refine ⟨_, _, _, rfl, fun a ha => dif_neg (by omega), fun a b hb => ?_⟩
+    refine ⟨_, _, _, rfl, fun a ha => dite_eq_right (by omega), fun a b hb => ?_⟩
     unfold skewM
     split_ifs with h1 h2
-    · exact dif_neg (by rw [Fin.lt_def] at h1; simp only; omega)
+    · exact dite_eq_right (by rw [Fin.lt_def] at h1; simp only; omega)
     · dsimp only
-      rw [dif_neg (by omega)]; simp
+      rw [dite_eq_right (by omega)]; simp
     · have : a = b := le_antisymm (not_lt.1 h2) (not_lt.1 h1)
       subst this
       simp only
-      rw [dif_neg (by omega)]; simp
+      rw [dite_eq_right (by omega)]; simp
   have hblk : (upper y).BlockTriangular (OrderDual.toDual ∘ β) := hy ▸ upperIn_tri β x
   have hρ : rEl k r j β (x, q) = uEmb k r (upper y) * pEl k r B (skewM s t) := by
     unfold rEl; rw [← hy, ← hp]
@@ -418,6 +418,6 @@ theorem rset_normal0 : ∀ (k r j : ℕ) (hj : j ≤ r) (z z' : (Fin (2 * r + k 
   refine van_map (P := fun i' => i'.val < r ∨ r + k < i'.val) _ _ ?_ hw
   intro i p hi hp
   unfold mEmb
-  rw [dif_neg (by omega), if_neg (by rintro rfl; exact hp hi)]
+  rw [dite_eq_right (by omega), ite_eq_right (by rintro rfl; exact hp hi)]
 
 end GlobalTheory.Amp

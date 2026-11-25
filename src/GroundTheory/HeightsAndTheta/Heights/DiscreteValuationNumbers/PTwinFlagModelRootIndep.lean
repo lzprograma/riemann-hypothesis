@@ -92,14 +92,14 @@ theorem divDiff_last {m : ℕ} (P : MvPolynomial (Fin m) ℤ) :
   have hc : ∀ i : Fin m, Finsupp.mapDomain Fin.castSucc ν i.castSucc = ν i :=
     fun i => Finsupp.mapDomain_apply_of_injective hcs ν i
   have hs : ∀ i : Fin m, Finsupp.single (Fin.last m) 1 i.castSucc = 0 := fun i => by
-    rw [Finsupp.single_apply, if_neg (Fin.castSucc_lt_last i).ne']
+    rw [Finsupp.single_apply, ite_eq_right (Fin.castSucc_lt_last i).ne']
   have hemp : (Finset.univ.filter fun j : Fin (m + 1) => Fin.last m < j) = ∅ :=
     Finset.filter_false_of_mem fun j _ => not_lt.mpr (Fin.le_last j)
   simp only [addRightEmbedding_apply, coeff_mul_X, coeff_rename_mapDomain _ hcs, Finsupp.add_apply,
     Finsupp.single_eq_same, hl, zero_add, hemp, Finset.prod_empty, mul_one, Finset.range_one,
     Finset.sum_singleton, pow_zero, Nat.sub_self, Nat.zero_sub]
   rw [Finset.prod_filter, Fin.prod_univ_castSucc]
-  simp only [Fin.castSucc_lt_last, if_true, lt_irrefl, if_false, mul_one, hc, hs, add_zero]
+  simp only [Fin.castSucc_lt_last, ite_true, lt_irrefl, ite_false, mul_one, hc, hs, add_zero]
   rw [monomial_eq, map_mul, rename_C, Finsupp.prod_fintype _ _ (fun i => pow_zero _), map_prod]
   simp only [map_pow, rename_X]
 
@@ -108,7 +108,7 @@ theorem divCycle_one {R : Type*} [CommRing R] [IsNoetherianRing R] {K : Type} [F
   classical
   ext W
   simp only [divCycle, Finsupp.ofSupportFinite_coe, Finsupp.coe_zero, Pi.zero_apply]
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro ⟨h, -⟩
   rw [Ideal.span_singleton_one, sup_top_eq, Ideal.minimalPrimes_top] at h
   exact h

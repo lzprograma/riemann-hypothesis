@@ -6,10 +6,6 @@ public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GaussianHessianIntegral
 public import Lemmata.GeneralBFactSecondBisForm.Goal1
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Calculus.ContDiff.Bounds
 public import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
 public import Mathlib.Analysis.Calculus.Deriv.Pi
@@ -18,55 +14,10 @@ public import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 public import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
 public import Mathlib.Analysis.Complex.OperatorNorm
 public import Mathlib.Analysis.Complex.RemovableSingularity
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.UniformSpace.Uniformizable
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Analysis.Calculus.LineDeriv.Basic
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CasChainA
 
 @[expose] public section
 
@@ -784,151 +735,10 @@ section Holo
 
 variable {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [NormedAddCommGroup F] [NormedSpace ℂ F]
 
-theorem C_line_hasDerivAt {f : E → F} {y v : E} {ζ : ℂ} (h : DifferentiableAt ℂ f (y + ζ • v)) :
-    HasDerivAt (fun z : ℂ => f (y + z • v)) (fderiv ℂ f (y + ζ • v) v) ζ := by
-  simpa [Function.comp_def] using h.hasFDerivAt.comp_hasDerivAt ζ (((hasDerivAt_id ζ).smul_const v).const_add y)
-
-theorem C_continuousOn_fderiv [FiniteDimensional ℂ E] {U : Set E} (hU : IsOpen U) {f : E → F}
-    (hf : DifferentiableOn ℂ f U) : ContinuousOn (fderiv ℂ f) U := by
-  have := FiniteDimensional.proper ℂ E
-  intro x hx
-  refine ContinuousAt.continuousWithinAt ?_
-  obtain ⟨ρ0, hρ0, hball⟩ := Metric.isOpen_iff.1 hU x hx
-  set ρ := ρ0 / 3 with hρ
-  have hρpos : 0 < ρ := by positivity
-  have hsub : closedBall x (2 * ρ) ⊆ U := (closedBall_subset_ball (by rw [hρ]; linarith)).trans hball
-  have hdf : ∀ y ∈ U, DifferentiableAt ℂ f y := fun y hy => (hf y hy).differentiableAt (hU.mem_nhds hy)
-  have huc : UniformContinuousOn f (closedBall x (2 * ρ)) :=
-    (isCompact_closedBall x (2 * ρ)).uniformContinuousOn_of_continuous (hf.continuousOn.mono hsub)
-  rw [Metric.continuousAt_iff]
-  intro ε hε
-  obtain ⟨η, hη, hηε⟩ := Metric.uniformContinuousOn_iff.1 huc (ε * ρ / 2) (by positivity)
-  refine ⟨min η ρ, lt_min hη hρpos, fun x' hx' => ?_⟩
-  have hx'η : ‖x' - x‖ < η := by rw [← dist_eq_norm]; exact hx'.trans_le (min_le_left _ _)
-  have hx'ρ : ‖x' - x‖ < ρ := by rw [← dist_eq_norm]; exact hx'.trans_le (min_le_right _ _)
-  have hin1 : ∀ z ∈ ball x ρ, z ∈ closedBall x (2 * ρ) := fun z hz =>
-    ball_subset_closedBall (ball_subset_ball (by linarith) hz)
-  have hin2 : ∀ z ∈ ball x ρ, z + (x' - x) ∈ closedBall x (2 * ρ) := by
-    intro z hz
-    rw [mem_closedBall, dist_eq_norm]
-    rw [mem_ball, dist_eq_norm] at hz
-    calc ‖z + (x' - x) - x‖ = ‖(z - x) + (x' - x)‖ := by congr 1; abel
-      _ ≤ ‖z - x‖ + ‖x' - x‖ := norm_add_le _ _
-      _ ≤ 2 * ρ := by linarith
-  have hd2 : ∀ z ∈ ball x ρ, HasFDerivAt (fun z => f (z + (x' - x))) (fderiv ℂ f (z + (x' - x))) z := by
-    intro z hz
-    have := (hdf _ (hsub (hin2 z hz))).hasFDerivAt.comp z ((hasFDerivAt_id z).add_const (x' - x))
-    simpa [Function.comp_def] using this
-  have hxx : x ∈ ball x ρ := mem_ball_self hρpos
-  have hfd : fderiv ℂ (fun z => f (z + (x' - x)) - f z) x = fderiv ℂ f x' - fderiv ℂ f x := by
-    have h0 : HasFDerivAt (fun z => f (z + (x' - x)) - f z)
-        (fderiv ℂ f (x + (x' - x)) - fderiv ℂ f x) x := (hd2 x hxx).sub (hdf x hx).hasFDerivAt
-    rw [h0.fderiv]; congr 2; abel
-  rw [dist_eq_norm, ← hfd]
-  have hle : ‖fderiv ℂ (fun z => f (z + (x' - x)) - f z) x‖ ≤ (ε * ρ / 2) / ρ := by
-    refine _root_.Bl.general_b_fact_second_bis_form.goal1 hρpos ?_ ?_
-    · intro z hz
-      exact ((hd2 z hz).differentiableAt.sub (hdf z (hsub (hin1 z hz)))).differentiableWithinAt
-    · intro z hz
-      rw [← dist_eq_norm]
-      refine (hηε _ (hin2 z hz) _ (hin1 z hz) ?_).le
-      rw [dist_eq_norm, add_sub_cancel_left]; exact hx'η
-  have : (ε * ρ / 2) / ρ = ε / 2 := by field_simp
-  rw [this] at hle
-  linarith
-
 theorem C_differentiableOn_fderiv_apply [FiniteDimensional ℂ E] [CompleteSpace F] {U : Set E} (hU : IsOpen U)
     {f : E → F} (hf : DifferentiableOn ℂ f U) (v : E) :
     DifferentiableOn ℂ (fun x => fderiv ℂ f x v) U := by
-  have := FiniteDimensional.proper ℂ E
-  by_cases hv : v = 0
-  · subst hv
-    simp
-  intro x₁ hx₁
-  refine DifferentiableAt.differentiableWithinAt ?_
-  obtain ⟨ρ0, hρ0, hball⟩ := Metric.isOpen_iff.1 hU x₁ hx₁
-  set ρ := ρ0 / 3 with hρ
-  have hρpos : 0 < ρ := by positivity
-  set R := ρ / ‖v‖ with hR
-  have hRpos : 0 < R := by positivity
-  have hsub : closedBall x₁ (2 * ρ) ⊆ U := (closedBall_subset_ball (by rw [hρ]; linarith)).trans hball
-  have hmem : ∀ x ∈ ball x₁ ρ, ∀ z ∈ closedBall (0:ℂ) R, x + z • v ∈ closedBall x₁ (2 * ρ) := by
-    intro x hx z hz
-    rw [mem_closedBall, dist_eq_norm]
-    rw [mem_ball, dist_eq_norm] at hx
-    have hz' : ‖z‖ ≤ R := by simpa using hz
-    have h1 : ‖z • v‖ ≤ ρ := by
-      rw [norm_smul]
-      calc ‖z‖ * ‖v‖ ≤ R * ‖v‖ := by gcongr
-        _ = ρ := by rw [hR]; field_simp
-    calc ‖x + z • v - x₁‖ = ‖(x - x₁) + z • v‖ := by congr 1; abel
-      _ ≤ ‖x - x₁‖ + ‖z • v‖ := norm_add_le _ _
-      _ ≤ 2 * ρ := by linarith
-  have hdf : ∀ y ∈ U, DifferentiableAt ℂ f y := fun y hy => (hf y hy).differentiableAt (hU.mem_nhds hy)
-  have hcirc : ∀ θ : ℝ, circleMap 0 R θ ∈ closedBall (0:ℂ) R := fun θ =>
-    sphere_subset_closedBall (circleMap_mem_sphere 0 hRpos.le θ)
-  have hform : ∀ x ∈ ball x₁ ρ, fderiv ℂ f x v =
-      (2 * Real.pi * Complex.I : ℂ)⁻¹ • ∮ z in C(0, R), ((z - 0) ^ 2)⁻¹ • f (x + z • v) := by
-    intro x hx
-    have hopen : IsOpen ((fun z : ℂ => x + z • v) ⁻¹' U) := hU.preimage (by fun_prop)
-    have h1 := Complex.two_pi_I_inv_smul_circleIntegral_sub_sq_inv_smul_of_differentiable hopen
-      (c := 0) (w₀ := 0) (R := R) (f := fun z => f (x + z • v)) (fun z hz => hsub (hmem x hx z hz))
-      (fun z hz => (C_line_hasDerivAt (hdf _ hz)).differentiableAt.differentiableWithinAt)
-      (mem_ball_self hRpos)
-    have hx0 : DifferentiableAt ℂ f (x + (0:ℂ) • v) :=
-      hdf _ (hsub (hmem x hx 0 (mem_closedBall_self hRpos.le)))
-    rw [h1, (C_line_hasDerivAt hx0).deriv]
-    simp
-  obtain ⟨B, hB⟩ := (isCompact_closedBall x₁ (2 * ρ)).exists_bound_of_continuousOn
-    ((C_continuousOn_fderiv hU hf).mono hsub)
-  have hc1 : Continuous fun θ : ℝ => deriv (circleMap 0 R) θ := by
-    have : (fun θ : ℝ => deriv (circleMap 0 R) θ) = fun θ => circleMap 0 R θ * Complex.I := by
-      funext θ; rw [deriv_circleMap]
-    rw [this]
-    exact (continuous_circleMap 0 R).mul continuous_const
-  have hc2 : Continuous fun θ : ℝ => ((circleMap 0 R θ - 0) ^ 2)⁻¹ := by
-    refine Continuous.inv₀ (((continuous_circleMap 0 R).sub continuous_const).pow 2) fun θ => ?_
-    exact pow_ne_zero 2 (sub_ne_zero.2 (circleMap_ne_center hRpos.ne'))
-  have hcF : ∀ x ∈ ball x₁ ρ, Continuous fun θ : ℝ => f (x + circleMap 0 R θ • v) := by
-    intro x hx
-    refine hf.continuousOn.comp_continuous ?_ fun θ => hsub (hmem x hx _ (hcirc θ))
-    exact continuous_const.add ((continuous_circleMap 0 R).smul continuous_const)
-  have hcF' : Continuous fun θ : ℝ => fderiv ℂ f (x₁ + circleMap 0 R θ • v) := by
-    refine (C_continuousOn_fderiv hU hf).comp_continuous ?_
-      fun θ => hsub (hmem x₁ (mem_ball_self hρpos) _ (hcirc θ))
-    exact continuous_const.add ((continuous_circleMap 0 R).smul continuous_const)
-  have hder : HasFDerivAt (fun x => ∫ θ in (0:ℝ)..2 * Real.pi, deriv (circleMap 0 R) θ •
-        (((circleMap 0 R θ - 0) ^ 2)⁻¹ • f (x + circleMap 0 R θ • v)))
-      (∫ θ in (0:ℝ)..2 * Real.pi, deriv (circleMap 0 R) θ •
-        (((circleMap 0 R θ - 0) ^ 2)⁻¹ • fderiv ℂ f (x₁ + circleMap 0 R θ • v))) x₁ := by
-    refine intervalIntegral.hasFDerivAt_integral_of_dominated_of_fderiv_le (𝕜 := ℂ)
-      (F' := fun x θ => deriv (circleMap 0 R) θ •
-        (((circleMap 0 R θ - 0) ^ 2)⁻¹ • fderiv ℂ f (x + circleMap 0 R θ • v)))
-      (bound := fun θ => ‖deriv (circleMap 0 R) θ‖ * (‖((circleMap 0 R θ - 0) ^ 2)⁻¹‖ * B))
-      (ball_mem_nhds x₁ hρpos) ?_ ?_ ?_ ?_ ?_ ?_
-    · filter_upwards [ball_mem_nhds x₁ hρpos] with x hx
-      exact (hc1.smul (hc2.smul (hcF x hx))).aestronglyMeasurable
-    · exact (hc1.smul (hc2.smul (hcF x₁ (mem_ball_self hρpos)))).intervalIntegrable _ _
-    · exact (hc1.smul (hc2.smul hcF')).aestronglyMeasurable
-    · refine Eventually.of_forall fun θ _ x hx => ?_
-      rw [norm_smul, norm_smul]
-      gcongr
-      exact hB _ (hmem x hx _ (hcirc θ))
-    · exact (hc1.norm.mul (hc2.norm.mul continuous_const)).intervalIntegrable _ _
-    · refine Eventually.of_forall fun θ _ x hx => ?_
-      have h1 := (hdf _ (hsub (hmem x hx _ (hcirc θ)))).hasFDerivAt.comp x
-        ((hasFDerivAt_id x).add_const (circleMap 0 R θ • v))
-      have h2 : HasFDerivAt (fun x => f (x + circleMap 0 R θ • v))
-          (fderiv ℂ f (x + circleMap 0 R θ • v)) x := by
-        simpa [Function.comp_def] using h1
-      exact (h2.const_smul _).const_smul _
-  have hev : (fun x => fderiv ℂ f x v) =ᶠ[𝓝 x₁] fun x => (2 * Real.pi * Complex.I : ℂ)⁻¹ •
-      ∫ θ in (0:ℝ)..2 * Real.pi, deriv (circleMap 0 R) θ •
-        (((circleMap 0 R θ - 0) ^ 2)⁻¹ • f (x + circleMap 0 R θ • v)) := by
-    filter_upwards [ball_mem_nhds x₁ hρpos] with x hx
-    rw [hform x hx]
-    rfl
-  exact (hev.differentiableAt_iff).2 (hder.differentiableAt.const_smul _)
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.S7.cca_differentiableOn_fderiv_apply <;> assumption
 
 theorem holo_contDiffOn {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [FiniteDimensional ℂ E]
     [NormedAddCommGroup F] [NormedSpace ℂ F] [CompleteSpace F] {U : Set E} (hU : IsOpen U) {f : E → F}
@@ -3095,7 +2905,6 @@ theorem F_zero_small (d : ℕ) (hd : 0 < d) (β : ℂ) (hβ : β ≠ 0) (r Λ : 
 
 end Formalism.FourierDecayAlt.P.StationaryPhaseModel
 
-open Formalism.FourierDecayAlt.G MeasureTheory Filter Topology Matrix
 
 namespace Formalism.FourierDecayAlt.P.StationaryPhaseModel
 

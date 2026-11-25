@@ -190,7 +190,7 @@ theorem proof : CentredIntegralEquation.Statement := by
       intro m
       by_cases hm : m ∈ t
       · simpa [a', hm] using ha m hm
-      · simp only [a', hm, if_false]; exact analyticAt_const
+      · simp only [a', hm, ite_false]; exact analyticAt_const
     set v : anFun w := ∑ m ∈ t, compA A w (mkA (a' m) (ha' m)) * ∏ i, zc i ^ m i
     have hv : (u - v).1 = fun z => u.1 z - ∑ m ∈ t, a m (A z) * ∏ i, z i ^ m i := by
       funext z

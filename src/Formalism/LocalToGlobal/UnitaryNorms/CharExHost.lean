@@ -36,12 +36,6 @@ theorem resInf_eq (χ : HChar L) (w : InfinitePlace F) (k : Fˣ) : χ.resInf w k
 
 end Sub
 
-section Loc
-
-variable {L : Type} [Field L] [NumberField L]
-
-end Loc
-
 variable {R : Formalism.BasicNotions.Ranks} {H : Formalism.BasicNotions.Host R}
 
 end CharEx

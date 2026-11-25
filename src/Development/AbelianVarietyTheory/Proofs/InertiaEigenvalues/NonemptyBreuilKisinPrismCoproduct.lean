@@ -24,54 +24,11 @@ public import Mathlib.RingTheory.Ideal.Operations
 public import Mathlib.RingTheory.Ideal.BigOperators
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EnvRingExists
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrismHomMapIdealEq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Data.Nat.Choose.Multinomial
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsAdicCompleteOfPowLe
 import Formalism.SharpRestriction.CuspSpanNormBounds.Point
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinHomImageXDeltaZeroLiftsUniformizerStatement, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinPrismHomExtOfX, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeltaRingHomUniqueOfAdicTopologicalBasis, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowerSeriesRingHomOfIsAdicComplete, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWittVectorLiftOfIsAdicComplete, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CMemDeltaCommuteLocusSubringOfIsHausdorff, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsDeltaRingHomPowerSeriesOfRankOneImage, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanSingletonClosedOfBoundedTorsion, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBreuilKisinHomOfUniformizerFrame, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitDeltaOfPrismIdealEqSpan, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Imports, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RegularAndBoundedTorsionOfAdicTopologicalBasis, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyBreuilKisinPrismCoproduct
@@ -154,9 +111,9 @@ theorem hom_ext_of_hf_X : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K
       intro i
       rw [Polynomial.coeff_sub, Polynomial.coeff_X_pow]
       rcases lt_trichotomy i bk.Ep.natDegree with h | h | h
-      · rw [if_neg h.ne, sub_zero]; exact bk.dvd_coeff i h
-      · rw [if_pos h, h, bk.monic.coeff_natDegree, sub_self]; exact dvd_zero _
-      · rw [if_neg h.ne', sub_zero, Polynomial.coeff_eq_zero_of_natDegree_lt h]; exact dvd_zero _
+      · rw [ite_eq_right h.ne, sub_zero]; exact bk.dvd_coeff i h
+      · rw [ite_eq_left h, h, bk.monic.coeff_natDegree, sub_self]; exact dvd_zero _
+      · rw [ite_eq_right h.ne', sub_zero, Polynomial.coeff_eq_zero_of_natDegree_lt h]; exact dvd_zero _
     obtain ⟨q, hq⟩ := hd
     refine ⟨(q : bk.S), ?_⟩
     have h := congrArg (fun p : Polynomial (Wq l bk.a) => (p : bk.S)) hq
@@ -174,7 +131,7 @@ theorem hom_ext_of_hf_X : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K
     intro N f
     obtain ⟨h, hh⟩ := (PowerSeries.X_pow_dvd_iff (n := N)
       (φ := f - ((trunc N f : Polynomial (Wq l bk.a)) : bk.S))).2 (fun m hm => by
-        rw [map_sub, Polynomial.coeff_coe, coeff_trunc, if_pos hm, sub_self])
+        rw [map_sub, Polynomial.coeff_coe, coeff_trunc, ite_eq_left hm, sub_self])
     exact ⟨_, h, by rw [← hh]; ring⟩
   apply Hom.ext'
   refine RingHom.ext fun f => ?_
@@ -274,7 +231,7 @@ theorem mk_eval₂_trunc_coe {W C : Type} [CommRing W] [CommRing C] (ω : W →+
   have hdvd : (Polynomial.X : Polynomial W) ^ K ∣ p - PowerSeries.trunc K (p : W⟦X⟧) := by
     rw [Polynomial.X_pow_dvd_iff]
     intro d hd
-    rw [Polynomial.coeff_sub, PowerSeries.coeff_trunc, if_pos hd, Polynomial.coeff_coe, sub_self]
+    rw [Polynomial.coeff_sub, PowerSeries.coeff_trunc, ite_eq_left hd, Polynomial.coeff_coe, sub_self]
   obtain ⟨q, hq⟩ := hdvd
   generalize PowerSeries.trunc K (p : W⟦X⟧) = t at hq ⊢
   have hp : p = t + Polynomial.X ^ K * q := by
@@ -613,7 +570,6 @@ end GlobalTheory.BSP.WDelta
 
 namespace GlobalTheory.BSP
 
-
 open GlobalTheory.BSP.WDelta in
 theorem C_mem_δLocus_of_hausdorff : ∀ (l : ℕ) [Fact l.Prime] (a : ℕ) [NeZero a] (C : Type) [CommRing C]
     (DC : Delta l C) (J : Ideal C), (l : C) ∈ J → IsHausdorff J C → ∀ σ : (Wq l a)⟦X⟧ →+* C,
@@ -671,7 +627,7 @@ theorem X_pow_dvd_sub_trunc' {R : Type} [CommRing R] (x : R⟦X⟧) (n : ℕ) :
     (X : R⟦X⟧) ^ n ∣ x - (trunc n x : R⟦X⟧) := by
   rw [PowerSeries.X_pow_dvd_iff]
   intro m hm
-  rw [map_sub, Polynomial.coeff_coe, coeff_trunc, if_pos hm, sub_self]
+  rw [map_sub, Polynomial.coeff_coe, coeff_trunc, ite_eq_left hm, sub_self]
 
 end GlobalTheory.TruncationDivisibility
 
@@ -824,9 +780,9 @@ theorem BK.X_pow_eq_sub {l : ℕ} [Fact l.Prime] {K : FinExt l} (bk : BK K) :
     intro i
     rw [Polynomial.coeff_sub, Polynomial.coeff_X_pow]
     rcases lt_trichotomy i bk.Ep.natDegree with hi | rfl | hi
-    · rw [if_neg hi.ne, sub_zero]; exact bk.dvd_coeff i hi
-    · rw [if_pos rfl, bk.monic.coeff_natDegree, sub_self]; exact dvd_zero _
-    · rw [if_neg hi.ne', sub_zero, Polynomial.coeff_eq_zero_of_natDegree_lt hi]; exact dvd_zero _
+    · rw [ite_eq_right hi.ne, sub_zero]; exact bk.dvd_coeff i hi
+    · rw [ite_eq_left rfl, bk.monic.coeff_natDegree, sub_self]; exact dvd_zero _
+    · rw [ite_eq_right hi.ne', sub_zero, Polynomial.coeff_eq_zero_of_natDegree_lt hi]; exact dvd_zero _
   obtain ⟨q, hq⟩ := h
   refine ⟨(q : bk.S), ?_⟩
   have := congrArg (Polynomial.coeToPowerSeries.ringHom (R := Wq l bk.a)) hq
@@ -1042,32 +998,11 @@ section -- clump:auto
 
 namespace GlobalTheory.PowerBound
 
-theorem pow_le {A : Type} [CommRing A] (a d : A) (n : ℕ) :
-    (Ideal.span {a} ⊔ Ideal.span {d}) ^ (n + 1) ≤
-      Ideal.span {a ^ (n + 1)} ⊔ Ideal.span {d} * (Ideal.span {a} ⊔ Ideal.span {d}) ^ n := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    set I := Ideal.span {a} ⊔ Ideal.span {d} with hI
-    have haI : a ^ (n + 1) ∈ I ^ (n + 1) :=
-      Ideal.pow_mem_pow (Ideal.mem_sup_left (Ideal.mem_span_singleton_self a)) _
-    calc I ^ (n + 1 + 1) = I * I ^ (n + 1) := pow_succ' I (n + 1)
-      _ ≤ I * (Ideal.span {a ^ (n + 1)} ⊔ Ideal.span {d} * I ^ n) := Ideal.mul_mono_right ih
-      _ = I * Ideal.span {a ^ (n + 1)} ⊔ Ideal.span {d} * (I * I ^ n) := by
-          rw [Ideal.mul_sup, mul_left_comm]
-      _ ≤ Ideal.span {a ^ (n + 1 + 1)} ⊔ Ideal.span {d} * I ^ (n + 1) := by
-          apply sup_le
-          · rw [hI, Ideal.sup_mul, Ideal.span_singleton_mul_span_singleton, ← pow_succ']
-            apply sup_le_sup_left
-            exact Ideal.mul_mono_right ((Ideal.span_singleton_le_iff_mem _).2 haI)
-          · rw [← pow_succ']
-            exact le_sup_right
-
 theorem main : ∀ {A : Type} [inst : CommRing A] (a d : A) (n : ℕ) {x : A},
     x ∈ (Ideal.span {a} ⊔ Ideal.span {d}) ^ (n + (1 : ℕ)) →
       ∃ (u : A), ∃ w ∈ (Ideal.span {a} ⊔ Ideal.span {d}) ^ n, x = a ^ (n + (1 : ℕ)) * u + d * w := by
   intro A _ a d n x hx
-  obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 (pow_le a d n hx)
+  obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 (GlobalTheory.BSP.span_sup_span_pow_succ_le a d n hx)
   obtain ⟨u, rfl⟩ := Ideal.mem_span_singleton'.1 hy
   obtain ⟨w, hw, rfl⟩ := Ideal.mem_span_singleton_mul.1 hz
   exact ⟨u, w, hw, by ring⟩
@@ -1345,8 +1280,6 @@ def lift (hI : B.I = Ideal.span {d}) {C : Obj l ↥(OL K)} (f : Hom B C) (h0 : E
   f_I := I_of En hI f h0 h0a
   f_str := str_of En hI f h0 h0a (I_of En hI f h0 h0a)
 
-
-
 theorem univ (hF : IsFrame bk B d p) (g0 : Hom bk.prism (obj hF.1 En))
     (hg0 : BK.hf g0 X = En.i p + En.i d * En.w) (C : Obj l ↥(OL K)) (f : Hom B C)
     (g : Hom bk.prism C) : ∃! h : Hom (obj hF.1 En) C, h.comp (inl hF.1 En) = f ∧ h.comp g0 = g := by
@@ -1393,7 +1326,6 @@ def env (hF : IsFrame bk B d p) : Env bk B d p :=
     tb_b := En.tb_b }
 
 end GlobalTheory.BSP.EnvCop
-
 
 open GlobalTheory.BSP.EnvCop in
 theorem GlobalTheory.BSP.nonempty_env : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (B : Obj l ↥(OL K))

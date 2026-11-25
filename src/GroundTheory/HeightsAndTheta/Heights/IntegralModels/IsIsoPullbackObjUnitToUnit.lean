@@ -79,18 +79,6 @@ end SchemeStatements
 
 section AlgebraStatements
 
-def Dominates (A : Type*) {K : Type*} [CommRing A] [IsLocalRing A] [Field K] [Algebra A K]
-    (V : Subring K) : Prop :=
-  ∃ h : ∀ a : A, algebraMap A K a ∈ V,
-    ∀ a : A, (⟨_, h a⟩ : V) ∈ nonunits V ↔ a ∈ IsLocalRing.maximalIdeal A
-
-def DominatingDVR.Statement : Prop :=
-  (∀ (A K : Type) [CommRing A] [IsDomain A] [IsLocalRing A] [IsNoetherianRing A] [Field K]
-    [Algebra A K] [IsFractionRing A K], ¬ IsField A →
-      ∃ V : Subring K, IsDiscreteValuationRing V ∧ Dominates A V) ∧
-  (∀ (Z : Scheme.{0}) [IsIntegral Z] [IsLocallyNoetherian Z] (z : Z), z ≠ genericPoint Z →
-      ∃ V : Subring Z.functionField, IsDiscreteValuationRing V ∧ Dominates (Z.presheaf.stalk z) V)
-
 def blowUpChart (A K : Type*) [CommRing A] [Field K] [Algebra A K] {n : ℕ} (x : Fin n → A)
     (i : Fin n) : Subalgebra A K :=
   Algebra.adjoin A (Set.range fun j => algebraMap A K (x j) / algebraMap A K (x i))

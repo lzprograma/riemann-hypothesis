@@ -25,14 +25,6 @@ def PullSectionIntegralInt.Statement : Prop :=
         integralClosure
           (Algebra.adjoin ℤ (insert ((M : Ω)⁻¹) (Set.range fun i => aeval y (L i) / aeval y (L j)))) Ω
 
-section Inhabitants
-
-namespace PullSectionIntegralInt
-
-end PullSectionIntegralInt
-
-end Inhabitants
-
 end
 
 end GroundTheory.Heights₂.Heights.HilbertSamuel

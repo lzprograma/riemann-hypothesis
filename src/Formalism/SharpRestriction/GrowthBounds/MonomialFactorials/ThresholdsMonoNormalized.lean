@@ -19,54 +19,11 @@ public import Mathlib.Analysis.Complex.ExponentialBounds
 public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestPlusOf
 public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockValuationOverZpHolds
 public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestRankLProved
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.TypeStar
 import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.KappaZeroNonneg
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.RingTheory.LocalProperties.Reduced
-import Mathlib.Tactic.Linter.Style
 import Mathlib.Topology.Sheaves.Presheaf
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -137,7 +94,6 @@ theorem digit_class_dimension_comparison_of_remaining_estimates {D : Formalism.B
       ((30 + CM) / X.L.Y * ((X.S C0 CE1 CE2).t : ℝ) * Real.exp 3 + 5 / X.L.Y) := by
   classical
   have hY : (1 : ℝ) ≤ X.L.Y := hH.1.1
-  have hY0 : (0 : ℝ) < X.L.Y := by linarith
   intro dl hdl
   have hbox : (CountingStatementReduction.box X).filter (fun a => Compat C0 CE1 CE2 X dl a.1) = cbox C0 CE1 CE2 X dl ×ˢ X.winA := by
     ext a
@@ -216,7 +172,6 @@ theorem segment_weighted_counting_bound_of_all_remaining_bounds (D : Formalism.B
   have hY : (1 : ℝ) ≤ X.L.Y := hH.1.1
   have hY0 : (0 : ℝ) < X.L.Y := by linarith
   have hN : (1 : ℝ) ≤ (X.N₁ : ℝ) := by exact_mod_cast hH.1.2.2.2.2.2.1
-  have ht : (0 : ℝ) ≤ ((X.S C0 CE1 CE2).t : ℝ) := Nat.cast_nonneg _
   have he : (0 : ℝ) < Real.exp 3 := Real.exp_pos 3
   refine ⟨fun aTop aPlus b => blockBadness C0 CE1 CE2 X aTop aPlus b ⌊X.L.Y * D1r C0 CE1 CE2 X CM⌋,
     (30 + CM) / X.L.Y * ((X.S C0 CE1 CE2).t : ℝ) * Real.exp 3 + 5 / X.L.Y, by positivity, ?_, ?_,
@@ -230,7 +185,6 @@ theorem segment_weighted_counting_bound_of_all_remaining_bounds (D : Formalism.B
         ((30 + CM) * Real.exp 3 + 5) * (((X.S C0 CE1 CE2).t : ℝ) + 1) := by
       have : 0 ≤ (30 + CM) * Real.exp 3 := by positivity
       nlinarith
-    have h2 : 0 ≤ (30 + CM) * Real.exp 3 + 5 := by positivity
     calc 2 * ((30 + CM) * ((X.S C0 CE1 CE2).t : ℝ) * Real.exp 3 + 5) * Real.exp 3
         ≤ 2 * (((30 + CM) * Real.exp 3 + 5) * (((X.S C0 CE1 CE2).t : ℝ) + 1)) * Real.exp 3 := by
           apply mul_le_mul_of_nonneg_right _ he.le
@@ -425,7 +379,6 @@ theorem ratioCondition_of_segFacts (hS : SegFacts C0 CE1 CE2 X) : RestRatio C0 C
     have hJ : (X.r : ℝ) * X.xa ≤ (X.L.a : ℝ) / 8 := by
       have h1 := hS.xa
       have hLa := hS.La4
-      have hLa0 := hS.hF.La0
       unfold Formalism.MainNotions.ColumnSystems.Loc.J0 at h1
       rw [hk] at h1
       have hk0 : (0 : ℝ) < (X.r : ℝ) + 1 := by linarith
@@ -436,7 +389,6 @@ theorem ratioCondition_of_segFacts (hS : SegFacts C0 CE1 CE2 X) : RestRatio C0 C
           field_simp
         linarith
       have h4 : 2 * X.L.La C0 * X.L.b' ≤ ((X.r : ℝ) + 1) / 2 * X.L.b' := by nlinarith
-      have h5 : ((X.r : ℝ) + 1) / 2 * X.L.b' ≤ (X.L.a : ℝ) / 8 := by nlinarith
       linarith
     have hd : ((y : ℝ) - x) * ((X.S C0 CE1 CE2).P X.p (uTop (X.S C0 CE1 CE2) i) : ℝ) ≤
         X.L.a / (X.L.k * X.L.Y) + X.xa := by
@@ -573,7 +525,7 @@ theorem nv_irr' {w : O} (hw : Irreducible w) : dvrOrderNat w = 1 := by
 
 theorem vK_int_form (x : KK O) (hx : x ≠ 0) : ∃ k : ℤ, vK p x = (((k : ℚ) / (ramE p O : ℚ) : ℚ) : WithTop ℚ) := by
   unfold vK ordW
-  rw [if_neg hx]
+  rw [ite_eq_right hx]
   exact ⟨_, rfl⟩
 
 theorem vK_le_zero_of_not_int (S : UniformizedDVR p O) (a : KK O)
@@ -597,15 +549,14 @@ theorem vK_le_zero_of_not_int (S : UniformizedDVR p O) (a : KK O)
       nv_irr' S.w_irr]
     simp [dvrOrderNat]
   rw [valuation_mul_alt, hk, hwinv, ← WithTop.coe_add, ← WithTop.coe_zero, WithTop.coe_le_coe] at h
-  push_neg at h
+  push Not at h
   refine ⟨(k : ℚ) / (ramE p O : ℚ), hk, ?_⟩
   have h2 : ((k : ℚ) - 1) / (ramE p O : ℚ) < 0 := by
     rw [sub_div]
     rw [neg_div] at h
     linarith
   have h3 : (k : ℚ) - 1 < 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact absurd h2 (not_lt.2 (div_nonneg hc hepos.le))
   have h4 : k < 1 := by exact_mod_cast (by linarith : (k : ℚ) < 1)
   have h5 : (k : ℚ) ≤ 0 := by exact_mod_cast (by omega : k ≤ 0)
@@ -676,7 +627,7 @@ theorem goodSub_of_dual (S : UniformizedDVR p O) (be : V → V → KK O)
         intro i _
         rw [ht i, mul_smul, algebraMap_smul, algebraMap_smul]
       exact S.w_irr.not_isUnit (hprim S.w _ hx' hu')
-    · push_neg at hall
+    · push Not at hall
       obtain ⟨j, hj⟩ := hall
       obtain ⟨q, hq, hq0⟩ := vK_le_zero_of_not_int S (t j) (not_le.2 hj)
       obtain ⟨qc, hqc, hqcD⟩ := hc
@@ -1038,10 +989,6 @@ theorem Yl_bound (hFree : RestFree C0 CE1 CE2 X) {dl : DCl X} (hdl : dl ∈ clSe
     have hkP := hS.kP l
     have hkb := hS.kb
     have hsR : (σ : ℝ) < ((X.r : ℝ) + 1) * (P : ℝ) := by exact_mod_cast hsum
-    have hP1R : (1 : ℝ) ≤ (P : ℝ) := by exact_mod_cast hP1
-    have hr0 : (0 : ℝ) ≤ (X.r : ℝ) := Nat.cast_nonneg _
-    have hb0 : (0 : ℝ) ≤ X.L.b' := by nlinarith
-    have hA0 : (0 : ℝ) ≤ (X.L.a : ℝ) := Nat.cast_nonneg _
     have : (σ : ℝ) < (X.L.a : ℝ) := by nlinarith
     exact_mod_cast this.le
   obtain ⟨vlo, hlo1, hlo2, hlo3, hlo4⟩ := exists_low X.L.a σ P (by omega) hσA
@@ -1082,8 +1029,7 @@ theorem Yl_bound (hFree : RestFree C0 CE1 CE2 X) {dl : DCl X} (hdl : dl ∈ clSe
   rw [hdlo] at hx1
   have hvv : vlo < vhi := by omega
   have hqq : qlo ≤ qhi := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have : P * qhi < P * qlo := Nat.mul_lt_mul_of_pos_left hc hPpos
     omega
   obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hqq
@@ -1197,7 +1143,6 @@ theorem restTMSize_of (hS : SegFacts C0 CE1 CE2 X) (hFree : RestFree C0 CE1 CE2 
     have h1 := coarseA_upper hS x.1 (uTop (X.S C0 CE1 CE2) i)
     have h2 := b_small hS
     have hP : (1 : ℝ) ≤ ((X.S C0 CE1 CE2).P X.p (uTop (X.S C0 CE1 CE2) i) : ℝ) := by exact_mod_cast hS.P1 _
-    have h0 : (0 : ℝ) ≤ (coarseA X.p (X.S C0 CE1 CE2) x.1 (uTop (X.S C0 CE1 CE2) i) : ℝ) := Nat.cast_nonneg _
     have ha0 : (0 : ℝ) ≤ X.L.a := Nat.cast_nonneg _
     have h3 : (coarseA X.p (X.S C0 CE1 CE2) x.1 (uTop (X.S C0 CE1 CE2) i) : ℝ) ≤ 2 * X.L.a := by nlinarith
     have h4 : coarseA X.p (X.S C0 CE1 CE2) x.1 (uTop (X.S C0 CE1 CE2) i) ≤ 2 * X.L.a := by exact_mod_cast h3
@@ -1290,7 +1235,6 @@ theorem lower_bound_initial_multiplicity {dl : DCl X} {a : Fin X.s → ℕ} (ha 
   have hσu : (X.S C0 CE1 CE2).sigma ≤ (u : ℕ) := by
     simp [hu, uTop]
   set P := SegData.P X.p (X.S C0 CE1 CE2) u with hPdef
-  have hPpos : 0 < P := twoPow_pos C0 CE1 CE2 X u
   have hj : x.2.1 i ≤ x.1.o u := (((mem_lv _ _ _).mp hlv).1 i).1
   have hA : coarseA X.p (X.S C0 CE1 CE2) x.1 u ≤ (X.S C0 CE1 CE2).bTop u / P :=
     Nat.div_le_div_right (Nat.sub_le _ _)
@@ -1329,7 +1273,6 @@ theorem lower_bound_initial_multiplicity {dl : DCl X} {a : Fin X.s → ℕ} (ha 
     push_cast at h1
     linarith [hS.bTop u]
   have havR : (X.L.a : ℝ) ≤ v := by exact_mod_cast hav
-  have hPR : (0 : ℝ) ≤ (P : ℝ) := Nat.cast_nonneg _
   nlinarith
 
 theorem restSI_proved (hFree : RestFree C0 CE1 CE2 X) : RestSI (C0 := C0) (CE1 := CE1) (CE2 := CE2) (X := X) := by
@@ -1393,7 +1336,6 @@ theorem restSI_proved (hFree : RestFree C0 CE1 CE2 X) : RestSI (C0 := C0) (CE1 :
     have := hF.b_lt
     show X.L.b' * X.L.p ≤ X.L.a
     linarith
-  have ha0 : (0 : ℝ) ≤ X.L.a := Nat.cast_nonneg _
   have hsum : (2 * (X.s : ℝ) + 1) * (2 * X.L.a / X.p) + 6 * ((X.L.a : ℝ) / X.p) ≤ X.L.a := by
     calc (2 * (X.s : ℝ) + 1) * (2 * X.L.a / X.p) + 6 * ((X.L.a : ℝ) / X.p)
         = (4 * (X.s : ℝ) + 8) * ((X.L.a : ℝ) / X.p) := by ring
@@ -1470,8 +1412,6 @@ theorem eps_num (Sr Yr Y κ lg CM : ℝ) (hY : 1 ≤ Y) (hYr : 0 < Yr) (hS0 : 0 
     field_simp
   rw [e1]
   have h1 : lg / κ ≤ 1 / 24 := by rw [div_le_iff₀ hκ]; linarith
-  have h2 : 0 ≤ Sr / Yr := div_nonneg hS0 hYr.le
-  have h3 : 0 ≤ lg / κ := div_nonneg hlg hκ.le
   have h4 : 2 * (Sr / Yr) * (lg / κ) ≤ 2 * (7 / Y) * (1 / 24) := by gcongr
   have h5 : 7 / Y ≤ 7 := by rw [div_le_iff₀ hY0]; nlinarith
   have h6 : 2 * (Sr / Yr) * (lg / κ) / Y ≤ 1 / Y := by
@@ -1623,9 +1563,6 @@ theorem restTMEps_of (hS : SegFacts C0 CE1 CE2 X) (hE' : (X.r : ℝ) + 1 ≤ X.L
   have hYr0 : (0 : ℝ) < ((XMof C0 CE1 CE2 X dl a x.1 x.2).Yl i : ℝ) := by
     have h2 := lt_of_lt_of_le hB2 hYP
     exact pos_of_mul_pos_left h2 (by linarith)
-  have hB1 : 0 ≤ 5 / 2 * X.L.b' + (2 * X.s + 1) * (2 * X.L.a / X.p) := by
-    have : (0 : ℝ) ≤ X.L.a := Nat.cast_nonneg _
-    positivity
   have hfin : (5 / 2 * X.L.b' + (2 * X.s + 1) * (2 * X.L.a / X.p)) * X.L.Y ≤ 7 * (X.L.a / (2 * (X.L.k * X.L.Y))) := by
     have hq : (2 * (X.s : ℝ) + 1) * (2 * X.L.a / X.p) * (2 * X.L.k * X.L.Y ^ 2) ≤ 4 * X.L.a := by
       have hpk' := hE.pk
@@ -1638,7 +1575,6 @@ theorem restTMEps_of (hS : SegFacts C0 CE1 CE2 X) (hE' : (X.r : ℝ) + 1 ≤ X.L
         nlinarith only [h1, this]
       have ha0 : (0 : ℝ) ≤ X.L.a := Nat.cast_nonneg _
       nlinarith only [h2, hpk', ha0]
-    have hq2 : 5 / 2 * X.L.b' * (2 * X.L.k * X.L.Y ^ 2) ≤ 5 / 2 * X.L.a := by nlinarith only [hkYb]
     have e4 : (5 / 2 * X.L.b' + (2 * X.s + 1) * (2 * X.L.a / X.p)) * X.L.Y =
         ((5 / 2 * X.L.b' * (2 * X.L.k * X.L.Y ^ 2)) + (2 * (X.s : ℝ) + 1) * (2 * X.L.a / X.p) * (2 * X.L.k * X.L.Y ^ 2)) /
           (2 * (X.L.k * X.L.Y)) := by

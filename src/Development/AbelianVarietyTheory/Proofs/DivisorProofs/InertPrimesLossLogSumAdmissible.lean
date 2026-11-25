@@ -234,7 +234,6 @@ theorem gam_bounds {p : ℕ} (hp : 2 ≤ p) : 0 ≤ gam p ∧ gam p ≤ 2 / p :=
 theorem first_term {D : D7} {L : SizeData₂ D} (h : SizesAt L) {j : ℕ} (hj : j ∈ SizeData₂.lifts D) {p : ℕ} (hp : 2 ≤ p) :
     max 0 ((∑ z ∈ kindA D p, FOrb D j p z) / (nP D p : ℝ)) ≤ 6 * (D.R.f * D.R.m * L.sc.b) / p := by
   have hb : 0 < L.sc.b := Real.exp_pos _
-  have hp' : (0 : ℝ) < p := by exact_mod_cast (by omega : 0 < p)
   have hnP : (0 : ℝ) < nP D p := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne _)
   have hkn := D.R.m_add_three_le_k
   have hk : (1 : ℝ) ≤ D.R.k := by exact_mod_cast (by omega : 1 ≤ D.R.k)
@@ -274,7 +273,6 @@ theorem eatI_bound {D : D7} {L : SizeData₂ D} (h : SizesAt L) {K : Consts} {c 
   obtain ⟨hj1, hj2⟩ := Finset.mem_Icc.1 hj
   have hx1 := L.sc.one_lt_alt
   have hb : 0 < L.sc.b := Real.exp_pos _
-  have hL : 1 ≤ L.sc.L := Real.one_le_rpow L.sc.one_lt_alt.le L.sc.eps_pos.le
   have hmn := D.R.two_le_m
   have hkn := D.R.m_add_three_le_k
   have hmfn : D.R.m ≤ D.R.f := D.R.m_le_f
@@ -383,7 +381,6 @@ theorem eatI_bound {D : D7} {L : SizeData₂ D} (h : SizesAt L) {K : Consts} {c 
     linarith
   have lb1 : 0 ≤ Real.logb p (2 * L.sc.a) := div_nonneg la0 hl0.le
   have lb2 : 0 ≤ Real.logb p (4 * (nP D p : ℝ) * Nm D * L.sc.a) := div_nonneg lq0 hl0.le
-  have m0 : 0 ≤ max 0 ((∑ z ∈ kindA D p, FOrb D j p z) / (nP D p : ℝ)) := le_max_left _ _
   have u1 := mul_le_mul_of_nonneg_right (add_le_add (add_le_add t1 t2) t3) hl0.le
   have e : (6 * (D.R.f * D.R.m * L.sc.b) / p + 12 * (D.R.f * D.R.m * L.sc.b) / p +
       108 * (D.R.f * D.R.m * L.sc.b) / p) * Real.log p = 126 * (D.R.f * D.R.m * L.sc.b) * (Real.log p / p) := by ring
@@ -452,7 +449,6 @@ theorem eatX_bound {D : D7} {L : SizeData₂ D} (h : SizesAt L) {c : ErrC}
   have hkn := D.R.m_add_three_le_k
   have hk : (1 : ℝ) ≤ D.R.k := by exact_mod_cast (by omega : 1 ≤ D.R.k)
   have hp2 : (2 : ℝ) ≤ p := by exact_mod_cast hp
-  have hp0 : (0 : ℝ) < p := by linarith
   have hl0 : 0 < Real.log p := Real.log_pos (by linarith)
   have hlogb : Real.log L.sc.b = L.sc.L := Real.log_exp _
   have ha1 : 1 ≤ L.sc.a := one_le_mul_of_one_le_of_one_le hx1.le (by linarith)
@@ -476,7 +472,6 @@ theorem eatX_bound {D : D7} {L : SizeData₂ D} (h : SizesAt L) {c : ErrC}
     rw [nsmul_eq_mul] at a
     have a2 := mul_le_mul_of_nonneg_right (card_le_f D (kindBC D p)) (by positivity : 0 ≤ 9 * L.sc.b)
     linarith
-  have hk1 : (0 : ℝ) ≤ D.R.k - 1 := by linarith
   have lb : 0 ≤ Real.logb p L.sc.a := div_nonneg la0 hl0.le
   rw [h3, abs_of_nonneg (by positivity), add_mul]
   refine add_le_add ?_ ?_
@@ -513,7 +508,6 @@ theorem sum_eatI {D : D7} {L : SizeData₂ D} (h : SizesAt L) {K : Consts} {c : 
   have hb : 0 < L.sc.b := Real.exp_pos _
   have hL : 1 ≤ L.sc.L := Real.one_le_rpow L.sc.one_lt_alt.le L.sc.eps_pos.le
   have hmn := D.R.two_le_m
-  have hm : (1 : ℝ) ≤ D.R.m := by exact_mod_cast (by omega : 1 ≤ D.R.m)
   have hη := L.etaSz_pos
   have hX0 : 0 ≤ L.sc.X'' D.R.n := div_nonneg (mul_nonneg (by linarith) hb.le) hw0.le
   have hXb : L.sc.X'' D.R.n ≤ L.sc.b := (le_mul_of_one_le_right hX0 (by linarith)).trans hX
@@ -697,7 +691,7 @@ theorem bound_one {D : D7} {L : SizeData₂ D} {c : ErrC}
       (∑ τ : D.what₂.Tau, wj D j τ) / ((p : ℝ) ^ 2 - 1) else 0)|) := by
     intro p hp
     have e0 : padicValNat p 1 = 0 := by simp [_root_.Nat.padicValNat_def (n := 1)]
-    rw [if_pos (hQ p hp).2, e0, Nat.cast_zero, zero_add]
+    rw [ite_eq_left (hQ p hp).2, e0, Nat.cast_zero, zero_add]
     unfold EatC Formalism.MainNotions.G.Nm
     rw [hc, mul_assoc]
   rw [Finset.sum_congr rfl hEg]
@@ -705,7 +699,6 @@ theorem bound_one {D : D7} {L : SizeData₂ D} {c : ErrC}
   refine mul_le_mul_of_nonneg_left ?_ (by norm_num)
   have hL := HCEntries.one_le_scL L
   have hb := HCEntries.one_le_b L
-  have hk := HCEntries.one_le_k D
   have ht := HCEntries.one_le_letterBlockLength D
   have hmn := D.R.two_le_m
   have hkn := D.R.m_add_three_le_k
@@ -828,7 +821,7 @@ theorem inertPrimes_loss_log_sum_admissible : ∀ {eps : ℝ} (Fm : FamP eps), 0
     refine Finset.sum_congr rfl fun p hp => ?_
     rw [Finset.mem_filter] at hp
     unfold Formalism.MainNotions.WeightDegreeSizes.EatCI
-    rw [if_pos hp.2]
+    rw [ite_eq_left hp.2]
   have eB : ∑ p ∈ P.filter (fun p => ¬ (G.IsResidueClassZero (Fm.D x i) p ∧ G.hP (Fm.D x i) p = 0)),
       2 * Real.log (p : ℝ) * |Formalism.MainNotions.WeightDegreeSizes.EatCI (Fm.L x i) Fm.GK Fm.cX.err j p| =
       ∑ p ∈ P.filter (fun p => ¬ (G.IsResidueClassZero (Fm.D x i) p ∧ G.hP (Fm.D x i) p = 0)),
@@ -836,7 +829,7 @@ theorem inertPrimes_loss_log_sum_admissible : ∀ {eps : ℝ} (Fm : FamP eps), 0
     refine Finset.sum_congr rfl fun p hp => ?_
     rw [Finset.mem_filter] at hp
     unfold Formalism.MainNotions.WeightDegreeSizes.EatCI
-    rw [if_neg hp.2]
+    rw [ite_eq_right hp.2]
   rw [eA, eB, add_mul]
   exact add_le_add A B
 

@@ -3,42 +3,6 @@ module
 public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightedPrimeSumBound
 public import Formalism.FilteredPoleLength.LocalDescentLevels.FourTermSumBoundOfParameters
 public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.QuotientParamNonneg
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -121,13 +85,10 @@ theorem pvs_core (A E Cd Q R δ lδ d D T c g₀ G PH Prw Pη Pd PO PD PQ RR L �
   have r2 : 5 * G * (f * r ^ 2) + Pd ≤ PP ^ 3 := by
     have a1 : 50 * G ≤ PP := by linarith
     have a2 : 28 * (f * r ^ 2) ≤ PP := by linarith
-    have a3 : Pd ≤ PP := by linarith
     have a4 : (50 * G) * (28 * (f * r ^ 2)) ≤ PP * PP := mul_le_mul a1 a2 (by positivity) hPP0.le
     have a5 : PP * PP * 87 ≤ PP ^ 3 := by
       have : PP ^ 3 = PP * PP * PP := by ring
       rw [this]; exact mul_le_mul_of_nonneg_left hPP87 (by positivity)
-    have a6 : PP * PP = PP ^ 2 := by ring
-    have a7 : (50 * G) * (28 * (f * r ^ 2)) = 280 * (5 * G * (f * r ^ 2)) := by ring
     linarith
   have r3 : Pη / 2 ≤ PP ^ 2 := by linarith
   have tp := Formalism.MainNotions.Gaps.T0.total_le_of_bounds d D T c RR T κ (60 * G + 180 * PH + 40 * PD + 22 * PQ')
@@ -137,7 +98,6 @@ theorem pvs_core (A E Cd Q R δ lδ d D T c g₀ G PH Prw Pη Pd PO PD PQ RR L �
     by_contra h
     have hkfb : 0 < k * f * b := by positivity
     have := mul_neg_of_neg_of_pos (not_le.mp h) hkfb
-    have e : C * (k * f * b) = C * k * f * b := by ring
     linarith
   have hbase : PP ^ 2 * k ≤ T * (m * δ₂) := by
     have e1 : PP ^ 2 * k ≤ PP ^ 4 * D ^ 3 * k * f := by
@@ -163,7 +123,6 @@ theorem pvs_core (A E Cd Q R δ lδ d D T c g₀ G PH Prw Pη Pd PO PD PQ RR L �
         exact mul_le_mul_of_nonneg_left this hT0.le
       linarith
     have e6 : PP ^ 3 * T * 4 ≤ PP ^ 3 * T * (T * (f * m * δ₂)) := mul_le_mul_of_nonneg_left e5 (by positivity)
-    have e7 : PP ^ 3 * T * (T * (f * m * δ₂)) = PP ^ 3 * T ^ 2 * (f * m * δ₂) := by ring
     have e8 : PP ^ 3 * T ^ 2 * (f * m * δ₂) ≤ b * (f * m * δ₂) := mul_le_mul_of_nonneg_right hS5 (by positivity)
     linarith
   have ps1 : 4 * C * PP ^ 2 * D ^ 3 * k / (m * δ₂) ≤ T := by
@@ -305,8 +264,6 @@ theorem sumGP (large₂ : SizeData₂ D) (X : PJ D B P j) (h1 : 1 ≤ j) (K : KA
       refine le_trans (le_of_eq ?_) this
       ring
     · have hPH0 : 0 ≤ PH := by linarith
-      have hPrw0 : 0 ≤ Prw := by linarith
-      have hL0 : 0 ≤ wL.size := by linarith
       rw [mul_zero]
       positivity
   exact pvs_core _ _ _ _ _ (G.del : ℝ) (Real.log (G.del : ℝ)) (X.rk ka (B.Mlat j ka) : ℝ) (WeightFamilies.dimY D j : ℝ) (T : ℝ)

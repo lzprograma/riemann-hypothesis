@@ -2,44 +2,7 @@ module
 
 public import Formalism.LocalRingCardinality.DataKerI
 public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.RingTheory.MvPolynomial
 
 @[expose] public section
@@ -115,13 +78,6 @@ structure AdLift (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (e : FamE D) (
   z_S : ∀ c c' k, ∃ a : ℕ, 0 < a ∧ (∀ q : ℕ, q.Prime → q ∣ a → q ∈ O.S) ∧
     a • pt D (tor0 D cc δ) δ (z c c' k) ∈ La0 D (tor0 D cc δ) (D.R.N i) (D.R.N (i + 1))
   dg : D.what₂.Tau → ℕ
-
-namespace AdLift
-
-variable {D : D7} {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} {e : FamE D} {Q : DtAd D} {u : D.what₂.Word}
-  {C : ColumnChain D.R D.what₂.Tau (D.hcW u)} {O : LiftObj D C} {i : ℕ} (A : AdLift D cc δ e Q O i)
-
-end AdLift
 
 
 
@@ -346,7 +302,7 @@ theorem lamNo_eq (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau) (j : ℕ) : 
     intro r hr
     by_cases hrj : r < D.R.N j
     · have h1 : lamNo D u τ (j + 1) r = lamNo D u τ j r := by
-        simp only [lamNo, lamTr, if_pos hrj]
+        simp only [lamNo, lamTr, ite_eq_left hrj]
         have h2 := sJ'_sub_sJ D u τ j
         push_cast
         linarith
@@ -370,7 +326,7 @@ theorem lamNo_eq (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau) (j : ℕ) : 
         generalize j * (D.R.t + 1) = a at *
         omega
       have hdiv : (r - D.R.k) / (D.R.t + 1) = j := Nat.div_eq_of_lt_le hlo hhi
-      simp only [lamNo, lamTr, if_neg hrj, if_pos hr, if_neg hk, hdiv]
+      simp only [lamNo, lamTr, ite_eq_right hrj, ite_eq_left hr, ite_eq_right hk, hdiv]
       have h2 := sJ_sub_wJ D u τ j
       push_cast
       linarith
@@ -379,12 +335,12 @@ theorem wtRec_thm (D : D7) : wtRec D := by
   intro u τ i hi
   refine ⟨fun C => ⟨?_, ?_⟩, fun r hr => ?_⟩
   · rw [C.sSharp_eq i hi τ]
-    simp only [sJ', eJ, dif_pos hi]
+    simp only [sJ', eJ, dite_eq_left hi]
   · rw [C.sDiv_eq i hi τ]
-    simp only [sJ, eJ, dif_pos hi]
+    simp only [sJ, eJ, dite_eq_left hi]
   · have hi1 : 1 ≤ i + 1 ∧ i + 1 ≤ D.R.m := ⟨by omega, by omega⟩
     have hw : Formalism.BasicNotions.DV.wSz D (i + 1) τ = (((D.hc τ).e ⟨i, hi⟩ : ℚ) : ℝ) := by
-      simp only [Formalism.BasicNotions.DV.wSz, dif_pos hi1, Nat.add_sub_cancel]
+      simp only [Formalism.BasicNotions.DV.wSz, dite_eq_left hi1, Nat.add_sub_cancel]
     have key : Formalism.BasicNotions.DV.nuRow D u (i + 1) τ r = (((Formalism.BasicNotions.DV.srcPar D u τ r + (D.hc τ).e ⟨i, hi⟩ -
         (((D.R.N i : ℚ) + (D.R.N (i + 1) : ℚ) - 1 - 2 * (r : ℚ)) / 2)) : ℚ) : ℝ) := by
       unfold Formalism.BasicNotions.DV.nuRow
@@ -399,7 +355,7 @@ theorem wtRec_thm (D : D7) : wtRec D := by
     simp only [nuTr]
     rw [hlam, lamNo_eq D u τ i r hr]
     by_cases hk : r < D.R.k
-    · simp only [if_pos hk, lamZ, dif_pos hk, Formalism.BasicNotions.DV.srcPar, sJ', eJ, dif_pos hi, Formalism.BasicNotions.sExp',
+    · simp only [ite_eq_left hk, lamZ, dite_eq_left hk, Formalism.BasicNotions.DV.srcPar, sJ', eJ, dite_eq_left hi, Formalism.BasicNotions.sExp',
         D.hcW_e, N_cast]
       push_cast
       ring
@@ -419,7 +375,7 @@ theorem wtRec_thm (D : D7) : wtRec D := by
         conv_lhs => rw [e]
         push_cast
         ring
-      simp only [if_neg hk, Formalism.BasicNotions.DV.srcPar, dif_neg hk, dif_pos hqm, wJ, Formalism.BasicNotions.wG, eJ, sJ', dif_pos hi,
+      simp only [ite_eq_right hk, Formalism.BasicNotions.DV.srcPar, dite_eq_right hk, dite_eq_left hqm, wJ, Formalism.BasicNotions.wG, eJ, sJ', dite_eq_left hi,
         Formalism.BasicNotions.sExp', D.hcW_e, N_cast]
       push_cast
       linear_combination hr'

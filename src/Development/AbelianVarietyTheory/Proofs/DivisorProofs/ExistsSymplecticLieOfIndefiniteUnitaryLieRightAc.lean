@@ -119,14 +119,15 @@ theorem mem_sp_of_sympl {l : Type} [Fintype l] [DecidableEq l] (Z : Matrix (l �
   simp [mulVec, dotProduct, Pi.single_apply, Matrix.mul_apply] at h1 ⊢
   linarith
 
-theorem exists_sp_rightAct : ∀ (ι l : Type) [Fintype ι] [DecidableEq ι] [Fintype l] [DecidableEq l] (P Q R S : ℕ)
-    (φ : (ι → Matrix (Ix P Q) (Ix R S) ℂ) ≃ₗ[ℝ] (l ⊕ l → ℝ)),
+theorem exists_sp_rightAct_dep : ∀ (ι l : Type) [Fintype ι] [DecidableEq ι] [Fintype l] [DecidableEq l] (P Q R S : ι → ℕ)
+    (φ : (∀ w : ι, Matrix (Ix (P w) (Q w)) (Ix (R w) (S w)) ℂ) ≃ₗ[ℝ] (l ⊕ l → ℝ)),
     (∀ c c', sympl (φ c) (φ c') = 2 * (∑ w, ∑ a, ∑ b, lineSign a b * c w a b * star (c' w a b)).im) →
-    ∀ Y : ι → Mat R S, (∀ w, Y w ∈ upq R S) →
+    ∀ Y : ∀ w : ι, Mat (R w) (S w), (∀ w, Y w ∈ upq (R w) (S w)) →
     ∃ Z ∈ LieAlgebra.Symplectic.sp l ℝ, (∀ c, Z *ᵥ φ c = φ fun w => c w * (Y w)ᵀ) ∧
       ∀ (t : ℝ) c, NormedSpace.exp (t • Z) *ᵥ φ c = φ fun w => c w * (NormedSpace.exp (t • Y w))ᵀ := by
   intro ι l _ _ _ _ P Q R S φ hφ Y hY
-  let G : (ι → Matrix (Ix P Q) (Ix R S) ℂ) →ₗ[ℝ] (ι → Matrix (Ix P Q) (Ix R S) ℂ) :=
+  let G : (∀ w : ι, Matrix (Ix (P w) (Q w)) (Ix (R w) (S w)) ℂ) →ₗ[ℝ]
+      (∀ w : ι, Matrix (Ix (P w) (Q w)) (Ix (R w) (S w)) ℂ) :=
     { toFun := fun c w => c w * (Y w)ᵀ
       map_add' := fun c c' => by ext w : 1; simp [Matrix.add_mul]
       map_smul' := fun r c => by ext w : 1; simp [Matrix.smul_mul] }
@@ -143,7 +144,7 @@ theorem exists_sp_rightAct : ∀ (ι l : Type) [Fintype ι] [DecidableEq ι] [Fi
     rw [hZ, hZ, hφ, hφ, ← mul_add, ← Complex.add_im]
     simp only [hs, Complex.zero_im, mul_zero]
   · intro t c
-    have hpow : ∀ (n : ℕ) (c : ι → Matrix (Ix P Q) (Ix R S) ℂ),
+    have hpow : ∀ (n : ℕ) (c : ∀ w : ι, Matrix (Ix (P w) (Q w)) (Ix (R w) (S w)) ℂ),
         (t • Z) ^ n *ᵥ φ c = φ fun w => c w * ((t • Y w) ^ n)ᵀ := by
       intro n
       induction n with
@@ -158,8 +159,6 @@ theorem exists_sp_rightAct : ∀ (ι l : Type) [Fintype ι] [DecidableEq ι] [Fi
         rw [pow_succ, Matrix.transpose_mul, Matrix.mul_assoc]
     letI : NormedRing (Matrix (l ⊕ l) (l ⊕ l) ℝ) := Matrix.linftyOpNormedRing
     letI : NormedAlgebra ℝ (Matrix (l ⊕ l) (l ⊕ l) ℝ) := Matrix.linftyOpNormedAlgebra
-    letI : NormedRing (Mat R S) := Matrix.linftyOpNormedRing
-    letI : NormedAlgebra ℝ (Mat R S) := Matrix.linftyOpNormedAlgebra
     have h1 : HasSum (fun n : ℕ => (((n.factorial : ℝ)⁻¹) • (t • Z) ^ n) *ᵥ φ c)
         (NormedSpace.exp (t • Z) *ᵥ φ c) :=
       (NormedSpace.exp_series_hasSum_exp' (𝕂 := ℝ) (t • Z)).map
@@ -167,6 +166,8 @@ theorem exists_sp_rightAct : ∀ (ι l : Type) [Fintype ι] [DecidableEq ι] [Fi
     have hw : ∀ w, HasSum (fun n : ℕ => c w * (((n.factorial : ℝ)⁻¹ • (t • Y w) ^ n))ᵀ)
         (c w * (NormedSpace.exp (t • Y w))ᵀ) := by
       intro w
+      letI : NormedRing (Mat (R w) (S w)) := Matrix.linftyOpNormedRing
+      letI : NormedAlgebra ℝ (Mat (R w) (S w)) := Matrix.linftyOpNormedAlgebra
       have := (NormedSpace.exp_series_hasSum_exp' (𝕂 := ℝ) (t • Y w)).matrix_transpose
       exact this.map (AddMonoidHom.mk' (fun M => c w * M) fun _ _ => Matrix.mul_add _ _ _)
         (continuous_const.matrix_mul continuous_id)
@@ -174,8 +175,17 @@ theorem exists_sp_rightAct : ∀ (ι l : Type) [Fintype ι] [DecidableEq ι] [Fi
     refine h1.unique ?_
     convert h2 using 1
     funext n
+    simp only [Function.comp_apply]
     rw [Matrix.smul_mulVec, hpow, ← φ.map_smul]
     congr 1; funext w
     simp [Matrix.transpose_smul, Matrix.mul_smul]
+
+theorem exists_sp_rightAct : ∀ (ι l : Type) [Fintype ι] [DecidableEq ι] [Fintype l] [DecidableEq l] (P Q R S : ℕ)
+    (φ : (ι → Matrix (Ix P Q) (Ix R S) ℂ) ≃ₗ[ℝ] (l ⊕ l → ℝ)),
+    (∀ c c', sympl (φ c) (φ c') = 2 * (∑ w, ∑ a, ∑ b, lineSign a b * c w a b * star (c' w a b)).im) →
+    ∀ Y : ι → Mat R S, (∀ w, Y w ∈ upq R S) →
+    ∃ Z ∈ LieAlgebra.Symplectic.sp l ℝ, (∀ c, Z *ᵥ φ c = φ fun w => c w * (Y w)ᵀ) ∧
+      ∀ (t : ℝ) c, NormedSpace.exp (t • Z) *ᵥ φ c = φ fun w => c w * (NormedSpace.exp (t • Y w))ᵀ :=
+  fun ι l _ _ _ _ P Q R S => exists_sp_rightAct_dep ι l (fun _ => P) (fun _ => Q) (fun _ => R) (fun _ => S)
 
 end GlobalTheory.RealLift.SpLie

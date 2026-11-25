@@ -20,14 +20,6 @@ namespace Formalism.MainNotions.Inhab
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.BasicNotions.Examples₂ NumberField
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-section Ext
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E]
-
-end Ext
-
 structure Tow (D : D7) (t : ℕ) where
   Xs : ℕ → HSp D
   Xs_rank : ∀ j, j ≤ D.R.m → (Xs j).rank = D.R.k + j * (t + 1)
@@ -78,8 +70,6 @@ namespace Formalism.L2.Fam.ThC
 
 open Formalism.L2.Theta
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.MainNotions.Inhab Formalism.BasicNotions.Examples₂
 
 variable {D : D7}
@@ -116,10 +106,6 @@ def sigTow (D : D7) (t : ℕ) : Tow D t where
 
 open Classical in
 def towC (D : D7) (t : ℕ) : Tow D t := if h : t = D.R.t then h ▸ recTow D else sigTow D t
-
-def SpSig (D : D7) : Prop :=
-  ∀ j, j ≤ D.R.m → (D.sp.X j).IsPosDef ∧
-    ∀ τ, (D.sp.Y j).sig τ = (D.R.r + j * D.R.t - (D.R.m - j) / 2, (D.R.m - j) / 2)
 
 
 open Classical in
@@ -172,13 +158,6 @@ structure PerGaps (ψ : AddChar (AF D.host.F) ℂ) : Prop where
   int1 : BesInt1 ψ
   inv : BesInv ψ
   int2 : BesInt2 ψ
-
-section Bessel2
-
-variable {ψ : AddChar (AF D.host.F) ℂ} {A B : HSp D} {ι : A.V →ₗ[D.host.E] B.V}
-
-
-end Bessel2
 
 end Formalism.L2.Fam.ThC
 

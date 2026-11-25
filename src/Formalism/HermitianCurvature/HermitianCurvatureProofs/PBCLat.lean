@@ -9,54 +9,8 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCStmt
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelSizesJointMean
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PeriodLatticeFactsSplitOfGeneral
 public import Lemmata.GeneralBFactRightSide.Imports
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ReduceModChar
 import Aesop.Main
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -85,13 +39,13 @@ theorem mfac_anti (K : ℕ) {L : ℝ} (hL : 0 < L) {b b' : ℝ} (hb : 0 ≤ b) (
     mfac K L b' ≤ mfac K L b := by
   unfold mfac
   by_cases hb0 : b = 0
-  · rw [if_pos hb0]
+  · rw [ite_eq_left hb0]
     split_ifs
     · exact le_rfl
     · exact min_le_left _ _
   · have hbpos : 0 < b := lt_of_le_of_ne hb (Ne.symm hb0)
     have hb'0 : b' ≠ 0 := by linarith
-    rw [if_neg hb0, if_neg hb'0]
+    rw [ite_eq_right hb0, ite_eq_right hb'0]
     refine min_le_min le_rfl (pow_le_pow_left₀ (div_nonneg hL.le (by linarith)) ?_ K)
     exact div_le_div_of_nonneg_left hL.le hbpos hbb
 
@@ -118,7 +72,7 @@ theorem radial_eq (K : ℕ) (x : ℝ) (hx : 0 < x) (y : ℝ) (hy : 0 < y) :
     y ^ (Module.finrank ℝ ℂ - 1) • mfac K x y =
       if y ≤ x then y else x ^ K * y ^ ((1 : ℝ) - K) := by
   rw [Complex.finrank_real_complex]
-  simp only [mfac, hy.ne', if_false, smul_eq_mul, show 2 - 1 = 1 from rfl, pow_one]
+  simp only [mfac, hy.ne', ite_false, smul_eq_mul, show 2 - 1 = 1 from rfl, pow_one]
   split_ifs with hxy
   · rw [min_eq_left (one_le_pow₀ ((one_le_div hy).mpr hxy)), mul_one]
   · push Not at hxy
@@ -152,8 +106,8 @@ theorem majIntegral_ok : MajIntegral := by
   rw [integral_fun_norm_addHaar volume (mfac K x), setIntegral_congr_fun measurableSet_Ioi hcongr,
     ← Ioc_union_Ioi_eq_Ioi hx.le,
     setIntegral_union (Ioc_disjoint_Ioi le_rfl) measurableSet_Ioi hA hB,
-    setIntegral_congr_fun measurableSet_Ioc (fun y hy => if_pos hy.2),
-    setIntegral_congr_fun measurableSet_Ioi (fun y hy => if_neg (not_le.mpr (mem_Ioi.mp hy))),
+    setIntegral_congr_fun measurableSet_Ioc (fun y hy => ite_eq_left hy.2),
+    setIntegral_congr_fun measurableSet_Ioi (fun y hy => ite_eq_right (not_le.mpr (mem_Ioi.mp hy))),
     ← intervalIntegral.integral_of_le hx.le, integral_id, integral_const_mul,
     integral_Ioi_rpow_of_lt (by linarith) hx, volC, Complex.finrank_real_complex]
   have e : x ^ K * x ^ ((1 : ℝ) - K + 1) = x ^ 2 := by
@@ -322,8 +276,6 @@ theorem mul_single {f : ℕ} (σ : crystallineComparison.V f) (v : Fin f) (w : �
   · subst h; simp
   · simp [h]
 
-alias add_conj := _root_.Complex.add_conj
-
 def gen (f : ℕ) (R : ℝ) (p : Fin f × Bool) : crystallineComparison.V f :=
   Pi.single p.1 (if p.2 then (R : ℂ) * Complex.I else (R : ℂ))
 
@@ -348,14 +300,15 @@ theorem mem_dual_iff (f : ℕ) (R : ℝ) (hR : 0 < R) (σ : crystallineCompariso
   have hgen : ∀ v (β : Bool), crystallineComparison.psi (σ * gen f R (v, β)) = 1 ↔
       ∃ n : ℤ, (if β then -(2 * R * (σ v).im) else 2 * R * (σ v).re) = n := by
     intro v β
-    rw [gen, mul_single, psi_single, add_conj, ← _root_.Bl.general_b_fact_right_side.goal1]
+    rw [gen, mul_single, psi_single, Complex.add_conj,
+      ← _root_.Bl.general_b_fact_right_side.goal1]
     congr! 4
     cases β <;> simp [Complex.mul_re, Complex.mul_im] <;> ring
   constructor
   · intro h v
     obtain ⟨a, ha⟩ := (hgen v false).1 (h _ (Submodule.subset_span ⟨(v, false), rfl⟩))
     obtain ⟨c, hc⟩ := (hgen v true).1 (h _ (Submodule.subset_span ⟨(v, true), rfl⟩))
-    simp only [if_false, if_true, Bool.false_eq_true] at ha hc
+    simp only [ite_false, ite_true, Bool.false_eq_true] at ha hc
     refine ⟨a, -c, ?_⟩
     rw [eq_div_iff (by simp [hR'])]
     apply Complex.ext
@@ -409,7 +362,7 @@ theorem fundamentalDomain_standard_basis_eq (f : ℕ) : ZSpan.fundamentalDomain 
     Set.pi Set.univ (fun _ : Fin f => {z : ℂ | z.re ∈ Set.Ico (0 : ℝ) 1 ∧ z.im ∈ Set.Ico (0 : ℝ) 1}) := by
   ext m
   simp only [ZSpan.fundamentalDomain, Set.mem_ofPred_eq, Set.mem_pi, Set.mem_univ, true_implies, Prod.forall,
-    standard_lattice_basis_repr, Bool.forall_bool, if_false, if_true, Bool.false_eq_true]
+    standard_lattice_basis_repr, Bool.forall_bool, ite_false, ite_true, Bool.false_eq_true]
 
 theorem vol_square : (volume : Measure ℂ) {z : ℂ | z.re ∈ Set.Ico (0 : ℝ) 1 ∧ z.im ∈ Set.Ico (0 : ℝ) 1} = 1 := by
   have h : {z : ℂ | z.re ∈ Set.Ico (0 : ℝ) 1 ∧ z.im ∈ Set.Ico (0 : ℝ) 1} =
@@ -451,7 +404,7 @@ theorem mfac_scale (K : ℕ) (L g a : ℝ) (hg : 0 < g) :
   unfold crystallineComparison.mfac
   by_cases h : a = 0
   · simp [h]
-  · rw [if_neg (mul_ne_zero hg.ne' h), if_neg h]
+  · rw [ite_eq_right (mul_ne_zero hg.ne' h), ite_eq_right h]
     congr 2
     field_simp
 
@@ -465,7 +418,7 @@ theorem mfac_shift0 (K : ℕ) {L δ : ℝ} (hL : 0 ≤ L) (hδ : 0 < δ) {a : �
     crystallineComparison.mfac K L a ≤ crystallineComparison.mfac K (L + δ) (a + δ) := by
   have had : 0 < a + δ := by linarith
   unfold crystallineComparison.mfac
-  rw [if_neg had.ne']
+  rw [ite_eq_right had.ne']
   split_ifs with h0
   · subst h0
     rw [min_eq_left (one_le_pow₀ ((one_le_div (by linarith)).mpr (by linarith)))]

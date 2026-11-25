@@ -51,6 +51,7 @@ import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Init
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceBaseVacuumDatumExistsUnique
 
 @[expose] public section
 
@@ -58,7 +59,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.SeeSaw ValuativeRel IsLocalRing
 open scoped TensorProduct Pointwise
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FinPl.CombProof
 
@@ -126,38 +126,7 @@ theorem isSBHalf_extFun : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [To
     (p : SplitPt D k) (n n' : Type) [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] (S T : HSp D)
     (α : Frame p S n') (β : Frame p T n) (LS : Lat S) (LT : Lat T), IsSelfDualC S LS → IsSelfDualC T LT →
     ∀ Ψ ∈ SB (Matrix n n' k), IsSBHalf p.e (latO S T (LS : Set _) (LT : Set _) (· = p.v)) (extFun α β Ψ) := by
-  classical
-  intro D k _ _ _ _ p n n' _ _ _ _ S T α β LS LT hS hT Ψ hΨ
-  obtain ⟨Na, hNa, ha⟩ := GlobalTheory.FinPl.RdBound.exists_nat_mul_rd_mem D k p n n' S T α β LS LT hS hT
-  obtain ⟨Nb, hNb, hb⟩ := GlobalTheory.FinPl.exists_nsmul_mem_latO_of_rd_int D k p n n' S T α β LS LT hS hT
-  obtain ⟨Nc, hNc, hc1, hc2⟩ := GlobalTheory.SBUnif.uniform k n n' Ψ hΨ
-  have hhalf_add : ∀ {t u : WO S T}, IsHalf p.e u → (IsHalf p.e (t + u) ↔ IsHalf p.e t) := fun {t u} hu =>
-    forall_congr' fun i => forall_congr' fun j => by
-      rw [Matrix.add_apply, mul_add, hu i j, add_left_inj]
-  have hhalf_nsmul : ∀ (N : ℕ) {t : WO S T}, IsHalf p.e t → IsHalf p.e (N • t) := fun N t ht i j => by
-    rw [Matrix.smul_apply, nsmul_eq_mul, mul_left_comm, ht i j]
-  refine ⟨fun t ht => ?_, Na * Nb * Nc, Nat.mul_pos (Nat.mul_pos hNa hNb) hNc, fun u hu hh t => ?_, fun t ht => ?_⟩
-  · by_contra h
-    exact ht (by simp [extFun, h])
-  · have hu' : IsHalf p.e ((Na * Nb * Nc) • u) := hhalf_nsmul _ hh
-    unfold extFun
-    rw [if_congr (hhalf_add hu') rfl rfl]
-    split_ifs with h
-    · rw [rd_add, rd_nsmul, show ((Na * Nb * Nc : ℕ) : k) • rd α β u = (Nc : k) • (((Nb : k) * Na) • rd α β u) by
-        rw [smul_smul]; push_cast; ring_nf]
-      refine hc1 _ _ fun i j => ?_
-      rw [Matrix.smul_apply, smul_eq_mul, mul_assoc]
-      exact mul_mem (by exact_mod_cast (algebraMap ℤ 𝒪[k] Nb).2) (ha u hu hh i j)
-    · rfl
-  · have hth : IsHalf p.e t := by
-      by_contra h
-      exact ht (by simp [extFun, h])
-    have hΨt : Ψ (rd α β t) ≠ 0 := by simpa [extFun, hth] using ht
-    have h1 := hb (Nc • t) (hhalf_nsmul _ hth) fun i j => by
-      rw [rd_nsmul, Matrix.smul_apply, smul_eq_mul]
-      exact hc2 _ hΨt i j
-    rw [show (Na * Nb * Nc) • t = Na • (Nb • (Nc • t)) by rw [smul_smul, smul_smul, mul_assoc]]
-    exact nsmul_mem h1 Na
+  apply _root_.GlobalTheory.FinPl.OverProof.isSBHalf_extFun <;> assumption
 
 variable {D : D7}
 
@@ -170,31 +139,7 @@ theorem dualPair {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) {S
     (∀ y ∈ half S T (cA D e), (∀ u ∈ Λ ⊓ half S T e, ψ (symplO S T u y) = 1) → y ∈ Λ ⊓ half S T (cA D e)) ∧
     (∀ k : ℕ, 0 < k → ∃ R : Set (WO S T), R.Finite ∧ ∀ t ∈ Λ ⊓ half S T e, ∃ r ∈ R, ∃ u ∈ Λ ⊓ half S T e, t = r + k • u) ∧
     (∀ y ∈ half S T (cA D e), ∃ k : ℕ, 0 < k ∧ k • y ∈ Λ) := by
-  intro Λ
-  have he := hs.1
-  have hec := hs.2.1
-  have he' : cA D e * cA D e = cA D e := by rw [← map_mul, he]
-  have heε : algebraMap (AF D.host.F) (AE D) ε * e = e := by rw [← heq]; linear_combination he + hec
-  have heε' : algebraMap (AF D.host.F) (AE D) ε * cA D e = cA D e := by rw [← heq]; linear_combination he' + hec
-  have hdual := (GlobalTheory.LatVac.latO_selfDual_approx_sign D ψ S T LS LT hψ hS hT).1
-  have hfin := GlobalTheory.LatFinMod.latO_finite_mod D S T LS LT hS.1.fg hT.1.fg fun w => w = v
-  refine ⟨fun u hu y hy => (hdual u (infPart_half hε heε hu.2)).1 (latO_le_top _ hu.1) y (latO_le_top _ hy.1),
-    mem_of_dual hε hdual he heε heε', fun y hy h => ?_, fun k hk => ?_, fun y hy => ?_⟩
-  · refine mem_of_dual hε hdual he' heε' (by rwa [cA_cA]) y hy fun u hu => ?_
-    rw [cA_cA] at hu
-    rw [symplO_skew, AddChar.map_neg_eq_inv, h u hu, inv_one]
-  · obtain ⟨R, hR, h⟩ := hfin k hk
-    refine ⟨(fun r => e • r) '' R, hR.image _, fun t ht => ?_⟩
-    obtain ⟨r, hr, u, hu, htr⟩ := h t ht.1
-    refine ⟨_, ⟨r, hr, rfl⟩, e • u, idem_smul_mem hε he heε (latO_le_top _ hu), ?_⟩
-    have := (mem_half S T).1 ht.2
-    rw [← this, htr, smul_add, smul_comm e k u]
-  · obtain ⟨k, hk, hky⟩ := exists_nsmul_mem_latO'
-      (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ hS)
-      (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ hT) y (infPart_half hε heε' hy)
-    refine ⟨k, hk, ?_⟩
-    have := (idem_smul_mem hε he' heε' hky).1
-    rwa [smul_comm, (mem_half S T).1 hy] at this
+  apply _root_.GlobalTheory.FinPl.OverProof.dualPair <;> assumption
 
 theorem extFun_comb : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (p : SplitPt D k) (n n' : Type) [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S T : HSp D) (α : Frame p S n') (β : Frame p T n) (LS : Lat S) (LT : Lat T), IsSelfDualC S LS → IsSelfDualC T LT → ∀ Ψ ∈ SB (Matrix n n' k), ∃ c : WO S T →₀ ℂ, CombAt (· = p.v) c ∧ ∀ (f₀ : WO S T → ℂ) (Tm : (WO S T → ℂ) →ₗ[ℂ] (WO S T → ℂ)), IsPlaceModel ψ (symplO S T) (heisO ψ S T) p.e (latO S T (LS : Set (Fin S.rank → D.host.E)) (LT : Set (Fin T.rank → D.host.E)) (· = p.v)) 1 f₀ Tm → Tm (extFun α β Ψ) = comb ψ S T c f₀ := by
   classical

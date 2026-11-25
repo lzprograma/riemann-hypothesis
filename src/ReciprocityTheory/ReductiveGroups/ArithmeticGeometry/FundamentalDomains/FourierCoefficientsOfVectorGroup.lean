@@ -563,7 +563,7 @@ theorem Ich_bound (hω : X.IsLZBasis g ω)
     (hunit : ∀ b, IsHermFam b → X.IsUnitaryC (X.zmat u b)) (la : Wt X.Ψ r)
     (χ : X.Ψ → Fin 2 → Fin 2 → ℂ) (x : Frame X.Ψ r) {M : ℝ}
     (hM : ∀ b, IsHermFam b → X.pnorm la G (X.Zb u b x) ≤ M) :
-    ‖Ich X u ω G χ x‖ * fac X la x ≤ M := by
+    ‖Ich X u ω G χ x‖ * ReciprocityTheory.ChartRestriction.G.FD.Data.nfac X la x ≤ M := by
   have hωh : ∀ j, IsHermFam (ω j) := by
     intro j τ i k
     obtain ⟨β, hβ, -, hb⟩ := hω.1 j
@@ -575,7 +575,7 @@ theorem Ich_bound (hω : X.IsLZBasis g ω)
 
     simp only [Bv, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, Complex.conj_ofReal]
     exact Finset.sum_congr rfl fun j _ => by rw [hωh j τ i k]
-  have hfac : ∀ b, IsHermFam b → fac X la (X.Zb u b x) = fac X la x := by
+  have hfac : ∀ b, IsHermFam b → ReciprocityTheory.ChartRestriction.G.FD.Data.nfac X la (X.Zb u b x) = ReciprocityTheory.ChartRestriction.G.FD.Data.nfac X la x := by
     intro b hb
     have hd : ∀ τ i, dmin X.Gm (X.Zb u b x) τ i = dmin X.Gm x τ i := by
       intro τ i
@@ -591,10 +591,10 @@ theorem Ich_bound (hω : X.IsLZBasis g ω)
         rfl
       simp only [gram, Matrix.of_apply]
       rw [hcol, hcol, hunit b hb τ]
-    simp only [fac, hd]
-  have hnn : ∀ y, 0 ≤ fac X la y := fun y =>
+    simp only [ReciprocityTheory.ChartRestriction.G.FD.Data.nfac, hd]
+  have hnn : ∀ y, 0 ≤ ReciprocityTheory.ChartRestriction.G.FD.Data.nfac X la y := fun y =>
     Finset.prod_nonneg fun τ _ => Finset.prod_nonneg fun i _ => Real.rpow_nonneg (norm_nonneg _) _
-  have hpn : ∀ y, X.pnorm la G y = ‖G y‖ * fac X la y := fun y => rfl
+  have hpn : ∀ y, X.pnorm la G y = ‖G y‖ * ReciprocityTheory.ChartRestriction.G.FD.Data.nfac X la y := fun y => rfl
   have hech : ∀ t, ‖ech ω χ t‖ = 1 := fun t => by
     unfold ech
     rw [Complex.norm_exp]
@@ -609,14 +609,14 @@ theorem Ich_bound (hω : X.IsLZBasis g ω)
     rw [hpn] at h1
     exact le_trans (mul_nonneg (norm_nonneg _) (hnn _)) h1
   · have hb : ∀ t ∈ cube (4 * Fintype.card X.Ψ),
-        ‖G (X.Zb u (Bv ω t) x) * ech ω χ t‖ ≤ M / fac X la x := by
+        ‖G (X.Zb u (Bv ω t) x) * ech ω χ t‖ ≤ M / ReciprocityTheory.ChartRestriction.G.FD.Data.nfac X la x := by
       intro t _
       rw [norm_mul, hech, mul_one, le_div_iff₀ hpos, ← hfac _ (hBv t), ← hpn]
       exact hM _ (hBv t)
-    have hI : ‖Ich X u ω G χ x‖ ≤ M / fac X la x * (volume (cube (4 * Fintype.card X.Ψ))).toReal :=
+    have hI : ‖Ich X u ω G χ x‖ ≤ M / ReciprocityTheory.ChartRestriction.G.FD.Data.nfac X la x * (volume (cube (4 * Fintype.card X.Ψ))).toReal :=
       norm_setIntegral_le_of_norm_le_const (by rw [hcube1]; simp) hb
     rw [hcube1, ENNReal.toReal_one, mul_one] at hI
-    calc _ ≤ M / fac X la x * fac X la x := mul_le_mul_of_nonneg_right hI (hnn x)
+    calc _ ≤ M / ReciprocityTheory.ChartRestriction.G.FD.Data.nfac X la x * ReciprocityTheory.ChartRestriction.G.FD.Data.nfac X la x := mul_le_mul_of_nonneg_right hI (hnn x)
       _ = M := div_mul_cancel₀ M hpos.ne'
 
 theorem Ich_coeff {χ : X.Ψ → Fin 2 → Fin 2 → ℂ} {m : Fin (4 * Fintype.card X.Ψ) → ℤ}
@@ -717,7 +717,7 @@ theorem fourier_coefficients_of_vector_group (hL1 : UnipotentVectorGroup (E := E
       (psi_cont hω hdomH hGd hx) (fun n t => psi_per hω hadd hdomH hper hx n t)
     have hcoef : ∀ m, X.fz u g (c m) G x = UnitAddTorus.mFourierCoeff D m := by
       intro m
-      rw [hfz, if_pos (hcfreq m)]
+      rw [hfz, ite_eq_left (hcfreq m)]
       refine Ich_coeff (fun j => ?_) D hD
       show 2 * pr (c m) (ω j) = (m j : ℝ)
       rw [hcm]
@@ -748,7 +748,7 @@ theorem fourier_coefficients_of_vector_group (hL1 : UnipotentVectorGroup (E := E
     rw [hcomp]
     exact hF'
   by_cases hχ : IsHermFam χ ∧ X.IsFreqZ g χ
-  · have hfe : X.fz u g χ G = Ich X u ω G χ := funext fun x => by rw [hfz, if_pos hχ]
+  · have hfe : X.fz u g χ G = Ich X u ω G χ := funext fun x => by rw [hfz, ite_eq_left hχ]
     have hfreq : ∀ j, ∃ k : ℤ, 2 * X.pairR χ (ω j) = k := fun j => hχ.2 (ω j) (hω.1 j)
     refine ⟨⟨?_, ?_, ?_⟩, ?_, hsum⟩
     · rw [hfe]
@@ -762,7 +762,7 @@ theorem fourier_coefficients_of_vector_group (hL1 : UnipotentVectorGroup (E := E
     · intro x hx M hM
       rw [pnorm_eq, hfe]
       exact Ich_bound hω hunit la χ x hM
-  · have hfe : X.fz u g χ G = fun _ => 0 := funext fun x => by rw [hfz, if_neg hχ]
+  · have hfe : X.fz u g χ G = fun _ => 0 := funext fun x => by rw [hfz, ite_eq_right hχ]
     have hh0 : IsHermFam (0 : X.Ψ → Fin 2 → Fin 2 → ℂ) := by
       have h := th_herm (0 : X.Ψ → Fin 2 → Fin 2 → ℝ)
       rwa [th_zero] at h

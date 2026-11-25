@@ -189,8 +189,7 @@ theorem exists_conj_entries_mem (K : IntermediateField ℚ_[p] (PadicAlgCl p)) (
       simp
     rw [e, norm_mul, norm_pow] at h
     have hpos := pow_pos (norm_p_pos p) (N₁ + N₂)
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     nlinarith
   have e2 : ((R⁻¹ : GL (Fin n) (KQ p K r)) : Matrix (Fin n) (Fin n) (KQ p K r)) i j * ((M - 1).map (inclK p K r)) j k *
       (R : Matrix (Fin n) (Fin n) (KQ p K r)) k l =

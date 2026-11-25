@@ -82,7 +82,7 @@ theorem exists_equivariant_fun_on_spanning_families {R M G F : Type} [CommRing R
     intro z g hz hg
     have : (h1 y z hy hz).exists.choose = g :=
       (h1 y z hy hz).unique (h1 y z hy hz).exists.choose_spec hg
-    simp only [f, dif_pos hz, this]
+    simp only [f, dite_eq_left hz, this]
   have hspan : ∀ (z : Fin r → M) (k : M ≃ₗ[R] M), Submodule.span R (Set.range z) = ⊤ →
       Submodule.span R (Set.range fun b => k (z b)) = ⊤ := by
     intro z k hz
@@ -101,7 +101,7 @@ theorem exists_equivariant_fun_on_spanning_families {R M G F : Type} [CommRing R
   · intro x hx
     rw [himg]
     by_contra hz
-    exact hx (by simp only [f, dif_neg hz])
+    exact hx (by simp only [f, dite_eq_right hz])
   · intro k x
     set z : Fin r → M := fun b => x (Fin.castLE hrn b) with hzdef
     change f (fun b => k (z b)) = _ * f z
@@ -114,7 +114,7 @@ theorem exists_equivariant_fun_on_spanning_families {R M G F : Type} [CommRing R
         have := hspan _ k.symm h
         simp only [LinearEquiv.symm_apply_apply] at this
         exact hz this
-      simp only [f, dif_neg hz, dif_neg hz', mul_zero]
+      simp only [f, dite_eq_right hz, dite_eq_right hz', mul_zero]
   · change f (fun b : Fin r => x₀ (Fin.castLE hrn b)) = 1
     rw [hx₀, hf y 1 hy (fun b => rfl), hadj1]
     simp

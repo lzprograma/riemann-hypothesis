@@ -1,50 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.RingTheory.QuasiFinite.Basic
 
 @[expose] public section
@@ -127,31 +84,31 @@ theorem exists_isUnit_add_mul_twist {R : Type} [CommRing R] (τ : R ≃+* R) (h�
       rw [this]
       exact M.1.sub_mem (M.1.sub_mem hyM' hd) (M.1.mul_mem_left _ (hτM _ hd))
     by_cases h1a : 1 + a ∈ M.1
-    · have htx : t M = x := by simp only [t, if_pos hfix, if_pos h1a]
+    · have htx : t M = x := by simp only [t, ite_eq_left hfix, ite_eq_left h1a]
       rw [htx] at ht
       have : a * (τ x - x) ∈ M.1 := by
         have : a * (τ x - x) = (x + a * τ x) - x * (1 + a) := by ring
         rw [this]; exact M.1.sub_mem ht (M.1.mul_mem_left _ h1a)
       exact hunit (ha.mul hx) this
-    · have ht1 : t M = 1 := by simp only [t, if_pos hfix, if_neg h1a]
+    · have ht1 : t M = 1 := by simp only [t, ite_eq_left hfix, ite_eq_right h1a]
       rw [ht1, map_one, mul_one, add_comm] at ht
       exact h1a (by rwa [add_comm])
   · have hfix' : pt (pt M) ≠ pt M := by rw [pt_pt]; exact Ne.symm hfix
     by_cases hlt : e M < e (pt M)
-    · have ht1 : t M = 1 := by simp only [t, if_neg hfix, if_pos hlt]
+    · have ht1 : t M = 1 := by simp only [t, ite_eq_right hfix, ite_eq_left hlt]
       have hlt' : ¬ e (pt M) < e (pt (pt M)) := by rw [pt_pt]; exact not_lt.2 hlt.le
-      have ht0 : t (pt M) = 0 := by simp only [t, if_neg hfix', if_neg hlt']
+      have ht0 : t (pt M) = 0 := by simp only [t, ite_eq_right hfix', ite_eq_right hlt']
       have h1 := hy M
       have h2 := hy (pt M)
       rw [ht1] at h1
       rw [ht0, sub_zero, mem_pt] at h2
       have : (1 : R) = (y + a * τ y) - (y - 1) - a * τ y := by ring
       exact hne1 (this ▸ M.1.sub_mem (M.1.sub_mem hyM' h1) (M.1.mul_mem_left _ h2))
-    · have ht0 : t M = 0 := by simp only [t, if_neg hfix, if_neg hlt]
+    · have ht0 : t M = 0 := by simp only [t, ite_eq_right hfix, ite_eq_right hlt]
       have hne : e (pt M) ≠ e M := fun h => hfix (e.injective h)
       have hlt' : e (pt M) < e (pt (pt M)) := by
         rw [pt_pt]; exact lt_of_le_of_ne (not_lt.1 hlt) hne
-      have ht1 : t (pt M) = 1 := by simp only [t, if_neg hfix', if_pos hlt']
+      have ht1 : t (pt M) = 1 := by simp only [t, ite_eq_right hfix', ite_eq_left hlt']
       have h1 := hy M
       have h2 := hy (pt M)
       rw [ht0, sub_zero] at h1

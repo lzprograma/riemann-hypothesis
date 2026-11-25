@@ -2,52 +2,9 @@ module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightIrreducible.ClosedEqNablaC
 import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalRingCardinality.Params
 public import Mathlib.LinearAlgebra.Dual.Lemmas
 
@@ -82,7 +39,7 @@ theorem coeff_mem_of_eval {σ : Type*} (U : Submodule ℂ (MvPolynomial σ ℂ))
       (Set.infinite_of_injective_forall_mem Nat.cast_injective (fun n => hroot n))
     have hc := congrArg (fun r => _root_.AddMonoidAlgebra.coeff (M := ℕ) r k) hq0
     simp only [hq, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow, Polynomial.coeff_zero,
-      Finset.sum_ite_eq, Finset.mem_range, Nat.lt_succ_iff.mpr hk, if_true] at hc
+      Finset.sum_ite_eq, Finset.mem_range, Nat.lt_succ_iff.mpr hk, ite_true] at hc
     simpa using hc
   · rw [Polynomial.coeff_eq_zero_of_natDegree_lt (by omega)]
     simp
@@ -96,7 +53,7 @@ private theorem eval_rowGen_X_eq_rowAct_one_add_single {N n : ℕ} (a b : Fin N)
     simp only [Matrix.add_apply, Matrix.one_apply, Matrix.single_apply, ite_and]
     split_ifs <;> subst_vars <;> simp_all [add_mul]
   simp only [rowGen, rowAct, MvPolynomial.aeval_X, hterm, Finset.sum_add_distrib, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
   by_cases h : i = b
   · simp [h]
     ring
@@ -121,7 +78,7 @@ theorem det_one_add_single_ne {N : ℕ} (a b : Fin N) (n : ℕ) :
       ext i j
       simp only [Matrix.add_apply, Matrix.one_apply, Matrix.single_apply, Matrix.diagonal_apply, ite_and]
       split_ifs <;> subst_vars <;> simp_all
-    rw [hd, Matrix.det_diagonal, Finset.prod_ite_eq', if_pos (Finset.mem_univ a)]
+    rw [hd, Matrix.det_diagonal, Finset.prod_ite_eq', ite_eq_left (Finset.mem_univ a)]
     have h1 : ((n : ℂ) + 1) ≠ 0 := by exact_mod_cast Nat.succ_ne_zero n
     rwa [add_comm] at h1
   · rw [show (1 + Matrix.single a b (n : ℂ)) = Matrix.transvection a b (n : ℂ) from rfl,
@@ -186,7 +143,7 @@ theorem fixed_vectors_killed : FixedKilledC := by
       · exact absurd (h.1.trans h.2.symm) hne
       · simp
   have h4 := coeff_mem_of_eval ⊥ _ key k
-  rw [Submodule.mem_bot, Polynomial.coeff_sub, Polynomial.coeff_C, if_neg (by omega), sub_zero] at h4
+  rw [Submodule.mem_bot, Polynomial.coeff_sub, Polynomial.coeff_C, ite_eq_right (by omega), sub_zero] at h4
   exact h4
 
 end PI.WHw

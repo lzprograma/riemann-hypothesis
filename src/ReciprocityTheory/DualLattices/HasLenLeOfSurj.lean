@@ -182,7 +182,7 @@ lemma sub_lin_mem_sq (hv : v.Integers R) (D : Lifts H U X) (hdet : (valM D).det 
         refine Finset.sum_subset (Finset.subset_univ _) fun α _ hα => ?_
         by_cases hPα : P α
         · simp [hPα]
-        · rw [if_neg hPα]
+        · rw [ite_eq_right hPα]
           have h0 : α = 0 := by
             by_contra h0
             apply hPα
@@ -199,7 +199,7 @@ lemma sub_lin_mem_sq (hv : v.Integers R) (D : Lifts H U X) (hdet : (valM D).det 
         exact one_ne_zero h2)]
       refine Finset.sum_congr rfl fun k _ => ?_
       have hnP : ¬ P (Pi.single k 1) := fun h => h.2 k rfl
-      rw [if_neg hnP, monX_single]
+      rw [ite_eq_right hnP, monX_single]
     have hA : ∀ α, (if P α then c α • monX D α else 0) ∈ sqIdeal (augIdeal H.AA.carrier) := by
       intro α
       split_ifs with h

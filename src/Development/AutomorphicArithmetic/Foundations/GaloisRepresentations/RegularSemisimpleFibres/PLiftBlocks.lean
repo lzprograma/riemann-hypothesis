@@ -1,42 +1,7 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchCut
@@ -47,14 +12,6 @@ open NumberField IsDedekindDomain ValuativeRel Polynomial Formalism.ConjugateSel
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Shin
 open GroundTheory.Global GroundTheory.Global.SemiLocal UpperTheory.V.Published UpperTheory.CBC UpperTheory.Gal.InertialTypesAlt
 open scoped Classical
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
-private lemma geo_mul (x l : ℕ) (hx : 1 ≤ x) :
-    (∑ i ∈ Finset.range l, x ^ i) * (x - 1) = x ^ l - 1 := by
-  obtain ⟨y, rfl⟩ : ∃ y, x = y + 1 := ⟨x - 1, by omega⟩
-  have := geom_sum_mul_add y l
-  simp only [Nat.add_sub_cancel]
-  omega
 
 private lemma div_id (N a b S : ℕ) (ha : 0 < a) (hS : S * a = b) (hb : b ∣ N) (hb0 : 0 < b) :
     S * (N / b) = N / a := by
@@ -142,7 +99,7 @@ private lemma lbk_ndvd (Q q l f m k : ℕ) (hq : 2 ≤ q) (hl : l.Prime) (hQ : Q
   have hqm : 1 < q ^ m := Nat.one_lt_pow hm.ne' (by omega)
   have hql : 1 < (q ^ l) ^ m := Nat.one_lt_pow hm.ne' (Nat.one_lt_pow hl.ne_zero (by omega))
   have hT : (∑ i ∈ Finset.range l, q ^ (m * i)) * (q ^ m - 1) = (q ^ l) ^ m - 1 := by
-    have := geo_mul (q ^ m) l hqm.le
+    have := geom_sum_mul_of_one_le hqm.le l
     simp only [← pow_mul] at this ⊢
     rw [this, Nat.mul_comm l m]
   have hd1 : (q ^ l) ^ m - 1 ∣ Q - 1 := by
@@ -195,9 +152,9 @@ private lemma lbkL (Q q l f : ℕ) (hq : 2 ≤ q) (hl : l.Prime) (hQ : Q = (q ^ 
     · obtain ⟨m', rfl⟩ := hlm
       have : liftL q l [(l * m', k)] = (List.range l).map fun i => (m', k * q ^ i) := by
         simp [liftL, Nat.mul_div_cancel_left _ hl.pos]
-      rw [if_pos (dvd_mul_right _ _), this, List.map_map]
+      rw [ite_eq_left (dvd_mul_right _ _), this, List.map_map]
       exact lbk_dvd Q q l m' k
-    · rw [if_neg hlm] at hd ⊢
+    · rw [ite_eq_right hlm] at hd ⊢
       have hmf : m ∣ f := hd (m, _) (List.mem_append_left _ (List.mem_singleton.2 rfl))
       simpa using lbk_ndvd Q q l f m k hq hl hQ (h0 (m, k) List.mem_cons_self) hmf hlm
 
@@ -207,7 +164,7 @@ private lemma splitsL (q l f : ℕ) (hl : l.Prime) (L : List (ℕ × ℕ))
   by_cases hlm : l ∣ m
   · have h1 : (m / l, k * q ^ 0) ∈ liftAll q l L := by
       refine List.mem_flatMap.2 ⟨(m, k), hp, ?_⟩
-      simp only [if_pos hlm, liftL]
+      simp only [ite_eq_left hlm, liftL]
       simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil]
       exact List.mem_map.2 ⟨0, List.mem_range.2 hl.pos, rfl⟩
     have h2 := hd _ h1
@@ -216,7 +173,7 @@ private lemma splitsL (q l f : ℕ) (hl : l.Prime) (L : List (ℕ × ℕ))
     exact Nat.mul_dvd_mul_left l h2
   · have h1 : (m, k * ∑ i ∈ Finset.range l, q ^ (m * i)) ∈ liftAll q l L := by
       refine List.mem_flatMap.2 ⟨(m, k), hp, ?_⟩
-      simp [if_neg hlm]
+      simp [ite_eq_right hlm]
     exact (hd _ h1).mul_left l
 
 theorem UpperTheory.Gal.InertialTypesAlt.liftBlocks :
@@ -230,7 +187,7 @@ theorem UpperTheory.Gal.InertialTypesAlt.liftBlocks :
   have hdiv' : ∀ p ∈ liftAll q l L, p.1 ∣ f := hdiv
   have hL0 : ∀ p ∈ L, 0 < p.1 := fun p hp => (hL p hp).1
   refine ⟨⟨l * f, Nat.mul_pos hl.pos hf, by rw [hQ', pow_mul], splitsL q l f hl L hdiv'⟩, ?_⟩
-  have hS := geo_mul q l (by omega)
+  have hS := geom_sum_mul_of_one_le (show 1 ≤ q by omega) l
   have hql : 1 < q ^ l := Nat.one_lt_pow hl.ne_zero (by omega)
   have hDid : (∑ i ∈ Finset.range l, q ^ i) * ((Q - 1) / (q ^ l - 1)) = (Q - 1) / (q - 1) :=
     div_id (Q - 1) (q - 1) (q ^ l - 1) _ (by omega) hS (by rw [hQ']; exact _root_.Nat.sub_one_dvd_pow_sub_one _ f) (by omega)

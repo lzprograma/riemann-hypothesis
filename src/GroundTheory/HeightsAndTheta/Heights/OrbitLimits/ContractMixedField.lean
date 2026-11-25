@@ -114,7 +114,7 @@ theorem intNum_eq_zero [DecidableEq K'] {κ : K → K'} {v : (Σ k, ι k) → (�
       (ne_of_gt (lt_of_le_of_lt (Nat.zero_le d₀) hcount))
     obtain ⟨a, ha⟩ : ∃ a : K → ℤ, bs i = pullDeg κ a := by
       by_contra h
-      exact hi (if_neg h)
+      exact hi (ite_eq_right h)
     obtain ⟨σ, hσ⟩ : ∃ σ : Equiv.Perm (Fin (n + 1)), σ (Fin.last n) = i :=
       ⟨Equiv.swap i (Fin.last n), Equiv.swap_apply_right _ _⟩
     rw [← FieldNumbers.IntNumSymm.full F K' ι' V' (n + 1) bs σ]
@@ -128,7 +128,7 @@ theorem intNum_eq_zero [DecidableEq K'] {κ : K → K'} {v : (Σ k, ι k) → (�
     have hsum : (∑ i, if ∃ a : K → ℤ, bs i = pullDeg κ a then 1 else 0) =
         (∑ j : Fin n, if ∃ a : K → ℤ, Fin.init (bs ∘ σ) j = pullDeg κ a then 1 else 0) + 1 := by
       rw [← Equiv.sum_comp σ (fun j => if ∃ a : K → ℤ, bs j = pullDeg κ a then 1 else 0),
-        Fin.sum_univ_castSucc, hσ, if_pos ⟨a, ha⟩]
+        Fin.sum_univ_castSucc, hσ, ite_eq_left ⟨a, ha⟩]
       rfl
 
     classical
@@ -176,7 +176,7 @@ theorem contractMixedField : ReciprocityTheory.ChartRestriction.G.AI.I4.Contract
   refine intNum_eq_zero hv (d + r) V' d₀ _ hV' hI ?_
   rw [Fin.sum_univ_add]
   have h1 : ∀ j : Fin d, (if ∃ a : K → ℤ, Fin.append (fun j => pullDeg κ (L j)) N (Fin.castAdd r j) =
-      pullDeg κ a then 1 else 0) = 1 := fun j => if_pos ⟨L j, by rw [Fin.append_left]⟩
+      pullDeg κ a then 1 else 0) = 1 := fun j => ite_eq_left ⟨L j, by rw [Fin.append_left]⟩
   rw [Finset.sum_congr rfl fun j _ => h1 j]
   simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul, mul_one]
   omega

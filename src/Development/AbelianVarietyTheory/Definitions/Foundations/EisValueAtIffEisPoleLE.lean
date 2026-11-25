@@ -53,8 +53,6 @@ namespace GlobalTheory.Eis
 open scoped NNReal ENNReal ComplexConjugate
 open Filter Topology Set MeasureTheory Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.Pj GlobalTheory.AutomorphicL2Unitary GlobalTheory.Doubling GlobalTheory.Cont
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (V : HSp D)
 
 abbrev SiegelCosets : Type := Cosets (siegel V) (GQ (dblSp V))
@@ -419,26 +417,6 @@ theorem dblConv_iff (hi : LeftInv ((GQ V).prod (GQ V)) (dblIntegrand V μ E f₁
     (measurableEmbedding_sec.measurable.prodMap measurableEmbedding_sec.measurable)).aestronglyMeasurable)).1 hc
 
 end Dbl
-
-section ZetaNonvanishing₂
-
-variable {m : Measure (GA D V)} {Φ : ℂ → GA D (dblSp V) → ℂ} {f₁ f₂ : GA D V → ℂ} {s₀ c c' : ℂ} {n : ℤ}
-
-end ZetaNonvanishing₂
-
-section Euler
-
-open NumberField IsDedekindDomain
-
-variable {K : Type} [Field K] [NumberField K] {T : Set (HeightOneSpectrum (𝓞 K))} {c : LFun.Fam K} {σ : ℝ} {Λ : ℂ → ℂ}
-
-end Euler
-
-theorem eis_smul_indicator (V : HSp D) (c : ℂ → ℂ) :
-    IsEisFamily V (fun s => c s • indicator (siegelQ V : Set (GA D (dblSp V))) 1) ∧
-      ∀ s, eis V (c s • indicator (siegelQ V : Set (GA D (dblSp V))) 1) = c s • indicator (GQ (dblSp V) : Set _) 1 :=
-  ⟨IsEisFamily.smul (Φ := fun _ => _) (fun _ _ => ⟨(cosetSum_indicator 1).1, fun g => (cosetSum_indicator g).2.1⟩) c,
-    fun s => (eis_smul _ _).trans (congrArg _ (funext fun g => (cosetSum_indicator g).2.2))⟩
 
 end GlobalTheory.Eis
 

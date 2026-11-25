@@ -16,61 +16,14 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingMod
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.CCount
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.TwistedCocycleApplyOne
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.SecondSelmerSpanBoundAtAllLevels
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PowerSeries.Inverse
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Separation.Connected
-import Mathlib.Topology.Sheaves.Init
 import Formalism.ConjugateSelfDual.Statement
 import ReciprocityTheory.GaloisValuations.GlobalA
 import Mathlib.RingTheory.AdicCompletion.Completeness
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -206,10 +159,8 @@ private theorem rho1_pow_eq_one_pro_l (l : ℕ) [Fact l.Prime] (L : Loc) (G0 : G
   have h3 : g' = g ^ l ^ e := Subtype.ext h2
   subst h3
   obtain ⟨r1, r2, -⟩ := rho1 l G0.frame n x k (x.Am m)
-  have hp : ∀ (u : G0.G₀) (j : ℕ), k.ρ1 (x.Am m) (u ^ j) = k.ρ1 (x.Am m) u ^ j := fun u j => by
-    induction j with
-    | zero => rw [pow_zero, pow_zero]; exact r1
-    | succ j ih => rw [pow_succ, pow_succ, ← ih]; exact r2 _ _
+  have hp : ∀ (u : G0.G₀) (j : ℕ), k.ρ1 (x.Am m) (u ^ j) = k.ρ1 (x.Am m) u ^ j :=
+    map_pow (⟨⟨k.ρ1 (x.Am m), r1⟩, r2⟩ : G0.G₀ →* _)
   refine ⟨e + 1, ?_⟩
   have h1' : x.ρX (DD (x.Am m) k.g) (g ^ l ^ e) = 1 := h1
   rw [pow_succ, pow_mul, hp, Kap.ρ1, h1', mul_one, one_add_pow _ (epM_mul _), add_eq_left]
@@ -236,14 +187,11 @@ theorem UpperTheory.V.Pa.descend :
   obtain ⟨U, hU⟩ := affine_ker rep' (c3 _ _ rep' c2 had) y hy
   have htriv : ∀ g : (T.GN N).G₀, (T.h N).p g ∈ T.H → k.ρ1 (x.Am m) ((T.h N).p₀ g) = 1 → rep' g = 1 := by
     intro g hg h1
-    have h2 : k.ρ1 (x.Am m) ((T.h N).p₀ g⁻¹) = 1 := by
-      have := r2 ((T.h N).p₀ g) ((T.h N).p₀ g⁻¹)
-      rw [h1, one_mul] at this
-      rw [← this, ← map_mul, mul_inv_cancel, map_one]
-      exact r1
+    have h2 := r2 ((T.h N).p₀ g) ((T.h N).p₀ g⁻¹)
+    rw [h1, one_mul, ← map_mul, mul_inv_cancel, map_one, r1] at h2
     refine LinearMap.ext fun Z => Subtype.ext ((had.1 g Z).trans ?_)
     simp only []
-    rw [h1, h2, epsD_one l G0.frame n x k m _ (T.H_ε _ hg), one_smul, one_mul, mul_one]
+    rw [h1, ← h2, epsD_one l G0.frame n x k m _ (T.H_ε _ hg), one_smul, one_mul, mul_one]
     rfl
   have hker : (T.h N).p.ker ≤ U.toSubgroup := by
     refine (T.ker_le N).trans (Subgroup.topologicalClosure_minimal _ (sup_le ?_ ?_) U.toOpenSubgroup.isClosed)
@@ -437,9 +385,9 @@ private theorem dgCut_iff {A X : Type} [CommRing A] [CommRing X] [Algebra A X] {
   rw [← Matrix.ext_iff]
   refine forall₂_congr fun i j => ?_
   by_cases h : ((i : ℕ) < a ↔ (j : ℕ) < a)
-  · simp only [dgCut, Matrix.of_apply, if_pos h]
+  · simp only [dgCut, Matrix.of_apply, ite_eq_left h]
     simp [h, ddPart, DD.ext_iff, funext_iff]
-  · simp only [dgCut, Matrix.of_apply, if_neg h]
+  · simp only [dgCut, Matrix.of_apply, ite_eq_right h]
     simp [h, ddPart, DD.ext_iff, funext_iff]
 
 variable (X : Type) [CommRing X] [Algebra x.A X] {q : ℕ} (sg : Fin q → F.G₀)
@@ -562,8 +510,6 @@ theorem UpperTheory.V.Pa.exists_ncard_annihilated_cocycles_le_coboundaries_mul :
     obtain ⟨b1, b2, b3, b4⟩ := e.1 a2
     exact ⟨⟨b1, fun i j => (adicLC _ _ _ m _ ht).2 ((dg_lc _).1 a1 i j), b2, b3⟩, b4⟩
   · haveI := (finAm l G0.frame n x m k.g).2.2.1
-    haveI : Finite (Matrix (Fin n) (Fin n) (DD (x.Am m) k.g)) :=
-      inferInstanceAs (Finite (Fin n → Fin n → DD (x.Am m) k.g))
     refine (Set.finite_range fun (Y : Matrix (Fin n) (Fin n) (DD (x.Am m) k.g)) (g : G0.frame.G₀) =>
       epsD k (x.Am m) g • (k.ρ1 (x.Am m) g * Y * k.ρ1 (x.Am m) g⁻¹) - Y).subset ?_
     rintro _ ⟨Y, -, -, rfl⟩
@@ -629,11 +575,6 @@ theorem UpperTheory.V.Pa.dualN :
   classical
   have hfinM := finAm l G0.frame n x m k.g
   haveI : Finite (DD (x.Am m) k.g) := hfinM.2.2.1
-  haveI : Finite (Matrix (Fin n) (Fin n) (DD (x.Am m) k.g)) :=
-    inferInstanceAs (Finite (Fin n → Fin n → DD (x.Am m) k.g))
-  haveI : Finite ↥(k.EpsilonEtaTensorDual (x.Am m)) :=
-    Finite.of_injective (fun Y : ↥(k.EpsilonEtaTensorDual (x.Am m)) => (Y : Matrix (Fin n) (Fin n) (DD (x.Am m) k.g)))
-      Subtype.val_injective
   haveI := hfin
   have hrho1 := rho1 l G0.frame n x k (x.Am m)
   have hp0ta : ∀ j, (T.h N).p₀ (T.ta N j) = 1 := fun j =>
@@ -643,8 +584,6 @@ theorem UpperTheory.V.Pa.dualN :
     apply Subtype.ext
     rw [hAd.1]
     simp [map_inv, hp0ta, hrho1.1, T.ta_ker, epsD]
-  have hZl : ∀ y, y ∈ Zl rep' ↔ IsLocallyConstant y ∧ ∀ g h, y (g * h) = y g + rep' g (y h) :=
-    fun y => Iff.rfl
   let Z : AddSubgroup ((T.GN N).Γ → ↥(k.EpsilonEtaTensorDual (x.Am m))) :=
     { carrier := {y | y ∈ Zl rep' ∧ ∀ j, ∃ Y, y (T.ph N j) = rep' (T.ph N j) Y - Y ∧
         y (T.ta N j) = rep' (T.ta N j) Y - Y}
@@ -668,14 +607,14 @@ theorem UpperTheory.V.Pa.dualN :
   have hBlZ : (Bl rep').toAddSubgroup ≤ Z := by
     intro y hy
     obtain ⟨Y, hY⟩ := (mem_Bl rep').1 hy
-    refine ⟨(hZl y).2 ⟨?_, ?_⟩, fun j => ⟨Y, hY _, hY _⟩⟩
+    refine ⟨⟨?_, ?_⟩, fun j => ⟨Y, hY _, hY _⟩⟩
     · have hy' : y = fun g => rep' g Y - Y := funext hY
       rw [hy']
       exact (hLCr Y).sub (IsLocallyConstant.const _)
     · intro g h
       rw [hY, hY, hY, map_mul, Module.End.mul_apply, map_sub]
       abel
-  have hcoc : ∀ z ∈ Z, ∀ g h, z (g * h) = z g + rep' g (z h) := fun z hz => ((hZl z).1 hz.1).2
+  have hcoc : ∀ z ∈ Z, ∀ g h, z (g * h) = z g + rep' g (z h) := fun z hz => hz.1.2
   obtain ⟨hA, hB, hCc⟩ := cCount x.A (T.GN N).Γ ↥(k.EpsilonEtaTensorDual (x.Am m)) rep' (T.GN N).c (T.GN N).c_sq
     (hfinM.2.2.2.2.2.2.2.1 hl)
   have hA' := hA Z hZfin hBlZ hcoc

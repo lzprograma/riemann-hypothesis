@@ -1,6 +1,7 @@
 module
 
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IrreducibleFactorHeightBound
+import all ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IrreducibleFactorHeightBound
 public import Mathlib.Algebra.Order.Antidiag.FinsuppEquiv
 public import Mathlib.Algebra.Order.Chebyshev
 public import Mathlib.Analysis.Complex.ExponentialBounds
@@ -209,12 +210,7 @@ theorem coeffIn_lin (w : Fin (N + 1) → B) (hw : ∀ j, w j ∈ W) (i : Fin (D 
 
 private theorem sum_support_inr_eq_xDeg {D N : ℕ} (s : _root_.ReciprocityTheory.ChartRestriction.G.T0.LinearSubstitution.V D N →₀ ℕ) :
     ∑ x ∈ s.support, Sum.elim (fun _ => 0) (fun i => s (Sum.inr i)) x = xDeg s := by
-  rw [xDeg, Finset.sum_subset (Finset.subset_univ _), Fintype.sum_sum_type]
-  · simp
-  · intro x _ hx
-    cases x with
-    | inl p => rfl
-    | inr i => simpa using hx
+  apply _root_.ReciprocityTheory.ChartRestriction.G.T0.Data.sum_support_inr_eq_xDeg <;> assumption
 
 theorem coeffIn_evW (w : Fin (N + 1) → B) (hw : ∀ j, w j ∈ W) {n : ℕ}
     (Q : MvPolynomial (_root_.ReciprocityTheory.ChartRestriction.G.T0.LinearSubstitution.V D N) R) (hx : XHom n Q) : CoeffIn W n (evW w Q) := by

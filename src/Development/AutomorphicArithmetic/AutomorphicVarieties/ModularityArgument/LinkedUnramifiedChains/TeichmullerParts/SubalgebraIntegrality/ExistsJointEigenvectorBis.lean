@@ -61,7 +61,7 @@ private theorem exists_joint_eigenvector_bis {E J : Type} [AddCommGroup E] [Modu
       refine ⟨G, hSW hG1, hG2, fun i => ?_⟩
       have := hall i G hG1
       simpa [sub_eq_zero] using this
-    · push_neg at hall
+    · push Not at hall
       obtain ⟨i, s, hs, hne⟩ := hall
       set D : Module.End ℂ E := T i - μ i • (1 : Module.End ℂ E) with hD
       have hDS : ∀ t ∈ S, D t ∈ S := fun t ht => by
@@ -424,7 +424,6 @@ private theorem abs_cong {l : ℕ} [Fact l.Prime] {A M J : Type} [CommRing A] [I
   have h3 : ‖y t‖ < 1 := by
     by_contra hge
     exact absurd h2 (not_lt.2 (one_le_pow₀ (not_lt.1 hge)))
-  set_option synthInstance.maxHeartbeats 200000 in
   have h4 : y t = y (heckeGen (locPart Y op a) op i) - x (a i) := by
     change y (heckeGen (locPart Y op a) op i - algebraMap A _ (a i)) = _
     rw [map_sub y, hy]

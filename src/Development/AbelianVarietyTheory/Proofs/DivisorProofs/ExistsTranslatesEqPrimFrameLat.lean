@@ -166,7 +166,7 @@ theorem indicator_isPrimFrame_succ [Fintype D] [Fintype 𝓀[k]] {ϖ : kˣ} (hϖ
   swap
   · simp [h]
   obtain ⟨h1, h2⟩ := isPrimFrame_iff.1 h
-  simp only [h, true_and, if_true, one_mul]
+  simp only [h, true_and, ite_true, one_mul]
   generalize Y.submatrix Fin.succ id = Y' at *
   generalize Y.row 0 = y
   have key : ∀ c c' : Fin n → 𝒪[k], (ϖ : k)⁻¹ • (y + (fun i => (c i : k)) ᵥ* Y') ∈ Λ →
@@ -179,9 +179,9 @@ theorem indicator_isPrimFrame_succ [Fintype D] [Fintype 𝓀[k]] {ϖ : kˣ} (hϖ
     simp only [hϖ.residue_eq_iff]
     exact ⟨fun h => h2 _ h, fun h => vecMul_mem_of_int h1 h⟩
   by_cases h3 : ∀ c : Fin n → k, (∀ i, c i ∈ 𝒪[k]) → (ϖ : k)⁻¹ • (y + c ᵥ* Y') ∉ Λ
-  · rw [Finset.sum_eq_zero fun r _ => if_neg (h3 _ fun i => (l (r i)).2), sub_zero]
+  · rw [Finset.sum_eq_zero fun r _ => ite_eq_right (h3 _ fun i => (l (r i)).2), sub_zero]
     simp only [and_iff_left h3]
-  · rw [if_neg fun h => h3 h.2]
+  · rw [ite_eq_right fun h => h3 h.2]
     push Not at h3
     obtain ⟨c, hc, hc'⟩ := h3
     have hy : y ∈ Λ := by
@@ -244,7 +244,7 @@ theorem exists_comb_isPrimFrame.{u} {k : Type u} [Field k] [ValuativeRel k] [Top
         add_zero, Finset.sum_mul, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun i _ => ?_
       by_cases h : γ i * Y.submatrix Fin.succ id ∈ matLat (Fin n) Λ
-      · simp only [h, true_and, if_true, mul_one, mul_sub, Finset.mul_sum, neg_mul, Finset.sum_neg_distrib]
+      · simp only [h, true_and, ite_true, mul_one, mul_sub, Finset.mul_sum, neg_mul, Finset.sum_neg_distrib]
         ring
       · simp [h]
     · rw [Finset.prod_range_succ, ← h3, Fintype.sum_sum_type, Fintype.sum_prod_type]

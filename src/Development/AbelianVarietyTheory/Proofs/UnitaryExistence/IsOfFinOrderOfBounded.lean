@@ -115,7 +115,7 @@ lemma exists_col {n : ℕ} (B : Matrix (Fin n) (Fin n) ℂ)
       · simp
       · intro c _ hc
         have : c.1 ≠ j := fun h => hc (Subtype.ext h)
-        rw [dite_eq_right c.2, if_neg this, mul_zero]
+        rw [dite_eq_right c.2, ite_eq_right this, mul_zero]
       · simp
     rw [h1, h2]
     ring

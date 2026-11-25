@@ -1,55 +1,10 @@
 module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.OneDegOfHalves
-public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.OmEDiagMonomial
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockWeightDegree.ExistsMonomialWeight
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.EqZeroOfFockInnerSelfRe
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.ProdMapPowSingle
 
 @[expose] public section
 
@@ -59,37 +14,20 @@ open Matrix FockH1Action MvPolynomial
 
 namespace PI.FockOneDegW.Core
 
-open PI.FockOneDegW PI.FockOneDegW.Inner PI.FockOneDegW.Diag
-
-theorem pd_comm {σ : Type*} (i j : σ) (P : MvPolynomial σ ℂ) :
-    pderiv i (pderiv j P) = pderiv j (pderiv i P) := by
-  classical
-  induction P using MvPolynomial.induction_on with
-  | C a => simp
-  | add p q hp hq => simp only [map_add (f := _), hp, hq]
-  | mul_X p n hp =>
-    have hc : ∀ a b : σ, pderiv a (pderiv b (X n : MvPolynomial σ ℂ)) = 0 := by
-      intro a b
-      rw [pderiv_X, Pi.single_apply]
-      split_ifs
-      · exact Derivation.map_one_eq_zero _
-      · exact map_zero _
-    simp only [Derivation.leibniz, map_add (f := _), smul_eq_mul]
-    rw [hc i j, hc j i, hp]
-    ring
+open PI.FockOneDegW PI.FockOneDegW.Inner
+open PI.FockWtDegWork (W1 coeff_of_diag fockAct1_monomial lw wt_of_isHW)
 
 theorem key {σ : Type*} (v : MvPolynomial σ ℂ) (ac ad bc bd : σ) (hne : bc ≠ ad) :
     fockInner (pderiv ac (pderiv ad v)) (pderiv bc (pderiv bd v)) =
       fockInner (X bc * pderiv ac v) (X ad * pderiv bd v) := by
   rw [fockInner_mul_X, pderiv_mul, pderiv_X_of_ne hne, zero_mul, zero_add, fockInner_X_mul,
-    pd_comm ad ac]
+    MvPolynomial.pderiv_comm ad ac]
 
 theorem coeff_zero_of_dd {σ : Type*} (v : MvPolynomial σ ℂ) (i j : σ) (hij : i ≠ j)
     (h : pderiv i (pderiv j v) = 0) (α : σ →₀ ℕ) (hα : AddMonoidAlgebra.coeff v α ≠ 0) :
     α i = 0 ∨ α j = 0 := by
   classical
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   obtain ⟨hi, hj⟩ := hcon
   have hsplit : α = (α - Finsupp.single i 1 - Finsupp.single j 1) + Finsupp.single i 1 +
       Finsupp.single j 1 := by
@@ -198,8 +136,8 @@ theorem SS_offblock (v : Pol p q r s) (a b : Ix p q) (h : ¬ sameBlock a b) : SS
       apply h
       rw [side_sb]
       rw [(side_lp a d).1 h1.2, (side_lp b d).1 h2.2]
-    · rw [if_neg h2, fockInner_zero_right]
-  · rw [if_neg h1, fockInner_zero_left]
+    · rw [ite_eq_right h2, fockInner_zero_right]
+  · rw [ite_eq_right h1, fockInner_zero_left]
 
 theorem negOp_apply (v : Pol p q r s) (b a : Ix p q) :
     negOp b a v = ∑ c : Ix r s, (if linePos ((b, c) : Ln p q r s) = true then 0
@@ -237,20 +175,20 @@ theorem SS_eq (v : Pol p q r s) (a b : Ix p q) (hab : sameBlock a b) :
     · have hbc : linePos ((b, c) : Ln p q r s) = true := by
         rw [side_lp, ← hs, (side_lp a d).1 hD]
         exact ((side_sb c d).1 hcd).symm
-      rw [if_neg (fun h => h.1 hcd), if_pos hbc, fockInner_zero_left, fockInner_zero_left]
+      rw [ite_eq_right (fun h => h.1 hcd), ite_eq_left hbc, fockInner_zero_left, fockInner_zero_left]
     · have hbc : ¬ linePos ((b, c) : Ln p q r s) = true := by
         intro h
         apply hcd
         rw [side_sb, ← (side_lp b c).1 h, ← hs]
         exact (side_lp a d).1 hD
-      rw [if_pos ⟨hcd, hD⟩, if_pos ⟨hcd, hD'⟩, if_neg hbc, if_pos hD]
+      rw [ite_eq_left ⟨hcd, hD⟩, ite_eq_left ⟨hcd, hD'⟩, ite_eq_right hbc, ite_eq_left hD]
       apply key
       intro h
       apply hcd
       have : c = d := (Prod.mk.inj h).2
       subst this
       exact (side_sb c c).2 rfl
-  · rw [if_neg (fun h => hD h.2), if_neg hD, fockInner_zero_left, fockInner_zero_right]
+  · rw [ite_eq_right (fun h => hD h.2), ite_eq_right hD, fockInner_zero_left, fockInner_zero_right]
 
 theorem hw_eq (hK : OpsK) (μ : Ix p q → ℚ) (v : Pol p q r s)
     (hv : IsHW (fockAct1 p q r s) μ v) (a b : Ix p q) (h : posC a b) :
@@ -259,7 +197,7 @@ theorem hw_eq (hK : OpsK) (μ : Ix p q → ℚ) (v : Pol p q r s)
     have h2 := hv.2
     simp only [hwSub, Submodule.mem_inf, Submodule.mem_iInf, LinearMap.mem_ker] at h2
     exact h2.2 a b h
-  rw [hK p q r s a b (posC_sb a b h), if_neg (posC_ne a b h), add_zero, LinearMap.sub_apply,
+  rw [hK p q r s a b (posC_sb a b h), ite_eq_right (posC_ne a b h), add_zero, LinearMap.sub_apply,
     sub_eq_zero] at hker
   exact hker
 
@@ -303,7 +241,7 @@ theorem core (hK : OpsK) (hL : HarmIff) (μ : Ix p q → ℚ) (v : Pol p q r s)
     have h2 : ¬ linePos ((a, c) : Ln p q r s) = true := by rw [hc]; simp
     exact h2 ((side_lp a c).2 (h1.trans h.symm))
   unfold gg at hg
-  rwa [if_pos ⟨hnsb, hd⟩] at hg
+  rwa [ite_eq_left ⟨hnsb, hd⟩] at hg
 
 theorem exists_monomial_weight' {σ ι : Type*} [Fintype σ]
     (T : ι → Module.End ℂ (MvPolynomial σ ℂ)) (f : ι → (σ →₀ ℕ) → ℚ)
@@ -349,7 +287,7 @@ theorem shift_eq (α : Ln p q r s →₀ ℕ)
     by_cases hA : ∀ c : Fin r, α (Sum.inl i, Sum.inl c) = 0
     · left; exact Finset.sum_eq_zero fun c _ => by simp [hA c]
     · right
-      push_neg at hA
+      push Not at hA
       obtain ⟨c0, hc0⟩ := hA
       refine Finset.sum_eq_zero fun d _ => ?_
       have := (hrow (Sum.inl i) (Sum.inr d) (Sum.inl c0) rfl rfl).resolve_right hc0
@@ -367,7 +305,7 @@ theorem shift_eq (α : Ln p q r s →₀ ℕ)
     by_cases hA : ∀ c : Fin s, α (Sum.inr i, Sum.inr c) = 0
     · left; exact Finset.sum_eq_zero fun c _ => by simp [hA c]
     · right
-      push_neg at hA
+      push Not at hA
       obtain ⟨c0, hc0⟩ := hA
       refine Finset.sum_eq_zero fun d _ => ?_
       have := (hrow (Sum.inr i) (Sum.inl d) (Sum.inr c0) rfl rfl).resolve_right hc0

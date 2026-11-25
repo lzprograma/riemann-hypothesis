@@ -16,9 +16,6 @@ open Formalism.MainNotions.DIV.Cons (SCF intO)
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
 variable {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {O : Type} [CommRing O] {β : O →+* c.F}
 
-def N3AtPoints (Y : Model Xo c β) (p : ℕ) : Prop :=
-  ∀ (C : SCF p) (P : PointsOfFlagModel.PtC Y C), Nonempty (DatAt Y P)
-
 def BetaAdd (Y : Model Xo c β) (p : ℕ) : Prop :=
   ∀ (C : SCF p) (P : PointsOfFlagModel.PtC Y C) (A : DatAt Y P) (a a' b : A.Ylat),
     A.beta (a + a') b = A.beta a b + A.beta a' b

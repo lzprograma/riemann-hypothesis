@@ -38,43 +38,7 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSpl
 public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.T2SpaceGlCompletionsOver
 import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.UnitTrace
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.DetAdmA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
-import Mathlib.Tactic.ReduceModChar
 import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
 import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.IsoEq
 import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatEx
@@ -82,10 +46,7 @@ import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting
 import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.CarryLift
 import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PowTwist
 import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.SatakeTwists.SatakeTwistHolds
-import Mathlib.Data.Multiset.Functor
 import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.IntPow
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSConjSpaceR
 import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SmoEq
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -167,118 +128,12 @@ theorem _root_.UpperTheory.ConvolutionTheory.Sph.descAt (hCI : CI) (hGM : GM.GM)
     exact ⟨⟨hA0.1, fun w hw => hA0.2 w (hS w hw)⟩, fun τ => (hA0.1 τ).1,
       fun w hw => ⟨(hA0.2 w (hS w hw)).1, h0 w _ (hA0.2 w (hS w hw))⟩⟩
   clear hSdef hvu
-  have hne := (hPl F E hp).2.2.1
-  obtain ⟨T, hTS, hmk, htyped, hrank, c, f₀, UF, hUF, hL⟩ := hTy F E σ hσ hp n hn μE V hV q w₀ hq S hqS hunr hsph
-    (Function.update (fun u => (hne u).some) v w)
-  have hw : T.mk' v = w := by rw [hmk, Function.update_self]
-  clear hmk
-  subst hw
-  obtain ⟨u, hu, hu0⟩ := (Submodule.ne_bot_iff _).1 htyped
-  obtain ⟨m, hm, D, s, hs, νE, iE, νF, iF, b, a, aE, aF, hposition, harch, hAE, hAF, hpair, hua⟩ :=
-    hPI F E σ hσ hp n hn μE μF u hu0
-  letI : ∀ x : Pl E, MeasurableSpace (Gw n x) := fun _ => borel _
-  haveI : ∀ x : Pl E, BorelSpace (Gw n x) := fun _ => ⟨rfl⟩
-  letI : ∀ x : Pl F, MeasurableSpace (Gw n x) := fun _ => borel _
-  haveI : ∀ x : Pl F, BorelSpace (Gw n x) := fun _ => ⟨rfl⟩
-  have hmE : ∀ x : Pl E, ∃ mm : Measure (Gw n x), mm.IsHaarMeasure := fun x => (haar_norm E n x).imp fun _ h => h.1
-  have hmF : ∀ x : Pl F, ∃ mm : Measure (Gw n x), mm.IsHaarMeasure ∧ mm (GLnLocal.integralGL (x.adicCompletion F) n) = 1 :=
-    fun x => haar_norm F n x
-  choose mE hmE using hmE
-  choose mF hmF using hmF
-  have hτ : ∀ x : Pl E, ∃ τ : SmIrr (Gw n x), Occurs μE V x τ := fun x => by
-    haveI := hmE x
-    exact (hOcc E n μE V x (mE x) hV).1
-  choose τ₁ hτ₁ using hτ
-  obtain ⟨τ, hτ, hτw⟩ : ∃ τ : ∀ x : Pl E, SmIrr (Gw n x), (∀ x, Occurs μE V x (τ x)) ∧ τ (T.mk' v).1 = τ' := by
-    refine ⟨Function.update τ₁ (T.mk' v).1 τ', fun x => ?_, Function.update_self ..⟩
-    by_cases h : x = (T.mk' v).1
-    · subst h; rw [Function.update_self]; exact hτ'
-    · rw [Function.update_of_ne h]; exact hτ₁ x
-  subst hτw
-  obtain ⟨ν, hν⟩ := hGood n hn
-  obtain ⟨x, cE, Z₀, hx, hcE, hZ₀, hZ0, hE⟩ := hTE F E σ hσ hp n hn m hm μE θ hθ D s hs hposition νE νF b a aE aF harch q w₀ hq T V hV
-    hVθ hrank ⟨u, hu, hua⟩ mE hmE τ hτ ν hν.1.antitone
-  obtain ⟨κ, hκ, hG⟩ := hGM F E σ hσ hp n hn μE μF θ hθ q w₀ hq νE νF aE aF 1 one_pos hAE hAF hpair
-  set SF : Set (Pl F) := {y | y ∈ S ∨ y = q} with hSF
-  set SE : Set (Pl E) := {y | y.under (𝓞 F) ∈ SF} with hSE
-  obtain ⟨ι, _, V₀, τ₀, bF, Z, hι, hF⟩ := hSum F E σ n (Module.finrank F E) hn μF νF mF hmF aF q w₀ S UF ν hν.1.antitone
-    (fun V₀ => ∃ Λ' t', At μF SF V₀ Λ' t' ∧ Λ = bcInf Λ' ∧ ∀ y ∉ SE, t y = bcSat t' y) x hx
-  have hvsp : v ∈ T.sp := Finset.mem_filter.2 ⟨hTS ▸ hvS, hv⟩
-  obtain ⟨τv, r, hr, hiso, htr, hlev⟩ := hPull F E n v (T.mk' v) (hv _) (mF v) (mE _) (hmF v).1 (hmE _) (τ _)
-  obtain ⟨hCO, hfix, hφ⟩ := hlev (T.J _) (UF v) (T.co _) (hUF v hvsp)
-  have hunit : ∀ y ∈ T.sp, _ := fun y hy => hUnit E n μE V hV (T.mk' y).1 (mE _) (hmE _) (τ _) (T.J _) (hτ _) (T.co _) (by
-    refine (Submodule.ne_bot_iff _).2 ⟨u, ⟨hu.1, ?_⟩, hu0⟩
-    have h1 : u ∈ eigL μE (T.mk' y).1 (T.J _) (T.χ _) := (Submodule.mem_iInf _).1 hu.2 _
-    rw [T.triv y (Finset.mem_filter.1 hy).2 (T.mk' y)] at h1
-    have h2 := T.chr (T.mk' y).1
-    rw [T.triv y (Finset.mem_filter.1 hy).2 (T.mk' y)] at h2
-    rwa [(hEig E n μE _ _ _ (T.co _) h2).2.1] at h1)
-  have hsu : ∀ y : Pl F, ∃ z : ℂ, y ∈ T.sp → z ≠ 0 ∧ HasTrace (mE _) (τ (T.mk' y).1).ρ
-      ((T.J (T.mk' y).1 : Set (Gw n (T.mk' y).1)).indicator 1) z := fun y => by
-    by_cases hy : y ∈ T.sp
-    · obtain ⟨z, hz⟩ := (hunit y hy).2.2.2
-      exact ⟨z, fun _ => hz⟩
-    · exact ⟨0, fun h => absurd h hy⟩
-  choose su hsu using hsu
-  let ψ₁ : ∀ y : Pl F, Gw n (T.mk' y).1 → ℂ := fun y => (T.J (T.mk' y).1 : Set (Gw n (T.mk' y).1)).indicator 1
-  obtain ⟨L₁, hfit₁, -, hL₁s, hL₁n⟩ := hL ψ₁ fun y hy => ⟨(hunit y hy).2.1, (hunit y hy).2.2.1⟩
-  have hL₁S : L₁.S = S := hfit₁.S_eq.trans hTS
-  have hs₁ : ∀ i (y : Pl F), ∃ z : ℂ, y ∈ S → HasTrace (mF y) (τ₀ i y).ρ (L₁.f y) z := fun i y => by
-    by_cases hy : y ∈ S
-    · haveI := (hmF y).1
-      have ht := L₁.test y (hL₁S ▸ hy)
-      obtain ⟨z, hz⟩ := (hOcc F n μF (V₀ i) y (mF y) (hι i).1).2.2 _ ((hι i).2.2.2 y) (L₁.f y) ⟨ht.2.2.1, ht.2.2.2⟩
-      exact ⟨z, fun _ => hz⟩
-    · exact ⟨0, fun h => absurd h hy⟩
-  choose s₁ hs₁ using hs₁
-  haveI := (hmF v).1
-  obtain ⟨i, hi⟩ := hAbs F n v (mF v) (UF v) hCO ι (fun i => τ₀ i v)
-    (fun i => (κ * ∏ y ∈ S, c y) * bF i * ∏ y ∈ S.erase v, s₁ i y) Z τv (cE * r * ∏ y ∈ T.sp.erase v, su y) Z₀
-    (mul_ne_zero (mul_ne_zero hcE hr) (Finset.prod_ne_zero_iff.2 fun y hy => (hsu y (Finset.mem_of_mem_erase hy)).1))
-    hZ₀ hZ0 (fun i => (hι i).2.2.1) (hfix (hunit v hvsp).1) (by
-      intro φ s₀ sF hφt hφi hs₀ hsF
-      obtain ⟨ψv, hψt, hψi, rfl⟩ := hφ φ hφt hφi
-      obtain ⟨L, hfit, hLc, hLs, hLn⟩ := hL (Function.update ψ₁ v ψv) fun y hy => by
-        by_cases h : y = v
-        · subst h; rw [Function.update_self]; exact ⟨hψt, hψi⟩
-        · rw [Function.update_of_ne h]; exact ⟨(hunit y hy).2.1, (hunit y hy).2.2.1⟩
-      have hLS : L.S = S := hfit.S_eq.trans hTS
-      obtain ⟨𝔢, 𝔣, h𝔢, h𝔣, hgeo⟩ := hG L ν hν
-      have heS : 𝔢.S = SE := Set.ext fun y => by rw [h𝔢.2.2.1, hLS]; rfl
-      have hfS : 𝔣.S = SF := Set.ext fun y => by rw [h𝔣.2.2.1, hLS]; rfl
-      obtain ⟨hAt', hc1, hc2⟩ := hS' 𝔢.S fun y => by rw [h𝔢.2.2.1, hLS]
-      have hoff : OffFam F n 𝔢.S 𝔣.S Λ t := by
-        rw [heS, hfS]
-        exact hOffA SF ((S.finite_toSet.union (Set.finite_singleton q)).subset fun y hy => hy)
-      filter_upwards [hCI F E n _ hn hp.pos μE μF θ 𝔢 𝔣 _ hgeo Λ t hc1 hc2 hoff x hx] with j hj
-      rw [hOne E n _ hn μE θ 𝔢 V Λ t hV hVθ hAt' x j,
-        hE L _ hfit _ 𝔢 h𝔢 (Function.update su v (r * s₀)) (fun y hy => by
-          by_cases h : y = v
-          · subst h; rw [Function.update_self, Function.update_self]; exact htr _ _ hs₀
-          · rw [Function.update_of_ne h, Function.update_of_ne h]; exact (hsu y hy).2) j, heS, hfS,
-        hF L 𝔣 hLS (fun y hy => (hLc y hy).2) h𝔣 (fun i => Function.update (s₁ i) v (sF i)) (fun i y hy => by
-          by_cases h : y = v
-          · subst h
-            rw [Function.update_self, hLs y hvsp, Function.update_self]; exact hsF i
-          · rw [Function.update_of_ne h]
-            have e : L.f y = L₁.f y := by
-              by_cases hy' : GM.Split E y
-              · have hys : y ∈ T.sp := Finset.mem_filter.2 ⟨hTS ▸ hy, hy'⟩
-                rw [hLs y hys, hL₁s y hys, Function.update_of_ne h]
-              · rw [hLn y hy hy', hL₁n y hy hy']
-            rw [e]; exact hs₁ i y hy) j, hLS, Finset.prod_congr rfl fun y hy => (hLc y hy).1,
-        Finset.prod_update_of_mem hvsp, Finset.mul_sum] at hj
-      simp only [Finset.prod_update_of_mem hvS, Finset.sdiff_singleton_eq_erase] at hj
-      calc _ = cE * (Z₀.map (· ^ j)).sum * (r * s₀ * ∏ y ∈ T.sp.erase v, su y) := by ring
-        _ = _ := hj
-        _ = _ := Finset.sum_congr rfl fun i _ => by ring)
-  obtain ⟨Λ', t', hA, hΛ, ht⟩ := (hι i).2.1
-  have hSFf : SF.Finite := (S.finite_toSet.union (Set.finite_singleton q)).subset fun y hy => hy
-  have huF : u₀ ∉ SF := fun h => h.elim huS huq
-  refine ⟨V₀ i, Λ', t', (hι i).1, ⟨SF, hSFf, hA⟩, hΛ, ?_, hA.2 u₀ huF, fun y hy => ht y fun h => huF (hy ▸ h)⟩
-  obtain ⟨𝔢, -, h𝔢, -⟩ := hG L₁ ν hν
-  have heS : 𝔢.S = SE := Set.ext fun y => by rw [h𝔢.2.2.1, hL₁S]; rfl
-  exact Filter.mem_of_superset (heS ▸ 𝔢.finS : SE.Finite).compl_mem_cofinite fun y hy => ht y hy
+  obtain ⟨V₀, Λ', t', hV₀, hA, hΛ, ht, hcof, -, -, -⟩ :=
+    coreDesc_of_data hAbs hPull hUnit hOne hSum hPI hTy hTE hGood hPl hOcc hEig hCI hGM
+      F E σ hσ hp n hn μE μF θ hθ V Λ t hV hVθ hOffA v w hv τ' hτ' S q w₀ hvS hqS hq hunr hsph hS'
+  have hSFf : ({y : Pl F | y ∈ S ∨ y = q}).Finite := (S.finite_toSet.union (Set.finite_singleton q)).subset fun y hy => hy
+  have huF : u₀ ∉ ({y : Pl F | y ∈ S ∨ y = q} : Set (Pl F)) := fun h => h.elim huS huq
+  exact ⟨V₀, Λ', t', hV₀, ⟨_, hSFf, hA⟩, hΛ, hcof, hA.2 u₀ huF, fun y hy => ht y fun h => huF (hy ▸ h)⟩
 
 end UpperTheory.ConvolutionTheory.T
 end -- clump:auto
@@ -420,9 +275,9 @@ theorem UpperTheory.ConvolutionTheory.Sph.down :
   have hAt₁ : At μE S₀ V' Λ t₁ := by
     refine ⟨hAt.1, fun u hu => ?_⟩
     by_cases h : u.under (𝓞 F) = v
-    · simp only [t₁, if_pos h]
+    · simp only [t₁, ite_eq_left h]
       exact hb u h
-    · simp only [t₁, if_neg h]
+    · simp only [t₁, ite_eq_right h]
       exact hAt.2 u fun h' => hu ⟨h', h⟩
   have hAE₁ : AtAE μE V' Λ t₁ := ⟨S₀, hS₀, hAt₁⟩
   obtain ⟨V₀, Λ₀, t₀, hV₀, hAt₀, hΛ, ht, hv₀, -⟩ := Sph.descAt ci Sph.gm F E σ hσ hp n hn μE μF θ hθ V' Λ t₁ S₀

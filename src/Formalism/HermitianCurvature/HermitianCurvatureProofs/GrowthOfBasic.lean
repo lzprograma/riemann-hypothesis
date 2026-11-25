@@ -7,55 +7,9 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Localisation
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PeriodLatticeFactsSplitOfGeneral
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PullLatticeTypedUnit
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwistedIsRealOrderLattice
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.InnerProductSpace.Positive
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -78,10 +32,8 @@ lemma euler_product_bounds (x : ℝ) (hx0 : 0 < x) (hx : x ≤ 1 / 3) (k : ℕ) 
     obtain ⟨h1, h2⟩ := ih
     rw [Finset.prod_Icc_succ_top (by omega : 1 ≤ n + 1)]
     have hx1 : x ≤ 1 := by linarith
-    have hy : x ^ (n + 1) ≤ x := pow_le_of_le_one hx0.le hx1 (Nat.succ_ne_zero n)
     have hy0 : 0 ≤ x ^ (n + 1) := pow_nonneg hx0.le _
     have hyx : x ^ (n + 1 + 1) = x ^ (n + 1) * x := pow_succ x (n + 1)
-    have hP0 : 0 ≤ ∏ i ∈ Icc 1 n, (1 - x ^ i) := by linarith
     constructor
     · have e1 := mul_le_mul_of_nonneg_right h1 (show (0:ℝ) ≤ 1 - x ^ (n + 1) by linarith)
       have e2 := mul_nonneg hy0 (show (0:ℝ) ≤ 1 / 3 - x ^ (n + 1) by linarith)
@@ -220,10 +172,6 @@ lemma price_exponential_bound (f k : ℕ) (b g : ℝ) (hb : 1 ≤ b) (hk : 1 ≤
   have hkb0 : 0 ≤ (k:ℝ) * b := by linarith
   have h7 : b ^ 7 ≤ (k * b) ^ 7 := pow_le_pow_left₀ hb0.le hkb 7
   have hb7 : 0 < b ^ 7 := pow_pos hb0 7
-  have hb71 : (1:ℝ) ≤ b ^ 7 := by
-    have := pow_le_pow_left₀ zero_le_one hb 7
-    simpa using this
-  have e8 : ((k:ℝ) * b) ^ 8 = (k * b) ^ 7 * (k * b) := by ring
   have hk8 : (k:ℝ) * b ^ 7 ≤ (k * b) ^ 8 := by
     linarith [mul_le_mul h7 hkb' (by linarith) (pow_nonneg hkb0 7)]
   have hkb7 : b ^ 7 ≤ (k:ℝ) * b ^ 7 := by linarith [mul_le_mul_of_nonneg_right hkR hb7.le]
@@ -275,10 +223,9 @@ lemma exp_mul_one_sub_le (y : ℝ) : Real.exp y * (1 - y) ≤ 1 := by
   have e : Real.exp y * Real.exp (-y) = 1 := by rw [← Real.exp_add]; simp
   linarith [mul_le_mul_of_nonneg_left h hp.le]
 
-private theorem exp_le_quad_lemma (x : ℝ) (h0 : 0 ≤ x) (h1 : x ≤ 1 / 2) :
+private theorem exp_le_quad_lemma (x : ℝ) (h1 : x ≤ 1 / 2) :
     Real.exp x ≤ 1 + x + 2 * x ^ 2 := by
   have h := exp_mul_one_sub_le x
-  have hp := Real.exp_pos x
   have eq1 : (1 + x + 2 * x ^ 2) * (1 - x) = 1 + x ^ 2 * (1 - 2 * x) := by ring
   have hkey : 0 ≤ x ^ 2 * (1 - 2 * x) := mul_nonneg (sq_nonneg x) (by linarith)
   have hle : Real.exp x * (1 - x) ≤ (1 + x + 2 * x ^ 2) * (1 - x) := by linarith [h, eq1, hkey]
@@ -309,7 +256,7 @@ theorem t_EtaZero : SqrtSumSqLeOneAddInvPowSix := by
   rw [← hu] at hPg hA
   rw [h14] at hA hε hε'
   have hE : Real.exp (6 * u) ≤ 1 + 7 * u := by
-    have := exp_le_quad_lemma (6 * u) (by linarith) (by linarith)
+    have := exp_le_quad_lemma (6 * u) (by linarith)
     linarith [mul_nonneg hu0.le hw]
   have hF : Real.exp (u ^ 2) ≤ 1 + u := by
     have hu2_le : u ^ 2 ≤ (1 / 1000) * u := by
@@ -318,7 +265,7 @@ theorem t_EtaZero : SqrtSumSqLeOneAddInvPowSix := by
     have hu4_le : (u ^ 2) ^ 2 ≤ (1 / 1000) ^ 2 * u ^ 2 :=
       calc (u ^ 2) ^ 2 = u ^ 2 * u ^ 2 := sq (u ^ 2)
         _ ≤ (1 / 1000) ^ 2 * u ^ 2 := mul_le_mul_of_nonneg_right (pow_le_pow_left₀ hu0.le hu1 2) (sq_nonneg u)
-    have := exp_le_quad_lemma (u ^ 2) (by positivity) (by linarith)
+    have := exp_le_quad_lemma (u ^ 2) (by linarith)
     linarith
   have hM : A + 2 * ε ≤ 1 + 3 * u := by
     have h1 : (1 + u) * Real.exp (u ^ 2) ≤ (1 + u) * (1 + u) :=
@@ -663,7 +610,7 @@ theorem t_PairSplit : PairSplit := by
     rw [← Summable.tsum_finsetSum]
     · apply tsum_congr; intro p
       rw [Finset.sum_ite_eq]
-      simp only [mem_univ, if_true]
+      simp only [mem_univ, ite_true]
       by_cases h3 : p.1 ∈ S <;> by_cases h4 : p.2 ∈ S <;>
         by_cases h5 : X.rowOf p.1 = X.rowOf p.2 <;>
         simp [Set.indicator, Terms.allPairs, h3, h4, h5]
@@ -823,16 +770,16 @@ theorem outOk (hA : J.PSDAgree) (hA2 : A5.A2) (hLP : J.LocalPullback) (hPh : J.P
     · have hS : t ∈ S.L := hL (fun q => (AddSubgroup.mem_iInf.1 hin) q)
       refine psd_congr ?_ key
       intro x hx y hy
-      simp only [hin, hS, if_true, hN x hx y hy]
+      simp only [hin, hS, ite_true, hN x hx y hy]
     · by_cases hS : t ∈ S.L
       · have := _root_.Formalism.FourierDecayAlt.P.Jx7.psd_add (psd_one hSch Y) key
         refine psd_congr ?_ this
         intro x hx y hy
-        simp only [hin, hS, if_true, if_false, hN x hx y hy]
+        simp only [hin, hS, ite_true, ite_false, hN x hx y hy]
         ring
       · refine psd_congr ?_ key
         intro x hx y hy
-        simp only [hin, hS, if_false, hN x hx y hy]
+        simp only [hin, hS, ite_false, hN x hx y hy]
 
 theorem famOk (hA : J.PSDAgree) (hA2 : A5.A2) (hLP : J.LocalPullback) (hPh : J.PhaseOk)
     (hUH : J.LocalUnitHeads) (hN0 : A5.BaseKernelOne) (h13 : ∀ s, 1 ≤ s → A5.A13 s)
@@ -1172,7 +1119,3 @@ theorem t_PairBoundFromLocal : PairBoundFromLocal := by
 end From
 
 end Formalism.FourierDecayAlt.P.GrowthPolynomialOperator
-
-namespace Formalism.FourierDecayAlt.P
-
-end Formalism.FourierDecayAlt.P

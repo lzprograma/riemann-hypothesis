@@ -70,55 +70,20 @@ end SectionSupBound
 open SectionBounded SectionSupBound in
 theorem SectionSupBound.proof : SectionSupBound.Statement := by
   intro K _ ι _ Ω _ y A τ e hA he
-  classical
-  choose M hM0 hM using fun c => SectionSupBound.exists_lower A hA c
-  choose B hB0 hB using fun c hc => SectionBounded.exists_upper y A.a τ he c hc
-  set S : ℝ := ∑ c : (∀ k, ι k), if hc : (∀ k, y ⟨k, c k⟩ ≠ 0) then B c hc * M c ^ τ else 0 with hSdef
-  have hS0 : 0 ≤ S := Finset.sum_nonneg fun c' _ => by
-    split_ifs with hc'
-    · exact mul_nonneg (hB0 c' hc') (pow_nonneg (hM0 c') τ)
-    · exact le_rfl
+  obtain ⟨S, hS0, hS⟩ := SectionBounded.exists_bound_of_lower y A τ he fun c _ => by
+    obtain ⟨M, hM0, hM⟩ := SectionSupBound.exists_lower A hA c
+    exact ⟨M, hM0, fun z _ => hM z⟩
   refine ⟨Real.log (1 + S), Real.log_nonneg (by linarith), ?_⟩
   rw [Real.exp_log (by linarith)]
   intro dg dh g h z hg hh hdeg hgy hz
-  have hmax : ∀ k, ∃ i, ∀ i', ‖z ⟨k, i'⟩‖ ≤ ‖z ⟨k, i⟩‖ := fun k => by
-    obtain ⟨i0, _⟩ := hz.1 k
-    obtain ⟨i, _, hi⟩ := Finset.exists_max_image Finset.univ (fun i => ‖z ⟨k, i⟩‖) ⟨i0, Finset.mem_univ _⟩
-    exact ⟨i, fun i' => hi i' (Finset.mem_univ _)⟩
-  choose c hcmax using hmax
-  have hz0 : ∀ k, z ⟨k, c k⟩ ≠ 0 := fun k h0 => by
-    obtain ⟨i0, hi0⟩ := hz.1 k
-    have := hcmax k i0
-    rw [h0, norm_zero] at this
-    exact hi0 (norm_le_zero_iff.mp this)
-  have hyc : ∀ k, y ⟨k, c k⟩ ≠ 0 := fun k h0 => hz0 k (by
-    have := vanish hz (homog_X ⟨k, c k⟩) (by rw [aeval_X]; exact h0)
-    simpa using this)
-  have h1 := hB c hyc dg dh g h z hg hh hdeg hgy hz hcmax hz0
-  have h2 := hM c z hcmax hz0
-  have hpow : ∏ k, ‖z ⟨k, c k⟩‖ ^ ((τ : ℤ) * A.a k) = (∏ k, ‖z ⟨k, c k⟩‖ ^ A.a k) ^ τ := by
-    rw [← Finset.prod_pow]
-    refine Finset.prod_congr rfl fun k _ => ?_
-    rw [mul_comm, zpow_mul, zpow_natCast]
-  have h3 : ∏ k, ‖z ⟨k, c k⟩‖ ^ ((τ : ℤ) * A.a k) ≤ M c ^ τ * A.h z ^ τ := by
-    rw [hpow, ← mul_pow]
-    exact pow_le_pow_left₀ (Finset.prod_nonneg fun k _ => zpow_nonneg (norm_nonneg _) _) h2 τ
-  have hCge : B c hyc * M c ^ τ ≤ 1 + S := by
-    have := Finset.single_le_sum (f := fun c : (∀ k, ι k) =>
-        if hc : (∀ k, y ⟨k, c k⟩ ≠ 0) then B c hc * M c ^ τ else 0)
-      (fun c' _ => by
-        split_ifs with hc'
-        · exact mul_nonneg (hB0 c' hc') (pow_nonneg (hM0 c') τ)
-        · exact le_rfl) (Finset.mem_univ c)
-    simp only [dif_pos hyc] at this
-    linarith
+  have h1 := hS dg dh g h z hg hh hdeg hgy hz
   have hAh : 0 ≤ A.h z ^ τ := pow_nonneg (A.pos z hz.1).le τ
   calc ‖eval z (map (Int.castRingHom ℂ) g)‖
-      ≤ B c hyc * ‖eval z (map (Int.castRingHom ℂ) h)‖ * ∏ k, ‖z ⟨k, c k⟩‖ ^ ((τ : ℤ) * A.a k) := h1
-    _ ≤ B c hyc * ‖eval z (map (Int.castRingHom ℂ) h)‖ * (M c ^ τ * A.h z ^ τ) :=
-        mul_le_mul_of_nonneg_left h3 (mul_nonneg (hB0 c hyc) (norm_nonneg _))
-    _ = (B c hyc * M c ^ τ) * ‖eval z (map (Int.castRingHom ℂ) h)‖ * A.h z ^ τ := by ring
-    _ ≤ _ := by gcongr
+      ≤ S * ‖eval z (map (Int.castRingHom ℂ) h)‖ * A.h z ^ τ := h1
+    _ ≤ (1 + S) * ‖eval z (map (Int.castRingHom ℂ) h)‖ * A.h z ^ τ := by
+        have := norm_nonneg (eval z (map (Int.castRingHom ℂ) h))
+        gcongr
+        linarith
 
 end
 

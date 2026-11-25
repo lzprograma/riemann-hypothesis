@@ -140,20 +140,6 @@ theorem fourier_char_smul (χ : 𝓢(E, ℂ)) (η ξ : E) :
     ← AddChar.map_add_eq_mul, inner_sub_right]
   congr 3; ring
 
-section Kernel
-
-variable (s N : ℝ) (χ : 𝓢(E, ℂ))
-
-variable {s N}
-
-end Kernel
-
-section Identity
-
-variable {s N : ℝ} (χ : 𝓢(E, ℂ))
-
-end Identity
-
 
 end
 

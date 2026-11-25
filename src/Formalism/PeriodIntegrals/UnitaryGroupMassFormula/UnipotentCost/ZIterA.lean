@@ -3,49 +3,8 @@ module
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
 public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Analysis.Calculus.ContDiff.Bounds
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 
 set_option backward.isDefEq.respectTransparency false
@@ -126,13 +85,6 @@ theorem norm_smulRightL_le (E : Type) [NormedAddCommGroup E] [NormedSpace ℝ E]
     ‖StrongDual.smulRightL ℝ V E‖ ≤ 1 := by
   exact ContinuousLinearMap.norm_smulRightL_le
 
-private theorem one_le_pow_of_one_le_real {x : ℝ} (hx : 1 ≤ x) (n : ℕ) : 1 ≤ x ^ n := by
-  exact one_le_pow₀ hx
-
-private theorem pow_le_pow_right_of_one_le {x : ℝ} (hx : 1 ≤ x) {m n : ℕ} (h : m ≤ n) :
-    x ^ m ≤ x ^ n := by
-  exact pow_le_pow_right₀ hx h
-
 private theorem mul_pow_mul_le_mul_pow_succ {Kc R β lam M : ℝ} {b j : ℕ} (hj : j ≤ b) (hKc : 0 ≤ Kc)
     (hR : 1 ≤ R) (hβ : 0 ≤ β) (hlam : 1 ≤ lam) (hM : 1 ≤ M) :
     Kc * M ^ (j + 1) * (R ^ (b - j) * (β * lam) * (lam * M) ^ (b - j)) ≤
@@ -147,8 +99,7 @@ private theorem mul_pow_mul_le_mul_pow_succ {Kc R β lam M : ℝ} {b j : ℕ} (h
       (mul_nonneg (mul_nonneg (pow_nonneg hR0 _) (mul_nonneg hβ hlam0))
         (pow_nonneg (mul_nonneg hlam0 hM0) _))
   have hX : 1 ≤ R ^ j * lam ^ j :=
-    one_le_mul_of_one_le_of_one_le (one_le_pow_of_one_le_real hR j)
-      (one_le_pow_of_one_le_real hlam j)
+    one_le_mul_of_one_le_of_one_le (one_le_pow₀ hR) (one_le_pow₀ hlam)
   calc _ ≤ Kc * M ^ (j + 1) * (R ^ k * (β * lam) * (lam * M) ^ k) * (R ^ j * lam ^ j) :=
         le_mul_of_one_le_right hL hX
     _ = _ := by ring
@@ -172,9 +123,9 @@ theorem iter_words (q : ℕ) (Kc : ℝ) (hKc : 0 ≤ Kc) : ∃ C : ℝ, 1 ≤ C 
   have hNK : 0 ≤ (Fintype.card I : ℝ) * Kc := mul_nonneg (Nat.cast_nonneg _) hKc
   have hR : 1 ≤ R := by
     rw [hRdef]
-    exact one_le_mul_of_one_le_of_one_le (by linarith) (one_le_pow_of_one_le_real (by norm_num) q)
+    exact one_le_mul_of_one_le_of_one_le (by linarith) (one_le_pow₀ (by norm_num))
   have hR0 : 0 ≤ R := by linarith
-  refine ⟨R ^ q, one_le_pow_of_one_le_real hR q, ?_⟩
+  refine ⟨R ^ q, one_le_pow₀ hR, ?_⟩
   intro α E _ _ Cls Dop Γ U c z₀ M lam hU hz₀ hM hlam hdown hDop hsmooth hderiv hc hcb
   have hM0 : (0 : ℝ) ≤ M := by linarith
   have hlam0 : (0 : ℝ) ≤ lam := by linarith
@@ -248,7 +199,7 @@ theorem iter_words (q : ℕ) (Kc : ℝ) (hKc : 0 ≤ Kc) : ∃ C : ℝ, 1 ≤ C 
               congr 1
               exact_mod_cast Nat.sum_range_choose b
       have hN : (Fintype.card I : ℝ) * Kc * 2 ^ b ≤ R := by
-        have h2 : (2 : ℝ) ^ b ≤ 2 ^ q := pow_le_pow_right_of_one_le (by norm_num) (by omega)
+        have h2 : (2 : ℝ) ^ b ≤ 2 ^ q := pow_le_pow_right₀ (by norm_num) (by omega)
         calc _ ≤ (Fintype.card I : ℝ) * Kc * 2 ^ q := mul_le_mul_of_nonneg_left h2 hNK
           _ ≤ R := by
               rw [hRdef, add_mul, one_mul]
@@ -283,7 +234,7 @@ theorem iter_words (q : ℕ) (Kc : ℝ) (hKc : 0 ≤ Kc) : ∃ C : ℝ, 1 ≤ C 
   calc _ ≤ R ^ b * β * (lam * M) ^ b := key b hb H β hH hw
     _ ≤ R ^ q * β * (lam * M) ^ b :=
         mul_le_mul_of_nonneg_right
-          (mul_le_mul_of_nonneg_right (pow_le_pow_right_of_one_le hR hb) hβ)
+          (mul_le_mul_of_nonneg_right (pow_le_pow_right₀ hR hb) hβ)
           (pow_nonneg (mul_nonneg hlam0 hM0) _)
 
 end words

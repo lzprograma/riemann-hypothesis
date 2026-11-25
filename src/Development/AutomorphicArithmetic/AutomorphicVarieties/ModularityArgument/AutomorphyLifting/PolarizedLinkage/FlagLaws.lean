@@ -48,8 +48,6 @@ open NumberField IsDedekindDomain Formalism.L2.Host Formalism.ConjugateSelfDual 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.LocLanglands GlobalTheory.GalOfCusp UpperTheory.Zero.LLC UpperTheory.V.Af UpperTheory.V.Z.Gam
 open UpperTheory.GalN.V GroundTheory.Global.SemiLocal UpperTheory.V.Published UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.V.Z.Win
 
 section Abstract
@@ -145,7 +143,7 @@ private def resD (K L : Type) {Ω : Type} [Field K] [NumberField K] [Field L] [N
     ↥(Dec (F := L) A) →* ↥(Dec (F := K) A) where
   toFun u := ⟨rs K L Ω u, u.2⟩
   map_one' := Subtype.ext (map_one _)
-  map_mul' a b := Subtype.ext (map_mul _ _ _)
+  map_mul' _ _ := Subtype.ext (map_mul _ _ _)
 
 private def cMap (A B : ValuationSubring Ω) (γ : G K Ω) (h : γ • A = B) :
     ↥(Dec (F := K) B) →* ↥(Dec (F := K) A) where

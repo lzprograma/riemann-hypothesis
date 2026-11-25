@@ -3,43 +3,9 @@ module
 public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.RunsAlong
 public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.SingleIndexPlacesAreTwisted
 public import Formalism.LocalToGlobal.IndefiniteReal.WeakCharacterisationWithError
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -48,8 +14,6 @@ open Formalism.L2.Host (CharFrame HChar TupTied)
 open GlobalTheory.AtMember GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Top GlobalTheory.Mem.Top.Bl GlobalTheory.Fc GlobalTheory.BigTop GlobalTheory.BigOn GlobalTheory.Plug
 
 namespace GlobalTheory.PlugPt
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 set_option genInjectivity false in
@@ -106,12 +70,6 @@ abbrev BdPt : BdT := fun _ O c => PtAt O.ex c
 def sidePt {D : D7} {O : Obj D} {c : ℝ} (b : BdPt D O c) : Side D O.ex.nch :=
   { G := b.P.Gp, Pl0 := b.P.Pl0, I0 := b.P.I0, T := b.P.T, A3 := b.P.A3, J := b.T, R := b.R, P0 := b.P.P0, ψ0 := b.P.ψ0, cG := b.cG,
     v₀ := b.v₀, S := b.Sx, YS := b.nexp, cf := b.R.C, tp := b.Tp }
-
-section Wit
-
-variable {K : Ctx} {B : Base} {f : Fr B.toPre} {T : TwDat B} {w : ColW B f T} {Z : w.Lt} {Wt : Set B.places.Pl} {p0 : BaseLevelRowSide (w.D Z)}
-
-end Wit
 
 variable {hL : GlobalTheory.Published.LocalLanglandsGL} {𝒮 : Slots}
 

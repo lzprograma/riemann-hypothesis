@@ -44,8 +44,6 @@ namespace GlobalTheory.KerDia
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Forms Formalism.L2.Ker GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC
 
-attribute [local instance] GlobalTheory.Mem.Col2.starE
-
 variable {B : Base} {X : PreX B.toPre}
 
 def ent (I : TC B X) (l : I.Laws) (u : B.Word) (a : I.ι) (i : ℕ) {b : (I.stp u a i).β} {b' : (I.stp u a (i + 1)).β}

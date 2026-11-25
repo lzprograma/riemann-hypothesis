@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.QuadraticCharpolySplitting.RcChars
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.GalUnitaryT
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BernsteinZelevinskyFinitenessHolds
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasSatakeOfIsLocComp
@@ -70,8 +71,6 @@ open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.Conjuga
 open GlobalTheory GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af
 open UpperTheory.Zero.LLC GlobalTheory.UnitaryBC GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.RoadU UpperTheory.V.Z.Win
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.V.Z.Win.UnramifiedSatakeFrobeniusCompatibility
 
 section Local
@@ -83,43 +82,7 @@ private theorem charPol_chars {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsL
     {rc : IrrGL (k := w.adicCompletion E) → WD h} (H : LawsT a ha rc) (x : IrrGL (k := w.adicCompletion E)) {n : ℕ}
     (ξ : Fin n → ((w.adicCompletion E)ˣ →* ℂˣ)) (hξ : ∀ j, IsSmoothChar (ξ j)) (hs : HasSupport x.rep (chars ξ hξ))
     (hu : Unlinked (chars ξ hξ)) (g : Weil h) : (rc x).charPol g = ∏ j, (X - C ((ξ j (a g) : ℂˣ) : ℂ)) := by
-  haveI : CharZero (w.adicCompletion E) := charZero_of_injective_algebraMap (algebraMap E _).injective
-  obtain ⟨𝔪, hm⟩ := Pr.exh (w.adicCompletion E) x
-  have he : chars ξ hξ = msupp 𝔪 :=
-    GlobalTheory.LocGL.SupportUnique.hasSupport_unique GlobalTheory.RecT.geometricLemma_holds GlobalTheory.bernsteinZelevinskyFiniteness_holds
-      Pr.zel _ x _ _ hs (GlobalTheory.LocGL.hasSupport_msupp_of_isL Pr.zel _ 𝔪 x hm)
-  have hterm : ∀ Δ ∈ 𝔪, ∀ i : Fin Δ.len, Δ.term i ∈ chars ξ hξ := fun Δ hΔ i => by
-    rw [he, msupp]
-    exact Multiset.mem_bind.2 ⟨Δ, hΔ, Multiset.mem_map.2 ⟨i, Finset.mem_univ_val _, rfl⟩⟩
-  have hone : ∀ Δ ∈ 𝔪, Δ.len = 1 := fun Δ hΔ => by
-    by_contra hne
-    have h2 : 1 < Δ.len := lt_of_le_of_ne Δ.len_pos (Ne.symm hne)
-    refine hu _ (hterm Δ hΔ ⟨1, h2⟩) _ (hterm Δ hΔ ⟨0, Δ.len_pos⟩) ?_
-    simp only [Segment.term, IrrGL.nu_nu]
-    norm_num
-  have hms : ∀ Δ ∈ 𝔪, Δ.ms = {Δ.first} := fun Δ hΔ => by
-    have e : Δ = Segment.single Δ.first Δ.isCusp_first := Segment.ext_first rfl (by rw [hone Δ hΔ]; rfl)
-    rw [e, Segment.ms_single]
-    rfl
-  have hsupp : msupp 𝔪 = 𝔪.map Segment.first := by
-    rw [msupp, ← Multiset.bind_singleton]
-    exact Multiset.bind_congr hms
-  have hsum : rc x = sumList (𝔪.toList.map fun Δ => rc Δ.first) := by
-    rw [H.langlands 𝔪.toList x (by rw [Multiset.coe_toList]; exact hm), segSum]
-    congr 1
-    refine List.map_congr_left fun Δ hΔ => ?_
-    rw [hone Δ (Multiset.mem_toList.1 hΔ)]
-    simp only [Nat.cast_one, sub_self, zero_div]
-    exact (GlobalTheory.WeilDeligne.charPol_lpTw_lpChar_lpSp E Ω A w h _).1
-  have hpol : ∀ j, (rc (IrrGL.ofChar (ξ j) (hξ j))).charPol g = X - C ((ξ j (a g) : ℂˣ) : ℂ) := fun j => by
-    rw [H.one, WD.lpOfChar, WD.charPol_mk, WDRep.ofChars_ρ, charpoly_diagEnd]
-    simp
-  have hprod : (∏ j, (X - C ((ξ j (a g) : ℂˣ) : ℂ))) = ((chars ξ hξ).map fun y => (rc y).charPol g).prod := by
-    rw [chars, Multiset.map_map, Finset.prod_eq_multiset_prod]
-    exact congrArg Multiset.prod (Multiset.map_congr rfl fun j _ => (hpol j).symm)
-  rw [hsum, GlobalTheory.LocLanglands.CuspExt.charPol_sumList, List.map_map, hprod, he, hsupp, Multiset.map_map,
-    ← Multiset.prod_coe, ← Multiset.map_coe, Multiset.coe_toList]
-  rfl
+  apply _root_.UpperTheory.V.Z.Win.charPol_of_chars <;> assumption
 
 private theorem satWD_mono0 (n : ℕ) (B : Multiset ℂˣ) : (satWD h n B).mono0 := by
   unfold satWD

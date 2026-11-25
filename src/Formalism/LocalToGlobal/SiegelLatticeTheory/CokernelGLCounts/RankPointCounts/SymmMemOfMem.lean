@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DoubleCosetEqIffIsometryUnipotentTranslateStatement
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.UnitaryNormalVectorCount
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.TermDefPf
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelativeEquivalence.DCRelEquivAllHolds
@@ -14,8 +15,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
   Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.NGCut Formalism.L2.SG.TermOp
 
 namespace Formalism.L2.SG.NGCut.NormalVectorPairings
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Grp
 
@@ -126,16 +125,7 @@ theorem NRat_inv {n : (VS D).V ≃ₗ[D.host.E] (VS D).V} (hn : n ∈ NRat F) : 
   exact h2
 
 theorem NRat_mul {n m : (VS D).V ≃ₗ[D.host.E] (VS D).V} (hn : n ∈ NRat F) (hm : m ∈ NRat F) : n * m ∈ NRat F := by
-  simp only [NRat, Set.mem_setOf_eq] at hn hm ⊢
-  refine ⟨(Formalism.HermitianLatticesTheory.isom (VS D).hT).mul_mem hn.1 hm.1, flag_mul F hn.2.1 hm.2.1, ?_⟩
-  intro x hx
-  have hw := hm.2.2 x hx
-  have hnw := X_pres F hn.2.1 _ hw
-  have key : (n * m) x - x = (n x - x) + (n (m x - x) - (m x - x)) + (m x - x) := by
-    show n (m x) - x = _
-    rw [map_sub]; abel
-  rw [key]
-  exact Submodule.add_mem _ (Submodule.add_mem _ (hn.2.2 x hx) (Submodule.sub_mem _ hnw hw)) hw
+  apply _root_.GlobalTheory.HL.NmlCoset.mul_mem <;> assumption
 
 end Grp
 

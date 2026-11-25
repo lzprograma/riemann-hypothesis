@@ -50,7 +50,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf GlobalTheory.Unf.FB
 
 namespace GlobalTheory.Unf.FB
@@ -63,7 +62,7 @@ theorem ell_vecMul_last {σ n : ℕ} (b : Mx D (σ + 1) n) : ell D (σ + 1) ᵥ*
   rw [Finset.sum_eq_single (Fin.last σ)]
   · simp
   · intro i _ hi
-    rw [if_neg (fun h => hi (Fin.ext (by simp only [Fin.val_last]; omega))), zero_mul]
+    rw [ite_eq_right (fun h => hi (Fin.ext (by simp only [Fin.val_last]; omega))), zero_mul]
   · simp
 
 theorem zEll_mul_eq {σ n : ℕ} (L : HSp D) (ζ : Fin L.rank → D.host.E) (b : Mx D (σ + 1) n) :

@@ -8,8 +8,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.L2.Host GlobalTheory.TwInputs.Move
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.HeightCounting.SideCopy
 
 structure CopyAll (D D' : D7) (ι : D.what₂.LL →+* D'.what₂.LL) (e : ↥D'.LL0 ≃+* ↥D.LL0) : Prop where

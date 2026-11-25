@@ -249,7 +249,6 @@ noncomputable def barInclF (n : ℕ) :
   freeLift k S (res S.subtype (free k G (Fin n → G)))
     (fun v => Finsupp.single (S.subtype ∘ v) (MonoidAlgebra.single (1 : G) (1 : k)))
 
-set_option backward.isDefEq.respectTransparency false in
 lemma barInclF_single (n : ℕ) (v : Fin n → S) (s : S) (r : k) :
     (barInclF S n).hom (Finsupp.single v (MonoidAlgebra.single s r)) =
       Finsupp.single (S.subtype ∘ v) (MonoidAlgebra.single (s : G) r) := by
@@ -263,7 +262,6 @@ lemma contractNth_subtype {G : Type u} [Group G] (S : Subgroup G) {n : ℕ} (j :
   simp only [Fin.contractNth, Function.comp_apply]
   split_ifs <;> simp
 
-set_option backward.isDefEq.respectTransparency false in
 lemma barInclF_comm (j : ℕ) :
     barInclF S (j + 1) ≫ (resFunctor S.subtype).map (barComplex.d k G j) =
       barComplex.d k S j ≫ barInclF S j := by
@@ -278,7 +276,6 @@ lemma barInclF_comm (j : ℕ) :
   exact congrArg (fun v => Finsupp.single v _) (contractNth_subtype S i x)
 
 
-set_option backward.isDefEq.respectTransparency false in
 noncomputable def barIncl :
     (barResolution k S).complex ⟶ (resBarResolution (k := k) S).complex where
   f n := barInclF S n
@@ -318,7 +315,6 @@ section Key
 variable {k G : Type u} [CommRing k] [Group G] (S : Subgroup G)
 
 
-set_option backward.isDefEq.respectTransparency false in
 noncomputable def resHomComplex (A : Rep.{u} k G) :
     (barComplex k G).linearYonedaObj k A ⟶
       (resBarResolution (k := k) S).complex.linearYonedaObj k (res S.subtype A) where
@@ -332,7 +328,6 @@ noncomputable def resHomComplex (A : Rep.{u} k G) :
     rfl
 
 
-set_option backward.isDefEq.respectTransparency false in
 lemma freeLift_cochainsMap_subtype (A : Rep.{u} k G) (n : ℕ) (y : (Fin n → G) → A) :
     freeLift k S (res S.subtype A) (((cochainsMap S.subtype (𝟙 (res S.subtype A))).f n).hom y) =
       barInclF S n ≫ (resFunctor S.subtype).map (freeLift k G A y) := by
@@ -344,7 +339,6 @@ lemma freeLift_cochainsMap_subtype (A : Rep.{u} k G) (n : ℕ) (y : (Fin n → G
     y (Subtype.val ∘ w) by simp).symm
 
 
-set_option backward.isDefEq.respectTransparency false in
 lemma cochainsMap_subtype_comp_iso (A : Rep.{u} k G) :
     cochainsMap S.subtype (𝟙 (res S.subtype A)) ≫ (inhomogeneousCochainsIso (res S.subtype A)).hom =
       (inhomogeneousCochainsIso A).hom ≫ resHomComplex S A ≫

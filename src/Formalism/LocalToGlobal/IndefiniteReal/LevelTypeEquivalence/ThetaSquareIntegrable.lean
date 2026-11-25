@@ -12,8 +12,6 @@ open scoped TensorProduct ContDiff
 
 namespace Formalism.IndefR.Eqv
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def ThetaSquareIntegrable (D : D7) : Prop :=

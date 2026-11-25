@@ -54,15 +54,6 @@ noncomputable section
 
 namespace GlobalTheory
 
-private theorem differentiableOn_prod_of_forall {E κ : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {S : Set E}
-    (s : Finset κ) (φ : κ → E → ℂ) (h : ∀ k, DifferentiableOn ℂ (φ k) S) :
-    DifferentiableOn ℂ (fun z => ∏ k ∈ s, φ k z) S := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa only [Finset.prod_empty] using differentiableOn_const (c := (1 : ℂ))
-  | insert a t ha ih =>
-    simp only [Finset.prod_insert ha]
-    exact (h a).mul ih
 
 section
 
@@ -87,12 +78,15 @@ def linCombUnif (h : ∀ k z, u'.ex (F k z) = u.ex z ≫ f k) :
     full := u.full
     hol := u.hol
     fr := fun (j : K → L'.ι) z => ∏ k, u'.fr (j k) (F k z) ^ ε k
-    fr_hol := fun j => by
-      refine differentiableOn_prod_of_forall Finset.univ
-        (fun k (z : Fin g → ℂ) => u'.fr (j k) (F k z) ^ ε k) fun k => ?_
-      refine DifferentiableOn.zpow ?_ (Or.inl fun z hz => u'.fr_ne _ _ (hc j z hz k))
-      exact (u'.fr_hol (j k)).comp (LinearMap.toContinuousLinearMap (F k)).differentiable.differentiableOn
-        fun z hz => hc j z hz k
+    fr_hol := fun j z hz => by
+      classical
+      exact (HasFDerivWithinAt.finsetProd (u := Finset.univ)
+        (g := fun k (w : Fin g → ℂ) => u'.fr (j k) (F k w) ^ ε k) fun k _ =>
+        ((DifferentiableOn.zpow ((u'.fr_hol (j k)).comp
+          (LinearMap.toContinuousLinearMap (F k)).differentiable.differentiableOn
+          fun w hw => hc j w hw k)
+          (Or.inl fun w hw => u'.fr_ne _ _ (hc j w hw k))) z hz).hasFDerivWithinAt
+        ).differentiableWithinAt
     fr_ne := fun j z hz => Finset.prod_ne_zero_iff.2 fun k _ => zpow_ne_zero _ (u'.fr_ne _ _ (hc j z hz k))
     fr_compat := fun j j' z hz => by
       obtain ⟨h1, h2⟩ := (top_le_preimage_inf (u.ex z).left _ _).1 hz

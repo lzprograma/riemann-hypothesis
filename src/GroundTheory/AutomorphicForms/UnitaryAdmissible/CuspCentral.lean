@@ -35,7 +35,7 @@ theorem ringEquiv_posIdele (r : ℝ) (hr : 0 < r) :
     rw [← GroundTheory.Global.IdeleGroup.coe_infiniteProj, infiniteProj_posIdele]
     show Completion.extensionEmbedding w.1 (GroundTheory.Global.posRealElem w.1 (r ^ w.1.mult)) = r
     have hc : ¬ w.1.IsReal := not_isReal_iff_isComplex.2 w.2
-    rw [GroundTheory.Global.posRealElem, dite_eq_right hc, mult, if_neg hc,
+    rw [GroundTheory.Global.posRealElem, dite_eq_right hc, mult, ite_eq_right hc,
       ← Completion.ringEquivComplexOfIsComplex_apply (not_isReal_iff_isComplex.1 hc),
       RingEquiv.apply_symm_apply, Real.sqrt_sq hr.le]
 

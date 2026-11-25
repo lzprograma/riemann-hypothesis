@@ -16,60 +16,15 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenImm
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemSuppOnIffIdemMulOfNatural
 public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsUnitGramFrameBorelChange
 public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LevelActionMemCuspForms
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFlatSecRankZero
 import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsUnitaryMulTriangular
 import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
 import Formalism.LocalToGlobal.ProjectiveLattices.ErealAddIInf
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 import Mathlib.Algebra.CharP.Pi
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.PicardGroup
 import Development.AbelianVarietyTheory.Proofs.HeightProofs.NoCommonZeroIffOfSec
 import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralFramedPointOfLevelMove
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueFramedPointMoveUniversalTriple
@@ -78,7 +33,6 @@ import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedModuliAlge
 import Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfD
 import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
 import Formalism.LocalToGlobal.ProjectiveLattices.SpMapAlgHomId
-import Mathlib.SetTheory.ZFC.PSet
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeOrbitProjectorEigen, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ISupIndepRangeInc, Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelMoveEigenlatticeSlopeDefinite
@@ -170,14 +124,14 @@ theorem freeOrbit_projector_eigen : ∀ (K V G C : Type) [Field K] [AddCommGroup
       rw [map_sum, Finset.sum_eq_single_of_mem o ho]
       · set_option synthInstance.maxHeartbeats 100000 in
           rw [map_sum, Fintype.sum_eq_single g]
-        · rw [key o ho g, if_pos ⟨rfl, rfl⟩]
+        · rw [key o ho g, ite_eq_left ⟨rfl, rfl⟩]
         · intro g' hg'
-          rw [key o ho g', if_neg (fun h => hg' h.1)]
+          rw [key o ho g', ite_eq_right (fun h => hg' h.1)]
       · intro o' ho' hne
 
         rw [map_sum]
         refine Finset.sum_eq_zero (fun g' _ => ?_)
-        rw [key o' ho' g', if_neg (fun h => hne h.2)]
+        rw [key o' ho' g', ite_eq_right (fun h => hne h.2)]
 
 end GlobalTheory
 end -- clump:auto
@@ -653,8 +607,8 @@ theorem homN_actLev (hC : DefCase U ξ) (hL : ActLev (Xo := Xo) c lev) (hD : Dom
     (fun k k' τ => (hC.xi σ hσ k τ).trans (hC.xi σ hσ k' τ).symm) hm hb hx₀ hx'
   refine ⟨⟨k', x'.1⟩, ⟨x'.2, hZ'⟩, ?_⟩
   have hsec := hU.2.2.2.2.1 a n hD _ (actLev_mem_sec hL g hf) k
-  have v1 : rdU (U σ) (actLev c lev g f) k x₀.1 = toC (evR Xo c (actLev c lev g f) ((U σ).un k x₀)) := dif_pos x₀.2
-  have v2 : rdU (U σ) f k' x'.1 = toC (evR Xo c f ((U σ).un k' x')) := dif_pos x'.2
+  have v1 : rdU (U σ) (actLev c lev g f) k x₀.1 = toC (evR Xo c (actLev c lev g f) ((U σ).un k x₀)) := dite_eq_left x₀.2
+  have v2 : rdU (U σ) f k' x'.1 = toC (evR Xo c f ((U σ).un k' x')) := dite_eq_left x'.2
   have v3 := (GlobalTheory.Frames.algebraic_laws GlobalTheory.lawsFieldsSeparately.2.1 _ H Dw l Xo c).2.2.2.2.2.2 (CAt σ)
     (inferInstanceAs (IsReduced ℂ)) a n f hf t _ y' hb
   have v4 : ‖toC (wchar (ex Dw a n) t : CAt σ)‖ = 1 := by
@@ -705,11 +659,11 @@ theorem slope_eig {K V G C : Type} [Field K] [NumberField K] [_root_.NumberField
   let Φ : (∀ o : O, ι o → K) →ₗ[K] V :=
     ∑ o : O, ∑ g : G, (((χ g)⁻¹ : Kˣ) : K) • (ρ g ∘ₗ φ o ∘ₗ LinearMap.proj o)
   let f : (∀ o : O, ι o → K) → C → V := fun x o => if h : o ∈ O then φ o (x ⟨o, h⟩) else 0
-  have hf : ∀ x (o : O), f x o = φ o (x o) := fun x o => dif_pos o.2
+  have hf : ∀ x (o : O), f x o = φ o (x o) := fun x o => dite_eq_left o.2
   have hfe : ∀ x o, e o (f x o) = f x o := fun x o => by
     by_cases h : o ∈ O
     · rw [hf x ⟨o, h⟩]; exact (hr _ _).1 ⟨_, rfl⟩
-    · rw [show f x o = 0 from dif_neg h, map_zero]
+    · rw [show f x o = 0 from dite_eq_right h, map_zero]
   have hΦ' : ∀ x, Φ x = ∑ o : O, ∑ g, ((χ g)⁻¹ : Kˣ) • ρ g (φ o (x o)) := fun x => by
     simp only [Φ, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.comp_apply, LinearMap.proj_apply,
       Units.smul_def]
@@ -806,7 +760,7 @@ def proj (hC : DefCase U ξ) (W : WTZ D.host.E) (Z : Comp Xo c) : cuspW Xo c U W
 theorem homN_idem_mul {σ : c.F →+* ℂ} (U : Unf Xo c σ r) (W : WTZ D.host.E) (f : Rul Xo c) {Z : Comp Xo c}
     {z : Σ k, Frame (U.X k).Ψ r} (hz : z ∈ framesOn U Z) : homN U ξ W (idem Z * f) z = homN U ξ W f z := by
   obtain ⟨hx, hZ⟩ := hz
-  have v1 : ∀ f : Rul Xo c, rdU U f z.1 z.2 = toC (evR Xo c f (U.un z.1 ⟨z.2, hx⟩)) := fun f => dif_pos hx
+  have v1 : ∀ f : Rul Xo c, rdU U f z.1 z.2 = toC (evR Xo c f (U.un z.1 ⟨z.2, hx⟩)) := fun f => dite_eq_left hx
   have e : rdU U (idem Z * f) z.1 z.2 = rdU U f z.1 z.2 := by
     rw [v1, v1]
     congr 1
@@ -815,7 +769,7 @@ theorem homN_idem_mul {σ : c.F →+* ℂ} (U : Unf Xo c σ r) (W : WTZ D.host.E
         evalAt_mul (K := c.F) (fun S _ _ => FrPt Xo c S) (fun φ y z => FrMap φ y z) (idem Z) f _
       rw [e, evR_idem hZ ht, one_mul]
     · unfold evR Formalism.L2.Pj.evalAt
-      rw [dif_neg ht, dif_neg ht]
+      rw [dite_eq_right ht, dite_eq_right ht]
   unfold homN ptN Data.pnorm
   rw [e]
 

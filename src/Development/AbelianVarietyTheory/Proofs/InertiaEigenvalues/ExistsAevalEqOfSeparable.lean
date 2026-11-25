@@ -6,54 +6,6 @@ public import Mathlib.LinearAlgebra.FreeModule.PID
 public import Mathlib.RingTheory.Flat.TorsionFree
 public import Mathlib.RingTheory.SimpleRing.Principal
 public import Formalism.PadicSubsetSums.StableGradedCounts.ExistsNeZeroAevalEqZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Artinian.Instances
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
 
 @[expose] public section
@@ -62,27 +14,6 @@ open GlobalTheory.UnitLemma Polynomial
 
 namespace GlobalTheory.UnitLemma.PairClass
 
-theorem exists_aeval_eq_of_separable {F A : Type} [Field F] [CommRing A] [Algebra F A]
-    [Module.Finite F A] (a : A) (hs : (LinearMap.mulLeft F a).charpoly.Separable) (y : A) :
-    ∃ q : F[X], y = aeval a q := by
-  obtain ⟨w, hw⟩ := Formalism.IrreducibleCountingLemmas.Z.base_change_cyclic_vector F A (LinearMap.mulLeft F a) hs
-  have key : ∀ (p : F[X]) (z : A), aeval (LinearMap.mulLeft F a) p z = aeval a p * z := by
-    intro p z
-    have h1 : aeval (Algebra.lmul F A a) p = Algebra.lmul F A (aeval a p) :=
-      aeval_algHom_apply (Algebra.lmul F A) a p
-    have h2 : Algebra.lmul F A a = LinearMap.mulLeft F a := rfl
-    rw [← h2, h1]
-    rfl
-  obtain ⟨p1, hp1⟩ := hw 1
-  obtain ⟨p2, hp2⟩ := hw (w * w)
-  obtain ⟨p3, hp3⟩ := hw y
-  rw [key] at hp1 hp2 hp3
-  have hw2 : w = aeval a p2 := by
-    calc w = w * w * aeval a p1 := by rw [mul_assoc, mul_comm w (aeval a p1), hp1, mul_one]
-      _ = aeval a p2 * (aeval a p1 * w) := by rw [← hp2]; ring
-      _ = aeval a p2 := by rw [hp1, mul_one]
-  exact ⟨p3 * p2, by rw [← hp3, map_mul, hw2]⟩
-
 theorem aeval_mulLeft_apply {F A : Type} [Field F] [CommRing A] [Algebra F A] (a : A) (p : F[X]) (z : A) :
     aeval (LinearMap.mulLeft F a) p z = aeval a p * z := by
   have h1 : aeval (Algebra.lmul F A a) p = Algebra.lmul F A (aeval a p) :=
@@ -90,6 +21,20 @@ theorem aeval_mulLeft_apply {F A : Type} [Field F] [CommRing A] [Algebra F A] (a
   have h2 : Algebra.lmul F A a = LinearMap.mulLeft F a := rfl
   rw [← h2, h1]
   rfl
+
+theorem exists_aeval_eq_of_separable {F A : Type} [Field F] [CommRing A] [Algebra F A]
+    [Module.Finite F A] (a : A) (hs : (LinearMap.mulLeft F a).charpoly.Separable) (y : A) :
+    ∃ q : F[X], y = aeval a q := by
+  obtain ⟨w, hw⟩ := Formalism.IrreducibleCountingLemmas.Z.base_change_cyclic_vector F A (LinearMap.mulLeft F a) hs
+  obtain ⟨p1, hp1⟩ := hw 1
+  obtain ⟨p2, hp2⟩ := hw (w * w)
+  obtain ⟨p3, hp3⟩ := hw y
+  rw [aeval_mulLeft_apply] at hp1 hp2 hp3
+  have hw2 : w = aeval a p2 := by
+    calc w = w * w * aeval a p1 := by rw [mul_assoc, mul_comm w (aeval a p1), hp1, mul_one]
+      _ = aeval a p2 * (aeval a p1 * w) := by rw [← hp2]; ring
+      _ = aeval a p2 := by rw [hp1, mul_one]
+  exact ⟨p3 * p2, by rw [← hp3, map_mul, hw2]⟩
 
 theorem trace_nondeg (F A : Type) [Field F] [CharZero F] [CommRing A] [Algebra F A] [Module.Finite F A]
     (a : A) (hs : (LinearMap.mulLeft F a).charpoly.Separable) (x : A)

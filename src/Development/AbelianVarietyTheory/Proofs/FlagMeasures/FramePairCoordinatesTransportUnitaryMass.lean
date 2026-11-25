@@ -56,13 +56,6 @@ open scoped Pointwise ENNReal Classical
 namespace GlobalTheory.HL.CoordMass
 open GlobalTheory.HL.Eichler GlobalTheory.HL.CoordUnip
 
-section
-variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
-variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E]
-variable {L : LocE F E} {r k : ℕ} (S : Frames L r k)
-
-end
-
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E]
 variable {M : Model F E} {V : Type} [AddCommGroup V] [Module E V] {H : HermSp M V} {r k : ℕ}

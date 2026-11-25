@@ -413,7 +413,6 @@ open Formalism.BasicNotions Formalism.QuantumDeterminants Formalism.MainNotions.
 
 namespace GlobalTheory.GapConstant
 
-
 theorem gap_thresholds (k r : ℕ) (hk : 1 ≤ k) :
     Formalism.FourierDecayAlt.ThreeDimData.GapOK k r (1000 * ((2 * r + 2 : ℕ) : ℝ) ^ ((9 : ℝ) / 2) *
               (((3 * (r + 1) : ℕ) : ℝ) * ((2 * r + k + 1 : ℕ) : ℝ) ^ 2 + ((2 * r + k + 1 : ℕ) : ℝ) ^ 3)) ∧
@@ -753,18 +752,11 @@ open Formalism.FourierDecayAlt.P.TwoByOneBlock Formalism.FourierDecayAlt.P.BigCe
 
 variable {k r : ℕ}
 
-theorem hb_mul_self : Hb k * Hb k = 1 := by
-  unfold Hb
-  rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-  congr 1
-  funext j
-  split_ifs <;> norm_num
-
 theorem isUnit_det_of_hb {μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ} (h : μᴴ * Hb k * μ = Hb k) :
     IsUnit μ.det := by
   apply Matrix.isUnit_det_of_left_inverse (B := Hb k * μᴴ * Hb k)
   calc Hb k * μᴴ * Hb k * μ = Hb k * (μᴴ * Hb k * μ) := by simp only [Matrix.mul_assoc]
-    _ = 1 := by rw [h, hb_mul_self]
+    _ = 1 := by rw [h, Formalism.FourierDecayAlt.P.TwoByOneBlock.Hb_sq]
 
 theorem conj_mem_of_levi (A B n : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)
     (hAB : A * B = 1) (hA : A ∈ UH (Hpk k r)) (hB : B ∈ UH (Hpk k r))
@@ -777,16 +769,16 @@ theorem conj_mem_of_levi (A B n : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k +
     have hea : ¬ mid k r (eI k r a) := by
       have := a.isLt; simp only [mid, eI]; omega
     rw [Matrix.mul_apply, Finset.sum_eq_single (eI k r a)]
-    · rw [hB1 _ _ hea, if_pos rfl, mul_one, Matrix.mul_apply, Finset.sum_eq_single (eI k r a)]
-      · rw [hn.2.1 a (eI k r a) (by simp [eI]), if_pos rfl, mul_one, hA1 _ _ hea]
+    · rw [hB1 _ _ hea, ite_eq_left rfl, mul_one, Matrix.mul_apply, Finset.sum_eq_single (eI k r a)]
+      · rw [hn.2.1 a (eI k r a) (by simp [eI]), ite_eq_left rfl, mul_one, hA1 _ _ hea]
       · intro l _ hl
         by_cases hla : a.val ≤ l.val
-        · rw [hn.2.1 a l hla, if_neg hl, mul_zero]
+        · rw [hn.2.1 a l hla, ite_eq_right hl, mul_zero]
         · have hlm : ¬ mid k r l := by have := a.isLt; simp only [mid]; omega
-          rw [hA1 i l hlm, if_neg (by rw [Fin.ext_iff]; omega), zero_mul]
+          rw [hA1 i l hlm, ite_eq_right (by rw [Fin.ext_iff]; omega), zero_mul]
       · simp
     · intro l _ hl
-      rw [hB1 _ _ hea, if_neg hl, mul_zero]
+      rw [hB1 _ _ hea, ite_eq_right hl, mul_zero]
     · simp
   · intro i j hj1 hj2 hi
     have hjm : mid k r j := ⟨hj1, hj2⟩
@@ -796,12 +788,12 @@ theorem conj_mem_of_levi (A B n : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k +
       by_cases hm : mid k r m
       · congr 1
         rw [Matrix.mul_apply, Finset.sum_eq_single m]
-        · rw [hn.2.2 m m hm.1 hm.2 hm.1, if_pos rfl, mul_one]
+        · rw [hn.2.2 m m hm.1 hm.2 hm.1, ite_eq_left rfl, mul_one]
         · intro l _ hl
           by_cases hlr : r ≤ l.val
-          · rw [hn.2.2 l m hm.1 hm.2 hlr, if_neg hl, mul_zero]
+          · rw [hn.2.2 l m hm.1 hm.2 hlr, ite_eq_right hl, mul_zero]
           · have hlm : ¬ mid k r l := by simp only [mid]; omega
-            rw [hA1 i l hlm, if_neg (by rw [Fin.ext_iff]; omega), zero_mul]
+            rw [hA1 i l hlm, ite_eq_right (by rw [Fin.ext_iff]; omega), zero_mul]
         · simp
       · rw [hB3 m j hjm hm, mul_zero, mul_zero]
     rw [Finset.sum_congr rfl (fun m _ => key m), ← Matrix.mul_apply, hAB, Matrix.one_apply]
@@ -827,7 +819,7 @@ theorem cellQuot_props (c : Fin r → ℂ) (μ₁ μ : Matrix (Fin (k + 1)) (Fin
       · obtain ⟨s, rfl⟩ := mid_exists hi
         rw [jV_wI]
         simp only [Pi.single_apply, wI_inj.eq_iff]
-      · rw [jV_out _ hi, Pi.single_apply, if_neg (fun he : i = wI k r t => hi (he ▸ mid_wI t))]
+      · rw [jV_out _ hi, Pi.single_apply, ite_eq_right (fun he : i = wI k r t => hi (he ▸ mid_wI t))]
     have col : ((bigCell k r c μ₁)⁻¹ * bigCell k r c μ) m (wI k r t) =
         (((bigCell k r c μ₁)⁻¹ * bigCell k r c μ) *ᵥ Pi.single (wI k r t) 1) m := by
       rw [Matrix.mulVec_single_one]; rfl
@@ -886,7 +878,6 @@ open Formalism.BasicNotions Formalism.QuantumDeterminants Formalism.MainNotions.
 noncomputable section
 
 namespace GlobalTheory.CellMajTransfer
-
 
 open Formalism.FourierDecayAlt in
 theorem pt_bound {k r : ℕ} (L : LocBessel k r) {γ₁ a : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
@@ -951,7 +942,6 @@ end GlobalTheory.CellMajTransfer
 
 namespace GlobalTheory.CellMajTransfer
 
-
 open Formalism.FourierDecayAlt in
 theorem inner_eq {k r : ℕ} (L : LocBessel k r) (a : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) {C : ℝ≥0∞}
     (hmap : L.μN.map (conjM a) = C • L.μN) {f : PairSp k r → ℝ≥0∞} (hfm : Measurable f) (x : Mt k r × Mt k r) :
@@ -980,7 +970,6 @@ theorem inner_eq {k r : ℕ} (L : LocBessel k r) (a : Matrix (Fin (2 * r + k + 1
   have hs := lintegral_lintegral_swap (μ := L.μW') (ν := L.μN) (f := fun h'' n' => f (x, (h'', n')))
     hH'.aemeasurable
   rw [hs, mul_one]
-
 
 open Formalism.FourierDecayAlt in
 theorem integrable_mul_right : ∀ (k r : ℕ) (L : Formalism.MainNotions.S.LocBessel k r) (γ₁ a : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) (b : ℝ) (C : ℝ≥0∞), 0 < L.κN → L.κN ≠ ⊤ → 0 ≤ b → γ₁ ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r) → a ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r) → C ≠ ⊤ → L.μN.map (Formalism.QuantumDeterminants.conjM a) = C • L.μN → MeasureTheory.Integrable (GlobalTheory.CellAmp.pairMaj γ₁ b) (Formalism.MainNotions.S.pairMeas L) → MeasureTheory.Integrable (GlobalTheory.CellAmp.pairMaj (γ₁ * a) b) (Formalism.MainNotions.S.pairMeas L) := by
@@ -1102,7 +1091,6 @@ theorem good_point (k r : ℕ) (L : Formalism.MainNotions.S.LocBessel k r) (hk :
   have h1 : 0 < Complex.normSq P := Complex.normSq_pos.2 hP0
   nlinarith
 
-
 open Formalism.FourierDecayAlt in
 theorem conv_good (k r : ℕ) (L : Formalism.MainNotions.S.LocBessel k r) (h : ℝ) (hok : Formalism.FourierDecayAlt.ThreeDimData.GapOK k r h)
     (hgap : GlobalTheory.CellAmp.GapCell k r h) (hκ : L.κN ≠ ⊤) (c : Fin r → ℂ)
@@ -1145,8 +1133,8 @@ theorem conv_good (k r : ℕ) (L : Formalism.MainNotions.S.LocBessel k r) (h : �
       rw [Matrix.diagonal_apply]
       show _ = if i = j then _ else _
       by_cases h : i = j
-      · rw [if_pos h, if_pos h, h]
-      · rw [if_neg h, if_neg h]
+      · rw [ite_eq_left h, ite_eq_left h, h]
+      · rw [ite_eq_right h, ite_eq_right h]
   have hR := GlobalTheory.AmpNorm.rStab_bigCell c μ₁ hc hg
   have hcd := GlobalTheory.CellAmp.Model.cellData_open L 0 _ hg hinv hG hmono hR
   exact GlobalTheory.CellMaj.cellConv k r L h 0 _ _ _ _ hκ hok hgap hcd hmono
@@ -1257,14 +1245,12 @@ theorem oneBesselTor_of_gapHyp : GlobalTheory.GapIn.Hyp → ∃ Cgf : ℝ, ∀ D
   · have hs' := hs
     obtain ⟨m, x, y, X, hxy, -, hsdef⟩ := hs'
     have hx : ∃ x ∈ (rep L).TK, l x ≠ 0 := by
-      by_contra hne
-      push_neg at hne
+      by_contra! hne
       apply hs0
       rw [hsdef]
       exact Finset.sum_eq_zero fun i _ => by rw [hne _ (hxy i).1, inner_zero_left]
     have hy : ∃ y ∈ (rep L).TK, l' y ≠ 0 := by
-      by_contra hne
-      push_neg at hne
+      by_contra! hne
       apply hs0
       rw [hsdef]
       exact Finset.sum_eq_zero fun i _ => by rw [hne _ (hxy i).2, map_zero, inner_zero_right]

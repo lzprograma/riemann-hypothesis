@@ -1,47 +1,7 @@
 module
 
 public import Formalism.GradedWeylDivisibility.StatementC
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -51,11 +11,6 @@ noncomputable section
 
 namespace Formalism.GradedWeylDivisibility
 
-private theorem exists_pos_of_sum_pos {ι : Type*} (s : Finset ι) (f : ι → ℕ)
-    (h : 0 < ∑ i ∈ s, f i) : ∃ i ∈ s, 0 < f i := by
-  obtain ⟨i, hi, hne⟩ := Finset.exists_ne_zero_of_sum_ne_zero (Nat.pos_iff_ne_zero.mp h)
-  exact ⟨i, hi, Nat.pos_of_ne_zero hne⟩
-
 private theorem colExp_apply {r n h : ℕ} (c : Fin h → Fin r) (hh : h ≤ n) (a : Fin r)
     (t : Fin n) :
     colExp c hh (a, t) = if ht : t.val < h then (if c ⟨t.val, ht⟩ = a then 1 else 0) else 0 := by
@@ -63,23 +18,23 @@ private theorem colExp_apply {r n h : ℕ} (c : Fin h → Fin r) (hh : h ≤ n) 
   rw [Finsupp.finsetSum_apply]
   simp only [Finsupp.single_apply, Prod.mk.injEq]
   by_cases ht : t.val < h
-  · rw [dif_pos ht]
+  · rw [dite_eq_left ht]
     rw [Finset.sum_eq_single ⟨t.val, ht⟩]
     · have e : Fin.castLE hh ⟨t.val, ht⟩ = t := Fin.ext rfl
       by_cases hca : c ⟨t.val, ht⟩ = a
-      · rw [if_pos ⟨hca, e⟩, if_pos hca]
-      · rw [if_neg (fun hh' => hca hh'.1), if_neg hca]
+      · rw [ite_eq_left ⟨hca, e⟩, ite_eq_left hca]
+      · rw [ite_eq_right (fun hh' => hca hh'.1), ite_eq_right hca]
     · intro p _ hp
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨_, h2⟩
       have h3 : p.val = t.val := congrArg Fin.val h2
       exact hp (Fin.ext h3)
     · intro hn
       exact absurd (Finset.mem_univ _) hn
-  · rw [dif_neg ht]
+  · rw [dite_eq_right ht]
     apply Finset.sum_eq_zero
     intro p _
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨_, h2⟩
     have h3 : p.val = t.val := congrArg Fin.val h2
     have h4 := p.isLt
@@ -92,9 +47,9 @@ private theorem sum_colExp_apply_eq_ite_mem {r n h : ℕ} (c : Fin h → Fin r) 
       if ht : t.val < h then (if c ⟨t.val, ht⟩ ∈ S then 1 else 0) else 0 := by
   simp only [colExp_apply]
   by_cases ht : t.val < h
-  · simp only [dif_pos ht]
+  · simp only [dite_eq_left ht]
     exact Finset.sum_ite_eq S (c ⟨t.val, ht⟩) (fun _ => 1)
-  · simp only [dif_neg ht]
+  · simp only [dite_eq_right ht]
     exact Finset.sum_const_zero
 
 theorem semistandardPeel : SSYTPeel := by
@@ -102,7 +57,7 @@ theorem semistandardPeel : SSYTPeel := by
   have hstep : ∀ l j : Fin n, j.val = l.val + 1 → 0 < ν j → 0 < ν l := by
     intro l j hlj hj
     rw [← hcol j] at hj
-    obtain ⟨a, -, ha⟩ := exists_pos_of_sum_pos _ _ hj
+    obtain ⟨a, -, ha⟩ := Finset.sum_pos_iff.mp hj
     have h1 : (∑ b : Fin r with b ≤ a, m (b, j)) ≤ 0 + ∑ b : Fin r with b < a, m (b, l) :=
       hint_r l j hlj a
     have h2 : m (a, j) ≤ ∑ b : Fin r with b ≤ a, m (b, j) :=
@@ -139,8 +94,7 @@ theorem semistandardPeel : SSYTPeel := by
           intro s hs
           rw [Finset.mem_filter] at hs
           rw [Finset.mem_Iio]
-          by_contra hst
-          push_neg at hst
+          by_contra! hst
           exact hnt (hmono s t hst hs.2)
         have hc := Finset.card_le_card hsub
         rw [Fin.card_Iio] at hc
@@ -159,7 +113,7 @@ theorem semistandardPeel : SSYTPeel := by
     intro p
     have hp : 0 < ν (Fin.castLE hh p) := (hiff _).1 p.isLt
     rw [← hcol] at hp
-    obtain ⟨a, -, ha⟩ := exists_pos_of_sum_pos _ _ hp
+    obtain ⟨a, -, ha⟩ := Finset.sum_pos_iff.mp hp
     have hS : (Finset.univ.filter (fun b : Fin r => 0 < m (b, Fin.castLE hh p))).Nonempty :=
       ⟨a, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ha⟩⟩
     refine ⟨(Finset.univ.filter (fun b : Fin r => 0 < m (b, Fin.castLE hh p))).min' hS, ?_, ?_⟩
@@ -187,7 +141,7 @@ theorem semistandardPeel : SSYTPeel := by
       Finset.single_le_sum (f := fun b => m (b, j)) (fun _ _ => Nat.zero_le _) (by simp)
     have h3 := hc1' j hj
     have h4 : 0 < ∑ b : Fin r with b < c ⟨j.val, hj⟩, m (b, l) := by omega
-    obtain ⟨b, hb, hbpos⟩ := exists_pos_of_sum_pos _ _ h4
+    obtain ⟨b, hb, hbpos⟩ := Finset.sum_pos_iff.mp h4
     rw [Finset.mem_filter] at hb
     exact lt_of_le_of_lt (hc2' l hl b hbpos) hb.2
   have hcstep' : ∀ p q : Fin h, q.val = p.val + 1 → c p < c q := by
@@ -213,15 +167,15 @@ theorem semistandardPeel : SSYTPeel := by
     intro a t
     rw [colExp_apply]
     by_cases ht : t.val < h
-    · rw [dif_pos ht]
+    · rw [dite_eq_left ht]
       by_cases hca : c ⟨t.val, ht⟩ = a
-      · rw [if_pos hca]
+      · rw [ite_eq_left hca]
         have h1 := hc1' t ht
         rw [hca] at h1
         omega
-      · rw [if_neg hca]
+      · rw [ite_eq_right hca]
         exact Nat.zero_le _
-    · rw [dif_neg ht]
+    · rw [dite_eq_right ht]
       exact Nat.zero_le _
   have hsub : ∀ x, (m - colExp c hh) x = m x - colExp c hh x := by
     intro x
@@ -261,12 +215,12 @@ theorem semistandardPeel : SSYTPeel := by
     · by_cases hcl : c ⟨l.val, hl⟩ < a
       · have hmemL : c ⟨l.val, hl⟩ ∈ Finset.univ.filter (fun b : Fin r => b < a) :=
           Finset.mem_filter.mpr ⟨Finset.mem_univ _, hcl⟩
-        rw [dif_pos hl, if_pos hmemL]
+        rw [dite_eq_left hl, ite_eq_left hmemL]
         by_cases hj : j.val < h
         · by_cases hcj : c ⟨j.val, hj⟩ ≤ a
           · have hmemJ : c ⟨j.val, hj⟩ ∈ Finset.univ.filter (fun b : Fin r => b ≤ a) :=
               Finset.mem_filter.mpr ⟨Finset.mem_univ _, hcj⟩
-            rw [dif_pos hj, if_pos hmemJ]
+            rw [dite_eq_left hj, ite_eq_left hmemJ]
             omega
           · have hz : ∑ b : Fin r with b ≤ a, m (b, j) = 0 := by
               apply Finset.sum_eq_zero
@@ -289,7 +243,7 @@ theorem semistandardPeel : SSYTPeel := by
   · intro t
     rw [hpart, hcol t]
     by_cases ht : t.val < h
-    · rw [dif_pos ht, if_pos (Finset.mem_univ _), if_pos ht]
-    · rw [dif_neg ht, if_neg ht]
+    · rw [dite_eq_left ht, ite_eq_left (Finset.mem_univ _), ite_eq_left ht]
+    · rw [dite_eq_right ht, ite_eq_right ht]
 
 end Formalism.GradedWeylDivisibility

@@ -101,18 +101,18 @@ theorem exists_equiv_stdSymp {M : Type} [AddCommGroup M] [Module.Free ℤ M] [Mo
     rw [Module.Basis.equivFun_symm_apply]; simp [Pi.single_apply]
   rw [hs, hs, Out.stdSymp]
   rcases i with i | i <;> rcases j with j | j <;> have := i.2 <;> have := j.2
-  · rw [hb.left_left, hl, hl, if_neg (by omega), if_neg (by omega)]
+  · rw [hb.left_left, hl, hl, ite_eq_right (by omega), ite_eq_right (by omega)]
   · rw [hb.left_right, hl, hr]
     by_cases h : i = j
-    · subst h; rw [if_pos rfl, if_pos (by omega)]
+    · subst h; rw [ite_eq_left rfl, ite_eq_left (by omega)]
     · have : (i : ℕ) ≠ j := fun a => h (Fin.ext a)
-      rw [if_neg h, if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right h, ite_eq_right (by omega), ite_eq_right (by omega)]
   · rw [hb.right_left hB, hl, hr]
     by_cases h : i = j
-    · subst h; rw [if_pos rfl, if_neg (by omega), if_pos (by omega)]
+    · subst h; rw [ite_eq_left rfl, ite_eq_right (by omega), ite_eq_left (by omega)]
     · have : (i : ℕ) ≠ j := fun a => h (Fin.ext a)
-      rw [if_neg h, if_neg (by omega), if_neg (by omega)]
-  · rw [hb.right_right, hr, hr, if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right h, ite_eq_right (by omega), ite_eq_right (by omega)]
+  · rw [hb.right_right, hr, hr, ite_eq_right (by omega), ite_eq_right (by omega)]
 
 theorem exists_isSympBasis : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H),
     ∃ bas : (Fin (2 * (Module.finrank ℚ E / 2 * (D.p + D.q))) → ℤ) ≃ₗ[ℤ] D.La, IsSympBasis D bas := by

@@ -64,24 +64,11 @@ theorem two_le_absNorm {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) : 2 ≤ 
   have hc := Formalism.HermitianLattices.Ext.L3.MeanB.comap_extP_pow (K := K) 𝔭 1
   rw [pow_one, pow_one] at hc
   have h1 : extP K 𝔭 ≠ ⊤ := fun h => h𝔭.ne_top (by rw [← hc, h, Ideal.comap_top])
-  have h0 : extP K 𝔭 ≠ ⊥ := by
-    intro h
-    have hne : 𝔭 ≠ ⊥ := fun h' =>
-      NumberField.RingOfIntegers.not_isField F (Ring.isField_iff_maximal_bot.mpr (h' ▸ h𝔭))
-    apply hne
-    rw [← hc, h]
-    ext t
-    simp only [Ideal.mem_comap, Ideal.mem_bot]
-    constructor
-    · intro ht
-      have h2 : algebraMap F K (t : F) = 0 := by
-        have h3 := congrArg (algebraMap (𝓞 K) K) ht
-        rw [map_zero] at h3
-        exact h3
-      have h4 : (t : F) = 0 := (algebraMap F K).injective (by rw [h2, map_zero])
-      exact_mod_cast h4
-    · intro ht
-      rw [ht, map_zero]
+  have h0 : extP K 𝔭 ≠ ⊥ := fun h =>
+    NumberField.RingOfIntegers.not_isField F <| Ring.isField_iff_maximal_bot.mpr <| by
+      rw [← hc, h, Ideal.comap_bot_of_injective _
+        (FaithfulSMul.algebraMap_injective (𝓞 F) (𝓞 K))] at h𝔭
+      exact h𝔭
   have ha0 : Ideal.absNorm (extP K 𝔭) ≠ 0 := fun h => h0 (Ideal.absNorm_eq_zero_iff.mp h)
   have ha1 : Ideal.absNorm (extP K 𝔭) ≠ 1 := fun h => h1 (Ideal.absNorm_eq_one_iff.mp h)
   omega

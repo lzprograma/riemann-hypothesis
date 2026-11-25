@@ -12,8 +12,6 @@ open MeasureTheory NumberField IsDedekindDomain Matrix Formalism.BasicNotions Fo
 
 namespace Formalism.L2.SG.Pf.ColDictPf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 abbrev unitaryGroupFiniteAdeles (D : D7) : Subgroup (GL (Fin (D.R.N 0)) (D.host.E ⊗[D.host.F] FiniteAdeleRing (𝓞 D.host.F) D.host.F)) :=
   Formalism.UG.UPts (Formalism.L2.Forms.sigD D) (Formalism.L2.Forms.gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)
 
@@ -46,21 +44,6 @@ structure TrFacts {D : D7} (X : HidaSetting D) {u : D.what₂.Word} {F : Formali
         Formalism.L2.Forms.atInf (Formalism.L2.Forms.embT D) (γ' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) τ
   infOnto : ∀ g : D.what₂.Tau → Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) ℂ, (∀ τ, (g τ)ᴴ * G0 D τ * g τ = G0 D τ) →
     ∃ s ∈ Hinf X u, ∀ τ, sTil X Tr.wt s τ * g τ = 1
-
-section RepAlg
-
-variable {D : D7} (X : HidaSetting D) (wt : (VS D).V ≃ₗ[D.host.E] (VS D).V)
-  (ιA : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F ≃+* D.host.E ⊗[D.host.F] FiniteAdeleRing (𝓞 D.host.F) D.host.F)
-
-
-end RepAlg
-
-section Phi
-
-variable {D : D7} {X : HidaSetting D} {u : D.what₂.Word} {F : Formalism.L2.Forms.Forms0 D u} {Tr : Transport X u F}
-  (G : TrFacts X Tr)
-
-end Phi
 
 section Sharp
 
@@ -154,20 +137,6 @@ theorem inner_shP_rat (T T' : Cu X u hK) (γ : Gam X u) (h : Hfin X u) (κ : Ku 
 
 end Sharp
 
-section Adelic
-
-variable {D : D7} {X : HidaSetting D} {u : D.what₂.Word} {F : Formalism.L2.Forms.Forms0 D u} {Tr : Transport X u F}
-  (G : TrFacts X Tr) {hK : X.LevelSubgroupCharacter} (hL : LevelMatch X Tr hK)
-
-end Adelic
-
-section Adelic2
-
-variable {D : D7} {X : HidaSetting D} {u : D.what₂.Word} {F : Formalism.L2.Forms.Forms0 D u} {Tr : Transport X u F}
-  (G : TrFacts X Tr) {hK : X.LevelSubgroupCharacter} (hL : LevelMatch X Tr hK)
-
-end Adelic2
-
 section Onto
 
 variable {D : D7} {X : HidaSetting D} {u : D.what₂.Word} {F : Formalism.L2.Forms.Forms0 D u} {Tr : Transport X u F}
@@ -184,26 +153,6 @@ theorem vpi_nontrivial (X : HidaSetting D) (u : D.what₂.Word) : Nontrivial (X.
   exact (Finset.prod_ne_zero_iff.2 (fun v _ => inner_self_ne_zero.2 (hx v))) h1.symm
 
 end Onto
-
-section Bij
-
-variable {D : D7} {X : HidaSetting D} {u : D.what₂.Word} {F : Formalism.L2.Forms.Forms0 D u} {Tr : Transport X u F}
-  (G : TrFacts X Tr) {hK : X.LevelSubgroupCharacter} (hL : LevelMatch X Tr hK)
-
-end Bij
-
-section Isom
-
-variable {D : D7} {X : HidaSetting D} {u : D.what₂.Word} {F : Formalism.L2.Forms.Forms0 D u} {Tr : Transport X u F}
-  (G : TrFacts X Tr) {hK : X.LevelSubgroupCharacter} (hL : LevelMatch X Tr hK)
-
-end Isom
-
-section Assembly
-
-variable {D : D7} {X : HidaSetting D} {u : D.what₂.Word} {F : Formalism.L2.Forms.Forms0 D u} {hK : X.LevelSubgroupCharacter}
-
-end Assembly
 
 end Formalism.L2.SG.Pf.ColDictPf
 

@@ -3,47 +3,6 @@ module
 public import Formalism.SharpRestriction.LevelLetterCocycles.CoordStepsOf
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.TensorProduct.IsBaseChangeFree
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.DistinguishedUnitIdeals.ExistsConstOfInvariantMod
 import Mathlib.RingTheory.PiTensorProduct
 
@@ -119,13 +78,13 @@ theorem isUnit_of_unit_coefficient (hOloc : IsLocalRing O)
   have hdvd : (PowerSeries.X : PowerSeries O) ^ k₀ ∣ a i - Lp := by
     rw [PowerSeries.X_pow_dvd_iff]
     intro d hd
-    rw [map_sub, hcL, if_pos hd, sub_self]
+    rw [map_sub, hcL, ite_eq_left hd, sub_self]
   obtain ⟨U, hU⟩ := hdvd
   have hUu : IsUnit U := by
     rw [PowerSeries.isUnit_iff_constantCoeff, ← PowerSeries.coeff_zero_eq_constantCoeff_apply]
     have h1 := congrArg (PowerSeries.coeff k₀) hU
-    rw [PowerSeries.coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self, map_sub, hcL,
-      if_neg (lt_irrefl _), sub_zero] at h1
+    rw [PowerSeries.coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self, map_sub, hcL,
+      ite_eq_right (lt_irrefl _), sub_zero] at h1
     rw [← h1]
     exact hu₀
   let δf : LetA O n := fun j => if j = i then 1 else PowerSeries.X ^ k₀
@@ -461,8 +420,7 @@ theorem basis_combination_mem_invariants (i : ZMod n) (d : Fin r → W.EE) (hd :
   · rw [Finset.smul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← smul_assoc, (hd j).1]
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [map_sum]
+  · rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [W.γD_smul, hB j δ hδ, (hd j).2 δ hδ]
 

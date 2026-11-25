@@ -110,12 +110,10 @@ theorem fourB_indicator_intLattice : ∀ (F E : Type) [NontriviallyNormedField F
     rw [integral_indicator_const _ hO.measurableSet, Set.indicator_of_mem hy, Pi.one_apply, mul_one]
     simp [Measure.real]
   · obtain ⟨i, hi⟩ : ∃ i, ¬ ‖j y i‖ ≤ 1 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hy h
     obtain ⟨e, he, hne⟩ : ∃ e : E, ‖e‖ ≤ 1 ∧ ψ (Algebra.trace F E (e * j y i)) ≠ 1 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hi ((key _).1 h)
     set a := j.symm (Pi.single i (star e)) with ha_def
     have hja : j a = Pi.single i (star e) := by simp [ha_def]

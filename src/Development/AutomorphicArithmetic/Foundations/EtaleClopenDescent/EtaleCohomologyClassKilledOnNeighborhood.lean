@@ -23,45 +23,6 @@ public import Development.EtaleCohomology.KummerTheory.InjSlice
 public import Development.EtaleCohomology.KummerTheory.SHenCutPf
 public import Development.EtaleCohomology.EtaleSheaves.GeoProof
 public import Development.EtaleCohomology.EtaleSheaves.SecondDegreeKilling.LeafKill2Of
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.EtaleCohomology.EtaleSheaves.SecondDegreeKilling.HkpullComp
 import Development.EtaleCohomology.KummerTheory.DictPfEv
 import Mathlib.Tactic.Linter.HaveILetI
@@ -399,13 +360,13 @@ attribute [local instance] Sys.cat Sys.filt Sys.ring
 
 private theorem resY_id {Y B : Scheme.{0}} (p : Y ⟶ B) (U : B.Etale) : resY p (𝟙 U) = 𝟙 _ := by
   apply pullback.hom_ext
-  · erw [pullback.lift_fst]; simp
-  · erw [pullback.lift_snd]; simp; exact Category.comp_id _
+  · rw [pullback.lift_fst]; simp
+  · rw [pullback.lift_snd]; simp; exact Category.comp_id _
 
 private theorem resYW_id {Y B W : Scheme.{0}} (p : Y ⟶ B) (ι : W ⟶ B) (U : B.Etale) : resYW p ι (𝟙 U) = 𝟙 _ := by
   apply pullback.hom_ext
-  · erw [pullback.lift_fst]; simp [resY_id]
-  · erw [pullback.lift_snd]; simp
+  · rw [pullback.lift_fst]; simp [resY_id]
+  · rw [pullback.lift_snd]; simp
 
 variable {q : ℕ} {i : ℤ} {B W Y : Scheme.{0}} {p : Y ⟶ B} {ι : W ⟶ B} {U : B.Etale} {m : ℤ} {u : U.left}
 
@@ -431,7 +392,7 @@ private def fam (S : Sys q i p ι U m u) : Fam S.J where
   X := towY S
   Z := towW S
   pr j := prU p ι (S.V j)
-  prt f := (pullback.lift_fst _ _ _).symm
+  prt _ := (pullback.lift_fst _ _ _).symm
   prL := prS p ι (S.t ≫ U.hom)
   sq := S.sq
 
@@ -541,23 +502,23 @@ private abbrev mW {S S' : Scheme.{0}} {s : S ⟶ B} {s' : S' ⟶ B} (g : S' ⟶ 
 private theorem mY_comp_pullback_fst {S S' : Scheme.{0}} {s : S ⟶ B} {s' : S' ⟶ B} (g : S' ⟶ S) (h : g ≫ s = s') :
     mY p g h ≫ pullback.fst p s = pullback.fst p s' := by
   unfold mY pullback.map
-  erw [pullback.lift_fst]
+  rw [pullback.lift_fst]
   exact Category.comp_id _
 
 private theorem mY_comp_pullback_snd {S S' : Scheme.{0}} {s : S ⟶ B} {s' : S' ⟶ B} (g : S' ⟶ S) (h : g ≫ s = s') :
     mY p g h ≫ pullback.snd p s = pullback.snd p s' ≫ g := by
   unfold mY pullback.map
-  erw [pullback.lift_snd]
+  rw [pullback.lift_snd]
 
 private theorem mW_comp_fst_eq_fst_comp_mY {S S' : Scheme.{0}} {s : S ⟶ B} {s' : S' ⟶ B} (g : S' ⟶ S) (h : g ≫ s = s') :
     mW p ι g h ≫ pullback.fst _ ι = pullback.fst _ ι ≫ mY p g h := by
   unfold mW pullback.map
-  erw [pullback.lift_fst]
+  rw [pullback.lift_fst]
 
 private theorem mW_comp_pullback_snd {S S' : Scheme.{0}} {s : S ⟶ B} {s' : S' ⟶ B} (g : S' ⟶ S) (h : g ≫ s = s') :
     mW p ι g h ≫ pullback.snd _ ι = pullback.snd _ ι := by
   unfold mW pullback.map
-  erw [pullback.lift_snd]
+  rw [pullback.lift_snd]
   exact Category.comp_id _
 
 private theorem mY_comp {S S' S'' : Scheme.{0}} {s : S ⟶ B} {s' : S' ⟶ B} {s'' : S'' ⟶ B} (g : S' ⟶ S) (h : g ≫ s = s')
@@ -665,7 +626,7 @@ private theorem equiv_hom_comp_projection {S : Scheme.{0}} (g : S ⟶ C) (s : S 
       (pullback.fst (p2 p ι π) g ≫ pullback.snd (pullback.snd p π ≫ π) ι) ≫ ι := by
   subst h
   rw [Category.assoc, Category.assoc, eY_hom_snd_assoc]
-  erw [pullback.lift_snd_assoc]
+  rw [pullback.lift_snd_assoc]
   rw [← pullback.condition (f := pullback.snd p π ≫ π) (g := ι),
     ← pullback.condition_assoc (f := p2 p ι π) (g := g)]
   simp only [Category.assoc]
@@ -711,41 +672,41 @@ private theorem eY_nat (h : g ≫ π = s) (h' : g' ≫ π = s') (k : S' ⟶ S) (
     (eY p π g' s' h').hom ≫ mY p k hk = bc (pullback.snd p π) k hg ≫ (eY p π g s h).hom := by
   apply pullback.hom_ext
   · rw [Category.assoc, mY_comp_pullback_fst, eY_hom_fst, Category.assoc, eY_hom_fst]
-    erw [pullback.lift_fst_assoc]
+    rw [pullback.lift_fst_assoc]
     rw [Category.comp_id]
   · rw [Category.assoc, mY_comp_pullback_snd, eY_hom_snd_assoc, Category.assoc, eY_hom_snd]
-    erw [pullback.lift_snd]
+    rw [pullback.lift_snd]
 
 private theorem bc_comp_pullback_fst {X : Scheme.{0}} (P : X ⟶ C) (k : S' ⟶ S) (hg : k ≫ g = g') :
     bc P k hg ≫ pullback.fst P g = pullback.fst P g' := by
   unfold bc pullback.map
-  erw [pullback.lift_fst]
+  rw [pullback.lift_fst]
   exact Category.comp_id _
 
 private theorem bc_comp_pullback_snd {X : Scheme.{0}} (P : X ⟶ C) (k : S' ⟶ S) (hg : k ≫ g = g') :
     bc P k hg ≫ pullback.snd P g = pullback.snd P g' ≫ k := by
   unfold bc pullback.map
-  erw [pullback.lift_snd]
+  rw [pullback.lift_snd]
 
 private theorem aW_comp_pullback_fst (g : S ⟶ C) :
     aW p ι π g ≫ pullback.fst _ _ = pullback.fst _ _ ≫ pullback.fst _ _ := by
   unfold aW
-  erw [pullback.lift_fst]
+  rw [pullback.lift_fst]
 
 private theorem aW_comp_pullback_snd (g : S ⟶ C) :
     aW p ι π g ≫ pullback.snd _ _ = pullback.snd _ _ := by
   unfold aW
-  erw [pullback.lift_snd]
+  rw [pullback.lift_snd]
 
 private theorem eW_hom_comp_fst_eq_aW_comp_eY (g : S ⟶ C) (h : g ≫ π = s) :
     (eW p ι π g s h).hom ≫ pullback.fst _ _ = aW p ι π g ≫ (eY p π g s h).hom := by
   unfold eW
-  erw [pullback.lift_fst]
+  rw [pullback.lift_fst]
 
 private theorem eW_hom_comp_snd (g : S ⟶ C) (h : g ≫ π = s) :
     (eW p ι π g s h).hom ≫ pullback.snd _ _ = pullback.fst _ _ ≫ pullback.snd _ _ := by
   unfold eW
-  erw [pullback.lift_snd]
+  rw [pullback.lift_snd]
 
 private theorem eW_nat (h : g ≫ π = s) (h' : g' ≫ π = s') (k : S' ⟶ S) (hk : k ≫ s = s') (hg : k ≫ g = g') :
     (eW p ι π g' s' h').hom ≫ mW p ι k hk = bc (p2 p ι π) k hg ≫ (eW p ι π g s h).hom := by
@@ -1028,7 +989,7 @@ private lemma mY_snd (p : Y ⟶ B) (u : T ⟶ B) (u' : T' ⟶ B) (f : T ⟶ T') 
 private lemma mY_fst (p : Y ⟶ B) (u : T ⟶ B) (u' : T' ⟶ B) (f : T ⟶ T') (h : f ≫ u' = u) :
     mY p u u' f h ≫ pullback.fst p u' = pullback.fst p u := by
   unfold mY pullback.map
-  erw [pullback.lift_fst]
+  rw [pullback.lift_fst]
   exact Category.comp_id _
 
 private lemma mY_comp (p : Y ⟶ B) (u : T ⟶ B) (u' : T' ⟶ B) (u'' : T'' ⟶ B) (f : T ⟶ T') (g : T' ⟶ T'')
@@ -1191,7 +1152,7 @@ section -- clump:auto
 
 theorem UpperTheory.Cb.etale_cohomology_class_killed_on_neighborhood :
     LateralTheory.E.SecondDegreeKilling.Nbhd.LeafKillNbhd :=
-  LateralTheory.E.NeighbourhoodKilling.goal_of UpperTheory.etaleCohomology_class_killed_on_nbhd_pair UpperTheory.Cb.neighbourhood_cohomology_obstruction_exact UpperTheory.relativeCohomology_connecting_naturality
+  LateralTheory.E.NeighbourhoodKilling.goal_of UpperTheory.etaleCohomology_class_killed_on_nbhd_pair
     (LateralTheory.E.Bridge_yfiPf.Bridge_of_geo_pack
       (LateralTheory.E.GeoProof.Geo_of (UpperTheory.Cb.affineGeometricCase_of_obstructionExact_natural UpperTheory.Cb.neighbourhood_cohomology_obstruction_exact UpperTheory.relativeCohomology_connecting_naturality)
         (UpperTheory.Cb.neighbourhoodShrinking_of_obstructionExact_natural UpperTheory.Cb.neighbourhood_cohomology_obstruction_exact UpperTheory.relativeCohomology_connecting_naturality))

@@ -1,5 +1,6 @@
 module
 
+import all Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumAInj
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumAGlueCut
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumAGram
 public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LocGlue
@@ -26,25 +27,7 @@ theorem h_expand (H : HermSp M V) (x a y b : V) :
 
 theorem span_MMfam (H : HermSp M V) {r : ℕ} (t : Term V M r) :
     Submodule.span E (Set.range (H.MMfam t)) = Submodule.span E (Set.range (Sum.elim t.f t.f')) := by
-  unfold HermSp.MMfam
-  rcases hs : M.split with _ | g
-  · rfl
-  · apply le_antisymm
-    · rw [Submodule.span_le]
-      rintro _ ⟨i | i, rfl⟩
-      · exact Submodule.subset_span ⟨Sum.inl i, rfl⟩
-      · exact Submodule.smul_mem _ _ (Submodule.sub_mem _ (Submodule.subset_span ⟨Sum.inr i, rfl⟩)
-          (Submodule.subset_span ⟨Sum.inl i, rfl⟩))
-    · rw [Submodule.span_le]
-      rintro _ ⟨i | i, rfl⟩
-      · exact Submodule.subset_span ⟨Sum.inl i, rfl⟩
-      · have hq : (g.q : F) ≠ 0 := fun h => g.q_irr.ne_zero (Subtype.ext h)
-        have e : t.f' i = algebraMap F E (g.q : F) • (algebraMap F E ((g.q : F)⁻¹) • (t.f' i - t.f i)) + t.f i := by
-          rw [smul_smul, ← map_mul, mul_inv_cancel₀ hq, map_one, one_smul, sub_add_cancel]
-        show t.f' i ∈ _
-        rw [e]
-        exact Submodule.add_mem _ (Submodule.smul_mem _ _ (Submodule.subset_span ⟨Sum.inr i, rfl⟩))
-          (Submodule.subset_span ⟨Sum.inl i, rfl⟩)
+  apply _root_.Formalism.L2.SG.LsDatumA.span_MMfam_eq_span_f_f' <;> assumption
 
 theorem hermSp_W0_eq_perp_span_range_MMfam (H : HermSp M V) {r : ℕ} (t : Term V M r) :
     H.W0 t.f t.f' = H.perp (Submodule.span E (Set.range (H.MMfam t))) := by

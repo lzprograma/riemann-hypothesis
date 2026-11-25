@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LeastOrderBoundOfOrdTieTriv
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdempotentsAbelianSchemeConstantDimension
 public import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr
 public import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
@@ -130,25 +131,7 @@ theorem cspB_genPt_mem (Z : Comp Xo c) : genPt Z ∈ (Z : Set (Xo.XF c)) := by
 
 theorem cspB_isClopen (hdisj : ∀ Z Z' : Comp Xo c, Z ≠ Z' → Disjoint (Z : Set (Xo.XF c)) Z')
     (Z : Comp Xo c) : IsClopen (Z : Set (Xo.XF c)) := by
-  have := CompFin.finite_comp Xo c
-  refine ⟨isClosed_of_mem_irreducibleComponents _ Z.2, ?_⟩
-  have hU : (Z : Set (Xo.XF c)) = (⋃ Z' : {Z' : Comp Xo c // Z' ≠ Z}, (Z'.1 : Set (Xo.XF c)))ᶜ := by
-    ext p
-    constructor
-    · intro hp hp'
-      obtain ⟨⟨Z', hne⟩, hZ'⟩ := Set.mem_iUnion.1 hp'
-      exact Set.disjoint_left.1 (hdisj Z Z' (Ne.symm hne)) hp hZ'
-    · intro hp
-      have hall : p ∈ ⋃₀ irreducibleComponents (Xo.XF c) := by
-        rw [sUnion_irreducibleComponents]; trivial
-      obtain ⟨W, hW, hpW⟩ := Set.mem_sUnion.1 hall
-      by_contra hpZ
-      refine hp (Set.mem_iUnion.2 ⟨⟨⟨W, hW⟩, fun hWZ => hpZ ?_⟩, hpW⟩)
-      rw [← hWZ]
-      exact hpW
-  rw [hU]
-  exact (isClosed_iUnion_of_finite fun Z' : {Z' : Comp Xo c // Z' ≠ Z} =>
-    isClosed_of_mem_irreducibleComponents _ Z'.1.2).isOpen_compl
+  apply GlobalTheory.TrivOrderTieCompare.isClopen_comp
 
 
 

@@ -130,8 +130,9 @@ theorem aeval_eq_zero_of_mem {f : MRing ι} (hf : f ∈ idealOver y ℤ) : aeval
     rw [Ideal.mem_comap, RingHom.mem_ker, map_int, aeval_eq_eval_mConeMap, RingHom.mem_ker.mp hg, map_zero]
   exact RingHom.mem_ker.mp (h hf)
 
-theorem cellMon_aeval_ne {I : ∀ k, Finset (ι k)} (hI : ∀ k, ∀ i ∈ I k, y ⟨k, i⟩ ≠ 0) {t : MRing ι}
-    (ht : t ∈ KH.cellMon ℤ I) : aeval y t ≠ 0 := by
+theorem cellMon_aeval_ne' {S : Type} [CommRing S] [Algebra S Ω] {I : ∀ k, Finset (ι k)}
+    (hI : ∀ k, ∀ i ∈ I k, y ⟨k, i⟩ ≠ 0) {t : MRingOver S ι}
+    (ht : t ∈ KH.cellMon S I) : aeval y t ≠ 0 := by
   induction ht using Submonoid.closure_induction with
   | mem x hx =>
     obtain ⟨k, i, hi, rfl⟩ := hx
@@ -140,10 +141,16 @@ theorem cellMon_aeval_ne {I : ∀ k, Finset (ι k)} (hI : ∀ k, ∀ i ∈ I k, 
   | one => simp
   | mul x x' _ _ hx hx' => rw [map_mul]; exact mul_ne_zero hx hx'
 
+theorem cellMon_aeval_ne {I : ∀ k, Finset (ι k)} (hI : ∀ k, ∀ i ∈ I k, y ⟨k, i⟩ ≠ 0) {t : MRing ι}
+    (ht : t ∈ KH.cellMon ℤ I) : aeval y t ≠ 0 :=
+  cellMon_aeval_ne' hI ht
+
 
 variable (y) in
-theorem aeval_div_mem (c : ∀ k, ι k) {g : MRing ι} {d : K → ℕ} (hg : IsMultiHomog g d) :
-    aeval y g / ∏ k, y ⟨k, c k⟩ ^ d k ∈ chartRingZ y c := by
+theorem aeval_div_mem' {S : Type} [CommRing S] [Algebra S Ω] (c : ∀ k, ι k) {g : MRingOver S ι}
+    {d : K → ℕ} (hg : IsMultiHomog g d) :
+    aeval y g / ∏ k, y ⟨k, c k⟩ ^ d k ∈
+      Algebra.adjoin S (Set.range fun p : Σ k, ι k => y p / y ⟨p.1, c p.1⟩) := by
   classical
 
   rw [g.as_sum, map_sum, Finset.sum_div]
@@ -162,6 +169,11 @@ theorem aeval_div_mem (c : ∀ k, ι k) {g : MRing ι} {d : K → ℕ} (hg : IsM
   rw [key]
   exact Subalgebra.prod_mem _ fun p _ => Subalgebra.pow_mem _
     (Algebra.subset_adjoin (Set.mem_range_self (f := fun p : Σ k, ι k => y p / y ⟨p.1, c p.1⟩) p)) _
+
+variable (y) in
+theorem aeval_div_mem (c : ∀ k, ι k) {g : MRing ι} {d : K → ℕ} (hg : IsMultiHomog g d) :
+    aeval y g / ∏ k, y ⟨k, c k⟩ ^ d k ∈ chartRingZ y c :=
+  aeval_div_mem' y c hg
 
 theorem mem_chartRingZ_of_isRep {c : ∀ k, ι k} (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) {T : Submonoid (MRing ι)}
     {x : LocalizedModule T (MRing ι ⧸ idealOver y ℤ)} {t : Ω} {a : K → ℤ}
@@ -200,8 +212,9 @@ theorem eq_chartCell {J : KH.Cell K ι 0} {c : ∀ k, ι k} (hc : ∀ k, c k ∈
   rw [hi] at h ⊢
   rw [Finset.mem_singleton.mp h]
 
-theorem mem_cellMon_chart {c : ∀ k, ι k} {t : MRing ι} (ht : t ∈ KH.cellMon ℤ (chartCell c).1) :
-    ∃ e : K → ℕ, t = cmon c e := by
+theorem mem_cellMon_chart' {S : Type} [CommRing S] {c : ∀ k, ι k} {t : MRingOver S ι}
+    (ht : t ∈ KH.cellMon S (chartCell c).1) :
+    ∃ e : K → ℕ, t = MvPolynomial.map (Int.castRingHom S) (cmon c e) := by
   classical
   induction ht using Submonoid.closure_induction with
   | mem x hx =>
@@ -209,14 +222,19 @@ theorem mem_cellMon_chart {c : ∀ k, ι k} {t : MRing ι} (ht : t ∈ KH.cellMo
     have hi' : i = c k := Finset.mem_singleton.mp hi
     subst hi'
     refine ⟨Pi.single k 1, ?_⟩
-    unfold cmon
+    rw [cmon, map_prod]
     rw [Finset.prod_eq_single k (fun k' _ hk' => by simp [hk']) (fun h => absurd (Finset.mem_univ k) h)]
     simp
   | one => exact ⟨0, by simp [cmon]⟩
   | mul x x' _ _ hx hx' =>
     obtain ⟨f, rfl⟩ := hx
     obtain ⟨f', rfl⟩ := hx'
-    exact ⟨f + f', (cmon_add c f f').symm⟩
+    exact ⟨f + f', by rw [cmon_add, map_mul]⟩
+
+theorem mem_cellMon_chart {c : ∀ k, ι k} {t : MRing ι} (ht : t ∈ KH.cellMon ℤ (chartCell c).1) :
+    ∃ e : K → ℕ, t = cmon c e := by
+  obtain ⟨e, he⟩ := mem_cellMon_chart' ht
+  exact ⟨e, he.trans (map_int _)⟩
 
 theorem exists_isRep {c : ∀ k, ι k} (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) {a : K → ℤ}
     {x : LocalizedModule (KH.cellMon ℤ (chartCell c).1) (MRing ι ⧸ idealOver y ℤ)}
@@ -274,12 +292,12 @@ section Cocycle
 
 variable [LinearOrder K] [∀ k, LinearOrder (ι k)]
 
-theorem res_faces {M : Type} [AddCommGroup M] [Module (MRing ι) M] (z : KH.CechC ℤ ι M 0)
-    (hz : KH.cechD ℤ ι M 0 z = 0) (I : KH.Cell K ι 1) (k0 : K) (i1 i2 : ι k0) (hlt : i1 < i2)
-    (hI : I.1 k0 = {i1, i2}) (hrest : ∀ k ≠ k0, (I.1 k).card = 1) (J1 J2 : KH.Cell K ι 0)
+theorem res_facesS {S : Type} [CommRing S] {M : Type} [AddCommGroup M] [Module (MRingOver S ι) M]
+    (z : KH.CechC S ι M 0) (hz : KH.cechD S ι M 0 z = 0) (I : KH.Cell K ι 1) (k0 : K) (i1 i2 : ι k0)
+    (hlt : i1 < i2) (hI : I.1 k0 = {i1, i2}) (hrest : ∀ k ≠ k0, (I.1 k).card = 1) (J1 J2 : KH.Cell K ι 0)
     (hJ1 : J1.1 = Function.update I.1 k0 ((I.1 k0).erase i1))
     (hJ2 : J2.1 = Function.update I.1 k0 ((I.1 k0).erase i2)) :
-    KH.cellRes ℤ M J1.1 I.1 (z J1) = KH.cellRes ℤ M J2.1 I.1 (z J2) := by
+    KH.cellRes S M J1.1 I.1 (z J1) = KH.cellRes S M J2.1 I.1 (z J2) := by
   have hne : ∀ k, (I.1 k).Nonempty := I.2.1
   have h2 : (I.1 k0).card = 2 := by rw [hI]; exact Finset.card_pair (ne_of_lt hlt)
   have hface : ∀ i ∈ I.1 k0, (∀ l, (Function.update I.1 k0 ((I.1 k0).erase i) l).Nonempty) ∧
@@ -313,9 +331,9 @@ theorem res_faces {M : Type} [AddCommGroup M] [Module (MRing ι) M] (z : KH.Cech
     norm_num
   have hi1 : i1 ∈ I.1 k0 := by rw [hI]; simp
   have hi2 : i2 ∈ I.1 k0 := by rw [hI]; simp
-  have key : KH.cechD ℤ ι M 0 z I =
-      KH.faceSign I.1 k0 i1 • KH.cellRes ℤ M (Function.update I.1 k0 ((I.1 k0).erase i1)) I.1
-        (z ⟨_, hface i1 hi1⟩) + KH.faceSign I.1 k0 i2 • KH.cellRes ℤ M
+  have key : KH.cechD S ι M 0 z I =
+      KH.faceSign I.1 k0 i1 • KH.cellRes S M (Function.update I.1 k0 ((I.1 k0).erase i1)) I.1
+        (z ⟨_, hface i1 hi1⟩) + KH.faceSign I.1 k0 i2 • KH.cellRes S M
         (Function.update I.1 k0 ((I.1 k0).erase i2)) I.1 (z ⟨_, hface i2 hi2⟩) := by
     rw [KH.cechD]
     erw [LinearMap.pi_apply]
@@ -344,7 +362,7 @@ theorem res_faces {M : Type} [AddCommGroup M] [Module (MRing ι) M] (z : KH.Cech
       · rfl
     · intro h
       exact absurd (Finset.mem_univ k0) h
-  have e0 : KH.cechD ℤ ι M 0 z I = 0 := by rw [hz]; rfl
+  have e0 : KH.cechD S ι M 0 z I = 0 := by rw [hz]; rfl
   rw [key, hs1, hs2, one_smul, neg_one_smul, ← sub_eq_add_neg, sub_eq_zero] at e0
   obtain ⟨A1, hA1⟩ := J1
   obtain ⟨A2, hA2⟩ := J2
@@ -352,13 +370,22 @@ theorem res_faces {M : Type} [AddCommGroup M] [Module (MRing ι) M] (z : KH.Cech
   subst hJ1 hJ2
   exact e0
 
-variable {a : K → ℤ} {v : KH.CechC ℤ ι (MRing ι ⧸ idealOver y ℤ) 0}
+theorem res_faces {M : Type} [AddCommGroup M] [Module (MRing ι) M] (z : KH.CechC ℤ ι M 0)
+    (hz : KH.cechD ℤ ι M 0 z = 0) (I : KH.Cell K ι 1) (k0 : K) (i1 i2 : ι k0) (hlt : i1 < i2)
+    (hI : I.1 k0 = {i1, i2}) (hrest : ∀ k ≠ k0, (I.1 k).card = 1) (J1 J2 : KH.Cell K ι 0)
+    (hJ1 : J1.1 = Function.update I.1 k0 ((I.1 k0).erase i1))
+    (hJ2 : J2.1 = Function.update I.1 k0 ((I.1 k0).erase i2)) :
+    KH.cellRes ℤ M J1.1 I.1 (z J1) = KH.cellRes ℤ M J2.1 I.1 (z J2) :=
+  res_facesS z hz I k0 i1 i2 hlt hI hrest J1 J2 hJ1 hJ2
 
-theorem val_step_lt (hz : KH.cechD ℤ ι _ 0 v = 0) {c d : ∀ k, ι k}
-    (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) (hd : ∀ k, y ⟨k, d k⟩ ≠ 0) (k0 : K) (hcd : ∀ k ≠ k0, c k = d k)
-    (hlt : c k0 < d k0) {s t : Ω}
-    (hs : IsRep y ℤ (KH.cellMon ℤ (chartCell c).1) (v (chartCell c)) c s a)
-    (ht : IsRep y ℤ (KH.cellMon ℤ (chartCell d).1) (v (chartCell d)) d t a) : s = t := by
+theorem chartStep_res {S : Type} [CommRing S] {M : Type} [AddCommGroup M] [Module (MRingOver S ι) M]
+    (v : KH.CechC S ι M 0) (hz : KH.cechD S ι M 0 v = 0)
+    {c d : ∀ k, ι k} (k0 : K) (hcd : ∀ k ≠ k0, c k = d k) (hlt : c k0 < d k0) :
+    ∃ (A : ∀ k, Finset (ι k)) (hsc : ∀ k, (chartCell c).1 k ⊆ A k)
+      (hsd : ∀ k, (chartCell d).1 k ⊆ A k),
+      (∀ k, ∀ i ∈ A k, i = c k ∨ i = d k) ∧
+      LocalizedModule.liftOfLE _ _ (cellMon_mono (S := S) hsd) (v (chartCell d)) =
+        LocalizedModule.liftOfLE _ _ (cellMon_mono (S := S) hsc) (v (chartCell c)) := by
   classical
   have hne : c k0 ≠ d k0 := ne_of_lt hlt
   set A : ∀ k, Finset (ι k) := Function.update (fun k => ({c k} : Finset (ι k))) k0 {c k0, d k0} with hAdef
@@ -375,17 +402,16 @@ theorem val_step_lt (hz : KH.cechD ℤ ι _ 0 v = 0) {c d : ∀ k, ι k}
   have hAsum : ∑ k, ((A k).card - 1) = 1 := by
     rw [Finset.sum_eq_single k0 (fun k _ hk => by rw [hAk k hk]; rfl)
       (fun h => absurd (Finset.mem_univ k0) h), hA0, Finset.card_pair hne]
-  have hIy : ∀ k, ∀ i ∈ A k, y ⟨k, i⟩ ≠ 0 := by
+  have hAmem : ∀ k, ∀ i ∈ A k, i = c k ∨ i = d k := by
     intro k i hi
     by_cases hk : k = k0
     · subst hk
       rw [hA0] at hi
       rcases Finset.mem_insert.mp hi with h | h
-      · rw [h]; exact hc _
-      · rw [Finset.mem_singleton.mp h]; exact hd _
+      · exact Or.inl h
+      · exact Or.inr (Finset.mem_singleton.mp h)
     · rw [hAk k hk, Finset.mem_singleton] at hi
-      rw [hi]
-      exact hc k
+      exact Or.inl hi
   have hrest : ∀ k ≠ k0, (A k).card = 1 := fun k hk => by rw [hAk k hk]; rfl
   have hsc : ∀ k, (chartCell c).1 k ⊆ A k := by
     intro k
@@ -403,12 +429,9 @@ theorem val_step_lt (hz : KH.cechD ℤ ι _ 0 v = 0) {c d : ∀ k, ι k}
       rw [hA0]
       simp
     · rw [hAk k hk, hcd k hk]
-  have e := res_faces v hz ⟨A, hAne, hAsum⟩ k0 (c k0) (d k0) hlt hA0 hrest (chartCell d) (chartCell c) ?_ ?_
+  have e := res_facesS v hz ⟨A, hAne, hAsum⟩ k0 (c k0) (d k0) hlt hA0 hrest (chartCell d) (chartCell c) ?_ ?_
   · rw [cellRes_of_le (cellMon_mono hsd), cellRes_of_le (cellMon_mono hsc)] at e
-    have h1 := hs.lift (cellMon_mono hsc)
-    have h2 := ht.lift (cellMon_mono hsd)
-    rw [← e] at h1
-    exact val_eq_of_isRep hIy hc hd h1 h2
+    exact ⟨A, hsc, hsd, hAmem, e⟩
   · funext k
     by_cases hk : k = k0
     · subst hk
@@ -423,6 +446,21 @@ theorem val_step_lt (hz : KH.cechD ℤ ι _ 0 v = 0) {c d : ∀ k, ι k}
       rw [Function.update_self, hA0, Finset.pair_comm, Finset.erase_insert (by simpa using hne.symm)]
     · show ({c k} : Finset (ι k)) = Function.update A k0 ((A k0).erase (d k0)) k
       rw [Function.update_of_ne hk, hAk k hk]
+
+variable {a : K → ℤ} {v : KH.CechC ℤ ι (MRing ι ⧸ idealOver y ℤ) 0}
+
+theorem val_step_lt (hz : KH.cechD ℤ ι _ 0 v = 0) {c d : ∀ k, ι k}
+    (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) (hd : ∀ k, y ⟨k, d k⟩ ≠ 0) (k0 : K) (hcd : ∀ k ≠ k0, c k = d k)
+    (hlt : c k0 < d k0) {s t : Ω}
+    (hs : IsRep y ℤ (KH.cellMon ℤ (chartCell c).1) (v (chartCell c)) c s a)
+    (ht : IsRep y ℤ (KH.cellMon ℤ (chartCell d).1) (v (chartCell d)) d t a) : s = t := by
+  obtain ⟨A, hsc, hsd, hAmem, e⟩ := chartStep_res v hz k0 hcd hlt
+  have hIy : ∀ k, ∀ i ∈ A k, y ⟨k, i⟩ ≠ 0 := fun k i hi =>
+    (hAmem k i hi).elim (fun h => h ▸ hc k) (fun h => h ▸ hd k)
+  have h1 := hs.lift (cellMon_mono hsc)
+  have h2 := ht.lift (cellMon_mono hsd)
+  rw [← e] at h1
+  exact val_eq_of_isRep hIy hc hd h1 h2
 
 theorem val_step (hz : KH.cechD ℤ ι _ 0 v = 0) {c d : ∀ k, ι k}
     (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) (hd : ∀ k, y ⟨k, d k⟩ ≠ 0) (k0 : K) (hcd : ∀ k ≠ k0, c k = d k) {s t : Ω}

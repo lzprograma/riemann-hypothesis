@@ -2,45 +2,7 @@ module
 
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.GlobalCharacterOfInputs
 import Aesop.Main
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -226,8 +188,8 @@ theorem tsum_rr (Γ' K : Subgroup B)
         exact hx
     simp only [rr, e2, e4]
     by_cases hm : (γ : B) ∈ D
-    · rw [if_pos hm, Set.indicator_of_mem (show (γ : B) ∈ (D : Set B) from hm)]
-    · rw [if_neg hm, Set.indicator_of_notMem (show (γ : B) ∉ (D : Set B) from hm)]
+    · rw [ite_eq_left hm, Set.indicator_of_mem (show (γ : B) ∈ (D : Set B) from hm)]
+    · rw [ite_eq_right hm, Set.indicator_of_notMem (show (γ : B) ∉ (D : Set B) from hm)]
   have hle : (D : Set B) ⊆ Γ' := fun x hx => hx.1
   calc ∑' γ : Γ', rr Γ' K ((γ : B) * y)
       = ∑' γ : Γ', rr Γ' K (((γ * ⟨h, hh⟩ : Γ') : B) * y) :=
@@ -278,8 +240,8 @@ theorem integral_term (β : Measure B) [β.IsHaarMeasure] (K U : Subgroup B) (hK
   have he : (fun y => if q⁻¹ * y ∈ K then F y * c else 0) = fun y => g (q⁻¹ * y) := by
     funext y
     by_cases hy : q⁻¹ * y ∈ K
-    · simp only [g, if_pos hy, Set.indicator_of_mem (show q⁻¹ * y ∈ (K : Set B) from hy), mul_inv_cancel_left]
-    · simp only [g, if_neg hy, Set.indicator_of_notMem (show q⁻¹ * y ∉ (K : Set B) from hy), zero_mul]
+    · simp only [g, ite_eq_left hy, Set.indicator_of_mem (show q⁻¹ * y ∈ (K : Set B) from hy), mul_inv_cancel_left]
+    · simp only [g, ite_eq_right hy, Set.indicator_of_notMem (show q⁻¹ * y ∉ (K : Set B) from hy), zero_mul]
   rw [he]
   refine ⟨hg.comp_mul_left q⁻¹, ?_⟩
   rw [integral_mul_left_eq_self g q⁻¹]
@@ -307,14 +269,14 @@ theorem integral_mul_rr (β : Measure B) [β.IsHaarMeasure] (Γ' K U : Subgroup 
     have hrr : (((rr Γ' K y).toReal : ℝ) : ℂ) = if (Quotient.out q₀)⁻¹ * y ∈ K then c q₀ else 0 := by
       simp only [rr, hoo]
       by_cases hm : (Quotient.out q₀)⁻¹ * y ∈ K
-      · simp [if_pos hm, c, ENNReal.toReal_inv]
-      · simp [if_neg hm]
+      · simp [ite_eq_left hm, c, ENNReal.toReal_inv]
+      · simp [ite_eq_right hm]
     rw [hrr]
     by_cases hq : q₀ ∈ S
-    · rw [Finset.sum_eq_single q₀ (fun q _ hq' => if_neg (hne q hq')) (fun h => absurd hq h)]
+    · rw [Finset.sum_eq_single q₀ (fun q _ hq' => ite_eq_right (hne q hq')) (fun h => absurd hq h)]
       by_cases hm : (Quotient.out q₀)⁻¹ * y ∈ K
-      · simp [if_pos hm]
-      · simp [if_neg hm]
+      · simp [ite_eq_left hm]
+      · simp [ite_eq_right hm]
     · rw [Finset.sum_eq_zero]
       · by_cases hm : (Quotient.out q₀)⁻¹ * y ∈ K
         · have : F y = 0 := by
@@ -323,10 +285,10 @@ theorem integral_mul_rr (β : Measure B) [β.IsHaarMeasure] (Γ' K U : Subgroup 
             rw [hSdef, Set.Finite.mem_toFinset]
             exact ⟨_, hm, by simpa using h0⟩
           simp [this]
-        · simp [if_neg hm]
+        · simp [ite_eq_right hm]
       · intro q hqS
         have hqq : q ≠ q₀ := fun h => hq (h ▸ hqS)
-        exact if_neg (hne q hqq)
+        exact ite_eq_right (hne q hqq)
   have hterm := fun q => integral_term β K U hKo hKc hU F hF (Quotient.out q) (c q)
   rw [integral_congr_ae (Filter.Eventually.of_forall hpt),
     integral_finsetSum S (fun q _ => (hterm q).1), dcSum,

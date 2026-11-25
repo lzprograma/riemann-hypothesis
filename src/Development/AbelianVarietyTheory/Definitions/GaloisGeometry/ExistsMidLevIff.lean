@@ -9,43 +9,7 @@ public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCas
 public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.MemMoveLevUloc
 public import Formalism.LocalToGlobal.KernelLattices.KerChTie
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -229,21 +193,9 @@ def TopLev (j : ℕ) (P : rowSG Pr sel mu) (g : Sp X.E (R.N j) ≃ₗ[X.E] Sp X.
 
 end Levels
 
-section Moved
-
-open Formalism.L2.Forms
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-  {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {T f : ℕ} {bad : Set (HeightOneSpectrum (𝓞 F))}
-  {S : StepLevel F E σ J T f bad} (k : basePts S) (κ : S.U)
-
-end Moved
-
 section Charts
 
 open Formalism.L2.Forms Formalism.MainNotions.G Formalism.MainNotions.G.CmpJ Formalism.L2.G Formalism.L2.G.Cmp
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {u : D.what₂.Word}
 
@@ -280,23 +232,6 @@ def ofStepIn {A : ColumnsAtT D.R C} {P : PeriodMap D.R C}
   lat := S.lat
   K := S.K
 
-def ofOne {T : ℕ} {bad : Set (HeightOneSpectrum (𝓞 D.host.F))} (eY : C.Y i ≃ Fr D i hi)
-    {lat : C.cls i → Submodule (𝓞 D.host.E) (Fin (D.R.N i) → D.host.E)} (K : LevelChart D T bad i hi (C.stab i) lat) : StepCharts C i hi where
-  T := T
-  bad := bad
-  eY := eY
-  Ch := Unit
-  chOf := fun _ => ()
-  lat := lat
-  K := fun _ =>
-    { lev := K.lev
-      y := fun c => K.y c.1
-      y_bij := K.y_bij.comp ⟨Subtype.val_injective, fun c => ⟨⟨c, rfl⟩, rfl⟩⟩
-      y_lat := fun c => K.y_lat c.1
-      stabI := fun c => K.stabI c.1
-      stabI_inj := fun c => K.stabI_inj c.1
-      stabI_range := fun c => K.stabI_range c.1 }
-
 variable (St : StepCharts C i hi)
 
 def y (c : C.cls i) : UPts (sigD D) (gramN D i hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F) := (St.K (St.chOf c)).y ⟨c, rfl⟩
@@ -316,8 +251,6 @@ end Charts
 section LevTie
 
 open Formalism.L2.Forms Formalism.L2.Ker Formalism.MainNotions
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {X : Fields} (s : Seam D X) {i : ℕ} {hi : i ≤ D.R.m} {T : ℕ} {bad : Set (HeightOneSpectrum (𝓞 D.host.F))}
   (lev : StepLevel D.host.F D.host.E (sigD D) (gramN D i hi) T D.R.f bad) {SB : Finset (HeightOneSpectrum (𝓞 X.E))}
@@ -354,8 +287,6 @@ end LevTie
 section Comparison₂
 
 open Formalism.L2.Forms Formalism.L2.Ker Formalism.MainNotions Formalism.L2.DIV Formalism.MainNotions.G
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def IsAdIso {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (ι : AfE F E ≃+* FiniteAdeleRing (𝓞 E) E) : Prop :=
@@ -637,12 +568,6 @@ theorem AdLawAt.mu_ne {XiAd : AdDatum St} {muT : ℕ → (AfE D.host.F D.host.E)
   exact one_ne_zero h
 
 
-variable (St) in
-abbrev ChainBase : Type := ∀ i hi, (St i hi).Base
-
-
-variable (St) in
-def moveCharts (k : ChainBase St) : ChainCharts D u μ := fun i hi => (St i hi).move (k i hi)
 
 variable (A dtU a)
 

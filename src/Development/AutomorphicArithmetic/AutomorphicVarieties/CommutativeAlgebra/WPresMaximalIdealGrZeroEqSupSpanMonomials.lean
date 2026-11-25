@@ -52,7 +52,7 @@ private theorem UpperTheory.V.Alg.monomial_mem_weight_zero {O σ X : Type} [Comm
     (m : σ →₀ ℕ) (hm : Finsupp.weight wt m = 0) : (monomial m (1 : O) : MvPowerSeries σ O) ∈ wtPart O wt 0 := by
   classical
   intro n hn
-  rw [coeff_monomial, if_neg]
+  rw [coeff_monomial, ite_eq_right]
   rintro rfl
   exact hn hm
 
@@ -102,7 +102,7 @@ theorem UpperTheory.V.Alg.wPres_maximalIdeal_gr_zero_eq_sup_span_monomials :
       rw [map_sub, coeff_C]
       by_cases h0 : n = 0
       · subst h0; simp
-      · rw [if_neg h0, sub_zero]
+      · rw [ite_eq_right h0, sub_zero]
         exact hf n fun h => hn ⟨h0, h⟩)
     have hb' : b - algebraMap O (W.gr 0) (constantCoeff f) = ∑ m : μ, mk (c m.1) (hc m.1) * U m := by
       apply hinj

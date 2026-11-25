@@ -226,8 +226,7 @@ theorem seq_sub_dvd (x : AdicCompletion.AdicCauchySequence (pI p) (Lau p)) {m n 
 theorem exists_not_dvd (x : AdicCompletion.AdicCauchySequence (pI p) (Lau p))
     (hx : AdicCompletion.mk (pI p) (Lau p) x ≠ 0) :
     ∃ a, ∀ n, a ≤ n → ¬ (p : Lau p) ^ a ∣ x.1 n := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   apply hx
   apply AdicCompletion.ext_evalₐ
   intro a
@@ -253,8 +252,7 @@ instance charZero_completed_ring : CharZero (O0 p) := by
 instance isDomain_completed_ring : IsDomain (O0 p) := by
   haveI : NoZeroDivisors (O0 p) := ⟨by
     intro x y hxy
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     obtain ⟨hx, hy⟩ := hcon
     obtain ⟨x, rfl⟩ := AdicCompletion.mk_surjective (pI p) (Lau p) x
     obtain ⟨y, rfl⟩ := AdicCompletion.mk_surjective (pI p) (Lau p) y

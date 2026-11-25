@@ -30,63 +30,9 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPower
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupDeterminantPowDepthBasisChangeInvaria
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeFormalGroupDeterminantPowDepthOfRadii
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.CauchyBinet
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PtOrderProdSub
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.TypeStar
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Algebra.Order.Star.Int
 import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TypicalBasisCoordinates
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -125,19 +71,6 @@ def intSubring (v : AddValuation C (WithTop ℝ)) : Subring C where
 theorem isIntV_iff (v : AddValuation C (WithTop ℝ)) (x : C) : IsIntV v x ↔ x ∈ intSubring v :=
   Iff.rfl
 
-theorem int_of_le (v : AddValuation C (WithTop ℝ)) {a b : C} (hb : b ≠ 0)
-    (h : v b ≤ v (a * b)) : IsIntV v a := by
-  show 0 ≤ v a
-  rw [AddValuation.map_mul] at h
-  have hb' : v b ≠ ⊤ := fun h' => hb ((AddValuation.top_iff v).1 h')
-  obtain ⟨r, hr⟩ := WithTop.ne_top_iff_exists.1 hb'
-  rcases eq_or_ne (v a) ⊤ with ha | ha
-  · rw [ha]; exact le_top
-  obtain ⟨s, hs⟩ := WithTop.ne_top_iff_exists.1 ha
-  rw [← hr, ← hs, ← WithTop.coe_add, WithTop.coe_le_coe] at h
-  rw [← hs]
-  exact_mod_cast (by linarith : (0 : ℝ) ≤ s)
-
 end
 
 end GlobalTheory.LowU
@@ -157,7 +90,7 @@ theorem pivot_step (v : AddValuation C (WithTop ℝ)) {i' n : ℕ}
     (M : Matrix (Fin (i' + 1)) (Fin (n + 1)) C) (h0 : M 0 0 ≠ 0)
     (hmin : ∀ b, v (M 0 0) ≤ v (M b 0)) : Reduces v M := by
   have hq : ∀ c : Fin i', IsIntV v (M c.succ 0 / M 0 0) := fun c =>
-    int_of_le v h0 (by rw [div_mul_cancel₀ _ h0]; exact hmin c.succ)
+    GlobalTheory.powRow_int_of_le v h0 (by rw [div_mul_cancel₀ _ h0]; exact hmin c.succ)
   obtain ⟨g', cr', hc1, hc2, hint, hdet, hz⟩ :=
     ih (Matrix.of fun c e' => M c.succ e'.succ - M c.succ 0 / M 0 0 * M 0 e'.succ)
   have hw : ∀ a'', IsIntV v (-∑ c, g' a'' c * (M c.succ 0 / M 0 0)) := fun a'' =>
@@ -319,7 +252,7 @@ theorem coeff_subst_of_pow_support {M : ℕ} {C : Type} [Field C] (p : ℕ) (hp 
       apply hm
       have hlt : n < p ^ n := Nat.lt_pow_self (by omega)
       rw [coeff_pow_eq_zero_of_degree_lt s hs _ α (by omega), smul_zero]
-    · push_neg at hpt
+    · push Not at hpt
       exact absurd (by rw [hL m hpt, zero_smul]) hm
 
 theorem subst_sum_lgCurve_eq_lgSum : ∀ (C : Type) [Field C] [CharZero C] (v : AddValuation C (WithTop ℝ)) (p : ℕ), p.Prime → ∀ (d M : ℕ) (G : LogFGL v d) (γ : Fin d → Fin d → PowerSeries C), (∀ a, G.IsPTypical p (γ a)) → ∀ (t : Fin d → MvPowerSeries (Fin M) C), (∀ a, constantCoeff (t a) = 0) → ∀ e : Fin d, subst t (∑ a, PowerSeries.subst (X a : MvPowerSeries (Fin d) C) (G.lgCurve (γ a) e)) = lgSum p (fun a n => G.lc p (γ a) n) t e := by
@@ -585,7 +518,7 @@ theorem coeff_Phi {p : ℕ} {c : Fin d → ℕ → Fin d → C} (hc0 : ∀ a, c 
       ∑ a, c a n b * coeff α (t a ^ (p ^ n)) := rfl
   have h0 : ∑ a, c a 0 b * coeff α (t a ^ (p ^ 0)) = coeff α (t b) := by
     simp only [hc0, pow_zero, pow_one, Pi.single_apply, ite_mul, one_mul, zero_mul,
-      Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   simp only [Phi, map_add (f := _), map_sub, hl, Finset.sum_range_succ', h0]
   ring
 
@@ -828,28 +761,28 @@ theorem glue_mul_glue_inv : ∀ (C : Type) [Field C] (v : AddValuation C (WithTo
     by_cases ha : a ∈ S (lab a)
     · have hterm : ∀ b, glue lab S x a b * glue lab S y b c = x (lab a) a b * y (lab a) b c := by
         intro b
-        simp only [glue, Matrix.of_apply, if_pos ha]
+        simp only [glue, Matrix.of_apply, ite_eq_left ha]
         by_cases hxb : x (lab a) a b = 0
         · rw [hxb, zero_mul, zero_mul]
         · have hb := (hx _ _ _ hxb).2
           have hl : lab b = lab a := hlab _ _ hb
-          rw [if_pos (hl ▸ hb), hl]
+          rw [ite_eq_left (hl ▸ hb), hl]
       simp_rw [hterm]
       by_cases hc : c ∈ S (lab a)
       · exact hinv _ _ _ ha hc
       · have h0 : ∀ b, y (lab a) b c = 0 := by
           intro b; by_contra hne; exact hc (hy _ _ _ hne).2
         simp only [h0, mul_zero, Finset.sum_const_zero]
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro rfl; exact hc ha
     · have hterm : ∀ b, glue lab S x a b * glue lab S y b c =
           if a = b then glue lab S y b c else 0 := by
         intro b
-        simp only [glue, Matrix.of_apply, if_neg ha]
+        simp only [glue, Matrix.of_apply, ite_eq_right ha]
         split_ifs <;> simp
       simp_rw [hterm]
-      rw [Finset.sum_ite_eq Finset.univ a (fun b => glue lab S y b c), if_pos (Finset.mem_univ _)]
-      simp only [glue, Matrix.of_apply, if_neg ha]
+      rw [Finset.sum_ite_eq Finset.univ a (fun b => glue lab S y b c), ite_eq_left (Finset.mem_univ _)]
+      simp only [glue, Matrix.of_apply, ite_eq_right ha]
   refine ⟨hint x hxi, hmul, ?_⟩
   have hd : (glue lab S x).det * (glue lab S y).det = 1 := by
     rw [← Matrix.det_mul, hmul, Matrix.det_one]
@@ -1012,7 +945,7 @@ theorem _root_.GlobalTheory.RootFin.root_fin : _root_.ReciprocityTheory.ChartRes
     have hterm : ∀ b, x a b * y b c = if hb : b ∈ S then
         T (e.symm ⟨a, ha⟩) (e.symm ⟨b, hb⟩) * T⁻¹ (e.symm ⟨b, hb⟩) (e.symm ⟨c, hc⟩) else 0 := by
       intro b
-      simp only [hx, hy, dif_pos ha, dif_pos hc]
+      simp only [hx, hy, dite_eq_left ha, dite_eq_left hc]
       split_ifs <;> simp
     rw [Finset.sum_congr rfl (fun b _ => hterm b),
       sum_dite_mem_eq_sum_equivFin S (fun b : S => T (e.symm ⟨a, ha⟩) (e.symm b) * T⁻¹ (e.symm b) (e.symm ⟨c, hc⟩))]
@@ -1022,15 +955,14 @@ theorem _root_.GlobalTheory.RootFin.root_fin : _root_.ReciprocityTheory.ChartRes
   · intro a ha haD
     set w := e.symm ⟨a, ha⟩ with hw
     have hjw : j ≤ (w : ℕ) := by
-      by_contra hlt
-      push_neg at hlt
+      by_contra! hlt
       exact haD (Finset.mem_image.mpr ⟨w, by simp [hlt], by simp [hw]⟩)
     have key := hTzero w hjw
     have hp0 : p ^ n ≠ 0 := pow_ne_zero _ hp.ne_zero
     have hterm : ∀ b, x a b ^ (p ^ n) • G.lc p (γ b) n = if hb : b ∈ S then
         T w (e.symm ⟨b, hb⟩) ^ (p ^ n) • G.lc p (γ b) n else 0 := by
       intro b
-      simp only [hx, dif_pos ha, ← hw]
+      simp only [hx, dite_eq_left ha, ← hw]
       split_ifs <;> simp [zero_pow hp0]
     rw [Finset.sum_congr rfl (fun b _ => hterm b),
       sum_dite_mem_eq_sum_equivFin S (fun b : S => T w (e.symm b) ^ (p ^ n) • G.lc p (γ b) n)]
@@ -1098,12 +1030,12 @@ theorem glue_ne_zero {ι : Type} {lab : Fin d → ι} {S : ι → Finset (Fin d)
     {a b : Fin d} (h : glue lab S x a b ≠ 0) : b = a ∨ (a ∈ S (lab a) ∧ b ∈ S (lab a)) := by
   simp only [glue, Matrix.of_apply] at h
   by_cases ha : a ∈ S (lab a)
-  · rw [if_pos ha] at h
+  · rw [ite_eq_left ha] at h
     exact Or.inr (hx _ _ _ h)
-  · rw [if_neg ha] at h
+  · rw [ite_eq_right ha] at h
     by_cases hab : a = b
     · exact Or.inl hab.symm
-    · rw [if_neg hab] at h; exact absurd rfl h
+    · rw [ite_eq_right hab] at h; exact absurd rfl h
 
 theorem finrank_mod_le {M : Type} [AddCommGroup M] [Module C M] (W : Submodule C M)
     (t : Finset M) (A : Set M) (hA : ∀ w ∈ A, w ∈ W ⊔ Submodule.span C (t : Set M)) :
@@ -1161,7 +1093,7 @@ theorem exists_stage [IsAlgClosed C] [CharZero C] {p : ℕ} (hp : p.Prime) (hv :
       simp only [htan, Finset.smul_sum, smul_smul]
       rw [Finset.sum_comm]
       simp only [← Finset.sum_smul, ← Matrix.mul_apply, hYX, Matrix.one_apply, ite_smul, one_smul,
-        zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     rw [e]
     refine U.sum_mem fun b _ => ?_
     by_cases hab : glue ty S y a b = 0
@@ -1169,7 +1101,7 @@ theorem exists_stage [IsAlgClosed C] [CharZero C] {p : ℕ} (hp : p.Prime) (hv :
     · exact U.smul_mem _ (hU b (glue_ne_zero hys hab))
   · have := hLa (ty a) a ha haD
     rw [hlc]
-    simp only [glue, Matrix.of_apply, if_pos ha]
+    simp only [glue, Matrix.of_apply, ite_eq_left ha]
     exact (Submodule.Quotient.mk_eq_zero _).1 this
 
 end
@@ -1235,17 +1167,17 @@ theorem exists_stageInv_zero [IsAlgClosed C] [CharZero C] {p : ℕ} (hp : p.Prim
   refine ⟨γ', fun a => if Even (ty a).val ∧ a ∉ D (ty a) then 0 else -1, hB', fun a => ?_,
     fun a ha => ?_, fun i hi l hl => ?_, fun a ha => ?_⟩
   · dsimp only; split_ifs <;> simp
-  · exact if_neg fun hc => (Nat.not_even_iff_odd.2 ha) hc.1
+  · exact ite_eq_right fun hc => (Nat.not_even_iff_odd.2 ha) hc.1
   · refine (Finset.card_le_card fun a ha => ?_).trans (hD i)
     obtain ⟨-, rfl, hal⟩ := Finset.mem_filter.1 ha
     by_contra haD
     dsimp only at hal
-    rw [if_pos ⟨hi, haD⟩] at hal
+    rw [ite_eq_left ⟨hi, haD⟩] at hal
     simp only [Nat.cast_zero] at hl
     omega
   · have hc : Even (ty a).val ∧ a ∉ D (ty a) := by
       by_contra hc
-      simp only [if_neg hc] at ha
+      simp only [ite_eq_right hc] at ha
       omega
     refine ⟨(Submodule.mem_bot C).1 (hW a (by simpa using hc.1) hc.2), ?_⟩
     refine Submodule.span_mono ?_ (_root_.GlobalTheory.span_tangent_of_type C v p d h ty G γ' hB' (ty a + 2) _ fun c hc' =>
@@ -1253,7 +1185,7 @@ theorem exists_stageInv_zero [IsAlgClosed C] [CharZero C] {p : ℕ} (hp : p.Prim
     rintro _ ⟨b, rfl⟩
     refine ⟨⟨b.1, b.2, ?_⟩, rfl⟩
     dsimp only
-    rw [if_pos hc]
+    rw [ite_eq_left hc]
     split_ifs <;> simp
 
 theorem exists_stageInv_succ [IsAlgClosed C] [CharZero C] {p : ℕ} (hp : p.Prime)
@@ -1309,7 +1241,7 @@ theorem exists_stageInv_succ [IsAlgClosed C] [CharZero C] {p : ℕ} (hp : p.Prim
   · have := hr a
     simp only [hdp']; push_cast; split_ifs <;> omega
   · have := ho a ha
-    simp only [hdp']; rw [if_neg (by omega), this]
+    simp only [hdp']; rw [ite_eq_right (by omega), this]
   · push_cast at hlK
     by_cases hlK' : l = K
     · refine (Finset.card_le_card fun a ha => ?_).trans (hD i)
@@ -1333,9 +1265,9 @@ theorem exists_stageInv_succ [IsAlgClosed C] [CharZero C] {p : ℕ} (hp : p.Prim
       (hl b ?_).1), ?_⟩
     · rcases hb with rfl | ⟨-, -, hb⟩ <;> omega
     · by_cases h1 : dp a = K ∧ a ∉ D (ty a)
-      · have e : dp' a = K + 1 := if_pos h1
+      · have e : dp' a = K + 1 := ite_eq_left h1
         exact hspan _ K _ (by omega) (by omega) (hW a h1.1 h1.2)
-      · have e : dp' a = dp a := if_neg h1
+      · have e : dp' a = dp a := ite_eq_right h1
         have := hr a
         refine hlc a 2 _ fun b hb => ?_
         rcases hb with rfl | ⟨haK, hb1, hb2⟩
@@ -1550,9 +1482,6 @@ theorem low_count_third_bound : RadiusExponentInequality := by
   · rw [hrK, hrm]
     have hdiv : (i : ℝ) * ex / ((p : ℝ) - 1) = i * ex * (1 / ((p : ℝ) - 1)) := by ring
     rw [hdiv, hpm]
-    have key : ((i : ℝ) - cr) * ex * (ex * q) ≤ ((i : ℝ) - cr) * ex := by
-      have := mul_le_mul_of_nonneg_left hqe (mul_nonneg (sub_nonneg.2 hi) (by positivity : (0:ℝ) ≤ ex))
-      linarith
     have e : (i : ℝ) * ex * ((1 + p) / D) - (i : ℝ) ^ 2 * Real.logb p (ex + 1) - i * ex * ((1 + q) / D)
         - ex * cr * ((1 + p) / D - (1 + q) / D)
         - ((((i : ℝ) - cr) * ex * p / D) - (i : ℝ) ^ 2 * (Real.logb p ex + 1))
@@ -1689,7 +1618,7 @@ theorem coeff_lin {M : ℕ} (x : Fin M → C) (α : Fin M →₀ ℕ) :
 theorem coeff_lin_eq_zero {M : ℕ} (x : Fin M → C) (α : Fin M →₀ ℕ) (h : Finsupp.degree α ≠ 1) :
     coeff α (∑ m, x m • (X m : MvPowerSeries (Fin M) C)) = 0 := by
   rw [coeff_lin]
-  refine Finset.sum_eq_zero fun m _ => if_neg fun e => h ?_
+  refine Finset.sum_eq_zero fun m _ => ite_eq_right fun e => h ?_
   rw [e]; simp
 
 theorem ordGe_lin {M : ℕ} (ρ : Fin M → ℝ) (x : Fin M → C) (r : ℝ) (hx : ∀ m, IsIntV v (x m))
@@ -1885,7 +1814,7 @@ theorem detDepth_lower : ∀ (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (
       · have hacr : a.val < cr := by
           by_contra hacr
           exact ha (hgS a (not_lt.1 hacr) b (Finset.mem_filter.2 ⟨Finset.mem_univ _, hb, hK⟩))
-        simp only [hρ, if_pos hacr]
+        simp only [hρ, ite_eq_left hacr]
         exact _root_.GlobalTheory.DepthRadii.radius_anti hp3 (hdp b).1
       · exact (_root_.GlobalTheory.DepthRadii.radius_anti hp3 (not_lt.1 hK)).trans (hρK a)
   obtain ⟨t, ht0, hteq, htord, -⟩ := GlobalTheory.DepthRadii.exists_solution_ordGe_radius C v p hp hp3 hvp d i dp cc (fun a => (hdp a).1)

@@ -2,42 +2,6 @@ module
 
 public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightedPrimeSumBound
 public import Formalism.LocalToGlobal.ProjectiveLattices.ExtendedPointBaseChange
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -121,11 +85,11 @@ theorem norm_euclideanEmbedding_eq_netNorm (σ : B.KO →+* ℂ) (F : B.Cusp j k
   rw [Fintype.sum_sigma, Finset.sum_eq_single σ]
   · rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun y _ => ?_
-    rw [Nt.goodRowsProjector_apply_eq_sum, if_pos rfl, norm_mul, mul_pow, Complex.norm_real, Real.norm_eq_abs, sq_abs, ← Nt.cf_sq]
+    rw [Nt.goodRowsProjector_apply_eq_sum, ite_eq_left rfl, norm_mul, mul_pow, Complex.norm_real, Real.norm_eq_abs, sq_abs, ← Nt.cf_sq]
     ring
   · intro τ _ hτ
     refine Finset.sum_eq_zero fun y _ => ?_
-    rw [Nt.goodRowsProjector_apply_eq_sum, if_neg hτ, norm_zero]
+    rw [Nt.goodRowsProjector_apply_eq_sum, ite_eq_right hτ, norm_zero]
     ring
   · intro h
     exact absurd (Finset.mem_univ σ) h
@@ -146,8 +110,7 @@ theorem netN_eq_zero (hM : NetMax Nt) (σ : B.KO →+* ℂ) (F : B.Cusp j ka) : 
     have hpos : (0 : ℝ) < Fintype.card (Nt.NN σ) := Nat.cast_pos.mpr (Fintype.card_pos_iff.mpr ⟨y⟩)
     have h2 : (Fintype.card (Nt.NN σ) : ℝ)⁻¹ * ∑ y, ‖Nt.ev σ y F‖ ^ 2 ≤ 0 := Real.sqrt_eq_zero'.mp h
     have h3 : ∑ y, ‖Nt.ev σ y F‖ ^ 2 ≤ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       have := mul_pos (inv_pos.mpr hpos) hc
       linarith
     have h4 : ‖Nt.ev σ y F‖ ^ 2 ≤ ∑ y, ‖Nt.ev σ y F‖ ^ 2 :=

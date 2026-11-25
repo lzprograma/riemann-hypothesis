@@ -59,7 +59,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SymChain GlobalTheory.SeeSaw ValuativeRel GlobalTheory.LocMod
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LocMod.LevBack
 open GlobalTheory.FinPl (SplitPt)
@@ -199,9 +198,9 @@ theorem blkOf_zPos {κ l t j n r : ℕ} (hr : r = κ + l) {e : Ix (Fin κ ⊕ Fi
   unfold blkOf
   rw [he a]
   rcases a with (a | a) | ⟨p, i⟩
-  · rw [if_pos (by have := a.2; simp only [zPos]; omega)]; rfl
-  · rw [if_pos (by have := a.2; simp only [zPos]; omega)]; rfl
-  · rw [if_neg (by simp only [zPos]; omega)]
+  · rw [ite_eq_left (by have := a.2; simp only [zPos]; omega)]; rfl
+  · rw [ite_eq_left (by have := a.2; simp only [zPos]; omega)]; rfl
+  · rw [ite_eq_right (by simp only [zPos]; omega)]
     have ht : 0 < t := i.pos
     have : zPos (κ := κ) (l := l) (Sum.inr (p, i)) - r = i.val + t * p.val := by
       simp only [zPos, mul_comm t]; omega

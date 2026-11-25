@@ -132,7 +132,7 @@ theorem isWtOn_iff (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E) (
       convert this using 1
       simp
     have heq := hder.unique hexp
-    rw [Finset.sum_eq_single a (fun b _ hb => by simp [Pi.single_apply, hb]) (by simp)] at heq
+    rw [Finset.sum_eq_single a (fun b _ hb => by simp [hb]) (by simp)] at heq
     simp only [Pi.single_eq_same, Complex.ofReal_one, one_mul] at heq
     apply Subtype.ext
     have h2 : Complex.I • ((E a a v : D) : H) = Complex.I • (((μ a : ℝ) : ℂ) • (v : H)) := by

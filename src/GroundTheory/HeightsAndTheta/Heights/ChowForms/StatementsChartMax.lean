@@ -33,10 +33,6 @@ def ComponentOfIncIdeal.Statement : Prop :=
         incIdeal W e ≤ Ideal.span {q} →
           W ∈ relComps (I ⊔ Ideal.span {linForm u}) ∧ incIdeal W e = Ideal.span {q}
 
-section Inhabitants
-
-end Inhabitants
-
 end
 
 end GroundTheory.Heights₂.Heights

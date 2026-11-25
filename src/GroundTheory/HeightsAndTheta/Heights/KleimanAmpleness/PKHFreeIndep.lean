@@ -68,7 +68,7 @@ theorem smul_smul_monoFrac (I : ∀ k, Finset (ι k)) (u : (Σ k, ι k) →₀ �
     (monomial u (1 : S) : MRingOver S ι) • (r • monoFrac S I b) =
       LocalizedModule.mk (Ideal.Quotient.mk (⊥ : Ideal (MRingOver S ι))
         (monomial (posExp b + u - negExp b) r)) (1 : KH.cellMon S I) := by
-  rw [monoFrac, dif_pos hI, LocalizedModule.smul'_mk, LocalizedModule.smul'_mk, LocalizedModule.mk_eq]
+  rw [monoFrac, dite_eq_left hI, LocalizedModule.smul'_mk, LocalizedModule.smul'_mk, LocalizedModule.mk_eq]
   refine ⟨1, ?_⟩
   rw [one_smul, one_smul, one_smul, Submonoid.smul_def]
   rw [← Ideal.Quotient.mk_eq_mk, ← Ideal.Quotient.mk_eq_mk, ← Submodule.Quotient.mk_smul,
@@ -106,12 +106,12 @@ theorem eq_zero_of_sum_smul_monoFrac (I : ∀ k, Finset (ι k)) (A : Finset ((Σ
   intro a ha
   by_cases hI : ∀ k, negSet a k ⊆ I k
   · have hk := congrArg (AddMonoidAlgebra.coeff · (c a)) key
-    rw [coeff_sum, Finset.sum_eq_single a, coeff_monomial, if_pos rfl,
+    rw [coeff_sum, Finset.sum_eq_single a, coeff_monomial, ite_eq_left rfl,
       AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at hk
     · exact hk
     · intro b hb hba
       by_cases hbI : ∀ k, negSet b k ⊆ I k
-      · rw [coeff_monomial, if_neg]
+      · rw [coeff_monomial, ite_eq_right]
         exact fun hcb => hba (shift_injective u (hle b hb hbI) (hle a ha hI) hcb)
       · simp [hg b hb hbI]
     · exact fun hna => absurd ha hna
@@ -134,8 +134,8 @@ theorem KHFreeIndep.full : KHFreeIndep.Statement := by
     split_ifs with hb1
     · rfl
     · simp [monoFrac, hb1]
-  have hJ := KHFreeIndep.eq_zero_of_sum_smul_monoFrac J.1.1 A g (fun b _ hb => dif_neg hb) hsum a ha
-  rw [show g a = f a J from dif_pos J.2] at hJ
+  have hJ := KHFreeIndep.eq_zero_of_sum_smul_monoFrac J.1.1 A g (fun b _ hb => dite_eq_right hb) hsum a ha
+  rw [show g a = f a J from dite_eq_left J.2] at hJ
   simpa using hJ
 
 end

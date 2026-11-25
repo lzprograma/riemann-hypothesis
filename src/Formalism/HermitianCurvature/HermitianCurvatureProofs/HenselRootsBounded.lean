@@ -1,50 +1,7 @@
 module
 
 public import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -513,19 +470,19 @@ theorem TT_congr {R : Subring K} {s : ℕ} {Cut : Set K} {τ : Kˣ} {F : Kˣ →
   unfold TT
   by_cases hc : (c : K) ∈ Cut
   · obtain ⟨hc', ω, hcω, hF⟩ := hω c c' hcc hc
-    rw [if_pos hc, if_pos hc', ← finsum_comp_equiv (Equiv.mulRight ω)]
+    rw [ite_eq_left hc, ite_eq_left hc', ← finsum_comp_equiv (Equiv.mulRight ω)]
     refine finsum_congr fun z => ?_
     have hiff : (z * ω) ^ s = τ * c' ↔ z ^ s = τ * c := by
       rw [hcω, mul_pow, ← mul_assoc]
       exact mul_left_inj _
     show (if (z * ω) ^ s = τ * c' then F (z * ω) else 0) = _
     by_cases hz : z ^ s = τ * c
-    · rw [if_pos hz, if_pos (hiff.2 hz), hF z hz]
-    · rw [if_neg hz, if_neg (fun hh => hz (hiff.1 hh))]
+    · rw [ite_eq_left hz, ite_eq_left (hiff.2 hz), hF z hz]
+    · rw [ite_eq_right hz, ite_eq_right (fun hh => hz (hiff.1 hh))]
   · have hc' : (c' : K) ∉ Cut := by
       intro hc'
       exact hc (hω c' c (by simpa using R.neg_mem hcc) hc').1
-    rw [if_neg hc, if_neg hc']
+    rw [ite_eq_right hc, ite_eq_right hc']
 
 theorem TT_scale {s : ℕ} {Cut : Set K} {τ : Kˣ} {F G : Kˣ → ℂ} (υ : Kˣ)
     (hcut : ∀ c : Kˣ, (c : K) ∈ Cut ↔ ((υ ^ s * c : Kˣ) : K) ∈ Cut)
@@ -534,16 +491,16 @@ theorem TT_scale {s : ℕ} {Cut : Set K} {τ : Kˣ} {F G : Kˣ → ℂ} (υ : K�
   classical
   unfold TT
   by_cases hc : (c : K) ∈ Cut
-  · rw [if_pos hc, if_pos ((hcut c).1 hc), ← finsum_comp_equiv (Equiv.mulRight υ)]
+  · rw [ite_eq_left hc, ite_eq_left ((hcut c).1 hc), ← finsum_comp_equiv (Equiv.mulRight υ)]
     refine finsum_congr fun z => ?_
     have hiff : (z * υ) ^ s = τ * (υ ^ s * c) ↔ z ^ s = τ * c := by
       rw [mul_pow, mul_left_comm τ, mul_comm (z ^ s)]
       exact mul_right_inj _
     show (if (z * υ) ^ s = τ * (υ ^ s * c) then F (z * υ) else 0) = _
     by_cases hz : z ^ s = τ * c
-    · rw [if_pos hz, if_pos (hiff.2 hz), hG c z hc hz]
-    · rw [if_neg hz, if_neg (fun hh => hz (hiff.1 hh))]
-  · rw [if_neg hc, if_neg (fun hh => hc ((hcut c).2 hh))]
+    · rw [ite_eq_left hz, ite_eq_left (hiff.2 hz), hG c z hc hz]
+    · rw [ite_eq_right hz, ite_eq_right (fun hh => hz (hiff.1 hh))]
+  · rw [ite_eq_right hc, ite_eq_right (fun hh => hc ((hcut c).2 hh))]
 
 theorem core {R : Subring K} {s : ℕ} {Cut : Set K} {τ : Kˣ} {F : Kˣ → ℂ}
     {cr : K ⧸ R.toAddSubgroup → Kˣ} (hcr : IsCr R cr)
@@ -578,22 +535,22 @@ theorem core {R : Subring K} {s : ℕ} {Cut : Set K} {τ : Kˣ} {F : Kˣ → ℂ
       refine finsum_congr fun x => ?_
       unfold TT
       by_cases hc : (cr x : K) ∈ Cut
-      · simp only [if_pos hc]
+      · simp only [ite_eq_left hc]
         rw [← finsum_sum_comm]
         · rw [← finsum_zero (α := Kˣ)]
           refine finsum_congr fun z => ?_
           by_cases hz : z ^ s = τ * cr x
-          · simp only [if_pos hz]; exact hC _ hc z hz
-          · simp only [if_neg hz]; simp
+          · simp only [ite_eq_left hz]; exact hC _ hc z hz
+          · simp only [ite_eq_right hz]; simp
         · intro ε _
           exact (hfin2 (τ * cr x)).subset fun z hz => by
             by_contra hne
-            exact hz (if_neg hne)
-      · simp only [if_neg hc]; simp
+            exact hz (ite_eq_right hne)
+      · simp only [ite_eq_right hc]; simp
     · intro ε _
       exact hfin1.subset fun x hx => by
         by_contra hne
-        exact hx (if_neg hne)
+        exact hx (ite_eq_right hne)
   exact (mul_eq_zero.1 hsum).resolve_left fun h0 => hcard (by exact_mod_cast h0)
 
 end Core
@@ -924,14 +881,14 @@ theorem crossVanish : Formalism.FourierDecayAlt.A6.CrossVanish := by
   refine Eq.trans (finsum_congr fun x => ?_) hmain
   unfold TT
   by_cases hc : (cr x : K) ∈ cutSet m Om t
-  · rw [if_pos hc, if_pos hc]
+  · rw [ite_eq_left hc, ite_eq_left hc]
     refine finsum_congr fun z => ?_
     by_cases hz : z ^ (m + 1) = (-t₁) ^ m * cr x
-    · rw [if_pos hz, if_pos hz, hF, hA]
+    · rw [ite_eq_left hz, ite_eq_left hz, hF, hA]
       show _ = g (z : K) * ψ _
       congr 2; ring
-    · rw [if_neg hz, if_neg hz]
-  · rw [if_neg hc, if_neg hc]
+    · rw [ite_eq_right hz, ite_eq_right hz]
+  · rw [ite_eq_right hc, ite_eq_right hc]
 
 end Main
 

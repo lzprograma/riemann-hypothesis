@@ -16,8 +16,6 @@ import Mathlib.Tactic.TypeStar
 section -- clump:auto
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights
 
 namespace RestTerms
@@ -227,7 +225,7 @@ theorem constantCoeff_schur (σ : Type*) [Fintype σ] [DecidableEq σ] {m : ℕ}
     intro j
     simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply,
       constantCoeff_completeSymmetric]
-    rw [if_neg]
+    rw [ite_eq_right]
     simp only [Nat.cast_zero, sub_zero]
     omega
 
@@ -256,7 +254,7 @@ theorem constantCoeff_pushOut (r a : ℕ) (c : SmallBlock) (κ : ℚ) (lam : Fin
     rw [map_mul, constantCoeff_C, xSign, constantCoeff_aeval_of_zero _ (fun i => by simp), this,
       schur_zero, map_one, mul_one]
   · rw [map_mul, constantCoeff_C, xSign, constantCoeff_aeval_of_zero _ (fun i => by simp),
-      constantCoeff_schur _ _ (fun i j hij => Nat.sub_le_sub_right (hl hij) a), if_neg, mul_zero]
+      constantCoeff_schur _ _ (fun i j hij => Nat.sub_le_sub_right (hl hij) a), ite_eq_right, mul_zero]
     intro h0
     exact h2 (funext fun i => by
       have := congrFun h0 i
@@ -351,7 +349,7 @@ theorem extraFactor_expand (hF : FrobeniusCharacterFormula.Statement) (r q m : �
   unfold extraFactor blockCoeff
   by_cases hq : q = 0
   · subst hq
-    simp only [if_true, one_mul, zero_add]
+    simp only [ite_true, one_mul, zero_add]
     by_cases hm : m = 0
     · subst hm
       simp [partitionsOf_zero, schur_zero]
@@ -359,8 +357,8 @@ theorem extraFactor_expand (hF : FrobeniusCharacterFormula.Statement) (r q m : �
       have := hF r 1 m' le_rfl
       rw [pow_succ', this, add_comm 1 m']
       refine Finset.sum_congr rfl fun lam _ => ?_
-      rw [if_neg hm, List.replicate_succ]
-  · simp only [if_neg hq]
+      rw [ite_eq_right hm, List.replicate_succ]
+  · simp only [ite_eq_right hq]
     exact hF r q m (Nat.one_le_iff_ne_zero.mpr hq)
 
 def blockOut (r a : ℕ) (c : SmallBlock) (κ : ℚ) (q m : ℕ) : RootRing 1 (r + a) :=
@@ -388,14 +386,14 @@ theorem constantCoeff_blockOut (r a : ℕ) (c : SmallBlock) (κ : ℚ) (q m : �
       if q + m = r * a then blockCoeff q m (rectangle r a) * κ else 0 := by
   rw [blockOut, constantCoeff_pushOut_sum r a c κ _ (fun lam h => antitone_of_mem_partitionsOf h)]
   by_cases h : q + m = r * a
-  · rw [if_pos ((rectangle_mem_partitionsOf r a (q + m)).mpr h), if_pos h]
-  · rw [if_neg (fun h' => h ((rectangle_mem_partitionsOf r a (q + m)).mp h')), if_neg h]
+  · rw [ite_eq_left ((rectangle_mem_partitionsOf r a (q + m)).mpr h), ite_eq_left h]
+  · rw [ite_eq_right (fun h' => h ((rectangle_mem_partitionsOf r a (q + m)).mp h')), ite_eq_right h]
 
 theorem blockOut_eq_zero_of_lt (r a : ℕ) (c : SmallBlock) (κ : ℚ) (q m : ℕ)
     (h : q + m < r * a) : blockOut r a c κ q m = 0 := by
   refine Finset.sum_eq_zero fun lam hlam => ?_
   have hs := sum_of_mem_partitionsOf hlam
-  rw [pushOut, if_neg, smul_zero]
+  rw [pushOut, ite_eq_right, smul_zero]
   intro hall
   have : ∑ i : Fin r, a ≤ ∑ i, lam i := Finset.sum_le_sum fun i _ => hall i
   simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul] at this
@@ -416,8 +414,6 @@ end -- clump:auto
 -- clump-header: {"m": "GroundTheory.HeightsAndTheta.Heights.RemainderTerms.BlockValue", "h": "module\n\npublic import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Expand\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
 
@@ -488,7 +484,7 @@ theorem mstar_mem (f r a : ℕ) (q : Fin f → ℕ) (e : ℕ) (τ : Fin f)
       ∑ σ' ∈ Finset.univ.erase τ, (r * a - q σ') :=
     Finset.sum_congr rfl fun x hx => by simp [mstar, Finset.ne_of_mem_erase hx]
   rw [this]
-  simp only [mstar, if_true]
+  simp only [mstar, ite_true]
   omega
 
 theorem eq_mstar_of (f r a : ℕ) (q : Fin f → ℕ) (e : ℕ) (τ : Fin f) (m : Fin f → ℕ)
@@ -502,7 +498,7 @@ theorem eq_mstar_of (f r a : ℕ) (q : Fin f → ℕ) (e : ℕ) (τ : Fin f) (m 
     rw [← Finset.add_sum_erase _ _ (Finset.mem_univ σ)] at hs
     have : ∑ x ∈ Finset.univ.erase σ, m x = ∑ σ' ∈ Finset.univ.erase σ, (r * a - q σ') :=
       Finset.sum_congr rfl fun x hx => h x (Finset.ne_of_mem_erase hx)
-    simp only [mstar, if_true]
+    simp only [mstar, ite_true]
     omega
   · simp [mstar, hσ, h σ hσ]
 
@@ -517,16 +513,16 @@ theorem restrict_gmfOut (f r a : ℕ) (c : SmallBlock) (κ : ℚ) (q : Fin f →
   rw [gmfOut, map_sum]
   rw [Finset.sum_eq_single (mstar f r a q e τ)]
   · rw [map_smul, map_prod, ← Finset.mul_prod_erase _ _ (Finset.mem_univ τ)]
-    rw [restrictToBlock_blockEmb, if_pos rfl]
+    rw [restrictToBlock_blockEmb, ite_eq_left rfl]
     have : ∏ x ∈ Finset.univ.erase τ, restrictToBlock f (r + a) τ
         (blockEmb f (r + a) x (blockOut r a c κ (q x) (mstar f r a q e τ x))) =
         C (∏ σ ∈ Finset.univ.erase τ, (blockCoeff (q σ) (r * a - q σ) (rectangle r a) * κ)) := by
       rw [map_prod]
       refine Finset.prod_congr rfl fun σ hσ => ?_
       have hne := Finset.ne_of_mem_erase hσ
-      rw [restrictToBlock_blockEmb, if_neg hne, constantCoeff_blockOut]
-      simp only [mstar, if_neg hne]
-      rw [if_pos (by have := hq σ hne; omega)]
+      rw [restrictToBlock_blockEmb, ite_eq_right hne, constantCoeff_blockOut]
+      simp only [mstar, ite_eq_right hne]
+      rw [ite_eq_left (by have := hq σ hne; omega)]
     rw [this, smul_eq_C_mul, smul_eq_C_mul, map_mul, map_natCast]
     ring
   · intro m hm hne
@@ -535,7 +531,7 @@ theorem restrict_gmfOut (f r a : ℕ) (c : SmallBlock) (κ : ℚ) (q : Fin f →
       push Not at hcon
       exact hne (eq_mstar_of f r a q e τ m hm hcon)
     rw [map_smul, map_prod, Finset.prod_eq_zero (Finset.mem_univ σ), smul_zero]
-    rw [restrictToBlock_blockEmb, if_neg hστ, constantCoeff_blockOut, if_neg, map_zero]
+    rw [restrictToBlock_blockEmb, ite_eq_right hστ, constantCoeff_blockOut, ite_eq_right, map_zero]
     have := hq σ hστ
     omega
   · intro h
@@ -597,10 +593,10 @@ theorem blockOut_rect (r a : ℕ) (c : SmallBlock) (κ : ℚ) (q m : ℕ) (h : q
     blockOut r a c κ q m = C (blockCoeff q m (rectangle r a) * κ) := by
   rw [blockOut, Finset.sum_eq_single (rectangle r a)]
   · have h0 : (fun i : Fin r => rectangle r a i - a) = 0 := funext fun i => by simp [rectangle]
-    rw [pushOut, if_pos (fun i => by simp [rectangle]), h0, schur_zero, map_one, mul_one, smul_eq_C_mul,
+    rw [pushOut, ite_eq_left (fun i => by simp [rectangle]), h0, schur_zero, map_one, mul_one, smul_eq_C_mul,
       ← C_mul, mul_comm]
   · intro lam hlam hne
-    rw [pushOut, if_neg, smul_zero]
+    rw [pushOut, ite_eq_right, smul_zero]
     intro hall
     apply hne
     rw [mem_partitionsOf_iff] at hlam

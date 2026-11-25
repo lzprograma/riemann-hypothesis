@@ -61,8 +61,7 @@ open TensorProduct in
 private theorem projTrace_comm (u : M →ₗ[R] N) (v : N →ₗ[R] M) :
     projTrace R N (u ∘ₗ v) = projTrace R M (v ∘ₗ u) := by
   obtain ⟨t, rfl⟩ := (dualTensorHom_bijective (R := R) (M := M) (N := N)).2 u
-  induction t using TensorProduct.induction_on with
-  | zero => simp
+  induction t using TensorProduct.inductionOn with
   | add a b ha hb => simp only [map_add (f := _), LinearMap.add_comp, LinearMap.comp_add, ha, hb]
   | tmul ξ n =>
     have e1 : dualTensorHom R M N (ξ ⊗ₜ n) ∘ₗ v = (ξ ∘ₗ v).smulRight n := by ext; simp
@@ -110,23 +109,20 @@ end Alg
 private theorem res_pi_bijective {Y : Scheme.{0}} {M : Type} (A : Y.Opens) (D : M → Y.Opens)
     (hD : ∀ m, D m ≤ A) (hc : A ≤ iSup D) (hd : ∀ i j, i ≠ j → D i ⊓ D j = ⊥) :
     Function.Bijective fun (x : Γ(Y, A)) m ↦ Y.presheaf.map (homOfLE (hD m)).op x := by
-  constructor
-  · intro x y e
-    exact TopCat.Sheaf.eq_of_locally_eq' Y.sheaf D A (fun m ↦ homOfLE (hD m)) hc x y
-      fun m ↦ congrFun e m
-  · intro y
-    have hcomp : TopCat.Presheaf.IsCompatible Y.sheaf.1 D y := by
-      intro i j
-      by_cases hij : i = j
-      · subst hij
-        rfl
-      · have : Subsingleton Γ(Y, D i ⊓ D j) := by
-          rw [hd i j hij]
-          infer_instance
-        exact this.elim _ _
-    obtain ⟨x, hx, -⟩ := TopCat.Sheaf.existsUnique_gluing' Y.sheaf D A
-      (fun m ↦ homOfLE (hD m)) hc y hcomp
-    exact ⟨x, funext hx⟩
+  rw [Function.bijective_iff_existsUnique]
+  intro y
+  have hcomp : TopCat.Presheaf.IsCompatible Y.sheaf.1 D y := by
+    intro i j
+    by_cases hij : i = j
+    · subst hij
+      rfl
+    · have : Subsingleton Γ(Y, D i ⊓ D j) := by
+        rw [hd i j hij]
+        infer_instance
+      exact this.elim _ _
+  obtain ⟨x, hx, hunique⟩ := TopCat.Sheaf.existsUnique_gluing' Y.sheaf D A
+    (fun m ↦ homOfLE (hD m)) hc y hcomp
+  exact ⟨x, funext hx, fun z hz ↦ hunique z (congrFun hz)⟩
 
 section Geo
 
@@ -138,17 +134,17 @@ private theorem secTrace_eq_sum {s : Z ⟶ Sp k} {s' : Y ⟶ Sp k} {c : Y ⟶ Z}
     (hU : IsAffineOpen U) (b' : Sec s' (c ⁻¹ᵁ U)) :
     secTrace s s' hU b' = ∑ m, secTrace (f := (W m).ι ≫ c) s ((W m).ι ≫ s') hU
       (appSec s' ((W m).ι ≫ s') (W m).ι (c ⁻¹ᵁ U) b') := by
-  letI := secAlg s s' c U
-  letI inst : ∀ m, Algebra (Sec s U) (Sec ((W m).ι ≫ s') (((W m).ι ≫ c) ⁻¹ᵁ U)) :=
+  let := secAlg s s' c U
+  let inst : ∀ m, Algebra (Sec s U) (Sec ((W m).ι ≫ s') (((W m).ι ≫ c) ⁻¹ᵁ U)) :=
     fun m ↦ secAlg s ((W m).ι ≫ s') ((W m).ι ≫ c) U
-  haveI := sec_finite (s := s) (s' := s') (f := c) hU
-  haveI := sec_etale (s := s) (s' := s') (f := c) hU
-  haveI := projective_of_etale (Sec s U) (Sec s' (c ⁻¹ᵁ U))
-  haveI : ∀ m, Module.Finite (Sec s U) (Sec ((W m).ι ≫ s') (((W m).ι ≫ c) ⁻¹ᵁ U)) :=
+  have := sec_finite (s := s) (s' := s') (f := c) hU
+  have := sec_etale (s := s) (s' := s') (f := c) hU
+  have := projective_of_etale (Sec s U) (Sec s' (c ⁻¹ᵁ U))
+  have : ∀ m, Module.Finite (Sec s U) (Sec ((W m).ι ≫ s') (((W m).ι ≫ c) ⁻¹ᵁ U)) :=
     fun m ↦ sec_finite (s := s) (s' := (W m).ι ≫ s') (f := (W m).ι ≫ c) hU
-  haveI : ∀ m, Algebra.Etale (Sec s U) (Sec ((W m).ι ≫ s') (((W m).ι ≫ c) ⁻¹ᵁ U)) :=
+  have : ∀ m, Algebra.Etale (Sec s U) (Sec ((W m).ι ≫ s') (((W m).ι ≫ c) ⁻¹ᵁ U)) :=
     fun m ↦ sec_etale (s := s) (s' := (W m).ι ≫ s') (f := (W m).ι ≫ c) hU
-  haveI : ∀ m, Module.Projective (Sec s U) (Sec ((W m).ι ≫ s') (((W m).ι ≫ c) ⁻¹ᵁ U)) :=
+  have : ∀ m, Module.Projective (Sec s U) (Sec ((W m).ι ≫ s') (((W m).ι ≫ c) ⁻¹ᵁ U)) :=
     fun m ↦ projective_of_etale _ _
   let r : ∀ m, Sec s' (c ⁻¹ᵁ U) →ₐ[Sec s U] Sec ((W m).ι ≫ s') (((W m).ι ≫ c) ⁻¹ᵁ U) := fun m ↦
     { appSec s' ((W m).ι ≫ s') (W m).ι (c ⁻¹ᵁ U) with
@@ -203,8 +199,7 @@ private theorem sum_app {X : Scheme.{0}} {F G : X.Modules} {ι : Type} (t : Fins
   classical
   induction t using Finset.induction_on with
   | empty =>
-    simp only [Finset.sum_empty, Scheme.Modules.Hom.zero_app]
-    rfl
+    simp
   | insert a t ha ih =>
     rw [Finset.sum_insert ha, Finset.sum_insert ha, Scheme.Modules.Hom.add_app, ← ih]
     rfl
@@ -229,31 +224,22 @@ private theorem omegaTrace_eq_sum {s : Z ⟶ Sp k} {s' : Y ⟶ Sp k} {c : Y ⟶ 
 
   rw [secTrace_eq_sum W hd hc hU b', Finset.sum_smul, map_sum]
 
-private theorem cohOn_map_sum {X : Scheme.{0}} (R : Type) [CommRing R] [Algebra R Γ(X, ⊤)]
-    {F G : X.Modules} {ι : Type} (t : Finset ι) (φ : ι → (F ⟶ G)) (U : X.Opens) (n : ℕ) :
-    cohOn.map R (∑ i ∈ t, φ i) U n = ∑ i ∈ t, cohOn.map R (φ i) U n := by
-  classical
-  induction t using Finset.induction_on with
-  | empty => simpa using cohOn.map_zero_hom R F G U n
-  | insert a t ha ih =>
-    rw [Finset.sum_insert ha, Finset.sum_insert ha, cohOn.map_add_hom, ih]
-
 private theorem hodgeTrace_eq_sum {s : Z ⟶ Sp k} {s' : Y ⟶ Sp k} {c : Y ⟶ Z} [IsFinite c] [Etale c]
     (h : c ≫ s = s') {M : Type} [Fintype M] (W : M → Y.Opens) (hd : ∀ i j, i ≠ j → W i ⊓ W j = ⊥)
     (hc : iSup W = ⊤) [∀ m, IsFinite ((W m).ι ≫ c)] [∀ m, Etale ((W m).ι ≫ c)]
     (hg : ∀ m, ((W m).ι ≫ c) ≫ s = (W m).ι ≫ s') (a b : ℕ) (w : hodgeH s' a b) :
     hodgeTrace h a b w = ∑ m, hodgeTrace (f := (W m).ι ≫ c) (hg m) a b
       (hodgePull (f := (W m).ι) rfl a b w) := by
-  letI := algΓ s
-  letI := algΓ s'
+  let := algΓ s
+  let := algΓ s'
   obtain ⟨y, rfl⟩ := (coh.pushforwardEquiv k (appTop_algebraMap h) (Omega s' a) b).surjective w
   have e1 : hodgeTrace h a b (coh.pushforwardEquiv k (appTop_algebraMap h) (Omega s' a) b y) =
       cohOn.map k (omegaTrace h a) ⊤ b y :=
     congrArg (cohOn.map k (omegaTrace h a) ⊤ b)
       ((coh.pushforwardEquiv k (appTop_algebraMap h) (Omega s' a) b).symm_apply_apply y)
-  rw [e1, omegaTrace_eq_sum h W hd hc hg a, cohOn_map_sum, LinearMap.sum_apply]
+  rw [e1, omegaTrace_eq_sum h W hd hc hg a, cohOn.map_sum_hom, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun m _ ↦ ?_
-  letI := algΓ ((W m).ι ≫ s')
+  let := algΓ ((W m).ι ≫ s')
   rw [cohOn.map_comp, LinearMap.comp_apply]
   change _ = cohOn.map k (omegaTrace (hg m) a) ⊤ b
     ((coh.pushforwardEquiv k (appTop_algebraMap (hg m)) (Omega ((W m).ι ≫ s') a) b).symm _)
@@ -277,6 +263,6 @@ end UpperTheory.TrSum
 theorem UpperTheory.Cb.hodgeTrace_eq_sum_clopen_decomposition :
     ∀ (Z Y : Scheme.{0}) (s : Z ⟶ Sp ℂ) (s' : Y ⟶ Sp ℂ) (c : Y ⟶ Z) [IsFinite c] [Etale c] (h : c ≫ s = s') (M : Type) [Fintype M] (W : M → Y.Opens), (∀ i j, i ≠ j → W i ⊓ W j = ⊥) → iSup W = ⊤ → ∀ (hf : ∀ m, IsFinite ((W m).ι ≫ c)) (he : ∀ m, Etale ((W m).ι ≫ c)) (a b : ℕ) (w : hodgeH s' a b), hodgeTrace h a b w = ∑ m, (haveI := hf m; haveI := he m; hodgeTrace (f := (W m).ι ≫ c) (s' := (W m).ι ≫ s') (by rw [Category.assoc, h]) a b (hodgePull (f := (W m).ι) rfl a b w)) := by
   intro Z Y s s' c _ _ h M _ W hd hc hf he a b w
-  haveI := hf
-  haveI := he
+  have := hf
+  have := he
   exact UpperTheory.TrSum.hodgeTrace_eq_sum h W hd hc _ a b w

@@ -125,12 +125,12 @@ theorem isU_cW (k : ℕ) : IsU (fun K [Field K] [CharZero K] g2 g3 => cW g2 g3 k
   | _ k ih =>
     by_cases h2 : k = 2
     · refine (universal_g2.mul (isU_const (1 / 20))).congr fun K _ _ g2 g3 => ?_
-      rw [POf.cW_eq, if_pos h2]
+      rw [POf.cW_eq, ite_eq_left h2]
       push_cast
       ring
     by_cases h3 : k = 3
     · refine (universal_g3.mul (isU_const (1 / 28))).congr fun K _ _ g2 g3 => ?_
-      rw [POf.cW_eq, if_neg h2, if_pos h3]
+      rw [POf.cW_eq, ite_eq_right h2, ite_eq_left h3]
       push_cast
       ring
     by_cases h4 : 4 ≤ k
@@ -139,17 +139,17 @@ theorem isU_cW (k : ℕ) : IsU (fun K [Field K] [CharZero K] g2 g3 => cW g2 g3 k
           cW g2 g3 (m.val + 2) * cW g2 g3 (k - (m.val + 2)))
           fun m _ => (ih (m.val + 2) (by omega)).mul (ih (k - (m.val + 2)) (by omega)))).congr
         fun K _ _ g2 g3 => ?_
-      rw [POf.cW_eq, if_neg h2, if_neg h3, if_pos h4]
+      rw [POf.cW_eq, ite_eq_right h2, ite_eq_right h3, ite_eq_left h4]
       push_cast
       rfl
     · refine (isU_const 0).congr fun K _ _ g2 g3 => ?_
-      rw [POf.cW_eq, if_neg h2, if_neg h3, if_neg h4]
+      rw [POf.cW_eq, ite_eq_right h2, ite_eq_right h3, ite_eq_right h4]
       simp
 
 theorem isU_pOf (n : ℕ) : IsU (fun K [Field K] [CharZero K] g2 g3 => coeff n (pOf g2 g3)) := by
   by_cases hn : Even n
-  · exact (isU_cW (n / 2 + 1)).congr fun K _ _ g2 g3 => by rw [POf.coeff_pOf, if_pos hn]
-  · exact (isU_const 0).congr fun K _ _ g2 g3 => by rw [POf.coeff_pOf, if_neg hn]; simp
+  · exact (isU_cW (n / 2 + 1)).congr fun K _ _ g2 g3 => by rw [POf.coeff_pOf, ite_eq_left hn]
+  · exact (isU_const 0).congr fun K _ _ g2 g3 => by rw [POf.coeff_pOf, ite_eq_right hn]; simp
 
 variable {K : Type} [Field K] [CharZero K]
 
@@ -265,7 +265,7 @@ theorem coeff_tensor4_gen {K : Type} [Field K] {n : Type} (f : MvPowerSeries n K
       ext i
       have := DFunLike.congr_fun hL.1 (b, i)
       simp only [Finsupp.coe_finsetSum, Finset.sum_apply, hν, blk_apply, Finset.sum_ite_eq',
-        Finset.mem_univ, if_true] at this
+        Finset.mem_univ, ite_true] at this
       exact this
     ext1 a
     rw [hν, hνμ]
@@ -463,7 +463,7 @@ theorem unc_coordV (k : D.what₂.Tau × Fin N' × Fin N) : unc D N N' (Formalis
     simp
   · rw [Pi.single_eq_of_ne h]
     simp only [Prod.mk.injEq] at h
-    rw [if_neg (by tauto)]
+    rw [ite_eq_right (by tauto)]
 
 theorem taylor_eq_rat_mul (G : Formalism.MainNotions.TaylorLogMetric.VC D N N' → ℂ) (hG : AnalyticOnNhd ℂ (G ∘ (unc D N N').symm) Set.univ)
     (α : Formalism.MainNotions.TaylorLogMetric.Mono D N N') :
@@ -651,7 +651,7 @@ theorem matH_smul_one (c : ℂ) {m : Type} [Fintype m] [DecidableEq m] (z w : m 
     matH (c • (1 : Matrix m m ℂ)) z w = c * ∑ i, z i * (starRingEnd ℂ) (w i) := by
   show (∑ i, ∑ j, z i * (c • (1 : Matrix m m ℂ)) i j * (starRingEnd ℂ) (w j)) = _
   simp only [Matrix.smul_apply, Matrix.one_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true, Finset.mul_sum]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   ring
 
@@ -776,7 +776,7 @@ theorem algFact_of (hSS : StdStep)
     (hKT : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (B : Ker.Base D cc δ),
       Formalism.MainNotions.TaylorLogMetric.IsCurveIdeal D cc → Formalism.MainNotions.TaylorLogMetric.IsDiscriminantTwelfthRootOfIdealLattice D cc δ → KapAlg B ∧ KerTransAlg B) : AlgFact := by
   intro D cc δ B hcc hδ χ hχ p _ hp5 hin N N'
-  have hS : B.StdOK := Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.stdOK B hcc hδ
+  have hS : B.StdOK := GlobalTheory.FourthRootStd.stdOK B hcc hδ
   obtain ⟨hK, hT⟩ := hKT D cc δ B hcc hδ
   have h2 : ∀ s : Formalism.MainNotions.TaylorLogMetric.VC D N N',
       Formalism.MainNotions.TaylorLogMetric.TorsPrime D p (Formalism.MainNotions.TaylorLogMetric.La D B.tor (Formalism.MainNotions.StandardLatticesGL3.stdL D N) (Formalism.MainNotions.StandardLatticesGL3.stdL D N')) s →
@@ -860,7 +860,7 @@ theorem algFact_of_trans (hSS : StdStep)
 
 theorem algZero_of_trans (h : KerTransAll) : AlgZero := by
   intro D cc δ B hcc hδ p _ _ _ N N' s hs
-  exact U_thZero_algEnt B (Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.stdOK B hcc hδ) (kapAlg_all B) (h D cc δ B hcc hδ) N N' s
+  exact U_thZero_algEnt B (GlobalTheory.FourthRootStd.stdOK B hcc hδ) (kapAlg_all B) (h D cc δ B hcc hδ) N N' s
     (isTors_of_torsPrime B s hs)
 
 theorem algFact_of_kerTrans (h : KerTransAll) : AlgFact :=

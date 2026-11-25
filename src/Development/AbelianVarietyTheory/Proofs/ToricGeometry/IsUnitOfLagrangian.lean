@@ -140,7 +140,7 @@ theorem _root_.GlobalTheory.SiegelNormalForm.isUnit_of_lagrangian (P Hm : Matrix
   have h := congrArg Complex.im (hsum (Hm *ᵥ star (f j)))
   rw [hPx, zero_dotProduct, Complex.zero_im, Complex.im_sum] at h
   simp only [hxc, Complex.im_ofReal_mul, hf, mul_ite, mul_neg, mul_one, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
   simpa using h.symm
 
 
@@ -191,7 +191,7 @@ theorem _root_.GlobalTheory.SiegelNormalForm.siegel_of_relations (Y : Matrix (Fi
     intro i j
     have := e2 i j
     simp only [hrow, mul_ite, mul_one, mul_zero, Finset.sum_add_distrib, Finset.sum_neg_distrib,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true, hsecond] at this
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true, hsecond] at this
     linarith
   have him : ∀ i j, (τ j i).im = (τ i j).im := by
     intro i j

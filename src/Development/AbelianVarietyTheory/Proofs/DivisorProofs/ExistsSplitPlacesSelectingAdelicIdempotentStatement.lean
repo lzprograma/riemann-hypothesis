@@ -86,18 +86,18 @@ theorem exists_sqrt_adele (d : ℕ) : ∃ s ι : Af F, ∀ v,
     ⟨fun v => if ∃ y : Fv F v, y * y = -(d : Fv F v) then 1 else 0,
       Filter.Eventually.of_forall fun v => ?_⟩, fun v => ?_⟩
   · by_cases h : ∃ y : Fv F v, y * y = -(d : Fv F v)
-    · simp only [h, dif_pos]; exact sqrt_mem F d v _ h.choose_spec
-    · simp only [h, dif_neg, not_false_iff]; exact zero_mem _
+    · simp only [h, dite_eq_left]; exact sqrt_mem F d v _ h.choose_spec
+    · simp only [h, dite_eq_right, not_false_iff]; exact zero_mem _
   · by_cases h : ∃ y : Fv F v, y * y = -(d : Fv F v)
-    · simp only [h, if_true]; exact one_mem _
-    · simp only [h, if_false]; exact zero_mem _
+    · simp only [h, ite_true]; exact one_mem _
+    · simp only [h, ite_false]; exact zero_mem _
   · by_cases h : ∃ y : Fv F v, y * y = -(d : Fv F v)
     · left
-      refine ⟨if_pos h, ?_⟩
+      refine ⟨ite_eq_left h, ?_⟩
       have e : ∀ x : Fv F v, x = h.choose → x * x = -(d : Fv F v) := fun x hx => hx ▸ h.choose_spec
-      exact e _ (dif_pos h)
+      exact e _ (dite_eq_left h)
     · right
-      exact ⟨if_neg h, dif_neg h, fun y hy => h ⟨y, hy⟩⟩
+      exact ⟨ite_eq_right h, dite_eq_right h, fun y hy => h ⟨y, hy⟩⟩
 
 theorem pair_mul (α β : Af F) : pairA F 0 α * pairA F 0 β = pairA F 0 (α * β) :=
   Prod.ext (mul_zero _) rfl
@@ -116,9 +116,6 @@ theorem place_ext {v : HeightOneSpectrum (𝓞 F)} {α : Af F} (h0 : ∀ v', v' 
   · rw [map_mul, map_mul, h0 w hw, zero_mul, zero_mul]
 
 end Local
-
-theorem star_delta (D : D7) : star D.host.sqrtMinusD = -D.host.sqrtMinusD := by
-  rw [star_eq_conj, D.host.conj_sqrtMinusD]
 
 theorem d_ne_zero (D : D7) : D.host.d ≠ 0 := D.host.hyp.2.1.pos.ne'
 
@@ -284,7 +281,7 @@ theorem exists_half_idem : ∀ D : D7, ∃ ε : AE D, ε * ε = ε ∧ ε * cA D
   exact exists_half_abstract (algebraMap (AF D.host.F) (AE D)) (cA D) (infPart D)
     ((1 : AF D.host.F) ⊗ₜ[D.host.F] D.host.sqrtMinusD) D.host.d (d_ne_zero D) tensor_inj
     (fun a => (hcA a 1).trans (congrArg (fun x => a ⊗ₜ[D.host.F] x) (star_one _)))
-    ((hcA 1 _).trans ((congrArg (fun x => (1 : AF D.host.F) ⊗ₜ[D.host.F] x) (star_delta D)).trans
+    ((hcA 1 _).trans ((congrArg (fun x => (1 : AF D.host.F) ⊗ₜ[D.host.F] x) (GlobalTheory.FockCompare.RealChart.star_sqrtMinusD D)).trans
       (TensorProduct.tmul_neg _ _)))
     (tensor_sq _ _ D.host.sqrtMinusD_sq) (tensor_decomp _ (field_decomp D))
     (fun _ => TensorProduct.zero_tmul (Ainf D.host.F) (1 : D.host.E))

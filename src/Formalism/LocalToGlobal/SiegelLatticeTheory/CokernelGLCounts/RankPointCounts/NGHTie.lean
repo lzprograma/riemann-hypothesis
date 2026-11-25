@@ -15,8 +15,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.NGHTie
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def nDelta {E : Type} [Field E] (r : ℕ) (γ : PN.Pts E r) : ℕ :=
   r * (r + 1) + ∑ a : Fin γ.1.length, endIdx γ a * (2 * r + 1 - endIdx γ a)
 
@@ -89,7 +87,7 @@ theorem hpt_eq [StarRing E] (r : ℕ) (γ : PN.Pts E r) (rd g : ℝ) (hg : 0 < g
   have hrd : ((rd ^ (2 * r * (r + 1)))⁻¹) ^ f *
       ∏ a : Fin γ.1.length, ((rd ^ (2 * (endIdx γ a * (2 * r + 1 - endIdx γ a))))⁻¹) ^ f =
       ((rd ^ (2 * f))⁻¹) ^ nDelta r γ := by
-    simp only [← inv_pow, ← pow_mul, Finset.prod_pow_eq_pow_sum, ← mul_inv, ← pow_add]
+    simp only [← inv_pow, ← pow_mul, Finset.prod_pow_eq_pow_sum, ← pow_add]
     congr 2
     unfold nDelta
     have e : ∀ i : Fin γ.1.length, 2 * (endIdx γ i * (2 * r + 1 - endIdx γ i)) * f =

@@ -57,7 +57,7 @@ def RealExpansionMajorant (Q : _root_.Formalism.IndefR.IndefiniteRealisation Rc 
     (∀ (i : Fin D.R.m) (x : (Y.MjH ((i : ℕ) + 1)).V)
       (y : Fin (Module.finrank D.what₂.LL (Q.Rl.toRealDat.WL Q.F.lv2 false i)) → D.what₂.LL),
       HEq ((P.JM.eW i).symm x) y → (Yr.fi i).e (jD ((i : ℕ) + 1) x) = jDL Q.Rl Q.F.lv2 i y) ∧
-    Nonempty (NMjRR Q.Rl cG Sd Yr Y c jD)
+    Nonempty (NMjR Y c)
 end Formalism.IndefR.NX
 end
 end

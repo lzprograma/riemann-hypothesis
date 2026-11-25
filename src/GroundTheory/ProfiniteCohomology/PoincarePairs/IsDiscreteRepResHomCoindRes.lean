@@ -16,8 +16,6 @@ open CategoryTheory MonoidalCategory
 
 universe u
 
-attribute [local instance 2000] Rep.hV2
-
 section Eval
 
 variable {k G : Type u} [CommRing k] [Group G]

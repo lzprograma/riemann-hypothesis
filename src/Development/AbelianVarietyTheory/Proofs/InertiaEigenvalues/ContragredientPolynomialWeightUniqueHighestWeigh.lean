@@ -77,7 +77,6 @@ open Formalism.MainNotions.IntegralHeckeForms (TwOK)
 open Formalism.AUTREP (GAf)
 open GlobalTheory.FormInner (frameEquiv)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 
@@ -158,7 +157,7 @@ theorem defect_transfer (e : K →+* ℂ) (c : L →+* L) (τ : L →+* K) {ι :
   let G : Matrix (Fin n) (Fin n) A := fun a b => if b < a then 0 else algebraMap (MvPolynomial (Fin n × Fin n) K) A (X (a, b))
   have hGtri : G.BlockTriangular id := fun a b h => by
     simp only [G]
-    rw [if_pos (show b < a from h)]
+    rw [ite_eq_left (show b < a from h)]
   have hDA : algebraMap (MvPolynomial (Fin n × Fin n) K) A D =
       ∏ a, algebraMap (MvPolynomial (Fin n × Fin n) K) A (X (a, a)) := by
     rw [← map_prod]
@@ -286,7 +285,7 @@ theorem GlobalTheory.hwAt_of_hwAtF : ∀ (L : Type) [Field L] [NumberField L] [I
     simp only [hb', map_sum, map_smul, Module.Basis.repr_self]
     rw [Finsupp.finsetSum_apply]
     simp only [Finsupp.smul_apply, Finsupp.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [hev]
     have h2 := congrFun (congrFun h1 i) j
     rw [LinearMap.toMatrix_apply] at h2
@@ -334,7 +333,6 @@ open Formalism.MainNotions.IntegralHeckeForms (TwOK)
 open Formalism.AUTREP (GAf)
 open GlobalTheory.FormInner (frameEquiv)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 noncomputable section

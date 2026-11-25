@@ -1,52 +1,7 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.RootWeights.TwistSubEqMatrixSubst
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.RootWeights.MatrixSubstTransvectionX, Formalism.SharpRestriction.GrowthBounds.RootWeights.MatrixSubstTransvectionMonomialOfFixed, Formalism.SharpRestriction.GrowthBounds.RootWeights.SumFinsuppAntidiagEqSumPiFinset
@@ -144,10 +99,10 @@ theorem sum_single_sourceVar_apply (c : ι → ℕ) (v : ι × Fin n) :
   rw [Finsupp.finsetSum_apply, Finset.sum_eq_single v.1]
   · rw [Finsupp.single_apply]
     by_cases h : v = sourceVar LL a b v.1
-    · rw [if_pos h.symm, if_pos h]
-    · rw [if_neg (Ne.symm h), if_neg h]
+    · rw [ite_eq_left h.symm, ite_eq_left h]
+    · rw [ite_eq_right (Ne.symm h), ite_eq_right h]
   · intro l _ hl
-    rw [Finsupp.single_apply, if_neg]
+    rw [Finsupp.single_apply, ite_eq_right]
     intro h
     apply hl
     rw [← h, sourceVar_fst]
@@ -218,9 +173,9 @@ theorem sub_sourcePart_sourceVar (l : ι) (hl : l ∈ S) : (m - sourceVariableEx
   classical
   rw [Finsupp.tsub_apply]
   unfold sourceVariableExponent
-  rw [sum_single_sourceVar_apply, sourceVar_fst, if_pos rfl]
+  rw [sum_single_sourceVar_apply, sourceVar_fst, ite_eq_left rfl]
   unfold sourceExp
-  rw [if_pos hl]
+  rw [ite_eq_left hl]
   exact Nat.sub_self _
 
 variable {R : Type*} [CommRing R] (φ : R →+* B)
@@ -233,7 +188,7 @@ theorem matrixSubst_transvection_monomial_of_fixed (m0 : ι × Fin n →₀ ℕ)
   have hv' : ¬ (v.1 ∈ S ∧ v = sourceVar LL a b v.1) := by
     rintro ⟨hS, he⟩
     exact (Finsupp.mem_support_iff.1 hv) ((congrArg m0 he).trans (h0 _ hS))
-  rw [matrixSubst_transvection_X, if_neg hv']
+  rw [matrixSubst_transvection_X, ite_eq_right hv']
 
 theorem matrixSubst_transvection_monomial_prod :
     matrixSubst LL S φ (Matrix.transvection a b t) (Matrix.transvection a b (-t)) (monomial m 1) =
@@ -255,10 +210,10 @@ theorem matrixSubst_transvection_monomial_prod :
   refine Finset.prod_congr rfl fun l _ => ?_
   rw [map_pow]
   by_cases hl : l ∈ S
-  · rw [matrixSubst_transvection_X, sourceVar_fst, if_pos ⟨hl, rfl⟩, add_comm]
+  · rw [matrixSubst_transvection_X, sourceVar_fst, ite_eq_left ⟨hl, rfl⟩, add_comm]
   · have he : sourceExp LL S a b m l = 0 := by
       unfold sourceExp
-      rw [if_neg hl]
+      rw [ite_eq_right hl]
     rw [he, pow_zero, pow_zero]
 
 private theorem letterSign_pow_mul_choose_sourceExp (p : ι → ℕ) (l : ι) (hpl : p l ≤ sourceExp LL S a b m l) :
@@ -268,13 +223,13 @@ private theorem letterSign_pow_mul_choose_sourceExp (p : ι → ℕ) (l : ι) (h
   by_cases hS : l ∈ S
   · have he : sourceExp LL S a b m l = m (sourceVar LL a b l) := by
       unfold sourceExp
-      rw [if_pos hS]
+      rw [ite_eq_left hS]
     rw [he]
     unfold sourceVar letterSign
     cases LL.vec l <;> simp
   · have he : sourceExp LL S a b m l = 0 := by
       unfold sourceExp
-      rw [if_neg hS]
+      rw [ite_eq_right hS]
     rw [he] at hpl ⊢
     have hp0 : p l = 0 := by omega
     rw [hp0]
@@ -389,8 +344,7 @@ theorem sum_finsuppAntidiag_eq_sum_piFinset (k : ℕ) :
       monomial (shiftedExponent LL a b m p) (rootShiftCoefficient B LL a b m p) := by
   have hcf : ∀ p : ι → ℕ, rootShiftCoefficient B LL a b m p ≠ 0 → ∀ l, p l ≤ m (sourceVar LL a b l) := by
     intro p hp l
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     apply hp
     unfold rootShiftCoefficient
     refine Finset.prod_eq_zero (Finset.mem_univ l) ?_
@@ -417,7 +371,7 @@ theorem sum_finsuppAntidiag_eq_sum_piFinset (k : ℕ) :
     refine ⟨fun l => ?_, ?_⟩
     · rw [Nat.lt_succ_iff]
       by_cases hl : l ∈ S
-      · rw [sourceExp, if_pos hl]
+      · rw [sourceExp, ite_eq_left hl]
         exact hcf _ (hmon _ _ hne) l
       · rw [hz l hl]
         exact Nat.zero_le _
@@ -430,7 +384,7 @@ theorem sum_finsuppAntidiag_eq_sum_piFinset (k : ℕ) :
     have hle : ∀ l, p l ≤ sourceExp LL S a b m l := fun l => Nat.lt_succ_iff.mp (hp.1 l)
     have hz : ∀ l, l ∉ S → p l = 0 := fun l hl => by
       have h := hle l
-      rw [sourceExp, if_neg hl] at h
+      rw [sourceExp, ite_eq_right hl] at h
       omega
     refine ⟨Finsupp.equivFunOnFinite.symm p, ?_, ?_, ?_⟩
     · rw [Finset.mem_finsuppAntidiag, Finsupp.coe_equivFunOnFinite_symm]

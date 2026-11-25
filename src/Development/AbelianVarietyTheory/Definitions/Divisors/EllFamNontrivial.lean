@@ -3,56 +3,10 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Divisors.FderivFnCongr
 public import Development.AbelianVarietyTheory.Definitions.Divisors.CommAlgFunctorCoboundaryZeroMemCocyclesOne
 public import Mathlib.Algebra.DualNumber
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.RingTheory.Ideal.BigOperators
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -70,27 +24,6 @@ structure Fam (I : Type) [Fintype I] (g : ℕ) (Λ : Type) [AddCommGroup Λ] whe
 
   τ : Λ →+ ((I → ℂ) → Fin g → ℂ)
   hol : ∀ l, AnalyticOnNhd ℂ (τ l) V
-
-def ellFam : Fam (Fin 1) 1 (ℤ × ℤ) where
-  V := ⟨{z | 0 < (z 0).im}, isOpen_lt continuous_const (Complex.continuous_im.comp (continuous_apply 0))⟩
-  τ := { toFun := fun l z _ ↦ l.1 * z 0 + l.2
-         map_zero' := by ext; simp
-         map_add' := fun l m ↦ by ext; simp; ring }
-  hol l := fun z _ ↦ by
-    refine AnalyticAt.pi fun _ ↦ ?_
-    change AnalyticAt ℂ (fun z : Fin 1 → ℂ ↦ (l.1 : ℂ) * z 0 + l.2) z
-    exact (analyticAt_const.mul ((ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : Fin 1 ↦ ℂ) 0).analyticAt z)).add
-      analyticAt_const
-
-theorem ellFam_nontrivial : (fun _ ↦ Complex.I) ∈ ellFam.V ∧
-    ellFam.τ (1, 0) (fun _ ↦ Complex.I) = (fun _ ↦ Complex.I) ∧ ellFam.τ (0, 1) (fun _ ↦ Complex.I) = fun _ ↦ 1 := by
-  refine ⟨?_, ?_, ?_⟩
-  · change (0 : ℝ) < Complex.I.im
-    simp
-  · funext i
-    simp [ellFam]
-  · funext i
-    simp [ellFam]
 
 variable {I : Type} [Fintype I] {g : ℕ} {Λ : Type} [AddCommGroup Λ]
 
@@ -355,14 +288,6 @@ def Charts.dualAt {F : Fam I g Λ} (K : Charts F) (k : K.K) (p : Tot I g) (hp : 
   nil := ⟨2, by rw [Ideal.span_singleton_pow, sq, DualNumber.eps_mul_eps]; simp⟩
   ρ := (algebraMap ℂ (DualNumber ℂ)).comp (Hol.ev p hp).toRingHom
   ρ_cst _ := rfl
-
-theorem Charts.dualAt_J_ne_bot {F : Fam I g Λ} (K : Charts F) (k : K.K) (p : Tot I g) (hp : p ∈ K.W k) :
-    (K.dualAt k p hp).J ≠ ⊥ := by
-  change Ideal.span {DualNumber.eps} ≠ ⊥
-  rw [Ne, Ideal.span_singleton_eq_bot]
-  intro h
-  have := congrArg TrivSqZeroExt.snd h
-  simp at this
 
 def tangentAt {W : Opens (Tot I g)} (a : Fin g) (p : Tot I g) (hp : p ∈ W) : Hol W →+* DualNumber ℂ where
   toFun h := TrivSqZeroExt.inl (Hol.ev p hp h) + TrivSqZeroExt.inr (Hol.ev p hp (dw a h))

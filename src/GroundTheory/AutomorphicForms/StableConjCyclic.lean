@@ -49,13 +49,7 @@ theorem exists_linearIndependent_pow_apply_of_isAlgClosed (f : Module.End K W)
     (Module.End.hasEigenvalue_iff_isRoot_charpoly f _).2 (hroot j)
   choose w hw using fun j => (hev j).exists_hasEigenvector
   have hli : LinearIndependent K w := f.eigenvectors_linearIndependent' μ hμ w hw
-  have hpow : ∀ (k : ℕ) j, (f ^ k) (w j) = μ j ^ k • w j := by
-    intro k j
-    induction k with
-    | zero => simp
-    | succ k ih =>
-      rw [pow_succ', Module.End.mul_apply, ih, map_smul, (hw j).apply_eq_smul, smul_smul,
-        pow_succ]
+  have hpow : ∀ (k : ℕ) j, (f ^ k) (w j) = μ j ^ k • w j := fun k j => (hw j).pow_apply k
   refine ⟨∑ j, w j, ?_⟩
   rw [Fintype.linearIndependent_iff]
   intro c hc

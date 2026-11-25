@@ -61,7 +61,7 @@ theorem commute_E_Qd {n : ℕ} (P : GMod n) {c : ℕ} (d : Fin c → ℕ) (h : �
       have h1 : b ≠ stdBlocks d h ⟨i, p⟩ := fun e => hi (by rw [hab, e, blk_apply])
       have h2 : stdBlocks d h ⟨i, q⟩ ≠ a := fun e => hi (by rw [← e, blk_apply])
       have e := P.gl a b (stdBlocks d h ⟨i, p⟩) (stdBlocks d h ⟨i, q⟩)
-      rw [if_neg h1, if_neg h2, sub_zero] at e
+      rw [ite_eq_right h1, ite_eq_right h2, sub_zero] at e
       exact sub_eq_zero.mp e
     unfold Qd qdet qminor
     refine Commute.sum_right _ _ _ fun σ _ => ?_
@@ -570,7 +570,7 @@ theorem block_raise (hS : StepChar) (hT : TensDecomp) (P Q : GMod n) (d : Fin 3 
       simp only [bops]
       rw [hθ]
       simp only [show stdBlocks d h ⟨k, a⟩ = ι a from rfl, show stdBlocks d h ⟨k, b⟩ = ι b from rfl, hι.eq_iff]
-    simp only [e1, e2, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [e1, e2, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have hΦne : Φ ≠ 0 := by
     intro h0
     let x1' : M.V := ⟨x1, hx1⟩
@@ -624,7 +624,7 @@ theorem block_raise (hS : StepChar) (hT : TensDecomp) (P Q : GMod n) (d : Fin 3 
       refine Finset.sum_congr rfl fun p _ => ?_
       have h9 := qdet_lin (θ (ι p)) (bops P d h i) (bops Q d h i) (fun a b y => by
         simp only [bops]
-        rw [hθ, if_neg, add_zero]
+        rw [hθ, ite_eq_right, add_zero]
         intro h0
         have h1 := hblk p
         rw [h0] at h1
@@ -747,15 +747,15 @@ theorem sub_raise (hS : StepChar) (hT : TensDecomp) (Y Y' : GMod n) (d : Fin 3 �
     change _ = θq p (sqMk Y S1 S2 hS1 hS2 ⟨(Y.E b a).dualMap x, hS1 b a _ x.2⟩) + _
     rw [show θq p (sqMk Y S1 S2 hS1 hS2 ⟨(Y.E b a).dualMap x, hS1 b a _ x.2⟩) = mkQ' (R p ⟨(Y.E b a).dualMap x, hS1 b a _ x.2⟩) from rfl]
     by_cases hp : p = b
-    · rw [if_pos hp, ← map_add (f := _)]
+    · rw [ite_eq_left hp, ← map_add (f := _)]
       refine congrArg _ (Subtype.ext ?_)
       have := hθ a b p x
-      rw [if_pos hp] at this
+      rw [ite_eq_left hp] at this
       exact this
-    · rw [if_neg hp, add_zero]
+    · rw [ite_eq_right hp, add_zero]
       refine congrArg _ (Subtype.ext ?_)
       have := hθ a b p x
-      rw [if_neg hp, add_zero] at this
+      rw [ite_eq_right hp, add_zero] at this
       exact this
   have hv : mkP ⟨φ, hφ⟩ ∈ leviSub (sqMod Y S1 S2 hS1 hS2) d h χ L := by
     refine ⟨fun a b hab => ?_, fun i c => ?_⟩
@@ -1041,8 +1041,7 @@ theorem transport : Transport := by
     simp only [← Finset.sum_smul, h1]
     simp
   obtain ⟨p0, hp0⟩ : ∃ p, θ p φ ∉ W'' := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     refine hφZ ((hZmem φ).2 ⟨hφ, fun i => ?_⟩)
     rw [hcomp]
     exact W''.sum_mem fun p _ => W''.smul_mem _ (hc p)
@@ -1052,13 +1051,13 @@ theorem transport : Transport := by
     refine LinearMap.ext fun u => ?_
     have e := coordB_Eb X B (χ s) p a b u
     by_cases hp : p = b
-    · rw [if_pos hp]
+    · rw [ite_eq_left hp]
       change φ (coordB X B (χ s) p (Eb (step X (χ s)) B b a u)) =
         φ (Eb X B b a (coordB X B (χ s) p u)) + φ (coordB X B (χ s) a u)
-      rw [e, if_pos hp, map_add (f := _)]
-    · rw [if_neg hp, add_zero]
+      rw [e, ite_eq_left hp, map_add (f := _)]
+    · rw [ite_eq_right hp, add_zero]
       change φ (coordB X B (χ s) p (Eb (step X (χ s)) B b a u)) = φ (Eb X B b a (coordB X B (χ s) p u))
-      rw [e, if_neg hp, add_zero]
+      rw [e, ite_eq_right hp, add_zero]
   have hθW : ∀ p, ∀ φ ∈ W F, θ p φ ∈ W F'' := fun p φ hφ => by
     rw [hθsum]
     exact Submodule.sum_mem _ fun a _ => Submodule.smul_mem _ _ (hcompW a φ hφ)

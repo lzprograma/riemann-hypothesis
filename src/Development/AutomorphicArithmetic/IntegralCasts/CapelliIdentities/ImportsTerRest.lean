@@ -49,7 +49,7 @@ public import Mathlib.RingTheory.Nakayama
 
 noncomputable def UpperTheory.Reformulated.B.Qe31.Statement :
     Prop :=
-    ∀ (T : Type) [inst : CommRing T] [IsNoetherianRing T] (P : Ideal T) [inst_2 : P.IsPrime] (h : ℕ) (f : Fin h → T),
+    ∀ (T : Type) [CommRing T] [IsNoetherianRing T] (P : Ideal T) [P.IsPrime] (h : ℕ) (f : Fin h → T),
       (∀ (i : Fin h), f i ∈ P) →
         IsLocalRing.maximalIdeal (Localization.AtPrime P) ≤
             Ideal.span

@@ -6,8 +6,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscrim
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries
@@ -43,8 +41,7 @@ include hunit
 
 theorem either {c : k} (hc : c ≠ 0) (σ τ₁ τ₂ : T)
     (P : ∀ a, c * ((χ σ a - χ τ₁ a) * (χ σ a - χ τ₂ a)) = 0) : σ = τ₁ ∨ σ = τ₂ := by
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   obtain ⟨a₁, hu₁⟩ := hunit σ τ₁ hne.1
   obtain ⟨a₂, hu₂⟩ := hunit σ τ₂ hne.2
   have e1 : c * (χ σ a₁ - χ τ₂ a₁) = 0 := by

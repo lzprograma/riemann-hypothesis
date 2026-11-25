@@ -52,29 +52,6 @@ theorem ptsIntegral_add_locConst (P : Ideal (MRing ι)) {e : ℕ} {φ φ' : Fin 
   · simp only [ptsIntegralAt, sheetDensity_add_locConst P h]
   · rfl
 
-theorem I_snoc_degZero {I : Ideal (MRing ι) → (n : ℕ) → (Fin n → HermLine ι) → ℝ} (hI : IsIntersectionFamily I)
-    {P : Ideal (MRing ι)} {n : ℕ} {L : Fin n → HermLine ι} {B : HermLine ι} (hP : IsArithVar P (n + 1))
-    (hL : ∀ j, IsSmoothHerm (L j)) (hB : IsSmoothHerm B) (ha : B.a = 0) :
-    I P (n + 1) (Fin.snoc L B) = -ptsIntegral P (pot L) (logNorm B 1) := by
-  have hhom : IsMultiHomog (1 : MRing ι) 0 := by
-    intro m hm k
-    rw [MvPolynomial.support_one, Finset.mem_singleton] at hm
-    subst hm
-    simp
-  have hnot : (1 : MRing ι) ∉ P := fun h => hP.2.1.1.ne_top ((Ideal.eq_top_iff_one P).2 h)
-  rw [hI.2.2 P n L B 1 0 hP hL hB (fun k => by simp [ha]) hhom hnot]
-  have hsupp : divSupp P (1 : MRing ι) = ∅ := by
-    ext W
-    refine ⟨fun hW => ?_, fun h => h.elim⟩
-    have h1 : P ⊔ Ideal.span {(1 : MRing ι)} = ⊤ := by simp
-    have hp : W.IsPrime := hW.1.1.1
-    have hle : P ⊔ Ideal.span {(1 : MRing ι)} ≤ W := hW.1.1.2
-    rw [h1] at hle
-    exact hp.ne_top (top_le_iff.1 hle)
-  unfold recR arInt
-  simp only [hsupp, finsum_mem_empty, zero_sub]
-  rfl
-
 end TwistIntersection
 
 end

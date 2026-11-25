@@ -1,5 +1,7 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ChainProjectionLevelCharacter
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlacesApart
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
 public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
 import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
@@ -66,7 +68,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.ChainEquiv
 
@@ -131,18 +132,7 @@ theorem lifts_chain {T : Type} (L : LevCh D T) (μ0 : T) (h : L.Is μ0) (t : T) 
 theorem multT_value {V : HSp D} {S : D.what₂.Tau → SPar} (θ : InfFam D) (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ)
     (u : SmT M →ₗ[ℂ] (GA D V → ℂ)) (hu : u ∈ MultT θ M J χ) (v : SmT M) :
     (∀ γ ∈ GQ V, ∀ g, u v (γ * g) = u v g) ∧ ∀ k ∈ J, ∀ g, u v (g * k) = χ k * u v g := by
-  have h0 := GlobalTheory.mult_value_left_cont_level θ M J χ _ ((mem_multT θ M J χ u).1 hu)
-  induction v using PiTensorProduct.induction_on with
-  | smul_tprod r f =>
-    have h1 := h0 f
-    simp only [PiTensorProduct.lift_symm, LinearMap.compMultilinearMap_apply] at h1
-    refine ⟨fun γ hγ g => ?_, fun k hk g => ?_⟩
-    · simp only [map_smul, Pi.smul_apply, h1.1 γ hγ g]
-    · simp only [map_smul, Pi.smul_apply, h1.2.2 k hk g, smul_eq_mul]; ring
-  | add x y hx hy =>
-    refine ⟨fun γ hγ g => ?_, fun k hk g => ?_⟩
-    · simp only [map_add (f := _), Pi.add_apply, hx.1 γ hγ g, hy.1 γ hγ g]
-    · simp only [map_add (f := _), Pi.add_apply, hx.2 k hk g, hy.2 k hk g]; ring
+  first | exact _root_.GlobalTheory.StepLevelP.IoLevPf.multT_val | exact @_root_.GlobalTheory.StepLevelP.IoLevPf.multT_val | apply _root_.GlobalTheory.StepLevelP.IoLevPf.multT_val <;> assumption
 
 theorem integral_shift_lift (V : HSp D) (β : GL (Fin V.rank) (Lev.EAf D)) (L : LevDat D.host.E ℂ V.rank) (g0 : G0 L.Pg L.r)
     (κ : GA D V) (hκ : IsLevelLift V β L g0 κ) (ν : Measure (GA D V)) (hν : ν.IsHaarMeasure) (𝓕 : Set (GA D V))
@@ -308,7 +298,7 @@ theorem rel_dnFrom (hl : R.toLevCh.Is A.μ0) (hi : R.models_inf) (hY : R.models_
       (R.ItY k) (hc.ItY t k hn).ne (R.CC t (k + 1)) (fun U w => (multT_value _ _ _ _ _ U.2 w).1)
       (R.βY (k + 1)) (R.datYt t (k + 1) R.triv) _ (meas_chain hY hY' t (k + 1) hn).1 _ (meas_chain hY hY' t (k + 1) hn).2
       (R.ioY t k) (hc.ioY t k (by omega)) g0 κ hκ g0 κ' hκ' _
-      (GlobalTheory.T.stepVector_lift_pair_flagLevel_realized_chain R hl hi hc.ωY hc.vY t k hn g0 κ κ' hκ hκ') F F' (hF κ' hκ') v g
+      (GlobalTheory.StepVecLaw.stepVec_lifts R hl hi hc.ωY hc.vY t k hn g0 κ κ' hκ hκ') F F' (hF κ' hκ') v g
 
 theorem rel_ioX (hl : R.toLevCh.Is A.μ0) (hi : R.models_inf) (hY : R.models_νY) (hY' : R.models_νY') (hc : R.IsChain)
     (hX : R.models_νX) (hcX : R.models_cX) (hHX : R.models_HX)

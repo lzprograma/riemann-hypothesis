@@ -52,8 +52,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.ChainFr GlobalTheory.SquareComm GlobalTheory.ChiGrid GlobalTheory.FunObj
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.SquareRel
 
 section Rel
@@ -135,12 +133,6 @@ end GlobalTheory.SquareRel
 
 namespace GlobalTheory.SquareRel
 
-section Route
-
-variable {D : D7} {a b c d b' : ℕ}
-
-end Route
-
 section Grid
 
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} (G : GridData L sc) (i j : ℕ) {d b' b₁ : ℕ}
@@ -175,22 +167,5 @@ theorem nontrivial_of_tensor {Pr Pf Pi : Type*} [AddCommGroup Pr] [Module ℂ Pr
   obtain ⟨u, hu⟩ := exists_ne (0 : Pi)
   apply hu
   rw [← e.apply_symm_apply u, hz (e.symm u), map_zero]
-
-end GlobalTheory.SquareRel
-
-namespace GlobalTheory.SquareRel
-
-open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation (alpha beta)
-
-variable {D : D7} {Pr Pf Pi : Type*} [AddCommGroup Pr] [Module ℂ Pr] [AddCommGroup Pf] [Module ℂ Pf]
-  [AddCommGroup Pi] [Module ℂ Pi]
-
-end GlobalTheory.SquareRel
-
-namespace GlobalTheory.SquareRel
-
-open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation (alpha beta)
-
-variable {D : D7}
 
 end GlobalTheory.SquareRel

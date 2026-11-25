@@ -1,43 +1,6 @@
 module
 
 public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -48,8 +11,6 @@ open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open GlobalTheory.CuspGeneric GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DiscSpec PositivityTheory.jumpWindows PositivityTheory.RgJS
 open GroundTheory.Automorphic GroundTheory.Automorphic.FourierWhittaker GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.Spherical
 open scoped ENNReal ComplexConjugate
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.AdelicQuotientData
 
@@ -67,7 +28,7 @@ theorem blkU_val_of_not_lt {R : Type} [CommRing R] {r m : ℕ} (x : UnipotentBlo
     (h : ¬ (i : ℕ) < c) : (blkU x : GL (Fin k) R).val i c = (1 : Matrix (Fin k) (Fin k) R) i c := by
   rw [blkU_val_apply, Finset.sum_eq_zero, add_zero]
   intro t _
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro ⟨e1, e2⟩
   have := t.2
   subst e1 e2
@@ -156,13 +117,13 @@ theorem cut_apply {j : ℕ} {u : GA E k} (hu : UU j u) (i c : Fin k) :
   · rw [Finset.sum_eq_single (⟨(i, c), h.1, h.2.ge, h.2.le⟩ : UnipotentBlockColumnIndex k j j)]
     · simp
     · intro t _ ht
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨e1, e2⟩
       exact ht (Subtype.ext (Prod.ext e2 e1))
     · simp
   · rw [Finset.sum_eq_zero, add_zero]
     intro t _
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨e1, e2⟩
     have := t.2
     subst e1 e2
@@ -173,7 +134,7 @@ theorem uu_cut {j : ℕ} {u : GA E k} (hu : UU j u) : UU (j + 1) (cut j u) := by
   · rw [cut_apply hu]; split_ifs
     · rfl
     · exact hu.1 i c hc
-  · rw [cut_apply hu, if_neg (by omega)]; exact hu.2.1 i
+  · rw [cut_apply hu, ite_eq_right (by omega)]; exact hu.2.1 i
   · rw [cut_apply hu]
     split_ifs with h
     · rw [Matrix.one_apply_ne]; intro e; subst e; omega
@@ -209,10 +170,10 @@ theorem sd_cut {j : ℕ} (hj1 : 1 ≤ j) (hjk : j < k) {u : GA E k} (hu : UU j u
   let c0 : Fin k := ⟨j, hjk⟩
   rw [Finset.sum_eq_single (i0, c0), dot, Finset.sum_eq_single (⟨(i0, c0), by simp [i0]; omega, le_rfl, le_rfl⟩ : UnipotentBlockColumnIndex k j j)]
   · simp [eLast, i0, c0]
-    rw [if_pos (by omega), if_pos (by omega)]
+    rw [ite_eq_left (by omega), ite_eq_left (by omega)]
   · intro t _ ht
     simp only [eLast]
-    rw [if_neg, map_zero, zero_mul]
+    rw [ite_eq_right, map_zero, zero_mul]
     intro e
     apply ht
     have := t.2
@@ -221,7 +182,7 @@ theorem sd_cut {j : ℕ} (hj1 : 1 ≤ j) (hjk : j < k) {u : GA E k} (hu : UU j u
     · apply Fin.ext; simp [c0]; omega
   · simp
   · intro p hp hne
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2⟩
     simp only [Finset.mem_filter] at hp
     apply hne

@@ -1,47 +1,7 @@
 module
 
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.OnlyIsotropic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.WedgeSub
 
@@ -142,28 +102,28 @@ theorem sum_chains_eq_zero (R : V → V → Prop) (hr : ∀ x, R x x) (ht : ∀ 
   have hgg : ∀ s, g (g s) = s := by
     intro s
     by_cases h : c s ∈ s
-    · have e1 : g s = s.erase (c s) := by rw [hg, if_pos h]
+    · have e1 : g s = s.erase (c s) := by rw [hg, ite_eq_left h]
       have e2 : c s ∉ g s := by rw [e1]; simp
-      rw [hg (g s), hcg, if_neg e2, e1, Finset.insert_erase h]
-    · have e1 : g s = insert (c s) s := by rw [hg, if_neg h]
+      rw [hg (g s), hcg, ite_eq_right e2, e1, Finset.insert_erase h]
+    · have e1 : g s = insert (c s) s := by rw [hg, ite_eq_right h]
       have e2 : c s ∈ g s := by rw [e1]; exact Finset.mem_insert_self (c s) s
-      rw [hg (g s), hcg, if_pos e2, e1, Finset.erase_insert h]
+      rw [hg (g s), hcg, ite_eq_left e2, e1, Finset.erase_insert h]
   refine Finset.sum_involution (fun s _ => g s) ?_ ?_ ?_ ?_
   · intro s _
     by_cases h : c s ∈ s
-    · have e1 : g s = s.erase (c s) := by rw [hg, if_pos h]
+    · have e1 : g s = s.erase (c s) := by rw [hg, ite_eq_left h]
       rw [← Finset.card_erase_add_one h, ← e1, pow_succ]
       ring
-    · have e1 : g s = insert (c s) s := by rw [hg, if_neg h]
-      rw [e1, Finset.card_insert_eq_ite, if_neg h, pow_succ]
+    · have e1 : g s = insert (c s) s := by rw [hg, ite_eq_right h]
+      rw [e1, Finset.card_insert_eq_ite, ite_eq_right h, pow_succ]
       ring
   · intro s _ _ hEq
     by_cases h : c s ∈ s
-    · have e1 : g s = s.erase (c s) := by rw [hg, if_pos h]
+    · have e1 : g s = s.erase (c s) := by rw [hg, ite_eq_left h]
       have e2 : c s ∉ g s := by rw [e1]; simp
       rw [hEq] at e2
       exact e2 h
-    · have e1 : g s = insert (c s) s := by rw [hg, if_neg h]
+    · have e1 : g s = insert (c s) s := by rw [hg, ite_eq_right h]
       have e2 : c s ∈ g s := by rw [e1]; exact Finset.mem_insert_self (c s) s
       rw [hEq] at e2
       exact h e2
@@ -172,11 +132,11 @@ theorem sum_chains_eq_zero (R : V → V → Prop) (hr : ∀ x, R x x) (ht : ∀ 
     obtain ⟨_, hcs, hA⟩ := hs
     refine ⟨Finset.mem_univ _, ?_⟩
     by_cases h : c s ∈ s
-    · have e1 : g s = s.erase (c s) := by rw [hg, if_pos h]
+    · have e1 : g s = s.erase (c s) := by rw [hg, ite_eq_left h]
       rw [e1]
       exact ⟨hcs.mono (Finset.coe_subset.2 (Finset.erase_subset _ _)),
         fun e he => hA e (Finset.mem_of_mem_erase he)⟩
-    · have e1 : g s = insert (c s) s := by rw [hg, if_neg h]
+    · have e1 : g s = insert (c s) s := by rw [hg, ite_eq_right h]
       have hUc : ∀ hne : (U s).Nonempty, least (U s) ∈ U s ∧ ∀ x ∈ U s, R (least (U s)) x := fun hne =>
         hleast (U s) hne (hcs.mono (by rw [hU]; exact Finset.coe_subset.2 (Finset.filter_subset _ _)))
       rw [e1]
@@ -230,16 +190,16 @@ theorem sMeet_le_left (e e' : Fin m → SignType) : SLe (sMeet e e') e := by
   intro i hi
   simp only [sMeet] at hi ⊢
   by_cases h : e i = e' i
-  · rw [if_pos h]
-  · rw [if_neg h] at hi
+  · rw [ite_eq_left h]
+  · rw [ite_eq_right h] at hi
     exact absurd rfl hi
 
 theorem sMeet_le_right (e e' : Fin m → SignType) : SLe (sMeet e e') e' := by
   intro i hi
   simp only [sMeet] at hi ⊢
   by_cases h : e i = e' i
-  · rw [if_pos h, h]
-  · rw [if_neg h] at hi
+  · rw [ite_eq_left h, h]
+  · rw [ite_eq_right h] at hi
     exact absurd rfl hi
 
 theorem le_sMeet (x e e' : Fin m → SignType) (h : SLe x e) (h' : SLe x e') : SLe x (sMeet e e') := by
@@ -247,7 +207,7 @@ theorem le_sMeet (x e e' : Fin m → SignType) (h : SLe x e) (h' : SLe x e') : S
   simp only [sMeet]
   have h1 : e i = x i := h i hi
   have h2 : e' i = x i := h' i hi
-  rw [if_pos (h1.trans h2.symm), h1]
+  rw [ite_eq_left (h1.trans h2.symm), h1]
 
 theorem sdot_zero (a : Fin m → ℝ) : sdot (0 : Fin m → SignType) a = 0 := by simp [sdot]
 
@@ -300,8 +260,8 @@ theorem gam_eq_indicator : ∀ m : ℕ, ∀ (y : (Fin m → SignType) → ℝ) a
       · simp
       · simp
     · simp
-  · rw [Set.indicator_apply, if_neg (show a ∉ {a | ∀ e, sdot e a ≤ y e} from hall)]
-    push_neg at hall
+  · rw [Set.indicator_apply, ite_eq_right (show a ∉ {a | ∀ e, sdot e a ≤ y e} from hall)]
+    push Not at hall
     obtain ⟨es, -, hesmax⟩ := Finset.exists_max_image Finset.univ (fun e => sdot e a - y e)
       Finset.univ_nonempty
     obtain ⟨e1, he1⟩ := hall

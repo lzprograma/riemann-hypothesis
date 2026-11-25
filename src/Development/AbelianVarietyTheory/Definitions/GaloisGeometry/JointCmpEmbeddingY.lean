@@ -57,8 +57,6 @@ open Formalism.L2.KerInert.AdmLoc (pendG CurveIn XiIn)
 open GlobalTheory.TwU (StepCharts ChainCharts AdData AdPins AdTie AdLawAt AdDatum latCo ratA ssRec)
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def castSt {D : D7} {u : D.what₂.Word} {C C' : ColumnChain D.R D.what₂.Tau (D.hcW u)} (h : C = C') {i : ℕ} {hi : i ≤ D.R.m}
     (S : StepCharts C i hi) : StepCharts C' i hi := h ▸ S
 

@@ -6,8 +6,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscrim
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB.LogPf
@@ -60,15 +58,15 @@ variable {k : Type} [CommRing k] [Algebra ℚ k] [Algebra R k]
 
 theorem constantCoeff_second_factor (B : FB R d O) : constantCoeff B.ph2 = 1 := by
   have h := congrArg constantCoeff B.cocycleRight_zero_fst
-  rwa [cc_ev' (by intro j i; fin_cases j <;> simp [cc_pt, cc_zero]), map_one] at h
+  rwa [cc_ev' (by intro j i; fin_cases j <;> simp [cc_pt]), map_one] at h
 
 theorem cc_sy (B : FB R d O) : constantCoeff B.sy = 1 := by
   have h := congrArg constantCoeff B.symmetry_zero_fst
-  rwa [cc_ev' (by intro j i; fin_cases j <;> simp [cc_pt, cc_zero]), map_one] at h
+  rwa [cc_ev' (by intro j i; fin_cases j <;> simp [cc_pt]), map_one] at h
 
 theorem cc_ad (B : FB R d O) (a : O) : constantCoeff (B.ad a) = 1 := by
   have h := congrArg constantCoeff (B.adjoint_zero_fst a)
-  rwa [cc_ev' (by intro j i; fin_cases j <;> simp [cc_pt, cc_zero]), map_one] at h
+  rwa [cc_ev' (by intro j i; fin_cases j <;> simp [cc_pt]), map_one] at h
 
 theorem constantCoeff_add_second_third (B : FB R d O) (l : Fin d) :
     constantCoeff (addOf (B.FK k) (pt k (n := 3) d 1) (pt k d 2) l) = 0 := constantCoeff_ev cz12 ((lawK k B).const l)

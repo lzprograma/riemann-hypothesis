@@ -139,8 +139,8 @@ theorem updn_f_loc {v : HeightOneSpectrum (𝓞 F)} (P : ST) (hov : IsOver v P.1
       then redA P.1 (pullV x' z (lastIdx n)) else 0)
   rw [← updn_mem_loc hov h]
   by_cases hz : z ∈ localization₂ P.1.asIdeal (Formalism.UG.CS.globLat x (stdLat E n))
-  · rw [if_pos hz, if_pos hz, updn_red_loc hov h hz]
-  · rw [if_neg hz, if_neg hz]
+  · rw [ite_eq_left hz, ite_eq_left hz, updn_red_loc hov h hz]
+  · rw [ite_eq_right hz, ite_eq_right hz]
 
 theorem updn_be_loc {v : HeightOneSpectrum (𝓞 F)} (w : SG) (hov : IsOver v w.1)
     {x x' : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)} (h : bc (prV (E := E) v) x = bc (prV (E := E) v) x') :
@@ -152,10 +152,10 @@ theorem updn_be_loc {v : HeightOneSpectrum (𝓞 F)} (w : SG) (hov : IsOver v w.
       then fun i => redA w.1 (pullV x' z i) else 0)
   rw [← updn_mem_loc hov h]
   by_cases hz : z ∈ localization₂ w.1.asIdeal (Formalism.UG.CS.globLat x (stdLat E n))
-  · rw [if_pos hz, if_pos hz]
+  · rw [ite_eq_left hz, ite_eq_left hz]
     funext i
     exact updn_red_loc hov h hz i
-  · rw [if_neg hz, if_neg hz]
+  · rw [ite_eq_right hz, ite_eq_right hz]
 
 structure Deco.SameOff (v : HeightOneSpectrum (𝓞 F)) (d d' : Deco E n ST SG) : Prop where
   N : ∀ Q : Pl E, ¬ IsOver v Q → localization₂ Q.asIdeal d.N = localization₂ Q.asIdeal d'.N
@@ -163,12 +163,5 @@ structure Deco.SameOff (v : HeightOneSpectrum (𝓞 F)) (d d' : Deco E n ST SG) 
   be : ∀ w : SG, ¬ IsOver v w.1 → d.be w = d'.be w
 
 end Loc
-
-section Move
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
-variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Pl E)) (H : Subgroup (GLG (E := E) (n := n) (SG := SG)))
-
-end Move
 
 end Formalism.L2.Col

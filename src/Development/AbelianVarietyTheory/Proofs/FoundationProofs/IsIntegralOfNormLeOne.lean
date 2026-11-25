@@ -107,9 +107,6 @@ variable {E Ω : Type} [Field E] [Field Ω] [Algebra E Ω]
   {Gw : Subgroup (Ω ≃ₐ[E] Ω)} {O₀ : Type} [CommRing O₀] [Algebra ℤ_[l] O₀] [TopologicalSpace O₀]
   (Bw : LocBridge l E Ω Gw O₀) (P : LocPrime l) {m : ℕ}
 
-theorem toLL_injective : Function.Injective Bw.toLL :=
-  Subtype.val_injective.comp Bw.eO.injective
-
 end Local
 
 theorem mem_of_mk_mem_span {R G M : Type} [CommRing R] [Group G] [TopologicalSpace G] [AddCommGroup M]

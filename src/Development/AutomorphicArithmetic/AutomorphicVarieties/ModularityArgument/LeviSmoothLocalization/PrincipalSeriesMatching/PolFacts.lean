@@ -160,9 +160,9 @@ private theorem pol_deg (s : Multiset (IrrGL (k := k))) (χ : kˣ →* ℂˣ) : 
     simp only [cnt, Multiset.filter_cons]
     by_cases hy : ∃ ξ hξ, y = IrrGL.ofChar ξ hξ ∧ IsUnram (ξ * χ)
     · obtain ⟨ξ, hξ, rfl, hu⟩ := hy
-      rw [fac_pos χ ξ hξ hu, natDegree_lin _ (Units.ne_zero _), if_pos ⟨ξ, hξ, rfl, hu⟩,
+      rw [fac_pos χ ξ hξ hu, natDegree_lin _ (Units.ne_zero _), ite_eq_left ⟨ξ, hξ, rfl, hu⟩,
         Multiset.card_add, Multiset.card_singleton]
-    · rw [fac_neg χ y hy, if_neg hy, natDegree_one, zero_add, zero_add]
+    · rw [fac_neg χ y hy, ite_eq_right hy, natDegree_one, zero_add, zero_add]
 
 private theorem fac_root (χ : kˣ →* ℂˣ) (y : IrrGL (k := k)) (x : ℂ) : (pfac χ y).eval x = 0 ↔
     ∃ ξ hξ, y = IrrGL.ofChar ξ hξ ∧ IsUnram (ξ * χ) ∧ (((ξ * χ) (unif k) : ℂˣ) : ℂ) * x = 1 := by

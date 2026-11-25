@@ -36,57 +36,13 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrismCo
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SemiBCInjectiveOfInjective
 public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFCrystalHomOfEquivariantEtaleMapAinf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsAdicCompleteOfPowLe
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemBallOfGaugeLt
 import Formalism.SharpRestriction.CuspSpanNormBounds.Point
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Kernel
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsOrientedPrismUniformizerFrameBreuilKisinHomStatement
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSemilinearBaseChangeOfBasisMapsToBasis, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtaleRealisationOfFramedMatrices, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiscPeriodComparisonMatrixMul, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinCoproductUnitCocycleIdentities, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinComparisonUnitCocycleEveryPrism, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ComparisonMatrixExistsOnDisc, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowDvdGaloisComparisonMatrix, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrismComparisonMatrixPowSmulBoundedOnDisc, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsComparisonMatrixPrismCoproduct, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsRealizationMatrixStratifiedPhiModule, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.StratifiedPhiModuleOfCoproductCocycle, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsStratifiedPhiModuleCrystallineLattice, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineLatticePrismaticFCrystalPerfectPrism, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtaleRealisationIndepAinfModel, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinDatumStructureMapInjective, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrismaticFCrystalHomExtBreuilKisinPrism, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FCrystalHomEqOfEtaleRealisationPerfectPrism, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BhattScholzeIntegral
@@ -134,20 +90,8 @@ open Matrix
 
 variable {l : ℕ} [hl : Fact l.Prime]
 
-theorem equivFun_frob {T : Type} [AddCommGroup T] [Module ℤ_[l] T] {ι : Type} [Fintype ι] [DecidableEq ι]
-    (b : Module.Basis ι ℤ_[l] T) (y : WCb l ⊗[ℤ_[l]] T) :
-    (b.baseChange (WCb l)).equivFun (TensorProduct.map (frobW l).toLinearMap LinearMap.id y) =
-      fun i => frobW l ((b.baseChange (WCb l)).equivFun y i) := by
-  funext i
-  simp only [Module.Basis.equivFun_apply]
-  induction y with
-  | tmul a t =>
-    rw [TensorProduct.map_tmul, Module.Basis.baseChange_repr_tmul, Module.Basis.baseChange_repr_tmul,
-      map_smul, AlgHom.toLinearMap_apply, LinearMap.id_apply]
-  | add y z hy hz => rw [map_add (f := _), map_add (f := _), map_add (f := _), Finsupp.add_apply, Finsupp.add_apply, map_add (f := _), hy, hz]
-
 theorem equivFun_map {T : Type} [AddCommGroup T] [Module ℤ_[l] T] {ι : Type} [Fintype ι] [DecidableEq ι]
-    (b : Module.Basis ι ℤ_[l] T) (s : WCb l ≃ₐ[ℤ_[l]] WCb l) (r : T →ₗ[ℤ_[l]] T) (y : WCb l ⊗[ℤ_[l]] T) :
+    (b : Module.Basis ι ℤ_[l] T) (s : WCb l →ₐ[ℤ_[l]] WCb l) (r : T →ₗ[ℤ_[l]] T) (y : WCb l ⊗[ℤ_[l]] T) :
     (b.baseChange (WCb l)).equivFun (TensorProduct.map s.toLinearMap r y) =
       (LinearMap.toMatrix b b r).map (algebraMap ℤ_[l] (WCb l)) *ᵥ
         fun k => s ((b.baseChange (WCb l)).equivFun y k) := by
@@ -155,11 +99,11 @@ theorem equivFun_map {T : Type} [AddCommGroup T] [Module ℤ_[l] T] {ι : Type} 
   simp only [Module.Basis.equivFun_apply, Matrix.mulVec, dotProduct, Matrix.map_apply]
   induction y with
   | tmul a t =>
-    rw [TensorProduct.map_tmul, Module.Basis.baseChange_repr_tmul, AlgEquiv.toLinearMap_apply,
+    rw [TensorProduct.map_tmul, Module.Basis.baseChange_repr_tmul, AlgHom.toLinearMap_apply,
       ← LinearMap.toMatrix_mulVec_repr b b r t]
 
     simp only [Module.Basis.baseChange_repr_tmul, Matrix.mulVec, dotProduct, Algebra.smul_def,
-    Finset.sum_mul, map_mul, mul_assoc, map_sum, AlgEquiv.commutes]
+    Finset.sum_mul, map_mul, mul_assoc, map_sum, AlgHom.commutes]
   | add y z hy hz =>
     simp only [map_add (f := _), Finsupp.add_apply, hy, hz, mul_add, Finset.sum_add_distrib]
 
@@ -184,7 +128,7 @@ theorem realises_of_mreal : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK
     rw [hj, LinearEquiv.apply_symm_apply]
 
   have hbc : SemiBC j := by
-    letI := hU.unit.invertible
+    let := hU.unit.invertible
     let c := (Pi.basisFun (WCb l) (Fin d)).map ((Matrix.toLinearEquiv' U this).trans (b.baseChange (WCb l)).equivFun.symm)
     refine _root_.GlobalTheory.BSP.semiBC_of_basis _ _ _ _ _ j (Fin d) b₀ c fun i => ?_
     apply (b.baseChange (WCb l)).equivFun.injective
@@ -206,8 +150,8 @@ theorem realises_of_mreal : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK
       simp_rw [← hb₀]; exact (b₀.sum_equivFun x).symm
     rw [hx] at hfr
     obtain ⟨r, hr⟩ := _root_.GlobalTheory.BSP.frob_tr_basis l K bk d M e S.a S.A hF.Φ (ainfObj K) bk.ι d₀ (b₀.equivFun x) m k hfr
-    haveI : IsDomain (ainfObj K).A := (ainfId K).toMulEquiv.isDomain
-    haveI := Module.Free.of_basis b₀
+    have : IsDomain (ainfObj K).A := (ainfId K).toMulEquiv.isDomain
+    have := Module.Free.of_basis b₀
     have h1 := sub_eq_zero.1 ((smul_eq_zero.1 hr).resolve_left (pow_ne_zero _ hne))
     simp_rw [← hb₀] at h1
     rw [← b₀.equivFun_symm_apply] at h1
@@ -242,7 +186,9 @@ theorem realises_of_mreal : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK
     have hσE : σ (BK.hf bk.ι bk.E) = bk.evW bk.E := rfl
     refine ((b.baseChange (WCb l)).equivFun.map_smul _ _).trans ?_
     refine Eq.trans ?_ (hjs _).symm
-    refine (congrArg (σ (BK.hf bk.ι bk.E) ^ S.a • ·) ((equivFun_frob b (j x)).trans hz)).trans ?_
+    have hfrob := equivFun_map b (frobW l) LinearMap.id (j x)
+    rw [LinearMap.toMatrix_id, Matrix.map_one _ (map_zero _) (map_one _), Matrix.one_mulVec] at hfrob
+    refine (congrArg (σ (BK.hf bk.ι bk.E) ^ S.a • ·) (hfrob.trans hz)).trans ?_
     refine Eq.trans ?_ (congrArg (U *ᵥ ·) hc).symm
     exact (congrArg (fun t => t ^ S.a • (U.map (frobW l) *ᵥ _)) hσE).trans
       ((Matrix.smul_mulVec _ _ _).symm.trans
@@ -281,7 +227,7 @@ theorem realises_of_mreal : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK
         exact h1.trans (h2.trans (congrArg (fun v => (U.map (galW l (g : GQ l)) *ᵥ v) i) h3))
     have hg := hU.gal g
     refine ((congrArg (fun z => (b.baseChange (WCb l)).equivFun (j z)) htr).trans (hjs _)).trans ?_
-    refine Eq.trans ?_ (equivFun_map b _ _ _).symm
+    refine Eq.trans ?_ (equivFun_map b (galW l (g : GQ l)).toAlgHom _ _).symm
     refine (congrArg (U *ᵥ ·) hL).trans (Eq.trans ?_ (congrArg (_ *ᵥ ·) hR).symm)
     exact (Matrix.mulVec_mulVec _ _ _).trans ((congrArg (· *ᵥ _) hg.symm).trans (Matrix.mulVec_mulVec _ _ _).symm)
 
@@ -475,7 +421,7 @@ theorem unit_cocycle : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (
         k₂.comp En.inr = k₃.comp En.inr → ε.map k₁.f * ε.map k₂.f = ε.map k₃.f := by
   intro l _ K bk d ρ τ s ht En ε hrel B
   have cocB := _root_.GlobalTheory.BSP.height_rel_unit_cocycle l K bk d ρ τ s ht En ε hrel
-  haveI : IsAdicComplete bk.J bk.S := bk.complete
+  have : IsAdicComplete bk.J bk.S := bk.complete
   refine ⟨unit_of_codiag En.inl En.inr En.univ ε
     (fun Δ h => (cocB bk.prism (Hom.id _) Unit (TopBasis.self bk.J)).1 Δ h), fun k₁ k₂ k₃ h12 h13 h23 => ?_⟩
   exact (_root_.GlobalTheory.BSP.nonempty_env l K bk En.Q _ _ (GlobalTheory.T.isOrientedPrismUniformizerFrame_breuilKisinHom l K bk En.Q En.inl)).elim fun En₂ =>
@@ -829,18 +775,13 @@ section Alg
 
 variable {R R' : Type} [CommRing R] [CommRing R'] {n : Type} [Fintype n] [DecidableEq n]
 
-omit [Fintype n] [DecidableEq n] in
-theorem map_smul_hom (f : R →+* R') (c : R) (M : Matrix n n R) : (c • M).map f = f c • M.map f := by
-  ext i j
-  simp
-
 theorem frobenius_matrix_equation_inverse_scaling (F : R →+* R) (e t v : R) (hv : v * t = 1) (ht : F t = e * t) (a N : ℕ) (Y A : Matrix n n R)
     (h : e ^ a • Y.map F = Y * A) : e ^ (a + N) • (v ^ N • Y).map F = (v ^ N • Y) * A := by
   have h1 : F v * (e * t) = 1 := by rw [← ht, ← map_mul, hv, map_one]
   have h2 : e * F v = v := by linear_combination v * h1 - (e * F v) * hv
   have h3 : e ^ (a + N) * F v ^ N = v ^ N * e ^ a := by
     rw [pow_add, mul_assoc, ← mul_pow, h2, mul_comm]
-  rw [map_smul_hom, map_pow, smul_smul, h3, ← smul_smul, h, Matrix.smul_mul]
+  rw [GlobalTheory.CrisPeriods.map_smul_ring, map_pow, smul_smul, h3, ← smul_smul, h, Matrix.smul_mul]
 
 theorem galois_matrix_equation_inverse_scaling (G : R →+* R) (t v : R) (hv : v * t = 1) (N : ℕ) (P Y ε : Matrix n n R)
     (h : t ^ N • (P * Y.map G) = G t ^ N • (Y * ε)) : P * (v ^ N • Y).map G = (v ^ N • Y) * ε := by
@@ -851,17 +792,17 @@ theorem galois_matrix_equation_inverse_scaling (G : R →+* R) (t v : R) (hv : v
   have h4 : v ^ N * G v ^ N * G t ^ N = v ^ N := by
     rw [mul_assoc, ← mul_pow, h1, one_pow, mul_one]
   simp only [smul_smul, h3, h4] at h2
-  rw [map_smul_hom, map_pow, Matrix.mul_smul, h2, Matrix.smul_mul]
+  rw [GlobalTheory.CrisPeriods.map_smul_ring, map_pow, Matrix.mul_smul, h2, Matrix.smul_mul]
 
 theorem descend (f : R →+* R') (hf : Function.Injective f) (x y : R) (N : ℕ) (M Y ε : Matrix n n R)
     (h : f x ^ N • M.map f = f y ^ N • (Y.map f * ε.map f)) : x ^ N • M = y ^ N • (Y * ε) := by
   apply Matrix.map_injective hf
   simp only []
-  rw [map_smul_hom, map_smul_hom, map_pow, map_pow, Matrix.map_mul, h]
+  rw [GlobalTheory.CrisPeriods.map_smul_ring, GlobalTheory.CrisPeriods.map_smul_ring, map_pow, map_pow, Matrix.map_mul, h]
 
 theorem push (f : R →+* R') (x y : R) (N : ℕ) (P Q Y ε : Matrix n n R) (h : x ^ N • (P * Q) = y ^ N • (Y * ε)) :
     f x ^ N • (P.map f * Q.map f) = f y ^ N • (Y.map f * ε.map f) := by
-  rw [← Matrix.map_mul, ← Matrix.map_mul, ← map_pow, ← map_pow, ← map_smul_hom, ← map_smul_hom, h]
+  rw [← Matrix.map_mul, ← Matrix.map_mul, ← map_pow, ← map_pow, ← GlobalTheory.CrisPeriods.map_smul_ring, ← GlobalTheory.CrisPeriods.map_smul_ring, h]
 
 end Alg
 
@@ -880,7 +821,7 @@ theorem exists_mreal : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (
       rw [frobW_inclW, hτ.1, map_mul]
     · have h := congrArg (fun M => M.map (inclW l)) ht.φ
       try beta_reduce at h
-      rw [map_smul_hom, map_pow, Matrix.map_mul] at h
+      rw [GlobalTheory.CrisPeriods.map_smul_ring, map_pow, Matrix.map_mul] at h
       refine Eq.trans ?_ h
       congr 1
       ext1 i j
@@ -1071,8 +1012,8 @@ theorem isUnit_toMatrix_actT {l : ℕ} [Fact l.Prime] {K : FinExt l} {V : Type} 
 
 theorem clause1_perfectPrism : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (P : LocPrime l) (AI : LocAinf l P), IsStd P AI → ∀ (V : Type) [AddCommGroup V] [Module ℚ_[l] V] [Module ℤ_[l] V] [IsScalarTower ℤ_[l] ℚ_[l] V] [FiniteDimensional ℚ_[l] V] [TopologicalSpace V] [IsModuleTopology ℚ_[l] V] (ρ : Representation ℚ_[l] ↥(GK K) V) (L : Lattice (O := ℤ_[l]) ρ), (∀ x, Continuous fun g => ρ g x) → IsCrys (P.PD K) ρ → ∃ (M : FCrys l ↥(OL K)) (j : M.M (ainfObj K) →ₛₗ[(inclW l).comp (ainfId K).toRingHom] (WCb l ⊗[ℤ_[l]] ↥L.T)), Realises K M (ainfObj K) (ainfId K) ↥L.T (fun g => actT L g) j := by
   intro l _ K P AI hStd V _ _ _ _ _ _ _ ρ L hcont hcrys
-  haveI : Module.Free ℤ_[l] ↥L.T := L.free
-  haveI : Module.Finite ℤ_[l] ↥L.T := Module.Finite.iff_fg.mpr L.fg
+  have : Module.Free ℤ_[l] ↥L.T := L.free
+  have : Module.Finite ℤ_[l] ↥L.T := Module.Finite.iff_fg.mpr L.fg
   obtain ⟨bk⟩ := _root_.GlobalTheory.BSP.nonempty_bk_of_finExt l K
   obtain ⟨τ, hτ⟩ := _root_.GlobalTheory.BSP.exists_isPer l K bk
   let b := Module.finBasis ℤ_[l] ↥L.T
@@ -1294,8 +1235,8 @@ theorem FHom.eq_of_tr {M M' : FCrys l R} (u u' : FHom M M') {P Q : Obj l R} (g :
 
 theorem FHom.eq_of_inj {M M' : FCrys l R} (u u' : FHom M M') {B C : Obj l R} (h : Hom B C)
     (hinj : Function.Injective h.f) (hC : u.u C = u'.u C) : u.u B = u'.u B := by
-  haveI := M'.fin B
-  haveI := M'.proj B
+  have := M'.fin B
+  have := M'.proj B
   have hi : Function.Injective (M'.tr h) :=
     semiBC_injective_of_injective _ _ h.f hinj _ _ (M'.tr h) (M'.tr_bc h)
   ext x
@@ -1337,10 +1278,10 @@ theorem fHom_eq_of_realises : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (T' : 
   intro l _ K T' _ _ ρ' M M' j' H u u' h
   obtain ⟨bk⟩ := _root_.GlobalTheory.BSP.nonempty_bk_of_finExt l K
   apply _root_.GlobalTheory.BSP.fhom_ext_bk l K bk M M' u u'
-  haveI := M'.fin (ainfObj K)
-  haveI := M'.proj (ainfObj K)
-  haveI := M'.fin bk.prism
-  haveI := M'.proj bk.prism
+  have := M'.fin (ainfObj K)
+  have := M'.proj (ainfObj K)
+  have := M'.fin bk.prism
+  have := M'.proj bk.prism
   have hj : Function.Injective j' :=
     semiBC_injective_of_injective _ _ ((inclW l).comp (ainfId K).toRingHom)
       (GlobalTheory.Prism.inclW_injective.comp (ainfId K).injective) _ _ j' H.bc

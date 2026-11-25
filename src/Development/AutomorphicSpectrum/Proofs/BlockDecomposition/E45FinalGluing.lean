@@ -434,7 +434,6 @@ theorem allLeaves_mono {E : Type} [Field E] [NumberField E] [IsCMField E]
   | node t₁ t₂ i₁ i₂ => exact fun h => ⟨i₁ h.1, i₂ h.2⟩
 
 theorem factorStep_holds : FactorStep := by
-  set_option synthInstance.maxHeartbeats 400000 in
     intro h4 E _ _ _ N W hW
     rcases Nat.eq_zero_or_pos N with rfl | hN
     · refine ⟨fun _ => ∅, fun M => ⟨Set.finite_empty, by simp⟩, fun K _ =>
@@ -595,7 +594,6 @@ section -- clump:auto
 @[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.UG Formalism.BasicNotions GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DiscSpec GlobalTheory.BCWords GlobalTheory.Published
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.IsobaricOfPublished
 
@@ -787,13 +785,6 @@ theorem limL_allLeaves_shift (P : ∀ M : ℕ, Submodule ℂ (Sm E M) → Prop) 
   | leaf V z' => exact Iff.rfl
   | node t₁ t₂ i₁ i₂ => exact and_congr i₁ i₂
 
-theorem limL_allLeaves_mono {P Q : ∀ M : ℕ, Submodule ℂ (Sm E M) → Prop} (h : ∀ M V, P M V → Q M V) :
-    ∀ {N : ℕ} {t : Tr E N}, t.AllLeaves P → t.AllLeaves Q := by
-  intro N t
-  induction t with
-  | leaf V z => exact h _ _
-  | node t₁ t₂ i₁ i₂ => exact fun a => ⟨i₁ a.1, i₂ a.2⟩
-
 theorem limL_disc_shift (z : ℂ) : ∀ {N : ℕ} {t : Tr E N}, t.AllLeaves (fun M _ => 0 < M) → t.Disc → (t.shift z).Disc := by
   intro N t
   induction t with
@@ -852,7 +843,7 @@ theorem limL_lim_one (hS : ConvStrip) (hSh : ConvShift) (hC : ConvComp) (hT : Tw
       (Complex.continuous_re.tendsto z₀).comp hlim
     simp only [hz, ] at h1
     exact (tendsto_nhds_unique h1 tendsto_const_nhds)
-  have hpos : t₀.AllLeaves (fun M _ => 0 < M) := limL_allLeaves_mono (fun _ _ h => h.1) hL
+  have hpos : t₀.AllLeaves (fun M _ => 0 < M) := GlobalTheory.CompanionTheory.EGlue.allLeaves_mono (fun _ _ h => h.1) hL
   have hposk : ∀ k, (tt k).AllLeaves (fun M _ => 0 < M) := fun k => by
     rw [← limL_allLeaves_strip, hst k, limL_allLeaves_strip]
     exact hpos
@@ -925,7 +916,7 @@ theorem limLists : ConvStrip → ConvShift → ConvComp → LimLists := by
     rwa [(hak k).1, (hak k).2] at h
   obtain ⟨φ, t, s, hφ, hc, hr, hg, hl, hd, he⟩ := limL_lim_one hS hSh hC hT hM hbody (fun k => V (a k))
     (fun k => z (a k)) R hR (fun k => hD _) (fun k => hz _) htyp (fun k => hI _) (fun k => hzR _)
-  refine ⟨fun k => a (φ k), t, s, ha.comp hφ, hc, hr, hg, limL_allLeaves_mono ?_ hl, hd, he⟩
+  refine ⟨fun k => a (φ k), t, s, ha.comp hφ, hc, hr, hg, GlobalTheory.CompanionTheory.EGlue.allLeaves_mono ?_ hl, hd, he⟩
   rintro M' V' ⟨-, K'', hK'', W'', hW'', h⟩
   refine Or.inr ⟨K'', ?_, W'', ?_, h⟩
   · simp only [Set.mem_iUnion]
@@ -1465,13 +1456,13 @@ theorem pairSlices : PairSlices := by
   refine ⟨fun m₂ => ?_, fun m₁ => ?_⟩
   · obtain ⟨φ, hφ, e⟩ := h₁ m₂
     have hex : ∃ φ : Sm E a, φ.1 = fun x => F (x, m₂) := ⟨φ, e⟩
-    have hs : sl₁ F m₂ = hex.choose := by simp only [sl₁, dif_pos hex]
+    have hs : sl₁ F m₂ = hex.choose := by simp only [sl₁, dite_eq_left hex]
     have hc : hex.choose = φ := Subtype.ext (hex.choose_spec.trans e.symm)
     rw [hs, hc]
     exact ⟨hφ, e⟩
   · obtain ⟨φ, hφ, e⟩ := h₂ m₁
     have hex : ∃ φ : Sm E b, φ.1 = fun x => F (m₁, x) := ⟨φ, e⟩
-    have hs : sl₂ F m₁ = hex.choose := by simp only [sl₂, dif_pos hex]
+    have hs : sl₂ F m₁ = hex.choose := by simp only [sl₂, dite_eq_left hex]
     have hc : hex.choose = φ := Subtype.ext (hex.choose_spec.trans e.symm)
     rw [hs, hc]
     exact ⟨hφ, e⟩
@@ -1860,12 +1851,10 @@ theorem eFinalGlue_of (hCS : ConvStrip) (hCC : ConvComp) (hFS : FactorStep) (hLL
     hG'0 hG'm hG't (fun k h hh => hG'e k h _ (hGe _ h _ (heig _ h hh)))
     (fun h hh => (hlam h hh).comp ((tendsto_add_atTop_nat k₀).comp (hφ₁.comp hφ₂).tendsto_atTop))
   obtain ⟨i, hi⟩ : ∃ i, F i ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hF0 (funext hcon)
   obtain ⟨x, hx⟩ : ∃ x, F i x ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hi (funext hcon)
   have hsl := hPS E a b _ _ (F i) (hFm i)
   have hn₁ : sl₁ (F i) x.2 ≠ 0 := fun h => hx (by

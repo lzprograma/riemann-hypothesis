@@ -4,58 +4,13 @@ public import Formalism.LocalRingCardinality.DataSpaces
 public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleRanksRankComplement
 public import Formalism.FockGram.SymGramPosSemidef
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Stdform
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -245,11 +200,11 @@ theorem lorentzDiagonal_hasSignature : Formalism.UG.HasSignature
   · simp only [Formalism.UG.Jpq, Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_symm,
       finSumFinEquiv_apply_left, finSumFinEquiv_apply_right, Matrix.fromBlocks_apply₁₂,
       Matrix.diagonal_apply, Matrix.zero_apply]
-    rw [if_neg (castAdd_ne_natAdd' i j)]
+    rw [ite_eq_right (castAdd_ne_natAdd' i j)]
   · simp only [Formalism.UG.Jpq, Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_symm,
       finSumFinEquiv_apply_left, finSumFinEquiv_apply_right, Matrix.fromBlocks_apply₂₁,
       Matrix.diagonal_apply, Matrix.zero_apply]
-    rw [if_neg (castAdd_ne_natAdd' j i).symm]
+    rw [ite_eq_right (castAdd_ne_natAdd' j i).symm]
   · simp only [Formalism.UG.Jpq, Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_symm,
       finSumFinEquiv_apply_right, Matrix.fromBlocks_apply₂₂, Matrix.diagonal_apply,
       Matrix.neg_apply, Matrix.one_apply, negLast_natAdd, (Fin.natAdd_injective 1 8).eq_iff]
@@ -352,7 +307,7 @@ theorem lorentz_last_vector_norm (T : ℕ) (pz : E) (hpz : star pz * pz = T) :
     diagForm (8 + 1) negLast (Pi.single (Fin.last 8) pz) (Pi.single (Fin.last 8) pz) = -(T : E) := by
   rw [diagForm_single_left]
   have hn : negLast (Fin.last 8) = true := rfl
-  simp only [Pi.single_eq_same, hn, sgn, if_true]
+  simp only [Pi.single_eq_same, hn, sgn, ite_true]
   rw [← hpz]
   ring
 
@@ -445,16 +400,16 @@ theorem example_baseSpace_isometric_graded : ∀ j, 1 ≤ j → j ≤ R0.m → �
     rw [e2]
     by_cases hij : i = j
     · subst hij
-      rw [if_pos (show @Eq (Fin (8 + 1)) i i from rfl), if_pos rfl]
+      rw [ite_eq_left (show @Eq (Fin (8 + 1)) i i from rfl), ite_eq_left rfl]
       by_cases hi : (i : ℕ) = 8
       · have hn : negLast i = true := by simp [negLast, hi]
         rw [hn]
-        simp only [if_pos hi, sgn, if_true, Bool.false_eq_true, if_false, map_neg, map_one]
+        simp only [ite_eq_left hi, sgn, ite_true, Bool.false_eq_true, ite_false, map_neg, map_one]
         rw [mul_neg_one, neg_mul, hy, neg_neg]
       · have hn : negLast i = false := by simp [negLast, hi]
         rw [hn]
         simp [hi, sgn]
-    · rw [if_neg (show ¬ @Eq (Fin (8 + 1)) i j from hij), if_neg hij]
+    · rw [ite_eq_right (show ¬ @Eq (Fin (8 + 1)) i j from hij), ite_eq_right hij]
       simp
 
 end Examples₂

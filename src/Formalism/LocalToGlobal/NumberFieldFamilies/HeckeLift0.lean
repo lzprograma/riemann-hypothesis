@@ -19,10 +19,7 @@ structure MtReal0 (μ : what₂.Tup) (j : ℕ) where
   wt : NG.AlgWt H.E R.nV
   J : Subgroup (GAf H.E R.nV)
   χ : J →* ℂˣ
-  J_open : ∃ N : ℕ, 0 < N ∧ ∀ κ, NG.Cong H.E R.nV N κ → ∃ h : κ ∈ J, χ ⟨κ, h⟩ = 1
   real : what₂.Mt μ j →ₗ[ℂ] (GAf H.E R.nV → wt.W)
-  real_inj : Function.Injective real
-  real_range : LinearMap.range real = NG.TypeSp wt.ρ J χ
 
 abbrev MtFam0 : Type 1 := ∀ (μ : what₂.Tup) (j : ℕ), 1 ≤ j → j ≤ R.m → MtReal0 H what₂ μ j
 

@@ -546,7 +546,7 @@ theorem dedekindZeta_eq_sum_realEisenstein (h2 : finrank ℚ K = 2) (hD : discr 
         rw [inv_eq_iff_mul_eq_one, ← ClassGroup.mk_mk0 K]
         conv_rhs => rw [← hc c, ← map_mul, ClassGroup.mk_eq_one_iff]
         rfl
-      simp only [this, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      simp only [this, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
       ring
   have h4 := Complex.hasSum_ofReal.2 (h3.tsum_fiberwise Ideal.absNorm)
   rw [dedekindZeta, LSeries]

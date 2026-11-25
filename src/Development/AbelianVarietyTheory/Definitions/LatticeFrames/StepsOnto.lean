@@ -50,8 +50,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.Core.Rk
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 
 structure Tower (D : D7) extends LevCh D Unit where

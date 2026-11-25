@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.FibreCounting
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TermTieOf
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SaturatedPf
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
@@ -19,8 +20,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 set_option linter.unusedVariables false
 
 namespace Formalism.L2.SG.Pf.FinXP
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Reps
 
@@ -75,12 +74,8 @@ theorem stabF_of_fix {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (c : (VS D).V �
 theorem fix_X {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (c : (VS D).V ≃ₗ[D.host.E] (VS D).V)
     (he : ∀ a, c (F0.e a) = F0.e a) : ∀ x ∈ F0.X, c x = x := by
   intro x hx
-  unfold FlagG.X at hx
-  induction hx using Submodule.span_induction with
-  | mem y hy => obtain ⟨a, rfl⟩ := hy; exact he a
-  | zero => simp
-  | add y w _ _ hy hw => rw [map_add (f := _), hy, hw]
-  | smul k y _ hy => rw [map_smul, hy]
+  exact (Submodule.span_le (p := LinearMap.eqLocus c.toLinearMap LinearMap.id)).2
+    (by rintro _ ⟨a, rfl⟩; exact he a) hx
 
 end Reps
 
@@ -143,15 +138,7 @@ theorem fib_decomp {s s' : TT Y u u'} (h : s.toTerm = s'.toTerm) :
 theorem gterm_eq {s s' : TT Y u u'} (h1 : s.lam = s'.lam) (h2 : s.lam' = s'.lam')
     (h3 : ∃ n ∈ NLam s.lam (lf D (X.Fu u)), ∃ n' ∈ NLam s.lam' (lf D (X.Fu u')), s'.lin = n * s.lin * n') :
     s = s' := by
-  obtain ⟨l, hl, l', hl', c⟩ := s
-  obtain ⟨k, hk, k', hk', c'⟩ := s'
-  simp only at h1 h2
-  subst h1 h2
-  have : c = c' := by
-    rw [← Quot.out_eq c, ← Quot.out_eq c']
-    exact Quot.sound h3
-  subst this
-  rfl
+  apply _root_.Formalism.L2.SG.Pf.FibreCounting.gterm_eq <;> assumption
 
 def cPerp {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (c : (VS D).V ≃ₗ[D.host.E] (VS D).V)
     (hc : c ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT) (hX : ∀ x ∈ F0.X, c x = x) :
@@ -459,12 +446,10 @@ theorem xplus_nlam {Λ : Submodule (𝓞 E) S.V} {G : LFlag S r T'} {n : S.V ≃
 
 theorem map_X_of_e {G K : LFlag S r T'} {φ : S.V ≃ₗ[E] S.V} (he : ∀ a, φ (G.fl.e a) = K.fl.e a) {x : S.V}
     (hx : x ∈ G.fl.X) : φ x ∈ K.fl.X := by
-  unfold FlagG.X at hx ⊢
-  induction hx using Submodule.span_induction with
-  | mem y hy => obtain ⟨a, rfl⟩ := hy; rw [he]; exact Submodule.subset_span ⟨a, rfl⟩
-  | zero => simp
-  | add y w _ _ hy hw => rw [map_add (f := _)]; exact add_mem hy hw
-  | smul k y _ hy => rw [map_smul]; exact Submodule.smul_mem _ k hy
+  refine (Submodule.span_le (p := K.fl.X.comap φ.toLinearMap)).2 ?_ hx
+  rintro _ ⟨a, rfl⟩
+  rw [SetLike.mem_coe, Submodule.mem_comap, LinearEquiv.coe_coe, he]
+  exact Submodule.subset_span ⟨a, rfl⟩
 
 theorem xplus_frame {G K : LFlag S r T'} {φ : S.V ≃ₗ[E] S.V} (hf : ∀ a, frame K a = φ (frame G a))
     {w : S.V} (hw : w ∈ Xplus G) : φ w ∈ Xplus K := by
@@ -696,7 +681,7 @@ theorem pair_step (hK : IotaKer) {s₁ s₂ t₁ t₂ : TT Y u u'} (h1 : s₁.to
   have hsF := X_le_spanE_XLam (X.Fu u) s₁.lam ((Y.rowsOK u).1 _ s₁.mem)
   constructor
   · unfold s0T
-    rw [if_pos ⟨hl, hl'⟩, if_pos ⟨hm, hm'⟩, ← hl1, hβt]
+    rw [ite_eq_left ⟨hl, hl'⟩, ite_eq_left ⟨hm, hm'⟩, ← hl1, hβt]
     have hT := Th_move hn₁ hn₂' hm₁ hm₂' hf₁ hzt₁ hf₂ hzt₂ (lift_F s₁) (lift_frame s₁) hL₂ hsF (hs_frame s₁) hβ hβX
       hτX hτ
     unfold Lat.s0

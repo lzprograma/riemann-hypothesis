@@ -183,7 +183,7 @@ theorem exists_uniformizer_lt_one (E : Type) [Field E] [NumberField E]
     (fun v => if v.1 = w then π else 0)
   have h1 : w.intValuation y = WithZero.exp (-1) := by
     have h2 := hy w hw
-    simp only [if_true] at h2
+    simp only [ite_true] at h2
     rw [← HeightOneSpectrum.intValuation_le_pow_iff_mem] at h2
     have h3 : w.intValuation (y - π) < w.intValuation π := by
       rw [hπ]
@@ -196,7 +196,7 @@ theorem exists_uniformizer_lt_one (E : Type) [Field E] [NumberField E]
   · rw [hww, h1, ← WithZero.exp_zero]
     exact WithZero.exp_lt_exp.2 (by norm_num)
   · have h2 := hy w' hw'
-    simp only [if_neg hww, sub_zero] at h2
+    simp only [ite_eq_right hww, sub_zero] at h2
     rw [← HeightOneSpectrum.intValuation_le_pow_iff_mem] at h2
     rw [← WithZero.exp_zero]
     exact h2.trans_lt (WithZero.exp_lt_exp.2 (by norm_num))
@@ -489,9 +489,9 @@ theorem prime_mul_card_le_card_over : ∀ (p : ℕ) (F E : Type) [Field F] [Numb
   · obtain ⟨w, hw⟩ := (places_over F E).2.1 v
     have : 0 < (SE.filter (fun w => w.under (𝓞 F) = v)).card :=
       Finset.card_pos.2 ⟨w, Finset.mem_filter.2 ⟨(hSE w).2 (hw ▸ hv), hw⟩⟩
-    rw [if_pos hs]
+    rw [ite_eq_left hs]
     omega
-  · rw [if_neg hs]
+  · rw [ite_eq_right hs]
     push Not at hs
     obtain ⟨r, hr⟩ := hs
     have hδ : δ ≠ 0 := fun h0 => hq.nonpow 0 (by rw [h0, zero_pow hp.ne_zero])

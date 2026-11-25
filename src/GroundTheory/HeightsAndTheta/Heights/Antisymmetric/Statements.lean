@@ -103,8 +103,4 @@ def AntisymPerturbation.Statement : Prop :=
       (∀ τ : T, ∀ x ∈ Kτ τ, |eval x P| ≤ ε) →
       ∃ l ∈ antisymInv T N j, ∀ m, |(P - v • h - antisymDelta T N * l).coeff m| ≤ C * ε
 
-section Inhabitants
-
-end Inhabitants
-
 end GroundTheory.Heights₂.Heights

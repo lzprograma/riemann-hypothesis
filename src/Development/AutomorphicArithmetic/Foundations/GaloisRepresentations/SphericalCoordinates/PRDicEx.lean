@@ -2,48 +2,8 @@ module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
-import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
@@ -208,8 +168,8 @@ private theorem period_smul_eq_conj_or_self_smul {g : ℕ} (R : Arch G →ₗ[�
     R (Pi.single v (m • z)) = (if sgnV L v = 1 then m else starRingEnd ℂ m) • R (Pi.single v z) := by
   rw [smul_decomp m z, Pi.single_add, map_add (f := _), Pi.single_smul, Pi.single_smul, map_smul, map_smul, hrel]
   rcases sgn_pm L v with hs | hs
-  · rw [if_pos hs, hs, _root_.one_mul, smul_decomp m (R (Pi.single v z))]
-  · rw [if_neg (by rw [hs]; norm_num), hs, smul_decomp ((starRingEnd ℂ) m) (R (Pi.single v z))]
+  · rw [ite_eq_left hs, hs, _root_.one_mul, smul_decomp m (R (Pi.single v z))]
+  · rw [ite_eq_right (by rw [hs]; norm_num), hs, smul_decomp ((starRingEnd ℂ) m) (R (Pi.single v z))]
     simp [neg_smul, smul_neg, Complex.conj_re, Complex.conj_im]
 
 private theorem scalar_mulVec' (n : ℕ) (a : ℂ) (z : Fin n → ℂ) : Matrix.scalar (Fin n) a *ᵥ z = a • z := by
@@ -237,16 +197,16 @@ private theorem period_relation_eigenvector (hPE : PerExt) (hPT : PlaceT) (ha : 
         exact (hQ.1 _ w).symm) (Pi.single v z.1)
     rw [hi, diagL_single, G.psi_F, scalar_mulVec', period_smul_eq_conj_or_self_smul R0 v z.1 hrel]
     rcases hcase with ⟨hs, he⟩ | ⟨hs, -, he⟩
-    · rw [if_pos hs, he]
-    · rw [if_neg (by rw [hs]; norm_num), he]
+    · rw [ite_eq_left hs, he]
+    · rw [ite_eq_right (by rw [hs]; norm_num), he]
   · have hi := intertw A R0 hR0 H (((y : G.Cˣ × ℚˣ).1 : G.Cˣ) : G.C) (fun w => (hH w).symm) (Pi.single v z.1)
     rw [hi, diagL_single]
     have hz' : G.psi v (((y : G.Cˣ × ℚˣ).1 : G.Cˣ) : G.C) *ᵥ z.1 = lam • z.1 := hz
     rw [hz', period_smul_eq_conj_or_self_smul R0 v z.1 hrel]
     unfold kap
     rcases hcase with ⟨hs, he⟩ | ⟨hs, hne', -⟩
-    · rw [if_pos hs, if_pos he]
-    · rw [if_neg (by rw [hs]; norm_num), if_neg hne']
+    · rw [ite_eq_left hs, ite_eq_left he]
+    · rw [ite_eq_right (by rw [hs]; norm_num), ite_eq_right hne']
 
 private theorem J_line (hS : SigB) (hJL : JLine) (B : GlobalTheory.LKCx.Form G) {v : InfinitePlace G.F}
     (hsig : sigPosH (G.gram_herm v) = 1) (J₀ : Matrix (Fin G.n) (Fin G.n) ℂ)

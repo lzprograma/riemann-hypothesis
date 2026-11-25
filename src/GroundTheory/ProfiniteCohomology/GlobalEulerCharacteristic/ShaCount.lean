@@ -20,8 +20,6 @@ noncomputable section
 
 section PoitouTateCount
 
-attribute [local instance 2000] Rep.hV2
-
 variable {G : Type u} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   {ι : Type u} {Hv : ι → Type u} [∀ v, Group (Hv v)] [∀ v, TopologicalSpace (Hv v)]
   [∀ v, IsTopologicalGroup (Hv v)] {φ : ∀ v, Hv v →ₜ* G} [Fintype ι]
@@ -62,8 +60,6 @@ theorem natCard_cohomology_two_mul_of_poitouTate (P : PoitouTateDualityHypothese
 end PoitouTateCount
 
 section GSPoitouTate
-
-attribute [local instance 2000] Rep.hV2
 
 local notation "ℚ̄" => AlgebraicClosure ℚ
 

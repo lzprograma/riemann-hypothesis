@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IwasawaDecompositionUnitaryIsotropicFlag
 import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAlgebrasMaxCompactAndLeviInter
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DefClassNum
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
@@ -120,21 +121,7 @@ theorem trace_of_proj (P : Matrix (Fin n) (Fin n) ℂ) (W : Submodule ℂ (Fin n
 
 theorem exists_proj (W : Submodule ℂ (Fin n → ℂ)) :
     ∃ P : Matrix (Fin n) (Fin n) ℂ, Pᴴ = P ∧ (∀ y, P *ᵥ y ∈ W) ∧ ∀ y ∈ W, P *ᵥ y = y := by
-  let W' : Submodule ℂ (EuclideanSpace ℂ (Fin n)) := W.comap (WithLp.linearEquiv 2 ℂ (Fin n → ℂ)).toLinearMap
-  let T : EuclideanSpace ℂ (Fin n) →ₗ[ℂ] EuclideanSpace ℂ (Fin n) := W'.starProjection.toLinearMap
-  have hT : ∀ y : Fin n → ℂ, (Matrix.toEuclideanLin.symm T) *ᵥ y = (T (WithLp.toLp 2 y)).ofLp := by
-    intro y
-    conv_rhs => rw [← Matrix.toEuclideanLin.apply_symm_apply T]
-    rfl
-  refine ⟨Matrix.toEuclideanLin.symm T, ?_, fun y => ?_, fun y hy => ?_⟩
-  · apply Matrix.isSymmetric_toEuclideanLin_iff.1
-    rw [LinearEquiv.apply_symm_apply]
-    exact W'.starProjection_isSymmetric
-  · rw [hT]
-    exact W'.starProjection_apply_mem (WithLp.toLp 2 y)
-  · rw [hT]
-    have : T (WithLp.toLp 2 y) = WithLp.toLp 2 y := Submodule.starProjection_eq_self_iff.2 hy
-    rw [this]
+  first | exact _root_.GlobalTheory.RealIwasawa.exists_proj | exact @_root_.GlobalTheory.RealIwasawa.exists_proj | apply _root_.GlobalTheory.RealIwasawa.exists_proj <;> assumption
 
 theorem exists_orthonormal (G : Submodule ℝ (Matrix (Fin n) (Fin n) ℂ)) (d : ℕ)
     (hd : Module.finrank ℝ G = d) :

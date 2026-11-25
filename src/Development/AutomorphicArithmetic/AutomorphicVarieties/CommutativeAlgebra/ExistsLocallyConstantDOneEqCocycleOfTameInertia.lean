@@ -260,7 +260,7 @@ theorem UpperTheory.V.Alg.exists_locallyConstant_dOne_eq_cocycle_of_tame_inertia
   have ha0 : ∀ (g : Γ) (n : ℕ), ((fr ^ n : Γ) : Γ ⧸ V) = g → a0 g = cocycleTrivializationOnPowers ρ κ fr n := by
     intro g n hn
     have h : ∃ n : ℕ, ((fr ^ n : Γ) : Γ ⧸ V) = g := ⟨n, hn⟩
-    simp only [a0, dif_pos h]
+    simp only [a0, dite_eq_left h]
     exact wd _ _ (h.choose_spec.trans hn.symm)
   let H : Subgroup Γ := (Subgroup.zpowers (fr : Γ ⧸ V)).comap (QuotientGroup.mk' V)
   have hVH : V ≤ H := fun u hu => by

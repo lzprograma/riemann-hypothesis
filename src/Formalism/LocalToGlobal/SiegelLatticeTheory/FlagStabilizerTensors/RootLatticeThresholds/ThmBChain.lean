@@ -20,8 +20,6 @@ open scoped ENNReal
 
 namespace Formalism.L2.SG.Pf.ThmBChain
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem theoremB_uniform_rotated (h : Formalism.MainNotions.RotatedPoints.WeightedBoundRotatedUniform) : JointNormBoundRotatedUniform := by
   exact h
 

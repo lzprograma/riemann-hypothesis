@@ -58,7 +58,6 @@ theorem not_four_sq {u Δ : ℤ} (hu : Δ ≤ u) (hΔ : 0 < Δ) (r : ℤ) : u ^ 
   intro h
   have h2 : (2 * |r|) ^ 2 = u ^ 2 + Δ := by rw [mul_pow, sq_abs]; linarith
   have hr0 : 0 ≤ 2 * |r| := by positivity
-  have hu0 : 0 ≤ u := by linarith
   have a1 : u < 2 * |r| := by nlinarith
   have a2 : 2 * |r| < u + 1 := by nlinarith
   omega
@@ -77,7 +76,6 @@ theorem disc_pos {A B C D : ℤ} {τ : ℍ} (hC : C ≠ 0)
   have key : (((-((D - A) ^ 2 + 4 * B * C)) : ℤ) : ℝ) = 4 * (C : ℝ) ^ 2 * y ^ 2 := by
     push_cast
     linear_combination (-(D : ℝ) + A - 2 * C * x) * h1' - 4 * (C : ℝ) * hre
-  have hCr : (0 : ℝ) < (C : ℝ) ^ 2 := by positivity
   have : (0 : ℝ) < (((-((D - A) ^ 2 + 4 * B * C)) : ℤ) : ℝ) := by rw [key]; positivity
   exact_mod_cast this
 

@@ -4,45 +4,6 @@ public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters
 public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
 public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.RepComb
 public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntPull
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.AlternatingFormStandardHermitian
 import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PeriodLatticeFinitelyGenerated
 import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.SelfDualComap
@@ -86,8 +47,6 @@ theorem transport {V : Type} [AddCommGroup V] [Module ℂ V] [DecidableEq V] (T 
     rw [map_sub] at h
     simpa using h
 
-alias main := _root_.GlobalTheory.TransportLemma.transport
-
 end GlobalTheory.TransportLemma
 end -- clump:auto
 end -- clump:auto
@@ -105,8 +64,6 @@ namespace GlobalTheory.TwU.KerMove
 open Formalism.BasicNotions NumberField IsDedekindDomain Formalism.MainNotions Formalism.L2.Ker Formalism.L2.PairingIndexBounds.F Formalism.L2.Th1.H Formalism.L2.PairingIndexBounds.Mv
 open Formalism.L2.KerInert Formalism.L2.KerInert.PullbackComparison Formalism.L2.KerInert.RepComb
 open scoped TensorProduct
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Abs
 
@@ -139,9 +96,6 @@ theorem xiL_map (hH : ∀ x y, H (T x) (T y) = H x y) (hα : ∀ x, α (T x) = �
   refine Finset.sum_congr rfl fun y _ => ?_
   rw [hatS_map H T hH, hα, hα, hH, hH, ← map_add (f := _), opU_map H T hH]
 
-alias isReps_image := _root_.GlobalTheory.TransportLemma.transport
-
-
 omit [DecidableEq V] in
 theorem repsOf_of_exists {Λ₁ Λ₂ : AddSubgroup V} (h : ∃ S, IsReps Λ₁ Λ₂ S) : IsReps Λ₁ Λ₂ (repsOf Λ₁ Λ₂) := by
   unfold repsOf
@@ -156,12 +110,12 @@ theorem xiL_transport {A B Λ A₁ B₁ Λ₁ : AddSubgroup V} (hyp : SplitHyp H
   have hΛA : ∀ x, T x ∈ Λ ⊓ A ↔ x ∈ Λ₁ ⊓ A₁ := fun x => by
     rw [AddSubgroup.mem_inf, AddSubgroup.mem_inf, hΛ, hA]
   rw [← xiL_map H α T hH hα]
-  exact twist_representatives V H α A B Λ hyp SX SA SB _ _ _ hSX hSA hSB (isReps_image T hSX₁ hΛ hA)
-    (isReps_image T hSA₁ hB hΛA) (isReps_image T hSB₁ hΛ hB) vol θ hθ Φ hΦ (T z)
+  exact twist_representatives V H α A B Λ hyp SX SA SB _ _ _ hSX hSA hSB (GlobalTheory.TransportLemma.transport T hSX₁ hΛ hA)
+    (GlobalTheory.TransportLemma.transport T hSA₁ hB hΛA) (GlobalTheory.TransportLemma.transport T hSB₁ hΛ hB) vol θ hθ Φ hΦ (T z)
 
 theorem exists_reps_symm {Λ₁ Λ₂ M₁ M₂ : AddSubgroup V} {S : Finset V} (hS : IsReps M₁ M₂ S) (h1 : ∀ x, T x ∈ M₁ ↔ x ∈ Λ₁)
     (h2 : ∀ x, T x ∈ M₂ ↔ x ∈ Λ₂) : ∃ S₁, IsReps Λ₁ Λ₂ S₁ := by
-  refine ⟨S.image T.symm, isReps_image T.symm hS (fun x => ?_) (fun x => ?_)⟩
+  refine ⟨S.image T.symm, GlobalTheory.TransportLemma.transport T.symm hS (fun x => ?_) (fun x => ?_)⟩
   · rw [← h1, AddEquiv.apply_symm_apply]
   · rw [← h2, AddEquiv.apply_symm_apply]
 

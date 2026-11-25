@@ -23,8 +23,7 @@ namespace Formalism.L2.GlobalTheoryTheory.UnramifiedTrace
 private theorem eq_pow_sub_of_mul_pow_eq_pow {c q k n : ℕ} (hq : 1 < q) (hc : 1 ≤ c) (h : c * q ^ k = q ^ n) :
     c = q ^ (n - k) := by
   have hkn : k ≤ n := by
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have h1 : q ^ n < q ^ k := Nat.pow_lt_pow_right hq hlt
     have h2 : q ^ k ≤ c * q ^ k := Nat.le_mul_of_pos_left _ hc
     omega
@@ -66,8 +65,7 @@ variable {K X : Type*} [Field K] [Fintype K] [DecidableEq K] [AddCommGroup X] [M
 theorem exists_dual_one {Y : Type*} [AddCommGroup Y] [Module K Y] [FiniteDimensional K Y] (y : Y) (hy : y ≠ 0) :
     ∃ g : Module.Dual K Y, g y = 1 := by
   have h1 : ∃ g : Module.Dual K Y, g y ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hy ((Module.forall_dual_apply_eq_zero_iff K y).1 h)
   obtain ⟨g, hg⟩ := h1
   exact ⟨(g y)⁻¹ • g, by simp [hg]⟩
@@ -437,7 +435,7 @@ theorem dUPt0F_of (T : Forms0 D u) (hE : PtEx T) (hW : PtWd T) (hI : PtInj T) (h
   obtain ⟨P, hP⟩ : ∃ P : Module.Dual ((D.mem u).A.Fv v) ((D.fm u).lk 0 v c) → UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _)) × UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F) × T.cls0.lev.U,
       ∀ g, g ≠ 0 → DnMvL T v c g (P g).1 (P g).2.1 (P g).2.2 :=
     ⟨fun g => if hg : g ≠ 0 then (dnMvL_ex T v c g hg).choose else 1,
-      fun g hg => by simp only [dif_pos hg]; exact (dnMvL_ex T v c g hg).choose_spec⟩
+      fun g hg => by simp only [dite_eq_left hg]; exact (dnMvL_ex T v c g hg).choose_spec⟩
   obtain ⟨Z, hZ⟩ : ∃ Z : ∀ (g : Module.Dual ((D.mem u).A.Fv v) ((D.fm u).lk 0 v c)) (_ : {x // (D.fm u).fv 0 v ((D.fm u).dn 0 v c g) x = 1}), ↥(Ld D u 0 (Nat.zero_le _) ((D.fm u).dn 0 v c g)),
       ∀ g x, T.lv0.pr v _ (Z g x) = x.1 :=
     ⟨fun g x => (T.lv0.pr_surj v _ x.1).choose, fun g x => (T.lv0.pr_surj v _ x.1).choose_spec⟩
@@ -448,7 +446,7 @@ theorem dUPt0F_of (T : Forms0 D u) (hE : PtEx T) (hW : PtWd T) (hI : PtInj T) (h
   obtain ⟨Y, hY⟩ : ∃ Y : ∀ (g : Module.Dual ((D.mem u).A.Fv v) ((D.fm u).lk 0 v c)) (_ : {x // (D.fm u).fv 0 v ((D.fm u).dn 0 v c g) x = 1}), (D.fm u).lk 0 v c,
       ∀ g x, g ≠ 0 → IsPtZ T v c g (P g).1 (Z g x) (Y g x) :=
     ⟨fun g x => if hg : g ≠ 0 then (hE v c g hg _ _ _ (hP g hg) (Z g x)).choose else 0,
-      fun g x hg => by simp only [dif_pos hg]; exact (hE v c g hg _ _ _ (hP g hg) (Z g x)).choose_spec⟩
+      fun g x hg => by simp only [dite_eq_left hg]; exact (hE v c g hg _ _ _ (hP g hg) (Z g x)).choose_spec⟩
   have key : ∀ g, g ≠ 0 → ∀ z y, IsPtZ T v c g (P g).1 z y → g y = (D.fm u).fv 0 v _ (T.lv0.pr v _ z) := by
     intro g hg z y hz0
     obtain ⟨s, hs, hz, hy⟩ := hz0

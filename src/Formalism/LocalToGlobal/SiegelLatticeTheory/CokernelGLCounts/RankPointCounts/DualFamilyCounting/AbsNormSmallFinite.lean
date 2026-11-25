@@ -15,19 +15,13 @@ namespace Formalism.L2.SG.Pf.Cnt
 
 open Formalism.HermitianLattices.Ext.L3
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem absNorm_small_finite (D : Formalism.BasicNotions.D7) :
     {p : PlF D | (Ideal.absNorm p.asIdeal : ℝ) < 3}.Finite := by
-  have h : {I : Ideal (𝓞 D.host.F) | Ideal.absNorm I < 3}.Finite := by
-    have : {I : Ideal (𝓞 D.host.F) | Ideal.absNorm I < 3} =
-        ⋃ n ∈ Finset.range 3, {I : Ideal (𝓞 D.host.F) | Ideal.absNorm I = n} := by
-      ext I; simp [Finset.mem_range]
-    rw [this]
-    exact Set.Finite.biUnion (Finset.finite_toSet _) (fun n _ => Ideal.finite_setOf_absNorm_eq n)
-  refine (h.preimage (fun p _ q _ hpq => IsDedekindDomain.HeightOneSpectrum.ext hpq)).subset ?_
+  refine (Ring.HasFiniteQuotients.finite_absNorm_heightOneSpectrum_le
+    (S := 𝓞 D.host.F) 2).subset ?_
   intro p hp
   simp only [Set.mem_setOf_eq] at hp ⊢
-  exact_mod_cast hp
+  have h : Ideal.absNorm p.asIdeal < 3 := by exact_mod_cast hp
+  exact Nat.lt_succ_iff.mp h
 
 end Formalism.L2.SG.Pf.Cnt

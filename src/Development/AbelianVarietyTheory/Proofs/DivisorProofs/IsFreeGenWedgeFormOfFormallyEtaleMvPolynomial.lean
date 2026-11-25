@@ -70,7 +70,7 @@ theorem isFreeGen_dForm_of_formallyEtale_mvPolynomial :
   haveI : Subsingleton (Algebra.H1Cotangent A₀ A) :=
     Algebra.FormallySmooth.subsingleton_h1Cotangent
   have hinj : Function.Injective (KaehlerDifferential.mapBaseChange k A₀ A) := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro y hy
     obtain ⟨w, rfl⟩ := (Algebra.H1Cotangent.exact_δ_mapBaseChange k A₀ A y).1 hy
     rw [Subsingleton.elim w 0, map_zero]

@@ -2,49 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsEventuallyNormRiemannThetaTermLe
 public import Mathlib.LinearAlgebra.SymplecticGroup
-import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -84,11 +41,6 @@ def symp (g : ℕ) : Fl g [⋀^Fin 2]→L[ℝ] ℝ where
 def stdLat (g : ℕ) : Submodule ℤ (Fl g) :=
   Submodule.span ℤ (Set.range (Pi.basisFun ℝ (Fin g ⊕ Fin g)))
 
-def wedgePow {T : Type*} [NormedAddCommGroup T] [NormedSpace ℝ T]
-    (α : T [⋀^Fin 2]→L[ℝ] ℝ) (k : ℕ) (v : Fin k × Fin 2 → T) : ℝ :=
-  (1 / 2 ^ k) * ∑ σ : Equiv.Perm (Fin k × Fin 2),
-    ((Equiv.Perm.sign σ : ℤ) : ℝ) * ∏ i, α ![v (σ (i, 0)), v (σ (i, 1))]
-
 def per {g : ℕ} (τ : Matrix (Fin g) (Fin g) ℂ) (x : Fl g) : Fin g → ℂ :=
   (fun i => (x (Sum.inl i) : ℂ)) ᵥ* τ + fun i => (x (Sum.inr i) : ℂ)
 
@@ -127,10 +79,6 @@ def pull (f : Pt E g → Pt E' g) (α : Pt E' g → Form2 E' g) (P : Pt E g) : F
 def transl (τ : E → Matrix (Fin g) (Fin g) ℂ) (x : Fl g) (P : Pt E g) : Pt E g :=
   (P.1, P.2 + per (τ P.1) x)
 
-def ddc (u : Pt E g → ℝ) (P v w : Pt E g) : ℝ :=
-  (1 / (4 * π)) * (fderiv ℝ (fun Q => fderiv ℝ u Q (Complex.I • v)) P w -
-    fderiv ℝ (fun Q => fderiv ℝ u Q (Complex.I • w)) P v)
-
 def IsFactor (B : Set E) (τ : E → Matrix (Fin g) (Fin g) ℂ) (M : Submodule ℤ (Fl g))
     (j : Fl g → Pt E g → ℂ) : Prop :=
   (∀ l ∈ M, DifferentiableOn ℂ (j l) (cov B g) ∧ ∀ P ∈ cov B g, j l P ≠ 0) ∧
@@ -141,29 +89,6 @@ def IsMetric (B : Set E) (τ : E → Matrix (Fin g) (Fin g) ℂ) (M : Submodule 
   ContDiffOn ℝ ∞ h (cov B g) ∧ (∀ P ∈ cov B g, 0 < h P) ∧
   ∀ l ∈ M, ∀ P ∈ cov B g, h (transl τ l P) * ‖j l P‖ ^ 2 = h P
 
-def ChernIsFlat (B : Set E) (τ : E → Matrix (Fin g) (Fin g) ℂ) (h : Pt E g → ℝ) : Prop :=
-  ∀ P ∈ cov B g, ∀ v w : Pt E g, -ddc (fun Q => Real.log (h Q)) P v w = om0 τ P ![v, w]
-
-def InducesPolarisation (B : Set E) (τ : E → Matrix (Fin g) (Fin g) ℂ) (M : Submodule ℤ (Fl g))
-    (j : Fl g → Pt E g → ℂ) : Prop :=
-  ∀ b ∈ B, ∃ f : Fl g → (Fin g → ℂ) → ℂ,
-    (∀ l ∈ M, Differentiable ℂ (f l) ∧ ∀ z, j l (b, z) = Complex.exp (2 * π * Complex.I * f l z)) ∧
-    ∀ l ∈ M, ∀ l' ∈ M, ∀ z,
-      f l (z + per (τ b) l') + f l' z - f l' (z + per (τ b) l) - f l z = (riem l l' : ℂ)
-
 end Family
-
-def symMat (g : ℕ) : Submodule ℂ (Fin g → Fin g → ℂ) where
-  carrier := {A | ∀ i j, A i j = A j i}
-  add_mem' := fun {A B} hA hB i j => by simp [hA i j, hB i j]
-  zero_mem' := fun _ _ => rfl
-  smul_mem' := fun c A hA i j => by simp [hA i j]
-
-def tauU {g : ℕ} (s : symMat g) : Matrix (Fin g) (Fin g) ℂ := Matrix.of s.1
-
-def siegel (g : ℕ) : Set (symMat g) := {s | IsSiegel (tauU s)}
-
-def symPart {g : ℕ} (A : Matrix (Fin g) (Fin g) ℂ) : symMat g :=
-  ⟨fun i j => (A i j + A j i) / 2, fun i j => by simp only [add_comm]⟩
 
 end GlobalTheory.IndefiniteRowSideFullHecke.SiegelReframe

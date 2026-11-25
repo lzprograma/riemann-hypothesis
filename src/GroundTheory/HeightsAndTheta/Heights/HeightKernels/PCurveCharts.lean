@@ -2,50 +2,7 @@ module
 
 public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsClosedPointChart
 import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+import Mathlib.RingTheory.Localization.Finiteness
 
 @[expose] public section
 
@@ -123,31 +80,13 @@ theorem mem_blockFnField_of_mem_curveRing [NumberField K'] (hy : IsArithVar (mCo
 
 theorem exists_nat_mul_mem_adjoin [CharZero K'] {S : Set K'} {x : K'} (hx : x ∈ Algebra.adjoin ℚ S) :
     ∃ n : ℕ, n ≠ 0 ∧ (n : K') * x ∈ Algebra.adjoin ℤ S := by
-  induction hx using Algebra.adjoin_induction with
-  | mem x hx => exact ⟨1, one_ne_zero, by simpa using Algebra.subset_adjoin hx⟩
-  | algebraMap q =>
-    refine ⟨q.den, q.den_nz, ?_⟩
-    have hq : (q.den : K') * algebraMap ℚ K' q = (q.num : K') := by
-      rw [eq_ratCast, Rat.cast_def]
-      field_simp
-    rw [hq]
-    exact intCast_mem _ _
-  | add x z _ _ hx hz =>
-    obtain ⟨n, hn, hnx⟩ := hx
-    obtain ⟨m, hm, hmz⟩ := hz
-    refine ⟨n * m, mul_ne_zero hn hm, ?_⟩
-    have e : ((n * m : ℕ) : K') * (x + z) = (m : K') * ((n : K') * x) + (n : K') * ((m : K') * z) := by
-      push_cast; ring
-    rw [e]
-    exact add_mem (mul_mem (natCast_mem _ m) hnx) (mul_mem (natCast_mem _ n) hmz)
-  | mul x z _ _ hx hz =>
-    obtain ⟨n, hn, hnx⟩ := hx
-    obtain ⟨m, hm, hmz⟩ := hz
-    refine ⟨n * m, mul_ne_zero hn hm, ?_⟩
-    have e : ((n * m : ℕ) : K') * (x * z) = ((n : K') * x) * ((m : K') * z) := by
-      push_cast; ring
-    rw [e]
-    exact mul_mem hnx hmz
+  obtain ⟨t, ht⟩ := multiple_mem_adjoin_of_mem_localization_adjoin (nonZeroDivisors ℤ) ℚ S x hx
+  refine ⟨t.1.natAbs, Int.natAbs_ne_zero.mpr (nonZeroDivisors.ne_zero t.2), ?_⟩
+  have ht' : (t.1 : K') * x ∈ Algebra.adjoin ℤ S := by simpa [Submonoid.smul_def, zsmul_eq_mul] using ht
+  rcases Int.natAbs_eq t.1 with h | h
+  · rwa [← Int.cast_natCast, ← h]
+  · rw [← Int.cast_natCast, neg_eq_iff_eq_neg.mp h.symm, Int.cast_neg, neg_mul]
+    exact neg_mem ht'
 
 
 omit [Fintype T] in

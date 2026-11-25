@@ -6,44 +6,6 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrin
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialCenter
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialInvariantDecrease
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -379,117 +341,6 @@ theorem monomialPrincipalization_center_subset_boundaryLocus (hGeom : MonomialGe
         (Scheme.IdealSheafData.mem_support_comap.mp hx))
   exact ⟨_, List.mem_map.mpr ⟨D, hD, rfl⟩, Scheme.IdealSheafData.mem_support_comap.mpr hxD⟩
 
-private theorem centerAtLast_eq_monomialCenter {k : Type u} [Field k] {X : Scheme.{u}}
-    {p : X ⟶ Spec (CommRingCat.of k)} {I : X.IdealSheafData} {m : ℕ}
-    {E : List X.IdealSheafData} (d : MarkedBlowupSequenceData p I m E) :
-    MarkedBlowupSequenceData.centerAtLast d =
-      monomialCenter (d.ideal d.length) m (d.boundary d.length) := rfl
-
-private theorem monomialCenter_comap_eqToHom {X Y : Scheme.{u}} (h : X = Y)
-    (J : Y.IdealSheafData) (m : ℕ) (E : List Y.IdealSheafData) :
-    monomialCenter (J.comap (eqToHom h)) m (List.map (fun D => D.comap (eqToHom h)) E) =
-      (monomialCenter J m E).comap (eqToHom h) := by
-  subst h
-  simp
-
-theorem monomialPrincipalization_center_eq_monomialCenter (_hGeom : MonomialGeometryHypotheses.{u})
-    (hinv : ComapIsoInvariance.{u}) :
-    ∀ T : MarkedIdealWithBoundary.{u}, MonomialCenter.IsLocallyMonomialTriple T →
-      ∀ i < (monomialPrincipalization hinv T).length,
-        (monomialPrincipalization hinv T).center i =
-          monomialCenter ((monomialPrincipalization hinv T).ideal i) T.mult
-            ((monomialPrincipalization hinv T).boundary i) := by
-  intro T _ i hi
-  rw [monomialPrincipalization_length hinv T] at hi
-  have hi' : i < monomialStallIndex hinv T.structMap T.ideal T.mult T.boundary := hi
-  have hle : i ≤ monomialStallIndex hinv T.structMap T.ideal T.mult T.boundary := le_of_lt hi'
-  have hobj := monomialBlowupSeq_schemeAt hinv T.structMap T.ideal T.mult T.boundary i hle
-  rw [monomialPrincipalization_apply, MarkedBlowupSequenceData.toMarkedSequence_center,
-    MarkedBlowupSequenceData.toMarkedSequence_ideal, MarkedBlowupSequenceData.toMarkedSequence_boundary,
-    monomialBlowupSeq_center hinv T.structMap T.ideal T.mult T.boundary i hi',
-    monomialBlowupSeq_ideal hinv T.structMap T.ideal T.mult T.boundary i hle,
-    monomialBlowupSeq_boundary hinv T.structMap T.ideal T.mult T.boundary i hle,
-    centerAtLast_eq_monomialCenter]
-  exact (monomialCenter_comap_eqToHom hobj _ T.mult _).symm
-
-private theorem minIndexCard_comap_eqToHom {A B : Scheme.{u}} (h : A = B)
-    (J : B.IdealSheafData) (m : ℕ) (E : List B.IdealSheafData) :
-    minIndexCard (J.comap (eqToHom h)) m (List.map (fun D => D.comap (eqToHom h)) E) =
-      minIndexCard J m E := by
-  subst h
-  simp
-
-theorem monomialPrincipalization_minIndexCard_ne_zero (_hGeom : MonomialGeometryHypotheses.{u})
-    (hinv : ComapIsoInvariance.{u}) :
-    ∀ T : MarkedIdealWithBoundary.{u}, MonomialCenter.IsLocallyMonomialTriple T →
-      ∀ i < (monomialPrincipalization hinv T).length,
-        minIndexCard ((monomialPrincipalization hinv T).ideal i) T.mult
-          ((monomialPrincipalization hinv T).boundary i) ≠ 0 := by
-  intro T _ i hi
-  rw [monomialPrincipalization_length] at hi
-  have hlt : i < monomialStallIndex hinv T.structMap T.ideal T.mult T.boundary := hi
-  have hle : i ≤ monomialStallIndex hinv T.structMap T.ideal T.mult T.boundary := Nat.le_of_lt hlt
-  have hmin : minIndexCard
-      ((MarkedBlowupSequenceData.monomialBlowupIterate hinv
-          (emptyMarkedBlowupSequenceData T.structMap T.ideal T.mult T.boundary) i).ideal
-        (MarkedBlowupSequenceData.monomialBlowupIterate hinv
-          (emptyMarkedBlowupSequenceData T.structMap T.ideal T.mult T.boundary) i).length) T.mult
-      ((MarkedBlowupSequenceData.monomialBlowupIterate hinv
-          (emptyMarkedBlowupSequenceData T.structMap T.ideal T.mult T.boundary) i).boundary
-        (MarkedBlowupSequenceData.monomialBlowupIterate hinv
-          (emptyMarkedBlowupSequenceData T.structMap T.ideal T.mult T.boundary) i).length) ≠ 0 :=
-    minIndexCard_monomialIterateFromEmpty_ne_zero hinv T i hlt
-  have hEq := minIndexCard_comap_eqToHom
-      (monomialBlowupSeq_schemeAt hinv T.structMap T.ideal T.mult T.boundary i hle)
-      ((MarkedBlowupSequenceData.monomialBlowupIterate hinv
-          (emptyMarkedBlowupSequenceData T.structMap T.ideal T.mult T.boundary) i).ideal
-        (MarkedBlowupSequenceData.monomialBlowupIterate hinv
-          (emptyMarkedBlowupSequenceData T.structMap T.ideal T.mult T.boundary) i).length) T.mult
-      ((MarkedBlowupSequenceData.monomialBlowupIterate hinv
-          (emptyMarkedBlowupSequenceData T.structMap T.ideal T.mult T.boundary) i).boundary
-        (MarkedBlowupSequenceData.monomialBlowupIterate hinv
-          (emptyMarkedBlowupSequenceData T.structMap T.ideal T.mult T.boundary) i).length)
-  rw [monomialPrincipalization_apply, MarkedBlowupSequenceData.toMarkedSequence_ideal,
-    MarkedBlowupSequenceData.toMarkedSequence_boundary,
-    monomialBlowupSeq_ideal hinv T.structMap T.ideal T.mult T.boundary i hle,
-    monomialBlowupSeq_boundary hinv T.structMap T.ideal T.mult T.boundary i hle]
-  intro h0
-  exact hmin (hEq.symm.trans h0)
-
-private theorem isMonomialNear_comap_eqToHom {X Y : Scheme.{u}} (h : X = Y)
-    (J : Y.IdealSheafData) (F : List Y.IdealSheafData) (m : ℕ)
-    (hmon : ∀ y ∈ orderAtLeastLocus J m, MonomialCenter.IsMonomialNear F J y)
-    (x : ↥X) (hx : x ∈ orderAtLeastLocus (J.comap (eqToHom h)) m) :
-    MonomialCenter.IsMonomialNear (List.map (fun D => D.comap (eqToHom h)) F)
-      (J.comap (eqToHom h)) x := by
-  subst h
-  have hx' : x ∈ orderAtLeastLocus J m := by simpa using hx
-  simpa using hmon x hx'
-
-theorem monomialPrincipalization_isMonomialNear (hGeom : MonomialGeometryHypotheses.{u})
-    (hinv : ComapIsoInvariance.{u}) :
-    ∀ T : MarkedIdealWithBoundary.{u}, MonomialCenter.IsLocallyMonomialTriple T →
-      ∀ i ≤ (monomialPrincipalization hinv T).length,
-        ∀ x ∈ orderAtLeastLocus ((monomialPrincipalization hinv T).ideal i) T.mult,
-          MonomialCenter.IsMonomialNear ((monomialPrincipalization hinv T).boundary i)
-            ((monomialPrincipalization hinv T).ideal i) x := by
-  intro T hT i hi
-  have hiN : i ≤ monomialStallIndex hinv T.structMap T.ideal T.mult T.boundary := by
-    rwa [monomialPrincipalization_length] at hi
-  have hid := monomialBlowupSeq_ideal hinv T.structMap T.ideal T.mult T.boundary i hiN
-  have hbd := monomialBlowupSeq_boundary hinv T.structMap T.ideal T.mult T.boundary i hiN
-  have hmon : ∀ y ∈ orderAtLeastLocus ((monomialIterateFromEmpty hinv T i).ideal
-        (monomialIterateFromEmpty hinv T i).length) T.mult,
-      MonomialCenter.IsMonomialNear
-        ((monomialIterateFromEmpty hinv T i).boundary (monomialIterateFromEmpty hinv T i).length)
-        ((monomialIterateFromEmpty hinv T i).ideal (monomialIterateFromEmpty hinv T i).length) y :=
-    (isLocallyMonomialTriple_tripleAtLastBlowup_monomialIterate hGeom hinv T hT i).monomialNear
-  rw [monomialPrincipalization_apply]
-  intro x hx
-  rw [MarkedBlowupSequenceData.toMarkedSequence_ideal, hid] at hx
-  rw [MarkedBlowupSequenceData.toMarkedSequence_ideal, MarkedBlowupSequenceData.toMarkedSequence_boundary, hid, hbd]
-  exact isMonomialNear_comap_eqToHom _ _ _ T.mult hmon x hx
-
 theorem monomialPrincipalization_principalizationCertificate (hGeom : MonomialGeometryHypotheses.{u})
     (hinv : ComapIsoInvariance.{u}) :
     ∀ T : MarkedIdealWithBoundary.{u}, MonomialCenter.IsLocallyMonomialTriple T →
@@ -503,110 +354,12 @@ theorem monomialPrincipalization_principalizationCertificate (hGeom : MonomialGe
   exact PrincipalizationCertificate.memory
     (monomialPrincipalization_center_subset_boundaryLocus hGeom hinv T hT i hi)
 
-private theorem centerInvariant_le_of_lt {n n' : ℕ} {a : MonomialCenter.CenterInvariant n} {b : MonomialCenter.CenterInvariant n'}
-    (h : MonomialCenter.CenterInvariant.Lt a b) : MonomialCenter.CenterInvariant.Le a b := by
-  unfold MonomialCenter.CenterInvariant.Le
-  exact Or.inl h
-
-private theorem comap_eqToHom_refl {A : Scheme.{u}} (h : A = A)
-    (D : A.IdealSheafData) : D.comap (eqToHom h) = D := by
-  rw [eqToHom_refl]
-  simp
-
-private theorem map_comap_eqToHom_refl {A : Scheme.{u}} (h : A = A)
-    (E : List A.IdealSheafData) :
-    List.map (fun D => D.comap (eqToHom h)) E = E := by
-  induction E with
-  | nil => rfl
-  | cons _ _ _ => simp
-
-private theorem centerInvariant_le_comap_eqToHom {A B A' B' : Scheme.{u}} (h : A = B) (h' : A' = B')
-    (m : ℕ) (J : B.IdealSheafData) (E : List B.IdealSheafData)
-    (J' : B'.IdealSheafData) (E' : List B'.IdealSheafData)
-    (hle : MonomialCenter.CenterInvariant.Le (MonomialCenter.centerInvariant J m E) (MonomialCenter.centerInvariant J' m E')) :
-    MonomialCenter.CenterInvariant.Le
-      (MonomialCenter.centerInvariant (J.comap (eqToHom h)) m (List.map (fun D => D.comap (eqToHom h)) E))
-      (MonomialCenter.centerInvariant (J'.comap (eqToHom h')) m
-        (List.map (fun D => D.comap (eqToHom h')) E')) := by
-  subst h
-  subst h'
-  rw [map_comap_eqToHom_refl rfl E, map_comap_eqToHom_refl rfl E',
-    comap_eqToHom_refl rfl J, comap_eqToHom_refl rfl J']
-  exact hle
-
-theorem monomialPrincipalization_centerInvariant_le_succ (hGeom : MonomialGeometryHypotheses.{u})
-    (hinv : ComapIsoInvariance.{u}) :
-    ∀ T : MarkedIdealWithBoundary.{u}, MonomialCenter.IsLocallyMonomialTriple T →
-      ∀ t : ℕ, t + 1 < (monomialPrincipalization hinv T).length →
-        (MonomialCenter.centerInvariant ((monomialPrincipalization hinv T).ideal t) T.mult
-            ((monomialPrincipalization hinv T).boundary t)).Le
-          (MonomialCenter.centerInvariant ((monomialPrincipalization hinv T).ideal (t + 1)) T.mult
-            ((monomialPrincipalization hinv T).boundary (t + 1))) := by
-  intro T hT t ht
-  rw [monomialPrincipalization_length hinv T] at ht
-  have ht1 : t + 1 < monomialStallIndex hinv T.structMap T.ideal T.mult T.boundary := ht
-  have ht0 : t < monomialStallIndex hinv T.structMap T.ideal T.mult T.boundary :=
-    Nat.lt_of_succ_lt ht1
-  have hstep : MarkedBlowupSequenceData.IsAdmissibleCenter (monomialIterateFromEmpty hinv T t) :=
-    isAdmissibleCenter_of_lt_monomialStallIndex hinv T.structMap T.ideal T.mult T.boundary t ht0
-  have hiter : monomialIterateFromEmpty hinv T (t + 1) =
-      MarkedBlowupSequenceData.blowupAtCenter hinv (monomialIterateFromEmpty hinv T t) :=
-    MarkedBlowupSequenceData.monomialBlowupIterate_succ hinv
-      (emptyMarkedBlowupSequenceData T.structMap T.ideal T.mult T.boundary) t
-  have hlastEq : tripleAtLastBlowup T (monomialIterateFromEmpty hinv T (t + 1)) =
-      blowupTripleAtCenterIdeal (tripleAtLastBlowup T (monomialIterateFromEmpty hinv T t)) := by
-    rw [hiter]
-    exact tripleAtLastBlowup_blowupAtCenter hinv T (monomialIterateFromEmpty hinv T t) hstep
-  have hloc := isLocallyMonomialTriple_tripleAtLastBlowup_monomialIterate hGeom hinv T hT t
-  have hmin := minIndexCard_monomialIterateFromEmpty_ne_zero hinv T t ht0
-  have hmin1 := minIndexCard_monomialIterateFromEmpty_ne_zero hinv T (t + 1) ht1
-  have hdich := minIndexCard_blowupTripleAtCenterIdeal_eq_zero_or_centerInvariant_lt hGeom hloc hmin
-  rw [← hlastEq] at hdich
-  have hlt : MonomialCenter.CenterInvariant.Lt
-      (MonomialCenter.centerInvariant (tripleAtLastBlowup T (monomialIterateFromEmpty hinv T t)).ideal T.mult
-        (tripleAtLastBlowup T (monomialIterateFromEmpty hinv T t)).boundary)
-      (MonomialCenter.centerInvariant (tripleAtLastBlowup T (monomialIterateFromEmpty hinv T (t + 1))).ideal T.mult
-        (tripleAtLastBlowup T (monomialIterateFromEmpty hinv T (t + 1))).boundary) := by
-    rcases hdich with h | h
-    · exact absurd h hmin1
-    · exact h
-  have hle := centerInvariant_le_of_lt hlt
-  rw [monomialPrincipalization_apply,
-    MarkedBlowupSequenceData.toMarkedSequence_ideal, MarkedBlowupSequenceData.toMarkedSequence_ideal,
-    MarkedBlowupSequenceData.toMarkedSequence_boundary, MarkedBlowupSequenceData.toMarkedSequence_boundary,
-    monomialBlowupSeq_ideal hinv T.structMap T.ideal T.mult T.boundary t (Nat.le_of_lt ht0),
-    monomialBlowupSeq_ideal hinv T.structMap T.ideal T.mult T.boundary (t + 1) (Nat.le_of_lt ht1),
-    monomialBlowupSeq_boundary hinv T.structMap T.ideal T.mult T.boundary t (Nat.le_of_lt ht0),
-    monomialBlowupSeq_boundary hinv T.structMap T.ideal T.mult T.boundary (t + 1) (Nat.le_of_lt ht1)]
-  exact centerInvariant_le_comap_eqToHom _ _ T.mult _ _ _ _ hle
-
 structure IsMonomialCasePrincipalization (F : PrincipalizationAssignment.{u}) : Prop where
-  center_subset_boundaryLocus :
-    ∀ T : MarkedIdealWithBoundary.{u}, MonomialCenter.IsLocallyMonomialTriple T →
-      ∀ i < (F T).length,
-        ↑((F T).center i).support ⊆ MarkedSequenceOfBlowups.boundaryLocus (F T) i
   cert :
     ∀ T : MarkedIdealWithBoundary.{u}, MonomialCenter.IsLocallyMonomialTriple T →
       ∀ i < (F T).length,
         PrincipalizationCertificate ((F T).schemeAt i) (MarkedSequenceOfBlowups.projectionToSpec (F T) i) ((F T).ideal i) T.mult
           (MarkedSequenceOfBlowups.boundaryLocus (F T) i) ((F T).center i)
-  center_eq :
-    ∀ T : MarkedIdealWithBoundary.{u}, MonomialCenter.IsLocallyMonomialTriple T →
-      ∀ i < (F T).length,
-        (F T).center i = monomialCenter ((F T).ideal i) T.mult ((F T).boundary i)
-  minLevel_ne_zero :
-    ∀ T : MarkedIdealWithBoundary.{u}, MonomialCenter.IsLocallyMonomialTriple T →
-      ∀ i < (F T).length, minIndexCard ((F T).ideal i) T.mult ((F T).boundary i) ≠ 0
-  key_le :
-    ∀ T : MarkedIdealWithBoundary.{u}, MonomialCenter.IsLocallyMonomialTriple T →
-      ∀ t : ℕ, t + 1 < (F T).length →
-        (MonomialCenter.centerInvariant ((F T).ideal t) T.mult ((F T).boundary t)).Le
-          (MonomialCenter.centerInvariant ((F T).ideal (t + 1)) T.mult ((F T).boundary (t + 1)))
-  monomial_near :
-    ∀ T : MarkedIdealWithBoundary.{u}, MonomialCenter.IsLocallyMonomialTriple T →
-      ∀ i ≤ (F T).length,
-        ∀ x ∈ orderAtLeastLocus ((F T).ideal i) T.mult,
-          MonomialCenter.IsMonomialNear ((F T).boundary i) ((F T).ideal i) x
   center_nonempty :
     ∀ T : MarkedIdealWithBoundary.{u}, MonomialCenter.IsLocallyMonomialTriple T →
       ∀ i < (F T).length, (((F T).center i).support : Set ↥((F T).schemeAt i)).Nonempty
@@ -619,13 +372,7 @@ structure IsMonomialCasePrincipalization (F : PrincipalizationAssignment.{u}) : 
 
 theorem isMonomialCasePrincipalization_monomialPrincipalization (hGeom : MonomialGeometryHypotheses.{u})
     (hinv : ComapIsoInvariance.{u}) : IsMonomialCasePrincipalization (monomialPrincipalization hinv) :=
-  { center_subset_boundaryLocus :=
-      monomialPrincipalization_center_subset_boundaryLocus hGeom hinv
-    cert := monomialPrincipalization_principalizationCertificate hGeom hinv
-    center_eq := monomialPrincipalization_center_eq_monomialCenter hGeom hinv
-    minLevel_ne_zero := monomialPrincipalization_minIndexCard_ne_zero hGeom hinv
-    key_le := monomialPrincipalization_centerInvariant_le_succ hGeom hinv
-    monomial_near := monomialPrincipalization_isMonomialNear hGeom hinv
+  { cert := monomialPrincipalization_principalizationCertificate hGeom hinv
     center_nonempty := monomialPrincipalization_center_support_nonempty hGeom hinv
     resolves := monomialPrincipalization_isResolution hGeom hinv
     trivial_of_coSupport_empty := monomialPrincipalization_length_eq_zero_of_empty hinv }

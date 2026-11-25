@@ -13,8 +13,6 @@ open MeasureTheory NumberField IsDedekindDomain Matrix Formalism.BasicNotions Fo
 
 namespace Formalism.L2.SG.ColDict
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Frames
 
 variable {D : D7}

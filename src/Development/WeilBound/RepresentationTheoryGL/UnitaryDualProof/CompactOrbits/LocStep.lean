@@ -10,6 +10,7 @@ public import Mathlib.LinearAlgebra.Trace
 public import Mathlib.NumberTheory.LocalField.Basic
 public import Mathlib.Topology.Instances.Matrix
 import Mathlib.Algebra.CharZero.Infinite
+import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
 
 @[expose] public section
 
@@ -427,40 +428,6 @@ private theorem trace_aeval_eq_sum (A : Mat k n) (p : k[X]) :
     trace (aeval A p) = ∑ i ∈ Finset.range (p.natDegree + 1), p.coeff i * trace (A ^ i) := by
   rw [aeval_eq_sum_range, Matrix.trace_sum]; simp only [Matrix.trace_smul, smul_eq_mul]
 
-private theorem isNilpotent_of_trace_pow [CharZero k] (A : Mat k n)
-    (h : ∀ m, 1 ≤ m → trace (A ^ m) = 0) : IsNilpotent A := by
-  obtain ⟨q, hq, hXq⟩ := Polynomial.exists_eq_pow_rootMultiplicity_mul_and_not_dvd A.charpoly
-    (charpoly_monic A).ne_zero 0
-  simp only [map_zero, sub_zero] at hq hXq
-  set r := rootMultiplicity 0 A.charpoly
-  obtain ⟨a, b, hab⟩ := IsCoprime.pow_left ((Polynomial.irreducible_X.coprime_iff_not_dvd).2 hXq) (m := r + 1)
-  have hzero : aeval A (X ^ (r + 1) * q) = 0 := by
-    rw [show (X ^ (r + 1) * q : k[X]) = X * A.charpoly by rw [hq]; ring, map_mul, aeval_self_charpoly, mul_zero]
-  have hprod : aeval A (a * X ^ (r + 1)) * aeval A (b * q) = 0 := by
-    rw [← map_mul, show a * X ^ (r + 1) * (b * q) = (a * b) * (X ^ (r + 1) * q) by ring, map_mul, hzero, mul_zero]
-  have hidem : IsIdempotentElem (aeval A (a * X ^ (r + 1))) := by
-    have he : aeval A (a * X ^ (r + 1)) = 1 - aeval A (b * q) :=
-      eq_sub_of_add_eq (by rw [← map_add, hab, map_one])
-    show aeval A (a * X ^ (r + 1)) * aeval A (a * X ^ (r + 1)) = aeval A (a * X ^ (r + 1))
-    conv_lhs => arg 2; rw [he]
-    rw [mul_sub, mul_one, hprod, sub_zero]
-  have htr : trace (aeval A (a * X ^ (r + 1))) = 0 := by
-    rw [trace_aeval_eq_sum]
-    refine Finset.sum_eq_zero fun i _ => ?_
-    rcases i with _ | i
-    · simp
-    · rw [h (i + 1) (by omega), mul_zero]
-  have hz : aeval A (a * X ^ (r + 1)) = 0 := (map_eq_zero_iff _ (AlgEquiv.injective _)).1 <|
-    LinearMap.IsIdempotentElem.eq_zero_of_trace_eq_zero (hidem.map (Matrix.toLinAlgEquiv' : Mat k n ≃ₐ[k] _)) <| by
-      rw [LinearMap.trace_eq_matrix_trace k (Pi.basisFun k (Fin n)), LinearMap.toMatrix_eq_toMatrix']
-      change trace (LinearMap.toMatrix' (Matrix.toLin' _)) = 0
-      rw [LinearMap.toMatrix'_toLin', htr]
-  refine ⟨r + 1, ?_⟩
-  have e : (X ^ (r + 1) : k[X]) = X ^ (r + 1) * (a * X ^ (r + 1)) + b * (X ^ (r + 1) * q) := by
-    linear_combination (-(X ^ (r + 1) : k[X])) * hab
-  have := congrArg (aeval A) e
-  simpa [hz, hzero] using this
-
 private theorem isNilpotent_aeval_charpoly [CharZero k] {Z : SubM k n} {x x₀ : Mat k n}
     (h : pZ Z x = pZ Z x₀) : IsNilpotent (aeval x x₀.charpoly) := by
   have htp : ∀ i (hi : i < 2 * n + 1), trace (x ^ i) = trace (x₀ ^ i) := fun i hi => by
@@ -470,7 +437,7 @@ private theorem isNilpotent_aeval_charpoly [CharZero k] {Z : SubM k n} {x x₀ :
       rw [← one_mul (y ^ i), show (1 : Mat k n) = ((1 : Z) : Mat k n) from rfl, h1, Finset.sum_mul, Matrix.trace_sum]
       simp [pZ, Matrix.trace_smul]
     rw [key x, key x₀, h]
-  refine isNilpotent_of_trace_pow _ fun m hm => ?_
+  refine ReciprocityTheory.L2DbarEstimates.Y.isNilpotent_of_trace_pow n _ fun m hm _ => ?_
   rw [← map_pow]
   have hM : (x.charpoly * x₀.charpoly).Monic := (charpoly_monic x).mul (charpoly_monic x₀)
   have hdeg : (x.charpoly * x₀.charpoly).natDegree = 2 * n := by

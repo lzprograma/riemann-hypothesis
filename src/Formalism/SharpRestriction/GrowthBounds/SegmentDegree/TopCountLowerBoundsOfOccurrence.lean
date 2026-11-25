@@ -2,45 +2,7 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DiscriminantNeZeroOfResidueNeZero
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.OldestLetterInSegment
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ColumnConditionsOfNumericBounds
 
@@ -68,7 +30,7 @@ theorem oldest_le_row (hX : X.Hyp p K) (j x : ℤ) (hx : x ∈ X.toLate j) (i : 
     X.F.oldest j x ≤ X.row j x i := by
   have hr0 : 0 < r := Nat.pos_of_ne_zero (NeZero.ne r)
   have hmem := (mem_late X j x).1 hx
-  have hlen := r_le_length hX.valid j x hmem.1 hmem.2
+  have hlen := r_le_length hX.valid j x hmem.2
   have hi := i.isLt
   rw [oldest_eq, row_eq]
   have h1 : (evL X.F j x).length - r < (evL X.F j x).length := by omega
@@ -80,7 +42,7 @@ theorem sg_mul_le (hX : X.Hyp p K) (j x : ℤ) (hx : x ∈ X.toLate j) (i : Fin 
     (X.sg p K j x : ℝ) * (p : ℝ) ^ X.F.dist j (X.row j x i) ≤ 2 * X.a / (Dat.k (r := r) K ^ 2 * X.Y) := by
   have hr0 : 0 < r := Nat.pos_of_ne_zero (NeZero.ne r)
   have hmem := (mem_late X j x).1 hx
-  have hlen := r_le_length hX.valid j x hmem.1 hmem.2
+  have hlen := r_le_length hX.valid j x hmem.2
   have hold : X.F.oldest j x ∈ X.F.letters j := by
     rw [oldest_eq]
     have h1 : (evL X.F j x).length - r < (evL X.F j x).length := by omega
@@ -121,9 +83,8 @@ theorem sg_mul_le (hX : X.Hyp p K) (j x : ℤ) (hx : x ∈ X.toLate j) (i : Fin 
 
 private theorem late_index_map_mem_letters (hX : X.Hyp p K) (j x : ℤ) (hx : x ∈ X.toLate j) (i : Fin r) :
     X.row j x i ∈ X.F.letters j := by
-  have hr0 : 0 < r := Nat.pos_of_ne_zero (NeZero.ne r)
   have hmem := (mem_late X j x).1 hx
-  have hlen := r_le_length hX.valid j x hmem.1 hmem.2
+  have hlen := r_le_length hX.valid j x hmem.2
   have hi := i.isLt
   rw [row_eq]
   have h2 : (evL X.F j x).length - r + (i : ℕ) < (evL X.F j x).length := by omega
@@ -132,9 +93,8 @@ private theorem late_index_map_mem_letters (hX : X.Hyp p K) (j x : ℤ) (hx : x 
 
 private theorem late_index_map_injective (hX : X.Hyp p K) (j x : ℤ) (hx : x ∈ X.toLate j) :
     Function.Injective (X.row j x) := by
-  have hr0 : 0 < r := Nat.pos_of_ne_zero (NeZero.ne r)
   have hmem := (mem_late X j x).1 hx
-  have hlen := r_le_length hX.valid j x hmem.1 hmem.2
+  have hlen := r_le_length hX.valid j x hmem.2
   intro i i' h
   have hi := i.isLt
   have hi' := i'.isLt
@@ -161,7 +121,6 @@ theorem Et_le (hOcc : LeadingLetterInAtMostTwoSegments) (hX : X.Hyp p K) (t : Fi
     have : (0:ℝ) < X.Y := by linarith [B.Y1]
     positivity
   set c : ℝ := 2 * X.a / (Dat.k (r := r) K ^ 2 * X.Y) with hc
-  have hc0 : 0 ≤ c := div_nonneg (by linarith) hden.le
   have hcnt : ∀ j : ℤ, ∀ x ∈ X.toLate j,
       (Finset.univ.filter fun i : Fin r => posOf n' (X.row j x i) = t).card ≤
         ((X.F.letters j).filter fun y => posOf n' y = t).card := by
@@ -243,9 +202,6 @@ theorem a_ge (hX : X.Hyp p K) : 32 * ((X.E₀ : ℝ) + X.mStar + 1) ≤ X.a := b
 theorem k_sq_mul_Y_ge_Ns (hX : X.Hyp p K) (hC : 32 ≤ X.Ck) : 160 * (X.Ns : ℝ) ≤ Dat.k (r := r) K ^ 2 * X.Y := by
   have B := basics hX
   have ha := a_ge hX
-  have hE0 : (0:ℝ) ≤ X.E₀ := Nat.cast_nonneg _
-  have hm0 : (0:ℝ) ≤ X.mStar := Nat.cast_nonneg _
-  have ha32 : (32:ℝ) ≤ X.a := by linarith
   have hlog : 1 ≤ Real.log X.a := by
     rw [Real.le_log_iff_exp_le (by linarith)]
     have := Real.exp_one_lt_d9
@@ -261,11 +217,6 @@ theorem k_sq_mul_Y_ge_Ns (hX : X.Hyp p K) (hC : 32 ≤ X.Ck) : 160 * (X.Ns : ℝ
     exact mul_le_mul_of_nonneg_right hC (mul_nonneg (sq_nonneg _) (by linarith))
   have hP1 := hX.P1
   have hkdef : Dat.k (r := r) K = ((r + K : ℕ) : ℝ) := rfl
-  have hk5 : (5:ℝ) ≤ ((r + K : ℕ) : ℝ) := by
-    have h := B.k5
-    rw [hkdef] at h
-    exact h
-  have hk32 : 32 * (X.Ns : ℝ) ≤ ((r + K : ℕ) : ℝ) := by linarith
   have hY := hX.Y1
   rw [hkdef]
   have e1 : 0 ≤ ((r + K : ℕ) : ℝ) ^ 2 * (X.Y - 1) := mul_nonneg (sq_nonneg _) (by linarith)
@@ -281,10 +232,7 @@ theorem top_count_lower_bounds_of_occurrence (C₀ : ℝ) (hC : 32 ≤ C₀) (hO
   have ha := a_ge hX
   have B := basics hX
   have hNs : (1:ℝ) ≤ X.Ns := B.Ns1
-  have hE0 : (0:ℝ) ≤ X.E₀ := Nat.cast_nonneg _
-  have hm0 : (0:ℝ) ≤ X.mStar := Nat.cast_nonneg _
   have ha0 : 0 ≤ X.a := by linarith
-  have hE0a : 32 * (X.E₀ : ℝ) ≤ X.a := by linarith
   have hEt40 : ∀ t, (X.Et p K t : ℝ) ≤ X.a / 40 := by
     intro t
     refine (Et_le hOcc hX t).trans ?_
@@ -300,7 +248,7 @@ theorem top_count_lower_bounds_of_occurrence (C₀ : ℝ) (hC : 32 ≤ C₀) (hO
       have : (X.E' t : ℝ) ≤ X.deg t := by linarith
       exact_mod_cast this
     unfold Dat.d
-    rw [if_pos ht, Nat.cast_sub hle]
+    rw [ite_eq_left ht, Nat.cast_sub hle]
   have hEtd : ∀ t ∈ X.F.TT, X.Et p K t ≤ X.d t := by
     intro t ht
     have hdeg := (hX.degs t ht).1
@@ -328,7 +276,7 @@ theorem top_count_lower_bounds_of_occurrence (C₀ : ℝ) (hC : 32 ≤ C₀) (hO
         apply mul_eq_zero_of_right
         apply Finset.sum_eq_zero
         intro i _
-        rw [if_neg]
+        rw [ite_eq_right]
         intro hpos
         apply ht
         rw [← hpos]

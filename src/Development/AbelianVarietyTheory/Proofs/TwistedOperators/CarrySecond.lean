@@ -2,39 +2,7 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TwistPlacesOffPrimeQZero
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterIdeleCharacterMatchUnique
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -42,7 +10,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Form
 open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim
 open Formalism.L2.Host (HChar)
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.RowEx
 
 noncomputable section
@@ -266,21 +233,21 @@ theorem carryS : CarryS := by
   obtain ⟨B', hB'⟩ : ∃ B' : Frames G', ∀ i j, i ≠ 0 → HEq (B'.β i j) (S.B.β i j) := by
     refine ⟨⟨fun i j => if h : i = 0 then 1 else trGL (eVs i j h) (S.B.βs i j), fun i j h1 h2 h3 => ?_⟩, fun i j h => ?_⟩
     · have h0 : i ≠ 0 := by omega
-      simp only [dif_neg h0]
+      simp only [dite_eq_right h0]
       exact isFrame_tr _ (eΛs i j h0) (S.B.isFrame i j h1 (h2.trans_eq (hm.trans hm.symm)) (h3.trans_eq (hm.trans hm.symm)))
     · obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero h
       dsimp only [Frames.β]
-      rw [dif_neg h]
+      rw [dite_eq_right h]
       exact trGL_heq _ _
   have eVt : ∀ j, G'.V (.top j) = G.V (.top j) := fun j => eq_of_heq (hG.top j).1
 
   have eVd' : ∀ Y, DefNode m Y → G'.V Y = G.V Y := fun Y h => (eVd Y h).1
   obtain ⟨fr', hfr⟩ : ∃ fr' : ∀ Y : Node, GL (Fin (G'.V Y).rank) _, ∀ Y, DefNode m Y → HEq (fr' Y) (S.N.fr Y) :=
     ⟨fun Y => if h : DefNode m Y then trGL (eVd' Y h) (S.N.fr Y) else 1, fun Y h => by
-      simp only [dif_pos h]; exact trGL_heq _ _⟩
+      simp only [dite_eq_left h]; exact trGL_heq _ _⟩
   obtain ⟨u', hu'⟩ : ∃ u' : ∀ Y : Node, GfC (D := dOf L) (G'.V Y), ∀ Y, DefNode m Y → HEq (u' Y) (S.N.u Y) :=
     ⟨fun Y => if h : DefNode m Y then trU (eVd' Y h) (S.N.u Y) else 1, fun Y h => by
-      simp only [dif_pos h]; exact trU_heq _ _⟩
+      simp only [dite_eq_left h]; exact trU_heq _ _⟩
 
   have hTd : DefNode m (.top _) := hm'.le
   have hGd : DefNode m (.grid _ _) := (⟨hm'.le, hm'⟩ : _ ≤ m ∧ _ = m)
@@ -332,15 +299,15 @@ theorem carryS : CarryS := by
       (Prod.ext (rk_eq (eP p h).1) (rk_eq (eP p h).2) : ((G'.pS p).rank, (G'.pT p).rank) =
         ((G.pS (mapPair ι p)).rank, (G.pT (mapPair ι p)).rank)) (S.Z.e0 (mapPair ι p)) else 0,
       fun p h => ?_, fun p h => ?_⟩
-    · simp only [dif_pos h]; exact trFun_heq _ _
-    · simp only [dif_neg h]
+    · simp only [dite_eq_left h]; exact trFun_heq _ _
+    · simp only [dite_eq_right h]
   obtain ⟨vac', hvac', zvac'⟩ : ∃ vac' : ∀ p : Pair T', Formalism.IndefR.Datum.WO (D := dOf L) (G'.pS p) (G'.pT p) → ℂ,
       (∀ p, DefPair m p → HEq (vac' p) (S.Z.vac (mapPair ι p))) ∧ ∀ p, ¬ DefPair m p → vac' p = 0 := by
     refine ⟨fun p => if h : DefPair m p then trFun (F := fun ST : HSp (dOf L) × HSp (dOf L) => Formalism.IndefR.Datum.WO ST.1 ST.2 → ℂ)
       (Prod.ext (eP p h).1 (eP p h).2 : (G'.pS p, G'.pT p) = (G.pS (mapPair ι p), G.pT (mapPair ι p))) (S.Z.vac (mapPair ι p))
       else 0, fun p h => ?_, fun p h => ?_⟩
-    · simp only [dif_pos h]; exact trFun_heq _ _
-    · simp only [dif_neg h]
+    · simp only [dite_eq_left h]; exact trFun_heq _ _
+    · simp only [dite_eq_right h]
   have hDN : ∀ Y, DefNode m Y → DefNode _ Y := fun Y h => hm'.symm ▸ h
   have vacDD : ∀ ψ θ (S T : HSp (dOf L)) cS cT LS LT f, Formalism.IndefR.Datum.IsVacO (D := dOf L) ψ θ S T cS cT LS LT f →
       Formalism.IndefR.Datum.IsVacO (D := dOf L') ψ θ S T cS cT LS LT f := by

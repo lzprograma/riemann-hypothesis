@@ -71,7 +71,7 @@ theorem tsum_transversal_eq_tsum_orbitQuotient_general {G X A M : Type} [Group G
     intro o ho
     have hTo : T o.out := by
       by_contra hn
-      exact ho (if_neg hn)
+      exact ho (ite_eq_right hn)
     obtain ⟨a, g, hg⟩ := hsurj _ hTo
     refine ⟨a, ?_⟩
     rw [← Quotient.out_eq o]
@@ -83,7 +83,7 @@ theorem tsum_transversal_eq_tsum_orbitQuotient_general {G X A M : Type} [Group G
   rw [← hc.tsum_eq hsupp]
   refine tsum_congr fun a => ?_
   obtain ⟨g, hg⟩ := hout a
-  rw [← hg, if_pos (hT g _ (hι a)), hφ g _ (hι a)]
+  rw [← hg, ite_eq_left (hT g _ (hι a)), hφ g _ (hι a)]
 
 theorem tsum_transversal_eq_tsum_orbitQuotient : ∀ {G X A : Type} [Group G] [MulAction G X] (ι : A → X) (T : X → Prop), (∀ g : G, ∀ x, T x → T (g • x)) → (∀ a, T (ι a)) → (∀ x, T x → ∃ a, ∃ g : G, g • ι a = x) → (∀ a b, (∃ g : G, g • ι a = ι b) → a = b) → (∀ φ : X → ℂ, (∀ g : G, ∀ x, T x → φ (g • x) = φ x) → ∑' a, φ (ι a) = ∑' o : MulAction.orbitRel.Quotient G X, if T o.out then φ o.out else 0) ∧ ∀ φ : X → ℝ≥0∞, (∀ g : G, ∀ x, T x → φ (g • x) = φ x) → ∑' a, φ (ι a) = ∑' o : MulAction.orbitRel.Quotient G X, if T o.out then φ o.out else 0 := by
   intro G X A _ _ ι T hT hι hsurj hinj

@@ -62,10 +62,10 @@ theorem inner_raiB {ι : Pol p q r s →ₗ[ℂ] H} (hι : IsFockIP ι) (l : Ln 
     (P Q : Pol p q r s) :
     inner ℂ (ι (raiB l P)) (ι Q) = (if linePos l then 1 else -1) * inner ℂ (ι P) (ι (lowB l Q)) := by
   cases hl : linePos l
-  · simp only [raiB, lowB, hl, Bool.false_eq_true, if_false]
+  · simp only [raiB, lowB, hl, Bool.false_eq_true, ite_false]
     show inner ℂ (ι (-pderiv l P)) (ι Q) = -1 * inner ℂ (ι P) (ι (X l * Q))
     rw [map_neg, inner_neg_left, inner_pderiv hι, neg_one_mul]
-  · simp only [raiB, lowB, hl, if_true]
+  · simp only [raiB, lowB, hl, ite_true]
     show inner ℂ (ι (X l * P)) (ι Q) = 1 * inner ℂ (ι P) (ι (pderiv l Q))
     rw [inner_X_mul hι, one_mul]
 
@@ -73,10 +73,10 @@ theorem inner_lowB {ι : Pol p q r s →ₗ[ℂ] H} (hι : IsFockIP ι) (l : Ln 
     (P Q : Pol p q r s) :
     inner ℂ (ι (lowB l P)) (ι Q) = (if linePos l then 1 else -1) * inner ℂ (ι P) (ι (raiB l Q)) := by
   cases hl : linePos l
-  · simp only [raiB, lowB, hl, Bool.false_eq_true, if_false]
+  · simp only [raiB, lowB, hl, Bool.false_eq_true, ite_false]
     show inner ℂ (ι (X l * P)) (ι Q) = -1 * inner ℂ (ι P) (ι (-pderiv l Q))
     rw [map_neg, inner_neg_right, inner_X_mul hι, neg_one_mul, neg_neg]
-  · simp only [raiB, lowB, hl, if_true]
+  · simp only [raiB, lowB, hl, ite_true]
     show inner ℂ (ι (pderiv l P)) (ι Q) = 1 * inner ℂ (ι P) (ι (X l * Q))
     rw [inner_pderiv hι, one_mul]
 

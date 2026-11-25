@@ -78,21 +78,6 @@ theorem sum_choose_succ (n : ℕ) (U : ℕ → ℤ) :
     Nat.choose_succ_self, Nat.cast_zero, zero_mul, add_zero]
   ring
 
-section ProjBundle
-
-variable {K : Type*} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
-variable {F : Type*} [Field F] {Ω : Type*} [Field Ω] [Algebra F Ω]
-variable {E : Type*} [AddCommGroup E] [Module Ω E] {N : ℕ}
-
-end ProjBundle
-
-section Rename
-
-variable {F : Type} [Field F] {S : Type} [Fintype S] [DecidableEq S] {κ ι' : S → Type}
-  [∀ s, Fintype (κ s)] [∀ s, Fintype (ι' s)]
-
-end Rename
-
 end ProjectiveBundleNumbers
 
 end

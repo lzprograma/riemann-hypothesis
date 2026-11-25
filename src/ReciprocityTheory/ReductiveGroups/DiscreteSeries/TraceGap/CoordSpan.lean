@@ -16,12 +16,6 @@ variable {n : ℕ}
 
 def gaW (ε : Fin n → Bool) (lam : Fin n → ℝ) : Fin n → ℝ := lam - rhoC ε + rhoHol ε
 
-section General
-
-variable {M : Type*} [AddCommGroup M] [Module ℂ M]
-
-end General
-
 variable {M : Type*} [NormedAddCommGroup M] [InnerProductSpace ℂ M]
 
 def coordSpan (Z : Submodule ℂ (TensorProduct ℂ M (Fock n))) : Submodule ℂ M :=

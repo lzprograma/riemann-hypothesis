@@ -1,48 +1,9 @@
 module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.ModulusAdjoinISqrtNegPrimes
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
+import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocA
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -51,61 +12,7 @@ open scoped Pointwise
 
 namespace UpperTheory.V.Two.DyadicOrbitIndex
 
-variable (l : ℕ) [hl : Fact l.Prime]
-
-private theorem prime_l : Prime ((l : ℕ) : 𝓞 ℚ) := by
-  have h : Prime ((l : ℕ) : ℤ) := Nat.prime_iff_prime_int.mp hl.out
-  have e : ((l : ℕ) : 𝓞 ℚ) = Rat.ringOfIntegersEquiv.symm ((l : ℕ) : ℤ) := by simp
-  rw [e]
-  exact (MulEquiv.prime_iff Rat.ringOfIntegersEquiv.symm.toMulEquiv).mpr h
-
-private noncomputable def vQ : HeightOneSpectrum (𝓞 ℚ) where
-  asIdeal := Ideal.span {((l : ℕ) : 𝓞 ℚ)}
-  isPrime := (Ideal.span_singleton_prime (prime_l l).ne_zero).mpr (prime_l l)
-  ne_bot := by rw [Ne, Ideal.span_singleton_eq_bot]; exact (prime_l l).ne_zero
-
-variable {l} {Ω : Type} [Field Ω]
-
-private theorem intCast_mem_vQ (n : ℤ) : ((n : ℤ) : 𝓞 ℚ) ∈ (vQ l).asIdeal ↔ ((l : ℕ) : ℤ) ∣ n := by
-  show ((n : ℤ) : 𝓞 ℚ) ∈ Ideal.span {((l : ℕ) : 𝓞 ℚ)} ↔ _
-  rw [Ideal.mem_span_singleton]
-  have e1 : ((l : ℕ) : 𝓞 ℚ) = Rat.ringOfIntegersEquiv.symm ((l : ℕ) : ℤ) := by simp
-  have e2 : ((n : ℤ) : 𝓞 ℚ) = Rat.ringOfIntegersEquiv.symm n := by simp
-  rw [e1, e2]
-  exact map_dvd_iff Rat.ringOfIntegersEquiv.symm
-
-private theorem val_intCast_le_one (A : ValuationSubring Ω) (n : ℤ) : A.valuation (n : Ω) ≤ 1 :=
-  (A.valuation_le_one_iff _).mpr (intCast_mem A n)
-
-private theorem val_intCast_lt_one_iff (A : ValuationSubring Ω) (hA : A.valuation ((l : ℕ) : Ω) < 1) (n : ℤ) :
-    A.valuation (n : Ω) < 1 ↔ ((l : ℕ) : ℤ) ∣ n := by
-  constructor
-  · intro h
-    by_contra hnd
-    have hc : IsCoprime ((l : ℕ) : ℤ) n :=
-      ((Nat.prime_iff_prime_int.mp hl.out).coprime_iff_not_dvd).mpr hnd
-    obtain ⟨a, b, hab⟩ := hc
-    have h1 : A.valuation ((a : Ω) * ((l : ℕ) : Ω) + (b : Ω) * (n : Ω)) < 1 := by
-      refine Valuation.map_add_lt _ ?_ ?_
-      · rw [map_mul]; exact lt_of_le_of_lt (mul_le_of_le_one_left' (val_intCast_le_one A a)) hA
-      · rw [map_mul]; exact lt_of_le_of_lt (mul_le_of_le_one_left' (val_intCast_le_one A b)) h
-    have h2 : (a : Ω) * ((l : ℕ) : Ω) + (b : Ω) * (n : Ω) = 1 := by exact_mod_cast congrArg (Int.cast : ℤ → Ω) hab
-    rw [h2, map_one] at h1
-    exact lt_irrefl _ h1
-  · rintro ⟨k, rfl⟩
-    push_cast
-    rw [map_mul]
-    exact lt_of_le_of_lt (mul_le_of_le_one_right' (val_intCast_le_one A k)) hA
-
-private theorem isPlaceOver_vQ [Algebra ℚ Ω] (A : ValuationSubring Ω) (hA : A.valuation ((l : ℕ) : Ω) < 1) :
-    IsPlaceOver (F := ℚ) A (vQ l) := by
-  intro x
-  obtain ⟨n, rfl⟩ : ∃ n : ℤ, x = ((n : ℤ) : 𝓞 ℚ) :=
-    ⟨Rat.ringOfIntegersEquiv x, by
-      have := Rat.ringOfIntegersEquiv.symm_apply_apply x
-      rw [← this]; simp⟩
-  rw [intCast_mem_vQ, ← val_intCast_lt_one_iff A hA]
-  simp
+variable {Ω : Type} [Field Ω]
 
 private theorem smul_val_lt [Algebra ℚ Ω] (g : G ℚ Ω) (A : ValuationSubring Ω) (n : ℕ)
     (hA : A.valuation (n : Ω) < 1) : (g • A).valuation (n : Ω) < 1 := by
@@ -136,7 +43,9 @@ theorem UpperTheory.V.Two.orbIndex :
     obtain ⟨q, -, rfl⟩ := Finset.mem_image.1 hB
     exact smul_val_lt _ _ _ h0
   · intro A hA
-    obtain ⟨g, rfl⟩ := exists_smul_eq_of_isPlaceOver (F := ℚ) (isPlaceOver_vQ A₀ h0) (isPlaceOver_vQ A hA)
+    have hA0 := Formalism.BasicNotions.Examples₂.LB.isPlaceOver_vQ A₀ h0
+    have hA1 := Formalism.BasicNotions.Examples₂.LB.isPlaceOver_vQ A hA
+    obtain ⟨g, rfl⟩ := exists_smul_eq_of_isPlaceOver (F := ℚ) hA0 hA1
     obtain ⟨h, hh⟩ := QuotientGroup.mk_out_eq_mul (V ⊔ Dec (F := ℚ) A₀) g
     have hm : (h⁻¹ : G ℚ Ω) ∈ ((V ⊔ Dec (F := ℚ) A₀ : Subgroup (G ℚ Ω)) : Set (G ℚ Ω)) := inv_mem h.2
     rw [Subgroup.normal_mul] at hm

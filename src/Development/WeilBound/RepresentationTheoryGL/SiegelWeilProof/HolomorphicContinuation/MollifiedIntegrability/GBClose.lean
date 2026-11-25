@@ -19,59 +19,9 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsBoundAlt
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.GBInvar
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.GBLink
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.SimpleRing.Principal
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Order.CompletePartialOrder
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.RatBound, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ContDiffHerm, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.GBBound, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.GBCauchy, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.GBLagr, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.GBTwist, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.GBClose
@@ -388,7 +338,7 @@ theorem pb_dom (a : ℂ) (ha : a = Complex.I ∨ a = -Complex.I) (lam : Fin n �
     have e1 : ((1 - a • b) *ᵥ x) i0 = x i0 - a * ∑ j, b i0 j * x j := by
       simp only [Matrix.mulVec, dotProduct, Matrix.sub_apply, Matrix.smul_apply, smul_eq_mul, sub_mul,
         Finset.sum_sub_distrib, Finset.mul_sum, Matrix.one_apply, ite_mul, one_mul, zero_mul,
-        Finset.sum_ite_eq, Finset.mem_univ, if_true, mul_assoc]
+        Finset.sum_ite_eq, Finset.mem_univ, ite_true, mul_assoc]
     rw [e1]; simp only [sub_mul, Finset.sum_sub_distrib, hD]; ring
   have hsum : ‖∑ j, (b i0 j - Matrix.diagonal (fun i => (lam i : ℂ)) i0 j) * x j‖ ≤ (n : ℝ) * (c₀ * pbwt lam i0 * m) := by
     calc ‖∑ j, (b i0 j - Matrix.diagonal (fun i => (lam i : ℂ)) i0 j) * x j‖ ≤ ∑ j, ‖(b i0 j - Matrix.diagonal (fun i => (lam i : ℂ)) i0 j) * x j‖ := norm_sum_le _ _
@@ -621,8 +571,8 @@ theorem pBound : PBound := by
     apply hCR
     rintro ⟨t, i, j⟩
     cases t
-    · simp only [Bool.false_eq_true, if_false]; rw [i1]; exact hent _ hY1 i j
-    · simp only [if_true]; rw [i2]; exact hent _ hY2 i j
+    · simp only [Bool.false_eq_true, ite_false]; rw [i1]; exact hent _ hY1 i j
+    · simp only [ite_true]; rw [i2]; exact hent _ hY2 i j
   have hrp : P ^ (-((p + q : ℕ) : ℝ)) = (P ^ (p + q))⁻¹ := by
     rw [Real.rpow_neg hP.le, Real.rpow_natCast]
   show ‖(1 - (Complex.I * s) • (k * b * kᴴ))⁻¹.det ^ p * (1 + (Complex.I * s) • (k * b * kᴴ))⁻¹.det ^ q *
@@ -682,7 +632,7 @@ theorem shift_apply (b : Mc n) (w : ℂ) (i j a c : Fin n) :
   by_cases h : i = a ∧ j = c
   · obtain ⟨rfl, rfl⟩ := h
     simp
-  · rw [Matrix.single_apply_of_ne _ _ _ _ _ h, if_neg h, mul_zero]
+  · rw [Matrix.single_apply_of_ne _ _ _ _ _ h, ite_eq_right h, mul_zero]
 
 theorem shift_mem (b : Mc n) {r : Fin n → Fin n → ℝ} (hr : ∀ i j, 0 < r i j) (i j : Fin n) {w : ℂ}
     (hw : ‖w‖ ≤ r i j) : b + w • Matrix.single i j (1 : ℂ) ∈ pdisc b r := by
@@ -915,11 +865,6 @@ theorem contDiff_dirC {f : E n → ℂ} (hf : ContDiff ℝ (⊤ : ℕ∞) f) (w 
 theorem contDiff_Dkl {f : E n → ℂ} (hf : ContDiff ℝ (⊤ : ℕ∞) f) (k l : Fin n) :
     ContDiff ℝ (⊤ : ℕ∞) (Dkl k l f) := contDiff_dirC hf _
 
-theorem herm_isHermitian (y : E n) : (herm y).IsHermitian := by
-  ext i j
-  simp only [conjTranspose_apply, herm]
-  apply Complex.ext <;> simp <;> ring
-
 theorem dP_pos (y : E n) : 0 < dP y := by
   have hH := herm_isHermitian y
   have h1 : (1 + herm y * herm y).PosDef := by
@@ -1105,11 +1050,11 @@ theorem twist : Twist := by
   have hc0 : ∀ j, ContDiff ℝ (⊤ : ℕ∞) (c0 j) := by
     intro j
     by_cases h : j = 0
-    · simp only [c0, h, if_true]; exact hH
-    · simp only [c0, h, if_false]; exact contDiff_const
+    · simp only [c0, h, ite_true]; exact hH
+    · simp only [c0, h, ite_false]; exact contDiff_const
   have hc0s : ∀ j, 1 ≤ j → c0 j = 0 := by
     intro j hj
-    simp only [c0, show j ≠ 0 by omega, if_false]
+    simp only [c0, show j ≠ 0 by omega, ite_false]
   refine ⟨TDelta^[N] c0, iter_smooth N hc0, ?_⟩
   intro z y
   have h0 : (fun y => ((dP y : ℝ) : ℂ) ^ (-z) * H y) =

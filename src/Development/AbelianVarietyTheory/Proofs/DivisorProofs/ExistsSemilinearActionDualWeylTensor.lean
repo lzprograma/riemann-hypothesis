@@ -43,8 +43,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open NumberField IsDedekindDomain Formalism.L2.DIV GlobalTheory.ExpFrame Formalism.CohomologicalDescent.DepthNonnegative Formalism.CohomologicalDescent.LogSmallConstantBounds Formalism.CohomologicalDescent.ShortWeightBounds Formalism.CohomologicalDescent.LD Formalism.RankGapBounds.FormsTensorLocalization
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.SemilinTransport

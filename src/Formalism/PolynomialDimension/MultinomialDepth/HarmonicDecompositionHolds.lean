@@ -1,57 +1,12 @@
 module
 
 public import Formalism.PolynomialDimension.StatementHar
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Etale.Weakly
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Data.Sym.Card
 
 @[expose] public section
@@ -564,9 +519,9 @@ theorem levelProj_level [CharZero K] (hk : 1 ≤ k) {A B i j : ℕ} (hi : i ≤ 
   rw [hc]
   rcases lt_trichotomy i j with hij | hij | hij
   · rw [Nat.descFactorial_eq_zero_iff_lt.2 hij, zero_mul, Nat.cast_zero, mul_zero, zero_smul, map_zero,
-      smul_zero, mul_zero, if_neg hij.ne]
+      smul_zero, mul_zero, ite_eq_right hij.ne]
   · subst hij
-    rw [if_pos rfl, Nat.sub_self, pow_zero, one_mul, map_smul, harProj_har hw, smul_smul]
+    rw [ite_eq_left rfl, Nat.sub_self, pow_zero, one_mul, map_smul, harProj_har hw, smul_smul]
     congr 1
     convert one_smul K w using 2
     have hN : A - i + (B - i) + k + i - 1 = A + B + k - 2 * i + i - 1 := by omega
@@ -575,7 +530,7 @@ theorem levelProj_level [CharZero K] (hk : 1 ≤ k) {A B i j : ℕ} (hi : i ≤ 
       Nat.cast_ne_zero.2 (Nat.choose_pos (by omega)).ne'
     rw [hN, Nat.descFactorial_self, Nat.descFactorial_eq_factorial_mul_choose, Nat.cast_mul, Nat.cast_mul]
     field_simp
-  · rw [if_neg hij.ne', map_smul]
+  · rw [ite_eq_right hij.ne', map_smul]
     have hpow : hXY K k ^ (i - j) * w = hXY K k * (hXY K k ^ (i - j - 1) * w) := by
       rw [← mul_assoc, ← pow_succ', Nat.sub_add_cancel (by omega)]
     have hg : hXY K k ^ (i - j - 1) * w ∈ PolAB K k (A - j - 1) (B - j - 1) := by
@@ -597,7 +552,7 @@ theorem levelProj_sum [CharZero K] (hk : 1 ≤ k) {A B : ℕ} {f : PolXY K k} (h
       = ∑ j ∈ range (min A B + 1), if i = j then hXY K k ^ i * w i else 0 :=
         Finset.sum_congr rfl fun j hj =>
           levelProj_level hk hi' (Nat.lt_succ_iff.1 (Finset.mem_range.1 hj)) (hw i)
-    _ = hXY K k ^ i * w i := by rw [Finset.sum_ite_eq, if_pos hi]
+    _ = hXY K k ^ i * w i := by rw [Finset.sum_ite_eq, ite_eq_left hi]
 
 end Har2
 
@@ -619,7 +574,7 @@ theorem isotypicProjection_holds : LevelProj := by
   by_cases h : i = j
   · subst h
     simp
-  · rw [if_neg (Ne.symm h), if_neg h]
+  · rw [ite_eq_right (Ne.symm h), ite_eq_right h]
 
 namespace Har2
 

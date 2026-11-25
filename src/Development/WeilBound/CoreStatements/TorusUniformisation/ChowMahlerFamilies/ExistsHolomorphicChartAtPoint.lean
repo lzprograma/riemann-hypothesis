@@ -4,51 +4,8 @@ public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryCha
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
 public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
 public import Mathlib.Analysis.Calculus.InverseFunctionTheorem.ContDiff
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AnChart
 
 @[expose] public section
@@ -365,10 +322,10 @@ theorem PositivityTheory.Xgn.exists_holomorphic_chart_at_point : ∀ (K : Type) 
     let y' : (Fin m → ℂ) → (Γ(X, X.basicOpen g) →+* ℂ) := fun b =>
       if h : ⊤ ≤ y b ⁻¹ᵁ X.basicOpen g then ptHom (y b) _ h else ptHom x _ hxV
     have hy' : ∀ b ∈ U, spMap (y' b) ≫ hV.fromSpec = y b := fun b hb => by
-      simp only [y', dif_pos hb.2, ptHom_spec]
+      simp only [y', dite_eq_left hb.2, ptHom_spec]
     obtain ⟨ε, κ, ε0, b₁, b₂, b₃, b₄⟩ := a₂ m U y' (hy (X.basicOpen g) 0).1
       (fun f => (hy (X.basicOpen g) f).2.congr fun b hb => by
-        simp only [y', valAt', dif_pos hb.2]; rfl)
+        simp only [y', valAt', dite_eq_left hb.2]; rfl)
       (fun b hb => (over_iff s hV σ _).1 (by rw [← Category.assoc, hy' b hb, hσ b hb.1]))
-      b₀ ⟨hb₀, by rw [hy₀]; exact hxV⟩ (by subst hy₀; exact dif_pos hxV)
+      b₀ ⟨hb₀, by rw [hy₀]; exact hxV⟩ (by subst hy₀; exact dite_eq_left hxV)
     exact ⟨ε, κ, ε0, fun b hb => (b₁ hb).1, b₂, b₃, fun b hb => ⟨(b₄ b hb).1, by rw [← (b₄ b hb).2, hy' b (b₁ hb)]⟩⟩

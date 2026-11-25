@@ -60,8 +60,8 @@ theorem coeffs_iff (h : HidaSetting p n' W Qq O Kf ι σ j w) {τ : Type} (a : O
       exact Finset.sum_ite_eq' _ _ _
     rw [e]
     by_cases hm : m ∈ P.support
-    · rw [if_pos hm, hc m, kapR_alg, map_mul]
-    · rw [if_neg hm, map_zero, mul_zero]
+    · rw [ite_eq_left hm, hc m, kapR_alg, map_mul]
+    · rw [ite_eq_right hm, map_zero, mul_zero]
       rw [MvPolynomial.mem_support_iff, not_not] at hm
       rw [hm, map_zero]
   · rintro ⟨P0, hP0⟩ m
@@ -189,11 +189,11 @@ theorem lift_eq {S : Type} [Fintype S] [DecidableEq S] (h : HidaSetting p n' W Q
       obtain ⟨x, c⟩ := v
       simp only [RingHom.comp_apply, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom, liftSubst, aeval_X, map_X, Lin]
       by_cases hv : LL.vec x
-      · simp only [hv, if_true, Bm, map_sum, map_mul]
+      · simp only [hv, ite_true, Bm, map_sum, map_mul]
         refine Finset.sum_congr rfl fun b _ => ?_
         rw [map_C, hinv]
         split_ifs <;> simp [map_C, map_X, kapR_alg] <;> ring
-      · simp only [hv, Bool.false_eq_true, if_false, Bm, map_sum, map_mul]
+      · simp only [hv, Bool.false_eq_true, ite_false, Bm, map_sum, map_mul]
         refine Finset.sum_congr rfl fun b _ => ?_
         rw [map_C, hmat]
         split_ifs <;> simp [map_C, map_X, kapR_alg] <;> ring

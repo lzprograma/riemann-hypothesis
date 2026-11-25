@@ -49,6 +49,16 @@ namespace GlobalTheory.Published
 def IsRegularChar (g d : ℕ) {K : Type} [Field K] (θ : Kˣ →* ℂˣ) : Prop :=
   ∀ i j, i < d → j < d → θ ^ g ^ i = θ ^ g ^ j → i = j
 
+/-- **Green's parametrisation of the cuspidal characters of `GL_d(𝔽_g)`**, for a prime `g`.
+Let `d > 0` and let `K` be the field with `g ^ d` elements. Call a character `θ` of `Kˣ`
+regular if `θ, θ ^ g, …, θ ^ (g ^ (d - 1))` are distinct (`IsRegularChar`). Then there is a
+map `θ ↦ τ θ` to functions on `GL_d(𝔽_g)` such that:
+* for regular `θ`, `τ θ` is an irreducible cuspidal character (`IsCusp`) of degree
+  `(g - 1) (g ^ 2 - 1) ⋯ (g ^ (d - 1) - 1)`, and at an element whose characteristic polynomial
+  is irreducible with a root `z ∈ Kˣ` it takes the value
+  `(-1) ^ (d - 1) * (θ z + θ (z ^ g) + ⋯ + θ (z ^ (g ^ (d - 1))))`;
+* for regular `θ` and `θ'`, `τ θ = τ θ'` exactly when `θ' = θ ^ (g ^ i)` for some `i < d`;
+* every irreducible cuspidal character of `GL_d(𝔽_g)` is `τ θ` for some regular `θ`. -/
 def GreenRegularCharacters : Prop :=
   ∀ (g : ℕ) [Fact g.Prime] (d : ℕ), 0 < d → ∀ (K : Type) [Field K] [Algebra (ZMod g) K], Module.finrank (ZMod g) K = d →
     ∃ τ : (Kˣ →* ℂˣ) → Gn g d → ℂ,

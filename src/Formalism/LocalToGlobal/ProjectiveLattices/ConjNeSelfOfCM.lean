@@ -1,59 +1,15 @@
 module
 
+
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.HfRsmulRight
 public import Formalism.LocalToGlobal.ProjectiveLattices.CrudeBase
 public import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
 public import Formalism.LocalToGlobal.ProjectiveLattices.CrudeMin
 public import Formalism.LocalToGlobal.ProjectiveLattices.CrudeVal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PowerSeriesExpIntegralCanonGaugeAdditiveSecond
 import Mathlib.Tactic.Linter.Style
 import Mathlib.Tactic.Linter.HaveILetI
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.ProjectiveLattices.CrudeDiv, Formalism.LocalToGlobal.ProjectiveLattices.CrudeOrd, Formalism.LocalToGlobal.ProjectiveLattices.ConjNeSelfOfCM
 
@@ -61,8 +17,6 @@ import Mathlib.Tactic.Linter.HaveILetI
 -- clump-header: {"m": "Formalism.LocalToGlobal.ProjectiveLattices.CrudeDiv", "h": "module\n\npublic import Formalism.LocalToGlobal.ProjectiveLattices.CrudeBase\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic\nimport Mathlib.RingTheory.PiTensorProduct\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -216,15 +170,14 @@ theorem linMon_aeval_monomial {ι : Type} [Fintype ι] [DecidableEq ι] (cp : ι
   rw [hS, hP, one_mul]
   by_cases hEq : a = α
   · subst hEq
-    rw [tsub_self, if_pos rfl, if_pos rfl, Finsupp.prod_fintype _ _ (fun _ => Nat.factorial_zero)]
+    rw [tsub_self, ite_eq_left rfl, ite_eq_left rfl, Finsupp.prod_fintype _ _ (fun _ => Nat.factorial_zero)]
     push_cast
     exact Finset.prod_congr rfl fun l _ => by rw [Nat.descFactorial_self]
-  · rw [if_neg hEq]
+  · rw [ite_eq_right hEq]
     split_ifs with h0
     · have hle : α ≤ a := tsub_eq_zero_iff_le.mp h0
       obtain ⟨l, hl⟩ : ∃ l, α l < a l := by
-        by_contra hcon
-        push_neg at hcon
+        by_contra! hcon
         exact hEq (le_antisymm (Finsupp.le_def.mpr hcon) hle)
       exact Finset.prod_eq_zero (Finset.mem_univ l)
         (by rw [Nat.descFactorial_eq_zero_iff_lt.mpr hl, Nat.cast_zero])
@@ -240,8 +193,6 @@ end -- clump:auto
 -- clump-header: {"m": "Formalism.LocalToGlobal.ProjectiveLattices.CrudeOrd", "h": "module\n\nimport Development.AbelianVarietyTheory.Proofs.JetHarmonics.PowerSeriesExpIntegralCanonGaugeAdditiveSecond\npublic import Formalism.LocalToGlobal.ProjectiveLattices.CrudeBase\npublic import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -348,7 +299,7 @@ theorem cro_coeff_lin (G : FGLaw k d) (i j : Fin d) :
       if i = j then 1 else 0 := by
     by_cases hij : i = j
     · simp [hij]
-    · rw [if_neg hij, if_neg]
+    · rw [ite_eq_right hij, ite_eq_right]
       intro hs
       apply hij
       have h2 := congrArg (fun D : Fin 1 × Fin d →₀ ℕ => D ((0 : Fin 1), i)) hs
@@ -383,7 +334,7 @@ theorem cro_coeff_lin (G : FGLaw k d) (i j : Fin d) :
         subst hs0
         simp [zero_pow (Finsupp.mem_support_iff.mp hs)]
       rw [hz, map_zero]
-    · push_neg at hx
+    · push Not at hx
       have hprod : (D.prod fun s m =>
           (fun p : Fin 2 × Fin d => (![0, pt k d 0] : Fin 2 → Pt k 1 d) p.1 p.2) s ^ m) =
           monomial (∑ s ∈ D.support, Finsupp.single ((0 : Fin 1), s.2) (D s)) (1 : k) := by
@@ -398,7 +349,7 @@ theorem cro_coeff_lin (G : FGLaw k d) (i j : Fin d) :
         subst h1
         first
           | simp [pt, MvPowerSeries.X_pow_eq]
-      rw [hprod, MvPowerSeries.coeff_monomial, if_neg]
+      rw [hprod, MvPowerSeries.coeff_monomial, ite_eq_right]
       intro heq
       apply hD
       ext ⟨s1, s2⟩
@@ -413,7 +364,7 @@ theorem cro_coeff_lin (G : FGLaw k d) (i j : Fin d) :
         · simp [Finsupp.single_apply] at hev ⊢
           split_ifs at hev ⊢ <;> omega
       · intro s hs hne
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h2
         apply hne
         obtain ⟨t1, t2⟩ := s
@@ -624,8 +575,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace Formalism.L2.Pj
@@ -650,11 +599,7 @@ def crudeBd {K : Type} [Field K] [NumberField K] (la : HeightOneSpectrum (𝓞 K
 
 omit [StarRing (𝓞 E)] in
 theorem conj_ne_self_of_CM (τ : E →+* ℂ) : ComplexEmbedding.conjugate τ ≠ τ := by
-  haveI := NumberField.IsCMField.isTotallyComplex E
-  intro hτ
-  have hc := NumberField.IsTotallyComplex.isComplex (NumberField.InfinitePlace.mk τ)
-  rw [← NumberField.InfinitePlace.not_isReal_iff_isComplex, NumberField.InfinitePlace.isReal_mk_iff] at hc
-  exact hc hτ
+  apply _root_.ReciprocityTheory.ChartRestriction.G.I2.ChA.ne_conj <;> assumption
 
 theorem Crude.le_degree {σ : Type} (α : σ →₀ ℕ) (s : σ) : α s ≤ α.degree := by
   by_cases hs : s ∈ α.support
@@ -754,25 +699,25 @@ theorem crude_val {T : CDVR} {d : ℕ} {O : Type} [CommRing O] [StarRing O] (B :
     simp only [φ]
     dsimp only at hi ⊢
     by_cases hg : ∃ i'', colP Dw hn ⟨τ', i''⟩ = b'
-    · rw [if_pos hg, Crude.Lin_linForm]
+    · rw [ite_eq_left hg, Crude.Lin_linForm]
       congr 1
       by_cases hbb : b = b'
       · subst hbb
         obtain ⟨i'', hi''⟩ := hg
         have hp : (⟨τ, i⟩ : Lt1 Dw) = ⟨τ', i''⟩ := hβ (hi.trans hi''.symm)
         obtain ⟨rfl, -⟩ := Sigma.mk.inj_iff.1 hp
-        rw [if_pos rfl, hW τ i' i0]
+        rw [ite_eq_left rfl, hW τ i' i0]
         by_cases h : i0 = i'
         · subst h; simp
-        · rw [if_neg h, if_neg]
+        · rw [ite_eq_right h, ite_eq_right]
           intro hl
           cases hl
           exact h rfl
-      · rw [if_neg hbb, if_neg]
+      · rw [ite_eq_right hbb, ite_eq_right]
         intro hl
         cases hl
         exact hbb rfl
-    · rw [if_neg hg, if_neg]
+    · rw [ite_eq_right hg, ite_eq_right]
       · simpa using Crude.div_Lin_C (n := n) b (uvec ⟨τ, i0⟩) (0 : T.Fr)
       · intro hl
         cases hl
@@ -799,11 +744,11 @@ theorem crude_val {T : CDVR} {d : ℕ} {O : Type} [CommRing O] [StarRing O] (B :
   rw [Crude.nabValN_eq_lin B h hg w0 k f (fun ℓ : LtN Dw n => ℓ.2.2) (fun ℓ => uvec ⟨ℓ.1, ℓ.2.1⟩)
     (P1 Dw T a hn) (DF Dw a) hPdeg hOrd, Finset.sum_eq_single α]
   · rw [hfdef, Crude.linMon_aeval_monomial _ _ φ hφ0 _ hdual α α
-      (fun l hl => Crude.Pmin_good (m := α) (hm := hαmem) (ℓ := l) (hℓ := hl)), if_pos rfl, hcoeff, one_mul]
+      (fun l hl => Crude.Pmin_good (m := α) (hm := hαmem) (ℓ := l) (hℓ := hl)), ite_eq_left rfl, hcoeff, one_mul]
     rfl
   · intro m hm hne
     rw [hfdef, Crude.linMon_aeval_monomial _ _ φ hφ0 _ hdual m α
-      (fun l hl => Crude.Pmin_good (m := m) (hm := hm) (ℓ := l) (hℓ := hl)), if_neg hne, mul_zero]
+      (fun l hl => Crude.Pmin_good (m := m) (hm := hm) (ℓ := l) (hℓ := hl)), ite_eq_right hne, mul_zero]
   · intro hα
     exact absurd hαmem hα
 

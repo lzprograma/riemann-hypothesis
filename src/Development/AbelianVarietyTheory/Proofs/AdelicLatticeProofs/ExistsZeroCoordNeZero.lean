@@ -153,12 +153,12 @@ theorem exists_zero_coord_ne_zero {F : Type*} [Field F] [CharZero F] {ι : Type*
         simp [hij, hi]
       · by_cases h2 : k = j
         · subst h2
-          simp only [h1, if_false, if_true]
+          simp only [h1, ite_false, ite_true]
           ring
-        · simp only [h1, h2, if_false]
+        · simp only [h1, h2, ite_false]
           ring
     simp only [this, Finset.sum_add_distrib, ← Finset.mul_sum, h, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
     rw [ht]
     field_simp
     ring
@@ -231,7 +231,7 @@ theorem exists_represent (H : Isotropy) {r : ℕ} (hr : 2 ≤ r) {g : Fin r → 
     have : IsCMField.complexConj E θ = -θ := hθ
     simp [cc, this, sub_eq_add_neg]
   simp only [herm, hcc, Matrix.diagonal_apply, mul_ite, ite_mul, mul_zero, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   have : ∀ i, ((w (some (Sum.inl i)) : E) + w (some (Sum.inr i)) * θ) / w none * g i *
       (((w (some (Sum.inl i)) : E) - w (some (Sum.inr i)) * θ) / w none) =
       (g i * (w (some (Sum.inl i)) : E) ^ 2 -

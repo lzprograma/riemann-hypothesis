@@ -5,8 +5,6 @@ import Mathlib.RingTheory.SimpleRing.Principal
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB
@@ -26,15 +24,6 @@ def evD (χ : O →+* k) {n : ℕ} (b : Fin n → O) (c : Fin n → k) : k := �
 def IsEqv (χ : O →+* k) {n : ℕ} (b : Fin n → O) (c : Fin n → k) : Prop :=
   ∀ a : O, ∃ m : Fin n → Fin n → ℤ, (∀ i, a * b i = ∑ j, m i j • b j) ∧
     ∀ j, ∑ i, (m i j : k) * c i = χ a * c j
-
-private theorem smul_mulVec_lemma {S : Type} [CommRing S] {m : ℕ} (e : S)
-    (A : Matrix (Fin m) (Fin m) S) (v : Fin m → S) : (e • A).mulVec v = e • A.mulVec v := by
-  funext i
-  show ∑ j, (e • A) i j * v j = e * ∑ j, A i j * v j
-  rw [Finset.mul_sum]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  show e * A i j * v j = e * (A i j * v j)
-  ring
 
 theorem eig_actD (M : O →+* Matrix (Fin d) (Fin d) k) (χ : O →+* k) {n : ℕ} (b : Fin n → O) (c : Fin n → k)
     (h : IsEqv χ b c) (a : O) : M a * actD M b c = χ a • actD M b c := by
@@ -127,8 +116,8 @@ theorem actP_eig (B : FB R d O) (χ : O →+* k) {n : ℕ} (b : Fin n → O) (c 
   have e2 := eig_actD (EigA.dActS k B) χ b c h a
   show ((EigA.dActH k B a).mulVec ((actD (EigA.dActH k B) b c).mulVec ξ.1),
       (EigA.dActS k B a).mulVec ((actD (EigA.dActS k B) b c).mulVec ξ.2)) = _
-  rw [Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, e1, e2, smul_mulVec_lemma,
-    smul_mulVec_lemma]
+  rw [Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, e1, e2, Matrix.smul_mulVec,
+    Matrix.smul_mulVec]
   rfl
 
 theorem actP_actP_eig (B : FB R d O) (χ : O →+* k) {n n' : ℕ} (b : Fin n → O) (c : Fin n → k) (h : IsEqv χ b c)
@@ -137,8 +126,8 @@ theorem actP_actP_eig (B : FB R d O) (χ : O →+* k) {n n' : ℕ} (b : Fin n �
   show ((actD (EigA.dActH k B) b c).mulVec ((actD (EigA.dActH k B) b' c').mulVec ξ.1),
       (actD (EigA.dActS k B) b c).mulVec ((actD (EigA.dActS k B) b' c').mulVec ξ.2)) = _
   rw [Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, actD_mul_eig (EigA.dActH k B) χ b c h b' c',
-    actD_mul_eig (EigA.dActS k B) χ b c h b' c', smul_mulVec_lemma,
-    smul_mulVec_lemma]
+    actD_mul_eig (EigA.dActS k B) χ b c h b' c', Matrix.smul_mulVec,
+    Matrix.smul_mulVec]
   rfl
 
 theorem betaH_sum_left {ι : Type} (s : Finset ι) (f : ι → (Fin d → k) × (Fin d → k)) (η : (Fin d → k) × (Fin d → k)) :

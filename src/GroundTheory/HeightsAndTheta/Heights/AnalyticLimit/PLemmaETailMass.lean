@@ -31,7 +31,7 @@ theorem LemmaETailMass.proof (hT : LemmaETrunc.Statement) (hC : LemmaETruncMass.
   let ut : ℝ → Fin D → X → ℝ := fun R i =>
     if h : Real.exp 1 ≤ R then Classical.choose (htr R h i) else fun _ => 0
   have hut : ∀ R (h : Real.exp 1 ≤ R) i, ut R i = Classical.choose (htr R h i) := fun R h i => by
-    simp only [ut, dif_pos h]
+    simp only [ut, dite_eq_left h]
   obtain ⟨hint, hle₁⟩ := hC D A Om (secOpen s) (rSec L s) u ut (isOpen_secOpen hL hs)
     (continuousOn_rSec hL hs) (fun i => (hu i).smooth) (fun i => (hu i).nonneg)
     (fun R hR i => by

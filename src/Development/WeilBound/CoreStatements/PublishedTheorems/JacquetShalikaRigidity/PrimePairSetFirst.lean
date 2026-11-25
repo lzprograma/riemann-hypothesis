@@ -6,44 +6,7 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Unipote
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousQuotientAveragePeriodicFamily
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuotientAverageTranslateInvariant
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WhittakerCoefficientRationalMirabolicMulStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.CategoryTheory.Countable
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -53,8 +16,6 @@ open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open GlobalTheory.CuspGeneric GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DiscSpec PositivityTheory.jumpWindows PositivityTheory.RgJS
 open GroundTheory.Automorphic GroundTheory.Automorphic.FourierWhittaker GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.Spherical
 open scoped ENNReal ComplexConjugate
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.AdelicQuotientData
 
@@ -129,7 +90,7 @@ theorem colT_rat (hψ : StdPsi ψ) (m : ℕ) (hmk : m + 1 < k) (f : GA E k → �
   · intro s _ hs
     have h0 : eLast (E := E) k (m + 1) s = 0 := by
       simp only [eLast]
-      rw [if_neg]
+      rw [ite_eq_right]
       intro e
       apply hs
       have h2 := s.2.2
@@ -153,23 +114,23 @@ def rowEquiv (m : ℕ) (hmk : m + 1 < k) : RowT E k (m + 1) ≃ {ξ : UnipotentB
     intro h0
     exact hi (congrFun h0 ⟨(i, ⟨m + 1, hmk⟩), him, le_rfl, le_rfl⟩)⟩
   invFun η := ⟨fun i => if h : (i : ℕ) < m + 1 then η.1 ⟨(i, ⟨m + 1, hmk⟩), h, le_rfl, le_rfl⟩ else 0, by
-    refine ⟨fun h0 => η.2 ?_, fun i hi => dif_neg (by omega)⟩
+    refine ⟨fun h0 => η.2 ?_, fun i hi => dite_eq_right (by omega)⟩
     funext t
     have h1 := congrFun h0 t.1.1
     simp only [Pi.zero_apply] at h1
-    rw [dif_pos t.2.1, blk_eta hmk t] at h1
+    rw [dite_eq_left t.2.1, blk_eta hmk t] at h1
     exact h1⟩
   left_inv ξ := by
     apply Subtype.ext
     funext i
     by_cases h : (i : ℕ) < m + 1
-    · exact dif_pos h
-    · exact (dif_neg h).trans (ξ.2.2 i (by omega)).symm
+    · exact dite_eq_left h
+    · exact (dite_eq_right h).trans (ξ.2.2 i (by omega)).symm
   right_inv η := by
     apply Subtype.ext
     funext t
     show (if h : (t.1.1 : ℕ) < m + 1 then η.1 ⟨(t.1.1, ⟨m + 1, hmk⟩), h, le_rfl, le_rfl⟩ else 0) = η.1 t
-    rw [dif_pos t.2.1, blk_eta hmk t]
+    rw [dite_eq_left t.2.1, blk_eta hmk t]
 
 end primePairSetFirst
 
@@ -191,8 +152,8 @@ theorem p1_holds : N0 → P0 → P1 := by
     have ht := t.2.1
     simp only [eLast, Matrix.one_apply]
     by_cases h : (t.1.1 : ℕ) = m
-    · rw [if_pos (Fin.ext h.symm), if_pos (by omega)]
-    · rw [if_neg (fun e => h (congrArg Fin.val e).symm), if_neg (by omega)]
+    · rw [ite_eq_left (Fin.ext h.symm), ite_eq_left (by omega)]
+    · rw [ite_eq_right (fun e => h (congrArg Fin.val e).symm), ite_eq_right (by omega)]
   · intro j hj y g
     rcases Nat.lt_or_ge (m + 1) j with h1 | h1
     · exact primePairSetFirst.colT_law m f j h1 (hf.law j h1) y g

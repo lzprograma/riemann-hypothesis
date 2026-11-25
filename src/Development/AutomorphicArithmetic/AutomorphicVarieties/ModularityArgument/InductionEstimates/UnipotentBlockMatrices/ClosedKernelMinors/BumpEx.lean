@@ -153,7 +153,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.bumpEx :
   letI : FirstCountableTopology (G1 K n) := by
     set_option synthInstance.maxHeartbeats 200000 in exact inferInstance
   letI : RegularSpace (G1 K n) := by
-    set_option synthInstance.maxHeartbeats 200000 in exact inferInstance
+    exact inferInstance
   letI : R1Space (G1 K n) := by
     set_option synthInstance.maxHeartbeats 200000 in exact inferInstance
   obtain ⟨O', hO', hO'O, hO'c⟩ := local_compact_nhds hO

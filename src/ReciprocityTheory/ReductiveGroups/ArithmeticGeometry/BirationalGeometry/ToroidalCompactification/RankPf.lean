@@ -4,10 +4,9 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsUnivRingBc
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.ChartLaw
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -30,21 +29,7 @@ theorem tvec_inj {c c' : Fin n → R} (h : tvec (x := x) c = tvec (x := x) c') :
 
 theorem list_prod_tan' : ∀ {M : ℕ} (u : Fin M → (sp (R₀ := R) (DualNumber R) ⟶ Gx)) (hu : ∀ i, IsTan (u i)),
     ∃ h : IsTan (List.ofFn u).prod, tcoord hx _ h = ∑ i, tcoord hx (u i) (hu i) := by
-  intro M
-  induction M with
-  | zero =>
-    intro u hu
-    have e0 : (List.ofFn u).prod = 1 := by simp
-    refine ⟨e0 ▸ isTan_one, ?_⟩
-    rw [tcoord_congr hx e0 _ isTan_one, tcoord_one]
-    simp
-  | succ M ih =>
-    intro u hu
-    obtain ⟨h, e⟩ := ih (fun i => u i.succ) (fun i => hu i.succ)
-    have e0 : (List.ofFn u).prod = u 0 * (List.ofFn fun i => u i.succ).prod := by
-      rw [List.ofFn_succ, List.prod_cons]
-    refine ⟨e0 ▸ isTan_mul (hu 0) h, ?_⟩
-    rw [tcoord_congr hx e0 _ (isTan_mul (hu 0) h), tcoord_mul hx (hu 0) h, e, Fin.sum_univ_succ]
+  apply _root_.ReciprocityTheory.ChartRestriction.G.Chart.list_prod_tan <;> assumption
 
 theorem mem_eigLat_iff {O : Type} (act : O → (Gx ⟶ Gx)) [∀ a, IsMonHom (act a)] (χ : O → R) (c : Fin n → R) :
     c ∈ eigLat hx act χ ↔ ∀ a, tmap hx (act a) c = χ a • c := by

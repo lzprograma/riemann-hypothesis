@@ -27,7 +27,7 @@ theorem goal1 :
           Exists.{1} fun (m : Real) ↦
             ∀ (t : Real),
               Eq.{1} (f t) (Complex.exp (HMul.hMul.{0, 0, 0} (Complex.ofReal (HMul.hMul.{0, 0, 0} m t)) Complex.I)) := by
-  intro f hf hmul _ hnorm
-  exact Bl.general_b_fact_third_further.goal1 f hf hmul hnorm
+  intros
+  apply Bl.general_b_fact_third_further.goal1 <;> assumption
 
 end Bl.general_b_fact_left_variant

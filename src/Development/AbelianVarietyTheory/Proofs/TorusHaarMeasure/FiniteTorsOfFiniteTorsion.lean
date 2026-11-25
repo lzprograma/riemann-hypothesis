@@ -379,26 +379,6 @@ theorem _root_.GlobalTheory.ChartCompare.nEval_sub_mem (f : MvPowerSeries σ R�
 
 end Eval
 
-section Law
-
-open MvPowerSeries
-
-variable {g : ℕ}
-
-end Law
-
-section Nil
-
-variable {K : LAlg R₀}
-
-end Nil
-
-section Chart
-
-variable {B : BX R₀} {K : LAlg R₀} {g : ℕ}
-
-end Chart
-
 section Torsion
 
 universe v
@@ -419,16 +399,6 @@ end OfFin
 
 
 end Torsion
-
-section Bundle
-
-universe v
-
-variable {B : BX R₀} {g : ℕ} {p : ℕ} [Fact p.Prime] {k : LAlg R₀} {O : ResAlg k} {W : NilAlg k}
-  {C : Type v} [Field C] [Algebra (O.alg : Type) C] [IsFractionRing (O.alg : Type) C]
-
-
-end Bundle
 
 universe v
 

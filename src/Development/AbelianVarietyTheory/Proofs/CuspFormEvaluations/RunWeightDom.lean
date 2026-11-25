@@ -5,44 +5,8 @@ public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClas
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpolationModelInequalities
 public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ComponentModelWeightDimensionDictionary
 import Formalism.LocalToGlobal.LatticeGeometry.DegFlLApply
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -94,14 +58,14 @@ theorem block {p : ℕ} (hp : 0 < p) (ka wL wF : Fin p → ℕ) (T Dm r c : ℤ)
     rw [e wL (i + 1) hi, e wL i (by omega)]
     have hg' := hg ⟨i, by omega⟩ hi
     have hL' := hL ⟨i, by omega⟩
-    simp only [gapZ, hi, dif_pos, if_true] at hL' hg'
+    simp only [gapZ, hi, dite_eq_left, ite_true] at hL' hg'
     obtain ⟨ρ, hρ0, hρ1, hx⟩ := fdiv_spec hT' hL'
     nlinarith
   · intro i hi
     rw [e wF (i + 1) hi, e wF i (by omega), e wL (i + 1) hi, e wL i (by omega),
       hF ⟨i + 1, hi⟩, hF ⟨i, by omega⟩]
     have hL' := hL ⟨i, by omega⟩
-    simp only [gapZ, hi, dif_pos, if_true] at hL'
+    simp only [gapZ, hi, dite_eq_left, ite_true] at hL'
     obtain ⟨ρ, hρ0, hρ1, hx⟩ := fdiv_spec hT' hL'
     linarith
   · have hlast : p - 1 < p := by omega
@@ -109,7 +73,7 @@ theorem block {p : ℕ} (hp : 0 < p) (ka wL wF : Fin p → ℕ) (T Dm r c : ℤ)
     have hl' := hl ⟨p - 1, hlast⟩ (by simp; omega)
     have hL' := hL ⟨p - 1, hlast⟩
     have hn : ¬ (p - 1 + 1 < p) := by omega
-    simp only [gapZ, hn, dif_neg, if_false, not_false_eq_true] at hL'
+    simp only [gapZ, hn, dite_eq_right, ite_false, not_false_eq_true] at hL'
     obtain ⟨ρ, hρ0, hρ1, hx⟩ := fdiv_spec hT' hL'
     by_contra hc'
     have h1 : 10 * (wL ⟨p - 1, hlast⟩ : ℤ) ≤ 19 * T - 1 := by linarith [not_le.mp hc']
@@ -118,7 +82,7 @@ theorem block {p : ℕ} (hp : 0 < p) (ka wL wF : Fin p → ℕ) (T Dm r c : ℤ)
     rw [e wL (p - 1) hlast, e wF (p - 1) hlast, hF ⟨p - 1, hlast⟩]
     have hL' := hL ⟨p - 1, hlast⟩
     have hn : ¬ (p - 1 + 1 < p) := by omega
-    simp only [gapZ, hn, dif_neg, if_false, not_false_eq_true] at hL'
+    simp only [gapZ, hn, dite_eq_right, ite_false, not_false_eq_true] at hL'
     obtain ⟨ρ, hρ0, hρ1, hx⟩ := fdiv_spec hT' hL'
     nlinarith
 
@@ -146,14 +110,14 @@ theorem row {r p q : ℕ} (hpq : p + q = r) (T Dm nL nF : ℤ) (hnL : 0 ≤ nL) 
     have hij' : (i : ℕ) < j := hij
     have hi' : ¬ q ≤ (i : ℕ) := by omega
     have hj' : ¬ q ≤ (j : ℕ) := by omega
-    rw [hL i, hL j, if_neg hi', if_neg hj']
+    rw [hL i, hL j, ite_eq_right hi', ite_eq_right hj']
     have key := lt_of_succ_lt m1 (q - 1 - j) (q - 1 - i) (by omega) (by omega)
     linarith
   · intro i j hqi hij
     have hij' : (i : ℕ) < j := hij
     have hj' : q ≤ (j : ℕ) := by omega
     have hjr := j.isLt
-    rw [hL i, hL j, if_pos hqi, if_pos hj']
+    rw [hL i, hL j, ite_eq_left hqi, ite_eq_left hj']
     have key := lt_of_succ_lt p1 (i - q) (j - q) (by omega) (by omega)
     linarith
   · intro a b hb hbq
@@ -161,14 +125,14 @@ theorem row {r p q : ℕ} (hpq : p + q = r) (T Dm nL nF : ℤ) (hnL : 0 ≤ nL) 
     have hbz : ((b : ℕ) : ℤ) = ((a : ℕ) : ℤ) + 1 := by rw [hb]; push_cast; ring
     by_cases ha : q ≤ (a : ℕ)
     · have hb' : q ≤ (b : ℕ) := by omega
-      rw [hL a, hL b, hF a, hF b, if_pos ha, if_pos ha, if_pos hb', if_pos hb']
+      rw [hL a, hL b, hF a, hF b, ite_eq_left ha, ite_eq_left ha, ite_eq_left hb', ite_eq_left hb']
       have hi : (b : ℕ) - q = (a : ℕ) - q + 1 := by omega
       rw [hi]
       have key := p2 ((a : ℕ) - q) (by omega)
       rw [hbz]
       linarith
     · have hb' : ¬ q ≤ (b : ℕ) := by omega
-      rw [hL a, hL b, hF a, hF b, if_neg ha, if_neg ha, if_neg hb', if_neg hb']
+      rw [hL a, hL b, hF a, hF b, ite_eq_right ha, ite_eq_right ha, ite_eq_right hb', ite_eq_right hb']
       have hi : q - 1 - (a : ℕ) = q - 1 - (b : ℕ) + 1 := by omega
       rw [hi]
       have key := m2 (q - 1 - (b : ℕ)) (by omega)
@@ -177,14 +141,14 @@ theorem row {r p q : ℕ} (hpq : p + q = r) (T Dm nL nF : ℤ) (hnL : 0 ≤ nL) 
   · intro a b ha hb
     have hbr := b.isLt
     have ha' : ¬ q ≤ (a : ℕ) := by omega
-    rw [hL a, hL b, if_neg ha', if_pos hb]
+    rw [hL a, hL b, ite_eq_right ha', ite_eq_left hb]
     have h1 := le_of_succ_lt p1 ((b : ℕ) - q) (by omega)
     have h2 := le_of_succ_lt m1 (q - 1 - (a : ℕ)) (by omega)
     linarith
   · intro a b ha hb hp hq
     have ha' : ¬ q ≤ (a : ℕ) := by omega
     have hb' : q ≤ (b : ℕ) := by omega
-    rw [hL a, hL b, hF a, hF b, if_neg ha', if_neg ha', if_pos hb', if_pos hb']
+    rw [hL a, hL b, hF a, hF b, ite_eq_right ha', ite_eq_right ha', ite_eq_left hb', ite_eq_left hb']
     have e1 : q - 1 - (a : ℕ) = q - 1 := by omega
     have e2 : (b : ℕ) - q = p - 1 := by omega
     have e3 : ((b : ℕ) : ℤ) = (r : ℤ) - 1 := by

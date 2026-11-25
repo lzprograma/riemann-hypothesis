@@ -3,53 +3,8 @@ module
 public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
 public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffOnFubiniStudyProfileInvNormSqFirst
 public import Mathlib.Order.CompletePartialOrder
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -105,8 +60,6 @@ structure RegCharts (A : FinHolAtlas D X) where
 
   W'' : Fin n → Set (Fin D → ℂ)
   isOpen_kappaOpenNeighbourhood : ∀ j, IsOpen (W j)
-  isOpen_alt : ∀ j, IsOpen (W' j)
-  isOpen_alt_alt : ∀ j, IsOpen (W'' j)
   W_subset : ∀ j, W j ⊆ (ψ j).target
   isCompact_closure_middle : ∀ j, IsCompact (closure (W' j))
   closure_W'_subset : ∀ j, closure (W' j) ⊆ W j
@@ -114,26 +67,14 @@ structure RegCharts (A : FinHolAtlas D X) where
   cover : ∀ x, ∃ j, x ∈ (ψ j).source ∧ ψ j x ∈ W'' j
 
   θ : LocPot X
-  θ_pot : IsPotential A θ
 
   om : LocPot X
-  om_pot : IsPotential A om
-  om_pos : IsPosPot A om
-
-  q : Fin n → (Fin D → ℂ) → ℝ
-  q_smooth : ∀ j, ContDiffOn ℝ ∞ (q j) (W j)
-  q_θ : ∀ j, ∀ y ∈ (ψ j).source, ψ j y ∈ W j → ∃ V : Set X, IsOpen V ∧ y ∈ V ∧ ∃ G : X → ℂ,
-    A.HoloOn V G ∧ ∀ x ∈ V ∩ θ.U y ∩ (ψ j).source, ψ j x ∈ W j →
-      θ.φ y x - q j (ψ j x) = (G x).re
 
 namespace RegCharts
 
 variable {A : FinHolAtlas D X} (R : RegCharts A)
 
 def V'' (j : Fin R.n) : Set X := (R.ψ j).source ∩ R.ψ j ⁻¹' R.W'' j
-
-def u (φ : X → ℝ) (j : Fin R.n) (z : Fin D → ℂ) : ℝ := R.q j z + φ ((R.ψ j).symm z)
-
 
 end RegCharts
 
@@ -155,21 +96,6 @@ structure RegChartData (A : FinHolAtlas D X) extends RegCharts A where
   one_le_r : ∀ x ∈ Yo, 1 ≤ r x
 
   φ : X → ℝ
-  φ_smooth : A.SmoothOn Yo φ
-  psh : ∀ j, ReciprocityTheory.AnForm.A.IsPsh (W j \ coordDiv (S j)) (toRegCharts.u φ j)
-
-  C : ℝ
-  φ_le : ∀ x ∈ Yo, φ x ≤ C
-  le_φ : ∀ x ∈ Yo, -(C * Real.log (r x)) ≤ φ x
-  grad : ∀ j, ∀ z ∈ W j \ coordDiv (S j),
-    ‖fderiv ℝ (toRegCharts.u φ j) z‖ ≤
-      C * r ((ψ j).symm z) ^ C * Real.exp (r ((ψ j).symm z) / 2)
-
-structure BoundedThPsh {A : FinHolAtlas D X} (R : RegCharts A) where
-
-  φ : X → ℝ
-  bdd : ∃ B, ∀ x, |φ x| ≤ B
-  psh : ∀ j, ReciprocityTheory.AnForm.A.IsPsh (R.W j) (R.u φ j)
 
 def siegel (g : ℕ) : Set (Matrix (Fin g) (Fin g) ℂ) :=
   {Z | Zᵀ = Z ∧ (Z.map Complex.im).PosDef}
@@ -189,12 +115,6 @@ structure PeriodPolydisc (n a g : ℕ) where
   B_zero : ∀ i : Fin n, a ≤ (i : ℕ) → B i = 0
   period : ∀ i : Fin n, (i : ℕ) < a → ∀ w ∈ coverSet n a,
     τ (w + Pi.single i (2 * Real.pi * Complex.I)) = τ w + (B i).map (fun m : ℤ => (m : ℂ))
-
-namespace PeriodPolydisc
-
-variable {n a g : ℕ} (P : PeriodPolydisc n a g)
-
-end PeriodPolydisc
 
 theorem im_mul_inv_two_pi_I (x : ℝ) (w : ℂ) :
     ((x : ℂ) * (2 * Real.pi * Complex.I)⁻¹ * w).im = -x * w.re / (2 * Real.pi) := by

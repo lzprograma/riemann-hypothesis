@@ -22,59 +22,14 @@ public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProo
 public import Formalism.PeriodIntegrals.FglTriFactor
 public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.FormalGroupLawFirstHalfHolds
 public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.LevelRestrictionOfGroupLawHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupSplitting.ExpCongruenceExtendsToSum
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Linter.Style
 import Mathlib.RingTheory.PowerSeries.Inverse
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Polynomial.Basic
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.FormalGroupLawExists
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.ThirdRootSubVarZeroNeZero
 import Mathlib.Tactic.TypeStar
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CubicExponentialFactor.NormAddLeOne, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CubicExponentialFactor.ExpMvAddC, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupChords.DerivativeFlog, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupChords.SubstBivariateSeriesDifferencePair, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupChords.NormDeltaWc, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupChords.FormalGroupChordFactor, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupTriangles.LogThirdPointSum, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupTriangles.CcPrEq, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExponentialFactorIdentity.ExpMvEq, Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.TheoremOfCubeOfAdditionFormulas
@@ -298,31 +253,31 @@ theorem main : Lemma := by
     exact PI.FglShared.subst_ne_zero hex0 hinv hy0 hy
   have e0 : MvPowerSeries.coeff (Finsupp.single (0 : Fin 3) k) (lg l x0) = PowerSeries.coeff k l := by
     have h := hcoef 0 0
-    rw [if_pos rfl] at h
+    rw [ite_eq_left rfl] at h
     exact h
   have e1 : MvPowerSeries.coeff (Finsupp.single (0 : Fin 3) k) (lg l x1) = 0 := by
     have h := hcoef 0 1
-    rw [if_neg (by decide)] at h
+    rw [ite_eq_right (by decide)] at h
     exact h
   have e2 : MvPowerSeries.coeff (Finsupp.single (0 : Fin 3) k) (lg l x2) = 0 := by
     have h := hcoef 0 2
-    rw [if_neg (by decide)] at h
+    rw [ite_eq_right (by decide)] at h
     exact h
   have f1 : MvPowerSeries.coeff (Finsupp.single (1 : Fin 3) k) (lg l x1) = PowerSeries.coeff k l := by
     have h := hcoef 1 1
-    rw [if_pos rfl] at h
+    rw [ite_eq_left rfl] at h
     exact h
   have f2 : MvPowerSeries.coeff (Finsupp.single (1 : Fin 3) k) (lg l x2) = 0 := by
     have h := hcoef 1 2
-    rw [if_neg (by decide)] at h
+    rw [ite_eq_right (by decide)] at h
     exact h
   have g2 : MvPowerSeries.coeff (Finsupp.single (2 : Fin 3) k) (lg l x2) = PowerSeries.coeff k l := by
     have h := hcoef 2 2
-    rw [if_pos rfl] at h
+    rw [ite_eq_left rfl] at h
     exact h
   have g0 : MvPowerSeries.coeff (Finsupp.single (2 : Fin 3) k) (lg l x0) = 0 := by
     have h := hcoef 2 0
-    rw [if_neg (by decide)] at h
+    rw [ite_eq_right (by decide)] at h
     exact h
   have hs0 : s ≠ 0 := by
     have hs' : s = pt ex (lg l x0 + lg l x1 + lg l x2) := by
@@ -524,13 +479,13 @@ theorem dX_eq (f : PowerSeries ℂ_[p]) : dX f = PowerSeries.derivative (R := �
 theorem derivative_flog' (W : WeierstrassCurve ℂ_[p]) (wq : PowerSeries ℂ_[p]) :
     PowerSeries.derivative (R := ℂ_[p]) (flog W wq) = omegaW W wq := by
   ext n
-  rw [PowerSeries.coeff_derivative, flog, PowerSeries.coeff_mk, if_neg (Nat.succ_ne_zero n), Nat.add_sub_cancel]
+  rw [PowerSeries.coeff_derivative, flog, PowerSeries.coeff_mk, ite_eq_right (Nat.succ_ne_zero n), Nat.add_sub_cancel]
   push_cast
   exact div_mul_cancel₀ _ (Nat.cast_add_one_ne_zero n)
 
 theorem flog_const (W : WeierstrassCurve ℂ_[p]) (wq : PowerSeries ℂ_[p]) :
     PowerSeries.constantCoeff (flog W wq) = 0 := by
-  rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, flog, PowerSeries.coeff_mk, if_pos rfl]
+  rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, flog, PowerSeries.coeff_mk, ite_eq_left rfl]
 
 theorem omega_mul {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries ℂ_[p]} (h : IsWq W wq) :
     omegaW W wq * (wq * (algebraMap ℂ_[p] (PowerSeries ℂ_[p]) W.a₁ * PowerSeries.X +
@@ -553,20 +508,6 @@ theorem deriv_ext {f g : PowerSeries ℂ_[p]} (hd : PowerSeries.derivative (R :=
     first
     | exact mul_right_cancel₀ (Nat.cast_add_one_ne_zero n) e
 
-private theorem derivative_subst_eq_subst_derivative_mul (a f : PowerSeries ℂ_[p]) (ha : PowerSeries.HasSubst a) :
-    PowerSeries.derivative (R := ℂ_[p]) (PowerSeries.subst a f) =
-      PowerSeries.subst a (PowerSeries.derivative (R := ℂ_[p]) f) * PowerSeries.derivative (R := ℂ_[p]) a := by
-  have hpd : ∀ g : PowerSeries ℂ_[p], MvPowerSeries.pderiv (R := ℂ_[p]) () g = PowerSeries.derivative (R := ℂ_[p]) g := by
-    intro g
-    refine PowerSeries.ext fun n => ?_
-    rw [PowerSeries.coeff_derivative]
-    show MvPowerSeries.coeff (Finsupp.single () n) (MvPowerSeries.pderiv (R := ℂ_[p]) () g) = _
-    rw [MvPowerSeries.coeff_pderiv, ← Finsupp.single_add, Finsupp.single_eq_same]
-    rfl
-  have := PI.AddIntG.Wk.pderiv_subst (σ := Unit) ha f ()
-  rw [hpd, hpd] at this
-  exact this
-
 theorem flog_iW {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries ℂ_[p]} (h : IsWq W wq) :
     PowerSeries.subst (iW W wq) (flog W wq) = -flog W wq := by
   have hs := hasSubst_iW W wq
@@ -583,7 +524,7 @@ theorem flog_iW {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries ℂ_[p]} (h : I
     simp only [map_add (f := _), map_sub, map_mul, map_pow, map_neg, map_ofNat, AlgHom.commutes, hX] at hom'
     simp only [← hφ] at hom'
     rw [hwi] at hom'
-    have hcw := derivative_subst_eq_subst_derivative_mul (iW W wq) wq hs
+    have hcw := PowerSeries.derivative_subst (f := wq) hs
     rw [hwi] at hcw
     have hdwD : PowerSeries.derivative (R := ℂ_[p]) (wq * Dser W wq ^ 2) =
         PowerSeries.derivative (R := ℂ_[p]) wq * Dser W wq ^ 2 +
@@ -600,7 +541,7 @@ theorem flog_iW {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries ℂ_[p]} (h : I
       have h00 := congrArg PowerSeries.constantCoeff h0
       have h2 : PowerSeries.constantCoeff (2 : PowerSeries ℂ_[p]) = 2 := map_ofNat _ 2
       simp [D_const, wq_const' h, h2] at h00
-    rw [derivative_subst_eq_subst_derivative_mul (iW W wq) (flog W wq) hs, derivative_flog', map_neg, derivative_flog']
+    rw [PowerSeries.derivative_subst (f := flog W wq) hs, derivative_flog', map_neg, derivative_flog']
     have key : (PowerSeries.subst (iW W wq) (omegaW W wq) * PowerSeries.derivative (R := ℂ_[p]) (iW W wq) +
         omegaW W wq) * (Dser W wq * (wq * (algebraMap ℂ_[p] (PowerSeries ℂ_[p]) W.a₁ * PowerSeries.X +
         algebraMap ℂ_[p] (PowerSeries ℂ_[p]) W.a₃ * PowerSeries.X ^ 3 * wq - 2))) = 0 := by
@@ -681,8 +622,7 @@ theorem cc_msubst {φ : Fin 2 → MvPowerSeries (Fin 2) ℂ_[p]} (hφ : MvPowerS
   · simp
   · intro d hd
     obtain ⟨s, hs⟩ : ∃ s, d s ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hd (Finsupp.ext h)
     have h0 : MvPowerSeries.constantCoeff (d.prod fun s e => φ s ^ e) = 0 := by
       rw [Finsupp.prod, map_prod]
@@ -1052,7 +992,7 @@ variable {p : ℕ} [Fact p.Prime]
 theorem cc_flog (W : WeierstrassCurve ℂ_[p]) (wq : PowerSeries ℂ_[p]) :
     PowerSeries.constantCoeff (flog W wq) = 0 := by
   first
-  | (rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, flog, PowerSeries.coeff_mk, if_pos rfl])
+  | (rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, flog, PowerSeries.coeff_mk, ite_eq_left rfl])
 
 theorem abel' {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries ℂ_[p]} (h : IsWq W wq) :
     lg (flog W wq) (MvPowerSeries.X 0 : MvPowerSeries (Fin 2) ℂ_[p]) + lg (flog W wq) (MvPowerSeries.X 1) +

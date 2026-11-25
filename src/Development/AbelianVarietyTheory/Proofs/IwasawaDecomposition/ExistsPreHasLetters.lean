@@ -8,52 +8,9 @@ public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GoodT
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InhabitedStage
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LatticeEmbeddingMemUnitGroup
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocStageInhabited
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.PicardGroup
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsColsRowsRestPos, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPreHasLetters
@@ -183,8 +140,8 @@ def model (n : C.Tup → ℕ) (D : ℕ)
   ft0 _ := ()
   Amb μ := Euc (n μ)
   Mult μ j := Euc (if j = 0 then D else n μ)
-  multZero _ := eucCast (if_pos rfl)
-  multTop _ := eucCast (if_neg (by have := B.R.two_le_m; omega))
+  multZero _ := eucCast (ite_eq_left rfl)
+  multTop _ := eucCast (ite_eq_right (by have := B.R.two_le_m; omega))
   io _ _ := Matrix.toEuclideanLin (Matrix.of fun a b => if (a : ℕ) = (b : ℕ) then 1 else 0)
   Mtilde μ := stdOLat _ _ (n μ)
   eOp _ := LinearMap.id
@@ -232,7 +189,7 @@ def model (n : C.Tup → ℕ) (D : ℕ)
   Bu_linR _ φ := ⟨fun F G => by simp [Finset.sum_add_distrib, mul_add],
     fun a F => by simp [← Finset.mul_sum, mul_left_comm]⟩
   eMtTw := eTw
-  perCol_tie u μ h φ F := dif_neg h
+  perCol_tie u μ h φ F := dite_eq_right h
   eMu_isom := heM
 
 end GlobalTheory.Mem.RowsModel

@@ -54,13 +54,6 @@ noncomputable section
 
 namespace GlobalTheory.ArcQ.TanPart
 
-section Mul
-
-variable {B B' Z Z' : Scheme.{0}} {G : Over B} [GrpObj G] {G' : Over B'} [GrpObj G'] {f : B' ⟶ B}
-  {φ : G'.left ⟶ G.left}
-
-end Mul
-
 section Eps
 
 variable {S : Type} [CommRing S]
@@ -69,13 +62,6 @@ theorem fst_alg : (TrivSqZeroExt.fstHom S S S).toRingHom.comp (algebraMap S (Dua
   RingHom.ext fun x => by simp
 
 end Eps
-
-section Comb
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
-  {Xo : Moduli Dw l} {S : Type} [CommRing S]
-
-end Comb
 
 section Gt
 
@@ -110,13 +96,5 @@ theorem isZero_of_isAdd {T : Over (Spec (CommRingCat.of A))} {g : Out.GtPt D₀ 
   exact (mul_eq_left.1 e.symm).trans (val_one _).symm
 
 end Gt
-
-section ThetaShiftProofs
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
-  {Xo : Moduli Dw l} {c : Coeff l} {O : Type} [CommRing O] {β : O →+* c.F} {Y : Model Xo c β}
-  {K₁ : Type} [Field K₁] [Algebra c.F K₁] {b : O →+* K₁} {a : ArcIn Dw l β K₁ b} {χ : Sp (PowerSeries K₁) ⟶ Y.X}
-
-end ThetaShiftProofs
 
 end GlobalTheory.ArcQ.TanPart

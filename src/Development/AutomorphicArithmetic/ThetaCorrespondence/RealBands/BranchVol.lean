@@ -11,57 +11,8 @@ public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FormalDeg
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestKTypeLieWordNormBound
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealInputOfBranching
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VolumeOfBallBound
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.CStarAlgebra.Module.Constructions
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -76,82 +27,6 @@ open Matrix
 open scoped Matrix.Norms.L2Operator ComplexOrder
 
 namespace GlobalTheory
-
-section OpNorm
-
-variable {m n : Type*} [Fintype m] [Fintype n] [DecidableEq m] [DecidableEq n]
-
-
-theorem norm_dotProduct_mulVec_star_le (A : Matrix n n ℂ) (x : n → ℂ) :
-    ‖x ⬝ᵥ A *ᵥ star x‖ ≤ ‖A‖ * ∑ k, ‖x k‖ ^ 2 := by
-  set y : EuclideanSpace ℂ n := WithLp.toLp 2 (star x) with hy
-  have h := l2_opNorm_mulVec A y
-  have h1 := norm_inner_le_norm (𝕜 := ℂ) y ((EuclideanSpace.equiv n ℂ).symm (A *ᵥ y))
-  have h2 : ‖y‖ ^ 2 = ∑ k, ‖x k‖ ^ 2 := by simp [hy, EuclideanSpace.norm_sq_eq]
-  have h3 : inner ℂ y ((EuclideanSpace.equiv n ℂ).symm (A *ᵥ y)) = x ⬝ᵥ A *ᵥ star x := by
-    rw [EuclideanSpace.inner_eq_star_dotProduct, dotProduct_comm]
-    simp [hy]
-  rw [← h3, ← h2]
-  refine h1.trans ?_
-  nlinarith [norm_nonneg y]
-
-end OpNorm
-
-section LogDet
-
-variable {n : Type*} [Fintype n] [DecidableEq n]
-
-end LogDet
-
-section Inertia
-
-variable {m n : Type*} [Fintype m] [Fintype n] [DecidableEq m] [DecidableEq n]
-
-omit [DecidableEq m] in
-theorem dotProduct_diagonal_mulVec_star (d x : n → ℂ) :
-    x ⬝ᵥ diagonal d *ᵥ star x = ∑ k, d k * ((‖x k‖ ^ 2 : ℝ) : ℂ) := by
-  simp only [dotProduct, mulVec_diagonal, Pi.star_apply]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  rw [← Complex.normSq_eq_norm_sq, ← Complex.mul_conj]
-  simp only [Complex.star_def]
-  ring
-
-theorem le_re_dotProduct_diagonal_add_of_support {j : n → ℂ} (E : Matrix n n ℂ) {x : n → ℂ}
-    (hx : ∀ k, x k ≠ 0 → j k = 1) :
-    (1 - ‖E‖) * ∑ k, ‖x k‖ ^ 2 ≤ (x ⬝ᵥ (diagonal j + E) *ᵥ star x).re := by
-  have h1 : (x ⬝ᵥ diagonal j *ᵥ star x).re = ∑ k, ‖x k‖ ^ 2 := by
-    rw [dotProduct_diagonal_mulVec_star, Complex.re_sum]
-    refine Finset.sum_congr rfl fun k _ => ?_
-    by_cases h : x k = 0
-    · simp [h]
-    · rw [hx k h, one_mul, Complex.ofReal_re]
-  have h2 := norm_dotProduct_mulVec_star_le E x
-  have h3 := abs_le.1 (Complex.abs_re_le_norm (x ⬝ᵥ E *ᵥ star x))
-  rw [add_mulVec, dotProduct_add, Complex.add_re, h1]
-  linarith [h3.1]
-
-theorem sum_norm_sq_pos {x : n → ℂ} (hx : x ≠ 0) : 0 < ∑ k, ‖x k‖ ^ 2 := by
-  obtain ⟨k, hk⟩ := Function.ne_iff.1 hx
-  exact Finset.sum_pos' (fun _ _ => by positivity)
-    ⟨k, Finset.mem_univ k, by have : x k ≠ 0 := hk; positivity⟩
-
-theorem re_dotProduct_diagonal_add_pos_of_support {j : n → ℂ} {E : Matrix n n ℂ} (hE : ‖E‖ < 1)
-    {x : n → ℂ} (hx0 : x ≠ 0) (hx : ∀ k, x k ≠ 0 → j k = 1) :
-    0 < (x ⬝ᵥ (diagonal j + E) *ᵥ star x).re :=
-  (mul_pos (by linarith) (sum_norm_sq_pos hx0)).trans_le
-    (le_re_dotProduct_diagonal_add_of_support E hx)
-
-theorem posDef_one_add {E : Matrix n n ℂ} (hE : E.IsHermitian) (hE1 : ‖E‖ < 1) :
-    (1 + E).PosDef := by
-  have hH : (1 + E).IsHermitian := isHermitian_one.add hE
-  refine PosDef.of_dotProduct_mulVec_pos hH fun x hx => ?_
-  have h := re_dotProduct_diagonal_add_pos_of_support (j := fun _ => 1) hE1
-    (star_ne_zero.2 hx) fun _ _ => rfl
-  rw [star_star, diagonal_one] at h
-  rw [Complex.pos_iff]
-  exact ⟨h, (hH.im_star_dotProduct_mulVec_self x).symm⟩
-
-end Inertia
 
 section Exp
 
@@ -579,7 +454,7 @@ private theorem vol_arith (n : ℕ) (B : ℝ) (hn : 3 ≤ n) (hB : 1 ≤ B) :
 theorem UpperTheory.Lit.Branch.volDeg :
     VolDeg := by
   have hVol : VolBall := _root_.GlobalTheory.SepReal.volBall
-  have hDegU : DegUpper := _root_.GlobalTheory.SepReal.degUpper_of _root_.GlobalTheory.SepReal.logNear_holds _root_.GlobalTheory.SepReal.lieBound hVol
+  have hDegU : DegUpper := _root_.GlobalTheory.SepReal.degUpper_of _root_.GlobalTheory.SepReal.logNear_holds _root_.GlobalTheory.SepReal.lieBound
   refine ⟨11, by norm_num, ?_⟩
   intro n e ε lam ε' mu B hP H H' _ _ _ _ π σ hπ hσ d hd
   have hn := hP.three_le

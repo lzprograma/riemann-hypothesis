@@ -25,12 +25,6 @@ open NumberField Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroup
 open Classical ValuativeRel
 open scoped ComplexOrder
 
-def PtUnitAE (D : Formalism.BasicNotions.D7) : Prop :=
-  ∀ (δ : ∀ p : PlF D, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep),
-    (∀ p, Agree δ M p) → ∀ (T T' n : ℕ) (w : Point D.host.E n), n ≤ D.R.rS + 1 →
-    {p : PlF D | ¬ ((M p).split = none ∧ (∀ x ∈ (M p).R, (M p).psiR x = 1) ∧
-      ∃ a, modPt δ T T' p w = some a ∧ (M p).InGLR a)}.Finite
-
 def qP {D : Formalism.BasicNotions.D7} (p : PlF D) : ℝ :=
   (Nat.card (IsLocalRing.ResidueField 𝒪[(D.s.atP p).Fp]) : ℝ)
 
@@ -77,23 +71,6 @@ def RowsFinAt (D : Formalism.BasicNotions.D7) : Prop :=
       IsRowReps D F0 what₂ →
     ∀ (nc : ℝ) (κ : TermDef.Term D u u' F0 what₂ → ℕ), RowLabel κ → ∀ x : TB.Pt D.host.E,
       {ρ : ℕ | rowVec (PairVal.vRdef D u u' F0 what₂ δ M) κ nc ρ x ≠ 0}.Finite
-
-def RowsDomAt (D : Formalism.BasicNotions.D7) : Prop :=
-  ∀ (Wp Wq : InfinitePlace D.host.E → Type) [∀ x, NormedAddCommGroup (Wp x)]
-    [∀ x, InnerProductSpace ℂ (Wp x)] [∀ x, NormedAddCommGroup (Wq x)] [∀ x, InnerProductSpace ℂ (Wq x)] (S : C.HidaSetting D.host.E Wp Wq) (δ : ∀ p : PlF D, (D.s.atP p).Fp)
-    (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep), (∀ p, Agree δ M p) →
-    ∀ (L : CntLocal.LocSp D M) (u u' : D.what₂.Word),
-    (D.mem u).A.T ≡ (D.mem u').A.T [MOD (Formalism.MainNotions.S.Lat.gS D) ^ 2] → Compat S u u' →
-    ∀ (F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)) (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)),
-      IsRowReps D F0 what₂ →
-    ∀ ϖ : ∀ p : PlF D, 𝒪[(D.s.atP p).Fp], (∀ p, Irreducible (ϖ p)) →
-    ∀ nc : ℝ, CntLocal.Formula δ L u u' F0 what₂ nc → ∀ α : ℝ, 0 < α →
-    BddAbove (densSet L δ ϖ u u' F0 what₂) →
-    ∀ κ : TermDef.Term D u u' F0 what₂ → ℕ, RowLabel κ →
-    ∀ Y : Finset (TB.Pt D.host.E), (∀ p ∈ Y, TB.IsPt p ((dOf S δ M u u').r + 1)) →
-      TB.PSDOn Y (fun p q => ((supDens L δ ϖ u u' F0 what₂ / α : ℝ) : ℂ) *
-          (dOf S δ M u u').Kr ((dOf S δ M u u').r + 1) p q -
-        rowKer (PairVal.vRdef D u u' F0 what₂ δ M) κ (nc * α) p q)
 
 def ClK {E W : Type} [Field E] (Dt : TB.Data E W) : Prop :=
   ∀ (i : ℕ) (Y : Finset (TB.Pt E)),
@@ -323,7 +300,7 @@ theorem rowLabelExists_of (hG : Corank.ScalarEquivG) (hR : ∀ u u' : D.what₂.
   obtain ⟨enc, henc⟩ := exists_injective_nat (Quotient s)
   refine ⟨fun t => if h : t.G ≠ 0 then enc (Quotient.mk s ⟨t, h⟩) else 0, ?_⟩
   intro t t' ht ht'
-  simp only [dif_pos ht.2, dif_pos ht'.2, henc.eq_iff, Quotient.eq]
+  simp only [dite_eq_left ht.2, dite_eq_left ht'.2, henc.eq_iff, Quotient.eq]
   exact Iff.rfl
 
 end Label
@@ -331,13 +308,6 @@ end Label
 section RowsA
 
 variable {D : Formalism.BasicNotions.D7}
-
-private theorem posSemidef_outer_product {ι : Type*} [Fintype ι] (u : ι → ℂ) :
-    (Matrix.of fun x y => u x * star (u y)).PosSemidef := by
-  have h := Matrix.posSemidef_conjTranspose_mul_self (Matrix.of fun (_ : Unit) (j : ι) => star (u j))
-  convert h using 1
-  ext x y
-  simp [Matrix.mul_apply, Matrix.conjTranspose_apply]
 
 theorem psdOn_of_full {α : Type} (Y : Finset α) (K : α → α → ℂ) (c : ℕ → α → ℂ)
     (hfin : ∀ x, {ρ | c ρ x ≠ 0}.Finite)
@@ -363,12 +333,12 @@ theorem psdOn_of_full {α : Type} (Y : Finset α) (K : α → α → ℂ) (c : �
     have : ρ ∉ F := fun h => hρ (Finset.mem_inter.2 ⟨hρR, h⟩)
     simp [hmem x hx ρ this]
   simp only [TB.PSDOn] at hD ⊢
-  have hS : (∑ ρ ∈ F \ R, Matrix.of fun x y : Y => c ρ x * star (c ρ y)).PosSemidef :=
-    Finset.sum_induction _ Matrix.PosSemidef (fun A B hA hB => hA.add hB) Matrix.PosSemidef.zero
-      (fun ρ _ => posSemidef_outer_product (fun x : Y => c ρ x))
+  have hS := Matrix.posSemidef_sum (F \ R) fun ρ _ =>
+    Matrix.posSemidef_vecMulVec_self_star (fun x : Y => c ρ x)
   convert hD.add hS using 1
   ext x y
-  simp only [Matrix.add_apply, Matrix.of_apply, Matrix.sum_apply, starRingEnd_apply]
+  simp only [Matrix.add_apply, Matrix.of_apply, Matrix.sum_apply, Matrix.vecMulVec_apply,
+    Pi.star_apply, starRingEnd_apply]
   have h1 := hts x x.2 y y.2
   have h2 := hR x x.2 y y.2
   simp only [starRingEnd_apply] at h1 h2
@@ -415,7 +385,7 @@ theorem kind_ptOfList_join {D : Formalism.BasicNotions.D7} (h : TB.Pt D.host.E) 
     apply hdet
     rw [Formalism.L2.SG.Pf.dmin_snoc w _ t hb hs, h0, zero_mul]
   unfold kind
-  rw [if_neg h0, Formalism.L2.SG.Pf.zeta_snoc w h0 _ t hb hs]
+  rw [ite_eq_right h0, Formalism.L2.SG.Pf.zeta_snoc w h0 _ t hb hs]
 
 theorem localModelT_holds (D : Formalism.BasicNotions.D7) : LocalModelT D := by
   intro Wp Wq _ _ _ _ S δ M hA u u' hC
@@ -424,7 +394,7 @@ theorem localModelT_holds (D : Formalism.BasicNotions.D7) : LocalModelT D := by
   rw [hr] at hh hh' ⊢
   show KrOf δ M (D.mem u).A.T (D.mem u').A.T (D.R.rS + 1) (TB.join h 1 t) (TB.join h' 1 t') = 0
   unfold KrOf
-  rw [if_neg (Nat.succ_ne_zero _), if_neg (lt_irrefl _)]
+  rw [ite_eq_right (Nat.succ_ne_zero _), ite_eq_right (lt_irrefl _)]
   rcases ha : ptOfList (D.R.rS + 1) (TB.join h 1 t) with _ | a
   · rfl
   rcases hb : ptOfList (D.R.rS + 1) (TB.join h' 1 t') with _ | b
@@ -432,9 +402,9 @@ theorem localModelT_holds (D : Formalism.BasicNotions.D7) : LocalModelT D := by
   have e1 := kind_ptOfList_join h t hh a ha
   have e2 := kind_ptOfList_join h' t' hh' b hb
   show Kglob δ M (D.mem u).A.T (D.mem u').A.T (D.R.rS + 1) a b / _ = 0
-  rw [Kglob, dif_pos rfl]
+  rw [Kglob, dite_eq_left rfl]
   unfold KtopG
-  rw [e1, e2, if_neg (by simpa using htt)]
+  rw [e1, e2, ite_eq_right (by simpa using htt)]
   simp
 
 end LMT
@@ -543,25 +513,20 @@ theorem density_gram_matrix_sub_posSemidef {ι Θ : Type*} [Fintype ι] [Fintype
       (if 0 < n x ∧ 0 < n y then ((n x : ℂ) * ∑ θ, (dens θ : ℂ) * (a θ : ℂ) * v θ x * star (v θ y)) /
         ((Real.sqrt (n x * n y) : ℝ) : ℂ) else 0)).PosSemidef := by
   classical
-  have hsum : ∀ (M : Θ → Matrix ι ι ℂ), (∀ θ, (M θ).PosSemidef) → (∑ θ, M θ).PosSemidef := fun M hM =>
-    Finset.sum_induction _ Matrix.PosSemidef (fun A B hA hB => hA.add hB) Matrix.PosSemidef.zero
-      (fun θ _ => hM θ)
-  have h1 : (∑ θ, (((Dsup - dens θ) * a θ : ℝ) : ℂ) • Matrix.of fun x y =>
-      (if 0 < n x then v θ x else 0) * star (if 0 < n y then v θ y else 0)).PosSemidef :=
-    hsum _ fun θ => (posSemidef_outer_product (fun x => if 0 < n x then v θ x else 0)).smul
+  have h1 := Matrix.posSemidef_sum (Finset.univ : Finset Θ) fun θ _ =>
+    (Matrix.posSemidef_vecMulVec_self_star (fun x => if 0 < n x then v θ x else 0)).smul
       (Complex.zero_le_real.mpr (mul_nonneg (sub_nonneg.mpr (hd θ)) (ha θ)))
-  have h2 : (∑ θ, ((Dsup * a θ : ℝ) : ℂ) • Matrix.of fun x y =>
-      (if 0 < n x then 0 else v θ x) * star (if 0 < n y then 0 else v θ y)).PosSemidef :=
-    hsum _ fun θ => (posSemidef_outer_product (fun x => if 0 < n x then 0 else v θ x)).smul
+  have h2 := Matrix.posSemidef_sum (Finset.univ : Finset Θ) fun θ _ =>
+    (Matrix.posSemidef_vecMulVec_self_star (fun x => if 0 < n x then 0 else v θ x)).smul
       (Complex.zero_le_real.mpr (mul_nonneg hD0 (ha θ)))
   convert h1.add h2 using 1
   ext x y
-  simp only [Matrix.of_apply, Matrix.add_apply, Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul,
-    Finset.mul_sum]
+  simp only [Matrix.of_apply, Matrix.add_apply, Matrix.sum_apply, Matrix.smul_apply,
+    Matrix.vecMulVec_apply, Pi.star_apply, smul_eq_mul, Finset.mul_sum]
   by_cases hP : 0 < n x ∧ 0 < n y
-  · rw [if_pos hP, Finset.sum_div, ← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
+  · rw [ite_eq_left hP, Finset.sum_div, ← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun θ _ => ?_
-    simp only [if_pos hP.1, if_pos hP.2, star_zero, mul_zero, add_zero]
+    simp only [ite_eq_left hP.1, ite_eq_left hP.2, star_zero, mul_zero, add_zero]
     by_cases hvx : v θ x = 0
     · simp [hvx]
     by_cases hvy : v θ y = 0
@@ -572,25 +537,25 @@ theorem density_gram_matrix_sub_posSemidef {ι Θ : Type*} [Fintype ι] [Fintype
     field_simp
     push_cast
     ring
-  · rw [if_neg hP, sub_zero, ← Finset.sum_add_distrib]
+  · rw [ite_eq_right hP, sub_zero, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun θ _ => ?_
     by_cases hx : 0 < n x <;> by_cases hy : 0 < n y
     · exact absurd ⟨hx, hy⟩ hP
-    · simp only [if_pos hx, if_neg hy, star_zero, mul_zero, zero_mul, add_zero]
+    · simp only [ite_eq_left hx, ite_eq_right hy, star_zero, mul_zero, zero_mul, add_zero]
       by_cases hvx : v θ x = 0
       · simp [hvx]
       by_cases hvy : v θ y = 0
       · simp [hvy]
       have hxy := hsupp θ x y hvx hvy
       exact absurd (hxy ▸ hx) hy
-    · simp only [if_neg hx, if_pos hy, star_zero, mul_zero, zero_mul, zero_add]
+    · simp only [ite_eq_right hx, ite_eq_left hy, star_zero, mul_zero, zero_mul, zero_add]
       by_cases hvx : v θ x = 0
       · simp [hvx]
       by_cases hvy : v θ y = 0
       · simp [hvy]
       have hxy := hsupp θ x y hvx hvy
       exact absurd (hxy ▸ hy) hx
-    · simp only [if_neg hx, if_neg hy, star_zero, mul_zero, zero_add]
+    · simp only [ite_eq_right hx, ite_eq_right hy, star_zero, mul_zero, zero_add]
       push_cast
       ring
 
@@ -847,8 +812,7 @@ theorem dom_points (hN : SupportG.NormProd D) {δ : ∀ p : PlF D, (D.s.atP p).F
       rw [hsum]
       ring
     · have h0 : n x = 0 ∨ n y = 0 := by
-        by_contra h
-        push_neg at h
+        by_contra! h
         exact hxy ⟨lt_of_le_of_ne (hn0 x) (Ne.symm h.1), lt_of_le_of_ne (hn0 y) (Ne.symm h.2)⟩
       rcases h0 with h0 | h0
       · have hc : ∀ ρ, chat vR κ nc ρ (w x) = 0 := fun ρ => by
@@ -882,12 +846,6 @@ theorem dom_points (hN : SupportG.NormProd D) {δ : ∀ p : PlF D, (D.s.atP p).F
   exact (hKA.smul (Complex.zero_le_real.2 hsd)).add hclose
 
 end RDProof4
-
-section RDProof5
-
-variable {D : Formalism.BasicNotions.D7}
-
-end RDProof5
 
 section Close
 

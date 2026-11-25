@@ -205,7 +205,7 @@ end Chart
 
 section Density
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable (Ψ : Finset (E →+* ℂ)) (G : Matrix (Fin r) (Fin r) E)
 
@@ -256,7 +256,6 @@ theorem chart_squeeze (hG : G.det ≠ 0) {t : ℝ} (ht : 1 < t) : ∀ᶠ ε in �
       grpBall (realSU Ψ G) ε ⊆ chartExp Ψ G hG '' ball 0 (t * ε) := by
   have ht0 : 0 < t := by linarith
   have hti : t⁻¹ < 1 := inv_lt_one_of_one_lt₀ ht
-  have hti0 : 0 < t⁻¹ := inv_pos.2 ht0
   obtain ⟨δ1, hδ1, H1⟩ := exists_approx Ψ G hG (κ := t - 1) (by linarith)
   obtain ⟨δ2, hδ2, H2⟩ := exists_approx Ψ G hG (κ := 1 - t⁻¹) (by linarith)
   have hev := eventually_mem_image Ψ G hG (ball_mem_nhds (0 : realLie Ψ G) hδ2)

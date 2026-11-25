@@ -318,8 +318,7 @@ theorem pi_free (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (f : A c) :
   have hfix : ∀ p ∈ d.HtOne, d.nPMM h c f p ≠ 0 → ∀ x, d.sub0 x (d.gen p) = d.gen p := by
     intro p hp hn x
     have hw : ∃ w, w ∈ d.GoodP c p := by
-      by_contra hno
-      push_neg at hno
+      by_contra! hno
       exact hn (by simp [Data.nPMM, hno])
     have hm := d.GeneratorMultiHomogeneous hd h c p hp hw
     refine d.substRowZero_fix_of_degree_zero x (d.gen p) fun s hs => ?_

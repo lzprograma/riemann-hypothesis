@@ -2,7 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.ThetaSetupStructureMapComp
 public import Development.AbelianVarietyTheory.Definitions.Divisors.NotOrdGeOfNotMem
-public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraitExistsAfterFiniteExtensionOfCompleteDVRStatement
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
 import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCompleteDvrFiniteSubalgebra
 import Mathlib.Algebra.Order.Floor.Extended
@@ -126,55 +125,3 @@ theorem exists_closure (V : Type) [CommRing V] [IsDomain V] [IsDiscreteValuation
   exact (FractionRing.algEquiv (integralClosure V L) L).symm.commutes _
 
 end GlobalTheory.Poinc.TraitLift
-
-namespace GlobalTheory.Poinc
-
-
-open GlobalTheory.Poinc.TraitLift in
-theorem exists_trait_lift_setup (hExt : TraitExtSt) : ∀ (g n : ℕ) (F : SFam g n (zetaAway n)) (Z : Scheme.{0}) (i : F.X ⟶ Z) (W8 : Matrix (Fin 8) (Fin 8) ℤ) (X₁ : Setup F W8 i), IsClopen (Set.range X₁.π) → ∀ (T : Trait F) (ξ : Sp T.V ⟶ Z), jK T.V ≫ ξ = T.y ≫ i → ξ (closedPoint T.V) ∈ Set.range X₁.π → ∃ (T' : Trait F) (f : T.V →+* T'.V) (fK : FractionRing T.V →+* FractionRing T'.V) (ξ₁ : Sp T'.V ⟶ X₁.M.Z), Function.Injective f ∧ IsLocalHom f ∧ (∀ a, fK (algebraMap T.V (FractionRing T.V) a) = algebraMap T'.V (FractionRing T'.V) (f a)) ∧ T'.y = spMap fK ≫ T.y ∧ spMap f ≫ ξ = ξ₁ ≫ X₁.π ∧ jK T'.V ≫ ξ₁ ≫ X₁.π = T'.y ≫ i := by
-  intro g n F Z i W8 X₁ hcl T ξ hξ hc
-  haveI : IsFinite X₁.π := X₁.fin
-  have hgen : (jK T.V ≫ ξ) (closedPoint (FractionRing T.V)) ∈ Set.range X₁.π := by
-    exact mem_of_closedPoint _ hcl.isOpen T.V ξ hc _
-  obtain ⟨L, _, _, _, η, hη⟩ := exists_finite_point X₁.π (FractionRing T.V) (jK T.V ≫ ξ) hgen
-  haveI := T.complete
-  obtain ⟨V₂, _, _, _, j, e, hB, hD, hj, hjl, he⟩ := exists_closure T.V L
-  have hring : (algebraMap V₂ (FractionRing V₂)).comp j =
-      (e.comp (algebraMap (FractionRing T.V) L)).comp (algebraMap T.V (FractionRing T.V)) :=
-    RingHom.ext fun a => (he a).symm
-  haveI : ValuationRing V₂ := inferInstance
-  have hsq : (spMap e ≫ η) ≫ X₁.π = jK V₂ ≫ (spMap j ≫ ξ) := by
-    rw [Category.assoc, hη, ← Category.assoc, spMap_comp', ← Category.assoc, ← Category.assoc, spMap_comp',
-      show jK V₂ = spMap (algebraMap V₂ (FractionRing V₂)) from rfl, spMap_comp', hring]
-  obtain ⟨l, hl1, -⟩ := exists_lift_of_isFinite X₁.π V₂ (spMap e ≫ η) (spMap j ≫ ξ) hsq
-  obtain ⟨T', f'', fK'', hinj'', hloc'', -, hc'', hy''⟩ := hExt g n _ (zetaAway n) F V₂ hB hD
-    (spMap (e.comp (algebraMap (FractionRing T.V) L)) ≫ T.y)
-  have hring2 : (algebraMap T'.V (FractionRing T'.V)).comp (f''.comp j) =
-      (fK''.comp (e.comp (algebraMap (FractionRing T.V) L))).comp (algebraMap T.V (FractionRing T.V)) := by
-    ext a
-    simp only [RingHom.comp_apply]
-    rw [← hc'', ← he]
-  have key : jK T'.V ≫ spMap (f''.comp j) = spMap (fK''.comp (e.comp (algebraMap (FractionRing T.V) L))) ≫ jK T.V := by
-    rw [show jK T'.V = spMap (algebraMap T'.V (FractionRing T'.V)) from rfl,
-      show jK T.V = spMap (algebraMap T.V (FractionRing T.V)) from rfl, spMap_comp', spMap_comp', hring2]
-  haveI := hloc''
-  refine ⟨T', f''.comp j, fK''.comp (e.comp (algebraMap (FractionRing T.V) L)), spMap f'' ≫ l, hinj''.comp hj,
-    inferInstance, fun a => (RingHom.congr_fun hring2 a).symm, ?_, ?_, ?_⟩
-  · rw [hy'', ← Category.assoc, spMap_comp']
-  · rw [Category.assoc, hl1, ← Category.assoc, spMap_comp']
-  · calc jK T'.V ≫ (spMap f'' ≫ l) ≫ X₁.π = jK T'.V ≫ spMap (f''.comp j) ≫ ξ := by
-          rw [Category.assoc, hl1, ← spMap_comp', Category.assoc]
-      _ = spMap (fK''.comp (e.comp (algebraMap (FractionRing T.V) L))) ≫ jK T.V ≫ ξ := by
-          rw [← Category.assoc, key, Category.assoc]
-      _ = T'.y ≫ i := by
-          rw [hξ, hy'', ← spMap_comp']
-          simp only [Category.assoc]
-
-end GlobalTheory.Poinc
-
-namespace GlobalTheory.Poinc
-
-theorem traitLift_setup : ∀ (g n : ℕ) (F : SFam g n (zetaAway n)) (Z : Scheme.{0}) (i : F.X ⟶ Z) (W8 : Matrix (Fin 8) (Fin 8) ℤ) (X₁ : Setup F W8 i), IsClopen (Set.range X₁.π) → ∀ (T : Trait F) (ξ : Sp T.V ⟶ Z), jK T.V ≫ ξ = T.y ≫ i → ξ (closedPoint T.V) ∈ Set.range X₁.π → ∃ (T' : Trait F) (f : T.V →+* T'.V) (fK : FractionRing T.V →+* FractionRing T'.V) (ξ₁ : Sp T'.V ⟶ X₁.M.Z), Function.Injective f ∧ IsLocalHom f ∧ (∀ a, fK (algebraMap T.V (FractionRing T.V) a) = algebraMap T'.V (FractionRing T'.V) (f a)) ∧ T'.y = spMap fK ≫ T.y ∧ spMap f ≫ ξ = ξ₁ ≫ X₁.π ∧ jK T'.V ≫ ξ₁ ≫ X₁.π = T'.y ≫ i :=
-  exists_trait_lift_setup GlobalTheory.T.traitExistsAfterFiniteExtension_of_completeDVR
-
-end GlobalTheory.Poinc

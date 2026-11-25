@@ -118,15 +118,6 @@ variable [HasSheafify J AddCommGrpCat.{w}] [HasExt.{w'} (Sheaf J AddCommGrpCat.{
 noncomputable def H.δ (n₀ n₁ : ℕ) (h : n₀ + 1 = n₁) : Sheaf.H S.X₃ n₀ →+ Sheaf.H S.X₁ n₁ :=
   Sheaf.H.δ hS n₀ n₁ h
 
-lemma H.δ_apply (n₀ n₁ : ℕ) (h : n₀ + 1 = n₁) (x : Sheaf.H S.X₃ n₀) :
-    H.δ hS n₀ n₁ h x = x.comp hS.extClass h := rfl
-
-
-include hS in
-theorem H.exact₂ {n : ℕ} (y : Sheaf.H S.X₂ n) (hy : Sheaf.H.map S.g n y = 0) :
-    ∃ x : Sheaf.H S.X₁ n, Sheaf.H.map S.f n x = y :=
-  Sheaf.H.longSequence_exact₂ hS y hy
-
 theorem H.exact₃ {n₀ n₁ : ℕ} (h : n₀ + 1 = n₁) (y : Sheaf.H S.X₃ n₀)
     (hy : H.δ hS n₀ n₁ h y = 0) : ∃ x : Sheaf.H S.X₂ n₀, Sheaf.H.map S.g n₀ x = y :=
   Sheaf.H.longSequence_exact₃ hS y h hy

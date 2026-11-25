@@ -169,7 +169,7 @@ theorem exists_split_adele {κ : Type} [Finite κ] (a : κ → AF F) :
       filter_upwards [hS.compl_mem_cofinite] with v hv
       rw [dite_eq_right hv]
       exact zero_mem _⟩
-  have hs : ∀ x y, p ((x, s y) : Ainf F × Af F) = (x, y) := fun x y => Prod.ext rfl (funext fun v => dif_pos v.2)
+  have hs : ∀ x y, p ((x, s y) : Ainf F × Af F) = (x, y) := fun x y => Prod.ext rfl (funext fun v => dite_eq_left v.2)
   have hs1 : ∀ v, s 1 v = if v ∈ S then 1 else 0 := fun v => by
     show dite _ _ _ = _
     split_ifs <;> rfl
@@ -330,7 +330,6 @@ end GlobalTheory.AdelicPointsUnimod
 
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta in
-attribute [local instance] Formalism.BasicNotions.Host.cmStar in
 theorem GlobalTheory.AdelicPointsUnimod.isMulRightInvariant_of_isHaarMeasure :
     ∀ (D : D7) (V : HSp D) (μ : Measure (GA D V)), μ.IsHaarMeasure → μ.IsMulRightInvariant := by
   intro D V μ hμ

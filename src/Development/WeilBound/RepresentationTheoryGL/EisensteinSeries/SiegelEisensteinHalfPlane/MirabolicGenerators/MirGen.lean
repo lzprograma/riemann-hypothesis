@@ -7,57 +7,11 @@ public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.Sieg
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BoundaryTermGood
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PrincipalIdentityAssembly
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RatVSmul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Analysis.CStarAlgebra.ContinuousMap
 import GroundTheory.AutomorphicForms.ReductionMeasure
-import Mathlib.Topology.Compactness.CompactlyGeneratedSpace
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TopoAF
-import Mathlib.Topology.Compactness.Paracompact
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AverageInvariance, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AverageMembership, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DiagonalTermGood, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeightTermGood, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MasterIdentity, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicGeneration, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SideTermConvergence, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SideTermIdentity, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SideTermUnfolding, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TestFunctionSphericalK, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnfoldingOfAverage, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VecKapMul, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ZetaIntegralOfEpsteinConv, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ZetaValueAtOne, Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.MirabolicGenerators.MirGen
@@ -556,19 +510,6 @@ theorem leftGood_mono {f : ℂ → X} {a b : ℝ} (hab : b ≤ a) (h : LeftGood 
 
 end SlopeTestRemainingChoices
 
-section Eis
-
-variable {G : Type} [Group G] [TopologicalSpace G] {W : Type} [NormedAddCommGroup W] [NormedSpace ℂ W]
-
-theorem eis_smul (Γ K P : Subgroup G) (c : G → ℂ) (ρ : K →* (W →L[ℂ] W)) (Λ : G → ℂ) (g : G)
-    (t : ℂ) (w : W) : eis Γ K P c ρ Λ g (t • w) = t • eis Γ K P c ρ Λ g w := by
-  unfold eis
-  rw [← tsum_const_smul'']
-  refine tsum_congr fun q => ?_
-  rw [map_smul, smul_comm]
-
-end Eis
-
 theorem master : AvgMem → DGood → HGood → BGood → Master := by
   intro hM hD hH hB
   intro G _ _ _ _ _ W _ _ _ K ρ hK hρ _ _ μ hHaar hProb Γ P P' c η η' β L J R N Φ a ζ hpar hLe hR
@@ -628,7 +569,7 @@ theorem master : AvgMem → DGood → HGood → BGood → Master := by
     change (Complex.exp (z ^ 2) * (z - 1)) • avg μ ρ (fun κ => Φ z (g * κ)) (J w) =
       eis Γ K P' c ρ (fun x => β x - z * η' x) g
         (((z • T ((Complex.exp (z ^ 2) * (z - 1)) • avg μ ρ (ζ z))) w : secSp K P' c ρ) : W)
-    rw [hOp, eis_smul, hEqL z hz g (J w), smul_smul, mul_comm z]
+    rw [hOp, GlobalTheory.CompanionTheory.EisCore.eis_const_smul, hEqL z hz g (J w), smul_smul, mul_comm z]
 
 end GlobalTheory.CompanionTheory.RgEisMG
 end -- clump:auto
@@ -1053,7 +994,6 @@ theorem inv_mulVec_smul_vec (m γ : GL ι 𝔸[k]) (x : 𝔸[k]) (i : ι) :
     ((m⁻¹ : GL ι 𝔸[k]) : Matrix ι ι 𝔸[k]) *ᵥ (x • MG.vec γ i) = x • MG.vec (γ * m) i := by
   unfold MG.vec
   rw [Matrix.mulVec_smul, _root_.mul_inv_rev, Units.val_mul, Matrix.mulVec_mulVec]
-
 
 omit [Fintype ι] [DecidableEq ι] in
 theorem norm_lineZeta_le (Ψ : (ι → 𝔸[k]) → ℂ) (ω : HeckeCharacter k) (s : ℂ) (v : ι → 𝔸[k]) :

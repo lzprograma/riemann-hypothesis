@@ -121,10 +121,10 @@ theorem isTypeFn_fst {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Hos
   refine ⟨fun h => ?_, fun h => ?_⟩
   · refine hcard.trans ?_
     unfold Datum.mult
-    rw [if_pos h]
+    rw [ite_eq_left h]
   · refine hcard.trans ?_
     unfold Datum.mult
-    rw [if_neg h]
+    rw [ite_eq_right h]
 
 theorem spMap_spMap {R R' R'' : Type} [CommRing R] [CommRing R'] [CommRing R''] (f : R' →+* R'')
     (g : R →+* R') : spMap f ≫ spMap g = spMap (f.comp g) := by

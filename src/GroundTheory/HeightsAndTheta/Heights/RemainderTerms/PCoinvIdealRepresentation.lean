@@ -5,8 +5,6 @@ import Mathlib.RingTheory.PiTensorProduct
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 open MvPolynomial Finset

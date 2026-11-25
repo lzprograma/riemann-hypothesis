@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ArchimedeanCompact.GrpEqMemArchCompact
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.SiegelHeight
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelSetHeightBound
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelSetInterTranslateFinite
@@ -52,17 +53,7 @@ open NumberField Matrix GlobalTheory.CuspRep GroundTheory.Automorphic GroundTheo
 
 private theorem loc_le_height {E : Type} [Field E] [NumberField E] {a : ℕ} (g : GA E a) (w : InfinitePlace E) :
     locHeight (Reduction.infAt w g) ≤ AutomorphicForm.height g := by
-  classical
-  have h1 : locHeight (Reduction.infAt w g) ≤ locHeight (Reduction.infAt w g) ^ w.mult :=
-    le_self_pow₀ (one_le_locHeight _) InfinitePlace.mult_pos.ne'
-  have h2 : locHeight (Reduction.infAt w g) ^ w.mult ≤
-      ∏ w : InfinitePlace E, locHeight (Reduction.infAt w g) ^ w.mult := by
-    rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ w)]
-    refine le_mul_of_one_le_right (pow_nonneg (locHeight_pos _).le _) ?_
-    exact Finset.prod_induction _ (fun x : ℝ => 1 ≤ x)
-      (fun _ _ hx hy => one_le_mul_of_one_le_of_one_le hx hy) le_rfl fun _ _ => one_le_pow₀ (one_le_locHeight _)
-  exact h1.trans (h2.trans (le_mul_of_one_le_right (zero_le_one.trans (one_le_prod_locHeight g))
-    (one_le_finprod_locHeight g)))
+  apply _root_.UpperTheory.V.Cm.loc_le_height <;> assumption
 
 private theorem norm_le_height {E : Type} [Field E] [NumberField E] [IsTotallyReal E] {a : ℕ} (g : GA E a) :
     ‖TR.toL (GeneralLinearGroup.map (TR.pInf E) g).val‖ ≤ AutomorphicForm.height g := by

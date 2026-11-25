@@ -2,50 +2,7 @@ module
 
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FSatakeB
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -94,7 +51,7 @@ theorem sum_rev_ite {M : Type} [AddCommMonoid M] (f : Fin N → M) (j : Fin N) :
   rw [Finset.sum_eq_single j.rev]
   · simp
   · intro x _ hx
-    rw [if_neg fun e => hx (by rw [← e, Fin.rev_rev])]
+    rw [ite_eq_right fun e => hx (by rw [← e, Fin.rev_rev])]
   · simp
 
 theorem form_mid_last {M : Matrix (Fin (N + 2)) (Fin (N + 2)) L} {r b : Fin N → L} {c : L} (h : Shape M r b c)
@@ -123,7 +80,7 @@ theorem form_eq_of (hσσ : ∀ x, σ (σ x) = x) {M : Matrix (Fin (N + 2)) (Fin
       mid_ne_zero, mid_ne_last, zero_ne_mid, last_ne_mid, mid_injective.eq_iff]
   · by_cases e : i = j.rev
     · subst e; simp
-    · rw [if_neg e, if_neg fun e' => e e'.symm]
+    · rw [ite_eq_right e, ite_eq_right fun e' => e e'.symm]
   · exact h1 i
   · have := congrArg σ (h1 j)
     simp only [map_add (f := _), hσσ, map_zero] at this
@@ -182,10 +139,10 @@ theorem Heisenberg₂ : Heis := by
     have hf : cT σ (mat u) * antiJ L (N + 2) * mat u = antiJ L (N + 2) := u.2
     have h1 : ∀ j, colOf u j.rev + σ (rowOf u j) = 0 := fun j => by
       have := congrFun (congrFun hf (mid j)) (Fin.last (N + 1))
-      rwa [form_mid_last hs, antiJ_eq, if_neg (by rw [Fin.rev_last]; exact mid_ne_zero j)] at this
+      rwa [form_mid_last hs, antiJ_eq, ite_eq_right (by rw [Fin.rev_last]; exact mid_ne_zero j)] at this
     have h2 : cornerOf u + ∑ k, σ (colOf u k.rev) * colOf u k + σ (cornerOf u) = 0 := by
       have := congrFun (congrFun hf (Fin.last (N + 1))) (Fin.last (N + 1))
-      rwa [form_last_last hs, antiJ_eq, if_neg (by rw [Fin.rev_last]; exact last_ne_zero)] at this
+      rwa [form_last_last hs, antiJ_eq, ite_eq_right (by rw [Fin.rev_last]; exact last_ne_zero)] at this
     have hr : ∀ j, rowOf u j = -σ (colOf u j.rev) := fun j => by
       have := congrArg σ (h1 j)
       simp only [map_add (f := _), hσσ, map_zero] at this
@@ -231,8 +188,6 @@ section -- clump:auto
 
 open GlobalTheory.InertZeta
 
-theorem _root_.GlobalTheory.T.unitary_heisenberg_radical_coordinates : Heis := by
-  first | exact @GlobalTheory.InertZeta.HeisCoord.Heisenberg₂
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryHeisenbergRadicalCoordinatesStatement =====

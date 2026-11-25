@@ -159,7 +159,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.SqTop
 open GlobalTheory.ConstRatio (NegIdx Factor)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open MeasureTheory
 open scoped TensorProduct
 
@@ -320,13 +319,13 @@ theorem rai_rai (i l : Fin b) (j k : Fin a) :
   · simp [h1, h2, smul_smul, mul_comm, mul_left_comm, mul_assoc]
   · have : ¬ ((τ, l, k) : Formalism.IndefR.Datum.FVar D b a) = (τ, i, j) := fun e => by
       simp only [Prod.mk.injEq, true_and] at e; exact h2 (e.1 ▸ e.2 ▸ h1)
-    simp only [h1, h2, if_true, if_false, Module.End.mul_apply, LinearMap.smul_apply, map_smul, LinearMap.neg_apply,
+    simp only [h1, h2, ite_true, ite_false, Module.End.mul_apply, LinearMap.smul_apply, map_smul, LinearMap.neg_apply,
       map_neg, LinearMap.mulLeft_apply, Derivation.coeFn_coe, pd_X, this, add_zero, smul_smul, mul_comm (sgn (ε k)), smul_neg]
   · have : ¬ ((τ, i, j) : Formalism.IndefR.Datum.FVar D b a) = (τ, l, k) := fun e => by
       simp only [Prod.mk.injEq, true_and] at e; exact h1 (e.1 ▸ e.2 ▸ h2)
-    simp only [h1, h2, if_true, if_false, Module.End.mul_apply, LinearMap.smul_apply, map_smul, LinearMap.neg_apply,
+    simp only [h1, h2, ite_true, ite_false, Module.End.mul_apply, LinearMap.smul_apply, map_smul, LinearMap.neg_apply,
       map_neg, LinearMap.mulLeft_apply, Derivation.coeFn_coe, pd_X, this, add_zero, smul_smul, mul_comm (sgn (ε k)), smul_neg]
-  · simp only [h1, h2, if_false, Module.End.mul_apply, LinearMap.smul_apply, map_smul, LinearMap.neg_apply,
+  · simp only [h1, h2, ite_false, Module.End.mul_apply, LinearMap.smul_apply, map_smul, LinearMap.neg_apply,
       map_neg, Derivation.coeFn_coe, smul_smul, mul_comm (sgn (ε k)), smul_neg, pd_pd (τ, i, j)]
 
 theorem low_low (i l : Fin b) (j k : Fin a) :
@@ -334,15 +333,15 @@ theorem low_low (i l : Fin b) (j k : Fin a) :
   refine LinearMap.ext fun P => ?_
   unfold lowO
   by_cases h1 : ε' i = ε j <;> by_cases h2 : ε' l = ε k
-  · simp only [h1, h2, if_true, Module.End.mul_apply, LinearMap.smul_apply, map_smul,
+  · simp only [h1, h2, ite_true, Module.End.mul_apply, LinearMap.smul_apply, map_smul,
       Derivation.coeFn_coe, smul_smul, mul_comm (sgn (ε k)), pd_pd (τ, i, j)]
   · have : ¬ ((τ, i, j) : Formalism.IndefR.Datum.FVar D b a) = (τ, l, k) := fun e => by
       simp only [Prod.mk.injEq, true_and] at e; exact h2 (e.1 ▸ e.2 ▸ h1)
-    simp only [h1, h2, if_true, if_false, Module.End.mul_apply, LinearMap.smul_apply, map_smul,
+    simp only [h1, h2, ite_true, ite_false, Module.End.mul_apply, LinearMap.smul_apply, map_smul,
       LinearMap.mulLeft_apply, Derivation.coeFn_coe, pd_X, this, add_zero, smul_smul, mul_comm (sgn (ε k))]
   · have : ¬ ((τ, l, k) : Formalism.IndefR.Datum.FVar D b a) = (τ, i, j) := fun e => by
       simp only [Prod.mk.injEq, true_and] at e; exact h1 (e.1 ▸ e.2 ▸ h2)
-    simp only [h1, h2, if_true, if_false, Module.End.mul_apply, LinearMap.smul_apply, map_smul,
+    simp only [h1, h2, ite_true, ite_false, Module.End.mul_apply, LinearMap.smul_apply, map_smul,
       LinearMap.mulLeft_apply, Derivation.coeFn_coe, pd_X, this, add_zero, smul_smul, mul_comm (sgn (ε k))]
   · simp [h1, h2, smul_smul, mul_comm, mul_left_comm, mul_assoc]
 
@@ -353,17 +352,17 @@ theorem low_rai (i : Fin b) (j : Fin a) (l : Fin b) (k : Fin a) :
   by_cases e : i = l ∧ j = k
   · obtain ⟨rfl, rfl⟩ := e
     by_cases h1 : ε' i = ε j
-    · simp only [h1, if_true, Module.End.mul_apply, LinearMap.smul_apply, map_smul, LinearMap.add_apply, and_self,
+    · simp only [h1, ite_true, Module.End.mul_apply, LinearMap.smul_apply, map_smul, LinearMap.add_apply, and_self,
         LinearMap.mulLeft_apply, Derivation.coeFn_coe, pd_X, smul_smul, GlobalTheory.LieFock.sgn_mul_self, one_smul,
         Module.End.one_apply]
-    · simp only [h1, if_true, if_false, Module.End.mul_apply, LinearMap.smul_apply, map_smul, LinearMap.add_apply, and_self,
+    · simp only [h1, ite_true, ite_false, Module.End.mul_apply, LinearMap.smul_apply, map_smul, LinearMap.add_apply, and_self,
         LinearMap.mulLeft_apply, Derivation.coeFn_coe, pd_X, smul_smul, GlobalTheory.LieFock.sgn_mul_self, one_smul,
         Module.End.one_apply, LinearMap.neg_apply, map_neg, smul_neg]
       ring
   · have t1 : ¬ ((τ, i, j) : Formalism.IndefR.Datum.FVar D b a) = (τ, l, k) := fun h => e (by simpa using h)
     have t2 : ¬ ((τ, l, k) : Formalism.IndefR.Datum.FVar D b a) = (τ, i, j) := fun h => t1 h.symm
     by_cases h1 : ε' i = ε j <;> by_cases h2 : ε' l = ε k <;>
-    simp only [e, h1, h2, if_true, if_false, Module.End.mul_apply, LinearMap.smul_apply, map_smul, LinearMap.neg_apply,
+    simp only [e, h1, h2, ite_true, ite_false, Module.End.mul_apply, LinearMap.smul_apply, map_smul, LinearMap.neg_apply,
       map_neg, LinearMap.mulLeft_apply, Derivation.coeFn_coe, pd_X, t1, t2, add_zero, smul_smul, mul_comm (sgn (ε k)),
       smul_neg, pd_pd (τ, i, j), mul_left_comm (X (τ, i, j))]
 
@@ -394,10 +393,7 @@ open MeasureTheory Matrix GlobalTheory.ChainFr GlobalTheory.FockIndep GlobalTheo
 open GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators (raiO lowO fockS)
 open ReciprocityTheory.ChartRestriction.DS.Lap.Capelli
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} {V W : HSp D}
-
 
 open Classical in
 theorem ccr (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (A : Fr V) (B : Fr W) (k l : FVar D W.rank V.rank)
@@ -420,7 +416,7 @@ theorem ccr (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (A : Fr V) (B : Fr W
       GlobalTheory.LieFock.gram_onb (GlobalTheory.LieFock.fr_det A τ) (A.fr_gram τ)
     have gB : (B.onb τ)ᴴ * gramAt D W τ * B.onb τ = diagonal fun a => GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators.sgn (B.ε τ a) :=
       GlobalTheory.LieFock.gram_onb (GlobalTheory.LieFock.fr_det B τ) (B.fr_gram τ)
-    simp only [if_true, GlobalTheory.FockVecInj.cplxO_unitMap (B := A.onb τ) (isUnit_nonsing_inv_det _ (GlobalTheory.LieFock.fr_det A τ))
+    simp only [ite_true, GlobalTheory.FockVecInj.cplxO_unitMap (B := A.onb τ) (isUnit_nonsing_inv_det _ (GlobalTheory.LieFock.fr_det A τ))
       (GlobalTheory.LieFock.cart_onb A τ) (GlobalTheory.LieFock.cart_onb B τ),
       Matrix.mul_smul, Matrix.trace_smul, GlobalTheory.FockVecInj.trace_unitMap (fun a => GlobalTheory.LieFock.sgn_mul_self _) gA gB,
       Prod.mk.injEq, true_and]
@@ -428,7 +424,7 @@ theorem ccr (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (A : Fr V) (B : Fr W
     have h1 := GlobalTheory.VacuumFockLaws.fockScale_sq (D := D) τ
     have h2 := GlobalTheory.VacuumFockLaws.fockScale_ne (D := D) τ
     by_cases e : a = c ∧ b = d
-    · rw [if_pos e, if_pos e, inv_mul_eq_iff_eq_mul₀ h2, mul_neg, h1]
+    · rw [ite_eq_left e, ite_eq_left e, inv_mul_eq_iff_eq_mul₀ h2, mul_neg, h1]
       unfold GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators.sgn
       split_ifs <;> simp [hre] <;> ring_nf <;> simp only [I_sq] <;> ring1
     · simp [e]
@@ -450,7 +446,7 @@ theorem annih_ptF (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (A : Fr V) (B 
     (fun _ _ h h' => annih_add hψ hθ _ _ _ h h') (fun a _ h => annih_smul hψ hθ _ _ _ a h)
     (fun j g h => ccr hψ hθ A B k j h) hf.1 (hf.2 k.1 _) P
   refine h.trans ?_
-  simp only [ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true, map_smul]
+  simp only [ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true, map_smul]
   rfl
 
 theorem ptF_raiO (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (A : Fr V) (B : Fr W) {f : WO V W → ℂ}
@@ -462,10 +458,10 @@ theorem ptF_raiO (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (A : Fr V) (B :
     unfold ptF; exact map_smul _ _ _
   unfold raiO
   by_cases hp : B.ε τ i = A.ε τ j
-  · rw [if_pos hp, one_smul] at hu
-    rw [if_pos hp, LinearMap.smul_apply, LinearMap.mulLeft_apply, lin, GlobalTheory.FockAdjoint.ptF_X_mul hψ hθ A B hf.1]
+  · rw [ite_eq_left hp, one_smul] at hu
+    rw [ite_eq_left hp, LinearMap.smul_apply, LinearMap.mulLeft_apply, lin, GlobalTheory.FockAdjoint.ptF_X_mul hψ hθ A B hf.1]
     simp only [aPlus, crea, hu, GlobalTheory.FockBaseChange.cplxO_one]
-  · rw [if_neg hp, neg_one_smul, ← neg_smul] at hu
+  · rw [ite_eq_right hp, neg_one_smul, ← neg_smul] at hu
     have h := annih_ptF hψ hθ A B hf (τ, i, j) P
     have hg := GlobalTheory.FockAdjoint.ptF_theta hψ hθ A B hf.1 P
     have h2 := GlobalTheory.VacuumFockLaws.fockScale_ne (D := D) τ
@@ -474,7 +470,7 @@ theorem ptF_raiO (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (A : Fr V) (B :
       have := GlobalTheory.FockBaseChange.dRho_dir_smul hψ hθ τ (-1) (I • unitMap (A.onb τ) (B.onb τ) i j) hg
       simpa only [ofReal_neg, ofReal_one, neg_smul, one_smul] using this
     simp only [annih, hu, hn] at h
-    rw [if_neg hp, LinearMap.smul_apply, LinearMap.neg_apply, lin, ← neg_one_smul ℂ, lin]
+    rw [ite_eq_right hp, LinearMap.smul_apply, LinearMap.neg_apply, lin, ← neg_one_smul ℂ, lin]
     simp only [aPlus, crea, GlobalTheory.FockBaseChange.cplxO_one, Derivation.coeFn_coe]
     congr 1
     rw [sub_eq_add_neg, ← smul_neg, h, smul_smul, mul_neg, inv_mul_cancel₀ h2]
@@ -586,7 +582,7 @@ theorem mixS_dRho (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) {V₀ : HSp D}
       rw [e2]; exact e
     have hs : GlobalTheory.IndefiniteRowSideFullHecke.HermitianSymplecticScalars.symplAt (GlobalTheory.Size.posSp D ρ) W τ z (compAt θ τ x) = 0 :=
       (GlobalTheory.Unf.symplAt_posSp D W ρ τ z (compAt θ τ x)).trans (by rw [hx]; simp)
-    rw [GlobalTheory.Unf.symplO_eq_two_half, AddChar.map_add_eq_mul, e3, hs]
+    rw [GlobalTheory.RatSelfDual.symplO_eq_add, AddChar.map_add_eq_mul, e3, hs]
     simp
   simp only [hphase] at hder
   exact hder.unique (hasDerivAt_const _ _)
@@ -636,8 +632,6 @@ section Quot
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum
 open Matrix GlobalTheory.ChainFr GlobalTheory.SquareComm GlobalTheory.RealQuot Complex
 open GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators (raiO lowO fockS)
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem exists_lie_parts {n : ℕ} (ε : Fin n → Bool) (N : Matrix (Fin n) (Fin n) ℂ) :
     ∃ Y₁ Y₂ : Matrix (Fin n) (Fin n) ℂ, Y₁ᴴ * Formalism.REAL.Jm ε + Formalism.REAL.Jm ε * Y₁ = 0 ∧
@@ -711,26 +705,6 @@ theorem comp_quad (A : Fr M) (B : Fr X) (eT : D.what₂.Tau → ℚ) (τ : D.wha
 
 end Quot
 
-section Main
-
-open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Theta IsDedekindDomain NumberField Finset
-open Formalism.DivisionValues (vw)
-open Formalism.L2.Host (HChar)
-open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTheory.RowTest
-open GlobalTheory.CMVal (IsHeckeL)
-open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
-open GlobalTheory.SqTop
-open GlobalTheory.ConstRatio (NegIdx Factor)
-open scoped TensorProduct
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-open GlobalTheory.SquareComm GlobalTheory.ChainFr MeasureTheory
-
-open GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators (raiO lowO)
-open ReciprocityTheory.ChartRestriction.DS.Lap.Capelli
-
-end Main
-
 end GlobalTheory.GoodFock
 
 end
@@ -748,11 +722,8 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open GlobalTheory.Grid GlobalTheory.Doubling GlobalTheory.ChainFr GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints
 open scoped TensorProduct ENNReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.SquareComm
 open scoped Pointwise
-open Formalism.IndefR.Datum
-open GlobalTheory.Grid
 
 noncomputable section
 
@@ -803,7 +774,6 @@ theorem coord_le {D : D7} {θ : InfFam D} (hθ : IsInfFam θ) {m r : ℕ} (ξ : 
     _ = (L : ℝ) * ((∑ τ, ‖tauE D τ (ξ j i)‖) * t i) := mul_assoc _ _ _
     _ ≤ _ := mul_le_mul_of_nonneg_left (by linarith) hLr
 
-
 theorem prod_mul_sum_mixS_le : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (θ : InfFam D), IsInfFam θ →
     ∀ (V X S₀ : HSp D) (r : ℕ) (d : GlobalTheory.MixModel.HypDec V S₀ r) (μ' : Measure (Mx D X.rank r))
     (𝓕' : Set (Mx D X.rank r)), IsCovolOne (GlobalTheory.MixModel.ratMx D X.rank r) μ' 𝓕' → ∀ (c : ℝ), 0 < c →
@@ -820,7 +790,7 @@ theorem prod_mul_sum_mixS_le : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ), Is
   intro D ψ hψ θ hθ V X S₀ r d μ' 𝓕' hμ' c hc K₀ hK₀ hK₀c μ 𝓕 hμ τ₀ e
   obtain ⟨N, A₄, C₄, hC₄, h4⟩ := GlobalTheory.T.siegelCone_integral_matrix_lattice_count θ hθ X.rank r c hc
   obtain ⟨k₂, C₂, hC₂, h2⟩ := GlobalTheory.T.mixed_theta_series_rapid_decay ψ hψ θ hθ V X S₀ r d μ' 𝓕' hμ' (N + r * e)
-  obtain ⟨k₁, B, C₁, hC₁, h1⟩ := GlobalTheory.T.thetaFunction_heisenbergWord_sup_le_level_pow ψ hψ θ hθ V X K₀ hK₀ hK₀c μ 𝓕 hμ
+  obtain ⟨k₁, B, C₁, hC₁, h1⟩ := GlobalTheory.LevelSupBound.supN_word_le ψ hψ θ hθ V X K₀ hK₀ hK₀c μ 𝓕 hμ
   obtain ⟨M, hM, h3⟩ := GlobalTheory.T.mixedCoordinate_support_integral_at_level ψ hψ V X S₀ r d μ' 𝓕' hμ' K₀ hK₀ hK₀c
   set Wc : ℝ := ∑ k ∈ Finset.range (k₂ + 1),
     (Fintype.card (D.what₂.Tau × Fin X.rank × Fin V.rank × Bool) : ℝ) ^ k with hWc
@@ -883,8 +853,7 @@ theorem prod_mul_sum_mixS_le : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ), Is
     simp only [hc'] at hb
     have hcol : ∀ i, ∃ j, ξ j i ≠ 0 := by
       intro i
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       refine h0 (hvan _ i fun j => ?_)
       rw [hc', Matrix.mul_diagonal]
       have : compAt θ τ₀ (ξ.map (incA D) : Mx D X.rank r) j i = 0 := by
@@ -966,9 +935,7 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open GlobalTheory.Grid GlobalTheory.Doubling GlobalTheory.ChainFr GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints
 open scoped TensorProduct ENNReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.SquareComm
-
 
 theorem _root_.GlobalTheory.T.torus_mixedCoordinate_sum_rapid_decay : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (θ : InfFam D), IsInfFam θ →
     ∀ (V X S₀ : HSp D) (r : ℕ) (d : GlobalTheory.MixModel.HypDec V S₀ r) (μ' : Measure (Mx D X.rank r))
@@ -998,7 +965,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open GlobalTheory.Grid GlobalTheory.Doubling GlobalTheory.ChainFr GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints
 open scoped TensorProduct ENNReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.SquareComm
 
 open scoped Pointwise
@@ -1023,7 +989,7 @@ theorem theta_le_height {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D
   have hC₁ : IsCompact (C₀ * (K : Set (GA D M))) := hC₀.mul hK
   obtain ⟨K₀, hK₀n, hK₀c, m, e, hlev⟩ := GlobalTheory.T.weilTheta_level_polynomial_in_height ψ θ hθ ε M X χ χ' ω hω Φ hΦ _ hC₁
   obtain ⟨μ, 𝓕, hμ⟩ := GlobalTheory.Size.exists_isCovolOne (sgn ε M) X
-  obtain ⟨S₀, d, hA1⟩ := GlobalTheory.T.wittFrame_torus_eq_levi_element θ hθ ε M r Xf Yf hW
+  obtain ⟨S₀, d, hA1⟩ := GlobalTheory.WittLevi.witt_levi θ hθ ε M r Xf Yf hW
   obtain ⟨μ', 𝓕', hcov, hA2⟩ := GlobalTheory.T.leviThetaValue_le_det_mul_rational_sum ψ (sgn ε M) S₀ X r d χ χ' (ω.toSgn ε) hω
   obtain ⟨k, A, C, hC, hB⟩ := GlobalTheory.T.torus_mixedCoordinate_sum_rapid_decay ψ (IsWeilDatumO.std hω) θ hθ (sgn ε M) X S₀ r d μ' 𝓕' hcov c hc K₀ hK₀n hK₀c
     μ 𝓕 hμ τ₀ (Module.finrank ℚ D.host.F * X.rank)
@@ -1051,7 +1017,7 @@ theorem theta_le_height {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D
     rw [← hlevi]
     show ω (a, 1) Ψ 0 = ω ((ofSgn ε M) ((ofSgn ε M).symm a), 1) Ψ 0
     rw [MulEquiv.apply_symm_apply]
-  rw [← e', GlobalTheory.T.halfPowerDetAbs_realDiagonal_torus θ hθ r X.rank t ht.1 α hα1 hα2] at hle
+  rw [← e', GlobalTheory.HalfModTorus.halfMod_torus θ hθ r X.rank t ht.1 α hα1 hα2] at hle
   refine hle.trans (h2.trans (ENNReal.ofReal_le_ofReal ?_))
   have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
   have hm0 : 0 ≤ m * H ^ e := hn0.trans hnle
@@ -1072,7 +1038,7 @@ theorem integrableOn_thetaKO : GlobalTheory.Published.SiegelSetUnitary → ∀ (
   have hν1 := hν.1
   obtain ⟨r, Xf, Yf, hW⟩ := GlobalTheory.SiegelSet.exists_isWittFrame (GlobalTheory.AdelicU.isCMExt_host D) (isHermND_gram M)
   have hr : r ≤ p := _root_.GlobalTheory.WittSig.wittIndex_le_neg M hτ hW
-  obtain ⟨K, Ω, c, hK, hΩ, -, hc, -, hcl, hcov, ⟨C₀, hC₀, hconj⟩, hmeas, -, -⟩ :=
+  obtain ⟨K, Ω, c, hK, hΩ, -, hc, -, -, hcov, ⟨C₀, hC₀, hconj⟩, hmeas, -, -⟩ :=
     hRT D.host.F D.host.E D.sp.cm.sig (GlobalTheory.AdelicU.isCMExt_host D) M.rank M.gram (isHermND_gram M) r Xf Yf hW
   obtain ⟨-, C₁, hC₁⟩ := hmeas ν hν1
   obtain ⟨B, hB⟩ := theta_le_height ψ θ hθ ε M X χ χ' ω hω Φ hΦ τ₀ hvan r Xf Yf hW Ω C₀ K c hC₀ hK hc hconj h
@@ -1086,7 +1052,6 @@ theorem integrableOn_thetaKO : GlobalTheory.Published.SiegelSetUnitary → ∀ (
     rw [e1, map_mul, Module.End.mul_apply]
     exact hω'.om_aut _ (ofSgn_symm_mem_GQ ε hγ) 1 (one_mem _) _ (hω'.om_pres _ _ hΦ)
   set S := GlobalTheory.SiegelSet.siegelSet D.sp.cm.sig M.gram Xf Yf Ω c K with hSdef
-  have hSm : MeasurableSet S := hcl.measurableSet
   have hScov : ∀ g, ∃ γ ∈ GQ M, γ * g ∈ S := fun g => by
     obtain ⟨γ, hγ, s, hs, e⟩ := hcov g
     refine ⟨γ⁻¹, inv_mem hγ, ?_⟩
@@ -1098,7 +1063,7 @@ theorem integrableOn_thetaKO : GlobalTheory.Published.SiegelSetUnitary → ∀ (
       C₁ * (ENNReal.ofReal B * ∫⁻ t in GlobalTheory.SiegelSet.cone r c,
         ENNReal.ofReal ((GlobalTheory.SiegelSet.modulus D.host.F M.rank t * ∏ i, t i)⁻¹)) := by
     calc ∫⁻ g in 𝓕, ‖thetaKO ω g h Φ‖ₑ ∂ν ≤ ∫⁻ g in S, ‖thetaKO ω g h Φ‖ₑ ∂ν :=
-          _root_.GlobalTheory.lintegral_fundamentalDomain_le_of_meets_orbits (GQ M) ν hν.2 hSm hScov hcont.enorm.measurable
+          _root_.GlobalTheory.lintegral_fundamentalDomain_le_of_meets_orbits (GQ M) ν hν.2 hScov
             (fun γ hγ g => by rw [hinv γ hγ g])
       _ ≤ C₁ * ∫⁻ t in GlobalTheory.SiegelSet.cone r c, ENNReal.ofReal B *
             ENNReal.ofReal ((GlobalTheory.SiegelSet.modulus D.host.F M.rank t * ∏ i, t i)⁻¹) :=
@@ -1126,9 +1091,7 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open GlobalTheory.Grid GlobalTheory.Doubling GlobalTheory.ChainFr GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints
 open scoped TensorProduct ENNReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.SquareComm
-
 
 theorem _root_.GlobalTheory.T.thetaKernel_integrableOn_fundamentalDomain : GlobalTheory.Published.SiegelSetUnitary → ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D), IsInfFam θ →
     ∀ (ε : Bool) (M X : HSp D) (χ χ' : (Formalism.L2.Theta.AE D)ˣ →* Circle) (ω : WRep M X), IsWeil ψ ε M X χ χ' ω →
@@ -1161,7 +1124,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.SqTop
 open GlobalTheory.ConstRatio (NegIdx Factor)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.SquareComm GlobalTheory.ChainFr MeasureTheory
 open GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators (raiO lowO)
 open ReciprocityTheory.ChartRestriction.DS.Lap.Capelli
@@ -1178,7 +1140,7 @@ theorem exists_admissible_fock_polynomial : _root_.GlobalTheory.FunPr.ThetaLocal
   obtain ⟨P₀, hP₀⟩ : ∃ P₀, q' P₀ = 0 → ∀ P, q' P = 0 := by
     by_cases h : ∃ P₀, q' P₀ ≠ 0
     · exact h.imp fun _ h h' => absurd h' h
-    · push_neg at h
+    · push Not at h
       exact ⟨0, fun _ => h⟩
   refine ⟨capelliC (quad (raiO τ (sgA A₁ τ) (B.ε τ)) (lowO τ (sgA A₁ τ) (B.ε τ)))
     ((W₁.rank : ℂ) - 1) P₀, fun α β htr hexp ωA ωB Pi rf rl p p' hm f hf => ⟨fun ν₁ 𝓕₁ hν => ?_, fun h0 P'' => ?_⟩⟩
@@ -1324,7 +1286,6 @@ open GlobalTheory.SqTop
 open GlobalTheory.ConstRatio (NegIdx Factor)
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.SquareComm GlobalTheory.ChainFr MeasureTheory
 
 noncomputable section
@@ -1540,7 +1501,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.SqTop
 open GlobalTheory.ConstRatio (NegIdx Factor)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.SquareComm GlobalTheory.ChainFr MeasureTheory
 noncomputable section
 namespace GlobalTheory.ConvThetaNe
@@ -1679,7 +1639,6 @@ open GlobalTheory.CMVal (IsHeckeL)
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.SqTop
 open GlobalTheory.ConstRatio (NegIdx Factor)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open MeasureTheory
 open scoped TensorProduct
 noncomputable section

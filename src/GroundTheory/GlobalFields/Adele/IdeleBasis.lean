@@ -71,7 +71,7 @@ theorem isTopologicalBasis (hAopen : ∀ i, IsOpen (A i)) :
     · filter_upwards [x.2, I.finite_toSet.compl_mem_cofinite] with i hi hiI
       have hiI' : i ∉ I := hiI
       have hiT : i ∈ T := hi
-      simp only [V, if_neg hiI', if_pos hiT, Set.univ_inter]
+      simp only [V, ite_eq_right hiI', ite_eq_left hiT, Set.univ_inter]
     · intro i
       rw [← hxx']
       refine ⟨?_, ?_⟩
@@ -82,13 +82,13 @@ theorem isTopologicalBasis (hAopen : ∀ i, IsOpen (A i)) :
     · intro y hy
       let y' : Πʳ i, [R i, A i]_[𝓟 T] := ⟨y.1, eventually_principal.2 fun i hi ↦ by
         have := (hy i).2
-        simp only [if_pos hi] at this
+        simp only [ite_eq_left hi] at this
         exact this⟩
       have hy' : y' ∈ _root_.RestrictedProduct.inclusion R A hT ⁻¹' u := by
         rw [← htu]
         refine hIW fun i hi ↦ ?_
         have := (hy i).1
-        simp only [if_pos (Finset.mem_coe.1 hi)] at this
+        simp only [ite_eq_left (Finset.mem_coe.1 hi)] at this
         exact this
       exact hy'
 

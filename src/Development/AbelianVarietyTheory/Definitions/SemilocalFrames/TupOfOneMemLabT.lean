@@ -4,45 +4,6 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsReduction
 public import Formalism.CyclotomicNorms.NonsquarefreeBounds.NonsquarefreeMonicBoundHolds
 public import Formalism.SharpRestriction.Divisibility.PrimeDegreeVariant
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -84,7 +45,7 @@ local instance neZeroTypePrime (k : Fin 2) : NeZero (D.host.g k) := ⟨(D.host.g
 
 variable {D}
 
-theorem tupOf_injective : Function.Injective (tupOf D) := fun a b h =>
+theorem tupOf_injective : Function.Injective (tupOf D) := fun _ _ h =>
   funext fun kv => PrimeDegreeVariant.Ten.monicOf_inj _ _ (congrFun (congrFun h kv.1) kv.2)
 
 theorem mem_range_tupOf {t : Tup2 D} :
@@ -181,30 +142,8 @@ theorem ES_eq_finsum (S : Set (Tup2 D)) : ES D S = ∑ᶠ t ∈ S, zTup D t := b
   simp only [Set.mem_inter_iff, Finset.coe_filter, Set.mem_setOf_eq, Function.mem_support]
   exact ⟨fun h => ⟨⟨by_contra fun h' => h.2 (zTup_eq_zero h'), h.1⟩, h.2⟩, fun h => ⟨h.1.2, h.2⟩⟩
 
-theorem ES_coe (S : Finset (Tup2 D)) : ES D (S : Set (Tup2 D)) = ∑ t ∈ S, zTup D t := by
-  rw [ES_eq_finsum, finsum_mem_coe_finset]
-
 theorem ES_singleton (t : Tup2 D) : ES D {t} = zTup D t := by
   rw [ES_eq_finsum, finsum_mem_singleton]
-
-theorem ES_empty : ES D ∅ = 0 := by
-  rw [ES_eq_finsum, finsum_mem_empty]
-
-theorem ES_congr {S T : Set (Tup2 D)} (h : ∀ t ∈ labT D, t ∈ S ↔ t ∈ T) : ES D S = ES D T := by
-  classical
-  rw [ES_eq_sum, ES_eq_sum, Finset.filter_congr h]
-
-theorem ES_univ : ES D Set.univ = 1 := by
-  classical
-  rw [ES_eq_sum_coef]
-  simp only [Set.mem_univ, if_true]
-  refine (PrimeDegreeVariant.Ten.sum_tens (PrimeDegreeVariant.Ten.ESer D)).trans ?_
-  simp only [PrimeDegreeVariant.Ten.ESer_sum]
-  exact PrimeDegreeVariant.Ten.tens_one
-
-theorem sum_zTup : ∑ t ∈ labT D, zTup D t = 1 := by
-  rw [← ES_coe, ← ES_univ]
-  exact ES_congr fun _ ht => ⟨fun _ => trivial, fun _ => ht⟩
 
 
 open Classical in
@@ -230,20 +169,5 @@ theorem ES_mul_self (S : Set (Tup2 D)) : ES D S * ES D S = ES D S := by
 theorem ES_comm (S : Set (Tup2 D)) (a : MonoidAlgebra ℂ (G0g D.nd)) : ES D S * a = a * ES D S := by
   rw [ES_eq_sum, Finset.sum_mul, Finset.mul_sum]
   exact Finset.sum_congr rfl fun t _ => zTup_comm t a
-
-theorem ES_union_add_inter (S T : Set (Tup2 D)) : ES D (S ∪ T) + ES D (S ∩ T) = ES D S + ES D T := by
-  classical
-  simp only [ES_eq_sum, Finset.sum_filter, ← Finset.sum_add_distrib]
-  refine Finset.sum_congr rfl fun t _ => ?_
-  by_cases h : t ∈ S <;> by_cases h' : t ∈ T <;> simp [h, h']
-
-theorem ES_union {S T : Set (Tup2 D)} (h : Disjoint S T) : ES D (S ∪ T) = ES D S + ES D T := by
-  rw [← ES_union_add_inter, Set.disjoint_iff_inter_eq_empty.1 h, ES_empty, add_zero]
-
-theorem ES_compl (S : Set (Tup2 D)) : ES D Sᶜ = 1 - ES D S := by
-  rw [eq_sub_iff_add_eq', ← ES_union disjoint_compl_right, Set.union_compl_self, ES_univ]
-
-theorem ES_bad : ES D {t | ¬ D.ntypes.goodTuple t} = 1 - D.ntypes.e0 :=
-  ES_compl {t | D.ntypes.goodTuple t}
 
 end GlobalTheory.RowLev

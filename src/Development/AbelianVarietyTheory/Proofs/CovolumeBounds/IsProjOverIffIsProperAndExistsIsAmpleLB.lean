@@ -445,46 +445,9 @@ section Twist
 
 variable {L M : LB X}
 
-theorem exists_gen_div_div_tw (hL : L.IsLB) (hM : M.IsLB) :
-    ∃ t : (LB.div (LB.div (tw L M 1) L) M).Gen, t.IsGen := by
-  have l₁ : ∀ p : ((L.ι × M.ι) × L.ι) × M.ι,
-      L.U p.1.1.1 ⊓ M.U p.1.1.2 ⊓ L.U p.1.2 ⊓ M.U p.2 ≤ L.U p.1.1.1 ⊓ L.U p.1.2 := fun p y hy => ⟨hy.1.1.1, hy.1.2⟩
-  have l₂ : ∀ p : ((L.ι × M.ι) × L.ι) × M.ι,
-      L.U p.1.1.1 ⊓ M.U p.1.1.2 ⊓ L.U p.1.2 ⊓ M.U p.2 ≤ M.U p.1.1.2 ⊓ M.U p.2 := fun p y hy => ⟨hy.1.1.2, hy.2⟩
-  have v : ∀ (y : X) (p : ((L.ι × M.ι) × L.ι) × M.ι), y ∈ L.U p.1.1.1 ⊓ M.U p.1.1.2 ⊓ L.U p.1.2 ⊓ M.U p.2 →
-      gm (𝟙 X) y _ (res (l₁ p) (L.g p.1.1.1 p.1.2) * res (l₂ p) (M.g p.1.1.2 p.2)) =
-        gm (𝟙 X) y _ (L.g p.1.1.1 p.1.2) * gm (𝟙 X) y _ (M.g p.1.1.2 p.2) := fun y p hy => by
-    rw [map_mul, gm_res (𝟙 X) y _ hy, gm_res (𝟙 X) y _ hy]
-  refine ⟨⟨fun p => res (l₁ p) (L.g p.1.1.1 p.1.2) * res (l₂ p) (M.g p.1.1.2 p.2)⟩,
-    fun p q => unit_ext fun y hy => ?_⟩
-  have e₁ := gm_div M (LB.div (tw L M 1) L) (𝟙 X) y p q hy
-  have e₂ := gm_div L (tw L M 1) (𝟙 X) y p.1 q.1 ⟨hy.1.1, hy.2.1⟩
-  have hm : y ∈ L.U p.1.1.1 ⊓ M.U p.1.1.2 ⊓ (L.U q.1.1.1 ⊓ M.U q.1.1.2) := ⟨hy.1.1.1, hy.2.1.1⟩
-  have e₃ : gm (𝟙 X) y _ ((tw L M 1).g p.1.1 q.1.1) =
-      gm (𝟙 X) y _ (L.g p.1.1.1 q.1.1.1) * gm (𝟙 X) y _ (M.g p.1.1.2 q.1.1.2) :=
-    (congrArg (gm (𝟙 X) y _) (tw_g L M 1 p.1.1 q.1.1)).trans (by
-      rw [zpow_one]
-      exact (map_mul _ _ _).trans (congrArg₂ (· * ·) (gm_res (𝟙 X) y _ hm _) (gm_res (𝟙 X) y _ hm _)))
-  refine ((gm_res (𝟙 X) y _ hy _).trans (v y p hy.1)).trans (Eq.symm ((map_mul _ _ _).trans
-    ((congrArg₂ (· * ·) (e₁.trans (congrArg (· * _) (e₂.trans (congrArg (· * _) e₃))))
-      ((gm_res (𝟙 X) y _ hy _).trans (v y q hy.2))).trans ?_)))
-  have a₁ := gm_cocycle hL (𝟙 X) y hy.1.1.1.1 hy.1.1.2 hy.2.1.2
-  have a₂ := gm_cocycle hL (𝟙 X) y hy.1.1.1.1 hy.2.1.1.1 hy.2.1.2
-  have b₁ := gm_cocycle hM (𝟙 X) y hy.1.1.1.2 hy.1.2 hy.2.2
-  have b₂ := gm_cocycle hM (𝟙 X) y hy.1.1.1.2 hy.2.1.1.2 hy.2.2
-  rw [eq_mul_inv_of_mul_eq (a₁.trans a₂.symm), eq_mul_inv_of_mul_eq (b₁.trans b₂.symm)]
-  have key : ∀ {Γ : Type} [CommGroup Γ] (a b c d e f : Γ),
-      a * b * c⁻¹ * d⁻¹ * (e * f) = a * e * c⁻¹ * (b * f * d⁻¹) := fun a b c d e f => by ac_rfl
-  exact key _ _ _ _ _ _
-
-theorem IsAmpleLB.tw_one (hL : IsAmpleLB L) (hM : IsGenerated M) : IsAmpleLB (tw L M 1) :=
-  hL.tensor_isGenerated hM (isLB_tw hL.isLB hM.isLB 1) (exists_gen_div_div_tw hL.isLB hM.isLB)
-
 end Twist
 
 section Summary
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem isProper_of_veryAmpleBy {R : Type} [CommRing R] {f : X ⟶ Sp R} {L : LB X} {M : ℕ}
     {s : Fin (M + 1) → L.Sec} (h : VeryAmpleBy f L s) : IsProper f :=

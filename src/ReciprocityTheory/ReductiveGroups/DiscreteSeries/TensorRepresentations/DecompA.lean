@@ -2,54 +2,14 @@ module
 
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.LinearAlgebra.Lagrange
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.Eigenspace.Minpoly
 public import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.LinearAlgebra.Eigenspace.Basic
 
 @[expose] public section
@@ -111,14 +71,14 @@ theorem dc_lagrange_decomp (hT : ∀ f ∈ S, T f ∈ S)
   intro f hf
   refine ⟨fun b => if b ∈ B then aeval T (Lagrange.basis (dc_cplxPts B) id (b : ℂ)) f else 0, fun b => ?_, ?_⟩
   · by_cases hb : b ∈ B
-    · simp only [hb, if_true]
+    · simp only [hb, ite_true]
       exact ⟨dc_aeval_mem hT _ f hf, dc_basis_eigen hP (dc_mem_cplxPts.mpr ⟨b, hb, rfl⟩) f hf⟩
     · simp [hb]
   · rcases B.eq_empty_or_nonempty with hB | hB
     · subst hB
       have := hP f hf
       simpa [dc_cplxPts, Lagrange.nodal] using this
-    · rw [Finset.sum_congr rfl fun b hb => if_pos hb]
+    · rw [Finset.sum_congr rfl fun b hb => ite_eq_left hb]
       have hs : (dc_cplxPts B).Nonempty := hB.image _
       have h1 := Lagrange.sum_basis (dc_injOn_id_cplx B) hs
       have h2 : ∑ b ∈ B, aeval T (Lagrange.basis (dc_cplxPts B) id (b : ℂ)) f =
@@ -146,7 +106,7 @@ theorem dc_lagProj_props (hT : ∀ f ∈ S, T f ∈ S)
       ∀ f ∈ S, ∀ z' : ℂ, z' ≠ z → T f = z' • f → dc_lagProj T B z f = 0 := by
   classical
   by_cases hz : z ∈ dc_cplxPts B
-  · simp only [dc_lagProj, hz, if_true]
+  · simp only [dc_lagProj, hz, ite_true]
     refine ⟨fun f hf => ?_, dc_basis_eigen hP hz, fun f hf he => ?_, fun f hf z' hz' he => ?_⟩
     · rw [dc_aeval_eigen (dc_basis_eigen hP hz f hf)]
       have := Lagrange.eval_basis_self (v := id) (dc_injOn_id_cplx B) hz
@@ -162,7 +122,7 @@ theorem dc_lagProj_props (hT : ∀ f ∈ S, T f ∈ S)
         simp only [id] at this
         rw [this, zero_smul]
       · rw [dc_eq_zero_of_eigen_not_mem hP hz'' hf he, map_zero]
-  · simp only [dc_lagProj, hz, if_false, LinearMap.zero_apply]
+  · simp only [dc_lagProj, hz, ite_false, LinearMap.zero_apply]
     refine ⟨fun _ _ => trivial, fun _ _ => by simp, fun f hf he => (dc_eq_zero_of_eigen_not_mem hP hz hf he).symm,
       fun _ _ _ _ _ => trivial⟩
 

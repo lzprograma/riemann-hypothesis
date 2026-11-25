@@ -42,8 +42,8 @@ theorem Zsw_ite {m : ℕ} {u v : VA X.B.I} {c d : Fin m} (x : X.B.I.E ⊗[X.B.I.
   have h'' := Zswap X h'
   have e : sigA X.B.I (if c = d then x else 0) = if d = c then sigA X.B.I x else 0 := by
     by_cases h1 : d = c
-    · subst h1; rw [if_pos rfl, if_pos rfl]
-    · rw [if_neg h1, if_neg (Ne.symm h1), map_zero]
+    · subst h1; rw [ite_eq_left rfl, ite_eq_left rfl]
+    · rw [ite_eq_right h1, ite_eq_right (Ne.symm h1), map_zero]
   rw [e] at h''
   exact h''
 
@@ -162,7 +162,7 @@ theorem projection_z0_mem_ideal : piG X X.z0 ∈ mL X.B.I X.B.g := by
 theorem piG_bw (c : Fin D.R.k) : piG X (X.bw c) ∈ mL X.B.I X.B.g := by
   refine piG_reduce X _ 0 0 0 (fun i => if i = c then X.ew else 0) 0 ?_ ?_ ?_ ?_ ?_ ?_
   · simp only [Pi.zero_apply, zero_smul, Finset.sum_const_zero, ite_smul, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true, zero_add, add_zero, sub_zero]
+      Finset.mem_univ, ite_true, zero_add, add_zero, sub_zero]
     rw [← X.bw_w c, sub_self]; exact zero_mem _
   · intro a; exact Z0 X ((X.weightVectorsIntegral c).2.2 a).2.1
   · intro a; exact Z0 X ((X.weightVectorsIntegral c).2.2 a).1
@@ -173,7 +173,7 @@ theorem piG_bw (c : Fin D.R.k) : piG X (X.bw c) ∈ mL X.B.I X.B.g := by
 theorem piG_bwd (c : Fin D.R.k) : piG X (X.bwd c) ∈ mL X.B.I X.B.g := by
   refine piG_reduce X _ 0 0 0 0 (fun i => if i = c then sigA X.B.I X.ew else 0) ?_ ?_ ?_ ?_ ?_ ?_
   · simp only [Pi.zero_apply, zero_smul, Finset.sum_const_zero, ite_smul, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true, zero_add, add_zero, sub_zero]
+      Finset.mem_univ, ite_true, zero_add, add_zero, sub_zero]
     rw [← X.bwd_w c, sub_self]; exact zero_mem _
   · intro a; exact Z0 X ((X.weightVectorsIntegral c).2.2 a).2.2.2
   · intro a; exact Z0 X ((X.weightVectorsIntegral c).2.2 a).2.2.1

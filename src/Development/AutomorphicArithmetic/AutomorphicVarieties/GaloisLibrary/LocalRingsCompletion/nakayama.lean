@@ -53,12 +53,6 @@ open PowerSeries IsLocalRing UpperTheory.V.abelian₂
 open IsDiscreteValuationRing (addVal)
 open scoped Pointwise TensorProduct Topology
 
-private theorem isPrecomplete_pi {R : Type} [CommRing R] (I : Ideal R) [IsPrecomplete I R] (r : ℕ) :
-    IsPrecomplete I (Fin r → R) := by
-  first
-  | exact _root_.Formalism.SharedLemmas.isPrecomplete_fin_pi
-  | (apply _root_.Formalism.SharedLemmas.isPrecomplete_fin_pi <;> assumption)
-
 theorem UpperTheory.V.abelian₂.nakayama :
     ∀ (R : Type) [CommRing R] (I : Ideal R) [IsPrecomplete I R] (M : Type) [AddCommGroup M] [Module R M] [IsHausdorff I M],
       (∀ (r : ℕ) (s : Fin r → M), Submodule.span R (Set.range s) ⊔ I • (⊤ : Submodule R M) = ⊤ →
@@ -69,7 +63,7 @@ theorem UpperTheory.V.abelian₂.nakayama :
       Submodule.span R (Set.range s) = ⊤ := by
     intro r s hs
     have hsurj : Function.Surjective (Fintype.linearCombination R s) := by
-      haveI := isPrecomplete_pi I r
+      haveI := Formalism.SharedLemmas.isPrecomplete_fin_pi I r
       apply surjective_of_mkQ_comp_surjective (I := I)
       intro q
       obtain ⟨m, rfl⟩ := Submodule.Quotient.mk_surjective _ q

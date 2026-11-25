@@ -59,8 +59,6 @@ open GlobalTheory.ChiGrid Formalism.L2.DIV
 
 namespace GlobalTheory.FunObj
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace VecEx
 
 section Frames

@@ -262,10 +262,4 @@ theorem isLocalizedModule_resBasicOpen_of_qcqs (hU : IsCompact (U : Set X))
 
 end BasicOpen
 
-section Hom
-
-variable {X : Scheme.{u}} {F G : X.Modules} (φ : F ⟶ G) {U V W : X.Opens}
-
-end Hom
-
 end GlobalTheory.QCoh.Qcqs

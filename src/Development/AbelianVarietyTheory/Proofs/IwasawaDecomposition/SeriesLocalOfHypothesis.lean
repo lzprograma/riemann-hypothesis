@@ -76,7 +76,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain NumberField Formalism.L2 Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.RecTie GlobalTheory.Mem GlobalTheory.Mem.R3 GlobalTheory.HeightCounting GlobalTheory.CenFrame
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FrameOff
 
@@ -88,8 +87,6 @@ theorem map_conj_eq_one {R S : Type} [CommRing R] [CommRing S] {m k : ℕ} (f : 
     (b' : Matrix (Fin k) (Fin m) R) (K : Matrix (Fin k) (Fin k) R) (hb : b * b' = 1) (hK : K.map f = 1) :
     (b * K * b').map f = 1 := by
   rw [Matrix.map_mul, Matrix.map_mul, hK, Matrix.mul_one, ← Matrix.map_mul, hb, Matrix.map_one _ (map_zero f) (map_one f)]
-
-
 
 theorem evAt_swapCast_symm (D : D7) (hF : D.host.F = maximalRealSubfield D.host.E)
     (v : HeightOneSpectrum (𝓞 (maximalRealSubfield D.host.E))) (x : ReciprocityTheory.Aut.AL D.host.E) :
@@ -149,7 +146,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain NumberField Formalism.L2 Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.RecTie GlobalTheory.Mem GlobalTheory.Mem.R3 GlobalTheory.HeightCounting GlobalTheory.CenFrame
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -213,7 +209,7 @@ open Matrix
 variable {k : Type} [CommRing k] {n : ℕ}
 
 theorem sdot (p q : Fin n) (x : k) (h : q ≠ p) : Pi.single q 1 ⬝ᵥ Pi.single p x = 0 := by
-  rw [single_dotProduct, Pi.single_apply, if_neg h, mul_zero]
+  rw [single_dotProduct, Pi.single_apply, ite_eq_right h, mul_zero]
 
 theorem comm_a (p0 p1 pm : Fin n) (h01 : p0 ≠ p1) (h0m : p0 ≠ pm) (h1m : p1 ≠ pm) :
     (tU (Pi.single pm (1 : k)) (Pi.single p0 1) (sdot _ _ _ h0m))⁻¹ *
@@ -222,7 +218,7 @@ theorem comm_a (p0 p1 pm : Fin n) (h01 : p0 ≠ p1) (h0m : p0 ≠ pm) (h1m : p1 
       tU (Pi.single pm (-1)) (Pi.single p1 1) (sdot _ _ _ h1m) := by
   apply Units.ext
   simp only [Units.val_mul, tU_val, tU_inv_val, add_mul, mul_add, sub_mul, mul_sub, one_mul, mul_one, vmv_mul_vmv,
-    Matrix.mul_smul, single_dotProduct, Pi.single_apply, h0m, h1m, h01.symm, if_false, if_true, mul_zero, zero_smul, add_zero, sub_zero, mul_one]
+    Matrix.mul_smul, single_dotProduct, Pi.single_apply, h0m, h1m, h01.symm, ite_false, ite_true, mul_zero, zero_smul, add_zero, sub_zero, mul_one]
   ext p q
   simp only [Matrix.add_apply, Matrix.sub_apply, Matrix.smul_apply, vecMulVec_apply, Pi.single_apply, smul_eq_mul]
   split_ifs <;> simp_all
@@ -233,7 +229,7 @@ theorem comm_b (p0 p1 pm : Fin n) (h01 : p0 ≠ p1) (h0m : p0 ≠ pm) (h1m : p1 
       tU (Pi.single p0 (a * b)) (Pi.single p1 1) (sdot _ _ _ h01.symm) := by
   apply Units.ext
   simp only [Units.val_mul, tU_val, tU_inv_val, add_mul, mul_add, sub_mul, mul_sub, one_mul, mul_one, vmv_mul_vmv,
-    Matrix.smul_mul, single_dotProduct, Pi.single_apply, h1m, h01.symm, h0m.symm, if_false, if_true, mul_zero, zero_smul, add_zero, zero_mul, mul_one]
+    Matrix.smul_mul, single_dotProduct, Pi.single_apply, h1m, h01.symm, h0m.symm, ite_false, ite_true, mul_zero, zero_smul, add_zero, zero_mul, mul_one]
   ext p q
   simp only [Matrix.add_apply, Matrix.sub_apply, Matrix.smul_apply, vecMulVec_apply, Pi.single_apply, smul_eq_mul]
   split_ifs <;> simp_all [mul_comm]
@@ -283,9 +279,9 @@ theorem entry_zero : ∀ (k : Type) [CommRing k], IsField k → ∀ n r : ℕ, 2
     ext l
     simp only [Pi.sub_apply, Pi.smul_apply, smul_eq_mul, ψ, Pi.single_apply]
     rcases lt_trichotomy l j with hl | hl | hl
-    · rw [if_neg (not_lt.mpr hl.le), if_neg hl.ne, hlow l hl]; ring
+    · rw [ite_eq_right (not_lt.mpr hl.le), ite_eq_right hl.ne, hlow l hl]; ring
     · rw [hl]; simp
-    · rw [if_pos hl, if_neg hl.ne']; linear_combination (-(φ l)) * ht
+    · rw [ite_eq_left hl, ite_eq_right hl.ne']; linear_combination (-(φ l)) * ht
   have KEY : ∀ (v : Fin n → k) (hv : Pi.single j 1 ⬝ᵥ v = 0), tU v (Pi.single j 1) hv ∈ H := by
     intro v hv
     have hw : φ ⬝ᵥ (t • (((tU (Pi.single j 1) ψ hψ)⁻¹).val *ᵥ v)) = 0 := by
@@ -354,9 +350,6 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Form
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-
-theorem _root_.GlobalTheory.T.normalised_subgroup_column_matrices_entry_zero : ∀ (k : Type) [CommRing k], IsField k → ∀ n r : ℕ, 2 ≤ r → r < n → ∀ (H : Subgroup (GL (Fin n) k)) (b : GL (Fin n) k), (∀ u ∈ unip k n, ∀ h ∈ H, u * h * u⁻¹ ∈ H) → (∀ (h : GL (Fin n) k) (m : Fin n) (v : Fin n → k), r ≤ (m : ℕ) → v m = 0 → h.val = colMat v m → h ∈ H) → (∀ (h : GL (Fin n) k) (m : Fin n) (v : Fin n → k), r ≤ (m : ℕ) → v m = 0 → (b * h * b⁻¹).val = colMat v m → h ∈ H) → (∀ i j : Fin n, (i : ℕ) + 1 = j → (j : ℕ) < r → ∃ (c : k) (h : GL (Fin n) k), h.val = Matrix.transvection i j c ∧ h ∉ H) → ∀ a c : Fin n, r ≤ (a : ℕ) → (c : ℕ) < r → b.val a c = 0 := by
-  first | exact @GlobalTheory.PosAgree.entry_zero
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormalisedSubgroupColumnMatricesEntryZeroStatement =====
@@ -368,7 +361,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain NumberField Formalism.L2 Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.RecTie GlobalTheory.Mem GlobalTheory.Mem.R3 GlobalTheory.HeightCounting GlobalTheory.CenFrame
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -688,7 +680,7 @@ theorem para_of_colMat_fixed : ∀ (L : Type) [Field L] [NumberField L] [IsCMFie
         by_cases h1 : a = i ∧ c = j
         · obtain ⟨rfl, rfl⟩ := h1
           simp [hij, hjr, hne, x']
-        · rw [if_neg h1]
+        · rw [ite_eq_right h1]
           split_ifs with h4
           · have h2 : a ≠ c := fun h => by subst h; omega
             simp [h2]
@@ -715,14 +707,13 @@ theorem para_of_colMat_fixed : ∀ (L : Type) [Field L] [NumberField L] [IsCMFie
         rw [← h2]
         exact h1.symm
       obtain ⟨z, hz⟩ : ∃ z, f z ≠ 0 := by
-        by_contra hcon
-        push_neg at hcon
+        by_contra! hcon
         exact hf (funext hcon)
       have h0 : (ψ₀ x0 - 1) • f z = 0 := by rw [sub_smul, one_smul, ← key, sub_self]
       rcases smul_eq_zero.1 h0 with h | h
       · exact hψx (sub_eq_zero.1 h)
       · exact hz h
-  exact GlobalTheory.T.normalised_subgroup_column_matrices_entry_zero k hk n r hr hrn H b hnorm hcol
+  exact GlobalTheory.PosAgree.entry_zero k hk n r hr hrn H b hnorm hcol
     (fun h m v hm hv e κ y hκ hy ey x => hb κ y hκ hy m v hm hv (by rw [ey]; exact e) x) hroot
 
 end GlobalTheory.ParaForce
@@ -738,7 +729,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain NumberField Formalism.L2 Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.RecTie GlobalTheory.Mem GlobalTheory.Mem.R3 GlobalTheory.HeightCounting
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -770,11 +760,11 @@ theorem colMat_blocks (hn : n' = n) (h : n = r + t) (ht : 0 < t) (hr : r ≤ n')
     have := hx a c
     simpa [colMat, Matrix.one_apply, Matrix.vecMulVec_apply, Pi.single_apply] using this
   have hb : x ∈ blockTri (blk2 r) := mem_twoBlockTriangular_of_blockTriangular fun a c ha hc => by
-    rw [hx', if_neg (by rintro rfl; omega), if_neg (by rintro rfl; omega)]; simp
+    rw [hx', ite_eq_right (by rintro rfl; omega), ite_eq_right (by rintro rfl; omega)]; simp
   rw [blkOf_eq h ht]
   refine ⟨hb, Units.ext ?_, Units.ext ?_⟩
   · rw [diag_block_det_val 1 hb]
-    have hm1 : blk2 r m = 1 := by unfold blk2; rw [if_neg (by omega)]
+    have hm1 : blk2 r m = 1 := by unfold blk2; rw [ite_eq_right (by omega)]
     have e : (x : Matrix (Fin n') (Fin n') k).submatrix (Subtype.val : {a : Fin n' // blk2 r a = 1} → Fin n') Subtype.val =
         1 + Matrix.replicateCol Unit (fun a : {a : Fin n' // blk2 r a = 1} => v a.1) *
           Matrix.replicateRow Unit (Pi.single (⟨m, hm1⟩ : {a : Fin n' // blk2 r a = 1}) (1 : k)) := by
@@ -800,7 +790,7 @@ theorem conj_blocks (hn : n' = n) (h : n = r + t) (ht : 0 < t) (hr : r ≤ n) (h
   obtain rfl : x = b * e * b⁻¹ := Units.ext (Matrix.ext fun a c => hx a c)
   have hb' : b ∈ blockTri (blk2 r) := mem_twoBlockTriangular_of_blockTriangular hb
   have he' : e ∈ blockTri (blk2 r) := mem_twoBlockTriangular_of_blockTriangular fun a c ha hc => by
-    rw [he, dite_eq_right (by omega), if_neg (by rintro rfl; omega)]
+    rw [he, dite_eq_right (by omega), ite_eq_right (by rintro rfl; omega)]
   have hd : dBlk (blk2 r) 1 e = 1 := by
     refine Units.ext ?_
     rw [diag_block_det_val 1 he']
@@ -809,7 +799,7 @@ theorem conj_blocks (hn : n' = n) (h : n = r + t) (ht : 0 < t) (hr : r ≤ n) (h
       have ha : ¬ ((a.1 : ℕ) < r) := fun h' => by
         have := a.2
         unfold blk2 at this
-        rw [if_pos h'] at this
+        rw [ite_eq_left h'] at this
         omega
       rw [Matrix.submatrix_apply, he, dite_eq_right (fun h' => ha h'.1)]
       simp [Matrix.one_apply, Subtype.ext_iff]
@@ -871,9 +861,9 @@ theorem red_of_isLiftAt (s : ReciprocityTheory.Aut.SplitPlace L) {k : Type} [Com
   · rw [dite_eq_right hac] at h ⊢
     rw [← hy a c] at h
     by_cases e : a = c
-    · rw [if_pos e] at h ⊢
+    · rw [ite_eq_left e] at h ⊢
       rw [show y.val a c = 1 from Subtype.ext h, map_one]
-    · rw [if_neg e] at h ⊢
+    · rw [ite_eq_right e] at h ⊢
       rw [show y.val a c = 0 from Subtype.ext h, map_zero]
 
 end Loc
@@ -942,8 +932,6 @@ theorem rank_V (i : Fin D.R.m) : (Vc D i).rank = D.R.nV := D.sp.V_rank _ (Nat.le
 theorem t_pos (D : D7) : 0 < D.R.t := by have := D.R.rank_add_five_le; omega
 
 theorem r_lt_nV (D : D7) : D.R.r < D.R.nV := by have := t_pos D; unfold Ranks.nV; omega
-
-
 
 theorem local_red (hL : R.toLevCh.Is A.μ0) (hPg : ∀ PP ∈ R.Pg, ∃ kv : (Σ k : Fin 2, D.nd.PlG k), PP = D.naut.plGw kv.1 kv.2)
     (i : Fin D.R.m) (t : T) (Pl : LevelP R.Pg D.R.r ℂ) {hF : D.host.F = maximalRealSubfield D.host.E}
@@ -1014,8 +1002,6 @@ section Main
 
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type} {A3 : FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T D.R.m} {Ks : Type}
   [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat3 D A3 Ks} {F : Face3 D A3} {X0 : BaseLevelRowSide D}
-
-
 
 theorem cen_used (Y : R3.Read (A3 := A3) R.toRealDat F.lv2 X0) (cG : G0 R.Pg D.R.r ≃* G0g D.nd) (hB : R.toRealDat.BaseW F.lv2)
     (hK : Keep (A3 := A3) R.toRealDat F.lv2 cG) (hO : A3.A.fam.Ok 1) (hC : CenRead Y cG) (M : MtFam D) (ad : MtAd Y M)
@@ -1133,7 +1119,6 @@ theorem cen_heq {K : Type} [Field K] [NumberField K] [StarRing K] {G : Type} [Gr
   rw [eq_of_heq (he _), eq_of_heq (he _)]
   exact (tL μ).cen z a ha x
 
-
 open Formalism.L2.Indef Formalism.L2.Rows Formalism.IndefR.Cx GlobalTheory.Mem.R3.Tr in
 
 theorem cenRead_state {K : Ctx} {B : Base} {f : Fr B.toPre} {T : TwDat B} {w : ColW B f T} {P : Pre2 K w} (x : St P) :
@@ -1144,22 +1129,16 @@ theorem cenRead_state {K : Ctx} {B : Base} {f : Fr B.toPre} {T : TwDat B} {w : C
   have hz := Bare.coeff_cenPull (x.m.z.R.eG.trans x.m.z.cG) z
   have ha' : ∀ g, (w.st x.o.Z).toD7.what₂.embLL (a.coeff g) = (z' : MonoidAlgebra ℂ (Gc B w.px)).coeff g :=
     fun g => (ha g).trans (hz g).symm
-  have h1 := hc.mt (x.r.Y.tup t) ((i : ℕ) + 1) ((by with_unfolding_all exact (z :))) z' ((by with_unfolding_all exact (hz :)))
-    ((P.q.p.tL (x.r.Y.tup t) ((i : ℕ) + 1)).j ((by with_unfolding_all exact ((x.r.Y.eMt i t v) :))))
+  have h1 := hc.mt (x.r.Y.tup t) ((i : ℕ) + 1) (z) z' (hz)
+    ((P.q.p.tL (x.r.Y.tup t) ((i : ℕ) + 1)).j (x.r.Y.eMt i t v))
   have h2 := cen_heq (fun a => P.q.p.mL a ((i : ℕ) + 1)) (fun a => P.q.p.sL a ((i : ℕ) + 1)) (fun a => P.q.p.tL a ((i : ℕ) + 1))
-    (congrFun x.r.tup t) (x.m.t.hL i t) (fun y => (by with_unfolding_all exact ((x.r.Y.eMt i t ((y))) : _))) ((by with_unfolding_all exact ((x.r.eMt i t) :))) z' ((by with_unfolding_all exact (a :))) ((by with_unfolding_all exact (ha' :))) ((by with_unfolding_all exact (v :)))
-  exact (by with_unfolding_all exact ((h1.trans h2) :))
-
-
-
-
+    (congrFun x.r.tup t) (x.m.t.hL i t) (fun y => x.r.Y.eMt i t ((y))) (x.r.eMt i t) z' (a) (ha') (v)
+  exact h1.trans h2
 
 theorem labTie_withLoc {K : Ctx} {B : Base} {f : Fr B.toPre} {T : TwDat B} {w : ColW B f T} {P : Pre2 K w}
     (x : St P) (Lc : LocAll (lay0 (Dof x))) :
     GlobalTheory.SerSys.LabTie (withLoc Lc) fun k => GlobalTheory.Mem.TypePl.labDat ((withLoc Lc).host.g k) :=
   fun k => ⟨(x.fits.grp.teich k).symm, x.fits.grp.ser k⟩
-
-
 
 end GlobalTheory.SerThird
 

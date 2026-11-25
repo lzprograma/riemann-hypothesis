@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.GRepresents
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
@@ -136,12 +137,12 @@ private theorem eqs_iff (s : ℤˣ) (X : Matrix (Fin m ⊕ Fin m) (Fin m ⊕ Fin
       obtain ⟨a, ha, hb⟩ := ex_theta _ _ (sub_eq_zero.1 h1)
       refine ⟨⟨a, s⟩, rfl, ?_⟩
       rw [← Matrix.fromBlocks_toBlocks X, h2, h3, ← ha, ← hb]
-      exact if_pos hs
+      exact ite_eq_left hs
     · obtain ⟨h1, h2, h3, -⟩ := Matrix.fromBlocks_inj.1 h
       obtain ⟨a, ha, hb⟩ := ex_theta _ _ (sub_eq_zero.1 h1)
       refine ⟨⟨a, s⟩, rfl, ?_⟩
       rw [← Matrix.fromBlocks_toBlocks X, h2, h3, ← ha, ← hb]
-      exact if_neg hs
+      exact ite_eq_right hs
   · rintro ⟨x, rfl, rfl⟩
     rw [emb_def]
     unfold eqs
@@ -168,21 +169,8 @@ omit [IsTopologicalGroup Γ] in
 private theorem lc_mod (hη : IsLocallyConstant η) {R : Type} [CommRing R] [Algebra O R] [IsCO O R]
     (s : GLift O η Ψ R) (n : ℕ) :
     IsLocallyConstant fun g => GG.map (Ideal.Quotient.mk (maximalIdeal R ^ n)) (s.hom g) := by
-  apply lc_gg
-  · have hfun : (fun g => (GG.map (Ideal.Quotient.mk (maximalIdeal R ^ n)) (s.hom g)).right) = fun g => η g := by
-      funext g
-      rw [GG.map_right]
-      exact s.hasMult g
-    rw [hfun]
-    exact hη
-  · intro a b
-    have hfun : (fun g => (GG.map (Ideal.Quotient.mk (maximalIdeal R ^ n)) (s.hom g)).mat a b) =
-        fun g => Ideal.Quotient.mk (maximalIdeal R ^ n) ((s.hom g).mat a b) := by
-      funext g
-      rw [GG.map_mat]
-      rfl
-    rw [hfun]
-    exact s.cont a b n
+  intros
+  apply _root_.UpperTheory.V.U3.GLift.locConst <;> assumption
 
 omit [IsTopologicalGroup Γ] in
 private theorem ker_closed {G : Type*} [Group G] (φ : Γ →* G) (h : IsLocallyConstant φ) :
@@ -329,13 +317,6 @@ private theorem transfer (hη : IsLocallyConstant η) (N : Set Γ) (M : Subgroup
 
 end Desc
 
-private theorem totDisc_quot {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
-    [TotallyDisconnectedSpace G] (N : Subgroup G) [N.Normal] (hN : IsClosed (N : Set G)) :
-    TotallyDisconnectedSpace (G ⧸ N) := by
-  first
-  | exact _root_.Formalism.SharedLemmas.totDisc_quot
-  | (apply _root_.Formalism.SharedLemmas.totDisc_quot <;> assumption)
-
 section Quot
 
 variable {O : Type} [CommRing O] [IsLocalRing O] {Γ ι : Type} [Group Γ] [TopologicalSpace Γ] [Fintype ι]
@@ -386,7 +367,7 @@ theorem UpperTheory.V.U3.exists_univ :
     rw [hMeq]
     exact Subgroup.isClosed_topologicalClosure _
   haveI : IsClosed (M : Set Γ) := hMc
-  haveI : TotallyDisconnectedSpace (Γ ⧸ M) := totDisc_quot M hMc
+  haveI : TotallyDisconnectedSpace (Γ ⧸ M) := Formalism.SharedLemmas.totDisc_quot M hMc
   have hNM : N ⊆ M := fun g hg => by
     rw [hMeq]
     exact Subgroup.le_topologicalClosure _ (Subgroup.subset_normalClosure hg)

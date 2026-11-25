@@ -307,7 +307,7 @@ theorem scal_smul {j : ℕ} (a : P.KO) (x : P.FormsS j) : P.scal (a • x) = a *
 
 theorem scal_incS {j : ℕ} {w : WeightFamilies.Wt D j} (F : P.Cusp j w) : P.scal (P.incS j w F) = 0 := by
   have h := P.cf_incS 0 F
-  rw [if_neg (WithZero.coe_ne_zero)] at h
+  rw [ite_eq_right (WithZero.coe_ne_zero)] at h
   rw [scal, ← cf_apply, h]; rfl
 
 variable {j : ℕ}

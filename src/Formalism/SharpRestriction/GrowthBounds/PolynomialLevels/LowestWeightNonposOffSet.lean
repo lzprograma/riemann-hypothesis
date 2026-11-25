@@ -7,44 +7,7 @@ public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SlackBound
 import Formalism.SharpRestriction.GrowthBounds.PathWeight.MdWeightMapDomain
 public import Formalism.SharpRestriction.GrowthBounds.RootWeights.DerivativeValuationBounds
 public import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeMapFractionField
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlanePairsOnBlocksAt
@@ -125,8 +88,7 @@ private theorem posTL_injective (hV : Fr.Valid L₁ N₁) (hnL : ∀ j, nL j = (
   have hsm := fr_last_strictMono hV
   have hseg : ∀ t t' : TL J nL r, posTL Fr t = posTL Fr t' → segZ t.1 ≤ segZ t'.1 := by
     intro t t' h
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have h1 := posTL_mem_Ioc_fr_last hV hnL t
     have h2 := posTL_mem_Ioc_fr_last hV hnL t'
     have h3 : Fr.fr (segZ t'.1) (r - 1) ≤ Fr.fr (segZ t.1 - 1) (r - 1) := hsm.monotone (by omega)
@@ -184,7 +146,7 @@ theorem tl_surj (hV : Fr.Valid L₁ N₁) (hnL : ∀ j, nL j = (Fr.LLset (segZ j
   simp only [Frames.letters, Finset.mem_filter, Finset.mem_Icc] at hl
   have hw : Fr.fr (segZ j - 1) (r - 1) < x := by
     unfold Frames.IsW at hW
-    push_neg at hW
+    push Not at hW
     exact hW
   by_cases hlt : x < Fr.fr (segZ j) 0
   · have hLL : x ∈ Fr.LLset (segZ j) := by
@@ -192,7 +154,7 @@ theorem tl_surj (hV : Fr.Valid L₁ N₁) (hnL : ∀ j, nL j = (Fr.LLset (segZ j
       exact ⟨⟨hw, hlt⟩, hl.2⟩
     obtain ⟨l, hl1, hl2⟩ := DdG.exists_llPos Fr (segZ j) x hLL
     exact ⟨Sum.inl ⟨l, by rw [hnL j]; exact hl1⟩, hl2⟩
-  · push_neg at hlt
+  · push Not at hlt
     obtain ⟨i, hi, hxi⟩ := DdG.eq_fr Fr hV.2.2.2.2.2.1 (by omega) (segZ j) x hlt hl.1.2 hl.2
     refine ⟨Sum.inr ⟨r - 1 - i, by omega⟩, ?_⟩
     show Fr.fr (segZ j) (r - 1 - (r - 1 - i)) = x
@@ -230,16 +192,16 @@ private theorem posU_strictMono (hV : Fr.Valid L₁ N₁) (hnL : ∀ j, nL j = (
   unfold posU
   by_cases hb' : b < nL j
   · have ha' : a < nL j := lt_trans hab hb'
-    rw [if_pos ha', if_pos hb']
+    rw [ite_eq_left ha', ite_eq_left hb']
     exact Formalism.MainNotions.Proposition5Numerics.llPos_lt _ _ _ hab (by rw [← hnL j]; exact hb')
-  · rw [if_neg hb']
+  · rw [ite_eq_right hb']
     by_cases ha' : a < nL j
-    · rw [if_pos ha']
+    · rw [ite_eq_left ha']
       have hm := Formalism.MainNotions.Proposition5Numerics.llPos_mem Fr (segZ j) a (by rw [← hnL j]; exact ha')
       simp only [Frames.LLset, Finset.mem_filter, Finset.mem_Ioo] at hm
       have h2 := Formalism.MainNotions.Proposition5Numerics.DdG.fr_le Fr hmono (segZ j) (Nat.zero_le (b - nL j)) (by omega)
       exact lt_of_lt_of_le hm.1.2 h2
-    · rw [if_neg ha']
+    · rw [ite_eq_right ha']
       exact Formalism.MainNotions.Proposition5Numerics.DdG.fr_lt Fr hmono (segZ j) (by omega) (by omega)
 
 private theorem posU_lt_posU_iff (hV : Fr.Valid L₁ N₁) (hnL : ∀ j, nL j = (Fr.LLset (segZ j)).card) (j : ZMod J)

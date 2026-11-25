@@ -28,37 +28,8 @@ theorem ringKrullDim_killIdeal_add_card_le {Q : Ideal (MRing ι F)} [Q.IsPrime]
     (hQ : ∀ (T : Finset K) (q : MRing ι F), q ∈ Q → killBlocks T q ∈ Q) (hrel : IsRelevant Q)
     (T : Finset K) :
     ringKrullDim (MRing ι F ⧸ killIdeal Q T) + (T.card : WithBot ℕ∞) ≤
-      ringKrullDim (MRing ι F ⧸ Q) := by
-  choose i hi using hrel
-  have hmono : ∀ {T T' : Finset K}, T ⊆ T' → killIdeal Q T ≤ killIdeal Q T' := by
-    intro T T' h q hq
-    change killBlocks T' q ∈ Q
-    rw [← killBlocks_comp h]
-    exact hQ T' _ hq
-  induction T using Finset.induction_on with
-  | empty =>
-    have : killIdeal Q (∅ : Finset K) = Q := by
-      ext q
-      simp [killIdeal, killBlocks_empty]
-    rw [this, Finset.card_empty, Nat.cast_zero, add_zero]
-  | insert k T hk ih =>
-    have : (killIdeal Q T).IsPrime := Ideal.comap_isPrime _ _
-    have hstep := ringKrullDim_add_one_le (P := killIdeal Q T) (Q := killIdeal Q (insert k T))
-      (hmono (Finset.subset_insert k T)) (f := X ⟨k, i k⟩)
-      (by
-        change killBlocks T (X ⟨k, i k⟩) ∉ Q
-        rw [killBlocks_X, if_neg hk]
-        exact hi k)
-      (by
-        change killBlocks (insert k T) (X ⟨k, i k⟩) ∈ Q
-        rw [killBlocks_X, if_pos (Finset.mem_insert_self k T)]
-        exact Q.zero_mem)
-    calc ringKrullDim (MRing ι F ⧸ killIdeal Q (insert k T)) + ((insert k T).card : WithBot ℕ∞)
-        = (ringKrullDim (MRing ι F ⧸ killIdeal Q (insert k T)) + 1) + (T.card : WithBot ℕ∞) := by
-          rw [Finset.card_insert_of_notMem hk, Nat.cast_add, Nat.cast_one, add_assoc,
-            add_comm (1 : WithBot ℕ∞)]
-      _ ≤ ringKrullDim (MRing ι F ⧸ killIdeal Q T) + (T.card : WithBot ℕ∞) := by gcongr
-      _ ≤ _ := ih
+      ringKrullDim (MRing ι F ⧸ Q) :=
+  PFContracted.ringKrullDim_killIdeal_add_card_le hQ hrel T
 
 end Chain
 
@@ -92,8 +63,8 @@ theorem exists_rename_eq_killBlocks_compl (x : MRing ι' F) :
     obtain ⟨k', i⟩ := v
     rw [map_mul, killBlocks_X, ← ha]
     by_cases h : k' ∈ (Finset.univ.map j)ᶜ
-    · exact ⟨0, by rw [if_pos h, mul_zero, map_zero]⟩
-    · rw [if_neg h]
+    · exact ⟨0, by rw [ite_eq_left h, mul_zero, map_zero]⟩
+    · rw [ite_eq_right h]
       simp only [Finset.mem_compl, Finset.mem_map, Finset.mem_univ, true_and, not_not] at h
       obtain ⟨k, rfl⟩ := h
       exact ⟨a * X ⟨k, i⟩, by rw [map_mul, rename_X]; rfl⟩

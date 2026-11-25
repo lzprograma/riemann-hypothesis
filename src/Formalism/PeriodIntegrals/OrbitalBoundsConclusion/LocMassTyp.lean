@@ -15,51 +15,10 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.N
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SplitB
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SplitDecomp
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SaturatedSplitLattice
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.TransitiveOverLocalRings
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.IsTopRingTens
-import Mathlib.CategoryTheory.Countable
-import Mathlib.Tactic.ENatToNat
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.UnitaryLocalMassIdentity
 import Mathlib.Tactic.Linter.HaveILetI
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.SelfDualMeasureSFinite
@@ -329,7 +288,7 @@ theorem kUnip1_of (hS : SplitR) : KUnip1 := by
   have hUdiag : ∀ a, U a a = 1 := fun a => by
     simp [hU, uMat, hsc1]
   have hUlow : ∀ a b, b < a → U a b = 0 := fun a b hba => by
-    simp only [hU, Matrix.of_apply, uMat, if_neg (ne_of_gt hba), dif_neg (not_lt_of_gt hba),
+    simp only [hU, Matrix.of_apply, uMat, ite_eq_right (ne_of_gt hba), dite_eq_right (not_lt_of_gt hba),
       mul_zero]
   have hUI : ∀ a b, U a b ∈ OEv (E := E) v := by
     intro a b
@@ -405,8 +364,8 @@ theorem kUnip1_of (hS : SplitR) : KUnip1 := by
   have hlast : ∀ c, U (Fin.last r) c = if c = Fin.last r then 1 else 0 := by
     intro c
     by_cases hc : c = Fin.last r
-    · rw [if_pos hc, hc, hUdiag]
-    · rw [if_neg hc]
+    · rw [ite_eq_left hc, hc, hUdiag]
+    · rw [ite_eq_right hc]
       exact hUlow _ _ (lt_of_le_of_ne (Fin.le_last c) hc)
   have hYoff : ∀ c d, ¬ (c = Fin.last r ∧ d = Fin.last r) →
       Formalism.UG.hform (sigR (Fv F v) σ) (JR (Fv F v) J) (Y0 c) (Y0 d) = 0 := by
@@ -614,12 +573,6 @@ theorem dV_ne : dV v ≠ 0 := by
   · exact h.choose_spec.1
   · exact one_ne_zero
 
-theorem alp_ne (r : ℕ) (a : Fin (r + 1)) : alp v r a ≠ 0 := by
-  unfold alp
-  split_ifs
-  · exact pow_ne_zero _ (inv_ne_zero (dV_ne v))
-  · exact one_ne_zero
-
 end Alg
 
 section Main
@@ -660,7 +613,7 @@ theorem uo_of_mem {y : HA (Fv F v) σ J}
         sc (E := E) v (alp v r b) := by
       rw [sc_mul]
       congr 1
-      field_simp [alp_ne v r a]
+      field_simp [PI.LocMassTypW.alp_ne' v r a]
     calc c a * sc (E := E) v (alp v r a)
         = uMat v x a b * (sc (E := E) v ((alp v r a)⁻¹ * alp v r b) *
             sc (E := E) v (alp v r a)) := by simp only [c]; ring
@@ -669,7 +622,7 @@ theorem uo_of_mem {y : HA (Fv F v) σ J}
     rw [key]
     exact kvc_mem_lat σ J v Λ hk (hy.1 b)
   have := hy.2 c hmem a
-  simp only [c, uMat, if_neg hab.ne, dif_pos hab] at this
+  simp only [c, uMat, ite_eq_right hab.ne, dite_eq_left hab] at this
   exact this
 
 end Main
@@ -700,13 +653,13 @@ theorem stepC_at {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E
       ∑ a, uMat v x a b • ratV (F := F) (Fv F v) (F0 P a) := by
     intro x b
     by_cases hx : x ∈ UO (E := E) v r
-    · simp only [t, dif_pos hx]
+    · simp only [t, dite_eq_left hx]
       exact (hK0 x hx).choose_spec.1 b
-    · simp only [t, dif_neg hx]
+    · simp only [t, dite_eq_right hx]
       exact (hE0 x).choose_spec b
   have htK : ∀ x ∈ UO (E := E) v r, y * t x * y⁻¹ ∈ Formalism.L2.SG.TypedSets.Kv σ J Λ v := by
     intro x hx
-    simp only [t, dif_pos hx]
+    simp only [t, dite_eq_left hx]
     exact (hK0 x hx).choose_spec.2
   have hiff : ∀ x (s0 : S0 (Fv F v) σ J P), (s0 : HA (Fv F v) σ J) * t x ∈ C ↔
       x ∈ UO (E := E) v r ∧ s0 ∈ stabilizerConjugateCompact σ J v P Λ y := by

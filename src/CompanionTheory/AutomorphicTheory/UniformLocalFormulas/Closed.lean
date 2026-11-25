@@ -696,8 +696,6 @@ open scoped ENNReal
 
 namespace Formalism.MainStatements.RowRest
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 abbrev AN {X : HidaSetting D} {θ : ℝ} {C : Choice X θ} (hB : WuBessel C) (u u' : D.what₂.Word) (dg : D.what₂.Tau → ℝ) :

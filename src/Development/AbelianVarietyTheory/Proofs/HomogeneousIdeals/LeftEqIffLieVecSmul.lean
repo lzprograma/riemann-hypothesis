@@ -307,8 +307,6 @@ variable {R : Type} [CommRing R] {X Y : Type} [AddCommGroup X] [AddCommGroup Y]
 
 def lieVec (c : X →+ R) : epsR R ⟶ splitTorus (Sp R) X := epsVec _ c
 
-theorem charVal_lieVec (c : X →+ R) (x : X) : charVal (lieVec c) x = 1 + inr (c x) := charVal_epsVec c x
-
 theorem isTangent_iff_charVal (w : epsR R ⟶ splitTorus (Sp R) X) :
     IsTangent w ↔ ∀ x, (charVal w x).fst = 1 := by
   unfold IsTangent
@@ -326,18 +324,11 @@ theorem isTangent_lieVec (c : X →+ R) : IsTangent (lieVec c) := (isTangent_iff
 
 theorem lieVec_injective : Function.Injective (lieVec : (X →+ R) → _) := epsVec_injective
 
-theorem lieVec_add (c d : X →+ R) : lieVec (c + d) = lieVec c * lieVec d := epsVec_add c d
-
 theorem left_eq_iff_lieVec_smul (a : R) (c : X →+ R) (u : epsR R ⟶ splitTorus (Sp R) X) :
     u.left = spMap (epsScaleR a) ≫ (lieVec c).left ↔ u = lieVec (a • c) := left_eq_epsScaleR_iff a (epsScaleR_base a) c u
 
 theorem lieVec_smul_left (a : R) (c : X →+ R) :
     (lieVec (a • c)).left = spMap (epsScaleR a) ≫ (lieVec c).left := (left_eq_iff_lieVec_smul a c _).2 rfl
-
-theorem lieVec_smul (a : R) (c : X →+ R) : lieVec (a • c) = GrpTangent.epsScale a ≫ lieVec c := by
-  apply Over.OverMorphism.ext
-  rw [lieVec_smul_left, Over.comp_left]
-  rfl
 
 theorem lieVec_comp_diagMap (c : X →+ R) (u : Y →+ X) :
     lieVec c ≫ diagMap (Sp R) u = lieVec (c.comp u) := epsVec_comp_diagMap c u
@@ -564,9 +555,3 @@ theorem lieMult_iff (n : ℕ) :
 end Fibre
 
 end GlobalTheory.Diag
-
-namespace GlobalTheory
-
-open Diag
-
-end GlobalTheory

@@ -127,7 +127,7 @@ theorem sep_of_degrees {z : Fin k × Fin n → σ} {y : Fin l × Fin n → σ}
     have e : colOp ℂ z i j P = colOp ℂ y j i P := sub_eq_zero.1 (hup i j hij)
     have e1 := LinearMap.congr_fun (colOp_lie (K := ℂ) z hz i i i j) P
     have e2 := LinearMap.congr_fun (commute_colOp_colOp (K := ℂ) z y hzy i i j i).eq P
-    simp only [if_neg hij.ne', if_true, sub_zero, LinearMap.sub_apply, Module.End.mul_apply, h1,
+    simp only [ite_eq_right hij.ne', ite_true, sub_zero, LinearMap.sub_apply, Module.End.mul_apply, h1,
       map_smul] at e1 e2
     rw [← e] at e2
     rw [e2, sub_self] at e1
@@ -214,13 +214,13 @@ def IsSide (e : Ln p q r s → σ) (act : Mat p q →ₗ[ℂ] Module.End ℂ (Mv
 
 theorem omE_pos_pos {l l' : Ln p q r s} (h : linePos l = true) (h' : linePos l' = true)
     (P : Pol p q r s) : omE l l' P = X l * pderiv l' P + (if l = l' then (1 / 2 : ℂ) else 0) • P := by
-  simp only [omE, raiB, lowB, h, h', if_true]
+  simp only [omE, raiB, lowB, h, h', ite_true]
   split_ifs <;> simp
 
 theorem omE_neg_neg {l l' : Ln p q r s} (h : linePos l = false) (h' : linePos l' = false)
     (P : Pol p q r s) :
     omE l l' P = -(X l' * pderiv l P) - (if l = l' then (1 / 2 : ℂ) else 0) • P := by
-  simp only [omE, raiB, lowB, h, h', Bool.false_eq_true, if_false]
+  simp only [omE, raiB, lowB, h, h', Bool.false_eq_true, ite_false]
   rw [LinearMap.add_apply, Module.End.mul_apply, LinearMap.neg_apply, LinearMap.mulLeft_apply,
     Derivation.coeFn_coe, pderiv_X_mul']
   split_ifs
@@ -258,7 +258,7 @@ theorem IsSide.mem_wtSub (h : IsSide e act) (μ : Ix p q → ℚ) (P : MvPolynom
       (∀ a, mixedOp ℂ (zA e) (zB e) a a P = (shiftNu (cPair r s) μ (.inl a) : ℂ) • P) ∧
       ∀ a, mixedOp ℂ (zC e) (zD e) a a P = (shiftNu (cPair r s) μ (.inr a) : ℂ) • P := by
   simp only [wtSub, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply,
-    LinearMap.smul_apply, LinearMap.id_apply, Sum.forall, h.1, h.2, if_true, shiftNu, Rat.cast_sub,
+    LinearMap.smul_apply, LinearMap.id_apply, Sum.forall, h.1, h.2, ite_true, shiftNu, Rat.cast_sub,
     Rat.cast_add, sub_smul, add_smul, eq_sub_iff_add_eq, sub_eq_iff_eq_add, zero_add]
 
 theorem IsSide.mem_hwSub (h : IsSide e act) (μ : Ix p q → ℚ) (P : MvPolynomial σ ℂ) :
@@ -310,7 +310,7 @@ theorem lowering_iff (e : Ln p q r s → σ) (P : MvPolynomial σ ℂ) :
     · simp
   have pc : ∀ c₀ d₀ : Ix r s, ¬ sameBlock c₀ d₀ → IsPC (Eab c₀ d₀) := by
     intro c₀ d₀ h a b hab
-    rw [Eab, Matrix.single_apply, if_neg]
+    rw [Eab, Matrix.single_apply, ite_eq_right]
     rintro ⟨rfl, rfl⟩
     exact h hab
   constructor
@@ -318,12 +318,12 @@ theorem lowering_iff (e : Ln p q r s → σ) (P : MvPolynomial σ ℂ) :
     refine ⟨fun i j => ?_, fun i j => ?_⟩
     · have := h _ (pc (.inr j) (.inl i) id)
       rw [key, neg_eq_zero, Fintype.sum_sum_type] at this
-      simp only [linePos, if_true, Bool.false_eq_true, if_false, Finset.sum_const_zero,
+      simp only [linePos, ite_true, Bool.false_eq_true, ite_false, Finset.sum_const_zero,
         add_zero] at this
       exact (Finset.sum_congr rfl fun _ _ => pderiv_swap _ _ _).trans this
     · have := h _ (pc (.inl j) (.inr i) id)
       rw [key, neg_eq_zero, Fintype.sum_sum_type] at this
-      simp only [linePos, if_true, Bool.false_eq_true, if_false, Finset.sum_const_zero,
+      simp only [linePos, ite_true, Bool.false_eq_true, ite_false, Finset.sum_const_zero,
         zero_add] at this
       exact (Finset.sum_congr rfl fun _ _ => pderiv_swap _ _ _).trans this
   · rintro ⟨h1, h2⟩ Z hZ

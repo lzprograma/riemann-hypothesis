@@ -61,8 +61,6 @@ import Development.AbelianVarietyTheory.PublishedTheorems.RelativeAmpleness.RelA
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open scoped Pointwise
 
 namespace GlobalTheory.IntegralFractionLift
@@ -371,9 +369,6 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open scoped CategoryTheory.Obj CategoryTheory.MonObj Pointwise
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.HTLat GlobalTheory.Published GlobalTheory.Published.AbVarRed IsLocalRing
-attribute [local instance] Over.cartesianMonoidalCategory
-
-set_option autoImplicit false
 
 namespace GlobalTheory.InertiaRestrict
 

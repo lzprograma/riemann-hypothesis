@@ -141,7 +141,7 @@ theorem exists_adelicNorm_le_mul_pow (hd : 0 < d) (Φ : (Fin N → 𝔸[K]) → 
     refine (Finset.prod_subset (fun v hv' => ?_) fun v _ hvS => ?_).symm
     · rw [hT, Finset.mem_union, Finset.mem_union]
       exact Or.inl (Or.inl hv')
-    · simp only [Bf, if_neg hvS]
+    · simp only [Bf, ite_eq_right hvS]
   have hfin_le : ∏ᶠ v, ‖Reduction.finComp v (Φ y)‖ ≤
       (∏ v ∈ S, Bf v) * (∏ᶠ v, ‖Reduction.finComp v y‖) ^ d := by
     rw [hfinΦ, hfiny, ← hST, ← Finset.prod_pow, ← Finset.prod_mul_distrib]

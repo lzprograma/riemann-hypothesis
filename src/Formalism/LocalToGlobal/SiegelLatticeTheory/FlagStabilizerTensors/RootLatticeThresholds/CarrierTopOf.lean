@@ -13,8 +13,6 @@ open MeasureTheory NumberField Formalism.BasicNotions
 
 namespace Formalism.L2.SG.Pf.Carrier
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
-
 open Formalism.L2.SG.RealObj
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
@@ -52,11 +50,11 @@ theorem emb_carrierInOf (e : InfinitePlace D.host.E ≃ D.what₂.Tau) (he : Pla
 
 
 open Matrix in
-theorem base_carrierOf (I : CarrierIn X u u') (Mo : ModelsFor (sOf I)) (i0 i0' : ∀ _ : InfinitePlace X.B.I.F, Fin D.R.k)
+theorem base_carrierOf (I : CarrierIn X u u') (i0 i0' : ∀ _ : InfinitePlace X.B.I.F, Fin D.R.k)
     (hQ : ∀ v, I.Q v * I.Qi v = 1) (hi : ∀ v, i0 v = i0' v)
     (hν : ∀ j, I.ν' j = I.Qi (I.τ j) *ᵥ X.wfr u' (I.τ j) (i0' (I.τ j)))
     (hm : ∀ j, I.m₀ j = Formalism.L2.SG.Pf.CarrierBase.m0Of X u u' (I.τ j) (I.Q (I.τ j)) (I.Qi (I.τ j))) :
-    (CarrierOf I Mo).Base i0 i0' := by
+    (CarrierOf I).Base i0 i0' := by
   have h := Formalism.L2.SG.Pf.CarrierBase.baseFromX_of X u u' (sOf I) i0 i0' I.τ I.Q I.Qi hQ hi
   have e1 : I.ν' = fun j => I.Qi (I.τ j) *ᵥ X.wfr u' (I.τ j) (i0' (I.τ j)) := funext hν
   have e2 : I.m₀ = fun j => Formalism.L2.SG.Pf.CarrierBase.m0Of X u u' (I.τ j) (I.Q (I.τ j)) (I.Qi (I.τ j)) := funext hm

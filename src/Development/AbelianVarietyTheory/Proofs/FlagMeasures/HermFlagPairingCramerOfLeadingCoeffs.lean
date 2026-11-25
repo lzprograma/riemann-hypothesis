@@ -144,12 +144,12 @@ theorem exists_entry (bs : List (Kˣ × ℕ+)) (a : ℕ) (ha : a < (bs.map fun b
   obtain ⟨l, s, t, ε, h1, h2, h3, h4, -⟩ := exists_block bs a ha
   have hb : l + (l + s) - a - 1 < (bs.map fun b => (b.2 : ℕ)).sum := by omega
   have h5 : ptEntryL bs a (l + (l + s) - a - 1) ≠ 0 := by
-    rw [h4, if_pos (by omega)]; exact t.ne_zero
+    rw [h4, ite_eq_left (by omega)]; exact t.ne_zero
   refine ⟨_, hb, h5, fun a' h6 => ?_⟩
   obtain ⟨l', s', t', ε', -, -, -, h7, -⟩ := exists_block bs _ hb
   rw [entry_symm, h7] at h5 h6
-  have h8 := of_not_not (mt (fun h => if_neg h) h5)
-  have h9 := of_not_not (mt (fun h => if_neg h) h6)
+  have h8 := of_not_not (mt (fun h => ite_eq_right h) h5)
+  have h9 := of_not_not (mt (fun h => ite_eq_right h) h6)
   omega
 
 end GlobalTheory.DegCnt.BlockMinor

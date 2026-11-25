@@ -142,7 +142,7 @@ theorem ptBasisMap_inv (G : LogFGL v d) {γ : Fin d → Fin d → PowerSeries C}
     intro b α h
     left
     by_contra h'
-    push_neg at h'
+    push Not at h'
     exact h (hlow b α (by omega))
   have hKi : ∀ b, K b ∈ ptIntSer v (Fin d) := fun b =>
     Subring.sub_mem _ (hΦ b).2 (Subring.sum_mem _ fun a _ => ptIntSer_smul (hMint a b) (ptIntSer_X a))

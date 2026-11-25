@@ -186,7 +186,7 @@ theorem proof : MaDensLogPow.Statement := by
   set C : Fin (e + 1 + 1) → Matrix (Fin (e + 1 + 1)) (Fin (e + 1 + 1)) ℂ :=
     Fin.cons A₀ (fun _ : Fin (e + 1) => H) with hC
   have hCs : ∀ i ∈ s, C i = H := fun i hi => by
-    rw [hC, cons_const_apply, if_neg (Finset.ne_of_mem_erase hi)]
+    rw [hC, cons_const_apply, ite_eq_right (Finset.ne_of_mem_erase hi)]
   have key := mdisc_expand (a : ℂ) (b : ℂ) H G hG s C hCs
   rw [Finset.sum_congr rfl fun i hi => mdisc_update_eq G A₀ H i (Finset.ne_of_mem_erase hi),
     Finset.sum_const, hscard, Nat.add_sub_cancel, nsmul_eq_mul] at key

@@ -52,8 +52,7 @@ theorem gb_mcPts_eq (P : Ideal (MRing (GlobalTheory κ))) : mcPts P = pts P := b
   refine and_congr_left' ⟨fun h h0 => ?_, fun h k => ?_⟩
   · obtain ⟨i, hi⟩ := h ()
     exact hi (congrFun h0 _)
-  · by_contra hne
-    push_neg at hne
+  · by_contra! hne
     exact h (funext fun p => hne p.2)
 
 theorem gb_fibre_eq (x : Ix κ → Ω) (e : Fin (D + 1) → Ix κ) (y : Fin D → ℂ) :
@@ -129,8 +128,7 @@ theorem gb_exists_scale {Δ : MvPolynomial (Fin (D + 1)) ℂ} (hΔ : Δ ≠ 0) :
     ∃ c : ℂ, c ≠ 0 ∧ ∃ y₀ : Fin D → ℂ, eval (c • (Fin.cons 1 y₀ : Fin (D + 1) → ℂ)) Δ ≠ 0 := by
   have h1 : Δ * X 0 ≠ 0 := mul_ne_zero hΔ (X_ne_zero _)
   obtain ⟨w, hw⟩ : ∃ w, eval w (Δ * X 0) ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     exact h1 (MvPolynomial.funext (fun w => by simpa using hne w))
   rw [eval_mul, eval_X] at hw
   have hw0 : w 0 ≠ 0 := right_ne_zero_of_mul hw
@@ -148,20 +146,8 @@ theorem gb_exists_scale {Δ : MvPolynomial (Fin (D + 1)) ℂ} (hΔ : Δ ≠ 0) :
 theorem gb_ae_good {c : ℂ} {Δ : MvPolynomial (Fin (D + 1)) ℂ} {y₀ : Fin D → ℂ}
     (h₀ : eval (c • (Fin.cons 1 y₀ : Fin (D + 1) → ℂ)) Δ ≠ 0) :
     ∀ᵐ y : Fin D → ℂ, eval (c • (Fin.cons 1 y : Fin (D + 1) → ℂ)) Δ ≠ 0 := by
-  have hpoly : ∀ p : MvPolynomial (Fin (D + 1)) ℂ, AnalyticOnNhd ℂ (fun w => eval w p) Set.univ := by
-    intro p
-    induction p using MvPolynomial.induction_on
-    next a =>
-      simp only [eval_C]
-      exact analyticOnNhd_const
-    next p q hp hq =>
-      simp only [map_add (f := _)]
-      exact hp.add hq
-    next p i hp =>
-      simp only [map_mul, eval_X]
-      exact hp.mul ((ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : Fin (D + 1) => ℂ) i).analyticOnNhd _)
   have hf : AnalyticOnNhd ℂ ((fun w => eval w Δ) ∘ fun y : Fin D → ℂ => c • (Fin.cons 1 y : Fin (D + 1) → ℂ))
-      Set.univ := (hpoly Δ).comp (gb_analytic_scaledCons c) (Set.mapsTo_univ _ _)
+      Set.univ := (AnalyticOnNhd.eval_mvPolynomial Δ).comp (gb_analytic_scaledCons c) (Set.mapsTo_univ _ _)
   have h := ReciprocityTheory.AnForm.volume_zero_set_of_analyticOnNhd isOpen_univ isPreconnected_univ hf
     ⟨y₀, Set.mem_univ _, h₀⟩
   rw [ae_iff]

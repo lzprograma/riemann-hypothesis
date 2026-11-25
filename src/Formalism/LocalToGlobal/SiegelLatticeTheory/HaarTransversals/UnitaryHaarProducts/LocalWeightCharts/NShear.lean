@@ -33,12 +33,12 @@ theorem split_low {A : Matrix (Fin r) (Fin r) ℂ} (hA : LowId A) (v : Fin r →
   have : ∀ c, A a c * v c = (if a = c then v c else 0) + (if a < c then A a c * v c else 0) := by
     intro c
     rcases lt_trichotomy a c with h | rfl | h
-    · rw [if_neg (ne_of_lt h), if_pos h, zero_add]
-    · rw [if_pos rfl, if_neg (lt_irrefl a), add_zero, hA a a le_rfl, if_pos rfl, one_mul]
-    · rw [if_neg (ne_of_gt h), if_neg (not_lt.2 h.le), add_zero, hA a c h.le, if_neg (ne_of_gt h),
+    · rw [ite_eq_right (ne_of_lt h), ite_eq_left h, zero_add]
+    · rw [ite_eq_left rfl, ite_eq_right (lt_irrefl a), add_zero, hA a a le_rfl, ite_eq_left rfl, one_mul]
+    · rw [ite_eq_right (ne_of_gt h), ite_eq_right (not_lt.2 h.le), add_zero, hA a c h.le, ite_eq_right (ne_of_gt h),
         zero_mul]
   rw [Finset.sum_congr rfl fun c _ => this c, Finset.sum_add_distrib, Finset.sum_ite_eq,
-    if_pos (Finset.mem_univ _)]
+    ite_eq_left (Finset.mem_univ _)]
 
 theorem lowId_bA {g : Mx k r} (hc : ColB g) : LowId (bA g) := fun a b h => hc.aa a b h
 
@@ -66,7 +66,7 @@ theorem lmul_coord {m₀ : Mx k r} (h0 : m₀ ∈ Nset k r) (x : CI k r → ℂ)
     rcases i with ⟨⟨a, b⟩, h⟩ | ⟨a, j⟩ | ⟨⟨a, b⟩, h⟩
     · show bA (m₀ * phi0 x s) a b = _
       rw [bA_mul hcg, Matrix.mul_apply, phi0, bA_mk, split_low (lowId_bA hc0)]
-      simp only [Pi.add_apply, shG, cA, dif_pos h]
+      simp only [Pi.add_apply, shG, cA, dite_eq_left h]
     · show bB (m₀ * phi0 x s) a j = _
       rw [bB_mul hcg, Matrix.add_apply, Matrix.mul_apply, phi0, bB_mk, split_low (lowId_bA hc0)]
       simp only [Pi.add_apply, shG, cB]

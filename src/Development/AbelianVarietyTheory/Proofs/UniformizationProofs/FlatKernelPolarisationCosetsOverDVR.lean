@@ -67,7 +67,6 @@ import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsInKNeOn
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.UU
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 noncomputable section
 namespace GlobalTheory.StabFlat
 open GlobalTheory.CechPic
@@ -191,7 +190,7 @@ theorem exists_family (hL : L.IsLB) (hO : O.IsLB) (hΘ : ∃ t : LB.Gen (Theta B
 
 end Family
 
-theorem exists_ideal (hG : GlobalFnsSt) {V : Type} [CommRing V] (B : Over (Spec (CommRingCat.of V))) [GrpObj B]
+theorem exists_ideal_core (hG : GlobalFnsSt) {V : Type} [CommRing V] (B : Over (Spec (CommRingCat.of V))) [GrpObj B]
     [IsCommMonObj B] (hB : IsAbelianScheme B) (hp : IsProjBy B.hom) {g : ℕ} (hg : SmoothOfRelativeDimension g B.hom)
     {L O : LB B.left} (hL : L.IsLB) (hO : O.IsLB) (hΘ : ∃ t : LB.Gen (Theta B L), t.IsGen)
     (hu : ∃ u : LB.Gen (abelian₂ B O), u.IsGen) {H : Over (Spec (CommRingCat.of V))} (j : H ⟶ B)
@@ -199,16 +198,23 @@ theorem exists_ideal (hG : GlobalFnsSt) {V : Type} [CommRing V] (B : Over (Spec 
       Triv ((LB.div (translDiff B L x) (O.pull (snd T B).left)).pull ((fst T B).left ⁻¹ᵁ U).ι)) ↔
         ∃ y : T ⟶ H, y ≫ j = x)
     (A : Type) [CommRing A] [IsNoetherianRing A] [IsLocalRing A] (a : Spec (CommRingCat.of A) ⟶ B.left)
-    (ϖ : A) (h₁ : ϖ ∈ nonZeroDivisors A) (h₂ : IsRegularLocalRing (A ⧸ Ideal.span {ϖ}))
-    (h₃ : ringKrullDim (A ⧸ Ideal.span {ϖ}) = g)
     (K₀ : Type) [Field K₀] (g₀ : A →+* K₀) (hg₀ : IsLocalHom g₀)
     (h₀ : ∃ y : Spec (CommRingCat.of K₀) ⟶ H.left, y ≫ j.left = Spec.map (CommRingCat.ofHom g₀) ≫ a)
-    (hE : ∀ (K : Type) [Field K] (φ : A →+* K), φ ϖ = 0 →
+    (J : Ideal A)
+    (hE : ∀ (K : Type) [Field K] (φ : A →+* K), J ≤ RingHom.ker φ →
       (∃ y : Spec (CommRingCat.of K) ⟶ H.left, y ≫ j.left = Spec.map (CommRingCat.ofHom φ) ≫ a) →
       RingHom.ker φ = IsLocalRing.maximalIdeal A) :
-    ∃ I : Ideal A, IsSMulRegular (A ⧸ I) ϖ ∧ ∀ (R : Type) [CommRing R] [IsLocalRing R] (φ : A →+* R),
-      (∃ y : Spec (CommRingCat.of R) ⟶ H.left, y ≫ j.left = Spec.map (CommRingCat.ofHom φ) ≫ a) ↔
-        I ≤ RingHom.ker φ := by
+    ∃ (I : Ideal A) (C : CochainComplex (ModuleCat.{0} A) ℕ),
+      (∀ i, Module.Free A (C.X i) ∧ Module.Finite A (C.X i)) ∧
+      (∃ n, ∀ i, n < i → IsZero (C.X i)) ∧
+      Nonempty ((Module.Dual A (C.X 0) ⧸ LinearMap.range (C.d 0 1).hom.dualMap) ≃ₗ[A] (A ⧸ I)) ∧
+      (∀ p : PrimeSpectrum A, J ≤ p.asIdeal →
+        ∃ (K : Type) (_ : Field K) (φ : A →+* K), RingHom.ker φ = p.asIdeal ∧
+          ∀ i, (p.asIdeal ≠ IsLocalRing.maximalIdeal A ∨ g < i) →
+            (((ModuleCat.extendScalars φ).mapHomologicalComplex _).obj C).ExactAt i) ∧
+      (∀ (R : Type) [CommRing R] [IsLocalRing R] (φ : A →+* R),
+        (∃ y : Spec (CommRingCat.of R) ⟶ H.left, y ≫ j.left = Spec.map (CommRingCat.ofHom φ) ≫ a) ↔
+          I ≤ RingHom.ker φ) := by
   let t := a ≫ B.hom
   obtain ⟨F, hF, hΛ, hcl⟩ := exists_family hL hO hΘ hu t (Over.homMk a rfl)
   let B' := (Over.pullback t).obj B
@@ -255,10 +261,9 @@ theorem exists_ideal (hG : GlobalFnsSt) {V : Type} [CommRing V] (B : Over (Spec 
   obtain ⟨I, ⟨eI⟩, hI⟩ := GlobalTheory.UU.SecCyclic.cyclic_ideal A _ B'.hom F hF P inferInstance inferInstance K₀ g₀ hg₀ _ _ _
     q₀ (CubeOpen.bijective_appTop hG B' hB' q₀) ((test K₀ g₀ _ _ _ q₀).2 h₀)
   obtain ⟨C, c₁, c₂, ⟨eC⟩, c₃⟩ := GlobalTheory.T.exists_perfect_free_finite_complex A B' hB' hp' g hg' F hF hΛ P
-  refine ⟨I, ?_, fun R _ _ φ => (test R φ _ _ _ (IsPullback.of_hasPullback _ _)).symm.trans
-    (hI R φ _ _ _ (IsPullback.of_hasPullback _ _))⟩
-  refine ((eC.trans eI).isSMulRegular_congr ϖ).1
-    (GlobalTheory.isSMulRegular_coker_dualMap_of_exact_fibres A ϖ g h₁ h₂ h₃ C c₁ c₂ fun p hϖ => ?_)
+  refine ⟨I, C, c₁, c₂, ⟨eC.trans eI⟩, fun p hJ => ?_,
+    fun R _ _ φ => (test R φ _ _ _ (IsPullback.of_hasPullback _ _)).symm.trans
+      (hI R φ _ _ _ (IsPullback.of_hasPullback _ _))⟩
   let K := AlgebraicClosure p.asIdeal.ResidueField
   let φ : A →+* K := (algebraMap p.asIdeal.ResidueField K).comp (algebraMap A p.asIdeal.ResidueField)
   have hk : RingHom.ker φ = p.asIdeal := by
@@ -266,9 +271,57 @@ theorem exists_ideal (hG : GlobalFnsSt) {V : Type} [CommRing V] (B : Over (Spec 
       Ideal.ker_algebraMap_residueField]
   refine ⟨K, inferInstance, φ, hk, fun i hi => c₃ K φ _ _ _ (IsPullback.of_hasPullback _ _) i ?_⟩
   rcases hi with hi | hi
-  · refine Or.inr fun ht => hi (hk.symm.trans (hE K φ ?_ ((test K φ _ _ _ (IsPullback.of_hasPullback _ _)).1 ht)))
-    exact (RingHom.mem_ker).1 (hk.ge hϖ)
+  · exact Or.inr fun ht => hi (hk.symm.trans (hE K φ (hJ.trans hk.ge)
+      ((test K φ _ _ _ (IsPullback.of_hasPullback _ _)).1 ht)))
   · exact Or.inl hi
+
+theorem exists_ideal (hG : GlobalFnsSt) {V : Type} [CommRing V] (B : Over (Spec (CommRingCat.of V))) [GrpObj B]
+    [IsCommMonObj B] (hB : IsAbelianScheme B) (hp : IsProjBy B.hom) {g : ℕ} (hg : SmoothOfRelativeDimension g B.hom)
+    {L O : LB B.left} (hL : L.IsLB) (hO : O.IsLB) (hΘ : ∃ t : LB.Gen (Theta B L), t.IsGen)
+    (hu : ∃ u : LB.Gen (abelian₂ B O), u.IsGen) {H : Over (Spec (CommRingCat.of V))} (j : H ⟶ B)
+    (hH : ∀ (T : Over (Spec (CommRingCat.of V))) (x : T ⟶ B), (∀ p : T.left, ∃ U : T.left.Opens, p ∈ U ∧
+      Triv ((LB.div (translDiff B L x) (O.pull (snd T B).left)).pull ((fst T B).left ⁻¹ᵁ U).ι)) ↔
+        ∃ y : T ⟶ H, y ≫ j = x)
+    (A : Type) [CommRing A] [IsNoetherianRing A] [IsLocalRing A] (a : Spec (CommRingCat.of A) ⟶ B.left)
+    (ϖ : A) (h₁ : ϖ ∈ nonZeroDivisors A) (h₂ : IsRegularLocalRing (A ⧸ Ideal.span {ϖ}))
+    (h₃ : ringKrullDim (A ⧸ Ideal.span {ϖ}) = g)
+    (K₀ : Type) [Field K₀] (g₀ : A →+* K₀) (hg₀ : IsLocalHom g₀)
+    (h₀ : ∃ y : Spec (CommRingCat.of K₀) ⟶ H.left, y ≫ j.left = Spec.map (CommRingCat.ofHom g₀) ≫ a)
+    (hE : ∀ (K : Type) [Field K] (φ : A →+* K), φ ϖ = 0 →
+      (∃ y : Spec (CommRingCat.of K) ⟶ H.left, y ≫ j.left = Spec.map (CommRingCat.ofHom φ) ≫ a) →
+      RingHom.ker φ = IsLocalRing.maximalIdeal A) :
+    ∃ I : Ideal A, IsSMulRegular (A ⧸ I) ϖ ∧ ∀ (R : Type) [CommRing R] [IsLocalRing R] (φ : A →+* R),
+      (∃ y : Spec (CommRingCat.of R) ⟶ H.left, y ≫ j.left = Spec.map (CommRingCat.ofHom φ) ≫ a) ↔
+        I ≤ RingHom.ker φ := by
+  obtain ⟨I, C, c₁, c₂, ⟨e⟩, hex, hI⟩ := exists_ideal_core hG B hB hp hg hL hO hΘ hu j hH A a K₀ g₀ hg₀ h₀
+    (Ideal.span {ϖ}) fun K _ φ hφ => hE K φ ((Ideal.span_singleton_le_iff_mem _).1 hφ)
+  exact ⟨I, (e.isSMulRegular_congr ϖ).1
+    (GlobalTheory.isSMulRegular_coker_dualMap_of_exact_fibres A ϖ g h₁ h₂ h₃ C c₁ c₂
+      fun p hϖ => hex p ((Ideal.span_singleton_le_iff_mem _).2 hϖ)), hI⟩
+
+theorem ker_eq_maximalIdeal_of_closed {X H : Scheme.{0}} (j : H ⟶ X) (h : H)
+    (J : Ideal (X.presheaf.stalk (j h)))
+    (cl : ∀ (z : H) (p : Spec (X.presheaf.stalk (j h))), J ≤ p.asIdeal →
+      j z = X.fromSpecStalk (j h) p → IsClosed ({j z} : Set X))
+    (K : Type) [Field K] (φ : X.presheaf.stalk (j h) →+* K) (hφ : J ≤ RingHom.ker φ)
+    (hy : ∃ y : Spec (CommRingCat.of K) ⟶ H, y ≫ j = Spec.map (CommRingCat.ofHom φ) ≫ X.fromSpecStalk (j h)) :
+    RingHom.ker φ = IsLocalRing.maximalIdeal _ := by
+  rcases hy with ⟨y, hy⟩
+  let p := Spec.map (CommRingCat.ofHom φ) (IsLocalRing.closedPoint K)
+  have hk : p.asIdeal = RingHom.ker φ := by
+    show Ideal.comap φ (IsLocalRing.maximalIdeal K) = _
+    rw [IsLocalRing.maximalIdeal_eq_bot, RingHom.ker_eq_comap_bot]
+  have e : j (y (IsLocalRing.closedPoint K)) = X.fromSpecStalk (j h) p :=
+    congrArg (fun q => q (IsLocalRing.closedPoint K)) hy
+  have hc := cl _ p (hφ.trans hk.ge) e
+  have hs : X.fromSpecStalk (j h) p ⤳ j h := by
+    have : X.fromSpecStalk (j h) p ∈ Set.range (X.fromSpecStalk (j h)) := ⟨p, rfl⟩
+    rwa [Scheme.range_fromSpecStalk] at this
+  have e' : j h = X.fromSpecStalk (j h) p := (hs.mem_closed hc e.symm).trans e
+  have hp' : p = IsLocalRing.closedPoint _ := (X.fromSpecStalk (j h)).isEmbedding.injective
+    (e'.symm.trans Scheme.fromSpecStalk_closedPoint.symm)
+  rw [← hk, hp']
+  rfl
 
 theorem isClosed_of_isFinite {V : Type} [CommRing V] [IsLocalRing V] {H : Scheme.{0}}
     (f : H ⟶ Spec (CommRingCat.of V)) [IsFinite f] (z : H) (hz : f z = IsLocalRing.closedPoint V) :
@@ -306,21 +359,8 @@ theorem flat_of_isFinite : GlobalFnsSt → ∀ (V : Type) [CommRing V] [IsDomain
   · rw [Scheme.fromSpecResidueField, Category.assoc, ← Scheme.SpecMap_stalkMap_fromSpecStalk,
       ← Spec.map_comp_assoc]
     rfl
-  · rintro K _ φ hφ ⟨y, hy⟩
-    let p := Spec.map (CommRingCat.ofHom φ) (IsLocalRing.closedPoint K)
-    have hk : p.asIdeal = RingHom.ker φ := by
-      show Ideal.comap φ (IsLocalRing.maximalIdeal K) = _
-      rw [IsLocalRing.maximalIdeal_eq_bot, RingHom.ker_eq_comap_bot]
-    have e : j.left (y (IsLocalRing.closedPoint K)) = B.left.fromSpecStalk (j.left h) p :=
-      congrArg (fun q => q (IsLocalRing.closedPoint K)) hy
-    have hc := cl _ p (hk.ge hφ) e
-    have hs : B.left.fromSpecStalk (j.left h) p ⤳ j.left h := by
-      have : B.left.fromSpecStalk (j.left h) p ∈ Set.range (B.left.fromSpecStalk (j.left h)) := ⟨p, rfl⟩
-      rwa [Scheme.range_fromSpecStalk] at this
-    have e' : j.left h = B.left.fromSpecStalk (j.left h) p := (hs.mem_closed hc e.symm).trans e
-    have hp' : p = IsLocalRing.closedPoint _ := (B.left.fromSpecStalk (j.left h)).isEmbedding.injective
-      (e'.symm.trans Scheme.fromSpecStalk_closedPoint.symm)
-    rw [← hk, hp']
-    rfl
+  · exact fun K _ φ hφ hy => ker_eq_maximalIdeal_of_closed j.left h (Ideal.span {σ ϖ})
+      (fun z p hp => cl z p ((Ideal.span_singleton_le_iff_mem _).1 hp)) K φ
+      ((Ideal.span_singleton_le_iff_mem _).2 hφ) hy
 
 end GlobalTheory.StabFlat

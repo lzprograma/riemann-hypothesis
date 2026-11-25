@@ -4,46 +4,7 @@ public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.TieDefs
 public import Formalism.PolynomialDimension.MultinomialDepth.SqrtFockGaussLatticeComparisonHolds
 public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ShapeCovering.CovDet
 public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ShapeCovering.CovWeyl
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.Interval.Finset.Box
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -173,19 +134,19 @@ theorem ta_mul_mem_PolAB {K : Type} [Field K] {k P Q : ℕ} (f1 f2 : MvPolynomia
 theorem ta_nuOf_vec (m P : ℕ) (hm : 1 ≤ m) : nuOf (letterWt m P true) = fun t => if t = 0 then P else 0 := by
   funext t
   unfold nuOf letterWt
-  simp only [if_true]
+  simp only [ite_true]
   have hl : Fin.last m ≠ 0 := by
     intro h
     have := congrArg Fin.val h
     simp at this
     omega
-  rw [if_neg hl]
+  rw [ite_eq_right hl]
   split_ifs <;> simp
 
 theorem ta_nuOf_cov (m Q : ℕ) : nuOf (letterWt m Q false) = fun t => if t = Fin.last m then 0 else Q := by
   funext t
   unfold nuOf letterWt
-  simp only [Bool.false_eq_true, if_false, if_true]
+  simp only [Bool.false_eq_true, ite_false, ite_true]
   split_ifs <;> simp
 
 theorem explicit_map_onto_two_letter_space : ExplicitMapOntoTwoLetters := by
@@ -198,7 +159,7 @@ theorem explicit_map_onto_two_letter_space : ExplicitMapOntoTwoLetters := by
     · rintro y ⟨F, hF, rfl⟩
       have ht := hF true
       have hf := hF false
-      simp only [if_true, Bool.false_eq_true, if_false] at ht hf
+      simp only [ite_true, Bool.false_eq_true, ite_false] at ht hf
       rw [ta_nuOf_vec m P hm] at ht
       rw [ta_nuOf_cov m Q] at hf
       obtain ⟨f1, h1, e1⟩ := (ShapeCovering.first_column_polynomials_characterize K m P (F true) hm).1 ht
@@ -222,12 +183,12 @@ theorem explicit_map_onto_two_letter_space : ExplicitMapOntoTwoLetters := by
         MvPolynomial (Fin (m + 1) × Fin (m + 1)) K), ?_, ?_⟩
     · intro b
       cases b
-      · simp only [Bool.false_eq_true, if_false, cond_false]
+      · simp only [Bool.false_eq_true, ite_false, cond_false]
         rw [ta_nuOf_cov m Q]
         refine (ShapeCovering.signed_minor_polynomials_characterize K m Q _ hm).2 ⟨_, ?_, rfl⟩
         have := ta_isHom_prodX (A := K) (fun i : Fin (m + 1) => v (Sum.inr i))
         rwa [show ∑ i : Fin (m + 1), v (Sum.inr i) = Q from (hf v hv).2] at this
-      · simp only [if_true, cond_true]
+      · simp only [ite_true, cond_true]
         rw [ta_nuOf_vec m P hm]
         refine (ShapeCovering.first_column_polynomials_characterize K m P _ hm).2 ⟨_, ?_, rfl⟩
         have := ta_isHom_prodX (A := K) (fun i : Fin (m + 1) => v (Sum.inl i))

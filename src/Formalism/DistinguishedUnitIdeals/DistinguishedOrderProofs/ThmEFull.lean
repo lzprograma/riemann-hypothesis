@@ -13,54 +13,10 @@ public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.ArcLift
 public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.LevelsModConstIffOfDownDown
 public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.LevelsModConstIffOfNoDown
 public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.LinExtEqZeroOfMemExt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.DescentEstimateDownUp, Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.BaseGamC, Formalism.DistinguishedUnitIdeals.FinalE, Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.ThmEFull
@@ -304,7 +260,7 @@ theorem extF_mem_of_levelCond {ϖ : O} (hϖ : Irreducible ϖ) {r : ℕ} (φ : (F
     obtain ⟨N, z, hz⟩ := h
     have e := congrArg (extF φ) hz
     simp only [map_smul, map_sub, extF_cst, smul_eq_mul] at e
-    rw [if_neg (by decide)]
+    rw [ite_eq_right (by decide)]
     apply mem_span_pow_of_uniformizer_mul O ϖ hϖ dd q hq _ (N + k)
     rw [Ideal.mem_span_singleton]
     exact ⟨extF φ z + PowerSeries.C (ϖ ^ N) * R * PowerSeries.C (φ d), by
@@ -313,7 +269,7 @@ theorem extF_mem_of_levelCond {ϖ : O} (hϖ : Irreducible ϖ) {r : ℕ} (φ : (F
     obtain ⟨N, c, z, hc, hz⟩ := h
     have e := congrArg (extF φ) hz
     simp only [map_smul, map_sub, map_add (f := _), extF_cst, smul_eq_mul] at e
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     have hH : q ^ H = q ^ (H - bb) * q ^ bb := by rw [← pow_add, Nat.sub_add_cancel (hkb rfl)]
     apply mem_span_pow_of_uniformizer_mul O ϖ hϖ dd q hq _ (N + k)
     rw [Ideal.mem_span_singleton]
@@ -324,7 +280,7 @@ theorem extF_mem_of_levelCond {ϖ : O} (hϖ : Irreducible ϖ) {r : ℕ} (φ : (F
     obtain ⟨N, c, z, hc, hz⟩ := h
     have e := congrArg (extF φ) hz
     simp only [map_smul, map_sub, map_add (f := _), extF_cst, smul_eq_mul] at e
-    rw [if_neg (by decide)]
+    rw [ite_eq_right (by decide)]
     apply mem_span_pow_of_uniformizer_mul O ϖ hϖ dd q hq _ (N + k)
     rw [Ideal.mem_span_singleton]
     exact ⟨extF φ c + q ^ bb * extF φ z + PowerSeries.C (ϖ ^ N) * R * PowerSeries.C (φ d), by
@@ -512,7 +468,7 @@ theorem descent_estimate_down : MD := by
         by_cases h : s = s₁
         · subst h; rw [hk₁]; decide
         · rw [hthin s (Finset.mem_range.1 hs) h]; decide
-      rw [if_neg this, pow_zero]
+      rw [ite_eq_right this, pow_zero]
     rw [hB, one_mul] at hw
     have hw1 : PowerSeries.C (ϖ ^ k) * w - PowerSeries.C (φ d) ∈ Ideal.span {p s₁} :=
       Ideal.span_singleton_le_span_singleton.mpr (dvd_pow_self _ hb) hw
@@ -541,12 +497,12 @@ theorem descent_estimate_down_up : MDU := by
     have hB : ∏ s ∈ Finset.range ell, p s ^ (if kind s = Kind.up then b s else 0) =
         p s₀ ^ b s₀ := by
       rw [Finset.prod_eq_single_of_mem s₀ (Finset.mem_range.2 hs₀) (fun s hs hne => ?_)]
-      · rw [if_pos hk₀]
+      · rw [ite_eq_left hk₀]
       · have : kind s ≠ Kind.up := by
           by_cases h : s = s₁
           · subst h; rw [hk₁]; decide
           · rw [hthin s (Finset.mem_range.1 hs) hne h]; decide
-        rw [if_neg this, pow_zero]
+        rw [ite_eq_right this, pow_zero]
     rw [hB] at hw
     exact dvd_of_down_up hϖ h01 hb (hP.1 s₀ hs₀) (hP.1 s₁ hs₁) (φ d) k w hw
   · rintro ⟨lam, ν, hν, rfl⟩
@@ -620,10 +576,6 @@ theorem cob_sum (L : Lat B n V) {ι : Type} (s : Finset ι) (y z : ι → ZMod n
   exact cob_add L (h c (Finset.mem_insert_self c s))
     (ih fun c' hc' => h c' (Finset.mem_insert_of_mem hc'))
 
-theorem lc_pow (B : Base O) (k : ℕ) : B.lc ^ k = C ((B.ℓ : O) ^ k) := by
-  unfold Base.lc
-  rw [map_pow]
-
 end
 
 theorem combine {O : Type} [CommRing O] {n : ℕ} {V₁ V₂ : Type} [AddCommGroup V₁]
@@ -681,7 +633,7 @@ theorem thmE_of (h1 : RhoExists) (h2 : RhoLin) (h3 : RhoFun) (h4 : Step1) : ThmE
       hZsmul (ac c) (Y1 c, Z1 c) (hZrho c hc (W1 c) (hW1 c hc) (Y1 c) (Z1 c) (hR c hc))
   · have e : 2 * rr + 4 * sig + 2 * a₀ + 2 * kap =
         (rr + 2 * sig + 2 * a₀ + 2 * kap) + (rr + 2 * sig) := by ring
-    simp only [lc_pow] at hcob ⊢
+    simp only [Formalism.ExponentWindows.E.IteratedPhiHomomorphisms.lc_pow] at hcob ⊢
     simp only [Prod.fst_sum, Prod.snd_sum]
     rw [e, combine h.f Cu.cuts (B.ℓ : O) _ (rr + 2 * sig) (rr + 2 * sig + 2 * a₀ + 2 * kap) rfl
         ac mc ham κ.1 yc Y1,

@@ -155,7 +155,7 @@ theorem lenCoker_mul_le (v : AddValuation R (WithTop ℝ)) (hv : ∀ x, 0 ≤ v 
       simp [Y, Z', Dm, er, Matrix.reindex_apply, hb, Matrix.mul_apply, Fintype.sum_sum_type]
     rw [h0, AddValuation.map_zero]
     exact le_top
-  · push_neg at hz
+  · push Not at hz
     have hx : ∀ b, ∃ x, ec.symm (f b) = Sum.inl x := by
       intro b
       rcases hfb : ec.symm (f b) with x | c
@@ -218,11 +218,11 @@ theorem frobSum_alt {d : ℕ} {l : ℕ} (hl : 1 < l) (n j j' : ℕ) (big : ZMod 
     · have hb : ¬ big (a + ((k + 1 : ℕ) : ZMod d)) := by
         rw [hpar, Nat.even_add_one]
         exact not_not.mpr hk
-      rw [hps _ hb, if_pos hk]
+      rw [hps _ hb, ite_eq_left hk]
     · have hb : big (a + ((k + 1 : ℕ) : ZMod d)) := by
         rw [hpar, Nat.even_add_one]
         exact hk
-      rw [hpb _ hb, if_neg hk]
+      rw [hpb _ hb, ite_eq_right hk]
       push_cast
       ring
   have hF : (fun k : ℕ => ((l : ℝ) ^ (k + 1))⁻¹ * (p (a + ((k + 1 : ℕ) : ZMod d)) : ℝ)) =
@@ -231,12 +231,12 @@ theorem frobSum_alt {d : ℕ} {l : ℕ} (hl : 1 < l) (n j j' : ℕ) (big : ZMod 
   have hev : ∀ m : ℕ, ((l : ℝ) ^ (2 * m + 1))⁻¹ * (if Even (2 * m) then (j' : ℝ) else (n : ℝ) + j) =
       ((j' : ℝ) * (l : ℝ)⁻¹) * (((l : ℝ)⁻¹) ^ 2) ^ m := by
     intro m
-    rw [if_pos (even_two_mul m), ← inv_pow, pow_succ, pow_mul]
+    rw [ite_eq_left (even_two_mul m), ← inv_pow, pow_succ, pow_mul]
     ring
   have hod : ∀ m : ℕ, ((l : ℝ) ^ (2 * m + 1 + 1))⁻¹ * (if Even (2 * m + 1) then (j' : ℝ) else (n : ℝ) + j) =
       (((n : ℝ) + j) * ((l : ℝ)⁻¹) ^ 2) * (((l : ℝ)⁻¹) ^ 2) ^ m := by
     intro m
-    rw [if_neg (Nat.not_even_two_mul_add_one m), ← inv_pow, pow_succ, pow_succ, pow_mul]
+    rw [ite_eq_right (Nat.not_even_two_mul_add_one m), ← inv_pow, pow_succ, pow_succ, pow_mul]
     ring
   have hs := summable_geometric_of_lt_one hq0 hq1
   unfold frobSum

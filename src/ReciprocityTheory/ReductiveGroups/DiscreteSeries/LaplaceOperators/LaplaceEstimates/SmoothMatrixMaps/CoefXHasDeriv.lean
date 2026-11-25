@@ -340,7 +340,7 @@ theorem tMapD_Eab {σ : Mat k r → (H →L[ℂ] H)} {D : Submodule ℂ H}
     ring
   rw [Finset.mul_sum, ← Finset.sum_add_distrib, Finset.sum_congr rfl (fun c _ => hL c),
     Finset.sum_sub_distrib, Finset.sum_ite_eq' Finset.univ a]
-  simp only [Finset.mem_univ, if_true]
+  simp only [Finset.mem_univ, ite_true]
   unfold tMapD
   have hR : ∀ c, cJd x₁ (Pi.single c 1) g * coefX σ x₀ w ((LemK.tensVd E a b f c : D) : H) g =
       cJd x₁ (Pi.single c 1) g * coefX σ x₀ w ((E a b (f c) : D) : H) g -
@@ -351,7 +351,7 @@ theorem tMapD_Eab {σ : Mat k r → (H →L[ℂ] H)} {D : Submodule ℂ H}
     · subst h; simp [coefX_sub, mul_sub]
     · simp [h]
   rw [Finset.sum_congr rfl (fun c _ => hR c), Finset.sum_sub_distrib, Finset.sum_ite_eq' Finset.univ b]
-  simp only [Finset.mem_univ, if_true, hyb]
+  simp only [Finset.mem_univ, ite_true, hyb]
 
 end TDAux
 end ReciprocityTheory.ChartRestriction.DS.Lap

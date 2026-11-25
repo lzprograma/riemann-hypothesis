@@ -1,6 +1,7 @@
 module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
+import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.MapRepComp
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RatTorsionFree
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.ResidueFlagPoints.ResLeMemDec
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutQ0
@@ -159,7 +160,7 @@ import Mathlib.RingTheory.PiTensorProduct
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.VWPtAut, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AdjointVanishingGsp4RigidPoint, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.SolQ, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicOfGsp4RigidSolvableGalois, Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.UnipotentIdempotents.EqOfMem, Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.UnipotentIdempotents.EqOfKer, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TLinkEx, Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.Number, Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.MapRepComp, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.ExistsCmFieldTwistH1, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.RigSp4
 
 -- ===== clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.VWPtAut =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.VWPtAut", "h": "module\n\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RatTorsionFree\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.ResidueFlagPoints.ResLeMemDec\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutQ0\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TAlgOfCyc\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TwistInvarianceAutomorphic\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.VWBridge\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.VWCsdOf\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.WinTop\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.ResidueFlagPoints.PtPair\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.ResidueFlagPoints.ResLeCont\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.ResidueFlagPoints.TwWts\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.SphericalOfHasSat\n\n"}
+-- clump-header: {"m": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.VWPtAut", "h": "module\n\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
 section -- clump:auto
 @[expose] public section
 
@@ -208,7 +209,7 @@ theorem UpperTheory.GalN.V.point_automorphy_w_of_gsp_cusp_sub_rank_four :
   rw [h4] at h3
   obtain ⟨P, hPair⟩ := ptPair K n r hr
   exact _root_.UpperTheory.GalN.V.mkCsd'_alt (_root_.UpperTheory.GalN.V.csdOf0_alt hP (W.Lp T.L) T.L Ω inferInstance l ι 4 (by norm_num) _ K.s.c P K.s.hc h3 hPair) fun _ =>
-    h4 ▸ _root_.UpperTheory.V.Z.Win.WitA.witness_twist_algebraic_character hP.toClassicalTheorems h2 ((twc_cont K n).mul hκ.inv) ⟨π, hreg, hatt⟩ hW
+    h4 ▸ _root_.UpperTheory.V.Z.Win.WitA.witness_twist_algebraic_character hP.toClassicalTheorems h2 hW
 end
 end -- clump:auto
 end -- clump:auto
@@ -225,12 +226,6 @@ section -- clump:auto
 section
 open UpperTheory.GalN.V
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws GlobalTheory.GalOfCusp UpperTheory.V.Th
-section Alg
-open Matrix
-end Alg
-section Gal
-variable {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l}
-end Gal
 section Core
 open scoped Matrix
 
@@ -336,7 +331,7 @@ theorem adjoint_vanishing_gsp4_rigid_point (hU : _root_.UpperTheory.V.Ws.Unramif
   have hirr₀ : U3.MatIrr ⊤ (W.mat ρ) := fun N hN => (_root_.UpperTheory.Reformulated.B.Qe4.irrIffSpan (W.mat ρ)).2 hfull' N fun g v hv => hN g trivial v hv
   have hfree : Free K.V.frame fun v => (Link.pt φ y).psi v := fun v : W.Vl l T.L => by
     have : IsGalois ℚ Ω := {}
-    obtain ⟨g, hg, hc, α, hα, hcp⟩ := hf (K.s.A v) (by simpa using (K.s.hA v _).2 v.2)
+    obtain ⟨g, hg, hc, α, hα, hcp⟩ := hf (K.s.A v) (by convert (K.s.hA v _).2 v.2; simp)
     have hi : T.L.fixingSubgroup.index ≠ 0 := by
       rw [← IntermediateField.finrank_eq_fixingSubgroup_index Ω T.L]
       exact Module.finrank_pos.ne'
@@ -428,14 +423,6 @@ theorem adjoint_vanishing_gsp4_rigid_point (hU : _root_.UpperTheory.V.Ws.Unramif
           ring
         rw [e, div_pow, hmk v i g hg, hmk v j g hg, div_one])
 end Core
-section Rg
-open scoped Matrix TensorProduct
-section BK
-variable {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω] {l : ℕ} [Fact l.Prime]
-  {C V : Type} [CommRing C] [Algebra ℚ_[l] C] [AddCommGroup V] [Module C V] [Module ℚ_[l] V]
-  [IsScalarTower ℚ_[l] C V] [TopologicalSpace V] [IsTopologicalAddGroup V] [ContinuousConstSMul C V]
-end BK
-end Rg
 end
 end -- clump:auto
 end -- clump:auto
@@ -454,7 +441,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.SolQ =====
 
 -- ===== clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicOfGsp4RigidSolvableGalois =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicOfGsp4RigidSolvableGalois", "h": "module\n\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RatTorsionFree\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdTransfer\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.SolQ\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.CuspUnique\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AutomorphicCharacters.AuSign\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AutomorphicCharacters.PairJAdj\nimport Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.IsAlgClosureField\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.OrdZero\n\n"}
+-- clump-header: {"m": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicOfGsp4RigidSolvableGalois", "h": "module\n\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
 section -- clump:auto
 @[expose] public section
 
@@ -463,9 +450,6 @@ section -- clump:auto
 
 section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws GlobalTheory.GalOfCusp UpperTheory.V.Th
-section Alg
-open Matrix
-end Alg
 section Gal
 variable {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l}
 theorem automorphic_of_gsp4_rigid_solvable_galois (H : _root_.UpperTheory.V.Af.HypothesesH') (K L : IntermediateField ℚ Ω) [NumberField K] [NumberField L] [IsCMField K] [IsCMField L]
@@ -491,17 +475,6 @@ theorem automorphic_of_gsp4_rigid_solvable_galois (H : _root_.UpperTheory.V.Af.H
     inferInstance inferInstance l ι 4 (by norm_num) (r.toHomUnits.comp (Af.resG ℚ K Ω)) θ
     (hr.comp (Af.continuous_restrictScalarsHom ℚ K Ω)) hirr hθ (auSign _) ⟨cc, _, hc, hp⟩).1 haut
 end Gal
-section Core
-variable {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l}
-end Core
-section Rg
-open scoped Matrix TensorProduct
-section BK
-variable {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω] {l : ℕ} [Fact l.Prime]
-  {C V : Type} [CommRing C] [Algebra ℚ_[l] C] [AddCommGroup V] [Module C V] [Module ℚ_[l] V]
-  [IsScalarTower ℚ_[l] C V] [TopologicalSpace V] [IsTopologicalAddGroup V] [ContinuousConstSMul C V]
-end BK
-end Rg
 end
 end -- clump:auto
 end -- clump:auto
@@ -813,86 +786,7 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws GlobalTheory.GalOfCusp UpperTheory.V.Th
-
-private theorem mapRep_comp {H R R' R'' : Type} [Group H] [CommRing R] [CommRing R'] [CommRing R''] (f : R →+* R') (g : R' →+* R'')
-    (r : H →* M4 R) : mapRep (g.comp f) r = mapRep g (mapRep f r) := rfl
-
-private theorem conj_comp {H H' K : Type} [Group H] [Group H'] [CommRing K] {r r' : H →* M4 K} (h : IsConj4 r r') (φ : H' →* H) :
-    IsConj4 (r.comp φ) (r'.comp φ) := h.imp fun _ hv g => hv (φ g)
-
-private theorem irr_sub {Γ V K k : Type} [Group Γ] [CommRing V] [Field K] [IsAlgClosed K] [CharZero K] [Field k]
-    (f : V →+* K) (hf : Function.Injective f) (red : V →+* k) (r : Γ →* M4 V) (χ : Fin 4 → Γ →* kˣ)
-    (htr : ∀ g, red (r g).trace = ∑ i, (χ i g : k)) (H : Subgroup Γ) [H.Normal] (hab : ∀ a b : Γ, a * b * a⁻¹ * b⁻¹ ∈ H)
-    (hd : ∀ i j, i ≠ j → ∃ g ∈ H, χ i g ≠ χ j g) (hi : Irr (mapRep f r)) : Irr ((mapRep f r).comp H.subtype) := by
-  by_contra hred
-  have hirr := ((irrIff K).1 _).1 hi
-  obtain ⟨φ, hφ1, hH, -, M, hM⟩ := UpperTheory.V.U3.exists_selfTwist (mapRep f r).toHomUnits H hab
-    (fun W hW => hirr.2.2 W le_top fun g => hW g trivial)
-    (fun h => hred (((irrIff K).1 _).2 ⟨top_ne_bot, fun _ _ _ => Submodule.mem_top, fun W _ hW => h W fun g hg => hW ⟨g, hg⟩⟩))
-  have hM' : ∀ g, (M : M4 K) * ((φ g : K) • mapRep f r g) = mapRep f r g * M := fun g => hM g trivial
-  obtain ⟨g0, hg0⟩ := DFunLike.ne_iff.1 hφ1
-  have h0 : ∀ h : H, ∑ i, (χ i g0 : k) * χ i h = 0 := by
-    intro h
-    have h1 : (φ (g0 * h) : K) • mapRep f r (g0 * h) = (M⁻¹ : (M4 K)ˣ) * mapRep f r (g0 * h) * M := by
-      rw [mul_assoc, ← hM', Units.inv_mul_cancel_left]
-    have h2 := congrArg Matrix.trace h1
-    rw [Matrix.trace_units_conj', Matrix.trace_smul, map_mul φ, (MonoidHom.mem_ker.1 (hH h.2)), mul_one, smul_eq_mul] at h2
-    have h3 : (mapRep f r (g0 * h)).trace = 0 := by
-      by_contra h4
-      exact hg0 (Units.ext (mul_right_cancel₀ h4 (h2.trans (one_mul _).symm)))
-    have h5 : (r (g0 * h)).trace = 0 := hf (by rw [map_zero, ← h3]; simp only [Matrix.trace, Matrix.diag, map_sum f, mapRep_apply])
-    have h6 := htr (g0 * h)
-    rw [h5, map_zero] at h6
-    simpa using h6.symm
-  have hli := (linearIndependent_monoidHom H k).comp (fun i => (Units.coeHom k).comp ((χ i).comp H.subtype)) (by
-    intro i j hij
-    by_contra hne
-    obtain ⟨g, hg, hx⟩ := hd i j hne
-    have := DFunLike.congr_fun hij (⟨g, hg⟩ : H)
-    exact hx (Units.ext this))
-  have := Fintype.linearIndependent_iff.1 hli (fun i => (χ i g0 : k)) (by
-    ext h
-    simpa using h0 h) 0
-  exact (χ 0 g0).ne_zero this
-
-private theorem irr_conj {H K : Type} [Group H] [Field K] {r r' : H →* M4 K} (h : IsConj4 r r') (hi : Irr r) : Irr r' := by
-  obtain ⟨u, hu⟩ := h
-  rw [Irr, eq_top_iff]
-  intro X _
-  have key : ∀ Y ∈ Submodule.span K (Set.range r), (u : M4 K) * Y * (u⁻¹ : (M4 K)ˣ) ∈ Submodule.span K (Set.range r') := by
-    intro Y hY
-    induction hY using Submodule.span_induction with
-    | mem x hx => obtain ⟨g, rfl⟩ := hx; exact Submodule.subset_span ⟨g, hu g⟩
-    | zero => simp
-    | add x y _ _ hx hy => rw [mul_add, add_mul]; exact add_mem hx hy
-    | smul a x _ hx => rw [mul_smul_comm, smul_mul_assoc]; exact Submodule.smul_mem _ a hx
-  have := key ((u⁻¹ : (M4 K)ˣ) * X * u) (hi ▸ Submodule.mem_top)
-  simpa [mul_assoc] using this
-
-private theorem irr_map {H K K' : Type} [Group H] [Field K] [Field K'] (e : K ≃+* K') {r : H →* M4 K} (hi : Irr r) :
-    Irr (mapRep (e : K →+* K') r) := by
-  rw [Irr, eq_top_iff]
-  intro X _
-  have key : ∀ Y ∈ Submodule.span K (Set.range r), Y.map e ∈ Submodule.span K' (Set.range (mapRep (e : K →+* K') r)) := by
-    intro Y hY
-    induction hY using Submodule.span_induction with
-    | mem x hx => obtain ⟨g, rfl⟩ := hx; exact Submodule.subset_span ⟨g, rfl⟩
-    | zero => simp
-    | add x y _ _ hx hy => rw [Matrix.map_add _ (map_add e)]; exact add_mem hx hy
-    | smul a x _ hx =>
-      have : (a • x).map e = e a • x.map e := by ext i j; simp
-      rw [this]; exact Submodule.smul_mem _ _ hx
-  have := key (X.map e.symm) (hi ▸ Submodule.mem_top)
-  have e2 : (X.map e.symm).map e = X := by ext i j; simp
-  rwa [e2] at this
-
-private theorem conj_map {H K K' : Type} [Group H] [Field K] [Field K'] (e : K →+* K') {r r' : H →* M4 K} (h : IsConj4 r r') :
-    IsConj4 (mapRep e r) (mapRep e r') := by
-  obtain ⟨u, hu⟩ := h
-  refine ⟨Units.map (e.mapMatrix : M4 K →+* M4 K').toMonoidHom u, fun g => ?_⟩
-  show e.mapMatrix (r' g) = e.mapMatrix (u : M4 K) * e.mapMatrix (r g) * e.mapMatrix ((u⁻¹ : (M4 K)ˣ) : M4 K)
-  rw [hu, map_mul, map_mul]
+open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Ws.MapRepHelpers GlobalTheory.GalOfCusp UpperTheory.V.Th
 
 private theorem conj_trans {H R : Type} [Group H] [CommRing R] {r r' r'' : H →* M4 R} (h : IsConj4 r r') (h' : IsConj4 r' r'') :
     IsConj4 r r'' := by
@@ -901,83 +795,6 @@ private theorem conj_trans {H R : Type} [Group H] [CommRing R] {r r' r'' : H →
   exact ⟨v * u, fun g => by rw [hv, hu, mul_inv_rev, Units.val_mul, Units.val_mul]; simp only [mul_assoc]⟩
 
 variable {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l}
-
-private theorem comm_ab (E : Type) [Field E] [Algebra ℚ E] [Algebra E Ω] [IsScalarTower ℚ E Ω] [IsAbelianGalois ℚ E]
-    (a b : G ℚ Ω) (x : E) : (a * b * a⁻¹ * b⁻¹) (algebraMap E Ω x) = algebraMap E Ω x := by
-  have h : AlgEquiv.restrictNormalHom E (a * b * a⁻¹ * b⁻¹) = 1 := by
-    simp only [map_mul, map_inv]
-    rw [IsMulCommutative.is_comm.comm (AlgEquiv.restrictNormalHom E a)]
-    group
-  rw [← AlgEquiv.restrictNormal_commutes]
-  exact congrArg (algebraMap E Ω) (DFunLike.congr_fun h x)
-
-private theorem comm_L {D : Raw Ω c} (T : Tower D) (a b : G ℚ Ω) : a * b * a⁻¹ * b⁻¹ ∈ T.L.fixingSubgroup := by
-  haveI : IsGalois ℚ Ω := {}
-  rw [T.hL, IntermediateField.fixingSubgroup_sup]
-  refine ⟨?_, ?_⟩
-  · exact fun x => comm_ab T.F a b x
-  · have h2 : T.K.fixingSubgroup.index = 2 := (IntermediateField.finrank_eq_fixingSubgroup_index Ω T.K).symm.trans T.degK
-    show _ ∈ T.K.fixingSubgroup
-    simp only [Subgroup.mul_mem_iff_of_index_two h2, inv_mem_iff]
-    tauto
-
-private theorem rt_wt {O Γ : Type} [CommRing O] [Group Γ] (Φ : Fr O Γ) (g : Γ) (h : Φ.χ 0 g * Φ.χ 3 g = Φ.χ 1 g * Φ.χ 2 g)
-    (i j : Fin 4) : Φ.rt (wt i j) g * Φ.χ j g = Φ.χ i g := by
-  have h3 : Φ.χ 3 g = (Φ.χ 0 g)⁻¹ * (Φ.χ 1 g * Φ.χ 2 g) := by rw [← h, inv_mul_cancel_left]
-  show (Φ.χ 0 g * (Φ.χ 1 g)⁻¹) ^ (wt i j).1 * (Φ.χ 0 g * (Φ.χ 2 g)⁻¹) ^ (wt i j).2 * Φ.χ j g = Φ.χ i g
-  apply Additive.ofMul.injective
-  have h4 := congrArg Additive.ofMul h3
-  simp only [ofMul_mul, ofMul_inv, ofMul_zpow] at h4 ⊢
-  fin_cases i <;> fin_cases j <;> simp [wt, lamW, muW, h4] <;> abel
-
-private theorem dist_L {D : Raw Ω c} (T : Tower D) (hT : T.Ok) (i j : Fin 4) (hij : i ≠ j) :
-    ∃ g ∈ T.L.fixingSubgroup, Raw.bar (D.ps i) g ≠ Raw.bar (D.ps j) g := by
-  have key : ∀ i j, i ≠ j → ∃ g ∈ T.L.fixingSubgroup, Raw.bar (chi D T.pr i) g ≠ Raw.bar (chi D T.pr j) g := by
-    intro i j hij
-    obtain ⟨g, hg, hne⟩ := hT.g3 (wt i j) (by revert i j; decide)
-    refine ⟨resQ T.F g, ?_, fun h => hne ?_⟩
-    · rw [T.hL, IntermediateField.fixingSubgroup_sup]
-      exact ⟨fun x => g.commutes x, hg⟩
-    · have h1 := rt_wt (T.fr ∅) g (by
-        show chi D T.pr 0 _ * chi D T.pr 3 _ = chi D T.pr 1 _ * chi D T.pr 2 _
-        cases T.pr <;> simp [chi, lab, Raw.ps, Raw.th, mul_comm]) i j
-      have h2 := congrArg (fun x : c.Oˣ => residue c.O (x : c.O)) h1
-      simp only [Units.val_mul, map_mul] at h2
-      have h3 : Raw.bar (chi D T.pr j) (resQ T.F g) ≠ 0 := ((chi D T.pr j _).isUnit.map (residue c.O)).ne_zero
-      exact mul_right_cancel₀ h3 ((h2.trans h).trans (one_mul _).symm)
-  have hl : ∀ i, lab T.pr (lab T.pr i) = i := by cases T.pr <;> decide
-  have := key (lab T.pr i) (lab T.pr j) fun h => hij (by rw [← hl i, h, hl])
-  simpa only [chi, hl] using this
-
-private theorem ps_wt_any {D : Raw Ω c} (h : D.Good) {A : ValuationSubring Ω} (hA : A.valuation (l : Ω) < 1) (i : Fin 4)
-    {s : G ℚ Ω} (hs : s ∈ Ine (F := ℚ) A) (h1 : s ∈ D.ψ.ker) (h2 : s ∈ D.om.ker) :
-    D.ps i s = chiO ℚ Ω l c.O s ^ D.wts4 i := by
-  have hl : l.Prime := Fact.out
-  obtain ⟨u, -, hu⟩ := (UpperTheory.V.Chr.placesQ Ω).2.2 l A _ hl hA (h.pl_over l hl)
-  have e : ∀ γ : G ℚ Ω →* c.Oˣ, γ (u⁻¹ * s * u) = γ s := fun γ => by
-    rw [map_mul, map_mul, map_inv, mul_right_comm, inv_mul_cancel, one_mul]
-  have h3 := (facts D h).2.2.2.1 i (u⁻¹ * s * u) ⟨⟨hu s hs, (e _).trans h1⟩, (e _).trans h2⟩
-  rwa [e, e] at h3
-
-private theorem irr_L {D : Raw Ω c} (T : Tower D) (hT : T.Ok) (𝔞 : Amb l) (f : 𝔞.V →+* PadicAlgCl l) (hf : Function.Injective f)
-    (r : G ℚ Ω →* M4 𝔞.V) (hr : ∀ g i j, r g i j - 𝔞.a c (D.r0 g i j) ∈ maximalIdeal 𝔞.V) (hi : Irr (mapRep f r)) :
-    Irr ((mapRep f r).comp T.L.fixingSubgroup.subtype) := by
-  haveI : T.L.fixingSubgroup.Normal := ⟨fun n hn g => by
-    have := mul_mem (comm_L T g n) hn
-    rwa [inv_mul_cancel_right] at this⟩
-  refine irr_sub f hf (residue 𝔞.V) r
-    (fun i => (Units.map (𝔞.red c).toMonoidHom).comp (D.ps i)) (fun g => ?_) _ (comm_L T) (fun i j hij => ?_) hi
-
-  · rw [Matrix.trace, map_sum]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    have h1 : residue 𝔞.V (r g i i) = residue 𝔞.V (𝔞.a c (D.r0 g i i)) := Ideal.Quotient.eq.2 (hr g i i)
-    have h2 : D.r0 g i i = D.ps i g := Matrix.diagonal_apply_eq _ i
-    rw [h2] at h1
-    exact h1
-  · obtain ⟨g, hg, hne⟩ := dist_L T hT i j hij
-    refine ⟨g, hg, fun h => hne ((𝔞.j c).injective ?_)⟩
-    have h1 : 𝔞.red c (D.ps i g) = 𝔞.red c (D.ps j g) := congrArg Units.val h
-    exact h1
 
 private theorem point (hC : CohomologyHyp) {D : Raw Ω c} (T : Tower D) (hF : T.Fit) (𝔞 : Amb l)
     {P : PD T.ι (G T.F Ω) 𝔞.V} (hs : 𝔞.Small P) (hp : (T.fr ∅).IsPair (𝔞.a c) P)
@@ -1204,15 +1021,6 @@ section -- clump:auto
 
 section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws GlobalTheory.GalOfCusp UpperTheory.V.Th
-section Alg
-open Matrix
-end Alg
-section Gal
-variable {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l}
-end Gal
-section Core
-variable {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l}
-end Core
 section Rg
 open scoped Matrix TensorProduct
 private theorem rg_twist {Γ k V : Type} [Group Γ] [CommRing k] [AddCommGroup V] [Module k V] (A : Representation k Γ V)

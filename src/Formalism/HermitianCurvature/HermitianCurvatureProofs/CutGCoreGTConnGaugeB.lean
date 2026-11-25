@@ -1,54 +1,10 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsAdmissibleSplittingCharPairMulTwist
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_GCore_GTConnCut
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Analysis.Calculus.FDeriv.Star
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateCommuteRaisingConstant
 
 @[expose] public section
@@ -87,30 +43,7 @@ theorem fnZ_val {v : ℂ → ℂ} (hv : ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop
   simp [fnZ, MA.toSm, h]
 
 theorem coordQ_unit (hTT : 0 ≤ P.TT) (v : M.Var P.r) : IsUnit (coordQ v : SmQ P.r P.TT) := by
-  have hne : ∀ x ∈ MA.Qset P.r P.TT, MA.coordE v x ≠ 0 := by
-    intro x hx
-    have hz : MA.zE v x ≠ 0 := by
-      unfold MA.zE
-      split_ifs with h
-      · exact hx.1 _
-      · intro h0
-        have h1 : P.TT < Complex.normSq x.2 := hx.2
-        rw [h0, Complex.normSq_zero] at h1
-        linarith
-    unfold MA.coordE
-    split_ifs
-    · exact hz
-    · exact (map_ne_zero _).mpr hz
-  have hmem : (fun q : MA.Qp P.r P.TT => (MA.coordE v q.1)⁻¹) ∈ MA.smSub P.r P.TT := by
-    show ContDiffOn ℝ MA.sm (MA.ext (fun q : MA.Qp P.r P.TT => (MA.coordE v q.1)⁻¹)) (MA.Qset P.r P.TT)
-    have h1 : ContDiffOn ℝ MA.sm (fun x => (MA.coordE v x)⁻¹) (MA.Qset P.r P.TT) :=
-      (MA.coordE_smooth v).contDiffOn.inv hne
-    exact h1.congr (fun x hx => by simp [MA.ext, hx])
-  refine isUnit_iff_exists_inv.mpr ⟨⟨_, hmem⟩, ?_⟩
-  apply Subtype.ext
-  funext q
-  show MA.coordE v q.1 * (MA.coordE v q.1)⁻¹ = 1
-  exact mul_inv_cancel₀ (hne q.1 q.2)
+  apply _root_.Formalism.FourierDecayAlt.P.MAx3.I4.unitQ <;> assumption
 
 theorem dzQ_apply (hTT : 0 ≤ P.TT) (f : SmQ P.r P.TT) (q : Qp P.r P.TT) :
     ((dzQ P f : SmQ P.r P.TT) : Qp P.r P.TT → ℂ) q = wirt M.vz (MA.ext (f : Qp P.r P.TT → ℂ)) q.1 := by
@@ -184,7 +117,7 @@ theorem fnZ_ev_eq {v : ℂ → ℂ} (hv : ContDiffOn ℝ ((⊤ : ℕ∞) : WithT
   have hopen : IsOpen (MA.Qset P.r P.TT) :=
     h1.inter (isOpen_lt continuous_const (Complex.continuous_normSq.comp continuous_snd))
   filter_upwards [hopen.mem_nhds q.2] with x hx
-  simp only [MA.ext, dif_pos hx]
+  simp only [MA.ext, dite_eq_left hx]
   exact fnZ_val P hv ⟨x, hx⟩
 
 theorem fderiv_snd_comp {v : ℂ → ℂ} (hv : ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) v (Ann P)) (q : Qp P.r P.TT) :

@@ -192,8 +192,7 @@ theorem hint_log_le (hd : d.AxH 𝒜) {c : ι} {G : WT} {f : A c} (hf : f ∈ �
     ∀ P ∈ PT (Ω := Ω c) sg, Real.log (d.nrm c G f P) ≤ Real.log B := fun P hP => Real.log_le_log (hd.nrm_pos c P hf hf0) (hB P hP)
 
 theorem hint_thp_ne (hd : d.AxH 𝒜) (c : ι) : ∃ k, d.thp k c ≠ 0 := by
-  by_contra hall
-  push_neg at hall
+  by_contra! hall
   obtain ⟨e, he, -, h3⟩ := hd.a4
   obtain ⟨q, hq, p, hp⟩ := h3 1
   apply hq c

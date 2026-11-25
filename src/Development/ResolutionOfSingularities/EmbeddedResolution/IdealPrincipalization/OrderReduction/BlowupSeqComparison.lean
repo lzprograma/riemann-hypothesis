@@ -6,45 +6,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.Resolutio
 public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
 public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -56,49 +18,14 @@ noncomputable section
 
 namespace FunctorialResolution.EmbeddedResolution
 
-private theorem range_iso_hom_comp {X Y Z : Scheme.{u}} (e : X ≅ Y) (g : Y ⟶ Z) :
-    Set.range (e.hom ≫ g).base = Set.range g.base := by
-  apply Set.Subset.antisymm
-  · rintro _ ⟨x, rfl⟩
-    exact ⟨e.hom.base x, rfl⟩
-  · rintro _ ⟨y, rfl⟩
-    refine ⟨e.inv.base y, ?_⟩
-    show g.base (e.hom.base (e.inv.base y)) = g.base y
-    rw [Scheme.inv_hom_apply]
-
-private theorem comap_hom_comap_inv {X Y : Scheme.{u}} (e : X ≅ Y) (I : Y.IdealSheafData) :
-    (I.comap e.hom).comap e.inv = I := by
-  rw [← Scheme.IdealSheafData.comap_comp, e.inv_hom_id, Scheme.IdealSheafData.comap_id]
-
-private theorem mem_support_of_le {X : Scheme.{u}} {I J : X.IdealSheafData} (h : I ≤ J) (x : ↥X)
-    (hx : x ∈ J.support) : x ∈ I.support :=
-  Scheme.IdealSheafData.support_antitone h hx
-
-private theorem exists_subschemeι_base_eq {X : Scheme.{u}} (I : X.IdealSheafData) (x : ↥X)
-    (hx : x ∈ I.support) : ∃ z, I.subschemeι.base z = x := by
-  have hmem : x ∈ Set.range ⇑I.subschemeι := by
-    rw [Scheme.IdealSheafData.range_subschemeι I]
-    exact hx
-  obtain ⟨z, hz⟩ := hmem
-  exact ⟨z, hz⟩
-
-private theorem exists_pullbackFst_base_eq {X Y S : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (x : ↥X)
-    (hx : f.base x ∈ Set.range g.base) : ∃ z, (Limits.pullback.fst f g).base z = x := by
-  have h := Scheme.Pullback.range_fst f g
-  rw [Set.ext_iff] at h
-  exact (h x).mpr hx
-
 private theorem exists_preimage_of_isPullback {X' X S : Scheme.{u}} {g : X' ⟶ X} {s : S ⟶ X}
     {Q : Scheme.{u}} {p : Q ⟶ S} {q : Q ⟶ X'} (h : IsPullback p q s g) (x : ↥S)
     (hx : s.base x ∈ Set.range g.base) : ∃ y : ↥Q, p.base y = x := by
-  have h1 : Set.range p.base = Set.range (Limits.pullback.fst s g).base := by
-    rw [← h.isoPullback_hom_fst]
-    exact range_iso_hom_comp h.isoPullback _
-  obtain ⟨z, hz⟩ := exists_pullbackFst_base_eq s g x hx
-  have hmem : x ∈ Set.range p.base := by
-    rw [h1]
-    exact ⟨z, hz⟩
-  exact hmem
+  obtain ⟨z, hz⟩ := (Scheme.Pullback.range_fst s g).ge hx
+  refine ⟨h.isoPullback.inv.base z, ?_⟩
+  have h1 := congrArg (fun φ : Q ⟶ S => (h.isoPullback.inv ≫ φ).base z) h.isoPullback_hom_fst
+  rw [← Category.assoc, h.isoPullback.inv_hom_id, Category.id_comp] at h1
+  exact h1.symm.trans hz
 
 def BlowupLiftEqOnControlledTransform : Prop :=
   ∀ (X Y S T : Scheme.{u}) (π : Y ⟶ X) (Z : X.IdealSheafData), Blowup.IsBlowupAlongIdealSheaf π Z →
@@ -197,8 +124,9 @@ theorem BlowupSeqLevelIso.center_comap_iso_hom_eq (hd : BlowupSeqComparison f g 
   have hkey : ∀ y : ↥(C.schemeAt i), y ∈ (C.center i).support →
       (σ₁ i hi.le).base y = st.iso.inv.base ((σ₂ i hi.le).base y) := by
     intro y hy
-    have hy2 : y ∈ (a i).support := mem_support_of_le (hd.ideal_le_center i hi) y hy
-    obtain ⟨z, hz⟩ := exists_subschemeι_base_eq (a i) y hy2
+    obtain ⟨z, (hz : (a i).subschemeι.base z = y)⟩ :=
+      (Scheme.IdealSheafData.range_subschemeι (a i)).ge
+        (Scheme.IdealSheafData.support_antitone (hd.ideal_le_center i hi) hy)
     have e1 : ((a i).subschemeι ≫ σ₁ i hi.le).base z
         = ((a i).subschemeι ≫ σ₂ i hi.le ≫ st.iso.inv).base z := by
       rw [st.compat hi.le]
@@ -281,7 +209,8 @@ theorem BlowupSeqLevelIso.subschemeι_comp_eq_comp_isoSucc_inv (hd : BlowupSeqCo
   intro hj
   have hcen1 : C.center i = (B₁.center i).comap (σ₁ i hi.le) := hd.center_C₁ i hi
   have hinv : (B₁.center i).comap st.iso.inv = B₂.center i := by
-    rw [← BlowupSeqLevelIso.center_comap_iso_hom_eq hd hi st, comap_hom_comap_inv]
+    rw [← BlowupSeqLevelIso.center_comap_iso_hom_eq hd hi st,
+      ← Scheme.IdealSheafData.comap_comp, st.iso.inv_hom_id, Scheme.IdealSheafData.comap_id]
   have hcen2 : (B₁.center i).comap (σ₂ i hi.le ≫ st.iso.inv) = C.center i := by
     rw [Scheme.IdealSheafData.comap_comp, hinv, ← hd.center_C₂ i hi]
   have hZeq : (B₁.center i).comap (σ₁ i hi.le)

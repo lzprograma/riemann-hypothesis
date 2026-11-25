@@ -167,7 +167,3 @@ theorem objMap_cancel (m : ObjMap o' o f) (n : ObjMap o'' o (f' ≫ f)) :
 end
 
 end GlobalTheory.ObjComp
-
-namespace GlobalTheory
-
-end GlobalTheory

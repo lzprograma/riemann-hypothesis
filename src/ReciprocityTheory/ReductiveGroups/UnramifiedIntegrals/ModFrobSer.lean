@@ -24,7 +24,7 @@ theorem xp_zmod {p : ℕ} (hp : p.Prime) (f : PowerSeries (ZMod p)) : xp p f = f
   rw [← key, ← Polynomial.coe_pow, Polynomial.coeff_coe, ← ZMod.expand_card, Polynomial.coeff_expand hp.pos]
   simp only [xp, PowerSeries.coeff_mk]
   split_ifs with h
-  · rw [PowerSeries.coeff_trunc, if_pos (Nat.lt_succ_of_le (Nat.div_le_self n p))]
+  · rw [PowerSeries.coeff_trunc, ite_eq_left (Nat.lt_succ_of_le (Nat.div_le_self n p))]
   · rfl
 
 theorem exists_C_mul_of_map_eq_zero {p : ℕ} (h : PowerSeries ℤ)

@@ -71,16 +71,16 @@ def stdPair (Lc : LocF q F) (a : Fin n) : LocF.PP Lc n :=
    { lat := ⟨1, fun x => by simp⟩
      add := fun x hx y hy => by
        dsimp only at hx hy ⊢
-       rw [dif_pos hx, dif_pos hy, dif_pos ((Lc.std n).add_mem hx hy), ← map_add (f := _)]; rfl
+       rw [dite_eq_left hx, dite_eq_left hy, dite_eq_left ((Lc.std n).add_mem hx hy), ← map_add (f := _)]; rfl
      smul := fun c x hx => by
        dsimp only at hx ⊢
-       rw [dif_pos hx, dif_pos ((Lc.std n).smul_mem c hx), ← map_mul]; rfl
-     off := fun x hx => dif_neg hx
+       rw [dite_eq_left hx, dite_eq_left ((Lc.std n).smul_mem c hx), ← map_mul]; rfl
+     off := fun x hx => dite_eq_right hx
      ne := by
        have h : (fun _ => 1 : Fin n → Lc.K) ∈ Lc.std n := (mem_std _).2 fun _ => Lc.O.one_mem
        refine ⟨fun _ => 1, ?_⟩
        dsimp only
-       rw [dif_pos h]
+       rw [dite_eq_left h]
        exact (map_one Lc.res).trans_ne one_ne_zero }⟩
 
 def mvO (g : GL (Fin n) Lc.K) : (Fin n → Lc.K) →ₗ[Lc.O] (Fin n → Lc.K) :=

@@ -115,8 +115,8 @@ theorem isIxR_of_isIx {e₀ : R ≃ Fin r} {ea : Ix R (Fin t) j ≃ Fin a}
 theorem IsIxR.blkOf {e₀ : R ≃ Fin r} {ea : Ix R (Fin t) j ≃ Fin a} (h : IsIxR e₀ ea) (i : Ix R (Fin t) j) :
     Formalism.L2.DIV.blkOf r t (ea i) = i.blk := by
   rcases i with i | ⟨c, s⟩
-  · rw [Formalism.L2.DIV.blkOf, if_pos (by rw [h.2.1]; exact (e₀ i).2)]; rfl
-  · rw [Formalism.L2.DIV.blkOf, h.2.2, if_neg (by omega), Nat.add_sub_cancel_left, Nat.add_mul_div_left _ _ s.pos,
+  · rw [Formalism.L2.DIV.blkOf, ite_eq_left (by rw [h.2.1]; exact (e₀ i).2)]; rfl
+  · rw [Formalism.L2.DIV.blkOf, h.2.2, ite_eq_right (by omega), Nat.add_sub_cancel_left, Nat.add_mul_div_left _ _ s.pos,
       Nat.div_eq_of_lt s.2, zero_add]; rfl
 
 variable {b : ℕ} {e₀ : R ≃ Fin r} {ea : Ix R (Fin t) j ≃ Fin a} {eb : Ix R (Fin t) (j + 1) ≃ Fin b}

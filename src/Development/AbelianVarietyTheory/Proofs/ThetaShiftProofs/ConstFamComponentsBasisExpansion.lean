@@ -52,14 +52,10 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
   TopologicalSpace NumberField
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.ConstFam
 
@@ -203,10 +199,3 @@ theorem exists_pow_smul_mem_span {C : Type} (rep : C → a.D₀.X) (hrep : ∀ �
   rwa [smul_smul, Units.inv_mul_cancel_left] at this
 
 end GlobalTheory.ConstFam
-
-namespace GlobalTheory
-
-open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
-open GlobalTheory.FieldBaseChange GlobalTheory.ConstFam
-
-end GlobalTheory

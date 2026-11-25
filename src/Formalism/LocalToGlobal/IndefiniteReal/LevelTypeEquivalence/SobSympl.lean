@@ -12,8 +12,6 @@ open scoped TensorProduct
 
 namespace Formalism.IndefR.Eqv
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {S T : HSp D}
 
 def cAlin (D : D7) : AE D →ₗ[AF D.host.F] AE D where

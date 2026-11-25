@@ -95,10 +95,10 @@ theorem sum_coS (inj : Function.Injective fun x : Orb × ZMod 2 => tau x.1 x.2) 
   rw [← Equiv.sum_comp (eW r tau N).symm, Fintype.sum_prod_type]
   rw [Finset.sum_eq_single α]
   · refine Finset.sum_congr rfl fun g _ => ?_
-    rw [coS_lam plc inj, if_pos rfl]
+    rw [coS_lam plc inj, ite_eq_left rfl]
   · intro α' _ hne
     refine Finset.sum_eq_zero fun g _ => ?_
-    rw [coS_lam plc inj, if_neg (Ne.symm hne), h0]
+    rw [coS_lam plc inj, ite_eq_right (Ne.symm hne), h0]
   · intro h; exact absurd (Finset.mem_univ _) h
 
 theorem subG_X (y : Fin N × WVO fun o (_ : Fin 2) => IIs r tau o) :

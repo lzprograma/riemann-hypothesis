@@ -12,8 +12,6 @@ open Formalism.BasicNotions NumberField IsDedekindDomain
 
 namespace Formalism.IndefR.Fin
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {R : Ranks}
 
 def alphaH (H : Host R) : H.E := (1 + H.sqrtMinusD) / 2

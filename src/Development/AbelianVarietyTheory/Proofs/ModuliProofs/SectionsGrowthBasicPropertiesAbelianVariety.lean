@@ -147,7 +147,7 @@ theorem exists_h0Is (p : X ⟶ Sp K) (M : LB X)
   have h1 := Nat.find_min hn (m := r) (by omega)
   have h2 := Nat.find_spec hn
   rw [hr] at h2
-  push_neg at h1
+  push Not at h1
   obtain ⟨s, hs⟩ := h1
   have hs' : ∀ c : Fin r → K, (∀ j, ∑ k, cst p _ (c k) * (s k).f j = 0) → c = 0 := fun c hc => by
     by_contra h

@@ -38,7 +38,7 @@ theorem exists_slice (Q : MvPolynomial (Fin 2) ℚ) (e : ℕ) (hQ : Q.totalDegre
     rw [Finset.sum_eq_single (Finsupp.single 0 e)]
     · simp
     · intro m hm hne
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hme
       apply hne
       have := hdeg m hm

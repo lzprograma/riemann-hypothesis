@@ -112,7 +112,7 @@ theorem exists_indep_forms : ∀ (r : ℕ) (X : Data E r) (Xa : ArchInM X) (Fl :
     have hc : ∀ q, cc (e q).1.2 (e q).1.1 = a q := by
       intro q
       have h : ((e q).1.1, (e q).1.2) ∈ S ×ˢ M := (e q).2
-      simp only [cc, dif_pos h]
+      simp only [cc, dite_eq_left h]
       exact congrArg a (e.symm_apply_apply q)
     have hcomb : ∀ x, leadM X Fl.s Fl.w0 F T (T + 1) cc x =
         ∑ q, a q * fP (e q).1.1 (e q).1.2 x := by

@@ -258,12 +258,12 @@ theorem vanish_all {Ω : Type} [Field Ω] (σ : E →+* E) (ι : E →+* Ω) {δ
         by_cases p : a = i ∧ b = j
         · by_cases q : b = i ∧ a = j
           · exact absurd (p.1.trans q.1.symm) hab
-          · simp only [if_pos p, if_neg q]
+          · simp only [ite_eq_left p, ite_eq_right q]
             linear_combination (-1) * hz - hw
         · by_cases q : b = i ∧ a = j
-          · simp only [if_neg p, if_pos q]
+          · simp only [ite_eq_right p, ite_eq_left q]
             linear_combination hw
-          · simp only [if_neg p, if_neg q]
+          · simp only [ite_eq_right p, ite_eq_right q]
             ring
       rw [e, ← add_assoc]
       exact hstep _ (hstep Y hY hH1 _) hH2 _
@@ -309,8 +309,6 @@ open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct Topology
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory Filter
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC PositivityTheory.PfSWUS PositivityTheory.Rg.Rsw PositivityTheory.Rg.Rsw.L PositivityTheory.Rg.Rsw.Cell
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {p : ℕ}
 

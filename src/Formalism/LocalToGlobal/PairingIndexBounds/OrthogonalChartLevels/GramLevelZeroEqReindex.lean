@@ -11,8 +11,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.PairingIndexBounds.F
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 structure Lev0Data (D : D7) (u : D.what₂.Word) (w : D.what₂.places.Pl) (h : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) where
   A : LocAt D.host.F D.host.E (D.R.N 0) (D.gat u w h)
   J : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E

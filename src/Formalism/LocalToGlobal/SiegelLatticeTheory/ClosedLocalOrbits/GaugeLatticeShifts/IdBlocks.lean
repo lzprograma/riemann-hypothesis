@@ -6,6 +6,7 @@ public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements
 import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 public import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
 import Mathlib.Tactic.TypeStar
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.Vanish
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -613,22 +614,11 @@ end CrossUnfold
 
 section Diag
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.TermOp.KExpCut
 
 theorem norm_psiR {n r : ℕ} (ε : Fin n → Bool) (gg : ℕ) (e f : Fin r → Fin n → ℂ) (z : Fin n → ℂ)
     (g : Matrix (Fin n) (Fin n) ℂ) : ‖psiR ε gg e f z g‖ = 1 := by
-  unfold psiR
-  have hS : ∑ a, (rootCoord ε e f z g a + star (rootCoord ε e f z g a)) =
-      ((∑ a, 2 * (rootCoord ε e f z g a).re : ℝ) : ℂ) := by
-    push_cast
-    refine Finset.sum_congr rfl fun a _ => ?_
-    rw [Complex.star_def, Complex.add_conj]
-    push_cast; ring
-  rw [hS, show 2 * (Real.pi : ℂ) * Complex.I * (((∑ a, 2 * (rootCoord ε e f z g a).re : ℝ) : ℂ) / (gg : ℂ)) =
-      ((2 * Real.pi * ((∑ a, 2 * (rootCoord ε e f z g a).re) / gg) : ℝ) : ℂ) * Complex.I by push_cast; ring]
-  exact Complex.norm_exp_ofReal_mul_I _
+  apply _root_.Formalism.L2.SG.TermOp.Vanish.psiR_norm1 <;> assumption
 
 variable {D : D7} {X : HidaSetting D}
 
@@ -715,8 +705,6 @@ end Diag
 
 section DiagSteps
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.TermOp.KExpCut
 
 variable {D : D7} {X : HidaSetting D} {u u' : D.what₂.Word}
@@ -731,13 +719,13 @@ def Meets (cs : ColSys X u what₂) (cs' : ColSys X u' rows') (t : GTerm X u u' 
 theorem blk_of_not (cs : ColSys X u what₂) (cs' : ColSys X u' rows') (FdN FdN' : Set X.B.I.Ginf)
     {t : GTerm X u u' F0 F0' what₂ rows'} {ρ : cs.Cl} {ρ' : cs'.Cl} (h : ¬ Meets cs cs' t ρ ρ') :
     blk cs cs' FdN FdN' t ρ ρ' = 0 := by
-  unfold blk; exact if_neg h
+  unfold blk; exact ite_eq_right h
 
 theorem blk_of (cs : ColSys X u what₂) (cs' : ColSys X u' rows') (FdN FdN' : Set X.B.I.Ginf)
     {t : GTerm X u u' F0 F0' what₂ rows'} {ρ : cs.Cl} {ρ' : cs'.Cl} (h : Meets cs cs' t ρ ρ') :
     blk cs cs' FdN FdN' t ρ ρ' = ((scl FdN FdN' (X := X) (u := u) (u' := u') * X.volK2 : ℝ) : ℂ) •
       (X.chi2 (kOf X u u' (cs.h ρ : X.B.I.Gf) (cs'.h ρ' : X.B.I.Gf) t.pt) • OOt t) := by
-  unfold blk; exact if_pos h
+  unfold blk; exact ite_eq_left h
 
 
 variable (F0) in
@@ -782,7 +770,7 @@ theorem idDiagBlocks_of (cs : ColSys X u what₂) (FdN : Set X.B.I.Ginf) (hK2 : 
     exact hasSum_zero
   by_cases hρ : ρ = ρ'
   · subst hρ
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     obtain ⟨t0, ht0, hm0⟩ := h1.2.2 ρ
     have hval : blk cs cs FdN FdN t0 ρ ρ = ContinuousLinearMap.id ℂ (X.Vpi u) := by
       obtain ⟨hγ, hph⟩ := hP ρ t0 ht0 hm0
@@ -822,7 +810,7 @@ theorem idDiagBlocks_of (cs : ColSys X u what₂) (FdN : Set X.B.I.Ginf) (hK2 : 
       ⟨t0, ht0⟩ hz
     simp only at this
     rwa [hval] at this
-  · rw [if_neg hρ]
+  · rw [ite_eq_right hρ]
     have hz : (fun t : {t : GTerm X u u F0 F0 what₂ what₂ // t.isId} => blk cs cs FdN FdN t.1 ρ ρ') = fun _ => 0 :=
       funext fun t => blk_of_not _ _ _ _ fun hm => hρ (h1.1 ρ ρ' t.1 t.2 hm)
     rw [hz]
@@ -831,8 +819,6 @@ theorem idDiagBlocks_of (cs : ColSys X u what₂) (FdN : Set X.B.I.Ginf) (hK2 : 
 end DiagSteps
 
 section ClosedDiag
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.TermOp.KExpCut Formalism.L2.SG.Full
   Formalism.L2.SG.PoincareInHH.Cut
@@ -863,8 +849,6 @@ theorem idCellDiagC_of_steps (hV : VolPosC) (hI : PiIrrC) (hM : IdMeetC) (hN : N
 end ClosedDiag
 
 section Off
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.TermOp.KExpCut
 
@@ -972,8 +956,6 @@ theorem idOffBlocks_of (cs : ColSys X u what₂) (cs' : ColSys X u' rows') (FdN 
 end Off
 
 section ClosedOff
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.TermOp.KExpCut Formalism.L2.SG.Full
 

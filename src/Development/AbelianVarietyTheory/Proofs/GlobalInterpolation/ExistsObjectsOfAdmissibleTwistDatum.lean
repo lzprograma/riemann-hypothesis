@@ -18,6 +18,7 @@ public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HostBo
 public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ValidForConstructedPointClassesEventuallyWorking
 public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.AuxiliaryPrimeCoprimeSmallConductor
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExplicitConstantsParameterConditionsLarge
+import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ConstMulRpowMulLogPowLeRpow
 import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ScalePolynomialQuantitiesComparison
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -272,13 +273,13 @@ theorem offC_top (L : SizeData₂ D) (j : ℕ) (z : Bool × HH D) (h : IsTopPl D
   unfold offC
   by_cases hj : j ∈ SizeData₂.lifts D
   · have h' : z.1 = false ∧ z.2 ∈ D.host.TT := h
-    rw [if_pos hj, if_pos h']
+    rw [ite_eq_left hj, ite_eq_left h']
     obtain ⟨h1, h2⟩ := Finset.mem_Icc.1 hj
     have h3 := L.win_top j h1 h2 (tauPl D z) ⟨z.2, h.2⟩ (by rw [eTau_tauPl]; simp [plGG, h.1])
     unfold wPl bL
     rw [dite_eq_left h.2]
     constructor <;> linarith [h3.1, h3.2]
-  · rw [if_neg hj, if_pos h]
+  · rw [ite_eq_right hj, ite_eq_left h]
     constructor <;> linarith
 
 theorem offC_thick (L : SizeData₂ D) (j : ℕ) (z : Bool × HH D) (h : IsThickPl D z) :
@@ -288,10 +289,10 @@ theorem offC_thick (L : SizeData₂ D) (j : ℕ) (z : Bool × HH D) (h : IsThick
   unfold offC
   by_cases hj : j ∈ SizeData₂.lifts D
   · have h' : ¬ (z.1 = false ∧ z.2 ∈ D.host.TT) := hn
-    rw [if_pos hj, if_neg h', sub_zero]
+    rw [ite_eq_left hj, ite_eq_right h', sub_zero]
     obtain ⟨h1, h2⟩ := Finset.mem_Icc.1 hj
     exact L.win_thick j h1 h2 (tauPl D z) (by rw [eTau_tauPl, thick_iff]; exact h)
-  · rw [if_neg hj, if_neg hn, if_pos h]
+  · rw [ite_eq_right hj, ite_eq_right hn, ite_eq_left h]
     constructor <;> linarith
 
 theorem offC_thin (L : SizeData₂ D) (j : ℕ) (z : Bool × HH D) (h : IsThinPl D z) :
@@ -300,12 +301,12 @@ theorem offC_thin (L : SizeData₂ D) (j : ℕ) (z : Bool × HH D) (h : IsThinPl
   unfold offC
   by_cases hj : j ∈ SizeData₂.lifts D
   · have h' : ¬ (z.1 = false ∧ z.2 ∈ D.host.TT) := h.1
-    rw [if_pos hj, if_neg h', sub_zero]
+    rw [ite_eq_left hj, ite_eq_right h', sub_zero]
     obtain ⟨h1, h2⟩ := Finset.mem_Icc.1 hj
     refine L.win_thin j h1 h2 (tauPl D z) ?_
     rw [eTau_tauPl]
     exact ⟨plGG_mem_Psi D z, by rw [top_iff]; exact h.1, by rw [thick_iff]; exact h.2⟩
-  · rw [if_neg hj, if_neg h.1, if_neg h.2]
+  · rw [ite_eq_right hj, ite_eq_right h.1, ite_eq_right h.2]
     constructor <;> linarith
 
 def inst (L : SizeData₂ D) (K : Consts) (Ce : ℝ) : Inst D L where
@@ -323,11 +324,11 @@ theorem inst_canon (L : SizeData₂ D) (K : Consts) (Ce : ℝ) : CanonInst (inst
   refine ⟨fun _ _ => rfl, fun j hj t => ?_⟩
   show offC L j (false, t) = _
   unfold offC
-  rw [if_neg hj]
+  rw [ite_eq_right hj]
   by_cases ht : t ∈ D.host.TT
-  · rw [if_pos ht, if_pos (show IsTopPl D (false, t) from ⟨rfl, ht⟩)]
-  · rw [if_neg ht, if_neg (show ¬ IsTopPl D (false, t) from fun h => ht h.2),
-      if_neg (show ¬ IsThickPl D (false, t) from fun h => by simpa using h.1)]
+  · rw [ite_eq_left ht, ite_eq_left (show IsTopPl D (false, t) from ⟨rfl, ht⟩)]
+  · rw [ite_eq_right ht, ite_eq_right (show ¬ IsTopPl D (false, t) from fun h => ht h.2),
+      ite_eq_right (show ¬ IsThickPl D (false, t) from fun h => by simpa using h.1)]
 
 theorem inst_fill (L : SizeData₂ D) (K : Consts) (Ce : ℝ) (j : ℕ) (hj : j ∈ SizeData₂.lifts D) (τ : D.what₂.Tau)
     (z : Bool × HH D) (h : (D.eTau τ : D.R.GG) = plGG D z) : fill (inst L K Ce) (bL L) j z = wj D j τ := by
@@ -338,7 +339,7 @@ theorem inst_fill (L : SizeData₂ D) (K : Consts) (Ce : ℝ) (j : ℕ) (hj : j 
   unfold fill
   show _ + offC L j z = _
   unfold offC wPl
-  rw [if_pos hj, hτ]
+  rw [ite_eq_left hj, hτ]
   ring
 
 theorem one_le_fill {L : SizeData₂ D} (X : Inst D L) (hw : 1 ≤ L.sc.w'' D.R.n) (j : ℕ) (z : Bool × HH D) :
@@ -354,12 +355,12 @@ theorem one_le_fill {L : SizeData₂ D} (X : Inst D L) (hw : 1 ≤ L.sc.w'' D.R.
   unfold fill
   by_cases h1 : IsTopPl D z
   · have h' : z.1 = false ∧ z.2 ∈ D.host.TT := h1
-    rw [if_pos h']
+    rw [ite_eq_left h']
     unfold bL
     rw [dite_eq_left h1.2]
     linarith [(X.off_top j z h1).1, L.bT_ge ⟨z.2, h1.2⟩]
   · have h' : ¬ (z.1 = false ∧ z.2 ∈ D.host.TT) := h1
-    rw [if_neg h', zero_add]
+    rw [ite_eq_right h', zero_add]
     by_cases h2 : IsThickPl D z
     · linarith [(X.off_thick j z h2).1]
     · linarith [(X.off_thin j z ⟨h1, h2⟩).1]
@@ -367,12 +368,12 @@ theorem one_le_fill {L : SizeData₂ D} (X : Inst D L) (hw : 1 ≤ L.sc.w'' D.R.
 theorem VV_empty {L : SizeData₂ D} (X : Inst D L) (K : Consts) (a b : HH D → ℤ) (p : ℕ) (h : ¬ Cand D L K p) :
     VV X K a b p = ∅ := by
   unfold VV
-  rw [if_neg (fun h' => h h'.1)]
+  rw [ite_eq_right (fun h' => h h'.1)]
 
 theorem tau_eq_zero_of_not_candidate {L : SizeData₂ D} (X : Inst D L) (K : Consts) (a b : HH D → ℤ) (p : ℕ) (h : ¬ Cand D L K p) :
     tauP X K a b p = 0 := by
   unfold tauP
-  rw [if_pos (VV_empty X K a b p h)]
+  rw [ite_eq_left (VV_empty X K a b p h)]
 
 theorem ioP_eq_zero_of_not_cand {L : SizeData₂ D} (X : Inst D L) (K : Consts) (a b : HH D → ℤ) (p : ℕ) (h : ¬ Cand D L K p) :
     ioP X K a b p = 0 := by
@@ -426,7 +427,7 @@ def refill (L : SizeData₂ D) (X : Inst D L) (K : Consts) (Cr : ℝ) (EX : ErrX
     io := fun w => ioP X K (aL L) (bL L) (D.what₂.places.resChar w)
     gain_supp := fun j w h => by
       unfold gainP
-      rw [if_pos (Or.inr (hS w h).1), ite_self]
+      rw [ite_eq_left (Or.inr (hS w h).1), ite_self]
     F_supp := fun j w h => FvalP_above L j (hS w h).1 (hS w h).2.1 (hS w h).2.2.1
     E_supp := fun u j w h => Eval_above L EX K c u j w (hS w h).1 ((hS w h).2.2.2.1 u).1 (hS w h).2.1 (hS w h).2.2.1
       ((hS w h).2.2.2.1 u).2
@@ -438,10 +439,10 @@ def refill (L : SizeData₂ D) (X : Inst D L) (K : Consts) (Cr : ℝ) (EX : ErrX
         rcases Finset.mem_insert.1 h with h | h
         · rw [h]; exact D.host.g_level 0
         · rw [Finset.mem_singleton.1 h]; exact D.host.g_level 1
-      refine if_neg ?_
+      refine ite_eq_right ?_
       rintro (h2 | h2) <;> exact absurd (h1.symm.trans h2) (by decide)
     untwisted := fun w h j h1 h2 => ⟨(L.untwisted w h j h1 h2).1, hu w h j (Finset.mem_Icc.2 ⟨h1, h2⟩)⟩
-    not_inert := fun w h1 h2 => ⟨fun j => if_neg (fun h => h.elim h2 h1), tau_eq_zero_of_not_candidate X K _ _ _ (fun hc => h2 hc.2.2.1),
+    not_inert := fun w h1 h2 => ⟨fun j => ite_eq_right (fun h => h.elim h2 h1), tau_eq_zero_of_not_candidate X K _ _ _ (fun hc => h2 hc.2.2.1),
       ioP_eq_zero_of_not_cand X K _ _ _ (fun hc => h2 hc.2.2.1)⟩
     drop := {p | NoGain X K Cr p ∧ ∀ u, p ≠ (D.mem u).A.T}
     drop_alt := fun u h => h.2 u rfl
@@ -451,7 +452,7 @@ def refill (L : SizeData₂ D) (X : Inst D L) (K : Consts) (Cr : ℝ) (EX : ErrX
     TTw_full := fun w h => by
       refine Finset.filter_true_of_mem (fun t _ => ?_)
       unfold TTP
-      rw [if_pos h]
+      rw [ite_eq_left h]
       exact t.2
     wPart := fun j t p e => fill X (bL L) j (partner D p t e)
     wPart_ge := fun j t p e => one_le_fill X hw j _ }
@@ -467,7 +468,7 @@ theorem exists_refill : ∀ (C : FC) (cD ch : ℝ) (D : D7) (L0 : SizeData₂ D)
     exact absurd (hS w h').1 (not_lt.2 h)
   · by_contra h'
     exact h (hS w h').2.2.2.2
-  · refine ⟨fun j hj τ z h => inst_fill _ _ _ j hj τ z h, fun _ _ _ => rfl, ?_, fun _ h j _ => if_pos h, rfl, rfl,
+  · refine ⟨fun j hj τ z h => inst_fill _ _ _ j hj τ z h, fun _ _ _ => rfl, ?_, fun _ h j _ => ite_eq_left h, rfl, rfl,
       hV.La_eq.symm⟩
     show Finset.map _ (Finset.filter _ _) = TTP (inst L0 C.GK C.cX.Ce) C.GK (aL L0) (bL L0) (D.what₂.places.resChar w)
     ext t
@@ -566,8 +567,8 @@ theorem exists_glue : ∀ (K V : Type) [Field K] [NumberField K] [AddCommGroup V
   intro K V _ _ _ _ _ _ M S A hS hM hA
   classical
   let B : HeightOneSpectrum (𝓞 K) → Submodule (𝓞 K) V := fun w => if w ∈ S then A w else locSub w M
-  have hB1 : ∀ w ∈ S, B w = A w := fun w hw => if_pos hw
-  have hB2 : ∀ w ∉ S, B w = locSub w M := fun w hw => if_neg hw
+  have hB1 : ∀ w ∈ S, B w = A w := fun w hw => ite_eq_left hw
+  have hB2 : ∀ w ∉ S, B w = locSub w M := fun w hw => ite_eq_right hw
   have hsat : ∀ w (t : 𝓞 K) (x : V), t ∉ w.asIdeal → t • x ∈ B w → x ∈ B w := by
     intro w t x ht hx
     by_cases hw : w ∈ S
@@ -644,7 +645,7 @@ theorem cand_of_VV {L : SizeData₂ D} (X : Inst D L) (K : Consts) (a b : HH D �
   by_contra h'
   apply h
   unfold VV
-  rw [if_neg h']
+  rw [ite_eq_right h']
 
 theorem not_noGain {L : SizeData₂ D} (X : Inst D L) (K : Consts) (Cr : ℝ) (p : ℕ) (h : VV X K (aL L) (bL L) p ≠ ∅) :
     ¬ NoGain X K Cr p := by
@@ -758,12 +759,12 @@ theorem exists_lat {L : SizeData₂ D} (X : Inst D L) (Y : LatInst D) (K : Const
       rintro _ ⟨w, hw, rfl⟩
       simp only [Equiv.symm_apply_apply]
       rcases hw with ⟨hg, hV⟩ | hw
-      · have hA : A w = A1 w hg := dif_pos hg
+      · have hA : A w = A1 w hg := dite_eq_left hg
         rw [hA]
         obtain ⟨h1, n, hn, h2⟩ := hS w hg hV
         refine ⟨hA1s w hg, n, hn, fun x hx => (hA1 w hg _).2 (h2 x hx), fun x hx => h1 _ ?_⟩
         exact (hA1 w hg _).1 (Submodule.smul_of_tower_mem _ n hx)
-      · have hA : A w = A2 w := dif_neg (hng w hw)
+      · have hA : A w = A2 w := dite_eq_right (hng w hw)
         rw [hA]
         obtain ⟨n, hn, h1, h2⟩ := hT w hw
         exact ⟨hA2s w, n, hn, fun x hx => (hA2 w _).2 (h1 x hx), fun x hx => h2 _ ((hA2 w _).1 hx)⟩)
@@ -771,12 +772,12 @@ theorem exists_lat {L : SizeData₂ D} (X : Inst D L) (Y : LatInst D) (K : Const
         VV X K (aL L) (bL L) (D.what₂.places.resChar w) ≠ ∅ →
         ∀ x, InLoc (D.plEq w) N x ↔ c.cmp u w hg (D.nuIn u x) ∈ NP X Y K u w hg := by
     intro w hg hV x
-    have hA : A w = A1 w hg := dif_pos hg
+    have hA : A w = A1 w hg := dite_eq_left hg
     rw [hN1 _ ⟨w, Or.inl ⟨hg, hV⟩, rfl⟩, Equiv.symm_apply_apply, hA, hA1]
   have e2 : ∀ w, w ∉ S → DV.LocEq (D.plEq w) N (DV.MramL D u) := fun w hw =>
     locEq_of_iff _ _ _ (hN2 _ (fun h => hw ((D.plEq.injective.mem_set_image).1 h)))
   refine ⟨N, e1, fun w hw x => ?_, fun w hw => ?_, fun w hw hV => e2 w ?_⟩
-  · have hA : A w = A2 w := dif_neg (hng w hw)
+  · have hA : A w = A2 w := dite_eq_right (hng w hw)
     rw [hN1 _ ⟨w, Or.inr hw, rfl⟩, Equiv.symm_apply_apply, hA, hA2]
   · by_cases h : w ∈ S
     · obtain ⟨hg, hV⟩ := h.resolve_right hw
@@ -1097,7 +1098,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsParametersOver =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.InjectiveOfOrder =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.InjectiveOfOrder", "h": "module\n\npublic import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.TameGeneratorWindow\npublic import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows\npublic import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExplicitRanksBasicBoundsLargeScale\npublic import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HostBoundsTwoMulRpowLogSqLe\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.InjectiveOfOrder", "h": "module\n\npublic import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.TameGeneratorWindow\npublic import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows\npublic import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExplicitRanksBasicBoundsLargeScale\npublic import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HostBoundsTwoMulRpowLogSqLe\nimport Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ConstMulRpowMulLogPowLeRpow\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -1107,27 +1108,16 @@ namespace GlobalTheory.ClassDuty
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab NumberField GlobalTheory.EX GlobalTheory.IndefiniteRowSideFullHecke.TameGeneratorWindow
 
-theorem exists_large (eps A : ℝ) (he : 0 < eps) (hA : 0 < A) :
+theorem exists_large (eps A : ℝ) (he : 0 < eps) :
     ∃ x0 : ℝ, ∀ x ≥ x0, A * (x ^ (eps / 5) * Real.log x ^ 2) < x ^ (eps / 3) ∧ 2 ≤ x ^ (eps / 16) ∧ 44 ^ 3 ≤ x := by
-  have h := (isLittleO_log_rpow_rpow_atTop (2 : ℝ) (s := 2 * eps / 15) (by positivity)).bound
-    (c := 1 / (2 * A)) (by positivity)
-  have h' := (tendsto_rpow_atTop (y := eps / 16) (by positivity)).eventually_ge_atTop 2
-  obtain ⟨x0, hx0⟩ := Filter.eventually_atTop.mp ((h.and h').and (Filter.eventually_ge_atTop ((44 : ℝ) ^ 3)))
-  refine ⟨x0, fun x hx => ?_⟩
-  obtain ⟨⟨h1, h3⟩, h2⟩ := hx0 x hx
-  have hx0 : 0 < x := by linarith [show (0 : ℝ) < 44 ^ 3 by norm_num]
-  refine ⟨?_, h3, h2⟩
-  rw [Real.norm_eq_abs, Real.norm_eq_abs, Real.rpow_two, abs_of_nonneg (sq_nonneg _),
-    abs_of_nonneg (Real.rpow_nonneg hx0.le _)] at h1
-  have e : x ^ (eps / 3) = x ^ (eps / 5) * x ^ (2 * eps / 15) := by
-    rw [← Real.rpow_add hx0]; congr 1; ring
-  have hp : 0 < x ^ (eps / 5) := Real.rpow_pos_of_pos hx0 _
-  have hq : 0 < x ^ (2 * eps / 15) := Real.rpow_pos_of_pos hx0 _
-  have h4 : A * Real.log x ^ 2 ≤ x ^ (2 * eps / 15) / 2 := by
-    calc A * Real.log x ^ 2 ≤ A * (1 / (2 * A) * x ^ (2 * eps / 15)) := by gcongr
-      _ = _ := by field_simp
-  rw [e]
-  nlinarith
+  obtain ⟨x₁, h₁⟩ := const_mul_rpow_mul_log_pow_le_rpow (eps / 5) (eps / 3) (2 * A) 2 (by linarith)
+  apply Filter.eventually_atTop.mp
+  filter_upwards [Filter.eventually_ge_atTop x₁,
+    (tendsto_rpow_atTop (y := eps / 16) (by positivity)).eventually_ge_atTop 2,
+    Filter.eventually_ge_atTop ((44 : ℝ) ^ 3)] with x hx h₂ hx₄₄
+  refine ⟨?_, h₂, hx₄₄⟩
+  have hxpos : 0 < x := lt_of_lt_of_le (by norm_num : (0 : ℝ) < 44 ^ 3) hx₄₄
+  linarith only [h₁ x hx, Real.rpow_pos_of_pos hxpos (eps / 3)]
 
 theorem poly_lt {x w y : ℝ} (hx : 44 ^ 3 ≤ x) (hw : Real.log x ≤ w) (hy : 500 * w < y) :
     8 * x ^ (406 : ℝ) < Real.exp y := by
@@ -1147,7 +1137,7 @@ theorem windowsAt_of (eps : ℝ) (he : 0 < eps) (he' : eps < 1 / 52) (C : FC) (h
       WindowsAt L C.P.CY ∧ L.sc.X' ≤ lJ L := by
   have h8 : 1 ≤ C.P.Cpde := hC.2.2.2.2.2.2.2.2.2.2.2.2.1
   have hY : 1 ≤ C.P.CY := hC.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2 _ (by simp [FC.cLast])
-  obtain ⟨x1, h1⟩ := exists_large eps (500 + 2 * C.P.Cpde + 2 * C.P.CY) he (by linarith)
+  obtain ⟨x1, h1⟩ := exists_large eps (500 + 2 * C.P.Cpde + 2 * C.P.CY) he
   obtain ⟨x2, h2⟩ := rank_basic_bounds eps he he'
   obtain ⟨x3, h3⟩ := hostBounds eps C.P.Cpde he he' h8
   refine ⟨max x1 (max x2 x3), fun cD ch D L hs hx h P => ?_⟩

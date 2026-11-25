@@ -37,64 +37,11 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThre
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.TypeIOfTwoSigned
 import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
 import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ConjTor
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.Henselian
 import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ExistsUniqueIsPtHom
-import Mathlib.Algebra.Order.Star.Int
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsPtHomAct, Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.NormBoundOfIntegralValues, Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.NormTwoEqOne, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PrecompleteOfPowLe, Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.PrecompleteOfPowLe, Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.PtSign, Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ConjugatePreservesWeightFiltration, Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.TangentCoordEqZeroOfNonposWeight, Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.UnitEqOneOfPowEqOneOfResidueOne, Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.AbstractCount
@@ -241,7 +188,7 @@ private theorem norm_two_eq_one {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O]
       have hlt : ‖((2 : ℤ) : ℤ_[l])‖ < 1 := lt_of_le_of_ne (PadicInt.norm_le_one _) (by simpa using hn)
       exact PadicInt.norm_int_lt_one_iff_dvd 2 |>.1 hlt
     have hinj : Function.Injective (algebraMap ℤ_[l] O) := by
-      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+      rw [injective_iff_map_eq_zero]
       intro x hx
       by_contra hx0
       have e := PadicInt.unitCoeff_spec hx0
@@ -380,8 +327,8 @@ private theorem exists_sum_X_mul (p : MvPowerSeries σ O) (hp : MvPowerSeries.co
     rw [map_sum]
     simp only [hq]
     by_cases h : n ≠ 0
-    · simp [dif_pos h]
-    · simp only [dif_neg h, Finset.sum_const_zero]
+    · simp [dite_eq_left h]
+    · simp only [dite_eq_right h, Finset.sum_const_zero]
       push Not at h
       subst h
       simpa using hp
@@ -771,13 +718,13 @@ private theorem wtPart_decomp {O σ : Type} [CommRing O] (wt : σ → ℤ) (j : 
       intro n i
       rw [MvPowerSeries.X_def, MvPowerSeries.coeff_monomial_mul]
       by_cases hle : Finsupp.single i 1 ≤ n
-      · rw [if_pos hle, one_mul, hg, tsub_add_cancel_of_le hle]
+      · rw [ite_eq_left hle, one_mul, hg, tsub_add_cancel_of_le hle]
       · have hP : ¬ P n i := by
           rintro ⟨h, hc⟩
           apply hle
           rw [Finsupp.single_le_iff, ← hc]
           exact Nat.one_le_iff_ne_zero.mpr h.choose_spec.2
-        rw [if_neg hle, if_neg hP]
+        rw [ite_eq_right hle, ite_eq_right hP]
     ext n
 
     rw [map_sum]
@@ -785,10 +732,10 @@ private theorem wtPart_decomp {O σ : Type} [CommRing O] (wt : σ → ℤ) (j : 
     by_cases h : ∃ k ∈ s, n k ≠ 0
     · have hP : ∀ i, P n i ↔ h.choose = i := fun i => ⟨fun ⟨_, e⟩ => e, fun e => ⟨h, e⟩⟩
       simp_rw [hP]
-      rw [Finset.sum_ite_eq, if_pos h.choose_spec.1]
+      rw [Finset.sum_ite_eq, ite_eq_left h.choose_spec.1]
     · have hP : ∀ i, ¬ P n i := fun i ⟨h', _⟩ => h h'
-      simp only [hP, if_false, Finset.sum_const_zero]
-      push_neg at h
+      simp only [hP, ite_false, Finset.sum_const_zero]
+      push Not at h
       exact hs n h
 
 private theorem vanish_of_entries {O : Type} [CommRing O] [IsLocalRing O] {G Γ ι : Type} [Group G] [Group Γ]
@@ -1187,19 +1134,19 @@ theorem UpperTheory.V.UnitaryThreeInertia.eq_rz_of_vanE :
         decide)
     (fun e => by
       obtain ⟨Z, hZ⟩ := (htri F.vl (Set.mem_insert _ _)).2
-      refine ⟨Matrix.of fun a b => if wt a b = j then Z a b else 0, fun a b hab => if_neg hab, fun g hg => ?_⟩
+      refine ⟨Matrix.of fun a b => if wt a b = j then Z a b else 0, fun a b hab => ite_eq_right hab, fun g hg => ?_⟩
       ext a b
       have hg' : F.η (F.loc _ g) = 1 := hg
-      rw [cob, Matrix.sub_apply, adRep_baseLift_apply, if_pos hg', Matrix.of_apply]
+      rw [cob, Matrix.sub_apply, adRep_baseLift_apply, ite_eq_left hg', Matrix.of_apply]
       by_cases hab : wt a b = j
-      · simp only [if_pos hab]
+      · simp only [ite_eq_left hab]
         have h1 := hZ g hg a b (hab ▸ e)
         rw [hs] at h1
         have h2 : ((F.Ψ (F.loc _ g) ^ wt a b : Oˣ) : O) * psi F.Ψ b (F.loc _ g) = psi F.Ψ a (F.loc _ g) := by
           rw [psi, psi, ← Units.val_mul, ← _root_.zpow_add, wt, sub_add_cancel]
         refine (hpu b (F.loc _ g)).mul_right_cancel ?_
         linear_combination h1 + Z a b * h2
-      · simp only [if_neg hab]
+      · simp only [ite_eq_right hab]
         rw [hgw _ a b hab]; simp)
   have hcob : cob (r0 F.η F.Ψ) X = fun g => t • γ g := funext fun g => (hX g).symm
   have hzv : zvar F.c g₁ (r0 F.η F.Ψ) (fun g => t • γ g) = t • (ms (r g₁).mat - ms (r (gstar F.c g₁)).mat) := by
@@ -1341,7 +1288,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.tangent_coord_eq_zero_of_nonpos_weight
     rw [WPres.z, hτ, tangent_point_snd, Finset.sum_eq_single i]
     · simp [MvPowerSeries.coeff_X]
     · intro k _ hk
-      rw [MvPowerSeries.coeff_X, if_neg, zero_mul]
+      rw [MvPowerSeries.coeff_X, ite_eq_right, zero_mul]
       intro e
       exact hk (Finsupp.single_left_injective one_ne_zero e)
     · simp

@@ -19,11 +19,6 @@ noncomputable section
 
 namespace SheetFormComparison
 
-theorem hessC_congr {D : ℕ} {f g : (Fin D → ℂ) → ℝ} {y : Fin D → ℂ} (h : f =ᶠ[𝓝 y] g) :
-    hessC f y = hessC g y := by
-  unfold hessC
-  rw [(h.fderiv (𝕜 := ℝ)).fderiv_eq (𝕜 := ℝ)]
-
 theorem contDiff_logPot (N : ℕ) : ContDiff ℝ ∞ (HilbertSamuel.ProjFS.logPot (N := N)) := by
   have h : (HilbertSamuel.ProjFS.logPot (N := N)) = fun z => Real.log (1 + euclPot z) := rfl
   rw [h]
@@ -95,7 +90,6 @@ theorem posSemidef_hessC_logPot_sub {N : ℕ} {z : Fin N → ℂ} (hz : ‖z‖ 
     mul_le_mul_of_nonneg_right hqm (div_nonneg ha0 (by linarith : (0 : ℝ) ≤ q))]
 
 end SheetFormComparison
-
 
 end
 

@@ -155,7 +155,7 @@ theorem coefLast_eq_coeff [Fintype ι] (b : ι → Fin n → ℕ) (F : Pol K ι 
         simp [h.1]
       · intro h
         exact ⟨fun τ s => by simpa using congrArg (fun e => e (τ, s)) h, h2⟩
-    · rw [if_neg (fun h => h2 h.2)]
+    · rw [ite_eq_right (fun h => h2 h.2)]
       push Not at h2
       obtain ⟨τ, a, h⟩ := h2
       rw [Finset.prod_eq_zero (Finset.mem_univ τ) (Finset.prod_eq_zero (Finset.mem_univ a) (zero_pow h))]

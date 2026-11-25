@@ -3,6 +3,7 @@ module
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.LocalUnfoldPfB
 import Mathlib.Tactic.Lemma
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfS
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustFStatementPfC
 
 @[expose] public section
 
@@ -31,26 +32,10 @@ variable {X b1}
 theorem mat_uL (x : Frame X.Ψ r) (τ : X.Ψ) :
     mat (uL X x1' b1 x) τ = mat x1' τ * (mat b1 τ)⁻¹ * (mat x1' τ)⁻¹ * mat x τ := rfl
 
-private lemma det_mat_ne_zero_of_isOrth {x : Frame X.Ψ r} (ho : IsOrth X x) (τ : X.Ψ) : (mat x τ).det ≠ 0 := by
-  intro h0
-  have hg := ho τ
-  have e : gram τ.1 X.Gm (mat x τ) =
-      (mat x τ).transpose * X.Gm.map τ.1 * (mat x τ).map (starRingEnd ℂ) := by
-    ext a b
-    simp only [gram, hermC, col, Matrix.of_apply, Matrix.mul_apply, Matrix.transpose_apply,
-      Matrix.map_apply, Finset.sum_mul]
-    rw [Finset.sum_comm]
-  have hd := congrArg Matrix.det hg
-  rw [e, Matrix.det_mul, Matrix.det_mul, Matrix.det_transpose, h0, zero_mul, zero_mul,
-    Matrix.det_diagonal] at hd
-  refine (Finset.prod_ne_zero_iff.mpr fun a _ => ?_) hd.symm
-  unfold sgn
-  split_ifs <;> norm_num
-
 theorem uL_cpt (ho' : IsOrth X x1') (hb1 : b1 ∈ Bor X.Ψ r) (z : V (nd X)) (b : Frame X.Ψ r) :
     uL X x1' b1 (rmul (cpt X (rmul x1' b1) z) b) = rmul (cpt X x1' z) b := by
   funext τ
-  have hA := isUnit_iff_ne_zero.mpr (det_mat_ne_zero_of_isOrth ho' τ)
+  have hA := isUnit_iff_ne_zero.mpr (ExF.det_ne_of_orth _ ho' τ)
   have hB := isUnit_iff_ne_zero.mpr (hb1 τ).1
   have e : ∀ x b : Frame X.Ψ r, mat (rmul x b) τ = mat x τ * mat b τ := fun _ _ => rfl
   show mat (uL X x1' b1 (rmul (cpt X (rmul x1' b1) z) b)) τ = mat (rmul (cpt X x1' z) b) τ
@@ -61,7 +46,7 @@ theorem uL_cpt (ho' : IsOrth X x1') (hb1 : b1 ∈ Bor X.Ψ r) (z : V (nd X)) (b 
 theorem vL_uL (ho' : IsOrth X x1') (hb1 : b1 ∈ Bor X.Ψ r) (x : Frame X.Ψ r) :
     vL X x1' b1 (uL X x1' b1 x) = x := by
   funext τ
-  have hA := isUnit_iff_ne_zero.mpr (det_mat_ne_zero_of_isOrth ho' τ)
+  have hA := isUnit_iff_ne_zero.mpr (ExF.det_ne_of_orth _ ho' τ)
   have hB := isUnit_iff_ne_zero.mpr (hb1 τ).1
   have e : ∀ y : Frame X.Ψ r,
       mat (vL X x1' b1 y) τ = mat x1' τ * mat b1 τ * (mat x1' τ)⁻¹ * mat y τ := fun _ => rfl
@@ -74,7 +59,7 @@ theorem vL_uL (ho' : IsOrth X x1') (hb1 : b1 ∈ Bor X.Ψ r) (x : Frame X.Ψ r) 
 theorem vL_cpt (ho' : IsOrth X x1') (z : V (nd X)) (b : Frame X.Ψ r) :
     vL X x1' b1 (rmul (cpt X x1' z) b) = rmul (cpt X (rmul x1' b1) z) b := by
   funext τ
-  have hA := isUnit_iff_ne_zero.mpr (det_mat_ne_zero_of_isOrth ho' τ)
+  have hA := isUnit_iff_ne_zero.mpr (ExF.det_ne_of_orth _ ho' τ)
   have e : ∀ x b : Frame X.Ψ r, mat (rmul x b) τ = mat x τ * mat b τ := fun _ _ => rfl
   have e2 : ∀ y : Frame X.Ψ r,
       mat (vL X x1' b1 y) τ = mat x1' τ * mat b1 τ * (mat x1' τ)⁻¹ * mat y τ := fun _ => rfl
@@ -106,18 +91,6 @@ theorem isOpen_Tset (ho' : IsOrth X x1') (hb1 : b1 ∈ Bor X.Ψ r) {ρ : ℝ}
   exact (D.hz.continuousOn.isOpen_inter_preimage (ExtFPf.isOpen_cell D) Metric.isOpen_ball).preimage
     (cont_uL X b1)
 
-private lemma lact_lact_eq_lact_mul (γ δ : GL (Fin r) E) (x : Frame X.Ψ r) :
-    lact γ (lact δ x) = lact (γ * δ) x := by
-  funext τ
-  show (γ : Matrix (Fin r) (Fin r) E).map τ.1 * ((δ : Matrix (Fin r) (Fin r) E).map τ.1 * mat x τ) =
-    ((γ * δ : GL (Fin r) E) : Matrix (Fin r) (Fin r) E).map τ.1 * mat x τ
-  rw [Units.val_mul, Matrix.map_mul, Matrix.mul_assoc]
-
-private lemma lact_one_upper_bounds (x : Frame X.Ψ r) : lact (1 : GL (Fin r) E) x = x := by
-  funext τ
-  show ((1 : GL (Fin r) E) : Matrix (Fin r) (Fin r) E).map τ.1 * mat x τ = mat x τ
-  rw [Units.val_one, Matrix.map_one _ (map_zero _) (map_one _), Matrix.one_mul]
-
 theorem sat_eq (x1 : Frame X.Ψ r) (ρ : ℝ) :
     {x | ∃ γ ∈ X.Γ, ∃ b ∈ Bor X.Ψ r, ∃ z' ∈ Metric.ball (0 : V (nd X)) ρ, x = lact γ (rmul (cpt X x1 z') b)} =
       ⋃ γ : X.Γ, lact γ.1⁻¹ ⁻¹' Tset X x1 ρ := by
@@ -128,12 +101,12 @@ theorem sat_eq (x1 : Frame X.Ψ r) (ρ : ℝ) :
   · rintro ⟨γ, hγ, b, hb, z', hz', rfl⟩
     refine ⟨⟨γ, hγ⟩, z', b, ⟨hz', hb⟩, ?_⟩
     show _ = lact γ⁻¹ (lact γ _)
-    rw [lact_lact_eq_lact_mul, inv_mul_cancel, lact_one_upper_bounds]
+    rw [KU.lact_lact X, inv_mul_cancel, KU.lact_one X]
   · rintro ⟨⟨γ, hγ⟩, z', b, ⟨hz', hb⟩, h⟩
     refine ⟨γ, hγ, b, hb, z', hz', ?_⟩
     have h' : lact γ (lact γ⁻¹ x) = lact γ (rmul (cpt X x1 z') b) := by
       rw [← h]
-    rw [lact_lact_eq_lact_mul, mul_inv_cancel, lact_one_upper_bounds] at h'
+    rw [KU.lact_lact X, mul_inv_cancel, KU.lact_one X] at h'
     exact h'
 
 include D in

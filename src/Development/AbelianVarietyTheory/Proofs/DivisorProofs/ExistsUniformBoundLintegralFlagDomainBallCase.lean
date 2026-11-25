@@ -95,22 +95,21 @@ open scoped ComplexOrder
 
 theorem blkW_upper {r : ℕ} (p0 : ℕ) (w : Low r → ℂ) (i j : Fin (r - 1)) (h : i < j) :
     blkW p0 w i j = 0 := by
-  have h' : (i : ℕ) < j := h
   unfold blkW
   split_ifs
   · unfold lowMat
-    rw [dite_eq_right (by rw [Fin.lt_def]; simp only; omega), if_neg (by rw [Fin.ext_iff]; simp only; omega)]
+    rw [dite_eq_right (by rw [Fin.lt_def]; simp only; omega), ite_eq_right (by rw [Fin.ext_iff]; simp only; omega)]
   · unfold lowMat
-    rw [dite_eq_right (by rw [Fin.lt_def]; simp only; omega), if_neg (by rw [Fin.ext_iff]; simp only; omega)]
+    rw [dite_eq_right (by rw [Fin.lt_def]; simp only; omega), ite_eq_right (by rw [Fin.ext_iff]; simp only; omega)]
 
 theorem blkW_diag {r : ℕ} (p0 : ℕ) (w : Low r → ℂ) (i : Fin (r - 1)) :
     blkW p0 w i i = 1 := by
   unfold blkW
   split_ifs
   · unfold lowMat
-    rw [dite_eq_right (lt_irrefl _), if_pos rfl]
+    rw [dite_eq_right (lt_irrefl _), ite_eq_left rfl]
   · unfold lowMat
-    rw [dite_eq_right (lt_irrefl _), if_pos rfl]
+    rw [dite_eq_right (lt_irrefl _), ite_eq_left rfl]
 
 theorem lowerTri_det_one {n : ℕ} (T : Matrix (Fin n) (Fin n) ℂ)
     (hu : ∀ i j, i < j → T i j = 0) (hd : ∀ i, T i i = 1) : T.det = 1 := by
@@ -183,8 +182,6 @@ theorem colGram_blkW_last (r p0 : ℕ) (w : Low r → ℂ) :
   rw [this, Matrix.submatrix_id_id, Matrix.det_mul, Matrix.det_conjTranspose, blkW_det_eq_one]
   simp
 
-theorem colGramLast : ∀ (r p0 : ℕ) (w : Low r → ℂ), colGram (blkW p0 w) (Fin.last (r - 1)) = 1 :=
-  colGram_blkW_last
 
 end GlobalTheory.IntBall
 end -- clump:auto
@@ -261,10 +258,7 @@ theorem colGram_three_unitLower : ∀ M : Matrix (Fin 3) (Fin 3) ℂ, (∀ i, M 
   intro M hd hu
   have h00 := hd 0
   have h11 := hd 1
-  have h22 := hd 2
   have h01 : M 0 1 = 0 := hu 0 1 (by decide)
-  have h02 : M 0 2 = 0 := hu 0 2 (by decide)
-  have h12 : M 1 2 = 0 := hu 1 2 (by decide)
   have e1 : lminor (Mᴴ * M) 1 = (Mᴴ * M) 0 0 := by
     unfold lminor
     exact Matrix.det_fin_one _
@@ -340,8 +334,6 @@ theorem key (A B C D : ℝ) (hA : 0 ≤ A) (hB : 0 ≤ B) (hC : 0 ≤ C) (hD : 0
   generalize (1 + D) ^ (1/3:ℝ) = δ at *
   have hx : α ^ 2 * β ≤ 1 + A + B := by have := sq_mul_le_cubes α β hα hβ; linarith
   have hy : γ ^ 2 * β ≤ 1 + C + D := by have := sq_mul_le_cubes γ β hγ hβ; linarith
-  have hp1 : 0 < α ^ 2 * β := by positivity
-  have hp2 : 0 < γ ^ 2 * β := by positivity
   have hprod : (α ^ 2 * β) ^ 2 * (γ ^ 2 * β) ^ 2 ≤ (1 + A + B) ^ 2 * (1 + C + D) ^ 2 := by
     gcongr
   have hδ4 : 0 < (δ ^ 4)⁻¹ := by positivity
@@ -484,8 +476,8 @@ theorem lintegral_hB_lt_top_of_pos (p0 : ℕ) (pa pb pc : Low 4) (hab : pa ≠ p
     if p ∈ S then ENNReal.ofReal (pw x) else (Metric.closedBall (0 : ℂ) 1).indicator 1 x
   have hf : ∀ p, Measurable (f p) := by
     intro p; by_cases hp : p ∈ S
-    · simp only [f, hp, if_true]; exact measurable_pw
-    · simp only [f, hp, if_false]; exact measurable_one.indicator measurableSet_closedBall
+    · simp only [f, hp, ite_true]; exact measurable_pw
+    · simp only [f, hp, ite_false]; exact measurable_one.indicator measurableSet_closedBall
   let U : (Low 4 → ℂ) → ℝ≥0∞ := fun w => ∏ p, f p (w p)
   have hU : Measurable U := Finset.measurable_prod _ fun p _ => (hf p).comp (measurable_pi_apply p)
   have hUfin : ∫⁻ w, U w < ⊤ := by
@@ -494,8 +486,8 @@ theorem lintegral_hB_lt_top_of_pos (p0 : ℕ) (pa pb pc : Low 4) (hab : pa ≠ p
     rw [volume_pi, this]
     refine ENNReal.prod_lt_top fun p _ => ?_
     by_cases hp : p ∈ S
-    · simp only [f, hp, if_true]; exact lintegral_pw_lt_top
-    · simp only [f, hp, if_false]
+    · simp only [f, hp, ite_true]; exact lintegral_pw_lt_top
+    · simp only [f, hp, ite_false]
       rw [lintegral_indicator measurableSet_closedBall]
       simpa using (measure_closedBall_lt_top (μ := (volume : Measure ℂ)) (x := 0) (r := 1))
   have hUeq : ∀ w : Low 4 → ℂ, (∀ p, p ∉ S → ‖w p‖ ≤ 1) →
@@ -673,9 +665,6 @@ theorem lintegral_hB_one_two_lt_top : ∫⁻ w : Low 2 → ℂ, hB 1 w < ⊤ := 
     rw [pi_norm_le_iff_of_nonneg zero_le_one]
     constructor
     · intro h p
-      have hp := p.2
-      have h1 : (p.1.2 : ℕ) < p.1.1 := hp
-      have h2 : (p.1.1 : ℕ) < 2 := p.1.1.isLt
       exact h p (by omega) (by omega)
     · intro h p _ _
       exact h p
@@ -825,7 +814,7 @@ theorem nmat_apply_idx (z : V (nd X)) (i : Fin (nd X)) :
     nmat X z ((Fintype.equivFin (Ent X)).symm i).1 ((Fintype.equivFin (Ent X)).symm i).2.1.1
       ((Fintype.equivFin (Ent X)).symm i).2.1.2 = z i := by
   have h := ((Fintype.equivFin (Ent X)).symm i).2.2
-  simp only [nmat, dif_pos h]
+  simp only [nmat, dite_eq_left h]
   exact congrArg (fun j => z j) ((Fintype.equivFin (Ent X)).apply_symm_apply i)
 
 theorem coordOf_nmat (z : V (nd X)) : coordOf X (nmat X z) = z := by
@@ -840,14 +829,14 @@ theorem nFrame_apply (z : V (nd X)) (τ : X.Ψ) (a b : Fin r) :
   simp only [zFrame, leviFrame]
   by_cases ha : X.p0 ≤ (a : ℕ)
   · by_cases hb : (b : ℕ) < X.p0
-    · rw [if_pos ⟨ha, hb⟩]
+    · rw [ite_eq_left ⟨ha, hb⟩]
       refine Finset.sum_congr rfl fun c _ => ?_
       by_cases hc : (c : ℕ) < X.p0
       · have : ¬ X.p0 ≤ (c : ℕ) := by omega
         simp [ha, hb, hc, this]
       · have : X.p0 ≤ (c : ℕ) := by omega
         simp [ha, hb, hc, this]
-    · rw [if_neg (fun h => hb h.2), Finset.sum_eq_single a]
+    · rw [ite_eq_right (fun h => hb h.2), Finset.sum_eq_single a]
       · have : ¬ (a : ℕ) < X.p0 := by omega
         simp [hb, this]
       · intro c _ hca
@@ -857,7 +846,7 @@ theorem nFrame_apply (z : V (nd X)) (τ : X.Ψ) (a b : Fin r) :
           simp [hb, h2]
         · simp [hc, hca.symm]
       · simp
-  · rw [if_neg (fun h => ha h.1), Finset.sum_eq_single a]
+  · rw [ite_eq_right (fun h => ha h.1), Finset.sum_eq_single a]
     · simp [ha]
     · intro c _ hca
       simp [ha, hca.symm]
@@ -875,12 +864,12 @@ theorem nmat_toEntries (z : V (nd X)) : nmat X (toEntries X z) = nFrame X z := b
   by_cases h : b < a
   · exact nmat_coordOf_of_lt X _ τ h
   · have : ¬ (X.p0 ≤ (a : ℕ) ∧ (b : ℕ) < X.p0) := fun h' => h (Fin.lt_def.2 (by omega))
-    rw [nFrame_apply, if_neg this]
+    rw [nFrame_apply, ite_eq_right this]
     exact nmat_of_not_lt X _ _ τ h
 
 theorem nmat_toEntries_of_not (z : V (nd X)) (τ : X.Ψ) {a b : Fin r}
     (h : ¬ (X.p0 ≤ (a : ℕ) ∧ (b : ℕ) < X.p0)) : nmat X (toEntries X z) τ a b = nmat X z τ a b := by
-  rw [nmat_toEntries, nFrame_apply, if_neg h]
+  rw [nmat_toEntries, nFrame_apply, ite_eq_right h]
 
 theorem nmat_ofEntries_of_not (w : V (nd X)) (τ : X.Ψ) {a b : Fin r}
     (h : ¬ (X.p0 ≤ (a : ℕ) ∧ (b : ℕ) < X.p0)) : nmat X (ofEntries X w) τ a b = nmat X w τ a b := by
@@ -904,12 +893,12 @@ theorem Wm_toEntries (z : V (nd X)) (τ : X.Ψ) :
   show nmat X (toEntries X z) τ (ExF.qI X m) (Fin.castLE X.p0_le b) = _
   have h : X.p0 ≤ ((ExF.qI X m : Fin r) : ℕ) ∧ ((Fin.castLE X.p0_le b : Fin r) : ℕ) < X.p0 :=
     ⟨Nat.le_add_right _ _, b.isLt⟩
-  rw [nmat_toEntries, nFrame_apply, if_pos h, ExF.sum_split X, Matrix.mul_apply]
+  rw [nmat_toEntries, nFrame_apply, ite_eq_left h, ExF.sum_split X, Matrix.mul_apply]
   have h2 : ∀ k : Fin (r - X.p0), ¬ ((ExF.qI X k : Fin r) : ℕ) < X.p0 := fun k =>
     not_lt.2 (Nat.le_add_right _ _)
-  simp only [h2, if_false, Finset.sum_const_zero, add_zero]
+  simp only [h2, ite_false, Finset.sum_const_zero, add_zero]
   refine Finset.sum_congr rfl fun c _ => ?_
-  rw [if_pos (show ((Fin.castLE X.p0_le c : Fin r) : ℕ) < X.p0 from c.isLt)]
+  rw [ite_eq_left (show ((Fin.castLE X.p0_le c : Fin r) : ℕ) < X.p0 from c.isLt)]
   rfl
 
 theorem Wm_ofEntries (w : V (nd X)) (τ : X.Ψ) :
@@ -918,7 +907,7 @@ theorem Wm_ofEntries (w : V (nd X)) (τ : X.Ψ) :
   show nmat X (ofEntries X w) τ (ExF.qI X m) (Fin.castLE X.p0_le b) = _
   have h : X.p0 ≤ ((ExF.qI X m : Fin r) : ℕ) ∧ ((Fin.castLE X.p0_le b : Fin r) : ℕ) < X.p0 :=
     ⟨Nat.le_add_right _ _, b.isLt⟩
-  rw [ofEntries, nmat_coordOf_of_lt X _ τ (Fin.lt_def.2 (by omega)), dif_pos h]
+  rw [ofEntries, nmat_coordOf_of_lt X _ τ (Fin.lt_def.2 (by omega)), dite_eq_left h]
   have : (⟨(ExF.qI X m : ℕ) - X.p0, by have := (ExF.qI X m).isLt; omega⟩ : Fin (r - X.p0)) = m :=
     Fin.ext (by simp [ExF.qI])
   rw [this]
@@ -988,7 +977,7 @@ theorem measurePreserving_toEntries : MeasurePreserving (toEntries X) volume vol
   have h' : ∀ c d : Fin r, (c : ℕ) - d < (a : ℕ) - b → nmat X z τ c d = nmat X w τ c d := by
     intro c d hcd
     by_cases hl : d < c
-    · simp only [nmat, dif_pos hl]
+    · simp only [nmat, dite_eq_left hl]
       apply h
       simpa using hcd
     · exact nmat_of_not_lt X _ _ τ hl
@@ -998,7 +987,7 @@ theorem measurePreserving_toEntries : MeasurePreserving (toEntries X) volume vol
         - nmat X y τ a b = ∑ c ∈ Finset.univ.erase b,
           if (c : ℕ) < X.p0 then nmat X y τ a c * nmat X y τ c b else 0 := by
       intro y
-      rw [← Finset.add_sum_erase _ _ (Finset.mem_univ b), if_pos hW.2,
+      rw [← Finset.add_sum_erase _ _ (Finset.mem_univ b), ite_eq_left hW.2,
         show nmat X y τ b b = 1 from ExF.nM_diag X y τ b]
       ring
     rw [hs, hs]
@@ -1156,9 +1145,9 @@ theorem measurable_hB : ∀ (r p0 : ℕ), Measurable (hB (r := r) p0) := by
     have hent : ∀ a b : Fin r, Continuous (fun w : Low r → ℂ => lowMat w a b) := fun a b =>
       (continuous_apply b).comp ((continuous_apply a).comp hlow)
     by_cases h : p0 = 1
-    · simp only [blkW, h, if_true]
+    · simp only [blkW, h, ite_true]
       exact hent _ _
-    · simp only [blkW, h, if_false]
+    · simp only [blkW, h, ite_false]
       exact hent _ _
   have hcg : ∀ k, Continuous (fun w : Low r → ℂ => colGram (blkW p0 w) k) := by
     intro k
@@ -1482,7 +1471,6 @@ theorem zDet_mul_colGram_le_norm_dmin : ∀ (E : Type) [Field E] [NumberField E]
     haveI : Unique {b : Fin r // (b : ℕ) < X.p0} :=
       { default := ⟨⟨0, by omega⟩, by show 0 < X.p0; omega⟩
         uniq := fun b => Subtype.ext (Fin.ext (by
-          have h1 : ((b : Fin r) : ℕ) < X.p0 := b.2
           show ((b : Fin r) : ℕ) = 0
           omega)) }
     rw [Matrix.det_unique, Matrix.det_fin_one]
@@ -1493,7 +1481,6 @@ theorem zDet_mul_colGram_le_norm_dmin : ∀ (E : Type) [Field E] [NumberField E]
         invFun := fun a => ⟨(a.1 : ℕ) - 1, by have := a.1.2; omega⟩
         left_inv := fun i => Fin.ext (by simp)
         right_inv := fun a => Subtype.ext (Fin.ext (by
-          have h1 : X.p0 ≤ ((a : Fin r) : ℕ) := a.2
           show ((a : Fin r) : ℕ) - 1 + 1 = (a : Fin r)
           omega)) }
     have key : ∀ i : Fin (r - 1), Zm i 0 = zBlock X z τ ⟨⟨(i : ℕ) + 1, by omega⟩, hmem i⟩ default := by
@@ -1512,7 +1499,7 @@ theorem zDet_mul_colGram_le_norm_dmin : ∀ (E : Type) [Field E] [NumberField E]
     rw [Matrix.submatrix_mul _ _ _ id _ Function.bijective_id, ← Matrix.conjTranspose_submatrix]
     have hN : (blkW X.p0 (zOf X z τ)).submatrix id (Fin.castLE (Nat.le_of_lt_succ (Fin.castSucc k).isLt)) = Nm := by
       ext i j
-      simp only [Matrix.submatrix_apply, blkW, hp, if_true, hNm, hA, hL, id]
+      simp only [Matrix.submatrix_apply, blkW, hp, ite_true, hNm, hA, hL, id]
       congr 1
       · exact Fin.ext (by simp; omega)
       · exact Fin.ext (by simp [hf]; omega)
@@ -1609,10 +1596,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
 theorem gram_eq_mul {r : ℕ} (τ : E →+* ℂ) (G : Matrix (Fin r) (Fin r) E) (x : Matrix (Fin r) (Fin r) ℂ) :
     ReciprocityTheory.ChartRestriction.G.FD.gram τ G x = xᵀ * G.map τ * x.map (starRingEnd ℂ) := by
-  ext a b
-  simp only [ReciprocityTheory.ChartRestriction.G.FD.gram, hermC, ReciprocityTheory.ChartRestriction.G.FD.col, Matrix.of_apply, Matrix.mul_apply, Matrix.transpose_apply,
-    Matrix.map_apply, Finset.sum_mul]
-  rw [Finset.sum_comm]
+  apply _root_.GlobalTheory.IntBallMinorOne.gram_eq_transpose <;> assumption
 
 theorem gram_mul {r : ℕ} (τ : E →+* ℂ) (G : Matrix (Fin r) (Fin r) E) (x y : Matrix (Fin r) (Fin r) ℂ) :
     ReciprocityTheory.ChartRestriction.G.FD.gram τ G (x * y) = yᵀ * ReciprocityTheory.ChartRestriction.G.FD.gram τ G x * y.map (starRingEnd ℂ) := by
@@ -1638,7 +1622,7 @@ theorem n_top (hp : X.p0 = p) (z : V (nd X)) (τ : X.Ψ) (i a : Fin p) :
   rw [hl, zero_mul, add_zero]
   rw [Finset.sum_eq_single i]
   · simp [zFrame, leviFrame, hp, nmat_eq]
-    rw [if_neg (by omega), if_neg (by omega)]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega)]
   · intro b _ hb
     have : i.castSucc ≠ b.castSucc := fun h => hb (Fin.castSucc_injective _ h).symm
     simp [zFrame, hp, this]
@@ -1650,7 +1634,7 @@ theorem n_last (hp : X.p0 = p) (z : V (nd X)) (τ : X.Ψ) (a : Fin p) :
   show (∑ c, zFrame X z τ (Fin.last p) c * leviFrame X z τ c a.castSucc) = _
   simp [zFrame, leviFrame, hp, nmat_eq, Fin.sum_univ_castSucc]
   refine Finset.sum_congr rfl fun x _ => ?_
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 end GlobalTheory.IntBall.MinorLast
 
@@ -1716,8 +1700,8 @@ theorem finiteRing_sq_sub_mul_sq_eq_of_card (X : Data E (p + 1)) (hp : X.p0 = p)
     have hc : ∀ a : Fin ((k : ℕ) + 1), (Fin.castLE (by omega) a : Fin (p + 1)) =
         Fin.castSucc (⟨a, by omega⟩ : Fin p) := fun a => Fin.ext rfl
     rw [Matrix.submatrix_apply, hc, hc, entry_tdm, Fin.sum_univ_castSucc]
-    simp only [n_top X hp, n_last X hp, Fin.val_castSucc, Fin.val_last, sgn, hp, Fin.is_lt, if_true,
-      lt_irrefl, if_false, Matrix.transpose_apply, Matrix.sub_apply, Matrix.vecMulVec_apply, Matrix.vecMul, dotProduct, Pi.star_apply, N, q, ← hw]
+    simp only [n_top X hp, n_last X hp, Fin.val_castSucc, Fin.val_last, sgn, hp, Fin.is_lt, ite_true,
+      lt_irrefl, ite_false, Matrix.transpose_apply, Matrix.sub_apply, Matrix.vecMulVec_apply, Matrix.vecMul, dotProduct, Pi.star_apply, N, q, ← hw]
     simp only [Complex.ofReal_one, Complex.ofReal_neg,
       mul_one, Complex.star_def]
     rw [sub_eq_add_neg]
@@ -1786,8 +1770,7 @@ theorem norm_dmin_zero (X : Data E r) (x : Frame X.Ψ r) (τ : X.Ψ) (h : 0 < r 
 
 theorem ball_cases {X : Data E r} (h1 : 0 < X.p0) (h2 : X.p0 < r) (h3 : X.p0 * (r - X.p0) ≤ 3) :
     X.p0 = 1 ∨ X.p0 + 1 = r := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   have ha : 2 ≤ X.p0 := by omega
   have hb : 2 ≤ r - X.p0 := by omega
   have := Nat.mul_le_mul ha hb
@@ -1828,7 +1811,7 @@ theorem density_mul_exp_le (X : Data E r) (h1 : 0 < X.p0) (h2 : X.p0 < r) (h3 : 
     have e1 := Fin.prod_univ_succ fun j : Fin (r - 1 + 1) => colGram (blkW X.p0 (zOf X z τ)) j ^ (-2 : ℤ)
     have e2 := Fin.prod_univ_castSucc fun j : Fin (r - 1 + 1) => colGram (blkW X.p0 (zOf X z τ)) j ^ (-2 : ℤ)
     rw [colGram_zero, one_zpow, one_mul] at e1
-    rw [_root_.GlobalTheory.IntBall.colGramLast r X.p0 (zOf X z τ), one_zpow, mul_one] at e2
+    rw [_root_.GlobalTheory.IntBall.colGram_blkW_last r X.p0 (zOf X z τ), one_zpow, mul_one] at e2
     rw [← e1, e2]
     rfl
 

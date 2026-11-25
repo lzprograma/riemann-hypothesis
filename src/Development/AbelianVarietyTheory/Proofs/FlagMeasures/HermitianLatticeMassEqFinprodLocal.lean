@@ -207,7 +207,7 @@ theorem mass_eq_finprod : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [
     by_contra hcon
     apply hp
     have hu : U p = K p := not_not.1 hcon
-    have h1 : c p = 1 := if_neg (not_not.2 hu)
+    have h1 : c p = 1 := ite_eq_right (not_not.2 hu)
     exact ⟨1, by rw [h1]; simp⟩
   let φ := extHom A (k + 2 * r + 1)
   have hdense : ∀ g, g ∈ Subgroup.pi Set.univ K ∨ g ∈ Subgroup.pi Set.univ U →
@@ -244,7 +244,7 @@ theorem mass_eq_finprod : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [
         haveI := (A.loc p).lf
         have hcp : ((c p : ((A.loc p).Fp)ˣ) : (A.loc p).Fp) = (((G.S p).ϖ : 𝒪[(A.loc p).Fp]) : (A.loc p).Fp) := by
           have h3 : c p = Units.mk0 (((G.S p).ϖ : 𝒪[(A.loc p).Fp]) : (A.loc p).Fp)
-              (fun h0 => (G.S p).ϖ_irr.ne_zero (Subtype.ext h0)) := if_pos he
+              (fun h0 => (G.S p).ϖ_irr.ne_zero (Subtype.ext h0)) := ite_eq_left he
           rw [h3]
           rfl
         refine stabilises_of_close (A.L p) (A.lat p Λ) (hlat p).1 (G.S p).ϖ (G.S p).ϖ_irr _ ?_

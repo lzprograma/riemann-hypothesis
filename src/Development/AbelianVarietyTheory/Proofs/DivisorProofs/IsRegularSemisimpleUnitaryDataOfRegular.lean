@@ -56,7 +56,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formali
 open GlobalTheory.IndefiniteRowSideFullHecke.PlusPolynomialRoots (IsTestData PPol Tor Phi PhiOK PhiReal ellKernel Gap NoFixed IsLatticeConj GeomExpansion EllipticPart TraceEq)
 open GlobalTheory.PRep (IsAdmissible)
 open GlobalTheory.TrMult
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.TruncKer GlobalTheory.IndefiniteRowSideFullHecke.NonFieldTypeVanishingAlt GlobalTheory.Chamber GlobalTheory.Cusp
 open scoped TensorProduct
 
@@ -72,8 +71,7 @@ theorem isRegular_of_isRegSS : ∀ {D : D7} {V : HSp D} (γ : GF V), IsRegSS γ.
       Algebra.FinitePresentation.of_finiteType.1 inferInstance⟩
   · intro e
     simp [Formalism.BasicNotions.CMData.sig]
-  · by_contra hne
-    push_neg at hne
+  · by_contra! hne
     have htop : (⊥ : Subalgebra (↥D.host.F) D.host.E) = ⊤ := by
       refine eq_top_iff.2 (fun e _ => ?_)
       rw [Algebra.mem_bot]

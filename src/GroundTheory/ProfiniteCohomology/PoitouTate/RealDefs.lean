@@ -15,8 +15,6 @@ namespace GroundTheory.ProfCoh
 
 open CategoryTheory MonoidalCategory
 
-attribute [local instance 2000] Rep.hV2
-
 section NormClass
 
 variable {k F : Type} [CommRing k] [Group F] [TopologicalSpace F] [IsTopologicalGroup F] [Fintype F]

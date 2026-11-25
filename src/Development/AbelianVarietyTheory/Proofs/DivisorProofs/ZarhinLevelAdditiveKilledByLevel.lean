@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ZarhinOrderIsRingActionOnProduct
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KappaOK
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoLeFinrankLa
 import Mathlib.Algebra.Order.Floor.Extended
@@ -116,21 +117,7 @@ theorem isMonHom_incZ : IsMonHom (incZ A B) := by
 
 theorem isMonHom_actZ (d : ℕ) (la : A ⟶ B) (mu : B ⟶ A) [IsMonHom la] [IsMonHom mu] (N : ord d) :
     IsMonHom (actZ A B d la mu N) := by
-  unfold actZ
-  apply isMonHom_mkZ
-  · intro i
-    apply _root_.GlobalTheory.SharpExt.isMonHom_prod
-    intro j
-    haveI := _root_.GlobalTheory.Serre.isMonHom_zpow (pa A B j) ((N : Matrix (Fin 4 ⊕ Fin 4) (Fin 4 ⊕ Fin 4) ℤ) (Sum.inl j) (Sum.inl i))
-    haveI := _root_.GlobalTheory.Serre.isMonHom_zpow (pb A B j ≫ mu)
-      ((N : Matrix (Fin 4 ⊕ Fin 4) (Fin 4 ⊕ Fin 4) ℤ) (Sum.inr j) (Sum.inl i) / (d : ℤ))
-    exact _root_.GlobalTheory.Serre.isMonHom_mul _ _
-  · intro i
-    apply _root_.GlobalTheory.SharpExt.isMonHom_prod
-    intro j
-    haveI := _root_.GlobalTheory.Serre.isMonHom_zpow (pa A B j ≫ la) ((N : Matrix (Fin 4 ⊕ Fin 4) (Fin 4 ⊕ Fin 4) ℤ) (Sum.inl j) (Sum.inr i))
-    haveI := _root_.GlobalTheory.Serre.isMonHom_zpow (pb A B j) ((N : Matrix (Fin 4 ⊕ Fin 4) (Fin 4 ⊕ Fin 4) ℤ) (Sum.inr j) (Sum.inr i))
-    exact _root_.GlobalTheory.Serre.isMonHom_mul _ _
+  apply _root_.GlobalTheory.ZarhinFam.RAct.actZ_isMonHom <;> assumption
 
 end Obj
 

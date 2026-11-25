@@ -28,9 +28,8 @@ theorem intPS_sub {f g : PowerSeries K} (hf : IntPS R f) (hg : IntPS R g) : IntP
   rw [map_sub]
   exact R.sub_mem (hf n) (hg n)
 
-theorem intPS_mul {f g : PowerSeries K} (hf : IntPS R f) (hg : IntPS R g) : IntPS R (f * g) := fun n => by
-  rw [PowerSeries.coeff_mul]
-  exact R.sum_mem (fun p _ => R.mul_mem (hf _) (hg _))
+theorem intPS_mul {f g : PowerSeries K} (hf : IntPS R f) (hg : IntPS R g) : IntPS R (f * g) :=
+  Formalism.L2.Th1.C.JetSubstitutionLemmas.intPS_mul hf hg
 
 theorem intPS_C {c : K} (hc : c ∈ R) : IntPS R (PowerSeries.C c) := fun n => by
   rw [PowerSeries.coeff_C]
@@ -68,11 +67,7 @@ theorem hs_of {a : PowerSeries K} (h : PowerSeries.constantCoeff a = 0) : PowerS
 
 theorem cc_mulBy {l linv : PowerSeries K} (h : IsLogPair l linv) (al : K) :
     PowerSeries.constantCoeff (mulBy l linv al) = 0 := by
-  obtain ⟨q, hq⟩ := PowerSeries.X_dvd_iff.mpr h.2.2.1
-  have ha : PowerSeries.HasSubst (PowerSeries.C al * l) := hs_of (by simp [h.1])
-  unfold mulBy
-  rw [hq, ← PowerSeries.coe_substAlgHom ha, map_mul, PowerSeries.coe_substAlgHom,
-    PowerSeries.subst_X ha, map_mul, map_mul, h.1, mul_zero, zero_mul]
+  exact Formalism.L2.Th1.C.JetSubstitutionLemmas.cc_mulBy h al
 
 theorem subst_mulBy_l {l linv : PowerSeries K} (h : IsLogPair l linv) (al : K) :
     PowerSeries.subst (mulBy l linv al) l = PowerSeries.C al * l := by

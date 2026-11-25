@@ -1,5 +1,6 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsPlaceWithVectors
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarPinVt
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LocWSOf
 public import Formalism.FormalDegreeBessel.FinalG
@@ -54,6 +55,7 @@ import Formalism.SharpRestriction.CuspSpanNormBounds.Point
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
 import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CoefDecay
 import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.AmpTensorDSdNonemptyOfSubsingleton
+import Formalism.LocalToGlobal.HermitianForms.Interlace
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarPinVtLZero, Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarPinVtPtSome, Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarPinVtRZero, Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierDataBuiltOfCompactTest, Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierPropGram, Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierTParNums, Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierXAll
@@ -72,8 +74,6 @@ namespace Formalism.L2.SG.Pf.Carrier.CarPinVt
 
 open Formalism.L2.SG.RealObj
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 def GNonNeg (u u' : D.what₂.Word) : Prop :=
@@ -88,7 +88,7 @@ theorem lZero_of (u u' : D.what₂.Word) (sc : ℝ) (i0 i0' : ∀ _ : InfinitePl
   simp only
   by_cases hrep : ∃ γ, IsPtRep X u u' w γ
   · have h1 : ¬ ∀ v, 0 < GX X u u' D.host.rdE (gamW X u u' w) v := fun h => hng ⟨hrep, h⟩
-    push_neg at h1
+    push Not at h1
     obtain ⟨v, hv⟩ := h1
     have hrepw : IsPtRep X u u' w (gamW X u u' w) := by
       unfold gamW; rw [dite_eq_left hrep]; exact hrep.choose_spec
@@ -100,7 +100,7 @@ theorem lZero_of (u u' : D.what₂.Word) (sc : ℝ) (i0 i0' : ∀ _ : InfinitePl
       rw [h0, zero_pow (by omega), zero_mul]
     rw [hn, Real.sqrt_zero, Complex.ofReal_zero, zero_smul]
   · have hV : unscaledOperatorAtPointRepresentative X u u' sc i0 i0' νq w = 0 := by
-      unfold unscaledOperatorAtPointRepresentative; rw [if_neg hrep]
+      unfold unscaledOperatorAtPointRepresentative; rw [ite_eq_right hrep]
     rw [hV, map_zero, smul_zero]
 
 theorem gX_nonneg {θ : ℝ} (C : Formalism.L2.SG.LocWSOf.Choice X θ) (u u' : D.what₂.Word) (γ : X.B.I.Ginf)
@@ -236,8 +236,6 @@ namespace Formalism.L2.SG.Pf.Carrier.CarPinVt
 open Formalism.L2.SG.RealObj Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Built Formalism.L2.SG.LocWSOf
   Formalism.L2.SG.Pf.CarrierT
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 theorem exists_nonneg_ptG_lptOf_eq_mul (v : InfinitePlace X.B.I.F) (κ : ℂ) (hκ : star κ = -κ) (TT : ℝ)
@@ -294,7 +292,7 @@ theorem rZero_carrierInT (u u' : D.what₂.Word) (e : InfinitePlace D.host.E ≃
       Tw (D := D) u * Tw (D := D) u' * ‖RealObj.Dl (RealObj.ZhatO (ptC X v w)) D.R.rS‖ ^ 2 ≤ 0 := by
     by_cases hrep : ∃ γ, IsPtRep X u u' w γ
     · have h1 : ¬ ∀ v, 0 < GX X u u' D.host.rdE (gamW X u u' w) v := fun h => hng ⟨hrep, h⟩
-      push_neg at h1
+      push Not at h1
       obtain ⟨v, hv1⟩ := h1
       refine ⟨v, ?_⟩
       have hrepw : IsPtRep X u u' w (gamW X u u' w) := by
@@ -309,8 +307,7 @@ theorem rZero_carrierInT (u u' : D.what₂.Word) (e : InfinitePlace D.host.E ≃
         (Formalism.L2.SG.Pf.CarrierTop.cS D.R.rS D.host.rdE) (Formalism.L2.SG.Pf.CarrierTop.cS D.R.rS D.host.rdE)
         (Tw (D := D) u * Tw (D := D) u') (by rw [hcl]; simp)
       rw [Formalism.L2.SG.Pf.CarrierTop.zx_sc, hGd, hZ1] at hv1
-      by_contra hpos
-      push_neg at hpos
+      by_contra! hpos
       have hrd := Formalism.MainNotions.LocalModelPeriodLattices.rdE_pos D
       have hne : (∏ i : Fin D.R.rS, Formalism.L2.SG.Pf.CarrierTop.cS D.R.rS D.host.rdE (Fin.castLE (Nat.le_succ D.R.rS) i)) ≠ 0 :=
         Finset.prod_ne_zero_iff.mpr fun i _ => by
@@ -320,8 +317,7 @@ theorem rZero_carrierInT (u u' : D.what₂.Word) (e : InfinitePlace D.host.E ≃
         pow_pos (mul_pos (norm_pos_iff.mpr hne) (norm_pos_iff.mpr hne)) 2
       have := mul_pos hc hpos
       linarith
-    · by_contra hall
-      push_neg at hall
+    · by_contra! hall
       obtain ⟨γ, hγ, -⟩ := hPRE w (fun v => by have := hall v; unfold Gv; exact this)
       exact hrep ⟨γ, hγ⟩
   refine ⟨(tauE X e).symm v, Or.inr ?_⟩
@@ -402,8 +398,6 @@ namespace Formalism.L2.SG.Pf.CarrierT
 
 open Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Built Formalism.L2.SG.LocWSOf Formalism.L2.SG.RealObj
 open Formalism.L2.SG.Pf.Choice
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) {θ : ℝ} (C : Choice X θ)
 
@@ -645,14 +639,7 @@ theorem half_lt_int {a b : ℚ} (ha : ∃ z : ℤ, a = z + 1 / 2) (hb : ∃ z : 
   linarith
 
 theorem int_lt_half {a b : ℚ} (ha : ∃ z : ℤ, a = z + 1 / 2) (hb : ∃ z : ℤ, b = z) (h : b < a) : b + 1 / 2 ≤ a := by
-  obtain ⟨z, rfl⟩ := ha
-  obtain ⟨n, rfl⟩ := hb
-  have : n ≤ z := by
-    have : (n : ℚ) < z + 1 := by linarith
-    have : n < z + 1 := by exact_mod_cast this
-    omega
-  have : (n : ℚ) ≤ z := by exact_mod_cast this
-  linarith
+  apply _root_.Formalism.L2.Forms.half_gap <;> assumption
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) {θ : ℝ} (C : Formalism.L2.SG.LocWSOf.Choice X θ)
 
@@ -778,21 +765,8 @@ theorem frameVec_facts {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [Inner
     [InnerProductSpace ℂ Wq] (Bs : B.RealPlaceData k r Wp Wq) (ν' : Fin (2 * r + k + 1) → ℂ) (m₀ : B.Mat k r)
     (hF : D.IsBaseFrame Bs ν' m₀) (hT : 0 < Tz k r Bs.z) (hT' : 0 < Tz k r Bs.z') :
     inWb k r (m₀ *ᵥ ν') ∧ herm (Hpk k r) (m₀ *ᵥ ν') Bs.z = 0 ∧ herm (Hpk k r) (m₀ *ᵥ ν') (m₀ *ᵥ ν') = 1 := by
-  obtain ⟨hw, hz, hn, hm, hmz⟩ := hF
-  have hU : m₀ᴴ * Hpk k r * m₀ = Hpk k r := hm.1
-  refine ⟨Formalism.FourierDecayAlt.P.Qx8.inWb_mulVec hm hw, ?_, by rw [_root_.PI.StabSplit.UnipW.herm_inv hU]; exact hn⟩
-  have h0 : herm (Hpk k r) (m₀ *ᵥ ν') (m₀ *ᵥ Bs.z') = 0 := by rw [_root_.PI.StabSplit.UnipW.herm_inv hU]; exact hz
-  rw [hmz] at h0
-  set c : ℂ := ((√(Tz k r Bs.z' / Tz k r Bs.z) : ℝ) : ℂ) with hc
-  have hc0 : c ≠ 0 := by
-    rw [hc]; exact_mod_cast (Real.sqrt_pos.mpr (div_pos hT' hT)).ne'
-  have e : herm (Hpk k r) (m₀ *ᵥ ν') (c • Bs.z) = star c * herm (Hpk k r) (m₀ *ᵥ ν') Bs.z := by
-    unfold herm
-    rw [star_smul, smul_dotProduct, smul_eq_mul]
-  rw [e] at h0
-  rcases mul_eq_zero.mp h0 with h | h
-  · exact absurd (star_eq_zero.mp h) hc0
-  · exact h
+  intros
+  apply _root_.Formalism.FourierDecayAlt.P.HaarMassHermitianCurvature.frameVec_facts <;> assumption
 
 theorem typeProj_nonempty (hTP : Top.TypeProjExists) {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
     [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (P : M.Par)
@@ -816,7 +790,7 @@ namespace Formalism.L2.SG.Pf.CarrierXAll
 
 open Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Built Formalism.L2.SG.LocWSOf Formalism.L2.SG.Pf.CarrierT
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
+attribute [local instance] instCM
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) {θ : ℝ} (C : Choice X θ)
 
@@ -979,15 +953,13 @@ end Formalism.L2.SG.Pf.CarrierXAll
 
 noncomputable section
 
-open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S
-open scoped Matrix
 
 namespace Formalism.L2.SG.Pf.CarrierXAll
 
 open Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Built Formalism.L2.SG.LocWSOf Formalism.L2.SG.Pf.CarrierT Formalism.L2.SG.RealObj
 open Formalism.L2.SG.Pf.Carrier.CarPinVt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
+attribute [local instance] instCM
 
 theorem cut_len {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what₂.Word} (I : CarrierIn X u u') (v : Fin I.nf) :
     (sOf I).cutHi v - (sOf I).cutLo v = I.G.Del / 2 - 5 / 2 := by
@@ -1118,8 +1090,6 @@ end Formalism.L2.SG.Pf.CarrierXAll
 
 noncomputable section
 
-open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S
-open scoped Matrix
 
 namespace Formalism.L2.SG.Pf.CarrierXAll
 
@@ -1176,7 +1146,7 @@ namespace Formalism.L2.SG.Pf.CarrierXAll
 open Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Built Formalism.L2.SG.LocWSOf Formalism.L2.SG.Pf.CarrierT Formalism.L2.SG.RealObj
 open Formalism.L2.SG.Pf.Carrier.CarPinVt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
+attribute [local instance] instCM
 
 theorem host_v (D : D7) : D.host.v = Formalism.FourierDecayAlt.S6.rd D.host.E / 2 := by
   unfold Formalism.BasicNotions.Host.v Formalism.BasicNotions.Host.rdE Formalism.FourierDecayAlt.S6.rd
@@ -1202,21 +1172,19 @@ def XLeafAt {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) {θ : ℝ} 
   ∀ (Θ : ∀ j : Fin (nfE D), Formalism.FourierDecayAlt.Top.TopLift D.R.k D.R.rS (X.Vloc u (tauE X e j)) (X.Vloc u' (tauE X e j)))
     (TP : ∀ j : Fin (nfE D), Formalism.FourierDecayAlt.Top.TypeProj (parE e u u' de de' j) (towersOf X C u u' e j).base.π
       (towersOf X C u u' e j).base.z (m0E X C u u' e j *ᵥ nuE X C u' e i0' j)) (A₀ : ℝ),
-    Formalism.L2.SG.Pf.Carrier.JointPin.PinCov (CarrierOf (ITc X C u u' e he hv CA de de' l (gridT e l) (grid1T e l) (fcT X C e u u' a b ξ ξ' cc) cutStd i0' Θ TP A₀) (modelsOf (ITc X C u u' e he hv CA de de' l (gridT e l) (grid1T e l) (fcT X C e u u' a b ξ ξ' cc) cutStd i0' Θ TP A₀)))
+    Formalism.L2.SG.Pf.Carrier.JointPin.PinCov (CarrierOf (ITc X C u u' e he hv CA de de' l (gridT e l) (grid1T e l) (fcT X C e u u' a b ξ ξ' cc) cutStd i0' Θ TP A₀))
 
 end Formalism.L2.SG.Pf.CarrierXAll
 
 noncomputable section
 
-open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S
-open scoped Matrix
 
 namespace Formalism.L2.SG.Pf.CarrierXAll
 
 open Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Built Formalism.L2.SG.LocWSOf Formalism.L2.SG.Pf.CarrierT Formalism.L2.SG.RealObj
 open Formalism.L2.SG.Pf.Carrier.CarPinVt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
+attribute [local instance] instCM
 
 def Cd : ℝ := exists_Cc_data.choose
 
@@ -1385,8 +1353,6 @@ end Formalism.L2.SG.Pf.CarrierXAll
 
 noncomputable section
 
-open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S
-open scoped Matrix
 
 namespace Formalism.L2.SG.Pf.CarrierXAll
 
@@ -1394,7 +1360,7 @@ open Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Bui
 open Formalism.FourierDecayAlt Formalism.L2.SG.HidaSetting Formalism.L2.SG.Full Formalism.L2.SG.PackageTie2 Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups
 open Formalism.L2.SG.AdBridge Formalism.L2.SG.DataInst Formalism.L2.SG.SpectralTiesReal
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
+attribute [local instance] instCM
 
 theorem polys (k r : ℕ) :
     (k : ℝ) * ((4 * Formalism.FourierDecayAlt.C.Kst * (r + 1) : ℕ) : ℝ) * ((r : ℝ) + 1) ^ 2 + ((4 * Formalism.FourierDecayAlt.C.Kst * (r + 1) : ℕ) : ℝ) ^ 2 * ((r : ℝ) + 1) ^ 2 +
@@ -1430,8 +1396,6 @@ end Formalism.L2.SG.Pf.CarrierXAll
 
 noncomputable section
 
-open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S
-open scoped Matrix
 
 namespace Formalism.L2.SG.Pf.CarrierXAll
 

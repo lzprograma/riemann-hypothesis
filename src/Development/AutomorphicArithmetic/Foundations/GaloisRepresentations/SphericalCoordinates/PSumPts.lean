@@ -1,45 +1,8 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
@@ -132,25 +95,25 @@ theorem UpperTheory.Gal.W2.sumPts_of :
     show tm v c K S (Quot.out q) (Quot.out pt) = _
     rw [tm_eq v c K S _ _ (hK _ _)]
     by_cases hxF : x ∈ Fb
-    · rw [if_pos hxF]
+    · rw [ite_eq_left hxF]
       obtain ⟨y, hy⟩ := hFb.1 hxF
       have hy' := ((hE1 y).1).1 hy
       rw [finsum_eq_single _ (E y)]
-      · rw [if_pos hy', ((hE1 y).2 hy).1, ((hE1 y).2 hy).2, hw y hy]
+      · rw [ite_eq_left hy', ((hE1 y).2 hy).1, ((hE1 y).2 hy).2, hw y hy]
       · intro y' hne
-        rw [if_neg]
+        rw [ite_eq_right]
         intro hs
         exact hne (hS _ _ _ _ hs hy')
-    · rw [if_neg hxF]
+    · rw [ite_eq_right hxF]
       apply finsum_eq_zero_of_forall_eq_zero
       intro y'
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hs
       exact hxF (hFb.2 ⟨E' y', ((hE2 y').1).1 hs⟩)
   have hsupp : Function.support (fun x => g (Φ x)) ⊆ ↑Fb := by
     intro x hx0
     by_contra hn
-    exact hx0 (by show g (Φ x) = 0; rw [key x, if_neg (show x ∉ Fb from hn)])
+    exact hx0 (by show g (Φ x) = 0; rw [key x, ite_eq_right (show x ∉ Fb from hn)])
   have hfin : (Function.support g).Finite := by
     apply ((Fb.finite_toSet).image Φ).subset
     intro s hs
@@ -163,4 +126,4 @@ theorem UpperTheory.Gal.W2.sumPts_of :
     rw [finsum_sigma g hfin]
     rfl
   rw [h1, ← finsum_comp_equiv Φ, finsum_eq_sum_of_support_subset (fun x => g (Φ x)) hsupp]
-  exact Finset.sum_congr rfl (fun x hx => by rw [key, if_pos hx])
+  exact Finset.sum_congr rfl (fun x hx => by rw [key, ite_eq_left hx])

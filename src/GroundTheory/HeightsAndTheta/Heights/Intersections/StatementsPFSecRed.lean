@@ -28,10 +28,6 @@ def PFSecAt (I : AllFam) (r : ℕ) : Prop :=
 def PFSecRed.Statement : Prop :=
   ∀ (I : AllFam), I.IsFamily → ∀ r : ℕ, PFSecAt I r → PFAt I (r + 1)
 
-section Inhabitants
-
-end Inhabitants
-
 end
 
 end GroundTheory.Heights₂.Heights.Inter

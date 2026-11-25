@@ -10,44 +10,7 @@ import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryActionA
 import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryRealPointsStructureRealPlaces
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmPureTensorOOfFinite
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.DatEqZero
 public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
 public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
@@ -60,7 +23,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level Host
 open GlobalTheory.SW hiding Level IsSB
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.IndefR.FWT Formalism.L2.Pj
 open scoped TensorProduct Classical ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -146,7 +108,7 @@ theorem trace_parity {k : ℕ} {G s B : Matrix (Fin k) (Fin k) ℂ} {p : ℕ} (h
   refine Finset.sum_congr rfl fun a _ => ?_
   rcases hε a with h | h
   · simp [h.1]
-  · rw [if_neg (by rw [h.1]; norm_num)]
+  · rw [ite_eq_right (by rw [h.1]; norm_num)]
     simp [h.1]
 
 section Letters
@@ -168,10 +130,10 @@ theorem IsTyp.ne (h : IsTyp D H) (s t : D.what₂.Tau) : tauE D s ≠ conjEmb (t
   fun e => (h.2 _).2 ⟨t, e⟩ ((h.1 _).2 ⟨s, rfl⟩)
 
 theorem IsTyp.mult_pos (h : IsTyp D H) (Dw : Datum H) (t : D.what₂.Tau) : Dw.mult (tauE D t) = Dw.p :=
-  if_pos ((h.1 _).2 ⟨t, rfl⟩)
+  ite_eq_left ((h.1 _).2 ⟨t, rfl⟩)
 
 theorem IsTyp.mult_neg (h : IsTyp D H) (Dw : Datum H) (t : D.what₂.Tau) : Dw.mult (conjEmb (tauE D t)) = Dw.q :=
-  if_neg ((h.2 _).2 ⟨t, rfl⟩)
+  ite_eq_right ((h.2 _).2 ⟨t, rfl⟩)
 
 variable {lt : LtN Dw n → FVar D m n}
 
@@ -223,7 +185,7 @@ theorem IsLt.col (hl : IsLt lt) (h : IsTyp D H) (ℓ : LtN Dw n) (j : Fin n) :
 theorem X_eq_varF (k : FVar D m n) {t : D.what₂.Tau} {i b : ℕ} (h1 : k.1 = t) (h2 : (k.2.1 : ℕ) = i) (h3 : (k.2.2 : ℕ) = b) :
     (MvPolynomial.X k : MvPolynomial (FVar D m n) ℂ) = varF t i b := by
   subst h1 h2 h3
-  rw [varF, dif_pos ⟨k.2.1.2, k.2.2.2⟩]
+  rw [varF, dite_eq_left ⟨k.2.1.2, k.2.2.2⟩]
 
 def toF (lt : LtN Dw n → FVar D m n) : MvPolynomial (LtN Dw n) c.F →+* MvPolynomial (FVar D m n) ℂ :=
   (MvPolynomial.rename lt).toRingHom.comp (MvPolynomial.map (inC c))
@@ -279,7 +241,7 @@ theorem toF_pG (hl : IsLt lt) (h : IsTyp D H) (hn : Dw.p + Dw.q ≤ n) (a : (D.h
     conv_rhs => rw [← m1, Finset.prod_range]
     refine Finset.prod_congr rfl fun i _ => ?_
     have hi : (i : ℕ) < Dw.p := lt_of_lt_of_eq i.2 m1
-    rw [map_pow, dif_pos (by omega), if_pos ((h.1 _).2 ⟨t, rfl⟩), toF_minorP]
+    rw [map_pow, dite_eq_left (by omega), ite_eq_left ((h.1 _).2 ⟨t, rfl⟩), toF_minorP]
     congr 1
     · rw [minorPlus]
       congr 1
@@ -296,7 +258,7 @@ theorem toF_pG (hl : IsLt lt) (h : IsTyp D H) (hn : Dw.p + Dw.q ≤ n) (a : (D.h
     conv_rhs => rw [← m2, Finset.prod_range]
     refine Finset.prod_congr rfl fun i _ => ?_
     have hi : (i : ℕ) < Dw.q := lt_of_lt_of_eq i.2 m2
-    rw [map_pow, dif_pos (by omega), if_neg ((h.2 _).2 ⟨t, rfl⟩), toF_minorP]
+    rw [map_pow, dite_eq_left (by omega), ite_eq_right ((h.2 _).2 ⟨t, rfl⟩), toF_minorP]
     congr 1
     · rw [minorMinus]
       congr 1
@@ -334,9 +296,9 @@ theorem toF_gaStar (hl : IsLt lt) (h : IsTyp D H) (pW : D.what₂.Tau → ℕ) (
     show ℓ.1 (IsCMField.complexConj D.host.E (ga j ℓ.2.2)) = _
     rw [IsCMField.complexEmbedding_complexConj]
     rcases (hl ℓ).2 with ⟨h1, h2⟩ | ⟨h1, h2⟩
-    · rw [if_pos (h2 ▸ (hl.pos h h1).2.2)]
+    · rw [ite_eq_left (h2 ▸ (hl.pos h h1).2.2)]
       exact congrArg (fun σ : D.host.E →+* ℂ => conj (σ _)) h1
-    · rw [if_neg (by omega)]
+    · rw [ite_eq_right (by omega)]
       exact congrArg (fun σ : D.host.E →+* ℂ => conj (σ _)) h1
 
 end Letters

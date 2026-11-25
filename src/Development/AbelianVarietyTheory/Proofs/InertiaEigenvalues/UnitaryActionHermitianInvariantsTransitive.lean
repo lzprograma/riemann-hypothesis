@@ -2,55 +2,8 @@ module
 
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitaryOrbitNormalFormUnitInvariant
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -127,7 +80,7 @@ theorem comp_mulVec_ev (p : Fin r → K) (j : ℕ) (hj : j + 1 < r) : companion 
   rw [Finset.sum_eq_single ⟨j, by omega⟩]
   · simp [companion, show j + 1 ≠ r by omega]
   · intro l _ hl
-    rw [if_neg]
+    rw [ite_eq_right]
     exact fun h => hl (Fin.ext h)
   · simp
 
@@ -146,7 +99,7 @@ theorem comp_pow_r (p : Fin r → K) : companion p ^ r *ᵥ ev r K 0 = -p := by
     rw [Finset.sum_eq_single ⟨s, by omega⟩]
     · simp [companion]
     · intro l _ hl
-      rw [if_neg]
+      rw [ite_eq_right]
       exact fun h => hl (Fin.ext h)
     · simp
 
@@ -168,7 +121,7 @@ theorem mom_sec_lt (a : Inv r K) (i : Fin r) : mom (sec a) i = a.2.1 i := by
   simp only [dotProduct, ev, mul_ite, mul_one, mul_zero]
   rw [Finset.sum_eq_single i]
   · simp [show (sec a).2.2.1 = a.2.1 from rfl]
-  · intro l _ hl; rw [if_neg]; exact fun h => hl (Fin.ext h)
+  · intro l _ hl; rw [ite_eq_right]; exact fun h => hl (Fin.ext h)
   · simp
 
 end Gen
@@ -277,7 +230,7 @@ theorem Bm_ev (Y : Gl r K) : Bm Y *ᵥ ev r K 0 = Y.2.1 := by
   simp only [mulVec, dotProduct, ev, mul_ite, mul_one, mul_zero]
   rw [Finset.sum_eq_single ⟨0, i.pos⟩]
   · simp [Bm]
-  · intro l _ hl; rw [if_neg]; exact fun h => hl (Fin.ext h)
+  · intro l _ hl; rw [ite_eq_right]; exact fun h => hl (Fin.ext h)
   · simp
 
 end Gen2
@@ -446,7 +399,7 @@ theorem mulVec_ev {K : Type} [CommRing K] (M : Matrix (Fin r) (Fin r) K) (j : Fi
   simp only [mulVec, dotProduct, ev, mul_ite, mul_one, mul_zero]
   rw [Finset.sum_eq_single j]
   · simp
-  · intro l _ hl; rw [if_neg]; exact fun h => hl (Fin.ext h)
+  · intro l _ hl; rw [ite_eq_right]; exact fun h => hl (Fin.ext h)
   · simp
 
 theorem part4 [Unram F E] (a : Inv r F) (hΔ : Delta a ≠ 0) :

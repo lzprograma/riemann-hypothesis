@@ -2,6 +2,7 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.TwoChartSt
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
+import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsFormalBiextMap
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -42,8 +43,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscrim
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB ReciprocityTheory.ChartRestriction.G.TB.WickVanishing GlobalTheory.JetSer
@@ -56,41 +55,23 @@ variable {R k : Type} [CommRing R] [CommRing k] (f : R →+* k) {d : ℕ}
 
 def mP {n : ℕ} (a : Pt R n d) : Pt k n d := fun i => MvPowerSeries.map f (a i)
 
-theorem map_ev {m n : ℕ} (a : Fin m → Pt R n d) (ha : ∀ j, GP (a j)) (g : PS R m d) :
-    MvPowerSeries.map f (ev a g) = ev (fun j => mP f (a j)) (MvPowerSeries.map f g) := by
-  unfold ev
-  rw [MvPowerSeries.map_subst (gt_hasSubst a ha)]
-  rfl
-
 theorem map_ev1 {n : ℕ} {a : Pt R n d} (ha : GP a) (g : PS R 1 d) :
     MvPowerSeries.map f (ev ![a] g) = ev ![mP f a] (MvPowerSeries.map f g) := by
-  rw [map_ev f _ (single_point_zero_constant ha)]
+  refine (GlobalTheory.FBMap.map_ev f (single_point_zero_constant ha) g).trans ?_
   congr 1
   funext j; fin_cases j; rfl
 
-theorem map_ev2 {n : ℕ} {a b : Pt R n d} (ha : GP a) (hb : GP b) (g : PS R 2 d) :
-    MvPowerSeries.map f (ev ![a, b] g) = ev ![mP f a, mP f b] (MvPowerSeries.map f g) := by
-  rw [map_ev f _ (pair_points_zero_constant ha hb)]
-  congr 1
-  funext j; fin_cases j <;> rfl
-
 theorem map_ev3 {n : ℕ} {a b c : Pt R n d} (ha : GP a) (hb : GP b) (hc : GP c) (g : PS R 3 d) :
     MvPowerSeries.map f (ev ![a, b, c] g) = ev ![mP f a, mP f b, mP f c] (MvPowerSeries.map f g) := by
-  rw [map_ev f _ (triple_points_zero_constant ha hb hc)]
+  refine (GlobalTheory.FBMap.map_ev f (triple_points_zero_constant ha hb hc) g).trans ?_
   congr 1
   funext j; fin_cases j <;> rfl
-
-theorem mapPoint_pt {n : ℕ} (j : Fin n) : mP f (pt R d j) = pt k d j := by
-  funext i; simp [mP, pt]
 
 theorem mapPoint_zero {n : ℕ} : mP f (0 : Pt R n d) = 0 := by
   funext i; simp [mP]
 
 theorem mapPoint_comp1 {n : ℕ} (φ : Pt R 1 d) {a : Pt R n d} (ha : GP a) :
     mP f (comp1 φ a) = comp1 (mP f φ) (mP f a) := funext fun i => map_ev1 f ha (φ i)
-
-theorem mapPoint_addOf {n : ℕ} (F : Pt R 2 d) {a b : Pt R n d} (ha : GP a) (hb : GP b) :
-    mP f (addOf F a b) = addOf (mP f F) (mP f a) (mP f b) := funext fun i => map_ev2 f ha hb (F i)
 
 theorem constantCoeff_map_eq_zero₂ {n : ℕ} {a : Pt R n d} (ha : GP a) : GP (mP f a) := fun i => by
   simp only [mP, constantCoeff_map, ha i, map_zero]
@@ -108,44 +89,52 @@ theorem related_map {O : Type} [CommRing O] [StarRing O] {B B' : FB R d O} {φ �
   have hφi : GP φi := h.inv.2.1
   have hp : ∀ {n : ℕ} (j : Fin n), GP (pt R (n := n) d j) := fun j => gp_pt j
   have hc : ∀ {n : ℕ} (j : Fin n), GP (comp1 φ (pt R (n := n) d j)) := fun j => gp_comp1 φ _ hφ (hp j)
+  have mp_pt : ∀ {n : ℕ} (j : Fin n), mP f (pt R d j) = pt k d j :=
+    fun j => GlobalTheory.FBMap.mapPt_pt f j
+  have mp_add : ∀ {n : ℕ} (F : Pt R 2 d) {a b : Pt R n d}, GP a → GP b →
+      mP f (addOf F a b) = addOf (mP f F) (mP f a) (mP f b) :=
+    fun {_} F {_ _} ha hb => GlobalTheory.FBMap.mapPt_addOf f F ha hb
+  have mev2 : ∀ {n : ℕ} {a b : Pt R n d}, GP a → GP b → ∀ (g : PS R 2 d),
+      MvPowerSeries.map f (ev ![a, b] g) = ev ![mP f a, mP f b] (MvPowerSeries.map f g) :=
+    fun ha hb g => GlobalTheory.FBMap.map_ev2 f ha hb g
   have mc : ∀ {n : ℕ} (ψ : Pt R 1 d) (j : Fin n),
       mP f (comp1 ψ (pt R (n := n) d j)) = comp1 (mP f ψ) (pt k d j) := fun ψ j => by
-    rw [mapPoint_comp1 f ψ (hp j), mapPoint_pt]
+    rw [mapPoint_comp1 f ψ (hp j), mp_pt]
   have hBa : ∀ a, GP (B.A.act a) := B.A.const
   have hBa' : ∀ a, GP (B'.A.act a) := B'.A.const
   refine ⟨⟨constantCoeff_map_eq_zero₂ f hφ, constantCoeff_map_eq_zero₂ f hφi, ?_, ?_⟩, ?_, ?_, fun i => ?_, fun a => ?_, ?_, ?_, ?_, fun a => ?_⟩
-  · rw [← mapPoint_comp1 f φ hφi, h.inv.2.2.1, mapPoint_pt]
-  · rw [← mapPoint_comp1 f φi hφ, h.inv.2.2.2, mapPoint_pt]
+  · rw [← mapPoint_comp1 f φ hφi, h.inv.2.2.1, mp_pt]
+  · rw [← mapPoint_comp1 f φi hφ, h.inv.2.2.2, mp_pt]
   · have := congrArg (MvPowerSeries.map f) h.ax0
-    rwa [map_ev2 f gp_zero₂ (hp 0), mapPoint_zero, mapPoint_pt, map_one] at this
+    rwa [mev2 gp_zero₂ (hp 0), mapPoint_zero, mp_pt, map_one] at this
   · have := congrArg (MvPowerSeries.map f) h.ax1
-    rwa [map_ev2 f (hp 0) gp_zero₂, mapPoint_zero, mapPoint_pt, map_one] at this
+    rwa [mev2 (hp 0) gp_zero₂, mapPoint_zero, mp_pt, map_one] at this
   · have := congrArg (MvPowerSeries.map f) (h.law i)
     unfold transF at this ⊢
-    rw [map_ev1 f (gp_addOf _ B.G.const _ _ (hc 0) (hc 1)), mapPoint_addOf f _ (hc 0) (hc 1), mc, mc] at this
+    rw [map_ev1 f (gp_addOf _ B.G.const _ _ (hc 0) (hc 1)), mp_add _ (hc 0) (hc 1), mc, mc] at this
     rw [hF', hF]
     exact this
   · rw [hA', hA, h.act a, mapPoint_comp1 f φi (gp_comp1 _ _ (hBa a) hφ), mapPoint_comp1 f _ hφ]
   · have := congrArg (MvPowerSeries.map f) h.ph1
-    rw [map_mul, map_mul, map_mul, map_ev2 f (gp_addOf _ B'.G.const _ _ (hp 0) (hp 1)) (hp 2),
-      map_ev3 f (hc 0) (hc 1) (hc 2), map_ev2 f (hp 0) (hp 2), map_ev2 f (hp 1) (hp 2),
-      mapPoint_addOf f _ (hp 0) (hp 1), mc, mc, mc, mapPoint_pt, mapPoint_pt, mapPoint_pt] at this
+    rw [map_mul, map_mul, map_mul, mev2 (gp_addOf _ B'.G.const _ _ (hp 0) (hp 1)) (hp 2),
+      map_ev3 f (hc 0) (hc 1) (hc 2), mev2 (hp 0) (hp 2), mev2 (hp 1) (hp 2),
+      mp_add _ (hp 0) (hp 1), mc, mc, mc, mp_pt, mp_pt, mp_pt] at this
     rw [hF', h1', h1]
     exact this
   · have := congrArg (MvPowerSeries.map f) h.ph2
-    rw [map_mul, map_mul, map_mul, map_ev2 f (hp 0) (gp_addOf _ B'.G.const _ _ (hp 1) (hp 2)),
-      map_ev3 f (hc 0) (hc 1) (hc 2), map_ev2 f (hp 0) (hp 1), map_ev2 f (hp 0) (hp 2),
-      mapPoint_addOf f _ (hp 1) (hp 2), mc, mc, mc, mapPoint_pt, mapPoint_pt, mapPoint_pt] at this
+    rw [map_mul, map_mul, map_mul, mev2 (hp 0) (gp_addOf _ B'.G.const _ _ (hp 1) (hp 2)),
+      map_ev3 f (hc 0) (hc 1) (hc 2), mev2 (hp 0) (hp 1), mev2 (hp 0) (hp 2),
+      mp_add _ (hp 1) (hp 2), mc, mc, mc, mp_pt, mp_pt, mp_pt] at this
     rw [hF', h2', h2]
     exact this
   · have := congrArg (MvPowerSeries.map f) h.sy
-    rw [map_mul, map_mul, map_ev2 f (hc 0) (hc 1), map_ev2 f (hp 1) (hp 0), mc, mc, mapPoint_pt, mapPoint_pt] at this
+    rw [map_mul, map_mul, mev2 (hc 0) (hc 1), mev2 (hp 1) (hp 0), mc, mc, mp_pt, mp_pt] at this
     rw [hs', hs]
     exact this
   · have := congrArg (MvPowerSeries.map f) (h.ad a)
-    rw [map_mul, map_mul, map_ev2 f (hc 0) (hc 1),
-      map_ev2 f (hp 0) (gp_comp1 _ _ (hBa' _) (hp 1)),
-      map_ev2 f (gp_comp1 _ _ (hBa' _) (hp 0)) (hp 1), mc, mc, mc, mc, mapPoint_pt, mapPoint_pt] at this
+    rw [map_mul, map_mul, mev2 (hc 0) (hc 1),
+      mev2 (hp 0) (gp_comp1 _ _ (hBa' _) (hp 1)),
+      mev2 (gp_comp1 _ _ (hBa' _) (hp 0)) (hp 1), mc, mc, mc, mc, mp_pt, mp_pt] at this
     rw [hd', hd, hA', hA']
     exact this
 
@@ -296,8 +285,12 @@ theorem intTrans (hN : NabTransSt)
     simp [dLin, mP]
   rw [← nabVal_eq hF' hA', ← nabVal_eq hF hA, ← hd]
   refine hv w0 m f f' ?_ Λ u P
-  rw [FB.toK, map_ev2 _ (gp_pt 0) (gp_comp1 _ _ (B'.A.const w0) (gp_pt 0)),
-    mapPoint_comp1 _ _ (gp_pt 0), mapPoint_pt, ← hA'] at hf
+  have mev2 : ∀ (g : PS R 2 d), MvPowerSeries.map (algebraMap R k) (ev ![pt R (n := 1) d 0, comp1 (B'.A.act w0) (pt R (n := 1) d 0)] g) =
+      ev ![mP (algebraMap R k) (pt R (n := 1) d 0), mP (algebraMap R k) (comp1 (B'.A.act w0) (pt R (n := 1) d 0))] (MvPowerSeries.map (algebraMap R k) g) :=
+    fun g => GlobalTheory.FBMap.map_ev2 (algebraMap R k) (gp_pt 0) (gp_comp1 _ _ (B'.A.const w0) (gp_pt 0)) g
+  have mp_pt0 : mP (algebraMap R k) (pt R (n := 1) d 0) = pt k d 0 :=
+    GlobalTheory.FBMap.mapPt_pt (algebraMap R k) 0
+  rw [FB.toK, mev2, mapPoint_comp1 _ _ (gp_pt 0), mp_pt0, ← hA'] at hf
   exact hf
 
 end GlobalTheory.JetSer.IntTrans

@@ -8,51 +8,10 @@ public import Mathlib.NumberTheory.Harmonic.Bounds
 public import Formalism.RankGapBounds.LargePrimeFactor
 public import Formalism.PieriBlockIdeals.MertensReciprocalElementary
 public import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.Lemma
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PieriBlockIdeals.PieriColumnMinors.LocalComponentGL, Formalism.PieriBlockIdeals.PieriColumnMinors.LogarithmEquivalence, Formalism.PieriBlockIdeals.PieriColumnMinors.SharperSizeNeedsMleKFalse, Formalism.RankGapBounds.RankGapProofs.CardLargePrimeFactorsLeOneHolds, Formalism.PieriBlockIdeals.PieriColumnMinors.ParameterBounds
@@ -915,7 +874,7 @@ theorem thinSum_holds : SumA := by
       rw [(hA τ hτ l (hQ l hl)).1 (by linarith), Nat.cast_zero, zero_mul]
     rw [this]
     exact hRHS
-  · push_neg at hw1
+  · push Not at hw1
     have hlogpos : 0 < Real.log (D.hw τ) := Real.log_pos hw1
     have hC := choose_two_le_sq_div_two P.Nr
     have hC0 : (0 : ℝ) ≤ (P.Nr.choose 2 : ℝ) := Nat.cast_nonneg _
@@ -1011,7 +970,7 @@ theorem ex_mul_log_le_of_thinA {P : Par} (H : P.Hyp) (G : P.Large) {ι : Type} {
   by_cases hlw : D.hw τ < l
   · rw [h1 hlw, Nat.cast_zero, zero_mul]
     exact mul_nonneg (sq_nonneg _) (by linarith)
-  · push_neg at hlw
+  · push Not at hlw
     have hhw := hw_le_two_mul_b' H G hW hτ
     have hbb := smaller_exponent_lt H G
     have hb := b_pos' P
@@ -1073,7 +1032,7 @@ theorem thickTerm_holds : TermC := by
     have e3 : indexDenominator P * l ≤ indexDenominator P * P.lJ := mul_le_mul_of_nonneg_left hlJ hJpos.le
     have e4 := mul_le_mul_of_nonneg_right e2 hl0.le
     linarith
-  · push_neg at hbig
+  · push Not at hbig
     have hl3 : (l : ℝ) < 3 * P.η := by linarith
     obtain ⟨c1, c2⟩ := log_h_pos_and_le H G
     have hC := choose_two_le_sq_div_two P.Nr
@@ -1352,7 +1311,7 @@ theorem sum_J_mul_log_le_totalBound (rs3 : PrimeCountingBound) {P : Par} (H : P.
   have memW : ∀ l ∈ W, l.Prime ∧ P.lJ < (l : ℝ) ∧ ¬ P.Excl l ∧ l ∉ D.Sp := by
     intro l hl
     rw [hWd, Finset.mem_filter, hBd, Finset.mem_filter] at hl
-    push_neg at hl
+    push Not at hl
     exact ⟨hQ l hl.1.1, hl.1.2, hl.2.1, hl.2.2⟩
   have hdisj : Disjoint A W := by
     rw [Finset.disjoint_left]
@@ -1416,7 +1375,7 @@ theorem sum_J_mul_log_le_totalBound (rs3 : PrimeCountingBound) {P : Par} (H : P.
       XC + (XD + 2 * (P.k : ℝ) * (P.S + 1) * (P.L + 2)) := by
     intro τ hτ
     have e : ∑ l ∈ W, (if τ ∈ D.T2 then min (D.ex τ l : ℝ) (D.cW P τ l) else (D.ex τ l : ℝ)) * Real.log (l : ℝ) = ∑ l ∈ W, min (D.ex τ l : ℝ) (D.cW P τ l) * Real.log (l : ℝ) :=
-      Finset.sum_congr rfl (fun l _ => by rw [if_pos hτ])
+      Finset.sum_congr rfl (fun l _ => by rw [ite_eq_left hτ])
     rw [e]
     exact add_le_add (hXC τ hτ A memA)
       (hXD τ hτ W (fun l hl => ⟨(memW l hl).1, (memW l hl).2.1, (memW l hl).2.2.1⟩))
@@ -1424,7 +1383,7 @@ theorem sum_J_mul_log_le_totalBound (rs3 : PrimeCountingBound) {P : Par} (H : P.
       1.3 * (P.Nr : ℝ) ^ 2 * P.b' := by
     intro τ hτ
     have e : ∑ l ∈ W, (if τ ∈ D.T2 then min (D.ex τ l : ℝ) (D.cW P τ l) else (D.ex τ l : ℝ)) * Real.log (l : ℝ) = ∑ l ∈ W, (D.ex τ l : ℝ) * Real.log (l : ℝ) :=
-      Finset.sum_congr rfl (fun l _ => by rw [if_neg hτ])
+      Finset.sum_congr rfl (fun l _ => by rw [ite_eq_right hτ])
     rw [e, ← Finset.sum_union hdisj]
     refine thinSum_holds rs3 P H G ι D I.thinA I.widths τ hτ (A ∪ W) (fun l hl => ?_)
     rcases Finset.mem_union.1 hl with h | h

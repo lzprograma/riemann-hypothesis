@@ -78,11 +78,11 @@ private theorem esymm_surj (n : ℕ) (y : Fin n → ℂ) :
   have h1 := Polynomial.coeff_eq_esymm_roots_of_card hc (k := (i.rev : ℕ)) (by rw [hd]; exact i.rev.2.le)
   have e : n - (i.rev : ℕ) = i + 1 := by rw [Fin.val_rev]; omega
   have h2 : p.coeff (i.rev : ℕ) = (-1) ^ ((i : ℕ) + 1) * y i := by
-    rw [hp, Polynomial.coeff_add, Polynomial.coeff_X_pow, if_neg i.rev.2.ne, zero_add, hq,
+    rw [hp, Polynomial.coeff_add, Polynomial.coeff_X_pow, ite_eq_right i.rev.2.ne, zero_add, hq,
       Polynomial.finsetSum_coeff, Finset.sum_eq_single i.rev]
-    · rw [Polynomial.coeff_C_mul_X_pow, if_pos rfl, e, Fin.rev_rev]
+    · rw [Polynomial.coeff_C_mul_X_pow, ite_eq_left rfl, e, Fin.rev_rev]
     · intro b _ hb
-      rw [Polynomial.coeff_C_mul_X_pow, if_neg (fun h => hb (Fin.ext h.symm))]
+      rw [Polynomial.coeff_C_mul_X_pow, ite_eq_right (fun h => hb (Fin.ext h.symm))]
     · simp
   rw [hd, e, hm.leadingCoeff, one_mul, h2] at h1
   exact (mul_left_cancel₀ (pow_ne_zero _ (by norm_num)) h1).symm

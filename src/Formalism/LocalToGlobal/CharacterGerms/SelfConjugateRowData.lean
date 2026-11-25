@@ -6,8 +6,6 @@ public import Formalism.LocalToGlobal.CharacterGerms.RowTieTop
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators
@@ -167,11 +165,5 @@ def AllSelfConjugateCharts (Φ : ∀ (C : Type) [Field C] (_V : VF C) (d : ℕ) 
 def RankMaximalSelfCharts : Prop := AllSelfConjugateCharts Xo c fun _ _ V _ _ _ _ X => ∀ Hc : ∀ g, X.CartHyp V g, RawChart.RankMaximalCondition Hc
 
 end Named
-
-section Top
-
-variable {T : CDVR} {io : c.F →+* T.Fr} {y : IntFr Xo c T io} {Orb : Type} {d : ℕ} [NeZero d]
-
-end Top
 
 end Formalism.L2.FormalSeriesBounds

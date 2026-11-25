@@ -5,6 +5,7 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingMod
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.FinTwO
 import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.OmFacts
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.PlKill
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.PlKill
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -72,22 +73,7 @@ include h1 hm c1 cm hz in
 private theorem tw_U [TopologicalSpace K] (cρ : IsLocallyConstant ρ) (cχ : IsLocallyConstant χ)
     (cz : IsLocallyConstant z) :
     ∃ U : OpenNormalSubgroup K, ∀ g, g ∈ U ↔ ρ g = 1 ∧ χ g = 1 ∧ z g = 0 := by
-  let S : Subgroup K :=
-    { carrier := {g | ρ g = 1 ∧ χ g = 1 ∧ z g = 0}
-      one_mem' := ⟨h1, c1, twisted_cocycle_apply_one ρ z χ h1 c1 hz⟩
-      mul_mem' := fun {a b} ha hb => ⟨by rw [hm, ha.1, hb.1, one_mul], by rw [cm, ha.2.1, hb.2.1, one_mul],
-        by rw [tw_add ρ z χ h1 hm hz ha.1 ha.2.1, ha.2.2, hb.2.2, add_zero]⟩
-      inv_mem' := fun {a} ha => ⟨tw_inv ρ h1 hm ha.1, tw_inv χ c1 cm ha.2.1, by
-        have := tw_add ρ z χ h1 hm hz ha.1 ha.2.1 a⁻¹
-        rw [mul_inv_cancel, twisted_cocycle_apply_one ρ z χ h1 c1 hz, ha.2.2, zero_add] at this
-        exact this.symm⟩ }
-  have hN : S.Normal := ⟨fun u hu g => ⟨by
-      rw [hm, hm, hu.1, mul_one, ← hm, mul_inv_cancel, h1], by
-      rw [cm, cm, hu.2.1, mul_one, ← cm, mul_inv_cancel, c1], by
-      rw [mul_assoc, hz, tw_add ρ z χ h1 hm hz hu.1 hu.2.1, hu.2.2, zero_add, ← hz, mul_inv_cancel,
-        twisted_cocycle_apply_one ρ z χ h1 c1 hz]⟩⟩
-  have hO : IsOpen (S : Set K) := (cρ {1}).inter ((cχ {1}).inter (cz {0}))
-  exact ⟨⟨⟨S, hO⟩, hN⟩, fun g => Iff.rfl⟩
+  apply _root_.tw_U <;> assumption
 
 end Abs
 

@@ -20,18 +20,12 @@ theorem oSmulW {W : Type*} [AddCommGroup W] [Module E W] [Module (𝓞 E) W] [Is
   first
   | exact (algebraMap_smul E o w).symm
 
-private theorem coe_ne_zero_of_ne_zero (o : 𝓞 E) (h : o ≠ 0) : (o : E) ≠ 0 := by
-  intro h'
-  apply h
-  first
-  | exact_mod_cast h'
-
 private theorem inv_smul_apply_smul_eq_of_smul_mem {W : Type*} [AddCommGroup W] [Module E W] [Module (𝓞 E) W] [IsScalarTower (𝓞 E) E W]
     (P : Submodule (𝓞 E) S.V) (f : P →ₗ[𝓞 E] W) (u : S.V) (a b : 𝓞 E) (ha : a ≠ 0) (hb : b ≠ 0)
     (hau : a • u ∈ P) (hbu : b • u ∈ P) :
     ((a : E))⁻¹ • f ⟨a • u, hau⟩ = ((b : E))⁻¹ • f ⟨b • u, hbu⟩ := by
-  have ha' := coe_ne_zero_of_ne_zero a ha
-  have hb' := coe_ne_zero_of_ne_zero b hb
+  have ha' := RingOfIntegers.coe_ne_zero_iff.2 ha
+  have hb' := RingOfIntegers.coe_ne_zero_iff.2 hb
   have h1 : (b : E) • f ⟨a • u, hau⟩ = (a : E) • f ⟨b • u, hbu⟩ := by
     rw [← oSmulW, ← oSmulW, ← map_smul, ← map_smul]
     congr 1
@@ -75,8 +69,8 @@ theorem ext_lat {W : Type*} [AddCommGroup W] [Module E W] [Module (𝓞 E) W] [I
     simp only [RingHom.id_apply]
     obtain ⟨p, q, hq, rfl⟩ := IsFractionRing.div_surjective (A := 𝓞 E) c
     have hq0 : q ≠ 0 := nonZeroDivisors.ne_zero hq
-    have hq' := coe_ne_zero_of_ne_zero q hq0
-    have ha' := coe_ne_zero_of_ne_zero _ (hd0 x.1 x.2)
+    have hq' := RingOfIntegers.coe_ne_zero_iff.2 hq0
+    have ha' := RingOfIntegers.coe_ne_zero_iff.2 (hd0 x.1 x.2)
     have e0 : q * d x.1 x.2 ≠ 0 := mul_ne_zero hq0 (hd0 _ _)
     have hcq : (q * d x.1 x.2) • ((algebraMap (𝓞 E) E p / algebraMap (𝓞 E) E q) • x.1) =
         p • (d x.1 x.2 • x.1) := by

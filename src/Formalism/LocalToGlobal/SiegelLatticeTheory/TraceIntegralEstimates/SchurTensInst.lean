@@ -367,8 +367,6 @@ theorem lintegral_sq_eq {u : X → ℂ} (hu : MemLp u 2 μ) :
   congr 1
   exact lintegral_congr fun x => (enorm_sq_eq (u x)).symm
 
-private theorem norm_conj_complex (z : ℂ) : ‖conj z‖ = ‖z‖ := Complex.norm_conj z
-
 theorem integrable_mul_conj {u v : X → ℂ} (hu : MemLp u 2 μ) (hv : MemLp v 2 μ) :
     Integrable (fun x => u x * conj (v x)) μ := by
   have hu2 := (memLp_two_iff_integrable_sq_norm hu.aestronglyMeasurable).1 hu
@@ -377,7 +375,7 @@ theorem integrable_mul_conj {u v : X → ℂ} (hu : MemLp u 2 μ) (hv : MemLp v 
     hu.aestronglyMeasurable.mul (Complex.continuous_conj.comp_aestronglyMeasurable hv.aestronglyMeasurable)
   refine (hu2.add hv2).mono hm (ae_of_all _ fun x => ?_)
   show ‖u x * conj (v x)‖ ≤ ‖‖u x‖ ^ 2 + ‖v x‖ ^ 2‖
-  rw [norm_mul, norm_conj_complex, Real.norm_of_nonneg (by positivity)]
+  rw [norm_mul, Complex.norm_conj, Real.norm_of_nonneg (by positivity)]
   nlinarith [sq_nonneg (‖u x‖ - ‖v x‖), norm_nonneg (u x), norm_nonneg (v x),
     mul_nonneg (norm_nonneg (u x)) (norm_nonneg (v x))]
 
@@ -405,7 +403,7 @@ theorem norm_integral_mul_conj_le {u v : X → ℂ} (hu : MemLp u 2 μ) (hv : Me
   refine (norm_integral_le_integral_norm _).trans
     (integral_mono (integrable_mul_conj hu hv).norm hR fun x => ?_)
   show ‖u x * conj (v x)‖ ≤ (t * ‖u x‖ ^ 2 + ‖v x‖ ^ 2 / t) / 2
-  rw [norm_mul, norm_conj_complex]
+  rw [norm_mul, Complex.norm_conj]
   exact mul_le_weighted_sq_add_half ht
 
 private theorem lintegral_enorm_sub_limit_sq_le {f : ℕ → X → ℂ} {F : X → ℂ}
@@ -780,10 +778,6 @@ theorem isSchur_of_isFdeg {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} 
     (h : IsFdeg (Formalism.REAL.muG ε) σ d) : IsSchur (Formalism.REAL.muG ε) (fun g : Formalism.REAL.UJ ε => σ (uMat g)) d :=
   ⟨h.1, fun a b a' b' => h.2 a b a' b'⟩
 
-theorem fdegOf_eq' {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} {d : ℝ} (h : IsFdeg (Formalism.REAL.muG ε) σ d)
-    {w : H} (hw : w ≠ 0) : fdegOf (Formalism.REAL.muG ε) σ w = d := by
-  apply GlobalTheory.LowestVectorDegree.fdegOf_eq <;> assumption
-
 end Loc
 
 theorem stepSchurG_holds : Formalism.L2.SG.RealObj.EnergyInst.StepSchurG := by
@@ -799,7 +793,7 @@ theorem stepSchurG_holds : Formalism.L2.SG.RealObj.EnergyInst.StepSchurG := by
       have := hw v
       rw [h0, norm_zero] at this
       exact zero_ne_one this
-    have he : X.dv v = d := fdegOf_eq' hd hw0
+    have he : X.dv v = d := GlobalTheory.LowestVectorDegree.fdegOf_eq hd hw0
     rw [he]
     exact hd
   have hT : IsTensAbs (fun v (g : Formalism.REAL.UJ (X.B.I.ε v)) => X.B.σ v (uMat g)) X.B.σs X.B.tens :=

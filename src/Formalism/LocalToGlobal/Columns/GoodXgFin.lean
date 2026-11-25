@@ -37,21 +37,21 @@ theorem gx_orth {k : Type} [Field k] [IsAlgClosed k] [CharZero k] {ψ ψ' : G �
   letI : Invertible (Nat.card G : k) := invertibleOfNonzero (by exact_mod_cast Nat.card_pos.ne')
   rw [Representation.char_orthonormal ρ ρ']
   by_cases h : ρ.character = ρ'.character
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     have : Nonempty (ρ'.Equiv ρ) := by
 
       by_contra hne
       have h1 := Representation.char_orthonormal ρ ρ
-      rw [if_pos ⟨Representation.Equiv.refl ρ⟩] at h1
+      rw [ite_eq_left ⟨Representation.Equiv.refl ρ⟩] at h1
       have h2 := Representation.char_orthonormal ρ ρ'
-      rw [if_neg hne] at h2
+      rw [ite_eq_right hne] at h2
       rw [← h] at h2
       rw [h2] at h1
       exact zero_ne_one h1
-    rw [if_pos this]
-  · rw [if_neg h]
+    rw [ite_eq_left this]
+  · rw [ite_eq_right h]
     have : ¬ Nonempty (ρ'.Equiv ρ) := fun ⟨φ⟩ => h (Representation.char_iso φ).symm
-    rw [if_neg this]
+    rw [ite_eq_right this]
 
 theorem gx_linInd {k : Type} [Field k] [IsAlgClosed k] [CharZero k] :
     LinearIndependent k (fun ψ : gxIrrSet (G := G) k => (ψ : G → k)) := by

@@ -1,51 +1,6 @@
 module
 
 public import Development.WeilBound.CoreStatements.FlagImmersions.AltCMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Algebra.BigOperators.Field
 
@@ -186,7 +141,7 @@ theorem rr_coeff_big (w : ℕ → R) : ∀ m N n : ℕ, N ≤ n → (rr w m N).c
     rw [rr]
     split_ifs with h0
     · simp
-    · rw [coeff_one, if_neg (by omega)]
+    · rw [coeff_one, ite_eq_right (by omega)]
   | m + 1, 0, n, h => by simp [rr]
   | m + 1, N + 1, 0, h => absurd h (by omega)
   | m + 1, N + 1, n + 1, h => by
@@ -202,20 +157,20 @@ def cnt (n d N : ℕ) : ℕ :=
 theorem cnt_two (n d e : ℕ) (he : e ≤ d) :
     cnt n d (n + e + 1) + cnt n d (n + e) = (n + d).choose n * d.choose e := by
   unfold cnt
-  rw [if_pos (by omega : n < n + e + 1), show n + e + 1 - 1 - n = e by omega]
+  rw [ite_eq_left (by omega : n < n + e + 1), show n + e + 1 - 1 - n = e by omega]
   rcases e with _ | e
-  · rw [if_neg (by omega : ¬ n < n + 0)]
+  · rw [ite_eq_right (by omega : ¬ n < n + 0)]
     split_ifs with h
     · simp [h]
     · simp
   · obtain ⟨d, rfl⟩ : ∃ d', d = d' + 1 := ⟨d - 1, by omega⟩
-    rw [if_pos (by omega : n < n + (e + 1)), show n + (e + 1) - 1 - n = e by omega,
-      if_neg (by omega : ¬ d + 1 = 0), if_neg (by omega : ¬ d + 1 = 0), Nat.add_sub_cancel, Nat.choose_succ_succ' d e]
+    rw [ite_eq_left (by omega : n < n + (e + 1)), show n + (e + 1) - 1 - n = e by omega,
+      ite_eq_right (by omega : ¬ d + 1 = 0), ite_eq_right (by omega : ¬ d + 1 = 0), Nat.add_sub_cancel, Nat.choose_succ_succ' d e]
     ring
 
 theorem cnt_top (n d e : ℕ) : cnt n (d + 1) (n + e + 1) = (n + d + 1).choose n * d.choose e := by
   unfold cnt
-  rw [if_pos (by omega : n < n + e + 1), show n + e + 1 - 1 - n = e by omega, if_neg (by omega : ¬ d + 1 = 0),
+  rw [ite_eq_left (by omega : n < n + e + 1), show n + e + 1 - 1 - n = e by omega, ite_eq_right (by omega : ¬ d + 1 = 0),
     Nat.add_sub_cancel, add_assoc]
 
 theorem rr_maj (U : ℝ) (hU : 0 < U) (w : ℕ → Polynomial ℝ) (hw : ∀ a, Maj (w a) U (1 / U)) :

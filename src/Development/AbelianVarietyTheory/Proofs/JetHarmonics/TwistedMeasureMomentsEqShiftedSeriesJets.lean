@@ -60,16 +60,6 @@ theorem norm_zc (a : ℤ_[q]) : ‖zc a‖ = ‖a‖ := by
   have h := PadicComplex.norm_extends' q (a : ℚ_[q])
   simpa [zc] using h
 
-theorem zc_natCast (m : ℕ) : zc (m : ℤ_[q]) = (m : ℂ_[q]) := by simp [zc]
-
-theorem continuous_zc : Continuous (zc : ℤ_[q] → ℂ_[q]) := by
-  refine (Isometry.of_dist_eq fun a b => ?_).continuous
-  rw [dist_eq_norm, dist_eq_norm, ← norm_zc]
-  simp [zc]
-
-theorem norm_sub_one_lt_of_root {ζ : ℂ_[q]} {n : ℕ} (h : ζ ^ (q ^ n) = 1) : ‖ζ - 1‖ < 1 := by
-  apply GlobalTheory.MomOne.ShiftComp.norm_sub_one_lt_of_root <;> assumption
-
 theorem continuous_redFun (r : ℕ) (g : ZMod (q ^ r) → ℂ_[q]) :
     Continuous fun a : ℤ_[q] => g (PadicInt.toZModPow r a) := by
   have hl : q.Prime := Fact.out
@@ -138,9 +128,9 @@ theorem sS_pow_eq (ζ : ℂ_[q]) (m : ℕ) :
 
 theorem twisted_moments : ∀ (q : ℕ) [Fact q.Prime] (S : ℂ_[q]⟦X⟧) (ζ : ℂ_[q]) (n k : ℕ), Bdd S → ζ ^ (q ^ n) = 1 → ∃ f : C(ℤ_[q], ℂ_[q]), (∀ a, f a = ζ ^ (PadicInt.toZModPow n a).val * zc a ^ k) ∧ HasSum (fun m : ℕ => coeff m S * (fwdDiff (1 : ℤ_[q]))^[m] f 0) (constantCoeff (DT^[k] (shiftS ζ S))) := by
   intro q _ S ζ n k hS h
-  have hζ := norm_sub_one_lt_of_root h
+  have hζ := GlobalTheory.MomOne.ShiftComp.norm_sub_one_lt_of_root h
   refine ⟨⟨fun a => ζ ^ (PadicInt.toZModPow n a).val * zc a ^ k,
-    (continuous_redFun n fun x => ζ ^ x.val).mul (continuous_zc.pow k)⟩, fun _ => rfl, ?_⟩
+    (continuous_redFun n fun x => ζ ^ x.val).mul (GlobalTheory.MomOne.ShiftComp.continuous_zc.pow k)⟩, fun _ => rfl, ?_⟩
   have := hasSum_coeff_iter hζ hS k 0
   rw [coeff_zero_eq_constantCoeff] at this
   convert this using 3 with m
@@ -149,7 +139,7 @@ theorem twisted_moments : ∀ (q : ℕ) [Fact q.Prime] (S : ℂ_[q]⟦X⟧) (ζ 
   refine Finset.sum_congr rfl fun j _ => ?_
   have e : (0 : ℤ_[q]) + j • (1 : ℤ_[q]) = (j : ℤ_[q]) := by simp
   rw [e]
-  simp only [ContinuousMap.coe_mk, map_natCast, ZMod.val_natCast, zc_natCast]
+  simp only [ContinuousMap.coe_mk, map_natCast, ZMod.val_natCast, GlobalTheory.MomOne.ShiftComp.zc_natCast]
   rw [← pow_eq_pow_mod j h]
   simp
   ring

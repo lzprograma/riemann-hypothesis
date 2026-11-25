@@ -28,54 +28,10 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFam
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LimitOfModuleForms
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCutInside
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBJoint
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.MeasureTheory.Integral.Pi
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Basify
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Matrix.PosDef
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Polynomial.Basic
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCChain
 import Mathlib.Tactic.Monotonicity.Lemmas
 import Mathlib.Topology.Sheaves.Presheaf
@@ -97,14 +53,6 @@ open scoped ComplexConjugate
 
 noncomputable section
 open Classical
-
-theorem integrable_decay3 : Integrable (fun c : ℂ => ((1 + ‖c‖) ^ 3)⁻¹) := by
-  have hi : Integrable (fun c : ℂ => (1 + ‖c‖) ^ (-(3 : ℝ))) :=
-    integrable_one_add_norm (by rw [Complex.finrank_real_complex]; norm_num)
-  refine hi.congr (Eventually.of_forall fun c => ?_)
-  simp only
-  rw [Real.rpow_neg (by positivity)]
-  norm_cast
 
 section limB
 
@@ -201,9 +149,9 @@ theorem tendsto_gram (ε : ℝ) (hε : 0 < ε) (k : ℕ) (hk : k ≤ S.G.r + 1) 
       ∏ v : Fin S.f, ((√(C.nLoc S.G.k S.G.r S.fr (S.pd v).G (C.loc (S.σ v) h)) *
         √(C.nLoc S.G.k S.G.r S.fr (S.pd v).G (C.loc (S.σ v) h')) : ℝ) : ℂ) *
           RR n v ε k (w'.1 v) (C.loc (S.σ v) h) (C.loc (S.σ v) h') :=
-    funext fun n => by rw [gram_withRR, if_pos hk]; rfl
+    funext fun n => by rw [gram_withRR, ite_eq_left hk]; rfl
   have e2 : S.gram ε k w'.1 h h' = ∏ v, S.gramLoc v ε k (w'.1 v) (C.loc (S.σ v) h) (C.loc (S.σ v) h') := by
-    simp only [C.HidaSetting.gram, if_pos hk]
+    simp only [C.HidaSetting.gram, ite_eq_left hk]
   rw [e1, e2]
   exact tendsto_finsetProd _ fun v _ => tendsto_gramLoc' S RR hconv v ε hε k (w'.1 v) ⟨w', rfl⟩ _ _
 
@@ -260,7 +208,7 @@ theorem tendsto_Nhat (hInt : ∀ n, KB.IntAll (KB.withRR S (RR n)))
   have hgi : Integrable g := by
     refine Integrable.div_const (integrable_finsetSum _ fun h _ => integrable_finsetSum _ fun h' _ =>
       Integrable.const_mul (Integrable.fintype_prod (f := fun v c => Cb v h h' * ((1 + ‖c‖) ^ 3)⁻¹)
-        fun v => integrable_decay3.const_mul _) _) _
+        fun v => Formalism.FourierDecayAlt.P.PBC.integrable_inv_cube.const_mul _) _) _
   have hbi : Integrable (fun c : J.CV E => g (Formalism.FourierDecayAlt.P.JCx1.needs.Qm S c)) :=
     (Formalism.FourierDecayAlt.P.JCx1.needs.Qm_mp S).integrable_comp_of_integrable hgi
   refine tendsto_integral_of_dominated_convergence (fun c => g (Formalism.FourierDecayAlt.P.JCx1.needs.Qm S c)) (fun n => ?_) hbi
@@ -336,7 +284,7 @@ theorem integral_formula_passes_to_limits : Formalism.FourierDecayAlt.KB.LimitIn
     intro A x
     exact ((continuous_apply x).comp (continuous_apply A)).tendsto a |>.comp hlim
   let θ' : Finset (Fin S.f) → S.W → ℝ := fun A w' => if h : w' ∈ B then a A ⟨w', h⟩ else 0
-  have hθ' : ∀ A w' (h : w' ∈ B), θ' A w' = a A ⟨w', h⟩ := fun A w' h => dif_pos h
+  have hθ' : ∀ A w' (h : w' ∈ B), θ' A w' = a A ⟨w', h⟩ := fun A w' h => dite_eq_left h
   refine ⟨θ', ?_, ?_⟩
   · intro A
     refine ⟨?_, ?_, ?_⟩
@@ -462,8 +410,8 @@ theorem liftOfLoc_statement : KB.LiftOfLoc := by
     (by
       intro v _
       by_cases hv : v ∈ A
-      · simp only [if_pos hv]; exact hu2 v hv
-      · simp only [if_neg hv, one_mul]
+      · simp only [ite_eq_left hv]; exact hu2 v hv
+      · simp only [ite_eq_right hv, one_mul]
         exact blockPSD_pull (Y.image (lpt S v s t) ∪ Y.image (lpt S v s t')) (KB.gN S v ε i (w.1 v))
           (gN_psd S hpos v hε hi w _) Y (lpt S v s t) (lpt S v s t')
           (fun h hh => Finset.mem_union_left _ (Finset.mem_image_of_mem _ hh))
@@ -665,10 +613,10 @@ theorem gram_psd {S : C.HidaSetting E Wp Wq} (hP : C.ThmPPos S) {ε : ℝ} (hε 
         (fun h hh => Finset.mem_image_of_mem _ hh)
     refine Jx7.psd_congr ?_ (Jx7.psd_prod univ _ this)
     intro x _ y _
-    simp only [C.HidaSetting.gram, hk, if_true]
+    simp only [C.HidaSetting.gram, hk, ite_true]
   · refine Jx7.psd_congr ?_ (Jx7.psd_zero (F := Y))
     intro x _ y _
-    simp only [C.HidaSetting.gram, hk, if_false]
+    simp only [C.HidaSetting.gram, hk, ite_false]
 
 theorem local_norm_nonneg_alt {S : C.HidaSetting E Wp Wq} (hP : C.ThmPPos S) {ε : ℝ} (hε : 0 < ε) (k : ℕ) (w : S.W)
     (Y : Finset (TB.Pt E)) (κ : TB.Pt E → TB.Pt E → ℂ) (hκ : TB.PSDOn Y κ) : 0 ≤ S.base.N0 ε k w Y κ := by
@@ -1296,7 +1244,7 @@ theorem germ_step (S : C.HidaSetting E Wp Wq) (hpos : C.ThmPPos S) (hI : KB.IntA
   rw [(hmix N').2] at hH
   have hN : ∑ z ∈ Ss, Nz Y κ D z = ∑ z ∈ Ss, (KB.NstV S ε (b + n - 1) n w' Y κ z z).re :=
     Finset.sum_congr rfl fun z hz => by
-      simp only [Nz, if_pos (hgood z hz)]
+      simp only [Nz, ite_eq_left (hgood z hz)]
       rw [nstV_eq]
       rfl
   rw [hN] at hH
@@ -1418,7 +1366,7 @@ theorem nst_eq_nstV (S : C.HidaSetting E Wp Wq) (ε : ℝ) (i s : ℕ) (hi : i �
     (Y : Finset (TB.Pt E)) (κ : TB.Pt E → TB.Pt E → ℂ) (t : E) :
     S.base.Nst ε i s w Y κ t t = KB.NstV S ε i s w Y κ (embV S t) (embV S t) := by
   unfold TB.Data.Nst KB.NstV
-  simp only [C.HidaSetting.base, C.HidaSetting.mkData, C.HidaSetting.gram, if_pos hi, TB.join, C.loc, List.map_append,
+  simp only [C.HidaSetting.base, C.HidaSetting.mkData, C.HidaSetting.gram, ite_eq_left hi, TB.join, C.loc, List.map_append,
     List.map_cons, List.map_nil]
   rfl
 
@@ -1452,7 +1400,7 @@ theorem sumFormConcrete_of (S : C.HidaSetting E Wp Wq) (hg1 : 0 < S.G.g1) (hg2 :
     refine ⟨this.1, this.2.trans (le_of_eq ?_)⟩
     show (if b + s ≤ S.G.r + 1 then J.thrS S.G S.CA S.de S.de' S.T S.T' S.l b (s + 1) (S.pl v)
       else 2 * J.thrP S.G S.CA S.de S.de' S.T S.T' S.l b (S.pl v)) = _
-    rw [if_pos hbs]; rfl
+    rw [ite_eq_left hbs]; rfl
   have hΛ0 : ∀ b s, 1 ≤ b → 1 ≤ s → b + s ≤ S.G.r + 1 → ∀ v, 0 ≤ Λ b s v :=
     fun b s hb hs hbs v => (hΛ b s hb hs hbs v).1
   have hvol : ∀ b n, 0 ≤ S.base.vol b n := by
@@ -1608,11 +1556,11 @@ theorem top_of_local : KB.TopOfLoc := by
         (fun h hh => mem_image_of_mem _ hh)
       refine Jx8.psd_congr ?_ h1
       intro x _ y _
-      simp only [A, if_pos hv]
+      simp only [A, ite_eq_left hv]
       rfl
     · refine Jx8.psd_congr ?_ (Jx8.zero_psd Y)
       intro x _ y _
-      simp only [A, if_neg hv, sub_self]
+      simp only [A, ite_eq_right hv, sub_self]
   have hle := BaseGramNonnegativity.sum_re_nonneg Y κ _ hκ (Jx7.psd_prod_dom univ G A hG hAG)
   have hprod : ∀ h h', ∏ v, A v h h' =
       (∏ v ∈ B, (c v : ℂ)) * ∏ v, (if v ∈ B then M v h h' else G v h h') := by
@@ -1876,16 +1824,16 @@ theorem core (hW : WaveLocB) (hL : LiftLocB) (hTL : PBL.TopLocB) (hDT : KB.DegTo
   have hX0 : ∀ i v, 0 ≤ X i v := by
     intro i v
     by_cases hi : 1 ≤ i ∧ i ≤ S.G.r + 1
-    · simp only [hXdef, if_pos hi]; exact (hXt0 i hi.1 hi.2 v).1
-    · simp only [hXdef, if_neg hi, le_refl]
+    · simp only [hXdef, ite_eq_left hi]; exact (hXt0 i hi.1 hi.2 v).1
+    · simp only [hXdef, ite_eq_right hi, le_refl]
   have hXt : JC.HidaCurvatureBarriers S X := by
     intro i hi1 hi2 v
-    simp only [hXdef, if_pos (And.intro hi1 hi2)]
+    simp only [hXdef, ite_eq_left (And.intro hi1 hi2)]
     exact hXt0 i hi1 hi2 v
   have hXl : ∀ F : ∀ v : Fin S.f, ℝ → B.Mat S.G.k S.G.r → (Wq (S.pl v) →L[ℂ] Wp (S.pl v)),
       (∀ v ε, 0 < ε → KB.CptCoef (p v).T.base (F v ε)) → ∀ v, KB.WaveLoc (PBL.setC S p F) v fun i => X i v := by
     intro F hF v i hi1 hi2
-    have hXi : X i v = X0 i v := by rw [hXdef]; exact if_pos ⟨hi1, hi2⟩
+    have hXi : X i v = X0 i v := by rw [hXdef]; exact ite_eq_left ⟨hi1, hi2⟩
     simp only [hXi]
     exact hXl0 F hF v i hi1 hi2
   obtain ⟨Λ, hΛ0, hΛs, hΛl⟩ := h3 E Wp Wq S p f χ A₀ (PBJoint.built_setting_to_model_place le3 hB)

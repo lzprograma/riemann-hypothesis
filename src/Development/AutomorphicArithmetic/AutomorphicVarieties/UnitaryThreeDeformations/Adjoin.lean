@@ -1,5 +1,7 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Gordan
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUnitBasePointAdjoinTwistedSigma
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.WPresEx
 import Mathlib.Algebra.Order.Floor.Extended
@@ -54,14 +56,7 @@ open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.U3 UpperTheory.V.Alg
 
 private theorem exists_min_basis {σ : Type} [Finite σ] (S : Set (σ →₀ ℕ)) :
     ∃ B : Finset (σ →₀ ℕ), (∀ b ∈ B, b ∈ S) ∧ ∀ n ∈ S, ∃ b ∈ B, b ≤ n := by
-  classical
-  have hP : ∀ t : Set (σ →₀ ℕ), t.IsPWO := fun t => Set.isPWO_of_wellQuasiOrderedLE t
-  have hfin : {b | Minimal (· ∈ S) b}.Finite :=
-    (setOfPred_minimal_antichain _).finite_of_partiallyWellOrderedOn (hP _)
-  refine ⟨hfin.toFinset, fun b hb => ?_, fun n hn => ?_⟩
-  · exact ((Set.Finite.mem_toFinset hfin).1 hb).1
-  · obtain ⟨b, hbn, hb⟩ := (hP S).exists_le_minimal hn
-    exact ⟨b, (Set.Finite.mem_toFinset hfin).2 hb, hbn⟩
+  apply _root_.UpperTheory.V.Alg.gordan_dickson <;> assumption
 
 private theorem exists_decomp {O σ : Type} [CommRing O] [Finite σ] (w : σ → ℤ) (j : ℤ) (S : Set (σ →₀ ℕ))
     (hS : ∀ n ∈ S, Finsupp.weight w n = j) :
@@ -73,7 +68,7 @@ private theorem exists_decomp {O σ : Type} [CommRing O] [Finite σ] (w : σ →
   let c : (σ →₀ ℕ) → (σ →₀ ℕ) := fun n => if h : n ∈ S then Classical.choose (hB n h) else 0
   have hc : ∀ n ∈ S, c n ∈ B ∧ c n ≤ n := by
     intro n hn
-    simp only [c, dif_pos hn]
+    simp only [c, dite_eq_left hn]
     exact Classical.choose_spec (hB n hn)
   refine ⟨B, hBS, fun f hf => ?_⟩
   let g : (σ →₀ ℕ) → MvPowerSeries σ O := fun b m =>
@@ -87,7 +82,7 @@ private theorem exists_decomp {O σ : Type} [CommRing O] [Finite σ] (w : σ →
   · intro m hm
     rw [MvPowerSeries.coeff_apply]
     simp only [g]
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2⟩
     apply hm
     have e1 := hS _ h1
@@ -100,10 +95,10 @@ private theorem exists_decomp {O σ : Type} [CommRing O] [Finite σ] (w : σ →
     simp_rw [MvPowerSeries.coeff_monomial_mul, one_mul]
     by_cases hn : n ∈ S
     · rw [Finset.sum_eq_single (c n)]
-      · rw [if_pos (hc n hn).2, hg _ _ (hc n hn).2, if_pos ⟨hn, rfl⟩]
+      · rw [ite_eq_left (hc n hn).2, hg _ _ (hc n hn).2, ite_eq_left ⟨hn, rfl⟩]
       · intro b _ hb
         split_ifs with hbn
-        · rw [hg _ _ hbn, if_neg]
+        · rw [hg _ _ hbn, ite_eq_right]
           rintro ⟨_, h⟩
           exact hb h.symm
         · rfl
@@ -114,7 +109,7 @@ private theorem exists_decomp {O σ : Type} [CommRing O] [Finite σ] (w : σ →
       apply Finset.sum_eq_zero
       intro b _
       split_ifs with hbn
-      · rw [hg _ _ hbn, if_neg]
+      · rw [hg _ _ hbn, ite_eq_right]
         rintro ⟨h, _⟩
         exact hn h
       · rfl
@@ -125,7 +120,7 @@ private theorem inv_mem_wtPart {O σ : Type} [CommRing O] (w : σ → ℤ) {f g 
   set g0 := wcomp O w 0 g with hg0
   have h0 : ∀ n, Finsupp.weight w n = 0 → MvPowerSeries.coeff n (g - g0) = 0 := by
     intro n hn
-    rw [map_sub, hg0, coeff_wcomp, if_pos hn, sub_self]
+    rw [map_sub, hg0, coeff_wcomp, ite_eq_left hn, sub_self]
   have hprod : ∀ n, Finsupp.weight w n = 0 → MvPowerSeries.coeff n (f * (g - g0)) = 0 := by
     intro n hn
     rw [MvPowerSeries.coeff_mul]
@@ -161,7 +156,7 @@ private theorem inv_mem_wtPart {O σ : Type} [CommRing O] (w : σ → ℤ) {f g 
 private theorem monomial_mem_wtPart {O σ : Type} [CommRing O] (w : σ → ℤ) (b : σ →₀ ℕ) :
     (MvPowerSeries.monomial b 1 : MvPowerSeries σ O) ∈ wtPart O w (Finsupp.weight w b) := fun n hn => by
   classical
-  rw [MvPowerSeries.coeff_monomial, if_neg]
+  rw [MvPowerSeries.coeff_monomial, ite_eq_right]
   rintro rfl
   exact hn rfl
 
@@ -198,25 +193,7 @@ private theorem part_decomp {O R : Type} [CommRing O] [CommRing R] [Algebra O R]
 
 private theorem mem_adjoin_of_mul_eq_one_of_isIntegral' {O R : Type} [CommRing O] [CommRing R] [Algebra O R] {u v : R}
     (huv : u * v = 1) (hv : IsIntegral O v) : v ∈ Algebra.adjoin O {u} := by
-  obtain ⟨p, hpm, hp⟩ := hv
-  letI : Invertible v := ⟨u, huv, by rw [mul_comm]; exact huv⟩
-  have h1 : Polynomial.eval₂ (algebraMap O R) u p.reverse = 0 := by
-    have h := Polynomial.eval₂_reverse_mul_pow (algebraMap O R) v p
-    rw [hp] at h
-    have hinv : (⅟v : R) = u := rfl
-    rw [hinv] at h
-    have hu : IsUnit (v ^ p.natDegree) := (isUnit_of_invertible v).pow _
-    exact hu.mul_left_eq_zero.mp h
-  obtain ⟨q, hq⟩ := Polynomial.X_dvd_sub_C (p := p.reverse)
-  rw [Polynomial.coeff_zero_reverse, hpm.leadingCoeff, map_one] at hq
-  have h2 : p.reverse = 1 + Polynomial.X * q := by rw [← hq]; ring
-  rw [h2, Polynomial.eval₂_add, Polynomial.eval₂_mul, Polynomial.eval₂_X, Polynomial.eval₂_one] at h1
-  have h3 : v = -Polynomial.aeval u q := by
-    have h4 : v * (1 + u * Polynomial.eval₂ (algebraMap O R) u q) = 0 := by rw [h1, mul_zero]
-    rw [Polynomial.aeval_def]
-    linear_combination h4 - (Polynomial.eval₂ (algebraMap O R) u q) * huv
-  rw [h3]
-  exact Subalgebra.neg_mem _ (Polynomial.aeval_mem_adjoin_singleton O u)
+  apply _root_.GlobalTheory.UnitLemma.UnitBase.mem_adjoin_of_mul_eq_one' <;> assumption
 
 private theorem part_zero_le {O R : Type} [CommRing O] [IsLocalRing O] [CommRing R] [IsLocalRing R] [Algebra O R]
     (W : WPres O ℤ R) (hfin : (W.part 0).FG) : ∀ x ∈ W.part 0, x ∈ Algebra.adjoin O (Set.range W.z) := by
@@ -253,7 +230,7 @@ private theorem part_zero_le {O R : Type} [CommRing O] [IsLocalRing O] [CommRing
       obtain ⟨b, hb, hxb⟩ := hx
       refine ⟨MvPowerSeries.monomial b 1, hmono b hb, ?_, hxb.symm⟩
       rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, MvPowerSeries.coeff_monomial,
-        if_neg (Ne.symm (hBS b hb).2)]
+        ite_eq_right (Ne.symm (hBS b hb).2)]
     | zero => exact ⟨0, Submodule.zero_mem _, map_zero _, by simp⟩
     | add x y _ _ hx hy =>
       obtain ⟨h1, m1, c1, e1⟩ := hx
@@ -310,9 +287,9 @@ private theorem part_zero_le {O R : Type} [CommRing O] [IsLocalRing O] [CommRing
       simp only [Set.mem_setOf_eq, not_and, not_not] at hn
       by_cases h0 : n = 0
       · subst h0
-        rw [map_sub, MvPowerSeries.coeff_C, if_pos rfl, MvPowerSeries.coeff_zero_eq_constantCoeff_apply,
+        rw [map_sub, MvPowerSeries.coeff_C, ite_eq_left rfl, MvPowerSeries.coeff_zero_eq_constantCoeff_apply,
           sub_self]
-      · rw [map_sub, MvPowerSeries.coeff_C, if_neg h0, sub_zero]
+      · rw [map_sub, MvPowerSeries.coeff_C, ite_eq_right h0, sub_zero]
         by_cases hw : Finsupp.weight W.wt n = 0
         · exact absurd (hn hw) h0
         · exact hf n hw

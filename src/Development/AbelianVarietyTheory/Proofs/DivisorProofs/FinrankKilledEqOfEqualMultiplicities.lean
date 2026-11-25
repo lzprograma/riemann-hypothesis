@@ -163,7 +163,7 @@ theorem rank_hom_le_killed [IsSimpleModule Rg S] {s : S} (hs : s ≠ 0) (hI : �
     { toFun := fun g => ⟨g s, map_mem_killed I g hI⟩
       map_add' := fun a b => rfl
       map_smul' := fun c a => rfl } ?_
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro a ha
   by_contra h
   have h0 : a s = 0 := congrArg Subtype.val ha
@@ -172,8 +172,7 @@ theorem rank_hom_le_killed [IsSimpleModule Rg S] {s : S} (hs : s ≠ 0) (hI : �
 theorem exists_ne_zero_of_rank_eq {A B : Type} [AddCommGroup A] [Module ℂ A] [AddCommGroup B]
     [Module ℂ B] (h : Module.rank ℂ A = Module.rank ℂ B) {a : A} (ha : a ≠ 0) :
     ∃ b : B, b ≠ 0 := by
-  by_contra hb
-  push_neg at hb
+  by_contra! hb
   exact ha (rank_zero_iff_forall_zero.1 (h.trans (rank_zero_iff_forall_zero.2 hb)) a)
 
 theorem exists_simple {A : Type} [AddCommGroup A] [Module Rg A] [IsSemisimpleModule Rg A]
@@ -216,7 +215,7 @@ theorem rank_killed_eq (I : Set Rg) (n : ℕ) :
     obtain ⟨f, hf⟩ := exists_ne_zero_of_rank_eq (H U u hu hI).symm (sub_ne U u hu)
     have h1 : f u = 0 := congrArg Subtype.val (h0 ⟨f u, map_mem_killed I f hI⟩)
     exact hu (injective_of_ne_zero hf (h1.trans (map_zero f).symm))
-  · push_neg at h0
+  · push Not at h0
     obtain ⟨a, ha⟩ := h0
     obtain ⟨U, hU, u, hu, hI⟩ := exists_simple I (a := a.1) (fun h => ha (Subtype.ext h)) a.2
     obtain ⟨f, hf⟩ := exists_ne_zero_of_rank_eq (H U u hu hI) (sub_ne U u hu)
@@ -268,7 +267,7 @@ theorem finrank_killed_eq : ∀ (Rg : Type) [Ring Rg] [Algebra ℂ Rg] (M N : Ty
         rw [rank_hom_congr_left e, rank_hom_congr_left e]
         exact HN _ (IsSimpleModule.congr e.symm) ⟨f s, ⟨s, rfl⟩,
           fun h => hs (hi (h.trans (map_zero f).symm)), map_mem_killed I f hI⟩
-      push_neg at h1 h2
+      push Not at h1 h2
       rw [rank_zero_iff_forall_zero.2 h1, rank_zero_iff_forall_zero.2 h2])
   exact (Module.finrank_eq_of_rank_eq key).symm
 

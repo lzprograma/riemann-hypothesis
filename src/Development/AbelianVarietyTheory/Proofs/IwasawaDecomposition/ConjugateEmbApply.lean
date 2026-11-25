@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIndexIdeal
 public import Development.AbelianVarietyTheory.Definitions.Foundations.RootOfUnityEightQMemCoeffGaloisSubfield
 public import Development.AbelianVarietyTheory.Definitions.Foundations.AuxiliaryFrameNormalizedSpaces
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFinsetTypeNormPrincipal
@@ -60,18 +61,7 @@ variable {K K' : Type} [Field K] [Field K'] (f : K →+* K')
 
 theorem span_image_span (s : Set K) :
     Submodule.span (𝓞 K') (f '' (Submodule.span (𝓞 K) s : Set K)) = Submodule.span (𝓞 K') (f '' s) := by
-  refine le_antisymm (Submodule.span_le.2 ?_)
-    (Submodule.span_mono (Set.image_mono Submodule.subset_span))
-  rintro _ ⟨x, hx, rfl⟩
-  induction hx using Submodule.span_induction with
-  | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
-  | zero => simp
-  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
-  | smul a x _ hx =>
-    have : f (a • x) = RingOfIntegers.mapRingHom f a • f x := by
-      rw [Algebra.smul_def, Algebra.smul_def, map_mul]; rfl
-    rw [this]
-    exact Submodule.smul_mem _ _ hx
+  first | exact _root_.GlobalTheory.BetaEx.span_image_span | exact @_root_.GlobalTheory.BetaEx.span_image_span | apply _root_.GlobalTheory.BetaEx.span_image_span <;> assumption
 
 def extend : Submodule (𝓞 K) K →* Submodule (𝓞 K') K' where
   toFun M := Submodule.span (𝓞 K') (f '' (M : Set K))
@@ -91,15 +81,8 @@ section host
 variable {R : Ranks} (H : Host R)
 
 theorem conjugate_emb (g : R.GG) :
-    ComplexEmbedding.conjugate (H.emb g) = H.emb (g * R.cc) := by
-  rw [Formalism.L2.Geo.emb_mul_cc_comp]
-  refine RingHom.ext fun x => ?_
-  have hcm := H.isCMField_hostE
-  have h : IsCMField.complexConj H.E x = H.conj x := by
-    apply H.φ₀.injective
-    rw [IsCMField.complexEmbedding_complexConj, H.conjE_apply]
-  show starRingEnd ℂ (H.emb g x) = H.emb g (H.conj x)
-  rw [← h, IsCMField.complexEmbedding_complexConj]
+    ComplexEmbedding.conjugate (H.emb g) = H.emb (g * R.cc) :=
+  _root_.GlobalTheory.Mem.BaseEx.conjugate_emb H g
 
 theorem conjugate_emb_apply (g : R.GG) (x : H.E) :
     ComplexEmbedding.conjugate (H.emb g) x = H.emb g (H.conj x) := by
@@ -110,10 +93,8 @@ theorem ex_emb_iff (g : R.GG) :
   ⟨fun ⟨t, ht⟩ => (factEmb R H).1.1 ht ▸ t.2, fun h => ⟨⟨g, h⟩, rfl⟩⟩
 
 theorem emb_cm (σ : H.E →+* ℂ) :
-    (∃ t : Tau R, H.emb t = σ) ↔ ¬ ∃ t : Tau R, H.emb t = ComplexEmbedding.conjugate σ := by
-  obtain ⟨g, rfl⟩ := (factEmb R H).1.2 σ
-  rw [conjugate_emb, ex_emb_iff, ex_emb_iff]
-  exact Formalism.L2.Geo.mem_Psi_iff_mul_cc_notMem g
+    (∃ t : Tau R, H.emb t = σ) ↔ ¬ ∃ t : Tau R, H.emb t = ComplexEmbedding.conjugate σ :=
+  _root_.GlobalTheory.Mem.BaseEx.emb_cm H σ
 
 theorem sum_emb_bijective : Function.Bijective
     (Sum.elim (fun t : Tau R => H.emb t) fun t : Tau R => ComplexEmbedding.conjugate (H.emb t)) := by
@@ -123,17 +104,17 @@ theorem sum_emb_bijective : Function.Bijective
 open Classical in
 def typeExp (p q : ℕ) (σ : H.E →+* ℂ) : ℕ := if ∃ t : Tau R, H.emb t = σ then p else q
 
-theorem typeExp_emb (p q : ℕ) (t : Tau R) : typeExp H p q (H.emb t) = p := if_pos ⟨t, rfl⟩
+theorem typeExp_emb (p q : ℕ) (t : Tau R) : typeExp H p q (H.emb t) = p := ite_eq_left ⟨t, rfl⟩
 
 theorem typeExp_conj (p q : ℕ) (t : Tau R) :
-    typeExp H p q (ComplexEmbedding.conjugate (H.emb t)) = q := if_neg ((emb_cm H _).1 ⟨t, rfl⟩)
+    typeExp H p q (ComplexEmbedding.conjugate (H.emb t)) = q := ite_eq_right ((emb_cm H _).1 ⟨t, rfl⟩)
 
 theorem typeExp_add (p q : ℕ) (σ : H.E →+* ℂ) :
     typeExp H p q σ + typeExp H p q (ComplexEmbedding.conjugate σ) = p + q := by
   unfold typeExp
   by_cases h : ∃ t : Tau R, H.emb t = σ
-  · rw [if_pos h, if_neg ((emb_cm H σ).1 h)]
-  · rw [if_neg h, if_pos (not_not.1 (fun h' => h ((emb_cm H σ).2 h'))), add_comm]
+  · rw [ite_eq_left h, ite_eq_right ((emb_cm H σ).1 h)]
+  · rw [ite_eq_right h, ite_eq_left (not_not.1 (fun h' => h ((emb_cm H σ).2 h'))), add_comm]
 
 theorem prod_typeExp {M : Type} [CommMonoid M] (p q : ℕ) (F : (H.E →+* ℂ) → M) :
     ∏ σ, F σ ^ typeExp H p q σ =
@@ -143,10 +124,8 @@ theorem prod_typeExp {M : Type} [CommMonoid M] (p q : ℕ) (F : (H.E →+* ℂ) 
 
 end host
 
-theorem isAlgebraic_exp (N : ℕ) : IsAlgebraic ℚ (Complex.exp (2 * Real.pi * Complex.I / N)) := by
-  rcases Nat.eq_zero_or_pos N with rfl | h
-  · simpa using isAlgebraic_one
-  · exact ((Complex.isPrimitiveRoot_exp N h.ne').isIntegral h).tower_top.isAlgebraic
+theorem isAlgebraic_exp (N : ℕ) : IsAlgebraic ℚ (Complex.exp (2 * Real.pi * Complex.I / N)) :=
+  _root_.GlobalTheory.Mem.BaseField.isAlgebraic_exp N
 
 theorem exists_gens (E : Type) [Field E] [NumberField E] : ∃ S : Finset ℂ, (∀ z ∈ S, IsAlgebraic ℚ z) ∧
     ∀ K : IntermediateField ℚ ℂ, (∀ z ∈ S, z ∈ K) → ∀ (τ : E →+* ℂ) x, τ x ∈ K := by

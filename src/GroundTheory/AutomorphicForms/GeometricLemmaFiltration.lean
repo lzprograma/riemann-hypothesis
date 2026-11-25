@@ -205,7 +205,7 @@ variable {σ}
 
 theorem supportedIn_mono {Y Y' : Set (GL (Fin n) F)} (h : Y ⊆ Y') :
     supportedIn σ Y ≤ supportedIn σ Y' :=
-  fun f hf g hg => hf g fun hgY => hg (h hgY)
+  fun _ hf g hg => hf g fun hgY => hg (h hgY)
 
 theorem supportedIn_empty : supportedIn σ (∅ : Set (GL (Fin n) F)) = ⊥ := by
   rw [eq_bot_iff]

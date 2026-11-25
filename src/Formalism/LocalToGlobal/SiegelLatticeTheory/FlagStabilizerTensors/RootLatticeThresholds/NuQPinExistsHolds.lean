@@ -56,12 +56,6 @@ theorem hJ_span_zero (x : Fin n → ℂ) (S : Set (Fin n → ℂ)) (h : ∀ y �
   | add y z _ _ hy hz => rw [_root_.PI.SchurPlaces.Geo.hJ_add_right, hy, hz, add_zero]
   | smul c y _ hy => rw [_root_.PI.SchurPlaces.Geo.hJ_smul_right, hy, mul_zero]
 
-theorem spanLt_mono (e : Fin r → Fin n → ℂ) {a b : ℕ} (h : a ≤ b) : spanLt e a ≤ spanLt e b :=
-  Submodule.span_mono (Set.image_mono fun c (hc : c.1 < a) => lt_of_lt_of_le hc h)
-
-theorem mem_spanLt (e : Fin r → Fin n → ℂ) {a : ℕ} (b : Fin r) (h : b.1 < a) : e b ∈ spanLt e a :=
-  Submodule.subset_span ⟨b, h, rfl⟩
-
 theorem sub_mem_of (e : Fin r → Fin n → ℂ) (m : Matrix (Fin n) (Fin n) ℂ)
     (hm : ∀ b : Fin r, m *ᵥ e b - e b ∈ spanLt e b.1) (a : ℕ) :
     ∀ w ∈ spanLt e (a + 1), m *ᵥ w - w ∈ spanLt e a := by
@@ -69,7 +63,7 @@ theorem sub_mem_of (e : Fin r → Fin n → ℂ) (m : Matrix (Fin n) (Fin n) ℂ
   induction hw using Submodule.span_induction with
   | mem y hy =>
     obtain ⟨b, hb, rfl⟩ := hy
-    exact spanLt_mono e (Nat.lt_succ_iff.1 hb) (hm b)
+    exact Formalism.L2.SG.Pf.WuDec.spanLt_mono e (Nat.lt_succ_iff.1 hb) (hm b)
   | zero => simp
   | add y z _ _ hy hz =>
     rw [Matrix.mulVec_add, show m *ᵥ y + m *ᵥ z - (y + z) = (m *ᵥ y - y) + (m *ᵥ z - z) by abel]
@@ -82,7 +76,7 @@ theorem maps_of (e : Fin r → Fin n → ℂ) (m : Matrix (Fin n) (Fin n) ℂ)
     (hm : ∀ b : Fin r, m *ᵥ e b - e b ∈ spanLt e b.1) (a : ℕ) :
     ∀ w ∈ spanLt e a, m *ᵥ w ∈ spanLt e a := by
   intro w hw
-  have h := sub_mem_of e m hm a w (spanLt_mono e (Nat.le_succ a) hw)
+  have h := sub_mem_of e m hm a w (Formalism.L2.SG.Pf.WuDec.spanLt_mono e (Nat.le_succ a) hw)
   have := Submodule.add_mem _ h hw
   rwa [sub_add_cancel] at this
 
@@ -112,7 +106,7 @@ theorem conj_core (hgi : gi * g = 1) (hgi' : g * gi = 1)
     intro a w hw
     refine hJ_span_zero ε (F a) _ ?_ w hw
     rintro _ ⟨b, hb, rfl⟩
-    rw [hFE, if_neg]
+    rw [hFE, ite_eq_right]
     intro h; subst h; simp at hb
 
   have hgF : ∀ (a : Fin r) (w : Fin n → ℂ), w ∈ spanLt E (a.1 + 1) → hJ ε (g *ᵥ F a) w = hJ ε (F a) w := by
@@ -156,22 +150,22 @@ theorem conj_core (hgi : gi * g = 1) (hgi' : g * gi = 1)
         set N' := nxt E Z' a with hN'
         have hxa : g *ᵥ N' - N ∈ spanLt E (a.1 + 1) := by
           by_cases h : a.1 + 1 < r
-          · simp only [hN, hN', nxt, dif_pos h]
+          · simp only [hN, hN', nxt, dite_eq_left h]
             exact hEg ⟨a.1 + 1, h⟩
-          · simp only [hN, hN', nxt, dif_neg h]
+          · simp only [hN, hN', nxt, dite_eq_right h]
             have : a.1 + 1 = r := by omega
             rw [this]; exact hZ
         have hsN : s *ᵥ N - N ∈ spanLt E (a.1 + 1) := by
           by_cases h : a.1 + 1 < r
-          · simp only [hN, nxt, dif_pos h]
+          · simp only [hN, nxt, dite_eq_left h]
             exact hsE' ⟨a.1 + 1, h⟩
-          · simp only [hN, nxt, dif_neg h]
+          · simp only [hN, nxt, dite_eq_right h]
             have : a.1 + 1 = r := by omega
             rw [this]; exact hsZ'
         have hFN : hJ ε (F a) N' = hJ ε (F a) N := by
           by_cases h : a.1 + 1 < r
-          · simp only [hN, hN', nxt, dif_pos h]
-          · simp only [hN, hN', nxt, dif_neg h]
+          · simp only [hN, hN', nxt, dite_eq_left h]
+          · simp only [hN, hN', nxt, dite_eq_right h]
             rw [hFZ, hFZ']
         have e1 : (gi * s * g) *ᵥ N' = gi *ᵥ (s *ᵥ (g *ᵥ N')) := by
           rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec]
@@ -185,7 +179,7 @@ theorem conj_core (hgi : gi * g = 1) (hgi' : g * gi = 1)
         have hbase : hJ ε (g *ᵥ F a) (N + x) = hJ ε (F a) N := by
           rw [← hgN, hiso, hFN]
         rw [hdec, _root_.PI.SchurPlaces.Geo.hJ_add_right ε _ (N + x), _root_.PI.SchurPlaces.Geo.hJ_add_right ε _ (s *ᵥ N - N), hbase, hgF a _ hsN,
-          hgF a _ (spanLt_mono E (Nat.le_succ _) (hsX a.1 x hxa)), hFlow a _ (hsX a.1 x hxa), add_zero, ← _root_.PI.SchurPlaces.Geo.hJ_add_right]
+          hgF a _ (Formalism.L2.SG.Pf.WuDec.spanLt_mono E (Nat.le_succ _) (hsX a.1 x hxa)), hFlow a _ (hsX a.1 x hxa), add_zero, ← _root_.PI.SchurPlaces.Geo.hJ_add_right]
         congr 1
         abel
       unfold psiR
@@ -217,7 +211,7 @@ theorem conj_core (hgi : gi * g = 1) (hgi' : g * gi = 1)
         have e : E a = g *ᵥ (gi *ᵥ E a) := by rw [Matrix.mulVec_mulVec, hgi', Matrix.one_mulVec]
         rw [e, hiso]
 
-        have hm : gi *ᵥ E a ∈ spanLt E r := hgiX r _ (mem_spanLt E a a.2)
+        have hm : gi *ᵥ E a ∈ spanLt E r := hgiX r _ (Formalism.L2.SG.Pf.WuDec.mem_spanLt E a a.2)
         have hy' : ∀ w ∈ spanLt E r, hJ ε w y = 0 := by
           intro w hw
           induction hw using Submodule.span_induction with
@@ -235,8 +229,6 @@ open scoped Classical
 open MeasureTheory NumberField Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp
 
 namespace Formalism.L2.SG.Pf.IdBlocks2.Conj
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Rat
 
@@ -435,13 +427,10 @@ theorem idOffConj_all {D : D7} (X : HidaSetting D) (u u' : D.what₂.Word)
 
 end Formalism.L2.SG.Pf.IdBlocks2.Conj
 
-open scoped Classical
 open MeasureTheory NumberField Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp
   Formalism.L2.SG.PoincareInHH.PoincareSetting
 
 namespace Formalism.L2.SG.Pf.IdBlocks2.Lift
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open PI.SchurPlaces.Geo
 
@@ -538,7 +527,7 @@ theorem idOffLift_all {D : D7} (X : HidaSetting D) (u u' : D.what₂.Word)
     · show hJ ε (rvc X v (X.fY a')) _ = 0
       rw [hexp]
       simp_rw [hfe]
-      simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true, sub_self]
+      simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true, sub_self]
     · show hJ ε (rvc X v (X.zu u)) _ = 0
       rw [hexp, hyZ b]
       simp [hze]
@@ -668,9 +657,6 @@ end Formalism.L2.SG.Pf.IdBlocks2.Lift
 
 namespace Formalism.L2.SG.Pf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-open scoped Classical
 open Formalism.BasicNotions Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.TermOp.IdBlocks Formalism.L2.SG.Full
 
 theorem idOffConjC_holds : IdOffConjC :=
@@ -737,8 +723,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 open Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.SpectralTiesReal
 
 namespace Formalism.L2.SG.PoincareAmplitudeLowerBounds
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.DataInst Formalism.L2.SG.CntLocal Formalism.L2.SG.RowsConc Formalism.L2.SG.RealObj
 
@@ -835,11 +819,11 @@ theorem exists_typ {D : D7} (X : HidaSetting D) :
   by_cases h : q p
   · have : (typ p).1 = true := by
       simp [typ, Equiv.sumCompl_symm_apply_of_pos h, Equiv.boolProdEquivSum]
-    rw [this, if_pos rfl]
+    rw [this, ite_eq_left rfl]
     exact_mod_cast h
   · have : (typ p).1 = false := by
       simp [typ, Equiv.sumCompl_symm_apply_of_neg h, Equiv.boolProdEquivSum]
-    rw [this, if_neg (by simp)]
+    rw [this, ite_eq_right (by simp)]
     exact_mod_cast (hneg p).1 h
 
 theorem linkAll_of (hKpp : KppVolAll) : LinkAll := by

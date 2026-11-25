@@ -6,8 +6,6 @@ import Mathlib.Tactic.Lemma
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
@@ -148,10 +146,6 @@ lemma mapDomain_sub' {α β : Type} (f : α → β) (F G : α →₀ ℤ) :
 
 lemma single_two {α : Type} (a : α) : Finsupp.single a (2 : ℤ) = Finsupp.single a 1 + Finsupp.single a 1 := by
   rw [← Finsupp.single_add]
-  norm_num
-
-lemma single_neg_two {α : Type} (a : α) : Finsupp.single a (-2 : ℤ) = -Finsupp.single a 1 - Finsupp.single a 1 := by
-  rw [← Finsupp.single_neg, ← Finsupp.single_sub]
   norm_num
 
 def psiP (w : A ⟶ A) (y : T ⟶ A) : (T ⟶ A) →₀ ℤ :=

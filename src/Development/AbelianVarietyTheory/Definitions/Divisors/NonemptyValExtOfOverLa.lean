@@ -8,56 +8,15 @@ public import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
 public import Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfB
 public import Formalism.LocalToGlobal.ProjectiveLattices.TowerOfAt
 public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsFormalBiextMap
-public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.PderivSecondEvFirstPointEqZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.PderivSecondEvFirstPointEqZero
 public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ChartLocalDepthLeOfValuedExtensionBound
 public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NonemptyClosedValuedExtensionOfCDVR
 public import Formalism.LocalToGlobal.ProjectiveLattices.SatLeaves
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Formalism.LocalToGlobal.ProjectiveLattices.IntAllProof
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -70,18 +29,19 @@ open GlobalTheory.FGDepth GlobalTheory.CharDepth GlobalTheory.LawLog
 section Log
 
 open MvPowerSeries
+open ReciprocityTheory.ChartRestriction.G.TB
 
 variable {C : Type} [Field C] [CharZero C] {d : ℕ}
 
 def logFGLOf (v : AddValuation C (WithTop ℝ)) (G : FGLaw C d)
     (hG : ∀ a, MvIsInt v (subst (twoVars C d) (G.F a))) : LogFGL v d where
-  lg a := subst (oneVar C d) (GlobalTheory.FormalLog.logOf G a)
-  lg_const a := constantCoeff_subst_eq_zero hs_oneVar cc_oneVar (GlobalTheory.FormalLog.constantCoeff_prim _)
+  lg a := subst (oneVar C d) (LogPf.logOf G a)
+  lg_const a := constantCoeff_subst_eq_zero hs_oneVar cc_oneVar (LogPf.constantCoeff_prim _)
   lg_lin a b := by
     rw [coeff_single_oneVar]
-    have h := congrArg constantCoeff (GlobalTheory.FormalLog.pderiv_logOf G a b)
+    have h := congrArg constantCoeff (LogPf.pderiv_logOf G a b)
     rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv, zero_add] at h
-    have h2 := congrFun (congrFun (GlobalTheory.FormalLog.cc_om G) a) b
+    have h2 := congrFun (congrFun (LogPf.cc_om G) a) b
     simp only [Matrix.map_apply, Matrix.one_apply] at h2
     simpa [h2] using h
   F a := subst (twoVars C d) (G.F a)
@@ -98,7 +58,7 @@ def logFGLOf (v : AddValuation C (WithTop ℝ)) (G : FGLaw C d)
     rw [e0, e1, subst_oneVar _ cc_twoVars _ G.const, subst_oneVar _ cc_twoVars _ (hp 0),
       subst_oneVar _ cc_twoVars _ (hp 1), ← subst_add hs_twoVars]
     congr 1
-    exact GlobalTheory.FormalLog.logOf_add G a
+    exact LogPf.logOf_add G a
 
 end Log
 
@@ -190,16 +150,16 @@ theorem sum_gap_tail (g : ℕ → ℕ) (hg : Antitone g) (m i : ℕ) (hi : i < m
     intro n hn
     induction n, hn using Nat.le_induction with
     | base =>
-      rw [Finset.sum_eq_zero fun j hj => if_neg (by have := Finset.mem_range.1 hj; omega), zero_add]
+      rw [Finset.sum_eq_zero fun j hj => ite_eq_right (by have := Finset.mem_range.1 hj; omega), zero_add]
     | succ n hn ih =>
       have := hg (Nat.le_succ n)
-      rw [Finset.sum_range_succ, if_pos (by omega), ← ih]
+      rw [Finset.sum_range_succ, ite_eq_left (by omega), ← ih]
       simp only [Nat.succ_eq_add_one] at this
       omega
-  rw [Finset.sum_range_succ, if_pos hi, if_neg (lt_irrefl _), Nat.sub_zero, ← key k (by omega)]
+  rw [Finset.sum_range_succ, ite_eq_left hi, ite_eq_right (lt_irrefl _), Nat.sub_zero, ← key k (by omega)]
   congr 1
   refine Finset.sum_congr rfl fun j hj => ?_
-  rw [if_pos (show j + 1 < k + 1 by have := Finset.mem_range.1 hj; omega)]
+  rw [ite_eq_left (show j + 1 < k + 1 by have := Finset.mem_range.1 hj; omega)]
 
 
 open Classical in
@@ -212,7 +172,7 @@ theorem sum_gap_row {a : (E →+* ℂ) × ℕ → ℕ} (ha : ∀ τ, Antitone fu
     refine Finset.sum_congr rfl fun j _ => ?_
     simp only [true_and, gap, rk]
   · intro σ _ hσ
-    exact Finset.sum_eq_zero fun j _ => if_neg fun h => hσ h.1
+    exact Finset.sum_eq_zero fun j _ => ite_eq_right fun h => hσ h.1
   · intro h; exact absurd (Finset.mem_univ τ) h
 
 def prodP (C : Type) [Field C] (cx : Lt1 Dw → ℕ) :

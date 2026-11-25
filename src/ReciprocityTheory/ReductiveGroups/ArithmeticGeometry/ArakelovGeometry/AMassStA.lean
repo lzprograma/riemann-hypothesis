@@ -257,11 +257,11 @@ theorem cxHessian_gbPot (y : Fin D → ℂ) (i j : Fin D) :
   simp only [cxHessian, fderiv_fderiv_gbPot_apply, gb_I_single, gbBil_single, gb_conj_mul]
   by_cases h : i = j
   · subst h
-    simp only [Pi.single_apply, if_true, Complex.one_re, Complex.one_im, Complex.I_re, Complex.I_im]
+    simp only [Pi.single_apply, ite_true, Complex.one_re, Complex.one_im, Complex.I_re, Complex.I_im]
     push_cast
     field_simp
     ring
-  · simp only [Pi.single_apply, h, Ne.symm h, if_false, Complex.zero_re, Complex.zero_im,
+  · simp only [Pi.single_apply, h, Ne.symm h, ite_false, Complex.zero_re, Complex.zero_im,
       Complex.one_re, Complex.one_im, Complex.I_re, Complex.I_im]
     push_cast
     field_simp

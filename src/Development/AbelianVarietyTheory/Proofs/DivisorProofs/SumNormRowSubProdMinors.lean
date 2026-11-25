@@ -91,22 +91,7 @@ def xMat (τ : ι) (d a : ℕ) : Matrix (Fin d) (Fin a) (Pol ι d a) := Matrix.o
 end GlobalTheory.MinorFrame
 
 noncomputable section
-namespace GlobalTheory.MinorFrame
-open scoped Matrix
-
-end GlobalTheory.MinorFrame
 
 noncomputable section
-namespace GlobalTheory.MinorFrame
-open MvPolynomial
-open scoped Matrix ComplexConjugate
-
-variable {ι : Type} [Fintype ι]
-
-end GlobalTheory.MinorFrame
 
 noncomputable section
-namespace GlobalTheory.MinorFrame
-open MvPolynomial
-
-end GlobalTheory.MinorFrame

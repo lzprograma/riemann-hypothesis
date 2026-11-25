@@ -124,7 +124,6 @@ theorem near_isClosedImmersion [hfin : IsFinite f]
   obtain ⟨a, ha, hsurj⟩ := DenseFibreIso.exists_away_surjective (A ⊗[R] K) hbij.2 m
   exact ⟨a, ha, IsClosedImmersion.spec_of_surjective _ hsurj⟩
 
-set_option backward.isDefEq.respectTransparency.types false in
 theorem near_isIso [hcl : IsClosedImmersion f] [IsLocallyNoetherian X] [Flat (f ≫ s)]
     [IsIso (pullback.snd f (pullback.fst s (spMap (algebraMap R K))))]
     (x : X) (hx : RingHom.ker (algebraMap R K) = (s x).asIdeal) :

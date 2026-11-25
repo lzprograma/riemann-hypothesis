@@ -389,8 +389,8 @@ theorem inSpan_of_comp {f : X ⟶ Y} {H : LB X} {I K : Type} [Fintype I] [Fintyp
   simp only [map_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => ?_
-  rw [Finset.sum_eq_single (e a) (fun b _ hb => by rw [if_neg (Ne.symm hb), map_zero, zero_mul]) (by simp),
-    if_pos rfl]
+  rw [Finset.sum_eq_single (e a) (fun b _ hb => by rw [ite_eq_right (Ne.symm hb), map_zero, zero_mul]) (by simp),
+    ite_eq_left rfl]
 
 theorem valF_const (c : F) : valF (𝟙 (Sp F)) ⊤ ((Scheme.ΓSpecIso (CommRingCat.of F)).inv.hom c) = c := by
   rw [valF_eq le_rfl]
@@ -670,8 +670,7 @@ theorem level_eq (h₁ : Out.Laws) (h₂ : Out.Laws2) {D : Datum H} {l : Level H
     (fun n hn u hu => Θ.sep n hn u fun v j hj => by
       rw [MulZeroClass.zero_mul]; exact hu v j (by rwa [fib_fst] at hj))
     (by
-      by_contra hne
-      push_neg at hne
+      by_contra! hne
       obtain ⟨j, hj⟩ := exists_chart_pt hL (Θ.x z₀).left
       have e := Θ.val k hk i₁ z₀ j (by rw [fib_fst]; exact hj)
       rw [sval_of_zero _ hne] at e
@@ -914,7 +913,7 @@ theorem points_frames_eq (L₁ : Out.Laws) (L₂ : Out.Laws2) {E : Type} [Field 
   let φ : ∀ j, (Σ α : A.X, A.Theta j α) → A.V → F := fun j i v =>
     if h : j = 0 then 0 else haveI : NeZero j := ⟨h⟩; f (A.FSum j i.1 i.2 v)
   have hf : ∀ (j : ℕ) [NeZero j] i v, φ j i v = f (A.FSum j i.1 i.2 v) := fun j _ i v =>
-    dif_neg (NeZero.ne j)
+    dite_eq_right (NeZero.ne j)
   have hg : ∀ (j : ℕ) [NeZero j] i v, φ j i v = g (A.FSum j i.1 i.2 v) := fun j _ i v =>
     (hf j i v).trans (hfg _ (fsum_mem A j _ _ i.2.2 v))
   obtain ⟨Θ₁, x₁, l₁⟩ := _root_.GlobalTheory.ArcBaseChange.exists_fpts_baseChange E H Xo.X A Xo.univ.t y Φ F f φ hA hf

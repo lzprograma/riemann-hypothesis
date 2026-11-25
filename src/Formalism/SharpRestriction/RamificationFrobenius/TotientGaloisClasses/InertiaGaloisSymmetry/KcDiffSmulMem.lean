@@ -1,50 +1,8 @@
 module
 
 public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -80,17 +38,6 @@ theorem kc_sum_comm (σ : H.E ≃ₐ[ℚ] H.E)
 
 theorem kc_one_ne : (1 : FractionalIdeal (𝓞 H.E)⁰ H.E) ≠ 0 := one_ne_zero
 
-private theorem mem_one_fractionalIdeal_iff_isIntegral (t : H.E) : t ∈ (1 : FractionalIdeal (𝓞 H.E)⁰ H.E) ↔ IsIntegral ℤ t := by
-  rw [FractionalIdeal.mem_one_iff]
-  constructor
-  · rintro ⟨y, rfl⟩
-    exact NumberField.RingOfIntegers.isIntegral_coe y
-  · intro h
-    exact ⟨⟨t, h⟩, rfl⟩
-
-private theorem isIntegral_algEquiv_apply_iff (σ : H.E ≃ₐ[ℚ] H.E) (t : H.E) : IsIntegral ℤ (σ t) ↔ IsIntegral ℤ t :=
-  isIntegral_algEquiv (σ.restrictScalars ℤ)
-
 theorem kc_mem_dual_iff (y : H.E) :
     y ∈ FractionalIdeal.dual (𝓞 H.K) H.K (1 : FractionalIdeal (𝓞 H.E)⁰ H.E) ↔
       ∀ x : 𝓞 H.E, IsIntegral ℤ (∑ τ : H.E ≃ₐ[H.K] H.E, τ (y * x)) := by
@@ -109,12 +56,12 @@ theorem kc_mem_dual_iff (y : H.E) :
   constructor
   · intro h x
     rw [← key]
-    have := h _ ((mem_one_fractionalIdeal_iff_isIntegral H _).mpr (NumberField.RingOfIntegers.isIntegral_coe x))
+    have := h _ ((FractionalIdeal.mem_one_iff _).mpr ⟨x, rfl⟩)
     rwa [Algebra.traceForm_apply] at this
   · intro h a ha
-    rw [mem_one_fractionalIdeal_iff_isIntegral] at ha
+    obtain ⟨x, rfl⟩ := (FractionalIdeal.mem_one_iff _).mp ha
     rw [Algebra.traceForm_apply, key]
-    exact h ⟨a, ha⟩
+    exact h x
 
 attribute [local instance] FractionRing.liftAlgebra FractionRing.isScalarTower_liftAlgebra
 
@@ -134,7 +81,8 @@ theorem kc_mem_diff_iff (z : 𝓞 H.E) :
       have : w = z := NumberField.RingOfIntegers.ext e
       rwa [← this]
   rw [e1, coeIdeal_differentIdeal (𝓞 H.K) H.K H.E (𝓞 H.E), FractionalIdeal.mem_inv_iff hd]
-  simp only [kc_mem_dual_iff, mem_one_fractionalIdeal_iff_isIntegral]
+  simp only [kc_mem_dual_iff, FractionalIdeal.mem_one_iff,
+    ← IsIntegralClosure.isIntegral_iff (R := ℤ) (A := 𝓞 H.E)]
 
 theorem kc_dual_smul (σ : H.E ≃ₐ[ℚ] H.E)
     (hc : ∀ (τ : H.E ≃ₐ[H.K] H.E) (x : H.E), σ (τ x) = τ (σ x)) (y : H.E)
@@ -150,8 +98,8 @@ theorem kc_dual_smul (σ : H.E ≃ₐ[ℚ] H.E)
     rw [kc_sum_comm H σ hc]
     refine Finset.sum_congr rfl fun τ _ => ?_
     rw [map_mul σ, hx']
-  rw [e, isIntegral_algEquiv_apply_iff]
-  exact hx
+  rw [e]
+  exact (isIntegral_algEquiv (σ.restrictScalars ℤ)).mpr hx
 
 theorem kc_diff_smul_mem (σ : H.E ≃ₐ[ℚ] H.E)
     (hc : ∀ (τ : H.E ≃ₐ[H.K] H.E) (x : H.E), σ (τ x) = τ (σ x)) (z : 𝓞 H.E)
@@ -159,10 +107,9 @@ theorem kc_diff_smul_mem (σ : H.E ≃ₐ[ℚ] H.E)
   rw [kc_mem_diff_iff] at hz ⊢
   intro y hy
   have hy' := kc_dual_smul H σ.symm (kc_comm_symm H σ hc) y hy
-  have h1 := hz (σ.symm y) hy'
-  rw [← isIntegral_algEquiv_apply_iff H σ, map_mul, AlgEquiv.apply_symm_apply] at h1
-  have e : ((σ • z : 𝓞 H.E) : H.E) = σ (z : H.E) := rfl
-  rw [e]
+  have h1 : IsIntegral ℤ (σ ((z : H.E) * σ.symm y)) :=
+    (isIntegral_algEquiv (σ.restrictScalars ℤ)).mpr (hz (σ.symm y) hy')
+  rw [map_mul, AlgEquiv.apply_symm_apply] at h1
   exact h1
 
 theorem kc_diff_smul_le (σ : H.E ≃ₐ[ℚ] H.E)
@@ -205,21 +152,23 @@ theorem kc_mem_inv_smul (σ : H.E ≃ₐ[ℚ] H.E) (B : Ideal (𝓞 H.E))
       rw [Ideal.mem_pointwise_smul_iff_inv_smul_mem, inv_smul_smul]
       exact hb
     have := h (algebraMap (𝓞 H.E) H.E (σ • b)) (by rw [FractionalIdeal.mem_coeIdeal]; exact ⟨σ • b, hb', rfl⟩)
-    rw [_root_.Formalism.HC.Der.mem_one_fractionalIdeal_iff_isIntegral] at this ⊢
-    rw [show algebraMap (𝓞 H.E) H.E (σ • b) = σ (algebraMap (𝓞 H.E) H.E b) from rfl, ← map_mul,
-      _root_.Formalism.HC.Der.isIntegral_algEquiv_apply_iff] at this
-    exact this
+    rw [FractionalIdeal.mem_one_iff,
+      ← IsIntegralClosure.isIntegral_iff (R := ℤ) (A := 𝓞 H.E)] at this ⊢
+    rw [show algebraMap (𝓞 H.E) H.E (σ • b) = σ (algebraMap (𝓞 H.E) H.E b) from rfl,
+      ← map_mul] at this
+    exact (isIntegral_algEquiv (σ.restrictScalars ℤ)).mp this
   · intro h w hw
     rw [FractionalIdeal.mem_coeIdeal] at hw
     obtain ⟨b, hb, rfl⟩ := hw
     rw [Ideal.mem_pointwise_smul_iff_inv_smul_mem] at hb
     have := h (algebraMap (𝓞 H.E) H.E (σ⁻¹ • b)) (by rw [FractionalIdeal.mem_coeIdeal]; exact ⟨σ⁻¹ • b, hb, rfl⟩)
-    rw [_root_.Formalism.HC.Der.mem_one_fractionalIdeal_iff_isIntegral] at this ⊢
+    rw [FractionalIdeal.mem_one_iff,
+      ← IsIntegralClosure.isIntegral_iff (R := ℤ) (A := 𝓞 H.E)] at this ⊢
     have e : σ (algebraMap (𝓞 H.E) H.E (σ⁻¹ • b)) = algebraMap (𝓞 H.E) H.E b := by
       show σ (σ⁻¹ (b : H.E)) = b
       rw [AlgEquiv.aut_inv, AlgEquiv.apply_symm_apply]
-    rw [← _root_.Formalism.HC.Der.isIntegral_algEquiv_apply_iff H σ, map_mul, e] at this
-    exact this
+    rw [← e, ← map_mul]
+    exact (isIntegral_algEquiv (σ.restrictScalars ℤ)).mpr this
 
 theorem unimodular : ∀ 𝔟 : Ideal (𝓞 H.E), differentIdeal (𝓞 H.K) (𝓞 H.E) = 𝔟 * (H.conj • 𝔟) → ∀ x : H.E,
     x ∈ ((𝔟 : FractionalIdeal (nonZeroDivisors (𝓞 H.E)) H.E)⁻¹) ↔

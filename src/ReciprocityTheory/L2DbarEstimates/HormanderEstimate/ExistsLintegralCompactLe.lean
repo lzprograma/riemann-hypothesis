@@ -79,18 +79,6 @@ private theorem chart_symm_eventuallyEq_of_mem_sources (n : ℕ) {M : Type*} [To
   calc e.symm w = e.symm (e (e'.symm w)) := by rw [h3]
     _ = e'.symm w := e.left_inv hw2
 
-private theorem db_eq_wdb_of_mem_chart_source (n : ℕ) {M : Type*} [TopologicalSpace M] (z : M → V n)
-    {e : OpenPartialHomeomorph M (V n)} (he : IsChart n z e) (j : Fin n) (f : M → ℂ) {x : M}
-    (hx : x ∈ e.source) : db n z j f x = wdb n j (f ∘ e.symm) (z x) := by
-  have hex : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source := ⟨e, he, hx⟩
-  unfold db
-  rw [dite_eq_left hex]
-  have hspec := Classical.choose_spec hex
-  have heq : (f ∘ (Classical.choose hex).symm) =ᶠ[𝓝 (z x)] (f ∘ e.symm) :=
-    (chart_symm_eventuallyEq_of_mem_sources n z hspec.1 he hspec.2 hx).fun_comp f
-  unfold wdb
-  rw [heq.fderiv_eq]
-
 private theorem continuous_db_of_smooth (n : ℕ) {M : Type*} [TopologicalSpace M] (z : M → V n)
     (hz : IsLocalHomeomorph z) (j : Fin n) (φ : M → ℂ) (hφ : Smooth n z φ) :
     Continuous (db n z j φ) := by
@@ -109,14 +97,14 @@ private theorem continuous_db_of_smooth (n : ℕ) {M : Type*} [TopologicalSpace 
     (hw.continuousAt (e.open_target.mem_nhds (e.map_source hxe))).comp (e.continuousAt hxe)
   refine hat.congr ?_
   filter_upwards [e.open_source.mem_nhds hxe] with y hy
-  rw [db_eq_wdb_of_mem_chart_source n z hc j φ hy, hc hy]
+  rw [db_eq_wdb n z _ hc j φ _ hy, hc hy]
 
 private theorem db_eq_zero_of_not_mem_tsupport (n : ℕ) {M : Type*} [TopologicalSpace M] (z : M → V n)
     (hz : IsLocalHomeomorph z) (j : Fin n) (φ : M → ℂ) {x : M} (hx : x ∉ tsupport φ) :
     db n z j φ x = 0 := by
   obtain ⟨e, hxe, he⟩ := hz x
   have hc : IsChart n z e := fun y _ => by rw [he]
-  rw [db_eq_wdb_of_mem_chart_source n z hc j φ hxe]
+  rw [db_eq_wdb n z _ hc j φ _ hxe]
   have h0 : (φ ∘ e.symm) =ᶠ[𝓝 (z x)] fun _ => (0 : ℂ) := by
     have h1 : φ =ᶠ[𝓝 x] 0 := notMem_tsupport_iff_eventuallyEq.mp hx
     have hcont : Filter.Tendsto e.symm (𝓝 (e x)) (𝓝 x) := by

@@ -48,8 +48,6 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil
 open scoped TensorProduct Matrix
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.V.Hi
 
 open UpperTheory.V.W (Plc)
@@ -247,12 +245,6 @@ structure Part (lam : Wt L l n) {d : ℕ} (ξ : GV n H.Sl →* GL (Fin d) ℂ) :
   atL : ∀ v, AtL ι (H.ovr v) (r.comp (H.dec v)) lam (σl v)
   atQ : ∀ (q : H.Q) (B : ValuationSubring Ω) (h : IsPlaceOver B (H.wq q)) (rc : IrrGL (k := (H.wq q).adicCompletion L) → WD h), IsRec h rc →
     Lev.WO ι (r.comp H.prj) (rc (algNorm (σq q)))
-
-def Aut (P : Wt L l n → (H.Gq →* GL (Fin n) (Qbar l)) → Prop) : Prop :=
-  ∀ lam ∈ H.admitted, ∀ (d : ℕ) (ξ : GV n H.Sl →* GL (Fin d) ℂ), IsAlgWt ι lam ξ → ∀ F ∈ H.Big ι ξ,
-    (∃ K, F ∈ fixd (H.X.raF d (H.τC ι)) (H.lev K)) → (∃ e, F ∈ fixd (H.X.rpF ℂ d H.m) (H.X.I.I1 e)) →
-    F ∈ ⨆ Y : {Y : H.Part ι lam ξ // P lam Y.r}, Y.1.Y
-
 def lowVal (lam : Wt L l n) (v : H.V) (j : ℕ) : ℂ :=
   ι (∏ i ∈ Finset.univ.filter fun i : Fin n => (i : ℕ) < j,
     algPow (H.Sl v) (lowW lam i) ((unif ((H.Sl v).adicCompletion L) : ((H.Sl v).adicCompletion L)ˣ) : (H.Sl v).adicCompletion L))

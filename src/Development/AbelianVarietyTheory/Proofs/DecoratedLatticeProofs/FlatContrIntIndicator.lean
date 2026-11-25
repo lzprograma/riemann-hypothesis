@@ -150,13 +150,13 @@ theorem flCol_intInd {ψ : AddChar k Circle} (hψ : HasConductor ψ 1) {ν : Mea
   rw [opE_of_ite hψ hν _ x.toCols₁
     (IntM x.toCols₁ ∧ ∀ i : Fin (c + 1), i.val + 1 = p → ∀ r, x r (Sum.inr ()) ∈ 𝒪[k]) fun e => ?_]
   · by_cases hp : p = 0 ∨ c + 1 < p
-    · rw [if_pos hp]
+    · rw [ite_eq_left hp]
       by_cases hP : IntM x.toCols₁
-      · rw [if_pos ⟨hP, fun i hi => by omega⟩,
+      · rw [ite_eq_left ⟨hP, fun i hi => by omega⟩,
           Set.indicator_of_mem (show x.toCols₁ ∈ {x : Matrix n n' k | ∀ r q, x r q ∈ 𝒪[k]} from hP)]
-      · rw [if_neg (fun h => hP h.1),
+      · rw [ite_eq_right (fun h => hP h.1),
           Set.indicator_of_notMem (show x.toCols₁ ∉ {x : Matrix n n' k | ∀ r q, x r q ∈ 𝒪[k]} from hP)]
-    rw [if_neg hp]
+    rw [ite_eq_right hp]
     split_ifs with hP
     · rw [Set.indicator_of_mem (show x ∈ {x : Matrix n (n' ⊕ Unit) k | ∀ r q, x r q ∈ 𝒪[k]} from by
         rintro r (q | ⟨⟩)
@@ -168,9 +168,9 @@ theorem flCol_intInd {ψ : AddChar k Circle} (hψ : HasConductor ψ 1) {ν : Mea
       (and_congr (intM_affPt (c := c) (p := p) x.toCols₁ e) (intM_colAt (n' := n') (c := c) (p := p) fun r => x r (Sum.inr ())))
     by_cases h : IntM (affPt (c := c) p x.toCols₁ e + colAt n' c p fun r => x r (Sum.inr ()))
     · rw [Set.indicator_of_mem (show _ ∈ {x : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k | ∀ r q, x r q ∈ 𝒪[k]} from h),
-        if_pos (by tauto)]
+        ite_eq_left (by tauto)]
     · rw [Set.indicator_of_notMem (show _ ∉ {x : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k | ∀ r q, x r q ∈ 𝒪[k]} from h),
-        if_neg (by tauto)]
+        ite_eq_right (by tauto)]
 
 theorem flRow_intInd {ψ : AddChar k Circle} (hψ : HasConductor ψ 1) {ν : Measure k} (hν : IsUnitVol ν) (p : ℕ)
     (hp1 : 1 ≤ p) (hpc : p ≤ c) :
@@ -192,9 +192,9 @@ theorem flRow_intInd {ψ : AddChar k Circle} (hψ : HasConductor ψ 1) {ν : Mea
       (and_congr (intM_affPt (c := c) (p := p) x.toRows₁ e) (intM_rowAt (n := n) (c := c) (p := p) (x (Sum.inr ()))))
     by_cases h : IntM (affPt (c := c) p x.toRows₁ e + rowAt n c p (x (Sum.inr ())))
     · rw [Set.indicator_of_mem (show _ ∈ {x : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k | ∀ r q, x r q ∈ 𝒪[k]} from h),
-        if_pos (by tauto)]
+        ite_eq_left (by tauto)]
     · rw [Set.indicator_of_notMem (show _ ∉ {x : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k | ∀ r q, x r q ∈ 𝒪[k]} from h),
-        if_neg (by tauto)]
+        ite_eq_right (by tauto)]
 
 end GlobalTheory.LocFlat.UnramFlat
 
@@ -210,21 +210,20 @@ theorem integral_psi_O {ψ : AddChar k Circle} (hψ : HasConductor ψ 1) {ν : M
   haveI := hν.1
   have hO : MeasurableSet (𝒪[k] : Set k) := (Valuation.isOpen_integer (v := valuation k)).measurableSet
   by_cases ha : a ∈ 𝒪[k]
-  · rw [if_pos ha]
+  · rw [ite_eq_left ha]
     have : (fun t => (if t ∈ 𝒪[k] then (1 : ℂ) else 0) * (ψ (-1 * (a * t)) : ℂ)) =
         Set.indicator (𝒪[k] : Set k) (fun _ => 1) := by
       funext t
       by_cases ht : t ∈ 𝒪[k]
-      · rw [if_pos ht, Set.indicator_of_mem (show t ∈ (𝒪[k] : Set k) from ht),
+      · rw [ite_eq_left ht, Set.indicator_of_mem (show t ∈ (𝒪[k] : Set k) from ht),
           psi_eq_one hψ (by simpa using neg_mem (mul_mem ha ht))]
         simp
-      · rw [if_neg ht, Set.indicator_of_notMem (show t ∉ (𝒪[k] : Set k) from ht), zero_mul]
+      · rw [ite_eq_right ht, Set.indicator_of_notMem (show t ∉ (𝒪[k] : Set k) from ht), zero_mul]
     rw [this, integral_indicator_const _ hO]
     simp [Measure.real, hν.2]
-  · rw [if_neg ha]
+  · rw [ite_eq_right ha]
     obtain ⟨t₀, ht₀, hne⟩ : ∃ t₀ ∈ 𝒪[k], ψ (t₀ * (-a)) ≠ 1 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact ha (by simpa using neg_mem (mem_of_psi hψ h))
     set F : k → ℂ := fun t => (if t ∈ 𝒪[k] then (1 : ℂ) else 0) * (ψ (-1 * (a * t)) : ℂ) with hF
     have hFt : ∀ t, F (t₀ + t) = (ψ (t₀ * (-a)) : ℂ) * F t := by

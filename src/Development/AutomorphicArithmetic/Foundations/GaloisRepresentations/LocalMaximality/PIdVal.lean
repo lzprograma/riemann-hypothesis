@@ -5,53 +5,6 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.Complementar
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLaurentConstantTermFormFunctionFieldStatement
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTopDegreeCoefficientFormAndEqOnTopFormsStatement
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KahlerFormsOverSubalgebraClosureProperties
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -207,10 +160,10 @@ theorem UpperTheory.Gal.productCup_of_system.idVal_of :
     have hfs : ∑ᶠ e, γ0 e * e.1 h = φ (g k) := by
       rw [finsum_eq_single _ z]
       · rw [hh z]
-        simp only [if_true, mul_one]
+        simp only [ite_true, mul_one]
         exact val_unique hV (hγ0 z) (hφ _ (hgLoc z _ (hyB k S hS)))
       · intro e he
-        rw [hh e, if_neg he, mul_zero]
+        rw [hh e, ite_eq_right he, mul_zero]
     have : ρ (t k) = φ (g k) := by rw [← hfs]; exact htv
     rwa [this] at hres
   have claim3 : ∑ k, algebraMap F K (t k) • w k = (h : K) • dtS K x S := by
@@ -231,7 +184,7 @@ theorem UpperTheory.Gal.productCup_of_system.idVal_of :
       simp only [sub_smul, Finset.sum_sub_distrib, ite_smul, zero_smul, Finset.sum_smul, mul_smul]
       rw [Finset.sum_comm]
       simp only [← Finset.smul_sum, ← hbe]
-      rw [claim3, Finset.sum_ite_eq, if_pos (by simp [Finset.mem_powersetCard, hS]), sub_self]
+      rw [claim3, Finset.sum_ite_eq, ite_eq_left (by simp [Finset.mem_powersetCard, hS]), sub_self]
     intro T hT
     exact sub_eq_zero.1 (linearIndependent_iff'.1 hli _ _ hsum T hT)
   have hTm : T ∈ Finset.univ.powersetCard a := by simp [Finset.mem_powersetCard, hT]
@@ -240,9 +193,9 @@ theorem UpperTheory.Gal.productCup_of_system.idVal_of :
   rw [claim4 T hTm] at hL
   have hz1 : Val B z.1 (h : K) 1 := by
     have := (hV K B z.1).2.2.1 h
-    rwa [hh z, if_pos rfl] at this
+    rwa [hh z, ite_eq_left rfl] at this
   by_cases hST : S = T
-  · rw [if_pos hST] at hL ⊢
+  · rw [ite_eq_left hST] at hL ⊢
     exact val_unique hV hL hz1
-  · rw [if_neg hST] at hL ⊢
+  · rw [ite_eq_right hST] at hL ⊢
     exact val_unique hV hL (val_zero hV)

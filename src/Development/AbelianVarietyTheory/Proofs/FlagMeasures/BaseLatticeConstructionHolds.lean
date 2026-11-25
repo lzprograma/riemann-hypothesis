@@ -195,7 +195,6 @@ open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotio
   Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.LatticeGluingRadicals
 namespace GlobalTheory.TypeAsm
 open LatticeOrthogonalComplement
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem lat0C : LatticeNormalizationCondition := by
   intro D large₂ X Y u hS W HW hE Λ hΛ

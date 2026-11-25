@@ -721,7 +721,7 @@ theorem exists_level (hG : GlobalFnsSt) (hS : IsSemiAbelian G) [IsAdicComplete I
         D.toPre.cub.t q z J ^ ε k) (tri_congr (U.gt e) (y ≫ (Over.pullback (thick R I e)).map (a k)) (h2 τ k) (h2 τ' k))
     · rw [aV_even U a β hβ nβ hG e _ hJ hN, aV_even U a β hβ nβ hG e _ hJ hN, mul_right_comm, ← _root_.mul_assoc]
       refine congrArg₂ (· * ·) rfl (Finset.prod_congr rfl fun k _ => ?_)
-      exact congrArg (fun q => val D.toPre.sym q z J ^ ε k) (pG_congr (U.gt e) (h2 τ k)))
+      exact congrArg (fun q => val D.toPre.sym q z J ^ ε k) (pG_congr (U.gt e) (h2 τ k) :))
   obtain ⟨s, hs, vs⟩ := exists_descend D.toPre.P.isLB (U.gt e).q.left
     (fun k => (fstG I e D.toPre.P.A).left ≫ (b k).left) t ht (fun Z g₁ g₂ z J hJ h => by
       let Z' : Over (Spec (CommRingCat.of (R ⧸ I ^ (e + 1)))) := Over.mk (g₂ ≫ (thickObj R I e G).hom)

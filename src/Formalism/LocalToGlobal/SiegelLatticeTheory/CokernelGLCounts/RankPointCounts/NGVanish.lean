@@ -13,8 +13,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.NGVanish
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem hsEmb_eq_zero {Wq Wp : Type} [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wq]
     [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] (A : Wq →L[ℂ] Wp)
     (h : Formalism.L2.SG.PackageTie.hsEmb A = 0) : A = 0 := by

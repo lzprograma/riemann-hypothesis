@@ -73,7 +73,7 @@ theorem PtsAddFirst.sheetDensity_add {K : Type} [Fintype K] {ι : K → Type} [�
       sheetDensity Q Ψ (Fin.cons (fun z => Real.log (M.h z)) (pot L)) g y w +
         sheetDensity Q Ψ (Fin.cons (fun z => Real.log (N.h z)) (pot L)) g y w := by
   by_cases hγ : ∃ γ, IsSheet Q Ψ y w γ
-  · simp only [sheetDensity, dif_pos hγ]
+  · simp only [sheetDensity, dite_eq_left hγ]
     set γ := hγ.choose
     have hs : IsSheet Q Ψ y w γ := hγ.choose_spec
     have han : ∀ᶠ y' in 𝓝 y, AnalyticAt ℂ γ y' := (sheet_analyticAt osgood hs).eventually_analyticAt
@@ -92,7 +92,7 @@ theorem PtsAddFirst.sheetDensity_add {K : Type} [Fintype K] {ι : K → Type} [�
       refine Fin.cases ?_ (fun i => ?_) j <;> simp
     rw [hcons, hcons, hcons, PtsAddFirst.maDensity_cons_add _ _ _ _ _
       (PtsAddFirst.cxHessian_add (hcd hM) (hcd hN) hsum), mul_add]
-  · simp only [sheetDensity, dif_neg hγ, add_zero]
+  · simp only [sheetDensity, dite_eq_right hγ, add_zero]
 
 theorem PtsAddFirst.proof (hInt : PtsIntegrableStatement) : PtsAddFirst.Statement := by
   intro K _ ι _ Q e L M N E t hQ hL hM hN hE ht
@@ -100,7 +100,7 @@ theorem PtsAddFirst.proof (hInt : PtsIntegrableStatement) : PtsAddFirst.Statemen
     fun A hA j => Fin.cases hA (fun i => hL i) j
   have hMN : IsSmoothHerm (M.tensor N) := hM.mul hN
   by_cases hΨ : ∃ Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1 + 1) → ℂ), IsGoodProj Q Ψ
-  · simp only [ptsIntegral, dif_pos hΨ, ptsIntegralAt]
+  · simp only [ptsIntegral, dite_eq_left hΨ, ptsIntegralAt]
     have hI : ∀ A : HermLine ι, IsSmoothHerm A → Integrable (fun y => ∑ᶠ w ∈ fibre Q hΨ.choose y,
         sheetDensity Q hΨ.choose (Fin.cons (fun z => Real.log (A.h z)) (pot L)) (logNorm E t) y w) := by
       intro A hA
@@ -111,6 +111,6 @@ theorem PtsAddFirst.proof (hInt : PtsIntegrableStatement) : PtsAddFirst.Statemen
     funext y
     rw [← finsum_mem_add_distrib (fibreFinite K ι Q (e + 1) hΨ.choose hQ hΨ.choose_spec y)]
     exact finsum_mem_congr rfl fun w _ => PtsAddFirst.sheetDensity_add Q _ L M N hM hN _ y w
-  · simp only [ptsIntegral, dif_neg hΨ, add_zero]
+  · simp only [ptsIntegral, dite_eq_right hΨ, add_zero]
 
 end GroundTheory.Heights₂.Heights.Inter

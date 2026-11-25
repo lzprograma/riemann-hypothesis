@@ -2,48 +2,8 @@ module
 
 public import Formalism.SharpRestriction.LevelLetterCocycles.LemmasUnramifiedOfRingCondition
 public import Formalism.SharpRestriction.LevelLetterCocycles.KillerLevCoreOf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PowerSeries.Inverse
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -80,15 +40,6 @@ theorem γA_φpow (W : LocWach PD LL O v n) (g : W.Gam) (t : ℕ) (a : LetA O n)
   | zero => simp only [pow_zero, AlgHom.one_apply]
   | succ t ih =>
     rw [pow_succ, AlgHom.mul_apply, AlgHom.mul_apply, ih, gammaA_phiA_comm]
-
-private lemma mem_AΔ_iff_forall_gammaA_fixed (W : LocWach PD LL O v n) (a : LetA O n) :
-    a ∈ W.AΔ ↔ ∀ δ ∈ W.DelF, W.γA δ a = a := Iff.rfl
-
-private lemma phiA_pow_mem_AΔ (W : LocWach PD LL O v n) (t : ℕ) {a : LetA O n} (ha : a ∈ W.AΔ) :
-    (W.φA ^ t) a ∈ W.AΔ := by
-  rw [mem_AΔ_iff_forall_gammaA_fixed] at ha ⊢
-  intro δ hδ
-  rw [γA_φpow, ha δ hδ]
 
 private lemma natCast_p_ne_zero_level_letter_cocycles (W : LocWach PD LL O v n) : ((PD.p : ℕ) : O) ≠ 0 := by
   intro h
@@ -132,28 +83,6 @@ private lemma ps_apply_ne_zero (W : LocWach PD LL O v n) (hR : RingP W) (s : ℕ
   rw [h, map_zero] at e
   exact natCast_p_ne_zero_level_letter_cocycles W e.symm
 
-private lemma pi0_mem_AΔ (W : LocWach PD LL O v n) (hR : RingP W) : W.π₀ ∈ W.AΔ := by
-  obtain ⟨h1, -⟩ := hR
-  exact h1
-
-private lemma ps_mem_AΔ' (W : LocWach PD LL O v n) (hR : RingP W) (s : ℕ) : ps W s ∈ W.AΔ := by
-  have hq : qA W ∈ W.AΔ := by
-    show W.π₀ + ((PD.p : ℕ) : LetA O n) ∈ W.AΔ
-    exact add_mem (pi0_mem_AΔ W hR) (natCast_mem _ _)
-  exact phiA_pow_mem_AΔ W s hq
-
-private lemma mem_AΔ_of_ps_mul_mem_AΔ [IsDomain O] (W : LocWach PD LL O v n) (hR : RingP W) (s : ℕ)
-    {x : LetA O n} (hx : ps W s * x ∈ W.AΔ) : x ∈ W.AΔ := by
-  have hz := ps_mem_AΔ' W hR s
-  rw [mem_AΔ_iff_forall_gammaA_fixed] at hx hz ⊢
-  intro δ hδ
-  have e1 := hx δ hδ
-  rw [map_mul, hz δ hδ] at e1
-  funext i
-  have e2 := congrFun e1 i
-  simp only [Pi.mul_apply] at e2
-  exact mul_left_cancel₀ (ps_apply_ne_zero W hR s i) e2
-
 private lemma isUnit_one_add_mul_pi0 (W : LocWach PD LL O v n) (hR : RingP W) (w : LetA O n) :
     IsUnit (1 + w * W.π₀) := by
   rw [Pi.isUnit_iff]
@@ -164,7 +93,6 @@ private lemma isUnit_one_add_mul_pi0 (W : LocWach PD LL O v n) (hR : RingP W) (w
 
 private lemma mem_AΔ_of_mul_eq_one (W : LocWach PD LL O v n) {r r' : LetA O n} (hr : r ∈ W.AΔ)
     (h : r * r' = 1) : r' ∈ W.AΔ := by
-  rw [mem_AΔ_iff_forall_gammaA_fixed] at hr ⊢
   intro δ hδ
   have e := congrArg (W.γA δ) h
   rw [map_mul, map_one, hr δ hδ] at e
@@ -191,9 +119,9 @@ theorem psStable_of [IsDomain O] [NeZero n] (W : LocWach PD LL O v n) (hR : Ring
   have hq : qA W ∈ W.AΔ := by
     have e : ps W 0 = qA W := by simp only [ps, pow_zero, AlgHom.one_apply]
     rw [← e]
-    exact ps_mem_AΔ' W hR 0
+    exact KL.ps_mem W hR.1 0
   have hu : 1 + (w : LetA O n) * W.π₀ ∈ W.AΔ := by
-    apply mem_AΔ_of_ps_mul_mem_AΔ W hR 0
+    apply ToolsR.cancel_AΔ (KL.ps_mem W hR.1 0) (ps_apply_ne_zero W hR 0)
     have e : ps W 0 * (1 + (w : LetA O n) * W.π₀) = W.γA W.gam (qA W) := by
       rw [hγq]
       simp only [ps, pow_zero, AlgHom.one_apply]
@@ -204,8 +132,8 @@ theorem psStable_of [IsDomain O] [NeZero n] (W : LocWach PD LL O v n) (hR : Ring
   have hUm : (U : LetA O n) ∈ W.AΔ := by
     rw [hU]
     exact hu
-  refine ⟨(W.φA ^ t) (U : LetA O n), phiA_pow_mem_AΔ W t hUm, (W.φA ^ t) (↑U⁻¹ : LetA O n),
-    phiA_pow_mem_AΔ W t (mem_AΔ_of_mul_eq_one W hUm U.mul_inv), ?_, ?_⟩
+  refine ⟨(W.φA ^ t) (U : LetA O n), KL.φA_mem W hUm t, (W.φA ^ t) (↑U⁻¹ : LetA O n),
+    KL.φA_mem W (mem_AΔ_of_mul_eq_one W hUm U.mul_inv) t, ?_, ?_⟩
   · rw [← map_mul, U.mul_inv, map_one]
   · show W.γA W.gam ((W.φA ^ t) (qA W)) = (W.φA ^ t) (U : LetA O n) * ps W t
     rw [γA_φpow, hγq, map_mul, hU]
@@ -269,9 +197,9 @@ private lemma exists_lA_eq_mul_ps_add_mul_ps_of_lt [IsDomain O] (W : LocWach PD 
     show (W.φA ^ (s + (m + 1))) W.π₀ = (W.φA ^ s) (qA W) * (W.φA ^ s) e
     rw [pow_add, AlgHom.mul_apply, he, map_mul]
   have hc : (W.φA ^ s) e ∈ W.AΔ := by
-    apply mem_AΔ_of_ps_mul_mem_AΔ W hR s
+    apply ToolsR.cancel_AΔ (KL.ps_mem W hR.1 s) (ps_apply_ne_zero W hR s)
     rw [← hφt]
-    exact phiA_pow_mem_AΔ W _ (pi0_mem_AΔ W hR)
+    exact KL.φA_mem W hR.1 _
   refine ⟨-(W.φA ^ s) e, neg_mem hc, 1, one_mem _, ?_⟩
   have hpt : ps W (s + (m + 1)) = (W.φA ^ (s + (m + 1))) W.π₀ + lA W := by
     simp only [ps, qA, lA, map_add (f := _), map_natCast]

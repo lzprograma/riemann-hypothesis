@@ -132,7 +132,7 @@ theorem eq_zero_of_sum_mono {y : Fin (D + 1) → Ω} (hy : coordIdeal ℤ y = �
   rw [hp, coeff_sum, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at hc
   rw [Finset.sum_eq_single i (fun j _ hji => ?_) (by simp)] at hc
   · simpa using hc
-  · rw [coeff_monomial, if_neg]
+  · rw [coeff_monomial, ite_eq_right]
     intro hE
     exact hji (adtEnum_injective D N (by simpa using hE))
 
@@ -152,7 +152,7 @@ theorem form_enum_sq_le (D N : ℕ) (c : Fin (Finset.Nat.antidiagonalTuple (D + 
   set c' : (Fin (D + 1) → ℕ) → ℂ := fun a => if h : a ∈ Finset.Nat.antidiagonalTuple (D + 1) N then
     c ((Finset.Nat.antidiagonalTuple (D + 1) N).equivFin ⟨a, h⟩) else 0 with hc'
   have hci : ∀ i, c' (adtEnum D N i) = c i := fun i => by
-    simp only [hc', dif_pos (adtEnum_mem D N i)]
+    simp only [hc', dite_eq_left (adtEnum_mem D N i)]
     simp [adtEnum]
   have e1 : ∑ i, c i * monoC (adtEnum D N i) w =
       ∑ a ∈ Finset.Nat.antidiagonalTuple (D + 1) N, c' a * monoC a w := by
@@ -253,26 +253,5 @@ theorem crd_span {x : Ix κ → Ω} {n r : ℕ} {b : Fin r → MvPolynomial (Ix 
     simp [Finset.sum_apply, Pi.single_apply]
   rw [hv]
   exact Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (key _ (hle (hbm j)))
-
-theorem sq_wgt_le_of_le {m : ConeMetric (C := ℂ) (ι := Ix κ)} {n : ℕ} {z : Ix κ → ℂ} (hz : z ≠ 0) {a Y : ℝ}
-    (ha : 0 ≤ a) (h : a ≤ Y * m.ρ z ^ n) : a ^ 2 * wgt m n z ≤ Y ^ 2 := by
-  have hρ : 0 < m.ρ z ^ n := pow_pos (m.pos z hz) n
-  unfold wgt
-  have e2 : m.ρ z ^ (2 * n) = (m.ρ z ^ n) ^ 2 := by ring
-  rw [e2, mul_inv_le_iff₀ (by positivity)]
-  calc a ^ 2 ≤ (Y * m.ρ z ^ n) ^ 2 := pow_le_pow_left₀ ha h 2
-    _ = Y ^ 2 * (m.ρ z ^ n) ^ 2 := by ring
-
-theorem sqN_comp_eq {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric (C := ℂ) (ι := Ix κ)}
-    (hFS : IsPullFS x e m) {z : Ix κ → ℂ} (hz : z ∈ pts (coordIdeal ℤ x)) :
-    sqN (z ∘ e) = m.ρ z ^ 2 := by
-  rw [hFS z hz, Real.sq_sqrt (Finset.sum_nonneg fun k _ => by positivity)]
-  rfl
-
-theorem norm_le_sqrt_of_sq_le {a b t : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (ht : 0 ≤ t)
-    (h : a ^ 2 ≤ b * t ^ 2) : a ≤ Real.sqrt b * t := by
-  calc a = Real.sqrt (a ^ 2) := (Real.sqrt_sq ha).symm
-    _ ≤ Real.sqrt (b * t ^ 2) := Real.sqrt_le_sqrt h
-    _ = Real.sqrt b * t := by rw [Real.sqrt_mul hb, Real.sqrt_sq ht]
 
 end ReciprocityTheory.ChartRestriction.G.ArakelovGeometry

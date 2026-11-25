@@ -66,6 +66,7 @@ import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
 import Mathlib.RingTheory.MvPolynomial.Symmetric.FundamentalTheorem
+import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PRestPolynomialHomogeneous
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FlagRelativeTangentTopChernIsHomogeneousCmType, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FlagMapChernRootsX, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GrassmannProductIntegralEqZeroOfMemRelIdeal, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FlagMapChernRootsPointPoly, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GrassmannProductIntegralPointClassEqOne, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdmissibleChernFormKillsGrassmannianRelationCopi, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdmissibleChernFormProdGrassmannianBasisCopies, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemGrassmannianRelationIdealSupMonomialSpan, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdmissibleFormEqMulPointClassValue, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GrassmannProductTopDegreeEqSmulPointClass, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HomogeneousComponentChernClassesOfRoots, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHomogeneousOfMulIsHomogeneousOfNeZeroRight, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSpanOfChernClassesOfRootsEqZero, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompactDualLinearFormFlagDegreePointClass
@@ -189,7 +190,7 @@ theorem roots_mem (τ : GlobalTheory.AllWt.Psi H) :
   rw [Multiset.mem_range] at hi
   have hi' : i < Dw.mult τ.1 := by omega
   have hi2 : i < Dw.p + Dw.q := by omega
-  rw [dif_pos hi', rootSeq, dif_pos hi2, flagRoot, dif_pos τ.2]
+  rw [dite_eq_left hi', rootSeq, dite_eq_left hi2, flagRoot, dite_eq_left τ.2]
 
 theorem range_reflect (q : ℕ) : (Multiset.range q).map (fun i => q - 1 - i) = Multiset.range q := by
   have hinj : ∀ x ∈ Multiset.range q, ∀ y ∈ Multiset.range q, q - 1 - x = q - 1 - y → x = y := by
@@ -217,7 +218,7 @@ theorem roots_conj (τ : GlobalTheory.AllWt.Psi H) :
     rw [GlobalTheory.AllWt.conjEmb_conjEmb]; exact τ.2
   have e : (⟨conjEmb (conjEmb τ.1), h'⟩ : GlobalTheory.AllWt.Psi H) = τ :=
     Subtype.ext (GlobalTheory.AllWt.conjEmb_conjEmb _)
-  simp only [dif_pos hi', flagRoot, dif_neg hn, Function.comp_apply, rootSeq, dif_pos hi2, e]
+  simp only [dite_eq_left hi', flagRoot, dite_eq_right hn, Function.comp_apply, rootSeq, dite_eq_left hi2, e]
 
 theorem rename_esymm (τ : GlobalTheory.AllWt.Psi H) (k : ℕ) :
     rename (fun i : Fin (Dw.p + Dw.q) => (τ, i)) (esymm (Fin (Dw.p + Dw.q)) ℝ k) =
@@ -245,9 +246,6 @@ theorem flagMap_relPoly (τ : GlobalTheory.AllWt.Psi H) (k : ℕ) :
 
 end GlobalTheory.Schubert.RelKill
 
-namespace GlobalTheory.Schubert
-
-end GlobalTheory.Schubert
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -264,10 +262,6 @@ open Classical
 namespace GlobalTheory.GrassTop.RelVanish
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
-
-theorem rho_eq_flagMap (H : Host E) (Dw : Datum H) : rho H Dw = GlobalTheory.Schubert.flagMap Dw := by
-  unfold rho GlobalTheory.Schubert.flagMap
-  congr 1
 
 noncomputable def numLin (H : Host E) (Dw : Datum H) : MvPolynomial ((E →+* ℂ) × ℕ) ℝ →ₗ[ℝ] ℝ :=
   GlobalTheory.Schubert.flagLin (GlobalTheory.AllWt.Psi H) (Dw.p + Dw.q) ∘ₗ (GlobalTheory.Schubert.flagMap Dw).toLinearMap ∘ₗ
@@ -321,7 +315,7 @@ theorem intGr_eq_zero_of_mem_relIdeal : ∀ {E : Type} [Field E] [NumberField E]
     (Q : MvPolynomial ((E →+* ℂ) × ℕ) ℝ), Q ∈ relIdeal H Dw → intGr H Dw Q = 0 := by
   intro E _ _ _ H Dw Q hQ
   have h := RelVanish.numLin_mul_eq_zero H Dw Q hQ 1
-  rw [mul_one, RelVanish.numLin_apply, ← RelVanish.rho_eq_flagMap] at h
+  rw [mul_one, RelVanish.numLin_apply, ← GlobalTheory.GrassTop.rho_eq_flagMap] at h
   rw [intGr, h, zero_div]
 
 end GlobalTheory.GrassTop
@@ -356,7 +350,7 @@ theorem sign_revPerm_real (n : ℕ) :
         simp [Equiv.Perm.decomposeFin_symm_apply_succ, Fin.rev_succ]
     have hs := congrArg Equiv.Perm.sign key
     rw [Equiv.Perm.sign_mul, sign_finRotate, Equiv.Perm.decomposeFin.symm_sign] at hs
-    simp only [if_true, one_mul, Nat.add_sub_cancel] at hs
+    simp only [ite_true, one_mul, Nat.add_sub_cancel] at hs
     rw [Fin.sum_univ_castSucc, pow_add]
     simp only [Fin.coe_castSucc, Fin.val_last]
     rw [← ih]
@@ -405,11 +399,11 @@ theorem schubPoint_eq (ι : Type) [Fintype ι] [DecidableEq ι] (p q : ℕ) :
   · refine Finset.prod_congr rfl fun i _ => ?_
     simp only [tailSgn, Formalism.DegreeFormula.permExp, revTail_castAdd, Finsupp.equivFunOnFinite_symm_apply_apply,
       Fin.coe_castAdd]
-    rw [if_pos i.2, neg_pow, map_pow, map_neg, map_one]
+    rw [ite_eq_left i.2, neg_pow, map_pow, map_neg, map_one]
   · refine Finset.prod_congr rfl fun j _ => ?_
     simp only [tailSgn, Formalism.DegreeFormula.permExp, revTail_natAdd, Finsupp.equivFunOnFinite_symm_apply_apply,
       Fin.coe_natAdd, Fin.val_rev]
-    rw [if_neg (by omega), C_1, one_mul]
+    rw [ite_eq_right (by omega), C_1, one_mul]
     congr 1
     omega
 
@@ -419,7 +413,7 @@ theorem degFl_schubPoint (ι : Type) [Fintype ι] [DecidableEq ι] (p q : ℕ) :
   rw [schubPoint_eq]
   unfold Formalism.DegreeFormula.degFl
   rw [Finset.sum_eq_single (fun _ => revTail p q)]
-  · rw [coeff_C_mul, coeff_monomial, if_pos rfl, mul_one]
+  · rw [coeff_C_mul, coeff_monomial, ite_eq_left rfl, mul_one]
     have hA : ∏ x : ι × Fin (p + q), tailSgn p q x.2 =
         ((-1 : ℝ) ^ (∑ i : Fin p, (p + q - 1 - (i : ℕ)))) ^ Fintype.card ι := by
       rw [Fintype.prod_prod_type]
@@ -446,7 +440,7 @@ theorem degFl_schubPoint (ι : Type) [Fintype ι] [DecidableEq ι] (p q : ℕ) :
     rw [hA, hB, hD]
     exact e _ _ _
   · intro σ _ hσ
-    rw [coeff_C_mul, coeff_monomial, if_neg, mul_zero, mul_zero]
+    rw [coeff_C_mul, coeff_monomial, ite_eq_right, mul_zero, mul_zero]
     intro h
     exact hσ (Formalism.DegreeFormula.PermutationPointDegree.permExp_inj _ _ h).symm
   · simp
@@ -655,7 +649,6 @@ namespace GlobalTheory.GrassTop
 
 theorem ren_rel {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} (τ : GlobalTheory.AllWt.Psi H) (k : ℕ) :
     ren τ (rel k) = GlobalTheory.PointChern.relPoly τ k := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [ren, rel, GlobalTheory.PointChern.relPoly, map_sum, renVar]
 
 theorem admissibleChernForm_kills_grassmannianRelationCopies : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H)
@@ -676,11 +669,11 @@ theorem admissibleChernForm_kills_grassmannianRelationCopies : ∀ (E : Type) [F
     · rw [mul_comm]
       simp only [ren, rename_X]
       have hm : Dw.mult τ.1 = Dw.p := GlobalTheory.PointChern.mult_of_mem Dw τ.2
-      exact h3 _ _ (by simp only [renVar, if_true]; omega) r
+      exact h3 _ _ (by simp only [renVar, ite_true]; omega) r
     · rw [mul_comm]
       simp only [ren, rename_X]
       have hm : Dw.mult (conjEmb τ.1) = Dw.q := GlobalTheory.PointChern.mult_of_not_mem Dw (GlobalTheory.AllWt.conj_not_mem τ)
-      exact h3 _ _ (by simp only [renVar]; simp only [Bool.false_eq_true, if_false]; omega) r
+      exact h3 _ _ (by simp only [renVar]; simp only [Bool.false_eq_true, ite_false]; omega) r
   | zero => intro r; simp
   | add x y _ _ hx hy => intro r; rw [map_add (f := _), mul_add, map_add (f := _), hx, hy, add_zero]
   | smul a x _ hx => intro r; rw [smul_eq_mul, map_mul (ren τ) a x, ← mul_assoc]; exact hx _
@@ -739,7 +732,7 @@ theorem adm_apply_prod_ren_eq_ite_mul_pointPoly : ∀ (E : Type) [Field E] [Numb
       simp only [mul_pow, Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, ← C_pow, ← pow_mul]
     rw [h1, h2, ← smul_eq_C_mul, LinearMap.map_smul, smul_eq_mul, ← mul_assoc, ← mul_pow]
     norm_num
-  · push_neg at hall
+  · push Not at hall
     obtain ⟨σ, hσ⟩ := hall
     have key : ∀ τ, ∃ d : Bool × ℕ →₀ ℕ, GlobalTheory.GrassTop.wt d ≤ Dw.p * Dw.q ∧
         (g τ ≠ X (true, Dw.p) ^ Dw.q → GlobalTheory.GrassTop.wt d < Dw.p * Dw.q) ∧ g τ = monomial d 1 := by
@@ -862,7 +855,7 @@ lemma hv_zero_left (q : ℕ) (y : Bool × ℕ) :
   obtain ⟨b, k⟩ := y
   rcases Nat.eq_zero_or_pos k with rfl | hk
   · simpa using X_zero_sub_one_mem_J (p := 0) (q := q) b
-  · simp only [show k ≠ 0 by omega, if_false, C_0, sub_zero]
+  · simp only [show k ≠ 0 by omega, ite_false, C_0, sub_zero]
     cases b
     · exact X_false_mem_J_zero hk
     · exact X_true_mem_J hk
@@ -872,7 +865,7 @@ lemma hv_zero_right (p : ℕ) (y : Bool × ℕ) :
   obtain ⟨b, k⟩ := y
   rcases Nat.eq_zero_or_pos k with rfl | hk
   · simpa using X_zero_sub_one_mem_J (p := p) (q := 0) b
-  · simp only [show k ≠ 0 by omega, if_false, C_0, sub_zero]
+  · simp only [show k ≠ 0 by omega, ite_false, C_0, sub_zero]
     cases b
     · exact X_false_mem_J hk
     · exact X_true_mem_J_zero hk
@@ -1201,7 +1194,7 @@ theorem top_eq_smul_point : ∀ {E : Type} [Field E] [NumberField E] [IsCMField 
     | mem x hx =>
       obtain ⟨d, hd, rfl⟩ := hx
       refine weightedHomogeneousComponent_eq_zero' _ _ fun d' hd' => ?_
-      rw [support_monomial, if_neg one_ne_zero, Finset.mem_singleton] at hd'
+      rw [support_monomial, ite_eq_right one_ne_zero, Finset.mem_singleton] at hd'
       subst hd'
       rw [Finsupp.weight_apply]
       intro h
@@ -1293,7 +1286,7 @@ theorem isHomogeneous_of_mul_isHomogeneous_right {σ : Type} (P Q : MvPolynomial
       by_cases h : i = k
       · simp [h]
       · have : k + b ≠ i + b := by omega
-        rw [if_neg this, if_neg h]
+        rw [ite_eq_right this, ite_eq_right h]
     simp_rw [hterm]
     rw [Finset.sum_ite_eq']
     split_ifs with h
@@ -1305,7 +1298,7 @@ theorem isHomogeneous_of_mul_isHomogeneous_right {σ : Type} (P Q : MvPolynomial
     have h1 : homogeneousComponent (k + b) (P * Q) = 0 := by
       have : k + b ≠ a + b := by omega
       have e := homogeneousComponent_of_mem (m := k + b) (hPQ : P * Q ∈ homogeneousSubmodule σ ℝ (a + b))
-      rw [e, if_neg this]
+      rw [e, ite_eq_right this]
     rw [key] at h1
     exact (mul_eq_zero.mp h1).resolve_right hQ
   rw [← sum_homogeneousComponent P]
@@ -1327,8 +1320,6 @@ section -- clump:auto
 
 open MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.GoodMetric GlobalTheory.LieBase GlobalTheory.GrassTop
 open Classical
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -1430,13 +1421,13 @@ theorem mk_liftChern_truncChern :
   ext ⟨τ, k⟩ : 1
   simp only [AlgHom.comp_apply, truncChern, aeval_X, Ideal.Quotient.mkₐ_eq_mk]
   rcases k with _ | j
-  · simp only [if_true, map_one]
+  · simp only [ite_true, map_one]
     rw [← map_one (Ideal.Quotient.mk (rankIdeal m)), Ideal.Quotient.eq]
     rw [← neg_mem_iff, neg_sub]
     exact Ideal.subset_span (Or.inl ⟨τ, rfl⟩)
   · by_cases h : j < m τ
     · simp [h, liftChern]
-    · simp only [Nat.add_one_ne_zero, if_false, Nat.add_sub_cancel, h, dif_neg, not_false_eq_true, map_zero]
+    · simp only [Nat.add_one_ne_zero, ite_false, Nat.add_sub_cancel, h, dite_eq_right, not_false_eq_true, map_zero]
       rw [eq_comm, Ideal.Quotient.eq_zero_iff_mem]
       exact Ideal.subset_span (Or.inr ⟨τ, j + 1, by omega, rfl⟩)
 
@@ -1467,19 +1458,7 @@ open MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor Globa
 open Classical
 
 theorem add_mul_pred_div_two : ∀ (a b : ℕ), (a + b) * (a + b - 1) / 2 = a * (a - 1) / 2 + b * (b - 1) / 2 + a * b := by
-  have g : ∀ n : ℕ, (n + 1) * (n + 1 - 1) / 2 = n * (n - 1) / 2 + n := by
-    intro n
-    rw [Nat.add_sub_cancel]
-    cases n with
-    | zero => simp
-    | succ k =>
-      rw [Nat.add_sub_cancel, show (k + 1 + 1) * (k + 1) = (k + 1) * k + 2 * (k + 1) by ring,
-        Nat.add_mul_div_left _ _ (by norm_num)]
-  intro a b
-  induction b with
-  | zero => simp
-  | succ b ih =>
-    rw [← add_assoc, g (a + b), g b, ih]; ring
+  apply _root_.GroundTheory.Heights₂.Heights.RestTerms.choose_two_add <;> assumption
 
 theorem antisymm_isHomogeneous : ∀ {ι : Type} [Fintype ι] {m : ι → ℕ} (P : MvPolynomial (Root m) ℝ) (d : ℕ), P.IsHomogeneous d → (antisymm P).IsHomogeneous d := by
   intro ι _ m P d h
@@ -1558,8 +1537,8 @@ theorem grass_top : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : 
       by_cases hd : d = e
       · rw [hd, hReW.weightedHomogeneousComponent_same]
         simp [hRe]
-      · rw [map_sub, ← _root_.GlobalTheory.GrassComp.homogeneousComponent_chernRoots, homogeneousComponent_of_mem ((mem_homogeneousSubmodule _ _).mpr hRh), if_neg hd,
-          weightedHomogeneousComponent_of_mem ((mem_weightedHomogeneousSubmodule _ _ _ _).mpr hReW), if_neg hd,
+      · rw [map_sub, ← _root_.GlobalTheory.GrassComp.homogeneousComponent_chernRoots, homogeneousComponent_of_mem ((mem_homogeneousSubmodule _ _).mpr hRh), ite_eq_right hd,
+          weightedHomogeneousComponent_of_mem ((mem_weightedHomogeneousSubmodule _ _ _ _).mpr hReW), ite_eq_right hd,
           map_zero, sub_zero]
     rw [← sum_homogeneousComponent (chernRoots Dw.mult (R - Re))]
     exact Finset.sum_eq_zero fun d _ => hc d

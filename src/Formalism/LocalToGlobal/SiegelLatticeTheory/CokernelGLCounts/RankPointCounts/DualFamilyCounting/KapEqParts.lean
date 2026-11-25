@@ -13,8 +13,6 @@ noncomputable section
 
 namespace Formalism.L2.SG.Pf.LsNc5
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : HidaSetting D) (u : D.what₂.Word) (v : InfinitePlace X.B.I.F)
 
 theorem spanLt_eq {n r : ℕ} (e : Fin r → Fin n → ℂ) (a : ℕ) :
@@ -65,8 +63,8 @@ theorem pair_of_X {g : Matrix (Fin X.B.I.n) (Fin X.B.I.n) ℂ} {x : Fin X.B.I.n 
     induction hw using Submodule.span_induction with
     | mem w hw =>
       obtain ⟨b, -, rfl⟩ := hw
-      rw [Finset.sum_eq_single b (fun c _ hc => by rw [fr_fe, if_neg hc, star_zero, zero_mul])
-        (fun h => absurd (Finset.mem_univ b) h), fr_fe, if_pos rfl, star_one, one_mul]
+      rw [Finset.sum_eq_single b (fun c _ hc => by rw [fr_fe, ite_eq_right hc, star_zero, zero_mul])
+        (fun h => absurd (Finset.mem_univ b) h), fr_fe, ite_eq_left rfl, star_one, one_mul]
     | zero => simp only [hz1, hz2, star_zero, zero_mul, Finset.sum_const_zero]
     | add a b _ _ ha hb =>
       rw [hadd1, ha, hb, ← Finset.sum_add_distrib]
@@ -119,7 +117,7 @@ theorem inj_at {s s' : X.B.I.Ginf} (hs : s ∈ X.NinfU u) (hs' : s' ∈ X.NinfU 
       · exact cx b a hba
       · have hz : ∀ c ∈ {c : Fin D.R.rS | c.1 < a.1}, hJ (X.B.I.ε v) (fV X v b) (eV X v c) = 0 := by
           intro c hc
-          rw [fr_fe, if_neg]
+          rw [fr_fe, ite_eq_right]
           rintro rfl
           exact hba hc
         rw [mulVec_split (uMat (s v)), mulVec_split (uMat (s' v)), hJa, hJa,
@@ -228,7 +226,7 @@ theorem inj_at {s s' : X.B.I.Ginf} (hs : s ∈ X.NinfU u) (hs' : s' ∈ X.NinfU 
     · rw [hde a b]
       simp [fr_ee]
     · rw [← hΔ b a]
-      simp only [fr_fe, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      simp only [fr_fe, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     · rw [hdw a j]
       simp [fr_we]
     · rw [hdz a]

@@ -136,7 +136,7 @@ private theorem inv_frm_mul_frm_mul_eq_uMat_of_eq_embedding (I : AutInst) (x k :
     (h : w.embedding = I.φ (w.comap (algebraMap I.F I.E))) :
     (frm I x w)⁻¹ * frm I (x * k) w = uMat (k.1 (w.comap (algebraMap I.F I.E))) := by
   simp only [frm]
-  rw [if_pos h, if_pos h]
+  rw [ite_eq_left h, ite_eq_left h]
   clear h
   generalize w.comap (algebraMap I.F I.E) = v
   have hA : IsUnit (I.P v * uMat (x.1 v)) := (I.P_unit v).mul (Units.isUnit _)
@@ -151,7 +151,7 @@ private theorem inv_frm_mul_frm_mul_eq_conj_uMat_of_ne_embedding (I : AutInst) (
     (frm I x w)⁻¹ * frm I (x * k) w =
       (uMat (k.1 (w.comap (algebraMap I.F I.E)))).map (starRingEnd ℂ) := by
   simp only [frm]
-  rw [if_neg h, if_neg h]
+  rw [ite_eq_right h, ite_eq_right h]
   clear h
   generalize w.comap (algebraMap I.F I.E) = v
   have hA : IsUnit (I.P v * uMat (x.1 v)) := (I.P_unit v).mul (Units.isUnit _)

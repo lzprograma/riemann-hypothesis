@@ -90,8 +90,8 @@ theorem avg_mul_avg [DecidableEq (G →+ B)] (ψ : AddChar B o) (hψ : ∀ a, ψ
   rw [smul_mul_smul_comm, h1, sum_char_comp ψ hψ, smul_smul]
   by_cases h : c = c'
   · subst h
-    rw [if_pos (sub_self c), if_pos rfl, _root_.mul_assoc, hu, _root_.mul_one]
-  · rw [if_neg (fun h0 => h (sub_eq_zero.1 h0).symm), if_neg h, mul_zero, zero_smul]
+    rw [ite_eq_left (sub_self c), ite_eq_left rfl, _root_.mul_assoc, hu, _root_.mul_one]
+  · rw [ite_eq_right (fun h0 => h (sub_eq_zero.1 h0).symm), ite_eq_right h, mul_zero, zero_smul]
 
 theorem sum_avg [Fintype (G →+ B)] (ψ : AddChar B o) (hψ : ∀ a, ψ a = 1 → a = 0) (ρ : G → A)
     (hρ : ∀ t, (∀ c : G →+ B, c t = 0) → ρ t = 1) (u : o) (hu : u * (Fintype.card G : o) = 1) :
@@ -101,7 +101,7 @@ theorem sum_avg [Fintype (G →+ B)] (ψ : AddChar B o) (hψ : ∀ a, ψ a = 1 �
     by_cases h : ∀ c : G →+ B, c t = 0
     · rw [hρ t h]
     · have h2 := sum_char_comp ψ hψ (-(AddMonoidHom.eval (M := G) (N := B) t))
-      rw [if_neg (fun h0 => h fun c => by simpa using DFunLike.congr_fun h0 c)] at h2
+      rw [ite_eq_right (fun h0 => h fun c => by simpa using DFunLike.congr_fun h0 c)] at h2
       simp only [AddMonoidHom.neg_apply, AddMonoidHom.eval_apply_apply] at h2
       rw [h2, zero_smul, zero_smul]
   have h3 : ∀ c : G →+ B, ∑ t, ψ (-(c t)) = if c = 0 then (Fintype.card G : o) else 0 := by
@@ -110,7 +110,7 @@ theorem sum_avg [Fintype (G →+ B)] (ψ : AddChar B o) (hψ : ∀ a, ψ a = 1 �
   rw [← Finset.smul_sum, Finset.sum_comm]
   simp only [← Finset.sum_smul, h1]
   rw [Finset.sum_comm]
-  simp only [h3, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [h3, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [smul_smul, hu, one_smul]
 
 end Abstract

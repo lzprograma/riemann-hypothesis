@@ -311,8 +311,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
 open scoped CategoryTheory.Obj
@@ -491,13 +489,13 @@ theorem exists_isThetaDeg : Out.SecTwistSt → ThetaUnifAV → ∀ (K : Type) [F
     fun 𝔭 => ?_, fun σ => ?_, (hfin.union (KeyPow.sum_log_norm_eq_finsum ha _ hv).1).subset fun 𝔭 h => ?_, rfl⟩
   · by_cases h : ∃ M, KeyPow.IsLocalModel x 𝔭 a M
     · obtain ⟨M, hM⟩ := id h
-      exact ⟨a, M, hM, by beta_reduce; rw [if_pos h]; exact hv 𝔭⟩
+      exact ⟨a, M, hM, by beta_reduce; rw [ite_eq_left h]; exact hv 𝔭⟩
     · obtain ⟨a', M, hM, h₁, -⟩ := hloc 𝔭
-      exact ⟨a', M, hM, by beta_reduce; rw [if_neg h]; exact h₁⟩
+      exact ⟨a', M, hM, by beta_reduce; rw [ite_eq_right h]; exact h₁⟩
   · obtain ⟨x', h₁, h₂⟩ := hn σ
     exact ⟨x', _, h₁, h₂⟩
   · by_cases h' : ∃ M, KeyPow.IsLocalModel x 𝔭 a M
-    · exact Or.inr (by simpa only [Function.mem_support, if_pos h'] using h)
+    · exact Or.inr (by simpa only [Function.mem_support, ite_eq_left h'] using h)
     · exact Or.inl h'
 
 end GlobalTheory.ThetaDegree
@@ -707,7 +705,7 @@ theorem exists_eigenbasis_fibre : Out.SecTwistSt → Out.Laws → ∀ (E : Type)
     apply Submodule.exists_mem_ne_zero_of_ne_bot
     intro h
     have := hrk (res t)
-    rw [latRank, h, if_pos (hrt t), finrank_bot] at this
+    rw [latRank, h, ite_eq_left (hrt t), finrank_bot] at this
     exact zero_ne_one this
   choose b hb hb0 using hb
   have hli : LinearIndependent K b := (hind.comp hinj).linearIndependent _ hb hb0

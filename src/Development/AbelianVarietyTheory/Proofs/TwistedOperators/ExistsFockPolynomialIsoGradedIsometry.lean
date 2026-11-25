@@ -54,7 +54,6 @@ open GlobalTheory.Chain (signed)
 open GlobalTheory.Chain.RealIt (LPol locS locT IsPolyIso)
 open MeasureTheory Matrix
 open scoped TensorProduct InnerProductSpace ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.ArchRec
 
 namespace GlobalTheory.ArchRec.SignedRename
@@ -88,7 +87,7 @@ theorem coeff_ren (k : ι →₀ ℕ) (P : MvPolynomial ι ℂ) :
     by_cases hm : m = k
     · subst hm
       simp
-    · rw [if_neg hm, if_neg (fun h => hm (Finsupp.mapDomain_injective σ.injective h)), mul_zero]
+    · rw [ite_eq_right hm, ite_eq_right (fun h => hm (Finsupp.mapDomain_injective σ.injective h)), mul_zero]
   | add P Q hP hQ => rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hP, hQ, mul_add]
 
 theorem isHomogeneous_ren {ι κ : Type} (f : ι → κ) (s : ι → ℂ) (d : ℕ) (P : MvPolynomial ι ℂ) (h : P.IsHomogeneous d) :

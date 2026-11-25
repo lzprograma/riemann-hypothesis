@@ -10,62 +10,9 @@ public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.Eig
 public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DblCoordUnique
 public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ExistsInvariantForm
 public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.SplitQuadraticAlgebraOrder
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictMod
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.LinearActAlg, Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.LinearActInt, Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.LinearAct
@@ -132,7 +79,6 @@ theorem card_lagr [Nontrivial K] {JB : Matrix β β K} {Cy : Matrix β ν K} (h 
       (by rw [← Matrix.toLin'_mul, h1, Matrix.toLin'_one])
   rw [card_eq_of_linearEquiv K f, Fintype.card_sum, two_mul]
 
-
 omit [Invertible (2 : k)] [Fintype α] [DecidableEq α] in
 theorem indep {Cy Cx : Matrix β ν K} {M : Matrix (ν ⊕ ν) β K} (h2 : M * fromCols Cy Cx = 1) {z z' : Matrix ν α K}
     (h : Cy * z + Cx * z' = 0) : z = 0 ∧ z' = 0 := by
@@ -165,7 +111,6 @@ theorem lagY_dim [Nontrivial K] {ξ₀ : K} (hq : IsQuad c ξ₀) {ξ : K} {JA :
     have h3 : Cy * (z - z') + Cx * (0 : Matrix ν α K) = 0 := by
       rw [Matrix.mul_sub, hz', sub_self, Matrix.mul_zero, add_zero]
     exact sub_eq_zero.1 (indep hM h3).1
-
 
 omit [Invertible (2 : k)] in
 theorem exists_coord {ξ₀ : K} (hq : IsQuad c ξ₀) (ν α : Type) [Fintype ν] [Fintype α] [DecidableEq α] :
@@ -211,7 +156,6 @@ theorem exists_coord {ξ₀ : K} (hq : IsQuad c ξ₀) (ν α : Type) [Fintype �
     rw [LinearMap.det_toMatrix', LinearMap.det_conj, LinearMap.det_restrictScalars, hdetK, map_pow]
     simp
 
-
 omit [DecidableEq α] [DecidableEq β] in
 theorem schr_box (ψ : AddChar k ℂ) {κ' : Type} [Fintype κ'] (w : (κ ⊕ κ' → k) × (κ ⊕ κ' → k)) (φ₁ : (κ → k) → ℂ)
     (φ₂ : (κ' → k) → ℂ) : schr ψ w (boxFun φ₁ φ₂) =
@@ -251,21 +195,11 @@ namespace PositivityTheory.ThK.LinAct
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Invertible (2 : k)]
   {κ ι : Type} [Fintype κ] [Fintype ι] {ψ : AddChar k ℂ}
 
-
-omit [Invertible (2 : k)] in
-theorem norm_char (hc : Continuous ψ) (x : k) : ‖ψ x‖ = 1 := by
-  apply PositivityTheory.KCo.Mod.norm_one <;> assumption
-
-theorem eventually_fix (hc : Continuous ψ) {φ : (κ → k) → ℂ} (hφ : φ ∈ SB (κ → k)) :
-    ∀ᶠ w in 𝓝 (0 : (κ → k) × (κ → k)), schr ψ w φ = φ := by
-  apply PositivityTheory.KCo.Mod.small <;> assumption
-
-
 omit [Invertible (2 : k)] in
 theorem exists_compact_ann (hc : Continuous ψ) (h1 : ψ ≠ 1) {U : Set (ι → k)} (hU : U ∈ 𝓝 (0 : ι → k)) :
     ∃ C : Set (ι → k), IsCompact C ∧ ∀ x, (∀ y ∈ U, ψ (x ⬝ᵥ y) = 1) → x ∈ C := by
   classical
-  obtain ⟨u, hu⟩ := (GlobalTheory.CompanionTheory.VacLoc.GoodInh.exists_goodChar k).2 ψ hc (norm_char hc) h1
+  obtain ⟨u, hu⟩ := (GlobalTheory.CompanionTheory.VacLoc.GoodInh.exists_goodChar k).2 ψ hc (PositivityTheory.KCo.Mod.norm_one hc) h1
   have : ∀ i, ∃ v : kˣ, ∀ y ∈ 𝒪[k], Pi.single i ((v : k) * y) ∈ U := fun i =>
     hu.basis ((fun t => (Pi.single i t : ι → k)) ⁻¹' U)
       ((continuous_single (A := fun _ => k) i).continuousAt.preimage_mem_nhds (by simpa using hU))
@@ -290,7 +224,6 @@ theorem schr_comm (w w' : (κ → k) × (κ → k)) (φ : (κ → k) → ℂ) :
   have h2 : ⅟(2 : k) * 2 = 1 := invOf_mul_self _
   linear_combination (w.1 ⬝ᵥ w'.2 - w'.1 ⬝ᵥ w.2) * h2
 
-
 omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Invertible (2 : k)] in
 theorem exists_section (large₂ : Submodule k ((κ → k) × (κ → k)))
     (hiso : ∀ w ∈ large₂, ∀ w' ∈ large₂, w.1 ⬝ᵥ w'.2 = w'.1 ⬝ᵥ w.2) (hdim : Module.finrank k large₂ = Fintype.card κ)
@@ -307,7 +240,7 @@ theorem exists_section (large₂ : Submodule k ((κ → k) × (κ → k)))
       (fun a b c => by
         simp only [Submodule.coe_smul, Prod.smul_fst, Prod.smul_snd, smul_dotProduct, dotProduct_smul, smul_eq_mul]; ring)
   have hinj : Function.Injective B := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     refine hXL x (mem_of_orth large₂ hiso hdim _ fun w hw => ?_)
     exact (sub_eq_zero.1 (LinearMap.congr_fun hx ⟨w, hw⟩)).symm
@@ -326,7 +259,7 @@ theorem coeff_mem (hc : Continuous ψ) (h1 : ψ ≠ 1) (l : ((κ → k) → ℂ)
   have := t2Space_local_field_bis (k := k)
   have cX : Continuous X := X.continuous_on_pi
   have cS : Continuous S := S.continuous_on_pi
-  have hf := eventually_fix (ψ := ψ) hc hφ
+  have hf := PositivityTheory.KCo.Mod.small (ψ := ψ) hc hφ
   constructor
   · rw [IsLocallyConstant.iff_eventually_eq]
     intro x
@@ -380,7 +313,7 @@ theorem exists_avg [DecidableEq ι] (hc : Continuous ψ) (h1 : ψ ≠ 1) (large�
   · by_contra hcon
     push Not at hcon
     obtain ⟨φ, hφ, h0⟩ := hne
-    have hz := cyc hc (norm_char hc) h1 (hF φ hφ) (fun h => h0 (by
+    have hz := cyc hc (PositivityTheory.KCo.Mod.norm_one hc) h1 (hF φ hφ) (fun h => h0 (by
       have e0 : schr ψ 0 φ = φ := by funext z; simp [schr]
       simpa [e0] using congrFun h 0)) I fun w => by
       have e := hcon _ (schr_mem hc (S w.2) (schr_mem hc (X w.1) hφ))
@@ -448,7 +381,7 @@ theorem dbl_fix (hc : Continuous ψ) (h1 : ψ ≠ 1) (hq : IsQuad c ξ₀) (hA :
   have hiso := lagY_iso dd hL.1
   have hdim := lagY_dim hq dd hL
   have hcard := card_lagr hL
-  have hn := norm_char hc
+  have hn := PositivityTheory.KCo.Mod.norm_one hc
   have key : ∀ g, ∃ a : ℂ, ∀ φ ∈ SB (κ → k), l (om g φ) = a * l φ := fun g =>
     line hc hn h1 _ hiso hdim l (l ∘ₗ om g) hl (by
       rintro _ ⟨z, rfl⟩ φ hφ
@@ -516,7 +449,7 @@ theorem weilB_fix (hc : Continuous ψ) (h1 : ψ ≠ 1) (hq : IsQuad c ξ₀) (hA
     (l : ((κ → k) → ℂ) →ₗ[ℂ] ℂ) (hl : ∀ w ∈ lagY d Cy, ∀ φ ∈ SB (κ → k), l (schr ψ w φ) = l φ)
     (hne : ∃ φ ∈ SB (κ → k), l φ ≠ 0) : ∀ g, ∀ φ ∈ SB (κ → k), l (om g φ) = l φ := by
   obtain ⟨hs₀, dd, omd, hdd, hs, hr, hb⟩ := hW
-  have hn := norm_char hc
+  have hn := PositivityTheory.KCo.Mod.norm_one hc
   obtain ⟨l₂, hne₂, hl₂⟩ := GlobalTheory.CompanionTheory.LagFun.exists_invariant_form k _ ψ hc h1 _ (lagY_iso dd hL.1)
   have hfix := dbl_fix hc h1 hq hA hL dd omd hs hr l₂ hl₂ hne₂
   obtain ⟨φ₁, h₁, φ₂, h₂, h₁₂⟩ : ∃ φ₁ ∈ SB (κ → k), ∃ φ₂ ∈ SB (κ → k), l₂ (boxFun φ₁ φ₂) ≠ 0 := by

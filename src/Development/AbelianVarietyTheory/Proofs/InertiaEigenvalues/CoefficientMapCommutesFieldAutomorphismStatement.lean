@@ -11,63 +11,12 @@ public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaL
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConjTupRefl
 public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
 public import Formalism.LocalToGlobal.IndefiniteReal.FWTie
-public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCcIsEquivAtSerOfOneMapRowOfCore
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCcIsEquivAtSerOfOneMapRowOfFive
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VectorValuedLiftFieldChange
 public import Development.AbelianVarietyTheory.Definitions.Divisors.MarkAd
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
 import Formalism.GradedWeylDivisibility.FinalD
-import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.TotallySplit
 import Mathlib.Tactic.Linter.HaveILetI
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelExtensionFirst
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalPointsGenerate
@@ -86,7 +35,6 @@ import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsRootNotMem
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.LFCompare
 open Polynomial
@@ -339,8 +287,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.LFCompare
@@ -404,7 +350,7 @@ theorem rhoVr_unitary (γ : Matrix (Fin n) (Fin n) E) (h : γᴴ * γ = 1) (v : 
 
 theorem natW_cast (μ : DomWeight n) (i : Fin n) : (μ.natW i : ℤ) = μ.w i - μ.detShift := by
   have : μ.detShift ≤ μ.w i := by
-    rw [DomWeight.detShift, dif_pos i.pos]
+    rw [DomWeight.detShift, dite_eq_left i.pos]
     exact μ.anti (by rw [Fin.le_def]; have := i.isLt; simp only; omega)
   rw [DomWeight.natW, Int.toNat_of_nonneg (by omega)]
 
@@ -537,30 +483,30 @@ theorem gaStar_pG {a : (E →+* ℂ) × ℕ → ℕ} (ha : IsPartFam Dw a) (hn :
   have e : ∏ b : Fin n, embF c σ (u (if InPsi H σ then b else b.rev)) ^ part Dw a σ b =
       ∏ i : Fin (Dw.mult σ), (∏ b ∈ Finset.range (i + 1), x b) ^ aStep Dw a σ i := by
     have t := tele x (part Dw a σ) (part_anti ha σ) (Dw.mult σ)
-    rw [show part Dw a σ (Dw.mult σ) = 0 from if_neg (lt_irrefl _), pow_zero, mul_one,
+    rw [show part Dw a σ (Dw.mult σ) = 0 from ite_eq_right (lt_irrefl _), pow_zero, mul_one,
       Finset.prod_subset (Finset.range_mono hm) (f := fun b => x b ^ part Dw a σ b) (fun b _ hb => by
-        rw [show part Dw a σ b = 0 from if_neg (by simpa using hb), pow_zero]),
+        rw [show part Dw a σ b = 0 from ite_eq_right (by simpa using hb), pow_zero]),
       Finset.prod_range, Finset.prod_range] at t
     refine Eq.trans ?_ (t.symm.trans ?_)
     · refine Finset.prod_congr rfl fun b _ => ?_
-      simp only [x, dif_pos b.isLt]
+      simp only [x, dite_eq_left b.isLt]
     · refine Finset.prod_congr rfl fun i _ => ?_
-      rw [aStep, part, part, if_pos i.isLt]
+      rw [aStep, part, part, ite_eq_left i.isLt]
   rw [e, map_prod, ← Finset.prod_smul]
   refine Finset.prod_congr rfl fun i _ => ?_
   have hi : i.val + 1 ≤ n := lt_of_lt_of_le i.isLt hm
-  rw [dif_pos hi, map_pow, ← smul_pow]
+  rw [dite_eq_left hi, map_pow, ← smul_pow]
   congr 1
   by_cases hσ : InPsi H σ
-  · rw [if_pos hσ, gaStar_minorP, Finset.prod_range]
+  · rw [ite_eq_left hσ, gaStar_minorP, Finset.prod_range]
     congr 1
     refine Finset.prod_congr rfl fun b _ => ?_
-    simp only [x, dif_pos (lt_of_lt_of_le b.isLt hi), if_pos hσ]
+    simp only [x, dite_eq_left (lt_of_lt_of_le b.isLt hi), ite_eq_left hσ]
     rfl
-  · rw [if_neg hσ, gaStar_minorP, Finset.prod_range, ← Equiv.prod_comp Fin.revPerm]
+  · rw [ite_eq_right hσ, gaStar_minorP, Finset.prod_range, ← Equiv.prod_comp Fin.revPerm]
     congr 1
     refine Finset.prod_congr rfl fun b _ => ?_
-    simp only [x, dif_pos (lt_of_lt_of_le b.isLt hi), if_neg hσ]
+    simp only [x, dite_eq_left (lt_of_lt_of_le b.isLt hi), ite_eq_right hσ]
     congr 2
     apply Fin.ext
     have := b.isLt
@@ -591,7 +537,7 @@ theorem gaStar_pG_vac {a : (E →+* ℂ) × ℕ → ℕ} (ha : IsPartFam Dw a) (
   have h1 : ¬ InPsi H (ComplexEmbedding.conjugate τ.1) := by
     have := Harm.not_mem_hostType_iff H τ.1
     exact fun h => this.2 h τ.2
-  simp only [if_pos τ.2, if_neg h1]
+  simp only [ite_eq_left τ.2, ite_eq_right h1]
   rw [Matrix.det_diagonal, map_prod, ← Finset.prod_zpow, ← Equiv.prod_comp Fin.revPerm
     (fun b => embF c (ComplexEmbedding.conjugate τ.1) (IsCMField.complexConj E (t b.rev)) ^
       part Dw a (ComplexEmbedding.conjugate τ.1) b), ← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
@@ -720,11 +666,11 @@ theorem exponents_eq_zero {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host
     refine this.trans (Finset.sum_congr rfl fun τ _ => ?_)
     have h1 : ¬ InPsi H (ComplexEmbedding.conjugate τ.1) := fun h => (Harm.not_mem_hostType_iff H τ.1).2 h τ.2
     have h2 : τ.1 (star z) = ComplexEmbedding.conjugate τ.1 z := IsCMField.complexEmbedding_complexConj E τ.1 z
-    simp only [μ, dif_pos τ.2, dif_neg h1, ComplexEmbedding.involutive_conjugate E τ.1, map_sub, h2]
+    simp only [μ, dite_eq_left τ.2, dite_eq_right h1, ComplexEmbedding.involutive_conjugate E τ.1, map_sub, h2]
     ring)
   funext τ
   have := hμ τ.1
-  simp only [μ, dif_pos τ.2] at this
+  simp only [μ, dite_eq_left τ.2] at this
   exact_mod_cast this
 
 section Scalar
@@ -759,7 +705,7 @@ variable {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {l : Level H}
 
 theorem rhoM_coe (emb : Ix → E →+* c.F) (lam : Ix → DomWeight n) (g : GL (Fin n) E) :
     rhoM c emb lam (g : Matrix (Fin n) (Fin n) E) = rhoVr emb lam g := by
-  rw [rhoM, dif_pos ((Matrix.isUnit_iff_isUnit_det _).1 g.isUnit)]
+  rw [rhoM, dite_eq_left ((Matrix.isUnit_iff_isUnit_det _).1 g.isUnit)]
   exact congrArg _ (Units.ext rfl)
 
 theorem ne_zero_of_hwOK {lam : Ix → DomWeight n} {hw : VVc c lam} (h : hwOK c lam hw) : hw ≠ 0 := fun h0 => by
@@ -883,7 +829,7 @@ theorem weight_eq_of_tie (e : Ix ≃ Psi H) (ha : IsPartFam Dw a) (hok : hwOK c 
   have : (lam x).w = (lamP Dw n ha (fun τ => if hn : 0 < n then -κ (e.symm τ) ⟨0, hn⟩ else 0) (e x)).w := by
     funext i
     have := hκ x ⟨0, i.pos⟩ i
-    simp only [lamP, dif_pos i.pos, Equiv.symm_apply_apply, this]
+    simp only [lamP, dite_eq_left i.pos, Equiv.symm_apply_apply, this]
     simp [κ, lamP]
   generalize lam x = μ, lamP Dw n ha _ (e x) = ν at this
   cases μ
@@ -934,8 +880,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoefficientMapCommutesFieldAutomorphism", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConjTupRefl\npublic import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam\npublic import Formalism.LocalToGlobal.IndefiniteReal.FWTie\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCcIsEquivAtSerOfOneMapRowOfCore\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelExtensionFirst\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalPointsGenerate\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VectorValuedLiftFieldChange\nimport Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TensorMapDescent\nimport Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryRealPointsStructureRealPlaces\nimport Development.AbelianVarietyTheory.Proofs.JetHarmonics.WeightExponentsEmbeddingsDegree\npublic import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIoLFRecIff\nimport Formalism.LocalToGlobal.Divisibility.CoefModLemmas\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\npublic import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.CoefficientSpaceWeights\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.MarkAd\nimport Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsRootNotMem\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -1069,7 +1013,6 @@ section Main
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT Formalism.L2.Pj
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.ConjTwist GlobalTheory.GalTw ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Classical
 
@@ -1081,8 +1024,8 @@ theorem io_map_conj : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T0 : Ty
   have hT : TieIn T R κ v₀ := ⟨fw.laws, fw.alg_eq, fw.kap, fw.hv₀, fw.chiR, fw.x0⟩
   have hθ : IsInfFam R.θ := hR.models.inf
   have hc : (R.cV i).Is := hR.models.cV i
-  have hP := (GlobalTheory.AdTh.RecPair.isPair_record_ofCore D G Pl0 T0 A _ R F hR i A.μ0 hO.lift.std).1
-  obtain ⟨n1, n2, -, n4⟩ := GlobalTheory.AdTh.coefMap_norm_equivariant_basis_ofCore D G Pl0 T0 A T R F κ v₀ hR hT i Tp tup O hO
+  have hP := (GlobalTheory.AdTh.RecPair.isPair_record_ofFive D G Pl0 T0 A _ R F (GlobalTheory.Core5.of_core hR) i A.μ0 hO.lift.std).1
+  obtain ⟨n1, n2, -, n4⟩ := GlobalTheory.AdTh.coefMap_norm_equivariant_basis_ofFive D G Pl0 T0 A T R F κ v₀ (GlobalTheory.Core5.of_core hR) hT i Tp tup O hO
   obtain ⟨-, r2, -⟩ := GlobalTheory.RatGen.rational_points_generate D (Vc D i) (R.cV i) (hR.models.vpos i) hP.sigV hc
   obtain ⟨-, -, w1, -, -⟩ := GlobalTheory.WeightExponents.weight_exponents D T.Q hT.laws.pins _ (inR i) (κ i)
   have hj : ∀ σ y, (ta : O.c'.F →+* O.c'.F) (embF O.c' σ y) = embF O.c' σ y := fun σ y =>
@@ -1117,12 +1060,9 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT Formalism.L2.Pj
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.ConjTwist GlobalTheory.GalTw ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Classical
 
-theorem _root_.GlobalTheory.T.coefficientMap_commutes_fieldAutomorphism : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T0 : Type) (A : FamIn D.what₂.LL G Pl0 T0 D.R.m) (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (R : RealDat D A T.Q.c.F) (F : Face D A) (κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)) (v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec), GlobalTheory.Hk3.Core R F → Nonempty (FWTie T R κ v₀) → ∀ (i : Fin D.R.m) (Tp : Type) (tup : Tp → T0) (M : OMDat T.toCore R i Tp tup), M.Pins (κ i) (v₀ i (sg0 D A)) (iotaW T i) (T.x₀ ((i : ℕ) + 1) M.s0) → ∀ (τ : ℂ ≃+* ℂ) (ta : M.c'.F ≃+* M.c'.F), (∀ a : M.c'.F, ((ta a : M.c'.F) : ℂ) = τ (a : ℂ)) → FixBase T R i τ → ∀ x x' : VsV D i M.c'.F, (x' : Pol M.c'.F D.what₂.Tau (Vc D i).rank) = MvPolynomial.map (ta : M.c'.F →+* M.c'.F) (x : Pol M.c'.F D.what₂.Tau (Vc D i).rank) → M.io x' = MvPolynomial.map (ta : M.c'.F →+* M.c'.F) (M.io x) := by
-  first | exact @GlobalTheory.IoConj.io_map_conj
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoefficientMapCommutesFieldAutomorphismStatement =====

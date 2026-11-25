@@ -6,53 +6,8 @@ public import Mathlib.LinearAlgebra.Matrix.ToLinearEquiv
 public import Mathlib.CategoryTheory.Category.Basic
 public import Mathlib.RingTheory.LocalRing.Defs
 public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Definitions.MembershipCriteria.GoodChar
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.MembershipProofs.ExistsSkewOfDiagonal, Development.AutomorphicSpectrum.Proofs.MembershipProofs.BigCellLocal
@@ -131,7 +86,7 @@ theorem exists_skew_isUnit_det {F : Type} [Field F] (σ : F →+* F) {β : Type}
       by_cases hDj : D j = 0
       · rw [hDj, mul_zero]
       · have e := hE j
-        rw [if_neg hDj, mul_zero, add_zero] at e
+        rw [ite_eq_right hDj, mul_zero, add_zero] at e
         rw [(mul_eq_zero.1 e).resolve_right hDj, zero_mul]
     have hva : v ᵥ* a = 0 := by
       rw [hD, ← Matrix.vecMul_vecMul, ← Matrix.vecMul_vecMul, hwD, Matrix.zero_vecMul]
@@ -145,7 +100,7 @@ theorem exists_skew_isUnit_det {F : Type} [Field F] (σ : F →+* F) {β : Type}
       rw [Pi.zero_apply]
       by_cases hDj : D j = 0
       · have e := hE j
-        rw [if_pos hDj, hDj, mul_zero, zero_add] at e
+        rw [ite_eq_left hDj, hDj, mul_zero, zero_add] at e
         exact (mul_eq_zero.1 e).resolve_right hc
       · have e := congr_fun hud j
         rw [Matrix.vecMul_diagonal, Pi.zero_apply] at e
@@ -310,13 +265,6 @@ theorem decomp_split [IsLocalRing A] (hσ : ∀ z, σ (σ z) = z) {w : A} (hw : 
   simp [fromBlocks_multiply, ha']
 
 end Split
-
-section Lift
-
-variable {R : Type} [CommRing R] {E : Type} [CommRing E] [Algebra R E] {c : E →ₐ[R] E} {A : Subring E} {σ : A →+* A}
-  {ι : Type} [Fintype ι] [DecidableEq ι]
-
-end Lift
 
 end GlobalTheory.CompanionTheory.VacLoc.BigCellLocal
 end -- clump:auto

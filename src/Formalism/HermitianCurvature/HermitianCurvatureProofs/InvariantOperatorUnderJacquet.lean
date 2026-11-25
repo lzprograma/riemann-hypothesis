@@ -28,56 +28,9 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModelLevelMu
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFusionForms
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QxChain
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothWordsAll
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylConjugationFixedColumn.ReflectionScalarDualIsotropic
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterlaceSignTwo
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
@@ -164,12 +117,12 @@ theorem asym_sum {B : Type*} [AddCommGroup B] {t : ℕ} (T : Fin t → Fin t →
     intro a b
     rcases lt_trichotomy a b with h | h | h
     · have h' : a.val < b.val := h
-      rw [if_neg h.ne, if_pos h, if_neg (not_lt.2 h.le), min_eq_left h.le, max_eq_right h.le, eps, if_pos h', one_smul,
+      rw [ite_eq_right h.ne, ite_eq_left h, ite_eq_right (not_lt.2 h.le), min_eq_left h.le, max_eq_right h.le, eps, ite_eq_left h', one_smul,
         sub_zero]
     · subst h
       simp
     · have h' : ¬ a.val < b.val := not_lt.2 (le_of_lt h)
-      rw [if_neg h.ne', if_neg (not_lt.2 h.le), if_pos h, min_eq_right h.le, max_eq_left h.le, eps, if_neg h', neg_smul,
+      rw [ite_eq_right h.ne', ite_eq_right (not_lt.2 h.le), ite_eq_left h, min_eq_right h.le, max_eq_left h.le, eps, ite_eq_right h', neg_smul,
         one_smul, zero_sub]
   simp_rw [h]
   simp_rw [Finset.sum_sub_distrib]
@@ -245,18 +198,18 @@ theorem secondChern_eq_double_sum (w : ℂ) (y : Fin t → A) (x : Fin t → ℂ
     refine Finset.sum_congr rfl fun i _ => ?_
     refine Finset.sum_congr rfl fun i' _ => ?_
     by_cases h : i < i'
-    · rw [if_pos h, ← Finset.sum_sub_distrib]
+    · rw [ite_eq_left h, ← Finset.sum_sub_distrib]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [← Finset.sum_sub_distrib]
       refine Finset.sum_congr rfl fun j' _ => ?_
       by_cases h' : j < j'
-      · rw [if_pos ⟨h, h'⟩, if_pos h', if_pos h']
+      · rw [ite_eq_left ⟨h, h'⟩, ite_eq_left h', ite_eq_left h']
         simp only [hU, sub_mul, mul_sub, smul_sub]
         abel
-      · rw [if_neg (fun hh => h' hh.2), if_neg h', if_neg h', sub_zero]
-    · rw [if_neg h]
+      · rw [ite_eq_right (fun hh => h' hh.2), ite_eq_right h', ite_eq_right h', sub_zero]
+    · rw [ite_eq_right h]
       refine Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun j' _ => ?_
-      rw [if_neg (fun hh => h hh.1)]
+      rw [ite_eq_right (fun hh => h hh.1)]
   rw [s1, asym_sum (fun a b i i' => ∑ j, ∑ j', if j < j' then U a b j j' i i' j j' - U a b j' j i i' j j' else 0)]
   have s2 : ∀ a b i i', (∑ j, ∑ j', if j < j' then U a b j j' i i' j j' - U a b j' j i i' j j' else 0) =
       ∑ c, ∑ d, if c = d then 0 else eps c d • U a b c d i i' (min c d) (max c d) := fun a b i i' =>
@@ -270,17 +223,17 @@ theorem secondChern_eq_double_sum (w : ℂ) (y : Fin t → A) (x : Fin t → ℂ
     intro a
     rw [Finset.sum_comm]
     by_cases hab : a = b
-    · rw [if_pos hab]
+    · rw [ite_eq_left hab]
       symm
       refine Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun j' _ => ?_
-      rw [nS, if_pos (Or.inl hab), mul_zero, smul_zero]
-    · rw [if_neg hab, Finset.smul_sum]
+      rw [nS, ite_eq_left (Or.inl hab), mul_zero, smul_zero]
+    · rw [ite_eq_right hab, Finset.smul_sum]
       refine Finset.sum_congr rfl fun d _ => ?_
       rw [Finset.smul_sum]
       refine Finset.sum_congr rfl fun c _ => ?_
       by_cases hcd : c = d
-      · rw [if_pos hcd, nS, if_pos (Or.inr hcd), mul_zero, smul_zero, smul_zero]
-      · rw [if_neg hcd, nS, if_neg (by tauto)]
+      · rw [ite_eq_left hcd, nS, ite_eq_left (Or.inr hcd), mul_zero, smul_zero, smul_zero]
+      · rw [ite_eq_right hcd, nS, ite_eq_right (by tauto)]
         simp only [hU]
         rw [show ((min a b : Fin t) : ℕ) + ((max a b : Fin t) : ℕ) + ((min c d : Fin t) : ℕ) + ((max c d : Fin t) : ℕ) =
           (a : ℕ) + (b : ℕ) + (c : ℕ) + (d : ℕ) by
@@ -356,8 +309,8 @@ theorem J_signed (hJ : QJacobi) (hE : GlRel E) (u : ℂ) (i q l p : Fin t) :
     ring
   rw [a1, a2, ← smul_sub, h, nS]
   by_cases hc : i = q ∨ l = p
-  · rw [if_pos hc, if_pos hc, smul_zero, mul_zero]
-  · rw [if_neg hc, if_neg hc, cast_mul_eq_smul, mul_smul_comm, smul_smul]
+  · rw [ite_eq_left hc, ite_eq_left hc, smul_zero, mul_zero]
+  · rw [ite_eq_right hc, ite_eq_right hc, cast_mul_eq_smul, mul_smul_comm, smul_smul]
     congr 1
     push_cast
     ring
@@ -380,15 +333,15 @@ theorem MC_signed (hM : MinorCov) (hE : GlRel E) (η : Fin t → A) (hη : IsCov
     rw [smul_mul_assoc, mul_smul_comm, smul_sub]
   rw [a1, h]
   by_cases hi : i = p
-  · rw [if_pos hi, smul_zero]
+  · rw [ite_eq_left hi, smul_zero]
     symm
     refine Finset.sum_eq_zero fun a _ => ?_
-    rw [nS, if_pos (Or.inr hi), zero_mul]
-  · rw [if_neg hi, Finset.smul_sum]
+    rw [nS, ite_eq_left (Or.inr hi), zero_mul]
+  · rw [ite_eq_right hi, Finset.smul_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     by_cases ha : a = q
-    · rw [if_pos ha, nS, if_pos (Or.inl ha), smul_zero, zero_mul]
-    · rw [if_neg ha, nS, if_neg (by tauto), cast_mul_eq_smul, smul_smul, smul_mul_assoc]
+    · rw [ite_eq_left ha, nS, ite_eq_left (Or.inl ha), smul_zero, zero_mul]
+    · rw [ite_eq_right ha, nS, ite_eq_right (by tauto), cast_mul_eq_smul, smul_smul, smul_mul_assoc]
       congr 1
       push_cast
       ring
@@ -431,22 +384,22 @@ theorem skip_one_ne (t : ℕ) (q : Fin (t + 1)) (k : Fin t) : skip1 q k ≠ q :=
 theorem eps_skip (t : ℕ) (q : Fin (t + 1)) (k : Fin t) :
     ((eps (skip1 q k) q : ℤ) : ℂ) * (-1 : ℂ) ^ ((skip1 q k : Fin (t + 1)) : ℕ) = (-1 : ℂ) ^ (k : ℕ) := by
   by_cases h : k.val < q.val
-  · have h1 : ((skip1 q k : Fin (t + 1)) : ℕ) = k.val := by simp only [skip1, apply_ite Fin.val]; rw [if_pos h]
-    rw [eps, h1, if_pos h]
+  · have h1 : ((skip1 q k : Fin (t + 1)) : ℕ) = k.val := by simp only [skip1, apply_ite Fin.val]; rw [ite_eq_left h]
+    rw [eps, h1, ite_eq_left h]
     simp
-  · have h1 : ((skip1 q k : Fin (t + 1)) : ℕ) = k.val + 1 := by simp only [skip1, apply_ite Fin.val]; rw [if_neg h]
-    rw [eps, h1, if_neg (by omega)]
+  · have h1 : ((skip1 q k : Fin (t + 1)) : ℕ) = k.val + 1 := by simp only [skip1, apply_ite Fin.val]; rw [ite_eq_right h]
+    rw [eps, h1, ite_eq_right (by omega)]
     push_cast
     ring
 
 theorem covariant_commutes_signed_minor_sum (hE : GlRel E) (η : Fin t → A) (hη : IsCov E η) (hηη : ∀ a b, η a * η b = η b * η a) (q c p : Fin t)
     (w : ℂ) : ∑ a, η a * nS E a q c p (w - 1) = ∑ a, nS E a q c p w * η a := by
   by_cases hcp : c = p
-  · have h0 : ∀ a w', nS E a q c p w' = 0 := fun a w' => by rw [nS, if_pos (Or.inr hcp)]
+  · have h0 : ∀ a w', nS E a q c p w' = 0 := fun a w' => by rw [nS, ite_eq_left (Or.inr hcp)]
     simp only [h0, mul_zero, zero_mul]
   rcases t with _ | _ | t
   · exact q.elim0
-  · have h0 : ∀ a w', nS E a q c p w' = 0 := fun a w' => by rw [nS, if_pos (Or.inl (Fin.ext (by omega)))]
+  · have h0 : ∀ a w', nS E a q c p w' = 0 := fun a w' => by rw [nS, ite_eq_left (Or.inl (Fin.ext (by omega)))]
     simp only [h0, mul_zero, zero_mul]
   · have h := quantum_minor_move.2 A (t + 2) t E η hE hη hηη (skip1 q) (skip2 (min c p) (max c p)) w
     have hs : ∀ k : Fin (t + 1), (skip1 q ∘ k.succAbove : Fin t → Fin (t + 1 + 1)) =
@@ -457,10 +410,10 @@ theorem covariant_commutes_signed_minor_sum (hE : GlRel E) (η : Fin t → A) (h
         ((((eps c p : ℤ) : ℂ) * (-1 : ℂ) ^ ((q : ℕ) + (c : ℕ) + (p : ℕ))) * (-1 : ℂ) ^ (k : ℕ)) •
           qminor E (skip2 (min (skip1 q k) q) (max (skip1 q k) q)) (skip2 (min c p) (max c p)) w' := by
       intro k w'
-      rw [← skip_succ_identity, nS, if_neg (by have := skip_one_ne _ q k; tauto), ← eps_skip (t + 1) q k]
+      rw [← skip_succ_identity, nS, ite_eq_right (by have := skip_one_ne _ q k; tauto), ← eps_skip (t + 1) q k]
       congr 1
       ring
-    have hq : ∀ w', nS E q q c p w' = 0 := fun w' => by rw [nS, if_pos (Or.inl rfl)]
+    have hq : ∀ w', nS E q q c p w' = 0 := fun w' => by rw [nS, ite_eq_left (Or.inl rfl)]
     rw [Fin.sum_univ_succAbove _ q, Fin.sum_univ_succAbove _ q, hq, hq, mul_zero, zero_mul, zero_add, zero_add]
     have l1 : ∑ k : Fin (t + 1), η (q.succAbove k) * nS E (q.succAbove k) q c p (w - 1) =
         (((eps c p : ℤ) : ℂ) * (-1 : ℂ) ^ ((q : ℕ) + (c : ℕ) + (p : ℕ))) • ∑ k : Fin (t + 1), ((-1 : ℂ) ^ (k : ℕ)) •
@@ -543,8 +496,6 @@ noncomputable section
 namespace Formalism.FourierDecayAlt.P
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 namespace QrD
 
@@ -723,8 +674,6 @@ namespace Formalism.FourierDecayAlt.P.Qx7
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q
 open scoped ContDiff
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 local macro "distrib_module" : tactic =>
   `(tactic| (simp only [mul_sub, sub_mul, mul_add, add_mul, smul_mul_assoc, mul_smul_comm,
@@ -960,8 +909,8 @@ def WD (l : Fin r) (F : (Fin r → ℂ) → E) (c : Fin r → ℂ) (P Pb : E) : 
 theorem WD.pOp {F : (Fin r → ℂ) → E} {c : Fin r → ℂ} {P Pb : E} (h : WD l F c P Pb) (hc : c ∈ OmX r) :
     pOp l F c = P ∧ pbOp l F c = Pb := by
   obtain ⟨F', hF, h1, h2⟩ := h
-  exact ⟨by simp only [Formalism.QuantumDeterminants.pOp, if_pos hc, wirt, hF.fderiv, h1],
-    by simp only [Formalism.QuantumDeterminants.pbOp, if_pos hc, wirtBar, hF.fderiv, h2]⟩
+  exact ⟨by simp only [Formalism.QuantumDeterminants.pOp, ite_eq_left hc, wirt, hF.fderiv, h1],
+    by simp only [Formalism.QuantumDeterminants.pbOp, ite_eq_left hc, wirtBar, hF.fderiv, h2]⟩
 
 theorem WD.add {F G : (Fin r → ℂ) → E} {c : Fin r → ℂ} {P Pb Q Qb : E} (hF : WD l F c P Pb) (hG : WD l G c Q Qb) :
     WD l (fun x => F x + G x) c (P + Q) (Pb + Qb) := by
@@ -1242,26 +1191,6 @@ local notation "⟪" u ", " v "⟫" => herm (Hpk k r) u v
 
 lemma Hh : (Hpk k r)ᴴ = Hpk k r := B2x8.Hpk_herm k r
 
-lemma herm_bvec_right (u : Fin (2 * r + k + 1) → ℂ) (j : Fin (2 * r + k + 1)) :
-    ⟪u, bvec j⟫ = (Hpk k r *ᵥ u) j := by
-  simp [herm, bvec, Pi.star_single]
-
-lemma herm_e_right (u : Fin (2 * r + k + 1) → ℂ) (a : Fin r) : ⟪u, bvec (eI k r a)⟫ = u (esI k r a) := by
-  rw [herm_bvec_right, B2x6.hpk_mulVec]
-  have h1 : WeylGroupFacts.tau k r (eI k r a) = esI k r a := by
-    apply Fin.ext; rw [B2x6.tau_out _ (by simp only [eI]; omega)]; simp [eI, esI]
-  have h2 : WeylGroupFacts.sgn k r (eI k r a) = 1 := by
-    unfold WeylGroupFacts.sgn; rw [if_neg (by simp only [eI]; omega)]
-  rw [h1, h2, one_mul]
-
-lemma herm_es_right (u : Fin (2 * r + k + 1) → ℂ) (a : Fin r) : ⟪u, bvec (esI k r a)⟫ = u (eI k r a) := by
-  rw [herm_bvec_right, B2x6.hpk_mulVec]
-  have h1 : WeylGroupFacts.tau k r (esI k r a) = eI k r a := by
-    apply Fin.ext; rw [B2x6.tau_out _ (by simp only [esI]; omega)]; simp only [eI, esI]; omega
-  have h2 : WeylGroupFacts.sgn k r (esI k r a) = 1 := by
-    unfold WeylGroupFacts.sgn; rw [if_neg (by simp only [esI]; omega)]
-  rw [h1, h2, one_mul]
-
 lemma eI_ne_esI (a b : Fin r) : eI k r a ≠ esI k r b := by
   intro h; have := congrArg Fin.val h; simp only [eI, esI] at this; omega
 
@@ -1273,59 +1202,10 @@ lemma esI_inj {a b : Fin r} : esI k r a = esI k r b ↔ a = b := by
   · intro h; have := congrArg Fin.val h; simp only [esI] at this; exact Fin.ext (by omega)
   · rintro rfl; rfl
 
-lemma h_e_e (a b : Fin r) : ⟪bvec (eI k r a), bvec (eI k r b)⟫ = 0 := by
-  rw [herm_e_right]; exact Pi.single_eq_of_ne (eI_ne_esI a b).symm _
-lemma h_es_es (a b : Fin r) : ⟪bvec (esI k r a), bvec (esI k r b)⟫ = 0 := by
-  rw [herm_es_right]; exact Pi.single_eq_of_ne (eI_ne_esI b a) _
-lemma h_e_es (a b : Fin r) : ⟪bvec (eI k r a), bvec (esI k r b)⟫ = if a = b then 1 else 0 := by
-  rw [herm_es_right]; simp only [bvec, Pi.single_apply, eI_inj]
-  by_cases h : a = b
-  · simp [h]
-  · rw [if_neg h, if_neg (Ne.symm h)]
-lemma h_es_e (a b : Fin r) : ⟪bvec (esI k r a), bvec (eI k r b)⟫ = if a = b then 1 else 0 := by
-  rw [herm_e_right]; simp only [bvec, Pi.single_apply, esI_inj]
-  by_cases h : a = b
-  · simp [h]
-  · rw [if_neg h, if_neg (Ne.symm h)]
-
 variable {l : Fin r}
 
 local notation "𝐞" => bvec (eI k r l)
 local notation "𝐬" => bvec (esI k r l)
-
-lemma weyl_cell_apply_dual_basis (c : ℂ) (q : Fin (2 * r + k + 1)) :
-    w1 k r l c (esI k r l) q = if q = eI k r l then c else 0 := by
-  unfold w1
-  by_cases h : q = eI k r l <;> simp [h, (eI_ne_esI l l).symm]
-
-lemma weyl_cell_apply_basis (c : ℂ) (q : Fin (2 * r + k + 1)) :
-    w1 k r l c (eI k r l) q = if q = esI k r l then (star c)⁻¹ else 0 := by
-  unfold w1
-  by_cases h : q = esI k r l <;> simp [h, eI_ne_esI l l]
-
-lemma weyl_cell_apply_other (c : ℂ) {p : Fin (2 * r + k + 1)} (h1 : p ≠ eI k r l) (h2 : p ≠ esI k r l)
-    (q : Fin (2 * r + k + 1)) : w1 k r l c p q = if q = p then 1 else 0 := by
-  unfold w1
-  by_cases h : q = p
-  · simp [h, h1, h2]
-  · simp [h1, h2, h, Ne.symm h]
-
-lemma weyl_cell_mulVec (c : ℂ) (y : Fin (2 * r + k + 1) → ℂ) :
-    w1 k r l c *ᵥ y = y + (c * ⟪y, 𝐬⟫ - ⟪y, 𝐞⟫) • 𝐬 + ((conj c)⁻¹ * ⟪y, 𝐞⟫ - ⟪y, 𝐬⟫) • 𝐞 := by
-  ext p
-  rw [herm_e_right, herm_es_right]
-  simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, bvec, Pi.single_apply, mulVec, dotProduct]
-  by_cases h2 : p = esI k r l
-  · subst h2
-    simp only [weyl_cell_apply_dual_basis, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, (eI_ne_esI l l).symm, if_false]
-    ring
-  · by_cases h1 : p = eI k r l
-    · subst h1
-      simp only [weyl_cell_apply_basis, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, eI_ne_esI l l, if_false]
-      rw [Complex.star_def]; ring
-    · simp only [weyl_cell_apply_other c h1 h2, ite_mul, zero_mul, one_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, h1, h2,
-        if_false]
-      ring
 
 lemma weyl_cell_mem_level_group {c : ℂ} (hc : c ≠ 0) : w1 k r l c ∈ Glev k r l.castSucc := by
   apply PI.IsotropicReflections.reflection_mem_Glev_castSucc <;> assumption

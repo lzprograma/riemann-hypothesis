@@ -45,7 +45,6 @@ open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct Classical
 
 namespace GlobalTheory.AdForm.Model
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 variable {D : D7}
 
 section Gen

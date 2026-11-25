@@ -4,8 +4,6 @@ public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsTop
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 open Finset
@@ -29,15 +27,15 @@ theorem exists_hookShape_of_isHook {r k : ℕ} (hk : 1 ≤ k) (nu : Fin r → �
     intro i j hij
     by_cases hj : j < r
     · have hi : i < r := lt_of_le_of_lt hij hj
-      simp only [hg, dif_pos hj, dif_pos hi]
+      simp only [hg, dite_eq_left hj, dite_eq_left hi]
       exact hanti (show (⟨i, hi⟩ : Fin r) ≤ ⟨j, hj⟩ from hij)
-    · simp [hg, dif_neg hj]
+    · simp [hg, dite_eq_right hj]
   have hle1 : ∀ j, 1 ≤ j → g j ≤ 1 := by
     intro j hj
     by_cases h : j < r
-    · simp only [hg, dif_pos h]
+    · simp only [hg, dite_eq_left h]
       exact hhook ⟨j, h⟩ (by simp only; omega)
-    · simp [hg, dif_neg h]
+    · simp [hg, dite_eq_right h]
   have hsplit : g 0 + ∑ j ∈ Ico 1 r, g j = k := by
     rw [← Finset.sum_eq_sum_Ico_succ_bot hr, ← Finset.range_eq_Ico]
     exact hsumg
@@ -53,7 +51,7 @@ theorem exists_hookShape_of_isHook {r k : ℕ} (hk : 1 ≤ k) (nu : Fin r → �
         calc ∑ j ∈ Ico 1 i, g j ≤ ∑ j ∈ Ico 1 i, 1 :=
               Finset.sum_le_sum fun j hj => hle1 j (mem_Ico.mp hj).1
           _ = i - 1 := by simp
-      rw [h0, if_neg (by omega)]
+      rw [h0, ite_eq_right (by omega)]
     · have ho : ∀ j ∈ Ico 1 (i + 1), g j = 1 := fun j hj => by
         have h2 := hanti_g j i (by have := (mem_Ico.mp hj).2; omega)
         have h3 := hle1 j (mem_Ico.mp hj).1
@@ -62,7 +60,7 @@ theorem exists_hookShape_of_isHook {r k : ℕ} (hk : 1 ≤ k) (nu : Fin r → �
         rw [ht, ← Finset.sum_Ico_consecutive g (show 1 ≤ i + 1 by omega)
           (show i + 1 ≤ r by omega), Finset.sum_congr rfl ho]
         simp
-      rw [h1, if_pos hit]
+      rw [h1, ite_eq_left hit]
   have htr : t < r := by
     have : t ≤ r - 1 := by
       calc t ≤ ∑ j ∈ Ico 1 r, 1 := Finset.sum_le_sum fun j hj => hle1 j (mem_Ico.mp hj).1
@@ -80,9 +78,9 @@ theorem exists_hookShape_of_isHook {r k : ℕ} (hk : 1 ≤ k) (nu : Fin r → �
   rw [← hgnu i]
   unfold hookShape
   by_cases hi0 : (i : ℕ) = 0
-  · rw [if_pos hi0, hi0]
+  · rw [ite_eq_left hi0, hi0]
     omega
-  · rw [if_neg hi0, hrow i (by omega) i.isLt]
+  · rw [ite_eq_right hi0, hrow i (by omega) i.isLt]
 
 theorem HookSumBound.proof (hC : LemmaC.Statement) (hH : HookTableauCount.Statement) :
     HookSumBound.Statement := by

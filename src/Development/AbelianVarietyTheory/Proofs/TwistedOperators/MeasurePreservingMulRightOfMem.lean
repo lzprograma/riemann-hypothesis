@@ -53,8 +53,6 @@ import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ClassF
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice MeasureTheory Formalism.L2.Theta Formalism.IndefR GlobalTheory.IndefiniteRowSideFullHecke.ClassFunctionSumIntegral Topology
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.DefiniteClassAvg
 
 theorem measurePreserving_mul_right_of_mem {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
@@ -244,9 +242,5 @@ theorem existsUnique_doubleCoset {G H : Type} [Group G] [Group H] (π : G →* H
     exact k.2
   · rintro ⟨γ, hγ, k, hk, rfl⟩
     exact ⟨⟨γ, hγ⟩, ⟨π k, hk⟩, by rw [map_mul, map_mul, ha]; rfl⟩
-
-end GlobalTheory.DefiniteClassAvg
-
-namespace GlobalTheory.DefiniteClassAvg
 
 end GlobalTheory.DefiniteClassAvg

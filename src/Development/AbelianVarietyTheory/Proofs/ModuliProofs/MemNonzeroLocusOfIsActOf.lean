@@ -56,7 +56,6 @@ noncomputable section
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open TopologicalSpace
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.CoprimeTorsion
 

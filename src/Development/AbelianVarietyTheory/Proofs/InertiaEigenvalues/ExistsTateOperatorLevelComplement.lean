@@ -6,55 +6,16 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersEqSumZetaPow
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateDecompositionCompletedCyclotomicIntegers
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormPrimitiveRootPrimePowSubOnePadicComplex
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Algebra.Nonarchimedean.Completion
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -65,8 +26,6 @@ noncomputable section
 namespace GlobalTheory.Cyc.TateS
 
 variable {l : ℕ} [Fact l.Prime]
-
-alias Ks_mono := _root_.GlobalTheory.TateDecomp.Ks_mono
 
 theorem Gj_le (K : FinExt l) (j : ℕ) {g : GQ l} (hg : g ∈ Gj K j) :
     g ∈ (K0 K).fixingSubgroup := fun x => hg ⟨x.1, (le_sup_left : _ ≤ Ks K j) x.2⟩
@@ -123,14 +82,14 @@ def algC (K : FinExt l) : Subring (PadicComplex l) where
     rintro _ _ ⟨m, hm⟩ ⟨n, hn⟩
     obtain ⟨a, ha, rfl⟩ := mem_inC.1 hm
     obtain ⟨b, hb, rfl⟩ := mem_inC.1 hn
-    exact ⟨max m n, mem_inC.2 ⟨a + b, add_mem (Ks_mono K (le_max_left _ _) ha)
-      (Ks_mono K (le_max_right _ _) hb), map_add _ _ _⟩⟩
+    exact ⟨max m n, mem_inC.2 ⟨a + b, add_mem (GlobalTheory.TateDecomp.Ks_mono K (le_max_left _ _) ha)
+      (GlobalTheory.TateDecomp.Ks_mono K (le_max_right _ _) hb), map_add _ _ _⟩⟩
   mul_mem' := by
     rintro _ _ ⟨m, hm⟩ ⟨n, hn⟩
     obtain ⟨a, ha, rfl⟩ := mem_inC.1 hm
     obtain ⟨b, hb, rfl⟩ := mem_inC.1 hn
-    exact ⟨max m n, mem_inC.2 ⟨a * b, mul_mem (Ks_mono K (le_max_left _ _) ha)
-      (Ks_mono K (le_max_right _ _) hb), map_mul _ _ _⟩⟩
+    exact ⟨max m n, mem_inC.2 ⟨a * b, mul_mem (GlobalTheory.TateDecomp.Ks_mono K (le_max_left _ _) ha)
+      (GlobalTheory.TateDecomp.Ks_mono K (le_max_right _ _) hb), map_mul _ _ _⟩⟩
   neg_mem' := by
     rintro _ ⟨m, hm⟩
     obtain ⟨a, ha, rfl⟩ := mem_inC.1 hm
@@ -163,7 +122,7 @@ theorem mem_Xalg (K : FinExt l) {j i : ℕ} (hi : j < i) {z y : Om l}
 
 theorem Xalg_alg (K : FinExt l) (j : ℕ) {x : PadicComplex l} (hx : x ∈ Xalg K j) : x ∈ algC K :=
   Xalg_le_of K j (algC K).toAddSubgroup (fun i _ _ _ hz hy _ =>
-    coe_mem_algC K (mul_mem (_root_.GlobalTheory.TateDecomp.root_mem_Ks K hz.pow_eq_one) (Ks_mono K (Nat.sub_le i 1) hy))) hx
+    coe_mem_algC K (mul_mem (_root_.GlobalTheory.TateDecomp.root_mem_Ks K hz.pow_eq_one) (GlobalTheory.TateDecomp.Ks_mono K (Nat.sub_le i 1) hy))) hx
 
 theorem int_decomp (K : FinExt l) {j : ℕ} (hj : 1 ≤ j) (c : ℕ) : ∀ x : Om l, x ∈ Ks K (j + c) →
     ‖x‖ ≤ 1 → ∃ o ∈ Ks K j, ∃ d ∈ Xalg K j,
@@ -282,7 +241,7 @@ theorem solve_alg (hact : IsActC act) (hχ : IsCyc χ) (K : FinExt l) {j : ℕ} 
   have hη1 : η - 1 ≠ 0 := sub_ne_zero.2 (hη.ne_one hp.one_lt)
   have hj1 : 1 ≤ j + b := by have := hj.1; omega
   have hmem : ∀ {e : Om l}, IsPrimitiveRoot e l → e - 1 ∈ Ks K (j + b) := fun h =>
-    sub_mem (Ks_mono K hj1 (_root_.GlobalTheory.TateDecomp.root_mem_Ks K (by rw [pow_one, h.pow_eq_one]))) (one_mem _)
+    sub_mem (GlobalTheory.TateDecomp.Ks_mono K hj1 (_root_.GlobalTheory.TateDecomp.root_mem_Ks K (by rw [pow_one, h.pow_eq_one]))) (one_mem _)
   set w : Om l := (ζ₀ - 1) / (η - 1) * y with hw
   have hwK : w ∈ Ks K (j + b) := mul_mem (div_mem (hmem hζ₀) (hmem hη)) hy
   have hw1 : ‖w‖ ≤ 1 := by
@@ -330,7 +289,7 @@ theorem zeta_sub_one_mem (K : FinExt l) {j : ℕ} (hj : 1 ≤ j) {ζ : PadicComp
   have hp : l.Prime := Fact.out
   refine ⟨?_, ?_⟩
   · obtain ⟨ζ₀, rfl, hζ₀⟩ := prim_lift hp.ne_zero hζ
-    exact mem_inC.2 ⟨ζ₀ - 1, sub_mem (Ks_mono K hj (_root_.GlobalTheory.TateDecomp.root_mem_Ks K (by rw [pow_one, hζ₀.pow_eq_one])))
+    exact mem_inC.2 ⟨ζ₀ - 1, sub_mem (GlobalTheory.TateDecomp.Ks_mono K hj (_root_.GlobalTheory.TateDecomp.root_mem_Ks K (by rw [pow_one, hζ₀.pow_eq_one])))
       (one_mem _), by rw [map_sub, map_one]⟩
   · have h1 : ‖ζ‖ = 1 := by
       have := congrArg norm hζ.pow_eq_one
@@ -359,7 +318,7 @@ theorem est_pow (hact : IsActC act) (hχ : IsCyc χ) (K : FinExt l) {j : ℕ} (h
       (act g d - d) / (l : PadicComplex l) ^ n := by
     rw [map_div₀, map_pow, map_natCast, hwa]
   obtain ⟨o, ho, d', hd', hod⟩ := int_decomp K hj.1 m (a / (l : Om l) ^ n)
-    (div_mem (Ks_mono K (Nat.le_add_left _ _) ha) (pow_mem (natCast_mem _ _) _))
+    (div_mem (GlobalTheory.TateDecomp.Ks_mono K (Nat.le_add_left _ _) ha) (pow_mem (natCast_mem _ _) _))
     (by
       rw [← norm_coe, hcoe, norm_div, div_le_one (norm_pos_iff.2 hlC), hnl]
       exact hn)

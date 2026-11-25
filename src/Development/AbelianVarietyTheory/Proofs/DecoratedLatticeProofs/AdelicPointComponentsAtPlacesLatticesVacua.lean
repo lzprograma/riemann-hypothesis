@@ -50,7 +50,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Stan
 noncomputable section
 open IsDedekindDomain NumberField
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 
@@ -151,7 +150,7 @@ theorem idem_mem_idAt (P : Pl D → Prop) : idem D P ∈ idAt D P := by
   unfold idAt
   refine Ideal.mem_inf.2 ⟨RingHom.mem_ker.2 (infPart_pair _ _), ?_⟩
   refine Submodule.mem_iInf _ |>.2 fun w => RingHom.mem_ker.2 ?_
-  rw [compAt_idem, if_neg w.2]
+  rw [compAt_idem, ite_eq_right w.2]
 
 theorem mem_idAt_iff (P : Pl D → Prop) (a : AE D) : a ∈ idAt D P ↔ idem D P * a = a := by
   constructor
@@ -165,7 +164,7 @@ theorem mem_idAt_iff (P : Pl D → Prop) (a : AE D) : a ∈ idAt D P ↔ idem D 
       · intro w
         rw [map_mul]
         by_cases hw : P w
-        · rw [map_sub, map_one, compAt_idem, if_pos hw, sub_self, zero_mul]
+        · rw [map_sub, map_one, compAt_idem, ite_eq_left hw, sub_self, zero_mul]
         · rw [RingHom.mem_ker.1 (haw' ⟨w, hw⟩), mul_zero]
     rw [sub_mul, one_mul, sub_eq_zero] at h
     exact h.symm
@@ -184,11 +183,11 @@ theorem mem_idOff_iff (P : Pl D → Prop) (a : AE D) : a ∈ idOff D P ↔ idem 
       rw [map_mul]
       by_cases hw : P w
       · rw [RingHom.mem_ker.1 (ha ⟨w, hw⟩), mul_zero]
-      · rw [compAt_idem, if_neg hw, zero_mul]
+      · rw [compAt_idem, ite_eq_right hw, zero_mul]
   · intro h w
     apply RingHom.mem_ker.2
     have := congrArg (compAt D w.1) h
-    rw [map_mul, compAt_idem, if_pos w.2, one_mul, map_zero] at this
+    rw [map_mul, compAt_idem, ite_eq_left w.2, one_mul, map_zero] at this
     exact this
 
 theorem idem_mem_intAt (P : Pl D → Prop) : idem D P ∈ intAt D P := by
@@ -489,7 +488,7 @@ theorem placeIdempotent_integral_smul_mem_latticeCompletionAtPlace {S : HSp D} {
         L.smul_mem o hx, ?_⟩
       · rw [map_mul, map_mul]
         exact mul_mem (mul_mem (ePl_int _ w) (ha w)) (hαi w)
-      · rw [map_mul, map_mul, evalV_ePl, if_neg hw, zero_mul, zero_mul]
+      · rw [map_mul, map_mul, evalV_ePl, ite_eq_right hw, zero_mul, zero_mul]
       · funext i
         rw [Pi.smul_apply, smul_eq_mul]
         unfold idem
@@ -536,8 +535,8 @@ theorem part_lat (P : Pl D → Prop) (S : HSp D) (L : Lat S) (y : Fin S.rank →
     let β : Fin t → Af D.host.F := fun k => RestrictedProduct.mk (fun w => if P w then evalV D.host.F w (B w k) else 0)
       (Filter.Eventually.of_forall fun w => by
         by_cases hw : P w
-        · rw [if_pos hw]; exact ((hB w hw) k).1 w
-        · rw [if_neg hw]; exact zero_mem _)
+        · rw [ite_eq_left hw]; exact ((hB w hw) k).1 w
+        · rw [ite_eq_right hw]; exact zero_mem _)
     have hβ : ∀ k w, evalV D.host.F w (β k) = if P w then evalV D.host.F w (B w k) else 0 := fun k w => rfl
     have hyeq : y = fun i => ∑ k, pairA D.host.F 0 (β k) ⊗ₜ[D.host.F] g k i := by
       funext i
@@ -553,20 +552,20 @@ theorem part_lat (P : Pl D → Prop) (S : HSp D) (L : Lat S) (y : Fin S.rank →
         simp only [compAt_pair, hβ]
         by_cases hw : P w
         · have h1 : compAt D w (y i) = compAt D w ((idem D (· = w) • y) i) := by
-            rw [Pi.smul_apply, smul_eq_mul, map_mul, compAt_idem, if_pos rfl, one_mul]
+            rw [Pi.smul_apply, smul_eq_mul, map_mul, compAt_idem, ite_eq_left rfl, one_mul]
 
           rw [h1, hBy w hw, map_sum]
-          simp only [compAt_pair, if_pos hw, sub_self]
+          simp only [compAt_pair, ite_eq_left hw, sub_self]
         · rw [compAt_of_idAt (hid i) hw]
-          simp only [if_neg hw, TensorProduct.zero_tmul, Finset.sum_const_zero, sub_zero]
+          simp only [ite_eq_right hw, TensorProduct.zero_tmul, Finset.sum_const_zero, sub_zero]
     rw [hyeq, ← Finset.sum_fn]
     refine AddSubgroup.sum_mem _ fun k _ => AddSubgroup.subset_closure
       ⟨β k, fun w => ?_, fun w hw => ?_, 1, rfl, g k, hgL k, ?_⟩
     · rw [hβ]
       by_cases hw : P w
-      · rw [if_pos hw]; exact ((hB w hw) k).1 w
-      · rw [if_neg hw]; exact zero_mem _
-    · rw [hβ, if_neg hw]
+      · rw [ite_eq_left hw]; exact ((hB w hw) k).1 w
+      · rw [ite_eq_right hw]; exact zero_mem _
+    · rw [hβ, ite_eq_right hw]
     · funext i
       rw [one_mul]
 

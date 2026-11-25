@@ -29,74 +29,20 @@ public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.HasCompactSupportOfSection
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PCompat
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PGrowth
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import GroundTheory.AutomorphicForms.RealGroups
 import GroundTheory.AutomorphicForms.RealIwasawaIntegration
 import GroundTheory.AutomorphicForms.ReductionMeasure
 import GroundTheory.GlobalFields.Adele.Topology
 import GroundTheory.GlobalFields.TateThesis.IdeleMeasure
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PicardGroup
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CapelliOfGelfand
 import Formalism.RealPlaceAnalysis.StatementE
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.QdetPolyMapMonic
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.InfinitesimalCharacterGL.NatDegreeDefectGelf
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.TotallySplit
 import Aesop.Main
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveKernelUniqueness
 import GroundTheory.GlobalFields.Adele.Approximation
+import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.ReproOf
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PActEq, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PActPi, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.ActHcsSlice, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PFinInvMulInfGL, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PInfEx, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContDiffOnInvReal, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PSmoothA, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PSmoothB, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PSmooth, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.SmoothOfHolds
@@ -113,8 +59,6 @@ open GlobalTheory.CuspRep GlobalTheory.UnitaryBC PositivityTheory.Rg.BcB.E Posit
 open PositivityTheory.RgTw (Mat G)
 open PositivityTheory.Rg.BcB.SpectralAccumulation (Hf finH)
 open scoped Classical
-
-attribute [local instance] PositivityTheory.Rg.BcB.E.borelH
 
 namespace PositivityTheory.Rg.BcB.CG
 
@@ -284,7 +228,7 @@ variable {ι : Type} [DecidableEq ι] {X : Type}
 
 def splitY (w : ι) (t : X) (z : {v // v ≠ w} → X) : ι → X := fun v => if h : v = w then t else z ⟨v, h⟩
 
-theorem splitY_self (w : ι) (t : X) (z : {v // v ≠ w} → X) : splitY w t z w = t := dif_pos rfl
+theorem splitY_self (w : ι) (t : X) (z : {v // v ≠ w} → X) : splitY w t z w = t := dite_eq_left rfl
 
 theorem splitY_ne (w : ι) (t : X) (z : {v // v ≠ w} → X) (v : {v // v ≠ w}) : splitY w t z v = z v := by
   simp [splitY, v.2]
@@ -294,8 +238,8 @@ theorem update_splitY_self (w : ι) (t t' : X) (z : {v // v ≠ w} → X) :
   funext v
   simp only [Function.update_apply, splitY]
   by_cases h : v = w
-  · rw [if_pos h, dif_pos h]
-  · rw [if_neg h]; simp [h]
+  · rw [ite_eq_left h, dite_eq_left h]
+  · rw [ite_eq_right h]; simp [h]
 
 theorem update_splitY_ne (w : ι) (t : X) (z : {v // v ≠ w} → X) (v : {v // v ≠ w}) (s : X) :
     Function.update (splitY w t z) v s = splitY w t (Function.update z v s) := by
@@ -303,13 +247,13 @@ theorem update_splitY_ne (w : ι) (t : X) (z : {v // v ≠ w} → X) (v : {v // 
   simp only [Function.update_apply, splitY]
   by_cases h : x = w
   · have h' : x ≠ (v : ι) := fun e => v.2 (e ▸ h)
-    rw [if_neg h', dif_pos h, dif_pos h]
-  · rw [dif_neg h, dif_neg h]
+    rw [ite_eq_right h', dite_eq_left h, dite_eq_left h]
+  · rw [dite_eq_right h, dite_eq_right h]
     by_cases h' : x = v
     · have : (⟨x, h⟩ : {v // v ≠ w}) = v := Subtype.ext h'
-      rw [if_pos h', if_pos this]
+      rw [ite_eq_left h', ite_eq_left this]
     · have : (⟨x, h⟩ : {v // v ≠ w}) ≠ v := fun e => h' (congrArg Subtype.val e)
-      rw [if_neg h', if_neg this]
+      rw [ite_eq_right h', ite_eq_right this]
 
 theorem splitY_one [One X] (w : ι) : splitY w (1 : X) (1 : {v // v ≠ w} → X) = 1 := by
   funext v
@@ -319,15 +263,15 @@ theorem continuous_splitY_left [TopologicalSpace X] (w : ι) (z : {v // v ≠ w}
     Continuous fun t : X => splitY w t z :=
   continuous_pi fun v => by
     by_cases h : v = w
-    · simp only [splitY, dif_pos h]; exact continuous_id
-    · simp only [splitY, dif_neg h]; exact continuous_const
+    · simp only [splitY, dite_eq_left h]; exact continuous_id
+    · simp only [splitY, dite_eq_right h]; exact continuous_const
 
 theorem continuous_splitY_right [TopologicalSpace X] (w : ι) (t : X) :
     Continuous fun z : {v // v ≠ w} → X => splitY w t z :=
   continuous_pi fun v => by
     by_cases h : v = w
-    · simp only [splitY, dif_pos h]; exact continuous_const
-    · simp only [splitY, dif_neg h]; exact continuous_apply _
+    · simp only [splitY, dite_eq_left h]; exact continuous_const
+    · simp only [splitY, dite_eq_right h]; exact continuous_apply _
 
 variable {Idx : ι → Type}
 
@@ -405,7 +349,7 @@ theorem pi_cont_supp {ι : Type} [Fintype ι] [DecidableEq ι] {Idx : ι → Typ
   have hK : ∀ v, IsCompact (K v) := fun v => isCompact_iUnion fun a => isCompact_iUnion fun b => (he v a b).2
   refine HasCompactSupport.intro (isCompact_univ_pi hK) fun y hy => ?_
   rw [Set.mem_univ_pi] at hy
-  push_neg at hy
+  push Not at hy
   obtain ⟨v, hv⟩ := hy
   refine Finset.sum_eq_zero fun J _ => ?_
   have h0 : e v (y v) (I v) (J v) = 0 := image_eq_zero_of_notMem_tsupport (f := fun t => e v t (I v) (J v)) fun h =>
@@ -864,12 +808,6 @@ section Tc
 
 variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
-theorem along_smul' (w : InfinitePlace E) (g : GA E a) (c : ℂ) (φ : GA E a → ℂ) :
-    along w g (c • φ) = c • along w g φ := by
-  funext x
-  simp only [along, chart, Pi.smul_apply]
-  split_ifs <;> simp
-
 theorem zfin_of (φ : Sm E a) (c : (E →+* ℂ) → ℂ → ℂ) (hc : ∀ τ u, cap τ u φ = c τ u • φ) :
     FiniteDimensional ℂ (Submodule.span ℂ ((fun z : Module.End ℂ (Sm E a) => z φ) '' (Zalg E a : Set _))) := by
   have : FiniteDimensional ℂ (Submodule.span ℂ {φ}) := FiniteDimensional.span_of_finite ℂ (Set.finite_singleton φ)
@@ -1092,7 +1030,7 @@ theorem hasInf_single (hB : BridgeSt) (χ : InfinitePlace E → Inf a) (φ : Sm 
     intro ψ hψ g
     obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hψ
     have e : ((c • φ : Sm E a) : GA E a → ℂ) = c • (φ : GA E a → ℂ) := rfl
-    rw [e, along_smul']
+    rw [e, PositivityTheory.RgBcC.Bridge.along_smul]
     exact isEig_smul (hφ _ g) c)
   by_cases h : τ = (InfinitePlace.mk τ).embedding
   · have e : mOf χ τ = Multiset.map (χ (InfinitePlace.mk τ) true) Finset.univ.val := by
@@ -1291,20 +1229,8 @@ theorem eq_of_defect (m : ℕ) (t t' : ℕ → ℂ) (Q : ℂ[X]) (hQ : Q.natDegr
   exact mul_left_cancel₀ hu e
 
 theorem exists_enum (s : Multiset ℂ) : ∀ n, Multiset.card s = n → ∃ r : Fin n → ℂ, Multiset.map r univ.val = s := by
-  induction s using Multiset.induction_on with
-  | empty =>
-    intro n hn
-    simp only [Multiset.card_zero] at hn
-    subst hn
-    exact ⟨Fin.elim0, by simp⟩
-  | cons a s ih =>
-    intro n hn
-    rw [Multiset.card_cons] at hn
-    subst hn
-    obtain ⟨r, hr⟩ := ih _ rfl
-    refine ⟨Fin.cons a r, ?_⟩
-    conv_rhs => rw [← hr]
-    simp [Fin.univ_succ, Function.comp_def]
+  intros
+  apply _root_.PositivityTheory.Rg.BcB.CG.ReproL.exists_enum <;> assumption
 
 theorem exists_gelf (V : Type) [AddCommGroup V] [Module ℂ V] (m : ℕ) (M : Fin (m + 1) → Fin (m + 1) → Module.End ℂ V)
     (hM : Formalism.REAL.GlRel M) (v : V) (hv : v ≠ 0) (t : ℕ → ℂ) (ht : ∀ k, Formalism.REAL.etr M k v = t k • v) :
@@ -1411,9 +1337,6 @@ variable {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
 end GlobalTheory.CompanionTheory.WaveCp.Rep.Frame
 
-namespace GlobalTheory.CompanionTheory.WaveCp.Rep
-
-end GlobalTheory.CompanionTheory.WaveCp.Rep
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -1600,7 +1523,6 @@ theorem contDiffAt_matMul {X : Type} [NormedAddCommGroup X] [NormedSpace ℝ X] 
   simp only [Matrix.mul_apply]
   exact ContDiffAt.sum fun k _ =>
     (contDiffAt_pi.1 (contDiffAt_pi.1 hf i) k).mul (contDiffAt_pi.1 (contDiffAt_pi.1 hg k) j)
-
 
 open Classical in
 omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
@@ -1798,7 +1720,6 @@ theorem continuous_hFin₀ {a b : ℕ} : Continuous (hFin : H E a b → Hf E a b
 theorem gFin_infGL₀ (u : GL (Fin n) (Cinf E)) : gFin (infGL E n u) = 1 := pFin_infGL u
 
 end SmoothIntegrals
-
 
 open SmoothIntegrals in
 theorem smoothOf (hTT : TensTest) : SmoothOf := by

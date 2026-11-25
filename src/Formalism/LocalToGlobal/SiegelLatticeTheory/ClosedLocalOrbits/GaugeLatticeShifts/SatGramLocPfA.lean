@@ -1,5 +1,7 @@
 module
 
+import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.ImaginaryGeneratorMulDenominator
+import Formalism.SharpRestriction.AdmissibleParameterJoins.SumLogPrimeFactorsLe
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramLoc
 public import Mathlib.RingTheory.RamificationInertia.Inertia
 public import Mathlib.RingTheory.RamificationInertia.Ramification
@@ -24,15 +26,7 @@ variable {K : Type} [Field K] [NumberField K]
 theorem liesOver_natCast (p : ℕ) (hp : p.Prime)
     (v : HeightOneSpectrum (𝓞 K)) (hv : ((p : ℕ) : 𝓞 K) ∈ v.asIdeal) :
     v.asIdeal.LiesOver (Ideal.span {(p : ℤ)}) := by
-  have hpZ : Prime (p : ℤ) := Nat.prime_iff_prime_int.mp hp
-  have hmax : (Ideal.span {(p : ℤ)}).IsMaximal :=
-    PrincipalIdealRing.isMaximal_of_irreducible hpZ.irreducible
-  have hne : Ideal.comap (algebraMap ℤ (𝓞 K)) v.asIdeal ≠ ⊤ := Ideal.comap_ne_top _ v.isPrime.ne_top
-  have hle : Ideal.span {(p : ℤ)} ≤ Ideal.comap (algebraMap ℤ (𝓞 K)) v.asIdeal := by
-    rw [Ideal.span_singleton_le_iff_mem, Ideal.mem_comap]
-    simpa using hv
-  constructor
-  exact hmax.eq_of_le hne hle
+  apply _root_.Formalism.MainNotions.J.liesOver_of_mem <;> assumption
 
 theorem image_places_primesOver (p : ℕ) (hp : p.Prime) :
     (fun v : HeightOneSpectrum (𝓞 K) => v.asIdeal) '' {v | ((p : ℕ) : 𝓞 K) ∈ v.asIdeal} =
@@ -78,16 +72,7 @@ theorem card_quot_split (p : ℕ) (hp : p.Prime)
     (hs : {v : HeightOneSpectrum (𝓞 K) | ((p : ℕ) : 𝓞 K) ∈ v.asIdeal}.ncard = Module.finrank ℚ K)
     (v : HeightOneSpectrum (𝓞 K)) (hv : ((p : ℕ) : 𝓞 K) ∈ v.asIdeal) :
     Nat.card (𝓞 K ⧸ v.asIdeal) = p := by
-  haveI := liesOver_natCast p hp v hv
-  have h := Ideal.absNorm_eq_pow_inertiaDeg' v.asIdeal hp
-  have hf := (ram_inertia_split p hp hs v hv).2
-  have h2 : (Ideal.span {((p : ℕ) : ℤ)}).inertiaDeg' v.asIdeal = 1 := by
-    haveI : (Ideal.span {((p : ℕ) : ℤ)}).IsMaximal :=
-      PrincipalIdealRing.isMaximal_of_irreducible (Nat.prime_iff_prime_int.mp hp).irreducible
-    haveI : v.asIdeal.IsMaximal := v.isMaximal
-    rw [Ideal.inertiaDeg'_eq_inertiaDeg, hf]
-  rw [h2, pow_one] at h
-  rw [← h, Ideal.absNorm_apply, Submodule.cardQuot_apply]
+  apply Formalism.IndefR.NX.card_residue_of_split <;> assumption
 
 theorem intValuation_split (p : ℕ) (hp : p.Prime)
     (hs : {v : HeightOneSpectrum (𝓞 K) | ((p : ℕ) : 𝓞 K) ∈ v.asIdeal}.ncard = Module.finrank ℚ K)

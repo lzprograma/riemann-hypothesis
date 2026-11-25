@@ -252,7 +252,7 @@ theorem cc_logF : PowerSeries.constantCoeff (Formalism.MainNotions.GL3Theta.logF
   unfold Formalism.MainNotions.GL3Theta.logF
   rw [PowerSeries.coeff_mk]
   refine Finset.sum_eq_zero fun j _ => ?_
-  rw [if_neg]
+  rw [ite_eq_right]
   exact (pow_pos hp.out.pos _).ne
 
 theorem lg_pt (g : G1 p) (hex : PowerSeries.constantCoeff g.ex = 0) (hinv : PowerSeries.subst g.ex g.l = PowerSeries.X)
@@ -341,15 +341,15 @@ theorem coeff_one_subst {R : Type*} [CommRing R] (a f : PowerSeries R) (ha : Pow
   rcases Nat.lt_or_gt_of_ne hd with h | h
   · have : d = 0 := by omega
     subst this
-    rw [pow_zero, PowerSeries.coeff_one, if_neg one_ne_zero, smul_zero]
-  · rw [ha', mul_pow, PowerSeries.coeff_X_pow_mul', if_neg (by omega), smul_zero]
+    rw [pow_zero, PowerSeries.coeff_one, ite_eq_right one_ne_zero, smul_zero]
+  · rw [ha', mul_pow, PowerSeries.coeff_X_pow_mul', ite_eq_right (by omega), smul_zero]
 
 theorem coeff_one_logF : PowerSeries.coeff 1 (Formalism.MainNotions.GL3Theta.logF p) = 1 := by
   unfold Formalism.MainNotions.GL3Theta.logF
   rw [PowerSeries.coeff_mk, Finset.sum_eq_single 0]
   · simp
   · intro j _ hj
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     have h2 : 1 < p ^ (2 * j) := Nat.one_lt_pow (by omega) hp.out.one_lt
     omega
@@ -361,7 +361,7 @@ theorem coeff_one_l (g : G1 p) (hW : IsWq g.W g.wq) : PowerSeries.coeff 1 g.l = 
     have := congrArg PowerSeries.constantCoeff hW
     simpa using this
   unfold G1.l flog
-  rw [PowerSeries.coeff_mk, if_neg one_ne_zero, Nat.sub_self, PowerSeries.coeff_zero_eq_constantCoeff_apply]
+  rw [PowerSeries.coeff_mk, ite_eq_right one_ne_zero, Nat.sub_self, PowerSeries.coeff_zero_eq_constantCoeff_apply]
   unfold omegaW
   simp only [map_mul, map_sub, map_add (f := _), map_neg, map_pow, PowerSeries.constantCoeff_inv, PowerSeries.constantCoeff_X, h0]
   simp
@@ -458,7 +458,7 @@ theorem wq_mem_ratSub {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries ℂ_[p]} 
     have hd : (PowerSeries.X : PowerSeries ℂ_[p]) ^ n ∣ wq - wn := by
       rw [PowerSeries.X_pow_dvd_iff]
       intro m hm
-      rw [map_sub, hwn_def, PowerSeries.coeff_mk, if_pos hm, sub_self]
+      rw [map_sub, hwn_def, PowerSeries.coeff_mk, ite_eq_left hm, sub_self]
     obtain ⟨r, hr⟩ := hd
     let c := algebraMap ℂ_[p] (PowerSeries ℂ_[p])
     let Φ : PowerSeries ℂ_[p] → PowerSeries ℂ_[p] := fun w =>
@@ -475,7 +475,7 @@ theorem wq_mem_ratSub {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries ℂ_[p]} 
       have : ∀ Q : PowerSeries ℂ_[p], PowerSeries.X * (PowerSeries.X ^ n * r) * Q = PowerSeries.X ^ (n + 1) * (r * Q) := by
         intro Q
         ring
-      rw [this, PowerSeries.coeff_X_pow_mul', if_neg (by omega)]
+      rw [this, PowerSeries.coeff_X_pow_mul', ite_eq_right (by omega)]
     have e3 : PowerSeries.coeff n wq = PowerSeries.coeff n (Φ wn) := by
       rw [map_sub, sub_eq_zero] at e2
       rw [← e2, ← hΦ]

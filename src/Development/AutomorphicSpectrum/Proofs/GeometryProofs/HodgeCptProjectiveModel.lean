@@ -27,73 +27,27 @@ public import Mathlib.AlgebraicGeometry.Properties
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtNoetherianModelNoetherian
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SegreRefineLineBundles
 public import Mathlib.LinearAlgebra.Eigenspace.Pi
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsGenericWeilPairing
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateOmegaCoherent
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelEmbeddingInjective
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EtaleLocalizationAtPrimeTensorOfLowHeight
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieModel
-import Mathlib.Order.CompletePartialOrder
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeEigenVectorBundle
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueAct
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackEquivalence
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
-import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieOmegaLatticeVectorBundle
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LawsProved
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagModelStatementHolds
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.CoreStatements.HodgeTatePoints.MkWeil, Development.AutomorphicSpectrum.Proofs.GeometryProofs.FullTorsionWeilPullback, Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptProjectiveModel
 
 -- ===== clump member: Development.WeilBound.CoreStatements.HodgeTatePoints.MkWeil =====
--- clump-header: {"m": "Development.WeilBound.CoreStatements.HodgeTatePoints.MkWeil", "h": "module\n\npublic import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil\npublic import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.MemEigSpOfMemHtDual\npublic import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPushEquiv\npublic import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Coalgebra.IsFrobenius\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
+-- clump-header: {"m": "Development.WeilBound.CoreStatements.HodgeTatePoints.MkWeil", "h": "module\n\npublic import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil\npublic import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.MemEigSpOfMemHtDual\npublic import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPushEquiv\npublic import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Coalgebra.IsFrobenius\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.NatCastSmulMemHtLat\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -112,10 +66,6 @@ theorem epi_fieldMap {Ω K : Type} [Field Ω] [Field K] (a : Ω →+* K) : Epi (
   have : Surjective (Spec.map (CommRingCat.ofHom a)) :=
     ⟨fun z => ⟨IsLocalRing.closedPoint K, Subsingleton.elim (α := PrimeSpectrum Ω) _ _⟩⟩
   exact Flat.epi_of_flat_of_surjective _
-
-theorem spec_map_comp {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (f : A →+* B) (g : B →+* C) :
-    Spec.map (CommRingCat.ofHom (g.comp f)) = Spec.map (CommRingCat.ofHom g) ≫ Spec.map (CommRingCat.ofHom f) := by
-  rw [CommRingCat.ofHom_comp, Spec.map_comp]
 
 theorem card_char_le (T K : Type) [Group T] [Finite T] [Field K] :
     Finite (T →* Kˣ) ∧ Nat.card (T →* Kˣ) ≤ Nat.card T := by
@@ -153,7 +103,7 @@ theorem ht_weil_pull : ∀ (X X' : Scheme.{0}) (Ω Ω' : Type) [Field Ω] [Field
   intro X X' Ω Ω' _ _ ξ ξ' f i hd G _ _ G' _ φ hp L L' hL hL' hw n hF
   have hd' : spMap i ≫ ξ = ξ' ≫ f := hd.symm
   have hsp : ∀ {k : Type} [Field k] (a : Ω' →+* k), spMap (a.comp i) = spMap a ≫ spMap i := fun a =>
-    spec_map_comp i a
+    GlobalTheory.CompanionTheory.Ar.HTTie.spec_comp i a
   have hdk : ∀ {k : Type} [Field k] (a : Ω' →+* k), spMap (a.comp i) ≫ ξ = (spMap a ≫ ξ') ≫ f := fun a => by
     rw [hsp, Category.assoc, hd', Category.assoc]
   obtain ⟨E, hE⟩ := GlobalTheory.LiePull.exists_pushEquiv hp (Over.mk ξ') (spMap i ≫ ξ) hd'
@@ -296,16 +246,7 @@ variable {X X' : Scheme.{0}} {Ω : Type} [Field Ω] {ξ : Spec (CommRingCat.of �
 
 theorem pull_map (L : Lat ξ E) (ξ' : Spec (CommRingCat.of Ω) ⟶ X') (g : X' ⟶ X) (φ : E →ₗ[Ω] E') :
     (L.map φ).pull ξ' g (AddMonoidHom.id E') = (L.pull ξ' g (AddMonoidHom.id E)).map φ := by
-  funext p
-  show Submodule.span _ _ = Submodule.map _ (Submodule.span _ _)
-  rw [Submodule.map_span]
-  congr 1
-  ext w
-  constructor
-  · rintro ⟨h, e, ⟨u, hu, rfl⟩, rfl⟩
-    exact ⟨u, ⟨h, u, hu, rfl⟩, rfl⟩
-  · rintro ⟨u, ⟨h, e, he, hu⟩, rfl⟩
-    exact ⟨h, φ e, ⟨e, he, rfl⟩, congrArg φ hu⟩
+  apply _root_.GlobalTheory.CompanionTheory.Ar.FlagModel.pull_map <;> assumption
 
 theorem span_of_isVBOn {L : Lat ξ E} {T : Set (Cpt ξ)} {r : ℕ} {V : Submodule Ω E} (h : L.IsVBOn T r V)
     {p : Cpt ξ} (hp : p ∈ T) : Submodule.span Ω (L p : Set E) = V := by
@@ -455,7 +396,7 @@ theorem common₂ (Ω : Type) [Field Ω] (κ : Type) [Finite κ] (x : κ → Ω)
     | .inl _ => inferInstanceAs (FiniteDimensional Ω (⊤ : Submodule Ω E₁))
     | .inr b => inferInstanceAs (FiniteDimensional Ω (⊤ : Submodule Ω (E₂ b)))
   obtain ⟨c₀, hc₀⟩ := M.tie.cover ⟨genPt M.ξ, specializes_rfl⟩
-  obtain ⟨κ', hκ', y, M', f, hd, hn, hch, hvb, hnorm⟩ := _root_.GlobalTheory.CompanionTheory.Relay.flag_model_common_refinement ℤ Ω κ x M Unit (fun _ => κ) (fun _ => x)
+  obtain ⟨κ', hκ', y, M', f, hd, hn, hch, hvb, hnorm⟩ := _root_.PositivityTheory.HtPt.Mb.LTopCommon.exists_common_normal_model ℤ Ω κ x M Unit (fun _ => κ) (fun _ => x)
     (B₁ ⊕ B₂) F L (fun _ => ⊤) (fun _ => ⟨c₀, hc₀.1⟩)
     (fun b => match b with
       | .inl b => h₁ b
@@ -564,7 +505,7 @@ theorem exists_hodgeCpt_htFree : Out.WeilSt → ∀ (E : Type) [Field E] [Number
     (fun b => Module.Dual Ω (eigSp ρ (cst.comp (labelEmb c b.2))))
     (fun b => (N₁.htOm t₁.PP.L (b.1.1 ^ R b.1.1)).map (eigSp ρ (cst.comp (labelEmb c b.2))).dualRestrict)
     (fun p => (hcoh p.1 p.2).1)
-    (fun b => (_root_.GlobalTheory.CompanionTheory.Ar.coh_vb_images_sums_multiples _ Ω M₁.ξ _ _ _ (N₁.htOm t₁.PP.L (b.1.1 ^ R b.1.1)) _).2.1 _ (hcoh b.1.1 b.1.2).1)
+    (fun b => (_root_.PositivityTheory.HtPt.Mc.coh_ops _ Ω M₁.ξ _ _ _ (N₁.htOm t₁.PP.L (b.1.1 ^ R b.1.1)) _).2.1 _ (hcoh b.1.1 b.1.2).1)
     (fun p => hspan p.1 p.2)
     (fun b q => span_map_top _ _ Subspace.dualRestrict_surjective q (hspan b.1.1 b.1.2 q))
   have hg : M'.ξ ≫ g = M₁.ξ := by

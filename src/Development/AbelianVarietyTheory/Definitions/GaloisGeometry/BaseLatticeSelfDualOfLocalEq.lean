@@ -54,8 +54,6 @@ open Formalism Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotio
 open Formalism.BasicNotions Formalism.MainNotions.G Formalism.L2.G Formalism.L2.Forms Formalism.UG NumberField IsDedekindDomain Matrix
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X0 : Formalism.L2.Herm.Herm0 D) (u : D.what₂.Word) (w : D.what₂.places.Pl)
   (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w))
 
@@ -190,8 +188,6 @@ open Formalism Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotio
 open Formalism.BasicNotions Formalism.MainNotions.G Formalism.L2.G Formalism.L2.G.Cmp Formalism.L2.Forms Formalism.UG NumberField IsDedekindDomain Matrix Formalism.MainNotions.G.CmpJ
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem reGL_symm_rfl {a : ℕ} (R : Type) [CommRing R] (x : GL (Fin a) R) : (Formalism.L2.Forms.reGL rfl R).symm x = x := by
   apply (Formalism.L2.Forms.reGL rfl R).injective
   rw [MulEquiv.apply_symm_apply, Formalism.L2.Forms.reGL_rfl]
@@ -305,8 +301,6 @@ theorem loc_lattice_eq_of_torsion_away {n : ℕ} (v : HeightOneSpectrum (𝓞 F)
 
 end Gen
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem reL_symm_reL {a b : ℕ} (h : a = b) {E : Type} [Field E] [NumberField E] (L : Submodule (𝓞 E) (Fin a → E)) :
     reL h.symm (reL h L) = L := by
   subst h
@@ -374,15 +368,6 @@ theorem base_lattice_self_dual_of_chain (u : D.what₂.Word) (dt : MemDt (cols.f
           (natCast_notMem w' hg.1 hw hg.2.2.2.2.2)
 
 end Mem
-
-section Rec
-
-open Formalism.MainNotions
-
-variable {L : SizeData₂ D} {hT : GatTies D} {Gi : G.Inst D L} {Gl : G.LatInst D} {K : G.Consts} {Dx : DivX D} {cX : ExtraC}
-  {ex : Extra D L hT Gi Gl K Dx cX}
-
-end Rec
 
 end GlobalTheory.Port
 

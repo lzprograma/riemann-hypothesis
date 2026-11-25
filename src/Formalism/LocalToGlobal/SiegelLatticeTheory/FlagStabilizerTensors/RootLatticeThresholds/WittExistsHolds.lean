@@ -12,8 +12,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.
 
 namespace Formalism.L2.SG.Pf.WittFlags
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Flag
 
 variable {D : D7} {T : D.host.E}

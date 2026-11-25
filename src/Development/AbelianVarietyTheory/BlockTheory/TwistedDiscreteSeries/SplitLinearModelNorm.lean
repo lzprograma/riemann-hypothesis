@@ -48,8 +48,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.SplitLinearModelNorm
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def absV (F : Type) [Field F] [NumberField F] (v : HeightOneSpectrum (𝓞 F)) (y : (Fv F v)ˣ) : ℝ :=
   ((Ideal.absNorm v.asIdeal : ℕ) : ℝ) ^ (WithZero.log (Valued.v (y : Fv F v)))
 

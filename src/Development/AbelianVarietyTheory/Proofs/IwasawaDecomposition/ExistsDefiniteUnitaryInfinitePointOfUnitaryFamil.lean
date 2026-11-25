@@ -54,9 +54,9 @@ theorem list_prod_single {G ι : Type} [Monoid G] [DecidableEq ι] (v : ι) (a :
     by_cases hu : u = v
     · subst hu
       have : (l.map fun w => if w = u then a else 1) = l.map fun _ => 1 :=
-        List.map_congr_left fun w hw => if_neg fun (e : w = u) => hn.1 (e ▸ hw)
-      rw [if_pos rfl, this, List.prod_map_one, mul_one]
-    · rw [if_neg hu, one_mul]
+        List.map_congr_left fun w hw => ite_eq_right fun (e : w = u) => hn.1 (e ▸ hw)
+      rw [ite_eq_left rfl, this, List.prod_map_one, mul_one]
+    · rw [ite_eq_right hu, one_mul]
       exact list_prod_single v a l hn.2 ((List.mem_cons.1 h).resolve_left (Ne.symm hu))
 
 end GlobalTheory.InfSurj

@@ -1,7 +1,5 @@
 module
 
-import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CyclotomicFrobeniusPowerSeriesXEqMulQuotient
 public import Mathlib.RingTheory.PowerSeries.Exp
@@ -9,50 +7,6 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Cycloto
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUniqueEv
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocPrimeVNormalised
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -213,17 +167,17 @@ theorem exists_ev (H : EvLaw l (O := O) v inferInstance) : ∃ ev : L → (O⟦X
     intro ζ
     rw [map_sub, map_mul, constantCoeff_exp, constantCoeff_C, mul_one, map_one, sub_add_cancel]
     by_cases h : ∃ j : ℕ, IsPrimitiveRoot ζ (l ^ j)
-    · simp only [z, if_pos h]
+    · simp only [z, ite_eq_left h]
       exact h.imp fun j hj => hj.pow_eq_one
-    · simp [z, if_neg h]
+    · simp [z, ite_eq_right h]
   have hex : ∀ ζ : Set.range z, ∃ ev : O⟦X⟧ →ₐ[O] L⟦X⟧, ev X = C (ζ : L) * exp L - 1 := by
     rintro ⟨_, ζ, rfl⟩
     exact (H _ (hz ζ)).1.exists
   choose ev hev using hex
   refine ⟨fun ζ => ev ⟨z ζ, ζ, rfl⟩, fun ζ h => ?_, fun ζ h => ?_, fun ζ => ?_⟩
-  · simp only [hev, z, if_pos h]
+  · simp only [hev, z, ite_eq_left h]
   · refine congrArg ev (Subtype.ext ?_)
-    simp only [z, if_neg h, ite_self]
+    simp only [z, ite_eq_right h, ite_self]
   · simp only [hev]; exact hz ζ
 
 

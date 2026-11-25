@@ -65,8 +65,8 @@ theorem period_eq_triangular_orthonormal : ∀ (E : Type) [Field E] [NumberField
   have hcc : ∀ τ : E →+* ℂ, ComplexEmbedding.conjugate (ComplexEmbedding.conjugate τ) = τ := fun τ =>
     ComplexEmbedding.involutive_conjugate E τ
   obtain ⟨f, hf⟩ := exists_letter_equiv X.Ψ X.cmType Dw.p Dw.q r hr (relab c σ) hbij Dw.mult
-    (fun τ h => by unfold Datum.mult; rw [if_pos ((hrt τ).1 ((hty _).1 h))])
-    (fun τ h => by unfold Datum.mult; rw [if_neg (fun h' => h ((hty _).2 ((hrt τ).2 h')))])
+    (fun τ h => by unfold Datum.mult; rw [ite_eq_left ((hrt τ).1 ((hty _).1 h))])
+    (fun τ h => by unfold Datum.mult; rw [ite_eq_right (fun h' => h ((hty _).2 ((hrt τ).2 h')))])
   obtain ⟨idx, hi⟩ : ∃ idx : Fin g ≃ X.Ψ × Fin r, ∀ j,
       (relab c σ (e j).1 ∈ X.Ψ ∧ (idx j).1.1 = relab c σ (e j).1 ∧ ((idx j).2 : ℕ) = Dw.q + (e j).2) ∨
       (relab c σ (e j).1 ∉ X.Ψ ∧ (idx j).1.1 = ComplexEmbedding.conjugate (relab c σ (e j).1) ∧
@@ -95,8 +95,8 @@ theorem period_eq_triangular_orthonormal : ∀ (E : Type) [Field E] [NumberField
     intro j
     rw [hq]
     rcases hi j with ⟨a, b, c'⟩ | ⟨a, b, c', d⟩
-    · rw [if_neg (by omega), b]
-    · rw [if_pos (by omega), b, hcc]
+    · rw [ite_eq_right (by omega), b]
+    · rw [ite_eq_left (by omega), b, hcc]
   have hper : ∀ (x : Frame X.Ψ r) (v : Fin r → E) j, perFr X x v (relab c σ (e j).1) (e j).2 =
       if ((idx j).2 : ℕ) < D.q then
         hermC (idx j).1.1 X.Gm (col (mat x (idx j).1) (idx j).2) (Data.emb (idx j).1.1 v)
@@ -109,10 +109,10 @@ theorem period_eq_triangular_orthonormal : ∀ (E : Type) [Field E] [NumberField
     dsimp only at h ⊢
     rw [← hp0] at h ⊢
     rcases h with ⟨a, rfl, rfl⟩ | ⟨a, rfl, rfl, d⟩
-    · rw [if_neg (by omega)]
+    · rw [ite_eq_right (by omega)]
       unfold perFr
       rw [dite_eq_left a, dite_eq_left hn]
-    · rw [if_pos (by omega)]
+    · rw [ite_eq_left (by omega)]
       unfold perFr
       rw [dite_eq_right a, dite_eq_left (show conjEmb (relab c σ (e j).1) ∈ X.Ψ from hτ), dite_eq_left hn]
       rfl
@@ -155,14 +155,14 @@ theorem period_eq_triangular_orthonormal : ∀ (E : Type) [Field E] [NumberField
     have c1 := hi j
     have c2 := hi j'
     by_cases hj : ((idx j).2 : ℕ) < D.q
-    · rw [if_pos hj] at h2 t1
+    · rw [ite_eq_left hj] at h2 t1
       have hj' : ((idx j').2 : ℕ) < D.q := by omega
-      rw [if_pos hj'] at t2
+      rw [ite_eq_left hj'] at t2
       refine ⟨hbij.1 (by rw [t1, t2, h1]), ?_⟩
       rcases c1 with ⟨-, -, c1⟩ | ⟨-, -, c1, d1⟩ <;> rcases c2 with ⟨-, -, c2⟩ | ⟨-, -, c2, d2⟩ <;> omega
-    · rw [if_neg hj] at h2 t1
+    · rw [ite_eq_right hj] at h2 t1
       have hj' : ¬ ((idx j').2 : ℕ) < D.q := by omega
-      rw [if_neg hj'] at t2
+      rw [ite_eq_right hj'] at t2
       refine ⟨hbij.1 (by rw [t1, t2, h1]), ?_⟩
       rcases c1 with ⟨-, -, c1⟩ | ⟨-, -, c1, d1⟩ <;> rcases c2 with ⟨-, -, c2⟩ | ⟨-, -, c2, d2⟩ <;> omega
   have hbne : ∀ τ i, b τ i i ≠ 0 := fun τ i => PerMove.bor_diag_ne hb τ i

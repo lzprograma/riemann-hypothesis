@@ -92,8 +92,8 @@ theorem star_permMat {n : ℕ} (s : Equiv.Perm (Fin n)) : star (permMat s) = per
   ext i j
   simp only [permMat, Matrix.star_apply, Matrix.of_apply]
   by_cases h : s j = i
-  · rw [if_pos h, if_pos (by rw [← h]; simp)]; simp
-  · rw [if_neg h, if_neg (by rintro rfl; simp at h)]; simp
+  · rw [ite_eq_left h, ite_eq_left (by rw [← h]; simp)]; simp
+  · rw [ite_eq_right h, ite_eq_right (by rintro rfl; simp at h)]; simp
 
 theorem permMat_mem {n : ℕ} (s : Equiv.Perm (Fin n)) : permMat s ∈ Matrix.unitaryGroup (Fin n) ℂ := by
   rw [Matrix.mem_unitaryGroup_iff, star_permMat, permMat_mul]

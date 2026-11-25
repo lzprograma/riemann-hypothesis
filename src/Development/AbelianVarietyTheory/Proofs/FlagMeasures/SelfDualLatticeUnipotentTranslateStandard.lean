@@ -172,14 +172,14 @@ theorem exists_move [IsNonarchimedeanLocalField F] [CharZero F] (y : Fin r → S
         by_cases hjm : j = j₀
         · subst hjm
           have : hf L S.Hm a (g j₀.castSucc) = 1 := by
-            rw [← hf_cj L S.herm.1, hga, if_pos rfl, map_one]
+            rw [← hf_cj L S.herm.1, hga, ite_eq_left rfl, map_one]
           rw [← ha, h1, eich, this]
           simp
         · have hlt : (j : ℕ) < m := by
             have : (j : ℕ) ≠ m := fun hh => hjm (Fin.ext hh)
             omega
           have k1 : hf L S.Hm (y j) (g j₀.castSucc) = 0 := by
-            rw [← hf_cj L S.herm.1, dy, if_neg, map_zero]
+            rw [← hf_cj L S.herm.1, dy, ite_eq_right, map_zero]
             intro hh; exact hjm (Fin.castSucc_injective _ hh).symm
           have k2 : hf L S.Hm (y j) (a - y j₀) = 0 := by
             rw [hf_sub_r, iy, ← h j hlt, ha, hni, iso, sub_self]
@@ -206,7 +206,7 @@ theorem core [IsNoetherianRing L.O] (Λ : Submodule L.O S.V) (hfg : Λ.FG)
     rw [← hf_cj L S.herm.1, dual]
     by_cases h : j = i <;> simp [h]
   have gram0 : ∀ i j : Fin r, hf L S.Hm (g i.castSucc) (g j.castSucc) = 0 := fun i j => by
-    rw [gram, if_neg]; simp
+    rw [gram, ite_eq_right]; simp
   have hle : A ⊓ (perp L S.Hm (Submodule.span E (Set.range gs))).restrictScalars L.O ≤ Λ := by
     rintro x ⟨hx, hx'⟩
     obtain ⟨⟨a, ha, z, hz, rfl⟩, -⟩ := (memA x).1 hx
@@ -241,9 +241,9 @@ theorem core [IsNoetherianRing L.O] (Λ : Submodule L.O S.V) (hfg : Λ.FG)
     unfold Frames.h
     rw [hf_add_r, hx' w hw, add_zero, hf_add_l, k, add_zero]
     exact hint _ ha _ hb
-  · rw [← hf_cj L S.herm.1, hc', if_neg (Fin.castSucc_ne_last j), map_zero]
+  · rw [← hf_cj L S.herm.1, hc', ite_eq_right (Fin.castSucc_ne_last j), map_zero]
   · unfold Frames.h
-    rw [hc', if_pos rfl]
+    rw [hc', ite_eq_left rfl]
   · obtain ⟨h1, h2⟩ := hproj v hv
     set x := v - ∑ i : Fin r, hf L S.Hm v (g i.castSucc) • gs i with hx
     have hxO : ∀ i, hf L S.Hm x (gs i) ∈ L.O := fun i => hint _ h1 _ (hgs i)
@@ -310,7 +310,7 @@ theorem lift_of_frame [IsNonarchimedeanLocalField F] [CharZero F] (Λ : Submodul
     rw [← hni, LinearEquiv.apply_symm_apply, ← hf_cj L S.herm.1, ← h0, hf_cj L S.herm.1, hu]
   choose c hcΛ hc using hc
   have gram0 : ∀ (i : Fin (r + 1)) (j : Fin r), hf L S.Hm (g i) (g j.castSucc) = 0 := fun i j => by
-    rw [gram, if_neg]; simp
+    rw [gram, ite_eq_right]; simp
   have hc' : ∀ j b, hf L S.Hm (c j) (g b) = if b = j then 1 else 0 := fun j b => by
     rw [← hf_cj L S.herm.1, hc]
     by_cases h : b = j <;> simp [h]

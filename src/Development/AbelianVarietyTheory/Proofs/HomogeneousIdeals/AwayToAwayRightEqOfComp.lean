@@ -42,8 +42,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory
@@ -54,8 +52,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Sp epsR IsTangent IsLieComb I
 open TrivSqZeroExt (inl inr)
 
 namespace GlobalTheory.SqZero
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {R : Type} [CommRing R] {G : Over (Spec (CommRingCat.of R))} [GrpObj G] [IsCommMonObj G]
   {n : ℕ} {S S' A : Type} [CommRing S] [Algebra R S] [CommRing S'] [Algebra R S']
@@ -156,7 +152,7 @@ theorem expBij_of_unitInChart (hv : ∀ i, IsTangent (v i)) (hS : UnitInChart G 
       rw [IsTanOver, ← Category.assoc, spMap_comp, ← hu]
       congr 2
       ext b
-      simp [addDers_apply, TrivSqZeroExt.fst_sum, t])
+      simp [addDers_apply, t])
     rw [Finr] at ha
     refine ⟨a, fun b => ?_⟩
     have := congrArg TrivSqZeroExt.snd (AlgHom.congr_fun (chart_inj j ha) b)

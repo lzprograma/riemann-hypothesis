@@ -2,45 +2,7 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.PathWeight.GeneratorImageIsSymbol
 import Formalism.PolynomialDimension.DetMulEqSumAdjugate
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -207,11 +169,19 @@ theorem ge_older (L₁ N₁ : ℕ) (hV : F.Valid L₁ N₁) (hn : Even n') (hr :
 
 end Count
 
-theorem restGeom : RestGeom := by
+theorem restGeom_of_le :
+    ∀ (p n' r : ℕ) [NeZero n'] (F : Frames n' r) (L₁ N₁ : ℕ), 13 ≤ p → 2 ≤ r → Even n' → F.Valid L₁ N₁ →
+    ∀ (deg : Fin n' → ℕ) (a : ℕ), (∀ s ∈ F.TT, (a : ℝ) ≤ deg s ∧ (deg s : ℝ) ≤ 2 * a) →
+    ∀ (j : ℤ) (dd : ℤ → ℕ),
+      (∀ x ∈ F.letters j, (F.IsW j x ∨ x ∈ F.LLset j) →
+        (dd x : ℝ) ≤ levDeg p F deg j x + levDeg p F deg j x / 100) →
+    ∀ x ∈ nonW F j,
+      ((∑ y ∈ (F.letters j).filter (fun y => Even y ∧ y < x ∧ ∀ l < r, y ≠ Arow F x l), dd y : ℕ) : ℝ) ≤
+        Bo p F deg j x / 80 := by
   intro p n' r _ F L₁ N₁ hp hr hn hV deg a hdeg j dd hdd x hx
   have hx1 : x ∈ F.letters j := (Finset.mem_filter.1 hx).1
   have hW : ¬ F.IsW j x := (Finset.mem_filter.1 hx).2
-  obtain ⟨⟨ho1, ho2, ho3⟩, _⟩ := ge_oldest F L₁ N₁ hV (by omega) j x hx1 hW
+  obtain ⟨⟨ho1, ho2, ho3⟩, _⟩ := ge_oldest F L₁ N₁ hV (by lia) j x hx1 hW
   have ho1' := ho1
   unfold Frames.letters at ho1'
   rw [Finset.mem_filter, Finset.mem_Icc] at ho1'
@@ -223,7 +193,7 @@ theorem restGeom : RestGeom := by
     intro y hy
     rw [Finset.mem_filter] at hy
     obtain ⟨h1, h2, h3, h4⟩ := hy
-    obtain ⟨h5, h6⟩ := ge_older F L₁ N₁ hV hn (by omega) j x hx1 hW y h1 h2 h3 h4
+    obtain ⟨h5, h6⟩ := ge_older F L₁ N₁ hV hn (by lia) j x hx1 hW y h1 h2 h3 h4
     exact ⟨h5, h2, h1, h6⟩
   have hlev : ∀ y ∈ F.letters j, levDeg p F deg j y ≤ 2 * ((a : ℝ) / (p : ℝ) ^ (F.dist j y)) := by
     intro y hy
@@ -236,7 +206,7 @@ theorem restGeom : RestGeom := by
       (dd y : ℝ) ≤ 2.02 * ((a : ℝ) / (p : ℝ) ^ (F.dist j y)) := by
     intro y hy
     obtain ⟨_, _, h3, h4⟩ := hY y hy
-    have h5 := (abs_le.1 (hdd y h3 h4)).2
+    have h5 := hdd y h3 h4
     have h6 := hlev y h3
     linarith
   rw [Nat.cast_sum]
@@ -256,21 +226,21 @@ theorem restGeom : RestGeom := by
       intro y hy
       obtain ⟨h1, h2, _, _⟩ := hY y hy
       obtain ⟨k, hk⟩ := ho2.sub h2
-      constructor <;> omega
+      constructor <;> lia
     have hsum : ∑ y ∈ (F.letters j).filter (fun y => Even y ∧ y < x ∧ ∀ l < r, y ≠ Arow F x l), (dd y : ℝ) =
         ∑ m ∈ ((F.letters j).filter (fun y => Even y ∧ y < x ∧ ∀ l < r, y ≠ Arow F x l)).image
           (fun y => ((F.oldest j x - y) / 2).toNat), (dd (F.oldest j x - 2 * (m : ℤ)) : ℝ) := by
       rw [Finset.sum_image]
       · refine Finset.sum_congr rfl fun y hy => ?_
         have h1 := (hf y hy).1
-        have h2 : F.oldest j x - 2 * ((((F.oldest j x - y) / 2).toNat : ℕ) : ℤ) = y := by omega
+        have h2 : F.oldest j x - 2 * ((((F.oldest j x - y) / 2).toNat : ℕ) : ℤ) = y := by lia
         rw [h2]
       · intro y1 hy1 y2 hy2 h
         have h1 := (hf y1 hy1).1
         have h2 := (hf y2 hy2).1
         have h' : ((F.oldest j x - y1) / 2).toNat = ((F.oldest j x - y2) / 2).toNat := h
         rw [h'] at h1
-        omega
+        lia
     rw [hsum]
     have hB : (a : ℝ) / (p : ℝ) ^ (F.dist j (F.oldest j x)) ≤ Bo p F deg j x := by
       unfold Bo levDeg
@@ -283,14 +253,18 @@ theorem restGeom : RestGeom := by
         obtain ⟨y, hy, rfl⟩ := Finset.mem_image.1 hm
         obtain ⟨h1, h2⟩ := hf y hy
         refine ⟨h2, Nat.cast_nonneg _, ?_⟩
-        have h3 : F.oldest j x - 2 * ((((F.oldest j x - y) / 2).toNat : ℕ) : ℤ) = y := by omega
+        have h3 : F.oldest j x - 2 * ((((F.oldest j x - y) / 2).toNat : ℕ) : ℤ) = y := by lia
         have h4 : F.dist j y = F.dist j (F.oldest j x) + 2 * ((F.oldest j x - y) / 2).toNat := by
           have := (hY y hy).1
           unfold Frames.dist
-          omega
+          lia
         show (dd (F.oldest j x - 2 * ((((F.oldest j x - y) / 2).toNat : ℕ) : ℤ)) : ℝ) ≤ _
         rw [h3, ← h4, mul_div_assoc]
         exact hdd' y hy)
     exact le_trans g1 g2
+
+theorem restGeom : RestGeom := fun p n' r _ F L₁ N₁ hp hr hn hV deg a hdeg j dd hdd =>
+  restGeom_of_le p n' r F L₁ N₁ hp hr hn hV deg a hdeg j dd fun y hy hwy => by
+    linarith [(abs_le.1 (hdd y hy hwy)).2]
 
 end Formalism.MainNotions.G.symbolGeneratorData

@@ -4,8 +4,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscrim
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
@@ -36,14 +34,6 @@ def LogSt : Prop :=
     (∀ i, constantCoeff (ℓ i) = 0) ∧ dLin ℓ = 1 ∧
     comp1 ℓ (G.add (pt k (n := 2) d 0) (pt k (n := 2) d 1)) =
       comp1 ℓ (pt k (n := 2) d 0) + comp1 ℓ (pt k (n := 2) d 1)
-
-def LogDerivSt : Prop :=
-  ∀ (k : Type) [CommRing k] [Algebra ℚ k] (d : ℕ) (G : FGLaw k d) (ℓ : Pt k 1 d),
-    (∀ i, constantCoeff (ℓ i) = 0) → dLin ℓ = 1 →
-    comp1 ℓ (G.add (pt k (n := 2) d 0) (pt k (n := 2) d 1)) =
-      comp1 ℓ (pt k (n := 2) d 0) + comp1 ℓ (pt k (n := 2) d 1) →
-    ∀ (u : Fin d → k) (g : PS k 1 d),
-      Dof G.F u (ev (n := 1) ![ℓ] g) = ev (n := 1) ![ℓ] (∑ j, C (u j) * pderiv ((0 : Fin 1), j) g)
 
 def ConstSt : Prop :=
   ∀ (k : Type) [CommRing k] (d : ℕ) (φ : Pt k 1 d), (∀ i, constantCoeff (φ i) = 0) →

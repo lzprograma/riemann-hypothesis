@@ -3,46 +3,7 @@ module
 public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
 public import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
 public import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeCoproduct
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -65,33 +26,6 @@ theorem reducedInverseImage_eq_vanishingIdeal_closedPreimage {X X' : Scheme.{u}}
     (S : TopologicalSpace.Closeds X) :
     reducedInverseImage f S = Scheme.IdealSheafData.vanishingIdeal (closedPreimage f S) := rfl
 
-private theorem support_vanishingIdeal {X : Scheme.{u}} (Z : TopologicalSpace.Closeds X) :
-    (Scheme.IdealSheafData.vanishingIdeal Z).support = Z := rfl
-
-private theorem isRadical_map_of_bijective {R S : Type u} [CommRing R] [CommRing S] (φ : R →+* S)
-    (hφ : Function.Bijective φ) {I : Ideal R} (hI : I.radical = I) :
-    (Ideal.map φ I).radical = Ideal.map φ I := by
-  refine le_antisymm ?_ Ideal.le_radical
-  intro y hy
-  obtain ⟨m, hm⟩ := Ideal.mem_radical_iff.mp hy
-  obtain ⟨z, rfl⟩ := hφ.2 y
-  rw [← map_pow] at hm
-  obtain ⟨w, hw, hw2⟩ := (Ideal.mem_map_iff_of_surjective φ hφ.2).mp hm
-  have hz : z ^ m ∈ I := by
-    have hwz : w = z ^ m := hφ.1 hw2
-    rwa [hwz] at hw
-  have hzI : z ∈ I := by
-    rw [← hI]
-    exact Ideal.mem_radical_iff.mpr ⟨m, hz⟩
-  exact Ideal.mem_map_of_mem _ hzI
-
-private theorem ideal_eq_span_of_map_eq_span {R S : Type u} [CommRing R] [CommRing S] (φ : R →+* S)
-    (ψ : S →+* R) (hψφ : ∀ r, ψ (φ r) = r) (I : Ideal R) (b : S)
-    (hb : Ideal.map φ I = Ideal.span {b}) : I = Ideal.span {ψ b} := by
-  have h2 : Ideal.map ψ (Ideal.map φ I) = I := by
-    rw [Ideal.map_map, show ψ.comp φ = RingHom.id R from RingHom.ext hψφ, Ideal.map_id]
-  rw [← h2, hb, Ideal.map_span, Set.image_singleton]
-
 private theorem isRegularParameterSystem_of_ringEquiv {R S : Type u} [CommRing R] [CommRing S]
     [IsLocalRing R] [IsLocalRing S] (e : R ≃+* S) (n : ℕ) (v : Fin n → R) (w : Fin n → S)
     (hvw : ∀ i, e (v i) = w i) (hv : IsRegularParameterSystem R n v) :
@@ -112,20 +46,6 @@ private theorem isIso_appLE_image {X Y : Scheme.{u}} (h : X ⟶ Y) [IsOpenImmers
   rw [show h.appLE (h ''ᵁ U) U e = (h.appIso U).hom from (Scheme.Hom.appIso_hom' h U).symm]
   infer_instance
 
-private theorem stalkMap_germ_eq_germ_appLE {X Y : Scheme.{u}} (f : X ⟶ Y) (U : Y.Opens) (V : X.Opens)
-    (e : V ≤ (TopologicalSpace.Opens.map f.base).obj U) (x : X) (hx : x ∈ V)
-    (hfx : f.base x ∈ U) (s : Γ(Y, U)) :
-    f.stalkMap x (Y.presheaf.germ U (f.base x) hfx s)
-      = X.presheaf.germ V x hx (f.appLE U V e s) := by
-  have key : Y.presheaf.germ U (f.base x) hfx ≫ f.stalkMap x
-      = f.app U ≫ X.presheaf.germ ((TopologicalSpace.Opens.map f.base).obj U) x hfx := by
-    simp
-  have key2 : f.stalkMap x (Y.presheaf.germ U (f.base x) hfx s)
-      = X.presheaf.germ ((TopologicalSpace.Opens.map f.base).obj U) x hfx (f.app U s) := by
-    rw [← CommRingCat.comp_apply, key, CommRingCat.comp_apply]
-  have h1 : f.appLE U V e s = X.presheaf.map (homOfLE e).op (f.app U s) := rfl
-  rw [key2, h1, TopCat.Presheaf.germ_res_apply]
-
 private theorem comap_ideal_radical_eq_of_isOpenImmersion {X' Y' : Scheme.{u}} (h : X' ⟶ Y') [IsOpenImmersion h]
     (I : Y'.IdealSheafData) (hI : I.radical = I) (V : X'.affineOpens) :
     ((I.comap h).ideal V).radical = (I.comap h).ideal V := by
@@ -133,10 +53,11 @@ private theorem comap_ideal_radical_eq_of_isOpenImmersion {X' Y' : Scheme.{u}} (
   have he : V.1 ≤ (TopologicalSpace.Opens.map h.base).obj (h ''ᵁ V.1) :=
     le_of_eq (Scheme.Hom.preimage_image_eq h V.1).symm
   have : IsIso (h.appLE (h ''ᵁ V.1) V.1 he) := isIso_appLE_image h V.1 he
-  rw [Scheme.IdealSheafData.comap_ideal_eq_map_appLE I h ⟨h ''ᵁ V.1, hU⟩ V he]
-  refine isRadical_map_of_bijective _
-    (ConcreteCategory.bijective_of_isIso (h.appLE (h ''ᵁ V.1) V.1 he)) ?_
-  rw [← Scheme.IdealSheafData.radical_ideal, hI]
+  have hb := ConcreteCategory.bijective_of_isIso (h.appLE (h ''ᵁ V.1) V.1 he)
+  rw [Scheme.IdealSheafData.comap_ideal_eq_map_appLE I h ⟨h ''ᵁ V.1, hU⟩ V he,
+    ← Ideal.map_radical_of_surjective hb.2
+      ((RingHom.injective_iff_ker_eq_bot _).mp hb.1 ▸ bot_le),
+    ← Scheme.IdealSheafData.radical_ideal, hI]
 
 theorem comap_vanishingIdeal_of_isOpenImmersion {X' Y' : Scheme.{u}} (h : X' ⟶ Y')
     [IsOpenImmersion h] (Z : TopologicalSpace.Closeds Y') :
@@ -144,7 +65,8 @@ theorem comap_vanishingIdeal_of_isOpenImmersion {X' Y' : Scheme.{u}} (h : X' ⟶
       = Scheme.IdealSheafData.vanishingIdeal (closedPreimage h Z) := by
   have hZrad : (Scheme.IdealSheafData.vanishingIdeal Z).radical
       = Scheme.IdealSheafData.vanishingIdeal Z := by
-    rw [← Scheme.IdealSheafData.vanishingIdeal_support, support_vanishingIdeal]
+    rw [← Scheme.IdealSheafData.vanishingIdeal_support]
+    rfl
   have hrad : ((Scheme.IdealSheafData.vanishingIdeal Z).comap h).radical
       = (Scheme.IdealSheafData.vanishingIdeal Z).comap h := by
     refine Scheme.IdealSheafData.ext (funext fun V => ?_)
@@ -185,18 +107,15 @@ theorem isStrictNormalCrossingsAt_base_of_comap {X' Y' : Scheme.{u}} (h : X' ⟶
     le_of_eq (Scheme.Hom.preimage_image_eq h U'.1).symm
   have hy : h.base x ∈ h ''ᵁ U'.1 := ⟨x, hx, rfl⟩
   have : IsIso (h.appLE (h ''ᵁ U'.1) U'.1 he) := isIso_appLE_image h U'.1 he
-  have : IsIso (h.stalkMap x) := inferInstance
   let ε : Γ(Y', h ''ᵁ U'.1) ≃+* Γ(X', U'.1) :=
     (asIso (h.appLE (h ''ᵁ U'.1) U'.1 he)).commRingCatIsoToRingEquiv
   let τ : Y'.presheaf.stalk (h.base x) ≃+* X'.presheaf.stalk x :=
     (asIso (h.stalkMap x)).commRingCatIsoToRingEquiv
   have hgerm : ∀ i, τ (Y'.presheaf.germ (h ''ᵁ U'.1) (h.base x) hy (ε.symm (g i)))
-      = X'.presheaf.germ U'.1 x hx (g i) := by
-    intro i
-    have h1 := stalkMap_germ_eq_germ_appLE h (h ''ᵁ U'.1) U'.1 he x hx hy (ε.symm (g i))
-    have h2 : (h.appLE (h ''ᵁ U'.1) U'.1 he) (ε.symm (g i)) = g i := ε.apply_symm_apply (g i)
-    rw [h2] at h1
-    exact h1
+      = X'.presheaf.germ U'.1 x hx (g i) := fun i =>
+    ((Scheme.Hom.germ_stalkMap_apply h (h ''ᵁ U'.1) x hy (ε.symm (g i))).trans
+      (TopCat.Presheaf.germ_res_apply X'.presheaf (homOfLE he) x hx _).symm).trans
+      (congrArg (X'.presheaf.germ U'.1 x hx) (ε.apply_symm_apply (g i)))
   refine ⟨IsRegularLocalRing.of_ringEquiv τ.symm, ⟨h ''ᵁ U'.1, hU⟩, hy, n,
     fun i => ε.symm (g i), J, ?_, ?_⟩
   · refine isRegularParameterSystem_of_ringEquiv τ.symm n
@@ -206,11 +125,13 @@ theorem isStrictNormalCrossingsAt_base_of_comap {X' Y' : Scheme.{u}} (h : X' ⟶
     rw [← hgerm i, τ.symm_apply_apply]
   · have hmap := Scheme.IdealSheafData.comap_ideal_eq_map_appLE E h ⟨h ''ᵁ U'.1, hU⟩ U' he
     rw [hideal] at hmap
-    have hprod : (ε.symm : Γ(X', U'.1) →+* Γ(Y', h ''ᵁ U'.1)) (∏ i ∈ J, g i)
-        = ∏ i ∈ J, ε.symm (g i) := map_prod _ _ _
-    rw [ideal_eq_span_of_map_eq_span ((h.appLE (h ''ᵁ U'.1) U'.1 he).hom)
-      (ε.symm : Γ(X', U'.1) →+* Γ(Y', h ''ᵁ U'.1)) (fun r => ε.symm_apply_apply r)
-      (E.ideal ⟨h ''ᵁ U'.1, hU⟩) (∏ i ∈ J, g i) hmap.symm, hprod]
+    have hcomp :
+        (ε.symm : Γ(X', U'.1) →+* Γ(Y', h ''ᵁ U'.1)).comp
+          (ε : Γ(Y', h ''ᵁ U'.1) →+* Γ(X', U'.1)) = RingHom.id _ :=
+      RingHom.ext ε.symm_apply_apply
+    have h2 := congrArg (Ideal.map (ε.symm : Γ(X', U'.1) →+* Γ(Y', h ''ᵁ U'.1))) hmap.symm
+    change Ideal.map _ (Ideal.map (ε : Γ(Y', h ''ᵁ U'.1) →+* Γ(X', U'.1)) _) = _ at h2
+    rwa [Ideal.map_map, hcomp, Ideal.map_id, Ideal.map_span, Set.image_singleton, map_prod] at h2
 
 theorem reducedInverseImage_comp {A B Z : Scheme.{u}} (g : A ⟶ B) (f : B ⟶ Z)
     (W : TopologicalSpace.Closeds Z) :

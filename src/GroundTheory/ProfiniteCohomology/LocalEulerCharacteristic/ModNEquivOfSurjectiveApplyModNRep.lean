@@ -111,10 +111,6 @@ attribute [local instance] unitFiltrationAction maxPowAction
 
 variable {E F}
 
-theorem coe_maxPow_smul (σ : F ≃ₐ[E] F) {k : ℕ} (x : maxPow F k) :
-    ((σ • x : maxPow F k) : 𝒪[F]) = σ • (x : 𝒪[F]) :=
-  rfl
-
 variable {ϖ : 𝒪[F]} (hϖ : Irreducible ϖ) {p : ℕ} {e : ℕ} {ε : 𝒪[F]ˣ}
   (hpe : (p : 𝒪[F]) = ϖ ^ e * ε)
 include hϖ hpe
@@ -218,18 +214,6 @@ theorem unitToModN_eq_zero_iff (hp : p.Prime) {k : ℕ} (hk : e + 1 ≤ k)
     exact hyp.symm
 
 
-omit hϖ hpe in
-variable (ϖ) in
-theorem unitToModN_smul (hϖ : Irreducible ϖ) (hpe : (p : 𝒪[F]) = ϖ ^ e * ε) {k : ℕ}
-    (hk : e ≤ k) (σ : F ≃ₐ[E] F) (u : Additive (unitFiltration F k)) :
-    unitToModN hϖ hpe hk (σ • u) =
-      modNRep (F ≃ₐ[E] F) (maxPow F k) p σ (unitToModN hϖ hpe hk u) := by
-  rw [unitToModN_apply, unitToModN_apply, modNRep_mk]
-  congr 1
-  ext
-  rw [coe_maxPow_smul, smul_sub, smul_one]
-  rfl
-
 end Filtration
 
 section Lattice
@@ -270,62 +254,8 @@ noncomputable abbrev normalSubAction (θ : F) : DistribMulAction (F ≃ₐ[E] F)
 
 attribute [local instance] normalSubAction
 
-theorem coe_normalSub_smul {θ : F} (σ : F ≃ₐ[E] F) (x : normalSub E θ) :
-    (((σ • x : normalSub E θ) : 𝒪[F]) : F) = σ ((x : 𝒪[F]) : F) :=
-  rfl
-
 variable {θ : F} (hθ : LinearIndependent E fun σ : F ≃ₐ[E] F ↦ σ θ)
   (hθO : ∀ σ : F ≃ₐ[E] F, σ θ ∈ 𝒪[F])
-
-omit [TopologicalSpace E] [IsNonarchimedeanLocalField E] [TopologicalSpace F]
-  [IsNonarchimedeanLocalField F] in
-include hθO in
-theorem sum_smul_mem_integer (c : (F ≃ₐ[E] F) → 𝒪[E]) : ∑ σ, c σ • σ θ ∈ 𝒪[F] := by
-  refine sum_mem fun σ _ ↦ ?_
-  rw [integer_smul_eq]
-  exact mul_mem ((algebraMap_mem_integer_iff E F (c σ)).mpr (c σ).2) (hθO σ)
-
-noncomputable def normalSubOfCoeff : ((F ≃ₐ[E] F) → 𝒪[E]) →+ normalSub E θ where
-  toFun c := ⟨⟨∑ σ, c σ • σ θ, sum_smul_mem_integer hθO c⟩, sum_smul_mem_normalLattice c⟩
-  map_zero' := by ext; simp
-  map_add' c d := by ext; simp [add_smul, Finset.sum_add_distrib]
-
-omit [TopologicalSpace E] [IsNonarchimedeanLocalField E] [TopologicalSpace F]
-  [IsNonarchimedeanLocalField F] in
-theorem coe_normalSubOfCoeff (c : (F ≃ₐ[E] F) → 𝒪[E]) :
-    ((normalSubOfCoeff hθO c : 𝒪[F]) : F) = ∑ σ, c σ • σ θ :=
-  rfl
-
-omit [TopologicalSpace E] [IsNonarchimedeanLocalField E] [TopologicalSpace F]
-  [IsNonarchimedeanLocalField F] in
-include hθ in
-theorem normalSubOfCoeff_bijective : Function.Bijective (normalSubOfCoeff hθO) := by
-  constructor
-  · intro c d h
-    have := congrArg (fun x : normalSub E θ ↦ ((x : 𝒪[F]) : F)) h
-    exact coeff_injective θ hθ this
-  · intro x
-    obtain ⟨c, hc⟩ := (mem_normalLattice_iff 1 θ).mp (mem_normalSub.mp x.2)
-    refine ⟨c, ?_⟩
-    ext
-    rw [coe_normalSubOfCoeff, ← hc]
-    simp
-
-noncomputable def normalSubEquiv : ((F ≃ₐ[E] F) → 𝒪[E]) ≃+ normalSub E θ :=
-  AddEquiv.ofBijective (normalSubOfCoeff hθO) (normalSubOfCoeff_bijective hθ hθO)
-
-omit [TopologicalSpace E] [IsNonarchimedeanLocalField E] [TopologicalSpace F]
-  [IsNonarchimedeanLocalField F] in
-theorem normalSubEquiv_apply (c : (F ≃ₐ[E] F) → 𝒪[E]) :
-    normalSubEquiv hθ hθO c = normalSubOfCoeff hθO c :=
-  rfl
-
-theorem smul_normalSubOfCoeff (τ : F ≃ₐ[E] F) (c : (F ≃ₐ[E] F) → 𝒪[E]) :
-    τ • normalSubOfCoeff hθO c = normalSubOfCoeff hθO (fun σ ↦ c (τ⁻¹ * σ)) := by
-  ext
-  rw [coe_normalSub_smul, coe_normalSubOfCoeff, coe_normalSubOfCoeff]
-  have := algEquiv_smul_sum (1 : 𝒪[E]) θ τ 0 c
-  simpa using this
 
 end Lattice
 
@@ -395,7 +325,7 @@ theorem coeffToRegular_perm [Group Γ] (τ : Γ) (c : Γ → O) :
   rw [Finset.sum_eq_single (τ⁻¹ * ρ)]
   · simp
   · intro σ _ hσ
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     apply hσ
     rw [← h]
@@ -442,7 +372,7 @@ noncomputable def modNEquivOfSurjective (φ : A →+ X) (hs : Function.Surjectiv
     (((LinearMap.range (LinearMap.lsmul ℤ A n)).liftQ φ.toIntLinearMap
       fun a ha ↦ LinearMap.mem_ker.mpr ((hker a).mpr ha)).toAddMonoidHom.toZModLinearMap n)
     ⟨by
-      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+      rw [injective_iff_map_eq_zero]
       intro x hx
       obtain ⟨a, rfl⟩ := Submodule.Quotient.mk_surjective _ x
       exact (Submodule.Quotient.mk_eq_zero _).mpr ((hker a).mp hx),
@@ -664,7 +594,7 @@ theorem finite_modN_maxPow (k : ℕ) : Finite (ModN (maxPow F k) p) := by
   let L := (LinearMap.range (LinearMap.lsmul ℤ (maxPow F k) p)).liftQ φ.toIntLinearMap
     fun a ha ↦ LinearMap.mem_ker.mpr ((hφ a).mpr ha)
   refine Finite.of_injective L ?_
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨a, rfl⟩ := Submodule.Quotient.mk_surjective _ x
   exact (Submodule.Quotient.mk_eq_zero _).mpr ((hφ a).mp hx)

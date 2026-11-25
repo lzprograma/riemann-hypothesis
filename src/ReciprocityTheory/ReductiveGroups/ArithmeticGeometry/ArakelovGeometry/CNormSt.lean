@@ -12,6 +12,7 @@ import Mathlib.Tactic.TypeStar
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.LemCone
 public import Mathlib.Algebra.MvPolynomial.Funext
 import ReciprocityTheory.GeometryOfNumbers.PluriharmonicAnalysis.BergmanDefs
+import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.IrreducibleConnected.BasicOpenSteps
 
 @[expose] public section
 
@@ -45,16 +46,8 @@ theorem smul_mem_pts_coord {J : Type} [Fintype J] (x : J → Ω) {z : J → ℂ}
 
 theorem dense_eval_ne_zero {N : ℕ} {Δ : MvPolynomial (Fin N) ℂ} (hΔ : Δ ≠ 0) :
     Dense {w | eval w Δ ≠ 0} := by
-  rw [dense_iff_inter_open]
-  rintro U hU ⟨w, hw⟩
-  by_contra hne
-  apply hΔ
-  have h0 : ∀ v ∈ U, eval v Δ = 0 := fun v hv => by
-    by_contra h
-    exact hne ⟨v, hv, h⟩
-  have han : AnalyticOnNhd ℂ (fun v => eval v Δ) Set.univ := AnalyticOnNhd.eval_mvPolynomial Δ
-  have hz := han.eqOn_zero_of_preconnected_of_eventuallyEq_zero isPreconnected_univ
-    (Set.mem_univ w) (Filter.eventually_of_mem (hU.mem_nhds hw) h0)
-  exact MvPolynomial.funext fun v => by simpa using hz (Set.mem_univ v)
+  first
+    | exact _root_.GroundTheory.Heights₂.Heights.HilbertSamuel.IrreducibleBasicOpenConnected.dense_ne_zero
+    | apply _root_.GroundTheory.Heights₂.Heights.HilbertSamuel.IrreducibleBasicOpenConnected.dense_ne_zero <;> first | assumption | rfl | infer_instance
 
 end ReciprocityTheory.ChartRestriction.G.ArakelovGeometry

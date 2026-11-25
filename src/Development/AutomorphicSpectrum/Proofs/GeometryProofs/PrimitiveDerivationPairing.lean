@@ -17,62 +17,8 @@ public import Mathlib.LinearAlgebra.Dual.Lemmas
 public import Mathlib.GroupTheory.CosetCover
 public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.MemPrimitiveTensorsIffIsPrimitiveElem
 public import Mathlib.RingTheory.HopfAlgebra.Quotient
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.PiTensorProduct
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -93,7 +39,7 @@ theorem exists_algHom_ne_zero_of_not_isNilpotent
     ∃ x : A →ₐ[k] k, x f ≠ 0 := by
   haveI : IsArtinianRing A := isArtinian_of_tower k inferInstance
   rw [← mem_nilradical, nilradical_eq_sInf, Ideal.mem_sInf] at hf
-  push_neg at hf
+  push Not at hf
   obtain ⟨P, hP, hfP⟩ := hf
   haveI : P.IsPrime := hP
   haveI : P.IsMaximal := IsArtinianRing.isMaximal_of_isPrime P
@@ -308,7 +254,7 @@ theorem mem_eigenspace_of_mem_ker (D : Derivation k R R) {z : R} (hz : D z = z)
 
 theorem powerSum_injective (p : ℕ) [CharP k p] (D : Derivation k R R) {z w : R}
     (hz : D z = z) (hw : z * w = 1) : Function.Injective (powerSum D z p) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro a ha
   have hinj : Function.Injective (fun i : Fin p => ((i : ℕ) : k)) := fun i j hij =>
     Fin.ext (CharP.natCast_injOn_Iio k p i.2 j.2 hij)
@@ -521,7 +467,7 @@ theorem exists_coeff (p : ℕ) [Fact p.Prime] [CharP k p] (D : Derivation k R R)
       have : ∑ i ∈ Finset.range j, (if i = j then e else c i) * z ^ i
           = ∑ i ∈ Finset.range j, c i * z ^ i := by
         refine Finset.sum_congr rfl fun i hi => ?_
-        rw [if_neg (Finset.mem_range.1 hi).ne]
+        rw [ite_eq_right (Finset.mem_range.1 hi).ne]
       rw [this, ← hac]
       simp
 
@@ -811,8 +757,7 @@ theorem exists_isUnit_mem_of_forall_point :
     exact ht (hx t this)
   have hne := Subspace.biUnion_ne_univ_of_top_notMem (k := k) (s := s) htop
   obtain ⟨w, hw⟩ : ∃ w : U, w ∉ ⋃ p ∈ s, (p : Set U) := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hne (Set.eq_univ_of_forall hcon)
   refine ⟨w, w.2, ?_⟩
   by_contra hnu
@@ -951,7 +896,7 @@ theorem key (k : Type) [Field k] [IsAlgClosed k] (p : ℕ) [hp : Fact p.Prime] [
         intro hz
         have := _root_.GlobalTheory.CompanionTheory.HopfPrim.powers_indep_of_primitive k p A f hf h0 (fun i => if i = 0 then 0 else 1) (by
           rw [Finset.range_eq_Ico, Finset.sum_eq_sum_Ico_succ_bot (by omega)]
-          simp only [if_true, zero_smul, zero_add]
+          simp only [ite_true, zero_smul, zero_add]
           rw [← hz]
           refine Finset.sum_congr rfl fun i hi => ?_
           have : i ≠ 0 := by have := (Finset.mem_Ico.1 hi).1; omega

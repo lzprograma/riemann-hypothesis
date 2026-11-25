@@ -27,12 +27,12 @@ theorem h_om'_f'U (f f' : Fin (r + 1) → V) (T' : F) (hF' : Formalism.MainNotio
   rw [h_sum_smul_left]
   by_cases hb : b = Fin.last r
   · subst hb
-    rw [if_pos rfl, Finset.sum_eq_single (Fin.last r)]
+    rw [ite_eq_left rfl, Finset.sum_eq_single (Fin.last r)]
     · rw [hF'.2, adj_last]
     · intro c _ hc
       rw [hF'.1 c (Fin.last r) (Or.inl hc), mul_zero]
     · simp
-  · rw [if_neg hb]
+  · rw [ite_eq_right hb]
     apply Finset.sum_eq_zero
     intro c _
     rw [hF'.1 c b (Or.inr hb), mul_zero]
@@ -42,10 +42,10 @@ theorem h_om'_om'U (f f' : Fin (r + 1) → V) (T' : F) (hF' : Formalism.MainNoti
   have e := h_sum_smul_left (H := H) (fun c => (H.Zhat f f').adjugate c (Fin.last r)) f' (H.om' f f')
   change H.h (∑ c, (H.Zhat f f').adjugate c (Fin.last r) • f' c) (H.om' f f') = _
   rw [e, Finset.sum_eq_single (Fin.last r)]
-  · rw [H.h_herm, h_om'_f'U H f f' T' hF', if_pos rfl, adj_last, map_mul, map_neg, AlgEquiv.commutes]
+  · rw [H.h_herm, h_om'_f'U H f f' T' hF', ite_eq_left rfl, adj_last, map_mul, map_neg, AlgEquiv.commutes]
     ring
   · intro c _ hc
-    rw [H.h_herm, h_om'_f'U H f f' T' hF', if_neg hc, map_zero, mul_zero]
+    rw [H.h_herm, h_om'_f'U H f f' T' hF', ite_eq_right hc, map_zero, mul_zero]
   · simp
 
 private theorem hermSp_h_smul_right_eq_cj_mul' (x y : V) (a : E) : H.h x (a • y) = M.L.cj a * H.h x y := by
@@ -97,10 +97,10 @@ theorem mem_X_ofU (f f' : Fin (r + 1) → V) (T T' : F) (hF : Formalism.MainNoti
     rw [e]
     by_cases ha : a = Fin.last r
     · subst ha
-      simp only [and_self, if_true] at this
+      simp only [and_self, ite_true] at this
       rw [Pi.single_eq_same]
       linear_combination this
-    · simp only [ha, false_and, if_false, mul_zero, zero_add] at this
+    · simp only [ha, false_and, ite_false, mul_zero, zero_add] at this
       rw [Pi.single_eq_of_ne ha]
       exact this
   have hc'eq : (fun b => c (Sum.inr b)) =
@@ -119,9 +119,9 @@ theorem mem_X_ofU (f f' : Fin (r + 1) → V) (T T' : F) (hF : Formalism.MainNoti
   have hl : c (Sum.inl (Fin.last r)) = 0 := by
     rw [h_add_right, h_sum_right, h_sum_right] at h2
     simp only [h_om'_f, h_om'_f'U H f f' T' hF'] at h2
-    rw [Finset.sum_eq_single (Fin.last r) (fun b _ hb => by rw [if_neg hb, mul_zero]) (by simp),
-      Finset.sum_eq_single (Fin.last r) (fun b _ hb => by rw [if_neg hb, mul_zero]) (by simp),
-      if_pos rfl, if_pos rfl, ← dl_full, hcl', kapU, map_mul, map_mul, map_mul, AlgEquiv.commutes] at h2
+    rw [Finset.sum_eq_single (Fin.last r) (fun b _ hb => by rw [ite_eq_right hb, mul_zero]) (by simp),
+      Finset.sum_eq_single (Fin.last r) (fun b _ hb => by rw [ite_eq_right hb, mul_zero]) (by simp),
+      ite_eq_left rfl, ite_eq_left rfl, ← dl_full, hcl', kapU, map_mul, map_mul, map_mul, AlgEquiv.commutes] at h2
     have h3 : M.L.cj (H.Dl f f' (r + 1)) * M.L.cj (Ring.inverse (H.Dl f f' (r + 1))) = 1 := by
       rw [← map_mul, Ring.mul_inverse_cancel _ hD, map_one]
     have hmul : M.L.cj (c (Sum.inl (Fin.last r))) * H.Gdet f f' T T' = 0 := by

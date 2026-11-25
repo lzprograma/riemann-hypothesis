@@ -78,7 +78,7 @@ theorem _root_.GlobalTheory.QNorm.evenNorms_one_add_four_mul :
     by_cases ht : w t ≤ 1
     · exact exists_exp_two_mul_of_eq_sq w (mul_ne_zero h2 hb)
         (by rw [hfac, map_mul, hroot t ht, mul_one])
-    · push_neg at ht
+    · push Not at ht
       have ht0 : t ≠ 0 := by
         rintro h
         rw [h, map_zero] at ht

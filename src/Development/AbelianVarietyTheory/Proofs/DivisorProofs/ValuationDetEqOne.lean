@@ -62,27 +62,6 @@ open scoped ValuativeRel Pointwise
 
 namespace GlobalTheory.HenQ.ShellOp
 
-section General
-
-open GroundTheory.Automorphic.Spherical GLnLocal Iwasawa HeckeAlgebra
-
-variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] {n : ℕ}
-
-
-end General
-
-end GlobalTheory.HenQ.ShellOp
-
-namespace GlobalTheory.HenQ.ShellOp
-
-section Series
-
-end Series
-
-end GlobalTheory.HenQ.ShellOp
-
-namespace GlobalTheory.HenQ.ShellOp
-
 section Hecke
 
 open GroundTheory.Automorphic.Spherical GLnLocal Iwasawa HeckeAlgebra
@@ -183,21 +162,3 @@ theorem minuscule_mem_of (z : Fin n → ℂˣ) {f : GL (Fin n) F → ℂ}
 end Hecke
 
 end GlobalTheory.HenQ.ShellOp
-
-namespace GlobalTheory.HenQ.ShellOp
-
-section Global
-
-open GroundTheory.Automorphic.Spherical GLnLocal Iwasawa HeckeAlgebra
-
-variable {K : Type} [Field K] [NumberField K]
-
-end Global
-
-end GlobalTheory.HenQ.ShellOp
-
-namespace GlobalTheory.HenQ
-
-open GroundTheory.Automorphic.Spherical GLnLocal Iwasawa HeckeAlgebra
-
-end GlobalTheory.HenQ

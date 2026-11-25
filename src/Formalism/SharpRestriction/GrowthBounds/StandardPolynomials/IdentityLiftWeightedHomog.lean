@@ -5,44 +5,6 @@ public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LiftSubstit
 import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.HookKeyOrderGeOne
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.KeyOne
 import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Lemma44IdentityOfRawTail
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -65,9 +27,9 @@ section Grad
 
 variable {X : Loc}
 
-theorem wN_pos {v : VarH X} (h : (v.1.2 = true ∧ 1 ≤ v.2.val) ∨ (v.1.2 = false ∧ v.2.val < 1)) : wN X v = 1 := if_pos h
+theorem wN_pos {v : VarH X} (h : (v.1.2 = true ∧ 1 ≤ v.2.val) ∨ (v.1.2 = false ∧ v.2.val < 1)) : wN X v = 1 := ite_eq_left h
 
-theorem wN_neg {v : VarH X} (h : ¬ ((v.1.2 = true ∧ 1 ≤ v.2.val) ∨ (v.1.2 = false ∧ v.2.val < 1))) : wN X v = 0 := if_neg h
+theorem wN_neg {v : VarH X} (h : ¬ ((v.1.2 = true ∧ 1 ≤ v.2.val) ∨ (v.1.2 = false ∧ v.2.val < 1))) : wN X v = 0 := ite_eq_right h
 
 theorem ndM_eq (m : MonH X) : ndM X m = Finsupp.weight (wN X) m := by
   classical
@@ -76,9 +38,9 @@ theorem ndM_eq (m : MonH X) : ndM X m = Finsupp.weight (wN X) m := by
   refine Finset.sum_congr rfl fun v _ => ?_
   by_cases h : (v.1.2 = true ∧ 1 ≤ v.2.val) ∨ (v.1.2 = false ∧ v.2.val < 1)
   · have h' : ((hhLetters X.TT).vec v.1 = true ∧ 1 ≤ v.2.val) ∨ ((hhLetters X.TT).vec v.1 = false ∧ v.2.val < 1) := h
-    rw [if_pos h', wN_pos h, smul_eq_mul, mul_one]
+    rw [ite_eq_left h', wN_pos h, smul_eq_mul, mul_one]
   · have h' : ¬ (((hhLetters X.TT).vec v.1 = true ∧ 1 ≤ v.2.val) ∨ ((hhLetters X.TT).vec v.1 = false ∧ v.2.val < 1)) := h
-    rw [if_neg h', wN_neg h, smul_eq_mul, mul_zero]
+    rw [ite_eq_right h', wN_neg h, smul_eq_mul, mul_zero]
 
 theorem multideg_eq (m : MonH X) (l : X.TT × Bool) : multideg m l = Finsupp.weight (wL X l) m := by
   classical
@@ -134,8 +96,8 @@ theorem identity_lift_X (w : O) (v : VarH X) :
   show liftSubst X.p X.n' O w 1 (hhLetters X.TT) 1 (MvPolynomial.X (x, b)) = _
   rw [liftSubst_one_hh]
   by_cases h : (x.2 = true ∧ 1 ≤ (b : ℕ)) ∨ (x.2 = false ∧ (b : ℕ) < 1)
-  · rw [if_pos h, C_mul_eq_smul, wN_pos (v := (x, b)) h, pow_one]
-  · rw [if_neg h, wN_neg (v := (x, b)) h, pow_zero, one_smul]
+  · rw [ite_eq_left h, C_mul_eq_smul, wN_pos (v := (x, b)) h, pow_one]
+  · rw [ite_eq_right h, wN_neg (v := (x, b)) h, pow_zero, one_smul]
 
 theorem identity_lift_monomial (w : O) (M : MonH X) :
     lift1 X O w (monomial M 1) = (w ^ ndM X M) • (monomial M 1 : RHH O X) := by

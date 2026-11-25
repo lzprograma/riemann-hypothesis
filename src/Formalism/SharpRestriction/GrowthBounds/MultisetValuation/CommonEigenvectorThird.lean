@@ -11,51 +11,9 @@ public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.TwoSumsC
 public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TheoremSFromKOneOf
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.BiadditiveSecondVariable
 import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.SubstZOfXCoordZA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.OddLogRelation
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.GroupTheory.Nilpotent
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.ExpansionAllPlacesOfPlace
 
@@ -75,19 +33,6 @@ open Formalism.MainNotions.G Formalism.BasicNotions Finset
 open Formalism.InvariantFactorPaths.G7 (lgF lamF altF)
 
 variable {p : ℕ} [hp : Fact p.Prime]
-
-theorem sx_dual_even {n' : ℕ} (B : OmBasis p n') (i i' : Fin (n' / 2)) :
-    ∑ r, (sigW p)^[2 * i.val] (B.omS r) * (sigW p)^[2 * i'.val] (B.om r) = if i = i' then 1 else 0 := by
-  classical
-  have hAB : (Matrix.of fun (r j : Fin (n' / 2)) => (sigW p)^[2 * j.val] (B.om r)) *
-      (Matrix.of fun (j r' : Fin (n' / 2)) => (sigW p)^[2 * j.val] (B.omS r')) = 1 := by
-    refine Matrix.ext fun r r' => ?_
-    rw [Matrix.mul_apply, Matrix.one_apply, ← B.dual r r']
-    exact Finset.sum_congr rfl fun j _ => by rw [Matrix.of_apply, Matrix.of_apply, iterate_map_mul]
-  have hBA := mul_eq_one_comm.mp hAB
-  have h := congrFun (congrFun hBA i) i'
-  rw [Matrix.mul_apply, Matrix.one_apply] at h
-  simpa using h
 
 theorem sx_dual {n' : ℕ} (B : OmBasis p n') (hev : Even n') (a b : Fin n') (hab : a.val % 2 = b.val % 2) :
     ∑ r, (sigW p)^[a.val] (B.omS r) * (sigW p)^[b.val] (B.om r) = if a = b then 1 else 0 := by
@@ -128,7 +73,7 @@ theorem sx_frob_sum {ι α K' : Type} [Field K'] (R : Subring K') (s : Finset α
   · rw [MvPowerSeries.coeff_map]
     exact (MvPowerSeries.coeff n r).2
   · have hsum : ∀ i ∈ s, MvPowerSeries.map R.subtype (y' i) = x i := fun i hi => by
-      simp only [y', dif_pos hi]
+      simp only [y', dite_eq_left hi]
       exact hy i hi
     have h2 := congrArg (MvPowerSeries.map R.subtype) hr
 
@@ -179,7 +124,7 @@ theorem sx_lam_int (vp : K') (hvp : vp ^ (p ^ 2 - 1) = (p : K')) (n : ℕ) :
       rw [Finset.sum_eq_single j]
       · simp
       · intro b _ hb
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h
         exact hb (hinj h).symm
       · intro hj
@@ -229,11 +174,11 @@ theorem sx_lam_int (vp : K') (hvp : vp ^ (p ^ 2 - 1) = (p : K')) (n : ℕ) :
         have hnq : (p ^ 2) ^ j ≠ p ^ 2 := fun h => by
           have := hinj (show (p ^ 2) ^ j = (p ^ 2) ^ 1 by rw [h, pow_one])
           omega
-        rw [if_neg hn1, if_neg hnq]
+        rw [ite_eq_right hn1, ite_eq_right hnq]
         simp only [add_zero, sub_zero]
         exact dvd_pow_self _ (by omega)
   · have hsum : (∑ i ∈ range (n + 1), if n = (p ^ 2) ^ i then ((p : K') ^ i)⁻¹ else 0) = 0 :=
-      Finset.sum_eq_zero fun i _ => if_neg fun h => hn ⟨i, h⟩
+      Finset.sum_eq_zero fun i _ => ite_eq_right fun h => hn ⟨i, h⟩
     rw [hsum, mul_zero]
     have hn1 : n ≠ 1 := fun h => hn ⟨0, by simp [h]⟩
     have hnq : n ≠ p ^ 2 := fun h => hn ⟨1, by simp [h]⟩
@@ -248,7 +193,7 @@ private theorem sum_sign_if_eq_pow_at_pow (q : ℕ) (hq : 1 < q) (l : ℕ) :
   rw [Finset.sum_eq_single l]
   · simp
   · intro b _ hb
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hb (hinj h).symm
   · intro hl
@@ -256,7 +201,7 @@ private theorem sum_sign_if_eq_pow_at_pow (q : ℕ) (hq : 1 < q) (l : ℕ) :
 
 private theorem sum_sign_if_eq_pow_eq_zero_of_ne_pow (q m : ℕ) (hm : ∀ l, m ≠ q ^ l) :
     (∑ i ∈ range (m + 1), if m = q ^ i then ((-1 : ℤ)) ^ i else 0) = 0 :=
-  Finset.sum_eq_zero fun i _ => if_neg (hm i)
+  Finset.sum_eq_zero fun i _ => ite_eq_right (hm i)
 
 private theorem sum_sign_if_eq_pow_add_div_eq_indicator_one (q : ℕ) (hq : 1 < q) (n : ℕ) :
     (∑ i ∈ range (n + 1), if n = q ^ i then ((-1 : ℤ)) ^ i else 0) +
@@ -275,12 +220,12 @@ private theorem sum_sign_if_eq_pow_add_div_eq_indicator_one (q : ℕ) (hq : 1 < 
       have hne : q ^ (l + 1) ≠ 1 := fun h => by
         have := hinj (show q ^ (l + 1) = q ^ 0 by rw [h, pow_zero])
         omega
-      rw [if_pos hd, hdiv, sum_sign_if_eq_pow_at_pow q hq l, if_neg hne, pow_succ]
+      rw [ite_eq_left hd, hdiv, sum_sign_if_eq_pow_at_pow q hq l, ite_eq_right hne, pow_succ]
       ring
-  · push_neg at hn
+  · push Not at hn
     rw [sum_sign_if_eq_pow_eq_zero_of_ne_pow q n hn]
     have hn1 : n ≠ 1 := fun h => hn 0 (by simp [h])
-    rw [if_neg hn1, zero_add]
+    rw [ite_eq_right hn1, zero_add]
     split_ifs with hd
     · apply sum_sign_if_eq_pow_eq_zero_of_ne_pow
       intro l hl
@@ -331,7 +276,7 @@ private theorem coeff_subst_eq_sum_coeff_mul_coeff_pow {K : Type} [Field K] (μ 
     by_contra hlt
     apply hd
     obtain ⟨r, hr⟩ := PowerSeries.X_dvd_iff.2 h0
-    rw [hr, mul_pow, PowerSeries.coeff_X_pow_mul', if_neg (by omega), smul_zero]
+    rw [hr, mul_pow, PowerSeries.coeff_X_pow_mul', ite_eq_right (by omega), smul_zero]
 
 theorem sx_mu_alt_int (vp : K') (hvp : vp ^ (p ^ 2 - 1) = (p : K')) (μ : PowerSeries K')
     (h0 : PowerSeries.constantCoeff μ = 0)
@@ -413,7 +358,7 @@ theorem sx_mu_alt_int (vp : K') (hvp : vp ^ (p ^ 2 - 1) = (p : K')) (μ : PowerS
         have hzb : ∀ d ∈ (range (n + 1)).erase 1, ((z d : ℤ) : ZMod p) = if d = p ^ 2 then 1 else 0 := by
           intro d hd
           have h := hz2 d
-          rw [if_neg (Finset.ne_of_mem_erase hd), zero_add] at h
+          rw [ite_eq_right (Finset.ne_of_mem_erase hd), zero_add] at h
           split_ifs at h ⊢ with hdq
           · have h' := (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).2 h
             push_cast at h'
@@ -428,7 +373,7 @@ theorem sx_mu_alt_int (vp : K') (hvp : vp ^ (p ^ 2 - 1) = (p : K')) (μ : PowerS
             ((P.map (Int.castRingHom (ZMod p))) ^ (p ^ 2)).coeff n else 0)]
           · rw [Finset.sum_ite_eq', hQq]
             split_ifs with h1 h2 h2
-            · rw [hQ, if_pos (Nat.div_lt_self (by omega) hq)]
+            · rw [hQ, ite_eq_left (Nat.div_lt_self (by omega) hq)]
             · rfl
             · exfalso
               apply h1
@@ -449,27 +394,27 @@ theorem sx_mu_alt_int (vp : K') (hvp : vp ^ (p ^ 2 - 1) = (p : K')) (μ : PowerS
       refine ⟨P + Polynomial.C ((if n = 1 then 1 else 0) -
           ∑ d ∈ (range (n + 1)).erase 1, z d * (P ^ d).coeff n) * Polynomial.X ^ n,
         ?_, ?_, ?_, ?_⟩
-      · rw [Polynomial.coeff_add, Polynomial.coeff_C_mul_X_pow, if_neg (by omega), hP0, add_zero]
+      · rw [Polynomial.coeff_add, Polynomial.coeff_C_mul_X_pow, ite_eq_right (by omega), hP0, add_zero]
       · intro m hm
-        rw [Polynomial.coeff_add, Polynomial.coeff_C_mul_X_pow, if_neg (by omega), hPz m (by omega),
+        rw [Polynomial.coeff_add, Polynomial.coeff_C_mul_X_pow, ite_eq_right (by omega), hPz m (by omega),
           add_zero]
       · intro m hm
         rw [Polynomial.coeff_add, Polynomial.coeff_C_mul_X_pow]
         rcases Nat.lt_or_ge m n with h | h
-        · rw [if_neg (by omega), add_zero]
+        · rw [ite_eq_right (by omega), add_zero]
           exact hPμ m h
         · have hmn : m = n := by omega
           subst hmn
-          rw [if_pos rfl, hPz m le_rfl, zero_add]
+          rw [ite_eq_left rfl, hPz m le_rfl, zero_add]
           exact hcμ
       · intro m hm
         rw [Polynomial.coeff_add, Polynomial.coeff_C_mul_X_pow]
         rcases Nat.lt_or_ge m n with h | h
-        · rw [if_neg (by omega), add_zero]
+        · rw [ite_eq_right (by omega), add_zero]
           exact hPd m h
         · have hmn : m = n := by omega
           subst hmn
-          rw [if_pos rfl, hPz m le_rfl, zero_add]
+          rw [ite_eq_left rfl, hPz m le_rfl, zero_add]
           exact hcd
   obtain ⟨P, -, -, hPμ, hPd⟩ := key (n + 1) (by omega)
   obtain ⟨y, hy⟩ := hPd n (by omega)
@@ -659,7 +604,7 @@ theorem th_frob_lin (hF : FrobSumH p n' r0 r1 K' (Rp p K' vp)) (hW : FrobWH p) (
     rw [MvPowerSeries.coeff_zero_C, MvPowerSeries.coeff_zero_C, hzeq]
     ring
   · refine ⟨0, Subring.zero_mem _, ?_⟩
-    rw [MvPowerSeries.coeff_C, MvPowerSeries.coeff_C, if_neg hn, if_neg hn]
+    rw [MvPowerSeries.coeff_C, MvPowerSeries.coeff_C, ite_eq_right hn, ite_eq_right hn]
     ring
 
 def linK (K' : Type) [Field K'] [Algebra (K0 p) K'] (w : WW p) (P : Finset (Fin n')) (a : Fin r0) (b : Fin r1)
@@ -830,7 +775,7 @@ theorem th_sumR {ν : ℕ} (w1 w2 : Fin ν → WW p) (P Q : Finset (Fin n'))
 
       rw [Finset.sum_congr rfl (fun r _ => h1 r), ← Finset.sum_mul, ← map_sum, hD t ht t' ht']
       split_ifs <;> simp
-    rw [Finset.sum_congr rfl e, Finset.sum_ite_eq' P (posAdd t' 1), if_pos (hQ t' ht')]
+    rw [Finset.sum_congr rfl e, Finset.sum_ite_eq' P (posAdd t' 1), ite_eq_left (hQ t' ht')]
   simp only [Finset.sum_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   rw [Finset.sum_congr rfl fun t _ => Finset.sum_comm]
@@ -880,53 +825,6 @@ theorem th_Aw_posAdd {w : WW p} (hper : (sigW p)^[n'] w = w) (s : Fin n') (d : �
   congr 1
   exact Function.IsPeriodicPt.iterate_mod_apply hper _
 
-private theorem intR_C_of_mem {ι F : Type} [Field F] (R : Subring F) {c : F} (hc : c ∈ R) :
-    IntR R (MvPowerSeries.C c : MvPowerSeries ι F) := by
-  classical
-  intro n
-  rw [MvPowerSeries.coeff_C]
-  split_ifs
-  · exact hc
-  · exact R.zero_mem
-
-private theorem intR_add' {ι F : Type} [Field F] (R : Subring F) {f g : MvPowerSeries ι F}
-    (hf : IntR R f) (hg : IntR R g) : IntR R (f + g) := by
-  intro n
-  rw [map_add (f := _)]
-  exact R.add_mem (hf n) (hg n)
-
-private theorem intR_mul' {ι F : Type} [Field F] (R : Subring F) {f g : MvPowerSeries ι F}
-    (hf : IntR R f) (hg : IntR R g) : IntR R (f * g) := by
-  classical
-  intro n
-  rw [MvPowerSeries.coeff_mul]
-  exact R.sum_mem fun x _ => R.mul_mem (hf _) (hg _)
-
-private theorem intR_pow {ι F : Type} [Field F] (R : Subring F) {f : MvPowerSeries ι F}
-    (hf : IntR R f) (k : ℕ) : IntR R (f ^ k) := by
-  induction k with
-  | zero =>
-    classical
-    intro n
-    rw [pow_zero, MvPowerSeries.coeff_one]
-    split_ifs
-    · exact R.one_mem
-    · exact R.zero_mem
-  | succ k ih =>
-    rw [pow_succ]
-    exact intR_mul' R ih hf
-
-private theorem intR_sum' {ι F α : Type} [Field F] (R : Subring F) (s : Finset α)
-    (f : α → MvPowerSeries ι F) (h : ∀ i ∈ s, IntR R (f i)) : IntR R (∑ i ∈ s, f i) := by
-  intro n
-
-  rw [map_sum]
-  exact R.sum_mem fun i hi => h i hi n
-
-private theorem cg_of_eq' {ι F : Type} [Field F] (R : Subring F) (pp : F)
-    {f g : MvPowerSeries ι F} (h : f = g) : Cg R pp f g :=
-  ⟨0, fun n => by rw [map_zero]; exact R.zero_mem, by rw [h, mul_zero, add_zero]⟩
-
 private theorem cg_sub_multiset_valuation {ι F : Type} [Field F] (R : Subring F) (pp : F)
     {f g f' g' : MvPowerSeries ι F} (h : Cg R pp f g) (h' : Cg R pp f' g') :
     Cg R pp (f - f') (g - g') := by
@@ -936,46 +834,16 @@ private theorem cg_sub_multiset_valuation {ι F : Type} [Field F] (R : Subring F
   rw [map_sub]
   exact R.sub_mem (hY n) (hY' n)
 
-private theorem cg_trans' {ι F : Type} [Field F] (R : Subring F) (pp : F)
-    {f g k : MvPowerSeries ι F} (h : Cg R pp f g) (h' : Cg R pp g k) : Cg R pp f k := by
-  obtain ⟨Y, hY, rfl⟩ := h
-  obtain ⟨Y', hY', rfl⟩ := h'
-  exact ⟨Y' + Y, intR_add' R hY' hY, by ring⟩
-
-private theorem cg_mul' {ι F : Type} [Field F] (R : Subring F) (pp : F) (hpp : pp ∈ R)
-    {f g f' g' : MvPowerSeries ι F} (h : Cg R pp f g) (h' : Cg R pp f' g')
-    (hg : IntR R g) (hf' : IntR R f') : Cg R pp (f * f') (g * g') := by
-  obtain ⟨Y, hY, rfl⟩ := h
-  obtain ⟨Y', hY', rfl⟩ := h'
-  exact ⟨g * Y' + Y * (g' + MvPowerSeries.C pp * Y'),
-    intR_add' R (intR_mul' R hg hY') (intR_mul' R hY hf'), by ring⟩
-
-private theorem cg_pow' {ι F : Type} [Field F] (R : Subring F) (pp : F) (hpp : pp ∈ R)
-    {f g : MvPowerSeries ι F} (h : Cg R pp f g) (hf : IntR R f) (hg : IntR R g) (k : ℕ) :
-    Cg R pp (f ^ k) (g ^ k) := by
-  induction k with
-  | zero => exact cg_of_eq' R pp (by rw [pow_zero, pow_zero])
-  | succ k ih =>
-    rw [pow_succ, pow_succ]
-    exact cg_mul' R pp hpp ih h (intR_pow R hg k) hf
-
-private theorem cg_sum' {ι F α : Type} [Field F] (R : Subring F) (pp : F) (s : Finset α)
-    {f g : α → MvPowerSeries ι F} (h : ∀ i, Cg R pp (f i) (g i)) :
-    Cg R pp (∑ i ∈ s, f i) (∑ i ∈ s, g i) := by
-  choose Y hY heq using h
-  exact ⟨∑ i ∈ s, Y i, intR_sum' R s Y (fun i _ => hY i), by
-    rw [Finset.sum_congr rfl (fun i _ => heq i), Finset.sum_add_distrib, Finset.mul_sum]⟩
-
 private theorem cg_C_mul' {ι F : Type} [Field F] (R : Subring F) (pp : F) {c : F} (hc : c ∈ R)
     {f g : MvPowerSeries ι F} (h : Cg R pp f g) :
     Cg R pp (MvPowerSeries.C c * f) (MvPowerSeries.C c * g) := by
   obtain ⟨Y, hY, rfl⟩ := h
-  exact ⟨MvPowerSeries.C c * Y, intR_mul' R (intR_C_of_mem R hc) hY, by ring⟩
+  exact ⟨MvPowerSeries.C c * Y, IntR_mul (IntR_C (R := R) hc) hY, by ring⟩
 
 private theorem intR_of_cg_of_intR {ι F : Type} [Field F] (R : Subring F) (pp : F) (hpp : pp ∈ R)
     {f g : MvPowerSeries ι F} (h : Cg R pp f g) (hg : IntR R g) : IntR R f := by
   obtain ⟨Y, hY, rfl⟩ := h
-  exact intR_add' R hg (intR_mul' R (intR_C_of_mem R hpp) hY)
+  exact IntR_add hg (IntR_mul (IntR_C (R := R) hpp) hY)
 
 theorem restTwoSums_of (hT1 : MuAltH p) (hT2 : DualH p)
     (hF : ∀ (n' r0 r1 : ℕ) (K' : Type) [Field K'] (R : Subring K'), FrobSumH p n' r0 r1 K' R) (hW : FrobWH p) :
@@ -990,8 +858,8 @@ theorem restTwoSums_of (hT1 : MuAltH p) (hT2 : DualH p)
     fun t a b => th_sSer_int _ t a b
   have hLin0 : ∀ (w : WW p) (P : Finset (Fin n)) (e : Fin n → ℕ) (a : Fin r0) (b : Fin r1),
       IntR (Rp p L vp) (∑ t ∈ P, MvPowerSeries.C (Aw L w (e t)) * sSer p L t a b) :=
-    fun w P e a b => intR_sum' _ P _ fun t _ =>
-      intR_mul' _ (intR_C_of_mem _ (th_Aw_mem vp w _)) (hsI t a b)
+    fun w P e a b => IntR_sum P _ fun t _ =>
+      IntR_mul (IntR_C (R := Rp p L vp) (th_Aw_mem vp w _)) (hsI t a b)
   have hEv1 : ∀ s ∈ Pev n, ∀ d, posAdd s (2 * d) ∈ Pev n := by
     intro s hs d
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hs ⊢
@@ -1031,12 +899,12 @@ theorem restTwoSums_of (hT1 : MuAltH p) (hT2 : DualH p)
     intro r a b
     have hZi : IntR (Rp p L vp) (sOf B L μ (Sum.inr (r, a, b))) :=
       intR_of_cg_of_intR _ _ hpR (hZ r a b) (hLin0 (B.om r) (Pod n) (fun t => t.val) a b)
-    have hZp := cg_pow' _ _ hpR (hZ r a b) hZi (hLin0 (B.om r) (Pod n) (fun t => t.val) a b) p
+    have hZp := cg_pow hZi (hLin0 (B.om r) (Pod n) (fun t => t.val) a b) (hZ r a b) p
     have hF1 := th_frob_lin vp hFS hW (B.om r) (Pod n) (fun t => t.val) (fun t => sSer p L t a b)
       (fun t => hsI t a b)
-    have hZB := cg_trans' _ _ hZp hF1
-    have hXZ := cg_mul' _ _ hpR (hX r a b) hZB
-      (hLin0 (B.omS r) (Pev n) (fun t => t.val) a b) (intR_pow _ hZi p)
+    have hZB := cg_trans hZp hF1
+    have hXZ := cg_mul (IntR_pow hZi p)
+      (hLin0 (B.omS r) (Pev n) (fun t => t.val) a b) (hX r a b) hZB
     exact cg_C_mul' _ _ hc0 hXZ
   have hT2' : ∀ (r : Fin (n / 2)) (a : Fin r0) (b : Fin r1),
       Cg (Rp p L vp) (p : L)
@@ -1048,15 +916,15 @@ theorem restTwoSums_of (hT1 : MuAltH p) (hT2 : DualH p)
     intro r a b
     have hXi : IntR (Rp p L vp) (sOf B L μ (Sum.inl (r, a, b))) :=
       intR_of_cg_of_intR _ _ hpR (hX r a b) (hLin0 (B.omS r) (Pev n) (fun t => t.val) a b)
-    have hXp := cg_pow' _ _ hpR (hX r a b) hXi (hLin0 (B.omS r) (Pev n) (fun t => t.val) a b) p
+    have hXp := cg_pow hXi (hLin0 (B.omS r) (Pev n) (fun t => t.val) a b) (hX r a b) p
     have hF2 := th_frob_lin vp hFS hW (B.omS r) (Pev n) (fun t => t.val) (fun t => sSer p L t a b)
       (fun t => hsI t a b)
-    have hXA := cg_trans' _ _ hXp hF2
-    have hZX := cg_mul' _ _ hpR (hZ r a b) hXA
-      (hLin0 (B.om r) (Pod n) (fun t => t.val) a b) (intR_pow _ hXi p)
+    have hXA := cg_trans hXp hF2
+    have hZX := cg_mul (IntR_pow hXi p)
+      (hLin0 (B.om r) (Pod n) (fun t => t.val) a b) (hZ r a b) hXA
     exact cg_C_mul' _ _ hc1 hZX
-  have hAll := cg_sum' _ _ (Finset.univ : Finset (Eidx n r0 r1))
-    fun e : Eidx n r0 r1 => cg_sub_multiset_valuation _ _ (hT1' e.1 e.2.1 e.2.2) (hT2' e.1 e.2.1 e.2.2)
+  have hAll := cg_sum (Finset.univ : Finset (Eidx n r0 r1)) _ _
+    fun e _ => cg_sub_multiset_valuation _ _ (hT1' e.1 e.2.1 e.2.2) (hT2' e.1 e.2.1 e.2.2)
   obtain ⟨Y, hY, heq⟩ := hAll
   obtain ⟨u, hu_def⟩ : ∃ u : Fin n → L,
       u = fun s => if IsOddPos s then wK' p L c else -wK' p L (sigW p c) := ⟨_, rfl⟩
@@ -1110,8 +978,8 @@ theorem restTwoSums_of (hT1 : MuAltH p) (hT2 : DualH p)
       _ = if posAdd t' 1 = t then 1 else 0 := h
       _ = if t = posAdd t' 1 then 1 else 0 := by
           by_cases h1 : t = posAdd t' 1
-          · rw [if_pos h1, if_pos h1.symm]
-          · rw [if_neg h1, if_neg (Ne.symm h1)]
+          · rw [ite_eq_left h1, ite_eq_left h1.symm]
+          · rw [ite_eq_right h1, ite_eq_right (Ne.symm h1)]
   rw [hR]
   simp only [Fintype.sum_prod_type]
   rw [triple_sum_comm]
@@ -1128,11 +996,11 @@ theorem restTwoSums_of (hT1 : MuAltH p) (hT2 : DualH p)
   · refine Finset.sum_congr rfl fun s hs => ?_
     rw [hu_def]
     dsimp only
-    rw [if_pos (Finset.mem_filter.mp hs).2]
+    rw [ite_eq_left (Finset.mem_filter.mp hs).2]
   · refine Finset.sum_congr rfl fun s hs => ?_
     rw [hu_def]
     dsimp only
-    rw [if_neg (Finset.mem_filter.mp hs).2, map_neg, neg_mul]
+    rw [ite_eq_right (Finset.mem_filter.mp hs).2, map_neg, neg_mul]
 
 end Formalism.MainNotions.FormalGroupSystem.Pf
 end -- clump:auto

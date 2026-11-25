@@ -109,23 +109,6 @@ end Algebra
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 variable {Xo : Moduli Dw l} {c c' : Coeff l}
 
-section First
-
-open AlgebraicGeometry CategoryTheory ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.FD
-
-variable (c c') (hle : c.F ≤ c'.F)
-
-abbrev inclF : c.F →+* c'.F := (IntermediateField.inclusion hle).toRingHom
-
-def Compat (S : Type) [CommRing S] [Algebra c.F S] [Algebra c'.F S] : Prop :=
-  ∀ a : c.F, algebraMap c'.F S (inclF c c' hle a) = algebraMap c.F S a
-
-variable {c c'}
-
-variable {r : ℕ}
-
-end First
-
 abbrev Natural (c : Coeff l) (f : Rul Xo c) : Prop :=
   IsNatural (K := c.F) (fun S _ _ => FrPt Xo c S) (fun φ y z => FrMap φ y z) f
 

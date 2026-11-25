@@ -254,7 +254,3 @@ theorem loc_isLocalization (S : Finset T) : IsLocalization (unitsIn S) (loc S) :
     rw [Subtype.ext this]
 
 end GlobalTheory.NormalApprox
-
-namespace GlobalTheory.NormalApprox
-
-end GlobalTheory.NormalApprox

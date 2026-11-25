@@ -151,7 +151,7 @@ theorem twZr_parL (P : HeightOneSpectrum (𝓞 X.E)) (v : Sp X.E (R.N 0 + cOf R 
   rw [ciMem_sclLat]
   have hN := rank_zero_eq_k (R := R)
   refine forall_congr' fun l => ?_
-  rw [if_neg (by omega), zpow_zero, inv_one, one_mul]
+  rw [ite_eq_right (by omega), zpow_zero, inv_one, one_mul]
 
 theorem zeroExtension_mem_parahoric_zero {P : HeightOneSpectrum (𝓞 X.E)} (hP : P ∉ Pr.vGs) (sharp : Bool) {g : Sp X.E (R.N 0) ≃ₗ[X.E] Sp X.E (R.N 0)}
     (hg : g ∈ GLint X.E (R.N 0) P) : twZrExt (c := cOf R 0) g ∈ Jat (Pr := Pr) (R := R) sharp 0 P := by
@@ -193,7 +193,7 @@ theorem twZr_chr (hc : cst.Ok) (P : rowSG Pr sel mu) (hP : P.1 ∉ Pr.vGs) (r : 
   unfold chiInv
   rw [hc.psi_int P _ hint, inv_one, one_mul]
   unfold lamRow
-  rw [if_neg hP]
+  rw [ite_eq_right hP]
   unfold LocE.lamQB
   have hN := rank_zero_eq_k (R := R)
   have : IsEmpty (Fin (R.N 0 - (R.k + 0))) := ⟨fun i => by have := i.2; omega⟩

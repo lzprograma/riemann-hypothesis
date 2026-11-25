@@ -2,9 +2,7 @@ module
 
 public import Mathlib.Analysis.Normed.Field.Instances
 public import Mathlib.NumberTheory.Padics.Complex
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Multiset
 
 @[expose] public section
 
@@ -26,20 +24,10 @@ theorem exists_root_near (P : ℂ_[l][X]) (hP : P.Monic) (x : ℂ_[l]) (h : ‖P
     prod_multiset_X_sub_C_of_monic_of_roots_card_eq hP IsAlgClosed.card_roots_eq_natDegree
   by_contra hcon
   push Not at hcon
-  have key : ∀ s : Multiset ℂ_[l], (∀ a ∈ s, 1 ≤ ‖x - a‖) →
-      1 ≤ ‖((s.map fun a => X - C a).prod).eval x‖ := by
-    intro s
-    induction s using Multiset.induction_on with
-    | empty => intro _; simp
-    | cons a s ih =>
-      intro hs
-      rw [Multiset.map_cons, Multiset.prod_cons, eval_mul, norm_mul]
-      simp only [eval_sub, eval_X, eval_C]
-      exact one_le_mul_of_one_le_of_one_le (hs a (Multiset.mem_cons_self _ _))
-        (ih fun b hb => hs b (Multiset.mem_cons_of_mem hb))
-  have := key P.roots (fun a ha => hcon a ((mem_roots hP.ne_zero).1 ha))
-  rw [hsplit] at this
-  linarith
+  apply h.not_ge
+  rw [← hsplit, eval_multiset_prod, Multiset.norm_prod_map, Multiset.map_map]
+  simp only [Function.comp_apply, eval_sub, eval_X, eval_C]
+  exact Multiset.one_le_prod_map fun a ha => hcon a ((mem_roots hP.ne_zero).1 ha)
 
 theorem norm_pow_sub_one_le {y : ℂ_[l]} (hy : ‖y‖ = 1) (k : ℕ) : ‖y ^ k - 1‖ ≤ ‖y - 1‖ := by
   induction k with

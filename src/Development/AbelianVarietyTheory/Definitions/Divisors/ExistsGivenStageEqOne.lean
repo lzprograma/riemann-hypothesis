@@ -63,8 +63,6 @@ namespace GlobalTheory.FunObj
 
 open GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StepData GlobalTheory.StdFrames Formalism.L2.Host Formalism.L2.DIV ValuativeRel
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 def flipOrder (m : ℕ) : List (ℕ × ℕ) := (List.range m).flatMap fun i => (List.range m).map fun j => (i, j)
 
 def midEdge (m i j p : ℕ) : Edge :=
@@ -96,9 +94,9 @@ theorem canFlip_col {m i : ℕ} (hi : i < m) : ∀ j, j ≤ m →
     refine ⟨canFlip_append h1 (h2 ▸ .cons ?_ (.nil _)), ?_⟩
     · have := infix_map_range (midEdge m i j) (p := i + m - j - 1) (n := m + m) (by omega)
       have e1 : midEdge m i j (i + m - j - 1) = .theta i j := by
-        rw [midEdge, if_neg (by omega), if_pos (by omega)]; congr 1; omega
+        rw [midEdge, ite_eq_right (by omega), ite_eq_left (by omega)]; congr 1; omega
       have e2 : midEdge m i j (i + m - j - 1 + 1) = .ex i j := by
-        rw [midEdge, if_neg (by omega), if_neg (by omega), if_pos (by omega)]
+        rw [midEdge, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left (by omega)]
       rwa [e1, e2] at this
     · simp only [List.map_cons, List.map_nil, List.foldl_cons, List.foldl_nil, flipPath, List.map_map]
       refine List.map_congr_left fun p _ => ?_
@@ -140,13 +138,9 @@ variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts}
 
 abbrev Kw (w : Pl D.host.E) : Type := w.adicCompletion D.host.E
 
-@[reducible] def borelKw (w : Pl D.host.E) : MeasurableSpace (Kw w) := borel _
+@[reducible] instance borelKw (w : Pl D.host.E) : MeasurableSpace (Kw w) := borel _
 
-attribute [local instance] borelKw
-
-theorem borelSpaceKw (w : Pl D.host.E) : BorelSpace (Kw w) := ⟨rfl⟩
-
-attribute [local instance] borelSpaceKw
+instance borelSpaceKw (w : Pl D.host.E) : BorelSpace (Kw w) := ⟨rfl⟩
 
 def unifAt (w : Pl D.host.E) : (Kw w)ˣ := atFin w (unif w)
 
@@ -175,7 +169,7 @@ theorem depthAt_w (G : GridData L sc) {v : Pl D.host.F} (hv : v ∈ G.pl.S0) :
     cosExp G (G.pl.w v) = G.pl.depth sc v ∧ depthAt G (G.pl.w v) = G.pl.depth sc v := by
   classical
   have h : cosExp G (G.pl.w v) = G.pl.depth sc v := by
-    rw [cosExp, if_pos (by unfold Places.W0; convert Finset.mem_image_of_mem _ hv), G.pl.under_w hv]
+    rw [cosExp, ite_eq_left (by unfold Places.W0; convert Finset.mem_image_of_mem _ hv), G.pl.under_w hv]
   exact ⟨h, by rw [depthAt, h, max_eq_left (G.pl.depth_pos sc v)]⟩
 
 theorem depthAt_of_notMem (G : GridData L sc) {w : Pl D.host.E} (hw : w ∉ G.pl.W0) : cosExp G w = 0 ∧ depthAt G w = 1 := by
@@ -261,12 +255,12 @@ def psiAt {G : GridData L sc} (W : G.Weil) (w : Pl D.host.E) : AddChar (Kw w) Ci
 def colFrame (L : LevCh D T) : ∀ j, GL (Fin (columnBlock L j).sp.rank) (Formalism.IndefR.Lev.EAf D)
   | 0 => L.βY 0
   | j + 1 => if h : j + 1 < D.R.m then cast (by rw [colY_lt L h]) (L.βY (j + 1))
-      else cast (by rw [show columnBlock L (j + 1) = ⟨D.sp.X', L.ΛX⟩ from if_neg h]) L.βX
+      else cast (by rw [show columnBlock L (j + 1) = ⟨D.sp.X', L.ΛX⟩ from ite_eq_right h]) L.βX
 
 theorem colFrame_lt (L : LevCh D T) {j : ℕ} (h : j < D.R.m) : HEq (colFrame L j) (L.βY j) := by
   cases j with
   | zero => rfl
-  | succ j => rw [colFrame, dif_pos h]; exact cast_heq _ _
+  | succ j => rw [colFrame, dite_eq_left h]; exact cast_heq _ _
 
 theorem colFrame_m (L : LevCh D T) : HEq (colFrame L D.R.m) L.βX := by
   obtain ⟨j, hj⟩ : ∃ j, D.R.m = j + 1 := ⟨D.R.m - 1, by have := D.R.two_le_m; omega⟩

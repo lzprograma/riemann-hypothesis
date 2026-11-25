@@ -40,74 +40,21 @@ public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AtLinAdap
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CombOfTied
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsStandardBasesLatticeAtPlaceOfAdaptedBases
 import Development.AutomorphicArithmetic.CyclotomicBounds.SmallFacts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
 import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.QuasiPeriodConstUniqueOf
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Data.Nat.Choose.Multinomial
 import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
 import Std.Tactic.BVDecide.Normalize.Bool
 import Formalism.GaussJetBounds.StatementH
 import Formalism.LocalToGlobal.KernelLattices.XiIndCClass
 import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementG
 import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.IsTransSys
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.Valuation.Integral
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.PiTensorProduct
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MulVSubRight
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.NumberTheory.RamificationInertia.Galois
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntEasy
 import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
 import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.HalfPeriodStandardCM
 import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.LocNormAmbOfOf
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormDgenEqOne, Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualFrameColumnsScaledStandardVectors, Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualFrameHermitianFormTraceRealPlaces, Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualFramePairedBlocksDiagonalModRoot, Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualLocalBasesPairDualModRootMinusD, Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FixedIod, Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertiaInvolutionRealPlacePairs, Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormNatCastOfCoprime, Development.AbelianVarietyTheory.Proofs.SatakeParameters.PadicNormLeOneHostBaseModuleAtD, Development.AbelianVarietyTheory.Proofs.SatakeParameters.PairEmbeddingsCongrModRootMinusD, Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualLocalBasesEigenframeAtRamifiedPrime, Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormLeOfMemSq, Development.AbelianVarietyTheory.Proofs.SatakeParameters.ShapeNormalisedThetaCombinationsDualBasesAtD, Development.AbelianVarietyTheory.Proofs.SatakeParameters.KernelDatumThetaSeriesShapeAtDAdaptedBases
@@ -163,9 +110,9 @@ theorem frameM_coef_eq_chgB : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (lm : Taylor
     rw [Fintype.sum_prod_type]
   rw [hJ, Fintype.sum_sigma]
   simp only [GlobalTheory.DFrame.coef, GlobalTheory.DFrame.gc, GlobalTheory.DFrame.pc]
-  simp only [mul_ite, ite_mul, mul_zero, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [mul_ite, ite_mul, mul_zero, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [Finset.sum_eq_single x.1 (fun z _ hz => by simp [hz]) (by simp)]
-  simp only [if_true, GlobalTheory.DFrame.vecF, GlobalTheory.DFrame.mat, GlobalTheory.DFrame.colR, GlobalTheory.DFrame.rowL, Matrix.of_apply, map_mul, RingEquiv.coe_toRingHom]
+  simp only [ite_true, GlobalTheory.DFrame.vecF, GlobalTheory.DFrame.mat, GlobalTheory.DFrame.colR, GlobalTheory.DFrame.rowL, Matrix.of_apply, map_mul, RingEquiv.coe_toRingHom]
   have hsum' := hsum x.1 (s.iT i.1)
   simp only [hι] at hsum'
   have e : ∀ k, ι (TaylorLogMetric.embT D (s.iT i.1) (a x.1 k)) *
@@ -178,7 +125,7 @@ theorem frameM_coef_eq_chgB : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (lm : Taylor
       (r x.1 k * ι (TaylorLogMetric.embT D (s.iT i.1) (a x.1 k))) := fun k => by ring
   rw [Finset.sum_congr rfl fun k _ => e k, ← Finset.mul_sum, hsum']
   by_cases h : s.iT i.1 = tauPl D x.1
-  · rw [if_pos h, TaylorLogMetric.chgB, if_pos h.symm]
+  · rw [ite_eq_left h, TaylorLogMetric.chgB, ite_eq_left h.symm]
     simp only [h]
     set tp := tauPl D x.1 with htp
     have hm : ∀ {m : ℕ} (Q : Matrix (Fin m) (Fin m) D.host.E),
@@ -196,7 +143,7 @@ theorem frameM_coef_eq_chgB : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (lm : Taylor
     simp only [Matrix.map_apply, RingHom.comp_apply, RingEquiv.coe_toRingHom]
     rw [← htp] at h1 h2 ⊢
     field_simp
-  · rw [if_neg h, TaylorLogMetric.chgB, if_neg (fun e => h e.symm)]
+  · rw [ite_eq_right h, TaylorLogMetric.chgB, ite_eq_right (fun e => h e.symm)]
     simp
 
 end GlobalTheory.DFrame
@@ -235,7 +182,7 @@ theorem hOK_vecF : ∀ (D : D7) (X : Fields) (s : Seam D X) (L : PeriodPair) (Λ
     unfold Formalism.L2.Th1.GD.hOK Formalism.L2.AlgTh.hSc
     show ((Formalism.L2.Th1.F.area L : ℝ) : ℂ) * ∑ i, ∑ j, _ = _
     simp only [Matrix.diagonal_apply, mul_ite, mul_zero, ite_mul, zero_mul, Finset.sum_ite_eq,
-      Finset.mem_univ, if_true, Finset.mul_sum]
+      Finset.mem_univ, ite_true, Finset.mul_sum]
     rw [Fintype.sum_prod_type]
     refine Finset.sum_congr rfl fun τ _ => ?_
 
@@ -322,7 +269,7 @@ theorem pair_value_eq {D : D7} {p : ℕ} [Fact p.Prime] {ι : ℂ ≃+* ℂ_[p]}
     · rw [norm_div, norm_mul, h₂, one_mul]
       exact div_le_one_of_le₀ hc (norm_nonneg _)
     · subst hX
-      simp only [hab, if_true, mul_one, map_mul]
+      simp only [hab, ite_true, mul_one, map_mul]
       field_simp
       ring
   · refine ⟨0, by simp, ?_⟩
@@ -441,14 +388,6 @@ theorem sigmaOf_mul (g h : R.GG) : H.sigmaOf (g * h) = H.sigmaOf g * H.sigmaOf h
   unfold Host.sigmaOf
   exact map_mul _ g h
 
-theorem sigmaOf_one : H.sigmaOf 1 = 1 := by
-  unfold Host.sigmaOf
-  exact map_one _
-
-theorem galE_sigmaOf (g : R.GG) : H.galE (H.sigmaOf g) = g := by
-  unfold Host.sigmaOf
-  exact MulEquiv.apply_symm_apply _ _
-
 theorem sigmaOf_sqrt_neg (g : R.GG) (h : g.1.2 = -1) : H.sigmaOf g H.sqrtMinusD = -H.sqrtMinusD := by
   have := H.galE_bE (H.sigmaOf g)
   rw [galE_sigmaOf, h] at this
@@ -514,10 +453,6 @@ open Formalism.FrobeniusOrbits Formalism.TwoAdicCyclotomicDecomposition
 open Formalism.L2.Th1.CM (MaximalUnramifiedExtension)
 open Formalism.MainNotions.G (plGG)
 
-theorem embT_tauPl (D : D7) (z : Bool × HH D) : TaylorLogMetric.embT D (tauPl D z) = D.host.emb (plGG D z) := by
-  unfold TaylorLogMetric.embT tauPl
-  rw [Equiv.apply_symm_apply]
-
 theorem eTau_tauPl (D : D7) (z : Bool × HH D) : (D.eTau (tauPl D z) : D.R.GG) = plGG D z := by
   unfold tauPl
   rw [Equiv.apply_symm_apply]
@@ -527,7 +462,7 @@ theorem tauSg_tauPl (D : D7) (b : Bool) (t : HH D) : TaylorLogMetric.tauSg D (ta
     cases b <;> refine Prod.ext (Prod.ext ?_ ?_) ?_ <;> simp [plGG, Formalism.HC.Frame.tau1, Formalism.HC.Frame.tau2, TaylorLogMetric.sgm]
   have hmem : (D.eTau (tauPl D (b, t)) : D.R.GG) * TaylorLogMetric.sgm D ∈ D.R.Psi := by
     rw [eTau_tauPl, hm]; exact plGG_mem_Psi D _
-  rw [show TaylorLogMetric.tauSg D (tauPl D (b, t)) = D.eTau.symm ⟨_, hmem⟩ from dif_pos hmem]
+  rw [show TaylorLogMetric.tauSg D (tauPl D (b, t)) = D.eTau.symm ⟨_, hmem⟩ from dite_eq_left hmem]
   refine (Equiv.symm_apply_eq _).2 (Subtype.ext ?_)
   simp only [eTau_tauPl, hm]
 
@@ -553,7 +488,7 @@ theorem inertia_pairs : ∀ (D : D7) (p : ℕ) [Fact p.Prime], p = D.host.d → 
     rw [← AlgEquiv.mul_apply, ← sigmaOf_mul]
     have : sInv D.R * sInv D.R = 1 := by
       refine Prod.ext (Prod.ext ?_ ?_) ?_ <;> simp [sInv]
-    rw [this, sigmaOf_one]
+    rw [this, GlobalTheory.InducedType.sigmaOf_one]
     rfl
   · intro y
     change D.host.sigmaOf (sInv D.R) (D.host.sigmaOf (D.R.cc) y) = D.host.sigmaOf (D.R.cc) (D.host.sigmaOf (sInv D.R) y)
@@ -561,7 +496,7 @@ theorem inertia_pairs : ∀ (D : D7) (p : ℕ) [Fact p.Prime], p = D.host.d → 
   · intro z z' h
     have h' : ∀ x, D.host.φ₀ (D.host.sigmaOf (plGG D z) x) = D.host.φ₀ (D.host.sigmaOf (plGG D z') x) := fun x => by
       have := RingHom.congr_fun h x
-      simp only [embT_tauPl] at this
+      simp only [GlobalTheory.InertCompare.embT_tauPl] at this
       exact this
     have hs : D.host.sigmaOf (plGG D z) = D.host.sigmaOf (plGG D z') :=
       AlgEquiv.ext fun x => D.host.φ₀.injective (h' x)
@@ -629,12 +564,6 @@ theorem exists_common_smul {R V : Type*} [CommRing R] [AddCommGroup V] [Module R
   | add x y _ _ hx hy => rw [smul_add]; exact N.add_mem hx hy
   | smul a x _ hx => rw [smul_comm]; exact N.smul_mem _ hx
 
-theorem norm_natCast_of_coprime {p : ℕ} [Fact p.Prime] {s : ℕ} (h : Nat.Coprime s p) :
-    ‖(s : ℂ_[p])‖ = 1 := by
-  have h1 : (s : ℂ_[p]) = algebraMap ℚ_[p] ℂ_[p] (s : ℚ_[p]) := by simp
-  rw [h1, norm_algebraMap']
-  exact Padic.norm_natCast_eq_one_iff.2 h.symm
-
 theorem general {E : Type*} [Field E] {p : ℕ} [Fact p.Prime] (ρ : E →+* ℂ_[p]) {N N' : ℕ}
     (L L₁ : Submodule (𝓞 E) (Fin N → E)) (L' L₁' : Submodule (𝓞 E) (Fin N' → E))
     (P : Matrix (Fin N) (Fin N) E) (P' : Matrix (Fin N') (Fin N') E) (hfg : L₁.FG)
@@ -654,7 +583,7 @@ theorem general {E : Type*} [Field E] {p : ℕ} [Fact p.Prime] (ρ : E →+* ℂ
   have hn : ∀ n : ℕ, Nat.Coprime n p → ‖ρ (((n : 𝓞 E)) : E)‖ = 1 := by
     intro n hn
     rw [RingOfIntegers.coe_eq_algebraMap, map_natCast, map_natCast]
-    exact norm_natCast_of_coprime hn
+    exact GlobalTheory.HeckeVal.norm_natCast_eq_one hn
   have hsm : ∀ {k : ℕ} (n : ℕ) (x : Fin k → E), (n : 𝓞 E) • x = (n : E) • x := by
     intro k n x
     rw [Nat.cast_smul_eq_nsmul, Nat.cast_smul_eq_nsmul]
@@ -734,13 +663,6 @@ open Formalism.MainNotions.G (HH)
 
 namespace GlobalTheory.IntegralAtPlace
 
-theorem norm_le_one_of_isIntegral {p : ℕ} [Fact p.Prime] {x : ℂ_[p]}
-    (hx : IsIntegral ℤ x) : ‖x‖ ≤ 1 := by
-  have h : x ∈ (NormedField.valuation (K := ℂ_[p])).integer :=
-    (Valuation.integer.integers (NormedField.valuation (K := ℂ_[p]))).mem_of_integral hx.tower_top
-  rw [Valuation.mem_integer_iff, NormedField.valuation_apply] at h
-  exact_mod_cast h
-
 theorem norm_le_one : ∀ (D : D7) (p : ℕ) [Fact p.Prime], p = D.host.d → ∀ (φ : D.host.E →+* ℂ_[p]) (a : D.host.E), a ∈ D.host.AA0 → ‖φ a‖ ≤ 1 := by
   intro D p hpF hpd φ a ha
   obtain ⟨-, -, hqd, -, hd2⟩ := hypOdd_of_hostHyp D.host.hyp
@@ -751,7 +673,7 @@ theorem norm_le_one : ∀ (D : D7) (p : ℕ) [Fact p.Prime], p = D.host.d → �
       have := congrArg φ hx
       rw [Polynomial.hom_eval₂, map_zero] at this
       rwa [RingHom.ext_int (φ.comp (algebraMap ℤ D.host.E)) (algebraMap ℤ ℂ_[p])] at this
-    exact norm_le_one_of_isIntegral h
+    exact GlobalTheory.NormSum.KernelAt.norm_le_one_of_isIntegral h
   let Q : Ideal (𝓞 D.host.E) :=
     { carrier := {y | ‖φ (y : D.host.E)‖ < 1}
       add_mem' := fun {x y} hx hy => by
@@ -769,8 +691,7 @@ theorem norm_le_one : ∀ (D : D7) (p : ℕ) [Fact p.Prime], p = D.host.d → �
       simp at h1
     · rw [hmem, show ((x * y : 𝓞 D.host.E) : D.host.E) = (x : D.host.E) * y from rfl, map_mul,
         norm_mul] at hxy
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       rw [hmem, hmem, not_lt, not_lt] at hc
       have := mul_le_mul hc.1 hc.2 zero_le_one (norm_nonneg _)
       linarith
@@ -823,8 +744,7 @@ theorem congr_at_d : ∀ (D : D7) (p : ℕ) [Fact p.Prime], p = D.host.d → ∀
   have hnth : ‖th‖ = ‖(p : ℂ_[p])‖ ^ (1 / 2 : ℝ) := by
     rw [← Real.sqrt_eq_rpow, ← hnorm2, Real.sqrt_sq (norm_nonneg _)]
   refine ⟨⟨?_, ?_⟩, ?_⟩
-  · by_contra h
-    push_neg at h
+  · by_contra! h
     have : 1 < ‖th‖ ^ 2 := by nlinarith
     linarith
   · intro h
@@ -1045,10 +965,10 @@ theorem eigenframe_at_d : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ), 
         · rw [zero_mul]
       simp only [h1]
       rw [Finset.sum_eq_single τ]
-      · simp only [if_true, ← Finset.mul_sum]
+      · simp only [ite_true, ← Finset.mul_sum]
         have := hsum τ (tauPl D ρ)
         rw [htauR] at this
-        rw [this, if_neg (fun h => hne (hbij.1 h)), mul_zero]
+        rw [this, ite_eq_right (fun h => hne (hbij.1 h)), mul_zero]
       · intro b _ hb; simp [hb]
       · intro h; exact absurd (Finset.mem_univ τ) h
     have hd1 := (_root_.GlobalTheory.DFrame.dual_local_bases_pair D p ι _ hth0 hcong P σ hσ hdualP).1
@@ -1083,8 +1003,8 @@ theorem eigenframe_at_d : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ), 
         intro i'
         simp only [act, LinearMap.coe_mk, AddHom.coe_mk, Pi.single_apply, mul_ite, mul_one, mul_zero]
       simp only [hfr, Formalism.L2.Th1.GD.mapVec, hact]
-      rw [Finset.sum_eq_single i (fun b _ hb => by rw [if_neg (Ne.symm hb), map_zero, zero_mul])
-        (fun h => absurd (Finset.mem_univ i) h), if_pos rfl]
+      rw [Finset.sum_eq_single i (fun b _ hb => by rw [ite_eq_right (Ne.symm hb), map_zero, zero_mul])
+        (fun h => absurd (Finset.mem_univ i) h), ite_eq_left rfl]
       by_cases h : tauPl D x.1 = s.iT i.1
       · rw [← h]; rfl
       · simp [TaylorLogMetric.chgB, h]

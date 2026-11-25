@@ -147,8 +147,6 @@ theorem ordI_detIdl (SB : Finset (HeightOneSpectrum (𝓞 E))) {N : Submodule (�
 
 end General
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem mk_mk_eq_of_ord {R : Ranks} (H : Formalism.BasicNotions.Host R) (SQ : Finset (HeightOneSpectrum (𝓞 H.E))) {a b : Ideles H.E}
     (h : ∀ w, ordI w a - ordI (conjPrime₂ w) a = ordI w b - ordI (conjPrime₂ w) b) :
     (QuotientGroup.mk (QuotientGroup.mk a) : DtQ H SQ ⧸ UOQ H SQ) = QuotientGroup.mk (QuotientGroup.mk b) := by
@@ -167,8 +165,6 @@ namespace GlobalTheory.Mem.Col2
 
 open DetLat
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem mk_detPt_eq_relDetQ : ∀ (R : Ranks) (H : Formalism.BasicNotions.Host R) (n : ℕ) (ST SG Q SQ : Finset (HeightOneSpectrum (𝓞 H.E))) (p : DecoF H.E n ST SG Q), LevOk H SG SQ → (QuotientGroup.mk (detPt H SQ p) : DtQ H SQ ⧸ UOQ H SQ) = relDetQ H SQ n (stdLat H.E n) p.deco.1.N := by
   intro R H n ST SG Q SQ p hL
   have hN := p.deco.2.lat
@@ -180,12 +176,12 @@ theorem mk_detPt_eq_relDetQ : ∀ (R : Ranks) (H : Formalism.BasicNotions.Host R
     CharValCompare.conjP_conjP, ordSub_std, ordSub_std, ordSub_conj hN p.deco.2.uni]
   have hs := hL.split w
   by_cases h1 : w ∈ uSG SG SQ
-  · rw [if_pos h1, if_neg (hs h1), if_pos h1]
+  · rw [ite_eq_left h1, ite_eq_right (hs h1), ite_eq_left h1]
     omega
   · by_cases h2 : conjPrime₂ w ∈ uSG SG SQ
-    · rw [if_neg h1, if_pos h2, if_pos h2]
+    · rw [ite_eq_right h1, ite_eq_left h2, ite_eq_left h2]
       omega
-    · rw [if_neg h1, if_neg h2, if_neg h2, if_neg h1]
+    · rw [ite_eq_right h1, ite_eq_right h2, ite_eq_right h2, ite_eq_right h1]
       omega
 
 end GlobalTheory.Mem.Col2

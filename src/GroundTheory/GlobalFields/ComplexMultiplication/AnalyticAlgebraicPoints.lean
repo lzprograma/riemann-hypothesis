@@ -126,7 +126,7 @@ def germ (f : ℂ → ℂ) : MeroField :=
   if h : Meromorphic f then Ideal.Quotient.mk meroNull ⟨f, h⟩ else 0
 
 theorem germ_of {f : ℂ → ℂ} (hf : Meromorphic f) : germ f = Ideal.Quotient.mk meroNull ⟨f, hf⟩ :=
-  dif_pos hf
+  dite_eq_left hf
 
 theorem germ_surjective (u : MeroField) : ∃ f : ℂ → ℂ, Meromorphic f ∧ germ f = u := by
   obtain ⟨⟨f, hf⟩, rfl⟩ := Ideal.Quotient.mk_surjective u

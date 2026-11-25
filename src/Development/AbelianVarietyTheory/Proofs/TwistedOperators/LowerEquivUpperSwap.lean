@@ -54,29 +54,7 @@ section General
 
 variable {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V]
 
-theorem smInd_equiv_of_eq [TopologicalSpace G] [IsTopologicalGroup G] {H H' : Subgroup G} (h : H = H')
-    (σ : Representation ℂ H V) (σ' : Representation ℂ H' V)
-    (hσ : ∀ g (hg : g ∈ H) (hg' : g ∈ H'), σ ⟨g, hg⟩ = σ' ⟨g, hg'⟩) :
-    Nonempty ((smInd H σ).Equiv (smInd H' σ')) := by
-  subst h
-  obtain rfl : σ = σ' := MonoidHom.ext fun g => hσ g.1 g.2 g.2
-  exact ⟨Representation.Equiv.refl _⟩
-
 end General
-
-section Blocks
-
-variable (R : Type) [CommRing R] {a b n : Type} [Fintype a] [DecidableEq a] [Fintype b] [DecidableEq b]
-  [Fintype n] [DecidableEq n]
-
-end Blocks
-
-section Local
-
-variable (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-  {a b : Type} [Fintype a] [DecidableEq a] [Fintype b] [DecidableEq b]
-
-end Local
 
 open ValuativeRel MeasureTheory in
 variable {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V] in

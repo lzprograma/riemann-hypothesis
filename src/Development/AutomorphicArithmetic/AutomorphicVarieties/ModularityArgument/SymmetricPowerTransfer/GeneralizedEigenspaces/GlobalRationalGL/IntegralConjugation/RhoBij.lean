@@ -51,8 +51,6 @@ open UpperTheory.V.W (Plc Lp)
 open scoped TensorProduct
 open GroundTheory.Global.SemiLocal
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 noncomputable section
 
 namespace UpperTheory.V.Z.Sym.Dict.Br

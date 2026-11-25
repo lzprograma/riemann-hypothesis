@@ -73,22 +73,8 @@ theorem cmq_ne_zero (c : ∀ k, ι k) (e : K → ℕ) : cmq c e ≠ 0 := by
     rw [map_pow, map_X]; exact pow_ne_zero _ (X_ne_zero _)
 
 theorem mem_cellMon_chartQ {c : ∀ k, ι k} {t : MRingOver ℚ ι} (ht : t ∈ KH.cellMon ℚ (chartCell c).1) :
-    ∃ e : K → ℕ, t = cmq c e := by
-  classical
-  induction ht using Submonoid.closure_induction with
-  | mem x hx =>
-    obtain ⟨k, i, hi, rfl⟩ := hx
-    have hi' : i = c k := Finset.mem_singleton.mp hi
-    subst hi'
-    refine ⟨Pi.single k 1, ?_⟩
-    rw [cmq, cmon, map_prod]
-    rw [Finset.prod_eq_single k (fun k' _ hk' => by simp [hk']) (fun h => absurd (Finset.mem_univ k) h)]
-    simp
-  | one => exact ⟨0, by simp [cmq, cmon]⟩
-  | mul x x' _ _ hx hx' =>
-    obtain ⟨f, rfl⟩ := hx
-    obtain ⟨f', rfl⟩ := hx'
-    exact ⟨f + f', (cmq_add c f f').symm⟩
+    ∃ e : K → ℕ, t = cmq c e :=
+  mem_cellMon_chart' ht
 
 section Eval
 
@@ -147,15 +133,8 @@ theorem evQ_smul (r : MRingOver ℚ ι) (m : MRingOver ℚ ι ⧸ idealOver y �
   rw [smul_quot, map_mul, evQ_mk]
 
 theorem cellMon_aevalQ_ne {I : ∀ k, Finset (ι k)} (hI : ∀ k, ∀ i ∈ I k, y ⟨k, i⟩ ≠ 0) :
-    ∀ t ∈ KH.cellMon ℚ I, aeval y t ≠ 0 := by
-  intro t ht
-  induction ht using Submonoid.closure_induction with
-  | mem x hx =>
-    obtain ⟨k, i, hi, rfl⟩ := hx
-    rw [aeval_X]
-    exact hI k i hi
-  | one => simp
-  | mul x x' _ _ hx hx' => rw [map_mul]; exact mul_ne_zero hx hx'
+    ∀ t ∈ KH.cellMon ℚ I, aeval y t ≠ 0 :=
+  fun _ ht => cellMon_aeval_ne' hI ht
 
 
 open Classical in
@@ -259,25 +238,8 @@ section Chart
 variable {Ω : Type} [Field Ω] [CharZero Ω] {y : (Σ k, ι k) → Ω}
 
 theorem aeval_div_memQ (c : ∀ k, ι k) {g : MRingOver ℚ ι} {d : K → ℕ} (hg : IsMultiHomog g d) :
-    aeval y g / ∏ k, y ⟨k, c k⟩ ^ d k ∈ chartRingQ y c := by
-  classical
-
-  rw [g.as_sum, map_sum, Finset.sum_div]
-  refine Subalgebra.sum_mem _ fun m hm => ?_
-  rw [aeval_monomial, mul_div_assoc]
-  refine Subalgebra.mul_mem _ (Subalgebra.algebraMap_mem _ _) ?_
-  have key : m.prod (fun p e => y p ^ e) / ∏ k, y ⟨k, c k⟩ ^ d k = ∏ p, (y p / y ⟨p.1, c p.1⟩) ^ m p := by
-    rw [Finsupp.prod_fintype _ _ (by simp)]
-    simp only [div_pow]
-    rw [Finset.prod_div_distrib]
-    congr 1
-    rw [Fintype.prod_sigma]
-    refine Finset.prod_congr rfl fun k _ => ?_
-    dsimp only
-    rw [Finset.prod_pow_eq_pow_sum, hg m hm k]
-  rw [key]
-  exact Subalgebra.prod_mem _ fun p _ => Subalgebra.pow_mem _
-    (Algebra.subset_adjoin (Set.mem_range_self (f := fun p : Σ k, ι k => y p / y ⟨p.1, c p.1⟩) p)) _
+    aeval y g / ∏ k, y ⟨k, c k⟩ ^ d k ∈ chartRingQ y c :=
+  aeval_div_mem' y c hg
 
 theorem exists_formQ (c : ∀ k, ι k) (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) {r : Ω} (hr : r ∈ chartRingQ y c) :
     ∃ (e : K → ℕ) (F : MRingOver ℚ ι), IsMultiHomog F e ∧ aeval y F = r * ∏ k, y ⟨k, c k⟩ ^ e k := by
@@ -401,78 +363,8 @@ theorem resFacesS {S : Type} [CommRing S] {M : Type} [AddCommGroup M] [Module (M
     (hI : I.1 k0 = {i1, i2}) (hrest : ∀ k ≠ k0, (I.1 k).card = 1) (J1 J2 : KH.Cell K ι 0)
     (hJ1 : J1.1 = Function.update I.1 k0 ((I.1 k0).erase i1))
     (hJ2 : J2.1 = Function.update I.1 k0 ((I.1 k0).erase i2)) :
-    KH.cellRes S M J1.1 I.1 (z J1) = KH.cellRes S M J2.1 I.1 (z J2) := by
-  have hne : ∀ k, (I.1 k).Nonempty := I.2.1
-  have h2 : (I.1 k0).card = 2 := by rw [hI]; exact Finset.card_pair (ne_of_lt hlt)
-  have hface : ∀ i ∈ I.1 k0, (∀ l, (Function.update I.1 k0 ((I.1 k0).erase i) l).Nonempty) ∧
-      ∑ l, ((Function.update I.1 k0 ((I.1 k0).erase i) l).card - 1) = 0 := by
-    intro i hi
-    have hc : ((I.1 k0).erase i).card = 1 := by rw [Finset.card_erase_of_mem hi, h2]
-    refine ⟨fun l => ?_, Finset.sum_eq_zero fun l _ => ?_⟩
-    · by_cases hl : l = k0
-      · subst hl
-        rw [Function.update_self]
-        exact Finset.card_pos.mp (by omega)
-      · rw [Function.update_of_ne hl]
-        exact hne l
-    · by_cases hl : l = k0
-      · subst hl
-        rw [Function.update_self, hc]
-        rfl
-      · rw [Function.update_of_ne hl, hrest l hl]
-        rfl
-  have hsumsign : ∑ l ∈ Finset.univ.filter (· < k0), ((I.1 l).card - 1) = 0 :=
-    Finset.sum_eq_zero fun l hl => by rw [hrest l (ne_of_lt (Finset.mem_filter.mp hl).2)]; rfl
-  have hs1 : KH.faceSign I.1 k0 i1 = 1 := by
-    have f1 : (({i1, i2} : Finset (ι k0)).filter (· < i1)).card = 0 := by
-      simp [Finset.filter_insert, Finset.filter_singleton, not_lt.mpr hlt.le]
-    simp only [KH.faceSign, hsumsign, hI, add_zero, f1]
-    norm_num
-  have hs2 : KH.faceSign I.1 k0 i2 = -1 := by
-    have f2 : (({i1, i2} : Finset (ι k0)).filter (· < i2)).card = 1 := by
-      simp [Finset.filter_insert, Finset.filter_singleton, hlt]
-    simp only [KH.faceSign, hsumsign, hI, add_zero, f2]
-    norm_num
-  have hi1 : i1 ∈ I.1 k0 := by rw [hI]; simp
-  have hi2 : i2 ∈ I.1 k0 := by rw [hI]; simp
-  have key : KH.cechD S ι M 0 z I =
-      KH.faceSign I.1 k0 i1 • KH.cellRes S M (Function.update I.1 k0 ((I.1 k0).erase i1)) I.1
-        (z ⟨_, hface i1 hi1⟩) + KH.faceSign I.1 k0 i2 • KH.cellRes S M
-        (Function.update I.1 k0 ((I.1 k0).erase i2)) I.1 (z ⟨_, hface i2 hi2⟩) := by
-    rw [KH.cechD]
-    erw [LinearMap.pi_apply]
-    simp only [LinearMap.sum_apply]
-    rw [Finset.sum_eq_single k0]
-    · rw [Finset.sum_eq_add_of_mem i1 i2 hi1 hi2 (ne_of_lt hlt)]
-      · rw [dite_eq_left (hface i1 hi1), dite_eq_left (hface i2 hi2)]
-        rfl
-      · intro i hi hne'
-        rw [hI] at hi
-        simp only [Finset.mem_insert, Finset.mem_singleton] at hi
-        rcases hi with rfl | rfl
-        · exact absurd rfl hne'.1
-        · exact absurd rfl hne'.2
-    · intro k _ hk
-      refine Finset.sum_eq_zero fun i hi => ?_
-      split_ifs with hc
-      · exfalso
-        obtain ⟨hn, -⟩ := hc
-        have h3 := hn k
-        rw [Function.update_self] at h3
-        have h4 := Finset.card_erase_of_mem hi
-        rw [hrest k hk] at h4
-        have h5 := Finset.card_pos.mpr h3
-        omega
-      · rfl
-    · intro h
-      exact absurd (Finset.mem_univ k0) h
-  have e0 : KH.cechD S ι M 0 z I = 0 := by rw [hz]; rfl
-  rw [key, hs1, hs2, one_smul, neg_one_smul, ← sub_eq_add_neg, sub_eq_zero] at e0
-  obtain ⟨A1, hA1⟩ := J1
-  obtain ⟨A2, hA2⟩ := J2
-  simp only at hJ1 hJ2
-  subst hJ1 hJ2
-  exact e0
+    KH.cellRes S M J1.1 I.1 (z J1) = KH.cellRes S M J2.1 I.1 (z J2) :=
+  res_facesS z hz I k0 i1 i2 hlt hI hrest J1 J2 hJ1 hJ2
 
 variable {Ω : Type} [Field Ω] [CharZero Ω] {y : (Σ k, ι k) → Ω}
 variable {v : KH.CechC ℚ ι (MRingOver ℚ ι ⧸ idealOver y ℚ) 0}
@@ -481,68 +373,11 @@ theorem val_step_lt (hz : KH.cechD ℚ ι _ 0 v = 0) {c d : ∀ k, ι k}
     (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) (hd : ∀ k, y ⟨k, d k⟩ ≠ 0) (k0 : K) (hcd : ∀ k ≠ k0, c k = d k)
     (hlt : c k0 < d k0) :
     val y _ (v (chartCell c)) = val y _ (v (chartCell d)) := by
-  classical
-  have hne : c k0 ≠ d k0 := ne_of_lt hlt
-  set A : ∀ k, Finset (ι k) := Function.update (fun k => ({c k} : Finset (ι k))) k0 {c k0, d k0} with hAdef
-  have hA0 : A k0 = {c k0, d k0} := Function.update_self _ _ _
-  have hAk : ∀ k ≠ k0, A k = {c k} := fun k hk => Function.update_of_ne hk _ _
-  have hAne : ∀ k, (A k).Nonempty := by
-    intro k
-    by_cases hk : k = k0
-    · subst hk
-      rw [hA0]
-      exact Finset.insert_nonempty _ _
-    · rw [hAk k hk]
-      exact Finset.singleton_nonempty _
-  have hAsum : ∑ k, ((A k).card - 1) = 1 := by
-    rw [Finset.sum_eq_single k0 (fun k _ hk => by rw [hAk k hk]; rfl)
-      (fun h => absurd (Finset.mem_univ k0) h), hA0, Finset.card_pair hne]
-  have hIy : ∀ k, ∀ i ∈ A k, y ⟨k, i⟩ ≠ 0 := by
-    intro k i hi
-    by_cases hk : k = k0
-    · subst hk
-      rw [hA0] at hi
-      rcases Finset.mem_insert.mp hi with h | h
-      · rw [h]; exact hc _
-      · rw [Finset.mem_singleton.mp h]; exact hd _
-    · rw [hAk k hk, Finset.mem_singleton] at hi
-      rw [hi]
-      exact hc k
-  have hrest : ∀ k ≠ k0, (A k).card = 1 := fun k hk => by rw [hAk k hk]; rfl
-  have hsc : ∀ k, (chartCell c).1 k ⊆ A k := by
-    intro k
-    show {c k} ⊆ A k
-    by_cases hk : k = k0
-    · subst hk
-      rw [hA0]
-      simp
-    · rw [hAk k hk]
-  have hsd : ∀ k, (chartCell d).1 k ⊆ A k := by
-    intro k
-    show {d k} ⊆ A k
-    by_cases hk : k = k0
-    · subst hk
-      rw [hA0]
-      simp
-    · rw [hAk k hk, hcd k hk]
-  have e := resFacesS v hz ⟨A, hAne, hAsum⟩ k0 (c k0) (d k0) hlt hA0 hrest (chartCell d) (chartCell c) ?_ ?_
-  · rw [cellRes_of_le (cellMon_mono hsd), cellRes_of_le (cellMon_mono hsc)] at e
-    have hA := cellMon_aevalQ_ne (y := y) hIy
-    rw [← val_liftOfLE (cellMon_mono hsc) hA, ← val_liftOfLE (cellMon_mono hsd) hA, e]
-  · funext k
-    by_cases hk : k = k0
-    · subst hk
-      show ({d k} : Finset (ι k)) = Function.update A k ((A k).erase (c k)) k
-      rw [Function.update_self, hA0, Finset.erase_insert (by simpa using hne)]
-    · show ({d k} : Finset (ι k)) = Function.update A k0 ((A k0).erase (c k0)) k
-      rw [Function.update_of_ne hk, hAk k hk, hcd k hk]
-  · funext k
-    by_cases hk : k = k0
-    · subst hk
-      show ({c k} : Finset (ι k)) = Function.update A k ((A k).erase (d k)) k
-      rw [Function.update_self, hA0, Finset.pair_comm, Finset.erase_insert (by simpa using hne.symm)]
-    · show ({c k} : Finset (ι k)) = Function.update A k0 ((A k0).erase (d k0)) k
-      rw [Function.update_of_ne hk, hAk k hk]
+  obtain ⟨A, hsc, hsd, hAmem, e⟩ := chartStep_res v hz k0 hcd hlt
+  have hIy : ∀ k, ∀ i ∈ A k, y ⟨k, i⟩ ≠ 0 := fun k i hi =>
+    (hAmem k i hi).elim (fun h => h ▸ hc k) (fun h => h ▸ hd k)
+  have hA := cellMon_aevalQ_ne (y := y) hIy
+  rw [← val_liftOfLE (cellMon_mono hsc) hA, ← val_liftOfLE (cellMon_mono hsd) hA, e]
 
 theorem val_step (hz : KH.cechD ℚ ι _ 0 v = 0) {c d : ∀ k, ι k}
     (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) (hd : ∀ k, y ⟨k, d k⟩ ≠ 0) (k0 : K) (hcd : ∀ k ≠ k0, c k = d k) :

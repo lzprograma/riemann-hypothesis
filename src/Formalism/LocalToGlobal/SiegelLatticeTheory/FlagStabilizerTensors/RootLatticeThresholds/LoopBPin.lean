@@ -18,8 +18,6 @@ open NumberField MeasureTheory Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.Pf.LoopBPin
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : HidaSetting D} {Y : Full X}
 
 theorem isFundR_fundOf {u u' : D.what₂.Word} (s : TT Y u u') : LoopTerm.IsFundR s (TermOp.FundOf s) := by
@@ -150,15 +148,8 @@ theorem covolPos_holds (u u' : D.what₂.Word) : LoopTerm.CovolPos (Y := Y) u u'
     simp_rw [h2]
     exact (Equiv.inv (TermOp.Vanish.ROsub X (X.Fu u) (X.Fu u') s.lam s.lam' s.lin)).tsum_eq
       (fun q => (μw.map fun y => g * y * g⁻¹) (K0 ∩ (fun x => (q : X.B.I.Ginf) * x) ⁻¹' K))
-  have hC : IsCompact ((fun y : X.B.I.Ginf => g * y * g⁻¹) ⁻¹' K0) := by
-    have e : (fun y : X.B.I.Ginf => g * y * g⁻¹) ⁻¹' K0 = (fun k => g⁻¹ * k * g) '' K0 := by
-      ext y
-      simp only [Set.mem_preimage, Set.mem_image]
-      constructor
-      · intro hy; exact ⟨g * y * g⁻¹, hy, by group⟩
-      · rintro ⟨k, hk, rfl⟩; convert hk using 1; group
-    rw [e]
-    exact hK0c.image ((continuous_const.mul continuous_id).mul continuous_const)
+  have hC : IsCompact ((fun y : X.B.I.Ginf => g * y * g⁻¹) ⁻¹' K0) :=
+    ((Homeomorph.mulLeft g).trans (Homeomorph.mulRight g⁻¹)).isCompact_preimage.2 hK0c
   have hfin : (μw.map fun y => g * y * g⁻¹) K0 < ⊤ := by
     rw [Measure.map_apply hcm hK0m]
     have hsc := stCoord_cont u' w γw

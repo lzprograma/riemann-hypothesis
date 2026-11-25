@@ -6,47 +6,6 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorModOfT
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeFirstDeRhamStructure
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLieConditionModHodgeFiltration
 import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ConnectedSpaceSpecOfIsLocalRing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
 
 @[expose] public section
@@ -55,7 +14,6 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.UPel.Sm GlobalTheory.Cris GlobalTheory.DeRham
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.HTLieRho
 
@@ -96,18 +54,6 @@ theorem nm_eq_mul (b : GlobalTheory.UPel.HT.Base D R) (β : R →+* k) :
   simp only [map_add (f := _), map_sub, map_pow, map_mul, map_intCast, map_zero] at hr
   linear_combination hr
 
-theorem exists_sep (b : GlobalTheory.UPel.HT.Base D R) (β : R →+* k) {i j : Fin D.a} (hij : i ≠ j) :
-    ∃ c : 𝓞 D.F, β (b.t i c) ≠ β (b.t j c) := by
-  by_contra h
-  push_neg at h
-  have hle : Ideal.span (Set.range fun x => b.t i x - b.t j x) ≤ RingHom.ker β := by
-    rw [Ideal.span_le]
-    rintro _ ⟨x, rfl⟩
-    simp [RingHom.mem_ker, map_sub, h x]
-  rw [b.comax i j hij, top_le_iff] at hle
-  have h1 : (1 : R) ∈ RingHom.ker β := by rw [hle]; trivial
-  rw [RingHom.mem_ker, map_one] at h1
-  exact one_ne_zero h1
 
 variable {b : GlobalTheory.UPel.HT.Base D R}
 
@@ -284,7 +230,7 @@ theorem finrank_quot [IsAlgClosed k] (o₀ : GlobalTheory.UPel.HT.Obj b N t) (β
   have hχ : Function.Injective (fun j : Fin D.a => β.comp (b.t j)) := by
     intro j j' h
     by_contra hne
-    obtain ⟨c, hc⟩ := exists_sep b β hne
+    obtain ⟨c, hc⟩ := b.exists_char_separation β hne
     exact hc (RingHom.congr_fun h c)
   have hEρ : ∀ j, Lie.eig (o₀.act.toF D) (β.comp (b.t j)) ≤ eigOm o₀ (β b.ρ) := fun j v hv => by
     rw [mem_eigOm, Lie.mem_eig_iff.1 hv D.ω, RingHom.comp_apply, b.t_ω]
@@ -353,7 +299,7 @@ theorem finrank_quot [IsAlgClosed k] (o₀ : GlobalTheory.UPel.HT.Obj b N t) (β
         · subst hj
           exact Submodule.mem_sup_right (hw j)
         · apply Submodule.mem_sup_left
-          obtain ⟨c, hc⟩ := exists_sep b β hj
+          obtain ⟨c, hc⟩ := b.exists_char_separation β hj
           obtain ⟨h, hh⟩ := HL.toLie_surjective (o₀.act.toF D) ((β (b.t j c) - β (b.t i c))⁻¹ • w j)
           have key : T (GlobalTheory.HTCount.crysAct o₀ (algebraMap (𝓞 D.F) D.O c) h - (β.comp (b.t i)) c • h) = w j := by
             rw [hTdef, map_sub, map_smul, toLie_crys, hh, smul_comm c, Lie.mem_eig_iff.1 (hw j) c,

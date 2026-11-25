@@ -1,59 +1,13 @@
 module
 
 public import Formalism.TameInertiaTowers.StatementField
-public import Formalism.TameInertiaTowers.InvLength
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 public import Mathlib.RingTheory.SimpleRing.Principal
-public import Formalism.TameInertiaTowers.CentralOrderTwo.NormalOrderTwoCentral
 import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.CompletePartialOrder
 public import Mathlib.RingTheory.Ideal.Int
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -422,48 +376,5 @@ theorem layerFrob_of (hG : LayerGalois) : LayerFrob := by
     (Prod.ext (Units.ext (hσ.2.1.trans hτv.2.1.symm)) (Units.ext (hσ.2.2.trans hτv.2.2.symm))))
   subst this
   exact hτ
-
-theorem invLength : InvLength := by
-  intro N u hu1
-  set k := (u - 1).natAbs with hkdef
-  have hk : k ≠ 0 := by
-    rw [hkdef]; intro h; apply hu1; have := Int.natAbs_eq_zero.mp h; linarith
-  have hN : (2 ^ N : ℕ) ≠ 0 := by positivity
-  have : NeZero (2 ^ N) := ⟨hN⟩
-  set c : ZMod (2 ^ N) := ((u - 1 : ℤ) : ZMod (2 ^ N)) with hc
-  let f : ZMod (2 ^ N) →+ ZMod (2 ^ N) := AddMonoidHom.mulLeft c
-  have hcard : Nat.card {x : ZMod (2 ^ N) // c * x = 0} = Nat.card f.ker :=
-    Nat.card_congr (Equiv.subtypeEquivRight (fun x => (AddMonoidHom.mem_ker (f := f)).symm))
-  have hrange : f.range = AddSubgroup.zmultiples c := by
-    ext y
-    simp only [AddMonoidHom.mem_range, AddSubgroup.mem_zmultiples_iff]
-    constructor
-    · rintro ⟨x, rfl⟩
-      refine ⟨(x.val : ℤ), ?_⟩
-      simp only [f, AddMonoidHom.coe_mulLeft, zsmul_eq_mul, Int.cast_natCast, ZMod.natCast_zmod_val]
-      ring
-    · rintro ⟨n, rfl⟩
-      refine ⟨(n : ZMod (2 ^ N)), ?_⟩
-      simp only [f, AddMonoidHom.coe_mulLeft, zsmul_eq_mul]
-      ring
-  have hord : addOrderOf c = 2 ^ N / Nat.gcd (2 ^ N) k := by
-    have : c = (k : ZMod (2 ^ N)) ∨ c = -(k : ZMod (2 ^ N)) := by
-      rcases Int.natAbs_eq (u - 1) with h | h
-      · left; rw [hc, h]; simp [hkdef]
-      · right; rw [hc, h]; simp [hkdef]
-    rcases this with h | h
-    · rw [h, ZMod.addOrderOf_coe _ hN]
-    · rw [h, addOrderOf_neg, ZMod.addOrderOf_coe _ hN]
-  have hmul := AddSubgroup.card_mul_index f.ker
-  rw [AddSubgroup.index_ker, hrange, Nat.card_zmultiples, hord, Nat.card_zmod] at hmul
-  have hg : Nat.gcd (2 ^ N) k ∣ 2 ^ N := Nat.gcd_dvd_left _ _
-  have hgpos : 0 < Nat.gcd (2 ^ N) k := Nat.gcd_pos_of_pos_left _ (by positivity)
-  have hd : Nat.gcd (2 ^ N) k * (2 ^ N / Nat.gcd (2 ^ N) k) = 2 ^ N := Nat.mul_div_cancel' hg
-  have hdpos : 0 < 2 ^ N / Nat.gcd (2 ^ N) k :=
-    Nat.div_pos (Nat.le_of_dvd (by positivity) hg) hgpos
-  have hker : Nat.card f.ker = Nat.gcd (2 ^ N) k :=
-    Nat.eq_of_mul_eq_mul_right hdpos (hmul.trans hd.symm)
-  rw [hcard, hker, gcd_two_pow N k hk]
-  simp [hkdef, padicValInt, padicValNat]
 
 end Formalism.TwoAdicCyclotomicDecomposition

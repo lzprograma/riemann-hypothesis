@@ -11,56 +11,8 @@ public import Mathlib.LinearAlgebra.Eigenspace.Basic
 public import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
 public import Mathlib.RepresentationTheory.Semisimple
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WhittakerSpaceDimFiniteGLLeOne
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.RepresentationTheory.Maschke
 
@@ -223,7 +175,7 @@ theorem exists_eigenvector_of_stable {F : Type} [Field F] [Fintype F] (ψ : AddC
     obtain ⟨i, hi⟩ := Function.ne_iff.1 hx
     refine Finset.prod_eq_zero (Finset.mem_univ i) ?_
     have := AddChar.sum_mulShift (ψ := ψ) (-x i) hprim
-    rw [if_neg (by simpa using hi)] at this
+    rw [ite_eq_right (by simpa using hi)] at this
     simpa using this
   have hsum : ∑ l, w l = (Fintype.card (ι → F) : ℂ) • v := by
     simp only [w]
@@ -331,9 +283,9 @@ theorem colEl_neg_mul {b : Fin r → ℕ} (hb : Monotone b) (k : Fin r) (x : Fin
     · obtain rfl : j = k := Fin.ext h
       rw [hu.1.2 j]
       rcases lt_trichotomy i j with h' | h' | h'
-      · rw [if_pos h', hx i h', Matrix.one_apply_ne h'.ne]; ring
+      · rw [ite_eq_left h', hx i h', Matrix.one_apply_ne h'.ne]; ring
       · subst h'; simp [hu.1.2 i]
-      · rw [if_neg (lt_asymm h'), hu.1.1 (show j.val < i.val from h'), Matrix.one_apply_ne h'.ne']; simp
+      · rw [ite_eq_right (lt_asymm h'), hu.1.1 (show j.val < i.val from h'), Matrix.one_apply_ne h'.ne']; simp
   refine ⟨⟨(unip F r).mul_mem (colGL_mem_unip k (-x)) hu.1, hc⟩, ?_⟩
   unfold edgeSum
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -341,10 +293,10 @@ theorem colEl_neg_mul {b : Fin r → ℕ} (hb : Monotone b) (k : Fin r) (x : Fin
   · have h1 := hij.1
     by_cases hk : k < j
     · have : ¬ i < k := by rw [Fin.lt_def] at hk ⊢; omega
-      rw [if_pos hij, if_pos ⟨hij, hk⟩, e, if_neg this, add_zero]
-    · rw [if_pos hij, if_neg (fun h => hk h.2), hc i j (by rw [Fin.lt_def] at hk; omega),
+      rw [ite_eq_left hij, ite_eq_left ⟨hij, hk⟩, e, ite_eq_right this, add_zero]
+    · rw [ite_eq_left hij, ite_eq_right (fun h => hk h.2), hc i j (by rw [Fin.lt_def] at hk; omega),
         Matrix.one_apply_ne (fun h' => by simp [h'] at h1)]
-  · rw [if_neg hij, if_neg (fun h => hij h.1)]
+  · rw [ite_eq_right hij, ite_eq_right (fun h => hij h.1)]
 
 theorem mul_colEl_val {b : Fin r → ℕ} (hb : Monotone b) (k : Fin r) (x : Fin r → F) {u : blockTri (κ := F) b}
     (hu : u ∈ colSet F b (k.val + 1)) (i j : Fin r) :
@@ -371,9 +323,9 @@ theorem colEl_stable {V : Type} [AddCommGroup V] [Module ℂ V] (ψ : AddChar F 
   have hu' : u ∈ colSet F b k.val := ⟨hu.1, fun i j hj => hu.2 i j (by omega)⟩
   have hm : u * colEl hb k x ∈ colSet F b k.val := by
     refine ⟨(unip F r).mul_mem hu.1 (colGL_mem_unip k x), fun i j hj => ?_⟩
-    rw [mul_colEl_val hb k x hu, hu.2 i j (by omega), if_neg (fun h => by simp [h.2] at hj), add_zero]
+    rw [mul_colEl_val hb k x hu, hu.2 i j (by omega), ite_eq_right (fun h => by simp [h.2] at hj), add_zero]
   obtain ⟨h1, h2⟩ := colEl_neg_mul hb k x hm (fun i hi => by
-    rw [mul_colEl_val hb k x hu, hu.2 i k (by omega), if_pos ⟨hi, rfl⟩, Matrix.one_apply_ne hi.ne, zero_add])
+    rw [mul_colEl_val hb k x hu, hu.2 i k (by omega), ite_eq_left ⟨hi, rfl⟩, Matrix.one_apply_ne hi.ne, zero_add])
   obtain ⟨-, h3⟩ := colEl_neg_mul hb k 0 hu' (fun i hi => by
     rw [hu.2 i k (by omega), Matrix.one_apply_ne hi.ne]; rfl)
   rw [neg_zero, colEl_zero, one_mul] at h3
@@ -382,7 +334,7 @@ theorem colEl_stable {V : Type} [AddCommGroup V] [Module ℂ V] (ψ : AddChar F 
     unfold edgeSum
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     split_ifs with h
-    · rw [mul_colEl_val hb k x hu, if_neg (fun h' => h.2.ne' h'.2), add_zero]
+    · rw [mul_colEl_val hb k x hu, ite_eq_right (fun h' => h.2.ne' h'.2), add_zero]
     · rfl
   have h5 := hv _ h1
   rw [h2, h4, ← h3] at h5
@@ -828,8 +780,6 @@ theorem eig_colChar_vecMul_ne_bot (F : Type) [Field F] (ψ : AddChar F ℂ) (r :
         split_ifs with hij
         · refine c1 i j fun hi => ?_
           have h1 : j.val = i.val + 1 := hij.1.1
-          have h2 : k.val < j.val := hij.2
-          have h3 : i.val < k.val := hi
           omega
         · rfl
     have e : σ u (σ h⁻¹ v) = σ h⁻¹ (σ (h * u * h⁻¹) v) := by
@@ -933,7 +883,6 @@ theorem step [Fintype F] (ψ : AddChar F ℂ) (hψ : ψ ≠ 1) {V : Type} [AddCo
         simp [colChar, this]
   · obtain ⟨i, hi⟩ := Function.ne_iff.1 hl0
     obtain ⟨hik, hbi⟩ := hl i hi
-    have hik' : i.val < k.val := hik
     let k' : Fin r := ⟨k.val - 1, by omega⟩
     have hk' : k'.val + 1 = k.val := by show k.val - 1 + 1 = k.val; omega
     have hbk : b k' = b k := by
@@ -1035,7 +984,6 @@ theorem exists_blocks (b : Fin r → ℕ) (hb : Monotone b) :
     constructor
     · intro h
       have h1 : i < j := (f c).lt_iff_lt.1 (show (f c i).val < (f c j).val by omega)
-      have h1' : i.val < j.val := h1
       by_contra hc
       have h2 : i.val + 1 < j.val := by omega
       let m : Fin (T c).card := ⟨i.val + 1, h2.trans j.2⟩

@@ -49,8 +49,6 @@ import Mathlib.Tactic.Polynomial.Basic
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory
@@ -61,8 +59,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Sp epsR IsTangent IsLieComb I
 open TrivSqZeroExt (inl inr)
 
 namespace GlobalTheory.SqZero
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {R : Type} [CommRing R]
 

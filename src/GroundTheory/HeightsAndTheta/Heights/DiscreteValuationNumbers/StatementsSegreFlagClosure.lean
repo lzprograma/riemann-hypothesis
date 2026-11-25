@@ -129,10 +129,6 @@ def SegreFlagClosurePullback.Statement : Prop :=
             (Fin.append g gz) Bs Q
         else 0
 
-section Examples
-
-end Examples
-
 end
 
 end GroundTheory.Heights₂.Heights.NumbersDVR

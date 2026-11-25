@@ -67,9 +67,9 @@ theorem affine_mul_eq (d : ℕ) (p q : A) (c : ℕ → A) (u : ℂ) :
     refine sum_congr rfl fun i _ => ?_
     simp only [smul_mul_assoc, mul_smul_comm, smul_smul, pow_succ]
   · rw [sum_range_succ _ (d + 1), mul_sum]
-    simp only [lt_irrefl, if_false, smul_zero, add_zero]
+    simp only [lt_irrefl, ite_false, smul_zero, add_zero]
     refine sum_congr rfl fun i hi => ?_
-    rw [if_pos (mem_range.mp hi), mul_smul_comm]
+    rw [ite_eq_left (mem_range.mp hi), mul_smul_comm]
 
 theorem prod_affine_two_top (t : ℕ) (p : Fin (t + 1) → ℂ) (q : Fin (t + 1) → A) :
     ∃ c : ℕ → A, c (t + 1) = (∏ k, p k) • (1 : A) ∧
@@ -87,9 +87,9 @@ theorem prod_affine_two_top (t : ℕ) (p : Fin (t + 1) → ℂ) (q : Fin (t + 1)
   | succ t ih =>
     obtain ⟨c, hc1, hc0, hc⟩ := ih (fun k => p k.succ) (fun k => q k.succ)
     refine ⟨shiftCoeff (t + 1) (p 0 • (1 : A)) (q 0) c, ?_, ?_, fun u => ?_⟩
-    · simp only [shiftCoeff, lt_irrefl, if_false, add_zero]
+    · simp only [shiftCoeff, lt_irrefl, ite_false, add_zero]
       rw [hc1, smul_one_mul, smul_smul, ← Fin.prod_univ_succ]
-    · simp only [shiftCoeff, lt_add_iff_pos_right, Nat.lt_add_one, if_true]
+    · simp only [shiftCoeff, lt_add_iff_pos_right, Nat.lt_add_one, ite_true]
       rw [hc0, hc1, smul_one_mul, mul_smul_comm, mul_one, smul_sum, add_comm]
       conv_rhs => rw [Fin.sum_univ_succ]
       congr 1
@@ -138,24 +138,22 @@ theorem qdet_shift_next_coeff : ∀ (A : Type) [Ring A] [Algebra ℂ A] (m : ℕ
       simp
     · intro σ _ hσ
       obtain ⟨k, hk⟩ : ∃ k, σ k ≠ k := by
-        by_contra hne
-        push_neg at hne
+        by_contra! hne
         exact hσ (Equiv.ext hne)
-      rw [hc1 σ, Finset.prod_eq_zero (mem_univ k) (if_neg hk), zero_smul, mul_zero]
+      rw [hc1 σ, Finset.prod_eq_zero (mem_univ k) (ite_eq_right hk), zero_smul, mul_zero]
     · intro h1
       exact absurd (mem_univ _) h1
   · simp only
     rw [Finset.sum_eq_single (1 : Equiv.Perm (Fin (m + 1)))]
     · rw [hc0 1]
       simp only [Equiv.Perm.sign_one, Units.val_one, Int.cast_one, one_mul, Equiv.Perm.coe_one,
-        id_eq, if_true, ite_self, prod_const_one, one_smul]
+        id_eq, ite_true, ite_self, prod_const_one, one_smul]
       rw [sum_add_distrib, add_comm]
       congr 1
       simp only [Algebra.algebraMap_eq_smul_one, ← sum_smul]
     · intro σ _ hσ
       obtain ⟨k₀, hk₀⟩ : ∃ k, σ k ≠ k := by
-        by_contra hne
-        push_neg at hne
+        by_contra! hne
         exact hσ (Equiv.ext hne)
       rw [hc0 σ]
       have hz : ∀ k, (∏ j, (if j = k then (1 : ℂ) else (if σ j = j then (1 : ℂ) else 0))) = 0 := by

@@ -2,50 +2,9 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
 public import Lemmata.GeneralBFactLeftFurther.Imports
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -201,7 +160,7 @@ lemma cmp_X_mul (o : ℕ) (v : σ) (f : MvPolynomial σ R) :
   · obtain ⟨m', rfl⟩ : ∃ m', m = Finsupp.single v 1 + m' :=
       ⟨m - Finsupp.single v 1, (add_tsub_cancel_of_le (by
         rw [Finsupp.single_le_iff]; exact Nat.one_le_iff_ne_zero.mpr (Finsupp.mem_support_iff.mp hv))).symm⟩
-    rw [if_pos hv, if_pos hv, add_tsub_cancel_left, coeff_weightedHomogeneousComponent, weight_single_add]
+    rw [ite_eq_left hv, ite_eq_left hv, add_tsub_cancel_left, coeff_weightedHomogeneousComponent, weight_single_add]
     simp
   · simp [hv]
 
@@ -228,23 +187,23 @@ variable {n : ℕ} {P : Type*} [CommRing P] {c : ℤ} {hs : ℕ → ℕ} {x : �
 
 lemma KG_rise_pos (hc : 1 ≤ c) (h : hs j < hs (j + 1)) : KG c hs x (j + 1) = wedgeR (x j) (KG c hs x j) := by
   show colStep c (hs j) (hs (j + 1)) (x j) (KG c hs x j) = _
-  rw [colStep, if_pos h, if_pos hc]
+  rw [colStep, ite_eq_left h, ite_eq_left hc]
 
 lemma KG_fall_pos (hc : 1 ≤ c) (h : hs (j + 1) < hs j) : KG c hs x (j + 1) = contrR (x j) (KG c hs x j) := by
   show colStep c (hs j) (hs (j + 1)) (x j) (KG c hs x j) = _
-  rw [colStep, if_neg (by omega), if_pos h, if_pos hc]
+  rw [colStep, ite_eq_right (by omega), ite_eq_left h, ite_eq_left hc]
 
 lemma KG_rise_neg (hc : ¬ 1 ≤ c) (h : hs j < hs (j + 1)) : KG c hs x (j + 1) = contrR (x j) (KG c hs x j) := by
   show colStep c (hs j) (hs (j + 1)) (x j) (KG c hs x j) = _
-  rw [colStep, if_pos h, if_neg hc]
+  rw [colStep, ite_eq_left h, ite_eq_right hc]
 
 lemma KG_fall_neg (hc : ¬ 1 ≤ c) (h : hs (j + 1) < hs j) : KG c hs x (j + 1) = wedgeR (x j) (KG c hs x j) := by
   show colStep c (hs j) (hs (j + 1)) (x j) (KG c hs x j) = _
-  rw [colStep, if_neg (by omega), if_pos h, if_neg hc]
+  rw [colStep, ite_eq_right (by omega), ite_eq_left h, ite_eq_right hc]
 
 lemma KG_eq (h : hs j = hs (j + 1)) : KG c hs x (j + 1) = KG c hs x j := by
   show colStep c (hs j) (hs (j + 1)) (x j) (KG c hs x j) = _
-  rw [colStep, if_neg (by omega), if_neg (by omega)]
+  rw [colStep, ite_eq_right (by omega), ite_eq_right (by omega)]
 
 lemma wedgeR_ne {y : Fin n → P} {Kv : Finset (Fin n) → P} {J : Finset (Fin n)} (h : wedgeR y Kv J ≠ 0) :
     ∃ m ∈ J, Kv (J.erase m) ≠ 0 := by
@@ -405,12 +364,12 @@ lemma cmp_extOne (J : Finset (Fin (r + K))) :
   unfold extOne
   by_cases h : J = ∅
   · have h' := (eq_empty_iff_split J).mp h
-    rw [if_pos h, if_pos h'.1, if_pos h'.2, cmp_one, mul_one]
-  · rw [if_neg h, map_zero]
+    rw [ite_eq_left h, ite_eq_left h'.1, ite_eq_left h'.2, cmp_one, mul_one]
+  · rw [ite_eq_right h, map_zero]
     by_cases h1 : Jp J = ∅
     · have h2 : Jt J ≠ ∅ := fun h2 => h ((eq_empty_iff_split J).mpr ⟨h1, h2⟩)
-      rw [if_neg h2, mul_zero]
-    · rw [if_neg h1, zero_mul]
+      rw [ite_eq_right h2, mul_zero]
+    · rw [ite_eq_right h1, zero_mul]
 
 lemma ar0 {d d' w om : ℕ} (h : d' ≤ d) (hw : w ≤ om) : d' * w ≤ d * (om + 1) := Nat.mul_le_mul h (by omega)
 
@@ -461,13 +420,13 @@ lemma hst2 (j : ℕ) : d.hs (j + 1) ≤ d.hs j + 1 ∧ d.hs j ≤ d.hs (j + 1) +
 lemma vec_of_rise {j : ℕ} (h : d.hs j < d.hs (j + 1)) : d.vec j = true := by
   have hst := d.hstep j
   by_contra hv
-  rw [if_neg hv] at hst
+  rw [ite_eq_right hv] at hst
   omega
 
 lemma vec_of_fall {j : ℕ} (h : d.hs (j + 1) < d.hs j) : ¬ (d.vec j = true) := by
   have hst := d.hstep j
   intro hv
-  rw [if_pos hv] at hst
+  rw [ite_eq_left hv] at hst
   omega
 
 lemma o_succ (j : ℕ) : d.o (j + 1) = d.cost j + d.o j := by
@@ -501,12 +460,12 @@ theorem inv_pos (hc : 1 ≤ c) (h0 : d.hs 0 = 0) : ∀ j, j ≤ N →
     rcases lt_trichotomy (d.hs j) (d.hs (j + 1)) with h1 | h1 | h1
     · have hv := d.vec_of_rise h1
       have hxp : ∀ a, IsW wv (d.x j (Fin.castAdd K a)) 0 := fun a => by
-        have := d.hxp j a; rwa [if_pos hv] at this
+        have := d.hxp j a; rwa [ite_eq_left hv] at this
       have hxt : ∀ b, IsW wv (d.x j (Fin.natAdd r b)) (d.om j) := fun b => by
-        have := d.hxt j b; rwa [if_pos hv] at this
+        have := d.hxt j b; rwa [ite_eq_left hv] at this
       have hK : d.Kf c (j + 1) = wedgeR (d.x j) (d.Kf c j) := KG_rise_pos hc h1
       by_cases h2 : d.hs j < r
-      · have hcost : d.cost j = 0 := by rw [cost, if_neg (by omega)]
+      · have hcost : d.cost j = 0 := by rw [cost, ite_eq_right (by omega)]
         have hpl : d.pl c (j + 1) = wedgeR (fun a => d.x j (Fin.castAdd K a)) (d.pl c j) :=
           KG_rise_pos hc (by show min _ _ < min _ _; omega)
         have htn : d.tn c (j + 1) = d.tn c j := KG_eq (by show _ - _ = _ - _; omega)
@@ -531,7 +490,7 @@ theorem inv_pos (hc : 1 ≤ c) (h0 : d.hs 0 = 0) : ∀ j, j ≤ N →
             omega
         · rw [hK, hpl, htn, ho, hcost]
           exact wedge_pl ihD hxp (fun J b hb e => Ord.term (hxt b) (A0 _) (by omega)) htz J
-      · have hcost : d.cost j = d.om j := by rw [cost, if_pos (by omega)]
+      · have hcost : d.cost j = d.om j := by rw [cost, ite_eq_left (by omega)]
         have hpl : d.pl c (j + 1) = d.pl c j := KG_eq (by show min _ _ = min _ _; omega)
         have htn : d.tn c (j + 1) = wedgeR (fun b => d.x j (Fin.natAdd r b)) (d.tn c j) :=
           KG_rise_pos hc (by show _ - _ < _ - _; omega)
@@ -558,7 +517,7 @@ theorem inv_pos (hc : 1 ≤ c) (h0 : d.hs 0 = 0) : ∀ j, j ≤ N →
           have h4 := Jp_card_le J
           have := ar3 (d := min (d.hs j) r - ((Jp J).card - 1)) (om := d.om j) (by omega)
           omega
-    · have hcost : d.cost j = 0 := by rw [cost, if_neg (by omega)]
+    · have hcost : d.cost j = 0 := by rw [cost, ite_eq_right (by omega)]
       have hK : d.Kf c (j + 1) = d.Kf c j := KG_eq h1
       have hpl : d.pl c (j + 1) = d.pl c j := KG_eq (by show min _ _ = min _ _; omega)
       have htn : d.tn c (j + 1) = d.tn c j := KG_eq (by show _ - _ = _ - _; omega)
@@ -569,12 +528,12 @@ theorem inv_pos (hc : 1 ≤ c) (h0 : d.hs 0 = 0) : ∀ j, j ≤ N →
         exact ihD J
     · have hv := d.vec_of_fall h1
       have hxp : ∀ a, IsW wv (d.x j (Fin.castAdd K a)) (d.om j) := fun a => by
-        have := d.hxp j a; rwa [if_neg hv] at this
+        have := d.hxp j a; rwa [ite_eq_right hv] at this
       have hxt : ∀ b, IsW wv (d.x j (Fin.natAdd r b)) 0 := fun b => by
-        have := d.hxt j b; rwa [if_neg hv] at this
+        have := d.hxt j b; rwa [ite_eq_right hv] at this
       have hK : d.Kf c (j + 1) = contrR (d.x j) (d.Kf c j) := KG_fall_pos hc h1
       by_cases h2 : r < d.hs j
-      · have hcost : d.cost j = 0 := by rw [cost, if_neg (by omega)]
+      · have hcost : d.cost j = 0 := by rw [cost, ite_eq_right (by omega)]
         have hpl : d.pl c (j + 1) = d.pl c j := KG_eq (by show min _ _ = min _ _; omega)
         have htn : d.tn c (j + 1) = contrR (fun b => d.x j (Fin.natAdd r b)) (d.tn c j) :=
           KG_fall_pos hc (by show _ - _ < _ - _; omega)
@@ -594,7 +553,7 @@ theorem inv_pos (hc : 1 ≤ c) (h0 : d.hs 0 = 0) : ∀ j, j ≤ N →
             omega
         · rw [hK, hpl, htn, ho, hcost]
           exact contr_tan ihD hxt (fun J a ha e => Ord.term (hxp a) (A0 _) (by omega)) J
-      · have hcost : d.cost j = d.om j := by rw [cost, if_pos (by omega)]
+      · have hcost : d.cost j = d.om j := by rw [cost, ite_eq_left (by omega)]
         have hpl : d.pl c (j + 1) = contrR (fun a => d.x j (Fin.castAdd K a)) (d.pl c j) :=
           KG_fall_pos hc (by show min _ _ < min _ _; omega)
         have htn : d.tn c (j + 1) = d.tn c j := KG_eq (by show _ - _ = _ - _; omega)
@@ -647,7 +606,7 @@ theorem inv_neg (hc : ¬ 1 ≤ c) (hr : ∀ j, j ≤ N → r ≤ d.hs j) : ∀ j
         intro m hm
         exfalso; simp [o, Jp] at hm
       · show Ord wv _ (extOne J)
-        rw [extOne, if_neg hJ]; exact Ord.zero _
+        rw [extOne, ite_eq_right hJ]; exact Ord.zero _
     · have h00 : d.o 0 = 0 := by simp [o]
       rw [h00]
       exact cmp_extOne (wv := wv) (R := R) J
@@ -666,11 +625,11 @@ theorem inv_neg (hc : ¬ 1 ≤ c) (hr : ∀ j, j ≤ N → r ≤ d.hs j) : ∀ j
     rcases lt_trichotomy (d.hs j) (d.hs (j + 1)) with h1 | h1 | h1
     · have hv := d.vec_of_rise h1
       have hxp : ∀ a, IsW wv (d.x j (Fin.castAdd K a)) 0 := fun a => by
-        have := d.hxp j a; rwa [if_pos hv] at this
+        have := d.hxp j a; rwa [ite_eq_left hv] at this
       have hxt : ∀ b, IsW wv (d.x j (Fin.natAdd r b)) (d.om j) := fun b => by
-        have := d.hxt j b; rwa [if_pos hv] at this
+        have := d.hxt j b; rwa [ite_eq_left hv] at this
       have hK : d.Kf c (j + 1) = contrR (d.x j) (d.Kf c j) := KG_rise_neg hc h1
-      have hcost : d.cost j = d.om j := by rw [cost, if_pos (by omega)]
+      have hcost : d.cost j = d.om j := by rw [cost, ite_eq_left (by omega)]
       have htn : d.tn c (j + 1) = contrR (fun b => d.x j (Fin.natAdd r b)) (d.tn c j) :=
         KG_rise_neg hc (by show _ - _ < _ - _; omega)
       refine ⟨fun w hw J => ?_, fun J => ?_⟩
@@ -690,7 +649,7 @@ theorem inv_neg (hc : ¬ 1 ≤ c) (hr : ∀ j, j ≤ N → r ≤ d.hs j) : ∀ j
         rw [Jp_insert_ca, Finset.card_insert_of_notMem ha]
         have := ar3 (d := (Jp J).card + 1) (om := d.om j) (by omega)
         omega
-    · have hcost : d.cost j = 0 := by rw [cost, if_neg (by omega)]
+    · have hcost : d.cost j = 0 := by rw [cost, ite_eq_right (by omega)]
       have hK : d.Kf c (j + 1) = d.Kf c j := KG_eq h1
       have htn : d.tn c (j + 1) = d.tn c j := KG_eq (by show _ - _ = _ - _; omega)
       refine ⟨fun w hw J => ?_, fun J => ?_⟩
@@ -700,11 +659,11 @@ theorem inv_neg (hc : ¬ 1 ≤ c) (hr : ∀ j, j ≤ N → r ≤ d.hs j) : ∀ j
         exact ihD J
     · have hv := d.vec_of_fall h1
       have hxp : ∀ a, IsW wv (d.x j (Fin.castAdd K a)) (d.om j) := fun a => by
-        have := d.hxp j a; rwa [if_neg hv] at this
+        have := d.hxp j a; rwa [ite_eq_right hv] at this
       have hxt : ∀ b, IsW wv (d.x j (Fin.natAdd r b)) 0 := fun b => by
-        have := d.hxt j b; rwa [if_neg hv] at this
+        have := d.hxt j b; rwa [ite_eq_right hv] at this
       have hK : d.Kf c (j + 1) = wedgeR (d.x j) (d.Kf c j) := KG_fall_neg hc h1
-      have hcost : d.cost j = 0 := by rw [cost, if_neg (by omega)]
+      have hcost : d.cost j = 0 := by rw [cost, ite_eq_right (by omega)]
       have htn : d.tn c (j + 1) = wedgeR (fun b => d.x j (Fin.natAdd r b)) (d.tn c j) :=
         KG_fall_neg hc (by show _ - _ < _ - _; omega)
       refine ⟨fun w hw J => ?_, fun J => ?_⟩
@@ -730,10 +689,10 @@ theorem low (hNK : N ≤ K) (h0 : if 1 ≤ c then d.hs 0 = 0 else d.hs 0 = r + K
     Ord wv (d.o N) (d.Kf c N J) ∧
     weightedHomogeneousComponent wv (d.o N) (d.Kf c N J) = d.pl c N (Jp J) * d.tn c N (Jt J) := by
   by_cases hc : 1 ≤ c
-  · rw [if_pos hc] at h0
+  · rw [ite_eq_left hc] at h0
     obtain ⟨hA, hD⟩ := d.inv_pos c hc h0 N le_rfl
     exact ⟨by simpa using hA 0 (fun _ _ => Nat.zero_le _) J, hD J⟩
-  · rw [if_neg hc] at h0
+  · rw [ite_eq_right hc] at h0
     obtain ⟨hA, hD⟩ := d.inv_neg c hc (fun j hj => by have := d.hs_ge h0 j; omega) N le_rfl
     exact ⟨by simpa using hA 0 (fun _ _ => Nat.zero_le _) J, hD J⟩
 
@@ -809,7 +768,7 @@ lemma Kcol_eq_KG {n : ℕ} (mu : Fin (N + 1) → Fin n → ℤ) (c : ℤ) :
   | 0, _ => rfl
   | j + 1, hj => by
     have hlt : j < N := hj
-    rw [Kcol, dif_pos hlt, Kcol_eq_KG mu c j (by omega)]
+    rw [Kcol, dite_eq_left hlt, Kcol_eq_KG mu c j (by omega)]
     show _ = colStep c (hsOf mu c j) (hsOf mu c (j + 1)) (xOf R N n j) _
     rw [hsOf_eq mu c j (by omega), hsOf_eq mu c (j + 1) (by omega)]
     have : letVec R (⟨j, hlt⟩ : Fin N) = xOf R N n j := by
@@ -846,7 +805,7 @@ def mkDat (LL : Letters (Fin N)) (B : Fin N → ℕ) (om : Fin N → ℕ) (hom :
     intro j a
     by_cases h : j < N
     · refine Or.inr ⟨(⟨j, h⟩, Fin.castAdd K a), by simp [xOf, h], ?_⟩
-      simp only [dif_pos h, symWt, Fin.val_castAdd]
+      simp only [dite_eq_left h, symWt, Fin.val_castAdd]
       cases hv : LL.vec ⟨j, h⟩
       · simp
       · have := a.2
@@ -856,7 +815,7 @@ def mkDat (LL : Letters (Fin N)) (B : Fin N → ℕ) (om : Fin N → ℕ) (hom :
     intro j b
     by_cases h : j < N
     · refine Or.inr ⟨(⟨j, h⟩, Fin.natAdd r b), by simp [xOf, h], ?_⟩
-      simp only [dif_pos h, symWt, Fin.val_natAdd]
+      simp only [dite_eq_left h, symWt, Fin.val_natAdd]
       cases hv : LL.vec ⟨j, h⟩
       · simp
       · simp
@@ -866,7 +825,7 @@ def mkDat (LL : Letters (Fin N)) (B : Fin N → ℕ) (om : Fin N → ℕ) (hom :
     by_cases h : j < N
     · rw [hsOf_eq P.mu c j (by omega), hsOf_eq P.mu c (j + 1) (by omega)]
       have hs := P.step ⟨j, h⟩
-      simp only [dif_pos h]
+      simp only [dite_eq_left h]
       have e1 : (⟨j, h⟩ : Fin N).castSucc = ⟨j, by omega⟩ := rfl
       have e2 : (⟨j, h⟩ : Fin N).succ = ⟨j + 1, by omega⟩ := rfl
       rw [e1, e2] at hs
@@ -881,11 +840,11 @@ def mkDat (LL : Letters (Fin N)) (B : Fin N → ℕ) (om : Fin N → ℕ) (hom :
       split_ifs <;> omega
   hom := by
     intro i j hij hj
-    rw [dif_pos hj, dif_pos (by omega)]
+    rw [dite_eq_left hj, dite_eq_left (by omega)]
     exact hom (by rw [Fin.lt_def]; exact hij)
   hpos := by
     intro j hj
-    rw [dif_pos hj]; exact hpos _
+    rw [dite_eq_left hj]; exact hpos _
 
 lemma mkDat_o (LL : Letters (Fin N)) (B : Fin N → ℕ) (om : Fin N → ℕ) (hom : StrictAnti om) (hpos : ∀ i, 0 < om i)
     (P : PPath (r + K) N LL B) (c : ℤ) : (mkDat R LL B om hom hpos P c).o N = oc om P.mu c := by
@@ -894,11 +853,11 @@ lemma mkDat_o (LL : Letters (Fin N)) (B : Fin N → ℕ) (om : Fin N → ℕ) (h
   refine Finset.sum_congr rfl fun i _ => ?_
   have e1 : (mkDat R LL B om hom hpos P c).hs i = colH (P.mu i.castSucc) c := hsOf_eq P.mu c i (by omega)
   have e2 : (mkDat R LL B om hom hpos P c).hs (i + 1) = colH (P.mu i.succ) c := hsOf_eq P.mu c (i + 1) (by omega)
-  have e3 : (mkDat R LL B om hom hpos P c).om i = om i := dif_pos i.2
+  have e3 : (mkDat R LL B om hom hpos P c).om i = om i := dite_eq_left i.2
   rw [Dat.cost, e1, e2, e3]
   by_cases hC : IsCostly P.mu c i
-  · rw [if_pos hC]; exact if_pos hC
-  · rw [if_neg hC]; exact if_neg hC
+  · rw [ite_eq_left hC]; exact ite_eq_left hC
+  · rw [ite_eq_right hC]; exact ite_eq_right hC
 
 theorem kcol_low (LL : Letters (Fin N)) (B : Fin N → ℕ) (om : Fin N → ℕ) (hNK : N + r ≤ K) (hom : StrictAnti om)
     (hpos : ∀ i, 0 < om i) (P : PPath (r + K) N LL B) (c : ℤ) (J : Finset (Fin (r + K))) :

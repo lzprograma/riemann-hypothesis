@@ -15,8 +15,6 @@ namespace Formalism.L2.SG.Pf.FibQ
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat PI.PairValDefs PI.NRCW
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Glob
 
 variable (D : D7)
@@ -29,8 +27,8 @@ theorem entry_mem (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T : D.host.E} (G : 
     (c b : Fin (D.R.rS + 1)) (hcb : c < b) : ∀ x ∈ aaF D b, x * fmat D G n c b ∈ aaF D c := by
   have hc : c.val < D.R.rS := by have := b.isLt; omega
   have hf : fmat D G n c b = G.fl.coefX (n (frame G b) - frame G b) ⟨c.val, hc⟩ := by
-    simp only [fmat, dif_pos hc]
-    rw [if_neg (ne_of_lt hcb), zero_add]
+    simp only [fmat, dite_eq_left hc]
+    rw [ite_eq_right (ne_of_lt hcb), zero_add]
   rw [hf]
   have hXSΛ : ∀ v, v ∈ XS D G.fl → v ∈ Λ := by
     intro v hv
@@ -59,7 +57,7 @@ theorem entry_mem (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T : D.host.E} (G : 
       have := congrArg Fin.val e
       simp only at this
       omega
-    rw [hsplit, coefX_smul _ (add_mem (e_mem_X _ _) hd), coefX_add _ (e_mem_X _ _) hd, coefX_e, if_neg hne,
+    rw [hsplit, coefX_smul _ (add_mem (e_mem_X _ _) hd), coefX_add _ (e_mem_X _ _) hd, coefX_e, ite_eq_right hne,
       zero_add] at hcx
     exact hcx
   · have hfz : frame G b = G.fl.z := by

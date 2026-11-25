@@ -13,15 +13,13 @@ namespace Formalism.L2.SG.WConst
 
 open Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.RealObj Formalism.MainNotions.S.LocalSplitGroups
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section LinAlg
 
 variable {r : ℕ}
 
 theorem Dl_scale (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) (c : Fin (r + 1) → ℂ) (l : ℕ) (hl : l ≤ r + 1) :
     Formalism.L2.SG.RealObj.Dl (r := r) (fun a b => c a * Z a b * c b) l = (∏ a : Fin l, c (Fin.castLE hl a)) ^ 2 * Formalism.L2.SG.RealObj.Dl Z l := by
-  simp only [Formalism.L2.SG.RealObj.Dl, dif_pos hl]
+  simp only [Formalism.L2.SG.RealObj.Dl, dite_eq_left hl]
 
   have h : Matrix.submatrix (fun a b => c a * Z a b * c b : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) (Fin.castLE hl) (Fin.castLE hl) =
       Matrix.of (fun i j => c (Fin.castLE hl i) *
@@ -130,7 +128,7 @@ theorem ptC_eq (v : InfinitePlace X.B.I.F) (w : Point D.host.E (D.R.rS + 1)) :
 theorem Dl_ptC (v : InfinitePlace X.B.I.F) (w : Point D.host.E (D.R.rS + 1)) (l : ℕ) (hl : l ≤ D.R.rS + 1) :
     Formalism.L2.SG.RealObj.Dl (ptC X v w) l = Formalism.MainNotions.S.embS D (X.pl v) (Dmin w l) := by
   rw [ptC_eq]
-  simp only [Formalism.L2.SG.RealObj.Dl, dif_pos hl, Dmin]
+  simp only [Formalism.L2.SG.RealObj.Dl, dite_eq_left hl, Dmin]
   rw [RingHom.map_det]
   rfl
 
@@ -163,7 +161,7 @@ theorem card_places : Fintype.card (InfinitePlace X.B.I.F) = D.R.f := by
 
 theorem isPtRep_gamW {u u' : D.what₂.Word} {w : Point D.host.E (D.R.rS + 1)} (h : ∃ γ, IsPtRep X u u' w γ) :
     IsPtRep X u u' w (gamW X u u' w) := by
-  simp only [gamW, dif_pos h]
+  simp only [gamW, dite_eq_left h]
   exact h.choose_spec
 
 theorem GX_gamW (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) (h : ∃ γ, IsPtRep X u u' w γ)

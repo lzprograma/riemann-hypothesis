@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.AdelicProofs.LocalValuationLogNormsExistence
 public import Formalism.SatakeDualWeyl.StatementC
 public import Mathlib.RingTheory.DedekindDomain.Factorization
 
@@ -18,12 +19,7 @@ variable (F : Type) [Field F] [NumberField F]
 
 theorem finite_placesOver (g : ℕ) (hg : g ≠ 0) :
     {v : HeightOneSpectrum (𝓞 F) | ((g : ℕ) : 𝓞 F) ∈ v.asIdeal}.Finite := by
-  have h0 : Ideal.span {((g : ℕ) : 𝓞 F)} ≠ 0 := by
-    rw [Ideal.zero_eq_bot, Ne, Ideal.span_singleton_eq_bot]
-    exact_mod_cast hg
-  refine (Ideal.finite_factors h0).subset ?_
-  intro v hv
-  exact Ideal.dvd_iff_le.2 ((Ideal.span_singleton_le_iff_mem _).2 hv)
+  apply _root_.GlobalTheory.CompanionTheory.Ar.Br.Dd.finite_over <;> assumption
 
 
 open Classical in

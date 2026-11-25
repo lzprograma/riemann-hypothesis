@@ -32,7 +32,7 @@ theorem e_linInd : LinearIndependent ℂ e := by
   rw [Fintype.linearIndependent_iff]
   intro g hg i
   have h1 := pair_sum X τ e he g Finset.univ i
-  rw [hg, hermC_zero_left, if_pos (Finset.mem_univ i)] at h1
+  rw [hg, hermC_zero_left, ite_eq_left (Finset.mem_univ i)] at h1
   have h2 := sgn_sq X i
   calc g i = g i * (((sgn X.p0 i : ℝ) : ℂ) * ((sgn X.p0 i : ℝ) : ℂ)) := by rw [h2, mul_one]
     _ = (g i * ((sgn X.p0 i : ℝ) : ℂ)) * ((sgn X.p0 i : ℝ) : ℂ) := by ring
@@ -51,7 +51,7 @@ theorem expand (u : Fin r → ℂ) :
   obtain ⟨β, hβ⟩ := (Submodule.mem_span_range_iff_exists_fun ℂ).mp hu
   have hc : ∀ a : Fin r, ((sgn X.p0 a : ℝ) : ℂ) * hermC τ.1 X.Gm u (e a) = β a := by
     intro a
-    rw [← hβ, pair_sum X τ e he β Finset.univ a, if_pos (Finset.mem_univ a)]
+    rw [← hβ, pair_sum X τ e he β Finset.univ a, ite_eq_left (Finset.mem_univ a)]
     calc ((sgn X.p0 a : ℝ) : ℂ) * (β a * ((sgn X.p0 a : ℝ) : ℂ))
         = β a * (((sgn X.p0 a : ℝ) : ℂ) * ((sgn X.p0 a : ℝ) : ℂ)) := by ring
       _ = β a := by rw [sgn_sq, mul_one]
@@ -95,7 +95,7 @@ theorem proj (y : Fin r → ℂ)
   symm
   rw [hermC_sum_left]
   simp only [hermC_smul_left, he, Fin.castLE_inj, mul_ite, mul_zero]
-  rw [Finset.sum_ite_eq', if_pos (Finset.mem_univ c), sgn_castLE, mul_one]
+  rw [Finset.sum_ite_eq', ite_eq_left (Finset.mem_univ c), sgn_castLE, mul_one]
 
 include he hflag hind in
 theorem gramPos_det_ne : (X.gramPos x τ).det ≠ 0 := by

@@ -66,29 +66,24 @@ theorem isSesq_eq_sum_coordVec {n : ℕ} {M : Type*} [AddCommGroup M] [Module �
     intro w
     ext i
     simp [coordVec, Pi.single_apply]
-  have hl : ∀ (s : Finset (Fin n)) (c : Fin n → ℂ) (x : Fin n → V n) (y : V n),
-      α (∑ i ∈ s, c i • x i) y = ∑ i ∈ s, c i • α (x i) y := by
-    intro s c x y
-    induction s using Finset.induction_on with
-    | empty =>
-      have := hα.smul_left 0 0 y
-      simpa using this
-    | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, hα.add_left, hα.smul_left, ih]
-  have hr : ∀ (s : Finset (Fin n)) (c : Fin n → ℂ) (x : V n) (y : Fin n → V n),
-      α x (∑ i ∈ s, c i • y i) = ∑ i ∈ s, conj (c i) • α x (y i) := by
-    intro s c x y
-    induction s using Finset.induction_on with
-    | empty =>
-      have := hα.smul_right 0 x 0
-      simpa using this
-    | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, hα.add_right, hα.smul_right, ih]
-  calc α x y = α (∑ a, x a • coordVec a) (∑ b, y b • coordVec b) := by rw [← hex x, ← hex y]
+  let β : V n →ₗ[ℂ] V n →ₛₗ[starRingEnd ℂ] M :=
+    { toFun := fun w =>
+        { toFun := α w
+          map_add' := hα.add_right w
+          map_smul' := fun c v => hα.smul_right c w v }
+      map_add' := fun w z => LinearMap.ext fun v => hα.add_left w z v
+      map_smul' := fun c w => LinearMap.ext fun v => hα.smul_left c w v }
+  calc
+    α x y = β (∑ a, x a • coordVec a) (∑ b, y b • coordVec b) := by
+      rw [← hex x, ← hex y]
+      rfl
     _ = _ := by
-      rw [hl]
+      rw [LinearMap.map_sum₂]
       refine Finset.sum_congr rfl fun a _ => ?_
-      rw [hr, Finset.smul_sum]
+      rw [LinearMap.map_smul₂, map_sum, Finset.smul_sum]
       refine Finset.sum_congr rfl fun b _ => ?_
-      rw [smul_smul]
+      rw [map_smulₛₗ, smul_smul]
+      rfl
 
 theorem det_of_apply_coordVec {n : ℕ} (L : V n →L[ℂ] V n) :
     (Matrix.of fun c a => L (coordVec a) c).det = L.det := by

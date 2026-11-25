@@ -239,7 +239,6 @@ theorem jm_transpose : (Jm R S)ᵀ = Jm R S := by
 
 theorem frame_inv {M : Matrix β β ℂ} {C : Matrix β (Ix R S) ℂ} {C' : Matrix (Ix R S) β ℂ}
     (hF : Cᵀ * M * C.map star = Jm R S) (hR : C * C' = 1) : C' * C = 1 := by
-  have hs : ∀ {m n : Type} (A : Matrix m n ℂ), A.map star = A.map (starRingEnd ℂ) := fun _ => rfl
   set D := C.map (starRingEnd ℂ)
   set D' := C'.map (starRingEnd ℂ)
   have h1 : (Jm R S * Cᵀ * M) * D = 1 := by

@@ -79,10 +79,10 @@ theorem pattern_to_places (F : Type) [Zero F] [One F] (κ ρ s τ j : ℕ) (R : 
         (p' - (κ + s + 1)) / τ < (p - (κ + s + 1)) / τ → R p p' = 0)) := by
   intro hR
   have key : ∀ a b : Ix (Fin κ ⊕ Fin (s + 1)) (Fin τ) j, a ≠ b → ¬ FreeIx ρ a b → R (zPos a) (zPos b) = 0 :=
-    fun a b hab h => by rw [hR a b h, if_neg hab]
+    fun a b hab h => by rw [hR a b h, ite_eq_right hab]
   refine ⟨fun p' hp' => ⟨?_, fun p hp hne hc => ?_⟩, fun p p' h1 h2 h3 h4 => ?_⟩
   · obtain ⟨b, rfl⟩ := zPos_surj (κ := κ) (τ := τ) (l := s + 1) (j := j) (p := p') (by omega)
-    rw [hR b b ?_, if_pos rfl]
+    rw [hR b b ?_, ite_eq_left rfl]
     rcases b with (i | i) | ⟨i, u⟩
     · simp [FreeIx, FreeTop]
     · simp [FreeIx, FreeTop]

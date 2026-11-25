@@ -2,56 +2,17 @@ module
 
 import Formalism.SharpRestriction.LevelLetterCocycles.ProdOneSubPrimitiveRoots
 public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.GroupTheory.Nilpotent
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
 import Mathlib.NumberTheory.Padics.ProperSpace
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
 
 @[expose] public section
@@ -211,38 +172,6 @@ theorem exists_eq_mul {m : ℕ} (hm : 0 < m) (hl : ¬ l ∣ m) {y : Om l} (hy : 
   have hz := (isClosed_rootRing hm).mem_of_tendsto ht (Filter.Eventually.of_forall hmem)
   rw [sub_zero] at hz
   exact ⟨(l : Om l)⁻¹ * y, hz, (mul_inv_cancel_left₀ hl0 y).symm⟩
-
-theorem norm_rootRing {m : ℕ} (hm : 0 < m) (hl : ¬ l ∣ m) {y : Om l} (hy : y ∈ rootRing l m)
-    (h0 : y ≠ 0) : ∃ n : ℤ, ‖y‖ = (l : ℝ) ^ n := by
-  have hp : l.Prime := Fact.out
-  have hl1 : (1 : ℝ) < l := by exact_mod_cast hp.one_lt
-  have hl0 : (0 : ℝ) < l := by linarith
-  have key : ∀ k : ℕ, ∀ y ∈ rootRing l m, y ≠ 0 → (l : ℝ) ^ (-(k : ℤ)) ≤ ‖y‖ →
-      ∃ n : ℤ, ‖y‖ = (l : ℝ) ^ n := by
-    intro k
-    induction k with
-    | zero =>
-      intro y hy _ hle
-      refine ⟨0, ?_⟩
-      simp only [Nat.cast_zero, neg_zero, zpow_zero] at hle ⊢
-      exact le_antisymm (norm_le_one hm hy) hle
-    | succ k ih =>
-      intro y hy hy0 hle
-      rcases (norm_le_one hm hy).lt_or_eq with hlt | heq
-      · obtain ⟨z, hz, rfl⟩ := exists_eq_mul hm hl hy hlt
-        have hz0 : z ≠ 0 := by rintro rfl; simp at hy0
-        rw [norm_mul, norm_l] at hle ⊢
-        rw [show (-((k + 1 : ℕ) : ℤ)) = -(k : ℤ) - 1 by push_cast; ring,
-          zpow_sub_one₀ hl0.ne'] at hle
-        have hk : (l : ℝ) ^ (-(k : ℤ)) ≤ ‖z‖ :=
-          le_of_mul_le_mul_left (by rwa [mul_comm] at hle) (inv_pos.2 hl0)
-        obtain ⟨n, hn⟩ := ih z hz hz0 hk
-        exact ⟨n - 1, by rw [hn, zpow_sub_one₀ hl0.ne', mul_comm]⟩
-      · exact ⟨0, by simp [heq]⟩
-  obtain ⟨k, hk⟩ : ∃ k : ℕ, (l : ℝ) ^ (-(k : ℤ)) ≤ ‖y‖ := by
-    obtain ⟨k, hk⟩ := exists_pow_lt_of_lt_one (norm_pos_iff.2 h0) (inv_lt_one_of_one_lt₀ hl1)
-    exact ⟨k, by rw [zpow_neg, zpow_natCast, ← inv_pow]; exact hk.le⟩
-  exact key k y hy h0 hk
 
 theorem exists_mul_mem {x : Om l} (hx : x ∈ MaximalUnramifiedExtension l) :
     ∃ m : ℕ, 0 < m ∧ ¬ l ∣ m ∧ ∃ c : ℤ_[l], c ≠ 0 ∧ algebraMap ℤ_[l] (Om l) c * x ∈ rootRing l m := by

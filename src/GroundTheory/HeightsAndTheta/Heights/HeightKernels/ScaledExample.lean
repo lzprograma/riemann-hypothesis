@@ -63,16 +63,6 @@ def DualGeomDegStandard.Statement : Prop :=
       (Module.finrank ℚ K : ℝ) *
         geomDeg (grassIdeal 1 1 (i - 1)) (fsMulti (plBlocks 1 1 (i - 1))) (1 * 1 * (i - 1))
 
-def HermLattice.scaledExample : HermLattice ℚ 1 where
-  lattice := (HermLattice.standard ℚ 1).lattice
-  fg := (HermLattice.standard ℚ 1).fg
-  span_eq := (HermLattice.standard ℚ 1).span_eq
-  metric := fun _ => Matrix.diagonal fun _ => (4 : ℂ)
-  posDef := fun _ => Matrix.PosDef.diagonal fun _ => by norm_num
-  conj := fun _ => by
-    ext a c
-    by_cases h : a = c <;> simp [h, map_ofNat]
-
 end
 
 end GroundTheory.Heights₂.Heights

@@ -3,45 +3,7 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgeLatticeAdaptedBasis
 public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SymbolRealisableBound
 public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.RankMulConductorDivLeOne
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -66,15 +28,8 @@ theorem ord_pos {n' m : ℕ} (r : ℕ) (lam : Fin n' → Fin (m + 1) → ℤ) (h
       omega
   have hcard : ((Finset.univ.filter fun a : Fin (m + 1) => a.val < r).card : ℤ) ≤ r := by
     have : (Finset.univ.filter fun a : Fin (m + 1) => a.val < r).card ≤ r := by
-      calc (Finset.univ.filter fun a : Fin (m + 1) => a.val < r).card
-          ≤ (Finset.range r).card := by
-            apply Finset.card_le_card_of_injOn (fun a => a.val)
-            · intro a ha
-              simp only [Finset.coe_filter, Finset.mem_univ, true_and, Set.mem_setOf_eq] at ha
-              simpa using ha
-            · intro a _ b _ hab
-              exact Fin.ext hab
-        _ = r := Finset.card_range r
+      rw [Fin.card_filter_val_lt]
+      exact min_le_right _ _
     exact_mod_cast this
   calc ∑ a : Fin (m + 1) with a.val < r, (lamAt lam s a - lamAt lam s (Fin.last m))
       ≤ ∑ _a : Fin (m + 1) with _a.val < r, (lam s 0 - lam s (Fin.last m)) := Finset.sum_le_sum fun a _ => hterm a
@@ -111,12 +66,12 @@ theorem ordMax_rest {n' m : ℕ} (hm : 2 ≤ m) {TT : Finset (Fin n')} {aT bT : 
       have h01 : lam0 s 1 ≤ lam0 s 0 := hdom s (Fin.zero_le _)
       have hc1 := abs_le.1 (hc 1 (by omega) (by omega))
       unfold dT flatDeg
-      rw [if_pos hs, if_pos hs, Int.toNat_of_nonneg (by omega), elast]
+      rw [ite_eq_left hs, ite_eq_left hs, Int.toNat_of_nonneg (by omega), elast]
       omega
     · have h1 := abs_le.1 ((hb s).2 hs 0)
       have h2 := abs_le.1 ((hb s).2 hs (Fin.last m))
       unfold dT
-      rw [if_neg hs, if_neg hs]
+      rw [ite_eq_right hs, ite_eq_right hs]
       push_cast
       omega
   unfold ordMax

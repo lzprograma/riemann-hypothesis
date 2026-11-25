@@ -13,8 +13,6 @@ open Classical
 
 namespace Formalism.L2.SG.Pf.TupGlob
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7}
 
 def IntFr (U : PairVal.MatR D) : Prop :=

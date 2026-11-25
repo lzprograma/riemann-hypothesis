@@ -58,7 +58,7 @@ theorem emb_mul_diagonal {L : Type} [Field L] [Valued L (WithZero (Multiplicativ
   ext a b
   rw [Matrix.mul_diagonal]
   by_cases hb : b ∈ Set.range e
-  · rw [if_pos hb, mul_one]
+  · rw [ite_eq_left hb, mul_one]
     by_cases ha : a ∈ Set.range e
     · obtain ⟨i, rfl⟩ := ha
       obtain ⟨j, rfl⟩ := hb
@@ -66,7 +66,7 @@ theorem emb_mul_diagonal {L : Type} [Field L] [Valued L (WithZero (Multiplicativ
       simp [Matrix.diagonal_apply, he.eq_iff]
     · have hab : a ≠ b := fun h => ha (h ▸ hb)
       rw [(hι s).2 a b (Or.inl ha), Matrix.one_apply_ne hab, Matrix.diagonal_apply_ne _ hab]
-  · rw [if_neg hb, (hι s).2 a b (Or.inr hb)]
+  · rw [ite_eq_right hb, (hι s).2 a b (Or.inr hb)]
     by_cases hab : a = b
     · subst hab
       simp
@@ -81,8 +81,8 @@ theorem embTorus : EmbTorus := by
       fun a => if a ∈ Set.range e then (1 : L) else D a := by
     funext a
     by_cases ha : a ∈ Set.range e
-    · rw [if_pos ha, if_pos ha]
-    · rw [if_neg ha, if_neg ha, hD a ha]
+    · rw [ite_eq_left ha, ite_eq_left ha]
+    · rw [ite_eq_right ha, ite_eq_right ha, hD a ha]
   have hz : mat ((ι s)⁻¹ * t) = Matrix.diagonal (fun a => if a ∈ Set.range e then (1 : L) else D a) := by
     rw [mat_mul, ht, ← h1, ← Matrix.mul_assoc, mat_inv_mul, Matrix.one_mul]
   refine ⟨(ι s)⁻¹ * t, by group, ?_, fun g => ?_⟩
@@ -97,7 +97,7 @@ theorem embTorus : EmbTorus := by
       exact mul_comm _ _
     · by_cases ha : a ∈ Set.range e
       · by_cases hb : b ∈ Set.range e
-        · rw [if_pos ha, if_pos hb, one_mul, mul_one]
+        · rw [ite_eq_left ha, ite_eq_left hb, one_mul, mul_one]
         · rw [(hι g).2 a b (Or.inr hb), Matrix.one_apply_ne hab, mul_zero, zero_mul]
       · rw [(hι g).2 a b (Or.inl ha), Matrix.one_apply_ne hab, mul_zero, zero_mul]
 

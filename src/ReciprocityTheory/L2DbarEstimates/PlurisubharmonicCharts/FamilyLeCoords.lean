@@ -63,13 +63,6 @@ def IsSecOn (A : WeightedAtlas n Y ι La) (la : La) (U : Set Y) (s : ι → Y �
 def IsSec (A : WeightedAtlas n Y ι La) (la : La) (s : ι → Y → ℂ) : Prop :=
   A.IsSecOn la Set.univ s
 
-def IsSSec (A : WeightedAtlas n Y ι La) (la : La) (s : ι → Y → ℂ) : Prop :=
-  (∀ i, ContDiffOn ℝ ∞ (s i ∘ (A.chart i).symm) (A.chart i).target) ∧
-  ∀ i j y, y ∈ (A.chart i).source → y ∈ (A.chart j).source → s i y = A.g la i j y * s j y
-
-def IsFrameOn (A : WeightedAtlas n Y ι La) (la : La) (U : Set Y) (s : ι → Y → ℂ) : Prop :=
-  A.IsSecOn la U s ∧ ∀ y ∈ U, s (A.pick y) y ≠ 0
-
 def SmoothFn (A : WeightedAtlas n Y ι La) (f : Y → ℝ) : Prop :=
   ∀ i, ContDiffOn ℝ ∞ (f ∘ (A.chart i).symm) (A.chart i).target
 
@@ -103,10 +96,6 @@ def IsCoordAt (A : WeightedAtlas n Y ι La) (w0 : ι → Y → ℂ) (s : Fin n �
     Prop :=
   (fderiv ℂ (A.zLoc w0 s (A.pick P)) (A.chart (A.pick P) P)).det ≠ 0
 
-def VanishOrd (A : WeightedAtlas n Y ι La) (s : ι → Y → ℂ) (P : Y) (k : ℕ) : Prop :=
-  ∃ C : ℝ, ∀ᶠ v in 𝓝 (A.chart (A.pick P) P),
-    ‖s (A.pick P) ((A.chart (A.pick P)).symm v)‖ ≤ C * ‖v - A.chart (A.pick P) P‖ ^ k
-
 def Mset (A : WeightedAtlas n Y ι La) (w0 : ι → Y → ℂ) (s : Fin n → ι → Y → ℂ)
     (De : MvPolynomial (Fin n) ℂ) : Set Y :=
   {y | w0 (A.pick y) y ≠ 0 ∧ MvPolynomial.eval (fun k => A.zmap w0 s y k) De ≠ 0}
@@ -132,11 +121,6 @@ structure Flat (A : WeightedAtlas n Y ι La) (w0 : ι → Y → ℂ) (s : Fin n 
   localHomeo : IsLocalHomeomorph (fun y : A.Mset w0 s De => A.zmap w0 s y)
   proper : ∀ K : Set (V n), IsCompact K → (∀ v ∈ K, MvPolynomial.eval (fun k => v k) De ≠ 0) →
     IsCompact (A.Mset w0 s De ∩ A.zmap w0 s ⁻¹' K)
-
-def flatE (A : WeightedAtlas n Y ι La) (w0 : ι → Y → ℂ) (s : Fin n → ι → Y → ℂ)
-    (De : MvPolynomial (Fin n) ℂ) (y : Y) : ℝ :=
-  ((De.totalDegree : ℝ) + 1) * Real.log (1 + ‖A.zmap w0 s y‖ ^ 2) -
-    Real.log (‖MvPolynomial.eval (fun k => A.zmap w0 s y k) De‖ ^ 2)
 
 end WeightedAtlas
 

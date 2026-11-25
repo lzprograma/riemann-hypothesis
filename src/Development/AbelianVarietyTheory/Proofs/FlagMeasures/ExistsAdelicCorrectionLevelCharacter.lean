@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResSConjGen
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicLatticeCarryIffForallPlace
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralExtensionFiniteAdelesBasicProperties
@@ -64,6 +65,8 @@ import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SplitPrimeIntegers.Exis
 import Mathlib.Tactic.Polynomial.Basic
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitPlaceFirstFactorLocalFrame
+import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemLocLatOverLat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicLatticeFrameConditionCharacterLocal, Development.AbelianVarietyTheory.Proofs.FlagMeasures.TrivialOnDualQuotientIffMemLocalUnitary, Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicFrameLevelConjFormLevelWithCharacters, Development.AbelianVarietyTheory.Proofs.FlagMeasures.TransportFrameAlongUnitaryAdelic, Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAdelicCorrectionLevelCharacter
@@ -129,19 +132,7 @@ theorem prV_sum_IE_not (S : Finset (HeightOneSpectrum (𝓞 F)))
 
 private theorem prV_mem_of_mem_OAd (v : HeightOneSpectrum (𝓞 F)) {a : E ⊗[F] Ad F} (ha : a ∈ OAd F E) :
     prV (E := E) v a ∈ intV E v := by
-  have ha' : a ∈ Subring.closure (Set.range (fun x : intOE E => (x : E) ⊗ₜ[F] (1 : Ad F)) ∪
-      Set.range (fun z : intAd F => (1 : E) ⊗ₜ[F] (z : Ad F))) := ha
-  have hle : Subring.closure (Set.range (fun x : intOE E => (x : E) ⊗ₜ[F] (1 : Ad F)) ∪
-      Set.range (fun z : intAd F => (1 : E) ⊗ₜ[F] (z : Ad F))) ≤ (intV E v).comap (prV (E := E) v) := by
-    rw [Subring.closure_le]
-    rintro _ (⟨⟨x, hx⟩, rfl⟩ | ⟨⟨z, hz⟩, rfl⟩)
-    · show prV (E := E) v ((x : E) ⊗ₜ[F] (1 : Ad F)) ∈ intV E v
-      rw [afsplit_prV_tmul]
-      exact Subring.subset_closure (Or.inl ⟨⟨x, hx⟩, by rw [afsplit_one_apply]⟩)
-    · show prV (E := E) v ((1 : E) ⊗ₜ[F] z) ∈ intV E v
-      rw [afsplit_prV_tmul]
-      exact Subring.subset_closure (Or.inr ⟨⟨z v, hz v⟩, rfl⟩)
-  exact hle ha'
+  apply _root_.GlobalTheory.St.G.FrLoc.prV_OAd <;> assumption
 
 theorem prVec_span (v : HeightOneSpectrum (𝓞 F)) {k : ℕ} (b : Fin k → Fin n → E ⊗[F] Ad F) (T : Set (Fin k))
     {x : Fin n → E ⊗[F] Ad F} (hx : x ∈ Submodule.span (OAd F E) (b '' T)) :
@@ -172,39 +163,7 @@ theorem prVec_span (v : HeightOneSpectrum (𝓞 F)) {k : ℕ} (b : Fin k → Fin
 
 private theorem afsplitIE_mem_OAd' (v : HeightOneSpectrum (𝓞 F)) {a : E ⊗[F] v.adicCompletion F}
     (ha : a ∈ intV E v) : afsplitIE v a ∈ OAd F E := by
-  have ha' : a ∈ Subring.closure (Set.range (fun x : intOE E => (x : E) ⊗ₜ[F] (1 : v.adicCompletion F)) ∪
-      Set.range (fun z : (v.adicCompletionIntegers F).toSubring => (1 : E) ⊗ₜ[F] (z : v.adicCompletion F))) := ha
-  have hone : afsplitI v (1 : v.adicCompletion F) ∈ intAd F := afsplitI_mem_intAd v 1 (one_mem _)
-  clear ha
-  induction ha' using Subring.closure_induction with
-  | mem x hx =>
-    rcases hx with ⟨⟨x, hx⟩, rfl⟩ | ⟨⟨z, hz⟩, rfl⟩
-    · show afsplitIE v ((x : E) ⊗ₜ[F] (1 : v.adicCompletion F)) ∈ OAd F E
-      rw [afsplitIE_tmul]
-      have hsplit : ((x : E) ⊗ₜ[F] afsplitI v (1 : v.adicCompletion F) : E ⊗[F] Ad F) =
-          ((x : E) ⊗ₜ[F] (1 : Ad F)) * ((1 : E) ⊗ₜ[F] afsplitI v (1 : v.adicCompletion F)) := by
-        rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
-      rw [hsplit]
-      exact Subring.mul_mem _ (Subring.subset_closure (Or.inl ⟨⟨x, hx⟩, rfl⟩))
-        (Subring.subset_closure (Or.inr ⟨⟨_, hone⟩, rfl⟩))
-    · show afsplitIE v ((1 : E) ⊗ₜ[F] (z : v.adicCompletion F)) ∈ OAd F E
-      rw [afsplitIE_tmul]
-      exact Subring.subset_closure (Or.inr ⟨⟨_, afsplitI_mem_intAd v z hz⟩, rfl⟩)
-  | zero =>
-    rw [map_zero]
-    exact Subring.zero_mem _
-  | one =>
-    rw [Algebra.TensorProduct.one_def, afsplitIE_tmul]
-    exact Subring.subset_closure (Or.inr ⟨⟨_, hone⟩, rfl⟩)
-  | add x y _ _ hx hy =>
-    rw [map_add (f := _)]
-    exact Subring.add_mem _ hx hy
-  | neg x _ hx =>
-    rw [map_neg]
-    exact Subring.neg_mem _ hx
-  | mul x y _ _ hx hy =>
-    rw [map_mul]
-    exact Subring.mul_mem _ hx hy
+  apply _root_.GlobalTheory.St.G.FirstFactorFrame.afsplitIE_mem_OAd <;> assumption
 
 theorem IE_span (v : HeightOneSpectrum (𝓞 F)) {k : ℕ} (b : Fin k → Fin n → E ⊗[F] Ad F) (T : Set (Fin k))
     {s : Fin n → E ⊗[F] v.adicCompletion F}
@@ -326,25 +285,7 @@ theorem hR_incl (σ : E →ₐ[F] E) (J : Matrix (Fin n) (Fin n) E) (x y : Fin n
 
 private theorem sigR_mem_intAE' (σ : E →ₐ[F] E) {a : E ⊗[F] Ad F} (ha : a ∈ OAd F E) :
     sigR σ (Ad F) a ∈ OAd F E := by
-  have ha' : a ∈ Subring.closure (Set.range (fun x : intOE E => (x : E) ⊗ₜ[F] (1 : Ad F)) ∪
-      Set.range (fun z : intAd F => (1 : E) ⊗ₜ[F] (z : Ad F))) := ha
-  have hle : Subring.closure (Set.range (fun x : intOE E => (x : E) ⊗ₜ[F] (1 : Ad F)) ∪
-      Set.range (fun z : intAd F => (1 : E) ⊗ₜ[F] (z : Ad F))) ≤ (OAd F E).comap (sigR σ (Ad F)) := by
-    rw [Subring.closure_le]
-    rintro _ (⟨⟨x, hx⟩, rfl⟩ | ⟨⟨z, hz⟩, rfl⟩)
-    · obtain ⟨e, rfl⟩ := hx
-      show sigR σ (Ad F) ((algebraMap (𝓞 E) E e) ⊗ₜ[F] (1 : Ad F)) ∈ OAd F E
-      have hσ : σ (algebraMap (𝓞 E) E e) ∈ intOE E :=
-        ⟨NumberField.RingOfIntegers.mapRingHom (σ : E →+* E) e, rfl⟩
-      have h1 : sigR σ (Ad F) ((algebraMap (𝓞 E) E e) ⊗ₜ[F] (1 : Ad F)) =
-          (σ (algebraMap (𝓞 E) E e)) ⊗ₜ[F] (1 : Ad F) := rfl
-      rw [h1]
-      exact Subring.subset_closure (Or.inl ⟨⟨_, hσ⟩, rfl⟩)
-    · show sigR σ (Ad F) ((1 : E) ⊗ₜ[F] (z : Ad F)) ∈ OAd F E
-      have h1 : sigR σ (Ad F) ((1 : E) ⊗ₜ[F] (z : Ad F)) = (σ 1) ⊗ₜ[F] (z : Ad F) := rfl
-      rw [h1, map_one]
-      exact Subring.subset_closure (Or.inr ⟨⟨z, hz⟩, rfl⟩)
-  exact hle ha'
+  apply _root_.GlobalTheory.ResConjPlace.conj_mem_int <;> assumption
 
 theorem hR_mem (σ : E →ₐ[F] E) (J : Matrix (Fin n) (Fin n) E) (L : Submodule (𝓞 E) (Fin n → E))
     (hint : ∀ x ∈ L, x ∈ dualSet (σ : E →+* E) J L) {a b : Fin n → E ⊗[F] Ad F}
@@ -696,14 +637,7 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
 theorem sigR_mem (σ : E →ₐ[F] E) (v : HeightOneSpectrum (𝓞 F)) :
     ∀ a ∈ intV E v, sigR σ (v.adicCompletion F) a ∈ intV E v := by
-  have : intV E v ≤ (intV E v).comap (sigR σ (v.adicCompletion F)) := by
-    refine Subring.closure_le.2 ?_
-    rintro _ (⟨⟨_, a, rfl⟩, rfl⟩ | ⟨a, rfl⟩)
-    · exact Subring.subset_closure (Or.inl ⟨⟨_, (⟨σ a, (a.isIntegral_coe).map (σ.restrictScalars ℤ)⟩ : 𝓞 E), rfl⟩, rfl⟩)
-    · show (σ 1) ⊗ₜ[F] (a : v.adicCompletion F) ∈ intV E v
-      rw [map_one]
-      exact Subring.subset_closure (Or.inr ⟨a, rfl⟩)
-  exact this
+  apply _root_.GlobalTheory.OverLat.sigR_mem_intV <;> assumption
 
 theorem nsmul_mem_loc (v : HeightOneSpectrum (𝓞 F)) (T : ℕ) (L L' : Submodule (𝓞 E) (Fin n → E))
     (h : ∀ x ∈ L', (T : E) • x ∈ L) : ∀ x ∈ loc v L', (T : intV E v) • x ∈ loc v L := by
@@ -873,12 +807,12 @@ theorem level_conj_frame : ∀ (F E : Type) [Field F] [NumberField F] [Field E] 
   have hf_g : ∀ i v (h : (gp i : 𝓞 F) ∈ v.asIdeal), hf v = κl i v h := by
     intro i v h
     obtain rfl | rfl : i = 0 ∨ i = 1 := by fin_cases i <;> simp
-    · simp only [hf, dif_pos h]
+    · simp only [hf, dite_eq_left h]
     · have h0 : (gp 0 : 𝓞 F) ∉ v.asIdeal := fun h0 => not_both_mem (hgp 0) (hgp 1) hne v h0 h
-      simp only [hf, dif_neg h0, dif_pos h]
+      simp only [hf, dite_eq_right h0, dite_eq_left h]
   have hf_one : ∀ v, (gp 0 : 𝓞 F) ∉ v.asIdeal → (gp 1 : 𝓞 F) ∉ v.asIdeal → hf v = 1 := by
     intro v h0 h1
-    simp only [hf, dif_neg h0, dif_neg h1]
+    simp only [hf, dite_eq_right h0, dite_eq_right h1]
   have hf_lev : ∀ v, hf v ∈ levelVL cm.sig J v S.Lb := by
     intro v
     by_cases h0 : (gp 0 : 𝓞 F) ∈ v.asIdeal

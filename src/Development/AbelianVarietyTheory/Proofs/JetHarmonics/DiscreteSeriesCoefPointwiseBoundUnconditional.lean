@@ -97,13 +97,6 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularityAtPlaceOf
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ActualClassesCompactSupport", "h": "module\n\npublic import Formalism.HermitianCurvature.HerGenC\npublic import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSETopFinal\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
-
-namespace GlobalTheory
-
-theorem actualClasses_compactSupport : Formalism.FourierDecayAlt.P5.ThmPActualCpt :=
-  Formalism.FourierDecayAlt.P.CutSE.actual_compact_theorem
-
-end GlobalTheory
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ActualClassesCompactSupport =====
@@ -220,8 +213,7 @@ theorem scale_bounds {Ch b ka T : ℝ} (r : ℕ) (hb : 1 ≤ b) (hka : 0 < ka) (
   have hk2 := hpow (1 / ka) (by positivity) (by rwa [one_div])
   have hq : 0 < (1 / ka) ^ (2 * r) := by positivity
   have hT : 0 < T := by
-    by_contra hneg
-    push_neg at hneg
+    by_contra! hneg
     have := mul_nonpos_of_nonpos_of_nonneg hneg hq.le
     linarith
   have hTe : T = T * (1 / ka) ^ (2 * r) * ka ^ (2 * r) := by
@@ -732,16 +724,7 @@ theorem gap_one {P : M.Par} (h : P.OK) (i : ℕ) (hi : i ∈ Finset.Icc 1 (P.k -
 
 theorem gap_nat {P : M.Par} (h : P.OK) (i : ℕ) (hi : i ∈ Finset.Icc 1 (P.k - 1)) :
     ∃ N : ℕ, P.u' i - P.u' (i + 1) = (N : ℝ) + 1 := by
-  have h1 := gap_one h i hi
-  rw [Finset.mem_Icc] at hi
-  obtain ⟨a, ha⟩ := h.int_u' i (Finset.mem_Icc.2 ⟨hi.1, by omega⟩)
-  obtain ⟨c, hc⟩ := h.int_u' (i + 1) (Finset.mem_Icc.2 ⟨by omega, by omega⟩)
-  have h2 : ((0 : ℤ) : ℝ) ≤ ((a - c - 1 : ℤ) : ℝ) := by push_cast; linarith
-  have h3 : (0 : ℤ) ≤ a - c - 1 := by exact_mod_cast h2
-  refine ⟨(a - c - 1).toNat, ?_⟩
-  have h4 : (((a - c - 1).toNat : ℤ) : ℝ) = ((a - c - 1 : ℤ) : ℝ) := by rw [Int.toNat_of_nonneg h3]
-  push_cast at h4
-  linarith
+  apply _root_.GlobalTheory.WigSh.par_gap_right <;> assumption
 
 theorem ok_plus {P : M.Par} (h : P.OK) (l n₀ : ℕ) (he : ∀ i ∈ Finset.Icc 1 P.k, P.u i = P.u' i)
     (hg : 2 * (n₀ : ℝ) + 1 ≤ P.u' l - P.u' (l + 1)) :
@@ -832,11 +815,11 @@ theorem shiftExists_of (hA : GlobalTheory.WigSh.AmapsShExists) : GlobalTheory.Wi
     (fun i _ => by
       by_cases h : i = l + 1
       · subst h; simp
-      · rw [Function.update_of_ne h, if_neg h])
+      · rw [Function.update_of_ne h, ite_eq_right h])
     (fun i _ => by
       by_cases h : i = l
       · subst h; simp
-      · rw [Function.update_of_ne h, if_neg h])
+      · rw [Function.update_of_ne h, ite_eq_right h])
   exact ⟨Wqp, i1, i2, i3, Wqm, j1, j2, j3, pp, pm, Ap, Am, ApPt, AmPt, a1, b1, a2, a3, a4, b2, b3, b4, a8, b8,
     c1, c2, c3, c4⟩
 
@@ -1080,7 +1063,7 @@ open BpJoin
 namespace GlobalTheory
 
 theorem discreteSeriesCoef_pointwiseBound : ThmBpDS :=
-  _root_.GlobalTheory.BpDiscreteSeriesTwoInputs.pointwise_bound_discreteSeries GlobalTheory.besselXiIntegrable_holds GlobalTheory.actualClasses_compactSupport
+  _root_.GlobalTheory.BpDiscreteSeriesTwoInputs.pointwise_bound_discreteSeries GlobalTheory.besselXiIntegrable_holds Formalism.FourierDecayAlt.P.CutSE.actual_compact_theorem
 
 end GlobalTheory
 end -- clump:auto

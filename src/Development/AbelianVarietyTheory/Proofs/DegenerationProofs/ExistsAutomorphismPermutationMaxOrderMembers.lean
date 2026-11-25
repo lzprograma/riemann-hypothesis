@@ -616,7 +616,7 @@ theorem value_invDer {v : epsR K ⟶ G} {dd : ∀ W : G.left.Opens, Γ(G.left, W
     simpa using h5
   · have := key 1
     rw [show pbT ((fst (epsR K) G ≫ v) * snd (epsR K) G).left (1 : Γ(G.left, U))
-      ((snd (epsR K) G).left ⁻¹ᵁ U) = 0 from dif_neg h, pbT_zero, map_zero] at this
+      ((snd (epsR K) G).left ⁻¹ᵁ U) = 0 from dite_eq_right h, pbT_zero, map_zero] at this
     simpa using congrArg TrivSqZeroExt.fst this
 
 theorem exists_mem_basicOpen [Smooth G.hom] {n : ℕ} {v : Fin n → (epsR K ⟶ G)} (hv : IsLieBasis v)

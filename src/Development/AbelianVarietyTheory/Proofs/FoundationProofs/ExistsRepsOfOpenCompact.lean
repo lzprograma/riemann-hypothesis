@@ -53,11 +53,10 @@ noncomputable section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.FWT
 open scoped TensorProduct Matrix ComplexOrder
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.RepsObj
 
-open GlobalTheory.IndefiniteRowSideFullHecke.SublevelSplitting hiding levJ
+open GlobalTheory.IndefiniteRowSideFullHecke.SublevelSplitting
 
 section Space
 
@@ -132,21 +131,12 @@ variable {D : D7} {T : Type} (L : LevCh D T) (i : Fin D.R.m) (t : T)
 
 theorem isPosDef_of_vStd (hV : VStd D i) : (Vc D i).IsPosDef := fun τ => by
   have h := factVSig _ _ D.sp ((i : ℕ) + 1) (by omega) (by omega) τ
-  rw [GlobalTheory.StdFrame.neg_eq_false_of_vStd D i hV, if_neg Bool.false_ne_true] at h
+  rw [GlobalTheory.StdFrame.neg_eq_false_of_vStd D i hV, ite_eq_right Bool.false_ne_true] at h
   rw [D.sp.V_rank _ (by omega) i.2]
   exact h
 
 end Levels
 
-
-section Record
-
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.L2.DIV
-
-variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : FamIn D.what₂.LL G Pl0 T0 D.R.m}
-  {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (i : Fin D.R.m) (K' : Type) [Field K']
-
-end Record
 
 end GlobalTheory.RepsObj
 

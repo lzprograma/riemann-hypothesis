@@ -7,56 +7,13 @@ public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.Column
 public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ProdLeadMinorDiagonal
 public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RowAddGenericRowAddTerm
 public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.Sl2NonnegWeightOfHighestWeightVector
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Etale.Weakly
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -103,10 +60,10 @@ theorem eval_mul_prod_eq {J : Type*} [Fintype J] (B : J → Set σ)
       set x'' : σ → K := fun s => if ∃ i ∈ insert j S, s ∈ B i then x₀ s else x s with hx''
       have h₁ : eval x' (D j) = eval x (D j) := hD j _ _ fun s hs => by
         rw [hx']
-        exact if_neg fun ⟨i, hi, hs'⟩ => hB i j (fun e => hj (e ▸ hi)) s hs' hs
+        exact ite_eq_right fun ⟨i, hi, hs'⟩ => hB i j (fun e => hj (e ▸ hi)) s hs' hs
       have h₂ : eval x'' (D j) = eval x₀ (D j) := hD j _ _ fun s hs => by
         rw [hx'']
-        exact if_pos ⟨j, Finset.mem_insert_self _ _, hs⟩
+        exact ite_eq_left ⟨j, Finset.mem_insert_self _ _, hs⟩
       have h₃ : eval x'' Q = eval x' Q := eval_congr_vars fun s hs => by
         have : s ∉ B j := fun h => hQ s h hs
         simp [hx', hx'', this]
@@ -114,7 +71,7 @@ theorem eval_mul_prod_eq {J : Type*} [Fintype J] (B : J → Set σ)
       ring
   rw [key]
   congr 1
-  exact eval_congr_vars fun s hs => if_pos (by simpa using hv s hs)
+  exact eval_congr_vars fun s hs => ite_eq_left (by simpa using hv s hs)
 
 variable [CharZero K] {p q n : ℕ}
 

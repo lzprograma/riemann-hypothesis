@@ -47,7 +47,7 @@ theorem satDir_of (hS : ChartSaturated Xo c) {T : CDVR} {io : c.F →+* T.Fr} {y
   rw [h3]
   by_cases hii : i' = i
   · subst hii; simp
-  · rw [if_neg (fun h' => hii (emb.injective h')), if_neg hii, map_zero]
+  · rw [ite_eq_right (fun h' => hii (emb.injective h')), ite_eq_right hii, map_zero]
 
 theorem nuW_le_crude (hE : IntChartEx Xo c) (hS : ChartSaturated Xo c) (la : HeightOneSpectrum (𝓞 c.F)) (k : ℕ)
     (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) (ha : DomW Dw a) (hn : Fintype.card (Lt1 Dw) ≤ n) :

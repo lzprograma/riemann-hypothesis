@@ -21,8 +21,6 @@ namespace Formalism.L2.SG.Pf.NcReal.JX
 open Formalism.QuantumDeterminants Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj Formalism.L2.SG.Pf.WFL Formalism.L2.SG.Pf
   Formalism.L2.SG.RealObj.InfCut.JacobianCoordinates Formalism.L2.SG.RealObj.InfCut
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def mOf : {n r k : ℕ} → n = 2 * r + k + 1 → (ε : Fin n → Bool) → (Fin r → Fin n → ℂ) → (Fin r → Fin n → ℂ) →
     (Fin k → Fin n → ℂ) → (Fin n → ℂ) → Formalism.REAL.UJ ε → Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ
   | _, _, _, rfl, ε, e, f, w, z0, g => Qi ε e f w z0 * uMat g * Qm e f w z0
@@ -185,10 +183,10 @@ theorem adj_lowId {A : Matrix (Fin r) (Fin r) ℂ} (hA : WlocSk.NB.LowId A) :
     (∀ a d : Fin r, d < a → A.adjugate a d = 0) ∧ ∀ a, A.adjugate a a = 1 := by
   have hT : A.BlockTriangular id := fun i j hji => by
     have hji' : j < i := hji
-    rw [hA i j hji'.le, if_neg (ne_of_gt hji')]
+    rw [hA i j hji'.le, ite_eq_right (ne_of_gt hji')]
   have hdet : A.det = 1 := by
     rw [Matrix.det_of_upperTriangular hT]
-    exact Finset.prod_eq_one fun i _ => by rw [hA i i le_rfl, if_pos rfl]
+    exact Finset.prod_eq_one fun i _ => by rw [hA i i le_rfl, ite_eq_left rfl]
   have hadj : A.adjugate = A⁻¹ := by
     rw [Matrix.inv_def, hdet, Ring.inverse_one, one_smul]
   have hU : IsUnit A.det := by rw [hdet]; exact isUnit_one
@@ -200,12 +198,12 @@ theorem adj_lowId {A : Matrix (Fin r) (Fin r) ℂ} (hA : WlocSk.NB.LowId A) :
   · rw [hadj]
     have h1 : (A⁻¹ * A) a a = 1 := by rw [Matrix.nonsing_inv_mul _ hU, Matrix.one_apply_eq]
     rw [Matrix.mul_apply, Finset.sum_eq_single a] at h1
-    · rw [hA a a le_rfl, if_pos rfl, mul_one] at h1
+    · rw [hA a a le_rfl, ite_eq_left rfl, mul_one] at h1
       exact h1
     · intro c _ hca
       rcases lt_or_gt_of_ne hca with hlt | hgt
       · rw [hinvT hlt, zero_mul]
-      · rw [hA c a hgt.le, if_neg hca, mul_zero]
+      · rw [hA c a hgt.le, ite_eq_right hca, mul_zero]
     · intro h
       exact absurd (Finset.mem_univ a) h
 
@@ -235,11 +233,11 @@ theorem tri_conj (F Δ : Matrix (Fin r) (Fin r) ℂ) (hF : ∀ d a, d < a → F 
     · intro h
       exact absurd (Finset.mem_univ b) h
   rw [Matrix.mul_apply, Finset.sum_eq_single a]
-  · rw [hrow a le_rfl, if_pos rfl, hF1, mul_one]
+  · rw [hrow a le_rfl, ite_eq_left rfl, hF1, mul_one]
   · intro d _ hda
     rcases lt_or_gt_of_ne hda with hlt | hgt
     · rw [hF d a hlt, mul_zero]
-    · rw [hrow d hgt.le, if_neg hda, zero_mul]
+    · rw [hrow d hgt.le, ite_eq_right hda, zero_mul]
   · intro h
     exact absurd (Finset.mem_univ a) h
 
@@ -361,22 +359,22 @@ theorem bk_tri {T : ℝ} (hT : 0 < T) (p : CBlk r) (x x' y y' : ∀ q : CBlk r, 
       WlocSk.NB.shG (ph0 (chAt T x' v)) (chAt T y' v).1 (Sum.inl ⟨(b, a), hba⟩) - x' (Sum.inl (Sum.inl ⟨(b, a), hba⟩)) v
     simp only [WlocSk.NB.shG, ph0, WlocSk.NB.phi0, WlocSk.NB.bA_mk]
     rw [sub_eq_sub_iff_sub_eq_sub, ← Finset.sum_sub_distrib, Finset.sum_eq_single a]
-    · simp only [if_pos hba, WlocSk.NB.cA, dif_pos hba, dif_neg (lt_irrefl a), ite_true, mul_one]
+    · simp only [ite_eq_left hba, WlocSk.NB.cA, dite_eq_left hba, dite_eq_right (lt_irrefl a), ite_true, mul_one]
       rfl
     · intro c _ hca
       by_cases hbc : b < c
-      · simp only [if_pos hbc]
+      · simp only [ite_eq_left hbc]
         rcases lt_or_gt_of_ne hca with h | h
         · have e1 : x (Sum.inl (Sum.inl ⟨(b, c), hbc⟩)) = x' (Sum.inl (Sum.inl ⟨(b, c), hbc⟩)) :=
             ag _ (by show c.val - b.val < a.val - b.val; omega)
           have e2 : y (Sum.inl (Sum.inl ⟨(c, a), h⟩)) = y' (Sum.inl (Sum.inl ⟨(c, a), h⟩)) :=
             ag' _ (by show a.val - c.val < a.val - b.val; omega)
-          simp only [WlocSk.NB.cA, dif_pos hbc, dif_pos h]
+          simp only [WlocSk.NB.cA, dite_eq_left hbc, dite_eq_left h]
           show x (Sum.inl (Sum.inl ⟨(b, c), hbc⟩)) v * y (Sum.inl (Sum.inl ⟨(c, a), h⟩)) v -
             x' (Sum.inl (Sum.inl ⟨(b, c), hbc⟩)) v * y' (Sum.inl (Sum.inl ⟨(c, a), h⟩)) v = 0
           rw [e1, e2, sub_self]
-        · simp only [WlocSk.NB.cA, dif_neg (not_lt.2 h.le), if_neg (ne_of_gt h), mul_zero, sub_self]
-      · simp only [if_neg hbc, sub_self]
+        · simp only [WlocSk.NB.cA, dite_eq_right (not_lt.2 h.le), ite_eq_right (ne_of_gt h), mul_zero, sub_self]
+      · simp only [ite_eq_right hbc, sub_self]
     · intro h; exact absurd (Finset.mem_univ a) h
   ·
     funext v j
@@ -399,11 +397,11 @@ theorem bk_tri {T : ℝ} (hT : 0 < T) (p : CBlk r) (x x' y y' : ∀ q : CBlk r, 
         ag _ (by show c.val - b.val < r + (r - b.val); have := c.isLt; omega)
       have e2 : y (Sum.inl (Sum.inr c)) = y' (Sum.inl (Sum.inr c)) :=
         ag' _ (by show r + (r - c.val) < r + (r - b.val); have := c.isLt; omega)
-      simp only [if_pos hbc, WlocSk.NB.cA, dif_pos hbc, WlocSk.NB.cB]
+      simp only [ite_eq_left hbc, WlocSk.NB.cA, dite_eq_left hbc, WlocSk.NB.cB]
       show x (Sum.inl (Sum.inl ⟨(b, c), hbc⟩)) v * (y (Sum.inl (Sum.inr c)) v j / sclT T j) =
         x' (Sum.inl (Sum.inl ⟨(b, c), hbc⟩)) v * (y' (Sum.inl (Sum.inr c)) v j / sclT T j)
       rw [e1, e2]
-    · simp only [if_neg hbc]
+    · simp only [ite_eq_right hbc]
   ·
     obtain ⟨⟨b, a⟩, hba⟩ := p
     funext v
@@ -430,9 +428,9 @@ theorem bk_tri {T : ℝ} (hT : 0 < T) (p : CBlk r) (x x' y y' : ∀ q : CBlk r, 
     simp only [ph0] at *
     rw [h1, Matrix.add_apply, Matrix.add_apply, star_add, h3 b a, h2]
     have e1 : WlocSk.NB.cK (chAt T x v).1 (chAt T x v).2 b a = x (Sum.inr (Sum.inl ⟨(b, a), hba⟩)) v := by
-      simp only [WlocSk.NB.cK, dif_pos hba]; rfl
+      simp only [WlocSk.NB.cK, dite_eq_left hba]; rfl
     have e2 : WlocSk.NB.cK (chAt T x' v).1 (chAt T x' v).2 b a = x' (Sum.inr (Sum.inl ⟨(b, a), hba⟩)) v := by
-      simp only [WlocSk.NB.cK, dif_pos hba]; rfl
+      simp only [WlocSk.NB.cK, dite_eq_left hba]; rfl
     rw [e1, e2]
     ring
   ·
@@ -457,7 +455,7 @@ theorem bk_tri {T : ℝ} (hT : 0 < T) (p : CBlk r) (x x' y y' : ∀ q : CBlk r, 
       (WlocSk.NB.dlt (ph0 (chAt T x' v)) (chAt T y' v).1 a a).im - x' (Sum.inr (Sum.inr a)) v
     simp only [ph0] at *
     rw [h1, Matrix.add_apply, Complex.add_im, h2]
-    simp only [WlocSk.NB.cK, lt_irrefl, dif_neg, not_false_eq_true, Complex.sub_im, Complex.mul_im,
+    simp only [WlocSk.NB.cK, lt_irrefl, dite_eq_right, not_false_eq_true, Complex.sub_im, Complex.mul_im,
       Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im, mul_one, mul_zero, add_zero]
     show _ + ((x (Sum.inr (Sum.inr a)) v) - (x' (Sum.inr (Sum.inr a)) v)) - x (Sum.inr (Sum.inr a)) v = _
     ring
@@ -485,11 +483,11 @@ theorem blkOf_one {ι : Type} {r k : ℕ} (T : ℝ) :
   rcases p with ((⟨⟨b, a⟩, hba⟩ | b) | (⟨⟨b, a⟩, hba⟩ | a))
   · funext v
     show (1 : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) (eI k r b) (eI k r a) = 0
-    rw [Matrix.one_apply, if_neg]
+    rw [Matrix.one_apply, ite_eq_right]
     intro h; exact (ne_of_lt hba) (by have := congrArg Fin.val h; simp [eI] at this; exact Fin.ext this)
   · funext v j
     show sclT T j * (1 : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) (eI k r b) (wI k r j) = 0
-    rw [Matrix.one_apply, if_neg, mul_zero]
+    rw [Matrix.one_apply, ite_eq_right, mul_zero]
     intro h; have := congrArg Fin.val h; simp [eI, wI] at this; omega
   · funext v
     show WlocSk.NB.kof 1 b a = 0
@@ -500,7 +498,7 @@ theorem blkOf_one {ι : Type} {r k : ℕ} (T : ℝ) :
       refine Finset.sum_eq_zero fun c _ => ?_
       have hne : eI k r c ≠ esI k r l := by
         intro h; have := congrArg Fin.val h; simp [eI, esI] at this; omega
-      rw [if_neg hne, mul_zero]
+      rw [ite_eq_right hne, mul_zero]
     simp [WlocSk.NB.kof, hm]
   · funext v
     show (WlocSk.NB.mof (1 : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) a a).im = 0
@@ -510,7 +508,7 @@ theorem blkOf_one {ι : Type} {r k : ℕ} (T : ℝ) :
       refine Finset.sum_eq_zero fun c _ => ?_
       have hne : eI k r c ≠ esI k r a := by
         intro h; have := congrArg Fin.val h; simp [eI, esI] at this; omega
-      rw [if_neg hne, mul_zero]
+      rw [ite_eq_right hne, mul_zero]
     rw [hm, Complex.zero_im]
 
 variable {D : D7} (X : HidaSetting D)
@@ -533,12 +531,12 @@ theorem blk_eq (u : D.what₂.Word) (s : X.B.I.Ginf) (hs : s ∈ X.NinfU u) :
     show (if h : j.val < D.R.k then LsNc5.phiMat X u v s b ⟨j.val, h⟩ else LsNc5.yVec X u v s b) =
       sclT (Tw u) j * mX X u s v (eI D.R.k D.R.rS b) (wI D.R.k D.R.rS j)
     by_cases h : j.val < D.R.k
-    · rw [dif_pos h, sclT, if_pos h, one_mul]
+    · rw [dite_eq_left h, sclT, ite_eq_left h, one_mul]
       have := hw (s v) b ⟨j.val, h⟩
       have e : Fin.castSucc (⟨j.val, h⟩ : Fin D.R.k) = j := Fin.ext rfl
       rw [e] at this
       exact this
-    · rw [dif_neg h, sclT, if_neg h]
+    · rw [dite_eq_right h, sclT, ite_eq_right h]
       have e : j = Fin.last D.R.k := Fin.ext (by have := j.isLt; simp only [Fin.val_last]; omega)
       subst e
       exact hz (s v) b
@@ -594,14 +592,14 @@ theorem cont_shG (i : WlocSk.NB.CI k r) :
       ∑ c, if p.1.1 < c then WlocSk.NB.bA mc.1 p.1.1 c * WlocSk.NB.cA mc.2 c p.1.2 else 0
     refine continuous_finsetSum _ fun c _ => ?_
     by_cases h : p.1.1 < c
-    · simp only [if_pos h]; exact (hent _ _).mul (hcA _ _)
-    · simp only [if_neg h]; exact continuous_const
+    · simp only [ite_eq_left h]; exact (hent _ _).mul (hcA _ _)
+    · simp only [ite_eq_right h]; exact continuous_const
   · show Continuous fun mc : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ × (WlocSk.NB.CI k r → ℂ) =>
       (∑ c, if q.1 < c then WlocSk.NB.bA mc.1 q.1 c * WlocSk.NB.cB mc.2 c q.2 else 0) + WlocSk.NB.bB mc.1 q.1 q.2
     refine (continuous_finsetSum _ fun c _ => ?_).add (hent _ _)
     by_cases h : q.1 < c
-    · simp only [if_pos h]; exact (hent _ _).mul (hcB _ _)
-    · simp only [if_neg h]; exact continuous_const
+    · simp only [ite_eq_left h]; exact (hent _ _).mul (hcB _ _)
+    · simp only [ite_eq_right h]; exact continuous_const
   · show Continuous fun mc : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ × (WlocSk.NB.CI k r → ℂ) =>
       (WlocSk.NB.dlt mc.1 mc.2 p.1.1 p.1.2 - star (WlocSk.NB.dlt mc.1 mc.2 p.1.2 p.1.1)) / 2
     have h1 : ∀ a b : Fin r, Continuous fun mc : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ ×

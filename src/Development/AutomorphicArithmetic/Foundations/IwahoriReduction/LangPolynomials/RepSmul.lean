@@ -2,45 +2,6 @@ module
 
 public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
 public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.WdVal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -148,21 +109,6 @@ private theorem rs_cg {l : ℕ} [Fact l.Prime] {c : Coef l} (β : Bas c) (he : �
     calc _ ≤ ‖(l : PadicAlgCl l) ^ n‖ * 1 := mul_le_mul_of_nonneg_left (rs_sum_le _ he _) (norm_nonneg _)
       _ = _ := mul_one _
 
-private theorem rs_unit {Ω : Type} [Field Ω] (A : ValuationSubring Ω) {ι : Type} [Fintype ι] (u : ι → Ω)
-    (hu : ∀ i, u i ∈ A ∧ u i ≠ 0 ∧ (u i)⁻¹ ∈ A) (a : ι → ℕ) :
-    ∏ k, u k ^ a k ∈ A ∧ ∏ k, u k ^ a k ≠ 0 ∧ (∏ k, u k ^ a k)⁻¹ ∈ A := by
-  classical
-  suffices h : ∀ s : Finset ι, ∏ k ∈ s, u k ^ a k ∈ A ∧ ∏ k ∈ s, u k ^ a k ≠ 0 ∧ (∏ k ∈ s, u k ^ a k)⁻¹ ∈ A from h _
-  intro s
-  induction s using Finset.induction_on with
-  | empty => simp [A.one_mem]
-  | insert k s hk ih =>
-    rw [Finset.prod_insert hk]
-    obtain ⟨h1, h2, h3⟩ := hu k
-    refine ⟨mul_mem (pow_mem h1 _) ih.1, mul_ne_zero (pow_ne_zero _ h2) ih.2.1, ?_⟩
-    rw [mul_inv, ← inv_pow]
-    exact mul_mem (pow_mem h3 _) ih.2.2
-
 private theorem rs_kum {Ω : Type} [Field Ω] [Algebra ℚ Ω] {l : ℕ} [Fact l.Prime] {n : ℕ} {z : Ω} (hz : z ^ l ^ n = 1)
     (s : G ℚ Ω) {ι : Type} [Fintype ι] (u : ι → Ω) (x : ι → ZMod (l ^ n)) (hx : ∀ k, KumVal n z (u k) s (x k)) (a : ι → ℕ) :
     KumVal (l := l) n z (∏ k, u k ^ a k) s ((∑ k, a k * (x k).val : ℕ) : ZMod (l ^ n)) := by
@@ -207,7 +153,10 @@ theorem UpperTheory.Kd.C7.pRepSmul :
   refine ⟨P', ⟨hprim, hnm, fun i => ?_, hval, fun s hs hcyc hfix => ?_⟩, fun i => ?_⟩
   · beta_reduce
     rw [hpv i]
-    exact rs_unit A _ hunits (a i)
+    refine ⟨prod_mem fun k _ => pow_mem (hunits k).1 _,
+      Finset.prod_ne_zero_iff.2 fun k _ => pow_ne_zero _ (hunits k).2.1, ?_⟩
+    rw [← Finset.prod_inv_distrib]
+    exact prod_mem fun k _ => by rw [← inv_pow]; exact pow_mem (hunits k).2.2 _
   · obtain ⟨k, hk, hcg⟩ := hK s hs hcyc hfix
     refine ⟨fun i => ((∑ k', a i k' * (k k').val : ℕ) : ZMod (l ^ n)), fun i => ?_, ?_⟩
     · beta_reduce

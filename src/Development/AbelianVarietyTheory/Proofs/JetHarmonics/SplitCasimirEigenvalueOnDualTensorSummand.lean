@@ -62,7 +62,7 @@ theorem dualTens_casimir_apply {M : Type} [NormedAddCommGroup M] [InnerProductSp
       = E a b (E b a (x i)) - (if i = a then E a b (x b) else 0) - (if i = b then E b a (x a) else 0)
         + (if i = b then x b else 0) := by
     intro a b
-    simp only [dualTens, map_sub, if_true]
+    simp only [dualTens, map_sub, ite_true]
     split_ifs <;> (try simp only [map_zero]) <;> abel
   have h1 : ∑ a, ∑ b, (if i = a then E a b (x b) else 0) = ∑ c, E i c (x c) := by
     rw [Finset.sum_comm]; simp
@@ -91,7 +91,6 @@ theorem splitCas_on_summand : ∀ (M : Type) [NormedAddCommGroup M] [InnerProduc
   intro M _ _ Ns _ _ n E F io mu s hE hF hio y
   funext i
   have h1 : io (Formalism.REAL.Cas F y) i = ∑ a, ∑ b, dualTens E a b (dualTens E b a (io y)) i := by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp [Formalism.REAL.Cas, LinearMap.sum_apply, map_sum, Finset.sum_apply, hio]
   rw [dualTens_casimir_apply, hE, hF, map_smul, casG_sub_single, Pi.smul_apply] at h1
   have h2 : (2 : ℂ) • splitCas E (io y) i

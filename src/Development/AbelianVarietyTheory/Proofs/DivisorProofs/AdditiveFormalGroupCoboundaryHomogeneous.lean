@@ -1,53 +1,11 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -73,7 +31,7 @@ theorem hom_mul {σ : Type} {m n : ℕ} {g h : MvPowerSeries σ R}
 theorem hom_one {σ : Type} : ∀ e : σ →₀ ℕ, e.degree ≠ 0 → coeff e (1 : MvPowerSeries σ R) = 0 := by
   classical
   intro e he
-  rw [coeff_one, if_neg]
+  rw [coeff_one, ite_eq_right]
   rintro rfl; exact he (map_zero _)
 
 theorem hom_pow {σ : Type} {g : MvPowerSeries σ R}
@@ -110,7 +68,7 @@ theorem hom_X {σ : Type} (s : σ) :
     ∀ e : σ →₀ ℕ, e.degree ≠ 1 → coeff e (X s : MvPowerSeries σ R) = 0 := by
   classical
   intro e he
-  rw [coeff_X, if_neg]
+  rw [coeff_X, ite_eq_right]
   rintro rfl; exact he (by simp)
 
 theorem hom_add {σ : Type} {n : ℕ} {g h : MvPowerSeries σ R}
@@ -187,10 +145,10 @@ theorem coeff_swap_eq (d : ℕ) (c : MvPowerSeries (Fin d ⊕ Fin d) R) (γ : Fi
   rw [ha, coeff_subst hs]
   simp_rw [prod_X_map, coeff_monomial]
   rw [finsum_eq_single _ (γ.mapDomain Sum.swap)]
-  · rw [← Finsupp.mapDomain_comp, Sum.swap_swap_eq, Finsupp.mapDomain_id, if_pos rfl, smul_eq_mul,
+  · rw [← Finsupp.mapDomain_comp, Sum.swap_swap_eq, Finsupp.mapDomain_id, ite_eq_left rfl, smul_eq_mul,
       mul_one]
   · intro δ hδ
-    rw [if_neg, smul_zero]
+    rw [ite_eq_right, smul_zero]
     rintro rfl
     apply hδ
     rw [← Finsupp.mapDomain_comp, Sum.swap_swap_eq, Finsupp.mapDomain_id]
@@ -307,11 +265,11 @@ theorem coeff_prod_addLaw (d n : ℕ) : ∀ α : Fin d →₀ ℕ, α.degree = n
     · rw [coeff_one]
       by_cases hβ : β = 0
       · subst hβ; simp
-      · rw [if_neg, if_neg (Ne.symm hβ)]
+      · rw [ite_eq_right, ite_eq_right (Ne.symm hβ)]
         intro h; apply hβ; ext k
         have := DFunLike.congr_fun h (Sum.inl k)
         simpa [mdl_inl] using this
-    · rw [coeff_one, if_neg, if_neg]
+    · rw [coeff_one, ite_eq_right, ite_eq_right]
       · intro h
         have := DFunLike.congr_fun h i
         simp at this
@@ -339,42 +297,42 @@ theorem coeff_prod_addLaw (d n : ℕ) : ∀ α : Fin d →₀ ℕ, α.degree = n
       rfl
     rw [hP]
     refine ⟨?_, fun i => ?_⟩
-    · rw [map_add (f := _), coeff_mul_monomial, coeff_mul_monomial, if_neg (c := Finsupp.single (Sum.inr j) 1 ≤ _), add_zero]
+    · rw [map_add (f := _), coeff_mul_monomial, coeff_mul_monomial, ite_eq_right (c := Finsupp.single (Sum.inr j) 1 ≤ _), add_zero]
       swap
       · rw [Finsupp.single_le_iff, mdl_inr]; omega
       by_cases hb : 1 ≤ β j
-      · rw [if_pos (by rw [Finsupp.single_le_iff, mdl_inl]; exact hb), subA, (ih a ha _).1, mul_one]
+      · rw [ite_eq_left (by rw [Finsupp.single_le_iff, mdl_inl]; exact hb), subA, (ih a ha _).1, mul_one]
         simp only [eqA a β j hb]
-      · rw [if_neg (by rw [Finsupp.single_le_iff, mdl_inl]; exact hb), if_neg (neA a β j (by omega))]
+      · rw [ite_eq_right (by rw [Finsupp.single_le_iff, mdl_inl]; exact hb), ite_eq_right (neA a β j (by omega))]
     · rw [map_add (f := _), coeff_mul_monomial, coeff_mul_monomial]
       by_cases hji : j = i
       · subst hji
-        rw [if_pos (c := Finsupp.single (Sum.inr j) 1 ≤ _) (by simp [Finsupp.single_le_iff]),
+        rw [ite_eq_left (c := Finsupp.single (Sum.inr j) 1 ≤ _) (by simp [Finsupp.single_le_iff]),
           add_tsub_cancel_right, (ih a ha _).1]
         simp only [add_left_inj]
         by_cases hb : 1 ≤ β j
-        · rw [if_pos (by rw [Finsupp.single_le_iff]; simpa [mdl_inl] using hb), subB, (ih a ha _).2,
+        · rw [ite_eq_left (by rw [Finsupp.single_le_iff]; simpa [mdl_inl] using hb), subB, (ih a ha _).2,
             eqC β j hb]
           by_cases hab : a = β
           · subst hab; simp <;> ring
           · simp [hab]
-        · rw [if_neg (by rw [Finsupp.single_le_iff]; simpa [mdl_inl] using hb), zero_add]
+        · rw [ite_eq_right (by rw [Finsupp.single_le_iff]; simpa [mdl_inl] using hb), zero_add]
           by_cases hab : a = β
           · subst hab
             have : a j = 0 := by omega
             simp [this]
           · simp [hab]
-      · rw [if_neg (c := Finsupp.single (Sum.inr j) 1 ≤ _)
+      · rw [ite_eq_right (c := Finsupp.single (Sum.inr j) 1 ≤ _)
           (by rw [Finsupp.single_le_iff]; simp [mdl_inr, Finsupp.single_apply, Ne.symm hji]), add_zero]
         have hi : (((a + Finsupp.single j 1 : Fin d →₀ ℕ) i : ℕ) : R) = (a i : R) := by
           simp [hji]
         rw [hi]
         by_cases hb : 1 ≤ β j
-        · rw [if_pos (by rw [Finsupp.single_le_iff]; simpa [mdl_inl] using hb), subB, (ih a ha _).2,
+        · rw [ite_eq_left (by rw [Finsupp.single_le_iff]; simpa [mdl_inl] using hb), subB, (ih a ha _).2,
             mul_one]
           simp only [eqB a β j i hji hb]
-        · rw [if_neg (by rw [Finsupp.single_le_iff]; simpa [mdl_inl] using hb),
-            if_neg (neB a β j i hji (by omega))]
+        · rw [ite_eq_right (by rw [Finsupp.single_le_iff]; simpa [mdl_inl] using hb),
+            ite_eq_right (neB a β j i hji (by omega))]
 
 end GlobalTheory.HomogCob
 
@@ -399,14 +357,14 @@ theorem coeff_cob1_additive_law_mixed (d : ℕ) (f : MvPowerSeries (Fin d) R) (�
   have h1 : (∑ᶠ δ : Fin d →₀ ℕ, coeff δ f • (if β.mapDomain Sum.inl + Finsupp.single (Sum.inr i) 1 =
       δ.mapDomain Sum.inl then (1 : R) else 0)) = 0 := by
     refine finsum_eq_zero_of_forall_eq_zero fun δ => ?_
-    rw [if_neg, smul_zero]
+    rw [ite_eq_right, smul_zero]
     intro h
     have := DFunLike.congr_fun h (Sum.inr i)
     simp [mdl_inr] at this
   have h2 : (∑ᶠ δ : Fin d →₀ ℕ, coeff δ f • (if β.mapDomain Sum.inl + Finsupp.single (Sum.inr i) 1 =
       δ.mapDomain Sum.inr then (1 : R) else 0)) = 0 := by
     refine finsum_eq_zero_of_forall_eq_zero fun δ => ?_
-    rw [if_neg, smul_zero]
+    rw [ite_eq_right, smul_zero]
     obtain ⟨k, hk⟩ : ∃ k, β k ≠ 0 := by
       by_contra! hc; exact hβ (Finsupp.ext hc)
     intro h
@@ -415,10 +373,10 @@ theorem coeff_cob1_additive_law_mixed (d : ℕ) (f : MvPowerSeries (Fin d) R) (�
     exact hk this
   rw [h1, h2, sub_zero, sub_zero]
   · rw [finsum_eq_single _ (β + Finsupp.single i 1)]
-    · rw [(coeff_prod_addLaw d _ _ rfl β).2 i, if_pos rfl, smul_eq_mul, mul_comm]
+    · rw [(coeff_prod_addLaw d _ _ rfl β).2 i, ite_eq_left rfl, smul_eq_mul, mul_comm]
       simp
     · intro δ hδ
-      rw [(coeff_prod_addLaw d _ δ rfl β).2 i, if_neg hδ, smul_zero]
+      rw [(coeff_prod_addLaw d _ δ rfl β).2 i, ite_eq_right hδ, smul_zero]
 
 end GlobalTheory.HomogCob
 

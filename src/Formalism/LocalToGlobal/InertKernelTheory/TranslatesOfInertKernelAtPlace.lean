@@ -13,8 +13,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.KerInert.KGLt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.PairingIndexBounds.F
 
 def XiAwayLt {p : ℕ} [Fact p.Prime] (X : Sys p) (hfin : ∀ j c, (X.Lv.lev j c).FinClasses) (D : D7)

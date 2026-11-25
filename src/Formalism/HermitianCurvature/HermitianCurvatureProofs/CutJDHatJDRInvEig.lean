@@ -1,48 +1,6 @@
 module
 
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRInvDefs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -134,8 +92,8 @@ theorem m_col_e {m : B.Mat k r} (hm : m ∈ Nset k r) (q i : Fin (2 * r + k + 1)
 theorem mw_X {z' : Fin (2 * r + k + 1) → ℂ} {w m : B.Mat k r} (hw : w ∈ UWset k r z') (hm : m ∈ Nset k r)
     (i q : Fin (2 * r + k + 1)) (hi : r ≤ i.val) (hq : q.val < r) : (m * w) i q = 0 := by
   rw [Matrix.mul_apply]
-  simp only [w_col_e hw q hq, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
-  rw [m_col_e hm q i hq (by omega), if_neg]
+  simp only [w_col_e hw q hq, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
+  rw [m_col_e hm q i hq (by omega), ite_eq_right]
   intro h; subst h; omega
 
 end
@@ -173,7 +131,7 @@ theorem nilpotent_column_anisotropic {m : B.Mat k r} (hm : m ∈ Nset k r) (i j 
 theorem mw_colX {z' : Fin (2 * r + k + 1) → ℂ} {w m : B.Mat k r} (hw : w ∈ UWset k r z')
     (i q : Fin (2 * r + k + 1)) (hq : q.val < r) : (m * w) i q = m i q := by
   rw [Matrix.mul_apply]
-  simp only [w_col_e hw q hq, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [w_col_e hw q hq, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem nilpotent_unitary_fixes_tail {z' : Fin (2 * r + k + 1) → ℂ} {w m : B.Mat k r} (hz' : inWb k r z') (hw : w ∈ UWset k r z')
     (hm : m ∈ Nset k r) (i : Fin (2 * r + k + 1)) (hi : r ≤ i.val) : ((m * w) *ᵥ z') i = z' i := by
@@ -183,7 +141,7 @@ theorem nilpotent_unitary_fixes_tail {z' : Fin (2 * r + k + 1) → ℂ} {w m : B
     by_cases hj : r ≤ j.val ∧ j.val ≤ r + k
     · rw [nilpotent_column_anisotropic hm i j hj.1 hj.2 hi]
     · rw [hz' j (by omega), mul_zero, mul_zero]
-  simp only [Matrix.mulVec, dotProduct, e, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [Matrix.mulVec, dotProduct, e, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 def TV (k r : ℕ) (S : B.Mat k r) : Matrix (Fin (r + k + 1)) (Fin (r + k + 1)) ℂ := S.submatrix (eV k r) (eV k r)
 
@@ -213,10 +171,10 @@ theorem det_mw_V {z' : Fin (2 * r + k + 1) → ℂ} {w m : B.Mat k r} (hw : w �
     rw [Matrix.det_of_isUpperTriangular]
     · refine Finset.prod_eq_one (fun i _ => ?_)
       simp only [Matrix.toSquareBlockProp, Matrix.toBlock_apply]
-      rw [mw_colX hw _ _ i.2, m_col_e hm i.1 i.1 i.2 le_rfl, if_pos rfl]
+      rw [mw_colX hw _ _ i.2, m_col_e hm i.1 i.1 i.2 le_rfl, ite_eq_left rfl]
     · intro i j hij
       simp only [Matrix.toSquareBlockProp, Matrix.toBlock_apply]
-      rw [mw_colX hw _ _ j.2, m_col_e hm j.1 i.1 j.2 (le_of_lt hij), if_neg]
+      rw [mw_colX hw _ _ j.2, m_col_e hm j.1 i.1 j.2 (le_of_lt hij), ite_eq_right]
       intro h; exact (ne_of_lt hij) (Subtype.ext h).symm
   have h2 : ((m * w).toSquareBlockProp (fun i => ¬ i.val < r)).det = (TV k r (m * w)).det := by
     rw [← Matrix.det_submatrix_equiv_self (eVEquiv k r)]
@@ -289,15 +247,15 @@ theorem betaM_d {z' : Fin (2 * r + k + 1) → ℂ} {w m : B.Mat k r} (hz' : inWb
           · intro h; exact Fin.succAbove_left_injective (comp_inj eV_inj h)
           · intro h; rw [h]
         by_cases h : j = ⟨t.val, by have := t.isLt; omega⟩
-        · rw [if_pos (iff.2 h), if_pos h, beM, hwI]
+        · rw [ite_eq_left (iff.2 h), ite_eq_left h, beM, hwI]
           simp only [hηdef]
           ring
-        · rw [if_neg (fun h' => h (iff.1 h')), if_neg h, mul_zero]
+        · rw [ite_eq_right (fun h' => h (iff.1 h')), ite_eq_right h, mul_zero]
       simp only [e1]
       rw [sum_emb _ emb_inj (fun p : Fin (r + k + 1) => if j = p then η p * (-1 : ℂ) ^ (p : ℕ) else 0)
         (fun q hq => by split_ifs <;> simp [hη q (notin q hq)])]
       rw [Finset.sum_ite_eq]
-      simp only [Finset.mem_univ, if_true]
+      simp only [Finset.mem_univ, ite_true]
       ring
     rw [lhs, core_col T η hT j, rhs, det_mw_V hw hm]
     ring
@@ -331,7 +289,7 @@ theorem inverse_beta_minus_holds : RInvBetaM := by
     split_ifs <;> simp [mul_assoc]
   rw [Finset.sum_congr rfl e1, Finset.sum_comm, Finset.smul_sum]
   refine Finset.sum_congr rfl (fun t _ => ?_)
-  rw [← Finset.smul_sum, Finset.sum_ite_eq', if_pos (hmem t), smul_smul]
+  rw [← Finset.smul_sum, Finset.sum_ite_eq', ite_eq_left (hmem t), smul_smul]
 
 end Formalism.FourierDecayAlt.P.CutMP
 
@@ -347,7 +305,7 @@ theorem zeta_zero {z' : Fin (2 * r + k + 1) → ℂ} (hz' : inWb k r z') (q : Fi
     herm (Hpk k r) (bvec q) z' = 0 := by
   unfold herm
   simp only [dotProduct, Matrix.mulVec, bvec, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true, Pi.star_apply]
+    Finset.mem_univ, ite_true, Pi.star_apply]
   refine Finset.sum_eq_zero (fun x _ => ?_)
   by_cases hx : r ≤ x.val ∧ x.val ≤ r + k
   · have : Hpk k r x q = 0 := by
@@ -436,15 +394,15 @@ theorem conclusion₃ {z' : Fin (2 * r + k + 1) → ℂ} (hz' : inWb k r z') (P 
           · intro h; exact Fin.succAbove_left_injective (comp_inj index_embedding_injective h)
           · intro h; rw [h]
         by_cases h : j = ⟨r + i.val, by have := i.isLt; omega⟩
-        · rw [if_pos (iff.2 h), if_pos h, alP, hwI, hs (i : ℕ)]
+        · rw [ite_eq_left (iff.2 h), ite_eq_left h, alP, hwI, hs (i : ℕ)]
           simp only [hζdef]
           ring
-        · rw [if_neg (fun h' => h (iff.1 h')), if_neg h, mul_zero]
+        · rw [ite_eq_right (fun h' => h (iff.1 h')), ite_eq_right h, mul_zero]
       simp only [e1]
       rw [sum_emb _ emb_inj (fun p : Fin (r + k + 1) => if j = p then (-1 : ℂ) ^ r * ((-1 : ℂ) ^ (p : ℕ) * ζ p) else 0)
         (fun q hq => by split_ifs <;> simp [hζ0 q (notin q hq)])]
       rw [Finset.sum_ite_eq]
-      simp only [Finset.mem_univ, if_true]
+      simp only [Finset.mem_univ, ite_true]
     rw [lhs, core_row T ζ hζ j, rhs, hdet]
     ring
 
@@ -468,7 +426,7 @@ theorem usage₅ {z' : Fin (2 * r + k + 1) → ℂ} (hz' : inWb k r z') (P : B.M
     split_ifs <;> simp
   rw [Finset.sum_congr rfl e1, Finset.sum_comm, Finset.smul_sum]
   refine Finset.sum_congr rfl (fun i _ => ?_)
-  rw [← Finset.smul_sum, Finset.sum_ite_eq', if_pos (hmem i), smul_smul]
+  rw [← Finset.smul_sum, Finset.sum_ite_eq', ite_eq_left (hmem i), smul_smul]
 
 end
 

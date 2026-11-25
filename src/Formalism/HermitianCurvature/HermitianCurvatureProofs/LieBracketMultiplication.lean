@@ -1,57 +1,15 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselDecayBounds.BesselUnitNorm.BesselNormSteps.BesselLine.ConvGrp
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.LieListProducts
 public import Formalism.HermitianCurvature.FrameExists2
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameEntries
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftDerivativeCurves
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -72,18 +30,7 @@ section Geometry
 variable {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ}
 
 theorem uw_mul {g h : Mx k r} (hg : g ∈ UWset k r z) (hh : h ∈ UWset k r z) : g * h ∈ UWset k r z := by
-  obtain ⟨hg1, hg2, hg3⟩ := hg
-  obtain ⟨hh1, hh2, hh3⟩ := hh
-  refine ⟨?_, fun a => ⟨?_, ?_⟩, ?_⟩
-  · have e1 : gᴴ * Hpk k r * g = Hpk k r := hg1
-    have e2 : hᴴ * Hpk k r * h = Hpk k r := hh1
-    show (g * h)ᴴ * Hpk k r * (g * h) = Hpk k r
-    rw [Matrix.conjTranspose_mul]
-    calc hᴴ * gᴴ * Hpk k r * (g * h) = hᴴ * (gᴴ * Hpk k r * g) * h := by simp only [Matrix.mul_assoc]
-      _ = Hpk k r := by rw [e1, e2]
-  · rw [← Matrix.mulVec_mulVec, (hh2 a).1, (hg2 a).1]
-  · rw [← Matrix.mulVec_mulVec, (hh2 a).2, (hg2 a).2]
-  · rw [← Matrix.mulVec_mulVec, hh3, hg3]
+  apply _root_.PI.WBL.Cv.uw_mul <;> assumption
 
 theorem uw_pow {g : Mx k r} (hg : g ∈ UWset k r z) (n : ℕ) : g ^ n ∈ UWset k r z := by
   induction n with
@@ -103,36 +50,13 @@ theorem uw_inv {h : Mx k r} (hh : h ∈ UWset k r z) : h⁻¹ ∈ UWset k r z :=
   calc h⁻¹ *ᵥ z = h⁻¹ *ᵥ (h *ᵥ z) := by rw [hh.2.2]
     _ = z := by rw [Matrix.mulVec_mulVec, LeftDerivativeCurves.uh_inv_mul hh.1, Matrix.one_mulVec]
 
-theorem lie_zero : InLieW k r z (0 : Mx k r) := by
-  unfold InLieW inLieLev
-  refine ⟨?_, by simp⟩
-  simp
+theorem lie_zero : InLieW k r z (0 : Mx k r) := Formalism.FourierDecayAlt.P.LieListProducts.lie_zero
 
 theorem lie_add {X Y : Mx k r} (hX : InLieW k r z X) (hY : InLieW k r z Y) : InLieW k r z (X + Y) := by
-  unfold InLieW inLieLev at *
-  obtain ⟨⟨h1, h1'⟩, h2⟩ := hX
-  obtain ⟨⟨h3, h3'⟩, h4⟩ := hY
-  refine ⟨⟨?_, fun a ha => ⟨?_, ?_⟩⟩, ?_⟩
-  · rw [Matrix.conjTranspose_add, add_mul, mul_add]
-    calc Xᴴ * Hpk k r + Yᴴ * Hpk k r + (Hpk k r * X + Hpk k r * Y)
-        = (Xᴴ * Hpk k r + Hpk k r * X) + (Yᴴ * Hpk k r + Hpk k r * Y) := by abel
-      _ = 0 := by rw [h1, h3, add_zero]
-  · rw [Matrix.add_mulVec, (h1' a ha).1, (h3' a ha).1, add_zero]
-  · rw [Matrix.add_mulVec, (h1' a ha).2, (h3' a ha).2, add_zero]
-  · rw [Matrix.add_mulVec, h2, h4, add_zero]
+  apply _root_.Formalism.FourierDecayAlt.P.LieListProducts.lie_add <;> assumption
 
 theorem lie_smul {X : Mx k r} (hX : InLieW k r z X) (s : ℝ) : InLieW k r z ((s : ℂ) • X) := by
-  unfold InLieW inLieLev at *
-  obtain ⟨⟨h1, h1'⟩, h2⟩ := hX
-  have hs : star (s : ℂ) = (s : ℂ) := Complex.conj_ofReal s
-  refine ⟨⟨?_, fun a ha => ⟨?_, ?_⟩⟩, ?_⟩
-  · rw [Matrix.conjTranspose_smul, hs, Matrix.smul_mul, Matrix.mul_smul, ← smul_add, h1, smul_zero]
-  · first
-    | rw [Matrix.smul_mulVec, (h1' a ha).1, smul_zero]
-  · first
-    | rw [Matrix.smul_mulVec, (h1' a ha).2, smul_zero]
-  · first
-    | rw [Matrix.smul_mulVec, h2, smul_zero]
+  exact Formalism.FourierDecayAlt.P.LieListProducts.lie_smul hX s
 
 theorem lie_bracket {X Y : Mx k r} (hX : InLieW k r z X) (hY : InLieW k r z Y) :
     InLieW k r z (X * Y - Y * X) := by

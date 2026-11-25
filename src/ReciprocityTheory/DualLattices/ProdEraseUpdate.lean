@@ -44,7 +44,7 @@ theorem xc_eq (Cm Cinv : Matrix ι ι k) (h : Cinv * Cm = 1) (i : ι) (x : ι �
   simp only [lam, Finset.mul_sum, ← mul_assoc]
   rw [Finset.sum_comm]
   simp only [← Finset.sum_mul, e, Matrix.one_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
 
 def MulStable (S : Submodule k ((ι → ZMod p) → k)) (h : (ι → ZMod p) → k) : Prop :=
   ∀ f ∈ S, h * f ∈ S
@@ -59,12 +59,12 @@ theorem prod_erase_update (Cm : Matrix ι ι k) (α : ι → ZMod p) (l : ι) (a
     ∏ j ∈ univ.erase l, lam Cm j x ^ (Function.update α l a j).val =
       ∏ j ∈ univ.erase l, lam Cm j x ^ (α j).val := by
   refine Finset.prod_congr rfl (fun j hj => ?_)
-  rw [Function.update_apply, if_neg (Finset.ne_of_mem_erase hj)]
+  rw [Function.update_apply, ite_eq_right (Finset.ne_of_mem_erase hj)]
 
 theorem sum_erase_update (α : ι → ZMod p) (l : ι) (a : ZMod p) :
     ∑ j ∈ univ.erase l, (Function.update α l a j).val = ∑ j ∈ univ.erase l, (α j).val := by
   refine Finset.sum_congr rfl (fun j hj => ?_)
-  rw [Function.update_apply, if_neg (Finset.ne_of_mem_erase hj)]
+  rw [Function.update_apply, ite_eq_right (Finset.ne_of_mem_erase hj)]
 
 theorem key_step (Cm Cinv : Matrix ι ι k) (h : Cinv * Cm = 1) :
     ∀ (N : ℕ) (α : ι → ZMod p), ∑ j, (α j).val = N → ∀ l,
@@ -203,7 +203,7 @@ theorem delta_apply (y x : ι → ZMod p) : delta k y x = if x = y then 1 else 0
   by_cases hxy : x = y
   · subst hxy; simp
   · have hn : ¬ ∀ i ∈ (univ : Finset ι), x i = y i := fun hall => hxy (funext fun i => hall i (mem_univ i))
-    rw [if_neg hn, if_neg hxy]
+    rw [ite_eq_right hn, ite_eq_right hxy]
 
 theorem span_monF_eq_top (Cm Cinv : Matrix ι ι k) (h : Cinv * Cm = 1) :
     Submodule.span k (Set.range (monF (p := p) Cm)) = ⊤ := by

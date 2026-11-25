@@ -56,12 +56,10 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealLineOfPeriod
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 noncomputable section
 
 namespace GlobalTheory.RowRep
 open GlobalTheory.RootEx
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 theorem diag_conj_symR {k : Type} [Field k] {n : Type} [Fintype n] [DecidableEq n] {c : ℕ} {x y : GL (n ⊕ Fin c) k}
     {f : n ⊕ Fin c → k} (hy : y.val = diagonal f) (hx : x ∈ symR k n c) : y⁻¹ * x * y ∈ symR k n c := by
@@ -162,7 +160,6 @@ theorem frame_diag {D : D7} {A B : HSp D} {c : ℕ} {ε : D.host.E} (d : Hermiti
 end GlobalTheory.RowRep
 
 namespace GlobalTheory.RowRep
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 theorem glue_alg {R : Type} [CommRing R] {n : Type} [Fintype n] [DecidableEq n] {X X' Y Y' G H : Matrix n n R} {e e' : R}
     (h0 : e * e' = 0) (h1 : e * e = e) (h2 : e' * e' = e') (hX : e • X = X) (hY : e • Y = Y) (hX' : e' • X' = X')
@@ -393,7 +390,6 @@ end GlobalTheory.RowRep
 
 namespace GlobalTheory.RowRep
 open GlobalTheory.RootEx GlobalTheory.LocGrp GlobalTheory.LocGrpIff
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 theorem jac_par {D : D7} {K : Type} [Field K] (π : AE D →+* K) {A B : HSp D} {σ : ℕ} {ε : D.host.E} (d : HermitianOrthogonalExtensionData A B (2 * σ) ε)
     {b b' : Matrix (Fin A.rank) (Fin A.rank) K} (hb : b * b' = 1) {u : Fin (2 * σ) → K}
@@ -446,7 +442,6 @@ end GlobalTheory.RowRep
 
 namespace GlobalTheory.RowRep
 open GlobalTheory.RootEx GlobalTheory.LocGrp GlobalTheory.LocGrpIff
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 theorem bes_par {D : D7} {K : Type} [Field K] (π : AE D →+* K) {A B : HSp D} {σ : ℕ} (d : HermitianOrthogonalExtensionData A B (2 * σ + 1) (-1))
     (l : Fin σ → D.host.E) (hl : ∀ a, l a ≠ 0)
@@ -545,7 +540,6 @@ theorem besGrp_mem_symR : ∀ {D : D7} {A B : HSp D} {c σ : ℕ} (d : Hermitian
 end GlobalTheory.RowRep
 
 namespace GlobalTheory.RowRep
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc}
 
 theorem exists_isTilt (G : GridData L sc) (j : ℕ) : ∃ δ, GlobalTheory.RowVal.IsTilt G j δ := by
@@ -594,7 +588,6 @@ theorem locAt_lat (B : Frames G) (t : T) (w : Pl D.host.E) {j : ℕ} (h1 : 1 ≤
 end GlobalTheory.RowRep
 
 namespace GlobalTheory.RowRep
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} {W : G.Weil} {U : Set T}
 
 theorem exists_inBasis_eq {n n' : ℕ} (h : n' = n) (β : GL (Fin n) (Lev.EAf D)) (w : Pl D.host.E) (g : GL (Fin n') (Kw w)) :
@@ -674,9 +667,9 @@ theorem locAt_tilt (S : GridChoice W U) {t : T} (ht : t ∈ U) {w : Pl D.host.E}
     have hc : σ ≤ D.R.m - 1 - j := by clear hp; omega
     refine Eq.trans ?_ (congrArg (incA D) (mul_diagonal _ _ _ _).symm)
     by_cases hp' : p.1 < σ
-    · rw [if_pos hp']
+    · rw [ite_eq_left hp']
       exact (congrFun (congrFun b r) ⟨p.1, hp'⟩).trans (congrArg (incA D) (mul_diagonal _ _ _ _))
-    · rw [if_neg hp']
+    · rw [ite_eq_right hp']
       obtain ⟨q, rfl⟩ : ∃ q : Fin σ, p = (Fin.castLE hc q).rev :=
         ⟨⟨2 * σ - 1 - p.1, by omega⟩, Fin.ext (by simp only [Fin.val_rev, Fin.val_castLE]; omega)⟩
       rw [show 2 * σ - 1 - (Fin.castLE hc q).rev.1 = q.1 by
@@ -694,7 +687,6 @@ theorem tilt_conj (S : GridChoice W U) {t : T} (ht : t ∈ U) {w : Pl D.host.E} 
 end GlobalTheory.RowRep
 
 namespace GlobalTheory.RowRep
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 
 

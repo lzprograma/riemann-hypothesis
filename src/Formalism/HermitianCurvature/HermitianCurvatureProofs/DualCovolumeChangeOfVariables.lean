@@ -3,52 +3,7 @@ module
 public import Formalism.HermitianCurvature.StatementJ
 public import Lemmata.FiberEquations.FiberEq
 public import Mathlib.Algebra.Module.LinearMap.Rat
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -131,7 +86,7 @@ theorem orth_zero (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTot
     rw [PiLp.inner_apply] at ht
     simp only [Fintype.sum_prod_type, Fintype.sum_bool, Finset.sum_apply, Pi.smul_apply,
       Function.comp, v, smul_eq_mul, Pi.zero_apply]
-    simp only [if_true, Bool.false_eq_true, if_false]
+    simp only [ite_true, Bool.false_eq_true, ite_false]
     have h2 : ∀ w : InfinitePlace E, conj (z w) * w.embedding t + z w * conj (w.embedding t) =
         ((2 * inner ℝ (z w) (cemb E t w) : ℝ) : ℂ) := by
       intro w
@@ -260,16 +215,8 @@ theorem t_PoissonJoint : PoissonJoint := by
     summable_of_sum_le (fun _ => norm_nonneg _) hfin
   have hts : ∑' μ : {μ : dual Λ // μ ≠ 0}, ‖F (μ : dual Λ)‖ ≤ ZLattice.covolume Λ * B :=
     hsum'.tsum_le_of_sum_le hfin
-  have hsum : Summable (fun μ : dual Λ => ‖F μ‖) := by
-    refine (Finset.summable_compl_iff ({0} : Finset (dual Λ))).1 ?_
-    have e : {x : dual Λ // x ∉ ({0} : Finset (dual Λ))} ≃ {μ : dual Λ // μ ≠ 0} :=
-      Equiv.subtypeEquivRight (fun x => by simp)
-    refine (summable_of_sum_le (fun _ => norm_nonneg _) (c := ZLattice.covolume Λ * B) ?_)
-    intro T
-    have := hfin (T.map ⟨fun x => ⟨x.1, by simpa using x.2⟩, fun a b h => by
-      have := congrArg (fun z => z.1) h; exact Subtype.ext this⟩)
-    rw [Finset.sum_map] at this
-    exact this
+  have hsum : Summable (fun μ : dual Λ => ‖F μ‖) :=
+    (Set.finite_singleton (0 : dual Λ)).summable_compl_iff.1 hsum'
   obtain ⟨_, hP⟩ := h0 V ι π hπ Λ φ Cφ (emb t₀) hc hdec hsum (fun l => hpos _)
   have hmem : ∀ t ∈ S, emb (t - t₀) ∈ Λ := fun t ht => hLa _ (hS t ht)
   let S' : Finset Λ := S.attach.image (fun t => ⟨emb (t.1 - t₀), hmem t.1 t.2⟩)

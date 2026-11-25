@@ -72,7 +72,7 @@ variable {D : D7} {X : HidaSetting D} {θ : ℝ}
 
 theorem theta_pos (C : Choice X θ) (u : D.what₂.Word) (τ : D.what₂.Tau) : 0 < θ := by
   by_contra hθ
-  push_neg at hθ
+  push Not at hθ
   have hv := _root_.Formalism.L2.SG.Pf.Choice.host_v_pos D
   have hq := C.nuS_q u τ
   unfold muNB kapN haarLie muS at hq
@@ -269,48 +269,13 @@ theorem wuBesselOfLoc {D : D7} {X : HidaSetting D} {θ : ℝ} (hRT : ReproTr) (h
     (muGB X (C.Q τ) (C.Qi τ) τ) (C.muW u τ) (muNB D θ) (C.nuS u τ) hμG hμW hμN hq
     (fun x => wT C u τ (x * C.y τ)) hcont hspsi hrep hne hlt
   refine ⟨B, hBm, fun γ => ?_⟩
-  obtain ⟨h1, h2, h3, -⟩ := C.isT τ
-  have hy : (C.y τ)ᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * C.y τ = Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS := C.y_mem τ
-  have hd : Formalism.REAL.Jm (X.B.I.ε (vOf X τ)) * Formalism.REAL.Jm (X.B.I.ε (vOf X τ)) = 1 := by
-    unfold Formalism.REAL.Jm
-    rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    funext a
-    split_ifs <;> norm_num
-  have hJJ : ∀ M : Matrix (Fin X.B.I.n) (Fin (2 * D.R.rS + D.R.k + 1)) ℂ,
-      Formalism.REAL.Jm (X.B.I.ε (vOf X τ)) * (Formalism.REAL.Jm (X.B.I.ε (vOf X τ)) * M) = M := fun M => by
-    rw [← Matrix.mul_assoc, hd, Matrix.one_mul]
-  have hA : ∀ M : Matrix (Fin X.B.I.n) (Fin (2 * D.R.rS + D.R.k + 1)) ℂ, (C.Qi τ)ᴴ * ((C.Q τ)ᴴ * M) = M := fun M => by
-    rw [← Matrix.mul_assoc, ← Matrix.conjTranspose_mul, h2, Matrix.conjTranspose_one, Matrix.one_mul]
-  have hHinv : C.Qi τ * Formalism.REAL.Jm (X.B.I.ε (vOf X τ)) * (C.Qi τ)ᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS = 1 := by
-    rw [← h3]
-    simp only [Matrix.mul_assoc, hA, hJJ, h1]
-  obtain ⟨yi, hyi⟩ : ∃ M : Matrix (Fin (2 * D.R.rS + D.R.k + 1)) (Fin (2 * D.R.rS + D.R.k + 1)) ℂ,
-      M = C.Qi τ * Formalism.REAL.Jm (X.B.I.ε (vOf X τ)) * (C.Qi τ)ᴴ * (C.y τ)ᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS :=
-    ⟨_, rfl⟩
-  have hyi1 : yi * C.y τ = 1 := by
-    rw [hyi, show C.Qi τ * Formalism.REAL.Jm (X.B.I.ε (vOf X τ)) * (C.Qi τ)ᴴ * (C.y τ)ᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS *
-        C.y τ = C.Qi τ * Formalism.REAL.Jm (X.B.I.ε (vOf X τ)) * (C.Qi τ)ᴴ *
-        ((C.y τ)ᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * C.y τ) by simp only [Matrix.mul_assoc], hy, hHinv]
-  have hyi2 : C.y τ * yi = 1 := by
-    first
-      | exact mul_eq_one_comm.mp hyi1
-  have hyiU : yiᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * yi = Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS := by
-    calc yiᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * yi
-        = yiᴴ * ((C.y τ)ᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * C.y τ) * yi := by rw [hy]
-      _ = (C.y τ * yi)ᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * (C.y τ * yi) := by
-          simp only [Matrix.conjTranspose_mul, Matrix.mul_assoc]
-      _ = Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS := by
-          rw [hyi2, Matrix.conjTranspose_one, Matrix.one_mul, Matrix.mul_one]
-  have hmU : (C.Qi τ * uMat γ * C.Q τ)ᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * (C.Qi τ * uMat γ * C.Q τ) =
-      Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS := conj_mem_lemma C τ γ
-  have hxU : C.Qi τ * uMat γ * C.Q τ * yi ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS) := by
-    show (C.Qi τ * uMat γ * C.Q τ * yi)ᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * (C.Qi τ * uMat γ * C.Q τ * yi) =
-      Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS
-    calc (C.Qi τ * uMat γ * C.Q τ * yi)ᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * (C.Qi τ * uMat γ * C.Q τ * yi)
-        = yiᴴ * ((C.Qi τ * uMat γ * C.Q τ)ᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * (C.Qi τ * uMat γ * C.Q τ)) * yi := by
-          simp only [Matrix.conjTranspose_mul, Matrix.mul_assoc]
-      _ = Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS := by rw [hmU, hyiU]
+  obtain ⟨-, h2, -, -⟩ := C.isT τ
+  set yi := Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * (C.y τ)ᴴ *
+    Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS
+  obtain ⟨hyiU, hyi1⟩ :=
+    Formalism.MainNotions.S.Inh.unitary_group_inv_mem (C.y τ) (C.y_mem τ)
+  have hxU := Formalism.MainNotions.S.Inh.mul_mem_UH_Hpk_nonempty_parameter_models _ _
+    (conj_mem_lemma C τ γ) hyiU
   have hxy : C.Qi τ * uMat γ * C.Q τ * yi * C.y τ = C.Qi τ * uMat γ * C.Q τ := by
     rw [Matrix.mul_assoc _ yi, hyi1, Matrix.mul_one]
   have hx' := hBW' _ hxU

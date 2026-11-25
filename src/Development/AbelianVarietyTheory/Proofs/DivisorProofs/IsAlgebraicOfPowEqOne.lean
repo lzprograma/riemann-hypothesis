@@ -42,7 +42,6 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.TupleReadBaseTupleE
 
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 open NumberField IsDedekindDomain
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.DIV.Cons Formalism.L2.Pj Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Indef.Tree Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Cx
@@ -50,8 +49,6 @@ open Formalism.IndefR.FWT GlobalTheory.BigTop GlobalTheory.OntoChain GlobalTheor
 open GlobalTheory.BigOn GlobalTheory.BigOn.Exp Formalism.L2.Theta GlobalTheory.ExportSeries
 open scoped TensorProduct
 
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.BigOn.Exp
 
@@ -131,14 +128,6 @@ theorem exists_algExp {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 I0 T : T
   refine sum_mem fun l _ => mul_mem ?_ ?_
   · exact (hmem _).2 (hz l)
   · exact (hmem _).2 (hemb _)
-
-end GlobalTheory.BigOn.Exp
-
-namespace GlobalTheory.BigOn.Exp
-
-end GlobalTheory.BigOn.Exp
-
-namespace GlobalTheory.BigOn.Exp
 
 end GlobalTheory.BigOn.Exp
 

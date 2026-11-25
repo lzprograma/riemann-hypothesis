@@ -43,8 +43,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.ClassScalarCompare
@@ -59,29 +57,6 @@ section Poly
 variable (c : Coeff l) {n : ℕ}
 
 end Poly
-
-section Adelic
-
-variable {n : ℕ}
-
-theorem star_diagE (x : E) : star (diagE E x) = diagE E (IsCMField.complexConj E x) := by
-  show adConj E (1 ⊗ₜ x) = 1 ⊗ₜ _
-  simp [adConj]
-
-theorem map_conjTranspose (g : Matrix (Fin n) (Fin n) E) :
-    g.conjTranspose.map (diagE E) = star (g.map (diagE E)) := by
-  ext a b; exact (star_diagE _).symm
-
-def toRat (g : Matrix (Fin n) (Fin n) E) (hg : g.conjTranspose * g = 1) : ratPts E n :=
-  ⟨⟨g.map (diagE E), Matrix.mem_unitaryGroup_iff'.2 (by
-      rw [← map_conjTranspose, ← Matrix.map_mul, hg, Matrix.map_one _ (map_zero _) (map_one _)])⟩,
-    fun a b => ⟨g a b, rfl⟩, fun a b => ⟨_, (star_diagE (g b a)).symm⟩⟩
-
-def adTrace : AdE E →+ AdF E :=
-  ((TensorProduct.rid (maximalRealSubfield E) (AdF E)).toLinearMap ∘ₗ
-    LinearMap.lTensor (AdF E) (Algebra.trace (maximalRealSubfield E) E)).toAddMonoidHom
-
-end Adelic
 
 section Conj
 

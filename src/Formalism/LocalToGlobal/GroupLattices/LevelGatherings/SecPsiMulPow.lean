@@ -118,22 +118,22 @@ instance orbSecPsi (φ : Formalism.HC.Frame) : OrbSec φ.Psi where
   sec z g := if (z : φ.GG).1 = 1 then secPsi φ z g else Quotient.out (QuotientGroup.mk g : φ.Psi ⧸ Subgroup.zpowers z)
   sec_mem z g := by
     by_cases hz : (z : φ.GG).1 = 1
-    · rw [if_pos hz]
+    · rw [ite_eq_left hz]
       obtain ⟨i, hi⟩ := secPsi_mul_pow φ z g hz
       have : (secPsi φ z g)⁻¹ * g = z ^ i := inv_mul_eq_of_eq_mul hi.symm
       rw [this]
       exact Subgroup.npow_mem_zpowers z i
-    · rw [if_neg hz]
+    · rw [ite_eq_right hz]
       exact QuotientGroup.eq.1 (Quotient.out_eq _)
   sec_const z g g' h := by
     by_cases hz : (z : φ.GG).1 = 1
-    · rw [if_pos hz, if_pos hz]
+    · rw [ite_eq_left hz, ite_eq_left hz]
       rw [← mem_powers_iff_mem_zpowers] at h
       obtain ⟨i, hi⟩ := h
       have hi' : z ^ i = g⁻¹ * g' := hi
       have : g' = g * z ^ i := by rw [hi', mul_inv_cancel_left]
       rw [this, secPsi_const φ z g hz]
-    · rw [if_neg hz, if_neg hz, QuotientGroup.eq.2 h]
+    · rw [ite_eq_right hz, ite_eq_right hz, QuotientGroup.eq.2 h]
 
 def zPsi (φ : Formalism.HC.Frame) (h : φ.MA) : φ.Psi := ⟨((1, 1), h), by rw [Formalism.HC.Frame.mem_Psi_iff]⟩
 

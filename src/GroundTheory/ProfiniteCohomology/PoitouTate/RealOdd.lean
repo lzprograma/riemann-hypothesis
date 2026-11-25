@@ -44,8 +44,6 @@ namespace GroundTheory.ProfCoh
 
 open CategoryTheory MonoidalCategory Involution OrderTwo
 
-attribute [local instance 2000] Rep.hV2
-
 section Transfer
 
 variable {F Ω : Type} [Field F] [Field Ω] [Algebra F Ω] (M : Rep.{0} (ULift.{0} ℤ) Gal(Ω/F))
@@ -81,7 +79,7 @@ theorem cartierDualToQZ_apply_eq_zero_iff (φ : cartierDual F Ω M) (m : M) :
     (rootsOfUnityToUnits_injective n).eq_iff]
 
 theorem cartierDualToQZ_injective : Function.Injective (cartierDualToQZ M hMn e) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro φ hφ
   apply LinearMap.ext
   intro m
@@ -116,7 +114,6 @@ section Equivariance
 
 variable {F Ω : Type} [Field F] [Field Ω] [Algebra F Ω] (M : Rep.{0} (ULift.{0} ℤ) Gal(Ω/F))
   {n : ℕ} [NeZero n] (hMn : ∀ m : M, n • m = 0) (e : galRootsOfUnity.{0} F Ω n ≃+ ZMod n)
-
 
 omit [NeZero n] in
 theorem cartierDualToQZ_act {c : Gal(Ω/F)} (hinv : c⁻¹ = c)
@@ -162,7 +159,6 @@ variable {F Ω : Type} [Field F] [Field Ω] [Algebra F Ω] [FiniteDimensional F 
       ((a * b : Fˣ) : F) ∈ Set.range (Algebra.norm F : Ω → F))
   {c : Gal(Ω/F)} (hG : ∀ g : Gal(Ω/F), g = 1 ∨ g = c) (hc : c ≠ 1)
   (hneg : (-1 : F) ∉ Set.range (Algebra.norm F : Ω → F))
-
 
 include hneg in
 theorem realInv_cocycleTwo (t : galUnits.{0} F Ω) (ht : (galUnits.{0} F Ω).ρ c t = t)
@@ -216,7 +212,6 @@ section Cup
 variable {F Ω : Type} [Field F] [Field Ω] [Algebra F Ω] [FiniteDimensional F Ω] [IsGalois F Ω]
   (M : Rep.{0} (ULift.{0} ℤ) Gal(Ω/F)) [IsDiscreteRep M] [Finite M]
   {c : Gal(Ω/F)} (hG : ∀ g : Gal(Ω/F), g = 1 ∨ g = c) (hc : c ≠ 1)
-
 
 omit [FiniteDimensional F Ω] in
 theorem cochainOf_cupCartier {p q : ℕ} (h : p + q = 2) (x : cocycles M p)
@@ -310,7 +305,7 @@ theorem cupPairing_H0_cocycleTwo (a : M.ρ.invariants) (φ : cartierDual F Ω M)
       funext j; fin_cases j <;> rfl
     have e3 : Fin.partialProd (![g, h] : Fin 2 → Gal(Ω/F)) ⟨0, by omega⟩ = 1 := by
       simp [Fin.partialProd]
-    rw [e1, e3, map_one, Module.End.one_apply]
+    rw [e1, e3, map_one, one_apply_eq_self]
   obtain ⟨ht, hzt⟩ := exists_eq_cocycleTwo_of_normalized (galUnits.{0} F Ω) hG hc z
     (fun g => by rw [hval, cochainTwo_one_left _ hc, LinearMap.zero_apply])
     (fun g => by rw [hval, cochainTwo_one_right _ hc, LinearMap.zero_apply])
@@ -342,8 +337,6 @@ namespace GroundTheory.ProfCoh
 
 open CategoryTheory MonoidalCategory Involution OrderTwo
 
-attribute [local instance 2000] Rep.hV2
-
 section Neg
 
 variable {M : Type*} [AddCommGroup M]
@@ -364,7 +357,6 @@ variable {F Ω : Type} [Field F] [Field Ω] [Algebra F Ω] [FiniteDimensional F 
   {c : Gal(Ω/F)} (hG : ∀ g : Gal(Ω/F), g = 1 ∨ g = c) (hc : c ≠ 1)
   (M : Rep.{0} (ULift.{0} ℤ) Gal(Ω/F)) [IsDiscreteRep M] [Finite M]
 
-
 include hG hc in
 theorem realDualityPairing_two_zero_eq_zero (x : cohomology M 2)
     (y : cohomology (cartierDual F Ω M) 0) (hy : y ∈ normClasses (cartierDual F Ω M)) :
@@ -380,7 +372,6 @@ theorem realDualityPairing_two_zero_eq_zero (x : cohomology M 2)
   refine ⟨(b : M →ₗ[ULift.{0} ℤ] galUnits.{0} F Ω) a, ?_⟩
   change ((((cartierDual F Ω M).ρ.norm b) : M →ₗ[ULift.{0} ℤ] galUnits.{0} F Ω) a) = _
   rw [norm_apply _ hG hc, LinearMap.add_apply, cartierDual_ρ_apply, inv_eq_self hG hc, ha]
-
 
 include hG hc in
 theorem realDualityPairing_zero_two_eq_zero (x : cohomology M 0) (hx : x ∈ normClasses M)
@@ -398,8 +389,8 @@ theorem realDualityPairing_zero_two_eq_zero (x : cohomology M 0) (hx : x ∈ nor
   have hφb : (φ : M →ₗ[ULift.{0} ℤ] galUnits.{0} F Ω) (M.ρ c b) =
       (galUnits.{0} F Ω).ρ c ((φ : M →ₗ[ULift.{0} ℤ] galUnits.{0} F Ω) b) := by
     conv_lhs => rw [← hφ]
-    rw [cartierDual_ρ_apply, inv_eq_self hG hc, ← Module.End.mul_apply, ← map_mul,
-      mul_self_eq_one hG hc, map_one, Module.End.one_apply]
+    rw [cartierDual_ρ_apply, inv_eq_self hG hc, ← mul_apply_eq_comp, ← map_mul,
+      mul_self_eq_one hG hc, map_one, one_apply_eq_self]
   change (φ : M →ₗ[ULift.{0} ℤ] galUnits.{0} F Ω) (M.ρ.norm b) = _
   rw [norm_apply _ hG hc, map_add (f := _), hφb]
 
@@ -462,7 +453,6 @@ variable {F Ω : Type} [Field F] [Field Ω] [Algebra F Ω] [FiniteDimensional F 
   (hroots : ∀ k : ℕ, 0 < k → Nonempty (galRootsOfUnity.{0} F Ω k ≃+ ZMod k))
   (M : Rep.{0} (ULift.{0} ℤ) Gal(Ω/F)) [IsDiscreteRep M] [Finite M]
 
-
 omit [IsDiscreteRep M] [Finite M] in
 include hneg in
 theorem realInv_cocycleTwo_eq_cartierDualToQZ {n : ℕ} [NeZero n] (hMn : ∀ m : M, n • m = 0)
@@ -487,7 +477,6 @@ theorem realInv_cocycleTwo_eq_cartierDualToQZ {n : ℕ} [NeZero n] (hMn : ∀ m 
       rw [← neg_add, h2φ, neg_zero]
   · rw [ht0]
     exact cartierDualToQZ_apply_eq_zero_iff M hMn e φ m
-
 
 include hneg hconj hroots in
 theorem realDualityPairingTwoZero_eq_tatePair :
@@ -522,7 +511,6 @@ theorem realDualityPairingTwoZero_eq_tatePair :
   refine (realInv_cocycleTwo_eq_cartierDualToQZ h2 hN hG hc hneg M hMn e (T.symm f) a hq _
     (Or.inl rfl) ht).trans ?_
   rw [hTf]
-
 
 include hneg hconj hroots in
 theorem realDualityPairingZeroTwo_eq_tatePair :
@@ -560,7 +548,6 @@ theorem realDualityPairingZeroTwo_eq_tatePair :
   refine (realInv_cocycleTwo_eq_cartierDualToQZ h2 hN hG hc hneg M hMn e _ a hq _
     (Or.inl rfl) ht).trans ?_
   rw [hTf]
-
 
 include hG hc hneg hconj hroots in
 theorem realDualityPairing_one_eq_tatePair :
@@ -601,13 +588,11 @@ theorem realDualityPairing_one_eq_tatePair :
     (Or.inr (by rw [hβ]; rfl)) ht).trans ?_
   rw [hTf]
 
-
 include hG hc hneg hconj hroots in
 theorem realDualityPairing_one_bijective :
     Function.Bijective (realDualityPairing F Ω h2 hN M (show 1 + 1 = 2 from rfl)) := by
   obtain ⟨e, e', h⟩ := realDualityPairing_one_eq_tatePair h2 hN hG hc hneg hconj hroots M
   exact bijective_of_pairing_eq _ _ e e' h tatePair_bijective
-
 
 include hG hc hneg hconj hroots in
 theorem realDualityPairing_one_flip_bijective :
@@ -615,13 +600,11 @@ theorem realDualityPairing_one_flip_bijective :
   obtain ⟨e, e', h⟩ := realDualityPairing_one_eq_tatePair h2 hN hG hc hneg hconj hroots M
   exact bijective_flip_of_pairing_eq _ _ e e' h tatePair_flip_bijective
 
-
 include hneg hconj hroots in
 theorem realDualityPairingTwoZero_bijective :
     Function.Bijective (realDualityPairingTwoZero h2 hN hG hc M) := by
   obtain ⟨e, e', h⟩ := realDualityPairingTwoZero_eq_tatePair h2 hN hG hc hneg hconj hroots M
   exact bijective_of_pairing_eq _ _ e e' h tatePair_bijective
-
 
 include hneg hconj hroots in
 theorem realDualityPairingTwoZero_flip_bijective :
@@ -629,13 +612,11 @@ theorem realDualityPairingTwoZero_flip_bijective :
   obtain ⟨e, e', h⟩ := realDualityPairingTwoZero_eq_tatePair h2 hN hG hc hneg hconj hroots M
   exact bijective_flip_of_pairing_eq _ _ e e' h tatePair_flip_bijective
 
-
 include hneg hconj hroots in
 theorem realDualityPairingZeroTwo_bijective :
     Function.Bijective (realDualityPairingZeroTwo h2 hN hG hc M) := by
   obtain ⟨e, e', h⟩ := realDualityPairingZeroTwo_eq_tatePair h2 hN hG hc hneg hconj hroots M
   exact bijective_of_pairing_eq _ _ e e' h tatePair_bijective
-
 
 include hneg hconj hroots in
 theorem realDualityPairingZeroTwo_flip_bijective :
@@ -644,21 +625,6 @@ theorem realDualityPairingZeroTwo_flip_bijective :
   exact bijective_flip_of_pairing_eq _ _ e e' h tatePair_flip_bijective
 
 end Duality
-
-section Values
-
-variable {F Ω : Type} [Field F] [Field Ω] [Algebra F Ω] [FiniteDimensional F Ω] [IsGalois F Ω]
-  (h2 : Module.finrank F Ω ≤ 2)
-  (hN : ∀ a b : Fˣ, (a : F) ∉ Set.range (Algebra.norm F : Ω → F) →
-    (b : F) ∉ Set.range (Algebra.norm F : Ω → F) →
-      ((a * b : Fˣ) : F) ∈ Set.range (Algebra.norm F : Ω → F))
-  {c : Gal(Ω/F)} (hG : ∀ g : Gal(Ω/F), g = 1 ∨ g = c) (hc : c ≠ 1)
-  (hneg : (-1 : F) ∉ Set.range (Algebra.norm F : Ω → F))
-  (hconj : ∀ ζ : galUnits.{0} F Ω, (∃ k : ℕ, 0 < k ∧ k • ζ = 0) → (galUnits.{0} F Ω).ρ c ζ = -ζ)
-  (hroots : ∀ k : ℕ, 0 < k → Nonempty (galRootsOfUnity.{0} F Ω k ≃+ ZMod k))
-  (M : Rep.{0} (ULift.{0} ℤ) Gal(Ω/F)) [IsDiscreteRep M] [Finite M]
-
-end Values
 
 section Bundle
 
@@ -672,7 +638,6 @@ variable {F Ω : Type} [Field F] [Field Ω] [Algebra F Ω] [FiniteDimensional F 
   (hconj : ∀ ζ : galUnits.{0} F Ω, (∃ k : ℕ, 0 < k ∧ k • ζ = 0) → (galUnits.{0} F Ω).ρ c ζ = -ζ)
   (hroots : ∀ k : ℕ, 0 < k → Nonempty (galRootsOfUnity.{0} F Ω k ≃+ ZMod k))
   (M : Rep.{0} (ULift.{0} ℤ) Gal(Ω/F)) [IsDiscreteRep M] [Finite M]
-
 
 include hneg hconj hroots in
 theorem real_local_duality_of_orderTwo :
@@ -709,8 +674,6 @@ noncomputable section
 namespace GroundTheory.ProfCoh
 
 open IsDedekindDomain NumberField CategoryTheory MonoidalCategory GroundTheory.Global
-
-attribute [local instance 2000] Rep.hV2
 
 section NormClassMap
 
@@ -767,18 +730,6 @@ theorem bijective_dualToCartier {n : ℕ} [NeZero n] (hL : Nonempty (galRootsOfU
           Nat.card_le_card_of_injective _ (bijective_toDualDual hD hM).1
       _ ≤ Nat.card (dualRep D M) := card_dualRep_le hD
 
-
-omit [IsTopologicalGroup G] [IsDiscreteRep D] [IsDiscreteRep M] in
-theorem tensorHom_dualToCartier_cartierPairing :
-    (𝟙 (Rep.res ψ.toMonoidHom M) ⊗ₘ _root_.GroundTheory.ProfCoh.dualToCartierDual ψ D ρ M) ≫
-        cartierPairing K L (Rep.res ψ.toMonoidHom M) =
-      _root_.GroundTheory.ProfCoh.resEvalPairing ψ D M ≫ ρ := by
-  refine Rep.Hom.ext (Representation.IntertwiningMap.ext (LinearMap.ext fun x => ?_))
-  induction x using TensorProduct.induction_on with
-  | zero => simp only [map_zero]
-  | tmul a f => rfl
-  | add x y hx hy => simp only [map_add (f := _), hx, hy]
-
 theorem cupPairing_dualToCartier [Finite M] [IsDiscreteRep (galUnits.{0} K L)]
     [IsDiscreteRep (cartierDual K L (Rep.res ψ.toMonoidHom M))] {r s : ℕ} (h : r + s = 2)
     (ξ : cohomology (Rep.res ψ.toMonoidHom M) r)
@@ -789,7 +740,7 @@ theorem cupPairing_dualToCartier [Finite M] [IsDiscreteRep (galUnits.{0} K L)]
   have hc := cupPairing_cohomologyMap (cartierPairing K L (Rep.res ψ.toMonoidHom M))
     (𝟙 _) (_root_.GroundTheory.ProfCoh.dualToCartierDual ψ D ρ M) h ξ η
   rw [cohomologyMap_id, ModuleCat.id_apply] at hc
-  rw [hc, tensorHom_dualToCartier_cartierPairing, cohomologyMap_cupPairing]
+  rw [hc, GroundTheory.ProfCoh.tensorHom_dualToCartierDual_cartierPairing, cohomologyMap_cupPairing]
 
 section Order2
 
@@ -805,7 +756,6 @@ variable [FiniteDimensional K L] [IsGalois K L] (h2 : Module.finrank K L ≤ 2)
   [IsDiscreteRep (cartierDual K L (Rep.res ψ.toMonoidHom M))]
   (inv : cohomology (Rep.res ψ.toMonoidHom D) 2 →+ QZ)
   (hinv : ∀ z, inv z = realInv K L h2 hN ((cohomologyMap ρ 2).hom z))
-
 
 include hG hc hneg hconj hroots hinv in
 theorem exists_orderTwo_pairing_zero {n : ℕ} [NeZero n] (hD : Nonempty (D ≃+ ZMod n))
@@ -825,7 +775,6 @@ theorem exists_orderTwo_pairing_zero {n : ℕ} [NeZero n] (hD : Nonempty (D ≃+
   refine e1.trans ?_
   change χ (e.symm (e η)) = χ η
   rw [AddEquiv.symm_apply_apply]
-
 
 include hG hc hneg hconj hroots hinv in
 theorem exists_orderTwo_pairing_two {n : ℕ} [NeZero n] (hD : Nonempty (D ≃+ ZMod n))
@@ -913,8 +862,6 @@ variable (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)) [IsDis
 
 variable [NeZero n] (hD : Nonempty (gsRoots S n ≃+ ZMod n)) (hM : ∀ m : M, n • m = 0)
 
-
-
 include hD hM in
 theorem surjective_gsRealPairing_zero (w : {v : InfinitePlace K.1 // v.IsReal}) :
     Function.Surjective
@@ -938,8 +885,6 @@ theorem surjective_gsRealPairing_zero (w : {v : InfinitePlace K.1 // v.IsReal}) 
   case hρ => exact gsRealRootsToUnits_injective S ιr n w
   obtain ⟨ξ, hξ⟩ := key
   exact ⟨ξ, AddMonoidHom.ext fun η => (ptLocalPairing_apply _ _ _ _ _ _ _ _).trans (hξ η)⟩
-
-
 
 include hD hM in
 theorem exists_gsRealPairing_two (w : {v : InfinitePlace K.1 // v.IsReal})
@@ -988,8 +933,6 @@ namespace GroundTheory.ProfCoh
 
 open IsDedekindDomain NumberField CategoryTheory CategoryTheory.Limits MonoidalCategory GroundTheory.Global
 
-attribute [local instance 2000] Rep.hV2
-
 local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
@@ -1000,7 +943,6 @@ section OrderTwoOdd
 
 variable {F : Type} [Group F] [TopologicalSpace F] [IsTopologicalGroup F] [Fintype F] {n : ℕ}
   (hn : Odd n) (B : Rep.{0} (ULift.{0} ℤ) F) [IsDiscreteRep B] (hB : ∀ b : B, n • b = 0)
-
 
 include hn hB in
 theorem isZero_cohomology_of_card_two_of_odd [CompactSpace F] [TotallyDisconnectedSpace F]
@@ -1021,7 +963,6 @@ theorem isZero_cohomology_of_card_two_of_odd [CompactSpace F] [TotallyDisconnect
       _ = 0 := by rw [hnx, mul_nsmul', h2x, nsmul_zero, sub_zero]
   rw [hz x, hz y]
 
-
 omit [TopologicalSpace F] [IsTopologicalGroup F] [IsDiscreteRep B] in
 include hn hB in
 theorem exists_norm_of_orderTwo_of_odd {c : F} (hG : ∀ g : F, g = 1 ∨ g = c) (hc : c ≠ 1) :
@@ -1040,7 +981,6 @@ section Local
 variable {n : ℕ} (hn : Odd n) (A : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)) [IsDiscreteRep A]
   (hA : ∀ a : A, n • a = 0)
 
-
 include hn hA in
 theorem isZero_cohomology_gsReal_of_odd (w : {v : InfinitePlace K.1 // v.IsReal}) (m : ℕ) :
     IsZero (cohomology (Rep.res (gsRealFamily S ιr w).toMonoidHom A) (m + 1)) := by
@@ -1048,7 +988,6 @@ theorem isZero_cohomology_gsReal_of_odd (w : {v : InfinitePlace K.1 // v.IsReal}
     ?hcard m
   case hcard => exact card_realGal_eq_two w.1 w.2
   exact key
-
 
 omit [IsDiscreteRep A] in
 include hn hA in
@@ -1061,7 +1000,6 @@ theorem exists_norm_gsReal_of_odd (w : {v : InfinitePlace K.1 // v.IsReal}) :
   case hc => exact realConj_ne_one w.1 w.2
   exact key
 
-
 include hn hA in
 theorem bijective_tateForget_gs_of_odd (m : ℕ) :
     Function.Bijective (tateForget (gsFinFamily S ιs) (gsRealFamily S ιr) A
@@ -1073,7 +1011,6 @@ theorem bijective_tateForget_gs_of_odd (m : ℕ) :
     (fun w m => isZero_cohomology_gsReal_of_odd S ιr hn A hA w m)
     (fun w => exists_norm_gsReal_of_odd S ιr hn A hA w) m
   exact (ConcreteCategory.isIso_iff_bijective _).1 this
-
 
 include hn hA in
 theorem bijective_tateForget_gs_of_odd' {m : ℕ} (hm : 1 ≤ m) :
@@ -1088,8 +1025,8 @@ end Local
 
 section Hypotheses
 
-noncomputable instance fintypeRealPlaces (K : FiniteSubfield) : Fintype {v : InfinitePlace K.1 // v.IsReal} :=
-  Fintype.ofFinite _
+noncomputable instance fintypeRealPlaces (K : FiniteSubfield) : Fintype {v : InfinitePlace K.1 // v.IsReal} := by
+  classical infer_instance
 
 theorem injective_resZero {G H : Type} [Group G] [TopologicalSpace G]
     [IsTopologicalGroup G] [Group H] [TopologicalSpace H] [IsTopologicalGroup H] (φ : H →ₜ* G)
@@ -1120,7 +1057,6 @@ def gsOddTrace : tateCompactCohomologyRes (gsFinFamily S ιs) (gsRealFamily S ι
       (fun v => Rep.res (gsFinFamily S ιs v).toMonoidHom (gsRoots S N)) (fun _ => 𝟙 _)
       (fun w => Rep.res (gsRealFamily S ιr w).toMonoidHom (gsRoots S N)) (fun _ => 𝟙 _) 3).hom.toAddMonoidHom
 
-
 omit [Fintype S] [NeZero N] in
 include hodd in
 theorem gsReal_two_eq_zero_of_odd (w : {v : InfinitePlace K.1 // v.IsReal})
@@ -1135,8 +1071,6 @@ theorem gsOddTrace_apply (z : tateCompactCohomologyRes (gsFinFamily S ιs) (gsRe
           (fun v => Rep.res (gsFinFamily S ιs v).toMonoidHom (gsRoots S N)) (fun _ => 𝟙 _)
           (fun w => Rep.res (gsRealFamily S ιr w).toMonoidHom (gsRoots S N)) (fun _ => 𝟙 _) 3).hom z) :=
   rfl
-
-
 
 theorem gsOddTrace_localToCompact
     (ξ : ptTLocal (gsFinFamily S ιs) (gsRealFamily S ιr) (gsRoots S N) 2) :
@@ -1162,8 +1096,6 @@ theorem gsOddTrace_localToCompact
     _ = ∑ v, gsLocalInvRootsQZ S ιs N v (ξ.1 v) + 0 := (add_zero _).symm
     _ = _ := congrArg (∑ v, gsLocalInvRootsQZ S ιs N v (ξ.1 v) + ·) h2.symm
 
-
-
 include hS in
 theorem bijective_tateCompactDualityMap_gs_of_odd (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S))
     [IsDiscreteRep M] [Finite M] (hM : ∀ m : M, N • m = 0) {r s : ℕ} (h : r + s = 3) (hs : 1 ≤ s) :
@@ -1175,7 +1107,6 @@ theorem bijective_tateCompactDualityMap_gs_of_odd (M : Rep.{0} (ULift.{0} ℤ) (
   refine bijective_of_bijective_precomp _ _ (AddEquiv.ofBijective _ hf) (fun x y => ?_) hγ
   exact (gsOddTrace_apply S ιr ιs hS hodd _).trans (congrArg _ (tateForget_tateCompactCupRes
     (gsFinFamily S ιs) (gsRealFamily S ιr) (dualEvalPairing (gsRoots S N) M) _ y x))
-
 
 include hS hodd in
 theorem gsOddTatePoitouTateHypotheses [Nonempty S] :

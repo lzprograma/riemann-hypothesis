@@ -45,9 +45,6 @@ import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
 open AlgebraicGeometry CategoryTheory NumberField IsLocalRing IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj ReciprocityTheory.PGsh
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.DVR.QForm Formalism.MainNotions.ModuliIntegralCharts.H1
 open GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.SlopeRec GlobalTheory.CovTop GlobalTheory.BigTop GlobalTheory.RefSum GlobalTheory.FactorDepth GlobalTheory.CharDepth GlobalTheory.FGDepth GlobalTheory.PtTie GlobalTheory.PlaceInt
-attribute [local instance] Over.cartesianMonoidalCategory
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -99,25 +96,25 @@ abbrev thExpZ (u : GlobalTheory.AllWt.Weight Dw) (n : ℕ) : (E →+* ℂ) × �
 theorem thExpZ_big (u : GlobalTheory.AllWt.Weight Dw) (n : ℕ) (τ : Psi H) (i : ℕ) (hi : i < Dw.p) :
     thExpZ Dw u n (τ.1, i) = u τ ⟨i, by omega⟩ + 1 - u τ ⟨Dw.p - 1, by omega⟩ := by
   rw [thExpZ, GlobalTheory.AllWt.wtOf_big _ _ τ i hi]
-  simp only [Pi.add_apply, GlobalTheory.FlatLine.parWt, shift, dif_pos (show 0 < Dw.p by omega)]
+  simp only [Pi.add_apply, GlobalTheory.FlatLine.parWt, shift, dite_eq_left (show 0 < Dw.p by omega)]
   ring
 
 theorem thExpZ_big_ge (u : GlobalTheory.AllWt.Weight Dw) (n : ℕ) (τ : Psi H) (i : ℕ) (hi : Dw.p ≤ i) :
     thExpZ Dw u n (τ.1, i) = 0 := by
-  simp only [thExpZ, GlobalTheory.AllWt.wtOf, dif_pos τ.2, dif_neg (not_lt.2 hi)]
+  simp only [thExpZ, GlobalTheory.AllWt.wtOf, dite_eq_left τ.2, dite_eq_right (not_lt.2 hi)]
 
 theorem thExpZ_small (u : GlobalTheory.AllWt.Weight Dw) (n : ℕ) (hp : 0 < Dw.p) (τ : Psi H) (i : ℕ) (hi : i < Dw.q) :
     thExpZ Dw u n (conjEmb τ.1, i) =
       u τ ⟨Dw.p - 1, by omega⟩ - u τ ⟨Dw.p + (Dw.q - 1 - i), by omega⟩ - 2 * ((n / 2 : ℕ) : ℤ) - 1 := by
   rw [thExpZ, GlobalTheory.AllWt.wtOf_small _ _ τ i hi]
-  simp only [Pi.add_apply, GlobalTheory.FlatLine.parWt, shift, dif_pos hp]
+  simp only [Pi.add_apply, GlobalTheory.FlatLine.parWt, shift, dite_eq_left hp]
   ring
 
 theorem thExpZ_small_ge (u : GlobalTheory.AllWt.Weight Dw) (n : ℕ) (τ : Psi H) (i : ℕ) (hi : Dw.q ≤ i) :
     thExpZ Dw u n (conjEmb τ.1, i) = 0 := by
   have h' : conjEmb (conjEmb τ.1) (H.rt : E) = H.rt0 := by
     rw [GlobalTheory.AllWt.conjEmb_conjEmb]; exact τ.2
-  simp only [thExpZ, GlobalTheory.AllWt.wtOf, dif_neg (GlobalTheory.AllWt.conj_not_mem τ), dif_pos h', dif_neg (not_lt.2 hi)]
+  simp only [thExpZ, GlobalTheory.AllWt.wtOf, dite_eq_right (GlobalTheory.AllWt.conj_not_mem τ), dite_eq_left h', dite_eq_right (not_lt.2 hi)]
 
 theorem thA_dominant_lastPos_degree (E : Type) [Field E] [NumberField E] [IsCMField E]
     (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (u : GlobalTheory.AllWt.Weight Dw) (n : ℕ) (b : ℝ) (hp : 1 ≤ Dw.p)
@@ -191,7 +188,7 @@ theorem thA_dominant_lastPos_degree (E : Type) [Field E] [NumberField E] [IsCMFi
     · show (n : ℤ) = 2 * ((n / 2 : ℕ) : ℤ)
       omega
   · intro σ hσ _
-    have hmul : Dw.mult σ = Dw.p := if_pos hσ
+    have hmul : Dw.mult σ = Dw.p := ite_eq_left hσ
     rw [hmul]
     have h1 : thExpZ Dw u n (σ, Dw.p - 1) = 1 :=
       (thExpZ_big u n ⟨σ, hσ⟩ (Dw.p - 1) (by omega)).trans (by ring)

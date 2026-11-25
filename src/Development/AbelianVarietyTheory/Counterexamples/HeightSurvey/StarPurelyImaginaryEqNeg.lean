@@ -46,8 +46,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.DualPairCheck
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem cA_cA (x : Formalism.L2.Theta.AE D) : cA D (cA D x) = x := by

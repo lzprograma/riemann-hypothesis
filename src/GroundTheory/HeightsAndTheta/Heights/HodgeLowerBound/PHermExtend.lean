@@ -151,8 +151,7 @@ theorem isCompact_unitPts (P : Ideal (MRing ι)) : IsCompact (unitPts P) := by
     · rintro ⟨⟨_, h⟩, h1⟩; exact ⟨h1, h⟩
     · rintro ⟨h1, h⟩
       refine ⟨⟨fun k => ?_, h⟩, h1⟩
-      by_contra hk
-      push_neg at hk
+      by_contra! hk
       have h0 : blkSq z k = 0 := by simp [blkSq, hk]
       rw [h1 k] at h0
       exact one_ne_zero h0
@@ -268,8 +267,8 @@ theorem exists_smooth_descend (hP : IsMultiHomogIdeal P) (hpos : ∀ z ∈ mcPts
   let t : ((Σ k, ι k × ι k) → ℂ) → Set ℝ := fun Q => if Q ∈ C then {descend P a F Q} else Set.univ
   have ht : ∀ Q, Convex ℝ (t Q) := fun Q => by
     by_cases h : Q ∈ C
-    · simp only [t, if_pos h]; exact convex_singleton _
-    · simp only [t, if_neg h]; exact convex_univ
+    · simp only [t, ite_eq_left h]; exact convex_singleton _
+    · simp only [t, ite_eq_right h]; exact convex_univ
   have Hloc : ∀ Q, ∃ U ∈ 𝓝 Q, ∃ g : ((Σ k, ι k × ι k) → ℂ) → ℝ,
       ContMDiffOn 𝓘(ℝ, (Σ k, ι k × ι k) → ℂ) 𝓘(ℝ, ℝ) ∞ g U ∧ ∀ y ∈ U, g y ∈ t y := by
     intro Q
@@ -278,20 +277,20 @@ theorem exists_smooth_descend (hP : IsMultiHomogIdeal P) (hpos : ∀ z ∈ mcPts
       obtain ⟨W, hW, g, hg, hgC⟩ := local_ext hP hpos hF hS hz₀
       refine ⟨W, hW, g, contMDiffOn_iff_contDiffOn.2 hg, fun y hy => ?_⟩
       by_cases hy' : y ∈ C
-      · simp only [t, if_pos hy']
+      · simp only [t, ite_eq_left hy']
         exact hgC y ⟨hy, hy'⟩
-      · simp only [t, if_neg hy']
+      · simp only [t, ite_eq_right hy']
         trivial
     · refine ⟨Cᶜ, (isClosed_projImage hP).isOpen_compl.mem_nhds hQ, fun _ => 0, contMDiffOn_const,
         fun y hy => ?_⟩
-      simp only [t, if_neg hy]
+      simp only [t, ite_eq_right hy]
       trivial
   obtain ⟨g, hg⟩ := exists_contMDiffMap_forall_mem_convex_of_local 𝓘(ℝ, (Σ k, ι k × ι k) → ℂ)
     (n := (⊤ : ℕ∞)) ht Hloc
   refine ⟨g, contMDiff_iff_contDiff.1 g.contMDiff, fun z hz => ?_⟩
   have := hg (proj z)
   have hC : proj z ∈ C := Set.mem_image_of_mem proj hz
-  have h2 : t (proj z) = {descend P a F (proj z)} := if_pos hC
+  have h2 : t (proj z) = {descend P a F (proj z)} := ite_eq_left hC
   rw [h2, Set.mem_singleton_iff] at this
   rw [this, descend_proj hF hz]
 

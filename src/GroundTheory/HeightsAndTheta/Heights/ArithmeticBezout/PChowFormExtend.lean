@@ -212,7 +212,7 @@ theorem isChowForm_map (h : RadicalBaseChange.Statement) {K L : Type} [Field K] 
         rw [map_mul, rename_C, hmapX]
         ring
       have hmem := coordPoly_mem_of_mem_map b R (e ▸ hg j) c
-      rwa [coordPoly_sum, if_pos hcS] at hmem
+      rwa [coordPoly_sum, ite_eq_left hcS] at hmem
     choose! q hq using hdiv
     refine ⟨∑ c ∈ S, C (b c) * map (algebraMap K L) (q c), ?_⟩
     conv_lhs => rw [← hsum]

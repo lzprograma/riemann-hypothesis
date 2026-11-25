@@ -192,7 +192,7 @@ theorem mem_Jat {X : Fields} {Pr : Primes X} {R : Ranks} (sharp : Bool) (j : ℕ
   unfold lamYat at hs hc
   unfold Jat
   by_cases hw : w ∈ Pr.vGs
-  · rw [if_pos hw] at hs hc ⊢
+  · rw [ite_eq_left hw] at hs hc ⊢
     split_ifs
     · refine ⟨hs, mem_flagU (qOf w) _ _ _ _ _ (fun s => ?_) (fun s x hx => ?_) (fun s => ?_) _ hs hc⟩
       · exact sclLat_le w _ hq _ _ _
@@ -202,7 +202,7 @@ theorem mem_Jat {X : Fields} {Pr : Primes X} {R : Ranks} (sharp : Bool) (j : ℕ
       · exact sclLat_le w _ hq _ _ _
       · exact smul_mem_sclLat w _ hq _ _ _ x hx
       · exact bvec_mem w _ hq _ _ _
-  · rw [if_neg hw] at hs hc ⊢
+  · rw [ite_eq_right hw] at hs hc ⊢
     have hp : LocE.parL w (qOf w) (R.k + j) (R.N j) (cOf R j) = LocE.sclLat w (qOf w) (R.N j + cOf R j)
         (fun l => LocE.scE (R.N j) 0 l + if R.k + j ≤ l ∧ l < R.N j then 1 else 0) := by
       unfold LocE.parL
@@ -297,13 +297,13 @@ theorem intAt_n1Arg_G {E : Type} [Field E] [NumberField E] [StarRing E] {P : Hei
     convert h2 using 1
     have e1 : LocE.scE n (fun i => i + 1) (n + i + 1) = ((i + 2 : ℕ) : ℤ) := by
       unfold LocE.scE
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       congr 1
       beta_reduce
       omega
     have e2 : LocE.scE n (fun i => i + 1) (n + i) = ((i + 1 : ℕ) : ℤ) := by
       unfold LocE.scE
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       congr 1
       beta_reduce
       omega
@@ -327,13 +327,13 @@ theorem lam_root_G (hL : L.Ok Ch sel mu cst G m2) {j : ℕ} (b : L.β j)
   have hs : h ∈ stabL X.E _ (lamYat (Pr := Pr) j P.1) := hh ▸ hL.stabG j b P' hP
   have hD := hL.depthG P' hP
   unfold lamYat at hs
-  rw [if_pos hP] at hs
+  rw [ite_eq_left hP] at hs
   have hκ : (MulAut.conj h⁻¹).toMonoidHom r ∈ Jat (Pr := Pr) cst.sharp j P.1 := hr.2
   have e : (MulAut.conj h⁻¹).toMonoidHom r = h⁻¹ * r * h := by simp
   rw [e] at hκ
   have hκ' : h⁻¹ * r * h ∈ stabL X.E _ (LocE.lamY P.1 (qOf P.1) (R.N j) (cOf R j) fun i => i + 1) := by
     unfold Jat at hκ
-    rw [if_pos hP] at hκ
+    rw [ite_eq_left hP] at hκ
     split_ifs at hκ
     · exact hκ.1
     · exact hκ.1
@@ -351,7 +351,7 @@ theorem lam_root_G (hL : L.Ok Ch sel mu cst G m2) {j : ℕ} (b : L.β j)
     refine root_mul (root_inv h1) ?_
     replace hne := right_ne_zero_of_mul hne
     unfold lamRow at hne ⊢
-    rw [if_pos (show P'.1 ∈ Pr.vGs from hP)] at hne ⊢
+    rw [ite_eq_left (show P'.1 ∈ Pr.vGs from hP)] at hne ⊢
     split_ifs at hne ⊢
     · exact tame_root _ _ _ _ _ hne
     · exact tame_root _ _ _ _ _ hne

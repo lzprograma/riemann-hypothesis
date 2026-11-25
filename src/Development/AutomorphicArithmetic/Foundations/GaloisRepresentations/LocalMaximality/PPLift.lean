@@ -2,55 +2,7 @@ module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -95,37 +47,24 @@ private theorem exteriorAlgebra_iota_mul_mem_omB_succ {K : Type} [Field K] [Alge
     {p : Ω[K⁄ℂ]} (hp : p ∈ Submodule.span ℂ {m : Ω[K⁄ℂ] | ∃ c ∈ B, ∃ u ∈ B, m = c • D ℂ K u})
     {y : DR ℂ K} (hy : y ∈ omB ℂ K B a) :
     ExteriorAlgebra.ι K p * y ∈ omB ℂ K B (a + 1) := by
-  induction hp using Submodule.span_induction with
-  | mem q hq =>
-    obtain ⟨c, hc, u, hu, rfl⟩ := hq
-    unfold omB at hy ⊢
-    induction hy using Submodule.span_induction with
-    | mem z hz =>
-      obtain ⟨b, hb, v, hv, rfl⟩ := hz
-      apply Submodule.subset_span
-      refine ⟨c * b, B.mul_mem hc hb, Fin.cons u v, ?_, ?_⟩
-      · intro k
-        refine Fin.cases ?_ (fun k => ?_) k
-        · simpa using hu
-        · simpa using hv k
-      · rw [ExteriorAlgebra.ιMulti_succ_apply]
-        simp only [map_smul, smul_mul_assoc, mul_smul_comm, smul_smul, Matrix.vecTail,
-          Function.comp_def, Fin.cons_succ, Fin.cons_zero]
-        rw [mul_comm b c]
-    | zero => simp
-    | add z w _ _ hz hw =>
-      rw [mul_add]
-      exact Submodule.add_mem _ hz hw
-    | smul r z _ hz =>
-      rw [mul_smul_comm]
-      exact Submodule.smul_mem _ r hz
-  | zero => simp
-  | add q q' _ _ hq hq' =>
-    rw [map_add (f := _), add_mul]
-    exact Submodule.add_mem _ hq hq'
-  | smul r q _ hq =>
-    rw [LinearMap.map_smul_of_tower, smul_mul_assoc]
-    exact Submodule.smul_mem _ r hq
+  let mul : Ω[K⁄ℂ] →ₗ[ℂ] DR ℂ K →ₗ[ℂ] DR ℂ K :=
+    (LinearMap.mul ℂ (DR ℂ K)).comp ((ExteriorAlgebra.ι K).restrictScalars ℂ)
+  have hmul := Submodule.apply_mem_map₂ mul hp hy
+  refine (show _ ≤ omB ℂ K B (a + 1) from ?_) hmul
+  unfold omB
+  rw [Submodule.map₂_span_span, Submodule.span_le, Set.image2_subset_iff]
+  rintro _ ⟨c, hc, u, hu, rfl⟩ _ ⟨b, hb, v, hv, rfl⟩
+  apply Submodule.subset_span
+  refine ⟨c * b, B.mul_mem hc hb, Fin.cons u v, ?_, ?_⟩
+  · intro k
+    refine Fin.cases ?_ (fun k => ?_) k
+    · simpa using hu
+    · simpa using hv k
+  · change ExteriorAlgebra.ι K (c • D ℂ K u) * (b • ExteriorAlgebra.ιMulti K a (fun k => D ℂ K (v k))) = _
+    rw [ExteriorAlgebra.ιMulti_succ_apply]
+    simp only [map_smul, smul_mul_assoc, mul_smul_comm, smul_smul, Matrix.vecTail,
+      Function.comp_def, Fin.cons_succ, Fin.cons_zero]
+    rw [mul_comm b c]
 
 private theorem iotaMulti_mem_omB_of_mem_span {K : Type} [Field K] [Algebra ℂ K] (B : Subalgebra ℂ K) :
     ∀ (a : ℕ) (m : Fin a → Ω[K⁄ℂ]),

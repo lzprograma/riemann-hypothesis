@@ -71,8 +71,7 @@ theorem _root_.GlobalTheory.dvr_finite_over_complete_dvr :
   haveI : Algebra.IsIntegral O V := Algebra.IsIntegral.of_finite O V
   have hinj : Function.Injective (algebraMap O V) := by
     set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
-    by_contra h
-    push_neg at h
+    by_contra! h
     obtain ⟨a, ha, ha0⟩ := h
     have hker : (RingHom.ker (algebraMap O V)).IsMaximal := by
       refine Ideal.IsPrime.isMaximal (RingHom.ker_isPrime _) ?_

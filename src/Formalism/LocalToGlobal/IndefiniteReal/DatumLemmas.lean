@@ -88,8 +88,6 @@ theorem large_act (I g g' : Matrix (Fin n) (Fin n) R) (k : Matrix (Fin m) (Fin m
 
 end Gen
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 abbrev GG (S : HSp D) : Matrix (Fin S.rank) (Fin S.rank) (AE D) := S.gram.map (incA D)
@@ -130,10 +128,10 @@ theorem bridgeSmall : BridgeSmall D := by
   intro S T hr
   refine ⟨fun x y => ?_, fun g h x => ?_⟩
   · have : hHom S T (toTWsmall S T y) (toTWsmall S T x) = hO S T x y := by
-      unfold hHom; rw [if_pos hr]
+      unfold hHom; rw [ite_eq_left hr]
       exact small_gen (cA D) (GG S) (GI S) (GG T) (GI_GG S) (GI_herm S) x y
     unfold symplO sympl; rw [this]
-  · unfold actHom; rw [if_pos hr]
+  · unfold actHom; rw [ite_eq_left hr]
     exact small_act (cA D) (GI S) _ _ _ (inv_GI S g) x
 
 theorem trace_cA (a : AE D) :
@@ -155,11 +153,11 @@ theorem bridgeLarge (hxi : star D.host.xi0 = -D.host.xi0) : BridgeLarge D := by
   intro S T hr
   refine ⟨fun x y => ?_, fun g h x => ?_⟩
   · have : hHom T S (toTWlarge S T y) (toTWlarge S T x) = cA D (hO S T x y) := by
-      unfold hHom; rw [if_pos hr.le]
+      unfold hHom; rw [ite_eq_left hr.le]
       exact large_gen (cA D) cA_cA (GG S) (GI S) (GG T) (GG_GI S) (GI_herm S) (GG_herm T) x y
     unfold symplO sympl
     rw [this, ← trace_cA (incA D D.host.xi0 * hO S T x y), map_mul, cA_inc, hxi, map_neg, neg_mul, map_neg]
-  · unfold actHom; rw [if_pos hr.le]
+  · unfold actHom; rw [ite_eq_left hr.le]
     have k := inv_GI S g⁻¹
     rw [inv_inv] at k
     exact large_act (cA D) (GI S) _ _ _ k x

@@ -23,10 +23,6 @@ def SecPointSeparable.Statement : Prop :=
       Algebra.trdeg k (Algebra.adjoin k (Set.range fun m => x m * (x j₀)⁻¹)) ≤ (e : Cardinal)) →
       Algebra.IsSeparable (GenParField k e n) L
 
-section Inhabitants
-
-end Inhabitants
-
 end
 
 end GroundTheory.Heights₂.Heights.Vertical

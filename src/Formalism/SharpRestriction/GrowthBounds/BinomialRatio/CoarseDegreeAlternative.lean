@@ -3,43 +3,6 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FamilyFourthBound
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ThresholdLowerBounds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -61,7 +24,6 @@ theorem coarse_bounds {r : ℕ} (g P : ℕ) (f : Fin (r + 1) → ℕ) (hf : ∀ 
   have h3 : (((g - ∑ c, f c) / P : ℕ) : ℝ) * P = (g : ℝ) - ((∑ c, f c : ℕ) : ℝ) := by
     rw [← Nat.cast_sub hs, ← Nat.cast_mul, h1]
   have h4 : ((∑ c, f c : ℕ) : ℝ) < ((r : ℝ) + 1) * P := by exact_mod_cast h2
-  have h5 : (0 : ℝ) ≤ ((∑ c, f c : ℕ) : ℝ) := Nat.cast_nonneg _
   rw [h3]
   constructor <;> linarith
 
@@ -73,7 +35,6 @@ theorem poly_S {de ε be : ℝ} (hε : 0 ≤ ε) (hde : 40 * ε ≤ de) (hde6 : 
     mul_le_mul_of_nonneg_right (by linarith) hu
   have h2 : (1 + de / 2 - 18 * ε) * ((1 - 2 * de) * (1 + de)) ≤ (1 + de / 2) * ((1 - 2 * de) * (1 + de)) :=
     mul_le_mul_of_nonneg_right (by linarith) hu
-  have h3 : (1 + de / 2) * ((1 - 2 * de) * (1 + de)) = 1 - de / 2 - 5 / 2 * de ^ 2 - de ^ 3 := by ring
   have h4 : 0 ≤ de ^ 2 := by positivity
   have h5 : 0 ≤ de ^ 3 := by positivity
   calc (1 - 2 * de) * (1 + be) * (1 + de) = (1 + be) * ((1 - 2 * de) * (1 + de)) := by ring
@@ -86,7 +47,6 @@ theorem poly_U {de ε be : ℝ} (hε : 0 ≤ ε) (hde : 40 * ε ≤ de) (hde6 : 
   have hu : 0 ≤ (1 - de) * (1 + 2 * de) := mul_nonneg (by linarith) (by linarith)
   have h1 : (1 - de / 2) * ((1 - de) * (1 + 2 * de)) ≤ (1 - be - ε) * ((1 - de) * (1 + 2 * de)) :=
     mul_le_mul_of_nonneg_right (by linarith) hu
-  have h3 : (1 - de / 2) * ((1 - de) * (1 + 2 * de)) = 1 + de * (1 / 2 - 5 / 2 * de + de ^ 2) := by ring
   have h4 : 0 ≤ de * (1 / 2 - 5 / 2 * de + de ^ 2) := mul_nonneg hde0 (by nlinarith [sq_nonneg de])
   linarith
 
@@ -95,7 +55,6 @@ theorem dich_S {a b' de ε be E0 Q Qj P pd g A A0 : ℝ} (ha : 0 < a) (hb : 0 < 
     (hbe : be ≤ de / 2 - 18 * ε) (hbe0 : 0 ≤ be) (hN5 : E0 / a + Q / a ≤ ε) (hg : g ≤ b' * (1 + be))
     (hA : A * P ≤ g) (hA0 : (a - E0) / Qj - 1 < A0) (hS : pd < a / b' * (1 - 2 * de)) :
     A * (1 + de) < A0 := by
-  have hde0 : 0 ≤ de := by linarith
   have hQj0 : 0 < Qj := by rw [← hQj]; positivity
   have h1 : pd * b' < a * (1 - 2 * de) := by
     rw [div_mul_eq_mul_div, lt_div_iff₀ hb] at hS; exact hS
@@ -124,7 +83,6 @@ theorem dich_U {a b' de ε be E0 Qj P pd g A A0 k : ℝ} (hb : 0 < b') (hP : 0 <
     (hbe : be ≤ de / 2 - 18 * ε) (hE0 : 0 ≤ E0) (hg : b' * (1 - be) ≤ g) (hkP : k * P ≤ ε * b')
     (hA : g - k * P < A * P) (hA0 : A0 ≤ (a - E0) / Qj) (hU : a / b' * (1 + 2 * de) < pd) :
     A0 < A * (1 - de) := by
-  have hde0 : 0 ≤ de := by linarith
   have hQj0 : 0 < Qj := by rw [← hQj]; positivity
   have h1 : a * (1 + 2 * de) < pd * b' := by
     rw [div_mul_eq_mul_div, div_lt_iff₀ hb] at hU; exact hU
@@ -168,7 +126,6 @@ theorem Std.eps0 (h : Std C0 Cde CE1 CE2 H X) : 0 ≤ eps X C0 := by
 theorem Std.kQ (hH : 1 ≤ H) (h : Std C0 Cde CE1 CE2 H X) : X.k ^ 3 * X.Q ≤ X.b' := by
   have hk : 0 < X.k := by linarith [h.k5]
   have hQ1 := h.Q1
-  have hQ0 : 0 < X.Q := by linarith
   have hQ4 : X.Q ≤ X.Q ^ 4 := by
     calc X.Q = X.Q ^ 1 := (pow_one _).symm
       _ ≤ X.Q ^ 4 := pow_le_pow_right₀ hQ1 (by norm_num)
@@ -197,7 +154,6 @@ theorem Std.kQeps (hH : 1 ≤ H) (h : Std C0 Cde CE1 CE2 H X) : X.k * X.Q ≤ ep
 
 theorem Std.two_rank_mul_Q_le (hH : 1 ≤ H) (h : Std C0 Cde CE1 CE2 H X) : 2 * (X.k * X.Q) ≤ X.b' := by
   have hk5 := h.k5
-  have hk : 0 < X.k := by linarith
   have hQ0 : 0 < X.Q := by linarith [h.Q1]
   have h1 := h.kQ hH
   have : X.k * X.Q * 2 ≤ X.k * X.Q * (X.k * X.k) :=
@@ -213,7 +169,6 @@ theorem Std.levels (h : Std C0 Cde CE1 CE2 H X) (j : Fin (numSeg X.TT)) (i : Fin
     ((X.p ^ (segG X.TT j - (segDists X.TT j).get i) : ℕ) : ℝ) ≤ ((X.p ^ segG X.TT j : ℕ) : ℝ) := by
   obtain ⟨_, hdG⟩ := dist_pos_lt X.TT j i
   have hp1 := h.p1
-  have hp0 : (0 : ℝ) < X.p := by linarith
   refine ⟨by push_cast; positivity, by positivity, ?_, ?_, ?_⟩
   · push_cast
     rw [← pow_add]
@@ -249,7 +204,6 @@ theorem coarse_degree_alternative (hH : 1 ≤ H) (h : Std C0 Cde CE1 CE2 H X) (j
     unfold eps
     calc be X C0 ≤ X.de C0 Cde / 2 - 18 * X.N1 * X.La C0 / X.k := this
       _ = _ := by ring
-  have hde0 : 0 ≤ X.de C0 Cde := by linarith [h.eps0]
   have hk0 : 0 < X.k := by linarith [h.k5]
   constructor
   · intro hi

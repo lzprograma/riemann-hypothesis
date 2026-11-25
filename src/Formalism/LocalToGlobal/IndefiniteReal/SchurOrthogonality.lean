@@ -20,8 +20,6 @@ open scoped InnerProductSpace ContDiff TensorProduct
 
 namespace Formalism.IndefR.SchurOrthogonalityAlt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Alg
 
 end Alg

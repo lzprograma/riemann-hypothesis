@@ -2,41 +2,7 @@ module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.SuppBCOfMix
 import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.FixedNeBotOfEquiv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchCut
 
@@ -46,7 +12,6 @@ open NumberField IsDedekindDomain ValuativeRel Polynomial Formalism.ConjugateSel
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Shin
 open GroundTheory.Global GroundTheory.Global.SemiLocal UpperTheory.V.Published UpperTheory.CBC UpperTheory.Gal.InertialTypesAlt
 open scoped Classical
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 private theorem perm_lift {α β : Type*} (f : α → β) {m m' : List β} (h : m.Perm m') :
     ∀ l : List α, l.map f = m' → ∃ l' : List α, l'.Perm l ∧ l'.map f = m := by
@@ -121,15 +86,15 @@ private theorem core {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] 
     intro a
     by_cases h : (x a).1 = 1
     · refine hCF 𝓀[k] θ hθ (x a).1 (c a) (c₁ a) 0 (hpos a) ?_
-      simp only [c₁, if_pos h, h, ← hq, pow_one, pow_zero, mul_one]
+      simp only [c₁, ite_eq_left h, h, ← hq, pow_one, pow_zero, mul_one]
       exact Nat.mod_modEq _ _
-    · simp only [c₁, if_neg h]
+    · simp only [c₁, ite_eq_right h]
   have hreg : ∀ a, Reg q (x a).1 (c₁ a) := by
     intro a
     by_cases h : (x a).1 = 1
     · intro i h0 h1
       omega
-    · simp only [c₁, if_neg h]
+    · simp only [c₁, ite_eq_right h]
       exact (hx a).2.2.1
   let f : IrrGL (k := k) × ℕ → ℕ × ℕ := fun t => (t.1.1, t.2)
   let T₀ : List (IrrGL (k := k) × ℕ) := List.ofFn fun a => (x a, c₁ a)
@@ -188,7 +153,7 @@ private theorem core {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] 
     have h2 : 2 ≤ (x a).1 := by simpa using hp2
     refine ⟨a, ?_, h2⟩
     have : (x a).1 ≠ 1 := by omega
-    simp only [c₁, if_neg this]
+    simp only [c₁, ite_eq_right this]
   let a₀ : Lbl := ⟨q, D, (T₀.map f).filter fun p => 2 ≤ p.1⟩
   have hOk₀ : a₀.Ok := by
     refine ⟨hq2, fun p hp => (hD p hp).1, fun p hp => ?_⟩
@@ -209,7 +174,7 @@ private theorem core {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] 
     have h2 : p.2 = c₁ a := (Prod.ext_iff.1 ha).2
     show p.2 < q - 1
     rw [h2]
-    simp only [c₁, if_pos h1]
+    simp only [c₁, ite_eq_left h1]
     exact Nat.mod_lt _ (by have : 2 ≤ q := hq2; omega)
   · intro p hp
     obtain ⟨a, rfl, h2⟩ := hLm p hp
@@ -235,7 +200,7 @@ private theorem core {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] 
     have nb : (x b).1 ≠ 1 := by omega
     have hcong' : c b ≡ c a * q ^ i [MOD q ^ (x a).1 - 1] := by
       have : c₁ b ≡ c₁ a * q ^ i [MOD q ^ (x a).1 - 1] := hcong
-      simpa only [c₁, if_neg na, if_neg nb] using this
+      simpa only [c₁, ite_eq_right na, ite_eq_right nb] using this
     have := inert_both hIn θ (x a) (x b) (hx a).1 (hx b).1 (hx a).2.1 (hx b).2.1 (c a) (c b) (hx a).2.2.2 (hx b).2.2.2
       heq (hCF 𝓀[k] θ hθ (x a).1 (c a) (c b) i (hpos a) hcong')
     exact hh.elim (· this.1) (· this.2)

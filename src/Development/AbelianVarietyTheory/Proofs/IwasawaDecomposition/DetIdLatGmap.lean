@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GlobSpecOfExists
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FieldIsoSelfDualAndPeriodLatticesAgree
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DetIdNormOneMul
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MovedVacuumMemThetaFunctionsAndMoves
@@ -94,21 +95,7 @@ theorem norm_one_span (D : D7) (z : D.host.E) (hz : z * D.host.conj z = 1) :
 
 theorem star_det_mul {E : Type} [Field E] [StarRing E] {n : ℕ} (γ : UF E n) :
     star ((LinearEquiv.det γ.1 : Eˣ) : E) * ((LinearEquiv.det γ.1 : Eˣ) : E) = 1 := by
-  set M : Matrix (Fin n) (Fin n) E := LinearMap.toMatrix' (γ.1 : Sp E n →ₗ[E] Sp E n) with hM
-  have hd : ((LinearEquiv.det γ.1 : Eˣ) : E) = M.det := by
-    rw [LinearEquiv.coe_det, hM, LinearMap.det_toMatrix']
-  have hu : M.conjTranspose * M = 1 := by
-    ext i j
-    have h := γ.2 (Pi.single i 1) (Pi.single j 1)
-    simp only [hStd, LinearMap.mk₂'ₛₗ_apply] at h
-    rw [Matrix.mul_apply]
-    simp only [Matrix.conjTranspose_apply, hM, LinearMap.toMatrix'_apply, LinearEquiv.coe_coe]
-    refine h.trans ?_
-    rw [Matrix.one_apply]
-    by_cases hij : i = j
-    · subst hij; simp [Pi.single_apply]
-    · simp [Pi.single_apply, hij, Ne.symm hij]
-  rw [hd, ← Matrix.det_conjTranspose, ← Matrix.det_mul, hu, Matrix.det_one]
+  first | exact _root_.GlobalTheory.GO.RetractionModules.star_det_mul | exact @_root_.GlobalTheory.GO.RetractionModules.star_det_mul | apply _root_.GlobalTheory.GO.RetractionModules.star_det_mul <;> assumption
 
 theorem matT_eq {E E' : Type} [Field E] [NumberField E] [Field E'] [NumberField E'] (e : E ≃+* E') {n : ℕ}
     (x : HomE E n n) : matT e n n x = (e : E →+* E').mapMatrix (LinearMap.toMatrix' x) := rfl

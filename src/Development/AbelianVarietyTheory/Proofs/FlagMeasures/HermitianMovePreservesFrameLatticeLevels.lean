@@ -102,7 +102,7 @@ theorem mem_Mof (g g' : Fin (r + 1) → S.V) (y : S.V) :
       · refine ⟨Pi.single b (-algebraMap F E S.th⁻¹), Pi.single b (algebraMap F E S.th⁻¹), ?_,
           fun i => ?_⟩
         · simp only [Pi.single_apply, ite_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ,
-            if_true, smul_sub, neg_smul]
+            ite_true, smul_sub, neg_smul]
           abel
         · by_cases h : i = b
           · subst h

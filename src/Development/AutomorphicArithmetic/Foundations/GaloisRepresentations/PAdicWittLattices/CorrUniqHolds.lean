@@ -214,10 +214,6 @@ section Key
 
 variable {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S)
 
-theorem secMap_sum {F G : Shv R} {ι : Type*} (s : Finset ι) (g : ι → (F ⟶ G)) {U : Scheme.{0}} (a : Sec F U) :
-    Sec.map (∑ j ∈ s, g j) a = ∑ j ∈ s, Sec.map (g j) a :=
-  map_sum (mapHom F G a) g s
-
 theorem exists_free_restr (P : PSh) : ∃ ι : (free R).obj P ⟶ (restr φ).obj ((free S).obj P),
     ∀ U x, Sec.map ι (freeGen R P U x) = (show Sec ((restr φ).obj ((free S).obj P)) U from freeGen S P U x) :=
   free_exists P _ (fun U x => show Sec ((restr φ).obj ((free S).obj P)) U from freeGen S P U x)
@@ -242,7 +238,7 @@ theorem isTransfer_reduce {Z X : Scheme.{0}} {f : Z ⟶ X} {t : freeSch R X ⟶ 
   rw [freeGen_map, ht']
   rw [freeGen_map] at e
   refine e.trans ?_
-  rw [secMap_sum, secMap_sum]
+  rw [LateralTheory.KummerTheory.AW.sec_map_sum, LateralTheory.KummerTheory.AW.sec_map_sum]
   refine (map_sum (ι.hom.app (op V)).hom _ Finset.univ).trans (Finset.sum_congr rfl fun j _ => ?_)
   change Sec.map ι (Sec.map ((free R).map (yoneda.map (s j))) (freeGen R (yoneda.obj T) V w)) = _
   rw [freeGen_map, freeGen_map, hι]
@@ -642,7 +638,6 @@ private theorem isProper_desc {A G U Z : Scheme.{0}} {φ : A ⟶ G} {f : A ⟶ U
   haveI : IsSeparated g := ⟨hC⟩
   exact IsProper.mk
 
-set_option backward.isDefEq.respectTransparency.types false in
 private theorem isFinite_desc_fin (W : Scheme.{0}) (n : ℕ) :
     IsFinite (Sigma.desc (f := fun _ : Fin n => W) fun _ => 𝟙 W) := by
   induction n with
@@ -671,7 +666,6 @@ private theorem isFinite_desc_fin (W : Scheme.{0}) (n : ℕ) :
     rw [key]
     infer_instance
 
-set_option backward.isDefEq.respectTransparency.types false in
 private theorem isFinite_desc (W : Scheme.{0}) (J : Type) [Finite J] :
     IsFinite (Sigma.desc (f := fun _ : J => W) fun _ => 𝟙 W) := by
   obtain ⟨n, ⟨e⟩⟩ := Finite.exists_equiv_fin J
@@ -698,7 +692,6 @@ private theorem locallyQuasiFinite_of_etale {X Y : Scheme.{0}} (f : X ⟶ Y) [Et
   show Algebra.QuasiFinite R S
   infer_instance
 
-set_option backward.isDefEq.respectTransparency.types false in
 theorem UpperTheory.Gal.G3.jSplitDesc :
     SplitDesc := by
   intro Z Y W s c _ _ _ J _ σ hs
@@ -1005,12 +998,6 @@ theorem eqv_iso {E E' : Spc} (f : E ⟶ E') [IsIso f] : Eqv R f F := by
   · rw [← pull_comp, IsIso.inv_hom_id, pull_id]
   · rw [← pull_comp, IsIso.hom_inv_id, pull_id]
 
-theorem eqv_trans {E E' E'' : Spc} {f : E ⟶ E'} {g : E' ⟶ E''} (hf : Eqv R f F) (hg : Eqv R g F) : Eqv R (f ≫ g) F := by
-  intro n
-  have : (pull R (f ≫ g) F n : _ → _) = pull R f F n ∘ pull R g F n := funext fun x => pull_comp R f g F n x
-  rw [this]
-  exact (hf n).comp (hg n)
-
 theorem eqv_of_eqv_comp {E E' E'' : Spc} {f : E ⟶ E'} {g : E' ⟶ E''} (hf : Eqv R f F) (hfg : Eqv R (f ≫ g) F) :
     Eqv R g F := by
   intro n
@@ -1028,7 +1015,7 @@ theorem fst_comp_eq : pullback.fst p (g ≫ d) =
 theorem eqv_fst_comp (h1 : Eqv R (sch.map (pullback.fst (pullback.snd p d) g)) F)
     (h2 : Eqv R (sch.map (pullback.fst p d)) F) : Eqv R (sch.map (pullback.fst p (g ≫ d))) F := by
   rw [fst_comp_eq, Functor.map_comp, Functor.map_comp]
-  exact eqv_trans F (eqv_iso F _) (eqv_trans F h1 h2)
+  exact LateralTheory.KummerTheory.AlgExtPf.eqv_comp F (eqv_iso F _) (LateralTheory.KummerTheory.AlgExtPf.eqv_comp F h1 h2)
 
 theorem eqv_fst_of_comp (h1 : Eqv R (sch.map (pullback.fst (pullback.snd p d) g)) F)
     (h2 : Eqv R (sch.map (pullback.fst p (g ≫ d))) F) : Eqv R (sch.map (pullback.fst p d)) F := by
@@ -1037,7 +1024,7 @@ theorem eqv_fst_of_comp (h1 : Eqv R (sch.map (pullback.fst (pullback.snd p d) g)
       (pullbackLeftPullbackSndIso p d g).hom ≫ pullback.fst p (g ≫ d) := by
     rw [pullbackLeftPullbackSndIso_hom_fst]
   rw [← Functor.map_comp, this, Functor.map_comp]
-  exact eqv_trans F (eqv_iso F _) h2
+  exact LateralTheory.KummerTheory.AlgExtPf.eqv_comp F (eqv_iso F _) h2
 
 end Eqv
 

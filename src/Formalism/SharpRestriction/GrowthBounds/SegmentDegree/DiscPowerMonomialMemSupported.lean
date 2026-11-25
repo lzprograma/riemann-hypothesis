@@ -6,44 +6,7 @@ public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.CardFinRange
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DplusLeBeS
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.OldestLetterInSegment
 import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.PsiCutSupported
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
-import Std.Tactic.BVDecide.Normalize.Prop
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ColumnConditionsOfNumericBounds
 
 @[expose] public section
@@ -68,28 +31,28 @@ theorem mem_isSt_Ican {N r : ℕ} [NeZero r] {n0 : ℕ} {be : ℤ} {ν : Fin (N 
     exact this
   refine ⟨?_, ?_, ?_⟩
   · intro c hc
-    rw [Ican_eq H, if_neg]
+    rw [Ican_eq H, ite_eq_right]
     intro h
     exact hc (mem_colRange_of_le_entry ν (Fin.last N) 0 (by omega) (by rw [hlast]; exact h.2))
   · intro c
     rw [Ican_eq H, pEnd_eq]
     by_cases h1 : 1 ≤ c
-    · rw [if_pos h1]
+    · rw [ite_eq_left h1]
       by_cases h2 : c ≤ be
-      · rw [if_pos ⟨h1, h2⟩, colH_all fun m => by rw [H.fin]; exact h2, Finset.card_univ, Fintype.card_fin]
-      · rw [if_neg fun h => h2 h.2, colH_none fun m => by rw [H.fin]; omega, Finset.card_empty]
-    · rw [if_neg h1, if_neg fun h => h1 h.1, colH_all fun m => by rw [H.fin]; omega, Finset.card_empty]
+      · rw [ite_eq_left ⟨h1, h2⟩, colH_all fun m => by rw [H.fin]; exact h2, Finset.card_univ, Fintype.card_fin]
+      · rw [ite_eq_right fun h => h2 h.2, colH_none fun m => by rw [H.fin]; omega, Finset.card_empty]
+    · rw [ite_eq_right h1, ite_eq_right fun h => h1 h.1, colH_all fun m => by rw [H.fin]; omega, Finset.card_empty]
       omega
   · intro c t
     unfold tabCol
     by_cases h1 : 1 ≤ c
-    · rw [if_pos h1, if_pos (by omega : (1 : ℤ) ≤ c + 1), Ican_eq H, Ican_eq H]
+    · rw [ite_eq_left h1, ite_eq_left (by omega : (1 : ℤ) ≤ c + 1), Ican_eq H, Ican_eq H]
       by_cases h2 : c + 1 ≤ be
-      · rw [if_pos ⟨by omega, h2⟩, if_pos ⟨h1, by omega⟩]
-      · rw [if_neg fun h => h2 h.2]
+      · rw [ite_eq_left ⟨by omega, h2⟩, ite_eq_left ⟨h1, by omega⟩]
+      · rw [ite_eq_right fun h => h2 h.2]
         simp
-    · rw [if_neg h1]
-      have hc0 : Ican ν c = ∅ := by rw [Ican_eq H, if_neg fun h => h1 h.1]
+    · rw [ite_eq_right h1]
+      have hc0 : Ican ν c = ∅ := by rw [Ican_eq H, ite_eq_right fun h => h1 h.1]
       rw [hc0, Finset.sdiff_empty]
       exact Finset.card_le_card (Finset.filter_subset_filter _ (Finset.subset_univ _))
 
@@ -152,7 +115,7 @@ theorem mem_thc_restr (hX : X.Hyp p K) (j : ℤ) (b : ℤ → ℕ) (x : ℤ) (hx
   · rfl
   · have hl : X.F.oldest j x ∈ X.toLate j := (mem_late X j _).mpr ⟨ho1, hW⟩
     unfold Dat.restr
-    rw [if_pos hl]
+    rw [ite_eq_left hl]
 
 theorem mem_det_supported (R : Type) [CommRing R] {n : ℕ} (y : Fin n → ℤ) (s : Set (ℤ × Fin n))
     (h : ∀ a c, (y a, c) ∈ s) :
@@ -255,25 +218,24 @@ theorem restMemA_of (D : Formalism.BasicNotions.D7) (hAdm : AdmB D) (C₀ : ℝ)
     have hCi := hC i
     unfold Formalism.MainNotions.CovariantDegrees.CondC at hCi
     refine ⟨fun he => ⟨?_, ?_⟩, fun he => ⟨?_, ?_⟩, ?_⟩
-    · rw [hM, if_pos he]
+    · rw [hM, ite_eq_left he]
       unfold Dat.memG
       rw [sG3]; exact (u2.2 i.succ).2
     · refine le_trans (WithTop.coe_le_coe.mpr ?_) vlt
-      rw [hM, if_pos he]
-      rw [if_pos ((comb_vec X.F j i).mpr he)] at hCi
+      rw [hM, ite_eq_left he]
+      rw [ite_eq_left ((comb_vec X.F j i).mpr he)] at hCi
       omega
-    · rw [hM, if_neg he]
+    · rw [hM, ite_eq_right he]
       unfold Dat.memG
       rw [sG4]; exact (u2.2 i.castSucc).2
     · refine le_trans (WithTop.coe_le_coe.mpr ?_) vle
-      rw [hM, if_neg he]
-      rw [if_neg (fun h => he ((comb_vec X.F j i).mp h))] at hCi
+      rw [hM, ite_eq_right he]
+      rw [ite_eq_right (fun h => he ((comb_vec X.F j i).mp h))] at hCi
       omega
     · refine geR_of_le vlt ?_
       rw [← mem_thc_restr hX j b _ hxl]
       have := (hGood i hW).1
       push_cast
-      have hm : (0 : ℝ) ≤ (X.m0 K : ℝ) := Nat.cast_nonneg _
       linarith
 
 end Formalism.MainNotions.SelectionLemmas.Pf

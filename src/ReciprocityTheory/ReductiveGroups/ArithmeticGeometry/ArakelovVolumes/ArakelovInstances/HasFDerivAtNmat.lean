@@ -15,8 +15,6 @@ import Mathlib.RingTheory.SimpleRing.Principal
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Inst.KapPf
@@ -63,9 +61,9 @@ theorem embF_single (e' : Ent X) (τ : X.Ψ) (x c : Fin r) :
   by_cases h1 : c < x
   · rw [dite_eq_left h1, Pi.single_apply]
     by_cases h2 : τ = e'.1 ∧ x = e'.2.1.1 ∧ c = e'.2.1.2
-    · rw [if_pos h2, if_pos ((ent_eq_iff X _ _).2 h2)]
-    · rw [if_neg h2, if_neg (fun h => h2 ((ent_eq_iff X _ _).1 h))]
-  · rw [dite_eq_right h1, if_neg]
+    · rw [ite_eq_left h2, ite_eq_left ((ent_eq_iff X _ _).2 h2)]
+    · rw [ite_eq_right h2, ite_eq_right (fun h => h2 ((ent_eq_iff X _ _).1 h))]
+  · rw [dite_eq_right h1, ite_eq_right]
     rintro ⟨rfl, rfl, rfl⟩
     exact h1 e'.2.2
 
@@ -106,13 +104,13 @@ theorem lmulL_entry (N : Frame X.Ψ r) (e e' : Ent X) :
   simp only [embF_single, mul_ite, mul_one, mul_zero]
   split_ifs with h
   · rw [Finset.sum_eq_single e'.2.1.1]
-    · rw [if_pos ⟨h.1, rfl, h.2⟩]
+    · rw [ite_eq_left ⟨h.1, rfl, h.2⟩]
     · intro x _ hx
-      rw [if_neg]
+      rw [ite_eq_right]
       exact fun h' => hx h'.2.1
     · simp
   · refine Finset.sum_eq_zero fun x _ => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     exact fun h' => h ⟨h'.1, h'.2.2⟩
 
 theorem rmulL_entry (b : Frame X.Ψ r) (e e' : Ent X) :
@@ -124,13 +122,13 @@ theorem rmulL_entry (b : Frame X.Ψ r) (e e' : Ent X) :
   simp only [embF_single, ite_mul, one_mul, zero_mul]
   split_ifs with h
   · rw [Finset.sum_eq_single e'.2.1.2]
-    · rw [if_pos ⟨h.1, h.2, rfl⟩]
+    · rw [ite_eq_left ⟨h.1, h.2, rfl⟩]
     · intro y _ hy
-      rw [if_neg]
+      rw [ite_eq_right]
       exact fun h' => hy h'.2.2
     · simp
   · refine Finset.sum_eq_zero fun y _ => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     exact fun h' => h ⟨h'.1, h'.2.1⟩
 
 theorem det_lmulL_unit (N : Frame X.Ψ r) (hlow : ∀ τ a x, a < x → N τ a x = 0) (hdiag : ∀ τ a, N τ a a = 1) :
@@ -146,7 +144,7 @@ theorem det_lmulL_unit (N : Frame X.Ψ r) (hlow : ∀ τ a x, a < x → N τ a x
       have hk' : e.2.1.1 = e'.2.1.1 := by simpa using hk
       by_cases h : e = e'
       · subst h; simp [hdiag]
-      · rw [if_neg h, if_neg]
+      · rw [ite_eq_right h, ite_eq_right]
         intro h2
         exact h ((ent_eq_iff X e e').2 ⟨h2.1, hk', h2.2⟩))]
   simp
@@ -163,7 +161,7 @@ theorem det_lmulL_upper (b : Frame X.Ψ r) (hup : ∀ τ a x, x < a → b τ a x
       rw [lmulL_entry]
       by_cases h : e = e'
       · subst h; simp
-      · rw [if_neg h, if_neg]
+      · rw [ite_eq_right h, ite_eq_right]
         intro h2
         exact h ((ent_eq_iff X e e').2 ⟨h2.1, hk, h2.2⟩))
 
@@ -180,7 +178,7 @@ theorem det_rmulL_upper (b : Frame X.Ψ r) (hup : ∀ τ a x, x < a → b τ a x
       have hk' : e.2.1.2 = e'.2.1.2 := by simpa using hk
       by_cases h : e = e'
       · subst h; simp
-      · rw [if_neg h, if_neg]
+      · rw [ite_eq_right h, ite_eq_right]
         intro h2
         exact h ((ent_eq_iff X e e').2 ⟨h2.1, h2.2, hk'⟩))
 
@@ -235,8 +233,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Inst.KapPf
@@ -286,7 +282,7 @@ theorem isUnit_nmat (τ : X.Ψ) (z : V (nd X)) : IsUnit (mat (nmat X z) τ) := b
   · intro a c hac
     have h' : a < c := OrderDual.toDual_lt_toDual.mp hac
     simp only [mat, nmat, Matrix.of_apply]
-    rw [dite_eq_right (not_lt.mpr h'.le), if_neg h'.ne]
+    rw [dite_eq_right (not_lt.mpr h'.le), ite_eq_right h'.ne]
 
 def entryL (a c : Fin r) : Matrix (Fin r) (Fin r) ℂ →ₗ[ℂ] ℂ where
   toFun M := M a c

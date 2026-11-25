@@ -238,9 +238,9 @@ theorem term_neg_transpose {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fi
   simp only [Tm]
   by_cases h : a = b
   · subst h
-    rw [if_pos rfl, if_pos rfl, map_neg]
+    rw [ite_eq_left rfl, ite_eq_left rfl, map_neg]
     abel
-  · rw [if_neg h, if_neg (Ne.symm h)]
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
     simp
 
 theorem orderedTermProduct_neg_transpose {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fin n → Fin n → A) (arg : Fin n → ℂ)

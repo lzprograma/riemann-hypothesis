@@ -14,8 +14,6 @@ open Classical ValuativeRel
 
 set_option linter.dupNamespace false
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : Formalism.BasicNotions.D7)
 
 structure LocSp (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) : Type 1 where
@@ -32,17 +30,6 @@ structure LocSp (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) : T
 attribute [instance] LocSp.acg LocSp.mod
 
 variable {D}
-
-def LocSp.ofTermLoc {Y : TermTie D} {δ : ∀ p : PlF D, (D.s.atP p).Fp}
-    {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep} {u u' : D.what₂.Word}
-    (X : TermLoc D Y δ M u u') : LocSp D M where
-  V := X.V
-  H := X.H
-  rank := X.rank
-  bc := X.bc
-  bc_smul := X.bc_smul
-  bc_span := X.bc_span
-  bc_form := X.bc_form
 
 abbrev Tn (u : D.what₂.Word) : D.host.E := (((D.mem u).A.T : ℕ) : D.host.E)
 
@@ -161,14 +148,6 @@ theorem h_sum_right {ι : Type} (s : Finset ι) (x : V) (y : ι → V) :
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [← H.h_herm]
 
-theorem gram_comb {ι : Type} [Fintype ι] [DecidableEq ι] (v : ι → V) (A : Matrix ι ι E) (a b : ι) :
-    H.h (∑ i, A i b • v i) (∑ k, A k a • v k) =
-      ((A.map M.L.cj).transpose * Matrix.of (fun a b => H.h (v b) (v a)) * A) a b := by
-  simp only [h_sum_left, h_sum_right, H.h_smul_left, h_smul_right', Matrix.mul_apply, Matrix.transpose_apply,
-    Matrix.map_apply, Matrix.of_apply, Finset.sum_mul, Finset.mul_sum]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => ?_
-  ring
 end
 
 theorem gz_eq (D : Formalism.BasicNotions.D7) {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') :
@@ -200,71 +179,5 @@ theorem ga_gram (D : Formalism.BasicNotions.D7) {T T' : D.host.E} (F : FlagG (VS
     exact hs _ _
   · simp only [Ga, Matrix.fromBlocks_apply₂₂, Matrix.of_apply, Sum.elim_inr, brS]
     rw [key (S := 0) F' a b]
-
-theorem gaLoc_gram (D : Formalism.BasicNotions.D7) {M : ∀ p : PlF D, Formalism.MainNotions.S.Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep}
-    (L : LocSp D M) (δ : ∀ p : PlF D, (D.s.atP p).Fp) (p : PlF D) {T T' : D.host.E}
-    (F : FlagG (VS D) D.R.rS T) (F' : FlagG (VS D) D.R.rS T') (a b : Fin (D.R.rS + 1) ⊕ Fin (D.R.rS + 1)) :
-    GaLoc M δ p T T' (Zhat F F') a b =
-      (L.H p).h (phi δ p b • L.bc p (Sum.elim F.fvec F'.fvec b)) (phi δ p a • L.bc p (Sum.elim F.fvec F'.fvec a)) := by
-  rw [(L.H p).h_smul_left, h_smul_right' (L.H p), L.bc_form]
-  simp only [GaLoc, Matrix.of_apply]
-  rw [ga_gram]
-  ring
-
-theorem gaPlus_gram_G (D : Formalism.BasicNotions.D7) {M : ∀ p : PlF D, Formalism.MainNotions.S.Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep}
-    (L : LocSp D M) (δ : ∀ p : PlF D, (D.s.atP p).Fp) (p : PlF D) {T T' : D.host.E}
-    (F : FlagG (VS D) D.R.rS T) (F' : FlagG (VS D) D.R.rS T') (g : Formalism.MainNotions.S.Loc.SplitG (M p).L)
-    (hg : (M p).split = some g) (a b : Fin (D.R.rS + 1) ⊕ Fin (D.R.rS + 1)) :
-    let x : Fin (D.R.rS + 1) → L.V p := fun j => frFac δ p j • L.bc p (F.fvec j)
-    let x' : Fin (D.R.rS + 1) → L.V p := fun j => frFac δ p j • L.bc p (F'.fvec j)
-    let mm := Sum.elim x (fun j => algebraMap (D.s.atP p).Fp (D.s.atP p).Ep ((g.q : (D.s.atP p).Fp)⁻¹) • (x' j - x j))
-    GaPlus M δ p T T' (Zhat F F') a b = (L.H p).h (mm b) (mm a) := by
-  intro x x' mm
-  have hG : GaLoc M δ p T T' (Zhat F F') =
-      Matrix.of (fun a b => (L.H p).h (Sum.elim x x' b) (Sum.elim x x' a)) := by
-    ext a b
-    rw [gaLoc_gram D L]
-    rcases a with a | a <;> rcases b with b | b <;> rfl
-  have hmm : ∀ b, mm b = ∑ i, (Matrix.fromBlocks 1
-      (-(algebraMap (D.s.atP p).Fp (D.s.atP p).Ep ((g.q : (D.s.atP p).Fp)⁻¹)) •
-        (1 : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) (D.s.atP p).Ep)) 0
-      (algebraMap (D.s.atP p).Fp (D.s.atP p).Ep ((g.q : (D.s.atP p).Fp)⁻¹) •
-        (1 : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) (D.s.atP p).Ep))) i b • Sum.elim x x' i := by
-    intro b
-    rcases b with b | b
-    · simp [mm, Fintype.sum_sum_type, Matrix.one_apply]
-    · simp [mm, Fintype.sum_sum_type, Matrix.one_apply, sub_eq_neg_add, neg_smul]
-      rw [Algebra.algebraMap_eq_smul_one]
-  rw [hmm, hmm, gram_comb, ← hG]
-  simp only [GaPlus, hg]
-
-theorem gaPlus_eq_gram (D : Formalism.BasicNotions.D7) {M : ∀ p : PlF D, Formalism.MainNotions.S.Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep}
-    (L : LocSp D M) (δ : ∀ p : PlF D, (D.s.atP p).Fp) (p : PlF D) {T T' : D.host.E}
-    (F : FlagG (VS D) D.R.rS T) (F' : FlagG (VS D) D.R.rS T') (abelian₂ : Submodule (M p).L.O (L.V p))
-    (T₀ T₀' : (D.s.atP p).Fp) :
-    GaPlus M δ p T T' (Zhat F F') = (L.H p).gram ((L.H p).MMfam
-      ({ abelian₂ := abelian₂, f := fun j => frFac δ p j • L.bc p (F.fvec j),
-         f' := fun j => frFac δ p j • L.bc p (F'.fvec j), T := T₀, T' := T₀' } :
-        Formalism.MainNotions.S.Loc.Term (L.V p) (M p) D.R.rS)) := by
-  ext a b
-  cases hs : (M p).split with
-  | none =>
-    simp only [GaPlus, hs, Formalism.MainNotions.S.Loc.HermSp.gram, Formalism.MainNotions.S.Loc.HermSp.MMfam, Matrix.of_apply]
-    rw [gaLoc_gram D L]
-    rcases a with a | a <;> rcases b with b | b <;> rfl
-  | some g =>
-    rw [gaPlus_gram_G D L δ p F F' g hs]
-    simp only [Formalism.MainNotions.S.Loc.HermSp.gram, Formalism.MainNotions.S.Loc.HermSp.MMfam, hs, Matrix.of_apply]
-
-theorem zhatLoc_eq (D : Formalism.BasicNotions.D7) {M : ∀ p : PlF D, Formalism.MainNotions.S.Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep}
-    (L : LocSp D M) (δ : ∀ p : PlF D, (D.s.atP p).Fp) (p : PlF D) {T T' : D.host.E}
-    (F : FlagG (VS D) D.R.rS T) (F' : FlagG (VS D) D.R.rS T') :
-    ZhatLoc M δ p (Zhat F F') = (L.H p).Zhat (fun j => frFac δ p j • L.bc p (F.fvec j))
-      (fun j => frFac δ p j • L.bc p (F'.fvec j)) := by
-  ext a b
-  simp only [ZhatLoc, Formalism.MainNotions.S.Loc.HermSp.Zhat, Matrix.of_apply]
-  rw [(L.H p).h_smul_left, h_smul_right' (L.H p), L.bc_form]
-  simp only [Zhat]
-  ring
 
 end Formalism.L2.SG.CntLocal

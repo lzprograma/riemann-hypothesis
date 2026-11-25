@@ -22,52 +22,14 @@ import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsAdicCompleteOfFini
 import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsReducedTorsionGeometricFibre
 import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SectionEqZeroOfForallGeometricPoint
 import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UnitOfBijectiveMulNatural
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.DualNumber
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.Valuation.Integral
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.UnivChartLoc
 import Mathlib.Algebra.Azumaya.Basic
 import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -76,7 +38,6 @@ open NumberField IsDedekindDomain
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct NNReal
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Pdiv ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Formalism.L2.Pj GlobalTheory.HTLat GlobalTheory.EigenSplit GlobalTheory.Frames GlobalTheory.AllWt GlobalTheory.CompHt
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.CompHt.FormalChar
 
@@ -416,36 +377,7 @@ theorem exists_tangent_param {d : ℕ} {x : JetSer.Fam P.G (Fin d)} (hx : Chart.
   have hp₀ : ¬ IsUnit (p : O) := Fact.out
   have hp : ¬ IsUnit (p : DualNumber O) := fun h => hp₀ (by
     simpa using h.map (TrivSqZeroExt.fstHom O O O))
-  have mem_pow (R : Type) [CommRing R] (a : R) (n : ℕ) (z : R) :
-      z ∈ (Ideal.span {a} ^ n • ⊤ : Submodule R R) ↔ a ^ n ∣ z := by
-    rw [Ideal.span_singleton_pow, smul_eq_mul, Ideal.mul_top, Ideal.mem_span_singleton]
-  have dual_dvd (n : ℕ) (z : DualNumber O) :
-      (p : DualNumber O) ^ n ∣ z ↔ (p : O) ^ n ∣ z.fst ∧ (p : O) ^ n ∣ z.snd := by
-    have e : (p : DualNumber O) ^ n = TrivSqZeroExt.inl ((p : O) ^ n) := by
-      rw [← TrivSqZeroExt.inl_pow, TrivSqZeroExt.inl_natCast]
-    rw [e]
-    constructor
-    · rintro ⟨y, rfl⟩
-      exact ⟨⟨y.fst, by simp⟩, ⟨y.snd, by simp⟩⟩
-    · rintro ⟨⟨a, ha⟩, b, hb⟩
-      exact ⟨TrivSqZeroExt.inl a + TrivSqZeroExt.inr b, by ext <;> simp [ha, hb]⟩
-  have hc : IsAdicComplete (Ideal.span {(p : DualNumber O)}) (DualNumber O) := by
-    have h : IsAdicComplete (Ideal.span {(p : O)}) O := inferInstance
-    refine { toIsHausdorff.haus' := ?_, toIsPrecomplete.prec' := ?_ }
-    · intro z hz
-      simp only [SModEq.zero, mem_pow, dual_dvd] at hz
-      refine TrivSqZeroExt.ext (h.toIsHausdorff.haus' z.fst fun n => ?_)
-        (h.toIsHausdorff.haus' z.snd fun n => ?_)
-      · rw [SModEq.zero, mem_pow]; exact (hz n).1
-      · rw [SModEq.zero, mem_pow]; exact (hz n).2
-    · intro f hf
-      simp only [SModEq.sub_mem, mem_pow, dual_dvd] at hf ⊢
-      obtain ⟨a, ha⟩ := h.toIsPrecomplete.prec' (fun n => (f n).fst) fun {m n} hmn => by
-        rw [SModEq.sub_mem, mem_pow]; exact (hf hmn).1
-      obtain ⟨b, hb⟩ := h.toIsPrecomplete.prec' (fun n => (f n).snd) fun {m n} hmn => by
-        rw [SModEq.sub_mem, mem_pow]; exact (hf hmn).2
-      simp only [SModEq.sub_mem, mem_pow] at ha hb
-      exact ⟨TrivSqZeroExt.inl a + TrivSqZeroExt.inr b, fun n => ⟨by simpa using ha n, by simpa using hb n⟩⟩
+  have hc := _root_.GlobalTheory.HTLat.OmegaRank.isAdicComplete_dualNumber (O := O) p
   have hl := existsUnique_left (P := P) hp hc
   have hr := existsUnique_right (P := P) hp hc
   let tv : (Fin d → O) → LieG P.Gt := fun b => ⟨(hl (Chart.tvec (x := x) b)).choose,

@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianProducts.HatLin
 public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
 public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.FiniteFamilyOfCompact
 public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.WtBound
@@ -7,44 +8,6 @@ import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalys
 public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.HatSt
 import GroundTheory.HeightsAndTheta.Theta.AdelicFourierCoord
 import GroundTheory.HeightsAndTheta.Theta.Weil.PartialFourierAdelicPi
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
 
 @[expose] public section
@@ -60,113 +23,23 @@ namespace UpperTheory.ConvolutionTheory.R2.Ff.HM
 
 variable {F : Type} [Field F] [NumberField F]
 
-private theorem comp_signed_mem {ι κ : Type} [Fintype ι] [Fintype κ] (e : κ ≃ ι) (ε : κ → F)
-    (hε : ∀ k, ε k * ε k = 1) {G : (κ → A F) → ℂ} (hG : G ∈ schwartzBruhatPi (K := F) (ι := κ)) :
-    (fun x : ι → A F => G fun k => rt (ε k) * x (e k)) ∈ schwartzBruhatPi (K := F) (ι := ι) := by
-  have hD : Matrix.diagonal ε * Matrix.diagonal ε = (1 : Matrix κ κ F) := by
-    rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    funext k
-    exact hε k
-  let M : Matrix κ ι F := (Matrix.diagonal ε).submatrix id e.symm
-  let N : Matrix ι κ F := (Matrix.diagonal ε).submatrix e.symm id
-  have hNM : N * M = 1 := by
-    have h := Matrix.submatrix_mul (Matrix.diagonal ε) (Matrix.diagonal ε) e.symm id e.symm
-      Function.bijective_id
-    rw [hD, Matrix.submatrix_one_equiv] at h
-    exact h.symm
-  have hMN : M * N = 1 := by
-    have h := Matrix.submatrix_mul (Matrix.diagonal ε) (Matrix.diagonal ε) id e.symm id
-      e.symm.bijective
-    rw [hD, Matrix.submatrix_id_id] at h
-    exact h.symm
-  have h := GroundTheory.Heights₂.Theta.comp_mulVec_mem_schwartzBruhatPi M N hNM hMN hG
-  have hx : ∀ x : ι → A F, (M.map (algebraMap F (A F)) *ᵥ x) = fun k => rt (ε k) * x (e k) := by
-    intro x
-    funext k
-    simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, M, Matrix.submatrix_apply, id]
-    rw [← e.sum_comp]
-    simp only [Matrix.diagonal_apply]
-    rw [Finset.sum_eq_single k]
-    · simp
-    · intro b _ hb
-      simp [Ne.symm hb]
-    · simp
-  simpa only [hx] using h
-
-private def eS : Fin 3 ⊕ Unit ≃ Fin 4 where
-  toFun := Sum.elim ![0, 2, 3] fun _ => 1
-  invFun := ![.inl 0, .inr (), .inl 1, .inl 2]
-  left_inv := by
-    rintro (i | ⟨⟩)
-    · fin_cases i <;> rfl
-    · rfl
-  right_inv := by
-    intro i
-    fin_cases i <;> rfl
-
-private def FF (φ : V4 F → ℂ) (z : Fin 3 ⊕ Unit → A F) : ℂ := φ fun i => z (eS.symm i)
-
-private theorem FF_mem {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi (K := F) (ι := Fin 4)) :
-    FF φ ∈ schwartzBruhatPi (K := F) (ι := Fin 3 ⊕ Unit) := by
-  have h := comp_signed_mem (F := F) eS.symm (fun _ => 1) (fun _ => by simp) hφ
-  have he : FF φ = fun x => φ fun k => rt ((fun _ => 1 : Fin 4 → F) k) * x (eS.symm k) := by
-    funext x
-    simp [FF]
-  rw [he]
-  exact h
-
-private theorem slice_integrable {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi (K := F) (ι := Fin 4)) (x : V4 F) :
-    Integrable (fun s => φ (Function.update x 1 s)) (adeleMeasure F) := by
-  have h := GroundTheory.Heights₂.Theta.integrable_partialFourierPi_slice (FF_mem hφ) (fun i => x (eS (Sum.inl i)))
-  have hmp := measurePreserving_funUnique (adeleMeasure F) Unit
-  refine (hmp.integrable_comp_emb (MeasurableEquiv.measurableEmbedding _)).1 ?_
-  have e : (fun s => φ (Function.update x 1 s)) ∘ (MeasurableEquiv.funUnique Unit (A F)) =
-      fun y => FF φ (Sum.elim (fun i => x (eS (Sum.inl i))) y) := by
-    funext y
-    simp only [Function.comp, FF]
-    congr 1
-    funext i
-    fin_cases i <;> simp [eS]
-  rw [e]
-  exact h
-
-private theorem slice_mul_integrable {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi (K := F) (ι := Fin 4)) (x : V4 F) :
-    Integrable (fun s => φ (Function.update x 1 s) * ψ (-(s * x 1))) (adeleMeasure F) := by
-  refine (slice_integrable hφ x).mul_bdd (c := 1) ?_ ?_
-  · exact (continuous_ψ.comp (continuous_id.mul continuous_const).neg).aestronglyMeasurable
-  · exact Eventually.of_forall fun s => by simp
-
-private theorem hat_add {a b : V4 F → ℂ} (ha : a ∈ schwartzBruhatPi (K := F) (ι := Fin 4))
-    (hb : b ∈ schwartzBruhatPi (K := F) (ι := Fin 4)) (x : V4 F) : hat (a + b) x = hat a x + hat b x := by
-  unfold hat
-  rw [← integral_add (slice_mul_integrable ha x) (slice_mul_integrable hb x)]
-  refine integral_congr_ae (Eventually.of_forall fun s => ?_)
-  simp [add_mul]
-
-private theorem hat_smul (c : ℂ) (a : V4 F → ℂ) (x : V4 F) : hat (c • a) x = c * hat a x := by
-  unfold hat
-  rw [← integral_const_mul]
-  refine integral_congr_ae (Eventually.of_forall fun s => ?_)
-  simp [mul_assoc]
-
 private theorem hat_sum {ι : Type} (s : Finset ι) (f : ι → S4 F) (x : V4 F) :
     hat (∑ i ∈ s, f i).1 x = ∑ i ∈ s, hat (f i).1 x := by
   induction s using Finset.induction_on with
   | empty =>
     have : ((0 : S4 F)).1 = (0 : ℂ) • (0 : V4 F → ℂ) := by simp
     simp only [Finset.sum_empty]
-    rw [this, hat_smul, zero_mul]
+    rw [this, G.hat_smul, zero_mul]
   | insert i s hi ih =>
     rw [Finset.sum_insert hi, Finset.sum_insert hi, ← ih]
-    exact hat_add (f i).2 (∑ i ∈ s, f i).2 x
+    exact G.hat_add (f i) (∑ i ∈ s, f i) x
 
 private theorem wt_mono {K K' : Set (Fin 4 → FiniteAdeleRing (𝓞 F) F)} (h : K ⊆ K') (N : ℕ) (v : V4 F) :
     wt K N v ≤ wt K' N v := by
   unfold wt
   by_cases hv : finPartPi v ∈ K
-  · rw [if_pos hv, if_pos (h hv)]
-  · rw [if_neg hv]
+  · rw [ite_eq_left hv, ite_eq_left (h hv)]
+  · rw [ite_eq_right hv]
     split_ifs
     · positivity
     · exact le_rfl
@@ -228,7 +101,7 @@ theorem UpperTheory.ConvolutionTheory.R2.Ff.hatMaj :
     rw [hat_sum, Finset.sum_mul]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
     have h1 : hat (c i • W.L (infGL E 2 y) (e i)).1 v' = c i * hat (W.L (infGL E 2 y) (e i)).1 v' :=
-      hat_smul _ _ _
+      G.hat_smul _ _ _
     rw [h1, norm_mul]
     calc ‖c i‖ * ‖hat (W.L (infGL E 2 y) (e i)).1 v'‖
         ≤ 1 * (B i * wt (K i) N v') := mul_le_mul (hc i) (hB' i v') (norm_nonneg _) zero_le_one

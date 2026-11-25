@@ -1,57 +1,10 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SortSign
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CoeEqAlgebraMapZeroEquiv
-import Mathlib.Topology.Sheaves.Presheaf
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -130,11 +83,11 @@ theorem sign_pair {τ : κ → ι} {t : Finset κ} {a b : κ} (ha : a ∈ t) (hb
   have c1 : cubeSign t a = (if b < a then (-1 : ℤ) else 1) *
       ∏ x ∈ (t.erase a).erase b, (if x < a then (-1 : ℤ) else 1) := by
     rw [cubeSign_eq_prod, ← Finset.mul_prod_erase t _ hb, ← Finset.mul_prod_erase (t.erase b) _ ha', hu']
-    simp only [lt_self_iff_false, if_false, one_mul]
+    simp only [lt_self_iff_false, ite_false, one_mul]
   have c2 : cubeSign t b = (if a < b then (-1 : ℤ) else 1) *
       ∏ x ∈ (t.erase a).erase b, (if x < b then (-1 : ℤ) else 1) := by
     rw [cubeSign_eq_prod, ← Finset.mul_prod_erase t _ ha, ← Finset.mul_prod_erase (t.erase a) _ hb']
-    simp only [lt_self_iff_false, if_false, one_mul]
+    simp only [lt_self_iff_false, ite_false, one_mul]
   have hs : (if b < a then (-1 : ℤ) else 1) = -(if a < b then (-1 : ℤ) else 1) := by
     rcases lt_or_gt_of_ne hab with h' | h' <;> simp [h', lt_asymm h']
   rw [e1, e2, c1, c2, Finset.prod_mul_distrib, Finset.prod_mul_distrib, hs]
@@ -187,29 +140,28 @@ theorem pullC_delta (τ : κ → ι) (φ : E →ₗ[k] E') (c : Finset ι → E)
   simp only [GlobalTheory.DI.delta]
   by_cases h : Set.InjOn τ t
 
-  · rw [if_pos h, Finset.sum_image (by intro x hx y hy hxy; exact h hx hy hxy), map_sum, Finset.smul_sum]
+  · rw [ite_eq_left h, Finset.sum_image (by intro x hx y hy hxy; exact h hx hy hxy), map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun i hi => ?_
-    rw [pullC_apply, if_pos (h.mono (Finset.coe_subset.2 (Finset.erase_subset i t))), map_zsmul,
+    rw [pullC_apply, ite_eq_left (h.mono (Finset.coe_subset.2 (Finset.erase_subset i t))), map_zsmul,
       ← image_erase_of_injOn h hi, smul_smul, smul_smul, sign_inj h hi]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     have h' : ∃ a ∈ t, ∃ b ∈ t, τ a = τ b ∧ a ≠ b := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact h (by intro x hx y hy hxy; exact hc x hx y hy hxy)
     obtain ⟨a, ha, b, hb, he, hab⟩ := h'
     have zero_of : ∀ s : Finset κ, a ∈ s → b ∈ s → pullC τ φ c s = 0 := fun s has hbs => by
-      rw [pullC_apply, if_neg]
+      rw [pullC_apply, ite_eq_right]
       intro hs
       exact hab (hs has hbs he)
     rw [Finset.sum_eq_add_of_mem a b ha hb hab (fun x _ hne => by
       rw [zero_of _ (Finset.mem_erase.2 ⟨hne.1.symm, ha⟩) (Finset.mem_erase.2 ⟨hne.2.symm, hb⟩), smul_zero])]
     by_cases hia : Set.InjOn τ (t.erase a)
     · have hib := injOn_erase_swap hb hab he hia
-      rw [pullC_apply, pullC_apply, if_pos hia, if_pos hib, image_erase_eq hb hab he,
+      rw [pullC_apply, pullC_apply, ite_eq_left hia, ite_eq_left hib, image_erase_eq hb hab he,
         image_erase_eq ha hab.symm he.symm, smul_smul, smul_smul, ← add_smul, sign_pair ha hb hab he hia,
         neg_add_cancel, zero_smul]
     · have hib : ¬ Set.InjOn τ (t.erase b) := fun hib => hia (injOn_erase_swap ha hab.symm he.symm hib)
-      rw [pullC_apply, pullC_apply, if_neg hia, if_neg hib, smul_zero, smul_zero, add_zero]
+      rw [pullC_apply, pullC_apply, ite_eq_right hia, ite_eq_right hib, smul_zero, smul_zero, add_zero]
 
 theorem pullC_mem (A : Finset ι → Submodule k E) (B : Finset κ → Submodule k E') (τ : κ → ι) (φ : E →ₗ[k] E')
     (hφ : ∀ s : Finset κ, s.Nonempty → ∀ y ∈ A (s.image τ), φ y ∈ B s) (n : ℤ) (c : Finset ι → E)
@@ -220,12 +172,12 @@ theorem pullC_mem (A : Finset ι → Submodule k E) (B : Finset κ → Submodule
   split_ifs with hs hinj
   · have hcard := Finset.card_image_of_injOn hinj
     have hc' := hc (s.image τ)
-    rw [if_pos ⟨hs.1.image τ, by rw [hcard]; exact hs.2⟩] at hc'
+    rw [ite_eq_left ⟨hs.1.image τ, by rw [hcard]; exact hs.2⟩] at hc'
     exact zsmul_mem (hφ s hs.1 _ hc') _
   · exact Submodule.zero_mem _
   · rename_i hinj
     have hc' := hc (s.image τ)
-    rw [if_neg (fun h' => hs ⟨Finset.image_nonempty.1 h'.1, by
+    rw [ite_eq_right (fun h' => hs ⟨Finset.image_nonempty.1 h'.1, by
       rw [← Finset.card_image_of_injOn hinj]; exact h'.2⟩), Submodule.mem_bot] at hc'
     rw [hc', map_zero, smul_zero]
     exact Submodule.zero_mem _

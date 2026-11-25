@@ -93,8 +93,6 @@ theorem exp_eq (r k : ℕ) (hk : 1 ≤ k) :
 
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what₂.Word}
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
-
 theorem kMatch_holds (P : Parts X u u') : EnergyPlace.KMatch P := by
   intro hg hrd hr hk hgpos hk1
   have hrdpos : 0 < Formalism.FourierDecayAlt.S6.rd D.host.E := by rw [hrd]; exact EnergyConst.rdE_pos'

@@ -3,46 +3,9 @@ module
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
 import Formalism.PadicSubsetSums.StableGradedCounts.ZBrauerNesbittAlg
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchCut
-import Mathlib.RingTheory.PicardGroup
 
 @[expose] public section
 
@@ -50,19 +13,12 @@ open NumberField IsDedekindDomain ValuativeRel Polynomial Formalism.ConjugateSel
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Shin
 open GroundTheory.Global GroundTheory.Global.SemiLocal UpperTheory.V.Published UpperTheory.CBC UpperTheory.Gal.InertialTypesAlt
 open scoped Classical
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 section Semi
 
 variable {F F' : Type} [Field F] [Field F'] (r : F ≃+* F')
   {V V' : Type} [AddCommGroup V] [Module F V] [AddCommGroup V'] [Module F' V']
   (e : V ≃+ V') (he : ∀ (c : F) (x : V), e (c • x) = r c • e x)
-
-include he in
-private theorem symm_smul (c : F') (y : V') : e.symm (c • y) = r.symm c • e.symm y := by
-  apply e.injective
-  rw [he]
-  simp
 
 private def smap (W : Submodule F V) : Submodule F' V' where
   carrier := e '' W
@@ -120,35 +76,17 @@ private theorem charpoly_semi [FiniteDimensional F V] [FiniteDimensional F' V']
     LinearMap.charpoly g' = (LinearMap.charpoly g).map r.toRingHom := by
   classical
   let b := Module.finBasis F V
-  have hf : ∀ f : Fin (Module.finrank F V) →₀ F,
-      Finsupp.mapRange r.symm (map_zero r.symm) (Finsupp.mapRange r (map_zero r) f) = f := by
-    intro f
-    ext i
-    simp
+  have := RingHomInvPair.of_ringEquiv r
+  have := RingHomInvPair.symm (r : F →+* F') (r.symm : F' →+* F)
+  let eₛ : V ≃ₛₗ[(r : F →+* F')] V' := { e with map_smul' := he }
   let repr' : V' ≃ₗ[F'] (Fin (Module.finrank F V) →₀ F') :=
-    { toFun := fun y => Finsupp.mapRange r (map_zero r) (b.repr (e.symm y))
-      invFun := fun c => e (b.repr.symm (Finsupp.mapRange r.symm (map_zero r.symm) c))
-      map_add' := by
-        intro x y
-        ext i
-        simp
-      map_smul' := by
-        intro c y
-        ext i
-        simp [symm_smul r e he]
-      left_inv := by
-        intro y
-        show e (b.repr.symm (Finsupp.mapRange r.symm _ (Finsupp.mapRange r _ (b.repr (e.symm y))))) = y
-        rw [hf]
-        simp
-      right_inv := by
-        intro c
-        ext i
-        simp }
+    eₛ.symm.trans (b.repr.trans (Finsupp.mapRange.linearEquiv r.toSemilinearEquiv))
   let b' : Module.Basis (Fin (Module.finrank F V)) F' V' := Module.Basis.ofRepr repr'
   have hb' : ∀ j, b' j = e (b j) := by
     intro j
-    simp [b', repr']
+    change e (b.repr.symm (Finsupp.mapRange r.symm (map_zero r.symm)
+      (Finsupp.single j 1))) = e (b j)
+    rw [Finsupp.mapRange_single, map_one, Module.Basis.repr_symm_single_one]
   rw [← LinearMap.charpoly_toMatrix g b, ← LinearMap.charpoly_toMatrix g' b', ← Matrix.charpoly_map]
   congr 1
   ext i j

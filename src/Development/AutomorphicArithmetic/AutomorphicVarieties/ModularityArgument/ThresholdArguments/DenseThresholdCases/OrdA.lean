@@ -60,7 +60,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 private theorem ordA_lin {W ι : Type} [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W]
     (f : ι → Module.End ℂ W) (hc : ∀ i j, Commute (f i) (f j)) (l : W →ₗ[ℂ] ℂ) (μ : ι → ℂ)
     (hl : ∀ i v, l (f i v) = μ i * l v) {w : W} (hw : l w ≠ 0) : ∃ v, v ≠ 0 ∧ ∀ i, f i v = μ i • v := by
@@ -224,7 +223,7 @@ theorem UpperTheory.V.Hi.exists_ne_zero_mem_eig_uOp_eq_psEig_smul_of_equiv_ps :
   let σ := (twist ((ofChar (torusChar μ)).comp (leviTorus k (Fin n)).symm.toMonoidHom) (deltaHalf k _)).comp
     (leviProj k (points (Fin n)))
   have hσ : ∀ p x, σ p x = χ p * x := fun p x => by
-    simp only [χ, dif_pos p.2]
+    simp only [χ, dite_eq_left p.2]
     show (deltaHalf k _ _ : ℂ) • ofChar _ _ x = _
     rw [ofChar_apply]
     simp [Ψ, mul_assoc]
@@ -238,7 +237,7 @@ theorem UpperTheory.V.Hi.exists_ne_zero_mem_eig_uOp_eq_psEig_smul_of_equiv_ps :
   have hN : ∀ x ∈ unipB k (Fin n), χ x = 1 := by
     intro x hx
     have h := unipRad_le_parab k _ hx
-    simp only [χ, dif_pos h]
+    simp only [χ, dite_eq_left h]
     rw [(coe_mem_unipRad k ⟨x, h⟩).1 hx, map_one, Units.val_one]
   have hD : ∀ t, diagT k (Fin n) t ∈ parab k (points (Fin n)) := fun t => leviEmb_mem_parab k _ _
   have hT : ∀ t, χ (diagT k (Fin n) t) =
@@ -246,7 +245,7 @@ theorem UpperTheory.V.Hi.exists_ne_zero_mem_eig_uOp_eq_psEig_smul_of_equiv_ps :
     intro t
     have hd : ∀ i, Matrix.GeneralLinearGroup.det (leviTorus k (Fin n) t i) = t i :=
       congrFun ((leviTorus k (Fin n)).left_inv t)
-    simp only [χ, dif_pos (hD t)]
+    simp only [χ, dite_eq_left (hD t)]
     rw [show leviProj k _ ⟨_, hD t⟩ = leviTorus k (Fin n) t from leviProj_leviEmb k _ _]
     simp [Ψ, deltaHalf_apply, hd, Finset.prod_mul_distrib]
   have hφ' : ∀ t : (glIwa k n).T, χ t = ((φ t)⁻¹ : ℂˣ) ∧ ((t : GL (Fin n) k) ∈ (glIwa k n).Tc c → χ t = 1) := by
@@ -265,7 +264,7 @@ theorem UpperTheory.V.Hi.exists_ne_zero_mem_eig_uOp_eq_psEig_smul_of_equiv_ps :
     simp
   have hmul : ∀ a ∈ parab k (points (Fin n)), ∀ b ∈ parab k (points (Fin n)), χ (a * b) = χ a * χ b := by
     intro a ha b hb
-    simp only [χ, dif_pos ha, dif_pos hb, dif_pos (mul_mem ha hb)]
+    simp only [χ, dite_eq_left ha, dite_eq_left hb, dite_eq_left (mul_mem ha hb)]
     rw [← Units.val_mul, ← map_mul, ← map_mul]
     rfl
   obtain ⟨f, hf1, hf⟩ := _root_.UpperTheory.Reformulated.B.Gr28.indVec _ ((glIwa k n).I1 c) σ (hI c).1 1 (by

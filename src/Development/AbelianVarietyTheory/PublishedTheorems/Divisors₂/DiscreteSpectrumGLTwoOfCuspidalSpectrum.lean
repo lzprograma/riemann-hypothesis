@@ -65,9 +65,6 @@ structure IsDiscreteWith (ω : HChar E) (V : Submodule ℂ (Sm E a)) : Prop wher
   irred : ∀ W ≤ V, _root_.GlobalTheory.CuspRep.IsStable W → W = ⊥ ∨ W = V
 
 
-variable (a) in
-def detLine (χ : HChar E) : Submodule ℂ (Sm E a) := Submodule.span ℂ {mulChi a χ (oneFn E a)}
-
 theorem chiDet_scalar (χ : HChar E) (z : Neutral.B1.Ideles E) :
     chiDet a χ (GeneralLinearGroup.scalar (Fin a) z) = (χ ^ a).1 z := by
   have : GeneralLinearGroup.det (GeneralLinearGroup.scalar (Fin a) z) = z ^ a := Units.ext (by
@@ -82,14 +79,6 @@ theorem IsDiscreteWith.apply (h : IsDiscreteWith ω V) {φ : Sm E a} (hφ : φ �
     φ.1 (GeneralLinearGroup.scalar (Fin a) z * g) = ((ω.1 z : ℂˣ) : ℂ) * φ.1 g := by
   rw [CuspRep.scalar_comm]
   exact congrFun (congrArg Subtype.val (h.central z φ hφ)) g
-
-theorem enorm_ofReal_norm (z : ℂ) : ‖((‖z‖ : ℝ) : ℂ)‖ₑ = ‖z‖ₑ := by
-  rw [← ofReal_norm, Complex.norm_of_nonneg (norm_nonneg z), ofReal_norm]
-
-theorem isDiscreteWith_of_isDiscrete (h : IsDiscrete V) (hc : ∀ z : Neutral.B1.Ideles E, ∀ φ ∈ V,
-    rt E a (GeneralLinearGroup.scalar (Fin a) z) φ = ((ω.1 z : ℂˣ) : ℂ) • φ) : IsDiscreteWith ω V :=
-  ⟨h.aut, hc, fun φ hφ => ⟨fun t g => by simp only [(h.sqInt φ hφ).1 t g], by
-    simpa only [enorm_ofReal_norm] using (h.sqInt φ hφ).2⟩, h.stable, h.ne_bot, h.irred⟩
 
 theorem isSqInt_of_bounded {f : GA E a → ℂ} (h : ∀ t g, f (splitCentre E a t * g) = f g) {C : ℝ}
     (hC : ∀ g, ‖f g‖ ≤ C) : IsSqInt f := by
@@ -134,23 +123,6 @@ theorem IsDiscreteWith.twist (h : IsDiscreteWith ω V) {ν : HChar E} (hν : ν.
     have e := Submodule.map_comap_eq_of_surjective (f := (mulChi a ν).toLinearMap) (mulChi a ν).surjective W
     exact h.imp (fun h => by rw [← e, h, Submodule.map_bot]) fun h => by rw [← e, h]
 
-theorem isDiscreteWith_detLine (hχ : χ.IsUnitary) : IsDiscreteWith (χ ^ a) (detLine a χ) := by
-  have h1 : IsDiscreteWith 1 (Submodule.span ℂ {oneFn E a}) :=
-    isDiscreteWith_of_isDiscrete ⟨fun _ => isAutForm_const, fun φ hφ => by
-        obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hφ
-        exact isSqInt_of_bounded (f := fun _ => c * 1) (fun _ _ => rfl) fun _ => le_rfl,
-      isStable_const, fun e => oneFn_ne_zero (Submodule.span_singleton_eq_bot.1 e),
-      fun W hW _ => (nonzero_span_atom _ oneFn_ne_zero).le_iff.1 hW⟩ fun z φ hφ => by
-        obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hφ
-        exact (one_smul ℂ _).symm
-  have h2 := h1.twist hχ
-  rwa [one_mul, Submodule.map_span, Set.image_singleton] at h2
-
-theorem detLine_ne_cusp (ha : 1 < a) (χ : HChar E) (π : CuspSub E a) : detLine a χ ≠ π.V := fun e => by
-  have h := (π.cusp _ (e.le (Submodule.mem_span_singleton_self _))).mulChi χ⁻¹
-  rw [← mulChi_mul, mul_inv_cancel, mulChi_one] at h
-  exact GlobalTheory.ConstNotCusp.not_isCuspidal_oneFn E a ha h.2
-
 section Local
 
 open GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.LocGL.ProjLine
@@ -158,8 +130,6 @@ open GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.LocGL.ProjLine
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
 end Local
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 end GlobalTheory.DiscChar
 

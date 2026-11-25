@@ -312,10 +312,4 @@ include P
 
 end IndefCore
 
-namespace ColData
-
-variable {Bs : DefBase K} {Df : DefSide Bs} {Dc : DefCols Df} {Sp : SPer Dc} {S : IndefData Df} (C : ColData Dc Sp S)
-
-end ColData
-
 end Formalism.L2.Indef

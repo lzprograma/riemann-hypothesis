@@ -30,18 +30,13 @@ theorem hsA_smul (c : ℂ) (A : V' →L[ℂ] V) : hsA (c • A) = ‖c‖ ^ 2 * 
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [ContinuousLinearMap.smul_apply, norm_smul, mul_pow]
 
-private theorem sum_norm_inner_stdBasis_sq_eq_norm_sq {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
-    [FiniteDimensional ℂ E] (x : E) :
-    ∑ i, ‖⟪stdOrthonormalBasis ℂ E i, x⟫_ℂ‖ ^ 2 = ‖x‖ ^ 2 := by
-  exact (stdOrthonormalBasis ℂ E).sum_sq_norm_inner_right x
-
 theorem hsA_eq_adjoint (A : V' →L[ℂ] V) :
     hsA A = ∑ i, ‖(ContinuousLinearMap.adjoint A) (stdOrthonormalBasis ℂ V i)‖ ^ 2 := by
   unfold Formalism.L2.SG.Pf.EnergyAbs.hsA
   calc ∑ i, ‖A (stdOrthonormalBasis ℂ V' i)‖ ^ 2
       = ∑ i, ∑ j, ‖⟪stdOrthonormalBasis ℂ V j, A (stdOrthonormalBasis ℂ V' i)⟫_ℂ‖ ^ 2 := by
         refine Finset.sum_congr rfl fun i _ => ?_
-        rw [sum_norm_inner_stdBasis_sq_eq_norm_sq]
+        rw [(stdOrthonormalBasis ℂ V).sum_sq_norm_inner_right]
     _ = ∑ j, ∑ i, ‖⟪stdOrthonormalBasis ℂ V' i,
           (ContinuousLinearMap.adjoint A) (stdOrthonormalBasis ℂ V j)⟫_ℂ‖ ^ 2 := by
         rw [Finset.sum_comm]
@@ -49,7 +44,7 @@ theorem hsA_eq_adjoint (A : V' →L[ℂ] V) :
         rw [ContinuousLinearMap.adjoint_inner_right, norm_inner_symm]
     _ = ∑ j, ‖(ContinuousLinearMap.adjoint A) (stdOrthonormalBasis ℂ V j)‖ ^ 2 := by
         refine Finset.sum_congr rfl fun j _ => ?_
-        rw [sum_norm_inner_stdBasis_sq_eq_norm_sq]
+        rw [(stdOrthonormalBasis ℂ V').sum_sq_norm_inner_right]
 
 private theorem norm_sq_apply_of_inner_preserving {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
     (U : E →L[ℂ] E) (hU : ∀ a b, ⟪U a, U b⟫_ℂ = ⟪a, b⟫_ℂ) (v : E) : ‖U v‖ ^ 2 = ‖v‖ ^ 2 := by
@@ -116,15 +111,6 @@ theorem rep_mul_apply {σ : G → (HH →L[ℂ] HH)} (hσ : IsUnitRep σ) (x y :
   rw [hmul, ContinuousLinearMap.mul_apply]
 
 end Rep
-
-section Kernel
-
-variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [SecondCountableTopology G]
-  [MeasurableSpace G] [BorelSpace G] {μ : Measure G} [μ.IsMulLeftInvariant]
-variable {HH : Type} [NormedAddCommGroup HH] [InnerProductSpace ℂ HH]
-variable {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V] [FiniteDimensional ℂ V]
-
-end Kernel
 
 section Quot
 

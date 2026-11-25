@@ -5,55 +5,7 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedCharacter
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.IntegralApproximationByInteger
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.IsUnitRedP
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedNormLattice.UniformContinuityGaloisGroup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.IaDivDown
 public import Mathlib.Algebra.BigOperators.Field
 
@@ -124,12 +76,12 @@ theorem jq_DA {q kj n c : ℕ} {g : Sp E (n + c) ≃ₗ[E] Sp E (n + c)} (hg : g
     intro l'
     unfold eN
     by_cases hl' : l'.1 = j
-    · rw [if_neg (by rw [hl']; exact hj), if_pos hl']
+    · rw [ite_eq_right (by rw [hl']; exact hj), ite_eq_left hl']
       simpa using ia_one (P := P)
-    · rw [if_neg hl', mul_zero]
+    · rw [ite_eq_right hl', mul_zero]
       exact ia_zero (P := P)
   have h3 := (mem_parL' _).mp ((h2 _).mpr hej) l
-  rw [if_pos hl, zpow_one] at h3
+  rw [ite_eq_left hl, zpow_one] at h3
   rwa [div_eq_inv_mul]
 
 theorem apply_sum' {N : ℕ} (f : Sp E N ≃ₗ[E] Sp E N) (v : Sp E N) (i : Fin N) :
@@ -273,7 +225,7 @@ theorem supp_comp {g : Sp E (n + c) ≃ₗ[E] Sp E (n + c)} (hg : g ∈ JQ P q k
     by_cases hr : r ≤ p''
     · rw [mul_div_assoc]
       exact ia_mul (P := P) (gm_int hqq h1 h2 h3 h4 h5 hg p p'' hp) (hyB p'' p' hr hp''' hp')
-    · push_neg at hr
+    · push Not at hr
       rw [mul_div_right_comm]
       refine ia_mul (P := P) ?_ (hyA p'' p' hp''' (by omega))
       rw [atN_of_lt _ (fIdx_lt (le_trans h2 h3) hp)]
@@ -360,14 +312,14 @@ theorem jacobian_transformation_law : JLawP := by
       · simp [eN]
       · intro b _ hb
         simp only [eN]
-        rw [if_neg (fun h => hb (Fin.ext h)), mul_zero]
+        rw [ite_eq_right (fun h => hb (Fin.ext h)), mul_zero]
       · intro h
         exact absurd (Finset.mem_univ _) h]
     rw [hM0]
     beta_reduce
     by_cases hc : p' < r ∧ p = p'
-    · rw [if_pos hc, if_pos ⟨p', hc.1, by show fIdx k₀ c n p = fIdx k₀ c n p'; rw [hc.2], rfl⟩]
-    · rw [if_neg hc, if_neg]
+    · rw [ite_eq_left hc, ite_eq_left ⟨p', hc.1, by show fIdx k₀ c n p = fIdx k₀ c n p'; rw [hc.2], rfl⟩]
+    · rw [ite_eq_right hc, ite_eq_right]
       rintro ⟨t, ht, e1, e2⟩
       have i1 := fIdx_inj hp (by omega : t < n + c) hk e1
       have i2 := fIdx_inj hp' (by omega : t < n' + c') h5 e2
@@ -378,7 +330,7 @@ theorem jacobian_transformation_law : JLawP := by
       split_ifs
       · exact ia_one (P := P)
       · exact ia_zero (P := P)
-    · rw [hent0 p p' hp (by omega), if_neg (by omega), zero_div]
+    · rw [hent0 p p' hp (by omega), ite_eq_right (by omega), zero_div]
       exact ia_zero (P := P)
   have hA0 : AYm (qOf P) k₀ r c' n' c n (Matrix.toLin' M0) = 1 := by
     ext s t
@@ -387,7 +339,7 @@ theorem jacobian_transformation_law : JLawP := by
     by_cases hst : s = t
     · subst hst
       simp
-    · rw [if_neg, if_neg hst]
+    · rw [ite_eq_right, ite_eq_right hst]
       rintro ⟨-, h⟩
       exact hst (Fin.ext h)
   have hr1 : redP P (1 : E) = 1 := PI.TwChrOne.Pf.reduction_one₂ P
@@ -404,13 +356,13 @@ theorem jacobian_transformation_law : JLawP := by
   rw [phi_eq, phi_eq]
   by_cases hy : CondQ P (qOf P) k₀ r c' n' c n y
   · have hgy := supp_comp rfl h1 h2 h3 h4 h5 hg hy
-    rw [if_pos hgy, if_pos hy]
+    rw [ite_eq_left hgy, ite_eq_left hy]
     exact unitV_eq_mul_of_redP_eq_mul ξ hGA (det_comp rfl h1 h2 h3 h4 h5 hp hg hy)
   · have hgy : ¬ CondQ P (qOf P) k₀ r c' n' c n (κ.symm.toLinearMap ∘ₗ y) := by
       intro h'
       apply hy
       have h6 := supp_comp rfl h1 h2 h3 h4 h5 hκ h'
       rwa [hcomp y] at h6
-    rw [if_neg hgy, if_neg hy, mul_zero]
+    rw [ite_eq_right hgy, ite_eq_right hy, mul_zero]
 
 end PI.TwistedEisensteinNonvanishing.W

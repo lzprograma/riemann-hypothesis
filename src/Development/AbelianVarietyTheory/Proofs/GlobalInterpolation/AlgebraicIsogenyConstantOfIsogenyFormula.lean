@@ -58,8 +58,7 @@ theorem qbar_of_pow {x : ℂ} {n : ℕ} (hn : 0 < n) (h : x ^ n ∈ Formalism.Ma
   (qbar_iff x).2 (IsAlgebraic.of_pow hn ((qbar_iff _).1 h))
 
 theorem nat_mem (n : ℕ) [n.AtLeastTwo] : (OfNat.ofNat n : ℂ) ∈ Formalism.MainNotions.TaylorLogMetric.Qbar := by
-  have h : ((n : ℕ) : ℂ) ∈ Formalism.MainNotions.TaylorLogMetric.Qbar := natCast_mem _ n
-  simpa using h
+  exact Formalism.L2.KerInert.Sigma.ChartWirtingerDerivatives.nat_mem n
 
 open PowerSeries
 
@@ -74,10 +73,6 @@ theorem algebraic_isogenyConstant_of_isogenyFormula (e : PowerSeries ℂ) (he : 
 
 theorem alpha_sq (dK : ℕ) :
     (((-1 : ℤ) : ℂ) + ((2 : ℤ) : ℂ) * Formalism.L2.Th1.CM.omegaK dK) ^ 2 = -(dK : ℂ) := by
-  have h : (((Real.sqrt dK : ℝ) : ℂ)) ^ 2 = (dK : ℂ) := by
-    rw [← Complex.ofReal_pow, Real.sq_sqrt (Nat.cast_nonneg _)]; simp
-  have e : (((-1 : ℤ) : ℂ) + ((2 : ℤ) : ℂ) * Formalism.L2.Th1.CM.omegaK dK) = Complex.I * ((Real.sqrt dK : ℝ) : ℂ) := by
-    unfold Formalism.L2.Th1.CM.omegaK; push_cast; ring
-  rw [e, mul_pow, h, Complex.I_sq]; ring
+  exact Formalism.L2.KerInert.Sigma.ChartWirtingerDerivatives.alpha_sq dK
 
 end GlobalTheory.IsogConst

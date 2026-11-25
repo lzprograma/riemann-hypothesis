@@ -5,48 +5,10 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentati
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.DiffIdealNeBot
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.CoeCj
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.HTOsmulRight
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelativeEquivalence.DCRelEquivAllHolds
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
+import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeGluingRadicals
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.NormRepLift, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.FrameActOneAdd, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.IntLatOfUnimod, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.ResidueOnto, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.GlobalDual, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.PreRowvec, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.NormRepStepOfTrace
@@ -63,8 +25,6 @@ open scoped Classical
 namespace PI.NormRepLift
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable (D : D7) (u u' : D.what₂.Word)
 
@@ -96,21 +56,8 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {r : ℕ} {T : E}
 
-theorem Xflag_mono (F : LFlag S r T) (j : ℕ) : Xflag F j ≤ Xflag F (j + 1) := by
-  show Submodule.span E (F.fl.e '' {i | i.1 < j}) ≤ Submodule.span E (F.fl.e '' {i | i.1 < j + 1})
-  exact Submodule.span_mono (Set.image_mono fun i hi => by
-    simp only [Set.mem_setOf_eq] at hi ⊢
-    omega)
-
 theorem X_le_orth (F : LFlag S r T) : Xsp F ≤ orth S (Xsp F) := by
-  intro x hx
-  simp only [orth, Submodule.mem_iInf, LinearMap.mem_ker]
-  intro y hy
-  refine span_zero (φ := S.hT y) (fun z hz => ?_) hx
-  obtain ⟨i, rfl⟩ := hz
-  rw [herm_eq, span_zero (φ := S.hT (F.fl.e i)) (fun z hz => by
-    obtain ⟨k, rfl⟩ := hz
-    exact F.fl.e_iso i k) hy, star_zero]
+  apply _root_.Formalism.MainNotions.LatticeGluingRadicals.c_X_iso <;> assumption
 
 theorem NLam_mul (Λ : Submodule (𝓞 E) S.V) (F : LFlag S r T) {n₁ n₂ : S.V ≃ₗ[E] S.V}
     (h₁ : n₁ ∈ NLam Λ F) (h₂ : n₂ ∈ NLam Λ F) : n₁ * n₂ ∈ NLam Λ F := by
@@ -196,9 +143,9 @@ theorem exists_undo (Λ : Submodule (𝓞 E) S.V) (hint : IntLat Λ) (F : LFlag 
     have hw : ∀ c, S.hT v (frame F c) = (w c : E) := by
       intro c
       by_cases hc : a < c
-      · simp only [w, dif_pos hc]
+      · simp only [w, dite_eq_left hc]
         exact hq c hc
-      · simp only [w, dif_neg hc]
+      · simp only [w, dite_eq_right hc]
         have hcr : c.val < r := by
           have h' : ¬ a.val < c.val := fun h => hc (Fin.lt_def.mpr h)
           omega
@@ -211,9 +158,9 @@ theorem exists_undo (Λ : Submodule (𝓞 E) S.V) (hint : IntLat Λ) (F : LFlag 
           exact Fin.le_def.mpr (by simp only; omega)
         rw [hfc, hperp c' hle]
         simp
-    refine ⟨w, fun c hc => ?_, fun c hc => ⟨q c hc, by simp only [w, dif_pos hc]⟩, ?_⟩
+    refine ⟨w, fun c hc => ?_, fun c hc => ⟨q c hc, by simp only [w, dite_eq_left hc]⟩, ?_⟩
     · have hnc : ¬ a < c := not_lt.mpr hc
-      simp only [w, dif_neg hnc]
+      simp only [w, dite_eq_right hnc]
     · refine ⟨tvEquiv (F.fl.e ⟨a.val, ha⟩) v (l : E) hee hev hve,
         tv_mem_NLam Λ hint F ⟨a.val, ha⟩ (hfe _) v hv hperp l hl hee hev hve, ?_⟩
       have hact := tv_actsBy F ⟨a.val, ha⟩ v (l : E) hee hev hve w hw
@@ -246,8 +193,6 @@ open scoped Classical
 namespace PI.NRL
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def RowVec (D : D7) (u : D.what₂.Word) (T' : ℕ) : Prop :=
   PrimeHyp D u T' →
@@ -402,8 +347,7 @@ theorem residue_onto (c : Fin r) :
       · rw [← Ideal.Quotient.eq_zero_iff_mem]
 
         simpa [map_sum, map_mul, hα', mk] using hz
-      · set_option synthInstance.maxHeartbeats 100000 in
-          rw [map_sum]
+      · rw [map_sum]
         push_cast
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [hT_osmul_right, ho]; ring)
@@ -418,8 +362,8 @@ theorem residue_onto (c : Fin r) :
   have := hφ i
   simp only at this
   by_cases hic : i = c
-  · simp only [hic, if_true] at this ⊢; rw [map_one]; exact this.symm
-  · simp only [hic, if_false] at this ⊢; rw [map_zero]; exact this.symm
+  · simp only [hic, ite_true] at this ⊢; rw [map_one]; exact this.symm
+  · simp only [hic, ite_false] at this ⊢; rw [map_zero]; exact this.symm
 
 include hU hint hind he hloc in
 theorem exact_dual (c : Fin r) :
@@ -548,12 +492,12 @@ theorem pre_rowvec (Λ : Submodule (𝓞 E) S.V) (hint : IntLat Λ) (Tn : ℕ) (
 
     rw [map_sum, LinearMap.sum_apply, Finset.sum_eq_single i]
     · by_cases hai : a < i
-      · rw [if_pos hai, if_pos hai, hT_cj_left, hq]
-      · rw [if_neg hai, if_neg hai, zero_smul, map_zero, LinearMap.zero_apply]
+      · rw [ite_eq_left hai, ite_eq_left hai, hT_cj_left, hq]
+      · rw [ite_eq_right hai, ite_eq_right hai, zero_smul, map_zero, LinearMap.zero_apply]
     · intro c _ hci
       by_cases hac : a < c
-      · rw [if_pos hac, hT_cj_left, h0 c i (Ne.symm hci), mul_zero]
-      · rw [if_neg hac, zero_smul, map_zero, LinearMap.zero_apply]
+      · rw [ite_eq_left hac, hT_cj_left, h0 c i (Ne.symm hci), mul_zero]
+      · rw [ite_eq_right hac, zero_smul, map_zero, LinearMap.zero_apply]
     · intro h; exact absurd (Finset.mem_univ i) h
   obtain ⟨ζ, hζ⟩ := hint v₀ hv₀ F.fl.z hz
   obtain ⟨x, y', hxy⟩ := hTg
@@ -567,7 +511,7 @@ theorem pre_rowvec (Λ : Submodule (𝓞 E) S.V) (hint : IntLat Λ) (Tn : ℕ) (
   have hve : ∀ i, S.hT v (F.fl.e i) = S.hT v₀ (F.fl.e i) := by
     intro i; simp only [v, map_add (f := _), LinearMap.add_apply, hT_cj_left, hze, mul_zero, add_zero]
   refine ⟨v, Λ.add_mem hv₀ (Λ.smul_mem _ hz), fun i hi => ?_, fun c hc => ?_⟩
-  · rw [hve, hv0e, if_neg (not_lt.mpr hi)]
+  · rw [hve, hv0e, ite_eq_right (not_lt.mpr hi)]
   · induction c using Fin.lastCases with
     | last =>
       refine ⟨y' * (ζ - t (Fin.last r)), ?_⟩
@@ -580,7 +524,7 @@ theorem pre_rowvec (Λ : Submodule (𝓞 E) S.V) (hint : IntLat Λ) (Tn : ℕ) (
       have hai : a < i := Fin.castSucc_lt_castSucc_iff.mp hc
       refine ⟨t i.castSucc * q i, ?_⟩
       have hfi : frame F (Fin.castSucc i) = F.fl.e i := by simp [frame, FlagG.fvec]
-      rw [hfi, hve, hv0e, if_pos hai]
+      rw [hfi, hve, hv0e, ite_eq_left hai]
       push_cast; ring
 
 theorem coe_nat (N : ℕ) : ((N : 𝓞 E) : E) = (N : E) := map_natCast (algebraMap (𝓞 E) E) N
@@ -632,8 +576,6 @@ open scoped Classical
 namespace PI.NRL
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def TraceOne (D : D7) : Prop := ∃ ω : 𝓞 D.host.E, (ω : D.host.E) + star (ω : D.host.E) = 1
 

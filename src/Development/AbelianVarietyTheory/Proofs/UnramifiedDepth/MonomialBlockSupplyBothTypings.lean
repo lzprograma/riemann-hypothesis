@@ -86,7 +86,7 @@ def Low (α : σ →₀ ℕ) (g : MvPowerSeries σ C) : Prop :=
 theorem low_one : Low (0 : σ →₀ ℕ) (1 : MvPowerSeries σ C) := by
   classical
   refine ⟨by simp, fun m _ hm => ?_⟩
-  rw [MvPowerSeries.coeff_one, if_neg hm]
+  rw [MvPowerSeries.coeff_one, ite_eq_right hm]
 
 theorem Low.term {α β : σ →₀ ℕ} {g h : MvPowerSeries σ C} (hg : Low α g) (hh : Low β h)
     (a b : σ →₀ ℕ) (hd : a.degree + b.degree ≤ α.degree + β.degree) (hne : (a, b) ≠ (α, β)) :
@@ -97,7 +97,7 @@ theorem Low.term {α β : σ →₀ ℕ} {g h : MvPowerSeries σ C} (hg : Low α
   by_cases hb : b.degree ≤ β.degree ∧ b ≠ β
   · rw [hh.2 b hb.1 hb.2, mul_zero]
   exfalso
-  push_neg at ha hb
+  push Not at ha hb
   by_cases ha' : a = α
   · by_cases hb' : b = β
     · exact hne (by rw [ha', hb'])
@@ -163,10 +163,10 @@ theorem low_tangent {t : σ → MvPowerSeries σ C} (ht : TangentId t) (x : σ) 
   classical
   have h1 : Low (Finsupp.single x 1) (t x) := by
     refine ⟨?_, ?_⟩
-    · rw [ht x _ (by rw [Finsupp.degree_single]), MvPowerSeries.coeff_X, if_pos rfl]
+    · rw [ht x _ (by rw [Finsupp.degree_single]), MvPowerSeries.coeff_X, ite_eq_left rfl]
     · intro m hm hne
       rw [Finsupp.degree_single] at hm
-      rw [ht x m hm, MvPowerSeries.coeff_X, if_neg hne]
+      rw [ht x m hm, MvPowerSeries.coeff_X, ite_eq_right hne]
   have h2 := h1.pow n
   rwa [Finsupp.smul_single, smul_eq_mul, mul_one] at h2
 
@@ -185,14 +185,14 @@ theorem coeff_kill (p : σ → Prop) [DecidablePred p] (m : σ →₀ ℕ) (hm :
         apply Finset.prod_congr rfl
         intro x hx
         dsimp only
-        rw [if_pos (hu x hx)]
+        rw [ite_eq_left (hu x hx)]
       rw [h, MvPolynomial.algebraMap_eq, ← MvPolynomial.monomial_eq]
-    · push_neg at hu
+    · push Not at hu
       obtain ⟨x, hx, hpx⟩ := hu
       have hz : (u.prod fun i k => (if p i then MvPolynomial.X i else 0 : MvPolynomial σ C) ^ k) = 0 := by
         rw [Finsupp.prod]
         apply Finset.prod_eq_zero hx
-        rw [if_neg hpx]
+        rw [ite_eq_right hpx]
         exact zero_pow (Finsupp.mem_support_iff.1 hx)
       have hne : u ≠ m := by
         intro h
@@ -249,7 +249,7 @@ theorem jet_eq {α : σ →₀ ℕ} {P : MvPolynomial σ C} {g : MvPowerSeries �
   obtain ⟨hk, hh, hs⟩ := hP
   obtain ⟨h1, h0⟩ := hg
   have hcoef : AddMonoidAlgebra.coeff P α = 1 := by
-    rw [← coeff_kill p α hs P, hk, MvPolynomial.coeff_monomial, if_pos rfl]
+    rw [← coeff_kill p α hs P, hk, MvPolynomial.coeff_monomial, ite_eq_left rfl]
   unfold jetAt0
   rw [Finset.sum_eq_single α]
   · rw [hcoef, h1]
@@ -435,11 +435,11 @@ theorem dg_apply (j : Fin N × Fin N' → σ) (hj : Function.Injective j) (f : �
   rw [Finsupp.finsetSum_apply, Finset.sum_eq_single b.val]
   · unfold dgOne
     by_cases hbc : b.val = c.val
-    · rw [if_pos hbc, dite_eq_left ⟨b.isLt, by rw [hbc]; exact c.isLt⟩, Finsupp.single_apply,
-        if_pos (by congr 1; exact Prod.ext (Fin.ext rfl) (Fin.ext hbc))]
-    · rw [if_neg hbc]
+    · rw [ite_eq_left hbc, dite_eq_left ⟨b.isLt, by rw [hbc]; exact c.isLt⟩, Finsupp.single_apply,
+        ite_eq_left (by congr 1; exact Prod.ext (Fin.ext rfl) (Fin.ext hbc))]
+    · rw [ite_eq_right hbc]
       split_ifs with h
-      · rw [Finsupp.single_apply, if_neg]
+      · rw [Finsupp.single_apply, ite_eq_right]
         intro he
         have h' := congrArg (fun x => x.2.val) (hj he)
         exact hbc (by simpa using h')
@@ -447,7 +447,7 @@ theorem dg_apply (j : Fin N × Fin N' → σ) (hj : Function.Injective j) (f : �
   · intro ρ _ hρ
     unfold dgOne
     split_ifs with h
-    · rw [Finsupp.single_apply, if_neg]
+    · rw [Finsupp.single_apply, ite_eq_right]
       intro he
       have h' := congrArg (fun x => x.1.val) (hj he)
       exact hρ (by simpa using h')
@@ -464,21 +464,13 @@ theorem dg_apply_of_notMem (j : Fin N × Fin N' → σ) (f : ℕ → ℕ) (x : �
   intro ρ _
   unfold dgOne
   split_ifs
-  · rw [Finsupp.single_apply, if_neg (fun h => hx _ h.symm)]
+  · rw [Finsupp.single_apply, ite_eq_right (fun h => hx _ h.symm)]
   · rfl
 
 end Diagonal
 
 section Valuation
 variable {C : Type} [Field C] (v : AddValuation C (WithTop ℝ))
-
-theorem val_nat_nonneg (n : ℕ) : 0 ≤ v (n : C) := by
-  classical
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    push_cast
-    exact le_trans (le_min ih (AddValuation.map_one v).ge) (AddValuation.map_add v _ _)
 
 theorem val_coprime {l : ℕ} (hl : l.Prime) (hv : v (l : C) = 1) {n : ℕ} (hn : ¬ l ∣ n) :
     v (n : C) = 0 := by

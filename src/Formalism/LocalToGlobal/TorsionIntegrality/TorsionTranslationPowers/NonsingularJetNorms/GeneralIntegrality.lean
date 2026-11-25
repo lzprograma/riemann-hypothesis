@@ -73,7 +73,7 @@ theorem coeff_tensor4 (f : MvPowerSeries n K) (ν : n →₀ ℕ) :
       ext i
       have := DFunLike.congr_fun hL.1 (b, i)
       simp only [Finsupp.coe_finsetSum, Finset.sum_apply, hμ, blk_apply, Finset.sum_ite_eq',
-        Finset.mem_univ, if_true] at this
+        Finset.mem_univ, ite_true] at this
       exact this
     ext1 a
     rw [hμ, hμν]

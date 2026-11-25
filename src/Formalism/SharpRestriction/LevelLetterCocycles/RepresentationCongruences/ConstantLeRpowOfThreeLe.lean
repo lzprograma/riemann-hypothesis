@@ -119,27 +119,8 @@ private theorem addVal_l_eq_eO (hl0 : (l : O) ≠ 0) :
 private theorem addVal_natCast_eq_of_l_mem_maximalIdeal (hl : (l : O) ∈ IsLocalRing.maximalIdeal O) (hl0 : (l : O) ≠ 0)
     (n : ℕ) (hn : n ≠ 0) :
     IsDiscreteValuationRing.addVal O (n : O) = ((eO (O := O) l * padicValNat l n : ℕ) : ℕ∞) := by
-  have hp : l.Prime := Fact.out
-  obtain ⟨v, m, hm, rfl⟩ := Nat.exists_eq_pow_mul_and_not_dvd hn l hp.one_lt.ne'
-  have hm0 : m ≠ 0 := by
-    rintro rfl
-    exact hm (dvd_zero l)
-  have hcop : Nat.Coprime l m := (Nat.Prime.coprime_iff_not_dvd hp).2 hm
-  have hunit : IsUnit (m : O) := by
-    rw [← IsLocalRing.notMem_maximalIdeal]
-    intro hmem
-    obtain ⟨a, b, hab⟩ := (Nat.Coprime.isCoprime hcop).map (Int.castRingHom O)
-    simp only [eq_intCast, Int.cast_natCast] at hab
-    have h1 : (1 : O) ∈ IsLocalRing.maximalIdeal O := by
-      rw [← hab]
-      exact Ideal.add_mem _ (Ideal.mul_mem_left _ _ hl) (Ideal.mul_mem_left _ _ hmem)
-    exact (IsLocalRing.maximalIdeal.isMaximal O).ne_top ((Ideal.eq_top_iff_one _).2 h1)
-  push_cast
-  rw [IsDiscreteValuationRing.addVal_mul, IsDiscreteValuationRing.addVal_pow,
-    IsDiscreteValuationRing.addVal_eq_zero_iff.2 hunit, addVal_l_eq_eO hϖ hl0,
-    (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (pow_ne_zero _ hp.ne_zero) hm0, Nat.padicValNat_def, Nat.multiplicity_prime_pow,
-    Nat.padicValNat_def, multiplicity_eq_zero_of_not_dvd hm]
-  simp [nsmul_eq_mul, mul_comm]
+  intros
+  apply _root_.Formalism.MainNotions.N.FrobeniusPowerSeries.ContPA.addVal_natCast <;> assumption
 
 private theorem natCast_ne_zero_of_l_mem_maximalIdeal (hl : (l : O) ∈ IsLocalRing.maximalIdeal O) (hl0 : (l : O) ≠ 0)
     (n : ℕ) (hn : n ≠ 0) : (n : O) ≠ 0 := by

@@ -5,50 +5,6 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.Commutative
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DTrCoeff
 import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.HomTwo
 import Mathlib.Algebra.DualNumber
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
 
 @[expose] public section
@@ -67,16 +23,6 @@ private lemma map_smul_c {B B' : Type} [CommRing B] [Algebra A B] [CommRing B'] 
   | tmul a b => simp [smul_tmul']
   | add a b ha hb => simp only [smul_add, map_add (f := _), ha, hb]
 
-private lemma map_map_c {B B' B'' : Type} [CommRing B] [Algebra A B] [CommRing B'] [Algebra A B']
-    [CommRing B''] [Algebra A B''] (φ : B →ₐ[A] B') (ψ : B' →ₐ[A] B'') (χ : B →ₐ[A] B'') (h : ∀ b, ψ (φ b) = χ b)
-    (w : B ⊗[A] E) :
-    Algebra.TensorProduct.map ψ (AlgHom.id A E) (Algebra.TensorProduct.map φ (AlgHom.id A E) w) =
-      Algebra.TensorProduct.map χ (AlgHom.id A E) w := by
-  induction w using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a b => simp [h]
-  | add a b ha hb => simp only [map_add (f := _), ha, hb]
-
 private lemma add_of_homog (f : ∀ (B : Type) [CommRing B] [Algebra A B], B ⊗[A] E → B)
     (nat : ∀ (B B' : Type) [CommRing B] [Algebra A B] [CommRing B'] [Algebra A B'] (φ : B →ₐ[A] B') (x : B ⊗[A] E),
       f B' (Algebra.TensorProduct.map φ (AlgHom.id A E) x) = φ (f B x))
@@ -92,9 +38,15 @@ private lemma add_of_homog (f : ∀ (B : Type) [CommRing B] [Algebra A B], B ⊗
        (TrivSqZeroExt.inr (g (0, 1)) : TrivSqZeroExt B B) • Algebra.TensorProduct.map i1 (AlgHom.id A E) y)).snd := by
     intro g
     have h := nat _ _ ((TrivSqZeroExt.map g).restrictScalars A) z
-    have hc : ∀ b, ((TrivSqZeroExt.map g).restrictScalars A) (i2 b) = i1 b := fun b =>
-      (TrivSqZeroExt.map g).commutes b
-    simp only [z, map_add (f := _), map_smul_c, map_map_c i2 _ i1 hc] at h
+    have hi : ((TrivSqZeroExt.map g).restrictScalars A).comp i2 = i1 :=
+      AlgHom.ext fun b => (TrivSqZeroExt.map g).commutes b
+    have hcomp : ∀ w,
+        Algebra.TensorProduct.map ((TrivSqZeroExt.map g).restrictScalars A) (AlgHom.id A E)
+          (Algebra.TensorProduct.map i2 (AlgHom.id A E) w) =
+        Algebra.TensorProduct.map i1 (AlgHom.id A E) w := fun w => by
+      rw [← AlgHom.comp_apply, ← Algebra.TensorProduct.map_comp, AlgHom.comp_id, hi]
+    dsimp only [z] at h
+    rw [map_add, map_smul_c, map_smul_c, hcomp x, hcomp y] at h
     have h2 := congrArg TrivSqZeroExt.snd h
     simp only [AlgHom.restrictScalars_apply, TrivSqZeroExt.map_inr, TrivSqZeroExt.snd_map] at h2
     exact h2.symm
@@ -138,10 +90,6 @@ private lemma ee (he : IsIdempotentElem e) (B : Type) [CommRing B] [Algebra A B]
     ((1 : B) ⊗ₜ[A] e) * ((1 : B) ⊗ₜ[A] e) = (1 : B) ⊗ₜ[A] e := by
   rw [Algebra.TensorProduct.tmul_mul_tmul, he.eq, one_mul]
 
-private lemma tmul_eq (B : Type) [CommRing B] [Algebra A B] (b : B) (x : E) :
-    b ⊗ₜ[A] x = b • ((1 : B) ⊗ₜ[A] x) := by
-  simp [smul_tmul']
-
 private lemma cornerF_hom (he : IsIdempotentElem e) (h1 : D.D A[X] (1 + X ⊗ₜ e) = 1 + X)
     (B : Type) [CommRing B] [Algebra A B] (b : B) (x : B ⊗[A] E) :
     cornerF D e B (b • x) = b * cornerF D e B x := by
@@ -150,7 +98,7 @@ private lemma cornerF_hom (he : IsIdempotentElem e) (h1 : D.D A[X] (1 + X ⊗ₜ
   rw [add_sub_cancel] at h
   conv_rhs => rw [← h, ← map_mul]
   congr 1
-  rw [tmul_eq B (b - 1)]
+  rw [TensorProduct.tmul_eq_smul_one_tmul (b - 1)]
   have h2 := ee (A := A) he B
   generalize ((1 : B) ⊗ₜ[A] e) = ε at h2 ⊢
   simp only [add_mul, mul_add, mul_sub, one_mul, mul_one, smul_mul_assoc, mul_smul_comm, ← mul_assoc, h2, sub_smul,
@@ -164,12 +112,13 @@ private lemma cornerF_add (he : IsIdempotentElem e) (h1 : D.D A[X] (1 + X ⊗ₜ
 
 private lemma cornerF_e (he : IsIdempotentElem e) (h1 : D.D A[X] (1 + X ⊗ₜ e) = 1 + X)
     (B : Type) [CommRing B] [Algebra A B] (b : B) : cornerF D e B (b ⊗ₜ e) = b := by
-  rw [tmul_eq, cornerF_hom he h1, cornerF, ee he, ee he, sub_add_cancel, map_one, mul_one]
+  rw [TensorProduct.tmul_eq_smul_one_tmul, cornerF_hom he h1, cornerF, ee he, ee he,
+    sub_add_cancel, map_one, mul_one]
 
 private lemma cornerF_tmul (he : IsIdempotentElem e) (h1 : D.D A[X] (1 + X ⊗ₜ e) = 1 + X)
     (B : Type) [CommRing B] [Algebra A B] (b : B) (u : E) :
     cornerF D e B (b ⊗ₜ u) = b * algebraMap A B (cornerF D e A (1 ⊗ₜ u)) := by
-  rw [tmul_eq, cornerF_hom he h1]
+  rw [TensorProduct.tmul_eq_smul_one_tmul, cornerF_hom he h1]
   congr 1
   have := cornerF_nat D e A B (Algebra.ofId A B) (1 ⊗ₜ u)
   simpa [Algebra.ofId_apply] using this
@@ -183,7 +132,7 @@ private lemma cornerF_tr (he : IsIdempotentElem e) (h1 : D.D A[X] (1 + X ⊗ₜ 
   rw [cornerF_add he h1, cornerF_e he h1, cornerF_tmul he h1, (d_chi D u).2.2.1] at h
   have h2 := congrArg (fun p => p.coeff 1) h
   simp only [finsetSum_coeff, coeff_C_mul_X_pow] at h2
-  rw [Finset.sum_ite_eq, if_pos (Finset.mem_range.2 (by omega))] at h2
+  rw [Finset.sum_ite_eq, ite_eq_left (Finset.mem_range.2 (by omega))] at h2
   simpa [Det.tr, coeff_one] using h2
 
 private lemma compl_e (he : IsIdempotentElem e) (h1 : D.D A[X] (1 + X ⊗ₜ e) = 1 + X) (hn : 1 ≤ n)

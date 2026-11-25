@@ -224,7 +224,7 @@ theorem nodes_of_parameters : ∀ eps : ℝ, 0 < eps → eps < 1 / 52 → ∃ x0
     have hwj := S.wj_ge L τ (j.1 + 1) (by omega) (by omega)
     have e : wj D (j.1 + 1) τ = (((D.hc τ).e j : ℚ) : ℝ) := by
       have : j.1 + 1 - 1 < D.R.m := by omega
-      simp only [wj, dif_pos this]
+      simp only [wj, dite_eq_left this]
       rfl
     rw [e] at hwj
     have hc := abs_le.1 (L.be_close τ j j)

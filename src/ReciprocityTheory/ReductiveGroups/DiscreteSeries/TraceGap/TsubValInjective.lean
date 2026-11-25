@@ -26,17 +26,12 @@ namespace ReciprocityTheory.ChartRestriction.DS.TRGap
 
 variable {n : ℕ} {ε : Fin n → Bool}
 
-theorem kset_mem_UJset {k : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε) : k ∈ UJset ε := by
-  show kᴴ * Jm ε * k = Jm ε
-  rw [mul_assoc, ← hk.2, ← mul_assoc, ← Matrix.star_eq_conjTranspose,
-    (Matrix.mem_unitaryGroup_iff').1 hk.1, one_mul]
-
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
   {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} {D : Submodule ℂ H} {E : Fin n → Fin n → Module.End ℂ D}
 
 theorem inner_sigD (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E) {k : Matrix (Fin n) (Fin n) ℂ}
     (hk : k ∈ Kset ε) (u v : D) : inner ℂ (sigD hD hk u) (sigD hD hk v) = inner ℂ u v := by
-  let Lk : H →ₗᵢ[ℂ] H := { toLinearMap := (σ k : H →ₗ[ℂ] H), norm_map' := hσ.2.1 k (kset_mem_UJset hk) }
+  let Lk : H →ₗᵢ[ℂ] H := { toLinearMap := (σ k : H →ₗ[ℂ] H), norm_map' := hσ.2.1 k (ReciprocityTheory.ChartRestriction.DS.closure_inUJ_of_mem_Kset hk) }
   rw [Submodule.coe_inner, Submodule.coe_inner]
   exact Lk.inner_map_map u v
 
@@ -81,7 +76,7 @@ theorem wK_mul (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E) {a b 
     wK hD hab = wK hD ha ∘ₗ wK hD hb := by
   have hs : sigD hD hab = sigD hD ha ∘ₗ sigD hD hb := by
     ext v
-    simp [sigD, hσ.1.2 a (kset_mem_UJset ha) b (kset_mem_UJset hb)]
+    simp [sigD, hσ.1.2 a (ReciprocityTheory.ChartRestriction.DS.closure_inUJ_of_mem_Kset ha) b (ReciprocityTheory.ChartRestriction.DS.closure_inUJ_of_mem_Kset hb)]
   rw [wK, wK, wK, hs, ff_mul ha hb, ← TensorProduct.map_comp]
   rfl
 
@@ -159,7 +154,7 @@ variable (hD : IsDerivedOn ε σ D E) {S : Submodule ℂ (TensorProduct ℂ D (F
 
 theorem tOp_apply {k : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε) (x : TSub S) :
     tsubVal S (tOp hD hSK k x) = wK hD hk (tsubVal S x) := by
-  simp only [tOp, dif_pos hk]
+  simp only [tOp, dite_eq_left hk]
   rfl
 
 theorem tOp_isURepOn (hσ : IsURepOn (UJset ε) σ) :
@@ -194,7 +189,7 @@ theorem tOp_isURepOn (hσ : IsURepOn (UJset ε) σ) :
       refine ContinuousOn.congr ?_ hΨ
       refine continuousOn_pi.2 fun s => continuousOn_finsetSum _ fun s' _ => ?_
       exact (ffMat_continuous s s').continuousOn.smul
-        ((hσ.2.2 _).mono fun g hg => kset_mem_UJset hg)
+        ((hσ.2.2 _).mono fun g hg => ReciprocityTheory.ChartRestriction.DS.closure_inUJ_of_mem_Kset hg)
     have hinj : Function.Injective (coordH ∘ₗ tsubVal S) := coordH_injective.comp tsubVal_injective
     let e := LinearEquiv.ofInjective _ hinj
     have hcont : Continuous e.symm := LinearMap.continuous_of_finiteDimensional e.symm.toLinearMap
@@ -216,7 +211,7 @@ variable (hD : IsDerivedOn ε σ D E) {S : Submodule ℂ (TensorProduct ℂ D (F
 theorem tOp_trace {k : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε) :
     LinearMap.trace ℂ (TSub S) (tOp hD hSK k : TSub S →ₗ[ℂ] TSub S) =
       LinearMap.trace ℂ S ((wK hD hk).restrict (hSK k hk)) := by
-  simp only [tOp, dif_pos hk]
+  simp only [tOp, dite_eq_left hk]
   rfl
 
 theorem tOp_isKTypeOf (hσ : IsURepOn (UJset ε) σ) {γ : Fin n → ℝ}

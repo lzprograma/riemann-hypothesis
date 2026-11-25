@@ -141,8 +141,6 @@ section FixGlob
 
 variable {D : D7}
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem stVFix_holds (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word) : StVFix X u u' := by
   classical
   intro w hw v y hy hF hGF
@@ -191,9 +189,9 @@ theorem stVFix_holds (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.w
     intro c b
     rw [hZe]
     by_cases h : c.val = ptPar w.1 b.val
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       refine ⟨fun _ => Fin.ext h, fun _ => mul_ne_zero (pow_ne_zero _ (by norm_num)) (hne b.val b.2)⟩
-    · rw [if_neg h, map_zero, map_zero, mul_zero]
+    · rw [ite_eq_right h, map_zero, map_zero, mul_zero]
       exact ⟨fun h' => absurd rfl h', fun h' => absurd (congrArg Fin.val h') h⟩
   have hY1 := fix_loc (X.B.I.ε v) e z z' (uMat (γ v)) (uMat (γ v)⁻¹) (uMat y) (uMat ((γ v)⁻¹ * y * γ v))
     hGGi hG hee (hez u) (hez u') π hπ hP1 hy.1.2 hy.2.2 hYG hF hGF

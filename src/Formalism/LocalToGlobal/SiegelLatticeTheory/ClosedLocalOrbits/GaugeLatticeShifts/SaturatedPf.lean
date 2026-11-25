@@ -1,48 +1,8 @@
 module
 
+import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeGluingRadicals
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.Saturated
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -337,8 +297,6 @@ end Transport
 
 section D7
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7)
 
 theorem XS_mapFlag (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (hβ : β ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT) {T : D.host.E}
@@ -392,11 +350,7 @@ theorem isotropicSpan_orthogonal_anisotropicVector (F : LFlag S r T) : F.fl.z �
   exact hT_span_left (by rintro _ ⟨a, rfl⟩; exact F.fl.z_orth a)
 
 theorem X_le_orth_sat (F : LFlag S r T) : Xsp F ≤ orth S (Xsp F) := by
-  intro v hv
-  rw [mem_orth']
-  refine hT_span_left ?_
-  rintro _ ⟨a, rfl⟩
-  exact hT_span_right (fun x hx => by obtain ⟨b, rfl⟩ := hx; exact F.fl.e_iso a b) v hv
+  apply _root_.Formalism.MainNotions.LatticeGluingRadicals.c_X_iso <;> assumption
 
 theorem frame_last_sat (F : LFlag S r T) : frame F (Fin.last r) = F.fl.z := by
   simp [frame, FlagG.fvec]
@@ -814,8 +768,6 @@ end DC
 
 section D7
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7)
 
 theorem big_block_function_holds (u u' : D.what₂.Word) : BBFun D u u' := by
@@ -1015,8 +967,6 @@ end SplitEquiv
 
 section D7
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7)
 
 theorem Xa_r' {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {r : ℕ} {T : E}
@@ -1124,14 +1074,6 @@ theorem automorphism_induces_lattice_map (u : D.what₂.Word) (F0 : FlagG (VS D)
     rw [FlagG.Xa, Submodule.map_span, Set.image_image]
     congr 1
     exact Set.image_congr fun i _ => hβe i
-
-end D7
-
-section D7
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-variable {D : D7}
 
 end D7
 
@@ -1246,13 +1188,5 @@ theorem eq_of_locP {A B : Submodule (𝓞 E) S.V}
   exact le_antisymm (key A B h) (key B A fun P => (h P).symm)
 
 end Int
-
-section D7
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-variable (D : D7)
-
-end D7
 
 end Formalism.L2.SG.Pf

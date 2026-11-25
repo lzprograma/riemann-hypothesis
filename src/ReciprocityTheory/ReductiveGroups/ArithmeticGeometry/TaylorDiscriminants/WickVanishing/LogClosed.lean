@@ -2,56 +2,10 @@ module
 
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogInv
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogChain
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.DofComm
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -61,30 +15,10 @@ namespace ReciprocityTheory.ChartRestriction.G.TB.LogPf
 
 variable {k : Type} [CommRing k] {d : ℕ}
 
-private theorem cc_subst_lemma {σ τ : Type} [Fintype σ] {L : σ → MvPowerSeries τ k}
-    (hL0 : ∀ p, constantCoeff (L p) = 0) (F : MvPowerSeries σ k) :
-    constantCoeff (MvPowerSeries.subst L F) = constantCoeff F := by
-  classical
-  have hL : MvPowerSeries.HasSubst L := by
-    first
-      | exact MvPowerSeries.hasSubst_of_constantCoeff_zero hL0
-  rw [MvPowerSeries.constantCoeff_subst hL, finsum_eq_single _ 0]
-  · simp [MvPowerSeries.coeff_zero_eq_constantCoeff_apply]
-  · intro e he
-    obtain ⟨p, hp⟩ : ∃ p, e p ≠ 0 := by
-      by_contra hn
-      push_neg at hn
-      exact he (Finsupp.ext hn)
-    have hz : constantCoeff (e.prod fun s n => L s ^ n) = 0 := by
-      rw [Finsupp.prod, map_prod]
-      apply Finset.prod_eq_zero (Finsupp.mem_support_iff.mpr hp)
-      rw [map_pow, hL0, zero_pow hp]
-    rw [hz, smul_zero]
-
 theorem cc_ev {m n : ℕ} {a : Fin m → Pt k n d} (ha : CZ a) (f : PS k m d) :
     constantCoeff (ev a f) = constantCoeff f := by
-  unfold ev
-  exact cc_subst_lemma (σ := Fin m × Fin d) (τ := Fin n × Fin d) (L := fun p => a p.1 p.2) (fun p => ha p.1 p.2) f
+  have h0 : constantCoeff (ev a (f - C (constantCoeff f))) = 0 := constantCoeff_ev ha (by simp)
+  rwa [ev_sub ha, ev_C ha, map_sub, constantCoeff_C, sub_eq_zero] at h0
 
 variable (G : FGLaw k d)
 
@@ -93,20 +27,7 @@ theorem formalFamilyConstantCoeffZero_zero_secondVar : CZ (![0, pt k (n := 1) d 
   fin_cases j <;> simp [pt]
 
 theorem cc_jac (i b : Fin d) : constantCoeff (Jac G i b) = if i = b then 1 else 0 := by
-  have hE : CZ (![pt k (n := 1) d 0, 0] : Fin 2 → Pt k 1 d) := by
-    intro j i
-    fin_cases j <;> simp [pt]
-  have h := congrArg (pderiv (R := k) ((0 : Fin 1), b)) (G.unit i)
-  rw [pderiv_ev formalFamilyConstantCoeffZero_zero_secondVar, Fintype.sum_prod_type, Fin.sum_univ_two] at h
-  simp [pt, MvPowerSeries.pderiv_X, Pi.single_apply] at h
-  have h2 := congrArg constantCoeff h
-  rw [cc_ev formalFamilyConstantCoeffZero_zero_secondVar] at h2
-  show constantCoeff (ev (n := 1) ![pt k d 0, 0] (pderiv (R := k) ((1 : Fin 2), b) (G.F i))) = _
-  rw [cc_ev hE, h2]
-  by_cases hib : i = b
-  · subst hib
-    simp
-  · simp [hib]
+  apply _root_.ReciprocityTheory.ChartRestriction.G.TB.WickVanishing.Nab.cc_jac' <;> assumption
 
 def JM : Matrix (Fin d) (Fin d) (PS k 1 d) := Matrix.of (Jac G)
 
@@ -235,13 +156,8 @@ theorem om_P (i a : Fin d) :
   exact h
 
 theorem d_evF (h : PS k 1 d) (v : Fin 2 × Fin d) :
-    pderiv (R := k) v (ev (n := 2) ![G.F] h) = ∑ c, ev (n := 2) ![G.F] (pderiv (R := k) ((0 : Fin 1), c) h) * pderiv (R := k) v (G.F c) := by
-  have hF : CZ (![G.F] : Fin 1 → Pt k 2 d) := by
-    intro j i
-    fin_cases j
-    simpa using G.const i
-  rw [pderiv_ev hF, Fintype.sum_prod_type]
-  simp
+    pderiv (R := k) v (ev (n := 2) ![G.F] h) = ∑ c, ev (n := 2) ![G.F] (pderiv (R := k) ((0 : Fin 1), c) h) * pderiv (R := k) v (G.F c) :=
+  _root_.ReciprocityTheory.ChartRestriction.G.TB.WickVanishing.Nab.d_F G h v
 
 private alias CZ_pt_vector := _root_.ReciprocityTheory.ChartRestriction.G.TB.LogPf.cz1
 
@@ -294,7 +210,7 @@ theorem om_key (i a b : Fin d) :
   simp only [hsE, hz0, ev_mul hE, ev_add hE, ez_F, ez_dx, ez_dy,
     _root_.ReciprocityTheory.ChartRestriction.G.TB.LogPf.pderiv_comm ((1 : Fin 2), b) ((0 : Fin 2), a), ← hdJ] at hP2
   rw [Finset.sum_add_distrib] at hP2
-  simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true] at hP2
+  simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at hP2
   have hM := congrFun (congrFun (om_mul G) i) b
   rw [Matrix.mul_apply] at hM
   simp only [JM, Matrix.of_apply] at hM

@@ -238,7 +238,7 @@ theorem ideleSymbol_infiniteEmbedding_eq_one (L : Type*) [Field L] [NumberField 
   rw [ideleSymbol_infiniteEmbedding]
   by_cases hw : w.IsReal
   · obtain ⟨w'⟩ := IdeleNorm.nonempty_infinitePlacesOver L w
-    rw [infiniteLocalSymbol_apply L w hw w' z, if_neg (not_lt.2 (hz hw).le)]
+    rw [infiniteLocalSymbol_apply L w hw w' z, ite_eq_right (not_lt.2 (hz hw).le)]
   · rw [infiniteLocalSymbol_of_not_isReal L w hw, MonoidHom.one_apply]
 
 end Positive

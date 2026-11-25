@@ -4,6 +4,7 @@ public import GroundTheory.GlobalFields.TateThesis.AdeleMeasure
 public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.HasModerateGrowthZero
 public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Uniform
 import GroundTheory.AutomorphicForms.ReductionMeasure
+import GroundTheory.AutomorphicForms.FourierWhittaker.IsAddFundamentalDomainImageOfMapVecLattice
 import GroundTheory.GlobalFields.Adele.Topology
 import Mathlib.CategoryTheory.Countable
 import Mathlib.Dynamics.Ergodic.Action.Regular
@@ -85,7 +86,7 @@ theorem unipGL_injective : Function.Injective (unipGL : (UPos n r → R) → GL 
   intro X Y h
   funext p
   have := congrArg (fun g : GL (Fin n) R => (g : Matrix (Fin n) (Fin n) R) p.1.1 p.1.2) h
-  simp only [coe_unipGL, unipMatrix, Matrix.add_apply, blockEntry_apply, dif_pos p.2] at this
+  simp only [coe_unipGL, unipMatrix, Matrix.add_apply, blockEntry_apply, dite_eq_left p.2] at this
   simpa using this
 
 end Ring
@@ -123,46 +124,20 @@ def unipLattice : AddSubgroup (UPos n r → 𝔸[K]) :=
 
 variable {K n r}
 
-instance countable_unipLattice : Countable (unipLattice K n r) := by
-  have := GroundTheory.Global.countable_numberField K
-  have e : (unipLattice K n r : Set (UPos n r → 𝔸[K])) =
-      Set.range (AddMonoidHom.compLeft (algebraMap K 𝔸[K]).toAddMonoidHom (UPos n r)) :=
-    AddMonoidHom.coe_range _
-  have hc : (unipLattice K n r : Set (UPos n r → 𝔸[K])).Countable := e ▸ Set.countable_range _
-  exact hc.to_subtype
+instance countable_unipLattice : Countable (unipLattice K n r) :=
+  FourierWhittaker.countable_vecLattice
 
 theorem measurableSet_unipFundamentalDomain : MeasurableSet (unipFundamentalDomain K n r) :=
-  MeasurableSet.univ_pi fun _ => GroundTheory.Global.measurableSet_fundamentalSet K
+  FourierWhittaker.measurableSet_vecDomain
 
 theorem isAddFundamentalDomain_unipFundamentalDomain :
     IsAddFundamentalDomain (unipLattice K n r) (unipFundamentalDomain K n r)
-      (unipMeasure K n r) := by
-  classical
-  refine IsAddFundamentalDomain.mk' measurableSet_unipFundamentalDomain.nullMeasurableSet
-    fun X => ?_
-  choose k hk huniq using fun p => GroundTheory.Global.existsUnique_sub_mem_fundamentalSet K (X p)
-  refine ⟨⟨fun p => algebraMap K 𝔸[K] (-k p), fun p => -k p, rfl⟩, ?_, ?_⟩
-  · intro p _
-    change algebraMap K 𝔸[K] (-k p) + X p ∈ GroundTheory.Global.fundamentalSet K
-    rw [map_neg, neg_add_eq_sub]
-    exact hk p
-  · rintro ⟨_, ξ, rfl⟩ h
-    refine Subtype.ext (funext fun p => ?_)
-    have hp : algebraMap K 𝔸[K] (ξ p) + X p ∈ GroundTheory.Global.fundamentalSet K := h p (mem_univ p)
-    have : -ξ p = k p := huniq p (-ξ p) (by
-      show X p - algebraMap K 𝔸[K] (-ξ p) ∈ GroundTheory.Global.fundamentalSet K
-      rwa [map_neg, sub_neg_eq_add, add_comm])
-    change algebraMap K 𝔸[K] (ξ p) = algebraMap K 𝔸[K] (-k p)
-    rw [← this, neg_neg]
+      (unipMeasure K n r) :=
+  FourierWhittaker.isAddFundamentalDomain_vecDomain
 
 theorem exists_isCompact_superset_unipFundamentalDomain :
-    ∃ C, IsCompact C ∧ unipFundamentalDomain K n r ⊆ C := by
-  refine ⟨Set.univ.pi fun _ => closure (GroundTheory.Global.fundamentalSetInfinite K) ×ˢ
-    (GroundTheory.Global.integralFiniteAdeles (𝓞 K) K : Set (FiniteAdeleRing (𝓞 K) K)),
-    isCompact_univ_pi fun _ => (GroundTheory.Global.isCompact_closure_fundamentalSetInfinite K).prod
-      (GroundTheory.Global.isCompact_integralFiniteAdeles K), ?_⟩
-  intro X hX p _
-  exact ⟨subset_closure (hX p (mem_univ p)).1, (hX p (mem_univ p)).2⟩
+    ∃ C, IsCompact C ∧ unipFundamentalDomain K n r ⊆ C :=
+  FourierWhittaker.exists_isCompact_superset_vecDomain
 
 
 variable (r) in

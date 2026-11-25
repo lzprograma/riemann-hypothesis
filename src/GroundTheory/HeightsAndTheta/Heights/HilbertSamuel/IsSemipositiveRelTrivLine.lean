@@ -20,10 +20,6 @@ def ArithmeticVolumeDegreeZero.Statement : Prop :=
     IsConjInvariantH A → genDeg (mCoordIdeal y) D A.a ≤ 0 →
     II K ι (mCoordIdeal y) (D + 1) (fun _ => A) ≤ arVolP (IsSmallH (mCoordIdeal y) y A) (chartLat y A.a) 1 D
 
-namespace ArithmeticVolumeDegreeZero
-
-end ArithmeticVolumeDegreeZero
-
 end
 
 end GroundTheory.Heights₂.Heights.HilbertSamuel

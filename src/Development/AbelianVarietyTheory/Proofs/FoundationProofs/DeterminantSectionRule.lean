@@ -62,8 +62,6 @@ import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -115,8 +113,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.DeterminantSectionRule", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FibreIff\npublic import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.RamifiedPlacesSplitEigen\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LieCombBaseChange\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Development.AbelianVarietyTheory.Definitions.CMLattices.IsCyclotomicExtensionCyclotomicField28\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.VecMulMapEqZero\nimport Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsAbelianGaloisHost\nimport Formalism.LocalToGlobal.ProjectiveLattices.ErealAddIInf\nimport Formalism.SharpRestriction.CuspSpanNormBounds.Point\nimport Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -178,17 +174,17 @@ theorem comb_one {x : Sp R ⟶ S} {n : ℕ} {v : Fin n → (FramedFlatCoordinate
       have : epsScaleR (1 : R) = RingHom.id _ := by
         refine RingHom.ext fun x => ?_
         ext <;> simp [epsScaleR]
-      simp only [if_true, Matrix.one_apply_eq, this, spMap_id]
+      simp only [ite_true, Matrix.one_apply_eq, this, spMap_id]
       exact (Category.id_comp _).symm
     · have : epsScaleR (0 : R) = (algebraMap R (DualNumber R)).comp (TrivSqZeroExt.fstHom R R R).toRingHom := by
         refine RingHom.ext fun x => ?_
         ext <;> simp [epsScaleR, TrivSqZeroExt.algebraMap_eq_inl]
-      simp only [if_neg hk, Matrix.one_apply_ne (Ne.symm hk), this, spMap_comp]
+      simp only [ite_eq_right hk, Matrix.one_apply_ne (Ne.symm hk), this, spMap_comp]
       refine Eq.trans ?_ (Category.assoc _ _ _).symm
       refine Eq.trans ?_ (congrArg (spMap (algebraMap R (DualNumber R)) ≫ ·) (hv k)).symm
       let D : FramedFlatCoordinates.epsAt x ⟶ Over.mk x := Over.homMk (spMap (algebraMap R (DualNumber R))) rfl
       exact (congrArg CommaMorphism.left (MonObj.comp_one D)).symm
-  · rw [List.ofFn_eq_map, List.prod_map_eq_pow_single i _ (fun a h _ => if_neg h)]
+  · rw [List.ofFn_eq_map, List.prod_map_eq_pow_single i _ (fun a h _ => ite_eq_right h)]
     simp
 
 end Tangent

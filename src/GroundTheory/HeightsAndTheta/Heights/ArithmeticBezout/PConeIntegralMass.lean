@@ -35,39 +35,41 @@ theorem norm_zeroExt (m k : ℕ) (x : EuclideanSpace ℂ (Fin m)) : ‖zeroExt m
 theorem isometry_zeroExt (m k : ℕ) : Isometry (zeroExt m k) :=
   AddMonoidHomClass.isometry_of_norm (zeroExt m k) (norm_zeroExt m k)
 
+theorem coordBall_eq (m k : ℕ) :
+    {y : EuclideanSpace ℂ (Fin (m + k)) | ‖y‖ < 1 ∧ ∀ j : Fin (m + k), m ≤ (j : ℕ) → y j = 0} =
+      zeroExt m k '' Metric.ball 0 1 := by
+  ext y
+  simp only [Set.mem_ofPred_eq, Set.mem_image, Metric.mem_ball, dist_zero_right]
+  constructor
+  · rintro ⟨hy, hz⟩
+    refine ⟨WithLp.toLp 2 fun i => y (Fin.castAdd k i), ?_, ?_⟩
+    · rw [← norm_zeroExt m k]
+      convert hy using 2
+      ext j
+      refine Fin.addCases (fun i => ?_) (fun i => ?_) j
+      · simp [zeroExt]
+      · simp [zeroExt, hz (Fin.natAdd m i) (by simp)]
+    · ext j
+      refine Fin.addCases (fun i => ?_) (fun i => ?_) j
+      · simp [zeroExt]
+      · simp [zeroExt, hz (Fin.natAdd m i) (by simp)]
+  · rintro ⟨x, hx, rfl⟩
+    refine ⟨by rwa [norm_zeroExt], fun j hj => ?_⟩
+    revert hj
+    refine Fin.addCases (fun i => ?_) (fun i => ?_) j
+    · intro hi
+      simp at hi
+      omega
+    · intro _
+      simp [zeroExt]
+
 theorem coordBall_mass {n m : ℕ} (hmn : m ≤ n) :
     0 < Measure.hausdorffMeasure ((2 * m : ℕ) : ℝ)
         {y : EuclideanSpace ℂ (Fin n) | ‖y‖ < 1 ∧ ∀ j : Fin n, m ≤ (j : ℕ) → y j = 0} ∧
       Measure.hausdorffMeasure ((2 * m : ℕ) : ℝ)
         {y : EuclideanSpace ℂ (Fin n) | ‖y‖ < 1 ∧ ∀ j : Fin n, m ≤ (j : ℕ) → y j = 0} < ⊤ := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le hmn
-  have hset : {y : EuclideanSpace ℂ (Fin (m + k)) | ‖y‖ < 1 ∧ ∀ j : Fin (m + k), m ≤ (j : ℕ) → y j = 0} =
-      zeroExt m k '' Metric.ball 0 1 := by
-    ext y
-    simp only [Set.mem_ofPred_eq, Set.mem_image, Metric.mem_ball, dist_zero_right]
-    constructor
-    · rintro ⟨hy, hz⟩
-      refine ⟨WithLp.toLp 2 fun i => y (Fin.castAdd k i), ?_, ?_⟩
-      · rw [← norm_zeroExt m k]
-        convert hy using 2
-        ext j
-        refine Fin.addCases (fun i => ?_) (fun i => ?_) j
-        · simp [zeroExt]
-        · simp [zeroExt, hz (Fin.natAdd m i) (by simp)]
-      · ext j
-        refine Fin.addCases (fun i => ?_) (fun i => ?_) j
-        · simp [zeroExt]
-        · simp [zeroExt, hz (Fin.natAdd m i) (by simp)]
-    · rintro ⟨x, hx, rfl⟩
-      refine ⟨by rwa [norm_zeroExt], fun j hj => ?_⟩
-      revert hj
-      refine Fin.addCases (fun i => ?_) (fun i => ?_) j
-      · intro hi
-        simp at hi
-        omega
-      · intro _
-        simp [zeroExt]
-  rw [hset, (isometry_zeroExt m k).hausdorffMeasure_image (Or.inl (by positivity))]
+  rw [coordBall_eq m k, (isometry_zeroExt m k).hausdorffMeasure_image (Or.inl (by positivity))]
   have hd : ((2 * m : ℕ) : ℝ) = (finrank ℝ (EuclideanSpace ℂ (Fin m)) : ℝ) := by
     rw [finrank_real_of_complex, finrank_euclideanSpace_fin]
   rw [hd]

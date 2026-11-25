@@ -1,5 +1,7 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalRingExistsAevalOfCommuteSeparable
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyUnitaryConjOfSameEllipticCharpolyInert
 public import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwistedTraceFormulaStable
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeftMulMatrixTransfer
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnramifiedQuadraticDatumAtInertPlace
@@ -74,16 +76,8 @@ variable {O : Type} [CommRing O] {n : ℕ}
 open GlobalTheory.ClassParam in
 theorem exists_cyclic [IsLocalRing O] (M : Matrix (Fin n) (Fin n) O) (hs : M.charpoly.Separable) :
     ∃ v, IsUnit (krylov M v) := by
-  haveI : Subsingleton (MaximalSpectrum O) := ⟨fun a b =>
-    MaximalSpectrum.ext ((IsLocalRing.eq_maximalIdeal a.isMaximal).trans
-      (IsLocalRing.eq_maximalIdeal b.isMaximal).symm)⟩
-  obtain ⟨w, hw⟩ := GlobalTheory.RegSS.Semilocal.cyclicSemilocal_of_cyclicField GlobalTheory.RegSS.cyclicField _ (Fin n) M hs
-  let σ : Equiv.Perm (Fin n) := (Fintype.equivFin (Fin n)).trans (finCongr (Fintype.card_fin n))
-  have hk : GlobalTheory.RegSS.krylov M w = (krylov M w).submatrix id σ := by
-    ext i j
-    simp [GlobalTheory.RegSS.krylov, krylov, σ]
-  rw [hk, Matrix.det_permute'] at hw
-  exact ⟨w, (Matrix.isUnit_iff_isUnit_det _).2 (isUnit_of_mul_isUnit_right hw)⟩
+  intros
+  apply _root_.GlobalTheory.LocalCommutant.exists_isUnit_krylov <;> assumption
 
 theorem conj_of_charpoly [IsLocalRing O] (a b : GL (Fin n) O) (hs : a.val.charpoly.Separable)
     (h : b.val.charpoly = a.val.charpoly) : ∃ g, b = g⁻¹ * a * g := by
@@ -238,12 +232,6 @@ theorem twConj_of_norm_eq [IsLocalRing O] [IsNoetherianRing O] [IsAdicComplete (
 
 end Ring
 
-section Group
-
-variable {G : Type} [Group G]
-
-end Group
-
 variable {E : Type} [Field E] [NumberField E]
 
 theorem eventually_int (x : E) :
@@ -252,26 +240,11 @@ theorem eventually_int (x : E) :
 
 theorem eventually_lift (p : E[X]) : ∀ᶠ w : Pl E in cofinite, ∃ q : (w.adicCompletionIntegers E)[X],
     q.map (algebraMap _ (w.adicCompletion E)) = atPl w p := by
-  have h : ∀ᶠ w : Pl E in cofinite, ∀ i ∈ p.support,
-      algebraMap E (w.adicCompletion E) (p.coeff i) ∈ w.adicCompletionIntegers E := by
-    rw [eventually_all_finset]
-    exact fun i _ => eventually_int _
-  filter_upwards [h] with w hw
-  refine (Polynomial.mem_lifts _).1 ((Polynomial.lifts_iff_coeff_lifts _).2 fun i => ?_)
-  rw [coeff_map]
-  by_cases hi : i ∈ p.support
-  · exact ⟨⟨_, hw i hi⟩, rfl⟩
-  · rw [notMem_support_iff.1 hi, map_zero]
-    exact ⟨0, map_zero _⟩
+  apply _root_.GlobalTheory.BCT.UnitInert.eventually_lift <;> assumption
 
 theorem eventually_separable (P : E[X]) (hP : P.Separable) : ∀ᶠ w : Pl E in cofinite,
-    ∀ q : (w.adicCompletionIntegers E)[X], q.map (algebraMap _ (w.adicCompletion E)) = atPl w P → q.Separable := by
-  obtain ⟨u, v, huv⟩ := hP
-  filter_upwards [eventually_lift u, eventually_lift v] with w ⟨u', hu⟩ ⟨v', hv⟩ q hq
-  refine ⟨u', v', Polynomial.map_injective (algebraMap _ (w.adicCompletion E)) Subtype.val_injective ?_⟩
-  rw [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_mul, ← Polynomial.derivative_map, hq, hu, hv,
-    Polynomial.derivative_map, ← Polynomial.map_mul, ← Polynomial.map_mul, ← Polynomial.map_add, huv,
-    Polynomial.map_one, Polynomial.map_one]
+    ∀ q : (w.adicCompletionIntegers E)[X], q.map (algebraMap _ (w.adicCompletion E)) = atPl w P → q.Separable :=
+  _root_.GlobalTheory.BCT.UnitInert.eventually_separable P hP
 
 theorem mem_int {L : Type} [Field L] {n : ℕ} (O : Subring L) (g : GL (Fin n) L)
     (h1 : ∀ i j, g.1 i j ∈ O) (h2 : ∀ i j, g⁻¹.1 i j ∈ O) : g ∈ Formalism.UG.GLint (Fin n) O := by
@@ -308,9 +281,9 @@ theorem twConj_of_mem (hU : Unr E) (n : ℕ) (w : Pl E) (Q : (w.adicCompletion E
     conj_of_charpoly a b (hQ _ ((hch a).trans ha))
       (Polynomial.map_injective ι hι (by rw [hch, hch, ha, hb]))
   by_cases hw : IsSplitAt w
-  · simp only [nrmL, if_pos hw] at hy hz
+  · simp only [nrmL, ite_eq_left hw] at hy hz
     obtain ⟨g, rfl⟩ := hconj _ _ hy hz
-    exact ⟨GeneralLinearGroup.map ι g, by rw [thL, if_pos hw, map_mul, map_mul, map_inv]; rfl⟩
+    exact ⟨GeneralLinearGroup.map ι g, by rw [thL, ite_eq_left hw, map_mul, map_mul, map_inv]; rfl⟩
   · obtain ⟨-, hcc, hv, h4, -⟩ := GlobalTheory.ConjAtPlace.main E hU w
     obtain ⟨ϖ, q, ⟨-, -, -, -, ⟨x₀, hx₀, hx₁⟩, hq2, hcard⟩, -⟩ := (h4 hw).2.1
     have hcard' : Nat.card (w.adicCompletionIntegers E ⧸ IsLocalRing.maximalIdeal (w.adicCompletionIntegers E))
@@ -323,7 +296,7 @@ theorem twConj_of_mem (hU : Unr E) (n : ℕ) (w : Pl E) (Q : (w.adicCompletion E
     have hc : ∀ x, c (c x) = x := fun x => Subtype.ext (hcc _)
     have hmap : ∀ a, GeneralLinearGroup.map ι (thetaGL n c a) = thetaGL n (cj w) (GeneralLinearGroup.map ι a) :=
       GlobalTheory.ThetaPull.map_thetaGL ι c (cj w) (fun _ => rfl)
-    simp only [nrmL, if_neg hw, ← hmap, ← map_mul] at hy hz
+    simp only [nrmL, ite_eq_right hw, ← hmap, ← map_mul] at hy hz
     obtain ⟨g, hg⟩ := hconj _ _ hy hz
     obtain ⟨k, hk⟩ := twConj_of_norm_eq c hc
       (fun x hx => by
@@ -342,6 +315,6 @@ theorem twConj_of_mem (hU : Unr E) (n : ℕ) (w : Pl E) (Q : (w.adicCompletion E
       calc z' = g⁻¹ * (g * z' * thetaGL n c g⁻¹) * thetaGL n c g := by rw [map_inv]; group
         _ = _ := by rw [hk, map_mul]; group
     refine ⟨GeneralLinearGroup.map ι (k * g), ?_⟩
-    rw [thL, if_neg hw, ← hmap, ← map_inv, ← map_mul, ← map_mul, ← hz']
+    rw [thL, ite_eq_right hw, ← hmap, ← map_inv, ← map_mul, ← map_mul, ← hz']
 
 end GlobalTheory.BCT.UnitStable

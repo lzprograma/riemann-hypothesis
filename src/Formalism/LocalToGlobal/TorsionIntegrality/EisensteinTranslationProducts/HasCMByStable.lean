@@ -106,7 +106,7 @@ theorem pOf_scale {K : Type} [Field K] (g2 g3 lam : K) :
 theorem cc_wpDen {K : Type} [Field K] (g2 g3 : K) : constantCoeff (wpDen g2 g3) = 1 := by
   rw [← coeff_zero_eq_constantCoeff_apply]
   unfold wpDen
-  rw [coeff_mk, if_pos rfl]
+  rw [coeff_mk, ite_eq_left rfl]
 
 theorem rescale_inv {K : Type} [Field K] (lam : K) {f : PowerSeries K}
     (hf : constantCoeff f ≠ 0) : rescale lam f⁻¹ = (rescale lam f)⁻¹ := by

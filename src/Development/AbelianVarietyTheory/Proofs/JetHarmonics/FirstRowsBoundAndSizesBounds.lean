@@ -48,8 +48,6 @@ import Formalism.LocalToGlobal.CharacterGerms.GeNatCast
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.FirstRows
@@ -65,9 +63,9 @@ theorem sum_ite_le {ι β : Type} [Fintype ι] (φ : ι → β) (hφ : Function.
     rw [Finset.sum_eq_single t]
     · simpa using hg t
     · intro t' _ ht'
-      rw [if_neg fun h => ht' (hφ h).symm]
+      rw [ite_eq_right fun h => ht' (hφ h).symm]
     · simp
-  · rw [Finset.sum_eq_zero fun t _ => if_neg fun h' => h ⟨t, h'⟩]
+  · rw [Finset.sum_eq_zero fun t _ => ite_eq_right fun h' => h ⟨t, h'⟩]
     exact hB
 
 theorem tauEmb_injective (D : D7) : Function.Injective (DV.tauEmb D) := fun _ _ h =>

@@ -10,44 +10,6 @@ public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsI
 import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsSectionApplyEqOfIsAlgClosed
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FlatOfQuasiFiniteOfFlatFibres
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PowerMapLocallyQuasiFinite
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
 
 @[expose] public section
@@ -57,71 +19,6 @@ open GlobalTheory.CompanionTheory.Ar.BT ReciprocityTheory.ChartRestriction.G.Sem
 
 namespace PositivityTheory.HtPt.Twhopf
 
-
-open GlobalTheory.FibreFlat in
-set_option backward.isDefEq.respectTransparency false in
-theorem flat_of_flatOver_fields {X Y S : Scheme.{0}} (f : X ⟶ Y) (g : Y ⟶ S)
-    (hY : LocallyOfFinitePresentation g) (h0 : LocallyOfFinitePresentation (f ≫ g))
-    (h1 : Flat (f ≫ g)) (h2 : LocallyQuasiFinite f)
-    (H : ∀ (k : Type) [Field k] (t : Spec (CommRingCat.of k) ⟶ S), FlatOver f g t) :
-    Flat f := by
-  wlog hS : ∃ R, S = Spec R generalizing X Y S
-  · refine IsZariskiLocalAtTarget.of_openCover (S.affineCover.pullback₁ g) fun i => ?_
-    let u := S.affineCover.f i
-    have sq := IsPullback.of_hasPullback f (pullback.fst g u)
-    have sq' := IsPullback.of_hasPullback g u
-    refine this (pullback.snd f (pullback.fst g u)) (pullback.snd g u)
-      inferInstance (MorphismProperty.of_isPullback (sq.paste_vert sq') h0)
-      (MorphismProperty.of_isPullback (sq.paste_vert sq') h1)
-      (MorphismProperty.of_isPullback (P := @LocallyQuasiFinite) sq h2)
-      (fun k _ t => ?_) ⟨_, rfl⟩
-    intro W Z a b j h sq2 e
-    refine ((H k (t ≫ u)).target sq) a b j h sq2 ?_
-    rw [pullback.condition, reassoc_of% e]
-  obtain ⟨R, rfl⟩ := hS
-  wlog hA : ∃ A, Y = Spec A generalizing X Y
-  · refine IsZariskiLocalAtTarget.of_openCover Y.affineCover fun i => ?_
-    have sq := IsPullback.of_hasPullback f (Y.affineCover.f i)
-    have e : pullback.snd f (Y.affineCover.f i) ≫ Y.affineCover.f i ≫ g =
-        pullback.fst f (Y.affineCover.f i) ≫ f ≫ g := by
-      rw [← Category.assoc, ← sq.w, Category.assoc]
-    exact this (pullback.snd f (Y.affineCover.f i))
-      (MorphismProperty.of_isPullback (P := @LocallyQuasiFinite) sq h2) (Y.affineCover.f i ≫ g)
-      inferInstance (by rw [e]; infer_instance) (by rw [e]; infer_instance)
-      (fun k _ t => (H k t).target sq) ⟨_, rfl⟩
-  obtain ⟨A, rfl⟩ := hA
-  wlog hX : ∃ B, X = Spec B generalizing X
-  · refine IsZariskiLocalAtSource.of_openCover X.affineCover fun i => ?_
-    exact this (X.affineCover.f i ≫ f) inferInstance (by rw [Category.assoc]; infer_instance)
-      (by rw [Category.assoc]; infer_instance)
-      (fun k _ t => (H k t).source _) ⟨_, rfl⟩
-  obtain ⟨B, rfl⟩ := hX
-  obtain ⟨f, rfl⟩ := Spec.map_surjective f
-  obtain ⟨g, rfl⟩ := Spec.map_surjective g
-  rw [← Spec.map_comp] at h1 h0
-  rw [Flat.SpecMap_iff] at h1 ⊢
-  rw [HasRingHomProperty.Spec_iff (P := @LocallyQuasiFinite)] at h2
-  rw [HasRingHomProperty.Spec_iff (P := @LocallyOfFinitePresentation)] at hY h0
-  letI : Algebra R A := g.hom.toAlgebra
-  letI : Algebra A B := f.hom.toAlgebra
-  letI : Algebra R B := (g ≫ f).hom.toAlgebra
-  haveI : IsScalarTower R A B := IsScalarTower.of_algebraMap_eq fun _ => rfl
-  haveI : Module.Flat R B := h1
-  haveI : Algebra.QuasiFinite A B := h2
-  haveI : Algebra.FinitePresentation R A := hY
-  haveI : Algebra.FinitePresentation R B := h0
-  haveI : Algebra.FinitePresentation A B :=
-    Algebra.FinitePresentation.of_restrict_scalars_finitePresentation R A B
-  refine GlobalTheory.flat_of_quasiFinite_of_flat_fibres R A B fun k C _ _ _ t h e => ?_
-  have sq := isPullback_SpecMap_of_isPushout _ _ _ _ (CommRingCat.isPushout_tensorProduct A C B)
-  have := H k (Spec.map (CommRingCat.ofHom t)) _ _ _ (Spec.map (CommRingCat.ofHom h)) sq.flip
-    (by
-      rw [← Spec.map_comp, ← Spec.map_comp]
-      congr 1
-      ext1
-      exact e)
-  rw [Flat.SpecMap_iff] at this
-  exact RingHom.flat_algebraMap_iff.mp this
 
 theorem mul_flat : ∀ (S : Scheme.{0}) [IsLocallyNoetherian S] (G : Over S) [GrpObj G], IsSemiAbelian G → ∀ N : ℕ, 1 ≤ N → Flat ((𝟙 G) ^ N).left := by
   intro S _ G _ hG N hN

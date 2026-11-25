@@ -1,52 +1,7 @@
 module
 
 public import Mathlib.RingTheory.Smooth.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.RingTheory.LocalRing.Module
 
 @[expose] public section
@@ -68,23 +23,10 @@ private theorem one_tmul_residueField_surjective (A : Type*) [CommRing A] [IsLoc
     (M : Type*) [AddCommGroup M] [Module A M] :
     Function.Surjective (fun x : M => (1 : IsLocalRing.ResidueField A) ⊗ₜ[A] x) := by
   intro z
-  induction z using TensorProduct.induction_on with
-  | zero => exact ⟨0, by simp⟩
-  | tmul a x =>
-      obtain ⟨a₀, rfl⟩ := IsLocalRing.residue_surjective a
-      refine ⟨a₀ • x, ?_⟩
-      have h1 : (a₀ • (1 : IsLocalRing.ResidueField A)) = IsLocalRing.residue A a₀ := by
-        rw [Algebra.smul_def, mul_one]; rfl
-      show (1 : IsLocalRing.ResidueField A) ⊗ₜ[A] (a₀ • x) = _
-      rw [← TensorProduct.smul_tmul, h1]
-  | add x y hx hy =>
-      obtain ⟨u, hu⟩ := hx
-      obtain ⟨v, hv⟩ := hy
-      refine ⟨u + v, ?_⟩
-      show (1 : IsLocalRing.ResidueField A) ⊗ₜ[A] (u + v) = _
-      rw [TensorProduct.tmul_add]
-      rw [show (1 : IsLocalRing.ResidueField A) ⊗ₜ[A] u = x from hu,
-        show (1 : IsLocalRing.ResidueField A) ⊗ₜ[A] v = y from hv]
+  obtain ⟨w, rfl⟩ := (Algebra.linearMap A (IsLocalRing.ResidueField A)).rTensor_surjective
+    M IsLocalRing.residue_surjective z
+  obtain ⟨x, rfl⟩ := (TensorProduct.lid A M).symm.surjective w
+  exact ⟨x, by simp⟩
 
 private theorem tmul_eq_zero_of_toCotangent_eq_zero (A : Type*) [CommRing A] [IsLocalRing A]
     (I : Ideal A) (hI : I ≤ IsLocalRing.maximalIdeal A) (x : ↥I)
@@ -252,8 +194,6 @@ theorem exists_local_parameters :
   classical
   have hfin : Module.Finite A ↥(IsLocalRing.maximalIdeal A) :=
     Module.Finite.iff_fg.mpr (IsNoetherian.noetherian _)
-  have hfin2 : Module.Finite (IsLocalRing.ResidueField A)
-      (IsLocalRing.ResidueField A ⊗[A] ↥(IsLocalRing.maximalIdeal A)) := inferInstance
   obtain ⟨y, hy⟩ : ∃ y : Fin (Module.finrank (IsLocalRing.ResidueField A)
       (IsLocalRing.ResidueField A ⊗[A] ↥(IsLocalRing.maximalIdeal A))) →
       ↥(IsLocalRing.maximalIdeal A),

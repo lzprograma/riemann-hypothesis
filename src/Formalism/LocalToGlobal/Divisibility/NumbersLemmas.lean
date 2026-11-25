@@ -26,12 +26,6 @@ theorem not_dvd_of_inert {φ : Formalism.HC.Frame} {H : Formalism.HC.HostRaw φ}
     (h : primeClass H p = PrimeClass.inertClass ∨ primeClass H p = PrimeClass.signal) : ¬ p ∣ H.condN :=
   h.elim (not_dvd_conductor_of_inert hp) (not_dvd_of_signal hp)
 
-section Cases
-
-variable (j : ℕ) {p : ℕ}
-
-end Cases
-
 theorem nu_eq_originRow (δ : Code N) (j : ℕ) (hj : 1 ≤ j) (z : RPl N.R) (i : ℕ) :
     ((N.nu δ j z i : ℚ) : ℝ) =
       Formalism.DivisionValues.originRow N.R.k N.R.t j (N.w j z) ((N.srcPar δ z i : ℚ) : ℝ) ((i : ℝ) + 1) := by
@@ -385,13 +379,13 @@ theorem ofRecord_FInert {j : ℕ} (hj : 1 ≤ j) : (ofRecord D L Del h0).FInert 
       (IsResidueClassZero D p ∧ Formalism.MainNotions.G.hP D p = 0) := by
     rw [hh]; exact Iff.rfl
   by_cases h : IsResidueClassZero D p ∧ Formalism.MainNotions.G.hP D p = 0
-  · rw [if_pos (hc.2 h), if_pos h]
+  · rw [ite_eq_left (hc.2 h), ite_eq_left h]
     have e1 : ∀ z : Bool × HH D, ((D.R.k : ℝ) - 1) * (ofRecord D L Del h0).w j z / ((p : ℝ) ^ 2 - 1) =
         ((D.R.k : ℝ) - 1) * wj D j (tauPl D z) / ((p : ℝ) ^ 2 - 1) := fun z => by
       rw [ofRecord_w D L Del h0 hj]; rfl
     exact (Finset.sum_congr rfl (fun z _ => e1 z)).trans
       ((tauPl_bijective D).sum_comp (fun τ => ((D.R.k : ℝ) - 1) * wj D j τ / ((p : ℝ) ^ 2 - 1)))
-  · rw [if_neg (fun h' => h (hc.1 h')), if_neg h, ofRecord_ordP D L Del h0 hh]
+  · rw [ite_eq_right (fun h' => h (hc.1 h')), ite_eq_right h, ofRecord_ordP D L Del h0 hh]
     exact congrArg (· / (nP D p : ℝ))
       (Finset.sum_congr rfl (fun z _ => ofRecord_FOrb D L Del h0 hh hj z))
 
@@ -439,18 +433,18 @@ theorem ofRecord_FjP {j : ℕ} (hj : 1 ≤ j) {p : ℕ} (hp : p.Prime)
     unfold SizeData₂.gTypes
     rw [Finset.mem_insert, Finset.mem_singleton]
   by_cases h1 : p ∈ L.gTypes
-  · rw [if_pos (hg.2 h1), if_pos h1, hG]
-  · rw [if_neg (fun h => h1 (hg.1 h)), if_neg h1]
+  · rw [ite_eq_left (hg.2 h1), ite_eq_left h1, hG]
+  · rw [ite_eq_right (fun h => h1 (hg.1 h)), ite_eq_right h1]
     by_cases h2 : D.host.cls p = PrimeClass.ramD
-    · rw [if_pos (show (ofRecord D L Del h0).cls p = PrimeClass.ramD from h2), if_pos h2, ofRecord_FRamD D L Del h0 hj]
-    · rw [if_neg (show ¬ (ofRecord D L Del h0).cls p = PrimeClass.ramD from h2), if_neg h2]
+    · rw [ite_eq_left (show (ofRecord D L Del h0).cls p = PrimeClass.ramD from h2), ite_eq_left h2, ofRecord_FRamD D L Del h0 hj]
+    · rw [ite_eq_right (show ¬ (ofRecord D L Del h0).cls p = PrimeClass.ramD from h2), ite_eq_right h2]
       by_cases h3 : (IsResidueClassZero D p ∨ IsSg D p) ∧ (p : ℝ) ≤ L.sc.X'' D.R.n
-      · rw [if_pos (show ((ofRecord D L Del h0).cls p = PrimeClass.inertClass ∨ (ofRecord D L Del h0).cls p = PrimeClass.signal) ∧
-          (p : ℝ) ≤ (ofRecord D L Del h0).sc.X'' (ofRecord D L Del h0).R.n from h3), if_pos h3,
+      · rw [ite_eq_left (show ((ofRecord D L Del h0).cls p = PrimeClass.inertClass ∨ (ofRecord D L Del h0).cls p = PrimeClass.signal) ∧
+          (p : ℝ) ≤ (ofRecord D L Del h0).sc.X'' (ofRecord D L Del h0).R.n from h3), ite_eq_left h3,
           ofRecord_FInert D L Del h0 (hP_eq_ofRecord D L Del h0 hp (NumDatum.not_dvd_of_inert hp h3.1)) hj]
-      · rw [if_neg (show ¬ (((ofRecord D L Del h0).cls p = PrimeClass.inertClass ∨
+      · rw [ite_eq_right (show ¬ (((ofRecord D L Del h0).cls p = PrimeClass.inertClass ∨
           (ofRecord D L Del h0).cls p = PrimeClass.signal) ∧
-          (p : ℝ) ≤ (ofRecord D L Del h0).sc.X'' (ofRecord D L Del h0).R.n) from h3), if_neg h3]
+          (p : ℝ) ≤ (ofRecord D L Del h0).sc.X'' (ofRecord D L Del h0).R.n) from h3), ite_eq_right h3]
 
 theorem ofRecord_Fval (hK : DV.KapDef D) {j : ℕ} (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) (w : D.what₂.places.Pl) :
     Fval L j w = (ofRecord D L Del h0).FjP j (D.what₂.places.resChar w) :=

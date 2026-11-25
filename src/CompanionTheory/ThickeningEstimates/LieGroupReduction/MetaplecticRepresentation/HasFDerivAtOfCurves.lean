@@ -31,7 +31,7 @@ theorem hasFDerivAt_of_curves {E F : Type} [NormedAddCommGroup E] [NormedSpace �
   let w : ℝ → E := fun t => if e : ∃ n, ‖y n‖ = t then y e.choose else t • v
   have w0 : w 0 = 0 := by
     have : ¬∃ n, ‖y n‖ = 0 := fun ⟨n, e⟩ => hne n e
-    simp only [w, dif_neg this, zero_smul]
+    simp only [w, dite_eq_right this, zero_smul]
   have hw : HasDerivAt w v 0 := by
     rw [hasDerivAt_iff_isLittleO, Asymptotics.isLittleO_iff]
     intro δ hδ
@@ -47,17 +47,17 @@ theorem hasFDerivAt_of_curves {E F : Type} [NormedAddCommGroup E] [NormedSpace �
       rw [dist_eq_norm] at h1
       have h2 : w t - t • v = t • (‖y e.choose‖⁻¹ • y e.choose - v) := by
         rw [smul_sub, smul_smul, e1, mul_inv_cancel₀ (e1 ▸ hne _), one_smul]
-        simp only [w, dif_pos e]
+        simp only [w, dite_eq_left e]
       rw [h2, norm_smul, mul_comm]
       exact mul_le_mul_of_nonneg_right h1 (norm_nonneg _)
-    · simp only [w, dif_neg e, sub_self, norm_zero]
+    · simp only [w, dite_eq_right e, sub_self, norm_zero]
       positivity
   have h1 := (h (fun t => x₀ + w t) v (by simp [w0]) (hw.const_add x₀)).fun_sub (L.hasFDerivAt.comp_hasDerivAt 0 hw)
   rw [sub_self, hasDerivAt_iff_isLittleO, Asymptotics.isLittleO_iff] at h1
   have h2 : Tendsto (fun n => ‖y n‖) atTop (𝓝 0) := by simpa using (hy0.comp hφ.tendsto_atTop).norm
   obtain ⟨n, hn⟩ := (h2.eventually (h1 hε)).exists
   have e : ∃ m, ‖y m‖ = ‖y n‖ := ⟨n, rfl⟩
-  have e2 : w ‖y n‖ = y e.choose := by simp only [w, dif_pos e]
+  have e2 : w ‖y n‖ = y e.choose := by simp only [w, dite_eq_left e]
   refine hb0 (φ e.choose) ?_
   simp only [Function.comp, w0, e2, add_zero, map_zero, sub_zero, smul_zero, norm_norm] at hn
   rw [sub_right_comm]
@@ -88,7 +88,6 @@ theorem hasDerivAt_det_one {M : ℝ → l → l → ℝ} {X : l → l → ℝ} (
 theorem curve {g : ℝ → (l ⊕ l) → (l ⊕ l) → ℝ} {X : (l ⊕ l) → (l ⊕ l) → ℝ} (g0 : Matrix.of (g 0) = 1)
     (hg : HasDerivAt g X 0) (f : Sch l) :
     HasDerivAt (fun t => schwartzToL2 l (sec (Matrix.of (g t)) f)) (schwartzToL2 l (Qd (Matrix.of X) f)) 0 := by
-  set_option synthInstance.maxHeartbeats 200000 in
     have hd : ∀ i j : l → l ⊕ l, HasDerivAt (fun t => bl i j (Matrix.of (g t))) (bl i j (Matrix.of X)) 0 := fun i j =>
       (LinearMap.toContinuousLinearMap
         ((bl i j).comp (Matrix.ofLinearEquiv ℝ).toLinearMap)).hasFDerivAt.comp_hasDerivAt 0 hg

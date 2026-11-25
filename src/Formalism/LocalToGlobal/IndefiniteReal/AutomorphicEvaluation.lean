@@ -12,8 +12,6 @@ open scoped TensorProduct ContDiff InnerProductSpace
 
 namespace Formalism.IndefR.AutomorphicEvaluation
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar}
 
 def ev (M : DSModel V S) (v₀ : M.Vec) : MMap M →ₗ[ℂ] (GA D V → ℂ) where

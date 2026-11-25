@@ -387,9 +387,9 @@ theorem unipotentOfCoords_unipotentPart_mul {b : GL (Fin n) 𝕜}
   by_cases hij : i = j
   · subst hij; simp
   · by_cases h : i < j
-    · simp only [hij, h, if_false, dite_true, zero_add, unipotentPart]
+    · simp only [hij, h, ite_false, dite_true, zero_add, unipotentPart]
       rw [div_mul_cancel₀ _ (apply_self_ne_zero_of_isUpperTriangular hb j)]
-    · simp only [hij, h, if_false, dite_false, add_zero, zero_mul]
+    · simp only [hij, h, ite_false, dite_false, add_zero, zero_mul]
       exact (hb (lt_of_le_of_ne (not_lt.1 h) (Ne.symm hij))).symm
 
 def phaseUnitary (τ : Fin n → 𝕜) (hτ : ∀ i, τ i ≠ 0) : unitaryGroup (Fin n) 𝕜 :=

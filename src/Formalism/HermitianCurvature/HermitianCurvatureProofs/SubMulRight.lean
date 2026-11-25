@@ -5,51 +5,8 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoo
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InverseSplitting
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerParabolicCoordinates
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.ShearMeasurability
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 import Mathlib.CategoryTheory.Countable
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -141,10 +98,10 @@ theorem utLeft : UTLeft := by
     have hq := q.2
     by_cases hki : k = q.1.1
     · subst hki
-      rw [if_pos rfl, if_pos rfl, upper_apply, upper_apply, Matrix.one_apply_ne (ne_of_lt q.2), dite_eq_left hq,
+      rw [ite_eq_left rfl, ite_eq_left rfl, upper_apply, upper_apply, Matrix.one_apply_ne (ne_of_lt q.2), dite_eq_left hq,
         dite_eq_left hq, zero_add, zero_add, ha.2]
       simp
-    · rw [if_neg hki, if_neg hki, sub_zero, sub_zero]
+    · rw [ite_eq_right hki, ite_eq_right hki, sub_zero, sub_zero]
       rcases lt_or_gt_of_ne hki with hk | hk
       · rw [ha.1 q.1.1 k hk, zero_mul, zero_mul]
       · rw [upper_apply, upper_apply]
@@ -163,7 +120,7 @@ theorem lowOf_coord {m : ℕ} (p : Fin m × Fin m → Prop) [DecidablePred p] (h
   rw [Finset.sum_eq_single q]
   · simp
   · intro b _ hb
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hb (Subtype.ext h)
   · intro h
@@ -189,13 +146,13 @@ private theorem lowP_apply' {m : ℕ} (w : Equiv.Perm (Fin m)) (y : C2.LPidx w �
   · rw [Finset.sum_eq_single ⟨(i, j), h⟩]
     · simp
     · intro b _ hb
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hh
       exact hb (Subtype.ext hh)
     · intro hh
       exact absurd (Finset.mem_univ _) hh
   · refine Finset.sum_eq_zero fun q _ => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hq
     apply h
     have := q.2
@@ -327,13 +284,13 @@ theorem lowerUnipotent_symm_apply (y : C2.LPidx σ.symm → ℂ) (i j : Fin m) :
   · rw [Finset.sum_eq_single ⟨(i, j), h⟩]
     · simp
     · intro b _ hb
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hh
       exact hb (Subtype.ext hh)
     · intro hh
       exact absurd (Finset.mem_univ _) hh
   · refine Finset.sum_eq_zero fun q _ => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hq
     apply h
     have := q.2
@@ -392,13 +349,13 @@ theorem phiTopCoords : PhiTopCoords := by
   have hcol : ∀ a, w a = σ.symm a ∧ d' a = d a := by
     intro a
     have e := congrFun (congrFun hM (w a)) a
-    simp only [C2.monoP, Matrix.of_apply, if_true] at e
+    simp only [C2.monoP, Matrix.of_apply, ite_true] at e
     rw [U.hMat, _root_.Formalism.FourierDecayAlt.P.Ux2.permutationMatrix_mul_apply, Matrix.diagonal_apply] at e
     by_cases h : σ (w a) = a
     · refine ⟨?_, ?_⟩
       · rw [Equiv.eq_symm_apply]; exact h
-      · rw [h, if_pos rfl] at e; exact e.symm
-    · rw [if_neg h] at e; exact absurd e.symm (hd' a)
+      · rw [h, ite_eq_left rfl] at e; exact e.symm
+    · rw [ite_eq_right h] at e; exact absurd e.symm (hd' a)
   have hw : w = σ.symm := Equiv.ext fun a => (hcol a).1
   have hdd : d' = d := funext fun a => (hcol a).2
   subst hw hdd

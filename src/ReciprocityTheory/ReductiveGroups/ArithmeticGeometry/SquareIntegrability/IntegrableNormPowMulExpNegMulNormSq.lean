@@ -148,7 +148,7 @@ theorem fa1Mono_rot {g : ℕ} (α : Fin g →₀ ℕ) (j : Fin g) (u : Circle)
     monomialOfMultiindex α (coordinateRotation j u z) = (u : ℂ) ^ (α j) * monomialOfMultiindex α z := by
   rw [fa1Mono_eq, fa1Mono_eq]
   simp only [fa1Rot_apply, mul_pow, Finset.prod_mul_distrib, ite_pow, one_pow,
-    Finset.prod_ite_eq', Finset.mem_univ, if_true]
+    Finset.prod_ite_eq', Finset.mem_univ, ite_true]
 
 theorem integral_monomial_mul_conj_gaussian_eq_zero {g : ℕ} {α β : Fin g →₀ ℕ} (h : α ≠ β) :
     ∫ z : EuclideanSpace ℂ (Fin g),

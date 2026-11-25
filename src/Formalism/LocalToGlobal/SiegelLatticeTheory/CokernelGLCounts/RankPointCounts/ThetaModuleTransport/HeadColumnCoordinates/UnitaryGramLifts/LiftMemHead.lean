@@ -36,16 +36,6 @@ theorem lstar_add (σ : R →+* R) (X Y : Matrix (Fin (r + 1)) (Fin (r + 1)) R) 
 theorem lstar_one (σ : R →+* R) : lstar σ (1 : Matrix (Fin (r + 1)) (Fin (r + 1)) R) = 1 := by
   ext i j; rw [lstar_apply, Matrix.one_apply, Matrix.one_apply]; split_ifs with h1 h2 h2 <;> simp_all
 
-theorem lift_mem_head (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) R) (v : Fin (r + 1) → R)
-    (hv : v (Fin.last r) = 0) : Z.mulVec v ∈ headCols Z := by
-  have : Z.mulVec v = ∑ b : Fin r, v b.castSucc • fun i => Z i b.castSucc := by
-    funext i
-    simp only [Matrix.mulVec, dotProduct, Fin.sum_univ_castSucc, hv, mul_zero, add_zero, Finset.sum_apply,
-      Pi.smul_apply, smul_eq_mul]
-    exact Finset.sum_congr rfl fun b _ => mul_comm _ _
-  rw [this]
-  exact Submodule.sum_mem _ fun b _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨b, rfl⟩)
-
 theorem lift_col_mul (A X : Matrix (Fin (r + 1)) (Fin (r + 1)) R) (a : Fin (r + 1)) :
     (fun i => (A * X) i a) = A.mulVec fun i => X i a := by
   funext i; simp only [Matrix.mul_apply, Matrix.mulVec, dotProduct]
@@ -89,7 +79,7 @@ def liftEquiv (Z Z' A B : Matrix (Fin (r + 1)) (Fin (r + 1)) R)
     (hB : ∀ a : Fin r, B.mulVec (fun i => Z' i a.castSucc) ∈ headCols Z)
     (hBA : ∀ w, B.mulVec (A.mulVec w) - w ∈ headCols Z) (hAB : ∀ w, A.mulVec (B.mulVec w) - w ∈ headCols Z') :
     MbMod Z ≃ₗ[R] MbMod Z' :=
-  LinearEquiv.ofLinear (liftMapQ Z Z' A hA) (liftMapQ Z' Z B hB)
+  LinearEquiv.ofLinearMap (liftMapQ Z Z' A hA) (liftMapQ Z' Z B hB)
     (Submodule.linearMap_qext _ (LinearMap.ext fun w => by
       simp only [LinearMap.coe_comp, Function.comp_apply, Submodule.mkQ_apply, liftMapQ_mk, LinearMap.id_comp]
       exact (Submodule.Quotient.eq _).2 (hAB w)))

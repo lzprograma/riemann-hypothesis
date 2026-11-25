@@ -20,7 +20,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor
 open scoped TensorProduct ComplexOrder
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.PlaceIsometry
 
@@ -54,8 +53,7 @@ variable {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)} {ΛT : Subm
 theorem exists_pair_ne_one (hψ : IsStdChar D ψ (-1)) (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) {a : AE D}
     (ha : IsSplitIdem D a) {d : WO S T} (hd : IsHalf a d) (hn : d ∉ latO S T ΛS ΛT fun _ => True) :
     ∃ l ∈ latO S T ΛS ΛT fun _ => True, IsHalf (cA D a) l ∧ ψ (symplO S T l d) ≠ 1 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   refine hn (GlobalTheory.LatVac.mem_of_char hψ hS hT (half_fin ha hd) fun u hu => ?_)
   have hb := (isSplitIdem_conj ha).1
   have h1 := hc (cA D a • u) (GlobalTheory.LatticeStable.smul_mem_latO D S T _ _ _ _
@@ -67,7 +65,6 @@ theorem heisO_eigen {l : WO S T} {f : WO S T → ℂ} (h : heisO ψ S T l f = f)
     heisO ψ S T l (heisO ψ S T y (heisO ψ S T x f)) =
       ψ (symplO S T l y + symplO S T l x) • heisO ψ S T y (heisO ψ S T x f) := by
   rw [heisO_comm ψ S T l y, heisO_comm ψ S T l x, h, heisO_smul, smul_smul, AddChar.map_add_eq_mul]
-
 
 open Classical in
 theorem ipO_translates (hψ : IsStdChar D ψ (-1)) (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) {a : AE D}
@@ -128,7 +125,6 @@ theorem halfInd_add {a : AE D} {Λ : AddSubgroup (WO S T)} {l : WO S T} (hl : l 
   refine if_congr (and_congr (Λ.add_mem_cancel_right hl) ⟨fun h => ?_, fun h => _root_.GlobalTheory.HalfCoordSB.isHalf_add h hl'⟩) rfl rfl
   simpa using _root_.GlobalTheory.HalfCoordSB.isHalf_sub h hl'
 
-
 open Classical in
 theorem integral_waves (hψ : IsStdChar D ψ (-1)) (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) {a : AE D}
     (ha : IsSplitIdem D a) {G : Type} [AddCommGroup G] [MeasurableSpace G] [MeasurableAdd G] (ν : Measure G)
@@ -159,10 +155,10 @@ theorem integral_waves (hψ : IsStdChar D ψ (-1)) (hS : IsSelfDualC S ΛS) (hT 
       simp only [F]
       rw [e1, neg_add_cancel_right, halfInd_add h.1 (_root_.GlobalTheory.HalfCoordSB.isHalf_sub hx hx')]
       by_cases hz : σ z ∈ Λ
-      · rw [Set.indicator_of_mem (show z ∈ κ '' {t | t ∈ Λ ∧ IsHalf a t} from ⟨σ z, ⟨hz, h1 z⟩, h2 z⟩), halfInd, if_pos ⟨hz, h1 z⟩, map_one, mul_one, mul_one,
+      · rw [Set.indicator_of_mem (show z ∈ κ '' {t | t ∈ Λ ∧ IsHalf a t} from ⟨σ z, ⟨hz, h1 z⟩, h2 z⟩), halfInd, ite_eq_left ⟨hz, h1 z⟩, map_one, mul_one, mul_one,
           ← sub_eq_add_neg, symplO_sub_left, sub_eq_add_neg (symplO S T (σ z) _), AddChar.map_add_eq_mul,
           GlobalTheory.LatVac.char_sympl_eq_one hψ hS hT hz h.2, one_mul, ← symplO_skew]
-      · rw [Set.indicator_of_notMem, halfInd, if_neg fun h => hz h.1, zero_mul, mul_zero]
+      · rw [Set.indicator_of_notMem, halfInd, ite_eq_right fun h => hz h.1, zero_mul, mul_zero]
         rintro ⟨t, ht, rfl⟩
         exact hz (by rw [h4 t ht.2]; exact ht.1)
     simp only [e]
@@ -230,11 +226,11 @@ theorem placeModel_isometry : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ 
   obtain ⟨σ, h1, h2, h3⟩ := exists_section hκ
   have h4 : ∀ t, IsHalf a t → σ (κ t) = t := fun t ht => hκ.2.1.injOn (h1 _) ht (h2 _)
   have hp : ∀ Φ, pull a κ Φ ∘ σ = Φ := fun Φ => funext fun z => by
-    simp only [Function.comp, pull, if_pos (h1 z), h2]
+    simp only [Function.comp, pull, ite_eq_left (h1 z), h2]
   refine ⟨(hκ.2.2.1.measure_pos _ ⟨κ 0, 0, ⟨zero_mem _, fun _ _ => mul_zero _⟩, rfl⟩).ne',
     hκ.2.2.2.measure_lt_top.ne, ?_⟩
   obtain ⟨w1, w2⟩ := GlobalTheory.T.schwartzBruhatHalf_span_modulated_translates D ψ S T ΛS ΛT hψ hS hT a ha.1 ha.2.1 (infPart_splitIdem ha)
-  obtain ⟨c1, c2⟩ := GlobalTheory.T.isSchwartzBruhatHalf_iff_pullback_matrix D S T v m n a _ κ hκ
+  obtain ⟨c1, c2⟩ := GlobalTheory.HalfCoordSB.isSBHalf_iff_pull D S T v m n a _ κ hκ
   have I := GlobalTheory.T.theta_inner_product_hermitian D ψ S T μ 𝓕 hψ hμ
   set W := {Ψ : WO S T → ℂ | ∃ x y : WO S T, IsHalf a x ∧ IsHalf (cA D a) y ∧
     Ψ = fun t => ψ (symplO S T t y) * halfInd a (latO S T ΛS ΛT fun _ => True) (t + x)} with hW

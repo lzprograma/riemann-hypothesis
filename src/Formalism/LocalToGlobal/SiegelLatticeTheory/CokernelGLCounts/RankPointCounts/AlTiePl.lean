@@ -29,8 +29,6 @@ section comp
 
 open MonoidWithZeroHom MonoidWithZeroHom.ValueGroup₀
 
-open MonoidWithZeroHom MonoidWithZeroHom.ValueGroup₀
-
 variable {E L : Type} [Field E] [NumberField E] [Field L] [NumberField L]
 
 theorem asIdeal_mapPl (j : E ≃+* L) (w : HeightOneSpectrum (𝓞 E)) :
@@ -53,16 +51,12 @@ theorem mem_mapPl_pow (j : E ≃+* L) (w : HeightOneSpectrum (𝓞 E)) (n : ℕ)
   · intro hx
     exact ⟨x, hx, rfl⟩
 
-theorem eq_of_forall_le_exp {a b : WithZero (Multiplicative ℤ)} (ha : a ≠ 0) (hb : b ≠ 0) (ha1 : a ≤ 1)
-    (hb1 : b ≤ 1) (h : ∀ n : ℕ, a ≤ WithZero.exp (-(n : ℤ)) ↔ b ≤ WithZero.exp (-(n : ℤ))) : a = b := by
-  apply Formalism.L2.Host.CT.eq_of_forall_le_exp <;> assumption
-
 theorem intValuation_mapPl (j : E ≃+* L) (w : HeightOneSpectrum (𝓞 E)) (x : 𝓞 E) :
     (mapPl j w).intValuation (RingOfIntegers.mapRingEquiv j x) = w.intValuation x := by
   by_cases hx : x = 0
   · subst hx
     simp
-  · apply eq_of_forall_le_exp
+  · apply Formalism.L2.Host.CT.eq_of_forall_le_exp
     · exact (mapPl j w).intValuation_ne_zero _ ((map_ne_zero_iff _ (RingOfIntegers.mapRingEquiv j).injective).2 hx)
     · exact w.intValuation_ne_zero x hx
     · exact (mapPl j w).intValuation_le_one _
@@ -84,20 +78,15 @@ theorem valuation_mapPl (j : E ≃+* L) (w : HeightOneSpectrum (𝓞 E)) (x : E)
     HeightOneSpectrum.valuation_of_algebraMap, HeightOneSpectrum.valuation_of_algebraMap,
     HeightOneSpectrum.valuation_of_algebraMap, intValuation_mapPl, intValuation_mapPl]
 
-theorem continuous_withVal {R S : Type} [Field R] [Field S] {v : Valuation R (WithZero (Multiplicative ℤ))}
-    {v' : Valuation S (WithZero (Multiplicative ℤ))} (hs : Function.Surjective v) (f : WithVal v →+* WithVal v')
-    (hf : ∀ x, Valued.v (f x) = Valued.v x) : Continuous f := by
-  apply Formalism.L2.Host.CT.continuous_withVal <;> assumption
-
 theorem continuous_congrVal (j : E ≃+* L) (w : HeightOneSpectrum (𝓞 E)) :
     Continuous (WithVal.congr (w.valuation E) ((mapPl j w).valuation L) j) :=
-  continuous_withVal (HeightOneSpectrum.valuation_surjective E w) (WithVal.congr _ _ j).toRingHom fun x => by
+  Formalism.L2.Host.CT.continuous_withVal (HeightOneSpectrum.valuation_surjective E w) (WithVal.congr _ _ j).toRingHom fun x => by
     show Valued.v (WithVal.toVal _ (j x.ofVal)) = _
     rw [WithVal.valued_toVal, valuation_mapPl, WithVal.apply_ofVal]
 
 theorem continuous_congrVal_symm (j : E ≃+* L) (w : HeightOneSpectrum (𝓞 E)) :
     Continuous (WithVal.congr (w.valuation E) ((mapPl j w).valuation L) j).symm :=
-  continuous_withVal (HeightOneSpectrum.valuation_surjective L (mapPl j w))
+  Formalism.L2.Host.CT.continuous_withVal (HeightOneSpectrum.valuation_surjective L (mapPl j w))
     (WithVal.congr (w.valuation E) ((mapPl j w).valuation L) j).symm.toRingHom fun x => by
     show Valued.v (WithVal.toVal _ (j.symm x.ofVal)) = _
     rw [WithVal.valued_toVal, ← WithVal.apply_ofVal, ← valuation_mapPl j w, RingEquiv.apply_symm_apply]

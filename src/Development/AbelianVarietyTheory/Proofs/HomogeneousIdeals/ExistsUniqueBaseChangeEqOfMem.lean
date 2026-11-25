@@ -206,12 +206,6 @@ theorem IsDescentDatum.invertible_invariants [Module.FaithfullyFlat A B]
 
 end Invertible
 
-section Gluing
-
-
-
-end Gluing
-
 end FlatDescent
 
 end GlobalTheory

@@ -59,7 +59,7 @@ theorem qth_ext_close (g : Sp E n ≃ₗ[E] Sp E n) (N : ℕ) (hg : lqPrinc P N 
     · have hu' : LinearMap.funLeft E E (Fin.castAdd c) u = 0 := by
         ext j
         simp only [hu0, LinearMap.funLeft_apply, Pi.single_apply, Pi.zero_apply]
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h
         apply hl
         rw [← h]

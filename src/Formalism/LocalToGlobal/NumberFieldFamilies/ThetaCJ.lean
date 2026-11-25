@@ -22,8 +22,6 @@ namespace Formalism.L2.Fam.ThC
 
 open Formalism.L2.Theta
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Tri
 
 variable {R : Type} [CommRing R] {ρ : ℕ}
@@ -84,8 +82,6 @@ open scoped TensorProduct ContDiff
 namespace Formalism.L2.Fam.ThC
 
 open Formalism.L2.Theta
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Gen
 

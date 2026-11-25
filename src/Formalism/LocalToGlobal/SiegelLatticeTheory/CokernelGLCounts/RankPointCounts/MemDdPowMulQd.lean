@@ -16,8 +16,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.StabIntLat
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 alias ddS_ne := _root_.Formalism.L2.SG.Pf.StabIntSh.lg_ddS_ne
@@ -130,26 +128,26 @@ variable (w : Point D.host.E (D.R.rS + 1))
 theorem Xmat_upU (y : FreeE w → D.host.E) : UpU (Xmat w y) := by
   intro a c
   refine ⟨fun h => ?_, fun h => ?_⟩
-  · simp only [Xmat, ne_of_gt h, if_false]
+  · simp only [Xmat, ne_of_gt h, ite_false]
     rw [dite_eq_right (fun h' => absurd h'.1 (not_lt.2 (le_of_lt h)))]
   · simp [Xmat, h]
 
 theorem Xmat_blk (y : FreeE w → D.host.E) : IsBlockDiagonalMatrix w (Xmat w y) := by
   intro a c hne
   have hac : a ≠ c := fun e => hne (by rw [e])
-  simp only [Xmat, hac, if_false]
+  simp only [Xmat, hac, ite_false]
   rw [dite_eq_right (fun h' => hne h'.2)]
 
 theorem Xmat_q (y : FreeE w → D.host.E) (q : FreeE w) : Xmat w y q.1.1 q.1.2 = y q := by
   have hne : q.1.1 ≠ q.1.2 := ne_of_lt q.2.1
-  simp only [Xmat, hne, if_false]
+  simp only [Xmat, hne, ite_false]
   rw [dite_eq_left q.2]
   rfl
 
 theorem Xmat_grD (y : FreeE w → D.host.E) (hy : ∀ q, y q ∈ ddPow D (hgt w q)) : GrD (Xmat w y) := by
   intro a c hac
   rcases eq_or_lt_of_le hac with h | h
-  · subst h; simp only [Xmat, if_true, Nat.sub_self]; exact one_mem_ddPow0
+  · subst h; simp only [Xmat, ite_true, Nat.sub_self]; exact one_mem_ddPow0
   · by_cases hb : blkOf w.1 a.val = blkOf w.1 c.val
     · have := Xmat_q w y ⟨(a, c), h, hb⟩
       simp only at this; rw [this]; exact hy ⟨(a, c), h, hb⟩

@@ -2,56 +2,9 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
 public import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Separation.Connected
-import Mathlib.Topology.Sheaves.Init
 import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.FrobeniusReciprocity.PullHomeoApply
+import GroundTheory.GlobalFields.TateThesis.NoSmallSubgroups
 
 @[expose] public section
 
@@ -63,35 +16,7 @@ namespace GlobalTheory.CompanionTheory.FrobNz
 
 private theorem three_halves_norm_sub_one_le_norm_sq_sub_one (u : ℂ) (hu : ‖u - 1‖ < 1/2) :
     3/2 * ‖u - 1‖ ≤ ‖u ^ 2 - 1‖ := by
-  have h1 : u ^ 2 - 1 = (u - 1) * (u + 1) := by ring
-  have h4 : ‖(2:ℂ)‖ ≤ ‖u + 1‖ + ‖u - 1‖ := by
-    calc ‖(2:ℂ)‖ = ‖(u + 1) - (u - 1)‖ := by congr 1; ring
-      _ ≤ ‖u + 1‖ + ‖u - 1‖ := norm_sub_le _ _
-  have h5 : ‖(2:ℂ)‖ = 2 := by simp
-  have h2 : (3:ℝ)/2 ≤ ‖u + 1‖ := by linarith
-  rw [h1, norm_mul]
-  nlinarith [norm_nonneg (u - 1), mul_le_mul_of_nonneg_left h2 (norm_nonneg (u - 1))]
-
-private theorem eq_one_of_forall_norm_pow_two_pow_sub_one_lt' (w : ℂ) (hw : ∀ n : ℕ, ‖w ^ (2 ^ n) - 1‖ < 1/2) :
-    w = 1 := by
-  have key : ∀ n : ℕ, (3/2 : ℝ) ^ n * ‖w - 1‖ ≤ ‖w ^ (2 ^ n) - 1‖ := by
-    intro n
-    induction n with
-    | zero => simp
-    | succ n ih =>
-      have e : w ^ (2 ^ (n + 1)) = (w ^ (2 ^ n)) ^ 2 := by rw [pow_succ, pow_mul]
-      rw [e]
-      have h3 := three_halves_norm_sub_one_le_norm_sq_sub_one (w ^ (2 ^ n)) (hw n)
-      calc (3/2 : ℝ) ^ (n + 1) * ‖w - 1‖ = 3/2 * ((3/2) ^ n * ‖w - 1‖) := by ring
-        _ ≤ 3/2 * ‖w ^ (2 ^ n) - 1‖ := by linarith
-        _ ≤ ‖(w ^ (2 ^ n)) ^ 2 - 1‖ := h3
-  by_contra hne
-  have hd : 0 < ‖w - 1‖ := norm_pos_iff.mpr (sub_ne_zero.mpr hne)
-  obtain ⟨n, hn⟩ := pow_unbounded_of_one_lt (1/2 / ‖w - 1‖) (by norm_num : (1:ℝ) < 3/2)
-  have h1 := key n
-  have h2 := hw n
-  rw [div_lt_iff₀ hd] at hn
-  linarith
+  apply _root_.GroundTheory.Global.norm_sq_sub_one_ge <;> assumption
 
 theorem exists_compact_open_subgroup_trivial {G : Type} [Group G] [TopologicalSpace G]
     [IsTopologicalGroup G] [T2Space G] [LocallyCompactSpace G] [TotallyDisconnectedSpace G]
@@ -152,7 +77,7 @@ theorem exists_compact_open_subgroup_trivial {G : Type} [Group G] [TopologicalSp
   have hkH : k ∈ H := hk
   apply Units.ext
   rw [Units.val_one]
-  apply eq_one_of_forall_norm_pow_two_pow_sub_one_lt'
+  apply _root_.GroundTheory.Global.eq_one_of_forall_norm_pow_two_pow_sub_one_lt
   intro n
   have hmem : k ^ (2 ^ n) ∈ H := H.pow_mem hkH _
   have hV : k ^ (2 ^ n) ∈ V := (hsW (hHs hmem)).2
@@ -199,6 +124,6 @@ theorem exists_SB_integral_mul_char_eq_one : ∀ (G : Type) [Group G] [Topologic
     show ∫ x, (K : Set G).indicator (fun _ => (((μ (K : Set G)).toReal : ℂ))⁻¹) x * (χ x : ℂ) ∂μ = 1
     simp only [key]
     rw [integral_indicator_const _ hKm]
-    simp [Measure.real, hpos.ne', hfin.ne, hr]
+    simp [Measure.real, hr]
 
 end GlobalTheory.CompanionTheory.FrobNz

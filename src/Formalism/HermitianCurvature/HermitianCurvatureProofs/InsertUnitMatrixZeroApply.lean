@@ -3,51 +3,7 @@ module
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PrStarFst
 public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelsOfBuiltSetting
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -126,7 +82,7 @@ theorem qw_factor {S : Type} (q : ℂ → ℂ) (u : List (Letter ℂ S)) (y : �
             rcases abs_cases (y - Y) with ⟨a, _⟩ | ⟨a, _⟩ <;> linarith
           exact div_pos (by linarith) h'
       refine ⟨c * ((y - Y + 1) / (y - Y)), mul_pos hc hD, ?_⟩
-      simp only [qw, hp, if_true, hce, hY]
+      simp only [qw, hp, ite_true, hce, hY]
       push_cast
       ring
     · have hp' : l.plus = false := by simpa using hp
@@ -139,7 +95,7 @@ theorem qw_factor {S : Type} (q : ℂ → ℂ) (u : List (Letter ℂ S)) (y : �
             rcases abs_cases (y - Y) with ⟨a, _⟩ | ⟨a, _⟩ <;> linarith
           exact div_pos_of_neg_of_neg (by linarith) (by linarith)
       refine ⟨c * ((Y - y) / (Y - y - 1)), mul_pos hc hD, ?_⟩
-      simp only [qw, hp', Bool.false_eq_true, if_false, hce, hY]
+      simp only [qw, hp', Bool.false_eq_true, ite_false, hce, hY]
       push_cast
       ring
 
@@ -228,9 +184,9 @@ theorem liftM_one : liftM (1 : SlopeTestRemainingChoices (Fin n) A) = 1 := by
   rw [liftM_apply, Matrix.one_apply, Matrix.one_apply]
   by_cases h0 : z 0 = z' 0
   · by_cases ht : Fin.tail z = Fin.tail z'
-    · rw [if_pos h0, if_pos ht, if_pos ((ix_ext_iff z z').2 ⟨h0, ht⟩)]
-    · rw [if_pos h0, if_neg ht, if_neg (fun h => ht ((ix_ext_iff z z').1 h).2)]
-  · rw [if_neg h0, if_neg (fun h => h0 ((ix_ext_iff z z').1 h).1)]
+    · rw [ite_eq_left h0, ite_eq_left ht, ite_eq_left ((ix_ext_iff z z').2 ⟨h0, ht⟩)]
+    · rw [ite_eq_left h0, ite_eq_right ht, ite_eq_right (fun h => ht ((ix_ext_iff z z').1 h).2)]
+  · rw [ite_eq_right h0, ite_eq_right (fun h => h0 ((ix_ext_iff z z').1 h).1)]
 
 theorem liftM_zero : liftM (0 : SlopeTestRemainingChoices (Fin n) A) = 0 := by
   ext z z'; simp [liftM_apply]
@@ -279,11 +235,11 @@ theorem eU_succ (a : Fin n) (i j : Fin 2) : (eU a.succ i j : SlopeTestRemainingC
       exact Fin.cases (motive := fun b => b ≠ a.succ → x b = y b) (fun _ => h0)
         (fun b' hb' => h3 b' (fun h => hb' (by rw [h]))) b hb
   by_cases h0 : x 0 = y 0
-  · rw [if_pos h0]
+  · rw [ite_eq_left h0]
     by_cases h : Fin.tail x a = i ∧ Fin.tail y a = j ∧ ∀ b, b ≠ a → Fin.tail x b = Fin.tail y b
-    · rw [if_pos h, if_pos (key.2 ⟨h0, h⟩)]
-    · rw [if_neg h, if_neg (fun h' => h (key.1 h').2)]
-  · rw [if_neg h0, if_neg (fun h' => h0 (key.1 h').1)]
+    · rw [ite_eq_left h, ite_eq_left (key.2 ⟨h0, h⟩)]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h (key.1 h').2)]
+  · rw [ite_eq_right h0, ite_eq_right (fun h' => h0 (key.1 h').1)]
 
 theorem io_succ (x : A) : (io x : SlopeTestRemainingChoices (Fin (n + 1)) A) = liftM (io x) := by
   ext z z'
@@ -291,9 +247,9 @@ theorem io_succ (x : A) : (io x : SlopeTestRemainingChoices (Fin (n + 1)) A) = l
   simp only [io, Matrix.scalar_apply, Matrix.diagonal_apply]
   by_cases h0 : z 0 = z' 0
   · by_cases ht : Fin.tail z = Fin.tail z'
-    · rw [if_pos h0, if_pos ht, if_pos ((ix_ext_iff z z').2 ⟨h0, ht⟩)]
-    · rw [if_pos h0, if_neg ht, if_neg (fun h => ht ((ix_ext_iff z z').1 h).2)]
-  · rw [if_neg h0, if_neg (fun h => h0 ((ix_ext_iff z z').1 h).1)]
+    · rw [ite_eq_left h0, ite_eq_left ht, ite_eq_left ((ix_ext_iff z z').2 ⟨h0, ht⟩)]
+    · rw [ite_eq_left h0, ite_eq_right ht, ite_eq_right (fun h => ht ((ix_ext_iff z z').1 h).2)]
+  · rw [ite_eq_right h0, ite_eq_right (fun h => h0 ((ix_ext_iff z z').1 h).1)]
 
 theorem map_smul_liftM (c : ℂ) (M : M2 (SlopeTestRemainingChoices (Fin n) A)) : (c • M).map liftM = c • M.map liftM := by
   ext i j; simp [liftM_smul]
@@ -359,10 +315,10 @@ theorem RRw_succ (QQ : ℂ → M2 A) (u : List (Letter ℂ (Fin n))) :
     congr 1
     by_cases hp : l.plus = true
     · have hp' : (upL l).plus = true := hp
-      rw [if_pos hp', if_pos hp, TTw_succ]
+      rw [ite_eq_left hp', ite_eq_left hp, TTw_succ]
       exact ins_succ l.intersection_update_fsHerm_neg_one _
     · have hp' : ¬ (upL l).plus = true := hp
-      rw [if_neg hp', if_neg hp, TTw_succ, ← Matrix.transpose_map]
+      rw [ite_eq_right hp', ite_eq_right hp, TTw_succ, ← Matrix.transpose_map]
       exact ins_succ l.intersection_update_fsHerm_neg_one _
 
 theorem JL_succ (L : List (Letter ℂ (Fin n))) : JL (L.map upL) = (liftM (JL L) : SlopeTestRemainingChoices (Fin (n + 1)) A) := by
@@ -374,10 +330,10 @@ theorem JL_succ (L : List (Letter ℂ (Fin n))) : JL (L.map upL) = (liftM (JL L)
     congr 1
     by_cases hp : l.plus = true
     · have hp' : (upL l).plus = true := hp
-      rw [if_pos hp', if_pos hp, J_succ]
+      rw [ite_eq_left hp', ite_eq_left hp, J_succ]
       exact ins_succ l.intersection_update_fsHerm_neg_one _
     · have hp' : ¬ (upL l).plus = true := hp
-      rw [if_neg hp', if_neg hp, J_succ, ← Matrix.transpose_map]
+      rw [ite_eq_right hp', ite_eq_right hp, J_succ, ← Matrix.transpose_map]
       exact ins_succ l.intersection_update_fsHerm_neg_one _
 
 end Lift
@@ -487,7 +443,7 @@ theorem pair_step {m : ℕ} (β : V → V → ℂ) (hβ : ∀ v v', β (-v) v' =
 theorem mat_cons (QQ : ℂ → M2 (Q.Pr V)) (y : ℂ) (L W : List (Letter ℂ (Fin n))) :
     JL ((⟨true, 0, y⟩ : Letter ℂ (Fin (n + 1))) :: L.map upL) * RRw QQ (W.map upL) =
       ins (0 : Fin (n + 1)) (YangianSpanCharacter.T.J (SlopeTestRemainingChoices (Fin (n + 1)) (Q.Pr V))) * liftM (JL L * RRw QQ W) := by
-  rw [JL, if_pos rfl, JL_succ, RRw_succ, liftM_mul, mul_assoc]
+  rw [JL, ite_eq_left rfl, JL_succ, RRw_succ, liftM_mul, mul_assoc]
 
 end ActLift
 
@@ -615,14 +571,14 @@ theorem Lw_dual (ys : List ℝ) (w : List C.Letter) :
     · rw [List.getElem_map]
       simp only [Lw, List.getElem_take, positioned_getElem, plusW_getElem, minusW_getElem, castL]
       have hc' : i < ys.length := by rwa [List.length_map, hL] at hc
-      simp only [hc', dif_pos, dl, Fin.cast]
+      simp only [hc', dite_eq_left, dl, Fin.cast]
       push_cast
       rfl
     · simp only [Ww, List.getElem_drop, positioned_getElem, plusW_getElem, minusW_getElem, castL]
       have hc' : ¬ i < ys.length := by rwa [List.length_map, hL] at hc
-      simp only [hc', dif_neg, not_false_eq_true, List.length_map, hL]
+      simp only [hc', dite_eq_right, not_false_eq_true, List.length_map, hL]
       have e1 : ys.length + (i - ys.length) = i := by omega
-      simp only [e1, Fin.cast, hc', dif_neg, not_false_eq_true]
+      simp only [e1, Fin.cast, hc', dite_eq_right, not_false_eq_true]
 
 theorem castL_rfl {n : ℕ} (u : List (Letter ℂ (Fin n))) : u.map (castL rfl) = u := by
   conv_rhs => rw [← List.map_id u]
@@ -656,7 +612,7 @@ theorem Lw_getElem (ys : List ℝ) (w : List C.Letter) (i : ℕ) (h : i < (Lw ys
     (Lw ys w)[i] = ⟨true, ⟨i, by rw [len_plusW]; rw [Lw_length] at h; omega⟩,
       ((ys[i]'(by rwa [Lw_length] at h) : ℝ) : ℂ)⟩ := by
   have h' : i < ys.length := by rwa [Lw_length] at h
-  simp only [Lw, List.getElem_take, positioned_getElem, plusW_getElem, h', dif_pos]
+  simp only [Lw, List.getElem_take, positioned_getElem, plusW_getElem, h', dite_eq_left]
 
 theorem Lw_pairwise (w : List C.Letter) (ys : List ℝ) (h : ys.Pairwise fun y y' => 2 < |y - y'|) :
     (Lw ys w).Pairwise fun l l' => l.pt - l'.pt ≠ 0 ∧ l.pt - l'.pt ≠ 1 ∧ l.pt - l'.pt ≠ -1 := by

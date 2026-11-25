@@ -123,7 +123,7 @@ theorem evalPt_pbT {B : Type} [CommRing B] {Y Z : Scheme.{0}} (x : Sp B ⟶ Z) (
     {O' : Z.Opens} (h : O' ≤ f ⁻¹ᵁ O) (h' : ⊤ ≤ x ⁻¹ᵁ O') (y : Sp B ⟶ Y) (hy : x ≫ f = y)
     (h'' : ⊤ ≤ y ⁻¹ᵁ O) (s : Γ(Y, O)) : evalPt x O' h' (pbT f s O') = evalPt y O h'' s := by
   subst hy
-  simp only [evalPt, pbT, dif_pos h]
+  simp only [evalPt, pbT, dite_eq_left h]
   rw [← Scheme.Hom.appLE_comp_appLE (e₁ := h) (e₂ := h')]
   simp only [CommRingCat.hom_comp, RingHom.comp_apply]
 

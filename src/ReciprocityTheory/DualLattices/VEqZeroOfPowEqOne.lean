@@ -28,20 +28,7 @@ def PsIsInt (v : AddValuation C (WithTop ℝ)) (f : PowerSeries C) : Prop :=
 theorem v_eq_zero_of_pow_eq_one {v : AddValuation C (WithTop ℝ)} {z : C} {N : ℕ} (hN : N ≠ 0)
     (hz : z ^ N = 1) : v z = 0 := by
   have h1 : N • v z = 0 := by rw [← AddValuation.map_pow, hz, AddValuation.map_one]
-  generalize v z = x at h1 ⊢
-  induction x using WithTop.recTopCoe with
-  | top =>
-    exfalso
-    obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hN
-    rw [succ_nsmul, WithTop.add_top] at h1
-    exact WithTop.top_ne_zero h1
-  | coe r =>
-    rw [← WithTop.coe_nsmul] at h1
-    have h2 : N • r = 0 := WithTop.coe_eq_zero.mp h1
-    rw [nsmul_eq_mul] at h2
-    rcases mul_eq_zero.mp h2 with h | h
-    · exact absurd (Nat.cast_eq_zero.mp h) hN
-    · rw [h]; rfl
+  exact le_antisymm ((nsmul_nonpos_iff hN).1 h1.le) ((nsmul_nonneg_iff hN).1 h1.ge)
 
 structure LogFGL (v : AddValuation C (WithTop ℝ)) (d : ℕ) where
   lg : Fin d → MvPowerSeries (Fin d) C

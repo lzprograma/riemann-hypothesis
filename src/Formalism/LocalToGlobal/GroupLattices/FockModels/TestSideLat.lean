@@ -79,35 +79,45 @@ theorem li_coe {O Kf X : Type} [CommRing O] [Field Kf] [Algebra O Kf] [AddCommGr
     apply hinj
     simpa [Algebra.smul_def] using hab)
 
-theorem ten_side (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O Kf] [IsFractionRing O Kf]
+theorem ten_side_of_psi (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O Kf] [IsFractionRing O Kf]
     (p : ℕ) {n' m : ℕ} (lam0 : Fin n' → Fin (m + 1) → ℤ) (hd : IsDominant lam0) (N : Fin n' → ℕ)
     (β : ∀ s : Fin n', ↥(dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s))) ≃ₗ[Kf]
       Module.Dual Kf ↥(dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s))))
     (hβ : ∀ s, PosCore O Kf p m (lamAt lam0 s) (N s) (β s))
-    (Vs : Submodule Kf (MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf))
-    (hVs : Vs = tensorLat Kf Kf (fun s => dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s)))) :
-    ∃ Ψ : Module.Dual Kf Vs ≃ₗ[Kf] Vs,
-      ∀ Ms : Fin n' → Matrix (Fin (m + 1)) (Fin (m + 1)) Kf, (∀ s, IsUnit (Ms s).det) →
-        (dualLat O Kf ((Hten O lam0 fun s => colSpan O (Ms s)).comap (Vs.subtype.restrictScalars O))).map
-            (Ψ.toLinearMap.restrictScalars O) ≤
-          (Hten O lam0 fun s => colSpan O ((Ms s)⁻¹).transpose).comap (Vs.subtype.restrictScalars O) ∧
-        scale ((p : Kf) ^ (∑ s, N s))
-            ((Hten O lam0 fun s => colSpan O ((Ms s)⁻¹).transpose).comap (Vs.subtype.restrictScalars O)) ≤
-          (dualLat O Kf ((Hten O lam0 fun s => colSpan O (Ms s)).comap (Vs.subtype.restrictScalars O))).map
-            (Ψ.toLinearMap.restrictScalars O) := by
-  subst hVs
-  classical
+    [∀ s : Fin n', Fintype ↥(ssIdx (m + 1) (m + 1) (nuOf (lamAt lam0 s)))]
+    [∀ s : Fin n', DecidableEq ↥(ssIdx (m + 1) (m + 1) (nuOf (lamAt lam0 s)))]
+    (Ψ : Module.Dual Kf (tensorLat Kf Kf (fun s => dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s)))) ≃ₗ[Kf]
+      tensorLat Kf Kf (fun s => dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s))))
+    (hΨ : ∀ (Z : ∀ s : Fin n', Module.Basis ↥(ssIdx (m + 1) (m + 1) (nuOf (lamAt lam0 s))) Kf
+        ↥(dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s))))
+      (z z' : Module.Basis (∀ s : Fin n', ↥(ssIdx (m + 1) (m + 1) (nuOf (lamAt lam0 s)))) Kf
+        (tensorLat Kf Kf (fun s => dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s))))),
+      (∀ i, ((z i : tensorLat Kf Kf (fun s => dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s)))) :
+          MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) =
+        ∏ s, blockEmb Kf s ((Z s (i s) : dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s))) :
+          MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf)) →
+      (∀ i, ((z' i : tensorLat Kf Kf (fun s => dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s)))) :
+          MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) =
+        ∏ s, blockEmb Kf s ((dualB (β s) (Z s) (i s) : dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s))) :
+          MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf)) →
+      ∀ j, Ψ (z.coord j) = z' j) :
+    ∀ Ms : Fin n' → Matrix (Fin (m + 1)) (Fin (m + 1)) Kf, (∀ s, IsUnit (Ms s).det) →
+      (dualLat O Kf ((Hten O lam0 fun s => colSpan O (Ms s)).comap
+          ((tensorLat Kf Kf (fun s => dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s)))).subtype.restrictScalars O))).map
+          (Ψ.toLinearMap.restrictScalars O) ≤
+        (Hten O lam0 fun s => colSpan O ((Ms s)⁻¹).transpose).comap
+          ((tensorLat Kf Kf (fun s => dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s)))).subtype.restrictScalars O) ∧
+      scale ((p : Kf) ^ (∑ s, N s))
+          ((Hten O lam0 fun s => colSpan O ((Ms s)⁻¹).transpose).comap
+            ((tensorLat Kf Kf (fun s => dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s)))).subtype.restrictScalars O)) ≤
+        (dualLat O Kf ((Hten O lam0 fun s => colSpan O (Ms s)).comap
+            ((tensorLat Kf Kf (fun s => dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s)))).subtype.restrictScalars O))).map
+          (Ψ.toLinearMap.restrictScalars O) := by
+  intro Ms hMs
   have hinj : Function.Injective (algebraMap O Kf) := IsFractionRing.injective O Kf
   have hanti := kp_lamAt_antitone lam0 hd
-  have hfin : ∀ s : Fin n', Finite ↥(ssIdx (m + 1) (m + 1) (nuOf (lamAt lam0 s))) :=
-    fun s => (sSIdxFinite (m + 1) (m + 1) (nuOf (lamAt lam0 s))).to_subtype
-  let _ : ∀ s : Fin n', Fintype ↥(ssIdx (m + 1) (m + 1) (nuOf (lamAt lam0 s))) := fun s => Fintype.ofFinite _
-  set V : Fin n' → Submodule Kf (MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf) :=
-    fun s => dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s)) with hV
-  have hb := fun s : Fin n' => latBasis (O := O) hinj m (lamAt lam0 s) 1 (by simp)
-  choose b _ using hb
-  obtain ⟨Ψ, hΨ⟩ := psi_exists V β b
-  refine ⟨Ψ, fun Ms hMs => ?_⟩
+  let V : Fin n' → Submodule Kf (MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf) :=
+    fun s => dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s))
   have hMs' : ∀ s, IsUnit (((Ms s)⁻¹).transpose).det := fun s => det_invT _ (hMs s)
   have hZ := fun s : Fin n' => latBasis (O := O) hinj m (lamAt lam0 s) (Ms s) (hMs s)
   choose Z hZ using hZ
@@ -142,6 +152,13 @@ theorem ten_side (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O K
     congr 2
     funext j
     exact hΨ Z z z' hz hz' j
+  change (dualLat O Kf ((Hten O lam0 fun s => colSpan O (Ms s)).comap
+      ((tensorLat Kf Kf V).subtype.restrictScalars O))).map (Ψ.toLinearMap.restrictScalars O) ≤
+    (Hten O lam0 fun s => colSpan O ((Ms s)⁻¹).transpose).comap ((tensorLat Kf Kf V).subtype.restrictScalars O) ∧
+    scale ((p : Kf) ^ (∑ s, N s))
+      ((Hten O lam0 fun s => colSpan O ((Ms s)⁻¹).transpose).comap ((tensorLat Kf Kf V).subtype.restrictScalars O)) ≤
+    (dualLat O Kf ((Hten O lam0 fun s => colSpan O (Ms s)).comap
+      ((tensorLat Kf Kf V).subtype.restrictScalars O))).map (Ψ.toLinearMap.restrictScalars O)
   rw [hmap]
   have hPmem : ∀ s (P : V s), (P : MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf) ∈
       nablaLTw O Kf m (lamAt lam0 s) (Ms s) → P ∈ Submodule.span O (Set.range (Z s)) := by
@@ -199,5 +216,34 @@ theorem ten_side (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O K
     simp only [one_smul] at h1
     rw [← comap_span_coe] at h1
     exact h1
+
+theorem ten_side (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O Kf] [IsFractionRing O Kf]
+    (p : ℕ) {n' m : ℕ} (lam0 : Fin n' → Fin (m + 1) → ℤ) (hd : IsDominant lam0) (N : Fin n' → ℕ)
+    (β : ∀ s : Fin n', ↥(dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s))) ≃ₗ[Kf]
+      Module.Dual Kf ↥(dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s))))
+    (hβ : ∀ s, PosCore O Kf p m (lamAt lam0 s) (N s) (β s))
+    (Vs : Submodule Kf (MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf))
+    (hVs : Vs = tensorLat Kf Kf (fun s => dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s)))) :
+    ∃ Ψ : Module.Dual Kf Vs ≃ₗ[Kf] Vs,
+      ∀ Ms : Fin n' → Matrix (Fin (m + 1)) (Fin (m + 1)) Kf, (∀ s, IsUnit (Ms s).det) →
+        (dualLat O Kf ((Hten O lam0 fun s => colSpan O (Ms s)).comap (Vs.subtype.restrictScalars O))).map
+            (Ψ.toLinearMap.restrictScalars O) ≤
+          (Hten O lam0 fun s => colSpan O ((Ms s)⁻¹).transpose).comap (Vs.subtype.restrictScalars O) ∧
+        scale ((p : Kf) ^ (∑ s, N s))
+            ((Hten O lam0 fun s => colSpan O ((Ms s)⁻¹).transpose).comap (Vs.subtype.restrictScalars O)) ≤
+          (dualLat O Kf ((Hten O lam0 fun s => colSpan O (Ms s)).comap (Vs.subtype.restrictScalars O))).map
+            (Ψ.toLinearMap.restrictScalars O) := by
+  subst hVs
+  classical
+  have hinj : Function.Injective (algebraMap O Kf) := IsFractionRing.injective O Kf
+  have hfin : ∀ s : Fin n', Finite ↥(ssIdx (m + 1) (m + 1) (nuOf (lamAt lam0 s))) :=
+    fun s => (sSIdxFinite (m + 1) (m + 1) (nuOf (lamAt lam0 s))).to_subtype
+  let _ : ∀ s : Fin n', Fintype ↥(ssIdx (m + 1) (m + 1) (nuOf (lamAt lam0 s))) := fun s => Fintype.ofFinite _
+  let V : Fin n' → Submodule Kf (MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf) :=
+    fun s => dualWeyl Kf (m + 1) (m + 1) (nuOf (lamAt lam0 s))
+  have hb := fun s : Fin n' => latBasis (O := O) hinj m (lamAt lam0 s) 1 (by simp)
+  choose b _ using hb
+  obtain ⟨Ψ, hΨ⟩ := psi_exists V β b
+  exact ⟨Ψ, ten_side_of_psi O Kf p lam0 hd N β hβ Ψ hΨ⟩
 
 end Formalism.L2.G.Model

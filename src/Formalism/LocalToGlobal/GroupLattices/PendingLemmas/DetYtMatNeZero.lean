@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.SubstZOfXCoordZA
 public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
 import Mathlib.Algebra.AffineMonoid.UniqueSums
 import Mathlib.RingTheory.PiTensorProduct
@@ -15,12 +16,7 @@ namespace Formalism.L2.G.Pend
 variable {p : ℕ} [Fact p.Prime] (X : Sys p)
 
 theorem rankJ (j : ℕ) : (X.Fl.Pj j).m + 1 = NN X.G.P.m X.Fl.t j := by
-  cases j with
-  | zero => simp [Fills.Pj, NN]
-  | succ j =>
-    show X.G.P.m + (j + 1) * (X.Fl.t + 1) + 1 = NN X.G.P.m X.Fl.t (j + 1)
-    unfold NN
-    ring
+  apply _root_.Formalism.L2.G.Pend.rank_eq <;> assumption
 
 theorem NN_le (j : ℕ) : NN X.G.P.m X.t j ≤ NN X.G.P.m X.t (j + 1) := by
   unfold NN
@@ -258,7 +254,7 @@ theorem subD_X (j : ℕ) (x : Σ v : Fin (X.Fl.Pj j).nV,
 
 theorem ySub_odd (j : ℕ) (v : X.Pl) (s : Fin (X.G.P.n' v)) (h : IsOddPos s) :
     ySub X Kc j v s = (YtMat X Kc j v s).adjugate := by
-  simp only [ySub, if_pos h]
+  simp only [ySub, ite_eq_left h]
 
 theorem delF_eq (j : ℕ) (G : (X.Pj j).Xsp) (R : DA X Kc j)
     (h : subD X Kc j G * numD X Kc j = denD X Kc j * R) (f : MvPowerSeries (X.ZA j) Kc) :

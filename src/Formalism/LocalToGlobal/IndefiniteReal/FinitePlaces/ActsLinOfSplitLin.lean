@@ -11,8 +11,6 @@ open Formalism.IndefR.Datum
 
 namespace Formalism.IndefR.Fin.LevelGroupLemmas
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem mt_mul' (V : HSp D) (a b : GA D V) : Formalism.L2.Theta.mt V (a * b) = Formalism.L2.Theta.mt V a * Formalism.L2.Theta.mt V b := by

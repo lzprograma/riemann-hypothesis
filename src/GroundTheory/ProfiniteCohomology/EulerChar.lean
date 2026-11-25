@@ -44,10 +44,10 @@ theorem card_range_eq_card_ker_of_exact {T : ShortComplex (ModuleCat k)} (hT : T
 variable {S : ShortComplex (Rep.{u} k G)} [IsDiscreteRep S.X₁] [IsDiscreteRep S.X₂]
   [IsDiscreteRep S.X₃]
 
-theorem eulerChar_shortExact_of_finite (hS : S.ShortExact)
-    [Finite (cohomology S.X₁ 1)] [Finite (cohomology S.X₂ 1)] [Finite (cohomology S.X₃ 1)]
-    [Subsingleton (cohomology S.X₁ 3)] :
-    eulerChar S.X₂ = eulerChar S.X₁ * eulerChar S.X₃ := by
+theorem eulerChar_mul_eq_mul_card_range_δ (hS : S.ShortExact)
+    [Finite (cohomology S.X₁ 1)] [Finite (cohomology S.X₂ 1)] [Finite (cohomology S.X₃ 1)] :
+    eulerChar S.X₁ * eulerChar S.X₃ =
+      eulerChar S.X₂ * Nat.card (LinearMap.range (δ hS 2 3 rfl).hom) := by
   have hk := fun {X Y : ModuleCat k} (φ : X ⟶ Y) => card_eq_card_ker_mul_card_range φ.hom
   have e2 : ∀ i, Nat.card (LinearMap.range (cohomologyMap S.f i).hom) =
       Nat.card (LinearMap.ker (cohomologyMap S.g i).hom) := fun i =>
@@ -74,8 +74,6 @@ theorem eulerChar_shortExact_of_finite (hS : S.ShortExact)
         (fun i => by simp)
     rw [LinearMap.ker_eq_bot.2 ((ModuleCat.mono_iff_injective _).1 hm)]
     simp
-  have htop : Nat.card (LinearMap.range (δ hS 2 3 rfl).hom) = 1 :=
-    Nat.card_of_subsingleton (0 : LinearMap.range (δ hS 2 3 rfl).hom)
   have hA1 : Nat.card (cohomology S.X₁ 1) ≠ 0 := Nat.card_pos.ne'
   have hB1 : Nat.card (cohomology S.X₂ 1) ≠ 0 := Nat.card_pos.ne'
   have hC1 : Nat.card (cohomology S.X₃ 1) ≠ 0 := Nat.card_pos.ne'
@@ -86,13 +84,21 @@ theorem eulerChar_shortExact_of_finite (hS : S.ShortExact)
     hk (cohomologyMap S.f 0), hk (cohomologyMap S.f 1), hk (cohomologyMap S.f 2),
     hk (cohomologyMap S.g 0), hk (cohomologyMap S.g 1), hk (cohomologyMap S.g 2),
     hk (δ hS 0 1 rfl), hk (δ hS 1 2 rfl), hk (δ hS 2 3 rfl),
-    h0, htop, ← e2 0, ← e2 1, ← e2 2, ← e30, ← e31, ← e32, ← e10, ← e11]
+    h0, ← e2 0, ← e2 1, ← e2 2, ← e30, ← e31, ← e32, ← e10, ← e11]
   simp only [mul_ne_zero_iff] at hA1 hB1 hC1
   obtain ⟨hz0, hx1⟩ := hA1
   obtain ⟨-, hy1⟩ := hB1
   obtain ⟨-, hz1⟩ := hC1
   push_cast
   field_simp
+
+theorem eulerChar_shortExact_of_finite (hS : S.ShortExact)
+    [Finite (cohomology S.X₁ 1)] [Finite (cohomology S.X₂ 1)] [Finite (cohomology S.X₃ 1)]
+    [Subsingleton (cohomology S.X₁ 3)] :
+    eulerChar S.X₂ = eulerChar S.X₁ * eulerChar S.X₃ := by
+  have htop : Nat.card (LinearMap.range (δ hS 2 3 rfl).hom) = 1 :=
+    Nat.card_of_subsingleton (0 : LinearMap.range (δ hS 2 3 rfl).hom)
+  rw [eulerChar_mul_eq_mul_card_range_δ hS, htop, Nat.cast_one, mul_one]
 
 end ShortExact
 

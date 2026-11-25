@@ -187,7 +187,7 @@ theorem proof : IncidenceZeroLocus.Statement := by
     by_cases hff : f' = f
     · subst hff
       simp
-    · rw [if_neg hff, if_neg (fun h' => hff (Subtype.ext h'.symm))]
+    · rw [ite_eq_right hff, ite_eq_right (fun h' => hff (Subtype.ext h'.symm))]
   obtain ⟨σ', hσ'⟩ := exists_det_submatrix_ne_zero (Mx.map φv) hspanv
   obtain ⟨D, hD⟩ : ∃ D, D = (Mx.submatrix id σ').det := ⟨_, rfl⟩
   have hDv : aeval v D ≠ 0 := by

@@ -47,45 +47,11 @@ noncomputable section
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
 open GlobalTheory GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.GalN.V
 
 section Local
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {h : IsPlaceOver A w}
-
-theorem eig_lpTw (x : WD h) (s : ℝ) {φ : ↥(Weil h)} (hφ : deg φ = 1) {α : ℂ} (hα : α ∈ x.eig φ) :
-    α * ((normV w : ℕ) : ℂ) ^ ((s : ℝ) : ℂ) ∈ (x.lpTw s).eig φ := by
-  rw [GlobalTheory.RowTie.EigTwist.eig_lpTw x hφ s]
-  exact Multiset.mem_map_of_mem _ hα
-
-theorem RatioW.of_tempered {x : WD h} {s : ℝ} (hm : x.mono0) (ht : (x.lpTw s).tempered) : RatioW x := by
-  have hq : (1 : ℝ) < ((normV w : ℕ) : ℝ) := by exact_mod_cast GlobalTheory.WeilDeligne.one_lt_normV w
-  have key : ∀ y : WD h, y.mono0 → y.tempered → ∀ φ : ↥(Weil h), deg φ = 1 → ∀ α ∈ y.eig φ, ‖α‖ = 1 := by
-    intro y hm ht φ hφ α hα
-    induction y using WD.ind with
-    | hP n b =>
-      rw [WD.monodromyZero_ofWeilDeligneRepClass_iff] at hm
-      rw [WD.tempered_mk] at ht
-      rw [WD.eig_mk, mem_roots (LinearMap.charpoly_monic _).ne_zero, ← Module.End.hasEigenvalue_iff_isRoot_charpoly] at hα
-      have top := ht.norm_eq_one hm hφ
-      by_contra hne
-      have d := Module.End.eigenspaces_iSupIndep (b.ρ φ) α
-      have le : (⊤ : Submodule ℂ (Fin n → ℂ)) ≤ ⨆ (β) (_ : β ≠ α), Module.End.eigenspace (b.ρ φ) β := by
-        rw [← top]
-        exact iSup₂_le fun β hβ => le_iSup₂_of_le β (fun e => hne (e ▸ hβ)) le_rfl
-      exact hα (disjoint_top.1 (d.mono_right le))
-  intro φ hφ α hα β hβ
-  have hm' := (WD.monomial_twist_iff x s).2 hm
-  have e1 := key _ hm' ht φ hφ _ (eig_lpTw x s hφ hα)
-  have e2 := key _ hm' ht φ hφ _ (eig_lpTw x s hφ hβ)
-  rw [norm_mul] at e1 e2
-  have hc : ‖((normV w : ℕ) : ℂ) ^ ((s : ℝ) : ℂ)‖ ≠ 0 := fun e => by rw [e, mul_zero] at e1; exact zero_ne_one e1
-  have e3 : ‖α‖ = ‖β‖ := mul_right_cancel₀ hc (e1.trans e2.symm)
-  have hb : 0 < ‖β‖ := lt_of_le_of_ne (norm_nonneg _) fun e => by rw [← e, zero_mul] at e2; exact zero_ne_one e2
-  rw [e3]
-  exact lt_mul_of_one_lt_left hb hq
 
 variable {E' Ω' : Type} [Field E'] [NumberField E'] [Field Ω'] [Algebra E' Ω'] [IsAlgClosure E' Ω']
   {A' : ValuationSubring Ω'} {w' : HeightOneSpectrum (𝓞 E')} {h' : IsPlaceOver A' w'}
@@ -111,29 +77,6 @@ variable {F Ω : Type} [Field F] [NumberField F] [IsTotallyReal F] [Field Ω] [A
   {l : ℕ} [Fact l.Prime] {a : ℕ} {π : TR.CuspSub F a} {ι : Qbar l ≃+* ℂ} {r : G F Ω →* GL (Fin a) (Qbar l)} {wt : ℤ}
   {HT : (F →+* Qbar l) → Multiset ℤ}
 
-theorem IsGalRU.of_old (H : IsGalRepOfR π ι r wt HT) : IsGalRU π ι r wt HT := by
-  refine {
-    cont := H.cont
-    ss := H.ss
-    away := ?_
-    ratio := ?_
-    weights := H.weights
-    weights_sym := H.weights_sym
-    above := ?_ }
-  · intro w hl A h rc hrc σ hσ
-    exact .of_eq ((H.away w hl A h rc hrc σ hσ).wdOf_eq hl)
-  · intro w hl A h rc hrc σ hσ hm
-    obtain ⟨x, hx, ht⟩ := H.pure w hl A h
-    rw [← hx.wdOf_eq hl] at ht
-    exact .of_tempered (by rwa [(H.away w hl A h rc hrc σ hσ).wdOf_eq hl]) ht
-  · intro P AI T w A h O _ _ _ Bw hj
-    have k := H.above P AI T w A h O Bw hj
-    exact ⟨k.1, k.2.1, fun σ hσ hi _ rc hrc => by rw [(k.2.2.1 σ hσ hi).2 rc hrc]; exact ⟨fun _ => rfl, id⟩, k.2.2.2⟩
-
 end Real
-
-theorem exRN (h : ExR) : ExRN := fun F Ω _ _ _ _ _ _ l _ ι n _ hn π χ h1 h2 =>
-  let ⟨r, wt, HT, H, a, b⟩ := h F Ω l ι n hn π χ h1 h2
-  ⟨r, wt, HT, .of_old H, a, fun r' x y => .of_old (b r' x y)⟩
 
 end UpperTheory.GalN.V

@@ -55,8 +55,6 @@ open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.DIV Global
 
 namespace GlobalTheory.Mem.Col2.FullDt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {R : Ranks} (H : Formalism.BasicNotions.Host R)
 
 def detU : Formalism.L2.Herm.unitaryOneFiniteAdeles (host_cmData R H) →* U1 (host_cmData R H).sig :=

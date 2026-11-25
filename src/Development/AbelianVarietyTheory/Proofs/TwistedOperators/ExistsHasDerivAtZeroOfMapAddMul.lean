@@ -78,8 +78,7 @@ theorem exists_hasDerivAt_zero_of_map_add_mul :
   have hd : ∀ u, HasDerivAt F (ν u) u := fun u => (hc.deriv_integral ν 0 u ▸
     (hc.integral_hasStrictDerivAt 0 u).hasDerivAt.differentiableAt.hasDerivAt)
   have hex : ∃ δ, F δ ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     have hz : F = fun _ => 0 := funext hne
     have h1 := hd 0
     rw [hz, h0] at h1

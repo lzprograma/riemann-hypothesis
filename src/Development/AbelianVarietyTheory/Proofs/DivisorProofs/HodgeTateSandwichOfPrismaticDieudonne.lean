@@ -5,49 +5,8 @@ public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.Inj
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FontaineAinfLocalDomainXiAdicOrder
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemRange
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 public import Mathlib.RingTheory.Valuation.Integral
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -297,10 +256,6 @@ theorem sandwichAt_of_covariant {C : Type} [Field C] [IsAlgClosed C] [CharZero C
   have hal : ∀ t, D.al (toO e t) = (u₁ : O) • c.equivFun (ι G (hodgeTate G t)) := fun t => by
     refine (red F (ofPadic p O ∘ e t)).trans ?_
     rw [hF, ← hc, hΦ, ← nr, hu₁, map_smul, map_smul, nι, hodgeTate_eq_omegaDualMap]
-  have hact : ∀ a y, actH D a (c.equivFun y) = c.equivFun (H.map (ρ a).asHom y) := fun a y => by
-    obtain ⟨m, rfl⟩ := (hr G).1 y
-    rw [nr, hc, hc, ← hρM]
-    exact red _ _
   have hbb : ∀ y i, D.bb (c.equivFun y) i =
       padicToO p O ↑u⁻¹ * ↑u₂⁻¹ * π G y (dlog G (χ i)) := fun y i => by
     obtain ⟨m, rfl⟩ := (hr G).1 y
@@ -347,12 +302,7 @@ theorem sandwichAt_of_covariant {C : Type} [Field C] [IsAlgClosed C] [CharZero C
     (π G ∘ₗ c.equivFun.symm.toLinearMap) ((hex G).2.2.comp c.equivFun.symm.surjective)
   have hlie : ∀ y, lie (D.Fil.mkQ (c.equivFun y)) = π G y := fun y =>
     congrArg (π G) (c.equivFun.symm_apply_apply y)
-  refine ⟨D, e, LinearEquiv.ofBijective fil₀ hfil, lie, fun a t => (hρT a t).symm,
-    fun a w => ?_, fun a m => ?_, fun t => ?_, fun x χ' => ?_⟩
-  · exact (congrArg c.equivFun (nι _ _ (ρ a).asHom w).symm).trans (hact a _).symm
-  · obtain ⟨y, rfl⟩ := c.equivFun.surjective m
-    rw [hact, hlie, hlie]
-    exact nπ _ _ (ρ a).asHom y
+  refine ⟨D, e, LinearEquiv.ofBijective fil₀ hfil, lie, fun t => ?_, fun x χ' => ?_⟩
   · rw [hal, hodgeTate_eq_omegaMap]
     rfl
   · obtain ⟨y, rfl⟩ := (hex G).2.2 x

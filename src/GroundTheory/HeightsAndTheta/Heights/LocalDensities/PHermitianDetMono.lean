@@ -29,10 +29,6 @@ def HermitianDetMono.Statement : Prop :=
   ∀ (n : ℕ) (A B : Matrix (Fin n) (Fin n) ℂ), B.PosSemidef → (A - B).PosSemidef →
     B.det.re ≤ A.det.re
 
-section Examples
-
-end Examples
-
 end
 
 end GroundTheory.Heights₂.Heights.FourB

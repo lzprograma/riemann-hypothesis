@@ -2,50 +2,9 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFrameOfForallExists
 public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -687,34 +646,5 @@ theorem IsVB.lbIso_det_pullback (h : IsVB F r) (f : Y ⟶ X) :
   rw [hpg j j' hh,
     IsFrame.detUnit_res ((j PUnit.unit).isFrame.pullback f) ((j' PUnit.unit).isFrame.pullback f),
     IsFrame.val_detUnit_pullback (j PUnit.unit).isFrame (j' PUnit.unit).isFrame f inf_le_left inf_le_right hh]
-
-theorem lbIso_det_toMod {L : LB X} (hL : L.IsLB) : LBIso L (det (toMod L) 1) := by
-  refine (lbIso_det_of_frames hL (fun i _ => LB.chartSec hL i) (fun i => isFrame_chartSec hL i)
-    (fun i j => ?_)).2
-  have key : resM (toMod L) (inf_le_right : L.U i ⊓ L.U j ≤ L.U j) (LB.chartSec hL j) =
-      ((L.g i j : Γ(X, L.U i ⊓ L.U j)ˣ) : Γ(X, L.U i ⊓ L.U j)) •
-        resM (toMod L) (inf_le_left : L.U i ⊓ L.U j ≤ L.U i) (LB.chartSec hL i) := by
-    have ext {s t : Γ(toMod L, L.U i ⊓ L.U j)}
-        (hst : ∀ k, LB.coord s k = LB.coord t k) : s = t :=
-      Subtype.ext (funext hst)
-    refine ext fun k => ?_
-    rw [LB.coord_smul]
-    change resG X _ (LB.coord (LB.chartSec hL j) k) =
-      resG X _ ((L.g i j : Γ(X, L.U i ⊓ L.U j)ˣ) : Γ(X, L.U i ⊓ L.U j)) * resG X _ (LB.coord (LB.chartSec hL i) k)
-    rw [LB.coord_chartSec, LB.coord_chartSec, resG_resG, resG_resG]
-    have c0 := congrArg Units.val (hL.3 k i j)
-    have c := congrArg (resG X (show (L.U i ⊓ L.U j) ⊓ L.U k ≤ _ by
-      intro x hx
-      simp only [TopologicalSpace.Opens.mem_inf] at hx ⊢
-      tauto)) c0
-    simp only [Units.val_mul, map_mul, val_res, resG_resG] at c
-    rw [mul_comm]
-    exact c.symm
-  refine Units.ext ?_
-  rw [IsFrame.val_detUnit]
-  simp only [Module.Basis.det_apply, Matrix.det_unique, Module.Basis.toMatrix_apply]
-  rw [key, map_smul, ← IsFrame.basis_apply (isFrame_chartSec hL i) inf_le_left (default : Fin 1),
-    Module.Basis.repr_self]
-  simp
 
 end GlobalTheory.VB

@@ -18,8 +18,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 open Classical ValuativeRel
 open Formalism.L2.SG.Pf.AtPt Formalism.L2.SG.TermLoc
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Steps
 
 variable {D : Formalism.BasicNotions.D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
@@ -86,7 +84,7 @@ theorem ptT_eq (hN : PairVal.NormRepExists D u u' F0 what₂) (hrows : IsRowReps
   obtain ⟨y, hy⟩ := hN γ w hat hrel hgen
   have hex : ∃ x : Point D.host.E (D.R.rS + 1) × LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) × PairVal.MatR D ×
       PairVal.MatR D, PairVal.NormRep γ x.1 x.2.1 x.2.2.1 x.2.2.2 := ⟨(w, y), hy⟩
-  have hn : nrep γ = some hex.choose := dif_pos hex
+  have hn : nrep γ = some hex.choose := dite_eq_left hex
   obtain ⟨hRep, -, hL, hU, e⟩ := hex.choose_spec
   obtain ⟨F₁, hR₁, -, hc₁⟩ := hat
   have hw : w = hex.choose.1 := pt_eq_of_cells cell_point_uniqueness (_root_.term_function_const D u u') hrows γ
@@ -182,7 +180,7 @@ theorem fiberCount_of {θ0 : ∀ p, Option ((M p).Cls D.R.rS)}
           refine finprod_eq_one_of_forall_eq_one fun p => ?_
           rw [← hZx]
           simp only [eL]
-          rw [if_pos ⟨hcls p, (hTC w Z hZ p (hcls p)).trans (hth p)⟩]
+          rw [ite_eq_left ⟨hcls p, (hTC w Z hZ p (hcls p)).trans (hth p)⟩]
         have hpos : TotPos (CntLocal.GZ (CntLocal.Tn u) (CntLocal.Tn u') Z) := by
           rw [hGM w Z hZ]
           exact totPos_of_kind hk (hEP γ₀ w₀ hγ₀)
@@ -227,7 +225,7 @@ theorem fiberCount_of {θ0 : ∀ p, Option ((M p).Cls D.R.rS)}
         rw [← hZx]
         by_cases hc : IsLCls M δ (D.mem u).A.T (D.mem u').A.T p₀ w (tupZ M δ u u' Z p₀)
         · simp only [eL]
-          rw [if_neg]
+          rw [ite_eq_right]
           rintro ⟨-, h⟩
           exact hp₀ ((hTC w Z hZ p₀ hc).symm.trans h)
         · exact eL_of_not_cls hc
@@ -260,7 +258,7 @@ theorem leadingMinors_of_matrix (u u' : D.what₂.Word) : GOfMat (D := D) u u' :
     rw [← Formalism.L2.SG.NGCut.LeadingMinorIntegrality.lead_ZhatOM Z q hq, ← Formalism.L2.SG.NGCut.LeadingMinorIntegrality.lead_cell _ _ hc,
       ← Formalism.MainNotions.BesselShellMomentBounds.leadMinorK_eq _ q hq]
     unfold Dmin Formalism.MainNotions.S.ThB.leadMinorK
-    rw [dif_pos hq]
+    rw [dite_eq_left hq]
   unfold CntLocal.GZ Gpt
   have hstar (x : D.host.E) : D.conjF x = star x :=
     (D.conjF_eq x).trans (Formalism.BasicNotions.Examples₂.star_eq_conj (H := D.host) x).symm

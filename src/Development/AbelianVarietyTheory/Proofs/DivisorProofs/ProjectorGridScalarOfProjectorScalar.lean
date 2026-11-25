@@ -1,50 +1,6 @@
 module
 
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -162,7 +118,7 @@ theorem kill_pow {N : ℕ} {e : ℕ → ℕ → Module.End ℚ V} {lam : ℕ →
     {U : Module.End ℚ V} (hU : U ∈ vanSub N e lam s) (k : ℕ) (hk : 0 < k) : U ((e j i ^ k) v) = 0 := by
   refine hU _ _ (isWt_pow he hj hi hv k) ?_
   rw [Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq']
-  simp only [his, hjs, if_true, if_false]
+  simp only [his, hjs, ite_true, ite_false]
   have : (0 : ℤ) < k := by exact_mod_cast hk
   linarith
 
@@ -174,13 +130,13 @@ theorem step (hS : StepScalar) {N K : ℕ} {e : ℕ → ℕ → Module.End ℚ V
   have hi : i < N := by omega
   have h1 : e i j * e j i - e j i * e i j = e i i - e j j := by
     have := he i j j i hi hj hj hi
-    rw [if_pos rfl, if_pos rfl] at this
+    rw [ite_eq_left rfl, ite_eq_left rfl] at this
     exact this
   have h2 : (e i i - e j j) * e j i - e j i * (e i i - e j j) = -(e j i + e j i) := by
     have a1 := he i i j i hi hi hj hi
     have a2 := he j j j i hj hj hj hi
-    rw [if_neg hij.ne, if_pos rfl] at a1
-    rw [if_pos rfl, if_neg hij.ne] at a2
+    rw [ite_eq_right hij.ne, ite_eq_left rfl] at a1
+    rw [ite_eq_left rfl, ite_eq_right hij.ne] at a2
     calc (e i i - e j j) * e j i - e j i * (e i i - e j j)
         = (e i i * e j i - e j i * e i i) - (e j j * e j i - e j i * e j j) := by noncomm_ring
       _ = -(e j i + e j i) := by rw [a1, a2]; abel

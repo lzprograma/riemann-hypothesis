@@ -62,13 +62,7 @@ variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E]
 variable {L : LocE F E} {r k : ℕ} (S : Frames L r k)
 
 theorem mem_smul (h : S.GLV) (Λ : Submodule L.O S.V) (x : S.V) : x ∈ h • Λ ↔ h⁻¹ x ∈ Λ := by
-  rw [Submodule.mem_smul_pointwise_iff_exists]
-  constructor
-  · rintro ⟨y, hy, rfl⟩
-    have : h⁻¹ (h • y) = y := h.symm_apply_apply y
-    rwa [this]
-  · intro hx
-    exact ⟨_, hx, h.apply_symm_apply x⟩
+  exact GlobalTheory.HL.MoveWit.mem_smul S h Λ x
 
 theorem isSD_smul {h : S.GLV} (hh : h ∈ isomG L S.Hm) {Λ : Submodule L.O S.V} (hΛ : IsSD L S.Hm Λ) :
     IsSD L S.Hm (h • Λ) := by

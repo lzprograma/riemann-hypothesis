@@ -32,14 +32,9 @@ attribute [local instance] MvPolynomial.gradedAlgebra
 
 theorem homogeneousComponent_mul_of_deg_one (c t : MvPolynomial σ R) (ht : t.IsHomogeneous 1) (d : ℕ) :
     homogeneousComponent (d + 1) (c * t) = homogeneousComponent d c * t := by
-  have key : ∀ (x : MvPolynomial σ R) (i : ℕ),
-      (DirectSum.decompose (homogeneousSubmodule σ R) x i : MvPolynomial σ R) =
-        homogeneousComponent i x :=
-    fun x i => decomposition.decompose'_apply x i
-  have h := DirectSum.coe_decompose_mul_of_right_mem_of_le (𝒜 := homogeneousSubmodule σ R) (a := c)
-    (n := d + 1) ((mem_homogeneousSubmodule 1 t).mpr ht) (by omega)
-  rw [key, key, Nat.add_sub_cancel] at h
-  exact h
+  simp_rw [← decomposition.decompose'_apply]
+  exact DirectSum.coe_decompose_mul_add_of_right_mem (homogeneousSubmodule σ R) (a := c) (i := d)
+    ((mem_homogeneousSubmodule 1 t).mpr ht)
 
 theorem isHomogeneous_span_of {s : Set (MvPolynomial σ R)} (h : ∀ x ∈ s, ∃ d, x.IsHomogeneous d) :
     (Ideal.span s).IsHomogeneous (homogeneousSubmodule σ R) :=

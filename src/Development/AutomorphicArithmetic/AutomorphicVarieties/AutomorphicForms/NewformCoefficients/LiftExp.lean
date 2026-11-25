@@ -104,14 +104,7 @@ private theorem eq_of_ord {I J : Ideal (𝓞 ℚ)} (hI : I ≠ ⊥) (hJ : J ≠ 
 
 private theorem val_unit {u : (Af ℚ)ˣ} (hu : IsZU u) (w : HeightOneSpectrum (𝓞 ℚ)) :
     Valued.v (pLoc ℚ w (u : Af ℚ)) = 1 := by
-  have h1 : Valued.v (pLoc ℚ w (u : Af ℚ)) ≤ 1 := Subring.mem_iInf.1 hu.1 w
-  have h2 : Valued.v (pLoc ℚ w ((u⁻¹ : (Af ℚ)ˣ) : Af ℚ)) ≤ 1 := Subring.mem_iInf.1 hu.2 w
-  have h3 : Valued.v (pLoc ℚ w (u : Af ℚ)) * Valued.v (pLoc ℚ w ((u⁻¹ : (Af ℚ)ˣ) : Af ℚ)) = 1 := by
-    rw [← map_mul, ← map_mul, Units.mul_inv, map_one, map_one]
-  refine le_antisymm h1 ?_
-  calc 1 = _ := h3.symm
-    _ ≤ Valued.v (pLoc ℚ w (u : Af ℚ)) * 1 := mul_le_mul_right h2 _
-    _ = _ := mul_one _
+  apply _root_.val_one <;> assumption
 
 private theorem genD_iff (q : ℚ) {u : (Af ℚ)ˣ} (hu : IsZU u) (𝔪 : Ideal (𝓞 ℚ)) :
     GenD (algebraMap ℚ (Af ℚ) q * (u : Af ℚ)) 𝔪 ↔
@@ -131,7 +124,7 @@ theorem UpperTheory.V.Af.Nf.coefAt :
     UpperTheory.V.Af.Nf.CoefAt := by
   intro a q hq u hu
   by_cases hd : q.den = 1
-  · rw [if_pos hd]
+  · rw [ite_eq_left hd]
     have hnum : 0 < q.num := Rat.num_pos.2 hq
     have hn : q.num.toNat ≠ 0 := by omega
     have hqn : q = (q.num.toNat : ℚ) := by
@@ -148,7 +141,7 @@ theorem UpperTheory.V.Af.Nf.coefAt :
       have := WithZero.exp_injective ((h2 w).symm.trans (hv w))
       omega
     rw [UpperTheory.V.Sd.coefAt, dite_eq_left hex, he, Ideal.absNorm_span_natCast, RingOfIntegers.rank, Module.finrank_self, pow_one]
-  · rw [if_neg hd, UpperTheory.V.Sd.coefAt, dite_eq_right]
+  · rw [ite_eq_right hd, UpperTheory.V.Sd.coefAt, dite_eq_right]
     rintro ⟨𝔪, h⟩
     obtain ⟨r, hr⟩ := HeightOneSpectrum.mem_integers_of_valuation_le_one (R := 𝓞 ℚ) ℚ q fun w => by
       rw [((genD_iff q hu _).1 h).2 w, ← WithZero.exp_zero, WithZero.exp_le_exp]
@@ -250,12 +243,12 @@ theorem UpperTheory.V.Af.Nf.liftExp :
     have e : (j n).1 * r = ((n + 1 : ℕ) : ℚ) := div_mul_cancel₀ _ hr.ne'
     simp only [Function.comp]
     rw [hc _ (hq _), e, Fintype.sum_subsingleton _ Rat.infinitePlace, reAt_rat]
-    simp only [Rat.den_natCast, Rat.num_natCast, Int.toNat_natCast, if_true]
+    simp only [Rat.den_natCast, Rat.num_natCast, Int.toNat_natCast, ite_true]
     congr 3
     change ((((((n + 1 : ℕ) : ℚ) / r : ℚ) : ℝ)) : ℂ) * ((ev x : ℂ) + Complex.I * (ev y.val : ℂ)) = _
     push_cast
     ring
-  · rw [hc _ (hq ξ), if_neg, zero_mul]
+  · rw [hc _ (hq ξ), ite_eq_right, zero_mul]
     intro hd
     have h1 : 0 < (ξ.1 * r).num := Rat.num_pos.2 (mul_pos (hq ξ) hr)
     refine hξ ⟨(ξ.1 * r).num.toNat - 1, Subtype.ext ?_⟩

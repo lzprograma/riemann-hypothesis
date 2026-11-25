@@ -5,44 +5,6 @@ public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafOrderDecrease
 public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafSmoothPullback
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheaf
 
 @[expose] public section
@@ -52,15 +14,6 @@ universe u
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 
 namespace FunctorialResolution.EmbeddedResolution
-
-private theorem le_natCast_or_succ_le (a : ℕ∞) (r : ℕ) :
-    a ≤ (r : ℕ∞) ∨ ((r + 1 : ℕ) : ℕ∞) ≤ a := by
-  rcases eq_or_ne a ⊤ with rfl | ha
-  · exact Or.inr le_top
-  · obtain ⟨m, rfl⟩ := ENat.ne_top_iff_exists.1 ha
-    rcases Nat.lt_or_ge r m with hm | hm
-    · exact Or.inr (by exact_mod_cast hm)
-    · exact Or.inl (by exact_mod_cast hm)
 
 private theorem germ_comp_appLE {X Y : Scheme.{u}} (h : Y ⟶ X) (U : X.Opens) (V : Y.Opens)
     (e : V ≤ h ⁻¹ᵁ U) (y : Y) (hy : y ∈ V) :
@@ -115,19 +68,17 @@ theorem orderAt_comap (k : Type u) [Field k] [CharZero k] {X Y : Scheme.{u}}
     (p : X ⟶ Spec (CommRingCat.of k)) [AlgebraicGeometry.Smooth p]
     (h : Y ⟶ X) [AlgebraicGeometry.Smooth h] (I : X.IdealSheafData) (y : Y) :
     orderAt (I.comap h) y = orderAt I (h.base y) := by
-  have : LocallyOfFiniteType p := inferInstance
-  have : LocallyOfFiniteType (h ≫ p) := inferInstance
   refine le_antisymm ?_ (orderAt_le_orderAt_comap h I y)
   rcases eq_or_ne (orderAt I (h.base y)) ⊤ with hI | hI
   · rw [hI]; exact le_top
   obtain ⟨r, hr⟩ := ENat.ne_top_iff_exists.1 hI
   rw [← hr]
-  rcases le_natCast_or_succ_le (orderAt (I.comap h) y) r with hle | hlt
+  rcases le_or_gt (orderAt (I.comap h) y) r with hle | hlt
   · exact hle
   exfalso
   have h1 : ((1 : ℕ) : ℕ∞) ≤ orderAt (derivIdealSheafIterate k (h ≫ p) r (I.comap h)) y :=
     le_orderAt_derivIdealSheafIterate k (h ≫ p) (I.comap h) y 1 r (by
-      rw [Nat.add_comm]; exact hlt)
+      rw [Nat.add_comm, Nat.cast_add, Nat.cast_one]; exact ENat.natCast_add_one_le_iff.2 hlt)
   rw [derivIdealSheafIterate_comap k p h r I] at h1
   have h2 : (1 : ℕ∞) ≤ orderAt ((derivIdealSheafIterate k p r I).comap h) y := by exact_mod_cast h1
   have h3 := one_le_orderAt_of_one_le_orderAt_comap h (derivIdealSheafIterate k p r I) y h2

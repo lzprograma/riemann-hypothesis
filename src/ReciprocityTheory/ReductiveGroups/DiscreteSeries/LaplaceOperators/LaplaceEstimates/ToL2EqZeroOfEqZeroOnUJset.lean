@@ -45,8 +45,7 @@ namespace ReciprocityTheory.ChartRestriction.DS.Lap
 
 theorem finB_umat_inv {n : ℕ} {ε : Fin n → Bool} (y : Formalism.REAL.UJ ε) :
     Formalism.MainNotions.S.umat y⁻¹ = (Formalism.MainNotions.S.umat y)⁻¹ := by
-  show ((y⁻¹ : Formalism.REAL.UJ ε) : (Matrix (Fin n) (Fin n) ℂ)ˣ).val = _
-  rw [Subgroup.coe_inv, Matrix.coe_units_inv]
+  exact ReciprocityTheory.ChartRestriction.DS.Lap.unitary_matrix_inv_alt ε y
 
 theorem finB_umat_mul {n : ℕ} {ε : Fin n → Bool} (a b : Formalism.REAL.UJ ε) :
     Formalism.MainNotions.S.umat (a * b) = Formalism.MainNotions.S.umat a * Formalism.MainNotions.S.umat b := rfl

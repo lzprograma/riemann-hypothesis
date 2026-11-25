@@ -115,12 +115,12 @@ theorem coeff_pow_char (p : ℕ) [hp : Fact p.Prime] [CharP R p] (x : HahnSeries
   set b := x - a - c with hb_def
   have hx : x = a + c + b := by rw [hb_def]; abel
   have ha : ∀ t, a.coeff t ≠ 0 → t < N := by
-    intro t ht; by_contra h; push_neg at h; exact ht (HahnSeries.coeff_truncLT_of_le h x)
+    intro t ht; by_contra h; push Not at h; exact ht (HahnSeries.coeff_truncLT_of_le h x)
   have hb : ∀ t, b.coeff t ≠ 0 → N < t := by
-    intro t ht; by_contra h; push_neg at h; apply ht
+    intro t ht; by_contra h; push Not at h; apply ht
     rw [hb_def, HahnSeries.coeff_sub, HahnSeries.coeff_sub, ha_def, hc_def, HahnSeries.coeff_truncLT]
     rcases h.lt_or_eq with h | h
-    · rw [if_pos h, HahnSeries.coeff_single_of_ne h.ne]; simp
+    · rw [ite_eq_left h, HahnSeries.coeff_single_of_ne h.ne]; simp
     · subst h; simp
   rw [show x ^ p = (a + c + b) ^ p by rw [← hx], add_pow_char, add_pow_char, HahnSeries.coeff_add, HahnSeries.coeff_add]
   have h1 : (a ^ p).coeff n = 0 := by
@@ -215,8 +215,7 @@ theorem map_liftV (x : HahnSeries ℚ Ω) (h : ∀ r, x.coeff r ∈ V) : hahnSer
 
 theorem mem_of_pow_eq_one {w : Ω} {n : ℕ} (hn : n ≠ 0) (hw : w ^ n = 1) : w ∈ V := by
   rw [← ValuationSubring.valuation_le_one_iff]
-  by_contra h
-  push_neg at h
+  by_contra! h
   have := one_lt_pow₀ h hn
   rw [← map_pow, hw, map_one] at this
   exact lt_irrefl _ this

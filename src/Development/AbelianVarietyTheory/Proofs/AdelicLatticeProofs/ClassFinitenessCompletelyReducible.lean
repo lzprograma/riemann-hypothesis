@@ -146,7 +146,7 @@ theorem cf_of_ss : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (Γ : Set (Matr
     if hz : ∃ p, P z p then hz.choose else (1, 1)
   have hc : ∀ z, (∃ p, P z p) → P z (c z) := by
     intro z hz
-    simp only [c, dif_pos hz]
+    simp only [c, dite_eq_left hz]
     exact hz.choose_spec
   refine ⟨(Z.filter fun z => ∃ p, P z p).image fun z => (c z).1.map (algebraMap ℚ R) * (c z).2, ?_, ?_⟩
   · intro s hs

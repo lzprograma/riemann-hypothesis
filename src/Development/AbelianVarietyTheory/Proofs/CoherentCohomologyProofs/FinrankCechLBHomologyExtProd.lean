@@ -118,8 +118,8 @@ def degProj (A : Cube.{v} ι R) (p : ℕ) : Module.End R (∀ s, A.obj s) :=
 theorem degProj_apply (A : Cube.{v} ι R) (p : ℕ) (x : ∀ s, A.obj s) (s : Finset ι) :
     degProj A p x s = if s.card = p then x s else 0 := by
   by_cases h : s.card = p
-  · rw [if_pos h]; exact extend_apply_of_eq A _ h
-  · rw [if_neg h]; exact extend_apply_of_ne A _ h
+  · rw [ite_eq_left h]; exact extend_apply_of_eq A _ h
+  · rw [ite_eq_right h]; exact extend_apply_of_ne A _ h
 
 def degSign (A : Cube.{v} ι R) : Module.End R (∀ s, A.obj s) :=
   LinearMap.pi fun s => (-1 : ℤ) ^ s.card • LinearMap.proj s
@@ -264,7 +264,7 @@ theorem nonempty_cubeHomology_equiv_of_homotopy (A : Cube.{v} ι R) (n : ℕ)
   have hPP : ∀ x, P (P x) = P x := fun x => Φ.injective (by
     rw [← hP, ← hP]
     have := degProj_mul_degProj A n n
-    rw [if_pos rfl] at this
+    rw [ite_eq_left rfl] at this
     exact congr($this (Φ x)))
   have hI : ∀ w, e (P (I w)) = I w := fun w => by rw [← hIQ, hQI]
   refine nonempty_cubeHomology_equiv_of_retract A n (Φ.toLinearMap ∘ₗ I) (Q ∘ₗ Φ.symm.toLinearMap)
@@ -407,7 +407,7 @@ theorem rangeRestrict_comp_subtype_of_orthogonal {f : ℕ → Module.End K V}
   refine LinearMap.ext ?_
   rintro ⟨_, x, rfl⟩
   have := hf p p
-  rw [if_pos rfl] at this
+  rw [ite_eq_left rfl] at this
   exact Subtype.ext congr($this x)
 
 theorem rangeRestrict_comp_subtype_of_orthogonal_of_ne {f : ℕ → Module.End K V}
@@ -416,7 +416,7 @@ theorem rangeRestrict_comp_subtype_of_orthogonal_of_ne {f : ℕ → Module.End K
   refine LinearMap.ext ?_
   rintro ⟨_, x, rfl⟩
   have := hf p q
-  rw [if_neg h] at this
+  rw [ite_eq_right h] at this
   exact Subtype.ext congr($this x)
 
 theorem exists_retraction_tensor_ranges {f : ℕ → Module.End K V} {g : ℕ → Module.End K V'}
@@ -588,12 +588,12 @@ theorem degProj_totalTensorEquiv (n : ℕ) (z : (∀ s, A.obj s) ⊗[K] (∀ t, 
         degProj_apply]
       by_cases h1 : (part (inlEmb ι κ) w).card = p.1
       · by_cases h2 : (part (inrEmb ι κ) w).card = p.2
-        · rw [if_pos h1, if_pos h2]
-          exact (if_pos (Prod.ext h1 h2)).symm
-        · rw [if_neg h2, tmul_zero]
-          exact (if_neg fun h => h2 (congrArg Prod.snd h)).symm
-      · rw [if_neg h1, zero_tmul]
-        exact (if_neg fun h => h1 (congrArg Prod.fst h)).symm
+        · rw [ite_eq_left h1, ite_eq_left h2]
+          exact (ite_eq_left (Prod.ext h1 h2)).symm
+        · rw [ite_eq_right h2, tmul_zero]
+          exact (ite_eq_right fun h => h2 (congrArg Prod.snd h)).symm
+      · rw [ite_eq_right h1, zero_tmul]
+        exact (ite_eq_right fun h => h1 (congrArg Prod.fst h)).symm
     rw [Finset.sum_congr rfl fun p _ => h p, Finset.sum_ite_eq]
     simp only [Finset.HasAntidiagonal.mem_antidiagonal]
 
@@ -672,7 +672,7 @@ theorem nonempty_trunc₂_iso_extTensor (C : Cube.{v} (ι ⊕ₗ κ) K)
       fun {w w'} h x => by
         by_cases hw : w ∈ partsIn (inlEmb ι κ) (inrEmb ι κ) {s | s.Nonempty} {t | t.Nonempty}
         · have hw' := isUpperSet_partsIn_nonempty _ _ h hw
-          simp only [dif_pos hw, dif_pos hw', LinearMap.comp_apply, LinearEquiv.coe_coe]
+          simp only [dite_eq_left hw, dite_eq_left hw', LinearMap.comp_apply, LinearEquiv.coe_coe]
           rw [suppEquiv_res h hw hw', hν h hw hw']
         · have := subsingleton_supp (extTensor A B) hP hw
           rw [Subsingleton.elim x 0]
@@ -681,7 +681,7 @@ theorem nonempty_trunc₂_iso_extTensor (C : Cube.{v} (ι ⊕ₗ κ) K)
     trunc₂Iso (trunc₂Incl (extTensor A B)) fun s t hs ht => trunc₂Incl_bijective _ hs ht⟩
   have hw : sumVertex s t ∈ partsIn (inlEmb ι κ) (inrEmb ι κ) {s | s.Nonempty} {t | t.Nonempty} := by
     simp [hs, ht]
-  have : (φ.app (sumVertex s t)).hom = ν _ hw ∘ₗ (suppEquiv _ hP hw).toLinearMap := dif_pos hw
+  have : (φ.app (sumVertex s t)).hom = ν _ hw ∘ₗ (suppEquiv _ hP hw).toLinearMap := dite_eq_left hw
   rw [this]
   exact ((hb (sumVertex_part _) _).comp (hμ _ _ hw.1 hw.2)).comp (suppEquiv _ hP hw).bijective
 
@@ -801,7 +801,6 @@ section -- clump:auto
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry DirectSum TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory GlobalTheory.AbLaw
 noncomputable section
 namespace GlobalTheory.AbLaw.ExtProd
@@ -1014,7 +1013,6 @@ section -- clump:auto
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry DirectSum TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory GlobalTheory.AbLaw
 
 namespace GlobalTheory.AbLaw

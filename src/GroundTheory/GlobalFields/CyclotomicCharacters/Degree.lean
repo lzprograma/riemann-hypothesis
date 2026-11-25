@@ -91,10 +91,6 @@ theorem toPadicInt_degree (q : Nat.Primes) (σ : Gal((AlgebraicClosure ℚ)/ℚ)
 
 end Degree
 
-section ComplexConjugation
-
-end ComplexConjugation
-
 section FixedField
 
 noncomputable def zhatField : IntermediateField ℚ (AlgebraicClosure ℚ) :=

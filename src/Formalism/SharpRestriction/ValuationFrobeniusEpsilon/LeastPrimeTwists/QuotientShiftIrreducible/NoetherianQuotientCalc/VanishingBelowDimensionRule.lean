@@ -1,49 +1,8 @@
 module
 
+import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.EulerAdditivityInSection
 public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.EulerVanishingBelowDimension
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -89,20 +48,8 @@ theorem chi_ev_zero (ts : List (Deg k × R)) : ∀ (F : GMod B R k),
     filter_upwards [ih _ h1, ih _ h2] with m a b
     simp [chi, a, b]
 
-theorem ann_le_sub (F : GMod B R k) (N : Submodule R F.M) : F.Ann ≤ (F.sub N).Ann := by
-  intro a ha
-  refine Module.mem_annihilator.mpr fun x => ?_
-  have hx : ∀ x : N, a • x = 0 := fun x => Subtype.ext (Module.mem_annihilator.mp ha x.1)
-  exact hx x
-
 theorem ann_le_quo (F : GMod B R k) (N : Submodule R F.M) : F.Ann ≤ (F.quo N).Ann := by
-  intro a ha
-  refine Module.mem_annihilator.mpr fun x => ?_
-  have hx : ∀ x : F.M ⧸ N, a • x = 0 := by
-    intro x
-    obtain ⟨y, rfl⟩ := Submodule.Quotient.mk_surjective _ x
-    rw [← Submodule.Quotient.mk_smul, Module.mem_annihilator.mp ha y, Submodule.Quotient.mk_zero]
-  exact hx x
+  apply _root_.Formalism.MainNotions.V.Pf.V2.Calc.E7.ann_le_quo <;> assumption
 
 theorem ann_sup_le_quot (F : GMod B R k) (σ : R) : F.Ann ⊔ Ideal.span {σ} ≤ (F.quot σ).Ann := by
   refine sup_le (ann_le_quo F _) ?_
@@ -150,13 +97,7 @@ def isoQuot (F : GMod B R k) (s : R) (h : ∀ x : F.M, s • x = 0) : GIso F (F.
 
 theorem secs_cons_le (d : Deg k) (s : R) (ts : List (Deg k × R)) :
     secs ((d, s) :: ts) ≤ Ideal.span {s} ⊔ secs ts := by
-  refine Ideal.span_le.mpr ?_
-  rintro x ⟨d', hx⟩
-  rcases List.mem_cons.mp hx with h | h
-  · have : x = s := congrArg Prod.snd h
-    subst this
-    exact Ideal.mem_sup_left (Ideal.mem_span_singleton_self x)
-  · exact Ideal.mem_sup_right (Ideal.subset_span ⟨d', h⟩)
+  apply _root_.Formalism.MainNotions.V.Pf.V2.Calc.E7.secs_cons_le_sup <;> assumption
 
 end Gen
 
@@ -330,7 +271,8 @@ theorem dev_reduce (hGr : RuleGr) (hIrr : RuleIrr) (hIso : RuleIso) (hShift : Ru
       have g0 : ((GMod.self X.𝒜).quo (𝔮 i)).IsGr X.𝒜 :=
         ((hGr k X _ (self_isGr X.𝒜)).1 (𝔮 i) (isHomSub_of_hom X.𝒜 hh)).2
       have g3 : (((GMod.self X.𝒜).quo (𝔮 i)).shift (d i)).IsGr X.𝒜 := (hGr k X _ g0).2.1 (d i)
-      have hs := hE1 k X ts _ _ _ hv g1 g2 g3 ses (admissible_mono_ideal X.𝒜 (ann_le_sub F _) hA)
+      have hs := hE1 k X ts _ _ _ hv g1 g2 g3 ses (admissible_mono_ideal X.𝒜
+          (Formalism.MainNotions.V.Pf.V2.Calc.E7.ann_le_sub F _) hA)
       have hq : ∀ᶠ m in atTop, P (chi ts ((GMod.self X.𝒜).quo (𝔮 i)) m) := by
         by_cases hrel : Irr X.𝒜 ≤ 𝔮 i
         · have hz := chi_ev_zero ts _ (hIrr k X _ g0

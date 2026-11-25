@@ -115,8 +115,6 @@ theorem saturated_has_complement {R : Type u_1} {V : Type u_2} [CommRing R] [IsD
       rw [hx']
       exact Submodule.add_mem_sup ⟨g (N'.mkQ m), ⟨_, rfl⟩, rfl⟩ (by simpa [N'] using hd)
 
-alias main := _root_.GlobalTheory.SaturatedSublatticeComplement.saturated_has_complement
-
 end GlobalTheory.SaturatedSublatticeComplement
 end -- clump:auto
 end -- clump:auto

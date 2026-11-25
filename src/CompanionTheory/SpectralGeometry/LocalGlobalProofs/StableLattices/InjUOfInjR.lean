@@ -42,7 +42,7 @@ theorem cre_single {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (f : Pos
   show (if f ∈ A then CompanionTheory.D.LK.sg f A • (Pi.single S w : Cn n V) (A.erase f) else 0) = _
   by_cases hA : A = insert f S
   · subst hA
-    rw [if_pos (Finset.mem_insert_self f S), Finset.erase_insert h]
+    rw [ite_eq_left (Finset.mem_insert_self f S), Finset.erase_insert h]
     simp
   · have hr : (CompanionTheory.D.LK.sg f (insert f S) • (Pi.single (insert f S) w : Cn n V)) A = 0 := by
       simp [hA]
@@ -144,7 +144,7 @@ theorem adC_mem_omU {n : ℕ} {ε : Fin n → Bool} {lev : Fin n → ℕ} {p q :
   have hcase : (q = i.1.1 ∧ k.1 = (p, i.1.2)) ∨ (i.1.2 = p ∧ k.1 = (i.1.1, q)) := by
     by_contra hn
     rw [not_or] at hn
-    exact hc (by simp only [adC, if_neg hn.1, if_neg hn.2, sub_self])
+    exact hc (by simp only [adC, ite_eq_right hn.1, ite_eq_right hn.2, sub_self])
   obtain ⟨h1, h2⟩ : ε i.1.1 = ε i.1.2 ∧ lev i.1.1 < lev i.1.2 := (mem_filter.1 hi).2
   have hne : p ≠ q := ne_of_lt hpq
   rcases hcase with ⟨e1, e2⟩ | ⟨e1, e2⟩
@@ -228,16 +228,16 @@ def dT (lev : Fin n → ℕ) (a b : Fin n) : Module.End ℂ (Cn n V) :=
 abbrev LT (E : Fin n → Fin n → Module.End ℂ V) (a b : Fin n) : Module.End ℂ (Cn n V) := lift n (E a b)
 
 theorem cT_pos {lev : Fin n → ℕ} {a b : Fin n} (h : tau lev a b) :
-    (cT lev a b : Module.End ℂ (Cn n V)) = ann ⟨(a, b), h.1⟩ := dif_pos h
+    (cT lev a b : Module.End ℂ (Cn n V)) = ann ⟨(a, b), h.1⟩ := dite_eq_left h
 
 theorem dT_pos {lev : Fin n → ℕ} {a b : Fin n} (h : tau lev a b) :
-    (dT lev a b : Module.End ℂ (Cn n V)) = cre ⟨(a, b), h.1⟩ := dif_pos h
+    (dT lev a b : Module.End ℂ (Cn n V)) = cre ⟨(a, b), h.1⟩ := dite_eq_left h
 
 theorem cT_neg {lev : Fin n → ℕ} {a b : Fin n} (h : ¬tau lev a b) :
-    (cT lev a b : Module.End ℂ (Cn n V)) = 0 := dif_neg h
+    (cT lev a b : Module.End ℂ (Cn n V)) = 0 := dite_eq_right h
 
 theorem dT_neg {lev : Fin n → ℕ} {a b : Fin n} (h : ¬tau lev a b) :
-    (dT lev a b : Module.End ℂ (Cn n V)) = 0 := dif_neg h
+    (dT lev a b : Module.End ℂ (Cn n V)) = 0 := dite_eq_right h
 
 def SU (V : Type) [AddCommGroup V] [Module ℂ V] (lev : Fin n → ℕ) : Submodule ℂ (Cn n V) where
   carrier := {x | SuppIn (inU lev) x}
@@ -293,8 +293,8 @@ theorem bd_allT (E : Fin n → Fin n → Module.End ℂ V) (x : Cn n V) :
   congr 1
   refine sum_congr rfl fun i _ => sum_congr rfl fun j _ => sum_congr rfl fun k _ => ?_
   by_cases h : i.1.2 = j.1.1 ∧ k.1.1 = i.1.1 ∧ k.1.2 = j.1.2
-  · rw [if_pos h, if_pos ⟨trivial, trivial, h⟩]; rfl
-  · rw [if_neg h, if_neg (fun t => h t.2.2)]; rfl
+  · rw [ite_eq_left h, ite_eq_left ⟨trivial, trivial, h⟩]; rfl
+  · rw [ite_eq_right h, ite_eq_right (fun t => h t.2.2)]; rfl
 
 theorem part_one (E : Fin n → Fin n → Module.End ℂ V) (hx : x ∈ SU V lev) :
     ∑ a, ∑ b, LT E a b (cT lev a b x) = ∑ i : Pos n, lift n (E i.1.1 i.1.2) (ann i x) := by
@@ -310,8 +310,8 @@ theorem tri_sum (hx : x ∈ SU V lev) (i j : Pos n) :
       if i.1.2 = j.1.1 then dT lev i.1.1 j.1.2 (cT lev j.1.1 j.1.2 (cT lev i.1.1 i.1.2 x)) else 0 := by
   by_cases h : i.1.2 = j.1.1
   swap
-  · rw [if_neg h]; exact sum_eq_zero fun k _ => if_neg (fun t => h t.1)
-  rw [if_pos h]
+  · rw [ite_eq_right h]; exact sum_eq_zero fun k _ => ite_eq_right (fun t => h t.1)
+  rw [ite_eq_left h]
   by_cases hi : inU lev i
   swap
   · rw [ann_zero hi hx, cT_neg (lev := lev) (a := i.1.1) (b := i.1.2) (fun t => hi t.2)]; simp
@@ -322,9 +322,9 @@ theorem tri_sum (hx : x ∈ SU V lev) (i j : Pos n) :
   have hlv : lev i.1.1 < lev j.1.2 := lt_trans hi (h ▸ hj)
   rw [dT_pos (lev := lev) ⟨hlt, hlv⟩, cT_pos (lev := lev) (a := j.1.1) (b := j.1.2) ⟨j.2, hj⟩,
     cT_pos (lev := lev) (a := i.1.1) (b := i.1.2) ⟨i.2, hi⟩, sum_eq_single ⟨(i.1.1, j.1.2), hlt⟩]
-  · rw [if_pos ⟨h, rfl, rfl⟩]
+  · rw [ite_eq_left ⟨h, rfl, rfl⟩]
   · intro k _ hk
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨-, e1, e2⟩
     exact hk (Subtype.ext (Prod.ext e1 e2))
   · simp
@@ -342,8 +342,8 @@ theorem part_two (hx : x ∈ SU V lev) :
       split_ifs
       · rw [cT_neg (lev := lev) (a := b) (b := e) (fun t => h t.1)]; simp
       · rfl),
-    sum_eq_single i.1.2 (fun b _ hb => sum_eq_zero fun e _ => if_neg (Ne.symm hb)) (by simp)]
-  exact sum_congr rfl fun e _ => (if_pos rfl).symm
+    sum_eq_single i.1.2 (fun b _ hb => sum_eq_zero fun e _ => ite_eq_right (Ne.symm hb)) (by simp)]
+  exact sum_congr rfl fun e _ => (ite_eq_left rfl).symm
 
 def Dl (lev : Fin n → ℕ) (E : Fin n → Fin n → Module.End ℂ V) : Module.End ℂ (Cn n V) :=
   (∑ a, ∑ b, LT E a b * cT lev a b) + ∑ a, ∑ b, ∑ e, dT lev a e * cT lev b e * cT lev a b
@@ -378,8 +378,8 @@ theorem ad_one (hm : Monotone lev) {p q : Fin n} (hpq : lev p = lev q) (hx : x �
       ∑ r, dT lev p r (cT lev q r x) := by
   have e1 : ∑ r, dT lev p r (cT lev q r x) =
       ∑ a, ∑ b, if q = a then dT lev p b (cT lev a b x) else 0 := by
-    rw [sum_eq_single q (fun a _ ha => sum_eq_zero fun b _ => if_neg (Ne.symm ha)) (by simp)]
-    exact sum_congr rfl fun r _ => (if_pos rfl).symm
+    rw [sum_eq_single q (fun a _ ha => sum_eq_zero fun b _ => ite_eq_right (Ne.symm ha)) (by simp)]
+    exact sum_congr rfl fun r _ => (ite_eq_left rfl).symm
   rw [e1, sum_pos (fun a b => if q = a then dT lev p b (cT lev a b x) else 0)
     (fun a b h => by
       split_ifs
@@ -388,9 +388,9 @@ theorem ad_one (hm : Monotone lev) {p q : Fin n} (hpq : lev p = lev q) (hx : x �
   refine sum_congr rfl fun i _ => ?_
   by_cases h : q = i.1.1
   swap
-  · rw [if_neg h]
-    exact sum_eq_zero fun k _ => by rw [if_neg (fun t => h t.1), zero_smul]
-  rw [if_pos h]
+  · rw [ite_eq_right h]
+    exact sum_eq_zero fun k _ => by rw [ite_eq_right (fun t => h t.1), zero_smul]
+  rw [ite_eq_left h]
   by_cases hi : inU lev i
   swap
   · rw [ann_zero hi hx, cT_neg (lev := lev) (a := i.1.1) (b := i.1.2) (fun t => hi t.2)]; simp
@@ -398,9 +398,9 @@ theorem ad_one (hm : Monotone lev) {p q : Fin n} (hpq : lev p = lev q) (hx : x �
   have hlt : p < i.1.2 := hm.reflect_lt hlv
   rw [dT_pos (lev := lev) ⟨hlt, hlv⟩, cT_pos (lev := lev) (a := i.1.1) (b := i.1.2) ⟨i.2, hi⟩,
     sum_eq_single ⟨(p, i.1.2), hlt⟩]
-  · rw [if_pos ⟨h, rfl⟩, one_smul]
+  · rw [ite_eq_left ⟨h, rfl⟩, one_smul]
   · intro k _ hk
-    rw [if_neg, zero_smul]
+    rw [ite_eq_right, zero_smul]
     rintro ⟨-, e⟩
     exact hk (Subtype.ext e)
   · simp
@@ -411,8 +411,8 @@ theorem ad_two (hm : Monotone lev) {p q : Fin n} (hpq : lev p = lev q) (hx : x �
   have e1 : ∑ r, dT lev r q (cT lev r p x) =
       ∑ a, ∑ b, if b = p then dT lev a q (cT lev a b x) else 0 := by
     refine sum_congr rfl fun a _ => ?_
-    rw [sum_eq_single p (fun b _ hb => if_neg hb) (by simp)]
-    exact (if_pos rfl).symm
+    rw [sum_eq_single p (fun b _ hb => ite_eq_right hb) (by simp)]
+    exact (ite_eq_left rfl).symm
   rw [e1, sum_pos (fun a b => if b = p then dT lev a q (cT lev a b x) else 0)
     (fun a b h => by
       split_ifs
@@ -421,9 +421,9 @@ theorem ad_two (hm : Monotone lev) {p q : Fin n} (hpq : lev p = lev q) (hx : x �
   refine sum_congr rfl fun i _ => ?_
   by_cases h : i.1.2 = p
   swap
-  · rw [if_neg h]
-    exact sum_eq_zero fun k _ => by rw [if_neg (fun t => h t.1), zero_smul]
-  rw [if_pos h]
+  · rw [ite_eq_right h]
+    exact sum_eq_zero fun k _ => by rw [ite_eq_right (fun t => h t.1), zero_smul]
+  rw [ite_eq_left h]
   by_cases hi : inU lev i
   swap
   · rw [ann_zero hi hx, cT_neg (lev := lev) (a := i.1.1) (b := i.1.2) (fun t => hi t.2)]; simp
@@ -431,9 +431,9 @@ theorem ad_two (hm : Monotone lev) {p q : Fin n} (hpq : lev p = lev q) (hx : x �
   have hlt : i.1.1 < q := hm.reflect_lt hlv
   rw [dT_pos (lev := lev) ⟨hlt, hlv⟩, cT_pos (lev := lev) (a := i.1.1) (b := i.1.2) ⟨i.2, hi⟩,
     sum_eq_single ⟨(i.1.1, q), hlt⟩]
-  · rw [if_pos ⟨h, rfl⟩, one_smul]
+  · rw [ite_eq_left ⟨h, rfl⟩, one_smul]
   · intro k _ hk
-    rw [if_neg, zero_smul]
+    rw [ite_eq_right, zero_smul]
     rintro ⟨-, e⟩
     exact hk (Subtype.ext e)
   · simp
@@ -483,17 +483,17 @@ theorem GlobalTheory.CompanionTheory.LeviChain.lF_bd_comm : ∀ (n : ℕ) (lev :
           by_cases e : a = a' ∧ b = b'
           · obtain ⟨rfl, rfl⟩ := e
             simp [h]
-          · rw [if_neg, if_neg]
+          · rw [ite_eq_right, ite_eq_right]
             · exact fun t => e ⟨t.1, t.2.1⟩
             · intro t
               have := congrArg Subtype.val t
               simp only [Prod.mk.injEq] at this
               exact e this
-        · rw [dT_neg h', if_neg]
+        · rw [dT_neg h', ite_eq_right]
           · simp
           · rintro ⟨rfl, rfl, t⟩
             exact h' t
-      · rw [cT_neg h, if_neg (fun t => h t.2.2)]; simp)
+      · rw [cT_neg h, ite_eq_right (fun t => h t.2.2)]; simp)
     (fun a b h => cT_neg h) (fun a b h => dT_neg h)
     (fun b => ⟨fun h => ⟨hm.reflect_lt (by rw [← hpq] at *; exact h.2), by rw [← hpq]; exact h.2⟩,
       fun h => ⟨hm.reflect_lt (by rw [hpq]; exact h.2), by rw [hpq]; exact h.2⟩⟩)

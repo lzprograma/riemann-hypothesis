@@ -17,63 +17,14 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ElementaryTwis
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ElementaryTwistMinorScalar
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverTwoFramesComparison
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsLocSec
 import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.GenericFibreKerTarget
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.IsRatSectionOn
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.PiTensorProduct
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameChangeRegularEntries, Development.AutomorphicSpectrum.Proofs.MetricProofs.DetFacChange, Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagAdjacentFrameComparison, Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockTriangularOfProportionalMinors, Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagAdjacentOrbitComparison, Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagAdjacentTwoFramesOrbit
@@ -91,19 +42,6 @@ noncomputable section
 namespace GlobalTheory.CompanionTheory.Ar.PB.WSq.Sec.FrameReg
 
 open GlobalTheory.CompanionTheory.Ar.PB.CovMap.LocImg.FrameChange
-
-theorem stepCols_ne_empty {N j : ℕ} (i : Fin N) : stepCols N j i ≠ ∅ := by
-  intro e
-  have hi := i.2
-  by_cases h : (i : ℕ) + 1 ≤ j
-  · have : (⟨N - j, by omega⟩ : Fin N) ∈ stepCols N j i := by
-      simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_pos h]
-      omega
-    simp [e] at this
-  · have : (⟨0, by omega⟩ : Fin N) ∈ stepCols N j i := by
-      simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_neg h]
-      omega
-    simp [e] at this
 
 theorem minor_singleton {R : Type} [CommRing R] {N : ℕ} (h : Matrix (Fin N) (Fin N) R) (a b : Fin N) :
     minorIJ h {a} {b} = h a b := by
@@ -128,7 +66,7 @@ theorem stepCols_eq_singleton_of_zero {N j : ℕ} (i : Fin N) (hi : (i : ℕ) = 
   ext a
   have := a.2
   simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton, Fin.ext_iff]
-  rw [if_pos (by omega)]
+  rw [ite_eq_left (by omega)]
   omega
 
 theorem stepCols_om {N j : ℕ} (i : Fin N) (hi : (i : ℕ) = j) :
@@ -136,20 +74,20 @@ theorem stepCols_om {N j : ℕ} (i : Fin N) (hi : (i : ℕ) = j) :
   ext a
   have := a.2
   simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton, Fin.ext_iff]
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
   omega
 
 theorem isStepRows_singleton_low {N j : ℕ} (i : Fin N) (hi : (i : ℕ) = 0) (hj : 2 ≤ j) (hN : j ≤ N) (r : Fin N)
     (hr : N - j ≤ (r : ℕ)) : IsStepRows N j i {r} := by
   refine ⟨by rw [stepCols_eq_singleton_of_zero i hi (by omega) hN]; simp, ?_⟩
-  rw [if_pos (by omega), Finset.singleton_subset_iff]
+  rw [ite_eq_left (by omega), Finset.singleton_subset_iff]
   simp only [wIdx, Finset.mem_filter, Finset.mem_univ, true_and]
   exact hr
 
 theorem isStepRows_om {N j : ℕ} (i : Fin N) (hi : (i : ℕ) = j) (r : Fin N)
     (hr : (r : ℕ) < N - j) : IsStepRows N j i {r} := by
   refine ⟨by rw [stepCols_om i hi]; simp, ?_⟩
-  rw [if_neg (by omega), Finset.singleton_subset_iff]
+  rw [ite_eq_right (by omega), Finset.singleton_subset_iff]
   simp only [omIdx, Finset.mem_filter, Finset.mem_univ, true_and]
   exact hr
 
@@ -185,7 +123,6 @@ section Model
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Φ : Type} [Field Φ]
   {y : (Σ k, ι k) → Φ} {Ψ : Type} {N j : ℕ} (M : FlagModel y Ψ N j)
   {zb : (Σ k, baseIdx ι M.blk k) → ℂ} {F₁ F₂ : FrameData ι Ψ N M.Ω M.blk}
-
 
 include M in
 theorem twist_ratio (hz : zb ∈ mcPts (mCoordIdeal M.x)) (hG₁ : M.GoodAt F₁ (mCoordIdeal zb))
@@ -273,10 +210,10 @@ theorem minor_change (hz : zb ∈ mcPts (mCoordIdeal M.x)) (hF₁ : M.IsFrame F�
   have hmin : ∀ I, minorIJ ((F₁.T p.1)⁻¹ * F₂.T p.1 * unitCols I' (stepCols N j p.2) hI'.1) I (stepCols N j p.2) =
       minorIJ ((F₁.T p.1)⁻¹ * F₂.T p.1) I I' := fun I => by
     rw [hi.1]
-    simp only [minor_unitCols, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [minor_unitCols, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have hr : ∀ m : ι k, ∑ I, F₂.u ⟨k, m⟩ I * minorIJ (unitCols I' (stepCols N j p.2) hI'.1) I (stepCols N j p.2) =
       F₂.u ⟨k, m⟩ I' := fun m => by
-    simp only [minor_unitCols, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [minor_unitCols, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
   have rel : ∀ m : ι k, detFac j p.2 (F₂.T p.1) * (∏ k', M.x ⟨k', F₁.c k'⟩ ^ M.b p k') *
       ∑ I, F₁.u ⟨k, m⟩ I * minorIJ ((F₁.T p.1)⁻¹ * F₂.T p.1) I I' =
@@ -302,7 +239,7 @@ theorem minor_change (hz : zb ∈ mcPts (mCoordIdeal M.x)) (hF₁ : M.IsFrame F�
           _ = _ := by rw [e]; split_ifs <;> simp
       · have h0 : minorIJ ((F₁.T p.1)⁻¹ * F₂.T p.1) I I' = 0 := by
           rw [← hmin I]
-          exact (hi.2.1 _ I (hC.mul hE) hI).resolve_right (stepCols_ne_empty p.2)
+          exact (hi.2.1 _ I (hC.mul hE) hI).resolve_right (GlobalTheory.CompanionTheory.Ar.PB.CovMap.LocImg.FV.stepCols_ne_empty p.2)
         simp [h0]
     simp only [this]
     simp
@@ -352,7 +289,7 @@ theorem detW_reg (hz : zb ∈ mcPts (mCoordIdeal M.x)) (hF₁ : M.IsFrame F₁) 
     have h := detFac_improper M hz hF₁ hF₂ hG₁ hG₂ (τ, i) hp
     have e : detFac j i ((F₁.T τ)⁻¹ * F₂.T τ) = minorIJ ((F₁.T τ)⁻¹ * F₂.T τ) (wIdx N j) (wIdx N j) := by
       unfold detFac
-      rw [if_pos (by omega), if_neg (by omega), mul_one]
+      rw [ite_eq_left (by omega), ite_eq_right (by omega), mul_one]
     rw [← e]
     exact h
 
@@ -384,7 +321,7 @@ theorem change_regular : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fi
       obtain ⟨k, hk⟩ := proper i ⟨by show j + 1 ≠ j; omega, by show j + 1 ≠ N; omega⟩
       have e : detFac j i ((F₁.T τ)⁻¹ * F₂.T τ) = minorIJ ((F₁.T τ)⁻¹ * F₂.T τ) (wIdx N j) (wIdx N j) := by
         unfold detFac
-        rw [if_pos (by show j ≤ j + 1; omega), if_neg (by show ¬ j + 1 = N; omega), mul_one]
+        rw [ite_eq_left (by show j ≤ j + 1; omega), ite_eq_right (by show ¬ j + 1 = N; omega), mul_one]
       have := minor_reg M hz hF₁ hF₂ hG₁ hG₂ (τ, i) k hk (isStepRows_om i rfl r hr)
         (isStepRows_om i rfl s hs) (by show RegAt _ _ (detFac j i _)⁻¹; rw [e]; exact hW')
       rwa [minor_singleton] at this
@@ -402,7 +339,7 @@ theorem change_regular : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fi
           omega
         have ers : r = s := Fin.ext (by omega)
         unfold detFac
-        rw [if_pos (by show j ≤ N - 1 + 1; omega), if_pos (by show N - 1 + 1 = N; omega), e, minor_singleton, ers]
+        rw [ite_eq_left (by show j ≤ N - 1 + 1; omega), ite_eq_left (by show N - 1 + 1 = N; omega), e, minor_singleton, ers]
       have hdet : ((F₁.T τ)⁻¹ * F₂.T τ).det ≠ 0 := by
         rw [Matrix.det_mul, Matrix.det_nonsing_inv]
         exact mul_ne_zero (by simpa using hT₁.2) hT₂.2
@@ -421,7 +358,7 @@ theorem change_regular : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fi
       obtain ⟨k, hk⟩ := proper i ⟨by show 0 + 1 ≠ j; omega, by show 0 + 1 ≠ N; omega⟩
       have e : detFac j i ((F₁.T τ)⁻¹ * F₂.T τ) = 1 := by
         unfold detFac
-        rw [if_neg (by show ¬ j ≤ 0 + 1; omega), if_neg (by show ¬ 0 + 1 = N; omega), mul_one]
+        rw [ite_eq_right (by show ¬ j ≤ 0 + 1; omega), ite_eq_right (by show ¬ 0 + 1 = N; omega), mul_one]
       have := minor_reg M hz hF₁ hF₂ hG₁ hG₂ (τ, i) k hk (isStepRows_singleton_low i rfl h2 hjN r (by omega))
         (isStepRows_singleton_low i rfl h2 hjN s (by omega))
         (by show RegAt _ _ (detFac j i _)⁻¹; rw [e, inv_one]; exact ValRing.regAt_one _ _)
@@ -439,7 +376,7 @@ theorem change_regular : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fi
           omega
         have ers : r = s := Fin.ext (by omega)
         unfold detFac
-        rw [if_pos (by show 1 ≤ 0 + 1; omega), ew, minor_singleton, ← ers]
+        rw [ite_eq_left (by show 1 ≤ 0 + 1; omega), ew, minor_singleton, ← ers]
         split_ifs with hN1
         · have eo : omIdx N 1 = ∅ := by
             ext a
@@ -532,7 +469,6 @@ end Values
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Φ : Type} [Field Φ] {y : (Σ k, ι k) → Φ}
   {Ψ : Type} {N j : ℕ} (M : FlagModel y Ψ N j) {F₁ F₂ : FrameData ι Ψ N M.Ω M.blk}
 
-
 include M in
 theorem detFac_change (h₁ : M.IsFrame F₁) (h₂ : M.IsFrame F₂) (p : Ψ × Fin N) :
     detFac j p.2 (F₂.T p.1) = detFac j p.2 (F₁.T p.1) * detFac j p.2 ((F₁.T p.1)⁻¹ * F₂.T p.1) := by
@@ -547,7 +483,6 @@ theorem prod_ratio (c₁ : ∀ k, M.x ⟨k, F₁.c k⟩ ≠ 0) (p : Ψ × Fin N)
   rw [← Finset.prod_mul_distrib]
   refine Finset.prod_congr rfl fun k' _ => ?_
   rw [← mul_zpow, div_mul_cancel₀ _ (c₁ k')]
-
 
 open CovMap.LocImg.FrameChange in
 theorem frame_rel (h₁ : M.IsFrame F₁) (h₂ : M.IsFrame F₂) (c₁ : ∀ k, M.x ⟨k, F₁.c k⟩ ≠ 0) (p : Ψ × Fin N) (k : K)
@@ -569,10 +504,10 @@ theorem frame_rel (h₁ : M.IsFrame F₁) (h₂ : M.IsFrame F₂) (c₁ : ∀ k,
   have hm : ∀ I, minorIJ ((F₁.T p.1)⁻¹ * F₂.T p.1 * unitCols I' (stepCols N j p.2) hI'.1) I (stepCols N j p.2) =
       minorIJ ((F₁.T p.1)⁻¹ * F₂.T p.1) I I' := fun I => by
     rw [(_root_.GlobalTheory.CompanionTheory.Ar.PB.MinorCalc.minors_main M.Ω N j p.2 hj).1]
-    simp only [minor_unitCols, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [minor_unitCols, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have hr : ∑ I, F₂.u ⟨k, m⟩ I * minorIJ (unitCols I' (stepCols N j p.2) hI'.1) I (stepCols N j p.2) =
       F₂.u ⟨k, m⟩ I' := by
-    simp only [minor_unitCols, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [minor_unitCols, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   simp only [hm] at e1
   rw [hr] at e2
   have hd := detFac_change M h₁ h₂ p
@@ -639,7 +574,7 @@ theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι 
       exact frame_rel M hF₁ hF₂ c₁ p k hk m I' hI'
     have hstep : IsStepRows N j p.2 (stepCols N j p.2) := CovMap.LocImg.FV.isStepRows_stepCols p.2
     have hinv : ∑ m : ι k, F₂.u' (stepCols N j p.2) ⟨k, m⟩ * F₂.u ⟨k, m⟩ (stepCols N j p.2) = 1 := by
-      rw [hF₂.2.2.1 p k hk _ _ hstep hstep, if_pos rfl]
+      rw [hF₂.2.2.1 p k hk _ _ hstep hstep, ite_eq_left rfl]
     obtain ⟨hρR, hval⟩ := CovMap.LocImg.FV.reg_values hz p.2 (fun (m : ι k) I => F₁.u ⟨k, m⟩ I)
       (fun (m : ι k) I => F₂.u ⟨k, m⟩ I) (fun m : ι k => F₂.u' (stepCols N j p.2) ⟨k, m⟩) _ ρ _ hstep
       (fun m I => (hG₁.2.1 _ _).1) (fun m I => (hG₂.2.1 _ _).1) (fun m => (hG₂.2.1 _ _).2) (r₁₂ p.1) hrel hinv
@@ -708,7 +643,7 @@ theorem detFac_ne {S : Matrix (Fin N) (Fin N) ℂ} (hS : IsBlockDiag j S) (hd : 
 theorem minor_empty {C : Finset (Fin N)} (hC : C = ∅) (S : Matrix (Fin N) (Fin N) ℂ) : minorIJ S C C = 1 := by
   subst hC
   unfold minorIJ
-  rw [dif_pos rfl]
+  rw [dite_eq_left rfl]
   haveI : IsEmpty (Fin (∅ : Finset (Fin N)).card) := inferInstanceAs (IsEmpty (Fin 0))
   exact det_isEmpty
 
@@ -721,7 +656,7 @@ theorem blockDiag_transv (hj : j ≤ N) {a b ca cb : Fin N} (hb : (b : ℕ) = a 
     split_ifs at hca <;> omega
   intro r s hrs
   have e1 : r ≠ s := fun e => hrs (by rw [e])
-  rw [Matrix.add_apply, Matrix.one_apply_ne e1, zero_add, Matrix.single_apply, if_neg]
+  rw [Matrix.add_apply, Matrix.one_apply_ne e1, zero_add, Matrix.single_apply, ite_eq_right]
   rintro ⟨rfl, rfl⟩
   exact hrs same.symm
 
@@ -738,21 +673,21 @@ theorem sum_xi (τ : Ψ) (a b : Fin N) (hb : (b : ℕ) = a + 1) (g : Fin N → �
       (if (i : ℕ) + 1 = a then g i else 0) + (if i = b then g i else 0) - (if i = a then 2 * g i else 0) := by
     intro i
     have hib : (i : ℕ) = a + 1 ↔ i = b := by rw [← hb]; exact Fin.ext_iff.symm
-    simp only [xiCoef, if_true, hib]
+    simp only [xiCoef, ite_true, hib]
     split_ifs <;> push_cast <;> ring
-  simp only [e, Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [e, Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   congr 2
   split_ifs with h
   · rw [Finset.sum_eq_single (⟨a - 1, by have := a.2; omega⟩ : Fin N)]
-    · rw [if_pos]
+    · rw [ite_eq_left]
       show (a : ℕ) - 1 + 1 = a
       omega
     · intro i _ hi
-      rw [if_neg]
+      rw [ite_eq_right]
       intro e'
       exact hi (Fin.ext (by show (i : ℕ) = a - 1; omega))
     · exact fun h' => absurd (Finset.mem_univ _) h'
-  · exact Finset.sum_eq_zero fun i _ => if_neg (by omega)
+  · exact Finset.sum_eq_zero fun i _ => ite_eq_right (by omega)
 
 theorem sum_g (τ : Ψ) (hj : j ≤ N) (a b : Fin N) (hb : (b : ℕ) = a + 1) (hc : (b : ℕ) < j ∨ j ≤ (a : ℕ)) (w o : ℝ)
     (hw : j = 0 → w = 0) (ho : j = N → o = 0) :
@@ -768,37 +703,37 @@ theorem sum_g (τ : Ψ) (hj : j ≤ N) (a b : Fin N) (hb : (b : ℕ) = a + 1) (h
         ((if j ≤ (i : ℕ) + 1 then w else 0) + (if (i : ℕ) + 1 = N then o else 0))) = G i := by
     intro i
     by_cases h : IsProperStep N j i
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       simp only [G]
-      rw [if_pos (show (i : ℕ) + 1 ≠ j ∧ (i : ℕ) + 1 ≠ N from h)]
-    · rw [if_neg h]
+      rw [ite_eq_left (show (i : ℕ) + 1 ≠ j ∧ (i : ℕ) + 1 ≠ N from h)]
+    · rw [ite_eq_right h]
       simp only [G]
-      rw [if_neg (show ¬ ((i : ℕ) + 1 ≠ j ∧ (i : ℕ) + 1 ≠ N) from h)]
+      rw [ite_eq_right (show ¬ ((i : ℕ) + 1 ≠ j ∧ (i : ℕ) + 1 ≠ N) from h)]
   rw [Finset.sum_congr rfl fun i _ => by rw [hg i], sum_xi τ a b hb fun i => G i]
   have hbN := b.2
   have haN := a.2
   have hlow : ∀ n, n + 1 < j → G n = 0 := fun n hn => by
     simp only [G]
-    rw [if_pos ⟨by omega, by omega⟩, if_neg (by omega), if_neg (by omega)]
+    rw [ite_eq_left ⟨by omega, by omega⟩, ite_eq_right (by omega), ite_eq_right (by omega)]
     simp
   have hhigh : ∀ n, j ≤ n + 1 → (n + 1 = j → ¬ (a : ℕ) < j) → n + 1 < N → G n = -w := fun n hn h1 h2 => by
     simp only [G]
-    rw [if_pos hn, if_neg (by omega : ¬ n + 1 = N)]
+    rw [ite_eq_left hn, ite_eq_right (by omega : ¬ n + 1 = N)]
     by_cases e : n + 1 = j
-    · rw [if_neg (by omega), if_pos e, if_neg (h1 e)]
+    · rw [ite_eq_right (by omega), ite_eq_left e, ite_eq_right (h1 e)]
       simp
-    · rw [if_pos ⟨e, by omega⟩]
+    · rw [ite_eq_left ⟨e, by omega⟩]
       simp
   rcases hc with hc | hc
   · rw [hlow a (by omega)]
     have e0 : G b = 0 := by
       by_cases e : (b : ℕ) + 1 = j
       · simp only [G]
-        rw [if_neg (by omega), if_pos e, if_pos (by omega), if_pos (by omega)]
+        rw [ite_eq_right (by omega), ite_eq_left e, ite_eq_left (by omega), ite_eq_left (by omega)]
         by_cases e' : (b : ℕ) + 1 = N
-        · rw [if_pos e', ho (by omega)]
+        · rw [ite_eq_left e', ho (by omega)]
           simp
-        · rw [if_neg e']
+        · rw [ite_eq_right e']
           simp
       · exact hlow b (by omega)
     rw [e0]
@@ -810,7 +745,7 @@ theorem sum_g (τ : Ψ) (hj : j ≤ N) (a b : Fin N) (hb : (b : ℕ) = a + 1) (h
     have e0 : G b = -w := by
       by_cases e : (b : ℕ) + 1 = N
       · simp only [G]
-        rw [if_neg (by omega), if_neg (by omega), if_pos (by omega), if_pos e]
+        rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left (by omega), ite_eq_left e]
         ring
       · exact hhigh b (by omega) (by omega) (by omega)
     rw [e0]
@@ -852,10 +787,10 @@ theorem sum_dite_subtype {P : K → Prop} [DecidablePred P] [Fintype {k // P k}]
       = ∑ k ∈ Finset.univ.filter P, (if h : P k then f ⟨k, h⟩ else 0) :=
         (Finset.sum_filter_of_ne fun k _ hk => by
           by_contra h
-          exact hk (dif_neg h)).symm
+          exact hk (dite_eq_right h)).symm
     _ = ∑ k : {k // P k}, (if h : P k.1 then f ⟨k.1, h⟩ else 0) :=
         Finset.sum_subtype _ (by simp) fun k => if h : P k then f ⟨k, h⟩ else 0
-    _ = _ := Finset.sum_congr rfl fun k _ => dif_pos k.2
+    _ = _ := Finset.sum_congr rfl fun k _ => dite_eq_left k.2
 
 variable {Φ : Type} [Field Φ] {y : (Σ k, ι k) → Φ} {Ψ : Type} [Fintype Ψ] [DecidableEq Ψ] {N j : ℕ}
 
@@ -867,10 +802,10 @@ theorem sum_dy (M : FlagModel y Ψ N j) (p : Ψ × Fin N) (l : K → ℝ) :
     intro k
     unfold FlagModel.dy
     by_cases h : ∀ p', M.blk p' ≠ some k
-    · rw [dif_pos h, dif_pos h, if_neg (h p)]
+    · rw [dite_eq_left h, dite_eq_left h, ite_eq_right (h p)]
       push_cast
       ring
-    · rw [dif_neg h, dif_neg h]
+    · rw [dite_eq_right h, dite_eq_right h]
       split_ifs <;> simp
   simp only [e, Finset.sum_add_distrib]
   congr 1
@@ -886,7 +821,7 @@ def cc (M : FlagModel y Ψ N j) (τ : Ψ) (ζ : NonPluckerBlocks M.blk → ℂ) 
   else 1
 
 theorem cc_base (M : FlagModel y Ψ N j) (τ : Ψ) (ζ : NonPluckerBlocks M.blk → ℂ) (S : Matrix (Fin N) (Fin N) ℂ)
-    (k : NonPluckerBlocks M.blk) : cc M τ ζ S k.1 = ζ k := dif_pos k.2
+    (k : NonPluckerBlocks M.blk) : cc M τ ζ S k.1 = ζ k := dite_eq_left k.2
 
 theorem cc_step (M : FlagModel y Ψ N j) (τ : Ψ) (ζ : NonPluckerBlocks M.blk → ℂ) (S : Matrix (Fin N) (Fin N) ℂ) {i : Fin N}
     {k : K} (hk : M.blk (τ, i) = some k) :
@@ -895,7 +830,7 @@ theorem cc_step (M : FlagModel y Ψ N j) (τ : Ψ) (ζ : NonPluckerBlocks M.blk 
   have h' : ∃ i, M.blk (τ, i) = some k := ⟨i, hk⟩
   have e : h'.choose = i := congrArg Prod.snd (M.blk_inj _ _ k h'.choose_spec hk)
   unfold cc
-  rw [dif_neg h, dif_pos h', e]
+  rw [dite_eq_right h, dite_eq_left h', e]
 
 theorem cc_ne (M : FlagModel y Ψ N j) (τ : Ψ) {ζ : NonPluckerBlocks M.blk → ℂ} {S : Matrix (Fin N) (Fin N) ℂ}
     (hζ : ∀ k, ζ k ≠ 0) (hd : ∀ i, detFac j i S ≠ 0) (k : K) : cc M τ ζ S k ≠ 0 := by
@@ -1006,8 +941,8 @@ theorem baseF_move {M : FlagModel y Ψ N j} (τ : Ψ) (a : Fin N) {F₁ F₂ : F
     baseF M τ a F₁ zb (S * h) i = baseF M τ a F₂ zb h i * eFac M τ a ζ S i := by
   unfold baseF eFac
   by_cases hp : IsProperStep N j i
-  · rw [if_pos hp, if_pos hp, if_pos hp, one_mul]
-  · rw [if_neg hp, if_neg hp, if_neg hp, rFac_mul a S hh]
+  · rw [ite_eq_left hp, ite_eq_left hp, ite_eq_left hp, one_mul]
+  · rw [ite_eq_right hp, ite_eq_right hp, ite_eq_right hp, rFac_mul a S hh]
     have hd := detFac_ne hS hSd i
     have e := hs i (blk_none_of_not hp)
     have e' : valAt M.x (F₁.υ (τ, i)) zb =
@@ -1092,12 +1027,12 @@ theorem step_sum (M : FlagModel y Ψ N j) (τ : Ψ) (a : Fin N) {ζ : NonPlucker
   unfold eFac
   by_cases hp : IsProperStep N j i
   · obtain ⟨k, hk⟩ := exists_blk_of_proper (M := M) (τ := τ) hp
-    rw [if_pos hp, if_pos hp, hk]
+    rw [ite_eq_left hp, ite_eq_left hp, hk]
     simp only [Option.elim]
     rw [cc_step M τ ζ S hk, norm_mul, norm_inv, Real.log_mul (inv_ne_zero (norm_ne_zero_iff.2 hd))
       (norm_ne_zero_iff.2 hP), Real.log_inv, norm_one, Real.log_one]
     ring
-  · rw [if_neg hp, if_neg hp, blk_none_of_not hp, ← log_rFac a S i]
+  · rw [ite_eq_right hp, ite_eq_right hp, blk_none_of_not hp, ← log_rFac a S i]
     simp only [Option.elim]
     rw [norm_mul, norm_mul, norm_inv, Real.log_mul (mul_ne_zero (norm_ne_zero_iff.2 hP)
       (inv_ne_zero (norm_ne_zero_iff.2 hd))) (norm_ne_zero_iff.2 (rFac_ne a hS hSd i)),
@@ -1290,9 +1225,9 @@ theorem triangular_of_minors_proportional : ∀ (N j : ℕ) (h g : Matrix (Fin N
       · simp only; omega
       · simp only; omega
       · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-        rw [if_neg (by omega)]; omega
+        rw [ite_eq_right (by omega)]; omega
       · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-        rw [if_neg (by omega)]; omega
+        rw [ite_eq_right (by omega)]; omega
     · have hs' : N - j ≤ (s : ℕ) := by
         by_contra hc; exact hω (hb.mpr (by omega))
       have hi : (s : ℕ) - (N - j) < N := by omega
@@ -1300,9 +1235,9 @@ theorem triangular_of_minors_proportional : ∀ (N j : ℕ) (h g : Matrix (Fin N
       · simp only; omega
       · simp only; omega
       · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-        rw [if_pos (by omega)]; omega
+        rw [ite_eq_left (by omega)]; omega
       · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
-        rw [if_pos (by omega)]; omega
+        rw [ite_eq_left (by omega)]; omega
   · exact hbd r s hb
 
 end GlobalTheory.CompanionTheory.Ar.PB.WSq.Sec.TriStep
@@ -1335,27 +1270,27 @@ theorem cols_next (hj : j ≤ N) (hb : (b : ℕ) = a + 1) (hcase : (b : ℕ) < j
   rcases hcase with h | h
   · have h1 : (a : ℕ) + 1 ≤ j := by omega
     have h2 : (b : ℕ) + 1 ≤ j := by omega
-    simp only [lastCol, if_pos h1] at hca
+    simp only [lastCol, ite_eq_left h1] at hca
     refine ⟨?_, ?_, ?_⟩
     · ext c
-      simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_pos h1, if_pos h2,
+      simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_left h1, ite_eq_left h2,
         Finset.mem_insert, Fin.ext_iff]
       omega
-    · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_pos h1]
+    · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_left h1]
       omega
-    · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_pos h1]
+    · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_left h1]
       omega
   · have h1 : ¬ (a : ℕ) + 1 ≤ j := by omega
     have h2 : ¬ (b : ℕ) + 1 ≤ j := by omega
-    simp only [lastCol, if_neg h1] at hca
+    simp only [lastCol, ite_eq_right h1] at hca
     refine ⟨?_, ?_, ?_⟩
     · ext c
-      simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_neg h1, if_neg h2,
+      simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_right h1, ite_eq_right h2,
         Finset.mem_insert, Fin.ext_iff]
       omega
-    · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_neg h1]
+    · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_right h1]
       omega
-    · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_neg h1]
+    · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_right h1]
       omega
 
 theorem cols_prev (hj : j ≤ N) (hb : (b : ℕ) = a + 1) (hcase : (b : ℕ) < j ∨ j ≤ (a : ℕ))
@@ -1366,16 +1301,16 @@ theorem cols_prev (hj : j ≤ N) (hb : (b : ℕ) = a + 1) (hcase : (b : ℕ) < j
   rcases hcase with h | h
   · have h1 : (a : ℕ) + 1 ≤ j := by omega
     have h2 : (a' : ℕ) + 1 ≤ j := by omega
-    simp only [lastCol, if_pos h1] at hca
+    simp only [lastCol, ite_eq_left h1] at hca
     ext c
-    simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_pos h1, if_pos h2,
+    simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_left h1, ite_eq_left h2,
       Finset.mem_erase, ne_eq, Fin.ext_iff]
     omega
   · have h1 : ¬ (a : ℕ) + 1 ≤ j := by omega
     have h2 : ¬ (a' : ℕ) + 1 ≤ j := by omega
-    simp only [lastCol, if_neg h1] at hca
+    simp only [lastCol, ite_eq_right h1] at hca
     ext c
-    simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_neg h1, if_neg h2,
+    simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_right h1, ite_eq_right h2,
       Finset.mem_erase, ne_eq, Fin.ext_iff]
     omega
 
@@ -1386,12 +1321,12 @@ theorem cols_first (hj : j ≤ N) (hb : (b : ℕ) = a + 1) (hcase : (b : ℕ) < 
   rw [Finset.eq_empty_iff_forall_notMem]
   intro c
   by_cases h1 : (a : ℕ) + 1 ≤ j
-  · simp only [lastCol, if_pos h1] at hca
-    simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_pos h1,
+  · simp only [lastCol, ite_eq_left h1] at hca
+    simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_left h1,
       Finset.mem_erase, ne_eq, Fin.ext_iff]
     omega
-  · simp only [lastCol, if_neg h1] at hca
-    simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_neg h1,
+  · simp only [lastCol, ite_eq_right h1] at hca
+    simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_right h1,
       Finset.mem_erase, ne_eq, Fin.ext_iff]
     omega
 
@@ -1401,9 +1336,9 @@ theorem transv_blockDiag (hj : j ≤ N) (hb : (b : ℕ) = a + 1) (hcase : (b : �
   have hbN := b.2
   have hs : (ca : ℕ) < N - j ↔ (cb : ℕ) < N - j := by
     by_cases h1 : (a : ℕ) + 1 ≤ j
-    · simp only [lastCol, if_pos h1] at hca
+    · simp only [lastCol, ite_eq_left h1] at hca
       omega
-    · simp only [lastCol, if_neg h1] at hca
+    · simp only [lastCol, ite_eq_right h1] at hca
       omega
   intro r s h
   have hrs : r ≠ s := fun e => h (by rw [e])
@@ -1420,20 +1355,20 @@ theorem fac_next (hj : j ≤ N) (hb : (b : ℕ) = a + 1) (hcase : (b : ℕ) < j 
     have e : stepCols N j b = wIdx N j := by
       ext c
       have := c.2
-      simp only [stepCols, wIdx, Finset.mem_filter, Finset.mem_univ, true_and, if_pos h1.le]
+      simp only [stepCols, wIdx, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_left h1.le]
       omega
     rw [e]
-    simp only [Fib.facOf, if_pos h1, if_pos h2]
+    simp only [Fib.facOf, ite_eq_left h1, ite_eq_left h2]
   · have h3 : (b : ℕ) + 1 = N := by
       by_contra h3
       exact hp ⟨h1, h3⟩
     have h4 : ¬ (b : ℕ) + 1 ≤ j := by omega
     have e : stepCols N j b = omIdx N j := by
       ext c
-      simp only [stepCols, omIdx, Finset.mem_filter, Finset.mem_univ, true_and, if_neg h4]
+      simp only [stepCols, omIdx, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_right h4]
       omega
     rw [e]
-    simp only [Fib.facOf, if_neg h1]
+    simp only [Fib.facOf, ite_eq_right h1]
 
 theorem fac_prev (hb : (b : ℕ) = a + 1) {a' : Fin N} (ha' : (a' : ℕ) + 1 = a) (hp : ¬ IsProperStep N j a')
     (h : Matrix (Fin N) (Fin N) ℂ) : Fib.facOf N j a h a' = 1 ∧ (a : ℕ) = j := by
@@ -1442,14 +1377,14 @@ theorem fac_prev (hb : (b : ℕ) = a + 1) {a' : Fin N} (ha' : (a' : ℕ) + 1 = a
     by_contra h1
     exact hp ⟨h1, by omega⟩
   have h2 : ¬ (a : ℕ) < j := by omega
-  exact ⟨by simp only [Fib.facOf, if_pos h1, if_neg h2], by omega⟩
+  exact ⟨by simp only [Fib.facOf, ite_eq_left h1, ite_eq_right h2], by omega⟩
 
 theorem fac_ne_zero (hj : j ≤ N) (i : Fin N) {h : Matrix (Fin N) (Fin N) ℂ} (hh : IsBlockDiag j h) (hd : h.det ≠ 0)
     (a : Fin N) : Fib.facOf N j a h i ≠ 0 := by
   have hN : 0 < N := by have := i.2; omega
   have hd' := GlobalTheory.CompanionTheory.Ar.PB.CPts.detFac_ne_zero hj (⟨N - 1, by omega⟩ : Fin N) hh hd
   have e1 : j ≤ N - 1 + 1 := by omega
-  simp only [detFac, show N - 1 + 1 = N by omega, if_true, if_pos hj] at hd'
+  simp only [detFac, show N - 1 + 1 = N by omega, ite_true, ite_eq_left hj] at hd'
   simp only [Fib.facOf]
   have := left_ne_zero_of_mul hd'
   have := right_ne_zero_of_mul hd'
@@ -1468,20 +1403,20 @@ theorem xi_sum (τ : Ψ) {a b : Fin N} (hb : (b : ℕ) = a + 1) (D : Fin N → �
       (if (i : ℕ) + 1 = a then D i else 0) + (if i = b then D i else 0) - (if i = a then 2 * D i else 0) := by
     intro i
     have e1 : ((i : ℕ) = (a : ℕ) + 1) ↔ i = b := by rw [Fin.ext_iff, hb]
-    simp only [xiCoef, if_true, e1]
+    simp only [xiCoef, ite_true, e1]
     push_cast
     split_ifs <;> first | ring
-  simp only [e, Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [e, Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   congr 2
   by_cases ha : (a : ℕ) = 0
   · rw [h0 ha]
-    exact Finset.sum_eq_zero fun i _ => if_neg (by omega)
+    exact Finset.sum_eq_zero fun i _ => ite_eq_right (by omega)
   · have hlt := a.2
     rw [Finset.sum_eq_single (⟨a - 1, by omega⟩ : Fin N)]
-    · rw [if_pos (show ((a : ℕ) - 1) + 1 = a by omega)]
+    · rw [ite_eq_left (show ((a : ℕ) - 1) + 1 = a by omega)]
       exact hD _ (show ((a : ℕ) - 1) + 1 = a by omega)
     · intro i _ hne
-      refine if_neg fun e => hne (Fin.ext ?_)
+      refine ite_eq_right fun e => hne (Fin.ext ?_)
       show (i : ℕ) = (a : ℕ) - 1
       omega
     · simp
@@ -1510,7 +1445,7 @@ theorem dy_sum_some (M : FlagModel y Ψ N j) {p : Ψ × Fin N} {k₀ : K} (hk : 
   rw [Finset.sum_eq_single k₀]
   · have e : M.dy p k₀ = 1 := by
       unfold FlagModel.dy
-      rw [dite_eq_right (fun h => h p hk), if_pos hk]
+      rw [dite_eq_right (fun h => h p hk), ite_eq_left hk]
     rw [e]
     simp
   · intro k _ hne
@@ -1519,7 +1454,7 @@ theorem dy_sum_some (M : FlagModel y Ψ N j) {p : Ψ × Fin N} {k₀ : K} (hk : 
       simp
     · have e : M.dy p k = 0 := by
         unfold FlagModel.dy
-        rw [dite_eq_right h, if_neg fun e => hne (by rw [hk] at e; exact (Option.some_injective _ e).symm)]
+        rw [dite_eq_right h, ite_eq_right fun e => hne (by rw [hk] at e; exact (Option.some_injective _ e).symm)]
       rw [e]
       simp
   · simp
@@ -1533,7 +1468,7 @@ theorem dy_sum_none (M : FlagModel y Ψ N j) {p : Ψ × Fin N} (hp : M.blk p = n
     simp
   · have e : M.dy p k = 0 := by
       unfold FlagModel.dy
-      rw [dite_eq_right h, if_neg fun e => by rw [hp] at e; exact absurd e (by simp)]
+      rw [dite_eq_right h, ite_eq_right fun e => by rw [hp] at e; exact absurd e (by simp)]
     rw [e]
     simp
 
@@ -1592,8 +1527,7 @@ theorem minor_one (S : Finset (Fin N)) : minorIJ (1 : Matrix (Fin N) (Fin N) ℂ
 
 theorem exists_minor_ne (hj : j ≤ N) (i : Fin N) {h : Matrix (Fin N) (Fin N) ℂ} (hd : h.det ≠ 0) :
     ∃ I, minorIJ h I (stepCols N j i) ≠ 0 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   have e := (_root_.GlobalTheory.CompanionTheory.Ar.PB.MinorCalc.minors_main ℂ N j i hj).1 h⁻¹ h (stepCols N j i) (stepCols N j i)
   rw [Matrix.nonsing_inv_mul _ hd.isUnit, minor_one, Finset.sum_eq_zero fun I _ => by rw [hc I, mul_zero]] at e
   exact one_ne_zero e
@@ -1723,7 +1657,7 @@ theorem normRhs_same : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fint
   have hproper : ∀ i, IsProperStep N j i → i ≠ a → D i = Real.log ‖∏ x ∈ stepCols N j i, B x x‖ := fun i hi hia => by
     obtain ⟨k, hk⟩ := hsome i hi
     rw [hD]
-    simp only [wt, if_pos hi]
+    simp only [wt, ite_eq_left hi]
     rw [dy_sum_some M hk ob0, dy_sum_some M hk ob1, s0 i k hk, s1 i k hk hia]
     ring
   have hprev : ∀ a' : Fin N, (a' : ℕ) + 1 = a → D a' = Real.log ‖β‖ := fun a' ha' => by
@@ -1734,7 +1668,7 @@ theorem normRhs_same : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fint
       obtain ⟨g3, -⟩ := fac_prev (j := j) hb ha' hp h'
       have hbl := (M.blk_none (τ, a')).2 hp
       rw [hD]
-      simp only [wt, if_neg hp]
+      simp only [wt, ite_eq_right hp]
       rw [dy_sum_none M hbl ob0, dy_sum_none M hbl ob1, g1, g3, hβ, cols_first hj hb hcase hca (Or.inr g2)]
       simp
   have hzero : (a : ℕ) = 0 → Real.log ‖β‖ = 0 := fun h0 => by
@@ -1750,7 +1684,7 @@ theorem normRhs_same : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fint
         rw [fac_next hj hb hcase hp, fac_next hj hb hcase hp, hhB]
         exact (_root_.GlobalTheory.CompanionTheory.Ar.PB.MinorCalc.minors_main ℂ N j b hj).2.2.1 h B _ hBb hBt
       rw [hD]
-      simp only [wt, if_neg hp]
+      simp only [wt, ite_eq_right hp]
       rw [dy_sum_none M hbl ob0, dy_sum_none M hbl ob1, e, ← mul_assoc, norm_mul _ (∏ x ∈ stepCols N j b, B x x),
         Real.log_mul (norm_ne_zero_iff.2 (mul_ne_zero (hv b hp) (fac_ne_zero hj b hh hd a)))
           (norm_ne_zero_iff.2 (hΛ _))]
@@ -1762,7 +1696,7 @@ theorem normRhs_same : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fint
     exact absurd this (by simp)
   have hDa : 2 * D a = Real.log ‖∏ x ∈ stepCols N j a, B x x‖ + Real.log ‖c1 k₀‖ := by
     rw [hD]
-    simp only [wt, if_pos hap]
+    simp only [wt, ite_eq_left hap]
     rw [dy_sum_some M hk₀ ob0, dy_sum_some M hk₀ ob1, s0 a k₀ hk₀]
     ring
   have key := xi_sum τ hb D (Real.log ‖β‖) hprev hzero

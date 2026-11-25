@@ -1,54 +1,9 @@
 module
 
 public import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.RingTheory.Jacobson.Ideal
 public import Mathlib.RingTheory.Nakayama
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdicNeighbourhood
@@ -64,15 +19,8 @@ section Top
 variable {K : Type} [CommRing K] [TopologicalSpace K] [IsTopologicalRing K]
 
 theorem small_mul {C : Set K} (hC : IsCompact C) {W : Set K} (hW : W ∈ 𝓝 (0 : K)) :
-    ∃ U ∈ 𝓝 (0 : K), ∀ u ∈ U, ∀ c ∈ C, u * c ∈ W := by
-  obtain ⟨W', hW'W, hW'o, h0⟩ := mem_nhds_iff.1 hW
-  have hn : IsOpen ((fun p : K × K => p.1 * p.2) ⁻¹' W') := hW'o.preimage continuous_mul
-  obtain ⟨u, v, hu, -, hsu, htv, huv⟩ :=
-    generalized_tube_lemma (isCompact_singleton (x := (0 : K))) hC hn (by
-      rintro ⟨a, b⟩ ⟨ha, -⟩
-      have ha' : a = 0 := ha
-      simp [ha', h0])
-  exact ⟨u, hu.mem_nhds (hsu rfl), fun a ha c hc => hW'W (huv (Set.mk_mem_prod ha (htv hc)))⟩
+    ∃ U ∈ 𝓝 (0 : K), ∀ u ∈ U, ∀ c ∈ C, u * c ∈ W :=
+  by apply _root_.Formalism.FourierDecayAlt.P.AdicNeighbourhood.small_mul <;> assumption
 
 def I (R : Subring K) (a : K) : Set K := {x | ∃ r ∈ R, x = a * r}
 
@@ -504,7 +452,7 @@ theorem MW_symm (w : Fin m → K) : (MW w)ᵀ = MW w := by
   simp only [MW, Matrix.transpose_apply, Matrix.of_apply]
   by_cases hij : i = j
   · subst hij; simp
-  · simp only [hij, Ne.symm hij, if_false]; ring
+  · simp only [hij, Ne.symm hij, ite_false]; ring
 
 theorem quad_expand (y w : Fin m → K) :
     y ⬝ᵥ (MW w *ᵥ y) = 2 * (∑ i, y i ^ 2 * w i +
@@ -515,11 +463,11 @@ theorem quad_expand (y w : Fin m → K) :
     simp only [MW, Matrix.of_apply]
     by_cases hij : i = j
     · subst hij; simp; ring
-    · simp only [hij, if_false]
+    · simp only [hij, ite_false]
       split_ifs <;> ring
   simp only [dotProduct, Matrix.mulVec, Finset.mul_sum, e, Finset.sum_add_distrib]
   rw [Finset.sum_comm (f := fun i j => if i < j then y j * uW w j i * y i else 0)]
-  simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   rw [← Finset.mul_sum]
   ring
 

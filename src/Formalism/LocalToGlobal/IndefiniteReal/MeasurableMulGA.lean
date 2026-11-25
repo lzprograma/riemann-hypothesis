@@ -15,8 +15,6 @@ open Formalism.L2.Theta
 
 namespace Formalism.IndefR.PeterssonHilbertSpace
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem countable_GQ (V : HSp D) : Countable (GQ V) :=

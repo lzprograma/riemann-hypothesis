@@ -38,44 +38,17 @@ lemma finite_ball [FiniteDimensional ℝ E] (X : Submodule ℤ E) [DiscreteTopol
 
 lemma indep_of_flag [FiniteDimensional ℝ E] {d : ℕ} (hd : d = finrank ℝ E) (f : Fin d → E)
     (h : ∀ k, f k ∉ V f k.val) : LinearIndependent ℝ f := by
-  rw [Fintype.linearIndependent_iff]
-  intro g hg
-  by_contra hne
-  push_neg at hne
-  let s := Finset.univ.filter (fun l => g l ≠ 0)
-  have hs : s.Nonempty := by
-    obtain ⟨i, hi⟩ := hne
-    exact ⟨i, by simp [s, hi]⟩
-  let k := s.max' hs
-  have hk : g k ≠ 0 := by
-    have := s.max'_mem hs
-    simpa [s] using this
-  have hgt : ∀ l, k < l → g l = 0 := by
-    intro l hl
-    by_contra h0
-    exact absurd (s.le_max' l (by simp [s, h0])) (not_le.2 hl)
-  have hsplit : ∀ l, g l • f l =
-      (if l = k then g k • f k else 0) + (if l < k then g l • f l else 0) := by
-    intro l
-    rcases lt_trichotomy l k with h1 | h1 | h1
-    · simp [h1, h1.ne]
-    · rw [h1]; simp
-    · simp [hgt l h1, h1.ne', not_lt.2 h1.le]
-  have h2 : g k • f k + ∑ l ∈ Finset.univ.filter (· < k), g l • f l = 0 := by
-    have e : ∑ l, g l • f l = g k • f k + ∑ l ∈ Finset.univ.filter (· < k), g l • f l := by
-      rw [Finset.sum_congr (s₁ := Finset.univ) rfl (fun l _ => hsplit l), Finset.sum_add_distrib,
-        Finset.sum_filter]
-      simp
-    rw [← e]
-    exact hg
-  have hmem : g k • f k ∈ V f k.val := by
-    rw [eq_neg_of_add_eq_zero_left h2]
-    refine Submodule.neg_mem _ (_root_.sum_mem fun l hl => Submodule.smul_mem _ _ (Submodule.subset_span ⟨l, ?_, rfl⟩))
-    have hl' : l < k := by simpa using hl
-    exact Fin.lt_iff_val_lt_val.1 hl'
-  have h3 := Submodule.smul_mem (V f k.val) (g k)⁻¹ hmem
-  rw [smul_smul, inv_mul_cancel₀ hk, one_smul] at h3
-  exact h k h3
+  clear hd
+  induction d with
+  | zero => exact linearIndependent_empty_type
+  | succ d ih =>
+    refine linearIndependent_finSucc'.2 ⟨ih (Fin.init f) fun k => ?_, ?_⟩
+    · refine fun hk => h k.castSucc (Submodule.span_mono ?_ hk)
+      rintro _ ⟨j, hj, rfl⟩
+      exact ⟨j.castSucc, hj, rfl⟩
+    · refine fun hk => h (Fin.last d) (Submodule.span_mono ?_ hk)
+      rintro _ ⟨j, rfl⟩
+      exact ⟨j.castSucc, j.isLt, rfl⟩
 
 def phi {d : ℕ} (u : Fin d → E) (k : Fin d) (x : E) : ℝ := ⟪gs u k, x⟫_ℝ / ‖gs u k‖ ^ 2
 
@@ -91,39 +64,11 @@ lemma phi_sub (x y : E) : phi u k (x - y) = phi u k x - phi u k y := by
 lemma phi_smul (a : ℝ) (x : E) : phi u k (a • x) = a * phi u k x := by
   simp only [phi, real_inner_smul_right, mul_div_assoc]
 
-private lemma inner_gs_eq_zero_of_mem_V {x : E} (hx : x ∈ V u k.val) : ⟪gs u k, x⟫_ℝ = 0 := by
-  have hx' : x ∈ span ℝ (gramSchmidt ℝ u '' Set.Iio k) := by
-    rw [span_gramSchmidt_Iio, V_eq]
-    exact hx
-  have hle : span ℝ (gramSchmidt ℝ u '' Set.Iio k) ≤ (ℝ ∙ gramSchmidt ℝ u k)ᗮ := by
-    rw [Submodule.span_le]
-    rintro _ ⟨j, hj, rfl⟩
-    rw [SetLike.mem_coe, Submodule.mem_orthogonal_singleton_iff_inner_right]
-    exact gramSchmidt_orthogonal ℝ u (ne_of_gt hj)
-  exact Submodule.mem_orthogonal_singleton_iff_inner_right.1 (hle hx')
-
 lemma phi_V {x : E} (hx : x ∈ V u k.val) : phi u k x = 0 := by
-  simp [phi, inner_gs_eq_zero_of_mem_V u k hx]
+  simp [phi, inner_gs_span u k hx]
 
-private lemma sub_gs_mem_V : u k - gs u k ∈ V u k.val := by
-  rw [← V_eq, ← span_gramSchmidt_Iio ℝ u k]
-  show u k - gramSchmidt ℝ u k ∈ span ℝ (gramSchmidt ℝ u '' Set.Iio k)
-  rw [gramSchmidt_def ℝ u k, sub_sub_cancel]
-  refine _root_.sum_mem fun i hi => ?_
-  have hsub : (ℝ ∙ gramSchmidt ℝ u i) ≤ span ℝ (gramSchmidt ℝ u '' Set.Iio k) :=
-    Submodule.span_mono (Set.singleton_subset_iff.2 ⟨i, Finset.mem_Iio.1 hi, rfl⟩)
-  apply hsub
-  first
-  | exact Submodule.starProjection_apply_mem _ _
-
-lemma phi_self (hu : LinearIndependent ℝ u) : phi u k (u k) = 1 := by
-  have hne : gs u k ≠ 0 := by
-    first
-    | exact gramSchmidt_ne_zero k hu
-  have h1 : phi u k (u k) = phi u k (gs u k) + phi u k (u k - gs u k) := by
-    rw [← phi_add]; congr 1; abel
-  rw [h1, phi_V u k (sub_gs_mem_V u k), add_zero, phi, real_inner_self_eq_norm_sq,
-    div_self (pow_ne_zero 2 (norm_ne_zero_iff.2 hne))]
+lemma phi_self (hu : LinearIndependent ℝ u) : phi u k (u k) = 1 :=
+  mu_self u hu k
 
 lemma phi_comb (hu : LinearIndependent ℝ u) (a : Fin d → ℝ) (ha : ∀ l, k < l → a l = 0) :
     phi u k (∑ l, a l • u l) = a k := by
@@ -172,7 +117,8 @@ private lemma norm_add_smul_sq_of_real_inner_eq_zero (a g : E) (t : ℝ) (h : �
     Real.norm_eq_abs, sq_abs]
 
 private lemma norm_gs_sq_le_norm_sq {d : ℕ} (u : Fin d → E) (k : Fin d) : ‖gs u k‖ ^ 2 ≤ ‖u k‖ ^ 2 := by
-  have h := norm_add_smul_sq_of_real_inner_eq_zero (u k - gs u k) (gs u k) 1 (inner_gs_eq_zero_of_mem_V u k (sub_gs_mem_V u k))
+  have h := norm_add_smul_sq_of_real_inner_eq_zero (u k - gs u k) (gs u k) 1
+    (inner_gs_span u k (b_sub_gs_mem u k))
   rw [one_smul, sub_add_cancel, one_pow, one_mul] at h
   rw [h]
   nlinarith [sq_nonneg ‖u k - gs u k‖]
@@ -201,7 +147,7 @@ private lemma exists_lattice_mem_V_norm_sub_sq_le {d : ℕ} (u : Fin d → E) (h
     have hw2 : w - (m : ℝ) • u j - phi u j (w - (m : ℝ) • u j) • gs u j ∈ V u n := by
       have h1 := decomp u j hu hw1
       have h2 : phi u j (w - (m : ℝ) • u j) • (u j - gs u j) ∈ V u n :=
-        Submodule.smul_mem _ _ (sub_gs_mem_V u j)
+        Submodule.smul_mem _ _ (b_sub_gs_mem u j)
       have h3 := Submodule.add_mem _ h1 h2
       have h4 : w - (m : ℝ) • u j - phi u j (w - (m : ℝ) • u j) • gs u j =
           (w - (m : ℝ) • u j - phi u j (w - (m : ℝ) • u j) • u j) +
@@ -218,7 +164,7 @@ private lemma exists_lattice_mem_V_norm_sub_sq_le {d : ℕ} (u : Fin d → E) (h
           (w - (m : ℝ) • u j - phi u j (w - (m : ℝ) • u j) • gs u j - z) +
             phi u j (w - (m : ℝ) • u j) • gs u j := by abel
       have horth : ⟪gs u j, w - (m : ℝ) • u j - phi u j (w - (m : ℝ) • u j) • gs u j - z⟫_ℝ = 0 :=
-        inner_gs_eq_zero_of_mem_V u j (Submodule.sub_mem _ hw2 hzV)
+        inner_gs_span u j (Submodule.sub_mem _ hw2 hzV)
       rw [hsplit, norm_add_smul_sq_of_real_inner_eq_zero _ _ _ horth]
       have ht2 : phi u j (w - (m : ℝ) • u j) ^ 2 ≤ 1 := by
         rw [ht]
@@ -240,7 +186,7 @@ lemma reduce {d : ℕ} (u : Fin d → E) (hu : LinearIndependent ℝ u) (X : Sub
   have hw2 : x - phi u k x • gs u k ∈ V u k.val := by
     have h1 := decomp u k hu hxV
     have h2 : phi u k x • (u k - gs u k) ∈ V u k.val :=
-      Submodule.smul_mem _ _ (sub_gs_mem_V u k)
+      Submodule.smul_mem _ _ (b_sub_gs_mem u k)
     have h3 : x - phi u k x • gs u k = (x - phi u k x • u k) + phi u k x • (u k - gs u k) := by
       rw [smul_sub]; abel
     rw [h3]; exact Submodule.add_mem _ h1 h2
@@ -249,7 +195,8 @@ lemma reduce {d : ℕ} (u : Fin d → E) (hu : LinearIndependent ℝ u) (X : Sub
   refine ⟨x - z, X.sub_mem hxX hzX, Submodule.sub_mem _ hxV (V_mono u (Nat.le_succ _) hzV), ?_, ?_⟩
   · rw [phi_sub, phi_V u k hzV, sub_zero]
   · have hsplit : x - z = (x - phi u k x • gs u k - z) + phi u k x • gs u k := by abel
-    rw [hsplit, norm_add_smul_sq_of_real_inner_eq_zero _ _ _ (inner_gs_eq_zero_of_mem_V u k (Submodule.sub_mem _ hw2 hzV))]
+    rw [hsplit, norm_add_smul_sq_of_real_inner_eq_zero _ _ _
+      (inner_gs_span u k (Submodule.sub_mem _ hw2 hzV))]
     have hp2 : phi u k x ^ 2 ≤ 1 := by
       have := abs_le.1 hphi
       nlinarith

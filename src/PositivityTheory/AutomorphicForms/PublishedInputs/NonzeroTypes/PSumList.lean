@@ -1,6 +1,7 @@
 module
 
 public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.ScalarOnInertiaProp
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralCharacterRecCompatible
 
 @[expose] public section
 
@@ -45,11 +46,6 @@ theorem charPol_lpSum (x y : WD h) (σ : Weil h) :
 theorem monomial_zero_alt : (WD.lpZero (h := h)).mono0 := by
   rw [WD.lpZero, WD.monodromyZero_ofWeilDeligneRepClass_iff, WDRep.diag_N]
 
-theorem charPol_lpZero (σ : Weil h) : (WD.lpZero (h := h)).charPol σ = 1 := by
-  refine Polynomial.eq_one_of_monic_natDegree_zero (WD.charPol_monic _ σ) ?_
-  rw [WD.charPol_natDegree, WD.lpZero, WD.lpDim_mk]
-  simp
-
 end P_sumList
 
 open P_sumList in
@@ -62,7 +58,7 @@ theorem step_sumList : SumOverListProp := by
       rw [sumList, List.foldr_cons, ← sumList, monomial_sum_iff_alt, ih]
       simp
   · induction l with
-    | nil => simp [sumList, charPol_lpZero]
+    | nil => simp [sumList, SuppLaw.charPol_lpZero]
     | cons y l ih =>
       rw [sumList, List.foldr_cons, ← sumList, charPol_lpSum, ih, List.map_cons, List.prod_cons]
 

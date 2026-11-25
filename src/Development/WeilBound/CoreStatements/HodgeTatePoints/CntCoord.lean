@@ -9,53 +9,8 @@ public import ReciprocityTheory.DualLattices.BlockOneMulMulBlockOne
 public import Mathlib.LinearAlgebra.Quotient.Pi
 public import Development.WeilBound.CoreStatements.HodgeTatePoints.FormMemLin
 public import Development.WeilBound.CoreStatements.HodgeTatePoints.RaCoord
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -308,10 +263,10 @@ theorem exists_smith_basis (hv : v.Integers R) {ι : Type} [Fintype ι] [Decidab
     · have hj : ((e (e.symm j)) : ℕ) < m := by
         rw [Equiv.apply_symm_apply, ← hkj]; exact k.2
       have hε : ε (e.symm j) = a j := by
-        simp only [ε, if_pos hj, Equiv.apply_symm_apply]
-      rw [if_pos hkj, mul_smul, ← hε]
+        simp only [ε, ite_eq_left hj, Equiv.apply_symm_apply]
+      rw [ite_eq_left hkj, mul_smul, ← hε]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨e.symm j, rfl⟩)
-    · rw [if_neg hkj, mul_zero, zero_smul]
+    · rw [ite_eq_right hkj, mul_zero, zero_smul]
       exact Submodule.zero_mem _
   · rw [Submodule.span_le]
     rintro _ ⟨j, rfl⟩
@@ -328,17 +283,17 @@ theorem exists_smith_basis (hv : v.Integers R) {ι : Type} [Fintype ι] [Decidab
           rw [Matrix.mul_apply, Finset.sum_eq_single (e j)]
           · rw [hD]; simp [mul_comm]
           · intro b _ hb
-            rw [hD, if_neg, mul_zero]
+            rw [hD, ite_eq_right, mul_zero]
             intro h
             exact hb (Fin.ext h.symm)
           · intro h; exact absurd (Finset.mem_univ _) h
         simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
         rw [← h2, h1, h3]
-        simp only [ε, if_pos hj, Λ, Matrix.of_apply]
+        simp only [ε, ite_eq_left hj, Λ, Matrix.of_apply]
       rw [hsum, ← hg]
       exact Submodule.sum_mem _ fun l _ =>
         Submodule.smul_mem _ _ (Submodule.subset_span ⟨l, rfl⟩)
-    · have : ε j = 0 := if_neg hj
+    · have : ε j = 0 := ite_eq_right hj
       rw [this, zero_smul]
       exact Submodule.zero_mem _
 

@@ -112,7 +112,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
 noncomputable section
 
@@ -166,7 +165,7 @@ theorem oppArgs_theta (B : Frames G) (t : T) (w : Pl D.host.E)
     (y : ∀ j : Fin D.R.m, Mx D (G.V (.grid D.R.m (j + 1))).rank (G.V (.grid D.R.m j)).rank) {l : ℕ} (hl : l < D.R.m) :
     oppArgs t B w x y (.theta D.R.m l) = trCoord w (rank_vertex G t w (X := (D.R.m, l + 1)) ⟨le_rfl, hl⟩)
       (rank_vertex G t w (X := (D.R.m, l)) ⟨le_rfl, hl.le⟩) (B.β D.R.m (l + 1)) (B.β D.R.m l) (y ⟨l, hl⟩) := by
-  rw [oppArgs, dif_pos ⟨hl, rfl⟩]
+  rw [oppArgs, dite_eq_left ⟨hl, rfl⟩]
   rfl
 
 abbrev kapCol (B : Frames G) (t : T) (w : Pl D.host.E) {j : ℕ} (hj : j + 1 + 1 < D.R.m) (k : GA D (G.V (.grid D.R.m (j + 1)))) :
@@ -191,7 +190,6 @@ theorem movY_other {j : ℕ} (hj : j + 1 + 1 < D.R.m) (k : GA D (G.V (.grid D.R.
     (h1 : l ≠ j + 1) (h2 : l ≠ j) : movY G j hj k y ⟨l, h⟩ = y ⟨l, h⟩ := by
   rw [movY, Function.update_of_ne (fun h => h1 (by simpa [Fin.ext_iff] using h)),
     Function.update_of_ne (fun h => h2 (by simpa [Fin.ext_iff] using h))]
-
 
 omit G in
 theorem moveArgs_col {K : Type} [Field K] (Γ : Grid K) {m j : ℕ} (hj : j + 1 + 1 < m) (κ : GL (Fin (Γ.rank (m, j + 1))) K)
@@ -234,13 +232,13 @@ theorem oppArgs_movY (B : Frames G) (t : T) (w : Pl D.host.E) {j : ℕ} (hj : j 
       (locGrid G t w).moveArgs .one (Pi.mulSingle (D.R.m, j + 1) (kapCol B t w hj k)) (oppArgs t B w x y) := by
   refine moveArgs_col (locGrid G t w) hj _ _ _ (fun _ _ => rfl) (fun i l h => ?_) (fun i l h => ⟨?_, ?_⟩)
     (fun l h1 h2 => ?_) ?_ ?_
-  · exact dif_neg fun h' => h h'.2
-  · exact dif_neg fun h' => h h'.2
-  · exact dif_neg fun h' => h h'.2
+  · exact dite_eq_right fun h' => h h'.2
+  · exact dite_eq_right fun h' => h h'.2
+  · exact dite_eq_right fun h' => h h'.2
   · by_cases hl : l < D.R.m
     · rw [oppArgs_theta B t w x _ hl, oppArgs_theta B t w x _ hl, movY_other hj k y hl h1 h2]
     · have h0 : ¬ (l < D.R.m ∧ D.R.m = D.R.m) := fun h' => hl h'.1
-      have e0 : ∀ y', oppArgs t B w x y' (.theta D.R.m l) = 0 := fun _ => dif_neg h0
+      have e0 : ∀ y', oppArgs t B w x y' (.theta D.R.m l) = 0 := fun _ => dite_eq_right h0
       rw [e0, e0]
   · have hl : j < D.R.m := by omega
     rw [oppArgs_theta B t w x _ hl, oppArgs_theta B t w x _ hl, movY_one hj k y hl]
@@ -264,7 +262,7 @@ theorem kapCol_mem {μ₀ : T} (hL : L.Is μ₀) (B : Frames G) (t : T) (w : Pl 
 theorem mu_locIdele {μ₀ : T} (hL : L.Is μ₀) (t : T) (w : Pl D.host.E) {i : ℕ} (hi : i < D.R.m) (y : (Kw w)ˣ) :
     ((L.mu t (i + 1) (GlobalTheory.LFun.locIdele D.host.F w y) : Circle) : ℂ) = (((locGrid G t w).mu (i + 1) y : ℂˣ) : ℂ) := by
   have hE : ChrEq (L.mu t (i + 1)) (muBase L (i + 1) * L.xiH t) := by
-    have h1 : muBase L (i + 1) = L.C.mu0 ⟨i, hi⟩ := dif_pos hi
+    have h1 : muBase L (i + 1) = L.C.mu0 ⟨i, hi⟩ := dite_eq_left hi
     rw [h1]
     have := GlobalTheory.Mem.TupChar.chrEq_mul (hL.mu0 ⟨i, hi⟩) (hL.xi t)
     exact this
@@ -291,9 +289,9 @@ theorem splitScal_col {μ₀ : T} (hL : L.Is μ₀) (B : Frames G) (t : T) {w : 
     intro a b η n n' h x
     unfold Formalism.IndefR.Lift.attChr
     by_cases hn : Odd n
-    · rw [if_pos hn, if_pos (h.1 hn), MonoidHom.mul_apply, MonoidHom.mul_apply, MonoidHom.inv_apply, mul_inv, inv_inv,
+    · rw [ite_eq_left hn, ite_eq_left (h.1 hn), MonoidHom.mul_apply, MonoidHom.mul_apply, MonoidHom.inv_apply, mul_inv, inv_inv,
         mul_mul_mul_comm, inv_mul_cancel, mul_one]
-    · rw [if_neg hn, if_neg (fun h' => hn (h.2 h'))]
+    · rw [ite_eq_right hn, ite_eq_right (fun h' => hn (h.2 h'))]
   have hd : detIdl (idemAt w) (G.V (.grid D.R.m (j + 1))) k =
       GlobalTheory.LFun.locIdele D.host.F w (gdet (kapCol B t w hj k)) := detIdl_eq hs _ _ _ hk
   simp only [splitScal, splitFacO, map_one, d1, inv_one, one_mul, mul_one]
@@ -360,10 +358,7 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-theorem _root_.GlobalTheory.T.lastRowInnerVertex_vacua_scaled_localProduct : ∀ {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 T : Type} {A : FamIn D.what₂.LL Γ Pl0 T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat D A Ks} (ch : Choice R) (large₂ : SizeData₂ D) (F : Face D A), HidaSetting large₂ R F → ch.Is → ShapeAt ch → ∀ (t : T) (Φ : ch.G.Datum) (j : ℕ) (hj : j + 1 + 1 < D.R.m), ∀ k ∈ latGrp ch.G (j + 1), ∃ c₁ c₂ : ℂ, ch.W.om (.mu t D.R.m j) (1, k) (ch.rm.vT D.R.m j) = c₁ • ch.rm.vT D.R.m j ∧ ch.W.om (.mu t D.R.m (j + 1)) (k, 1) (ch.rm.vT D.R.m (j + 1)) = c₂ • ch.rm.vT D.R.m (j + 1) ∧ ∀ x y, c₁ * c₂ * ∏ w ∈ locPl ch.G t, Tflip ch.W ch.S.B t Φ w (oppArgs t ch.S.B w x (GlobalTheory.RowKFix.movY ch.G j hj k y)) = ∏ w ∈ locPl ch.G t, Tflip ch.W ch.S.B t Φ w (oppArgs t ch.S.B w x y) := by
-  first | exact @GlobalTheory.RowKFix.local_prod_col
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.LastRowInnerVertexVacuaScaledLocalProductStatement =====
@@ -376,7 +371,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -658,10 +652,7 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-theorem _root_.GlobalTheory.T.weilRep_pair_fixes_flippedTensorSum : ∀ {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 T : Type} {A : FamIn D.what₂.LL Γ Pl0 T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat D A Ks} (ch : Choice R) (large₂ : SizeData₂ D) (F : Face D A), HidaSetting large₂ R F → ch.Is → ∀ (t : T) (Φ : ch.G.Datum) (τ : SchRow ch.G × SchDown ch.G t →₀ ℂ), IsFlipFin t ch.S.B ch.rm Φ τ → ∀ (j : ℕ) (hj : j + 1 + 1 < D.R.m), ∀ k ∈ latGrp ch.G (j + 1), ∀ c₁ c₂ : ℂ, ch.W.om (.mu t D.R.m j) (1, k) (ch.rm.vT D.R.m j) = c₁ • ch.rm.vT D.R.m j → ch.W.om (.mu t D.R.m (j + 1)) (k, 1) (ch.rm.vT D.R.m (j + 1)) = c₂ • ch.rm.vT D.R.m (j + 1) → (∀ x y, c₁ * c₂ * ∏ w ∈ locPl ch.G t, Tflip ch.W ch.S.B t Φ w (oppArgs t ch.S.B w x (GlobalTheory.RowKFix.movY ch.G j hj k y)) = ∏ w ∈ locPl ch.G t, Tflip ch.W ch.S.B t Φ w (oppArgs t ch.S.B w x y)) → ∀ (y : RowPt ch.G) (v : ∀ i : Fin D.R.m, WO (ch.G.V (.grid D.R.m i)) (ch.G.V (.grid D.R.m (i + 1)))), (τ.sum fun d x => x * ((∏ n, d.1 n (y n)) * ∏ i : Fin D.R.m, ch.W.om (.mu t D.R.m i) ((Pi.mulSingle (j + 1) k : Pts ch.G) i, (Pi.mulSingle (j + 1) k : Pts ch.G) (i + 1)) (d.2 i) (v i))) = τ.sum fun d x => x * ((∏ n, d.1 n (y n)) * ∏ i, d.2 i (v i)) := by
-  first | exact @GlobalTheory.RowKFix.Tens.sum_om_single_eq
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilRepPairFixesFlippedTensorSumStatement =====
@@ -674,7 +665,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -689,8 +679,8 @@ theorem key {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 T : Type} {A : Fam
     omega
   obtain ⟨j, rfl⟩ : ∃ j, J = j + 1 := ⟨J - 1, by omega⟩
   have hj : j + 1 + 1 < D.R.m := hJ'.2
-  obtain ⟨c₁, c₂, h1, h2, h3⟩ := GlobalTheory.T.lastRowInnerVertex_vacua_scaled_localProduct ch large₂ F hS hch hsh t Φ j hj k hk
-  exact GlobalTheory.T.weilRep_pair_fixes_flippedTensorSum ch large₂ F hS hch t Φ τ hτ j hj k hk c₁ c₂ h1 h2 h3 y v
+  obtain ⟨c₁, c₂, h1, h2, h3⟩ := GlobalTheory.RowKFix.local_prod_col ch large₂ F hS hch hsh t Φ j hj k hk
+  exact GlobalTheory.RowKFix.Tens.sum_om_single_eq ch large₂ F hS hch t Φ τ hτ j hj k hk c₁ c₂ h1 h2 h3 y v
 
 theorem kfix : Big fun ch => KFix ch := by
   obtain ⟨CF0, h⟩ := GlobalTheory.T.lastRowLatticesGoodPosition_large_depth
@@ -713,10 +703,7 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-theorem _root_.GlobalTheory.T.flippedFiniteTensorLatticeFixed_largeDepth : Big fun ch => KFix ch := by
-  first | exact @GlobalTheory.RowKFix.kfix
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlippedFiniteTensorLatticeFixedLargeDepthStatement =====
@@ -731,7 +718,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.Unf.FB GlobalTheory.FinPl.HandInvPf
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.BesMove
 
@@ -743,8 +729,6 @@ theorem qS_xZero {S S₀ T T₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) (d' :
     rw [xZero, adj_mul, Matrix.mul_assoc, ← Matrix.mul_assoc (gA T), ← Matrix.mul_assoc (adj d'.jX), d'.gram_XX,
       Matrix.zero_mul, Matrix.mul_zero]
   rw [← cenS_nC, ← neg_inj, LinkPoint.neg_cenS_eq, h, Matrix.zero_mul, trace_zero, map_zero, neg_zero]
-
-
 
 theorem flatBF_source {ρ : ℕ} {B : BesLev D ρ} {J : JacLev D ρ} (s : StepBF ψ B J) {Ψ : WO B.V J.W → ℂ}
     (hΨ : IsThetaFunO ψ B.V J.W Ψ) {n : GA D B.V} (hn : n ∈ flagN B.d) :
@@ -810,7 +794,7 @@ theorem flatBF_source {ρ : ℕ} {B : BesLev D ρ} {J : JacLev D ρ} (s : StepBF
   have hmul : ∀ v : UX D ρ, psiUni ψ (v * u').1 = psiUni ψ v.1 * psiUni ψ u := fun v => by
     rw [← ThLaws.psiFlag_levi ψ J.d, ← ThLaws.psiFlag_levi ψ J.d, ← ThLaws.psiFlag_levi ψ J.d, Subgroup.coe_mul, map_mul,
       psiFlag_mul J.d ψ (J.d.levi_mem_NFlag v.2) (J.d.levi_mem_NFlag hu)]
-  have hu1 : psiUni ψ u * star (psiUni ψ u) = 1 := mul_star_psi hψ _
+  have hu1 : psiUni ψ u * star (psiUni ψ u) = 1 := GlobalTheory.ThetaSchur.mul_star_psi hψ _
   funext w
   rw [hfl]
   simp only [Pi.smul_apply, smul_eq_mul]
@@ -898,7 +882,7 @@ theorem hand_left {σ : ℕ} {B : BesLev D (σ + 1)} {J : JacLev D (σ + 1)} {B'
       Chain.hand s₁ s₂ l vL Φ₁ Φ₂ φ g h₁ h₂ := by
   have hΞ := (GlobalTheory.Unf.FlatTheta.flat_isThetaFun D (GlobalTheory.T.flatThetaMaps_converge_thetaFunctions D) ψ).1 _ B J s₁ _ (s₁.weil.om_pres (g, h₁) Φ₁ hΦ₁)
   unfold Chain.hand
-  rw [flatBF_bes s₁ hΦ₁ hn, handBF_move s₁ l hφ hΞ (psiBes ψ B.d 1 (vecB B.o B.ζ) n) (mul_star_psi s₁.weil.std _)]
+  rw [flatBF_bes s₁ hΦ₁ hn, handBF_move s₁ l hφ hΞ (psiBes ψ B.d 1 (vecB B.o B.ζ) n) (GlobalTheory.ThetaSchur.mul_star_psi s₁.weil.std _)]
 
 theorem biLift_last {V₀ A L S X T L'' : HSp D} (o : OrthDec V₀ A L) (o'' : OrthDec X T L'')
     (τ : Matrix (Fin L.rank) (Fin L''.rank) D.host.E) {χA χz χS : (AE D)ˣ →* Circle} {om₁ : Om V₀ S} {oma : Om A S} {omz : Om L S}
@@ -960,7 +944,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -973,13 +956,13 @@ variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc}
 theorem rowGrp_odd (j σ : ℕ) (hj : j + 2 * σ + 1 = D.R.m) :
     rowGrp G j = jacGrp (rowJac G j (by omega) σ (by omega)) := by
   obtain rfl : σ = (D.R.m - 1 - j) / 2 := by omega
-  exact dif_pos hj
+  exact dite_eq_left hj
 
 theorem rowGrp_even (j σ : ℕ) (hj : j + 2 * σ + 2 = D.R.m) :
     rowGrp G j = besGrp (besDecAt G j σ hj) (GlobalTheory.OrthSumExists.orthDecHsum D _ _) := by
   obtain rfl : σ = (D.R.m - 2 - j) / 2 := by omega
   unfold rowGrp
-  rw [dif_neg (by omega), dif_pos hj]
+  rw [dite_eq_right (by omega), dite_eq_left hj]
 
 variable (W : G.Weil) {t : T} {M : GlobalTheory.FunObj.Vol G} (hM : M.Is t)
 
@@ -999,7 +982,7 @@ theorem biL_conAt (j σ : ℕ) (hj : j + 2 * (σ + 1) + 2 = D.R.m) (Φ : SchDown
     biL W M t j φ (conAt W hM Φ h j) = handAt W hM j σ hj Φ φ (h j) (h (j + 1)) (h (j + 1 + 1)) := by
   obtain rfl : σ = (D.R.m - 4 - j) / 2 := by omega
   refine Eq.trans ?_ (dbl_hand_eq_biLift G W t hM _ j hj _ _ _ φ (hΦ ⟨j, by omega⟩) (hΦ ⟨j + 1, by omega⟩) hφ _ _ _).symm
-  have e : conAt W hM Φ h j = _ := (dif_neg (by omega)).trans (dif_pos hj)
+  have e : conAt W hM Φ h j = _ := (dite_eq_right (by omega)).trans (dite_eq_left hj)
   rw [e]
   rfl
 
@@ -1061,9 +1044,9 @@ theorem even_second (Φ : SchDown G t) (hΦ : ∀ j, IsThetaFunO W.ψ _ _ (Φ j)
       biL W M t j φ (conAt W hM Φ h j) := by
   rcases σ with _ | σ
   · have e : ∀ h' : Pts G, conAt W hM Φ h' j = lastDat W hM j hj (GlobalTheory.Unf.Inhab.nonempty_volN _).some (h' j) (Φ ⟨j, by omega⟩)
-        (castSch G (show j + 1 + 1 = D.R.m by omega) (Φ ⟨j + 1, by omega⟩)) := fun h' => dif_pos hj
+        (castSch G (show j + 1 + 1 = D.R.m by omega) (Φ ⟨j + 1, by omega⟩)) := fun h' => dite_eq_left hj
     rw [e, e, Function.update_self]
-    obtain ⟨χz, hzH, hzE, -, -, hodd⟩ := GlobalTheory.T.thetaGrid_lastRow_column_characters_differ G W t
+    obtain ⟨χz, hzH, hzE, -, -, hodd⟩ := GlobalTheory.RowChars.rowChars G W t
     obtain ⟨hS0, hT0⟩ := hodd j (by omega) (by omega)
     let B := besAt G hM j 0 hj (GlobalTheory.Unf.Inhab.nonempty_volN _).some
     let s := (lastAt G W t hM j hj (GlobalTheory.Unf.Inhab.nonempty_volN _).some).s
@@ -1081,7 +1064,7 @@ theorem even_second (Φ : SchDown G t) (hΦ : ∀ j, IsThetaFunO W.ψ _ _ (Φ j)
       (volAt hM (.top (j + 1)) (by show j + 1 ≤ D.R.m; omega)) hφ.1 hΞ
       (fun w => castSch G (show j + 1 + 1 = D.R.m by omega) (Φ ⟨j + 1, by omega⟩)
         ((rowJac G (j + 1) (by omega) 0 (by omega)).ext0 _ w))
-      (psiBes W.ψ B.d 1 (vecB B.o B.ζ) n) (GlobalTheory.FinPl.HandInvPf.mul_star_psi W.ψ_std _) a
+      (psiBes W.ψ B.d 1 (vecB B.o B.ζ) n) (GlobalTheory.ThetaSchur.mul_star_psi W.ψ_std _) a
     erw [← k] at k'
     exact k'
   · obtain ⟨i1, i2, i3, i4, i5, i6, i7⟩ := GlobalTheory.Mem.AdelicGroupTop.adelic_unitary_topology D (G.V (.top j))
@@ -1122,7 +1105,6 @@ theorem jPer_congr_above (M : GlobalTheory.FunObj.Vol G) (t : T) (C C' : BiFam G
     rw [hC j he le_rfl]
     exact jPer_congr_above M t C C' F σ (j + 1 + 1) _ _ (by obtain ⟨a, ha⟩ := he; exact ⟨a + 1, by omega⟩)
       fun i hi hji => hC i hi (by omega)
-
 
 omit hM in
 theorem jPer_congr_window (M : GlobalTheory.FunObj.Vol G) (t : T) (C C' : BiFam G) (F : Fn G (.grid D.R.m D.R.m)) (k : ℕ)
@@ -1224,10 +1206,7 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-theorem _root_.GlobalTheory.T.innermostIntegrand_leftPeriodInvariant_largeDepth : Big fun ch => RInv ch := by
-  first | exact @GlobalTheory.RowLeftInv.rinv
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.InnermostIntegrandLeftPeriodInvariantLargeDepthStatement =====
@@ -1240,7 +1219,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -1408,7 +1386,7 @@ theorem inv_of (hB : BasicAt ch) (hC : ConLin ch) (hK : KFix ch) (hR : RInv ch) 
 
 theorem main : Big fun ch => InvAt ch :=
   big_mono (fun ch h => inv_of ch h.1 h.2.1 h.2.2.1 h.2.2.2.1 h.2.2.2.2)
-    (Big.and GlobalTheory.T.lastRow_unfolding_basicHypotheses (Big.and GlobalTheory.T.unfoldedProduct_depends_on_dataProduct (Big.and GlobalTheory.T.flippedFiniteTensorLatticeFixed_largeDepth (Big.and GlobalTheory.T.innermostIntegrand_leftPeriodInvariant_largeDepth GlobalTheory.T.definitePeriod_depends_on_productFunction))))
+    (Big.and GlobalTheory.T.lastRow_unfolding_basicHypotheses (Big.and GlobalTheory.T.unfoldedProduct_depends_on_dataProduct (Big.and GlobalTheory.RowKFix.kfix (Big.and GlobalTheory.RowLeftInv.rinv GlobalTheory.T.definitePeriod_depends_on_productFunction))))
 
 end GlobalTheory.RowInv
 end -- clump:auto
@@ -1424,7 +1402,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem _root_.GlobalTheory.T.unfolded_integrand_biInvariant_large_depth : Big fun ch => InvAt ch := by
   first | exact @GlobalTheory.RowInv.main

@@ -205,8 +205,8 @@ theorem run_weight_dom_definite : ∀ (D : D7) (T : Top D) (h : LawsP T) (j : �
     exact row hpq Tn (WeightFamilies.dimY D j) ((wL.n / 2 : ℕ) : ℤ) ((wF.n / 2 : ℕ) : ℤ) (Int.natCast_nonneg _)
       (Int.natCast_nonneg _) _ (fun _ => 2 * (Tn : ℤ)) _ (fun _ => ((WeightFamilies.dimY D j : ℤ) + 2) * (2 * (Tn : ℤ)))
       (laR T j wL k τ) (laR T j wF k τ) (Int.natCast_nonneg _)
-      (fun a => by rw [hla, hz, if_pos (Nat.zero_le _), if_pos (Nat.zero_le _)])
-      (fun a => by rw [hla, hz, if_pos (Nat.zero_le _), if_pos (Nat.zero_le _)])
+      (fun a => by rw [hla, hz, ite_eq_left (Nat.zero_le _), ite_eq_left (Nat.zero_le _)])
+      (fun a => by rw [hla, hz, ite_eq_left (Nat.zero_le _), ite_eq_left (Nat.zero_le _)])
       bP.1 bP.2.1 bP.2.2.1 bP.2.2.2
       (fun i hi => absurd hi (by omega)) (fun i hi => absurd hi (by omega)) (by omega) (by simp)
   refine ⟨hz, fun τ => ?_, fun τ a b hab => ?_⟩
@@ -622,81 +622,6 @@ theorem lower_bound_definite : ∀ (D : D7) (T : Top D) (h : LawsP T) (j : ℕ) 
 
 end Lower
 
-section Contain
-
-open GlobalTheory.Containment
-
-theorem containment_any : ∀ (D : D7) (T : Top D) (h : LawsP T) (j : ℕ) (hj : InR D j) (n : SecNorm (recB h.toLawsCore)) (R : Rdg (recPlusN h j hj n)) (e : R.Y ≃ DomPt T j), IsRdgU h j hj n R e → ∀ (N : ℕ) (wL wF : WeightFamilies.Wt D j) (w : Fin N → (recB h.toLawsCore).Cusp j wL) (Tn : ℕ) (c1 : ℝ) (A : ArchAt h j w wF Tn c1) (t : Idx D j N → ℂ) (Fl : FlatAt h j A t) (δ : ℕ) (xs : Fin δ → R.Y) (en : Fin δ ≃ Σ k : (T.U j T.σ₀).Comp, Fin (Fl.Fl k).δ), (∀ q, e (xs q) = ⟨(en q).1, ⟨(Fl.Fl (en q).1).xs (en q).2, (Fl.Fl (en q).1).xs_mem _⟩⟩) → (∀ k : ℕ, RdOnto h j (addL wF wL k)) → ∀ (CR c : ℝ), (∀ F ∈ WeightFamilies.MggK (recB h.toLawsCore) CR Tn c j (addL wF wL Tn), ∀ k : (T.U j T.σ₀).Comp, rdR h j F k ∈ ((T.U j T.σ₀).X k).SSgt (laR T j (addL wF wL Tn) k) c1) → ∀ (m : ℕ) (θ : Fin m → R.Y → ℂ), (∀ i, θ i ∈ R.sp wF Set.univ) → Submodule.span ℂ (Set.range (vals xs θ)) = ⊤ → R.sp (addL wF wL Tn) (WeightFamilies.MggK n.base CR Tn c j (addL wF wL Tn)) ≤ Submodule.span ℂ (Set.range (R.lead w t Tn (a0 D j Tn) θ)) ⊔ R.deep w t ((recPlusN h j hj n).wF0 wL wF) (a0 D j Tn) := by
-  classical
-  intro D T h j hj n R e hR N wL wF w Tn c1 A t Fl δ xs en hxs hOnto CR c hMg m θ hθ hspan
-  have hsp := span_readings_components D T h j hj n R e hR
-  have hwt : ∀ (k : (T.U j T.σ₀).Comp) (a : ℕ), laR T j (addL wF wL a) k = (A.Xa k).Fp + a • (A.Xa k).L := fun k a => by
-    rw [A.hF, A.hL]
-    exact (WtDic.weights_dictionary D T h j hj k).2.2.1 wF wL a
-  choose θf hθf hθe using fun i => (hsp wF).1 (θ i) (hθ i)
-  have hs : ∀ (i : Fin (WeightFamilies.dimY D j + 1)) (y : R.Y),
-      R.s w t i y = ∑ k, t (i, k) * rdR h j (w k) (e y).1 (e y).2.1 := fun i y => by
-    unfold Rdg.s
-    rw [Finset.sum_apply]
-    exact Finset.sum_congr rfl fun k _ => by rw [Pi.smul_apply, smul_eq_mul, hR.2]
-  have hs0 : ∀ y, R.s w t 0 y = (Fl.Fl (e y).1).w0 (e y).2.1 := fun y => by rw [hs, Fl.h0]
-  have hs1 : ∀ (q : Fin (WeightFamilies.dimY D j)) y,
-      R.s w t q.succ y = (Fl.Fl (e y).1).s (Fin.cast (A.dim _).symm q) (e y).2.1 := fun q y => by
-    rw [hs, Fl.hs]; rfl
-  have hfin : ∀ k : (T.U j T.σ₀).Comp, ∃ (K : ℕ) (g : Fin K → Frame ((T.U j T.σ₀).X k).Ψ D.R.r → ℂ),
-      ∀ f ∈ ((T.U j T.σ₀).X k).SS ((A.Xa k).Fp + Tn • (A.Xa k).L),
-        ∃ c : Fin K → ℂ, ∀ x ∈ ((T.U j T.σ₀).X k).dom, f x = ∑ i, c i * g i x := by
-    intro k
-    obtain ⟨K, g, hg⟩ := sp_le_span_fin R (addL wF wL Tn)
-    refine ⟨K, fun i x => if hx : x ∈ ((T.U j T.σ₀).X k).dom then g i (e.symm ⟨k, x, hx⟩) else 0, fun f hf => ?_⟩
-    have hmem := (hsp (addL wF wL Tn)).2.1 _ _ (hOnto Tn) (Pi.single k f) fun k' => by
-      by_cases hk : k' = k
-      · subst hk
-        rw [Pi.single_eq_same, hwt]; exact hf
-      · rw [Pi.single_eq_of_ne hk, hwt]
-        exact (A.mar k').2.2.2.2 _ _ (BoundedSectionAlgebra.bdd_zero _ _)
-    obtain ⟨cf, hcf⟩ := (Submodule.mem_span_range_iff_exists_fun ℂ).1 (hg hmem)
-    refine ⟨cf, fun x hx => ?_⟩
-    have h1 := congrFun hcf (e.symm ⟨k, x, hx⟩)
-    rw [Equiv.apply_symm_apply, Finset.sum_apply] at h1
-    simp only [dif_pos hx]
-    simpa using h1.symm
-  have hsurj : ∀ v : (Σ k : (T.U j T.σ₀).Comp, Fin (Fl.Fl k).δ) → ℂ, ∃ a : Fin m → ℂ, ∀ p,
-      ∑ i, a i * θf i p.1 ((Fl.Fl p.1).xs p.2) = v p := by
-    intro v
-    obtain ⟨a, ha⟩ := (Submodule.mem_span_range_iff_exists_fun ℂ).1
-      (hspan ▸ Submodule.mem_top : (fun q => v (en q)) ∈ Submodule.span ℂ (Set.range (vals xs θ)))
-    refine ⟨a, fun p => ?_⟩
-    obtain ⟨q, rfl⟩ := en.surjective p
-    rw [← congrFun ha q, Finset.sum_apply]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    show _ = a i * θ i (xs q)
-    rw [hθe, hxs]
-  refine Submodule.span_le.2 ?_
-  rintro _ ⟨F, hF, rfl⟩
-  obtain ⟨cc, g, hg, hx⟩ := division_all (T.U j T.σ₀).X A.Xa Fl.Fl A.mar A.dim A.hT hfin θf
-    (fun i k => by rw [A.hF]; exact (hθf i k).1.1) hsurj (rdR h j F)
-    (fun k => by rw [← hwt, A.hc]; exact hMg F hF k)
-  have hdec : R.ev ((recPlusN h j hj n).inc (addL wF wL Tn) F) =
-      ∑ α ∈ ReciprocityTheory.ChartRestriction.G.AR.multiLt (WeightFamilies.dimY D j) (Tn - WeightFamilies.dimY D j), ∑ i,
-        cc α i • (R.mon w t α * R.s w t 0 ^ (Tn - ∑ q, α q) * θ i) +
-      ∑ α ∈ Finset.Nat.antidiagonalTuple (WeightFamilies.dimY D j) (Tn - WeightFamilies.dimY D j),
-        R.mon w t α * fun y => g (e y).1 α (e y).2.1 := by
-    funext y
-    rw [hR.2, sub_eq_iff_eq_add'.1 (hx (e y).1 (e y).2.1 (e y).2.2)]
-    simp only [Rdg.mon, Pi.add_apply, Finset.sum_apply, Pi.smul_apply, Pi.mul_apply, Finset.prod_apply,
-      Pi.pow_apply, smul_eq_mul, hs0, hs1, hθe, mul_assoc]
-  show R.ev ((recPlusN h j hj n).inc (addL wF wL Tn) F) ∈ _
-  rw [hdec]
-  refine Submodule.add_mem_sup (Submodule.sum_mem _ fun α hα => Submodule.sum_mem _ fun i _ =>
-    Submodule.smul_mem _ _ (Submodule.subset_span ⟨(⟨α, GlobalTheory.LeadJets.mem_multiLt.1 hα⟩, i), rfl⟩))
-    (Submodule.sum_mem _ fun α hα => Submodule.subset_span
-      ⟨α, _, Finset.Nat.mem_antidiagonalTuple.1 hα, ?_, rfl⟩)
-  exact (hsp (addL wF wL (WeightFamilies.dimY D j))).2.1 _ _ (hOnto _) (fun k => g k α) fun k => by
-    rw [hwt]; exact hg k α hα
-
-end Contain
-
 theorem exists_anFacts_definite (D : D7) (T : Top D) (h : LawsP T) (j : ℕ) (hj : InR D j) (n : SecNorm (recB h.toLawsCore)) (N : ℕ) (wL wF : WeightFamilies.Wt D j) (w : Fin N → (recB h.toLawsCore).Cusp j wL) (Tn : ℕ) (CR c c1 : ℝ)
     (hp : ∀ k : (T.U j T.σ₀).Comp, ((T.U j T.σ₀).X k).p0 = 0) (A : ArchAt h j w wF Tn c1)
     (hOn : ∀ k : ℕ, RdOnto h j (addL wF wL k)) (hM : MggOnto h j CR Tn c (addL wF wL Tn)) :
@@ -718,7 +643,7 @@ theorem exists_anFacts_definite (D : D7) (T : Top D) (h : LawsP T) (j : ℕ) (hj
     GlobalTheory.Shares.LeadDeep.main D T h j hj n R e hR N wL wF w Tn _ A t Fl _ xs en hxs,
     GlobalTheory.UpperRecord.upper D T h j hj n R e hR N wL wF w Tn _ A t Fl _ xs en hxs,
     lower_bound_definite D T h j hj n R e hR N wL wF w Tn _ A t Fl _ xs en hxs CR c hp hM,
-    containment_any D T h j hj n R e hR N wL wF w Tn _ A t Fl _ xs en hxs hOn CR c ?_⟩
+    _root_.GlobalTheory.Containment.main D T h j hj n R e hR N wL wF w Tn _ A t Fl _ xs en hxs hOn CR c ?_⟩
   · intro Q hQ
     have hσ : R.σ = T.σ₀ := RingHom.ext hR.1
     rw [hσ]

@@ -247,11 +247,6 @@ theorem lf_del_isLattice {s : ℕ} (hS : S.Good s) (c : S.Cl) : Submodule.IsLatt
 theorem lf_nabLat_isLattice {s : ℕ} (hS : S.Good s) : Submodule.IsLattice K S.nabLat :=
   ValuationLatticeField.valLatF_isLattice S.I S.I_injective S.Nab hS.nab_lat
 
-theorem lf_delLat_isLattice {s : ℕ} (hS : S.Good s) : Submodule.IsLattice K S.delLat :=
-  ValuationLatticeField.valLatF_isLattice S.I S.I_injective S.Del (S.lf_del_isLattice hS)
-
-theorem lf_delLat_le {s : ℕ} (hS : S.Good s) : S.delLat ≤ S.nabLat := ValuationLatticeField.valLatF_mono S.I hS.del_le
-
 end CSD
 
 namespace BlockDat
@@ -264,27 +259,13 @@ theorem lf_fE_inj : Function.Injective (Matrix.mulVecLin (B.fE ℓ Z)) := by
   simp only [Matrix.mulVecLin_apply, fE, ← Matrix.mulVec_mulVec] at hxy
   exact lf_zE_inj (lf_vE_inj hxy)
 
-theorem lf_lvlNab_isLattice (h : BlockHyp B ℓ v0 s) : Submodule.IsLattice K (B.S.lvlNab B.r ℓ.P ℓ.ψ) :=
-  exponent_index_lattice.cut_isLattice _ (fun _ _ hxy => lf_lvlE_inj hxy) _ (B.S.lf_nabLat_isLattice h.ok.good)
-
 theorem lf_lPr_surj (h : BlockHyp B ℓ v0 s) : Function.Surjective (Matrix.mulVecLin (B.lPr ℓ Z)) := by
   intro y
   refine ⟨(B.lE ℓ Z).mulVec y, ?_⟩
   rw [Matrix.mulVecLin_apply, Matrix.mulVec_mulVec, lf_lPr_lE (Z := Z) h, Matrix.one_mulVec]
 
-theorem lf_Tl_isLattice (h : BlockHyp B ℓ v0 s) : Submodule.IsLattice K (B.Tl ℓ Z) := by
-  refine ⟨(lf_lvlNab_isLattice h).fg.map _, ?_⟩
-  intro s hs hli
-  exact (LinearIndependent.iff_fractionRing _ _).mp hli
-
 theorem lf_cutZ_isLattice (h : BlockHyp B ℓ v0 s) : Submodule.IsLattice K (B.cutZ ℓ Z) :=
   exponent_index_lattice.cut_isLattice _ lf_fE_inj _ (B.S.lf_nabLat_isLattice h.ok.good)
-
-theorem lf_delZ_isLattice (h : BlockHyp B ℓ v0 s) : Submodule.IsLattice K (B.delZ ℓ Z) :=
-  exponent_index_lattice.cut_isLattice _ lf_fE_inj _ (B.S.lf_delLat_isLattice h.ok.good)
-
-theorem lf_delZ_le (h : BlockHyp B ℓ v0 s) : B.delZ ℓ Z ≤ B.cutZ ℓ Z :=
-  Submodule.comap_mono (B.S.lf_delLat_le h.ok.good)
 
 theorem lf_cutZ_le (h : BlockHyp B ℓ v0 s) : B.cutZ ℓ Z ≤ B.Tl ℓ Z := by
   intro z hz
@@ -293,11 +274,6 @@ theorem lf_cutZ_le (h : BlockHyp B ℓ v0 s) : B.cutZ ℓ Z ≤ B.Tl ℓ Z := by
   rw [Matrix.mulVec_mulVec, lf_lPr_lE (Z := Z) h, Matrix.one_mulVec]
 
 end BlockDat
-
-theorem lift_lattices : LiftLattices := by
-  intro K _ _ _ G _ _ Pl0 B ℓ Z v0 s h
-  exact ⟨BlockDat.lf_Tl_isLattice (Z := Z) h, BlockDat.lf_cutZ_isLattice (Z := Z) h, BlockDat.lf_delZ_isLattice (Z := Z) h, BlockDat.lf_delZ_le (Z := Z) h,
-    BlockDat.lf_cutZ_le (Z := Z) h⟩
 
 section Unif
 
@@ -484,7 +460,6 @@ theorem opMat_adj (hH : B.OkH) (i : B.Pl × ℕ) : ∃ i', (B.opMat i)ᴴ * B.S.
 
 end CyclotomicLifting
 
-open CyclotomicLifting
 
 namespace DefFam
 
@@ -731,14 +706,6 @@ end Formalism.L2.DIV
 namespace Formalism.L2.DIV.LiftTest
 
 end Formalism.L2.DIV.LiftTest
-
-namespace Formalism.L2.DIV
-
-namespace BlockDat
-
-end BlockDat
-
-end Formalism.L2.DIV
 
 namespace Formalism.L2.DIV.LiftTest
 

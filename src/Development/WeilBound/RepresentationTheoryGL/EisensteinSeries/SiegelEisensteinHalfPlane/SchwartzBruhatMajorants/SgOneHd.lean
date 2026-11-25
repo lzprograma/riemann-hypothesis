@@ -9,49 +9,9 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Extensio
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsParComap
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TriangularLowerRightDiag
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistOfSectionLaw
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.AdelicHomeomorphisms.IsTopologicalGroupG2
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import GroundTheory.AutomorphicForms.ReductionMeasure
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -1078,7 +1038,6 @@ theorem jcpt : StdGood → GrpTop → JTop → JCpt := by
     hemb.isCompact_preimage (hBc.prod hC₂)
   have hprj : Continuous (prj A ν ι) := continuous_snd.comp continuous_subtype_val
   have hclK : IsClosed (cK α j : Set (cover A ν ι)) := by
-    set_option synthInstance.maxHeartbeats 200000 in
       exact (hUK.isClosed.preimage hj).inter (hC₂.isClosed.preimage hprj)
   refine hP.of_isClosed_subset hclK ?_
   intro x hx
@@ -1398,16 +1357,7 @@ theorem conj_apply (t : Rˣ) (g : GL (ι ⊕ ι) R) (m n : ι ⊕ ι) :
 theorem det_two (i : ι) (hi : ∀ x, x = i) (M : Matrix (ι ⊕ ι) (ι ⊕ ι) R) :
     M.det = M (Sum.inl i) (Sum.inl i) * M (Sum.inr i) (Sum.inr i) -
       M (Sum.inl i) (Sum.inr i) * M (Sum.inr i) (Sum.inl i) := by
-  let e : Fin 2 ≃ ι ⊕ ι :=
-    { toFun := ![Sum.inl i, Sum.inr i]
-      invFun := Sum.elim (fun _ => 0) (fun _ => 1)
-      left_inv := fun a => by fin_cases a <;> rfl
-      right_inv := fun a => by
-        rcases a with a | a
-        · rw [hi a]; rfl
-        · rw [hi a]; rfl }
-  rw [← Matrix.det_submatrix_equiv_self e M, Matrix.det_fin_two]
-  rfl
+  apply _root_.GlobalTheory.CompanionTheory.RgEis.Cover.det_two <;> assumption
 
 theorem det_dg (i : ι) (hi : ∀ x, x = i) (x : Rˣ) :
     Matrix.GeneralLinearGroup.det (dg ι x) = x := by
@@ -1551,8 +1501,7 @@ theorem sup_rat [TopologicalSpace R] {ε : ℤˣ} (A : Ad E R) (ν : 𝔸[F] →
     rw [← e1, ← hG, Matrix.GeneralLinearGroup.val_det_apply, RingHom.map_det]
     rfl
   obtain ⟨m, n, hmn⟩ : ∃ m n, (n₀ : Matrix (ι ⊕ ι) (ι ⊕ ι) E) m n ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     apply hdn
     rw [det_two i hi]
     simp [hc]

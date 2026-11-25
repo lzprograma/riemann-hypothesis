@@ -12,42 +12,6 @@ public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.Sta
 public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsExhaustionGL
 public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.GelfandKazhdanDual
 public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ArthurClozelStrongSupp, Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ArthurClozelLocalSC, Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CyclicStrongAtCusp
@@ -61,14 +25,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain ValuativeRel
 open GlobalTheory.FunExt
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
-namespace GlobalTheory.Published
-
-def ArthurClozelStrongSupp : Prop := StrongBC lbc
-
-end GlobalTheory.Published
 
 end
 end -- clump:auto
@@ -85,14 +41,6 @@ noncomputable section
 open NumberField IsDedekindDomain ValuativeRel
 open GlobalTheory.FunExt
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
-namespace GlobalTheory.Published
-
-def ArthurClozelLocalSC : Prop := LocalBC lbc
-
-end GlobalTheory.Published
-
 end
 end -- clump:auto
 end -- clump:auto
@@ -108,7 +56,6 @@ noncomputable section
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.GLq
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.GalCut
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.RoadU
 
@@ -119,8 +66,6 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 def Unlinked (s : Multiset (IrrGL (k := k))) : Prop := ∀ y ∈ s, ∀ z ∈ s, y ≠ z.nu 1
 
 def PlainTor (x : IrrGL (k := k)) : Prop := ∃ s, HasSupport x.rep s ∧ (∀ y ∈ s, y.1 = 1) ∧ Unlinked s
-
-def Plain (x : IrrGL (k := k)) : Prop := PlainTor x ∨ (x.IsCusp ∧ UpperTheory.Zero.LLC.GoodCusp x)
 
 def chars {n : ℕ} (ξ : Fin n → (kˣ →* ℂˣ)) (hξ : ∀ j, IsSmoothChar (ξ j)) : Multiset (IrrGL (k := k)) :=
   Finset.univ.val.map fun j => IrrGL.ofChar (ξ j) (hξ j)
@@ -133,9 +78,6 @@ def satWD {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} (h : IsPlac
   (WD.lpUnr (h := h) (B.map fun b => ((b⁻¹ : ℂˣ) : ℂ))).lpTw ((1 - (a : ℝ)) / 2)
 
 variable [IsCMField E]
-
-def PlainAt (π : CuspSub E a) (w : HeightOneSpectrum (𝓞 E)) : Prop :=
-  ∀ σ : SmIrr (GL (Fin a) (w.adicCompletion E)), π.IsLocComp w σ → Plain (IrrGL.of σ.ρ σ.smooth σ.irred)
 
 inductive Sph
   | unr | dR | crys | phi
@@ -178,34 +120,6 @@ def ToralGal : Prop :=
       HasSupport (algNorm σ).rep (chars ξ hξ) → Unlinked (chars ξ hξ) →
     ∀ a : Weil h →* (w.adicCompletion E)ˣ, IsLocalArtin h a →
       (wdOf h hl ι r).mono0 ∧ ∀ g : Weil h, (wdOf h hl ι r).charPol g = ∏ j, (X - C ((ξ j (a g) : ℂˣ) : ℂ))
-
-structure Inputs : Prop where
-
-  js : GlobalTheory.Published.JacquetShalikaRigidity
-
-  gk : GlobalTheory.Published.GelfandKazhdanDual
-
-  adm : GlobalTheory.Published.IrreducibleAdmissibleGL
-
-  len : GlobalTheory.Published.StandardFunctorsFiniteLength
-
-  exh : GlobalTheory.Published.LanglandsExhaustionGL
-
-  zel : GlobalTheory.Published.ZelevinskyPolynomialRing
-
-  gen : GlobalTheory.Published.GenericUnitaryDualGL
-
-  ac : GlobalTheory.Published.ArthurClozelStrongTC
-
-  acs : GlobalTheory.Published.ArthurClozelStrongSupp
-
-  loc : GlobalTheory.Published.ArthurClozelLocalSC
-
-  hk : GlobalTheory.Published.HeckeLAdicCharacterAbove
-
-  alg : GlobalTheory.Published.AlgebraicCharacterWD
-
-  pst : GlobalTheory.Published.DeRhamPotSemistable
 
 end GlobalTheory.RoadU
 

@@ -42,54 +42,10 @@ public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RootOrig
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularizedHodgeMetricSmoothStatement
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RootModelOriginCompatibility
 public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.GenericFibreIntersectionPullback
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverBasePointInPoints
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.LineIsomorphismDefectFunction
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.PiTensorProduct
 import ReciprocityTheory.AnalyticForms.LeviForms.TailBoundA
 import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedB
@@ -183,9 +139,9 @@ theorem arFun_word (hII : IsFullIntersectionSystem II) (t : ℝ) (w : Fin (dimFl
     rfl
   have h3 : (∑ j, Finsupp.single (some (w j)) 1 : Option (Ψ × Fin N) →₀ ℕ) none = 0 := by
     simp [Finsupp.finsetSum_apply]
-  obtain ⟨h2, -, -, h4⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Top.monoLines_monomial_word II hII.1 M.K M.ι M.P _ _ (M.line t) (fun j => some (w j)) M.arith (line_smooth M t)
+  obtain ⟨h2, -, -, h4⟩ := _root_.RootFieldNumerics.intersection_monomial_lines II hII.1 M.K M.ι M.P _ _ (M.line t) (fun j => some (w j)) M.arith (line_smooth M t)
   have hδ : (M.δ : ℝ) ≠ 0 := Nat.cast_ne_zero.2 M.δ_pos.ne'
-  rw [h1, RootModel.arFun, Module.Basis.constr_basis, RootModel.arMono, if_pos h2, h3, pow_zero, mul_one,
+  rw [h1, RootModel.arFun, Module.Basis.constr_basis, RootModel.arMono, ite_eq_left h2, h3, pow_zero, mul_one,
     div_mul_cancel₀ _ hδ, h4]
   rfl
 
@@ -231,7 +187,7 @@ theorem test_factor' [DecidableEq Ψ] {p q n r : ℕ} (e : Fin r ≃ PairIx Ψ p
   have h := test_factor e hq hn
   rw [Fin.prod_univ_add] at h ⊢
   simp only [Fin.append_left, Fin.append_right, Finset.prod_const, Finset.card_univ, Fintype.card_fin] at h ⊢
-  rw [testPoly, pow_succ', mul_assoc, h, pow_succ', mul_assoc, sum_muCoef, muSmall, if_pos (by omega)]
+  rw [testPoly, pow_succ', mul_assoc, h, pow_succ', mul_assoc, sum_muCoef, muSmall, ite_eq_left (by omega)]
 
 end LevelTowerAlt.Comparison₂
 end -- clump:auto
@@ -247,12 +203,6 @@ section -- clump:auto
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P GlobalTheory.CompanionTheory.Ar.Cmp GlobalTheory.CompanionTheory.Ar.PB Filter Topology
 open ReciprocityTheory.ChartRestriction.G.AI.I1 (IsBlockMap pullDeg)
 
-namespace GlobalTheory.CompanionTheory.Ar.Cmp
-
-theorem r_combine : PullbackStatement → ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (P J : Ideal (MRing ι)) (D : ℕ) (R : AnLogRes P J D) (Amp : HermLine ι) (β : MRing ι) (b : K → ℕ) (σ : Type) [Fintype σ] (S₁ S₂ : AnSys D σ) (π₁ : R.X → S₁.X) (π₂ : R.X → S₂.X) (h₁ : HoloMap R.A S₁.A π₁) (h₂ : HoloMap R.A S₂.A π₂), IsPotential R.A (potOf R Amp) → IsPosPot R.A (potOf R Amp) → IsMultiHomog β b → β ∉ P → (∀ z ∈ mcPts P, evC z β = 0 → z ∈ mcPts J) → (∀ x, π₁ x ∈ bdry S₁.s → evC (R.lift x x) β = 0) → (∀ x, π₂ x ∈ bdry S₂.s → evC (R.lift x x) β = 0) → ∃ (L : LocPot R.X) (s : R.X → R.X → ℂ) (nb : ℕ) (m : Fin nb → ℕ) (W : Fin nb → Set R.X) (C₅ C t₀ : ℝ), IsPotential R.A L ∧ IsSection R.A L s ∧ IsSNC R.A L s m W ∧ (∀ y, logNormSec L s y ≤ 0) ∧ (∀ x, x ∈ bdry s ↔ evC (R.lift x x) β = 0) ∧ t₀ ≤ S₁.t₀ ∧ t₀ ≤ S₂.t₀ ∧ (∀ a, IsSingWeight R.A L s ((S₁.th a).pullback π₁ h₁.1) (S₁.ph a ∘ π₁) C₅ ∧ IsRegFamily R.A (potOf R Amp) L s ((S₁.th a).pullback π₁ h₁.1) (S₁.ph a ∘ π₁) (fun t => S₁.phT a t ∘ π₁) C t₀ ∧ IsRegFamilyC2 R.A s (S₁.ph a ∘ π₁) (fun t => S₁.phT a t ∘ π₁)) ∧ ∀ a, IsSingWeight R.A L s ((S₂.th a).pullback π₂ h₂.1) (S₂.ph a ∘ π₂) C₅ ∧ IsRegFamily R.A (potOf R Amp) L s ((S₂.th a).pullback π₂ h₂.1) (S₂.ph a ∘ π₂) (fun t => S₂.phT a t ∘ π₂) C t₀ ∧ IsRegFamilyC2 R.A s (S₂.ph a ∘ π₂) (fun t => S₂.phT a t ∘ π₂) :=
-  PositivityTheory.UnitarySelfGeneration.r_combine
-
-end GlobalTheory.CompanionTheory.Ar.Cmp
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.CommonResolutionPotentialComparison =====
@@ -265,12 +215,6 @@ section -- clump:auto
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P GlobalTheory.CompanionTheory.Ar.Cmp GlobalTheory.CompanionTheory.Ar.PB Filter Topology
 open ReciprocityTheory.ChartRestriction.G.AI.I1 (IsBlockMap pullDeg)
 
-namespace GlobalTheory.CompanionTheory.Ar.Pull
-
-theorem realis_pullback : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (K₁ : Type) [Fintype K₁] (ι₁ : K₁ → Type) [∀ k, Fintype (ι₁ k)] (κ₁ : K₁ → K) (v₁ : (Σ k, ι₁ k) → Σ k, ι k) (P J : Ideal (MRing ι)) (D : ℕ) (σ : Type) (S : AnSys D σ) (Re : Realis S (imageZ v₁ P)) (R : AnLogRes P J D), IsBlockMap κ₁ v₁ → IsArithVar P (D + 1) → AlgOver Re → ∃ (π : R.X → S.X) (hπ : HoloMap R.A S.A π), (∀ (x : R.X) (x₁ : Re.R.X), SameOrbit (Re.R.lift x₁ x₁) (fun p => R.lift x x (v₁ p)) → π x = Re.π x₁) ∧ (∀ a (ref' : HermLine ι), IsPullHerm κ₁ v₁ (Re.ref a) ref' → SamePot R.A Set.univ (potOf R ref') ((S.th a).pullback π hπ.1)) ∧ (∀ a t, 0 < t → t ≤ S.t₀ → ∀ x, Real.log ((Re.line a t).h fun p => R.lift x x (v₁ p)) = Real.log ((Re.ref a).h fun p => R.lift x x (v₁ p)) + S.phT a t (π x)) ∧ ∃ (β : MRing ι) (b : K → ℕ), IsMultiHomog β b ∧ β ∉ P ∧ ∀ x, π x ∈ bdry S.s → evC (R.lift x x) β = 0 :=
-  @PositivityTheory.UnitarySelfGeneration.r_pull
-
-end GlobalTheory.CompanionTheory.Ar.Pull
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.AlgebraicRealisationHolomorphicMap =====
@@ -338,10 +282,10 @@ theorem isMultiHomog_rename {κ : K → K'} {v : (Σ k, ι k) → Σ k, ι' k} (
     rw [hb.1.extend_apply, Finset.sum_eq_single k]
     · simpa using hf m₀ hm₀ k
     · intro k₂ _ hne
-      exact Finset.sum_eq_zero fun i _ => if_neg (hb.1.ne hne)
+      exact Finset.sum_eq_zero fun i _ => ite_eq_right (hb.1.ne hne)
     · simp
   · rw [Function.extend_apply' _ _ _ hk]
-    exact Finset.sum_eq_zero fun k _ => Finset.sum_eq_zero fun i _ => if_neg fun h => hk ⟨k, h⟩
+    exact Finset.sum_eq_zero fun k _ => Finset.sum_eq_zero fun i _ => ite_eq_right fun h => hk ⟨k, h⟩
 
 theorem isMultiHomog_mul {f g : MRing ι} {a b : K → ℕ} (hf : IsMultiHomog f a) (hg : IsMultiHomog g b) :
     IsMultiHomog (f * g) (a + b) := by
@@ -375,7 +319,7 @@ theorem side {κ₁ : K₁ → K} {v₁ : (Σ k, ι₁ k) → Σ k, ι k} (hb : 
       (∀ a t, 0 < t → t ≤ S.t₀ → ∀ x, Real.log ((Re.line a t).h fun p => R.lift x x (v₁ p)) =
         Real.log ((Re.ref a).h fun p => R.lift x x (v₁ p)) + S.phT a t (π x)) := by
   subst e
-  obtain ⟨π, hπ, h1, h2, h3, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Pull.realis_pullback K ι K₁ ι₁ κ₁ v₁ P J D σ S Re R hb har alg
+  obtain ⟨π, hπ, h1, h2, h3, -⟩ := _root_.PositivityTheory.UnitarySelfGeneration.r_pull K ι K₁ ι₁ κ₁ v₁ P J D σ S Re R hb har alg
   exact ⟨π, hπ, h1, h2, h3⟩
 
 theorem evC_bdry {κ₁ : K₁ → K} {v₁ : (Σ k, ι₁ k) → Σ k, ι k} (hb : IsBlockMap κ₁ v₁) {P J : Ideal (MRing ι)}
@@ -386,21 +330,12 @@ theorem evC_bdry {κ₁ : K₁ → K} {v₁ : (Σ k, ι₁ k) → Σ k, ι k} (h
     (hz : ∀ x, Re.π x ∈ bdry S.s → evC (Re.R.lift x x) γ = 0) (x : R.X) (hx : π x ∈ bdry S.s) :
     evC (R.lift x x) (rename v₁ γ) = 0 := by
   have hmem : (fun p => R.lift x x (v₁ p)) ∈ mcPts P₁ :=
-    e ▸ (_root_.GlobalTheory.CompanionTheory.Ar.Cmp.hermLine_pull_blockMap K₁ ι₁ K ι κ₁ v₁ hb).2.2.1 P _ (R.mem x x (R.mem_U x))
-  obtain ⟨x₁, hx₁⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Cmp.resolution_onto_complex_points K₁ ι₁ P₁ _ D Re.R Re.arith _ hmem
+    e ▸ (_root_.PositivityTheory.UnitarySelfGeneration.j_pull K₁ ι₁ K ι κ₁ v₁ hb).2.2.1 P _ (R.mem x x (R.mem_U x))
+  obtain ⟨x₁, hx₁⟩ := _root_.PositivityTheory.UnitarySelfGeneration.r_onto K₁ ι₁ P₁ _ D Re.R Re.arith _ hmem
   rw [evC_rename, ← evC_eq_zero_iff_of_sameOrbit hγ hx₁]
   exact hz x₁ (hπ x x₁ hx₁ ▸ hx)
 
 end Sides
-
-section Assemble
-
-variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
-  {K₁ : Type} [Fintype K₁] {ι₁ : K₁ → Type} [∀ k, Fintype (ι₁ k)]
-  {K₂ : Type} [Fintype K₂] {ι₂ : K₂ → Type} [∀ k, Fintype (ι₂ k)]
-  {K' : Type} [Fintype K'] {ι' : K' → Type} [∀ k, Fintype (ι' k)]
-
-end Assemble
 
 end GlobalTheory.CompanionTheory.Ar.Cmp.Build
 end -- clump:auto
@@ -526,10 +461,10 @@ theorem anCore (hR : Replace) (hB : BaseSide) (hI : PB.Inputs) (hK : ResK.ResKSt
   have hbd₁ : ∀ x, π x ∈ bdry S.s → evC (R.lift x x) (rename v (β * rename v₁ γ)) = 0 := fun x hx => by
     rw [hB0, evC_bdry hc₁.1 Re e₁ R l₁ hγ hz x hx, mul_zero]
   obtain ⟨L, s, nb, mb, Wb, C₅, C, t₀, hL, hsec, hsnc, hnorm, hbd, ht₁, -, hm, -⟩ :=
-    _root_.GlobalTheory.CompanionTheory.Ar.Cmp.r_combine hI.pullback K' ρ' _ J' d R Amp (rename v (β * rename v₁ γ)) _ σ S S π π hπ hπ hpot hpos
+    _root_.PositivityTheory.UnitarySelfGeneration.r_combine hI.pullback K' ρ' _ J' d R Amp (rename v (β * rename v₁ γ)) _ σ S S π π hπ hπ hpot hpos
       (isMultiHomog_rename hb hBh) (fun h => hBn (e₀ ▸ h)) hbad hbd₁ hbd₁
   have ht₀ : 0 < t₀ := (hm (Classical.arbitrary σ)).2.1.1
-  have hp₁ := _root_.GlobalTheory.CompanionTheory.Ar.Cmp.hermLine_pull_blockMap K₁ J₁ K' ρ' (κ ∘ κ₁) (v ∘ v₁) hc₁.1
+  have hp₁ := _root_.PositivityTheory.UnitarySelfGeneration.j_pull K₁ J₁ K' ρ' (κ ∘ κ₁) (v ∘ v₁) hc₁.1
   choose r hr using fun a => (hp₁.1 (Re.ref a)).exists
   have hrs : ∀ a, IsSmoothHerm (r a) := fun a => hp₁.2.1 _ _ (hr a) (Re.ref_smooth a)
   have hla : ∀ t a, (l t a).a = (r a).a := fun t a => by rw [(hl t a).1, (hr a).1, Re.line_deg]
@@ -553,27 +488,27 @@ theorem anCore (hR : Replace) (hB : BaseSide) (hI : PB.Inputs) (hK : ResK.ResKSt
     have h6 := (abs_le.1 (hph a x hx)).1
     refine ⟨abs_le.2 ⟨?_, ?_⟩, h4.trans (le_abs_self C)⟩ <;> nlinarith [le_abs_self C, abs_nonneg C₅, abs_nonneg C]
   obtain ⟨ref, Cb, hrefs, hev, hun⟩ := hB K J II Ψ Ω W D Hd M Sr B K' ρ' _ J' d R _ _ _ Mt hSr hc₂.1 e₂ hpot hpos hMt
-  obtain ⟨L₁, hL₁⟩ := ((_root_.GlobalTheory.CompanionTheory.Ar.Cmp.hermLine_pull_blockMap K₁ J₁ K₃ ρ κ₁ v₁ hb₁).1 Sg).exists
-  obtain ⟨L₂, hL₂⟩ := ((_root_.GlobalTheory.CompanionTheory.Ar.Cmp.hermLine_pull_blockMap K J K₃ ρ κ₂ v₂ hb₂).1 (muVert Hd B)).exists
+  obtain ⟨L₁, hL₁⟩ := ((_root_.PositivityTheory.UnitarySelfGeneration.j_pull K₁ J₁ K₃ ρ κ₁ v₁ hb₁).1 Sg).exists
+  obtain ⟨L₂, hL₂⟩ := ((_root_.PositivityTheory.UnitarySelfGeneration.j_pull K J K₃ ρ κ₂ v₂ hb₂).1 (muVert Hd B)).exists
   obtain ⟨f, g, hfg, hdef⟩ := hiso L₁ L₂ hL₁ hL₂
-  have hcr := (_root_.GlobalTheory.CompanionTheory.Ar.Cmp.IsoLines.isoLineOn_comb_trans_symm_pull K' ρ' _ ∅ har'.2.1 (Set.empty_subset _)).2.2.2 K₁ J₁ _ _ σ Re.ref r m hc₁.1 hr
+  have hcr := (_root_.PositivityTheory.UnitarySelfGeneration.i_comb K' ρ' _ ∅ har'.2.1 (Set.empty_subset _)).2.2.2 K₁ J₁ _ _ σ Re.ref r m hc₁.1 hr
   have hfg' : IsLineIso (mCoordIdeal y') (Top.combLine r m).a ref.a (rename v f) (rename v g) := by
     obtain ⟨t, ht⟩ := hev.exists
     rw [hcr.1, ← hSa, hc₁.2, ← hL₁.1, ← ht.2.1, (hMt t).1, hc₂.2, muReg, smoothRep_a]
-    have := (_root_.GlobalTheory.CompanionTheory.Ar.Cmp.lineIso_algebra K₃ ρ _ har.2.1).2.2.2.2 K' ρ' κ v _ hb e₀ _ _ _ _ hfg
+    have := (_root_.PositivityTheory.UnitarySelfGeneration.i_algebra K₃ ρ _ har.2.1).2.2.2.2 K' ρ' κ v _ hb e₀ _ _ _ _ hfg
     rwa [hL₂.1] at this
-  obtain ⟨w, hw, -, hws⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Cmp.defect_exists_smooth K' ρ' _ J' d R _ ref _ _ har'.2.1 hfg' ((_root_.GlobalTheory.CompanionTheory.Ar.Top.combLine_smooth_conj K' ρ' σ r m).1 hrs) hrefs
+  obtain ⟨w, hw, -, hws⟩ := _root_.PositivityTheory.UnitarySelfGeneration.i_defect K' ρ' _ J' d R _ ref _ _ har'.2.1 hfg' ((_root_.GlobalTheory.CompanionTheory.Ar.Top.combLine_smooth_conj K' ρ' σ r m).1 hrs) hrefs
   obtain ⟨B₀, hB₀⟩ := isCompact_univ.exists_bound_of_continuousOn (OneModel.continuous_of_smooth R.A hws).continuousOn
   have hB₀' : ∀ x, |w (R.lift x x)| ≤ |B₀| := fun x => (hB₀ x trivial).trans (le_abs_self _)
   have hmain : ∀ x ∉ bdry s, (fun p => R.lift x x ((v ∘ v₂) p)) ∉ D.Bd ∧ w (R.lift x x) = ∑ a, (m a : ℝ) * S.ph a (π x) +
       Real.log (ref.h (R.lift x x)) - Real.log ((muVert Hd B).h fun p => R.lift x x ((v ∘ v₂) p)) := by
     intro x hxb
-    have hz' : (fun p => R.lift x x (v p)) ∈ mcPts (mCoordIdeal y) := e₀ ▸ (_root_.GlobalTheory.CompanionTheory.Ar.Cmp.hermLine_pull_blockMap K₃ ρ K' ρ' κ v hb).2.2.1 _ _ (hx x)
+    have hz' : (fun p => R.lift x x (v p)) ∈ mcPts (mCoordIdeal y) := e₀ ▸ (_root_.PositivityTheory.UnitarySelfGeneration.j_pull K₃ ρ K' ρ' κ v hb).2.2.1 _ _ (hx x)
     have hne : evC (R.lift x x) (rename v (β * rename v₁ γ)) ≠ 0 := fun h => hxb ((hbd x).2 h)
     have hβ' : evC (fun p => R.lift x x (v p)) β ≠ 0 := fun h => hne (by rw [hB0, h, zero_mul])
     refine ⟨hbd₂ _ hz' hβ', ?_⟩
     have hm1 : (fun p => R.lift x x ((v ∘ v₁) p)) ∈ mcPts P₁ := e₁ ▸ hp₁.2.2.1 _ _ (hx x)
-    obtain ⟨x₁, hx₁⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Cmp.resolution_onto_complex_points K₁ J₁ _ _ d Re.R Re.arith _ hm1
+    obtain ⟨x₁, hx₁⟩ := _root_.PositivityTheory.UnitarySelfGeneration.r_onto K₁ J₁ _ _ d Re.R Re.arith _ hm1
     have ε₁ : π x = Re.π x₁ := l₁ x x₁ hx₁
     obtain ⟨u, u', huu, hu, hu'⟩ := OneModel.exists_pair_ne hfg.2 hz'
     have k₁ := hdef _ ⟨hz', hβ'⟩ u u' huu hu
@@ -740,7 +675,6 @@ theorem root_eq {Ψ : Type} [Fintype Ψ] [DecidableEq Ψ] {N n : ℕ} {M : Top.R
     refine (sum_gapc (c ∘ some) fun r => Real.log ((M.x t r).h z)).symm.trans (Finset.sum_congr rfl fun r _ => ?_)
     rw [R.fund_reg r.1 r.2 t h0 h1 z hz]
 
-
 theorem tie_of (hC : Common) (hR : Replace) (hB : BaseSide) : PB.AgreementPos → PB.Proportional → Cmp.CmpSt → Top.Given → PtsIntegrableStatement → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] [IsAbelianGalois ℚ E] (H : Host E) (D : Datum H) (Xo : ∀ l : Tor.Level H, Moduli D l) (l : Tor.Level H) (c : Coeff l) (Y : Model (Xo l) c (algebraMap (𝓞 c.F) c.F)) [DecidableEq (CMType H)] (T : Top.RootTower (CMType H) (D.p + D.q)) (o : Top.GoodOrigin Y T) (II : IntersectionSystem), Top.IsGlobal Xo l c Y → o.Extra → IsFullIntersectionSystem II → 1 ≤ D.p → 1 ≤ D.q → ∀ (B B₁ : ℕ) (a : T.Comp) (K : Type) [Fintype K] (J : K → Type) [∀ k, Fintype (J k)] (Ω : Type) [Field Ω] [Algebra ℚ Ω] (W : CMType H → Type) [∀ τ, AddCommGroup (W τ)] [∀ τ, Module Ω (W τ)] (Dc : ComponentData II (CMType H) K J Ω W) (O Lt : Type) [CommRing O] [AddCommGroup Lt] [Module O Lt] (X : ComponentSetting Dc O Lt) (Or : CptOrigin Y T.bad Dc X.H), 2 ≤ B → B ≤ B₁ → D.q ≤ D.p → Or.bg = Sum.inl → Or.sm = Sum.inr → Or.Good → genPt Or.𝔐.ξ₀ = genPt (o.Fx a).ξf → (∀ r : ℕ, r ∈ Dc.S ↔ r.Prime ∧ r ≤ B₁ ∧ r ∉ T.bad) → ∃ (K₃ : Type) (_ : Fintype K₃) (ι₃ : K₃ → Type) (_ : ∀ k, Fintype (ι₃ k)) (κ : K → K₃) (v : (Σ k, J k) → Σ k, ι₃ k) (P₃ : Ideal (MRing ι₃)) (e r : ℕ) (cf : Fin r → ℝ) (Mt : ℝ → HermLine ι₃) (Nt : ℝ → Fin r → Fin e → HermLine ι₃) (δ : ℝ), IsBlockMap κ v ∧ IsArithVar P₃ (Dc.n + 1 + e) ∧ imageZ v P₃ = mCoordIdeal Dc.y ∧ 0 < δ ∧ (∀ t m i, (Nt t m i).a = (Nt 1 m i).a) ∧ (∀ t m i, IsSmoothHerm (Nt t m i)) ∧ (∀ᶠ t in 𝓝[>] (0 : ℝ), IsPullHerm κ v (muReg X.H X.S B t) (Mt t)) ∧ Tendsto (fun t => ∑ m, cf m * II K₃ ι₃ P₃ (Dc.n + 1 + e) (Fin.append (fun _ : Fin (Dc.n + 1) => Mt t) (Nt t m))) (𝓝[>] 0) (𝓝 (δ * T.PPc II B a (Top.testPoly T.j))) ∧ ∀ᶠ t in 𝓝[>] (0 : ℝ), ∑ m, cf m * ptsIntegral (e := Dc.n + e) P₃ (fun i z => Real.log ((Fin.append (fun _ : Fin Dc.n => Mt t) (Nt 1 m) i).h z)) (fun _ => 1) = δ * (T.M B a).geoFun (Top.toA (Top.muSmall T.j ^ Top.dimX (CMType H) (D.p + D.q) T.j * Top.fibClass T.j : Top.RP (CMType H) (D.p + D.q))) := by
   intro hAg _ _ hG _ E _ _ _ _ H D Xo l c Y _ T o II _ hEx hII hp hq B B₁ a K _ J _ Ω _ _ W _ _ Dc O Lt _ _ _ X Or _ hBB hqp
     hbg hsm hGood hgen hS
@@ -759,7 +693,7 @@ theorem tie_of (hC : Common) (hR : Replace) (hB : BaseSide) : PB.AgreementPos �
       (fun p hp hd => (o.bad_iff p).2 ⟨hp, (hd.mul_left 2).mul_right _⟩) (o.omVB B a) (hEx.2 B a) hp hbg hsm hGood hgen
   have hmono := OrLinked.mono_int' c
   obtain ⟨x₀, hx₀⟩ := _root_.GlobalTheory.CompanionTheory.Ar.GenOpen.gen_open E H D l _ c _ _ Y _ _ _ _ _ (o.Or B a).𝔐 hmono
-  have alg := _root_.GlobalTheory.CompanionTheory.Ar.RootAlg.algOver_of_immersion E H D l _ c _ _ Y _ _ _ _ (o.Or B a) (spMap (o.Or B a).𝔐.fn ≫ x₀) (by
+  have alg := _root_.PositivityTheory.UnitarySelfGeneration.o_algover E H D l _ c _ _ Y _ _ _ _ (o.Or B a) (spMap (o.Or B a).𝔐.fn ≫ x₀) (by
     rw [Category.assoc, ← hx₀]; exact (o.Or B a).𝔐.fn_over) hmono (hEx.1 a)
   have : Nonempty (RootIx D) := ⟨(Classical.choice (_root_.GlobalTheory.CompanionTheory.Ar.Top.HostNumbers.host_numbers E H).2.1, ⟨0, by omega⟩)⟩
   obtain ⟨K', _, ρ', _, κ, v, y', hb, hy, hfield, har', hcore⟩ := anCore hR hB hI hK hII ((o.Or B a).Re.comap some) alg
@@ -780,8 +714,8 @@ theorem tie_of (hC : Common) (hR : Replace) (hB : BaseSide) : PB.AgreementPos �
   have e₂ : imageZ (v ∘ v₂) (mCoordIdeal y') = mCoordIdeal Dc.y := by
     rw [hjb.2.1 K J K' ρ' _ _ Ω₃ y' hc₂, ← he₂, ← hy]
     rfl
-  have hp₁ := _root_.GlobalTheory.CompanionTheory.Ar.Cmp.hermLine_pull_blockMap _ _ K' ρ' _ _ hc₁
-  have hp₂ := _root_.GlobalTheory.CompanionTheory.Ar.Cmp.hermLine_pull_blockMap K J K' ρ' _ _ hc₂
+  have hp₁ := _root_.PositivityTheory.UnitarySelfGeneration.j_pull _ _ K' ρ' _ _ hc₁
+  have hp₂ := _root_.PositivityTheory.UnitarySelfGeneration.j_pull K J K' ρ' _ _ hc₂
   choose pl hpl using fun A => (hp₁.1 A).exists
   choose Mt hMt using fun t => (hp₂.1 (muReg X.H X.S B t)).exists
   have hcore' := hcore Mt (fun t r => pl ((o.Or B a).Re.line (some r) t)) hMt fun t r => hpl _
@@ -791,7 +725,7 @@ theorem tie_of (hC : Common) (hR : Replace) (hB : BaseSide) : PB.AgreementPos �
   have hx' : ∀ t cc, IsSmoothHerm (Top.combLine (x' t) cc) := fun t cc => (_root_.GlobalTheory.CompanionTheory.Ar.Top.combLine_smooth_conj _ _ _ _ cc).1 fun o' => by
     cases o'
     exacts [PF.cst_smooth, (T.M B a).x_smooth _ _]
-  have hreg := GlobalTheory.T.regularized_hodge_metric_smooth K J II _ Ω W Dc X.H X.M X.S B X.S_tied
+  have hreg := GlobalTheory.CompanionTheory.Ar.Cusp.muReg_smooth_log K J II _ Ω W Dc X.H X.M X.S B X.S_tied
   set e := IntermediateField.relfinrank (blockFnField (y ∘ v₁)) (blockFnField y) with he
   have key : ∀ (a' b' : ℕ) (cc : Fin b' → Option (RootIx D) → ℤ), a' + b' = Top.dimFl (CMType H) (D.p + D.q) + 1 →
       Tendsto (fun t => II K' ρ' (mCoordIdeal y') (a' + b') (Fin.append (fun _ : Fin a' => Mt t)
@@ -812,7 +746,7 @@ theorem tie_of (hC : Common) (hR : Replace) (hB : BaseSide) : PB.AgreementPos �
         fun r => pl ((o.Or B a).Re.line (some r) t)) fun o' => o'.elim (cc none) (gapc (cc ∘ some))).h z =
           (pl (Top.combLine (x' t) cc)).h z := by
       intro cc
-      have h3 := (_root_.GlobalTheory.CompanionTheory.Ar.Cmp.IsoLines.isoLineOn_comb_trans_symm_pull K' ρ' _ ∅ har'.2.1 (Set.empty_subset _)).2.2.2 _ _ _ _ _
+      have h3 := (_root_.PositivityTheory.UnitarySelfGeneration.i_comb K' ρ' _ ∅ har'.2.1 (Set.empty_subset _)).2.2.2 _ _ _ _ _
         (fun o' : Option (RootIx D) => o'.elim (PF.cst _) fun r => (o.Or B a).Re.line (some r) t)
         (fun o' : Option (RootIx D) => o'.elim (PF.cst ρ') fun r => pl ((o.Or B a).Re.line (some r) t))
         (fun o' => o'.elim (cc none) (gapc (cc ∘ some))) hc₁ fun o' => by

@@ -7,7 +7,7 @@ public import Formalism.LocalRingCardinality.DataSpaces
 namespace Bl.general_b_fact_left_alt
 
 theorem goal1 :
-  ∀ {E : Type} [inst : Field.{0} E] [inst_1 : NumberField.{0} E] [inst_2 : StarRing.{0} E] {S : Formalism.BasicNotions.HSpace E}
+  ∀ {E : Type} [Field.{0} E] [NumberField.{0} E] [StarRing.{0} E] {S : Formalism.BasicNotions.HSpace E}
   (Λ : Submodule.{0, 0} (NumberField.RingOfIntegers.{0} E) S.V),
   Submodule.IsFullLattice.{0, 0, 0} E Λ →
     ∀ (v : S.V),

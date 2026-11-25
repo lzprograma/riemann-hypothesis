@@ -49,8 +49,6 @@ namespace GlobalTheory.LoopC
 open NumberField Module Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt
 open scoped ENNReal
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7)
 
 abbrev Fg (T : D.host.E) : Type := LFlag (hS D) D.R.rS T

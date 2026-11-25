@@ -119,8 +119,6 @@ import Mathlib.Algebra.Ring.IsFormallyReal
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open NumberField
@@ -128,20 +126,6 @@ open NumberField
 namespace GlobalTheory.SelfDualIndex
 
 variable {E : Type} [Field E] [NumberField E] {p : ℕ}
-
-theorem bdd_of_fg {Λ : Submodule (𝓞 E) (Fin p → E)} (h : Λ.FG) : GlobalTheory.BetaEx.Bdd Λ := by
-  classical
-  obtain ⟨s, rfl⟩ := h
-  choose a ha0 ha using fun v : Fin p → E => GlobalTheory.BetaEx.exists_smul_std v
-  refine ⟨∏ v ∈ s, a v, Finset.prod_ne_zero_iff.2 fun v _ => ha0 v, fun v hv => ?_⟩
-  induction hv using Submodule.span_induction with
-  | mem x hx =>
-    rw [← Finset.mul_prod_erase s a hx, mul_comm, mul_smul]
-    exact Submodule.smul_mem _ _ (ha x)
-  | zero => simp
-  | add x y _ _ hx hy => rw [smul_add]; exact add_mem hx hy
-  | smul b x _ hx => rw [smul_comm]; exact Submodule.smul_mem _ _ hx
-
 
 omit [NumberField E] in
 theorem ιMulti_single_ne_zero :
@@ -154,7 +138,6 @@ theorem ιMulti_single_ne_zero :
   rw [show (Matrix.of fun j : Fin p => (Pi.single j (1 : E) : Fin p → E)) = 1 from by
     ext i j; simp [Matrix.one_apply, Pi.single_apply, eq_comm], Matrix.det_one] at this
   exact one_ne_zero this
-
 
 omit [NumberField E] in
 theorem idx_eq (Λ : Submodule (𝓞 E) (Fin p → E)) (J : Ideal (𝓞 E)) (hJ : J • GlobalTheory.BetaEx.detSpan Λ = 1) :
@@ -255,7 +238,7 @@ theorem idx_mul_map_bar_eq : ∀ (E : Type) [Field E] [NumberField E] (bar : �
     convert hO b using 1
     funext a
     exact (hb a).symm
-  obtain ⟨J, -, hJ, -⟩ := GlobalTheory.BetaEx.exists_index_ideal _ Λ hstd (bdd_of_fg hfg)
+  obtain ⟨J, -, hJ, -⟩ := GlobalTheory.BetaEx.exists_index_ideal _ Λ hstd (GlobalTheory.LatIndexDeg.bdd_of_fg hfg)
     (fun m _ => GlobalTheory.BetaEx.exists_smul_std m)
   rw [GlobalTheory.DetIdeal.detSpan_std] at hJ
   have hJ1 : J • GlobalTheory.BetaEx.detSpan Λ = 1 := hJ.symm
@@ -299,10 +282,9 @@ theorem idx_mul_map_bar_eq : ∀ (E : Type) [Field E] [NumberField E] (bar : �
         simp [hbd, smul_eq_mul]
       rw [this, Matrix.mulVec_smul, hw, smul_zero, zero_dotProduct]
       simp
-    obtain ⟨k, hk0, hk⟩ := bdd_of_fg hfg
+    obtain ⟨k, hk0, hk⟩ := GlobalTheory.LatIndexDeg.bdd_of_fg hfg
     obtain ⟨i, hi⟩ : ∃ i, w i ≠ 0 := by
-      by_contra hne
-      push_neg at hne
+      by_contra! hne
       exact hw0 (funext hne)
     have hdi : d i ≠ 0 := fun h => hi (by rw [← hbd i, h, map_zero])
     have hkE : (k : E) ≠ 0 := by exact_mod_cast hk0
@@ -484,7 +466,6 @@ private theorem one_mem_colon_one_smul_of_fg {E : Type} [Field E] [NumberField E
   rw [mul_comm, ← Algebra.smul_def]
   exact Submodule.smul_mem_smul hi ha
 
-
 open NumberField in
 open scoped nonZeroDivisors in
 theorem _root_.GlobalTheory.colon_one_span_image_eq_map {E K : Type} [Field E] [NumberField E] [Field K]
@@ -610,7 +591,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 open NumberField
 
@@ -926,35 +906,11 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open NumberField
 
 namespace GlobalTheory.IdxTensor
-theorem cut_idxmap : ∀ {F V : Type} [Field F] [NumberField F] [AddCommGroup V] [Module F V] [Module (𝓞 F) V]
-    [IsScalarTower (𝓞 F) F V] (p : ℕ) (φ : (Fin p → F) →ₗ[F] V), Function.Injective φ →
-    ∀ (L N : Submodule (𝓞 F) (Fin p → F)),
-    GlobalTheory.FlatCM.idx F p (L.map (φ.restrictScalars (𝓞 F))) (N.map (φ.restrictScalars (𝓞 F))) =
-      (GlobalTheory.IdxTensor.dets F p N).colon (GlobalTheory.IdxTensor.dets F p L : Set F) := _root_.GlobalTheory.IdxMap.idx_map_eq_colon_dets
-
-theorem cut_detsspan : ∀ {F : Type} [Field F] [NumberField F] (p : ℕ) (S : Set (Fin p → F)),
-    GlobalTheory.IdxTensor.dets F p (Submodule.span (𝓞 F) S) =
-      Submodule.span (𝓞 F) {d | ∃ y : Fin p → Fin p → F, (∀ i, y i ∈ S) ∧ d = (Matrix.of y).det} := _root_.GlobalTheory.IdxTensor.dets_span_eq
-
-theorem cut_rankone : ∀ {K : Type} [Field K] [NumberField K] {m : ℕ} (ell : Submodule (𝓞 K) (Fin m → K)),
-    ReciprocityTheory.GeometryOfNumbersTheory.latRank K ell = 1 → ell.FG →
-    ∃ v : Fin m → K, v ≠ 0 ∧ ∃ 𝔟 : Submodule (𝓞 K) K, 𝔟.FG ∧ 𝔟 ≠ ⊥ ∧
-      ∀ e, e ∈ ell ↔ ∃ β ∈ 𝔟, e = β • v := _root_.GlobalTheory.latRank_one_eq_ideal_smul
-
-theorem cut_linindep : ∀ {K : Type} [Field K] [NumberField K] {p m n : ℕ} (ell : Submodule (𝓞 K) (Fin m → K))
-    (M : Fin p → ((Fin m → K) →ₗ[K] (Fin n → K))) (v : Fin m → K), v ≠ 0 → ∀ (𝔟 : Submodule (𝓞 K) K),
-    𝔟 ≠ ⊥ → (∀ e, e ∈ ell ↔ ∃ β ∈ 𝔟, e = β • v) → (∀ a, Function.Injective (M a)) →
-    iSupIndep (fun a => Submodule.span K
-      ((ell.map ((M a).restrictScalars (𝓞 K)) : Submodule (𝓞 K) (Fin n → K)) : Set (Fin n → K))) →
-    LinearIndependent K (fun a => M a v) := _root_.GlobalTheory.linearIndependent_images_of_rankOne_lattice
-
 theorem span_image_one {E K : Type} [Field E] [NumberField E] [Field K] [NumberField K]
     (τ : 𝓞 E →+* 𝓞 K) (τE : E →+* K) (hτ : ∀ x : 𝓞 E, τE x = ((τ x : 𝓞 K) : K)) :
     Submodule.span (𝓞 K) (τE '' (1 : Submodule (𝓞 E) E)) = 1 := by
@@ -1180,7 +1136,7 @@ theorem idealSt_zero : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H
     Submodule.FG.of_le (LieLattice.lieLat_fg_and_span_eq_top K _ FP).1
       (Submodule.span_mono fun c ⟨u, hu, _⟩ => ⟨u, hu⟩)
   have hrk : latRank K (FP.eigLat (X.A true).t.act τ) = 1 := by
-    rw [(GlobalTheory.CM.EigDec.eigen_decomposition E H K ρ (X.A true) FP 1 0 X.split X.typeP X.ρ_sq).1 τ, if_pos hτ]
+    rw [(GlobalTheory.CM.EigDec.eigen_decomposition E H K ρ (X.A true) FP 1 0 X.split X.typeP X.ρ_sq).1 τ, ite_eq_left hτ]
   rw [subP, hdesc FP FB MP hMP τ hτ τE hτE]
   exact _root_.GlobalTheory.IdxTensor.idx_image_eq_map E K τ τE hτE p _ _ _ MP Λ hfgA hrk (fun a => hinj (.inl a))
     (iSupIndep.comp hind (f := fun a : Fin p => ((Sum.inl a : Fin p ⊕ Fin 0), τ)) fun a b e => by simpa using e)
@@ -1222,10 +1178,6 @@ theorem latRank_iSup {K V ι : Type} [Field K] [NumberField K] [AddCommGroup V] 
     first
     | exact hi.dfinsupp_lsum_injective
   rw [← DirectSum.range_coeLinearMap, LinearMap.finrank_range_of_inj hinj, Module.finrank_directSum]
-
-end GlobalTheory.FlatCore.CMDiff
-
-namespace GlobalTheory.FlatCore.CMDiff
 
 end GlobalTheory.FlatCore.CMDiff
 
@@ -1348,8 +1300,7 @@ theorem deg_iSup_map_of_gram : ∀ (K : Type) [Field K] [NumberField K] (W V : T
   haveI : FiniteDimensional K (Submodule.span K (ℓ : Set W)) :=
     Module.finite_of_finrank_pos (by rw [hr]; norm_num)
   obtain ⟨c, hcℓ, hc0⟩ : ∃ c ∈ ℓ, c ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     have h0 : Submodule.span K (ℓ : Set W) = ⊥ := by
       rw [Submodule.span_eq_bot]; intro x hx; exact hne x hx
     rw [h0, finrank_bot] at hr; exact zero_ne_one hr
@@ -1445,15 +1396,6 @@ open NumberField
 
 namespace GlobalTheory
 
-theorem ringOfIntegers_ringHom_injective {E K : Type} [Field E] [NumberField E] [Field K] [NumberField K]
-    (σ : 𝓞 E →+* 𝓞 K) : Function.Injective σ := by
-  rw [RingHom.injective_iff_ker_eq_bot]
-  apply Ideal.eq_bot_of_comap_eq_bot (R := ℤ)
-  rw [eq_bot_iff]
-  intro n hn
-  rw [Ideal.mem_comap, RingHom.mem_ker] at hn
-  simpa using hn
-
 theorem sum_log_norm_embeddings {K : Type} [Field K] [NumberField K] (y : K) :
     ∑ s : K →+* ℂ, Real.log ‖s y‖ = Real.log |((Algebra.norm ℚ y : ℚ) : ℝ)| := by
   by_cases hy : y = 0
@@ -1472,7 +1414,7 @@ theorem mean_log_norm_embeddings_ringHom :
     Real.log |((Algebra.norm ℚ (x : E) : ℚ) : ℝ)| / Module.finrank ℚ E := by
   intro E K _ _ _ _ σ x
   have hinj : Function.Injective ((algebraMap (𝓞 K) K).comp σ) :=
-    (RingOfIntegers.coe_injective).comp (ringOfIntegers_ringHom_injective σ)
+    (RingOfIntegers.coe_injective).comp (GlobalTheory.CM.ringOfIntegers_hom_injective σ)
   let τ : E →+* K := IsFractionRing.lift hinj
   have hτ : τ (x : E) = (σ x : K) := IsFractionRing.lift_algebraMap hinj x
   letI : Algebra E K := τ.toAlgebra
@@ -1501,7 +1443,6 @@ open AlgebraicGeometry CategoryTheory NumberField IsDedekindDomain ReciprocityTh
 
 noncomputable section
 namespace GlobalTheory.FlatCM.ImageDeg
-
 
 open GlobalTheory.HermHom in
 theorem form_diff_eq_pair : ThetaUnifAV → Out.Laws → ∀ (K : Type) [Field K] [NumberField K] (P : Out.PolAV (Sp (𝓞 K))) (F : GenFib P)
@@ -1625,8 +1566,8 @@ theorem deg_images : CMCurve → ThetaUnifAV → Out.Laws → HomExtDvr → ∀ 
   obtain ⟨-, -, hinj, hind, -⟩ := Indep.letters_independent hU hL E H K ρ σ₁ p q X FA FB M hM
   have hrP := (_root_.GlobalTheory.CM.EigDec.eigen_decomposition E H K ρ (X.A true) FP 1 0 X.split X.typeP X.ρ_sq).1 τ
   have hrQ := (_root_.GlobalTheory.CM.EigDec.eigen_decomposition E H K ρ (X.A false) FQ 0 1 X.split X.typeM X.ρ_sq).1 (τ.comp (H.bar : 𝓞 E →+* 𝓞 E))
-  rw [if_pos hτ] at hrP
-  rw [if_neg (by rw [hτ']; exact hne)] at hrQ
+  rw [ite_eq_left hτ] at hrP
+  rw [ite_eq_right (by rw [hτ']; exact hne)] at hrQ
   have hΩP : 2 * deg hP (FP.eigLat (X.A true).t.act τ) = (logOm E χ).re := by
     have := hD E H χ hχ K ρ (X.A true) X.split X.ρ_sq X.typeP FP hP hhP τ hτ
     rw [← this, Complex.ofReal_re]
@@ -1710,8 +1651,8 @@ theorem cmDiff_definite : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
     have : (2 : 𝓞 K) * ρ = 0 := by linear_combination -e
     exact hρ ((mul_eq_zero.1 this).resolve_left two_ne_zero)
   have hdec := (GlobalTheory.CM.EigDec.eigen_decomposition E H K ρ X.B F p 0 X.split X.typeB X.ρ_sq).1
-  have hrkP : latRank K (F.eigLat X.B.t.act τ) = p := by rw [hdec, if_pos hτ]
-  have hrkQ : latRank K (F.eigLat X.B.t.act τb) = 0 := by rw [hdec, if_neg hne]
+  have hrkP : latRank K (F.eigLat X.B.t.act τ) = p := by rw [hdec, ite_eq_left hτ]
+  have hrkQ : latRank K (F.eigLat X.B.t.act τb) = 0 := by rw [hdec, ite_eq_right hne]
   have hfg : ∀ σ, (F.eigLat X.B.t.act σ).FG := fun σ =>
     Submodule.FG.of_le (LieLattice.lieLat_fg_and_span_eq_top K _ F).1
       (Submodule.span_mono fun c ⟨u, hu, _⟩ => ⟨u, hu⟩)

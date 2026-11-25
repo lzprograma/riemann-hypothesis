@@ -28,7 +28,7 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
 theorem exists_conj_ne (h : IsCMExt F E σ) : ∃ e : E, σ e ≠ e := by
   by_contra hσ
-  push_neg at hσ
+  push Not at hσ
   obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance
   have := h.2.1
   apply IsTotallyComplex.complexEmbedding_not_isReal τ
@@ -231,14 +231,8 @@ theorem coordHerm_qS (h : IsCMExt F E σ) [IsTopologicalRing R] [SecondCountable
     funext i
     obtain rfl : i = 0 := Subsingleton.elim _ _
     exact qS_hermScal R h (x.1 0)
-  have himg : ∀ s : Set (HermR R σ 1), f '' s = g ⁻¹' s := by
-    intro s
-    ext x
-    constructor
-    · rintro ⟨S, hS, rfl⟩
-      simpa [hgf S] using hS
-    · intro hx
-      exact ⟨g x, hx, hfg x⟩
+  have himg : ∀ s : Set (HermR R σ 1), f '' s = g ⁻¹' s := fun s =>
+    congrFun (Set.image_eq_preimage_of_inverse hgf hfg) s
   have hinj : Function.Injective f := Function.LeftInverse.injective hgf
   have hP : MeasurableSet {S | qS R σ S ∈ V} := (continuous_qS R htr).measurable hV
   have hset : f '' {S | qS R σ S ∈ V} = (Set.pi Set.univ fun _ : Fin 1 => V) ×ˢ Set.univ := by

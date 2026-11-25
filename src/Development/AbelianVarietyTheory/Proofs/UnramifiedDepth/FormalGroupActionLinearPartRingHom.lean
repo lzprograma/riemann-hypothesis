@@ -50,7 +50,6 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.Pdiv.ChartF ReciprocityTheory.ChartRestriction.G.Pdiv.AvDefs
 open ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.Be2 GlobalTheory.ChF
 open ReciprocityTheory.ChartRestriction.G.Chart (sp spMap)
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.ChF
 
@@ -72,7 +71,7 @@ private theorem linear_part_formal_add {R : Type} [CommRing R] {d : ℕ} (F : FG
     (by intro k l; fin_cases k; exacts [hφ l, hψ l]) (F.F i) (0, j)
   rw [Fintype.sum_prod_type, Fin.sum_univ_two] at h
   simp only [formal_group_coeff_first_linear, formal_group_coeff_second_linear, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ,
-    if_true] at h
+    ite_true] at h
   exact h.trans (congrArg₂ (· + ·) (_root_.one_mul _) (_root_.one_mul _))
 
 open ReciprocityTheory.ChartRestriction.G.PullbackSections.Pf.EigA in

@@ -50,8 +50,6 @@ namespace GlobalTheory.AdelicU
 open scoped TensorProduct
 open NumberField Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def placeOf (D : D7) (ρ : D.what₂.Tau) : InfinitePlace D.host.F :=
   InfinitePlace.mk ((tauE D ρ).comp (algebraMap D.host.F D.host.E))
 

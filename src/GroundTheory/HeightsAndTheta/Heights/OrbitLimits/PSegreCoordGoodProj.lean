@@ -122,7 +122,7 @@ theorem SegreCoordGoodProj.proof : SegreCoordGoodProj.Statement := by
     intro m hm
     rw [mem_support_iff, coeff_homogeneousComponent] at hm
     by_contra hne
-    exact hm (if_neg hne)
+    exact hm (ite_eq_right hne)
   obtain ⟨lam, hlam⟩ := exists_eval_cons_one_ne_zero _ _ hsupp
     (homogeneousComponent_totalDegree_ne_zero hc0)
   let Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) → ℂ) :=
@@ -148,7 +148,7 @@ theorem SegreCoordGoodProj.proof : SegreCoordGoodProj.Statement := by
   have hVs : ∀ j : Fin r', V j.succ = lam j * V 0 := by
     intro j
     have h := congrFun hΨ (Fin.succ ⟨j, by omega⟩)
-    simp only [Ψ, LinearMap.coe_mk, AddHom.coe_mk, Fin.cases_succ, dif_pos j.2, Fin.eta,
+    simp only [Ψ, LinearMap.coe_mk, AddHom.coe_mk, Fin.cases_succ, dite_eq_left j.2, Fin.eta,
       Pi.zero_apply] at h
     simp only [hVdef]
     rw [← sub_eq_zero, Finset.mul_sum, ← Finset.sum_sub_distrib, ← h]

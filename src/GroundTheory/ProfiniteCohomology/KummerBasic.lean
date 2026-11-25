@@ -3,9 +3,7 @@ module
 public import Mathlib.FieldTheory.Galois.Notation
 public import Mathlib.FieldTheory.IntermediateField.Adjoin.Defs
 public import Mathlib.RingTheory.RootsOfUnity.EnoughRootsOfUnity
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.TypeStar
 
@@ -66,15 +64,9 @@ def kummerGroup : Subgroup (UnitsModPow K n) :=
 variable {K n L} in
 lemma mk_mem_kummerGroup {a : Kˣ} :
     (a : UnitsModPow K n) ∈ kummerGroup K n L ↔ ∃ α : L, α ^ n = algebraMap K L a := by
-  rw [← mem_unitsPowIn]
-  constructor
-  · rintro ⟨b, hb, hba⟩
-    obtain ⟨c, hc⟩ := mem_unitsPow.mp (QuotientGroup.eq.mp hba)
-    have : a = b * c ^ n := by rw [hc]; group
-    rw [this]
-    exact mul_mem hb (unitsPow_le_unitsPowIn K n L (mem_unitsPow.mpr ⟨c, rfl⟩))
-  · intro ha
-    exact ⟨a, ha, rfl⟩
+  change a ∈ (kummerGroup K n L).comap (QuotientGroup.mk' (unitsPow K n)) ↔ _
+  rw [kummerGroup, Subgroup.comap_map_eq_self, mem_unitsPowIn]
+  simpa only [QuotientGroup.ker_mk'] using unitsPow_le_unitsPowIn K n L
 
 end Defs
 
@@ -85,7 +77,7 @@ variable {L : Type*} [Field L] [Algebra K L]
 
 lemma exists_algebraMap_eq_of_pow_eq_one {x : L} (hx : x ^ n = 1) :
     ∃ ζ : rootsOfUnity n K, algebraMap K L ((ζ : Kˣ) : K) = x := by
-  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot K n
+  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot K n
   obtain ⟨i, -, hi⟩ := (hζ.map_of_injective (algebraMap K L).injective).eq_pow_of_pow_eq_one hx
   refine ⟨⟨(hζ.isUnit (NeZero.ne n)).unit ^ i, ?_⟩, ?_⟩
   · rw [mem_rootsOfUnity', Units.val_pow_eq_pow_val, IsUnit.unit_spec, ← pow_mul, mul_comm,

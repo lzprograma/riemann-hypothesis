@@ -4,45 +4,6 @@ public import Mathlib.NumberTheory.Padics.Complex
 public import Mathlib.NumberTheory.Padics.PadicIntegers
 public import Mathlib.RingTheory.Valuation.Integral
 public import Development.AbelianVarietyTheory.Definitions.Foundations.HTLawAt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.HaveILetI
 import Development.AbelianVarietyTheory.Definitions.Foundations.IsLocallyConstantCycMod
 
@@ -179,8 +140,7 @@ theorem coeff_cg_of_values : ∀ (l : ℕ) [Fact l.Prime] (c : Coef l) (F : Powe
   have hlP : l.Prime := Fact.out
   unfold Cg
   rw [sub_zero]
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   obtain ⟨ϖ, s, hs, hls, hdisc⟩ := exists_unif c
   set q := ‖ϖ‖ with hq
   have hlpos : (0 : ℝ) < (l : ℝ)⁻¹ := by have := hlP.pos; positivity
@@ -188,8 +148,7 @@ theorem coeff_cg_of_values : ∀ (l : ℕ) [Fact l.Prime] (c : Coef l) (F : Powe
   have hl0 : 0 < q ^ s := by rw [← hls, _root_.GlobalTheory.CycTrace.norm_l]; exact hlpos
   have hl1 : q ^ s < 1 := by rw [← hls, _root_.GlobalTheory.CycTrace.norm_l]; exact hlone
   have hq0 : 0 < q := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have h0 : q = 0 := le_antisymm hc (norm_nonneg _)
     rw [h0, zero_pow hs.ne'] at hl0
     exact lt_irrefl _ hl0
@@ -243,8 +202,7 @@ theorem coeff_cg_of_values : ∀ (l : ℕ) [Fact l.Prime] (c : Coef l) (F : Powe
       _ ≤ l ^ M * (l - 1) := Nat.le_mul_of_pos_right _ h2
   have htpos : 0 < Nat.totient (l ^ (M + 1)) := by omega
   have ha0 : 0 < a := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have h0 : a = 0 := le_antisymm hc (norm_nonneg _)
     rw [h0, zero_pow htpos.ne'] at hphi
     rw [← hphi] at hl0
@@ -253,8 +211,7 @@ theorem coeff_cg_of_values : ∀ (l : ℕ) [Fact l.Prime] (c : Coef l) (F : Powe
     have : a ^ Nat.totient (l ^ (M + 1)) < 1 := by rw [hphi]; exact hl1
     exact (pow_lt_one_iff_of_nonneg ha0.le htpos.ne').1 this
   have hqa : q < a ^ d := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have h1 : a ^ (d * s) ≤ a ^ Nat.totient (l ^ (M + 1)) := by
       rw [hphi, pow_mul]; exact pow_le_pow_left₀ (by positivity) hc s
     have := (pow_le_pow_iff_right_of_lt_one₀ ha0 ha1).1 h1

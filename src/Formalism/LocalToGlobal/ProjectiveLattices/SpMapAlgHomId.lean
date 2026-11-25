@@ -1,10 +1,9 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.FrameLaws
 public import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -39,7 +38,7 @@ private theorem evalAt_eq_lemma (hWD : EvalWD pts mapR) {f : Rules pts} (hf : Is
     evalAt pts mapR f w = φ (f p y) := by
   have hF : FromTest pts mapR w := ⟨p, φ, y, hy⟩
   unfold evalAt
-  rw [dif_pos hF]
+  rw [dite_eq_left hF]
   exact hWD f hf S _ _ _ _ _ _ w hF.choose_spec.choose_spec.choose_spec hy
 
 theorem evalAt_congr_id (hWD : EvalWD pts mapR) (hTr : MapTransId pts mapR) {f : Rules pts}
@@ -51,7 +50,7 @@ theorem evalAt_congr_id (hWD : EvalWD pts mapR) (hTr : MapTransId pts mapR) {f :
     rw [evalAt_eq_lemma hWD hf p φ y hy, evalAt_eq_lemma hWD hf p φ y (hTr _ _ φ y z w hy h₁)]
   · have hw : ¬ FromTest pts mapR w := fun hw' => hz (fromTest_of_id hTr h₂ hw')
     unfold evalAt
-    rw [dif_neg hz, dif_neg hw]
+    rw [dite_eq_right hz, dite_eq_right hw]
 
 theorem evalAt_actL (hL : ActLaws pts mapR borR actR) (hWD : EvalWD pts mapR)
     (hTr : MapTransId pts mapR) (g : G) {f : Rules pts} (hf : IsNatural pts mapR f) {S : Type}
@@ -60,13 +59,13 @@ theorem evalAt_actL (hL : ActLaws pts mapR borR actR) (hWD : EvalWD pts mapR)
   have hm : ∀ (g' : G) {S : Type} [CommRing S] [Algebra K S] (y : pts S), actR g' y (mvPt pts actR g' y) := by
     intro g' S _ _ y
     unfold mvPt
-    rw [dif_pos (hL.total g' S y)]
+    rw [dite_eq_left (hL.total g' S y)]
     exact (hL.total g' S y).choose_spec
   by_cases hF : FromTest pts mapR y
   · have hc := hF.choose_spec.choose_spec.choose_spec
     rw [evalAt_eq_lemma hWD hf _ _ _ (hL.nat g _ _ _ _ _ _ _ hc (hm g _) (hm g y))]
     unfold evalAt
-    rw [dif_pos hF]
+    rw [dite_eq_left hF]
     rfl
   · have hmy : ¬ FromTest pts mapR (mvPt pts actR g y) := by
       rintro ⟨p, φ, z0, hz⟩
@@ -78,7 +77,7 @@ theorem evalAt_actL (hL : ActLaws pts mapR borR actR) (hWD : EvalWD pts mapR)
       have h3 := hL.func 1 _ _ _ _ h2 (hL.one _ y)
       exact ⟨p, φ, _, hTr _ _ φ _ _ _ h1 h3⟩
     unfold evalAt
-    rw [dif_neg hF, dif_neg hmy]
+    rw [dite_eq_right hF, dite_eq_right hmy]
 
 end Abstract
 
@@ -91,15 +90,7 @@ theorem ppx_le {S T : Type} [CommRing S] [CommRing T] {x : Sp S ⟶ Xo.X} {x' : 
     (pm : Gx x' ⟶ Gx x)
     (hs : pm ≫ (snd (Over.mk x) Xo.univ.t.G).left = (snd (Over.mk x') Xo.univ.t.G).left)
     (i : Fin 1 → Xo.univ.t.PP.L.ι) : (PPx x').U i ≤ pm ⁻¹ᵁ (PPx x).U i := by
-  intro p hp
-  have hp' : ∀ k, p ∈ (snd (Over.mk x') Xo.univ.t.G).left.base ⁻¹' (Xo.univ.t.PP.L.U (i k) : Set _) :=
-    Set.mem_iInter.1 hp
-  have e := congrArg (fun f : Gx x' ⟶ Xo.univ.t.G.left => f.base p) hs
-  show pm.base p ∈ ⋂ k, (snd (Over.mk x) Xo.univ.t.G).left.base ⁻¹' (Xo.univ.t.PP.L.U (i k) : Set _)
-  refine Set.mem_iInter.2 fun k => ?_
-  show (pm ≫ (snd (Over.mk x) Xo.univ.t.G).left).base p ∈ (Xo.univ.t.PP.L.U (i k) : Set _)
-  rw [e]
-  exact hp' k
+  apply _root_.ReciprocityTheory.ChartRestriction.G.PullbackSections.wtf_ppx_le <;> assumption
 
 theorem spMap_algHom_id (K : Type) [Field K] (T : Type) [CommRing T] [Algebra K T] :
     spMap (AlgHom.id K T).toRingHom = 𝟙 _ := by
@@ -177,14 +168,14 @@ theorem actBC_of {G : Type} [Group G]
       (fun {S : Type} [CommRing S] [Algebra c'.F S] (g' : G) (y y' : FrPt Xo c' S) =>
         levActR (Xo := Xo) (c := c') lev g' y y') g y) := by
     unfold mvPt
-    rw [dif_pos (hL'.total g S y)]
+    rw [dite_eq_left (hL'.total g S y)]
     exact (hL'.total g S y).choose_spec
   have A := levActR_res hle lev g h A0
   have B : levActR (Xo := Xo) (c := c) lev g (y.res hle h) (mvPt (K := c.F) (fun S _ _ => FrPt Xo c S)
       (fun {S : Type} [CommRing S] [Algebra c.F S] (g' : G) (y y' : FrPt Xo c S) =>
         levActR (Xo := Xo) (c := c) lev g' y y') g (y.res hle h)) := by
     unfold mvPt
-    rw [dif_pos (hL.total g S (y.res hle h))]
+    rw [dite_eq_left (hL.total g S (y.res hle h))]
     exact (hL.total g S (y.res hle h)).choose_spec
   exact evalAt_congr_id hWD hTr (hn i) (hL.func g _ _ _ _ A B) (hL.func g _ _ _ _ B A)
 
@@ -206,10 +197,10 @@ theorem evR_sum_smul {S : Type} [CommRing S] [Algebra c.F S] (y : FrPt Xo c S) {
     evR Xo c (∑ i, t i • g i) y = ∑ i, algebraMap c.F S (t i) * evR Xo c (g i) y := by
   unfold evR
   by_cases h : FromTest (K := c.F) (fun S _ _ => FrPt Xo c S) (fun φ y z => FrMap φ y z) y
-  · simp only [evalAt, dif_pos h]
+  · simp only [evalAt, dite_eq_left h]
 
     simp [Finset.sum_apply, map_sum, Algebra.smul_def]
-  · simp only [evalAt, dif_neg h]
+  · simp only [evalAt, dite_eq_right h]
     simp
 
 theorem isBC_regroup [Algebra c.F c'.F] (halg : algebraMap c.F c'.F = incF c c' hle) {m d : ℕ}
@@ -242,9 +233,9 @@ theorem rdU_unfBC (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (σ' : c'.F →+* 
     ∑ i, σ' (as i) * (if h : x ∈ ((U (σ'.comp (incF c c' hle))).X k).dom then
       toC (evR Xo c (fs i) ((U (σ'.comp (incF c c' hle))).un k ⟨x, h⟩)) else 0)
   by_cases hx : x ∈ ((U (σ'.comp (incF c c' hle))).X k).dom
-  · simp only [dif_pos hx]
+  · simp only [dite_eq_left hx]
     exact @hBC (CAt σ') _ ((σ'.comp (incF c c' hle)).toAlgebra) σ'.toAlgebra (fun _ => rfl) _
-  · simp only [dif_neg hx, mul_zero, Finset.sum_const_zero]
+  · simp only [dite_eq_right hx, mul_zero, Finset.sum_const_zero]
 
 theorem laU_unfBC (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (σ' : c'.F →+* ℂ) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) :
     laU (unfBC hle U σ') a n = laU (U (σ'.comp (incF c c' hle))) a n := by

@@ -38,7 +38,7 @@ theorem multigraded_length_stable_dim_zero {p : ℕ} (hp : p.Prime) {W : Ideal (
     obtain ⟨W', hW'min, hW'le⟩ := Ideal.exists_minimalPrimes_le (hle j)
     have hnr := not_relevant_of_dim_zero hWm hd hf hi hW'min
     rw [IsRelevant] at hnr
-    push_neg at hnr
+    push Not at hnr
     obtain ⟨k, hk⟩ := hnr
     exact ⟨k, fun i' => hW'le (hk i')⟩
   have hp0 : 0 < p := hp.pos

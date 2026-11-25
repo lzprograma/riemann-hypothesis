@@ -17,7 +17,7 @@ theorem exists_torsLift {G H : Type} [Group G] [Group H] (p : ℕ) (ρ : G →* 
   refine ⟨fun x => if h : ∃ g : G, (∃ n, 0 < n ∧ n.Coprime p ∧ g ^ n = 1) ∧ ρ g = x then h.choose else 1, ?_⟩
   intro n hn hnp g hg
   have h : ∃ g' : G, (∃ n, 0 < n ∧ n.Coprime p ∧ g' ^ n = 1) ∧ ρ g' = ρ g := ⟨g, ⟨n, hn, hnp, hg⟩, rfl⟩
-  simp only [dif_pos h]
+  simp only [dite_eq_left h]
   obtain ⟨⟨m, hm, hmp, hgm⟩, he⟩ := h.choose_spec
   exact hi (m * n) (Nat.mul_pos hm hn) (Nat.Coprime.mul_left hmp hnp) _ _
     (by rw [pow_mul, hgm, one_pow]) (by rw [mul_comm, pow_mul, hg, one_pow]) he
@@ -114,7 +114,7 @@ theorem transport_algO {p : ℕ} [Fact p.Prime] (D : Datum p)
     · rw [hact'1]
   · intro n hn hnp a
     have hg : 0 < n ∧ n.Coprime p := ⟨hn, hnp⟩
-    simp only [if_pos hg]
+    simp only [ite_eq_left hg]
     rw [← I.ker n hn hnp a]
     obtain ⟨h1, h2⟩ := hLx n hn hnp _ (hevt n hn hnp a)
     constructor
@@ -125,7 +125,7 @@ theorem transport_algO {p : ℕ} [Fact p.Prime] (D : Datum p)
       rw [h, ← map_one ρ, hL n hn hnp 1 (one_pow n), map_one]
   · intro n hn hnp y
     have hg : 0 < n ∧ n.Coprime p := ⟨hn, hnp⟩
-    simp only [if_pos hg]
+    simp only [ite_eq_left hg]
     constructor
     · intro hy
       obtain ⟨g, hg1, rfl⟩ := hρ's n hn hnp y hy
@@ -138,14 +138,14 @@ theorem transport_algO {p : ℕ} [Fact p.Prime] (D : Datum p)
     have hnm0 : 0 < n * m := Nat.mul_pos hn hm
     have hg1 : 0 < n * m ∧ (n * m).Coprime p := ⟨hnm0, hnm⟩
     have hg2 : 0 < n ∧ n.Coprime p := ⟨hn, hnp⟩
-    simp only [if_pos hg1, if_pos hg2]
+    simp only [ite_eq_left hg1, ite_eq_left hg2]
     obtain ⟨h1, h2⟩ := hLx (n * m) hnm0 hnm _ (hevt _ hnm0 hnm a)
     have := hL n hn hnp (L (I.ev (n * m) a) ^ m) (by rw [← pow_mul, mul_comm m n, h1])
     rw [map_pow, h2, I.tower n m hn hm hnm] at this
     rw [← map_pow, ← this]
   · intro n hn hnp a b
     have hg : 0 < n ∧ n.Coprime p := ⟨hn, hnp⟩
-    simp only [if_pos hg]
+    simp only [ite_eq_left hg]
     obtain ⟨ga1, ga2⟩ := hLx n hn hnp _ (hevt n hn hnp a)
     obtain ⟨gb1, gb2⟩ := hLx n hn hnp _ (hevt n hn hnp b)
     obtain ⟨u, hu, he, he'⟩ := hpair n hn hnp _ _ ga1 gb1
@@ -159,7 +159,7 @@ theorem transport_algO {p : ℕ} [Fact p.Prime] (D : Datum p)
     exact he'
   · intro n hn hnp a g hg hρg
     have hgd : 0 < n ∧ n.Coprime p := ⟨hn, hnp⟩
-    simp only [if_pos hgd]
+    simp only [ite_eq_left hgd]
     rw [← hρg, hL n hn hnp g hg]
 
 end GlobalTheory.TateTransportPrimeToP

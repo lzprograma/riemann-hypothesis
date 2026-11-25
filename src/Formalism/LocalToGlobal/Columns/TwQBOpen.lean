@@ -97,8 +97,8 @@ theorem qsp_single_locL (j : Fin n) :
   · rw [Pi.single_apply]
     show (if l = j then (1 : E) else 0) ∈ (1 : Submodule (𝓞 E) E)
     by_cases h : l = j
-    · rw [if_pos h]; exact Submodule.one_le.1 le_rfl
-    · rw [if_neg h]; exact zero_mem _
+    · rw [ite_eq_left h]; exact Submodule.one_le.1 le_rfl
+    · rw [ite_eq_right h]; exact zero_mem _
   · show inclE (F := F) (v.adicCompletion F) ((Pi.single j (1 : E) : Fin n → E) i) = _
     rw [Pi.single_apply, Pi.single_apply]
     split_ifs <;> simp

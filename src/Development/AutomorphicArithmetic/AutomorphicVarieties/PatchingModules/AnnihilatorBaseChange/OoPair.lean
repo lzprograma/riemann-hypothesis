@@ -1,5 +1,8 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.PhiFg
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.PairMap
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ExistsDeterminantPairPullback
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpecializationMapCompUniversalSection
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchedSupportCompletions
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.SubgroupQuot
@@ -12,48 +15,9 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTool
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGext
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.ResPull
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Separation.Connected
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -70,30 +34,7 @@ open UpperTheory.V.CA
 
 private theorem oo_finite_hom (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] (h : TopFG G)
     (Z : Type) [Group Z] [Finite Z] : Finite {φ : G →* Z // IsOpen (φ.ker : Set G)} := by
-  obtain ⟨s, hs, hgen⟩ := h
-  haveI : Finite s := hs.to_subtype
-  rw [topGen_iff] at hgen
-  refine Finite.of_injective (fun φ : {φ : G →* Z // IsOpen (φ.ker : Set G)} => fun x : s => φ.1 x) ?_
-  intro φ ψ hφψ
-  apply Subtype.ext
-  have hE : Subgroup.closure s ≤ φ.1.eqLocus ψ.1 := by
-    rw [Subgroup.closure_le]
-    intro x hx
-    exact congrFun hφψ ⟨x, hx⟩
-  have hopen : IsOpen (φ.1.eqLocus ψ.1 : Set G) := by
-    apply Subgroup.isOpen_mono (H₁ := φ.1.ker ⊓ ψ.1.ker)
-    · intro x hx
-      rw [Subgroup.mem_inf, MonoidHom.mem_ker, MonoidHom.mem_ker] at hx
-      show φ.1 x = ψ.1 x
-      rw [hx.1, hx.2]
-    · rw [Subgroup.coe_inf]
-      exact φ.2.inter ψ.2
-  have hclosed : IsClosed (φ.1.eqLocus ψ.1 : Set G) := Subgroup.isClosed_of_isOpen _ hopen
-  have htop : (Subgroup.closure s).topologicalClosure ≤ φ.1.eqLocus ψ.1 :=
-    Subgroup.topologicalClosure_minimal _ hE hclosed
-  rw [hgen] at htop
-  ext x
-  exact htop (Subgroup.mem_top x)
+  apply _root_.finite_open_homs_to_finite_group <;> assumption
 
 private theorem oo_phi (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
     (l : ℕ) [Fact l.Prime] (h : TopFG G) : PhiCond G l := by
@@ -170,18 +111,7 @@ variable {O : Type} [CommRing O] [IsLocalRing O] {R R' : Type} [CommRing R] [Alg
 
 private theorem oo_adic_map {Γ : Type} [TopologicalSpace Γ] {u : Γ → R} (hu : AdicCont (maximalIdeal R) u) :
     AdicCont (maximalIdeal R') fun g => f (u g) := by
-  intro N
-  have hm : maximalIdeal R ≤ (maximalIdeal R').comap (f : R →+* R') := by
-    intro x hx
-    rw [Ideal.mem_comap, ← res_eq_zero_iff O, RingHom.coe_coe, res_map, res_eq_zero_iff]
-    exact hx
-  have hN : maximalIdeal R ^ N ≤ (maximalIdeal R' ^ N).comap (f : R →+* R') := by
-    rw [← Ideal.map_le_iff_le_comap, Ideal.map_pow]
-    exact Ideal.pow_right_mono (Ideal.map_le_iff_le_comap.mpr hm) N
-  have h1 := (hu N).comp (Ideal.quotientMap (maximalIdeal R' ^ N) (f : R →+* R') hN)
-  convert h1 using 1
-  funext g
-  simp [Ideal.quotientMap_mk]
+  apply _root_.adic_map <;> assumption
 
 private theorem oo_def_map {n : ℕ} {G : Type} [Group G] [TopologicalSpace G] {Dbar : GDet n (ResidueField O) G}
     {D : GDet n R G} (h : IsDef O Dbar D) : IsDef O Dbar (D.map (f : R →+* R')) := by
@@ -263,29 +193,9 @@ section -- clump:auto
 open IsLocalRing Matrix Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa UpperTheory.V.Pa.Core
 open scoped TensorProduct
 
-private theorem adic_map {O : Type} [CommRing O] [IsLocalRing O] {R R' : Type} [CommRing R] [Algebra O R] [IsCO O R]
-    [CommRing R'] [Algebra O R'] [IsCO O R'] (f : R →ₐ[O] R') {Γ : Type} [TopologicalSpace Γ] {a : Γ → R}
-    (ha : AdicCont (maximalIdeal R) a) : AdicCont (maximalIdeal R') fun g => f (a g) := fun N => by
-  have hle : maximalIdeal R ^ N ≤ (maximalIdeal R' ^ N).comap (f : R →+* R') := by
-    refine le_trans (Ideal.pow_right_mono (fun y hy => ?_) N) (Ideal.le_comap_pow _ N)
-    show f y ∈ maximalIdeal R'
-    rw [← res_eq_zero_iff O, res_map, res_eq_zero_iff]
-    exact hy
-  exact (ha N).comp (Ideal.quotientMap _ (f : R →+* R') hle)
-
 private theorem lam_comap {n : ℕ} {A G H : Type} [CommRing A] [Group G] [Group H] (D : GDet n A G) (φ : H →* G)
     (i : ℕ) (y : MonoidAlgebra A H) : (D.comap φ).lam i y = D.lam i (MonoidAlgebra.mapDomainRingHom A φ y) := by
-  have : (D.comap φ).chi y = D.chi (MonoidAlgebra.mapDomainRingHom A φ y) := by
-    change D.D _ (MonoidAlgebra.mapDomainRingHom _ φ _) = D.D _ _
-    congr 1
-    rw [map_sub]
-    congr 1
-    · simp
-    · induction y using MonoidAlgebra.induction_linear with
-      | zero => simp
-      | add a b ha hb => simp only [map_add (f := _), ha, hb]
-      | single g r => simp
-  rw [GDet.lam, GDet.lam, this]
+  apply _root_.UpperTheory.V.W.FramePullback.lam_comap <;> assumption
 
 private theorem comap_inj {n : ℕ} {A G H : Type} [CommRing A] [Group G] [Group H] (φ : H →* G)
     (hφ : Function.Surjective φ) {D D' : GDet n A G} (h : D.comap φ = D'.comap φ) : D = D' := by
@@ -346,7 +256,7 @@ theorem UpperTheory.V.Pa.Core.ooPair :
     funext i
     rw [c1 i]
     rfl
-  · refine ⟨adic_map f (W.t.psi v i).cont, fun g => ?_, fun g => ?_⟩
+  · refine ⟨oo_adic_map f (W.t.psi v i).cont, fun g => ?_, fun g => ?_⟩
     · rw [c2]
       exact (res_map f _).trans ((W.t.psi v i).red g)
     · rw [c3]

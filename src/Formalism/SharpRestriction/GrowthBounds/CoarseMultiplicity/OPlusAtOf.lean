@@ -2,44 +2,7 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymbolFormOfOrthogonality
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -94,7 +57,6 @@ theorem oPlusAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
   have hsN : s ≤ X.N1 := by
     show ((segS X.TT j : ℕ) : ℝ) ≤ (X.N1 : ℝ)
     exact_mod_cast (St.segB j).2
-  have hs0 : 0 ≤ s := Nat.cast_nonneg _
   have hs2 : 2 * s ≤ X.k := by linarith [St.N1k]
   have hq1 : 1 ≤ q := by rw [hq]; linarith [(Nat.cast_nonneg X.m : (0 : ℝ) ≤ X.m)]
 
@@ -127,7 +89,6 @@ theorem oPlusAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
       rw [div_le_div_iff₀ hP (by norm_num)]
       have hm := mul_le_mul hLa hs2 (by positivity) (by linarith)
       have h8 : 8 * (La * s) ≤ P := by
-        have e : X.k * X.k = X.k ^ 2 := by ring
         linarith
       have h9 := mul_le_mul_of_nonneg_right h8 ha
       linarith
@@ -143,7 +104,6 @@ theorem oPlusAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
         linarith
       have h4 : 100 * P * A ≤ 4 * A * P ^ 3 := by
         have h5 := mul_le_mul_of_nonneg_left h2 (by positivity : (0 : ℝ) ≤ 4 * A * P)
-        have e : 4 * A * P * P ^ 2 = 4 * A * P ^ 3 := by ring
         linarith
       linarith
     linarith
@@ -177,8 +137,6 @@ theorem oPlusAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
       (S.A0 p : ℝ) ≤ (S.a : ℝ) / (p : ℝ) ^ S.G := by
     unfold SegData.A0 SegData.Qj
     push_cast
-    have hp' : (0 : ℝ) < (p : ℝ) := by exact_mod_cast hp
-    have hq : (0 : ℝ) < (p : ℝ) ^ S.G := pow_pos hp' _
     refine (Int.floor_le _).trans ?_
     gcongr
     linarith
@@ -188,7 +146,6 @@ theorem oPlusAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
   let r := X.m
   let b' := X.b'
   let be := _root_.Formalism.MainNotions.ColumnSystems.Pf.be X C0
-  have hp5nat_real : (5 : ℝ) ≤ p := by exact_mod_cast St.p5
   have hla0 : 0 ≤ S.La := by change 0 ≤ X.La C0; linarith [St.La1]
   have hG2 : 2 ≤ S.G := by
     change 2 ≤ segG X.TT j
@@ -202,7 +159,6 @@ theorem oPlusAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
     omega
   have hbeLe : be ≤ X.de C0 Cde / 2 := by
     have h1 := St.beLe
-    have h2 := St.La1
     have hk : 0 < X.k := by unfold Loc.k; positivity
     have h3 : 0 ≤ 18 * (X.N1 : ℝ) * X.La C0 / X.k := by positivity
     linarith
@@ -214,7 +170,6 @@ theorem oPlusAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
   have hplus : (S.bPlus : ℝ) ≤ b' * (1 + be) := (St.winB _ (next_mem X.TT j).1).2
   have hO : Oplus p r S b ≤ S.a / (p : ℝ) ^ 2 + (s : ℝ) * (2 * (b' / p)) +
       (S.La / ((r : ℝ) + 1) + 4 / (p : ℝ) ^ 2) * ((s : ℝ) * (2 * (S.a : ℝ) / p)) + 2 * (S.La * b' / ((r : ℝ) + 1)) := by
-    have hp5 : (5 : ℝ) ≤ p := hp5nat_real
     have hp0 : (0 : ℝ) < p := by linarith
     have hb0 := St.bpos
     have hLa := hla0
@@ -253,7 +208,7 @@ theorem oPlusAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
             ≤ ∑ _i : Fin s, 2 * (b' / p) := by
               apply Finset.sum_le_sum
               intro i _
-              rw [if_pos i.2]
+              rw [ite_eq_left i.2]
               exact hcoarse i
           _ = (s : ℝ) * (2 * (b' / p)) := by simp
       linarith
@@ -266,7 +221,6 @@ theorem oPlusAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
     have hcoef : 0 ≤ S.La / ((r : ℝ) + 1) + 4 / (p : ℝ) ^ 2 :=
       add_nonneg (div_nonneg hLa hr0.le) (by positivity)
     have hbP : (S.bPlus : ℝ) ≤ 2 * b' := by
-      have h1 := hplus
       have hbe : be ≤ 1 := by linarith [hbeLe, St.de6, St.be0]
       linarith [mul_le_mul_of_nonneg_left (show 1 + be ≤ 2 by linarith) hb0.le]
     have h3 : S.La * (S.bPlus : ℝ) / ((r : ℝ) + 1) ≤ 2 * (S.La * b' / ((r : ℝ) + 1)) := by

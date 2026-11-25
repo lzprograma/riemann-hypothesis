@@ -2,62 +2,15 @@ module
 
 public import Mathlib.RepresentationTheory.Character
 import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.CoassocSimps
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
-
-set_option autoImplicit false
 
 namespace CycSplitWork
 
@@ -145,16 +98,6 @@ private theorem representation_mul_apply {V : Type} [AddCommGroup V] [Module L V
   rw [map_mul]
   rfl
 
-private theorem representation_apply_inv_apply {V : Type} [AddCommGroup V] [Module L V]
-    (σ : Representation L G V) (g : G) (x : V) : σ g (σ g⁻¹ x) = x := by
-  rw [← representation_mul_apply, mul_inv_cancel, map_one]
-  rfl
-
-private theorem representation_inv_apply_apply {V : Type} [AddCommGroup V] [Module L V]
-    (σ : Representation L G V) (g : G) (x : V) : σ g⁻¹ (σ g x) = x := by
-  rw [← representation_mul_apply, inv_mul_cancel, map_one]
-  rfl
-
 private theorem subrepresentation_exists_equivariant_projection {V : Type} [AddCommGroup V] [Module L V]
     (σ : Representation L G V) (W : Subrepresentation σ) :
     ∃ P : V →ₗ[L] W.toSubmodule, (∀ w : W.toSubmodule, P w = w) ∧
@@ -176,7 +119,7 @@ private theorem subrepresentation_exists_equivariant_projection {V : Type} [AddC
   have hfix : ∀ w ∈ W.toSubmodule, A w = w := fun w hw => by
     rw [hA]
     have h1 : ∀ g : G, σ g⁻¹ (π (σ g w)) = w := fun g => by
-      rw [hπfix _ (W.apply_mem_toSubmodule g hw), representation_inv_apply_apply]
+      rw [hπfix _ (W.apply_mem_toSubmodule g hw), Representation.inv_self_apply]
     simp only [h1, Finset.sum_const, Finset.card_univ]
     have hne : (Fintype.card G : L) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
     rw [← Nat.cast_smul_eq_nsmul L, smul_smul, inv_mul_cancel₀ hne, one_smul]
@@ -186,7 +129,7 @@ private theorem subrepresentation_exists_equivariant_projection {V : Type} [AddC
     congr 1
     refine Fintype.sum_equiv (Equiv.mulRight h) _ _ (fun g => ?_)
     simp only [Equiv.coe_mulRight]
-    rw [mul_inv_rev, representation_mul_apply σ h⁻¹ g⁻¹, representation_mul_apply σ g h, representation_apply_inv_apply]
+    rw [mul_inv_rev, representation_mul_apply σ h⁻¹ g⁻¹, representation_mul_apply σ g h, Representation.self_inv_apply]
   exact ⟨LinearMap.codRestrict W.toSubmodule A hAW, fun w => Subtype.ext (hfix w w.2),
     fun g v => hequiv g v⟩
 
@@ -234,8 +177,7 @@ theorem hasIrreducibleDecomposition_of_finrank_eq : ∀ (n : ℕ) (V : Type) [Ad
     have h2 : (⊥ : Submodule L V) = ⊤ := congrArg Subrepresentation.toSubmodule h
     exact bot_ne_top h2
   obtain ⟨W, hW0, hWT⟩ : ∃ W : Subrepresentation σ, W ≠ ⊥ ∧ W ≠ ⊤ := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hirr (show IsSimpleOrder (Subrepresentation σ) from
       { toNontrivial := ⟨⟨⊥, ⊤, hbt⟩⟩
         eq_bot_or_eq_top := fun W => by
@@ -261,16 +203,6 @@ theorem hasIrreducibleDecomposition_of_finrank_eq : ∀ (n : ℕ) (V : Type) [Ad
     · exact hlC x h
   · rw [character_eq_add σ W C hc g, hchW g, hchC g, List.map_append, List.sum_append]
 
-private theorem sum_fin_length_get_eq_map_sum {M : Type} [AddCommMonoid M] {α : Type} (l : List α) (f : α → M) :
-    ∑ i : Fin l.length, f (l.get i) = (l.map f).sum := by
-  induction l with
-  | nil => simp
-  | cons a l ih =>
-    rw [List.map_cons, List.sum_cons, ← ih]
-    show ∑ i : Fin (l.length + 1), f ((a :: l).get i) = _
-    rw [Fin.sum_univ_succ]
-    rfl
-
 theorem char_eq_sum_irreducible {V : Type} [AddCommGroup V] [Module L V] [FiniteDimensional L V]
     (σ : Representation L G V) :
     ∃ (r : ℕ) (d : Fin r → ℕ) (τ : (i : Fin r) → Representation L G (Fin (d i) → L)),
@@ -278,7 +210,7 @@ theorem char_eq_sum_irreducible {V : Type} [AddCommGroup V] [Module L V] [Finite
   obtain ⟨l, hl, hch⟩ := hasIrreducibleDecomposition_of_finrank_eq _ V σ rfl
   refine ⟨l.length, fun i => (l.get i).1, fun i => (l.get i).2, fun i => hl _ (by simp), fun g => ?_⟩
   rw [hch g]
-  exact (sum_fin_length_get_eq_map_sum l (fun x => x.2.character g)).symm
+  exact (Fin.sum_univ_fun_getElem l (fun x => x.2.character g)).symm
 
 end
 

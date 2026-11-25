@@ -6,8 +6,6 @@ public import Mathlib.Algebra.BigOperators.Fin
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace Formalism.L2.Pj.FundamentalDomainD5

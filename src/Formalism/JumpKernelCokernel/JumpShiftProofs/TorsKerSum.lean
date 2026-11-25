@@ -1,47 +1,7 @@
 module
 
 public import Formalism.JumpKernelCokernel.Statement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -112,7 +72,7 @@ theorem coeff_dvd_of_mem (ℓ : O) (n k : ℕ) {r : PowerSeries O} (hr : r ∈ J
     ∀ i < n, ℓ ^ k ∣ coeff i r := by
   intro i hi
   obtain ⟨a, c, rfl⟩ := Ideal.mem_span_pair.mp hr
-  rw [map_add (f := _), coeff_mul_X_pow', if_neg (by omega), zero_add, coeff_mul_C]
+  rw [map_add (f := _), coeff_mul_X_pow', ite_eq_right (by omega), zero_add, coeff_mul_C]
   exact dvd_mul_left _ _
 
 theorem mem_of_coeff_dvd (ℓ : O) (n k : ℕ) (p : PowerSeries O)
@@ -217,39 +177,4 @@ theorem single (ℓ : O) (n k : ℕ) [IsDomain O] (hℓ : ℓ ≠ 0) :
     calc _ ≤ Module.length O (O ⧸ Ideal.span {ℓ ^ k}) := Module.length_le_of_injective _ hinj
       _ = _ := Formalism.KernelCokernelLengths.TorsionKernelSumLemmas.len_pow ℓ hℓ k
 
-theorem ker_pi_le {ι : Type} [Fintype ι] {R : Type} [CommRing R] (M : ι → Type)
-    [∀ i, AddCommGroup (M i)] [∀ i, Module R (M i)] (f : ∀ i, M i →ₗ[R] M i) :
-    Module.length R (LinearMap.ker (LinearMap.pi fun i => (f i).comp (LinearMap.proj (R := R)
-      (φ := M) i))) ≤ ∑ i, Module.length R (LinearMap.ker (f i)) := by
-  let Φ : LinearMap.ker (LinearMap.pi fun i => (f i).comp (LinearMap.proj (R := R) (φ := M) i)) →ₗ[R]
-      (∀ i, LinearMap.ker (f i)) :=
-    LinearMap.pi fun i => LinearMap.codRestrict (LinearMap.ker (f i))
-      ((LinearMap.proj (R := R) (φ := M) i).comp (Submodule.subtype _)) (fun x => by
-        have hx := x.2
-        rw [LinearMap.mem_ker] at hx ⊢
-        have h2 := congrFun hx i
-        simpa using h2)
-  have hΦ : Function.Injective Φ := by
-    intro x y hxy
-    apply Subtype.ext
-    funext i
-    have h2 := congrArg (fun z => (z i : M i)) hxy
-    simpa [Φ] using h2
-  calc _ ≤ Module.length R (∀ i, LinearMap.ker (f i)) := Module.length_le_of_injective Φ hΦ
-    _ = _ := Module.length_pi_of_fintype R _
-
 end Formalism.KernelCokernelLengths.TorsionKernelSumLemmas
-
-open Formalism.KernelCokernelLengths.TorsionKernelSumLemmas in
-theorem Formalism.KernelCokernelLengths.torsion_kernel_sum_length : Formalism.KernelCokernelLengths.TorsKerSum := by
-  unfold Formalism.KernelCokernelLengths.TorsKerSum
-  intro O _ _ _ ℓ hℓ m k n
-  calc _ ≤ ∑ j : Fin m, Module.length O (LinearMap.ker (LinearMap.mulLeft O
-        (Ideal.Quotient.mk (J ℓ (n j) k) ((PowerSeries.X : PowerSeries O) - PowerSeries.C ℓ)))) :=
-        Formalism.KernelCokernelLengths.TorsionKernelSumLemmas.ker_pi_le _ _
-    _ ≤ ∑ _j : Fin m, (k : ℕ∞) * Module.length O (O ⧸ Ideal.span {ℓ}) :=
-        Finset.sum_le_sum fun j _ => Formalism.KernelCokernelLengths.TorsionKernelSumLemmas.single ℓ (n j) k hℓ
-    _ = _ := by
-        rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-        push_cast
-        ring

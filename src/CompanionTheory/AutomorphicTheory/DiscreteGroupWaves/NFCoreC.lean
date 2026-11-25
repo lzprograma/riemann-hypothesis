@@ -144,7 +144,7 @@ theorem nFCoreNC_of_cut (hL : NFLeibV) (hT : NFTieHatC) (hH : NFHatProdKBS) (hN 
     show 0 < TBB.nPt P.k P.r (Tz P.k P.r p.T.base.z * Tz P.k P.r p.T.base.z') (TBB.bigPt P.r c)
     rw [e1]
     unfold bcWeight
-    rw [if_pos hζ']
+    rw [ite_eq_left hζ']
     refine mul_pos (Finset.prod_pos fun a _ => pow_pos (norm_pos_iff.2 (hd _)) _) (pow_pos ?_ _)
     rw [← hTTe]; linarith
   set S : ℝ := Real.sqrt (TBB.nPt P.k P.r (TBB.TTp p) γ) * Real.sqrt (TBB.nPt P.k P.r (TBB.TTp p) γ) with hSdef
@@ -237,7 +237,7 @@ theorem nFCoreNC_of_cut (hL : NFLeibV) (hT : NFTieHatC) (hH : NFHatProdKBS) (hN 
     rw [Fintype.sum_prod_type, Finset.mul_sum, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Fintype.sum_bool]
-    simp only [ThF, if_true, Bool.false_eq_true, if_false, hV2, CutSE.hsVec_smul', norm_smul, mul_pow,
+    simp only [ThF, ite_true, Bool.false_eq_true, ite_false, hV2, CutSE.hsVec_smul', norm_smul, mul_pow,
       Complex.norm_real, Real.norm_eq_abs, sq_abs, hVk]
     rw [← pow_mul, mul_comm N 2]
     ring

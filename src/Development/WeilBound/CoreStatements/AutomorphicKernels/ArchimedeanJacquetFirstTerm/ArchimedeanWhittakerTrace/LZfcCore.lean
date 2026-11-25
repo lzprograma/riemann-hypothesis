@@ -8,43 +8,7 @@ public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.Totall
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfCoefficientsSeparatingCharactersEqZero
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RationalSymplecticPointsSelfAnnihilator
 import Formalism.LocalToGlobal.IndefiniteReal.PHeisFC
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.MatrixOfUnipotentFrame
 public import Mathlib.Analysis.Matrix.MeasurableSpace
@@ -80,7 +44,6 @@ theorem incM_map_cA (γ : Matrix (Fin n) (Fin n) E) : (incM F (γ.map σ)) = (in
   simp [incM, Matrix.map_apply, GlobalTheory.LeviLine.cA_inclR]
 
 theorem trace_map_cA (M : Matrix (Fin n) (Fin n) (AE F E)) : (M.map (cA σ)).trace = cA σ M.trace := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [Matrix.trace, map_sum]
 
 theorem trace_tst (ε : ℤˣ) (γ : Matrix (Fin n) (Fin n) E) (β : Matrix (Fin n) (Fin n) (AE F E))
@@ -121,18 +84,12 @@ theorem rat_of_ker (hcm : IsCMExt F E σ) {ψ : AddChar (AF F) ℂ} (hψ : IsStd
     intro i j e
     have h1 := h _ (tst_mem hcm ε (Matrix.single j i (-(e / 2))))
     rw [trace_tst ε _ β hβ, trace_incM_single, map_add (f := _), trace_cA hcm] at h1
-    have hI : ∀ c : E, inclR (F := F) (AF F) c = (1 : AF F) ⊗ₜ[F] c := fun c => rfl
-    have hadd : ∀ a c : E, Algebra.trace (AF F) (AE F E) ((1 : AF F) ⊗ₜ[F] (a + c) * β i j) =
-        Algebra.trace (AF F) (AE F E) ((1 : AF F) ⊗ₜ[F] a * β i j) +
-          Algebra.trace (AF F) (AE F E) ((1 : AF F) ⊗ₜ[F] c * β i j) := fun a c => by
-      rw [TensorProduct.tmul_add, add_mul, map_add (f := _)]
-    have hneg : ∀ a : E, Algebra.trace (AF F) (AE F E) ((1 : AF F) ⊗ₜ[F] (-a) * β i j) =
-        -Algebra.trace (AF F) (AE F E) ((1 : AF F) ⊗ₜ[F] a * β i j) := fun a => by
-      rw [TensorProduct.tmul_neg, neg_mul, map_neg]
     have h2 : -(Algebra.trace (AF F) (AE F E) (inclR (F := F) (AF F) (-(e / 2)) * β i j) +
         Algebra.trace (AF F) (AE F E) (inclR (F := F) (AF F) (-(e / 2)) * β i j)) =
         Algebra.trace (AF F) (AE F E) ((1 : AF F) ⊗ₜ[F] e * β i j) := by
-      rw [hI, ← hadd, ← hneg]
+      have hI : ∀ c : E, inclR (F := F) (AF F) c = (1 : AF F) ⊗ₜ[F] c := fun _ => rfl
+      rw [hI, TensorProduct.tmul_neg, neg_mul, map_neg, neg_add, neg_neg,
+        ← map_add (f := _), ← add_mul, ← TensorProduct.tmul_add]
       congr 3
       ring
     rw [h2] at h1
@@ -154,9 +111,7 @@ theorem incM_mul (A C : Matrix (Fin n) (Fin n) E) : incM F (A * C) = incM F A * 
 
 theorem trace_incM_rat [FiniteDimensional F E] (A : Matrix (Fin n) (Fin n) E) :
     Algebra.trace (AF F) (AE F E) (Matrix.trace (incM F A)) = algebraMap F (AF F) (Algebra.trace F E (Matrix.trace A)) := by
-  have : Matrix.trace (incM F A) = (1 : AF F) ⊗ₜ[F] Matrix.trace A := by
-    simp [incM, Matrix.trace, inclR, TensorProduct.tmul_sum]
-  rw [this, GlobalTheory.LatVac.trace_tmul, one_mul]
+  apply PositivityTheory.SiegelWeilFormula.kunf.tt_rat
 
 end PositivityTheory.FTA.ZFC
 

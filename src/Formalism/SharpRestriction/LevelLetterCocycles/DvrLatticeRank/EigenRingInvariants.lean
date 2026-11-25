@@ -3,52 +3,7 @@ module
 public import Mathlib.RingTheory.AdicCompletion.Basic
 public import Mathlib.RingTheory.LocalRing.ResidueField.Defs
 public import Mathlib.RingTheory.PowerSeries.Substitution
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.Padics.PadicIntegers
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
 public import Mathlib.RingTheory.PowerSeries.WeierstrassPreparation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.PadicSubsetSums.CentralIdempotents.WindowSums
 public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 public import Mathlib.RingTheory.PowerSeries.Inverse
@@ -104,7 +59,7 @@ theorem ev_inj {a : O} (ha : a ∈ IsLocalRing.maximalIdeal O) {c c' : O}
   have hrec : ∀ n, PowerSeries.coeff (R := O) n H = a * PowerSeries.coeff (R := O) (n + 1) H := by
     intro n
     have hn := congrArg (PowerSeries.coeff (R := O) (n + 1)) hH
-    rw [PowerSeries.coeff_C, if_neg (by omega : n + 1 ≠ 0), sub_mul, map_sub, PowerSeries.coeff_succ_X_mul,
+    rw [PowerSeries.coeff_C, ite_eq_right (by omega : n + 1 ≠ 0), sub_mul, map_sub, PowerSeries.coeff_succ_X_mul,
       PowerSeries.coeff_C_mul] at hn
     linear_combination -hn
   have hmem : ∀ n, PowerSeries.coeff (R := O) 0 H ∈ (IsLocalRing.maximalIdeal O) ^ n := by
@@ -219,51 +174,5 @@ theorem card_le_of_dvd {f v k : PowerSeries O} {s : ℕ} (T : Finset O)
     rw [e3, map_mul, map_pow, constantCoeff_X, zero_pow (by omega), zero_mul]
 
 end Order
-
-end DualFramesAlt.eigenRingInvariants
-
-namespace DualFramesAlt.eigenRingInvariants
-
-open PowerSeries Formalism.IrreducibleCountingLemmas.WindowSums
-
-variable {l : ℕ} [hl : Fact l.Prime]
-
-section O
-
-variable {O : Type*} [CommRing O] [Algebra ℤ_[l] O] {a ζ : O}
-
-end O
-
-end DualFramesAlt.eigenRingInvariants
-
-namespace DualFramesAlt.eigenRingInvariants
-
-open PowerSeries Formalism.IrreducibleCountingLemmas.WindowSums Classical
-
-variable {l : ℕ} [hl : Fact l.Prime]
-
-section Act
-
-variable {O : Type*} [CommRing O] [Algebra ℤ_[l] O]
-
-variable [IsDomain O]
-
-end Act
-
-end DualFramesAlt.eigenRingInvariants
-
-namespace DualFramesAlt.eigenRingInvariants
-
-open PowerSeries Formalism.IrreducibleCountingLemmas.WindowSums Classical
-
-variable {l : ℕ} [hl : Fact l.Prime]
-
-section Fiber
-
-variable {O : Type*} [CommRing O] [IsDomain O] [IsLocalRing O] [Algebra ℤ_[l] O]
-
-variable [IsAdicComplete (IsLocalRing.maximalIdeal O) O]
-
-end Fiber
 
 end DualFramesAlt.eigenRingInvariants

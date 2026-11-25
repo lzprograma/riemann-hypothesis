@@ -52,8 +52,6 @@ open scoped TensorProduct InnerProductSpace
 
 namespace GlobalTheory.St.WittT
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Witt
 
 variable {D : D7}
@@ -114,7 +112,7 @@ theorem indep_of_dual {ι : Type} [Fintype ι] [DecidableEq ι] (v d : ι → (V
   have h := congrArg ((VS D).hT (d j)) hg
 
   simp only [map_sum, map_smul, map_zero, hd, smul_eq_mul, mul_ite, mul_zero, Finset.sum_ite_eq',
-  Finset.mem_univ, if_true] at h
+  Finset.mem_univ, ite_true] at h
   exact (mul_eq_zero.1 h).resolve_right (hc j)
 
 theorem indep_mkFr (e f : Fin D.R.rS → (VS D).V) (z : (VS D).V) (T : D.host.E) (hT : T ≠ 0)

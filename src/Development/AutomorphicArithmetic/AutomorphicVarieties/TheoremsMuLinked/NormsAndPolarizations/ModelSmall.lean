@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.IntModel
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.NormsAndPolarizations.CjApply
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.NormsAndPolarizations.InOfIntIff
@@ -392,7 +393,7 @@ private theorem iw_clear (Y : Matrix (Fin n) (Fin n) K) (c : Fin n) (a : Fin n �
   ext i j
   simp [A, Matrix.mul_apply, Matrix.one_apply, sub_mul, Finset.sum_sub_distrib]
   simp only [apply_ite (fun x : V => (x : K)), ZeroMemClass.coe_zero, OneMemClass.coe_one, ite_mul,
-    one_mul, zero_mul, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    one_mul, zero_mul, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 private theorem iw_step (Y : Matrix (Fin n) (Fin n) K) (c : Fin n)
     (hY : ∀ i j : Fin n, j < c → j < i → Y i j = 0) :
@@ -445,7 +446,7 @@ private theorem iw_step (Y : Matrix (Fin n) (Fin n) K) (c : Fin n)
     rcases lt_or_eq_of_le hjc with hlt | heq
     · rw [hY1c i j hlt hji, hY1c c j hlt hlt, mul_zero, sub_zero]
     · rw [heq] at hji ⊢
-      simp only [a, dif_pos hji]
+      simp only [a, dite_eq_left hji]
       show Y1 i c - Y1 i c / Y1 c c * Y1 c c = 0
       rw [div_mul_cancel₀ _ h0, sub_self]
 
@@ -564,13 +565,7 @@ section -- clump:auto
 open IsLocalRing Matrix NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.HV UpperTheory.V.Th UpperTheory.V.Th.Nm GlobalTheory.GalOfCusp
 
 private theorem ri_small {l : ℕ} [hl : Fact l.Prime] (C : ℝ) : ∃ N : ℕ, ‖((l : PadicAlgCl l)) ^ N‖ * C ≤ 1 := by
-  have h1 : ‖(l : PadicAlgCl l)‖ < 1 := by
-    rw [← map_natCast (algebraMap ℚ_[l] (PadicAlgCl l)), norm_algebraMap']
-    exact Padic.norm_p_lt_one
-  have h2 := (tendsto_pow_atTop_nhds_zero_of_lt_one (norm_nonneg _) h1).mul_const C
-  rw [zero_mul] at h2
-  obtain ⟨N, hN⟩ := (h2.eventually_le_const zero_lt_one).exists
-  exact ⟨N, by rwa [norm_pow]⟩
+  apply _root_.im_small <;> assumption
 
 private theorem ri_entries {l : ℕ} [Fact l.Prime] {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     [CompactSpace G] [T2Space G] {m : ℕ} (s : G →* Matrix (Fin m) (Fin m) (PadicAlgCl l))

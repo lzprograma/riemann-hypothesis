@@ -11,58 +11,11 @@ public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentation
 public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupFlatBaseChange
 public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupUniversal
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.DCoord
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.CategoryTheory.Monoidal.Mon
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Tactic.Lemma
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupOpenCover
-import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.WhittakerHecke.ExistsAffineBlowupCoordinateChartCover, Development.AutomorphicArithmetic.WhittakerHecke.IdealSheafComapEqSpecIdealSheafOfEqMap, Development.AutomorphicArithmetic.WhittakerHecke.IsAffineOpenImagePullbackOpenImmersionChart, Development.AutomorphicArithmetic.WhittakerHecke.SurjectiveEvalCoordBlowupSubstPushoutOfFlat, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.BChartEx, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.BlowUpChart2
@@ -415,7 +368,7 @@ theorem UpperTheory.surjective_eval_coordBlowupSubst_pushout_of_flat :
       simp only [γ, RingHom.comp_apply, MvPolynomial.eval₂Hom_X']
       rw [hebmk]
       by_cases hk : k = j
-      · subst hk; simp only [if_true, e, MvPolynomial.eval₂Hom_C]; rw [hw, hσX]; simp
+      · subst hk; simp only [ite_true, e, MvPolynomial.eval₂Hom_C]; rw [hw, hσX]; simp
       · simp [hk, e, g]
   have hid : ψ ≫ CommRingCat.ofHom eb = 𝟙 _ := by
     apply h.hom_ext
@@ -506,7 +459,7 @@ theorem UpperTheory.surjective_eval_coordBlowupSubst_pushout_of_flat :
     simp only [CommRingCat.hom_comp, RingHom.comp_apply, CommRingCat.hom_ofHom] at h2
     rw [h2]
     change uR.hom (coordBlowupSubst A Finset.univ j (MvPolynomial.X j)) = _
-    rw [hσX, if_neg (not_not.2 rfl)]
+    rw [hσX, ite_eq_right (not_not.2 rfl)]
     change (1 : B) ⊗ₜ[MvPolynomial (Fin D) A] (MvPolynomial.rename ULift.up (MvPolynomial.X j) : P') = _
     rw [MvPolynomial.rename_X]
   have hl : ∀ t : B ⊗[MvPolynomial (Fin D) A] P',

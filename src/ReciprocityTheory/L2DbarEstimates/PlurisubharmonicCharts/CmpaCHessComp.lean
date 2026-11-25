@@ -33,9 +33,6 @@ noncomputable section
 
 variable {n : ℕ}
 
-private theorem I_pow_three' : I ^ 3 = -I := by
-  rw [pow_succ, I_sq, neg_one_mul]
-
 private theorem eq_sum_coord_smul_basis (w : V n) : w = ∑ j, w j • bas n j := by
   conv_lhs => rw [← (EuclideanSpace.basisFun (Fin n) ℂ).sum_repr w]
   simp [bas]
@@ -71,7 +68,7 @@ private theorem wdb_comp_holomorphic_eq_sum_conj {U : V n → ℂ} {G : V n → 
   refine Finset.sum_congr rfl fun b _ => ?_
   simp only [PiLp.smul_apply, smul_eq_mul, map_mul, Complex.conj_I]
   ring_nf
-  simp only [Complex.I_sq, I_pow_three']
+  simp only [Complex.I_sq, Complex.I_pow_three]
   ring
 
 private theorem wd_comp_holomorphic_eq_sum {U : V n → ℂ} {G : V n → V n} {y : V n}
@@ -85,7 +82,7 @@ private theorem wd_comp_holomorphic_eq_sum {U : V n → ℂ} {G : V n → V n} {
   refine Finset.sum_congr rfl fun b _ => ?_
   simp only [PiLp.smul_apply, smul_eq_mul, map_mul, Complex.conj_I]
   ring_nf
-  simp only [Complex.I_sq, I_pow_three']
+  simp only [Complex.I_sq, Complex.I_pow_three]
   ring
 
 private theorem differentiableAt_fderiv_basis_coord_of_contDiffAt {G : V n → V n} {y : V n} (hG : ContDiffAt ℂ 2 G y) (k b : Fin n) :

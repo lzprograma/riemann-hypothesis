@@ -17,8 +17,6 @@ open scoped ENNReal
 
 namespace Formalism.L2.SG.Pf.ThmBChainG
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : HidaSetting D}
 
 theorem jointAmplitudeRotated_generic (Y : Full X) (u : D.what₂.Word) (large₂ : SizeData₂ D) (C1 : ℝ) {θ : ℝ} (C : Choice X θ)
@@ -36,7 +34,7 @@ theorem jointAmplitudeRotated_generic (Y : Full X) (u : D.what₂.Word) (large�
   set J2 := J2of Y u u ν (toPts w') with hJ2
   set th := thetaP u u hB J2 w' with hth
   have hthv : th = (localAmplitudeProduct u u hB w' / J2) ^ ((1 : ℝ) / (2 * Fintype.card D.what₂.Tau)) := by
-    rw [hth]; unfold thetaP; rw [if_pos ⟨hJ', hP1⟩]
+    rw [hth]; unfold thetaP; rw [ite_eq_left ⟨hJ', hP1⟩]
   have hth0 : 0 < th := by rw [hthv]; exact Real.rpow_pos_of_pos (div_pos hP1 hJ') _
   have hfc : (0 : ℝ) < 2 * Fintype.card D.what₂.Tau := by
     have := card_pos' D; positivity
@@ -75,9 +73,3 @@ theorem jointAmplitudeRotated_generic (Y : Full X) (u : D.what₂.Word) (large�
     exact le_rfl
 
 end Formalism.L2.SG.Pf.ThmBChainG
-
-namespace Formalism.L2.SG.Pf
-
-open Formalism.L2.SG.Pf.ThmBChainG
-
-end Formalism.L2.SG.Pf

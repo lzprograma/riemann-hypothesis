@@ -2,48 +2,10 @@ module
 
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsSmoothHermTrivLine
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.TowerOrigin
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import GroundTheory.HeightsAndTheta.Heights.Intersections.IsSmoothHermFubiniStudyO1
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.UnitAtDivOfIsGenAt
+import Development.WeilBound.CoreStatements.PlurisubharmonicCones.DeterminantLatticeGradedTensor
 
 @[expose] public section
 
@@ -64,36 +26,11 @@ variable {X : Scheme.{0}} {Ω : Type} [Field Ω] {ξ : Spec (CommRingCat.of Ω) 
 
 theorem unitAt_div_of_isGenAt {Λ : Lat ξ Ω} {p : Cpt ξ} {s s' : Ω} (h : Λ.IsGenAt p s) (h' : Λ.IsGenAt p s') :
     unitAt ξ p (s' / s) := by
-  obtain ⟨h0, e⟩ := h
-  obtain ⟨h0', e'⟩ := h'
-  have m1 : s' ∈ Submodule.span (regAt ξ p) {s} := by
-    rw [← e, e']; exact Submodule.mem_span_singleton_self s'
-  have m2 : s ∈ Submodule.span (regAt ξ p) {s'} := by
-    rw [← e', e]; exact Submodule.mem_span_singleton_self s
-  obtain ⟨r, hr⟩ := Submodule.mem_span_singleton.1 m1
-  obtain ⟨r', hr'⟩ := Submodule.mem_span_singleton.1 m2
-  have hr1 : (r : Ω) * s = s' := hr
-  have hr2 : (r' : Ω) * s' = s := hr'
-  refine ⟨div_ne_zero h0' h0, ?_, ?_⟩
-  · rw [(div_eq_iff h0).2 hr1.symm]; exact r.2
-  · rw [inv_div, (div_eq_iff h0').2 hr2.symm]; exact r'.2
+  apply _root_.GlobalTheory.CompanionTheory.Ar.Flat.GagaC.unitAt_div_of_isGenAt <;> assumption
 
 theorem tens_isGenAt {I : Type} [Fintype I] {Λ : I → Lat ξ Ω} (a : I → ℤ) {p : Cpt ξ} {s : I → Ω}
     (h : ∀ i, (Λ i).IsGenAt p (s i)) : (Lat.tens Λ a).IsGenAt p (∏ i, s i ^ a i) := by
-  refine ⟨Finset.prod_ne_zero_iff.2 fun i _ => zpow_ne_zero _ (h i).1, le_antisymm ?_ ?_⟩
-  · refine Submodule.span_le.2 ?_
-    rintro _ ⟨s', hs', rfl⟩
-    have hu : unitAt ξ p (∏ i, (s' i / s i) ^ a i) :=
-      unitAt.prod _ fun i _ => (unitAt_div_of_isGenAt (h i) (hs' i)).zpow _
-    have e : ∏ i, s' i ^ a i = (∏ i, (s' i / s i) ^ a i) * ∏ i, s i ^ a i := by
-      rw [← Finset.prod_mul_distrib]
-      refine Finset.prod_congr rfl fun i _ => ?_
-      rw [← mul_zpow, div_mul_cancel₀ _ (h i).1]
-    rw [e]
-    exact Submodule.mem_span_singleton.2 ⟨⟨_, hu.2.1⟩, rfl⟩
-  · refine Submodule.span_mono ?_
-    rintro _ rfl
-    exact ⟨s, h, rfl⟩
+  apply _root_.LevelTowerAlt.N1.tens_gen <;> assumption
 
 theorem exists_gen_of_tens {I : Type} [Fintype I] {Λ : I → Lat ξ Ω} {a : I → ℤ} {p : Cpt ξ} {t : Ω}
     (h : (Lat.tens Λ a).IsGenAt p t) : ∃ s : I → Ω, ∀ i, (Λ i).IsGenAt p (s i) := by

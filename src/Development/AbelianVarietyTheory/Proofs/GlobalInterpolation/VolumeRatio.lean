@@ -1011,8 +1011,7 @@ theorem le_of_lintegral_ball_eq {X : Type} [PseudoMetricSpace X] [ProperSpace X]
     (G H : X → ℝ≥0∞) (b : X) (hG : ContinuousAt G b) (hH : ContinuousAt H b)
     (h : ∀ r > 0, ∫⁻ x in Metric.ball b r, G x ∂ν = ∫⁻ x in Metric.ball b r, H x ∂ν) :
     H b ≤ G b := by
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   obtain ⟨c, hc1, hc2⟩ := exists_between hlt
   obtain ⟨d, hd1, hd2⟩ := exists_between hc2
   have e : ∀ᶠ x in 𝓝 b, G x < c ∧ d < H x :=
@@ -1187,7 +1186,7 @@ theorem fibre_lintegral_ne_zero : ActionCoordinates.QuotientMeasure → CDHaar �
   let s : ActionCoordinates.Wsp P Q → UpqT P Q := fun y => if h : ActionCoordinates.qf y = β then s0 y h else 1
   have hs : ∀ y, ActionCoordinates.qf y = β → ActionCoordinates.act (s y)⁻¹ x₀ = y := by
     intro y hy
-    simp only [s, dif_pos hy]
+    simp only [s, dite_eq_left hy]
     exact hs0 y hy
   have hc : Continuous fun g : UpqT P Q => ActionCoordinates.act g⁻¹ x₀ :=
     (hcl.continuous.comp continuous_inv).matrix_mulVec continuous_const
@@ -1515,7 +1514,6 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
 theorem hR_ratTup (R : Type) [CommRing R] [Algebra F R] {M : ℕ} (J : Matrix (Fin M) (Fin M) E) (x y : Fin M → E) :
     hR R σ J (fun i => inclR R (x i)) (fun i => inclR R (y i)) = inclR R (hE σ J x y) := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [hR, hE, Formalism.UG.hform, JR, sigR, inclR, map_sum, Algebra.TensorProduct.tmul_mul_tmul]
 
 theorem exists_bump {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimensional ℝ V] {x : V}
@@ -1736,8 +1734,6 @@ theorem ratio_of_eq {V V' c p : ℝ} (hV : 0 < V) (hV' : 0 < V') (hc : 0 < c) (h
   field_simp at h1 ⊢
   linarith
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem hE_coords (D : D7) (W : HSpace D.host.E) (x y : W.V) :
     hE D.sp.cm.sig W.gram (fun i => W.frame.repr x i) (fun i => W.frame.repr y i) = W.hT x y := by
   rw [GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryGroups.hT_coord]; rfl
@@ -1761,7 +1757,6 @@ theorem tsum_coords (D : D7) (W : HSpace D.host.E) (s : Bool) (β : D.host.F)
   rw [← eq.tsum_eq]; rfl
 
 
-set_option maxHeartbeats 1000000 in
 theorem ratio_of_setting (hL5 : PlaceSplittingTypes.SelfDualLatticeDensity) (hR3 : ActionCoordinates.RealPlaceMeasures)
     (hEu : LocalAdditiveCharacterDual.EulerProductOfDensities)
     (hSW : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E),

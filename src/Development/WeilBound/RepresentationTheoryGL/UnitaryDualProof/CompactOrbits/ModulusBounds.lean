@@ -23,26 +23,18 @@ namespace BModbound
 
 private theorem measure_eq_relIndex_mul' {G : Type} [AddGroup G] [MeasurableSpace G] [MeasurableAdd G]
     (μ : Measure G) [μ.IsAddLeftInvariant] (H K : AddSubgroup G) (hHK : H ≤ K)
-    (hH : MeasurableSet (H : Set G)) (hi : H.relIndex K ≠ 0) :
+    (hH : MeasurableSet (H : Set G)) (hK : MeasurableSet (K : Set G)) (hi : H.relIndex K ≠ 0) :
     μ (K : Set G) = (H.relIndex K : ENNReal) * μ (H : Set G) := by
-  classical
   have : (H.addSubgroupOf K).FiniteIndex := ⟨hi⟩
-  have : Fintype (K ⧸ H.addSubgroupOf K) := Fintype.ofFinite _
-  let c : (K ⧸ H.addSubgroupOf K) → Set G := fun q => (fun x => -((Quotient.out q : K) : G) + x) ⁻¹' (H : Set G)
-  have hU : (K : Set G) = ⋃ q ∈ (Finset.univ : Finset (K ⧸ H.addSubgroupOf K)), c q := Set.ext fun x => by
-    simp only [Finset.mem_univ, Set.iUnion_true, Set.mem_iUnion, SetLike.mem_coe]
-    exact ⟨fun hx => ⟨QuotientAddGroup.mk (⟨x, hx⟩ : K), by
-        simpa [c, AddSubgroup.mem_addSubgroupOf] using QuotientAddGroup.eq.1
-          (QuotientAddGroup.out_eq' (QuotientAddGroup.mk (⟨x, hx⟩ : K) : K ⧸ H.addSubgroupOf K))⟩,
-      fun ⟨q, hq⟩ => by simpa using K.add_mem (Quotient.out q : K).2 (hHK hq)⟩
-  have hd : Set.PairwiseDisjoint (↑(Finset.univ : Finset (K ⧸ H.addSubgroupOf K))) c := fun q _ q' _ hne =>
-    Set.disjoint_left.2 fun x hx hx' => hne <| by
-      have h4 : ((Quotient.out q : K) : K ⧸ H.addSubgroupOf K) = (Quotient.out q' : K) :=
-        QuotientAddGroup.eq.2 (by simpa [AddSubgroup.mem_addSubgroupOf, add_assoc] using H.add_mem hx (H.neg_mem hx'))
-      rwa [QuotientAddGroup.out_eq', QuotientAddGroup.out_eq'] at h4
-  rw [hU, measure_biUnion_finset hd (fun _ _ => (measurable_const_add _) hH)]
-  simp only [c, measure_preimage_add, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-  congr 2; rw [AddSubgroup.relIndex, AddSubgroup.index_eq_card, Nat.card_eq_fintype_card]
+  have : MeasurableAdd K := ⟨fun c => ((measurable_const_add (c : G)).comp measurable_subtypeVal).subtype_mk,
+    fun c => ((measurable_add_const (c : G)).comp measurable_subtypeVal).subtype_mk⟩
+  have hK' : MeasurableEmbedding K.subtype := MeasurableEmbedding.subtypeVal hK
+  have := Measure.IsAddLeftInvariant.comap μ hK'
+  have h := AddSubgroup.index_mul_measure (H.addSubgroupOf K) (measurable_subtypeVal hH) (μ.comap K.subtype)
+  rw [hK'.comap_apply, hK'.comap_apply, Set.image_univ, AddSubgroup.coe_addSubgroupOf,
+    Set.image_preimage_eq_inter_range, ← AddMonoidHom.coe_range, AddSubgroup.range_subtype,
+    Set.inter_eq_left.2 (SetLike.coe_subset_coe.2 hHK)] at h
+  exact h.symm
 
 private theorem relIndex_ne_zero_of_isCompact_of_isOpen' {X : Type} [TopologicalSpace X] [AddCommGroup X]
     [IsTopologicalAddGroup X] (A H : AddSubgroup X) (hA : IsCompact (A : Set X)) (hH : IsOpen (H : Set X)) :
@@ -69,8 +61,8 @@ private theorem ratio_pi {d : ℕ} (X' Y' : AddSubgroup (Fin d → k)) (hXc : Is
   have e3 : μ (Y' : Set (Fin d → k)) = distribHaarChar (Fin d → k) L * μ (X' : Set (Fin d → k)) := by
     rw [distribHaarChar_mul μ L, hY]; rfl
   rw [GroundTheory.Automorphic.Measures.distribHaarChar_pi_eq,
-    measure_eq_relIndex_mul' μ (X' ⊓ Y') X' inf_le_left hJo.measurableSet n1,
-    measure_eq_relIndex_mul' μ (X' ⊓ Y') Y' inf_le_right hJo.measurableSet n2, ← mul_assoc] at e3
+    measure_eq_relIndex_mul' μ (X' ⊓ Y') X' inf_le_left hJo.measurableSet hXo.measurableSet n1,
+    measure_eq_relIndex_mul' μ (X' ⊓ Y') Y' inf_le_right hJo.measurableSet hYo.measurableSet n2, ← mul_assoc] at e3
   have key := congrArg ENNReal.toReal ((ENNReal.mul_left_inj (hJo.measure_ne_zero μ ⟨0, (X' ⊓ Y').zero_mem⟩)
     (ne_top_of_le_ne_top hXc.measure_lt_top.ne (measure_mono (by simp [AddSubgroup.coe_inf])))).1 e3)
   simp only [ENNReal.toReal_mul, ENNReal.toReal_natCast, ENNReal.coe_toReal] at key
@@ -125,45 +117,21 @@ theorem isClosed_Gz (Z : SubM k n) : IsClosed (Gz Z : Set (GLn k n)) := Desc.SLF
 
 theorem exists_level (g : GLn k n) : ∃ m : ℕ, 1 ≤ m ∧ ∀ u ∈ congruenceSubgroup k n m,
     g⁻¹ * u * g ∈ integralGL k n ∧ g * u * g⁻¹ ∈ integralGL k n := by
-  classical
-  choose e he using fun a : k => Desc.SLT.Bi.exists_scale a
-  let f : Fin n × Fin n → ℕ := fun p => max (e (g.val p.1 p.2)) (e (g⁻¹.val p.1 p.2))
-  set E : ℕ := Finset.univ.sup f
-  have hπ1 : valuation k (Ozn.ϖ k) ≤ 1 := (GroundTheory.Automorphic.GLnLocal.uniformizer k).2
-  have hb : ∀ (P : Mat k n), (∀ i j, e (P i j) ≤ E) →
-      ∀ i j, valuation k (Ozn.ϖ k) ^ E * valuation k (P i j) ≤ 1 := fun P hP i j =>
-    (mul_le_mul_left (pow_le_pow_right_of_le_one' hπ1 (hP i j)) _).trans (he (P i j))
-  have hA : ∀ i j, valuation k (Ozn.ϖ k) ^ E * valuation k (g.val i j) ≤ 1 :=
-    hb g.val fun i j => (le_max_left _ _).trans (Finset.le_sup (f := f) (Finset.mem_univ (i, j)))
-  have hB : ∀ i j, valuation k (Ozn.ϖ k) ^ E * valuation k (g⁻¹.val i j) ≤ 1 :=
-    hb g⁻¹.val fun i j => (le_max_right _ _).trans (Finset.le_sup (f := f) (Finset.mem_univ (i, j)))
-  have hmul : ∀ P Q y : Mat k n, (∀ i j, valuation k (Ozn.ϖ k) ^ E * valuation k (P i j) ≤ 1) →
-      (∀ i j, valuation k (Ozn.ϖ k) ^ E * valuation k (Q i j) ≤ 1) →
-      (∀ i j, valuation k (y i j) ≤ valuation k (Ozn.ϖ k) ^ E * valuation k (Ozn.ϖ k) ^ E) →
-      ∀ i j, (P * y * Q) i j ∈ 𝒪[k] := fun P Q y hP hQ hy i j => by
-    rw [Matrix.mul_apply]; refine sum_mem fun b _ => ?_; rw [Matrix.mul_apply, Finset.sum_mul]
-    refine sum_mem fun a _ => ?_; show valuation k (P i a * y a b * Q b j) ≤ 1; rw [map_mul, map_mul]
-    calc valuation k (P i a) * valuation k (y a b) * valuation k (Q b j)
-        ≤ valuation k (P i a) * (valuation k (Ozn.ϖ k) ^ E * valuation k (Ozn.ϖ k) ^ E) * valuation k (Q b j) :=
-          mul_le_mul_left (mul_le_mul_right (hy a b) _) _
-      _ = (valuation k (Ozn.ϖ k) ^ E * valuation k (P i a)) * (valuation k (Ozn.ϖ k) ^ E * valuation k (Q b j)) := by
-          ac_rfl
-      _ ≤ 1 * 1 := mul_le_mul' (hP i a) (hQ b j)
-      _ = 1 := one_mul 1
-  have h1 : ∀ i j, (1 : Mat k n) i j ∈ 𝒪[k] := fun i j => by
-    rw [Matrix.one_apply]; split_ifs; exact one_mem _; exact zero_mem _
-  have hconj : ∀ w ∈ congruenceSubgroup k n (2 * E + 1), ∀ i j,
+  have hbot : ∀ x : Mat k n, x ∈ Bz (⊥ : SubM k n) := fun x a ha => by
+    obtain ⟨c, rfl⟩ := Algebra.mem_bot.1 ha; exact Algebra.commutes c x
+  obtain ⟨c, hc1, hc⟩ := Desc.SLT.Bi.exists_shift ⊥ g (hbot g.val)
+  have hconj : ∀ w ∈ congruenceSubgroup k n c, ∀ i j,
       ((g⁻¹ * w * g : GLn k n) : Mat k n) i j ∈ 𝒪[k] ∧ ((g * w * g⁻¹ : GLn k n) : Mat k n) i j ∈ 𝒪[k] := by
     intro w hw i j; rw [mem_congruenceSubgroup_iff] at hw
-    set y : Mat k n := (w : Mat k n) - 1
-    have hw' : (w : Mat k n) = 1 + y := by simp [y]
-    have hyb : ∀ a b, valuation k (y a b) ≤ valuation k (Ozn.ϖ k) ^ E * valuation k (Ozn.ϖ k) ^ E := fun a b => by
-      rw [← pow_add]; exact (hw.2 a b).trans (pow_le_pow_right_of_le_one' hπ1 (by omega))
-    exact ⟨by rw [Units.val_mul, Units.val_mul, hw', Matrix.mul_add, Matrix.add_mul, Matrix.mul_one,
-        Units.inv_mul, Matrix.add_apply]; exact add_mem (h1 i j) (hmul g⁻¹.val g.val y hB hA hyb i j),
-      by rw [Units.val_mul, Units.val_mul, hw', Matrix.mul_add, Matrix.add_mul, Matrix.mul_one,
-        Units.mul_inv, Matrix.add_apply]; exact add_mem (h1 i j) (hmul g.val g⁻¹.val y hA hB hyb i j)⟩
-  refine ⟨2 * E + 1, by omega, fun u hu => ⟨?_, ?_⟩⟩
+    obtain ⟨h1, h2⟩ := hc 0 (w.val - 1) ⟨hbot _, fun a b => (hw.2 a b).trans_eq (by rw [zero_add])⟩
+    have e : ∀ a : GLn k n, ((a * w * a⁻¹ : GLn k n) : Mat k n) i j =
+        (1 : Mat k n) i j + Desc.SLT.Bi.conjA a (w.val - 1) i j := fun a => by
+      rw [← Matrix.add_apply, Desc.SLT.Bi.conjA_apply, Units.val_mul, Units.val_mul, mul_sub, sub_mul, mul_one,
+        Units.mul_inv, add_sub_cancel]
+    have h1ij : (1 : Mat k n) i j ∈ 𝒪[k] := by rw [Matrix.one_apply]; split_ifs; exact one_mem _; exact zero_mem _
+    have e' := e g⁻¹; rw [inv_inv] at e'
+    exact ⟨e' ▸ add_mem h1ij ((h2.2 i j).trans_eq (pow_zero _)), e g ▸ add_mem h1ij ((h1.2 i j).trans_eq (pow_zero _))⟩
+  refine ⟨c, hc1, fun u hu => ⟨?_, ?_⟩⟩
   · rw [mem_integralGL_iff]; exact ⟨fun i j => (hconj u hu i j).1, fun i j => by
       rw [show (g⁻¹ * u * g)⁻¹ = g⁻¹ * u⁻¹ * g by group]; exact (hconj u⁻¹ (inv_mem hu) i j).1⟩
   · rw [mem_integralGL_iff]; exact ⟨fun i j => (hconj u hu i j).2, fun i j => by
@@ -213,7 +181,7 @@ theorem wt [CharZero k] (P : GL (Fin n) k) (w : Fin n → ℤ) (W : Submodule k 
 
 omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem relIndex_eq (I J : AddSubgroup (Matrix (Fin n) (Fin n) k))
-    (GI GJ : Subgroup (GL (Fin n) k)) (_hJI : J ≤ I)
+    (GI GJ : Subgroup (GL (Fin n) k))
     (hGI : ∀ u : GL (Fin n) k, u ∈ GI ↔ u.val - 1 ∈ I)
     (hGJ : ∀ u : GL (Fin n) k, u ∈ GJ ↔ u.val - 1 ∈ J)
     (hsurj : ∀ x ∈ I, ∃ u : GL (Fin n) k, u.val = 1 + x)
@@ -358,10 +326,7 @@ theorem cAv_inv (Z : SubM k n) (x : Mat k n) (v : Fin n → k) (g : GLn k n) (hg
 private theorem det_C [CharZero k] (Z : SubM k n) (hZ : CR Z) (g : GLn k n) (hg : g ∈ Gz Z) :
     LinearMap.det ((adL g).restrict (cC_inv Z g hg)) = 1 := by
   have h := PositivityTheory.RgUd.T.Desc.UniPf.det_conjL Z hZ g hg
-  let e : (Subalgebra.centralizer k (Z : Set (Matrix (Fin n) (Fin n) k))).toSubmodule ≃ₗ[k]
-      Subalgebra.centralizer k (Z : Set (Matrix (Fin n) (Fin n) k)) :=
-    { toFun := fun y => ⟨y.1, y.2⟩, invFun := fun y => ⟨y.1, y.2⟩, map_add' := fun _ _ => rfl,
-      map_smul' := fun _ _ => rfl, left_inv := fun _ => rfl, right_inv := fun _ => rfl }
+  let e := (Subalgebra.centralizer k (Z : Set (Matrix (Fin n) (Fin n) k))).toSubmoduleEquiv
   have he : PositivityTheory.RgUd.T.Desc.UniPf.conjL Z g hg =
       (e : _ →ₗ[k] _) ∘ₗ (adL g).restrict (cC_inv Z g hg) ∘ₗ (e.symm : _ →ₗ[k] _) :=
     LinearMap.ext fun y => Subtype.ext (adL_apply g y).symm
@@ -687,12 +652,12 @@ private theorem modul_eq [CharZero k] (hratio : RatioP k n) (Z : SubM k n) (hZ :
     let ⟨w, hw⟩ := surj C _ (mem_cj.mp hx)
     ⟨g * w * g⁻¹, by rw [Units.val_mul, Units.val_mul, hw, Matrix.mul_add, Matrix.add_mul,
       Matrix.mul_one, Units.mul_inv, adL_adL_inv]⟩
-  have e1 := relIndex_eq X Y K L hYX hKm hLm (surj C) fun u hu => multC _ u (intK u hu) (Subgroup.mem_inf.mp hu).2
-  have e2 := relIndex_eq XW YW (K ⊓ stab Z p) (L ⊓ stab Z p) hYWXW memKS memLS (surj W) fun u hu =>
+  have e1 := relIndex_eq X Y K L hKm hLm (surj C) fun u hu => multC _ u (intK u hu) (Subgroup.mem_inf.mp hu).2
+  have e2 := relIndex_eq XW YW (K ⊓ stab Z p) (L ⊓ stab Z p) memKS memLS (surj W) fun u hu =>
     let ⟨hK, hS⟩ := Subgroup.mem_inf.mp hu
     multW _ u (intK u hK) (Subgroup.mem_inf.mp hK).2 ((hSiff u (Subgroup.mem_inf.mp hK).2).mp hS)
-  have e3 := relIndex_eq gX Y gK L hYgX hgKm hLm surjgX fun u hu => multC _ u (gKint u hu).1 (gKint u hu).2
-  have e4 := relIndex_eq gXW YW (gK ⊓ stab Z p) (L ⊓ stab Z p) hYWgXW memgKS memLS
+  have e3 := relIndex_eq gX Y gK L hgKm hLm surjgX fun u hu => multC _ u (gKint u hu).1 (gKint u hu).2
+  have e4 := relIndex_eq gXW YW (gK ⊓ stab Z p) (L ⊓ stab Z p) memgKS memLS
     (fun x hx => surjgX x (mem_cj.mpr (latWC _ _ (mem_cj.mp hx)))) fun u hu =>
       let ⟨hK, hS⟩ := Subgroup.mem_inf.mp hu
       multW _ u (gKint u hK).1 (gKint u hK).2 ((hSiff u (gKint u hK).2).mp hS)

@@ -7,6 +7,7 @@ public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.
 public import Formalism.PeriodIntegrals.QuotInv
 import Mathlib.Tactic.Lemma
 import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QuotSetU
+import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QuotientMeasureRightInvariant
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuotientInvariantMeasurability.MeasurableAvgS, Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.L2RightTranslationThm
@@ -138,26 +139,7 @@ theorem ineq (h : QuotientSetting G S μG μS ν) {F : MtM m → ℝ≥0∞} (hF
     _ ≤ _ := hRHS
 
 theorem quotInv : PI.QuotInv := by
-  intro m G S μG μS ν h F hF hFi g0 hg0
-  obtain ⟨g, rfl⟩ : ∃ g : MtM m, Matrix.of g = g0 := ⟨Matrix.of.symm g0, rfl⟩
-  have hg : Matrix.of g ∈ G := hg0
-  have hFi' : ∀ s : MtM m, Matrix.of s ∈ S → ∀ x : MtM m, Matrix.of x ∈ G → F (mm s x) = F x :=
-    fun s hs x hx => hFi s hs x hx
-  have h1 : ∫⁻ x, F (mm x g) ∂ν ≤ ∫⁻ x, F x ∂ν := ineq h hF hFi' (g := g) hg
-  obtain ⟨hginvG, hgg⟩ := h.1.2.2.2 _ hg
-  have hgig : mm (minv g) g = oneM := by
-    have h : Matrix.of g * Matrix.of (minv g) = 1 := hgg
-    have := mul_eq_one_comm.1 h
-    funext i j; exact congrFun (congrFun this i) j
-  have h2 : ∫⁻ x, F (mm (mm x (minv g)) g) ∂ν ≤ ∫⁻ x, F (mm x g) ∂ν :=
-    ineq h (F := fun x => F (mm x g)) (hF.comp (measurable_mm_left g))
-      (by
-        intro s hs x hx
-        rw [mm_assoc]
-        exact hFi' s hs _ (mm_mem h.1 hx hg))
-      (g := minv g) hginvG
-  simp only [mm_assoc, hgig, mm_oneM] at h2
-  exact le_antisymm h1 h2
+  apply _root_.GlobalTheory.QuotRightInv.quotInv <;> assumption
 
 end PI.QuotInvW
 end -- clump:auto

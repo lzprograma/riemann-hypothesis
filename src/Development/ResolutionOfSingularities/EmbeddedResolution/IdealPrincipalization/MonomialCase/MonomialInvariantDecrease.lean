@@ -7,53 +7,9 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrin
 import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderAtMultiplicativity
 import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderPullback
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.LexOrderEncoding
 import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
 import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupOpenCover
-import Mathlib.SetTheory.ZFC.PSet
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.BlowupAtMonomialCenter, Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialInvariantDecrease
@@ -504,9 +460,9 @@ theorem orderAlong_transform_add_mult_of_exceptionalIndex_mem (hGeom : MonomialG
         simp [hi]
     have hεval : ε = (if i ∈ lexMaxIndices T.ideal T.mult T.boundary then 1 else 0) := by
       by_cases hi : i ∈ lexMaxIndices T.ideal T.mult T.boundary
-      · rw [if_pos hi]
+      · rw [ite_eq_left hi]
         exact hεiff.2 ⟨⊤, trivial, fun y hy => hmaxIdx i hi hy.1⟩
-      · rw [if_neg hi]
+      · rw [ite_eq_right hi]
         rcases hε01 with h0 | h1
         · exact h0
         · exfalso
@@ -928,20 +884,6 @@ private theorem foldr_mul_ofFn_eq_prod {Y : Scheme.{u}} :
       intro F
       rw [List.ofFn_succ, List.foldr_cons, ih, Fin.prod_univ_succ]
 
-private theorem comap_prod {X Y : Scheme.{u}} (f : X ⟶ Y) :
-    ∀ {n : ℕ} (F : Fin n → Y.IdealSheafData),
-      (∏ i, F i).comap f = ∏ i, (F i).comap f := by
-  intro n
-  induction n with
-  | zero =>
-      intro F
-      simp only [Finset.univ_eq_empty, Finset.prod_empty]
-      rw [Scheme.IdealSheafData.one_eq_top, Scheme.IdealSheafData.comap_top]
-      exact Scheme.IdealSheafData.one_eq_top.symm
-  | succ n ih =>
-      intro F
-      rw [Fin.prod_univ_succ, Scheme.IdealSheafData.comap_mul, ih, Fin.prod_univ_succ]
-
 private theorem prod_pow_comap_transformedBoundary_eq {X X' : Scheme.{u}} (π : X' ⟶ X)
     (Z : X.IdealSheafData) (L : List X.IdealSheafData) (W : X'.Opens)
     (a : Fin L.length → ℕ) (d : ℕ) :
@@ -973,7 +915,7 @@ private theorem prod_pow_comap_transformedBoundary_eq {X X' : Scheme.{u}} (π : 
   · refine Finset.prod_congr rfl ?_
     intro j _
     rw [hg1 j]
-    exact congrArg (fun t : ℕ => ((Blowup.strictTransform π Z (L.get j)).comap W.ι) ^ t) (dif_pos j.isLt)
+    exact congrArg (fun t : ℕ => ((Blowup.strictTransform π Z (L.get j)).comap W.ι) ^ t) (dite_eq_left j.isLt)
   · rw [hg2, dite_eq_right (by simp : ¬ ((Fin.last L.length : Fin (L.length + 1)) : ℕ) < L.length)]
 
 private theorem isMonomialNear_transformedBoundary_of_isBlowupAlongIdealSheaf (hGeom : MonomialGeometryHypotheses.{u})
@@ -1114,7 +1056,10 @@ private theorem isMonomialNear_transformedBoundary_of_isBlowupAlongIdealSheaf (h
             ((X'.homOfLE hWU) ≫ (π ∣_ U)) := by rw [hmon]
       _ = ∏ i : Fin T.boundary.length,
             (((T.boundary.get i).comap U.ι) ^ a i).comap
-              ((X'.homOfLE hWU) ≫ (π ∣_ U)) := comap_prod _ _
+              ((X'.homOfLE hWU) ≫ (π ∣_ U)) := by
+          rw [← List.prod_ofFn, Scheme.IdealSheafData.comap_listProd,
+            List.map_ofFn, List.prod_ofFn]
+          rfl
       _ = ∏ i : Fin T.boundary.length, (((T.boundary.get i).comap π).comap W.ι) ^ a i := by
             refine Finset.prod_congr rfl ?_
             intro i _
@@ -1246,13 +1191,6 @@ private theorem get_transformedBoundary_exceptionalIndex_eq_comap {X' X : Scheme
     apply Fin.val_injective
     simp [exceptionalIndex_val]
   rw [hfin, hg2, Blowup.exceptionalIdeal_eq_comap]
-
-private theorem injective_strictTransformIndex {X' X : Scheme.{u}} (π : X' ⟶ X) (Z : X.IdealSheafData)
-    (L : List X.IdealSheafData) : Function.Injective (strictTransformIndex π Z L) := by
-  intro i j hij
-  apply Fin.val_injective
-  have h := congrArg (fun z : Fin (transformedBoundary π Z L).length => (z : ℕ)) hij
-  simpa [strictTransformIndex_val] using h
 
 private theorem strictMono_strictTransformIndex {X' X : Scheme.{u}} (π : X' ⟶ X) (Z : X.IdealSheafData)
     (L : List X.IdealSheafData) : StrictMono (strictTransformIndex π Z L) := by
@@ -1572,8 +1510,8 @@ private theorem minIndexCard_lt_or_maxCandidateOrder_lt_of_isBlowupAlongIdealShe
       have hcimg : (Finset.image (strictTransformIndex π (monomialCenter T.ideal T.mult T.boundary) T.boundary)
             (preimageStrictTransformIndex π (monomialCenter T.ideal T.mult T.boundary) T.boundary J')).card
           = (preimageStrictTransformIndex π (monomialCenter T.ideal T.mult T.boundary) T.boundary J').card :=
-        Finset.card_image_of_injective _
-          (injective_strictTransformIndex π (monomialCenter T.ideal T.mult T.boundary) T.boundary)
+        Finset.card_image_of_injective _ (strictMono_strictTransformIndex π
+          (monomialCenter T.ideal T.mult T.boundary) T.boundary).injective
       rw [himg] at hcimg
       have h1 := hx.1
       omega
@@ -1585,8 +1523,8 @@ private theorem minIndexCard_lt_or_maxCandidateOrder_lt_of_isBlowupAlongIdealShe
       have hcimg : (Finset.image (strictTransformIndex π (monomialCenter T.ideal T.mult T.boundary) T.boundary)
             (preimageStrictTransformIndex π (monomialCenter T.ideal T.mult T.boundary) T.boundary J')).card
           = (preimageStrictTransformIndex π (monomialCenter T.ideal T.mult T.boundary) T.boundary J').card :=
-        Finset.card_image_of_injective _
-          (injective_strictTransformIndex π (monomialCenter T.ideal T.mult T.boundary) T.boundary)
+        Finset.card_image_of_injective _ (strictMono_strictTransformIndex π
+          (monomialCenter T.ideal T.mult T.boundary) T.boundary).injective
       rw [himg] at hcimg
       have hcand : IsCandidateComponent T.ideal T.mult T.boundary
           (preimageStrictTransformIndex π (monomialCenter T.ideal T.mult T.boundary) T.boundary J').card
@@ -1654,8 +1592,8 @@ private theorem minIndexCard_lt_or_maxCandidateOrder_lt_of_isBlowupAlongIdealShe
             (lexMaxIndices I' T.mult
               (transformedBoundary π (monomialCenter T.ideal T.mult T.boundary)
                 T.boundary))).card :=
-      Finset.card_image_of_injective _
-        (injective_strictTransformIndex π (monomialCenter T.ideal T.mult T.boundary) T.boundary)
+      Finset.card_image_of_injective _ (strictMono_strictTransformIndex π
+        (monomialCenter T.ideal T.mult T.boundary) T.boundary).injective
     rw [himg] at hcimg
     have hmin' : minIndexCard I' T.mult
         (transformedBoundary π (monomialCenter T.ideal T.mult T.boundary) T.boundary) ≠ 0 := h'
@@ -1685,8 +1623,8 @@ private theorem minIndexCard_lt_or_maxCandidateOrder_lt_of_isBlowupAlongIdealShe
             (lexMaxIndices I' T.mult
               (transformedBoundary π (monomialCenter T.ideal T.mult T.boundary)
                 T.boundary))).card :=
-      Finset.card_image_of_injective _
-        (injective_strictTransformIndex π (monomialCenter T.ideal T.mult T.boundary) T.boundary)
+      Finset.card_image_of_injective _ (strictMono_strictTransformIndex π
+        (monomialCenter T.ideal T.mult T.boundary) T.boundary).injective
     rw [himgc] at hcimg
     have hcardJ : (preimageStrictTransformIndex π (monomialCenter T.ideal T.mult T.boundary) T.boundary
         (lexMaxIndices I' T.mult
@@ -1842,31 +1780,6 @@ private theorem toNat_lt_toNat_of_lt_of_ne_top {a b : ℕ∞} (hab : a < b) (hb 
   have hmn : m < n := by exact_mod_cast hab
   simpa using hmn
 
-private theorem monomialInvariant_lt_of_lex_lt {D : ℕ} {T1 T2 : MarkedIdealWithBoundary.{u}}
-    (hstep :
-      D - minIndexCard T1.ideal T1.mult T1.boundary
-          < D - minIndexCard T2.ideal T2.mult T2.boundary ∨
-        (D - minIndexCard T1.ideal T1.mult T1.boundary
-            = D - minIndexCard T2.ideal T2.mult T2.boundary ∧
-          ((maxCandidateOrder T1.ideal T1.mult T1.boundary).toNat
-              < (maxCandidateOrder T2.ideal T2.mult T2.boundary).toNat ∨
-            ((maxCandidateOrder T1.ideal T1.mult T1.boundary).toNat
-                = (maxCandidateOrder T2.ideal T2.mult T2.boundary).toNat ∧
-              numMaxOrderCandidates T1 < numMaxOrderCandidates T2)))) :
-    monomialInvariant D T1 < monomialInvariant D T2 := by
-  have hgen : ∀ {a b c a' b' c' : ℕ},
-      (a < a' ∨ (a = a' ∧ (b < b' ∨ (b = b' ∧ c < c')))) →
-      (toLex (a, toLex (b, c)) : Lex (ℕ × Lex (ℕ × ℕ)))
-        < toLex (a', toLex (b', c')) := by
-    intro a b c a' b' c' hh
-    rcases hh with h1 | ⟨rfl, h1⟩
-    · exact Prod.Lex.left _ _ h1
-    · refine Prod.Lex.right _ ?_
-      rcases h1 with h2 | ⟨rfl, h2⟩
-      · exact Prod.Lex.left _ _ h2
-      · exact Prod.Lex.right _ h2
-  exact hgen hstep
-
 theorem monomialInvariant_blowupTripleAtCenterIdeal_lt (hGeom : MonomialGeometryHypotheses.{u}) {D : ℕ} {T : MarkedIdealWithBoundary.{u}}
     (hT : MonomialCenter.IsLocallyMonomialTriple T)
     (h : minIndexCard T.ideal T.mult T.boundary ≠ 0)
@@ -1896,7 +1809,7 @@ theorem monomialInvariant_blowupTripleAtCenterIdeal_lt (hGeom : MonomialGeometry
                 (MonomialCenter.sortedIndices
                   (lexMaxIndices (blowupTripleAtCenterIdeal T).ideal (blowupTripleAtCenterIdeal T).mult
                     (blowupTripleAtCenterIdeal T).boundary))))) := hkey0
-  refine monomialInvariant_lt_of_lex_lt ?_
+  rw [monomialInvariant, monomialInvariant, Prod.Lex.toLex_lt_toLex]
   rcases hkeyU with hrank | ⟨hrank, hrest⟩
   · left
     obtain ⟨J, C, hcand⟩ :=
@@ -1910,7 +1823,7 @@ theorem monomialInvariant_blowupTripleAtCenterIdeal_lt (hGeom : MonomialGeometry
       le_trans (krullDimSucc_blowupTripleAtCenterIdeal_le hGeom hT h) hD
     omega
   · right
-    refine ⟨by rw [hrank], ?_⟩
+    refine ⟨by rw [hrank], Prod.Lex.toLex_lt_toLex.2 ?_⟩
     rcases hrest with hval | ⟨hval, hpos⟩
     · left
       exact toNat_lt_toNat_of_lt_of_ne_top hval (maxCandidateOrder_spec hGeom hT h).2.2.2.ne

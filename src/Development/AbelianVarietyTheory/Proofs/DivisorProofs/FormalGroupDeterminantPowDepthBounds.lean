@@ -235,15 +235,7 @@ variable {C : Type} [Field C] (v : AddValuation C (WithTop ℝ))
 
 theorem isInt_mul {τ : Type} {f g : MvPowerSeries τ C} (hf : MvIsInt v f) (hg : MvIsInt v g) :
     MvIsInt v (f * g) := by
-  classical
-  intro α
-  unfold IsIntV
-  rw [coeff_mul]
-  refine Finset.sum_induction _ (fun x => 0 ≤ v x)
-    (fun a b ha hb => le_trans (le_min ha hb) (v.map_add a b)) (by simp) ?_
-  intro p _
-  rw [v.map_mul]
-  exact add_nonneg (hf _) (hg _)
+  apply _root_.GlobalTheory.DepthNonneg.mvIsInt_mul <;> assumption
 
 
 open Classical in
@@ -283,7 +275,7 @@ theorem coeff_single_exp {C : Type} [Field C] {v : AddValuation C (WithTop ℝ)}
   have e := congrArg (coeff (Finsupp.single b 1)) (h.2 a)
   rw [GlobalTheory.FormalSeries.coeff_single_subst h.1] at e
   simp only [G.lg_lin, smul_eq_mul, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true, coeff_X] at e
+    Finset.mem_univ, ite_true, coeff_X] at e
   rw [e]
   by_cases hab : a = b
   · subst hab; simp
@@ -317,7 +309,7 @@ theorem depth_le_content : ∀ (C : Type) [Field C] [CharZero C] (v : AddValuati
     show coeff (Finsupp.single y 1) (subst _ (expOf (G x.1) x.2)) = _
     rw [GlobalTheory.FormalSeries.coeff_single_subst (hlin0 x.1)]
     simp only [coeff_single_exp (G x.1) (hexp x.1), hlin1, smul_eq_mul, ite_mul, one_mul,
-      zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   set Y : (Σ b, Fin (n b)) → MvPowerSeries (Σ b, Fin (n b)) C :=
     fun y => ∑ e, l y.1 y.2 e • A ⟨y.1, e⟩ with hYdef
   have hY : ∀ y, 2 ≤ (Y y - X y).order := by
@@ -338,7 +330,7 @@ theorem depth_le_content : ∀ (C : Type) [Field C] [CharZero C] (v : AddValuati
     have key2 : ∑ e : Fin (d y.1), ∑ a : Fin (n y.1),
         l y.1 y.2 e * (u y.1 a e * if z = ⟨y.1, a⟩ then (1 : C) else 0) = if z = y then 1 else 0 := by
       rw [Finset.sum_comm]
-      simp_rw [key, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      simp_rw [key, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     exact key2
   have hAs : HasSubst A := hasSubst_of_constantCoeff_zero hA0
   unfold content
@@ -366,7 +358,7 @@ theorem depth_le_content : ∀ (C : Type) [Field C] [CharZero C] (v : AddValuati
     · intro β hβ hne
       rw [GlobalTheory.FormalSeries.coeff_eq_of_le_order_sub hord
         (by rw [hdeg β hβ, ← hdeg α hα]; exact Nat.lt_succ_self _), coeff_monomial,
-        if_neg hne, mul_zero]
+        ite_eq_right hne, mul_zero]
     · intro h; exact absurd hα h
   unfold depth
   refine (iInf_le _ ⟨f, hfint⟩).trans (le_of_eq ?_)

@@ -48,7 +48,6 @@ import Development.AbelianVarietyTheory.Definitions.LatticeFrames.JointSmooth
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.SeeSaw GlobalTheory.LocMod
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -113,11 +112,8 @@ open GlobalTheory.LocFlat.CFac
 section SlopeTestRemainingChoices
 variable {D : D7}
 
-theorem isThetaFunO_zero' (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) : IsThetaFunO ψ S T 0 := {
-  quasi γ w := by simp
-  level := ⟨⊤, isOpen_univ, fun u _ _ => by funext w; simp [heisO]⟩
-  cont := continuous_const
-  smooth _ _ _ _ _ := contDiff_const }
+theorem isThetaFunO_zero' (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) : IsThetaFunO ψ S T 0 :=
+  GlobalTheory.OrientedHeis.theta_zero
 
 def heisL (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (u : WO S T) : (WO S T → ℂ) →ₗ[ℂ] (WO S T → ℂ) where
   toFun := heisO ψ S T u
@@ -209,8 +205,7 @@ theorem isModel_boxT : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [Topol
       funext w
       simp [heisO]
     have ht₀ : ∃ t₀, Φ.1 t₀ ≠ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact hΦ (Subtype.ext (funext hc))
     obtain ⟨t₀, ht₀⟩ := ht₀
     have hU : {t | Φ.1 t = Φ.1 t₀} ∩ {t | Φ'.1 t = Φ'.1 t₀} ∈ nhds t₀ :=

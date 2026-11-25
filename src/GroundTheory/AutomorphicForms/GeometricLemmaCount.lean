@@ -70,11 +70,8 @@ theorem cosetIncl_injective : Function.Injective (cosetIncl A (K := K) (K' := K'
     simpa using A.mul_mem (A.inv_mem ha) hb
 
 theorem relIndex_inf_ne_zero (hK : K.relIndex K' ≠ 0) :
-    (K ⊓ A).relIndex (K' ⊓ A) ≠ 0 := by
-  have : (K.subgroupOf K').FiniteIndex := ⟨hK⟩
-  have : Finite ((K' ⊓ A : Subgroup G) ⧸ (K ⊓ A).subgroupOf (K' ⊓ A)) :=
-    Finite.of_injective _ (cosetIncl_injective (A := A) (K := K) (K' := K'))
-  exact Subgroup.index_ne_zero_of_finite
+    (K ⊓ A).relIndex (K' ⊓ A) ≠ 0 :=
+  Subgroup.relIndex_inter_ne_zero hK A
 
 end Incl
 

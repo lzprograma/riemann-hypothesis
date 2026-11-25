@@ -55,8 +55,6 @@ import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsHolFormC
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory
@@ -64,8 +62,6 @@ open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.RealMult GlobalTheory.TorusRM
 
 open scoped nonZeroDivisors
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.TorusRM.DiagFrame
 
@@ -78,8 +74,6 @@ theorem pzero_eq (T : Over (Sp ℂ)) : pzero A T = 1 := by
 
 theorem pt_diag_psum (y : 𝟙_ (Over (Sp ℂ)) ⟶ A) (I : Finset (Fin 2)) :
     y ≫ (lift (𝟙 A) (𝟙 A) ≫ psum A (x2 A) I) = y ^ I.card := by
-  have h0 : y ≫ lift (𝟙 A) (𝟙 A) ≫ fst A A = y := by simp
-  have h1 : y ≫ lift (𝟙 A) (𝟙 A) ≫ snd A A = y := by simp
   have hI : I = ∅ ∨ I = {0} ∨ I = {1} ∨ I = {0, 1} := by revert I; decide
   rcases hI with rfl | rfl | rfl | rfl <;>
     simp [psum, padd_eq, pzero_eq, x2, List.finRange_succ, comp_mul, comp_one, pow_two]

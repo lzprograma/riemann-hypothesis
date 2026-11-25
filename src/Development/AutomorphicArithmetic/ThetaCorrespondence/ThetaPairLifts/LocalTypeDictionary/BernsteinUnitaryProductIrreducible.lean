@@ -1,25 +1,22 @@
 module
 
 public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RayPrimes
+public import Mathlib.NumberTheory.LSeries.PrimesInAP
 public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesCoverExistsIff
 public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DsExistsOfDiscreteSeriesExists
 public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.FormalDegreeCompactDualIff
-public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LogDerOne
 public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
 public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
 public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsSmoothModerateOfIsAutFunSm
 public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.WeilRepresentationExists
 public import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.ExistsMemIdealInvariants
 public import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.HermitianHassePrincipleHolds
-public import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.PlaneFormNondegenerate
-public import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.ThetaRationalInvarianceHolds
 public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.GreenSeriesSt
-public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.PrimesInProgressionNonempty
 public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
 public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BorelCasselman
 public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CuspDiscreteDecompositionOfTraceClass
 public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesHermitianUniqueOfClassification
-public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesLowestKTypeOfClassification
 public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsFactorisationCuspidal
 public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsGrowthSobNeTopOfIsAutFunSm
 public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsOrthonormalOfUnimodular
@@ -30,7 +27,6 @@ public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFor
 public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IrreducibleDistinctUnitary
 public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsAdmissibleSubOfFiniteDimensional
 public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsIrrKSubOfIsKTypeOf
-public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.KudlaSplittingSplitUnitary
 public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LowerLiftsZeroOfWittIdxEqZero
 public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.MetaplecticRepresentation
 public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
@@ -78,41 +74,21 @@ import Mathlib.Tactic.NormNum.RealSqrt
 section
 namespace GlobalTheory.FunPr
 structure ThetaLocalInputs : Prop where
-  greenSeriesSt : GlobalTheory.Published.GreenSeriesSt
-  linnik : GlobalTheory.Published.Linnik
-  complexMultiplicationJSt : GlobalTheory.Published.ComplexMultiplicationJSt
-  bernsteinUnitaryProductIrreducible : GlobalTheory.Published.BernsteinUnitaryProductIrreducible
-  zelevinskyPolynomialRing : GlobalTheory.Published.ZelevinskyPolynomialRing
-  bernsteinZelevinskyFiniteness : GlobalTheory.Published.BernsteinZelevinskyFiniteness
-  cuspTraceClass : GlobalTheory.Published.CuspTraceClass
   weilSiegelFormulaUnitary : GlobalTheory.Published.WeilSiegelFormulaUnitary
   doublingMethod : _root_.GlobalTheory.Published.DoublingMethodLocalZetaIntegrals
   unramifiedDoublingGL : GlobalTheory.Published.UnramifiedDoublingGL
-  borelCasselman : GlobalTheory.Published.BorelCasselman
-  radfordShufflePolynomial : GlobalTheory.Published.RadfordShufflePolynomial
-  dixmierMalliavinFactorisation : GlobalTheory.Published.DixmierMalliavinFactorisation
-  schurOrthogonalitySquareIntegrable : GlobalTheory.Published.SchurOrthogonalitySquareIntegrable
-  heckeLPartialContinuation : GlobalTheory.Published.HeckeLPartialContinuation
-  logDerOne : GlobalTheory.Mem.An.LogDerOne
   kFiniteVectorsUnitary : GlobalTheory.Published.KFiniteVectorsUnitary
-  discreteSeriesLowestKType : GlobalTheory.Published.DiscreteSeriesLowestKType
   cuspBounded : GlobalTheory.Published.CuspBounded
   strongApproxSU : GlobalTheory.Published.StrongApproxSU
-  heckeLEntireAndNonzeroAtOne : GlobalTheory.Published.HeckeLEntireAndNonzeroAtOne
   realMetaplecticRepresentation : GlobalTheory.Published.RealMetaplecticRepresentation
   cuspDecayBound : GlobalTheory.Published.CuspDecayBound
-  gLHoweDuality : GlobalTheory.Published.GLHoweDuality
   harishChandraModules : GlobalTheory.Published.HarishChandraModules
   discreteSeriesCover : GlobalTheory.Published.DiscreteSeriesCover
-  hermitianHassePrinciple : GlobalTheory.Published.HermitianHassePrinciple
   discreteSeriesUpqExists : GlobalTheory.Published.DiscreteSeriesUpqExists
-  formalDegreeCompactDual : GlobalTheory.Published.FormalDegreeCompactDual
   discreteSeriesHermitianUnique : GlobalTheory.Published.DiscreteSeriesHermitianUnique
-  discreteSeriesExists : GlobalTheory.Published.DiscreteSeriesExists
   harishChandraFinite : GlobalTheory.Published.HarishChandraFinite
   cuspRapidDecay : GlobalTheory.Published.CuspRapidDecay
   weilRepresentationUnitaryPair : GlobalTheory.Published.WeilRepresentationUnitaryPair
-  discreteSeriesCoverExists : GlobalTheory.Published.DiscreteSeriesCoverExists
   cuspDecaySobolev : GlobalTheory.Published.CuspDecaySobolev
   casselmanWallach : GlobalTheory.Published.CasselmanWallach
   howeDualityReal : GlobalTheory.Published.HoweDualityReal

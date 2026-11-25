@@ -6,57 +6,6 @@ public import GroundTheory.GlobalFields.ComplexMultiplication.ResidueTheorem
 public import Mathlib.Topology.Algebra.Module.Cardinality
 public import GroundTheory.GlobalFields.ComplexMultiplication.RectangleIntegral
 public import GroundTheory.GlobalFields.ComplexMultiplication.EllipticRational
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: GroundTheory.GlobalFields.ComplexMultiplication.EllipticResidues, GroundTheory.GlobalFields.ComplexMultiplication.EllipticDegree
@@ -396,15 +345,6 @@ lemma finite_support_torusOrder {f : ℂ → ℂ} (hf : IsEllipticFunction L f) 
   simp only [Function.mem_support, torusResidue_logDeriv hf] at hx ⊢
   exact_mod_cast hx
 
-theorem finsum_torusOrder_eq_zero {f : ℂ → ℂ} (hf : IsEllipticFunction L f) :
-    ∑ᶠ x : Torus L, torusOrder L f x = 0 := by
-  have h := finsum_torusResidue_eq_zero (isEllipticFunction_logDeriv hf)
-  simp_rw [torusResidue_logDeriv hf] at h
-  have hc := (Int.castAddHom ℂ).map_finsum (finite_support_torusOrder hf)
-  simp only [Int.coe_castAddHom] at hc
-  rw [← hc] at h
-  exact_mod_cast h
-
 
 variable (L) in
 def degree (L : PeriodPair) (f : ℂ → ℂ) : ℕ :=
@@ -473,42 +413,6 @@ lemma finite_support_toNat_neg_torusOrder {f : ℂ → ℂ} (hf : IsEllipticFunc
     simp only [Function.mem_support] at hx ⊢
     omega
 
-theorem finsum_toNat_torusOrder_sub_const {f : ℂ → ℂ} (hf : IsEllipticFunction L f) (c : ℂ) :
-    ∑ᶠ x : Torus L, (torusOrder L (fun z ↦ f z - c) x).toNat = degree L f := by
-  classical
-  have hg : IsEllipticFunction L (fun z ↦ f z - c) := by
-    refine ⟨fun z ↦ ?_, fun z l hl ↦ by simp only [hf.2 z l hl]⟩
-    have := hf.1 z
-    fun_prop
-  set g : ℂ → ℂ := fun z ↦ f z - c with hgdef
-  have hfin := finite_support_torusOrder hg
-  set s := hfin.toFinset with hs
-  have hsupp : Function.support (torusOrder L g) ⊆ ↑s := by simp [hs]
-  have hsum := finsum_torusOrder_eq_zero hg
-  rw [finsum_eq_sum_of_support_subset _ hsupp] at hsum
-  have h1 : ∑ᶠ x, (torusOrder L g x).toNat = ∑ x ∈ s, (torusOrder L g x).toNat :=
-    finsum_eq_sum_of_support_subset _ fun x hx ↦ hsupp (by
-      simp only [Function.mem_support] at hx ⊢
-      omega)
-  have hpt : ∀ x, (-torusOrder L f x).toNat = (-torusOrder L g x).toNat := fun x ↦
-    (toNat_neg_untopD_sub_const (hf.1 _) c).symm
-  have h2 : degree L f = ∑ x ∈ s, (-torusOrder L g x).toNat := by
-    rw [degree]
-    simp_rw [hpt]
-    exact finsum_eq_sum_of_support_subset _ fun x hx ↦ hsupp (by
-      simp only [Function.mem_support] at hx ⊢
-      omega)
-  rw [h1, h2]
-  have key : ∀ x, ((torusOrder L g x).toNat : ℤ) - ((-torusOrder L g x).toNat : ℤ) =
-      torusOrder L g x := fun x ↦ Int.toNat_sub_toNat_neg _
-  have : ((∑ x ∈ s, (torusOrder L g x).toNat : ℕ) : ℤ) =
-      ((∑ x ∈ s, (-torusOrder L g x).toNat : ℕ) : ℤ) := by
-    push_cast
-    rw [← sub_eq_zero, ← Finset.sum_sub_distrib]
-    simp only [key]
-    exact hsum
-  exact_mod_cast this
-
 lemma eq_zero_of_finsum_eq_zero_nat {α : Type*} {u : α → ℕ} (hu : (Function.support u).Finite)
     (h : ∑ᶠ x, u x = 0) (x : α) : u x = 0 := by
   classical
@@ -545,25 +449,6 @@ theorem degree_ne_one {f : ℂ → ℂ} (hf : IsEllipticFunction L f) : degree L
     exact residue_ne_zero_of_meromorphicOrderAt_eq_neg_one (hf.1 _) hord hres
   · exact residue_eq_zero_of_meromorphicOrderAt_nonneg (hf.1 _)
       (nonneg_of_toNat_neg_untopD_eq_zero (hrest x hx))
-
-theorem degree_weierstrassP : degree L ℘[L] = 2 := by
-  have hP : IsEllipticFunction L ℘[L] := isEllipticFunction_weierstrassP
-  have h0 : (0 : Torus L) = Torus.mk L 0 := (QuotientAddGroup.mk_zero _).symm
-  rw [degree, finsum_eq_single _ (0 : Torus L) ?_]
-  · rw [h0, torusOrder_mk hP]
-    have h2 : meromorphicOrderAt ℘[L] 0 = ((-2 : ℤ) : WithTop ℤ) := by
-      rw [L.order_weierstrassP 0 (zero_mem _)]
-      norm_num
-    rw [h2, WithTop.untopD_coe]
-    rfl
-  · intro x hx
-    obtain ⟨z, rfl⟩ := Torus.mk_surjective L x
-    have hz : z ∉ L.lattice := fun h ↦ hx (by
-      rw [h0]
-      exact (Torus.mk_eq_mk_iff L).2 (by simpa using h))
-    rw [torusOrder_mk hP]
-    exact toNat_neg_untopD_eq_zero_of_nonneg
-      (L.analyticOnNhd_weierstrassP z hz).meromorphicOrderAt_nonneg
 
 end Elliptic
 end GroundTheory.Global

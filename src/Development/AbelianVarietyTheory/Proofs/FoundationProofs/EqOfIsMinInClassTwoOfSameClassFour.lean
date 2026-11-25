@@ -396,25 +396,6 @@ def ofMatrix (A : Matrix (Fin d) (Fin d) ℝ) : QuadraticMap ℤ (Fin d → ℤ)
   change (1 / 2 : ℝ) * ReciprocityTheory.ReducedBases.polar A x x = ReciprocityTheory.ReducedBases.polar A x x / 2
   ring
 
-theorem polar_ofMatrix (hA : A.IsHermitian) (x y : Fin d → ℤ) :
-    polar (ofMatrix A) x y = ReciprocityTheory.ReducedBases.polar A x y := by
-  have hs : ReciprocityTheory.ReducedBases.polar A y x = ReciprocityTheory.ReducedBases.polar A x y := by
-    have hT : Aᵀ = A := by simpa using hA.eq
-    rw [ReciprocityTheory.ReducedBases.polar, ReciprocityTheory.ReducedBases.polar, dotProduct_mulVec, ← mulVec_transpose, hT,
-      dotProduct_comm]
-  have ha : toReal (x + y) = toReal x + toReal y := by funext i; simp [toReal]
-  simp only [polar, ofMatrix_apply, ReciprocityTheory.ReducedBases.Q]
-  simp only [ReciprocityTheory.ReducedBases.polar, ha, mulVec_add, dotProduct_add, add_dotProduct] at hs ⊢
-  linarith
-
-theorem gram_ofMatrix (hA : A.IsHermitian) : gram (ofMatrix A) (Pi.basisFun ℤ (Fin d)) = A := by
-  ext i j
-  rw [gram_apply, polar_ofMatrix hA]
-  simp [ReciprocityTheory.ReducedBases.polar, toReal, dotProduct, mulVec, Pi.single_apply]
-
-theorem realExtension_ofMatrix_posDef (hA : A.PosDef) : (realExtension (ofMatrix A)).PosDef := by
-  rwa [realExtension_posDef_iff _ (Pi.basisFun ℤ (Fin d)), gram_ofMatrix hA.isHermitian]
-
 end Matrix
 
 end GlobalTheory.ClassMin

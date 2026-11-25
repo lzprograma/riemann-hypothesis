@@ -192,12 +192,7 @@ theorem card_quotient_range_comp {M : Type*} [AddCommGroup M] [Module (𝓞 K) M
 theorem card_quotient_mulVecLin {ι : Type*} [Fintype ι] [DecidableEq ι] (A : Matrix ι ι (𝓞 K))
     (hA : A.det ≠ 0) :
     Nat.card ((ι → 𝓞 K) ⧸ LinearMap.range A.mulVecLin) = (Algebra.norm ℤ A.det).natAbs := by
-  have hinj : Function.Injective A.mulVecLin := by
-    intro x y hxy
-    by_contra hne
-    refine hA (Matrix.exists_mulVec_eq_zero_iff.mp ⟨x - y, sub_ne_zero.mpr hne, ?_⟩)
-    rw [mulVec_sub]
-    exact sub_eq_zero.mpr hxy
+  have hinj : Function.Injective A.mulVecLin := Matrix.mulVec_injective_of_det_ne_zero hA
   set N := LinearMap.range A.mulVecLin
   let e : (ι → 𝓞 K) ≃ₗ[ℤ] N.restrictScalars ℤ :=
     (LinearEquiv.ofInjective A.mulVecLin hinj).restrictScalars ℤ
@@ -400,36 +395,6 @@ def HermitianMetric.scale (h : HermitianMetric K E) (c : ℝ) (hc : 0 < c) : Her
   form σ := coreScale (h.form σ) c hc
   form_conj σ x y := by
     rw [coreScale_inner, coreScale_inner, h.form_conj, map_mul, Complex.conj_ofReal]
-
-theorem gramDet_scale (h : HermitianMetric K E) (c : ℝ) (hc : 0 < c) (σ : K →+* ℂ) {ι : Type*}
-    [Fintype ι] [DecidableEq ι] (s : ι → E) :
-    gramDet (h.scale c hc) σ s = c ^ (2 * Fintype.card ι) * gramDet h σ s := by
-  simp only [gramDet]
-  have : (gram ℂ fun i ↦ fibreVec (h.scale c hc) σ (s i)) =
-      ((c ^ 2 : ℝ) : ℂ) • gram ℂ fun i ↦ fibreVec h σ (s i) := by
-    ext i j
-    rfl
-  rw [this, det_smul, ← Complex.ofReal_pow, Complex.re_ofReal_mul, pow_mul]
-
-theorem arithDegree_scale (h : HermitianMetric K E) (c : ℝ) (hc : 0 < c) :
-    arithDegree (h.scale c hc) =
-      arithDegree h - Module.finrank (𝓞 K) E * Module.finrank ℚ K * Real.log c := by
-  obtain ⟨s, hs⟩ := exists_linearIndependent_fin (K := K) (E := E)
-  rw [arithDegree_eq (h.scale c hc) hs (Fintype.card_fin _), arithDegree_eq h hs (Fintype.card_fin _)]
-  simp only [degreeWith, gramDet_scale, Fintype.card_fin]
-  have hlog : ∀ σ : K →+* ℂ, Real.log (c ^ (2 * Module.finrank (𝓞 K) E) * gramDet h σ s) =
-      2 * Module.finrank (𝓞 K) E * Real.log c + Real.log (gramDet h σ s) := fun σ ↦ by
-    rw [Real.log_mul (pow_pos hc _).ne' (gramDet_pos h σ hs).ne', Real.log_pow]
-    push_cast; ring
-  simp only [hlog]
-  rw [Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, NumberField.Embeddings.card,
-    nsmul_eq_mul]
-  ring
-
-theorem arithDegree_ratIntegers_scale (c : ℝ) (hc : 0 < c) :
-    arithDegree ((HermitianMetric.integers ℚ).scale c hc) = -Real.log c := by
-  rw [arithDegree_scale, arithDegree_integers, Module.finrank_self, Module.finrank_self]
-  simp
 
 end
 

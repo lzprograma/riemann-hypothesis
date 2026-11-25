@@ -4,51 +4,6 @@ public import Mathlib.Algebra.MvPolynomial.PDeriv
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.CategoryTheory.Category.Basic
 public import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Algebra.Star.BigOperators
 public import Mathlib.Basic.Complex.BigOperators
@@ -168,18 +123,18 @@ theorem gf_X_mul (k : τ) (p q : MvPolynomial τ ℂ) : gf w (X k * p) q = κ * 
   · rw [X, monomial_mul, one_mul, pderiv_monomial, gf_monomial, gf_monomial]
     by_cases h : Finsupp.single k 1 + s = t
     · subst h
-      rw [if_pos rfl, if_pos (add_tsub_cancel_left _ _).symm, hw]
+      rw [ite_eq_left rfl, ite_eq_left (add_tsub_cancel_left _ _).symm, hw]
       simp only [Finsupp.add_apply, Finsupp.single_eq_same]
       push_cast; ring
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       by_cases h' : s = t - Finsupp.single k 1
-      · rw [if_pos h']
+      · rw [ite_eq_left h']
         have : t k = 0 := by
           by_contra h0
           apply h
           rw [h', add_tsub_cancel_of_le (Finsupp.single_le_iff.mpr (Nat.one_le_iff_ne_zero.mpr h0))]
         simp [this]
-      · rw [if_neg h']; ring
+      · rw [ite_eq_right h']; ring
   · rw [mul_add, gf_add_left, gf_add_left, h1, h2, mul_add]
   · rw [gf_add_right, map_add (f := _), gf_add_right, h1, h2, mul_add]
 
@@ -189,20 +144,20 @@ theorem gf_pderiv (k : τ) (p q : MvPolynomial τ ℂ) : κ * gf w (pderiv k p) 
   · rw [X, monomial_mul, one_mul, pderiv_monomial, gf_monomial, gf_monomial]
     by_cases h : s = Finsupp.single k 1 + t
     · subst h
-      rw [if_pos rfl, if_pos (add_tsub_cancel_left _ _), hw, add_tsub_cancel_left]
+      rw [ite_eq_left rfl, ite_eq_left (add_tsub_cancel_left _ _), hw, add_tsub_cancel_left]
       simp only [Finsupp.add_apply, Finsupp.single_eq_same, star_mul]
       push_cast
       simp only [Complex.star_def, Complex.conj_natCast, map_add (f := _), map_one]
       ring
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       by_cases h' : s - Finsupp.single k 1 = t
-      · rw [if_pos h']
+      · rw [ite_eq_left h']
         have : s k = 0 := by
           by_contra h0
           apply h
           rw [← h', add_tsub_cancel_of_le (Finsupp.single_le_iff.mpr (Nat.one_le_iff_ne_zero.mpr h0))]
         simp [this]
-      · rw [if_neg h']; ring
+      · rw [ite_eq_right h']; ring
   · rw [map_add (f := _), gf_add_left, gf_add_left, ← h1, ← h2, mul_add]
   · rw [gf_add_right, mul_add, mul_add, gf_add_right, h1, h2]
 
@@ -236,25 +191,16 @@ theorem gf_pos (hs : ∀ s, star (w s) = w s) (hp : ∀ s, 0 < (w s).re) (p : Mv
   · rw [key]; exact mul_nonneg (Complex.normSq_nonneg _) (hp t).le
   · rw [key]; exact mul_pos (Complex.normSq_pos.mpr hs0) (hp s)
 
-omit [Fintype τ] in
-theorem pderiv_X' (v u : τ) : pderiv v (X u : MvPolynomial τ ℂ) = if v = u then 1 else 0 := by
-  rw [pderiv_X]; by_cases h : v = u
-  · subst h; simp
-  · simp [Ne.symm h, h]
-
 theorem der_expand (D : Derivation ℂ (MvPolynomial τ ℂ) (MvPolynomial τ ℂ)) (p : MvPolynomial τ ℂ) :
     D p = ∑ v, D (X v) * pderiv v p := by
-  induction p using MvPolynomial.induction_on with
-  | C a => simp
-  | add p q hp hq => simp [hp, hq, mul_add, Finset.sum_add_distrib]
-  | mul_X p u hp =>
-    rw [Derivation.leibniz, hp]
-    simp only [smul_eq_mul, Derivation.leibniz, pderiv_X', mul_add, Finset.sum_add_distrib]
-    have h1 : ∑ v, D (X v) * (p * (if v = u then (1 : MvPolynomial τ ℂ) else 0)) = p * D (X u) := by
-      simp [mul_ite]; ring
-    have h2 : ∑ v, D (X v) * (X u * pderiv v p) = X u * ∑ v, D (X v) * pderiv v p := by
-      rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun v _ => by ring
-    rw [h1, h2]
+  let D' : Derivation ℂ (MvPolynomial τ ℂ) (MvPolynomial τ ℂ) := ∑ v, D (X v) • pderiv (R := ℂ) v
+  have hD' : ∀ q, D' q = ∑ v, D (X v) * pderiv v q := fun q => by
+    change (D' : MvPolynomial τ ℂ →ₗ[ℂ] MvPolynomial τ ℂ) q = _
+    simp [D', Derivation.coe_sum_linearMap, LinearMap.sum_apply, Derivation.coe_smul_linearMap,
+      smul_eq_mul]
+  have h : D = D' := MvPolynomial.derivation_ext fun u => by
+    simp [hD', Pi.single_apply, mul_ite]
+  exact (DFunLike.congr_fun h p).trans (hD' p)
 
 theorem der_expand2 (D : Derivation ℂ (MvPolynomial τ ℂ) (MvPolynomial τ ℂ))
     (hlin : ∀ v, D (X v) = ∑ u, (D (X v)).coeff (Finsupp.single u 1) • X u) (p : MvPolynomial τ ℂ) :
@@ -279,101 +225,37 @@ theorem der_adj {w : (τ →₀ ℕ) → ℂ} (κ : ℂ) (hw : ∀ s k, w (Finsu
 def bf (w : (τ →₀ ℕ) → ℂ) (p q : MvPolynomial τ ℂ) : ℂ :=
   ∑ s ∈ p.support ∪ q.support, p.coeff s * q.coeff s * w s
 
+private theorem bf_eq_gf {τ : Type} [DecidableEq τ] (w : (τ →₀ ℕ) → ℂ) (p q : MvPolynomial τ ℂ) :
+    bf w p q = gf w (map (starRingEnd ℂ) p) q := by
+  have hs : (map (starRingEnd ℂ) p).support = p.support :=
+    Finset.ext fun s => by simp [MvPolynomial.mem_support_iff, coeff_map]
+  simp only [bf, gf, hs, coeff_map, ← Complex.star_def, star_star]
+
 theorem bf_eq (w : (τ →₀ ℕ) → ℂ) (S : Finset (τ →₀ ℕ)) {p q : MvPolynomial τ ℂ} (hp : p.support ⊆ S)
     (hq : q.support ⊆ S) : bf w p q = ∑ s ∈ S, p.coeff s * q.coeff s * w s := by
-  unfold bf
-  refine Finset.sum_subset (Finset.union_subset hp hq) fun s _ hs => ?_
-  simp only [Finset.mem_union, not_or] at hs
-  have h0 : p.coeff s = 0 := by
-    by_contra h; exact hs.1 (MvPolynomial.mem_support_iff.mpr h)
-  simp [h0]
-
-theorem bf_add_left (w : (τ →₀ ℕ) → ℂ) (p p' q : MvPolynomial τ ℂ) : bf w (p + p') q = bf w p q + bf w p' q := by
-  classical
-  have h1 := support_add (p := p) (q := p')
-  rw [bf_eq w (p.support ∪ p'.support ∪ q.support) (h1.trans Finset.subset_union_left) Finset.subset_union_right,
-    bf_eq w (p.support ∪ p'.support ∪ q.support) ((Finset.subset_union_left).trans Finset.subset_union_left)
-      Finset.subset_union_right,
-    bf_eq w (p.support ∪ p'.support ∪ q.support) ((Finset.subset_union_right).trans Finset.subset_union_left)
-      Finset.subset_union_right, ← Finset.sum_add_distrib]
-  refine Finset.sum_congr rfl fun s _ => ?_
-  simp; ring
-
-theorem bf_add_right (w : (τ →₀ ℕ) → ℂ) (p q q' : MvPolynomial τ ℂ) : bf w p (q + q') = bf w p q + bf w p q' := by
-  classical
-  have h1 := support_add (p := q) (q := q')
-  rw [bf_eq w (p.support ∪ (q.support ∪ q'.support)) Finset.subset_union_left (h1.trans Finset.subset_union_right),
-    bf_eq w (p.support ∪ (q.support ∪ q'.support)) Finset.subset_union_left
-      ((Finset.subset_union_left).trans Finset.subset_union_right),
-    bf_eq w (p.support ∪ (q.support ∪ q'.support)) Finset.subset_union_left
-      ((Finset.subset_union_right).trans Finset.subset_union_right), ← Finset.sum_add_distrib]
-  refine Finset.sum_congr rfl fun s _ => ?_
-  simp; ring
+  rw [bf_eq_gf, gf_eq w S ((support_map_subset (starRingEnd ℂ) p).trans hp) hq]
+  simp only [coeff_map, ← Complex.star_def, star_star]
 
 theorem bf_monomial (w : (τ →₀ ℕ) → ℂ) (s t : τ →₀ ℕ) (a b : ℂ) :
     bf w (monomial s a) (monomial t b) = if s = t then a * b * w s else 0 := by
-  classical
-  rw [bf_eq w {s, t} ((support_monomial_subset).trans (by simp)) ((support_monomial_subset).trans (by simp))]
-  by_cases h : s = t
-  · subst h; simp [coeff_monomial]
-  · rw [Finset.sum_pair h]; simp [coeff_monomial, h, Ne.symm h]
+  rw [bf_eq_gf, map_monomial, gf_monomial, ← Complex.star_def, star_star]
 
 theorem bf_X_mul {w : (τ →₀ ℕ) → ℂ} (κ : ℂ) (hw : ∀ s k, w (Finsupp.single k 1 + s) = κ * ((s k : ℂ) + 1) * w s)
     (k : τ) (p q : MvPolynomial τ ℂ) : bf w (X k * p) q = κ * bf w p (pderiv k q) := by
-  revert p q
-  refine gf_induction (fun s t a b => ?_) (fun p p' q h1 h2 => ?_) (fun p q q' h1 h2 => ?_)
-  · rw [X, monomial_mul, one_mul, pderiv_monomial, bf_monomial, bf_monomial]
-    by_cases h : Finsupp.single k 1 + s = t
-    · subst h
-      rw [if_pos rfl, if_pos (add_tsub_cancel_left _ _).symm, hw]
-      simp only [Finsupp.add_apply, Finsupp.single_eq_same]
-      push_cast; ring
-    · rw [if_neg h]
-      by_cases h' : s = t - Finsupp.single k 1
-      · rw [if_pos h']
-        have : t k = 0 := by
-          by_contra h0
-          apply h
-          rw [h', add_tsub_cancel_of_le (Finsupp.single_le_iff.mpr (Nat.one_le_iff_ne_zero.mpr h0))]
-        simp [this]
-      · rw [if_neg h']; ring
-  · rw [mul_add, bf_add_left, bf_add_left, h1, h2, mul_add]
-  · rw [bf_add_right, map_add (f := _), bf_add_right, h1, h2, mul_add]
+  rw [bf_eq_gf, map_mul, map_X, gf_X_mul κ hw, ← bf_eq_gf]
 
 theorem bf_pderiv {w : (τ →₀ ℕ) → ℂ} (κ : ℂ) (hw : ∀ s k, w (Finsupp.single k 1 + s) = κ * ((s k : ℂ) + 1) * w s)
     (k : τ) (p q : MvPolynomial τ ℂ) : κ * bf w (pderiv k p) q = bf w p (X k * q) := by
-  revert p q
-  refine gf_induction (fun s t a b => ?_) (fun p p' q h1 h2 => ?_) (fun p q q' h1 h2 => ?_)
-  · rw [X, monomial_mul, one_mul, pderiv_monomial, bf_monomial, bf_monomial]
-    by_cases h : s = Finsupp.single k 1 + t
-    · subst h
-      rw [if_pos rfl, if_pos (add_tsub_cancel_left _ _), hw, add_tsub_cancel_left]
-      simp only [Finsupp.add_apply, Finsupp.single_eq_same]
-      push_cast; ring
-    · rw [if_neg h]
-      by_cases h' : s - Finsupp.single k 1 = t
-      · rw [if_pos h']
-        have : s k = 0 := by
-          by_contra h0
-          apply h
-          rw [← h', add_tsub_cancel_of_le (Finsupp.single_le_iff.mpr (Nat.one_le_iff_ne_zero.mpr h0))]
-        simp [this]
-      · rw [if_neg h']; ring
-  · rw [map_add (f := _), bf_add_left, bf_add_left, ← h1, ← h2, mul_add]
-  · rw [bf_add_right, mul_add, mul_add, bf_add_right, h1, h2]
+  rw [bf_eq_gf, ← pderiv_map, gf_pderiv κ hw, ← bf_eq_gf]
 
 theorem bf_sum_left (w : (τ →₀ ℕ) → ℂ) {ι : Type} (I : Finset ι) (f : ι → MvPolynomial τ ℂ) (q : MvPolynomial τ ℂ) :
     bf w (∑ i ∈ I, f i) q = ∑ i ∈ I, bf w (f i) q := by
-  classical
-  induction I using Finset.induction_on with
-  | empty => simp [bf]
-  | insert a I ha ih => rw [Finset.sum_insert ha, bf_add_left, ih, Finset.sum_insert ha]
+  rw [bf_eq_gf, map_sum, gf_sum_left]
+  simp_rw [← bf_eq_gf]
 
 theorem bf_sum_right (w : (τ →₀ ℕ) → ℂ) {ι : Type} (I : Finset ι) (p : MvPolynomial τ ℂ) (f : ι → MvPolynomial τ ℂ) :
     bf w p (∑ i ∈ I, f i) = ∑ i ∈ I, bf w p (f i) := by
-  classical
-  induction I using Finset.induction_on with
-  | empty => simp [bf]
-  | insert a I ha ih => rw [Finset.sum_insert ha, bf_add_right, ih, Finset.sum_insert ha]
+  rw [bf_eq_gf, gf_sum_right]
+  simp_rw [← bf_eq_gf]
 
 end PositivityTheory.Rg.Sw.LC.CoreC.G

@@ -12,8 +12,6 @@ namespace Formalism.L2.Pj
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {T : Top D} (h : LawsP T)
 
 def EtArch (th tableLineDegreeTwo : ℝ) : ∀ j i, (recB h.toLawsCore).Cusp j (wEt D j i) → Prop :=

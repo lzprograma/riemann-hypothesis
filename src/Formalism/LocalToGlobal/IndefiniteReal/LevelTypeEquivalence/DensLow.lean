@@ -91,8 +91,7 @@ theorem bumpQ_eq_zero {r : ℝ} (hr : 0 < r) {m : Matrix (Fin n) (Fin n) ℂ} (h
   linarith
 
 theorem bumpQ_support {r : ℝ} (hr : 0 < r) {m : Matrix (Fin n) (Fin n) ℂ} (hm : bumpQ r m ≠ 0) : ‖m - 1‖ < r := by
-  by_contra h
-  push_neg at h
+  by_contra! h
   exact hm (bumpQ_eq_zero hr h)
 
 theorem bumpQ_compact {r : ℝ} (hr : 0 < r) : HasCompactSupport (bumpQ (n := n) r) := by
@@ -175,7 +174,7 @@ open scoped InnerProductSpace ContDiff
 
 namespace Formalism.IndefR.Eqv.KerDiag
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar Matrix.normedAddCommGroup Matrix.normedSpace
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar} (M : DSModel V S) (τ : D.what₂.Tau)
 

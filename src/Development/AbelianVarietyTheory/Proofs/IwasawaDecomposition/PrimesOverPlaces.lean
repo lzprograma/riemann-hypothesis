@@ -4,41 +4,7 @@ public import Formalism.LocalToGlobal.Columns.RecLevel
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsGLocIdGChiTied
 import Formalism.LocalToGlobal.Columns.BaseLemmas
 public import Formalism.LocalToGlobal.Columns.RecLevelLocP
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -154,7 +120,7 @@ theorem primes_over_places : ∀ (X : Fields) (Pr : Primes X) (hc : Formalism.Ba
     have hL : ∏ w, φ w = ∏ w ∈ Pr.vGs, φ' w := by
       rw [← Finset.prod_coe_sort Pr.vGs φ']
       refine Finset.prod_congr rfl fun w _ => ?_
-      simp only [φ', dif_pos w.2]
+      simp only [φ', dite_eq_left w.2]
     have hA : ∀ a : Fin 2, ∏ᶠ (v : HeightOneSpectrum (𝓞 X.F)) (h : (Pr.g a : 𝓞 X.F) ∈ v.asIdeal), φ (wOf a v h) =
         ∏ w ∈ Pr.vG a, φ' w := by
       intro a
@@ -166,7 +132,7 @@ theorem primes_over_places : ∀ (X : Fields) (Pr : Primes X) (hc : Formalism.Ba
         intro v hv
         have h' : (Pr.g a : 𝓞 X.F) ∈ v.asIdeal := by
           by_contra hn
-          exact hv (by simp only [f, dif_neg hn])
+          exact hv (by simp only [f, dite_eq_right hn])
         rw [Finset.coe_image]
         exact ⟨(wOf a v h').1, hin a v h', under_of_isOver (hspec a v h')⟩
       rw [e1, finprod_eq_prod_of_mulSupport_subset f hsupp, Finset.prod_image]
@@ -178,7 +144,7 @@ theorem primes_over_places : ∀ (X : Fields) (Pr : Primes X) (hc : Formalism.Ba
         have hw' : w ∈ Pr.vGs := mem_vGs hw
         have e2 : wOf a (w.under (𝓞 X.F)) hg = ⟨w, hw'⟩ :=
           ((h1 a _ hg ⟨w, hw'⟩).1 (isOver_of_under rfl)).symm
-        simp only [f, φ', dif_pos hg, dif_pos hw', e2]
+        simp only [f, φ', dite_eq_left hg, dite_eq_left hw', e2]
       · intro w hw w' hw' he
         have hg : (Pr.g a : 𝓞 X.F) ∈ (w.under (𝓞 X.F)).asIdeal := by
           show (Pr.g a : 𝓞 X.F) ∈ Ideal.comap (algebraMap (𝓞 X.F) (𝓞 X.E)) w.asIdeal

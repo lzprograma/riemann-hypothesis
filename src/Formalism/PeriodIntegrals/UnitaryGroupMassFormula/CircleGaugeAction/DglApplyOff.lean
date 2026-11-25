@@ -1,51 +1,7 @@
 module
 
 public import Formalism.PeriodIntegrals.ExistsGaugeMeasureForEachRank
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -99,7 +55,7 @@ lemma dgl_mem {u : ℂ} (hu : (starRingEnd ℂ) u * u = 1) : dgl r u ∈ UWb 0 r
       by_cases hp : p = cI r
       · subst hp
         have hc : Fin.rev (cI r) = cI r := (rev_eq_c_iff _).2 rfl
-        simp only [hc, if_true]
+        simp only [hc, ite_true]
         show star u * -1 * u = -1
         rw [show star u = (starRingEnd ℂ) u from rfl]
         linear_combination -hu
@@ -111,13 +67,13 @@ lemma dgl_mem {u : ℂ} (hu : (starRingEnd ℂ) u * u = 1) : dgl r u ∈ UWb 0 r
       have := congrArg Fin.val h
       simp [eI, cI] at this
       omega
-    simp only [bvec, dgl, Matrix.diagonal_mulVec_single, if_neg hne, one_mul]
+    simp only [bvec, dgl, Matrix.diagonal_mulVec_single, ite_eq_right hne, one_mul]
   · have hne : esI 0 r a ≠ cI r := by
       intro h
       have := congrArg Fin.val h
       simp [esI, cI] at this
       omega
-    simp only [bvec, dgl, Matrix.diagonal_mulVec_single, if_neg hne, one_mul]
+    simp only [bvec, dgl, Matrix.diagonal_mulVec_single, ite_eq_right hne, one_mul]
 
 lemma col_fix {g : Mat 0 r} (hg : g ∈ UWb 0 r) (j : Fin (2 * r + 0 + 1)) (hj : j ≠ cI r)
     (i : Fin (2 * r + 0 + 1)) : g i j = if i = j then 1 else 0 := by
@@ -169,9 +125,9 @@ lemma dgl_norm {u : ℂ} (h : dgl r u ∈ UWb 0 r) : (starRingEnd ℂ) u * u = 1
   have h1 := congrFun (congrFun hU (cI r)) (cI r)
   have hc : Fin.rev (cI r) = cI r := (rev_eq_c_iff (cI r)).2 rfl
   simp only [dgl, Matrix.diagonal_conjTranspose, Matrix.diagonal_mul, Matrix.mul_diagonal,
-    Pi.star_apply, if_true] at h1
+    Pi.star_apply, ite_true] at h1
   rw [Hpk_apply] at h1
-  simp only [hc, if_true] at h1
+  simp only [hc, ite_true] at h1
   show (starRingEnd ℂ) u * u = 1
   rw [show (starRingEnd ℂ) u = star u from rfl]
   linear_combination -h1

@@ -54,7 +54,7 @@ lemma tb_isUnit_of_omega {y : Matrix (Fin n) (Fin n) ℂ} (hy : y ∈ OmegaSet n
   | zero => simp
   | succ m =>
     have h := hy (Fin.last m)
-    simp only [lead, Fin.val_last, le_refl, dif_pos] at h
+    simp only [lead, Fin.val_last, le_refl, dite_eq_left] at h
     have e : y.submatrix (Fin.castLE (le_refl (m + 1))) (Fin.castLE (le_refl (m + 1))) = y := by
       ext a b; rfl
     rw [e] at h
@@ -67,12 +67,12 @@ lemma tb_contDiff_entry (a b : Fin n) : ContDiff ℂ ω (fun z : Matrix (Fin n) 
 lemma tb_contDiff_lead (i : ℕ) : ContDiff ℂ ω (lead (n := n) i) := by
   unfold lead
   by_cases h : i ≤ n
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     simp_rw [det_apply']
     refine ContDiff.sum fun σ _ => ?_
     refine contDiff_const.mul ?_
     exact contDiff_prod fun j _ => tb_contDiff_entry _ _
-  · simp only [dif_neg h]
+  · simp only [dite_eq_right h]
     exact contDiff_const
 
 lemma tb_contDiffOn_zpow {f : Matrix (Fin n) (Fin n) ℂ → ℂ} {s : Set (Matrix (Fin n) (Fin n) ℂ)}

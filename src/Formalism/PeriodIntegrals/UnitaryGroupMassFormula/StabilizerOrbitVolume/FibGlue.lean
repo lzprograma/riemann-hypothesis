@@ -2,53 +2,7 @@ module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.FibFour
 public import Mathlib.MeasureTheory.Integral.RieszMarkovKakutani.Real
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Presheaf
 
 @[expose] public section
 
@@ -68,7 +22,7 @@ open Classical in
 def extZ (U : Set V) (φ : U → ℝ) : V → ℝ := fun v => if h : v ∈ U then φ ⟨v, h⟩ else 0
 
 theorem extZ_val (U : Set V) (φ : U → ℝ) (u : U) : extZ U φ u = φ u := by
-  simp only [extZ, dif_pos u.2]
+  simp only [extZ, dite_eq_left u.2]
 
 private theorem tsupport_extZ_subset_image (U : Set V) (φ : U → ℝ) (hs : HasCompactSupport φ) :
     tsupport (extZ U φ) ⊆ Subtype.val '' tsupport φ := by
@@ -79,8 +33,8 @@ private theorem tsupport_extZ_subset_image (U : Set V) (φ : U → ℝ) (hs : Ha
   by_cases h : v ∈ U
   · refine ⟨⟨v, h⟩, subset_tsupport _ ?_, rfl⟩
     rw [Function.mem_support]
-    simpa only [extZ, dif_pos h] using hv
-  · exact (hv (by simp only [extZ, dif_neg h])).elim
+    simpa only [extZ, dite_eq_left h] using hv
+  · exact (hv (by simp only [extZ, dite_eq_right h])).elim
 
 theorem extZ_props {U : Set V} (hU : IsOpen U) (φ : U → ℝ) (hc : Continuous φ)
     (hs : HasCompactSupport φ) : IsCcOn U (extZ U φ) := by
@@ -109,21 +63,21 @@ theorem extZ_props {U : Set V} (hU : IsOpen U) (φ : U → ℝ) (hc : Continuous
 theorem extZ_add (U : Set V) (φ ψ : U → ℝ) : extZ U (φ + ψ) = extZ U φ + extZ U ψ := by
   funext v
   by_cases h : v ∈ U
-  · simp only [extZ, dif_pos h, Pi.add_apply]
-  · simp only [extZ, dif_neg h, Pi.add_apply, add_zero]
+  · simp only [extZ, dite_eq_left h, Pi.add_apply]
+  · simp only [extZ, dite_eq_right h, Pi.add_apply, add_zero]
 
 theorem extZ_smul (U : Set V) (c : ℝ) (φ : U → ℝ) : extZ U (c • φ) = c • extZ U φ := by
   funext v
   by_cases h : v ∈ U
-  · simp only [extZ, dif_pos h, Pi.smul_apply]
-  · simp only [extZ, dif_neg h, Pi.smul_apply, smul_zero]
+  · simp only [extZ, dite_eq_left h, Pi.smul_apply]
+  · simp only [extZ, dite_eq_right h, Pi.smul_apply, smul_zero]
 
 theorem extZ_nonneg (U : Set V) (φ : U → ℝ) (h : 0 ≤ φ) : 0 ≤ extZ U φ := by
   intro v
   by_cases hv : v ∈ U
-  · simp only [extZ, dif_pos hv, Pi.zero_apply]
+  · simp only [extZ, dite_eq_left hv, Pi.zero_apply]
     exact h ⟨v, hv⟩
-  · simp only [extZ, dif_neg hv, Pi.zero_apply, le_refl]
+  · simp only [extZ, dite_eq_right hv, Pi.zero_apply, le_refl]
 
 end Ext
 
@@ -141,7 +95,7 @@ theorem G_spec (hD : DensAll μ f ι ν U) {φ : V → ℝ} (h : IsCcOn U φ) :
     Continuous (G hD φ) ∧ ∀ S : Set X, IsCompact S →
       ∫ v in f ⁻¹' (ι '' S), φ v ∂μ = ∫ b in S, G hD φ b ∂ν := by
   have hc := Classical.choose_spec (hD φ h.1 h.2.1 h.2.2)
-  simp only [G, dif_pos h]
+  simp only [G, dite_eq_left h]
   exact hc
 
 variable [OpensMeasurableSpace X] [T2Space X] [LocallyCompactSpace X]
@@ -149,8 +103,7 @@ variable [OpensMeasurableSpace X] [T2Space X] [LocallyCompactSpace X]
 
 private theorem nonneg_of_setIntegral_compact_nonneg {g : X → ℝ} (hg : Continuous g)
     (h : ∀ S, IsCompact S → 0 ≤ ∫ b in S, g b ∂ν) (b0 : X) : 0 ≤ g b0 := by
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have hcneg : g b0 / 2 < 0 := by linarith
   have hW : {b | g b < g b0 / 2} ∈ 𝓝 b0 :=
     (isOpen_lt hg continuous_const).mem_nhds (show g b0 < g b0 / 2 by linarith)
@@ -286,9 +239,9 @@ theorem extZ_restr (hU : IsOpen U) (φ : V → ℝ) (h : IsCcOn U φ) :
     extZ U (restr hU φ h) = φ := by
   funext v
   by_cases hv : v ∈ U
-  · simp only [extZ, dif_pos hv]
+  · simp only [extZ, dite_eq_left hv]
     rfl
-  · simp only [extZ, dif_neg hv]
+  · simp only [extZ, dite_eq_right hv]
     exact (image_eq_zero_of_notMem_tsupport fun ht => hv (h.2.2 ht)).symm
 
 theorem fibG_integral (hD : DensAll μ f ι ν U) (hU : IsOpen U) (b : X) (φ : V → ℝ)

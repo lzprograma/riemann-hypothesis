@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitAtOfIsSplitPl
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.GuDefs
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -48,21 +49,7 @@ private theorem spehInf_eq_sum_shifted_map (d : ℕ) (m : Multiset ℂ) :
 
 private theorem infOfWeight_nodup' (n : ℕ) (lam : Formalism.BasicNotions.DomWeight n) :
     (GlobalTheory.UnitaryBC.infOfWeight lam).Nodup := by
-  unfold GlobalTheory.UnitaryBC.infOfWeight
-  refine Multiset.Nodup.map ?_ Finset.univ.nodup
-  intro a b h
-  have h2 : ((lam.w a - (a:ℕ) : ℤ) : ℂ) = ((lam.w b - (b:ℕ) : ℤ) : ℂ) := by
-    push_cast
-    linear_combination h
-  have h3 : lam.w a - (a:ℕ) = lam.w b - (b:ℕ) := by exact_mod_cast h2
-  rcases lt_trichotomy a b with hab | hab | hab
-  · have := lam.anti hab.le
-    have : (a:ℕ) < (b:ℕ) := hab
-    omega
-  · exact hab
-  · have := lam.anti hab.le
-    have : (b:ℕ) < (a:ℕ) := hab
-    omega
+  apply _root_.GlobalTheory.DefiniteBC.nodup_infOfWeight <;> assumption
 
 private theorem multiset_map_finset_sum {ι : Type*} (s : Finset ι) (g : ℂ → ℂ) (f : ι → Multiset ℂ) :
     Multiset.map g (∑ i ∈ s, f i) = ∑ i ∈ s, Multiset.map g (f i) :=

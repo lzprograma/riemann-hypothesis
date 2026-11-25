@@ -12,8 +12,6 @@ open scoped TensorProduct
 
 namespace Formalism.IndefR.Eqv
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 
 open Classical
@@ -87,8 +85,8 @@ theorem continuous_lineF (τ : D.what₂.Tau) (z : Matrix (Fin m) (Fin n) ℂ) :
   refine continuous_pi fun i => continuous_pi fun j => ?_
   refine (continuous_glueA D _).comp ((continuous_splitInv D).comp (continuous_pi fun τ' => ?_))
   by_cases h : τ' = τ
-  · simp only [h, if_true]; exact Complex.continuous_ofReal.mul continuous_const
-  · simp only [h, if_false]; exact continuous_const
+  · simp only [h, ite_true]; exact Complex.continuous_ofReal.mul continuous_const
+  · simp only [h, ite_false]; exact continuous_const
 
 theorem compAt_thetaC (τ : D.what₂.Tau) (w : Datum.Mx D m n) : Datum.compAt (thetaC D) τ w = w.map (psiT D τ) := rfl
 

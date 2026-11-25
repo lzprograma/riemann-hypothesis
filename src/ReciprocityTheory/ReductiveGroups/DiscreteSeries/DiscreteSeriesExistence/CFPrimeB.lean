@@ -125,8 +125,7 @@ theorem khw_extract (ε : Fin n → Bool) {lam : Fin n → ℝ} (hlam : StrictAn
       IsKHWVec ε E (μ - fockWt ε s) (tcoef ((fockBasis n).coord s) y) := by
   classical
   have hne : ∃ s, tcoef ((fockBasis n).coord s) y ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hy0
     rw [tcoef_expand y]
     simp [hcon]
@@ -244,8 +243,7 @@ theorem tens_ker_nontrivial (T : Module.End ℂ M) {V : Submodule ℂ M} {x : Te
     (hx : x ∈ LinearMap.range (TensorProduct.map V.subtype (LinearMap.id : Fock n →ₗ[ℂ] Fock n)))
     (hx0 : x ≠ 0) (hTx : TensorProduct.map T LinearMap.id x = 0) : ∃ v ∈ V, v ≠ 0 ∧ T v = 0 := by
   have hex : ∃ s, tcoef ((fockBasis n).coord s) x ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hx0
     rw [tcoef_expand x]
     simp [hcon]

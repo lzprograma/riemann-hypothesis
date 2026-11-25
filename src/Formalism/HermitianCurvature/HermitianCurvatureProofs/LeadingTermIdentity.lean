@@ -2,50 +2,7 @@ module
 
 public import Formalism.RealPlaceAnalysis.StatementE
 public import Formalism.HermitianCurvature.OperatorsCommuteTranslations
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.PlMonoConst, Formalism.HermitianCurvature.HermitianCurvatureProofs.LeadingTermIdentity
@@ -232,7 +189,7 @@ theorem top_self {m N : ℕ} (a : Fin m → Fin N) (ha : Function.Injective a) :
     obtain ⟨k, hk⟩ : ∃ k, σ k ≠ k := by
       by_contra H
       exact hσ (Equiv.ext fun l => by simpa using not_not.mp (fun h => H ⟨l, h⟩))
-    rw [Finset.prod_eq_zero (Finset.mem_univ k) (if_neg (ha.ne hk)), mul_zero]
+    rw [Finset.prod_eq_zero (Finset.mem_univ k) (ite_eq_right (ha.ne hk)), mul_zero]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -240,7 +197,7 @@ theorem prod_ne_zero_imp {m N : ℕ} (a b : Fin m → Fin N) (σ : Equiv.Perm (F
     (h : ∏ k, (if a (σ k) = b k then (1 : ℂ) else 0) ≠ 0) : ∀ k, a (σ k) = b k := by
   intro k
   by_contra hk
-  exact h (Finset.prod_eq_zero (Finset.mem_univ k) (if_neg hk))
+  exact h (Finset.prod_eq_zero (Finset.mem_univ k) (ite_eq_right hk))
 
 private theorem leading_term_identity_lemma {A : Type} [Ring A] [Algebra ℂ A] {n m : ℕ} (E : Fin n → Fin n → A)
     (P : (Fin m → Fin n) → Prop) [DecidablePred P] (d : (Fin m → Fin n) → ℂ)
@@ -255,9 +212,9 @@ private theorem leading_term_identity_lemma {A : Type} [Ring A] [Algebra ℂ A] 
       (qminor E (fa c) (fb c) (u + s0) - algebraMap ℂ A (u ^ m * ∑ σ : Equiv.Perm (Fin m), ((Equiv.Perm.sign σ : ℤ) : ℂ) * ∏ k, (if fa c (σ k) = fb c k then (1 : ℂ) else 0))) else 0)
       fun c _ => ?_
     by_cases hc : P c
-    · simp only [hc, if_true]
+    · simp only [hc, ite_true]
       exact pl_lmul _ (qminor_poly E (fa c) (fb c) s0)
-    · simp only [hc, if_false]
+    · simp only [hc, ite_false]
       exact pl_zero m
   obtain ⟨C, hC⟩ := hP
   refine ⟨C, fun u => ?_⟩
@@ -276,7 +233,7 @@ private theorem leading_term_identity_lemma {A : Type} [Ring A] [Algebra ℂ A] 
   have hsecond : (∑ c, if P c then algebraMap ℂ A (u ^ m * (d c * ∑ σ : Equiv.Perm (Fin m), ((Equiv.Perm.sign σ : ℤ) : ℂ) * ∏ k, (if fa c (σ k) = fb c k then (1 : ℂ) else 0))) else 0) =
       algebraMap ℂ A (u ^ m * d c0) := by
     rw [Finset.sum_eq_single c0]
-    · rw [if_pos h0, h1, mul_one]
+    · rw [ite_eq_left h0, h1, mul_one]
     · intro c _ hc
       split_ifs with hPc
       · rw [hz c hPc hc, mul_zero, mul_zero, map_zero]

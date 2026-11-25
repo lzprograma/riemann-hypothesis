@@ -60,53 +60,6 @@ noncomputable section
 
 open Classical
 
-theorem cs_abs {V : Type} [AddCommGroup V] [Module ℂ V] (Dv : V → Prop) (β : V → V → ℂ)
-    (hadd : ∀ x y, Dv x → Dv y → Dv (x + y)) (hsmul : ∀ (c : ℂ) x, Dv x → Dv (c • x))
-    (hl : ∀ x₁ x₂ y (c : ℂ), Dv x₁ → Dv x₂ → Dv y → β (x₁ + c • x₂) y = β x₁ y + c * β x₂ y)
-    (hr : ∀ x y₁ y₂ (c : ℂ), Dv x → Dv y₁ → Dv y₂ → β x (y₁ + c • y₂) = β x y₁ + conj c * β x y₂)
-    (hpos : ∀ x, Dv x → 0 ≤ β x x) (x y : V) (hx : Dv x) (hy : Dv y) (hherm : β y x = conj (β x y)) :
-    ‖β x y‖ ^ 2 ≤ (β x x).re * (β y y).re := by
-  set b := β x y with hb
-  set a := (β x x).re
-  set c := (β y y).re
-  have hc : 0 ≤ c := (Complex.nonneg_iff.1 (hpos y hy)).1
-  have hB : ‖b‖ ^ 2 = Complex.normSq b := by rw [Complex.sq_norm]
-  have key : ∀ t : ℝ, 0 ≤ a - 2 * t * Complex.normSq b + t ^ 2 * Complex.normSq b * c := by
-    intro t
-    set μ : ℂ := -(t : ℂ) * b with hμ
-    have e1 : β x (x + μ • y) = β x x + conj μ * b := by rw [hr _ _ _ _ hx hx hy]
-    have e2 : β y (x + μ • y) = conj b + conj μ * β y y := by rw [hr _ _ _ _ hy hx hy, hherm]
-    have hz2 := hpos (x + μ • y) (hadd _ _ hx (hsmul _ _ hy))
-    rw [hl _ _ _ _ hx hy (hadd _ _ hx (hsmul _ _ hy)), e1, e2] at hz2
-    have hre := (Complex.nonneg_iff.1 hz2).1
-    have : (β x x + conj μ * b + μ * (conj b + conj μ * β y y)).re =
-        a - 2 * t * Complex.normSq b + t ^ 2 * Complex.normSq b * c := by
-      simp only [hμ, Complex.add_re, Complex.mul_re, Complex.neg_re, Complex.neg_im, Complex.ofReal_re,
-        Complex.ofReal_im, Complex.conj_re, Complex.conj_im, Complex.normSq_apply, map_mul, map_neg,
-        Complex.conj_ofReal, Complex.mul_im, Complex.add_im]
-      ring
-    linarith [this ▸ hre]
-  rw [hB]
-  rcases hc.eq_or_lt with hc0 | hc0
-  · have hb0 : Complex.normSq b = 0 := by
-      by_contra hne
-      have hpos' : 0 < Complex.normSq b := lt_of_le_of_ne (Complex.normSq_nonneg _) (Ne.symm hne)
-      have := key ((a + 1) / (2 * Complex.normSq b))
-      rw [← hc0] at this
-      field_simp at this
-      nlinarith
-    rw [hb0, ← hc0]; simp
-  · have := key (1 / c)
-    field_simp at this
-    nlinarith [Complex.normSq_nonneg b]
-
-section place
-
-variable {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
-  [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
-
-end place
-
 theorem plusW_eq (ys : List ℝ) (w : List C.Letter) :
     KB.plusW ys w = ys.map (fun y => ((true, y) : C.Letter)) ++ w := by
   induction ys with
@@ -222,16 +175,16 @@ theorem mn_pick (Λ x L E₁ E₂ : ℝ) (K : ℕ) (hx : 0 ≤ x) (h₁ : L ≤ 
   unfold TBB.mn
   by_cases hx0 : x = 0
   · left
-    rw [if_pos hx0, one_mul]
+    rw [ite_eq_left hx0, one_mul]
     exact h₁
-  · rw [if_neg hx0]
+  · rw [ite_eq_right hx0]
     have hxpos : 0 < x := lt_of_le_of_ne hx (Ne.symm hx0)
     by_cases hm : 1 ≤ (Λ / x) ^ K
     · left
       rw [min_eq_left hm, one_mul]
       exact h₁
     · right
-      push_neg at hm
+      push Not at hm
       rw [min_eq_right hm.le]
       have h2 := h₂ hxpos
       have hxK : 0 < x ^ K := pow_pos hxpos K
@@ -502,13 +455,13 @@ theorem wv_np (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq 
           KB.levW P (P.r + 1) c := by
         rw [hlast, hTT]
         rw [hT, hT'] at hc2
-        simp only [C.nAux, KB.levW, B2.zWeight, if_pos hc2.le]
-        rw [if_pos ⟨by omega, trivial⟩]
+        simp only [C.nAux, KB.levW, B2.zWeight, ite_eq_left hc2.le]
+        rw [ite_eq_left ⟨by omega, trivial⟩]
         simp
       have hlev : 0 ≤ KB.levW P (P.r + 1) c := by
         rw [← hfac, hlast]
         simp only [C.nAux]
-        rw [if_pos ⟨by omega, trivial⟩]
+        rw [ite_eq_left ⟨by omega, trivial⟩]
         have : 0 ≤ Complex.normSq c - TBB.TTp p := by
           unfold TBB.TTp; linarith
         simpa using pow_nonneg this _
@@ -518,7 +471,7 @@ theorem wv_np (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq 
   · have hfac : C.nAux P.k P.r (D.ptGG (TBB.TTp p) (h ++ [(1, c)])) (fun _ _ => 1) (1 + j) [(1, c)] =
         KB.levW P (j + 1) c := by
       simp only [C.nAux, KB.levW]
-      rw [if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega)]
       have e : 1 + j + 1 - 1 = j + 1 := by omega
       rw [e]
       simp only [one_mul, mul_one, Nat.cast_one]
@@ -526,7 +479,7 @@ theorem wv_np (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq 
       ring
     have hlev : 0 ≤ KB.levW P (j + 1) c := by
       simp only [KB.levW]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       exact zpow_nonneg (norm_nonneg _) _
     rw [hfac, Real.mul_self_sqrt (mul_nonneg hA hlev)]
     push_cast
@@ -572,15 +525,3 @@ end germ
 end
 
 end Formalism.FourierDecayAlt.P.TBBx5
-
-namespace Formalism.FourierDecayAlt.P.TBBx5
-
-open Formalism.FourierDecayAlt
-
-end Formalism.FourierDecayAlt.P.TBBx5
-
-namespace Formalism.FourierDecayAlt.P
-
-open Formalism.FourierDecayAlt
-
-end Formalism.FourierDecayAlt.P

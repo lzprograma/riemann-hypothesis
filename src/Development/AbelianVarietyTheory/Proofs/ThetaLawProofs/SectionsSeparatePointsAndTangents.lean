@@ -11,53 +11,6 @@ public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.Ver
 public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsLieBasisIffIsUnitDet
 public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsSquareDetComparisonScaleSec
 public import Mathlib.LinearAlgebra.Matrix.Rank
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.AlgebraicGeometry.Morphisms.SchemeTheoreticallyDominant
-import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
-import Mathlib.AlgebraicGeometry.Sites.Fpqc
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.CategoryTheory.ExtremalEpi
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocal
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.OneCSt
@@ -74,7 +27,6 @@ open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCate
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Sp spMap)
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.AbLaw
 
 noncomputable section
@@ -160,8 +112,7 @@ theorem exists_separating (f : X ⟶ Spec (CommRingCat.of k)) {H : LB X} (hH : H
   · exact ⟨s a, hpa, hqa⟩
   obtain ⟨haff, r, hr, hsurj⟩ := hs.2 a
   obtain ⟨b, hb⟩ : ∃ b, valueAt p _ hpa (r b) ≠ valueAt q _ hqa (r b) := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     refine hne (eq_of_valueAt_eq p q haff hpa hqa (RingHom.ext fun x => ?_))
     obtain ⟨F, rfl⟩ := hsurj x
     induction F using MvPolynomial.induction_on with
@@ -203,106 +154,19 @@ open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCate
 open TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.H1
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.AbLaw
 
 theorem GlobalTheory.VeryAmpleJet.veryAmpleBy_of_veryAmpleAt {R : Type} [CommRing R] {A : Over (Spec (CommRingCat.of R))}
     [GrpObj A] {L : LB A.left} (hL : L.IsLB) {N : ℕ} (hA : VeryAmpleAt A L N) {X : Scheme.{0}} (e : X ⟶ A.left)
     [IsIso e] {f : X ⟶ Spec (CommRingCat.of R)} (hf : e ≫ A.hom = f) {H : LB X} (hH : H.IsLB)
     (hw : LBIso H (L.pull e)) :
-    ∃ (m : ℕ) (s : Fin (m + 1) → LB.Sec (pw H N)), VeryAmpleBy f (pw H N) s := by
-  obtain ⟨w, hw⟩ := hw
-  obtain ⟨M, s, hcov, hs⟩ := hA ⊤ (isAffineOpen_top _)
-  have : IsIso (A.hom ⁻¹ᵁ ⊤).ι := inferInstanceAs (IsIso A.left.topIso.hom)
-  obtain ⟨ψ, hiso, hψ⟩ : ∃ ψ : X ⟶ (A.hom ⁻¹ᵁ ⊤).toScheme, IsIso ψ ∧ ψ ≫ (A.hom ⁻¹ᵁ ⊤).ι = e :=
-    ⟨e ≫ inv (A.hom ⁻¹ᵁ ⊤).ι, inferInstance, by simp⟩
-  have hP := linComb_isLB L hL (K := Fin N) (fun _ => (A.hom ⁻¹ᵁ ⊤).ι) (fun _ => 1)
-  have hP' : (pw H N).IsLB := {
-    cover := hH.cover
-    g_self := fun i => by
-      have h := congrArg (· ^ (N : ℤ)) (hH.g_self i)
-      simp only [one_zpow, ← map_zpow] at h
-      exact h
-    cocycle := fun i j k => by
-      have h := congrArg (· ^ (N : ℤ)) (hH.cocycle i j k)
-      simp only [mul_zpow, ← map_zpow] at h
-      exact h }
-  obtain ⟨W, hW⟩ := LBIso.chartPull (chartPullPw H N)
-    (chartPullOut L (fun _ : Fin N => (A.hom ⁻¹ᵁ ⊤).ι) (fun _ => 1) ψ _
-      fun _ => (Category.id_comp _).trans hψ.symm)
-    (iso_linComb ((isGen_iff w).1 hw) (fun _ : Fin N => 𝟙 X) (fun _ => 1))
-  choose s' hs' using fun i => sec_pull_down ((isGen_iff W).1 hW) hP hP' (s i)
-  have loc : ∀ i, nonzeroLocus (M := pw H N) (s' i) = ψ ⁻¹ᵁ nonzeroLocus (s i) := fun i => by
-    ext y
-    refine (mem_nonzeroLocus _ y).trans (Iff.trans ⟨fun ⟨k, hk, u⟩ => ?_, fun ⟨j, hj, u⟩ => ?_⟩
-      (mem_nonzeroLocus _ (ψ y)).symm)
-    · obtain ⟨j, hj⟩ := exists_chart hP (ψ y)
-      have e := hs' i _ (𝟙 _) y j k hj hk
-      rw [Category.id_comp, gs_stalkMap ψ y _ hj] at e
-      exact ⟨j, hj, (isUnit_map_iff (ψ.stalkMap y).hom _).1
-        ((congrArg IsUnit e).mpr ((Units.isUnit _).mul u))⟩
-    · obtain ⟨k, hk⟩ := exists_chart hP' y
-      have e := hs' i _ (𝟙 _) y j k hj hk
-      rw [Category.id_comp] at e
-      exact ⟨k, hk, isUnit_of_mul_isUnit_right
-        ((congrArg IsUnit ((gs_stalkMap ψ y _ hj _).symm.trans e)).mp (u.map _))⟩
-  refine ⟨M, s', ?_, fun i => ?_⟩
-  · refine top_le_iff.1 fun y _ => ?_
-    obtain ⟨i, hi⟩ := Opens.mem_iSup.1 (show ψ y ∈ ⨆ i, nonzeroLocus (s i) by rw [hcov]; trivial)
-    exact Opens.mem_iSup.2 ⟨i, by rw [loc]; exact hi⟩
-  obtain ⟨haff, r, hr, hsurj⟩ := hs i
-  refine ⟨by rw [loc]; exact haff.preimage ψ, fun j => (ψ.appLE _ _ (loc i).le).hom (r j),
-    fun j k => fn_ext fun y hy => ?_, ?_⟩
-  · obtain ⟨l, hl⟩ := exists_chart hP (ψ y)
-    have hm : ψ y ∈ nonzeroLocus (s i) ⊓ (powOver A L ⊤ N).U l := ⟨(loc i).le hy.1, hl⟩
-    have e := congrArg (gs ψ y _) (hr j l)
-    rw [gs_res _ y _ hm, gs_mul _ y _ hm, gs_res _ y _ hm, gs_res _ y _ hm] at e
-    have e₁ := hs' j _ (𝟙 _) y l k hl hy.2
-    have e₂ := hs' i _ (𝟙 _) y l k hl hy.2
-    rw [Category.id_comp] at e₁ e₂
-    have e₃ := (gw W (𝟙 _) y l k).mul_right_inj.1
-      (e₁.symm.trans (e.trans ((congrArg _ e₂).trans (mul_left_comm _ _ _))))
-    refine (gs_res _ y _ hy _).trans (e₃.trans (Eq.symm ((gs_mul _ y _ hy _ _).trans (congrArg₂ (· * ·)
-      ((gs_res _ y _ hy _).trans ((gs_appLE ψ _ _ _ (𝟙 _) y hy.1 _).trans (by rw [Category.id_comp])))
-      (gs_res _ y _ hy _)))))
-  · have hT : IsIso (⊤ : (Spec (CommRingCat.of R)).Opens).ι :=
-      inferInstanceAs (IsIso (Spec (CommRingCat.of R)).topIso.hom)
-    let θ : CommRingCat.of R ⟶ Γ((⊤ : (Spec (CommRingCat.of R)).Opens).toScheme, ⊤) :=
-      (Scheme.ΓSpecIso (CommRingCat.of R)).inv ≫ (⊤ : (Spec (CommRingCat.of R)).Opens).ι.app ⊤
-    have hθi : IsIso θ := IsIso.comp_isIso' inferInstance (inferInstanceAs
-      (IsIso ((⊤ : (Spec (CommRingCat.of R)).Opens).ι.app ⊤)))
-    have hθ : Function.Surjective θ.hom :=
-      (ConcreteCategory.bijective_of_isIso θ).2
-    have hf' : f = ψ ≫ (A.hom ∣_ ⊤) ≫ (⊤ : (Spec (CommRingCat.of R)).Opens).ι := by
-      rw [morphismRestrict_ι, ← Category.assoc, hψ, hf]
-    have hap : IsIso (ψ.appLE _ _ (loc i).le) := by
-      have key : ∀ (V : X.Opens) (h : V = ψ ⁻¹ᵁ nonzeroLocus (s i)), IsIso (ψ.appLE _ V h.le) := by
-        rintro _ rfl
-        rw [Scheme.Hom.appLE_eq_app]
-        infer_instance
-      exact key _ (loc i)
-    have hc : cst f (nonzeroLocus (M := pw H N) (s' i)) =
-        (ψ.appLE _ _ (loc i).le).hom.comp
-          (((A.hom ∣_ ⊤).appLE ⊤ (nonzeroLocus (s i)) le_top).hom.comp θ.hom) := by
-      rw [hf']
-      have e₁ := Scheme.Hom.appLE_comp_appLE ψ (A.hom ∣_ ⊤) ⊤ (nonzeroLocus (s i))
-        (nonzeroLocus (M := pw H N) (s' i)) le_top (loc i).le
-      ext x
-      have e₂ := congrArg (fun q => q.hom (θ.hom x)) e₁
-      exact e₂.symm
-    intro d
-    obtain ⟨d, rfl⟩ := (ConcreteCategory.bijective_of_isIso (ψ.appLE _ _ (loc i).le)).2 d
-    obtain ⟨p, rfl⟩ := hsurj d
-    obtain ⟨p, rfl⟩ := MvPolynomial.map_surjective θ.hom hθ p
-    refine ⟨p, ?_⟩
-    rw [hc, MvPolynomial.eval₂Hom_map_hom]
-    exact (MvPolynomial.map_eval₂Hom _ _ _ p).symm
+    ∃ (m : ℕ) (s : Fin (m + 1) → LB.Sec (pw H N)), VeryAmpleBy f (pw H N) s :=
+  veryAmpleBy_of_powOver hL (hA ⊤ (isAffineOpen_top _)) e hf hH hw
 
 end
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.AbLaw
 open GlobalTheory.KeyKa
 
@@ -427,17 +291,7 @@ theorem GlobalTheory.KeyKa.sections_separate_points_and_tangents : Out.Laws → 
         have e' : w d = w 0 := mul_left_cancel (Over.OverMorphism.ext e)
         exact (x.basis.2 _ (htan _ _ (hw 0))).unique (e' ▸ hw d) (hw 0)
     exact ⟨fun i => t (a i), fun i => ht _, ha⟩
-  · have hpow : (pw x.P.L n).IsLB := {
-      cover := x.P.isLB.cover
-      g_self := fun i => by
-        have h := congrArg (· ^ (n : ℤ)) (x.P.isLB.g_self i)
-        simp only [one_zpow, ← map_zpow] at h
-        exact h
-      cocycle := fun i j k => by
-        have h := congrArg (· ^ (n : ℤ)) (x.P.isLB.cocycle i j k)
-        simp only [mul_zpow, ← map_zpow] at h
-        exact h }
-    obtain ⟨σ, h₁, h₂⟩ := exists_separating x.P.A.hom hpow hs z'.left z.left (Over.w z') (Over.w z)
+  · obtain ⟨σ, h₁, h₂⟩ := exists_separating x.P.A.hom (isLB_pw x.P.isLB n) hs z'.left z.left (Over.w z') (Over.w z)
       fun e => hne (Over.OverMorphism.ext e.symm)
     refine ⟨σ, (valT_eq (T := K) z.left _ hc _).trans ?_, (valT_eq (T := K) z'.left _ hc' _).trans_ne ?_⟩
     · exact not_not.1 fun h => h₂ ((top_le_nonzeroLocus_iff σ z.left c hc).2 h)

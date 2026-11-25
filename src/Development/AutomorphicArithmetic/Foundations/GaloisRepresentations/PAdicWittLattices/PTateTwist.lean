@@ -5,46 +5,6 @@ public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentation
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGenericHeckeMap
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntIntCast
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeVectorBundlePullback
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsGTateIsoTwistOfSimilitude, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PTateTwist
@@ -75,10 +35,6 @@ private theorem zpow_congr_of_dvd {u : kˣ} {n : ℕ} (hu : u ^ n = 1) {a b : �
   have hab : a = b + n * c := by linarith
   rw [hab, zpow_add, zpow_mul, zpow_natCast, hu, one_zpow, _root_.mul_one]
 
-private theorem prim_zpow {u : kˣ} {n : ℕ} (hu : IsPrimitiveRoot u n) {v : ℤ}
-    (hc : IsCoprime v (n : ℤ)) : IsPrimitiveRoot (u ^ v) n := by
-  exact hu.zpow_of_gcd_eq_one v (Int.isCoprime_iff_gcd_eq_one.mp hc)
-
 end Twist
 
 end UpperTheory.Lev
@@ -102,22 +58,22 @@ theorem UpperTheory.exists_gTateIso_twist_of_similitude :
   refine ⟨⟨fun n => I.ζ n ^ g.ν n, ?_, ?_, fun n x => if n = 0 then I.ev 0 x else I.ev n (g.f n x),
     ?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
   · intro n hn
-    exact Lev.prim_zpow (I.ζ_prim n hn) (g.sim n hn).cop
+    exact (I.ζ_prim n hn).zpow_of_gcd_eq_one _ (Int.isCoprime_iff_gcd_eq_one.mp (g.sim n hn).cop)
   · intro n m hn hm
     rw [← zpow_natCast, ← zpow_mul, mul_comm (g.ν _), zpow_mul, zpow_natCast, I.ζ_pow n m hn hm]
     exact Lev.zpow_congr_of_dvd (I.ζ_prim n hn).pow_eq_one (g.νtower n m hn hm)
   · intro n x y
     by_cases hn : n = 0
-    · simp only [hn, if_true, I.add]
-    · simp only [hn, if_false]
+    · simp only [hn, ite_true, I.add]
+    · simp only [hn, ite_false]
       exact hφadd n (Nat.pos_of_ne_zero hn) x y
   · intro n b x
     by_cases hn : n = 0
-    · simp only [hn, if_true, I.lin]
-    · simp only [hn, if_false]
+    · simp only [hn, ite_true, I.lin]
+    · simp only [hn, ite_false]
       rw [Lev.ev_MN I (Nat.pos_of_ne_zero hn) ((g.sim n (Nat.pos_of_ne_zero hn)).lin b x), I.lin]
   · intro n hn x
-    simp only [hn.ne', if_false]
+    simp only [hn.ne', ite_false]
     constructor
     · intro h1
       obtain ⟨y, hy⟩ := (I.ker n hn _).mp h1
@@ -127,7 +83,7 @@ theorem UpperTheory.exists_gTateIso_twist_of_similitude :
       rw [hφpow n hn]
       exact (I.onto n hn _).mpr ⟨_, rfl⟩
   · intro n hn q
-    simp only [hn.ne', if_false]
+    simp only [hn.ne', ite_false]
     rw [I.onto n hn]
     constructor
     · rintro ⟨z, rfl⟩
@@ -136,17 +92,17 @@ theorem UpperTheory.exists_gTateIso_twist_of_similitude :
     · rintro ⟨x, rfl⟩
       exact ⟨_, rfl⟩
   · intro n m hn hm x
-    simp only [(Nat.mul_pos hn hm).ne', hn.ne', if_false]
+    simp only [(Nat.mul_pos hn hm).ne', hn.ne', ite_false]
     rw [I.tower n m hn hm, Lev.ev_MN I hn (g.tower n m hn hm x)]
   · intro n hn x y
-    simp only [hn.ne', if_false]
+    simp only [hn.ne', ite_false]
     have h := I.isom n hn (g.f n x) (g.f n y)
     have hd := ((g.sim n hn).isom x y)
     rw [Lev.zpow_congr_of_dvd (I.ζ_prim n hn).pow_eq_one hd] at h
     rw [← zpow_mul]
     exact h
   · intro n hn x
-    simp only [hn.ne', if_false]
+    simp only [hn.ne', ite_false]
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsGTateIsoTwistOfSimilitude =====

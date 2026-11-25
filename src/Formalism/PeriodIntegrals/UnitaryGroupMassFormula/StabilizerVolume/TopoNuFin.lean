@@ -7,49 +7,8 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TensTop
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TopoAF
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TopoMeas
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Compactness.Paracompact
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -173,16 +132,16 @@ theorem nuFin_gen {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E]
     fun v => if Kv v ⊆ latV b v then latV b v else C v
   have hCvo : ∀ v, IsClopen (Cv v) := fun v => by
     by_cases h : Kv v ⊆ latV b v
-    · rw [show Cv v = latV b v from if_pos h]; exact isClopen_latV b v a M
-    · rw [show Cv v = C v from if_neg h]; exact hCo v
+    · rw [show Cv v = latV b v from ite_eq_left h]; exact isClopen_latV b v a M
+    · rw [show Cv v = C v from ite_eq_right h]; exact hCo v
   have hCvc : ∀ v, IsCompact (Cv v) := fun v => by
     by_cases h : Kv v ⊆ latV b v
-    · rw [show Cv v = latV b v from if_pos h]; exact isCompact_latV b v a M
-    · rw [show Cv v = C v from if_neg h]; exact hCc v
+    · rw [show Cv v = latV b v from ite_eq_left h]; exact isCompact_latV b v a M
+    · rw [show Cv v = C v from ite_eq_right h]; exact hCc v
   have hKCv : ∀ v, Kv v ⊆ Cv v := fun v => by
     by_cases h : Kv v ⊆ latV b v
-    · rw [show Cv v = latV b v from if_pos h]; exact h
-    · rw [show Cv v = C v from if_neg h]; exact hKC v
+    · rw [show Cv v = latV b v from ite_eq_left h]; exact h
+    · rw [show Cv v = C v from ite_eq_right h]; exact hKC v
   let Φv : ∀ v : HeightOneSpectrum (𝓞 F), (Fin a → Fin M → Fv F v ⊗[F] E) → ℂ :=
     fun v => (Cv v).indicator 1
   let Φf : (Fin a → Fin M → Af F ⊗[F] E) → ℂ := fun Y => ∏ᶠ v, Φv v (projV v Y)
@@ -193,7 +152,7 @@ theorem nuFin_gen {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E]
   have hpure : IsPureFin b Φf Φv := by
     refine ⟨hSB, ?_, fun _ => rfl⟩
     filter_upwards [hev] with v hv
-    simp only [Φv, Cv, hv, if_true]
+    simp only [Φv, Cv, hv, ite_true]
   obtain ⟨hint, -, -⟩ := key _ b Φ Φinf Φf Φv hΦic hΦis hpure (fun _ => rfl)
   have hone : ∀ X ∈ K, Φ X = 1 := by
     intro X hX

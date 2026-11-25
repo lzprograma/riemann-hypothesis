@@ -1,52 +1,6 @@
 module
 
 public import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Analysis.Calculus.ContDiff.Operations
 import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.ChartSymmEventuallyEq
 
@@ -78,7 +32,7 @@ theorem loc_d_congr {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n)
     (hz : IsLocalHomeomorph z) (j : Fin n) (f g : M → ℂ) (x : M) (h : f =ᶠ[𝓝 x] g) :
     d n z j f x = d n z j g x := by
   by_cases hc : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source
-  · simp only [d, dif_pos hc]
+  · simp only [d, dite_eq_left hc]
     set e := Classical.choose hc with he_def
     have he : IsChart n z e ∧ x ∈ e.source := Classical.choose_spec hc
     have hzx : z x = e x := he.1 he.2
@@ -90,13 +44,13 @@ theorem loc_d_congr {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n)
       exact ht.eventually h
     unfold wd
     rw [hfg.fderiv_eq]
-  · simp only [d, dif_neg hc]
+  · simp only [d, dite_eq_right hc]
 
 theorem loc_db_congr {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n)
     (hz : IsLocalHomeomorph z) (j : Fin n) (f g : M → ℂ) (x : M) (h : f =ᶠ[𝓝 x] g) :
     db n z j f x = db n z j g x := by
   by_cases hc : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source
-  · simp only [db, dif_pos hc]
+  · simp only [db, dite_eq_left hc]
     set e := Classical.choose hc with he_def
     have he : IsChart n z e ∧ x ∈ e.source := Classical.choose_spec hc
     have hzx : z x = e x := he.1 he.2
@@ -108,7 +62,7 @@ theorem loc_db_congr {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n)
       exact ht.eventually h
     unfold wdb
     rw [hfg.fderiv_eq]
-  · simp only [db, dif_neg hc]
+  · simp only [db, dite_eq_right hc]
 
 theorem loc_ck_sum {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (k : ℕ) {ι : Type*}
     (s : Finset ι) (f : ι → M → ℂ) (hf : ∀ i, Ck n z k (f i)) :
@@ -196,92 +150,6 @@ theorem continuous_two_form_norm_sq (n : ℕ) : Continuous (sq2 n) := by
   first
   | fun_prop
 
-private theorem chart_symm_eventuallyEq_at_chart_point {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n)
-    (e e' : OpenPartialHomeomorph M (V n)) (he : IsChart n z e) (he' : IsChart n z e') (y : M)
-    (hy : y ∈ e.source) (hy' : y ∈ e'.source) : e'.symm =ᶠ[𝓝 (z y)] e.symm := by
-  have hzy : z y = e y := he hy
-  have hzy' : z y = e' y := he' hy'
-  have h1 : ∀ᶠ w in 𝓝 (z y), w ∈ e.target := by
-    rw [hzy]
-    exact e.open_target.mem_nhds (e.map_source hy)
-  have h2 : ∀ᶠ w in 𝓝 (z y), w ∈ e'.target := by
-    rw [hzy']
-    exact e'.open_target.mem_nhds (e'.map_source hy')
-  have ht : Tendsto e'.symm (𝓝 (z y)) (𝓝 y) := by
-    rw [hzy']
-    first
-    | exact e'.tendsto_symm hy'
-  have h3 : ∀ᶠ w in 𝓝 (z y), e'.symm w ∈ e.source := ht.eventually (e.open_source.mem_nhds hy)
-  filter_upwards [h1, h2, h3] with w hw hw' hw''
-  refine e.injOn hw'' (e.map_target hw) ?_
-  rw [e.right_inv hw, ← he hw'', he' (e'.map_target hw'), e'.right_inv hw']
-
-private theorem d_eq_wd_at_chart_image {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (g : M → ℂ)
-    (e : OpenPartialHomeomorph M (V n)) (he : IsChart n z e) (y : M) (hy : y ∈ e.source) (j : Fin n) :
-    d n z j g y = wd n j (g ∘ e.symm) (e y) := by
-  have hc : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ y ∈ e.source := ⟨e, he, hy⟩
-  simp only [d, dif_pos hc]
-  have hs := Classical.choose_spec hc
-  have hfg : g ∘ (Classical.choose hc).symm =ᶠ[𝓝 (z y)] g ∘ e.symm :=
-    (chart_symm_eventuallyEq_at_chart_point n z e (Classical.choose hc) he hs.1 y hy hs.2).fun_comp g
-  rw [← he hy]
-  unfold wd
-  rw [hfg.fderiv_eq]
-
-private theorem db_eq_wdb_at_chart_image {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (g : M → ℂ)
-    (e : OpenPartialHomeomorph M (V n)) (he : IsChart n z e) (y : M) (hy : y ∈ e.source) (j : Fin n) :
-    db n z j g y = wdb n j (g ∘ e.symm) (e y) := by
-  have hc : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ y ∈ e.source := ⟨e, he, hy⟩
-  simp only [db, dif_pos hc]
-  have hs := Classical.choose_spec hc
-  have hfg : g ∘ (Classical.choose hc).symm =ᶠ[𝓝 (z y)] g ∘ e.symm :=
-    (chart_symm_eventuallyEq_at_chart_point n z e (Classical.choose hc) he hs.1 y hy hs.2).fun_comp g
-  rw [← he hy]
-  unfold wdb
-  rw [hfg.fderiv_eq]
-
-private theorem continuous_d_of_smooth {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n)
-    (hz : IsLocalHomeomorph z) (g : M → ℂ) (hg : Smooth n z g) (j : Fin n) :
-    Continuous (fun x => d n z j g x) := by
-  refine continuous_iff_continuousAt.mpr fun x => ?_
-  obtain ⟨e, hx, hze⟩ := hz x
-  have he : IsChart n z e := fun y _ => by rw [hze]
-  have hF : ContinuousOn (fun w => fderiv ℝ (g ∘ e.symm) w) e.target :=
-    (hg e he).continuousOn_fderiv_of_isOpen e.open_target (by first | simp)
-  have h0 : ContinuousOn (fun w => wd n j (g ∘ e.symm) w) e.target := by
-    unfold wd
-    exact ((hF.clm_apply continuousOn_const).sub (continuousOn_const.mul
-      (hF.clm_apply continuousOn_const))).div_const 2
-  have hW : ContinuousOn (fun y => wd n j (g ∘ e.symm) (e y)) e.source :=
-    h0.comp e.continuousOn (fun y hy => e.map_source hy)
-  have hc := hW.continuousAt (e.open_source.mem_nhds hx)
-  have hEv : (fun y => wd n j (g ∘ e.symm) (e y)) =ᶠ[𝓝 x] fun y => d n z j g y := by
-    filter_upwards [e.open_source.mem_nhds hx] with y hy
-    exact (d_eq_wd_at_chart_image n z g e he y hy j).symm
-  first
-  | exact hc.congr hEv
-
-private theorem continuous_db_apply_of_smooth {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n)
-    (hz : IsLocalHomeomorph z) (g : M → ℂ) (hg : Smooth n z g) (j : Fin n) :
-    Continuous (fun x => db n z j g x) := by
-  refine continuous_iff_continuousAt.mpr fun x => ?_
-  obtain ⟨e, hx, hze⟩ := hz x
-  have he : IsChart n z e := fun y _ => by rw [hze]
-  have hF : ContinuousOn (fun w => fderiv ℝ (g ∘ e.symm) w) e.target :=
-    (hg e he).continuousOn_fderiv_of_isOpen e.open_target (by first | simp)
-  have h0 : ContinuousOn (fun w => wdb n j (g ∘ e.symm) w) e.target := by
-    unfold wdb
-    exact ((hF.clm_apply continuousOn_const).add (continuousOn_const.mul
-      (hF.clm_apply continuousOn_const))).div_const 2
-  have hW : ContinuousOn (fun y => wdb n j (g ∘ e.symm) (e y)) e.source :=
-    h0.comp e.continuousOn (fun y hy => e.map_source hy)
-  have hc := hW.continuousAt (e.open_source.mem_nhds hx)
-  have hEv : (fun y => wdb n j (g ∘ e.symm) (e y)) =ᶠ[𝓝 x] fun y => db n z j g y := by
-    filter_upwards [e.open_source.mem_nhds hx] with y hy
-    exact (db_eq_wdb_at_chart_image n z g e he y hy j).symm
-  first
-  | exact hc.congr hEv
-
 theorem loc_piece {M : Type*} [TopologicalSpace M] [T2Space M] [SecondCountableTopology M]
     [MeasurableSpace M] [BorelSpace M] (n : ℕ) (z : M → V n) (hz : IsLocalHomeomorph z)
     (hMD : MultDivStatement n M) (hMS : MultSStatement n M) (η : M → ℝ) (hη : SmoothR n z η)
@@ -316,9 +184,9 @@ theorem loc_piece {M : Type*} [TopologicalSpace M] [T2Space M] [SecondCountableT
     unfold db wdb
     split_ifs <;> simp [Function.comp_def]
   have hdc : ∀ j, Continuous (fun x => d n z j (fun y => (η y : ℂ)) x) := fun j =>
-    continuous_d_of_smooth n z hz _ hsm j
+    Smooth.continuous n z hz _ (Smooth.d n z j _ hsm)
   have hdbc : ∀ j, Continuous (fun x => db n z j (fun y => (η y : ℂ)) x) := fun j =>
-    continuous_db_apply_of_smooth n z hz _ hsm j
+    Smooth.continuous n z hz _ (Smooth.db n z j _ hsm)
   have hbound : ∀ φ : M → ℂ, Continuous φ → (∀ x, x ∉ tsupport η → φ x = 0) →
       ∃ C, 0 ≤ C ∧ ∀ x, ‖φ x‖ ≤ C := by
     intro φ hφ h0

@@ -200,21 +200,16 @@ theorem exists_period (X : Data E r) (la : Wt X.Ψ r) :
     push_cast
     ring
 
-theorem exists_le_maj_of_iso (X : Data E r) (la : Wt X.Ψ r) :
-    ∃ ε : ℝ, 0 < ε ∧ ∀ P ∈ X.SS la, ∀ z0 ∈ X.dom,
-      (∀ x ∈ X.dom, X.pnorm la P x ≤ 2 * X.pnorm la P z0) → 0 < X.pnorm la P z0 →
-      ∀ v, X.IsIso v → ∃ τ : X.Ψ, ε ≤ X.c τ * X.maj z0 τ (Data.emb τ.1 v) := by
-  obtain ⟨M, hM, htrans⟩ := exists_period X la
+theorem pnorm_le_exp_of_flow (X : Data E r) (la : Wt X.Ψ r) (P : Frame X.Ψ r → ℂ) (hP : P ∈ X.SS la)
+    (z0 : Frame X.Ψ r) (hz0 : z0 ∈ X.dom) (v : Fin r → E) (hξ : X.IsIso v)
+    (M : ℝ) (hM : 0 < M)
+    (htrans : ∀ v ∈ X.Λ, herm X.Gm v v = 0 →
+      ∃ γ ∈ X.Γ, X.χ la γ = 1 ∧ ∀ τ : X.Ψ, (γ : Matrix (Fin r) (Fin r) E).map τ.1 = X.flowMat v τ (M : ℂ))
+    (t : ℝ) (ht0 : 0 < t) (htt : ∀ τ, 2 * t ≤ X.tt v z0 τ)
+    (C : ℝ) (hC : ∀ y ∈ X.dom, X.pnorm la P y ≤ C) :
+    X.pnorm la P z0 ≤ Real.exp (-2 * π * t / M) * (2 ^ ((∑ τ, X.spread la τ) / 2) * C) := by
   set w : ℝ := ∑ τ, X.spread la τ with hw
-  have hw0 : 0 ≤ w := Finset.sum_nonneg fun τ _ => flowTermNormDecay.spread_nonneg' X la τ
-  have hL : 0 < Real.log 2 := Real.log_pos one_lt_two
-  have hpi := Real.pi_pos
-  set ε : ℝ := π / (M * (w + 2) * Real.log 2) with hε
-  have hε0 : 0 < ε := by positivity
-  refine ⟨ε, hε0, fun P hP z0 hz0 hhalf hpos v hξ => ?_⟩
   obtain ⟨hv, hvv, hv0⟩ := id hξ
-  by_contra hcon
-  push Not at hcon
   set e : X.Ψ → Fin r → ℂ := fun τ => Data.emb τ.1 v with he
   have he0 : ∀ τ : X.Ψ, e τ ≠ 0 := by
     intro τ h
@@ -225,21 +220,13 @@ theorem exists_le_maj_of_iso (X : Data E r) (la : Wt X.Ψ r) :
   have heIso : X.IsIsoV e := fun τ => ⟨by
     show hermC τ.1 X.Gm (fun a => τ.1 (v a)) (fun a => τ.1 (v a)) = 0
     rw [EmbeddingHermitianPairs.hermC_emb, hvv, map_zero], he0 τ⟩
-  have hmaj : ∀ τ, 0 < X.maj z0 τ (e τ) := fun τ => X.maj_pos hz0 τ (he0 τ)
-  set t : ℝ := 1 / (2 * ε) with ht
-  have ht0 : 0 < t := by positivity
-  have htt : ∀ τ, 2 * t < X.ttV e z0 τ := by
-    intro τ
-    simp only [Data.ttV]
-    rw [show 2 * t = 1 / ε by rw [ht]; field_simp]
-    exact one_div_lt_one_div_of_lt (mul_pos (_root_.ReciprocityTheory.ChartRestriction.G.FD.MajorantFamilyNorms.c_pos X τ) (hmaj τ)) (hcon τ)
   have hfl : ∀ s, X.flowV e s z0 = X.flow v s z0 := fun s => rfl
   have hdom : ∀ ζ : ℂ, -(2 * t) < ζ.im → X.flow v (fun _ => ζ) z0 ∈ X.dom := by
     intro ζ hζ
     rw [← hfl]
     refine ((flowDomainCriterion_holds r X e heIso z0 hz0 (fun _ => ζ)).1).2 (fun τ => ?_)
     show 0 < 1 + ζ.im / X.ttV e z0 τ
-    have h := htt τ
+    have h : 2 * t ≤ X.ttV e z0 τ := htt τ
     have hpos' : 0 < X.ttV e z0 τ := by linarith
     have : -1 < ζ.im / X.ttV e z0 τ := by rw [lt_div_iff₀ hpos']; linarith
     linarith
@@ -265,7 +252,7 @@ theorem exists_le_maj_of_iso (X : Data E r) (la : Wt X.Ψ r) :
       have : {ζ : ℂ | -(2 * t) < ζ.im} ∈ 𝓝 ζ :=
         (isOpen_lt continuous_const Complex.continuous_im).mem_nhds hζ
       filter_upwards [this] with ζ' h'
-      simp only [hg, if_pos (show -(2 * t) < ζ'.im from h')]
+      simp only [hg, ite_eq_left (show -(2 * t) < ζ'.im from h')]
     refine DifferentiableAt.congr_of_eventuallyEq ?_ hev
     have hF : DifferentiableAt ℂ (fun ζ : ℂ => X.flow v (fun _ => ζ) z0) ζ :=
       ((FlowMeanContinuity.flow_differentiable X v z0).comp
@@ -274,12 +261,13 @@ theorem exists_le_maj_of_iso (X : Data E r) (la : Wt X.Ψ r) :
   have hzero : Tendsto g (comap im atTop) (𝓝 0) :=
     tendsto_zero X la P hP hz0 hξ
       (fun ζ hζ => hdom ζ (by linarith)) g
-      (fun ζ hζ => by simp only [hg, if_pos (show -(2 * t) < ζ.im by linarith)])
-  set B : ℝ := 2 * ‖P z0‖ * 2 ^ (w / 2) with hB
+      (fun ζ hζ => by simp only [hg, ite_eq_left (show -(2 * t) < ζ.im by linarith)])
+  have hnz : 0 < X.nfac la z0 := flowTermNormDecay.nfac_pos X la hz0
+  set B : ℝ := 2 ^ (w / 2) * C / X.nfac la z0 with hB
   have hBd : ∀ ζ : ℂ, ζ.im = -t → ‖g ζ‖ ≤ B := by
     intro ζ hζ
     have hlt : -(2 * t) < ζ.im := by linarith
-    simp only [hg, if_pos hlt]
+    simp only [hg, ite_eq_left hlt]
     set y := X.flow v (fun _ => ζ) z0 with hy
     have hyd := hdom ζ hlt
     have hnf : 0 < X.nfac la y := flowTermNormDecay.nfac_pos X la hyd
@@ -292,7 +280,7 @@ theorem exists_le_maj_of_iso (X : Data E r) (la : Wt X.Ψ r) :
       have hterm : ∀ τ : X.Ψ, (max (1 + ζ.im / X.ttV e z0 τ) (1 + ζ.im / X.ttV e z0 τ)⁻¹) ^
           (X.spread la τ / 2) ≤ (2 : ℝ) ^ (X.spread la τ / 2) := by
         intro τ
-        have h := htt τ
+        have h : 2 * t ≤ X.ttV e z0 τ := htt τ
         have hT : 0 < X.ttV e z0 τ := by linarith
         have hq1 : 1 / 2 ≤ 1 + ζ.im / X.ttV e z0 τ := by
           rw [hζ, neg_div]
@@ -311,39 +299,59 @@ theorem exists_le_maj_of_iso (X : Data E r) (la : Wt X.Ψ r) :
           (max_le (by linarith) hinv) (by linarith)
       calc _ ≤ ∏ τ : X.Ψ, (2 : ℝ) ^ (X.spread la τ / 2) :=
             Finset.prod_le_prod₀ (fun τ _ => Real.rpow_nonneg (le_trans (by
-              have h := htt τ
+              have h : 2 * t ≤ X.ttV e z0 τ := htt τ
               have hT : 0 < X.ttV e z0 τ := by linarith
               have : t / X.ttV e z0 τ ≤ 1 / 2 := by rw [div_le_iff₀ hT]; linarith
               rw [hζ, neg_div]
               linarith) (le_max_left _ _)) _) (fun τ _ => hterm τ)
         _ = (2 : ℝ) ^ (∑ τ : X.Ψ, X.spread la τ / 2) := (Real.rpow_sum_of_pos two_pos _ _).symm
         _ = (2 : ℝ) ^ (w / 2) := by rw [← Finset.sum_div]
-    have h1 : ‖P y‖ * X.nfac la y ≤ 2 * (‖P z0‖ * X.nfac la z0) := hhalf y hyd
+    have h1 : ‖P y‖ * X.nfac la y ≤ C := hC y hyd
     have h2 : X.nfac la z0 ≤ 2 ^ (w / 2) * X.nfac la y := by
       rw [div_le_iff₀ hnf] at hratio
       exact hratio.trans (mul_le_mul_of_nonneg_right hprod hnf.le)
-    have h3 : ‖P y‖ * X.nfac la y ≤ B * X.nfac la y := by
-      calc ‖P y‖ * X.nfac la y ≤ 2 * (‖P z0‖ * X.nfac la z0) := h1
-        _ ≤ 2 * (‖P z0‖ * (2 ^ (w / 2) * X.nfac la y)) := by gcongr
-        _ = B * X.nfac la y := by rw [hB]; ring
-    exact le_of_mul_le_mul_right h3 hnf
+    rw [hB, le_div_iff₀ hnz]
+    calc ‖P y‖ * X.nfac la z0 ≤ ‖P y‖ * (2 ^ (w / 2) * X.nfac la y) := by gcongr
+      _ = 2 ^ (w / 2) * (‖P y‖ * X.nfac la y) := by ring
+      _ ≤ 2 ^ (w / 2) * C := by gcongr
   have hsch := PeriodicSchwarzLemma.periodic_schwarz hM ht0 (show t < 2 * t by linarith) hper hdiff hzero hBd
   have hg0 : g 0 = P z0 := by
-    simp only [hg, Complex.zero_im, if_pos (show -(2 * t) < (0 : ℝ) by linarith)]
+    simp only [hg, Complex.zero_im, ite_eq_left (show -(2 * t) < (0 : ℝ) by linarith)]
     congr 1
     exact EmbeddingHermitianPairs.flow_zero X v z0
-  rw [hg0] at hsch
-  have hP0 : 0 < ‖P z0‖ := by
-    have hpn : X.pnorm la P z0 = ‖P z0‖ * X.nfac la z0 := rfl
-    rcases (norm_nonneg (P z0)).eq_or_lt with h | h
-    · rw [hpn, ← h, zero_mul] at hpos
-      exact absurd hpos (lt_irrefl 0)
-    · exact h
+  rw [hg0, hB, ← mul_div_assoc, le_div_iff₀ hnz] at hsch
+  exact hsch
+
+theorem exists_le_maj_of_iso (X : Data E r) (la : Wt X.Ψ r) :
+    ∃ ε : ℝ, 0 < ε ∧ ∀ P ∈ X.SS la, ∀ z0 ∈ X.dom,
+      (∀ x ∈ X.dom, X.pnorm la P x ≤ 2 * X.pnorm la P z0) → 0 < X.pnorm la P z0 →
+      ∀ v, X.IsIso v → ∃ τ : X.Ψ, ε ≤ X.c τ * X.maj z0 τ (Data.emb τ.1 v) := by
+  obtain ⟨M, hM, htrans⟩ := exists_period X la
+  set w : ℝ := ∑ τ, X.spread la τ with hw
+  have hw0 : 0 ≤ w := Finset.sum_nonneg fun τ _ => flowTermNormDecay.spread_nonneg' X la τ
+  have hL : 0 < Real.log 2 := Real.log_pos one_lt_two
+  have hpi := Real.pi_pos
+  set ε : ℝ := π / (M * (w + 2) * Real.log 2) with hε
+  have hε0 : 0 < ε := by positivity
+  refine ⟨ε, hε0, fun P hP z0 hz0 hhalf hpos v hξ => ?_⟩
+  obtain ⟨-, -, hv0⟩ := id hξ
+  by_contra hcon
+  push Not at hcon
+  have hmaj : ∀ τ, 0 < X.maj z0 τ (Data.emb τ.1 v) := fun τ =>
+    X.maj_pos hz0 τ fun h => hv0 (funext fun a => by simpa [Data.emb] using congr_fun h a)
+  set t : ℝ := 1 / (2 * ε) with ht
+  have ht0 : 0 < t := by positivity
+  have htt : ∀ τ, 2 * t ≤ X.tt v z0 τ := fun τ => by
+    simp only [Data.tt, Data.ttV]
+    rw [show 2 * t = 1 / ε by rw [ht]; field_simp]
+    exact (one_div_lt_one_div_of_lt (mul_pos (_root_.ReciprocityTheory.ChartRestriction.G.FD.MajorantFamilyNorms.c_pos X τ)
+      (hmaj τ)) (hcon τ)).le
+  have hsch := pnorm_le_exp_of_flow X la P hP z0 hz0 v hξ M hM htrans t ht0 htt (2 * X.pnorm la P z0) hhalf
   have h1 : 1 ≤ Real.exp (-2 * π * t / M) * (2 * 2 ^ (w / 2)) := by
-    have e1 : Real.exp (-2 * π * t / M) * B =
-        ‖P z0‖ * (Real.exp (-2 * π * t / M) * (2 * 2 ^ (w / 2))) := by rw [hB]; ring
+    have e1 : Real.exp (-2 * π * t / M) * (2 ^ (w / 2) * (2 * X.pnorm la P z0)) =
+        X.pnorm la P z0 * (Real.exp (-2 * π * t / M) * (2 * 2 ^ (w / 2))) := by ring
     rw [e1] at hsch
-    exact le_of_mul_le_mul_left (by rw [mul_one]; exact hsch) hP0
+    exact le_of_mul_le_mul_left (by rw [mul_one]; exact hsch) hpos
   have e3 : Real.exp ((1 + w / 2) * Real.log 2) = 2 * 2 ^ (w / 2) := by
     rw [show (1 + w / 2) * Real.log 2 = Real.log 2 + Real.log 2 * (w / 2) by ring, Real.exp_add,
       Real.exp_log two_pos, ← Real.rpow_def_of_pos two_pos]

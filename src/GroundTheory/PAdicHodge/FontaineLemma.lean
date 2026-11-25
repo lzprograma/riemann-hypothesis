@@ -129,8 +129,7 @@ theorem sub_one_dvd_coeff_zero {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1)
           gcongr
           exact pow_le_one₀ (norm_nonneg _) (preTilt_norm_le_one _)
       _ = r ^ p ^ N := mul_one _
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   set q := x / r with hq
   have hq1 : 1 < q := by rw [hq, one_lt_div hr0]; exact hlt
   have hbound : ∀ N : ℕ, q ^ p ^ N * r ≤ 1 := by
@@ -288,6 +287,7 @@ theorem exists_phiAway_eq_add_mul {ξ : AInf K p} (hξ : RingHom.ker θ = Ideal.
     (hy : y ∈ ACrisZero K p) :
     ∃ b : AInf K p, ∃ s ∈ ACrisZero K p,
       phiAway K p y = algebraMap (AInf K p) 𝔸 b + (X : 𝔸) * s := by
+  rw [acrisZero_eq_adjoin_dpow] at hy
   induction hy using Algebra.adjoin_induction with
   | mem y hy =>
     obtain ⟨n, x, hx, rfl⟩ := hy
@@ -335,7 +335,7 @@ theorem exists_phi_eq_add_mul [CharZero K] {ξ : AInf K p} (hξ : RingHom.ker θ
       algebraMap (AInf K p) (ACris K p) b + algebraMap (ACrisZero K p) (ACris K p) X * s := by
   refine _root_.GroundTheory.Variant₂.N1.exists_eq_add_mul_of_forall' (a := (p : AInf K p)) (r := (p : ACris K p))
     (algebraMap (AInf K p) (ACris K p)) (map_natCast _ p) _ (phi (K := K) (p := p)) (fun y => ?_) y
-  obtain ⟨y₀, z₁, rfl⟩ := exists_eq_add_p_pow_mul 1 y
+  obtain ⟨y₀, z₁, rfl⟩ := Reformulated.AutPerF.Acris.exists_eq_add 1 y
   obtain ⟨b, s, hs, e⟩ := exists_phiAway_eq_add_mul hξ hX y₀.2
   refine ⟨b, algebraMap (ACrisZero K p) (ACris K p) ⟨s, hs⟩, z₁, ?_⟩
   have e' : phiZero (K := K) (p := p) y₀ =
@@ -345,7 +345,7 @@ theorem exists_phi_eq_add_mul [CharZero K] {ξ : AInf K p} (hξ : RingHom.ker θ
       algebraMap (ACrisZero K p) (ACris K p) (phiZero (K := K) (p := p) y₀) := phi_of y₀
   have hb : algebraMap (AInf K p) (ACris K p) b =
       algebraMap (ACrisZero K p) (ACris K p) (algebraMap (AInf K p) (ACrisZero K p) b) :=
-    AdicCompletion.algebraMap_apply _ b
+    IsScalarTower.algebraMap_apply (AInf K p) (ACrisZero K p) (ACris K p) b
   rw [RingHom.map_add (phi (K := K) (p := p)), map_mul, pow_one, map_natCast, hof, e',
     RingHom.map_add (algebraMap (ACrisZero K p) (ACris K p)), map_mul, hb]
 
@@ -394,7 +394,7 @@ theorem p_mul_phi_mem_span_mu {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1)
     have hof : algebraMap (ACrisZero K p) (ACris K p) ((p : ACrisZero K p) * X) =
         algebraMap (AInf K p) (ACris K p) (AInf.mu ε * d) := by
       rw [h1]
-      exact (AdicCompletion.algebraMap_apply _ _).symm
+      exact (IsScalarTower.algebraMap_apply (AInf K p) (ACrisZero K p) (ACris K p) _).symm
     rw [map_mul, map_natCast] at hof
     rw [hof, map_mul]
   have hp0 := AInf.natCast_ne_zero hε hζ

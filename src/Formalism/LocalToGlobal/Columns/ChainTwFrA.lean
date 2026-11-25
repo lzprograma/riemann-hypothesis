@@ -189,10 +189,6 @@ section Gen
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E]
 
-def tfaExt {N n : ℕ} (hN : N = n + 1) (f : Sp E n ≃ₗ[E] Sp E n) : Sp E N ≃ₗ[E] Sp E N := by
-  subst hN
-  exact extE f
-
 theorem tfa_std_iff {n : ℕ} (Q : HeightOneSpectrum (𝓞 E)) (x : Sp E (n + 1)) :
     x ∈ stdAt E (n + 1) Q ↔ initL E n x ∈ stdAt E n Q ∧ IntAt Q (x (Fin.last n)) := by
   rw [ciMem_stdAt, ciMem_stdAt]
@@ -222,7 +218,7 @@ theorem tfaD_symm_apply {n : ℕ} (z : E) (hz : z ≠ 0) (x : Sp E (n + 1)) (i :
     by_cases h : j = Fin.last n
     · subst h
       simp [hz]
-    · simp only [h, if_false]
+    · simp only [h, ite_false]
   conv_lhs => rw [← key]
   rw [LinearEquiv.symm_apply_apply]
 
@@ -239,14 +235,14 @@ theorem tfaZ_spec {SG : Finset (HeightOneSpectrum (𝓞 E))} {ST : Finset (Heigh
   have hl := Deco.liftFr_spec (d.2.hasLift w)
   show extE (d.1.liftFr w) (tfaD (algebraMap (𝓞 E) E pi) hz x) ∈ localization₂ w.1.asIdeal (DecoSet.til (ST := ST) pi d).1.N ↔ _
   unfold DecoSet.til
-  rw [dif_pos hOk]
+  rw [dite_eq_left hOk]
   show extE (d.1.liftFr w) (tfaD (algebraMap (𝓞 E) E pi) hz x) ∈ localization₂ w.1.asIdeal (tilN d.1.N) ↔ _
   have hinit : initL E n (tfaD (algebraMap (𝓞 E) E pi) hz x) = initL E n x := by
     funext i
     show tfaD _ hz x (Fin.castSucc i) = x (Fin.castSucc i)
-    rw [tfaD_apply, if_neg (Fin.castSucc_ne_last i)]
+    rw [tfaD_apply, ite_eq_right (Fin.castSucc_ne_last i)]
   have hlast : tfaD (algebraMap (𝓞 E) E pi) hz x (Fin.last n) = algebraMap (𝓞 E) E pi * x (Fin.last n) := by
-    rw [tfaD_apply, if_pos rfl]
+    rw [tfaD_apply, ite_eq_left rfl]
   rw [mem_localization_tilN, initL_extE, extE_last, hinit, hlast, tfa_std_iff]
   refine and_congr (hl.1 _) ⟨fun h => ?_, fun h => (IntAt.coe w.1 pi).mul h⟩
   have h2 := (xtIntAt_piInv hw).mul h
@@ -271,7 +267,7 @@ def topFrA (hQS : ∀ P ∈ QE sel (mu : Chr X.F X.E X.K), P ∈ SG') : TopFr (R
     else frameOfY u P.1 (tilR hSG u d)
   spec P d x := by
     by_cases h : (d.1.til (ST := Pr.vT u) (Pr.piT u)).Ok ∧ Pr.piT u ∉ P.1.asIdeal
-    · rw [dif_pos h]
+    · rw [dite_eq_left h]
       exact tfaZ_spec (N_m_succ R) (Pr.piT u) d h.1 ⟨P.1, hQS P.1 P.2⟩ h.2 _ x
     · rw [dite_eq_right h]
       exact frameOfY_spec u P.1 (tilR hSG u d) x

@@ -13,62 +13,11 @@ public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSquareMulOfNonsquareUnits
 public import Development.AbelianVarietyTheory.Proofs.HeightProofs.QuadraticExtNormFormOverAlgebra
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Compactness.Paracompact
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HypOneZeroZero
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCovolOne
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TrMMemFramesEIff
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Topology.Separation.CompletelyRegular
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalUnitScalingNormMeasure, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuadraticBasisIntegralOrder, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuadraticBasisIntegralUnramified, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalContentZetaSeries
@@ -530,7 +479,7 @@ theorem norm_ne_zero (hD : w D = 1) (hsq : ∀ e : K, w e ≤ 1 → ¬ w (e ^ 2 
     · apply hsq _ hle
       rw [he, sub_self, map_zero]
       exact zero_lt_one
-    · push_neg at hle
+    · push Not at hle
       have h2 : w (x / y) ^ 2 = 1 := by rw [← map_pow, he, hD]
       have h3 : (1 : WithZero (Multiplicative ℤ)) < w (x / y) ^ 2 := one_lt_pow' hle two_ne_zero
       rw [h2] at h3
@@ -592,8 +541,7 @@ theorem isField (hB0 : B 0 = 1) (hBD : B 1 * B 1 = algebraMap K A D)
       conv_lhs => rw [← B.sum_repr x]
       rw [Fin.sum_univ_two, hB0, Algebra.smul_def, Algebra.smul_def, mul_one]
     have hpq : B.repr x 0 ≠ 0 ∨ B.repr x 1 ≠ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       apply hx
       rw [hxpq, hc.1, hc.2]
       simp
@@ -629,8 +577,7 @@ theorem exists_factor (hϖ : w ϖ = WithZero.exp (-1 : ℤ)) (hB0 : B 0 = 1)
     rw [Fin.sum_univ_two, hB0, Algebra.smul_def, Algebra.smul_def, mul_one]
   subst hxpq
   have hpq : p ≠ 0 ∨ q ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     apply hx0
     rw [hc.1, hc.2]
     simp
@@ -701,8 +648,7 @@ theorem exists_factor (hϖ : w ϖ = WithZero.exp (-1 : ℤ)) (hB0 : B 0 = 1)
 theorem le_of_eq_mul (hϖ : w ϖ = WithZero.exp (-1 : ℤ)) (hB0 : B 0 = 1) {i j : ℕ} {u : A}
     (hu : ∀ l, w (B.repr u l) ≤ 1)
     (h : (algebraMap K A ϖ) ^ i = (algebraMap K A ϖ) ^ j * u) : j ≤ i := by
-  by_contra hji
-  push_neg at hji
+  by_contra! hji
   obtain ⟨k, rfl⟩ : ∃ k, j = i + (k + 1) := ⟨j - i - 1, by omega⟩
   have hϖ0 : ϖ ≠ 0 := by
     intro h0
@@ -927,7 +873,7 @@ theorem content : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberFi
       obtain ⟨t, ht, hn⟩ := c3 i
       exact _root_.GlobalTheory.CompanionTheory.WeilSiegel.HypMass.ContentScale.coordK_map_mul F E σ h d b v lam hlam (c i) t _ (c1 i).1 ht hn
     · intro s hs
-      rw [zetaV, if_neg hnf]
+      rw [zetaV, ite_eq_right hnf]
       exact hasSum_split _ hq s hs
   · obtain ⟨hf, c, c1, c3, c4, c5⟩ := _root_.GlobalTheory.CompanionTheory.SW.QuadField.inert_content F E σ h d b b₂ D hb0 hσ1 hD v hD1 h21 hBC hCB hres
     refine ⟨ℕ, inferInstance, c, fun i => 2 * i, ⟨c1, ?_, c3, c4, c5⟩, ?_⟩
@@ -935,7 +881,7 @@ theorem content : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberFi
       obtain ⟨t, ht, hn⟩ := c3 i
       exact _root_.GlobalTheory.CompanionTheory.WeilSiegel.HypMass.ContentScale.coordK_map_mul F E σ h d b v lam hlam (c i) t _ (c1 i).1 ht hn
     · intro s hs
-      rw [zetaV, if_pos hf]
+      rw [zetaV, ite_eq_left hf]
       exact hasSum_field _ hq s hs
 
 end GlobalTheory.CompanionTheory.WeilSiegel.HypMass.Content

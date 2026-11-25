@@ -3,59 +3,10 @@ module
 public import Formalism.FlagUnipotentLattices.UnipotentStabiliserCharacterisation
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 import Aesop.Main
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.MeasureTheory.Constructions.HaarToSphere
 public import Mathlib.MeasureTheory.Measure.Lebesgue.VolumeOfBalls
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 public import Mathlib.MeasureTheory.Integral.Pi
@@ -170,14 +121,14 @@ theorem inverse_power_integral_pi : Formalism.HermitianLatticeCounting.Expansion
 
 lemma mul_cutoff_of_le {K L y : ℝ} (hK : 0 ≤ K) (hy : 0 < y) (h : y ≤ L) : y * TruncationCutoff K L y = y := by
   have h1 : (1 : ℝ) ≤ (L / y) ^ K := Real.one_le_rpow ((one_le_div hy).2 h) hK
-  rw [TruncationCutoff, if_neg hy.ne', min_eq_left h1, mul_one]
+  rw [TruncationCutoff, ite_eq_right hy.ne', min_eq_left h1, mul_one]
 
 lemma mul_cutoff_of_gt {K L y : ℝ} (hK : 0 ≤ K) (hL : 0 < L) (h : L < y) :
     y * TruncationCutoff K L y = L ^ K * y ^ (1 - K) := by
   have hy : 0 < y := hL.trans h
   have h1 : (L / y) ^ K ≤ 1 :=
     Real.rpow_le_one (div_nonneg hL.le hy.le) ((div_le_one hy).2 h.le) hK
-  rw [TruncationCutoff, if_neg hy.ne', min_eq_right h1, Real.div_rpow hL.le hy.le, sub_eq_add_neg,
+  rw [TruncationCutoff, ite_eq_right hy.ne', min_eq_right h1, Real.div_rpow hL.le hy.le, sub_eq_add_neg,
     Real.rpow_add hy, Real.rpow_one, Real.rpow_neg hy.le, div_eq_mul_inv]
   ring
 
@@ -859,13 +810,13 @@ theorem corollary_upper_estimate_holds : Formalism.HermitianLatticeCounting.Expa
     (by
       intro i
       by_cases hi : i = 0
-      · simp only [M, hi, if_true]; exact measurable_const
-      · simp only [M, hi, if_false]; exact hm _)
+      · simp only [M, hi, ite_true]; exact measurable_const
+      · simp only [M, hi, ite_false]; exact hm _)
     (by
       intro i ω
       by_cases hi : i = 0
       · simp [M, hi]
-      · simp only [M, hi, if_false]; exact hpos _ _)
+      · simp only [M, hi, ite_false]; exact hpos _ _)
     (by
       intro i
       by_cases hi : i = 0
@@ -875,7 +826,7 @@ theorem corollary_upper_estimate_holds : Formalism.HermitianLatticeCounting.Expa
       intro i hi
       rcases Nat.eq_zero_or_pos i with rfl | hi0
       · have e0 : (⟨min (0 + 1 - 1) r, by omega⟩ : Fin (r + 1)) = 0 := Fin.ext (by simp)
-        simp only [M, B, if_true, Nat.add_eq_zero_iff, one_ne_zero, and_false, if_false, e0, div_one]
+        simp only [M, B, ite_true, Nat.add_eq_zero_iff, one_ne_zero, and_false, ite_false, e0, div_one]
         exact h0 _ hq
       · obtain ⟨k, rfl⟩ : ∃ k, i = k + 1 := ⟨i - 1, by omega⟩
         have hk : k < r := by omega
@@ -883,14 +834,14 @@ theorem corollary_upper_estimate_holds : Formalism.HermitianLatticeCounting.Expa
           Fin.ext (by simp; omega)
         have e2 : (⟨min (k + 1 - 1) r, by omega⟩ : Fin (r + 1)) = (⟨k, hk⟩ : Fin r).castSucc :=
           Fin.ext (by simp; omega)
-        simp only [M, B, Nat.add_eq_zero_iff, one_ne_zero, and_false, if_false, e1, e2]
+        simp only [M, B, Nat.add_eq_zero_iff, one_ne_zero, and_false, ite_false, e1, e2]
         exact hc _ _ hq)
   have ea : (⟨min (a.val + 1 - 1) r, by omega⟩ : Fin (r + 1)) = a := Fin.ext (by simp; omega)
-  simp only [M, Nat.add_eq_zero_iff, one_ne_zero, and_false, if_false, if_true, ea, div_one] at key
+  simp only [M, Nat.add_eq_zero_iff, one_ne_zero, and_false, ite_false, ite_true, ea, div_one] at key
   refine key.trans (le_of_eq ?_)
   congr 1
   rw [prod_range_succ']
-  simp only [B, Nat.add_eq_zero_iff, one_ne_zero, and_false, if_false, if_true, prod_const, card_range]
+  simp only [B, Nat.add_eq_zero_iff, one_ne_zero, and_false, ite_false, ite_true, prod_const, card_range]
   rw [← pow_mul, mul_comm]
 
 theorem corollary_product_estimate_holds : Formalism.HermitianLatticeCounting.ExpansionTerms.MomentProductBound := by

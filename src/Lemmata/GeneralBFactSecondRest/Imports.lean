@@ -11,9 +11,9 @@ universe u_1 u_2
 namespace Bl.general_b_fact_second_rest
 
 theorem goal1 :
-  ∀ {K : Type u_1} {V : Type u_2} [inst : Field.{u_1} K] [NumberField.{u_1} K] [NumberField.IsTotallyComplex.{u_1} K]
-  [StarRing.{u_1} K] [inst_4 : AddCommGroup.{u_2} V] [inst_5 : Module.{u_1, u_2} K V]
-  [inst_6 : Module.{u_1, u_2} (NumberField.RingOfIntegers.{u_1} K) V]
+  ∀ {K : Type u_1} {V : Type u_2} [Field.{u_1} K] [NumberField.{u_1} K] [NumberField.IsTotallyComplex.{u_1} K]
+  [StarRing.{u_1} K] [AddCommGroup.{u_2} V] [Module.{u_1, u_2} K V]
+  [Module.{u_1, u_2} (NumberField.RingOfIntegers.{u_1} K) V]
   [IsScalarTower.{u_1, u_1, u_2} (NumberField.RingOfIntegers.{u_1} K) K V]
   (L : Submodule.{u_1, u_2} (NumberField.RingOfIntegers.{u_1} K) V),
   Eq.{u_2 + 1} (Submodule.span.{u_1, u_2} K (SetLike.coe.{u_2, u_2} L)) Top.top.{u_2} →

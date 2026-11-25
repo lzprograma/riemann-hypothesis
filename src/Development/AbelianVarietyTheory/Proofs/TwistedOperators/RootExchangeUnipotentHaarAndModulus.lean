@@ -113,7 +113,7 @@ theorem det_lm (P : ι → ι → Prop) [DecidableRel P] [F : Fintype {rs : ι �
   have ht : (lm P h).BlockTriangular (fun a => a.1.2) := by
     intro a b hab
     simp only [lm, Matrix.of_apply]
-    rw [if_neg (ne_of_lt hab).symm]
+    rw [ite_eq_right (ne_of_lt hab).symm]
   rw [ht.det_fintype]
   refine Finset.prod_congr rfl fun s _ => ?_
   let E : {r // P r s} ≃ {a : {rs : ι × ι // P rs.1 rs.2} // a.1.2 = s} :=
@@ -133,7 +133,7 @@ theorem det_rm (P : ι → ι → Prop) [DecidableRel P] [F : Fintype {rs : ι �
   have ht : (rm P h).BlockTriangular (fun a => a.1.1) := by
     intro a b hab
     simp only [rm, Matrix.of_apply]
-    rw [if_neg (ne_of_lt hab).symm]
+    rw [ite_eq_right (ne_of_lt hab).symm]
   rw [ht.det_fintype]
   refine Finset.prod_congr rfl fun s _ => ?_
   let E : {r // P s r} ≃ {a : {rs : ι × ι // P rs.1 rs.2} // a.1.1 = s} :=
@@ -222,7 +222,7 @@ theorem mkNel_co (p : ℕ) (g : N k n c p) : mkNel p (co p g) = g := by
   change mkN p (co p g) r s = _
   by_cases h : lev p r < lev p s
   · simp [mkN, h, co]
-  · simp only [mkN, Matrix.of_apply, dif_neg h]
+  · simp only [mkN, Matrix.of_apply, dite_eq_right h]
     exact (mem_N_iff.1 g.2 r s (not_lt.1 h)).symm
 
 theorem mul_mkNel (p : ℕ) (g : N k n c p) (e : Ix n c p → k) :
@@ -262,7 +262,7 @@ theorem rootExchangeEmbedGLComplement_mul_extendAboveDiagonalBlocks (p : ℕ) (x
   · have h0 : ∀ t, lev p t = lev p r → ∀ e : Ix n c p → k, ext0 (Up n c p) e t s = 0 := by
       intro t ht e
       simp only [ext0, Matrix.of_apply]
-      rw [dif_neg]
+      rw [dite_eq_right]
       simpa [ht] using h
     rw [h0 r rfl, Matrix.mul_apply]
     refine Finset.sum_eq_zero fun t _ => ?_
@@ -294,7 +294,7 @@ theorem det_lm_embX {p : ℕ} (x : GL n k) :
   rw [Finset.prod_congr rfl fun s _ => det_block_fromBlocks x.val _ (p < lev p s) fun a => Iff.rfl]
   rw [Fintype.prod_sum_type]
   change (∏ _a : n, if p < p then x.val.det else 1) * (∏ i : Fin c, if p < i.val + 1 then x.val.det else 1) = _
-  simp only [lt_irrefl, if_false, Finset.prod_const_one, one_mul]
+  simp only [lt_irrefl, ite_false, Finset.prod_const_one, one_mul]
   rw [Fin.prod_univ_eq_prod_range (fun i => if p < i + 1 then x.val.det else 1), ← Finset.prod_filter,
     Finset.prod_const]
   congr 1
@@ -308,7 +308,7 @@ theorem det_rm_embX {p : ℕ} (hp : p ≤ c) (x : GL n k) :
   rw [Finset.prod_congr rfl fun s _ => det_block_fromBlocks x.val _ (lev p s < p) fun a => Iff.rfl]
   rw [Fintype.prod_sum_type]
   change (∏ _a : n, if p < p then x.val.det else 1) * (∏ i : Fin c, if i.val + 1 < p then x.val.det else 1) = _
-  simp only [lt_irrefl, if_false, Finset.prod_const_one, one_mul]
+  simp only [lt_irrefl, ite_false, Finset.prod_const_one, one_mul]
   rw [Fin.prod_univ_eq_prod_range (fun i => if i + 1 < p then x.val.det else 1), ← Finset.prod_filter,
     Finset.prod_const]
   congr 1
@@ -412,8 +412,8 @@ theorem continuous_mkNel (p : ℕ) : Continuous (mkNel (k := k) (n := n) (c := c
   have h1 : Continuous (mkN (k := k) (n := n) (c := c) p) := by
     refine continuous_pi fun r => continuous_pi fun s => ?_
     by_cases h : lev p r < lev p s
-    · simp only [mkN, Matrix.of_apply, dif_pos h]; exact continuous_apply _
-    · simp only [mkN, Matrix.of_apply, dif_neg h]; exact continuous_const
+    · simp only [mkN, Matrix.of_apply, dite_eq_left h]; exact continuous_apply _
+    · simp only [mkN, Matrix.of_apply, dite_eq_right h]; exact continuous_const
   refine continuous_induced_rng.2 (Units.continuous_iff.2 ⟨h1.congr fun _ => rfl, ?_⟩)
   refine h1.matrix_adjugate.congr fun e => ?_
   rw [Matrix.coe_units_inv, Matrix.inv_def]

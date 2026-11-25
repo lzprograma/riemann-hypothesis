@@ -32,8 +32,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.NGCut.NormalIntegrality
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem zhat_int {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hun : Formalism.HermitianLatticesTheory.IsUnimodular (VS D).hT Λ)
@@ -86,7 +84,7 @@ theorem yv_orth_X {T T' : D.host.E} (F : FlagG (VS D) D.R.rS T) (F' : FlagG (VS 
       simp [Zhat, brS, FlagG.fvec, Fin.snoc_castSucc]
     have hm := congrFun (congrFun (Matrix.mul_adjugate (Zhat F F')) a.castSucc) (Fin.last _)
     rw [Matrix.mul_apply] at hm
-    simp only [Matrix.smul_apply, Matrix.one_apply, Fin.castSucc_ne_last, if_false, smul_zero] at hm
+    simp only [Matrix.smul_apply, Matrix.one_apply, Fin.castSucc_ne_last, ite_false, smul_zero] at hm
     unfold NormalVectorPairings.yv NormalVectorPairings.omp
 
     rw [map_add (f := _), map_smul, map_smul, F.z_orth a, smul_zero, add_zero, map_sum]
@@ -169,8 +167,6 @@ open scoped Classical
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat
 
 namespace Formalism.L2.SG.NGCut.NormalIntegrality
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
@@ -277,12 +273,10 @@ theorem norm_bound :
     intro h
     rw [h] at hc0I
     exact hc0ne ((Submodule.mem_bot _).1 hc0I)
-  have hNIc : Ideal.absNorm (Ideal.map e I) = Ideal.absNorm I := by
-    rw [Ideal.absNorm_apply, Ideal.absNorm_apply, Submodule.cardQuot_apply, Submodule.cardQuot_apply]
-    exact Nat.card_congr (Ideal.quotientEquiv I (Ideal.map e I) e rfl).toEquiv.symm
   have hdvd := Ideal.absNorm_dvd_absNorm_of_le hA
-  rw [map_mul, map_mul, hNIc, Ideal.absNorm_span_singleton, Ideal.absNorm_span_singleton, map_mul,
-    normZ_cO, Int.natAbs_mul] at hdvd
+  rw [map_mul, map_mul, TorsionTotientBound.absNorm_map_equiv e I,
+    Ideal.absNorm_span_singleton, Ideal.absNorm_span_singleton, map_mul, normZ_cO,
+    Int.natAbs_mul] at hdvd
   have hn0 : (Algebra.norm ℤ c0).natAbs ≠ 0 := by
     rw [Int.natAbs_ne_zero]
     exact Algebra.norm_ne_zero_iff.2 hc0ne
@@ -338,8 +332,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 set_option linter.dupNamespace false
 
 namespace Formalism.L2.SG.NGCut.NormalIntegrality
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Term
 

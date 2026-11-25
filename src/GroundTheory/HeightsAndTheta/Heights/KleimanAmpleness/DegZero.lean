@@ -35,9 +35,7 @@ def EulerSES.Statement : Prop :=
     (dA : ∀ n, A n →ₗ[F] A (n + 1)) (dB : ∀ n, B n →ₗ[F] B (n + 1)) (dC : ∀ n, C n →ₗ[F] C (n + 1))
     (f : ∀ n, A n →ₗ[F] B n) (g : ∀ n, B n →ₗ[F] C n) (N : ℕ),
     (∀ n, ∀ x ∈ CA n, dA n x ∈ CA (n + 1)) → (∀ n, ∀ x ∈ CB n, dB n x ∈ CB (n + 1)) →
-    (∀ n, ∀ x ∈ CC n, dC n x ∈ CC (n + 1)) →
-    (∀ n, ∀ x ∈ CA n, dA (n + 1) (dA n x) = 0) → (∀ n, ∀ x ∈ CB n, dB (n + 1) (dB n x) = 0) →
-    (∀ n, ∀ x ∈ CC n, dC (n + 1) (dC n x) = 0) →
+    (∀ n, ∀ x ∈ CB n, dB (n + 1) (dB n x) = 0) →
     (∀ n, ∀ x ∈ CA n, f n x ∈ CB n) → (∀ n, ∀ y ∈ CB n, g n y ∈ CC n) →
     (∀ n, ∀ x ∈ CA n, dB n (f n x) = f (n + 1) (dA n x)) →
     (∀ n, ∀ y ∈ CB n, dC n (g n y) = g (n + 1) (dB n y)) →

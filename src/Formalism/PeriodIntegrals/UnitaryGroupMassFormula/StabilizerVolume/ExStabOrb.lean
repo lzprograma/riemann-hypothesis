@@ -12,56 +12,9 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnitaryOrb
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianDiagonalization.ExistsOrthogonalFamily
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.OrbRing
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnitaryOrbits.UnitChoice
 import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AwayActions.SigmaSigma
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -379,7 +332,7 @@ end -- clump:auto
 -- ===== end clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.ExStabFin =====
 
 -- ===== clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.OrbRing =====
--- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.OrbRing", "h": "module\n\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.OrbRing\npublic import Formalism.SatakeDualWeyl.Statement\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnitaryOrbits.UnitChoice\n\n"}
+-- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.OrbRing", "h": "module\n\npublic import Formalism.SatakeDualWeyl.Statement\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnitaryOrbits.UnitChoice\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -424,17 +377,85 @@ theorem hform_mem (g : GL (Fin n) S) (hg : g ∈ UJ s J) (z w : Fin n → S) :
   rw [hform_mulVec]
   rw [show cT s (g : Matrix (Fin n) (Fin n) S) * J * (g : Matrix (Fin n) (Fin n) S) = J from hg]
 
+private lemma hform_single_single_stabilizer_orbit_volume (M : Matrix (Fin n) (Fin n) S) (a b : Fin n) :
+    hform s M (Pi.single a 1) (Pi.single b 1) = M a b := by
+  simp [hform, Pi.single_apply, apply_ite s]
+
 theorem mem_UJ_of (hdet : IsUnit J.det) (T : Matrix (Fin n) (Fin n) S)
     (key : ∀ z w, hform s J (T *ᵥ z) (T *ᵥ w) = hform s J z w) :
     ∃ g : GL (Fin n) S, g ∈ UJ s J ∧ (g : Matrix (Fin n) (Fin n) S) = T := by
-  apply PI.VolStabSW.OrbR.mem_UJ_of <;> assumption
+  have hM : cT s T * J * T = J := by
+    ext a b
+    have h := key (Pi.single a 1) (Pi.single b 1)
+    rwa [hform_mulVec, hform_single_single_stabilizer_orbit_volume, hform_single_single_stabilizer_orbit_volume] at h
+  have hdT : IsUnit T.det := by
+    have h1 := congrArg Matrix.det hM
+    rw [Matrix.det_mul, Matrix.det_mul] at h1
+    have h2 : (cT s T).det = s T.det := by
+      unfold cT
+      rw [Matrix.det_transpose]
+      exact (RingHom.map_det s T).symm
+    rw [h2] at h1
+    have h3 : s T.det * T.det * J.det = 1 * J.det := by linear_combination h1
+    have h4 : s T.det * T.det = 1 := hdet.mul_left_inj.mp h3
+    exact ⟨⟨T.det, s T.det, by rw [mul_comm]; exact h4, h4⟩, rfl⟩
+  refine ⟨Matrix.nonsingInvUnit T hdT, ?_, rfl⟩
+  show cT s T * J * T = J
+  exact hM
 
 theorem step (hs : ∀ z, s (s z) = z) (hJ : IsHerm s J) (hdet : IsUnit J.det)
     (a b : Fin n → S) (hab : hform s J b b = hform s J a a) (hu : IsUnit (hform s J a a))
     (lam : S) (hlam : lam * s lam = 1) (hc : IsUnit (hform s J a a - s lam * hform s J b a)) :
     ∃ g : GL (Fin n) S, g ∈ UJ s J ∧ (g : Matrix (Fin n) (Fin n) S) *ᵥ a = b ∧
       ∀ z, hform s J a z = 0 → hform s J b z = 0 → (g : Matrix (Fin n) (Fin n) S) *ᵥ z = z := by
-  apply PI.VolStabSW.OrbR.step <;> assumption
+  have hconj := hform_conj s J hs hJ
+  obtain ⟨c, hc_def⟩ : ∃ c, hform s J a a - s lam * hform s J b a = c := ⟨_, rfl⟩
+  rw [hc_def] at hc
+  obtain ⟨ci, hci⟩ : ∃ ci, c * ci = 1 := hc.exists_right_inv
+  have e2 : ci * c = 1 := by rw [mul_comm]; exact hci
+  have e3 : s ci * s c = 1 := by rw [← map_mul, e2, map_one]
+  obtain ⟨u, hu_def⟩ : ∃ u, a - lam • b = u := ⟨_, rfl⟩
+  have hua : hform s J u a = c := by
+    rw [← hu_def, hform_sub_left, hform_smul_left, hc_def]
+  have huu : hform s J u u = c + s c := by
+    rw [← hu_def, ← hc_def]
+    simp only [hform_sub_left, hform_sub_right, hform_smul_left, hform_smul_right, map_sub, map_mul,
+      hs, hconj]
+    linear_combination (s lam * lam) * hab + hform s J a a * hlam
+  have key1 : ∀ z w, hform s J (r1 s J ci u u *ᵥ z) (r1 s J ci u u *ᵥ w) = hform s J z w := by
+    intro z w
+    rw [reflection_mulVec, reflection_mulVec]
+    simp only [hform_sub_left, hform_sub_right, hform_smul_left, hform_smul_right, map_mul, hconj, huu]
+    linear_combination (hform s J z u * hform s J u w * s ci) * e2 +
+      (hform s J z u * hform s J u w * ci) * e3
+  obtain ⟨g1, hg1U, hg1⟩ := mem_UJ_of s J hdet _ key1
+  obtain ⟨βi, hβ⟩ : ∃ βi, hform s J a a * βi = 1 := hu.exists_right_inv
+  have hsβ : s (hform s J a a) = hform s J a a := hconj a a
+  have hsβi : s βi = βi := by
+    have h1 : hform s J a a * s βi = 1 := by rw [← hsβ, ← map_mul, hβ, map_one]
+    calc s βi = s βi * (hform s J a a * βi) := by rw [hβ, mul_one]
+      _ = (hform s J a a * s βi) * βi := by ring
+      _ = βi := by rw [h1, one_mul]
+  have key2 : ∀ z w, hform s J (r1 s J ((1 - s lam) * βi) b b *ᵥ z)
+      (r1 s J ((1 - s lam) * βi) b b *ᵥ w) = hform s J z w := by
+    intro z w
+    rw [reflection_mulVec, reflection_mulVec]
+    simp only [hform_sub_left, hform_sub_right, hform_smul_left, hform_smul_right, map_mul, hconj, hab,
+      map_sub, map_one, hs, hsβi]
+    linear_combination (hform s J z b * hform s J b w * βi) * hlam +
+      (hform s J z b * hform s J b w * (1 - lam) * (1 - s lam) * βi) * hβ
+  obtain ⟨g2, hg2U, hg2⟩ := mem_UJ_of s J hdet _ key2
+  refine ⟨g2 * g1, mul_mem hg2U hg1U, ?_, ?_⟩
+  · rw [Units.val_mul, ← mulVec_mulVec, hg1, hg2, reflection_mulVec s J ci u u, hua, e2, one_smul, ← hu_def,
+      sub_sub_cancel, reflection_mulVec, hform_smul_right, hab, ← sub_smul]
+    conv_rhs => rw [← one_smul S b]
+    congr 1
+    linear_combination hlam + (s lam * lam - lam) * hβ
+  · intro z hz1 hz2
+    have hzu : hform s J u z = 0 := by
+      rw [← hu_def, hform_sub_left, hform_smul_left, hz1, hz2, mul_zero, sub_zero]
+    rw [Units.val_mul, ← mulVec_mulVec, hg1, hg2, reflection_mulVec s J ci u u, hzu, mul_zero, zero_smul, sub_zero,
+      reflection_mulVec, hz2, mul_zero, zero_smul, sub_zero]
 
 theorem orb_orth (hs : ∀ z, s (s z) = z) (hJ : IsHerm s J) (hdet : IsUnit J.det) :
     ∀ (k : ℕ) (x y : Fin k → Fin n → S), (∀ i j, i ≠ j → hform s J (x i) (x j) = 0) →
@@ -442,7 +463,28 @@ theorem orb_orth (hs : ∀ z, s (s z) = z) (hJ : IsHerm s J) (hdet : IsUnit J.de
       (∀ i, IsUnit (hform s J (x i) (x i))) →
       (∀ i (t : S), ∃ lam, lam * s lam = 1 ∧ IsUnit (hform s J (x i) (x i) - s lam * t)) →
       ∃ g : GL (Fin n) S, g ∈ UJ s J ∧ ∀ i, (g : Matrix (Fin n) (Fin n) S) *ᵥ x i = y i := by
-  apply PI.VolStabSW.OrbR.orb_orth <;> assumption
+  intro k
+  induction k with
+  | zero => intro x y _ _ _ _; exact ⟨1, one_mem _, fun i => Fin.elim0 i⟩
+  | succ k ih =>
+    intro x y ho hg hu hl
+    obtain ⟨g', hg'U, hg'⟩ := ih (fun i => x i.succ) (fun i => y i.succ)
+      (fun i j hij => ho _ _ (fun e => hij (Fin.succ_injective _ e))) (fun i j => hg _ _)
+      (fun i => hu _) (fun i t => hl _ t)
+    obtain ⟨a, ha⟩ : ∃ a, (g' : Matrix (Fin n) (Fin n) S) *ᵥ x 0 = a := ⟨_, rfl⟩
+    have haa : hform s J a a = hform s J (x 0) (x 0) := by rw [← ha]; exact hform_mem s J g' hg'U _ _
+    obtain ⟨lam, hlam, hc⟩ := hl 0 (hform s J (y 0) a)
+    rw [← haa] at hc
+    obtain ⟨g1, hg1U, hg1a, hg1z⟩ := step s J hs hJ hdet a (y 0) (by rw [haa]; exact hg 0 0)
+      (haa ▸ hu 0) lam hlam hc
+    refine ⟨g1 * g', mul_mem hg1U hg'U, fun i => ?_⟩
+    refine Fin.cases ?_ (fun i => ?_) i
+    · rw [Units.val_mul, ← mulVec_mulVec, ha]; exact hg1a
+    · have hi := hg' i
+      rw [Units.val_mul, ← mulVec_mulVec, hi]
+      apply hg1z
+      · rw [← hi, ← ha, hform_mem s J g' hg'U]; exact ho 0 i.succ (Fin.succ_ne_zero i).symm
+      · rw [hg 0 i.succ]; exact ho 0 i.succ (Fin.succ_ne_zero i).symm
 
 def tM {m : ℕ} (X : Fin m → Fin n → S) : Matrix (Fin n) (Fin m) S := Matrix.of fun r i => X i r
 
@@ -478,15 +520,14 @@ theorem cm_fixed {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E
     (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (a : E) : σ a = a ↔ a ∈ (algebraMap F E).range := by
   apply PositivityTheory.SiegelWeilFormula.KAway.sigma_fix <;> assumption
 
-theorem orbTup_holds : OrbTup := by
-  intro F E _ _ _ _ _ σ hCM M J hJ _ _ a _ _ X0 hT hdet y hy
-  have h2 : Module.finrank F E = 2 := hCM.2.2.1
-  have hinv : ∀ x, σ (σ x) = x := by
-    intro x
-    obtain ⟨τ⟩ := (inferInstance : Nonempty (E →+* ℂ))
-    apply τ.injective
-    rw [hCM.2.2.2, hCM.2.2.2, star_star]
-  have hfix := cm_fixed σ hCM
+theorem witt_R {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
+    (σ : E →ₐ[F] E) (h2 : Module.finrank F E = 2) (hfix : ∀ a : E, σ a = a ↔ a ∈ (algebraMap F E).range)
+    (hinv : ∀ x, σ (σ x) = x) {M : ℕ} (J : Matrix (Fin M) (Fin M) E) (hJ : IsHermND σ J) {a : ℕ}
+    (X0 : Fin a → Fin M → E) (hT : ∀ i j, σ (gramE σ J X0 j i) = gramE σ J X0 i j)
+    (hdet : (gramE σ J X0).det ≠ 0) (R : Type) [CommRing R] [Algebra F R]
+    (hU : PIW.AdelicOrbitU.UnitChoice R) (y : Fin a → Fin M → R ⊗[F] E)
+    (hy : gramR R σ J y = (gramE σ J X0).map (inclR R)) :
+    ∃ g : HA R σ J, g • ratTup (F := F) R X0 = y := by
   set T := gramE σ J X0 with hTdef
   let sE : E →+* E := σ
   have hTH : IsHerm sE T := by
@@ -526,7 +567,6 @@ theorem orbTup_holds : OrbTup := by
   have hDfix : ∀ j, σ (D j j) = D j j := fun j => by
     rw [← hDv]; exact PIW.AdelicOrbitU.hform_conj sE T hinv hTH _ _
 
-  let R := AF F
   let sS := sigR R σ
   let JS := JR (F := F) R J
   have hsS : ∀ z, sS (sS z) = z := (PIW.AdelicOrbitU.stFix F E σ h2 hfix R).1
@@ -568,7 +608,7 @@ theorem orbTup_holds : OrbTup := by
       obtain ⟨β, hβ⟩ := (hfix _).mp (hDfix j)
       have hβ0 : β ≠ 0 := by
         rintro rfl; exact hDne j (by rw [← hβ, map_zero])
-      obtain ⟨lam, hlam, hu⟩ := PIW.AdelicOrbitU.stLam F E σ h2 hfix R (PIW.AdelicOrbitU.stP F) t β hβ0
+      obtain ⟨lam, hlam, hu⟩ := PIW.AdelicOrbitU.stLam F E σ h2 hfix R hU t β hβ0
       refine ⟨lam, hlam, ?_⟩
       rw [hGx, ← hβ, PIW.AdelicOrbitU.inclR_algebraMap]
       exact hu)
@@ -583,12 +623,21 @@ theorem orbTup_holds : OrbTup := by
   have hmat2 : (g : Matrix (Fin M) (Fin M) (R ⊗[F] E)) * Xm = tM y := by
     have := congrArg (fun N => N * Pm⁻¹) hmat
     simpa only [Matrix.mul_nonsing_inv_cancel_right _ _ hPmu] using this
-  refine ⟨(⟨g, hgU⟩ : HR (AF F) σ J), ?_⟩
+  refine ⟨(⟨g, hgU⟩ : HR R σ J), ?_⟩
   funext i
   funext r
-  show ((g : Matrix (Fin M) (Fin M) (R ⊗[F] E)) *ᵥ ratTup (AF F) X0 i) r = y i r
+  show ((g : Matrix (Fin M) (Fin M) (R ⊗[F] E)) *ᵥ ratTup (F := F) R X0 i) r = y i r
   have := congrFun (congrFun hmat2 r) i
   simpa [Xm, tM, ratTup, Matrix.mul_apply, mulVec, dotProduct] using this
+
+theorem orbTup_holds : OrbTup := by
+  intro F E _ _ _ _ _ σ hCM M J hJ _ _ a _ _ X0 hT hdet y hy
+  have hinv : ∀ x, σ (σ x) = x := by
+    intro x
+    obtain ⟨τ⟩ := (inferInstance : Nonempty (E →+* ℂ))
+    apply τ.injective
+    rw [hCM.2.2.2, hCM.2.2.2, star_star]
+  exact witt_R σ hCM.2.2.1 (cm_fixed σ hCM) hinv J hJ X0 hT hdet (AF F) (PIW.AdelicOrbitU.stP F) y hy
 
 end PI.VolStabS
 end -- clump:auto

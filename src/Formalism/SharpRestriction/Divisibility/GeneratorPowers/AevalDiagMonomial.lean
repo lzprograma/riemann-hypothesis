@@ -1,54 +1,9 @@
 module
 
 public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PairEvaluation
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -62,14 +17,10 @@ open MvPolynomial Formalism.MainNotions.ModuliIntegralCharts.H1.PairEvaluation
 
 variable {S : Type} [CommRing S] [Algebra ℚ S] {d : ℕ}
 
-private theorem memIo_lemma {σ : Type} (n : ℕ) (p : MvPolynomial σ S) :
-    p ∈ Io S σ ^ n ↔ ∀ x ∈ p.support, n ≤ Finsupp.degree x :=
-  mem_pow_idealOfVars_iff n p
-
 private theorem ccmem_lemma_2 {σ : Type} {n : ℕ} {p : MvPolynomial σ S} (hp : p ∈ Io S σ ^ (n + 1)) :
     AddMonoidAlgebra.coeff p 0 = 0 := by
   by_contra hne
-  have h := (memIo_lemma (n + 1) p).1 hp 0 (MvPolynomial.mem_support_iff.2 hne)
+  have h := (mem_pow_idealOfVars_iff (n + 1) p).1 hp 0 (MvPolynomial.mem_support_iff.2 hne)
   simp [Finsupp.degree] at h
 
 private theorem ccaeval_lemma_3 {σ τ : Type} (g : σ → MvPolynomial τ S) (hg : ∀ i, constantCoeff (g i) = 0)
@@ -81,7 +32,7 @@ private theorem ccaeval_lemma_3 {σ τ : Type} (g : σ → MvPolynomial τ S) (h
 
 private theorem memcc_lemma_19 {σ : Type} {p : MvPolynomial σ S} (hp : constantCoeff p = 0) :
     p ∈ Io S σ ^ 1 := by
-  rw [memIo_lemma]
+  rw [mem_pow_idealOfVars_iff]
   intro x hx
   by_contra hlt
   have h0 : Finsupp.degree x = 0 := by omega
@@ -92,13 +43,6 @@ private theorem memcc_lemma_19 {σ : Type} {p : MvPolynomial σ S} (hp : constan
     exact hi ((Finset.sum_eq_zero_iff.1 hs) i (Finsupp.mem_support_iff.2 hi))
   subst hx0
   exact (MvPolynomial.mem_support_iff.1 hx) hp
-
-private theorem weak_lemma_24 {σ : Type} {m n : ℕ} (h : m ≤ n) {p : MvPolynomial σ S}
-    (hp : p ∈ Io S σ ^ n) : p ∈ Io S σ ^ m := by
-  rw [memIo_lemma] at hp ⊢
-  intro x hx
-  have := hp x hx
-  omega
 
 private theorem base_lemma_17 {σ τ : Type} (g g' : σ → MvPolynomial τ S)
     (hgg : ∀ i, g i - g' i ∈ Io S τ ^ 2) (p : MvPolynomial σ S) :
@@ -122,7 +66,7 @@ private theorem subst_lemma_18 {σ τ : Type} (g g' : σ → MvPolynomial τ S) 
   induction n with
   | zero =>
     intro p _
-    refine ⟨by simp, weak_lemma_24 (by norm_num) (base_lemma_17 g g' hgg p)⟩
+    refine ⟨by simp, Ideal.pow_le_pow_right (by norm_num) (base_lemma_17 g g' hgg p)⟩
   | succ n ih =>
     intro p hp
     rw [pow_succ] at hp
@@ -136,7 +80,7 @@ private theorem subst_lemma_18 {σ τ : Type} (g g' : σ → MvPolynomial τ S) 
         exact hb0
       have hb2 : aeval g b - aeval g' b ∈ Io S τ ^ 2 := base_lemma_17 g g' hgg b
       have hb3 : aeval g' b ∈ Io S τ ^ 1 := by
-        have h := Ideal.sub_mem _ hb1 (weak_lemma_24 (by norm_num) hb2)
+        have h := Ideal.sub_mem _ hb1 (Ideal.pow_le_pow_right (by norm_num) hb2)
         simpa using h
       constructor
       · rw [map_mul, pow_succ]
@@ -175,46 +119,6 @@ private theorem ev2sub_lemma_25 {τ : Type} (u v u' v' : Fin d → MvPolynomial 
     · simpa using huu i
     · simpa using hvv i
 
-private theorem wtdeg_lemma_20 {σ : Type} (e : σ →₀ ℕ) : Finsupp.weight 1 e = Finsupp.degree e := by
-  rw [Finsupp.weight_apply]
-  show (e.sum fun i c => c • (1 : σ → ℕ) i) = ∑ i ∈ e.support, e i
-  simp [Finsupp.sum]
-
-private theorem hX_lemma_22 {σ : Type} (i : σ) : (X i : MvPolynomial σ S).IsHomogeneous 1 := by
-  classical
-  intro e he
-  rw [coeff_X'] at he
-  split_ifs at he with h
-  · rw [← h]
-    simp [Finsupp.weight_apply, Finsupp.sum_single_index]
-  · exact absurd rfl he
-
-private theorem homog_lemma_21 {σ τ : Type} {p : MvPolynomial σ S} {j : ℕ} (hp : p.IsHomogeneous j)
-    (g : σ → MvPolynomial τ S) (hg : ∀ i, (g i).IsHomogeneous 1) : (aeval g p).IsHomogeneous j := by
-  have h := hp.eval₂ C g (fun r => isHomogeneous_C _ r) hg
-  rw [one_mul] at h
-  rw [aeval_def, algebraMap_eq]
-  exact h
-
-private theorem ev2homog_lemma_23 {τ : Type} {p : MvPolynomial (Fin 2 × Fin d) S} {j : ℕ}
-    (hp : p.IsHomogeneous j) (u v : Fin d → MvPolynomial τ S) (hu : ∀ i, (u i).IsHomogeneous 1)
-    (hv : ∀ i, (v i).IsHomogeneous 1) : (ev2 p u v).IsHomogeneous j := by
-  apply homog_lemma_21 hp
-  rintro ⟨k, i⟩
-  fin_cases k
-  · simpa using hu i
-  · simpa using hv i
-
-private theorem zeroOf_lemma_26 {τ : Type} {p : MvPolynomial τ S} {j : ℕ} (hh : p.IsHomogeneous j)
-    (hp : p ∈ Io S τ ^ (j + 1)) : p = 0 := by
-  ext e
-  change p.coeff e = 0
-  by_contra he
-  have h1 : Finsupp.weight 1 e = j := hh he
-  have h2 := (memIo_lemma (j + 1) p).1 hp e (MvPolynomial.mem_support_iff.2 he)
-  rw [wtdeg_lemma_20] at h1
-  omega
-
 theorem lead_biadd {P : MvPolynomial (Fin 2 × Fin d) S} {m j : ℕ} (hj1 : 1 ≤ j) (hjm : j ≤ m)
     (fF : Fin d → MvPolynomial (Fin 3 × Fin d) S)
     (hF : ∀ i, fF i - (xs S d 0 i + xs S d 1 i) ∈ Io S (Fin 3 × Fin d) ^ 2)
@@ -234,11 +138,11 @@ theorem lead_biadd {P : MvPolynomial (Fin 2 × Fin d) S} {m j : ℕ} (hj1 : 1 �
     fun i => Ideal.add_mem _ (hxJ 0 i) (hxJ 1 i)
   have hfJ : ∀ i, fF i ∈ Io S (Fin 3 × Fin d) ^ 1 := by
     intro i
-    have h := Ideal.add_mem _ (weak_lemma_24 (by norm_num) (hF i)) (haJ i)
+    have h := Ideal.add_mem _ (Ideal.pow_le_pow_right (by norm_num) (hF i)) (haJ i)
     simpa using h
   have hR : P - 1 - homogeneousComponent j (P - 1) ∈ Io S (Fin 2 × Fin d) ^ (j + 1) := by
     have hP' := hP
-    rw [memIo_lemma] at hP' ⊢
+    rw [mem_pow_idealOfVars_iff] at hP' ⊢
     intro x hx
     rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_sub, coeff_homogeneousComponent] at hx
     split_ifs at hx with hxj
@@ -249,8 +153,8 @@ theorem lead_biadd {P : MvPolynomial (Fin 2 × Fin d) S} {m j : ℕ} (hj1 : 1 �
       have := hP' x hxQ
       omega
   have hQj := homogeneousComponent_isHomogeneous j (P - 1)
-  have hXh : ∀ (k : Fin 3) (i : Fin d), (xs S d k i).IsHomogeneous 1 := fun k i => hX_lemma_22 _
-  have hYh : ∀ (k : Fin 2) (i : Fin d), (xs S d k i).IsHomogeneous 1 := fun k i => hX_lemma_22 _
+  have hXh : ∀ (k : Fin 3) (i : Fin d), (xs S d k i).IsHomogeneous 1 := xs_hom
+  have hYh : ∀ (k : Fin 2) (i : Fin d), (xs S d k i).IsHomogeneous 1 := xs_hom
   have z2 : ∀ (w : Fin d → MvPolynomial (Fin 3 × Fin d) S) (i : Fin d), w i - w i ∈ Io S (Fin 3 × Fin d) ^ 2 := by
     intro w i
     simp
@@ -259,7 +163,7 @@ theorem lead_biadd {P : MvPolynomial (Fin 2 × Fin d) S} {m j : ℕ} (hj1 : 1 �
     simp
   constructor
   · have m1 : ev2 P fF (xs S d 2) - ev2 P (xs S d 0) (xs S d 2) * ev2 P (xs S d 1) (xs S d 2) ∈
-        Io S (Fin 3 × Fin d) ^ (j + 1) := weak_lemma_24 (by omega) hph1
+        Io S (Fin 3 × Fin d) ^ (j + 1) := Ideal.pow_le_pow_right (by omega) hph1
     have m2 := (ev2sub_lemma_25 fF (xs S d (2 : Fin 3)) (fun i => xs S d (0 : Fin 3) i + xs S d 1 i)
       (xs S d (2 : Fin 3)) hfJ (hxJ 2) hF (z2 _) j (P - 1) hP).2
     have m3 := (ev2sub_lemma_25 (fun i => xs S d (0 : Fin 3) i + xs S d 1 i) (xs S d (2 : Fin 3))
@@ -276,13 +180,14 @@ theorem lead_biadd {P : MvPolynomial (Fin 2 × Fin d) S} {m j : ℕ} (hj1 : 1 �
         Io S (Fin 3 × Fin d) ^ (j + 1) := by
       have h := Ideal.mul_mem_mul t4 t5
       rw [← pow_add] at h
-      exact weak_lemma_24 (by omega) h
+      exact Ideal.pow_le_pow_right (by omega) h
     have hE : ev2 (homogeneousComponent j (P - 1)) (fun i => xs S d (0 : Fin 3) i + xs S d 1 i) (xs S d 2) -
         ev2 (homogeneousComponent j (P - 1)) (xs S d 0) (xs S d 2) -
         ev2 (homogeneousComponent j (P - 1)) (xs S d 1) (xs S d 2) = 0 := by
-      apply zeroOf_lemma_26
-      · exact ((ev2homog_lemma_23 hQj _ _ (fun i => (hXh 0 i).add (hXh 1 i)) (hXh 2)).sub
-          (ev2homog_lemma_23 hQj _ _ (hXh 0) (hXh 2))).sub (ev2homog_lemma_23 hQj _ _ (hXh 1) (hXh 2))
+      apply eq_zero_of_isHomogeneous
+      · exact ((eval_pair_homogeneous hQj _ _ (fun i => (hXh 0 i).add (hXh 1 i)) (hXh 2)).sub
+          (eval_pair_homogeneous hQj _ _ (hXh 0) (hXh 2))).sub
+          (eval_pair_homogeneous hQj _ _ (hXh 1) (hXh 2))
       · have hid : ev2 (homogeneousComponent j (P - 1)) (fun i => xs S d (0 : Fin 3) i + xs S d 1 i) (xs S d 2) -
             ev2 (homogeneousComponent j (P - 1)) (xs S d 0) (xs S d 2) -
             ev2 (homogeneousComponent j (P - 1)) (xs S d 1) (xs S d 2) =
@@ -298,12 +203,13 @@ theorem lead_biadd {P : MvPolynomial (Fin 2 × Fin d) S} {m j : ℕ} (hj1 : 1 �
         exact Ideal.add_mem _ (Ideal.add_mem _ (Ideal.add_mem _
           (Ideal.sub_mem _ (Ideal.sub_mem _ m1 m2) m3) m4) m5) m6
     linear_combination hE
-  · have s1 : ev2 P (xs S d 1) (xs S d 0) - P ∈ Io S (Fin 2 × Fin d) ^ (j + 1) := weak_lemma_24 (by omega) hsym
+  · have s1 : ev2 P (xs S d 1) (xs S d 0) - P ∈ Io S (Fin 2 × Fin d) ^ (j + 1) :=
+      Ideal.pow_le_pow_right (by omega) hsym
     have s2 := (ev2sub_lemma_25 (xs S d (1 : Fin 2)) (xs S d (0 : Fin 2)) (xs S d (1 : Fin 2)) (xs S d (0 : Fin 2))
       (hyJ 1) (hyJ 0) (y2 _) (y2 _) (j + 1) _ hR).1
     have hE : ev2 (homogeneousComponent j (P - 1)) (xs S d 1) (xs S d 0) - homogeneousComponent j (P - 1) = 0 := by
-      apply zeroOf_lemma_26
-      · exact (ev2homog_lemma_23 hQj _ _ (hYh 1) (hYh 0)).sub hQj
+      apply eq_zero_of_isHomogeneous
+      · exact (eval_pair_homogeneous hQj _ _ (hYh 1) (hYh 0)).sub hQj
       · have hid : ev2 (homogeneousComponent j (P - 1)) (xs S d 1) (xs S d 0) - homogeneousComponent j (P - 1) =
             (ev2 P (xs S d 1) (xs S d 0) - P) -
             ev2 (P - 1 - homogeneousComponent j (P - 1)) (xs S d 1) (xs S d 0) +
@@ -328,12 +234,12 @@ private theorem coeffDiag_lemma_5 {σ : Type} (s : σ → S) (h : MvPolynomial �
   rw [map_sum, coeff_sum]
   simp only [monoDiag_lemma_4, coeff_monomial]
   rw [Finset.sum_eq_single e]
-  · rw [if_pos rfl]
+  · rw [ite_eq_left rfl]
   · intro b _ hb
-    rw [if_neg hb]
+    rw [ite_eq_right hb]
   · intro he
     simp only [MvPolynomial.mem_support_iff, not_not] at he
-    rw [if_pos rfl, he, mul_zero]
+    rw [ite_eq_left rfl, he, mul_zero]
 
 private theorem cancel_lemma_6 {a : ℕ} (ha : a ≠ 1) {c : S} (h : (2 : S) ^ a * c = 2 * c) : c = 0 := by
   have hq : ((2 : ℚ) ^ a - 2) ≠ 0 := by
@@ -359,19 +265,6 @@ private theorem prod_ite_pow_eq_two_pow_sum (k : Fin 2) (e : Fin 2 × Fin d →�
   rw [Finsupp.prod_fintype _ _ (fun _ => pow_zero _), Fintype.prod_prod_type, Fin.prod_univ_two]
   fin_cases k <;> simp [Finset.prod_pow_eq_pow_sum]
 
-private theorem comp_lemma_9 {σ τ υ : Type} (g : σ → MvPolynomial τ S) (r : τ → MvPolynomial υ S)
-    (p : MvPolynomial σ S) : aeval r (aeval g p) = aeval (fun i => aeval r (g i)) p := by
-  induction p using MvPolynomial.induction_on with
-  | C a => simp only [aeval_C, algebraMap_eq]
-  | add p q hp hq => simp only [map_add (f := _), hp, hq]
-  | mul_X p i hp => simp only [map_mul, aeval_X, hp]
-
-private theorem aevalX_lemma_10 {σ : Type} (p : MvPolynomial σ S) : aeval X p = p := by
-  induction p using MvPolynomial.induction_on with
-  | C a => simp only [aeval_C, algebraMap_eq]
-  | add p q hp hq => simp only [map_add (f := _), hp, hq]
-  | mul_X p i hp => simp only [map_mul, aeval_X, hp]
-
 private theorem wt_lemma_11 (e : Fin 2 × Fin d →₀ ℕ) :
     Finsupp.weight 1 e = (∑ i, e (0, i)) + ∑ i, e (1, i) := by
   rw [Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by simp)]
@@ -386,7 +279,7 @@ private theorem aeval_double_fst_of_additive {h : MvPolynomial (Fin 2 × Fin d) 
   have H := congrArg (aeval r) hA1
   have e1 : aeval r (ev2 h (fun i => xs S d (0 : Fin 3) i + xs S d 1 i) (xs S d 2)) =
       aeval (fun p : Fin 2 × Fin d => C (if p.1 = 0 then (2 : S) else 1) * X p) h := by
-    rw [ev2, comp_lemma_9]
+    rw [ev2, comp_aeval_apply]
     refine congrArg (fun f => aeval f h) ?_
     funext ⟨k, i⟩
     fin_cases k <;> simp [xs, hr]
@@ -394,8 +287,8 @@ private theorem aeval_double_fst_of_additive {h : MvPolynomial (Fin 2 × Fin d) 
     congr 1
   have e2 : ∀ k : Fin 3, k ≠ 2 → aeval r (ev2 h (xs S d k) (xs S d 2)) = h := by
     intro k hk
-    rw [ev2, comp_lemma_9]
-    conv_rhs => rw [← aevalX_lemma_10 h]
+    rw [ev2, comp_aeval_apply]
+    conv_rhs => rw [← aeval_X_left_apply h]
     refine congrArg (fun f => aeval f h) ?_
     funext ⟨l, i⟩
     fin_cases l <;> simp [xs, hr, hk]
@@ -410,13 +303,13 @@ private theorem aeval_double_snd_of_symm {h : MvPolynomial (Fin 2 × Fin d) S}
       ∀ q, G q = if q.1 = 0 then C (2 : S) * X (1, q.2) else X (0, q.2) := ⟨_, fun _ => rfl⟩
   have e1 : aeval (fun p : Fin 2 × Fin d => C (if p.1 = 1 then (2 : S) else 1) * X p)
       (ev2 h (xs S d (1 : Fin 2)) (xs S d 0)) = aeval G h := by
-    rw [ev2, comp_lemma_9]
+    rw [ev2, comp_aeval_apply]
     refine congrArg (fun f => aeval f h) ?_
     funext ⟨k, i⟩
     fin_cases k <;> simp [xs, hG]
   have e2 : ev2 (aeval (fun p : Fin 2 × Fin d => C (if p.1 = 0 then (2 : S) else 1) * X p) h)
       (xs S d (1 : Fin 2)) (xs S d 0) = aeval G h := by
-    rw [ev2, comp_lemma_9]
+    rw [ev2, comp_aeval_apply]
     refine congrArg (fun f => aeval f h) ?_
     funext ⟨k, i⟩
     fin_cases k <;> simp [xs, hG]
@@ -458,7 +351,7 @@ theorem stepNo2 {P : MvPolynomial (Fin 2 × Fin d) S} {m j : ℕ} (hj1 : 1 ≤ j
     (hP : P - 1 ∈ Io S (Fin 2 × Fin d) ^ j) : P - 1 ∈ Io S (Fin 2 × Fin d) ^ (j + 1) := by
   obtain ⟨hA, hs⟩ := lead_biadd hj1 hjm fF hF hph1 hsym hP
   have h0 := zero_of_biadd (homogeneousComponent_isHomogeneous j (P - 1)) hj2 hA hs
-  rw [memIo_lemma] at hP ⊢
+  rw [mem_pow_idealOfVars_iff] at hP ⊢
   intro x hx
   have hle := hP x hx
   rcases Nat.lt_or_ge j (Finsupp.degree x) with hlt | hge
@@ -466,7 +359,7 @@ theorem stepNo2 {P : MvPolynomial (Fin 2 × Fin d) S} {m j : ℕ} (hj1 : 1 ≤ j
   · exfalso
     have hxj : Finsupp.degree x = j := le_antisymm hge hle
     have hcx := congrArg (AddMonoidAlgebra.coeff · x) h0
-    rw [coeff_homogeneousComponent, if_pos hxj, AddMonoidAlgebra.coeff_zero] at hcx
+    rw [coeff_homogeneousComponent, ite_eq_left hxj, AddMonoidAlgebra.coeff_zero] at hcx
     exact (MvPolynomial.mem_support_iff.1 hx) hcx
 
 theorem eq_one_of_cube {P : MvPolynomial (Fin 2 × Fin d) S} {m : ℕ}
@@ -489,10 +382,7 @@ theorem eq_one_of_cube {P : MvPolynomial (Fin 2 × Fin d) S} {m : ℕ}
       rw [e]
       exact h
   by_cases hm : m + 1 ≤ 3
-  · rw [memIo_lemma] at h3 ⊢
-    intro x hx
-    have := h3 x hx
-    omega
+  · exact Ideal.pow_le_pow_right hm h3
   · have h := key (m + 1 - 3) (by omega)
     have e : 3 + (m + 1 - 3) = m + 1 := by omega
     rw [e] at h
@@ -533,7 +423,7 @@ theorem const_one {P : MvPolynomial (Fin 2 × Fin d) S} {m : ℕ}
     calc 1 - AddMonoidAlgebra.coeff P 0 = (v * AddMonoidAlgebra.coeff P 0) * (1 - AddMonoidAlgebra.coeff P 0) := by rw [hv, one_mul]
       _ = v * (AddMonoidAlgebra.coeff P 0 * (1 - AddMonoidAlgebra.coeff P 0)) := by ring
       _ = 0 := by rw [h2, mul_zero]
-  rw [memIo_lemma]
+  rw [mem_pow_idealOfVars_iff]
   intro x hx
   by_contra hlt
   have h0 : Finsupp.degree x = 0 := by omega
@@ -604,9 +494,9 @@ theorem bilin_of_biadd {h : MvPolynomial (Fin 2 × Fin d) S}
           simp
         · simp [hii]
     subst hE
-    rw [Finset.sum_eq_single i0, Finset.sum_eq_single l0, if_pos rfl]
+    rw [Finset.sum_eq_single i0, Finset.sum_eq_single l0, ite_eq_left rfl]
     · intro l _ hl
-      rw [if_neg]
+      rw [ite_eq_right]
       intro heq
       have := congrArg (fun f => f ((1 : Fin 2), l)) heq
       simp [Ne.symm hl] at this
@@ -614,7 +504,7 @@ theorem bilin_of_biadd {h : MvPolynomial (Fin 2 × Fin d) S}
       exact absurd (Finset.mem_univ _) h'
     · intro i _ hi
       refine Finset.sum_eq_zero (fun l _ => ?_)
-      rw [if_neg]
+      rw [ite_eq_right]
       intro heq
       have := congrArg (fun f => f ((0 : Fin 2), i)) heq
       simp [Ne.symm hi] at this

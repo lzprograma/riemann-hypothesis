@@ -14,47 +14,8 @@ public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitIdem
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitIdempotentPrimeProjectionCorrespondence
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitProjAdeleComponentChartProperties
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaFunctionSplitProductDatumIsPureTensorStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
 import Formalism.LocalToGlobal.IndefiniteReal.SelfDualFullLattice
@@ -65,7 +26,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor
 open scoped TensorProduct ComplexOrder nonZeroDivisors
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 
@@ -85,7 +45,7 @@ theorem topL_eq_upper {κ : Type} [Zero κ] (ht : a + t = n) (y : Matrix (Fin n)
   ext i j
   have h1 : i.val < n ∧ j.val < a := ⟨by omega, j.2⟩
   unfold topL
-  rw [dif_pos h1]
+  rw [dite_eq_left h1]
   rfl
 
 theorem lowZero_iff {κ : Type} [Zero κ] (ht : a + t = n) (y : Matrix (Fin n) (Fin a) κ) :
@@ -128,7 +88,7 @@ theorem phi_pos (ht : a + t = n) (P : Subgroup (GL (Fin a) (v.adicCompletionInte
   have h : ∃ k : P, ((k : GL (Fin a) (v.adicCompletionIntegers D.host.F)) : Matrix (Fin a) (Fin a) _).map
       (algebraMap (v.adicCompletionIntegers D.host.F) (Fv D.host.F v)) =
       (rowsTB ht (y.map (algebraMap _ (Fv D.host.F v)))).submatrix Sum.inl id := ⟨⟨g, hg⟩, by rw [hy]; rfl⟩
-  rw [dif_pos ⟨h, fun i j => ⟨Subtype.property _, (hr _).1 ((lowZero_iff ht _).1 hl i j)⟩⟩]
+  rw [dite_eq_left ⟨h, fun i j => ⟨Subtype.property _, (hr _).1 ((lowZero_iff ht _).1 hl i j)⟩⟩]
   have e : (h.choose : GL (Fin a) (v.adicCompletionIntegers D.host.F)) = g := by
     refine Units.ext (Matrix.ext fun i j => Subtype.ext ?_)
     rw [hy]
@@ -141,7 +101,7 @@ theorem phi_neg (ht : a + t = n) (P : Subgroup (GL (Fin a) (v.adicCompletionInte
     (h : ¬ (LowZero a (y.map r) ∧ ∃ g ∈ P, g.val = upper ht y)) :
     localNewformFunction v P 1 mu (rowsTB ht (y.map (algebraMap _ (Fv D.host.F v)))) = 0 := by
   unfold localNewformFunction
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨⟨g, hg⟩, h2⟩
   exact h ⟨(lowZero_iff ht _).2 fun i j => (hr _).2 (h2 i j).2, g, g.2,
     Matrix.ext fun i j => Subtype.ext (congrFun (congrFun hg i) j)⟩
@@ -225,10 +185,10 @@ theorem omegaK_eq {n a : ℕ} (Pg : Finset (Formalism.L2.DIV.Pl D.host.E))
     omegaK Pg y = ∏ PP ∈ Pg, locK (y PP) := by
   unfold omegaK locK
   split_ifs with h
-  · exact (Finset.prod_eq_one fun PP hPP => if_pos (h PP hPP)).symm
-  · push_neg at h
+  · exact (Finset.prod_eq_one fun PP hPP => ite_eq_left (h PP hPP)).symm
+  · push Not at h
     obtain ⟨PP, hPP, h⟩ := h
-    exact (Finset.prod_eq_zero hPP (if_neg fun h' => h h'.1 h'.2)).symm
+    exact (Finset.prod_eq_zero hPP (ite_eq_right fun h' => h h'.1 h'.2)).symm
 
 theorem omegaQ_eq {n a : ℕ} (Q : Finset (Formalism.L2.DIV.Pl D.host.E))
     (ξ : ∀ PP : Formalism.L2.DIV.Pl D.host.E, (Formalism.L2.DIV.kP PP)ˣ →* ℂˣ)
@@ -237,10 +197,10 @@ theorem omegaQ_eq {n a : ℕ} (Q : Finset (Formalism.L2.DIV.Pl D.host.E))
   unfold omegaQ
   split_ifs with h
   · rw [← Finset.prod_attach Q]
-    exact Finset.prod_congr rfl fun PP _ => by rw [locQ, dif_pos (h PP.1 PP.2)]
+    exact Finset.prod_congr rfl fun PP _ => by rw [locQ, dite_eq_left (h PP.1 PP.2)]
   · obtain ⟨PP, h⟩ := not_forall.1 h
     obtain ⟨hPP, h⟩ := Classical.not_imp.1 h
-    exact (Finset.prod_eq_zero hPP (dif_neg h)).symm
+    exact (Finset.prod_eq_zero hPP (dite_eq_right h)).symm
 
 variable (S T : HSp D) (βS : GL (Fin S.rank) (EAf D)) (βT : GL (Fin T.rank) (EAf D))
 
@@ -295,16 +255,16 @@ theorem onHalfAdj_eq {v : FinPl D} {φ : SplitProj D v} {e : AE D} (he : IsIdemO
   unfold onHalfAdj redFun
   rw [adjCo_eq S T βS βT φ (GlobalTheory.SplitProjChart.chart_rdA D v φ e he).2.1]
   by_cases hx : IsHalf (cA D e) x
-  · rw [if_pos hx]
+  · rw [ite_eq_left hx]
     by_cases hi : IsIntM (frMapAdj S T βS βT x)
-    · rw [if_pos ⟨hx, hi⟩]
+    · rw [ite_eq_left ⟨hx, hi⟩]
       choose h hh using fun i j => hr _ (hi i j)
       refine (h1 (Matrix.of fun i j => ⟨_, h i j⟩)).trans (congrArg ω (Matrix.ext fun i j => ?_))
-      exact (hh i j).trans (by rw [redM, dif_pos (hi i j)])
-    · rw [if_neg fun h => hi h.2]
+      exact (hh i j).trans (by rw [redM, dite_eq_left (hi i j)])
+    · rw [ite_eq_right fun h => hi h.2]
       by_contra hne
       exact hi fun i j => mem_int_of_rdE he (frMapAdj_half S T βS βT hx i j) (h0 _ hne i j)
-  · rw [if_neg hx, if_neg fun h => hx h.1]
+  · rw [ite_eq_right hx, ite_eq_right fun h => hx h.1]
 
 theorem onHalfAdj_princ {v : FinPl D} {φ : SplitProj D v} {e : AE D} (he : IsIdemOf φ e) {PP : Formalism.L2.DIV.Pl D.host.E}
     (hP : IsProjAt φ PP) {t : ℕ} (ht : T.rank + t = S.rank) (mu : (Fv D.host.F v)ˣ →* ℂˣ)
@@ -323,16 +283,11 @@ theorem onHalfAdj_top {v : FinPl D} {φ : SplitProj D v} {e : AE D} (he : IsIdem
   exact onHalfAdj_eq S T βS βT he PP r h3 _ _ (int_of_phi_ne_zero ht _ _ _)
     (phi_top r h1 ht mu ξ fun u b h hb => hmu u b ((h2 _ _).2 ⟨h, hb⟩))
 
-private theorem selfDual_isFullLattice {D : D7} : ∀ (V : HSp D) (Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)),
-    IsSelfDualC V Λ → Submodule.IsFullLattice D.host.E Λ := by
-  intro V Λ hΛ
-  exact Formalism.IndefR.Datum.IsSelfDualC.isFullLattice V Λ hΛ
-
 theorem isSBHalf_redFun {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)}
     {ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)} (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) {a : AE D}
     (ha : infPart D a = 0) (PP : Formalism.L2.DIV.Pl D.host.E) (ω : Matrix (Fin S.rank) (Fin T.rank) (Formalism.L2.DIV.kP PP) → ℂ) :
     IsSBHalf a (latO S T ΛS ΛT fun _ => True) (redFun S T βS βT a PP ω) :=
-  GlobalTheory.PlaceVec.isSBHalf_of_red (selfDual_isFullLattice S ΛS hS) (selfDual_isFullLattice T ΛT hT) ha (frMapAdj S T βS βT) (GlobalTheory.PlaceVec.frMapAdj_add S T βS βT)
+  GlobalTheory.PlaceVec.isSBHalf_of_red (Formalism.IndefR.Datum.IsSelfDualC.isFullLattice S ΛS hS) (Formalism.IndefR.Datum.IsSelfDualC.isFullLattice T ΛT hT) ha (frMapAdj S T βS βT) (GlobalTheory.PlaceVec.frMapAdj_add S T βS βT)
     (GlobalTheory.PlaceVec.frMapAdj_up S T βS βT) (GlobalTheory.PlaceVec.frMapAdj_down S T βS βT) {PP} (fun y => ω (y PP))
     fun _ _ h => by rw [h PP (Finset.mem_singleton_self _)]
 
@@ -352,15 +307,14 @@ theorem prod_redFun (s : Finset (Formalism.L2.DIV.Pl D.host.E)) (es : Formalism.
       change cA D (es PP) * (cA D (es PP) * x i j) = cA D (es PP) * x i j
       rw [← mul_assoc, ← RingHom.map_mul, (hes PP hPP).1.1]
     unfold redFun
-    rw [frMapAdj_smul, if_pos ⟨h4, h3⟩]
+    rw [frMapAdj_smul, ite_eq_left ⟨h4, h3⟩]
     refine congrArg (ω PP) (Matrix.ext fun i j => ?_)
-    refine (dif_pos (h3 i j)).trans (Eq.trans ?_ (dif_pos (hi i j)).symm)
+    refine (dite_eq_left (h3 i j)).trans (Eq.trans ?_ (dite_eq_left (hi i j)).symm)
     have := (Formalism.L2.DIV.resS D.host.F PP).map_mul ⟨_, h1⟩ ⟨_, hi i j⟩
     rw [h2, one_mul] at this
     exact this
   · have : ∃ PP ∈ s, ¬ IsIntM (toEAf D (es PP) • frMapAdj S T βS βT x) := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       refine hi fun i j => ?_
 
       rw [← frMapAdj_half S T βS βT hx i j, map_sum, Finset.sum_mul]
@@ -368,7 +322,7 @@ theorem prod_redFun (s : Finset (Formalism.L2.DIV.Pl D.host.E)) (es : Formalism.
     obtain ⟨PP, hPP, h⟩ := this
     refine Finset.prod_eq_zero hPP ?_
     unfold redFun
-    rw [frMapAdj_smul, if_neg fun h' => h h'.2]
+    rw [frMapAdj_smul, ite_eq_right fun h' => h h'.2]
 
 end Local
 
@@ -383,8 +337,8 @@ theorem thetaVecLocal : ∀ D : D7, ThetaVecLocal D := by
   have hT := hB.2.2.2.1
   let ω : ∀ PP : Formalism.L2.DIV.Pl D.host.E, Matrix (Fin S.rank) (Fin T.rank) (Formalism.L2.DIV.kP PP) → ℂ :=
     fun PP => if PP ∈ Pg then locK else locQ (ξ PP)
-  have ω1 : ∀ PP ∈ Pg, ω PP = locK := fun PP h => if_pos h
-  have ω2 : ∀ PP ∈ Q, ω PP = locQ (ξ PP) := fun PP h => if_neg fun h' => Finset.disjoint_left.1 hdis h' h
+  have ω1 : ∀ PP ∈ Pg, ω PP = locK := fun PP h => ite_eq_left h
+  have ω2 : ∀ PP ∈ Q, ω PP = locQ (ξ PP) := fun PP h => ite_eq_right fun h' => Finset.disjoint_left.1 hdis h' h
   let v : Formalism.L2.DIV.Pl D.host.E → FinPl D := fun PP => (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP)
   have hvφ : ∀ {w : FinPl D} {φ : SplitProj D w} {PP}, IsProjAt φ PP → w = v PP := fun h =>
     HeightOneSpectrum.ext (d2 _ _ _ h).1.symm
@@ -447,12 +401,12 @@ theorem thetaVecLocal : ∀ D : D7, ThetaVecLocal D := by
       · exact b1 τ
     · rw [prod_redFun S T βS βT _ es hes ω y (hcs ▸ hy)]
       by_cases hi : IsIntM (frMapAdj S T βS βT y)
-      · rw [if_pos ⟨hy, hi⟩, if_pos hi, omegaK_eq, omegaQ_eq, Finset.prod_union hdis]
+      · rw [ite_eq_left ⟨hy, hi⟩, ite_eq_left hi, omegaK_eq, omegaQ_eq, Finset.prod_union hdis]
         congr 1
         · exact Finset.prod_congr rfl fun PP h => by rw [ω1 PP h]
         · exact Finset.prod_congr rfl fun PP h => by rw [ω2 PP h]
-      · rw [if_neg fun h => hi h.2, if_neg hi]
-    · exact if_neg fun h => hy h.1
+      · rw [ite_eq_right fun h => hi h.2, ite_eq_right hi]
+    · exact ite_eq_right fun h => hy h.1
 
 end GlobalTheory.AdjVecLocal
 

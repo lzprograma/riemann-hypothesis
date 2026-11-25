@@ -8,56 +8,11 @@ public import Mathlib.LinearAlgebra.ExteriorAlgebra.Grading
 public import Mathlib.RingTheory.AlgebraicIndependent.Defs
 public import Mathlib.RingTheory.Smooth.Basic
 public import Mathlib.RingTheory.Trace.Defs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.ExteriorAlgebra.Basis
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 public import Mathlib.RingTheory.Etale.Field
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.LinearAlgebra.Determinant
 public import Mathlib.RingTheory.Etale.Basic
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -76,9 +31,6 @@ structure IsPd : Prop where
 
 def rA (I : Finset (Fin (d + 1))) : Subalgebra k F := Algebra.adjoin k {y | ∃ i ∈ I, ∃ j, y = x j / x i}
 
-def tw (m : ℤ) (I : Finset (Fin (d + 1))) : Submodule k F :=
-  ⨅ i ∈ I, (Subalgebra.toSubmodule (rA k x I)).comap (LinearMap.mulLeft k ((x 0 / x i) ^ m))
-
 def omA (I : Finset (Fin (d + 1))) : Submodule k F :=
   ⨅ i ∈ I, (Subalgebra.toSubmodule (rA k x I)).comap (LinearMap.mulLeft k (∏ j, x i / x j))
 
@@ -92,8 +44,6 @@ structure IsBundle (L : Finset (Fin (d + 1)) → Submodule k W) : Prop where
   proj : ∀ i, Module.Projective (rA k x {i}) (Submodule.span (rA k x {i}) (L {i} : Set W))
   loc : ∀ I, ∀ i ∈ I, L I = (Submodule.span (rA k x I) (L {i} : Set W)).restrictScalars k
 
-def kpair (ρ : F →ₗ[k] k) (β : W →ₗ[F] W' →ₗ[F] F) : W →ₗ[k] W' →ₗ[k] k := (β.restrictScalars₁₂ k k).compr₂ ρ
-
 end Proj
 
 section Forms
@@ -103,15 +53,9 @@ variable (k : Type) [Field k] (K : Type) [Field K] [Algebra k K]
 def omB (B : Subalgebra k K) (q : ℕ) : Submodule k (DR k K) :=
   Submodule.span k {y | ∃ b ∈ B, ∃ v : Fin q → K, (∀ j, v j ∈ B) ∧ y = b • ExteriorAlgebra.ιMulti K q fun j => D k K (v j)}
 
-def trunc (b : ℕ) : DR k K →ₗ[k] DR k K :=
-  ∑ q ∈ Finset.range b, (GradedAlgebra.proj (fun i : ℕ => ⋀[K]^i Ω[K⁄k]) q).restrictScalars k
-
 def sg : DR k K →ₐ[k] DR k K := (sgn (R := k) (B := K)).restrictScalars k
 
 variable {K} {ι : Type} [LinearOrder ι]
-
-def tot (B : Finset ι → Subalgebra k K) (a b : ℕ) : Cx k (Finset ι → DR k K) :=
-  ⟨totC (fun q s => omB k K (B s) q) a b, totD (trunc k K b ∘ₗ dDR k K)⟩
 
 variable (K) {F : Type} [Field F] [Algebra k F] [Algebra F K] [IsScalarTower k F K] {d : ℕ} (x : Fin (d + 1) → F)
 
@@ -133,9 +77,6 @@ def IsTop (τ : DR k K →ₗ[K] K) : Prop := τ (vol0 k K x) = 1 ∧ ∀ q, q �
 variable {K} in
 def trF (τ : DR k K →ₗ[K] K) (ρ : F →ₗ[k] k) : DR k K →ₗ[k] k :=
   ρ ∘ₗ (Algebra.trace F K).restrictScalars k ∘ₗ τ.restrictScalars k
-
-def hyp : Finset (Fin (d + 1)) → DR k K := fun s =>
-  ∑ i ∈ s, ∑ j ∈ s, if s.card = 2 ∧ i < j then (algebraMap F K (x j / x i))⁻¹ • ι1 (D k K (algebraMap F K (x j / x i))) else 0
 
 end Forms
 

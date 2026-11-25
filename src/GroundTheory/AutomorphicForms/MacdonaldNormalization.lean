@@ -57,11 +57,11 @@ theorem card_pairs_containing_le (i : Fin n) :
     · refine Finset.mem_image.2 ⟨p.2, Finset.mem_erase.2 ⟨fun h' => ?_, Finset.mem_univ _⟩, ?_⟩
       · rw [h, h'] at hlt
         exact lt_irrefl _ hlt
-      · simp only [g, ← h, if_pos hlt]
+      · simp only [g, ← h, ite_eq_left hlt]
     · refine Finset.mem_image.2 ⟨p.1, Finset.mem_erase.2 ⟨fun h' => ?_, Finset.mem_univ _⟩, ?_⟩
       · rw [h, h'] at hlt
         exact lt_irrefl _ hlt
-      · simp only [g, ← h, if_neg (not_lt.2 hlt.le)]
+      · simp only [g, ← h, ite_eq_right (not_lt.2 hlt.le)]
   calc _ ≤ ((Finset.univ.erase i).image g).card := Finset.card_le_card hsub
     _ ≤ (Finset.univ.erase i).card := Finset.card_image_le
     _ = n - 1 := by rw [Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ,
@@ -171,32 +171,12 @@ theorem evalAt_vdm_det (w : Fin n → ℂˣ) :
 
 theorem strictMono_of_forall_succ_lt {f : Fin n → Fin n}
     (h : ∀ i j : Fin n, (j : ℕ) = i + 1 → f i < f j) : StrictMono f := by
-  have key : ∀ d : ℕ, ∀ a b : Fin n, (b : ℕ) = a + d + 1 → f a < f b := by
-    intro d
-    induction d with
-    | zero => exact fun a b hab => h a b (by omega)
-    | succ d ih =>
-      intro a b hab
-      have hc : (a : ℕ) + d + 1 < n := by omega
-      exact (ih a ⟨a + d + 1, hc⟩ rfl).trans (h _ b (by simp only; omega))
-  intro a b hab
-  exact key (b - a - 1) a b (by have := Fin.lt_def.1 hab; omega)
+  cases n with
+  | zero => exact fun i => i.elim0
+  | succ n => exact Fin.strictMono_iff_lt_succ.2 fun i => h i.castSucc i.succ rfl
 
-theorem eq_one_of_strictMono {τ : Equiv.Perm (Fin n)} (hτ : StrictMono τ) : τ = 1 := by
-  have hinv : StrictMono τ.symm := by
-    intro a b hab
-    by_contra h
-    rw [not_lt] at h
-    have := hτ.monotone h
-    simp only [Equiv.apply_symm_apply] at this
-    exact absurd hab (not_lt.2 this)
-  ext i
-  have h1 : i ≤ τ i := hτ.le_apply
-  have h2 : i ≤ τ.symm i := hinv.le_apply
-  have h3 : τ i ≤ i := by
-    have := hτ.monotone h2
-    rwa [Equiv.apply_symm_apply] at this
-  simp [le_antisymm h3 h1]
+theorem eq_one_of_strictMono {τ : Equiv.Perm (Fin n)} (hτ : StrictMono τ) : τ = 1 :=
+  Equiv.ext (congrFun (hτ.eq_of_range_eq strictMono_id (by simp [τ.surjective.range_eq])))
 
 theorem exists_succ_of_ne_rev {σ : Equiv.Perm (Fin n)} (hσ : σ ≠ Fin.revPerm) :
     ∃ a b : Fin n, a < b ∧ (σ b : ℕ) = σ a + 1 := by

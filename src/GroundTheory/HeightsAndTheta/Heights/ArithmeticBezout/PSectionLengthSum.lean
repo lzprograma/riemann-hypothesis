@@ -19,39 +19,15 @@ theorem prime_between {A : Type*} [CommRing A] [IsNoetherianRing A] {J W Q : Ide
     (hWP : ∀ P ∈ J.minimalPrimes, P ≤ W → W ∈ (P ⊔ Ideal.span {f}).minimalPrimes)
     [hQ : Q.IsPrime] (hJQ : J ≤ Q) (hQW : Q ≤ W) : Q ∈ J.minimalPrimes ∨ Q = W := by
   obtain ⟨P, hP, hPQ⟩ := Ideal.exists_minimalPrimes_le hJQ
-  have hPp : P.IsPrime := hP.1.1
-  rcases eq_or_lt_of_le hPQ with h | hlt
-  · exact Or.inl (h ▸ hP)
-  rcases eq_or_lt_of_le hQW with h | hlt2
-  · exact Or.inr h
-  exfalso
-  have hW := hWP P hP (hPQ.trans hQW)
-  have hWp : W.IsPrime := hW.1.1
-  have h1 := Ideal.map_height_le_one_of_mem_minimalPrimes hW
-  set g := Ideal.Quotient.mk P
-  have hsurj : Function.Surjective g := Ideal.Quotient.mk_surjective
-  have hker : RingHom.ker g = P := Ideal.mk_ker
-  have hcm : ∀ I : Ideal A, P ≤ I → (I.map g).comap g = I := fun I hI => by
-    rw [Ideal.comap_map_of_surjective g hsurj, ← RingHom.ker_eq_comap_bot, hker, sup_eq_left.mpr hI]
-  have : (Q.map g).IsPrime :=
-    Ideal.map_isPrime_of_surjective hsurj (by rw [hker]; exact hPQ)
-  have : (W.map g).IsPrime :=
-    Ideal.map_isPrime_of_surjective hsurj (by rw [hker]; exact hPQ.trans hQW)
-  have : (W.map g).FiniteHeight := ⟨Or.inr (h1.trans_lt (WithTop.coe_lt_top 1)).ne⟩
-  have : (Q.map g).FiniteHeight :=
-    ⟨Or.inr ((Ideal.height_mono (Ideal.map_mono hQW)).trans_lt (h1.trans_lt (WithTop.coe_lt_top 1))).ne⟩
-  have hbot : (⊥ : Ideal (A ⧸ P)) < Q.map g := by
-    refine lt_of_le_of_ne bot_le fun h => hlt.ne ?_
-    rw [← hcm Q hPQ, ← h, ← RingHom.ker_eq_comap_bot, hker]
-  have hQW' : Q.map g < W.map g := by
-    refine lt_of_le_of_ne (Ideal.map_mono hQW) fun h => hlt2.ne ?_
-    rw [← hcm Q hPQ, h, hcm W (hPQ.trans hQW)]
-  have h2 := Ideal.height_strict_mono_of_isPrime_of_isPrime hQW'
-  have h3 := Ideal.height_strict_mono_of_isPrime_of_isPrime (I := ⊥) hbot
-  have h4 : (Q.map g).height < 1 := h2.trans_le h1
-  rw [Order.lt_one_iff] at h4
-  rw [h4] at h3
-  exact absurd h3 (not_lt_of_ge bot_le)
+  rcases eq_or_lt_of_le hQW with rfl | hQW'
+  · exact Or.inr rfl
+  have hspan : P ⊔ Ideal.span {f} = Ideal.span (insert f (P : Set A)) := by
+    rw [Ideal.span_insert, Ideal.span_eq, sup_comm]
+  have hmin := Ideal.mem_minimalPrimes_span_of_mem_minimalPrimes_span_insert hQW' f (P : Set A)
+    (hspan ▸ hWP P hP (hPQ.trans hQW)) (P : Set A) hPQ fun _ hx =>
+      Ideal.le_radical (Ideal.subset_span (.inr hx))
+  rw [Ideal.span_eq] at hmin
+  exact Or.inl ((le_antisymm (hmin.2 ⟨hP.1.1, le_rfl⟩ hPQ) hPQ) ▸ hP)
 
 theorem length_ne_top_of_mem_minimalPrimes {B : Type*} [CommRing B] [IsNoetherianRing B] [IsLocalRing B]
     (I : Ideal B) (hI : IsLocalRing.maximalIdeal B ∈ I.minimalPrimes) : Module.length B (B ⧸ I) ≠ ⊤ := by

@@ -278,10 +278,10 @@ theorem exists_cont_select {X : Type u} [TopologicalSpace X] [CompactSpace X] [T
       · intro x hx z hz
         by_cases hza : z ∈ C a
         · dsimp only
-          rw [if_pos hza]
+          rw [ite_eq_left hza]
           exact hCs a hza
         · dsimp only
-          rw [if_neg hza]
+          rw [ite_eq_right hza]
           rcases Finset.mem_insert.1 hx with rfl | hx'
           · exact absurd hz hza
           · exact hψ x hx' z hz

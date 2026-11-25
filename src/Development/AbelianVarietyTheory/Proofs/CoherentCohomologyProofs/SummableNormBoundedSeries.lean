@@ -155,17 +155,6 @@ theorem summable_norm_boundedSeries (f : boundedSeries F) {π : F} (hπ : ‖π�
 
 variable [CompleteSpace F]
 
-noncomputable def evalBounded (π : F) (hπ : ‖π‖ < 1) : boundedSeries F →+* F where
-  toFun f := ∑' n, coeff n (f : F⟦X⟧) * π ^ n
-  map_one' := by simpa only [map_one, OneMemClass.coe_one] using tsum_coeff_C (1 : F) π
-  map_mul' f g := tsum_coeff_mul (f : F⟦X⟧) g π (summable_norm_boundedSeries f hπ)
-    (summable_norm_boundedSeries g hπ)
-  map_zero' := by simp
-  map_add' f g := by
-    rw [← (summable_norm_boundedSeries f hπ).of_norm.tsum_add
-      (summable_norm_boundedSeries g hπ).of_norm]
-    simp only [Subring.coe_add, map_add (f := _), add_mul]
-
 variable (π : F) (hπ : ‖π‖ < 1)
 
 end Bounded

@@ -61,12 +61,6 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : D
 
 alias spMap_comp_spMap := _root_.GlobalTheory.Frames.EigenBaseChange.spMap_spMap
 
-alias dualMap_comp_alg := _root_.GlobalTheory.Frames.EigenBaseChange.dualMap_comp_alg
-
-alias fst_comp_dualMap := _root_.GlobalTheory.Frames.EigenBaseChange.fst_comp_dualMap
-
-alias dualMap_comp_epsMul := _root_.GlobalTheory.Frames.EigenBaseChange.dualMap_comp_epsMul
-
 alias tan_bc := _root_.GlobalTheory.Frames.EigenBaseChange.isTanAt_baseChange
 
 alias eig_bc := _root_.GlobalTheory.Frames.EigenBaseChange.isEigAt_baseChange

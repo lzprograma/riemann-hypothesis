@@ -270,11 +270,11 @@ theorem perm_eq_of_llRank {w w' : Equiv.Perm (Fin n)}
     constructor
     · intro hw
       by_contra hw'
-      rw [if_pos hw, if_neg hw'] at e1
+      rw [ite_eq_left hw, ite_eq_right hw'] at e1
       omega
     · intro hw'
       by_contra hw
-      rw [if_pos hw', if_neg hw] at e1
+      rw [ite_eq_left hw', ite_eq_right hw] at e1
       omega
   have hinv : w⁻¹ = w'⁻¹ := by
     ext r
@@ -364,9 +364,9 @@ theorem permGL_mul_diagGL (w : Equiv.Perm (Fin n)) (d : Fin n → Fˣ) :
     diagonal_apply, diagonal_mul, permGL_apply]
   by_cases h : r = w c
   · have : w⁻¹ r = c := Equiv.Perm.inv_eq_iff_eq.2 h
-    rw [if_pos this, if_pos h, mul_one]
+    rw [ite_eq_left this, ite_eq_left h, mul_one]
   · have : w⁻¹ r ≠ c := fun e => h (Equiv.Perm.inv_eq_iff_eq.1 e)
-    rw [if_neg this, if_neg h, mul_zero]
+    rw [ite_eq_right this, ite_eq_right h, mul_zero]
 
 theorem mem_doubleCoset_iff_normalForm {g : GL (Fin n) F} {w : Equiv.Perm (Fin n)} :
     g ∈ doubleCoset (permGL (k := F) w) (Iwasawa.borel F n) (Iwasawa.borel F n) ↔

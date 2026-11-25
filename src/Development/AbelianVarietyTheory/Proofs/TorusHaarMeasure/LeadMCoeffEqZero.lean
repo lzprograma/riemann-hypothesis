@@ -207,7 +207,7 @@ private theorem coeff_eq_zero_of_monomial_sum_eq_zero {n : ℕ} (M : Finset (Fin
   have hc := congrArg (AddMonoidAlgebra.coeff · (Finsupp.equivFunOnFinite.symm α)) hP
   simp only [P, MvPolynomial.coeff_sum, MvPolynomial.coeff_monomial, MvPolynomial.coeff_zero,
     (Finsupp.equivFunOnFinite).symm.injective.eq_iff] at hc
-  rwa [Finset.sum_ite_eq' M α B, if_pos hα] at hc
+  rwa [Finset.sum_ite_eq' M α B, ite_eq_left hα] at hc
 
 theorem leadM_coeff_eq_zero : ∀ (r : ℕ) (X : Data E r) (Xa : ArchInM X) (Fl : FlatM X Xa) (G : Wt X.Ψ r) (T a δ : ℕ),
     ∀ (t : Fin δ → Frame X.Ψ r → ℂ), (∀ k, X.IsSec G (t k)) →

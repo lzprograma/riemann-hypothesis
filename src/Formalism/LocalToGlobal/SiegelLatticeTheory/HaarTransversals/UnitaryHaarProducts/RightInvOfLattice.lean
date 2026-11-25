@@ -20,6 +20,7 @@ import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.Tactic.TypeStar
 import Mathlib.MeasureTheory.Measure.HasOuterApproxClosedProd
 import Mathlib.RingTheory.PicardGroup
+import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.WFLStepsLocHNProps
 
 @[expose] public section
 
@@ -83,15 +84,7 @@ section Grp
 
 theorem isClosed_inN {n r : ℕ} (ε : Fin n → Bool) (e : Fin r → Fin n → ℂ) (z : Fin n → ℂ) :
     IsClosed {M : Matrix (Fin n) (Fin n) ℂ | InN ε e z M} := by
-  have hc : ∀ (x : Fin n → ℂ) (S : Submodule ℂ (Fin n → ℂ)),
-      IsClosed {M : Matrix (Fin n) (Fin n) ℂ | (M - 1) *ᵥ x ∈ S} := fun x S =>
-    (Submodule.closed_of_finiteDimensional S).preimage
-      ((continuous_id.sub continuous_const).matrix_mulVec continuous_const)
-  have e2 : {M : Matrix (Fin n) (Fin n) ℂ | InN ε e z M} = {M | InS e z M} ∩
-      ⋂ y, ⋂ (_ : ∀ a, hJ ε (e a) y = 0), {M : Matrix (Fin n) (Fin n) ℂ | (M - 1) *ᵥ y ∈ spanLt e r} := by
-    ext M; simp [InN]
-  rw [e2]
-  exact (WuDecayPf.isClosed_inS e z).inter (isClosed_iInter fun y => isClosed_iInter fun _ => hc _ _)
+  apply _root_.Formalism.L2.SG.Pf.WFL.HNL.isClosed_inN <;> assumption
 
 variable {D : D7} (X : HidaSetting D) (u : D.what₂.Word)
 
@@ -448,7 +441,7 @@ theorem sCompact_of (hFL : FinLevi X u) (hNO : NOCocompact X u) (hND : NDenseAt 
       simp only [Subgroup.coe_mul]
       group
 
-theorem psiUnit_holds : PsiUnit X u := fun n _ =>
+theorem psiUnit_holds : PsiUnit X u := fun _ _ =>
   le_of_eq (Formalism.L2.SG.TermOp.KExpCut.psiUnit X _)
 
 theorem iUnfold_of_NO (hK : X.LevelSubgroupCharacter) (hFL : FinLevi X u) (hNO : NOCocompact X u) (hND : NDenseAt X u) :

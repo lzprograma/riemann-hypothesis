@@ -46,7 +46,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 
@@ -61,7 +60,7 @@ def orb (w : Pl E) : Finset (Pl E) := {w, cPl E w}
 def idem (T : Finset (Pl E)) : FiniteAdeleRing (𝓞 E) E :=
   ⟨fun w => if w ∈ T then 1 else 0, by
     filter_upwards [T.finite_toSet.compl_mem_cofinite] with w hw
-    rw [if_neg (by simpa using hw)]
+    rw [ite_eq_right (by simpa using hw)]
     exact zero_mem _⟩
 
 theorem idem_mul_self (T : Finset (Pl E)) : idem E T * idem E T = idem E T := by

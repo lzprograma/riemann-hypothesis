@@ -12,15 +12,11 @@ import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsAdditive
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual CompanionTheory.ObstructionTrivialLocus
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.CompanionTheory.PolSpread
 
@@ -74,8 +70,7 @@ theorem relAmple_of_span {S S' : Type} [CommRing S] [CommRing S'] (τ : S →+* 
     fun s => ?_
   let s' : PrimeSpectrum S' := s
   obtain ⟨r, hr, hs⟩ : ∃ r ∈ T, τ r ∉ s'.asIdeal := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     refine s'.isPrime.ne_top (top_le_iff.1 (h ▸ Ideal.span_le.2 ?_))
     rintro _ ⟨r, hr, rfl⟩
     exact hc r hr

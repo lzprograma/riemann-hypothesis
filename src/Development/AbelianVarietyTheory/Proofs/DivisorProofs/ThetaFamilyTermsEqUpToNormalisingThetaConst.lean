@@ -13,42 +13,7 @@ import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsExpand
 import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsFrameRatio
 import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpBijFAndExpandsFLin
 import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SectionValueAtTorsionPointEqSumTerms
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Definitions.Divisors.FromBase
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
@@ -57,7 +22,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.AnForm.R GlobalTheory.ZH GlobalTheory.Poinc GlobalTheory.Poinc.Sep
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.UT ReciprocityTheory.ChartRestriction.G.DVR
 open GlobalTheory.Poinc.Tors
 
@@ -109,43 +73,6 @@ theorem valAt_congr {k : ℕ} {t : SecA A F k} {x : TFK (R := R) F ⟶ A.A} {e e
 
 
 variable {F} in
-theorem sec_eq_of_valAt (hT : SecTwistSt) {t t' : SecA A F 1} {x : TFK (R := R) F ⟶ A.A} {e : FrAt x} {c : F} (hc : c ≠ 0)
-    (H : ValAt t x e c) (H' : ValAt t' x e c) : t = t' := by
-  obtain ⟨b, hb⟩ := GlobalTheory.PowBasis.exists_basis_pow_field hT R A F 1 le_rfl
-  have hq : Subsingleton (Fin (1 ^ A.g)) := by rw [one_pow]; infer_instance
-  obtain ⟨i₀⟩ : Nonempty (Fin (1 ^ A.g)) := by rw [one_pow]; infer_instance
-  obtain ⟨r, hr, -⟩ := hb t
-  obtain ⟨r', hr', -⟩ := hb t'
-  simp only [Fintype.sum_subsingleton _ i₀] at hr hr'
-  obtain ⟨z⟩ := CoefBasic.exists_pt (R := R) (F := F)
-  obtain ⟨J, hJ⟩ := CoefBasic.exists_good' A.isLB z
-  have a := (GlobalTheory.ThetaCompare.sval_smul hr x hJ).symm.trans (H z J hJ)
-  have a' := (GlobalTheory.ThetaCompare.sval_smul hr' x hJ).symm.trans (H' z J hJ)
-  obtain ⟨q, hq'⟩ := CoefBasic.cstH_surj (R := R) z (sA (b i₀) (ptSecT A.A x).left z J)
-  have b₁ : CoefBasic.cstH (R := R) z (r i₀) * CoefBasic.cstH (R := R) z q =
-      CoefBasic.cstH (R := R) z c * (@id ((TF (R := R) F).left.presheaf.stalk z)ˣ (val (powFrame A.A A.L x e (1 : ℕ)) (𝟙 _) z J)).val := by
-    rw [hq', ← CoefBasic.cst_eq, ← CoefBasic.cst_eq]; exact a
-  have b₂ : CoefBasic.cstH (R := R) z (r' i₀) * CoefBasic.cstH (R := R) z q =
-      CoefBasic.cstH (R := R) z c * (@id ((TF (R := R) F).left.presheaf.stalk z)ˣ (val (powFrame A.A A.L x e (1 : ℕ)) (𝟙 _) z J)).val := by
-    rw [hq', ← CoefBasic.cst_eq, ← CoefBasic.cst_eq]; exact a'
-  have q0 : q ≠ 0 := fun h => by
-    rw [h, map_zero, mul_zero] at b₁
-    exact hc (CoefBasic.cstH_inj z (((Units.mul_left_eq_zero _).1 b₁.symm).trans (map_zero _).symm))
-  have e₀ : r i₀ = r' i₀ := by
-    have := b₁.trans b₂.symm
-    rw [← map_mul, ← map_mul] at this
-    exact mul_right_cancel₀ q0 (CoefBasic.cstH_inj z this)
-  have e₁ : ∀ j, t.f j = t'.f j := fun j => by
-    have := hr j
-    have e₂ : r = r' := funext fun i => by rw [Subsingleton.elim i i₀]; exact e₀
-    rw [e₂] at this
-    exact this.trans (hr' j).symm
-  obtain ⟨f, _⟩ := t
-  obtain ⟨f', _⟩ := t'
-  obtain rfl : f = f' := funext e₁
-  rfl
-
-variable {F} in
 theorem coef_smul {k : ℕ} (g : GtPtF D.toPre F) {w : Frm D.toPre F k g.b} (hw : w.IsGen) (c : F) (s : Fam D.toPre F k) (χ) :
     coef (c • s) g w χ = c * coef s g w χ := by
   have h₁ := ((CoefBasic.coef_basic R D.toPre F k g).2.2 w hw).2.1
@@ -175,40 +102,6 @@ theorem liesOver_change {w₀ w₀' : W0 U} {d : F}
   rw [sc, coef_smul g hW]
 
 end
-
-theorem terms_eq : ∀ (g n : ℕ) (F : SFam g n (zetaAway n)) (W : Matrix (Fin 8) (Fin 8) ℤ) (Z : Scheme.{0}) (i : F.X ⟶ Z) (X₁ : Setup F W i) (z₁ : X₁.M.Z) (act : Matrix (Fin 8) (Fin 8) ℤ → (X₁.ρ.P.A ⟶ X₁.ρ.P.A)), ∀ (V : Type) [CommRing V] [IsDomain V] [IsLocalRing V] (ev : X₁.M.Z.presheaf.stalk z₁ →+* V) (X : Type) [AddCommGroup X] (m : ℕ) (t : Fin m → V) (δ : Fin m → LinearMap.BilinForm ℤ X) (𝔪 : UMem X₁ z₁ act V ev X t δ) (x x' : X₁.S.Gam) (C C' : Type) (lab : C → X₁.S.Gam) (lab' : C' → X₁.S.Gam) (T : (Fin 8 → X) → C → V) (T' : (Fin 8 → X) → C' → V), 𝔪.Terms x lab T → 𝔪.Terms x' lab' T' → ∀ (c : C) (c' : C'), lab c = lab' c' → ∀ mu, algebraMap V (FractionRing V) (T mu c) * 𝔪.yK ⟨X₁.S.th x, X₁.S.th_mem x⟩ = algebraMap V (FractionRing V) (T' mu c') * 𝔪.yK ⟨X₁.S.th x', X₁.S.th_mem x'⟩ := by
-  intro g n F W Z i X₁ z₁ act V _ _ _ ev X _ m t δ 𝔪 x₀ x₀' C C' lab lab' T T' hT hT' c c' hc mu
-  obtain ⟨x, fr, th, w₀, s, p, w, hx, hfr, hth, hw₀, hs, hg, hT⟩ := hT
-  obtain ⟨x', fr', th', w₀', s', p', w', hx', hfr', hth', hw₀', hs', hg', hT'⟩ := hT'
-  haveI : CharZero V := 𝔪.cn.2.2.2
-  have hL : GlobalTheory.UT.LL := GlobalTheory.firstFiveLaws
-  have hA : AdmBase V (maximalIdeal V) := ⟨𝔪.cn.1, inferInstance, 𝔪.cn.2.1, 𝔪.cn.2.2.1⟩
-  have hk : 1 ≤ X₁.S.r * X₁.S.N := by
-    have := X₁.S.r_pos; have := X₁.S.N_ge
-    exact Nat.one_le_iff_ne_zero.2 (Nat.mul_ne_zero (by omega) (by omega))
-  obtain rfl : x = x' := funext fun a => Over.OverMorphism.ext
-    (𝔪.cart.1.hom_ext ((hx a).trans (hx' a).symm) ((Over.w (x a)).trans (Over.w (x' a)).symm))
-  have hf : ∀ a z J, Good 𝔪.A.L z J → val (fr a) (𝟙 _) z J = val (fr' a) (𝟙 _) z J := fun a z J hJ => by
-    obtain ⟨J₀, hJ₀⟩ := CoefBasic.exists_good' X₁.ρ.P.isLB z
-    exact mul_left_cancel (((hfr a).2 z J₀ J hJ₀ hJ).trans ((hfr' a).2 z J₀ J hJ₀ hJ).symm)
-  obtain ⟨a, ha⟩ := GlobalTheory.ThetaGeneric.exists_th_ne_zero hL.1 hL.2.1 _ _ X₁.S X₁.ρ (FractionRing V) 𝔪.yK
-  obtain rfl : th = th' := sec_eq_of_valAt hL.2.1.secTwist ha (valAt_congr (hf a) (hth a)) (hth' a)
-  obtain ⟨d, hd0, hd⟩ := exists_expandsF_pow 𝔪.U.toUnifPre (FractionRing V) hw₀' hw₀
-  have hbij := (expBijF_and_expandsF_lin hL V _ hA 𝔪.D 𝔪.A 𝔪.G 𝔪.semi 𝔪.U).1 (FractionRing V) 1 le_rfl w₀' hw₀'
-  obtain rfl : s' = d ^ 1 • s := (hbij.1 th).unique hs' (hd 1 th s hs)
-  obtain ⟨h₁, h₂, h₃⟩ := hg c
-  obtain ⟨h₁', h₂', h₃'⟩ := hg' c'
-  rw [hT, hT']
-  rw [← hc] at h₃'
-  obtain ⟨w₁, hw₁, hv₁⟩ := TorsionValue.exists_frm_scale (w' c') h₂' hd0
-  have h₄ : LiesOver 𝔪.U.toUnifPre w₀ (p' c') w₁ (x (lab c)) (fr (lab c)) :=
-    liesOver_change hd h₂' hv₁ (hf _) h₃'
-  obtain ⟨e, ev⟩ := _root_.GlobalTheory.Poinc.Sep.LiesUniq.eq_of_liesOver V 𝔪.cn 𝔪.D 𝔪.A 𝔪.G 𝔪.semi 𝔪.U w₀ hw₀ _ hk _ _ _ _ _ _ h₁ h₁' h₂ hw₁ (hfr _).1 h₃ h₄
-  rw [coef_smul _ h₂', pow_one]
-  generalize w c = om at h₂ ev
-  generalize p c = q at om h₂ e ev
-  subst e
-  exact TorsionValue.coef_scale h₂' (fun z J hJ => by rw [ev z J hJ, hv₁ z J hJ]) s _
 
 end GlobalTheory.Poinc.Sep.TermsCompare
 

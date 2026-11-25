@@ -137,15 +137,16 @@ section Integral
 
 variable [MeasurableSpace (archGroup K n)] [BorelSpace (archGroup K n)]
 
-theorem HasModerateGrowth.of_eq_integral {φ ψ : AdelicGLn.AdelicGL K n → ℂ}
-    (hφ : HasModerateGrowth φ) (μ : Measure (archGroup K n)) [μ.IsHaarMeasure]
+theorem exists_height_bound_of_eq_integral {φ ψ : AdelicGLn.AdelicGL K n → ℂ} {N : ℕ}
+    (hφ : ∃ C : ℝ, ∀ g, ‖φ g‖ ≤ C * height g ^ N) (μ : Measure (archGroup K n)) [μ.IsHaarMeasure]
     {D : archGroup K n → ℂ} (hD : Continuous D) (hDc : HasCompactSupport D)
-    (hψ : ∀ g, ψ g = ∫ y, φ (g * infEmb K n y) * D y ∂μ) : HasModerateGrowth ψ := by
-  obtain ⟨C, N, hC⟩ := hφ
+    (hψ : ∀ g, ψ g = ∫ y, φ (g * infEmb K n y) * D y ∂μ) :
+    ∃ C : ℝ, ∀ g, ‖ψ g‖ ≤ C * height g ^ N := by
+  obtain ⟨C, hC⟩ := hφ
   obtain ⟨M, hM⟩ := exists_height_infEmb_le (K := K) (n := n) hDc.isCompact
   set M' := max M 1
   have hc0 : 0 ≤ heightConst K n := le_trans zero_le_one one_le_heightConst
-  refine ⟨|C| * (heightConst K n * M') ^ N * ∫ y, ‖D y‖ ∂μ, N, fun g => ?_⟩
+  refine ⟨|C| * (heightConst K n * M') ^ N * ∫ y, ‖D y‖ ∂μ, fun g => ?_⟩
   rw [hψ]
   have hb : ∀ y, ‖φ (g * infEmb K n y) * D y‖ ≤
       |C| * (heightConst K n * M') ^ N * height g ^ N * ‖D y‖ := by
@@ -172,6 +173,14 @@ theorem HasModerateGrowth.of_eq_integral {φ ψ : AdelicGLn.AdelicGL K n → ℂ
         norm_integral_le_of_norm_le (hint.const_mul _) (Eventually.of_forall hb)
     _ = |C| * (heightConst K n * M') ^ N * (∫ y, ‖D y‖ ∂μ) * height g ^ N := by
         rw [integral_const_mul]; ring
+
+theorem HasModerateGrowth.of_eq_integral {φ ψ : AdelicGLn.AdelicGL K n → ℂ}
+    (hφ : HasModerateGrowth φ) (μ : Measure (archGroup K n)) [μ.IsHaarMeasure]
+    {D : archGroup K n → ℂ} (hD : Continuous D) (hDc : HasCompactSupport D)
+    (hψ : ∀ g, ψ g = ∫ y, φ (g * infEmb K n y) * D y ∂μ) : HasModerateGrowth ψ := by
+  obtain ⟨C, N, hC⟩ := hφ
+  obtain ⟨C', hC'⟩ := exists_height_bound_of_eq_integral ⟨C, hC⟩ μ hD hDc hψ
+  exact ⟨C', N, hC'⟩
 
 theorem IsCuspidal.of_eq_integral {φ ψ : AdelicGLn.AdelicGL K n → ℂ} (hφc : Continuous φ)
     (hφ : IsCuspidal φ) (μ : Measure (archGroup K n)) [μ.IsHaarMeasure]

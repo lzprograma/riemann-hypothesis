@@ -315,7 +315,6 @@ theorem integral_even_pow (j : ℕ) : ∫ c in (-1 : ℝ)..1, c ^ (2 * j) = 2 / 
 
 end FibreConstantClosedForm
 
-
 open FibreConstantClosedForm in
 theorem FibreConstantClosedForm.proof (h0 : ZonalBilinearFormula.Statement)
     (h1 : GHatIdentity.Statement) : FibreConstantClosedForm.Statement := by
@@ -702,10 +701,6 @@ theorem inner_spherePoint (c₁ φ₁ c₂ φ₂ : ℝ) :
 theorem spherePoint_two (c φ : ℝ) : spherePoint c φ 2 = c := by
   simp [spherePoint]
 
-theorem continuous_spherePoint : Continuous (fun q : ℝ × ℝ => spherePoint q.1 q.2) := by
-  unfold spherePoint
-  fun_prop
-
 theorem measurable_kernelL : Measurable kernelL := by
   unfold kernelL
   exact measurable_const.mul (Real.measurable_log.comp ((measurable_const.sub measurable_id).div_const _))
@@ -846,7 +841,7 @@ theorem integral_kernelL_mul (hK : ZonalKernel.Statement) {c₁ : ℝ} (h₁ : c
   have hmeas : Measurable
       (fun q : ℝ × ℝ => kernelL ⟪spherePoint c₁ φ₁, spherePoint q.1 q.2⟫_ℝ * h q.1) :=
     (measurable_kernelL.comp
-      ((continuous_const.inner continuous_spherePoint).measurable)).mul
+      ((continuous_const.inner GroundTheory.Heights₂.Heights.FlagBundles.SphereLongitudeCoordinates.continuous_spherePoint).measurable)).mul
       (hh.measurable.comp measurable_fst)
   have hint : Integrable
       (fun q : ℝ × ℝ => kernelL ⟪spherePoint c₁ φ₁, spherePoint q.1 q.2⟫_ℝ * h q.1)
@@ -891,7 +886,7 @@ theorem ZonalHeightReduction.proof (hA : SphereLongitudeCoordinates.Statement)
   have : IsProbabilityMeasure sphereMeasure := ⟨sphereMeasure_univ⟩
   set μ := heightLongitudeMeasure with hμ
   have hsp : Measurable (fun q : ℝ × ℝ => spherePoint q.1 q.2) :=
-    continuous_spherePoint.measurable
+    GroundTheory.Heights₂.Heights.FlagBundles.SphereLongitudeCoordinates.continuous_spherePoint.measurable
   have hι : Measurable (fun n : Sphere2 => (n : E3)) := measurable_subtype_coe
   set k : ENNReal := (ENNReal.ofReal (4 * Real.pi))⁻¹ with hk
   have hA' : sphereMeasure.map (fun n : Sphere2 => (n : E3)) =

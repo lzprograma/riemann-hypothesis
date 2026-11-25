@@ -65,8 +65,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.DepthDegree
@@ -231,7 +229,7 @@ theorem derivAt0_monomial (γ : σ →₀ ℕ) (c : C) (g : MvPowerSeries σ C) 
     derivAt0 (MvPolynomial.monomial γ c) g = c * mfact γ * coeff γ g := by
   classical
   rw [derivAt0_eq_sum_of_subset _ g (MvPolynomial.support_monomial_subset), Finset.sum_singleton,
-    MvPolynomial.coeff_monomial, if_pos rfl]
+    MvPolynomial.coeff_monomial, ite_eq_left rfl]
 
 def derivAt0Hom (g : MvPowerSeries σ C) : MvPolynomial σ C →+ C where
   toFun P := derivAt0 P g
@@ -367,7 +365,7 @@ theorem monAlong_const (γ : (Σ b, Fin (d b)) →₀ ℕ) :
   · right
     unfold monAlong
     refine constantCoeff_subst_eq_zero (hasSubst_expAlong G u) (expAlong_const G u) ?_
-    rw [← coeff_zero_eq_constantCoeff_apply, coeff_monomial, if_neg (fun h => hγ h.symm)]
+    rw [← coeff_zero_eq_constantCoeff_apply, coeff_monomial, ite_eq_right (fun h => hγ h.symm)]
 
 omit [CharZero C] [Fintype κ] in
 theorem monAlong_int (γ : (Σ b, Fin (d b)) →₀ ℕ) : MvIsInt v (monomial γ (1 : C)) := by

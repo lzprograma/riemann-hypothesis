@@ -113,9 +113,3 @@ theorem rescale_C' (r z : ↥LL.1) : rescale r (C z) = C z := by
   by_cases h : n = 0 <;> simp [coeff_rescale, coeff_C, h]
 
 end GlobalTheory.WachExp
-
-namespace GlobalTheory.WachExp
-
-open PowerSeries
-
-end GlobalTheory.WachExp

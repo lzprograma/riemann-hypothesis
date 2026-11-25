@@ -153,7 +153,7 @@ private theorem arch_gen {R : Type} [CommRing R] [Finite R] (h2 : IsUnit (2 : R)
       (X * (A * Jmat R 3))ᵀ = -(X * (A * Jmat R 3)) := by
     intro X hX
     have hX' : A * (-(Jmat R 3 * Xᵀ * Jmat R 3)) * A' = X := by
-      simpa only [GG.ad_apply, GG.adFun, GG.mat, h, if_false, thetaLie] using hX
+      simpa only [GG.ad_apply, GG.adFun, GG.mat, h, ite_false, thetaLie] using hX
     rw [Matrix.transpose_mul, hB]
     conv_rhs => rw [← hX']
     simp only [Matrix.mul_neg, Matrix.neg_mul, neg_neg, Matrix.mul_assoc]
@@ -379,7 +379,7 @@ theorem UpperTheory.V.Z.J.dualZero :
       intro s hs X
       show GG.adFun ((boxK B k).r s) X = _
       simp only [GG.adFun]
-      rw [if_pos (show ((boxK B k).r s).right = 1 from hs)]
+      rw [ite_eq_left (show ((boxK B k).r s).right = 1 from hs)]
       rfl
     have hG0 : ∀ (h : F.G0) (a b i j : Fin 3), φ (adK B k ↑h (Matrix.single a b 1) i j) =
         if a = i ∧ b = j then ((F.Ψ ↑h ^ (w 3 a - w 3 b) : (ResidueField O)ˣ) : ResidueField O)
@@ -402,17 +402,17 @@ theorem UpperTheory.V.Z.J.dualZero :
         have e := congrArg (fun A => IsLocalRing.residue O (A p q)) hinv
 
         simp only [Matrix.mul_apply, map_sum, map_mul, hD, ite_mul, zero_mul, Finset.sum_ite_eq,
-        Finset.mem_univ, if_true, Matrix.one_apply, apply_ite (IsLocalRing.residue O), map_one,
+        Finset.mem_univ, ite_true, Matrix.one_apply, apply_ite (IsLocalRing.residue O), map_one,
         map_zero] at e
         have hu : ((F.Ψ ↑h ^ w 3 p : (ResidueField O)ˣ) : ResidueField O) ≠ 0 := Units.ne_zero _
         split_ifs with hpq
-        · rw [if_pos hpq] at e
+        · rw [ite_eq_left hpq] at e
           calc _ = (((F.Ψ ↑h ^ w 3 p)⁻¹ : (ResidueField O)ˣ) : ResidueField O) *
                 (((F.Ψ ↑h ^ w 3 p : (ResidueField O)ˣ) : ResidueField O) *
                   IsLocalRing.residue O ((↑(B.r ↑h).left⁻¹ : Matrix (Fin 3) (Fin 3) O) p q)) := by
                 rw [← mul_assoc, Units.inv_mul, one_mul]
             _ = _ := by rw [e, mul_one]
-        · rw [if_neg hpq] at e
+        · rw [ite_eq_right hpq] at e
           exact (mul_eq_zero.mp e).resolve_left hu
       have hDm : (IsLocalRing.residue O).mapMatrix (B.r ↑h).mat =
           Matrix.diagonal (fun p => ((F.Ψ ↑h ^ w 3 p : (ResidueField O)ˣ) : ResidueField O)) := by
@@ -457,7 +457,7 @@ theorem UpperTheory.V.Z.J.dualZero :
       have h2 : (B.r F.c).right ≠ 1 := by rw [B.nu, hF.del_c]; decide
       show GG.adFun ((boxK B k).r F.c) Y = _
       simp only [GG.adFun]
-      rw [if_neg (show ((boxK B k).r F.c).right ≠ 1 from h2)]
+      rw [ite_eq_right (show ((boxK B k).r F.c).right ≠ 1 from h2)]
       have h3 : ((boxK B k).r F.c).mat = 1 := by
         show π.mapMatrix (B.r F.c).mat = 1
         rw [hB.atc, map_one]
@@ -471,21 +471,21 @@ theorem UpperTheory.V.Z.J.dualZero :
       rcases hw with h0 | h1
       · obtain ⟨g, hg⟩ := hF.f2a
         apply hkey a b ↑g
-        · rw [hG0, if_pos ⟨rfl, rfl⟩, hom, h0, zpow_zero, Units.val_one]
+        · rw [hG0, ite_eq_left ⟨rfl, rfl⟩, hom, h0, zpow_zero, Units.val_one]
           intro heq
           exact hg (Units.val_eq_one.mp heq.symm)
         · intro i j hij
-          rw [hG0, if_neg hij]
+          rw [hG0, ite_eq_right hij]
       · obtain ⟨g, hg⟩ := hF.f2b (w 3 b - w 3 a) (by omega)
         apply hkey a b ↑g
-        · rw [hG0, if_pos ⟨rfl, rfl⟩, hom]
+        · rw [hG0, ite_eq_left ⟨rfl, rfl⟩, hom]
           intro heq
           apply hg
           apply Units.ext
           rw [Units.val_mul, ← heq, ← Units.val_mul, ← _root_.zpow_add, sub_add_sub_cancel, sub_self,
             zpow_zero]
         · intro i j hij
-          rw [hG0, if_neg hij]
+          rw [hG0, ite_eq_right hij]
     have L2 : ∀ a b : Fin 3, b = a.rev → (w 3 a - w 3 b = 2 ∨ w 3 a - w 3 b = -2) →
         Matrix.single a b (1 : Ok l O k) ∈ N ⊔ I • ⊤ := by
       intro a b hb hw
@@ -497,14 +497,14 @@ theorem UpperTheory.V.Z.J.dualZero :
         have hdk : ((F.delK (ResidueField O) g : (ResidueField O)ˣ) : ResidueField O) = 1 := by
           simp [Frame.delK, hd]
         apply hkey a a.rev g
-        · rw [eG, if_pos ⟨rfl, rfl⟩, hom]
+        · rw [eG, ite_eq_left ⟨rfl, rfl⟩, hom]
           intro heq
           apply hg
           apply Units.ext
           rw [Units.val_mul, Units.val_mul, hdk, mul_one, ← heq, ← Units.val_mul, ← _root_.zpow_add,
             sub_add_sub_cancel, sub_self, zpow_zero]
         · intro i j hij
-          rw [eG, if_neg hij]
+          rw [eG, ite_eq_right hij]
       · have hmem : F.c⁻¹ * g ∈ F.del.ker := by
           rw [MonoidHom.mem_ker, map_mul, map_inv, hF.del_c, hd]
           decide
@@ -521,7 +521,7 @@ theorem UpperTheory.V.Z.J.dualZero :
         have hdk : ((F.delK (ResidueField O) g : (ResidueField O)ˣ) : ResidueField O) = -1 := by
           simp [Frame.delK, hd]
         apply hkey a a.rev g
-        · rw [hsplit, htheta, Fin.rev_rev, map_neg, eG, if_pos ⟨rfl, rfl⟩, hom]
+        · rw [hsplit, htheta, Fin.rev_rev, map_neg, eG, ite_eq_left ⟨rfl, rfl⟩, hom]
           dsimp only
           rw [hΨ]
           intro heq
@@ -530,7 +530,7 @@ theorem UpperTheory.V.Z.J.dualZero :
           rw [Units.val_mul, Units.val_mul, hdk, ← heq, mul_neg_one, neg_mul, neg_neg,
             ← Units.val_mul, ← _root_.zpow_add, sub_add_sub_cancel, sub_self, zpow_zero]
         · intro i j hij
-          rw [hsplit, htheta, map_neg, eG, if_neg, neg_zero]
+          rw [hsplit, htheta, map_neg, eG, ite_eq_right, neg_zero]
           rintro ⟨h1, h2⟩
           apply hij
           refine ⟨Fin.rev_injective h2, ?_⟩
@@ -685,7 +685,7 @@ private theorem ad_cj {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsLocalR
     MonoidHom.coe_mk, OneHom.coe_mk, AddEquiv.coe_mk, Equiv.coe_fn_mk, e1]
   show GG.adFun (m := 3) (R := Ok l O k) _ _ = _
   simp only [GG.adFun, GG.mat, SemidirectProduct.map_left, SemidirectProduct.map_right, MonoidHom.id_apply, hr,
-    if_true, map_mul, map_inv, _root_.mul_inv_rev, inv_inv, Units.val_mul, Matrix.mul_assoc,
+    ite_true, map_mul, map_inv, _root_.mul_inv_rev, inv_inv, Units.val_mul, Matrix.mul_assoc,
     Units.inv_mul_cancel_left, Units.inv_mul, Matrix.mul_one]
 
 theorem UpperTheory.V.Z.J.zvCnt :
@@ -845,9 +845,9 @@ private theorem card_borel_torsion_lower_bound (A : Type) [AddCommGroup A] [Fini
         simp only [Prod.mk.injEq] at h
         rw [h.1, h.2] at hab
         exact lt_irrefl _ hab
-      simp only [F, dif_neg h1, if_neg h2]
+      simp only [F, dite_eq_right h1, ite_eq_right h2]
     · have h3 : ¬ (i.succ ≤ i.succ ∧ (i.succ, i.succ) ≠ (i.succ, i.succ)) := fun h => h.2 rfl
-      simp only [F, dif_pos hcc, dif_neg h3]
+      simp only [F, dite_eq_left hcc, dite_eq_right h3]
       simp
   let f : ({p : Fin 3 × Fin 3 // p.1 ≤ p.2 ∧ p ≠ (i.succ, i.succ)} → A) → b0 A i := fun g => ⟨F g, hF g⟩
   have hf : Function.Injective f := by
@@ -855,7 +855,7 @@ private theorem card_borel_torsion_lower_bound (A : Type) [AddCommGroup A] [Fini
     funext ⟨⟨a, b⟩, hp⟩
     have hp' : a ≤ b ∧ (a, b) ≠ (i.succ, i.succ) := hp
     have := congrArg (fun x : b0 A i => (x : Matrix (Fin 3) (Fin 3) A) a b) hgg
-    simp only [f, F, dif_pos hp'] at this
+    simp only [f, F, dite_eq_left hp'] at this
     exact this
   have h1 := Nat.card_le_card_of_injective f hf
   rw [Nat.card_fun] at h1
@@ -873,7 +873,7 @@ private theorem ent_surj (A : Type) [AddCommGroup A] (i : Fin 2) : Function.Surj
   have hlt : i.castSucc < i.succ := Fin.castSucc_lt_succ
   refine ⟨⟨Matrix.single i.castSucc i.succ a, ?_, ?_⟩, ?_⟩
   · intro x y h
-    rw [Matrix.single_apply, if_neg]
+    rw [Matrix.single_apply, ite_eq_right]
     rintro ⟨rfl, rfl⟩
     exact absurd h (not_lt.mpr hlt.le)
   · simp [hlt.ne, hlt.ne']
@@ -1157,7 +1157,7 @@ private def matrixEntryZeroTwoSubmodule (R : Type) [CommRing R] : Submodule ℤ 
 
 private theorem single_mem {R : Type} [CommRing R] (x : R) : Matrix.single (0 : Fin 3) (2 : Fin 3) x ∈ matrixEntryZeroTwoSubmodule R := by
   intro a b h
-  rw [Matrix.single_apply, if_neg]
+  rw [Matrix.single_apply, ite_eq_right]
   rintro ⟨rfl, rfl⟩
   exact h ⟨rfl, rfl⟩
 
@@ -1168,7 +1168,7 @@ private theorem eq_single {R : Type} [CommRing R] {X : Matrix (Fin 3) (Fin 3) R}
   by_cases hab : a = 0 ∧ b = 2
   · obtain ⟨rfl, rfl⟩ := hab
     simp
-  · rw [if_neg (fun h' => hab ⟨h'.1.symm, h'.2.symm⟩)]
+  · rw [ite_eq_right (fun h' => hab ⟨h'.1.symm, h'.2.symm⟩)]
     exact h a b hab
 
 private def e02 (R : Type) [CommRing R] : R ≃+ matrixEntryZeroTwoSubmodule R where
@@ -1347,16 +1347,6 @@ section -- clump:auto
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr UpperTheory.V.Z.J
 
-namespace UpperTheory.V.Z.J
-
-section
-variable {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsLocalRing O] [Algebra ℤ_[l] O]
-  {D : Type} [Group D] [TopologicalSpace D]
-
-end
-
-end UpperTheory.V.Z.J
-
 theorem UpperTheory.V.Z.J.locHigh :
     ∀ (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsCoef l O] [Algebra ℤ_[l] O] (D : Type) [Group D] [TopologicalSpace D] [IsTopologicalGroup D] [CompactSpace D] (I : Subgroup D) (ε : D →* ℤ_[l]ˣ) (d : ℕ) (t : D →* GL (Fin 3) O), (l : O) ≠ 0 → LE l D ε d → GenI l I d → TriRep t → ∀ i : Fin 2, UnitStep I ε t i → ∃ C : ℕ, ∀ k, 0 < k → Nat.card (Ok l O k) ^ (7 + 3 * d) ≤ C * (ZF (l := l) I k t).ncard := by
   classical
@@ -1389,7 +1379,7 @@ theorem UpperTheory.V.Z.J.locHigh :
   have hg : ∀ b ∈ (J : Set (Ok l O k)), g b * mc = b := by
     intro b hb
     have h : ∃ a, a * mc = b := Ideal.mem_span_singleton'.mp hb
-    simp only [g, dif_pos h]
+    simp only [g, dite_eq_left h]
     exact h.choose_spec
   have hcount : (W ×ˢ (J : Set (Ok l O k))).ncard ≤ (ZF (l := l) I k t).ncard := by
     refine Set.ncard_le_ncard_of_injOn (fun p => p.1 + g p.2 • y) ?_ ?_ hZfin
@@ -1481,11 +1471,11 @@ private theorem core {R Γ : Type} [CommRing R] [Group Γ] (r : Γ →* GG (m :=
       x.adFun X = x.mat * X * ((x.left⁻¹ : GL (Fin 3) R) : Matrix (Fin 3) (Fin 3) R) := by
     intro x X hx
     unfold GG.adFun
-    rw [if_pos hx]
+    rw [ite_eq_left hx]
   have adc : ∀ X, (r c).adFun X = thetaLie X := by
     intro X
     unfold GG.adFun
-    rw [if_neg (by rw [hc2]; exact hne), hc1, hleft, inv_one, Units.val_one, one_mul, mul_one]
+    rw [ite_eq_right (by rw [hc2]; exact hne), hc1, hleft, inv_one, Units.val_one, one_mul, mul_one]
   have ad0 : ∀ (x : GG (m := 3) (R := R)), x.adFun 0 = 0 := by
     intro x
     unfold GG.adFun thetaLie

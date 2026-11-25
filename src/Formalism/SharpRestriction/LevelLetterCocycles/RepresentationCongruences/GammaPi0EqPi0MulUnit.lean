@@ -3,52 +3,9 @@ module
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
 public import Mathlib.RingTheory.PowerSeries.Inverse
-import Mathlib.Algebra.Order.Algebra
-import Mathlib.Analysis.Normed.Group.Basic
-import Mathlib.Analysis.Real.Sqrt
-import Mathlib.Data.EReal.Inv
-import Mathlib.Geometry.Convex.ConvexSpace.Defs
-import Mathlib.Tactic.ContinuousFunctionalCalculus
-import Mathlib.Tactic.Positivity.Finset
-import Mathlib.Tactic.TypeStar
 import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.Pi0MemADelta
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
+import Formalism.SharpRestriction.LevelLetterCocycles.KillerLevCoreOf
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.ConstantCoeffAlgHom, Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.GammaPi0EqPi0MulUnit
@@ -69,7 +26,7 @@ variable {O : Type*} [CommRing O]
 theorem coeff_X_pow_mul_lt {n d : ℕ} (h : d < n) (p : PowerSeries O) :
     coeff d (X ^ n * p) = 0 := by
   first
-  | rw [PowerSeries.coeff_X_pow_mul', if_neg (not_le.mpr h)]
+  | rw [PowerSeries.coeff_X_pow_mul', ite_eq_right (not_le.mpr h)]
 
 theorem coeff_pow_mul_lt {Y : PowerSeries O} (hY : constantCoeff Y = 0) {n d : ℕ} (h : d < n)
     (p : PowerSeries O) : coeff d (Y ^ n * p) = 0 := by
@@ -82,7 +39,7 @@ theorem trunc_decomp (a : PowerSeries O) (k : ℕ) :
   have hd : (X : PowerSeries O) ^ k ∣ a - (trunc k a : PowerSeries O) := by
     rw [PowerSeries.X_pow_dvd_iff]
     intro m hm
-    rw [map_sub, Polynomial.coeff_coe, PowerSeries.coeff_trunc, if_pos hm, sub_self]
+    rw [map_sub, Polynomial.coeff_coe, PowerSeries.coeff_trunc, ite_eq_left hm, sub_self]
   obtain ⟨b, hb⟩ := hd
   exact ⟨b, by rw [← hb]; ring⟩
 
@@ -117,17 +74,12 @@ private theorem coeff_algHom_eq_sum_range_of_lt (σ : PowerSeries O →ₐ[O] Po
   refine Finset.sum_congr rfl fun i hi => ?_
   rw [Finset.mem_range] at hi
   first
-  | rw [map_smul, smul_eq_mul, PowerSeries.coeff_trunc, if_pos hi]
-
-private theorem hasSubst_of_constantCoeff_eq_zero_level_letter_cocycles {Y : PowerSeries O}
-    (hY : constantCoeff Y = 0) : PowerSeries.HasSubst Y := by
-  first
-  | exact PowerSeries.HasSubst.of_constantCoeff_zero' hY
+  | rw [map_smul, smul_eq_mul, PowerSeries.coeff_trunc, ite_eq_left hi]
 
 private theorem coeff_subst_eq_sum_range_of_lt {Y : PowerSeries O} (hY : constantCoeff Y = 0)
     (a : PowerSeries O) {m N : ℕ} (hN : m < N) :
     coeff m (a.subst Y) = ∑ n ∈ Finset.range N, coeff n a * coeff m (Y ^ n) := by
-  have hs := hasSubst_of_constantCoeff_eq_zero_level_letter_cocycles hY
+  have hs := PowerSeries.HasSubst.of_constantCoeff_zero' hY
   let σ : PowerSeries O →ₐ[O] PowerSeries O := PowerSeries.substAlgHom hs
   have h1 : ∀ f : PowerSeries O, σ f = f.subst Y := fun f => by
     first
@@ -271,11 +223,7 @@ theorem γD_smulA (T : LocLat G Qp LL O) (g : W.Gam) (a : LetA O n) (x : W.DD T)
   rfl
 
 theorem γA_letE (g : W.Gam) (c : ZMod n) : W.γA g (letE c) = letE c := by
-  funext i
-  change W.γ₀ g ((letE c : LetA O n) i) = (letE c : LetA O n) i
-  by_cases h : i = c
-  · subst h; simp [letE]
-  · simp [letE, Pi.single_eq_of_ne h]
+  apply _root_.Formalism.MainNotions.UnusedSlot80.KL.γA_letE <;> assumption
 
 theorem γE_ι (g : W.Gam) (a : LetA O n) :
     W.γE g (algebraMap (LetA O n) W.EE a) = algebraMap (LetA O n) W.EE (W.γA g a) := W.γE_ext g a

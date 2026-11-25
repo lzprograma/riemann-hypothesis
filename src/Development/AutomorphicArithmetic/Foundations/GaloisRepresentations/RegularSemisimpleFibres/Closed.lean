@@ -16,48 +16,9 @@ public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentation
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.MemTwCentConj
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.NumberField
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.TypeOfLblHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroOfTwOrbNeZero
 import GroundTheory.LocalFields.Uniqueness
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
@@ -327,8 +288,7 @@ private theorem trace_one (σ : F₁ ≃ₐ[F₀] F₁) (d : ℕ) (hG : UpperThe
     rw [Finset.sum_comm, Finset.sum_congr rfl fun j hj => h j (Finset.mem_range.1 hj)]
     simp [hG.pos]
   obtain ⟨i, hi⟩ : ∃ i, T (y i) ≠ 0 := by
-    by_contra hn
-    push_neg at hn
+    by_contra! hn
     simp [hn] at hs
   refine ⟨y i * (T (y i))⁻¹, ?_⟩
   simp only [map_mul, map_inv₀, hTj]
@@ -432,13 +392,8 @@ variable {k K : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarch
     [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
     [Algebra k K] [ValuativeExtension k K] [FiniteDimensional k K]
 
-private theorem int_mem (s : K ≃ₐ[k] K) (x : 𝒪[K]) : s (x : K) ∈ 𝒪[K] := by
-  have hx := x.2
-  rw [Valuation.mem_integer_iff] at hx ⊢
-  rwa [GroundTheory.LocalField.valuation_algEquiv_apply k K s (x : K)]
-
 private def rs (s : K ≃ₐ[k] K) : 𝒪[K] →+* 𝒪[K] :=
-  (s.toAlgHom.toRingHom.comp (algebraMap 𝒪[K] K)).codRestrict 𝒪[K] fun x => int_mem s x
+  (s.toAlgHom.toRingHom.comp (algebraMap 𝒪[K] K)).codRestrict 𝒪[K] fun x => mem_int' s x
 
 private theorem unit_of_red {F : Type} [Field F] (rd : 𝒪[K] →+* F) (hrd : Function.Surjective rd)
     {x : 𝒪[K]} (hx : rd x ≠ 0) : IsUnit x := by
@@ -592,16 +547,6 @@ private theorem avg_const_frobenius_local_pairs {A : Type} [Group A] (c : ℂ) :
   exact finsum_eq_single (fun _ : A ⧸ (⊤ : Subgroup A) => c) 1
     (fun q hq => absurd (Subsingleton.elim q 1) hq)
 
-private theorem conj_self {G : Type} [Group G] (S : Subgroup G) {s : G} (hs : s ∈ S) :
-    S.map (MulAut.conj s).toMonoidHom = S := by
-  ext y
-  simp only [Subgroup.mem_map, MulEquiv.coe_toMonoidHom, MulAut.conj_apply]
-  constructor
-  · rintro ⟨z, hz, rfl⟩
-    exact S.mul_mem (S.mul_mem hs hz) (S.inv_mem hs)
-  · intro hy
-    exact ⟨s⁻¹ * y * s, S.mul_mem (S.mul_mem (S.inv_mem hs) hy) hs, by group⟩
-
 private theorem zpowers_closed {G H : Type} [Group G] [TopologicalSpace G] [Group H] [TopologicalSpace H]
     (j : H →* G) (hj : Topology.IsClosedEmbedding j) (t : H) :
     IsCompact (closure (Subgroup.zpowers (j t) : Set G)) ↔ IsCompact (closure (Subgroup.zpowers t : Set H)) := by
@@ -638,7 +583,7 @@ private theorem wt_inv {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalG
     {t κ : G} (ht : t ∈ T) (hκ : κ ∈ K) (x : G) : wt T K (t * x * κ) = wt T K x := by
   unfold wt
   have hinj : Function.Injective (MulAut.conj t).toMonoidHom := (MulAut.conj t).injective
-  have hT : T.map (MulAut.conj t).toMonoidHom = T := conj_self T ht
+  have hT : T.map (MulAut.conj t).toMonoidHom = T := GlobalTheory.TwOrbConj.map_conj_self T ht
   have hKm : K.map (MulAut.conj (t * x * κ)).toMonoidHom =
       (K.map (MulAut.conj x).toMonoidHom).map (MulAut.conj t).toMonoidHom := by
     ext y
@@ -958,36 +903,6 @@ private theorem intEl_of_conj (n : ℕ) (γ : GL (Fin n) k) (g : GL (Fin n) K)
 
 end Int
 
-section Norm
-
-variable {k K : Type} [Field k] [Field K] [Algebra k K]
-
-private theorem aut_pow_finrank [FiniteDimensional k K] (s : K ≃ₐ[k] K) :
-    s ^ Module.finrank k K = 1 := by
-  have h1 := IntermediateField.finrank_fixedField_eq_card (F := k) (E := K) (Subgroup.zpowers s)
-  rw [Nat.card_zpowers] at h1
-  rw [← (letI : Module.Free (IntermediateField.fixedField (Subgroup.zpowers s)) K := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank k (IntermediateField.fixedField (Subgroup.zpowers s)) K), h1,
-    pow_mul', pow_orderOf_eq_one, one_pow]
-
-private theorem ofFn_twConj (s : K ≃ₐ[k] K) (n : ℕ) (δ g : GL (Fin n) K) (m : ℕ) :
-    (List.ofFn fun j : Fin m => galAct (s ^ (j : ℕ)) n (g⁻¹ * δ * galAct s n g)).prod =
-      g⁻¹ * (List.ofFn fun j : Fin m => galAct (s ^ (j : ℕ)) n δ).prod * galAct (s ^ m) n g := by
-  induction m with
-  | zero => simp [galAct_one]
-  | succ m ih =>
-    simp only [List.ofFn_succ', List.prod_concat, Fin.coe_castSucc, Fin.val_last]
-    rw [ih]
-    simp only [map_mul, map_inv]
-    rw [pow_succ, galAct_mul, MonoidHom.comp_apply]
-    group
-
-private theorem norm_twConj [FiniteDimensional k K] (s : K ≃ₐ[k] K) (n : ℕ) (δ g : GL (Fin n) K) :
-    GlobalTheory.LBC.norm k s (g⁻¹ * δ * galAct s n g) = g⁻¹ * GlobalTheory.LBC.norm k s δ * g := by
-  unfold GlobalTheory.LBC.norm
-  rw [ofFn_twConj, aut_pow_finrank, galAct_one, MonoidHom.id_apply]
-
-end Norm
-
 section Lift
 
 variable {K : Type} [Field K] [ValuativeRel K] {k F₀ F₁ : Type} [Field k] [Algebra k K] [Field F₀]
@@ -1045,7 +960,7 @@ theorem UpperTheory.Gal.InertialTypesAlt.L.redNorm :
     rintro β ⟨y, rfl⟩
     obtain ⟨z, hz, -⟩ := lift_prod hlift y (Module.finrank k K)
     exact ⟨z, hz⟩
-  refine ⟨fun h => incl_mem_iff n h, hnormKO, fun β g => norm_twConj s n β g,
+  refine ⟨fun h => incl_mem_iff n h, hnormKO, fun β g => norm_tw s n β g,
     fun γ g hg => intEl_of_conj n γ g hg, ?_⟩
   intro fb hfb
   obtain ⟨hlv1, hlv2⟩ := liftVal F₀ F₁ sb hres.frob n fb hfb

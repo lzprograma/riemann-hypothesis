@@ -51,8 +51,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.FlatSpaceComponents GlobalTheory.Ad
 
 namespace GlobalTheory.GlueUnique
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem exists_proj {K M : Type} [Field K] [AddCommGroup M] [Module K M] (U : Submodule K M) :
     ∃ Q : M →ₗ[K] M, (∀ x ∈ U, Q x = 0) ∧ ∀ x, x - Q x ∈ U := by
   obtain ⟨W, hW⟩ := U.exists_isCompl

@@ -129,9 +129,9 @@ lemma sum_r (hS : HodgeTateSetting p v R O σ cp) (H : HodgeTateDatum p g v R O 
     change Matrix.mulVecLin (U.εL i) (G y) = (y i : Fin g → R)
 
     rw [hG, map_sum, Finset.sum_eq_single i]
-    · rw [hproj i i _ (y i).2, if_pos rfl]
+    · rw [hproj i i _ (y i).2, ite_eq_left rfl]
     · intro b _ hb
-      rw [hproj i b _ (y b).2, if_neg (Ne.symm hb)]
+      rw [hproj i b _ (y b).2, ite_eq_right (Ne.symm hb)]
     · intro h; exact absurd (Finset.mem_univ _) h
   have hGF : G ∘ₗ F = LinearMap.id := by
     refine LinearMap.ext fun x => ?_
@@ -284,8 +284,7 @@ theorem unramifiedCokernelLength_of_length_eigenLengthProduct (hLen : LenIdState
     have h3 := Real.log_le_log (pow_pos (hXpos j) p) h2
     rw [Real.log_pow, Real.log_mul (hXpos _).ne' (pow_pos ha0 _).ne', Real.log_pow, hlogX,
       hlogX] at h3
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have h4 := mul_lt_mul_of_neg_right hc hL0
     linarith
   have hr : ∑ j, (U.r j : ℝ) = g := by exact_mod_cast sum_r hS H U

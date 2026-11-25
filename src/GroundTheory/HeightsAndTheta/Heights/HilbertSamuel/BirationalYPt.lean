@@ -21,12 +21,6 @@ def ArithmeticVolumeDimensionOne.Statement : Prop :=
     ∃ (n : ℕ) (s : Ω), 1 ≤ n ∧ s ∈ chartLat y M.a n ∧ s ≠ 0 ∧
       ∃ c : ℝ, c < 1 ∧ IsBoundedH (mCoordIdeal y) y M n c s
 
-namespace ArithmeticVolumeDimensionOne
-
-open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.HeightsSet
-
-end ArithmeticVolumeDimensionOne
-
 end
 
 end GroundTheory.Heights₂.Heights.HilbertSamuel

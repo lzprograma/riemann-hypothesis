@@ -145,11 +145,11 @@ theorem slice_step (hU1 : U ⊆ ball 0 1) (hc : ContinuousOn u (U \ coordDiv S))
     have hsum : ∑ i ∈ S, log ‖(x + ζ • ej j) i‖⁻¹ = y + a0 := by
       rw [← Finset.add_sum_erase S _ hj]
       congr 1
-      · rw [line_coord, if_pos rfl, hy, sub_neg_eq_add, add_comm]
+      · rw [line_coord, ite_eq_left rfl, hy, sub_neg_eq_add, add_comm]
       · rw [ha0def]
         apply Finset.sum_congr rfl
         intro i hi
-        rw [line_coord, if_neg (Finset.ne_of_mem_erase hi), add_zero]
+        rw [line_coord, ite_eq_right (Finset.ne_of_mem_erase hi), add_zero]
     have hgz := hg _ (hgood ζ hζ.1 hne)
     rw [hsum] at hgz
     have h1 := hY y (by linarith [le_max_left Y 0]) (by linarith [le_max_right Y 0])
@@ -297,7 +297,7 @@ theorem local_bound (hU : IsOpen U) (hU1 : U ⊆ ball 0 1) (hc : ContinuousOn u 
       have hF' : ∀ i ∈ F, ‖(x + ζ • ej j) i‖ < r / 2 := by
         intro i hi
         have hij : i ≠ j := fun h => hjF (h ▸ hi)
-        rw [line_coord, if_neg hij, add_zero]
+        rw [line_coord, ite_eq_right hij, add_zero]
         exact hxF i (Finset.mem_insert_of_mem hi)
       obtain ⟨y, hyL, hy⟩ := ih (fun i hi => hF i (Finset.mem_insert_of_mem hi)) (x + ζ • ej j)
         hS' hd' hm' hF'

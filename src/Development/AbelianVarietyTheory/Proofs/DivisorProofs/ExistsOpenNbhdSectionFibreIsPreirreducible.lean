@@ -560,14 +560,14 @@ theorem sum_coeff {k : Type} [CommRing k] (p : MvPolynomial σ k) (hp : p.totalD
   · rw [Finset.sum_eq_single ⟨n, hn⟩]
     · simp
     · intro m _ hm
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h; exact hm (Subtype.ext h)
     · simp
   · rw [Finset.sum_eq_zero]
     · by_contra h
       exact hn ((sum_eq_degree n ▸ le_totalDegree (mem_support_iff.mpr (Ne.symm h))).trans hp)
     · intro m _
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro rfl; exact hn m.2
 
 end GlobalTheory.SplitSpread
@@ -653,9 +653,9 @@ theorem bad_iff (f g : MvPolynomial σ A) (D : ℕ) (k : Type) [Field k] (ψ : A
       cases b <;> simpa [z]
     · rw [eval_eqs_inv]
       cases b
-      · simp only [z, Sum.elim_inr, Bool.false_eq_true, if_false]
+      · simp only [z, Sum.elim_inr, Bool.false_eq_true, ite_false]
         exact sub_eq_zero.mpr (inv_mul_cancel₀ hQg)
-      · simp only [z, Sum.elim_inr, if_true]
+      · simp only [z, Sum.elim_inr, ite_true]
         exact sub_eq_zero.mpr (inv_mul_cancel₀ hPg)
 
 end GlobalTheory.SplitSpread

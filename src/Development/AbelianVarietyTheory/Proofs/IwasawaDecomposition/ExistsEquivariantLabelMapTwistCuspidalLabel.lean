@@ -168,8 +168,7 @@ theorem exists_labelMap_twist_cuspLabel :
         exact ⟨h1, h2, h3, by rw [h4, Fintype.card_fin]⟩
       lab_inj := fun d τ τ' hd hs hc hs' hc' h =>
         (hC d hd).2.2 τ τ' (greenLab Cv d τ) hs hc hs' hc' (greenLab_spec Cv hC hd hs hc)
-          (by rw [h]; exact greenLab_spec Cv hC hd hs' hc')
-      lab_one := fun τ x hs hx htr => greenLab_one Cv hC τ x hs hx htr }
+          (by rw [h]; exact greenLab_spec Cv hC hd hs' hc') }
   refine ⟨O, ⟨?_, ?_⟩, ?_, ?_⟩
   · intro d α a hα τ τ' hd hs hc hs' hc' htr
     exact galois_clause Cv hC d α a hα τ τ' hd hs hc hs' hc' htr

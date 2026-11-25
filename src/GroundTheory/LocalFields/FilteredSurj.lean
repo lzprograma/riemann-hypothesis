@@ -2,15 +2,15 @@ module
 
 public import Mathlib.Algebra.Group.Subgroup.Map
 public import Mathlib.Order.Filter.AtTopBot.Defs
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.Tactic.TypeStar
 public import Mathlib.Order.Filter.AtTopBot.Basic
+import Mathlib.Algebra.Group.Subgroup.Ker
+import Mathlib.Tactic.Choose
 
 @[expose] public section
 
 namespace GroundTheory.LocalField
 
-open Filter Topology Uniformity
+open Filter
 
 section Filtration
 
@@ -71,7 +71,7 @@ theorem map_eq_of_graded_surjective {F : ℕ → Subgroup G} {E : ℕ → Subgro
     induction j with
     | zero => simpa [hr0] using hh
     | succ j ih =>
-      rw [hrs, ← add_assoc]
+      rw [hrs, ← Nat.add_assoc]
       exact (hs (k + j) (r j) (Nat.le_add_right k j) ih).2
 
   obtain ⟨D, hD⟩ : ∃ D : ℕ → G, ∀ j, D j = s (k + j) (r j) := ⟨_, fun _ => rfl⟩
@@ -95,7 +95,7 @@ theorem map_eq_of_graded_surjective {F : ℕ → Subgroup G} {E : ℕ → Subgro
     | zero => simp
     | succ d ih =>
       have e : x (m + (d + 1)) / x m = D (m + d + 1) * (x (m + d) / x m) := by
-        rw [← add_assoc, hxs, div_eq_mul_inv, div_eq_mul_inv, mul_assoc]
+        rw [← Nat.add_assoc, hxs, div_eq_mul_inv, div_eq_mul_inv, mul_assoc]
       rw [e]
       exact (F _).mul_mem (hF (by omega) (hDF (m + d + 1))) ih
   have hC : FiltrationCauchy F x := by
@@ -116,10 +116,8 @@ theorem map_eq_of_graded_surjective {F : ℕ → Subgroup G} {E : ℕ → Subgro
   obtain ⟨y, hy⟩ := hG x hC
   obtain ⟨M0, hM0⟩ := hy k
   have hyk : y ∈ F k := by
-    have e : (x M0 / y)⁻¹ * x M0 = y := by
-      simp only [div_eq_mul_inv, mul_inv_rev, inv_inv, mul_assoc, inv_mul_cancel, mul_one]
-    rw [← e]
-    exact (F k).mul_mem ((F k).inv_mem (hM0 M0 le_rfl)) (hxk M0)
+    simpa only [div_eq_mul_inv, (F k).mul_mem_cancel_left (hxk M0), (F k).inv_mem_iff]
+      using hM0 M0 le_rfl
   refine ⟨y, hyk, ?_⟩
   have h1 : h / f y = 1 := by
     apply hH
@@ -144,18 +142,10 @@ theorem surjective_of_graded_surjective {F : ℕ → Subgroup G} {E : ℕ → Su
     (hF0 : F 0 = ⊤) (hE0 : E (φ 0) = ⊤) (hmap : ∀ n, ∀ g ∈ F n, f g ∈ E (φ n))
     (hgr : ∀ n, ∀ h ∈ E (φ n), ∃ g ∈ F n, h / f g ∈ E (φ (n + 1))) :
     Function.Surjective f := by
-  intro h
-  have e := map_eq_of_graded_surjective hF hE hG hH f hφ 0 (fun n _ => hmap n)
-    (fun n _ => hgr n)
-  have hh : h ∈ E (φ 0) := by rw [hE0]; exact Subgroup.mem_top h
-  rw [← e, hF0] at hh
-  obtain ⟨g, -, rfl⟩ := hh
-  exact ⟨g, rfl⟩
+  rw [← MonoidHom.range_eq_top, ← Subgroup.map_top, ← hF0, ← hE0]
+  exact map_eq_of_graded_surjective hF hE hG hH f hφ 0
+    (fun n _ => hmap n) (fun n _ => hgr n)
 
 end Surjectivity
-
-section Topological
-
-end Topological
 
 end GroundTheory.LocalField

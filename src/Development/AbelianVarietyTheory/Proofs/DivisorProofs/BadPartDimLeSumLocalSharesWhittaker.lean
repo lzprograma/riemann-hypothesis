@@ -15,55 +15,8 @@ public import Mathlib.Algebra.MonoidAlgebra.Basic
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Formalism.CyclotomicNorms.NonsquarefreeBounds.NonsquarefreeMonicBoundHolds
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsWt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.GroupTheory.Nilpotent
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Data.Finsupp.Pointwise
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.TotallySplit
 import Mathlib.Tactic.Linter.Style
 import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsTr
 
@@ -115,22 +68,22 @@ theorem prod_fac_coeff (k : Fin 2) (t : Tup D k) (g : G0g D.nd) :
         intro v
         rw [fac_ne k t ⟨k', v⟩ hk, MonoidAlgebra.one_def, MonoidAlgebra.coeff_single_apply]
         by_cases hg : g ⟨k', v⟩ = 1
-        · rw [if_pos hg.symm, if_pos hg]
-        · rw [if_neg (Ne.symm hg), if_neg hg]
+        · rw [ite_eq_left hg.symm, ite_eq_left hg]
+        · rw [ite_eq_right (Ne.symm hg), ite_eq_right hg]
       simp only [hv]
       by_cases hc : ∀ v : D.nd.PlG k', g ⟨k', v⟩ = 1
-      · rw [if_pos hc]
-        exact Finset.prod_eq_one fun v _ => if_pos (hc v)
-      · rw [if_neg hc]
-        push_neg at hc
+      · rw [ite_eq_left hc]
+        exact Finset.prod_eq_one fun v _ => ite_eq_left (hc v)
+      · rw [ite_eq_right hc]
+        push Not at hc
         obtain ⟨v, hv'⟩ := hc
-        exact Finset.prod_eq_zero (Finset.mem_univ v) (if_neg hv')
+        exact Finset.prod_eq_zero (Finset.mem_univ v) (ite_eq_right hv')
     rw [Finset.prod_congr rfl e, Finset.prod_boole]
     by_cases hc : ∀ kv : (Σ k : Fin 2, D.nd.PlG k), kv.1 ≠ k → g kv = 1
-    · rw [if_pos hc, if_pos]
+    · rw [ite_eq_left hc, ite_eq_left]
       intro k' hk' v
       exact hc ⟨k', v⟩ (by simpa using hk')
-    · rw [if_neg hc, if_neg]
+    · rw [ite_eq_right hc, ite_eq_right]
       intro h
       apply hc
       rintro ⟨k', v⟩ hk
@@ -229,7 +182,7 @@ theorem spec_of_eps (L : Lev g N) (χ : GG g N → ℂ) (hp : IsProj (eps L.Mem 
   · rw [ha] at hq
     have hm : L.Mem q := by
       by_contra hc
-      exact hq (if_neg hc)
+      exact hq (ite_eq_right hc)
     exact unitri_sub_one_pow _ hm.1.1 hm.1.2
 
 theorem spec_eDat (P : Matrix (Fin N) (Fin N) (ZMod g) → Prop) (φ : Matrix (Fin N) (Fin N) (ZMod g) → ZMod g)
@@ -255,14 +208,14 @@ theorem spec_eDat (P : Matrix (Fin N) (Fin N) (ZMod g) → Prop) (φ : Matrix (F
     · by_contra h2
       haveI : Nonempty {u : GG g N // P u.val} := ⟨⟨x, h1⟩⟩
       have hc' : (Nat.card {u : GG g N // P u.val} : ℂ) ≠ 0 := by exact_mod_cast Nat.card_pos.ne'
-      rw [if_pos h1, if_neg h2] at hx
+      rw [ite_eq_left h1, ite_eq_right h2] at hx
       refine div_ne_zero (inv_ne_zero fun h3 => ?_) hc' hx
       have := AddChar.norm_apply (ZMod.stdAddChar (N := g)) (φ x.val)
       beta_reduce at h3
       rw [h3] at this
       simp at this
     · by_contra h2
-      rw [if_neg h2, if_pos h1] at hx
+      rw [ite_eq_right h2, ite_eq_left h1] at hx
       exact div_ne_zero (inv_ne_zero (chi_ne L x)) hc hx.symm
   refine spec_of_eps L (fun _ => 1) (GlobalTheory.BadShare.EpsProj.isProj_eps (mem_one L) (fun _ _ => mem_mul L) rfl (fun _ _ _ _ => by simp)) _
     fun x => ?_
@@ -476,7 +429,7 @@ theorem wtOf_eUk (k : Fin 2) (ψ₀ : AddChar (ZMod (D.host.g k)) ℂ) (f : (ZMo
   classical
   haveI : NeZero (D.host.g k) := ⟨(D.host.g_prime k).ne_zero⟩
   have h1 : (eUk D k ψ₀).coeff 1 = (cardU D k)⁻¹ := by
-    rw [coeff_eUk, if_pos (by simpa using isUniUp_one), Units.val_one, sdg, sd_one, AddChar.map_zero_eq_one, inv_one,
+    rw [coeff_eUk, ite_eq_left (by simpa using isUniUp_one), Units.val_one, sdg, sd_one, AddChar.map_zero_eq_one, inv_one,
       mul_one]
   have hr := coeff_one_real_of_idem _ (eUk_mul_eSer_idem D k ψ₀ f)
   obtain ⟨n, hn, -⟩ : ∃ n : ℕ, cardU D k = n ∧ n ≠ 0 := ⟨_, rfl, fun h => cardU_ne_zero D k (by
@@ -507,7 +460,7 @@ theorem term_eq [Fintype (G0g D.nd)] (P : Subgroup (G0g D.nd)) (lam : P →* ℂ
     simp only [mul_one, Pi.inv_apply, inv_eq_one]
   rw [coeff_badElt]
   by_cases hT : ∀ kv : (Σ k : Fin 2, D.nd.PlG k), kv.1 ≠ k → y kv = 1
-  · rw [if_pos hT, if_pos (hTi.2 hT), coeff_lvlIdem_eq]
+  · rw [ite_eq_left hT, ite_eq_left (hTi.2 hT), coeff_lvlIdem_eq]
     split_ifs with hP
     · have hu : ∀ v : D.nd.PlG k, IsUniUp ((y ⟨k, v⟩ : GL (Fin D.R.r) (ZMod (D.host.g k))) :
           Matrix (Fin D.R.r) (Fin D.R.r) (ZMod (D.host.g k))) := fun v => (hW.2.1 y).1 hP ⟨k, v⟩
@@ -525,13 +478,12 @@ theorem term_eq [Fintype (G0g D.nd)] (P : Subgroup (G0g D.nd)) (lam : P →* ℂ
       refine Finset.sum_congr rfl fun t _ => ?_
       rw [← Finset.prod_mul_distrib]
       refine Finset.prod_congr rfl fun v _ => ?_
-      rw [phiAt, if_pos (hu v)]
+      rw [phiAt, ite_eq_left (hu v)]
       simp only [mul_one, Pi.inv_apply]
     · rw [zero_mul]
       obtain ⟨v, hv⟩ : ∃ v : D.nd.PlG k, ¬ IsUniUp ((y ⟨k, v⟩ : GL (Fin D.R.r) (ZMod (D.host.g k))) :
           Matrix (Fin D.R.r) (Fin D.R.r) (ZMod (D.host.g k))) := by
-        by_contra hc
-        push_neg at hc
+        by_contra! hc
         apply hP
         rw [hW.2.1]
         rintro ⟨k', v⟩
@@ -542,8 +494,8 @@ theorem term_eq [Fintype (G0g D.nd)] (P : Subgroup (G0g D.nd)) (lam : P →* ℂ
           exact isUniUp_one
       refine (mul_eq_zero_of_right _ (Finset.sum_eq_zero fun t _ => ?_)).symm
       refine Finset.prod_eq_zero (Finset.mem_univ v) ?_
-      rw [phiAt, if_neg hv]
-  · rw [if_neg hT, if_neg (fun h => hT (hTi.1 h)), mul_zero]
+      rw [phiAt, ite_eq_right hv]
+  · rw [ite_eq_right hT, ite_eq_right (fun h => hT (hTi.1 h)), mul_zero]
 
 theorem badElt_mul_lvlIdem : ∀ (D : D7) [Fintype (G0g D.nd)] (P : Subgroup (G0g D.nd)) (lam : P →* ℂˣ) (ψ : ∀ kv : (Σ k : Fin 2, D.nd.PlG k), AddChar (ZMod (D.host.g kv.1)) ℂ), IsWhit D P lam ψ → ∀ (k : Fin 2) (S : Finset (Tup D k)) (H : Subgroup (G0g D.nd)), IsHalf D k H → (∀ g, (badElt D k S * Formalism.L2.DIV.lvlIdem P lam).coeff g ≠ 0 → g ∈ H) ∧ (badElt D k S * Formalism.L2.DIV.lvlIdem P lam).coeff 1 = ((locShare D (fun k' v => eUk D k' (ψ ⟨k', v⟩)) k S : ℝ) : ℂ) / (Nat.card P : ℂ) := by
   intro D _ P lam ψ hW k S H hH
@@ -718,7 +670,6 @@ theorem finrank_eig_inf_ker_le : ∀ (Γ V : Type) [Group Γ] [Fintype Γ] [AddC
     have hs : 0 ≤ s k := by
       have : 0 ≤ (Nat.card (H k) : ℝ) * s k := by rw [← hrR]; positivity
       exact le_of_mul_le_mul_left (by simpa using this) hH
-    have hd : (0 : ℝ) ≤ finrank ℂ (eig ρ Hb lam) := by positivity
     have hleR : (finrank ℂ (LinearMap.range (ρ.asAlgebraHom (b k * p))) : ℝ) ≤ n k * r := by exact_mod_cast hle
     have key : ((n k : ℝ) * r) * Nat.card Hb ≤ (c * s k * finrank ℂ (eig ρ Hb lam)) * Nat.card Hb := by
       calc ((n k : ℝ) * r) * Nat.card Hb = ((n k : ℝ) * Nat.card (H k)) * s k := by rw [mul_assoc, hrR]; ring
@@ -824,7 +775,7 @@ theorem coeff_map_mul_eR {π : Γ →* G} {ι : G →* Γ} (h : IsSplit π ι) (
       show (r : Γ) = (ι (π γ))⁻¹ * γ
       rw [hg]
       group
-  simp_rw [key, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp_rw [key, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 def comapEquiv {π : Γ →* G} {ι : G →* Γ} (h : IsSplit π ι) (P : Subgroup G) :
     P × π.ker ≃ P.comap π where
@@ -989,13 +940,13 @@ theorem badElt_all (k : Fin 2) : badElt D k (allTup D k) = 1 := by
   simp only [MonoidAlgebra.coeff_single, Finsupp.single_apply]
   by_cases h1 : g = 1
   · subst h1; simp
-  · rw [if_neg (Ne.symm h1)]
+  · rw [ite_eq_right (Ne.symm h1)]
     split_ifs with hs
     · obtain ⟨kv, hkv⟩ := Function.ne_iff.1 h1
       obtain ⟨k', v⟩ := kv
       by_cases hk : k' = k
       · subst hk
-        exact Finset.prod_eq_zero (Finset.mem_univ v) (if_neg fun h => hkv h.symm)
+        exact Finset.prod_eq_zero (Finset.mem_univ v) (ite_eq_right fun h => hkv h.symm)
       · exact absurd (hs ⟨k', v⟩ hk) hkv
     · rfl
 
@@ -1014,7 +965,7 @@ theorem badElt_good_add_bad (k : Fin 2) : badElt D k (goodSet D k) + badElt D k 
 
 theorem badElt_coeff_off (k : Fin 2) (S : Finset (Tup D k)) (h : G0g D.nd)
     (hh : ∃ kv : (Σ k : Fin 2, D.nd.PlG k), kv.1 ≠ k ∧ h kv ≠ 1) : (badElt D k S).coeff h = 0 := by
-  rw [badElt_coeff, if_neg]
+  rw [badElt_coeff, ite_eq_right]
   obtain ⟨kv, h1, h2⟩ := hh
   exact fun hs => h2 (hs kv h1)
 
@@ -1041,7 +992,7 @@ theorem coeff_mul_factors (x y : MonoidAlgebra ℂ (G0g D.nd))
     · rw [hy _ ⟨kv, by rw [h0]; decide, ?_⟩, mul_zero]
       intro hc
       apply hkv
-      simp only [h0, if_true]
+      simp only [h0, ite_true]
       have : (b⁻¹ * g) kv = 1 := hc
       rw [Pi.mul_apply, Pi.inv_apply, inv_mul_eq_one] at this
       exact this
@@ -1053,7 +1004,7 @@ theorem e0_eq : D.ntypes.e0 = badElt D 0 (goodSet D 0) * badElt D 1 (goodSet D 1
   apply MonoidAlgebra.coeff_injective
   ext g
   rw [coeff_mul_factors D _ _ (fun h hh => badElt_coeff_off D 0 _ h hh) (fun h hh => badElt_coeff_off D 1 _ h hh),
-    badElt_coeff, badElt_coeff, if_pos, if_pos]
+    badElt_coeff, badElt_coeff, ite_eq_left, ite_eq_left]
   rotate_left
   · rintro ⟨k, v⟩ hk
     fin_cases k

@@ -58,19 +58,19 @@ private theorem link_abs {E : Type} [Field E] [NumberField E] [IsCMField E] {n :
     exact (InfinitePlace.mk_eq_iff.1 e).resolve_left fun e' => c e'.symm
   refine ⟨fun v => if v.embedding = φ (y v) then μ (y v) else (μ (y v)).dual, fun σ hσ => ⟨fun h v => ?_, fun h i => ?_⟩⟩
   · by_cases c : v.embedding = φ (y v)
-    · simp only [if_pos c]
+    · simp only [ite_eq_left c]
       rw [c]
       exact h _
-    · simp only [if_neg c]
+    · simp only [ite_eq_right c]
       rw [← hconj v c]
       exact conj_wt hσ (h _)
   · have hi : y (InfinitePlace.mk (φ i)) = i := hb.1 (hy _)
     have key : ∀ v, HasWeightAt σ v.embedding (if v.embedding = φ (y v) then μ (y v) else (μ (y v)).dual) →
         HasWeightAt σ (φ (y v)) (μ (y v)) := fun v hv => by
       by_cases c : v.embedding = φ (y v)
-      · simp only [if_pos c] at hv
+      · simp only [ite_eq_left c] at hv
         rwa [c] at hv
-      · simp only [if_neg c] at hv
+      · simp only [ite_eq_right c] at hv
         have h2 := conj_wt hσ hv
         rw [← hconj v c, _root_.GlobalTheory.DefU.dual_dual] at h2
         exact (star_star (φ (y v))) ▸ h2

@@ -71,8 +71,6 @@ open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.Inde
 
 namespace GlobalTheory.RowsNonzero
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Abstract
 
 variable {K G X H E : Type} [Field K] [Group G] [Fintype G] [AddCommGroup X] [Module K X]
@@ -152,16 +150,6 @@ theorem sum_lvlIdem {σ : K →+* ℂ} (π : Representation ℂ G E) (P : Subgro
   rw [← Nat.cast_smul_eq_nsmul ℂ, smul_smul, ← Nat.card_eq_fintype_card, mul_inv_cancel₀ hc, one_smul]
 
 end Abstract
-
-section Hecke
-
-open GlobalTheory.HeckeModel GlobalTheory.SphericalOps
-
-variable {D : D7}
-
-variable {V : HSp D} {S : D.what₂.Tau → SPar} {β : GL (Fin V.rank) (Lev.EAf D)}
-
-end Hecke
 
 section Rows
 

@@ -227,12 +227,5 @@ noncomputable def sphMeasure : MeasureTheory.Measure
 
 end Data
 
-namespace Data
-
-variable {K ι Ω WT A}
-variable (d : Data K ι Ω WT A)
-
-end Data
-
 
 end ReciprocityTheory.ChartRestriction.G.T0

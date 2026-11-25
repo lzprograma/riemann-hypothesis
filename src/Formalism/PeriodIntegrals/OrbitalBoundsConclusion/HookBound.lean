@@ -11,56 +11,11 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.CapelliAbs
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.CapelliMain
 public import Mathlib.RingTheory.Derivation.Lie
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ProdFactorialSupportSubSingle
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.PiTensorProduct
+import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ContDiffFderivApply
+import Formalism.LocalToGlobal.Divisibility.BrJoint
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.DetShift, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.DeterminantAdjugate, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.HighestWeightLastZero, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.HookBoundOfSteps, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.HookNorm, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.DiagonalMonomialFactorial, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.ProdFactorialLe, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.Assemble, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.CapelliOps, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HookBound
@@ -409,7 +364,7 @@ theorem Ioi_eq_filter {m : ℕ} (x : Fin m) : Finset.Ioi x = Finset.univ.filter 
 theorem prod_Ioi_castSucc {M : Type*} [CommMonoid M] (n : ℕ) (i : Fin n) (g : Fin (n + 1) → M) :
     ∏ j ∈ Finset.Ioi (Fin.castSucc i), g j = (∏ j ∈ Finset.Ioi i, g (Fin.castSucc j)) * g (Fin.last n) := by
   rw [Ioi_eq_filter, Ioi_eq_filter, Finset.prod_filter, Finset.prod_filter, Fin.prod_univ_castSucc]
-  simp only [Fin.castSucc_lt_castSucc_iff, Fin.castSucc_lt_last, if_true]
+  simp only [Fin.castSucc_lt_castSucc_iff, Fin.castSucc_lt_last, ite_true]
 
 theorem Pn_last_zero (n : ℕ) (ν : Fin (n + 1) → ℕ) (h : ν (Fin.last n) = 0) :
     Pn ν = Pn (fun i : Fin n => ν (Fin.castSucc i)) * ∏ i : Fin n, (ν (Fin.castSucc i) + (n - i)) := by
@@ -514,14 +469,13 @@ theorem diagHom_monomial {N : ℕ} (m : Fin N × Fin N →₀ ℕ) (c : ℚ) :
     have : v.1 = v.2 := by
       by_contra hne
       exact (Finsupp.mem_support_iff.1 hv) (h v hne)
-    rw [if_pos this]
+    rw [ite_eq_left this]
   · have : ∃ v, v.1 ≠ v.2 ∧ m v ≠ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact h fun v hv => by_contra fun h0 => h0 (hc v hv)
     obtain ⟨v, hv, hmv⟩ := this
     rw [Finsupp.prod, Finset.prod_eq_zero (i := v) (Finsupp.mem_support_iff.2 hmv), mul_zero]
-    rw [if_neg hv, zero_pow hmv]
+    rw [ite_eq_right hv, zero_pow hmv]
 
 theorem coeff_diagHom {N : ℕ} (f : MvPolynomial (Fin N × Fin N) ℚ) (m : Fin N × Fin N →₀ ℕ)
     (hm : IsDiag m) : AddMonoidAlgebra.coeff (diagHom N f) m = AddMonoidAlgebra.coeff f m := by
@@ -530,7 +484,7 @@ theorem coeff_diagHom {N : ℕ} (f : MvPolynomial (Fin N × Fin N) ℚ) (m : Fin
   · rw [diagHom_monomial]
     split_ifs with h
     · rfl
-    · rw [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, coeff_monomial, if_neg]
+    · rw [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, coeff_monomial, ite_eq_right]
       rintro rfl
       exact h hm
   · rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq]
@@ -574,25 +528,17 @@ theorem isDiag_diagonal_monomial {N : ℕ} (ν : Fin N → ℕ) : IsDiag (M0 ν)
   refine Finset.sum_eq_zero fun s _ => ?_
   rw [Finset.sum_eq_zero, mul_zero]
   intro p _
-  rw [Finsupp.single_apply, if_neg]
+  rw [Finsupp.single_apply, ite_eq_right]
   intro h
   subst h
   exact hv rfl
 
 theorem coeff_diagonal_monomial_hw {N : ℕ} (ν : Fin N → ℕ) : AddMonoidAlgebra.coeff (hw ℚ le_rfl ν) (M0 ν) = 1 := by
-  rw [← coeff_diagHom _ _ (isDiag_diagonal_monomial ν), diagHom_hw, coeff_monomial, if_pos rfl]
+  rw [← coeff_diagHom _ _ (isDiag_diagonal_monomial ν), diagHom_hw, coeff_monomial, ite_eq_left rfl]
 
 theorem weight_rowW_apply {N : ℕ} (m : Fin N × Fin N →₀ ℕ) (a : Fin N) :
     (Finsupp.weight (rowW N N) m) a = ∑ b : Fin N, m (a, b) := by
-  classical
-  rw [Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by intro i; simp)]
-  rw [Finset.sum_apply, Fintype.sum_prod_type]
-  simp only [Pi.smul_apply, rowW, smul_eq_mul, Pi.single_apply]
-  rw [Finset.sum_eq_single a]
-  · simp
-  · intro b _ hb
-    simp [Ne.symm hb]
-  · simp
+  apply _root_.PI.WSF.evA_weight_rowW <;> assumption
 
 theorem diagonal_monomial_apply {N : ℕ} (ν : Fin N → ℕ) (hν : Antitone ν) (a : Fin N) : M0 ν (a, a) = ν a := by
   classical
@@ -772,7 +718,7 @@ theorem capelli_relation : CapRel := by
     split_ifs with h
     · obtain ⟨rfl, rfl⟩ := h
       simp
-    · rw [Pi.single_apply, if_neg (fun e => h (Prod.mk.inj e))]
+    · rw [Pi.single_apply, ite_eq_right (fun e => h (Prod.mk.inj e))]
       simp
 
 theorem capelli_left_holds : CapLeft := by
@@ -818,15 +764,7 @@ theorem xw_xo (N : ℕ) : ∀ (k : ℕ) (r s : Fin k → Fin N),
 theorem sum_perm_of_noninj {M : Type} [AddCommMonoid M] (N : ℕ) (F : (Fin N → Fin N) → M)
     (hF : ∀ s, ¬ Function.Injective s → F s = 0) :
     ∑ s, F s = ∑ π : Equiv.Perm (Fin N), F π := by
-  classical
-  have himg : ∑ π : Equiv.Perm (Fin N), F π =
-      ∑ s ∈ Finset.univ.image (fun π : Equiv.Perm (Fin N) => (π : Fin N → Fin N)), F s :=
-    (Finset.sum_image fun π _ σ _ h => Equiv.ext (congrFun h)).symm
-  rw [himg]
-  symm
-  refine Finset.sum_subset (Finset.subset_univ _) fun s _ hs => hF s fun hinj => hs ?_
-  exact Finset.mem_image.2
-    ⟨Equiv.ofBijective s (Finite.injective_iff_bijective.1 hinj), Finset.mem_univ _, rfl⟩
+  apply _root_.GlobalTheory.CapelliWeyl.sum_perm_of_not_injective <;> assumption
 
 theorem detD_eq (N : ℕ) : detD N = ∑ π : Equiv.Perm (Fin N), ((Equiv.Perm.sign π : ℤˣ) : ℤ) •
     dw (dop N) (id : Fin N → Fin N) (fun j => π j) := by

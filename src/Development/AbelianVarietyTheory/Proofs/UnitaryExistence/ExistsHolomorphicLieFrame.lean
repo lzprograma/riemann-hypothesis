@@ -192,14 +192,6 @@ theorem differentiableAt_fderiv {m g : ℕ} {X : Scheme.{0}} {B : Set (Fin m →
     (n := 2) h1.contDiffAt contDiffAt_const le_rfl
   exact h2.differentiableAt one_ne_zero
 
-section Fibre
-
-open GlobalTheory.GrpTangent
-
-variable {G : Over (Sp ℂ)} [GrpObj G] {X : Scheme.{0}} {ψ : G.left ⟶ X} {g : ℕ} {e : (Fin g → ℂ) → (Sp ℂ ⟶ X)}
-
-end Fibre
-
 end GlobalTheory.HolLieFrame
 
 namespace GlobalTheory

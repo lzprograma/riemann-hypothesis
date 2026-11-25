@@ -73,19 +73,8 @@ theorem perp_span {s : Set (Fin r → ℂ)} {v : Fin r → ℂ} (h : ∀ y ∈ s
 theorem perp_span_right (hG : ∀ a b, cc (G a b) = G b a) {s : Set (Fin r → ℂ)} {v : Fin r → ℂ}
     (h : ∀ y ∈ s, hermC τ G v y = 0) : ∀ y ∈ Submodule.span ℂ s, hermC τ G v y = 0 := by
   intro y hy
-  induction hy using Submodule.span_induction with
-  | mem x hx => exact h x hx
-  | zero => simp [hermC]
-  | add x y _ _ hx hy =>
-    have e : hermC τ G v (x + y) = hermC τ G v x + hermC τ G v y := by
-      simp only [hermC, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
-    rw [e, hx, hy, add_zero]
-  | smul c x _ hx =>
-    have e : hermC τ G v (c • x) = conj c * hermC τ G v x := by
-      simp only [hermC, Pi.smul_apply, smul_eq_mul, map_mul, Finset.mul_sum]
-      refine Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => ?_))
-      ring
-    rw [e, hx, mul_zero]
+  rw [← hermC_conj τ hG,
+    perp_span τ G (fun z hz => by rw [← hermC_conj τ hG, h z hz, map_zero]) y hy, map_zero]
 
 theorem coef_of_mem {n : ℕ} (Y : Fin n → Fin r → ℂ) (S : Set (Fin n)) {v : Fin r → ℂ}
     (hv : v ∈ Submodule.span ℂ (Y '' S)) :
@@ -120,21 +109,8 @@ theorem sum_mem_of {n : ℕ} (Y : Fin n → Fin r → ℂ) (S : Set (Fin n)) (w 
 variable (hG : ∀ a b, cc (G a b) = G b a)
 include hG
 
-theorem hC_self_im (v : Fin r → ℂ) : (hermC τ G v v).im = 0 := by
-  have hτ : ∀ a b, conj (τ (G a b)) = τ (G b a) := by
-    intro a b
-    rw [← hG a b]
-    first
-    | (simp only [cc]; exact (NumberField.IsCMField.complexEmbedding_complexConj τ (G a b)).symm)
-    | (simp [cc])
-  have hc : conj (hermC τ G v v) = hermC τ G v v := by
-
-    simp only [hermC, map_sum, map_mul, Complex.conj_conj]
-    rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => ?_))
-    rw [hτ]
-    ring
-  exact Complex.conj_eq_iff_im.mp hc
+theorem hC_self_im (v : Fin r → ℂ) : (hermC τ G v v).im = 0 :=
+  Complex.conj_eq_iff_im.mp (hermC_conj τ hG v v)
 
 theorem gs_exists {n : ℕ} (p : ℕ) (Y : Fin n → Fin r → ℂ) (hind : LinearIndependent ℂ Y)
     (horth : ∀ j k : Fin n, (j : ℕ) < p → p ≤ (k : ℕ) → hermC τ G (Y j) (Y k) = 0)
@@ -152,30 +128,6 @@ theorem gs_exists {n : ℕ} (p : ℕ) (Y : Fin n → Fin r → ℂ) (hind : Line
   classical
   obtain ⟨ε, hε⟩ : ∃ ε : Fin n → ℂ, ε = fun c : Fin n => (if (c : ℕ) < p then 1 else -1 : ℂ) :=
     ⟨fun c : Fin n => (if (c : ℕ) < p then 1 else -1 : ℂ), rfl⟩
-  have hτ : ∀ a b, conj (τ (G a b)) = τ (G b a) := by
-    intro a b
-    rw [← hG a b]
-    first
-    | (simp only [cc]; exact (NumberField.IsCMField.complexEmbedding_complexConj τ (G a b)).symm)
-    | (simp [cc])
-  have csym : ∀ u w, conj (hermC τ G u w) = hermC τ G w u := by
-    intro u w
-
-    simp only [hermC, map_sum, map_mul, Complex.conj_conj]
-    rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => ?_))
-    rw [hτ]
-    ring
-  have smulL : ∀ (c : ℂ) u w, hermC τ G (c • u) w = c * hermC τ G u w := fun c u w =>
-    map_smul (hL τ G w) c u
-  have subL : ∀ u u' w, hermC τ G (u - u') w = hermC τ G u w - hermC τ G u' w := fun u u' w =>
-    map_sub (hL τ G w) u u'
-  have sumL : ∀ (s : Finset (Fin n)) (f : Fin n → Fin r → ℂ) w,
-      hermC τ G (∑ a ∈ s, f a) w = ∑ a ∈ s, hermC τ G (f a) w := fun s f w =>
-    map_sum (hL τ G w) f s
-  have smulR : ∀ (c : ℂ) u w, hermC τ G u (c • w) = conj c * hermC τ G u w := by
-    intro c u w
-    rw [← csym, smulL, map_mul, csym]
 
   have cross : ∀ a c : Fin n, ¬((a : ℕ) < p ↔ (c : ℕ) < p) →
       ∀ u ∈ Submodule.span ℂ (Y '' {j | ((j : ℕ) < p ↔ (a : ℕ) < p)}),
@@ -194,7 +146,7 @@ theorem gs_exists {n : ℕ} (p : ℕ) (Y : Fin n → Fin r → ℂ) (hind : Line
     · have hkp : (k : ℕ) < p := by
         by_contra hkp
         exact hac ⟨fun ha => absurd (hj.mpr ha) hjp, fun hc => absurd (hk.mpr hc) hkp⟩
-      rw [← csym, horth k j hkp (not_lt.mp hjp), map_zero]
+      rw [← hermC_conj τ hG, horth k j hkp (not_lt.mp hjp), map_zero]
 
   have step : ∀ m : ℕ, m ≤ n → ∃ g : Fin n → Fin r → ℂ,
       (∀ c a : Fin n, (c : ℕ) < m → (a : ℕ) < m → hermC τ G (g c) (g a) = if c = a then ε c else 0) ∧
@@ -220,15 +172,15 @@ theorem gs_exists {n : ℕ} (p : ℕ) (Y : Fin n → Fin r → ℂ) (hind : Line
       have hvg : ∀ a ∈ T, hermC τ G v (g a) = 0 := by
         intro a ha
         have ham : (a : ℕ) < m := (Finset.mem_filter.mp ha).2
-        rw [hv, subL, sumL]
+        rw [hv, hermC_sub_left, hermC_sum_left]
         have : ∀ b ∈ T, hermC τ G ((ε b * hermC τ G (Y c₀) (g b)) • g b) (g a) =
             if b = a then hermC τ G (Y c₀) (g a) else 0 := by
           intro b hb
-          rw [smulL, horg b a (Finset.mem_filter.mp hb).2 ham]
+          rw [hermC_smul_left, horg b a (Finset.mem_filter.mp hb).2 ham]
           split_ifs with hba
           · rw [hba, mul_comm (ε a), mul_assoc, hεsq, mul_one]
           · rw [mul_zero]
-        rw [Finset.sum_congr rfl this, Finset.sum_ite_eq' T a, if_pos ha, sub_self]
+        rw [Finset.sum_congr rfl this, Finset.sum_ite_eq' T a, ite_eq_left ha, sub_self]
 
       set S₀ : Set (Fin n) := {j | (j : ℕ) ≤ c₀ ∧ ((j : ℕ) < p ↔ (c₀ : ℕ) < p)} with hS₀
       have hgS : ∀ a ∈ T, ((a : ℕ) < p ↔ (c₀ : ℕ) < p) → g a ∈ Submodule.span ℂ (Y '' S₀) := by
@@ -279,11 +231,11 @@ theorem gs_exists {n : ℕ} (p : ℕ) (Y : Fin n → Fin r → ℂ) (hind : Line
         rw [hε]
         dsimp only
         by_cases hcp : (c₀ : ℕ) < p
-        · rw [if_pos hcp, one_mul, hvw]
+        · rw [ite_eq_left hcp, one_mul, hvw]
           refine hpos w (fun j hj => hw j ?_) hw0
           rintro ⟨_, hj2⟩
           exact absurd (hj2.mpr hcp) (not_lt.mpr hj)
-        · rw [if_neg hcp, hvw]
+        · rw [ite_eq_right hcp, hvw]
           have := hneg w (fun j hj => hw j ?_) hw0
           · simp only [neg_mul, one_mul, Complex.neg_re]
             linarith
@@ -324,13 +276,13 @@ theorem gs_exists {n : ℕ} (p : ℕ) (Y : Fin n → Fin r → ℂ) (hind : Line
         by_cases hc0 : c = c₀ <;> by_cases ha0 : a = c₀
         · subst hc0
           subst ha0
-          rw [Function.update_self, smulL, smulR, hvv, hss, if_pos rfl]
+          rw [Function.update_self, hermC_smul_left, hermC_smul_right, hvv, hss, ite_eq_left rfl]
         · subst hc0
-          rw [Function.update_self, Function.update_of_ne ha0, smulL,
-            hvg a (hTm a (hlt a ha ha0)), mul_zero, if_neg (Ne.symm ha0)]
+          rw [Function.update_self, Function.update_of_ne ha0, hermC_smul_left,
+            hvg a (hTm a (hlt a ha ha0)), mul_zero, ite_eq_right (Ne.symm ha0)]
         · subst ha0
-          rw [Function.update_self, Function.update_of_ne hc0, smulR, ← csym,
-            hvg c (hTm c (hlt c hc hc0)), map_zero, mul_zero, if_neg hc0]
+          rw [Function.update_self, Function.update_of_ne hc0, hermC_smul_right,
+            ← hermC_conj τ hG, hvg c (hTm c (hlt c hc hc0)), map_zero, mul_zero, ite_eq_right hc0]
         · rw [Function.update_of_ne hc0, Function.update_of_ne ha0]
           exact horg c a (hlt c hc hc0) (hlt a ha ha0)
       · intro c hc

@@ -93,8 +93,7 @@ theorem chSideL {L : LocAll (lay0 D)} {Pl : PlSide D} {M : MtFam D} {C : NChoice
     choice := choiceL L h.choice
     off := h.off
     adm := h.adm
-    psi := h.psi
-    eMt_level := h.eMt_level }
+    psi := h.psi }
 
 
 

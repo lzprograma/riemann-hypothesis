@@ -45,7 +45,7 @@ lemma le_one_mul {A B : FractionalIdeal (𝓞 K)⁰ K} (hA : A ≤ 1) (hB : B �
 lemma valuation_algebraMap_eq (v : HeightOneSpectrum (𝓞 K)) {r : 𝓞 K} (hr : r ≠ 0) :
     v.valuation K (algebraMap (𝓞 K) K r) =
       WithZero.exp (-FractionalIdeal.count K v (FractionalIdeal.spanSingleton (𝓞 K)⁰ (algebraMap (𝓞 K) K r))) := by
-  rw [HeightOneSpectrum.valuation_of_algebraMap, HeightOneSpectrum.intValuation_def, if_neg hr,
+  rw [HeightOneSpectrum.valuation_of_algebraMap, HeightOneSpectrum.intValuation_def, ite_eq_right hr,
     ← FractionalIdeal.coeIdeal_span_singleton, FractionalIdeal.count_coe K v (by simpa using hr)]
 
 lemma valuation_eq_exp_count (v : HeightOneSpectrum (𝓞 K)) {x : K} (hx : x ≠ 0) :

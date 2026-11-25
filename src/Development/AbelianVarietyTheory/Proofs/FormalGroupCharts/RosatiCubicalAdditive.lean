@@ -50,7 +50,6 @@ noncomputable section
 
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out (rosatiφ rosatiε zero2)
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.RosatiCube
 

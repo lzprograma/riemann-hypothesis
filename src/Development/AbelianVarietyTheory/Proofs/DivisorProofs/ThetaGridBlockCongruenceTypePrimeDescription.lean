@@ -47,7 +47,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open IsDedekindDomain NumberField Matrix MeasureTheory
 open scoped TensorProduct nonZeroDivisors ComplexOrder
 open GlobalTheory.FunObj GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StepData GlobalTheory.StdFrames Formalism.L2.Host Formalism.L2.DIV ValuativeRel
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField GlobalTheory.FunObj.borelKw GlobalTheory.FunObj.borelSpaceKw
 
 namespace GlobalTheory.CompanionTheory.IterJ
 
@@ -190,7 +189,7 @@ theorem mem_stepGroup_map_iff : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Co
   have hK : (reGL (ixFin G t w j)).symm g ∈ KO (Kw w) (Ix (Fin D.R.r) (Fin D.R.t) j) ↔
       g ∈ KO (Kw w) (Fin ((locGrid G t w).rank (0, j))) := by
     rw [← reGL_mem_KO_iff (ixFin G t w j), MulEquiv.apply_symm_apply]
-  rw [hmap, stepGroup, if_pos hw, mem_iter_J, hK]
+  rw [hmap, stepGroup, ite_eq_left hw, mem_iter_J, hK]
   refine and_congr_right fun _ => and_congr ?_ ?_
   · constructor
     · intro h a b hab
@@ -226,8 +225,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open IsDedekindDomain NumberField Matrix MeasureTheory
 open scoped TensorProduct nonZeroDivisors ComplexOrder
 open GlobalTheory.FunObj GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StepData GlobalTheory.StdFrames Formalism.L2.Host Formalism.L2.DIV ValuativeRel
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField GlobalTheory.FunObj.borelKw GlobalTheory.FunObj.borelSpaceKw
 
 alias _root_.GlobalTheory.Adopt.thetaGridBlockCongruence_typePrime_description := _root_.IteratedIwahori.GlobalTheory.CompanionTheory.IterJ.mem_stepGroup_map_iff
 

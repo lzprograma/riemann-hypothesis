@@ -284,7 +284,7 @@ theorem isHolTo_congr {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] {B :
 theorem valAt'_spMap {R : Type} [CommRing R] (ψ : R →+* ℂ) (t : R) :
     valAt' (spMap ψ) ⊤ ((Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom t) = ψ t := by
   have h : ⊤ ≤ (spMap ψ) ⁻¹ᵁ ⊤ := le_top
-  rw [valAt', dif_pos h, valAt]
+  rw [valAt', dite_eq_left h, valAt]
   have e : (spMap ψ).appLE ⊤ ⊤ h = (spMap ψ).appTop := (spMap ψ).appLE_eq_app
   have n := Scheme.ΓSpecIso_inv_naturality (CommRingCat.ofHom ψ)
   have n' := congrArg (fun φ => φ.hom t) n
@@ -315,7 +315,7 @@ theorem exists_coordinates {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V]
   have h₀ : ⊤ ≤ a b₀ ⁻¹ᵁ U := (top_le_preimage_iff_mem _ _).2 ((hU _).2 hj)
   let ψ : V → (R →+* ℂ) := fun b => if hb : ⊤ ≤ a b ⁻¹ᵁ U then (hl _ hb).choose else (hl _ h₀).choose
   have hψ : ∀ b, ⊤ ≤ a b ⁻¹ᵁ U → a b = spMap (ψ b) ≫ j := fun b hb => by
-    simp only [ψ, dif_pos hb]
+    simp only [ψ, dite_eq_left hb]
     exact (hl _ hb).choose_spec
   refine ⟨{b ∈ B | ⊤ ≤ a b ⁻¹ᵁ U}, ψ, (h U 0).1, ⟨hb₀, h₀⟩, fun b hb => hb.1, fun b hb => hψ b hb.2, fun t => ?_⟩
   refine (h U ((j.appIso ⊤).inv.hom ((Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom t))).2.congr fun b hb => ?_
@@ -340,9 +340,9 @@ theorem exists_chart_holomorphic :
   let a : (Fin T.m → ℂ) → (Sp ℂ ⟶ Xo.XF c) := fun b =>
     if hb : b ∈ D then pullback.lift _ _ (hw b hb) else pullback.lift _ _ (hw b₀ hb₀)
   have ha₁ : ∀ b ∈ D, a b ≫ pullback.fst _ _ = F.u k (T.Pf (T.co b)) := fun b hb => by
-    simp only [a, dif_pos hb, pullback.lift_fst]
+    simp only [a, dite_eq_left hb, pullback.lift_fst]
   have ha₂ : ∀ b ∈ D, a b ≫ pullback.snd _ _ = spMap σ := fun b hb => by
-    simp only [a, dif_pos hb, pullback.lift_snd]
+    simp only [a, dite_eq_left hb, pullback.lift_snd]
   have ha : IsHolTo D a := GlobalTheory.HolFibre.isHolTo_of_isPullback (IsPullback.of_hasPullback _ _)
     (isHolTo_congr hu ha₁) (isHolTo_congr (GlobalTheory.HolFibre.isHolTo_const hDo (spMap σ)) ha₂)
   obtain ⟨p, j, y₀, ⟨hj, hj₁, hj₂⟩, hz⟩ := _root_.GlobalTheory.Frames.exists_openChart_testRing hS E H Dw l Xo c (a b₀ (default : PrimeSpectrum ℂ))
@@ -354,11 +354,11 @@ theorem exists_chart_holomorphic :
   let mk : ∀ b ∈ B, p.R →ₐ[c.F] CAt σ := fun b hb =>
     { toRingHom := (ψ b : p.R →+* CAt σ), commutes' := hc b hb }
   refine ⟨p, y₀, B, fun b => if h : b ∈ B then mk b h else mk b₀ hb, hBo, hb, hBD, fun b h => ?_, fun t => ?_⟩
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     rw [← ha₁ b (hBD h), hψ b h, Category.assoc, hj₁]
     rfl
   · refine (hol t).congr fun b h => ?_
-    simp only [dif_pos h]
+    simp only [dite_eq_left h]
     rfl
 
 end GlobalTheory.HolChart
@@ -495,7 +495,7 @@ theorem differentiableOn_rdU : Out.SecBaseChangeSt → Out.SecTwistSt → ∀ (E
   have hcomp := hΦ.comp T.co.symm.differentiableOn (fun x hx => by simpa using hx)
   refine hcomp.congr fun x hx => ?_
   unfold rdU unfOf
-  simp only [LinearMap.coe_mk, AddHom.coe_mk, dif_pos hx]
+  simp only [LinearMap.coe_mk, AddHom.coe_mk, dite_eq_left hx]
   exact key x hx
 
 end GlobalTheory.FrameUnif.NormUnHol

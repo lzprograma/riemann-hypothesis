@@ -62,8 +62,7 @@ theorem isRegularLocalRing_quotient_of_not_mem_sq [IsRegularLocalRing R] {x : R}
   simp only [Finsupp.sum] at hc
 
   obtain ⟨i0, hi0⟩ : ∃ i, IsUnit (c i) := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hx2
     rw [← hc, sq]
     refine Submodule.sum_mem _ (fun i _ => ?_)

@@ -16,8 +16,6 @@ set_option linter.dupNamespace false
 
 namespace Formalism.L2.SG.NGCut.NormalVectorPairings
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Defs
 
 variable {D : D7} {X : HidaSetting D} (Y : Full X) (u u' : D.what₂.Word)
@@ -118,7 +116,7 @@ theorem nmlInv_of (hL : NmlLine) (hI : NmlInt) (hS : NmlSep) : NormalInvariants.
       OccT Y u u' c γ (pick ν) ∧ nmlOf Y u u' (pick ν) = ν := by
     intro ν hν
     have h := (occ_iff Y u u' νL νB ng c γ ν).1 hν
-    simp only [hpick, dif_pos h]
+    simp only [hpick, dite_eq_left h]
     exact h.choose_spec
   refine ⟨J, J', 1, 1, fun ν => (coefA Y u u' t0 (pick ν), coefA' Y u u' t0 (pick ν)), hJ, hJ', one_ne_zero,
     one_ne_zero, fun ν hν => ?_, fun ν₁ ν₂ h₁ h₂ hκ => ?_, ?_, ?_⟩

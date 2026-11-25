@@ -7,54 +7,9 @@ public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSpe
 public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Assembly
 import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PCutRegular
 import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.KrullDimension.Field
 import Mathlib.RingTheory.KrullDimension.Polynomial
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -164,7 +119,7 @@ theorem cycEval_divCycle_eq (Q : Ideal (MRing ι (ZMod p))) (s : MRing ι ℤ)
     have hd : divCycle Q (red p s) W' =
         ((NumbersDVR.multAt (Q ⊔ Ideal.span {red p s}) W').toNat : ℤ) := by
       unfold divCycle
-      exact dif_pos hW'
+      exact dite_eq_left hW'
     rw [multAt_eq_toNat, multAt_comap, ← hd]
     by_cases h0 : divCycle Q (red p s) W' = 0
     · rw [h0, zero_mul, zero_mul]
@@ -192,7 +147,7 @@ theorem intNum_eq_geoNum_comap (n : ℕ) : ∀ Q : Ideal (MRing ι (ZMod p)), Is
     obtain rfl : a = ![] := Subsingleton.elim _ _
     rw [IntNumPoint.proof IntNumBase.full (ZMod p) K ι Q _ hQ hd hi]
     simp only [Geo.geoNum]
-    rw [dif_pos hrel, ReciprocityTheory.ChartRestriction.G.AI.I1.ptDeg, ReciprocityTheory.ChartRestriction.G.AI.I1.chartIdeal,
+    rw [dite_eq_left hrel, ReciprocityTheory.ChartRestriction.G.AI.I1.ptDeg, ReciprocityTheory.ChartRestriction.G.AI.I1.chartIdeal,
       comap_sup_span, ← Set.range_comp]
     have hf : (red p ∘ fun k => (X ⟨k, (hrel k).choose⟩ : MRing ι ℤ) - 1) =
         fun k => (X ⟨k, (hrel k).choose⟩ : MRing ι (ZMod p)) - 1 := by
@@ -261,7 +216,7 @@ theorem intNum_eq_geoNum_comap (n : ℕ) : ∀ Q : Ideal (MRing ι (ZMod p)), Is
     conv_lhs => rw [← Fin.snoc_init_self a]
     rw [hlin]
     simp only [Geo.geoNum]
-    rw [dif_pos hrel]
+    rw [dite_eq_left hrel]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [hcut k]
 
@@ -314,7 +269,7 @@ theorem intNum_map_eq_geoNum_hyps (p : ℕ) [Fact p.Prime] (D : ℕ) :
       have h1 := MvPolynomial.mem_support_iff.mp hm
       rw [coeff_C] at h1
       by_contra hne
-      exact h1 (if_neg (Ne.symm hne))
+      exact h1 (ite_eq_right (Ne.symm hne))
     subst this
     simp
   · rw [RingHom.mem_ker, map_X]

@@ -145,8 +145,8 @@ theorem dVar_hLf {κ : Type} [Fintype κ] {V : VF C} (X : RawChart C d I κ) (H 
     if ∀ x ∈ μ.support, X.OnLf g a a' x then ((μ w + 1 : ℕ) : C) * MvPowerSeries.coeff (μ + Finsupp.single w 1) X.hRow
       else 0
   by_cases hc : ∀ x ∈ μ.support, X.OnLf g a a' x
-  · rw [if_pos (key.2 hc), if_pos hc]
-  · rw [if_neg (fun h => hc (key.1 h)), if_neg hc, mul_zero]
+  · rw [ite_eq_left (key.2 hc), ite_eq_left hc]
+  · rw [ite_eq_right (fun h => hc (key.1 h)), ite_eq_right hc, mul_zero]
 
 end RowTiePCEq
 

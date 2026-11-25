@@ -5,51 +5,8 @@ public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocally
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MatrixRegular
 public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ValuationDetOfMemKO
 import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Algebra.Group.Units
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -269,10 +226,10 @@ theorem comm_pr_of_side {u : Matrix (Fin n) (Fin n) A}
     rwa [Matrix.sub_apply, one_apply_ne (ne_of_side e T hij), sub_zero] at this
   constructor <;> ext i j
   · rw [mul_pr_apply, pr_mul_apply]
-    by_cases a : blk e i ∈ T <;> by_cases b : blk e j ∈ T <;> simp only [a, b, if_true, if_false] <;>
+    by_cases a : blk e i ∈ T <;> by_cases b : blk e j ∈ T <;> simp only [a, b, ite_true, ite_false] <;>
       first | rfl | exact (h' i j (by tauto)).symm | exact h' i j (by tauto)
   · rw [mul_qr_apply, qr_mul_apply]
-    by_cases a : blk e i ∈ T <;> by_cases b : blk e j ∈ T <;> simp only [a, b, if_true, if_false] <;>
+    by_cases a : blk e i ∈ T <;> by_cases b : blk e j ∈ T <;> simp only [a, b, ite_true, ite_false] <;>
       first | rfl | exact (h' i j (by tauto)).symm | exact h' i j (by tauto)
 
 end Blocks
@@ -350,7 +307,7 @@ theorem exists_lift {Z : Fin n → Fin n → Prop} (hZ : ∀ i l j, Z i l → Z 
   have hL : ∀ y, IsLocalRing.residue 𝒪[k] (L y) = y := fun y => by
     by_cases h : y = 0
     · simp [L, h]
-    · simp only [L, if_neg h]; exact Function.surjInv_eq _ _
+    · simp only [L, ite_eq_right h]; exact Function.surjInv_eq _ _
   let Y : Matrix (Fin n) (Fin n) 𝒪[k] := fun i j => L ((u.val - 1) i j)
   have hYz : ∀ i j, ¬ Z i j → Y i j = 0 := fun i j h => by
     show L ((u.val - 1) i j) = 0
@@ -466,7 +423,7 @@ theorem conj_KOne_mem (hT : ∀ a b : Fin s, a ≤ b → b ∈ T → a ∈ T) {g
   have hnu : nu ∈ unipRad k e ⊓ KO k (Fin n) := by
     refine ⟨mem_unipRad_of fun i j hij => ?_, mem_KO.2 ⟨intM_one.add hYi, ?_⟩⟩
     · show (1 + Y - 1) i j = 0
-      rw [add_sub_cancel_left, hY, if_neg fun h' => hij (blk_lt_of_side hT h'.1 h'.2)]
+      rw [add_sub_cancel_left, hY, ite_eq_right fun h' => hij (blk_lt_of_side hT h'.1 h'.2)]
     · show IntM (1 - Y)
       rw [sub_eq_add_neg]; exact intM_one.add hYi.neg
   have hk : nu⁻¹ * h ∈ KOne k (Fin n) := by
@@ -745,7 +702,7 @@ theorem claim_of_antitone (hπ : IsSmooth π) :
     intro w hw hwk
     rw [dia_zero, map_one, Module.End.one_apply] at hwk
     exact eq_zero_of_fixed hπ isCompact_KOne (fixed_anti le_sup_left hw) hwk
-  · push_neg at h0
+  · push Not at h0
     obtain ⟨a0, ha0⟩ := h0
     let T : Finset (Fin s) := Finset.univ.filter fun a => 0 < C a
     have hmemT : ∀ a, a ∈ T ↔ 0 < C a := fun a => by simp [T]
@@ -753,7 +710,7 @@ theorem claim_of_antitone (hπ : IsSmooth π) :
     have hCC : (fun a => C' a + ind T a) = C := funext fun a => by
       simp only [C', ind]
       by_cases h : a ∈ T
-      · have := (hmemT a).1 h; simp only [h, if_true]; omega
+      · have := (hmemT a).1 h; simp only [h, ite_true]; omega
       · simp [h]
     have hT : ∀ a b : Fin s, a ≤ b → b ∈ T → a ∈ T := fun a b hab hb =>
       (hmemT a).2 (lt_of_lt_of_le ((hmemT b).1 hb) (hC hab))
@@ -767,14 +724,14 @@ theorem claim_of_antitone (hπ : IsSmooth π) :
       simp only [C', ind]
       by_cases hb : b ∈ T
       · have ha := hT a b hab hb
-        simp only [ha, hb, if_true]; omega
+        simp only [ha, hb, ite_true]; omega
       · have := hz b hb
-        simp only [hb, if_false]; split_ifs <;> omega
+        simp only [hb, ite_false]; split_ifs <;> omega
     have hlt : ∑ a, C' a < m := by
       rw [← hm]
       refine Finset.sum_lt_sum (fun a _ => Nat.sub_le _ _) ⟨a0, Finset.mem_univ _, ?_⟩
       have : a0 ∈ T := (hmemT a0).2 (Nat.pos_of_ne_zero ha0)
-      simp only [C', ind, this, if_true]
+      simp only [C', ind, this, ite_true]
       omega
     rw [← hCC]
     exact step hc1 hc2 hT hC' (ih _ hlt C' rfl hanti)

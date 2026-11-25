@@ -2,39 +2,6 @@ module
 
 public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaLiftTrivialOrbitTermsVanish
 public import GroundTheory.HeightsAndTheta.Theta.AdelicFourierCoord
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -51,38 +18,19 @@ section
 
 variable {K : Type} [Field K] [NumberField K] {ι : Type} [Fintype ι] [DecidableEq ι]
 
-private theorem map_mul_inv_eq_one {R : Type} [CommRing R] (h : A K →+* R) (g : GL ι (A K)) :
-    g.val.map h * (g⁻¹).val.map h = 1 := by
-  rw [← Matrix.map_mul, ← Units.val_mul, mul_inv_cancel, Units.val_one,
-    Matrix.map_one h (map_zero h) (map_one h)]
-
-private theorem map_inv_mul_eq_one {R : Type} [CommRing R] (h : A K →+* R) (g : GL ι (A K)) :
-    (g⁻¹).val.map h * g.val.map h = 1 := by
-  rw [← Matrix.map_mul, ← Units.val_mul, inv_mul_cancel, Units.val_one,
-    Matrix.map_one h (map_zero h) (map_one h)]
-
 private noncomputable def infEquiv (g : GL ι (A K)) :
     (ι → mixedSpace K) ≃L[ℝ] (ι → mixedSpace K) :=
-  LinearEquiv.toContinuousLinearEquiv
-    { toFun := fun u ↦ g.val.map adeleInfHom *ᵥ u
-      invFun := fun u ↦ (g⁻¹).val.map adeleInfHom *ᵥ u
-      map_add' := fun u v ↦ Matrix.mulVec_add _ u v
-      map_smul' := fun c u ↦ Matrix.mulVec_smul _ c u
-      left_inv := fun u ↦ by
-        simp only [Matrix.mulVec_mulVec, map_inv_mul_eq_one, Matrix.one_mulVec]
-      right_inv := fun u ↦ by
-        simp only [Matrix.mulVec_mulVec, map_mul_inv_eq_one, Matrix.one_mulVec] }
+  let u := Matrix.GeneralLinearGroup.map adeleInfHom g
+  LinearEquiv.toContinuousLinearEquiv ((Matrix.toLin'OfInv u.inv_mul u.mul_inv).restrictScalars ℝ)
 
 private noncomputable def finHomeo (g : GL ι (A K)) :
-    (ι → FiniteAdeleRing (𝓞 K) K) ≃ₜ (ι → FiniteAdeleRing (𝓞 K) K) where
-  toFun u := g.val.map adeleFinHom *ᵥ u
-  invFun u := (g⁻¹).val.map adeleFinHom *ᵥ u
-  left_inv u := by
-    simp only [Matrix.mulVec_mulVec, map_inv_mul_eq_one, Matrix.one_mulVec]
-  right_inv u := by
-    simp only [Matrix.mulVec_mulVec, map_mul_inv_eq_one, Matrix.one_mulVec]
-  continuous_toFun := continuous_const.matrix_mulVec continuous_id
-  continuous_invFun := continuous_const.matrix_mulVec continuous_id
+    (ι → FiniteAdeleRing (𝓞 K) K) ≃ₜ (ι → FiniteAdeleRing (𝓞 K) K) :=
+  let u := Matrix.GeneralLinearGroup.map adeleFinHom g
+  { (Matrix.toLin'OfInv u.inv_mul u.mul_inv).toEquiv with
+    continuous_toFun := show Continuous (u.val *ᵥ ·) from
+      continuous_const.matrix_mulVec continuous_id
+    continuous_invFun := show Continuous (u.inv *ᵥ ·) from
+      continuous_const.matrix_mulVec continuous_id }
 
 private theorem infPartPi_gl (g : GL ι (A K)) (x : ι → A K) :
     infPartPi (g.val *ᵥ x) = infEquiv g (infPartPi x) := by

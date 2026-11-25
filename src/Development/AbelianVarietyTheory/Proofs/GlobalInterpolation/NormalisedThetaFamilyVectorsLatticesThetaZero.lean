@@ -54,8 +54,7 @@ namespace GlobalTheory.NatFamily
 
 theorem exists_taylor_ne (D : D7) {N N' : ℕ} {F : VC D N N' → ℂ} (hF : Differentiable ℂ F) (h0 : F ≠ 0) :
     ∃ α, Formalism.MainNotions.TaylorLogMetric.taylor D F α ≠ 0 := by
-  by_contra h
-  push_neg at h
+  by_contra! h
   apply h0
   funext z
   rw [← GlobalTheory.ProdThetaConj.tsum_taylor_mono D hF z]

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilRepAverageKillsThetaOfDenseFamily
 public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCompactAdele
 import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
@@ -49,7 +50,6 @@ import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 open GlobalTheory.IndefiniteRowSideFullHecke.AdjointIsotropicDecomposition
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -64,32 +64,7 @@ theorem map_left_unitary (D : D7) (W : HSp D) (r : ℕ) (h : GA D W) (ν : Measu
     (hν : ν.IsAddHaarMeasure) :
     ν.map (fun y : Mx D W.rank r =>
       (HMul.hMul (mt W h) (y : Matrix (Fin W.rank) (Fin r) (AE D)) : Mx D W.rank r)) = ν := by
-  have hJ : IsHermND D.sp.cm.sig W.gram := GlobalTheory.Mem.VolExists.isHermND D.sp.cm W
-  obtain ⟨g', hg'⟩ := GlobalTheory.AdelicModulus.Row.exists_transpose (AF D.host.F) hJ h
-  have hK := GlobalTheory.AdelicModulus.Row.isHermND_inv_transpose hJ
-  haveI : BorelSpace (Mx D W.rank r) := ⟨rfl⟩
-  haveI : BorelSpace (Mx D r W.rank) := ⟨rfl⟩
-  let T := transposeCAE D W.rank r
-  have hT : Measurable T := T.continuous.measurable
-  have hTs : Measurable T.symm := T.symm.continuous.measurable
-  haveI hμ' : (ν.map T).IsAddHaarMeasure := T.isAddHaarMeasure_map ν
-  have hm := GlobalTheory.mul_unitary_map_haar D W.rank r (W.gram⁻¹)ᵀ hK.1 hK.2 g' (ν.map T) hμ'
-  set A : Matrix (Fin W.rank) (Fin W.rank) (AE D) := (HA.mat (AF D.host.F) D.sp.cm.sig (W.gram⁻¹)ᵀ g').1
-  have hR : Measurable (fun x : Mx D r W.rank =>
-      (HMul.hMul (x : Matrix (Fin r) (Fin W.rank) (AE D)) A : Mx D r W.rank)) :=
-    (continuous_id.matrix_mul continuous_const).measurable
-  have hmt : mt W h = (HA.mat (AF D.host.F) D.sp.cm.sig W.gram h).1 := rfl
-  have hf : (fun y : Mx D W.rank r =>
-      (HMul.hMul (mt W h) (y : Matrix (Fin W.rank) (Fin r) (AE D)) : Mx D W.rank r)) =
-      T.symm ∘ (fun x : Mx D r W.rank => (HMul.hMul (x : Matrix (Fin r) (Fin W.rank) (AE D)) A : Mx D r W.rank)) ∘ T := by
-    funext y
-    simp only [Function.comp_apply, A, hg', hmt]
-    show _ = ((y : Matrix (Fin W.rank) (Fin r) (AE D))ᵀ * ((HA.mat (AF D.host.F) D.sp.cm.sig W.gram h).1)ᵀ)ᵀ
-    rw [← Matrix.transpose_mul, Matrix.transpose_transpose]
-  rw [hf, ← Measure.map_map hTs (hR.comp hT), ← Measure.map_map hR hT, hm, Measure.map_map hTs hT]
-  have : (T.symm ∘ T : Mx D W.rank r → Mx D W.rank r) = id := by
-    funext y; simp
-  rw [this, Measure.map_id]
+  first | exact _root_.GlobalTheory.map_mt_mul_eq | exact @_root_.GlobalTheory.map_mt_mul_eq | apply _root_.GlobalTheory.map_mt_mul_eq <;> assumption
 
 theorem integral_left_unitary : ∀ (D : D7) (W : HSp D) (r : ℕ) (h : GA D W) (ν : Measure (Mx D W.rank r)),
     ν.IsAddHaarMeasure → ∀ Φ : Mx D W.rank r → ℂ,

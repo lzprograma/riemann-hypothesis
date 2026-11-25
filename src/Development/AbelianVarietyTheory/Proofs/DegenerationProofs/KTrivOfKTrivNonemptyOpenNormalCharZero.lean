@@ -63,8 +63,6 @@ open scoped CategoryTheory.Obj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.AbLaw GlobalTheory.UU
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace GlobalTheory.KTrivSpread
 
 theorem mono_of_finite {R : Type} [CommRing R] {X : Scheme.{0}} (h : X ⟶ Sp R) [IsFinite h] (e : Sp R ⟶ X)

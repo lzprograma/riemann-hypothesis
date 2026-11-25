@@ -62,8 +62,6 @@ import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SemicharacterS
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
@@ -491,7 +489,7 @@ private theorem valAt'_presheaf_map_homOfLE {Z : Scheme.{0}} (x : Sp ℂ ⟶ Z) 
     (h : ⊤ ≤ x ⁻¹ᵁ V) (f : Γ(Z, U)) :
     valAt' x V (Z.presheaf.map (homOfLE hVU).op f) = valAt' x U f := by
   unfold valAt'
-  rw [dif_pos h, dif_pos (h.trans fun p hp => hVU hp)]
+  rw [dite_eq_left h, dite_eq_left (h.trans fun p hp => hVU hp)]
   unfold valAt
   congr 1
   rw [← Scheme.Hom.map_appLE x h (homOfLE hVU).op]
@@ -518,14 +516,14 @@ private theorem valAt'_app_eq_valAt'_comp' {Z Z' : Scheme.{0}} (x : Sp ℂ ⟶ Z
     (h : ⊤ ≤ (x ≫ q) ⁻¹ᵁ U) (f : Γ(Z, U)) :
     valAt' x (q ⁻¹ᵁ U) (q.app U f) = valAt' (x ≫ q) U f := by
   unfold valAt'
-  rw [dif_pos h, dif_pos (show ⊤ ≤ x ⁻¹ᵁ q ⁻¹ᵁ U from h)]
+  rw [dite_eq_left h, dite_eq_left (show ⊤ ≤ x ⁻¹ᵁ q ⁻¹ᵁ U from h)]
   unfold valAt
   congr 1
 
 private theorem valAt'_one_moduli {Z : Scheme.{0}} (x : Sp ℂ ⟶ Z) (U : Z.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) :
     valAt' x U 1 = 1 := by
   unfold valAt'
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   unfold valAt
   rw [map_one, map_one]
 
@@ -533,7 +531,7 @@ private theorem valAt'_finset_prod {Z : Scheme.{0}} {I : Type} (x : Sp ℂ ⟶ Z
     (h : ⊤ ≤ x ⁻¹ᵁ U) (s : Finset I) (f : I → Γ(Z, U)) :
     valAt' x U (∏ i ∈ s, f i) = ∏ i ∈ s, valAt' x U (f i) := by
   unfold valAt'
-  simp only [dif_pos h]
+  simp only [dite_eq_left h]
   unfold valAt
   rw [map_prod, map_prod]
 

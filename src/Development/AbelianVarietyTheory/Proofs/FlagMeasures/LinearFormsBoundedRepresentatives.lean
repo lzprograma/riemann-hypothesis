@@ -1,5 +1,6 @@
 module
 
+import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLineIndex
 public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DefiniteLatticeDiscriminantModuleCardDetSq
@@ -130,7 +131,6 @@ section -- clump:auto
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LoopC.FunIdx
 
@@ -141,31 +141,7 @@ variable {E : Type} [Field E] [NumberField E] {V : Type} [AddCommGroup V] [Modul
 
 theorem exists_extend_fun (L : Submodule (𝓞 E) V) (hL : Submodule.span E (L : Set V) = ⊤)
     (ψ : L →ₗ[𝓞 E] 𝓞 E) : ∃ φ : V →ₗ[E] E, ∀ x : L, φ x = (ψ x : E) := by
-  haveI : IsLocalizedModule (nonZeroDivisors (𝓞 E)) L.subtype := by
-    refine ⟨?_, ?_, ?_⟩
-    · intro a
-      rw [Module.End.isUnit_iff]
-      have ha0 : ((a : 𝓞 E) : E) ≠ 0 := by
-        have := nonZeroDivisors.ne_zero a.2
-        exact_mod_cast this
-      have e : ⇑(algebraMap (𝓞 E) (Module.End (𝓞 E) V) a) = fun v => ((a : 𝓞 E) : E) • v := by
-        funext v
-        exact (algebraMap_smul E (a : 𝓞 E) v).symm
-      rw [e]
-      exact MulAction.bijective (Units.mk0 _ ha0)
-    · intro y
-      have hy : y ∈ Submodule.span E (L : Set V) := hL ▸ Submodule.mem_top
-      obtain ⟨t, ht⟩ := multiple_mem_span_of_mem_localization_span (nonZeroDivisors (𝓞 E)) E _ y hy
-      rw [Submodule.span_eq] at ht
-      exact ⟨(⟨_, ht⟩, t), rfl⟩
-    · intro x y hxy
-      exact ⟨1, by rw [Subtype.ext hxy]⟩
-  let g : L →ₗ[𝓞 E] E := Algebra.linearMap (𝓞 E) E ∘ₗ ψ
-  have hu : ∀ a : nonZeroDivisors (𝓞 E), IsUnit (algebraMap (𝓞 E) (Module.End (𝓞 E) E) a) :=
-    fun a => IsLocalizedModule.map_units (S := nonZeroDivisors (𝓞 E)) (Algebra.linearMap (𝓞 E) E) a
-  refine ⟨(IsLocalizedModule.lift (nonZeroDivisors (𝓞 E)) L.subtype g hu).extendScalarsOfIsLocalization
-    (nonZeroDivisors (𝓞 E)) E, fun x => ?_⟩
-  exact IsLocalizedModule.lift_apply (nonZeroDivisors (𝓞 E)) L.subtype g hu x
+  apply _root_.GroundTheory.Heights₂.Theta.UnitaryReduction.DualHomPf.exists_extend_of_submodule <;> assumption
 
 end Gen
 

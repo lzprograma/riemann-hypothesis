@@ -1,44 +1,6 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -55,7 +17,6 @@ lemma app_lt {r K : ℕ} (u : Fin r → ℤ) (v : Fin K → ℤ) (x : Fin (r + K
 
 lemma app_ge {r K : ℕ} (u : Fin r → ℤ) (v : Fin K → ℤ) (x : Fin (r + K)) (h : r ≤ x.val) :
     Fin.append u v x = v ⟨x.val - r, by omega⟩ := by
-  have hlt := x.isLt
   have hx : x = Fin.natAdd r ⟨x.val - r, by omega⟩ := Fin.ext (show x.val = r + (x.val - r) by omega)
   calc Fin.append u v x = Fin.append u v (Fin.natAdd r ⟨x.val - r, by omega⟩) := congrArg (Fin.append u v) hx
     _ = v ⟨x.val - r, by omega⟩ := Fin.append_right u v _
@@ -147,7 +108,6 @@ lemma antitone_append {r K : ℕ} [NeZero r] [NeZero K] (n1 : Fin r → ℤ) (k1
       exact h1 (show (⟨a.val, ha⟩ : Fin r) ≤ ⟨b.val, hb⟩ from hab')
     · have hb' : r ≤ b.val := by omega
       rw [app_ge n1 k1 b hb']
-      have hlt := b.isLt
       calc _ ≤ k1 0 := h2 (by rw [Fin.le_def]; simp)
         _ ≤ n1 (lastIdx r) := hm
         _ ≤ n1 ⟨a.val, ha⟩ := h1 (show (⟨a.val, ha⟩ : Fin r) ≤ lastIdx r from show a.val ≤ r - 1 by omega)
@@ -179,9 +139,9 @@ theorem prvB1_of_D7 (D : Formalism.BasicNotions.D7) : RotatedSumBound D := by
       rw [hP] at this
       unfold CondC
       by_cases hv : LL.vec i
-      · simp only [hv, if_true] at this ⊢
+      · simp only [hv, ite_true] at this ⊢
         exact (hstrip_append _ _ _ _ _).1 this
-      · simp only [hv, if_false, Bool.false_eq_true] at this ⊢
+      · simp only [hv, ite_false, Bool.false_eq_true] at this ⊢
         exact (hstrip_append _ _ _ _ _).1 this
     choose b' b'' h1 h2 h3 h4 using hstep
     have hdom : ∀ i, Antitone (nu i) ∧ Antitone (ka i) := fun i => by
@@ -207,9 +167,9 @@ theorem prvB1_of_D7 (D : Formalism.BasicNotions.D7) : RotatedSumBound D := by
         have s2 := P2.step j
         unfold CondC at c
         by_cases hv : LL.vec j
-        · simp only [hv, if_true] at c s1 s2
+        · simp only [hv, ite_true] at c s1 s2
           exact c.trans (s1.1 _)
-        · simp only [hv, if_false, Bool.false_eq_true] at c s1 s2
+        · simp only [hv, ite_false, Bool.false_eq_true] at c s1 s2
           exact (s2.1 _).trans c
     refine ⟨⟨joinPT P1.mu P2.mu, ?_, ?_, ?_⟩, rfl⟩
     · funext x
@@ -225,9 +185,9 @@ theorem prvB1_of_D7 (D : Formalism.BasicNotions.D7) : RotatedSumBound D := by
       have s2 := P2.step i
       unfold CondC at c
       by_cases hv : LL.vec i
-      · simp only [hv, if_true] at c s1 s2 ⊢
+      · simp only [hv, ite_true] at c s1 s2 ⊢
         exact (hstrip_append _ _ _ _ _).2 ⟨_, _, hb i, s1, s2, c⟩
-      · simp only [hv, if_false, Bool.false_eq_true] at c s1 s2 ⊢
+      · simp only [hv, ite_false, Bool.false_eq_true] at c s1 s2 ⊢
         exact (hstrip_append _ _ _ _ _).2 ⟨_, _, hb i, s1, s2, c⟩
 
 end Formalism.MainNotions.LemmaBAlt

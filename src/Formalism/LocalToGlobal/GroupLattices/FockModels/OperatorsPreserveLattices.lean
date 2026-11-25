@@ -228,7 +228,7 @@ theorem dl_pos (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O Kf]
   have hgD : IsUnit (g * lb_D (m + 1) r (algebraMap O Kf w)).det := by
     rw [Matrix.det_mul]; exact hg.mul (lb_D_det _ _ _ hw)
   unfold Dl0 at hF ⊢
-  rw [if_pos hlam] at hF ⊢
+  rw [ite_eq_left hlam] at hF ⊢
   have h2 := dl_P O Kf m r lam hlam w hw g F ((iInf₂_le g ⟨hg, rfl⟩ : _ ≤ deltaLTw O Kf m lam g) hF)
   exact (le_iInf₂ fun h hh => dl_indep hinj m lam _ h hgD hh.2 :
     deltaLTw O Kf m lam (g * lb_D (m + 1) r (algebraMap O Kf w)) ≤ _) h2

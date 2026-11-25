@@ -6,8 +6,6 @@ import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ Finsupp
@@ -34,11 +32,11 @@ theorem coeff_subst_killCompl {σ τ R : Type*} [CommRing R] [Finite τ] (e : σ
     by_cases hn : n = embDomain e x
     · subst hn
       simp
-    · rw [if_neg (Ne.symm hn), if_neg hn, smul_zero]
+    · rw [ite_eq_right (Ne.symm hn), ite_eq_right hn, smul_zero]
   rw [coeff_subst haS, finsum_eq_single _ (embDomain e x)]
-  · rw [hterm, if_pos rfl]
+  · rw [hterm, ite_eq_left rfl]
   · intro n hn
-    rw [hterm, if_neg hn]
+    rw [hterm, ite_eq_right hn]
 
 variable {k : Type} [CommRing k] {d : ℕ}
 
@@ -63,7 +61,7 @@ theorem coeff_ev_zero_left (h : PS k 2 d) (x : Fin 1 × Fin d →₀ ℕ) :
   fin_cases b
   · show (0 : PS k 1 d) = killCompl (eZ d) (X ((0 : Fin 2), i))
     ext m
-    rw [coeff_killCompl, coeff_X, if_neg]
+    rw [coeff_killCompl, coeff_X, ite_eq_right]
     · simp
     · intro hm
       have h1 := congrArg (fun g => g ((0 : Fin 2), i)) hm
@@ -85,7 +83,7 @@ theorem coeff_ev_zero_right (h : PS k 2 d) (x : Fin 1 × Fin d →₀ ℕ) :
     exact (killCompl_X (e := eXv d) ((0 : Fin 1), i)).symm
   · show (0 : PS k 1 d) = killCompl (eXv d) (X ((1 : Fin 2), i))
     ext m
-    rw [coeff_killCompl, coeff_X, if_neg]
+    rw [coeff_killCompl, coeff_X, ite_eq_right]
     · simp
     · intro hm
       have h1 := congrArg (fun g => g ((1 : Fin 2), i)) hm
@@ -154,7 +152,7 @@ theorem coeff_eq_zero_of_axes (h : PS k 2 d) (h0 : ev (n := 1) ![0, pt k d 0] h 
   · exact coeff_eq_zero_of_vanish_first_axis h h0 m hA
   by_cases hB : ∀ i, m (1, i) = 0
   · exact coeff_eq_zero_of_vanish_second_axis h h1 m hB
-  push_neg at hA hB
+  push Not at hA hB
   obtain ⟨i, hi⟩ := hA
   obtain ⟨i', hi'⟩ := hB
   have := two_le_degree hi hi'

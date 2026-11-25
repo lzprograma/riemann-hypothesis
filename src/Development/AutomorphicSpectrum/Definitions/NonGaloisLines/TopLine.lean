@@ -1,42 +1,6 @@
 module
 
 public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -76,22 +40,6 @@ def TopInj : Prop :=
       IsLocallyConstant (fun g => (Submodule.Quotient.mk (f g) : LL ⧸ L1.T)) ∧
       ∀ x, ReciprocityTheory.Def.d1 (charRep (cycLL PD LL)) f x - z x ∈ L1.T
 
-def DualQ : Prop :=
-  ∀ (LL : Type) [Field LL] [Algebra Qp LL] [TopologicalSpace LL] (O : Type) [CommRing O]
-    [Algebra O LL], GoodO (Qp := Qp) LL O →
-  ∀ L1 : Lattice (O := O) (charRep (cycLL PD LL)), L1.T = LinearMap.range (Algebra.linearMap O LL) →
-  ∀ (A A' : GRep G Qp LL O) (LA : Lattice (O := O) A.ρ) (LA' : Lattice (O := O) A'.ρ)
-    (P : A.V →ₗ[LL] A'.V →ₗ[LL] LL), IsDualLat1 PD LA LA' P →
-  ∀ (ϖ : O), Irreducible ϖ → ∀ (r : ℕ)
-    (hI : StableSub LA (Ideal.span {ϖ ^ r} • ⊤ : Submodule O ↥LA.T))
-    (hI' : StableSub LA' (Ideal.span {ϖ ^ r} • ⊤ : Submodule O ↥LA'.T)),
-    (∀ S, BQ LA _ hI ≤ S → S ≤ quotientCocycles LA _ hI → ∀ c ∈ quotientCocycles LA _ hI,
-      (∀ c' ∈ quotientCocycles LA' _ hI', (∀ s ∈ S, CobO PD L1 (cupQ LA LA' P ϖ r s c')) →
-        CobO PD L1 (cupQ LA LA' P ϖ r c c')) → c ∈ S) ∧
-    (∀ S', BQ LA' _ hI' ≤ S' → S' ≤ quotientCocycles LA' _ hI' → ∀ c' ∈ quotientCocycles LA' _ hI',
-      (∀ c ∈ quotientCocycles LA _ hI, (∀ s ∈ S', CobO PD L1 (cupQ LA LA' P ϖ r c s)) →
-        CobO PD L1 (cupQ LA LA' P ϖ r c c')) → c' ∈ S')
-
 def DualD : Prop :=
   ∀ (LL : Type) [Field LL] [Algebra Qp LL] [TopologicalSpace LL] (O : Type) [CommRing O]
     [Algebra O LL], GoodO (Qp := Qp) LL O →
@@ -113,29 +61,5 @@ def TopLine : Prop :=
   ∀ z z' : G × G → LL, Continuous z → Continuous z' →
     ReciprocityTheory.Def.d2 (charRep (cycLL PD LL)) z = 0 → ReciprocityTheory.Def.d2 (charRep (cycLL PD LL)) z' = 0 →
     ¬ CobL PD z → ∃ a : LL, CobL PD (z' - a • z)
-
-def NondegL : Prop :=
-  ∀ (LL : Type) [Field LL] [Algebra Qp LL] [TopologicalSpace LL] (O : Type) [CommRing O]
-    [Algebra O LL], GoodO (Qp := Qp) LL O →
-  ∀ (A A' : GRep G Qp LL O) (P : A.V →ₗ[LL] A'.V →ₗ[LL] LL), IsDual1 PD A.ρ A'.ρ P →
-    (∀ a ∈ continuousCocycles A.ρ, (∀ b ∈ continuousCocycles A'.ρ, CobL PD (cupL A'.ρ P a b)) → a ∈ B1 A.ρ) ∧
-    (∀ b ∈ continuousCocycles A'.ρ, (∀ a ∈ continuousCocycles A.ρ, CobL PD (cupL A'.ρ P a b)) → b ∈ B1 A'.ρ)
-
-def OrthL : Prop :=
-  ∀ (LL : Type) [Field LL] [Algebra Qp LL] [TopologicalSpace LL] (O : Type) [CommRing O]
-    [Algebra O LL], GoodO (Qp := Qp) LL O →
-  ∀ (A A' : GRep G Qp LL O) (P : A.V →ₗ[LL] A'.V →ₗ[LL] LL), IsDual1 PD A.ρ A'.ρ P → IsDR PD A.ρ →
-    ∀ a ∈ finiteCocycles PD A.ρ, ∀ b ∈ finiteCocycles PD A'.ρ, CobL PD (cupL A'.ρ P a b)
-
-def DualL : Prop :=
-  ∀ (LL : Type) [Field LL] [Algebra Qp LL] [TopologicalSpace LL] (O : Type) [CommRing O]
-    [Algebra O LL], GoodO (Qp := Qp) LL O →
-  ∀ (A A' : GRep G Qp LL O) (P : A.V →ₗ[LL] A'.V →ₗ[LL] LL), IsDual1 PD A.ρ A'.ρ P →
-    (∀ (S : Submodule LL (G → A.V)) (S' : Submodule LL (G → A'.V)), B1 A.ρ ≤ S → S ≤ continuousCocycles A.ρ →
-      B1 A'.ρ ≤ S' → S' ≤ continuousCocycles A'.ρ → (∀ a ∈ S, ∀ b ∈ S', CobL PD (cupL A'.ρ P a b)) →
-      finrank LL (H1V A.ρ) ≤ finrank LL (↥S ⧸ (B1 A.ρ).comap S.subtype) +
-        finrank LL (↥S' ⧸ (B1 A'.ρ).comap S'.subtype) →
-      (∀ a ∈ continuousCocycles A.ρ, (∀ b ∈ S', CobL PD (cupL A'.ρ P a b)) → a ∈ S) ∧
-      (∀ b ∈ continuousCocycles A'.ρ, (∀ a ∈ S, CobL PD (cupL A'.ρ P a b)) → b ∈ S'))
 
 end GlobalTheory.CompanionTheory.LocDual

@@ -140,7 +140,7 @@ theorem rectIntegral_eq_sum_residue {f : ℂ → ℂ} {z w : ℂ} (S : Finset �
       rcases eq_or_ne v u with rfl | hvu
       · simp [huS]
       · have hvS : v ∉ S := fun h ↦ hv (Finset.mem_coe.2 (Finset.mem_erase.2 ⟨hvu, h⟩))
-        rw [if_neg hvS, hFE u huS v hvu]
+        rw [ite_eq_right hvS, hFE u huS v hvu]
     · have hnhds : ((S : Set ℂ))ᶜ ∈ 𝓝 u :=
         S.finite_toSet.isClosed.isOpen_compl.mem_nhds (by simpa using huS)
       have hFana : AnalyticAt ℂ F u :=
@@ -149,7 +149,7 @@ theorem rectIntegral_eq_sum_residue {f : ℂ → ℂ} {z w : ℂ} (S : Finset �
       refine hFana.congr ?_
       filter_upwards [hnhds] with v hv
       have hvS : v ∉ S := by simpa using hv
-      simp only [hG, if_neg hvS]
+      simp only [hG, ite_eq_right hvS]
   have hSb : ∀ p ∈ S, p ∉ rectBoundary z w := fun p hp ↦ by
     obtain ⟨h1, h2, h3, h4⟩ := hS p hp
     exact notMem_rectBoundary_of_mem_Ioo
@@ -168,7 +168,7 @@ theorem rectIntegral_eq_sum_residue {f : ℂ → ℂ} {z w : ℂ} (S : Finset �
     apply rectIntegral_congr
     intro u hu
     have huS : u ∉ S := fun h ↦ hSb u h hu
-    simp only [hG, if_neg huS]
+    simp only [hG, ite_eq_right huS]
   have hPc : ∀ q ∈ S, ContinuousOn (principalPart f q) (rectBoundary z w) := fun q hq u hu ↦
     (analyticAt_principalPart f (fun (h : u = q) ↦ hSb q hq (h ▸ hu))).continuousAt.continuousWithinAt
   have hFc : ContinuousOn F (rectBoundary z w) := fun u hu ↦ by

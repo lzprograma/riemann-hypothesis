@@ -126,7 +126,7 @@ theorem range_evalForms (y : (Σ k, ι k) → Ω) (a : K → ℕ) :
     rw [hmon]
     refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨monomial v 1, ?_, rfl⟩)
     intro m hm k
-    rw [support_monomial, if_neg one_ne_zero, Finset.mem_singleton] at hm
+    rw [support_monomial, ite_eq_right one_ne_zero, Finset.mem_singleton] at hm
     rw [hm]
     exact hf' v hv k
   · refine Submodule.span_le.mpr ?_
@@ -163,7 +163,7 @@ end HilbFnValueSpan
 theorem HilbFnValueSpan.proof : HilbFnValueSpan.Statement := by
   intro K _ _ ι _ Ω _ _ y a
   unfold NumbersDVR.hilbFn
-  rw [if_pos (fun k => Int.natCast_nonneg _)]
+  rw [ite_eq_left (fun k => Int.natCast_nonneg _)]
   have ha : (fun k => ((a k : ℤ)).toNat) = a := funext fun k => Int.toNat_natCast _
   rw [ha, HilbFnValueSpan.finrank_gradedPiece]
 

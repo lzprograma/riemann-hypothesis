@@ -87,15 +87,6 @@ section Subspace
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
   (V : Submodule ℂ H) [CompleteSpace V]
 
-theorem orthogonalProjectionOnto_comp_subtypeL :
-    V.orthogonalProjectionOnto ∘L V.subtypeL = ContinuousLinearMap.id ℂ V :=
-  ContinuousLinearMap.ext fun w => V.orthogonalProjectionOnto_mem_subspace_eq_self w
-
-theorem eq_orthogonalProjectionOnto_comp (T : V →L[ℂ] V) :
-    T = V.orthogonalProjectionOnto ∘L (V.subtypeL ∘L T) := by
-  rw [← ContinuousLinearMap.comp_assoc, orthogonalProjectionOnto_comp_subtypeL,
-    ContinuousLinearMap.id_comp]
-
 end Subspace
 
 open Reduction AutomorphicForm CuspidalSpectrum RightCosetSpace
@@ -105,46 +96,6 @@ variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 local notation "Γ₁" => rationalGLOne (K := K) (n := n)
 
 variable (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
-
-theorem isHilbertSchmidt_cuspRep_of_bound (f : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ)
-    (B : ℝ) (hB : ∀ φ ∈ cuspidalL2 μ, ∀ x, ‖rconv Γ₁ μ f φ x‖ ≤ B * ‖φ‖) :
-    IsHilbertSchmidt ((cuspRep μ).integrated μ (UnitaryRep.ccToL1 μ f)) := by
-  have := isFiniteMeasure_quotientMeasure (K := K) (n := n) μ
-  let T := (cuspRep μ).integrated μ (UnitaryRep.ccToL1 μ f)
-  let T' : cuspidalL2 μ →L[ℂ] Lp ℂ 2 (quotientMeasure Γ₁ μ) := (cuspidalL2 μ).subtypeL ∘L T
-  have hT' : T' = (rightRegularRep Γ₁ μ).integrated μ (UnitaryRep.ccToL1 μ f) ∘L
-      (cuspidalL2 μ).subtypeL := subtypeL_comp_integrated μ _
-  let e : RightCosetSpace Γ₁ → StrongDual ℂ (cuspidalL2 μ) := fun q =>
-    (rconvCLM Γ₁ μ f (Quotient.out q)).comp (cuspidalL2 μ).subtypeL
-  have he : ∀ q, ‖e q‖ ≤ max B 0 := by
-    intro q
-    refine ContinuousLinearMap.opNorm_le_bound _ (le_max_right _ _) fun w => ?_
-    change ‖rconv Γ₁ μ f (w : Lp ℂ 2 (quotientMeasure Γ₁ μ)) (Quotient.out q)‖ ≤ _
-    refine (hB w w.2 _).trans ?_
-    rw [Submodule.coe_norm]
-    exact mul_le_mul_of_nonneg_right (le_max_left _ _) (norm_nonneg _)
-  have hout : ∀ (φ : Lp ℂ 2 (quotientMeasure Γ₁ μ)) (q : RightCosetSpace Γ₁),
-      rconvQ Γ₁ μ f φ q = rconv Γ₁ μ f φ (Quotient.out q) := by
-    intro φ q
-    obtain ⟨a, rfl⟩ := mk_surjective Γ₁ q
-    obtain ⟨γ, hγ⟩ := (mk_eq_mk_iff (Γ := Γ₁)).1 (Quotient.out_eq (mk Γ₁ a))
-    rw [rconvQ_mk, ← hγ]
-    exact (rconv_mul_left Γ₁ μ f φ γ.2 a).symm
-  have hae : ∀ w, T' w =ᵐ[quotientMeasure Γ₁ μ] fun q => e q w := by
-    intro w
-    have h1 : T' w = (rightRegularRep Γ₁ μ).integrated μ (UnitaryRep.ccToL1 μ f)
-        (w : Lp ℂ 2 (quotientMeasure Γ₁ μ)) := by
-      rw [hT']
-      rfl
-    rw [h1]
-    filter_upwards [integrated_ae_eq_rconvQ Γ₁ μ f (w : Lp ℂ 2 (quotientMeasure Γ₁ μ))] with q hq
-    exact hq.trans (hout _ q)
-  have hHS : IsHilbertSchmidt T' := isHilbertSchmidt_of_ae_eq_dual T' e (max B 0) he hae
-  have hTT : T = (cuspidalL2 μ).orthogonalProjectionOnto ∘L T' :=
-    eq_orthogonalProjectionOnto_comp (cuspidalL2 μ) T
-  show IsHilbertSchmidt T
-  rw [hTT]
-  exact hHS.comp_left _
 
 end CuspidalProjection
 

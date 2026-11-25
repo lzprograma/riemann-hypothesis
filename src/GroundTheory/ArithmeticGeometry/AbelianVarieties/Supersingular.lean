@@ -14,12 +14,6 @@ open WeierstrassCurve WeierstrassCurve.Affine
 
 universe u
 
-section Defs
-
-variable {F : Type u} [Field F] [DecidableEq F] (E : WeierstrassCurve F) (p : ℕ)
-
-end Defs
-
 variable {F : Type u} [Field F] [IsAlgClosed F] [DecidableEq F] (E : WeierstrassCurve F)
   [E.IsElliptic] (p : ℕ) [hp : Fact p.Prime] [CharP F p]
 

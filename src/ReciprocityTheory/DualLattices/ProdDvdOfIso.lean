@@ -54,7 +54,7 @@ private lemma nonempty_pi_quotient_equiv_maximal_restrict {R : Type} [CommRing R
     · rw [hsub i hi (x i), hsub i hi (y i)]
   · refine ⟨fun i => if hi : a i ∈ IsLocalRing.maximalIdeal R then z ⟨i, hi⟩ else 0, ?_⟩
     funext i
-    exact dif_pos i.2
+    exact dite_eq_left i.2
 
 private lemma prod_mem_span_prod_of_linearEquiv_pi_quotient {R : Type} [CommRing R] [IsLocalRing R] {ι κ : Type}
     [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ] (c : ι → R) (d : κ → R)
@@ -104,8 +104,8 @@ private lemma prod_mem_span_prod_of_linearEquiv_pi_quotient {R : Type} [CommRing
     rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, sub_eq_zero, map_sum, h1]
     by_cases h : i' = i
     · subst h
-      rw [Pi.single_eq_same, if_pos rfl, map_one]
-    · rw [Pi.single_eq_of_ne h, if_neg h, map_zero]
+      rw [Pi.single_eq_same, ite_eq_left rfl, map_one]
+    · rw [Pi.single_eq_of_ne h, ite_eq_right h, map_zero]
   have relAB : ∀ j j', (∑ i, A j i * B i j') - (if j = j' then 1 else 0) ∈
       Ideal.span {d j} := by
     intro j j'
@@ -122,8 +122,8 @@ private lemma prod_mem_span_prod_of_linearEquiv_pi_quotient {R : Type} [CommRing
     rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, sub_eq_zero, map_sum, h1]
     by_cases h : j = j'
     · subst h
-      rw [Pi.single_eq_same, if_pos rfl, map_one]
-    · rw [Pi.single_eq_of_ne h, if_neg h, map_zero]
+      rw [Pi.single_eq_same, ite_eq_left rfl, map_one]
+    · rw [Pi.single_eq_of_ne h, ite_eq_right h, map_zero]
   have hBA : (B * A).map (IsLocalRing.residue R) = 1 := by
     ext i' i
     rw [Matrix.map_apply, Matrix.mul_apply, Matrix.one_apply]

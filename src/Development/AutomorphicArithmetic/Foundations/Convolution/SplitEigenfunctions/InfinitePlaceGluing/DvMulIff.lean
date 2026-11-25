@@ -20,53 +20,13 @@ public import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKO
 public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SgLaws
 public import Development.AutomorphicArithmetic.WhittakerHecke.WhittakerUnipotentTranslateOfInfiniteComponentZe
 import GroundTheory.GlobalFields.CompletionAtPlace.Integers
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ConjInv
 import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Mathlib.Tactic.ReduceModChar
 import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
-import Mathlib.Tactic.Polynomial.Basic
 import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.WfT
-import Mathlib.Dynamics.Ergodic.Action.Regular
 import Mathlib.Tactic.Linter.HaveILetI
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FiniteCosetsInDoset
-import Mathlib.NumberTheory.NumberField.Discriminant.Different
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Lemma
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.WhittakerHecke.BaseChangeGL2CongruenceOfLevel, Development.AutomorphicArithmetic.WhittakerHecke.CongruenceElementCommuteInfEmbedding, Development.AutomorphicArithmetic.WhittakerHecke.EventuallyUnramifiedSatakeEigenOfMemCuspRep, Development.AutomorphicArithmetic.WhittakerHecke.ExistsNatMulIntegralAtAllFinitePlaces, Development.AutomorphicArithmetic.WhittakerHecke.ExistsPrincipalCongruenceLevelInvariant, Development.AutomorphicArithmetic.WhittakerHecke.ExistsWhittakerCoeffNeZeroOfAdmissible, Development.AutomorphicArithmetic.WhittakerHecke.FixedAndHeckeEigenOfFinsetLinearCombination, Development.AutomorphicArithmetic.WhittakerHecke.HasLevelOfUnitIdeleCongruentOne, Development.AutomorphicArithmetic.WhittakerHecke.SumRangeRatAdeleCharIotaMulOneSubEqIte, Development.AutomorphicArithmetic.WhittakerHecke.UnipotentConjCongruenceOfPowFive, Development.AutomorphicArithmetic.WhittakerHecke.UnipotentNatDivMemMaximalCompactOfNotBadPrime, Development.AutomorphicArithmetic.WhittakerHecke.UnipotentThetaMemCongruenceOfIntegral, Development.AutomorphicArithmetic.WhittakerHecke.WhittakerSumMulEqSumMulWhittaker, Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.InfinitePlaceGluing.DvMulIff
@@ -1337,8 +1297,6 @@ open UpperTheory.ConvolutionTheory.R2.G (FS2 Rw nE row)
 open UpperTheory.V.Af.Smo (EigAt)
 open scoped ComplexOrder
 
-private theorem ψ_zero' : ψ (0 : A ℚ) = 1 := by simp [ψ]
-
 private theorem congE_mono {E : Type} [Field E] [NumberField E] {M L : ℕ} (h : M ∣ L) {κ : GL (Fin 2) (A E)}
     (hκ : CongE L κ) : CongE M κ := by
   obtain ⟨e, rfl⟩ := h
@@ -1528,7 +1486,7 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.exGd_of :
       have hs : S y ≠ 0 := fun h0 => hy (by rw [h0]; simp)
       rw [hSv y X hz] at hs
       by_contra hv
-      exact hs (if_neg fun hall => hv (hall v))
+      exact hs (ite_eq_right fun hall => hv (hall v))
     ·
       intro t ht h1 y X
       have htL := UpperTheory.hasLevel_of_unitIdele_congruent_one L hL t ht h1
@@ -1564,7 +1522,7 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.exGd_of :
       simpa only [hφ₀, mul_one] using hne
     have h2 := hW 1 1
     rw [e1] at h2
-    rw [h2, hSv 1 1 hz, if_pos fun v => ?_]
+    rw [h2, hSv 1 1 hz, ite_eq_left fun v => ?_]
     · exact mul_ne_zero (div_self hnC ▸ one_ne_zero) hz
     · unfold Dv
       simp

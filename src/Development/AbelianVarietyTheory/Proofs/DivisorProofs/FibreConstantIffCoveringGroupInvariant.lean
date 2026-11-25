@@ -56,8 +56,6 @@ open scoped ENNReal
 
 open CategoryTheory
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.LevInv

@@ -235,11 +235,11 @@ theorem idealCovol (K : Type) [Field K] [NumberField K] [IsEmpty {w : InfinitePl
     intro a; funext i
     simp only [phiMap, mixedEmbedding_apply_isComplex]
     by_cases hi : cj i
-    · rw [if_pos hi]
+    · rw [ite_eq_left hi]
       rcases hφ i with h | h
       · exact absurd h hi
       · rw [h, ComplexEmbedding.conjugate_coe_eq]
-    · rw [if_neg hi]
+    · rw [ite_eq_right hi]
       have : φ i = (σ i).1.embedding := not_not.1 hi
       rw [this]
   set emb : K →+ mixedSpace K := (mixedEmbedding K).toAddMonoidHom

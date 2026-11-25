@@ -51,7 +51,6 @@ import Formalism.LocalToGlobal.IndefiniteReal.FockTheta.RealPlaceImaginaryGenera
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.CompactHowe Matrix Complex
 open scoped TensorProduct Real Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FockBaseChange
 

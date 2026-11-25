@@ -65,8 +65,6 @@ open scoped ENNReal
 noncomputable section
 namespace GlobalTheory.TowerCT
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem vol : ∀ (D : D7) (V : HSp D) (r : ℕ) (C : Matrix (Fin V.rank) (Fin r) D.host.E), IsIsoFrame V C →
     ∀ (κ : Measure (NI V C)) (𝓝 : Set (NI V C)), κ.IsHaarMeasure → IsFundamentalDomain (NIQ V C) 𝓝 κ → κ 𝓝 ≠ ⊤ := by
   intro D V r C hC κ 𝓝 hκ h𝓝

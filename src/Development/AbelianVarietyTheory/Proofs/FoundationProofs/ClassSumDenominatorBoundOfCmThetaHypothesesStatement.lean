@@ -7,48 +7,7 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DefiniteT
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormLeOneOfValuationLeOne
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DefiniteThetaPairTermsNormsIndependentRepresenta
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DerivationDenominatorsAndHostFieldSizes
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -117,7 +76,7 @@ theorem exists_exponents (f N d Q : ℕ) (B L : ℝ) (S : Finset ℕ) (dl : ℕ 
         Nat.mem_primeFactors, true_and, ne_eq, hM0, hQ.ne', not_false_eq_true] at hl
       obtain ⟨⟨⟨a1, a2⟩, a3⟩, a4⟩ := hl
       unfold expo_vp
-      rw [← hM, Nat.padicValNat_def, Nat.padicValNat_def, padicValNat.eq_zero_of_not_dvd a1, padicValNat.eq_zero_of_not_dvd a4, hz l a2, if_neg a3]
+      rw [← hM, Nat.padicValNat_def, Nat.padicValNat_def, padicValNat.eq_zero_of_not_dvd a1, padicValNat.eq_zero_of_not_dvd a4, hz l a2, ite_eq_right a3]
       simp
     · rfl
   · have e1 := sum_val_log_le S' hP M
@@ -142,7 +101,7 @@ theorem exists_exponents (f N d Q : ℕ) (B L : ℝ) (S : Finset ℕ) (dl : ℕ 
       rw [← Finset.sum_add_distrib, ← Finset.sum_add_distrib, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib,
         ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun l hl => ?_
-      rw [if_pos (hP l hl), expo_vp, ← hM]
+      rw [ite_eq_left (hP l hl), expo_vp, ← hM]
       ring
     have hfR : (1 : ℝ) ≤ f := by exact_mod_cast hf
     have hNR : (1 : ℝ) ≤ N := by exact_mod_cast hN
@@ -176,7 +135,7 @@ theorem intSt_of_forall_inp : (∀ D, Inp D) → IntSt := by
   refine ⟨S', _, hE, ?_, ?_⟩
   · intro δ t0 p hp Q' hQ' P hP
     have := CoordBound.coordInt D (hI D) S dl hLet Q N B hQ (by linarith) δ t0 p Q' hQ' P hP
-    simp only [if_pos hp.out]
+    simp only [ite_eq_left hp.out]
     exact this
   · intro δ t0 K _ _ _ _ σ ι P P' zA zA' hs hc hn
     have ne : ∀ (R : Pair D ⊤ δ t0 Q) (z : K), (∃ h T, R.coord h T ≠ 0) → σ z = (R.norm : ℂ) → z ≠ 0 := by
@@ -190,7 +149,7 @@ theorem intSt_of_forall_inp : (∀ D, Inp D) → IntSt := by
       intro R z h1 h2 h3 w
       obtain ⟨p, hp, hw⟩ := exists_prime_mem w
       have : Fact p.Prime := ⟨hp⟩
-      rw [hE.wt_eq hp w hw, if_pos hp, ← mul_assoc]
+      rw [hE.wt_eq hp w hw, ite_eq_left hp, ← mul_assoc]
       refine GlobalTheory.PadicPlaceBound.neg_mul_vw_le_vw K σ z p w _ h2 hw fun lam => ?_
       rw [h3]
       exact (_root_.GlobalTheory.NormVal.norm_mem_and_le D (hI D) S dl hLet δ t0 Q R.crv R.pt0 hQ R N B h1 p lam).2

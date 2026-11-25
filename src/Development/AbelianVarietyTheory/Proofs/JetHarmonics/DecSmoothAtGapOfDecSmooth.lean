@@ -132,7 +132,7 @@ open Formalism.QuantumDeterminants (Mt UH Hpk Nset UWset inWb Tz IsHCParam GapAt
 open Formalism.FourierDecayAlt.B (gN)
 open PI.BesselPeriodGGP (IsHaarOn IsQuotMeas)
 open Formalism.FourierDecayAlt GlobalTheory.IndefiniteRowSideFullHecke
-open GlobalTheory.IndefiniteRowSideFullHecke.SideNormalisedGap (Mat decExp decConst dimV dimN thrG thrS thrSS propExp DecGap Size Thresholds muS mulP IsSide
+open GlobalTheory.IndefiniteRowSideFullHecke.SideNormalisedGap (Mat decExp dimV DecGap muS mulP IsSide
   IsSideNormalised KFinDecay wordSeminorm DecKFin DecSmooth)
 
 theorem muS_ne_zero {k r : ℕ} {μW μN : Measure (Mt k r)} [SFinite μN] (hW : μW ≠ 0) (hN : μN ≠ 0) :

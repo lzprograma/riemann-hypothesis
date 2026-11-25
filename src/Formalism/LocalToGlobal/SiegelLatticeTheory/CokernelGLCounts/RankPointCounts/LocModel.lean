@@ -7,54 +7,10 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstKernelP
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.BasisEApply
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.DenEqOneOfForallPadicNormLeOne
 public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalOrbitGerms
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.Valuation.Integral
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.GoodRDeltaC
 
 @[expose] public section
 
@@ -132,58 +88,7 @@ variable {R K A : Type} [CommRing R] [Field K] [CommRing A] [Algebra R K] [Algeb
 
 theorem trace_isIntegral_rank2 (b : Module.Basis (Fin 2) K A) {y : A} (hy : IsIntegral R y) :
     IsIntegral R (Algebra.trace K A y) := by
-  classical
-  have : Module.Finite K A := Module.Finite.of_basis b
-  have : Nontrivial A := nontrivial_of_ne (b 0) 0 (b.linearIndependent.ne_zero 0)
-  by_cases hr : y ∈ (algebraMap K A).range
-  · obtain ⟨c, rfl⟩ := hr
-    have hc : IsIntegral R c :=
-      (isIntegral_algHom_iff (IsScalarTower.toAlgHom R K A) (algebraMap K A).injective).mp hy
-    rw [Algebra.trace_algebraMap, Module.finrank_eq_card_basis b]
-    simpa [two_smul] using hc.add hc
-  · set χ := (Algebra.leftMulMatrix b y).charpoly with hχdef
-    have hχy : aeval y χ = 0 := by
-      apply Algebra.leftMulMatrix_injective b
-      rw [← Polynomial.aeval_algHom_apply, map_zero]
-      exact Matrix.aeval_self_charpoly _
-    have hmon : χ.Monic := Matrix.charpoly_monic _
-    have hdeg : χ.natDegree = 2 := by simp [χ, Matrix.charpoly_natDegree_eq_dim]
-    have hyK : IsIntegral K y := Algebra.IsIntegral.isIntegral y
-    have hmin : χ = minpoly K y := by
-      refine eq_of_monic_of_dvd_of_natDegree_le (minpoly.monic hyK) hmon (minpoly.dvd K y hχy) ?_
-      rw [hdeg]
-      have h1 := minpoly.natDegree_pos hyK
-      have h2 : (minpoly K y).natDegree ≠ 1 := fun h => hr (minpoly.natDegree_eq_one_iff.mp h)
-      omega
-    obtain ⟨f, hfm, hf⟩ := hy
-    have hdvd : χ ∣ f.map (algebraMap R K) := by
-      rw [hmin]
-      refine minpoly.dvd K y ?_
-      rw [aeval_map_algebraMap, aeval_def]
-      exact hf
-    let Kb := AlgebraicClosure K
-    set χ' := χ.map (algebraMap K Kb) with hχ'
-    have hs : χ'.Splits := IsAlgClosed.splits _
-    have hroots : ∀ r ∈ χ'.roots, IsIntegral R r := by
-      intro r hr'
-      refine ⟨f, hfm, ?_⟩
-      have h1 : χ'.IsRoot r := (mem_roots (hmon.map _).ne_zero).mp hr'
-      obtain ⟨g, hg⟩ := hdvd
-      have h2 : (f.map (algebraMap R Kb)).eval r = 0 := by
-        rw [IsScalarTower.algebraMap_eq R K Kb, ← Polynomial.map_map, hg, Polynomial.map_mul, eval_mul]
-        rw [show (χ.map (algebraMap K Kb)).eval r = 0 from h1, zero_mul]
-      rwa [eval_map] at h2
-    have hsum : IsIntegral R χ'.roots.sum := by
-      have : χ'.roots.sum ∈ integralClosure R Kb :=
-        multiset_sum_mem _ fun r hr' => (mem_integralClosure_iff R Kb).mpr (hroots r hr')
-      exact (mem_integralClosure_iff R Kb).mp this
-    have htr : algebraMap K Kb (Algebra.trace K A y) = χ'.roots.sum := by
-      rw [Algebra.trace_eq_matrix_trace b, Matrix.trace_eq_neg_charpoly_nextCoeff, map_neg,
-        ← Polynomial.nextCoeff_map (algebraMap K Kb).injective, ← hχdef,
-        hs.nextCoeff_eq_neg_sum_roots_of_monic (hmon.map _), neg_neg]
-    refine (isIntegral_algHom_iff (IsScalarTower.toAlgHom R K Kb) (algebraMap K Kb).injective).mp ?_
-    rw [IsScalarTower.coe_toAlgHom', htr]
-    exact hsum
+  apply _root_.PI.UnitaryGroupMassFormula.CntFormula.DeltaB.trace_isIntegral_rank2 <;> assumption
 
 end Formalism.L2.SG.Pf.LocModel.LM.DeltaB
 
@@ -191,8 +96,6 @@ namespace Formalism.L2.SG.Pf.LocModel.LM
 
 open NumberField Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.CntLocal IsDedekindDomain
 open Classical ValuativeRel
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def DeltaUnitCof : Prop :=
   ∀ (D : Formalism.BasicNotions.D7) (δ : ∀ p : PlF D, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep),
@@ -259,8 +162,6 @@ namespace Formalism.L2.SG.Pf.LocModel.LM
 open NumberField Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.CntLocal IsDedekindDomain
 open Classical ValuativeRel
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def DiffTrivCof : Prop :=
   ∀ (D : Formalism.BasicNotions.D7) (δ : ∀ p : PlF D, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep),
     (∀ p, Agree δ M p) → ∀ᶠ p in Filter.cofinite, ∀ z : (D.s.atP p).Ep,
@@ -320,8 +221,6 @@ namespace Formalism.L2.SG.Pf.LocModel.LM
 
 open NumberField Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.CntLocal IsDedekindDomain
 open Classical ValuativeRel
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def EpDualCof : Prop :=
   ∀ D : Formalism.BasicNotions.D7, ∀ᶠ p in Filter.cofinite, ∀ z : (D.s.atP p).Ep,
@@ -396,8 +295,6 @@ namespace Formalism.L2.SG.Pf.LocModel.LM
 
 open NumberField Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.CntLocal IsDedekindDomain
 open Classical ValuativeRel
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem memO_iff {K : Type} [Field K] [ValuativeRel K] (x : K) : x ∈ 𝒪[K] ↔ x ≤ᵥ 1 := by
   simp only [Valuation.mem_integer_iff]
@@ -534,8 +431,6 @@ namespace Formalism.L2.SG.Pf.LocModel.LM
 
 open NumberField Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.CntLocal IsDedekindDomain
 open Classical ValuativeRel
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem t2Space_of_nonarchimedeanLocalField' (K : Type) [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] :
     T2Space K :=
@@ -744,8 +639,6 @@ namespace Formalism.L2.SG.Pf.LocModel.LM
 open NumberField Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.CntLocal IsDedekindDomain
 open Classical ValuativeRel
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7}
 
 theorem ιE_int_mem_O (p : PlF D) (a : 𝓞 D.host.E) : (D.s.atP p).ιE (a : D.host.E) ∈ (D.s.atP p).O := iotaE_mem_of_int D p (NumberField.RingOfIntegers.isIntegral_coe a)
@@ -792,8 +685,6 @@ namespace Formalism.L2.SG.Pf.LocModel
 
 open NumberField IsDedekindDomain ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups
 open Classical
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem resCard_loc {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     {sig : E →ₐ[F] E} {p : HeightOneSpectrum (𝓞 F)} (A : Loc.LocAt F E sig p) :
@@ -860,8 +751,6 @@ namespace Formalism.L2.SG.Pf.LocModel
 
 open NumberField IsDedekindDomain ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups
 open Classical
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section PtUnit
 
@@ -952,8 +841,6 @@ namespace Formalism.L2.SG.Pf.LocModel
 
 open NumberField IsDedekindDomain ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups
 open Classical
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section PtUnit2
 
@@ -1047,10 +934,10 @@ theorem good_place {δ : ∀ p : PlF D, (D.s.atP p).Fp}
     by_cases hsp : a' + s - 1 = D.R.rS + 1 ∧ s = 1
     · have hnu : nu D.R.rS a' (a' + s - 1) = 0 := by unfold nu; omega
       have hb0 : blkMod δ T T' p a' s t = (D.s.atP p).ιE t := by rw [hbM, hnu, pow_zero, one_mul]
-      simp only [blkTop, if_pos hsp, hb0]
+      simp only [blkTop, ite_eq_left hsp, hb0]
       have hc : ∃ k : Fin 3, IsUnit ((D.s.atP p).ιE t + (((k : Fin 3) : ℕ) : (D.s.atP p).Ep)) :=
         ⟨0, by simpa using IsUnit.of_mul_eq_one _ htt⟩
-      simp only [nSh, dif_pos hc]
+      simp only [nSh, dite_eq_left hc]
       set k := hc.choose with hk
       have hku : IsUnit ((D.s.atP p).ιE t + (((k : Fin 3) : ℕ) : (D.s.atP p).Ep)) := hc.choose_spec
       have he : (D.s.atP p).ιE t + (((k : Fin 3) : ℕ) : (D.s.atP p).Ep) =
@@ -1062,7 +949,7 @@ theorem good_place {δ : ∀ p : PlF D, (D.s.atP p).Fp}
         exact not_isUnit_zero hku
       obtain ⟨hk1, hk2⟩ := hNp (t, s) hb k hne
       exact ⟨hk1, _, hk2, by rw [← map_mul, mul_inv_cancel₀ hne, map_one]⟩
-    · simp only [blkTop, if_neg hsp, hbM]
+    · simp only [blkTop, ite_eq_right hsp, hbM]
       refine ⟨Subring.mul_mem _ (Subring.pow_mem _ hw1O _) h0.1, w0 ^ nu D.R.rS a' (a' + s - 1) *
         (D.s.atP p).ιE t⁻¹, Subring.mul_mem _ (Subring.pow_mem _ hw0O _) h0.2, ?_⟩
       calc w1 ^ nu D.R.rS a' (a' + s - 1) * (D.s.atP p).ιE t *
@@ -1073,7 +960,7 @@ theorem good_place {δ : ∀ p : PlF D, (D.s.atP p).Fp}
     (fun b hb => (w.2.1 b hb).2) hunit
   have hsum : (l.map (fun b => (b.2 : ℕ))).sum = n := by rw [hls]; exact w.2.2
   refine ⟨⟨l, hsum⟩, ?_, ?_⟩
-  · simp only [modPt, hl, dif_pos hsum]
+  · simp only [modPt, hl, dite_eq_left hsum]
   · apply inGLR_of_units
     intro b hb
     rw [hR]
@@ -1256,22 +1143,22 @@ theorem bb_glr (M : Loc.Model F E) (hOK : M.OK) (hψ : ∀ x ∈ M.R, M.psiR x =
     unfold Formalism.FourierDecayAlt.A5.orbZ Formalism.FourierDecayAlt.A5.rep at i1 j1 k1
     unfold Formalism.FourierDecayAlt.A5.phase Formalism.FourierDecayAlt.A5.rep at hph
     unfold Formalism.DoubleCosetMeasures.phi
-    rw [if_pos i1, hph, mul_one]
+    rw [ite_eq_left i1, hph, mul_one]
     haveI hsub := Formalism.FourierDecayAlt.P.A5x7.coker_subsingleton M.R j1 k1
     by_cases hc : c = trivCls M m
-    · rw [if_pos hc, Nat.cast_eq_one, Nat.card_eq_one_iff_unique]
+    · rw [ite_eq_left hc, Nat.cast_eq_one, Nat.card_eq_one_iff_unique]
       haveI hC : Subsingleton (M.Cok (Quotient.out c)) :=
         (sub_iff_triv M _).2 ((Quotient.out_eq (s := M.isoSetoid m) c).trans hc)
       refine ⟨⟨fun x y => Subtype.ext (LinearEquiv.ext fun v => Subsingleton.elim _ _)⟩,
         ⟨⟨LinearEquiv.ofSubsingleton _ _, Subsingleton.elim _ _, fun v => ?_⟩⟩⟩
       rw [Formalism.FourierDecayAlt.P.A5x7.lamLin_zero M.R j1 v, Subsingleton.elim (LinearEquiv.ofSubsingleton _ _ _) 0, map_zero]
-    · rw [if_neg hc, Nat.cast_eq_zero, Nat.card_eq_zero]
+    · rw [ite_eq_right hc, Nat.cast_eq_zero, Nat.card_eq_zero]
       refine Or.inl ⟨fun x => hc ?_⟩
       haveI : Subsingleton (M.Cok (Quotient.out c)) := x.1.symm.injective.subsingleton
       exact (Quotient.out_eq (s := M.isoSetoid m) c).symm.trans ((sub_iff_triv M (Quotient.out c)).1 this)
   · intro q hq
     unfold Formalism.DoubleCosetMeasures.phi
-    rw [if_neg, zero_mul]
+    rw [ite_eq_right, zero_mul]
     intro hI
     exact hq ((Formalism.FourierDecayAlt.P.A5x7.int_iff M.R _ hg q).mp hI)
 
@@ -1645,7 +1532,7 @@ theorem clK_core {δ : ∀ p : PlF D, (D.s.atP p).Fp}
       (1 : ℂ) * (starRingEnd ℂ) 1 * A5.Kp (placeOf M hOK p0).R (placeOf M hOK p0).ψ (ePt (placeOf M hOK p0).K)
         (ePt (placeOf M hOK p0).K) else 0) * z = z := by
     intro z
-    rw [Fintype.prod_unique, if_pos rfl, hk0, map_one, one_mul, one_mul, one_mul]
+    rw [Fintype.prod_unique, ite_eq_left rfl, hk0, map_one, one_mul, one_mul, one_mul]
   by_cases h0 : i = 0
   · subst h0
     refine ⟨Unit, inferInstance, fun _ => placeOf M hOK p0, fun _ _ => ePt _, fun _ _ => none, fun _ _ => 1,
@@ -1653,7 +1540,7 @@ theorem clK_core {δ : ∀ p : PlF D, (D.s.atP p).Fp}
     intro x _ y _
     rw [mul_comm, hunit]
     unfold KrOf
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     by_cases hx : x = [] <;> by_cases hy : y = [] <;> simp [hx, hy]
   by_cases hbig : D.R.rS + 1 < i
   · refine ⟨Unit, inferInstance, fun _ => placeOf M hOK p0, fun _ _ => ePt _, fun _ _ => none, fun _ _ => 1,
@@ -1661,7 +1548,7 @@ theorem clK_core {δ : ∀ p : PlF D, (D.s.atP p).Fp}
     intro x _ y _
     rw [mul_comm, hunit]
     unfold KrOf
-    rw [if_neg h0, if_pos hbig]
+    rw [ite_eq_right h0, ite_eq_left hbig]
     simp
   have hle : i ≤ D.R.rS + 1 := by omega
 
@@ -1685,19 +1572,19 @@ theorem clK_core {δ : ∀ p : PlF D, (D.s.atP p).Fp}
     intro x hx y hy
     rcases hxw : ptOfList (D.R.rS + 1) x with _ | w
     · have h1 : KrOf δ M T T' (D.R.rS + 1) x y = 0 := by
-        unfold KrOf; rw [if_neg (Nat.succ_ne_zero _), if_neg (lt_irrefl _), hxw]
+        unfold KrOf; rw [ite_eq_right (Nat.succ_ne_zero _), ite_eq_right (lt_irrefl _), hxw]
       have h2 : aL (D.R.rS + 1) x = 0 := by unfold aL; rw [hxw]
       rw [h1, h2]; simp
     rcases hyw : ptOfList (D.R.rS + 1) y with _ | w'
     · have h1 : KrOf δ M T T' (D.R.rS + 1) x y = 0 := by
-        unfold KrOf; rw [if_neg (Nat.succ_ne_zero _), if_neg (lt_irrefl _), hxw, hyw]
+        unfold KrOf; rw [ite_eq_right (Nat.succ_ne_zero _), ite_eq_right (lt_irrefl _), hxw, hyw]
       have h2 : aL (D.R.rS + 1) y = 0 := by unfold aL; rw [hyw]
       rw [h1, h2]; simp
     have hK : KrOf δ M T T' (D.R.rS + 1) x y = KtopG M δ T T' w w' / ((phi (D.R.rS + 1) x : ℂ) * (phi (D.R.rS + 1) y : ℂ)) := by
       unfold KrOf
-      rw [if_neg (Nat.succ_ne_zero _), if_neg (lt_irrefl _), hxw, hyw]
+      rw [ite_eq_right (Nat.succ_ne_zero _), ite_eq_right (lt_irrefl _), hxw, hyw]
       simp only
-      rw [Kglob, dif_pos rfl]
+      rw [Kglob, dite_eq_left rfl]
     rw [hK]
     have hcl : ∀ q : {p // p ∈ B}, (clT x = clT y) = (kind w = kind w') := by
       intro q; simp [clT, hxw, hyw]
@@ -1708,8 +1595,8 @@ theorem clK_core {δ : ∀ p : PlF D, (D.s.atP p).Fp}
       have hc : (clT x = clT y) ↔ (kind w = kind w') := by simp [clT, hxw, hyw]
       unfold KtopG
       by_cases hk : kind w = kind w'
-      · rw [if_pos hk]
-        simp only [if_pos (hc.2 hk)]
+      · rw [ite_eq_left hk]
+        simp only [ite_eq_left (hc.2 hk)]
         have e1 : ∀ q : {p // p ∈ B}, dT M δ T T' q.1 x * (starRingEnd ℂ) (dT M δ T T' q.1 y) *
             A5.Kp (placeOf M hOK q.1).R (placeOf M hOK q.1).ψ (etaL δ T T' (D.R.rS + 1) q.1 x)
               (etaL δ T T' (D.R.rS + 1) q.1 y) = KtopP M δ T T' q.1 w w' := fun q =>
@@ -1728,9 +1615,9 @@ theorem clK_core {δ : ∀ p : PlF D, (D.s.atP p).Fp}
         rw [Formalism.L2.SG.DataCut.dfac_eq_one hA hs, Formalism.L2.SG.DataCut.dfac_eq_one hA hs,
           Formalism.L2.SG.DataCut.locK_eq_one Formalism.MainNotions.LocalOrbitGerms.KKAll_proved hA g1 g2]
         simp
-      · rw [if_neg hk]
+      · rw [ite_eq_right hk]
         refine Finset.prod_eq_zero (Finset.mem_univ ⟨p0, hp0⟩) ?_
-        rw [if_neg (fun h => hk (hc.1 h))]
+        rw [ite_eq_right (fun h => hk (hc.1 h))]
     rw [hprod]
     have hax : aL (D.R.rS + 1) x = (phi (D.R.rS + 1) x)⁻¹ := by unfold aL; rw [hxw]
     have hay : aL (D.R.rS + 1) y = (phi (D.R.rS + 1) y)⁻¹ := by unfold aL; rw [hyw]
@@ -1742,17 +1629,17 @@ theorem clK_core {δ : ∀ p : PlF D, (D.s.atP p).Fp}
     intro x hx y hy
     rcases hxw : ptOfList i x with _ | w
     · have h1 : KrOf δ M T T' i x y = 0 := by
-        unfold KrOf; rw [if_neg h0, if_neg hbig, hxw]
+        unfold KrOf; rw [ite_eq_right h0, ite_eq_right hbig, hxw]
       have h2 : aL i x = 0 := by unfold aL; rw [hxw]
       rw [h1, h2]; simp
     rcases hyw : ptOfList i y with _ | w'
     · have h1 : KrOf δ M T T' i x y = 0 := by
-        unfold KrOf; rw [if_neg h0, if_neg hbig, hxw, hyw]
+        unfold KrOf; rw [ite_eq_right h0, ite_eq_right hbig, hxw, hyw]
       have h2 : aL i y = 0 := by unfold aL; rw [hyw]
       rw [h1, h2]; simp
     have hK : KrOf δ M T T' i x y = (∏ᶠ p, locK M δ T T' p i w w') / ((phi i x : ℂ) * (phi i y : ℂ)) := by
       unfold KrOf
-      rw [if_neg h0, if_neg hbig, hxw, hyw]
+      rw [ite_eq_right h0, ite_eq_right hbig, hxw, hyw]
       simp only
       rw [Kglob, dite_eq_right ht]
     rw [hK]
@@ -1760,7 +1647,7 @@ theorem clK_core {δ : ∀ p : PlF D, (D.s.atP p).Fp}
         dL δ T T' i q.1 x * (starRingEnd ℂ) (dL δ T T' i q.1 y) *
           A5.Kp (placeOf M hOK q.1).R (placeOf M hOK q.1).ψ (etaL δ T T' i q.1 x) (etaL δ T T' i q.1 y)
         else 0) = locK M δ T T' q.1 i w w' := fun q => by
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact locK_eq_kp hA T T' i q.1 hxw hyw
     rw [Fintype.prod_congr _ _ e1, Finset.prod_coe_sort B (fun p => locK M δ T T' p i w w')]
     have hf : ∏ᶠ p, locK M δ T T' p i w w' = ∏ p ∈ B, locK M δ T T' p i w w' := by

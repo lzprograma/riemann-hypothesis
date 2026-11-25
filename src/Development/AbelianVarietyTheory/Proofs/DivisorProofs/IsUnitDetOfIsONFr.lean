@@ -50,7 +50,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.F
 open GlobalTheory.SW hiding Level IsSB
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum
 open scoped TensorProduct Classical ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.AdTh
 
@@ -163,7 +162,7 @@ theorem perC_block {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} 
     split_ifs <;> simp
   simp only [hN, perC, hx']
   by_cases ha : (a : ℕ) < X.p0
-  · simp only [ha, if_true]
+  · simp only [ha, ite_true]
     have : hermC τ.1 X.Gm (FD.col (mat x τ * b) a) (u τ) =
         ∑ c, b c a * hermC τ.1 X.Gm (FD.col (mat x τ) c) (u τ) := by
       simp only [hermC, FD.col, Matrix.mul_apply, Finset.mul_sum, Finset.sum_mul]
@@ -172,15 +171,15 @@ theorem perC_block {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} 
     rw [this]
     refine Finset.sum_congr rfl fun c _ => ?_
     by_cases hc0 : (c : ℕ) < X.p0
-    · simp only [hc0, if_true]
+    · simp only [hc0, ite_true]
     · rw [prFst_block_zero hc (by tauto), zero_mul, zero_mul]
-  · simp only [ha, if_false]
+  · simp only [ha, ite_false]
     rw [Matrix.mul_inv_rev, ← mulVec_mulVec]
     change ∑ c, b⁻¹ a c * _ = _
     refine Finset.sum_congr rfl fun c _ => ?_
     by_cases hc0 : (c : ℕ) < X.p0
     · rw [prFst_block_zero hc' (by tauto), zero_mul, zero_mul]
-    · simp only [hc0, if_false]
+    · simp only [hc0, ite_false]
 
 theorem sgnM_eq {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : Data E r) :
     sgnM X = (2 : ℂ) • prFst r X.p0 - 1 := by

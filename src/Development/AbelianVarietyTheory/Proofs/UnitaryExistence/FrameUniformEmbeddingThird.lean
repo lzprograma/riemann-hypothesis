@@ -95,8 +95,6 @@ theorem coset_mulVec_mem_hat (L : Set (Fin n → E)) (A : Matrix (Fin n) (Fin n)
 
 end General
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem coset_latGHat (V : HSp D) (g : GA D V) :

@@ -15,17 +15,7 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.SatGramActR
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Steps
-
-def LiftAut : Prop :=
-  ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (Y : Formalism.L2.SG.Full.Full X) (w : D.what₂.Word)
-    (Λ : Submodule (𝓞 D.host.E) (VS D).V), Λ ∈ Y.what₂ w → ∀ γ : Gam X w,
-    ((((Y.cs w).h ((Y.cs w).base Λ) : X.B.I.Gf) * X.xu w)⁻¹ * (iotaF X w γ : X.B.I.Gf) *
-        (((Y.cs w).h ((Y.cs w).base Λ) : X.B.I.Gf) * X.xu w) ∈ X.B.I.Kset) →
-    ∃ β : (VS D).V ≃ₗ[D.host.E] (VS D).V, RatLink X (γ : X.B.I.GA) β ∧
-      β ∈ Formalism.L2.SG.Saturated.AutF Λ (lf D (X.Fu w))
 
 def AutFConjN : Prop :=
   ∀ (D : D7) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
@@ -89,7 +79,7 @@ theorem mapLF_mul_aut {Λ' : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} 
     rfl
   have hγβ : γ * β⁻¹ ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT := Subgroup.mul_mem _ hγ (Subgroup.inv_mem _ hiso)
   unfold mapLF
-  rw [dif_pos hγβ, dif_pos hγ]
+  rw [dite_eq_left hγβ, dite_eq_left hγ]
   congr 1
   · apply key
     · funext a
@@ -127,13 +117,13 @@ theorem cmap_pos (hN : AutFConjN) (hx : RatLink X x β) {Λ Λ' : Submodule (�
     (hβ : β ∈ Formalism.L2.SG.Saturated.AutF Λ' (lf D F0')) (p : GCar X u u' F0 F0' Λ Λ') :
     cmap x β hN hx (Quot.mk _ p) = Quot.mk _ (rmul x β hx hβ p) := by
   unfold cmap
-  exact dif_pos hβ
+  exact dite_eq_left hβ
 
 theorem cmap_neg (hN : AutFConjN) (hx : RatLink X x β) {Λ Λ' : Submodule (𝓞 D.host.E) (VS D).V}
     (hβ : β ∉ Formalism.L2.SG.Saturated.AutF Λ' (lf D F0')) (c : GQ X u u' F0 F0' Λ Λ') :
     cmap x β hN hx c = c := by
   unfold cmap
-  exact dif_neg hβ
+  exact dite_eq_right hβ
 
 theorem cmap_inv (hN : AutFConjN) (hx : RatLink X x β) {Λ Λ' : Submodule (𝓞 D.host.E) (VS D).V}
     (c : GQ X u u' F0 F0' Λ Λ') :

@@ -6,47 +6,7 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishC
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraProductListIsCharacterAndPermInvari
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraRestrictionCuspidalProductSumSubset
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraRestrictionTwoBlockCuspidalEqZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -138,7 +98,7 @@ theorem hcL_single (d : ℕ) (χ : Gn g d → ℂ) (hχ : IsClass χ) : hcL [⟨
   have hcard : (Finset.univ.filter fun p : Gn g d => InPar d (p : Mt g d)) = Finset.univ :=
     Finset.filter_true_of_mem (fun p _ => hP _)
   rw [hcard]
-  simp only [hP, if_true, htl, hcL_nil, mul_one, Finset.card_univ]
+  simp only [hP, ite_true, htl, hcL_nil, mul_one, Finset.card_univ]
   have hc : ∀ y : Gn g d, χ (y⁻¹ * x * y) = χ x := fun y => by
     simpa using hχ x y⁻¹
   simp only [hc, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
@@ -175,7 +135,7 @@ theorem ip_sub_cusp (L : List (Pc g)) (hc : ∀ p ∈ L, IsCusp p.2) (a : ℕ) (
     ip (hcL ((I.sort (· ≤ ·)).map L.get) a) ψ = if ∃ i, I = {i} ∧ L.get i = ⟨a, ψ⟩ then 1 else 0 := by
   have hcI : ∀ p ∈ (I.sort (· ≤ ·)).map L.get, IsCusp p.2 := fun p hp => hc p (mem_sort_map hp)
   by_cases h2 : 2 ≤ I.card
-  · rw [if_neg]
+  · rw [ite_eq_right]
     · exact ip_long_cusp a ψ hψ _ (by simpa using h2) ((_root_.GlobalTheory.GLq.ResCuspProd.degL_sort_map L I).trans hI) hcI
     · rintro ⟨i, rfl, -⟩
       simp at h2
@@ -191,8 +151,8 @@ theorem ip_sub_cusp (L : List (Pc g)) (hc : ∀ p ∈ L, IsCusp p.2) (a : ℕ) (
       simp only [Finset.sum_singleton] at hI
       rw [ip_single_cusp a ψ hψ _ (hc _ (List.get_mem L i)) hI]
       by_cases h : L.get i = ⟨a, ψ⟩
-      · rw [if_pos h, if_pos ⟨i, rfl, h⟩]
-      · rw [if_neg h, if_neg]
+      · rw [ite_eq_left h, ite_eq_left ⟨i, rfl, h⟩]
+      · rw [ite_eq_right h, ite_eq_right]
         rintro ⟨j, hj, h'⟩
         rw [Finset.singleton_inj] at hj
         subst hj
@@ -262,7 +222,7 @@ theorem finiteRing_sq_sub_mul_sq_eq_of_card : ∀ (L' L : List (Pc g)) (n : ℕ)
           (fun I => ∑ i ∈ I, (L.get i).1 = a) := by
         simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.sum_singleton, hi₀]
       rw [Finset.sum_eq_single_of_mem _ hmem]
-      · rw [ip_sub_cusp L hc a ψ hψ _ (Finset.mem_filter.1 hmem).2, if_pos ⟨i₀, rfl, hi₀⟩, one_mul]
+      · rw [ip_sub_cusp L hc a ψ hψ _ (Finset.mem_filter.1 hmem).2, ite_eq_left ⟨i₀, rfl, hi₀⟩, one_mul]
         obtain ⟨hp, hd⟩ := hrest i₀ hi₀
         have hp' : ((({i₀} : Finset _)ᶜ.sort (· ≤ ·)).map L.get).Perm M := (hp.symm.trans hperm).cons_inv
         have hnd' := (List.nodup_cons.1 (hp.nodup_iff.1 hnd)).2

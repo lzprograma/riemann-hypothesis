@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableSetImageBall
 public import Formalism.SatakeDualWeyl.Statement
 public import Formalism.LocalRingCardinality.DataCD
 public import Formalism.PeriodIntegrals.QuotInv
@@ -162,40 +163,14 @@ theorem inner_realify {n : ℕ} (X Y : Matrix (Fin n) (Fin n) ℂ) :
     ⟪realify n X, realify n Y⟫_ℝ = (Xᴴ * Y).trace.re := by
   show ⟪WithLp.toLp 2 (realifyFun X), WithLp.toLp 2 (realifyFun Y)⟫_ℝ = _
   simp only [PiLp.inner_apply, Fintype.sum_prod_type, Fintype.sum_bool, realifyFun, Matrix.trace, Matrix.diag_apply,
-    Matrix.mul_apply, Matrix.conjTranspose_apply, Complex.re_sum, RCLike.inner_apply, conj_trivial, if_true,
-    Bool.false_eq_true, if_false, Complex.mul_re, Complex.star_def, Complex.conj_re, Complex.conj_im]
+    Matrix.mul_apply, Matrix.conjTranspose_apply, Complex.re_sum, RCLike.inner_apply, conj_trivial, ite_true,
+    Bool.false_eq_true, ite_false, Complex.mul_re, Complex.star_def, Complex.conj_re, Complex.conj_im]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
 
 theorem isMatGroup_UH {N : ℕ} (H : Matrix (Fin N) (Fin N) ℂ) (hH : H * H = 1) : PI.IsMatGroup (UH H) := by
-  have key : ∀ a ∈ UH H, (H * aᴴ * H) * a = 1 := by
-    intro a ha
-    have ha' : aᴴ * H * a = H := ha
-    calc (H * aᴴ * H) * a = H * (aᴴ * H * a) := by simp only [Matrix.mul_assoc]
-      _ = 1 := by rw [ha', hH]
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · exact isClosed_eq ((continuous_id.matrix_conjTranspose.matrix_mul continuous_const).matrix_mul continuous_id)
-      continuous_const
-  · show (1 : Matrix (Fin N) (Fin N) ℂ)ᴴ * H * 1 = H
-    simp
-  · intro a ha b hb
-    have ha' : aᴴ * H * a = H := ha
-    have hb' : bᴴ * H * b = H := hb
-    show (a * b)ᴴ * H * (a * b) = H
-    rw [Matrix.conjTranspose_mul]
-    calc bᴴ * aᴴ * H * (a * b) = bᴴ * (aᴴ * H * a) * b := by simp only [Matrix.mul_assoc]
-      _ = H := by rw [ha', hb']
-  · intro a ha
-    have h1 := key a ha
-    have hinv : a⁻¹ = H * aᴴ * H := Matrix.inv_eq_left_inv h1
-    have hai : a * a⁻¹ = 1 := Matrix.mul_nonsing_inv a (Matrix.isUnit_det_of_left_inverse h1)
-    refine ⟨?_, hai⟩
-    have ha' : aᴴ * H * a = H := ha
-    show (a⁻¹)ᴴ * H * a⁻¹ = H
-    calc (a⁻¹)ᴴ * H * a⁻¹ = (a⁻¹)ᴴ * (aᴴ * H * a) * a⁻¹ := by rw [ha']
-      _ = (a * a⁻¹)ᴴ * H * (a * a⁻¹) := by rw [Matrix.conjTranspose_mul]; simp only [Matrix.mul_assoc]
-      _ = H := by rw [hai]; simp
+  apply _root_.GlobalTheory.GramExp.isMatGroup_UH <;> assumption
 
 open scoped Matrix.Norms.Operator in
 theorem mem_lieOf_UH {N : ℕ} (H : Matrix (Fin N) (Fin N) ℂ) (hH : H * H = 1) (X : Matrix (Fin N) (Fin N) ℂ) :

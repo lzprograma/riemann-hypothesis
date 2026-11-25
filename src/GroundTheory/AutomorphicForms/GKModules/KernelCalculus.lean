@@ -121,26 +121,16 @@ theorem isSmoothFun_integral_mul {Ψ : G → ℂ} (hΨ : Continuous Ψ) {γ : G 
       · intro h0; apply hne; simp [h0]
       · simp [h.expG_neg]
 
-theorem rightDeriv_integral_mul {Ψ : G → ℂ} (hΨ : Continuous Ψ) {γ : G → ℂ}
-    (hγ : h.IsTestFunction γ) (X : 𝔤) (g : G) :
-    h.rightDeriv X (fun g => ∫ y, Ψ (g * y) * γ y ∂μ) g = ∫ y, Ψ (g * y) * h.convDeriv X γ y ∂μ := by
+private theorem hasDerivAt_integral_shift_smul {F : Type*} [NormedAddCommGroup F]
+    [NormedSpace ℂ F] [CompleteSpace F] {f : G → F} (hf : Continuous f) {γ : G → ℂ}
+    (hγ : h.IsTestFunction γ) (X : 𝔤) :
+    HasDerivAt (fun t : ℝ => ∫ y, γ (y⁻¹ * h.expG (t • X))⁻¹ • f y ∂μ)
+      (∫ y, h.convDeriv X γ y • f y ∂μ) 0 := by
+  have := secondCountableTopology_subgroup_units G
   have hec : Continuous fun t : ℝ => h.expG (t • X) :=
     h.continuous_expG.comp (continuous_id.smul continuous_const)
-  have hfg : Continuous fun y : G => Ψ (g * y) := hΨ.comp (continuous_const.mul continuous_id)
   have hκ'c : Continuous fun z : G => γ z⁻¹ := continuous_of_isSmoothFun (isSmoothFun_comp_inv hγ.1)
   have hDc := continuous_rightDeriv_comp_inv hγ.1 X
-
-  have hshift : ∀ t : ℝ, (fun g => ∫ y, Ψ (g * y) * γ y ∂μ) (g * h.expG (t • X)) =
-      ∫ y, Ψ (g * y) * γ (y⁻¹ * h.expG (t • X))⁻¹ ∂μ := by
-    intro t
-    show ∫ y, Ψ (g * h.expG (t • X) * y) * γ y ∂μ = _
-    have := integral_mul_left_eq_self (μ := μ)
-      (fun y => Ψ (g * y) * γ (y⁻¹ * h.expG (t • X))⁻¹) (h.expG (t • X))
-    rw [← this]
-    congr 1
-    funext y
-    simp [mul_assoc, mul_inv_rev]
-
   have hderiv : ∀ (y : G) (t : ℝ), HasDerivAt (fun s : ℝ => γ (y⁻¹ * h.expG (s • X))⁻¹)
       (h.rightDeriv X (fun w : G => γ w⁻¹) (y⁻¹ * h.expG (t • X))) t := by
     intro y t
@@ -150,7 +140,6 @@ theorem rightDeriv_integral_mul {Ψ : G → ℂ} (hΨ : Continuous Ψ) {γ : G �
       rw [sub_self]; exact h1
     refine (h1'.comp_sub_const t t).congr_of_eventuallyEq (Eventually.of_forall fun s => ?_)
     simp only [mul_assoc, ← h.expG_add_smul, add_sub_cancel]
-
   set S : Set G := (fun p : ℝ × G => h.expG (p.1 • X) * p.2) ''
     (Metric.closedBall (0 : ℝ) 1 ×ˢ tsupport γ) with hSdef
   have hS : IsCompact S :=
@@ -163,38 +152,51 @@ theorem rightDeriv_integral_mul {Ψ : G → ℂ} (hΨ : Continuous Ψ) {γ : G �
     · simpa [mul_inv_rev] using hk
     · simp
   obtain ⟨M, hM⟩ := exists_bound_rightDeriv_comp_inv hγ.1 hγ.2 X
-  have hbound : Integrable (S.indicator fun y => ‖Ψ (g * y)‖ * M) μ := by
+  have hbound : Integrable (S.indicator fun y => M * ‖f y‖) μ := by
     refine IntegrableOn.integrable_indicator ?_ hS.measurableSet
-    exact (hfg.norm.mul continuous_const).continuousOn.integrableOn_compact hS
-  have hint0 : Integrable (fun y => Ψ (g * y) * γ (y⁻¹ * h.expG ((0 : ℝ) • X))⁻¹) μ := by
-    have : (fun y => Ψ (g * y) * γ (y⁻¹ * h.expG ((0 : ℝ) • X))⁻¹) = fun y => Ψ (g * y) * γ y := by
+    exact (continuous_const.mul hf.norm).continuousOn.integrableOn_compact hS
+  have hint0 : Integrable (fun y => γ (y⁻¹ * h.expG ((0 : ℝ) • X))⁻¹ • f y) μ := by
+    have : (fun y => γ (y⁻¹ * h.expG ((0 : ℝ) • X))⁻¹ • f y) = fun y => γ y • f y := by
       funext y; simp
     rw [this]
-    exact h.integrable_mul_test μ hΨ hγ g
+    exact ((hγ.continuous h).smul hf).integrable_of_hasCompactSupport hγ.2.smul_right
   have key := hasDerivAt_integral_of_dominated_loc_of_deriv_le (μ := μ)
-    (F := fun (t : ℝ) (y : G) => Ψ (g * y) * γ (y⁻¹ * h.expG (t • X))⁻¹)
-    (F' := fun (t : ℝ) (y : G) => Ψ (g * y) *
-      h.rightDeriv X (fun w : G => γ w⁻¹) (y⁻¹ * h.expG (t • X)))
+    (F := fun (t : ℝ) (y : G) => γ (y⁻¹ * h.expG (t • X))⁻¹ • f y)
+    (F' := fun (t : ℝ) (y : G) =>
+      h.rightDeriv X (fun w : G => γ w⁻¹) (y⁻¹ * h.expG (t • X)) • f y)
     (x₀ := (0 : ℝ)) (s := Metric.ball (0 : ℝ) 1)
-    (bound := S.indicator fun y => ‖Ψ (g * y)‖ * M)
+    (bound := S.indicator fun y => M * ‖f y‖)
     (Metric.ball_mem_nhds 0 one_pos)
     (Eventually.of_forall fun t =>
-      (hfg.mul (hκ'c.comp (continuous_inv.mul continuous_const))).aestronglyMeasurable) hint0
-    (hfg.mul (hDc.comp (continuous_inv.mul continuous_const))).aestronglyMeasurable
+      ((hκ'c.comp (continuous_inv.mul continuous_const)).smul hf).aestronglyMeasurable) hint0
+    ((hDc.comp (continuous_inv.mul continuous_const)).smul hf).aestronglyMeasurable
     (Eventually.of_forall fun y t ht => by
       by_cases hy : y ∈ S
-      · rw [indicator_of_mem hy, norm_mul]
-        exact mul_le_mul_of_nonneg_left (hM _) (norm_nonneg _)
-      · rw [indicator_of_notMem hy, hvanish y t (Metric.ball_subset_closedBall ht) hy, mul_zero,
+      · rw [indicator_of_mem hy, norm_smul]
+        exact mul_le_mul_of_nonneg_right (hM _) (norm_nonneg _)
+      · rw [indicator_of_notMem hy, hvanish y t (Metric.ball_subset_closedBall ht) hy, zero_smul,
           norm_zero])
     hbound
-    (Eventually.of_forall fun y t _ => (hderiv y t).const_mul (Ψ (g * y)))
+    (Eventually.of_forall fun y t _ => (hderiv y t).smul_const (f y))
+  simpa [convDeriv] using key.2
+
+theorem rightDeriv_integral_mul {Ψ : G → ℂ} (hΨ : Continuous Ψ) {γ : G → ℂ}
+    (hγ : h.IsTestFunction γ) (X : 𝔤) (g : G) :
+    h.rightDeriv X (fun g => ∫ y, Ψ (g * y) * γ y ∂μ) g =
+      ∫ y, Ψ (g * y) * h.convDeriv X γ y ∂μ := by
+  have hshift : ∀ t : ℝ, (fun g => ∫ y, Ψ (g * y) * γ y ∂μ) (g * h.expG (t • X)) =
+      ∫ y, γ (y⁻¹ * h.expG (t • X))⁻¹ • Ψ (g * y) ∂μ := by
+    intro t
+    show ∫ y, Ψ (g * h.expG (t • X) * y) * γ y ∂μ = _
+    have := integral_mul_left_eq_self (μ := μ)
+      (fun y => γ (y⁻¹ * h.expG (t • X))⁻¹ • Ψ (g * y)) (h.expG (t • X))
+    rw [← this]
+    congr 1; funext y; simp [mul_assoc, mul_inv_rev, mul_comm]
   have hd1 := h.hasDerivAt_rightDeriv (h.isSmoothFun_integral_mul μ hΨ hγ) X g
-  have hd2 := key.2.congr_of_eventuallyEq (Eventually.of_forall hshift)
+  have hd2 := (h.hasDerivAt_integral_shift_smul μ (hΨ.comp (continuous_const.mul continuous_id))
+    hγ X).congr_of_eventuallyEq (Eventually.of_forall hshift)
   rw [hd1.unique hd2]
-  congr 1
-  funext y
-  simp [convDeriv]
+  congr 1; funext y; simp [mul_comm]
 
 theorem integral_mul_add {Ψ : G → ℂ} (hΨ : Continuous Ψ) {γ₁ γ₂ : G → ℂ}
     (h₁ : h.IsTestFunction γ₁) (h₂ : h.IsTestFunction γ₂) (g : G) :
@@ -223,13 +225,6 @@ theorem integrated_const_mul_kernel (γ : G → ℂ) (c : ℂ) (w : E) :
 
 theorem derivOp_integrated_convDeriv {γ : G → ℂ} (hγ : h.IsTestFunction γ) (w : E) (X : 𝔤) :
     h.derivOp π X (π.integrated μ γ w) = π.integrated μ (h.convDeriv X γ) w := by
-  have := secondCountableTopology_subgroup_units G
-  have hec : Continuous fun t : ℝ => h.expG (t • X) :=
-    h.continuous_expG.comp (continuous_id.smul continuous_const)
-  have hw : Continuous fun y : G => π y w := π.continuous_orbit w
-  have hκ'c : Continuous fun z : G => γ z⁻¹ := continuous_of_isSmoothFun (isSmoothFun_comp_inv hγ.1)
-  have hDc := continuous_rightDeriv_comp_inv hγ.1 X
-
   have hshift : ∀ t : ℝ, π (h.expG (t • X)) (π.integrated μ γ w) =
       ∫ y, γ (y⁻¹ * h.expG (t • X))⁻¹ • π y w ∂μ := by
     intro t
@@ -241,60 +236,10 @@ theorem derivOp_integrated_convDeriv {γ : G → ℂ} (hγ : h.IsTestFunction γ
     congr 1
     funext x
     simp [mul_inv_rev, map_mul]
-  have hderiv : ∀ (y : G) (t : ℝ), HasDerivAt (fun s : ℝ => γ (y⁻¹ * h.expG (s • X))⁻¹)
-      (h.rightDeriv X (fun w : G => γ w⁻¹) (y⁻¹ * h.expG (t • X))) t := by
-    intro y t
-    have h1 := h.hasDerivAt_rightDeriv (isSmoothFun_comp_inv hγ.1) X (y⁻¹ * h.expG (t • X))
-    have h1' : HasDerivAt (fun s : ℝ => γ (y⁻¹ * h.expG (t • X) * h.expG (s • X))⁻¹)
-        (h.rightDeriv X (fun w : G => γ w⁻¹) (y⁻¹ * h.expG (t • X))) (t - t) := by
-      rw [sub_self]; exact h1
-    refine (h1'.comp_sub_const t t).congr_of_eventuallyEq (Eventually.of_forall fun s => ?_)
-    simp only [mul_assoc, ← h.expG_add_smul, add_sub_cancel]
-  set S : Set G := (fun p : ℝ × G => h.expG (p.1 • X) * p.2) ''
-    (Metric.closedBall (0 : ℝ) 1 ×ˢ tsupport γ) with hSdef
-  have hS : IsCompact S :=
-    ((isCompact_closedBall 0 1).prod hγ.2).image
-      ((hec.comp continuous_fst).mul continuous_snd)
-  have hvanish : ∀ (y : G) (t : ℝ), t ∈ Metric.closedBall (0 : ℝ) 1 → y ∉ S →
-      h.rightDeriv X (fun w : G => γ w⁻¹) (y⁻¹ * h.expG (t • X)) = 0 := by
-    intro y t ht hy
-    refine rightDeriv_comp_inv_eq_zero (fun hk => hy ⟨(t, (h.expG (t • X))⁻¹ * y), ⟨ht, ?_⟩, ?_⟩) X
-    · simpa [mul_inv_rev] using hk
-    · simp
-  obtain ⟨M, hM⟩ := exists_bound_rightDeriv_comp_inv hγ.1 hγ.2 X
-  have hbound : Integrable (S.indicator fun y => M * ‖π y w‖) μ := by
-    refine IntegrableOn.integrable_indicator ?_ hS.measurableSet
-    exact (continuous_const.mul hw.norm).continuousOn.integrableOn_compact hS
-  have hint0 : Integrable (fun y => γ (y⁻¹ * h.expG ((0 : ℝ) • X))⁻¹ • π y w) μ := by
-    have : (fun y => γ (y⁻¹ * h.expG ((0 : ℝ) • X))⁻¹ • π y w) = fun y => γ y • π y w := by
-      funext y; simp
-    rw [this]
-    exact h.integrable_smul_orbit π μ hγ w
-  have key := hasDerivAt_integral_of_dominated_loc_of_deriv_le (μ := μ)
-    (F := fun (t : ℝ) (y : G) => γ (y⁻¹ * h.expG (t • X))⁻¹ • π y w)
-    (F' := fun (t : ℝ) (y : G) =>
-      h.rightDeriv X (fun w : G => γ w⁻¹) (y⁻¹ * h.expG (t • X)) • π y w)
-    (x₀ := (0 : ℝ)) (s := Metric.ball (0 : ℝ) 1)
-    (bound := S.indicator fun y => M * ‖π y w‖)
-    (Metric.ball_mem_nhds 0 one_pos)
-    (Eventually.of_forall fun t =>
-      ((hκ'c.comp (continuous_inv.mul continuous_const)).smul hw).aestronglyMeasurable) hint0
-    ((hDc.comp (continuous_inv.mul continuous_const)).smul hw).aestronglyMeasurable
-    (Eventually.of_forall fun y t ht => by
-      by_cases hy : y ∈ S
-      · rw [indicator_of_mem hy, norm_smul]
-        exact mul_le_mul_of_nonneg_right (hM _) (norm_nonneg _)
-      · rw [indicator_of_notMem hy, hvanish y t (Metric.ball_subset_closedBall ht) hy, zero_smul,
-          norm_zero])
-    hbound
-    (Eventually.of_forall fun y t _ => (hderiv y t).smul_const (π y w))
   have hd1 := h.hasDerivAt_derivOp π (h.isSmoothVector_integrated π μ hγ w) X
-  have hd2 := key.2.congr_of_eventuallyEq (Eventually.of_forall hshift)
-  rw [hd1.unique hd2]
-  unfold BanachRep.integrated
-  congr 1
-  funext y
-  simp [convDeriv]
+  have hd2 := (h.hasDerivAt_integral_shift_smul μ (π.continuous_orbit w)
+    hγ X).congr_of_eventuallyEq (Eventually.of_forall hshift)
+  exact hd1.unique hd2
 
 theorem exists_uAction_integrated (u : UniversalEnvelopingAlgebra ℝ h.lieSubalgebra) {γ : G → ℂ}
     (hγ : h.IsTestFunction γ) :

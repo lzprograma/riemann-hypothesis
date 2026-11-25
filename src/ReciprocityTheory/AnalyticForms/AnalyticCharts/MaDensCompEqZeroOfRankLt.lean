@@ -25,6 +25,14 @@ noncomputable section
 def leviC {e : ℕ} (H : (Fin e → ℂ) →L[ℝ] (Fin e → ℂ) →L[ℝ] ℝ) (a b : Fin e → ℂ) : ℂ :=
   ((H a b + H (I • a) (I • b) : ℝ) + I * ((H a (I • b) - H (I • a) b : ℝ))) / 4
 
+/-- Transposing the real bilinear form exchanges the two vectors and conjugates the Levi form. -/
+theorem conj_leviC_flip {e : ℕ} (H : (Fin e → ℂ) →L[ℝ] (Fin e → ℂ) →L[ℝ] ℝ) (a b : Fin e → ℂ) :
+    starRingEnd ℂ (leviC H.flip a b) = leviC H b a := by
+  simp only [leviC, ContinuousLinearMap.flip_apply, map_div₀, map_add (f := _), map_mul,
+    Complex.conj_ofReal, Complex.conj_I, map_ofNat]
+  push_cast
+  ring
+
 theorem hessC_eq_leviC {e : ℕ} (f : (Fin e → ℂ) → ℝ) (z : Fin e → ℂ) (i j : Fin e) :
     hessC f z i j = leviC (fderiv ℝ (fderiv ℝ f) z) (Pi.single i 1) (Pi.single j 1) := rfl
 

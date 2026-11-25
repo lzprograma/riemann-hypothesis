@@ -46,8 +46,6 @@ open scoped TensorProduct Kronecker
 
 namespace GlobalTheory.WeilParts
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def NonSplitAt (D : D7) (v : HeightOneSpectrum (𝓞 D.host.F)) (ε : AF D.host.F) : Prop :=

@@ -2,42 +2,6 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.IsMultiHom
 public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SymbolRealisableBound
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.GroupLattices.FockModels.MkP
 
 @[expose] public section
@@ -56,7 +20,7 @@ theorem map_thAll {R R' : Type} [CommRing R] [CommRing R'] (f : R →+* R') (n' 
       map f (Formalism.L2.G.Model.Nv R m b c) = Formalism.L2.G.Model.Nv R' m b c := by
     intro b c
     cases b
-    · simp only [Formalism.L2.G.Model.Nv, Bool.false_eq_true, if_false]
+    · simp only [Formalism.L2.G.Model.Nv, Bool.false_eq_true, ite_false]
       have hg : Formalism.L2.G.Model.genM R' m =
           (map f : MvPolynomial (Fin (m + 1) × Fin (m + 1)) R →+* _).mapMatrix (Formalism.L2.G.Model.genM R m) := by
         ext a u
@@ -79,14 +43,13 @@ theorem restricted_weight_first_two_eq {n' m : ℕ} (hm : 1 ≤ m) (TT : Finset 
     rw [Ne, Fin.one_eq_zero_iff]
     omega
   have ht := Int.toNat_of_nonneg (sub_nonneg.mpr hle)
-  simp only [restW, flW, dT, flatDeg, hs, if_true, Pi.sub_apply, Pi.single_eq_same, Pi.single_eq_of_ne h10]
+  simp only [restW, flW, dT, flatDeg, hs, ite_true, Pi.sub_apply, Pi.single_eq_same, Pi.single_eq_of_ne h10]
   omega
 
 theorem nu_odd {n' m : ℕ} (hm : 1 ≤ m) (TT : Finset (Fin n')) (lam0 : Fin n' → Fin (m + 1) → ℤ) (hdom : IsDominant lam0)
     (s : Fin n') (hs : s ∈ TT) (hv : vecE n' s = false) (t : Fin (m + 1)) (ht : m ≤ t.val + 1) :
     nuOf (lamAt (restW TT lam0) s) t = 0 := by
   have hodd : ¬ Even (s : ℕ) := by simpa [vecE] using hv
-  have htl := t.isLt
   have hr : restW TT lam0 s t.rev = restW TT lam0 s 0 := by
     have hv' : t.rev.val ≤ 1 := by
       rw [Fin.val_rev]
@@ -98,7 +61,7 @@ theorem nu_odd {n' m : ℕ} (hm : 1 ≤ m) (TT : Finset (Fin n')) (lam0 : Fin n'
         apply Fin.ext
         rw [h, Fin.val_one', Nat.mod_eq_of_lt (by omega)]
       rw [e, restricted_weight_first_two_eq hm TT lam0 hdom s hs]
-  simp only [nuOf, lamAt, hodd, if_false, Fin.rev_last, hr]
+  simp only [nuOf, lamAt, hodd, ite_false, Fin.rev_last, hr]
   simp
 
 end Formalism.MainNotions.TestSideCounting

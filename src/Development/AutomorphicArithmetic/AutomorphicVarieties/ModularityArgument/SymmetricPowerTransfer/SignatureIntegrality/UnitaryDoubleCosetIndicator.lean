@@ -125,8 +125,6 @@ def fZ (ω : kˣ →* ℂˣ) {n : ℕ} (d : Fin n → kˣ) (g : GL (Fin n) k) : 
 
 def fS (ω : kˣ →* ℂˣ) (t : kˣ) : GL (Fin 2) k → ℂ := V.fZ ω ![t, t⁻¹]
 
-def fK (ω ω' : kˣ →* ℂˣ) (Rs : Finset kˣ) (t : kˣ) (g : GL (Fin 2) k) : ℂ := ∑ e ∈ Rs, (ω e : ℂ) * V.fZ ω' ![t * e, 1] g
-
 
 end Lev
 

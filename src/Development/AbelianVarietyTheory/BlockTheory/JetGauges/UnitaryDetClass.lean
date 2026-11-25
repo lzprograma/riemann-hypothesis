@@ -41,8 +41,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.UnitaryDetClass
@@ -55,9 +53,6 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
 def IsUnitary (γ : Matrix (Fin n) (Fin n) E) : Prop :=
   (γ.map (IsCMField.complexConj E)).transpose * γ = 1
-
-def Carries (γ : Matrix (Fin n) (Fin n) E) (Λ Λ' : GenLat E n) : Prop :=
-  ∀ v' : Fin n → E, v' ∈ Λ'.La ↔ ∃ v ∈ Λ.La, γ.mulVec v = v'
 
 def CongrAt (Q : ℕ) (u v : Fin n → E) : Prop :=
   ∃ k : ℕ, Nat.Coprime k Q ∧ ∀ j, ∃ s : 𝓞 E, (k : E) * (u j - v j) = (Q : E) * (s : E)

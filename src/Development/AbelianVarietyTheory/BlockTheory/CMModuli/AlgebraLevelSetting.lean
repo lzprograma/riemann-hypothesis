@@ -45,12 +45,9 @@ import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
-set_option autoImplicit false
-
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UU
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 namespace GlobalTheory.IndefiniteRowSideFullHecke.AlgebraLevelSetting
@@ -121,12 +118,6 @@ def Step.Compat {L₁ : Level P X f₁ G₁ F₁ h₁} {L₂ : Level P X f₂ G�
     ∀ (Z : Scheme.{0}) (y : Z ⟶ L₁.Q.B.left) (z : Z) (j : M.L.L.ι) (k₂ : L₂.D.M.L.L.ι) (k₁ : L₁.D.M.L.L.ι),
       (y ≫ r₁.toB) z ∈ M.L.L.U j → (y ≫ s.β) z ∈ L₂.D.M.L.L.U k₂ → y z ∈ L₁.D.M.L.L.U k₁ →
       gw r₁.a y z j k₁ = gw r₂.a (y ≫ s.β) z j k₂ * gw s.u y z k₂ k₁
-
-namespace Level.Red
-
-variable {L₁ : Level P X f₁ G₁ F₁ h₁} {M : CP B} (r : L₁.Red M)
-
-end Level.Red
 
 end Levels
 
@@ -226,29 +217,6 @@ structure HidaSetting (V : Type) [CommRing V] [IsDomain V] [IsLocalRing V] where
   symTriv : ∀ F : FormalTorus (IsLocalRing.maximalIdeal V) Q₀.i, F.HasSymTriv P
 
 attribute [instance] HidaSetting.grp HidaSetting.comm HidaSetting.addX HidaSetting.freeX HidaSetting.finX
-
-namespace HidaSetting
-
-variable {V : Type} [CommRing V] [IsDomain V] [IsLocalRing V] (S : HidaSetting V)
-
-abbrev Tower := AlgebraLevelSetting.Tower (IsLocalRing.maximalIdeal V) S.P S.Q₀.i
-
-abbrev Alg (W : S.Tower) := AlgebraLevelSetting.Alg W
-
-end HidaSetting
-
-def SymTriv.triv {S S' : Scheme.{0}} {G : Over S} [GrpObj G] [IsCommMonObj G] {f : S' ⟶ S}
-    {H : Over S'} [GrpObj H] (j : H.left ⟶ G.left) (hj : j ≫ G.hom = H.hom ≫ f) : SymTriv (CP.triv G) j hj where
-  s := unitGen _ _
-  gen := unitGen_isGen _ _
-  cub T x y u z J _ := by
-    have e : ∀ r, val (L := (CP.triv G).L.L) (unitGen ![j, H.hom ≫ f ≫ eSec G] ![1, -1]) r z J = 1 :=
-      fun r => val_unitGen _ _ _ _ _
-    have b : @id (T.left.presheaf.stalk z)ˣ (cubV (CP.triv G).c (T := Over.mk (T.hom ≫ f)) z J (toBase hj x)
-        (toBase hj y) (toBase hj u)) = 1 := cubV_trivCub G _ _ _ _ _
-    simp only [e, b, _root_.mul_one]
-  even T x z J _ := (val_unitGen _ _ _ _ _).trans ((congrArg₂ (· * ·) (val_sym_triv _ _ _ _)
-    (val_unitGen _ _ _ _ _)).trans (_root_.mul_one 1)).symm
 
 end GlobalTheory.IndefiniteRowSideFullHecke.AlgebraLevelSetting
 end

@@ -3,43 +3,7 @@ module
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumACorr
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.MemPerpSpanIff
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.HSumRight
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumA
 
 @[expose] public section
@@ -50,59 +14,7 @@ open ValuativeRel Formalism.MainNotions.S.Loc Formalism.L2.SG.LsDatumA
 
 namespace Formalism.L2.SG.LocalCountModules.LocCntCommon
 
-section Transport
-
-theorem graph_transport {D₁ D₂ Dc₁ Dc₂ W₁ W₂ P : Type} (Ψ₁ : D₁ ≃ Dc₁) (Ψ₂ : D₂ ≃ Dc₂)
-    (θ : D₁ ≃ D₂) (φ : W₁ → W₂) (Pc₁ : W₁ → P) (Pc₂ : W₂ → P) (Γ₁ : Set (D₁ × W₁))
-    (Γ₂ : Set (D₂ × W₂)) (Γc₁ : Set (Dc₁ × P)) (Γc₂ : Set (Dc₂ × P))
-    (h1 : (fun p => (Ψ₁ p.1, Pc₁ p.2)) '' Γ₁ = Γc₁) (h2 : (fun p => (Ψ₂ p.1, Pc₂ p.2)) '' Γ₂ = Γc₂)
-    (hP : ∀ w, Pc₂ (φ w) = Pc₁ w)
-    (hinj : ∀ p ∈ Γ₁, ∀ q ∈ Γ₂, Pc₂ q.2 = Pc₁ p.2 → q.2 = φ p.2) :
-    ((fun p => (θ p.1, φ p.2)) '' Γ₁ = Γ₂) ↔
-      ((fun p => (Ψ₂ (θ (Ψ₁.symm p.1)), p.2)) '' Γc₁ = Γc₂) := by
-  constructor
-  · intro h
-    rw [← h1, ← h2, ← h, Set.image_image, Set.image_image]
-    apply Set.image_congr
-    intro p _
-    simp [hP]
-  · intro h
-    ext q
-    constructor
-    · rintro ⟨p, hp, rfl⟩
-      have hc : (Ψ₂ (θ p.1), Pc₁ p.2) ∈ Γc₂ := by
-        rw [← h]
-        refine ⟨(Ψ₁ p.1, Pc₁ p.2), ?_, by simp⟩
-        rw [← h1]
-        exact ⟨p, hp, rfl⟩
-      rw [← h2] at hc
-      obtain ⟨q', hq', hqe⟩ := hc
-      simp only [Prod.mk.injEq, EmbeddingLike.apply_eq_iff_eq] at hqe
-      have e2 : q'.2 = φ p.2 := hinj p hp q' hq' hqe.2
-      have : q' = (θ p.1, φ p.2) := Prod.ext hqe.1 e2
-      show (θ p.1, φ p.2) ∈ Γ₂
-      rw [← this]
-      exact hq'
-    · intro hq
-      have hc : (Ψ₂ q.1, Pc₂ q.2) ∈ Γc₂ := by
-        rw [← h2]
-        exact ⟨q, hq, rfl⟩
-      rw [← h] at hc
-      obtain ⟨c, hc1, hce⟩ := hc
-      rw [← h1] at hc1
-      obtain ⟨p, hp, rfl⟩ := hc1
-      simp only [Prod.mk.injEq, Equiv.symm_apply_apply, EmbeddingLike.apply_eq_iff_eq] at hce
-      refine ⟨p, hp, ?_⟩
-      have e2 : q.2 = φ p.2 := hinj p hp q hq hce.2.symm
-      exact Prod.ext hce.1 e2.symm
-
-end Transport
-
-variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
-variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E]
-variable {M : Model F E} {V : Type} [AddCommGroup V] [Module E V] (H : HermSp M V)
-
-theorem smul_transport {A B : Type} [AddCommGroup A] [Module E A] [AddCommGroup B] [Module E B]
+theorem smul_transport {E : Type} [CommRing E] {A B : Type} [AddCommGroup A] [Module E A] [AddCommGroup B] [Module E B]
     (φ : A ≃ₗ[E] B) (c₁ c₂ k₁ k₂ : E) (hk₁ : k₁ * c₁ = 1) (hk₂ : k₂ * c₂ = 1) (a : A) (b : B)
     (e : c₂ • φ a = c₁ • b) : φ (k₁ • a) = k₂ • b := by
   rw [map_smul]
@@ -111,6 +23,10 @@ theorem smul_transport {A B : Type} [AddCommGroup A] [Module E A] [AddCommGroup 
   congr 1
   calc k₁ * k₂ * c₁ = k₂ * (k₁ * c₁) := by ring
     _ = k₂ := by rw [hk₁, mul_one]
+
+variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
+variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E]
+variable {M : Model F E} {V : Type} [AddCommGroup V] [Module E V] (H : HermSp M V)
 
 variable {r : ℕ}
 

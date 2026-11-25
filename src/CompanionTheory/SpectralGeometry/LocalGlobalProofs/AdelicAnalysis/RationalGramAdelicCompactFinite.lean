@@ -28,19 +28,6 @@ theorem sigma_sigma (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (x : E) : σ (σ x
   apply w.embedding.injective
   rw [hτ, hτ, star_star]
 
-theorem exists_moved (σ : E →ₐ[F] E) (h : IsCMExt F E σ) : ∃ x : E, σ x ≠ x := by
-  by_contra hc
-  push_neg at hc
-  obtain ⟨-, htc, -, hτ⟩ := h
-  let w : InfinitePlace E := Classical.arbitrary _
-  have hcx : w.IsComplex := htc.isComplex w
-  apply InfinitePlace.not_isReal_iff_isComplex.mpr hcx
-  rw [InfinitePlace.isReal_iff, ComplexEmbedding.isReal_iff]
-  ext x
-  have := hτ w.embedding x
-  rw [hc x] at this
-  simpa using this.symm
-
 theorem fixed_mem (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (e : E) (he : σ e = e) :
     ∃ t : F, e = algebraMap F E t := by
   apply GlobalTheory.CompanionTheory.SW.HermOne.exists_eq_algebraMap <;> assumption

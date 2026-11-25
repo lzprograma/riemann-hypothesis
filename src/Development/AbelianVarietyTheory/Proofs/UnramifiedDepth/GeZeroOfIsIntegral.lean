@@ -164,7 +164,7 @@ theorem labGeoSt : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : H
       exact hb ((ι.comp io).injective (congrFun h b))
     obtain ⟨b, hb⟩ := GlobalTheory.eigenvector_mem_span_block_of_basis T.Fr C ι (𝓞 E) (E →+* ℂ) Dw.mult (chD C3.ch) M
       (fun τ x => emA3 io ι τ x) (chartUnitVectors C3) hinj heig C3.ch.chart.basis (lab.tau o g a) v hv
-    refine ⟨fun q => if h : q.1 = a then b (Fin.cast (by rw [h]) q.2) else 0, fun q hq => dif_neg hq, ?_⟩
+    refine ⟨fun q => if h : q.1 = a then b (Fin.cast (by rw [h]) q.2) else 0, fun q hq => dite_eq_right hq, ?_⟩
     rw [hb, Fintype.sum_sigma, Finset.sum_eq_single a]
     · refine Finset.sum_congr rfl fun i _ => ?_
       dsimp only
@@ -173,7 +173,7 @@ theorem labGeoSt : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : H
     · intro a' _ ha'
       refine Finset.sum_eq_zero fun i _ => ?_
       dsimp only
-      rw [dif_neg ha', zero_smul]
+      rw [dite_eq_right ha', zero_smul]
     · intro h
       exact absurd (Finset.mem_univ a) h
 

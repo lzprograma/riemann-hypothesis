@@ -42,12 +42,7 @@ theorem selfDual_transport (V V' : Type) [AddCommGroup V] [TopologicalSpace V]
     SelfDual μ (fun x y => χ (e x) (e y)) ↔ SelfDual (μ.map e) χ := by
   refine ⟨selfDual_map_of_comp e μ χ, fun h => ?_⟩
   have h2 := selfDual_map_of_comp e.symm (μ.map e) (fun x y => χ (e x) (e y)) (by simpa using h)
-  have hm : (μ.map e).map e.symm = μ := by
-    have m1 : Measurable (e.symm : V' → V) := e.symm.continuous.measurable
-    have m2 : Measurable (e : V → V') := e.continuous.measurable
-    rw [Measure.map_map m1 m2]
-    have : (e.symm : V' → V) ∘ e = id := by ext x; simp
-    rw [this, Measure.map_id]
+  have hm : (μ.map e).map e.symm = μ := e.toHomeomorph.toMeasurableEquiv.map_symm_map
   rwa [hm] at h2
 
 end GlobalTheory.CompanionTheory.SW

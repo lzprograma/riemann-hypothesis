@@ -134,13 +134,13 @@ theorem bddSec_tendsto_constTerm : ∀ (E : Type) [Field E] [NumberField E] [IsC
         exact tendsto_const_nhds
       by_cases hν : ν = 0
       · subst hν
-        simp only [hF', if_true, Finset.sum_const_zero, Pi.zero_apply, mul_zero, zero_mul, neg_zero,
+        simp only [hF', ite_true, Finset.sum_const_zero, Pi.zero_apply, mul_zero, zero_mul, neg_zero,
           Real.exp_zero, Complex.ofReal_one, _root_.mul_one]
         exact tendsto_const_nhds
-      · rw [if_neg hν]
+      · rw [ite_eq_right hν]
         have hnn := hsign ν h0
         obtain ⟨τ0, hτ0⟩ : ∃ τ0, ν τ0 ≠ 0 := by
-          by_contra hc; push_neg at hc; exact hν (funext hc)
+          by_contra hc; push Not at hc; exact hν (funext hc)
         have hS : 0 < ∑ τ, ν τ :=
           Finset.sum_pos' (fun τ _ => hnn τ) ⟨τ0, Finset.mem_univ _, lt_of_le_of_ne (hnn τ0) (Ne.symm hτ0)⟩
         have hk : 0 < 4 * Real.pi * ∑ τ, ν τ := by positivity
@@ -183,8 +183,6 @@ open NumberField AlgebraicGeometry CategoryTheory Limits MonoidalCategory Cartes
 open GlobalTheory.Dict (castFr)
 open GlobalTheory.FrameNorm (IsUnitFr)
 open scoped Matrix
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -287,7 +285,7 @@ theorem finite_reps (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ)
   refine ⟨((Finset.univ ×ˢ S0).image fun p => p.2⁻¹ * rep p.1).filter (QMatch X X' N),
     fun s hs => (Finset.mem_filter.1 hs).2, fun a ha => ?_⟩
   have hex : ∃ a', QMatch X X' N a' ∧ f a' = f a := ⟨a, ha, rfl⟩
-  have hrep : rep (f a) = hex.choose := dif_pos hex
+  have hrep : rep (f a) = hex.choose := dite_eq_left hex
   obtain ⟨ha', hfa⟩ := hex.choose_spec
   have hP : ∀ v ∈ X.Λ, InL X' N hex.choose v ↔ InL X' N a v := by
     intro v hv

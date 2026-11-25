@@ -430,18 +430,15 @@ open scoped WithZero
 
 namespace GlobalTheory.QNorm
 
-private theorem isSquare_real_iff_nonneg (r : ℝ) : IsSquare r ↔ 0 ≤ r :=
-  ⟨fun h => h.nonneg, fun h => ⟨Real.sqrt r, (Real.mul_self_sqrt h).symm⟩⟩
-
 theorem index_sqSub_real_dvd_two {F : Type} [Field F] (σ : F →+* ℝ) : (sqSub σ).index ∣ 2 := by
   by_cases h : ∀ x : Fˣ, x ∈ sqSub σ
   · rw [show sqSub σ = ⊤ from eq_top_iff.mpr fun x _ => h x, Subgroup.index_top]
     exact one_dvd 2
-  · push_neg at h
+  · push Not at h
     obtain ⟨a, ha⟩ := h
     have hne : ∀ x : Fˣ, σ (x : F) ≠ 0 := fun x => (x.isUnit.map σ).ne_zero
     have hmem : ∀ x : Fˣ, x ∈ sqSub σ ↔ 0 ≤ σ (x : F) := fun x =>
-      (mem_sqSub σ x).trans (isSquare_real_iff_nonneg _)
+      (mem_sqSub σ x).trans Real.isSquare_iff
     have ha' : σ (a : F) < 0 := not_le.mp fun h' => ha ((hmem a).mpr h')
     have h2 : (sqSub σ).index = 2 := by
       refine Subgroup.index_eq_two_iff.mpr ⟨a, fun b => ?_⟩

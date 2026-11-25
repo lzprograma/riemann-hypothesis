@@ -13,8 +13,6 @@ namespace Formalism.L2.SG.Pf.MassDataX
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.DataInst Formalism.L2.SG.CntLocal
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem one_sub_eta_nonneg (η : ℝ) (hη : η = 1 ∨ η = -1) (q i : ℕ) : 0 ≤ 1 - η ^ i / ((q : ℕ) : ℝ) ^ i := by
   have h1 : |η ^ i| = 1 := by
     rcases hη with rfl | rfl <;> simp [abs_pow]

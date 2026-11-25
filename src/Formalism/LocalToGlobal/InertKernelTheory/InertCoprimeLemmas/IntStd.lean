@@ -23,7 +23,7 @@ variable {p : ℕ} [Fact p.Prime] (lam : Qbar →+* ℂ_[p])
 def Good (c : ℂ) : Prop := c ∈ Qbar ∧ IsIntP (lamC lam c)
 
 theorem lamC_of_mem {c : ℂ} (h : c ∈ Qbar) : lamC lam c = lam ⟨c, h⟩ := by
-  simp only [lamC, dif_pos h]
+  simp only [lamC, dite_eq_left h]
 
 theorem good_mul {a b : ℂ} (ha : Good lam a) (hb : Good lam b) : Good lam (a * b) := by
   refine ⟨mul_mem ha.1 hb.1, ?_⟩

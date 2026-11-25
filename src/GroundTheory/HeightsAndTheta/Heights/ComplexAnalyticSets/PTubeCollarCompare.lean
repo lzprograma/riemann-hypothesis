@@ -138,19 +138,11 @@ theorem TubeCollarCompare.proof : TubeCollarCompare.Statement := by
   · rw [Set.indicator_of_notMem hy]
     exact mul_nonneg hC (finsum_nonneg fun _ => finsum_nonneg fun _ => by split_ifs <;> positivity)
   rw [Set.indicator_of_mem hy]
-  unfold tubeDens chartAbsDens sheetSum
-  rw [finsum_mem_eq_finite_toFinset_sum _ (IndefiniteRowSideFullHecke.ComplexSets.fibre_finite hA y),
-    finsum_mem_eq_finite_toFinset_sum _ (IndefiniteRowSideFullHecke.ComplexSets.fibre_finite hA y), Finset.mul_sum]
-  refine Finset.sum_le_sum fun x hx => ?_
-  rw [Set.Finite.mem_toFinset] at hx
-  obtain ⟨hxZ, hxy⟩ := hx
+  unfold tubeDens chartAbsDens
+  refine TubeFormComparison.sheetSum_le_of_pointwise
+    (IndefiniteRowSideFullHecke.ComplexSets.fibre_finite hA y) fun x hxZ hxy s hs hsa => ?_
   subst hxy
-  split_ifs with hsx
-  swap
-  · simp
-  dsimp only
-  obtain ⟨V, hV, hyV, hsd, hsx', hsec, -⟩ := hsx.choose_spec
-  set s := hsx.choose with hsdef
+  obtain ⟨V, hV, hyV, hsd, hsx', hsec, -⟩ := hs
   set f := (Metric.closedBall (0 : Fin n → ℂ) R).indicator fun x => tubeWeight P (A *ᵥ x) with hfdef
   by_cases hf : f x = 0
   · rw [hf, zero_mul, abs_zero]
@@ -172,12 +164,9 @@ theorem TubeCollarCompare.proof : TubeCollarCompare.Statement := by
     rwa [logAbsSq, Real.exp_log h2] at h3
   have hw : |f x| ≤ 1 := by
     rw [hfdef, Set.indicator_of_mem hxB]
-    simp only [tubeWeight, if_pos hv1]
+    simp only [tubeWeight, ite_eq_left hv1]
     rw [abs_of_nonneg (by positivity)]
     exact inv_le_one_of_one_le₀ (by nlinarith)
-  have hsa : AnalyticAt ℂ s (A *ᵥ x) :=
-    analyticAt_pi_iff.2 fun i =>
-      ReciprocityTheory.AnForm.Osgood.osgood _ V (fun z => s z i) hV (differentiableOn_pi.1 hsd i) _ hyV
   have hg2 : ContDiffAt ℝ 2 g (s (A *ᵥ x)) := by
     rw [hsx']
     exact contDiffAt_logSq_comp A P x hP

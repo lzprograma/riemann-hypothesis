@@ -140,11 +140,9 @@ theorem rowE_rowWeight : ∀ (R : Type) [CommRing R] (r n : ℕ) (μ : Fin r →
 
     rw [map_sum, Finset.smul_sum]
     exact Finset.sum_congr rfl fun d hd => rowE_diag_monomial a μ d _ (hmon d hd)
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [f.as_sum, map_sum]
+  · rw [f.as_sum, map_sum]
     exact Finset.sum_eq_zero fun d hd => rowE_monomial_eq_zero a b μ d _ (hmon d hd) hb
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [f.as_sum, map_sum]
+  · rw [f.as_sum, map_sum]
     exact IsWeightedHomogeneous.sum _ _ _ fun d hd => rowE_monomial_weight a b μ μ' d _ (hmon d hd) hμ
 
 end GlobalTheory.Alc

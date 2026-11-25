@@ -45,7 +45,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 open GlobalTheory.LogDerProj
 
 noncomputable section
-set_option autoImplicit false
 
 namespace GlobalTheory.LogDerProj
 

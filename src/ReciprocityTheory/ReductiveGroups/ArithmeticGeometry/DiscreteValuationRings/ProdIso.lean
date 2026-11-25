@@ -2,55 +2,9 @@ module
 
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubicalPullBaseChangeSt
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBTransport
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.AppCompatGeneric
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -72,7 +26,7 @@ variable {U u}
 lemma tu_def {V : Y.Opens} {ψ : Y ⟶ X} {p : ι} (h : V ≤ ψ ⁻¹ᵁ U p) :
     tu U u V ψ p = res h (pullU ψ _ (u p)) := by
   unfold tu
-  exact dif_pos h
+  exact dite_eq_left h
 
 private alias rs_rs' := _root_.ReciprocityTheory.ChartRestriction.G.DVR.rs_rs
 
@@ -166,10 +120,10 @@ lemma wu_gen (w : LB.Iso L M) (hw : w.IsGen) {V : Y.Opens} {ψ : Y ⟶ X} {a a' 
     tu_def (U := (LB.div M L).U) (u := w.s) c0'
   have e3 : tr M V ψ a a' = res c1 (pullU ψ _ (M.g a a')) := by
     unfold tr
-    exact dif_pos c1
+    exact dite_eq_left c1
   have e4 : tr L V ψ b b' = res c2 (pullU ψ _ (L.g b b')) := by
     unfold tr
-    exact dif_pos c2
+    exact dite_eq_left c2
   calc wu w V ψ a b = _ := e1
     _ = _ := K
     _ = tr M V ψ a a' * (tr L V ψ b b')⁻¹ * wu w V ψ a' b' := by
@@ -440,7 +394,7 @@ lemma g_pull_one {Z : Scheme.{0}} (h : Z ⟶ X) (a b : Fin 1 → L.ι) {W : Z.Op
       (inf_le_right.trans (LB.wchart_le L (fun _ : Fin 1 => 𝟙 X) b 0))))
   have e3 : tr L W h (a 0) (b 0) = res c (pullU h _ (L.g (a 0) (b 0))) := by
     unfold tr
-    exact dif_pos c
+    exact dite_eq_left c
   refine (congrArg (fun z => res hW (pullU h _ z)) (linComb_fin_one_g L k a b)).trans ?_
   refine (congrArg (res hW) (map_zpow (pullU h _) _ k)).trans ((map_zpow (res hW) _ k).trans ?_)
   congr 1

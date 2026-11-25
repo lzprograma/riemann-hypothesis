@@ -1,45 +1,6 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PBData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -240,8 +201,8 @@ def wFun {V : Scheme.{0}} {k : ℕ} (y : Fin (k + 1) → (V ⟶ P.T')) (hy : ∀
     ComposableArrows (Um d Γ(V, ⊤)) k where
   obj i := P.v (y i)
   map {i j} _ := ⟨(P.g _ _ (P.ρ_eq (hy i j)), P.w _ _ (hy i j)), P.gv _ _ _ _⟩
-  map_id i := Subtype.ext (Prod.ext (P.g_self _ _) (P.w_self _ _))
-  map_comp {i j l} _ _ := Subtype.ext (Prod.ext (P.g_coc _ _ _ _ _).symm (P.w_coc _ _ _ _ _).symm)
+  map_id _ := Subtype.ext (Prod.ext (P.g_self _ _) (P.w_self _ _))
+  map_comp {_ _ _} _ _ := Subtype.ext (Prod.ext (P.g_coc _ _ _ _ _).symm (P.w_coc _ _ _ _ _).symm)
 
 theorem wFun_res {U V : Scheme.{0}} {k : ℕ} (s : V ⟶ U) (y : Fin (k + 1) → (U ⟶ P.T'))
     (hy : ∀ i j, y i ≫ P.e = y j ≫ P.e) (y' : Fin (k + 1) → (V ⟶ P.T'))

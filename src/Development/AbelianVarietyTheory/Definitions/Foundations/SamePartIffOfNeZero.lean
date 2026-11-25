@@ -110,15 +110,6 @@ theorem _root_.GlobalTheory.BadShare.bb_iff {g N l : ℕ} :
   · rintro ⟨hp, d, h1, h2, hq⟩
     exact ⟨d, h1, h2, hp, hq⟩
 
-theorem bb_of_dvd {g N l d : ℕ} (hl : l.Prime) (h1 : 1 ≤ d) (h2 : d ≤ N) (h0 : g ^ d - 1 ≠ 0) (h3 : l ∣ g ^ d - 1)
-    (h4 : g ^ d < l ^ 4) : BB g N l := by
-  haveI := Fact.mk hl
-  refine bb_iff.2 (Or.inr ⟨hl, d, h1, h2, h4.trans_le (Nat.pow_le_pow_right hl.pos ?_)⟩)
-  have hval : 1 ≤ padicValNat l (g ^ d - 1) := by
-    rw [Nat.padicValNat_def]
-    exact one_le_multiplicity_of_dvd h0 h3
-  omega
-
 section part
 variable {k : Type} [Field k] {l : ℕ}
 
@@ -313,8 +304,7 @@ theorem _root_.GlobalTheory.BadShare.good_iff {ι : Type} {m N : ℕ} {ch : ι �
     have hS : ∀ w, Squarefree (F w) := fun w => (_root_.GlobalTheory.BadShare.mem_sqSet.1 (h1 w)).2.2.1
     have hD : ∀ a : ℕ, 1 ≤ a → 2 * a ≤ N → ∃ w, ¬∃ q : (ZMod g)[X], q ∣ F w ∧ q.natDegree = a := by
       intro a ha1 ha2
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact h4 ⟨a, ha1, ha2, hc⟩
     exact ⟨⟨hA, hS, fun l hl hB w => h2 w l hl hB, fun l hl hlg w j => (h3 w j).1 l hl hlg, hD, v, hv⟩,
       ⟨hA, hS, fun l hl hB w => h2 w l hl hB, fun l hl hlg w j => (h3 w j).2 l hl hlg, hD, v, hv⟩⟩

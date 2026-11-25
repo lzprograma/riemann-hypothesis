@@ -157,7 +157,7 @@ theorem _root_.GlobalTheory.Proof.localUnfoldingIntegrand_boundedSchwartz.integr
     obtain ⟨⟨l, s⟩, hf⟩ := i
     have hentry := hint s l
     simpa only [LinearMap.smul_apply, Pi.smul_apply, smul_eq_mul,
-      _root_.GlobalTheory.QNormal.linearMap_unfolding_apply_single, dif_pos hf] using hentry
+      _root_.GlobalTheory.QNormal.linearMap_unfolding_apply_single, dite_eq_left hf] using hentry
   · have hfree := _root_.GlobalTheory.Proof.localUnfoldingIntegrand_boundedSchwartz.intHom_freeMap (P := P) hu
     have hPsi_eq : Psi (_root_.Formalism.L2.Col.Loc.xx1 xj (t + (_root_.Formalism.L2.Col.qOf P : E) ^ N • u)) = Psi (_root_.Formalism.L2.Col.Loc.xx1 xj t) := by
       rw [_root_.GlobalTheory.Proof.localUnfoldingIntegrand_boundedSchwartz.periodXX1_add_smul]

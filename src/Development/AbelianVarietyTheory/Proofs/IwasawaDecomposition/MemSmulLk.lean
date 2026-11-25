@@ -148,8 +148,6 @@ end Gen
 
 section Dd
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {u : D.what₂.Word}
 
 theorem mem_Ld (i : ℕ) (hi : i ≤ D.R.m) (c : (D.mem u).C.cls i) (z : (D.sp.X i).V) :
@@ -165,24 +163,6 @@ theorem mem_Lk (A : AtTTied u) (i : ℕ) (hi : i ≤ D.R.m) (v : (D.mem u).A.vT)
     rw [lc_sup, lc_smul]
     exact congrArg₂ (· ⊔ ·) rfl (congrArg (A.Pv v • ·) (dual_co D.sp.cm (D.sp.X i) (rankN D i hi) (D.clsLat u i c)))
   rw [← e]
-  exact (mem_lc (D.sp.X i) (rankN D i hi) _ z).symm
-
-theorem mem_smul_Ld (Q : Ideal (𝓞 D.host.E)) (i : ℕ) (hi : i ≤ D.R.m) (c : (D.mem u).C.cls i) (z : (D.sp.X i).V) :
-    z ∈ Q • Formalism.L2.Herm.Ld D u i c ↔ crdN D i hi z ∈ Q • Ld D u i hi c := by
-  have e : lc (D.sp.X i) (rankN D i hi) (Q • Formalism.L2.Herm.Ld D u i c) = Q • Ld D u i hi c := by
-    rw [lc_smul]
-    exact congrArg (Q • ·) (dual_co D.sp.cm (D.sp.X i) (rankN D i hi) (D.clsLat u i c))
-  rw [← e]
-  exact (mem_lc (D.sp.X i) (rankN D i hi) _ z).symm
-
-theorem mem_smul_Lk (A : AtTTied u) (i : ℕ) (hi : i ≤ D.R.m) (v : (D.mem u).A.vT) (c : (D.mem u).C.cls i)
-    (z : (D.sp.X i).V) : z ∈ A.Pv v • Formalism.L2.Herm.Lk D u (A.Pv v) i c ↔ crdN D i hi z ∈ A.Pv v • Lk A i hi v c := by
-  have e : lc (D.sp.X i) (rankN D i hi) (Formalism.L2.Herm.Lk D u (A.Pv v) i c) = Lk A i hi v c := by
-    rw [lc_sup, lc_smul]
-    exact congrArg₂ (· ⊔ ·) rfl (congrArg (A.Pv v • ·) (dual_co D.sp.cm (D.sp.X i) (rankN D i hi) (D.clsLat u i c)))
-  have e2 : lc (D.sp.X i) (rankN D i hi) (A.Pv v • Formalism.L2.Herm.Lk D u (A.Pv v) i c) = A.Pv v • Lk A i hi v c := by
-    rw [lc_smul, e]
-  rw [← e2]
   exact (mem_lc (D.sp.X i) (rankN D i hi) _ z).symm
 
 theorem crdN_osmul (i : ℕ) (hi : i ≤ D.R.m) (a : 𝓞 D.host.E) (z : (D.sp.X i).V) :
@@ -224,22 +204,12 @@ theorem prkH_eq {i : ℕ} (hi : i ≤ D.R.m) (v : (D.mem u).A.vT) (c : (D.mem u)
 theorem toLd_smul {i : ℕ} (hi : i ≤ D.R.m) (c : (D.mem u).C.cls i) (a : 𝓞 D.host.E) (z : Formalism.L2.Herm.Ld D u i c) :
     toLd i hi c (a • z) = a • toLd i hi c z := Subtype.ext (crdN_osmul i hi a z.1)
 
-theorem toLk_smul {i : ℕ} (hi : i ≤ D.R.m) (v : (D.mem u).A.vT) (c : (D.mem u).C.cls i) (a : 𝓞 D.host.E)
-    (z : Formalism.L2.Herm.Lk D u (A.Pv v) i c) : toLk A i hi v c (a • z) = a • toLk A i hi v c z :=
-  Subtype.ext (crdN_osmul i hi a z.1)
-
 theorem toLd_surj {i : ℕ} (hi : i ≤ D.R.m) (c : (D.mem u).C.cls i) : Function.Surjective (toLd (u := u) i hi c) := fun z =>
   ⟨⟨(crdN D i hi).symm z.1, (mem_Ld i hi c _).2 (by simpa using z.2)⟩, Subtype.ext (by simp [toLd])⟩
-
-theorem toLk_surj {i : ℕ} (hi : i ≤ D.R.m) (v : (D.mem u).A.vT) (c : (D.mem u).C.cls i) :
-    Function.Surjective (toLk A i hi v c) := fun z =>
-  ⟨⟨(crdN D i hi).symm z.1, (mem_Lk A i hi v c _).2 (by simpa using z.2)⟩, Subtype.ext (by simp [toLk])⟩
 
 end Dd
 
 section Mk
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {u : D.what₂.Word} (A : AtTTied u) (P : ∀ i hi, LvTied u A i hi)
 
@@ -297,10 +267,6 @@ theorem crdN_gx (i : ℕ) (hi : i ≤ D.R.m) (γ : UJ (sigD D : D.host.E →+* D
     crdN D i hi ((gx i hi γ).1 x) = γ.1.1 *ᵥ crdN D i hi x :=
   co_lin (D.sp.X i) (rankN D i hi) γ.1 x
 
-theorem hT_crdN (i : ℕ) (hi : i ≤ D.R.m) (x y : (D.sp.X i).V) :
-    (D.sp.X i).hT x y = hform (sigD D : D.host.E →+* D.host.E) (gramN D i hi) (crdN D i hi x) (crdN D i hi y) :=
-  hT_co D.sp.cm (D.sp.X i) (rankN D i hi) x y
-
 theorem lc_gmap (i : ℕ) (hi : i ≤ D.R.m) (γ : UJ (sigD D : D.host.E →+* D.host.E) (gramN D i hi))
     (L : Submodule (𝓞 D.host.E) (D.sp.X i).V) :
     (Formalism.HermitianLatticesTheory.gmap (gx i hi γ).1 L).map ((crdN D i hi : (D.sp.X i).V →ₗ[D.host.E] (Fin (D.R.N i) → D.host.E)).restrictScalars (𝓞 D.host.E)) =
@@ -347,7 +313,6 @@ def mkAtT (he : A.eV = e)
     rw [Ideal.mem_comap, ← he]
     exact ((A.res_v v x).symm)
   res := A.res
-  res_surj := A.res_surj
   res_ker _ := rfl
   res_F := hF
   seen := hseen
@@ -361,74 +326,15 @@ def mkAtT (he : A.eV = e)
     by_cases hi : i ≤ D.R.m
     · rw [prH_eq A P hi, prH_eq A P hi, toLd_smul, (P i hi).pr_smul]
     · simp [prH, hi]
-  pr_ker i hi v c y := by
-    rw [prH_eq A P hi, (P i hi).pr_ker]
-    exact (mem_smul_Ld _ i hi c y.1).symm
-  fv_ker i hi v c y := by
-    rw [prH_eq A P hi, (P i hi).fv_ker]
-    exact (mem_Lk A i hi v c y.1).symm
   prk := prkH A P
-  prk_surj i hi v c x := by
-    obtain ⟨z, rfl⟩ := (P i hi).prk_surj v c x
-    obtain ⟨y, rfl⟩ := toLk_surj A hi v c z
-    exact ⟨y, prkH_eq A P hi v c y⟩
-  prk_smul i v c a y := by
-    by_cases hi : i ≤ D.R.m
-    · rw [prkH_eq A P hi, prkH_eq A P hi, toLk_smul, (P i hi).prk_smul]
-    · simp only [prkH, dif_neg hi, AddMonoidHom.zero_apply, smul_zero]
-  prk_ker i hi v c y := by
-    rw [prkH_eq A P hi, (P i hi).prk_ker]
-    exact (mem_smul_Lk A i hi v c y.1).symm
-  te_tie i hi v c y h1 h := by
-    rw [prkH_eq A P hi]
-    have hk : crdN D i hi (((D.mem u).A.T : D.host.E) • (y : (D.sp.X i).V)) =
-        (((D.mem u).A.T : ℕ) : 𝓞 D.host.E) • (toLd i hi c y).1 := by
-      rw [map_smul, Nat.cast_smul_eq_nsmul, Nat.cast_smul_eq_nsmul]
-      rfl
-    refine Eq.trans ?_ ((P i hi).te v c (toLd i hi c y) (by rw [prH_eq A P hi] at h1; exact h1)
-      (hk ▸ (mem_Lk A i hi v c _).1 h))
-    exact congrArg _ (Subtype.ext hk)
   upG := upG
-  up_tie i hi v c y h := hup i hi v c y h
   dnG := dnG
-  dn_tie i hi v c g h := hdn i hi v c g h
   dilG := dilG
-  dil_tie i hi v a c := hdil i hi v a c
   lattice₂ := lattice₂
   levP := levP
   clsP := clsP
   z0 := (crdN D D.R.m le_rfl).symm Tl.z0
-  cocycle_zero_mem_invariants := by
-    obtain ⟨a, ha⟩ := Tl.lastCoordinateUniformizerVector_spans_orthogonal_line
-    refine Submodule.mem_span_singleton.2 ⟨a, ?_⟩
-    rw [ha, LinearEquiv.eq_symm_apply, map_smul]
-    rfl
-  hermitianForm_lastCoordinateUniformizerVector_self := by
-    rw [hT_crdN D.R.m le_rfl, LinearEquiv.apply_symm_apply]
-    exact Tl.hermitianForm_lastCoordinateUniformizerVector_self
   tilG c := gx D.R.m le_rfl (Tl.ga c)
-  til_tie c := by
-    refine ⟨?_, fun v z a ha => ?_⟩
-    · refine Submodule.map_injective_of_injective (f := ((crdN D D.R.m le_rfl : (D.sp.X D.R.m).V →ₗ[D.host.E] (Fin (D.R.N D.R.m) → D.host.E)).restrictScalars (𝓞 D.host.E)))
-        (crdN D D.R.m le_rfl).injective ?_
-      have h1 := Tl.til_lat c
-      rw [hlat c] at h1
-      rw [lc_gmap, Submodule.map_sup, Submodule.map_span, Set.image_singleton]
-      refine h1.trans ?_
-      refine congrArg₂ (· ⊔ ·) ?_ ?_
-      · rw [← Submodule.map_comp, ← Submodule.map_comp]
-        refine congrArg (fun f => Submodule.map f (lattice₂ c)) (LinearMap.ext fun y => ?_)
-        show iXc D (crdP D y) = crdN D D.R.m le_rfl (D.sp.iX' y)
-        have e3 : (D.sp.X'.frame.equivFun.trans (LinearEquiv.funCongrLeft D.host.E D.host.E (finCongr (rankP D)).symm)).symm (crdP D y) = y :=
-          (crdP D).symm_apply_apply y
-        simp only [iXc, LinearMap.comp_apply, LinearEquiv.coe_coe]
-        rw [e3]
-        rfl
-      · simp
-    · rw [prH_eq A P le_rfl]
-      refine Tl.til_fv v c (toLd _ le_rfl _ z) a ?_
-      rw [ha, hT_crdN D.R.m le_rfl, LinearEquiv.apply_symm_apply, crdN_gx]
-      rfl
 
 def AdOf {D : D7} (H : Formalism.L2.Herm.HermColsCh D) (u : D.what₂.Word) :
     ∀ i, (D.mem u).C.cls i → (D.mem u).C.cls i → Formalism.L2.Herm.GX D i → (D.mem u).A.vT → Prop

@@ -16,8 +16,6 @@ namespace Formalism.L2.SG.RealObj.EnergyInst
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.Pf.EnergyAbs
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def tauU {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u : D.what₂.Word) (s : X.B.I.Ginf) : X.Vpi u →L[ℂ] X.Vpi u :=
   X.psiInfU u s • X.piU u s
 

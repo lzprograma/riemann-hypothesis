@@ -35,8 +35,7 @@ theorem no_line {K : Type} [Field K] [NumberField K] {r : ℕ} (L : Submodule (�
   classical
   obtain ⟨S, hS⟩ := hL
   obtain ⟨i, hi⟩ : ∃ i, x i ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hx (funext h)
   obtain ⟨⟨b, hb⟩, hbint⟩ := IsLocalization.exist_integer_multiples_of_finset (nonZeroDivisors (𝓞 K))
     (S.biUnion fun v => Finset.univ.image v)

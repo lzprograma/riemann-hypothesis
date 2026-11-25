@@ -1,11 +1,12 @@
 module
 
+
+import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ChartGramPolar
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
 public import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 public import Mathlib.Algebra.Group.ForwardDiff
 public import Mathlib.Analysis.Matrix.Hermitian
 import Mathlib.Tactic.TypeStar
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.HasFDerivAtMvPolynomialEval, ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ComplexHessianTransposeIsHermitian
 
@@ -18,7 +19,6 @@ namespace ReciprocityTheory.ChartRestriction.G.ArakelovGeometry
 
 open ReciprocityTheory.ChartRestriction.G.Geo MvPolynomial Complex Filter Topology Finset Matrix
 
-open MvPolynomial Complex Filter Topology
 
 section
 
@@ -100,28 +100,7 @@ variable {D : ℕ}
 
 theorem mixedDiscriminant_constant (A : Matrix (Fin D) (Fin D) ℂ) :
     mixedDisc (fun _ => A) = A.det := by
-  show (1 / (D.factorial : ℂ)) * ∑ S : Finset (Fin D), (-1) ^ (D - S.card) * (∑ _k ∈ S, A).det = A.det
-  have h1 : ∀ S : Finset (Fin D), (-1 : ℂ) ^ (D - S.card) * (∑ _k ∈ S, A).det =
-      ((-1 : ℂ) ^ (D - S.card) * (S.card : ℂ) ^ D) * A.det := by
-    intro S
-    rw [Finset.sum_const, ← Nat.cast_smul_eq_nsmul ℂ, Matrix.det_smul, Fintype.card_fin]
-    ring
-  simp_rw [h1]
-  rw [← Finset.sum_mul]
-  have h2 : ∑ S : Finset (Fin D), (-1 : ℂ) ^ (D - S.card) * (S.card : ℂ) ^ D = D.factorial := by
-    have h3 := congrFun (fwdDiff_iter_eq_factorial (R := ℂ) (n := D)) 0
-    rw [fwdDiff_iter_eq_sum_shift] at h3
-    rw [← Finset.powerset_univ,
-      Finset.sum_powerset_apply_card (fun k => (-1 : ℂ) ^ (D - k) * (k : ℂ) ^ D),
-      Finset.card_univ, Fintype.card_fin]
-    simp only [Pi.natCast_apply, zero_add, nsmul_eq_mul, mul_one, zsmul_eq_mul] at h3
-    rw [← h3]
-    refine Finset.sum_congr rfl fun k _ => ?_
-    push_cast
-    ring
-  rw [h2]
-  have : (D.factorial : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (Nat.factorial_ne_zero D)
-  field_simp
+  apply GroundTheory.Heights₂.Heights.ChartGram.mixedDisc_const <;> assumption
 
 theorem complexHessian_transpose_isHermitian {φ : (Fin D → ℂ) → ℝ} {y : Fin D → ℂ} (h : IsSymmSndFDerivAt ℝ φ y) (c : ℝ) :
     ((c : ℂ) • (cxHessian φ y).transpose).IsHermitian := by

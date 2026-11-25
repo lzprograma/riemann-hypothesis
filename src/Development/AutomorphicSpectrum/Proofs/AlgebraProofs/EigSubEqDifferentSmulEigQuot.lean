@@ -4,45 +4,7 @@ public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.Lat
 public import Mathlib.Algebra.AffineMonoid.Basic
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DifferentGeneratorDualIntegral
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RelatedPairsOrbitalTermEq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
+import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LinearIndependentEigProj
 
 @[expose] public section
 
@@ -55,12 +17,6 @@ open Module NumberField GlobalTheory.CompanionTheory.Ar.HT
 variable {A K : Type} [CommRing A] [Field K] [Algebra A K]
   {V : Type} [AddCommGroup V] [Module K V] [Module A V] [IsScalarTower A K V]
   {E : Type} [Field E] [NumberField E]
-
-omit [NumberField E] in
-theorem apply_of_mem_eigSp (ρ : 𝓞 E →+* Module.End K V) (σ : E →+* K) {x : V}
-    (hx : x ∈ eigSp ρ σ) (a : 𝓞 E) : ρ a x = σ (a : E) • x := by
-  have := (Submodule.mem_iInf _).1 hx a
-  simpa [sub_eq_zero] using this
 
 theorem sum_smul_eigProj (ρ : 𝓞 E →+* Module.End K V) (σ : E →+* K) {N : ℕ} (t : Fin N → V)
     (y : Fin N → K) :
@@ -90,20 +46,7 @@ theorem eigSub_eq_different_smul_eigQuot : ∀ (A K : Type) [CommRing A] [Field 
   obtain ⟨he1, he2, -, he4⟩ := ProjEig.eigProj_spec K V E ρ σ
   obtain ⟨hd0, hd1, u, hu⟩ := _root_.GlobalTheory.CompanionTheory.Ar.HT.different_generator_dualInt A K E σ d hinj hσ hd
   have hQ : eigQuot ρ σ X = Submodule.span A (Set.range fun i => eigProj ρ σ (t i)) := by
-    apply le_antisymm
-    · unfold eigQuot
-      rw [hX.2.2, Submodule.map_span_le]
-      rintro _ ⟨⟨i, k⟩, rfl⟩
-      obtain ⟨a, ha⟩ := hσ (RingOfIntegers.basis E k)
-      have : eigProj ρ σ (ρ (RingOfIntegers.basis E k) (t i)) = a • eigProj ρ σ (t i) := by
-        rw [← Module.End.mul_apply, he4, Module.End.mul_apply,
-          apply_of_mem_eigSp ρ σ (he1 _), ← ha, IsScalarTower.algebraMap_smul]
-      simp only [LinearMap.restrictScalars_apply]
-      rw [this]
-      exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
-    · rw [Submodule.span_le]
-      rintro _ ⟨i, rfl⟩
-      exact ⟨t i, mem_of_isFreeOn ρ X t hX i, rfl⟩
+    apply _root_.GlobalTheory.CompanionTheory.Ar.Flat.HodgeDeterminantLattice.eigQuot_eq_span <;> assumption
   have hli : LinearIndependent K (fun i => eigProj ρ σ (t i)) := by
     rw [Fintype.linearIndependent_iff]
     intro y hy i

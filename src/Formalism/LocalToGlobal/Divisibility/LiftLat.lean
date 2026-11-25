@@ -171,12 +171,6 @@ structure BlockHyp {K : Type} [Field K] [NumberField K] [StarRing K] {G : Type} 
 
   ok : B.Ok s
 
-def LiftLattices : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (G : Type) [Group G] [Fintype G] (Pl0 : Type)
-    (B : BlockDat K G Pl0) (ℓ : Lvl K G) (Z : Submodule K B.S.Forms) (v0 : InfinitePlace K) (s : ℕ), BlockHyp B ℓ v0 s →
-    Submodule.IsLattice K (B.Tl ℓ Z) ∧ Submodule.IsLattice K (B.cutZ ℓ Z) ∧ Submodule.IsLattice K (B.delZ ℓ Z) ∧
-      B.delZ ℓ Z ≤ B.cutZ ℓ Z ∧ B.cutZ ℓ Z ≤ B.Tl ℓ Z
-
 def BoundsIVAt : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (G : Type) [Group G] [Fintype G] (Pl0 : Type)
     (B : BlockDat K G Pl0) (ℓ : Lvl K G) (Z : Submodule K B.S.Forms) (v0 : InfinitePlace K) (s : ℕ), BlockHyp B ℓ v0 s →

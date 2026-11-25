@@ -11,53 +11,7 @@ public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsG
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagModelCommonRefinement
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCptGen
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtLocalOrderFraction
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Dimension.OrzechProperty
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkMap
 
@@ -255,7 +209,7 @@ namespace GlobalTheory.CompanionTheory.Ar
 theorem isFlagVBOn_inter_of_steps : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Spec (CommRingCat.of Ω) ⟶ X) (E : Type) [AddCommGroup E] [Module Ω E] (L : Lat ξ E) (T : Set (Cpt ξ)) (g r : ℕ) (W : Submodule Ω E) (b₀ : Fin r → E), LinearIndependent Ω b₀ → (∀ k, b₀ k ∈ W) → L.IsVBOn T g W → (∀ n : ℕ, ∃ s W', (L.map (flagStep Ω b₀ n).mkQ).IsVBOn T s W') → (L.inter (Submodule.span Ω (Set.range b₀))).IsFlagVBOn T b₀ := by
   intro X Ω _ ξ E _ _ L T g r W b₀ hli hW hL hq p hp
   classical
-  haveI : IsLocalRing (regAt ξ p) := (_root_.GlobalTheory.CompanionTheory.Ar.regAt_local_mono_frac X Ω ξ).1 p
+  haveI : IsLocalRing (regAt ξ p) := (_root_.PositivityTheory.HtPt.Ma.reg_local X Ω ξ).1 p
   have hFW : ∀ n, flagStep Ω b₀ n ≤ W := fun n =>
     Submodule.span_le.2 (by
       rintro _ ⟨k, -, rfl⟩
@@ -301,8 +255,8 @@ theorem isFlagVBOn_inter_of_steps : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] 
   have hcoh : (L.inter (Submodule.span Ω (Set.range b₀))).IsCohOn T := by
     have hvb := (hv r).1
     rw [← hV] at hvb
-    exact (_root_.GlobalTheory.CompanionTheory.Ar.coh_vb_images_sums_multiples X Ω ξ E E (L.inter (Submodule.span Ω (Set.range b₀))) (L.inter (Submodule.span Ω (Set.range b₀))) T).1 _ _ hvb
-  obtain ⟨U, hU, hall⟩ := _root_.GlobalTheory.CompanionTheory.Ar.frame_spread_near X Ω ξ E _ T r b p hcoh hp hframe
+    exact (_root_.PositivityTheory.HtPt.Mc.coh_ops X Ω ξ E E (L.inter (Submodule.span Ω (Set.range b₀))) (L.inter (Submodule.span Ω (Set.range b₀))) T).1 _ _ hvb
+  obtain ⟨U, hU, hall⟩ := _root_.PositivityTheory.HtPt.Mc.frame_spread X Ω ξ E _ T r b p hcoh hp hframe
   exact ⟨U, hU, b, hflag, hall⟩
 
 end GlobalTheory.CompanionTheory.Ar
@@ -400,7 +354,7 @@ theorem flagModel : FlagModelStatement := by
     rw [← hW]
     exact FiniteDimensional.span_of_finite Ω (Set.finite_range b)
   obtain ⟨κ', hκ', y, M', f, hdom, hnorm, hchart, hvb, hat⟩ :=
-    _root_.GlobalTheory.CompanionTheory.Relay.flag_model_common_refinement o Ω κ x M A κa w (Σ σ, Fin (r σ + 1))
+    _root_.PositivityTheory.HtPt.Mb.LTopCommon.exists_common_normal_model o Ω κ x M A κa w (Σ σ, Fin (r σ + 1))
       (fun q => E ⧸ flagStep Ω (b₀ q.1) q.2)
       (fun q => (L q.1).map (flagStep Ω (b₀ q.1) q.2).mkQ)
       (fun q => (W q.1).map (flagStep Ω (b₀ q.1) q.2).mkQ) hw

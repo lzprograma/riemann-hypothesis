@@ -4,45 +4,8 @@ public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalP
 public import Mathlib.AlgebraicGeometry.Morphisms.Flat
 public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -52,63 +15,25 @@ open CategoryTheory AlgebraicGeometry CategoryTheory.Limits
 
 namespace FunctorialResolution.EmbeddedResolution
 
-private theorem map_mem_nonZeroDivisors_of_flat {R S : Type u} [CommRing R] [CommRing S]
-    (φ : R →+* S) (hφ : φ.Flat) {s : R} (hs : s ∈ nonZeroDivisors R) :
-    φ s ∈ nonZeroDivisors S := by
-  let _ : Algebra R S := φ.toAlgebra
-  have : Module.Flat R S := hφ
-  have hmul : ∀ x : S, φ s * x = s • x := by
-    intro x
-    rw [Algebra.smul_def, RingHom.algebraMap_toAlgebra]
-  have hs1 : ∀ x : R, s * x = 0 → x = 0 := (mem_nonZeroDivisors_iff.mp hs).1
-  have hL : Function.Injective (LinearMap.mulLeft R s) := by
-    intro a b hab
-    have h1 : s * a = s * b := by
-      simpa only [LinearMap.mulLeft_apply] using hab
-    have h2 : s * (a - b) = 0 := by rw [mul_sub, h1, sub_self]
-    exact sub_eq_zero.mp (hs1 _ h2)
-  have hinj : Function.Injective ((LinearMap.mulLeft R s).rTensor S) :=
-    Module.Flat.rTensor_preserves_injective_linearMap (M := S) _ hL
-  have key : ∀ t : S, φ s * t = 0 → t = 0 := by
-    intro t ht
-    have hsmul : s • t = 0 := by rw [← hmul t]; exact ht
-    have e1 : TensorProduct.tmul R s t = (0 : TensorProduct R R S) := by
-      have h3 : TensorProduct.tmul R s t = TensorProduct.tmul R (1 : R) (s • t) := by
-        rw [← TensorProduct.smul_tmul, smul_eq_mul, mul_one]
-      rw [h3, hsmul, TensorProduct.tmul_zero]
-    have e0 : ((LinearMap.mulLeft R s).rTensor S) (TensorProduct.tmul R (1 : R) t)
-        = ((LinearMap.mulLeft R s).rTensor S) 0 := by
-      rw [LinearMap.rTensor_tmul, map_zero, LinearMap.mulLeft_apply, mul_one]
-      exact e1
-    have h1 : TensorProduct.tmul R (1 : R) t = (0 : TensorProduct R R S) := hinj e0
-    have h2 : (TensorProduct.lid R S) (TensorProduct.tmul R (1 : R) t)
-        = (TensorProduct.lid R S) 0 := by rw [h1]
-    rwa [TensorProduct.lid_tmul, one_smul, map_zero] at h2
-  exact mem_nonZeroDivisors_iff.mpr
-    ⟨key, fun t ht => key t (by rw [mul_comm]; exact ht)⟩
-
-private theorem exists_affineOpen_mem_le {Y : Scheme.{u}} (y : Y) (W : Y.Opens) (hy : y ∈ W) :
-    ∃ V : Y.affineOpens, y ∈ (V : Y.Opens) ∧ (V : Y.Opens) ≤ W := by
-  obtain ⟨V, hVmem, hyV, hVle⟩ :=
-    TopologicalSpace.Opens.isBasis_iff_nbhd.mp Y.isBasis_affineOpens hy
-  exact ⟨⟨V, hVmem⟩, hyV, hVle⟩
-
 theorem _root_.FunctorialResolution.Blowup.IsLocallyGeneratedByNonZeroDivisor.comap_of_flat {X Y : Scheme.{u}} {D : X.IdealSheafData}
     (hD : FunctorialResolution.Blowup.IsLocallyGeneratedByNonZeroDivisor D) (f : Y ⟶ X) [AlgebraicGeometry.Flat f] :
     FunctorialResolution.Blowup.IsLocallyGeneratedByNonZeroDivisor (D.comap f) := by
   unfold FunctorialResolution.Blowup.IsLocallyGeneratedByNonZeroDivisor at hD ⊢
   intro y
   obtain ⟨U, s, hxU, hs, hUs⟩ := hD (f.base y)
-  obtain ⟨V, hyV, hVle⟩ :=
-    EmbeddedResolution.exists_affineOpen_mem_le y (f ⁻¹ᵁ (U : X.Opens))
-      (show y ∈ f ⁻¹ᵁ (U : X.Opens) from hxU)
-  have hU2 : IsAffineOpen (U : X.Opens) := U.2
-  have hV2 : IsAffineOpen (V : Y.Opens) := V.2
-  have hflat : (Scheme.Hom.appLE f (U : X.Opens) (V : Y.Opens) hVle).hom.Flat := by
-    apply AlgebraicGeometry.Scheme.Hom.flat_appLE <;> assumption
-  refine ⟨V, (Scheme.Hom.appLE f (U : X.Opens) (V : Y.Opens) hVle).hom s, hyV, ?_, ?_⟩
-  · exact _root_.FunctorialResolution.EmbeddedResolution.map_mem_nonZeroDivisors_of_flat _ hflat hs
-  · rw [Scheme.IdealSheafData.comap_ideal_eq_map_appLE D f U V hVle, hUs, Ideal.map_span,
+  obtain ⟨V, hV2, hyV, hVle⟩ :=
+    exists_isAffineOpen_mem_and_subset (x := y) (U := f ⁻¹ᵁ (U : X.Opens)) hxU
+  let V' : Y.affineOpens := ⟨V, hV2⟩
+  have hflat : (Scheme.Hom.appLE f (U : X.Opens) (V' : Y.Opens) hVle).hom.Flat :=
+    Scheme.Hom.flat_appLE f U.2 hV2 hVle
+  refine ⟨V', (Scheme.Hom.appLE f (U : X.Opens) (V' : Y.Opens) hVle).hom s, hyV, ?_, ?_⟩
+  · let _ := (Scheme.Hom.appLE f (U : X.Opens) (V' : Y.Opens) hVle).hom.toAlgebra
+    have : Module.Flat Γ(X, U.1) Γ(Y, V'.1) := hflat
+    have hreg : IsSMulRegular Γ(Y, V'.1) s := Module.Flat.isSMulRegular_of_nonZeroDivisors hs
+    refine mem_nonZeroDivisors_iff.mpr ⟨fun t ht => ?_, fun t ht => ?_⟩
+    · exact hreg (show s • t = s • 0 by rw [Algebra.smul_def, RingHom.algebraMap_toAlgebra, ht, smul_zero])
+    · exact hreg (show s • t = s • 0 by rw [Algebra.smul_def, RingHom.algebraMap_toAlgebra, mul_comm, ht, smul_zero])
+  · rw [Scheme.IdealSheafData.comap_ideal_eq_map_appLE D f U V' hVle, hUs, Ideal.map_span,
       Set.image_singleton]
 
 theorem _root_.FunctorialResolution.Blowup.IsBlowupAlongIdealSheaf.pullback_snd_of_flat {X Y B : Scheme.{u}} {π : B ⟶ X}

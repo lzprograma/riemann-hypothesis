@@ -2,47 +2,7 @@ module
 
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Measures
 public import Mathlib.LinearAlgebra.TensorProduct.Prod
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -135,42 +95,31 @@ instance ctsSMulTens (R : Type) [CommRing R] [Algebra F R] [TopologicalSpace R] 
 instance ctsAddTens (R : Type) [CommRing R] [Algebra F R] [TopologicalSpace R] :
     ContinuousAdd (R ⊗[F] E) := ModuleTopology.continuousAdd R (R ⊗[F] E)
 
-private theorem continuous_moduleTopology_of_semilinear {R S M N : Type*} [CommRing R] [CommRing S] [TopologicalSpace R]
-    [TopologicalSpace S] [AddCommGroup M] [Module R M] [AddCommGroup N] [Module S N] [tN : TopologicalSpace N]
-    [ContinuousSMul S N] [ContinuousAdd N] (g : R → S) (hg : Continuous g) (f : M →+ N)
-    (hf : ∀ (a : R) (x : M), f (a • x) = g a • f x) :
-    @Continuous M N (moduleTopology R M) tN f := by
-  letI t : TopologicalSpace M := TopologicalSpace.induced f tN
-  have h1 : @ContinuousSMul R M _ _ t := by
-    constructor
-    rw [continuous_induced_rng]
-    exact ((hg.comp continuous_fst).smul (continuous_induced_dom.comp continuous_snd)).congr
-      fun p => (hf p.1 p.2).symm
-  have h2 : @ContinuousAdd M t _ := by
-    constructor
-    rw [continuous_induced_rng]
-    exact ((continuous_induced_dom.comp continuous_fst).add (continuous_induced_dom.comp continuous_snd)).congr
-      fun p => (map_add f p.1 p.2).symm
-  rw [continuous_iff_le_induced]
-  exact sInf_le ⟨h1, h2⟩
+theorem continuous_first_factor_proj : Continuous (q1 (F := F) (E := E) R1 R2) :=
+  IsModuleTopology.continuous_of_distribMulActionHomₑ
+    (σ := MonoidHom.fst R1 R2) continuous_fst
+    { toAddMonoidHom := (q1 (F := F) (E := E) R1 R2).toAddMonoidHom
+      map_smul' := prodFirstProjection_smul R1 R2 }
 
-theorem continuous_first_factor_proj : Continuous (q1 (F := F) (E := E) R1 R2) := by
-  exact continuous_moduleTopology_of_semilinear Prod.fst continuous_fst (q1 (F := F) (E := E) R1 R2).toAddMonoidHom (prodFirstProjection_smul R1 R2)
+theorem continuous_second_factor_proj : Continuous (q2 (F := F) (E := E) R1 R2) :=
+  IsModuleTopology.continuous_of_distribMulActionHomₑ
+    (σ := MonoidHom.snd R1 R2) continuous_snd
+    { toAddMonoidHom := (q2 (F := F) (E := E) R1 R2).toAddMonoidHom
+      map_smul' := second_factor_proj_smul R1 R2 }
 
-theorem continuous_second_factor_proj : Continuous (q2 (F := F) (E := E) R1 R2) := by
-  exact continuous_moduleTopology_of_semilinear Prod.snd continuous_snd (q2 (F := F) (E := E) R1 R2).toAddMonoidHom (second_factor_proj_smul R1 R2)
+theorem continuous_first_factor_incl : Continuous (j1 (F := F) (E := E) R1 R2) :=
+  IsModuleTopology.continuous_of_distribMulActionHomₑ
+    (σ := MonoidHom.inl R1 R2) (continuous_id.prodMk continuous_const)
+    { toAddMonoidHom := AddMonoidHom.mk' (j1 (F := F) (E := E) R1 R2) fun x y => by
+        rw [j1, j1, j1, ← map_add (f := _), Prod.mk_add_mk, add_zero]
+      map_smul' := first_factor_incl_smul R1 R2 }
 
-theorem continuous_first_factor_incl : Continuous (j1 (F := F) (E := E) R1 R2) := by
-  exact continuous_moduleTopology_of_semilinear (fun a : R1 => ((a, 1) : R1 × R2)) (by fun_prop)
-    (AddMonoidHom.mk' (j1 (F := F) (E := E) R1 R2) fun x y => by
-      rw [j1, j1, j1, ← map_add (f := _), Prod.mk_add_mk, add_zero])
-    (first_factor_incl_smul R1 R2)
-
-theorem continuous_second_factor_incl : Continuous (j2 (F := F) (E := E) R1 R2) := by
-  exact continuous_moduleTopology_of_semilinear (fun b : R2 => ((1, b) : R1 × R2)) (by fun_prop)
-    (AddMonoidHom.mk' (j2 (F := F) (E := E) R1 R2) fun x y => by
-      rw [j2, j2, j2, ← map_add (f := _), Prod.mk_add_mk, add_zero])
-    (second_factor_incl_smul R1 R2)
+theorem continuous_second_factor_incl : Continuous (j2 (F := F) (E := E) R1 R2) :=
+  IsModuleTopology.continuous_of_distribMulActionHomₑ
+    (σ := MonoidHom.inr R1 R2) (continuous_const.prodMk continuous_id)
+    { toAddMonoidHom := AddMonoidHom.mk' (j2 (F := F) (E := E) R1 R2) fun x y => by
+        rw [j2, j2, j2, ← map_add (f := _), Prod.mk_add_mk, add_zero]
+      map_smul' := second_factor_incl_smul R1 R2 }
 
 theorem continuous_QQ_symm : Continuous (QQ (F := F) (E := E) R1 R2).symm := by
   exact (((continuous_first_factor_incl R1 R2).comp continuous_fst).add

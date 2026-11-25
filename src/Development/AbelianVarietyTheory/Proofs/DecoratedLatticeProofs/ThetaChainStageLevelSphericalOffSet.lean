@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalLabelOperatorsOnHyperspecialFixedVector
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeKeepsAndCommutes
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsInertPlOfInertOff
@@ -50,7 +51,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct InnerProductSpace ComplexConjugate
 open GlobalTheory.ChainOnto
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -74,20 +74,7 @@ theorem sep_level {c : Com D} {j : ℕ} {s : PiLocalization₂ D} (hs : s.Is c j
 theorem exists_unif_of_F (P : HeightOneSpectrum (𝓞 D.host.E)) :
     ∃ x : 𝓞 D.host.F, ∃ y : 𝓞 D.host.E, (y : D.host.E) = algebraMap D.host.F D.host.E (x : D.host.F) ∧
       y ∈ P.asIdeal ∧ y ∉ P.asIdeal ^ 2 := by
-  haveI := P.isPrime
-  haveI : Algebra.IsUnramifiedAt (𝓞 D.host.F) P.asIdeal :=
-    Algebra.unramified_iff_forall.1 (GlobalTheory.InertOfConj.unram D) ⟨P.asIdeal, P.isPrime⟩
-  have hle : (P.asIdeal.under (𝓞 D.host.F)).map (algebraMap (𝓞 D.host.F) (𝓞 D.host.E)) ≤ P.asIdeal :=
-    Ideal.map_comap_le
-  have h1 : Ideal.ramificationIdx' (P.asIdeal.under (𝓞 D.host.F)) P.asIdeal = 1 := by
-    letI := Localization.AtPrime.algebraOfLiesOver (P.asIdeal.under (𝓞 D.host.F)) P.asIdeal
-    exact (Ideal.IsDedekindDomain.ramificationIdx'_eq_one_iff P.ne_bot hle).2
-      ((Algebra.isUnramifiedAt_iff_map_eq (𝓞 D.host.F) (P.asIdeal.under (𝓞 D.host.F)) P.asIdeal).1 ‹_›).2
-  have h2 : ¬ (P.asIdeal.under (𝓞 D.host.F)).map (algebraMap (𝓞 D.host.F) (𝓞 D.host.E)) ≤ P.asIdeal ^ 2 :=
-    fun h => (Ideal.ramificationIdx'_ne_one_iff hle).2 h h1
-  rw [Ideal.map_le_iff_le_comap] at h2
-  obtain ⟨x, hx, hx2⟩ := SetLike.not_le_iff_exists.1 h2
-  exact ⟨x, algebraMap _ _ x, rfl, Ideal.mem_comap.1 hx, fun h => hx2 (Ideal.mem_comap.2 h)⟩
+  first | exact _root_.GlobalTheory.SphLabelOps.exists_real_unif | exact @_root_.GlobalTheory.SphLabelOps.exists_real_unif | apply _root_.GlobalTheory.SphLabelOps.exists_real_unif <;> assumption
 
 theorem level_spherical_off_S : ∀ D : D7, ForStage D fun c _ s => SphOff (levS s.V s.β s.L) (Lev.levChi s.V s.β s.L) c.S ∧
     SphOff (levS s.V s.β s.L) (fun k => conj (Lev.levChi s.V s.β s.L k)) c.S ∧

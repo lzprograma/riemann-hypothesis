@@ -4,55 +4,8 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.BicechC
 public import Development.AbelianVarietyTheory.Definitions.Divisors.ProdFam
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechAndTotalDifferentialAdditiveSquareZero
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.SimpleRing.Principal
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.BicechCohomologyKunnethDecomposition, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.PKunDec
@@ -61,8 +14,6 @@ import Mathlib.RingTheory.SimpleRing.Principal
 -- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.BicechCohomologyKunnethDecomposition", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.BicechC\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.ProdFam\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechAndTotalDifferentialAdditiveSquareZero\nimport Mathlib.Algebra.Module.StablyFree.Basic\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -381,11 +332,11 @@ def grC [Fintype ι] (F : Finset ι → Submodule k E) (hF : ∀ s t, s.Nonempty
     simp only [LinearMap.restrict_coe_apply, prL_apply, deltaL_apply]
     split_ifs with h
     · refine Finset.sum_congr rfl fun i hi => ?_
-      rw [if_pos]
+      rw [ite_eq_left]
       rw [Finset.card_erase_of_mem hi]
       omega
     · refine Finset.sum_eq_zero fun i hi => ?_
-      rw [if_neg, smul_zero]
+      rw [ite_eq_right, smul_zero]
       rw [Finset.card_erase_of_mem hi]
       have := Finset.card_pos.2 ⟨i, hi⟩
       omega
@@ -463,13 +414,13 @@ theorem sum_iL [Fintype ι] (F : Finset ι → Submodule k E) (a : coch F) : ∑
     · simp [(mem_coch.1 a.2).1]
     · simp [hs, rL_val]
   · intro b _ hb
-    rw [iL_val, if_neg]
+    rw [iL_val, ite_eq_right]
     exact fun h => hb h.2.symm
   · simp
 
 theorem phi_inj [Fintype ι] [Fintype κ] (μ : E →ₗ[k] E' →ₗ[k] E'') (A : Finset ι → Submodule k E)
     (B : Finset κ → Submodule k E') (h : Disjoint₂ μ A B) : Function.Injective (phi μ A B) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro t ht
   have ev : ∀ I J, (TensorProduct.lift (μ.compl₁₂ (A I).subtype (B J).subtype)) ∘ₗ TensorProduct.map (rL A I) (rL B J) =
       LinearMap.proj (I, J) ∘ₗ phi μ A B := by
@@ -496,7 +447,7 @@ theorem val_of_pi [Fintype ι] {F : Finset ι → Submodule k E} (hF : ∀ s t, 
     {a : coch F} (h : (grC F hF).π p a = a) {s : Finset ι} (hs : s.card ≠ p) : a.1 s = 0 := by
   rw [← h]
   show prL k ι E p a.1 s = 0
-  rw [prL_apply, if_neg hs]
+  rw [prL_apply, ite_eq_right hs]
 
 theorem mem_cechC [Fintype ι] {F : Finset ι → Submodule k E} (hF : ∀ s t, s.Nonempty → s ⊆ t → F s ≤ F t) {p : ℕ}
     {a : coch F} (h : (grC F hF).π p a = a) : a.1 ∈ cechC F ((p : ℤ) - 1) := by
@@ -752,7 +703,7 @@ private theorem kd_cech_val {A : Finset ι → Submodule ℂ E} {a : Finset ι �
   unfold cech Cx.Z at ha
   simp [cechC] at ha
   have h := ha.1 s
-  rw [if_neg (fun h' => hs h'.2)] at h
+  rw [ite_eq_right (fun h' => hs h'.2)] at h
   simpa using h
 
 private theorem kd_cech_zero {A : Finset ι → Submodule ℂ E} {a : Finset ι → E} {p : ℤ} (ha : a ∈ (cech A).Z p)
@@ -761,7 +712,7 @@ private theorem kd_cech_zero {A : Finset ι → Submodule ℂ E} {a : Finset ι 
   simp [cechC] at ha
   funext s
   have h := ha.1 s
-  rw [if_neg] at h
+  rw [ite_eq_right] at h
   · simpa using h
   · rintro ⟨hne, hc⟩
     have := hne.card_pos
@@ -828,15 +779,15 @@ private theorem kdTw_mem_bicech_Z_of_mem_acx_Z {ι E E' : Type} [LinearOrder ι]
     simp only [mixF, h.2.1, h.2.2.1] at hm
     simp only [kdTw]
     by_cases hc : I.Nonempty ∧ J.Nonempty ∧ ((I.card + J.card : ℕ) : ℤ) = (d : ℤ) + 2
-    · rw [if_pos hc]
-      rw [if_pos hc.2.2, if_pos ⟨hc.1, hc.2.1⟩] at hm
+    · rw [ite_eq_left hc]
+      rw [ite_eq_left hc.2.2, ite_eq_left ⟨hc.1, hc.2.1⟩] at hm
       exact zsmul_mem hm _
-    · rw [if_neg hc]
+    · rw [ite_eq_right hc]
       have h0 : t (uni I J) = 0 := by
         by_cases h1 : ((I.card + J.card : ℕ) : ℤ) = (d : ℤ) + 2
-        · rw [if_pos h1, if_neg (fun h2 => hc ⟨h2.1, h2.2, h1⟩)] at hm
+        · rw [ite_eq_left h1, ite_eq_right (fun h2 => hc ⟨h2.1, h2.2, h1⟩)] at hm
           simpa using hm
-        · rw [if_neg h1] at hm
+        · rw [ite_eq_right h1] at hm
           simpa using hm
       rw [h0, smul_zero]
       exact Submodule.zero_mem _
@@ -868,16 +819,16 @@ private theorem kdUn_mem_acx_B_of_mem_bicech_B {ι E E' : Type} [LinearOrder ι]
   dsimp only at hw'
   by_cases hc : (lft s).Nonempty ∧ (rgt s).Nonempty ∧
       (((lft s).card + (rgt s).card : ℕ) : ℤ) = (d : ℤ) - 1 + 2
-  · rw [if_pos hc] at hw'
+  · rw [ite_eq_left hc] at hw'
     have hcard : ((s.card : ℕ) : ℤ) = (d : ℤ) + 2 - 1 := by
       rw [hcs]
       have := hc.2.2
       push_cast at this ⊢
       omega
-    rw [if_pos hcard]
-    simp only [mixF, if_pos (And.intro hc.1 hc.2.1)]
+    rw [ite_eq_left hcard]
+    simp only [mixF, ite_eq_left (And.intro hc.1 hc.2.1)]
     exact zsmul_mem hw' _
-  · rw [if_neg hc] at hw'
+  · rw [ite_eq_right hc] at hw'
     have h0 : w (lft s, rgt s) = 0 := by simpa using hw'
     rw [h0, smul_zero]
     exact Submodule.zero_mem _

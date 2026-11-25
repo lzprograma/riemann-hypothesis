@@ -796,14 +796,9 @@ theorem isMultiHomogeneous_mul' {R : Type*} [CommSemiring R] {B n : ℕ} {a a' :
 
 theorem isMultiHomogeneous_one {R : Type*} [CommSemiring R] {B n : ℕ} :
     IsMultiHomogeneous (0 : Fin B → ℕ) (1 : MvPolynomial (Fin B × Fin n) R) := by
-  classical
-  unfold IsMultiHomogeneous
-  intro s hs b
-  rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_one] at hs
-  split_ifs at hs with h
-  · subst h
-    simp
-  · exact absurd rfl hs
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.G.T0.HeightMultiplicativity.multi_one
+    | apply _root_.ReciprocityTheory.ChartRestriction.G.T0.HeightMultiplicativity.multi_one <;> first | assumption | rfl | infer_instance
 
 theorem height_one_eq_zero {K : Type} [Field K] [NumberField K] {B n : ℕ} (hn : 0 < n) :
     h0 (1 : MvPolynomial (Fin B × Fin n) K) = 0 := by
@@ -854,26 +849,9 @@ variable (d : Data K ι Ω WT A)
 theorem ratio_linearCombination_expand (hd : d.AxH 𝒜) (x : Fin (d.N + 1) → K) (c : ι) :
     ratio (Ω := Ω c) (d.wx x c) (d.w (d.jc c) c) =
       ∑ j, algebraMap K (Ω c) (x j) * ratio (Ω := Ω c) (d.w j c) (d.w (d.jc c) c) := by
-  haveI := hd.tower c
-  have hg : d.w (d.jc c) c ≠ 0 := hd.w_base c
-  have hspan : ∀ f ∈ 𝒜 c d.wL, ∃ a : Ω c, f = a • d.w (d.jc c) c := by
-    intro f hf
-    have hne : (⟨d.w (d.jc c) c, hd.w_mem _ c⟩ : 𝒜 c d.wL) ≠ 0 := by
-      intro h0
-      exact hg (congrArg Subtype.val h0)
-    obtain ⟨a, ha⟩ := (finrank_eq_one_iff_of_nonzero' _ hne).mp (hd.finrank_one c d.wL) ⟨f, hf⟩
-    exact ⟨a, (congrArg Subtype.val ha).symm⟩
-  choose r hr using fun j => hspan (d.w j c) (hd.w_mem j c)
-  have hrat : ∀ j, ratio (Ω := Ω c) (d.w j c) (d.w (d.jc c) c) = r j := fun j => _root_.ReciprocityTheory.ChartRestriction.G.T0.ValuationResidueLemmas.ratio_eq hg (hr j)
-  simp only [hrat]
-  apply _root_.ReciprocityTheory.ChartRestriction.G.T0.ValuationResidueLemmas.ratio_eq hg
-  rw [Finset.sum_smul]
-  unfold Data.wx
-  rw [Finset.sum_apply]
-  apply Finset.sum_congr rfl
-  intro j _
-  rw [Pi.smul_apply, mul_smul, algebraMap_smul]
-  conv_lhs => rw [hr j]
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.G.T0.Data.hx4v2_ratio_wx
+    | apply _root_.ReciprocityTheory.ChartRestriction.G.T0.Data.hx4v2_ratio_wx <;> first | assumption | rfl | infer_instance
 
 theorem untopD_le_untopD {u v : WithTop ℤ} (hu : u ≠ ⊤) (hv : v ≠ ⊤) (h : u ≤ v) :
     u.untopD 0 ≤ v.untopD 0 := by
@@ -1147,8 +1125,7 @@ theorem HtGenericPt {K : Type} [Field K] [NumberField K] {ι : Type} [Fintype ι
   refine ⟨?_, ⟨hd.a4.choose, hd.a4.choose_spec.1⟩⟩
   have hφ : ∀ c, ∃ φ : Module.Dual K (A c), φ (d.w (d.jc c) c) ≠ 0 := by
     intro c
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hd.w_base c ((Module.forall_dual_apply_eq_zero_iff K _).mp hcon)
   choose φ hφ using hφ
   let P : ι → MvPolynomial (Fin (d.N + 1)) K := fun c =>
@@ -1167,8 +1144,7 @@ theorem HtGenericPt {K : Type} [Field K] [NumberField K] {ι : Type} [Fintype ι
       Finsupp.single_eq_single_iff] using this
   have hprod : (∏ c, P c) ≠ 0 := Finset.prod_ne_zero_iff.mpr (fun c _ => hP c)
   haveI : Infinite K := Infinite.of_injective (Nat.cast : ℕ → K) Nat.cast_injective
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   apply hprod
   apply MvPolynomial.funext
   intro x

@@ -5,52 +5,8 @@ public import Mathlib.Topology.Separation.Hausdorff
 public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.ElementaryCosets.CosetMap
 public import Mathlib.LinearAlgebra.Matrix.Block
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -896,12 +852,6 @@ theorem mem_of_map {H : Subgroup G} {θ : MulAut G} (h : H.map θ.toMonoidHom = 
   rw [← h]
   exact ⟨x, hx, rfl⟩
 
-theorem inv_mem_of_map {H : Subgroup G} {θ : MulAut G} (h : H.map θ.toMonoidHom = H) {x : G} (hx : x ∈ H) :
-    θ⁻¹ x ∈ H := by
-  rw [← h] at hx
-  obtain ⟨y, hy, rfl⟩ := hx
-  simpa using hy
-
 theorem twist_inv_apply (θ : MulAut G) (t x : G) :
     (θ * MulAut.conj t)⁻¹ x = t⁻¹ * θ⁻¹ x * t := by
   rw [mul_inv_rev, MulAut.mul_apply, ← map_inv, MulAut.conj_apply, inv_inv]
@@ -990,11 +940,11 @@ theorem killN : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [
   have hψm : ∀ x ∈ J ⊓ Nlo k N, ψ⁻¹ x ∈ J ⊓ Nlo k N := by
     intro x hx
     rw [ψinv]
-    exact d2 _ ⟨inv_mem_of_map hθJ hx.1, inv_mem_of_map hθNl hx.2⟩
+    exact d2 _ ⟨GlobalTheory.CompanionTheory.Lbc.KillNlo.inv_apply_mem hθJ hx.1, GlobalTheory.CompanionTheory.Lbc.KillNlo.inv_apply_mem hθNl hx.2⟩
   have hψt : ∀ x ∈ J ⊓ Tor k N, ψ⁻¹ x ∈ J ⊓ Tor k N := by
     intro x hx
     rw [ψinv]
-    exact d3 _ ⟨inv_mem_of_map hθJ hx.1, inv_mem_of_map hθT hx.2⟩
+    exact d3 _ ⟨GlobalTheory.CompanionTheory.Lbc.KillNlo.inv_apply_mem hθJ hx.1, GlobalTheory.CompanionTheory.Lbc.KillNlo.inv_apply_mem hθT hx.2⟩
   have hψNl : ∀ x ∈ J ⊓ Nlo k N, ψ x ∈ Nlo k N := fun x hx =>
     mem_of_map hθNl (nlo t htT x hx.2)
   have hψT : ∀ x ∈ J ⊓ Tor k N, ψ x ∈ Tor k N := fun x hx =>
@@ -1017,7 +967,7 @@ theorem killN : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [
     obtain ⟨x, hx, e⟩ := hg (l * j)
     rw [hψ, twist_pow θ t hθl] at e
     have hn : θ⁻¹ x ∈ KN k N J (ones N) (sum_ones N) :=
-      ⟨inv_mem_of_map hθJ hx.1, inv_mem_of_map hθNu hx.2⟩
+      ⟨GlobalTheory.CompanionTheory.Lbc.KillNlo.inv_apply_mem hθJ hx.1, GlobalTheory.CompanionTheory.Lbc.KillNlo.inv_apply_mem hθNu hx.2⟩
     have := hj _ hn
     rw [show leviEmb k (stdBlocks (ones N) (sum_ones N)) s₂ = tnorm θ l t from hs₂] at this
     exact this e
@@ -1027,7 +977,7 @@ theorem killN : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [
     rw [← inv_inv b, eb]
     group
   set m₀ : GL (Fin N) k := θ⁻¹ am⁻¹ with hm₀
-  have hm₀J : m₀ ∈ J ⊓ Nlo k N := ⟨inv_mem_of_map hθJ (inv_mem ham.1), inv_mem_of_map hθNl (inv_mem ham.2)⟩
+  have hm₀J : m₀ ∈ J ⊓ Nlo k N := ⟨GlobalTheory.CompanionTheory.Lbc.KillNlo.inv_apply_mem hθJ (inv_mem ham.1), GlobalTheory.CompanionTheory.Lbc.KillNlo.inv_apply_mem hθNl (inv_mem ham.2)⟩
   have hθm : θ m₀ = am⁻¹ := by simp [hm₀]
   set c : GL (Fin N) k := (t⁻¹ * m₀ * t) * γ⁻¹ * β⁻¹ with hcdef
   have hcJ : c ∈ J := mul_mem (mul_mem (d2 _ hm₀J).1 (inv_mem hγ.1)) (inv_mem hβ.1)

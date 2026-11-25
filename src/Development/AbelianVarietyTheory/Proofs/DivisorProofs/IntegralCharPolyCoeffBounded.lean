@@ -55,7 +55,7 @@ theorem nrmL_mem_KGL {E : Type} [Field E] [NumberField E] [IsCMField E] (n : ℕ
   unfold thL at ht
   split_ifs with hs
   · exact hy
-  · rw [if_neg hs] at ht
+  · rw [ite_eq_right hs] at ht
     exact mul_mem hy ht
 
 theorem charpoly_coeff_of_mem_KGL {E : Type} [Field E] [NumberField E] (n : ℕ) (w : Pl E)

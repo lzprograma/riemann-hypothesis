@@ -13,8 +13,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 open Classical ValuativeRel
 open Formalism.L2.SG.Pf.AtPt Formalism.L2.SG.TermLoc
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section ZOrb
 
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D)
@@ -91,12 +89,12 @@ theorem mm1' (Tn T'n : ℕ) (w : Point D.host.E (D.R.rS + 1)) :
     Matrix.mul_diagonal, Matrix.diagonal_mul, ptMat_apply', Ecorner, Matrix.of_apply]
   by_cases hb : b = sgF w a
   · subst hb
-    simp only [if_true, modMat_blk, map_sub, map_mul, fst_proj_algebraMap, htw1, hqi, apply_ite (p1 sg.e), hta1, map_zero,
+    simp only [ite_true, modMat_blk, map_sub, map_mul, fst_proj_algebraMap, htw1, hqi, apply_ite (p1 sg.e), hta1, map_zero,
       hφ1, RingHom.comp_apply]
     by_cases ha : a = Fin.last D.R.rS
     · subst ha; split_ifs <;> first | ring1 | (exfalso; rename_i h1 h2; exact h2 h1.2)
-    · simp only [ha, false_and, if_false]; ring
-  · rw [if_neg hb, if_neg hb, map_zero, map_zero, mul_zero, zero_mul, mul_zero]
+    · simp only [ha, false_and, ite_false]; ring
+  · rw [ite_eq_right hb, ite_eq_right hb, map_zero, map_zero, mul_zero, zero_mul, mul_zero]
     by_cases ha : a = Fin.last D.R.rS ∧ b = Fin.last D.R.rS
     · obtain ⟨rfl, rfl⟩ := ha
       have : ¬ sgF w (Fin.last D.R.rS) = Fin.last D.R.rS := fun h => hb h.symm
@@ -127,12 +125,12 @@ theorem mm2' (Tn T'n : ℕ) (w : Point D.host.E (D.R.rS + 1)) :
   by_cases hb : b = sgF w a
   · subst hb
     have hsr := sign_rel (R := (D.s.atP p).Fp) _ _ _ (nu_parity w a)
-    simp only [if_true, modMat_blk, map_sub, map_mul, snd_proj_algebraMap, htw2, hqi, apply_ite (p2 sg.e), hta2, map_zero,
+    simp only [ite_true, modMat_blk, map_sub, map_mul, snd_proj_algebraMap, htw2, hqi, apply_ite (p2 sg.e), hta2, map_zero,
       hφ2, RingHom.comp_apply, hsr]
     by_cases ha : a = Fin.last D.R.rS
     · subst ha; split_ifs <;> first | ring1 | (exfalso; rename_i h1 h2; exact h2 h1.2)
-    · simp only [ha, false_and, if_false]; ring
-  · rw [if_neg hb, if_neg hb, map_zero, map_zero, mul_zero, zero_mul, mul_zero, zero_mul]
+    · simp only [ha, false_and, ite_false]; ring
+  · rw [ite_eq_right hb, ite_eq_right hb, map_zero, map_zero, mul_zero, zero_mul, mul_zero, zero_mul]
     by_cases ha : a = Fin.last D.R.rS ∧ b = Fin.last D.R.rS
     · obtain ⟨rfl, rfl⟩ := ha
       have : ¬ sgF w (Fin.last D.R.rS) = Fin.last D.R.rS := fun h => hb h.symm
@@ -151,9 +149,9 @@ theorem zzpSgn_orb_typed (u u' : D.what₂.Word) {w : Point D.host.E (D.R.rS + 1
   obtain ⟨L1, U1, hL1, hU1, h1⟩ := generic_comp (sgF w) (sgF_sgF _)
     (isLo_map ((p1 sg.e).comp (D.s.atP p).ιE) hL) (isUp_map ((p1 sg.e).comp (D.s.atP p).ιE) hB)
     (W := (ptMat w).map ((p1 sg.e).comp (D.s.atP p).ιE))
-    (fun a b hb => by simp only [Matrix.map_apply, ptMat_apply', if_neg hb, map_zero])
+    (fun a b hb => by simp only [Matrix.map_apply, ptMat_apply', ite_eq_right hb, map_zero])
     (fun a => by
-      simp only [Matrix.map_apply, ptMat_apply', if_true]
+      simp only [Matrix.map_apply, ptMat_apply', ite_true]
       exact (map_ne_zero _).2 (pTau_ne' _ a))
     (cf Zd p) (cfi Zd p) (cfi_cf Zd p) (sg.q : (D.s.atP p).Fp)⁻¹ (inv_ne_zero hq)
     (-(((D.mem u).A.T : ℕ) : (D.s.atP p).Fp) / (sg.q : (D.s.atP p).Fp))
@@ -167,10 +165,10 @@ theorem zzpSgn_orb_typed (u u' : D.what₂.Word) {w : Point D.host.E (D.R.rS + 1
     (W := Sg (D.s.atP p).Fp D.R.rS * (ptMat w).map ((p2 sg.e).comp (D.s.atP p).ιE) *
       Sg (D.s.atP p).Fp D.R.rS)
     (fun a b hb => by
-      simp only [Sg, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', if_neg hb, map_zero,
+      simp only [Sg, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', ite_eq_right hb, map_zero,
         mul_zero, zero_mul])
     (fun a => by
-      simp only [Sg, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', if_true]
+      simp only [Sg, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', ite_true]
       exact mul_ne_zero (mul_ne_zero (hs0 _) ((map_ne_zero _).2 (pTau_ne' _ a))) (hs0 _))
     (cf Zd p) (cfi Zd p) (cfi_cf Zd p) (-(sg.q : (D.s.atP p).Fp)⁻¹) (neg_ne_zero.2 (inv_ne_zero hq))
     ((((D.mem u').A.T : ℕ) : (D.s.atP p).Fp) / (sg.q : (D.s.atP p).Fp))
@@ -214,11 +212,11 @@ theorem zzpSgn_orb (u u' : D.what₂.Word) {w : Point D.host.E (D.R.rS + 1)} {Z 
       ext a b
       rw [modMat_apply', Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply']
       by_cases hb : b = sgF w a
-      · rw [if_pos hb, if_pos hb, modMat_blk Zd]
+      · rw [ite_eq_left hb, ite_eq_left hb, modMat_blk Zd]
         simp only [twist, qE, tau0, hR, Ring.inverse_one, mul_one, ite_self, sub_zero, map_mul, fr]
         subst hb
         ring
-      · rw [if_neg hb, if_neg hb, map_zero, mul_zero, zero_mul]
+      · rw [ite_eq_right hb, ite_eq_right hb, map_zero, mul_zero, zero_mul]
     rw [zzp_sgn_ord Zd u u' p hM Z, hf', Matrix.map_mul, Matrix.map_mul, regroup fr fri hfr, hmod]
     exact goal_of (isLo_conj (isLo_map ι hL') fr fri hfr') (isUp_conj (isUp_map ι hU') fri fr hfr) rfl
   · exact zzpSgn_orb_typed Zd p sg hR g hM hAg.1 hAg.2 u u' hL' hU' hf'

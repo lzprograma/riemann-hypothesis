@@ -43,12 +43,6 @@ namespace Formalism.L2.Col
 
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV
 
-section Fix
-
-variable {κ : Type} [CommRing κ]
-
-end Fix
-
 section EntY
 
 variable {κ : Type} [CommRing κ]
@@ -73,7 +67,7 @@ theorem sl_mem_HJsym_iff {n r k t j rS : ℕ} (h : r ≤ n) (hkr : k + rS ≤ r)
       intro P P' hP' hP
       apply hB
       show coarse r (List.replicate j t) P'.val < coarse r (List.replicate j t) P.val
-      rw [hc, hc, if_pos hP', if_neg hP]
+      rw [hc, hc, ite_eq_left hP', ite_eq_right hP]
       exact Nat.succ_pos _
     refine ⟨fun P hP => ?_, fun P P' hne hnz => ?_⟩
     · have := h2 ⟨P.val, hP⟩
@@ -96,7 +90,7 @@ theorem sl_mem_HJsym_iff {n r k t j rS : ℕ} (h : r ≤ n) (hkr : k + rS ≤ r)
         apply hnz
         apply hB
         show coarse r (List.replicate j t) P'.val < coarse r (List.replicate j t) P.val
-        rw [hc, hc, if_neg hP', if_neg (by omega)]
+        rw [hc, hc, ite_eq_right hP', ite_eq_right (by omega)]
         generalize (P.val - r) / t = A at *
         generalize (P'.val - r) / t = B at *
         omega
@@ -121,7 +115,7 @@ theorem sl_mem_HJsym_iff {n r k t j rS : ℕ} (h : r ≤ n) (hkr : k + rS ≤ r)
         exact lt_irrefl _ hab
       have := ho _ _ hne hnz
       unfold slAllowY at this
-      rw [if_pos (show (Fin.castLE h b).val < r from b.2)] at this
+      rw [ite_eq_left (show (Fin.castLE h b).val < r from b.2)] at this
       exact this.2.1 hab
     · exact hd (Fin.castLE h a) a.2
     · show (M : Matrix (Fin n) (Fin n) κ) (Fin.castLE h a) (Fin.castLE h b) = 0
@@ -132,13 +126,13 @@ theorem sl_mem_HJsym_iff {n r k t j rS : ℕ} (h : r ≤ n) (hkr : k + rS ≤ r)
         omega
       have := ho _ _ hne hnz
       unfold slAllowY at this
-      rw [if_pos (show (Fin.castLE h b).val < r from b.2)] at this
+      rw [ite_eq_left (show (Fin.castLE h b).val < r from b.2)] at this
       exact this.2.2 ⟨ha, hb⟩
 
 theorem sl_allow_iff {k rS j t c p p' : ℕ} (hc : c + j = 2 * rS + 1) (hne : p ≠ p') :
     slAllowY k rS (k + j + c) t (if p < k then p else p + c) (if p' < k then p' else p' + c) ↔ ocbXAllow k rS j t p p' := by
   unfold slAllowY ocbXAllow symIdx
-  by_cases h1 : p < k <;> by_cases h2 : p' < k <;> simp only [h1, h2, if_true, if_false, Nat.add_sub_add_right] <;>
+  by_cases h1 : p < k <;> by_cases h2 : p' < k <;> simp only [h1, h2, ite_true, ite_false, Nat.add_sub_add_right] <;>
     generalize (p - (k + j)) / t = A <;> generalize (p' - (k + j)) / t = B <;> split_ifs <;> (try simp only [true_and, false_and, or_false]) <;> omega
 
 end EntY
@@ -228,7 +222,7 @@ theorem mem_level_zero_iff_pattern {n k rS t : ℕ} (hn : n = k) (M : GL (Fin n)
     · rw [sl_ocbM M ⟨p, by omega⟩ ⟨p, by omega⟩]
       exact hd ⟨p, by omega⟩ hp
     · unfold ocbXAllow
-      rw [if_pos (by omega)]
+      rw [ite_eq_left (by omega)]
       left
       by_contra hlt
       apply hnz
@@ -245,7 +239,7 @@ theorem mem_level_zero_iff_pattern {n k rS t : ℕ} (hn : n = k) (M : GL (Fin n)
       by_contra hnz
       have := ho i.val j.val i.2 j.2 (fun e => by omega) (by rw [sl_ocbM]; exact hnz)
       unfold ocbXAllow at this
-      rw [if_pos (by omega)] at this
+      rw [ite_eq_left (by omega)] at this
       omega
     · have := hd i.val hi
       rw [sl_ocbM] at this
@@ -288,7 +282,7 @@ theorem sl_ocbH {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m) (
   · rw [colLevSym_zero]
     show hbar ∈ (colLev Ch 0 w).H ↔ _
     unfold colLev
-    rw [if_pos (by omega)]
+    rw [ite_eq_left (by omega)]
     exact mem_level_zero_iff_pattern (by simp [Ranks.N]) hbar
   · by_cases htop : j + 1 = R.m
     · rw [colLevSym_pred Ch htop]
@@ -309,12 +303,12 @@ theorem sl_supSum_eq {n a : ℕ} (S : Finset ℕ) (A : Matrix (Fin n) (Fin n) κ
     else 0) n]
   refine Finset.sum_congr rfl fun i _ => ?_
   by_cases hc : i.val + 1 < a ∧ i.val ∈ S
-  · rw [if_pos hc]
+  · rw [ite_eq_left hc]
     by_cases hi1 : i.val + 1 < n
     · rw [dite_eq_left hi1, Finset.sum_eq_single ⟨i.val + 1, hi1⟩]
-      · rw [if_pos ⟨rfl, hc.1, hc.2⟩]
+      · rw [ite_eq_left ⟨rfl, hc.1, hc.2⟩]
       · intro b _ hb
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨h1, -, -⟩
         exact hb (Fin.ext h1.symm)
       · intro hh
@@ -322,14 +316,14 @@ theorem sl_supSum_eq {n a : ℕ} (S : Finset ℕ) (A : Matrix (Fin n) (Fin n) κ
     · rw [dite_eq_right hi1]
       apply Finset.sum_eq_zero
       intro b _
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨h1, -, -⟩
       have := b.2
       omega
-  · rw [if_neg hc]
+  · rw [ite_eq_right hc]
     apply Finset.sum_eq_zero
     intro b _
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2, h3⟩
     exact hc ⟨by omega, h3⟩
 
@@ -350,13 +344,13 @@ theorem sl_sup_ins {r k c j : ℕ} (hr : r = k + j + c) (Y Mx : ℕ → ℕ → 
       (if i < k - 1 then Mx i (i + 1) else 0) + (if k + c ≤ i ∧ i + 1 < r then Mx (i - c) (i - c + 1) else 0) := by
     intro i _
     by_cases h1 : i < k - 1
-    · rw [if_pos (by omega), if_pos h1, if_neg (by omega), add_zero, hY1 i (by omega)]
+    · rw [ite_eq_left (by omega), ite_eq_left h1, ite_eq_right (by omega), add_zero, hY1 i (by omega)]
     · by_cases h2 : k + c ≤ i ∧ i + 1 < r
-      · rw [if_pos (by omega), if_neg h1, if_pos h2, zero_add, hY3 i h2.1]
-      · rw [if_neg h1, if_neg h2, add_zero]
+      · rw [ite_eq_left (by omega), ite_eq_right h1, ite_eq_left h2, zero_add, hY3 i h2.1]
+      · rw [ite_eq_right h1, ite_eq_right h2, add_zero]
         by_cases h3 : i + 1 < r ∧ i + 1 ≠ k
-        · rw [if_pos h3, hY2 i (by omega) (by omega)]
-        · rw [if_neg h3]
+        · rw [ite_eq_left h3, hY2 i (by omega) (by omega)]
+        · rw [ite_eq_right h3]
   rw [Finset.sum_congr rfl e, Finset.sum_add_distrib, sl_sum_range_ite r (k - 1) (by omega)]
   congr 1
   rw [← Finset.sum_filter]
@@ -378,7 +372,7 @@ theorem sl_coarse_blk {r t j s a : ℕ} (ht : 0 < t) (hs : s < j) (ha : a < t) :
     coarse r (List.replicate j t) (r + s * t + a) = s + 1 := by
   have h1 : (s + 1) * t ≤ j * t := Nat.mul_le_mul_right t hs
   rw [Nat.add_mul, one_mul] at h1
-  rw [coarse_rep ht (by omega), if_neg (by omega), add_assoc, Nat.add_sub_cancel_left,
+  rw [coarse_rep ht (by omega), ite_eq_right (by omega), add_assoc, Nat.add_sub_cancel_left,
     show s * t + a = a + s * t from add_comm _ _, Nat.add_mul_div_right a s ht, Nat.div_eq_of_lt ha, zero_add]
 
 def blockPositionsEquiv {n r t j s : ℕ} (ht : 0 < t) (hn : n = r + j * t) (hs : s < j) :
@@ -397,9 +391,9 @@ def blockPositionsEquiv {n r t j s : ℕ} (ht : 0 < t) (hn : n = r + j * t) (hs 
       have hc := coarse_rep (r := r) (j := j) ht (show i.val ≤ r + j * t by have := i.2; omega)
       rw [hi] at hc
       by_cases hir : i.val < r
-      · rw [if_pos hir] at hc
+      · rw [ite_eq_left hir] at hc
         omega
-      · rw [if_neg hir] at hc
+      · rw [ite_eq_right hir] at hc
         have hd : (i.val - r) / t = s := by omega
         have h1 := Nat.div_mul_le_self (i.val - r) t
         have h2 := Nat.lt_div_mul_add (a := i.val - r) ht
@@ -450,7 +444,7 @@ theorem sl_ocbM_ins_row (M : GL (Fin N) κ) (i i' : ℕ) (hi1 : k ≤ i) (hi2 : 
   split_ifs with hb
   · rw [insGL_val, sl_insEquiv_of_val_r hk hN' ⟨i - k, by omega⟩ ⟨i, hb.1⟩ (by dsimp only; omega)]
     by_cases h1 : i' < k
-    · rw [sl_insEquiv_of_val hk hN' ⟨i', by omega⟩ ⟨i', hb.2⟩ (by dsimp only; rw [if_pos h1])]
+    · rw [sl_insEquiv_of_val hk hN' ⟨i', by omega⟩ ⟨i', hb.2⟩ (by dsimp only; rw [ite_eq_left h1])]
       rfl
     · by_cases h2 : i' < k + c
       · rw [sl_insEquiv_of_val_r hk hN' ⟨i' - k, by omega⟩ ⟨i', hb.2⟩ (by dsimp only; omega), Matrix.fromBlocks_apply₂₂]
@@ -486,10 +480,10 @@ theorem character_level_zero_entries (ψ : AddChar κ K) (χ : ℕ → κˣ →*
   unfold SX
   simp only [Finset.mem_filter, Finset.mem_range]
   by_cases hc : i < n - 1
-  · rw [if_pos ⟨by omega, by omega, Or.inl (by omega)⟩, if_pos hc, dite_eq_left (by omega)]
+  · rw [ite_eq_left ⟨by omega, by omega, Or.inl (by omega)⟩, ite_eq_left hc, dite_eq_left (by omega)]
     unfold ocbM
     rw [dite_eq_left ⟨by omega, by omega⟩]
-  · rw [if_neg (by omega), if_neg hc]
+  · rw [ite_eq_right (by omega), ite_eq_right hc]
 
 theorem sl_lamJsym_ent (ψ : AddChar κ K) (χ : ℕ → κˣ →* Kˣ) {n k r t j rS c N : ℕ} (h : r ≤ n) (hr0 : r = k + 2 * rS + 1)
     (hr : r = k + j + c) (hn : n = r + j * t) (ht : 0 < t) (M : ↥(HJsym κ n k r t j rS h)) (Mx : GL (Fin N) κ)
@@ -508,11 +502,11 @@ theorem sl_lamJsym_ent (ψ : AddChar κ K) (χ : ℕ → κˣ →* Kˣ) {n k r t
     unfold SPsymF
     simp only [Finset.mem_filter, Finset.mem_range]
     by_cases hc : i + 1 < r ∧ i + 1 ≠ k
-    · rw [if_pos ⟨hc.1, by omega, hc.2⟩, if_pos hc, dite_eq_left hc.1]
+    · rw [ite_eq_left ⟨hc.1, by omega, hc.2⟩, ite_eq_left hc, dite_eq_left hc.1]
       unfold ocbM
       rw [dite_eq_left ⟨by omega, by omega⟩]
       rfl
-    · rw [if_neg (fun hh => hc ⟨hh.1, hh.2.2⟩), if_neg hc]
+    · rw [ite_eq_right (fun hh => hc ⟨hh.1, hh.2.2⟩), ite_eq_right hc]
   · refine Finset.prod_congr rfl fun s hs => ?_
     have hs' : s < j := Finset.mem_range.mp hs
     rw [← sl_ocbChiK_unit, blkDet_val, sl_blk_det ht hn hs']
@@ -546,7 +540,7 @@ theorem closedLevels_by_entries_holds : OcbLevIsSym := by
       intro l hl M
       subst hl
       exact character_level_zero_entries _ _ (by simp [Ranks.N]) M
-    exact key _ (by unfold colLevSym; rw [if_pos rfl]; unfold colLev; rw [if_pos (by omega)]) hbar
+    exact key _ (by unfold colLevSym; rw [ite_eq_left rfl]; unfold colLev; rw [ite_eq_left (by omega)]) hbar
   · by_cases htop : j + 1 = R.m
     · have hNp := N_pred_eq htop
       have key : ∀ l : Lev (𝓞 X.E ⧸ w.1.asIdeal) X.K (R.N j),
@@ -574,7 +568,7 @@ theorem closedLevels_by_entries_holds : OcbLevIsSym := by
         (fun i hi => ?_) (fun i i1 i2 => sl_ocbM_ins_row (c := R.m - 1 - j) hk rfl hbar.1 i (i + 1) i1 i2 (by omega))
         (fun i hi => ?_) (fun s hs a b => ?_)
       · have := sl_ocbM_ins (c := R.m - 1 - j) hk rfl hbar.1 i (i + 1) (by omega) (by omega)
-        rwa [if_pos (by omega), if_pos (by omega)] at this
+        rwa [ite_eq_left (by omega), ite_eq_left (by omega)] at this
       · show ocbM (insGL _ _ _ _ _ hk rfl hbar.1) i (i + 1) = _
         rw [sl_ocbM_ins_late (c := R.m - 1 - j) hk rfl hbar.1 i (i + 1) hi (by omega), show i + 1 - (R.m - 1 - j) = i - (R.m - 1 - j) + 1 by omega]
       · show ocbM (insGL _ _ _ _ _ hk rfl hbar.1) _ _ = _

@@ -1,44 +1,6 @@
 module
 
 public import Development.EtaleCohomology.EtaleSheaves.RelDescPf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -56,53 +18,44 @@ def gN {D Y' E Y'' : CommRingCat.{0}} (φ' : D ⟶ Y') (e : D ⟶ E) (u : Y' ⟶
 
 def iN {Y X : Scheme.{0}} (f : Y ⟶ X) : sch.obj Y ⟶ cech f where
   app _ := WidePullback.lift (yoneda.map f) (fun _ => 𝟙 _) (fun _ => Category.id_comp _)
-  naturality := by
-    intro x y θ
+  naturality _ _ _ := by
     apply WidePullback.hom_ext
     · intro j
-      erw [Category.assoc, WidePullback.lift_π, Category.assoc, WidePullback.lift_π, WidePullback.lift_π]
-      exact Category.id_comp _
-    · erw [Category.assoc, WidePullback.lift_base, Category.assoc, WidePullback.lift_base, WidePullback.lift_base]
-      exact Category.id_comp _
+      simp [sch, disc, cech]
+    · simp [sch, disc, cech]
 
 theorem iN_aug {Y X : Scheme.{0}} (f : Y ⟶ X) : iN f ≫ cechAug f = sch.map f := by
   refine NatTrans.ext (funext fun x => ?_)
-  erw [NatTrans.comp_app, WidePullback.lift_base]
-  rfl
+  change (iN f).app x ≫ (cechAug f).app x = yoneda.map f
+  dsimp [iN, cechAug, cech, sch, disc]
+  apply WidePullback.lift_base
 
 theorem iN_app_zero_iso {Y X : Scheme.{0}} (f : Y ⟶ X) : IsIso ((iN f).app (op ⦋0⦌)) := by
-  refine ⟨⟨WidePullback.π (fun _ : Fin 1 => yoneda.map f) 0, ?_, ?_⟩⟩
-  · erw [WidePullback.lift_π]
-  · apply WidePullback.hom_ext
-    · intro j
-      have hj : j = 0 := Fin.fin_one_eq_zero j
-      subst hj
-      erw [Category.assoc, WidePullback.lift_π, Category.id_comp]
-      exact Category.comp_id _
-    · erw [Category.assoc, WidePullback.lift_base, Category.id_comp]
-      exact WidePullback.π_arrow _ _
+  refine ⟨⟨WidePullback.π (fun _ : Fin 1 => yoneda.map f) 0, by simp [iN, sch, disc, cech], ?_⟩⟩
+  apply WidePullback.hom_ext
+  · intro j
+    obtain rfl : j = 0 := Fin.fin_one_eq_zero j
+    simp [iN, sch, disc, cech]
+  · simp [iN, sch, disc, cech, WidePullback.π_arrow]
 
 theorem gN_aug {D Y' E Y'' : CommRingCat.{0}} (φ' : D ⟶ Y') (e : D ⟶ E) (u : Y' ⟶ Y'') (φ'' : E ⟶ Y'')
     (h : φ' ≫ u = e ≫ φ'') :
     gN φ' e u φ'' h ≫ cechAug (Spec.map e) = cechAug (Spec.map u) ≫ sch.map (Spec.map φ') := by
   refine NatTrans.ext (funext fun x => ?_)
-  erw [NatTrans.comp_app, WidePullback.lift_base]
-  rfl
+  change (gN φ' e u φ'' h).app x ≫ (cechAug (Spec.map e)).app x =
+    (cechAug (Spec.map u)).app x ≫ yoneda.map (Spec.map φ')
+  dsimp [gN, cechAug, cech, Arrow.mapCechNerve]
+  apply WidePullback.lift_base
 
 theorem gN_iN {D Y' E Y'' : CommRingCat.{0}} (φ' : D ⟶ Y') (e : D ⟶ E) (u : Y' ⟶ Y'') (φ'' : E ⟶ Y'')
     (h : φ' ≫ u = e ≫ φ'') :
     sch.map (Spec.map φ'') ≫ iN (Spec.map e) = iN (Spec.map u) ≫ gN φ' e u φ'' h := by
-  have hw : yoneda.map (Spec.map φ'') ≫ yoneda.map (Spec.map e) = yoneda.map (Spec.map u) ≫ yoneda.map (Spec.map φ') := by
-    rw [← Functor.map_comp, ← Functor.map_comp, ← Spec.map_comp, ← Spec.map_comp, h]
   refine NatTrans.ext (funext fun x => ?_)
   apply WidePullback.hom_ext
   · intro j
-    erw [Category.assoc, WidePullback.lift_π, Category.assoc, WidePullback.lift_π, ← Category.assoc,
-      WidePullback.lift_π, Category.id_comp]
-    exact Category.comp_id _
-  · erw [Category.assoc, WidePullback.lift_base, Category.assoc, WidePullback.lift_base, ← Category.assoc,
-      WidePullback.lift_base]
-    exact hw
+    simp [gN, iN, sch, disc, cech, Arrow.mapCechNerve]
+  · simp [gN, iN, sch, disc, cech, Arrow.mapCechNerve]
+    rw [← Functor.map_comp, ← Functor.map_comp, ← Spec.map_comp, ← Spec.map_comp, h]
 
 def Filt : Prop := Hyp → ∀ (R : Type) [CommRing R] (F : Shv R) (n : ℤ) {Z' Z : PSh} {X' X : Spc} (g : X' ⟶ X)
   (h : Z' ⟶ Z) (a : disc.obj Z ⟶ X) (b : disc.obj Z' ⟶ X') (comm : disc.map h ≫ a = b ≫ g),

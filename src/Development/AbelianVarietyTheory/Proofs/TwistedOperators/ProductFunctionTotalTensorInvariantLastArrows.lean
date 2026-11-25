@@ -74,7 +74,7 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMu
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VacRowScalar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColShiftVacEqSmul, Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExpansionSumProdLastVertexMovedEq, Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExpansionSumProdLastVertexMovedEqStatement, Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProductFunctionTotalTensorInvariantLastArrows
+-- Members: Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColShiftVacEqSmul, Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExpansionSumProdLastVertexMovedEq, Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProductFunctionTotalTensorInvariantLastArrows
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColShiftVacEqSmul =====
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColShiftVacEqSmul", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftEq\nimport Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ApplyAddInfRat\nimport Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SqNormIntegralFundamentalDomainEqL2NormSq\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsThetaAtOfVac\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitVacuumStandardLatticesDefinitePair\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilFinitePointPreservesFockVacuum\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
@@ -83,7 +83,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.LastVertexInv GlobalTheory.LastVertexMove
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
 noncomputable section
 namespace GlobalTheory.LastVertexVac
@@ -162,7 +161,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.LastVertexInv GlobalTheory.LastVertexMove
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
 noncomputable section
 
@@ -225,7 +223,7 @@ theorem fill_moved (hs : 1 ≤ Γ.s) {j : ℕ} (hj : j + 1 = Γ.m) {κ : GL (Fin
         rw [h1 _ l (by omega), h2 _ hj, Units.val_one, transpose_one, Matrix.one_mul, ← transpose_mul]
         congr 1
         unfold downMap
-        rw [dif_neg (by omega), dif_pos hj, dif_neg (by omega), dif_pos hj]
+        rw [dite_eq_right (by omega), dite_eq_left hj, dite_eq_right (by omega), dite_eq_left hj]
         ext a c
         refine (congrFun (congrFun hx.2.2 (Fin.cast (by rw [hj]) a)) (Fin.cast (by have := topRank_add hs l; omega) c)).trans ?_
         exact (Fintype.sum_equiv (finCongr (show Γ.rank (Γ.m, l + 1) = Γ.rank (Γ.m, Γ.m) by rw [hj])) _ _ fun _ => rfl).symm
@@ -233,9 +231,9 @@ theorem fill_moved (hs : 1 ≤ Γ.s) {j : ℕ} (hj : j + 1 = Γ.m) {κ : GL (Fin
         · rw [h1 _ l (by omega), h1 _ (l + 1) (by omega), inv_one, Units.val_one, Units.val_one, transpose_one, transpose_one,
             Matrix.one_mul, Matrix.mul_one]
           unfold downMap
-          rw [dif_pos (by omega), dif_pos (by omega), hx.1 l hl]
+          rw [dite_eq_left (by omega), dite_eq_left (by omega), hx.1 l hl]
         · unfold downMap
-          rw [dif_neg (by omega), dif_neg (by omega), dif_neg (by omega), dif_neg (by omega)]
+          rw [dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_right (by omega)]
           simp
     · simp [fill, hi]
   | ex i l =>
@@ -280,7 +278,7 @@ theorem prod_edgeFactor_last (hm : 1 ≤ Γ.m) (g : GL (Fin (Γ.rank (Γ.m, Γ.m
   rw [oppositePath, List.map_append, List.prod_append, List.map_map, List.map_map, List.map_reverse, List.prod_reverse,
     ← List.prod_toFinset _ List.nodup_range, ← List.prod_toFinset _ List.nodup_range, List.toFinset_range,
     Finset.prod_eq_single (Γ.m - 1), Finset.prod_eq_single (Γ.m - 1)]
-  · simp only [Function.comp, hf, Edge.src, Edge.tgt, e1, if_true, Prod.mk.injEq, show Γ.m - 1 ≠ Γ.m by omega, false_and, and_false, if_false,
+  · simp only [Function.comp, hf, Edge.src, Edge.tgt, e1, ite_true, Prod.mk.injEq, show Γ.m - 1 ≠ Γ.m by omega, false_and, and_false, ite_false,
       map_one, Grid.kappa, Grid.blockChar, MonoidHom.div_apply, e2]
     simp only [Units.val_div_eq_div_val, Units.val_inv_eq_inv_val, Units.val_one]
     field_simp
@@ -310,7 +308,7 @@ theorem datum_moved (hs : 1 ≤ Γ.s) (ψ : AddChar k Circle) (ν : Measure k) {
       rintro (_ | n) hn
       · omega
       · rw [Reps.elt, onColumn_apply]
-        exact dif_neg (by omega)
+        exact dite_eq_right (by omega)
     exact this _ hj.le
   have hcomm : (Pi.mulSingle (Γ.m, Γ.m) κ : Γ.VertexGroup) * ρ.elt β = ρ.elt β * Pi.mulSingle (Γ.m, Γ.m) κ := by
     funext Y
@@ -338,9 +336,6 @@ end Local
 end GlobalTheory.LastVertexLoc
 
 namespace GlobalTheory.LastVertexLoc
-
-
-
 
 open Matrix ValuativeRel GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StdFrames GlobalTheory.RowVacScalar
 
@@ -570,7 +565,7 @@ theorem colAt_moved (S : GridChoice W U) {t : T} (ht : t ∈ U) {w : Pl D.host.E
         inBasis hr (S.βp D.R.m) w (finG (G.V (.top D.R.m)) h)⁻¹ := by
       rw [map_inv, map_inv]
       exact congrArg (·⁻¹) (inBasis_top_cast S w _ (lastIx_succ D) h _ _)
-    simp only [GridChoice.colAt, dif_pos hj, Fin.eta, Function.update_self]
+    simp only [GridChoice.colAt, dite_eq_left hj, Fin.eta, Function.update_self]
     rw [e1, Matrix.map_mul, e2, GlobalTheory.RowMoveAt.mul_sub_cast, ← GlobalTheory.RowMoveAt.inBasis_val, e3, GlobalTheory.RowMoveAt.inBasis_val,
       map_inv (loc w), hh, loc_conj S ht hw (X := .top D.R.m) le_rfl]
   have hκ : (kapLast S t k w)⁻¹.val =
@@ -586,8 +581,8 @@ theorem colAt_moved (S : GridChoice W U) {t : T} (ht : t ∈ U) {w : Pl D.host.E
   refine ⟨fun i hi => ?_, ?_, ?_⟩
   · simp only [GridChoice.colAt]
     by_cases hi' : i < D.R.m
-    · rw [dif_pos hi', dif_pos hi', Function.update_of_ne (fun h => hi (congrArg Fin.val h))]
-    · rw [dif_neg hi', dif_neg hi']
+    · rw [dite_eq_left hi', dite_eq_left hi', Function.update_of_ne (fun h => hi (congrArg Fin.val h))]
+    · rw [dite_eq_right hi', dite_eq_right hi']
   · rw [key]; exact this.1
   · rw [key, hκ]; exact this.2
 
@@ -613,7 +608,7 @@ theorem rowAt_moved (S : GridChoice W U) {t : T} (ht : t ∈ U) {w : Pl D.host.E
     have e4 : (inBasis hr (S.B.β D.R.m D.R.m) w (finG (G.V (.grid D.R.m D.R.m)) h)).val = (inBasis hr (S.B.β D.R.m D.R.m) w (finG (G.V (.grid D.R.m D.R.m)) k)).val := by
       rw [GlobalTheory.RowMoveAt.inBasis_val, GlobalTheory.RowMoveAt.inBasis_val, hh, loc_conj S ht hw (X := .grid D.R.m D.R.m) ⟨le_rfl, rfl⟩]
     rw [← e4, ← e3]
-    simp only [GridChoice.rowAt, dif_pos hj, Fin.eta, Function.update_self, Frames.coord]
+    simp only [GridChoice.rowAt, dite_eq_left hj, Fin.eta, Function.update_self, Frames.coord]
     rw [e1, Matrix.map_mul, e2]
     erw [Matrix.transpose_transpose, Matrix.transpose_transpose]
     rw [GlobalTheory.RowMoveAt.inBasis_val, GlobalTheory.RowMoveAt.sub_mul_cast]
@@ -621,8 +616,8 @@ theorem rowAt_moved (S : GridChoice W U) {t : T} (ht : t ∈ U) {w : Pl D.host.E
   refine ⟨fun i hi => ?_, ?_⟩
   · simp only [GridChoice.rowAt]
     by_cases hi' : i < D.R.m
-    · rw [dif_pos hi', dif_pos hi', Function.update_of_ne (fun h => hi (congrArg Fin.val h))]
-    · rw [dif_neg hi', dif_neg hi']
+    · rw [dite_eq_left hi', dite_eq_left hi', Function.update_of_ne (fun h => hi (congrArg Fin.val h))]
+    · rw [dite_eq_right hi', dite_eq_right hi']
   · rw [key, kapLast, GlobalTheory.RowMoveAt.inBasis_val, GlobalTheory.RowMoveAt.inBasis_val]
     exact Matrix.submatrix_mul _ _ id _ _ (finCongr (by rw [last_succ])).bijective
 
@@ -670,7 +665,7 @@ theorem col_scalar (S : GridChoice W U) {t μ₀ : T} (hL : L.Is μ₀) (ht : t 
       Formalism.UG.stabGL (Formalism.L2.Herm.hatL (F := D.host.F) (G.Λ (.top D.R.m))) := by
     rw [e]; exact _root_.GlobalTheory.FinEmbLat.finEmb_mem_stabGL G.sp.topDec _ k h1
   have h4 := GlobalTheory.LastColLat.topLast_stab S.N _ (GlobalTheory.LastColLat.conj_stab S.N (X := .top D.R.m) le_rfl _ h2)
-  have key := GlobalTheory.T.weilLatticeVacuum_eq_prod_splitPlace_factors hW (S.N.selfDual hn.1) (S.N.selfDual hn.2) (locPl G t) (fun w hw => isIdemAt_idemAt hL G t hw)
+  have key := GlobalTheory.LatStabScalar.om_eq_prod_splitFac hW (S.N.selfDual hn.1) (S.N.selfDual hn.2) (locPl G t) (fun w hw => isIdemAt_idemAt hL G t hw)
     (Good.under_injOn hL G t) (fun v hv' => by rw [hS, hT]; exact ⟨mu_charUnramAt hL G t _ hv', mu_charUnramAt hL G t _ hv'⟩)
     1 (one_mem _) (GlobalTheory.LastVertexInv.topLast h).1 (GlobalTheory.LastVertexInv.topLast h).2 (one_lat _ _)
     (GlobalTheory.RowMovedLat.latHat_stab_of_hatL _ _ _ h4) _ hv.theta hv.lat
@@ -691,7 +686,7 @@ theorem col_scalar (S : GridChoice W U) {t μ₀ : T} (hL : L.Is μ₀) (ht : t 
     rw [hh, loc_conj S ht w.2 (X := .top D.R.m) le_rfl, gdet_kapLast, ← det_conj (loc w.1 (S.βp D.R.m)),
       ← det_submatrix_equiv_self (frame G.sp.topDec.rank), (finEmb_block S ht w.2 k).1, det_fromBlocks_zero₂₁, det_one, mul_one]
   have hE : ChrEq (L.mu t ((lastIx D : ℕ) + 1)) (muBase L ((lastIx D : ℕ) + 1) * L.xiH t) := by
-    have h1 : muBase L ((lastIx D : ℕ) + 1) = L.C.mu0 (lastIx D) := dif_pos hj
+    have h1 : muBase L ((lastIx D : ℕ) + 1) = L.C.mu0 (lastIx D) := dite_eq_left hj
     rw [h1]
     exact GlobalTheory.TowerCharRead.chrEq_mul (hL.mu0 (lastIx D)) (hL.xi t)
   rw [splitFacO, detIdl_one, map_one, inv_one, one_mul, detIdl_eq (isIdemAt_idemAt hL G t w.2) _ _ _ hdet, hS,
@@ -733,7 +728,7 @@ theorem row_scalar (S : GridChoice W U) {t μ₀ : T} (hL : L.Is μ₀) (ht : t 
       change Even (D.R.r + D.R.m * D.R.t + (D.R.m - 1) * sLen D)
       exact ((odd_r D).add_even (D.R.m_even.mul_right _)).add_odd
         ((Nat.Even.sub_odd hm D.R.m_even odd_one).mul (odd_sLen D))
-    rw [GridData.chrT, Formalism.IndefR.Lift.attChr, if_neg (Nat.not_odd_iff_even.2 hev), GridData.chr,
+    rw [GridData.chrT, Formalism.IndefR.Lift.attChr, ite_eq_right (Nat.not_odd_iff_even.2 hev), GridData.chr,
       show D.R.m - (lastIx D : ℕ) = 1 by have := lastIx_succ D; omega]
   rw [splitScal, splitFacO, show (rowPt S k).2 = 1 from rfl, detIdl_one, map_one, mul_one,
     detIdl_eq (isIdemAt_idemAt hL G t w.2) _ _ _ hdet, hT, Circle.coe_inv, Units.val_inv_eq_inv_val]
@@ -806,7 +801,7 @@ theorem sum_prod_moved_eq : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts
     exact datum_moved (Γ := locGrid G t w.1) one_le_sLen _ _ _ _ (isAdmissible_Tflip hL W S.B t Φ hde hc w.2) (β w)
       (last_succ G t w) (GlobalTheory.LastRowLat.givenLevel_inner G t w.1 (D.R.m, D.R.m) hm hm).le
       (Subgroup.mem_iInf.1 (Subgroup.mem_inf.1 hk).1 w) (colAt_moved S ht w.2 k x) (rowAt_moved S ht w.2 k y)
-      (dif_neg (lt_irrefl _))
+      (dite_eq_right (lt_irrefl _))
   · rw [hzero x y hx, hzero _ _ fun h => hx ⟨fun j => (hxh j).1 (h.1 j), fun j => (hyh j).1 (h.2 j)⟩, mul_zero]
 
 end GlobalTheory.LastVertexLoc
@@ -816,35 +811,8 @@ end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExpansionSumProdLastVertexMovedEq =====
 
--- ===== clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExpansionSumProdLastVertexMovedEqStatement =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExpansionSumProdLastVertexMovedEqStatement", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftEq\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExpansionSumProdLastVertexMovedEq\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
-open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.LastVertexInv GlobalTheory.LastVertexMove
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
-
-theorem _root_.GlobalTheory.T.expansion_sumProd_lastVertex_moved_eq : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} {W : G.Weil} {U : Set T} (S : GridChoice W U) {t : T} {Φ : G.Datum} {β : CosFam G t} {τ : PureDat G t →₀ ℂ} {μ₀ : T},
-    L.Is μ₀ → (Nat.Coprime D.host.pde (D.host.QS * D.host.q) ∧ Nat.Coprime D.host.pde' (D.host.QS * D.host.q)) → (∀ P ∈ L.Q t, ((Ideal.absNorm D.host.ccK : ℕ) : 𝓞 D.host.E) ∉ P.asIdeal) → t ∈ U → β ∈ S.supp t Φ → S.IsExpansion t Φ β τ →
-    (∀ d ∈ τ.support, (∀ j, S.Z.HasVec (d.1 j)) ∧ ∀ i, S.Z.HasVec (d.2 i)) →
-    ∀ k : FinPt G (.grid D.R.m D.R.m), finG (G.V (.grid D.R.m D.R.m)) k ∈ S.levRow t D.R.m le_rfl → ∀ cc cr : ℂ,
-    colShift S t (finEmb G.sp.topDec k) (S.Z.vac (.top t (lastIx D))) = cc • S.Z.vac (.top t (lastIx D)) →
-    rowShift S k (S.Z.vac (.chi (lastIx D) D.R.m)) = cr • S.Z.vac (.chi (lastIx D) D.R.m) →
-    ∀ (x : ∀ j : Fin D.R.m, WO (G.pS (.top t j)) (G.pT (.top t j)))
-      (y : ∀ i : Fin D.R.m, WO (G.pS (.chi i D.R.m : Pair T)) (G.pT (.chi i D.R.m : Pair T))),
-    (τ.sum fun d a => a *
-      (∏ j, Function.update (fun j => (d.1 j).fn) (lastIx D)
-        (cc • moveFn (colPt S t (finEmb G.sp.topDec k)) (d.1 (lastIx D)).fn) j (x j)) *
-      ∏ i, Function.update (fun i => (d.2 i).fn) (lastIx D) (cr • moveFn (rowPt S k) (d.2 (lastIx D)).fn) i (y i)) =
-    τ.sum fun d a => a * (∏ j, (d.1 j).fn (x j)) * ∏ i, (d.2 i).fn (y i) := by
-  first | exact @GlobalTheory.LastVertexLoc.sum_prod_moved_eq
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExpansionSumProdLastVertexMovedEqStatement =====
-
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProductFunctionTotalTensorInvariantLastArrows =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProductFunctionTotalTensorInvariantLastArrows", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftEq\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSelfDualCColumnLatticeOfOrthonormalFrame\nimport Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ActOMemLatOOfHat\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColPtInvMemStdLatIff\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColShiftVacEqSmul\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExpansionSumProdLastVertexMovedEqStatement\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.GivenLevelInner\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MultilinearSumEqOfFunctionProductSumsEq\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmEqSumLattice\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.VacRowScalar\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilActionSchrodingerModelFiniteIdempotent\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProductFunctionTotalTensorInvariantLastArrows", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftEq\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSelfDualCColumnLatticeOfOrthonormalFrame\nimport Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ActOMemLatOOfHat\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColPtInvMemStdLatIff\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColShiftVacEqSmul\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExpansionSumProdLastVertexMovedEq\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.GivenLevelInner\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MultilinearSumEqOfFunctionProductSumsEq\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmEqSumLattice\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.VacRowScalar\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilActionSchrodingerModelFiniteIdempotent\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -852,8 +820,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.LastVertexInv
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
 namespace GlobalTheory.LastVertexTensor
 
@@ -876,7 +842,7 @@ theorem loc (S : GridChoice W U) {t : T} {Φ : G.Datum} {β : CosFam G t} {τ : 
         (cc • moveFn (colPt S t (finEmb G.sp.topDec k)) (d.1 (lastIx D)).fn) j (x j)) *
       ∏ i, Function.update (fun i => (d.2 i).fn) (lastIx D) (cr • moveFn (rowPt S k) (d.2 (lastIx D)).fn) i (y i)) =
     τ.sum fun d a => a * (∏ j, (d.1 j).fn (x j)) * ∏ i, (d.2 i).fn (y i) :=
-  GlobalTheory.T.expansion_sumProd_lastVertex_moved_eq S hL hde hc ht hβ hexp hvec k hk cc cr hcc hcr x y
+  _root_.GlobalTheory.LastVertexLoc.sum_prod_moved_eq S hL hde hc ht hβ hexp hvec k hk cc cr hcc hcr x y
 
 end GlobalTheory.LastVertexTensor
 
@@ -914,8 +880,8 @@ theorem om_model (S : GridChoice W U) {p : Pair T} (hp : DefPair D.R.m p) (hIn :
     rw [Pi.smul_apply, one_smul]
     unfold halfInd
     by_cases h : x ∈ stdLat S p ∧ IsHalf e x
-    · rw [if_pos ((and_congr (hlat x) (GlobalTheory.SchrMove.isHalf_actO_iff _ _ _)).2 h), if_pos h]
-    · rw [if_neg (fun h' => h ((and_congr (hlat x) (GlobalTheory.SchrMove.isHalf_actO_iff _ _ _)).1 h')), if_neg h]
+    · rw [ite_eq_left ((and_congr (hlat x) (GlobalTheory.SchrMove.isHalf_actO_iff _ _ _)).2 h), ite_eq_left h]
+    · rw [ite_eq_right (fun h' => h ((and_congr (hlat x) (GlobalTheory.SchrMove.isHalf_actO_iff _ _ _)).1 h')), ite_eq_right h]
   have hc : W.om p (q.1, q.2) (S.Z.vac p) = c • Tm (fun x => halfInd e (stdLat S p) (actO _ _ q.1⁻¹ q.2⁻¹ x)) := by
     rw [hind, hT.vac, Prod.mk.eta]
     exact heig

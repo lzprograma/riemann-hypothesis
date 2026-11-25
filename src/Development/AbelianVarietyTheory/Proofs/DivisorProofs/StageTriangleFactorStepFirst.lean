@@ -52,8 +52,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.SqTop
 open GlobalTheory.ConstRatio (NegIdx Factor)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 noncomputable section
 
 namespace GlobalTheory.SqStepBig
@@ -106,8 +104,6 @@ theorem two_le_half {D : D7} {T : Type} {Lc : LevCh D T} {sc : GlobalTheory.ChiG
   obtain ⟨k, hk⟩ := D.R.k_even
   obtain ⟨m, hm⟩ := D.R.m_even
   obtain ⟨t, ht⟩ := D.R.t_odd
-  have h2 := D.R.two_le_m
-  have h3 := D.R.three_m_lt_t
   have e1 : rankV D (i + 1) (j + 1) = rankV D i j + D.R.t + sLen D := by simp only [rankV]; ring
   have e2 : sLen D = D.R.k + D.R.m - 1 + 6 := rfl
   simp only [pp, qq] at *
@@ -167,8 +163,4 @@ theorem gbig_both {Q₁ Q₂ : GP} (h₁ : GBig Q₁) (h₂ : GBig Q₂) : GBig 
 end GlobalTheory.SqStepBig
 
 end
-
-namespace GlobalTheory.SqStepBig
-
-end GlobalTheory.SqStepBig
 

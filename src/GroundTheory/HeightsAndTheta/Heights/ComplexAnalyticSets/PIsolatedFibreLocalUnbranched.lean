@@ -6,6 +6,7 @@ public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StIrreduc
 public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StIrreducibleGermPrimitiveForm
 public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPrimitiveFormSheetedOffDiscriminant
 import Mathlib.Tactic.TypeStar
+import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFiniteGermProjectionOpenAt
 public import Mathlib.Analysis.Analytic.ChangeOrigin
 public import Mathlib.Analysis.Analytic.Constructions
 public import Mathlib.Analysis.Analytic.Uniqueness
@@ -17,43 +18,6 @@ set_option maxSynthPendingDepth 1
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
 
 open Topology Filter
-
-private theorem germ_zero_of_mul_zero {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {f g : E → ℂ} {y : E}
-    (hf : AnalyticAt ℂ f y) (hg : AnalyticAt ℂ g y) (hfg : ∀ᶠ z in 𝓝 y, f z * g z = 0) :
-    (∀ᶠ z in 𝓝 y, f z = 0) ∨ (∀ᶠ z in 𝓝 y, g z = 0) := by
-  obtain ⟨r, hr, hball⟩ := Metric.mem_nhds_iff.1
-    ((hf.eventually_analyticAt.and hg.eventually_analyticAt).and hfg)
-  by_cases hf0 : ∀ z ∈ Metric.ball y r, f z = 0
-  · exact Or.inl (Filter.mem_of_superset (Metric.ball_mem_nhds y hr) hf0)
-  · right
-    push Not at hf0
-    obtain ⟨p, hp, hfp⟩ := hf0
-    have hgp : g =ᶠ[𝓝 p] 0 := by
-      filter_upwards [(hball hp).1.1.continuousAt.eventually_ne hfp, Metric.isOpen_ball.mem_nhds hp]
-        with z hz1 hz2
-      exact (mul_eq_zero.1 (hball hz2).2).resolve_left hz1
-    have hgan : AnalyticOnNhd ℂ g (Metric.ball y r) := fun z hz => (hball hz).1.2
-    have hzero := hgan.eqOn_zero_of_preconnected_of_eventuallyEq_zero (convex_ball y r).isPreconnected hp hgp
-    exact Filter.mem_of_superset (Metric.ball_mem_nhds y hr) fun z hz => by simpa using hzero hz
-
-private theorem germ_factor_zero_of_prod_zero {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {ι : Type*}
-    (h : ι → E → ℂ) {y : E} (s : Finset ι) (han : ∀ i ∈ s, AnalyticAt ℂ (h i) y)
-    (hprod : ∀ᶠ z in 𝓝 y, ∏ i ∈ s, h i z = 0) : ∃ i ∈ s, ∀ᶠ z in 𝓝 y, h i z = 0 := by
-  classical
-  induction s using Finset.induction_on with
-  | empty =>
-    obtain ⟨z, hz⟩ := hprod.exists
-    simp at hz
-  | insert a s ha ih =>
-    have hg : AnalyticAt ℂ (fun z => ∏ i ∈ s, h i z) y :=
-      Finset.analyticAt_fun_prod s fun i hi => han i (Finset.mem_insert_of_mem hi)
-    have hprod' : ∀ᶠ z in 𝓝 y, h a z * ∏ i ∈ s, h i z = 0 := by
-      filter_upwards [hprod] with z hz
-      rwa [Finset.prod_insert ha] at hz
-    rcases germ_zero_of_mul_zero (han a (Finset.mem_insert_self a s)) hg hprod' with h1 | h1
-    · exact ⟨a, Finset.mem_insert_self a s, h1⟩
-    · obtain ⟨i, hi, h2⟩ := ih (fun i hi => han i (Finset.mem_insert_of_mem hi)) h1
-      exact ⟨i, Finset.mem_insert_of_mem hi, h2⟩
 
 private theorem isOpen_diff_of_zeroSet {σ : Type} [Fintype σ] {Y N : Set (σ → ℂ)} {k : ℕ}
     {φ : Fin k → (σ → ℂ) → ℂ} (hN : IsOpen N) (hφ : ∀ m, AnalyticOnNhd ℂ (φ m) N)
@@ -134,11 +98,11 @@ theorem IsolatedFibreLocalUnbranched.proof (hcomp : OpenProjectionDominantCompon
       · filter_upwards [hez i j hij] with z hz _ using hz
     exact eventually_all.2 fun i => eventually_all.2 fun j => hev i j
   · intro hg0
-    obtain ⟨i, -, hi⟩ := germ_factor_zero_of_prod_zero (fun i y => δ i y * ∏ j, e i j y) Finset.univ
+    obtain ⟨i, -, hi⟩ := germ_prod_eventually_zero (fun i y => δ i y * ∏ j, e i j y) Finset.univ
       (fun i _ => hfac i) hg0
-    rcases germ_zero_of_mul_zero (hδa i) (Finset.analyticAt_fun_prod _ fun j _ => hea i j) hi with h1 | h1
+    rcases germ_eventually_zero_of_mul (hδa i) (Finset.analyticAt_fun_prod _ fun j _ => hea i j) hi with h1 | h1
     · exact hδ0 i h1
-    · obtain ⟨j, -, hj⟩ := germ_factor_zero_of_prod_zero (e i) Finset.univ (fun j _ => hea i j) h1
+    · obtain ⟨j, -, hj⟩ := germ_prod_eventually_zero (e i) Finset.univ (fun j _ => hea i j) h1
       exact he0 i j hj
   · intro x hx hgx
     obtain ⟨hxXB, ⟨⟨hxW0, hxM⟩, hxN⟩, hxe⟩ := hx
@@ -178,7 +142,7 @@ theorem IsolatedFibreLocalUnbranched.proof (hcomp : OpenProjectionDominantCompon
         · rw [hji] at hzj
           exact ⟨hzj, hzU⟩
         · have hzj' := Set.mem_iInter.1 hzU.2 j
-          rw [if_neg hji] at hzj'
+          rw [ite_eq_right hji] at hzj'
           exact absurd hzj hzj'.2
       · rintro ⟨hzi, hzU⟩
         have hzW : z ∈ X ∩ B ∩ W0 := by

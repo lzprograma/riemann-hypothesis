@@ -8,50 +8,7 @@ import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FiniteAdelicComparison.
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FiniteAdelicComparison.LocFrom
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FiniteAdelicComparison.LocInj
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
+import Formalism.LocalToGlobal.GroupLattices.LevelCharts.AtGLev
 
 @[expose] public section
 
@@ -90,14 +47,7 @@ theorem val_nat (F : Type) [Field F] [NumberField F] (v : HeightOneSpectrum (�
 
 theorem not_mem_of_coprime {F : Type} [Field F] [NumberField F] (v : HeightOneSpectrum (𝓞 F))
     {m g : ℕ} (h : Nat.Coprime m g) (hg : (g : 𝓞 F) ∈ v.asIdeal) : (m : 𝓞 F) ∉ v.asIdeal := by
-  intro hm
-  obtain ⟨a, b, hab⟩ := Nat.isCoprime_iff_coprime.2 h
-  apply v.isPrime.ne_top
-  rw [Ideal.eq_top_iff_one]
-  have h1 : ((a * (m : ℤ) + b * (g : ℤ) : ℤ) : 𝓞 F) = 1 := by rw [hab, Int.cast_one]
-  rw [← h1]
-  push_cast
-  exact v.asIdeal.add_mem (v.asIdeal.mul_mem_left _ hm) (v.asIdeal.mul_mem_left _ hg)
+  apply _root_.Formalism.L2.G.not_mem_of_coprime <;> assumption
 
 theorem finite_over (F : Type) [Field F] [NumberField F] {g : ℕ} (hg : 1 ≤ g) :
     {v : HeightOneSpectrum (𝓞 F) | (g : 𝓞 F) ∈ v.asIdeal}.Finite := by
@@ -144,9 +94,9 @@ theorem glue_holds_var : Glue := by
       LocConcl I g r e f z Rf.z0 v := fun v hv => hL I g r k e f z Rf hH v hv
   let loc : ∀ v : HeightOneSpectrum (𝓞 I.F), GL (Fin I.n) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv I.F v ⊗[I.F] I.E) :=
     fun v => if hv : (g : 𝓞 I.F) ∈ v.asIdeal then Classical.choose (hloc v hv) else 1
-  have hloc1 : ∀ v, (g : 𝓞 I.F) ∉ v.asIdeal → loc v = 1 := fun v hv => dif_neg hv
+  have hloc1 : ∀ v, (g : 𝓞 I.F) ∉ v.asIdeal → loc v = 1 := fun v hv => dite_eq_right hv
   have hspec : ∀ v (hv : (g : 𝓞 I.F) ∈ v.asIdeal), loc v = Classical.choose (hloc v hv) :=
-    fun v hv => dif_pos hv
+    fun v hv => dite_eq_left hv
   have hlocUK : ∀ v, loc v ∈ Uv I v ∧ loc v ∈ Kv I v := by
     intro v
     by_cases hv : (g : 𝓞 I.F) ∈ v.asIdeal
@@ -176,8 +126,8 @@ theorem glue_holds_var : Glue := by
     intro w
     rw [matV_listProd I loc Y hY1 hY2 _ (Finset.nodup_toList _) w]
     by_cases hw : (g : 𝓞 I.F) ∈ w.asIdeal
-    · rw [if_pos (by simpa using hw)]
-    · rw [if_neg (by simpa using hw), hloc1 w hw]
+    · rw [ite_eq_left (by simpa using hw)]
+    · rw [ite_eq_right (by simpa using hw), hloc1 w hw]
   have hxm : ∀ v, (I.fmat x).map (PI.FinKW.psiV I v).toRingHom =
       ((loc v : GL (Fin I.n) _) : Matrix (Fin I.n) (Fin I.n) _) := by
     intro v

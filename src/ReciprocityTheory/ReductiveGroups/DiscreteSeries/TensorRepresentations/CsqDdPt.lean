@@ -42,9 +42,9 @@ private theorem isCAR_cp_cm_cp_cm_reorder_shared_snd {cp cm : Fin n → Fin n �
     simp only [mul_assoc], isCAR_cm_mul_cp_eq_delta_sub_cp_mul_cm hC b x b y]
   by_cases hxy : x = y
   · subst hxy
-    rw [if_pos ⟨rfl, rfl⟩, if_pos rfl]
+    rw [ite_eq_left ⟨rfl, rfl⟩, ite_eq_left rfl]
     noncomm_ring
-  · rw [if_neg (fun h => hxy h.2), if_neg hxy]
+  · rw [ite_eq_right (fun h => hxy h.2), ite_eq_right hxy]
     noncomm_ring
 
 private theorem isCAR_cp_cm_cp_cm_reorder_shared_fst {cp cm : Fin n → Fin n → Module.End ℂ W}
@@ -55,9 +55,9 @@ private theorem isCAR_cp_cm_cp_cm_reorder_shared_fst {cp cm : Fin n → Fin n �
     simp only [mul_assoc], isCAR_cm_mul_cp_eq_delta_sub_cp_mul_cm hC i a j a]
   by_cases hij : i = j
   · subst hij
-    rw [if_pos ⟨rfl, rfl⟩, if_pos rfl]
+    rw [ite_eq_left ⟨rfl, rfl⟩, ite_eq_left rfl]
     noncomm_ring
-  · rw [if_neg (fun h => hij h.1), if_neg hij]
+  · rw [ite_eq_right (fun h => hij h.1), ite_eq_right hij]
     noncomm_ring
 
 theorem casimirK_sgE {cp cm : Fin n → Fin n → Module.End ℂ W} (hC : IsCAR cp cm) (ε : Fin n → Bool) :
@@ -210,15 +210,15 @@ theorem csq_dd_pt {E cp cm : Fin n → Fin n → Module.End ℂ W} (hE : IsGlRep
   rw [step, hgl, hcar]
   rcases eq_or_ne i j with h1 | h1 <;> rcases eq_or_ne b a with h2 | h2
   · subst h1; subst h2
-    simp only [and_self, if_true]
+    simp only [and_self, ite_true]
     noncomm_ring
   · subst h1
-    simp only [if_true, h2, if_false, and_false]
+    simp only [ite_true, h2, ite_false, and_false]
     noncomm_ring
   · subst h2
-    simp only [if_true, h1, Ne.symm h1, if_false, false_and]
+    simp only [ite_true, h1, Ne.symm h1, ite_false, false_and]
     noncomm_ring
-  · simp only [h1, h2, Ne.symm h1, if_false, and_false]
+  · simp only [h1, h2, Ne.symm h1, ite_false, and_false]
     noncomm_ring
 
 theorem dd_add {E cp cm : Fin n → Fin n → Module.End ℂ W} (hE : IsGlRep E) (hC : IsCAR cp cm)
@@ -262,7 +262,7 @@ theorem dd_add {E cp cm : Fin n → Fin n → Module.End ℂ W} (hE : IsGlRep E)
       intro i hi a
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun b _ => ?_
-      rw [Finset.sum_ite_eq, if_pos hi]
+      rw [Finset.sum_ite_eq, ite_eq_left hi]
     refine (Finset.sum_congr rfl fun i hi => Finset.sum_congr rfl fun a _ => h1 i hi a).trans ?_
     exact Finset.sum_comm.trans (Finset.sum_congr rfl fun a _ => Finset.sum_comm)
   have hB : ∑ i ∈ plusIdx ε, ∑ a ∈ minusIdx ε, ∑ j ∈ plusIdx ε, ∑ b ∈ minusIdx ε,
@@ -273,17 +273,17 @@ theorem dd_add {E cp cm : Fin n → Fin n → Module.End ℂ W} (hE : IsGlRep E)
         ∑ j ∈ plusIdx ε, E j i * (cp i a * cm j a) := by
       intro i a ha
       refine Finset.sum_congr rfl fun j _ => ?_
-      rw [Finset.sum_ite_eq', if_pos ha]
+      rw [Finset.sum_ite_eq', ite_eq_left ha]
     refine (Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun a ha => h1 i a ha).trans ?_
     exact (Finset.sum_congr rfl fun i _ => Finset.sum_comm).trans Finset.sum_comm
   have hC' : ∑ i ∈ plusIdx ε, ∑ a ∈ minusIdx ε, ∑ j ∈ plusIdx ε, ∑ b ∈ minusIdx ε,
       (if b = a then (if j = i then E i a * E a i else 0) else 0) =
       ∑ i ∈ plusIdx ε, ∑ a ∈ minusIdx ε, E i a * E a i := by
     refine Finset.sum_congr rfl fun i hi => Finset.sum_congr rfl fun a ha => ?_
-    rw [Finset.sum_congr rfl fun j _ => (by rw [Finset.sum_ite_eq', if_pos ha] :
+    rw [Finset.sum_congr rfl fun j _ => (by rw [Finset.sum_ite_eq', ite_eq_left ha] :
       ∑ b ∈ minusIdx ε, (if b = a then (if j = i then E i a * E a i else 0) else 0) =
         (if j = i then E i a * E a i else 0))]
-    rw [Finset.sum_ite_eq', if_pos hi]
+    rw [Finset.sum_ite_eq', ite_eq_left hi]
   have hcross : crossT ε E cp cm =
       ∑ x ∈ plusIdx ε, ∑ y ∈ plusIdx ε, ∑ c ∈ minusIdx ε, E x y * (cp y c * cm x c) -
         ∑ a ∈ minusIdx ε, ∑ b ∈ minusIdx ε, ∑ i ∈ plusIdx ε, E a b * (cp i a * cm i b) := by
@@ -342,7 +342,7 @@ theorem two_D_sq {E cp cm : Fin n → Fin n → Module.End ℂ W} (hE : IsGlRep 
   have h1 : ∀ a i : Fin n, E a i * E i a = E i a * E a i + (E a a - E i i) := by
     intro a i
     have h := hE a i i a
-    rw [if_pos rfl, if_pos rfl] at h
+    rw [ite_eq_left rfl, ite_eq_left rfl] at h
     rw [← h]
     abel
   have hcomm2 : ∑ a ∈ minusIdx ε, ∑ i ∈ plusIdx ε, E a i * E i a =

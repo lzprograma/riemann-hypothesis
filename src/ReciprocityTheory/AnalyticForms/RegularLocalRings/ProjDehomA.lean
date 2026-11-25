@@ -78,19 +78,6 @@ theorem segreW_prod_update [DecidableEq K] (P : Ideal (MvPolynomial (Σ k, ι k)
   simp only [map_mul, map_prod, map_pow, segreMap_X]
   exact prod_prod_update (X : (Σ k, ι k) → MvPolynomial (Σ k, ι k) ℂ) p p'
 
-theorem segreW_exchange [DecidableEq K] (P : Ideal (MvPolynomial (Σ k, ι k) ℂ))
-    (p p' : (k : K) → ι k) (q : Σ k, ι k) :
-    segreW P (Function.update p q.1 q.2) * segreW P (Function.update p' q.1 (p q.1)) =
-      segreW P (Function.update p' q.1 q.2) * segreW P p := by
-  obtain ⟨k, v⟩ := q
-  simp only [segreW, ← map_mul]
-  apply mk_eq_of_segreMap_eq
-  simp only [map_mul, segreMap_X]
-  rw [prod_update_eq X p k v, prod_update_eq X p' k (p k), prod_update_eq X p' k v,
-    ← Finset.mul_prod_erase Finset.univ (fun j => (X ⟨j, p j⟩ : MvPolynomial (Σ k, ι k) ℂ))
-      (Finset.mem_univ k)]
-  ring
-
 theorem segreMap_aeval_update [DecidableEq K] (p : (k : K) → ι k) {f : MvPolynomial (Σ k, ι k) ℂ}
     {a : K → ℕ} (hf : IsMultiHomog f a) :
     segreMap (aeval (fun q : Σ k, ι k => (X (Function.update p q.1 q.2) :

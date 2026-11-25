@@ -52,13 +52,9 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.FamFree
 
@@ -201,9 +197,3 @@ theorem exists_fam_support (hG : GlobalFnsSt) (hT : SecTwistSt) (hB : D.TauBimul
   exact hσ ((zero_add_nsmul_iff hG s α mu).1 h)
 
 end GlobalTheory.FamFree
-
-namespace GlobalTheory
-
-open ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
-
-end GlobalTheory

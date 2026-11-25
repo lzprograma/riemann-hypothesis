@@ -46,11 +46,8 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.LastVertexInv
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
-
 namespace GlobalTheory.FirstRowVertex
 
-open GlobalTheory.LastVertexInv
 
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} {W : G.Weil} {U : Set T}
 
@@ -81,7 +78,7 @@ theorem rowMapV_update_zero (S : GridChoice W U)
   refine congrArg (fun F => LinearMap.comp (chainTo (V := fun i => VV ℂ (wt G (.grid i D.R.m))) F D.R.m) _) ?_
   funext i
   by_cases hi : i < D.R.m
-  · simp only [dif_pos hi]
+  · simp only [dite_eq_left hi]
     rcases Nat.eq_zero_or_pos i with h0 | hpos
     · subst h0
       simp only [Function.update_self, Function.update_of_ne (show (0 + 1 : ℕ) ≠ 0 by omega)]
@@ -98,7 +95,7 @@ theorem rowMapV_update_zero (S : GridChoice W U)
       have hy1 : Function.update y 0 (y 0 * k) i = y i := Function.update_of_ne (by omega) _ _
       have hy2 : Function.update y 0 (y 0 * k) (i + 1) = y (i + 1) := Function.update_of_ne (by omega) _ _
       rw [hu, hy1, hy2]
-  · simp only [dif_neg hi]
+  · simp only [dite_eq_right hi]
 
 theorem prod_update_smul {ι : Type} [Fintype ι] [DecidableEq ι] {X : ι → Type} (F : ∀ i, X i → ℂ) (i₀ : ι) (h : X i₀ → ℂ)
     (c : ℂ) (ys : ∀ i, X i) :

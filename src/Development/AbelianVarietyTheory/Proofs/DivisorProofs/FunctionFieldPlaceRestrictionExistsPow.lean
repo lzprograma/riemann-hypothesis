@@ -50,8 +50,6 @@ import Mathlib.Topology.Sheaves.Init
 open scoped IntermediateField Polynomial RatFunc
 open GlobalTheory.Nef
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.Nef.PlaceResiduePowerBound
@@ -165,8 +163,7 @@ theorem root (v : Valuation F ℤᵐ⁰) (hv : ∃ a, 1 < v a) :
 
 theorem exists_one_lt {E : Type} [Field E] [Algebra F E] [FiniteDimensional F E]
     (p : Valuation E ℤᵐ⁰) (hp : Function.Surjective p) : ∃ a : F, 1 < p (algebraMap F E a) := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   obtain ⟨y, hy⟩ := hp (exp (1 : ℤ))
   have hy1 : 1 < p y := by rw [hy, ← exp_zero, exp_lt_exp]; norm_num
   obtain ⟨f, hfm, hfy⟩ := Algebra.IsIntegral.isIntegral (R := F) y

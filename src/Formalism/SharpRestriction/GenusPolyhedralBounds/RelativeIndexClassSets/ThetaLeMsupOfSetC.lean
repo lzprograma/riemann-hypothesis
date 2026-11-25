@@ -1,45 +1,9 @@
 module
 
 public import Formalism.SharpRestriction.Divisibility.WeightAlgebra
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -87,10 +51,6 @@ theorem msup_mul_le (X : PJ D B P j) (w w' : WeightFamilies.Wt D j) :
   obtain ⟨H, hH, e⟩ := mlat_mul X w w' hF hG
   exact ⟨H, hH, e.symm⟩
 
-private lemma smul_le_lemma_2 {R A : Type*} [CommSemiring R] [Semiring A] [Algebra R A]
-    {M N P Q : Submodule R A} (h1 : M ≤ P) (h2 : N ≤ Q) : M * N ≤ P * Q :=
-  Submodule.mul_le.2 fun _ hm _ hn => Submodule.mul_mem_mul (h1 hm) (h2 hn)
-
 theorem msup_pow_mul_le (X : PJ D B P j) (wL : WeightFamilies.Wt D j) (n : ℕ) :
     ∀ w : WeightFamilies.Wt D j, X.Msup wL ^ n * X.Msup w ≤ X.Msup (wadd (wsmul n wL) w) := by
   induction n with
@@ -98,21 +58,13 @@ theorem msup_pow_mul_le (X : PJ D B P j) (wL : WeightFamilies.Wt D j) (n : ℕ) 
   | succ n ih =>
     intro w
     rw [pow_succ, mul_assoc, ← wadd_wsmul_succ]
-    exact (smul_le_lemma_2 le_rfl (msup_mul_le X wL w)).trans (ih _)
-
-private lemma spow_le_lemma {R A : Type*} [CommSemiring R] [Semiring A] [Algebra R A]
-    {M N : Submodule R A} (h : M ≤ N) (n : ℕ) : M ^ n ≤ N ^ n := by
-  induction n with
-  | zero => exact le_rfl
-  | succ n ih =>
-    rw [pow_succ, pow_succ]
-    exact smul_le_lemma_2 ih h
+    exact (mul_le_mul' le_rfl (msup_mul_le X wL w)).trans (ih _)
 
 theorem emb_pow_mul_le (X : PJ D B P j) (wL w : WeightFamilies.Wt D j) (n : ℕ)
     {NL : Submodule (𝓞 B.KO) (B.Cusp j wL)} {N : Submodule (𝓞 B.KO) (B.Cusp j w)}
     (hL : NL ≤ B.Mlat j wL) (hN : N ≤ B.Mlat j w) :
     X.emb wL NL ^ n * X.emb w N ≤ X.Msup (wadd (wsmul n wL) w) :=
-  (smul_le_lemma_2 (spow_le_lemma (emb_mono X wL hL) n) (emb_mono X w hN)).trans
+  (mul_le_mul' (pow_le_pow_left' (emb_mono X wL hL) n) (emb_mono X w hN)).trans
     (msup_pow_mul_le X wL n w)
 
 theorem wt_first {ka wL wF : WeightFamilies.Wt D j} {T nP nW : ℕ} (hF : IsF' ka wL wF T nP) (hL : wL.n = nW)

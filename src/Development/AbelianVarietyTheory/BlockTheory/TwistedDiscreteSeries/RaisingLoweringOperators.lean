@@ -46,8 +46,6 @@ open Matrix GlobalTheory.Chain
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def sgn (e : Bool) : ℂ := if e then 1 else -1

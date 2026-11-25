@@ -4,52 +4,9 @@ public import Mathlib.Analysis.Analytic.Basic
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
 public import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Comp
 public import Mathlib.Analysis.Calculus.Deriv.Inv
@@ -247,9 +204,9 @@ theorem residue_rectangle_of_finite_principal_parts :
       filter_upwards [e1, hopen (S.erase s) s (Finset.notMem_erase s S)] with t ht1 ht2
       by_cases hts : t = s
       · subst hts
-        simp only [h, if_pos hsS]
+        simp only [h, ite_eq_left hsS]
       · have htS : t ∉ S := fun ht => ht2 (Finset.mem_erase.2 ⟨hts, ht⟩)
-        simp only [h, if_neg htS]
+        simp only [h, ite_eq_right htS]
         rw [ht1 hts, ← Finset.add_sum_erase S _ hsS]
         simp only [P]
         ring
@@ -258,10 +215,10 @@ theorem residue_rectangle_of_finite_principal_parts :
           (DifferentiableAt.fun_sum fun q hq => hP q s fun e => hsS (e ▸ hq)).differentiableWithinAt
         refine (hf s ⟨hs, hsS⟩).mono_of_mem_nhdsWithin ?_
         exact inter_mem_nhdsWithin R (hopen S s hsS)
-      refine hd.congr_of_eventuallyEq ?_ (by simp only [h, if_neg hsS])
+      refine hd.congr_of_eventuallyEq ?_ (by simp only [h, ite_eq_right hsS])
       filter_upwards [mem_nhdsWithin_of_mem_nhds (hopen S s hsS)] with t ht
       have ht' : t ∉ S := ht
-      simp only [h, if_neg ht']
+      simp only [h, ite_eq_right ht']
   have hB : SidesIn z.re w.re z.im w.im (R \ S) := by
     rw [SidesIn, Set.uIcc_of_le hre.le, Set.uIcc_of_le him.le]
     refine ⟨fun x hx => ⟨?_, fun hm => ?_⟩, fun x hx => ⟨?_, fun hm => ?_⟩,
@@ -283,7 +240,7 @@ theorem residue_rectangle_of_finite_principal_parts :
   change bdInt z.re w.re z.im w.im f = _
   rw [bdInt_congr hB (g := fun s => h s + ∑ q ∈ S, P q s) (fun s hs => by
       have ht' : s ∉ S := hs.2
-      simp only [h, if_neg ht']; ring),
+      simp only [h, ite_eq_right ht']; ring),
     bdInt_add hB (hh.continuousOn.mono Set.diff_subset) (continuousOn_finsetSum _ hPc), h0,
     zero_add, bdInt_sum hB S hPc, Finset.mul_sum]
   refine Finset.sum_congr rfl fun p hp => ?_

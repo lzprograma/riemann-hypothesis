@@ -22,7 +22,6 @@ public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentCoor
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentHorizontal
 import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentModulus
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnitsInvHaar
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 

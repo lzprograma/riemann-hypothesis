@@ -1,52 +1,10 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.ObjPol
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
 
 @[expose] public section
@@ -68,7 +26,7 @@ private theorem laurent_mul_coeff_of_unique_decomp {B : Type*} [CommRing B] (f g
     · simp
     · intro k₂ hk₂ hne
       by_cases ha : a ∈ f.coeff.support
-      · rw [if_neg]; intro he; exact hne (h a ha k₂ hk₂ he).2
+      · rw [ite_eq_right]; intro he; exact hne (h a ha k₂ hk₂ he).2
       · have : f.coeff a = 0 := by simpa using ha
         simp [this]
     · intro hb
@@ -77,7 +35,7 @@ private theorem laurent_mul_coeff_of_unique_decomp {B : Type*} [CommRing B] (f g
   · intro k₁ hk₁ hne
     apply Finset.sum_eq_zero
     intro k₂ hk₂
-    dsimp only; rw [if_neg]; intro he; exact hne (h k₁ hk₁ k₂ hk₂ he).1
+    dsimp only; rw [ite_eq_right]; intro he; exact hne (h k₁ hk₁ k₂ hk₂ he).1
   · intro ha
     have : f.coeff a = 0 := by simpa using ha
     simp [this]
@@ -144,11 +102,11 @@ private theorem laurent_mul_C_coeff {B : Type*} [CommRing B] (y : LaurentPolynom
     intro k₁ _ k₂ hk₂ he
     have : k₂ = 0 := by
       by_contra hne
-      rw [Finsupp.mem_support_iff, hCc, if_neg hne] at hk₂
+      rw [Finsupp.mem_support_iff, hCc, ite_eq_right hne] at hk₂
       exact hk₂ rfl
     omega)
   rw [add_zero] at h
-  rw [h, hCc, if_pos rfl]
+  rw [h, hCc, ite_eq_left rfl]
 
 theorem mul_Phi_coeff {σ A : Type*} [CommRing A] (P : MvPolynomial σ (LaurentPolynomial A)) (m : σ →₀ ℕ) (k : ℤ) :
     AddMonoidAlgebra.coeff ((mul_Phi σ A P).coeff k) m = (AddMonoidAlgebra.coeff P m).coeff k := by
@@ -182,8 +140,7 @@ theorem mul_degs_eq {σ A : Type*} [CommRing A] (P : MvPolynomial σ (LaurentPol
     simp
   · intro h
     obtain ⟨m, hm⟩ : ∃ m, AddMonoidAlgebra.coeff ((mul_Phi σ A P).coeff k) m ≠ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact h (by ext m; simpa using hc m)
     rw [mul_Phi_coeff] at hm
     exact ⟨m, fun h0 => hm (by rw [h0]; simp), hm⟩

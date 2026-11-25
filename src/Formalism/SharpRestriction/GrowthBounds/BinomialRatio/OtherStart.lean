@@ -1,43 +1,6 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -65,7 +28,6 @@ theorem rot_val (n : ℕ) (j : Fin n) :
 
 theorem rot_inj (n : ℕ) : Function.Injective (rot n) := by
   intro j j' h
-  have h' := congrArg Fin.val h
   have a := rot_val n j
   have b := rot_val n j'
   apply Fin.ext
@@ -97,7 +59,7 @@ theorem segG_eq (TT : Finset (Fin n')) (h2 : 2 ≤ numSeg TT) (j : Fin (numSeg T
   obtain ⟨m1, -⟩ := next_min TT j e he hev hne
   refine ⟨?_, m1⟩
   unfold segG
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 theorem sum_segG (TT : Finset (Fin n')) (h2 : 2 ≤ numSeg TT) : ∑ j, segG TT j = n' := by
   have key : ∀ j : Fin (numSeg TT), (segG TT j : ℤ) =
@@ -107,8 +69,6 @@ theorem sum_segG (TT : Finset (Fin n')) (h2 : 2 ≤ numSeg TT) : ∑ j, segG TT 
     obtain ⟨g, g0⟩ := segG_eq TT h2 j
     rw [g, next_eq] at *
     have c := cd_cases (segStart TT j) (segStart TT (rot _ j))
-    have l1 := (segStart TT j).isLt
-    have l2 := (segStart TT (rot _ j)).isLt
     rcases rot_val _ j with ⟨r1, r2⟩ | ⟨r1, r2⟩
     · have hlt : (segStart TT j).val < (segStart TT (rot _ j)).val :=
         ev_mono TT (Fin.lt_def.mpr (by omega))
@@ -117,7 +77,7 @@ theorem sum_segG (TT : Finset (Fin n')) (h2 : 2 ≤ numSeg TT) : ∑ j, segG TT 
         have := congrArg Fin.val e
         simp at this
         omega
-      rw [if_neg hne]
+      rw [ite_eq_right hne]
       omega
     · have hlt : (segStart TT (rot _ j)).val < (segStart TT j).val :=
         ev_mono TT (Fin.lt_def.mpr (by omega))
@@ -125,7 +85,7 @@ theorem sum_segG (TT : Finset (Fin n')) (h2 : 2 ≤ numSeg TT) : ∑ j, segG TT 
         apply Fin.ext
         show j.val = numSeg TT - 1
         omega
-      rw [if_pos he]
+      rw [ite_eq_left he]
       omega
   have hs : (∑ j, ((segStart TT (rot _ j)).val : ℤ)) = ∑ j, ((segStart TT j).val : ℤ) :=
     (rot_bij (numSeg TT)).sum_comp (fun j => ((segStart TT j).val : ℤ))
@@ -202,9 +162,7 @@ theorem odd_covered (TT : Finset (Fin n')) (h2 : 2 ≤ numSeg TT) (s : Fin n') (
     have c1 := cd_cases x s
     have c2 := cd_cases x (segNext TT j)
     have c3 := cd_cases (segNext TT j) s
-    have l1 := x.isLt
     have l2 := s.isLt
-    have l3 := (segNext TT j).isLt
     omega
 
 theorem biUnion_odd (TT : Finset (Fin n')) (h2 : 2 ≤ numSeg TT) :

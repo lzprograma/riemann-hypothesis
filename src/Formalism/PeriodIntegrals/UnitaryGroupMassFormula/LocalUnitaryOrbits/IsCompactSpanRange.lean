@@ -2,53 +2,15 @@ module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.UnifExHolds
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FirstStatementA
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.BasIntSmulMem
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.DensFibV
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.PosNear
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-import Mathlib.Topology.Sheaves.Init
+import Mathlib.Topology.Algebra.Module.Compact
 import ReciprocityTheory.GeneralLinearIntegers.AlgebraMapIntMemOint
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.UnitaryLocalMassIdentity
 
 @[expose] public section
 
@@ -63,23 +25,20 @@ open scoped TensorProduct
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   (v : HeightOneSpectrum (𝓞 F))
 
+private theorem isCompact_of_fg {M : Type} [AddCommGroup M] [Module (Fv F v) M]
+    [TopologicalSpace M] [ContinuousAdd M] [ContinuousSMul (Fv F v) M]
+    {N : Submodule (v.adicCompletionIntegers F) M} (hN : N.FG) : IsCompact (N : Set M) := by
+  have : CompactSpace (v.adicCompletionIntegers F) :=
+    PI.AdicCompletionValuation.compactSpace_integer F v
+  have : ContinuousSMul (v.adicCompletionIntegers F) M :=
+    ⟨(continuous_subtypeVal.comp continuous_fst).smul continuous_snd⟩
+  exact Submodule.isCompact_of_fg hN
+
 theorem isCompact_span_range {ι M : Type} [Fintype ι] [AddCommGroup M] [Module (Fv F v) M]
     [TopologicalSpace M] [ContinuousAdd M] [ContinuousSMul (Fv F v) M] (w : ι → M) :
     IsCompact ((Submodule.span (v.adicCompletionIntegers F) (Set.range w) :
-      Submodule (v.adicCompletionIntegers F) M) : Set M) := by
-  have : CompactSpace (v.adicCompletionIntegers F) :=
-    isCompact_iff_compactSpace.mp (ReciprocityTheory.GeneralLinearIntegers.GeneralLinearIntegersOpenCompact.isCompact_integers v)
-  have hc : Continuous (fun c : ι → v.adicCompletionIntegers F => ∑ i, ((c i : Fv F v)) • w i) :=
-    continuous_finsetSum _ fun i _ =>
-      (continuous_subtype_val.comp (continuous_apply i)).smul continuous_const
-  have e : ((Submodule.span (v.adicCompletionIntegers F) (Set.range w) :
-      Submodule (v.adicCompletionIntegers F) M) : Set M) =
-      Set.range (fun c : ι → v.adicCompletionIntegers F => ∑ i, ((c i : Fv F v)) • w i) := by
-    ext x
-    rw [SetLike.mem_coe, Submodule.mem_span_range_iff_exists_fun]
-    rfl
-  rw [e]
-  exact isCompact_range hc
+      Submodule (v.adicCompletionIntegers F) M) : Set M) :=
+  isCompact_of_fg v (Submodule.fg_span (Set.finite_range w))
 
 theorem oEv_eq_span : OEv (E := E) v = ((Submodule.span (v.adicCompletionIntegers F)
     (Set.range (fun i => inclR (F := F) (Fv F v) ((RingOfIntegers.basis E i : 𝓞 E) : E)))) :
@@ -108,48 +67,7 @@ theorem isCompact_oEv : IsCompact (OEv (E := E) v) := by
   exact isCompact_span_range v _
 
 theorem isOpen_oEv : IsOpen (OEv (E := E) v) := by
-  classical
-  have : FiniteDimensional F E := Module.Finite.of_restrictScalars_finite ℚ F E
-  set b := Module.finBasis F E with hb
-  obtain ⟨y, hy0, hy⟩ := exists_integral_multiples ℤ ℚ (Finset.univ.image b)
-  have hyb : ∀ k, IsIntegral ℤ (y • b k) := fun k =>
-    hy _ (Finset.mem_image_of_mem _ (Finset.mem_univ k))
-  set c : Fv F v := algebraMap F (Fv F v) (y : F) with hcdef
-  have hc : c ≠ 0 := by
-    rw [hcdef, ne_eq, map_eq_zero_iff _ (algebraMap F (Fv F v)).injective]
-    exact_mod_cast hy0
-  set W : Set (Fv F v ⊗[F] E) := ⋂ k, (fun z => PI.VolStabS.PositiveNearLattice.crd b (Fv F v) z k * c⁻¹) ⁻¹'
-    (v.adicCompletionIntegers F : Set (Fv F v)) with hWdef
-  have hWo : IsOpen W := isOpen_iInter_of_finite fun k =>
-    (ReciprocityTheory.GeneralLinearIntegers.GeneralLinearIntegersOpenCompact.isOpen_integers v).preimage
-      ((PI.VolStabS.PositiveNearLattice.continuous_crd b (Fv F v) k).mul continuous_const)
-  have hW0 : (0 : Fv F v ⊗[F] E) ∈ W := by
-    simp only [hWdef, Set.mem_iInter, Set.mem_preimage]
-    intro k
-    simp [PI.VolStabS.PositiveNearLattice.crd]
-  have hWsub : W ⊆ OEv (E := E) v := by
-    intro z hz
-    simp only [hWdef, Set.mem_iInter, Set.mem_preimage] at hz
-    rw [PI.VolStabS.PositiveNearLattice.eq_sum_crd b (Fv F v) z]
-    unfold OEv
-    refine Submodule.sum_mem _ fun k _ => ?_
-    have e1 : PI.VolStabS.PositiveNearLattice.crd b (Fv F v) z k • ((1 : Fv F v) ⊗ₜ[F] b k) =
-        (PI.VolStabS.PositiveNearLattice.crd b (Fv F v) z k * c⁻¹) • inclR (F := F) (Fv F v) (y • b k) := by
-      have e2 : inclR (F := F) (Fv F v) (y • b k) = c • ((1 : Fv F v) ⊗ₜ[F] b k) := by
-        show (1 : Fv F v) ⊗ₜ[F] (y • b k) = c • ((1 : Fv F v) ⊗ₜ[F] b k)
-        rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one, hcdef, Algebra.algebraMap_eq_smul_one,
-          TensorProduct.smul_tmul, Int.cast_smul_eq_zsmul]
-      rw [e2, smul_smul, mul_assoc, inv_mul_cancel₀ hc, mul_one]
-    rw [e1]
-    have hgen : inclR (F := F) (Fv F v) (y • b k) ∈ Submodule.span (v.adicCompletionIntegers F)
-        ((fun x : 𝓞 E => inclR (F := F) (Fv F v) (x : E)) '' Set.univ) :=
-      Submodule.subset_span ⟨(⟨y • b k, hyb k⟩ : 𝓞 E), Set.mem_univ _, rfl⟩
-    exact Submodule.smul_mem _ (⟨_, hz k⟩ : v.adicCompletionIntegers F) hgen
-  have hP : ((Submodule.span (v.adicCompletionIntegers F)
-      ((fun x : 𝓞 E => inclR (F := F) (Fv F v) (x : E)) '' Set.univ)).toAddSubgroup :
-        Set (Fv F v ⊗[F] E)) ∈ 𝓝 (0 : Fv F v ⊗[F] E) :=
-    Filter.mem_of_superset (hWo.mem_nhds hW0) hWsub
-  exact AddSubgroup.isOpen_of_mem_nhds _ hP
+  apply _root_.PI.LocMassTypU.isOpen_oev <;> assumption
 
 theorem hermOC_holds (σ : E →ₐ[F] E) (a : ℕ) : HermOC σ v a := by
   have := PI.VolStabSW.locallyCompact_Fv F v
@@ -188,39 +106,7 @@ theorem isCompact_latLoc
     (hL : ∃ L : Submodule (𝓞 E) (Fin n → E), Submodule.IsLattice E L ∧ (L : Set (Fin n → E)) = Λ) :
     IsCompact (latLoc (E := E) v Λ : Set (Fin n → Fv F v ⊗[F] E)) := by
   obtain ⟨L, hLat, rfl⟩ := hL
-  have hfg : (L.restrictScalars ℤ).FG := hLat.fg.restrictScalars
-  obtain ⟨s, hs⟩ := hfg
-  have e : latLoc (E := E) v (L : Set (Fin n → E)) = Submodule.span (v.adicCompletionIntegers F)
-      (Set.range (fun x : s => ratV (F := F) (Fv F v) (x : Fin n → E))) := by
-    apply le_antisymm
-    · unfold latLoc
-      rw [Submodule.span_le]
-      rintro _ ⟨x, hx, rfl⟩
-      have hx' : x ∈ Submodule.span ℤ (s : Set (Fin n → E)) := by
-        rw [hs]
-        exact hx
-      clear hx
-      induction hx' using Submodule.span_induction with
-      | mem y hy => exact Submodule.subset_span ⟨⟨y, hy⟩, rfl⟩
-      | zero =>
-        rw [ratV_zero]
-        exact Submodule.zero_mem _
-      | add y z _ _ hy hz =>
-        rw [ratV_add]
-        exact Submodule.add_mem _ hy hz
-      | smul c y _ hy =>
-        rw [ratV_zsmul]
-        exact zsmul_mem hy c
-    · rw [Submodule.span_le]
-      rintro _ ⟨⟨x, hx⟩, rfl⟩
-      have hxL : x ∈ L := by
-        have : x ∈ L.restrictScalars ℤ := by
-          rw [← hs]
-          exact Submodule.subset_span hx
-        exact this
-      exact Submodule.subset_span ⟨x, hxL, rfl⟩
-  rw [e]
-  exact isCompact_span_range v _
+  exact isCompact_of_fg v (basLat_fg v L hLat)
 
 theorem isOpen_latLoc
     (hL : ∃ L : Submodule (𝓞 E) (Fin n → E), Submodule.IsFullLattice E L ∧ (L : Set (Fin n → E)) = Λ) :

@@ -82,8 +82,8 @@ theorem sumX_mem (F' : LFlag S r T') (d : Fin r → E) : (∑ a : Fin r, d a •
 theorem hermitian_frame_z (F : LFlag S r T) (i : Fin (r + 1)) :
     S.hT (F.fl.fvec i) F.fl.z = if i = Fin.last r then -T else 0 := by
   induction i using Fin.lastCases with
-  | last => rw [fvec_last, if_pos rfl]; exact F.fl.z_norm
-  | cast a => rw [fvec_castSucc, if_neg (Fin.castSucc_lt_last a).ne]; exact F.fl.z_orth a
+  | last => rw [fvec_last, ite_eq_left rfl]; exact F.fl.z_norm
+  | cast a => rw [fvec_castSucc, ite_eq_right (Fin.castSucc_lt_last a).ne]; exact F.fl.z_orth a
 
 theorem fvec_mem_Xplus (F : LFlag S r T) (i : Fin (r + 1)) : F.fl.fvec i ∈ F.fl.Xplus := by
   induction i using Fin.lastCases with
@@ -249,10 +249,10 @@ theorem zeta_core (k : ℕ) (F : LFlag S r T) (F' F'' : LFlag S r T') (β : S.V 
       rw [one_smul, map_add (f := _), hermitian_frame_z, hT_wv] at this
       by_cases hi : i = Fin.last r
       · subst hi
-        rw [if_pos rfl] at this
+        rw [ite_eq_left rfl] at this
         simp only [hb, Pi.single_eq_same]
         linear_combination this
-      · rw [if_neg hi] at this
+      · rw [ite_eq_right hi] at this
         simp only [hb, Pi.single_eq_of_ne hi]
         linear_combination this
     have c1 := cramer_last A' v T hAv
@@ -272,8 +272,6 @@ open Formalism.L2.SG.LsDatumB
 open scoped Matrix
 
 section D7
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Formalism.BasicNotions.D7}
 
@@ -344,9 +342,9 @@ theorem kind_eq {u u' : D.what₂.Word} {F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u
   have hs := sgnL_ne (D := D) D.R.rS
   by_cases h0 : leadMinorE (ZhatL (lf D F0) F') D.R.rS = 0
   · have h0' : Dr (lf D F0) F' = 0 := h0
-    rw [if_pos (by rw [h0, mul_zero]), if_pos h0']
+    rw [ite_eq_left (by rw [h0, mul_zero]), ite_eq_left h0']
   · have h0' : Dr (lf D F0) F' ≠ 0 := h0
-    rw [if_neg (mul_ne_zero hs h0), if_neg h0', mul_div_mul_left _ _ hs]
+    rw [ite_eq_right (mul_ne_zero hs h0), ite_eq_right h0', mul_div_mul_left _ _ hs]
     rfl
 
 end D7
@@ -356,8 +354,6 @@ end Formalism.L2.SG.Pf.ScalKindPf
 namespace Formalism.L2.SG.Pf
 
 open NumberField Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef Formalism.L2.SG.DataCut Formalism.L2.SG.LsDatumB
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem scalKind_of {D : Formalism.BasicNotions.D7} {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (Formalism.L2.SG.CntLocal.Tn u)}
     {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)} (hrows : IsRowReps D F0 what₂) :

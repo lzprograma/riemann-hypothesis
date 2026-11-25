@@ -2,46 +2,6 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FTDefs
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.OtherStart
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.ContravariantIsotypicOrthogonal
 
 @[expose] public section
@@ -138,21 +98,21 @@ theorem fock_mono_disj {A B : Set σ} (hAB : Disjoint A B) {a a' b b' : σ →�
       rw [support_zero, Finset.sum_empty]
       split_ifs <;> simp
     · unfold fock
-      rw [support_monomial, if_neg hx, Finset.sum_singleton, coeff_monomial, coeff_monomial, if_pos rfl]
+      rw [support_monomial, ite_eq_right hx, Finset.sum_singleton, coeff_monomial, coeff_monomial, ite_eq_left rfl]
       by_cases huv : u = v
       · subst huv
-        rw [if_pos rfl, if_pos rfl]
-      · rw [if_neg (Ne.symm huv), if_neg huv, mul_zero, zero_mul]
+        rw [ite_eq_left rfl, ite_eq_left rfl]
+      · rw [ite_eq_right (Ne.symm huv), ite_eq_right huv, mul_zero, zero_mul]
   rw [monomial_mul, monomial_mul, hmono, hmono, hmono]
   have hiff : a + b = a' + b' ↔ a = a' ∧ b = b' := by
     rw [eq_comm, add_eq_add_disj hAB ha ha' hb hb', eq_comm, @eq_comm _ b']
   by_cases h1 : a = a' <;> by_cases h2 : b = b'
-  · rw [if_pos (hiff.mpr ⟨h1, h2⟩), if_pos h1, if_pos h2, expFact_add_disj hAB ha hb]
+  · rw [ite_eq_left (hiff.mpr ⟨h1, h2⟩), ite_eq_left h1, ite_eq_left h2, expFact_add_disj hAB ha hb]
     push_cast
     ring
-  · rw [if_neg (fun h => h2 (hiff.mp h).2), if_neg h2, mul_zero]
-  · rw [if_neg (fun h => h1 (hiff.mp h).1), if_neg h1, zero_mul]
-  · rw [if_neg (fun h => h1 (hiff.mp h).1), if_neg h1, zero_mul]
+  · rw [ite_eq_right (fun h => h2 (hiff.mp h).2), ite_eq_right h2, mul_zero]
+  · rw [ite_eq_right (fun h => h1 (hiff.mp h).1), ite_eq_right h1, zero_mul]
+  · rw [ite_eq_right (fun h => h1 (hiff.mp h).1), ite_eq_right h1, zero_mul]
 
 theorem fock_mul_disj {A B : Set σ} (hAB : Disjoint A B) {F1 G1 F2 G2 : MvPolynomial σ K}
     (hF1 : F1 ∈ supported K A) (hG1 : G1 ∈ supported K A) (hF2 : F2 ∈ supported K B) (hG2 : G2 ∈ supported K B) :
@@ -200,7 +160,7 @@ theorem fock_mul_disj {A B : Set σ} (hAB : Disjoint A B) {F1 G1 F2 G2 : MvPolyn
 theorem fock_one_one : fock (1 : MvPolynomial σ K) 1 = 1 := by
   classical
   unfold fock
-  rw [← C_1, support_C, if_neg one_ne_zero, Finset.sum_singleton, coeff_C, if_pos rfl]
+  rw [← C_1, support_C, ite_eq_right one_ne_zero, Finset.sum_singleton, coeff_C, ite_eq_left rfl]
   simp [expFact]
 
 theorem fock_prod_disj {J : Type} (A : J → Set σ) (hA : ∀ j j', j ≠ j' → Disjoint (A j) (A j')) (s : Finset J)
@@ -255,8 +215,7 @@ theorem segVars_disj (X : Loc) (j j' : Fin (numSeg X.TT)) (h : j ≠ j') : Disjo
   classical
   have hnodup : (evenTops X.TT).Nodup := Finset.sort_nodup _ _
   have hN : 2 ≤ numSeg X.TT := by
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have := j.isLt
     have := j'.isLt
     exact h (Fin.ext (by omega))

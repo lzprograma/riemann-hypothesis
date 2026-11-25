@@ -1,50 +1,12 @@
 module
 
+import Formalism.SharpRestriction.LevelLetterCocycles.SplittingOfExactnessAndData
 public import Formalism.SharpRestriction.LevelLetterCocycles.JumpsLetOfWin
 public import Formalism.SharpRestriction.LevelLetterCocycles.FiltrationSaturationKiller
 public import Formalism.SharpRestriction.LevelLetterCocycles.AnnihilatorGeneralOfRingCondition
 public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
 public import Formalism.SharpRestriction.LevelLetterCocycles.SaturationPullbackOfRingCondition
 public import Formalism.SharpRestriction.LevelLetterCocycles.WachFrobeniusLatticeUnramifiedFunctor
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.SharpRestriction.LevelLetterCocycles.RingConditionOfDeltaInvariants
 public import Formalism.SharpRestriction.LevelLetterCocycles.SecondComparisonInCoordinates
 
@@ -111,11 +73,11 @@ theorem hs_ge (A : Formalism.MainNotions.ArcLiftingSetup.ArcP n) (hA : A.OK) (c'
   unfold Formalism.MainNotions.ArcLiftingSetup.ArcP.Hs
   rw [hlet]
   by_cases h1 : A.ty (c' + (m : ZMod n)) = Formalism.MainNotions.LocalTheoryWindows.LT.thin
-  · rw [if_pos (Or.inl h1), h1]; simp [Mw]
+  · rw [ite_eq_left (Or.inl h1), h1]; simp [Mw]
   · by_cases h2 : e - (e - m) ≤ A.j
-    · rw [if_pos (Or.inr h2)]
+    · rw [ite_eq_left (Or.inr h2)]
       exact mw_le A hA c' hc' m hm1 (by omega)
-    · rw [if_neg (by tauto)]
+    · rw [ite_eq_right (by tauto)]
       have hth : (A.ty (c' + (m : ZMod n))).thick := by
         revert h1; cases A.ty (c' + (m : ZMod n)) <;> simp [Formalism.MainNotions.LocalTheoryWindows.LT.thick]
       have hsz := hA.2.2.2.2.2.2.2.1 _ hth
@@ -140,7 +102,7 @@ theorem hs_le_h (A : Formalism.MainNotions.ArcLiftingSetup.ArcP n) (hA : A.OK) (
 
 theorem hs_top (A : Formalism.MainNotions.ArcLiftingSetup.ArcP n) (a : ZMod n) (e s : ℕ) (h : e - s ≤ A.j) : A.Hs a e s = A.G₀ := by
   unfold Formalism.MainNotions.ArcLiftingSetup.ArcP.Hs
-  rw [if_pos (Or.inr h)]
+  rw [ite_eq_left (Or.inr h)]
 
 theorem two_h_lt (A : Formalism.MainNotions.ArcLiftingSetup.ArcP n) (h5 : 5 ≤ PD.p) : 2 * A.h < (PD.p - 1) * A.M PD.p := by
   unfold Formalism.MainNotions.ArcLiftingSetup.ArcP.M
@@ -281,9 +243,9 @@ theorem hw_le_hs (A : Formalism.MainNotions.ArcLiftingSetup.ArcP n) (hA : A.OK) 
   unfold Formalism.MainNotions.ArcLiftingSetup.ArcP.Hs
   rw [hlet]
   by_cases h1 : A.ty (c' + ((e - s : ℕ) : ZMod n)) = Formalism.MainNotions.LocalTheoryWindows.LT.thin
-  · rw [if_pos (Or.inl h1), h1]; simp [Hw]
+  · rw [ite_eq_left (Or.inl h1), h1]; simp [Hw]
   · by_cases h2 : e - s ≤ A.j
-    · rw [if_pos (Or.inr h2)]
+    · rw [ite_eq_left (Or.inr h2)]
       rcases hA.2.2.2.2.2.2.2.2 with h | ⟨hj, hth, hsz⟩
       · rw [h c' hc' (e - s) (by omega) h2]; simp [Hw]
       · have hk : e - s = 1 := by omega
@@ -297,7 +259,7 @@ theorem hw_le_hs (A : Formalism.MainNotions.ArcLiftingSetup.ArcP n) (hA : A.OK) 
         | up b => intro hs hok; simp only [Formalism.MainNotions.LocalTheoryWindows.LT.size] at hs; simp only [Hw]; omega
         | down b => intro hs hok; simp only [Formalism.MainNotions.LocalTheoryWindows.LT.size] at hs
                     simp only [Formalism.MainNotions.LocalTheoryWindows.LT.ok] at hok; simp only [Hw]; omega
-    · rw [if_neg (by tauto)]
+    · rw [ite_eq_right (by tauto)]
       have hth : (A.ty (c' + ((e - s : ℕ) : ZMod n))).thick := by
         revert h1; cases A.ty (c' + ((e - s : ℕ) : ZMod n)) <;> simp [Formalism.MainNotions.LocalTheoryWindows.LT.thick]
       have hsz := hA.2.2.2.2.2.2.2.1 _ hth
@@ -424,20 +386,7 @@ theorem arc_down [NeZero n] (hs : W.s = 1) (hR : Formalism.MainNotions.DeltaInva
 
 theorem Pp_letter (T : LocLat G Qp LL O) (c : ZMod n) (e : ℕ) (y : W.DD T)
     (hy : y ∈ Formalism.MainNotions.ArcLiftingSetup.Pp W T c e) : (letE (c + (e : ZMod n)) : LetA O n) • y = y := by
-  let S : AddSubgroup (W.DD T) :=
-    { carrier := {y | (letE (c + (e : ZMod n)) : LetA O n) • y = y}
-      add_mem' := fun {a b} ha hb => by
-        simp only [Set.mem_ofPred_eq] at ha hb ⊢; rw [smul_add, ha, hb]
-      zero_mem' := by simp only [Set.mem_ofPred_eq, smul_zero]
-      neg_mem' := fun {a} ha => by simp only [Set.mem_ofPred_eq] at ha ⊢; rw [smul_neg, ha] }
-  have hgen : {z | ∃ a ∈ W.AΔ, ∃ x, Formalism.MainNotions.LiftingTheory.InNΔi W T c x ∧ z = a • ((W.φD T) ^ e) x} ⊆
-      (S : Set (W.DD T)) := by
-    rintro _ ⟨a, -, x, ⟨-, ⟨y', -, hyx⟩⟩, rfl⟩
-    have hxc : (letE c : LetA O n) • x = x := by
-      rw [← hyx, LinearMap.smul_apply, LinearMap.id_apply, smul_smul, letE_mul_self]
-    show (letE (c + (e : ZMod n)) : LetA O n) • (a • ((W.φD T) ^ e) x) = a • ((W.φD T) ^ e) x
-    rw [smul_comm, φD_pow_letter W T c x hxc e]
-  exact (AddSubgroup.closure_le S).2 hgen hy
+  apply _root_.Formalism.MainNotions.UnusedSlot80.Split.Pp_letter <;> assumption
 
 theorem arc_sat (hCA : Formalism.MainNotions.LiftingTheory.CaseA W) (hsat : Formalism.MainNotions.ArcLiftingSetup.SATcore W)
     (hR : Formalism.MainNotions.DeltaInvariantLattices.wachRingRelations W 1 (PD.p - 1) W.π₀

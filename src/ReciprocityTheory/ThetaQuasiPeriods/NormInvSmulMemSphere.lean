@@ -91,11 +91,6 @@ theorem quad_lower {X : Type*} [TopologicalSpace X] (Mf : X → Matrix ι ι ℝ
 
 end ReciprocityTheory.PTheta.sphereQuadraticPositivity
 
-namespace ReciprocityTheory.PTheta
-open sphereQuadraticPositivity
-
-end ReciprocityTheory.PTheta
-
 namespace ReciprocityTheory.PTheta.sphereQuadraticPositivity
 
 variable {ι : Type*} [Fintype ι]

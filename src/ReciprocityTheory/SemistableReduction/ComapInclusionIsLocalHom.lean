@@ -17,13 +17,6 @@ namespace ReciprocityTheory.MultiplicativeHeights
 
 open scoped TensorProduct
 
-def RankStatement : Prop :=
-  ∀ (K L V : Type) [Field K] [Field L] [Algebra K L] [AddCommGroup V] [Module K V]
-    [FiniteDimensional K V] (W : Submodule K V) (ι : Type) (v : ι → V),
-    (∀ i, v i ∈ W) →
-    Submodule.span L (Set.range fun i => (1 : L) ⊗ₜ[K] v i) = ⊤ →
-    W = ⊤ ∧ Submodule.span K (Set.range v) = ⊤
-
 noncomputable def torusSum {K : Type*} [NormedField K] {n : ℕ} (c : (Fin n → ℤ) → K)
     (τ : Fin n → K) : K :=
   ∑' χ, c χ * ∏ i, τ i ^ χ i

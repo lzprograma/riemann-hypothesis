@@ -70,15 +70,13 @@ theorem divided_strictAnti : ∀ (ι : Type) [Fintype ι] (N : ℕ) (W : Wts ι 
       have ha : ¬ ((b : ℕ) < W.p) := by omega
       have ha' : (a : ℕ) < W.p := by omega
       have p1 : 0 < W.u1 τ a - W.u1 τ b := by
-        by_contra hc
-        push_neg at hc
+        by_contra! hc
         nlinarith
       have p2 : 0 < W.u1 τ a - W.u1 τ b - 3 * N := by
-        by_contra hc
-        push_neg at hc
+        by_contra! hc
         nlinarith
       refine ⟨by omega, ?_⟩
-      simp only [Wts.u', if_pos ha', if_neg ha]
+      simp only [Wts.u', ite_eq_left ha', ite_eq_right ha]
       omega
     · have e := g1 hb
       have hN : (0 : ℤ) ≤ W.T + W.Dd + 2 + 2 * N := by positivity
@@ -86,9 +84,9 @@ theorem divided_strictAnti : ∀ (ι : Type) [Fintype ι] (N : ℕ) (W : Wts ι 
       simp only [Wts.u']
       by_cases ha : (a : ℕ) < W.p
       · have hb' : (b : ℕ) < W.p := by omega
-        rw [if_pos ha, if_pos hb']; omega
+        rw [ite_eq_left ha, ite_eq_left hb']; omega
       · have hb' : ¬ (b : ℕ) < W.p := by omega
-        rw [if_neg ha, if_neg hb']; omega
+        rw [ite_eq_right ha, ite_eq_right hb']; omega
   have s1 : StrictAnti (W.u1 τ) := strictAnti_of_step _ fun a b h => (step a b h).1
   exact ⟨s1, strictAnti_of_step _ fun a b h => (step a b h).2,
     (Int.cast_strictMono (R := ℝ)).comp_strictAnti s1⟩

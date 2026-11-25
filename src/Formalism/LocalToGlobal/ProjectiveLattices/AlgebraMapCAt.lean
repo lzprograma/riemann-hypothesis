@@ -116,10 +116,6 @@ def ptNorm (σ : K →+* ℂ) (fnorm : pts (CAt σ) → ι → ℝ) (e : ι → 
     (y : pts (CAt σ)) : ℝ :=
   cabs (evalAt pts mapR f y) * ∏ i, |fnorm y i|⁻¹ ^ e i
 
-theorem ptNorm_nonneg (σ : K →+* ℂ) (fnorm : pts (CAt σ) → ι → ℝ) (e : ι → ℕ) (f : Rules pts)
-    (y : pts (CAt σ)) : 0 ≤ ptNorm pts mapR σ fnorm e f y :=
-  mul_nonneg (norm_nonneg _) (Finset.prod_nonneg fun _ _ => pow_nonneg (inv_nonneg.2 (abs_nonneg _)) _)
-
 theorem ptNorm_zero (σ : K →+* ℂ) (fnorm : pts (CAt σ) → ι → ℝ) (e : ι → ℕ) (y : pts (CAt σ)) :
     ptNorm pts mapR σ fnorm e 0 y = 0 := by
   unfold ptNorm; rw [evalAt_zero]

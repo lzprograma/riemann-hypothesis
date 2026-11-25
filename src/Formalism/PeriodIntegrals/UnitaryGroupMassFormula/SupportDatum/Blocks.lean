@@ -1,47 +1,7 @@
 module
 
 public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalGroupInFamilyNontrivial
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.SupportLoc
 
 @[expose] public section
 
@@ -52,8 +12,6 @@ namespace PI.SupportDatumW
 open NumberField IsDedekindDomain Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups ValuativeRel
 open scoped BigOperators ComplexOrder
 open Classical
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def blkDet {K : Type} [CommRing K] : List (K × ℕ) → K
   | [] => 1
@@ -74,7 +32,7 @@ theorem antidiag_det {K : Type} [CommRing K] (t : K) (s : ℕ) :
           Fin.coe_castSucc]
         split_ifs <;> first | rfl | omega
       rw [hm, ih]
-      simp only [Matrix.of_apply, Fin.val_zero, Fin.val_last, zero_add, if_true]
+      simp only [Matrix.of_apply, Fin.val_zero, Fin.val_last, zero_add, ite_true]
       have hexp : (s + 1) * (s + 1 - 1) / 2 = s + s * (s - 1) / 2 := by
         rcases s with _ | k
         · rfl
@@ -144,20 +102,7 @@ theorem ptEntry_append_ge {K : Type} [Zero K] (head tail : List (K × ℕ)) (a b
     ptEntry (head ++ tail) a b =
       if (head.map Prod.snd).sum ≤ b then
         ptEntry tail (a - (head.map Prod.snd).sum) (b - (head.map Prod.snd).sum) else 0 := by
-  induction head generalizing a b with
-  | nil => simp
-  | cons x hd ih =>
-    obtain ⟨t, s⟩ := x
-    simp only [List.map_cons, List.sum_cons] at ha ⊢
-    simp only [List.cons_append, ptEntry]
-    have hna : ¬ (a < s ∧ b < s) := by omega
-    rw [if_neg hna]
-    by_cases hb : s ≤ b
-    · rw [if_pos ⟨by omega, hb⟩, ih (a - s) (b - s) (by omega)]
-      by_cases hc : (hd.map Prod.snd).sum ≤ b - s
-      · rw [if_pos hc, if_pos (by omega), Nat.sub_sub, Nat.sub_sub]
-      · rw [if_neg hc, if_neg (by omega)]
-    · rw [if_neg (by omega), if_neg (by omega)]
+  apply _root_.Formalism.L2.SG.Pf.ptEntry_append_ge <;> assumption
 
 theorem blkDet_ne_zero {K : Type} [CommRing K] [IsDomain K] (bs : List (K × ℕ))
     (h : ∀ b ∈ bs, b.1 ≠ 0) : blkDet bs ≠ 0 := by

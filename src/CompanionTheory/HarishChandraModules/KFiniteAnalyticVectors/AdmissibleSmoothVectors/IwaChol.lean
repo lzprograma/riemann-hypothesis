@@ -1,10 +1,6 @@
 module
 
 public import Mathlib.Analysis.Matrix.LDL
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -13,23 +9,17 @@ namespace CompanionTheory.D.gk.admitted.CholeskyDecomposition
 open Matrix
 open scoped ComplexOrder
 
-set_option linter.unusedSectionVars false
-
-variable {𝕜 : Type*} [RCLike 𝕜] {n : Type*} [Fintype n] [LinearOrder n]
+variable {𝕜 : Type*} [RCLike 𝕜] {n : Type*} [LinearOrder n]
 
 theorem isUpperTriangular_conjTranspose_iff {A : Matrix n n 𝕜} :
     Aᴴ.IsUpperTriangular ↔ A.IsLowerTriangular := by
-  constructor
-  · intro h i j hij
-    have := h (i := j) (j := i) (OrderDual.toDual_lt_toDual.1 hij)
-    simpa [conjTranspose_apply] using this
-  · intro h i j hij
-    have := h (show OrderDual.toDual i < OrderDual.toDual j from hij)
-    simp [conjTranspose_apply, this]
+  simp only [IsUpperTriangular, IsLowerTriangular, BlockTriangular, conjTranspose_apply,
+    star_eq_zero, id_eq, OrderDual.toDual_lt_toDual]
+  exact forall_comm
 
 section Existence
 
-variable [WellFoundedLT n] [LocallyFiniteOrderBot n]
+variable [Fintype n] [LocallyFiniteOrderBot n]
 
 theorem exists_isUpperTriangular_conjTranspose_mul_self {S : Matrix n n 𝕜} (hS : S.PosDef) :
     ∃ R : Matrix n n 𝕜, R.IsUpperTriangular ∧ Rᴴ * R = S := by
@@ -65,7 +55,7 @@ end Existence
 
 section Existence2
 
-variable [WellFoundedLT n] [LocallyFiniteOrderBot n]
+variable [Fintype n] [LocallyFiniteOrderBot n]
 
 theorem star_mul_self_norm_div {x : 𝕜} (hx : x ≠ 0) :
     star ((‖x‖ : 𝕜) / x) * ((‖x‖ : 𝕜) / x) = 1 := by
@@ -80,8 +70,7 @@ theorem exists_cholesky {S : Matrix n n 𝕜} (hS : S.PosDef) :
   have hRi : ∀ i, R i i ≠ 0 := by
     have : R.det ≠ 0 := by
       intro h; apply hdet; rw [← hRS, det_mul, h, mul_zero]
-    rw [det_of_isUpperTriangular hR] at this
-    exact fun i => Finset.prod_ne_zero_iff.1 this i (Finset.mem_univ i)
+    exact hR.det_ne_zero_iff.1 this
   refine ⟨diagonal (fun i => (‖R i i‖ : 𝕜) / R i i) * R, fun i => ‖R i i‖,
     (blockTriangular_diagonal _).mul hR, fun i => norm_pos_iff.2 (hRi i), fun i => ?_, ?_⟩
   · rw [diagonal_mul, div_mul_cancel₀ _ (hRi i)]

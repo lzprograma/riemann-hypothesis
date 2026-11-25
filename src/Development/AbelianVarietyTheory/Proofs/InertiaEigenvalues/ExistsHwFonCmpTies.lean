@@ -335,7 +335,7 @@ theorem fixed_of_near (hn : ∀ (g : GQ l) (x : Om l), ‖g x‖ = ‖x‖) (D A
   have htr : ∀ d ∈ D, d (∑ s ∈ S, s y) = ∑ s ∈ S, s y := fun d hd => by
 
     rw [map_sum]
-    refine sum_shift D A S hS.1 hS.2 (fun g => g y) ?_ d hd
+    refine GlobalTheory.TranslateSum.sum_translate_eq D A S hS.1 hS.2 (fun g => g y) ?_ d hd
     intro g v _ hv
     change g (v y) = g y
     rw [hy v hv]
@@ -369,20 +369,6 @@ theorem faithH : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P
     exact Subgroup.finiteIndex_of_finite_quotient
   have hsup : (Kinf K ⊔ E).fixingSubgroup = Hinf K ⊓ E.fixingSubgroup :=
     IntermediateField.fixingSubgroup_sup
-  have hst : ∀ h ∈ Hinf K, ∀ x ∈ Kinf K ⊔ E, h x ∈ Kinf K ⊔ E := by
-    intro h hh
-    have : Kinf K ⊔ E ≤ (Kinf K ⊔ E).comap (h : Om l →ₐ[ℚ_[l]] Om l) := by
-      refine sup_le (fun x hx => ?_) (fun x hx => ?_)
-      · change h x ∈ Kinf K ⊔ E
-        rw [(IntermediateField.mem_fixingSubgroup_iff _ _).1 hh x hx]
-        exact (le_sup_left : Kinf K ≤ Kinf K ⊔ E) hx
-      · change h x ∈ Kinf K ⊔ E
-        have h1 := AlgEquiv.restrictNormal_commutes h E ⟨x, hx⟩
-        have h2 : h x ∈ E := by
-          have : h x = (h.restrictNormal E ⟨x, hx⟩ : E) := h1.symm
-          rw [this]; exact Subtype.property _
-        exact (le_sup_right : E ≤ Kinf K ⊔ E) h2
-    exact fun x hx => this hx
   set N := (Kinf K ⊔ E).fixingSubgroup with hN
   let A : Subgroup (GQ l) := Hinf K ⊓ GK L
   let D : Subgroup (GQ l) :=
@@ -406,7 +392,7 @@ theorem faithH : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P
     ((inf_le_inf_right _ (hAD.trans hDH)).trans hsup.ge)
   obtain ⟨R₂, hR₂, hs₂⟩ := reps_mul hAD hNA hS₂ hT
   obtain ⟨R, hR, hs⟩ := reps_mul hDH (hNA.trans hAD) hS₁ hR₂
-  obtain ⟨r, hr0, hr1, hroot⟩ := approx_root hn K (Kinf K ⊔ E) R le_sup_left hst hR.1 hR.2
+  obtain ⟨r, hr0, hr1, hroot⟩ := approx_root hn K (Kinf K ⊔ E) R le_sup_left hR.1 hR.2
   have hr' : max r (l : ℝ)⁻¹ < 1 := max_lt hr1 (inv_lt_one_of_one_lt₀ hl)
   have hr'0 : 0 ≤ max r (l : ℝ)⁻¹ := le_max_of_le_left hr0
   obtain ⟨a, ha, hra, ha1⟩ := exists_near_one K ((max r (l : ℝ)⁻¹) ^ ((3 : ℕ)⁻¹ : ℝ))
@@ -416,7 +402,7 @@ theorem faithH : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P
     exact pow_le_pow_left₀ (Real.rpow_nonneg hr'0 _) hra.le 3
   have ha0 : a ≠ 0 := norm_pos_iff.1 ((Real.rpow_nonneg hr'0 _).trans_lt hra)
   obtain ⟨e, heM, he1, he⟩ :=
-    trace_almost_onto l K (Kinf K ⊔ E) R le_sup_left hst hR.1 hR.2 a ha ha1
+    trace_almost_onto l K (Kinf K ⊔ E) R le_sup_left hR.1 hR.2 a ha ha1
   have heN : ∀ n ∈ N, n e = e := fun n hnN =>
     (IntermediateField.mem_fixingSubgroup_iff _ _).1 hnN e heM
   have key : ∀ b : Om l, ‖b‖ ≤ 1 → (∀ n ∈ N, n b = b) → ∀ d ∈ D,
@@ -445,7 +431,7 @@ theorem faithH : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P
       (le_trans hy ((le_max_left _ _).trans hra3)) (hd.2 _ fun h hh => ?_)
 
     rw [map_sum]
-    have := sum_shift A N T hT.1 hT.2 (fun g => AI.actT g x)
+    have := GlobalTheory.TranslateSum.sum_translate_eq A N T hT.1 hT.2 (fun g => AI.actT g x)
       (fun g v _ hv => by rw [map_mul AI.actT, RingAut.mul_apply, hxN v hv]) h hh
     rw [← this]
     refine Finset.sum_congr rfl fun t _ => ?_
@@ -482,7 +468,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicKernelTiltInvariantsFaithful =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ResEqOneIff =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ResEqOneIff", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FixedByCyclotomicKernelEtalePhiSolutionMemWachStatement\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionInjectiveSaturatedInter\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Henselian\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.RingTheory.TotallySplit\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ResEqOneIff", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FixedByCyclotomicKernelEtalePhiSolutionMemWachStatement\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionInjectiveSaturatedInter\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Henselian\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.RingTheory.TotallySplit\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanRangeMap\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -731,7 +717,7 @@ theorem exists_et (I : WIo R RA RW inclR φR gR πA)
     · intro i j g hg
       have h := repr_semi (e T) (TWact (gR g) T g) (gR g) (act_smul _ T g) (x j) i
       simp only [hx g hg, hfix T g hg, Module.Basis.repr_self, Finsupp.single_apply, ite_mul, one_mul,
-        zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
+        zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
       exact h.symm
     · ext i j
       have h := repr_semi (e T) (TWmap φR T) φR (phi_smul _ T) (x j) i
@@ -852,15 +838,6 @@ theorem gRW_mul {P : LocPrime l} (AI : LocAinf l P) (LL : FinExt l) (g h : GQ l)
     AI.gRW LL (g * h) x = AI.gRW LL g (AI.gRW LL h x) :=
   map_id_comp _ _ _ (fun w => by simp) x
 
-theorem phi_gRW {P : LocPrime l} (AI : LocAinf l P) (LL : FinExt l) (g : GQ l) (x : RW LL) :
-    φRW LL (AI.gRW LL g x) = AI.gRW LL g (φRW LL x) := by
-  refine map_id_comm _ _ _ _ (fun w => ?_) x
-  ext n
-  change (WittVector.map (frobenius (Cb l) l)
-      (WittVector.map (autCb l (AI.actT g)).toRingHom w)).coeff n =
-    (WittVector.map (autCb l (AI.actT g)).toRingHom (WittVector.map (frobenius (Cb l) l) w)).coeff n
-  simp [WittVector.map_coeff, frobenius_def]
-
 theorem res_eq_one_iff {P : LocPrime l} {K : FinExt l} {s : ℕ} {LL : FinExt l} (Γ : GamS P K s LL)
     (g : ↥(GK K)) : Γ.resΓ g = 1 ↔ P.χQ (g : GQ l) = 1 := by
   have h : algebraMap ↥(OL LL) ↥LL.1 (Γ.χΓ (Γ.resΓ g) : ↥(OL LL)) =
@@ -884,8 +861,8 @@ theorem res_eq_one_iff {P : LocPrime l} {K : FinExt l} {s : ℕ} {LL : FinExt l}
 theorem nonempty_wEt : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) (K : FinExt l) (s : ℕ) (LL : FinExt l), Good K s LL → ∀ (Γ : GamS P K s LL) (R : WSer Γ) (I : IoS AI R), IoW I → (∀ (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)), ∃ e : Module.Basis (Fin (Module.finrank ↥(OL LL) ↥T.L.T)) (RW LL) (TW (RW LL) T), EtBasis I T e) → Nonempty (WEt I) := by
   intro l _ P AI K s LL hg Γ R I hI h
   choose e he using h
-  obtain ⟨h1, h2, -⟩ := _root_.GlobalTheory.IoInj.ioE_injective_saturated_inter l P AI K s LL hg Γ R I hI
-  refine exists_et I (fun g h x => gRW_mul AI LL _ _ x) (fun g x => phi_gRW AI LL _ x) h1 h2
+  obtain ⟨h1, h2, -⟩ := _root_.GlobalTheory.IoInj.ioE_injective_saturated_inter l P AI K s LL Γ R I
+  refine exists_et I (fun g h x => gRW_mul AI LL _ _ x) (fun g x => GlobalTheory.EtaleBasis.frob_comm_gal AI LL _ x) h1 h2
     (fun p q A A' U hA hA' hU hφ => GlobalTheory.T.fixedByCyclotomicKernel_etalePhi_solution_mem_wach l P AI K s LL hg Γ R I hI p q A A' 0 U hA hA'
       (fun i j g hgK hχ => hU i j ⟨g, hgK⟩ ((res_eq_one_iff Γ _).2 hχ)) ?_) e
     (fun T g hg => (he T).1 g ((res_eq_one_iff Γ g).1 hg)) (fun T => (he T).2)

@@ -55,6 +55,7 @@ import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Analysis.Normed.Group.Ultra
+import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsEmbeddingPadicAlgClPlace
 
 @[expose] public section
 
@@ -66,32 +67,7 @@ namespace GlobalTheory.SplitEmbSep
 open NumberField in
 theorem _root_.GlobalTheory.SplitEmbSep.norm_le_one_of_isIntegral {C : Type*} [NormedField C] [IsUltrametricDist C]
     {x : C} (hx : IsIntegral ℤ x) : ‖x‖ ≤ 1 := by
-  obtain ⟨p, hm, hp⟩ := hx
-  by_contra h
-  push_neg at h
-  rw [← Polynomial.aeval_def, hm.as_sum] at hp
-
-  simp only [map_add (f := _), map_pow, Polynomial.aeval_X, map_sum, map_mul, eq_intCast, map_intCast] at hp
-  set n := p.natDegree
-  rcases Nat.eq_zero_or_pos n with hn | hn
-  · rw [hn] at hp
-    simp at hp
-  have hs : (Finset.range n).Nonempty := Finset.nonempty_range_iff.mpr hn.ne'
-  obtain ⟨i, hi, hle⟩ := IsUltrametricDist.exists_norm_finsetSum_le_of_nonempty hs
-    (fun i => ((p.coeff i : ℤ) : C) * x ^ i)
-  have hxn : x ^ n = -∑ i ∈ Finset.range n, ((p.coeff i : ℤ) : C) * x ^ i :=
-    eq_neg_of_add_eq_zero_left hp
-  have h1 : ‖x‖ ^ n ≤ ‖x‖ ^ i := by
-    calc ‖x‖ ^ n = ‖x ^ n‖ := (norm_pow x n).symm
-      _ = ‖∑ i ∈ Finset.range n, ((p.coeff i : ℤ) : C) * x ^ i‖ := by rw [hxn, norm_neg]
-      _ ≤ ‖((p.coeff i : ℤ) : C) * x ^ i‖ := hle
-      _ = ‖((p.coeff i : ℤ) : C)‖ * ‖x‖ ^ i := by rw [norm_mul, norm_pow]
-      _ ≤ 1 * ‖x‖ ^ i := by
-        gcongr
-        exact IsUltrametricDist.norm_intCast_le_one C _
-      _ = ‖x‖ ^ i := one_mul _
-  have h2 : ‖x‖ ^ i < ‖x‖ ^ n := pow_lt_pow_right₀ h (Finset.mem_range.mp hi)
-  exact absurd h1 (not_le.mpr h2)
+  apply _root_.GlobalTheory.norm_le_one_of_isIntegral_int <;> assumption
 
 
 open NumberField in

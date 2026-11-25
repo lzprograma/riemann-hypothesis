@@ -3,56 +3,11 @@ module
 public import Formalism.FormalDegreeBessel.StatementG
 public import Mathlib.Analysis.Matrix.Spectrum
 public import Mathlib.CategoryTheory.Category.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -247,21 +202,21 @@ lemma gn_gram_ff (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ)
     rw [gn_herm_bvec_right, gn_Hpk_mulVec_lo k r _ (eI k r ⟨a.val, ha⟩) ha]
     split_ifs with hb
     · simp only [bvec, Pi.single_apply, eI]
-      rw [if_neg]
+      rw [ite_eq_right]
       intro e
       first | (have e' := Fin.val_eq_of_eq e; simp at e'; omega)
     · exact hz _ (Or.inr (by simp only [eI]; omega))
   have hA := a.isLt
   have hB := b.isLt
   by_cases ha : a.val < r
-  · rw [hlo a b ha, if_neg (by omega)]
+  · rw [hlo a b ha, ite_eq_right (by omega)]
   · by_cases hb : b.val < r
     · have e := congrFun (congrFun (gn_gramM_herm k r z z' g) (Sum.inl a)) (Sum.inl b)
       rw [Matrix.conjTranspose_apply, hlo b a hb, star_zero] at e
-      rw [← e, if_neg (by omega)]
+      rw [← e, ite_eq_right (by omega)]
     · have ha' : a.val = r := by omega
       have hb' : b.val = r := by omega
-      rw [if_pos ⟨ha', hb'⟩]
+      rw [ite_eq_left ⟨ha', hb'⟩]
       simp only [gramM, gramVec, fvec, ha, hb, ↓reduceDIte]
 
 lemma gn_quad_inl (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ)
@@ -275,9 +230,9 @@ lemma gn_quad_inl (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ)
       Finset.sum_const_zero, add_zero, Pi.star_apply]
     rw [Finset.sum_eq_single (Fin.last r)]
     · rw [Finset.sum_eq_single (Fin.last r)]
-      · rw [gn_gram_ff k r z z' g hz, if_pos ⟨rfl, rfl⟩]
+      · rw [gn_gram_ff k r z z' g hz, ite_eq_left ⟨rfl, rfl⟩]
       · intro b _ hb
-        rw [gn_gram_ff k r z z' g hz, if_neg, zero_mul]
+        rw [gn_gram_ff k r z z' g hz, ite_eq_right, zero_mul]
         rintro ⟨_, h2⟩
         exact hb (Fin.ext h2)
       · intro h
@@ -285,7 +240,7 @@ lemma gn_quad_inl (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ)
     · intro a _ ha
       rw [Finset.sum_eq_zero, mul_zero]
       intro b _
-      rw [gn_gram_ff k r z z' g hz, if_neg, zero_mul]
+      rw [gn_gram_ff k r z z' g hz, ite_eq_right, zero_mul]
       rintro ⟨h1, _⟩
       exact ha (Fin.ext h1)
     · intro h
@@ -303,8 +258,7 @@ lemma gn_sum_neg {ι : Type*} [Fintype ι] [DecidableEq ι] (lam : ι → ℝ)
     (v : {i // lam i < 0} → ℂ) (hv : v ≠ 0) :
     ∑ i, lam i * Complex.normSq ((gnExt (fun i => lam i < 0) *ᵥ v) i) < 0 := by
   obtain ⟨j, hj⟩ : ∃ j, v j ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hv (funext hcon)
   calc ∑ i, lam i * Complex.normSq ((gnExt (fun i => lam i < 0) *ᵥ v) i) < ∑ _i : ι, (0 : ℝ) := by
         apply Finset.sum_lt_sum
@@ -325,8 +279,7 @@ lemma gn_sum_pos {ι : Type*} [Fintype ι] [DecidableEq ι] (lam : ι → ℝ)
     (v : {i // 0 < lam i} → ℂ) (hv : v ≠ 0) :
     0 < ∑ i, lam i * Complex.normSq ((gnExt (fun i => 0 < lam i) *ᵥ v) i) := by
   obtain ⟨j, hj⟩ : ∃ j, v j ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hv (funext hcon)
   calc (0 : ℝ) = ∑ _i : ι, (0 : ℝ) := by simp
     _ < ∑ i, lam i * Complex.normSq ((gnExt (fun i => 0 < lam i) *ᵥ v) i) := by

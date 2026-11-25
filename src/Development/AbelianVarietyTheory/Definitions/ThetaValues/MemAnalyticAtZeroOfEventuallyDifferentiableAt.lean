@@ -3,54 +3,7 @@ module
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
 public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.LineDerivListEqIteratedFDeriv
 public import Mathlib.RingTheory.MvPowerSeries.Derivative
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.PiTensorProduct.Generators
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -430,9 +383,6 @@ theorem dirPolyDeriv_eq_sum_coeff_taylor (P : MvPolynomial σ ℂ) (f : (σ → 
 @[simp] theorem constantCoeff_taylor (f : (σ → ℂ) → ℂ) :
     MvPowerSeries.constantCoeff (taylor f) = f 0 := constantCoeff_taylorDir _ f
 
-theorem taylor_add (hf : AnalyticAt ℂ f 0) (hg : AnalyticAt ℂ g 0) :
-    taylor (f + g) = taylor f + taylor g := taylorDir_add _ hf hg
-
 @[simp] theorem taylor_const (c : ℂ) :
     taylor (fun _ : σ → ℂ => c) = MvPowerSeries.C c := taylorDir_const _ c
 
@@ -440,10 +390,6 @@ theorem taylor_add (hf : AnalyticAt ℂ f 0) (hg : AnalyticAt ℂ g 0) :
 
 theorem taylor_mul (hf : AnalyticAt ℂ f 0) (hg : AnalyticAt ℂ g 0) :
     taylor (f * g) = taylor f * taylor g := taylorDir_mul _ hf hg
-
-theorem taylor_sum {κ : Type*} (s : Finset κ) {F : κ → (σ → ℂ) → ℂ}
-    (hF : ∀ k ∈ s, AnalyticAt ℂ (F k) 0) :
-    taylor (fun z => ∑ k ∈ s, F k z) = ∑ k ∈ s, taylor (F k) := taylorDir_sum _ s hF
 
 theorem taylor_fderiv (hf : AnalyticAt ℂ f 0) (i : σ) :
     taylor (fun z => fderiv ℂ f z (Pi.single i 1)) = MvPowerSeries.pderiv (R := ℂ) i (taylor f) :=
@@ -456,7 +402,7 @@ theorem taylor_clm (ℓ : (σ → ℂ) →L[ℂ] ℂ) :
 @[simp] theorem taylor_coord (i : σ) : taylor (fun z : σ → ℂ => z i) = MvPowerSeries.X i := by
   have h := taylor_clm (ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : σ => ℂ) i)
   simp only [ContinuousLinearMap.proj_apply, Pi.single_apply, ite_smul, one_smul, zero_smul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true] at h
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true] at h
   exact h
 
 theorem span_range_single_one :
@@ -501,9 +447,5 @@ theorem taylorDir_eq_taylor (u : σ → W) {F : W → ℂ} (hF : AnalyticAt ℂ 
   rfl
 
 end Coord
-
-section Examples
-
-end Examples
 
 end GlobalTheory

@@ -105,7 +105,7 @@ theorem tf_ph_memLp (dual : Bool) {lam : Fin n → ℝ} [CompleteSpace H] {ε : 
       ((Real.sqrt (S7.hs (Formalism.MainNotions.S.umat g)) : ℝ) : ℂ) * inner ℂ ((w : D) : H) (σ (Formalism.MainNotions.S.umat g) ((v : D) : H)))
       2 (Formalism.REAL.muG ε))
     {y : D} (hy : y ∈ genSub E V) {f : Fin n → D} (hf : f ∈ tensSub (genSub E V)) (c : Fin n) :
-    MemLp (fun g : Formalism.REAL.UJ ε => coefMap dual σ (Pi.single c (tfSgn ε c • (y : H)))
+    MemLp (fun g : Formalism.REAL.UJ ε => ReciprocityTheory.ChartRestriction.DS.occCoef dual σ (Pi.single c (tfSgn ε c • (y : H)))
       (fun d => ((f d : D) : H)) (Formalism.MainNotions.S.umat g)) 2 (Formalism.REAL.muG ε) := by
   have h := ((coef_embed dual hσ hD hsm hgap hV hc hVK hW _ (tf_single_smul_mem c (tfSgn ε c) hy) f hf).1).2 []
   rw [tf_coe_single] at h
@@ -117,7 +117,7 @@ theorem tfRdiag_tfPh (dual : Bool) {ε : Fin n → Bool} {σ : Matrix (Fin n) (F
   refine vectorL2_ext fun c => ?_
   rw [tfRdiag_apply, tfPh_apply, tfPh_apply, rightRegular_toL2 ε _ hh]
   refine toL2_congr_of_eq_on_UJset fun x hx => ?_
-  simp only [coefMap]
+  simp only [ReciprocityTheory.ChartRestriction.DS.occCoef]
   rw [tf_tensGrp_mul dual hσ hx hh]
 
 theorem tfJ_inner (ε : Fin n → Bool) (x x' : tfL2n ε) : inner ℂ (tfJ ε x) x' = inner ℂ x (tfJ ε x') := by

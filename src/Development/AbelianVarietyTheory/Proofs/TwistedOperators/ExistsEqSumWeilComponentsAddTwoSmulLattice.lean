@@ -49,7 +49,6 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensor
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor
 open scoped TensorProduct ComplexOrder
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.PlaceTensor.CompDecomp
 
@@ -63,8 +62,8 @@ theorem tendsto_one_sub_sum (F : Type) [Field F] [NumberField F] :
   let y : Finset (HeightOneSpectrum (𝓞 F)) → (∀ v, A v) := fun Q v =>
     ⟨if v ∈ Q then 0 else 1, by
       by_cases h : v ∈ Q
-      · rw [if_pos h]; exact (v.adicCompletionIntegers F).zero_mem
-      · rw [if_neg h]; exact (v.adicCompletionIntegers F).one_mem⟩
+      · rw [ite_eq_left h]; exact (v.adicCompletionIntegers F).zero_mem
+      · rw [ite_eq_right h]; exact (v.adicCompletionIntegers F).one_mem⟩
   let z : ∀ v, A v := fun v => ⟨0, (v.adicCompletionIntegers F).zero_mem⟩
   have hy : Tendsto y atTop (𝓝 z) := by
     rw [tendsto_pi_nhds]
@@ -74,7 +73,7 @@ theorem tendsto_one_sub_sum (F : Type) [Field F] [NumberField F] :
     have hv : v ∈ Q := Finset.singleton_subset_iff.mp hQ
     apply Subtype.ext
     show (if v ∈ Q then (0 : v.adicCompletion F) else 1) = 0
-    rw [if_pos hv]
+    rw [ite_eq_left hv]
   have hc : Continuous (RestrictedProduct.structureMap (fun v : HeightOneSpectrum (𝓞 F) => v.adicCompletion F)
       A Filter.cofinite) := RestrictedProduct.isEmbedding_structureMap.continuous
   have key : ∀ Q, (1 : Af F) - ∑ v ∈ Q, singleV F v 1 =
@@ -88,9 +87,9 @@ theorem tendsto_one_sub_sum (F : Type) [Field F] [NumberField F] :
     show _ = (if w ∈ Q then (0 : w.adicCompletion F) else 1)
     by_cases h : w ∈ Q
     · rw [Finset.sum_eq_single_of_mem w h (fun b _ hb => GlobalTheory.LatVac.evalV_singleV_ne F b w (Ne.symm hb)),
-        GlobalTheory.LatVac.evalV_singleV_same, if_pos h, sub_self]
+        GlobalTheory.LatVac.evalV_singleV_same, ite_eq_left h, sub_self]
     · rw [Finset.sum_eq_zero (fun b hb => GlobalTheory.LatVac.evalV_singleV_ne F b w (by rintro rfl; exact h hb)),
-        if_neg h, sub_zero]
+        ite_eq_right h, sub_zero]
   have h0 : RestrictedProduct.structureMap (fun v : HeightOneSpectrum (𝓞 F) => v.adicCompletion F) A
       Filter.cofinite z = (0 : Af F) :=
     by

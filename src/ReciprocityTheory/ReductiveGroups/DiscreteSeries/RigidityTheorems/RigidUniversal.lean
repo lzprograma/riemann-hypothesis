@@ -17,28 +17,35 @@ namespace ReciprocityTheory.ChartRestriction.DS
 
 variable {n : ℕ}
 
-theorem rigid_universal {H₁ : Type*} [NormedAddCommGroup H₁] [InnerProductSpace ℂ H₁] [CompleteSpace H₁]
-    {ε : Fin n → Bool} {lam : Fin n → ℝ} {σ₁ : Matrix (Fin n) (Fin n) ℂ → (H₁ →L[ℂ] H₁)} (hσ₁ : IsURepOn (UJset ε) σ₁)
+theorem rigid_universal_of {H₁ : Type*} [NormedAddCommGroup H₁] [InnerProductSpace ℂ H₁] [CompleteSpace H₁]
+    {ε : Fin n → Bool} {lam : Fin n → ℝ} {σ₁ : Matrix (Fin n) (Fin n) ℂ → (H₁ →L[ℂ] H₁)}
     {D₁ : Submodule ℂ H₁} {E₁ : Fin n → Fin n → Module.End ℂ D₁} (hD₁ : IsDerivedOn ε σ₁ D₁ E₁)
     {V₁ : Submodule ℂ D₁} (hV₁ : IsKIrrHW ε E₁ (lowK ε lam) V₁)
     (hc₁ : ∀ v ∈ V₁, casimir E₁ v = (casVal lam : ℂ) • v)
     (hVK₁ : ∀ k ∈ Kset ε, ∀ v ∈ V₁, ∃ w ∈ V₁, (w : H₁) = σ₁ k v)
-    {H₂ : Type*} [NormedAddCommGroup H₂] [InnerProductSpace ℂ H₂] [CompleteSpace H₂] {σ₂ : Matrix (Fin n) (Fin n) ℂ → (H₂ →L[ℂ] H₂)} (hσ₂ : IsURepOn (UJset ε) σ₂)
+    {H₂ : Type*} [NormedAddCommGroup H₂] [InnerProductSpace ℂ H₂] [CompleteSpace H₂] {σ₂ : Matrix (Fin n) (Fin n) ℂ → (H₂ →L[ℂ] H₂)}
     {D₂ : Submodule ℂ H₂} {E₂ : Fin n → Fin n → Module.End ℂ D₂} (hD₂ : IsDerivedOn ε σ₂ D₂ E₂)
-    {V₂ : Submodule ℂ D₂} (hV₂ : IsKIrrHW ε E₂ (lowK ε lam) V₂)
+    {V₂ : Submodule ℂ D₂}
     (hc₂ : ∀ v ∈ V₂, casimir E₂ v = (casVal lam : ℂ) • v)
-    (hVK₂ : ∀ k ∈ Kset ε, ∀ v ∈ V₂, ∃ w ∈ V₂, (w : H₂) = σ₂ k v)
-    (hgap : StdGap ε lam) (φ : V₁ →ₗ[ℂ] V₂)
+    (φ : V₁ →ₗ[ℂ] V₂)
     (hφK : ∀ k ∈ Kset ε, ∀ (v : V₁) (w : V₁), ((w : D₁) : H₁) = σ₁ k ((v : D₁) : H₁) →
       (((φ w : V₂) : D₂) : H₂) = σ₂ k (((φ v : V₂) : D₂) : H₂))
     (hφI : ∀ v v' : V₁, inner ℂ (((φ v' : V₂) : D₂) : H₂) (((φ v : V₂) : D₂) : H₂) =
-      inner ℂ ((v' : D₁) : H₁) ((v : D₁) : H₁)) :
+      inner ℂ ((v' : D₁) : H₁) ((v : D₁) : H₁))
+    (hrigid : ∀ {V : Submodule ℂ (USum.sD D₁ D₂)},
+      IsKIrrHW ε (USum.sE E₁ E₂) (lowK ε lam) V →
+      (∀ v ∈ V, casimir (USum.sE E₁ E₂) v = (casVal lam : ℂ) • v) →
+      (∀ k ∈ Kset ε, ∀ v ∈ V, ∃ w ∈ V, (w : WithLp 2 (H₁ × H₂)) = USum.sσ σ₁ σ₂ k v) →
+      ∀ (j' : V →ₗ[ℂ] WithLp 2 (H₁ × H₂)),
+      (∀ k ∈ Kset ε, ∀ v w : V, ((w : USum.sD D₁ D₂) : WithLp 2 (H₁ × H₂)) = USum.sσ σ₁ σ₂ k ((v : USum.sD D₁ D₂) : WithLp 2 (H₁ × H₂)) →
+        j' w = USum.sσ σ₁ σ₂ k (j' v)) →
+      (∀ v v' : V, inner ℂ (j' v') ((v : USum.sD D₁ D₂) : WithLp 2 (H₁ × H₂)) = 0) →
+      ∀ g ∈ UJset ε, ∀ v v' : V,
+        inner ℂ (j' v') (USum.sσ σ₁ σ₂ g ((v : USum.sD D₁ D₂) : WithLp 2 (H₁ × H₂))) = 0) :
     ∀ g ∈ UJset ε, ∀ v v' : V₁,
       inner ℂ (((φ v' : V₂) : D₂) : H₂) (σ₂ g (((φ v : V₂) : D₂) : H₂)) =
         inner ℂ ((v' : D₁) : H₁) (σ₁ g ((v : D₁) : H₁)) := by
   have : FiniteDimensional ℂ V₁ := hV₁.1
-  have hσ := USum.isURepOn_sσ hσ₁ hσ₂
-  have hD := USum.isDerivedOn_sσ hD₁ hD₂
   have hcomm := fun a b (hab : ε a = ε b) (v : V₁) =>
     USum.phi_E_comm hD₁ hD₂ hV₁.2.1 hVK₁ φ hφK hab v
   have hV := USum.diagSub_isKIrrHW φ hV₁ hcomm
@@ -70,7 +77,7 @@ theorem rigid_universal {H₁ : Type*} [NormedAddCommGroup H₁] [InnerProductSp
     simp only [inner_neg_left, hφI]
     exact add_neg_cancel _
   intro g hg v v'
-  have key := rigid_orth hgap hσ hD hV hc hVK j' hj horth g hg
+  have key := hrigid hV hc hVK j' hj horth g hg
     ⟨USum.diagι φ v, ⟨v, rfl⟩⟩ ⟨USum.diagι φ v', ⟨v', rfl⟩⟩
   change inner ℂ (WithLp.toLp 2 (((v' : D₁) : H₁), -(((φ v' : V₂) : D₂) : H₂)))
     (USum.sop (σ₁ g) (σ₂ g) (WithLp.toLp 2 (((v : D₁) : H₁), (((φ v : V₂) : D₂) : H₂)))) = 0 at key
@@ -78,5 +85,27 @@ theorem rigid_universal {H₁ : Type*} [NormedAddCommGroup H₁] [InnerProductSp
   simp only [inner_neg_left] at key
   rw [← sub_eq_add_neg, sub_eq_zero] at key
   exact key.symm
+
+theorem rigid_universal {H₁ : Type*} [NormedAddCommGroup H₁] [InnerProductSpace ℂ H₁] [CompleteSpace H₁]
+    {ε : Fin n → Bool} {lam : Fin n → ℝ} {σ₁ : Matrix (Fin n) (Fin n) ℂ → (H₁ →L[ℂ] H₁)} (hσ₁ : IsURepOn (UJset ε) σ₁)
+    {D₁ : Submodule ℂ H₁} {E₁ : Fin n → Fin n → Module.End ℂ D₁} (hD₁ : IsDerivedOn ε σ₁ D₁ E₁)
+    {V₁ : Submodule ℂ D₁} (hV₁ : IsKIrrHW ε E₁ (lowK ε lam) V₁)
+    (hc₁ : ∀ v ∈ V₁, casimir E₁ v = (casVal lam : ℂ) • v)
+    (hVK₁ : ∀ k ∈ Kset ε, ∀ v ∈ V₁, ∃ w ∈ V₁, (w : H₁) = σ₁ k v)
+    {H₂ : Type*} [NormedAddCommGroup H₂] [InnerProductSpace ℂ H₂] [CompleteSpace H₂] {σ₂ : Matrix (Fin n) (Fin n) ℂ → (H₂ →L[ℂ] H₂)} (hσ₂ : IsURepOn (UJset ε) σ₂)
+    {D₂ : Submodule ℂ H₂} {E₂ : Fin n → Fin n → Module.End ℂ D₂} (hD₂ : IsDerivedOn ε σ₂ D₂ E₂)
+    {V₂ : Submodule ℂ D₂} (hV₂ : IsKIrrHW ε E₂ (lowK ε lam) V₂)
+    (hc₂ : ∀ v ∈ V₂, casimir E₂ v = (casVal lam : ℂ) • v)
+    (hVK₂ : ∀ k ∈ Kset ε, ∀ v ∈ V₂, ∃ w ∈ V₂, (w : H₂) = σ₂ k v)
+    (hgap : StdGap ε lam) (φ : V₁ →ₗ[ℂ] V₂)
+    (hφK : ∀ k ∈ Kset ε, ∀ (v : V₁) (w : V₁), ((w : D₁) : H₁) = σ₁ k ((v : D₁) : H₁) →
+      (((φ w : V₂) : D₂) : H₂) = σ₂ k (((φ v : V₂) : D₂) : H₂))
+    (hφI : ∀ v v' : V₁, inner ℂ (((φ v' : V₂) : D₂) : H₂) (((φ v : V₂) : D₂) : H₂) =
+      inner ℂ ((v' : D₁) : H₁) ((v : D₁) : H₁)) :
+    ∀ g ∈ UJset ε, ∀ v v' : V₁,
+      inner ℂ (((φ v' : V₂) : D₂) : H₂) (σ₂ g (((φ v : V₂) : D₂) : H₂)) =
+        inner ℂ ((v' : D₁) : H₁) (σ₁ g ((v : D₁) : H₁)) :=
+  rigid_universal_of hD₁ hV₁ hc₁ hVK₁ hD₂ hc₂ φ hφK hφI fun hV hc hVK j' hj horth =>
+    rigid_orth hgap (USum.isURepOn_sσ hσ₁ hσ₂) (USum.isDerivedOn_sσ hD₁ hD₂) hV hc hVK j' hj horth
 
 end ReciprocityTheory.ChartRestriction.DS

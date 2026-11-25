@@ -42,8 +42,6 @@ import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.Vanishing
@@ -130,70 +128,10 @@ section On
 
 variable {S S' : Scheme.{0}} {u : S ⟶ Y} {u' : S' ⟶ Y'} {ψ : S' ⟶ S}
 
-theorem stalkMap_square (hψ : ψ ≫ u = u' ≫ φ) (z : S') {U : Y.Opens} (h : u (ψ z) ∈ U)
-    (h' : φ (u' z) ∈ U) (x : Γ(Y, U)) :
-    (ψ.stalkMap z).hom ((u.stalkMap (ψ z)).hom (ger _ h x)) =
-      (u'.stalkMap z).hom ((φ.stalkMap (u' z)).hom (ger _ h' x)) := by
-  have key {r r' : S' ⟶ Y} (e : r = r') (h : r z ∈ U) (h' : r' z ∈ U) :
-      (r.stalkMap z).hom (ger _ h x) = (r'.stalkMap z).hom (ger _ h' x) := by
-    subst e
-    rfl
-  have := key hψ h h'
-  rwa [Scheme.Hom.stalkMap_comp, Scheme.Hom.stalkMap_comp] at this
-
-theorem pt_square (hψ : ψ ≫ u = u' ≫ φ) (z : S') : u (ψ z) = φ (u' z) :=
-  congrArg (fun r : S' ⟶ Y => r z) hψ
-
-theorem exists_stalkHom (hψ : ψ ≫ u = u' ≫ φ) (z : S') :
-    ∃ θ : Y.presheaf.stalk (u (ψ z)) →+* Y'.presheaf.stalk (u' z),
-      (∀ (U : Y.Opens) h h' (x : Γ(Y, U)),
-        θ (ger _ h x) = (φ.stalkMap (u' z)).hom (ger _ h' x)) ∧
-      ∀ x, (u'.stalkMap z).hom (θ x) = (ψ.stalkMap z).hom ((u.stalkMap (ψ z)).hom x) := by
-  have key (y : Y) (e : y = φ (u' z)) : ∃ θ : Y.presheaf.stalk y →+* Y'.presheaf.stalk (u' z),
-      ∀ (U : Y.Opens) h h' (x : Γ(Y, U)),
-        θ (ger _ h x) = (φ.stalkMap (u' z)).hom (ger _ h' x) := by
-    subst e
-    exact ⟨_, fun _ _ _ _ => rfl⟩
-  obtain ⟨θ, hθ⟩ := key _ (pt_square hψ z)
-  refine ⟨θ, hθ, fun x => ?_⟩
-  obtain ⟨U, hU, x, rfl⟩ := Y.presheaf.germ_exist x
-  exact (congrArg _ (hθ U hU (pt_square hψ z ▸ hU) x)).trans (stalkMap_square hψ z hU _ x).symm
-
 variable {B : LB Y} {B' : LB Y'}
-
-def chartPullOn (a : ChartPull B' B φ) (hψ : ψ ≫ u = u' ≫ φ) :
-    ChartPull (B'.pull u') (B.pull u) ψ where
-  idx J _ := a.idx (J PUnit.unit)
-  le J z hz := mem_pull.2 ((pt_square hψ z).symm ▸ a.le _ (mem_pull.1 hz))
-  g z J J' hJ hJ' := by
-    have h := memInf (a.le _ (mem_pull.1 hJ)) (a.le _ (mem_pull.1 hJ'))
-    have h' : u (ψ z) ∈ B.U (a.idx (J PUnit.unit)) ⊓ B.U (a.idx (J' PUnit.unit)) :=
-      (pt_square hψ z).symm ▸ h
-    refine ((tr_pull B' u' z hJ hJ').trans ?_).trans (gm_pull_g B u ψ z (fun _ => _) (fun _ => _)
-      (mem_pull.2 h'.1) (mem_pull.2 h'.2)).symm
-    rw [tr_chartPull a _ (mem_pull.1 hJ) (mem_pull.1 hJ'), hψ]
-    refine Units.ext (Eq.trans ?_ (gm_val (u' ≫ φ) z _ h _).symm)
-    refine (congrArg (fun x => (u'.stalkMap z).hom ((φ.stalkMap (u' z)).hom x))
-      (val_tr B _ h)).trans ?_
-    refine Eq.trans ?_ (Scheme.Hom.germ_stalkMap_apply (u' ≫ φ) _ z h _)
-    rw [Scheme.Hom.stalkMap_comp]
-    rfl
 
 variable {p : Y ⟶ Sp k} {p' : Y' ⟶ Sp k'} {σ : k →+* k'} {O : Y.Opens} {W : Y'.Opens}
   {I : Y.IdealSheafData} {I' : Y'.IdealSheafData} {ψ : I'.subscheme ⟶ I.subscheme}
-
-def pullOn (a : ChartPull B' B φ) (w : φ ≫ p = p' ≫ spMap σ)
-    (hψ : ψ ≫ I.subschemeι = I'.subschemeι ≫ φ) : sectionsOnClosedSubscheme p B I →ₛₗ[σ] sectionsOnClosedSubscheme p' B' I' :=
-  pullChart (chartPullOn a hψ) (by rw [← Category.assoc, hψ, Category.assoc, w, Category.assoc])
-    le_top
-
-theorem germ_pullOn (a : ChartPull B' B φ) (w : φ ≫ p = p' ≫ spMap σ)
-    (hψ : ψ ≫ I.subschemeι = I'.subschemeι ≫ φ) (g : sectionsOnClosedSubscheme p B I) (j : (B'.pull I'.subschemeι).ι)
-    (z : I'.subscheme) (hj : z ∈ (B'.pull I'.subschemeι).U j) :
-    germ j z (Opens.mem_top z) hj (pullOn a w hψ g) = (ψ.stalkMap z).hom
-      (germ (fun _ => a.idx (j PUnit.unit)) (ψ z) (Opens.mem_top _)
-        ((chartPullOn a hψ).le j hj) g) :=
-  germ_pullChart _ _ _ g j z _ hj
 
 end On
 
@@ -213,23 +151,6 @@ section Lead
 
 variable {p : Y ⟶ Sp k} {p' : Y' ⟶ Sp k'} {σ : k →+* k'} {L M : LB Y} {L' M' : LB Y'}
   {hL : L.IsLB} {hL' : L'.IsLB} {ι : Type} [Finite ι] {s : ι → L.Sec} {O : Y.Opens} {W : Y'.Opens}
-
-theorem HasLead.pullChart (m : ChartPull M' M φ) (l : ChartPull L' L φ) (w : φ ≫ p = p' ≫ spMap σ)
-    {ψ : (cutIdeal hL' fun i => chartSec l (s i)).subscheme ⟶ (cutIdeal hL s).subscheme}
-    (hψ : ψ ≫ (cutIdeal hL s).subschemeι = (cutIdeal hL' fun i => chartSec l (s i)).subschemeι ≫ φ)
-    (hW : W ≤ φ ⁻¹ᵁ O) {hO : SuppIn O (cutIdeal hL s)}
-    (hO' : SuppIn W (cutIdeal hL' fun i => chartSec l (s i))) {n d : ℤ} {a : ℕ} {h : n + a = d}
-    {f : H0 p (tw M L d) O} {c : MonoDeg ι a → sectionsOnClosedSubscheme p (tw M L n) (cutIdeal hL s)}
-    (e : HasLead hL s hO h f c) :
-    HasLead hL' _ hO' h (pullChart (chartPullTwist m l d) w hW f)
-      fun α => pullOn (chartPullTwist m l n) w hψ (c α) := fun z i j hi hj => by
-  obtain ⟨θ, hθ, hθ'⟩ := exists_stalkHom hψ z
-  have := (e (ψ z) (m.idx i) (l.idx j) ((pt_square hψ z).symm ▸ m.le i hi)
-    ((pt_square hψ z).symm ▸ l.le j hj)).map θ (ψ.stalkMap z).hom hθ'
-  convert this using 1
-  · exact funext fun t => (secGer_chartSec l s j _ hj t).trans (hθ _ _ _ _).symm
-  · exact (germ_pullChart _ _ _ _ _ _ _ _).trans (hθ _ _ _ _).symm
-  · exact funext fun α => germ_pullOn _ _ _ _ _ _ _
 
 end Lead
 

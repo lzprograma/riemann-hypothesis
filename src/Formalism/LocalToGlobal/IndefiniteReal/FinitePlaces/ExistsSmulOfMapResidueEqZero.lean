@@ -207,13 +207,13 @@ theorem det_eq_pow_mul {ϖ : O} (hϖ : Irreducible ϖ) {n : Type} [Fintype n] [D
     refine Matrix.ext fun i j => ?_
     rw [Matrix.mul_diagonal]
     by_cases h : j ∈ J
-    · have hN' : N' i j = c i j := if_pos h
-      have hd : d j = ϖ := if_pos h
-      have hc : c i j = Classical.choose (hdiv j h i) := dif_pos h
+    · have hN' : N' i j = c i j := ite_eq_left h
+      have hd : d j = ϖ := ite_eq_left h
+      have hc : c i j = Classical.choose (hdiv j h i) := dite_eq_left h
       rw [hN', hd, hc, mul_comm]
       exact Classical.choose_spec (hdiv j h i)
-    · have hN' : N' i j = (N * Q) i j := if_neg h
-      have hd : d j = 1 := if_neg h
+    · have hN' : N' i j = (N * Q) i j := ite_eq_right h
+      have hd : d j = 1 := ite_eq_right h
       rw [hN', hd, mul_one]
   have hprod : ∏ j, d j = ϖ ^ J.card := by
     simp only [d]
@@ -665,24 +665,6 @@ theorem card_reps {ϖ : O} (hϖ : Irreducible ϖ) [Fintype (IsLocalRing.ResidueF
 
 end Count
 
-section Main
-
-variable [IsDiscreteValuationRing O]
-
-end Main
-
-section Index
-
-variable [IsDiscreteValuationRing O]
-
-end Index
-
-section Mirror
-
-variable [IsDiscreteValuationRing O]
-
-end Mirror
-
 section Completion
 
 open IsDedekindDomain NumberField
@@ -707,33 +689,18 @@ noncomputable instance instFintypeResidueOv : Fintype (IsLocalRing.ResidueField 
 theorem irreducible_of_unif (x : ↥(Formalism.UG.Ov F v)) (hx : Formalism.UG.IsUnifV F v (x : v.adicCompletion F)) :
     Irreducible x := by
   have hle : ∀ y : ↥(Formalism.UG.Ov F v), Valued.v (y : v.adicCompletion F) ≤ 1 := fun y => y.2
-  have hunit : ∀ y : ↥(Formalism.UG.Ov F v), Valued.v (y : v.adicCompletion F) = 1 → IsUnit y := by
-    intro y hy
-    have hy0 : (y : v.adicCompletion F) ≠ 0 := by
-      intro h; rw [h, map_zero] at hy; exact zero_ne_one hy
-    have hmem : (y : v.adicCompletion F)⁻¹ ∈ Formalism.UG.Ov F v := by
-      show Valued.v ((y : v.adicCompletion F)⁻¹) ≤ 1
-      rw [map_inv₀, hy, inv_one]
-    exact isUnit_iff_exists_inv.2 ⟨⟨_, hmem⟩, Subtype.ext (by simp [hy0])⟩
-  have hval_unit : ∀ y : ↥(Formalism.UG.Ov F v), IsUnit y → Valued.v (y : v.adicCompletion F) = 1 := by
-    intro y hy
-    obtain ⟨z, hz⟩ := hy.exists_right_inv
-    have h1 := congrArg (fun w : ↥(Formalism.UG.Ov F v) => Valued.v (w : v.adicCompletion F)) hz
-    simp only [Subring.coe_mul, map_mul, Subring.coe_one, map_one] at h1
-    have := hle y; have := hle z
-    by_contra hne
-    have hlt : Valued.v (y : v.adicCompletion F) < 1 := lt_of_le_of_ne (hle y) hne
-    have : Valued.v (y : v.adicCompletion F) * Valued.v (z : v.adicCompletion F) < 1 :=
-      mul_lt_one_of_lt_of_le hlt (hle z)
-    rw [h1] at this; exact lt_irrefl _ this
+  have hiu {y : ↥(Formalism.UG.Ov F v)} : IsUnit y ↔ Valued.v (y : v.adicCompletion F) = 1 :=
+    (HeightOneSpectrum.adicCompletionIntegers.integers F v).isUnit_iff_valuation_eq_one
   refine ⟨fun hu => ?_, fun a b hab => ?_⟩
-  · have := hval_unit x hu
+  · have := hiu.1 hu
     rw [hx] at this
     exact absurd this (by decide)
   · by_contra hcon
     push Not at hcon
-    have ha : Valued.v (a : v.adicCompletion F) < 1 := lt_of_le_of_ne (hle a) (fun h => hcon.1 (hunit a h))
-    have hb : Valued.v (b : v.adicCompletion F) < 1 := lt_of_le_of_ne (hle b) (fun h => hcon.2 (hunit b h))
+    have ha : Valued.v (a : v.adicCompletion F) < 1 :=
+      lt_of_le_of_ne (hle a) (fun h => hcon.1 (hiu.2 h))
+    have hb : Valued.v (b : v.adicCompletion F) < 1 :=
+      lt_of_le_of_ne (hle b) (fun h => hcon.2 (hiu.2 h))
     have hprod : Valued.v (a : v.adicCompletion F) * Valued.v (b : v.adicCompletion F) =
         ((Multiplicative.ofAdd (-1 : ℤ) : Multiplicative ℤ) : WithZero (Multiplicative ℤ)) := by
       rw [← map_mul, ← Subring.coe_mul, ← hab]; exact hx

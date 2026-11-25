@@ -643,16 +643,6 @@ noncomputable section
 
 namespace GlobalTheory.LeviIso
 
-theorem detNorm_pos_iff {E : Type} [Field E] [NumberField E] {j : ℕ} (x : MatInf E j) :
-    0 < detNorm E j x ↔ ∀ w, (Matrix.of (x w)).det ≠ 0 := by
-  unfold detNorm
-  constructor
-  · intro h w hw
-    rw [Finset.prod_eq_zero (Finset.mem_univ w) (by rw [hw]; simp)] at h
-    exact lt_irrefl _ h
-  · intro h
-    exact Finset.prod_pos fun w _ => pow_pos (norm_pos_iff.2 (h w)) 2
-
 theorem gram_place (I : AutInst) (v : InfinitePlace I.F) {p q : Type} (X : Matrix (Fin I.n) p I.E)
     (Y : Matrix (Fin I.n) q I.E) :
     ((I.P v)⁻¹ * X.map (I.φ v))ᴴ * Jm (I.ε v) * ((I.P v)⁻¹ * Y.map (I.φ v)) = (Xᴴ * I.J * Y).map (I.φ v) := by
@@ -687,7 +677,7 @@ theorem exists_charts (I I₀ : AutInst) (e : I₀.E ≃+* I.E) (xf : I.Gf) (a :
     (hτ₀ : τ₀ = RingHom.id ℂ ∨ τ₀ = starRingEnd ℂ) (hv : ∀ y, I.φ v (e y) = τ₀ (I₀.φ v₀ y)) :
     ∃ θ, IsLeviChart (I.ε v) (I₀.ε v₀) (flagAt I S v) (fun i => (I.P v)⁻¹ * (T i).map (I.φ v))
       ((I.P v)⁻¹ * T₀.map (I.φ v) * (I₀.P v₀).map τ₀) τ τ₀ θ := by
-  have hsat := _root_.GlobalTheory.FlagBase.AdSat.isSatFlag_of_isAdapted I I₀ e xf a j S Λ x₀ T T' T₀ hj h
+  have hsat := _root_.GlobalTheory.FlagBase.AdSat.isSatFlag_of_isAdapted I I₀ e xf a j S Λ x₀ T T' T₀ h
   have hsp := _root_.GlobalTheory.LeviIso.spansFlag_flagAt I I₀ e xf a j S Λ x₀ T T' T₀ h v
   obtain ⟨-, hn, -, h1, h2, h3, -, -⟩ := h
   have hJ : I.Jᴴ = I.J := I.J_herm
@@ -739,12 +729,12 @@ theorem ae_detNorm_pos (E : Type) [Field E] [NumberField E] {a : ℕ} (j : Fin a
         rw [ae_iff]
         simpa using (_root_.GlobalTheory.LeviIso.haarLoc_conj_and_null (j i)).2
       exact (Measure.quasiMeasurePreserving_eval (fun _ : InfinitePlace E => haarLoc (j i)) w).ae h3
-    exact h2.mono fun x hx => (detNorm_pos_iff x).2 hx
+    exact h2.mono fun x hx => (GlobalTheory.LatDom.detNorm_pos_iff x).2 hx
   exact ae_all_iff.2 fun i => (Measure.quasiMeasurePreserving_eval (fun i => haarGL E (j i)) i).ae (h1 i)
 
 theorem levi_product : ∀ (I I₀ : AutInst) (e : I₀.E ≃+* I.E) (xf : I.Gf) (a : ℕ) (j : Fin a → ℕ) (S : Fin (a + 1) → Submodule (𝓞 I.E) (Fin I.n → I.E)) (Λ : ∀ i, Submodule (𝓞 I.E) (Fin (j i) → I.E)) (x₀ : I₀.Gf) (T T' : ∀ i, Matrix (Fin I.n) (Fin (j i)) I.E) (T₀ : Matrix (Fin I.n) (Fin I₀.n) I.E), (∀ i, 1 ≤ j i) → IsAdapted I I₀ e xf j S Λ x₀ T T' T₀ → ∀ (μM : ∀ v, Measure (Formalism.REAL.UJ (I.ε v))) [∀ v, SigmaFinite (μM v)] (c₀ : InfinitePlace I₀.F → ℝ), (∀ v, IsGaugeSub (flagM (I.ε v) (flagAt I S v)) ((I.n - 2 * ∑ i, j i) ^ 2 + 2 * ∑ i, j i ^ 2) (μM v)) → IsGaugeAll I₀ c₀ → ∃ (Θ : (∀ i, MatInf I.E (j i)) × I₀.Ginf → I.Ginf) (κ : Fin a → ℝ), Measurable Θ ∧ (∀ i, 0 < κ i) ∧ (∀ m : I.Ginf, (∀ v, m v ∈ flagM (I.ε v) (flagAt I S v)) ↔ ∃ z : ((∀ i, MatInf I.E (j i)) × I₀.Ginf), (∀ i, 0 < detNorm I.E (j i) (z.1 i)) ∧ Θ z = m) ∧ (∀ z z' : ((∀ i, MatInf I.E (j i)) × I₀.Ginf), (∀ i, z.1 i ∈ autGL I.E (j i) (Λ i)) → z.2 ∈ latGroup I₀ x₀ → (∀ i, 0 < detNorm I.E (j i) (z'.1 i)) → ∃ γ ∈ leviGroup I xf S, γ * Θ z' = Θ (fun i => z.1 i * z'.1 i, z.2 * z'.2)) ∧ (∀ z : ((∀ i, MatInf I.E (j i)) × I₀.Ginf), (∀ i, 0 < detNorm I.E (j i) (z.1 i)) → ∀ i, sizesAt I xf S (Θ z) i = (detNorm I.E (j i) (z.1 i) / κ i) ^ (-(1 / (2 * (I.f : ℝ) * j i)))) ∧ (∀ z z' : ((∀ i, MatInf I.E (j i)) × I₀.Ginf), (∀ i, 0 < detNorm I.E (j i) (z.1 i)) → (∀ i, 0 < detNorm I.E (j i) (z'.1 i)) → Θ z = Θ z' → z = z') ∧ ∀ φ : I.Ginf → ENNReal, Measurable φ → ∫⁻ m, φ m ∂(Measure.pi μM) = (∏ i, ENNReal.ofReal (2 ^ (I.f * j i ^ 2))) * ENNReal.ofReal (∏ v, c₀ v) * ∫⁻ z₁ in {z₁ | ∀ i, 0 < detNorm I.E (j i) (z₁ i)}, ∫⁻ z₂, φ (Θ (z₁, z₂)) ∂(Measure.pi fun v => Formalism.REAL.muG (I₀.ε v)) ∂(Measure.pi fun i => haarGL I.E (j i)) := by
   intro I I₀ e xf a j S Λ x₀ T T' T₀ hj h μM _ c₀ hμ hc₀
-  have hsat := _root_.GlobalTheory.FlagBase.AdSat.isSatFlag_of_isAdapted I I₀ e xf a j S Λ x₀ T T' T₀ hj h
+  have hsat := _root_.GlobalTheory.FlagBase.AdSat.isSatFlag_of_isAdapted I I₀ e xf a j S Λ x₀ T T' T₀ h
   obtain ⟨β, σ, τ, τ₀, hτ, hτ₀, hβ, hσ⟩ := _root_.GlobalTheory.LeviIso.Places.places_match I I₀ e h.1
   choose θ hθ using fun v => exists_charts I I₀ e xf a j S Λ x₀ T T' T₀ hj h v (σ v) (τ v) (τ₀ v) (hτ v) (hτ₀ v)
     (hσ v)
@@ -760,7 +750,7 @@ theorem levi_product : ∀ (I I₀ : AutInst) (e : I₀.E ≃+* I.E) (xf : I.Gf)
   have hΘ : Measurable fun (z : (∀ i, MatInf I.E (j i)) × I₀.Ginf) v => θ v (R z v) :=
     Measurable.of_eval fun v => (hθ v).1.comp ((measurable_pi_apply v).comp hRm)
   have hdet : ∀ z : (∀ i, MatInf I.E (j i)) × I₀.Ginf, (∀ i, 0 < detNorm I.E (j i) (z.1 i)) →
-      ∀ v i, (Matrix.of ((R z v).1 i)).det ≠ 0 := fun z hz v i => (detNorm_pos_iff _).1 (hz i) (β v)
+      ∀ v i, (Matrix.of ((R z v).1 i)).det ≠ 0 := fun z hz v i => (GlobalTheory.LatDom.detNorm_pos_iff _).1 (hz i) (β v)
   have hM : ∀ z : (∀ i, MatInf I.E (j i)) × I₀.Ginf, (∀ i, 0 < detNorm I.E (j i) (z.1 i)) →
       ∀ v, θ v (R z v) ∈ flagM (I.ε v) (flagAt I S v) := fun z hz v =>
     ((hθ v).2.1 _).2 ⟨R z v, hdet z hz v, rfl⟩
@@ -770,7 +760,7 @@ theorem levi_product : ∀ (I I₀ : AutInst) (e : I₀.E ≃+* I.E) (xf : I.Gf)
     fun z z' hz hz' hzz => ?_, fun φ hφ => ?_⟩
   · choose y hy1 hy2 using fun v => ((hθ v).2.1 (m v)).1 (hm v)
     refine ⟨(fun i w => (y (β.symm w)).1 i, Equiv.piCongrLeft (fun w => UJ (I₀.ε w)) σ fun v => (y v).2),
-      fun i => (detNorm_pos_iff _).2 fun w => hy1 _ i, funext fun v => ?_⟩
+      fun i => (GlobalTheory.LatDom.detNorm_pos_iff _).2 fun w => hy1 _ i, funext fun v => ?_⟩
     rw [← hy2 v]
     refine congrArg (θ v) (Prod.ext (funext fun i => ?_) ?_)
     · exact congrArg (fun u => (y u).1 i) (β.symm_apply_apply v)
@@ -781,7 +771,7 @@ theorem levi_product : ∀ (I I₀ : AutInst) (e : I₀.E ≃+* I.E) (xf : I.Gf)
     obtain ⟨g, hg, Γ, γ₀, g1, g2, g3, g4⟩ := _root_.GlobalTheory.LeviRat.exists_rat_block I I₀ e xf a j S Λ x₀ T T' T₀ h γ hγ1 z.2 hz2
     have hz : ∀ i, 0 < detNorm I.E (j i) (z.1 i) := by
       intro i
-      refine (detNorm_pos_iff _).2 fun w => ?_
+      refine (GlobalTheory.LatDom.detNorm_pos_iff _).2 fun w => ?_
       have : Matrix.of (z.1 i w) = (γ i : Matrix (Fin (j i)) (Fin (j i)) I.E).map w.embedding := by
         ext r s
         exact hγ2 i w r s
@@ -1268,7 +1258,7 @@ theorem detNorm_aut_mul (hE : IsTotallyComplex E) {Λ : Submodule (𝓞 E) (Fin 
       exact hγw w a c
     have h2 : ∀ w : InfinitePlace E, w.mult = 2 := fun w => by
       unfold InfinitePlace.mult
-      rw [if_neg (InfinitePlace.not_isReal_iff_isComplex.2 (hE.isComplex w))]
+      rw [ite_eq_right (InfinitePlace.not_isReal_iff_isComplex.2 (hE.isComplex w))]
     simp_rw [h1, InfinitePlace.norm_embedding_eq]
     rw [← hnorm, ← InfinitePlace.prod_eq_abs_norm]
     simp_rw [h2]

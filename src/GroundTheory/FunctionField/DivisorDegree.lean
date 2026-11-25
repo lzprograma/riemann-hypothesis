@@ -2,6 +2,7 @@ module
 
 public import GroundTheory.FunctionField.Divisor
 import GroundTheory.FunctionField.Approximation
+import Mathlib.Algebra.Polynomial.Basis
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.PicardGroup
@@ -21,25 +22,10 @@ variable {k K : Type*} [Field k] [Field K] [Algebra k K]
 
 theorem linearIndependent_pow_of_transcendental {x : K} (hx : Transcendental k x) (N : ℕ) :
     LinearIndependent k fun i : Fin N => x ^ (i : ℕ) := by
-  classical
-  rw [Fintype.linearIndependent_iff]
-  intro g hg i
-  set p : k[X] := ∑ j : Fin N, monomial (j : ℕ) (g j) with hp
-  have hpx : aeval x p = 0 := by
-
-    rw [hp, map_sum, ← hg]
-    refine Finset.sum_congr rfl fun j _ => ?_
-    rw [aeval_monomial, Algebra.smul_def]
-  have hp0 : p = 0 := by
-    by_contra h
-    exact hx ⟨p, h, hpx⟩
-  have h := congrArg (fun q : k[X] => q.coeff i) hp0
-  simp only [hp, finsetSum_coeff, coeff_monomial, coeff_zero] at h
-  rw [Finset.sum_eq_single i] at h
-  · simpa using h
-  · intro j _ hj
-    exact Finsupp.single_eq_of_ne' (fun h' => hj (Fin.ext h'))
-  · intro h'; exact absurd (Finset.mem_univ i) h'
+  have h := (basisMonomials k).linearIndependent.map' (aeval x).toLinearMap
+    (LinearMap.ker_eq_bot.mpr (transcendental_iff_injective.mp hx))
+  simpa [Function.comp_def, aeval_monomial] using
+    h.comp (fun i : Fin N => (i : ℕ)) Fin.val_injective
 
 theorem adjoin_inv_eq {x : K} :
     IntermediateField.adjoin k {x⁻¹} = IntermediateField.adjoin k {x} := by
@@ -85,8 +71,10 @@ theorem deg_zeroDivisor_le {x : K} (hx : Transcendental k x) :
         rw [zeroDivisor_apply, max_eq_left (hS v hv).le, Int.toNat_of_nonneg (hS v hv).le]
     _ ≤ _ := by exact_mod_cast h
 
-theorem finrank_le_deg_poleDivisor {x : K} (hx : Transcendental k x) :
-    (finrank (IntermediateField.adjoin k {x}) K : ℤ) ≤ deg (poleDivisor x : Divisor k K) := by
+theorem exists_le_finrank_L_poleDivisor {x : K} (hx : Transcendental k x) :
+    ∃ C : Divisor k K, 0 ≤ C ∧
+      ∀ l : ℕ, ((l + 1 : ℤ) * finrank (IntermediateField.adjoin k {x}) K) ≤
+        finrank k (L (l • poleDivisor x + C)) := by
   classical
   have := finiteDimensional_adjoin hx
   set F := IntermediateField.adjoin k {x} with hF
@@ -94,57 +82,65 @@ theorem finrank_le_deg_poleDivisor {x : K} (hx : Transcendental k x) :
   let b := Module.finBasis F K
   set B : Divisor k K := poleDivisor x with hBdef
   set C : Divisor k K := ∑ j, poleDivisor (b j) with hCdef
-  set a : ℤ := (finrank k (algebraicClosure k K) : ℤ) with ha
   have hB : 0 ≤ B := poleDivisor_nonneg x
   have hC : 0 ≤ C := Finset.sum_nonneg fun j _ => poleDivisor_nonneg _
   have hCj : ∀ j, (poleDivisor (b j) : Divisor k K) ≤ C := fun j =>
     Finset.single_le_sum (f := fun j => (poleDivisor (b j) : Divisor k K))
       (fun j _ => poleDivisor_nonneg _) (Finset.mem_univ j)
-  have key : ∀ l : ℕ, ((l + 1 : ℤ) * n) ≤ l * deg B + deg C + a := by
-    intro l
-    set D : Divisor k K := l • B + C with hD'
-    have hD : 0 ≤ D := add_nonneg (nsmul_nonneg hB l) hC
-    have hmem : ∀ p : Fin (l + 1) × Fin n, x ^ (p.1 : ℕ) * b p.2 ∈ L D := by
-      rintro ⟨i, j⟩ v
-      rw [map_mul, map_pow]
-      have hx' := valuation_le_exp_poleDivisor x v
-      have hb' := (valuation_le_exp_poleDivisor (b j) v).trans
-        (WithZero.exp_le_exp.2 (Finsupp.le_def.1 (hCj j) v))
-      have hBv : 0 ≤ B v := by simpa using Finsupp.le_def.1 hB v
-      have hil : ((i : ℕ) : ℤ) ≤ l := by exact_mod_cast Nat.lt_succ_iff.1 i.2
-      calc v.valuation x ^ (i : ℕ) * v.valuation (b j)
-          ≤ WithZero.exp (B v) ^ (i : ℕ) * WithZero.exp (C v) :=
-            mul_le_mul' (pow_le_pow_left' hx' _) hb'
-        _ ≤ WithZero.exp (D v) := by
-            rw [← WithZero.exp_nsmul, ← WithZero.exp_add, WithZero.exp_le_exp]
-            simp only [hD', Finsupp.add_apply, Finsupp.smul_apply, nsmul_eq_mul]
-            have := mul_le_mul_of_nonneg_right hil hBv
-            linarith
-    let G : Fin (l + 1) × Fin n → L D := fun p => ⟨x ^ (p.1 : ℕ) * b p.2, hmem p⟩
-    have hli : LinearIndependent k G := by
-      apply LinearIndependent.of_comp (L D).subtype
-      have hb' : LinearIndependent k fun i : Fin (l + 1) =>
-          (IntermediateField.AdjoinSimple.gen k x) ^ (i : ℕ) := by
-        apply LinearIndependent.of_comp F.val.toLinearMap
-        have h := linearIndependent_pow_of_transcendental hx (l + 1)
-        have heq : (F.val.toLinearMap ∘ fun i : Fin (l + 1) =>
-            (IntermediateField.AdjoinSimple.gen k x) ^ (i : ℕ)) =
-            fun i : Fin (l + 1) => x ^ (i : ℕ) := by
-          funext i
-          simp
-        rw [heq]
-        exact h
-      convert linearIndependent_smul hb' b.linearIndependent using 1
-      funext p
-      simp [G, Algebra.smul_def]
-    have hcard := hli.fintype_card_le_finrank
-    simp only [Fintype.card_prod, Fintype.card_fin] at hcard
-    have hLD := finrank_L_le_deg_add hD
-    have hdeg : deg D = l * deg B + deg C := by
-      rw [hD', map_add (f := _), map_nsmul, nsmul_eq_mul]
-    have : ((l + 1 : ℕ) * n : ℕ) ≤ (finrank k (L D) : ℤ) := by exact_mod_cast hcard
-    push_cast at this
-    linarith
+  refine ⟨C, hC, fun l => ?_⟩
+  set D : Divisor k K := l • B + C with hD'
+  have hmem : ∀ p : Fin (l + 1) × Fin n, x ^ (p.1 : ℕ) * b p.2 ∈ L D := by
+    rintro ⟨i, j⟩ v
+    rw [map_mul, map_pow]
+    have hx' := valuation_le_exp_poleDivisor x v
+    have hb' := (valuation_le_exp_poleDivisor (b j) v).trans
+      (WithZero.exp_le_exp.2 (Finsupp.le_def.1 (hCj j) v))
+    have hBv : 0 ≤ B v := by simpa using Finsupp.le_def.1 hB v
+    have hil : ((i : ℕ) : ℤ) ≤ l := by exact_mod_cast Nat.lt_succ_iff.1 i.2
+    calc v.valuation x ^ (i : ℕ) * v.valuation (b j)
+        ≤ WithZero.exp (B v) ^ (i : ℕ) * WithZero.exp (C v) :=
+          mul_le_mul' (pow_le_pow_left' hx' _) hb'
+      _ ≤ WithZero.exp (D v) := by
+          rw [← WithZero.exp_nsmul, ← WithZero.exp_add, WithZero.exp_le_exp]
+          simp only [hD', Finsupp.add_apply, Finsupp.smul_apply, nsmul_eq_mul]
+          have := mul_le_mul_of_nonneg_right hil hBv
+          linarith
+  let G : Fin (l + 1) × Fin n → L D := fun p => ⟨x ^ (p.1 : ℕ) * b p.2, hmem p⟩
+  have hli : LinearIndependent k G := by
+    apply LinearIndependent.of_comp (L D).subtype
+    have hb' : LinearIndependent k fun i : Fin (l + 1) =>
+        (IntermediateField.AdjoinSimple.gen k x) ^ (i : ℕ) := by
+      apply LinearIndependent.of_comp F.val.toLinearMap
+      have h := linearIndependent_pow_of_transcendental hx (l + 1)
+      have heq : (F.val.toLinearMap ∘ fun i : Fin (l + 1) =>
+          (IntermediateField.AdjoinSimple.gen k x) ^ (i : ℕ)) =
+          fun i : Fin (l + 1) => x ^ (i : ℕ) := by
+        funext i
+        simp
+      rw [heq]
+      exact h
+    convert linearIndependent_smul hb' b.linearIndependent using 1
+    funext p
+    simp [G, Algebra.smul_def]
+  have hcard := hli.fintype_card_le_finrank
+  simp only [Fintype.card_prod, Fintype.card_fin] at hcard
+  have : ((l + 1 : ℕ) * n : ℕ) ≤ (finrank k (L D) : ℤ) := by exact_mod_cast hcard
+  push_cast at this
+  linarith
+
+theorem finrank_le_deg_poleDivisor {x : K} (hx : Transcendental k x) :
+    (finrank (IntermediateField.adjoin k {x}) K : ℤ) ≤ deg (poleDivisor x : Divisor k K) := by
+  classical
+  obtain ⟨C, hC, hkey⟩ := exists_le_finrank_L_poleDivisor hx
+  set B : Divisor k K := poleDivisor x with hBdef
+  set a : ℤ := (finrank k (algebraicClosure k K) : ℤ) with ha
+  have hB : 0 ≤ B := poleDivisor_nonneg x
+  have key : ∀ l : ℕ, ((l + 1 : ℤ) * finrank (IntermediateField.adjoin k {x}) K) ≤
+      l * deg B + deg C + a := fun l => by
+    have hLD := finrank_L_le_deg_add (add_nonneg (nsmul_nonneg hB l) hC)
+    have hdeg : deg (l • B + C) = l * deg B + deg C := by
+      rw [map_add (f := _), map_nsmul, nsmul_eq_mul]
+    linarith [hkey l]
   by_contra hlt
   push Not at hlt
   have hC0 := deg_nonneg hC
@@ -204,9 +200,6 @@ theorem finrank_L_add_divisor (D : Divisor k K) {x : K} (hx : x ≠ 0) :
 
 end Divisor
 
-
-variable (k K) in
-noncomputable abbrev Pic := Divisor k K ⧸ principalDivisors (k := k) (K := K)
 
 namespace Pic
 

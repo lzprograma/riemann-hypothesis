@@ -21,7 +21,7 @@ namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ}
 
@@ -32,14 +32,14 @@ theorem contDiff_entry (a b : Fin n) {m : ℕ∞ω} :
 theorem contDiff_lead (i : ℕ) {m : ℕ∞ω} : ContDiff ℂ m (lead (n := n) i) := by
   unfold lead
   by_cases h : i ≤ n
-  · simp only [h, dif_pos]
+  · simp only [h, dite_eq_left]
     simp only [Matrix.det_apply, Units.smul_def]
     refine ContDiff.sum fun σ _ => ?_
     refine ContDiff.const_smul _ ?_
     refine contDiff_prod fun k _ => ?_
     simp only [Matrix.submatrix_apply]
     exact contDiff_entry _ _
-  · simp only [h, dif_neg, not_false_eq_true]
+  · simp only [h, dite_eq_right, not_false_eq_true]
     exact contDiff_const
 
 theorem contDiffAt_zpow_lead (i : ℕ) (k : ℤ) {z : Matrix (Fin n) (Fin n) ℂ} (hz : lead i z ≠ 0)

@@ -2,43 +2,6 @@ module
 
 public import Formalism.SharpRestriction.ParConsts
 public import Mathlib.Analysis.InnerProductSpace.Positive
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -83,23 +46,6 @@ def OnSD (ψ : AddChar (AF F) ℂ) (n : ℕ) (Yi : Type) [AddCommGroup Yi] [Topo
   ∀ μi νi μv νv, Si μi → SelfDual νi χi → Sv μv → (∀ v, SelfDual (νv v) (χv v)) → Q μi νi μv νv
 
 def SW1a1 : Prop := OnH F E σ M J fun μ 𝓕 => μ 𝓕 < ⊤
-
-def SW1b1 : Prop :=
-  3 ≤ M → ∀ (β : F) (d : ℕ) (b : Module.Basis (Fin d) F E)
-    (Φ : (Fin 1 → Fin M → AF F ⊗[F] E) → ℂ) (Φi : (Fin 1 → Fin M → Ainf F ⊗[F] E) → ℂ)
-    (Φf : (Fin 1 → Fin M → Af F ⊗[F] E) → ℂ)
-    (Φv : ∀ v : HeightOneSpectrum (𝓞 F), (Fin 1 → Fin M → Fv F v ⊗[F] E) → ℂ),
-    Continuous Φi → RapidDecay b Φi → IsPureFin b Φf Φv → IsProdInfFin Φ Φi Φf →
-    AllSome (IsCharAF F) fun ψ =>
-    OnH F E σ M J fun μ 𝓕 =>
-    OnSD F E σ M J ψ 1 (Ainf F) (Fv F) (fun s t => psiInf F ψ (s * t)) (fun v s t => psiV F ψ v (s * t))
-      fun μi νi μv νv =>
-      ∃ (Fi : Ainf F → ℂ) (Fl : ∀ v, Fv F v → ℂ),
-        IsContDensity μi (fun X => qR (Ainf F) σ J (X 0)) id νi Φi Fi ∧
-        (∀ v, IsContDensity (μv v) (fun X => qR (Fv F v) σ J (X 0)) id (νv v) (Φv v) (Fl v)) ∧
-        Multipliable (fun v => Fl v (algebraMap F (Fv F v) β)) ∧
-        meanC μ 𝓕 (thSum F E σ M J Φ {x | x 0 ≠ 0 ∧ hE σ J (x 0) (x 0) = algebraMap F E β}) =
-          Fi (algebraMap F (Ainf F) β) * ∏' v, Fl v (algebraMap F (Fv F v) β)
 
 def SW1b2 : Prop :=
   3 ≤ M → ∀ (β : F), β ≠ 0 → ∀ (d : ℕ) (b : Module.Basis (Fin d) F E)
@@ -301,19 +247,6 @@ def FamilyMassLastLine (_D : D7) : Prop :=
       (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)), IsDS ε lam σ →
       IsKTypeOf ε σ (Formalism.QuantumDeterminants.lowK ε lam) (lowKSub ε lam σ) ∧
         ((Module.finrank ℂ (lowKSub ε lam σ) : ℕ) : ℝ) = dTau ε lam
-
-def RepresentationDimensionGeneral (D : D7) (C3 : ℝ) : Prop :=
-  ∀ (N : ℕ) (ε : Fin N → Bool) (lam : Fin N → ℝ) (ep0 h0 : ℝ) (H : Type) [NormedAddCommGroup H]
-    [InnerProductSpace ℂ H] (σ : Matrix (Fin N) (Fin N) ℂ → (H →L[ℂ] H)) (w : H),
-    let p : ℝ := (Finset.univ.filter (fun a => ε a = true)).card
-    let q : ℝ := (Finset.univ.filter (fun a => ε a = false)).card
-    Formalism.QuantumDeterminants.IsHCParam lam → Formalism.QuantumDeterminants.GapAtLeast ε lam h0 →
-    Real.exp (-(N : ℝ)) ≤ ep0 → ep0 < 1 / 2 →
-    C3 * min p q * (p * q) ^ 3 * N * Real.log N / ep0 ^ 2 ≤ h0 →
-    IsDS ε lam σ → w ≠ 0 →
-    (1 - ep0) * Formalism.QuantumDeterminants.fdegHC lam ≤ fdegOf ((D.s.cdScale N ε : ENNReal) • Formalism.REAL.muG ε) σ w ∧
-    fdegOf ((D.s.cdScale N ε : ENNReal) • Formalism.REAL.muG ε) σ w ≤
-      4 * (Module.finrank ℂ (lowKSub ε lam σ) : ℝ) * (C3 * p * q * N * lamAbs lam) ^ (p * q)
 
 end DS
 

@@ -242,7 +242,7 @@ theorem stepK : StepK := by
   have hf : ∀ c ∈ T, f c ∈ K ∧ ∀ k, π (c k - f c k) ∈ X.L := by
     intro c hc
     have h := hT c hc
-    simp only [f, dif_pos h]
+    simp only [f, dite_eq_left h]
     exact Classical.choose_spec (hK.2 c h).exists
   have hcard : T.card ≤ K.card := by
     apply Finset.card_le_card_of_injOn f

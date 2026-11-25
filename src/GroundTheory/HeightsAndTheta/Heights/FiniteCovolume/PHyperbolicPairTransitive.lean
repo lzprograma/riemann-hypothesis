@@ -3,7 +3,6 @@ module
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsHyperbolicPairs
 public import Mathlib.NumberTheory.NumberField.Basic
 public import GroundTheory.AutomorphicForms.HermitianOrthogonal
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -19,12 +18,10 @@ variable {W : Type*} [AddCommGroup W] [Module E W]
 
 namespace HyperbolicPairTransitive
 
-
 omit [NumberField E] in
 theorem sesq_swap (h : HermitianForm F E W) (x y : W) :
     h.toSesq y x = conj F E (h.toSesq x y) :=
   (h.isSymm.eq x y).symm
-
 
 omit [NumberField E] in
 theorem exists_unitary_of_preserves (h : HermitianForm F E W) [FiniteDimensional E W]

@@ -58,7 +58,7 @@ def XMid : Prop :=
 
 def XSpanN : Prop :=
   ∀ (p : ℕ) [Fact p.Prime] (X : Sys p) (Kc : Type) [Field Kc] [Algebra X.G.Kf Kc] [CharZero Kc] (j : ℕ)
-    (x : ∀ b : BX X, Fin (NJ X j) → ℕ → X.G.Kf) (f : MvPowerSeries (X.ZA j) Kc),
+    (x : ∀ _ : BX X, Fin (NJ X j) → ℕ → X.G.Kf) (f : MvPowerSeries (X.ZA j) Kc),
     delF X Kc j (∏ b, rename (emX X j b) (srcN X j b (x b))) f ∈
       Submodule.span Kc {z | ∃ F : BX X → MvPolynomial (Fin (NJ X (j + 1)) × Fin (NJ X (j + 1))) X.G.Kf,
         (∀ b, F b ∈ dualWeyl X.G.Kf (NJ X (j + 1)) (NJ X (j + 1)) (nuT X j b)) ∧

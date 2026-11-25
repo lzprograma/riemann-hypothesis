@@ -14,7 +14,7 @@ namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ}
 
@@ -74,11 +74,11 @@ theorem lead_tri_mul {c z c' : Matrix (Fin n) (Fin n) ℂ} (hc : IsLowerTri c) (
     rw [Finset.prod_filter]
     refine Fintype.prod_of_injective (Fin.castLE hi) (Fin.castLE_injective hi) _ _ ?_ ?_
     · intro k hk
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hlt
       exact hk ⟨⟨k, hlt⟩, Fin.ext rfl⟩
     · intro a
-      rw [if_pos (by rw [Fin.coe_castLE]; exact a.2)]
+      rw [ite_eq_left (by rw [Fin.coe_castLE]; exact a.2)]
   unfold lead
   rw [dite_eq_left hi, dite_eq_left hi, sub_mul_upper hi hc', sub_lower_mul hi hc, Matrix.det_mul, Matrix.det_mul,
     Matrix.det_of_lowerTriangular _ (lowerTri_sub hi hc), Matrix.det_of_upperTriangular (upperTri_sub hi hc'),

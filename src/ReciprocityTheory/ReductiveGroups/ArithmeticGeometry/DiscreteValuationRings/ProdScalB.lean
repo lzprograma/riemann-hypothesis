@@ -8,14 +8,10 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDesc
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped CategoryTheory.Obj
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace ReciprocityTheory.ChartRestriction.G.DVR
 
@@ -47,17 +43,5 @@ theorem ps_gs_secOfIso {A B : LB Y} (u : LB.Iso A B) (t : LB.Sec B) (hu : u.IsGe
   rw [gs_unit r z _ hz, map_inv, gm_res r z (divLe a b) hz]
 
 end PSHelp
-
-section ScalB
-
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor
-
-variable {R : Type} [CommRing R] [IsDomain R] {I : Ideal R} {j : ℕ} {D D' : DegData R I}
-  {A A' : PolAV (Spec (CommRingCat.of (FractionRing R)))}
-  {G G' : Over (Spec (CommRingCat.of R))} [GrpObj G] [IsCommMonObj G] [GrpObj G'] [IsCommMonObj G']
-  {pD : IsPowDeg D'.toPre D.toPre j} {pA : IsPowPolAV A' A j} {pG : IsPowGrp G' G j}
-  {U' : Unif I D' A' G'} {U : Unif I D A G}
-
-end ScalB
 
 end ReciprocityTheory.ChartRestriction.G.DVR

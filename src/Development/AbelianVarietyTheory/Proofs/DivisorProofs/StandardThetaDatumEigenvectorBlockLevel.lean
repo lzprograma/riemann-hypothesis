@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergTranslateUnitVectorCongrUnimodular
 public import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmFiniteAdeleStrongApproxModAdelicIdeal
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVecEq
@@ -15,51 +16,12 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilFixesCos
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemBlockCongruenceLevelSubgroupIffStabilizerEntr
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitBlockCosetThetaVectorMemThetaFunctions
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.TypeStar
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHalfIdem
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RationalPointsIntegralPointsMembership
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.Hilbert90IntegralIdelesOfMovedPrimes
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
@@ -88,38 +50,7 @@ namespace GlobalTheory.FunObj.CosetApprox
 
 theorem exists_mem_approx (D : D7) (𝔪 : Ideal (𝓞 D.host.E)) (m : ℕ) (hm : 0 < m) (y : AE D)
     (hy : y ∈ hatId D 𝔪) : ∃ b ∈ 𝔪, ∃ t ∈ IhE D ⊤, inc D (b : D.host.E) - y = (m : AE D) * t := by
-  induction hy using AddSubgroup.closure_induction with
-  | mem x hx =>
-    obtain ⟨b, hb, s, hs, rfl⟩ := hx
-    obtain ⟨r, w, hw, e⟩ := GlobalTheory.AdelicApprox.exists_approx D m hm s hs
-    have hr : inc D r ∈ OhE D := by
-      have : inc D r = s - (m : AE D) * w := by rw [e]; ring
-      rw [this]
-      exact sub_mem hs (mul_mem (natCast_mem _ m) hw)
-    have hri : IsIntegral ℤ r := Formalism.UG.P.csGlob_int (F := ℚ) _ hr
-    let r' : 𝓞 D.host.E := ⟨r, hri⟩
-    have hbr : b * r' ∈ 𝔪 := Ideal.mul_mem_right _ _ hb
-    have hbw : inc D (b : D.host.E) * w ∈ OhE D := mul_mem (Formalism.UG.P.adelstab_incl_int b) hw
-    refine ⟨b * r', hbr, -(inc D (b : D.host.E) * w), neg_mem ?_, ?_⟩
-    · have := GlobalTheory.AdelicApprox.absNorm_mul_mem_IhE D ⊤ _ hbw
-      simpa using this
-    · have hc : ((b * r' : 𝓞 D.host.E) : D.host.E) = (b : D.host.E) * r := rfl
-      rw [hc, map_mul, e]
-      ring
-  | zero => exact ⟨0, zero_mem _, 0, zero_mem _, by simp⟩
-  | add x y _ _ hx hy =>
-    obtain ⟨b, hb, t, ht, e⟩ := hx
-    obtain ⟨b', hb', t', ht', e'⟩ := hy
-    refine ⟨b + b', add_mem hb hb', t + t', add_mem ht ht', ?_⟩
-    push_cast
-    rw [map_add (f := _)]
-    linear_combination e + e'
-  | neg x _ hx =>
-    obtain ⟨b, hb, t, ht, e⟩ := hx
-    refine ⟨-b, neg_mem hb, -t, neg_mem ht, ?_⟩
-    push_cast
-    rw [map_neg]
-    linear_combination -e
+  apply _root_.GlobalTheory.CongApprox.exists_mem_approx <;> assumption
 
 theorem matrix_approx : ∀ (D : D7) (𝔪 : Ideal (𝓞 D.host.E)) {a d : ℕ} (Y : Matrix (Fin d) (Fin a) (AE D)),
     (∀ i j, Y i j ∈ hatId D 𝔪) → ∀ m : ℕ, 0 < m → ∃ w : Matrix (Fin d) (Fin a) D.host.E,
@@ -595,31 +526,7 @@ namespace GlobalTheory.FunObj.CosetMove
 
 theorem wd_wd_norm (D : D7) (T : Tor D) {N N' : ℕ} (a b : VC D N N') :
     ∃ φ : ℂ, ‖φ‖ = 1 ∧ ∀ F, Wd D T a (Wd D T b F) = φ • Wd D T (a + b) F := by
-  have h0 : wdPh D T (a + b) ≠ 0 := Complex.exp_ne_zero _
-  have hn : ∀ x : VC D N N', ‖wdPh D T x‖ = 1 := fun x => by
-    simp [wdPh, ee, Complex.norm_exp]
-  have hc : Hf D T b a = (starRingEnd ℂ) (Hf D T a b) := by
-
-    simp only [Hf, map_div₀, map_sum, map_mul, Complex.conj_conj, Complex.conj_ofReal]
-    congr 1
-    refine Finset.sum_congr rfl fun τ _ => Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => mul_comm _ _
-  refine ⟨wdPh D T a * wdPh D T b / wdPh D T (a + b) *
-    Complex.exp ((Real.pi : ℂ) * (Hf D T b a - Hf D T a b) / 2), ?_, fun F => ?_⟩
-  · rw [norm_mul, norm_div, norm_mul, hn, hn, hn, Complex.norm_exp, hc]
-    have : (((Real.pi : ℂ) * ((starRingEnd ℂ) (Hf D T a b) - Hf D T a b) / 2)).re = 0 := by
-      simp [Complex.mul_re, Complex.sub_re, Complex.conj_re]
-    rw [this]; simp
-  funext z
-  simp only [Wd, U, Pi.smul_apply, smul_eq_mul, VacMove.hf_add_left, VacMove.hf_add_right, add_assoc]
-  have : Complex.exp (-(Real.pi : ℂ) * (Hf D T z b + Hf D T a b) - (Real.pi : ℂ) * Hf D T b b / 2) *
-      Complex.exp (-(Real.pi : ℂ) * Hf D T z a - (Real.pi : ℂ) * Hf D T a a / 2) =
-      Complex.exp ((Real.pi : ℂ) * (Hf D T b a - Hf D T a b) / 2) *
-      Complex.exp (-(Real.pi : ℂ) * (Hf D T z a + Hf D T z b) -
-        (Real.pi : ℂ) * (Hf D T a a + (Hf D T b a + (Hf D T a b + Hf D T b b))) / 2) := by
-    rw [← Complex.exp_add, ← Complex.exp_add]; congr 1; ring
-  field_simp
-  field_simp at this
-  linear_combination (wdPh D T a * wdPh D T b * F (z + (a + b))) * this
+  apply _root_.GlobalTheory.HeisTranslate.wd_wd_unimod <;> assumption
 
 
 

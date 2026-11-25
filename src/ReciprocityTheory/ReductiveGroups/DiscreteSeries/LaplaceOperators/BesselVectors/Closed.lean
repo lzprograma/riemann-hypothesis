@@ -718,8 +718,7 @@ theorem k3V (n : ℕ) : QuotientHighestWeightTensorStandard n := by
   have hPne := lagrangeFactor_eval_ne_zero_of_injective hθinj s
 
   have hstart : ∃ u : Fin n → D, (∀ c, u c ∈ V) ∧ φ (P u) ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     have h0 : φ (P x) = 0 := generated_eigenspace_annihilate EN φ hφ P hPcomm hPmem hne (hgen x ((hX0mem x).1 hx).1)
     rw [hPon x hx, map_smul] at h0
     exact hφx ((smul_eq_zero.1 h0).resolve_left hPne)
@@ -796,11 +795,11 @@ theorem k3V (n : ℕ) : QuotientHighestWeightTensorStandard n := by
     rw [entry_bounds_of_partialSum, Pi.smul_apply] at h1
     by_cases hac : c0 = a
     · subst hac
-      rw [if_pos rfl] at h1
+      rw [ite_eq_left rfl] at h1
       rw [Pi.sub_apply, Pi.single_eq_same, Complex.ofReal_sub, Complex.ofReal_one, sub_smul,
         one_smul, ← h1]
       abel
-    · rw [if_neg hac, add_zero] at h1
+    · rw [ite_eq_right hac, add_zero] at h1
       rw [Pi.sub_apply, Pi.single_eq_of_ne (Ne.symm hac), sub_zero, h1]
   obtain ⟨u, huV, hu0, huK⟩ := hV.2.2.2
   have hbd1 : ∀ k, kirrPs k ν1 ≤ kirrPs k (lowK ε lam + Pi.single c0 1) := by
@@ -837,8 +836,7 @@ theorem k3V (n : ℕ) : QuotientHighestWeightTensorStandard n := by
   have hW0' : IsKIrrHW ε EN (lowK ε (ν0 + rhoC ε - rhoN ε)) W0 := by rw [lowestKType_shift_inv]; exact hW0
 
   have hsch : ∀ z ∈ Wm ε EN W0, phi EN 1 z = 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     obtain ⟨z0', hz0W, hz00⟩ := hne
     have : FiniteDimensional ℂ (ncV ε W0 1) := finiteDimensional_ncV hW0.1 1
     have hfdW : FiniteDimensional ℂ (Wm ε EN W0) := Submodule.finiteDimensional_of_le Wm_le_ncV

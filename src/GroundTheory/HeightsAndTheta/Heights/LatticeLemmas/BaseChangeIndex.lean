@@ -1,11 +1,7 @@
 module
 
 public import Mathlib.NumberTheory.NumberField.InfinitePlace.Embeddings
-import Mathlib.RingTheory.Henselian
 public import Mathlib.RingTheory.Ideal.Norm.RelNorm
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.TypeStar
 public import Mathlib.Algebra.Module.Torsion.Basic
 public import Mathlib.RingTheory.Flat.Basic
 public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
@@ -37,13 +33,7 @@ theorem card_tensor_integers (Q : Type*) [AddCommGroup Q] [Module (𝓞 K) Q] [F
   | _ n ih =>
   subst hn
   rcases subsingleton_or_nontrivial Q with hQ | hQ
-  · have h0 : ∀ z : 𝓞 L ⊗[𝓞 K] Q, z = 0 := fun z ↦ by
-      induction z using TensorProduct.induction_on with
-      | zero => rfl
-      | tmul b q => rw [Subsingleton.elim q 0, tmul_zero]
-      | add a b ha hb => rw [ha, hb, add_zero]
-    have : Subsingleton (𝓞 L ⊗[𝓞 K] Q) := ⟨fun x y ↦ by rw [h0 x, h0 y]⟩
-    rw [Nat.card_of_subsingleton (0 : 𝓞 L ⊗[𝓞 K] Q), Nat.card_of_subsingleton (0 : Q), one_pow]
+  · rw [Nat.card_of_subsingleton (0 : 𝓞 L ⊗[𝓞 K] Q), Nat.card_of_subsingleton (0 : Q), one_pow]
   obtain ⟨x, hx⟩ := exists_ne (0 : Q)
   set C : Submodule (𝓞 K) Q := Submodule.span (𝓞 K) {x}
   have : Finite (Q ⧸ C) := Finite.of_surjective _ (Submodule.mkQ_surjective C)

@@ -3,16 +3,7 @@ module
 public import Mathlib.Algebra.Algebra.Operations
 public import Mathlib.LinearAlgebra.Matrix.Defs
 public import Mathlib.RingTheory.LocalRing.MaximalIdeal.Defs
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+import Mathlib.Tactic.LinearCombination
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.RingTheory.Ideal.Operations
 public import Mathlib.RingTheory.LocalRing.MaximalIdeal.Basic

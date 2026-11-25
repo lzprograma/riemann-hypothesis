@@ -392,9 +392,6 @@ private theorem move_central {G : Type} [Group G] (C g D W : G) (hc : ∀ x, C *
   calc W⁻¹ * (g * (C * D) * g⁻¹ * W) = (W⁻¹ * C) * (g * D * g⁻¹ * W) := by rw [e5]; group
     _ = _ := by rw [e6]; group
 
-private theorem evU_val {K : Type} [Field K] {τ a : K} (h : a * a = τ * a - 1) (z : (Etau K τ)ˣ) :
-    ((evU h z : Kˣ) : K) = (z : Etau K τ).re + a * (z : Etau K τ).im := rfl
-
 private theorem quot_pow_zero {R : Type} [CommRing R] (I : Ideal R) : Subsingleton (R ⧸ I ^ 0) :=
   Ideal.Quotient.subsingleton_iff.2 (by rw [pow_zero, Ideal.one_eq_top])
 
@@ -467,10 +464,10 @@ private theorem diagonal_orbit_admissible : OkDOrb := by
       ((eD hs).comp j) hj (t * h) ha
     obtain ⟨hre, him⟩ := re_im hz
     have hb : ((evU (root_right (t * h)) z : kˣ) : k) = 1 + ((t * h)⁻¹ : kˣ) := by
-      rw [evU_val, hre, him, mul_one]
+      rw [UpperTheory.V.Z.Sym.Sig.ev_coe, hre, him, mul_one]
     have hzL : evU (root_left (t * h)) z = (t * h) * evU (root_right (t * h)) z := by
       apply Units.ext
-      rw [Units.val_mul (t * h) _, hb, evU_val, hre, him, mul_one, mul_add, mul_one, Units.mul_inv, add_comm]
+      rw [Units.val_mul (t * h) _, hb, UpperTheory.V.Z.Sym.Sig.ev_coe, hre, him, mul_one, mul_add, mul_one, Units.mul_inv, add_comm]
     obtain ⟨hFK, hOK⟩ := hK _ hb
     have hjz := hj z
     rw [hzL] at hjz
@@ -478,8 +475,8 @@ private theorem diagonal_orbit_admissible : OkDOrb := by
     rw [← hγ] at hFS hOS
     have e1 : t * h / t ∈ V.H := by
       rw [mul_div_cancel_left]; exact hh'
-    have f1 : UpperTheory.V.Z.Sym.Glob.one (t * h / t ∈ V.H) = 1 := if_pos e1
-    have f2 : UpperTheory.V.Z.Sym.Glob.one (Ind S.H ((t * h : kˣ) + ((t * h)⁻¹ : kˣ) : k) t) = 1 := if_pos hI
+    have f1 : UpperTheory.V.Z.Sym.Glob.one (t * h / t ∈ V.H) = 1 := ite_eq_left e1
+    have f2 : UpperTheory.V.Z.Sym.Glob.one (Ind S.H ((t * h : kˣ) + ((t * h)⁻¹ : kˣ) : k) t) = 1 := ite_eq_left hI
     refine ⟨hfS.2 hFS, hfK.2 hFK, hoS.trans ?_, hoK.trans ?_, fun _ w => ?_⟩
     · rw [hC, hOS, f1, f2]
       simp [S, Lev.data]
@@ -535,11 +532,11 @@ private theorem diagonal_orbit_admissible : OkDOrb := by
     refine ⟨?_, ?_, ?_, ?_, fun h => absurd h hI⟩
     · exact ⟨∅, fun y hy => absurd (hzS y) hy⟩
     · exact ⟨∅, fun y hy => absurd (hzK y) hy⟩
-    · have e0 : UpperTheory.V.Z.Sym.Glob.one (Ind S.H τ t) = 0 := if_neg hI
+    · have e0 : UpperTheory.V.Z.Sym.Glob.one (Ind S.H τ t) = 0 := ite_eq_right hI
       rw [e0, mul_zero]
       have hzS' : ∀ y : DX Δ, S.fS t (y⁻¹ * γ * y) = 0 := hzS
       simp [orb, wcount, hzS']
-    · have e0 : UpperTheory.V.Z.Sym.Glob.one (Ind S.H τ t) = 0 := if_neg hI
+    · have e0 : UpperTheory.V.Z.Sym.Glob.one (Ind S.H τ t) = 0 := ite_eq_right hI
       rw [e0, mul_zero]
       have hzK' : ∀ y : DX Δ, S.fK t (y⁻¹ * j z * y) = 0 := hzK
       simp [orb, wcount, hzK']
@@ -588,8 +585,6 @@ noncomputable section
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.PRep GlobalTheory.SmGL UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob UpperTheory.V.Z.Sym.Sig UpperTheory.V.Z.Sym.So
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.V.Z.Sym.So.LocalDataValidity
 
 variable {F : Type} [Field F] [NumberField F]
@@ -622,7 +617,7 @@ private theorem chi_unit (v : Pl F) {χ : (Kv v)ˣ →* ℂˣ} (h : Unr (Ov v) �
 private theorem hs_square {K : Type} [Field K] {D s : K} (h2 : (2 : K) ≠ 0) (h0 : s ≠ 0) (hss : s * s = D) (x : K) :
     Loc.hs D x = 1 := by
   unfold Loc.hs
-  rw [if_pos]
+  rw [ite_eq_left]
   refine ⟨(x + 1) / 2, (x - 1) / (2 * s), ?_⟩
   subst hss
   field_simp
@@ -679,23 +674,23 @@ private theorem s_ne (A : SD Δ) (hA : A.Ok) (v : Pl F) (h : v ∈ A.Sg) : A.s v
   exact lt_irrefl _ h3
 
 private theorem dat_S (A : SD Δ) (v : Pl F) (h : v ∈ A.Sg) :
-    A.dat.S v = (A.V v).data (A.hs v h) (A.Ry v) (A.χ v) := dif_pos h
+    A.dat.S v = (A.V v).data (A.hs v h) (A.Ry v) (A.χ v) := dite_eq_left h
 
 private theorem dat_Jv (A : SD Δ) (v : Pl F) (h : v ∈ A.Sg) :
     A.dat.Jv v = ((A.V v).J 3).comap (eU (A.hs v h)) := by
-  have e : A.dat.Jv v = (A.dat.S v).J := if_pos h
+  have e : A.dat.Jv v = (A.dat.S v).J := ite_eq_left h
   rw [e, dat_S A v h]
   rfl
 
-private theorem dat_Jv' (A : SD Δ) (v : Pl F) (h : v ∉ A.Sg) : A.dat.Jv v = KU (Ov v) _ := if_neg h
+private theorem dat_Jv' (A : SD Δ) (v : Pl F) (h : v ∉ A.Sg) : A.dat.Jv v = KU (Ov v) _ := ite_eq_right h
 
 private theorem local_level_at_sigma (A : SD Δ) (v : Pl F) (h : v ∈ A.Sg) :
     A.dat.J2v v = ((A.V v).J 2).comap (eD (A.hs v h)) := by
-  have e : A.dat.J2v v = (A.dat.S v).J2 := if_pos h
+  have e : A.dat.J2v v = (A.dat.S v).J2 := ite_eq_left h
   rw [e, dat_S A v h]
   rfl
 
-private theorem local_level_outside_sigma (A : SD Δ) (v : Pl F) (h : v ∉ A.Sg) : A.dat.J2v v = KD _ (Ov v) := if_neg h
+private theorem local_level_outside_sigma (A : SD Δ) (v : Pl F) (h : v ∉ A.Sg) : A.dat.J2v v = KD _ (Ov v) := ite_eq_right h
 
 private theorem mem_UG (A : SD Δ) (g : GA Δ) : g ∈ A.dat.UG ↔ ∀ v, g.1 v ∈ A.dat.Jv v := by
   unfold Dat.UG RPG.box

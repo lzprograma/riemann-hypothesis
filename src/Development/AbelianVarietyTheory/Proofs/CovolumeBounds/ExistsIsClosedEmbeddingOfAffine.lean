@@ -136,15 +136,6 @@ theorem PtsOver.secondCountableTopology [T1Space C] [SecondCountableTopology C] 
   exact (PtsOver.baseChangeHomeomorph (IsPullback.of_hasPullback p s)).symm.secondCountableTopology
 
 
-open scoped MonObj in
-theorem continuousMul_over (A : Over (Sp C)) [MonObj A] : ContinuousMul (𝟙_ (Over (Sp C)) ⟶ A) where
-  continuous_mul := (continuous_over_comp (μ[A])).comp (tensorHomeomorph A A).symm.continuous
-
-
-open scoped MonObj in
-theorem isTopologicalGroup_over (A : Over (Sp C)) [GrpObj A] : IsTopologicalGroup (𝟙_ (Over (Sp C)) ⟶ A) := {
-  toContinuousMul := continuousMul_over A
-  continuous_inv := continuous_over_comp (GrpObj.inv (X := A)) }
 
 variable {R : Type} [CommRing R] {N : ℕ}
 
@@ -167,16 +158,8 @@ theorem valR_pt_ratio (c : R →+* C) (v : Fin (N + 1) → C) (hv : Ideal.span (
   have h := (le_pt_preimage_chart_iff c v hv i).2 hi
   have e : ∀ a : C, (Scheme.ΓSpecIso (CommRingCat.of C)).hom.hom (fnOn ⊤ a) = a := fun a =>
     (congrArg _ (GlobalTheory.Cartier.resG_self (X := Sp C) le_top _)).trans (Iso.inv_hom_id_apply (Scheme.ΓSpecIso (CommRingCat.of C)) a)
-  have hmul : pullRatio (pt c v hv) ⊤ i h j * fnOn ⊤ (v i) = fnOn ⊤ (v j) := by
-    have hu : IsUnit (MvPolynomial.eval₂Hom c v (MvPolynomial.X i)) := by
-      simpa only [MvPolynomial.eval₂Hom_X'] using hi
-    have hpt : pt c v hv =
-        spMap (ProjPoint.awayLift (grading R N) (MvPolynomial.eval₂Hom c v) (MvPolynomial.X i) hu) ≫ _ :=
-      ProjPoint.ofHom_eq_awayι _ _ _ one_pos (X_mem R N i) hu
-    have hratio := ProjPoint.awayLift_mk_mul (grading R N) (MvPolynomial.eval₂Hom c v) hu
-      (X_mem R N i) 1 (MvPolynomial.X j) (X_mem R N j)
-    rw [pullRatio_of_eq hpt h (hpt ▸ h), pullRatio_spMap_awayι, ← map_mul]
-    exact congrArg (fnOn ⊤) (by simpa only [ratioAway, MvPolynomial.eval₂Hom_X', pow_one] using hratio)
+  have hmul : pullRatio (pt c v hv) ⊤ i h j * fnOn ⊤ (v i) = fnOn ⊤ (v j) :=
+    pullRatio_pt_top_mul c v hv i j hi h
   have h1 := congrArg (Scheme.ΓSpecIso (CommRingCat.of C)).hom.hom hmul
   rw [map_mul, e, e] at h1
   rw [valR_eq _ _ h, ← h1, mul_assoc, Ring.mul_inverse_cancel _ hi, mul_one]
@@ -194,11 +177,6 @@ omit [TopologicalSpace C] [IsTopologicalRing C] [IsOpenUnits C] in
 theorem projPt_surjective (c : R →+* C) : Function.Surjective (projPt (N := N) c) := fun x =>
   (exists_eq_pt c x.1 x.2).elim fun v h => h.elim fun hv e => ⟨⟨v, hv⟩, Subtype.ext e.symm⟩
 
-
-omit [TopologicalSpace C] [IsTopologicalRing C] [IsLocalRing C] [IsOpenUnits C] in
-theorem projPt_eq_iff (c : R →+* C) (v w : Unimodular C N) :
-    projPt c v = projPt c w ↔ ∃ u : Cˣ, w.1 = u • v.1 :=
-  Subtype.ext_iff.trans (pt_eq_pt_iff c v.2 w.2)
 
 theorem continuous_projPt (c : R →+* C) : Continuous (projPt (N := N) c) := by
   have hs : ∀ i, Subring.closure (Set.range (constFn (PSpace.str R N) (chart R N i)) ∪
@@ -256,12 +234,6 @@ theorem PtsOver.compactSpace [ProperSpace F] {p : X ⟶ Sp R} (hp : IsProjOver p
   exact (PtsOver.isClosedEmbedding_map i hi (spMap c.hom)).compactSpace
 
 end Normed
-
-section Sphere
-
-variable {𝕜 : Type} [RCLike 𝕜] {R : Type} [CommRing R] {N : ℕ}
-
-end Sphere
 
 
 end GlobalTheory.Points

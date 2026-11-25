@@ -91,39 +91,6 @@ private theorem w0_sq_sub_w0_add_eq_zero {E : Type} [Field E] [NumberField E] [I
     linear_combination (2 * H.w0 + H.rt - 1) * H.two_weight_eq_one_add_root + H.rt_sq - hc'
   exact (mul_eq_zero.1 h4).resolve_left (by norm_num)
 
-open NumberField Pointwise in
-private theorem host_bar_rt_of_isCMField {E : Type} [Field E] [NumberField E] [IsCMField E] (H : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) :
-    H.bar H.rt = -H.rt := by
-  have hsq : (H.bar H.rt - H.rt) * (H.bar H.rt + H.rt) = 0 := by
-    have h1 : H.bar H.rt ^ 2 = -(H.d : 𝓞 E) := by
-      rw [← map_pow, H.rt_sq, map_neg, map_natCast]
-    linear_combination h1 - H.rt_sq
-  rcases mul_eq_zero.1 hsq with h | h
-  · exfalso
-    have hfix : H.bar H.rt = H.rt := sub_eq_zero.1 h
-    obtain ⟨φ⟩ : Nonempty (E →+* ℂ) := inferInstance
-    have hreal : starRingEnd ℂ (φ (H.rt : E)) = φ (H.rt : E) := by
-      rw [← IsCMField.complexEmbedding_complexConj, ← H.bar_eq, hfix]
-    obtain ⟨t, ht⟩ := Complex.conj_eq_iff_real.1 hreal
-    have hE : ((H.rt : E)) ^ 2 = -(H.d : E) := by
-      have := congrArg (fun x : 𝓞 E => (x : E)) H.rt_sq
-      simpa using this
-    have hC : (t : ℂ) ^ 2 = -(H.d : ℂ) := by
-      rw [← ht, ← map_pow, hE, map_neg, map_natCast]
-    have hR : t ^ 2 = -(H.d : ℝ) := by exact_mod_cast hC
-    have hd : (0 : ℝ) < H.d := by exact_mod_cast H.d_prime.pos
-    nlinarith [sq_nonneg t]
-  · exact eq_neg_of_add_eq_zero_left h
-
-open NumberField Pointwise in
-private theorem host_bar_w0_of_isCMField {E : Type} [Field E] [NumberField E] [IsCMField E] (H : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) :
-    H.bar H.w0 = 1 - H.w0 := by
-  have h := congrArg H.bar H.two_weight_eq_one_add_root
-  simp only [map_mul, map_add (f := _), map_one, map_ofNat, host_bar_rt_of_isCMField] at h
-  have h2 : (2 : 𝓞 E) * H.bar H.w0 = 2 * (1 - H.w0) := by
-    linear_combination h + H.two_weight_eq_one_add_root
-  exact mul_left_cancel₀ two_ne_zero h2
-
 
 open NumberField Pointwise in
 theorem _root_.GlobalTheory.exists_level_mul_split : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (l : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H), (∀ (pd : ℕ) (I : Ideal (𝓞 E)), Odd pd → pd.Coprime l.M → I = Ideal.span {a | a ∈ I ∧ a ∈ Algebra.adjoin ℤ {H.w0}} → I * I.map (H.bar : 𝓞 E →+* 𝓞 E) = Ideal.span {(pd : 𝓞 E)} → I ⊔ I.map (H.bar : 𝓞 E →+* 𝓞 E) = ⊤ → ∃ l₂ : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H, l.Dvd l₂ ∧ l₂.M = l.M * pd ∧ l₂.Mb = l.Mb * I ∧ l₂.A = l.A) ∧ ∀ pd : ℕ, pd.Prime → pd ≠ 2 → jacobiSym (-(H.d : ℤ)) pd = 1 → ∃ I : Ideal (𝓞 E), I = Ideal.span {a | a ∈ I ∧ a ∈ Algebra.adjoin ℤ {H.w0}} ∧ I * I.map (H.bar : 𝓞 E →+* 𝓞 E) = Ideal.span {(pd : 𝓞 E)} ∧ I ⊔ I.map (H.bar : 𝓞 E →+* 𝓞 E) = ⊤ := by

@@ -12,8 +12,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.Forms
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def FormsTiedSym.to0 {D : D7} {u : D.what₂.Word} {Ch : ℕ → Type} {chOf : ∀ i, (D.mem u).C.cls i → Ch i}
     (T : FormsTiedSym D u Ch chOf) : Forms0 D u where
   atT := T.atT

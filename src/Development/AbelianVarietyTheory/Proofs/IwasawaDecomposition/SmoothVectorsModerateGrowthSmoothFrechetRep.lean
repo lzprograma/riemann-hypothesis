@@ -400,9 +400,9 @@ open Classical in
 def dpiOp (ε : Fin n → Bool) (ρ : Mx n → (E →L[ℂ] E)) (X : Mx n) : Fam ε ρ →L[ℂ] Fam ε ρ :=
   if hX : X ∈ lie (Jm ε) then der ρ ⟨X, hX⟩ else 0
 
-theorem piOp_eq (h : ModRep ε ρ) {g : Mx n} (hg : g ∈ UJset ε) : piOp h g = act h hg := dif_pos hg
+theorem piOp_eq (h : ModRep ε ρ) {g : Mx n} (hg : g ∈ UJset ε) : piOp h g = act h hg := dite_eq_left hg
 
-theorem dpiOp_eq (X : lie (Jm ε)) : dpiOp ε ρ X = der ρ X := dif_pos X.2
+theorem dpiOp_eq (X : lie (Jm ε)) : dpiOp ε ρ X = der ρ X := dite_eq_left X.2
 
 theorem tendsto_piOp_one (h : ModRep ε ρ) (v : Fam ε ρ) :
     Tendsto (fun g => piOp h g v) (𝓝[UJset ε] 1) (𝓝 v) := by

@@ -15,8 +15,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions Form
 
 namespace Formalism.L2.SG.LoopTieOf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Pins
 
 variable {D : D7} {X : HidaSetting D}
@@ -76,11 +74,11 @@ private theorem norm_tO_vec_eq_wt_mul_ampL {u u' : D.what₂.Word} (s : TT Y u u
         (Formalism.L2.SG.TermOp.ampN (Y.cs u) (Y.cs u') (Y.FN u) (Y.FN u') s) else 0 := fun i => rfl
   have hwt : 0 ≤ Formalism.L2.SG.TermOp.wt s := Real.sqrt_nonneg _
   rw [PiLp.norm_eq_of_L2, Finset.sum_eq_single (⟨s.lam, s.mem⟩, ⟨s.lam', s.mem'⟩)]
-  · rw [key, if_pos rfl, Real.sqrt_sq (norm_nonneg _), norm_smul, Complex.norm_real,
+  · rw [key, ite_eq_left rfl, Real.sqrt_sq (norm_nonneg _), norm_smul, Complex.norm_real,
       Real.norm_of_nonneg hwt]
     rfl
   · intro b _ hb
-    rw [key, if_neg hb, norm_zero]
+    rw [key, ite_eq_right hb, norm_zero]
     ring
   · intro h
     exact absurd (Finset.mem_univ _) h
@@ -238,7 +236,7 @@ theorem G_ne_of_Gt {u u' : D.what₂.Word} (s : TT Y u u') (h : (Y.tO u u').G s 
   intro h0
   apply h
   show (if s.G = 0 then (0 : ℝ) else 1) = 0
-  rw [if_pos h0]
+  rw [ite_eq_left h0]
 
 theorem bigS_cls (T : TermTie D) {u u' : D.what₂.Word} (s : ℕ) :
     ∀ x ∈ LoopsCut.bigS (Y.tO u u') s, ∃ h : rowL x.1 = rowL x.2,
@@ -270,7 +268,7 @@ theorem nsc_cls {u u' : D.what₂.Word} :
   unfold Formalism.L2.SG.TermOp.scalT
   have hs' : Formalism.L2.SG.TermOp.s0T x.1 x.2 = 1 := hs
   unfold Formalism.L2.SG.TermOp.s0T at hs'
-  rw [if_pos hl] at hs'
+  rw [ite_eq_left hl] at hs'
   exact ⟨hl, hs', hsc⟩
 
 theorem classS_le (T : TermTie D) (hJ : JtPin hF hI T) (hW : WRowPin hF hI T) (hC : FibreCount Y)
@@ -357,8 +355,7 @@ theorem rowsSC_at (T : TermTie D) (hJ : JtPin hF hI T) (hW : WRowPin hF hI T) (h
   have hC0p : 0 < C0 := by linarith [hwin.1]
   have hdu0 : 0 ≤ (D.duS u : ℝ) := le_trans (div_pos (mul_pos (zpow_pos hGs _) hDs) hC0p).le hwu
   have hR : 0 ≤ Formalism.MainNotions.BridgeLemma.rDD D u' := by
-    by_contra hneg
-    push_neg at hneg
+    by_contra! hneg
     have : C0 * Formalism.MainNotions.BridgeLemma.rDD D u' * GamS D large₂ ^ 2 < 0 :=
       mul_neg_of_neg_of_pos (mul_neg_of_pos_of_neg hC0p hneg) (pow_pos hGs 2)
     linarith
@@ -447,7 +444,6 @@ end Fam
 
 section Parts
 
-open MeasureTheory
 
 structure LoopRowsDat (D : D7) (T : TermTie D) (u u' : D.what₂.Word) where
   F0 : FlagG (VS D) D.R.rS (Tu D u : D.host.E)

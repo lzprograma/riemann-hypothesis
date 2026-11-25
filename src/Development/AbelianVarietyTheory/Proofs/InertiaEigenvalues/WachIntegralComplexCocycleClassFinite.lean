@@ -192,7 +192,7 @@ end Generic
 theorem main : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let W := (HW l).W K s LL h; ∀ T : Lt K LL, IsCrys ((D.loc l).PD K) T.ρ → ∀ (M : ℕ) (m : W.DD T), W.φD T m - m ∈ invN W T (W.Q ^ M) → ∃ a : ℕ, W.X ^ a • m ∈ W.N T := by
   intro D HW F l _ K s LL h W T hT M m hm
   exact of_tie ((F l).E K s LL h).tie T hT (GlobalTheory.NL.FrobDenom.main D HW F l K s LL h T hT)
-    (GlobalTheory.NL.NygaardExtension.main D HW F l K s LL h T hT) (GlobalTheory.NL.IoXQ.main D HW F l K s LL h).2.2.2.2.2.1 M m hm
+    (GlobalTheory.NL.NygaardExtension.main D HW F l K s LL h T hT) (GlobalTheory.NL.IoXQ.main D.loc D.locA HW F l K s LL h).2.2.2.2.2.1 M m hm
 
 end GlobalTheory.NL.DenomStep
 end -- clump:auto
@@ -265,7 +265,7 @@ theorem mem_N_of_div {r : ℕ} (b : Fin r → W.DD T) (hbN : ∀ j, b j ∈ W.N 
     refine ⟨fun i => (if i = j then 1 else 0) + letπ * w i, ?_, fun i => ?_⟩
     · rw [sub_eq_iff_eq_add'.1 hyeq]
       simp only [add_smul, Finset.sum_add_distrib, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq',
-        Finset.mem_univ, if_true, Finset.smul_sum, smul_smul]
+        Finset.mem_univ, ite_true, Finset.smul_sum, smul_smul]
     · rw [add_sub_cancel_left]
       exact Ideal.mul_mem_right _ _ (Ideal.subset_span rfl)
   choose Γc hΓeq hΓmem using hΓ
@@ -460,7 +460,7 @@ theorem X_pow_dvd_entry_of_fintype (D : Formalism.BasicNotions.D7) (HW : HWOf D.
 
 theorem mem_N : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let W := (HW l).W K s LL h; ∀ T : Lt K LL, IsCrys ((D.loc l).PD K) T.ρ → ∀ (M a : ℕ) (m : W.DD T), W.φD T m - m ∈ invN W T (W.Q ^ M) → W.γ T m - m ∈ aN W T letπ → W.X ^ a • m ∈ W.N T → m ∈ W.N T := by
   intro D HW F l _ K s LL h W T hT M a m hφ hγ hX
-  obtain ⟨bN⟩ := GlobalTheory.NL.N_basis D HW F l K s LL h T hT
+  obtain ⟨bN⟩ := GlobalTheory.NL.N_basis D.loc D.locA HW F l K s LL h T hT
   refine mem_N_of_div W T (fun i => (bN i : W.DD T)) (fun i => (bN i).2) ?_ ?_ a ?_ M m ?_ ?_ hX
   · intro x hx
     refine ⟨fun i => bN.repr ⟨x, hx⟩ i, ?_⟩

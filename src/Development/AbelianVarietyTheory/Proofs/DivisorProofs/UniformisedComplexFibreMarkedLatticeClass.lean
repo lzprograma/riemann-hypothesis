@@ -161,7 +161,6 @@ end ExpLemmas
 theorem unifCls_exp_one_iff {n : ℕ} (hn : 0 < n) (x : ℤ) :
     Complex.exp (-(2 * Real.pi * Complex.I) * (x : ℂ) / n) = 1 ↔ (n : ℤ) ∣ x := by
   have hn' : (n : ℂ) ≠ 0 := by exact_mod_cast hn.ne'
-  have h2 : (2 * Real.pi * Complex.I : ℂ) ≠ 0 := Complex.two_pi_I_ne_zero
   rw [Complex.exp_eq_one_iff]
   constructor
   · rintro ⟨k, hk⟩
@@ -249,12 +248,12 @@ theorem unifAt_cls : ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (R : Type) [Comm
   let ν : ℕ → ℤ := fun n => if hn : 0 < n ∧ n.Coprime p then Classical.choose (hroot n hn.1 hn.2) else 0
   have hf : ∀ (n : ℕ) (hn : 0 < n) (hnp : n.Coprime p) a, I.ev n a = e ((n : ℂ)⁻¹ • P (f n a)) := by
     intro n hn hnp a
-    simp only [f, dif_pos (And.intro hn hnp)]
+    simp only [f, dite_eq_left (And.intro hn hnp)]
     exact Classical.choose_spec (hlift n hn hnp) a
   have hν : ∀ (n : ℕ) (hn : 0 < n) (hnp : n.Coprime p), IsCoprime (ν n) n ∧
       ((I.ζ n : ℂˣ) : ℂ) = Complex.exp (-(2 * Real.pi * Complex.I) * (ν n : ℂ) / n) := by
     intro n hn hnp
-    simp only [ν, dif_pos (And.intro hn hnp)]
+    simp only [ν, dite_eq_left (And.intro hn hnp)]
     exact Classical.choose_spec (hroot n hn hnp)
   have heq : ∀ {n : ℕ}, 0 < n → ∀ v v' : D'.La,
       e ((n : ℂ)⁻¹ • P v) = e ((n : ℂ)⁻¹ • P v') ↔ ∃ w, v = v' + n • w :=

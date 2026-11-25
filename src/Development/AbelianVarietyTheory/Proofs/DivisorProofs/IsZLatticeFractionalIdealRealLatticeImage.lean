@@ -101,8 +101,7 @@ theorem isZLattice_latOf : ∀ (F : Type) [Field F] [NumberField F] [IsTotallyRe
   rw [eq_top_iff, ← span_range_remb F, Submodule.span_le]
   rintro _ ⟨a, rfl⟩
   have hc : ∃ c ∈ N, c ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     apply hN
     ext x
     rw [FractionalIdeal.mem_zero_iff]

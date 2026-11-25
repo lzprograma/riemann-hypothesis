@@ -3,48 +3,6 @@ module
 public import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
 public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupChart
 public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -253,9 +211,9 @@ theorem appLE_coord (B : BlowupChart π c S s) (i : Fin m) :
     (π.appLE U B.domain B.domain_le).hom (c.coord i) =
       if i ∈ S ∧ i ≠ s then B.chart.coord i * B.chart.coord s else B.chart.coord i := by
   by_cases h : i ∈ S ∧ i ≠ s
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     exact B.appLE_coord_of_mem i h.1 h.2
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     by_cases hi : i ∈ S
     · have hieq : i = s := by
         by_contra hne
@@ -296,9 +254,9 @@ theorem coordEvalHom_coordRelation (B : BlowupChart π c S s) (i : Fin m) :
     B.coordEvalHom (B.coordRelation i) = 0 := by
   rw [coordRelation_def]
   by_cases h : i ∈ S ∧ i ≠ s
-  · rw [if_pos h, map_sub, map_mul, coordEvalHom_X, coordEvalHom_X, coordEvalHom_C, B.appLE_coord i,
-      if_pos h, sub_self]
-  · rw [if_neg h, map_sub, coordEvalHom_X, coordEvalHom_C, B.appLE_coord i, if_neg h, sub_self]
+  · rw [ite_eq_left h, map_sub, map_mul, coordEvalHom_X, coordEvalHom_X, coordEvalHom_C, B.appLE_coord i,
+      ite_eq_left h, sub_self]
+  · rw [ite_eq_right h, map_sub, coordEvalHom_X, coordEvalHom_C, B.appLE_coord i, ite_eq_right h, sub_self]
 
 theorem coordEvalHom_eq_zero_of_mem_span (B : BlowupChart π c S s)
     (a : MvPolynomial (ULift.{u} (Fin m)) Γ(X, U))
@@ -319,18 +277,6 @@ theorem coordEvalQuotientHom_mk (B : BlowupChart π c S s)
     (a : MvPolynomial (ULift.{u} (Fin m)) Γ(X, U)) :
     B.coordEvalQuotientHom (Ideal.Quotient.mk (Ideal.span (Set.range B.coordRelation)) a) = B.coordEvalHom a := rfl
 
-private theorem iso_inv_hom_apply {R T : CommRingCat.{u}} (e : R ≅ T) (x : R) :
-    e.inv.hom (e.hom.hom x) = x := by
-  have h := congrArg (fun φ : R ⟶ R => CommRingCat.Hom.hom φ x) e.hom_inv_id
-  simpa only [CommRingCat.hom_comp, RingHom.coe_comp, Function.comp_apply, CommRingCat.hom_id,
-    RingHom.id_apply] using h
-
-private theorem iso_hom_inv_apply {R T : CommRingCat.{u}} (e : R ≅ T) (x : T) :
-    e.hom.hom (e.inv.hom x) = x := by
-  have h := congrArg (fun φ : T ⟶ T => CommRingCat.Hom.hom φ x) e.inv_hom_id
-  simpa only [CommRingCat.hom_comp, RingHom.coe_comp, Function.comp_apply, CommRingCat.hom_id,
-    RingHom.id_apply] using h
-
 private def mvPolynomialIsoGlobalSectionsAffineSpace (k : Type u) [Field k] (m : ℕ) :
     CommRingCat.of (MvPolynomial (ULift.{u} (Fin m)) k) ≅ Γ(affineSpaceFin k m, ⊤) :=
   (Scheme.ΓSpecIso (CommRingCat.of (MvPolynomial (ULift.{u} (Fin m)) k))).symm ≪≫
@@ -346,9 +292,8 @@ private theorem mvPolynomialIsoGlobalSectionsAffineSpace_hom_X (k : Type u) [Fie
       = AffineSpace.coord (Spec (CommRingCat.of k)) i := by
   have hcancel : ∀ x : Γ(affineSpaceFin k m, ⊤),
       ((AffineSpace.SpecIso (ULift.{u} (Fin m)) (CommRingCat.of k)).hom.appTop).hom
-        (((AffineSpace.SpecIso (ULift.{u} (Fin m)) (CommRingCat.of k)).inv.appTop).hom x) = x := by
-    intro x
-    exact iso_hom_inv_apply
+        (((AffineSpace.SpecIso (ULift.{u} (Fin m)) (CommRingCat.of k)).inv.appTop).hom x) = x :=
+    fun x => CommRingCat.hom_inv_apply
       (Scheme.Γ.mapIso (AffineSpace.SpecIso (ULift.{u} (Fin m)) (CommRingCat.of k)).op) x
   have h := AffineSpace.SpecIso_inv_appTop_coord (CommRingCat.of k) i
   have h2 : (mvPolynomialIsoGlobalSectionsAffineSpace k m).hom.hom (MvPolynomial.X i)
@@ -417,7 +362,7 @@ private theorem affineSpaceFin_globalSections_hom_ext (k : Type u) [Field k] (m 
       rw [hq, mvPolynomialIsoGlobalSectionsAffineSpace_hom_X, hc j]
   refine CommRingCat.hom_ext (RingHom.ext fun z => ?_)
   have h := key ((mvPolynomialIsoGlobalSectionsAffineSpace k m).inv.hom z)
-  rwa [iso_hom_inv_apply] at h
+  rwa [CommRingCat.hom_inv_apply] at h
 
 private theorem coordBlowupSubstMap_appTop_affineSpaceFinToSpec (t : Γ(Spec (CommRingCat.of k), ⊤)) :
     ((coordBlowupSubstMap k m S s).appTop).hom (((affineSpaceFinToSpec k m).appTop).hom t)
@@ -438,14 +383,16 @@ private theorem chart_appTop_coordBlowupSubstMap_apply (B : BlowupChart π c S s
   rw [comp_appTop_apply, comp_appTop_apply] at h
   exact h
 
-private theorem etaleChart_appTop_affineSpaceFinToSpec_apply {Y : Scheme.{u}} {q : Y ⟶ Spec (CommRingCat.of k)}
+private theorem etaleChart_appTop_affineSpaceFinToSpec_apply {Y : Scheme.{u}}
+    {q : Y ⟶ Spec (CommRingCat.of k)}
     {W : Y.Opens} (d : EtaleChart q W m) (t : Γ(Spec (CommRingCat.of k), ⊤)) :
     W.topIso.hom.hom ((d.map.appTop).hom (((affineSpaceFinToSpec k m).appTop).hom t))
       = sectionsAlgebraMap k q W (((Scheme.ΓSpecIso (CommRingCat.of k)).hom).hom t) := by
   have ha : affineSpaceGlobalSectionsHom k m
       (MvPolynomial.C (((Scheme.ΓSpecIso (CommRingCat.of k)).hom).hom t))
       = ((affineSpaceFinToSpec k m).appTop).hom t := by
-    rw [← mvPolynomialIsoGlobalSectionsAffineSpace_hom_apply k m, mvPolynomialIsoGlobalSectionsAffineSpace_hom_C, iso_inv_hom_apply]
+    rw [← mvPolynomialIsoGlobalSectionsAffineSpace_hom_apply k m,
+      mvPolynomialIsoGlobalSectionsAffineSpace_hom_C, CommRingCat.inv_hom_apply]
   rw [← ha]
   exact EtaleChart.coordRingHom_C d _
 
@@ -490,7 +437,8 @@ private theorem affineSectionsToCoordRelationQuotient_coord (B : BlowupChart π 
   have h : (mvPolynomialIsoGlobalSectionsAffineSpace k m).inv.hom
       (AffineSpace.coord (Spec (CommRingCat.of k)) (ULift.up j : ULift.{u} (Fin m)))
       = MvPolynomial.X (ULift.up j : ULift.{u} (Fin m)) := by
-    rw [← mvPolynomialIsoGlobalSectionsAffineSpace_hom_X k m (ULift.up j : ULift.{u} (Fin m)), iso_inv_hom_apply]
+    rw [← mvPolynomialIsoGlobalSectionsAffineSpace_hom_X k m (ULift.up j : ULift.{u} (Fin m)),
+      CommRingCat.inv_hom_apply]
   have h2 : (affineSectionsToCoordRelationQuotient B).hom
         (AffineSpace.coord (Spec (CommRingCat.of k)) (ULift.up j : ULift.{u} (Fin m)))
       = (MvPolynomial.eval₂Hom ((constToCoordRelationQuotient B).comp (sectionsAlgebraMap k p U))
@@ -508,10 +456,11 @@ private theorem affineSectionsToCoordRelationQuotient_affineSpaceFinToSpec (B : 
   have ha : (mvPolynomialIsoGlobalSectionsAffineSpace k m).hom.hom
       (MvPolynomial.C (((Scheme.ΓSpecIso (CommRingCat.of k)).hom).hom t))
       = ((affineSpaceFinToSpec k m).appTop).hom t := by
-    rw [mvPolynomialIsoGlobalSectionsAffineSpace_hom_C, iso_inv_hom_apply]
-  have h : (mvPolynomialIsoGlobalSectionsAffineSpace k m).inv.hom (((affineSpaceFinToSpec k m).appTop).hom t)
+    rw [mvPolynomialIsoGlobalSectionsAffineSpace_hom_C, CommRingCat.inv_hom_apply]
+  have h : (mvPolynomialIsoGlobalSectionsAffineSpace k m).inv.hom
+      (((affineSpaceFinToSpec k m).appTop).hom t)
       = MvPolynomial.C (((Scheme.ΓSpecIso (CommRingCat.of k)).hom).hom t) := by
-    rw [← ha, iso_inv_hom_apply]
+    rw [← ha, CommRingCat.inv_hom_apply]
   have h2 : (affineSectionsToCoordRelationQuotient B).hom (((affineSpaceFinToSpec k m).appTop).hom t)
       = (MvPolynomial.eval₂Hom ((constToCoordRelationQuotient B).comp (sectionsAlgebraMap k p U))
           (fun i : ULift.{u} (Fin m) =>
@@ -554,16 +503,16 @@ private theorem appTop_comp_affineSectionsToCoordRelationQuotient (B : BlowupCha
       · subst hjs
         rw [coordBlowupSubstMap_appTop_coord_self, affineSectionsToCoordRelationQuotient_coord]
         have hrel := mk_eq_mk_C_coord B j
-        rw [if_neg (by simp)] at hrel
+        rw [ite_eq_right (by simp)] at hrel
         exact hrel
       · rw [coordBlowupSubstMap_appTop_coord_of_mem k m S s j hjS hjs, map_mul, affineSectionsToCoordRelationQuotient_coord,
           affineSectionsToCoordRelationQuotient_coord, ← map_mul]
         have hrel := mk_eq_mk_C_coord B j
-        rw [if_pos ⟨hjS, hjs⟩] at hrel
+        rw [ite_eq_left ⟨hjS, hjs⟩] at hrel
         exact hrel
     · rw [coordBlowupSubstMap_appTop_coord_of_notMem k m S s j hjS, affineSectionsToCoordRelationQuotient_coord]
       have hrel := mk_eq_mk_C_coord B j
-      rw [if_neg (by tauto)] at hrel
+      rw [ite_eq_right (by tauto)] at hrel
       exact hrel
 
 private theorem bijective_coordEvalQuotientHom_of_isPullback (B : BlowupChart π c S s)
@@ -622,19 +571,19 @@ private theorem bijective_coordEvalQuotientHom_of_isPullback (B : BlowupChart π
     refine Ideal.Quotient.ringHom_ext ?_
     refine MvPolynomial.ringHom_ext (fun a => ?_) (fun i => ?_)
     · simp only [RingHom.comp_apply, RingHom.id_apply]
-      rw [coordEvalQuotientHom_mk, coordEvalHom_C, topIso_inv_appLE_apply, hinr', openSectionsToCoordRelationQuotient_apply,
-        iso_hom_inv_apply]
+      rw [coordEvalQuotientHom_mk, coordEvalHom_C, topIso_inv_appLE_apply, hinr',
+        openSectionsToCoordRelationQuotient_apply, CommRingCat.hom_inv_apply]
     · obtain ⟨j⟩ := i
       simp only [RingHom.comp_apply, RingHom.id_apply]
-      rw [coordEvalQuotientHom_mk, coordEvalHom_X, EtaleChart.coord_def B.chart j, iso_inv_hom_apply,
-        hinl', affineSectionsToCoordRelationQuotient_coord]
+      rw [coordEvalQuotientHom_mk, coordEvalHom_X, EtaleChart.coord_def B.chart j,
+        CommRingCat.inv_hom_apply, hinl', affineSectionsToCoordRelationQuotient_coord]
   have halpha : ∀ q, Δ.hom (B.domain.topIso.inv.hom (B.coordEvalQuotientHom q)) = q := by
     intro q
     have h := RingHom.congr_fun hring q
     simpa only [RingHom.comp_apply, RingHom.id_apply] using h
   refine ⟨fun x y hxy => ?_, fun y => ⟨Δ.hom (B.domain.topIso.inv.hom y), ?_⟩⟩
   · rw [← halpha x, ← halpha y, hxy]
-  · rw [hbeta', iso_hom_inv_apply]
+  · rw [hbeta', CommRingCat.hom_inv_apply]
 
 theorem surjective_coordEvalHom (B : BlowupChart π c S s) (hU : IsAffineOpen U)
     (hB : IsPullback B.chart.map (π.resLE U B.domain B.domain_le) (coordBlowupSubstMap k m S s) c.map) :

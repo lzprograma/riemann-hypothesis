@@ -13,7 +13,7 @@ noncomputable section
 
 namespace CompanionTheory.Bmu
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section general
 

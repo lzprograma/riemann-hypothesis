@@ -80,7 +80,7 @@ theorem func_eq_lam : ∀ (S : Set (ℕ → ℂ)) (B : ℕ) (φ : (ℕ → ℂ) 
   rw [h1, LinearMap.pi_apply_eq_sum_univ ψ (r ⟨a, ha⟩), EisM.lam,
     Finset.sum_range (fun n => (if h : n < B then ψ (Pi.single ⟨n, h⟩ 1) else 0) * a n)]
   refine Finset.sum_congr rfl (fun i _ => ?_)
-  simp only [i.2, dif_pos, Fin.eta, r, LinearMap.coe_mk, AddHom.coe_mk, smul_eq_mul]
+  simp only [i.2, dite_eq_left, Fin.eta, r, LinearMap.coe_mk, AddHom.coe_mk, smul_eq_mul]
   have hs : (fun j : Fin B => if i = j then (1 : ℂ) else 0) = Pi.single i 1 := by
     funext j; simp [Pi.single_apply, eq_comm]
   rw [hs, mul_comm]

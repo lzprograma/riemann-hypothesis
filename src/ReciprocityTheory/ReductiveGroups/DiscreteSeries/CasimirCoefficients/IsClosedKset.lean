@@ -73,7 +73,7 @@ def PsiM {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) (μ : Fin 
 
 section Calc
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 def IsLowerTri (c : Matrix (Fin n) (Fin n) ℂ) : Prop := ∀ a b : Fin n, a < b → c a b = 0
 

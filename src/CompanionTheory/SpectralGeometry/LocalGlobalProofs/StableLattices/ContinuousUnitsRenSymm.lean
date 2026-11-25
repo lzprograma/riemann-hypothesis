@@ -22,7 +22,6 @@ namespace GlobalTheory.CompanionTheory.UnitaryExp
 open Matrix
 
 
-set_option backward.isDefEq.respectTransparency false in
 theorem map_exp_matrix {m n : Type} [Fintype m] [DecidableEq m] [Fintype n] [DecidableEq n]
     (f : Matrix m m ℂ ≃ₐ[ℂ] Matrix n n ℂ) (hf : Continuous f) (S : Matrix m m ℂ) :
     f (NormedSpace.exp S) = NormedSpace.exp (f S) := by

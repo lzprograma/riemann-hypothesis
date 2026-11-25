@@ -1,52 +1,6 @@
 module
 
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PmatIsHermitian
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Algebra.Order.Chebyshev
 
 @[expose] public section
@@ -66,41 +20,23 @@ theorem pmat_eq_zero_of_eq {ε : Fin n → Bool} (z : PCoord ε → ℂ) {a b : 
     pmat z a b = 0 := by
   simp [pmat, h]
 
-private lemma pmat_eigenvectorUnitary_star_mul_self {ε : Fin n → Bool} (z : PCoord ε → ℂ) :
-    star ((pmat_isHermitian z).eigenvectorUnitary : Matrix (Fin n) (Fin n) ℂ) *
-      ((pmat_isHermitian z).eigenvectorUnitary : Matrix (Fin n) (Fin n) ℂ) = 1 := by
-  have hU := ((pmat_isHermitian z).eigenvectorUnitary).2
-  first
-  | exact Matrix.mem_unitaryGroup_iff'.mp hU
-
-private lemma pmat_eq_eigenvectorUnitary_mul_diagonal_mul_star {ε : Fin n → Bool} (z : PCoord ε → ℂ) :
-    pmat z = ((pmat_isHermitian z).eigenvectorUnitary : Matrix (Fin n) (Fin n) ℂ) *
-      diagonal (fun a => (pev z a : ℂ)) *
-        star ((pmat_isHermitian z).eigenvectorUnitary : Matrix (Fin n) (Fin n) ℂ) := by
-  conv_lhs => rw [(pmat_isHermitian z).spectral_theorem]
-  first
-  | rfl
-
 theorem pmat_mul_evU {ε : Fin n → Bool} (z : PCoord ε → ℂ) :
     pmat z * ((pmat_isHermitian z).eigenvectorUnitary : Matrix (Fin n) (Fin n) ℂ) =
       ((pmat_isHermitian z).eigenvectorUnitary : Matrix (Fin n) (Fin n) ℂ) *
         diagonal (fun a => (pev z a : ℂ)) := by
-  have h := congrArg (fun M => M * ((pmat_isHermitian z).eigenvectorUnitary : Matrix (Fin n) (Fin n) ℂ))
-    (pmat_eq_eigenvectorUnitary_mul_diagonal_mul_star z)
-  rw [h, Matrix.mul_assoc, pmat_eigenvectorUnitary_star_mul_self, Matrix.mul_one]
+  refine (congrArg (· * _) (pmat_isHermitian z).spectral_theorem).trans ?_
+  rw [Unitary.conjStarAlgAut_apply, Matrix.mul_assoc, Unitary.coe_star_mul_self, Matrix.mul_one]
+  simp only [Function.comp_def, RCLike.ofReal_eq_complex_ofReal]
+  rfl
 
 theorem neg_pmat_eq {ε : Fin n → Bool} (z : PCoord ε → ℂ) :
     -pmat z = ((pmat_isHermitian z).eigenvectorUnitary : Matrix (Fin n) (Fin n) ℂ) *
         diagonal (fun a => ((-pev z a : ℝ) : ℂ)) *
         star ((pmat_isHermitian z).eigenvectorUnitary : Matrix (Fin n) (Fin n) ℂ) := by
-  have h := congrArg Neg.neg (pmat_eq_eigenvectorUnitary_mul_diagonal_mul_star z)
-  rw [h]
-  have hd : diagonal (fun a => ((-pev z a : ℝ) : ℂ)) = -diagonal (fun a => (pev z a : ℂ)) := by
-    ext i j
-    by_cases hij : i = j <;> simp [hij]
-  rw [hd]
-  first
-  | rw [Matrix.mul_neg, Matrix.neg_mul]
+  conv_lhs => rw [(pmat_isHermitian z).spectral_theorem]
+  rw [Unitary.conjStarAlgAut_apply, ← Matrix.neg_mul, ← Matrix.mul_neg, Matrix.diagonal_neg]
+  simp only [Function.comp_apply, RCLike.ofReal_eq_complex_ofReal, ← Complex.ofReal_neg]
+  rfl
 
 theorem jm_conj_pmat {ε : Fin n → Bool} (z : PCoord ε → ℂ) : Jm ε * (pmat z * Jm ε) = -pmat z := by
   ext a b
@@ -110,46 +46,24 @@ theorem jm_conj_pmat {ε : Fin n → Bool} (z : PCoord ε → ℂ) : Jm ε * (pm
   · rw [pmat_eq_zero_of_eq z h]; simp
   · rcases hA : ε a <;> rcases hB : ε b <;> simp_all
 
-private lemma charpoly_eigenvectorUnitary_conj_eq {ε : Fin n → Bool} (z : PCoord ε → ℂ) (M : Matrix (Fin n) (Fin n) ℂ) :
-    (((pmat_isHermitian z).eigenvectorUnitary : Matrix (Fin n) (Fin n) ℂ) * M *
-      star ((pmat_isHermitian z).eigenvectorUnitary : Matrix (Fin n) (Fin n) ℂ)).charpoly = M.charpoly := by
-  rw [Matrix.charpoly_mul_comm, ← Matrix.mul_assoc, pmat_eigenvectorUnitary_star_mul_self, Matrix.one_mul]
-
-private lemma charpoly_roots_diagonal (d : Fin n → ℂ) :
-    (diagonal d).charpoly.roots = univ.val.map d := by
-  have h1 : (diagonal d).charpoly = ∏ i, (Polynomial.X - Polynomial.C (d i)) := by
-    unfold Matrix.charpoly
-    have hc : (diagonal d).charmatrix = diagonal (fun i => Polynomial.X - Polynomial.C (d i)) := by
-      ext i j
-      by_cases hij : i = j
-      · subst hij
-        first
-        | simp
-      · first
-        | simp [hij]
-    rw [hc, det_diagonal]
-  rw [h1, Finset.prod_eq_multiset_prod]
-  have hm : (univ.val.map fun i => Polynomial.X - Polynomial.C (d i)) =
-      (univ.val.map d).map (fun a => Polynomial.X - Polynomial.C a) := by
-    rw [Multiset.map_map]; rfl
-  rw [hm, Polynomial.roots_multiset_prod_X_sub_C]
-
 theorem pev_neg_multiset {ε : Fin n → Bool} (z : PCoord ε → ℂ) :
     Multiset.map (fun a => -pev z a) univ.val = Multiset.map (pev z) univ.val := by
   have hcp : (-pmat z).charpoly = (pmat z).charpoly := by
-    rw [← jm_conj_pmat z, Matrix.charpoly_mul_comm, Matrix.mul_assoc, _root_.ReciprocityTheory.ChartRestriction.DS.S7.Jm_mul_self, Matrix.mul_one]
-  have h1 : (pmat z).charpoly = (diagonal fun a => (pev z a : ℂ)).charpoly := by
-    conv_lhs => rw [pmat_eq_eigenvectorUnitary_mul_diagonal_mul_star z]
-    exact charpoly_eigenvectorUnitary_conj_eq z _
-  have h2 : (-pmat z).charpoly = (diagonal fun a => ((-pev z a : ℝ) : ℂ)).charpoly := by
-    rw [neg_pmat_eq z]
-    exact charpoly_eigenvectorUnitary_conj_eq z _
-  have h3 := congrArg Polynomial.roots (h2.symm.trans (hcp.trans h1))
-  rw [charpoly_roots_diagonal, charpoly_roots_diagonal] at h3
+    rw [← jm_conj_pmat z, Matrix.charpoly_mul_comm, Matrix.mul_assoc,
+      _root_.ReciprocityTheory.ChartRestriction.DS.S7.Jm_mul_self, Matrix.mul_one]
+  have h2 : (-pmat z).charpoly = ∏ i, (Polynomial.X - Polynomial.C ((-pev z i : ℝ) : ℂ)) := by
+    rw [neg_pmat_eq z, Matrix.charpoly_mul_comm, ← Matrix.mul_assoc,
+      Unitary.star_mul_self_of_mem (pmat_isHermitian z).eigenvectorUnitary.2, Matrix.one_mul,
+      Matrix.charpoly_diagonal]
+  have h3 : (-pmat z).charpoly.roots = Multiset.map (fun a => ((-pev z a : ℝ) : ℂ)) univ.val := by
+    rw [h2, Polynomial.roots_prod]
+    · simp
+    · exact Finset.prod_ne_zero_iff.mpr fun _ _ => Polynomial.X_sub_C_ne_zero _
   have h4 : (univ.val.map fun a => -pev z a).map (fun x : ℝ => (x : ℂ)) =
       (univ.val.map (pev z)).map (fun x : ℝ => (x : ℂ)) := by
-    first
-    | (rw [Multiset.map_map, Multiset.map_map]; exact h3)
+    rw [Multiset.map_map, Multiset.map_map]
+    exact h3.symm.trans ((congrArg Polynomial.roots hcp).trans
+      (pmat_isHermitian z).roots_charpoly_eq_eigenvalues)
   exact Multiset.map_injective Complex.ofReal_injective h4
 
 theorem sum_pev_neg {ε : Fin n → Bool} (z : PCoord ε → ℂ) (g : ℝ → ℝ) :
@@ -168,7 +82,7 @@ theorem quad_evU {ε : Fin n → Bool} (z : PCoord ε → ℂ) (c : Fin n → �
   unfold pevU
   rw [Matrix.mulVec_mulVec, hAU, ← Matrix.mulVec_mulVec, Matrix.star_mulVec,
     Matrix.dotProduct_mulVec, Matrix.vecMul_vecMul, ← Matrix.star_eq_conjTranspose,
-    pmat_eigenvectorUnitary_star_mul_self, Matrix.vecMul_one]
+    Unitary.star_mul_self_of_mem (pmat_isHermitian z).eigenvectorUnitary.2, Matrix.vecMul_one]
   simp only [dotProduct, mulVec_diagonal, Pi.star_apply]
   push_cast
   refine Finset.sum_congr rfl (fun a _ => ?_)
@@ -243,19 +157,14 @@ theorem pev_card_pos {ε : Fin n → Bool} (z : PCoord ε → ℂ) :
     (univ.filter (fun a => 0 < pev z a)).card ≤ q0 ε := by
   exact le_min (card_pos_le z true) (card_pos_le z false)
 
-private lemma eigenvectorUnitary_star_mul_mul_cancel {ε : Fin n → Bool} (z : PCoord ε → ℂ) (M : Matrix (Fin n) (Fin n) ℂ) :
-    star ((pmat_isHermitian z).eigenvectorUnitary : Matrix (Fin n) (Fin n) ℂ) *
-      (((pmat_isHermitian z).eigenvectorUnitary : Matrix (Fin n) (Fin n) ℂ) * M) = M := by
-  rw [← Matrix.mul_assoc, pmat_eigenvectorUnitary_star_mul_self, Matrix.one_mul]
-
 theorem pev_pos_sum_sq {ε : Fin n → Bool} (z : PCoord ε → ℂ) :
     ∑ a ∈ univ.filter (fun a => 0 < pev z a), pev z a ^ 2 = hs (pmat z) / 2 := by
   have h1 : (pmat z * pmat z).trace = ∑ a, ((pev z a : ℂ)) ^ 2 := by
-    conv_lhs => rw [pmat_eq_eigenvectorUnitary_mul_diagonal_mul_star z]
-    simp only [Matrix.mul_assoc]
-    rw [eigenvectorUnitary_star_mul_mul_cancel, Matrix.trace_mul_comm, Matrix.mul_assoc, Matrix.mul_assoc, pmat_eigenvectorUnitary_star_mul_self,
-      Matrix.mul_one, diagonal_mul_diagonal, trace_diagonal]
-    simp only [sq]
+    conv_lhs => rw [(pmat_isHermitian z).spectral_theorem]
+    rw [← map_mul, Unitary.conjStarAlgAut_apply, Matrix.trace_mul_comm, ← Matrix.mul_assoc,
+      Unitary.coe_star_mul_self, Matrix.one_mul, diagonal_mul_diagonal, trace_diagonal]
+    simp only [Function.comp_apply, RCLike.ofReal_eq_complex_ofReal, sq]
+    rfl
   have h2 : (pmat z * pmat z).trace = ((∑ i, ∑ j, ‖pmat z i j‖ ^ 2 : ℝ) : ℂ) := by
     simp only [Matrix.trace, Matrix.diag, Matrix.mul_apply]
     push_cast

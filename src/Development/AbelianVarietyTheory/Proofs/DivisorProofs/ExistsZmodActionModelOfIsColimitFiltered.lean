@@ -111,7 +111,6 @@ theorem exists_stage_action {K : Type} [SmallCategory K] [IsFiltered K] {G : Typ
   let α : (Functor.const K).obj R ⟶ E := (Functor.const K).map φ ≫ v
   let w : ∀ k, S ⟶ E.obj k := fun k => v.app k
   let ι : ∀ k, E.obj k ⟶ c.pt := fun k => c.ι.app k
-  have hα : ∀ k, α.app k = φ ≫ w k := fun k => rfl
   have hι : ∀ {k l} (f : k ⟶ l), E.map f ≫ ι l = ι k := fun f => c.w f
   have hw : ∀ {k l} (f : k ⟶ l), w k ≫ E.map f = w l := fun f =>
     (v.naturality f).symm.trans (Category.id_comp _)

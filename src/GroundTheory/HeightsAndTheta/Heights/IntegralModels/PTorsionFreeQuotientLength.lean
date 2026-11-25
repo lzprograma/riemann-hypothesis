@@ -65,10 +65,8 @@ theorem isFiniteLength_of_torsion [IsDomain R] [IsNoetherianRing R] [Ring.KrullD
     obtain ⟨y, -, rfl⟩ := (Submodule.mem_smul_pointwise_iff_exists _ _ _).mp hx
     rw [LinearMap.mem_ker, map_smul]
     exact (Submodule.mem_annihilator.mp hc1) _ Submodule.mem_top
-  have hs : Function.Surjective ((c • ⊤ : Submodule R (Fin n → R)).liftQ f hle) := by
-    intro q
-    obtain ⟨x, rfl⟩ := hf q
-    exact ⟨Submodule.Quotient.mk x, rfl⟩
+  have hs : Function.Surjective ((c • ⊤ : Submodule R (Fin n → R)).liftQ f hle) :=
+    Function.Surjective.of_comp (g := (c • ⊤ : Submodule R (Fin n → R)).mkQ) hf
   rw [← Module.length_ne_top_iff]
   refine ne_top_of_le_ne_top ?_ (Module.length_le_of_surjective _ hs)
   rw [length_pi_quot_smul_top]
@@ -103,9 +101,6 @@ theorem length_quot_smul_eq {N F₀ : Type*} [AddCommGroup N] [Module R N]
       mem_smul_pointwise_iff_exists] at hq ⊢
     obtain ⟨p, hp, hpx⟩ := hq
     rwa [← hreg hpx]
-  have hg1 : Function.Surjective g1 := fun y => by
-    obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ y
-    exact ⟨Submodule.Quotient.mk x, rfl⟩
   have hex1 : Function.Exact f1 g1 := fun y => by
     obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ y
     constructor
@@ -126,9 +121,6 @@ theorem length_quot_smul_eq {N F₀ : Type*} [AddCommGroup N] [Module R N]
     obtain ⟨p, ⟨z, rfl⟩, hp⟩ := hq
     refine ⟨z, mem_top, hφ ?_⟩
     rw [map_smul, hp]
-  have hg2 : Function.Surjective g2 := fun y => by
-    obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ y
-    exact ⟨Submodule.Quotient.mk x, rfl⟩
   have hex2 : Function.Exact f2 g2 := fun y => by
     obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ y
     constructor
@@ -141,8 +133,8 @@ theorem length_quot_smul_eq {N F₀ : Type*} [AddCommGroup N] [Module R N]
       refine (Quotient.mk_eq_zero _).mpr ?_
       have := sub_mem (LinearMap.mem_range_self φ z) (hPP hb)
       rwa [sub_sub_cancel] at this
-  have e1 := Module.length_eq_add_of_exact f1 g1 hf1 hg1 hex1
-  have e2 := Module.length_eq_add_of_exact f2 g2 hf2 hg2 hex2
+  have e1 := Module.length_eq_add_of_exact f1 g1 hf1 (Submodule.factor_surjective hPa) hex1
+  have e2 := Module.length_eq_add_of_exact f2 g2 hf2 (Submodule.factor_surjective hPP) hex2
   rw [e1, add_comm (Module.length R (F₀ ⧸ _))] at e2
   exact WithTop.add_left_cancel (Module.length_ne_top_iff.mpr hfin) e2
 

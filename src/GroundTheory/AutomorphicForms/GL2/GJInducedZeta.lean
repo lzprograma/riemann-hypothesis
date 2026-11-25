@@ -304,15 +304,6 @@ theorem integral_mul_prod_eq [TotallyDisconnectedSpace G] (P K : Subgroup G)
 
 end General
 
-section GeneralLinear
-
-variable (F : Type*) [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
-  (n : ℕ) {α : Type*} [LinearOrder α] {β : Fin n → α}
-
-variable [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)]
-
-end GeneralLinear
-
 end Measures
 
 end GroundTheory.Automorphic
@@ -765,7 +756,7 @@ variable {α : Type*} [LinearOrder α] {β : Fin n → α}
 
 theorem exists_inducedZeta (hσ : IsSmooth σ) [σ.IsIrreducible] (hc : IsCuspidal σ)
     (μG : Measure (GL (Fin n) F)) [μG.IsHaarMeasure] :
-    ∃ s₀ : ℝ, ∃ D : ℂ[X], D.eval 0 = 1 ∧
+    ∃ s₀ : ℝ, ∃ D : ℂ[X], D.eval 0 = 1 ∧ D.natDegree ≤ n ∧
       ∀ Φ : Matrix (Fin n) (Fin n) F → ℂ, IsSchwartzBruhat Φ →
         ∀ φ ∈ parabolicIndSpace F n β σ, ∀ ℓ ∈ smoothVectors (Representation.dual σ),
           (∀ s : ℂ, s₀ < s.re → Integrable (fun g : GL (Fin n) F =>
@@ -784,8 +775,8 @@ theorem exists_inducedZeta (hσ : IsSmooth σ) [σ.IsIrreducible] (hc : IsCuspid
   let μK : Measure (integralGL F n) := Measure.haar
   let θ : levi F n β →* ℝ≥0 := leviRatio β * leviSqrtModular β
   have hθ : Continuous θ := continuous_leviRatio.mul continuous_leviSqrtModular
-  obtain ⟨s₀, D, hD0, hM⟩ := exists_leviZeta hσ hc θ hθ (haarLevi β μ𝔪)
-  refine ⟨s₀, D, hD0, fun Φ hΦ φ hφ ℓ hℓ => ?_⟩
+  obtain ⟨s₀, D, hD0, hDn, hM⟩ := exists_leviZeta hσ hc θ hθ (haarLevi β μ𝔪)
+  refine ⟨s₀, D, hD0, hDn, fun Φ hΦ φ hφ ℓ hℓ => ?_⟩
 
   obtain ⟨r₁, hr₁⟩ := hΦ.exists_mul_congruenceSubgroup
   obtain ⟨K', hK'o, hK'⟩ := hφ.2

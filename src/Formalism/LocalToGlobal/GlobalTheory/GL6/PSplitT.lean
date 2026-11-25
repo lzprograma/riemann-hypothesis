@@ -280,12 +280,6 @@ theorem splitAtT_of_tied (A : AtTTied u) : SplitAtT A := by
     rw [hmem, map_sub, map_mul, hb, hρ, hαa, map_mul, sub_self]
   exact split_idempotent_of_square_root (sigD D) (A.eV v).1 α a b hσα (by rw [had, ha0]) habv hbv h2v
 
-theorem local_diamonds_exist_all (Tf : FormsTied D u) : LocalDiamondElementsExist Tf :=
-  local_diamonds_of_split Tf (splitAtT_of_tied Tf.atT)
-
-theorem diamond_elements_exist_all (Tf : FormsTied D u) : DiamondElementsExist Tf := by
-  exact diamond_elements_of_local Tf (local_diamonds_exist_all Tf)
-
 end Tied
 
 end Formalism.L2.GlobalTheoryTheory.LocalLatticeBases

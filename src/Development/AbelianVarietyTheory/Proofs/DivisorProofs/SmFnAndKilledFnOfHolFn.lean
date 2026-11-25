@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegativeFrameDomainProductOpenPreconnectedStable
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
 public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
 import Mathlib.Algebra.Order.Floor.Extended
@@ -52,13 +53,11 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.HolDict.HolTo
 
 variable {n : ℕ} {ι : Type} [Fintype ι] [DecidableEq ι]
 
-set_option backward.isDefEq.respectTransparency false in
 theorem contDiff_exp_entry (X : Mt n) (a b : Fin n) :
     ContDiff ℝ ∞ fun t : ℝ => NormedSpace.exp (t • X) a b := by
   letI : NormedRing (Mt n) := Matrix.linftyOpNormedRing
@@ -74,7 +73,6 @@ theorem contDiff_exp_entry (X : Mt n) (a b : Fin n) :
   exact (AnalyticAt.comp (f := fun s : ℝ => NormedSpace.exp (s • X))
     ((LinearMap.toContinuousLinearMap L).analyticAt _) he).contDiffAt
 
-set_option backward.isDefEq.respectTransparency false in
 theorem hasDerivAt_exp_entry (X : Mt n) (a b : Fin n) :
     HasDerivAt (fun t : ℝ => NormedSpace.exp (t • X) a b) (X a b) 0 := by
   letI : NormedRing (Mt n) := Matrix.linftyOpNormedRing
@@ -86,16 +84,7 @@ theorem hasDerivAt_exp_entry (X : Mt n) (a b : Fin n) :
   exact (LinearMap.toContinuousLinearMap L).hasFDerivAt.comp_hasDerivAt (0 : ℝ) h
 
 private theorem isOpen_frDom' (H : Mt n) (q : ℕ) : IsOpen (frDom H q) := by
-  have e : frDom H q = {x : Mt n | x.det ≠ 0} ∩ ⋂ i : Fin (n + 1), {x : Mt n |
-      0 < ReciprocityTheory.ChartRestriction.G.FD.psgn q i * (ReciprocityTheory.ChartRestriction.G.FD.lminor (-(xᴴ * H * x)) i).re} := by
-    ext x
-    simp only [frDom, Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_iInter]
-  rw [e]
-  refine IsOpen.inter (isOpen_ne_fun continuous_id.matrix_det continuous_const)
-    (isOpen_iInter_of_finite fun i => ?_)
-  refine isOpen_lt continuous_const (continuous_const.mul (Complex.continuous_re.comp ?_))
-  exact ((((continuous_id.matrix_conjTranspose.matrix_mul continuous_const).matrix_mul
-    continuous_id).neg).matrix_submatrix _ _).matrix_det
+  apply _root_.GlobalTheory.HolDict.FrameDom.isOpen_frDom <;> assumption
 
 theorem isOpen_frDoms (Hm : ι → Mt n) (q : ι → ℕ) : IsOpen (frDoms Hm q) := by
   have e : frDoms Hm q = ⋂ τ, (fun x : ι → Fin n → Fin n → ℂ => (Matrix.of (x τ) : Mt n)) ⁻¹' frDom (Hm τ) (q τ) := by
@@ -462,7 +451,7 @@ theorem killed_of_holFn {Hm : ι → Mt n} {q : ι → ℕ} {x₀ : ι → Mt n}
     split_ifs with hh
     · subst hh
       rw [Finset.prod_eq_single a (fun a' _ ha' => by
-        simp [hE, Matrix.single_apply, Ne.symm ha']) (by simp)]
+        simp [hE, Ne.symm ha']) (by simp)]
       simp [hE]
     · refine Finset.prod_eq_one fun a' _ => ?_
       have hn : ¬ (a = a' ∧ c = a') := fun hh2 => hh (hh2.1.trans hh2.2.symm)

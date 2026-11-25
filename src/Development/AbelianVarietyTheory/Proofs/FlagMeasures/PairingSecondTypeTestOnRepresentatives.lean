@@ -100,7 +100,7 @@ theorem iso_of (g : Fin (r + 1) → S.V) (t : E)
   refine h_eq_zero_of_span_orth S ?_ hx hy
   rintro _ ⟨i, hi, rfl⟩ _ ⟨j, hj, rfl⟩
   change hf L S.Hm (g i) (g j) = 0
-  rw [hg, if_neg]
+  rw [hg, ite_eq_right]
   rintro ⟨rfl, -⟩
   simp at hi
 

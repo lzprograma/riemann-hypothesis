@@ -52,7 +52,6 @@ open GlobalTheory.StepData (LatFrame)
 open GlobalTheory.RootEx (colE rowE)
 open GlobalTheory.IndefiniteRowSideFullHecke.FourierJacobiAverage (schT schM)
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 namespace GlobalTheory.SrcHalfOne

@@ -23,10 +23,4 @@ def BlockRatioAlg.Statement : Prop :=
         A (Fin.last m) ∉ imageZ v P' ∧
         ∑ j : Fin (m + 1), rename v (A j) * X q ^ (j : ℕ) * X c ^ (m - j : ℕ) ∈ P'
 
-section Inhabitants
-
-open IndefiniteRowSideFullHecke.Inter
-
-end Inhabitants
-
 end GroundTheory.Heights₂.Heights.Inter

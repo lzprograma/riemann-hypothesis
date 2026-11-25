@@ -6,44 +6,8 @@ public import Formalism.SharpRestriction.GrowthBounds.RootWeights.V2repResIsGLRe
 public import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
 public import Formalism.SharpRestriction.GrowthBounds.RootWeights.StableSubspaceCompleteReducibility
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicComponentLeLowerWeights
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Linter.Style
+import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.RootWeights.CrLift, Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIntegralForm
@@ -88,7 +52,7 @@ theorem cr_CR [CharZero K] [FiniteDimensional K V] (E : GLOps n K V) (hR : Satis
     W ≤ ⨆ mu, isotypicPartIn E W mu := by
   classical
   set W2 : Submodule K V := ⨆ mu, isotypicPartIn E W mu with hW2
-  have hW2st : IsStableUnderOperators E W2 := v2rep_iSup_stable E _ fun mu => v2rep_isoIn_stable E W mu
+  have hW2st : IsStableUnderOperators E W2 := Formalism.MainNotions.G.Joints.Stab_iSup E _ fun mu => v2rep_isoIn_stable E W mu
   by_contra hnot
   have hZne : W.map W2.mkQ ≠ ⊥ := by
     intro h
@@ -207,7 +171,7 @@ theorem cr_compl [CharZero K] [FiniteDimensional K V] (E : GLOps n K V) (hR : Sa
   choose Q hQ using fun lam : Fin n → ℤ => Submodule.exists_isCompl (cr_Hs E lam ⊓ W)
   set H' : (Fin n → ℤ) → Submodule K V := fun lam => cr_Hs E lam ⊓ Q lam with hH'
   set W' : Submodule K V := ⨆ lam, isotypicPartIn E (H' lam) lam with hW'
-  have hW'st : IsStableUnderOperators E W' := v2rep_iSup_stable E _ fun mu => v2rep_isoIn_stable E (H' mu) mu
+  have hW'st : IsStableUnderOperators E W' := Formalism.MainNotions.G.Joints.Stab_iSup E _ fun mu => v2rep_isoIn_stable E (H' mu) mu
   refine ⟨W', ⟨?_, ?_⟩, hW'st⟩
   ·
     rw [disjoint_iff]

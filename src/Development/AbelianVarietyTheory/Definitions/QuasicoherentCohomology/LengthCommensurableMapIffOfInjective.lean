@@ -1,48 +1,6 @@
 module
 
 public import Mathlib.RingTheory.Length
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -215,14 +173,6 @@ theorem LengthCommensurable.signedLength_map_of_injective {A B : Submodule R V}
 
 end Map
 
-section Equiv
-
-variable {R S V V' : Type*} [Ring R] [Ring S] [AddCommGroup V] [Module R V]
-  [AddCommGroup V'] [Module S V'] {σ : R →+* S} {σ' : S →+* R}
-  [RingHomInvPair σ σ'] [RingHomInvPair σ' σ] [RingHomSurjective σ]
-
-end Equiv
-
 section Ambient
 
 open scoped Pointwise
@@ -233,12 +183,6 @@ theorem relLength_submoduleOf {A W : Submodule R V} (h : A ≤ W) (B : Submodule
     relLength (A.submoduleOf W) (B.submoduleOf W) = relLength A B :=
   relLength_comap_of_le_range W.subtype (by rwa [Submodule.range_subtype]) B
 
-
-open Pointwise in
-theorem relLength_smul_smul {G : Type*} [Monoid G] [DistribMulAction G V] [SMulCommClass G R V]
-    {a : G} (ha : IsSMulRegular V a) (A B : Submodule R V) :
-    relLength (a • A) (a • B) = relLength A B :=
-  relLength_map_of_injective (DistribSMul.toLinearMap R V a) ha A B
 
 
 open Pointwise in
@@ -304,11 +248,6 @@ theorem relLength_top_of_isMaximal {R : Type*} [CommRing R] (I : Ideal R) [hI : 
     relLength (⊤ : Ideal R) I = 1 := by
   rw [relLength_top_left, Module.length_eq_one_iff, isSimpleModule_iff_isCoatom]
   exact hI.out
-
-theorem relLength_int_top_span_prime {p : ℤ} (hp : Prime p) :
-    relLength (⊤ : Ideal ℤ) (Ideal.span {p}) = 1 :=
-  have := PrincipalIdealRing.isMaximal_of_irreducible hp.irreducible
-  relLength_top_of_isMaximal _
 
 end Examples
 

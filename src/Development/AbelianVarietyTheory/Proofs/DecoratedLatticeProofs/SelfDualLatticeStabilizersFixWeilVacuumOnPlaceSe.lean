@@ -54,7 +54,7 @@ import Std.Tactic.BVDecide.Normalize.Prop
 -- Members: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsPlaceStabilizerPartialProductsFiniteSet, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualLatticeStabilizersFixWeilVacuumOnPlaceSe
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsPlaceStabilizerPartialProductsFiniteSet =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsPlaceStabilizerPartialProductsFiniteSet", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame\npublic import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIntegralSplitIdempotentOverTwo\nimport Development.AbelianVarietyTheory.Proofs.HeightProofs.MemAdelicLatticeIffLocalSelfDualCompletion\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmSplitHalves\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.PiTensorProduct\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsPlaceStabilizerPartialProductsFiniteSet", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame\npublic import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIntegralSplitIdempotentOverTwo\nimport Development.AbelianVarietyTheory.Proofs.HeightProofs.MemAdelicLatticeIffLocalSelfDualCompletion\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmSplitHalves\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.PiTensorProduct\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\nimport Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatticeVacuumIffPlacewise\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -118,8 +118,6 @@ namespace GlobalTheory.PlaceProducts
 
 open Classical
 
-set_option synthInstance.maxHeartbeats 400000
-
 variable {D : D7}
 
 alias mt_mul := _root_.GlobalTheory.BesselCompare.mt_mul
@@ -163,11 +161,9 @@ theorem pe_idem (v : Pl D) : pe D v * pe D v = pe D v :=
 def peT (D : D7) (T : Finset (Pl D)) : AE D := ∑ v ∈ T, pe D v
 
 theorem inf_peT (T : Finset (Pl D)) : infPart D (peT D T) = 0 := by
-  set_option synthInstance.maxHeartbeats 100000 in
     rw [peT, map_sum]; exact Finset.sum_eq_zero fun v _ => inf_pe v
 
 theorem comp_peT (T : Finset (Pl D)) (w : Pl D) : compAt D w (peT D T) = if w ∈ T then 1 else 0 := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [peT, map_sum, comp_pe]
 
 theorem pe_mul_peT {v : Pl D} {T : Finset (Pl D)} (hv : v ∉ T) : pe D v * peT D T = 0 :=
@@ -206,8 +202,6 @@ namespace GlobalTheory.PlaceProducts
 
 open Classical Matrix
 
-set_option synthInstance.maxHeartbeats 400000
-
 variable {D : D7}
 
 theorem pe_mul_of_mem {v : Pl D} {x : AE D} (hx : x ∈ idAt D (· = v)) : pe D v * x = x := by
@@ -219,15 +213,11 @@ theorem pe_mul_of_mem {v : Pl D} {x : AE D} (hx : x ∈ idAt D (· = v)) : pe D 
   · rw [zero_mul, h2 w h]
 
 theorem pe_mul_mem (v : Pl D) (x : AE D) : pe D v * x ∈ idAt D (· = v) :=
-  mem_idAt.2 ⟨by rw [map_mul, inf_pe, zero_mul], fun w hw => by rw [map_mul, comp_pe, if_neg hw, zero_mul]⟩
+  mem_idAt.2 ⟨by rw [map_mul, inf_pe, zero_mul], fun w hw => by rw [map_mul, comp_pe, ite_eq_right hw, zero_mul]⟩
 
 theorem idAt_mono {P : Pl D → Prop} {v : Pl D} (hv : P v) {x : AE D} (hx : x ∈ idAt D (· = v)) : x ∈ idAt D P := by
   obtain ⟨h1, h2⟩ := mem_idAt.1 hx
   exact mem_idAt.2 ⟨h1, fun w hw => h2 w fun h => hw (h ▸ hv)⟩
-
-theorem pairA_mul (a b : Af D.host.F) :
-    pairA D.host.F 0 a * pairA D.host.F 0 b = pairA D.host.F 0 (a * b) :=
-  Prod.ext (mul_zero _) rfl
 
 theorem latV_le (S : HSp D) (L : Lat S) {P : Pl D → Prop} {v : Pl D} (hv : P v) :
     latV S L (· = v) ≤ latV S L P := by
@@ -251,7 +241,7 @@ theorem pe_smul_latV (S : HSp D) (L : Lat S) (P : Pl D → Prop) (v : Pl D) {y :
       show pe D v * _ = _
       rw [pe, Algebra.TensorProduct.algebraMap_apply, Algebra.TensorProduct.tmul_mul_tmul, one_mul]
       simp only [Algebra.algebraMap_self, RingHom.id_apply]
-      rw [pairA_mul]
+      rw [GlobalTheory.VacLoc.pairA_mul]
   exact hle hy
 
 theorem latV_iff (S : HSp D) (L : Lat S) {P : Pl D → Prop} {v : Pl D} (hv : P v) {z : Fin S.rank → AE D}
@@ -301,8 +291,6 @@ namespace GlobalTheory.PlaceProducts
 
 open Classical
 
-set_option synthInstance.maxHeartbeats 400000
-
 theorem hom_loc {A B : Type} [CommRing A] [CommRing B] (φ : A →+* B) (e a b : A) :
     φ (e * a + (1 - e) * b) = φ e * φ a + (1 - φ e) * φ b := by
   simp only [map_add (f := _), map_mul, map_sub, map_one]
@@ -316,7 +304,6 @@ theorem hom_loc_zero {A B : Type} [CommRing A] [CommRing B] (φ : A →+* B) {e 
   rw [hom_loc, he, zero_mul, zero_add, sub_zero, one_mul]
 
 
-set_option maxHeartbeats 1000000 in
 theorem finite_place_products : ∀ (D : D7) (S : HSp D) (L : Lat S) (P : Pl D → Prop) (κ : GA D S), IsSelfDualC S L →
     InK S L P κ → ∀ Fs : Finset (Pl D), ∃ l : List (GA D S), (∀ y ∈ l, ∃ v, P v ∧ InK S L (· = v) y) ∧
       (∀ i j, infPart D (Formalism.L2.Theta.mt S l.prod i j) = infPart D (Formalism.L2.Theta.mt S κ i j)) ∧
@@ -335,10 +322,10 @@ theorem finite_place_products : ∀ (D : D7) (S : HSp D) (L : Lat S) (P : Pl D �
   · rw [hp, locM_apply]
     by_cases hPw : P w
     · have hc : compAt D w (peT D (Fs.filter P)) = 1 := by
-        rw [comp_peT, if_pos (Finset.mem_filter.2 ⟨hw, hPw⟩)]
+        rw [comp_peT, ite_eq_left (Finset.mem_filter.2 ⟨hw, hPw⟩)]
       exact hom_loc_one (compAt D w) hc _ _
     · have hc : compAt D w (peT D (Fs.filter P)) = 0 := by
-        rw [comp_peT, if_neg fun h => hPw (Finset.mem_filter.1 h).2]
+        rw [comp_peT, ite_eq_right fun h => hPw (Finset.mem_filter.1 h).2]
       have := (mem_idAt.1 (hK i j)).2 w hPw
       rw [map_sub, sub_eq_zero] at this
       rw [hom_loc_zero (compAt D w) hc]
@@ -346,7 +333,7 @@ theorem finite_place_products : ∀ (D : D7) (S : HSp D) (L : Lat S) (P : Pl D �
   · have e1 : mt S l.prod i j = peT D (Fs.filter P) * mt S κ i j +
         (1 - peT D (Fs.filter P)) * (1 : Matrix (Fin S.rank) (Fin S.rank) (AE D)) i j := by rw [hp, locM_apply]
     refine (congrArg (compAt D w) e1).trans (hom_loc_zero (compAt D w) ?_ _ _)
-    rw [comp_peT, if_neg fun h => hw (Finset.mem_filter.1 h).1]
+    rw [comp_peT, ite_eq_right fun h => hw (Finset.mem_filter.1 h).1]
 
 end GlobalTheory.PlaceProducts
 
@@ -364,8 +351,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Stan
 open Filter Topology
 
 namespace GlobalTheory.StabSetFix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem stab_fix_vac : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (χS χT : (AE D)ˣ →* Circle) (om : Om S T), IsWeilDatumO ψ S T χS χT om → ∀ (LS : Lat S) (LT : Lat T), IsSelfDualC S LS → IsSelfDualC T LT → ∀ (P : Pl D → Prop), (∀ v, P v → Tame D v ∧ GlobalTheory.IndefiniteRowSideFullHecke.UnramifiedCharacter.CharUnramAt D χS v ∧ GlobalTheory.IndefiniteRowSideFullHecke.UnramifiedCharacter.CharUnramAt D χT v) → ∀ f, Vac ψ S T LS LT P f → ∀ κ κ', InK S LS P κ → InK T LT P κ' → om (κ, κ') f = f := by
   intro D ψ S T χS χT om hW LS LT hS hT P hP f hf κ κ' hκ hκ'

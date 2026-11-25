@@ -3,19 +3,13 @@ module
 public import Mathlib.FieldTheory.Galois.Abelian
 public import Mathlib.Topology.Algebra.Group.TopologicalAbelianization
 public import Mathlib.FieldTheory.Galois.Profinite
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Connected.Separation
+import Mathlib.GroupTheory.Abelianization.Defs
 
 @[expose] public section
 
 namespace GroundTheory.LocalField
 
 open IntermediateField
-
-open scoped commutatorElement
 
 section MaximalAbelian
 
@@ -70,16 +64,13 @@ section Restrict
 variable {F Ω : Type*} [Field F] [Field Ω] [Algebra F Ω] [IsGalois F Ω]
 
 theorem commutator_le_ker_of_comm {G M : Type*} [Group G] [Group M] [IsMulCommutative M]
-    (f : G →* M) : commutator G ≤ f.ker := by
-  rw [commutator, Subgroup.commutator_le]
-  intro a _ b _
-  rw [MonoidHom.mem_ker, map_commutatorElement, commutatorElement_eq_one_iff_mul_comm]
-  exact mul_comm' _ _
+    (f : G →* M) : commutator G ≤ f.ker :=
+  Group.Abelianization.commutator_le_ker f
 
 theorem le_maximalAbelianExtension (L : IntermediateField F Ω) [IsAbelianGalois F L] :
     L ≤ maximalAbelianExtension F Ω := by
   have : T1Space (L ≃ₐ[F] L) := @T2Space.t1Space _ _ krullTopology_t2
-  rw [maximalAbelianExtension, le_iff_le, ← L.restrictNormalHom_ker]
+  rw [maximalAbelianExtension, le_fixedField_iff_le_fixingSubgroup, ← L.restrictNormalHom_ker]
   refine Subgroup.topologicalClosure_minimal _ (commutator_le_ker_of_comm _) ?_
   exact isClosed_singleton.preimage (InfiniteGalois.restrictNormalHom_continuous L)
 
@@ -120,6 +111,21 @@ theorem continuous_restrictAb (h : E ≤ maximalAbelianExtension F Ω) : Continu
 
 end Restrict
 
+section Commutative
+
+variable {F Ω : Type*} [Field F] [Field Ω] [Algebra F Ω] [IsGalois F Ω]
+
+instance isMulCommutative_maximalAbelianExtension :
+    IsMulCommutative (maximalAbelianExtension F Ω ≃ₐ[F] maximalAbelianExtension F Ω) :=
+  (topologicalAbelianizationEquiv F Ω).surjective.isMulCommutative
+
+theorem isAbelianGalois_of_le_maximalAbelianExtension (E : IntermediateField F Ω)
+    (h : E ≤ maximalAbelianExtension F Ω) : IsAbelianGalois F E := by
+  have : IsAbelianGalois F (maximalAbelianExtension F Ω) := {}
+  exact IsAbelianGalois.of_algHom (IntermediateField.inclusion h)
+
+end Commutative
+
 section Finite
 
 variable {F Ω : Type*} [Field F] [Field Ω] [Algebra F Ω] [IsGalois F Ω]
@@ -128,40 +134,9 @@ theorem exists_finite_abelian_mem {y : Ω} (hy : y ∈ maximalAbelianExtension F
     ∃ L : IntermediateField F Ω, FiniteDimensional F L ∧ IsAbelianGalois F L ∧ y ∈ L := by
   have : FiniteDimensional F F⟮y⟯ :=
     adjoin.finiteDimensional (Algebra.IsIntegral.isIntegral y)
-  set M : IntermediateField F Ω := normalClosure F F⟮y⟯ Ω
-  have : FiniteDimensional F M := normalClosure.is_finiteDimensional F F⟮y⟯ Ω
-  have : IsGalois F M := IsGalois.normalClosure F F⟮y⟯ Ω
-  have hyM : y ∈ M := IntermediateField.le_normalClosure F⟮y⟯ (mem_adjoin_simple_self F y)
-  have hMn : M.fixingSubgroup.Normal := by
-    rw [← M.restrictNormalHom_ker]; exact MonoidHom.normal_ker _
-  set H : Subgroup (Ω ≃ₐ[F] Ω) := M.fixingSubgroup ⊔ commutator (Ω ≃ₐ[F] Ω)
-  have : H.Normal := Subgroup.sup_normal _ _
-  set A : IntermediateField F Ω := fixedField H
-  have hAM : A ≤ M := by
-    rw [← InfiniteGalois.fixedField_fixingSubgroup M]
-    exact fixedField_le le_sup_left
-  have : FiniteDimensional F A :=
-    FiniteDimensional.of_injective (IntermediateField.inclusion hAM).toLinearMap
-      (IntermediateField.inclusion hAM).injective
-  have hfix : ∀ g ∈ H, AlgEquiv.restrictNormalHom (F := F) (K₁ := Ω) A g = 1 := by
-    intro g hg
-    ext x
-    rw [AlgEquiv.restrictNormalHom_apply, AlgEquiv.one_apply]
-    exact (mem_fixedField_iff H (x : Ω)).1 x.2 g hg
-  refine ⟨A, inferInstance, { toIsMulCommutative := ⟨⟨fun σ τ => ?_⟩⟩ }, ?_⟩
-  · obtain ⟨σ', rfl⟩ := AlgEquiv.restrictNormalHom_surjective (F := F) (K₁ := A) (E := Ω) σ
-    obtain ⟨τ', rfl⟩ := AlgEquiv.restrictNormalHom_surjective (F := F) (K₁ := A) (E := Ω) τ
-    have hc := hfix ⁅σ', τ'⁆ (Subgroup.mem_sup_right
-      (Subgroup.commutator_mem_commutator (Subgroup.mem_top σ') (Subgroup.mem_top τ')))
-    rw [map_commutatorElement, commutatorElement_eq_one_iff_mul_comm] at hc
-    exact hc
-  · rw [mem_fixedField_iff]
-    intro g hg
-    have hle : H ≤ MulAction.stabilizer (Ω ≃ₐ[F] Ω) y := by
-      refine sup_le (fun g hg => ?_) (fun g hg => ?_)
-      · exact (IntermediateField.mem_fixingSubgroup_iff M g).1 hg y hyM
-      · exact (mem_fixedField_iff _ y).1 hy g (Subgroup.le_topologicalClosure _ hg)
-    exact hle hg
+  exact ⟨F⟮y⟯, inferInstance,
+    isAbelianGalois_of_le_maximalAbelianExtension _ (adjoin_simple_le_iff.mpr hy),
+    mem_adjoin_simple_self F y⟩
 
 theorem ext_restrictAb {σ τ : maximalAbelianExtension F Ω ≃ₐ[F] maximalAbelianExtension F Ω}
     (h : ∀ (L : IntermediateField F Ω) [FiniteDimensional F L] [IsAbelianGalois F L],
@@ -227,26 +202,5 @@ theorem continuous_iff_restrictAb {X : Type*} [TopologicalSpace X]
     exact h (L : IntermediateField F Ω)
 
 end Continuity
-
-section Commutative
-
-variable {F Ω : Type*} [Field F] [Field Ω] [Algebra F Ω] [IsGalois F Ω]
-
-instance isMulCommutative_maximalAbelianExtension :
-    IsMulCommutative (maximalAbelianExtension F Ω ≃ₐ[F] maximalAbelianExtension F Ω) :=
-  ⟨⟨fun σ τ => (topologicalAbelianizationEquiv F Ω).symm.injective (by
-    rw [map_mul, map_mul, mul_comm])⟩⟩
-
-theorem isAbelianGalois_of_le_maximalAbelianExtension (E : IntermediateField F Ω) [Normal F E]
-    (h : E ≤ maximalAbelianExtension F Ω) : IsAbelianGalois F E := by
-  have : IsGalois F E :=
-    have := Algebra.isSeparable_tower_bot_of_isSeparable F E Ω
-    IsGalois.mk
-  refine { toIsMulCommutative := ⟨⟨fun σ τ => ?_⟩⟩ }
-  obtain ⟨σ', rfl⟩ := restrictAb_surjective E h σ
-  obtain ⟨τ', rfl⟩ := restrictAb_surjective E h τ
-  rw [← map_mul, ← map_mul, mul_comm' σ' τ']
-
-end Commutative
 
 end GroundTheory.LocalField

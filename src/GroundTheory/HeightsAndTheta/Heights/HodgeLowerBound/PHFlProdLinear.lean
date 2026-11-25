@@ -165,7 +165,7 @@ theorem hFl_sum_monomial (II : IntersectionSystem) {β : Type} (s : Finset β) (
     ring
   have hmono : ∀ (m : (Ψ × Fin N) →₀ ℕ) (a : ℚ), hFl Ψ N II (monomial m a) = (a : ℝ) * hFlMono Ψ N II m := by
     intro m a
-    rw [hsub _ {m} support_monomial_subset, Finset.sum_singleton, coeff_monomial, if_pos rfl]
+    rw [hsub _ {m} support_monomial_subset, Finset.sum_singleton, coeff_monomial, ite_eq_left rfl]
   induction s using Finset.induction_on with
   | empty => simp [hsub 0 ∅ (by simp)]
   | insert b s hb ih => rw [Finset.sum_insert hb, Finset.sum_insert hb, hadd, hmono, ih]
@@ -210,7 +210,7 @@ theorem hFlMono_sum_single (II : IntersectionSystem) (hII : IsIntersectionSystem
     rw [hm, dite_eq_left hk, hσ k hk]
     rfl
   unfold hFlMono
-  rw [if_pos hdeg, hML]
+  rw [ite_eq_left hdeg, hML]
   exact (hII (FlBlock Ψ N) (FlIdx Ψ N)).1 _ _ _ σ hP fun j => isSmoothHerm_fsHerm _
 
 end FlagHeightMultilinear

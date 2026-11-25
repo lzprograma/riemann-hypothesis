@@ -86,8 +86,7 @@ theorem ordMinMax_at_good_place (hd : d.AxH 𝒜) (c : ι) (w : AddValuation (Om
 
 theorem exists_ne_zero_of_finsum_mem_ne_zero' {α M : Type*} [AddCommMonoid M] {s : Set α} {f : α → M}
     (h : ∑ᶠ i ∈ s, f i ≠ 0) : ∃ i ∈ s, f i ≠ 0 := by
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   exact h (by rw [finsum_mem_congr rfl hne, finsum_mem_zero])
 
 alias multiplicity_split_finsum := _root_.ReciprocityTheory.ChartRestriction.G.T0.Data.x4v4_split
@@ -147,7 +146,6 @@ theorem substituted_factorization_exists (hd : d.AxH 𝒜) (h : d.S1) (x : Fin (
     letI : Algebra (KTp K d.D d.N) (OmS (Ω c) d.D d.N) :=
       ((algebraMap (KTf K d.D d.N) (OmS (Ω c) d.D d.N)).comp
         (algebraMap (KTp K d.D d.N) (KTf K d.D d.N))).toAlgebra
-    set_option synthInstance.maxHeartbeats 100000 in
     haveI : IsScalarTower (KTp K d.D d.N) (KTf K d.D d.N) (OmS (Ω c) d.D d.N) :=
       IsScalarTower.of_algebraMap_eq (fun _ => rfl)
     let y := algebraMap (Ω c) (OmS (Ω c) d.D d.N) a

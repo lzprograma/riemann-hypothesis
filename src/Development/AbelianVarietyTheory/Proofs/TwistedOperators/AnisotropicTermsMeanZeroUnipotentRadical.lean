@@ -11,48 +11,10 @@ public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WittTower
 import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
 import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
 import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
 import Mathlib.Data.Matrix.ColumnRowPartitioned
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.WeilIdempotents
 import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
@@ -62,7 +24,6 @@ import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 open GlobalTheory.IndefiniteRowSideFullHecke.AdjointIsotropicDecomposition
 open scoped Pointwise
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.AnisoMean
 variable {D : D7}
@@ -92,8 +53,6 @@ theorem setIntegral_eq_zero_of_central {G : Type*} [Group G] [MeasurableSpace G]
   · exact absurd (sub_eq_zero.1 h).symm hc
   · exact h
 
-alias adj_eq := _root_.GlobalTheory.TwistDual.adj_eq
-
 private theorem mul_add_mul_add_mul_eq_one_of_dual_blocks {K : Type*} [Field K] {n a b : ℕ} (C C' : Matrix (Fin n) (Fin a) K)
     (B : Matrix (Fin n) (Fin b) K) (P1 P3 : Matrix (Fin a) (Fin n) K) (P2 : Matrix (Fin b) (Fin n) K)
     (f1 : P1 * C = 1) (f2 : P1 * B = 0) (f3 : P2 * C = 0) (f4 : P2 * B = 1) (f5 : P1 * C' = 0)
@@ -119,7 +78,7 @@ theorem frame_identity {V V' : HSp D} {r : ℕ} {C C' : Matrix (Fin V.rank) (Fin
   have hG := _root_.GlobalTheory.MixModel.gram_conjTranspose V
   have hV' : V'.gram⁻¹ * V'.gram = 1 :=
     Matrix.nonsing_inv_mul _ (isUnit_iff_ne_zero.2 (GlobalTheory.AutFunCounterexample.gram_det_ne V'))
-  simp only [adj_eq] at h1 h2 h3 hCC hisom horth ⊢
+  simp only [GlobalTheory.TwistDual.adj_eq] at h1 h2 h3 hCC hisom horth ⊢
   have ct : ∀ {a b : ℕ} (X : Matrix (Fin V.rank) (Fin a) D.host.E) (Y : Matrix (Fin V.rank) (Fin b) D.host.E),
       Yᴴ * V.gram * X = (Xᴴ * V.gram * Y)ᴴ := by
     intro a b X Y
@@ -158,8 +117,6 @@ theorem isTheta_heisO {S T : HSp D} {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsSt
   have h2 := GlobalTheory.FinTranslate.isThetaFunO_heisO hc.1 hc.2.1 h1 hu
   rwa [GlobalTheory.FinTranslate.heisO_heisO, (GlobalTheory.FinTranslate.symplOH_fin_real hu hv), AddChar.map_zero_eq_one, one_smul] at h2
 
-alias trace_one_tmul := _root_.GlobalTheory.SymplecticOrthogonalSesquilinear.trace_one_tmul
-
 theorem sum_eq_trace {m n : ℕ} (A : Matrix (Fin m) (Fin m) D.host.E) (G : Matrix (Fin n) (Fin n) D.host.E)
     (x y : Matrix (Fin n) (Fin m) D.host.E) :
     ∑ a, ∑ b, ∑ c, ∑ d, A a b * star (y c b) * G c d * x d a = (A * yᴴ * G * x).trace := by
@@ -176,7 +133,7 @@ theorem symplOH_rat (S T : HSp D) (x y : Matrix (Fin T.rank) (Fin S.rank) D.host
     simp only [hO, Matrix.map_apply, _root_.GlobalTheory.DualPairCheck.cA_incA, ← map_mul, ← map_sum]
   rw [symplOH, symplO, key, ← map_mul]
   rw [show incA D (D.host.xi0 * (S.gram⁻¹ * yᴴ * T.gram * x).trace) =
-    (1 : AF D.host.F) ⊗ₜ[D.host.F] (D.host.xi0 * (S.gram⁻¹ * yᴴ * T.gram * x).trace) from rfl, trace_one_tmul, ← map_mul]
+    (1 : AF D.host.F) ⊗ₜ[D.host.F] (D.host.xi0 * (S.gram⁻¹ * yᴴ * T.gram * x).trace) from rfl, GlobalTheory.SymplecticOrthogonalSesquilinear.trace_one_tmul, ← map_mul]
 
 theorem psi_rat {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.F ψ) (S T : HSp D)
     (x y : Matrix (Fin T.rank) (Fin S.rank) D.host.E) :
@@ -192,11 +149,6 @@ theorem heisO_rat {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.F ψ) 
 alias mt_mul := _root_.GlobalTheory.BesselCompare.mt_mul
 
 alias mt_one := _root_.GlobalTheory.BesselCompare.mt_one
-
-theorem actO_mul_mt (S T : HSp D) (g : GA D S) (w : WO S T) :
-    actO S T g 1 (HMul.hMul (w : Matrix (Fin T.rank) (Fin S.rank) (AE D)) (Formalism.L2.Theta.mt S g)) = w := by
-  unfold actO
-  rw [mt_one, Matrix.one_mul, Matrix.mul_assoc, ← mt_mul, mul_inv_cancel, mt_one, Matrix.mul_one]
 
 theorem ni_fix {V : HSp D} {r : ℕ} {C : Matrix (Fin V.rank) (Fin r) D.host.E} {g : GA D V} (hg : g ∈ NI V C) :
     Formalism.L2.Theta.mt V g * C.map (incA D) = C.map (incA D) ∧
@@ -241,7 +193,7 @@ theorem res_om_heis (hs : IsIsoSplit V V' C B) {ψ : AddChar (AF D.host.F) ℂ} 
         (Formalism.L2.Theta.mt V (n : GA D V))) g) := by
   have hth : IsThetaFunO ψ V W (heisO ψ V W (HMul.hMul (w : Matrix (Fin W.rank) (Fin V.rank) (AE D))
       (Formalism.L2.Theta.mt V (n : GA D V))) g) := isTheta_heisO hω.std hg _
-  conv_lhs => rw [← actO_mul_mt V W (n : GA D V) w, ← hω.om_heis (n : GA D V) 1 _ g hg]
+  conv_lhs => rw [← GlobalTheory.LeviRes.actO_mul_mt V W (n : GA D V) w, ← hω.om_heis (n : GA D V) 1 _ g hg]
   exact GlobalTheory.T.wittTower_restriction_unipotentRadical_invariant D V V' W r C B hs ψ χS χT ω hω μ 𝓨 hμ n _ hth
 
 theorem mean_rat_shift (hs : IsIsoSplit V V' C B) {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1))
@@ -423,7 +375,7 @@ theorem pairing_trace {V W : HSp D} {r : ℕ} {C C' : Matrix (Fin V.rank) (Fin r
       ((adj D y * W.gram * y) * S₀).trace := by
   have hG : V.gram⁻¹ * V.gram = 1 :=
     Matrix.nonsing_inv_mul _ (isUnit_iff_ne_zero.2 (GlobalTheory.AutFunCounterexample.gram_det_ne V))
-  simp only [adj_eq] at h1 ⊢
+  simp only [GlobalTheory.TwistDual.adj_eq] at h1 ⊢
   have h1' : Cᴴ * (V.gram * C') = 1 := by rw [← Matrix.mul_assoc]; exact h1
   simp only [Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, _root_.GlobalTheory.MixModel.gram_conjTranspose, Matrix.mul_assoc]
   rw [← Matrix.mul_assoc V.gram⁻¹ V.gram, hG, Matrix.one_mul, Matrix.trace_mul_comm C']
@@ -459,7 +411,7 @@ theorem skew_generic {N r : ℕ} (G : Matrix (Fin N) (Fin N) D.host.E) (hG : G�
 
 theorem dual_one {V : HSp D} {r : ℕ} {C C' : Matrix (Fin V.rank) (Fin r) D.host.E}
     (h1 : adj D C * V.gram * C' = 1) : adj D C' * V.gram * C = 1 := by
-  rw [adj_eq] at h1 ⊢
+  rw [GlobalTheory.TwistDual.adj_eq] at h1 ⊢
   have h := congrArg Matrix.conjTranspose h1
   simpa [Matrix.conjTranspose_mul, _root_.GlobalTheory.MixModel.gram_conjTranspose, Matrix.mul_assoc] using h
 
@@ -536,7 +488,7 @@ theorem GlobalTheory.AnisoMean.aniso_mean_zero : ∀ (D : D7) (V V' W : HSp D) (
     rw [← hx]
     rfl
   have hM : (adj D y * W.gram * y)ᴴ = adj D y * W.gram * y := by
-    rw [adj_eq]
+    rw [GlobalTheory.TwistDual.adj_eq]
     simp [Matrix.conjTranspose_mul, _root_.GlobalTheory.MixModel.gram_conjTranspose, Matrix.mul_assoc]
   obtain ⟨S₀, hS₀, htr⟩ := exists_skew _ hM hy
   have ht : (1 / 2 : D.host.F) * Algebra.trace D.host.F D.host.E
@@ -551,7 +503,7 @@ theorem GlobalTheory.AnisoMean.aniso_mean_zero : ∀ (D : D7) (V V' W : HSp D) (
   have hXX : (C * S₀ * (adj D C * V.gram)) * (C * S₀ * (adj D C * V.gram)) = 0 :=
     sq_zero_generic C S₀ (adj D C * V.gram) hCC
   have hsk : (C * S₀ * (adj D C * V.gram))ᴴ * V.gram + V.gram * (C * S₀ * (adj D C * V.gram)) = 0 := by
-    rw [adj_eq]
+    rw [GlobalTheory.TwistDual.adj_eq]
     exact skew_generic V.gram (_root_.GlobalTheory.MixModel.gram_conjTranspose V) C S₀ hS₀
   obtain ⟨z, hz⟩ := exists_central V _ hXX hsk a
   have hzN : z ∈ NI V C := central_mem_NI hs.frame S₀ a hz

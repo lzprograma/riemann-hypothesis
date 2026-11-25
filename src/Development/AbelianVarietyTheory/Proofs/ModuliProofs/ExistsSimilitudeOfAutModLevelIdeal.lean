@@ -138,12 +138,6 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open scoped CategoryTheory.Obj TensorProduct Pointwise in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} (D : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Datum H)
   (l : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H) in
-private theorem conjO_conjO_unimodular_class_representatives (a : 𝓞 E) : H.bar (H.bar a) = a := by
-  apply RingOfIntegers.coe_injective
-  show ((H.bar (H.bar a) : 𝓞 E) : E) = (a : E)
-  rw [H.bar_eq, H.bar_eq]
-  simp
-
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct Pointwise in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} (D : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Datum H)
@@ -216,7 +210,7 @@ theorem _root_.GlobalTheory.exists_sim_of_aut_mod : ∀ (E : Type) [Field E] [Nu
     Ideal.mem_map_of_mem _ he
   have hbe' : H.bar e' ∈ l.Mb := by
     obtain ⟨y, hy, rfl⟩ := (Ideal.mem_map_of_equiv H.bar e').1 he'
-    rw [conjO_conjO_unimodular_class_representatives]
+    rw [HostModel.bar_bar]
     exact hy
   set f1 : D.La →ₗ[NumberField.RingOfIntegers E] D.La := e' • g + e • u with hf1
 

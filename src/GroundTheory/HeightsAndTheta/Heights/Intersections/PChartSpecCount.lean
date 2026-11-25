@@ -13,6 +13,7 @@ public import Mathlib.Algebra.MvPolynomial.CommRing
 public import Mathlib.Algebra.Polynomial.Lifts
 public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
+import Mathlib.RingTheory.MvPolynomial.Localization
 
 @[expose] public section
 
@@ -31,20 +32,10 @@ theorem exists_pow_mul_eq_map {R : Type*} [CommRing R] (E : R) {Q : Type*}
     ∃ (n : ℕ) (F' : MvPolynomial Q R),
       MvPolynomial.map (algebraMap R (Localization.Away E)) F' =
         MvPolynomial.C (algebraMap R (Localization.Away E) (E ^ n)) * F := by
-  induction F using MvPolynomial.induction_on with
-  | C a =>
-    obtain ⟨n, b, hb⟩ := IsLocalization.Away.surj E a
-    refine ⟨n, MvPolynomial.C b, ?_⟩
-    rw [MvPolynomial.map_C, ← MvPolynomial.C_mul, map_pow, mul_comm, hb]
-  | add F G hF hG =>
-    obtain ⟨n, F', hF'⟩ := hF
-    obtain ⟨k, G', hG'⟩ := hG
-    refine ⟨n + k, MvPolynomial.C (E ^ k) * F' + MvPolynomial.C (E ^ n) * G', ?_⟩
-    simp only [map_add (f := _), map_mul, MvPolynomial.map_C, hF', hG', pow_add, map_pow]
-    ring
-  | mul_X F i hF =>
-    obtain ⟨n, F', hF'⟩ := hF
-    exact ⟨n, F' * MvPolynomial.X i, by rw [map_mul, MvPolynomial.map_X, hF', mul_assoc]⟩
+  let := MvPolynomial.algebraMvPolynomial (R := R) (S := Localization.Away E) (σ := Q)
+  obtain ⟨⟨F', _, ⟨_, ⟨n, rfl⟩, rfl⟩⟩, h⟩ :=
+    IsLocalization.surj ((Submonoid.powers E).map (MvPolynomial.C : R →+* MvPolynomial Q R)) F
+  exact ⟨n, F', by simpa only [MvPolynomial.algebraMap_def, MvPolynomial.map_C, mul_comm] using h.symm⟩
 
 theorem eval₂_mvEval₂_C {A K Q : Type*} [CommRing A] [CommRing K] (k : A →+* K) (x : K) (G : Q → A[X])
     (F : MvPolynomial Q A) :
@@ -94,7 +85,7 @@ theorem ChartSpecCount.proof (hPE : ChartPrimElt.Statement) (hLA : LocAwaySpec.S
   let hq : Q → Φ[X] := fun q => if hq : r q ≠ 0 then (hh q hq).choose else 0
   have hhq : ∀ q, r q ≠ 0 → m ∣ hq q * g q - 1 := by
     intro q hq0
-    simp only [hq, dif_pos hq0]
+    simp only [hq, dite_eq_left hq0]
     exact (hh q hq0).choose_spec
   let S : Finset Φ := m.coeffs ∪ u.coeffs ∪ τ.coeffs ∪ Finset.univ.biUnion (fun q => (g q).coeffs ∪ (hq q).coeffs)
   obtain ⟨E, hE, hS, hker⟩ := hLA R Φ φ S hfrac

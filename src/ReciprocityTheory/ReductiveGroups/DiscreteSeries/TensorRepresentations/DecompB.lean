@@ -170,15 +170,15 @@ theorem dc_top_coord_false {μ : Fin n → ℝ} {f : Fin n → M} (hf : IsKHWVec
   refine ⟨c, hc, fun a => ?_, fun a b hab he => ?_⟩
   · have h := congrFun (hf.1 a) c
     simp only [tensF, cond_false, tensV_coord, Pi.smul_apply] at h
-    simp only [dc_wsh, Bool.false_eq_true, if_false, Pi.sub_apply, Pi.single_apply]
+    simp only [dc_wsh, Bool.false_eq_true, ite_false, Pi.sub_apply, Pi.single_apply]
     by_cases hca : c = a
     · subst hca
-      simp only [if_true] at h ⊢
+      simp only [ite_true] at h ⊢
       rw [eq_sub_of_add_eq h]
       push_cast
       rw [sub_smul, one_smul]
     · have hac : a ≠ c := Ne.symm hca
-      simp only [hca, hac, if_false, add_zero] at h ⊢
+      simp only [hca, hac, ite_false, add_zero] at h ⊢
       rw [h]
       push_cast
       simp
@@ -207,15 +207,15 @@ theorem dc_top_coord_true {μ : Fin n → ℝ} {f : Fin n → M} (hf : IsKHWVec 
   refine ⟨c, hc, fun a => ?_, fun a b hab he => ?_⟩
   · have h := congrFun (hf.1 a) c
     simp only [tensF, cond_true, tensVd_coord, Pi.smul_apply] at h
-    simp only [dc_wsh, if_true, Pi.add_apply, Pi.single_apply]
+    simp only [dc_wsh, ite_true, Pi.add_apply, Pi.single_apply]
     by_cases hca : c = a
     · subst hca
-      simp only [if_true] at h ⊢
+      simp only [ite_true] at h ⊢
       rw [eq_add_of_sub_eq h]
       push_cast
       rw [add_smul, one_smul]
     · have hac : a ≠ c := Ne.symm hca
-      simp only [hca, hac, if_false, sub_zero] at h ⊢
+      simp only [hca, hac, ite_false, sub_zero] at h ⊢
       rw [h]
       push_cast
       simp

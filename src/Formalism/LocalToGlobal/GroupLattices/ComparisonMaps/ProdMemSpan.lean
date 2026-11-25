@@ -70,13 +70,7 @@ variable {O Kf LL : Type} [CommRing O] [Field Kf] [Algebra O Kf] [Field LL] (e :
 theorem rowAct_map {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) {k n : ℕ}
     (U : Matrix (Fin k) (Fin k) R) (f : MvPolynomial (Fin k × Fin n) R) :
     rowAct S (U.map φ) (map φ f) = map φ (rowAct R U f) := by
-  induction f using MvPolynomial.induction_on with
-  | C a => simp [rowAct]
-  | add p q hp hq => simp only [map_add (f := _), hp, hq]
-  | mul_X p v hp =>
-    rw [map_mul, map_mul, map_mul, hp]
-
-    simp [rowAct, map_sum, Matrix.map_apply]
+  exact (Formalism.UG.P.wlocal_map_rowAct φ U f).symm
 
 theorem glMap_inv {k : ℕ} (g : GL (Fin k) LL) :
     ((g : Matrix (Fin k) (Fin k) LL).map e)⁻¹ = ((g⁻¹ : GL (Fin k) LL) : Matrix (Fin k) (Fin k) LL).map e := by

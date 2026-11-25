@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DiscreteSeriesCountingOfFiniteAndBounds
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermitianFormUnitaryOneOne
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicUnitaryHaarBiInvariant
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DiscreteSeriesCoefficientIntegrableMajorant
@@ -293,18 +294,7 @@ theorem constTerm_repro {G : Type} [Group G] [TopologicalSpace G] [IsTopological
         integral_mul_left_eq_self (fun y => (∫ m, f (m * y) ∂ν) * φ (x⁻¹ * y)) x
 
 theorem continuous_phe (B : RowsAut) (d : InfinitePlace B.I.F → ℝ) (hd : IsDSData B d) : Continuous (phe B d) := by
-  have he : Continuous B.e := (rowsAut_idem_elementary B).2.2.2
-  have hv : ∀ v, Continuous (fun g : B.I.Ginf => B.σ v (uMat (g v)) (B.w v)) := by
-    intro v
-    have hc := ((hd v).2.1.2.2.1).2.2 (B.w v)
-    exact hc.comp_continuous ((Units.continuous_val.comp continuous_subtype_val).comp (continuous_apply v))
-      (fun g => (g v).2)
-  have hph : Continuous (ph B d) := by
-    unfold ph
-    exact continuous_const.mul
-      (continuous_star.comp (continuous_finsetProd _ fun v _ => continuous_const.inner (hv v)))
-  unfold phe
-  exact (hph.comp continuous_fst).mul (he.comp continuous_snd)
+  first | exact _root_.GlobalTheory.NearMeas.continuous_phe | exact @_root_.GlobalTheory.NearMeas.continuous_phe | apply _root_.GlobalTheory.NearMeas.continuous_phe <;> assumption
 
 theorem one_le_of_isIsot (I : AutInst) (W : Submodule I.E (Fin I.n → I.E)) (hW : I.IsIsot W) : 1 ≤ I.n := by
   rcases Nat.eq_zero_or_pos I.n with h0 | hpos

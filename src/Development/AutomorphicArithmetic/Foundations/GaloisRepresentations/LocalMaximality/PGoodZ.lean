@@ -57,8 +57,6 @@ import Mathlib.Tactic.Linter.Style
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open GlobalTheory.PD GlobalTheory.CechDR KaehlerDifferential
 
 namespace GlobalTheory.PD
@@ -66,11 +64,6 @@ namespace GlobalTheory.PD
 section DualMono
 
 variable {k : Type} [Field k] {F : Type} [Field F] [Algebra k F] {d : ℕ} {x : Fin (d + 1) → F}
-
-theorem rA_le_of_subset {I J : Finset (Fin (d + 1))} (h : I ⊆ J) : rA k x I ≤ rA k x J := by
-  refine Algebra.adjoin_mono ?_
-  rintro y ⟨i, hi, j, rfl⟩
-  exact ⟨i, h hi, j, rfl⟩
 
 theorem div_mem_rA_of_mem {J : Finset (Fin (d + 1))} {i : Fin (d + 1)} (hi : i ∈ J) (j : Fin (d + 1)) :
     x j / x i ∈ rA k x J :=
@@ -100,7 +93,7 @@ theorem omA_le_of_subset (hx : ∀ i, x i ≠ 0) {I J : Finset (Fin (d + 1))} (h
     refine Finset.prod_congr rfl fun j _ => ?_
     field_simp [hx i₀, hx j]
   rw [e, mul_assoc]
-  exact (rA k x J).mul_mem ((rA k x J).pow_mem (div_mem_rA_of_mem (h hi₀) i) _) (rA_le_of_subset h (hy i₀ hi₀))
+  exact (rA k x J).mul_mem ((rA k x J).pow_mem (div_mem_rA_of_mem (h hi₀) i) _) (GlobalTheory.PD.Loc.rA_mono h (hy i₀ hi₀))
 
 variable {W W' : Type} [AddCommGroup W] [Module F W] [Module k W] [IsScalarTower k F W]
   [AddCommGroup W'] [Module F W'] [Module k W'] [IsScalarTower k F W']
@@ -251,7 +244,7 @@ theorem UpperTheory.Gal.productCup_of_system.goodZ_of :
     rw [sysZ_Y]
     exact tmul_mem_range (Subalgebra.one_mem _) (ratio_mem_rB K x hj b)
   · intro I I' J J' hI hJ hII hJJ
-    exact range_mono (rA_le_of_subset hII) (hrB J J' hJ hJJ)
+    exact range_mono (GlobalTheory.PD.Loc.rA_mono hII) (hrB J J' hJ hJJ)
   · intro I I' J J' hI hJ hII hJJ
     exact Submodule.map₂_le_map₂ (omA_le_of_subset hx0 hI hII) (omB_mono' (hrB J J' hJ hJJ) _)
   · intro I J hI hJ

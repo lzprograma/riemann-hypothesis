@@ -9,50 +9,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QminorZero
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialRaisingTopOfParts
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellMulVecBasis
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -200,7 +156,7 @@ theorem stepB_pt (z z' : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hz' : i
     by_cases hpr : p.val < r
     · have hpe : p = eI k r ⟨p.val, hpr⟩ := Fin.ext (by simp [eI])
       rw [hpe, Formalism.FourierDecayAlt.P.left_rule_cell E k r z D _ hz hD hN hsm hle c hc g hg hcD ⟨p.val, hpr⟩ ⟨l, by omega⟩
-        (by simp; omega), if_neg (by simp; omega), zero_smul]
+        (by simp; omega), ite_eq_right (by simp; omega), zero_smul]
     · have hpw : p = wI k r ⟨p.val - r, by omega⟩ := Fin.ext (by simp [wI]; omega)
       rw [hpw, leftRuleB z D _ hz hD hN hsm hle c hc g hg hcD ⟨l, by omega⟩ (by simp; omega)]
   have hL1 : ∀ X : SA E hD, Λ (EA hD (eI k r ⟨l + 1, by omega⟩) (eI k r ⟨l, by omega⟩) * X) =
@@ -210,7 +166,7 @@ theorem stepB_pt (z z' : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hz' : i
     have hsm := (((X : Module.End ℂ (VS k r 0 D E)) v₀ : VS k r 0 D E)).2.1
     have hle := leftEq_SA hD z hN X v₀ hLv
     rw [Formalism.FourierDecayAlt.P.left_rule_cell E k r z D _ hz hD hN hsm hle c hc g hg hcD ⟨l + 1, by omega⟩ ⟨l, by omega⟩
-      (by simp), if_pos (by simp), La_apply]
+      (by simp), ite_eq_left (by simp), La_apply]
   have hRmid : ∀ p : Fin (2 * r + k + 1), l + 2 ≤ p.val → p.val ≤ r + k → ∀ X : SA E hD,
       Λ (X * EA hD (eI k r ⟨l, by omega⟩) p) = 0 := by
     intro p hp1 hp2 X
@@ -219,7 +175,7 @@ theorem stepB_pt (z z' : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hz' : i
       by_cases hpr : p.val < r
       · have hpe : p = eI k r ⟨p.val, hpr⟩ := Fin.ext (by simp [eI])
         rw [hpe, hv₀, root_vector_action_cutoff hD z' hz' Formalism.FourierDecayAlt.P.right_rule_derivative hf hRf ⟨l, by omega⟩ ⟨p.val, hpr⟩ (by simp; omega),
-          if_neg (by simp; omega), zero_smul]
+          ite_eq_right (by simp; omega), zero_smul]
       · have hpw : p = wI k r ⟨p.val - r, by omega⟩ := Fin.ext (by simp [wI]; omega)
         rw [hpw, hv₀, EA_v0B hD z' hz' hf hRf ⟨l, by omega⟩ (by simp; omega)]
     rw [hzero, map_zero]
@@ -228,7 +184,7 @@ theorem stepB_pt (z z' : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hz' : i
     intro X
     rw [hΛ, La_apply, La_apply, Subalgebra.coe_mul, Module.End.mul_apply]
     rw [hv₀, root_vector_action_cutoff hD z' hz' Formalism.FourierDecayAlt.P.right_rule_derivative hf hRf ⟨l, by omega⟩ ⟨l + 1, by omega⟩ (by simp),
-      if_pos (by simp), one_smul]
+      ite_eq_left (by simp), one_smul]
   have hne : eI k r ⟨l, by omega⟩ ≠ eI k r ⟨l + 1, by omega⟩ := by simp [eI, Fin.ext_iff]
   have hring := stepB_ring (EA (E := E) hD) (EA_gl hD) Λ (eI k r ⟨l, by omega⟩) (eI k r ⟨l + 1, by omega⟩) hne
     (c ⟨l + 1, by omega⟩ / c ⟨l, by omega⟩) a b
@@ -282,7 +238,7 @@ theorem stepB_pt (z z' : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hz' : i
       u • Λ Q1 + EH k r (eI k r ⟨l, by omega⟩) (eI k r ⟨l, by omega⟩)
         (((Q1 : Module.End ℂ (VS k r 0 D E)) v₀ : VS k r 0 D E) : Mx k r → E) x0 := by
     unfold Tm
-    rw [if_pos rfl, add_mul, map_add (f := _), la_E hD v₀ hx0, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul,
+    rw [ite_eq_left rfl, add_mul, map_add (f := _), la_E hD v₀ hx0, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul,
       map_smul]
   rw [hT', Formalism.FourierDecayAlt.P.torus_cell E k r D _ hD (((Q1 : Module.End ℂ (VS k r 0 D E)) v₀ : VS k r 0 D E)).2.1
     c hc g hg hcD ⟨l, by omega⟩]
@@ -326,7 +282,7 @@ theorem partial_derivative_double_sum {E : Type} [NormedAddCommGroup E] [NormedS
     (κ : ι → ι' → ℂ) (F : ι → ι' → (Fin r → ℂ) → E) {c : Fin r → ℂ} (hF : ∀ i j, DifferentiableAt ℝ (F i j) c)
     (l : Fin r) (hc : c ∈ OmX r) :
     pOp l (fun c' => ∑ i, ∑ j, κ i j • F i j c') c = ∑ i, ∑ j, κ i j • pOp l (F i j) c := by
-  simp only [pOp, if_pos hc, wirt, (has_fderiv_double_sum κ F hF).fderiv, ContinuousLinearMap.coe_sum', Finset.sum_apply,
+  simp only [pOp, ite_eq_left hc, wirt, (has_fderiv_double_sum κ F hF).fderiv, ContinuousLinearMap.coe_sum', Finset.sum_apply,
     ContinuousLinearMap.coe_smul', Pi.smul_apply]
   simp only [Finset.smul_sum, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_

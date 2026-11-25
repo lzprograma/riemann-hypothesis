@@ -23,8 +23,6 @@ namespace GroundTheory.ProfCoh
 
 open CategoryTheory
 
-attribute [local instance 2000] Rep.hV2
-
 variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
   [TotallyDisconnectedSpace G]
 

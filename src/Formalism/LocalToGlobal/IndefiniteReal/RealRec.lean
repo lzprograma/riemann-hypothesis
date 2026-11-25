@@ -12,8 +12,6 @@ open Formalism.L2 Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Rows Formalis
 
 namespace Formalism.IndefR
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : MainNotions.G.Inst D L} {Gl : MainNotions.G.LatInst D} {K : MainNotions.G.Consts} {Y : DivX D}
   {cX : ExtraC} {ex : Extra D L hT Gi Gl K Y cX}
 
@@ -103,17 +101,5 @@ structure RealRec (Q : RealT Rc P Dcf Spf Zscf S Ks) : Type 1 where
 
   mjRead : Formalism.IndefR.RecTie.MjRead Q.Rl.toRealDat Q.F.lv2 tupT hm hTop hinj IL (fun i => (P.A3.indefDown P.S0).dW i)
     (fun i y => P.I.jW i y) (jDT Q)
-
-namespace RealRec
-
-variable {Q : RealT Rc P Dcf Spf Zscf S Ks} (Qr : RealRec Q)
-
-end RealRec
-
-namespace RealRec
-
-variable {Q : RealT Rc P Dcf Spf Zscf S Ks}
-
-end RealRec
 
 end Formalism.IndefR

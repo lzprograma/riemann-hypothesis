@@ -231,12 +231,6 @@ section Level
 
 variable {D : D7} (X : HidaSetting D)
 
-theorem kset_mul {x y : X.B.I.Gf} (hx : x ∈ X.B.I.Kset) (hy : y ∈ X.B.I.Kset) : x * y ∈ X.B.I.Kset :=
-  (Formalism.UG.stabGL X.B.I.Lf).mul_mem hx hy
-
-theorem kset_inv {x : X.B.I.Gf} (hx : x ∈ X.B.I.Kset) : x⁻¹ ∈ X.B.I.Kset :=
-  (Formalism.UG.stabGL X.B.I.Lf).inv_mem hx
-
 theorem gf_eq_one (hb : AdBridgeIso X.B.I) (δ : X.B.I.GA) (hδ : δ ∈ X.B.I.GFset) (h1 : δ.1 = 1) : δ = 1 := by
   obtain ⟨g, -, hinf, hfin⟩ := hδ
   obtain v := (inferInstance : Nonempty (InfinitePlace X.B.I.F)).some
@@ -343,7 +337,7 @@ theorem fundamental_domain_of_compact_open (hKo : KCompactOpen) (hRB : NRatBridg
       have h2 := hL.2.1 _ hK2
       have : δ.2 = X.xu u * ((X.xu u)⁻¹ * δ.2 * X.xu u) * (X.xu u)⁻¹ := by group
       rw [this]
-      exact kset_mul X (kset_mul X hx h2) (kset_inv X hx)
+      exact Formalism.L2.SG.PoincareInHH.Cut.kset_mul X (Formalism.L2.SG.PoincareInHH.Cut.kset_mul X hx h2) (Formalism.L2.SG.PoincareInHH.Cut.kset_inv X hx)
     have hfinK : finHA X hb δ.2 ∈ KX X := (hBK X hb δ.2).1 hKs
     refine ⟨⟨⟨toHA X.B.I hb δ * γ, (Nsub _ _ _ _).mul_mem hγ'N hγN⟩,
       Subgroup.mem_comap.2 (Subgroup.mul_mem _ hγ'F hγF)⟩, ?_⟩

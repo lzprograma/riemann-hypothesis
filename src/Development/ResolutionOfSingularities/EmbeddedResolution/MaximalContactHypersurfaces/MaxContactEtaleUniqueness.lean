@@ -495,8 +495,8 @@ theorem exists_common_charts_of_isMaxContactHypersurface (A : X.IdealSheafData) 
       ∃ γ : ℕ → Option (Fin n'),
         (∀ i : ℕ, i < N.length → γ i = a' (i + 1)) ∧
         (∀ i : ℕ, ¬ i < N.length → γ i = none) :=
-    ⟨fun i => if i < N.length then a' (i + 1) else none, fun i hi => if_pos hi,
-      fun i hi => if_neg hi⟩
+    ⟨fun i => if i < N.length then a' (i + 1) else none, fun i hi => ite_eq_left hi,
+      fun i hi => ite_eq_right hi⟩
   have hγinj : LabelingInjective γ N.length := by
     intro i i' hi hi' j hj hj'
     rw [hγval i hi] at hj
@@ -583,7 +583,7 @@ theorem exists_common_charts_of_isMaxContactHypersurface (A : X.IdealSheafData) 
       chartPartialDeriv hV (c'.restrict hVU') j g ∉
         (hV.primeIdealOf ⟨x, hxV⟩).asIdeal :=
     exists_unlabeled_index_partialDeriv_notMem_primeIdealOf hV (c'.restrict hVU') hxV N γ
-      H₂ g hlab hγinj (hsnc₂'.2 x) hg hxH₂ hxN
+      H₂ g hlab (hsnc₂'.2 x) hg hxH₂ hxN
   have hjdpd' :
       chartPartialDeriv hV (c'.restrict hVU') jd g ∉ (hV.primeIdealOf ⟨x, hxV⟩).asIdeal := hjdpd
   obtain ⟨c'', hcj₀, hclab, hpd⟩ : ∃ c'' : EtaleChart p V n',

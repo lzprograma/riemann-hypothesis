@@ -10,55 +10,15 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHarmon
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LowestDegreeComponentInvariant
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKernelReal
 public import Mathlib.RingTheory.MvPolynomial
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockHarmonicHomogeneousOfKType
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockHarmonicsGradedCompactStable
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeights
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlBlockFiniteDimModuleStructure
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockToSchwartzIntertwinesMetaplecticQuadratic
-import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.LinearAlgebra.PiTensorProduct.Finite
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -157,21 +117,6 @@ theorem atPl_eq_zero_of_common {ι : Type} [Fintype ι] [DecidableEq ι] {V : Ty
   rw [contr_atPl, hv, map_zero, Function.update_eq_self] at h
   exact h.symm
 
-theorem atPl_sub_smul_one {ι : Type} [Fintype ι] [DecidableEq ι] {V : Type} [AddCommGroup V] [Module ℂ V]
-    (w : ι) (L : Module.End ℂ V) (c : ℂ) (T : ⨂[ℂ] _ : ι, V) :
-    GlobalTheory.RealLift.atPl (V := fun _ : ι => V) w (L - c • 1) T =
-      GlobalTheory.RealLift.atPl (V := fun _ : ι => V) w L T - c • T := by
-  have e1 : L - c • 1 = L + (-c) • (1 : Module.End ℂ V) := by rw [neg_smul, sub_eq_add_neg]
-  have e2 : GlobalTheory.RealLift.atPl (V := fun _ : ι => V) w (1 : Module.End ℂ V) = 1 := by
-    unfold GlobalTheory.RealLift.atPl
-    have : Function.update (fun i : ι => (LinearMap.id : V →ₗ[ℂ] V)) w (1 : Module.End ℂ V) =
-        fun _ => LinearMap.id := Function.update_eq_self_iff.2 rfl
-    rw [this, PiTensorProduct.map_id]; rfl
-  rw [e1]
-  unfold GlobalTheory.RealLift.atPl at e2 ⊢
-  rw [PiTensorProduct.map_update_add, PiTensorProduct.map_update_smul, e2]
-  simp [sub_eq_add_neg]
-
 end GlobalTheory.KFixIrr.TensProj
 
 namespace GlobalTheory.KFixIrr.TensProj
@@ -232,17 +177,7 @@ theorem exists_proj_of_graded {σ : Type} (K : Submodule ℂ (MvPolynomial σ �
 
 theorem homogeneousComponent_fockAct1 {P Q R S : ℕ} (X : Mat P Q) (hX : IsKC X) (n : ℕ) (f : Pol P Q R S) :
     homogeneousComponent n (fockAct1 P Q R S X f) = fockAct1 P Q R S X (homogeneousComponent n f) := by
-  classical
-  have hh : ∀ i, fockAct1 P Q R S X (homogeneousComponent i f) ∈ homogeneousSubmodule (Ix P Q × Ix R S) ℂ i :=
-    fun i => GlobalTheory.FockAlg.MinFirst.kStable_homog i X hX _ (homogeneousComponent_isHomogeneous i f)
-
-  conv_lhs => rw [← sum_homogeneousComponent f, map_sum, map_sum]
-  simp_rw [homogeneousComponent_of_mem (hh _)]
-  rw [Finset.sum_ite_eq]
-  split_ifs with h
-  · rfl
-  · have : f.totalDegree < n := by simp at h; omega
-    rw [homogeneousComponent_eq_zero _ _ this, map_zero]
+  apply _root_.GlobalTheory.FockAlg.MinFirst.comp_comm <;> assumption
 
 theorem homogeneousComponent_mem_chiOne {P Q R S : ℕ} (x : ℚ) (f : Pol P Q R S) (hf : f ∈ chiOne P Q R S x) (n : ℕ) :
     homogeneousComponent n f ∈ chiOne P Q R S x := by
@@ -255,68 +190,6 @@ end GlobalTheory.KFixIrr.TensProj
 namespace GlobalTheory.KFixIrr
 
 open MvPolynomial Formalism.BasicNotions.TH TensProj
-
-theorem mem_span_tprod_chiOne : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (P Q R S : ℕ) (x : ι → ℚ) (m : ℕ)
-    (T : ⨂[ℂ] _ : ι, Formalism.BasicNotions.TH.Pol P Q R S), T ∈ GlobalTheory.KFixIrr.chiPart ι P Q R S x ⊓ GlobalTheory.KFixIrr.degLE ι P Q R S m →
-    T ∈ Submodule.span ℂ {U | ∃ g : ι → Formalism.BasicNotions.TH.Pol P Q R S, (∀ w, g w ∈ GlobalTheory.KFixIrr.chiOne P Q R S (x w)) ∧
-      ∑ w, (g w).totalDegree ≤ m ∧ U = PiTensorProduct.tprod ℂ g} := by
-  intro ι _ _ P Q R S x m T hT
-  classical
-  obtain ⟨hchi, hdeg⟩ := Submodule.mem_inf.1 hT
-  have hex : ∀ w, ∃ p : Pol P Q R S →ₗ[ℂ] Pol P Q R S, (∀ f, p f ∈ chiOne P Q R S (x w)) ∧
-      (∀ f ∈ chiOne P Q R S (x w), p f = f) ∧ ∀ f, (p f).totalDegree ≤ f.totalDegree := fun w =>
-    exists_proj_of_graded _ (homogeneousComponent_mem_chiOne (x w))
-  choose p hpK hpid hpdeg using hex
-
-  have hfix : ∀ w, GlobalTheory.RealLift.atPl (V := fun _ : ι => Pol P Q R S) w (p w) T = T := by
-    intro w
-    have h0 := atPl_eq_zero_of_common w
-      {L | ∃ X : Mat P Q, IsKC X ∧ L = fockAct1 P Q R S X - ((x w : ℂ) * X.trace) • 1}
-      (p w - 1) (fun v hv => by
-        have hv' : v ∈ chiOne P Q R S (x w) := by
-          rw [mem_chiOne]
-          intro X hX
-          have := hv _ ⟨X, hX, rfl⟩
-          rwa [LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply, sub_eq_zero] at this
-        rw [LinearMap.sub_apply, Module.End.one_apply, hpid w v hv', sub_self])
-      T (by
-        rintro L ⟨X, hX, rfl⟩
-        rw [atPl_sub_smul_one, (mem_chiPart x T).1 hchi w X hX, sub_self])
-    have h1 := atPl_sub_smul_one w (p w) 1 T
-    simp only [one_smul] at h1
-    rw [h0] at h1
-    exact (sub_eq_zero.1 h1.symm)
-
-  have hmap : ∀ s : Finset ι,
-      PiTensorProduct.map (fun w => if w ∈ s then p w else (LinearMap.id : Pol P Q R S →ₗ[ℂ] Pol P Q R S)) T = T := by
-    intro s
-    induction s using Finset.induction_on with
-    | empty => simp [PiTensorProduct.map_id]
-    | insert a s ha ih =>
-      have e : (fun w => if w ∈ insert a s then p w else (LinearMap.id : Pol P Q R S →ₗ[ℂ] Pol P Q R S)) =
-          fun w => (Function.update (fun _ => (LinearMap.id : Pol P Q R S →ₗ[ℂ] Pol P Q R S)) a (p a) w) ∘ₗ
-            (if w ∈ s then p w else LinearMap.id) := by
-        funext w
-        by_cases hw : w = a
-        · subst hw
-          simp [ha]
-        · simp [hw]
-      rw [e, PiTensorProduct.map_comp, LinearMap.comp_apply, ih]
-      exact hfix a
-  have hT' : PiTensorProduct.map p T = T := by
-    have := hmap Finset.univ
-    simpa using this
-  rw [← hT']
-
-  have hle : degLE ι P Q R S m ≤ (Submodule.span ℂ {U | ∃ g : ι → Formalism.BasicNotions.TH.Pol P Q R S,
-      (∀ w, g w ∈ GlobalTheory.KFixIrr.chiOne P Q R S (x w)) ∧ ∑ w, (g w).totalDegree ≤ m ∧
-        U = PiTensorProduct.tprod ℂ g}).comap (PiTensorProduct.map p) := by
-    refine Submodule.span_le.2 ?_
-    rintro U ⟨f, hf, rfl⟩
-    simp only [SetLike.mem_coe, Submodule.mem_comap, PiTensorProduct.map_tprod]
-    exact Submodule.subset_span ⟨fun w => p w (f w), fun w => hpK w _,
-      (Finset.sum_le_sum fun w _ => hpdeg w (f w)).trans hf, rfl⟩
-  exact hle hdeg
 
 end GlobalTheory.KFixIrr
 
@@ -385,18 +258,6 @@ theorem map_wts {a : Mat p q →ₗ[ℂ] Module.End ℂ V} {b : Mat p q →ₗ[�
     rw [map_add]; exact add_mem hx hy
 
 end General
-
-section Constructions
-
-end Constructions
-
-section Max
-
-end Max
-
-section Main
-
-end Main
 
 end GlobalTheory.CommonQuot
 end -- clump:auto
@@ -492,15 +353,6 @@ theorem atPl_mul (w : ι) (L L' : Module.End ℂ V) :
   refine PiTensorProduct.ext (MultilinearMap.ext fun f => ?_)
   simp [atPl_tprod]
 
-theorem atPl_comm {w w' : ι} (h : w ≠ w') (L L' : Module.End ℂ V) (T : ⨂[ℂ] _ : ι, V) :
-    atPl (V := fun _ : ι => V) w L (atPl (V := fun _ : ι => V) w' L' T) =
-      atPl (V := fun _ : ι => V) w' L' (atPl (V := fun _ : ι => V) w L T) := by
-  induction T using PiTensorProduct.induction_on with
-  | smul_tprod r f =>
-    simp only [map_smul, atPl_tprod, Function.update_of_ne h, Function.update_of_ne h.symm]
-    rw [Function.update_comm h]
-  | add x y hx hy => simp only [map_add (f := _), hx, hy]
-
 def actAt {p q : ℕ} (a : Mat p q →ₗ[ℂ] Module.End ℂ V) (w : ι) : Mat p q →ₗ[ℂ] Module.End ℂ (⨂[ℂ] _ : ι, V) where
   toFun Z := atPl (V := fun _ : ι => V) w (a Z)
   map_add' Z Z' := by rw [map_add (f := _), GlobalTheory.RealLift.Main.atPl_add]
@@ -534,77 +386,11 @@ theorem actAt_wts {p q : ℕ} {a : Mat p q →ₗ[ℂ] Module.End ℂ V} (h : �
     exact GlobalTheory.CommonQuot.map_wts (intersection_update_fsHerm_neg_one f w) (fun Z v => (atPl_tprod_update f w (a Z) v).symm) (h _)
   | add x y hx hy => exact Submodule.add_mem _ hx hy
 
-theorem tensSpan_mono {H H' : ι → Submodule ℂ V} (h : ∀ w, H w ≤ H' w) : tensSpan H ≤ tensSpan H' :=
-  Submodule.span_mono fun _ ⟨f, hf, e⟩ => ⟨f, fun w => h w (hf w), e⟩
-
-theorem tensSpan_fin (H : ι → Submodule ℂ V) [∀ w, FiniteDimensional ℂ (H w)] : FiniteDimensional ℂ (tensSpan H) := by
-  have : tensSpan H ≤ LinearMap.range (PiTensorProduct.map fun w => (H w).subtype) := by
-    refine Submodule.span_le.2 ?_
-    rintro _ ⟨f, hf, rfl⟩
-    exact ⟨PiTensorProduct.tprod ℂ fun w => (⟨f w, hf w⟩ : H w), by rw [PiTensorProduct.map_tprod]; rfl⟩
-  exact Submodule.finiteDimensional_of_le this
-
-theorem atPl_tensSpan {H : ι → Submodule ℂ V} (w : ι) {L : Module.End ℂ V} (hL : ∀ v ∈ H w, L v ∈ H w)
-    {T : ⨂[ℂ] _ : ι, V} (hT : T ∈ tensSpan H) : atPl (V := fun _ : ι => V) w L T ∈ tensSpan H := by
-  refine (Submodule.span_le.2 ?_ : tensSpan H ≤ (tensSpan H).comap (atPl (V := fun _ : ι => V) w L)) hT
-  rintro _ ⟨f, hf, rfl⟩
-  simp only [SetLike.mem_coe, Submodule.mem_comap, atPl_tprod]
-  refine tprod_mem_tensSpan _ _ fun i => ?_
-  by_cases h : i = w
-  · subst h; simpa using hL _ (hf i)
-  · simpa [Function.update_of_ne h] using hf i
-
-theorem atPl_tensSpan_zero {H : ι → Submodule ℂ V} (w : ι) {L : Module.End ℂ V} (hL : ∀ v ∈ H w, L v = 0)
-    {T : ⨂[ℂ] _ : ι, V} (hT : T ∈ tensSpan H) : atPl (V := fun _ : ι => V) w L T = 0 := by
-  refine (Submodule.span_le.2 ?_ : tensSpan H ≤ LinearMap.ker (atPl (V := fun _ : ι => V) w L)) hT
-  rintro _ ⟨f, hf, rfl⟩
-  simp only [SetLike.mem_coe, LinearMap.mem_ker, atPl_tprod, hL _ (hf w)]
-  exact MultilinearMap.map_update_zero _ _ _
-
 theorem exists_proj (A : Submodule ℂ V) : ∃ π : Module.End ℂ V, (∀ v, π v ∈ A) ∧ ∀ v ∈ A, π v = v := by
   obtain ⟨g, hg⟩ := LinearMap.exists_leftInverse_of_injective A.subtype (Submodule.ker_subtype _)
   refine ⟨A.subtype ∘ₗ g, fun v => (g v).2, fun v hv => ?_⟩
   have := congrArg (fun h => ((h ⟨v, hv⟩ : A) : V)) hg
   simpa using this
-
-theorem mem_tensSpan_of_killed (F : ι → Set (Module.End ℂ V)) (A : ι → Submodule ℂ V)
-    (hA : ∀ w v, (∀ L ∈ F w, L v = 0) → v ∈ A w) (T : ⨂[ℂ] _ : ι, V)
-    (hT : ∀ w, ∀ L ∈ F w, atPl (V := fun _ : ι => V) w L T = 0) : T ∈ tensSpan A := by
-  choose p hpK hpid using fun w => exists_proj (A w)
-  have hfix : ∀ w, atPl (V := fun _ : ι => V) w (p w) T = T := by
-    intro w
-    have h0 := TensProj.atPl_eq_zero_of_common w (F w) (p w - 1) (fun v hv => by
-        rw [LinearMap.sub_apply, Module.End.one_apply, hpid w v (hA w v hv), sub_self]) T (hT w)
-    have h1 := TensProj.atPl_sub_smul_one w (p w) 1 T
-    simp only [one_smul] at h1
-    rw [h0] at h1
-    exact (sub_eq_zero.1 h1.symm)
-  have hmap : ∀ s : Finset ι,
-      PiTensorProduct.map (fun w => if w ∈ s then p w else (LinearMap.id : V →ₗ[ℂ] V)) T = T := by
-    intro s
-    induction s using Finset.induction_on with
-    | empty => simp [PiTensorProduct.map_id]
-    | insert a s ha ih =>
-      have e : (fun w => if w ∈ insert a s then p w else (LinearMap.id : V →ₗ[ℂ] V)) =
-          fun w => (Function.update (fun _ => (LinearMap.id : V →ₗ[ℂ] V)) a (p a) w) ∘ₗ
-            (if w ∈ s then p w else LinearMap.id) := by
-        funext w
-        by_cases hw : w = a
-        · subst hw
-          simp [ha]
-        · simp [hw]
-      rw [e, PiTensorProduct.map_comp, LinearMap.comp_apply, ih]
-      exact hfix a
-  have hT' : PiTensorProduct.map p T = T := by
-    have := hmap Finset.univ
-    simpa using this
-  rw [← hT']
-  clear hT' hmap hfix hT
-  induction T using PiTensorProduct.induction_on with
-  | smul_tprod r f =>
-    rw [map_smul, PiTensorProduct.map_tprod]
-    exact Submodule.smul_mem _ _ (tprod_mem_tensSpan _ _ fun w => hpK w _)
-  | add x y hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
 
 end Tensor
 
@@ -624,198 +410,13 @@ theorem deg_le_of_harm {μ : Ix R S → ℚ} {f : Formalism.BasicNotions.TH.Pol 
   rw [mem_homogeneousSubmodule] at hhom
   rw [← hd, Nat.floor_natCast, hhom.totalDegree hne]
 
-theorem le_deg_of_hw {μ : Ix R S → ℚ} {f : Formalism.BasicNotions.TH.Pol P Q R S} (hf : IsHW (fockAct2 P Q R S) μ f) :
-    ⌊degW (cPair P Q) μ⌋₊ ≤ f.totalDegree := by
-  classical
-  obtain ⟨α, hα⟩ := (MvPolynomial.ne_zero_iff).1 hf.1
-  have hmem := (GlobalTheory.CommonQuot.mem_hwSub' _ _ _).1 hf.2
-  have e2 : ∀ c : Ix R S, (∑ a, lineSign a c * (((α (a, c) : ℕ) : ℂ) + 1 / 2)) = (μ c : ℂ) := by
-    intro c
-    have h := hmem.1 c
-    rw [sub_eq_zero] at h
-    have hd : ∀ g : Formalism.BasicNotions.TH.Pol P Q R S, AddMonoidAlgebra.coeff (fockAct2 P Q R S (Eab c c) g) α =
-        (∑ a, lineSign a c * (((α (a, c) : ℕ) : ℂ) + 1 / 2)) * AddMonoidAlgebra.coeff g α := by
-      intro g
-      induction g using MvPolynomial.induction_on' with
-      | monomial β z =>
-        have : monomial β z = z • (monomial β (1 : ℂ)) := by rw [smul_monomial, smul_eq_mul, mul_one]
-        rw [this, map_smul, cartan2, MvPolynomial.coeff_smul, MvPolynomial.coeff_smul, MvPolynomial.coeff_smul, coeff_monomial]
-        by_cases h : β = α
-        · subst h; simp only [if_true, smul_eq_mul]; ring
-        · simp [h]
-      | add p q hp hq => rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
-    have h' := hd f
-    rw [h, MvPolynomial.coeff_smul, smul_eq_mul] at h'
-    exact (mul_right_cancel₀ hα h').symm
-  have col : ∀ c : Ix R S, |shiftNu (cPair P Q) μ c| ≤ ∑ a, (α (a, c) : ℚ) := by
-    intro c
-    have h := e2 c
-    have n1 : (0 : ℚ) ≤ ∑ i : Fin P, (α (.inl i, c) : ℚ) := Finset.sum_nonneg fun _ _ => Nat.cast_nonneg _
-    have n2 : (0 : ℚ) ≤ ∑ j : Fin Q, (α (.inr j, c) : ℚ) := Finset.sum_nonneg fun _ _ => Nat.cast_nonneg _
-    rw [Fintype.sum_sum_type]
-    rcases c with k | l
-    · simp only [Fintype.sum_sum_type, lineSign, one_mul, neg_one_mul, Finset.sum_neg_distrib, Finset.sum_add_distrib,
-        Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] at h
-      have h' : ((∑ i' : Fin P, (α (.inl i', .inl k) : ℚ) - ∑ j' : Fin Q, (α (.inr j', .inl k) : ℚ) + P / 2 - Q / 2 : ℚ) : ℂ) =
-          (μ (.inl k) : ℂ) := by
-        push_cast; rw [← h]; ring
-      have h'' := Rat.cast_injective h'
-      simp only [shiftNu, cPair]
-      exact abs_le.2 ⟨by linarith, by linarith⟩
-    · simp only [Fintype.sum_sum_type, lineSign, one_mul, neg_one_mul, Finset.sum_neg_distrib, Finset.sum_add_distrib,
-        Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] at h
-      have h' : ((∑ j' : Fin Q, (α (.inr j', .inr l) : ℚ) - ∑ i' : Fin P, (α (.inl i', .inr l) : ℚ) - P / 2 + Q / 2 : ℚ) : ℂ) =
-          (μ (.inr l) : ℂ) := by
-        push_cast; rw [← h]; ring
-      have h'' := Rat.cast_injective h'
-      simp only [shiftNu, cPair]
-      exact abs_le.2 ⟨by linarith, by linarith⟩
-  have tot : degW (cPair P Q) μ ≤ (f.totalDegree : ℚ) := by
-    calc degW (cPair P Q) μ ≤ ∑ c, ∑ a, (α (a, c) : ℚ) := Finset.sum_le_sum fun c _ => col c
-      _ = ((α.sum fun _ e => e : ℕ) : ℚ) := by
-        rw [Finsupp.sum_fintype _ _ (fun _ => rfl), Fintype.sum_prod_type_right]; push_cast; rfl
-      _ ≤ _ := by exact_mod_cast le_totalDegree (mem_support_iff.2 hα)
-  exact Nat.floor_le_of_le tot
-
 theorem stable_restrict (d : ℕ) : KStable (fockAct2 P Q R S) (restrictTotalDegree (Ln P Q R S) ℂ d) := fun Z hZ f hf => by
   rw [mem_restrictTotalDegree] at hf ⊢
   exact (LowStable.mem_nonRaising.1 (LowStable.fockAct2_mem Z hZ) f).trans hf
 
 variable {ι : Type} [Fintype ι] [DecidableEq ι]
 
-theorem stable_degLE (m : ℕ) (w : ι) : KStable (actAt (fockAct2 P Q R S) w) (degLE ι P Q R S m) := fun Z hZ T hT => by
-  refine (Submodule.span_le.2 ?_ : degLE ι P Q R S m ≤ (degLE ι P Q R S m).comap (actAt (fockAct2 P Q R S) w Z)) hT
-  rintro _ ⟨f, hf, rfl⟩
-  simp only [SetLike.mem_coe, Submodule.mem_comap, actAt_apply, atPl_tprod]
-  refine tprod_mem_degLE _ ((Finset.sum_le_sum fun i _ => ?_).trans hf)
-  by_cases h : i = w
-  · subst h; simpa using LowStable.mem_nonRaising.1 (LowStable.fockAct2_mem Z hZ) (f i)
-  · simp [Function.update_of_ne h]
-
 variable {Z : Type} [AddCommGroup Z] [Module ℂ Z]
-
-theorem exists_harm (q : (⨂[ℂ] _ : ι, Formalism.BasicNotions.TH.Pol P Q R S) →ₗ[ℂ] Z)
-    (h1 : ∀ w (X : Mat P Q), IsPC X → ∀ T, q (actAt (fockAct1 P Q R S) w X T) = 0) (T : ⨂[ℂ] _ : ι, Formalism.BasicNotions.TH.Pol P Q R S) :
-    ∃ W : Submodule ℂ (⨂[ℂ] _ : ι, Formalism.BasicNotions.TH.Pol P Q R S), FiniteDimensional ℂ W ∧
-      (∀ w, KStable (actAt (fockAct2 P Q R S) w) W) ∧ W ≤ tensSpan (fun _ => Submodule.span ℂ (harm2 P Q R S)) ∧
-      ∃ T' ∈ W, q T' = q T := by
-  induction T using PiTensorProduct.induction_on with
-  | smul_tprod r f =>
-    have key : ∀ s : Finset ι, ∃ g : ι → Formalism.BasicNotions.TH.Pol P Q R S, (∀ w ∈ s, g w ∈ harm2 P Q R S) ∧
-        q (PiTensorProduct.tprod ℂ g) = q (PiTensorProduct.tprod ℂ f) := by
-      intro s
-      induction s using Finset.induction_on with
-      | empty => exact ⟨f, by simp, rfl⟩
-      | insert w s hws ih =>
-        obtain ⟨g, hg, e⟩ := ih
-        obtain ⟨h, hh, e'⟩ := _root_.GlobalTheory.FockAlg.HarmLift.exists_harm2_rep P Q R S Z (q ∘ₗ intersection_update_fsHerm_neg_one g w) (fun X hX v => by
-          rw [LinearMap.comp_apply, ← atPl_tprod_update]; exact h1 w X hX _) (g w)
-        refine ⟨Function.update g w h, fun i hi => ?_, ?_⟩
-        · by_cases hiw : i = w
-          · subst hiw; simpa using hh
-          · rw [Function.update_of_ne hiw]; exact hg i ((Finset.mem_insert.1 hi).resolve_left hiw)
-        · rw [← e, ← position_self g w, ← position_apply]; exact e'
-    obtain ⟨g, hg, e⟩ := key Finset.univ
-    choose H fH hH hHh _ sH using fun w => _root_.GlobalTheory.FockAlg.fin_harm P Q R S (g w) (hg w (Finset.mem_univ w))
-    refine ⟨tensSpan H, tensSpan_fin H, fun w Y hY T hT => atPl_tensSpan w (sH w Y hY) hT,
-      tensSpan_mono fun w v hv => Submodule.subset_span (hHh w v hv), r • PiTensorProduct.tprod ℂ g,
-      Submodule.smul_mem _ _ (tprod_mem_tensSpan _ _ hH), by rw [map_smul, map_smul, e]⟩
-  | add x y hx hy =>
-    obtain ⟨W, fW, sW, hW, T, hT, e⟩ := hx
-    obtain ⟨W', fW', sW', hW', T', hT', e'⟩ := hy
-    exact ⟨W ⊔ W', inferInstance, fun w => GlobalTheory.BlockReps.stable_sup (sW w) (sW' w), sup_le hW hW', T + T',
-      Submodule.add_mem_sup hT hT', by rw [map_add (f := _), map_add (f := _), e, e']⟩
-
-theorem mem_degLE_of_hw (μ : ι → Ix R S → ℚ) (T : ⨂[ℂ] _ : ι, Formalism.BasicNotions.TH.Pol P Q R S)
-    (hT : T ∈ tensSpan (fun _ : ι => Submodule.span ℂ (harm2 P Q R S)))
-    (hw : ∀ w, T ∈ hwSub (actAt (fockAct2 P Q R S) w) (μ w)) :
-    T ∈ degLE ι P Q R S (∑ w, ⌊degW (cPair P Q) (μ w)⌋₊) := by
-  obtain ⟨π, hπ, hπ'⟩ := exists_proj (Submodule.span ℂ (harm2 P Q R S))
-  have hs : (Submodule.span ℂ (harm2 P Q R S) : Set _) = harm2 P Q R S :=
-    (GlobalTheory.FockAlg.harm_graded_stable P Q R S _ (Or.inr (Or.inl rfl))).1
-  have h := mem_tensSpan_of_killed
-    (fun w => {L | L = π - 1 ∨ (∃ c, L = fockAct2 P Q R S (Eab c c) - ((μ w c : ℚ) : ℂ) • 1) ∨
-      ∃ c d, posC c d ∧ L = fockAct2 P Q R S (Eab c d)})
-    (fun w => restrictTotalDegree (Ln P Q R S) ℂ ⌊degW (cPair P Q) (μ w)⌋₊) (fun w v hv => by
-      rw [mem_restrictTotalDegree]
-      refine deg_le_of_harm ?_ ((GlobalTheory.CommonQuot.mem_hwSub' _ _ _).2 ⟨fun c => ?_, fun c d hcd => ?_⟩)
-      · have := hv _ (Or.inl rfl)
-        rw [LinearMap.sub_apply, Module.End.one_apply, sub_eq_zero] at this
-        rw [← hs, ← this]; exact hπ v
-      · exact hv _ (Or.inr (Or.inl ⟨c, rfl⟩))
-      · exact hv _ (Or.inr (Or.inr ⟨c, d, hcd, rfl⟩))) T (by
-      rintro w L (rfl | ⟨c, rfl⟩ | ⟨c, d, hcd, rfl⟩)
-      · exact atPl_tensSpan_zero w (fun v hv => by
-          rw [LinearMap.sub_apply, Module.End.one_apply, hπ' v hv, sub_self]) hT
-      · rw [TensProj.atPl_sub_smul_one]
-        exact ((GlobalTheory.CommonQuot.mem_hwSub' _ _ _).1 (hw w)).1 c
-      · exact ((GlobalTheory.CommonQuot.mem_hwSub' _ _ _).1 (hw w)).2 c d hcd)
-  refine (Submodule.span_le.2 ?_ : tensSpan _ ≤ degLE ι P Q R S _) h
-  rintro _ ⟨f, hf, rfl⟩
-  exact tprod_mem_degLE f (Finset.sum_le_sum fun w _ => (mem_restrictTotalDegree _ _ _).1 (hf w))
-
-theorem map_mem_degLE (q : (⨂[ℂ] _ : ι, Formalism.BasicNotions.TH.Pol P Q R S) →ₗ[ℂ] Z) (hq : Function.Surjective q)
-    (h1 : ∀ w (X : Mat P Q), IsPC X → ∀ T, q (actAt (fockAct1 P Q R S) w X T) = 0)
-    (h2 : ∀ w, KStable (actAt (fockAct2 P Q R S) w) (LinearMap.ker q)) (m : ℕ) (A : Z →ₗ[ℂ] Z)
-    (hA : ∀ w (Y : Mat R S), IsKC Y → ∀ T ∈ degLE ι P Q R S m, ∀ T', A (q T) = q T' →
-      A (q (actAt (fockAct2 P Q R S) w Y T)) = q (actAt (fockAct2 P Q R S) w Y T')) :
-    ∀ T ∈ degLE ι P Q R S m, A (q T) ∈ (degLE ι P Q R S m).map q := by
-  let G : Submodule ℂ (⨂[ℂ] _ : ι, Formalism.BasicNotions.TH.Pol P Q R S) :=
-    degLE ι P Q R S m ⊓ ((degLE ι P Q R S m).map q).comap (A ∘ₗ q)
-  have sG : ∀ w, KStable (actAt (fockAct2 P Q R S) w) G := by
-    rintro w Y hY T ⟨hT, T', hT', e⟩
-    exact ⟨stable_degLE m w Y hY T hT, _, stable_degLE m w Y hY T' hT', (hA w Y hY T hT T' e.symm).symm⟩
-  have base : ∀ f : ι → Formalism.BasicNotions.TH.Pol P Q R S, ∑ w, (f w).totalDegree ≤ m →
-      (∀ w, ∃ μ, IsHW (fockAct2 P Q R S) μ (f w)) → PiTensorProduct.tprod ℂ f ∈ G := by
-    intro f hf hhw
-    choose μ hμ using hhw
-    have hT := tprod_mem_degLE f hf
-    refine ⟨hT, ?_⟩
-    have hj : ∀ w, PiTensorProduct.tprod ℂ f ∈ hwSub (actAt (fockAct2 P Q R S) w) (μ w) := fun w => by
-      rw [← position_self f w]
-      exact GlobalTheory.CommonQuot.map_hw (intersection_update_fsHerm_neg_one f w) (fun Y v => (atPl_tprod_update f w _ v).symm) (hμ w).2
-    obtain ⟨T0, e0⟩ := hq (A (q (PiTensorProduct.tprod ℂ f)))
-    obtain ⟨W, fW, sW, hW, T1, hT1, e1⟩ := exists_harm q h1 T0
-    have e : A (q (PiTensorProduct.tprod ℂ f)) = q T1 := by rw [e1, e0]
-    obtain ⟨T2, hT2, hd, hhw⟩ := joint_lift (actAt (fockAct2 P Q R S))
-      (actAt_lie GlobalTheory.FockAlg.MinFirst.kLie2) (actAt_wts GlobalTheory.FockAlg.MinFirst.wts2)
-      (fun w w' h Y Y' v => atPl_comm h _ _ v) W (LinearMap.ker q) sW h2 μ T1 hT1
-      (fun w c => by
-        rw [LinearMap.mem_ker, map_sub, map_smul, ← hA w _ (GlobalTheory.CommonQuot.isKC_diag' c) _ hT T1 e, ← e, ← map_smul,
-          ← map_sub, ← map_smul, ← map_sub, ((GlobalTheory.CommonQuot.mem_hwSub' _ _ _).1 (hj w)).1 c, map_zero, map_zero])
-      (fun w c d hcd => by
-        rw [LinearMap.mem_ker, ← hA w _ (GlobalTheory.CommonQuot.isKC_pos' hcd) _ hT T1 e,
-          ((GlobalTheory.CommonQuot.mem_hwSub' _ _ _).1 (hj w)).2 c d hcd, map_zero, map_zero])
-    refine ⟨T2, degLE_mono ((Finset.sum_le_sum fun w _ => le_deg_of_hw (hμ w)).trans hf)
-      (mem_degLE_of_hw μ T2 (hW hT2) hhw), ?_⟩
-    rw [LinearMap.mem_ker, map_sub, sub_eq_zero] at hd
-    rw [LinearMap.comp_apply, e, hd]
-  have key : ∀ s : Finset ι, ∀ f : ι → Formalism.BasicNotions.TH.Pol P Q R S, ∑ w, (f w).totalDegree ≤ m →
-      (∀ w ∉ s, ∃ μ, IsHW (fockAct2 P Q R S) μ (f w)) → PiTensorProduct.tprod ℂ f ∈ G := by
-    intro s
-    induction s using Finset.induction_on with
-    | empty => exact fun f hf h => base f hf fun w => h w (by simp)
-    | insert w s hws ih =>
-      intro f hf h
-      have hle := GlobalTheory.BlockReps.le_of_hw (act := fockAct2 P Q R S) GlobalTheory.FockAlg.MinFirst.kLie2
-        (stable_restrict (f w).totalDegree) (fun v _ => GlobalTheory.FockAlg.MinFirst.wts2 v) (S := G.comap (intersection_update_fsHerm_neg_one f w))
-        (fun Y hY v hv => by
-          rw [Submodule.mem_comap, ← atPl_tprod_update]; exact sG w Y hY _ hv)
-        (fun μ v hv hhw => by
-          rw [Submodule.mem_comap, position_apply]
-          refine ih _ ((Finset.sum_le_sum fun i _ => ?_).trans hf) fun i hi => ?_
-          · by_cases hiw : i = w
-            · subst hiw; simpa using (mem_restrictTotalDegree _ _ _).1 hv
-            · simp [Function.update_of_ne hiw]
-          · by_cases hiw : i = w
-            · subst hiw; exact ⟨μ, by simpa using hhw⟩
-            · rw [Function.update_of_ne hiw]; exact h i (by simp [hiw, hi]))
-      rw [← position_self f w]
-      exact hle ((mem_restrictTotalDegree _ _ _).2 le_rfl)
-  intro T hT
-  refine ((Submodule.span_le.2 ?_ : degLE ι P Q R S m ≤ G) hT).2
-  rintro _ ⟨f, hf, rfl⟩
-  exact key Finset.univ f hf fun w hw => absurd (Finset.mem_univ w) hw
 
 end Fock
 

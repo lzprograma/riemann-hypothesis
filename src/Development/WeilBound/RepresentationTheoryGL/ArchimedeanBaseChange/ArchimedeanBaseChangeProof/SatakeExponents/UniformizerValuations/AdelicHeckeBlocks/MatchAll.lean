@@ -25,53 +25,10 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwistedTraceF
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
 import GroundTheory.LocalFields.PadicLogSeries
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import GroundTheory.AutomorphicForms.GLnLocal
 import GroundTheory.LocalFields.LocalFourierHaar
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Separation.Connected
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.IsCompactMaximalPairPlace
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LocalOperatorSums.LocOp3
 
@@ -88,8 +45,6 @@ noncomputable section
 open NumberField IsDedekindDomain
 open GlobalTheory.BCT GlobalTheory.UnitaryBC PositivityTheory.Rg.Bc.ArchbcB.B
 open scoped Classical
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.CompanionTheory.LeviMatchingAssembly
 
@@ -129,9 +84,9 @@ theorem tr_bad (d : LocData E n) (hd : d.Ok) {a : ℕ} (ha : a ≤ n) {w : Pl E}
   have e : ((d.fixL a).mul (pw (d.betaL a ha) m)).tr d.P d.one w =
       PositivityTheory.Rg.BcN.F2.mconv (d.fix a w) ((pw (d.betaL a ha) m).s w) := by
     unfold LM.tr
-    rw [if_neg hP]
+    rw [ite_eq_right hP]
     show PositivityTheory.Rg.BcN.F2.mconv (if w ∈ d.Bad then d.fix a w else idem (d.lev a w)) _ = _
-    rw [if_pos hw]
+    rw [ite_eq_left hw]
   rw [e, stabilizerDilationWeights_dualIsotropicVector d hd ha hT hw' m]
   exact GlobalTheory.CompanionTheory.FmPowP.mconv_idem_right ho hle _ fun u hu g => ((hd.fix a ha w hw).2 u hu g).2
 
@@ -157,10 +112,6 @@ theorem bad_inert (hI : MB.MatchBadI) (hU : Unr E) (d : LocData E n) (hd : d.Ok)
   rw [tr_bad d hd ha hw, gU_bad d hd hw, hf a ha]
   exact hI E hU w hs n a (n - a) k (Nat.add_sub_cancel' ha) hk _ hl hc _
 
-theorem mconv_mul_mul {a b : ℕ} {w : Pl E} (r s : ℂ) (u v : GLw a w × GLw b w → ℂ) :
-    mconv (fun y => r * u y) (fun y => s * v y) = fun y => (r * s) * mconv u v y :=
-  GlobalTheory.CompanionTheory.MatchLMPlaces.mconv_mul_mul r s u v
-
 theorem mconv_left {a b : ℕ} {w : Pl E} {u v : GLw a w × GLw b w → ℂ} {l : GLw a w × GLw b w}
     (hu : ∀ m, u (l * m) = u m) (m : GLw a w × GLw b w) : mconv u v (l * m) = mconv u v m := by
   unfold mconv
@@ -169,19 +120,15 @@ theorem mconv_left {a b : ℕ} {w : Pl E} {u v : GLw a w × GLw b w → ℂ} {l 
   funext z
   rw [hu, mul_inv_rev, mul_assoc, inv_mul_cancel_left]
 
-theorem tr_one (d : LocData E n) {a : ℕ} (L : LM d.kap a (n - a)) {w : Pl E} (hw : w ∈ d.P) :
-    L.tr d.P d.one w = ∑ x, L.m w x x :=
-  GlobalTheory.CompanionTheory.MatchLMB2.tr_one d L hw
-
 theorem sum_diag (d : LocData E n) {a : ℕ} {w : Pl E} (f g : d.kap w → LF a (n - a) w) (x : d.kap w) :
     ∑ z, mconv (d.diag f x z) (g z) = mconv (f x) (g x) := by
   refine (Finset.sum_eq_single x ?_ ?_).trans ?_
   · intro z _ hz
-    have h : d.diag f x z = 0 := if_neg (Ne.symm hz)
+    have h : d.diag f x z = 0 := ite_eq_right (Ne.symm hz)
     rw [h]
     exact GlobalTheory.CompanionTheory.FmPowP.mconv_zero_left _
   · simp
-  · have h : d.diag f x x = f x := if_pos rfl
+  · have h : d.diag f x x = f x := ite_eq_left rfl
     rw [h]
 
 section S0
@@ -248,7 +195,7 @@ theorem mackey_powers_at_S0 (hT : w ∉ d.T) (hS : w ∈ d.S₀) (k : ℕ) (x y 
           mconv (phi3 (Nat.add_sub_of_le ha) w (d.e w) x.1.2 z.1.2)
             (MS.mpow (d.X w) (phi3 (Nat.add_sub_of_le ha) w (d.e w)) k z.1.2 y.1.2) m) := fun z => by
       rw [mackey_matrix_at_S0 d ha hT, ih]
-      have e := congrFun (mconv_mul_mul (w := w) ((d.X w).card : ℂ)⁻¹ ((d.X w).card : ℂ)⁻¹
+      have e := congrFun (GlobalTheory.CompanionTheory.MatchLMPlaces.mconv_mul_mul (w := w) ((d.X w).card : ℂ)⁻¹ ((d.X w).card : ℂ)⁻¹
         (fun m => chi d a w m * phi3 (Nat.add_sub_of_le ha) w (d.e w) x.1.2 z.1.2 m)
         (fun m => chi d a w m * MS.mpow (d.X w) (phi3 (Nat.add_sub_of_le ha) w (d.e w)) k z.1.2 y.1.2 m)) m
       rw [e, GlobalTheory.CompanionTheory.CtMulSplit.mconv_twist _ (chi_ne d) (chi_mul d)]
@@ -293,14 +240,14 @@ theorem trace_at_S0_matches (hd : d.Ok) (hT : w ∉ d.T) (hS : w ∈ d.S₀) (m 
         MS.mpow (d.X w) (phi3 (Nat.add_sub_of_le ha) w (d.e w)) m x.1.2 x.1.2 y)) := fun x => by
     have hf : (d.fixL a).m w = d.diag (fun _ y => d.sgn a w * idem (d.L a w) y) := by
       show d.diag (fun _ => if w ∈ d.T then idem (d.lev a w) else d.sgn a w • idem (d.lev a w)) = _
-      simp only [if_neg hT, hl]
+      simp only [ite_eq_right hT, hl]
       rfl
     have e1 : ((d.fixL a).mul (pw (d.betaL a ha) m)).m w x x =
         mconv (fun y => d.sgn a w * idem (d.L a w) y) ((pw (d.betaL a ha) m).m w x x) := by
       show ∑ z, mconv ((d.fixL a).m w x z) ((pw (d.betaL a ha) m).m w z x) = _
       rw [hf]
       exact sum_diag d _ (fun z => (pw (d.betaL a ha) m).m w z x) x
-    have e2 := mconv_mul_mul (w := w) (d.sgn a w) 1 (idem (d.L a w)) ((pw (d.betaL a ha) m).m w x x)
+    have e2 := GlobalTheory.CompanionTheory.MatchLMPlaces.mconv_mul_mul (w := w) (d.sgn a w) 1 (idem (d.L a w)) ((pw (d.betaL a ha) m).m w x x)
     simp only [one_mul, mul_one] at e2
     have hinv : ∀ u ∈ d.L a w, ∀ g, (pw (d.betaL a ha) m).m w x x (u * g) = (pw (d.betaL a ha) m).m w x x g := by
       intro u hu g
@@ -317,7 +264,7 @@ theorem trace_at_S0_matches (hd : d.Ok) (hT : w ∉ d.T) (hS : w ∈ d.S₀) (m 
     rw [e1, e2, e3]
     funext y
     rw [mackey_powers_at_S0 d ha hT hS]
-  rw [tr_one d _ hP]
+  rw [GlobalTheory.CompanionTheory.MatchLMB2.tr_one d _ hP]
   funext y
   rw [Finset.sum_apply]
   simp only [hent]
@@ -388,30 +335,8 @@ abbrev cc (d : LocData E n) (w : Pl E) : ↥(d.c w).support → ℂ := fun j => 
 
 abbrev xx (d : LocData E n) (w : Pl E) : ↥(d.c w).support → Fin n → ℤ := fun j => j.1
 
-theorem qT_eq (s : Finset (Fin (n / 2))) :
-    d.qT a w s = fun y => (((Tail.I2 a (n - a) w).relIndex (K2 a (n - a) w) : ℕ) : ℂ) *
-      MT.entT n w (d.ϖ w) a (cc d w) (xx d w) s y := by
-  funext y
-  unfold LocData.qT MT.entT
-  by_cases h : LocData.admitted n a s
-  · have h' : MT.admitted n a s := ⟨h.1.1, h.1.2.1, h.1.2.2, h.2.1, h.2.2⟩
-    rw [dite_eq_left h, dite_eq_left h', Finsupp.sum, Finset.mul_sum, ← Finset.sum_coe_sort (d.c w).support]
-    refine Finset.sum_congr rfl fun j _ => ?_
-    unfold Tail.dc2
-    ring
-  · have h' : ¬ MT.admitted n a s := fun h' => h ⟨⟨h'.1, h'.2.1, h'.2.2.1⟩, h'.2.2.2.1, h'.2.2.2.2⟩
-    rw [dite_eq_right h, dite_eq_right h', mul_zero]
-
-theorem mpow_scale {b : ℕ} (r : ℂ) (u : GLw a w × GLw b w → ℂ) (k : ℕ) :
-    MT.mpow w (fun y => r * u y) k = fun y => r ^ k * MT.mpow w u k y :=
-  GlobalTheory.CompanionTheory.MatchLMPlaces.mpow_scale r u k
-
-theorem lpow_scale (K : Subgroup (UL n w)) (r : ℂ) (g : UL n w → ℂ) (k : ℕ) :
-    lpow K (fun y => r * g y) k = fun y => r ^ k * lpow K g k y :=
-  GlobalTheory.CompanionTheory.MatchLMPlaces.lpow_scale K r g k
-
 theorem qT_hecke (s : Finset (Fin (n / 2))) : IsHecke (Tail.I2 a (n - a) w) (d.qT a w s) := by
-  rw [qT_eq]
+  rw [GlobalTheory.CompanionTheory.MatchLMPlaces.qT_eq]
   exact GlobalTheory.CompanionTheory.MatchPow.isHecke_const_mul _ (GlobalTheory.CompanionTheory.MatchPow.entT_hecke n w _ a _ _ s)
 
 theorem beta_m_alt (hT : w ∈ d.T) : (d.betaL a ha).m w = d.diag (fun x => d.qT a w x.1.1) := by
@@ -419,25 +344,8 @@ theorem beta_m_alt (hT : w ∈ d.T) : (d.betaL a ha).m w = d.diag (fun x => d.qT
   simp [LocData.betaL, hT]
 
 theorem powers_diagonal_at_T (hT : w ∈ d.T) (k : ℕ) (x y : d.kap w) :
-    (pw (d.betaL a ha) k).m w x y = d.diag (fun x => MT.mpow w (d.qT a w x.1.1) (k + 1)) x y := by
-  induction k generalizing x y with
-  | zero =>
-    have h1 : ∀ s, MT.mpow w (d.qT a w s) 1 = d.qT a w s := fun s =>
-      GlobalTheory.CompanionTheory.FmPowP.mconv_idem_right (GlobalTheory.CompanionTheory.MatchPow.iwahori_pair_open a (n - a) w) (GlobalTheory.CompanionTheory.MatchPow.iwahori_pair_le_maximal a (n - a) w) _
-        fun u hu g => ((qT_hecke d s).2 u hu g).2
-    show (d.betaL a ha).m w x y = _
-    rw [beta_m_alt d ha hT]
-    simp only [zero_add, h1]
-  | succ k ih =>
-    show ∑ z, mconv ((d.betaL a ha).m w x z) ((pw (d.betaL a ha) k).m w z y) = _
-    rw [beta_m_alt d ha hT, sum_diag d _ (fun z => (pw (d.betaL a ha) k).m w z y), ih]
-    by_cases h : x = y
-    · have e1 : ∀ f : d.kap w → LF a (n - a) w, d.diag f x y = f x := fun f => if_pos h
-      rw [e1, e1]
-      rfl
-    · have e1 : ∀ f : d.kap w → LF a (n - a) w, d.diag f x y = 0 := fun f => if_neg h
-      rw [e1, e1]
-      exact GlobalTheory.CompanionTheory.FmPowP.mconv_zero_right _
+    (pw (d.betaL a ha) k).m w x y = d.diag (fun x => MT.mpow w (d.qT a w x.1.1) (k + 1)) x y :=
+  by apply _root_.GlobalTheory.CompanionTheory.MatchLMB2.powers_diagonal_at_T_block; assumption
 
 theorem trace_test_function_eq (hT : w ∈ d.T) (m : ℕ)
     (hH : ∀ s, ∀ u ∈ Tail.I2 a (n - a) w, ∀ g, MT.mpow w (d.qT a w s) (m + 1) (u * g) = MT.mpow w (d.qT a w s) (m + 1) g) :
@@ -446,30 +354,18 @@ theorem trace_test_function_eq (hT : w ∈ d.T) (m : ℕ)
   have hl : d.lev a w = Tail.I2 a (n - a) w := by simp [LocData.lev, hT]
   have hf : (d.fixL a).m w = d.diag (fun _ => idem (Tail.I2 a (n - a) w)) := by
     show d.diag (fun _ => if w ∈ d.T then idem (d.lev a w) else d.sgn a w • idem (d.lev a w)) = _
-    simp only [if_pos hT, hl]
+    simp only [ite_eq_left hT, hl]
   have hent : ∀ x : d.kap w, ((d.fixL a).mul (pw (d.betaL a ha) m)).m w x x = MT.mpow w (d.qT a w x.1.1) (m + 1) := fun x => by
     show ∑ z, mconv ((d.fixL a).m w x z) ((pw (d.betaL a ha) m).m w z x) = _
     rw [hf, sum_diag d _ (fun z => (pw (d.betaL a ha) m).m w z x), powers_diagonal_at_T d ha hT]
-    have e1 : ∀ f : d.kap w → LF a (n - a) w, d.diag f x x = f x := fun f => if_pos rfl
+    have e1 : ∀ f : d.kap w → LF a (n - a) w, d.diag f x x = f x := fun f => ite_eq_left rfl
     rw [e1]
     exact GlobalTheory.CompanionTheory.FmPowP.mconv_idem_left (GlobalTheory.CompanionTheory.MatchPow.iwahori_pair_open a (n - a) w) (GlobalTheory.CompanionTheory.MatchPow.iwahori_pair_le_maximal a (n - a) w) _ (hH _)
-  rw [tr_one d _ hP]
+  rw [GlobalTheory.CompanionTheory.MatchLMB2.tr_one d _ hP]
   funext y
   rw [Finset.sum_apply]
   simp only [hent]
   exact sum_kap_alt d hT (fun s => MT.mpow w (d.qT a w s) (m + 1) y)
-
-theorem unitary_function_at_T (hT : w ∈ d.T) : d.g₀ w = fun y => (((iwU n w (d.b w)).relIndex (KL n w) : ℕ) : ℂ) *
-    ∑ j, cc d w j * fU n w (d.b w) (d.ϖ w) (lOf (xx d w j)) y := by
-  have h : d.g₀ w = fun y => (d.c w).sum fun x t =>
-      t * (((iwU n w (d.b w)).relIndex (KL n w) : ℕ) : ℂ) * fU n w (d.b w) (d.ϖ w) (lOf x) y := by
-    unfold LocData.g₀
-    rw [if_pos hT]
-  rw [h]
-  funext y
-  rw [Finsupp.sum, Finset.mul_sum, ← Finset.sum_coe_sort (d.c w).support]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  ring
 
 theorem matching_at_T (hMT : MT.MatchT) (hU : Unr E) (hm : MOk d) (hT : w ∈ d.T) (m : ℕ) :
     Match n a (n - a) w 1 (d.gU (m + 1) w) (((d.fixL a).mul (pw (d.betaL a ha) m)).tr d.P d.one w) := by
@@ -501,7 +397,7 @@ theorem matching_at_T (hMT : MT.MatchT) (hU : Unr E) (hm : MOk d) (hT : w ∈ d.
   have hq : ∀ s, MT.mpow w (d.qT a w s) (m + 1) = fun y =>
       (((Tail.I2 a (n - a) w).relIndex (K2 a (n - a) w) : ℕ) : ℂ) ^ (m + 1) *
         MT.mpow w (MT.entT n w (d.ϖ w) a (cc d w) (xx d w) s) (m + 1) y := fun s => by
-    rw [qT_eq, mpow_scale]
+    rw [GlobalTheory.CompanionTheory.MatchLMPlaces.qT_eq, GlobalTheory.CompanionTheory.MatchLMPlaces.mpow_scale]
   have hLeft : ∀ s, ∀ u ∈ Tail.I2 a (n - a) w, ∀ g, MT.mpow w (d.qT a w s) (m + 1) (u * g) =
       MT.mpow w (d.qT a w s) (m + 1) g := fun s u hu g => by
     rw [hq]
@@ -516,7 +412,7 @@ theorem matching_at_T (hMT : MT.MatchT) (hU : Unr E) (hm : MOk d) (hT : w ∈ d.
   have hG : d.gU (m + 1) w = fun γ => ∑ _j : Unit, (((iwU n w (d.b w)).relIndex (KL n w) : ℕ) : ℂ) ^ (m + 1) *
       lpow (iwU n w (d.b w)) (fun γ => ∑ j, cc d w j * fU n w (d.b w) (d.ϖ w) (lOf (xx d w j)) γ) (m + 1) γ := by
     unfold LocData.gU
-    rw [hKU, unitary_function_at_T d hT, lpow_scale]
+    rw [hKU, GlobalTheory.CompanionTheory.MatchLMPlaces.unitary_function_at_T d hT, GlobalTheory.CompanionTheory.MatchLMPlaces.lpow_scale]
     simp
   have hR : ((d.fixL a).mul (pw (d.betaL a ha) m)).tr d.P d.one w = fun y => ∑ _j : Unit,
       (((iwU n w (d.b w)).relIndex (KL n w) : ℕ) : ℂ) ^ (m + 1) * (MT.cR n a w (d.b w) ^ (m + 1) *
@@ -556,9 +452,6 @@ theorem matchLMB3Of_main : MatchLMB3Of := by
 
 end GlobalTheory.CompanionTheory.LeviMatchingAssembly
 
-theorem PositivityTheory.Rg.BcB.F.MLM.matchLMB3Of_pf : PositivityTheory.Rg.BcB.F.MLM.MatchLMB3Of :=
-  GlobalTheory.CompanionTheory.LeviMatchingAssembly.matchLMB3Of_main
-
 end
 end -- clump:auto
 end -- clump:auto
@@ -574,8 +467,6 @@ noncomputable section
 open NumberField IsDedekindDomain Matrix Polynomial
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.LFun PositivityTheory.Rg.BcB.F.F5 PositivityTheory.Rg.BcB.F.Eig PositivityTheory.Rg.BcB.G8 PositivityTheory.Rg.BcN.F2 PositivityTheory.Rg.BcB.F.Tail PositivityTheory.Rg.Bc.ArchbcB.B PositivityTheory.Rg.BcB.F
 open scoped Classical
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.Rg.BcB.F.MB
 
@@ -593,7 +484,7 @@ theorem matchBadIOf2 : MatchBadIOf2 := by
     rw [mb_lone_apply]
     by_cases h : γ ∈ K'
     · have h' : γ ∈ ({γ : UL n w | γ.1 ∈ congK n w k} : Set (UL n w)) := (hmem γ).1 h
-      rw [if_pos h, Set.indicator_of_mem h', Pi.one_apply, mul_one]
+      rw [ite_eq_left h, Set.indicator_of_mem h', Pi.one_apply, mul_one]
     · have h' : γ ∉ ({γ : UL n w | γ.1 ∈ congK n w k} : Set (UL n w)) := fun h' => h ((hmem γ).2 h')
       simp [h, h']
   rw [hf]
@@ -623,17 +514,11 @@ open NumberField IsDedekindDomain Matrix Polynomial Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT PositivityTheory.Rg.BcN.F2
 open scoped Classical
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace PositivityTheory.Rg.BcB.F.MS
 
 section SlopeTestRemainingChoices
 
 variable {H : Type} [Group H]
-
-theorem ms_hint_left (K : Subgroup H) (u : H → ℂ) (k : H) :
-    hint K (fun z => u (k * z)) = hint K u :=
-  PositivityTheory.Rg.BcB.F.FinConv.hint_left K u k
 
 theorem ms_exists_of_hint_ne_zero (K : Subgroup H) (u : H → ℂ) (h : hint K u ≠ 0) : ∃ z, u z ≠ 0 := by
   by_contra hc
@@ -670,7 +555,7 @@ theorem isHk_gconv {w : Pl E} (K' : Subgroup (GLw n w)) (f₁ f₂ : GLw n w →
       show _ = f₁ (k₁⁻¹ * z) * f₂ ((k₁⁻¹ * z)⁻¹ * g)
       rw [a1, a2, show (k₁⁻¹ * z)⁻¹ * g = z⁻¹ * k₁ * g by group]
     rw [e1]
-    exact ms_hint_left _ u k₁⁻¹
+    exact GlobalTheory.CompanionTheory.FamClP.hint_left _ u k₁⁻¹
 
 theorem isHk_gpow {w : Pl E} (K' : Subgroup (GLw n w)) (f : GLw n w → ℂ) (hf : IsHk K' f) :
     ∀ N, IsHk K' (gpow f N)
@@ -754,7 +639,7 @@ theorem matchLMWordS (h3 : M3) : MLM.MatchLMWordS := MLM.matchLMWordSOf (matchSp
 theorem matchLMUnit (h1 : M1) (h3 : M3) : MLM.MatchLMUnit := MLM.matchLMUnitOf (matchUnitI_of h1) (matchSplit h3) idemAlg
 
 theorem matchLMB2 (h2 : M2) (h3 : M3) (h4 : M4) : MLM.MatchLMB2 :=
-  MLM.matchLMB3Of_pf (matchT_of h4) (MS.match_split_place_of_powers h3 (MS.split_place_powers_of_local_ops locOp3)) (MB.matchBadSOf h3 MB.lponeIdem)
+  _root_.GlobalTheory.CompanionTheory.LeviMatchingAssembly.matchLMB3Of_main (matchT_of h4) (MS.match_split_place_of_powers h3 (MS.split_place_powers_of_local_ops locOp3)) (MB.matchBadSOf h3 MB.lponeIdem)
     (MB.matchBadIOf2 h2 MB.lponeIdem) MB.fixIdem idemAlg
 
 end PositivityTheory.Rg.BcB.F.MatchAll

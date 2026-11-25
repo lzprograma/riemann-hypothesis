@@ -2,59 +2,19 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
 public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilSignShift
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HcParameterEAddHalfShiftLeBSucc
 
 @[expose] public section
 
 noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
-open GlobalTheory.IndefiniteRowSideFullHecke.WeilSignShift (NcGapGt NcGapGe minSig shiftPar alV alW lamS lamT StepGap StepWeil VacVec fockOf)
+open GlobalTheory.IndefiniteRowSideFullHecke.WeilSignShift (NcGapGt NcGapGe minSig shiftPar alV alW lamS lamT StepGap)
 
 namespace GlobalTheory.Chain.ItPairCompare
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem mem_signed {l₁ l₂ : List ℚ} {c x : ℚ} {s : Bool} :
     (x, s) ∈ signed l₁ l₂ c ↔ (s = true ∧ x - c ∈ l₁) ∨ (s = false ∧ x - c ∈ l₂) := by
@@ -252,34 +212,10 @@ theorem gap_of_le {i j : Fin R.m} (h : i.1 ≤ j.1) : ((R.t : ℚ) + 3) / 2 ≤ 
   · have := gap_of_lt P h; have := P.gap_be i; have := P.gap_be j; linarith
 
 theorem v_anti : StrictAnti P.v := by
-  have hs : ∀ (a : ℕ) (h : a + 1 < R.k - 1), P.v ⟨a + 1, h⟩ < P.v ⟨a, by omega⟩ :=
-    fun a h => (P.u_gt_v ⟨a + 1, h⟩).trans (P.v_gt_u ⟨a, by omega⟩)
-  have hA : ∀ (d a : ℕ) (h : a + d + 1 < R.k - 1), P.v ⟨a + d + 1, h⟩ < P.v ⟨a, by omega⟩ := by
-    intro d
-    induction d with
-    | zero => exact hs
-    | succ d ih => intro a h; exact (hs (a + d + 1) h).trans (ih a (by omega))
-  rintro ⟨a, ha⟩ ⟨b, hb⟩ hab
-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_lt (show a < b from hab)
-  exact hA d a hb
+  apply _root_.GlobalTheory.ForcedWeights.v_strictAnti <;> assumption
 
 theorem neg_b_lt_v (i : Fin (R.k - 1)) (j : Fin R.m) : -P.b j < P.v i := by
-  have hk := R.m_add_three_le_k
-  have hm := R.two_le_m
-  have h1 := P.u_last_gt (by omega) (by omega)
-  have h2 := P.v_gt_u ⟨R.k - 2, by omega⟩
-  have e : P.u ⟨R.k - 2 + 1, by omega⟩ = P.u ⟨R.k - 1, by omega⟩ := by congr 2; omega
-  have h3 : P.v ⟨R.k - 2, by omega⟩ ≤ P.v i := (v_anti P).antitone (show i.1 ≤ R.k - 2 by have := i.2; omega)
-  have h4 : P.b ⟨0, by omega⟩ ≤ P.b j := by
-    rcases Nat.eq_zero_or_pos j.1 with h | h
-    · exact le_of_eq (congrArg P.b (Fin.ext h.symm))
-    · have := gap_of_lt P (i := ⟨0, by omega⟩) (j := j) h
-      have := P.gap_be ⟨0, by omega⟩
-      have ht : (0 : ℚ) ≤ R.t := by positivity
-      linarith
-  simp only at h2
-  rw [e] at h2
-  linarith
+  apply _root_.GlobalTheory.ForcedWeights.negb_lt_v <;> assumption
 
 abbrev Idx (R : Ranks) (j : ℕ) : Type := Fin (R.k - 1) ⊕ Fin R.m ⊕ ({i : Fin R.m // (i : ℕ) < j} × Fin R.t)
 
@@ -426,14 +362,14 @@ theorem mem_parA (j : ℕ) (τ : D.what₂.Tau) (x : ℚ) (s : Bool) :
 theorem expS_eq_alV (k : Fin D.R.m) (τ : D.what₂.Tau) : expS D k τ = alV D k τ := by
   unfold expS alV
   rcases Nat.even_or_odd (k : ℕ) with h | h
-  · rw [if_pos h, if_pos h.add_one]
-  · rw [if_neg (Nat.not_even_iff_odd.2 h), if_neg (Nat.not_odd_iff_even.2 h.add_one), sub_zero]
+  · rw [ite_eq_left h, ite_eq_left h.add_one]
+  · rw [ite_eq_right (Nat.not_even_iff_odd.2 h), ite_eq_right (Nat.not_odd_iff_even.2 h.add_one), sub_zero]
 
 theorem expT_eq_alW (k : Fin D.R.m) (τ : D.what₂.Tau) : expT D k τ = alW D k τ := by
   unfold expT alW
   rcases Nat.even_or_odd (k : ℕ) with h | h
-  · rw [if_pos h, if_pos h.add_one, sub_zero]
-  · rw [if_neg (Nat.not_even_iff_odd.2 h), if_neg (Nat.not_odd_iff_even.2 h.add_one)]
+  · rw [ite_eq_left h, ite_eq_left h.add_one, sub_zero]
+  · rw [ite_eq_right (Nat.not_even_iff_odd.2 h), ite_eq_right (Nat.not_odd_iff_even.2 h.add_one)]
 
 theorem mem_lamS (k : Fin D.R.m) (τ : D.what₂.Tau) (x : ℚ) (s : Bool) :
     (x, s) ∈ lamS D k τ ↔ ∃ y : Idx D.R k, val (D.hc τ) _ y + (D.hc τ).e k = x ∧ sgn D.R _ y = s := by
@@ -441,8 +377,8 @@ theorem mem_lamS (k : Fin D.R.m) (τ : D.what₂.Tau) (x : ℚ) (s : Bool) :
   refine exists_congr fun y => and_congr_left' ?_
   unfold alW
   rcases Nat.even_or_odd (k : ℕ) with h | h
-  · rw [if_neg (Nat.not_odd_iff_even.2 h), if_pos h.add_one]; constructor <;> intro h <;> linarith
-  · rw [if_pos h, if_neg (Nat.not_odd_iff_even.2 h.add_one)]; constructor <;> intro h <;> linarith
+  · rw [ite_eq_right (Nat.not_odd_iff_even.2 h), ite_eq_left h.add_one]; constructor <;> intro h <;> linarith
+  · rw [ite_eq_left h, ite_eq_right (Nat.not_odd_iff_even.2 h.add_one)]; constructor <;> intro h <;> linarith
 
 theorem mem_lamT (k : Fin D.R.m) (τ : D.what₂.Tau) (x : ℚ) (s : Bool) :
     (x, s) ∈ lamT D k τ ↔ ∃ y : Idx D.R (k + 1), val (D.hc τ) _ y + (D.hc τ).e k = x ∧ sgn D.R _ y = s := by

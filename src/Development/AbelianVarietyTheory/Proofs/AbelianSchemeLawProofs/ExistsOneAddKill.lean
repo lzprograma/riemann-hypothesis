@@ -147,12 +147,12 @@ theorem frac {D W : Z.Opens} {w F : Fn Z} (hW : IsAffineOpen W) (h : IsLoc D W w
   obtain ⟨x, hx⟩ := hF
   obtain rfl := h.eq_basicOpen ha
   obtain ⟨n, y, hn⟩ := exists_eq_pow_mul_of_isAffineOpen Z W hW a x
-  refine ⟨n, fun z => if hz : z ∈ W then (Z.presheaf.germ W z hz).hom y else 0, ⟨y, fun z hz => by beta_reduce; rw [dif_pos hz]⟩,
+  refine ⟨n, fun z => if hz : z ∈ W then (Z.presheaf.germ W z hz).hom y else 0, ⟨y, fun z hz => by beta_reduce; rw [dite_eq_left hz]⟩,
     fun z hz => ?_⟩
   have hw := Z.basicOpen_le a hz
   have e := congrArg (Z.presheaf.germ _ z hz).hom hn
   rw [map_mul, map_pow, hx] at e
-  exact ((dif_pos hw).trans ((germ_res' (Z.basicOpen_le a) y z hz).symm.trans (e.trans (congrArg (· ^ n * F z)
+  exact ((dite_eq_left hw).trans ((germ_res' (Z.basicOpen_le a) y z hz).symm.trans (e.trans (congrArg (· ^ n * F z)
     ((germ_res' (Z.basicOpen_le a) a z hz).trans (ha z hw)))))).symm
 
 theorem Gen.mono {D : Z.Opens} {S S' : Set (Fn Z)} (h : Gen D S)

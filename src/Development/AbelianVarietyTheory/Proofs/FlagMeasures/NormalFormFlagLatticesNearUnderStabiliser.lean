@@ -347,7 +347,7 @@ theorem mem_Xa (F : FlagD H r) {j l : ℕ} (hj : j ≤ r) (hl : l ≤ j) (x : V)
       have hb' : (b : ℕ) < l := hb
       refine ⟨Pi.single ⟨b, by omega⟩ 1, fun a ha => ?_, ?_⟩
       · exact Pi.single_eq_of_ne (fun e => by subst e; simp at ha; omega) _
-      · simp only [Pi.single_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      · simp only [Pi.single_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
         rfl
     · exact ⟨0, fun _ _ => rfl, by simp⟩
     · rintro _ _ _ _ ⟨c, hc, rfl⟩ ⟨d, hd, rfl⟩
@@ -407,7 +407,7 @@ theorem exists_frame (F : FlagD H r) {j : ℕ} (hj : j ≤ r) (L : Submodule (�
   have hv : ∀ a, vec (ej F hj) (1 + Matrix.of fun b a => c a b) a = f a := by
     intro a
     simp only [vec, Matrix.add_apply, add_smul, Finset.sum_add_distrib, Matrix.of_apply, ← hcf,
-      Matrix.one_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Matrix.one_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     abel
   refine ⟨1 + Matrix.of fun b a => c a b, ⟨fun a b hab => ?_, fun a => ?_⟩, ?_, ?_⟩
   · simp [Matrix.one_apply_ne hab.ne', hc b a (le_of_lt hab)]
@@ -443,7 +443,7 @@ theorem exists_frame (F : FlagD H r) {j : ℕ} (hj : j ≤ r) (L : Submodule (�
           · rw [hb, Pi.single_eq_same]; exact h4
           · rw [Pi.single_eq_of_ne hb]; exact zero_mem _
         · simp only [Pi.add_apply, add_smul, Finset.sum_add_distrib, ← e', Pi.single_apply, ite_smul,
-            zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+            zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
           abel
     exact key j le_rfl
 
@@ -511,13 +511,13 @@ theorem exists_isom [FiniteDimensional K V] (e d : Fin j → V) (M M' : Matrix (
     have h4 : ∀ y, π y + ∑ a, H.B y (d a) • vec e (1 : Matrix (Fin j) (Fin j) K) a +
         ∑ a, H.B y (e a) • vec d (1 : Matrix (Fin j) (Fin j) K) a = y := fun y => by
       simp only [π, vec, Matrix.one_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq',
-        Finset.mem_univ, if_true]
+        Finset.mem_univ, ite_true]
       abel
     rw [h3, h3] at h1
     rw [h4, h4] at h2
     rw [h1, h2]
   have hinj : Function.Injective g := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     refine H.nondeg x fun y => ?_
     rw [← hiso, hx]; simp
@@ -632,7 +632,7 @@ omit [NumberField K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 theorem ist_ej (a : Fin r) (ha : N.j ≤ (a : ℕ)) (b : Fin N.j) :
     H.B (N.ist a) (ej N.F N.j_le b) = 0 ∧ H.B (N.ist a) (ej N.F' N.j_le b) = 0 := by
   constructor
-  · refine B_symm0 H ((N.ist_e (Fin.castLE N.j_le b) a ha).trans (if_neg fun e => ?_))
+  · refine B_symm0 H ((N.ist_e (Fin.castLE N.j_le b) a ha).trans (ite_eq_right fun e => ?_))
     have := b.2
     rw [← e] at ha
     simp at ha
@@ -724,7 +724,7 @@ theorem exists_elt [FiniteDimensional K V] (u : Matrix (Fin N.j) (Fin N.j) K) (h
     have h3 : star (c (σ a)) • d (σ a) = e' a := by
       simp [d, hσ, smul_smul, hc]
     simp only [hs, h1, h2, zero_smul, Finset.sum_const_zero, add_zero, ite_smul, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
     rw [smul_sub, h3, add_sub_cancel]
     simp only [vec, Finset.smul_sum, d, smul_smul]
     refine Fintype.sum_equiv (Function.Involutive.toPerm σ hσ) _ _ fun b => ?_
@@ -836,7 +836,7 @@ theorem ref_facts :
     rw [hx] at this
 
     simpa only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, hd, smul_eq_mul, mul_ite, mul_one,
-    mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] using this
+    mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true] using this
   · obtain ⟨x, -, hx⟩ := (mem_Xa N.F' N.j_le le_rfl y).1 hyX
     refine ⟨x, fun a => ?_, hx⟩
     have hd : ∀ b, H.B (ej N.F' N.j_le b) ((c (σ a))⁻¹ • ej N.F N.j_le (σ a)) = if b = a then 1 else 0 := by
@@ -855,7 +855,7 @@ theorem ref_facts :
     rw [hx] at this
 
     simpa only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, hd, smul_eq_mul, mul_ite, mul_one,
-    mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] using this
+    mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true] using this
 
 theorem denom (𝔠 : Ideal (𝓞 K))
     (hD : ∀ (l : ℕ) (hl : l ≤ r + 1), l ≤ N.j → Dl N.F N.F' l hl ≠ 0 → ∀ x ∈ 𝔠,
@@ -931,7 +931,7 @@ theorem denom (𝔠 : Ideal (𝓞 K))
     have : W * Matrix.of (fun p q => if q = σ p then (c q)⁻¹ else 0) = 1 := by
       ext p q
       simp only [hW, Matrix.mul_apply, Matrix.of_apply, hW', ite_mul, zero_mul, Finset.sum_ite_eq',
-        Finset.mem_univ, if_true, hσ]
+        Finset.mem_univ, ite_true, hσ]
       rcases eq_or_ne p q with h | h
       · subst h; simp [hc]
       · simp [h, h.symm]

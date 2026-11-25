@@ -59,7 +59,7 @@ end Lin
 section Period
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct
-open GlobalTheory.IndefiniteRowSideFullHecke.JumpMultiplicityDual (mulPeriod tdR filDdR jumpMult)
+open GlobalTheory.IndefiniteRowSideFullHecke.JumpMultiplicityDual (mulPeriod)
 
 variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
     [Algebra Qp K₀] [Algebra Qp K] [Algebra K₀ K] [IsScalarTower Qp K₀ K]
@@ -199,7 +199,7 @@ end Period
 section Comparison
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct
-open GlobalTheory.IndefiniteRowSideFullHecke.JumpMultiplicityDual (mulPeriod tdR filDdR jumpMult)
+open GlobalTheory.IndefiniteRowSideFullHecke.JumpMultiplicityDual (mulPeriod)
 
 variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
     [Algebra Qp K₀] [Algebra Qp K] [Algebra K₀ K] [IsScalarTower Qp K₀ K]
@@ -246,7 +246,7 @@ end Comparison
 section Filtered
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct
-open GlobalTheory.IndefiniteRowSideFullHecke.JumpMultiplicityDual (mulPeriod tdR filDdR jumpMult)
+open GlobalTheory.IndefiniteRowSideFullHecke.JumpMultiplicityDual (mulPeriod)
 
 variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
     [Algebra Qp K₀] [Algebra Qp K] [Algebra K₀ K] [IsScalarTower Qp K₀ K]

@@ -57,8 +57,6 @@ namespace GlobalTheory.ShortMove
 
 open GlobalTheory.RecDict
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem exists_adelic_of_isometry : ∀ (D : D7) (V : HSp D) (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E) (Dw : Datum H) (io : Dw.La →ₗ[𝓞 D.host.E] (Fin V.rank → D.host.E)), LatEmb V io → FormPlus V io → ∀ s : Sim Dw, (∀ n, s.ν n = 1) → ∃ κ : GA D V, latGHat V κ = latGHat V 1 ∧ ∀ N : ℕ, 0 < N → ∀ a, ∃ w ∈ latGHat V 1, (finHom V κ).1.mulVec (finVec V (io a)) = finVec V (io (s.f N a)) + N • w := by
   intro D V H Dw io hio hEF s hν
   obtain ⟨hinj, hrange⟩ := hio

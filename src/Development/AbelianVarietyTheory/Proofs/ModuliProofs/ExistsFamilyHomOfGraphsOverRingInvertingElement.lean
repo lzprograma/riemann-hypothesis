@@ -115,7 +115,7 @@ theorem mem_of_forall_map_mem {S σ : Type} [CommRing S] (J : Ideal (MvPolynomia
   let π : MvPolynomial σ S →ₗ[S] (↥(homogeneousSubmodule σ S e) ⧸ N) :=
     N.mkQ ∘ₗ (homogeneousComponent e).codRestrict (homogeneousSubmodule σ S e) fun G => homogeneousComponent_mem e G
   have hπ : ∀ G, π G = 0 ↔ homogeneousComponent e G ∈ J := fun G => Submodule.Quotient.mk_eq_zero N
-  have hFe : homogeneousComponent e F = F := by rw [homogeneousComponent_of_mem hF, if_pos rfl]
+  have hFe : homogeneousComponent e F = F := by rw [homogeneousComponent_of_mem hF, ite_eq_left rfl]
   rw [← hFe, ← hπ]
   by_contra hne
   obtain ⟨l, hl⟩ := Module.Projective.exists_dual_ne_zero S hne

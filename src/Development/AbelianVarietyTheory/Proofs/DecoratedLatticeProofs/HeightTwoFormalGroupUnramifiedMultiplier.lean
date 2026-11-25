@@ -220,12 +220,7 @@ theorem coefLe_mv_of_ps {K : Type} [NormedField K] {r : ℝ} {A : K⟦X⟧} (h :
 
 theorem norm_ringHom_pow_apply {K : Type} [NormedField K] (σ : K →+* K) (hσ : ∀ x, ‖σ x‖ = ‖x‖) :
     ∀ (j : ℕ) (x : K), ‖(σ ^ j) x‖ = ‖x‖ := by
-  intro j x
-  induction j generalizing x with
-  | zero => simp
-  | succ k ih =>
-    rw [pow_succ]
-    exact (ih (σ x)).trans (hσ x)
+  apply _root_.GlobalTheory.Honda.twistLog_norm_iterate <;> assumption
 
 private theorem norm_coeff_pow_le_one {K : Type} [NormedField K] [IsUltrametricDist K] {s : Type}
     (M : MvPowerSeries s K) (hM : ∀ m, ‖MvPowerSeries.coeff m M‖ ≤ 1) :
@@ -465,13 +460,13 @@ theorem cob_degree : ∀ (K : Type) [NormedField K] [IsUltrametricDist K] (l : �
   have hch : MvPowerSeries.coeff d ((MvPowerSeries.X (0 : Fin 2) + MvPowerSeries.X (1 : Fin 2) :
       MvPowerSeries (Fin 2) K) ^ n) = (n.choose k : K) := by
     rw [← MvPolynomial.coe_X, ← MvPolynomial.coe_X, ← MvPolynomial.coe_add, ← MvPolynomial.coe_pow,
-      MvPolynomial.coeff_coe, MvPolynomial.coeff_add_pow, if_pos, hd0]
+      MvPolynomial.coeff_coe, MvPolynomial.coeff_add_pow, ite_eq_left, hd0]
     rw [Finset.HasAntidiagonal.mem_antidiagonal]; simp only; omega
   have hX : ∀ s : Fin 2, MvPowerSeries.coeff d (h.subst (MvPowerSeries.X s : MvPowerSeries (Fin 2) K)) = 0 := by
     intro s
     rw [coeff_subst (HasSubst.X s)]
     refine finsum_eq_zero_of_forall_eq_zero fun j => ?_
-    rw [MvPowerSeries.coeff_X_pow, if_neg, smul_zero]
+    rw [MvPowerSeries.coeff_X_pow, ite_eq_right, smul_zero]
     rintro rfl
     fin_cases s
     · simp at hd1; omega
@@ -499,7 +494,7 @@ theorem eig_degree : ∀ (K : Type) [NormedField K] [IsUltrametricDist K] (l : �
   rw [Finsupp.degree_single] at key
   replace key : ‖coeff n (h.subst (mulBy f e w) : K⟦X⟧) - coeff n h * coeff n ((C w * X : K⟦X⟧) ^ n)‖ ≤
     ‖(l : K)‖ := key
-  rw [mul_pow, ← map_pow, coeff_C_mul, coeff_X_pow, if_pos rfl, mul_one] at key
+  rw [mul_pow, ← map_pow, coeff_C_mul, coeff_X_pow, ite_eq_left rfl, mul_one] at key
   have hb' := hb n
   rw [map_sub, coeff_C_mul] at hb'
   convert norm_sub_le_of hb' key using 2
@@ -625,7 +620,7 @@ theorem exists_even_type : ∀ (K : Type) [NormedField K] [IsUltrametricDist K] 
     rw [hN]; omega
   have hΦtop : ∀ k, coeff (N k) (Φ k) = 1 := by
     intro k
-    rw [hΦc, if_pos dvd_rfl, Nat.div_self (by have := hNgt k; omega), hf1, map_one]
+    rw [hΦc, ite_eq_left dvd_rfl, Nat.div_self (by have := hNgt k; omega), hf1, map_one]
   obtain ⟨G, hG⟩ : ∃ G, G = C (l : K) * f - hondaSum (σ ^ 2) (l ^ 2) c f := ⟨_, rfl⟩
   have hGc : ∀ m, coeff m G = (l : K) * coeff m f - ∑ j ∈ Finset.range m, c j * coeff m (Φ j) := by
     intro m
@@ -659,10 +654,10 @@ theorem exists_even_type : ∀ (K : Type) [NormedField K] [IsUltrametricDist K] 
       (f := fun k => d (N j) k * coeff (N j) (Φ k)) ?_]
     · congr 1
       refine Finset.sum_congr rfl fun k hk => ?_
-      rw [hd, if_pos (hNmono (Finset.mem_range.mp hk))]
+      rw [hd, ite_eq_left (hNmono (Finset.mem_range.mp hk))]
     · intro k _ hk'
       rw [Finset.mem_range, not_lt] at hk'
-      rw [hd, if_neg (not_lt.mpr (hNmono.monotone hk')), zero_mul]
+      rw [hd, ite_eq_right (not_lt.mpr (hNmono.monotone hk')), zero_mul]
   have htopG : ∀ j, coeff (N j) G = 0 := by
     intro j
     rw [hGc, ← Finset.sum_subset (Finset.range_mono (show j + 1 ≤ N j by have := hNgt j; omega))
@@ -1025,7 +1020,7 @@ theorem coeff_subst_eq_sum (f g : K⟦X⟧) (hg0 : constantCoeff g = 0) (n : ℕ
     by_contra hdn
     apply hd
     obtain ⟨g', rfl⟩ := X_dvd_iff.mpr hg0
-    simp only [mul_pow, coeff_X_pow_mul', if_neg (by omega : ¬ d ≤ n), smul_zero]
+    simp only [mul_pow, coeff_X_pow_mul', ite_eq_right (by omega : ¬ d ≤ n), smul_zero]
 
 theorem norm_coeff_le_of_subst (f g : K⟦X⟧) (ρ : ℝ) (hρ : 0 ≤ ρ) (hf0 : coeff 0 f = 0) (hf1 : coeff 1 f = 1)
     (hf : ∀ k, 1 ≤ k → ‖coeff k f‖ * ρ ^ k ≤ ρ) (hg0 : constantCoeff g = 0) (N : ℕ)
@@ -1138,9 +1133,6 @@ namespace GlobalTheory.HondaFunEq
 
 variable {K : Type} [NormedField K]
 
-theorem sq_apply (σ : K →+* K) (a : K) : (σ ^ 2) a = σ (σ a) := by
-  rw [pow_two]; rfl
-
 theorem frobLift_sq [IsUltrametricDist K] {l : ℕ} {σ : K →+* K} (h : Unr K l σ) :
     Formalism.G.IsFrobLift l (l ^ 2) (σ ^ 2) := by
   obtain ⟨-, -, -, hmax, hiso, hfrob⟩ := h
@@ -1149,7 +1141,7 @@ theorem frobLift_sq [IsUltrametricDist K] {l : ℕ} {σ : K →+* K} (h : Unr K 
   have hsa : ‖σ a‖ ≤ 1 := by rw [hiso]; exact ha
   have hal : ‖a ^ l‖ ≤ 1 := by rw [norm_pow]; exact pow_le_one₀ (norm_nonneg _) ha
   have hd : (σ ^ 2) a - a ^ (l ^ 2) = (σ (σ a) - (σ a) ^ l) + ((σ a) ^ l - (a ^ l) ^ l) := by
-    rw [sq_apply, ← pow_mul, sq]; ring
+    rw [GlobalTheory.Honda.unitFix_sq_apply, ← pow_mul, sq]; ring
   rw [hd]
   refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (key _ hsa) ?_)
   rw [← (Commute.all (σ a) (a ^ l)).geom_sum₂_mul, norm_mul]
@@ -1167,14 +1159,14 @@ theorem setting [IsUltrametricDist K] {l : ℕ} {σ : K →+* K} (h : Unr K l σ
 theorem coeff_ltLog_pow (l : ℕ) (hl : 2 ≤ l) (j : ℕ) :
     coeff ((l ^ 2) ^ j) (ltLog K l) = ((l : K) ^ j)⁻¹ := by
   have h : ∃ i : ℕ, (l ^ 2) ^ j = (l ^ 2) ^ i := ⟨j, rfl⟩
-  simp only [ltLog, coeff_mk, dif_pos h]
+  simp only [ltLog, coeff_mk, dite_eq_left h]
   have hq : 2 ≤ l ^ 2 := le_trans hl (Nat.le_self_pow (by norm_num) l)
   have := Nat.find_spec h
   rw [(Nat.pow_right_injective hq this).symm]
 
 theorem coeff_ltLog_of_not (l : ℕ) {n : ℕ} (h : ¬ ∃ j : ℕ, n = (l ^ 2) ^ j) :
     coeff n (ltLog K l) = 0 := by
-  simp only [ltLog, coeff_mk, dif_neg h]
+  simp only [ltLog, coeff_mk, dite_eq_right h]
 
 theorem ltLog_funEq [CharZero K] (l : ℕ) (hl : 2 ≤ l) (τ : K →+* K) :
     ltLog K l - (l : K)⁻¹ • (PowerSeries.map τ (ltLog K l)).subst ((X : K⟦X⟧) ^ (l ^ 2)) = X := by
@@ -1193,17 +1185,17 @@ theorem ltLog_funEq [CharZero K] (l : ℕ) (hl : 2 ≤ l) (τ : K →+* K) :
     | zero =>
       have : ¬ l ^ 2 ∣ 1 := fun h => by
         have := Nat.le_of_dvd one_pos h; omega
-      rw [coeff_ltLog_pow l hl 0, if_neg (by simpa using this), if_pos (pow_zero _)]; simp
+      rw [coeff_ltLog_pow l hl 0, ite_eq_right (by simpa using this), ite_eq_left (pow_zero _)]; simp
     | succ k =>
       have h1 : (l ^ 2) ^ (k + 1) ≠ 1 := by
         exact (Nat.one_lt_pow (Nat.succ_ne_zero k) (by omega : 1 < l ^ 2)).ne'
-      rw [if_pos (dvd_pow_self _ (Nat.succ_ne_zero k)), if_neg h1, pow_succ,
+      rw [ite_eq_left (dvd_pow_self _ (Nat.succ_ne_zero k)), ite_eq_right h1, pow_succ,
         Nat.mul_div_cancel _ (by omega), coeff_ltLog_pow l hl k, ← pow_succ, coeff_ltLog_pow l hl (k + 1)]
       have hl0 : (l : K) ≠ 0 := by exact_mod_cast (by omega : l ≠ 0)
       field_simp
       ring
   · have h1 : n ≠ 1 := fun h => hn ⟨0, by simp [h]⟩
-    rw [coeff_ltLog_of_not l hn, if_neg h1]
+    rw [coeff_ltLog_of_not l hn, ite_eq_right h1]
     split_ifs with hd
     · obtain ⟨m, rfl⟩ := hd
       have : ¬ ∃ j : ℕ, m = (l ^ 2) ^ j := fun ⟨j, hj⟩ => hn ⟨j + 1, by rw [hj]; ring⟩
@@ -1503,8 +1495,8 @@ theorem pow_apply_coeff_frobOp (τ : K →+* K) {q : ℕ} (hq : q ≠ 0) (f : K�
     (τ ^ i) (coeff (n / q ^ i) (frobOp τ q k f)) = coeff n (frobOp τ q (i + k) f) := by
   rw [coeff_frobOp τ hq, coeff_frobOp τ hq, pow_add q i k]
   by_cases h : q ^ i * q ^ k ∣ n
-  · rw [if_pos h, if_pos ((Nat.dvd_div_iff_mul_dvd hd).2 h), pow_apply_pow, Nat.div_div_eq_div_mul]
-  · rw [if_neg h, if_neg (fun h' => h ((Nat.dvd_div_iff_mul_dvd hd).1 h')), map_zero]
+  · rw [ite_eq_left h, ite_eq_left ((Nat.dvd_div_iff_mul_dvd hd).2 h), pow_apply_pow, Nat.div_div_eq_div_mul]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h ((Nat.dvd_div_iff_mul_dvd hd).1 h')), map_zero]
 
 theorem coeff_frobOp_sub_hondaSum (τ : K →+* K) (l : ℕ) {q : ℕ} (hq : 2 ≤ q) {f : K⟦X⟧} (hf : constantCoeff f = 0)
     (c : ℕ → K) (i n N : ℕ) (hN : n ≤ N) :
@@ -1515,7 +1507,7 @@ theorem coeff_frobOp_sub_hondaSum (τ : K →+* K) (l : ℕ) {q : ℕ} (hq : 2 �
   rw [coeff_frobOp τ hq0]
 
   by_cases hd : q ^ i ∣ n
-  · rw [if_pos hd, coeff_frobOp τ hq0 i f, if_pos hd, map_sub, coeff_C_mul, hondaSum, coeff_mk,
+  · rw [ite_eq_left hd, coeff_frobOp τ hq0 i f, ite_eq_left hd, map_sub, coeff_C_mul, hondaSum, coeff_mk,
      ← Finset.eventually_constant_sum (N := n / q ^ i) (n := N)
        (fun j hj => by rw [coeff_frobOp_eq_zero τ hq hf (by omega), mul_zero])
        (le_trans (Nat.div_le_self _ _) hN),
@@ -1523,9 +1515,9 @@ theorem coeff_frobOp_sub_hondaSum (τ : K →+* K) (l : ℕ) {q : ℕ} (hq : 2 �
     congr 1
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, pow_apply_coeff_frobOp τ hq0 f i (j + 1) hd]
-  · rw [if_neg hd, coeff_frobOp τ hq0 i f, if_neg hd, mul_zero, Finset.sum_eq_zero, sub_zero]
+  · rw [ite_eq_right hd, coeff_frobOp τ hq0 i f, ite_eq_right hd, mul_zero, Finset.sum_eq_zero, sub_zero]
     intro j _
-    rw [coeff_frobOp τ hq0, if_neg, mul_zero]
+    rw [coeff_frobOp τ hq0, ite_eq_right, mul_zero]
     exact fun h => hd (dvd_trans (pow_dvd_pow q (Nat.le_add_right _ _)) h)
 
 theorem sum_square_eq_sum_diag (N : ℕ) (F : ℕ → ℕ → K) (hF : ∀ i j, N ≤ i + j → F i j = 0) :

@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelativeEquivalence.DCRelEquivAllHolds
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermDef
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
 public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
@@ -32,8 +33,6 @@ open scoped Classical
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef Formalism.L2.SG.PairVal
 
 namespace Formalism.L2.SG.Pf.PairValG
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
@@ -153,48 +152,15 @@ theorem cond_conj (g s : S.V ≃ₗ[E] S.V) {A₁ B₁ A₂ B₂ : Submodule E S
 
 variable {T' : E} {F₁ F₂ : LFlag S r T'} {g : S.V ≃ₗ[E] S.V}
 
-theorem e_of_frame (hfr : ∀ a, frame F₂ a = g (frame F₁ a)) (i : Fin r) :
-    F₂.fl.e i = g (F₁.fl.e i) := by
-  have := hfr (Fin.castSucc i)
-  simpa [frame, FlagG.fvec] using this
-
-theorem xflag_eq_map (hfr : ∀ a, frame F₂ a = g (frame F₁ a)) (j : ℕ) :
-    Xflag F₂ j = (Xflag F₁ j).map (g : S.V →ₗ[E] S.V) := by
-  have he : F₂.fl.e = fun i => g (F₁.fl.e i) := funext (e_of_frame hfr)
-  show Submodule.span E (F₂.fl.e '' _) = (Submodule.span E (F₁.fl.e '' _)).map _
-  rw [Submodule.map_span, Set.image_image, he]
-  rfl
-
-theorem xsp_eq_map (hfr : ∀ a, frame F₂ a = g (frame F₁ a)) :
-    Xsp F₂ = (Xsp F₁).map (g : S.V →ₗ[E] S.V) := by
-  have he : F₂.fl.e = fun i => g (F₁.fl.e i) := funext (e_of_frame hfr)
-  show Submodule.span E (Set.range F₂.fl.e) = (Submodule.span E (Set.range F₁.fl.e)).map _
-  rw [Submodule.map_span, ← Set.range_comp, he]
-  rfl
-
-theorem orth_mem (hfr : ∀ a, frame F₂ a = g (frame F₁ a)) (hiso : g ∈ Formalism.HermitianLatticesTheory.isom S.hT)
-    (y : S.V) : y ∈ orth S (Xsp F₂) ↔ g.symm y ∈ orth S (Xsp F₁) := by
-  have hi : ∀ x y, S.hT (g x) (g y) = S.hT x y := hiso
-  rw [mem_orth_iff, mem_orth_iff, xsp_eq_map hfr]
-  constructor
-  · intro h x hx
-    have := h (g x) ⟨x, hx, rfl⟩
-    rw [← hi x (g.symm y)]
-    simpa using this
-  · rintro h _ ⟨x, hx, rfl⟩
-    have := h x hx
-    rw [← hi x (g.symm y)] at this
-    simpa using this
-
 theorem nlam_conj (hg : IsAutLam S Λ g) (hfr : ∀ a, frame F₂ a = g (frame F₁ a))
     (s : S.V ≃ₗ[E] S.V) : s ∈ NLam Λ F₂ ↔ g⁻¹ * s * g ∈ NLam Λ F₁ := by
   have hA : ∀ j x, x ∈ Xflag F₂ j ↔ g.symm x ∈ Xflag F₁ j := fun j x => by
-    rw [xflag_eq_map hfr]
+    rw [PI.DCRelEquiv.UnitaryGroupMassFormula.Xflag_transport hfr]
     exact Submodule.mem_map_equiv _
   have hX : ∀ x, x ∈ Xsp F₂ ↔ g.symm x ∈ Xsp F₁ := fun x => by
-    rw [xsp_eq_map hfr]
+    rw [PI.DCRelEquiv.UnitaryGroupMassFormula.Xsp_transport hfr]
     exact Submodule.mem_map_equiv _
-  have hO : ∀ x, x ∈ orth S (Xsp F₂) ↔ g.symm x ∈ orth S (Xsp F₁) := orth_mem hfr hg.1
+  have hO : ∀ x, x ∈ orth S (Xsp F₂) ↔ g.symm x ∈ orth S (Xsp F₁) := PI.DCRelEquiv.UnitaryGroupMassFormula.orth_mem_transport hfr hg.1
   have hAut : IsAutLam S Λ s ↔ IsAutLam S Λ (g⁻¹ * s * g) := by
     constructor
     · intro h
@@ -227,8 +193,6 @@ open scoped Classical
 open NumberField Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermOp Formalism.L2.SG.PairVal Formalism.L2.SG.Pf.StabilizerIndexVolumes
 
 namespace Formalism.L2.SG.Pf.VolPinAsm
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Basic
 
@@ -299,16 +263,6 @@ theorem nr_units {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS ((Tu D u : �
   rw [Matrix.det_mul, h0, zero_mul, Matrix.det_one] at this
   exact zero_ne_one this
 
-private theorem isUpUni_inv' {N : ℕ} {K : Type} [Field K] {U : Matrix (Fin N) (Fin N) K}
-    (h : IsUpUni U) : IsUpUni U⁻¹ := by
-  have h' : Formalism.DoubleCosetMeasures.IsUpUni U := by
-    refine ⟨?_, fun a => (h a a).2 rfl⟩
-    intro i j hij
-    exact (h i j).1 hij
-  have h2 := Formalism.DoubleCosetMeasures.isUpUni_inv K h'
-  intro i j
-  exact ⟨fun hij => h2.1 hij, fun hij => hij ▸ h2.2 i⟩
-
 private theorem conj_lemma_2 {N : ℕ} {K : Type} [Field K] (Z L B W U b S : Matrix (Fin N) (Fin N) K)
     (hZ : IsUnit Z.det) (hL : IsUnit L.det) (hU : IsUnit U.det) (hB : IsUnit B.det)
     (hS2 : S * S = 1) (hZ1 : Z * S = L * W * U) (hBW : B * W * b = W) :
@@ -340,43 +294,19 @@ private theorem conj_lemma_2 {N : ℕ} {K : Type} [Field K] (Z L B W U b S : Mat
     _ = Z⁻¹ * (Z * (S * (U⁻¹ * b * U) * S)) := by rw [hmain]
     _ = S * (U⁻¹ * b * U) * S := by rw [← Matrix.mul_assoc, hZinv, Matrix.one_mul]
 
-private theorem isUpUni_sgnM_conj {r : ℕ} {K : Type} [Field K] {B : Matrix (Fin (r + 1)) (Fin (r + 1)) K}
-    (hB : IsUpUni B) : IsUpUni ((sgnM r : Matrix (Fin (r + 1)) (Fin (r + 1)) K) * B * sgnM r) := by
-  intro i j
-  unfold sgnM
-  simp only [Matrix.diagonal_mul, Matrix.mul_diagonal]
-  refine ⟨fun hij => ?_, fun hij => ?_⟩
-  · rw [(hB i j).1 hij, mul_zero, zero_mul]
-  · subst hij
-    rw [(hB i i).2 rfl, mul_one, ← pow_add, ← two_mul, pow_mul, neg_one_sq, one_pow]
-
 theorem P'm_up_st {u' : D.what₂.Word} {u : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)}
     {F'' : FlagG (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)} {w : Point D.host.E (D.R.rS + 1)} {L U : MatR D}
     (hL : IsLoUni L) (hU : IsUpUni U) (hZu : IsUnit (Zhat F0 F'').det)
     (hZ1 : Zhat F0 F'' * sgnM D.R.rS = L * ptMat w * U) {β : GLR D} (hβ : β ∈ StSet (ptMat w)) :
     IsUpUni (P'm F0 F'' L (β : MatR D)) := by
   obtain ⟨_, b, hb, hβW⟩ := hβ
-  have hLd : IsUnit L.det := by
-    have h : L.det = 1 := by
-      rw [Matrix.det_of_lowerTriangular L (fun i j hij => (hL i j).1 (OrderDual.toDual_lt_toDual.mp hij))]
-      exact Finset.prod_eq_one fun i _ => (hL i i).2 rfl
-    rw [h]
-    exact isUnit_one
-  have hUd : IsUnit U.det := by
-    have h : U.det = 1 := by
-      rw [Matrix.det_of_upperTriangular (fun i j hij => (hU i j).1 hij)]
-      exact Finset.prod_eq_one fun i _ => (hU i i).2 rfl
-    rw [h]
-    exact isUnit_one
-  have hS2 : (sgnM D.R.rS : MatR D) * sgnM D.R.rS = 1 := by
-    unfold sgnM
-    rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    funext i
-    rw [← pow_add, ← two_mul, pow_mul, neg_one_sq, one_pow]
+  have hLd : IsUnit L.det := by rw [lo_det hL]; exact isUnit_one
+  have hUd : IsUnit U.det := by rw [up_det hU]; exact isUnit_one
+  have hS2 : (sgnM D.R.rS : MatR D) * sgnM D.R.rS = 1 := sgnM_sq
   unfold P'm
   rw [conj_lemma_2 _ _ _ _ _ _ _ hZu hLd hUd (Matrix.isUnits_det_units β) hS2 hZ1 hβW]
-  exact isUpUni_sgnM_conj (Formalism.L2.SG.Pf.isUpUni_mul (Formalism.L2.SG.Pf.isUpUni_mul (isUpUni_inv' hU) hb) hU)
+  exact up_sgn
+    (Formalism.L2.SG.Pf.isUpUni_mul (Formalism.L2.SG.Pf.isUpUni_mul (up_inv hU) hb) hU)
 
 end Main
 
@@ -385,11 +315,7 @@ section Phi
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) {u u' : D.what₂.Word}
 
 theorem hLu_of {L : MatR D} (hL : IsLoUni L) : IsUnit L.det := by
-  have h : L.det = 1 := by
-    rw [Matrix.det_of_lowerTriangular L (fun i j hij => (hL i j).1 (OrderDual.toDual_lt_toDual.mp hij))]
-    exact Finset.prod_eq_one fun i _ => (hL i i).2 rfl
-  rw [h]
-  exact isUnit_one
+  rw [lo_det hL]; exact isUnit_one
 
 theorem tw_isom_st (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E))
     (F'' : FlagG (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) {w : Point D.host.E (D.R.rS + 1)} {L U : MatR D}
@@ -610,7 +536,6 @@ theorem tw_inv_eq {u u' : D.what₂.Word} (F0 : FlagG (VS D) D.R.rS ((Tu D u : �
     tw F0 F'' L hLu hZu hGr a⁻¹ = (tw F0 F'' L hLu hZu hGr a)⁻¹ := by
   rw [eq_inv_iff_mul_eq_one, ← tw_mul, mul_inv_cancel, tw_one]
 
-
 open Formalism.L2.SG.PackageTie2 in
 theorem volume_dictionary_lu_decomposition (Y : Formalism.L2.SG.Full.Full X) {u u' : D.what₂.Word} (t : TT Y u u')
     {w : Point D.host.E (D.R.rS + 1)} {F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)} {L U : MatR D}
@@ -790,8 +715,6 @@ open NumberField Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism
 
 namespace Formalism.L2.SG.Pf.VolPinAsm
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section GlobalTheory
 
 variable {K : Type*} [Zero K]
@@ -821,37 +744,6 @@ section Rat
 
 variable {D : D7}
 
-private theorem sgnM_mul_self' {r : ℕ} {K : Type*} [Field K] :
-    (sgnM r : Matrix (Fin (r + 1)) (Fin (r + 1)) K) * sgnM r = 1 := by
-  unfold sgnM
-  rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-  congr 1
-  funext b
-  rw [← mul_pow]
-  simp
-
-private theorem isUpUni_inv_and_isUnit_det_of_isUpUni {n : ℕ} {K : Type*} [Field K] {N : Matrix (Fin n) (Fin n) K} (hN : IsUpUni N) :
-    IsUpUni N⁻¹ ∧ IsUnit N.det := by
-  have hbt : N.BlockTriangular id := by
-    intro i j hij
-    exact (hN i j).1 hij
-  have hdet : N.det = 1 := by
-    rw [Matrix.det_of_upperTriangular hbt]
-    exact Finset.prod_eq_one fun i _ => (hN i i).2 rfl
-  have hu : IsUnit N.det := by rw [hdet]; exact isUnit_one
-  haveI : Invertible N := Matrix.invertibleOfIsUnitDet N hu
-  have hbt' : N⁻¹.BlockTriangular id := Matrix.blockTriangular_inv_of_blockTriangular hbt
-  refine ⟨fun i j => ⟨fun hji => hbt' hji, fun hij => ?_⟩, hu⟩
-  subst hij
-  have h1 : (N⁻¹ * N) i i = 1 := by rw [Matrix.nonsing_inv_mul N hu, Matrix.one_apply_eq]
-  rw [Matrix.mul_apply, Finset.sum_eq_single i] at h1
-  · rwa [(hN i i).2 rfl, mul_one] at h1
-  · intro c _ hc
-    rcases lt_or_gt_of_ne hc with h | h
-    · rw [hbt' h, zero_mul]
-    · rw [(hN c i).1 h, mul_zero]
-  · intro h; exact absurd (Finset.mem_univ i) h
-
 theorem P'm_eq {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)}
     {F'' : FlagG (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)} {w : Point D.host.E (D.R.rS + 1)} {L U : MatR D}
     (hL : IsLoUni L) (hU : IsUpUni U) (hZu : IsUnit (Zhat F0 F'').det)
@@ -859,14 +751,8 @@ theorem P'm_eq {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ)
     (hab : B * ptMat w * b = ptMat w) :
     P'm F0 F'' L B = sgnM D.R.rS * (U⁻¹ * b * U) * sgnM D.R.rS := by
   have hWu : IsUnit (ptMat w).det := isUnit_iff_ne_zero.mpr (Formalism.L2.SG.Pf.StabilizerIndexVolumes.ptMat_det w)
-  have hLu : IsUnit L.det := by
-    have hbt : Lᵀ.BlockTriangular id := by
-      intro i j h
-      exact (hL j i).1 h
-    rw [← Matrix.det_transpose, Matrix.det_of_upperTriangular hbt]
-    rw [Finset.prod_eq_one (fun i _ => (show Lᵀ i i = 1 from (hL i i).2 rfl))]
-    exact isUnit_one
-  have hs : (sgnM D.R.rS : MatR D) * sgnM D.R.rS = 1 := sgnM_mul_self'
+  have hLu : IsUnit L.det := by rw [lo_det hL]; exact isUnit_one
+  have hs : (sgnM D.R.rS : MatR D) * sgnM D.R.rS = 1 := sgnM_sq
   have hb2 : (ptMat w)⁻¹ * B⁻¹ * ptMat w = b := by
     have e : B⁻¹ * ptMat w = ptMat w * b := by
       calc B⁻¹ * ptMat w = B⁻¹ * (B * ptMat w * b) := by rw [hab]
@@ -888,7 +774,8 @@ theorem conjW_up {w : Point D.host.E (D.R.rS + 1)} {β : GLR D} (hβ : β ∈ St
       (β : MatR D)⁻¹ * ptMat w * ((ptMat w)⁻¹ * (β : MatR D) * ptMat w) = ptMat w := by
   obtain ⟨-, b, hb, hbW⟩ := hβ
   have hWu : IsUnit (ptMat w).det := isUnit_iff_ne_zero.mpr (Formalism.L2.SG.Pf.StabilizerIndexVolumes.ptMat_det w)
-  obtain ⟨hbi, hbu⟩ := isUpUni_inv_and_isUnit_det_of_isUpUni hb
+  have hbi := up_inv hb
+  have hbu : IsUnit b.det := by rw [up_det hb]; exact isUnit_one
   have hβu : IsUnit (β : MatR D).det := (Matrix.isUnit_iff_isUnit_det _).mp β.isUnit
   have h1 : (β : MatR D) * ptMat w = ptMat w * b⁻¹ := by
     conv_rhs => rw [← hbW]
@@ -947,8 +834,7 @@ theorem conjW_blk {w : Point D.host.E (D.R.rS + 1)} {β : GLR D} (hβ : β ∈ S
   have e1 := hWi c c' h1
   have e2 := hWb d' d h2
   have hlt : c' < d' := by
-    by_contra hle
-    push_neg at hle
+    by_contra! hle
     have := blkOf_mono w.1 d'.1 c'.1 hle
     omega
   rw [(hlo c' d').1 hlt, mul_zero, zero_mul]
@@ -985,7 +871,7 @@ theorem FM_inv {e : Fin m → V} {g : V ≃ₗ[K] V} {G : Matrix (Fin m) (Fin m)
   have hc : ∀ d, ∑ c, G⁻¹ c b * G d c = (G * G⁻¹) d b := fun d => by
     rw [Matrix.mul_apply]; exact Finset.sum_congr rfl fun c _ => mul_comm _ _
   simp only [← Finset.sum_smul, hc, hGG, Matrix.one_apply, ite_smul, one_smul, zero_smul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 end FrameC
 
@@ -1026,20 +912,20 @@ theorem inS_frame {n r : ℕ} {e : Fin r → Fin n → ℂ} {z : Fin n → ℂ} 
   · intro i j
     refine ⟨fun hji => ?_, fun hij => ?_⟩
     · dsimp only
-      rw [if_neg (ne_of_gt hji)]
+      rw [ite_eq_right (ne_of_gt hji)]
       split_ifs with h
       · rw [hy0 j ⟨i.val, h⟩ (le_of_lt hji)]; simp
       · simp
     · subst hij
       dsimp only
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       split_ifs with h
       · rw [hy0 i ⟨i.val, h⟩ le_rfl]; simp
       · simp
   · intro b
     show g *ᵥ _ = _
     simp only [add_smul, Finset.sum_add_distrib, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
     rw [hyeq b, Fin.sum_univ_castSucc]
     simp [Formalism.L2.SG.RealObj.fam, Fin.snoc_castSucc]
 
@@ -1080,13 +966,13 @@ theorem FMm_inv {e : Fin m → Fin n → ℂ} {g : Matrix (Fin n) (Fin n) ℂ} {
   have hc : ∀ d, ∑ c, G⁻¹ c b * G d c = (G * G⁻¹) d b := fun d => by
     rw [Matrix.mul_apply]; exact Finset.sum_congr rfl fun c _ => mul_comm _ _
   simp only [← Finset.sum_smul, hc, hGG, Matrix.one_apply, ite_smul, one_smul, zero_smul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem conj_shear {r : ℕ} {N : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ} (hN : IsUpUni N)
     {Y Y' : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ} (a b : Fin (r + 1))
     (h : ∀ c d, a ≤ c → d ≤ b → (c, d) ≠ (a, b) → Y c d = Y' c d) :
     (N⁻¹ * Y * N) a b - Y a b = (N⁻¹ * Y' * N) a b - Y' a b := by
-  obtain ⟨hNi, -⟩ := isUpUni_inv_and_isUnit_det_of_isUpUni hN
+  have hNi := up_inv hN
   have key : ∀ Z : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ,
       (∀ c d, a ≤ c → d ≤ b → (c, d) ≠ (a, b) → Z c d = 0) → (N⁻¹ * Z * N) a b = Z a b := by
     intro Z hZ
@@ -1146,7 +1032,7 @@ theorem hJ_efr (u' : D.what₂.Word) (v : InfinitePlace X.B.I.F) (a : Fin D.R.rS
     fun x y => by rw [← Formalism.L2.SG.PoincareInHH.Cut.hform_crd X x y, RingEquiv.symm_apply_apply]
   rw [efr_eq, Formalism.L2.SG.Pf.Level.hJ_rv, show X.fR a = X.crd (X.fY a) from rfl, hE']
   refine Fin.lastCases ?_ (fun i => ?_) d
-  · rw [if_neg (Fin.castSucc_lt_last a).ne']
+  · rw [ite_eq_right (Fin.castSucc_lt_last a).ne']
     simp only [FlagG.fvec, Fin.snoc_last, X.flagZVector u', (X.zu_orth u' a).2, map_zero]
   · simp only [FlagG.fvec, Fin.snoc_castSucc, X.Fu_e u']
     have h := (VS D).herm.eq (X.eX i) (X.fY a)
@@ -1155,7 +1041,7 @@ theorem hJ_efr (u' : D.what₂.Word) (v : InfinitePlace X.B.I.F) (a : Fin D.R.rS
     rw [h2]
     by_cases hia : i = a
     · subst hia; simp
-    · rw [if_neg hia, if_neg (fun h => hia (Fin.castSucc_inj.1 h))]; simp
+    · rw [ite_eq_right hia, ite_eq_right (fun h => hia (Fin.castSucc_inj.1 h))]; simp
 
 theorem hJ_sum_right (ε : Fin X.B.I.n → Bool) (y : Fin X.B.I.n → ℂ) {m : ℕ} (c : Fin m → ℂ)
     (e : Fin m → Fin X.B.I.n → ℂ) : Formalism.L2.SG.HidaSetting.hJ ε y (∑ i, c i • e i) = ∑ i, c i * Formalism.L2.SG.HidaSetting.hJ ε y (e i) := by
@@ -1171,7 +1057,7 @@ theorem coef_efr (u' : D.what₂.Word) (v : InfinitePlace X.B.I.F) {g : Matrix (
   have hg' : ∀ d, g *ᵥ efr X u' v d = ∑ c, G c d • efr X u' v c := hg
   rw [Matrix.mulVec_smul, hg' b, Finset.smul_sum]
   simp only [smul_smul, hJ_sum_right X]
-  simp only [hJ_efr, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [hJ_efr, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 end RealFrame
 
@@ -1245,26 +1131,25 @@ theorem Alin_shear {N : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) ℂ} (hN : 
       z p = rdc ^ (p.1.2.1 - p.1.1.1) * Yhat w rdc z p.1.1 p.1.2 := by
     intro z
     have e1 : Yhat w rdc z p.1.1 p.1.2 = z p / rdc ^ (p.1.2.1 - p.1.1.1) := by
-      simp only [Yhat, dif_pos hcond]
+      simp only [Yhat, dite_eq_left hcond]
       rfl
     rw [e1, mul_div_cancel₀ _ (pow_ne_zero _ hrd)]
   have hcs := conj_shear hN (Y := Yhat w rdc x) (Y' := Yhat w rdc x') p.1.1 p.1.2 ?_
   · rw [Alin_apply, Alin_apply, hx x, hx x', ← mul_sub, ← mul_sub, hcs]
   · intro c d hac hdb hne
     by_cases hcd : c < d ∧ Formalism.L2.SG.RealObj.blkOf w.1 c.1 = Formalism.L2.SG.RealObj.blkOf w.1 d.1
-    · simp only [Yhat, dif_pos hcd]
+    · simp only [Yhat, dite_eq_left hcd]
       congr 1
       apply h
       have h1 : p.1.1.val ≤ c.val := hac
       have h2 : d.val ≤ p.1.2.val := hdb
       have h3 : c.val < d.val := hcd.1
       have h4 : c.val ≠ p.1.1.val ∨ d.val ≠ p.1.2.val := by
-        by_contra hh
-        push_neg at hh
+        by_contra! hh
         exact hne (Prod.ext (Fin.ext hh.1) (Fin.ext hh.2))
       show d.val - c.val < p.1.2.val - p.1.1.val
       omega
-    · simp only [Yhat, dif_neg hcd]
+    · simp only [Yhat, dite_eq_right hcd]
 
 end Alin
 
@@ -1308,7 +1193,7 @@ theorem conj_key {n : ℕ} {K : Type*} [Field K] {L : Type*} [Field L] (φ : K �
         (S⁻¹ * (Mm.map φ * (sgnM n * ((U⁻¹).map φ * X.map φ * U.map φ) * sgnM n) * (Mm⁻¹).map φ) * S) =
       (sgnM n * X.map φ * sgnM n) * (sgnM n * U.map φ * sgnM n * (Mm⁻¹).map φ * S) := by
   have hs : ∀ Z : Matrix (Fin (n + 1)) (Fin (n + 1)) L, sgnM n * (sgnM n * Z) = Z := by
-    intro Z; rw [← mul_assoc, sgnM_mul_self', one_mul]
+    intro Z; rw [← mul_assoc, sgnM_sq, one_mul]
   have hm : ∀ Z : Matrix (Fin (n + 1)) (Fin (n + 1)) L, (Mm⁻¹).map φ * (Mm.map φ * Z) = Z := by
     intro Z; rw [← mul_assoc, map_inv_mul φ hMm, one_mul]
   have hu : ∀ Z : Matrix (Fin (n + 1)) (Fin (n + 1)) L, U.map φ * ((U⁻¹).map φ * Z) = Z := by
@@ -1325,7 +1210,6 @@ theorem conj_off {n : ℕ} {K : Type*} [Field K] {N Y : Matrix (Fin n) (Fin n) K
 end Helpers
 
 section Final
-
 
 open Formalism.L2.SG.PackageTie2 in
 theorem dictC_holds : DictC := by

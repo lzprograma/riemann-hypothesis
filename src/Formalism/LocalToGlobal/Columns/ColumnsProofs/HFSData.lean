@@ -59,11 +59,11 @@ theorem resChar_chrMap (ξ : Chr F E K) (ht : ∀ v : HeightOneSpectrum (𝓞 F)
   have hex' := residue_character_exists F E L (chrMap ι ξ) ht' P
   have h1 : IsResChar ξ P (resChar ξ P) := by
     unfold resChar
-    rw [dif_pos hex.exists]
+    rw [dite_eq_left hex.exists]
     exact hex.exists.choose_spec
   have h2 : IsResChar (chrMap ι ξ) P (resChar (chrMap ι ξ) P) := by
     unfold resChar
-    rw [dif_pos hex'.exists]
+    rw [dite_eq_left hex'.exists]
     exact hex'.exists.choose_spec
   exact hex'.unique h2 (isResChar_chrMap ι h1)
 
@@ -112,8 +112,8 @@ theorem LevFam.glue_coefMap_reidx {SG Q₁ Q₂ : Finset (HeightOneSpectrum (�
   subst hA
   funext w
   by_cases hw : w.1 ∈ SG
-  · simp only [LevFam.glue, LevFam.reidx, LevFam.coefMap, dif_pos hw]
-  · simp only [LevFam.glue, LevFam.reidx, LevFam.coefMap, dif_neg hw]
+  · simp only [LevFam.glue, LevFam.reidx, LevFam.coefMap, dite_eq_left hw]
+  · simp only [LevFam.glue, LevFam.reidx, LevFam.coefMap, dite_eq_right hw]
     exact hB _
 
 theorem LevFam.coefMap_chr {SG : Finset (HeightOneSpectrum (𝓞 E))} (Λ : LevFam E K n SG) (x : ↥Λ.grp) :
@@ -151,8 +151,8 @@ theorem lamQ_coefMap (ξ : κˣ →* Kˣ) (a b : ℕ) :
 theorem extChi_coefMap {m : ℕ} (χ : Fin m → κˣ →* Kˣ) (s : ℕ) :
     extChi (fun j => (Units.map ι.toMonoidHom).comp (χ j)) s = (Units.map ι.toMonoidHom).comp (extChi χ s) := by
   by_cases h : s < m
-  · simp only [extChi, dif_pos h]
-  · simp only [extChi, dif_neg h, MonoidHom.comp_one]
+  · simp only [extChi, dite_eq_left h]
+  · simp only [extChi, dite_eq_right h, MonoidHom.comp_one]
 
 theorem lambdaAtPrime_characterMap {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (ξ : Chr F E K)
     (ht : ∀ v : HeightOneSpectrum (𝓞 F), wildAt E v ≤ ξ.ker) (P : HeightOneSpectrum (𝓞 E)) (n a b : ℕ) :

@@ -91,11 +91,6 @@ theorem KrOf_zero (δ : ∀ p : PlF D, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.M
     (T T' : ℕ) : KrOf δ M T T' 0 [] [] = 1 := by
   simp [KrOf]
 
-private theorem isPtL_of_ptOfList_ne_none {i : ℕ} {z : TB.Pt D.host.E} (hz : ptOfList i z ≠ none) :
-    Formalism.L2.S.IsPtL z i := by
-  by_contra h
-  simp [ptOfList, h, isPtL_signPt] at hz
-
 def ThOf : ℕ → ℕ → D.host.E → TB.Pt D.host.E → TB.Pt D.host.E → ℂ := fun _ _ _ _ _ => 0
 
 def eOf : ℕ → ℝ := fun _ => 0

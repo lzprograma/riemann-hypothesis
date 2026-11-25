@@ -10,8 +10,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.PullbackSections
@@ -93,13 +91,13 @@ theorem vtf_local (hol : IsHolFam e) (V : (pullback f u).Opens) (φ : Γ(pullbac
     if h : ⊤ ≤ e z ⁻¹ᵁ U then IsOpenImmersion.lift U.ι (e z) (vtf_range (e z) U h)
     else IsOpenImmersion.lift U.ι (e z0) (vtf_range (e z0) U h0U)
   have heU : ∀ z, ⊤ ≤ e z ⁻¹ᵁ U → eU z ≫ U.ι = e z := fun z h => by
-    simp only [eU, dif_pos h, IsOpenImmersion.lift_fac]
+    simp only [eU, dite_eq_left h, IsOpenImmersion.lift_fac]
   have heU' : ∀ z, eU z ≫ fU = uW := fun z => by
     rw [← cancel_mono W.ι]
     simp only [fU, uW, Category.assoc, IsOpenImmersion.lift_fac]
     by_cases h : ⊤ ≤ e z ⁻¹ᵁ U
     · rw [← Category.assoc, heU z h, he]
-    · simp only [eU, dif_neg h, IsOpenImmersion.lift_fac_assoc, he]
+    · simp only [eU, dite_eq_right h, IsOpenImmersion.lift_fac_assoc, he]
   have hpb : IsPullback (pullback.fst fU uW) (pullback.snd fU uW) fU uW := IsPullback.of_hasPullback fU uW
   have hgen := vtf_closure_eq_top (isPushout_appTop_of_isPullback hpb)
   have hw' : (pullback.fst fU uW ≫ U.ι) ≫ f = pullback.snd fU uW ≫ u := by

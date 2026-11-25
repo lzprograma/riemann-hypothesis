@@ -173,10 +173,10 @@ theorem _root_.GlobalTheory.trace_mem_prime_of_pow_mulVec_mem_smul : ∀ (K : Ty
     ext k
     rw [coeff_map, coeff_X_pow]
     rcases lt_trichotomy k q.natDegree with hk | rfl | hk
-    · rw [if_neg hk.ne, Ideal.Quotient.eq_zero_iff_mem]
+    · rw [ite_eq_right hk.ne, Ideal.Quotient.eq_zero_iff_mem]
       exact Ideal.pow_le_self (by omega) (hqc k)
     · simp [hqm.coeff_natDegree]
-    · rw [if_neg hk.ne', coeff_eq_zero_of_natDegree_lt hk, map_zero]
+    · rw [ite_eq_right hk.ne', coeff_eq_zero_of_natDegree_lt hk, map_zero]
   have hφπ : φ.map (Ideal.Quotient.mk P) = X ^ (m * q.natDegree) := by
     rw [hφdef, map_expand, hqπ, map_pow, expand_X, ← pow_mul]
   have hdvdπ : χ.map (Ideal.Quotient.mk P) ∣ X ^ (m * q.natDegree * r) := by
@@ -194,7 +194,7 @@ theorem _root_.GlobalTheory.trace_mem_prime_of_pow_mulVec_mem_smul : ∀ (K : Ty
     rw [← Ideal.Quotient.eq_zero_iff_mem]
     have := congrArg (fun p => p.coeff (r - 1)) hχπ
     simp only [coeff_map, coeff_X_pow, hir] at this
-    rw [this, if_neg (by omega)]
+    rw [this, ite_eq_right (by omega)]
   refine ⟨-χ.coeff (r - 1), P.neg_mem hcoeff, ?_⟩
   rw [Matrix.trace_eq_neg_charpoly_coeff, Fintype.card_fin, ← hχ, coeff_map]
   show algebraMap (𝓞 K) K (-χ.coeff (r - 1)) = _
@@ -319,10 +319,10 @@ theorem smallElement : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E],
   let Q : (E →+* ℂ) → Matrix (Fin r) (Fin r) ℂ := fun σ =>
     if hσ : σ ∈ X.Ψ then (mat x1 ⟨σ, hσ⟩)⁻¹
     else ((mat x1 ⟨ComplexEmbedding.conjugate σ, hcΨ σ hσ⟩)⁻¹).map (starRingEnd ℂ)
-  have hQpos : ∀ σ (hσ : σ ∈ X.Ψ), Q σ = (mat x1 ⟨σ, hσ⟩)⁻¹ := fun σ hσ => dif_pos hσ
+  have hQpos : ∀ σ (hσ : σ ∈ X.Ψ), Q σ = (mat x1 ⟨σ, hσ⟩)⁻¹ := fun σ hσ => dite_eq_left hσ
   have hQneg : ∀ σ (hσ : σ ∉ X.Ψ),
       Q σ = ((mat x1 ⟨ComplexEmbedding.conjugate σ, hcΨ σ hσ⟩)⁻¹).map (starRingEnd ℂ) :=
-    fun σ hσ => dif_neg hσ
+    fun σ hσ => dite_eq_right hσ
   set G : Matrix (Fin r) (Fin r) E := (γ : Matrix (Fin r) (Fin r) E) with hG
   have hposB : ∀ (τ : X.Ψ) (u : Fin r → ℂ),
       ReciprocityTheory.MultiplicativeHeights.normSq (((mat x1 τ)⁻¹ * G.map τ.1 * ((mat x1 τ)⁻¹)⁻¹) *ᵥ u) ≤

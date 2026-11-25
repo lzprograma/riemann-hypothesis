@@ -58,8 +58,8 @@ theorem WeierstrassFiniteness.proof (hE : FiniteModuloEliminate.Statement)
         · exact analyticAt_const
       · filter_upwards [hev] with z hz
         simp only [zeroCoordinate_apply, hL, Fintype.sum_sum_type, Sum.elim_inl, Sum.elim_inr,
-          Finset.mem_sdiff, Finset.mem_univ, hl, not_false_eq_true, and_self, if_true,
-          reduceCtorEq, if_false, zero_mul, Finset.sum_const_zero, add_zero]
+          Finset.mem_sdiff, Finset.mem_univ, hl, not_false_eq_true, and_self, ite_true,
+          reduceCtorEq, ite_false, zero_mul, Finset.sum_const_zero, add_zero]
         exact hz
   have hfin := key Finset.univ
   obtain ⟨N, a, h, ha, hh, hev⟩ := hI σ (Fin d ⊕ σ) x k f _ hf hfin g hg

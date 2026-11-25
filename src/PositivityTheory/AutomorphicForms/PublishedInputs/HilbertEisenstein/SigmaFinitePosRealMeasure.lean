@@ -6,6 +6,8 @@ import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.Ex
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
 import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
+import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.IdeleModuleInfIdDetLe
+import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.InvMulVecScalarMul
 
 @[expose] public section
 
@@ -25,61 +27,16 @@ variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
 theorem absD_mul (g h : GA F 2) : absD (g * h) = absD g * absD h := by
   simp only [absD, map_mul, Positive.val_mul]
 
-theorem absD_pos (g : GA F 2) : 0 < absD g := (IdeleGroup.ideleModule F _).2
+theorem absD_pos (g : GA F 2) : 0 < absD g := EisensteinIntegrability.absD_pos g
 
 theorem ideleModule_infId (d : (UpperTheory.V.TR.Rinf F)ˣ) :
-    (IdeleGroup.ideleModule F (UpperTheory.V.TR.infId F d) : ℝ) = ∏ v, |(d : UpperTheory.V.TR.Rinf F) v| := by
-  rw [ideleModule_apply]
-  have h2 : finiteModule (UpperTheory.V.TR.infId F d) = 1 := by
-    refine finprod_eq_one_of_forall_eq_one fun v => ?_
-    change ‖(((1 : Ad F) - UpperTheory.V.TR.sInf F 1 + UpperTheory.V.TR.sInf F (d : UpperTheory.V.TR.Rinf F) : Ad F)).2 v‖ = 1
-    change ‖((1 : Af F) - 0 + 0) v‖ = 1
-    simp
-  rw [h2, mul_one, infiniteModule]
-  refine Finset.prod_congr rfl fun w _ => ?_
-  have hm : w.mult = 1 := by
-    unfold InfinitePlace.mult; rw [if_pos (IsTotallyReal.isReal w)]
-  rw [hm, pow_one]
-  change ‖(((1 : Ad F) - UpperTheory.V.TR.sInf F 1 + UpperTheory.V.TR.sInf F (d : UpperTheory.V.TR.Rinf F) : Ad F)).1 w‖ = _
-  change ‖((1 : InfiniteAdeleRing F) - UpperTheory.V.TR.infEq F 1 + UpperTheory.V.TR.infEq F (d : UpperTheory.V.TR.Rinf F)) w‖ = _
-  rw [map_one, sub_self, zero_add]
-  change ‖(InfinitePlace.Completion.ringEquivRealOfIsReal (IsTotallyReal.isReal w)).symm ((d : UpperTheory.V.TR.Rinf F) w)‖ = _
-  set e := InfinitePlace.Completion.isometryEquivRealOfIsReal (IsTotallyReal.isReal w)
-  have he : ∀ r, (InfinitePlace.Completion.ringEquivRealOfIsReal (IsTotallyReal.isReal w)).symm r = e.symm r :=
-    fun _ => rfl
-  rw [he, ← dist_zero_right, ← Real.norm_eq_abs, ← dist_zero_right]
-  have h0 : e.symm 0 = 0 := by
-    rw [← he]; exact map_zero _
-  rw [← h0, e.symm.dist_eq]
+    (IdeleGroup.ideleModule F (UpperTheory.V.TR.infId F d) : ℝ) = ∏ v, |(d : UpperTheory.V.TR.Rinf F) v| :=
+  eisensteinGrowth.ideleModule_infId d
 
 theorem absD_infGL (y : GL (Fin 2) (UpperTheory.V.TR.Rinf F)) :
     absD (UpperTheory.V.TR.infGL F 2 y) = ∏ v, |(Matrix.det (y : Matrix (Fin 2) (Fin 2) (UpperTheory.V.TR.Rinf F))) v| := by
-  rw [absD, UpperTheory.V.TR.det_infGL, ideleModule_infId]
+  rw [absD, UpperTheory.V.TR.det_infGL, eisensteinGrowth.ideleModule_infId]
   rfl
-
-theorem absD_scalar_mul (t : {r : ℝ // 0 < r}) (u : normOneSubgroup F) (g : GA F 2) :
-    absD (Matrix.GeneralLinearGroup.scalar (Fin 2) (moduleSection (w0 F) t * (u : Ideles F)) * g) =
-      (t : ℝ) ^ 2 * absD g := by
-  rw [absD_mul]
-  congr 1
-  have hdet : Matrix.GeneralLinearGroup.det (Matrix.GeneralLinearGroup.scalar (Fin 2)
-      (moduleSection (w0 F) t * (u : Ideles F))) = (moduleSection (w0 F) t * (u : Ideles F)) ^ 2 := by
-    ext
-    simp [sq]
-    ring
-  have hu : IdeleGroup.ideleModule F (u : Ideles F) = 1 := u.2
-  rw [absD, hdet, map_pow, map_mul, ideleModule_moduleSection, hu, mul_one]
-  rfl
-
-theorem norm_hchar_of_finOrder {χ : HChar F} (hχ : IsOfFinOrder χ) (a : Ideles F) :
-    ‖((χ.1 a : ℂˣ) : ℂ)‖ = 1 := by
-  obtain ⟨n, hn, hpow⟩ := hχ.exists_pow_eq_one
-  have h1 : (χ.1 a) ^ n = 1 := by
-    have := congrArg (fun ψ : HChar F => ψ.1 a) hpow
-    simpa using this
-  have h2 : ‖((χ.1 a : ℂˣ) : ℂ)‖ ^ n = 1 := by
-    rw [← norm_pow, ← Units.val_pow_eq_pow_val, h1, Units.val_one, norm_one]
-  exact (pow_eq_one_iff_of_nonneg (norm_nonneg _) hn.ne').1 h2
 
 theorem measurableEmbedding_expPos : MeasurableEmbedding expPos :=
   expPosHomeomorph.measurableEmbedding

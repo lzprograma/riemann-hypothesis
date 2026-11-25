@@ -97,7 +97,6 @@ theorem exists_twSec_comb : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
     rw [hhi, hlo]
     simp only [Pi.sub_apply, Pi.smul_apply, smul_eq_mul, hs]
     have := hk w
-    have hm : (0 : ℝ) ≤ m := Nat.cast_nonneg m
     nlinarith
 
 end GlobalTheory.CombTw

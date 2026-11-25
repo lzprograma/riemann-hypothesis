@@ -58,9 +58,6 @@ open GlobalTheory.KS (rsT pbT C1 IsCoc IsCob)
 open GlobalTheory.LogKS (IsField)
 open GlobalTheory.RayEv (Ray)
 open GlobalTheory.Toroidal GlobalTheory.LogKS GlobalTheory.LogKSChart GlobalTheory.Heat
-attribute [local instance] Over.cartesianMonoidalCategory
-
-set_option autoImplicit false
 
 noncomputable section
 open GlobalTheory.TorusModel GlobalTheory.TorusExt GlobalTheory.Serre ReciprocityTheory.ChartRestriction.G.Semi.Rosenlicht

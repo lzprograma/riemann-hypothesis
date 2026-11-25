@@ -63,10 +63,6 @@ abbrev resAlgebra (h : V ≤ U) : Algebra Γ(X, U) Γ(X, V) :=
 abbrev resModule (h : V ≤ U) : Module Γ(X, U) Γ(F, V) :=
   Module.compHom Γ(F, V) (X.presheaf.map (homOfLE h).op).hom
 
-theorem resModule_smul (h : V ≤ U) (r : Γ(X, U)) (s : Γ(F, V)) :
-    letI := resModule F h
-    r • s = X.presheaf.map (homOfLE h).op r • s := rfl
-
 theorem res_isScalarTower (h : V ≤ U) :
     letI := resAlgebra h
     letI := resModule F h

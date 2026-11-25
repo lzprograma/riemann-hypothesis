@@ -832,7 +832,7 @@ theorem rational_coset_param : ∀ (F : Type) [Field F] [NumberField F] (ι : Ty
     congr 1
     rw [Finset.sum_eq_single i (fun j _ hj => by simp [Ne.symm hj]) (by simp)]
     refine Finset.sum_congr rfl fun v _ => ?_
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     ring
 
 end GlobalTheory.CompanionTheory.SW.ThW
@@ -1263,9 +1263,9 @@ theorem sb_eq_sum_coset_indicators :
     intro q
     by_cases hq : q = (x : V ⧸ L')
     · subst hq
-      rw [if_pos rfl, Set.indicator_of_mem (show x ∈ {y | y - ((x : V ⧸ L')).out ∈ L'} from (key _).2 rfl),
+      rw [ite_eq_left rfl, Set.indicator_of_mem (show x ∈ {y | y - ((x : V ⧸ L')).out ∈ L'} from (key _).2 rfl),
         hval, mul_one]
-    · rw [if_neg hq, Set.indicator_of_notMem (show x ∉ {y | y - q.out ∈ L'} from fun hx => hq ((key _).1 hx)),
+    · rw [ite_eq_right hq, Set.indicator_of_notMem (show x ∉ {y | y - q.out ∈ L'} from fun hx => hq ((key _).1 hx)),
         mul_zero]
   simp only [hterm, Finset.sum_ite_eq']
   split_ifs with hx
@@ -1640,14 +1640,6 @@ noncomputable section
 namespace GlobalTheory.CompanionTheory.SW.ThW
 
 section Linear
-
-theorem sb_integrable {V : Type} [AddCommGroup V] [TopologicalSpace V] [MeasurableSpace V]
-    {χ : V → V → ℂ} {μ : Measure V} (hV : NADual V χ μ) {φ : V → ℂ} (h : SB φ) (y : V) :
-    Integrable (fun x => φ x * χ x y) μ := by
-  obtain ⟨hT, _, _, _, hB, hH, _, _, hC, _⟩ := hV
-  have hc : Continuous fun x => φ x * χ x y :=
-    h.1.continuous.mul (hC.comp (by fun_prop : Continuous fun x : V => (x, y)))
-  exact hc.integrable_of_hasCompactSupport h.2.mul_right
 
 theorem fou_smul {V : Type} [MeasurableSpace V] (χ : V → V → ℂ) (μ : Measure V) (c : ℂ)
     (φ : V → ℂ) : fou χ μ (c • φ) = c • fou χ μ φ := by

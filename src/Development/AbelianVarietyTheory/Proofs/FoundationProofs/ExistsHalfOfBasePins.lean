@@ -54,8 +54,6 @@ open scoped Pointwise
 
 namespace GlobalTheory.CoverHalf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem eq_prod_of_squarefree {S : Type} [CommRing S] [IsDedekindDomain S] {I : Ideal S} (hI : Squarefree I)
     (P : Finset (HeightOneSpectrum S)) (hP : ∀ v, v ∈ P ↔ I ≤ v.asIdeal) : I = ∏ v ∈ P, v.asIdeal := by
   classical

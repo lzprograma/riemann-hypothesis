@@ -49,8 +49,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.BesselData
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 structure BesselDatum (A B : HSp D) (ι : A.V →ₗ[D.host.E] B.V) where

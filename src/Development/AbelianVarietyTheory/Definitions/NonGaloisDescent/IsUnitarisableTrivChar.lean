@@ -48,8 +48,6 @@ open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.UnitaryBC Gl
 
 namespace GlobalTheory.BcSpeh
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n c : ℕ}
 
 structure Parts (π : Submodule ℂ (UA E n → ℂ)) (a d : Fin c → ℕ) (h : ∑ i, d i * a i = n) (P : ∀ i, CuspSub E (a i))

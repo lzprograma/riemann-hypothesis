@@ -48,8 +48,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.WeilSignShift
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def NcGapGt (S : SPar) (h : ℝ) : Prop :=
   ∀ x ∈ S, ∀ y ∈ S, x.2 ≠ y.2 → h < |((x.1 - y.1 : ℚ) : ℝ)|
 
@@ -77,21 +75,6 @@ def StepGap (i : Fin D.R.m) : Prop :=
   ∀ τ, NcGapGt (lamS D i τ) ((D.R.rankY ((i : ℕ) + 1) : ℝ) ^ 3) ∧
     NcGapGt (lamT D i τ) ((D.R.rankY ((i : ℕ) + 1) : ℝ) ^ 3) ∧
     NcGapGe (lamS D i τ) (120 * (D.R.rankY i : ℝ) * (minSig (lamS D i τ) : ℝ) ^ ((3 : ℝ) / 2))
-
-variable {D}
-
-def StepWeil (ψ : AddChar (AF D.host.F) ℂ) (i : Fin D.R.m) (V W : HSp D)
-    (ω : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)) : Prop :=
-  ∃ χV χW : (AE D)ˣ →* Circle, IsWeilDatumO ψ V W χV χW ω ∧
-    ∀ τ, HasInfExp D χV τ (alV D i τ) ∧ HasInfExp D χW τ (alW D i τ)
-
-def VacVec {V W : HSp D} {S S' : D.what₂.Tau → SPar} (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D)
-    (M : DSModel V S) (M' : DSModel W S') (f : WO V W → ℂ) : Prop :=
-  IsThetaFunO ψ V W f ∧ ∀ τ, IsFockVacAt (heisO ψ V W) θ τ (cplxO (cart M τ) (cart M' τ)) f
-
-def fockOf {V W : HSp D} {S S' : D.what₂.Tau → SPar} (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D)
-    (M : DSModel V S) (M' : DSModel W S') (f : WO V W → ℂ) : PolF D W.rank V.rank → (WO V W → ℂ) :=
-  pureTensorO ψ θ V W (cart M) (cart M') (onb M) (onb M') f
 
 end GlobalTheory.IndefiniteRowSideFullHecke.WeilSignShift
 

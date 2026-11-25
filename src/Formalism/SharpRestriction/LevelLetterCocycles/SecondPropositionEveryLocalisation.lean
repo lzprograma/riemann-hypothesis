@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.LevelLetterCocycles.CongruenceAnnihilatesCharacterPart
 public import Formalism.SharpRestriction.LevelLetterCocycles.LargeLevelLemmas
 public import Aesop.BuiltinRules
 public import Formalism.TruncatedSeriesCounting.LemmaDetPoly
@@ -10,55 +11,14 @@ public import Formalism.CharacterColumnKernels.IdempotentNormalForms.VccSpan
 public import Formalism.SharpRestriction.LevelLetterCocycles.EndomorphismIndexBound
 public import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.BridgeDet
 public import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.LemmaDetPoly
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.CoassocSimps
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -342,7 +302,7 @@ theorem blocks_eq (a : A) :
     rw [Finset.sum_eq_single c]
     · simp
     · intro b _ hb
-      rw [if_neg (Ne.symm hb), map_zero, zero_mul]
+      rw [ite_eq_right (Ne.symm hb), map_zero, zero_mul]
     · simp
 
 theorem det_at (g : ℕ) (Θ : Matrix (Fin g) (Fin g) A) :
@@ -760,7 +720,7 @@ theorem inj_of_card {A : Type} [CommRing A] [IsDomain A] {t : ℕ} {F : Type} [F
   by_contra hni
   obtain ⟨i, j, hij, hne⟩ : ∃ i j, Φ x i = Φ x j ∧ i ≠ j := by
     unfold Function.Injective at hni
-    push_neg at hni
+    push Not at hni
     exact hni
   have hroot : ∀ z, Multiset.map (Φ z) Finset.univ.val = P.roots := by
     intro z
@@ -800,18 +760,18 @@ theorem inj_of_card {A : Type} [CommRing A] [IsDomain A] {t : ℕ} {F : Type} [F
     intro y c
     by_cases h : σ y = Equiv.swap i j
     · dsimp only [τ]
-      rw [if_pos h, hσ y c, h]
+      rw [ite_eq_left h, hσ y c, h]
       exact hswap c
     · dsimp only [τ]
-      rw [if_neg h, hσ y c]
+      rw [ite_eq_right h, hσ y c]
   have hτne : ∀ y, τ y ≠ Equiv.swap i j := by
     intro y
     by_cases h : σ y = Equiv.swap i j
     · dsimp only [τ]
-      rw [if_pos h]
+      rw [ite_eq_left h]
       exact hsw.symm
     · dsimp only [τ]
-      rw [if_neg h]
+      rw [ite_eq_right h]
       exact h
   have hτinj : Function.Injective τ := by
     intro y y' h
@@ -857,22 +817,22 @@ theorem sepElt (x : N.X i) : ∃ g ∈ N.T i, g x ≠ 0 ∧ ∀ y, y ≠ x → g
     if h : x ≠ y then f y h - algebraMap (N.O i) (N.X i → N.O i) (f y h y) else 1
   refine ⟨∏ y, F y, Subalgebra.prod_mem _ (fun y _ => ?_), ?_, ?_⟩
   · by_cases h : x ≠ y
-    · simp only [F, dif_pos h]
+    · simp only [F, dite_eq_left h]
       exact Subalgebra.sub_mem _ (hfT y h) (Subalgebra.algebraMap_mem _ _)
-    · simp only [F, dif_neg h]
+    · simp only [F, dite_eq_right h]
       exact Subalgebra.one_mem _
   · rw [Finset.prod_apply]
     refine Finset.prod_ne_zero_iff.mpr (fun y _ => ?_)
     by_cases h : x ≠ y
-    · simp only [F, dif_pos h, Pi.sub_apply]
+    · simp only [F, dite_eq_left h, Pi.sub_apply]
       exact sub_ne_zero.mpr (hf y h)
-    · simp only [F, dif_neg h, Pi.one_apply]
+    · simp only [F, dite_eq_right h, Pi.one_apply]
       exact one_ne_zero
   · intro y hy
     rw [Finset.prod_apply]
     refine Finset.prod_eq_zero (Finset.mem_univ y) ?_
     have h : x ≠ y := fun e => hy e.symm
-    simp only [F, dif_pos h, Pi.sub_apply]
+    simp only [F, dite_eq_left h, Pi.sub_apply]
     exact sub_self _
 
 variable {r : N.X i → (GE N →* GL (Fin R.nV) (N.O i))}
@@ -1088,11 +1048,7 @@ variable {i : N.Loc} {r : N.X i → (GE N →* GL (Fin R.nV) (N.O i))}
 
 theorem inR'_of_inR (hT : ∀ f ∈ N.T i, (fun x' => f (S.p x')) ∈ S.T') {a : N.X i → MatN N i}
     (ha : InR N i r a) : InR' N r S (fun x' => a (S.p x')) := by
-  obtain ⟨m, f, γ, hf, he⟩ := ha
-  refine ⟨m, fun k x' => f k (S.p x'), γ, fun k => hT _ (hf k), ?_⟩
-  subst he
-  funext x'
-  simp [Finset.sum_apply]
+  apply _root_.Formalism.MainNotions.TypePrimeCongruences.CongruenceModules.inR'_of_inR <;> assumption
 
 theorem exists_nonfixed_twisted_vector
     (hG6 : ∀ x : N.X i, (∃ u : Fin R.nV → KK N i, u ≠ 0 ∧ ∀ g,
@@ -1101,8 +1057,7 @@ theorem exists_nonfixed_twisted_vector
     (x : N.X i) (hx : x ∉ N.Z i) (η : Fin R.nV → KK N i) (hη : η ≠ 0) :
     ∃ g : GE N, toK N i (((chiU N i 1 g)⁻¹ : (N.O i)ˣ) : N.O i) •
       (mapM (toK N i) (rO N i r x) g).mulVec η ≠ η := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   apply hx
   apply hG6 x
   refine ⟨η, hη, fun g => ?_⟩

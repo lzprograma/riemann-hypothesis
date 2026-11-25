@@ -172,11 +172,11 @@ theorem _root_.GlobalTheory.UnitFrame.im_sum_periods {r : ℕ} (q : ℕ) (τ : E
   rw [hfull, Complex.im_sum, Complex.im_sum, ← Finset.sum_neg_distrib]
   refine Finset.sum_congr rfl fun a _ => ?_
   by_cases ha : (a : ℕ) < q
-  · simp only [ha, if_true, hkey]
+  · simp only [ha, ite_true, hkey]
     have : _root_.ReciprocityTheory.ChartRestriction.G.FD.sgn q a = 1 := by simp [_root_.ReciprocityTheory.ChartRestriction.G.FD.sgn, ha]
     simp [this, Complex.mul_im]
     ring
-  · simp only [ha, if_false]
+  · simp only [ha, ite_false]
     have : _root_.ReciprocityTheory.ChartRestriction.G.FD.sgn q a = -1 := by simp [_root_.ReciprocityTheory.ChartRestriction.G.FD.sgn, ha]
     simp [this, Complex.mul_im]
 

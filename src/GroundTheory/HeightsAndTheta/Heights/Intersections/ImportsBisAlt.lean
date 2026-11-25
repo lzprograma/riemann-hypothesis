@@ -74,7 +74,7 @@ theorem RegularityDenominator.proof (hD : RegularityDivisorSupportClosed.Stateme
   let M : ℤ := ∏ W ∈ hfin.toFinset, mW W
   have hM0 : M ≠ 0 := Finset.prod_ne_zero_iff.mpr fun W hW => by
     have hW' := hfin.mem_toFinset.mp hW
-    simp only [mW, dif_pos hW']
+    simp only [mW, dite_eq_left hW']
     exact (key W hW').choose_spec.1
   refine ⟨(M : funField P), fun h => hM0 ?_, fun W hWc hPW => ⟨?_, ?_⟩⟩
   · have h' : ((M : funField P) : FractionRing (MRing ι ⧸ P)) = 0 := by rw [h]; rfl
@@ -97,7 +97,7 @@ theorem RegularityDenominator.proof (hD : RegularityDivisorSupportClosed.Stateme
       obtain ⟨r, hr⟩ := Finset.dvd_prod_of_mem mW (hfin.mem_toFinset.mpr hW)
       have hm := (key W hW).choose_spec.2
       rw [show M = mW W * r from hr, Int.cast_mul, ← mul_assoc]
-      simp only [mW, dif_pos hW]
+      simp only [mW, dite_eq_left hW]
       exact mul_mem hm (intCast_mem _ r)
     · exact mul_mem (frac_mem_locRing hPW hu hva hvW hxv) (intCast_mem _ M)
 

@@ -48,20 +48,20 @@ theorem lowComp_entry_wt {ι : Type*} [Fintype ι] [DecidableEq ι] {n : ℕ} {�
     by_cases hcb : c = b
     · subst hcb
       have hca : ¬ c = a := hba
-      simp only [if_neg hca, ite_true, Matrix.zero_apply, sub_zero] at h
-      simp only [if_neg hca]
+      simp only [ite_eq_right hca, ite_true, Matrix.zero_apply, sub_zero] at h
+      simp only [ite_eq_right hca]
       apply mul_left_cancel₀ hne
       push_cast
       linear_combination h
     · by_cases hca : c = a
       · subst hca
-        simp only [if_neg (Ne.symm hcb), ite_true, Matrix.zero_apply, zero_sub] at h
-        simp only [if_neg hcb]
+        simp only [ite_eq_right (Ne.symm hcb), ite_true, Matrix.zero_apply, zero_sub] at h
+        simp only [ite_eq_right hcb]
         apply mul_left_cancel₀ hne
         push_cast
         linear_combination h
-      · simp only [if_neg (Ne.symm hcb), if_neg hca, Matrix.zero_apply, sub_zero] at h
-        simp only [if_neg hcb, if_neg hca]
+      · simp only [ite_eq_right (Ne.symm hcb), ite_eq_right hca, Matrix.zero_apply, sub_zero] at h
+        simp only [ite_eq_right hcb, ite_eq_right hca]
         apply mul_left_cancel₀ hne
         push_cast
         linear_combination h
@@ -100,7 +100,7 @@ theorem lowComp : LowCompStatement := by
   · intro c
     have h := congrArg (fun y : PiLp 2 (fun _ : ι => V) => y j) (hwt c)
     simp only [lowComp_tensAct_apply, hd c, Matrix.diagonal_apply, ite_smul, zero_smul,
-      Finset.sum_ite_eq, Finset.mem_univ, if_true, PiLp.smul_apply] at h
+      Finset.sum_ite_eq, Finset.mem_univ, ite_true, PiLp.smul_apply] at h
     rw [Pi.sub_apply, Complex.ofReal_sub, sub_smul, ← h, hj]
     abel
   · intro a b hab he

@@ -161,7 +161,7 @@ theorem _root_.GlobalTheory.LeadingMinors.coeff_prod_leading_minors : ∀ (k : T
         {x : (Σ τ : T, Fin (r τ)) × Fin n | ∃ i, col x.1.1 i = x.2}
         fun a i => ⟨Fin.castLE s.isLt i, rfl⟩) _
   refine ⟨?_, by rw [hdeg]; exact hhom, hdeg, fun mo hmo l b hlb => ?_⟩
-  · rw [← hmap, ← MvPolynomial.coeff_killCompl hf, hkill, MvPolynomial.coeff_monomial, if_pos rfl]
+  · rw [← hmap, ← MvPolynomial.coeff_killCompl hf, hkill, MvPolynomial.coeff_monomial, ite_eq_left rfl]
   · have hv : (l, b) ∈ P.vars :=
       (MvPolynomial.mem_vars_iff_mem_support _).2 ⟨mo, hmo, Finsupp.mem_support_iff.2 hlb⟩
     exact MvPolynomial.mem_supported.1 hsupp hv

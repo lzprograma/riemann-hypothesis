@@ -19,27 +19,11 @@ variable {D : D7} {inQ : D.what₂.Tup → HeightOneSpectrum (𝓞 D.host.F) →
 
 structure SymmetricTwistedTiltedData {Tw : TwForms D} {T : Formalism.L2.Herm.TwChTied D inQ} {H : Formalism.L2.Herm.HermColsCh D} {J : Formalism.L2.Herm.TwChJointS T H}
     {F : ∀ u, FormsTiedSym D u (H.Ch u) (H.chOf u)} {W : TwFormsTiedS D Tw T J F}
-    (Lv : SymmetricTwistedLevelData W) (u : D.what₂.Word) (μ : D.what₂.Tup) (hμ : μ ≠ D.what₂.mu0) (h1 : 1 ≤ D.R.m)
-    (K : ClassesAtPrimes (Tw.fm u μ) (badQ D (T.Q μ))) where
+    (_Lv : SymmetricTwistedLevelData W) (u : D.what₂.Word) (μ : D.what₂.Tup) (hμ : μ ≠ D.what₂.mu0) (h1 : 1 ≤ D.R.m)
+    (_K : ClassesAtPrimes (Tw.fm u μ) (badQ D (T.Q μ))) where
   z0 : Fin (D.R.N D.R.m) → D.host.E
-  lastCoordinateUniformizerVector_spans_orthogonal_line : ∃ a : D.host.E, z0 = a • zc D
-  hermitianForm_lastCoordinateUniformizerVector_self : hform (sigD D : D.host.E →+* D.host.E) (gramN D D.R.m le_rfl) z0 z0 = ((D.mem u).A.T : D.host.E)
   ga : (Tw.fm u μ).clsP → UJ (sigD D : D.host.E →+* D.host.E) (gramN D D.R.m le_rfl)
-  til_lat : ∀ c, mulLat (ga c).1.1 (latCrd D D.R.m le_rfl (T.lat u μ D.R.m ((Tw.fm u μ).til c))) =
-    (K.lat c).map ((iXc D).restrictScalars (𝓞 D.host.E)) ⊔ Submodule.span (𝓞 D.host.E) {z0}
-  til_fv : ∀ v c (x : ↥(LdG D D.R.m le_rfl (latCrd D D.R.m le_rfl (T.lat u μ D.R.m ((Tw.fm u μ).til c))))) (r : 𝓞 D.host.E),
-    (r : D.host.E) = hform (sigD D : D.host.E →+* D.host.E) (gramN D D.R.m le_rfl) z0 ((ga c).1.1 *ᵥ x.1) →
-    (Tw.fm u μ).fv D.R.m v ((Tw.fm u μ).til c) ((Lv.lv u μ hμ D.R.m h1 le_rfl).pr v _ x) = (W.atT u μ).res (F u).atT v r
-
-  stabMap : ∀ c s, IsExt D z0 (RingHom.id D.host.E) (K.stabI c s).1.1
-    ((ga c).1.1 * ((W.ch u μ hμ D.R.m h1 le_rfl (T.chOf u μ D.R.m ((Tw.fm u μ).til c))).stabI ⟨(Tw.fm u μ).til c, rfl⟩
-      ((Tw.fm u μ).stabMap c s)).1.1 * ((ga c)⁻¹).1.1)
-
   ka : ∀ c, (W.ch u μ hμ D.R.m h1 le_rfl (T.chOf u μ D.R.m ((Tw.fm u μ).til c))).lev.U
-  til_ad : ∀ c (g : GL (Fin (D.R.N D.R.m)) (D.host.E ⊗[D.host.F] FiniteAdeleRing (𝓞 D.host.F) D.host.F)),
-    IsExt D z0 (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) (K.y c).1.1 g.1 →
-    bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) (ga c).1 *
-      ((W.ch u μ hμ D.R.m h1 le_rfl (T.chOf u μ D.R.m ((Tw.fm u μ).til c))).y ⟨(Tw.fm u μ).til c, rfl⟩).1 = g * (ka c).1
 
 
 

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MaximalHermitianLatticeBadPrimesIffGramDet
 public import Formalism.HermitianLattices.StatementMass
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
 public import Mathlib.Algebra.Module.FinitePresentation
@@ -198,19 +199,7 @@ theorem cj_cj (s : 𝓞 K) : cj K (cj K s) = s := by
 
 theorem mem_hcompl {P : Ideal (𝓞 K)} (hP : P.IsPrime) (s : 𝓞 K) :
     s ∈ hcompl (K := K) P ↔ s ∉ P ∧ cj K s ∉ P := by
-  constructor
-  · intro hs
-    induction hs using Submonoid.closure_induction with
-    | mem x hx => exact ⟨hx.1, hx.2 _ (cj_coe x)⟩
-    | one => rw [map_one]; exact ⟨hP.one_notMem, hP.one_notMem⟩
-    | mul x y _ _ hx hy =>
-      rw [map_mul]
-      exact ⟨fun H => (hP.mem_or_mem H).elim hx.1 hy.1, fun H => (hP.mem_or_mem H).elim hx.2 hy.2⟩
-  · rintro ⟨h1, h2⟩
-    refine Submonoid.subset_closure ⟨h1, fun t ht => ?_⟩
-    rw [← cj_coe] at ht
-    rw [RingOfIntegers.coe_injective ht]
-    exact h2
+  apply _root_.GlobalTheory.MassOrth.mem_hcompl_iff <;> assumption
 
 theorem conjIdeal_eq (P : Ideal (𝓞 K)) : conjIdeal (K := K) P = P.comap (cj K) := by
   apply le_antisymm

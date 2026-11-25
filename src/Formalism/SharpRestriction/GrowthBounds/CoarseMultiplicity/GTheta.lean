@@ -4,47 +4,7 @@ public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.ChainEm
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFDefs
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.MapFloorMono
 import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.DivDerZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.TopOddNeEnd
-import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.BitVec
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -117,7 +77,7 @@ theorem cth_gen (D7 : Formalism.BasicNotions.D7) {D : BlockData N} (hT : TieOK D
       · refine freeV_of_vars (nv_add (nv_mul (nv_X (hZS i).1) (nv_X (hZS i).2)) (nv_sum _ fun c' hc' =>
           nv_mul (nv_X (hemb fun h => Finset.ne_of_mem_erase hc' (congrArg Prod.snd h).symm))
             (nv_X (hemb fun h => tieW_ne_tieE hT i i (congrArg Prod.fst h)))))
-      · simp only [Bool.false_eq_true, if_false, zero_add, map_mul, rename_X]
+      · simp only [Bool.false_eq_true, ite_false, zero_add, map_mul, rename_X]
       · refine otherE_free hT j i fun i' hi' => nv_Ehat hT i' (hZS i').1 (hZS i').2
           (fun c' => hemb fun h => hi' (hT.inj _ _ (congrArg Fin.val (congrArg Prod.fst h)).symm))
           (fun c' => hemb fun h => tieW_ne_tieE hT i i' (congrArg Prod.fst h))
@@ -133,7 +93,7 @@ theorem cth_gen (D7 : Formalism.BasicNotions.D7) {D : BlockData N} (hT : TieOK D
         · refine freeV_of_vars (nv_add (nv_mul (nv_X (hZS i).1) (nv_X (hZS i).2)) (nv_sum _ fun c' hc' =>
             nv_mul (nv_X (hemb fun h => tieW_ne_tieE hT i i (congrArg Prod.fst h).symm))
               (nv_X (hemb fun h => Finset.ne_of_mem_erase hc' (congrArg Prod.snd h).symm))))
-        · simp only [Bool.false_eq_true, if_false, zero_add, map_mul, rename_X]
+        · simp only [Bool.false_eq_true, ite_false, zero_add, map_mul, rename_X]
           ring
         · refine otherE_free hT j i fun i' hi' => nv_Ehat hT i' (hZS i').1 (hZS i').2
             (fun c' => hemb fun h => tieW_ne_tieE hT i' i (congrArg Prod.fst h).symm)
@@ -142,7 +102,7 @@ theorem cth_gen (D7 : Formalism.BasicNotions.D7) {D : BlockData N} (hT : TieOK D
               simp only [tieE] at this
               omega)))
       ·
-        push_neg at hW hE
+        push Not at hW hE
         have hfree : FreeV (chainEmb N r D.T.t (a0, c)) (∏ i, D.Ehat O (r := r) i ^ j i) :=
           freeV_of_vars (nv_prod _ fun i' _ => nv_pow (nv_Ehat hT i' (hZS i').1 (hZS i').2
             (fun c' => hemb fun h => hW i' (congrArg Prod.fst h))
@@ -184,7 +144,7 @@ theorem cth_gen (D7 : Formalism.BasicNotions.D7) {D : BlockData N} (hT : TieOK D
         (E' := rename (chainEmb N r D.T.t) (pairP O r hT i)) (Ehat_eq' hT i) ?_ (freeV_of_vars hpair) (hPP i) true ?_
         hoth hg ?_
       · exact freeV_of_vars (nv_X (by simp [scalS, scalZ]))
-      · simp only [if_true]
+      · simp only [ite_true]
         rw [Ehat_eq' hT i, map_neg]
         ring
       · intro b _
@@ -211,7 +171,7 @@ theorem cth_gen (D7 : Formalism.BasicNotions.D7) {D : BlockData N} (hT : TieOK D
         unfold scalS
         ring
       · exact freeV_of_vars (nv_X (by simp [scalZ]))
-      · simp only [if_true]
+      · simp only [ite_true]
         rw [Ehat_eq' hT i, map_neg]
         unfold scalS
         ring

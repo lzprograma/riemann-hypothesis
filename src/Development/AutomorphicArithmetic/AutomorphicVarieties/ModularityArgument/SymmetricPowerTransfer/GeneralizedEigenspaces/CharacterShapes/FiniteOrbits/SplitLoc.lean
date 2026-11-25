@@ -52,8 +52,6 @@ open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory
 open UpperTheory.V.W (Plc Lp)
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob UpperTheory.V.Z.Sym.Sig UpperTheory.V.Z.Sym.So UpperTheory.V.Z.Sym.Dict UpperTheory.V.Z.Sym.Dict.Br
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 section
 open GlobalTheory.SplitWeil
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
@@ -101,8 +99,7 @@ theorem UpperTheory.V.Z.Sym.So.kNon :
   obtain ⟨-, -, -, -, hU2₀⟩ := datOk F Δ A₀ hA₀
   have hinv := (kOps F Δ A hA V ch C hC).2.1 φ hφ
   obtain ⟨g, hg⟩ : ∃ g, φ g ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hφ0 (funext h)
   obtain ⟨γ, s, hs, y, hy, u, hu, rfl⟩ := hY.2 g
   have hu₀ := (hU2₀ u).1 hu
@@ -118,7 +115,7 @@ theorem UpperTheory.V.Z.Sym.So.kNon :
     by_contra h
     apply hv
     have hn : ¬ (v ∈ A.Sg ∧ v ∉ A₀.Sg) := fun h' => h h'.1
-    simp only [tf, dif_neg hn]
+    simp only [tf, dite_eq_right hn]
     exact one_mem _
   let t : DA Δ := ⟨tf, htf⟩
   have hcomm : t * y = y * t := by
@@ -128,32 +125,32 @@ theorem UpperTheory.V.Z.Sym.So.kNon :
     by_cases h : v ∈ A.Sg ∧ v ∉ A₀.Sg
     · rw [hoff y hy v h.1]
       simp
-    · simp only [tf, dif_neg h]
+    · simp only [tf, dite_eq_right h]
       simp
   have htS : t ∈ SA Δ := by
     simp only [SA, Subgroup.mem_iInf, Subgroup.mem_comap]
     intro v
     show tf v ∈ SU ((cv v) Δ)
     by_cases h : v ∈ A.Sg ∧ v ∉ A₀.Sg
-    · simp only [tf, dif_pos h]
+    · simp only [tf, dite_eq_left h]
       exact (hspl v h).choose_spec.1
-    · simp only [tf, dif_neg h]
+    · simp only [tf, dite_eq_right h]
       exact one_mem _
   have hj : t⁻¹ * u ∈ A.dat.U2 := by
     refine (hU2 _).2 ⟨fun v hv => ?_, fun v hv => ?_⟩
     · show eD (A.hs v hv) ((tf v)⁻¹ * u.1 v) ∈ (A.V v).J 2
       by_cases h0 : v ∈ A₀.Sg
       · have hn : ¬ (v ∈ A.Sg ∧ v ∉ A₀.Sg) := fun h => h.2 h0
-        simp only [tf, dif_neg hn, inv_one, one_mul]
+        simp only [tf, dite_eq_right hn, inv_one, one_mul]
         rw [eD_congr (A.hs v hv) (A₀.hs v h0) (hE.s v h0), hE.V v h0]
         exact hu₀.1 v h0
       · have hp : v ∈ A.Sg ∧ v ∉ A₀.Sg := ⟨hv, h0⟩
-        simp only [tf, dif_pos hp]
+        simp only [tf, dite_eq_left hp]
         rw [hE.iw v hv h0]
         exact (hspl v hp).choose_spec.2
     · show (tf v)⁻¹ * u.1 v ∈ KD ((cv v) Δ) (Ov v)
       have hn : ¬ (v ∈ A.Sg ∧ v ∉ A₀.Sg) := fun h => hv h.1
-      simp only [tf, dif_neg hn, inv_one, one_mul]
+      simp only [tf, dite_eq_right hn, inv_one, one_mul]
       exact hu₀.2 v (fun h0 => hv (hE.sub h0))
   refine ⟨y, hy, ⟨s * t, mul_mem hs htS⟩, ?_⟩
   intro h0

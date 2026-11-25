@@ -16,10 +16,6 @@ namespace Formalism.L2
 abbrev TwPick (D : D7) (i : D.ntw.Tw) : Type :=
   Σ (Q : Finset (PlE D.host)) (k' : ℕ), D.ntw.RCG i Q →* (D.ntw.Ok i k')ˣ
 
-def ExpHyp (D : D7) (I : TwIn D) (i : D.ntw.Tw) : Prop :=
-  Formalism.MainNotions.IntegralHeckeEveryConjugate D (BlochKatoReduction.bk0 D) I.E I.N0 ∧ D.ntw.NonzeroIndexPlace i ∧ BlochKatoReduction.Gen.SetHyp (BlochKatoReduction.bk0 D) i ∧ I.Ok i
-
-
 open Classical in
 def ExpGood (D : D7) (I : TwIn D) (A : Finset (PlE D.host)) (i : D.ntw.Tw) (p : TwPick D i) : Prop :=
   IntegralHeckeForms.GoodTw D.nexp (BlochKatoReduction.bk0 D) I.E I.N0 i (twEps D i) (I.S i) A p.1 p.2.1 p.2.2
@@ -47,9 +43,6 @@ theorem avRec_subset_avD (D : D7) (Av : TwAv D) (i : D.ntw.Tw) : AvRec D ⊆ avD
   intro v hv
   unfold avD
   exact Finset.mem_union_left _ hv
-
-def placesOverQ0 (D : D7) : Finset (PlE D.host) :=
-  (placesOver_finite_av D.host.E (AbsolutelyIrreducibleSpan.q0 D) (Host.leastSplitAuxiliaryPrimeThetaChain_spec D).1.ne_zero).toFinset
 
 def avOver (D : D7) (s : Finset ℕ) : Finset (PlE D.host) :=
   (Set.Finite.biUnion (s := ((s.filter (· ≠ 0) : Finset ℕ) : Set ℕ)) (t := fun p => placesOver D.host.E p)
@@ -87,26 +80,6 @@ theorem mem_avDesign {D : D7} (i : D.ntw.Tw) (v : PlE D.host) :
 def SidePl (D : D7) (w : D.what₂.places.Pl) (i : D.ntw.Tw) (s : Bool) : Prop :=
   ∀ x : D.LL0, 0 ≤ D.what₂.places.val w (x : D.what₂.LL) ↔
     (if s then D.ntw.emb0 i x else D.ntw.emb0b i x) ∈ (algebraMap (D.ntw.O0 i) (FractionRing (D.ntw.O0 i))).range
-
-def twPackPow (D : D7) (a : ℤ) (p : TwPack D) : TwPack D :=
-  ⟨p.1, p.2.1, p.2.2.1, p.2.2.2 ^ a⟩
-
-def fracOe (D : D7) (C : NChoice D) (w : D.what₂.places.Pl) : FractionRing (D.ntw.O0 (C.twI w)) →+* FractionRing (C.Oe w) :=
-  IsFractionRing.map (j := (algebraMap (D.ntw.Ok (C.twI w) (C.k' w)) (C.Oe w)).comp
-      ((algebraMap (D.ntw.O (C.twI w)) (D.ntw.Ok (C.twI w) (C.k' w))).comp (algebraMap (D.ntw.O0 (C.twI w)) (D.ntw.O (C.twI w)))))
-    ((C.Oe_inj w).comp ((D.ntw.Ok_inj (C.twI w) (C.k' w)).comp (D.ntw.O_inj (C.twI w))))
-
-structure NChoiceTied (D : D7) (C : NChoice D) (I : TwIn D) (Av : TwAv D) : Prop where
-  twI_conj : ∀ w, C.twI (D.what₂.places.conj w) = C.twI w
-  sd_place : ∀ w, TwistedAt D w → SidePl D w (C.twI w) (C.sd w)
-  emb_side : ∀ w, TwistedAt D w → ∀ (x : D.LL0), C.embW w (x : D.what₂.LL) =
-    fracOe D C w (if C.sd w then D.ntw.emb0 (C.twI w) x else D.ntw.emb0b (C.twI w) x)
-  sd_conj : ∀ w, TwistedAt D w → D.what₂.places.conj w ≠ w → C.sd (D.what₂.places.conj w) = !C.sd w
-  one : ∀ w w', TwistedAt D w → TwistedAt D w' → C.twI w' = C.twI w →
-    ∃ a : ℤ, Nat.Coprime a.natAbs (D.ntw.l (C.twI w)) ∧ NChoicePack C w' = twPackPow D a (NChoicePack C w)
-  good : ∀ w, TwistedAt D w → ExpHyp D I (C.twI w) →
-    ExpGood D I (avD D Av (C.twI w)) (C.twI w) ⟨C.Q w, C.k' w, BlochKatoReduction.Gen.psiAt (C.sd w) (C.psi' w)⟩
-  conj : ∀ w, TwistedAt D w → NChoicePack C (D.what₂.places.conj w) = NChoicePack C w
 
 variable {D : D7} {C : NChoice D} {I : TwIn D} {Av : TwAv D}
 
@@ -163,12 +136,6 @@ theorem emb0_mem_maximalIdeal_iff_val_pos_of_sidePl (D : D7) (w : D.what₂.plac
     rw [hsum] at this
     exact lt_irrefl _ this
 
-
-section Vac
-
-variable (D : D7)
-
-end Vac
 
 end Formalism.L2
 

@@ -51,7 +51,6 @@ open scoped Pointwise
 
 namespace UpperTheory.V.Z.Keep.OrdinaryFlagThree
 
-open UpperTheory.V.U3
 
 private theorem diag_mul_of_tri {k : Type} [CommRing k] (A B : Matrix (Fin 3) (Fin 3) k)
     (hA : A.BlockTriangular id) (hB : B.BlockTriangular id) (i : Fin 3) :

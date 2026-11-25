@@ -31,61 +31,14 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongr
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ConstantLeRpowOfThreeLe
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcLengthThreeFirstLift
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.FrobeniusRelationCombination
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.Pi0MemADelta
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.TypeStar
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.RingTheory.PowerSeries.WeierstrassPreparation
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.Linter.HaveILetI
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DvdCoeffsOfMemSpanDistinguished
 import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.FormalSeriesValueAtTwoPointsGenericPoints
 
@@ -355,14 +308,14 @@ theorem arc_length_three_hyp_first (W : LocWach PD LL O v n) (hcase : Formalism.
   have hps0 : ps W 0 = qA W := by simp [ps]
   have hHs0 : A.Hs a 2 0 = A.h := by
     unfold ArcP.Hs
-    rw [if_neg]
+    rw [ite_eq_right]
     push Not
     refine ⟨?_, by rw [hj]; norm_num⟩
     rw [Nat.cast_zero, sub_zero, ha, hty1]
     intro h; cases h
   have hHs1 : A.Hs a 2 1 = A.G₀ := by
     unfold ArcP.Hs
-    rw [if_pos (Or.inr (by rw [hj]))]
+    rw [ite_eq_left (Or.inr (by rw [hj]))]
   have hΛ : Λ = qA W ^ A.h * ps W 1 ^ A.G₀ := by
     rw [hΛdef, abelian₂, Finset.prod_range_succ, Finset.prod_range_one, hHs0, hHs1, hps0]
   have hb1h : b₁ + A.S ≤ A.h := by
@@ -393,9 +346,9 @@ theorem arc_length_three_hyp_first (W : LocWach PD LL O v n) (hcase : Formalism.
   obtain ⟨-, -, κ₁, κ₁', Hh1, a1, hHh1, -, -⟩ := hc3 (fun k => if k = k₀ then (algebraMap (LetA O n) W.EE) (letE a) else 0) (by
     intro k
     by_cases hk : k = k₀
-    · simp only [if_pos hk]
+    · simp only [ite_eq_left hk]
       exact ⟨Λ, hΛmem, by rw [← map_mul]; congr 1; ring⟩
-    · simp only [if_neg hk]
+    · simp only [ite_eq_right hk]
       exact ⟨0, W.AΔ.zero_mem, by simp⟩)
   set σ := A.σ PD.p with hσdef
   obtain ⟨κ', y, hy, hyeq⟩ := h4a
@@ -413,20 +366,20 @@ theorem arc_length_three_hyp_first (W : LocWach PD LL O v n) (hcase : Formalism.
     · intro k
       by_cases hk : k = k₀
       · subst hk; simp only; exact TypesA.IsHorTr_smul W κ₁ hHh
-      · simp only [if_neg hk]; rw [add_comm]; exact TypesA.IsHorTr_smul W κ (hHh1 k)
+      · simp only [ite_eq_right hk]; rw [add_comm]; exact TypesA.IsHorTr_smul W κ (hHh1 k)
     · intro k
       by_cases hk : k = k₀
-      · simp only [if_pos hk]
+      · simp only [ite_eq_left hk]
         refine ⟨W.AΔ.mul_mem (W.AΔ.mul_mem hletmem hRmem) (TypesA.lA_pow_mem W σ), ?_⟩
         rw [TC.lE_eq W σ]
         rw [show (algebraMap (LetA O n) W.EE) Λ * ((algebraMap (LetA O n) W.EE) (letE a) * (algebraMap (LetA O n) W.EE) (lA W ^ σ) * s) = (algebraMap (LetA O n) W.EE) (letE a) * (algebraMap (LetA O n) W.EE) (lA W ^ σ) * ((algebraMap (LetA O n) W.EE) Λ * s) by ring, hΛs]
         simp only [map_mul]; ring
-      · simp only [if_neg hk]; exact ⟨W.AΔ.zero_mem, by simp⟩
+      · simp only [ite_eq_right hk]; exact ⟨W.AΔ.zero_mem, by simp⟩
     · have hsum : ∑ k, (if k = k₀ then letE a * R * lA W ^ σ else 0) •
           ((W.φD T₂) ^ 2) (if k = k₀ then lA W ^ κ₁ • Hh else lA W ^ κ • Hh1 k) =
           (R * lA W ^ σ * lA W ^ κ₁) • ((W.φD T₂) ^ 2) Hh := by
-        rw [Finset.sum_eq_single k₀ (fun k _ hk => by simp only [if_neg hk, zero_smul]) (by simp)]
-        rw [if_pos rfl, if_pos rfl]
+        rw [Finset.sum_eq_single k₀ (fun k _ hk => by simp only [ite_eq_right hk, zero_smul]) (by simp)]
+        rw [ite_eq_left rfl, ite_eq_left rfl]
         rw [hφl, smul_smul, show letE a * R * lA W ^ σ * lA W ^ κ₁ = (R * lA W ^ σ * lA W ^ κ₁) * letE a by ring,
           mul_smul, hlet2]
       rw [hsum, pow_zero, one_smul, hΛx]
@@ -442,12 +395,12 @@ theorem arc_length_three_hyp_first (W : LocWach PD LL O v n) (hcase : Formalism.
   have hfr : ∀ m, InFr W a 1 Λ (if m = k₀ then (algebraMap (LetA O n) W.EE) (letE a) * lE W σ * s else 0) := by
     intro m
     by_cases hm : m = k₀
-    · simp only [if_pos hm]
+    · simp only [ite_eq_left hm]
       refine ⟨R * lA W ^ σ, W.AΔ.mul_mem hRmem (TypesA.lA_pow_mem W σ), ?_⟩
       rw [TC.lE_eq W σ]
       rw [show (algebraMap (LetA O n) W.EE) Λ * ((algebraMap (LetA O n) W.EE) (letE a) * (algebraMap (LetA O n) W.EE) (lA W ^ σ) * s) = (algebraMap (LetA O n) W.EE) (letE a) * (algebraMap (LetA O n) W.EE) (lA W ^ σ) * ((algebraMap (LetA O n) W.EE) Λ * s) by ring, hΛs]
       simp only [map_mul, map_one]; ring
-    · simp only [if_neg hm]; exact ⟨0, W.AΔ.zero_mem, by simp⟩
+    · simp only [ite_eq_right hm]; exact ⟨0, W.AΔ.zero_mem, by simp⟩
   have hN : InFNc W T₂ a 1 (s • lam) := by
     refine (hcrit (s • lam) 0 _ hInFP hRep hfr).2 ⟨0, 1, fun _ => (algebraMap (LetA O n) W.EE) (letE a) * lE W σ * s,
       fun _ => Pi.single k₀ 1, fun _ t => if t = 0 then -(b₁ : ℤ) else ((w' + A.S : ℕ) : ℤ),
@@ -589,9 +542,6 @@ theorem arc_length_three_hyp_second (W : LocWach PD LL O v n) (hcase : Formalism
       rw [hE]; exact (W.N T₂).smul_mem _ h2
     have hlet2 := TypesD.φDpow_letter W hxlet 2
     rw [e3] at hlet2
-    have hEl : (letE (c - 1) : LetA O n) • ((qA W ^ A.η * ps W 1 ^ (w' + A.S)) • ((W.φD T₂) ^ 2) x) =
-        (qA W ^ A.η * ps W 1 ^ (w' + A.S)) • ((W.φD T₂) ^ 2) x := by
-      rw [smul_comm, hlet2]
     have hamem : qA W ^ A.η * ps W 1 ^ (w' + A.S) ∈ W.AΔ :=
       W.AΔ.mul_mem (W.AΔ.pow_mem hqmem _) (W.AΔ.pow_mem hp1mem _)
     have hΔ : ∀ δ ∈ W.DelF, W.γD T₂ δ (((W.φD T₂) ^ 2) x) = ((W.φD T₂) ^ 2) x := by
@@ -729,22 +679,6 @@ theorem eval_eq_zero {x : O} (hx : x ∈ IsLocalRing.maximalIdeal O) (r : Polyno
   exact Ideal.sub_mem _ h (Ideal.mul_mem_right _ _ (Ideal.subset_span rfl))
 
 end GammaOnLevels
-
-section Core
-
-variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
-    [Algebra Qp K₀] [Algebra Qp K] [Algebra K₀ K] [IsScalarTower Qp K₀ K]
-    {B BdR : Type} [CommRing B] [CommRing BdR] [Algebra Qp B] [Algebra K₀ B] [IsScalarTower Qp K₀ B]
-    [Algebra Qp BdR] [Algebra K₀ BdR] [Algebra K BdR] [IsScalarTower Qp K BdR]
-    [IsScalarTower K₀ K BdR] [IsScalarTower Qp K₀ BdR]
-    {LL O : Type} [Field LL] [Algebra Qp LL] [TopologicalSpace LL] [CommRing O] [Algebra O LL]
-    {v : AddValuation LL (WithTop ℚ)} {n : ℕ}
-    {PD : PeriodData G Qp K₀ K B BdR}
-
-variable [FiniteDimensional Qp LL]
-
-
-end Core
 
 end Formalism.MainNotions.N.Ln17
 end -- clump:auto
@@ -1065,21 +999,7 @@ theorem gamma_q_expansion_of_points [IsDomain O] [IsDiscreteValuationRing O] [Ch
   have hpF : Fact PD.p.Prime := ⟨PD.hp⟩
   set χ : O := ((W.χΓ W.gam : Oˣ) : O) with hχdef
 
-  have hlm : ((PD.p : ℕ) : O) ∈ IsLocalRing.maximalIdeal O := by
-    rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
-    rintro ⟨u, hu⟩
-    have h2 : algebraMap O LL ((u⁻¹ : Oˣ) : O) * ((PD.p : ℕ) : LL) = 1 := by
-      rw [← map_natCast (algebraMap O LL), ← hu, ← map_mul, Units.inv_mul, map_one]
-    have h3 := congrArg v h2
-    rw [AddValuation.map_mul, AddValuation.map_one, W.v_l] at h3
-    have h1 := hO ((u⁻¹ : Oˣ) : O)
-    generalize v (algebraMap O LL ((u⁻¹ : Oˣ) : O)) = t at h1 h3
-    induction t using WithTop.recTopCoe with
-    | top => simp at h3
-    | coe q =>
-      have e3 : q + 1 = 0 := by exact_mod_cast h3
-      have e1 : (0 : ℚ) ≤ q := by exact_mod_cast h1
-      linarith
+  have hlm : ((PD.p : ℕ) : O) ∈ IsLocalRing.maximalIdeal O := ArcLengthOneTwo.l_mem_max W hO
 
   have hχ : χ - 1 ∈ Ideal.span {((PD.p : ℕ) : O)} := by
     have hg := W.gam_gen
@@ -1312,8 +1232,6 @@ theorem numeric_bound_two_a_le_b1 (l : ℕ) (hl : 11 ≤ l) (b wm S η b₁ H : 
     have h3 : (2 * (l : ℝ) - 1) ≤ 21 / 100 * ((l : ℝ) - 1) ^ 2 := by
       nlinarith [mul_nonneg (sub_nonneg.2 hl') (by linarith : (0 : ℝ) ≤ l - 1)]
     nlinarith [Nat.cast_nonneg (α := ℝ) H]
-  have hη0 := Nat.cast_nonneg (α := ℝ) η
-  have hS0 := Nat.cast_nonneg (α := ℝ) S
   linarith
 
 theorem numeric_bound_exponent_eg (l : ℕ) (hl : 11 ≤ l) (b wm S η b₁ H : ℕ) (hb : 1 ≤ b) (hη : 20 * η ≤ b) (hS : 20 * S ≤ b)
@@ -1322,7 +1240,6 @@ theorem numeric_bound_exponent_eg (l : ℕ) (hl : 11 ≤ l) (b wm S η b₁ H : 
     (EG l A S η b₁ : ℝ) ≤ 8 * Formalism.MainNotions.N.FrobeniusPowerSeries.Sg l (b + η + S) wm S η := by
   have hl1 : (1 : ℝ) < l := by exact_mod_cast (by omega : 1 < l)
   have hl0 : (0 : ℝ) < l - 1 := by linarith
-  have hcW : (0 : ℝ) ≤ (cW l H : ℝ) := Nat.cast_nonneg _
   have hHl : (0 : ℝ) ≤ (H : ℝ) * (2 * l - 1) / ((l : ℝ) - 1) ^ 2 := by
     apply div_nonneg _ (sq_nonneg _)
     exact mul_nonneg (Nat.cast_nonneg _) (by linarith)
@@ -1417,11 +1334,6 @@ theorem arc_length_three_first_level [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsD
   have hl5 : 5 ≤ PD.p := by omega
 
   have hlen' : sInf {d : ℕ | 1 ≤ d ∧ ¬ Formalism.MainNotions.TruncatedSeriesCountingBounds.Thick b η size (c - (d : ZMod n) + 1)} = 3 := hlen
-  have hne : {d : ℕ | 1 ≤ d ∧ ¬ Formalism.MainNotions.TruncatedSeriesCountingBounds.Thick b η size (c - (d : ZMod n) + 1)}.Nonempty := by
-    by_contra hcon
-    rw [Set.not_nonempty_iff_eq_empty] at hcon
-    rw [hcon, Nat.sInf_empty] at hlen'
-    omega
   have hm2 := Nat.notMem_of_lt_sInf (s := {d : ℕ | 1 ≤ d ∧ ¬ Formalism.MainNotions.TruncatedSeriesCountingBounds.Thick b η size (c - (d : ZMod n) + 1)})
     (m := 2) (by rw [hlen']; norm_num)
   have e2 : c - ((2 : ℕ) : ZMod n) + 1 = c - 1 := by push_cast; ring
@@ -1429,7 +1341,7 @@ theorem arc_length_three_first_level [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsD
     by_contra hcon
     exact hm2 ⟨by norm_num, by rw [e2]; exact hcon⟩
   have hhB : Formalism.MainNotions.TruncatedSeriesCountingBounds.hB b w S η size = b + η + S := by
-    unfold Formalism.MainNotions.TruncatedSeriesCountingBounds.hB; rw [if_pos ⟨c - 1, hT1⟩]
+    unfold Formalism.MainNotions.TruncatedSeriesCountingBounds.hB; rw [ite_eq_left ⟨c - 1, hT1⟩]
   have eSg : Formalism.MainNotions.N.Ln17.Sg PD.p b w S η size = Formalism.MainNotions.N.FrobeniusPowerSeries.Sg PD.p (b + η + S) w S η := by
     rw [show Formalism.MainNotions.N.Ln17.Sg PD.p b w S η size =
       Formalism.MainNotions.N.FrobeniusPowerSeries.Sg PD.p (Formalism.MainNotions.TruncatedSeriesCountingBounds.hB b w S η size) w S η from rfl, hhB]
@@ -1472,10 +1384,10 @@ theorem arc_length_three_first_level [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsD
     have h1 := hJA i τ hτ a ha
     have h2 := hηs i
     cases hu : up i
-    · simp only [hu, Mi', hi', Bool.false_eq_true, if_false, Set.mem_union, Set.mem_Icc] at h1 ⊢
+    · simp only [hu, Mi', hi', Bool.false_eq_true, ite_false, Set.mem_union, Set.mem_Icc] at h1 ⊢
       push_cast
       omega
-    · simp only [hu, Mi', hi', if_true, Set.mem_union, Set.mem_Icc] at h1 ⊢
+    · simp only [hu, Mi', hi', ite_true, Set.mem_union, Set.mem_Icc] at h1 ⊢
       push_cast
       omega
   have hAS : A.S = S := rfl
@@ -1487,16 +1399,16 @@ theorem arc_length_three_first_level [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsD
     have h2 := hηs i
     rw [hty i] at h1
     cases hu : up i
-    · simp only [hu, Mi', hi', Bool.false_eq_true, if_false, Formalism.MainNotions.LocalTheoryWindows.LT.win, Set.mem_union,
+    · simp only [hu, Mi', hi', Bool.false_eq_true, ite_false, Formalism.MainNotions.LocalTheoryWindows.LT.win, Set.mem_union,
         Set.mem_Icc, hAS, hAη] at h1 ⊢
       push_cast
       omega
-    · simp only [hu, Mi', hi', if_true, Formalism.MainNotions.LocalTheoryWindows.LT.win, Set.mem_union, Set.mem_Icc, hAS, hAη] at h1 ⊢
+    · simp only [hu, Mi', hi', ite_true, Formalism.MainNotions.LocalTheoryWindows.LT.win, Set.mem_union, Set.mem_Icc, hAS, hAη] at h1 ⊢
       push_cast
       omega
   have hwid : ∀ i, Mi' i + hi' i = size i + S + η := by
     intro i
-    cases hu : up i <;> simp only [hu, Mi', hi', Bool.false_eq_true, if_false, if_true] <;> omega
+    cases hu : up i <;> simp only [hu, Mi', hi', Bool.false_eq_true, ite_false, ite_true] <;> omega
   have hsz : ∀ i, size i ≤ b + η := by
     intro i
     by_cases ht : Formalism.MainNotions.TruncatedSeriesCountingBounds.Thick b η size i
@@ -1525,7 +1437,7 @@ theorem arc_length_three_first_level [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsD
   obtain ⟨cc, hcc⟩ := exists_cyclotomic_char_quotient W hcase hOv hinj
   have hU : Formalism.MainNotions.TruncatedSeriesCountingBounds.JumpsAt W T₁ (c - 1) ((Set.Icc (b₁ : ℤ) (b₁ + S)) ∪ Set.Icc (-(η : ℤ)) η) := by
     have := hJA (c - 1)
-    rw [hup1, if_pos rfl] at this
+    rw [hup1, ite_eq_left rfl] at this
     exact this
   have hCONS : ∀ y : W.DD T₁, Formalism.MainNotions.LiftingTheory.InNΔi W T₁ (c - 1) (qA W ^ (Ai + ri) • y) →
       Formalism.MainNotions.LiftingTheory.InNΔi W T₁ (c - 1) (Polynomial.aeval dop₁ (TruncatedCoefficientPoly cc b₁ S η (Ai + ri)) y) := by
@@ -1546,8 +1458,8 @@ theorem arc_length_three_first_level [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsD
   have hs' : ps W 1 ^ (size (c - 2) + S) ∈ Submonoid.closure {x | ∃ k ≥ 1, x = ps W k} :=
     Submonoid.pow_mem _ (Submonoid.subset_closure (show ps W 1 ∈ {x | ∃ k ≥ 1, x = ps W k} from ⟨1, le_rfl, rfl⟩)) _
 
-  have hM1 : Mi' (c - 2) = size (c - 2) + A.S := by simp only [Mi', hD, Bool.false_eq_true, if_false]; rfl
-  have hM2 : Mi' (c - 1) = A.η := by simp only [Mi', hup1, if_true]; rfl
+  have hM1 : Mi' (c - 2) = size (c - 2) + A.S := by simp only [Mi', hD, Bool.false_eq_true, ite_false]; rfl
+  have hM2 : Mi' (c - 1) = A.η := by simp only [Mi', hup1, ite_true]; rfl
   have hAh : A.h = b + η + S := hhB
   have hN : b₁ + (Ai + ri) + A.η ≤ (PD.p - 1) * A.M PD.p := by
     have h1 := Nat.lt_mul_div_succ (2 * A.h) (show 0 < PD.p - 1 by omega)
@@ -1658,7 +1570,7 @@ theorem arc_length_three_le_valuation_constant_term [NeZero n] [Fintype (K →�
   have hh : (arcOf b w S η up size).h = b + η + S := by
     show Formalism.MainNotions.TruncatedSeriesCountingBounds.hB b w S η size = _
     unfold Formalism.MainNotions.TruncatedSeriesCountingBounds.hB
-    rw [if_pos ⟨c - 1, ht1⟩]
+    rw [ite_eq_left ⟨c - 1, ht1⟩]
   have hη1 := hsz (c - 1)
   have hη0 := hsz c
   have hB1 : 1 ≤ size c + S := by omega

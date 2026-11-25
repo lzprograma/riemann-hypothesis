@@ -149,9 +149,9 @@ theorem abs_sub_le (hR : BlockResolutionSupBound.Statement) (d : HSMBlockDatum D
   have hprob := d.vol.1
   by_cases h : ∃ p : (Σ r : ℕ, Fin r → MvPolynomial (Σ k, ι k) ℚ), IsSecBasisM d.y d.k₀ n p.2
   swap
-  · simp only [blockChi, blockCChi, dif_neg h, sub_zero, abs_zero]
+  · simp only [blockChi, blockCChi, dite_eq_right h, sub_zero, abs_zero]
     exact mul_nonneg (Nat.cast_nonneg _) hL
-  simp only [blockChi, blockCChi, dif_pos h]
+  simp only [blockChi, blockCChi, dite_eq_left h]
   have hp := h.choose_spec
   generalize h.choose = p at hp ⊢
   obtain ⟨r, b⟩ := p

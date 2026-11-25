@@ -2,6 +2,7 @@ module
 
 public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroLeviEigenvectorExists
 import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.InPowMono
 
 @[expose] public section
 
@@ -14,12 +15,6 @@ open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.Loc
 namespace UpperTheory.TNZ.Grp.P_TzInj
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-
-theorem KC_anti {n r r' : ℕ} (h : r ≤ r') : KC k n r' ⊆ KC k n r := by
-  rintro g ⟨hg, hP⟩
-  refine ⟨hg, fun i j => ?_⟩
-  obtain ⟨y, hy, e⟩ := hP i j
-  exact ⟨y, Ideal.pow_le_pow_right h hy, e⟩
 
 theorem eq_zero_of_inPow {x : k} (hx : ∀ r, InPow r x) : x = 0 := by
   obtain ⟨y, -, rfl⟩ := hx 0
@@ -53,8 +48,8 @@ theorem exists_KC_subset {n : ℕ} (hsub : ∀ r, ((KCg k n r : Set (GL (Fin n) 
     exact (hg' 0).2 (h1' ▸ h1)
   have hdt : Directed (· ⊇ ·) (fun r => KC k n r ∩ Uᶜ) := by
     intro a b
-    exact ⟨max a b, Set.inter_subset_inter_left _ (KC_anti (le_max_left a b)),
-      Set.inter_subset_inter_left _ (KC_anti (le_max_right a b))⟩
+    exact ⟨max a b, Set.inter_subset_inter_left _ (P_PJ.KC_mono (le_max_left a b)),
+      Set.inter_subset_inter_left _ (P_PJ.KC_mono (le_max_right a b))⟩
   obtain ⟨r, hr⟩ := ((GlobalTheory.SplitFlip.isCompact_KO (k := k) (n := Fin n)).elim_directed_family_closed
     (fun r => KC k n r ∩ Uᶜ) (fun r => (hcl r).inter hU.isClosed_compl) (Set.disjoint_iff_inter_eq_empty.2 hst) hdt).imp (fun _ => Disjoint.inter_eq)
   refine ⟨r, fun g hg => ?_⟩
@@ -118,7 +113,7 @@ theorem step_TzInj {n : ℕ} (G : Grp k n) : TorusCentreInjectiveProp G := by
   obtain ⟨r0, hr0⟩ := exists_KC_subset (fun r => (hKC hccB r).1) (fun r => (hKC hccB r).2.2.1) U hUo hU1
   set r := max r0 G.lev with hr
   have hrl : G.lev ≤ r := le_max_right _ _
-  have hKCr : KC k n r ⊆ U := (KC_anti (le_max_left _ _)).trans hr0
+  have hKCr : KC k n r ⊆ U := (P_PJ.KC_mono (le_max_left _ _)).trans hr0
   have hPJ' := hPJ hcb hccB hΔU hΔM hJone hJmul hJinv hlM hlB hKC V π r hrl
   have hJfin : Finite (↥G.Jg ⧸ (KCg k n r).subgroupOf G.Jg) := hPJ'.1
   let _ : Fintype (↥G.Jg ⧸ (KCg k n r).subgroupOf G.Jg) := Fintype.ofFinite _

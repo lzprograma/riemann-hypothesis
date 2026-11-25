@@ -56,7 +56,7 @@ theorem dR_dL {a : E → E} (ha : ContDiff ℝ ∞ a) {b : E' → E'} (hb : Cont
 
 end general
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ} {H : Type*} [NormedAddCommGroup H] [NormedSpace ℂ H]
 

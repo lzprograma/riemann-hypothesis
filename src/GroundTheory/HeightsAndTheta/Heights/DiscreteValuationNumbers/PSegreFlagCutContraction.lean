@@ -31,19 +31,8 @@ theorem pullDeg_comp_of_eq_zero {K K' : Type*} (j : K ↪ K') (b : K' → ℤ)
 
 theorem withBot_le_of_lt_succ (a : WithBot ℕ∞) (m : ℕ) (h : a < ((m + 1 : ℕ) : WithBot ℕ∞)) :
     a ≤ ((m : ℕ) : WithBot ℕ∞) := by
-  induction a using WithBot.recBotCoe with
-  | bot => exact bot_le
-  | coe b =>
-    induction b using ENat.recTopCoe with
-    | top =>
-      exfalso
-      have h' : ((⊤ : ℕ∞) : WithBot ℕ∞) < (((m + 1 : ℕ) : ℕ∞) : WithBot ℕ∞) := h
-      exact absurd (WithBot.coe_lt_coe.mp h') (by simp)
-    | coe c =>
-      have h' : (((c : ℕ) : ℕ∞) : WithBot ℕ∞) < (((m + 1 : ℕ) : ℕ∞) : WithBot ℕ∞) := h
-      have hc : c < m + 1 := by exact_mod_cast WithBot.coe_lt_coe.mp h'
-      show (((c : ℕ) : ℕ∞) : WithBot ℕ∞) ≤ (((m : ℕ) : ℕ∞) : WithBot ℕ∞)
-      exact WithBot.coe_le_coe.mpr (by exact_mod_cast (by omega : c ≤ m))
+  rw [Nat.cast_add, Nat.cast_one] at h
+  exact ENat.WithBot.lt_add_one_iff.mp h
 
 variable {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
   {K' : Type} [Fintype K'] [DecidableEq K'] {ι' : K' → Type} [∀ o, Fintype (ι' o)]

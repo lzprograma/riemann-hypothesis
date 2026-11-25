@@ -93,12 +93,6 @@ namespace GlobalTheory.ReadingTieCheck
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj.FJ Formalism.L2.Pj.QAt MeasureTheory GlobalTheory.TorusFourier GlobalTheory.MaxCuspKilled
 
-section Free
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r ρ : ℕ}
-
-end Free
-
 section Record
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.WeightAlgebra Formalism.MainNotions.Gaps.EtaleWeightGaps Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.PullbackSections

@@ -1,48 +1,7 @@
 module
 
 public import Formalism.HermitianCurvature.LetterProductDoubleDegreeCount
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -112,10 +71,10 @@ theorem sign_prod_of_split_at_index (s : Finset ℕ) (g : ℕ → ℝ) (m : ℕ)
       (fun j hj => hneg j (Finset.mem_insert_of_mem hj))
     rw [Finset.prod_insert ha, Finset.filter_insert]
     by_cases hma : m ≤ a
-    · rw [if_pos hma, Finset.card_insert_of_notMem (fun h => ha (Finset.mem_filter.1 h).1), pow_succ]
+    · rw [ite_eq_left hma, Finset.card_insert_of_notMem (fun h => ha (Finset.mem_filter.1 h).1), pow_succ]
       have := hneg a (Finset.mem_insert_self a s) hma
       nlinarith
-    · rw [if_neg hma]
+    · rw [ite_eq_right hma]
       have := hpos a (Finset.mem_insert_self a s) (by omega)
       nlinarith
 
@@ -131,17 +90,17 @@ theorem polynomial_sign : C7.PSign := by
         (fun j => if h : j < k + 2 * r + 1 then Y + lam ⟨j, h⟩ else 1) j := by
       rw [← Fin.prod_univ_eq_prod_range]
       refine Finset.prod_congr rfl fun s _ => ?_
-      simp only [dif_pos s.isLt, Fin.eta]
+      simp only [dite_eq_left s.isLt, Fin.eta]
     have key := sign_prod_of_split_at_index (Finset.range (k + 2 * r + 1))
       (fun j => if h : j < k + 2 * r + 1 then Y + lam ⟨j, h⟩ else 1) (l - 1)
       (fun j hj hjm => by
         have hj' : j < k + 2 * r + 1 := Finset.mem_range.1 hj
-        simp only [dif_pos hj']
+        simp only [dite_eq_left hj']
         have := (hside ⟨j, hj'⟩).2 (show j + 1 < l by omega)
         linarith [hB'.2])
       (fun j hj hjm => by
         have hj' : j < k + 2 * r + 1 := Finset.mem_range.1 hj
-        simp only [dif_pos hj']
+        simp only [dite_eq_left hj']
         have := (hside ⟨j, hj'⟩).1 (show l ≤ j + 1 by omega)
         linarith [hB'.1])
     have hcard : ((Finset.range (k + 2 * r + 1)).filter (l - 1 ≤ ·)).card = (k - l) + 2 * (r + 1) := by

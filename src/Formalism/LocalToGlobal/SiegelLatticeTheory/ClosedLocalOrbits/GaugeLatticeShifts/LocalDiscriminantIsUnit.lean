@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermAttractorConstant.LeadMinorEMulUpper
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.SiegelMassRatios.GramJoint
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.EFSymmCont
@@ -20,8 +21,6 @@ namespace Formalism.L2.SG.Pf
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef
   Formalism.L2.SG.Saturated Formalism.L2.SG.TermLoc ValuativeRel
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable (D : D7)
 
@@ -587,7 +586,7 @@ theorem bt_frFac_unitO {T : D.host.E} (F : FlagG (VS D) D.R.rS T)
     have h2 := Submodule.apply_mem_span_image_of_mem_span ΦO hm
     have e : ΦO (frFac Z.δ p b.castSucc • baseChange₂ D p (F.e b)) = frFac Z.δ p b.castSucc := by
       show Φ _ = _
-      rw [map_smul, hΦ, if_pos rfl, smul_eq_mul, mul_one]
+      rw [map_smul, hΦ, ite_eq_left rfl, smul_eq_mul, mul_one]
     rw [e] at h2
     refine bt_mem_O_of_span Z p ?_ h2
     rintro _ ⟨_, ⟨a, rfl⟩, rfl⟩
@@ -599,7 +598,7 @@ theorem bt_frFac_unitO {T : D.host.E} (F : FlagG (VS D) D.R.rS T)
         (Set.range fun a : Fin D.R.rS => frFac Z.δ p a.castSucc • baseChange₂ D p (F.e a)) := by
       rw [h]; exact Submodule.subset_span ⟨b, rfl⟩
     have h2 := Submodule.apply_mem_span_image_of_mem_span ΦO hm
-    have e : ΦO (baseChange₂ D p (F.e b)) = 1 := by show Φ _ = _; rw [hΦ, if_pos rfl]
+    have e : ΦO (baseChange₂ D p (F.e b)) = 1 := by show Φ _ = _; rw [hΦ, ite_eq_left rfl]
     rw [e] at h2
     have hsub : ΦO '' (Set.range fun a : Fin D.R.rS => frFac Z.δ p a.castSucc • baseChange₂ D p (F.e a)) ⊆
         (Submodule.span (Z.M p).L.O {frFac Z.δ p b.castSucc} : Set (D.s.atP p).Ep) := by
@@ -1210,21 +1209,7 @@ theorem bt_lead_tri {n l : ℕ} (hl : l ≤ n) {R : Type*} [CommRing R] (Z U : M
     (hU : ∀ a b, b < a → U a b = 0) :
     (Z * U).submatrix (Fin.castLE hl) (Fin.castLE hl) =
       Z.submatrix (Fin.castLE hl) (Fin.castLE hl) * U.submatrix (Fin.castLE hl) (Fin.castLE hl) := by
-  ext i j
-  simp only [Matrix.submatrix_apply, Matrix.mul_apply]
-  have e := (Finset.sum_image (s := Finset.univ) (g := Fin.castLE hl)
-    (f := fun k => Z (Fin.castLE hl i) k * U k (Fin.castLE hl j))
-    (fun a _ b _ h => Fin.castLE_injective hl h))
-  rw [← e]
-  symm
-  apply Finset.sum_subset (Finset.subset_univ _)
-  intro k _ hk
-  have hjk : Fin.castLE hl j < k := by
-    by_contra hkj
-    push Not at hkj
-    apply hk
-    refine Finset.mem_image.2 ⟨⟨k.val, lt_of_le_of_lt hkj j.isLt⟩, Finset.mem_univ _, Fin.ext rfl⟩
-  rw [hU k _ hjk, mul_zero]
+  apply _root_.PI.TermAttrConst.UnitaryGroupMassFormula.sub_mul_upper <;> assumption
 
 theorem bt_det_unitri_sub {n l : ℕ} (hl : l ≤ n) {R : Type*} [CommRing R] (U : Matrix (Fin n) (Fin n) R)
     (h1 : ∀ a b, b < a → U a b = 0) (h2 : ∀ a, U a a = 1) :
@@ -1732,9 +1717,6 @@ open BBTie
 
 section Tied
 
-
-variable (D) in
-def LocTied : Prop := ∀ p : PlF D, Nonempty (Formalism.L2.S.LocIso (D.s.atP p) (Formalism.L2.S.locC D p))
 
 
 

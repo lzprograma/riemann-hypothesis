@@ -54,7 +54,7 @@ variable {g : ℕ} {S : Finset (Fin g)}
 
 def offEquiv (S : Finset (Fin g)) : {n : Fin g → ℤ // ∀ k ∈ S, n k = 0} ≃ ({k // k ∉ S} → ℤ) where
   toFun n i := n.1 i
-  invFun l := ⟨fun k => if h : k ∈ S then 0 else l ⟨k, h⟩, fun k hk => dif_pos hk⟩
+  invFun l := ⟨fun k => if h : k ∈ S then 0 else l ⟨k, h⟩, fun k hk => dite_eq_left hk⟩
   left_inv n := by
     refine Subtype.ext (funext fun k => ?_)
     by_cases h : k ∈ S

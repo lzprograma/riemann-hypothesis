@@ -20,61 +20,12 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Minuscul
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SymmetricFunctionAbsoluteValues
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TendstoZeroOfSumSqLe
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnipCMemIntegralGL
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 import GroundTheory.LocalFields.LocalFourierHaar
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Tactic.Linter.Style
 import GroundTheory.AutomorphicForms.MacdonaldRecursion
 import GroundTheory.AutomorphicForms.AffineBruhat
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Order.CompletePartialOrder
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CMEqZeroOfNe, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoeffEqPowOfMulOneSub, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ColumnAverageHermitianPositive, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousOfTrivialInteger, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsPowMulMemInteger, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsTranslateNeZero, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUnitForm, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinalFormBesselBound, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetShalikaBoundOfSteps, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemCongruenceSubgroupOfDiv, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ModulusEqOneOfIntegral, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrthogonalityOfLatticeCharacter, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondCountableField, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumRangeEsymmLMulSchur, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistedColumnAverageExists, Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.JacquetShalikaBound
@@ -102,27 +53,24 @@ theorem cM_eq_of {k : ℕ} (x : Fin (k + 1) → F) {i j : Fin n} (hj : (j : ℕ)
   simp only [cM, Matrix.of_apply]
   rw [dite_eq_left ⟨hj, hi⟩]
 
-theorem col_val (k : ℕ) (x : Fin (k + 1) → F) :
-    ((col n k x : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) = 1 + cM n k x := rfl
-
 theorem col_inv_val (k : ℕ) (x : Fin (k + 1) → F) :
     (((col n k x)⁻¹ : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) = 1 - cM n k x := rfl
 
 theorem col_mem (k : ℕ) (x : Fin (k + 1) → F) : col n k x ∈ unipotent F n := by
   refine ⟨fun i j hij => ?_, fun i => ?_⟩
   · have hij' : (j : ℕ) < i := hij
-    rw [col_val, Matrix.add_apply, Matrix.one_apply_ne (by intro e; subst e; omega),
+    rw [GlobalTheory.CompanionTheory.JSBound.col_coe, Matrix.add_apply, Matrix.one_apply_ne (by intro e; subst e; omega),
       cM_eq_zero_of_ne x (by omega), add_zero]
-  · rw [col_val, Matrix.add_apply, Matrix.one_apply_eq, cM_eq_zero_of_ne x (by omega), add_zero]
+  · rw [GlobalTheory.CompanionTheory.JSBound.col_coe, Matrix.add_apply, Matrix.one_apply_eq, cM_eq_zero_of_ne x (by omega), add_zero]
 
 theorem superdiagSum_cM {k : ℕ} (hk : k + 1 < n) (x : Fin (k + 1) → F) :
     Whittaker.superdiagSum (cM n k x) = x (Fin.last k) := by
   unfold Whittaker.superdiagSum
   rw [Finset.sum_eq_single (⟨k, by omega⟩ : Fin n), Finset.sum_eq_single (⟨k + 1, hk⟩ : Fin n)]
-  · rw [if_pos rfl, cM_eq_of x rfl (by simp)]
+  · rw [ite_eq_left rfl, cM_eq_of x rfl (by simp)]
     rfl
   · intro j _ hj
-    rw [if_neg]
+    rw [ite_eq_right]
     intro e
     exact hj (Fin.ext (by simpa using e))
   · simp
@@ -137,7 +85,7 @@ theorem superdiagSum_cM {k : ℕ} (hk : k + 1 < n) (x : Fin (k + 1) → F) :
 
 theorem psiN_col (ψ : AddChar F ℂ) {k : ℕ} (hk : k + 1 < n) (x : Fin (k + 1) → F) :
     Whittaker.psiN ψ (col n k x) = ψ (x (Fin.last k)) := by
-  rw [Whittaker.psiN, col_val, Whittaker.superdiagSum_add, Whittaker.superdiagSum_one, zero_add,
+  rw [Whittaker.psiN, GlobalTheory.CompanionTheory.JSBound.col_coe, Whittaker.superdiagSum_add, Whittaker.superdiagSum_one, zero_add,
     superdiagSum_cM hk]
 
 theorem mul_cM {k : ℕ} {M : Matrix (Fin n) (Fin n) F}
@@ -209,7 +157,7 @@ theorem inU_conj (ψ : AddChar F ℂ) {k : ℕ} (g : GL (Fin n) F) (hg : inU (k 
   have hinv := (unipotent F n).inv_mem hcol
   have hv : ((col n k x * g * (col n k x)⁻¹ : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) =
       (g : Matrix (Fin n) (Fin n) F) + cM n k x * (g : Matrix (Fin n) (Fin n) F) - cM n k x := by
-    rw [Units.val_mul, Units.val_mul, col_val, col_inv_val]
+    rw [Units.val_mul, Units.val_mul, GlobalTheory.CompanionTheory.JSBound.col_coe, col_inv_val]
     exact conj_expand (mul_cM (fun i j hj => hc i j (by omega)) x) (cM_mul k x x)
   refine ⟨col n k x * g * (col n k x)⁻¹, ⟨(unipotent F n).mul_mem hcg hinv, fun i j hj => ?_⟩,
     (inv_mul_cancel_right _ _).symm, ?_⟩
@@ -302,7 +250,7 @@ theorem coeff_prod_one_sub {n : ℕ} (β : Fin n → ℂ) (r : ℕ) :
   rw [e, coeff_C_mul, coeff_X_pow]
   by_cases h : r = t.card
   · subst h; simp
-  · rw [if_neg h, if_neg (fun h' => h h'.symm)]; simp
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h h'.symm)]; simp
 
 theorem mk_mul_prod_eq_one {n : ℕ} (β : Fin n → ℂ) (g : ℕ → ℂ) (h0 : g 0 = 1)
     (hrec : ∀ j : ℕ, 1 ≤ j → ∑ r ∈ Finset.range (j + 1),
@@ -313,7 +261,7 @@ theorem mk_mul_prod_eq_one {n : ℕ} (β : Fin n → ℂ) (g : ℕ → ℂ) (h0 
   simp only [coeff_prod_one_sub, coeff_mk]
   rcases Nat.eq_zero_or_pos j with rfl | hj
   · simp [h0, coeff_one]
-  · rw [hrec j hj, coeff_one, if_neg (by omega)]
+  · rw [hrec j hj, coeff_one, ite_eq_right (by omega)]
 
 end GlobalTheory.CompanionTheory.SatakeBound
 
@@ -615,31 +563,6 @@ section Lat
 
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
 
-
-open GroundTheory.Automorphic.GLnLocal in
-theorem exists_pow_mul_mem_integer (a : F) :
-    ∃ M : ℕ, (uniformizer F : F) ^ M * a ∈ 𝒪[F] := by
-  apply GlobalTheory.CompanionTheory.SatakeBound.LargeLattice.exists_pow_mul_mem
-
-
-open GroundTheory.Automorphic.GLnLocal in
-theorem pow_mul_mem_of_le {M M' : ℕ} (h : M ≤ M') {a : F}
-    (ha : (uniformizer F : F) ^ M * a ∈ 𝒪[F]) : (uniformizer F : F) ^ M' * a ∈ 𝒪[F] := by
-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
-  rw [pow_add, mul_comm ((uniformizer F : F) ^ M), mul_assoc]
-  exact mul_mem (pow_mem (uniformizer F).2 d) ha
-
-theorem lat_mono {m M M' : ℕ} (h : M ≤ M') : lat F m M ⊆ lat F m M' := by
-  intro x hx
-  simp only [lat, Set.mem_ofPred_eq] at hx ⊢
-  exact fun i => pow_mul_mem_of_le h (hx i)
-
-theorem exists_mem_lat {m : ℕ} (y : Fin m → F) : ∃ M, y ∈ lat F m M := by
-  choose N hN using fun i => exists_pow_mul_mem_integer (y i)
-  refine ⟨Finset.univ.sup N, ?_⟩
-  simp only [lat, Set.mem_ofPred_eq]
-  exact fun i => pow_mul_mem_of_le (Finset.le_sup (Finset.mem_univ i)) (hN i)
-
 theorem add_mem_lat {m M : ℕ} {x y : Fin m → F} (hx : x ∈ lat F m M) (hy : y ∈ lat F m M) :
     x + y ∈ lat F m M := by
   simp only [lat, Set.mem_ofPred_eq] at hx hy ⊢
@@ -688,8 +611,8 @@ theorem equivariant_of_steps : L0 → ColumnsMirabolic → ColumnsUnipotent → 
   obtain ⟨g', x₀, hg', rfl, hpsi⟩ := hd1 g hg
   obtain ⟨M₁, hM₁⟩ := hChar ((ρ (g' * col n k x₀)) u) u'
   obtain ⟨M₂, hM₂⟩ := hChar u u'
-  obtain ⟨M₃, hM₃⟩ := exists_mem_lat x₀
-  have hx₀ : x₀ ∈ lat F (k + 1) (M₁ + M₂ + M₃) := lat_mono (by omega) hM₃
+  obtain ⟨M₃, hM₃⟩ := GlobalTheory.CompanionTheory.SatakeBound.LargeLattice.exists_mem_lat x₀
+  have hx₀ : x₀ ∈ lat F (k + 1) (M₁ + M₂ + M₃) := GlobalTheory.CompanionTheory.SatakeBound.LargeLattice.lat_mono (by omega) hM₃
   have hpt : ∀ x : Fin (k + 1) → F,
       ψ (-x (Fin.last k)) * (B u') ((ρ (col n k x)) ((ρ (g' * col n k x₀)) u)) =
         GroundTheory.Automorphic.Whittaker.psiN ψ g' * ψ (x₀ (Fin.last k)) *
@@ -810,8 +733,7 @@ theorem sphSpan_le (π : CuspSub E a) (w : HeightOneSpectrum (𝓞 E)) : sphSpan
 
 theorem exists_translate_ne_zero : G2 := by
   intro E _ _ _ a π w B hB l hl
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   obtain ⟨x, hx⟩ := hB.exists_vec
   have hfix : ∀ v : π.V, IsFix π w v → v ≠ 0 → IsSatVecGL w (π.locRep w) v B := fun v hv h0 =>
     hB.2 v (GlobalTheory.LGrp.mem_fixed.2 hv) h0
@@ -848,8 +770,6 @@ section -- clump:auto
 noncomputable section
 
 open NumberField IsDedekindDomain Matrix Formalism.L2.Host GlobalTheory.CuspRep GlobalTheory.LFun PositivityTheory.JacquetShalikaLocal
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.CompanionTheory.JSUnit
 
@@ -1017,8 +937,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain MeasureTheory GlobalTheory.CuspRep GlobalTheory.LFun PositivityTheory.JacquetShalikaLocal
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace GlobalTheory.CompanionTheory.SatakeBound
 
 theorem jacquetShalikaBound_of_steps : ParameterUpperBound → liftZP_unit → ParameterAbsoluteValues → lift_levelP_alt₂ → G1 → G2 → G3 → G4 → GlobalTheory.Published.JacquetShalikaBound := by
@@ -1083,8 +1001,6 @@ noncomputable section
 open NumberField IsDedekindDomain GlobalTheory.CuspRep GroundTheory.Automorphic GroundTheory.Automorphic.GLnLocal
   PositivityTheory.JacquetShalikaLocal
 open scoped ValuativeRel Topology MatrixGroups
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.CompanionTheory.JSSmooth
 
@@ -1266,10 +1182,10 @@ theorem div_col {n k c : ℕ} {y : Fin (k + 1) → F}
   by_cases h : (j : ℕ) = k + 1 ∧ (i : ℕ) < k + 1
   · obtain ⟨t, ht, e'⟩ := hy ⟨i, h.2⟩
     refine ⟨t, ht, ?_⟩
-    simp only [cM, Matrix.of_apply, dif_pos h]
+    simp only [cM, Matrix.of_apply, dite_eq_left h]
     exact e'
   · refine ⟨0, Subring.zero_mem _, ?_⟩
-    simp only [cM, Matrix.of_apply, dif_neg h, mul_zero]
+    simp only [cM, Matrix.of_apply, dite_eq_right h, mul_zero]
 
 theorem stability_coefficients : L0 → L2 → ColumnsMirabolic → FormCoefficientStability := by
   intro h0 h2 h3 F _ _ _ _ _ _ μ _ ψ hψ n V _ _ ρ hρ l k B hk hI u u'
@@ -1379,7 +1295,7 @@ theorem orthogonality_of_lattice_character : L0 → L1 := by
   have hL := hL0 F μ ψ hψ
   dsimp only at hL ⊢
   by_cases hy : ∀ i, y i ∈ (valuation F).integer
-  · rw [if_pos hy]
+  · rw [ite_eq_left hy]
     have hmeas : MeasurableSet (lat F m 0) := ((hL.2 m).1 0).2.2.1
     have h1 : Set.EqOn (fun ξ : Fin m → F => ψ (ξ ⬝ᵥ y)) (fun _ => (1 : ℂ)) (lat F m 0) := by
       intro ξ hξ
@@ -1389,7 +1305,7 @@ theorem orthogonality_of_lattice_character : L0 → L1 := by
       exact sum_mem fun j _ => mul_mem (hξ j) (hy j)
     rw [setIntegral_congr_fun hmeas h1, setIntegral_const]
     simp
-  · rw [if_neg hy]
+  · rw [ite_eq_right hy]
     simp only [not_forall] at hy
     obtain ⟨i, hi⟩ := hy
     obtain ⟨t, ht, hne⟩ := exists_integer_psi_mul_ne_one hψ hi
@@ -1457,7 +1373,6 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchim
 theorem unif_ne_zero : (uniformizer F : F) ≠ 0 := by
   intro h0
   exact (irreducible_uniformizer F).ne_zero (Subtype.ext h0)
-
 
 variable (F) in
 def scal (m M : ℕ) : GL (Fin m) F where

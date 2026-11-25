@@ -3,45 +3,6 @@ module
 public import Formalism.PieriBlockIdeals.PieriColumnMinors.RowGenDerivative
 public import Formalism.GradedWeylDivisibility.StatementE
 public import Formalism.PieriBlockIdeals.LemmaDSkeletonUnit
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -96,11 +57,11 @@ theorem w_zero_stable_right_block (p q w : ℕ) (lam2 : Fin q → ℕ) (b b' : F
   rw [mem_orthogonal_frame_iff] at hu ⊢
   refine ⟨fun α a => ?_, fun α β => ?_⟩
   · have h := congrArg (fun T => T u) (EV_comm p q w lam2 (Sum.inl α) (Sum.inr a) (Sum.inr b) (Sum.inr b'))
-    simp only [LinearMap.sub_apply, Module.End.mul_apply, hu.1, map_zero, sub_zero, reduceCtorEq, if_false] at h
+    simp only [LinearMap.sub_apply, Module.End.mul_apply, hu.1, map_zero, sub_zero, reduceCtorEq, ite_false] at h
     rw [h]
     split_ifs <;> simp [hu.1]
   · have h := congrArg (fun T => T u) (EV_comm p q w lam2 (Sum.inl α) (Sum.inl β) (Sum.inr b) (Sum.inr b'))
-    simp only [LinearMap.sub_apply, Module.End.mul_apply, reduceCtorEq, if_false, sub_zero, LinearMap.zero_apply,
+    simp only [LinearMap.sub_apply, Module.End.mul_apply, reduceCtorEq, ite_false, sub_zero, LinearMap.zero_apply,
       sub_eq_zero] at h
     rw [h, hu.2]
     split_ifs <;> simp

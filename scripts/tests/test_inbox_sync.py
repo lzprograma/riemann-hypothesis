@@ -7,7 +7,10 @@ import io
 import json
 from pathlib import Path
 import subprocess
+import sys
+import tempfile
 import unittest
+from unittest import mock
 
 SCRIPT = Path(__file__).resolve().parents[1] / "inbox-sync.py"
 spec = importlib.util.spec_from_file_location("inbox_sync", SCRIPT)
@@ -34,9 +37,9 @@ def actor(who):
     return who if isinstance(who, dict) else user(who)
 
 
-def node(number, *, author="alice", draft=False, ref=None, labels=(), created=0, comments=(),
+def node(number, *, author="alice", draft=False, ref=None, home="o/r", labels=(), created=0, comments=(),
          reviews=(), events=(), state="OPEN"):
-    """A pull request as GraphQL describes it.
+    """A pull request as GraphQL describes it. `home` is the repository its branch is in.
 
     `comments` and `reviews` hold (login, minutes). `events` holds ("on" or "off", label,
     minutes, actor) for label changes, where actor is a login or BOT, and ("ready", minutes) or
@@ -53,7 +56,7 @@ def node(number, *, author="alice", draft=False, ref=None, labels=(), created=0,
                              "createdAt": at(minutes), "label": {"name": name}, "actor": actor(who)})
     return {
         "number": number, "state": state, "isDraft": draft, "headRefName": ref or f"topic-{number}",
-        "createdAt": at(created), "author": {"login": author},
+        "createdAt": at(created), "headRepository": {"nameWithOwner": home}, "author": {"login": author},
         "labels": {"nodes": [{"name": name} for name in labels]},
         "comments": {"nodes": [{"createdAt": at(minutes), "author": actor(who)}
                                for who, minutes in comments]},
@@ -135,7 +138,7 @@ class Normalising(unittest.TestCase):
             {"state": "PENDING", "submittedAt": None, "author": user("maint")},
             {"state": "COMMENTED", "submittedAt": at(10), "author": {"__typename": "Bot", "login": "copilot"}},
             {"state": "APPROVED", "submittedAt": at(11), "author": None}]
-        pr = inbox.pull(found)
+        pr = inbox.pull(found, "o/r")
         self.assertEqual(pr["entered"], T0 + datetime.timedelta(minutes=7))
         self.assertEqual((pr["added"], pr["added_by"]), (T0 + datetime.timedelta(minutes=4), "maint"))
         # The latest removal was the workflow's own.
@@ -148,12 +151,12 @@ class Normalising(unittest.TestCase):
 class AwaitingAuthor(unittest.TestCase):
     def test_taking_the_label_off_enters_review_and_is_not_a_response(self):
         pr = inbox.pull(node(1, events=[("on", "awaiting-author", 3, "maint"),
-                                        ("off", "awaiting-author", 10, "maint"), ("ready", 6)]))
+                                        ("off", "awaiting-author", 10, "maint"), ("ready", 6)]), "o/r")
         self.assertEqual(pr["entered"], T0 + datetime.timedelta(minutes=10))
         self.assertEqual([r["at"] for r in pr["responses"]], [T0 + datetime.timedelta(minutes=3)])
 
     def test_putting_the_label_on_is_a_response_not_an_entry(self):
-        pr = inbox.pull(node(1, created=0, events=[("on", "awaiting-author", 3, "maint")]))
+        pr = inbox.pull(node(1, created=0, events=[("on", "awaiting-author", 3, "maint")]), "o/r")
         self.assertEqual(pr["entered"], T0)
         self.assertEqual([r["did"] for r in pr["responses"]], ["changed its labels"])
 
@@ -171,6 +174,18 @@ class Sweep(unittest.TestCase):
                    node(5, labels=["awaiting-author"]), node(6, state="CLOSED")])
         sweep(gh)
         self.assertEqual(gh.writes, [])
+
+    def test_a_batch_branch_of_a_fork_is_not_a_batch(self):
+        gh = Fake([node(1, ref="batch/mine", home="fork/r"), node(2, ref="batch/ours", home="O/R"),
+                   node(3, ref="batch/gone", home=None)])
+        log = inbox.sync(gh, 1)
+        self.assertEqual(gh.writes, [("add", 1)])
+        self.assertIn("#1: put in the inbox, because it is waiting for a response", log)
+        # The repository's name is compared ignoring letter case, as GitHub does.
+        self.assertEqual(inbox.sync(gh, 2), ["#2: left as it was, because it is a batch"])
+        # A branch whose fork was deleted is not this repository's either.
+        inbox.sync(gh, 3)
+        self.assertEqual(gh.writes, [("add", 1), ("add", 3)])
 
     def test_drafts_batches_and_decided_pull_requests_come_out(self):
         gh = Fake([waiting(1, draft=True), waiting(2, ref="batch/x"),
@@ -467,6 +482,64 @@ class Gh(unittest.TestCase):
         with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(RuntimeError) as caught:
             self.answering(body, code=1).pull(1)
         self.assertIn("bad", str(caught.exception))
+
+    def test_a_body_that_is_not_json_still_gives_the_status(self):
+        gh = self.answering(b"HTTP/2.0 502 Bad Gateway\r\n\r\n<html>oops</html>", code=1)
+        self.assertEqual(gh.call("GET", "labels/inbox"), (502, None))
+
+    def test_graphql_without_data_raises(self):
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(RuntimeError):
+            self.answering(json.dumps({"data": None}).encode()).pull(1)
+
+    def test_a_label_write_refused_by_the_rate_limit_stops_the_run(self):
+        gh = self.answering(b"HTTP/2.0 403 Forbidden\r\n\r\n{\"message\": \"API rate limit exceeded\"}", code=1)
+        with self.assertRaises(inbox.Refused):
+            gh.label(7, True)
+
+
+class RefusedWrites(unittest.TestCase):
+    """A write GitHub refuses, with the sweep started by `main` as the workflow starts it."""
+
+    def refuse(self, gh, number, status, message):
+        """GitHub answers `status` to every write to the labels of #`number`."""
+        answer = gh.call
+
+        def call(method, path, payload=None):
+            if method != "GET" and path.startswith(f"issues/{number}/labels"):
+                gh.calls += 1
+                return status, {"message": message}
+            return answer(method, path, payload)
+        gh.call = call
+
+    def run_main(self, gh):
+        with tempfile.TemporaryDirectory() as folder:
+            summary = Path(folder) / "summary.md"
+            argv = ["inbox-sync.py", "--repo", "o/r", "--summary", str(summary)]
+            with mock.patch.object(inbox, "GitHub", lambda repo, dry_run=False: gh), \
+                    mock.patch.object(sys, "argv", argv), contextlib.redirect_stdout(io.StringIO()), \
+                    self.assertRaises(SystemExit) as stop:
+                inbox.main()
+            return stop.exception.code, summary.read_text()
+
+    def test_a_refusal_for_the_rate_limit_keeps_what_was_done_before_it(self):
+        gh = Fake([node(1), node(2), node(3)])
+        self.refuse(gh, 2, 403, "API rate limit exceeded for installation")
+        code, summary = self.run_main(gh)
+        self.assertEqual(code, 1)
+        self.assertEqual(gh.writes, [("add", 1)])
+        lines = summary.splitlines()
+        self.assertEqual(lines[0], "- #1: put in the inbox, because it is waiting for a response")
+        self.assertIn("GitHub's rate limit refused POST issues/2/labels", lines[1])
+        self.assertIn("requests to GitHub", lines[2])
+
+    def test_another_refusal_skips_that_pull_request_and_fails_the_run(self):
+        gh = Fake([node(1), node(2), node(3)])
+        self.refuse(gh, 2, 422, "Validation Failed")
+        code, summary = self.run_main(gh)
+        self.assertEqual(code, 1)
+        self.assertEqual(gh.writes, [("add", 1), ("add", 3)])
+        self.assertIn("- #2: skipped, because could not add inbox on #2: 422\n", summary)
+        self.assertIn("- #3: put in the inbox, because it is waiting for a response\n", summary)
 
 
 if __name__ == "__main__":

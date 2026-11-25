@@ -15,9 +15,13 @@ open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo
 
 noncomputable section
 
-theorem LocRingNoeth.proof (hF : LocRingFrac.Statement) : LocRingNoeth.Statement := by
+theorem LocRingNoeth.exists_chart_loc (hF : LocRingFrac.Statement)
+    (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)]
+    (P W : Ideal (MRing ι)) (hP : P.IsPrime) (hW : W.IsPrime) (hPW : P ≤ W) (hrel : IsRelevant W) :
+    ∃ T : Finset (FractionRing (MRing ι ⧸ P)), Subring.closure (T : Set _) ≤ locRing P W ∧
+      ∀ z ∈ locRing P W, ∃ a ∈ Subring.closure (T : Set _), ∃ b ∈ Subring.closure (T : Set _),
+        b ≠ 0 ∧ b⁻¹ ∈ locRing P W ∧ z * b = a := by
   classical
-  intro K _ ι _ P W hP hW hPW hrel
   have := hP
   let L := FractionRing (MRing ι ⧸ P)
   let q : MRing ι →+* L := (algebraMap (MRing ι ⧸ P) L).comp (Ideal.Quotient.mk P)
@@ -25,17 +29,16 @@ theorem LocRingNoeth.proof (hF : LocRingFrac.Statement) : LocRingNoeth.Statement
     rwa [RingHom.comp_apply, IsFractionRing.to_map_eq_zero_iff, Ideal.Quotient.eq_zero_iff_mem] at h))
   have hnz : ∀ v, v ∉ W → Ideal.Quotient.mk P v ∈ nonZeroDivisors (MRing ι ⧸ P) := fun v hv =>
     mem_nonZeroDivisors_of_ne_zero fun h => hv (hPW (Ideal.Quotient.eq_zero_iff_mem.mp h))
-
   have hfrac : ∀ u v a, IsMultiHomog u a → IsMultiHomog v a → v ∉ W → q u / q v ∈ locRing P W := by
     intro u v a hu hv hvW
     refine Subring.subset_closure ⟨u, v, a, hnz v hvW, hvW, hu, hv, ?_⟩
     rw [IsFractionRing.mk'_eq_div]
     rfl
   choose c hc using hrel
-
   let g : (Σ k, ι k) → L := fun p => q (X p) / q (X ⟨p.1, c p.1⟩)
   let B : Subring L := Subring.closure (Set.range g)
-  have hBN : IsNoetherianRing B := is_noetherian_subring_closure _ (Set.finite_range g)
+  have hTB : Subring.closure ((Finset.univ.image g : Finset L) : Set L) = B := by
+    rw [Finset.coe_image, Finset.coe_univ, Set.image_univ]
   have hBS : B ≤ locRing P W := Subring.closure_le.mpr (by
     rintro _ ⟨p, rfl⟩
     exact hfrac _ _ _ (AvoidRing.isMultiHomog_X p.1 p.2) (AvoidRing.isMultiHomog_X p.1 (c p.1)) (hc p.1))
@@ -46,12 +49,10 @@ theorem LocRingNoeth.proof (hF : LocRingFrac.Statement) : LocRingNoeth.Statement
     | C r => rw [eval₂Hom_C, eq_intCast]; exact intCast_mem _ r
     | add f₁ f₂ h₁ h₂ => rw [map_add]; exact add_mem h₁ h₂
     | mul_X f p hf => rw [map_mul, eval₂Hom_X']; exact mul_mem hf (Subring.subset_closure ⟨p, rfl⟩)
-
   have hkey : ∀ u a, IsMultiHomog u a → q u = θ u * q (∏ k, X ⟨k, c k⟩ ^ a k) := by
     intro u a hu
     conv_lhs => rw [u.as_sum]
     conv_rhs => rw [u.as_sum]
-
     rw [map_sum, map_sum, Finset.sum_mul, map_prod]
     refine Finset.sum_congr rfl fun m hm => ?_
     have hT : ∏ k, q (X ⟨k, c k⟩ ^ a k) = ∏ p : Σ k, ι k, q (X ⟨p.1, c p.1⟩) ^ m p := by
@@ -73,26 +74,38 @@ theorem LocRingNoeth.proof (hF : LocRingFrac.Statement) : LocRingNoeth.Statement
     rw [← mul_pow]
     congr 1
     exact (div_mul_cancel₀ _ (hq _ (hc p.1))).symm
+  refine ⟨Finset.univ.image g, hTB ▸ hBS, fun z hz => ?_⟩
+  rw [hTB]
+  obtain ⟨u, v, a, hu, hv, hvW, hzv⟩ := hF K ι P W hP hW hPW z hz
+  have hTW := AvoidRing.coordProd_not_mem hW c hc a
+  have hu' := hkey u a hu
+  have hv' := hkey v a hv
+  have hinv := hfrac _ v a (AvoidRing.isMultiHomog_coordProd c a) hv hvW
+  have hθv : θ v ≠ 0 := fun h => hq v hvW (by rw [hv', h, zero_mul])
+  refine ⟨θ u, hθB u, θ v, hθB v, hθv, ?_, ?_⟩
+  · have he : (θ v)⁻¹ = q (∏ k, X ⟨k, c k⟩ ^ a k) / q v := by
+      rw [eq_div_iff (hq v hvW), hv', ← mul_assoc, inv_mul_cancel₀ hθv, one_mul]
+    rw [he]
+    exact hinv
+  · apply mul_right_cancel₀ (hq _ hTW)
+    rw [mul_assoc, ← hv', ← hu']
+    exact hzv
 
+theorem LocRingNoeth.proof (hF : LocRingFrac.Statement) : LocRingNoeth.Statement := by
+  intro K _ ι _ P W hP hW hPW hrel
+  have := hP
+  obtain ⟨T, hBS, hloc⟩ := LocRingNoeth.exists_chart_loc hF K ι P W hP hW hPW hrel
+  let B := Subring.closure (T : Set (FractionRing (MRing ι ⧸ P)))
+  have hBN : IsNoetherianRing B := is_noetherian_subring_closure _ T.finite_toSet
   let _ : Algebra B (locRing P W) := (Subring.inclusion hBS).toAlgebra
   let M : Submonoid B := (IsUnit.submonoid (locRing P W)).comap (Subring.inclusion hBS)
   have hLoc : IsLocalization M (locRing P W) := by
     rw [isLocalization_iff]
     refine ⟨fun y => y.2, fun z => ?_, fun {b₁ b₂} h => ⟨1, ?_⟩⟩
-    · obtain ⟨u, v, a, hu, hv, hvW, hzv⟩ := hF K ι P W hP hW hPW z z.2
-      have hTW := AvoidRing.coordProd_not_mem hW c hc a
-      have hu' := hkey u a hu
-      have hv' := hkey v a hv
-      have hinv := hfrac _ v a (AvoidRing.isMultiHomog_coordProd c a) hv hvW
-      have hunit : IsUnit (Subring.inclusion hBS ⟨θ v, hθB v⟩) :=
-        IsUnit.of_mul_eq_one ⟨_, hinv⟩ (Subtype.ext (by
-          show θ v * (q _ / q v) = 1
-          rw [mul_div_assoc', ← hv', div_self (hq v hvW)]))
-      refine ⟨(⟨θ u, hθB u⟩, ⟨⟨θ v, hθB v⟩, hunit⟩), Subtype.ext ?_⟩
-      show (z : L) * θ v = θ u
-      apply mul_right_cancel₀ (hq _ hTW)
-      rw [mul_assoc, ← hv', ← hu']
-      exact hzv
+    · obtain ⟨a, ha, b, hb, hb0, hbinv, hzb⟩ := hloc z z.2
+      have hunit : IsUnit (Subring.inclusion hBS ⟨b, hb⟩) :=
+        IsUnit.of_mul_eq_one ⟨b⁻¹, hbinv⟩ (Subtype.ext (mul_inv_cancel₀ hb0))
+      exact ⟨(⟨a, ha⟩, ⟨⟨b, hb⟩, hunit⟩), Subtype.ext hzb⟩
     · rw [Subring.inclusion_injective hBS h]
   exact IsLocalization.isNoetherianRing M (locRing P W) hBN
 

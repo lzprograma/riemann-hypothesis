@@ -1,47 +1,6 @@
 module
 
 public import Formalism.SharpRestriction.LevelLetterCocycles.SecondComparisonInCoordinates
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -158,10 +117,6 @@ theorem toY_coe (hB : UnitBasis W e) (X : ExtIn e ι π E) (C : Coord W I T) (C�
 theorem map_π_ι (X : ExtIn e ι π E) (u : W.DD T) : W.map π (W.map ι u) = 0 :=
   (X.exact _).2 ⟨u, rfl⟩
 
-private theorem coord_eq_zero_of_t_eq_zero {T' : LocLat G Qp LL O} (C : Coord W I T') (i : ZMod n) (x : C.V)
-    (h : C.t i x = 0) : x = 0 :=
-  (AddEquiv.map_eq_zero_iff (C.θ i)).1 (Subtype.ext h)
-
 theorem toY_bij (hB : UnitBasis W e) (X : ExtIn e ι π E) (C : Coord W I T) (C₀ : Coord W I W.one)
     (i : ZMod n) : Function.Bijective (toY hB X C C₀ i) := by
   have hπι : ∀ u, W.map π (W.map ι u) = 0 := map_π_ι X
@@ -174,10 +129,10 @@ theorem toY_bij (hB : UnitBasis W e) (X : ExtIn e ι π E) (C : Coord W I T) (C�
       have h2 := congrArg (W.map π) h0
       rw [map_add (f := _), hπι, map_sec hB π X.πE, zero_add, map_zero] at h2
       exact h2
-    have hb0 : b = 0 := coord_eq_zero_of_t_eq_zero C₀ i b hb
+    have hb0 : b = 0 := C₀.t_inj i (hb.trans (C₀.t_zero i).symm)
     rw [hb, map_zero, add_zero] at h0
     have ha : C.t i a = 0 := X.inj (h0.trans (map_zero _).symm)
-    exact Prod.ext (coord_eq_zero_of_t_eq_zero C i a ha) hb0
+    exact Prod.ext (C.t_inj i (ha.trans (C.t_zero i).symm)) hb0
   · rintro ⟨y, hy⟩
     obtain ⟨hyl, hyΔ⟩ := id hy
     obtain ⟨x, hx⟩ : ∃ x, x = W.map π y := ⟨_, rfl⟩
@@ -255,25 +210,6 @@ theorem coordY_t_e₀ (hB : UnitBasis W e) (X : ExtIn e ι π E) (C : Coord W I 
     (coordY hB X C C₀).t k (pairY hB X C C₀ 0 e₀) = (letE k : LetA O n) • E := by
   rw [t_pairY, C.t_zero, map_zero, zero_add, he₀, sec_smulA, sec_e]
 
-private theorem letE_mul_letE_eq_zero_of_ne (i j : ZMod n) (h : i ≠ j) : (letE i : LetA O n) * letE j = 0 := by
-  funext k
-  simp only [letE, Pi.mul_apply, Pi.single_apply, Pi.zero_apply]
-  split_ifs with h1 h2 <;> simp_all
-
-private theorem letE_smul_tot_eq_t {T' : LocLat G Qp LL O} (C : Coord W I T') (y : ZMod n → C.V)
-    (i : ZMod n) : (letE i : LetA O n) • tot C y = C.t i (y i) := by
-  unfold tot
-  rw [Finset.smul_sum, Finset.sum_eq_single i]
-  · exact C.t_letter i (y i)
-  · intro j _ hj
-    rw [← C.t_letter j (y j), smul_smul, letE_mul_letE_eq_zero_of_ne i j (Ne.symm hj), zero_smul]
-  · intro h
-    exact absurd (Finset.mem_univ i) h
-
-private theorem coord_t_sub {T' : LocLat G Qp LL O} (C : Coord W I T') (i : ZMod n) (a b : C.V) :
-    C.t i (a - b) = C.t i a - C.t i b := by
-  simp only [Coord.t, map_sub, AddSubgroup.coe_sub]
-
 theorem rep_of (hB : UnitBasis W e) (X : ExtIn e ι π E) (C : Coord W I T) (C₀ : Coord W I W.one)
     (e₀ : C₀.V) (he₀ : ∀ i, C₀.t i e₀ = (letE i : LetA O n) • e) (y z : ZMod n → C.V)
     (hy : W.map ι (tot C y) = W.φD Y E - E) (hz : W.map ι (tot C z) = W.γD Y W.gamK E - E) :
@@ -283,31 +219,29 @@ theorem rep_of (hB : UnitBasis W e) (X : ExtIn e ι π E) (C : Coord W I T) (C�
     show (coordY hB X C C₀).t i ((y i, 0) : C.V × C₀.V) =
       (coordY hB X C C₀).t i ((latOf (coordY hB X C C₀)).φ i (pairY hB X C C₀ 0 e₀) -
         pairY hB X C C₀ 0 e₀)
-    rw [coord_t_sub, t_φ, coordY_t_e₀ hB X C C₀ e₀ he₀, coordY_t_e₀ hB X C C₀ e₀ he₀, coordY_t_apply_eq_map_add_sec,
-      C₀.t_zero, map_zero, add_zero, φD_smulA, φA_letE, ← smul_sub, ← hy, ← map_smulA,
-      letE_smul_tot_eq_t]
+    rw [Coord.t_sub, t_φ, coordY_t_e₀ hB X C C₀ e₀ he₀, coordY_t_e₀ hB X C C₀ e₀ he₀,
+      coordY_t_apply_eq_map_add_sec, C₀.t_zero, map_zero, add_zero, φD_smulA, φA_letE,
+      ← smul_sub, ← hy, ← map_smulA, letE_tot]
   · apply Coord.t_inj (coordY hB X C C₀) i
     show (coordY hB X C C₀).t i ((z i, 0) : C.V × C₀.V) =
       (coordY hB X C C₀).t i ((latOf (coordY hB X C C₀)).γ i (pairY hB X C C₀ 0 e₀) -
         pairY hB X C C₀ 0 e₀)
-    rw [coord_t_sub, t_γ, coordY_t_e₀ hB X C C₀ e₀ he₀, coordY_t_apply_eq_map_add_sec, C₀.t_zero, map_zero, add_zero,
-      γD_smulA, γA_letE, ← smul_sub, ← hz, ← map_smulA, letE_smul_tot_eq_t]
+    rw [Coord.t_sub, t_γ, coordY_t_e₀ hB X C C₀ e₀ he₀, coordY_t_apply_eq_map_add_sec,
+      C₀.t_zero, map_zero, add_zero, γD_smulA, γA_letE, ← smul_sub, ← hz, ← map_smulA,
+      letE_tot]
 
 theorem eΔ_of (C₀ : Coord W I W.one) (e₀ : C₀.V) (he₀ : ∀ i, C₀.t i e₀ = (letE i : LetA O n) • e) :
     ∀ δ ∈ W.DelF, W.γD W.one δ e = e := by
   intro δ hδ
-  have hsum : ∑ i, (letE i : LetA O n) = 1 := by
-    funext k
-    simp [letE, Finset.sum_apply, Pi.single_apply]
   have key : ∀ i, W.γD W.one δ ((letE i : LetA O n) • e) = (letE i : LetA O n) • e := fun i => by
     rw [← he₀ i]
     exact C₀.t_Δ i e₀ δ hδ
-  calc W.γD W.one δ e = W.γD W.one δ ((∑ i, (letE i : LetA O n)) • e) := by rw [hsum, one_smul]
+  calc W.γD W.one δ e = W.γD W.one δ ((∑ i, (letE i : LetA O n)) • e) := by
+        rw [sum_letE, one_smul]
     _ = (∑ i, (letE i : LetA O n)) • e := by
-
       rw [Finset.sum_smul, map_sum]
       simp only [key]
-    _ = e := by rw [hsum, one_smul]
+    _ = e := by rw [sum_letE, one_smul]
 
 theorem ext_of (hB : UnitBasis W e) (hX : BKExt W e) (hcr : IsCrys PD T.ρ) (hone : IsCrys PD W.one.ρ)
     (C : Coord W I T)

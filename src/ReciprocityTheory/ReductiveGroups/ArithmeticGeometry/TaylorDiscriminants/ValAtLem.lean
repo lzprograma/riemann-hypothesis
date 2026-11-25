@@ -7,8 +7,6 @@ public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.TB.ValAt
@@ -18,10 +16,10 @@ open AlgebraicGeometry CategoryTheory ReciprocityTheory.ChartRestriction.G.Geo.T
 variable {X : Scheme.{0}}
 
 theorem valAt'_of (x : Sp ℂ ⟶ X) (U : X.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) (f : Γ(X, U)) :
-    valAt' x U f = valAt x U h f := dif_pos h
+    valAt' x U f = valAt x U h f := dite_eq_left h
 
 theorem valAt'_of_not (x : Sp ℂ ⟶ X) (U : X.Opens) (h : ¬ ⊤ ≤ x ⁻¹ᵁ U) (f : Γ(X, U)) : valAt' x U f = 0 :=
-  dif_neg h
+  dite_eq_right h
 
 theorem valAt'_mul (x : Sp ℂ ⟶ X) (U : X.Opens) (f g : Γ(X, U)) :
     valAt' x U (f * g) = valAt' x U f * valAt' x U g := by

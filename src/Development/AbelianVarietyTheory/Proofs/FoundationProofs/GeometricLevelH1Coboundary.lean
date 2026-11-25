@@ -69,7 +69,7 @@ import Mathlib.Algebra.Ring.IsFormallyReal
 import Development.AbelianVarietyTheory.Definitions.Foundations.Integral
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsQRootPolyOfFixedGeometricStabilizerTau, Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricGaloisCoboundaryCongZeroModPrimePow, Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricGaloisDenseTauPowMulFixingQRoots, Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricH1ZetaSubOneKills, Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricH1ZetaSubOneKillsStatement, Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsQRootPolyOfFixedGeometricStabilizer, Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIntegralCoeffsOfGeometricFixedQExpansion, Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerTowerIntegerDecompositionByTau, Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerCocycleTwistedCoboundary, Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricLevelH1Coboundary
+-- Members: Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsQRootPolyOfFixedGeometricStabilizerTau, Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricGaloisCoboundaryCongZeroModPrimePow, Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricGaloisDenseTauPowMulFixingQRoots, Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricH1ZetaSubOneKills, Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsQRootPolyOfFixedGeometricStabilizer, Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIntegralCoeffsOfGeometricFixedQExpansion, Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerTowerIntegerDecompositionByTau, Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerCocycleTwistedCoboundary, Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricLevelH1Coboundary
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsQRootPolyOfFixedGeometricStabilizerTau =====
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsQRootPolyOfFixedGeometricStabilizerTau", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Henselian\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Tactic.TypeStar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
@@ -545,8 +545,7 @@ theorem mem_geoTop_iff (T : Tower p Ω) (g : Gal p Ω) :
 theorem exists_moved (T : Tower p Ω) {g : Gal p Ω} (hg : g ∉ Ggeo p Ω ⊓ ⨅ n, Gn T n) :
     ∃ a : Ω, g a ≠ a ∧ ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, h a = a := by
   rw [mem_geoTop_iff] at hg
-  by_contra hno
-  push_neg at hno
+  by_contra! hno
   apply hg
   refine ⟨fun x hx => ?_, fun n => ⟨?_, ?_⟩⟩
   · by_contra hne
@@ -645,11 +644,9 @@ theorem h1_killed_by_zeta_sub_one_geo : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 �
   have hperm : ∑ g ∈ E, σ g y * c (σ g) = x := by
     rw [hx, ← Finset.sum_image (f := fun g' => g' y * c g') hσinj, himg]
   have hhx : h x = ∑ g ∈ E, h (g y) * h (c g) := by
-    set_option synthInstance.maxHeartbeats 100000 in
       rw [hx, map_sum]; simp only [map_mul]
   have hζ : h (T.ζ j) = T.ζ j := (((mem_geoTop_iff T h).mp hh).2 j).1
   have hsumh : ∑ g ∈ E, h (g y) = T.ζ j - 1 := by
-    set_option synthInstance.maxHeartbeats 100000 in
       rw [← map_sum, hsum, map_sub, map_one, hζ]
   have step : ∀ g ∈ E, Cong (p := p) k (h (g y) * h (c g)) (σ g y * c (σ g) - h (g y) * c h) := by
     intro g hg
@@ -679,101 +676,6 @@ end -- clump:auto
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricH1ZetaSubOneKills =====
-
--- ===== clump member: Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricH1ZetaSubOneKillsStatement =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricH1ZetaSubOneKillsStatement", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteGaloisApproximation\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricH1ZetaSubOneKills\nimport Development.AbelianVarietyTheory.Proofs.FoundationProofs.SmallTracesSubgroupGaloisTowerTop\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open GlobalTheory.K5
-
-theorem _root_.GlobalTheory.T.geometric_h1_zeta_sub_one_kills : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
-  ∀ (T : Tower p Ω) (k j : ℕ), 1 ≤ j → ∀ c : Gal p Ω → Ω, IntegralLocallyConstCochainModPow k (Ggeo p Ω ⊓ ⨅ n, Gn T n) c →
-  (∀ g ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong (p := p) k (c (g * h)) (c g + g (c h))) →
-  Cob1 k (Ggeo p Ω ⊓ ⨅ n, Gn T n) (fun g => (T.ζ j - 1) * c g) := by
-  intro p _ hp2 Ω _ _ hΩ T k j hj c hc hcoc
-  classical
-  let H := Ggeo p Ω ⊓ ⨅ n, Gn T n
-  have uniform : ∃ S : Finset Ω, ∀ g ∈ H, ∀ h ∈ H,
-      (∀ x ∈ S, h x = g x) → Cong (p := p) k (c h) (c g) := by
-    have localTests : ∀ g : Gal p Ω, ∃ S : Finset Ω,
-        (g ∈ H → ∀ h ∈ H, (∀ x ∈ S, h x = g x) → Cong (p := p) k (c h) (c g)) ∧
-        (g ∉ H → ∀ h ∈ H, ¬ ∀ x ∈ S, h x = g x) := by
-      intro g
-      by_cases hg : g ∈ H
-      · obtain ⟨S, hS⟩ := hc.2 g hg
-        exact ⟨S, fun _ => hS, fun h => (h hg).elim⟩
-      · obtain ⟨a, hga, ha⟩ := TateGeo.exists_moved T hg
-        refine ⟨{a}, fun h => (hg h).elim, fun _ h hh agree => hga ?_⟩
-        exact (agree a (Finset.mem_singleton_self a)).symm.trans (ha h hh)
-    choose S hlocal hsep using localTests
-    obtain ⟨F, hF⟩ := _root_.GlobalTheory.K5.gal_finite_subcover p Ω hΩ S
-    refine ⟨F.biUnion S, fun g hg h hh agree => ?_⟩
-    obtain ⟨g₀, hg₀F, hg₀⟩ := hF g
-    have hg₀H : g₀ ∈ H := by
-      by_contra h
-      exact hsep g₀ h g hg hg₀
-    have hg' := hlocal g₀ hg₀H g hg hg₀
-    have hh' := hlocal g₀ hg₀H h hh (fun x hx =>
-      (agree x (Finset.mem_biUnion.mpr ⟨g₀, hg₀F, hx⟩)).trans (hg₀ x hx))
-    simpa [Cong] using Basic.cong_sub hh' hg'
-  obtain ⟨S, hS⟩ := uniform
-  obtain ⟨y, E, hy, hEH, hu, hsum⟩ :=
-    _root_.GlobalTheory.K5.small_traces_subgroup p Ω hp2 hΩ T H inf_le_right S j hj
-  let x : Ω := ∑ g ∈ E, g y * c g
-  have hx : IsInt (p := p) x := by
-    refine IsIntegral.sum _ fun g hg => ?_
-    exact (IsIntegral.map g.toAlgHom hy).mul (hc.1 g (hEH g hg))
-  refine ⟨-x, hx.neg, fun h hh => ?_⟩
-  have hσ : ∀ g ∈ E, ∃ g' ∈ E, h (g y) = g' y ∧ ∀ s ∈ S, h (g s) = g' s := by
-    intro g hg
-    obtain ⟨g', ⟨hg', hy', hs'⟩, -⟩ := hu (h * g) (H.mul_mem hh (hEH g hg))
-    exact ⟨g', hg', hy', hs'⟩
-  choose! σ hσE hσy hσS using hσ
-  have hσinj : Set.InjOn σ E := by
-    intro g₁ hg₁ g₂ hg₂ e
-    apply (hu g₁ (hEH g₁ hg₁)).unique ⟨hg₁, rfl, fun _ _ => rfl⟩
-    refine ⟨hg₂, h.injective ?_, fun s hs => h.injective ?_⟩
-    · rw [hσy g₁ hg₁, hσy g₂ hg₂, e]
-    · rw [hσS g₁ hg₁ s hs, hσS g₂ hg₂ s hs, e]
-  have himage : E.image σ = E :=
-    Finset.eq_of_subset_of_card_le (by simpa only [Finset.image_subset_iff] using hσE)
-      (by rw [Finset.card_image_of_injOn hσinj])
-  have hperm : ∑ g ∈ E, σ g y * c (σ g) = x := by
-    rw [← Finset.sum_image (f := fun g' => g' y * c g') hσinj, himage]
-  have hhx : h x = ∑ g ∈ E, h (g y) * h (c g) := by
-    simp only [x, map_sum, map_mul]
-  have hζ : h (T.ζ j) = T.ζ j := (((TateGeo.mem_geoTop_iff T h).mp hh).2 j).1
-  have hsumh : ∑ g ∈ E, h (g y) = T.ζ j - 1 := by
-    rw [← map_sum, hsum, map_sub, map_one, hζ]
-  have termCong : ∀ g ∈ E, Cong (p := p) k (h (g y) * h (c g))
-      (σ g y * c (σ g) - h (g y) * c h) := by
-    intro g hg
-    have hgH := hEH g hg
-    obtain ⟨a, ha, ea⟩ := hcoc h hh g hgH
-    obtain ⟨b, hb, eb⟩ := hS (σ g) (hEH _ (hσE g hg)) (h * g) (H.mul_mem hh hgH) (hσS g hg)
-    refine ⟨h (g y) * (b - a), (IsIntegral.map h.toAlgHom (IsIntegral.map g.toAlgHom hy)).mul (hb.sub ha), ?_⟩
-    rw [← hσy g hg]
-    linear_combination h (g y) * (eb - ea)
-  have sumCong (s : Finset (Gal p Ω)) (f f' : Gal p Ω → Ω)
-      (hs : ∀ g ∈ s, Cong (p := p) k (f g) (f' g)) :
-      Cong (p := p) k (∑ g ∈ s, f g) (∑ g ∈ s, f' g) := by
-    induction s using Finset.induction_on with
-    | empty => simpa using Basic.cong_refl (p := p) k (0 : Ω)
-    | insert a s ha ih =>
-      rw [Finset.sum_insert ha, Finset.sum_insert ha]
-      exact Basic.cong_add (hs a (Finset.mem_insert_self a s))
-        (ih fun g hg => hs g (Finset.mem_insert_of_mem hg))
-  have total := sumCong E _ _ termCong
-  rw [← hhx, Finset.sum_sub_distrib, hperm, ← Finset.sum_mul, hsumh] at total
-  obtain ⟨z, hz, e⟩ := total
-  refine ⟨z, hz, ?_⟩
-  show (T.ζ j - 1) * c h - (h (-x) - -x) = _
-  rw [map_neg]
-  linear_combination e
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricH1ZetaSubOneKillsStatement =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsQRootPolyOfFixedGeometricStabilizer =====
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsQRootPolyOfFixedGeometricStabilizer", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Henselian\nimport Mathlib.RingTheory.PicardGroup\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\npublic import Mathlib.FieldTheory.Galois.Infinite\n\n"}
@@ -1035,10 +937,6 @@ theorem isInt_natCast (n : ℕ) : IsInt (p := p) (n : Ω) := by
 
 theorem isInt_map (g : Gal p Ω) {x : Ω} (hx : IsInt (p := p) x) : IsInt (p := p) (g x) := hx.map g
 
-alias cong_refl := _root_.GlobalTheory.K5.TateGeo.cong_refl'
-
-alias cong_add := _root_.GlobalTheory.K5.TateGeo.cong_add'
-
 theorem cong_sub {k : ℕ} {x y x' y' : Ω} (h1 : Cong (p := p) k x y) (h2 : Cong (p := p) k x' y') :
     Cong (p := p) k (x - x') (y - y') := by
   obtain ⟨z1, hz1, e1⟩ := h1
@@ -1182,39 +1080,6 @@ end GlobalTheory.K5.TopGeo
 
 namespace GlobalTheory.K5.TopGeo
 
-theorem L_tau : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
-  ∀ T : Tower p Ω, ∃ τ ∈ Ggeo p Ω, ∀ n, τ (T.qq n) = T.ζ n * T.qq n := _root_.GlobalTheory.K5.TauGen.main
-
-theorem L_tate : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
-  ∀ (T : Tower p Ω) (k j : ℕ), 1 ≤ j → ∀ c : Gal p Ω → Ω, IntegralLocallyConstCochainModPow k (Ggeo p Ω ⊓ ⨅ n, Gn T n) c →
-  (∀ g ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong (p := p) k (c (g * h)) (c g + g (c h))) →
-  Cob1 k (Ggeo p Ω ⊓ ⨅ n, Gn T n) (fun g => (T.ζ j - 1) * c g) :=
-  GlobalTheory.T.geometric_h1_zeta_sub_one_kills
-
-theorem L_inv : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
-  ∀ (T : Tower p Ω) (k j : ℕ), 1 ≤ j → ∀ x : Ω, IsInt (p := p) x →
-  (∀ g ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong (p := p) k (g x) x) →
-  ∃ y : Ω, IsInt (p := p) y ∧ (∃ N, ∀ g ∈ Ggeo p Ω ⊓ MulAction.stabilizer (Gal p Ω) (T.qq N), g y = y) ∧
-    Cong (p := p) k ((T.ζ j - 1) * x) y := by
-  apply GlobalTheory.K5.geo_invariants_from_finite_level
-
-theorem L_decomp : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
-  ∀ (T : Tower p Ω) (τ : Gal p Ω), τ ∈ Ggeo p Ω → (∀ n, τ (T.qq n) = T.ζ n * T.qq n) →
-  ∀ (N : ℕ) (y : Ω), IsInt (p := p) y → (∀ g ∈ Ggeo p Ω ⊓ MulAction.stabilizer (Gal p Ω) (T.qq N), g y = y) →
-  ∃ o w : Ω, IsInt (p := p) o ∧ (∀ g ∈ Ggeo p Ω, g o = o) ∧ IsInt (p := p) w ∧
-    (∀ g ∈ Ggeo p Ω ⊓ MulAction.stabilizer (Gal p Ω) (T.qq N), g w = w) ∧
-    (T.ζ 1 - 1) * y = (T.ζ 1 - 1) * o + (τ w - w) := _root_.GlobalTheory.K5.Decomp.decomp
-
-theorem L_kern : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
-  ∀ (T : Tower p Ω) (τ : Gal p Ω), τ ∈ Ggeo p Ω → (∀ n, τ (T.qq n) = T.ζ n * T.qq n) →
-  ∀ (k N : ℕ) (w o : Ω), IsInt (p := p) w → (∀ g ∈ Ggeo p Ω ⊓ MulAction.stabilizer (Gal p Ω) (T.qq N), g w = w) →
-  (∀ g ∈ Ggeo p Ω, g o = o) → Cong (p := p) k (τ w - w) o → Cong (p := p) k o 0 :=
-  _root_.GlobalTheory.K5.KernLoc.main
-
-end GlobalTheory.K5.TopGeo
-
-namespace GlobalTheory.K5.TopGeo
-
 section
 variable {p : ℕ} [Fact p.Prime] {Ω : Type} [Field Ω] [Algebra (O0 p) Ω]
 
@@ -1241,9 +1106,9 @@ theorem coker_part (hp : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (k : ℕ) 
       simp only [ha1, map_sub, map_mul, hπdef, fix_pi T hg]; ring
     rw [e]
     exact cong_congr (by simp [ha1, AlgEquiv.mul_apply]) rfl
-      (cong_sub (cong_mul_left hπ (hcoc g hg h hh)) (cong_refl k _))
+      (cong_sub (cong_mul_left hπ (hcoc g hg h hh)) (GlobalTheory.K5.TateGeo.cong_refl' k _))
   have a1Hi : ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong (p := p) k (a1 h) 0 :=
-    fun h hh => cong_congr rfl (sub_self _) (cong_sub (hx1c h hh) (cong_refl k (h x1 - x1)))
+    fun h hh => cong_congr rfl (sub_self _) (cong_sub (hx1c h hh) (GlobalTheory.K5.TateGeo.cong_refl' k (h x1 - x1)))
   have isInt_a1 : ∀ g ∈ Ggeo p Ω, IsInt (p := p) (a1 g) := fun g hg =>
     (hπ.mul (ha.1 g hg)).sub ((isInt_map g hx1).sub hx1)
 
@@ -1254,10 +1119,10 @@ theorem coker_part (hp : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (k : ℕ) 
     have hG := (mem_Hi hh).1
     have h' := conj_Hi T hτG hτq hh
     have e1 : Cong (p := p) k (a1 (h * τ)) (h z) :=
-      _root_.GlobalTheory.K5.TateGeo.cong_trans' (a1coc h hG τ hτG) (cong_congr rfl (zero_add _) (cong_add (a1Hi h hh) (cong_refl k _)))
+      _root_.GlobalTheory.K5.TateGeo.cong_trans' (a1coc h hG τ hτG) (cong_congr rfl (zero_add _) (GlobalTheory.K5.TateGeo.cong_add' (a1Hi h hh) (GlobalTheory.K5.TateGeo.cong_refl' k _)))
     have e2 : Cong (p := p) k (a1 (τ * (τ⁻¹ * h * τ))) z :=
       _root_.GlobalTheory.K5.TateGeo.cong_trans' (a1coc τ hτG _ (mem_Hi h').1)
-        (cong_congr rfl (by rw [map_zero, add_zero]) (cong_add (cong_refl k z) (cong_map τ (a1Hi _ h'))))
+        (cong_congr rfl (by rw [map_zero, add_zero]) (GlobalTheory.K5.TateGeo.cong_add' (GlobalTheory.K5.TateGeo.cong_refl' k z) (cong_map τ (a1Hi _ h'))))
     have e3 : τ * (τ⁻¹ * h * τ) = h * τ := by group
     rw [e3] at e2
     exact _root_.GlobalTheory.K5.TateGeo.cong_trans' (_root_.GlobalTheory.K5.TateGeo.cong_symm' e1) e2
@@ -1283,7 +1148,7 @@ theorem coker_part (hp : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (k : ℕ) 
   have bτ : Cong (p := p) k (b τ) 0 := by
     have h1 : Cong (p := p) k (π ^ 2 * z) (π * o + (τ w - w)) := by
       rw [← hdec]; exact cong_congr (by ring) rfl (cong_mul_left hπ hyc)
-    have := cong_sub h1 (cong_refl k ((τ w - w) + π * o))
+    have := cong_sub h1 (GlobalTheory.K5.TateGeo.cong_refl' k ((τ w - w) + π * o))
     refine cong_congr ?_ (by ring) this
     simp only [hb, kum_tau T hk hκ hτG hτq, hz]; ring
   have bpow : ∀ s : ℕ, Cong (p := p) k (b (τ ^ s)) 0 := by
@@ -1293,7 +1158,7 @@ theorem coker_part (hp : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (k : ℕ) 
     | succ s ih =>
       rw [pow_succ]
       exact _root_.GlobalTheory.K5.TateGeo.cong_trans' (bcoc _ (pow_mem hτG s) τ hτG)
-        (cong_congr rfl (by rw [map_zero, add_zero]) (cong_add ih (cong_map _ bτ)))
+        (cong_congr rfl (by rw [map_zero, add_zero]) (GlobalTheory.K5.TateGeo.cong_add' ih (cong_map _ bτ)))
   have bG : ∀ g ∈ Ggeo p Ω, Cong (p := p) k (b g) 0 := by
     classical
     intro g hg
@@ -1302,7 +1167,7 @@ theorem coker_part (hp : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (k : ℕ) 
     have hg' : τ ^ s * h ∈ Ggeo p Ω := mul_mem (pow_mem hτG s) (mem_Hi hh).1
     have e0 : Cong (p := p) k (b (τ ^ s * h)) 0 :=
       _root_.GlobalTheory.K5.TateGeo.cong_trans' (bcoc _ (pow_mem hτG s) h (mem_Hi hh).1)
-        (cong_congr rfl (by rw [map_zero, add_zero]) (cong_add (bpow s) (cong_map _ (bHi h hh))))
+        (cong_congr rfl (by rw [map_zero, add_zero]) (GlobalTheory.K5.TateGeo.cong_add' (bpow s) (cong_map _ (bHi h hh))))
     have hx1' := hag x1 (by simp)
     have hw' := hag w (by simp)
     have hq' := hag (T.qq k) (by simp)
@@ -1311,7 +1176,7 @@ theorem coker_part (hp : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (k : ℕ) 
     have e1 : Cong (p := p) k (b (τ ^ s * h)) (b g) := by
       simp only [hb, ha1, hx1', hw', hκ']
       exact cong_sub (cong_sub (cong_mul_left (hπ.pow 2)
-        (cong_sub (cong_mul_left hπ ha') (cong_refl k _))) (cong_refl k _)) (cong_refl k _)
+        (cong_sub (cong_mul_left hπ ha') (GlobalTheory.K5.TateGeo.cong_refl' k _))) (GlobalTheory.K5.TateGeo.cong_refl' k _)) (GlobalTheory.K5.TateGeo.cong_refl' k _)
     exact _root_.GlobalTheory.K5.TateGeo.cong_trans' (_root_.GlobalTheory.K5.TateGeo.cong_symm' e1) e0
 
   obtain ⟨r, hr, hrG, hpr⟩ := p_eq (p := p) T
@@ -1319,7 +1184,7 @@ theorem coker_part (hp : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (k : ℕ) 
     (hr.pow 3).mul ((hπ.pow 2).mul hx1 |>.add hw), fun g hg => ?_⟩
   · simp only [map_mul, map_pow, hrG g hg, hπdef, fix_pi T hg, hoG g hg]
   · have := cong_mul_left (hr.pow 3) (bG g hg)
-    have e := cong_add this (cong_refl k (g (r ^ 3 * (π ^ 2 * x1 + w)) - r ^ 3 * (π ^ 2 * x1 + w)))
+    have e := GlobalTheory.K5.TateGeo.cong_add' this (GlobalTheory.K5.TateGeo.cong_refl' k (g (r ^ 3 * (π ^ 2 * x1 + w)) - r ^ 3 * (π ^ 2 * x1 + w)))
     refine cong_congr ?_ (by ring) e
     simp only [hb, ha1, map_mul, map_pow, map_add (f := _), hrG g hg, hπdef, fix_pi T hg, hpr]
     ring
@@ -1334,7 +1199,7 @@ theorem kern_part (hp : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (k : ℕ) (
   obtain ⟨τ, hτG, hτq⟩ := _root_.GlobalTheory.K5.TauGen.main p hp Ω hΩ T
   have hxinv : ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong (p := p) k (h x) x := by
     intro h hh
-    have := cong_add (_root_.GlobalTheory.K5.TateGeo.cong_symm' (hxc h (mem_Hi hh).1)) (cong_refl k x)
+    have := GlobalTheory.K5.TateGeo.cong_add' (_root_.GlobalTheory.K5.TateGeo.cong_symm' (hxc h (mem_Hi hh).1)) (GlobalTheory.K5.TateGeo.cong_refl' k x)
     exact cong_congr (by ring) (by rw [kum_Hi T hκ hh]; simp) this
   obtain ⟨y, hy, ⟨N, hyN⟩, hyc⟩ := _root_.GlobalTheory.K5.geo_invariants_from_finite_level p hp Ω hΩ T k 1 le_rfl x hx hxinv
   have h1 : Cong (p := p) k o (τ x - x) := by
@@ -1536,12 +1401,10 @@ theorem fix_range (hψ : IsReb T L ψ) (g : Gal p Ω) (hg : g (T.qq L) = T.qq L)
 def up (hψ : IsReb T L ψ) (g : Gal p Ω) (hg : g (T.qq L) = T.qq L) : Gal p (RebT Ω ψ) :=
   AlgEquiv.ofRingEquiv (f := (g.toRingEquiv : RebT Ω ψ ≃+* RebT Ω ψ)) (fun a => fix_range hψ g hg a)
 
-alias isAlgZp_zeta := _root_.GlobalTheory.K5.Dense.isAlgZp_zeta
-
 theorem mem_H (hψ : IsReb T L ψ) {g : Gal p (RebT Ω ψ)} (hg : g ∈ Ggeo p (RebT Ω ψ)) :
     down hψ g ∈ Ggeo p Ω ⊓ Gn T L := by
   have hgeo : down hψ g ∈ Ggeo p Ω := fun x hx => hg x ((isAlgZp_iff hψ x).2 hx)
-  refine Subgroup.mem_inf.2 ⟨hgeo, (GlobalTheory.K5.Basic.mem_gn T L _).2 ⟨hgeo _ (isAlgZp_zeta T L), ?_⟩⟩
+  refine Subgroup.mem_inf.2 ⟨hgeo, (GlobalTheory.K5.Basic.mem_gn T L _).2 ⟨hgeo _ (GlobalTheory.K5.GeoLevel.isAlgZp_zeta T L), ?_⟩⟩
   have h : g (ψ (qO p)) = ψ (qO p) := g.commutes (qO p)
   rw [hψ.par] at h
   exact h

@@ -2,45 +2,8 @@ module
 
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValHalfInf
 public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceTensorProductFiniteExtension
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
+import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LinIndepOneDelta
 
 @[expose] public section
 
@@ -73,18 +36,8 @@ theorem exists_delta (F E : Type) [Field F] [NumberField F] [Field E] [NumberFie
     rw [← hσ, ← sub_eq_zero.mp h0]
   refine ⟨x - σ x, hδ, ?_⟩
   generalize x - σ x = δ at hδ h0
-  have hli : LinearIndependent F ![(1 : E), δ] := by
-    rw [LinearIndependent.pair_iff]
-    intro s t hst
-    have h1 := congrArg σ hst
-    have hsm : ∀ (a : F) (z : E), σ (a • z) = a • σ z := fun a z => σ.toLinearMap.map_smul a z
-    rw [map_add (f := _), hsm, hsm, map_one, hδ, map_zero, smul_neg] at h1
-    have hs : (2 * s) • (1 : E) = 0 := by
-      rw [two_mul, add_smul]; linear_combination hst + h1
-    have hs0 : s = 0 := by simpa using hs
-    refine ⟨hs0, ?_⟩
-    rw [hs0, zero_smul, zero_add] at hst
-    exact (smul_eq_zero.mp hst).resolve_right h0
+  have hli : LinearIndependent F ![(1 : E), δ] :=
+    Formalism.IndefR.Fin.U1.linIndep_one_delta σ δ hδ h0
   intro z
   have hsp := hli.span_eq_top_of_card_eq_finrank' (by simp [h2])
   have hz : z ∈ Submodule.span F (Set.range ![(1 : E), δ]) := by rw [hsp]; trivial

@@ -77,51 +77,22 @@ theorem trM_bv (F G : PtRepPf.Fr ε r k) (j : PtRepPf.Fr.Ix r k) : trM F G *ᵥ 
   rw [trM_mulVec]
   simp [F.dual]
 
-private theorem hJ_finset_sum_right {κ : Type} (s : Finset κ) (x : Fin n → ℂ) (w : κ → Fin n → ℂ) :
-    hJ ε x (∑ j ∈ s, w j) = ∑ j ∈ s, hJ ε x (w j) := by
-  induction s using Finset.cons_induction with
-  | empty => unfold hJ; simp
-  | cons a s ha ih => rw [Finset.sum_cons, Finset.sum_cons, PtRepPf.hJ_add_right, ih]
-
-private theorem hJ_finset_sum_left {κ : Type} (s : Finset κ) (u : κ → Fin n → ℂ) (y : Fin n → ℂ) :
-    hJ ε (∑ i ∈ s, u i) y = ∑ i ∈ s, hJ ε (u i) y := by
-  rw [← PtRepPf.hJ_conj, hJ_finset_sum_right, star_sum]
-  exact Finset.sum_congr rfl fun i _ => by rw [PtRepPf.hJ_conj]
-
 private theorem hJ_sum_smul_sum_smul {κ : Type} [Fintype κ] (c d : κ → ℂ) (u w : κ → Fin n → ℂ) :
     hJ ε (∑ i, c i • u i) (∑ j, d j • w j) = ∑ i, ∑ j, star (c i) * d j * hJ ε (u i) (w j) := by
-  rw [hJ_finset_sum_left]
+  rw [PtRepPf.hJ_sum_left]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [PtRepPf.hJ_smul_left, hJ_finset_sum_right, Finset.mul_sum]
+  rw [PtRepPf.hJ_smul_left, PtRepPf.hJ_sum_right, Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [PtRepPf.hJ_smul_right]
   ring
 
 theorem trM_isom (F G : PtRepPf.Fr ε r k) (hT : F.T = G.T) (x y : Fin n → ℂ) :
     hJ ε (trM F G *ᵥ x) (trM F G *ᵥ y) = hJ ε x y := by
-  classical
-  have hli : LinearIndependent ℂ F.bv := by
-    rw [Fintype.linearIndependent_iff]
-    intro g hg j
-    have h1 := congrArg (hJ ε (F.dv j)) hg
-    simp only [hJ_finset_sum_right, PtRepPf.hJ_smul_right, F.dual] at h1
-    unfold hJ at h1
-    simpa using h1
-  have hspan : Submodule.span ℂ (Set.range F.bv) = ⊤ := by
-    have hcard : Fintype.card (PtRepPf.Fr.Ix r k) = Module.finrank ℂ (Fin n → ℂ) := by
-      rw [Module.finrank_fin_fun, F.card]
-      simp [PtRepPf.Fr.Ix]
-    first
-      | exact hli.span_eq_top_of_card_eq_finrank hcard
-  have hmem : ∀ z : Fin n → ℂ, ∃ c : PtRepPf.Fr.Ix r k → ℂ, ∑ i, c i • F.bv i = z := fun z =>
-    (Submodule.mem_span_range_iff_exists_fun ℂ).1 (by rw [hspan]; exact Submodule.mem_top)
-  have hM : ∀ c : PtRepPf.Fr.Ix r k → ℂ, trM F G *ᵥ ∑ i, c i • F.bv i = ∑ i, c i • G.bv i := by
-    intro c
-    rw [Matrix.mulVec_sum]
-    simp only [Matrix.mulVec_smul, trM_bv]
-  obtain ⟨c, rfl⟩ := hmem x
-  obtain ⟨d, rfl⟩ := hmem y
-  rw [hM, hM, hJ_sum_smul_sum_smul, hJ_sum_smul_sum_smul]
+  rw [trM_mulVec, trM_mulVec]
+  conv_rhs =>
+    rw [PtRepPf.expand_of_dual ε F.bv F.dv F.card_ix F.dual x,
+      PtRepPf.expand_of_dual ε F.bv F.dv F.card_ix F.dual y]
+  rw [hJ_sum_smul_sum_smul, hJ_sum_smul_sum_smul]
   simp only [gram_eq F G hT]
 
 theorem single_dot (A : Matrix (Fin n) (Fin n) ℂ) (p q : Fin n) :
@@ -269,7 +240,7 @@ theorem isBaseFrame_of (hr : r = D.R.rS) (hQ : IsTransp X v g k r Qm Qim) {Wp Wq
     exact (PtRepPf.frU X u' v).zw i
   · rw [herm_Qi X v hQ]
     have := (PtRepPf.frU X u' v).ww i i
-    rw [if_pos rfl] at this
+    rw [ite_eq_left rfl] at this
     exact this
   · exact ⟨transportMatrix_unitary_form X u u' v hQ, fun a _ => transportMatrix_fixes_isotropic X u u' v hr hQ a⟩
   · rw [hz, hz', tz_Qi X v hQ, tz_Qi X v hQ]

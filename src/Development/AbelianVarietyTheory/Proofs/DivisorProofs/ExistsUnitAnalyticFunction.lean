@@ -51,8 +51,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open GlobalTheory.PD GlobalTheory.CechDR KaehlerDifferential
 
-set_option autoImplicit false
-
 namespace GlobalTheory.PD
 
 open Polynomial

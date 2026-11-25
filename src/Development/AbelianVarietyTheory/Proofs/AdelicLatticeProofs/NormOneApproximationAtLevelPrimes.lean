@@ -276,19 +276,19 @@ theorem GlobalTheory.UnRep.normOne_approx : ∀ (F E : Type) [Field F] [NumberFi
         have hv := GlobalTheory.UnRep.valuation_eq_one_of_norm_one_of_not_moved F E c hc _ P hu' hQ.1
         by_cases hDP : (D : 𝓞 E) ∈ P.asIdeal
         · cases i
-          · simp only [Bool.false_eq_true, if_false, inv_div]
+          · simp only [Bool.false_eq_true, ite_false, inv_div]
             exact val_le_of_cong P N D D₁ D₂ k _ hD hM2 h1 hQ.2 hDP β α p b hpq'
-          · simp only [if_true]
+          · simp only [ite_true]
             exact val_le_of_cong P N D D₁ D₂ k _ hD hM2 h1 hQ.2 hDP α β p b hpq'
         · cases i
-          · simp only [Bool.false_eq_true, if_false]
+          · simp only [Bool.false_eq_true, ite_false]
             exact val_le_of_unit P _ D hDP (by rw [map_inv₀, hv, inv_one])
-          · simp only [if_true]
+          · simp only [ite_true]
             exact val_le_of_unit P _ D hDP hv)
     obtain ⟨b₁, hb₁⟩ := hs true
     obtain ⟨b₂, hb₂⟩ := hs false
-    simp only [if_true] at hb₁
-    simp only [Bool.false_eq_true, if_false] at hb₂
+    simp only [ite_true] at hb₁
+    simp only [Bool.false_eq_true, ite_false] at hb₂
     refine ⟨s, ⟨hs0, hsP⟩, ⟨b₁, ?_⟩, b₂, ?_⟩
     · rw [← hb₁, mul_left_comm, mul_div_cancel₀ _ hDE]
     · rw [← hb₂, mul_left_comm, mul_div_cancel₀ _ hDE]

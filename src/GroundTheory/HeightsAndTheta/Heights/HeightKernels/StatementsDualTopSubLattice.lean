@@ -25,35 +25,6 @@ def DualTopSubLattice.Statement : Prop :=
         (F.withStdMetric.degree - F'.withStdMetric.degree) *
           geomDeg (grassIdeal 1 1 (i - 1)) (fsMulti (plBlocks 1 1 (i - 1))) (1 * 1 * (i - 1))
 
-def twoVecExample : Fin 1 → ℚ := fun _ => 2
-
-def HermLattice.twiceStandardExample : HermLattice ℚ 1 where
-  lattice := Submodule.span (𝓞 ℚ) {twoVecExample}
-  fg := Submodule.fg_span (Set.finite_singleton _)
-  span_eq := by
-    rw [Submodule.span_span_of_tower]
-    refine eq_top_iff.mpr fun x _ => ?_
-    have hx : x = (x 0 / 2) • twoVecExample := by
-      funext j
-      fin_cases j
-      simp [twoVecExample]
-    rw [hx]
-    exact Submodule.smul_mem _ _ (Submodule.subset_span rfl)
-  metric := fun _ => 1
-  posDef := fun _ => Matrix.PosDef.one
-  conj := fun _ => by simp
-
-theorem twiceStandardExample_le :
-    HermLattice.twiceStandardExample.lattice ≤ (HermLattice.standard ℚ 1).lattice := by
-  show Submodule.span (𝓞 ℚ) {twoVecExample} ≤ _
-  rw [Submodule.span_le, Set.singleton_subset_iff]
-  have h : twoVecExample = (2 : 𝓞 ℚ) • (Pi.single 0 1 : Fin 1 → ℚ) := by
-    funext j
-    fin_cases j
-    simp [twoVecExample, Algebra.smul_def, map_ofNat]
-  rw [h]
-  exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨0, rfl⟩)
-
 end
 
 end GroundTheory.Heights₂.Heights

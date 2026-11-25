@@ -180,7 +180,7 @@ theorem exists_norm_le_height_pow_neg_siegel {φ : AdelicGLn.AdelicGL K n → �
         split_ifs
         · exact mul_nonneg (le_max_right _ _) (pow_nonneg hD0 _)
         · exact le_rfl) (Finset.mem_univ ⟨r, hrn⟩)
-    simpa only [hr, dif_pos] using h1
+    simpa only [hr, dite_eq_left] using h1
   set C₀' := |C₀| * D ^ (N₀ + N')
   have hC₀'0 : 0 ≤ C₀' := mul_nonneg (abs_nonneg _) (pow_nonneg hD0 _)
   refine ⟨C₀' + S, ?_⟩

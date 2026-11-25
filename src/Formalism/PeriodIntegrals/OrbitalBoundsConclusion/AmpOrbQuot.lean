@@ -5,49 +5,7 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitQuotientTop
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitQuotientTopology.MeasurableStabActOne
 public import Formalism.PeriodIntegrals.AmpOrbQ
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupBasics.FlagMatLower
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Std.Tactic.BVDecide.Normalize.Prop
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.IsCompactUnitaryMat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitQuotientTopology.ContinuousAtInvOfUh, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitQuotientTopology.ContinuousAtInvOfDet, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AmpOrbQuot
@@ -138,15 +96,7 @@ theorem rs_back (hc : μR {x | Matrix.of x ∉ RStab k r g} = 0) :
 
 theorem measurable_lmulM (a : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) :
     Measurable (lmulM (k := k) (r := r) a) := by
-  apply measurable_pi_lambda
-  intro i
-  apply measurable_pi_lambda
-  intro j
-  have : Continuous (fun x : Mt k r => (a * Matrix.of x) i j) := by
-    simp only [Matrix.mul_apply, Matrix.of_apply]
-    exact continuous_finsetSum _ fun l _ =>
-      continuous_const.mul ((continuous_apply j).comp (continuous_apply l))
-  exact this.measurable
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.Lap.Base.StandardBasisEmbedding.measurable_lmulM' <;> assumption
 
 theorem rs_val_mul [Fact (g ∈ UH (Hpk k r))] (a : RT k r g) :
     (Subtype.val : RT k r g → Mt k r) ∘ (fun x => a * x) = lmulM (toM a) ∘ Subtype.val := by
@@ -187,8 +137,7 @@ theorem rs_smul [Fact (g ∈ UH (Hpk k r))] (hμ : IsHaarOn (RStab k r g) μR) :
     rw [ht] at heq
     set ν := μR.comap (Subtype.val : RT k r g → Mt k r) with hνdef
     obtain ⟨n, hn⟩ : ∃ n, (haar : Measure (RT k r g)) (spanningSets ν n) ≠ 0 := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       have hU : (haar : Measure (RT k r g)) (⋃ n, spanningSets ν n) = 0 := measure_iUnion_null hcon
       rw [iUnion_spanningSets] at hU
       exact isOpen_univ.measure_ne_zero haar Set.univ_nonempty hU
@@ -293,34 +242,12 @@ theorem measurable_theta [SFinite μR] (hK : ∀ m, IsClosed (K m)) : Measurable
 
 variable {g μR K}
 
-private theorem hpk_sq_lemma (k r : ℕ) : Hpk k r * Hpk k r = 1 := by
-  ext i j
-  rw [Matrix.mul_apply, Matrix.one_apply]
-  have hs : (if r ≤ i.val ∧ i.val ≤ r + k then i.val else 2 * r + k - i.val) < 2 * r + k + 1 := by
-    split_ifs <;> omega
-  rw [Finset.sum_eq_single (⟨_, hs⟩ : Fin (2 * r + k + 1))]
-  · by_cases hij : i = j
-    · subst hij
-      rw [if_pos rfl]
-      simp only [Hpk, Fin.ext_iff]
-      split_ifs <;> first | (exfalso; (try simp only at *); omega) | (simp_all; done)
-    · rw [if_neg hij]
-      rw [Fin.ext_iff] at hij
-      simp only [Hpk, Fin.ext_iff]
-      split_ifs <;> first | (exfalso; (try simp only at *); omega) | (simp_all; done)
-  · intro l _ hl
-    rw [Ne, Fin.ext_iff, Fin.val_mk] at hl
-    simp only [Hpk, Fin.ext_iff]
-    split_ifs at * <;> first | (exfalso; (try simp only at *); omega) | (simp_all; done)
-  · intro h
-    exact absurd (Finset.mem_univ _) h
-
 private theorem isUnit_det_of_mem_UH' {g : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hg : g ∈ UH (Hpk k r)) :
     IsUnit g.det := by
   have hg' : gᴴ * Hpk k r * g = Hpk k r := hg
   have h : Hpk k r * gᴴ * Hpk k r * g = 1 := by
     calc Hpk k r * gᴴ * Hpk k r * g = Hpk k r * (gᴴ * Hpk k r * g) := by simp only [Matrix.mul_assoc]
-      _ = 1 := by rw [hg', hpk_sq_lemma k r]
+      _ = 1 := by rw [hg', Hpk_mul_self]
   exact Matrix.isUnit_det_of_left_inverse h
 
 theorem nInv_act {b : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hb : b ∈ UH (Hpk k r)) (a : Mt k r) (y : PairSp k r) :

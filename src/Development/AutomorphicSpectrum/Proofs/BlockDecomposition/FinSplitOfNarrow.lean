@@ -151,7 +151,7 @@ theorem gen_mem_polys {n : ℕ} (γ : Fin n → ℂ) (M : ℕ) (T : (Fin n → �
       simp
     · intro b _ hb
       obtain ⟨i, hi⟩ := Function.ne_iff.mp hb
-      rw [Finset.prod_eq_zero (Finset.mem_univ i) (if_neg (Ne.symm hi)), mul_zero]
+      rw [Finset.prod_eq_zero (Finset.mem_univ i) (ite_eq_right (Ne.symm hi)), mul_zero]
     · intro h
       exact absurd (Fintype.mem_piFinset.mpr fun i => Finset.mem_range.mpr (by omega)) h
   rw [key, Finset.mul_sum]
@@ -908,7 +908,7 @@ theorem zetaUnr_indicator {ϖ : kˣ} (hϖ : IsUnif ϖ) {ν : kˣ →* ℂˣ} (h�
     rcases lt_or_ge m 0 with h | h
     · exact conv_neg hf h
     · obtain ⟨t, rfl⟩ := Int.eq_ofNat_of_zero_le h
-      rw [conv_natCast (natDegree_invL_le n d ϖ ν) hf, key, PowerSeries.coeff_one, if_neg]
+      rw [conv_natCast (natDegree_invL_le n d ϖ ν) hf, key, PowerSeries.coeff_one, ite_eq_right]
       exact fun ht => hm (by rw [ht])
 
 theorem summable_antidiag_of_growth {n : ℕ} (Q : Fin n → ℝ) (hQ : ∀ i, 1 ≤ Q i) {r : ℝ} (hr : 0 ≤ r)
@@ -1437,11 +1437,6 @@ theorem p'_unit (hS : HidaSetting a a' ϖ α β ν) (hν : IsUnram ν) (hα : Is
 end Clauses2
 end PositivityTheory.ThK.SplitLoc.Unr
 
-namespace PositivityTheory.ThK.SplitLoc
-
-open Unr GlobalTheory.SplitFlip GlobalTheory.SplitWeil
-
-end PositivityTheory.ThK.SplitLoc
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -1457,8 +1452,6 @@ noncomputable section
 namespace PositivityTheory.ThK.SplitAsm
 
 open NumberField IsDedekindDomain ValuativeRel
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 theorem valuation_integers_eq_completion : IntEq := by
   intro F _ _ v x
@@ -1586,8 +1579,6 @@ section Global
 
 open NumberField IsDedekindDomain GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open PositivityTheory.KCo PositivityTheory.ThK.SplitDict PositivityTheory.ThK PositivityTheory.ThK.SplitAsm
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 local instance measFv {F : Type} [Field F] [NumberField F] (v : Pl F) : MeasurableSpace (Fv F v) := borel _
 

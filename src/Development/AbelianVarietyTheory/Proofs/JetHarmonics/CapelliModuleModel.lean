@@ -1,5 +1,7 @@
 module
 
+
+import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.BesselPeriodAdjointPair
 public import Formalism.HermitianCurvature.StatementQ
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
 public import Mathlib.Analysis.Analytic.IsolatedZeros
@@ -58,7 +60,6 @@ import Mathlib.Tactic.TypeStar
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.DilationUnipotentWeylMeasure
 import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.ReduceModChar
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.JetHarmonics.CapelliEigenRealToComplex, Development.AbelianVarietyTheory.Proofs.JetHarmonics.OperatorEabPreservesSmoothClassCC, Development.AbelianVarietyTheory.Proofs.JetHarmonics.CapelliModuleModel
 
@@ -178,22 +179,7 @@ theorem smooth_iff {f : B.Mat k r → F} :
     exact ⟨U, f', hU, hg, hf, fun g hgU hgG => he g hgU hgG.1⟩
 
 theorem dLR_zero (u v : List (B.Mat k r)) : B.dLR u v (0 : B.Mat k r → F) = 0 := by
-  have h1 : B.Rw v (0 : B.Mat k r → F) = 0 := by
-    unfold B.Rw
-    induction v with
-    | nil => rfl
-    | cons X v ih =>
-      rw [List.foldr_cons, ih]
-      funext g
-      simp [RdV]
-  unfold B.dLR
-  rw [h1]
-  induction u with
-  | nil => rfl
-  | cons X u ih =>
-    rw [List.foldr_cons, ih]
-    funext g
-    simp [B.LdV]
+  first | exact _root_.Gp91.GlobalTheory.CoefDecay.dLR_zero | exact @_root_.Gp91.GlobalTheory.CoefDecay.dLR_zero | apply _root_.Gp91.GlobalTheory.CoefDecay.dLR_zero <;> assumption
 
 theorem inCC_zero (A : ℝ) (m : ℕ) : B.InCC A m (0 : B.Mat k r → F) := by
   refine ⟨0, fun g₀ _ => ⟨Set.univ, 0, isOpen_univ, trivial, contDiffOn_const, fun _ _ _ => rfl⟩, ?_⟩
@@ -313,7 +299,7 @@ theorem capelli_module_model : ∀ (k r : ℕ) (Wp Wq : Type) [NormedAddCommGrou
     congr 1
     exact Finset.prod_congr rfl fun s _ => by ring
   · intro c hc
-    simp only [mulOp, dif_pos hc]
+    simp only [mulOp, dite_eq_left hc]
     refine ⟨fun v g hg => ev_M isOpen_univ (smooth_iff.2 hc) v (mem_lev.2 hg), fun a b v g hg => ?_⟩
     have := ev_EM (i := 0) isOpen_univ (c0 a) (c0 b) (smooth_iff.2 hc) v (mem_lev.2 hg)
     rw [position_level_zero_coord, position_level_zero_coord, ← ev_Eu a b v g hg] at this

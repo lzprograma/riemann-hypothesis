@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.IneChar
 public import Mathlib.Algebra.Field.ZMod
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.CardTors
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
@@ -34,70 +35,17 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibra
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.ReflOdd
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.SgnCyc
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.ToKOf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.FieldTheory.Galois.Profinite
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.PullMem
 import Mathlib.NumberTheory.NumberField.ClassNumber
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
 import Formalism.ConjugateSelfDual.Statement
 import Formalism.GaloisCohomology.Statement
 import ReciprocityTheory.GaloisValuations.GlobalA
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.HomCyc, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.AmbHom, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.IneCyc, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.AmbIndex, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.RelCyc, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.AmbCyc, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.HomLe, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.CardClDualOne, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.CardRangeInfTorsionLeIndexPow, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.EmbCyc, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.EmbedDeg, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.POddRelIndexLe, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.PTwo, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.StickH, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.FerreroWashington
@@ -346,26 +294,11 @@ private theorem iC_one {Ω : Type} [Field Ω] (A : ValuationSubring Ω) {m : ℕ
 
 private theorem iC_pow {Ω : Type} [Field Ω] (A : ValuationSubring Ω) {η : Ω} (h1 : A.valuation η = 1)
     (h : A.valuation (η - 1) < 1) (i : ℕ) : A.valuation (1 - η ^ i) < 1 := by
-  induction i with
-  | zero => simp
-  | succ i ih =>
-    have e : 1 - η ^ (i + 1) = η * (1 - η ^ i) - (η - 1) := by ring
-    rw [e]
-    refine A.valuation.map_sub_lt ?_ h
-    rw [map_mul, h1, one_mul]; exact ih
+  apply _root_.power_bounds_of_between <;> assumption
 
 private theorem iC_eta {Ω : Type} [Field Ω] (A : ValuationSubring Ω) {m : ℕ} (hm : m ≠ 0)
     (hv : ¬ A.valuation (m : Ω) < 1) {η : Ω} (hη : η ^ m = 1) (h : A.valuation (η - 1) < 1) : η = 1 := by
-  by_contra hne
-  apply hv
-  have hs : ∑ i ∈ Finset.range m, η ^ i = 0 := by
-    have := mul_geom_sum η m
-    rw [hη, sub_self] at this
-    exact (mul_eq_zero.1 this).resolve_left (sub_ne_zero.2 hne)
-  have e : (m : Ω) = ∑ i ∈ Finset.range m, (1 - η ^ i) := by
-    rw [Finset.sum_sub_distrib, hs]; simp
-  rw [e]
-  exact A.valuation.map_sum_lt one_ne_zero fun i _ => iC_pow A (iC_one A hm hη) h i
+  apply _root_.root_of_unity_eq_one_of_close_residue <;> assumption
 
 private theorem iC_ine (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω]
     (l : ℕ) [hl : Fact l.Prime] (A : ValuationSubring Ω) (hA : ¬ A.valuation (l : Ω) < 1) (g : G F Ω)
@@ -1268,7 +1201,7 @@ open UpperTheory.V.FW
 theorem UpperTheory.V.FW.pTwo :
     ∀ (C : Type) [CommGroup C] [Finite C] (J : C →* C), (∀ x, J (J x) = x) →
       (powR (C := C) 2).index ≤
-        ((difR J).relIndex (minK J) * Nat.card (difR J ⊓ torK (C := C) 2 : Subgroup C)) ^ 2 := by
+        (difR J).relIndex (minK J) * Nat.card (difR J ⊓ torK (C := C) 2 : Subgroup C) ^ 2 := by
   intro C _ _ J hJ
   classical
   have hcard : ∀ {G H : Type} [Group G] [Group H] (f : G →* H),
@@ -1336,19 +1269,12 @@ theorem UpperTheory.V.FW.pTwo :
   rw [h1]
   set r := D.relIndex K
   set d := Nat.card (D ⊓ T : Subgroup C)
-  have s1 : Nat.card T ≤ (r * d) * d := by
-    rw [e4]
-    apply Nat.mul_le_mul _ r1
-    calc Nat.card g.ker ≤ Nat.card (K ⊓ T : Subgroup C) := r2
-      _ = Nat.card h.ker * Nat.card h.range := e5
-      _ ≤ d * r := Nat.mul_le_mul r4 r3
-      _ = r * d := mul_comm _ _
-  have s2 : (r * d) * d ≤ (r * d) ^ 2 := by
-    rcases Nat.eq_zero_or_pos r with hr | hr
-    · simp [hr]
-    · rw [pow_two]
-      exact Nat.mul_le_mul_left _ (Nat.le_mul_of_pos_left d hr)
-  exact s1.trans s2
+  rw [pow_two, ← mul_assoc, e4]
+  apply Nat.mul_le_mul _ r1
+  calc Nat.card g.ker ≤ Nat.card (K ⊓ T : Subgroup C) := r2
+    _ = Nat.card h.ker * Nat.card h.range := e5
+    _ ≤ d * r := Nat.mul_le_mul r4 r3
+    _ = r * d := mul_comm _ _
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.PTwo =====
@@ -1392,7 +1318,7 @@ theorem UpperTheory.V.FW.stickH :
     have hdiv := Nat.div_add_mod (c * ((c : ZMod M)⁻¹ * t).val) M
     rw [hmod] at hdiv
     simp only [sub_mul, Finset.sum_sub_distrib, mul_assoc, ← Finset.mul_sum, ite_mul, one_mul,
-      zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, Units.val_one, Units.val_neg,
+      zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Units.val_one, Units.val_neg,
       neg_one_mul, hu, hneg, gc]
     generalize c * ((c : ZMod M)⁻¹ * t).val / M = q at hdiv ⊢
     have hz : (M : ℤ) * q + ((t : ZMod M).val : ℤ) = c * (((c : ZMod M)⁻¹ * t).val : ℤ) := by
@@ -1424,32 +1350,35 @@ theorem UpperTheory.V.FW.cyc (l : ℕ) [hl : Fact l.Prime] (f : ℕ) (hf : f.Cop
     simp
   obtain ⟨N, n₀, hn₀2, hmem⟩ := memZ l f (2 * (f * l) + 1) hf hcodd hc1 hcfl
   obtain ⟨B, hB⟩ := ambCyc l f hf
+  refine ⟨if l = 2 then (2 ^ (f * 2 ^ ee 2).totient) ^ N * (B ^ N) ^ 2
+    else l * (B ^ N) ^ 2, n₀, ?_⟩
+  intro n hn L _ _ _
+  haveI : NeZero (f * l ^ n) := ⟨(Nat.mul_pos hf0 (pow_pos hl0 n)).ne'⟩
+  have hM2 : 2 < f * l ^ n := by
+    have : 2 ≤ l ^ n := by
+      calc 2 ≤ l := hl.out.two_le
+        _ = l ^ 1 := (pow_one l).symm
+        _ ≤ l ^ n := Nat.pow_le_pow_right hl0 (by lia)
+    nlinarith
+  haveI : IsCMField L := IsCyclotomicExtension.Rat.isCMField L ⟨f * l ^ n, Set.mem_singleton _, hM2⟩
+  refine ⟨inferInstance, ?_⟩
+  obtain ⟨γ, hγ1, hγidx, hγmem⟩ := hmem n hn
+  have hcM : (2 * (f * l) + 1).Coprime (f * l ^ n) := by
+    obtain ⟨h1, h2⟩ := Nat.coprime_mul_iff_right.mp hcfl
+    exact Nat.coprime_mul_iff_right.mpr ⟨h1, h2.pow_right n⟩
+  have hcore := core l (ZMod (f * l ^ n))ˣ (Cl L) (cycRep (f * l ^ n) L) (-1) γ
+    (clA (f * l ^ n) L (-1)) (clA (f * l ^ n) L γ) (thetaH (f * l ^ n) (2 * (f * l) + 1)) N
+    (by simp) (fun x => cycRep_apply _ _ _ x) (fun x => cycRep_apply _ _ _ x)
+    (stickH _ _ L hcM hcodd hM2) hγmem
+  have hamb := hB n L γ (by lia) hγ1
+  have hbound : Nat.card ↥(difR (clA (f * l ^ n) L (-1)) ⊓ torK (Cl L) l) ≤ B ^ N :=
+    hcore.trans (Nat.pow_le_pow_left hamb N)
+  obtain ⟨_, hcE2⟩ := conjEq (f * l ^ n) L
   by_cases hl2 : l = 2
   · subst hl2
-    refine ⟨((2 ^ (f * 2 ^ ee 2).totient) ^ N * B ^ N) ^ 2, n₀, ?_⟩
-    intro n hn L _ _ _
-    haveI : NeZero (f * 2 ^ n) := ⟨(Nat.mul_pos hf0 (pow_pos hl0 n)).ne'⟩
-    have hM2 : 2 < f * 2 ^ n := by
-      have : 4 ≤ 2 ^ n := by
-        calc 4 = 2 ^ 2 := by norm_num
-          _ ≤ 2 ^ n := Nat.pow_le_pow_right (by norm_num) (by omega)
-      nlinarith
-    haveI : IsCMField L := IsCyclotomicExtension.Rat.isCMField L ⟨f * 2 ^ n, Set.mem_singleton _, hM2⟩
-    refine ⟨inferInstance, ?_⟩
-    obtain ⟨γ, hγ1, hγidx, hγmem⟩ := hmem n hn
-    have hcM : (2 * (f * 2) + 1).Coprime (f * 2 ^ n) := by
-      obtain ⟨h1, h2⟩ := Nat.coprime_mul_iff_right.mp hcfl
-      exact Nat.coprime_mul_iff_right.mpr ⟨h1, h2.pow_right n⟩
-    have hcore := core 2 (ZMod (f * 2 ^ n))ˣ (Cl L) (cycRep (f * 2 ^ n) L) (-1) γ
-      (clA (f * 2 ^ n) L (-1)) (clA (f * 2 ^ n) L γ) (thetaH (f * 2 ^ n) (2 * (f * 2) + 1)) N
-      (by simp) (fun x => cycRep_apply _ _ _ x) (fun x => cycRep_apply _ _ _ x)
-      (stickH _ _ L hcM hcodd hM2) hγmem
-    have hamb := hB n L γ (by omega) hγ1
-    have hbound : Nat.card ↥(difR (clA (f * 2 ^ n) L (-1)) ⊓ torK (Cl L) 2) ≤ B ^ N :=
-      hcore.trans (Nat.pow_le_pow_left hamb N)
+    simp only
     have hfodd : Odd f := Nat.coprime_two_right.mp hf
-    obtain ⟨_, hcE2⟩ := conjEq (f * 2 ^ n) L
-    have hsgn := sgnCyc f n (2 * (f * 2) + 1) N L γ hfodd h1 (by omega) hcM hcodd hγmem
+    have hsgn := sgnCyc f n (2 * (f * 2) + 1) N L γ hfodd h1 (by lia) hcM hcodd hγmem
     rw [← hcE2, hγidx] at hsgn
     have hinv : ∀ x : Cl L, clA (f * 2 ^ n) L (-1) (clA (f * 2 ^ n) L (-1) x) = x := by
       intro x
@@ -1457,45 +1386,25 @@ theorem UpperTheory.V.FW.cyc (l : ℕ) [hl : Fact l.Prime] (f : ℕ) (hf : f.Cop
       rw [← cycRep_apply, ← cycRep_apply, ← Module.End.mul_apply, ← map_mul]
       simp
     have hp := pTwo (Cl L) (clA (f * 2 ^ n) L (-1)) hinv
-    exact hp.trans (Nat.pow_le_pow_left (Nat.mul_le_mul hsgn hbound) 2)
-  · refine ⟨l * (B ^ N) ^ 2, n₀, ?_⟩
-    intro n hn L _ _ _
-    haveI : NeZero (f * l ^ n) := ⟨(Nat.mul_pos hf0 (pow_pos hl0 n)).ne'⟩
-    have hl3 : 3 ≤ l := by
-      have := hl.out.two_le
-      omega
-    have hM2 : 2 < f * l ^ n := by
-      have : 3 ≤ l ^ n := by
-        calc 3 ≤ l := hl3
-          _ = l ^ 1 := (pow_one l).symm
-          _ ≤ l ^ n := Nat.pow_le_pow_right hl0 (by omega)
-      nlinarith
-    haveI : IsCMField L := IsCyclotomicExtension.Rat.isCMField L ⟨f * l ^ n, Set.mem_singleton _, hM2⟩
-    refine ⟨inferInstance, ?_⟩
-    obtain ⟨γ, hγ1, _, hγmem⟩ := hmem n hn
-    have hcM : (2 * (f * l) + 1).Coprime (f * l ^ n) := by
-      obtain ⟨h1, h2⟩ := Nat.coprime_mul_iff_right.mp hcfl
-      exact Nat.coprime_mul_iff_right.mpr ⟨h1, h2.pow_right n⟩
-    have hcore := core l (ZMod (f * l ^ n))ˣ (Cl L) (cycRep (f * l ^ n) L) (-1) γ
-      (clA (f * l ^ n) L (-1)) (clA (f * l ^ n) L γ) (thetaH (f * l ^ n) (2 * (f * l) + 1)) N
-      (by simp) (fun x => cycRep_apply _ _ _ x) (fun x => cycRep_apply _ _ _ x)
-      (stickH _ _ L hcM hcodd hM2) hγmem
-    have hamb := hB n L γ (by omega) hγ1
-    have hbound : Nat.card ↥(difR (clA (f * l ^ n) L (-1)) ⊓ torK (Cl L) l) ≤ B ^ N :=
-      hcore.trans (Nat.pow_le_pow_left hamb N)
+    exact hp.trans (Nat.mul_le_mul hsgn (Nat.pow_le_pow_left hbound 2))
+  · rw [ite_eq_right hl2]
     have hlodd : Odd l := hl.out.odd_of_ne_two hl2
     obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot ℚ L (Set.mem_singleton (f * l ^ n))
       (NeZero.ne _)
     have hsplit : f * l ^ n = f * l ^ (n - 1) * l := by
       rw [mul_assoc, ← pow_succ]
       congr 2
-      omega
+      lia
     have hζl : IsPrimitiveRoot (ζ ^ (f * l ^ (n - 1))) l := hζ.pow (NeZero.pos _) hsplit
-    obtain ⟨_, hcE2⟩ := conjEq (f * l ^ n) L
     have hrefl := reflOdd L l _ hl2 hζl
     rw [← hcE2] at hrefl
     have hp := pOdd l (Cl L) (clA (f * l ^ n) L (-1)) hlodd hrefl
     exact hp.trans (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hbound 2))
+
+/-- The bounded class-group rank statement `Published.FerreroWashington`.
+The proof embeds the abelian field in a suitable cyclotomic field using `embed`,
+applies the uniform cyclotomic bound `cyc`, and descends it using `desc`.
+The resulting bound is on `Cl / Cl^l`, not on the order of the full class group. -/
 
 theorem UpperTheory.V.FW.ferreroWashington : UpperTheory.V.Published.FerreroWashington := by
   unfold UpperTheory.V.Published.FerreroWashington

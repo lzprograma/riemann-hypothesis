@@ -1,76 +1,11 @@
 module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.CuspCritAlt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
 open UpperHalfPlane
-
-namespace UpperTheory.V.Af.Nf
-
-end UpperTheory.V.Af.Nf
-
-private theorem lower_row_mul_add_ne_zero_of_det_ne_zero (x : Matrix (Fin 2) (Fin 2) ℝ) (hx : x.det ≠ 0) (w : ℍ) :
-    (x 1 0 : ℂ) * (w : ℂ) + (x 1 1 : ℂ) ≠ 0 := by
-  intro h
-  have him := congrArg Complex.im h
-  have hre := congrArg Complex.re h
-  simp at him hre
-  rcases him with h1 | h1
-  · apply hx
-    rw [Matrix.det_fin_two]
-    simp [h1] at hre
-    simp [h1, hre]
-  · exact absurd h1 w.im_pos.ne'
-
-private theorem im_mobius_pos_of_det_pos (y : Matrix (Fin 2) (Fin 2) ℝ) (hy : 0 < y.det) (z : ℍ) :
-    0 < (((y 0 0 : ℂ) * z + y 0 1) / ((y 1 0 : ℂ) * z + y 1 1)).im := by
-  have hj := lower_row_mul_add_ne_zero_of_det_ne_zero y hy.ne' z
-  rw [Complex.div_im]
-  have hn : 0 < Complex.normSq ((y 1 0 : ℂ) * z + y 1 1) := Complex.normSq_pos.mpr hj
-  rw [← sub_div]
-  apply div_pos _ hn
-  have hd := hy
-  rw [Matrix.det_fin_two] at hd
-  simp
-  nlinarith [z.im_pos]
 
 open UpperTheory.V.Af.Nf in
 theorem UpperTheory.V.Af.Nf.nslMul :
@@ -79,8 +14,12 @@ theorem UpperTheory.V.Af.Nf.nslMul :
   refine ⟨?_, ?_, ?_, ?_⟩
   · intro x y hx hy
     funext z
-    have hjy := lower_row_mul_add_ne_zero_of_det_ne_zero y hy.ne' z
-    have hm := im_mobius_pos_of_det_pos y hy z
+    let gy := Matrix.GeneralLinearGroup.mkOfDetNeZero y hy.ne'
+    have hjy : (y 1 0 : ℂ) * z + y 1 1 ≠ 0 := UpperHalfPlane.denom_ne_zero gy z
+    have hm : 0 < (((y 0 0 : ℂ) * z + y 0 1) / ((y 1 0 : ℂ) * z + y 1 1)).im := by
+      rw [show ((y 0 0 : ℂ) * z + y 0 1) / ((y 1 0 : ℂ) * z + y 1 1) =
+        UpperHalfPlane.num gy z / UpperHalfPlane.denom gy z from rfl, UpperHalfPlane.moebius_im]
+      exact div_pos (mul_pos hy z.im_pos) (UpperHalfPlane.normSq_denom_pos gy z.im_ne_zero)
     set m := ((y 0 0 : ℂ) * z + y 0 1) / ((y 1 0 : ℂ) * z + y 1 1) with hmdef
     simp only [nsl]
     rw [sign_pos hy, Matrix.det_mul, sign_mul, sign_pos hy, mul_one, abs_mul,

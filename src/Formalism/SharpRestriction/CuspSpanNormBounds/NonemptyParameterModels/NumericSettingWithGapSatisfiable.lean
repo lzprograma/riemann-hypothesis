@@ -1,53 +1,13 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SigZeroCayley
 import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.AmpTensorDSdNonemptyOfSubsingleton
 public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
 public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleySignature
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -93,7 +53,7 @@ lemma obj_PJP_apply (k r : ℕ) (i j : Fin (2 * r + k + 1)) :
   simp only [mul_diagonal, conjTranspose_apply, obj_PU_star]
   unfold obj_PU
   simp only [add_mul, mul_add, Finset.sum_add_distrib, ite_mul, mul_ite,
-    zero_mul, mul_zero, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    zero_mul, mul_zero, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [Hpk_eq]
   have hi := i.isLt
   have hs' := sig_val k r i
@@ -112,7 +72,7 @@ lemma obj_PJP_apply (k r : ℕ) (i j : Fin (2 * r + k + 1)) :
     · have h1 : ¬ i = j := fun h => hji h.symm
       have h2 : ¬ i = sig k r j := fun h => hjs ((eq_sig_iff k r i j).1 h)
       have h3 : ¬ sig k r j = sig k r i := fun h => hji ((sig_inj k r j i).1 h)
-      rw [if_neg h1, if_neg hjs, if_neg h2, if_neg h3, if_neg hjs]
+      rw [ite_eq_right h1, ite_eq_right hjs, ite_eq_right h2, ite_eq_right h3, ite_eq_right hjs]
       norm_num
 
 lemma obj_PP_apply (k r : ℕ) (i j : Fin (2 * r + k + 1)) :
@@ -122,7 +82,7 @@ lemma obj_PP_apply (k r : ℕ) (i j : Fin (2 * r + k + 1)) :
   simp only [conjTranspose_apply, obj_PU_star]
   unfold obj_PU
   simp only [add_mul, mul_add, Finset.sum_add_distrib, ite_mul, mul_ite,
-    zero_mul, mul_zero, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    zero_mul, mul_zero, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [Matrix.one_apply]
   have hi := i.isLt
   have hs' := sig_val k r i
@@ -141,7 +101,7 @@ lemma obj_PP_apply (k r : ℕ) (i j : Fin (2 * r + k + 1)) :
     · have h1 : ¬ i = j := fun h => hji h.symm
       have h2 : ¬ i = sig k r j := fun h => hjs ((eq_sig_iff k r i j).1 h)
       have h3 : ¬ sig k r j = sig k r i := fun h => hji ((sig_inj k r j i).1 h)
-      rw [if_neg h1, if_neg hjs, if_neg h2, if_neg h3, if_neg h1]
+      rw [ite_eq_right h1, ite_eq_right hjs, ite_eq_right h2, ite_eq_right h3, ite_eq_right h1]
       norm_num
 
 lemma obj_PU_cayley (k r : ℕ) : IsCayleyU k r (epsK k r) (obj_PU k r) := by
@@ -203,7 +163,7 @@ lemma obj_count (k r : ℕ) (hk : 1 ≤ k) :
   | succ r ih =>
     have e : 2 * (r + 1) + k + 1 = (2 * r + k + 1) + 1 + 1 := by ring
     rw [e, Finset.range_add_one, Finset.range_add_one, Finset.filter_insert, Finset.filter_insert,
-      if_neg (by omega), if_pos (by omega), Finset.card_insert_of_notMem (by simp), ih]
+      ite_eq_right (by omega), ite_eq_left (by omega), Finset.card_insert_of_notMem (by simp), ih]
     ring
 
 lemma obj_card_fin (n : ℕ) (p : ℕ → Prop) [DecidablePred p] :
@@ -222,19 +182,6 @@ theorem obj_epsSH_card (R : Formalism.BasicNotions.Ranks) :
 
 theorem obj_cayleyU_rows (D : Formalism.BasicNotions.D7) : ∃ P, IsCayleyU D.R.k D.R.rS (epsSH D.R) P :=
   obj_cayleyU_of_card _ _ _ (obj_epsSH_card D.R)
-
-lemma obj_lamSH_lo (R : Formalism.BasicNotions.Ranks) (P : Formalism.BasicNotions.HCParam R) (i : Fin (2 * R.rS + R.k + 1)) (h : i.val < R.k - 1) :
-    lamSH R P i = (P.v ⟨i.val, h⟩ : ℝ) := by
-  unfold lamSH lamS; simp only [Fin.val_cast]; rw [dite_eq_left h]
-
-lemma obj_lamSH_hi (R : Formalism.BasicNotions.Ranks) (P : Formalism.BasicNotions.HCParam R) (i : Fin (2 * R.rS + R.k + 1)) (h : ¬ i.val < R.k - 1)
-    (h' : i.val - (R.k - 1) < R.m) : lamSH R P i = -(P.b ⟨i.val - (R.k - 1), h'⟩ : ℝ) := by
-  unfold lamSH lamS; simp only [Fin.val_cast]; rw [dite_eq_right h, dite_eq_left h']
-
-lemma obj_m_eq (R : Formalism.BasicNotions.Ranks) : R.m = 2 * R.rS + 2 := by
-  obtain ⟨t, ht⟩ := R.m_even
-  have h2 := R.two_le_m
-  simp only [Formalism.BasicNotions.Ranks.rS]; omega
 
 theorem obj_isHCParam_lamSH (R : Formalism.BasicNotions.Ranks) (P : Formalism.BasicNotions.HCParam R) : IsHCParam (lamSH R P) := by
   apply Formalism.MainNotions.S.Inh.amp_isHCParam_lamSH <;> assumption
@@ -268,14 +215,7 @@ theorem obj_isHCParam_u (R : Formalism.BasicNotions.Ranks) (P : Formalism.BasicN
 
 open Formalism.MainNotions.CayleySignature in
 theorem exists_isCayleyU_eps48 (k r : ℕ) (hk : 1 ≤ k) : ∃ P, IsCayleyU k r (eps48 k r) P := by
-  apply obj_cayleyU_of_card
-  have e : (Finset.univ.filter fun i => eps48 k r i = true) =
-      Finset.univ.filter (fun i : Fin (2 * r + k + 1) => i.val < k - 1 ∨ (i.val - (k - 1)) % 2 = 0) := by
-    apply Finset.filter_congr
-    intro i _
-    unfold eps48
-    by_cases h : i.val < k - 1 <;> simp [h]
-  rw [e, obj_card_fin (2 * r + k + 1) (fun i => i < k - 1 ∨ (i - (k - 1)) % 2 = 0), obj_count k r hk]
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.exists_cayley_unitary <;> assumption
 
 
 end obj

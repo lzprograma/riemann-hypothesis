@@ -341,8 +341,7 @@ theorem exists_multiplier_descend_of_closed {σ X : Type} [Fintype σ] [Nonempty
   obtain ⟨b, hb, hbs⟩ := _root_.GlobalTheory.exists_common_denominator_of_isNilpotent B A Subtype.val_injective (s.image π) hnil
   obtain ⟨b, c, rfl⟩ := b
   refine ⟨c, ?_, fun f hf => ?_⟩
-  · by_contra hc
-    push_neg at hc
+  · by_contra! hc
     exact hb (Subtype.ext (Subtype.ext (funext fun x => hc x)))
   · obtain ⟨⟨b', c', rfl⟩, hb'⟩ := hbs (π f) (Finset.mem_image_of_mem _ hf)
     exact ⟨c', fun x => congrFun (congrArg Subtype.val hb') x⟩
@@ -450,10 +449,6 @@ lemma evC_ltr (g y : Matrix ι ι ℂ) (f : MvPolynomial (ι × ι) ℂ) : evC (
     congr 1
     simp [evC, ltr, Matrix.mul_apply]
 
-omit [Fintype ι] [DecidableEq ι] in
-alias evC_map := _root_.GlobalTheory.ClassFin.evC_map_rat
-
-
 omit [DecidableEq ι] in
 lemma exists_fg_rtr (f : MvPolynomial (ι × ι) ℂ) :
     ∃ V : Submodule ℂ (MvPolynomial (ι × ι) ℂ), V.FG ∧ ∀ g, rtr g f ∈ V := by
@@ -476,7 +471,6 @@ lemma exists_fg_rtr (f : MvPolynomial (ι × ι) ℂ) :
     refine Submodule.mul_mem_mul (h g) ?_
     rw [rtr, MvPolynomial.aeval_X]
     exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, rfl⟩)
-
 
 omit [DecidableEq ι] in
 lemma exists_finset_rtr (Γ : Set (Matrix ι ι ℂ)) (f : MvPolynomial (ι × ι) ℂ) :
@@ -523,7 +517,6 @@ lemma exists_common_zero (D : Ideal (MvPolynomial (ι × ι) ℂ)) (hD : D ≠ �
 
 end GlobalTheory.ClassFin.FibreDescent
 
-
 open GlobalTheory.ClassFin.FibreDescent in
 theorem GlobalTheory.ClassFin.exists_evC_blk_of_fibre_const : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (Γ : Set (Matrix ι ι ℂ)) (e : Matrix ι ι ℚ), IsQGroup Γ → e * e = e → (∀ g ∈ Γ, (1 - e.map (algebraMap ℚ ℂ)) * g * e.map (algebraMap ℚ ℂ) = 0) → ∀ f : MvPolynomial (ι × ι) ℂ, (∀ x ∈ Γ, ∀ x' ∈ Γ, blk e x = blk e x' → evC f x = evC f x') → ∃ b : MvPolynomial (ι × ι) ℂ, ∀ x ∈ Γ, evC f x = evC b (blk e x) := by
   intro ι _ _ Γ e hΓ he htri f hf
@@ -566,9 +559,9 @@ theorem GlobalTheory.ClassFin.exists_evC_blk_of_fibre_const : ∀ (ι : Type) [F
     obtain ⟨z, hz⟩ := exists_common_zero _ hD
     have hzp : z ∈ pts (blk e '' Γ) ℂ := by
       intro p hp
-      rw [← evC_map]
+      rw [← GlobalTheory.ClassFin.evC_map_rat]
       refine hz _ fun g _ => ⟨0, fun x hx => ?_⟩
-      rw [evC_map, hp _ ⟨x, hx, rfl⟩]
+      rw [GlobalTheory.ClassFin.evC_map_rat, hp _ ⟨x, hx, rfl⟩]
       simp [evC]
     have hx₀p : blk e x₀ ∈ pts (blk e '' Γ) ℂ := fun p hp => hp _ ⟨x₀, hx₀, rfl⟩
     have := _root_.GlobalTheory.ClassFin.evC_eq_zero_of_mem_pts_of_stable ι _ hpre.aut_mem (ltr z b₀) (by
@@ -857,8 +850,6 @@ section -- clump:auto
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
-theorem _root_.GlobalTheory.T.one_add_smul_mem_of_sq_zero' : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (Γ : Set (Matrix ι ι ℂ)), IsQGroup Γ → ∀ ε : Matrix ι ι ℂ, ε * ε = 0 → 1 + ε ∈ Γ → ∀ t : ℂ, 1 + t • ε ∈ Γ := by
-  first | exact @GlobalTheory.ClassFin.one_add_smul_mem_of_sq_zero
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OneAddSmulMemOfSqZeroStatement =====
@@ -898,7 +889,7 @@ theorem exists_linExt_corner_proj : ∀ (ι : Type) [Fintype ι] [DecidableEq ι
         rwa [h2] at h1
       smul_mem' := by
         rintro t x ⟨hx1, hx2⟩
-        refine ⟨GlobalTheory.T.one_add_smul_mem_of_sq_zero' ι Γ hΓ x (corner_mul_corner E x x hE hx2 hx2) hx1 t, ?_⟩
+        refine ⟨GlobalTheory.ClassFin.one_add_smul_mem_of_sq_zero ι Γ hΓ x (corner_mul_corner E x x hE hx2 hx2) hx1 t, ?_⟩
         rw [Matrix.mul_smul, Matrix.smul_mul, hx2] }
   have hS : ∀ σ : ℂ ≃+* ℂ, ∀ x ∈ S, x.map σ ∈ S := by
     rintro σ x ⟨hx1, hx2⟩
@@ -1032,7 +1023,6 @@ lemma linExt_zero (c : ι × ι → ι × ι → ℚ) : linExt c (0 : Matrix ι 
   ext i j; simp [linExt]
 
 end GlobalTheory.ClassFin.IdempotentCornerSection
-
 
 open GlobalTheory.ClassFin.IdempotentCornerSection in
 theorem GlobalTheory.ClassFin.exists_blk_section : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (Γ : Set (Matrix ι ι ℂ)) (e : Matrix ι ι ℚ), IsQGroup Γ → e * e = e → (∀ g ∈ Γ, (1 - e.map (algebraMap ℚ ℂ)) * g * e.map (algebraMap ℚ ℂ) = 0) → ∃ (c : ι × ι → ι × ι → ℚ) (b : ι → ι → MvPolynomial (ι × ι) ℚ), (∀ X : Matrix ι ι ℂ, 1 + linExt c X ∈ Γ ∧ e.map (algebraMap ℚ ℂ) * linExt c X * (1 - e.map (algebraMap ℚ ℂ)) = linExt c X) ∧ (Matrix.of fun i j => ev (b i j) (1 : Matrix ι ι ℂ)) = 1 ∧ ∀ g ∈ Γ, (Matrix.of fun i j => ev (b i j) (blk e g)) ∈ Γ ∧ blk e (Matrix.of fun i j => ev (b i j) (blk e g)) = blk e g ∧ g = (1 + linExt c (e.map (algebraMap ℚ ℂ) * g * (1 - e.map (algebraMap ℚ ℂ)) * (blk e g).adjugate)) * (Matrix.of fun i j => ev (b i j) (blk e g)) := by
@@ -1439,7 +1429,7 @@ private lemma exists_finset_integral_classes {R : Type} [CommRing R] [Algebra �
     choose z a ha hza using fun i j => hi L hL0 _ (hwN i j)
     have hc : ∃ w', Cls (fun i j => (z i j : ZMod L)) w' :=
       ⟨w, hw, fun i j => ⟨z i j, a i j, ha i j, rfl, hza i j⟩⟩
-    refine ⟨hc.choose, Finset.mem_image.2 ⟨_, Finset.mem_univ _, dif_pos hc⟩, ?_⟩
+    refine ⟨hc.choose, Finset.mem_image.2 ⟨_, Finset.mem_univ _, dite_eq_left hc⟩, ?_⟩
     obtain ⟨htS, ht⟩ := hc.choose_spec
     obtain ⟨t, htdef⟩ : ∃ t, t = hc.choose := ⟨_, rfl⟩
     rw [← htdef] at htS ht ⊢
@@ -1564,7 +1554,6 @@ private lemma linExt_map_algebraMap {R : Type} [CommRing R] [Algebra ℚ R] (c :
   ext i j
 
   simp [_root_.GlobalTheory.ClassFin.linExt, map_sum, map_mul]
-
 
 open Matrix in
 open scoped Kronecker ComplexOrder TensorProduct in

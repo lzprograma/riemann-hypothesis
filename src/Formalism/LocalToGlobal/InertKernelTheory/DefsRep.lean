@@ -17,7 +17,6 @@ open Formalism.DworkPowerSeriesWeights (Integral mvExp)
 open Formalism.InvariantFactorPaths.G7 (cob UnrOK IsLawOfLog)
 open Formalism.L2.Th1.CM (MaximalUnramifiedExtension)
 open Formalism.L2.G.Pend (k0ToC wittFractionAlgebraCp OcC Frm thA thFOf)
-open Formalism.MainNotions.FormalGroupSystem (Sys)
 
 def CurveAt (l : ℕ) [Fact l.Prime] (be : MvPowerSeries (Fin 2) (K0 l)) (g2 g3 ε s2 : MaximalUnramifiedExtension l) : Prop :=
   ‖g2‖ ≤ 1 ∧ ‖g3‖ ≤ 1 ∧ ‖ε‖ = 1 ∧ (∀ n, ‖PowerSeries.coeff n (thetaS l g2 g3 ε)‖ ≤ 1) ∧

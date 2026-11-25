@@ -95,7 +95,7 @@ theorem apply_basis_eq_smul {L V κ : Type} [Field L] [AddCommGroup V] [Module L
       rcases mul_eq_zero.mp h2 with h | h
       · exact absurd (hμ (sub_eq_zero.mp h)) hj
       · exact h
-    rw [h0, map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply, if_neg (Ne.symm hj),
+    rw [h0, map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply, ite_eq_right (Ne.symm hj),
       smul_zero]
 
 theorem comm_of_eigenbasis {L V κ : Type} [Field L] [AddCommGroup V] [Module L V]

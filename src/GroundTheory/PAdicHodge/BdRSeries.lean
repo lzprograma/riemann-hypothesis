@@ -24,7 +24,7 @@ theorem aeval_trunc_coe_of_pow_eq_zero {n : ℕ} {s : S} (hs : s ^ n = 0) (P : P
   have hdvd : Polynomial.X ^ n ∣ P - trunc n (P : ℚ⟦X⟧) := by
     rw [Polynomial.X_pow_dvd_iff]
     intro d hd
-    rw [Polynomial.coeff_sub, coeff_trunc, if_pos hd, Polynomial.coeff_coe, sub_self]
+    rw [Polynomial.coeff_sub, coeff_trunc, ite_eq_left hd, Polynomial.coeff_coe, sub_self]
   obtain ⟨Q, hQ⟩ := hdvd
   have h := congrArg (Polynomial.aeval s) hQ
   rw [map_sub, map_mul, map_pow, Polynomial.aeval_X, hs, zero_mul, sub_eq_zero] at h
@@ -57,7 +57,7 @@ theorem truncEval_eq_sum {n : ℕ} (s : S) (hs : s ^ n = 0) (f : ℚ⟦X⟧) :
     exact Subsingleton.elim _ _
   · rw [truncEval_apply, Polynomial.aeval_eq_sum_range' (natDegree_trunc_lt f n)]
     refine Finset.sum_congr rfl fun i hi => ?_
-    rw [coeff_trunc, if_pos (Finset.mem_range.1 hi), Algebra.smul_def]
+    rw [coeff_trunc, ite_eq_left (Finset.mem_range.1 hi), Algebra.smul_def]
 
 @[simp]
 theorem truncEval_X {n : ℕ} (s : S) (hs : s ^ n = 0) : truncEval s hs X = s := by
@@ -77,7 +77,7 @@ theorem truncEval_unique {n : ℕ} (ψ : ℚ⟦X⟧ →ₐ[ℚ] S) (s : S) (hs :
   obtain ⟨h, hh⟩ : X ^ n ∣ f - (trunc n f : ℚ⟦X⟧) := by
     rw [X_pow_dvd_iff]
     intro m hm
-    rw [map_sub, Polynomial.coeff_coe, coeff_trunc, if_pos hm, sub_self]
+    rw [map_sub, Polynomial.coeff_coe, coeff_trunc, ite_eq_left hm, sub_self]
   have h1 : ψ f = ψ (trunc n f : ℚ⟦X⟧) := by
     have := congrArg ψ hh
     rw [map_sub, map_mul, map_pow, hψ, hs, zero_mul, sub_eq_zero] at this
@@ -144,7 +144,7 @@ theorem seriesEval_X {z : B} (hz : z ∈ I) : seriesEval I z hz X = z := by
   rwa [Finset.sum_range_succ', Finset.sum_range_succ', Finset.sum_eq_zero, coeff_zero_X,
     coeff_one_X, map_zero, map_one, zero_mul, add_zero, pow_one, one_mul, zero_add] at h
   intro i _
-  rw [coeff_X, if_neg (by omega), map_zero, zero_mul]
+  rw [coeff_X, ite_eq_right (by omega), map_zero, zero_mul]
 
 theorem seriesEval_subst {z : B} (hz : z ∈ I) {g : ℚ⟦X⟧} (hg : constantCoeff g = 0) {w : B}
     (hw : w ∈ I) (hgw : seriesEval I z hz g = w) (f : ℚ⟦X⟧) :
@@ -194,7 +194,7 @@ theorem one_add_X_mul_geom : (1 + X : ℚ⟦X⟧) * mk (fun n => algebraMap ℚ 
   rw [add_mul, one_mul, map_add (f := _), coeff_one]
   rcases n with _ | n
   · simp
-  · rw [coeff_succ_X_mul, coeff_mk, coeff_mk, if_neg (Nat.succ_ne_zero n)]
+  · rw [coeff_succ_X_mul, coeff_mk, coeff_mk, ite_eq_right (Nat.succ_ne_zero n)]
     simp [pow_succ]
 
 theorem log_subst_one_add_X_pow_sub_one (k : ℕ) :
@@ -247,23 +247,12 @@ theorem logOnePlus_sub_sum_mem {z : B} (hz : z ∈ I) (n : ℕ) :
     rcases n with _ | n
     · simp
     · rw [Finset.range_eq_Ico, Finset.sum_eq_sum_Ico_succ_bot (Nat.succ_pos n), coeff_log,
-        if_pos rfl, map_zero, zero_mul, zero_add]
+        ite_eq_left rfl, map_zero, zero_mul, zero_add]
       refine Finset.sum_congr rfl fun i hi => ?_
-      rw [coeff_log, if_neg (by have := (Finset.mem_Ico.1 hi).1; omega), Algebra.algebraMap_self,
+      rw [coeff_log, ite_eq_right (by have := (Finset.mem_Ico.1 hi).1; omega), Algebra.algebraMap_self,
         RingHom.id_apply]
   rw [hs]
   exact seriesEval_sub_sum_mem hz (log ℚ) n
-
-theorem logOnePlus_eq_mul {z : B} (hz : z ∈ I) : ∃ u, u - 1 ∈ I ∧ logOnePlus I z hz = z * u := by
-  set h : ℚ⟦X⟧ := mk fun n => coeff (n + 1) (log ℚ)
-  have hlog : log ℚ = X * h := by
-    conv_lhs => rw [eq_X_mul_shift_add_const (log ℚ)]
-    rw [constantCoeff_log, map_zero, add_zero]
-  refine ⟨seriesEval I z hz h, ?_, ?_⟩
-  · have h1 := seriesEval_sub_sum_mem hz h 1
-    rwa [Finset.sum_range_one, pow_zero, mul_one, pow_one, coeff_mk, zero_add, coeff_one_log,
-      map_one] at h1
-  · rw [logOnePlus, hlog, map_mul, seriesEval_X]
 
 theorem logOnePlus_pow {z : B} (hz : z ∈ I) (k : ℕ) (hk : (1 + z) ^ k - 1 ∈ I) :
     logOnePlus I ((1 + z) ^ k - 1) hk = k * logOnePlus I z hz := by

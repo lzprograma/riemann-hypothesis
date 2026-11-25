@@ -13,8 +13,6 @@ open scoped TensorProduct ContDiff InnerProductSpace
 
 namespace Formalism.IndefR.AutomorphicEvaluation
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar}
 
 variable (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ))

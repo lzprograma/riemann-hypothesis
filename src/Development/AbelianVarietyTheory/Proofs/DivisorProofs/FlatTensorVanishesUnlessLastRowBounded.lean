@@ -146,7 +146,7 @@ theorem phase_shift (x : ColArgs G) (e : Vars G) (j₀ : Fin (G.m - 1)) (hj₀ :
     by_cases hj : j = j₀
     · subst hj
       have hev : Even (G.m - 2 - (j : ℕ)) := by rw [show G.m - 2 - (j : ℕ) = 0 by omega]; exact ⟨0, rfl⟩
-      rw [if_pos hev, if_pos hev, if_pos rfl]
+      rw [ite_eq_left hev, ite_eq_left hev, ite_eq_left rfl]
       simp only [true_and, mul_add, Finset.sum_add_distrib, add_assoc]
       congr 2
       simp_rw [Fin.val_inj, mul_ite, mul_zero]

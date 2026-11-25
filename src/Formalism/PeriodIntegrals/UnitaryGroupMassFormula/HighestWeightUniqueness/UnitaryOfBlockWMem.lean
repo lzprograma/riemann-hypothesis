@@ -2,51 +2,8 @@ module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightUniqueness.HpkMulMulHpkApply
 public import Formalism.PeriodIntegrals.IsLowUnitH
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.UnitaryHaarColumns
 
 @[expose] public section
 
@@ -158,54 +115,38 @@ lemma blockW_mul (a b : Matrix (Fin k) (Fin k) ℂ) :
       intro c _
       rw [blockW_in_out b (inB_bl c) hj, mul_zero]
   · rw [blockW_out (a * b) hi, Finset.sum_eq_single i]
-    · rw [blockW_out a hi, if_pos rfl, one_mul]
+    · rw [blockW_out a hi, ite_eq_left rfl, one_mul]
       exact blockW_out b hi
     · intro l _ hl
-      rw [blockW_out a hi, if_neg (Ne.symm hl), zero_mul]
+      rw [blockW_out a hi, ite_eq_right (Ne.symm hl), zero_mul]
     · intro h
       exact absurd (Finset.mem_univ i) h
 
 lemma blockW_one : blockW k r (1 : Matrix (Fin k) (Fin k) ℂ) = 1 := by
-  ext i j
-  by_cases hi : InB k r i
-  · by_cases hj : InB k r j
-    · rw [blockW_in _ hi hj, Matrix.one_apply, Matrix.one_apply]
-      have hi' : r ≤ i.val ∧ i.val < r + k := hi
-      have hj' : r ≤ j.val ∧ j.val < r + k := hj
-      by_cases hij : i = j
-      · subst hij
-        simp
-      · rw [if_neg hij, if_neg]
-        intro h
-        apply hij
-        have h2 := congrArg Fin.val h
-        change i.val - r = j.val - r at h2
-        exact Fin.ext (by omega)
-    · rw [blockW_in_out _ hi hj, Matrix.one_apply, if_neg (ne_of_inB hi hj)]
-  · rw [blockW_out _ hi, Matrix.one_apply]
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.Lap.Base.StandardBasisEmbedding.blockW_one <;> assumption
 
 lemma blockW_conjTranspose (a : Matrix (Fin k) (Fin k) ℂ) : (blockW k r a)ᴴ = blockW k r aᴴ := by
   ext i j
   rw [Matrix.conjTranspose_apply]
   by_cases hi : InB k r i <;> by_cases hj : InB k r j
   · rw [blockW_in a hj hi, blockW_in _ hi hj, Matrix.conjTranspose_apply]
-  · rw [blockW_out a hj, blockW_in_out _ hi hj, if_neg (ne_of_inB hi hj).symm, star_zero]
-  · rw [blockW_in_out a hj hi, blockW_out _ hi, if_neg (fun h => ne_of_inB hj hi h.symm), star_zero]
+  · rw [blockW_out a hj, blockW_in_out _ hi hj, ite_eq_right (ne_of_inB hi hj).symm, star_zero]
+  · rw [blockW_in_out a hj hi, blockW_out _ hi, ite_eq_right (fun h => ne_of_inB hj hi h.symm), star_zero]
   · rw [blockW_out a hj, blockW_out _ hi]
     by_cases hij : i = j
     · subst hij
       simp
-    · rw [if_neg hij, if_neg (Ne.symm hij), star_zero]
+    · rw [ite_eq_right hij, ite_eq_right (Ne.symm hij), star_zero]
 
 lemma piI_in {i : Fin (2 * r + k + 1)} (hi : InB k r i) : piI k r i = i := by
   have hi' : r ≤ i.val ∧ i.val < r + k := hi
   unfold piI
-  rw [if_pos (by omega)]
+  rw [ite_eq_left (by omega)]
 
 lemma epsI_in {i : Fin (2 * r + k + 1)} (hi : InB k r i) : epsI k r i = 1 := by
   have hi' : r ≤ i.val ∧ i.val < r + k := hi
   unfold epsI
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 lemma piI_out {i : Fin (2 * r + k + 1)} (hi : ¬ InB k r i) : ¬ InB k r (piI k r i) := by
   have hi' : ¬ (r ≤ i.val ∧ i.val < r + k) := hi
@@ -308,14 +249,14 @@ lemma fix_row {m : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hU :
   have hpo : ¬ InB k r (piI k r i) := piI_out hi
   have e := congrFun (congrFun hU' (piI k r i)) j
   rw [mul_assoc, Matrix.mul_apply, Finset.sum_eq_single (piI k r i)] at e
-  · rw [Matrix.conjTranspose_apply, fix_col hm _ hpo, if_pos rfl, star_one, one_mul, _root_.PI.HwUniqW.Hpk_mul_apply,
-      _root_.PI.HwUniqW.Hpk_apply, _root_.PI.HwUniqW.piI_piI, if_neg (ne_of_inB hj hi)] at e
+  · rw [Matrix.conjTranspose_apply, fix_col hm _ hpo, ite_eq_left rfl, star_one, one_mul, _root_.PI.HwUniqW.Hpk_mul_apply,
+      _root_.PI.HwUniqW.Hpk_apply, _root_.PI.HwUniqW.piI_piI, ite_eq_right (ne_of_inB hj hi)] at e
     have hne : epsI k r (piI k r i) ≠ 0 := by
       unfold epsI
       split_ifs <;> norm_num
     exact (mul_eq_zero.mp e).resolve_left hne
   · intro l _ hl
-    rw [Matrix.conjTranspose_apply, fix_col hm _ hpo, if_neg hl, star_zero, zero_mul]
+    rw [Matrix.conjTranspose_apply, fix_col hm _ hpo, ite_eq_right hl, star_zero, zero_mul]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -328,10 +269,10 @@ theorem fix_block {m : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (
       · rw [blockW_in _ hi hj]
         show m i j = m (bl k r _) (bl k r _)
         rw [block_mk hi, block_mk hj]
-      · rw [fix_row hU hm i j hi hj, blockW_out _ hi, if_neg (ne_of_inB hj hi).symm]
+      · rw [fix_row hU hm i j hi hj, blockW_out _ hi, ite_eq_right (ne_of_inB hj hi).symm]
     · rw [fix_col hm j hj i]
       by_cases hi : InB k r i
-      · rw [blockW_in_out _ hi hj, if_neg (ne_of_inB hi hj)]
+      · rw [blockW_in_out _ hi hj, ite_eq_right (ne_of_inB hi hj)]
       · rw [blockW_out _ hi]
   refine ⟨?_, hb⟩
   rw [mem_UJset_allPos]

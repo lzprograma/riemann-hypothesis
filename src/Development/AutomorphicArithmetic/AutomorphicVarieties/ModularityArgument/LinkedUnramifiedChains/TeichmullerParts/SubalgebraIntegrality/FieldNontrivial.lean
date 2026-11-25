@@ -1,47 +1,14 @@
 module
 
-import Mathlib
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.InertiaPartMaps.UnrAlgW
+import Mathlib.Algebra.Module.Torsion.PrimaryComponent
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.HodgeTateFromSandwich
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
 import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueSpecializes
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.HiComm
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsSemi
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.LinearAlgebra.Eigenspace.Pi
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -57,31 +24,13 @@ private theorem ge_add {f g : Module.End K V} (h : Commute f g) {μ ν : K} {v :
     (h2 : v ∈ g.maxGenEigenspace ν) : v ∈ (f + g).maxGenEigenspace (μ + ν) := by
   simpa using Module.End.genEigenspace_inf_le_add f g μ ν ⊤ ⊤ h ⟨h1, h2⟩
 
-private theorem ge_left {a f : Module.End K V} (h : Commute a f) {μ : K} {v : V} (h1 : v ∈ f.maxGenEigenspace μ) :
-    v ∈ (a * (f - μ • 1)).maxGenEigenspace 0 := by
-  rw [Module.End.mem_maxGenEigenspace] at h1 ⊢
-  obtain ⟨k, hk⟩ := h1
-  have hc : Commute a (f - μ • 1) := h.sub_right ((Commute.one_right a).smul_right μ)
-  exact ⟨k, by rw [zero_smul, sub_zero, hc.mul_pow, Module.End.mul_apply, hk, map_zero]⟩
-
 private theorem ge_scal (c : K) (v : V) : v ∈ (c • (1 : Module.End K V)).maxGenEigenspace c := by
   rw [Module.End.mem_maxGenEigenspace]
   exact ⟨1, by simp⟩
 
 private theorem ge_mul {f g : Module.End K V} (h : Commute f g) {μ ν : K} {v : V} (h1 : v ∈ f.maxGenEigenspace μ)
     (h2 : v ∈ g.maxGenEigenspace ν) : v ∈ (f * g).maxGenEigenspace (μ * ν) := by
-  have s : ∀ (c : K) (p : Module.End K V), Commute (c • (1 : Module.End K V)) p := fun c p =>
-    (Commute.one_left p).smul_left c
-  have a1 := ge_left h h2
-  have a2 := ge_left (s ν f) h1
-  have fg : Commute f (g - ν • 1) := h.sub_right (s ν f).symm
-  have c1 : Commute (f * (g - ν • 1)) (ν • 1 * (f - μ • 1)) :=
-    (s ν _).symm.mul_right (((Commute.refl f).mul_left fg.symm).sub_right (s μ _).symm)
-  have a3 := ge_add (s (μ * ν) _).symm (ge_add c1 a1 a2) (ge_scal (μ * ν) v)
-  have e : f * (g - ν • 1) + ν • 1 * (f - μ • 1) + (μ * ν) • (1 : Module.End K V) = f * g := by
-    simp only [mul_sub, mul_smul_comm, smul_mul_assoc, mul_one, one_mul, smul_smul]
-    abel
-  rwa [e, zero_add, zero_add] at a3
+  apply _root_.UpperTheory.V.J.ev_mul <;> assumption
 
 private theorem ne_bot_of_quot {I Q : Type} [AddCommGroup Q] [Module K Q] [FiniteDimensional K V] [IsAlgClosed K]
     (f : I → Module.End K V) (hc : ∀ i j, Commute (f i) (f j)) (x : I → K) (π : V →ₗ[K] Q) (hπ : π ≠ 0)

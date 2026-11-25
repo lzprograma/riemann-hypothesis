@@ -2,7 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EndOnId
 public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsToricRankOne
-public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisationEndomorphismClosedFibreTorusCharac
 import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsSchemeTheoreticallyDominantSpecOfInjective
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UniformisationTorusMonoAndFactor
 import Mathlib.Algebra.Order.Floor.Extended
@@ -51,11 +50,22 @@ open scoped CategoryTheory.Obj
 open ReciprocityTheory.AnForm.R GlobalTheory.ZH GlobalTheory.Poinc GlobalTheory.Poinc.Sep
 attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.UT ReciprocityTheory.ChartRestriction.G.DVR
-open GlobalTheory.Poinc.Eq8 GlobalTheory.Poinc.Sep.Spz Classical
+open GlobalTheory.Poinc.Sep.Spz Classical
 
 noncomputable section
 
 namespace GlobalTheory.Poinc.Sep.Spz
+
+private theorem eq_torusMap_of_torusEndOf {S : Scheme.{0}} {X : Type} [AddCommGroup X] (h : X →+ X)
+    (t : splitTorus S X ⟶ splitTorus S X) (ht : TorusEndOf X h t) : t = GlobalTheory.SplitTorus.torusMap S h := by
+  refine (GlobalTheory.SplitTorus.eq_torusMap_iff t h).2 fun b => ?_
+  have e := congrArg Units.val (ht b)
+  have : (res (fun x _ => show t.left.base x ∈ (⊤ : TopologicalSpace.Opens _) from trivial)
+      (pullU t.left ⊤ (charUnit S X b)) : Γ((splitTorus S X).left, ⊤)ˣ).val =
+      t.left.appTop.hom (charUnit S X b).val := by
+    rw [Scheme.Hom.appTop, Scheme.Hom.app_eq_appLE]; rfl
+  rw [this, GlobalTheory.SplitTorus.charUnit_val, GlobalTheory.SplitTorus.charUnit_val] at e
+  exact e
 
 theorem endU_gtTorus_comp {V : Type} [CommRing V] [IsDomain V] [IsLocalRing V] {D : DegData V (maximalIdeal V)}
     {A : PolAV (Sp (FractionRing V))} {G : Over (Sp V)} [GrpObj G] [IsCommMonObj G] (U : Unif (maximalIdeal V) D A G)
@@ -65,7 +75,7 @@ theorem endU_gtTorus_comp {V : Type} [CommRing V] [IsDomain V] [IsLocalRing V] {
     GlobalTheory.TorusPart.gtTorus (U.gt 0) ha h ≫ f₀ =
       GlobalTheory.SplitTorus.torusMap (Sp κ) E.h ≫ GlobalTheory.TorusPart.gtTorus (U.gt 0) ha h := by
   obtain ⟨t, ht, hi⟩ := E.i_lin 0
-  have htm := GlobalTheory.Poinc.Eq8.eq_torusMap_of_torusEndOf E.h t ht
+  have htm := eq_torusMap_of_torusEndOf E.h t ht
   have k := GlobalTheory.TorusPart.isGrpPullback_thickLift ha h
   have e : f₀.left ≫ GlobalTheory.TorusPart.thickLift ha h =
       GlobalTheory.TorusPart.thickLift ha h ≫ ((Over.pullback (thick V (maximalIdeal V) 0)).map E.aG).left := by

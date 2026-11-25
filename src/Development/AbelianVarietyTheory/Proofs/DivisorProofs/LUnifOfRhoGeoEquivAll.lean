@@ -3,46 +3,7 @@ module
 public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
 public import Formalism.LocalToGlobal.IndefiniteReal.RhoGeo
 public import Formalism.LocalToGlobal.IndefiniteReal.OneMapEq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -56,8 +17,6 @@ open scoped InnerProductSpace
 
 namespace GlobalTheory.TiedUnif
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Schur
 
 variable {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar} {M : DSModel V S} {μ : Measure (GA D V)} {𝓕 : Set (GA D V)}
@@ -65,7 +24,7 @@ variable {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar} {M : DSModel V S} {μ
 theorem isMultiplicityInner_of_ne_zero {T T' : MMap M} (h : ipM M μ 𝓕 T T' ≠ 0) : IsMultIP M μ 𝓕 T T' (ipM M μ 𝓕 T T') :=
   ipM_spec M μ 𝓕 T T' (by
     by_contra hn
-    exact h (by rw [ipM, dif_neg hn]))
+    exact h (by rw [ipM, dite_eq_right hn]))
 
 theorem exists_schur (H : HMod (MMap M)) (d : ℂ) (h : ∀ x y : H.H, inner ℂ x y = d * ipM M μ 𝓕 (H.e x) (H.e y)) (x y : H.H) :
     ∃ c, IsMultIP M μ 𝓕 (H.e x) (H.e y) c ∧ inner ℂ x y = d * c := by
@@ -199,7 +158,7 @@ theorem rhoIs_of_form (F : FormsL L K WL W G) (h : F.IsKsForm) (e : C ≃ₗ[K] 
 
 theorem injective_of_indep {σ : L →+* ℂ} (j : WL →ₛₗ[σ] W σ)
     (h : ∀ (m : ℕ) (x : Fin m → WL), LinearIndependent L x → LinearIndependent ℂ fun k => j (x k)) : Function.Injective j := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   by_contra h0
   exact (h 1 (fun _ => x) (linearIndependent_unique_iff.2 h0)).ne_zero 0 hx
@@ -228,12 +187,12 @@ theorem jEvAt_of_nontrivial (hu : JUnif T R κ v₀) {i : Fin D.R.m} {σ : D.wha
   refine hn (subsingleton_of_jTop hu ?_)
   by_cases hV : T.V ((i : ℕ) + 1) (res T σ) = Wc D i
   · exact jTop_good0 T R κ v₀ hσ hV fun h' => h ⟨hV, h'⟩
-  · rw [jTop, if_pos hσ, dif_neg hV]
+  · rw [jTop, ite_eq_left hσ, dite_eq_right hV]
 
 theorem jEvBarAt_of_nontrivial (hu : JUnif T R κ v₀) {i : Fin D.R.m} {σ : D.what₂.LL →+* ℂ} (hσ : ¬ GoodEmb T.Q.c (res T σ))
     (hn : ¬ Subsingleton (R.HW i σ).H) : ∃ hV, JEvBarAt T R κ i σ hV := by
   by_contra h
-  exact hn (subsingleton_of_jTop hu (by rw [jTop, if_neg hσ, dif_neg h]))
+  exact hn (subsingleton_of_jTop hu (by rw [jTop, ite_eq_right hσ, dite_eq_right h]))
 
 theorem evAt_jK (t : FWTie T R κ v₀) {i : Fin D.R.m} {σ : D.what₂.LL →+* ℂ} (hσ : GoodEmb T.Q.c (res T σ))
     {hV : T.V ((i : ℕ) + 1) (res T σ) = Wc D i} (h : JEvAt T R κ v₀ i σ hV) (f : Cu T κ i) :
@@ -289,7 +248,7 @@ theorem exists_lift_actW (he : R.models_HW) (hw : R.models_gW) {i : Fin D.R.m} {
       rw [hw]
       refine MultilinearMap.ext fun v => ?_
       show actG0 (Wc D i) (R.βW i) (R.datWp i R.triv) (R.eG g) _ = 0
-      exact dif_neg hk
+      exact dite_eq_right hk
     rw [Representation.self_inv_apply] at h1
     exact (he i σ).1 (h1.trans (map_zero _).symm)
 

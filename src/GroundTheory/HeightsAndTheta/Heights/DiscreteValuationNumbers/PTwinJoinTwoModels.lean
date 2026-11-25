@@ -84,7 +84,7 @@ theorem JoinTwoModels.proof (hC : ConeTrdegFnField.Statement) : JoinTwoModels.St
   rw [BundleExamples.mcIdeal_eq_pointIdeal, BundleExamples.isModelOver_iff] at hxW
   obtain ⟨hK, hW⟩ := hxW
   have hinj : Function.Injective (algebraMap O Ω) := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro a ha
     have hmem : a ∈ (pointIdeal O x).comap (C : O →+* MRing ι O) := by
       simp only [Ideal.mem_comap, pointIdeal, RingHom.mem_ker, pointConeMap, aeval_C,

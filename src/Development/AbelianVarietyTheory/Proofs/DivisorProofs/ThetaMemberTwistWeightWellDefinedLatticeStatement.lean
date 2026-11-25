@@ -177,11 +177,11 @@ theorem wt_wd : ∀ (I : Type) (X₁ : GlobalTheory.GSep.GSet) (z₁ : X₁.M.Z)
   refine ⟨fun mu => if h : ∃ a, 𝔪1.YY a mu then (sg : ℤ) • eStd X₁.S.g _ τ h.choose else 0, ?_⟩
   intro a mu hY
   have h : ∃ a, 𝔪1.YY a mu := ⟨a, hY⟩
-  simp only [dif_pos h]
+  simp only [dite_eq_left h]
   congr 1
   have hd := yy_sub 𝔪1 h.choose_spec hY
   have hH : h.choose - a ∈ X₁.S.HH X₁.M z₁ :=
-    (GlobalTheory.T.mem_dividingLabels_iff_class_zero I X₁ z₁ act x₀ hD V1 ev1 Y1 t1 δ1 𝔪1 _).2 hd
+    (_root_.GlobalTheory.GSep.mem_HH_iff_yy_zero I X₁ z₁ act x₀ hD V1 ev1 Y1 t1 δ1 𝔪1 _).2 hd
   have h0 : eStd X₁.S.g _ τ (h.choose - a) = 0 := hτ _ hH
   have hs : eStd X₁.S.g _ τ (h.choose - a) = eStd X₁.S.g _ τ h.choose - eStd X₁.S.g _ τ a := by
     simp only [eStd, Pi.sub_apply, ← Finset.sum_sub_distrib]

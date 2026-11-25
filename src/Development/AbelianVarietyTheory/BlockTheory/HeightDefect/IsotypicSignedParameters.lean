@@ -78,8 +78,6 @@ end Chains
 
 section Adelic
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def gramAt (V : HSp D) (τ : D.what₂.Tau) : Matrix (Fin V.rank) (Fin V.rank) ℂ := V.gram.map (tauE D τ)
@@ -99,61 +97,6 @@ section Signatures
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
 
-def latAt (v : HeightOneSpectrum (𝓞 F)) {M : ℕ} (L : Set (Fin M → E)) :
-    AddSubgroup (Fin M → v.adicCompletion F ⊗[F] E) :=
-  AddSubgroup.closure {y | ∃ a ∈ v.adicCompletionIntegers F, ∃ x ∈ L, y = fun i => a ⊗ₜ[F] x i}
-
-def LocIsom (hc : CMData F E) (v : HeightOneSpectrum (𝓞 F)) {M M' : ℕ} (G : Matrix (Fin M) (Fin M) E)
-    (G' : Matrix (Fin M') (Fin M') E) (L : Set (Fin M → E)) (L' : Set (Fin M' → E)) : Prop :=
-  ∃ (A : Matrix (Fin M') (Fin M) (v.adicCompletion F ⊗[F] E)) (B : Matrix (Fin M) (Fin M') (v.adicCompletion F ⊗[F] E)),
-    A * B = 1 ∧ B * A = 1 ∧
-    Formalism.UG.cT (Algebra.TensorProduct.map (AlgHom.id F (v.adicCompletion F)) hc.sig).toRingHom A *
-              G'.map (fun x => (1 : v.adicCompletion F) ⊗ₜ[F] x) * A = G.map (fun x => (1 : v.adicCompletion F) ⊗ₜ[F] x) ∧
-    ∀ y, y ∈ latAt v L ↔ A.mulVec y ∈ latAt v L'
-
-def coordLat (W : HSpace E) : Set (Fin W.rank → E) := {x | ∑ i, x i • W.frame i ∈ W.L0}
-
-def HermSignatures (hc : CMData F E) : Prop :=
-  (∀ (M : ℕ) (sg : (E →+* ℂ) → ℕ × ℕ), 1 ≤ M → (∀ τ, (sg τ).1 + (sg τ).2 = M) →
-    (∀ τ, sg (ComplexEmbedding.conjugate τ) = sg τ) → Even (∑ w : InfinitePlace E, (sg w.embedding).2) →
-      ∃ W : HSpace E, W.rank = M ∧ W.SigOK ∧ W.sig = sg) ∧
-  (∀ M p q : ℕ, 1 ≤ M → p + q = M → ∃ W : HSpace E, W.rank = M ∧ W.SigOK ∧ ∀ τ, W.sig τ = (p, q)) ∧
-  (∀ W W' : HSpace E, W.SigOK → W'.SigOK → W.sig = W'.sig →
-    ∃ ι : W.V ≃ₗ[E] W'.V, HSpace.IsIsomEmb W W' (ι : W.V →ₗ[E] W'.V)) ∧
-  ∀ W W' : HSpace E, W.rank = W'.rank → ∀ v : HeightOneSpectrum (𝓞 F),
-    LocIsom hc v W.gram W'.gram (coordLat W) (coordLat W')
-
-def IsSkewSelfDual {M : ℕ} (S : Matrix (Fin M) (Fin M) E) (L : Submodule (𝓞 E) (Fin M → E)) : Prop :=
-  Sᴴ = -S ∧ S.det ≠ 0 ∧ Submodule.IsLattice E L ∧
-    ∀ x, x ∈ L ↔ ∀ y ∈ L, star y ⬝ᵥ S.mulVec x ∈ (1 : Submodule (𝓞 E) E)
-
-def SkewSig (δ : E) {M : ℕ} (S : Matrix (Fin M) (Fin M) E) (p q : ℕ) : Prop :=
-  ∀ τ : E →+* ℂ, Formalism.UG.HasSignature ((δ⁻¹ • S).map τ) p q
-
-def SkewSignatures (hc : CMData F E) (δ : E) : Prop :=
-  ∀ M : ℕ, Even M →
-    (∀ p q : ℕ, p + q = M → ∃ (S : Matrix (Fin M) (Fin M) E) (L : Submodule (𝓞 E) (Fin M → E)),
-      IsSkewSelfDual S L ∧ SkewSig δ S p q) ∧
-    ∀ (S S' : Matrix (Fin M) (Fin M) E) (L L' : Submodule (𝓞 E) (Fin M → E)),
-      IsSkewSelfDual S L → IsSkewSelfDual S' L' →
-        (∀ p q : ℕ, SkewSig δ S p q → SkewSig δ S' p q →
-          ∃ g : GL (Fin M) E, (g : Matrix (Fin M) (Fin M) E)ᴴ * S' * (g : Matrix (Fin M) (Fin M) E) = S) ∧
-        ∀ v : HeightOneSpectrum (𝓞 F), LocIsom hc v S S' (L : Set (Fin M → E)) (L' : Set (Fin M → E))
-
 end Signatures
-
-def IsWittIndex {M : ℕ} (G : Matrix (Fin M) (Fin M) ℂ) (r : ℕ) : Prop :=
-  IsGreatest {s | ∃ W : Submodule ℂ (Fin M → ℂ), Module.finrank ℂ W = s ∧
-    ∀ x ∈ W, ∀ y ∈ W, star x ⬝ᵥ G.mulVec y = 0} r
-
-def WittIndexReal : Prop :=
-  ∀ (M p q : ℕ) (G : Matrix (Fin M) (Fin M) ℂ), Formalism.UG.HasSignature G p q → IsWittIndex G (min p q)
-
-def Signatures : Prop :=
-  (∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
-    (hc : CMData F E), Even (Module.finrank ℚ F) → (∀ x : E, IsOfFinOrder x → x = 1 ∨ x = -1) →
-    ∀ (d : ℕ) (δ : E), 0 < d → δ ^ 2 = -(d : E) → star δ = -δ →
-      HermSignatures hc ∧ SkewSignatures hc δ) ∧
-  WittIndexReal
 
 end GlobalTheory.IndefiniteRowSideFullHecke.IsotypicSignedParameters

@@ -2,52 +2,8 @@ module
 
 import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.CurveVerticalPointChart
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsPowSubMemSpanOfIsUnitModOfIsAlgClosed
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.IsRatSectionOn
+import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionBounded
 
 @[expose] public section
 
@@ -83,11 +39,6 @@ theorem homog_add {a b : MRing ι} {d : K → ℕ} (ha : IsMultiHomog a d) (hb :
   · exact ha m h k
   · exact hb m h k
 
-theorem homog_sub {a b : MRing ι} {d : K → ℕ} (ha : IsMultiHomog a d) (hb : IsMultiHomog b d) :
-    IsMultiHomog (a - b) d := by
-  rw [sub_eq_add_neg]
-  exact homog_add ha (fun m hm => hb m (by rwa [support_neg] at hm))
-
 theorem homog_C (n : ℤ) : IsMultiHomog (C n : MRing ι) (0 : K → ℕ) := by
   intro m hm k
   rw [C_apply] at hm
@@ -95,26 +46,7 @@ theorem homog_C (n : ℤ) : IsMultiHomog (C n : MRing ι) (0 : K → ℕ) := by
   simp
 
 theorem homog_X [DecidableEq K] (p : Σ k, ι k) : IsMultiHomog (X p : MRing ι) (Pi.single p.1 1) := by
-  classical
-  rcases p with ⟨k0, i0⟩
-  intro m hm k
-  rw [X] at hm
-  rw [Finset.mem_singleton.mp (support_monomial_subset hm)]
-  by_cases hk : k = k0
-  · subst hk
-    rw [Finset.sum_eq_single i0]
-    · simp
-    · intro i _ hi
-      rw [Finsupp.single_apply, if_neg]
-      intro h
-      exact hi (sigma_mk_injective h).symm
-    · simp
-  · rw [Pi.single_eq_of_ne hk]
-    apply Finset.sum_eq_zero
-    intro i _
-    rw [Finsupp.single_apply, if_neg]
-    intro h
-    exact hk (congrArg Sigma.fst h).symm
+  apply _root_.GroundTheory.Heights₂.Heights.HilbertSamuel.SectionBounded.homog_X <;> assumption
 
 def cMon (c : ∀ k, ι k) (m : K → ℕ) : MRing ι := ∏ k, X ⟨k, c k⟩ ^ m k
 
@@ -334,7 +266,7 @@ theorem isUnitSec_iff_chart (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fin
       intro hGmem
       apply cMon_notMem (W := W) hcW (m + m')
       have hmem : G * G' - cMon c (m + m') ∈ mCoordIdeal y := by
-        apply mem_of_aeval_eq_zero (homog_sub (homog_mul hG hG') (homog_cMon c (m + m')))
+        apply mem_of_aeval_eq_zero (GroundTheory.Heights₂.Heights.Targets.CurveVerticalPointChart.form_sub (homog_mul hG hG') (homog_cMon c (m + m')))
         rw [map_sub, map_mul, aeval_cMon, ← eG, ← eG']
         simp only [Pi.add_apply, pow_add, Finset.prod_mul_distrib]
         have hρρ := mul_inv_cancel₀ hρ0
@@ -347,7 +279,7 @@ theorem isUnitSec_iff_chart (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fin
       · exact hGW h
       · exact cMon_notMem hcW df h
     · have hd : (dg + m) + df = (m + df) + dg := by abel
-      apply mem_of_aeval_eq_zero (homog_sub (homog_mul (homog_cMon c (dg + m)) hf)
+      apply mem_of_aeval_eq_zero (GroundTheory.Heights₂.Heights.Targets.CurveVerticalPointChart.form_sub (homog_mul (homog_cMon c (dg + m)) hf)
         (by rw [hd]; exact homog_mul (homog_mul hG (homog_cMon c df)) hg))
       rw [map_sub, map_mul, map_mul, map_mul, aeval_cMon, aeval_cMon, ← eG]
       have h17 := zpow_factor (a := df) (b := dg) (fun k => y ⟨k, c k⟩) hc

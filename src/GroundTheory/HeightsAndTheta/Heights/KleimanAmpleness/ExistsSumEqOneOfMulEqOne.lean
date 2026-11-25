@@ -123,34 +123,6 @@ theorem exists_isPrime_locIn_eq {A B : Subalgebra S Ω} (hAB : A ≤ B) {e : Ω}
   refine ⟨P, hPprime, ?_⟩
   rw [locIn_eq_of_le_powMulMem hAB he hB P hPprime heP, hcomap]
 
-theorem exists_sum_eq_one_of_mul_eq_one (A : Subalgebra S Ω) (Q' : Submodule A Ω) {m : ℕ} (g : Fin m → Ω)
-    (hQQ : Submodule.span A (Set.range g) * Q' = 1) :
-    ∃ w : Fin m → Ω, (∀ a b, g a * w b ∈ A) ∧ ∑ b, g b * w b = 1 := by
-  classical
-  have hone : (1 : Ω) ∈ Submodule.span A (Set.range g) * Q' := by
-    rw [hQQ]; exact Submodule.mem_one.mpr ⟨1, map_one _⟩
-  obtain ⟨w, hwQ, hsum⟩ : ∃ w : Fin m → Ω, (∀ b, w b ∈ Q') ∧ ∑ b, g b * w b = 1 := by
-    refine Submodule.mul_induction_on
-      (C := fun z => ∃ w : Fin m → Ω, (∀ b, w b ∈ Q') ∧ ∑ b, g b * w b = z) hone ?_ ?_
-    · intro q hq q' hq'
-      obtain ⟨a, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun A).mp hq
-      refine ⟨fun b => (a b : Ω) * q', fun b => Q'.smul_mem (a b) hq', ?_⟩
-      rw [Finset.sum_mul]
-      refine Finset.sum_congr rfl fun b _ => ?_
-      rw [Subalgebra.smul_def, smul_eq_mul]
-      ring
-    · rintro _ _ ⟨w, hw, rfl⟩ ⟨w', hw', rfl⟩
-      refine ⟨w + w', fun b => Q'.add_mem (hw b) (hw' b), ?_⟩
-      rw [← Finset.sum_add_distrib]
-      exact Finset.sum_congr rfl fun b _ => by simp [mul_add]
-  refine ⟨w, fun a b => ?_, hsum⟩
-  have h := Submodule.mul_mem_mul (Submodule.subset_span ⟨a, rfl⟩ : g a ∈ Submodule.span A (Set.range g))
-    (hwQ b)
-  rw [hQQ, Submodule.mem_one] at h
-  obtain ⟨y, hy⟩ := h
-  rw [← hy]
-  exact y.2
-
 end Loc
 
 section Graph

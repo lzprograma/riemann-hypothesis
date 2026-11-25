@@ -20,64 +20,13 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SectionN
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothOperatorFacts
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevOperatorFacts
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevSpacePreserved
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
-import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Algebra.Group.Units
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.CStarAlgebra.ContinuousMap
-import Mathlib.Tactic.Lemma
-import Mathlib.Topology.UniformSpace.Uniformizable
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevIntegrationByParts
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsoluteCutoffBound, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsoluteFourierCoefficients, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsoluteFourierCoefficientsStatement, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactSobolevEmbedding, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConcentrationTimeBound, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DenseDomainFacts, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FriedrichsExtensionFacts, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelLocalization, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PaleyWienerDecay, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WvAlg, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.AsmKerOneOfSteps, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.AsmKerOne
+-- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsoluteCutoffBound, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsoluteFourierCoefficients, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactSobolevEmbedding, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConcentrationTimeBound, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DenseDomainFacts, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FriedrichsExtensionFacts, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelLocalization, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PaleyWienerDecay, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WvAlg, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.AsmKerOneOfSteps, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.AsmKerOne
 
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsoluteCutoffBound =====
 -- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsoluteCutoffBound", "h": "module\n\npublic import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Real\nimport Mathlib.Algebra.Ring.IsFormallyReal\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
@@ -100,8 +49,7 @@ def mulC (a : ℝ → ℂ) (ha : Continuous a) (f : C₀(ℝ, ℂ)) (R : ℝ) (h
     refine (tendsto_const_nhds (x := (0 : ℂ))).congr' ?_
     filter_upwards [hK] with y hy
     have hR : R ≤ |y| := by
-      by_contra hlt
-      push_neg at hlt
+      by_contra! hlt
       exact hy ⟨(abs_lt.mp hlt).1.le, (abs_lt.mp hlt).2.le⟩
     show (0 : ℂ) = a y * f y
     rw [hf y hR]⟩
@@ -350,13 +298,11 @@ theorem exists_bdd (hd : Dense (M : Set H)) (hs : ∀ x y : M, ⟪(Ω x : H), y�
     have hx0 := norm_nonneg (x : H)
     have hΩ0 := norm_nonneg (Ω v : H)
     have hvN : ‖(v : H)‖ ≤ ‖Z₀ x‖ := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       nlinarith
     rw [one_mul]
     change ‖Z₀ x‖ ≤ ‖(x : H)‖
-    by_contra h
-    push_neg at h
+    by_contra! h
     nlinarith
   let Z₁ : M →L[ℂ] H := Z₀.mkContinuous 1 hb
   refine ⟨Z₁.extend M.subtypeL, fun x v hv => ?_⟩
@@ -630,7 +576,7 @@ theorem abs_calc (Z : A) (hn : IsStarNormal Z) (hsp : Z - star Z = (-2 * I) • 
         ring_nf
         simp
         ring
-      simp only [lift, h0, if_false, hg]
+      simp only [lift, h0, ite_false, hg]
       rw [Complex.ofReal_inv, h5, map_inv₀]
       field_simp
   · intro g h hh
@@ -646,7 +592,7 @@ theorem abs_calc (Z : A) (hn : IsStarNormal Z) (hsp : Z - star Z = (-2 * I) • 
     by_cases h0 : z = 0
     · simp [lift, h0]
     · have h3 := circ_inv h0 (hK z hz)
-      simp only [lift, h0, if_false, hh, smul_eq_mul]
+      simp only [lift, h0, ite_false, hh, smul_eq_mul]
       have h4 : z * ((yOf z : ℂ) + I) = 1 := by
         rw [← h3]
         exact mul_inv_cancel₀ h0
@@ -688,18 +634,6 @@ end -- clump:auto
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsoluteFourierCoefficients =====
-
--- ===== clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsoluteFourierCoefficientsStatement =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsoluteFourierCoefficientsStatement", "h": "module\n\npublic import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsoluteFourierCoefficients\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-theorem _root_.GlobalTheory.T.absolute_fourier_coefficients : PositivityTheory.RgBcC.Fc.AbsFC := by
-  first | exact @GlobalTheory.CompanionTheory.FuncCalc.absFC
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsoluteFourierCoefficientsStatement =====
 
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactSobolevEmbedding =====
 -- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactSobolevEmbedding", "h": "module\n\npublic import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Algebra.Group.Units\nimport Mathlib.Topology.Sheaves.Init\n\n"}
@@ -1924,7 +1858,7 @@ theorem wvAlg : WvAlg := by
   refine ⟨?_, ?_, ?_, ?_⟩
   · have h2 : Even 2 := ⟨1, rfl⟩
     have h0 : Even 0 := ⟨0, rfl⟩
-    simp only [PositivityTheory.RgBcC.Fc.wv, PositivityTheory.RgBcC.Fc.chj, h2, h0, if_true, hsq, pow_zero, one_mul]
+    simp only [PositivityTheory.RgBcC.Fc.wv, PositivityTheory.RgBcC.Fc.chj, h2, h0, ite_true, hsq, pow_zero, one_mul]
     first
       | ring
   · simp [PositivityTheory.RgBcC.Fc.wv, PositivityTheory.RgBcC.Fc.chj]
@@ -1963,7 +1897,7 @@ end -- clump:auto
 -- ===== end clump member: Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.AsmKerOneOfSteps =====
 
 -- ===== clump member: Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.AsmKerOne =====
--- clump-header: {"m": "Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.AsmKerOne", "h": "module\n\npublic import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.CalcSteps\npublic import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsoluteCutoffBound\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsoluteFourierCoefficientsStatement\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CasimirOperatorFormula\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClosureOperatorFacts\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactSobolevEmbedding\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConcentrationTimeBound\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DenseDomainFacts\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FriedrichsExtensionFacts\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalCalculusCurve\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalCalculusFirstAssumption\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalCalculusJointCurve\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelLocalization\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelRegularity\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelWeightFacts\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PaleyWienerDecay\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SectionNormBound\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothOperatorFacts\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevOperatorFacts\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevSpacePreserved\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WvAlg\npublic import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.AsmKerOneOfSteps\nimport Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevIntegrationByParts\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.AsmKerOne", "h": "module\n\npublic import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.CalcSteps\npublic import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsoluteCutoffBound\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsoluteFourierCoefficients\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CasimirOperatorFormula\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClosureOperatorFacts\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactSobolevEmbedding\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConcentrationTimeBound\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DenseDomainFacts\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FriedrichsExtensionFacts\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalCalculusCurve\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalCalculusFirstAssumption\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalCalculusJointCurve\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelLocalization\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelRegularity\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelWeightFacts\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PaleyWienerDecay\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SectionNormBound\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothOperatorFacts\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevOperatorFacts\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevSpacePreserved\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WvAlg\npublic import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.AsmKerOneOfSteps\nimport Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevIntegrationByParts\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -1972,12 +1906,12 @@ namespace PositivityTheory.RgBcC.Fc
 open PositivityTheory.RgBcC
 
 theorem calcSteps : CalcSteps :=
-  ⟨GlobalTheory.T.absolute_fourier_coefficients, _root_.GlobalTheory.CompanionTheory.FcCut.absCut, _root_.GlobalTheory.CompanionTheory.WaveCurve.fcurve, GlobalTheory.CompanionTheory.WaveFc.wvAlg, _root_.GlobalTheory.CompanionTheory.FcCls.clsFacts, _root_.GlobalTheory.CompanionTheory.SobOpsPf.sobOps, _root_.GlobalTheory.CompanionTheory.CptSobProof.cptSob,
+  ⟨_root_.GlobalTheory.CompanionTheory.FuncCalc.absFC, _root_.GlobalTheory.CompanionTheory.FcCut.absCut, _root_.GlobalTheory.CompanionTheory.WaveCurve.fcurve, GlobalTheory.CompanionTheory.WaveFc.wvAlg, _root_.GlobalTheory.CompanionTheory.FcCls.clsFacts, _root_.GlobalTheory.CompanionTheory.SobOpsPf.sobOps, _root_.GlobalTheory.CompanionTheory.CptSobProof.cptSob,
     _root_.GlobalTheory.CompanionTheory.SecBd.secBound_main, _root_.GlobalTheory.CompanionTheory.PresSobA.presSob, _root_.GlobalTheory.CompanionTheory.FcConcT.concT, _root_.GlobalTheory.CompanionTheory.CurveJ.curveJoint, _root_.GlobalTheory.CompanionTheory.FriedrichsFc.friedrichs, _root_.GlobalTheory.CompanionTheory.Casimir.omFormula, _root_.GlobalTheory.CompanionTheory.FcCalc.Ibp.ibpSob,
     _root_.GlobalTheory.CompanionTheory.DenseCpt.denseD⟩
 
 theorem asmCpt : AsmCpt :=
-  _root_.GlobalTheory.CompanionTheory.WaveFc.Asm.asm1 GlobalTheory.T.absolute_fourier_coefficients _root_.GlobalTheory.CompanionTheory.FcCut.absCut _root_.GlobalTheory.CompanionTheory.WaveCurve.fcurve GlobalTheory.CompanionTheory.WaveFc.wvAlg _root_.GlobalTheory.CompanionTheory.FcCls.clsFacts _root_.GlobalTheory.CompanionTheory.SobOpsPf.sobOps _root_.GlobalTheory.CompanionTheory.CptSobProof.cptSob
+  _root_.GlobalTheory.CompanionTheory.WaveFc.Asm.asm1 _root_.GlobalTheory.CompanionTheory.FuncCalc.absFC _root_.GlobalTheory.CompanionTheory.FcCut.absCut _root_.GlobalTheory.CompanionTheory.WaveCurve.fcurve GlobalTheory.CompanionTheory.WaveFc.wvAlg _root_.GlobalTheory.CompanionTheory.FcCls.clsFacts _root_.GlobalTheory.CompanionTheory.SobOpsPf.sobOps _root_.GlobalTheory.CompanionTheory.CptSobProof.cptSob
     _root_.GlobalTheory.CompanionTheory.SecBd.secBound_main _root_.GlobalTheory.CompanionTheory.PresSobA.presSob _root_.GlobalTheory.CompanionTheory.FcConcT.concT _root_.GlobalTheory.CompanionTheory.CurveJ.curveJoint _root_.GlobalTheory.CompanionTheory.FriedrichsFc.friedrichs _root_.GlobalTheory.CompanionTheory.Casimir.omFormula _root_.GlobalTheory.CompanionTheory.FcCalc.Ibp.ibpSob _root_.GlobalTheory.CompanionTheory.DenseCpt.denseD
 
 theorem asmKerOne : AsmKerOne :=

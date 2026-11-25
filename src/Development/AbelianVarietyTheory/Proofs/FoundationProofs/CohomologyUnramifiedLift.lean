@@ -16,65 +16,16 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibra
 public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
+public import Mathlib.FieldTheory.Galois.Profinite
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CupProductUnramifiedClassesVanishes
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralTwoCocycleReciprocityTrivialAtLastPlace
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LocalConditionsIndependentOfPlaceOver
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnramifiedCocycleKillsRoots
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.DecActRoots
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormNatCastOfCoprime
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.FieldTheory.Galois.Profinite
-import Mathlib.Topology.Algebra.ClopenNhdofOne
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-import Mathlib.Tactic.Lemma
-import Mathlib.RingTheory.WittVector.IsPoly
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -1599,12 +1550,6 @@ theorem congruence_mul_of_unit_factor {n : ℕ} {P h un D : Qbar l} (h1 : Cg n (
     (hh : ‖h‖ ≤ 1) : Cg n (D * h) 0 :=
   _root_.UpperTheory.Reformulated.B.Yza4.congruence_mul_of_unit_factor h1 h2 hun hh
 
-alias htc_cocycle_NS := _root_.GlobalTheory.ZeroSubmodule.main
-
-theorem htc_killsMu_open [IsAlgClosure ℚ Ω] (C : Type) [Group C] (N : ℕ) (ψ : G ℚ Ω →* C) (hN : N ≠ 0)
-    (h : KillsMu N ψ) : IsOpen (ψ.ker : Set (G ℚ Ω)) ∧ IsLocallyConstant ψ :=
-  _root_.GlobalTheory.OpenKernelLocallyConstant.isOpen_ker_and_isLocallyConstant C N ψ hN h
-
 theorem htc_places (w : Pl) : normV w ≠ 0 ∧ (∀ v : Pl, v ≠ w → ((normV w : ℕ) : 𝓞 ℚ) ∉ v.asIdeal) ∧
     ∀ (p : ℕ), p.Prime → ∀ v v' : Pl, ((p : ℕ) : 𝓞 ℚ) ∈ v.asIdeal → ((p : ℕ) : 𝓞 ℚ) ∈ v'.asIdeal → v = v' :=
   _root_.UpperTheory.Reformulated.B.Yza3.htc_places w
@@ -1664,7 +1609,7 @@ theorem ht_vanish_commutator : GlobalTheory.Mem.LiteralAutomorphy.LitCoh → ∀
   obtain ⟨P, un, d, hPO, hun, hPfrob, hdc, hdO, hdrel, hdker, hdq⟩ :=
     _root_.GlobalTheory.Ord2.FirstDer.main l Ω c n S W y w ψ hWc hO hAbove hW.unr hyO hKill hwS hT
   obtain ⟨hNw, hNwv, hpl⟩ := htc_places w
-  obtain ⟨hψo, hψlc⟩ := htc_killsMu_open _ (normV w) ψ hNw hKill
+  obtain ⟨hψo, hψlc⟩ := GlobalTheory.OpenKernelLocallyConstant.isOpen_ker_and_isLocallyConstant _ (normV w) ψ hNw hKill
   have hψIne : ∀ v, v ≠ w → ∀ B' : ValuationSubring Ω, IsPlaceOver B' v → Ine (F := ℚ) B' ≤ ψ.ker :=
     fun v hv B' hB' s hs => hKill s (fun ζ hζ => _root_.GlobalTheory.InertiaRootOfUnity.inertia_fixes_root_of_unity (normV w) v B' hB' (hNwv v hv) s hs ζ hζ)
 
@@ -1681,7 +1626,7 @@ theorem ht_vanish_commutator : GlobalTheory.Mem.LiteralAutomorphy.LitCoh → ∀
     exact cyc_eq_one_of_mem_Ine hvl hB' hs
   have hNS_N0 : NS (F := ℚ) Ω (S : Set Pl) ≤ N0g W := htc_NS_le _ _ hN0c hIneN0
   have hNSy : ∀ a ∈ NS (F := ℚ) Ω (S : Set Pl), y a = 0 :=
-    htc_cocycle_NS _ W (N0g W) y hN0n hN0c (fun a ha => (Subgroup.mem_inf.1 ha).2) hy (by
+    GlobalTheory.ZeroSubmodule.main _ W (N0g W) y hN0n hN0c (fun a ha => (Subgroup.mem_inf.1 ha).2) hy (by
       intro v hv B' hB' s hs
       have hvl : ((l : ℕ) : 𝓞 ℚ) ∉ v.asIdeal := fun h => hv (hAbove v h)
       have hWs : W s = 1 := (hIneN0 v hv B' hB' hs).2
@@ -1690,7 +1635,7 @@ theorem ht_vanish_commutator : GlobalTheory.Mem.LiteralAutomorphy.LitCoh → ∀
       refine ⟨hIneN0 v hv B' hB' hs, ?_⟩
       rw [hx s hs, show mat W s = 1 by simp [mat, hWs], Matrix.one_mulVec, sub_self])
   have hNSz : ∀ a ∈ NS (F := ℚ) Ω (S : Set Pl), z a = 0 :=
-    htc_cocycle_NS _ (dual1 W) (N0g W) z hN0n hN0c (fun a ha => htc_dual1_eq_one ha) hz (by
+    GlobalTheory.ZeroSubmodule.main _ (dual1 W) (N0g W) z hN0n hN0c (fun a ha => htc_dual1_eq_one ha) hz (by
       intro v hv B' hB' s hs
       have hvl : ((l : ℕ) : 𝓞 ℚ) ∉ v.asIdeal := fun h => hv (hAbove v h)
       have hd1 : dual1 W s = 1 := htc_dual1_eq_one (hIneN0 v hv B' hB' hs)

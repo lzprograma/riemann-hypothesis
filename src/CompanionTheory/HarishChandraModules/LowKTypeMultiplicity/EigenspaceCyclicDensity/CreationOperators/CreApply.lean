@@ -24,18 +24,8 @@ def tw (i j : Pos n) : ℂ := if key j < key i then -1 else 1
 theorem tw_self (i : Pos n) : tw i i = 1 := by
   simp [tw]
 
-theorem tw_mul_self (i j : Pos n) : tw i j * tw i j = 1 :=
-  _root_.CompanionTheory.FinsetCAR.tw_mul_self key i j
-
-theorem tw_swap {i j : Pos n} (h : i ≠ j) : tw j i = -tw i j :=
-  _root_.CompanionTheory.FinsetCAR.tw_swap key (fun _ _ h => key_inj h) h
-
 theorem sg_mul_self (i : Pos n) (A : Finset (Pos n)) : sg i A * sg i A = 1 :=
   _root_.CompanionTheory.FinsetCAR.sg_mul_self key i A
-
-theorem sg_insert (i : Pos n) {j : Pos n} {A : Finset (Pos n)} (h : j ∉ A) :
-    sg i (insert j A) = tw i j * sg i A :=
-  _root_.CompanionTheory.FinsetCAR.sg_insert key i h
 
 theorem sg_erase (i : Pos n) {j : Pos n} {A : Finset (Pos n)} (h : j ∈ A) :
     sg i (A.erase j) = tw i j * sg i A :=

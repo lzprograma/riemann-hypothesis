@@ -154,7 +154,6 @@ theorem evC_aeval (hL : EvLaws Xo c) (h : GenFrEx Xo c) (Z : Comp Xo c) {N : ℕ
 
 theorem chart_mem (hL : EvLaws Xo c) {h : GenFrEx Xo c} (C : FChart h) {a : (E →+* ℂ) × ℕ → ℕ} {n : ℕ}
     {f : Rul Xo c} (hf : f ∈ sec Xo c a n) : wchar (ex Dw a n) C.t * evC h C.Z f ∈ C.R := by
-  set_option synthInstance.maxHeartbeats 200000 in
   have h1 := hL.wt a n f hf (Om C.Z) C.t (genFr h C.Z) C.yg (hL.test _ _) (hL.test _ _) C.bor
   set_option synthInstance.maxHeartbeats 200000 in
   have h2 := _root_.GlobalTheory.Reg.evR_baseChange_of_isReduced E H Dw l Xo c hL a n f hf C.R (Om C.Z) C.R.val C.y C.yg C.gen
@@ -470,7 +469,7 @@ theorem cusp_of_integral_of_dom : ∀ (E : Type) [Field E] [NumberField E] [IsCM
   have key : ∀ f, Formalism.L2.PjFree.rdU (U σ) f j x = evHom ((U σ).un j ⟨x, hx⟩) hy f := by
     intro f
     unfold Formalism.L2.PjFree.rdU
-    simp only [LinearMap.coe_mk, AddHom.coe_mk, dif_pos hx]
+    simp only [LinearMap.coe_mk, AddHom.coe_mk, dite_eq_left hx]
     rfl
   simp only [key]
   have h3 := congrArg (evHom ((U σ).un j ⟨x, hx⟩) hy) heq

@@ -1,5 +1,7 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbsHalfBlockDetIntegralGLInvariant
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemISupAutomorphicRepsOfInvariantForm
 public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DifferentiableAtChart
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.IntegralDeterminants.PlaceConjAlt
@@ -98,23 +100,8 @@ variable {K : Type} [Field K] [NumberField K]
 
 theorem valued_det_of_KGL {w : HeightOneSpectrum (𝓞 K)} {n : ℕ} {g : GL (Fin n) (w.adicCompletion K)}
     (hg : g ∈ GlobalTheory.LFun.KGL w (n := n)) : Valued.v g.val.det = 1 := by
-  obtain ⟨g0, rfl⟩ := hg
-  set O := (w.adicCompletionIntegers K).toSubring
-  have hd : ∀ h : GL (Fin n) O, ((Formalism.UG.bc O.subtype h).val.det) = ((h.val.det : O) : w.adicCompletion K) := by
-    intro h
-    exact (RingHom.map_det O.subtype h.val).symm
-  have h1 : Valued.v ((g0.val.det : O) : w.adicCompletion K) ≤ 1 := (g0.val.det).2
-  have h2 : Valued.v (((g0⁻¹).val.det : O) : w.adicCompletion K) ≤ 1 := ((g0⁻¹).val.det).2
-  have h3 : ((g0.val.det : O) : w.adicCompletion K) * (((g0⁻¹).val.det : O) : w.adicCompletion K) = 1 := by
-    rw [← Subring.coe_mul, ← Matrix.det_mul, ← Units.val_mul, mul_inv_cancel, Units.val_one, Matrix.det_one]
-    rfl
-  have h4 := congrArg Valued.v h3
-  rw [map_mul, map_one] at h4
-  rw [hd]
-  refine le_antisymm h1 ?_
-  calc (1 : WithZero (Multiplicative ℤ)) = _ := h4.symm
-    _ ≤ Valued.v ((g0.val.det : O) : w.adicCompletion K) * 1 := mul_le_mul' le_rfl h2
-    _ = _ := mul_one _
+  intros
+  apply _root_.GlobalTheory.BCT.AbsHalfInv.v_det_KGL <;> assumption
 
 end GlobalTheory.HenQ
 end -- clump:auto
@@ -186,8 +173,7 @@ theorem absBound :
     rw [← Matrix.mulVec_smul, ← heig h, Matrix.mulVec_sum]
 
   obtain ⟨g0, i0, h0⟩ : ∃ g i, Nf g i ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hF
     funext g
     have : F g = R g *ᵥ Nf g := by
@@ -263,8 +249,7 @@ theorem absBound :
     have := hit n [] (by simp) i0
     simpa [hN] using this
   have hd : 0 < nu ι (Nf g0 i0) := nu_pos' ι h0
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   rcases hc.eq_or_lt with h0c | hcpos
   · have := hfinal 1
     rw [← h0c] at this hlt
@@ -500,9 +485,9 @@ private noncomputable def tens (M : ∀ v, H →* Matrix (Fin (d v)) (Fin (d v))
     by_cases h : i = j
     · subst h
       simp
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       obtain ⟨v, hv⟩ := Function.ne_iff.1 h
-      exact Finset.prod_eq_zero (Finset.mem_univ v) (if_neg (Ne.symm hv))
+      exact Finset.prod_eq_zero (Finset.mem_univ v) (ite_eq_right (Ne.symm hv))
   map_mul' g h := by
     ext i j
     have e : ∀ v, M v (g * h)⁻¹ (j v) (i v) = ∑ k, M v h⁻¹ (j v) k * M v g⁻¹ k (i v) := fun v => by
@@ -621,12 +606,12 @@ private theorem exists_places (w : HeightOneSpectrum (𝓞 E)) (hw : IsSplitAt w
     if h : ∃ τ ∈ Ov ι w, InfinitePlace.mk τ = v then h.choose else v.embedding
   have hφ : ∀ v, InfinitePlace.mk (φ v) = v := fun v => by
     by_cases h : ∃ τ ∈ Ov ι w, InfinitePlace.mk τ = v
-    · simp only [φ, dif_pos h]
+    · simp only [φ, dite_eq_left h]
       exact h.choose_spec.2
-    · simp only [φ, dif_neg h]
+    · simp only [φ, dite_eq_right h]
       exact InfinitePlace.mk_embedding v
   have hφw : ∀ v, (∃ τ ∈ Ov ι w, InfinitePlace.mk τ = v) → φ v ∈ Ov ι w := fun v h => by
-    simp only [φ, dif_pos h]
+    simp only [φ, dite_eq_left h]
     exact h.choose_spec.1
   have hP := fun v => placeHom _ ι E (φ v)
   choose u ψ h1 h2 h3 using hP
@@ -678,15 +663,7 @@ private theorem expand {V : Type} [Fintype V] {W : V → Type} [∀ v, AddCommGr
   exact Finset.sum_congr rfl fun j _ => f.map_smul_univ _ _
 
 private theorem inf_comm (k : infU E n) (g : finU (E := E) (n := n)) : k.1 * g.1 = g.1 * k.1 := by
-  have h := GlobalTheory.BCT.TrKer.eq_splitFin_mul_splitInf (k.1 * g.1)
-  have h1 : GlobalTheory.BCT.TrKer.splitFin E n (k.1 * g.1) = g := by
-    rw [map_mul, GlobalTheory.BCT.TrKer.splitFin_inf, GlobalTheory.BCT.TrKer.splitFin_fin, one_mul]
-  have h2 : GlobalTheory.BCT.TrKer.splitInf E n (k.1 * g.1) = k := by
-    have a1 : GlobalTheory.BCT.TrKer.splitInf E n g.1 = 1 := by simpa using GlobalTheory.BCT.TrKer.splitInf_mul g 1
-    have a2 : GlobalTheory.BCT.TrKer.splitInf E n k.1 = k := by simpa using GlobalTheory.BCT.TrKer.splitInf_mul 1 k
-    rw [map_mul, a1, a2, mul_one]
-  rw [h1, h2] at h
-  exact h
+  apply _root_.UpperTheory.Reformulated.B.Gr38.inf_fin_comm <;> assumption
 
 private theorem cEmb_rat {γ₀ : GlobalTheory.BCT.UE E n} {r : UA E n} (hr : r ∈ ratU E n)
     (hre : ∀ v : InfinitePlace E, cEmb v.embedding r = GeneralLinearGroup.map v.embedding γ₀.1) (τ : E →+* ℂ) :
@@ -854,7 +831,7 @@ private theorem core (hn : 1 ≤ n) (σ : Submodule ℂ (UA E n → ℂ)) (hσ :
     by_cases h : u v = w
     · have h1 := hW _ hL' (u v) h (φ v) ((hOv v).2 h) (ψ v) (hψ v) (hint v) (d v) (e v) (C0 v) (hRB v) (j v) (i v)
       rw [← hp, List.length_map] at h1
-      rw [if_pos h]
+      rw [ite_eq_left h]
       simp only [M, mv_apply, hinv]
       refine (by simpa only [map_inv] using h1 : _ ≤ C0 v * B (φ v) ^ L.length).trans ?_
       exact mul_le_mul_of_nonneg_right (le_max_left _ _) (pow_nonneg (hB _) _)
@@ -864,7 +841,7 @@ private theorem core (hn : 1 ≤ n) (σ : Submodule ℂ (UA E n → ℂ)) (hσ :
         have h3 := h2 (u v)
         rw [Subgroup.mem_iInf] at h3
         exact MonoidHom.mem_ker.1 (h3 (hund v h))
-      rw [if_neg h, mul_one]
+      rw [ite_eq_right h, mul_one]
       simp only [M, mv_apply, hinv, h1, inv_one, map_one]
       rw [show (1 : Module.End ℂ _) = LinearMap.id from rfl, LinearMap.toMatrix_id, Matrix.one_apply]
       split_ifs

@@ -73,15 +73,6 @@ theorem red_mul {l m n : Type} [Fintype m] (A : Matrix l m O) (B : Matrix m n O)
     red (A * B) = red A * red B := by
   exact Matrix.map_mul
 
-theorem red_add {m n : Type} (A B : Matrix m n O) : red (A + B) = red A + red B := by
-  ext i j
-  simp [red]
-
-theorem red_eq_zero {m n : Type} (A : Matrix m n O) :
-    red A = 0 ↔ ∀ i j, A i j ∈ IsLocalRing.maximalIdeal O := by
-  rw [← Matrix.ext_iff]
-  simp [red, IsLocalRing.residue_eq_zero_iff]
-
 theorem exists_mem_of_red {n : Type} [Fintype n] [DecidableEq n] {J : Subgroup (GL n O)}
     (hJ : princ O n ≤ J) {k : GL n O} (hk : k ∈ J) {A : Matrix n n O}
     (h : red A = red (k : Matrix n n O)) : ∃ k' ∈ J, (k' : Matrix n n O) = A := by
@@ -97,68 +88,6 @@ theorem exists_mem_of_red {n : Type} [Fintype n] [DecidableEq n] {J : Subgroup (
   refine ⟨k * hu.unit, J.mul_mem hk (hJ hup), ?_⟩
   simp [← Matrix.mul_assoc]
 
-theorem blocks_mul {a t : Type} [Fintype a] [Fintype t] (g h : Matrix (a ⊕ t) (a ⊕ t) O) :
-    (g * h).toBlocks₁₁ = g.toBlocks₁₁ * h.toBlocks₁₁ + g.toBlocks₁₂ * h.toBlocks₂₁ ∧
-    (g * h).toBlocks₂₁ = g.toBlocks₂₁ * h.toBlocks₁₁ + g.toBlocks₂₂ * h.toBlocks₂₁ ∧
-    (g * h).toBlocks₂₂ = g.toBlocks₂₁ * h.toBlocks₁₂ + g.toBlocks₂₂ * h.toBlocks₂₂ := by
-  refine ⟨?_, ?_, ?_⟩ <;> ext i j <;>
-    simp [toBlocks₁₁, toBlocks₁₂, toBlocks₂₁, toBlocks₂₂, Matrix.mul_apply, Fintype.sum_sum_type]
-
-def level {a : ℕ} (t : ℕ) (J' : Subgroup (GL (Fin a) O)) (hJ : princ O (Fin a) ≤ J') :
-    Subgroup (GL (Fin a ⊕ Fin t) O) where
-  carrier := {g | (∃ k ∈ J', (k : Matrix (Fin a) (Fin a) O) = g.val.toBlocks₁₁) ∧
-    (∀ i j, g.val.toBlocks₂₁ i j ∈ IsLocalRing.maximalIdeal O) ∧
-    ∃ d : GL (Fin t) O, (d : Matrix (Fin t) (Fin t) O) = g.val.toBlocks₂₂}
-  one_mem' := by
-    refine ⟨⟨1, J'.one_mem, ?_⟩, ?_, ⟨1, ?_⟩⟩
-    · ext i j; simp [toBlocks₁₁, Matrix.one_apply]
-    · intro i j; simp [toBlocks₂₁]
-    · ext i j; simp [toBlocks₂₂, Matrix.one_apply]
-  mul_mem' := by
-    rintro g h ⟨⟨k, hk, e1⟩, c1, d, f1⟩ ⟨⟨k', hk', e2⟩, c2, d', f2⟩
-    obtain ⟨b1, b2, b3⟩ := blocks_mul g.val h.val
-    rw [← red_eq_zero] at c1 c2
-    refine ⟨exists_mem_of_red hJ (J'.mul_mem hk hk') ?_, ?_, ?_⟩
-    · rw [Units.val_mul, b1, red_add, red_mul _ (toBlocks₂₁ _), c2, ← e1, ← e2]; simp
-    · rw [← red_eq_zero, Units.val_mul, b2, red_add, red_mul, red_mul, c1, c2]; simp
-    · apply isUnit_of_red
-      rw [Units.val_mul, b3, red_add, red_mul (toBlocks₂₁ _), c1, ← f1, ← f2, Matrix.zero_mul,
-        zero_add, ← Units.val_mul]
-      exact (d * d').isUnit.map (IsLocalRing.residue O).mapMatrix
-  inv_mem' := by
-    rintro g ⟨⟨k, hk, e1⟩, c1, d, f1⟩
-    obtain ⟨b1, b2, b3⟩ := blocks_mul g.val (g⁻¹).val
-    rw [Units.mul_inv] at b1 b2 b3
-    rw [← red_eq_zero] at c1
-    have o1 : (1 : Matrix (Fin a ⊕ Fin t) (Fin a ⊕ Fin t) O).toBlocks₁₁ = 1 := by
-      ext i j; simp [toBlocks₁₁, Matrix.one_apply]
-    have o2 : (1 : Matrix (Fin a ⊕ Fin t) (Fin a ⊕ Fin t) O).toBlocks₂₁ = 0 := by
-      ext i j; simp [toBlocks₂₁]
-    have o3 : (1 : Matrix (Fin a ⊕ Fin t) (Fin a ⊕ Fin t) O).toBlocks₂₂ = 1 := by
-      ext i j; simp [toBlocks₂₂, Matrix.one_apply]
-    rw [o1, ← e1] at b1
-    rw [o2, ← f1] at b2
-    rw [o3, ← f1] at b3
-    have r1 : ∀ n : ℕ, red (1 : Matrix (Fin n) (Fin n) O) = 1 := fun n => by simp [red]
-    have c2 : red (g⁻¹).val.toBlocks₂₁ = 0 := by
-      have := congrArg (fun X => red (d⁻¹).val * red X) b2
-      simp only [red_add, red_mul (toBlocks₂₁ _), c1, Matrix.zero_mul, zero_add] at this
-      rw [← red_mul, ← red_mul, ← Matrix.mul_assoc, Units.inv_mul, Matrix.one_mul] at this
-      rw [← this]; simp [red]
-    refine ⟨exists_mem_of_red hJ (J'.inv_mem hk) ?_, (red_eq_zero _).1 c2, ?_⟩
-    · have := congrArg (fun X => red (k⁻¹).val * red X) b1
-      simp only [red_add, red_mul _ (toBlocks₂₁ _), c2, Matrix.mul_zero, add_zero] at this
-      rw [← red_mul, ← red_mul, ← Matrix.mul_assoc, Units.inv_mul, Matrix.one_mul,
-        Matrix.mul_one] at this
-      exact this.symm
-    · apply isUnit_of_red
-      have := congrArg red b3
-      rw [red_add, red_mul (toBlocks₂₁ _), c1, Matrix.zero_mul, zero_add, red_mul, r1] at this
-      exact (Matrix.isUnit_iff_isUnit_det _).2 (Matrix.isUnit_det_of_left_inverse this.symm)
-
-def parahoric (O : Type) [CommRing O] [IsLocalRing O] (r s : ℕ) : Subgroup (GL (Fin r ⊕ Fin s) O) :=
-  level s (⊤ : Subgroup (GL (Fin r) O)) le_top
-
 end Levels
 
 section Local
@@ -167,14 +96,10 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchim
 
 def resCard (F : Type) [Field F] [ValuativeRel F] : ℝ := (Nat.card 𝓀[F] : ℝ)
 
-def unitIn (u : 𝒪[F]ˣ) : Fˣ := Units.map (𝒪[F].subtype : 𝒪[F] →* F) u
-
 def entries {m n : Type} (A : Matrix m n 𝒪[F]) : m → n → F := fun i j => (A i j : F)
 
 def groupSet {n : Type} [Fintype n] [DecidableEq n] (H : Subgroup (GL n 𝒪[F])) : Set (n → n → F) :=
   {x | ∃ k ∈ H, entries k.val = x}
-
-def zetaFrom (q : ℝ) (c n : ℕ) : ℝ := (qE q (c + 1) n)⁻¹
 
 variable [MeasurableSpace F]
 

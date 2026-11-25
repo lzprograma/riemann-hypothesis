@@ -52,8 +52,8 @@ theorem coeff_mConeMapQ (y : (Σ k, ι k) → Ω) (f : MvPolynomial (Σ k, ι k)
     rw [mConeMapQ_eq y hm, prod_X_pow_eq_monomial, C_mul_monomial, mul_one, coeff_monomial,
       weightedHomogeneousComponent_of_mem (n := Finsupp.weight (NumbersDVR.blockWeight ι) m) hm]
     by_cases h : n = Finsupp.weight (NumbersDVR.blockWeight ι) m
-    · rw [if_pos h, if_pos (by rw [h])]
-    · rw [if_neg h, if_neg (fun h' => h (Finsupp.equivFunOnFinite.symm.injective h').symm), map_zero]
+    · rw [ite_eq_left h, ite_eq_left (by rw [h])]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h (Finsupp.equivFunOnFinite.symm.injective h').symm), map_zero]
   | add p q hp hq => rw [map_add (f := _), MvPolynomial.coeff_add, hp, hq, map_add (f := _), map_add (f := _)]
 
 
@@ -112,7 +112,7 @@ theorem proof : PullConeDegree.Statement := by
     fun j => isMultiHomog_of_isWeightedHomogeneous (weightedHomogeneousComponent_isWeightedHomogeneous _ _), ?_⟩
   have hc := congrArg (AddMonoidAlgebra.coeff · (Finsupp.equivFunOnFinite.symm d)) hψg
   rw [mConeMapQ_eq y (isWeightedHomogeneous_of_isMultiHomog hg), prod_X_pow_eq_monomial, C_mul_monomial, mul_one,
-    coeff_monomial, if_pos rfl, coeff_sum] at hc
+    coeff_monomial, ite_eq_left rfl, coeff_sum] at hc
   rw [hc]
   refine Finset.sum_congr rfl fun j _ => ?_
   have hle : Finsupp.equivFunOnFinite.symm e ≤ Finsupp.equivFunOnFinite.symm d :=
@@ -121,7 +121,7 @@ theorem proof : PullConeDegree.Statement := by
       Finsupp.equivFunOnFinite.symm (d - e) := by
     ext k
     simp
-  rw [coeff_mul_monomial', if_pos hle, hsub, coeff_mConeMapQ]
+  rw [coeff_mul_monomial', ite_eq_left hle, hsub, coeff_mConeMapQ]
 
 end PullConeDegree
 

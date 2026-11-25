@@ -143,7 +143,7 @@ theorem Ufl_mono {i j : ℕ} (h : i ≤ j) : Loc.Ufl F n c i ≤ Loc.Ufl F n c j
 theorem eN_mem_Ufl {i s : ℕ} (h : s < n + i) : Loc.eN F (n + c) s ∈ Loc.Ufl F n c i :=
   mem_Ufl.2 fun l hl => by
     unfold Loc.eN
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
 
 theorem inX_castAdd (x : Fin n → F) (a : Fin n) : Loc.inX F n c x (Fin.castAdd c a) = x a := by
   rw [inX_apply, dite_eq_left (by simp)]
@@ -248,7 +248,7 @@ theorem unfoldingAffinePointMap_apply_inclusion {n' c' : ℕ} (xj : (Fin n' → 
       split_ifs with h1 h2 h2
       · subst h2
         simp
-      · rw [Pi.single_apply, if_neg]
+      · rw [Pi.single_apply, ite_eq_right]
         rintro rfl
         exact h2 rfl
       · subst h2

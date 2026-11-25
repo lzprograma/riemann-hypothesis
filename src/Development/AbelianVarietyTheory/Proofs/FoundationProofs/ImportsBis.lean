@@ -46,7 +46,7 @@ public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 
 namespace GlobalTheory.AlgebraicIntegerNormBound
 
-theorem main : ∀ {A : Type} [inst : CommRing A] [IsDedekindDomain A] {Q : Ideal A} [Ideal.IsPrime Q], Q ≠ ⊥ → ∀ {π : A}, π ∈ Q → π ∉ Q ^ (2 : ℕ) → ∀ (m : ℕ), π ^ m ∉ Q ^ (m + (1 : ℕ)) := by
+theorem main : ∀ {A : Type} [CommRing A] [IsDedekindDomain A] {Q : Ideal A} [Ideal.IsPrime Q], Q ≠ ⊥ → ∀ {π : A}, π ∈ Q → π ∉ Q ^ (2 : ℕ) → ∀ (m : ℕ), π ^ m ∉ Q ^ (m + (1 : ℕ)) := by
   intro A _ _ Q hQ hQ0 π h1 h2 m hm
   have hP : Prime Q := Ideal.prime_of_isPrime hQ0 hQ
   rw [← Ideal.dvd_span_singleton] at h1 h2 hm

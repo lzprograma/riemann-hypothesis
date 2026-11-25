@@ -23,12 +23,12 @@ theorem sum_nc {R : Type} [AddCommMonoid R] (d b : Fin n) (g : Fin n → Fin n �
   · rw [Finset.sum_eq_single (⟨(d, b), h⟩ : NC ε)]
     · simp
     · intro j _ hj
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨h1, h2⟩
       exact hj (Subtype.ext (Prod.ext h1.symm h2.symm))
     · simp
   · refine Finset.sum_eq_zero fun j _ => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2⟩
     exact h (by rw [h1, h2]; exact j.2)
 
@@ -177,7 +177,7 @@ theorem verma : CompanionTheory.D.DSIC.Verma := by
       simp only [v, add_mul, mul_add, (hδ a c (yy j)).eq]
       abel
     · intro d e
-      have h0 : ¬(ε d = true ∧ ε e = false) → dd ε d e = 0 := fun h => dif_neg h
+      have h0 : ¬(ε d = true ∧ ε e = false) → dd ε d e = 0 := fun h => dite_eq_right h
       simp only [u, v]
       generalize dd ε d e = T at *
       by_cases hde : d = e

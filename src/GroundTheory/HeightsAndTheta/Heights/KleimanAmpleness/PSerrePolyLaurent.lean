@@ -52,7 +52,7 @@ theorem mem_monos_iff {I : Finset (Fin (N + 1))} {s : Poly S N} :
   | mem x hx =>
     obtain ⟨i, hi, rfl⟩ := hx
     refine ⟨Finsupp.single i 1, fun j hj => ?_, rfl⟩
-    rw [Finsupp.single_apply, if_neg]
+    rw [Finsupp.single_apply, ite_eq_right]
     rintro rfl; exact hj hi
   | one => exact ⟨0, fun _ _ => rfl, rfl⟩
   | mul x y _ _ hx hy =>
@@ -108,7 +108,7 @@ theorem toL_mul_iotaP (I : Finset (Fin (N + 1))) (p : Poly S N) (s : monos (S :=
   (localizationToLaurent_mk_eq_iff I p s _).mp rfl
 
 theorem localizationToLaurent_injective (I : Finset (Fin (N + 1))) : Function.Injective (iotaP (S := S) (N := N) I) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro z hz
   induction z using LocalizedModule.induction_on with
   | h p s =>
@@ -216,7 +216,7 @@ theorem iota_gen_mem (c : ℤ) (I : StdCell N) (m : Poly S N) (s : monos (S := S
     hm (Finsupp.mem_support_iff.mp hd)
   have hwf : Finsupp.weight (1 : Fin (N + 1) → ℕ) f = e := by
     refine hs ?_
-    rw [hf, coeff_monomial, if_pos rfl]
+    rw [hf, coeff_monomial, ite_eq_left rfl]
     exact one_ne_zero
   have hy' : y = expToInt N d - expToInt N f := by rw [hdy]; abel
   refine ⟨?_, fun j hj => ?_⟩

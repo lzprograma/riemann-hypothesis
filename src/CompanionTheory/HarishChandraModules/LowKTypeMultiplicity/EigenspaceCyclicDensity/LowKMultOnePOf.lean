@@ -24,7 +24,7 @@ section
 variable {V : Type} [AddCommGroup V] [Module ℂ V]
 
 theorem evK_allT (E : Fin n → Fin n → Module.End ℂ V) : evK (allT n) E = ev E := by
-  simp only [CompanionTheory.D.LK.evK, CompanionTheory.D.LK.ev, CompanionTheory.D.LK.allT, if_true]
+  simp only [CompanionTheory.D.LK.evK, CompanionTheory.D.LK.ev, CompanionTheory.D.LK.allT, ite_true]
 
 theorem evd_eig (F : Fin n → Module.End ℂ V) (τ : Fin n → ℂ) (x : V) (h : ∀ c, F c x = τ c • x)
     (b : FreeAlgebra ℂ (Fin n)) : evd F b x = FreeAlgebra.lift ℂ τ b • x := by
@@ -60,7 +60,7 @@ theorem multAlg_of (hL : LowSpan) (hH : HWMap) (hD : Dens) (hI : InvLift) (hC : 
     if h : ε a = ε b then (E a b).restrict (fun x hx => hLst a b h x hx) else 0
   have hET : ∀ a b (h : ε a = ε b) (x : L), ((ET a b x : L) : V) = E a b x := by
     intro a b h x
-    simp only [ET, dif_pos h, LinearMap.coe_restrict_apply]
+    simp only [ET, dite_eq_left h, LinearMap.coe_restrict_apply]
   have kET : CompanionTheory.D.DSIC.KRel ε ET := by
     intro a b c d hab hcd
     apply LinearMap.ext
@@ -72,20 +72,20 @@ theorem multAlg_of (hL : LowSpan) (hH : HWMap) (hD : Dens) (hI : InvLift) (hC : 
     by_cases h1 : b = c <;> by_cases h2 : d = a
     · have e1 : ε a = ε d := by rw [h1] at hab; exact hab.trans hcd
       have e2 : ε c = ε b := by rw [h2] at hcd; exact hcd.trans hab
-      rw [if_pos h1, if_pos h2] at key ⊢
+      rw [ite_eq_left h1, ite_eq_left h2] at key ⊢
       rw [hET a d e1, hET c b e2]
       exact key
     · have e1 : ε a = ε d := by rw [h1] at hab; exact hab.trans hcd
-      rw [if_pos h1, if_neg h2] at key ⊢
+      rw [ite_eq_left h1, ite_eq_right h2] at key ⊢
       rw [hET a d e1]
       simp only [LinearMap.zero_apply, ZeroMemClass.coe_zero] at key ⊢
       exact key
     · have e2 : ε c = ε b := by rw [h2] at hcd; exact hcd.trans hab
-      rw [if_neg h1, if_pos h2] at key ⊢
+      rw [ite_eq_right h1, ite_eq_left h2] at key ⊢
       rw [hET c b e2]
       simp only [LinearMap.zero_apply, ZeroMemClass.coe_zero] at key ⊢
       exact key
-    · rw [if_neg h1, if_neg h2] at key ⊢
+    · rw [ite_eq_right h1, ite_eq_right h2] at key ⊢
       simp only [LinearMap.zero_apply, ZeroMemClass.coe_zero] at key ⊢
       exact key
   have uET : CompanionTheory.D.DSIC.KUnit ε ET := by
@@ -145,7 +145,7 @@ theorem multAlg_of (hL : LowSpan) (hH : HWMap) (hD : Dens) (hI : InvLift) (hC : 
     intro A hA
     by_contra hne
     apply hA
-    rw [Pi.single_apply, if_neg hne]
+    rw [Pi.single_apply, ite_eq_right hne]
   have hSup : CompanionTheory.D.LK.Sup (CompanionTheory.D.LK.allT n) ∅ (CompanionTheory.D.LK.om ε).card (Pi.single (CompanionTheory.D.LK.om ε) v) := by
     intro A hA
     rw [hfilt A hA]
@@ -193,17 +193,17 @@ private lemma commute_E_cas_of_glRel {A : Type} [Ring A] {n : ℕ} (E : Fin n �
   have T1 : (∑ a, ∑ b, (if d = a then E c b else 0) * E b a) = ∑ b, E c b * E b d := by
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl (fun b _ => ?_)
-    simp only [ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   have T2 : (∑ a, ∑ b, (if b = c then E a d else 0) * E b a) = ∑ a, E a d * E c a := by
     refine Finset.sum_congr rfl (fun a _ => ?_)
-    simp only [ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have T3 : (∑ a, ∑ b, E a b * (if d = b then E c a else 0)) = ∑ a, E a d * E c a := by
     refine Finset.sum_congr rfl (fun a _ => ?_)
-    simp only [mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   have T4 : (∑ a, ∑ b, E a b * (if a = c then E b d else 0)) = ∑ b, E c b * E b d := by
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl (fun b _ => ?_)
-    simp only [mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [hsplit, T1, T2, T3, T4]
   abel
 
@@ -216,7 +216,7 @@ theorem lowKMultOneP_of (hM : MultAlg) (hE : KModExists) (hD : CycDense) (hO : O
   have hU : CompanionTheory.D.DSIC.KUnit ε E := by
     intro a b h x y
     rw [hK.unit a b x y]
-    simp only [Formalism.REAL.sgn, if_pos h, Complex.ofReal_one, one_mul]
+    simp only [Formalism.REAL.sgn, ite_eq_left h, Complex.ofReal_one, one_mul]
   have hLF : CompanionTheory.D.LK.LocFin ε E := hK.locFin
   have hIM : CompanionTheory.D.LK.IsMin ε E lam := by
     intro μ x hx hxh

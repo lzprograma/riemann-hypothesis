@@ -92,7 +92,7 @@ theorem affPt_of_free (p : ℕ) (x₀ : Matrix n n' k)
     (rs : {rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free p rs}) :
     affPt p x₀ e rs.1.1 rs.1.2 = basePt c (0 : Matrix n n' k) rs.1.1 rs.1.2 + e rs := by
   obtain ⟨⟨r, s⟩, h⟩ := rs
-  simp only [affPt, Matrix.add_apply, Matrix.of_apply, dif_pos h]
+  simp only [affPt, Matrix.add_apply, Matrix.of_apply, dite_eq_left h]
   congr 1
   rcases r with r | r <;> rcases s with s | s
   · exact h.elim
@@ -115,7 +115,7 @@ theorem continuous_affPt_uncurry (p : ℕ) :
     simp only at this
     simp only [this]
     fun_prop
-  · simp only [affPt, Matrix.add_apply, Matrix.of_apply, dif_neg h, add_zero]
+  · simp only [affPt, Matrix.add_apply, Matrix.of_apply, dite_eq_right h, add_zero]
     rcases r with r | r <;> rcases s with s | s
     · exact continuous_fst.matrix_elem r s
     all_goals exact continuous_const

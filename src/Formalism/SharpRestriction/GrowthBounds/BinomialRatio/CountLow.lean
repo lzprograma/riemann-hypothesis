@@ -6,46 +6,9 @@ public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FirstCoeffic
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.LeAndHalfLeProdOneSubExpNegOfBounds
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ThresholdLowerBounds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -143,7 +106,6 @@ theorem cl_sd_ratio_le (a b : ℕ) (θ : ℝ) (hθ : 0 ≤ θ) (n : ℕ)
     have ht := h (n + 1) (by omega) le_rfl
     push_cast at ht
     have ha0 : (0 : ℝ) ≤ (sd n a : ℝ) := Nat.cast_nonneg _
-    have hb0 : (0 : ℝ) ≤ (sd n b : ℝ) := Nat.cast_nonneg _
     refine le_of_mul_le_mul_right ?_ hn
     calc (sd (n + 1) a : ℝ) * ((n : ℝ) + 1) = ((a : ℝ) + ((n : ℝ) + 1)) * (sd n a : ℝ) := hs.symm
       _ ≤ (θ * ((b : ℝ) + ((n : ℝ) + 1))) * (θ ^ n * (sd n b : ℝ)) :=
@@ -190,11 +152,6 @@ theorem cl_hockey_low (m B : ℕ) (La : ℝ) (hm : 4 ≤ m) (hB : m + 1 ≤ B) (
   have hcastBL : ((B - (J + 1) : ℕ) : ℝ) = (B : ℝ) - ((J : ℝ) + 1) := by
     rw [Nat.cast_sub hJB]; push_cast; ring
   set θ : ℝ := 1 - ((J : ℝ) + 1) / ((B : ℝ) + m) with hθ
-  have hLB : (J : ℝ) + 1 ≤ (B : ℝ) + m := by
-    have : ((J + 1 : ℕ) : ℝ) ≤ (B : ℝ) := by exact_mod_cast hJB
-    push_cast at this
-    have : (0 : ℝ) ≤ m := Nat.cast_nonneg _
-    linarith
   have hθ0 : 0 ≤ θ := by
     rw [hθ, sub_nonneg, div_le_iff₀ hBm]; linarith
   have hratio : (sd m (B - (J + 1)) : ℝ) ≤ θ ^ m * (sd m B : ℝ) := by
@@ -202,10 +159,8 @@ theorem cl_hockey_low (m B : ℕ) (La : ℝ) (hm : 4 ≤ m) (hB : m + 1 ≤ B) (
     intro t _ htm
     rw [hcastBL]
     have htm' : (t : ℝ) ≤ m := by exact_mod_cast htm
-    have ht0 : (0 : ℝ) ≤ t := Nat.cast_nonneg _
     have e : θ * ((B : ℝ) + t) = ((B : ℝ) + t) - ((J : ℝ) + 1) * ((B : ℝ) + t) / ((B : ℝ) + m) := by
       rw [hθ]; ring
-    have hJ0 : (0 : ℝ) ≤ (J : ℝ) + 1 := by positivity
     have : ((J : ℝ) + 1) * ((B : ℝ) + t) / ((B : ℝ) + m) ≤ (J : ℝ) + 1 := by
       rw [div_le_iff₀ hBm]; nlinarith
     rw [e]; linarith
@@ -220,7 +175,6 @@ theorem cl_hockey_low (m B : ℕ) (La : ℝ) (hm : 4 ≤ m) (hB : m + 1 ≤ B) (
     have hq : ((m : ℝ) + 1) * ((B : ℝ) + m) ≤ 3 * m * B := by
       nlinarith [mul_nonneg (sub_nonneg.mpr hBr) (by linarith : (0 : ℝ) ≤ 2 * m - 1),
         mul_nonneg (by linarith : (0 : ℝ) ≤ m + 1) (by linarith : (0 : ℝ) ≤ m - 1)]
-    have hm0 : (0 : ℝ) ≤ m := Nat.cast_nonneg _
     have key : La * ((B : ℝ) + m) * ((m : ℝ) + 1) ≤ 3 * m * ((J : ℝ) + 1) * ((m : ℝ) + 1) := by
       calc La * ((B : ℝ) + m) * ((m : ℝ) + 1) = La * (((m : ℝ) + 1) * ((B : ℝ) + m)) := by ring
         _ ≤ La * (3 * m * B) := mul_le_mul_of_nonneg_left hq hLa0
@@ -293,7 +247,6 @@ theorem countLow_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
   have hs := hstd X hD hH hc
   have hkdef : X.k = (X.m : ℝ) + 1 := rfl
   have hk5 := hs.k5
-  have hk0 : 0 < X.k := by linarith
   have hLa1 := hs.La1
   have hLa0 : 0 ≤ X.La C0 := by linarith
   have hm4 : 4 ≤ X.m := by
@@ -400,9 +353,6 @@ theorem countLow_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
       (clC C0 CE1 CE2 X j rz ry) : ℚ) : ℝ) with hKS
   set Hr : ℝ := ((∑ jp ∈ range (⌊X.La C0 * ((X.seg C0 CE1 CE2 j).bPlus : ℝ) / ((X.m : ℝ) + 1)⌋₊ + 1),
         sdXi X.m ((X.seg C0 CE1 CE2 j).bPlus - jp) : ℕ) : ℝ) with hHr
-  have hP0 : (0 : ℝ) ≤ (Pi : ℝ) := Nat.cast_nonneg _
-  have hy0 : (0 : ℝ) ≤ (sd X.m (X.seg C0 CE1 CE2 j).bPlus : ℝ) := Nat.cast_nonneg _
-  have hx1 : (0 : ℝ) ≤ (sd X.m (A0n - ⌈m⌉₊) : ℝ) := Nat.cast_nonneg _
   have hKS0 : 0 ≤ KS := le_trans (by positivity) t1
   calc a1 * a2 * (1 - (X.m : ℝ) * (⌈m⌉₊ : ℝ) / (A0n : ℝ)) *
         ((sd X.m A0n : ℝ) * (Pi : ℝ) * (sd X.m (X.seg C0 CE1 CE2 j).bPlus : ℝ))
@@ -457,8 +407,8 @@ theorem cl_prod_le {α τ : Type*} (P : α → Prop) [DecidablePred P] (w : α �
       intro a
       rw [← Finset.mem_coe, hSe, Function.mem_support]
       constructor
-      · intro h; by_contra hp; exact h (if_neg hp)
-      · intro hp; rw [if_pos hp]; exact (hw a hp).ne'
+      · intro h; by_contra hp; exact h (ite_eq_right hp)
+      · intro hp; rw [ite_eq_left hp]; exact (hw a hp).ne'
     have mem : ∀ x : α × ℕ, x ∈ S ×ˢ range (J + 1) → P x.1 ∧ x.2 ≤ J := by
       intro x hx
       rw [Finset.mem_product, Finset.mem_range] at hx
@@ -474,7 +424,7 @@ theorem cl_prod_le {α τ : Type*} (P : α → Prop) [DecidablePred P] (w : α �
       refine Finset.sum_congr rfl (fun a ha => Finset.sum_congr rfl (fun jj hj => ?_))
       have hp := (hmemS a).mp ha
       have hjj : jj ≤ J := by have := Finset.mem_range.mp hj; omega
-      rw [if_pos hp, hval (a, jj) hp hjj]
+      rw [ite_eq_left hp, hval (a, jj) hp hjj]
     rw [← himg]
     apply Finset.sum_le_sum_of_subset_of_nonneg
     · intro t ht
@@ -488,61 +438,13 @@ theorem cl_prod_le {α τ : Type*} (P : α → Prop) [DecidablePred P] (w : α �
   · rw [finsum_of_infinite_support hS, zero_mul]
     exact finsum_nonneg hG0
 
-private theorem antitone_of_succ_le' {r : ℕ} (f : Fin r → ℤ) (h : ∀ i j : Fin r, i.val + 1 = j.val → f j ≤ f i) :
-    ∀ i j : Fin r, i ≤ j → f j ≤ f i := by
-  intro ⟨i, hi⟩ ⟨j, hj⟩ hij
-  simp only [Fin.mk_le_mk] at hij
-  induction j with
-  | zero =>
-    have : i = 0 := by omega
-    subst this; exact le_rfl
-  | succ j ih =>
-    rcases Nat.lt_or_ge i (j + 1) with hlt | hge
-    · exact le_trans (h ⟨j, by omega⟩ ⟨j + 1, hj⟩ rfl) (ih (by omega) (by omega))
-    · have : i = j + 1 := by omega
-      subst this; exact le_rfl
-
-private theorem antitone_pair_of_strip {r : ℕ} {nu mu : Fin r → ℤ} {g : ℕ} (h : Strip nu mu g) :
-    (∀ i j : Fin r, i ≤ j → nu j ≤ nu i) ∧ (∀ i j : Fin r, i ≤ j → mu j ≤ mu i) := by
-  obtain ⟨h1, h2, -⟩ := h
-  exact ⟨antitone_of_succ_le' nu (fun i j hij => le_trans (h2 i j hij) (h1 i)),
-    antitone_of_succ_le' mu (fun i j hij => le_trans (h1 j) (h2 i j hij))⟩
-
-private theorem antitone_last_of_isChain {N r : ℕ} {LL : ChainLetters N} {ka : Fin (N + 1) → Fin r → ℤ}
-    (h : IsChain LL ka) : ∀ i j : Fin r, i ≤ j → ka (Fin.last N) j ≤ ka (Fin.last N) i := by
-  obtain ⟨h0, hs⟩ := h
-  cases N with
-  | zero =>
-    intro i j _
-    have e : Fin.last 0 = 0 := by ext; simp
-    rw [e, h0]; simp
-  | succ N =>
-    intro i j hij
-    have := hs (Fin.last N)
-    rw [Fin.succ_last] at this
-    split_ifs at this
-    · exact (antitone_pair_of_strip this).1 i j hij
-    · exact (antitone_pair_of_strip this).2 i j hij
-
-private theorem wdim_pos_of_antitone {r : ℕ} (lam : Fin r → ℤ) (h : ∀ i j : Fin r, i ≤ j → lam j ≤ lam i) :
-    0 < wdim lam := by
-  unfold wdim
-  apply Finset.prod_pos; intro i _
-  apply Finset.prod_pos; intro j _
-  split_ifs with hij
-  · have hl : (lam j : ℚ) ≤ (lam i : ℚ) := by exact_mod_cast h i j hij.le
-    have hij' : ((i : ℕ) : ℚ) < ((j : ℕ) : ℚ) := by exact_mod_cast (show (i : ℕ) < (j : ℕ) from hij)
-    apply div_pos <;> linarith
-  · exact one_pos
-
 theorem cl_Fs_nonneg (C0 CE1 CE2 : ℝ) (X : Loc) [NeZero X.m] (j : Fin (numSeg X.TT)) (m : ℝ)
     (rz ry : Fin (segS X.TT j) → Fin (X.m + 1) → ℕ) (z : FinalTheorems (segS X.TT j) X.m (X.seg C0 CE1 CE2 j).t) :
     0 ≤ Fs C0 CE1 CE2 X j m rz ry z := by
   unfold Fs
   split_ifs with hok
-  · refine mul_nonneg (wdim_pos_of_antitone _ ?_).le (Nat.cast_nonneg _)
-    obtain ⟨-, -, hch, -⟩ := hok
-    exact antitone_last_of_isChain hch
+  · obtain ⟨-, -, hch, -⟩ := hok
+    exact mul_nonneg (wdim_pos (IsChain.anti_last hch)).le (Nat.cast_nonneg _)
   · exact le_refl 0
 
 theorem cl_Fs_finite {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hCD : ChainDimAt)
@@ -558,7 +460,7 @@ theorem cl_Fs_finite {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hCD : ChainDimAt)
     by_contra hn
     apply hz
     unfold Fs
-    rw [if_neg hn]
+    rw [ite_eq_right hn]
   exact (finsum_le_of_inj (Fs C0 CE1 CE2 X j m rz ry)
     (Gt (r := X.m) (mmLetters C0 CE1 CE2 X j rz ry) (X.seg C0 CE1 CE2 j).bPlus) Φ
     (Gt_nonneg _ _) (Gt_support_finite hCD _ _) (hinj.mono (fun _ hz => hsupp _ hz)) (by
@@ -567,15 +469,7 @@ theorem cl_Fs_finite {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hCD : ChainDimAt)
       obtain ⟨h1, h2, h3, h4⟩ := hΦ z hz'
       have hjp : z.2.1.2 ≤ (X.seg C0 CE1 CE2 j).bPlus := le_trans hz'.2.1.2 (min_le_right _ _)
       unfold Fs Gt
-      rw [if_pos hz', if_pos ⟨h1, h2, by rw [h4]; exact hjp⟩, h3, h4])).1
-
-private theorem antitone_lam_of_inter {r : ℕ} {mu : Fin (r + 1) → ℤ} {lam : Fin r → ℤ} (h : Inter mu lam) :
-    ∀ i j : Fin r, i ≤ j → lam j ≤ lam i :=
-  antitone_of_succ_le' lam (fun i j hij => by
-    have e : j.castSucc = i.succ := Fin.ext (by simp only [Fin.coe_castSucc, Fin.val_succ]; omega)
-    have h1 := (h j).2
-    rw [e] at h1
-    exact le_trans h1 (h i).1)
+      rw [ite_eq_left hz', ite_eq_left ⟨h1, h2, by rw [h4]; exact hjp⟩, h3, h4])).1
 
 theorem match_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hCD : ChainDimAt)
     (hMU : MatchUpAt C0 CYb Cde Ck CD Cb CE1 CE2 Cc) (hML : MatchLowAt C0 CYb Cde Ck CD Cb CE1 CE2 Cc) :
@@ -584,12 +478,7 @@ theorem match_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hCD : ChainDimAt)
   intro X _ hD hI hc j m hm hmA rz ry hdig
   obtain ⟨Ψ, hinj, hΨ⟩ := hML X hD hI hc j m hm hmA rz ry hdig
   have hfin := cl_Fs_finite hCD hMU X hD hI hc j m hm rz ry hdig
-  have e : (∑ᶠ z, Fs C0 CE1 CE2 X j m rz ry z) =
-      ∑ᶠ b, ∑ᶠ x, ∑ᶠ ka, Fs C0 CE1 CE2 X j m rz ry (b, x, ka) := by
-    rw [finsum_curry _ hfin]
-    refine finsum_congr (fun b => ?_)
-    exact finsum_curry _ (hfin.preimage (fun y1 _ y2 _ h => (Prod.mk.inj h).2))
-  rw [chainCount_eq, ← e]
+  rw [chainCount_eq, ← finsum_curry₃ (Fs C0 CE1 CE2 X j m rz ry) hfin]
   have key := cl_prod_le (fun x : (Fin (2 * segS X.TT j + 1 + 1) → Fin (X.m + 1) → ℤ) × (Fin X.m → ℤ) =>
       IsPair (((X.seg C0 CE1 CE2 j).A0 X.p - (⌈m⌉₊ : ℤ)).toNat) (clA C0 CE1 CE2 X j rz ry)
           (clC C0 CE1 CE2 X j rz ry) x.1 x.2 ∧
@@ -598,7 +487,7 @@ theorem match_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hCD : ChainDimAt)
     (by
       intro a ha
       obtain ⟨⟨-, hint⟩, -⟩ := ha
-      exact wdim_pos_of_antitone _ (antitone_lam_of_inter hint))
+      exact wdim_pos (inter_anti hint))
     ⌊X.La C0 * ((X.seg C0 CE1 CE2 j).bPlus : ℝ) / X.k⌋₊
     (fun jp => (sdXi X.m ((X.seg C0 CE1 CE2 j).bPlus - jp) : ℚ))
     (by intro n; unfold sdXi; exact_mod_cast Nat.choose_pos (by omega))
@@ -618,7 +507,7 @@ theorem match_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hCD : ChainDimAt)
         unfold TgtOK; exact ⟨hp, hj⟩
       obtain ⟨hs, hl, hjp⟩ := hΨ (t.1.1, t.1.2, t.2) hok
       unfold Fs
-      rw [if_pos hs, hl, hjp])
+      rw [ite_eq_left hs, hl, hjp])
   unfold keptPairSum
   convert key
 

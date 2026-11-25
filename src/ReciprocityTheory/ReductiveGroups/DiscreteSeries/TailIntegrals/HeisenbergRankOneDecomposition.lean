@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.ProdIicCastLE
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.Phi2
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.GoodRowsProjectorApplyEqSum
 public import Mathlib.Analysis.Matrix.PosDef
@@ -121,10 +122,6 @@ private theorem mulVec_bvec_eq_fun_apply {m : ℕ} (M : Matrix (Fin m) (Fin m) �
 private theorem dotProduct_bvec_eq_apply {m : ℕ} (w : Fin m → ℂ) (j : Fin m) : w ⬝ᵥ bvec j = w j := by
   show ∑ i, w i * bvec j i = w j
   simp [bvec, Pi.single_apply]
-
-private theorem e0_apply_eq_ite (k r' : ℕ) (p : Fin (2 * (1 + r') + k + 1)) :
-    e0 k r' p = if p.val = 0 then 1 else 0 := by
-  simp only [e0, bvec, Pi.single_apply, eI, a0, Fin.ext_iff]
 
 private theorem es0_apply_eq_ite (k r' : ℕ) (p : Fin (2 * (1 + r') + k + 1)) :
     es0 k r' p = if p.val = 2 * (1 + r') + k then 1 else 0 := by
@@ -260,33 +257,6 @@ private theorem Hpk_one_add_apply_mp_mp (k r' : ℕ) (i j : Fin (2 * r' + k + 1)
   simp only [and_true, true_and, Hpk, Fin.ext_iff, e1, e2]
   split_ifs <;> first | rfl | (exfalso; omega) | simp_all
 
-private theorem Hpk_mulVec_liftVec_eq_liftVec_mulVec (k r' : ℕ) (v : Fin (2 * r' + k + 1) → ℂ) :
-    Hpk k (1 + r') *ᵥ liftVec k 1 r' v = liftVec k 1 r' (Hpk k r' *ᵥ v) := by
-  funext p
-  have hpl := p.isLt
-  show ∑ q, Hpk k (1 + r') p q * liftVec k 1 r' v q = liftVec k 1 r' (Hpk k r' *ᵥ v) p
-  rw [sum_eq_sum_mp_of_zero_at_edges k r' (fun q => Hpk k (1 + r') p q * liftVec k 1 r' v q)
-    (fun q hq => by
-      show Hpk k (1 + r') p q * liftVec k 1 r' v q = 0
-      rw [liftVec_apply_eq_zero_of_edge k r' v q hq, mul_zero])]
-  simp only [liftVec_apply_mp]
-  by_cases hp : 1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1
-  · have hpe : p = mp k r' ⟨p.val - 1, by omega⟩ := Fin.ext (by simp only [mp]; omega)
-    rw [hpe, liftVec_apply_mp]
-    show _ = ∑ j, Hpk k r' _ j * v j
-    simp only [Hpk_one_add_apply_mp_mp]
-  · have h0 : liftVec k 1 r' (Hpk k r' *ᵥ v) p = 0 := by
-      simp only [liftVec]
-      split_ifs <;> first | rfl | (exfalso; omega)
-    rw [h0]
-    apply Finset.sum_eq_zero
-    intro j _
-    have hj := j.isLt
-    have : Hpk k (1 + r') p (mp k r' j) = 0 := by
-      simp only [Hpk, mp, Fin.ext_iff]
-      split_ifs <;> first | rfl | (exfalso; omega)
-    rw [this, zero_mul]
-
 private theorem dotProduct_star_liftVec_liftVec (k r' : ℕ) (y w : Fin (2 * r' + k + 1) → ℂ) :
     star (liftVec k 1 r' y) ⬝ᵥ liftVec k 1 r' w = star y ⬝ᵥ w := by
   show ∑ q, star (liftVec k 1 r' y q) * liftVec k 1 r' w q = ∑ j, star (y j) * w j
@@ -298,51 +268,25 @@ private theorem dotProduct_star_liftVec_liftVec (k r' : ℕ) (y w : Fin (2 * r' 
 
 private theorem herm_liftVec_liftVec (k r' : ℕ) (v y : Fin (2 * r' + k + 1) → ℂ) :
     herm (Hpk k (1 + r')) (liftVec k 1 r' v) (liftVec k 1 r' y) = herm (Hpk k r') v y := by
-  rw [herm, herm, Hpk_mulVec_liftVec_eq_liftVec_mulVec, dotProduct_star_liftVec_liftVec]
-
-private theorem Hpk_mulVec_e0_eq_es0_vec (k r' : ℕ) : Hpk k (1 + r') *ᵥ e0 k r' = es0 k r' := by
-  funext p
-  have hp := p.isLt
-  show ∑ q, Hpk k (1 + r') p q * e0 k r' q = es0 k r' p
-  rw [es0_apply_eq_ite, Finset.sum_eq_single (⟨0, by omega⟩ : Fin (2 * (1 + r') + k + 1))]
-  · rw [e0_apply_eq_ite]
-    simp only [and_true, true_and, Hpk, Fin.ext_iff]
-    split_ifs <;> first | rfl | (simp; done) | (exfalso; omega)
-  · intro q _ hq
-    have hq' : q.val ≠ 0 := fun h => hq (Fin.ext h)
-    rw [e0_apply_eq_ite, if_neg hq', mul_zero]
-  · intro h; exact absurd (Finset.mem_univ _) h
-
-private theorem Hpk_mulVec_es0_eq_e0_vec (k r' : ℕ) : Hpk k (1 + r') *ᵥ es0 k r' = e0 k r' := by
-  funext p
-  have hp := p.isLt
-  show ∑ q, Hpk k (1 + r') p q * es0 k r' q = e0 k r' p
-  rw [e0_apply_eq_ite, Finset.sum_eq_single (⟨2 * (1 + r') + k, by omega⟩ : Fin (2 * (1 + r') + k + 1))]
-  · rw [es0_apply_eq_ite]
-    simp only [and_true, true_and, Hpk, Fin.ext_iff]
-    split_ifs <;> first | rfl | (simp; done) | (exfalso; omega)
-  · intro q _ hq
-    have hq' : q.val ≠ 2 * (1 + r') + k := fun h => hq (Fin.ext h)
-    rw [es0_apply_eq_ite, if_neg hq', mul_zero]
-  · intro h; exact absurd (Finset.mem_univ _) h
+  rw [herm, herm, Hpk_lift, dotProduct_star_liftVec_liftVec]
 
 private theorem herm_e0_left_eq_star_apply_last (k r' : ℕ) (w : Fin (2 * (1 + r') + k + 1) → ℂ) :
     herm (Hpk k (1 + r')) (e0 k r') w = star (w ⟨2 * (1 + r') + k, by omega⟩) := by
-  rw [herm, Hpk_mulVec_e0_eq_es0_vec, es0, dotProduct_bvec_eq_apply]
+  rw [herm, Hpk_mulVec_e0, es0, dotProduct_bvec_eq_apply]
   rfl
 
 private theorem herm_es0_left_eq_star_apply_zero (k r' : ℕ) (w : Fin (2 * (1 + r') + k + 1) → ℂ) :
     herm (Hpk k (1 + r')) (es0 k r') w = star (w ⟨0, by omega⟩) := by
-  rw [herm, Hpk_mulVec_es0_eq_e0_vec, e0, dotProduct_bvec_eq_apply]
+  rw [herm, hermMatrix_last_basis, e0, dotProduct_bvec_eq_apply]
   rfl
 
 private theorem e0_apply_last_eq_zero (k r' : ℕ) : e0 k r' ⟨2 * (1 + r') + k, by omega⟩ = 0 := by
-  rw [e0_apply_eq_ite]
-  exact if_neg (show ¬(2 * (1 + r') + k = 0) by omega)
+  rw [goodRowsProjector_apply_eq_sum]
+  exact ite_eq_right (show ¬(2 * (1 + r') + k = 0) by omega)
 
 private theorem e0_apply_zero_eq_one (k r' : ℕ) : e0 k r' ⟨0, by omega⟩ = 1 := by
-  rw [e0_apply_eq_ite]
-  exact if_pos rfl
+  rw [goodRowsProjector_apply_eq_sum]
+  exact ite_eq_left rfl
 
 theorem heisenberg_first_basis {k r' : ℕ} (hHA : HeisAct) (x : HPar k r') : heis0 k r' x *ᵥ e0 k r' = e0 k r' := by
   rw [heis0, hHA k r', herm_e0_left_eq_star_apply_last, herm_e0_left_eq_star_apply_last,
@@ -358,11 +302,11 @@ theorem heisenberg_last_basis {k r' : ℕ} (hHA : HeisAct) (x : HPar k r') :
 theorem ea_heis_lift {k r' : ℕ} (hHA : HeisAct) (x : HPar k r') (v : Fin (2 * r' + k + 1) → ℂ) :
     heis0 k r' x *ᵥ liftVec k 1 r' v = liftVec k 1 r' v - herm (Hpk k r') v x.1 • e0 k r' := by
   have h3 : herm (Hpk k (1 + r')) (liftVec k 1 r' v) (e0 k r') = 0 := by
-    rw [herm, Hpk_mulVec_liftVec_eq_liftVec_mulVec]
+    rw [herm, Hpk_lift]
     show ∑ p, star (e0 k r' p) * liftVec k 1 r' (Hpk k r' *ᵥ v) p = 0
     apply Finset.sum_eq_zero
     intro p _
-    rw [e0_apply_eq_ite]
+    rw [goodRowsProjector_apply_eq_sum]
     split_ifs with hp
     · rw [liftVec_apply_eq_zero_of_edge k r' _ p (Or.inl hp), mul_zero]
     · rw [star_zero, zero_mul]
@@ -371,29 +315,29 @@ theorem ea_heis_lift {k r' : ℕ} (hHA : HeisAct) (x : HPar k r') (v : Fin (2 * 
 
 theorem last_basis_zero (k r' : ℕ) : es0 k r' 0 = 0 := by
   rw [es0_apply_eq_ite]
-  exact if_neg (by first | (rw [Fin.val_zero]; omega) | simp | omega)
+  exact ite_eq_right (by first | (rw [Fin.val_zero]; omega) | simp | omega)
 
 theorem first_basis_zero (k r' : ℕ) : e0 k r' 0 = 1 := by
-  rw [e0_apply_eq_ite]
-  exact if_pos (by first | rfl | simp)
+  rw [goodRowsProjector_apply_eq_sum]
+  exact ite_eq_left (by first | rfl | simp)
 
 theorem last_basis_middle_zero (k r' : ℕ) (j : Fin (2 * r' + k + 1)) : es0 k r' (mp k r' j) = 0 := by
   have hj := j.isLt
   rw [es0_apply_eq_ite]
-  exact if_neg (by simp only [mp]; omega)
+  exact ite_eq_right (by simp only [mp]; omega)
 
 theorem first_basis_middle_zero (k r' : ℕ) (j : Fin (2 * r' + k + 1)) : e0 k r' (mp k r' j) = 0 := by
-  rw [e0_apply_eq_ite]
-  exact if_neg (by simp only [mp]; omega)
+  rw [goodRowsProjector_apply_eq_sum]
+  exact ite_eq_right (by simp only [mp]; omega)
 
 theorem ea_phiV_app {k r : ℕ} (b : Fin (r + 1)) (i : Fin (2 * r + k + 1)) :
     phiV k r b i = if b.val < r then (if i.val = 2 * r + k - b.val then 1 else 0) else
       ((Real.sqrt 2)⁻¹ : ℂ) * ((if i.val = r then 1 else 0) + (if i.val = r + k then 1 else 0)) := by
   simp only [phiV]
   by_cases h1 : b.val < r
-  · rw [dite_eq_left h1, if_pos h1]
+  · rw [dite_eq_left h1, ite_eq_left h1]
     simp only [bvec, Pi.single_apply, esI, Fin.ext_iff]
-  · rw [dite_eq_right h1, if_neg h1]
+  · rw [dite_eq_right h1, ite_eq_right h1]
     simp only [epsV, bvec, Pi.smul_apply, Pi.add_apply, smul_eq_mul, Pi.single_apply, wI, Fin.ext_iff,
       Fin.val_zero, Fin.val_last, Nat.add_zero]
 
@@ -402,12 +346,12 @@ theorem ea_phiV'_app {k r : ℕ} (hk : 1 ≤ k) (b : Fin (r + 1)) (i : Fin (2 * 
       ((Real.sqrt 2)⁻¹ : ℂ) * ((if i.val = r then 1 else 0) - (if i.val = r + k then 1 else 0)) := by
   simp only [phiV']
   by_cases h1 : b.val < r
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     simp only [phiV]
     rw [dite_eq_left h1, mulVec_bvec_eq_fun_apply]
     simp only [Hpk, esI, Fin.ext_iff]
     split_ifs <;> first | rfl | (exfalso; omega)
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
     simp only [phiV]
     rw [dite_eq_right h1, epsV, Matrix.mulVec_smul, Matrix.mulVec_add, mulVec_bvec_eq_fun_apply, mulVec_bvec_eq_fun_apply]
     have c1 : Hpk k r i (wI k r 0) = if i.val = r then 1 else 0 := by
@@ -423,7 +367,7 @@ theorem ea_sum_ind {n : ℕ} (j : ℕ) (hj : j < n) : ∑ i : Fin n, (if i.val =
   rw [Finset.sum_eq_single (⟨j, hj⟩ : Fin n)]
   · simp
   · intro b _ hb
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hb (Fin.ext h)
   · intro h; exact absurd (Finset.mem_univ _) h
@@ -464,29 +408,7 @@ private theorem star_inv_sqrt_two_mul_sum_ite_eq_sub (k r : ℕ) (hk : 1 ≤ k) 
 
 theorem ea_phiV'_herm {k r : ℕ} (hk : 1 ≤ k) (a b : Fin (r + 1)) :
     herm (Hpk k r) (phiV' k r a) (phiV' k r b) = 0 := by
-  have e : Hpk k r *ᵥ phiV' k r a = phiV k r a := by
-    rw [phiV', Matrix.mulVec_mulVec, hpk_sq_lemma, Matrix.one_mulVec]
-  rw [herm, e]
-  show ∑ i, star (phiV' k r b i) * phiV k r a i = 0
-  simp only [ea_phiV'_app hk, ea_phiV_app]
-  have ha := a.isLt
-  have hb := b.isLt
-  by_cases h1 : a.val < r <;> by_cases h2 : b.val < r
-  · simp only [if_pos h1, if_pos h2]
-    apply Finset.sum_eq_zero
-    intro i _
-    split_ifs <;> first | (exfalso; omega) | simp
-  · simp only [if_pos h1, if_neg h2]
-    apply Finset.sum_eq_zero
-    intro i _
-    split_ifs <;> first | (exfalso; omega) | simp
-  · simp only [if_neg h1, if_pos h2]
-    apply Finset.sum_eq_zero
-    intro i _
-    split_ifs <;> first | (exfalso; omega) | simp
-  · simp only [if_neg h1, if_neg h2, star_inv_sqrt_two_mul_sum_ite_eq_sub k r hk]
-    rw [Finset.sum_sub_distrib, ← Finset.mul_sum, ← Finset.mul_sum,
-      ea_sum_ind (n := 2 * r + k + 1) r (by omega), ea_sum_ind (n := 2 * r + k + 1) (r + k) (by omega), sub_self]
+  apply ReciprocityTheory.ChartRestriction.DS.Xi.GS.phiV'_iso' <;> assumption
 
 theorem ea_phiV'_li {k r : ℕ} (hk : 1 ≤ k) : LinearIndependent ℂ (phiV' k r) := by
   rw [Fintype.linearIndependent_iff]

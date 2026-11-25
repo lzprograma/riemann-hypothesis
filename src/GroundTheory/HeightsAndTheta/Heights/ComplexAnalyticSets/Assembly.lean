@@ -186,67 +186,12 @@ public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PStokesOf
 public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PUnitaryZariskiDense
 public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVanishNearPoint
 public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVarietySlabMeasure
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.SimpleRing.Principal
 import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.AssemblyPartial
 import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChowNormFormGeneric
 import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChowSecDegree
 import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PNormFormEval
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Basify
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Algebra.Order.Star.Real
 import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 import Mathlib.RingTheory.KrullDimension.Field
 import Mathlib.RingTheory.KrullDimension.Polynomial
 import GroundTheory.HeightsAndTheta.Heights.ChowForms.Assembly
@@ -616,7 +561,7 @@ theorem linearForm_coeff_single {F : Type} [Field F] {n : ℕ} (a : Fin n → F)
   · rw [mul_comm, coeff_C_mul, coeff_X]
     simp
   · intro j _ hji
-    rw [mul_comm, coeff_C_mul, coeff_X, if_neg, mul_zero]
+    rw [mul_comm, coeff_C_mul, coeff_X, ite_eq_right, mul_zero]
     intro h
     exact hji ((Finsupp.single_left_inj one_ne_zero).mp h)
   · simp
@@ -938,45 +883,9 @@ theorem SectionOrder.proof (h₁ : IncIdealBelow.Statement) (h₂ : SpecFirstMem
     (h₉ : ChartNorm.Statement) (h₁₀ : ChartLength.Statement) (h₁₁ : LengthQuotientDet.Statement) :
     SectionOrder.Statement := by
   intro F _ _ n e I f u hI hf hu
-  have hne : specFirst f u ≠ 0 := h₄ F n e I f u hI hf hu
-  refine ⟨hne, fun q hq => ?_⟩
-  have hqp : Prime q := hq.prime
-  obtain ⟨t, ht⟩ := h₃ F n e I f q hI hf hqp
-
-  have htI : linForm t ∉ I := by
-    intro h
-    have hmem := h₂ F n e I I f t hf le_rfl h
-    rw [h₁ F n e I f hI hf, Ideal.mem_bot] at hmem
-    exact ht (hmem ▸ dvd_zero q)
-  let p : Ideal (MvPolynomial (Fin e × Fin n) F) := Ideal.span {q}
-  have hpp : p.IsPrime := (Ideal.span_singleton_prime hqp.ne_zero).mpr hqp
-  have htp : specFirst f t ∉ p := by
-    rw [Ideal.mem_span_singleton]
-    exact ht
-  have : IsDiscreteValuationRing (Localization.AtPrime p) := h₅ _ q p hqp rfl
-  have hem := h₆ _ q (specFirst f u) p hqp rfl hne
-  have : Module.Finite (Localization.AtPrime p) (ChartLoc I t e p) := h₇ F n e I f t p hI hf htp
-  obtain ⟨_, hinj, -⟩ := h₈ F n e I f t p hI hf htI
-  have : Module.IsTorsionFree (Localization.AtPrime p) (ChartLoc I t e p) := by
-    rw [Module.isTorsionFree_iff_algebraMap_injective]
-    exact hinj
-  have : Module.Free (Localization.AtPrime p) (ChartLoc I t e p) :=
-    Module.free_of_finite_type_torsion_free'
-  have hnorm := h₉ F n e I f t p hI hf (Or.inr ⟨q, hqp, rfl⟩) htp u
-  have hunit : IsUnit (algebraMap _ (Localization.AtPrime p) (specFirst f t)) :=
-    IsLocalization.map_units (Localization.AtPrime p) (⟨specFirst f t, htp⟩ : p.primeCompl)
-  have hinjO : Function.Injective
-      (algebraMap (MvPolynomial (Fin e × Fin n) F) (Localization.AtPrime p)) :=
-    IsLocalization.injective _ p.primeCompl_le_nonZeroDivisors
-  have hdet : LinearMap.det (LinearMap.mulLeft (Localization.AtPrime p)
-      (algebraMap (ChartInc I t e) (ChartLoc I t e p) (chartLin I t e u))) ≠ 0 := by
-    intro h0
-    apply hne
-    apply hinjO
-    rw [hnorm, h0, mul_zero, map_zero]
-  have hlen := h₁₁ (Localization.AtPrime p) (ChartLoc I t e p) _ hdet
-  rw [hem, hnorm, Ring.ord_mul_of_isUnit_left hunit, ← hlen]
-  exact h₁₀ F n e I f t u q p hI hf hu hqp rfl ht
+  exact SectionOrder.proof_of_chart hI hf hu h₁ h₂ (fun q => h₃ F n e I f q hI hf)
+    (h₄ F n e I f u hI hf hu) h₅ h₆ h₇ h₈ (fun t p _ h htp => h₉ F n e I f t p hI hf h htp u)
+    (fun t q p _ => h₁₀ F n e I f t u q p hI hf hu) h₁₁
 
 end
 
@@ -1452,10 +1361,6 @@ theorem eval_linPoly {n d : ℕ} (A : Matrix (Fin d) (Fin n) ℂ) (z : Fin n →
   ext i
   simp [GroundTheory.Heights₂.Heights.ComplexSets.linPoly, Matrix.mulVec, dotProduct]
 
-theorem finrank_real_fin_complex (d : ℕ) : Module.finrank ℝ (Fin d → ℂ) = 2 * d := by
-  rw [Module.finrank_pi_fintype, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-    Complex.finrank_real_complex, smul_eq_mul, mul_comm]
-
 theorem ZeroSetOpenMass.proof
     (hG : GroundTheory.Heights₂.Heights.ComplexSets.GenericProjectionFinite.Statement)
     (hD : GroundTheory.Heights₂.Heights.ComplexSets.DiscriminantCover.Statement)
@@ -1488,7 +1393,7 @@ theorem ZeroSetOpenMass.proof
   obtain ⟨K, hK⟩ : ∃ K, LipschitzWith K (fun z : Fin n → ℂ => A.mulVec z) :=
     ⟨_, (LinearMap.toContinuousLinearMap (Matrix.mulVecLin A)).lipschitz⟩
   have hpos : 0 < μH[((2 * d : ℕ) : ℝ)] U' := by
-    rw [← finrank_real_fin_complex d]
+    rw [← GroundTheory.Heights₂.Heights.SheetOnlyNull.finrank_real_fin_complex d]
     exact hU'.measure_pos _ ⟨_, hzU'⟩
   have hle := hK.hausdorffMeasure_image_le (by positivity : (0 : ℝ) ≤ ((2 * d : ℕ) : ℝ)) (g '' U')
   rw [himg] at hle

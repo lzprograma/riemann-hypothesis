@@ -2,63 +2,13 @@ module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
-
-set_option autoImplicit false
 
 namespace UpperTheory.Gal.productCup_of_system
 
@@ -140,7 +90,7 @@ private lemma core (hK2E : KoszulCocycleExistsWithPrescribedComponent) (hK2I : K
     refine ⟨(mem_acx_C _ _ _ _).2 fun L => ?_, LinearMap.mem_ker.2 (minors_cocycle hU hM T i g m)⟩
     by_cases hL : (L.card : ℤ) = d
     · have hL' : L.card = d := by exact_mod_cast hL
-      rw [if_pos hL]
+      rw [ite_eq_left hL]
       obtain ⟨s, hs, hdet⟩ := hLat {i} {j} L ⟨i, by simp⟩ j (by simp)
       refine ⟨T.act ((-1) ^ d * s) m, hStab _ ((T.R {i} {j}).mul_mem
         ((T.R {i} {j}).pow_mem ((T.R {i} {j}).neg_mem ((T.R {i} {j}).one_mem)) d) hs) _ hmM, ?_⟩
@@ -155,19 +105,19 @@ private lemma core (hK2E : KoszulCocycleExistsWithPrescribedComponent) (hK2I : K
       simp only [g]
       rw [mul_pow]
       linear_combination (-(s * (T.Y j : S) ^ d * (-1) ^ d * (T.X i : S) ^ d)) * hPP
-    · rw [if_neg hL]
+    · rw [ite_eq_right hL]
       have hcard : (uni {i} L).card ≠ d + 1 := by
         intro h
         apply hL
         have : (uni ({i} : Finset (Fin (d + 1))) L).card = 1 + L.card := by simp [uni]
         omega
-      have : detC T.rowMu (uni {i} L) = 0 := dif_neg hcard
+      have : detC T.rowMu (uni {i} L) = 0 := dite_eq_right hcard
       simp [c1, this]
   have hc1' := ((hRS S E T.act (Mi d) (T.M {i} {j}) um rm T.mu (fun _ => rfl) d c1).2.1).1 hc1
   let m0 : E := unsc T.act um c1 (img (dj j))
   have hm0M : m0 ∈ T.M {i} {j} := by
     have h := (mem_acx_C _ _ _ _).1 hc1'.1 (img (dj j))
-    rw [if_pos (by simp [img])] at h
+    rw [ite_eq_left (by simp [img])] at h
     exact h
   have hAc1 : ∀ L, Ac (c1 L) (π (detC T.rowMu (uni {i} L) * g) * v) := fun L => hmul _ _ _ hm
   have hπ0 : ∀ l, π (r l) = 0 := by

@@ -81,10 +81,17 @@ theorem edge (S : Type) [CommRing S] {Ω : Type} [Field Ω] [Algebra S Ω] (y : 
     unfold faceSign
     rw [hlow, hJk]
     simp [Finset.filter_insert, Finset.filter_singleton, hii]
-  have h0 : cellD S y 0 s ⟨J, hJ1⟩ = 0 := by rw [hs]; rfl
-  unfold cellD at h0
-  erw [LinearMap.pi_apply] at h0
-  erw [if_pos (show CellMeets y J from hm)] at h0
+  have h0 : (if CellMeets y J then
+      ∑ l, ∑ j ∈ J l,
+        if h : (∀ l', (Function.update J l ((J l).erase j) l').Nonempty) ∧
+            ∑ l', ((Function.update J l ((J l).erase j) l').card - 1) = 0 then
+          faceSign J l j • LinearMap.proj (R := S) (φ := fun _ : ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.KH.Cell K ι 0 => Ω)
+            ⟨Function.update J l ((J l).erase j), h⟩
+        else 0
+      else 0) s = 0 := by
+    have : cellD S y 0 s ⟨J, hJ1⟩ = 0 := by rw [hs]; rfl
+    exact this
+  rw [ite_eq_left hm] at h0
   rw [LinearMap.sum_apply, Finset.sum_eq_single k] at h0
   rotate_left
   · intro l _ hl
@@ -115,7 +122,7 @@ theorem edge (S : Type) [CommRing S] {Ω : Type} [Field Ω] [Algebra S Ω] (y : 
   · intro h; exact absurd (show i' ∈ J k by rw [hJk]; simp) h
   rw [dite_eq_left (hfa ▸ (pt (Function.update d k i')).2), dite_eq_left (hfb ▸ (pt (Function.update d k i)).2)] at h0
   simp only [LinearMap.smul_apply] at h0
-  erw [LinearMap.proj_apply, LinearMap.proj_apply] at h0
+  change faceSign J k i • s _ + faceSign J k i' • s _ = 0 at h0
   have e1 : ∀ h, s ⟨Function.update J k ((J k).erase i), h⟩ = s (pt (Function.update d k i')) :=
     fun _ => congrArg s (Subtype.ext hfa)
   have e2 : ∀ h, s ⟨Function.update J k ((J k).erase i'), h⟩ = s (pt (Function.update d k i)) :=

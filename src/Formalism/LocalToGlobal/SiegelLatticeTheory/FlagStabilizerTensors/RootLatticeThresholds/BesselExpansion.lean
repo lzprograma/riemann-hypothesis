@@ -50,8 +50,7 @@ theorem ch_nonneg {Ch Cg : ℝ} {T T' : ℕ} {b dist : ℝ} {v : D.what₂.Tau} 
   have hka : 0 < kaRe D := hStd.2.2.2.1
   have hk1 : kaRe D ≤ b ^ Ch := hStd.2.2.2.2.1
   have hk2 : (kaRe D)⁻¹ ≤ b ^ Ch := hStd.2.2.2.2.2.1
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   have hlt : b ^ Ch < 1 := Real.rpow_lt_one_of_one_lt_of_neg (by linarith) hc
   rcases le_total 1 (kaRe D) with h | h
   · linarith

@@ -133,8 +133,7 @@ theorem fix_fin (X : Tower Ω ε) (f : X.K) :
   choose Ec hEc using hcoef
   have hex : ∀ g : X.K, g ≠ f → ∃ r, (X.exp g).coeff r ≠ (X.exp f).coeff r := by
     intro g hg
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hg (exp_inj X (HahnSeries.ext (funext h)))
   choose rr hrr using hex
   let E1 : Finset Ω := q.support.biUnion Ec

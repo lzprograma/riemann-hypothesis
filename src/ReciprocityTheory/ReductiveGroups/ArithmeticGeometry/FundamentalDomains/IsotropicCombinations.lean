@@ -156,7 +156,7 @@ lemma hC_comb2_ortho (τ : E →+* ℂ) (G : Matrix (Fin r) (Fin r) E) {n p : �
     refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun b _ => ?_
     ring
   rw [h1]
-  simp_rw [h2, hf, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp_rw [h2, hf, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   unfold ReciprocityTheory.MultiplicativeHeights.jForm ReciprocityTheory.MultiplicativeHeights.sgn
   refine Finset.sum_congr rfl fun k _ => ?_
   split_ifs <;> ring

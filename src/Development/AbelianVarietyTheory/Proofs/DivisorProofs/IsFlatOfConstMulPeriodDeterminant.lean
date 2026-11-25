@@ -66,8 +66,6 @@ import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExponentialDeriv
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -141,15 +139,6 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Geo.Tor.Host E}
 theorem relab_inj (c : Coeff l) (e : c.F →+* ℂ) : Function.Injective (Formalism.L2.PjFree.relab (E := E) c e) :=
   fun _ _ h => GlobalTheory.DerivEig.eq_of_relab_eq c e fun a => by rw [h]
 
-theorem relab_conj (c : Coeff l) (e : c.F →+* ℂ) (φ : E →+* ℂ) :
-    Formalism.L2.PjFree.relab c e (conjEmb φ) = conjEmb (Formalism.L2.PjFree.relab (E := E) c e φ) := by
-  ext a
-  have h1 : Formalism.L2.Pj.embF c (conjEmb φ) a = Formalism.L2.Pj.embF c φ (IsCMField.complexConj E a) :=
-    Subtype.ext (IsCMField.complexEmbedding_complexConj E φ a).symm
-  show e (Formalism.L2.Pj.embF c (conjEmb φ) a) = starRingEnd ℂ (Formalism.L2.PjFree.relab c e φ a)
-  rw [h1]
-  exact IsCMField.complexEmbedding_complexConj E (Formalism.L2.PjFree.relab c e φ) a
-
 theorem span_coord (h : PerData c e Di Hm P W Q) : Submodule.span ℝ (Set.range Q) = ⊤ := by
   obtain ⟨-, -, hspan, -, hW, hPQ, -⟩ := h
   let T : (Pad.Letter D → ℂ) →ₗ[ℂ] (Fin g → ℂ) := Fintype.linearCombination ℂ W
@@ -186,7 +175,7 @@ theorem dualMat_mul (hx : IsPerBasis Di x hm) (h : PerData c e Di Hm P W Q) :
   · rw [← RingHom.mapMatrix_apply, ← RingHom.map_det]
     exact (map_ne_zero _).2 hx.2.2.2
   · ext k k'
-    have := emb_eq (relab_inj c e) (relab_conj c e) Di Q _ h.2.2.2.2.2.2 (span_coord h) (im_form h)
+    have := emb_eq (relab_inj c e) (GlobalTheory.UnifDataTest.relab_conj c e) Di Q _ h.2.2.2.2.2.2 (span_coord h) (im_form h)
       (fun a => hx.2.2.1 a k k') τ
     rw [Matrix.map_apply, (eq_mul_inv_iff_mul_eq₀ hI).2 this, sub_mul, sub_eq_add_neg, Matrix.add_apply]
     congr 1
@@ -231,7 +220,7 @@ theorem isCoef_per (h : PerData c e Di Hm P W Q) {v : Di.La} {n : ℕ} (hn : n �
 
   rw [key, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
-  rw [relab_conj]
+  rw [GlobalTheory.UnifDataTest.relab_conj]
   simp [conjEmb]
 
 theorem exists_coef {g' : ℕ} {Hm' : Matrix (Fin g') (Fin g') ℂ} {P' : Di.La →+ (Fin g' → ℂ)}
@@ -307,13 +296,12 @@ theorem wedge_eq (hp : D.p = D.mult τ) (hq : D.q = D.mult (conjEmb τ)) (hx : I
 
 end GlobalTheory.DetLine.WedgePer
 
-
 open GlobalTheory.DetLine.WedgePer in
 theorem GlobalTheory.DetLine.perVal_mul_wedgeCoord : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (D : Datum H) (l : Level H) (c : Coeff l) (e : c.F →+* ℂ) (τ : E →+* ℂ) (Di : Datum H) (x : Hor.Idx D τ → Di.La) (hm : Matrix (Hor.Idx D τ) (Hor.Idx D τ) E) (g g' : ℕ) (Hm : Matrix (Fin g) (Fin g) ℂ) (Hm' : Matrix (Fin g') (Fin g') ℂ) (P : Di.La →+ (Fin g → ℂ)) (P' : Di.La →+ (Fin g' → ℂ)) (W : Pad.Letter D → Fin g → ℂ) (W' : Pad.Letter D → Fin g' → ℂ) (Q Q' : Di.La →+ (Pad.Letter D → ℂ)) (φ : (Fin g → ℂ) ≃ₗ[ℝ] (Fin g' → ℂ)) (V : Fin D.p → Fin g → ℂ) (W₀ : Fin D.q → Fin g → ℂ) (V' : Fin D.p → Fin g' → ℂ) (W₀' : Fin D.q → Fin g' → ℂ) (y : Fin D.q ⊕ Fin D.p → Fin g → ℂ) (Δ Δ' : ℂ), τ (H.rt : E) = H.rt0 → IsPerBasis Di x hm → PerData c e Di Hm P W Q → PerData c e Di Hm' P' W' Q' → GoodPer c e τ x hm Q → GoodPer c e τ x hm Q' → (∀ a, φ (P a) = P' a) → MatchVec τ W V W₀ → MatchVec τ W' V' W₀' → IsWedgeCoord Hm V W₀ y Δ → IsWedgeCoord Hm' V' W₀' (fun k => φ (y k)) Δ' → perVal c e τ x hm Q * Δ' = perVal c e τ x hm Q' * Δ := by
   intro E _ _ _ H D l c e τ Di x hm g g' Hm Hm' P P' W W' Q Q' φ V W₀ V' W₀' y Δ Δ' hτ hx h h' hG hG' hφ hM hM' hΔ hΔ'
-  have hp : D.p = D.mult τ := (if_pos hτ).symm
+  have hp : D.p = D.mult τ := (ite_eq_left hτ).symm
   have hq : D.q = D.mult (conjEmb τ) := by
-    refine (if_neg fun hc => ?_).symm
+    refine (ite_eq_right fun hc => ?_).symm
     have h1 : starRingEnd ℂ H.rt0 = H.rt0 := by rw [← hτ]; exact hc.trans hτ.symm
     have h2 := H.sqrt_neg_disc_sq
     rw [← Complex.conj_eq_iff_re.1 h1] at h2
@@ -332,8 +320,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFlatOfConstMulPeriodDeterminant", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSectionOfChg\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero\npublic import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.HermitianCompactForm\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemRiemannRochSpaceIffRegularAtEverywhere\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.IsProperToroidalModelStructureMap\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComplexPointsComponentSamePeriodSpace\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigFrameMatch\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFramedChartSnc\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsVecEquiv\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDerivAt0CompLinear\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PerValMulWedgeCoord\nimport Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFrPtOfEigFrame\nimport Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPeriodsInFrameOffBoundary\nimport Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsStalkFactor\nimport Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HorizontalCoordinateLatticeIsometryDetOne\nimport Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExponentialDerivativeAtZeroIsTangent\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.CategoryTheory.Monoidal.Opposite.Mon\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 

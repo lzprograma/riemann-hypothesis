@@ -59,7 +59,6 @@ open Formalism.UG (IsUnifV qV IsUnramInv GU KU IsInertAt Hecke dosetInd IsCommen
 open Formalism.MainNotions.SchurIrreducible (IsSplit)
 open GlobalTheory.LGrp (IsUnitarisable IsIrrSmooth bcParam)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -92,7 +91,7 @@ theorem redM_apply (PP : Formalism.L2.DIV.Pl D.host.E) {b a : ℕ} (N : Matrix (
 theorem redE_of_mem (PP : Formalism.L2.DIV.Pl D.host.E) {x : EAf D} (hx : x ∈ SI) :
     redE PP x = Formalism.L2.DIV.resS D.host.F PP ⟨x, hx⟩ := by
   unfold redE
-  exact dif_pos hx
+  exact dite_eq_left hx
 
 theorem redE_zero (PP : Formalism.L2.DIV.Pl D.host.E) : redE (D := D) PP 0 = 0 := by
   rw [redE_of_mem PP (Subring.zero_mem _)]
@@ -101,12 +100,12 @@ theorem redE_zero (PP : Formalism.L2.DIV.Pl D.host.E) : redE (D := D) PP 0 = 0 :
 theorem topL_pos {κ : Type} [Zero κ] {b a k : ℕ} (y : Matrix (Fin b) (Fin a) κ) {i j : Fin k}
     (h : i.val < b ∧ j.val < a) : topL k y i j = y ⟨i.val, h.1⟩ ⟨j.val, h.2⟩ := by
   unfold topL
-  exact dif_pos h
+  exact dite_eq_left h
 
 theorem topL_neg {κ : Type} [Zero κ] {b a k : ℕ} (y : Matrix (Fin b) (Fin a) κ) {i j : Fin k}
     (h : ¬ (i.val < b ∧ j.val < a)) : topL k y i j = 0 := by
   unfold topL
-  exact dif_neg h
+  exact dite_eq_right h
 
 theorem redM_map (PP : Formalism.L2.DIV.Pl D.host.E) {b a : ℕ} (X : Matrix (Fin b) (Fin a) SI) :
     redM PP (X.map (SI).subtype) = X.map (Formalism.L2.DIV.resS D.host.F PP) := by
@@ -209,9 +208,9 @@ theorem int_of_unit_tops : ∀ {D : D7} (m n : ℕ), n ≤ m → ∀ (Z : Finset
   have hfV : toEAf D e • topL n (u * (γ⁻¹ : GL (Fin n) (EAf D)).1) = topL n (u * (γ⁻¹ : GL (Fin n) (EAf D)).1) := by
     rw [hVeq]
     exact smul_mul_fix _ _ _ hfU
-  obtain ⟨w, hw, hwe⟩ := GlobalTheory.T.exists_integral_inverse_at_splitPlaces_of_units Z e he _ (det_mem hUi) fun PP hPP =>
+  obtain ⟨w, hw, hwe⟩ := _root_.GlobalTheory.LocalInvIdem.exists_inv Z e he _ (det_mem hUi) fun PP hPP =>
     isUnit_res_det PP hUi (by rw [← topL_redM]; exact hU PP hPP)
-  obtain ⟨w', hw', hwe'⟩ := GlobalTheory.T.exists_integral_inverse_at_splitPlaces_of_units Z e he _ (det_mem hVi) fun PP hPP =>
+  obtain ⟨w', hw', hwe'⟩ := _root_.GlobalTheory.LocalInvIdem.exists_inv Z e he _ (det_mem hVi) fun PP hPP =>
     isUnit_res_det PP hVi (by rw [← topL_redM]; exact hV PP hPP)
   have hγ := adj_eq _ _ _ (toEAf D e) w' hUeq hwe' hfU
   have hγi := adj_eq _ _ _ (toEAf D e) w hVeq hwe hfV
@@ -242,7 +241,6 @@ open Formalism.UG (IsUnifV qV IsUnramInv GU KU IsInertAt Hecke dosetInd IsCommen
 open Formalism.MainNotions.SchurIrreducible (IsSplit)
 open GlobalTheory.LGrp (IsUnitarisable IsIrrSmooth bcParam)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 theorem _root_.GlobalTheory.T.integral_idempotent_mul_of_unit_topBlock_reductions : ∀ {D : D7} (m n : ℕ), n ≤ m → ∀ (Z : Finset (Pl D.host.E)) (e : AE D), IsIdemSum e Z → ∀ (u : Matrix (Fin m) (Fin n) (EAf D)) (γ : GL (Fin n) (EAf D)), IsIntM u → IsIntM (HMul.hMul u (γ⁻¹ : GL (Fin n) (EAf D)).1) → (∀ i j, toEAf D e * u i j = u i j) → (∀ PP ∈ Z, IsUnit (topL n (redM PP u)).det) → (∀ PP ∈ Z, IsUnit (topL n (redM PP (HMul.hMul u (γ⁻¹ : GL (Fin n) (EAf D)).1))).det) → IsIntM (toEAf D e • γ.1) ∧ IsIntM (toEAf D e • (γ⁻¹ : GL (Fin n) (EAf D)).1) ∧ ∀ PP ∈ Z, topL n (redM PP (HMul.hMul u (γ⁻¹ : GL (Fin n) (EAf D)).1)) * redM PP (toEAf D e • γ.1) = topL n (redM PP u) := by

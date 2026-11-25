@@ -57,7 +57,7 @@ theorem omP_mem (f f' : Fin (r + 1) → V) (hD : IsUnit (H.Dl f f' (r + 1))) :
     omP H f f' ∈ H.perp (H.X f) := by
   rw [mem_perpX_iff]
   intro a
-  rw [h_omP_f H f f' hD, if_neg (Fin.castSucc_lt_last a).ne]
+  rw [h_omP_f H f f' hD, ite_eq_right (Fin.castSucc_lt_last a).ne]
 
 theorem z_mem (f : Fin (r + 1) → V) (T : F) (hF : Formalism.MainNotions.ThinScalesBound.FrameK H f T) :
     f (Fin.last r) ∈ H.perp (H.X f) := by

@@ -140,11 +140,4 @@ def colClassPres (hS : Col.DecoPtSurj hc n ST SG) (h : S.Ok) {W : Type} [NormedA
 
 end ColPts
 
-section Forms
-
-variable {X : Col.Fields} (hc : Formalism.BasicNotions.CMData X.F X.E) {n : ℕ} [NeZero n]
-  {ST SG : Finset (IsDedekindDomain.HeightOneSpectrum (𝓞 X.E))}
-
-end Forms
-
 end Formalism.IndefR.Bridge

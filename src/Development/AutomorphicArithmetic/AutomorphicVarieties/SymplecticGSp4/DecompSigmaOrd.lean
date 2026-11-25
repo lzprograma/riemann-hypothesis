@@ -54,8 +54,6 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 
 namespace UpperTheory.V.GradeZeroInterpolatingElement
 
-instance {l : ℕ} [Fact l.Prime] (c : Coef l) : IsLocalRing ↥c.O := c.dvr.toIsLocalRing
-
 instance {l : ℕ} [Fact l.Prime] (c : Coef l) : IsNoetherianRing ↥c.O :=
   @PrincipalIdealRing.isNoetherianRing _ _ c.dvr.toIsPrincipalIdealRing
 

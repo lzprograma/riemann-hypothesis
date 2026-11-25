@@ -15,52 +15,13 @@ public import Formalism.SharpRestriction.AdmissibleParameterJoins.DIVfromGLbud
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertPrimesLossLogSumAdmissible
 public import Formalism.LocalRingCardinality.IntCastDvdOfDvdIntegers
 public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DivisionSecondComplementAtConstructedPoints
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Formalism.LocalRingCardinality.DataAmbForm
-import Mathlib.Tactic.ReduceModChar
 import Formalism.LocalRingCardinality.SpanPowerMembership.Places
 import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
 import Formalism.SharpRestriction.GlobalSchurBounds.TheoremThreeUnderScaleOfGeneral
@@ -79,12 +40,6 @@ namespace GlobalTheory.LossItemsCompare
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G GlobalTheory.IndefiniteRowSideFullHecke GlobalTheory.HCEntries
 
-section Programme
-
-variable {l d : ℕ} [NeZero d]
-
-end Programme
-
 section Point
 
 variable {D : D7} {L : SizeData₂ D} {X : ErrX D} {K : Consts} {c : ErrC}
@@ -96,12 +51,6 @@ theorem cube_le_eta (P : ParameterChoice' D L) : 4 * (D.R.N D.R.m : ℝ) ^ 3 + 6
   linarith [one_le_letterBlockLength D]
 
 end Point
-
-section Family
-
-variable {eps : ℝ} (Fm : FamP eps)
-
-end Family
 
 end GlobalTheory.LossItemsCompare
 
@@ -129,9 +78,9 @@ noncomputable def topConst (D : D7) (c : ℝ) (τ : D.what₂.Tau) : ℝ :=
 theorem topConst_top (c : ℝ) {τ : D.what₂.Tau} {t : D.host.TT}
     (h : (D.eTau τ : D.R.GG) = D.R.tau1 t) : topConst D c τ = c := by
   unfold topConst
-  rw [Finset.sum_eq_single t, if_pos h]
+  rw [Finset.sum_eq_single t, ite_eq_left h]
   · intro s _ hs
-    exact if_neg fun h' => hs (Subtype.ext (tau1_injective (h'.symm.trans h)))
+    exact ite_eq_right fun h' => hs (Subtype.ext (tau1_injective (h'.symm.trans h)))
   · simp
 
 theorem topConst_nonneg {c : ℝ} (hc : 0 ≤ c) (τ : D.what₂.Tau) : 0 ≤ topConst D c τ := by
@@ -150,7 +99,7 @@ theorem sum_topConst (c : ℝ) : ∑ τ, topConst D c τ = (D.host.TT.card : ℝ
     rw [Finset.sum_eq_single (D.eTau.symm ⟨D.R.tau1 t, (Formalism.HC.Frame.mem_Psi_iff _).2 rfl⟩)]
     · simp
     · intro τ _ hτ
-      refine if_neg fun h' => hτ ?_
+      refine ite_eq_right fun h' => hτ ?_
       rw [Equiv.eq_symm_apply]
       exact Subtype.ext h'
     · simp
@@ -188,12 +137,12 @@ theorem end_rows (P : ParameterChoice' D L) (u : D.what₂.Word) (i : ℕ) (hi :
   unfold offWt
   by_cases ha : (D.eTau τ : D.R.GG) ∈ D.host.topPlaces
   · obtain ⟨t, ht⟩ := GlobalTheory.HCEntries.exists_top ha
-    rw [topWt_top L ht, topConst_top _ ht, if_neg (not_not.2 ((mem_topsOf τ).2 ha))]
+    rw [topWt_top L ht, topConst_top _ ht, ite_eq_right (not_not.2 ((mem_topsOf τ).2 ha))]
     rw [(L.top_u τ t hk0 ht).1] at a1 a2
     rw [(L.top_u τ t hk0 ht).2] at b1 b2
     obtain ⟨c1, c2⟩ := L.win_top (i + 1) (by omega) hi τ t ht
     constructor <;> linarith
-  · rw [topWt_off L ha, if_pos (fun h => ha ((mem_topsOf τ).1 h))]
+  · rw [topWt_off L ha, ite_eq_left (fun h => ha ((mem_topsOf τ).1 h))]
     rw [P.uk_extreme τ (by omega) ha] at b1 b2
     have h0 := topConst_nonneg hc τ
     have h1 := P.cloud_place_bound τ (by omega) ha
@@ -416,10 +365,7 @@ theorem true_entry_le (h : SizesAt L) (P : ParameterChoice' D L) (hx : 2 ≤ L.s
     |((((D.fm u).lam i τ).w a - ((i * (D.R.t + 1) / 2 : ℕ) : ℤ) : ℤ) : ℝ)| ≤ 5 * L.sc.b := by
   have hN := N_le_b h P
   have hNe : (D.R.N D.R.m : ℝ) = D.R.k + D.R.m * (D.R.t + 1) := by unfold Ranks.N; push_cast; ring
-  have hk0 : (0 : ℝ) ≤ D.R.k := Nat.cast_nonneg _
-  have ht0 : (0 : ℝ) ≤ D.R.t := Nat.cast_nonneg _
   have hm0 : (0 : ℝ) ≤ (D.R.m : ℝ) * (D.R.t + 1) := by positivity
-  have s0 : (0 : ℝ) ≤ ((i * (D.R.t + 1) / 2 : ℕ) : ℝ) := Nat.cast_nonneg _
   have s1 : ((i * (D.R.t + 1) / 2 : ℕ) : ℝ) ≤ (D.R.m : ℝ) * (D.R.t + 1) := by
     have : i * (D.R.t + 1) / 2 ≤ D.R.m * (D.R.t + 1) :=
       (Nat.div_le_self _ _).trans (Nat.mul_le_mul_right _ hi)
@@ -430,7 +376,6 @@ theorem true_entry_le (h : SizesAt L) (P : ParameterChoice' D L) (hx : 2 ≤ L.s
   split_ifs with hk
   · have b := abs_le.1 (u_bound_off_top h P hx u τ ⟨a.1, hk⟩ ha)
     have a1 : (a.1 : ℝ) ≤ D.R.k := by exact_mod_cast hk.le
-    have a0 : (0 : ℝ) ≤ a.1 := Nat.cast_nonneg _
     unfold hcToWeightQ rhoVec
     push_cast
     rw [abs_le]
@@ -550,7 +495,6 @@ theorem trace_sq_le (x : H.E) (a : ℤ) (T : ℕ) (ha : (a : H.E) = x + H.conj x
   have h4 : (H.φ₀ x).re * (H.φ₀ x).re + (H.φ₀ x).im * (H.φ₀ x).im = (T : ℝ) := by exact_mod_cast h2
   have h5 : (a : ℝ) ^ 2 ≤ 4 * T := by
     rw [h3, ← h4]
-    have heq : (2 * (H.φ₀ x).re) ^ 2 = 4 * ((H.φ₀ x).re * (H.φ₀ x).re) := by ring
     linarith [mul_self_nonneg (H.φ₀ x).im]
   exact_mod_cast h5
 
@@ -755,13 +699,13 @@ theorem sum_over_eq {X : ErrX D} (hs : SeenDef D X) (u : D.what₂.Word) (S : Fi
     have b2 : vAdd (D.plEq w) y = (D.what₂.places.ramIdx w : ℤ) := by
       by_contra hne
       exact a4 ⟨b1, by omega⟩
-    rw [if_pos h, b2]
+    rw [ite_eq_left h, b2]
     push_cast
     ring
   · have b2 : vAdd (D.plEq w) y = 0 := by
       have := mt a5.2 h
       omega
-    rw [if_neg h, b2]
+    rw [ite_eq_right h, b2]
     simp
 
 theorem seen_half : ∀ {eps : ℝ} (Fm : FamP eps) (x : ℝ) (hx : Fm.x1 < x) (i : Fm.Ix x) (u : (Fm.D x i).what₂.Word) (S : Finset (Fm.D x i).what₂.places.Pl), (∀ w ∈ S, Formalism.MainNotions.product_first_zeroth_parts.OverT (Fm.D x i) u w) → 0 ≤ ∑ w ∈ S, SizeData₂.sz w (Formalism.MainNotions.product_first_zeroth_parts.ET (Fm.D x i) u w) ∧ ∑ w ∈ S, SizeData₂.sz w (Formalism.MainNotions.product_first_zeroth_parts.ET (Fm.D x i) u w) ≤ Formalism.MainNotions.product_first_zeroth_parts.ETpi (Fm.D x i) u * Real.log (((Fm.D x i).mem u).A.T : ℝ) := by
@@ -1031,7 +975,7 @@ theorem ctD_le (h : SizesAt L) (P : ParameterChoice' D L) (hx : 2 ≤ L.sc.x) (u
   have a := (abs_le.1 (nuAbs_place P u i j2 _ w0)).2
   unfold ctD
   by_cases ht : t ∈ D.host.TT
-  · simp only [if_pos ht]
+  · simp only [ite_eq_left ht]
     rw [topWt_top L (t := ⟨t, ht⟩) (eTau_false D t)] at a
     have b1 := (head_row u i j2 (tauPl D (false, t)) 0 (by omega)).2
     rw [D.hcW_first u _ (by omega), (L.top_u _ ⟨t, ht⟩ (by omega) (eTau_false D t)).1] at b1
@@ -1043,7 +987,7 @@ theorem ctD_le (h : SizesAt L) (P : ParameterChoice' D L) (hx : 2 ≤ L.sc.x) (u
     have b6 := (L.cloud_v (tauPl D (true, t)) ⟨0, by omega⟩).2
     push_cast at b5
     linarith
-  · simp only [if_neg ht]
+  · simp only [ite_eq_right ht]
     rw [topWt_off L (false_not_top ht)] at a
     linarith
 

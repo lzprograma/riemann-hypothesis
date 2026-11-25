@@ -2,45 +2,7 @@ module
 
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.InfinitesimalCharacterGL.NatDegreeDefectGelf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 public import Mathlib.Topology.MetricSpace.Sequences
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -164,7 +126,7 @@ theorem coeff_defect_top (t : ℕ → ℂ) (m N r : ℕ) (R : ℂ[X]) (hR : ∀ 
     rw [hR', coeff_sub, coeff_C_mul_X_pow]
     rcases eq_or_lt_of_le hi with h | h
     · subst h; simp
-    · rw [if_neg (by omega), hR i h, sub_zero]
+    · rw [ite_eq_right (by omega), hR i h, sub_zero]
   have h0 : (defect t m N R').coeff (r + N) = 0 := by
     by_cases hz : R' = 0
     · rw [hz, defect_zero', coeff_zero]
@@ -264,14 +226,14 @@ theorem key (m : ℕ) (χ : Fin (m + 1) → ℂ) (r : ℕ) (_hr : r ≤ m) :
     intro i hi
     rw [coeff_sub, coeff_Hi]
     by_cases hin : i ∈ Ioc r (m + 1)
-    · rw [if_pos hin, sub_self]
-    · rw [if_neg hin, sub_zero]
+    · rw [ite_eq_left hin, sub_self]
+    · rw [ite_eq_right hin, sub_zero]
       apply coeff_eq_zero_of_natDegree_lt
       rw [cq_natDegree]
       simp only [mem_Ioc, not_and, not_le] at hin
       exact hin hi
   have hr' : (cq m χ - Hi r (m + 1) (cq m χ)).coeff r = (cq m χ).coeff r := by
-    rw [coeff_sub, coeff_Hi, if_neg (by simp), sub_zero]
+    rw [coeff_sub, coeff_Hi, ite_eq_right (by simp), sub_zero]
   rw [e, coeff_add, coeff_defect_top _ _ _ r _ hvan, hr', gelfVal_zero'] at hz
   push_cast at hz
   exact hz

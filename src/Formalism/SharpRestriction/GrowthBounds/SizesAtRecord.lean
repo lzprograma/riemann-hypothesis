@@ -6,44 +6,6 @@ import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSa
 public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.MeanNum
 import Formalism.SharpRestriction.GrowthBounds.TopChoiceBounds
 import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.Conclusion1OfGainBoundAll
 
 @[expose] public section
@@ -56,7 +18,7 @@ open Formalism.MainNotions Formalism.MainNotions.AuxBlock8
 
 namespace Formalism.MainNotions.G.Joints
 
-theorem DII_arith (x DII Np N1 r k lb n' c c0 b' : ℝ) (hx : 500 ≤ x) (hDII0 : 0 ≤ DII) (hNp0 : 0 ≤ Np) (hN10 : 0 ≤ N1)
+theorem DII_arith (x DII Np N1 r k lb n' c c0 b' : ℝ) (hx : 500 ≤ x) (hNp0 : 0 ≤ Np) (hN10 : 0 ≤ N1)
     (hr0 : 0 ≤ r) (hk0 : 0 ≤ k) (hlb0 : 0 ≤ lb) (hn0 : 0 ≤ n') (hc0 : 0 ≤ c) (hc00 : 0 ≤ c0)
     (hDII : 480 * DII ≤ x) (hNp : Np ≤ 40 * x ^ 3) (hN1 : N1 ≤ x) (hr : r ≤ x) (hk : k ≤ x ^ 6) (hlb : lb ≤ 4 * x)
     (hn : n' ≤ x ^ 3) (hc : c ≤ b') (hc0' : c0 ≤ 5 * b') (hb : 1 ≤ b') :
@@ -70,7 +32,6 @@ theorem DII_arith (x DII Np N1 r k lb n' c c0 b' : ℝ) (hx : 500 ≤ x) (hDII0 
     have a3 : k ^ 2 ≤ (x ^ 6) ^ 2 := pow_le_pow_left₀ hk0 hk 2
     have e3 : x ^ 3 ≤ x ^ 12 := pow_le_pow_right₀ hx1 (by norm_num)
     have e5 : x ^ 5 ≤ x ^ 12 := pow_le_pow_right₀ hx1 (by norm_num)
-    have e6 : (x ^ 6) ^ 2 = x ^ 12 := by ring
     linarith
   have hS0 : 0 ≤ N1 ^ 3 + r ^ 5 + k ^ 2 :=
     add_nonneg (add_nonneg (pow_nonneg hN10 3) (pow_nonneg hr0 5)) (sq_nonneg k)
@@ -99,7 +60,7 @@ theorem DII_arith (x DII Np N1 r k lb n' c c0 b' : ℝ) (hx : 500 ≤ x) (hDII0 
   have h8 : 1 ≤ x ^ 17 * b' := one_le_mul_of_one_le_of_one_le (le_trans hx4 hx17) hb
   linarith [h3, h4, h5, h6, h7, h8, hC]
 
-theorem SzII_arith (x sz k r N n' Q5 DIIc c c0 XA E2 b' R : ℝ) (hx : 500 ≤ x) (hsz0 : 0 ≤ sz) (hk0 : 0 ≤ k)
+theorem SzII_arith (x sz k r N n' Q5 DIIc c c0 XA E2 b' R : ℝ) (hx : 500 ≤ x) (hk0 : 0 ≤ k)
     (hr0 : 0 ≤ r) (hN0 : 0 ≤ N) (hn0 : 0 ≤ n') (hQ0 : 0 ≤ Q5) (hD0 : 0 ≤ DIIc) (hc0 : 0 ≤ c) (hc00 : 0 ≤ c0)
     (hsz : sz ≤ x) (hk : k ≤ x ^ 6) (hr : r ≤ x) (hN : N ≤ x ^ 3) (hn : n' ≤ x ^ 3) (hQ : Q5 ≤ E2)
     (hD : DIIc ≤ x ^ 18 * b') (hc : c ≤ b') (hc0' : c0 ≤ 5 * b') (hb : 1 ≤ b') (hXA : XA = x ^ 26)
@@ -310,10 +271,10 @@ theorem windows_at {D : D7} (L : SizeData₂ D) (K : Consts) (hK : K.Nonneg) (hS
     (Finset.mem_filter.mp hs).2
   have haw : ∀ s (hs : s ∈ topsPos D p t0), wPos D p t0 (aL L) s = L.aT ⟨_, hmem s hs⟩ := by
     intro s hs
-    simp only [wPos, aL, dif_pos (hmem s hs)]
+    simp only [wPos, aL, dite_eq_left (hmem s hs)]
   have hbw : ∀ s (hs : s ∈ topsPos D p t0), wPos D p t0 (bL L) s = L.bT ⟨_, hmem s hs⟩ := by
     intro s hs
-    simp only [wPos, bL, dif_pos (hmem s hs)]
+    simp only [wPos, bL, dite_eq_left (hmem s hs)]
   refine ⟨fun s hs => ⟨?_, ?_⟩, fun s hs => ⟨?_, ?_, ?_⟩⟩
   · rw [haw s hs]
     obtain ⟨h1, h2⟩ := L.aT_win ⟨_, hmem s hs⟩
@@ -510,7 +471,6 @@ theorem numII_ev (eps : ℝ) (K : Consts) (hK : K.Nonneg) (C31 : ℝ) (h31 : 0 <
       _ = 2 * K.kII' * L.sc.x ^ 3 := by ring
       _ ≤ _ := le_trans f8 hklo
   ·
-    have hsz0 : 0 ≤ K.szII := hK.2.2.2.2.2.1
     have hDII0 : 0 ≤ K.DII := hK.2.2.2.2.1
     have hb0 := Pf.sc_b'_nonneg L.sc
     have hb1 : 1 ≤ L.sc.b' := by
@@ -529,7 +489,6 @@ theorem numII_ev (eps : ℝ) (K : Consts) (hK : K.Nonneg) (C31 : ℝ) (h31 : 0 <
       unfold c0num
       linarith only [hb0, hcG]
     have hQ0 : 0 < Qp L.sc p := pow_pos hpp (Gp L.sc)
-    have hlp0 : 0 ≤ Real.log p := Real.log_nonneg hp1.le
     have hlp : Real.log p ≤ 38 * Real.log L.sc.x := by
       have h1 : (p : ℝ) ≤ L.sc.x ^ 38 := by
         calc (p : ℝ) ≤ (D.R.k : ℝ) ^ 2 * L.sc.x ^ 26 := hp0'.le
@@ -544,12 +503,10 @@ theorem numII_ev (eps : ℝ) (K : Consts) (hK : K.Nonneg) (C31 : ℝ) (h31 : 0 <
       unfold Qp
       rw [Real.log_pow]
       have hG := Pf.Gp_le L.sc hxe
-      have hx8 : 0 ≤ L.sc.x ^ (L.sc.eps / 8) := Real.rpow_nonneg hx0.le _
       calc (Gp L.sc : ℝ) * Real.log p
           ≤ (Pf.cGE L.sc.eps * Real.log L.sc.x * L.sc.x ^ (L.sc.eps / 8)) * (38 * Real.log L.sc.x) := by gcongr
         _ = (38 * Pf.cGE L.sc.eps * Real.log L.sc.x) * (1 * Real.log L.sc.x) * L.sc.x ^ (L.sc.eps / 8) := by ring
         _ ≤ L.sc.x ^ (L.sc.eps / 96) * L.sc.x ^ (L.sc.eps / 96) * L.sc.x ^ (L.sc.eps / 8) := by
-            have q1 : 0 ≤ 1 * Real.log L.sc.x := mul_nonneg zero_le_one (zero_le_one.trans lx1)
             gcongr
         _ = L.sc.x ^ (L.sc.eps / 8 + L.sc.eps / 48) := by
             rw [← Real.rpow_add hx0, ← Real.rpow_add hx0]
@@ -580,11 +537,11 @@ theorem numII_ev (eps : ℝ) (K : Consts) (hK : K.Nonneg) (C31 : ℝ) (h31 : 0 <
           Real.logb p L.sc.a + 2 * (rG L.sc : ℝ) * (n' : ℝ) * cG L + (rG L.sc : ℝ) * NplusF L.sc n' * c0num L := by
         positivity
       have h2 := DII_arith L.sc.x K.DII (NplusF L.sc n') (N1 L.sc : ℝ) (rG L.sc : ℝ) (D.R.k : ℝ)
-        (Real.logb p L.sc.a) (n' : ℝ) (cG L) (c0num L) L.sc.b' hx500 hDII0 hNp0 hN10 hr0 hk0.le hlb0 hn'0 hcG0 hc00
+        (Real.logb p L.sc.a) (n' : ℝ) (cG L) (c0num L) L.sc.b' hx500 hNp0 hN10 hr0 hk0.le hlb0 hn'0 hcG0 hc00
         hxDII hNp hN1x hrx hk6 hlb hn'3 hcG hc0 hb1
       exact (Nat.ceil_lt_add_one hW0).le.trans h2
     apply SzII_arith L.sc.x K.szII _ _ _ _ _ _ _ _ _
-      (Real.exp (L.sc.x ^ (L.sc.eps / 8 + L.sc.eps / 48)) ^ 5) L.sc.b' _ hx500 hsz0 hk0.le hr0 hN0 hn'0 (by positivity)
+      (Real.exp (L.sc.x ^ (L.sc.eps / 8 + L.sc.eps / 48)) ^ 5) L.sc.b' _ hx500 hk0.le hr0 hN0 hn'0 (by positivity)
       (Nat.cast_nonneg _) hcG0 hc00 hxsz hk6 hrx hN3 hn'3 (by gcongr) hDIIf hcG hc0 hb1 rfl
 
     set E := Real.exp (L.sc.x ^ (L.sc.eps / 8 + L.sc.eps / 48)) ^ 5 with hE
@@ -643,7 +600,6 @@ theorem hypIIAt_ev (eps ez : ℝ) (hez0 : 0 < ez) (K : Consts) (hK : K.Nonneg) (
   have hL2u : L2 D L.sc < goodU L.sc.delta1 := Pf.second_level_lt_good_of_log L hS hxe f3
   have hGp : 3 * (Gp L.sc : ℝ) ≤ L.sc.x ^ (L.sc.eps / 4) := by
     have hG := Pf.Gp_le L.sc hxe
-    have hx8 : 0 ≤ L.sc.x ^ (L.sc.eps / 8) := Real.rpow_nonneg hx0.le _
     calc 3 * (Gp L.sc : ℝ) ≤ 3 * (Pf.cGE L.sc.eps * Real.log L.sc.x * L.sc.x ^ (L.sc.eps / 8)) := by gcongr
       _ = (3 * Pf.cGE L.sc.eps * Real.log L.sc.x) * L.sc.x ^ (L.sc.eps / 8) := by ring
       _ ≤ L.sc.x ^ (L.sc.eps / 8) * L.sc.x ^ (L.sc.eps / 8) := by gcongr

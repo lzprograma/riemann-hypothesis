@@ -14,8 +14,6 @@ namespace Formalism.L2.KerInert.OrthonormalJets
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem smulLat_star {N : ℕ} (γ : Matrix (Fin N) (Fin N) D.host.E) (h : star γ * γ = 1)

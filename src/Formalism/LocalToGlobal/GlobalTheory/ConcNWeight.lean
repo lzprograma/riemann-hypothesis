@@ -44,13 +44,13 @@ theorem sum_eSer (k : Fin 2) :
       (Formalism.CyclotomicNorms.monicOf c).coeff (i : ℕ) = c i := by
     intro c i
     unfold Formalism.CyclotomicNorms.monicOf
-    rw [Polynomial.coeff_add, Polynomial.coeff_X_pow, if_neg i.isLt.ne, zero_add,
+    rw [Polynomial.coeff_add, Polynomial.coeff_X_pow, ite_eq_right i.isLt.ne, zero_add,
       Polynomial.finsetSum_coeff]
     simp only [Polynomial.coeff_C_mul_X_pow]
     rw [Finset.sum_eq_single i]
     · simp
     · intro j _ hj
-      rw [if_neg]
+      rw [ite_eq_right]
       exact fun h => hj (Fin.ext h).symm
     · simp
   have hinj : Function.Injective (fun c : Fin D.R.r → ZMod (D.host.g k) => Formalism.CyclotomicNorms.monicOf c) := by

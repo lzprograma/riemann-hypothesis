@@ -173,109 +173,16 @@ theorem prodEquiv_isIso (φ : K.E →+* K'.E) (B₁ B₂ : InvAlg K) (ψ : K'.E 
 
 theorem prod_unitary (B₁ B₂ : InvAlg K) (hu₁ : B₁.g * B₁.σ B₁.g = 1) (hu₂ : B₂.g * B₂.σ B₂.g = 1) :
     (B₁.prod B₂).g * (B₁.prod B₂).σ (B₁.prod B₂).g = 1 :=
-  Prod.ext hu₁ hu₂
+  _root_.GlobalTheory.UnitLemma.UnrAny.prod_unitary B₁ B₂ hu₁ hu₂
 
 theorem prod_integral (B₁ B₂ : InvAlg K) (hi₁ : IsIntegral K.O B₁.g) (hi₂ : IsIntegral K.O B₂.g) :
-    IsIntegral K.O (B₁.prod B₂).g := by
-  obtain ⟨p₁, hp₁, e₁⟩ := hi₁
-  obtain ⟨p₂, hp₂, e₂⟩ := hi₂
-  refine ⟨p₁ * p₂, hp₁.mul hp₂, ?_⟩
-  rw [← aeval_def] at e₁ e₂ ⊢
-  have h1 : (aeval (B₁.prod B₂).g (p₁ * p₂)).1 = aeval B₁.g (p₁ * p₂) :=
-    (aeval_algHom_apply (AlgHom.fst K.O B₁.A B₂.A) (B₁.prod B₂).g (p₁ * p₂)).symm
-  have h2 : (aeval (B₁.prod B₂).g (p₁ * p₂)).2 = aeval B₂.g (p₁ * p₂) :=
-    (aeval_algHom_apply (AlgHom.snd K.O B₁.A B₂.A) (B₁.prod B₂).g (p₁ * p₂)).symm
-  refine Prod.ext ?_ ?_
-  · rw [h1, map_mul, e₁, zero_mul]; rfl
-  · rw [h2, map_mul, e₂, mul_zero]; rfl
+    IsIntegral K.O (B₁.prod B₂).g :=
+  _root_.GlobalTheory.UnitLemma.UnrAny.prod_integral B₁ B₂ hi₁ hi₂
 
 end Assembly
 
-theorem unitLemma_local_of_lie : UnitLemmaLie → ∀ (K : UQ), K.Odd → ∀ B₁ B₂ : InvAlg K, B₁.g * B₁.σ B₁.g = 1 → B₂.g * B₂.σ B₂.g = 1 → (B₁.P * B₂.P).Separable → IsIntegral K.O B₁.g → IsIntegral K.O B₂.g → IsLocalRing (Algebra.adjoin K.O ({(B₁.prod B₂).g} : Set (B₁.prod B₂).A)) → InvAlg.Identity B₁ B₂ := by
-  intro hL K hK B₁ B₂ hu₁ hu₂ hsep hi₁ hi₂ hl
-  have hsepP : (B₁.prod B₂).P.Separable := by rw [Orbit.prod_P]; exact hsep
-  have huP := prod_unitary B₁ B₂ hu₁ hu₂
-  have hiP := prod_integral B₁ B₂ hi₁ hi₂
-  obtain ⟨d, hd, hcard⟩ := _root_.GlobalTheory.UnitLemma.ResDeg.card_residueField_prod K hK B₁ B₂ hu₁ hu₂ hsep hi₁ hi₂ hl
-  obtain ⟨K', φ, hq, hc, hv, hodd, hfin, hz⟩ := _root_.GlobalTheory.UnitLemma.UnrExt.exists_unramified_ext K d hd
-  have hU : IsUnrExt K K' d φ := ⟨hq, hc, hv, hodd, hfin⟩
-  obtain ⟨ψ, hψ, hσ, hO, s, hs, hres⟩ := _root_.GlobalTheory.UnitLemma.Unr.exists_unr_embedding K hK (B₁.prod B₂) huP hsepP hiP hl d hcard K' φ hU hz
-  obtain ⟨Q, hQ1, hQ2⟩ := _root_.GlobalTheory.UnitLemma.Unr.charpoly_overExt_integral_reduction K K' d φ hU (B₁.prod B₂) ψ hψ hσ hO hl hsepP hiP s hres
-  have hiso := prodEquiv_isIso φ B₁ B₂ ψ hψ hσ
-  set ψ₁ := (RingHom.fst B₁.A B₂.A).comp ψ with hψ₁
-  set ψ₂ := (RingHom.snd B₁.A B₂.A).comp ψ with hψ₂
-  have h₁ : ∀ e, ψ₁ (φ e) = algebraMap K.E B₁.A e := fun e => congrArg Prod.fst (hψ e)
-  have h₁' : ∀ e, B₁.σ (ψ₁ e) = ψ₁ (K'.c e) := fun e => congrArg Prod.fst (hσ e)
-  have h₂ : ∀ e, ψ₂ (φ e) = algebraMap K.E B₂.A e := fun e => congrArg Prod.snd (hψ e)
-  have h₂' : ∀ e, B₂.σ (ψ₂ e) = ψ₂ (K'.c e) := fun e => congrArg Prod.snd (hσ e)
-  set C₁ := overExt φ B₁ ψ₁ h₁ h₁' with hC₁
-  set C₂ := overExt φ B₂ ψ₂ h₂ h₂' with hC₂
-  have hPP : C₁.P * C₂.P = (overExt φ (B₁.prod B₂) ψ hψ hσ).P := by
-    rw [← Orbit.prod_P, ← hiso.charpoly_eq_of_isIso]
-  have hO₁ : ∀ y : K'.O, ψ₁ (algebraMap K'.O K'.E y) ∈ Algebra.adjoin K.O ({B₁.g} : Set B₁.A) := by
-    intro y
-    have key : ∀ w ∈ Algebra.adjoin K.O ({(B₁.prod B₂).g} : Set (B₁.prod B₂).A),
-        (w : B₁.A × B₂.A).1 ∈ Algebra.adjoin K.O ({B₁.g} : Set B₁.A) := by
-      intro w hw
-      induction hw using Algebra.adjoin_induction with
-      | mem x hx => rw [Set.mem_singleton_iff.1 hx]; exact Algebra.self_mem_adjoin_singleton _ _
-      | algebraMap a => exact Subalgebra.algebraMap_mem _ a
-      | add x z _ _ hx hz => exact add_mem hx hz
-      | mul x z _ _ hx hz => exact mul_mem hx hz
-    exact key _ (hO y)
-  have hO₂ : ∀ y : K'.O, ψ₂ (algebraMap K'.O K'.E y) ∈ Algebra.adjoin K.O ({B₂.g} : Set B₂.A) := by
-    intro y
-    have key : ∀ w ∈ Algebra.adjoin K.O ({(B₁.prod B₂).g} : Set (B₁.prod B₂).A),
-        (w : B₁.A × B₂.A).2 ∈ Algebra.adjoin K.O ({B₂.g} : Set B₂.A) := by
-      intro w hw
-      induction hw using Algebra.adjoin_induction with
-      | mem x hx => rw [Set.mem_singleton_iff.1 hx]; exact Algebra.self_mem_adjoin_singleton _ _
-      | algebraMap a => exact Subalgebra.algebraMap_mem _ a
-      | add x z _ _ hx hz => exact add_mem hx hz
-      | mul x z _ _ hx hz => exact mul_mem hx hz
-    exact key _ (hO y)
-  have hO' : ∀ y : K'.O, (ψ₁.prod ψ₂) (algebraMap K'.O K'.E y) ∈
-      Algebra.adjoin K.O ({(B₁.prod B₂).g} : Set (B₁.prod B₂).A) := fun y => hO y
-  have hQ : ∃ Q : K'.O[X], Q.map (algebraMap K'.O K'.E) = C₁.P * C₂.P ∧
-      Q.map (IsLocalRing.residue K'.O) = (X - C (IsLocalRing.residue K'.O (s : K'.O))) ^ Q.natDegree :=
-    ⟨Q, hQ1.trans hPP.symm, hQ2⟩
-
-  have hsep' : (C₁.P * C₂.P).Separable := by
-    rw [hPP]
-    exact _root_.GlobalTheory.UnitLemma.Unr.charpoly_overExt_separable K K' d φ hU (B₁.prod B₂) ψ hψ hσ hsepP
-  have hId := _root_.GlobalTheory.UnitLemma.CayleyCase.identity_of_residually_unipotent hL K' (hodd hK) C₁ C₂ hu₁ hu₂ hsep' s hs hQ
-
-  have hst : ∀ (B : InvAlg K) (ψ : K'.E →+* B.A) (hψ : ∀ e, ψ (φ e) = algebraMap K.E B.A e)
-      (hσ : ∀ e, B.σ (ψ e) = ψ (K'.c e)),
-      (∀ y : K'.O, ψ (algebraMap K'.O K'.E y) ∈ Algebra.adjoin K.O ({B.g} : Set B.A)) →
-      (overExt φ B ψ hψ hσ).stSum = B.stSum := by
-    intro B ψ hψ hσ hO'
-    unfold InvAlg.stSum
-    exact finsum_congr fun k => _root_.GlobalTheory.UnitLemma.Unr.N_overExt K K' d φ hU B ψ hψ hσ hO' _
-  have hkap : InvAlg.kapSum C₁ C₂ = InvAlg.kapSum B₁ B₂ := by
-    unfold InvAlg.kapSum
-    refine finsum_congr fun k => ?_
-    have hN : (C₁.prod C₂).N k.rep = (B₁.prod B₂).N k.rep := by
-      rw [← hiso.N_eq]
-      exact _root_.GlobalTheory.UnitLemma.Unr.N_overExt K K' d φ hU (B₁.prod B₂) ψ hψ hσ hO _
-    rw [hN]
-    congr 1
-    set x := (Quot.out k).1 with hx
-    have hfix : B₁.σ ((x : (C₁.prod C₂).A).1) = (x : (C₁.prod C₂).A).1 := congrArg Prod.fst (Quot.out k).2
-    let x₁ : B₁.Aˣ := Units.map (MonoidHom.fst B₁.A B₂.A) x
-    have := _root_.GlobalTheory.UnitLemma.Unr.eta_overExt K K' d φ hU hd B₁ ψ₁ h₁ h₁' x₁ hfix
-    exact this
-  have hres' := _root_.GlobalTheory.UnitLemma.Unr.ResVal.val_resultant_unr K K' d φ hU hd B₁ B₂ ψ₁ ψ₂ h₁ h₁' h₂ h₂' hO' hsep s hQ
-  unfold InvAlg.Identity at hId ⊢
-  rw [hkap, hst B₁ ψ₁ h₁ h₁' hO₁, hst B₂ ψ₂ h₂ h₂' hO₂] at hId
-  rw [← hId, hres', hq]
-  congr 1
-  obtain ⟨m, rfl⟩ := hd
-  push_cast
-  rw [show -((2 * (m : ℤ) + 1) * val K'.O (resultant C₁.P C₂.P)) =
-      (2 * (m : ℤ) + 1) * (-val K'.O (resultant C₁.P C₂.P)) by ring, zpow_mul]
-  congr 1
-  rw [show (2 * (m : ℤ) + 1) = ((2 * m + 1 : ℕ) : ℤ) by push_cast; ring, zpow_natCast, Odd.neg_pow ⟨m, rfl⟩]
+theorem unitLemma_local_of_lie : UnitLemmaLie → ∀ (K : UQ), K.Odd → ∀ B₁ B₂ : InvAlg K, B₁.g * B₁.σ B₁.g = 1 → B₂.g * B₂.σ B₂.g = 1 → (B₁.P * B₂.P).Separable → IsIntegral K.O B₁.g → IsIntegral K.O B₂.g → IsLocalRing (Algebra.adjoin K.O ({(B₁.prod B₂).g} : Set (B₁.prod B₂).A)) → InvAlg.Identity B₁ B₂ :=
+  fun hL K _ => _root_.GlobalTheory.UnitLemma.UnrAny.unitLemma_local_of_lie_any hL K
 
 end GlobalTheory.UnitLemma.Unr
 end -- clump:auto
@@ -296,117 +203,51 @@ open GlobalTheory.UnitLemma Polynomial
 
 variable {K : UQ}
 
-theorem IsIso.stSum_eq {B C : InvAlg K} {φ : B.A ≃ₐ[K.E] C.A} (h : IsIso φ) : C.stSum = B.stSum := by
-  unfold InvAlg.stSum
-  rw [h.finsum_eq C.N fun x u => (_root_.GlobalTheory.UnitLemma.NormClass.N_norm_class K C x u).1]
-  exact finsum_congr fun k => h.N_eq _
+theorem IsIso.stSum_eq {B C : InvAlg K} {φ : B.A ≃ₐ[K.E] C.A} (h : IsIso φ) : C.stSum = B.stSum :=
+  _root_.GlobalTheory.UnitLemma.OrbitAll.isIso_stSum_eq h
 
 theorem IsIso.kapSum_eq {B₁ B₂ C₁ C₂ : InvAlg K} {φ₁ : B₁.A ≃ₐ[K.E] C₁.A} {φ₂ : B₂.A ≃ₐ[K.E] C₂.A}
-    (h₁ : IsIso φ₁) (h₂ : IsIso φ₂) : InvAlg.kapSum C₁ C₂ = InvAlg.kapSum B₁ B₂ := by
-  unfold InvAlg.kapSum
-  refine ((h₁.prod h₂).finsum_eq (fun x => K.eta (C₁.gramDet x.1) * (C₁.prod C₂).N x) fun x u => ?_).trans ?_
-  · have e1 := (_root_.GlobalTheory.UnitLemma.NormClass.N_norm_class K (C₁.prod C₂) x u).1
-    have e2 := (_root_.GlobalTheory.UnitLemma.NormClass.N_norm_class K C₁ x.1 (Units.map (MonoidHom.fst C₁.A C₂.A) u)).2
-    exact congrArg₂ (· * ·) e2 e1
-  · exact finsum_congr fun k => congrArg₂ (· * ·) (h₁.eta_eq _) ((h₁.prod h₂).N_eq _)
+    (h₁ : IsIso φ₁) (h₂ : IsIso φ₂) : InvAlg.kapSum C₁ C₂ = InvAlg.kapSum B₁ B₂ :=
+  _root_.GlobalTheory.UnitLemma.OrbitAll.isIso_kapSum_eq h₁ h₂
 
 theorem IsIso.identity {B₁ B₂ C₁ C₂ : InvAlg K} {φ₁ : B₁.A ≃ₐ[K.E] C₁.A} {φ₂ : B₂.A ≃ₐ[K.E] C₂.A}
-    (h₁ : IsIso φ₁) (h₂ : IsIso φ₂) (h : InvAlg.Identity C₁ C₂) : InvAlg.Identity B₁ B₂ := by
-  unfold InvAlg.Identity at h ⊢
-  rwa [h₁.kapSum_eq h₂, h₁.stSum_eq, h₂.stSum_eq, h₁.charpoly_eq_of_isIso, h₂.charpoly_eq_of_isIso] at h
+    (h₁ : IsIso φ₁) (h₂ : IsIso φ₂) (h : InvAlg.Identity C₁ C₂) : InvAlg.Identity B₁ B₂ :=
+  _root_.GlobalTheory.UnitLemma.OrbitAll.isIso_identity h₁ h₂ h
 
 theorem prod_aeval (B₁ B₂ : InvAlg K) (f : K.O[X]) :
     aeval (B₁.prod B₂).g f = ((aeval B₁.g f, aeval B₂.g f) : B₁.A × B₂.A) :=
-  Prod.ext (aeval_algHom_apply (AlgHom.fst K.O B₁.A B₂.A) (B₁.g, B₂.g) f).symm
-    (aeval_algHom_apply (AlgHom.snd K.O B₁.A B₂.A) (B₁.g, B₂.g) f).symm
+  _root_.GlobalTheory.UnitLemma.OrbitAll.prod_aeval B₁ B₂ f
 
 theorem prod_integral (B₁ B₂ : InvAlg K) (h₁ : IsIntegral K.O B₁.g) (h₂ : IsIntegral K.O B₂.g) :
     IsIntegral K.O (B₁.prod B₂).g :=
-  IsIntegral.pair (x := (B₁.g, B₂.g)) h₁ h₂
+  _root_.GlobalTheory.UnitLemma.OrbitAll.prod_integral B₁ B₂ h₁ h₂
 
 theorem eq_one_of_finrank_cut (B : InvAlg K) {e : B.A} (hi : IsIdempotentElem e) (he : B.σ e = e)
-    (h : Module.finrank K.E (cut B e he).A = 0) : e = 1 := by
-  have : Subsingleton (B.A ⧸ Ideal.span {e}) := (Module.finrank_zero_iff (R := K.E) (M := (cut B e he).A)).1 h
-  have h1 : (1 : B.A) ∈ Ideal.span {e} := Ideal.Quotient.eq_zero_iff_mem.1 (Subsingleton.elim _ _)
-  obtain ⟨a, ha⟩ := Ideal.mem_span_singleton'.1 h1
-  linear_combination (e - 1) * -ha + a * hi.eq
+    (h : Module.finrank K.E (cut B e he).A = 0) : e = 1 :=
+  _root_.GlobalTheory.UnitLemma.OrbitAll.eq_one_of_finrank_cut B hi he h
 
 theorem finrank_cut (B : InvAlg K) {e : B.A} (hi : IsIdempotentElem e) (he : B.σ e = e) :
     Module.finrank K.E B.A = Module.finrank K.E (cut B e he).A +
-      Module.finrank K.E (cut B (1 - e) (one_sub_fixed B he)).A := by
-  rw [(AlgEquiv.prodQuotientOfIsIdempotentElem K.E hi hi.one_sub (by simp)
-    (by simp [hi])).toLinearEquiv.finrank_eq, Module.finrank_prod]
-  rfl
+      Module.finrank K.E (cut B (1 - e) (one_sub_fixed B he)).A :=
+  _root_.GlobalTheory.UnitLemma.OrbitAll.finrank_cut B hi he
 
 theorem charpoly_eq_mul_charpoly_cut (B : InvAlg K) {e : B.A} (hi : IsIdempotentElem e) (he : B.σ e = e) :
-    B.P = (cut B e he).P * (cut B (1 - e) (one_sub_fixed B he)).P := by
-  rw [← prod_P, (isIso_cut B hi he).charpoly_eq_of_isIso]
+    B.P = (cut B e he).P * (cut B (1 - e) (one_sub_fixed B he)).P :=
+  _root_.GlobalTheory.UnitLemma.OrbitAll.charpoly_eq_mul_charpoly_cut B hi he
 
 theorem one_orbit (B : InvAlg K) (hu : B.g * B.σ B.g = 1) (hi : IsIntegral K.O B.g)
     (h : ∀ e ∈ Algebra.adjoin K.O ({B.g} : Set B.A), e * e = e → B.σ e = e → e = 0 ∨ e = 1) :
     (∃ e ∈ Algebra.adjoin K.O ({B.g} : Set B.A), e * e = e ∧ e + B.σ e = 1) ∨
-      IsLocalRing (Algebra.adjoin K.O ({B.g} : Set B.A)) := by
-  apply GlobalTheory.UnitLemma.OrbitAll.one_orbit <;> assumption
+      IsLocalRing (Algebra.adjoin K.O ({B.g} : Set B.A)) :=
+  _root_.GlobalTheory.UnitLemma.OrbitAll.one_orbit B hu hi h
 
-theorem identity_integral (hL : UnitLemmaLie) (hK : K.Odd) (n : ℕ) : ∀ B₁ B₂ : InvAlg K,
+theorem identity_integral (hL : UnitLemmaLie) (_hK : K.Odd) (n : ℕ) : ∀ B₁ B₂ : InvAlg K,
     Module.finrank K.E B₁.A + Module.finrank K.E B₂.A = n → B₁.g * B₁.σ B₁.g = 1 → B₂.g * B₂.σ B₂.g = 1 →
-    (B₁.P * B₂.P).Separable → IsIntegral K.O B₁.g → IsIntegral K.O B₂.g → InvAlg.Identity B₁ B₂ := by
-  induction n using Nat.strong_induction_on with
-  | _ n ih =>
-  intro B₁ B₂ hn u₁ u₂ hs i₁ i₂
-  by_cases h : ∀ e ∈ Algebra.adjoin K.O ({(B₁.prod B₂).g} : Set (B₁.prod B₂).A),
-      e * e = e → (B₁.prod B₂).σ e = e → e = 0 ∨ e = 1
-  · rcases one_orbit (B₁.prod B₂) (Prod.ext u₁ u₂) (prod_integral _ _ i₁ i₂) h with h | h
-    · exact _root_.GlobalTheory.UnitLemma.Swap.identity_of_swap K B₁ B₂ u₁ u₂ hs i₁ i₂ h
-    · exact _root_.GlobalTheory.UnitLemma.Unr.unitLemma_local_of_lie hL K hK B₁ B₂ u₁ u₂ hs i₁ i₂ h
-  push Not at h
-  obtain ⟨e, he, hee, hσ, h0, h1⟩ := h
-  rw [Algebra.adjoin_singleton_eq_range_aeval] at he
-  obtain ⟨f, hf⟩ := he
-  have hf : ((aeval B₁.g f, aeval B₂.g f) : B₁.A × B₂.A) = e := (prod_aeval B₁ B₂ f).symm.trans hf
-  obtain ⟨e₁, e₂⟩ := e
-  obtain ⟨f₁, f₂⟩ := Prod.ext_iff.1 hf
-  have j₁ : IsIdempotentElem e₁ := congrArg Prod.fst hee
-  have j₂ : IsIdempotentElem e₂ := congrArg Prod.snd hee
-  have s₁ : B₁.σ e₁ = e₁ := congrArg Prod.fst hσ
-  have s₂ : B₂.σ e₂ = e₂ := congrArg Prod.snd hσ
-  dsimp only at f₁ f₂
-  have r₁ := finrank_cut B₁ j₁ s₁
-  have r₂ := finrank_cut B₂ j₂ s₂
-  have p₁ : Module.finrank K.E (cut B₁ e₁ s₁).A + Module.finrank K.E (cut B₂ e₂ s₂).A ≠ 0 := fun hz =>
-    h1 (Prod.ext (eq_one_of_finrank_cut B₁ j₁ s₁ (Nat.add_eq_zero_iff.1 hz).1)
-      (eq_one_of_finrank_cut B₂ j₂ s₂ (Nat.add_eq_zero_iff.1 hz).2))
-  have p₂ : Module.finrank K.E (cut B₁ (1 - e₁) (one_sub_fixed B₁ s₁)).A +
-      Module.finrank K.E (cut B₂ (1 - e₂) (one_sub_fixed B₂ s₂)).A ≠ 0 := fun hz =>
-    h0 (Prod.ext
-      (sub_eq_self.1 (eq_one_of_finrank_cut B₁ j₁.one_sub (one_sub_fixed B₁ s₁) (Nat.add_eq_zero_iff.1 hz).1))
-      (sub_eq_self.1 (eq_one_of_finrank_cut B₂ j₂.one_sub (one_sub_fixed B₂ s₂) (Nat.add_eq_zero_iff.1 hz).2)))
-  rw [charpoly_eq_mul_charpoly_cut B₁ j₁ s₁, charpoly_eq_mul_charpoly_cut B₂ j₂ s₂, mul_mul_mul_comm] at hs
-  refine (isIso_cut B₁ j₁ s₁).identity (isIso_cut B₂ j₂ s₂) ?_
-  refine _root_.GlobalTheory.UnitLemma.ProdId.identity_prod K _ _ _ _ hs (cut_integral _ _ _ i₁) (cut_integral _ _ _ i₂) (cut_integral _ _ _ i₁)
-    (cut_integral _ _ _ i₂) ?_ ?_ ?_
-  · rw [← prod_P, ← prod_P] at hs ⊢
-    refine val_resultant _ _ hs.of_mul_left hs.of_mul_right
-      (_root_.GlobalTheory.UnitLemma.Unr.prod_integral _ _ (cut_integral _ _ _ i₁) (cut_integral _ _ _ i₂))
-      (_root_.GlobalTheory.UnitLemma.Unr.prod_integral _ _ (cut_integral _ _ _ i₁) (cut_integral _ _ _ i₂)) f ?_ ?_
-    · rw [prod_aeval, cut_aeval, cut_aeval, f₁, f₂]
-      exact Prod.ext (Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.mem_span_singleton_self _))
-        (Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.mem_span_singleton_self _))
-    · rw [prod_aeval, cut_aeval, cut_aeval, f₁, f₂]
-      exact Prod.ext (Ideal.Quotient.eq.2 (Ideal.mem_span_singleton_self (1 - e₁))).symm
-        (Ideal.Quotient.eq.2 (Ideal.mem_span_singleton_self (1 - e₂))).symm
-  · exact ih _ (by omega) _ _ rfl (cut_unitary _ _ _ u₁) (cut_unitary _ _ _ u₂) hs.of_mul_left
-      (cut_integral _ _ _ i₁) (cut_integral _ _ _ i₂)
-  · exact ih _ (by omega) _ _ rfl (cut_unitary _ _ _ u₁) (cut_unitary _ _ _ u₂) hs.of_mul_right
-      (cut_integral _ _ _ i₁) (cut_integral _ _ _ i₂)
+    (B₁.P * B₂.P).Separable → IsIntegral K.O B₁.g → IsIntegral K.O B₂.g → InvAlg.Identity B₁ B₂ :=
+  _root_.GlobalTheory.UnitLemma.OrbitAll.identity_integral hL n
 
-theorem unitLemmaGroup_of_lie : UnitLemmaLie → UnitLemmaGroup := by
-  intro hL K hK B₁ B₂ u₁ u₂ hs
-  by_cases hi : IsIntegral K.O B₁.g ∧ IsIntegral K.O B₂.g
-  · exact identity_integral hL hK _ B₁ B₂ rfl u₁ u₂ hs hi.1 hi.2
-  · obtain ⟨h1, h2⟩ := _root_.GlobalTheory.UnitLemma.kapSum_eq_zero_and_stSum_mul_eq_zero_of_not_isIntegral K B₁ B₂ hi
-    unfold InvAlg.Identity
-    rw [h1, h2, mul_zero]
+theorem unitLemmaGroup_of_lie : UnitLemmaLie → UnitLemmaGroup :=
+  fun hL K _ => _root_.GlobalTheory.UnitLemma.OrbitAll.identity_of_lie hL K
 
 end GlobalTheory.UnitLemma.Orbit
 end -- clump:auto
@@ -1006,7 +847,7 @@ theorem valsAt_torus_surjective : ∀ (G : Type) [CommGroup G] (τ : G →* G), 
     split_ifs with hij
     · subst hij; rw [hy1]; rfl
     · rw [hy2 j (e i) fun h => hij (he _ _ h)]; rfl
-  simp only [hc, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [hc, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 end GlobalTheory.UnitLemma
 end -- clump:auto
@@ -1085,8 +926,7 @@ theorem torus_mod_intUnits_structure : ∀ (K : UQ) (B : InvAlg K), B.LieReg →
     rw [B.σ_alg, ha.2.2]
   have hαpos : ∀ m, 0 < Multiplicative.toAdd (w m α) := by
     intro m
-    by_contra hle
-    push_neg at hle
+    by_contra! hle
     have h1 : 0 ≤ Multiplicative.toAdd (w m α⁻¹) := by
       rw [map_inv, toAdd_inv]
       linarith
@@ -1304,23 +1144,13 @@ namespace InvAlg
 
 variable {K : UQ} (B : InvAlg K)
 
-theorem torusOrb_mem_mulLat_unit (u : B.Aˣ) (L : Submodule K.O B.A) (y : B.A) :
-    y ∈ mulLat K.O (u : B.A) L ↔ ((u⁻¹ : B.Aˣ) : B.A) * y ∈ L := by
-  unfold mulLat
-  rw [Submodule.mem_map]
-  constructor
-  · rintro ⟨z, hz, rfl⟩
-    simpa [LinearMap.mulLeft_apply, ← mul_assoc] using hz
-  · intro h
-    exact ⟨_, h, by simp [LinearMap.mulLeft_apply, ← mul_assoc]⟩
-
 theorem torusOrb_mulLat_one (L : Submodule K.O B.A) : mulLat K.O (1 : B.A) L = L := by
-  ext y; simpa using torusOrb_mem_mulLat_unit B 1 L y
+  ext y; simpa using GlobalTheory.UnitLemma.TorusAction.mem_mulLat_unit B 1 L y
 
 theorem torusOrb_mulLat_mul (s t : B.Aˣ) (L : Submodule K.O B.A) :
     mulLat K.O ((s : B.A)) (mulLat K.O (t : B.A) L) = mulLat K.O ((s * t : B.Aˣ) : B.A) L := by
   ext y
-  rw [torusOrb_mem_mulLat_unit, torusOrb_mem_mulLat_unit, torusOrb_mem_mulLat_unit, mul_inv_rev, Units.val_mul, mul_assoc]
+  rw [GlobalTheory.UnitLemma.TorusAction.mem_mulLat_unit, GlobalTheory.UnitLemma.TorusAction.mem_mulLat_unit, GlobalTheory.UnitLemma.TorusAction.mem_mulLat_unit, mul_inv_rev, Units.val_mul, mul_assoc]
 
 theorem torusOrb_mulLat_inv (t : B.Aˣ) (L : Submodule K.O B.A) :
     mulLat K.O ((t⁻¹ : B.Aˣ) : B.A) (mulLat K.O (t : B.A) L) = L := by

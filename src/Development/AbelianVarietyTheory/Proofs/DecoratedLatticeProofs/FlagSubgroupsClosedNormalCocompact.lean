@@ -48,7 +48,6 @@ import Mathlib.Topology.Sheaves.Init
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf
 
 noncomputable section
@@ -64,10 +63,8 @@ local instance t2AE : T2Space (AE D) := (Formalism.IndefR.Eqv.ae_facts D).2.1
 
 local instance topAddAE : IsTopologicalAddGroup (AE D) := inferInstance
 
-set_option synthInstance.maxHeartbeats 400000 in
 local instance contSubVec (n : ℕ) : ContinuousSub (Fin n → AE D) := inferInstance
 
-set_option synthInstance.maxHeartbeats 400000 in
 local instance contSubMx (m n : ℕ) : ContinuousSub (Mx D m n) := inferInstance
 
 local instance t2Mx (m n : ℕ) : T2Space (Mx D m n) := (lattice_Mx D m n).2.2.2.1
@@ -312,23 +309,23 @@ theorem unip_cols_cocompact : ∀ (D : D7) (ρ : ℕ) (j : Fin ρ), ∃ K : Set 
     intro i l
     refine ⟨fun h => ?_, ?_⟩
     · change incA D (GlobalTheory.UnitU.row u.1.1 pick i l) = 0
-      rw [GlobalTheory.UnitU.row_eq, if_pos h, map_zero]
+      rw [GlobalTheory.UnitU.row_eq, ite_eq_left h, map_zero]
     · change incA D (GlobalTheory.UnitU.row u.1.1 pick i i) = 1
-      rw [GlobalTheory.UnitU.row_eq, if_neg (lt_irrefl i), if_pos rfl, map_one]
+      rw [GlobalTheory.UnitU.row_eq, ite_eq_right (lt_irrefl i), ite_eq_left rfl, map_one]
   let w : UX D ρ := ⟨GlobalTheory.UnitU.toUnit (rat δ) hδ, hδ⟩
   have hwcol : ∀ l : Fin ρ, l ≤ j → ∀ s : Fin ρ, w.1.1 s l = (1 : Matrix (Fin ρ) (Fin ρ) (AE D)) s l := by
     intro l hl s
     change incA D (GlobalTheory.UnitU.row u.1.1 pick s l) = _
     rw [GlobalTheory.UnitU.row_eq]
     rcases lt_trichotomy l s with h | rfl | h
-    · rw [if_pos h, map_zero, Matrix.one_apply_ne h.ne']
-    · rw [if_neg (lt_irrefl _), if_pos rfl, map_one, Matrix.one_apply_eq]
+    · rw [ite_eq_left h, map_zero, Matrix.one_apply_ne h.ne']
+    · rw [ite_eq_right (lt_irrefl _), ite_eq_left rfl, map_one, Matrix.one_apply_eq]
     · have h0 : (∑ l' : Fin ρ, if l' < l then incA D (GlobalTheory.UnitU.row u.1.1 pick s l') * u.1.1 l' l else 0) = 0 := by
         refine Finset.sum_eq_zero fun l' _ => ?_
         split_ifs with hl'
         · rw [hucol l hl l', Matrix.one_apply_ne hl'.ne, mul_zero]
         · rfl
-      rw [if_neg (not_lt.2 h.le), if_neg h.ne', Matrix.one_apply_ne h.ne, h0, hp0, map_zero]
+      rw [ite_eq_right (not_lt.2 h.le), ite_eq_right h.ne', Matrix.one_apply_ne h.ne, h0, hp0, map_zero]
   have hγcol : ∀ l : Fin ρ, l ≤ j → ∀ s : Fin ρ, (w⁻¹).1.1 s l = (1 : Matrix (Fin ρ) (Fin ρ) (AE D)) s l := by
     intro l hl s
     have h1 : ((w⁻¹).1.1 * w.1.1) s l = (w⁻¹).1.1 s l := by
@@ -349,7 +346,7 @@ theorem unip_cols_cocompact : ∀ (D : D7) (ρ : ℕ) (j : Fin ρ), ∃ K : Set 
       change (rat δ * u.1.1) i l ∈ C
       rw [GlobalTheory.UnitU.mul_apply_of_uni δ hu i l]
       change incA D (GlobalTheory.UnitU.row u.1.1 pick i l) + _ ∈ C
-      rw [GlobalTheory.UnitU.row_eq, if_neg (not_lt.2 hil.le), if_neg hil.ne']
+      rw [GlobalTheory.UnitU.row_eq, ite_eq_right (not_lt.2 hil.le), ite_eq_right hil.ne']
       exact hp _
     · exact Or.inr (Or.inr (hk i i).2)
     · exact Or.inr (Or.inl ((hk i l).1 hil))

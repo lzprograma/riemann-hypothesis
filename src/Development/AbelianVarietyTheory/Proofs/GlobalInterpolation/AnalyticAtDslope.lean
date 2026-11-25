@@ -8,53 +8,11 @@ public import Mathlib.NumberTheory.LSeries.DirichletContinuation
 import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LogDerivEqOrderDivAddAnalytic
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.BdIntEqZeroOfPrimitive
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CompletedLFunctionNeZeroOfReNonpos
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
 import Mathlib.NumberTheory.LSeries.Nonvanishing
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -62,12 +20,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology
 
 namespace GlobalTheory.ExplicitRect
-
-theorem analyticAt_dslope {f : ℂ → ℂ} {p : ℂ} (hf : AnalyticAt ℂ f p) :
-    AnalyticAt ℂ (dslope f p) p := hf.dslope p
-
-theorem eq_add_dslope (f : ℂ → ℂ) (p s : ℂ) : f s = f p + (s - p) * dslope f p s := by
-  simpa only [smul_eq_mul, add_comm] using (eq_add_of_sub_eq (sub_smul_dslope f p s).symm)
 
 theorem logDeriv_pole {f : ℂ → ℂ} {p : ℂ} (hf : AnalyticAt ℂ f p)
     (hn : analyticOrderAt f p ≠ ⊤) : ∃ g : ℂ → ℂ, AnalyticAt ℂ g p ∧ ∀ᶠ s in 𝓝[≠] p,
@@ -109,23 +61,11 @@ theorem expand_zero {φ h : ℂ → ℂ} {m : ℂ} {u : ℝ} (hu : 0 < u)
   field_simp [show s ≠ 0 from hs0]
   ring
 
-theorem analyticOff {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
-    AnalyticOnNhd ℂ (LFunction χ) ({1}ᶜ : Set ℂ) := by
-  exact GlobalTheory.Mem.An.ZeroWindow.analyticOff χ
-
-theorem exists_entire {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
-    ∃ F : ℂ → ℂ, Differentiable ℂ F ∧ F 1 ≠ 0 ∧ ∀ s, s ≠ 1 → LFunction χ s = 0 → F s = 0 := by
-  exact GlobalTheory.Mem.An.ZeroWindow.exists_entire χ
-
 theorem finite_zeros {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (T : ℝ) :
     {ρ : ℂ | 0 < ρ.re ∧ ρ.re < 1 ∧ |ρ.im| < T ∧ LFunction χ ρ = 0}.Finite := by
   refine (GlobalTheory.Mem.An.ZeroWindow.finite_zeros χ 0 T).subset ?_
   intro ρ hρ
   exact ⟨hρ.1, hρ.2.1, by simpa using hρ.2.2.1.le, hρ.2.2.2⟩
-
-theorem order_ne_top {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {ρ : ℂ} (hρ : ρ ≠ 1) :
-    analyticOrderAt (LFunction χ) ρ ≠ ⊤ := by
-  exact GlobalTheory.Mem.An.ZeroWindow.order_ne_top χ hρ
 
 open scoped Classical in
 /-- At one, the logarithmic derivative has residue `-1` for every principal
@@ -227,7 +167,7 @@ theorem residue_identity : ∀ (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ
         simp only [S, Finset.coe_insert, Set.mem_insert_iff, Finset.mem_coe, Set.Finite.mem_toFinset,
           Set.mem_ofPred_eq]
         exact Or.inr (Or.inr ⟨by linarith, by linarith, hI', hL⟩)
-    have hLa : AnalyticAt ℂ (LFunction χ) s := analyticOff χ s hs1
+    have hLa : AnalyticAt ℂ (LFunction χ) s := GlobalTheory.Mem.An.ZeroWindow.analyticOff χ s hs1
     have hd1 : DifferentiableAt ℂ (deriv (LFunction χ)) s := hLa.deriv.differentiableAt
     have hd2 : DifferentiableAt ℂ (fun s : ℂ => (u : ℂ) ^ s) s := (analyticAt_cpow hu0 s).differentiableAt
     exact (((hd1.div hLa.differentiableAt hLs).neg.mul hd2).div differentiableAt_id hs0).differentiableWithinAt
@@ -247,7 +187,7 @@ theorem residue_identity : ∀ (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ
       exact ⟨a, G, hG, by rw [hr]; exact hfe⟩
     · have hp1 : p ≠ 1 := by rintro rfl; simp at hpZ
       have hp0 : p ≠ 0 := by rintro rfl; simp at hpZ
-      obtain ⟨g, hg, hφp⟩ := logDeriv_pole (analyticOff χ p hp1) (order_ne_top χ hp1)
+      obtain ⟨g, hg, hφp⟩ := logDeriv_pole (GlobalTheory.Mem.An.ZeroWindow.analyticOff χ p hp1) (GlobalTheory.Mem.An.ZeroWindow.order_ne_top χ hp1)
       obtain ⟨a, G, hG, hfe⟩ := expand_simple
         (φ := fun s => deriv (LFunction χ) s / LFunction χ s) hu0 hp0 hg hφp
       have hr : r p = -((analyticOrderNatAt (LFunction χ) p : ℕ) * ((u : ℂ) ^ p / p)) := by
@@ -264,7 +204,7 @@ theorem residue_identity : ∀ (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ
   simp only [e]
   refine key.trans ?_
   have hr1 : r 1 = if N = 1 then (u : ℂ) else 0 := by
-    simp only [r, if_pos]
+    simp only [r, ite_eq_left]
     split_ifs <;> simp
   have hr0 : r 0 = -(m * (Real.log u : ℂ) + h 0) := by simp [r]
   have hrZ : ∑ p ∈ hZfin.toFinset, r p =

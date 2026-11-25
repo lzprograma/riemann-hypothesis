@@ -14,63 +14,11 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HighestW
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SpinGlRelationsAdjoint
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SpinTensorHighestWeight
 public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.LinearAlgebra.Matrix.CharP
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLoc
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.Style
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.SingleMulJmComm
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.IsMultZero
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Data.Fin.Tuple.Sort
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -116,11 +64,11 @@ theorem spinM_vacuum_lowest : ∀ {n : ℕ} {ι : Type} [Fintype ι] [DecidableE
       (if e < a then (2 : ℂ) else if e = a then 1 else 0) • q := by
     intro a e
     rcases lt_trichotomy e a with h | h | h
-    · rw [if_pos h, anti a e e a, hq e a h]
+    · rw [ite_eq_left h, anti a e e a, hq e a h]
       simp
     · subst h
       have h2 := anti e e e e
-      simp only [and_self, if_true] at h2
+      simp only [and_self, ite_true] at h2
       have h3 : (2 : ℂ) • (c e e *ᵥ (c e e *ᵥ q)) = (2 : ℂ) • q := by
         rw [two_smul]
         nth_rewrite 1 [h2]
@@ -128,7 +76,7 @@ theorem spinM_vacuum_lowest : ∀ {n : ℕ} {ι : Type} [Fintype ι] [DecidableE
         abel
       have h4 := smul_right_injective (ι → ℂ) (two_ne_zero : (2 : ℂ) ≠ 0) h3
       simpa using h4
-    · rw [if_neg (not_lt.mpr h.le), if_neg h.ne', hq a e h]
+    · rw [ite_eq_right (not_lt.mpr h.le), ite_eq_right h.ne', hq a e h]
       simp
   have hs : ∀ a : Fin n, ∑ e : Fin n, (if e < a then (2 : ℂ) else if e = a then 1 else 0) =
       2 * ((a : ℕ) : ℂ) + 1 := by
@@ -147,7 +95,7 @@ theorem spinM_vacuum_lowest : ∀ {n : ℕ} {ι : Type} [Fintype ι] [DecidableE
     simp [Fin.card_Iio, mul_comm]
   refine ⟨fun a => ?_, fun a b hab => ?_⟩
   · unfold spinM
-    rw [if_pos rfl, Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec, sumv]
+    rw [ite_eq_left rfl, Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec, sumv]
     simp only [hT]
     rw [← Finset.sum_smul, hs, smul_smul, ← sub_smul]
     congr 1
@@ -155,14 +103,14 @@ theorem spinM_vacuum_lowest : ∀ {n : ℕ} {ι : Type} [Fintype ι] [DecidableE
     push_cast
     ring
   · unfold spinM
-    rw [if_neg hab.ne', sub_zero, Matrix.smul_mulVec, sumv]
+    rw [ite_eq_right hab.ne', sub_zero, Matrix.smul_mulVec, sumv]
     have : ∀ e : Fin n, c b e *ᵥ (c e a *ᵥ q) = 0 := by
       intro e
       rcases lt_trichotomy e a with h | h | h
-      · rw [anti b e e a, if_neg (fun hh => hab.ne' hh.1), hq e b (h.trans hab)]
+      · rw [anti b e e a, ite_eq_right (fun hh => hab.ne' hh.1), hq e b (h.trans hab)]
         simp
       · subst h
-        rw [anti b e e e, if_neg (fun hh => hab.ne' hh.1), hq e b hab]
+        rw [anti b e e e, ite_eq_right (fun hh => hab.ne' hh.1), hq e b hab]
         simp
       · rw [hq a e h]
         simp
@@ -260,17 +208,17 @@ theorem exists_fock (m : ℕ) : ∃ (ι : Type) (_ : Fintype ι) (_ : DecidableE
         induction r using Fin.cases with
         | zero =>
           simp only [Fin.cases_zero, conjTranspose_kronecker, hGh, ← mul_kronecker_mul, hG,
-            ← kronecker_add, annM_car, if_true, one_kronecker_one]
+            ← kronecker_add, annM_car, ite_true, one_kronecker_one]
         | succ r =>
           have hne : (0 : Fin (m + 1)) ≠ r.succ := (Fin.succ_ne_zero r).symm
           simp only [Fin.cases_zero, Fin.cases_succ, conjTranspose_kronecker, conjTranspose_one,
-            ← mul_kronecker_mul, mul_one, one_mul, ← add_kronecker, hGAh, zero_kronecker, if_neg hne]
+            ← mul_kronecker_mul, mul_one, one_mul, ← add_kronecker, hGAh, zero_kronecker, ite_eq_right hne]
       | succ p =>
         induction r using Fin.cases with
         | zero =>
           have hne : p.succ ≠ (0 : Fin (m + 1)) := Fin.succ_ne_zero p
           simp only [Fin.cases_zero, Fin.cases_succ, conjTranspose_kronecker, hGh,
-            ← mul_kronecker_mul, mul_one, one_mul, ← add_kronecker, if_neg hne]
+            ← mul_kronecker_mul, mul_one, one_mul, ← add_kronecker, ite_eq_right hne]
           rw [add_comm, hGA, zero_kronecker]
         | succ r =>
           simp only [Fin.cases_succ, conjTranspose_kronecker, conjTranspose_one,
@@ -341,18 +289,18 @@ theorem coef_rel {n : ℕ} {s : ℂ} (hs : s * s = 2) (a b d e : Fin n) :
   · have h1 : ¬ (a = d ∧ b = d) := by rintro ⟨rfl, rfl⟩; exact lt_irrefl _ hab
     simp [modeOf_lt hab, modeOf_self, h1]
   · simp only [modeOf_lt hab, modeOf_gt hde, Prod.mk.injEq, coefA, coefC, hab, hde, lt_asymm hab,
-      lt_asymm hde, if_true, if_false]
+      lt_asymm hde, ite_true, ite_false]
     simp [hs]
   · have h1 : ¬ (a = e ∧ a = d) := by rintro ⟨rfl, rfl⟩; exact lt_irrefl _ hde
     have h2 : ¬ (a = d ∧ a = e) := fun h => h1 ⟨h.2, h.1⟩
     simp [modeOf_lt hde, modeOf_self, h1, h2]
-  · simp only [modeOf_self, Prod.mk.injEq, coefA, coefC, lt_irrefl, if_false, and_self]
+  · simp only [modeOf_self, Prod.mk.injEq, coefA, coefC, lt_irrefl, ite_false, and_self]
     split_ifs <;> norm_num
   · have h1 : ¬ (a = e ∧ a = d) := by rintro ⟨rfl, rfl⟩; exact lt_irrefl _ hde
     have h3 : ¬ (a = d ∧ a = e) := fun h => h1 ⟨h.2, h.1⟩
     simp [modeOf_gt hde, modeOf_self, h1]
   · simp only [modeOf_gt hab, modeOf_lt hde, Prod.mk.injEq, coefA, coefC, hab, hde, lt_asymm hab,
-      lt_asymm hde, if_true, if_false]
+      lt_asymm hde, ite_true, ite_false]
     by_cases h : b = d ∧ a = e
     · simp [h, hs]
     · have h' : ¬ (a = e ∧ b = d) := fun g => h ⟨g.2, g.1⟩
@@ -404,8 +352,7 @@ theorem exists_cliff_model : ∀ n : ℕ, ∃ (ι : Type) (_ : Fintype ι) (_ : 
       star_coefC hs', modeOf_comm a b]
     rw [add_comm]
   · obtain ⟨i, j, hij⟩ : ∃ i j, Q i j ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hQ (by ext i j; exact h i j)
     refine ⟨fun i => Q i j, fun h => hij (congrFun h i), ?_⟩
     intro a b hab
@@ -415,7 +362,7 @@ theorem exists_cliff_model : ∀ n : ℕ, ∃ (ι : Type) (_ : Fintype ι) (_ : 
       have := congrFun (congrFun hM k) j
       simpa [Matrix.mul_apply, mulVec, dotProduct] using this
     apply hcol
-    simp only [coefA, coefC, hab, lt_asymm hab, if_true, if_false, zero_smul, add_zero,
+    simp only [coefA, coefC, hab, lt_asymm hab, ite_true, ite_false, zero_smul, add_zero,
       smul_mul_assoc]
     simp [A, hv]
 
@@ -448,9 +395,9 @@ theorem permM_conjTranspose (w : Equiv.Perm (Fin n)) : (permM w)ᴴ = permM w⁻
   simp only [permM, Matrix.conjTranspose_apply, Matrix.of_apply]
   by_cases h : j = w i
   · have h2 : i = w⁻¹ j := by subst h; simp
-    rw [if_pos h, if_pos h2]; simp
+    rw [ite_eq_left h, ite_eq_left h2]; simp
   · have h2 : ¬ i = w⁻¹ j := fun e => h (by rw [e]; simp)
-    rw [if_neg h, if_neg h2]; simp
+    rw [ite_eq_right h, ite_eq_right h2]; simp
 
 theorem permM_mul_single (w : Equiv.Perm (Fin n)) (c d : Fin n) :
     permM w * Matrix.single c d (1 : ℂ) = Matrix.single (w c) d 1 := by
@@ -479,7 +426,7 @@ theorem single_mul_permM (v : Equiv.Perm (Fin n)) (c d : Fin n) :
         simp [h2, h3]
     · simp [h1]
   · intro b _ hb
-    rw [if_neg (fun q => hb q.2.symm)]; simp
+    rw [ite_eq_right (fun q => hb q.2.symm)]; simp
   · simp
 
 theorem permM_single (w : Equiv.Perm (Fin n)) (c d : Fin n) :
@@ -492,10 +439,10 @@ theorem permM_mul (w v : Equiv.Perm (Fin n)) : permM w * permM v = permM (w * v)
   rw [Finset.sum_eq_single (v j)]
   · have e : (w * v) j = w (v j) := rfl
     by_cases h : i = w (v j)
-    · rw [if_pos h, if_pos rfl, if_pos (h.trans e.symm)]; simp
-    · rw [if_neg h, zero_mul, if_neg (fun q => h (q.trans e))]
+    · rw [ite_eq_left h, ite_eq_left rfl, ite_eq_left (h.trans e.symm)]; simp
+    · rw [ite_eq_right h, zero_mul, ite_eq_right (fun q => h (q.trans e))]
   · intro b _ hb
-    rw [if_neg hb]; simp
+    rw [ite_eq_right hb]; simp
   · simp
 
 theorem permM_one : permM (1 : Equiv.Perm (Fin n)) = 1 := by
@@ -503,8 +450,8 @@ theorem permM_one : permM (1 : Equiv.Perm (Fin n)) = 1 := by
   simp only [permM, Matrix.of_apply, Matrix.one_apply]
   have e : (1 : Equiv.Perm (Fin n)) j = j := rfl
   by_cases h : i = j
-  · rw [if_pos (h.trans e.symm), if_pos h]
-  · rw [if_neg (fun q => h (q.trans e)), if_neg h]
+  · rw [ite_eq_left (h.trans e.symm), ite_eq_left h]
+  · rw [ite_eq_right (fun q => h (q.trans e)), ite_eq_right h]
 
 theorem Jm_true : ReciprocityTheory.ChartRestriction.DS.Jm (fun _ : Fin n => true) = 1 := by
   simp [ReciprocityTheory.ChartRestriction.DS.Jm]
@@ -599,13 +546,13 @@ theorem extremal_module : ∀ {n : ℕ} (κ : Fin n → ℝ), Antitone κ → �
     simp only [ContinuousLinearMap.mul_apply, h0, map_zero] at this
     exact hw0 this.symm
   · intro x
-    rw [hEval, unit_translate, T.w_wt x, if_pos rfl, map_smul, ← add_smul]
+    rw [hEval, unit_translate, T.w_wt x, ite_eq_left rfl, map_smul, ← add_smul]
     congr 1
     push_cast
     ring
   · intro x y hxy
     have hne : w x ≠ w y := fun e => (ne_of_lt hxy) (w.injective e)
-    rw [hEval, unit_translate, T.w_hw x y hxy rfl, if_neg hne]
+    rw [hEval, unit_translate, T.w_hw x y hxy rfl, ite_eq_right hne]
     simp
 
 end GlobalTheory.CompanionTheory.RealCount.Extremal

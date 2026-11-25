@@ -20,20 +20,6 @@ open scoped ComplexOrder
 
 namespace Formalism.L2.GlobalTheoryTheory.TraceIntegrality.Cc
 
-section Norm
-
-variable {E : Type} [Field E] [NumberField E]
-
-end Norm
-
-section Had
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E]
-
-open Formalism.BasicNotions
-
-end Had
-
 section Coord
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E]
@@ -88,8 +74,6 @@ open NumberField Matrix
 namespace Formalism.L2.GlobalTheoryTheory.ColValS
 
 open Formalism.BasicNotions Formalism.UG Formalism.L2.Forms Formalism.MainNotions.GlobalTheoryTheory.Inhab
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem map_inv_mat {K L : Type} [Field K] [Field L] (f : K →+* L) {n : ℕ} (A : Matrix (Fin n) (Fin n) K) (hA : A.det ≠ 0) :
     A⁻¹.map f = (A.map f)⁻¹ := by

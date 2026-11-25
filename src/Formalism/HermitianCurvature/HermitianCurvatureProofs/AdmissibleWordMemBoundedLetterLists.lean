@@ -7,52 +7,10 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PeriodLattic
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PoissonJointFirstReduction
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.MeasureTheory.Integral.Pi
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBJoint
 
 @[expose] public section
 
@@ -119,10 +77,6 @@ theorem block_schur {X ι : Type} [Fintype ι] (Y : Finset X) (κ : X → X → 
   set W := ∑ p ∈ Y, ∑ q ∈ Y, κ p q * ∏ v, w v p q
   set A := (∑ p ∈ Y, ∑ q ∈ Y, κ p q * ∏ v, a v p q).re
   set B := (∑ p ∈ Y, ∑ q ∈ Y, κ p q * ∏ v, b v p q).re
-  have hW : ‖W‖ ^ 2 ≤ A * B := hcs
-  have hA0 : 0 ≤ A := hA
-  have hB0 : 0 ≤ B := hB'
-  have hn := norm_nonneg W
   nlinarith [sq_nonneg (A - B), sq_nonneg (‖W‖ - (A + B) / 2)]
 
 section words
@@ -255,7 +209,7 @@ theorem rhs_eval (S : C.HidaSetting E Wp Wq) (ε : ℝ) (i : ℕ) (hi : i - 1 �
     congr 1
     refine Finset.sum_congr rfl fun w' _ => ?_
     congr 1
-    simp only [KB.gN, C.HidaSetting.gram, if_pos hi, Finset.prod_div_distrib]
+    simp only [KB.gN, C.HidaSetting.gram, ite_eq_left hi, Finset.prod_div_distrib]
     congr 1
     simp only [C.Word.size, C.HidaSetting.sizeAt, Complex.ofReal_prod]
   have e2 : ∑ h ∈ Y, ∑ h' ∈ Y, κ h h' * ∏ v, ((s v : ℂ) * ∑ a ∈ U v, (θ v a : ℂ) *
@@ -299,9 +253,9 @@ theorem waveV_core (S : C.HidaSetting E Wp Wq) (X : ℕ → Fin S.f → ℝ) (hW
     intro sg A v
     by_cases hv : v ∈ A
     · cases sg
-      · simp only [U, th, hv, if_true, Bool.false_eq_true, if_false]; exact hUm' v
-      · simp only [U, th, hv, if_true]; exact hUp' v
-    · simp only [U, th, hv, if_false]; exact locProb_single S w v _ (by omega)
+      · simp only [U, th, hv, ite_true, Bool.false_eq_true, ite_false]; exact hUm' v
+      · simp only [U, th, hv, ite_true]; exact hUp' v
+    · simp only [U, th, hv, ite_false]; exact locProb_single S w v _ (by omega)
   have hP : ∀ sg A, TB.IsProb (S.base.Wb (S.base.cnt w + C.Kst)) (fun w' : S.W => ∏ v, th sg A v (w'.1 v)) :=
     fun sg A => isProb_prod S _ hcnt (U sg A) (th sg A) (hU sg A)
   refine ⟨fun A w' => ((∏ v, th true A v (w'.1 v)) + ∏ v, th false A v (w'.1 v)) / 2, fun A => ?_, ?_⟩
@@ -335,12 +289,12 @@ theorem waveV_core (S : C.HidaSetting E Wp Wq) (X : ℕ → Fin S.f → ℝ) (hW
     · obtain ⟨-, u, hu, hB⟩ := hblk v ε hε (L v) (Y.image (C.loc (S.σ v))) (hYv v)
       refine ⟨u * L v ^ C.Kst, by simp [hv, hu, norm_pow], ?_⟩
       rw [haK true v, haK false v]
-      simp only [hv, if_true, Bool.false_eq_true, if_false]
+      simp only [hv, ite_true, Bool.false_eq_true, ite_false]
       exact hB
     · obtain ⟨hB0, -⟩ := hblk v ε hε (L v) (Y.image (C.loc (S.σ v))) (hYv v)
       refine ⟨1, by simp [hv], ?_⟩
       rw [haK true v, haK false v]
-      simp only [hv, if_false, one_mul]
+      simp only [hv, ite_false, one_mul]
       exact hB0
   choose c hcn hcB using hc
   have hS := block_schur Y κ hκ (fun v p q => aK true v (C.loc (S.σ v) p) (C.loc (S.σ v) q))
@@ -399,20 +353,7 @@ theorem psiInf_eq_prod (S : C.HidaSetting E Wp Wq) (l : E) (c : J.CV E) :
 
 theorem prod_dlB (S : C.HidaSetting E Wp Wq) (hg : 0 < S.g) (hU : S6.Unram E) (i : ℕ) :
     ∏ _v : Fin S.f, KB.dlB S i 1 = ZLattice.covolume (J.eLat E (S6.perLat E S.g (S6.nuBlock S.G.r i 1) 1) 1) := by
-  rw [_root_.Formalism.FourierDecayAlt.P.Dx2.NH.nhat E hU S.g _ 1 hg]
-  have hf : S.f = S6.deg E := by
-    have h1 := (Formalism.FourierDecayAlt.P.degreeFacts_statement E).2.1
-    have h2 : Fintype.card (Fin S.f) = Fintype.card (InfinitePlace E) := Fintype.card_congr S.pl
-    rw [Fintype.card_fin] at h2
-    omega
-  rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin, hf]
-  unfold KB.dlB D.deG
-  have hrd := Formalism.FourierDecayAlt.P.Jx4.rd_pos E
-  have hg' : (0 : ℝ) < (S.g : ℝ) := by exact_mod_cast hg
-  have e : S6.rd E ^ (2 * S6.nuBlock (S.G.r : ℤ) (i : ℤ) (1 : ℤ)) / (2 / (S6.rd E * (S.g : ℝ) ^ 3)) =
-      S6.rd E ^ (2 * S6.nuBlock (S.G.r : ℤ) (i : ℤ) (1 : ℤ)) * (S6.rd E / 2) * (S.g : ℝ) ^ 3 := by
-    field_simp
-  rw [Nat.cast_one, e, mul_pow, mul_pow, ← zpow_natCast, ← zpow_mul, ← pow_mul]
+  apply _root_.Formalism.FourierDecayAlt.P.PBJoint.prod_dlB <;> assumption
 
 theorem nhat_eq_nhatV (S : C.HidaSetting E Wp Wq) (hg : 0 < S.g) (hU : S6.Unram E) (hInt : KB.IntAll S)
     (ε : ℝ) (hε : 0 < ε) (i : ℕ) (hi1 : 1 ≤ i) (hi2 : i ≤ S.G.r + 1) (w : S.W) (Y : Finset (TB.Pt E))
@@ -492,10 +433,6 @@ theorem nhat_eq_nhatV (S : C.HidaSetting E Wp Wq) (hg : 0 < S.g) (hU : S6.Unram 
     ring
   have hcv := prod_dlB S hg hU i
   have hrd := Formalism.FourierDecayAlt.P.Jx4.rd_pos E
-  have hdl0 : KB.dlB S i 1 ≠ 0 := by
-    unfold KB.dlB D.deG
-    have hg' : (0 : ℝ) < (S.g : ℝ) := by exact_mod_cast hg
-    positivity
   have eR : KB.NhatV S ε i w Y κ (fun v => S.σ v l) = ∑ h : Y, ∑ h' : Y, κ h h' *
       ∏ v, ((KB.dlB S i 1 : ℂ)⁻¹ * ((∫ c, φ v h h' c * ψ v c) / (S.sizeAt v (w.1 v) : ℂ))) := by
     unfold KB.NhatV
@@ -523,7 +460,6 @@ end Formalism.FourierDecayAlt.P.PBB
 
 namespace Formalism.FourierDecayAlt.P
 
-open Formalism.FourierDecayAlt
 
 theorem plane_wave_bound : Formalism.FourierDecayAlt.KB.WaveV :=
   fun _ _ _ _ _ _ _ _ _ _ S X hW ε hε i hi1 hi2 w _ hcnt => PBB.waveV_core S X hW ε hε i hi1 hi2 w hcnt

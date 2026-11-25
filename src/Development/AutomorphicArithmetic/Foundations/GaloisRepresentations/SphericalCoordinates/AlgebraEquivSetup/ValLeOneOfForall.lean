@@ -2,46 +2,7 @@ module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMaxCompactGLOfCommuteEtaleCharpolyBounded
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.Valuation.AlgebraInstances
-import Mathlib.RingTheory.Valuation.LocalSubring
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.MapWopWmap
 import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.MemPadicAlgClValuationSubringIffNormLeOne
 
@@ -166,23 +127,9 @@ private theorem omega_not_rat {E : Type} [Field E] [NumberField E] [IsCMField E]
 private theorem span_omega {E : Type} [Field E] [NumberField E] [IsCMField E] (A : Arith E) (K : Subfield E)
     (hK : Module.finrank ℚ K = 2) (h : (A.ω : E) ∈ K) (x : K) :
     ∃ a b : ℚ, x = algebraMap ℚ K a + algebraMap ℚ K b * ⟨A.ω, h⟩ := by
-  have hli : LinearIndependent ℚ ![(1 : K), ⟨A.ω, h⟩] := by
-    rw [LinearIndependent.pair_iff]
-    intro a b hab
-    have hE : algebraMap ℚ E a + algebraMap ℚ E b * (A.ω : E) = 0 := by
-      have := congrArg (fun z : K => (z : E)) hab
-      simpa [Algebra.smul_def] using this
-    have hb : b = 0 := by
-      by_contra hb
-      apply omega_not_rat A (-a / b)
-      have hb' : algebraMap ℚ E b ≠ 0 := by simpa using hb
-      rw [map_div₀, map_neg]
-      field_simp
-      linear_combination hE
-    subst hb
-    refine ⟨?_, rfl⟩
-    have : algebraMap ℚ E a = 0 := by simpa using hE
-    simpa using this
+  have hli : LinearIndependent ℚ ![(1 : K), ⟨A.ω, h⟩] :=
+    (LinearIndependent.pair_iff' one_ne_zero).2 fun a ha => omega_not_rat A a <| by
+      simpa [Algebra.smul_def] using (congrArg (fun z : K => (z : E)) ha).symm
   have hspan : Submodule.span ℚ (Set.range ![(1 : K), ⟨A.ω, h⟩]) = ⊤ :=
     hli.span_eq_top_of_card_eq_finrank' (by simp [hK])
   have hx : x ∈ Submodule.span ℚ (Set.range ![(1 : K), ⟨A.ω, h⟩]) := hspan ▸ Submodule.mem_top
@@ -253,10 +200,6 @@ private theorem norm_of_mem_intKQ {p : ℕ} [Fact p.Prime] (K : IntermediateFiel
       exact b.2
   exact (_root_.GlobalTheory.mem_padicAlgCl_valuationSubring_iff_norm_le_one _).1 (hle hz)
 
-private theorem norm_galois {p : ℕ} [Fact p.Prime] (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p) (z : PadicAlgCl p) :
-    ‖σ z‖ = ‖z‖ := by
-  rw [← PadicAlgCl.spectralNorm_eq, ← PadicAlgCl.spectralNorm_eq, spectralNorm, spectralNorm, minpoly.algEquiv_eq]
-
 private theorem norm_of_Kint {p : ℕ} [Fact p.Prime] (t : ℚ_[p]ˣ)
     (h : (GeneralLinearGroup.scalar (Fin 1)) (Units.map (algebraMap ℚ_[p] (Qr p 1)).toMonoidHom t) ∈
       GlobalTheory.LKLoc.Kint p (Q0 p) 1 1) : ‖(t : ℚ_[p])‖ ≤ 1 := by
@@ -319,7 +262,7 @@ private theorem over_norm (S : Setup A n p) (y : Gam0 E n)
     (hτ : LiesOver S.P.Kq S.P.u τ) (j l : Fin n) : ‖τ (y.1.1.val j l)‖ ≤ 1 := by
   obtain ⟨i, σ, rfl⟩ := S.P.emb_all τ hτ
   show ‖σ (S.P.emb i (y.1.1.val j l))‖ ≤ 1
-  rw [norm_galois]
+  rw [GaloisNormAlt.Bridge.RingBasics.norm_gal]
   exact entry_norm S y hy i j l
 
 private theorem rat_norm {E : Type} [Field E] {p : ℕ} [Fact p.Prime] (τ : E →+* PadicAlgCl p) [Algebra ℚ E] (c : ℚ) :
@@ -344,7 +287,6 @@ private theorem all_norm (S : Setup A n p) (y : Gam0 E n)
     rw [h2, norm_mul, rat_norm]
     exact mul_le_one₀ (sim_norm S y hy) (norm_nonneg _) h1
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
 private theorem mem_KGL_of_entries {w : Plc E} {g : GL (Fin n) (w.adicCompletion E)}
     (h1 : ∀ i j, Valued.v (g.val i j) ≤ 1) (h2 : ∀ i j, Valued.v (g⁻¹.val i j) ≤ 1) : g ∈ KGL w (n := n) :=
   GlobalTheory.StabInt.mem_KGL_of_mem_integralGL ((GroundTheory.Automorphic.GLnLocal.mem_integralGL_iff _ _).2

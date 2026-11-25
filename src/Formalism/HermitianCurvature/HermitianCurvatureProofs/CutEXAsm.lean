@@ -12,55 +12,11 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX2
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsCompactCutoffCoefficient
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbRadHeadOf
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.Interlace
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsAdmissibleSplittingCharPairMulTwist
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopFirstOfParts
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
 import Mathlib.CategoryTheory.Countable
-import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Topology.Separation.CompletelyRegular
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -479,8 +435,6 @@ end asm
 
 section closed
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 theorem det_upUni {n : ℕ} {u : Matrix (Fin n) (Fin n) ℂ} (hu : Formalism.DoubleCosetMeasures.IsUpUni u) : u.det = 1 := by
   rw [Matrix.det_of_upperTriangular hu.1]
   simp [hu.2]
@@ -570,9 +524,9 @@ theorem exceptional_assumption_holds : Asm := by
     fun Z e' y => if (Z, y) ∈ UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z' then
       pbTop p (u e') (Matrix.of Z) (Matrix.of y) else 0 with hΨfdef
   have hΨf_pos : ∀ Z e' y, (Z, y) ∈ UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z' →
-      Ψf Z e' y = pbTop p (u e') (Matrix.of Z) (Matrix.of y) := fun Z e' y hq => if_pos hq
+      Ψf Z e' y = pbTop p (u e') (Matrix.of Z) (Matrix.of y) := fun Z e' y hq => ite_eq_left hq
   have hΨUT : ∀ e' (q : (Fin P.r → Fin P.r → ℂ) × Mt P.k (P.r - P.r)),
-      q ∉ UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z' → Ψf q.1 e' q.2 = 0 := fun e' q hq => if_neg hq
+      q ∉ UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z' → Ψf q.1 e' q.2 = 0 := fun e' q hq => ite_eq_right hq
   have hΨsm : ∀ e', PBI.ParFam P.k (P.r - P.r) (UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z')
       (fun q => Ψf q.1 e' q.2) := by
     intro e' q₀ hq₀ hq₀G
@@ -681,7 +635,7 @@ theorem exceptional_assumption_holds : Asm := by
     · exact (hβq.mono Set.inter_subset_right).smul ((hFe.const_smul κ⁻¹).mono Set.inter_subset_left)
     · show ((β q.1 : ℝ) : ℂ) • (if (q.1, q.2) ∈ UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z' then
           κ⁻¹ • Φf q.1 e q.2 else 0) = β q.1 • κ⁻¹ • Fe q
-      rw [if_pos hq.2, Complex.coe_smul]
+      rw [ite_eq_left hq.2, Complex.coe_smul]
       rw [show Φf q.1 e q.2 = Fe q from hag q hq.1 hqG]
   have hΦβK : ∀ q, Matrix.of q.2 ∈ Q.Glev P.k (P.r - P.r) (Fin.last _) → q ∉ K' → Φβ q.1 q.2 = 0 := by
     intro q hqG hqK
@@ -722,7 +676,7 @@ theorem exceptional_assumption_holds : Asm := by
       ((p.T.bs P.r).π h₁).comp ((if (Z, y) ∈ UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z' then κ⁻¹ • Φf Z e y else 0).comp
         ((p.T.bs P.r).π' h₂))
     by_cases hq : (Z, y) ∈ UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z'
-    · rw [if_pos (hiff.2 hq), if_pos hq]
+    · rw [ite_eq_left (hiff.2 hq), ite_eq_left hq]
       have e1 := hΦval Z e (fun _ => 0) (Matrix.of.symm (h₁ * Matrix.of y * h₂)) hy'
       have e2 := hΦval Z e (fun _ => 0) y hy
       have hx : ((fun _ => 0, Matrix.of y) : (Fin (JC.parLev P P.r).r → ℂ) × Q.Mx P.k (P.r - P.r)) ∈
@@ -730,7 +684,7 @@ theorem exceptional_assumption_holds : Asm := by
       have e3 := (P5.act (Fr.ofWord L st (D.positionted w)).F (Ψ Z) e).2.2.2 _ hx h₁ hh₁ h₂ hh₂
       rw [ContinuousLinearMap.smul_comp, ContinuousLinearMap.comp_smul, ← e1, ← e2]
       exact congrArg (fun X => κ⁻¹ • X) e3
-    · rw [if_neg (fun h' => hq (hiff.1 h')), if_neg hq]
+    · rw [ite_eq_right (fun h' => hq (hiff.1 h')), ite_eq_right hq]
       simp
   have hR₀ : ∀ (Z : Fin P.r → Fin P.r → ℂ) (y : Mt P.k (P.r - P.r)) (v : Matrix (Fin P.r) (Fin P.r) ℂ),
       (Matrix.of Z).det ≠ 0 → Matrix.of y ∈ Q.Glev P.k (P.r - P.r) (Fin.last _) → Formalism.DoubleCosetMeasures.IsUpUni v →
@@ -745,8 +699,8 @@ theorem exceptional_assumption_holds : Asm := by
         κ⁻¹ • Φf (Matrix.of.symm (Matrix.of Z * v)) e y else 0) =
       psiU p v • (if (Z, y) ∈ UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z' then κ⁻¹ • Φf Z e y else 0)
     by_cases hq : (Z, y) ∈ UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z'
-    · rw [if_pos (hiff.2 hq), if_pos hq, hΦR Z y v hy hv, smul_comm]
-    · rw [if_neg (fun h' => hq (hiff.1 h')), if_neg hq, smul_zero]
+    · rw [ite_eq_left (hiff.2 hq), ite_eq_left hq, hΦR Z y v hy hv, smul_comm]
+    · rw [ite_eq_right (fun h' => hq (hiff.1 h')), ite_eq_right hq, smul_zero]
   have hmkΦ : ∀ (Z : Fin P.r → Fin P.r → ℂ) (y : Mt P.k (P.r - P.r)), (Matrix.of Z).det ≠ 0 →
       Matrix.of y ∈ Q.Glev P.k (P.r - P.r) (Fin.last _) →
       pbTop p F₂ (Matrix.of Z) (Matrix.of y) = κ • Φ₀ Z y :=
@@ -757,7 +711,7 @@ theorem exceptional_assumption_holds : Asm := by
     intro Z y hq hy
     rw [hmkΦ Z y hq.1 hy]
     show κ • (if (Z, y) ∈ UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z' then κ⁻¹ • Φf Z e y else 0) = _
-    rw [if_pos hq, smul_smul, mul_inv_cancel₀ hκ, one_smul]
+    rw [ite_eq_left hq, smul_smul, mul_inv_cancel₀ hκ, one_smul]
 
   have hVopen : IsOpen {y : Mt P.k (P.r - P.r) | 0 < Q.GGl P.k (P.r - P.r) (p.T.bs P.r).z (p.T.bs P.r).z' (Matrix.of y)} :=
     isOpen_lt continuous_const ((Formalism.FourierDecayAlt.P.Qx8.GGl_cont _ _ _ _).comp continuous_id)

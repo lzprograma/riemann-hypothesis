@@ -58,8 +58,6 @@ open Formalism.L2 Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Rows Formalis
 
 namespace GlobalTheory.BigTop
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D} {Kc : Formalism.MainNotions.G.Consts}
   {Y : DivX D} {cX : ExtraC}
 
@@ -104,13 +102,9 @@ structure IndefiniteRowSideFullHecke (ex : Extra D L hT Gi Gl Kc Y cX) : Type 1 
 
   I : DivisionCompatibilityDataThreeSided D A3 P0 ψ0 Ps ψs Zs S0 S1 ex.p0 Dc
 
-  JA : AmbIds D A3.A ex.p0.s ex.amb0 P0 ψ0 I.tup
-
   JM : MjHIds D A3.A Y (A3.indefDown S0)
 
   div : DivDef3 D A3 P0 ψ0 Ps ψs Zs S0 S1 ex.p0 C NuC I
-
-  amb0 : AmbTie D A3.A ex.p0.s ex.amb0 P0 ψ0 I.tup I.jA0 JA
 
   mjH : MjHTie D A3.A Y (A3.indefDown S0) I.jW JM
 
@@ -122,8 +116,8 @@ variable {ex : Extra D L hT Gi Gl Kc Y cX}
 
 abbrev IndefiniteRowSideFullHecke.toRowSideFamily (P : IndefiniteRowSideFullHecke ex) : RowSideFamily ex :=
   { Gp := P.Gp, Pl0 := P.Pl0, I0 := P.I0, T := P.T, A3 := P.A3, P0 := P.P0, ψ0 := P.ψ0, Ps := P.Ps, ψs := P.ψs, Zs := P.Zs,
-    S0 := P.S0, S1 := P.S1, Dc := P.Dc, Sp := P.Sp, C := P.C, NuC := P.NuC, I := P.I, JA := P.JA, JM := P.JM,
-    tied := ⟨P.div, P.amb0, P.mjH, P.cen0⟩ }
+    S0 := P.S0, S1 := P.S1, Dc := P.Dc, Sp := P.Sp, C := P.C, NuC := P.NuC, I := P.I, JM := P.JM,
+    tied := ⟨P.div, P.mjH, P.cen0⟩ }
 
 def IndefiniteRowSideFullHecke.zsc (P : IndefiniteRowSideFullHecke ex) (Del h0 : ℕ) (Csz : ℝ) : DefSub P.A3.fam3.amb3 → IndefScale P.A3.fam3.base3 :=
   fun Zs =>
@@ -298,7 +292,7 @@ def ExportRow : Prop :=
     (∀ (i : Fin D.R.m) (x : (Y.MjH ((i : ℕ) + 1)).V)
       (y : Fin (Module.finrank D.what₂.LL (p.R.toRealDat.WL p.F.lv2 false i)) → D.what₂.LL),
       HEq ((p.P.JM.eW i).symm x) y → (p.nexp.fi i).e (jD ((i : ℕ) + 1) x) = Formalism.IndefR.NX.jDL p.R p.F.lv2 i y) ∧
-    Nonempty (Formalism.IndefR.NX.NMjRR p.R p.cG p.Sx p.nexp Y ex.nch jD)
+    Nonempty (Formalism.IndefR.NX.NMjR Y ex.nch)
 
 def Realised : Prop :=
   ∃ (Rc : RecT ex) (S : Formalism.L2.SG.SpectralTiesReal.STiesR Rc)
@@ -396,18 +390,6 @@ theorem tw_iff (w : D.what₂.places.Pl) : D.plEq w ∈ p.R.twPl ↔ D.what₂.m
     apply hne
     rw [← p.tupTie _ (Or.inr ⟨w, rfl⟩), ← p.tupTie _ (Or.inl rfl), p.tupAt w, p.charW.tup.mu_off (D.plEq w) hw, p.tupleRead_baseTuple_eq_family]
 
-section OfReal
-
-variable {P : IndefiniteRowSideFullHecke ex} {Del h0 : ℕ} {hDel : D.s.Del = (Del : ℚ)} {hh0 : L.etaSz = (D.R.m : ℝ) * (h0 : ℝ)}
-  {Dcf : ∀ Zs : DefSub P.A3.fam3.amb3, DefCols (P.A3.side3 P.Ps P.ψs Zs)} {Spf : ∀ Zs : DefSub P.A3.fam3.amb3, SPer (Dcf Zs)}
-  {gamDvd : (∀ (t : P.T) (c : (P.A3.A.fam.R t).S.Cl), Fintype.card ((P.A3.A.fam.R t).S.Gam c) ∣ (D.mem D.u₀).C.DGam) ∧
-    ∀ (j : Fin D.R.m) (t : P.T) (c : (P.A3.A.fam.L j t).S.Cl), Fintype.card ((P.A3.A.fam.L j t).S.Gam c) ∣ (D.mem D.u₀).C.DGam}
-  {Rc : RecT ex} {S : Formalism.L2.SG.SpectralTiesReal.STiesR Rc} {B : RealTB Rc P.toRowSideFamily Dcf Spf (P.zsc Del h0 Csz) S}
-  {Qp : RealPins B.Q} {Qr : RealRec B.Q}
-
-
-end OfReal
-
 namespace Realised
 
 variable {p} (h : p.Realised)
@@ -433,9 +415,6 @@ def Covol : Prop := Closed FamHyp fun Fm CH =>
 
 def Onto : Prop := Closed FamHyp fun Fm CH => DIVinN Fm →
   ∃ C0 : ℝ, 0 ≤ C0 ∧ EvPt Fm fun _ _ _ p => ∀ C, C0 ≤ C → (p.S false).ON (p.N C CH)
-
-def Fun0 : Prop := Closed FamHyp fun Fm CH => DIVinN Fm →
-  EvPt Fm fun _ _ _ p => ∀ C, (p.S false).FUN (p.N C CH)
 
 end GlobalTheory.BigTop
 

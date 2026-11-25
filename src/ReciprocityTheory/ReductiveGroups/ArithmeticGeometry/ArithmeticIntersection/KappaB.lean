@@ -153,12 +153,12 @@ lemma lintegral_coneFun (G : ℝ → ℝ≥0∞) (hG : Measurable G) :
     rw [hs, Real.sqrt_sq hr.le, mul_div_cancel_left₀ _ hr.ne']
     by_cases h1 : r < 1
     · have h2 : r ^ 2 < 1 := by nlinarith
-      rw [if_pos ⟨by positivity, h2⟩, indicator_of_mem (show r ∈ Iio (1 : ℝ) from h1)]
+      rw [ite_eq_left ⟨by positivity, h2⟩, indicator_of_mem (show r ∈ Iio (1 : ℝ) from h1)]
       rw [← mul_assoc, e1]
       simp only [Pi.one_apply, mul_one]
       ring
     · have h2 : ¬ r ^ 2 < 1 := by nlinarith
-      rw [if_neg (fun h => h2 h.2), indicator_of_notMem (show r ∉ Iio (1 : ℝ) from h1)]
+      rw [ite_eq_right (fun h => h2 h.2), indicator_of_notMem (show r ∉ Iio (1 : ℝ) from h1)]
       simp
 
 noncomputable def coneConst : ℝ≥0∞ :=
@@ -191,7 +191,7 @@ lemma volume_cone0 {s : Set ℝ} (hs : MeasurableSet s) :
     have hS0 : 0 ≤ S := by positivity
     unfold coneFun
     by_cases hc : 0 < S ∧ S < 1
-    · rw [if_pos hc]
+    · rw [ite_eq_left hc]
       have h0 : 0 < ‖y‖ := by rw [hn]; exact Real.sqrt_pos.2 hc.1
       have h1 : ‖y‖ < 1 := by
         rw [hn, ← Real.sqrt_one]; exact Real.sqrt_lt_sqrt hS0 hc.2
@@ -202,7 +202,7 @@ lemma volume_cone0 {s : Set ℝ} (hs : MeasurableSet s) :
       · have hy' : y ∉ {y : E3 | 0 < ‖y‖ ∧ ‖y‖ < 1 ∧ y 0 / ‖y‖ ∈ s} :=
           fun h => hy h.2.2
         rw [indicator_of_notMem hy', ← hn, indicator_of_notMem hy]
-    · rw [if_neg hc, indicator_of_notMem]
+    · rw [ite_eq_right hc, indicator_of_notMem]
       rintro ⟨h0, h1, -⟩
       apply hc
       rw [hn] at h0 h1

@@ -105,8 +105,7 @@ theorem bot_or_top {Γ k K : Type} [Field k] [Field K] [Algebra k K] {r : ℕ}
   right
   obtain ⟨x, hxW, hx0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hbot
   obtain ⟨j, hj⟩ : ∃ j, x j ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hx0 (funext h)
 
   have he : ∀ i, (Pi.single i (1 : K) : Fin r → K) ∈ W := by
@@ -131,8 +130,6 @@ theorem bot_or_top {Γ k K : Type} [Field k] [Field K] [Algebra k K] {r : ℕ}
     simp [Pi.single_apply]
   rw [hy]
   exact W.sum_mem fun i _ => W.smul_mem _ (he i)
-
-alias main := _root_.GlobalTheory.InvariantBotOrTop.bot_or_top
 
 end GlobalTheory.InvariantBotOrTop
 end -- clump:auto

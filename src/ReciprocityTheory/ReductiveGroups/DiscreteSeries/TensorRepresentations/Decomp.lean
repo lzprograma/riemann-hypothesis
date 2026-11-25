@@ -51,8 +51,8 @@ theorem hvec_smul (a : ℂ) (f : Fin n → D) : hvec (a • f) = a • hvec f :=
 
 theorem mx_mem {M : Submodule ℂ D} (dual : Bool) (X : Matrix (Fin n) (Fin n) ℂ)
     (hst : ∀ a b, ∀ f ∈ tensSub M, tensF dual E a b f ∈ tensSub M) {f : Fin n → D} (hf : f ∈ tensSub M) :
-    mx (tensF dual E) X f ∈ tensSub M := by
-  simp only [mx, LinearMap.sum_apply, LinearMap.smul_apply]
+    ReciprocityTheory.ChartRestriction.DS.actM (tensF dual E) X f ∈ tensSub M := by
+  simp only [ReciprocityTheory.ChartRestriction.DS.actM, LinearMap.sum_apply, LinearMap.smul_apply]
   exact Submodule.sum_mem _ fun a _ => Submodule.sum_mem _ fun b _ =>
     Submodule.smul_mem _ _ (hst a b f hf)
 
@@ -126,7 +126,7 @@ theorem tens_unitarize (dual : Bool) {lam : Fin n → ℝ} {H : Type*} [NormedAd
     intro f hf g hg
     simp only [Q, LinearMap.mk₂'ₛₗ_apply, Q0, hPid f hf, hPid g hg]
   have hskew : ∀ X (hX : inG ε X), ∀ f ∈ tensSub (n := n) (genSub E V), ∀ g ∈ tensSub (genSub E V),
-      Q (mx (tensF dual E) X f) g = -Q f (mx (tensF dual E) X g) := by
+      Q (ReciprocityTheory.ChartRestriction.DS.actM (tensF dual E) X f) g = -Q f (ReciprocityTheory.ChartRestriction.DS.actM (tensF dual E) X g) := by
     intro X hX f hf g hg
     have hXf := mx_mem dual X hst hf
     have hXg := mx_mem dual X hst hg
@@ -152,8 +152,7 @@ theorem tens_unitarize (dual : Bool) {lam : Fin n → ℝ} {H : Type*} [NormedAd
     simp only [Complex.re_sum, hre]
     have hnn : ∀ j ξ, 0 ≤ ∫ x, ‖u j ξ f x‖ ^ 2 ∂(Formalism.REAL.muG ε) := fun j ξ =>
       integral_nonneg fun x => by positivity
-    by_contra hneg
-    push_neg at hneg
+    by_contra! hneg
     have h0 : ∑ j, ∑ ξ, ∫ x, ‖u j ξ f x‖ ^ 2 ∂(Formalism.REAL.muG ε) = 0 :=
       le_antisymm hneg (Finset.sum_nonneg fun j _ => Finset.sum_nonneg fun ξ _ => hnn j ξ)
     have hz : ∀ j ξ, ∫ x, ‖u j ξ f x‖ ^ 2 ∂(Formalism.REAL.muG ε) = 0 := by
@@ -189,19 +188,19 @@ theorem tens_unitarize (dual : Bool) {lam : Fin n → ℝ} {H : Type*} [NormedAd
     obtain ⟨Z, hZ⟩ : ∃ Z, Z = Jm ε * (Matrix.single a b (1 : ℂ))ᴴ * Jm ε := ⟨_, rfl⟩
     have hX1 : inG ε (Matrix.single a b 1 - Z) := by rw [hZ]; exact inG_sub _
     have hX2 : inG ε (Complex.I • (Matrix.single a b 1 + Z)) := by rw [hZ]; exact inG_add _
-    have hTab : tensF dual E a b = (1 / 2 : ℂ) • mx (tensF dual E) (Matrix.single a b 1 - Z) +
-        (-(Complex.I / 2)) • mx (tensF dual E) (Complex.I • (Matrix.single a b 1 + Z)) := by
+    have hTab : tensF dual E a b = (1 / 2 : ℂ) • ReciprocityTheory.ChartRestriction.DS.actM (tensF dual E) (Matrix.single a b 1 - Z) +
+        (-(Complex.I / 2)) • ReciprocityTheory.ChartRestriction.DS.actM (tensF dual E) (Complex.I • (Matrix.single a b 1 + Z)) := by
       rw [← mx_smul, ← mx_smul, ← mx_add, ← mat_decomp, mx_single]
-    have hTba : (1 / 2 : ℂ) • mx (tensF dual E) (Matrix.single a b 1 - Z) +
-        (Complex.I / 2) • mx (tensF dual E) (Complex.I • (Matrix.single a b 1 + Z)) =
+    have hTba : (1 / 2 : ℂ) • ReciprocityTheory.ChartRestriction.DS.actM (tensF dual E) (Matrix.single a b 1 - Z) +
+        (Complex.I / 2) • ReciprocityTheory.ChartRestriction.DS.actM (tensF dual E) (Complex.I • (Matrix.single a b 1 + Z)) =
         -(adjSign ε a b • tensF dual E b a) := by
       rw [← mx_smul, ← mx_smul, ← mx_add, mat_decomp2, hZ, single_conj, ← neg_smul, mx_smul, mx_single,
         neg_smul]
     have s1 : star (1 / 2 : ℂ) = 1 / 2 := by simp
     have s2 : star (-(Complex.I / 2)) = Complex.I / 2 := by simp [Complex.conj_I, neg_div]
     have e1 : Q (tensF dual E a b f) g =
-        (1 / 2 : ℂ) * Q (mx (tensF dual E) (Matrix.single a b 1 - Z) f) g +
-        (Complex.I / 2) * Q (mx (tensF dual E) (Complex.I • (Matrix.single a b 1 + Z)) f) g := by
+        (1 / 2 : ℂ) * Q (ReciprocityTheory.ChartRestriction.DS.actM (tensF dual E) (Matrix.single a b 1 - Z) f) g +
+        (Complex.I / 2) * Q (ReciprocityTheory.ChartRestriction.DS.actM (tensF dual E) (Complex.I • (Matrix.single a b 1 + Z)) f) g := by
       rw [hTab]
       simp only [LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), map_smulₛₗ, smul_eq_mul,
         starRingEnd_apply, s1, s2]

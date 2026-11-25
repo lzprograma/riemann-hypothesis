@@ -14,8 +14,6 @@ open scoped ENNReal
 
 namespace Formalism.L2.SG.Pf.JointAmplitudePoints
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Pt
 
 variable {D : D7} {X : HidaSetting D} {θ : ℝ} (C : Choice X θ) (u u' : D.what₂.Word)

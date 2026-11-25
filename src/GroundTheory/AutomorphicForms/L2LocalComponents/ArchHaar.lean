@@ -45,7 +45,6 @@ theorem isMulRightInvariant_infinite [MeasurableSpace (AdelicGLn.InfiniteAdelicG
       ← Measure.map_map he (measurable_mul_const _), map_mul_right_eq_self]
   set c := haarScalarFactor (ν.map e) P
   have hc : ν.map e = c • P := by
-    set_option synthInstance.maxHeartbeats 200000 in
       exact isMulLeftInvariant_eq_smul (ν.map e) P
   have hc0 : c ≠ 0 := by
     intro h0

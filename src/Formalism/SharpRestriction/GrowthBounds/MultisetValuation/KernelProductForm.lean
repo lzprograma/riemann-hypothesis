@@ -5,45 +5,8 @@ public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.Valuatio
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EnInParamKProd
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.AuxUOfFirstTheoremPlaceBound
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.FacEmbDomain
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
+import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.InClassOfExp
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EnGePProdRat, Formalism.SharpRestriction.GrowthBounds.MultisetValuation.KernelProductForm
@@ -204,18 +167,10 @@ section IntRL
 variable {ι K : Type} [Field K] {R : Subring K}
 
 theorem en_IntR_mul {f g : MvPowerSeries ι K} (hf : IntR R f) (hg : IntR R g) : IntR R (f * g) := by
-  classical
-  intro n
-  rw [MvPowerSeries.coeff_mul]
-  exact R.sum_mem fun x _ => R.mul_mem (hf _) (hg _)
+  exact Formalism.MainNotions.FormalGroupSystem.Pf.IntR_mul hf hg
 
 theorem en_IntR_one : IntR R (1 : MvPowerSeries ι K) := by
-  classical
-  intro n
-  rw [MvPowerSeries.coeff_one]
-  split_ifs
-  · exact R.one_mem
-  · exact R.zero_mem
+  apply _root_.Formalism.MainNotions.FormalGroupSystem.Pf.IntR_one <;> assumption
 
 theorem en_IntR_X (i : ι) : IntR R (MvPowerSeries.X i : MvPowerSeries ι K) := by
   classical
@@ -226,9 +181,7 @@ theorem en_IntR_X (i : ι) : IntR R (MvPowerSeries.X i : MvPowerSeries ι K) := 
   · exact R.zero_mem
 
 theorem en_IntR_pow {f : MvPowerSeries ι K} (hf : IntR R f) (k : ℕ) : IntR R (f ^ k) := by
-  induction k with
-  | zero => rw [pow_zero]; exact en_IntR_one
-  | succ k ih => rw [pow_succ]; exact en_IntR_mul ih hf
+  exact Formalism.MainNotions.FormalGroupSystem.Pf.IntR_pow hf k
 
 theorem en_IntR_prod {α : Type} (s : Finset α) (f : α → MvPowerSeries ι K) (h : ∀ a ∈ s, IntR R (f a)) :
     IntR R (∏ a ∈ s, f a) :=

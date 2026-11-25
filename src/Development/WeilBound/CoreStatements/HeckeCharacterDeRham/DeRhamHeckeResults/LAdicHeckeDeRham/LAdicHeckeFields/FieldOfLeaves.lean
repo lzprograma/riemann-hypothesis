@@ -24,50 +24,7 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Uniformi
 public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.FilQuot
 public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.MaximalIdealEqSpanT
 public import Development.WeilBound.CoreStatements.HeckeCharacterDeRham.DeRhamHeckeResults.LAdicHeckeDeRham.LAdicHeckeFields.Reduce
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.FieldTheory.Galois.Profinite
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LocalPrimeGaloisActionPeriodT
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TripleAtt
 import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
@@ -75,13 +32,7 @@ import Formalism.ConjugateSelfDual.Statement
 import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
 import ReciprocityTheory.GaloisValuations.GlobalA
 import ReciprocityTheory.NeutralLocalFields.Reciprocity
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
-import Mathlib.Algebra.Order.Star.Int
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CharacterValuesIntegral, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateCommutingSeriesUnique, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateEndomorphismSeriesExists, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateIterateEventuallyZero, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateIterateLimitCongruence, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateLimitKernelZero, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateNormCyclotomic, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateScaledIterateTends, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateSeriesDeRhamPeriod, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateTorsionApproximation, Development.WeilBound.CoreStatements.HeckeCharacterDeRham.DeRhamHeckeResults.LAdicHeckeDeRham.LAdicHeckeFields.FieldOfLeaves
@@ -128,14 +79,10 @@ theorem mem_OL_of_norm_le_one (K : FinExt l) (x : ↥K.1) (h : ‖((x : ↥K.1) 
     (algebraMap ↥K.1 (Om l)).injective
   exact (isIntegral_algHom_iff _ hinj).1 (isIntegral_of_norm_le_one _ h)
 
-theorem compactSpace_GK (K : FinExt l) : CompactSpace ↥(GK K) := by
-  have := K.2
-  exact isCompact_iff_compactSpace.mp (IntermediateField.fixingSubgroup_isClosed K.1).isCompact
-
 theorem norm_le_one (K : FinExt l) (χ : ↥(GK K) →* (↥K.1)ˣ)
     (hc : Continuous (fun g => (((χ g : (↥K.1)ˣ) : ↥K.1) : Om l))) (g : ↥(GK K)) :
     ‖(((χ g : (↥K.1)ˣ) : ↥K.1) : Om l)‖ ≤ 1 := by
-  haveI := compactSpace_GK K
+  haveI := GlobalTheory.UnramifiedCrys.compactSpace_GK K
   obtain ⟨M, hM⟩ := (isCompact_range hc).isBounded.exists_norm_le
   have hpow : ∀ n : ℕ, ‖(((χ g : (↥K.1)ˣ) : ↥K.1) : Om l)‖ ^ n ≤ M := fun n => by
     have := hM _ ⟨g ^ n, rfl⟩
@@ -290,11 +237,6 @@ section Main
 
 variable {B : Type} [CommRing B] {S : Subring B} {F : ℕ → Ideal B} {ϖ : B}
 
-theorem pow_mem_F (env : PerEnv S F ϖ) {x : B} (hx : x ∈ F 1) (k : ℕ) : x ^ k ∈ F k := by
-  induction k with
-  | zero => simp [env.top]
-  | succ k ih => rw [pow_succ]; exact env.mul_le k 1 (Ideal.mul_mem_mul ih hx)
-
 theorem exists_near_ideal (hϖ : ϖ ∈ S) (J : Ideal B) (m : ℕ) :
     ∃ I : Ideal S, ∀ x : S, x ∈ I ↔ Near S ϖ J m (x : B) := by
   refine ⟨Ideal.span {(⟨ϖ, hϖ⟩ : S) ^ m} ⊔ J.comap S.subtype, fun x => ⟨fun hx => ?_, ?_⟩⟩
@@ -354,7 +296,7 @@ theorem finiteRing_sq_sub_mul_sq_eq_of_card {R C : Type} [CommRing R] [CommRing 
       rw [← map_pow]
       refine hmF _ ?_
       rw [SubmonoidClass.coe_pow]
-      exact pow_mem_F env hf k
+      exact GlobalTheory.CompanionTheory.LTPer.LogGal.pow_mem_F env hf k
     have e : mk (v' 0) ^ M = mk (v' 0 ^ M - ϖ' ^ 1 * s0') + mk ϖ' * mk s0' := by
       simp only [map_sub, map_mul, map_pow, pow_one]
       ring
@@ -489,7 +431,6 @@ theorem map_subst_comm {A B : Type} [CommRing A] [CommRing B] (h : A →+* B) {F
   rw [PowerSeries.map_subst (PowerSeries.HasSubst.of_constantCoeff_zero hG),
     PowerSeries.map_subst (PowerSeries.HasSubst.of_constantCoeff_zero hF)] at h2
   exact h2
-
 
 open GlobalTheory.CompanionTheory.LTHodge.CharEx GroundTheory.LocalField GroundTheory.LocalField.FormalGroup ValuativeRel in
 theorem exists_series_comm : ∀ {l : ℕ} [Fact l.Prime] (K : FinExt l) (π : ↥(OL K)), Irreducible π → ∀ a : ↥(OL K),
@@ -702,7 +643,6 @@ theorem exists_ltIter_mem_one (ϖ' : B) (hϖ : ϖ * ϖ' = 1) (θ : B →+* C) (h
 end GlobalTheory.CompanionTheory.LTPer.Nonv
 
 namespace GlobalTheory.CompanionTheory.LTPer
-
 
 open GlobalTheory.CompanionTheory.LTPer.Nonv in
 theorem exists_ltIter_eq_zero_of_tends : ∀ {B : Type} [CommRing B] {S : Subring B} {F : ℕ → Ideal B} {ϖ : B} {C : Type} [NormedField C] [IsUltrametricDist C], PerEnv S F ϖ → ∀ (ϖ' : B), ϖ * ϖ' = 1 →
@@ -1025,22 +965,6 @@ namespace GlobalTheory.CompanionTheory.LTPer.LogConv
 
 variable {B : Type} [CommRing B] {S : Subring B} {ϖ : B} {J : Ideal B}
 
-theorem near_add {m : ℕ} {x y : B} (hx : Near S ϖ J m x) (hy : Near S ϖ J m y) :
-    Near S ϖ J m (x + y) := by
-  obtain ⟨s, hs, h⟩ := hx
-  obtain ⟨s', hs', h'⟩ := hy
-  refine ⟨s + s', S.add_mem hs hs', ?_⟩
-  have := J.add_mem h h'
-  convert this using 1; ring
-
-theorem near_sub {m : ℕ} {x y : B} (hx : Near S ϖ J m x) (hy : Near S ϖ J m y) :
-    Near S ϖ J m (x - y) := by
-  obtain ⟨s, hs, h⟩ := hx
-  obtain ⟨s', hs', h'⟩ := hy
-  refine ⟨s - s', S.sub_mem hs hs', ?_⟩
-  have := J.sub_mem h h'
-  convert this using 1; ring
-
 theorem near_mul {a b : ℕ} {x y : B} (hx : Near S ϖ J a x) (hy : Near S ϖ J b y) :
     Near S ϖ J (a + b) (x * y) := by
   obtain ⟨s, hs, h⟩ := hx
@@ -1096,16 +1020,11 @@ theorem near_Qpow (E : PerEnv S F ϖ) {Q : B} (hQ : Q ∈ S) {M : ℕ}
     have := E.mul_le k 1 (Ideal.mul_mem_mul h1 h2)
     convert this using 1; ring
 
-theorem iter_succ (ϖ : B) (q n : ℕ) (x : B) :
-    ltIter ϖ q (n + 1) x = ϖ * ltIter ϖ q n x + ltIter ϖ q n x ^ q := by
-  unfold ltIter
-  rw [Function.iterate_succ_apply']
-
 theorem iter_mem (hϖ : ϖ ∈ S) {Q : B} (hQ : Q ∈ S) (q n : ℕ) : ltIter ϖ q n Q ∈ S := by
   induction n with
   | zero => simpa [ltIter] using hQ
   | succ n ih =>
-    rw [iter_succ]
+    rw [GlobalTheory.CompanionTheory.LTPer.QGal.ltIter_succ]
     exact S.add_mem (S.mul_mem hϖ ih) (S.pow_mem ih _)
 
 theorem pow_congr' {y z : B} (hy : y ∈ S) (hz : z ∈ S) (h : ∃ s ∈ S, y - z = ϖ * s) (e : ℕ) :
@@ -1126,7 +1045,7 @@ theorem iter_congr (hϖ : ϖ ∈ S) {Q : B} (hQ : Q ∈ S) (q n : ℕ) :
     have hy := iter_mem hϖ hQ q n
     obtain ⟨u, hu, h2⟩ := pow_congr' hy (S.pow_mem hQ (q ^ n)) ih q
     refine ⟨ltIter ϖ q n Q + u, S.add_mem hy hu, ?_⟩
-    rw [iter_succ, pow_succ q n, pow_mul]
+    rw [GlobalTheory.CompanionTheory.LTPer.QGal.ltIter_succ, pow_succ q n, pow_mul]
     linear_combination h2
 
 theorem near_iter (E : PerEnv S F ϖ) {q : ℕ} (hq : 2 ≤ q) {Q : B} (hQ : Q ∈ S) {M : ℕ}
@@ -1150,7 +1069,7 @@ theorem near_step (hϖ : ϖ ∈ S) {q : ℕ} (hq : 2 ≤ q) {b : ℕ} (hb : 1 �
     rw [add_comm]; exact near_mul h0 h
   have h2 : Near S ϖ J (b + 1) (y ^ q) :=
     near_mono hϖ (by nlinarith) (near_pow h q)
-  exact near_add h1 h2
+  exact GlobalTheory.CompanionTheory.LTPer.LogGal.near_add h1 h2
 
 theorem near_iter_add (E : PerEnv S F ϖ) {q : ℕ} (hq : 2 ≤ q) {Q : B} {k n0 : ℕ}
     (h : Near S ϖ (F k) 1 (ltIter ϖ q n0 Q)) (j : ℕ) :
@@ -1158,13 +1077,13 @@ theorem near_iter_add (E : PerEnv S F ϖ) {q : ℕ} (hq : 2 ≤ q) {Q : B} {k n0
   induction j with
   | zero => simpa using h
   | succ j ih =>
-    rw [show n0 + (j + 1) = n0 + j + 1 from rfl, iter_succ]
+    rw [show n0 + (j + 1) = n0 + j + 1 from rfl, GlobalTheory.CompanionTheory.LTPer.QGal.ltIter_succ]
     exact near_step (b := 1 + j) E.mem hq (by omega) ih
 
 theorem iter_diff {ϖ' : B} (hu : ϖ * ϖ' = 1) (q n : ℕ) (Q : B) :
     ϖ' ^ (n + 1) * ltIter ϖ q (n + 1) Q - ϖ' ^ n * ltIter ϖ q n Q =
       ϖ' ^ (n + 1) * ltIter ϖ q n Q ^ q := by
-  rw [iter_succ]
+  rw [GlobalTheory.CompanionTheory.LTPer.QGal.ltIter_succ]
   linear_combination (ϖ' ^ n * ltIter ϖ q n Q) * hu
 
 theorem near_diff (E : PerEnv S F ϖ) {ϖ' : B} (hu : ϖ * ϖ' = 1) {q : ℕ} (hq : 2 ≤ q) {Q : B}
@@ -1227,7 +1146,7 @@ theorem glue (E : PerEnv S F ϖ) {ϖ' : B} (hu : ϖ * ϖ' = 1) (x : ℕ → B)
       have a2 := near_anti (E.anti k) (h2 (max N1 N2) (le_max_right _ _))
       have b1 := near_mul (near_of_mem (S.pow_mem E.mem (c (k + 1)))) a1
       have b2 := near_mul (near_of_mem (S.pow_mem E.mem (c k))) a2
-      have b := near_sub b1 b2
+      have b := GlobalTheory.CompanionTheory.LTPer.LogGal.near_sub b1 b2
       rw [zero_add] at b
       convert b using 1; ring
     have := (F k).mul_mem_left (ϖ' ^ (c k + c (k + 1))) (near_all E k hall)

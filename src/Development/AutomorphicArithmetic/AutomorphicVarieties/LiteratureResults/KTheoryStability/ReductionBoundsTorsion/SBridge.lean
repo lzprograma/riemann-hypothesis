@@ -25,58 +25,12 @@ public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 public import Mathlib.Tactic.Continuity
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.SPUOf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.EvaluationSums.EvhEqSum
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.ColsMinSmul
 import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.ImportsAlt
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Module.StablyFree.Basic
 import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.AffineSplittingSpan.SAffOf
 import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CentralPositiveSemidefinite.SCenOf
 import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CompactLocalSets.SLocOf
@@ -274,7 +228,6 @@ theorem iCycles_injective (n : ℕ) : Function.Injective (iCycles (Rep.trivial �
 def pz : LinearMap.ker (Dz G k) →ₗ[ℤ] grpH G (k + 1) :=
   (π (Rep.trivial ℤ G ℤ) (k + 1)).hom ∘ₗ cz G k
 
-set_option backward.isDefEq.respectTransparency false in
 theorem pz_surjective : Function.Surjective (pz G k) := by
   intro y
   obtain ⟨c, rfl⟩ := (ModuleCat.epi_iff_surjective (π (Rep.trivial ℤ G ℤ) (k + 1))).1 inferInstance y
@@ -709,14 +662,14 @@ private theorem dC_prism_sum_eq_snd_sub_fst {Y : Type} {n : ℕ} (F : (Fin (n + 
     linear_combination (-1 : ℝ) ^ i * hc - (F (M i) - F (M (i + 1))) * hε
   have hM0 : M 0 = fun p ↦ (u p).2 := by
     funext r
-    simp only [M, uu, Nat.not_lt_zero, if_false]
+    simp only [M, uu, Nat.not_lt_zero, ite_false]
     congr 2
     apply Fin.ext
     simp only
     omega
   have hM1 : M (n + 2) = fun p ↦ (u p).1 := by
     funext r
-    simp only [M, uu, r.isLt, if_true]
+    simp only [M, uu, r.isLt, ite_true]
     congr 2
     apply Fin.ext
     simp only
@@ -1051,11 +1004,11 @@ private theorem exists_conj_blk_mulSingle_eq_stab (R : Type) [CommRing R] (q n :
     simp only [padMat, Matrix.of_apply, e1]
     by_cases hX : X.divNat = 0
     · by_cases hY : Y.divNat = 0
-      · rw [dite_eq_left ⟨(hlt X).2 hX, (hlt Y).2 hY⟩, if_pos ⟨hX, hY⟩]
+      · rw [dite_eq_left ⟨(hlt X).2 hX, (hlt Y).2 hY⟩, ite_eq_left ⟨hX, hY⟩]
       · rw [dite_eq_right (fun hh => hY ((hlt Y).1 hh.2)),
-          if_neg (fun hh : X.divNat = 0 ∧ Y.divNat = 0 => hY hh.2)]
+          ite_eq_right (fun hh : X.divNat = 0 ∧ Y.divNat = 0 => hY hh.2)]
     · rw [dite_eq_right (fun hh => hX ((hlt X).1 hh.1)),
-        if_neg (fun hh : X.divNat = 0 ∧ Y.divNat = 0 => hX hh.1)]
+        ite_eq_right (fun hh : X.divNat = 0 ∧ Y.divNat = 0 => hX hh.1)]
   ext x y
   rw [show (((MulAut.conj (⟨Pm, Pm, hPP, hPP⟩ : GL (Fin (q * n)) R)).toMonoidHom.comp
       (stab R n (q * n) h)) A : Matrix _ _ R) = Pm * (stab R n (q * n) h A : Matrix _ _ R) * Pm from rfl]
@@ -1067,7 +1020,7 @@ private theorem exists_conj_blk_mulSingle_eq_stab (R : Type) [CommRing R] (q n :
   simp [PsiBlockMatrix.blk, PsiBlockMatrix.blkM, hs, blockDiagonal_apply, Pi.mulSingle_apply, Equiv.swap_apply_eq_iff]
   by_cases h1 : x.divNat = i <;> by_cases h2 : y.divNat = i <;>
     by_cases h3 : x.divNat = y.divNat <;> simp [h1, h2, h3, Matrix.one_apply]
-  all_goals rw [if_neg (fun e => h2 e.symm), if_neg (fun e => h2 e.2.symm)]
+  all_goals rw [ite_eq_right (fun e => h2 e.symm), ite_eq_right (fun e => h2 e.2.symm)]
 
 private theorem isBd_cmap_pi_sub_sum_cmap_mulSingle_of_isPrim (hC : SChain) {G : Type} [Group G] {k : ℕ} {z : Chn G (k + 1)}
     (hz : IsPrim z) (q : ℕ) :
@@ -1414,14 +1367,14 @@ theorem rat_succAbove_succ {m : ℕ} (x : Fin (m + 2) → G) (j : Fin (m + 1)) :
   funext i
   simp only [Function.comp_apply, rat, Fin.contractNth]
   by_cases h1 : (i : ℕ) < j
-  · rw [if_pos h1, Fin.succAbove_of_castSucc_lt _ _ (by simp [Fin.lt_def] <;> omega),
+  · rw [ite_eq_left h1, Fin.succAbove_of_castSucc_lt _ _ (by simp [Fin.lt_def] <;> omega),
       Fin.succAbove_of_castSucc_lt _ _ (by simp [Fin.lt_def] <;> omega)]
     simp only [Fin.succ_castSucc]
   · by_cases h2 : (i : ℕ) = j
-    · rw [if_neg h1, if_pos h2, Fin.succAbove_of_castSucc_lt _ _ (by simp [Fin.lt_def] <;> omega),
+    · rw [ite_eq_right h1, ite_eq_left h2, Fin.succAbove_of_castSucc_lt _ _ (by simp [Fin.lt_def] <;> omega),
         Fin.succAbove_of_le_castSucc _ _ (by simp [Fin.le_def] <;> omega)]
       simp only [Fin.succ_castSucc, mul_assoc, mul_inv_cancel_left]
-    · rw [if_neg h1, if_neg h2, Fin.succAbove_of_le_castSucc _ _ (by simp [Fin.le_def] <;> omega),
+    · rw [ite_eq_right h1, ite_eq_right h2, Fin.succAbove_of_le_castSucc _ _ (by simp [Fin.le_def] <;> omega),
         Fin.succAbove_of_le_castSucc _ _ (by simp [Fin.le_def] <;> omega)]
       simp only [Fin.succ_castSucc]
 
@@ -1590,8 +1543,6 @@ theorem sSep : SSep := by
       rw [hg, ← smul_eq_mul, ← map_smul, Finsupp.smul_single, smul_eq_mul, mul_one]
     rw [hev]
     exact hφz
-
-theorem sSep_of : SChain → SSep := fun _ => sSep
 
 end PositivityTheory.KB
 end -- clump:auto

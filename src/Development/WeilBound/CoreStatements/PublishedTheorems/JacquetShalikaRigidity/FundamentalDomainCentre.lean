@@ -13,14 +13,11 @@ open GlobalTheory.CuspGeneric GlobalTheory.CuspRep GlobalTheory.UnitaryBC Global
 open GroundTheory.Automorphic GroundTheory.Automorphic.FourierWhittaker GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.Spherical
 open scoped ENNReal ComplexConjugate
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 attribute [local instance] GlobalTheory.CuspRep.CuspidalL2GL.discreteTopology_latticeGL
 
 namespace PositivityTheory.AdelicQuotientData
 
 namespace FundamentalDomainCentre
-
-set_option synthInstance.maxHeartbeats 400000
 
 variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {k : ℕ}
 
@@ -152,7 +149,6 @@ theorem split_centre_band_iff (hD : D0) (hk : 1 ≤ k) (n : ℤ) (g : GA E k) :
 
 end FundamentalDomainCentre
 
-set_option synthInstance.maxHeartbeats 400000 in
 theorem fundamental_domain_of : Q1 → D0 → N3 → W0 := by
   intro hQ1 hD hN3 E _ _ _ k μ _ hk
   obtain ⟨hpos, hmul, hcont, hrat, huu, -⟩ := hD E k

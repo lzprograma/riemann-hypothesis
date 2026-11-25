@@ -46,7 +46,6 @@ open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory
 open UpperTheory.V.W (Plc Lp)
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open UpperTheory.V.Z.Sym.Al
 
 noncomputable section
@@ -87,7 +86,7 @@ private theorem map_cutM_pos {P : HeightOneSpectrum (𝓞 E) → Prop} (A : Matr
 private theorem map_cutM_neg {P : HeightOneSpectrum (𝓞 E) → Prop} (A : Matrix (Fin n) (Fin n) (Af E))
     {u : HeightOneSpectrum (𝓞 E)} (h : ¬ P u) :
     RingHom.mapMatrix (pLoc E u) (cutM P A) = 1 := by
-  have h0 : pLoc E u (idem P) = 0 := by rw [pLoc_idem, if_neg h]
+  have h0 : pLoc E u (idem P) = 0 := by rw [pLoc_idem, ite_eq_right h]
   refine Matrix.ext fun i j => ?_
   change pLoc E u (idem P * A i j + (1 - idem P) * (1 : Matrix (Fin n) (Fin n) (Af E)) i j) =
     (1 : Matrix (Fin n) (Fin n) (u.adicCompletion E)) i j

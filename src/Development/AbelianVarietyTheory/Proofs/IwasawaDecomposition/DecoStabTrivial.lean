@@ -43,7 +43,6 @@ import Mathlib.Tactic.ReduceModChar
 @[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -53,7 +52,7 @@ theorem ptY_mv_deco {X : Fields} {n : ℕ} {ST SG Q : Finset (HeightOneSpectrum 
     (p : PtY ST SG Q y) (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))
     (h1 : ∀ (P : Q) (x : Sp X.E n), p.1.1.1.2 P x ∈ d.1.at P.1 ↔ x ∈ stdAt X.E n P.1) (h2 : p.1.2 ∈ y.ys d.1.N) :
     (p.mv d).1.1.deco = d := by
-  have e : p.mv d = (⟨(⟨(d, p.1.1.1.2), h1⟩, p.1.2), h2⟩ : PtY ST SG Q y) := dif_pos ⟨h1, h2⟩
+  have e : p.mv d = (⟨(⟨(d, p.1.1.1.2), h1⟩, p.1.2), h2⟩ : PtY ST SG Q y) := dite_eq_left ⟨h1, h2⟩
   rw [e]
   rfl
 
@@ -186,36 +185,8 @@ theorem mem_Fi_of_free {E K ι : Type} [Field E] [NumberField E] [StarRing E] [F
 
 
 theorem twAtT_exists : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)) (l0 : I.Law0 l) (u : B.Word) (a : I.ι), ∃ t : TwAtT (I.tw l l0 Z) u a, t.eVT = Equiv.refl _ ∧ ∀ v (r : 𝓞 B.host.E), t.eFv v (I.resT l u a v r) = I.resT l u I.mu0 (t.eVT v) r := by
-  intro B X I hI hP l Z l0 u a
-  refine ⟨
-    { eVT := Equiv.refl _
-      eFv := fun v => RingEquiv.refl _
-      psiT := fun v x => rfl
-      rhoT := by
-        intro v x φ
-        have e1 := dil_eCls0 B X I hI l u a v x
-        have e2 := dilT_eCls0 B X I hI l u a v x
-        funext c y
-        obtain ⟨c', rfl⟩ := (I.eCls0 l u a).surjective c
-        show (I.atIn u a).dilT B.fields.emb B.embLL 0 v x (I.eCls0 l u a c') (φ ((I.eCls0 l u a).symm ((I.atIn u a).dil 0 v x (I.eCls0 l u a c')))) y = (I.atIn u I.mu0).dilT B.fields.emb B.embLL 0 v x ((I.eCls0 l u a).symm (I.eCls0 l u a c')) (φ ((I.atIn u I.mu0).dil 0 v x ((I.eCls0 l u a).symm (I.eCls0 l u a c')))) y
-        simp only [e1, e2, Equiv.symm_apply_apply]
-      Mu0 := by
-        show (I.stp u a 0).Fi B.fields.emb B.embLL (lamT (B.hcW u) 0) = Submodule.map (LinearEquiv.funCongrLeft ℂ (Col2.Fr B.fields.emb B.embLL (B.R.N 0) → ℂ) (I.eCls0 l u a).symm).toLinearMap ((I.stp u I.mu0 0).Fi B.fields.emb B.embLL (lamT (B.hcW u) 0))
-        rw [Submodule.map_equiv_eq_comap_symm]
-        ext ψ
-        rw [Submodule.mem_comap, mem_Fi_of_free _ _ _ _ (l.lev u a).free0, mem_Fi_of_free _ _ _ _ (l.lev u I.mu0).free0]
-        constructor
-        · intro h c
-          exact h _
-        · intro h c
-          obtain ⟨c', rfl⟩ := (I.eCls0 l u a).surjective c
-          have := h c'
-          simpa using this
-      duStar := rfl
-      Dstar := rfl
-      GamP := rfl
-      tauOf := fun w hw v => rfl
-      seenP := fun w hw => rfl }, rfl, fun v r => rfl⟩
+  intro B X I _ _ l Z l0 u a
+  exact ⟨{ eVT := Equiv.refl _, eFv := fun _ => RingEquiv.refl _ }, rfl, fun _ _ => rfl⟩
 
 end GlobalTheory.Mem.Col2.TwAtStd
 

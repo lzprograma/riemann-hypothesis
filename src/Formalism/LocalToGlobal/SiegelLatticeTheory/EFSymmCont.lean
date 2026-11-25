@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.GlobalConditionOfLocalAgreement
 public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
 public import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtB
 
@@ -31,16 +32,7 @@ structure LocIso {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E
   eE_psi : ∀ y : A.Ep, A.psiE y = B.psiE (eE y)
 
 theorem conjF_invol (D : D7) (x : D.host.E) : D.conjF (D.conjF x) = x := by
-  rw [D.conjF_eq, D.conjF_eq]
-  have h1 : D.R.toFrame.cc * D.R.toFrame.cc = 1 := by
-    rw [← D.host.art_neg_one, ← map_mul]
-    simp
-  have h2 : D.host.gal.symm D.R.toFrame.cc * D.host.gal.symm D.R.toFrame.cc = 1 := by
-    rw [← map_mul, h1, map_one]
-  show D.host.gal.symm D.R.toFrame.cc (D.host.gal.symm D.R.toFrame.cc x) = x
-  first
-    | rw [← AlgEquiv.mul_apply, h2, AlgEquiv.one_apply]
-    | exact congrArg (fun e : D.host.E ≃ₐ[ℚ] D.host.E => e x) h2
+  apply _root_.Formalism.MainNotions.BridgeLemma.conjF_inv <;> assumption
 
 def locC (D : D7) (p : HeightOneSpectrum (𝓞 D.host.F)) : Formalism.MainNotions.S.Loc.LocAt D.host.F D.host.E D.conjF p :=
   Examples₂.locAtC D.conjF (conjF_invol D) (Examples₂.finrank_FE D.host) p

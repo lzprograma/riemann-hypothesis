@@ -9,8 +9,6 @@ import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OnePar
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open NumberField Matrix Module
@@ -49,16 +47,13 @@ theorem complex_embedding_cases (I : AutInst) (σ : I.E →+* ℂ) :
     · right
       rw [sub_eq_zero.mp h]
       exact I.cm.cmUnram.2.1 (I.φ v) a
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   obtain ⟨h1, h2⟩ := hcon v
   obtain ⟨a, ha⟩ : ∃ a, σ a ≠ I.φ v a := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact h1 (RingHom.ext h)
   obtain ⟨b, hb⟩ : ∃ b, σ b ≠ starRingEnd ℂ (I.φ v b) := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact h2 (RingHom.ext h)
   have ha' := (key a).resolve_left ha
   have hb' := (key b).resolve_right hb

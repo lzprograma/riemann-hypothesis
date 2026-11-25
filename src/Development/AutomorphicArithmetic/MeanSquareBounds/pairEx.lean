@@ -13,58 +13,11 @@ public import Formalism.GL3MeanSquares.SecondEstimateOfIntervalHypothesis
 public import Mathlib.NumberTheory.Primorial
 public import Development.AutomorphicArithmetic.MeanSquareBounds.StagePow
 public import Development.AutomorphicArithmetic.CharacterBoxes.PairGood
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MeanSquareHypWIff
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.NumberTheory.MulChar.Duality
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AutomorphicArithmetic.MeanSquareBounds.IndDrop, Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.mertensUpper, Development.AutomorphicArithmetic.MeanSquareBounds.Kappa4Loglog, Development.AutomorphicArithmetic.MeanSquareBounds.ExistsCoprimePrimePairSetSecondEqPPset, Development.AutomorphicArithmetic.MeanSquareBounds.LogOddM, Development.AutomorphicArithmetic.MeanSquareBounds.CharOf, Development.AutomorphicArithmetic.MeanSquareBounds.Stage1Succ, Development.AutomorphicArithmetic.MeanSquareBounds.PairShare, Development.AutomorphicArithmetic.MeanSquareBounds.RowsOfMem, Development.AutomorphicArithmetic.MeanSquareBounds.PairExists, Development.AutomorphicArithmetic.MeanSquareBounds.pairEx
+-- Members: Development.AutomorphicArithmetic.MeanSquareBounds.IndDrop, Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.mertensUpper, Development.AutomorphicArithmetic.MeanSquareBounds.ExistsCoprimePrimePairSetSecondEqPPset, Development.AutomorphicArithmetic.MeanSquareBounds.LogOddM, Development.AutomorphicArithmetic.MeanSquareBounds.CharOf, Development.AutomorphicArithmetic.MeanSquareBounds.Stage1Succ, Development.AutomorphicArithmetic.MeanSquareBounds.PairShare, Development.AutomorphicArithmetic.MeanSquareBounds.RowsOfMem, Development.AutomorphicArithmetic.MeanSquareBounds.PairExists, Development.AutomorphicArithmetic.MeanSquareBounds.pairEx
 
 -- ===== clump member: Development.AutomorphicArithmetic.MeanSquareBounds.IndDrop =====
 -- clump-header: {"m": "Development.AutomorphicArithmetic.MeanSquareBounds.IndDrop", "h": "module\n\npublic import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds\npublic import Development.AutomorphicArithmetic.MeanSquareBounds.IndUnique\npublic import Development.AutomorphicArithmetic.MeanSquareBounds.TwistPrim\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MeanSquareHypWIff\n\n"}
@@ -235,166 +188,6 @@ end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.mertensUpper =====
 
--- ===== clump member: Development.AutomorphicArithmetic.MeanSquareBounds.Kappa4Loglog =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.MeanSquareBounds.Kappa4Loglog", "h": "module\n\npublic import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds\npublic import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.mertensUpper\npublic import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.TailContour\npublic import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.TailDiff\npublic import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.TailNum\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Real\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MeanSquareHypWIff\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open Finset Formalism.HermitianLattices.ZeroFreeRegionGL2 Formalism.HermitianLattices.Ext.LogarithmicIntegralBounds
-
-namespace QH
-
-private theorem kappa4_num (K : ℝ) (hK : 0 ≤ K) (s Q : ℝ) (hs : 3 ≤ s) (hQ : 0 < Q)
-    (hQs : (s ^ 4) ^ 1006 ≤ Q) (x : ℝ) (hx : x = s ^ 10) :
-    ((K * s ^ 4 * (s ^ 4 * (1 / x ^ 2) * (x ^ 400) ^ (1 - 1 / 400 + (2 / 5) / 1600 : ℝ) + (x ^ 400) ^ 2 / Q)
-          + x ^ 400 * (1 / x ^ 2) * (x ^ 400 * (1 / x ^ 2) + 1) * Real.log (x ^ 400 + x ^ 400 * (1 / x ^ 2)) / x ^ 400)
-          / (x ^ 400 * (1 / x ^ 2))) ≤ 2 * K + 802 := by
-  have hs0 : 0 < s := by linarith
-  have hs1 : 1 ≤ s := by linarith
-  have hx3 : 3 ≤ x := by
-    rw [hx]; exact hs.trans (le_self_pow₀ hs1 (by norm_num))
-  have hx0 : 0 < x := by linarith
-  have hxa : x ^ ((2 / 5) / 4 : ℝ) = s := by
-    rw [hx, ← Real.rpow_natCast s 10, ← Real.rpow_mul hs0.le]
-    norm_num
-  apply le_of_mul_le_mul_left _ hx0
-  rw [Formalism.HermitianLattices.Ext.BoxTail.tail_num_rpow x (2 / 5) hx0, hxa,
-    Formalism.HermitianLattices.Ext.BoxTail.tail_num_alg x Q K _ _ _ hx0 hQ]
-  have t3 := Formalism.HermitianLattices.Ext.BoxTail.tail_num_third x hx3
-  have t1 : (s ^ 4) ^ 2 * s ≤ x := by
-    rw [hx]
-    calc (s ^ 4) ^ 2 * s = s ^ 9 := by ring
-      _ ≤ s ^ 10 := pow_le_pow_right₀ hs1 (by norm_num)
-  have t2 : s ^ 4 * x ^ 403 / Q ≤ x := by
-    rw [div_le_iff₀ hQ]
-    have e : s ^ 4 * x ^ 403 = x * (s ^ 4) ^ 1006 := by
-      rw [hx, ← pow_mul, ← pow_mul, ← pow_add, ← pow_add]
-    rw [e]
-    exact mul_le_mul_of_nonneg_left hQs hx0.le
-  have u1 := mul_le_mul_of_nonneg_left t1 hK
-  have u2 := mul_le_mul_of_nonneg_left t2 hK
-  have u3 : (802 : ℝ) ≤ x * 802 := by linarith
-  have e1 : K * (s ^ 4) ^ 2 * s = K * ((s ^ 4) ^ 2 * s) := mul_assoc _ _ _
-  have e2 : x * (2 * K + 802) = K * x + K * x + x * 802 := by ring
-  rw [e1, e2]
-  exact add_le_add (add_le_add u1 u2) (t3.trans u3)
-
-set_option maxRecDepth 4096 in
-private theorem kappa4_loglog : ∃ C l₀ : ℝ, 1 ≤ l₀ ∧ ∀ (Q : ℝ) (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N),
-    l₀ ≤ Real.log Q → GoodC Q χ → ‖logDerivLAtOne χ‖ ≤ 1000 * Real.log (Real.log Q) + C := by
-  obtain ⟨K, hK0, hK⟩ := Formalism.HermitianLattices.Ext.BoxTail.tail_contour ((2 / 5) / 1600) (by positivity) (by norm_num)
-  have hev : ∀ᶠ l : ℝ in Filter.atTop, l ^ 1006 ≤ Real.exp l := by
-    have h := (Real.tendsto_exp_div_pow_atTop 1006).eventually_ge_atTop 1
-    filter_upwards [h, Filter.eventually_gt_atTop 0] with l hl hl0
-    rwa [le_div_iff₀ (by positivity), one_mul] at hl
-  obtain ⟨l₀, hl₀⟩ := Filter.eventually_atTop.1 (hev.and (Filter.eventually_ge_atTop 81))
-  refine ⟨2 * K + 802 + 2, l₀, by linarith [(hl₀ l₀ le_rfl).2], ?_⟩
-  intro Q N _ χ hQlo hgood
-  obtain ⟨hχ, hNQ, hbox⟩ := hgood
-  obtain ⟨hexp, h81⟩ := hl₀ _ hQlo
-  have hN1 : (1 : ℝ) ≤ N := by exact_mod_cast Nat.one_le_iff_ne_zero.mpr (NeZero.ne N)
-  have hQ0 : 0 < Q := by linarith
-  rw [Real.exp_log hQ0] at hexp
-  have hQ2 : 2 ≤ Q := by
-    have := Real.log_le_self hQ0.le
-    linarith
-  obtain ⟨s, hs0, hs4⟩ : ∃ s : ℝ, 0 ≤ s ∧ s ^ 4 = Real.log Q :=
-    ⟨Real.log Q ^ ((4 : ℕ) : ℝ)⁻¹, Real.rpow_nonneg (by linarith) _,
-      Real.rpow_inv_natCast_pow (by linarith) (by norm_num)⟩
-  have hs3 : 3 ≤ s := by
-    apply le_of_pow_le_pow_left₀ (n := 4) (by norm_num) hs0
-    rw [hs4]; linarith
-  obtain ⟨x, hx⟩ : ∃ x : ℝ, x = s ^ 10 := ⟨_, rfl⟩
-  have hnum := kappa4_num K hK0 s Q hs3 hQ0 (by rw [hs4]; exact hexp) x hx
-  rw [hs4] at hnum
-  have hx3 : 3 ≤ x := by
-    rw [hx]; exact hs3.trans (le_self_pow₀ (by linarith) (by norm_num))
-  have hx0 : 0 < x := by linarith
-  have hlogz : Real.log (x ^ 400) = 1000 * Real.log (Real.log Q) := by
-    rw [← hs4, hx, Real.log_pow, Real.log_pow, Real.log_pow]; push_cast; ring
-  set z : ℝ := x ^ 400 with hz
-  set η : ℝ := 1 / x ^ 2 with hη
-  have hz1 : 1 ≤ z := one_le_pow₀ (by linarith)
-  have hη0 : 0 < η := by positivity
-  have hη1 : η ≤ 1 := by
-    rw [hη, div_le_one (by positivity)]; nlinarith
-  have hzη : 0 < z * η := by positivity
-  have hC := hK N χ Q z η hχ hQ2 hNQ hbox hz1 hη0 hη1
-  have hD := Formalism.HermitianLattices.Ext.BoxTail.tail_diff_schi χ z (z * η) hz1 hzη
-  set P : ℂ := ∑ n ∈ Icc 1 ⌊z⌋₊, ((ArithmeticFunction.vonMangoldt n : ℝ) : ℂ) * χ (n : ZMod N) / (n : ℂ) with hP
-  have hkey : ((z * η : ℝ) : ℂ) * (Formalism.ZeroFreeDirichlet.negLD χ 1 - P) =
-      -(Formalism.ZeroFreeDirichlet.Schi χ (z + z * η) - Formalism.ZeroFreeDirichlet.Schi χ z - ((z * η : ℝ) : ℂ) * Formalism.ZeroFreeDirichlet.negLD χ 1) +
-      (Formalism.ZeroFreeDirichlet.Schi χ (z + z * η) - Formalism.ZeroFreeDirichlet.Schi χ z - ((z * η : ℝ) : ℂ) * P) := by ring
-  have hnorm : ‖Formalism.ZeroFreeDirichlet.negLD χ 1 - P‖ ≤
-      (K * Real.log Q * (Real.log Q * η * z ^ (1 - 1 / 400 + (2 / 5) / 1600 : ℝ) + z ^ 2 / Q)
-        + z * η * (z * η + 1) * Real.log (z + z * η) / z) / (z * η) := by
-    rw [le_div_iff₀ hzη]
-    have h1 := congrArg norm hkey
-    rw [norm_mul, Complex.norm_real, Real.norm_of_nonneg hzη.le] at h1
-    calc ‖Formalism.ZeroFreeDirichlet.negLD χ 1 - P‖ * (z * η) = z * η * ‖Formalism.ZeroFreeDirichlet.negLD χ 1 - P‖ := mul_comm _ _
-      _ = _ := h1
-      _ ≤ _ := by
-        refine (norm_add_le _ _).trans ?_
-        rw [norm_neg]
-        exact add_le_add hC hD
-  have htail := hnorm.trans hnum
-  have hPle : ‖P‖ ≤ Real.log z + 2 := by
-    have hM : ∑ n ∈ Icc 1 ⌊z⌋₊, (ArithmeticFunction.vonMangoldt n : ℝ) / (n : ℝ) ≤ Real.log z + 2 := by
-      refine le_trans (Finset.sum_le_sum_of_subset_of_nonneg ?_ ?_) (Deduction.mertens_upper z hz1)
-      · intro n hn
-        exact Finset.mem_range.mpr (Nat.lt_succ_of_le (Finset.mem_Icc.mp hn).2)
-      · intro n _ _
-        exact div_nonneg ArithmeticFunction.vonMangoldt_nonneg (Nat.cast_nonneg n)
-    refine le_trans (norm_sum_le _ _) (le_trans ?_ hM)
-    refine Finset.sum_le_sum (fun n hn => ?_)
-    have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast (Finset.mem_Icc.mp hn).1
-    rw [norm_div, norm_mul, Complex.norm_real, Complex.norm_natCast,
-      Real.norm_of_nonneg ArithmeticFunction.vonMangoldt_nonneg]
-    have hχn : ‖χ (n : ZMod N)‖ ≤ 1 := DirichletCharacter.norm_le_one χ _
-    have hΛ : 0 ≤ (ArithmeticFunction.vonMangoldt n : ℝ) := ArithmeticFunction.vonMangoldt_nonneg
-    gcongr
-    calc (ArithmeticFunction.vonMangoldt n : ℝ) * ‖χ (n : ZMod N)‖ ≤ (ArithmeticFunction.vonMangoldt n : ℝ) * 1 := by gcongr
-      _ = ArithmeticFunction.vonMangoldt n := mul_one _
-  have hLD : logDerivLAtOne χ = -(Formalism.ZeroFreeDirichlet.negLD χ 1) := by
-    simp only [logDerivLAtOne, Formalism.ZeroFreeDirichlet.negLD, neg_neg]
-  rw [hLD, norm_neg]
-  calc ‖Formalism.ZeroFreeDirichlet.negLD χ 1‖ = ‖P + (Formalism.ZeroFreeDirichlet.negLD χ 1 - P)‖ := by rw [add_sub_cancel]
-    _ ≤ ‖P‖ + ‖Formalism.ZeroFreeDirichlet.negLD χ 1 - P‖ := norm_add_le _ _
-    _ ≤ _ := by rw [← hlogz]; linarith
-
-theorem kappa4 :
-    ∀ ε A : ℝ, 0 < ε → ε < 1 / 52 → 0 < A → ∃ Y₀ : ℝ, ∀ Y ≥ Y₀, ∀ (Q : ℝ) (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N),
-      Y ^ (ε / 6) ≤ Real.log Q → Real.log Q ≤ A * Y ^ (ε / 5) * Real.log Y ^ 2 → GoodC Q χ → ‖logDerivLAtOne χ‖ ≤ 4 * Real.log Y := by
-  intro ε A hε hε1 hA
-  obtain ⟨C, l₀, hl₀, hC⟩ := kappa4_loglog
-  have e1 : ∀ᶠ Y : ℝ in Filter.atTop, l₀ ≤ Y ^ (ε / 6) :=
-    (tendsto_rpow_atTop (by positivity : 0 < ε / 6)).eventually_ge_atTop _
-  have e2 : ∀ᶠ u : ℝ in Filter.atTop, ‖Real.log u‖ ≤ (1 / 26000) * ‖u‖ :=
-    Real.isLittleO_log_id_atTop.bound (by norm_num)
-  have e3 : ∀ᶠ u : ℝ in Filter.atTop, 13 * (1000 * Real.log A + C) ≤ u := Filter.eventually_ge_atTop _
-  have e4 := Real.tendsto_log_atTop.eventually (e2.and (e3.and (Filter.eventually_ge_atTop 1)))
-  obtain ⟨Y₀, hY₀⟩ := Filter.eventually_atTop.1 (e1.and (e4.and (Filter.eventually_gt_atTop 0)))
-  refine ⟨Y₀, ?_⟩
-  intro Y hY Q N _ χ hlo hhi hgood
-  obtain ⟨h1, ⟨h2, h3, h4⟩, hY0⟩ := hY₀ Y hY
-  have hb := hC Q N χ (h1.trans hlo) hgood
-  have hu0 : 0 < Real.log Y := by linarith
-  have hp : 0 < Y ^ (ε / 5) := Real.rpow_pos_of_pos hY0 _
-  have hl : Real.log (Real.log Q) ≤ Real.log A + ε / 5 * Real.log Y + 2 * Real.log (Real.log Y) := by
-    refine (Real.log_le_log (by linarith) hhi).trans (le_of_eq ?_)
-    rw [Real.log_mul (by positivity) (by positivity), Real.log_mul hA.ne' hp.ne', Real.log_rpow hY0,
-      Real.log_pow]
-    push_cast; ring
-  rw [Real.norm_of_nonneg hu0.le, Real.norm_of_nonneg (Real.log_nonneg h4)] at h2
-  have h5 : ε * Real.log Y ≤ 1 / 52 * Real.log Y := mul_le_mul_of_nonneg_right hε1.le hu0.le
-  have h6 : ε / 5 * Real.log Y = ε * Real.log Y / 5 := by ring
-  rw [h6] at hl
-  linarith
-
-end QH
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.MeanSquareBounds.Kappa4Loglog =====
 
 -- ===== clump member: Development.AutomorphicArithmetic.MeanSquareBounds.ExistsCoprimePrimePairSetSecondEqPPset =====
 -- clump-header: {"m": "Development.AutomorphicArithmetic.MeanSquareBounds.ExistsCoprimePrimePairSetSecondEqPPset", "h": "module\n\npublic import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MeanSquareHypWIff\n\n"}
@@ -1003,7 +796,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.MeanSquareBounds.PairExists =====
 
 -- ===== clump member: Development.AutomorphicArithmetic.MeanSquareBounds.pairEx =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.MeanSquareBounds.pairEx", "h": "module\n\npublic import Development.AutomorphicArithmetic.CharacterBoxes.PairGood\npublic import Development.AutomorphicArithmetic.MeanSquareBounds.IndDrop\npublic import Development.AutomorphicArithmetic.MeanSquareBounds.Kappa4Loglog\npublic import Development.AutomorphicArithmetic.MeanSquareBounds.PairExists\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Real\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Development.AutomorphicArithmetic.MeanSquareBounds.pairEx", "h": "module\n\npublic import Development.AutomorphicArithmetic.CharacterBoxes.PairGood\npublic import Development.AutomorphicArithmetic.MeanSquareBounds.IndDrop\npublic import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.mertensUpper\npublic import Development.AutomorphicArithmetic.MeanSquareBounds.PairExists\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Real\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -1064,7 +857,7 @@ private theorem pairEx_box (M : ℕ) (hM : 0 < M) (C τ Y X z z' : ℝ) (q d : �
 private theorem pairEx_g {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (h : χ ≠ 1) (y : ℝ) :
     Formalism.HC.An.gChi χ y = Gchi χ y := by
   unfold Formalism.HC.An.gChi
-  rw [if_neg h]
+  rw [ite_eq_right h]
   unfold Formalism.HC.An.sumLamChi Gchi
   congr 1
   apply Finset.sum_congr rfl
@@ -1079,48 +872,52 @@ private theorem pairEx_g {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (h
     linarith
   rw [max_eq_left hnn]
 
-private theorem log_exp_product_bounds (M : ℕ) (hM : 0 < M) (ε Y : ℝ) (hε : 0 < ε)
-    (hY : Real.exp (1 + Real.log (8 * M)) ≤ Y) (j : ℕ) (hj : j ≤ 1) :
-    Y ^ (ε / 6) ≤ Real.log (8 * M * Real.exp (Y ^ (ε / 5)) * Real.exp (Y ^ (ε / 5) * Real.log Y ^ 2) ^ j) ∧
-    Real.log (8 * M * Real.exp (Y ^ (ε / 5)) * Real.exp (Y ^ (ε / 5) * Real.log Y ^ 2) ^ j)
-      ≤ 3 * Y ^ (ε / 5) * Real.log Y ^ 2 := by
-  have hM1 : (1 : ℝ) ≤ M := by exact_mod_cast hM
-  have hM8 : (1 : ℝ) ≤ 8 * M := by linarith
-  have hlog8 : 0 ≤ Real.log (8 * M) := Real.log_nonneg hM8
-  have hY1 : 1 ≤ Y := le_trans (Real.one_le_exp (by linarith)) hY
-  have hYpos : 0 < Y := by linarith
-  have hL : 1 + Real.log (8 * M) ≤ Real.log Y := (Real.le_log_iff_exp_le hYpos).mpr hY
-  have hw1 : 1 ≤ Y ^ (ε / 5) := Real.one_le_rpow hY1 (by linarith)
-  have h65 : Y ^ (ε / 6) ≤ Y ^ (ε / 5) := Real.rpow_le_rpow_of_exponent_le hY1 (by linarith)
-  set w := Y ^ (ε / 5) with hw
-  set L := Real.log Y with hLdef
-  have hL1 : 1 ≤ L := by linarith
-  have hL2 : L ≤ L ^ 2 := by nlinarith
-  have hwL : L ^ 2 ≤ w * L ^ 2 := by nlinarith
-  have hlogQ : Real.log (8 * M * Real.exp w * Real.exp (w * L ^ 2) ^ j)
-      = Real.log (8 * M) + w + j * (w * L ^ 2) := by
-    rw [← Real.exp_nat_mul, mul_assoc, ← Real.exp_add,
-      Real.log_mul (ne_of_gt (by linarith)) (Real.exp_pos _).ne', Real.log_exp]
-    ring
-  have hj' : (j : ℝ) ≤ 1 := by exact_mod_cast hj
-  have hj0 : (0 : ℝ) ≤ j := Nat.cast_nonneg j
-  have hz0 : 0 ≤ w * L ^ 2 := by positivity
-  rw [hlogQ]
-  constructor
-  · nlinarith
-  · have a1 : w ≤ w * L ^ 2 := by nlinarith
-    have a2 : (j : ℝ) * (w * L ^ 2) ≤ w * L ^ 2 := by nlinarith
-    linarith
+private theorem logDeriv_le_of_Gchi {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
+    {y : ℝ} (hy : 1 ≤ Real.log y) (hy0 : 0 < y) (hG : ‖Gchi χ y‖ ≤ y) :
+    ‖logDerivLAtOne χ‖ ≤ 4 * Real.log y := by
+  have hy1 : 1 ≤ y := by linarith [Real.log_le_sub_one_of_pos hy0]
+  have hM : ∑ n ∈ Icc 1 ⌊y⌋₊, (ArithmeticFunction.vonMangoldt n : ℝ) / n ≤ Real.log y + 2 := by
+    refine le_trans (Finset.sum_le_sum_of_subset_of_nonneg ?_ ?_) (Deduction.mertens_upper y hy1)
+    · intro n hn
+      exact Finset.mem_range.mpr (Nat.lt_succ_of_le (Finset.mem_Icc.mp hn).2)
+    · intro n _ _
+      exact div_nonneg ArithmeticFunction.vonMangoldt_nonneg (Nat.cast_nonneg n)
+  have hS : ‖∑ n ∈ Icc 1 ⌊y⌋₊, ((ArithmeticFunction.vonMangoldt n : ℝ) : ℂ) * χ (n : ZMod N) * ((y / n - 1 : ℝ) : ℂ)‖
+      ≤ y * (Real.log y + 2) := by
+    refine (norm_sum_le _ _).trans ?_
+    calc (∑ n ∈ Icc 1 ⌊y⌋₊, ‖((ArithmeticFunction.vonMangoldt n : ℝ) : ℂ) * χ (n : ZMod N) * ((y / n - 1 : ℝ) : ℂ)‖)
+        ≤ ∑ n ∈ Icc 1 ⌊y⌋₊, y * ((ArithmeticFunction.vonMangoldt n : ℝ) / n) := by
+          apply Finset.sum_le_sum
+          intro n hn
+          obtain ⟨hn1, hny⟩ := Finset.mem_Icc.mp hn
+          have hn0 : (0 : ℝ) < n := by exact_mod_cast (lt_of_lt_of_le Nat.zero_lt_one hn1)
+          have hny' : (n : ℝ) ≤ y := (show (n : ℝ) ≤ ⌊y⌋₊ by exact_mod_cast hny).trans (Nat.floor_le hy0.le)
+          have hw : 0 ≤ y / n - 1 := by rw [sub_nonneg, le_div_iff₀ hn0]; simpa
+          rw [norm_mul, norm_mul, Complex.norm_real, Complex.norm_real,
+            Real.norm_of_nonneg ArithmeticFunction.vonMangoldt_nonneg, Real.norm_of_nonneg hw]
+          calc (ArithmeticFunction.vonMangoldt n : ℝ) * ‖χ (n : ZMod N)‖ * (y / n - 1)
+              ≤ ArithmeticFunction.vonMangoldt n * (y / n) := by
+                have hχ := DirichletCharacter.norm_le_one χ (n : ZMod N)
+                have hΛ := ArithmeticFunction.vonMangoldt_nonneg (n := n)
+                nlinarith [mul_le_mul_of_nonneg_left hχ hΛ]
+            _ = y * ((ArithmeticFunction.vonMangoldt n : ℝ) / n) := by ring
+      _ = y * (∑ n ∈ Icc 1 ⌊y⌋₊, (ArithmeticFunction.vonMangoldt n : ℝ) / n) := by rw [Finset.mul_sum]
+      _ ≤ y * (Real.log y + 2) := mul_le_mul_of_nonneg_left hM hy0.le
+  have h := norm_sub_le (Gchi χ y)
+    (∑ n ∈ Icc 1 ⌊y⌋₊, ((ArithmeticFunction.vonMangoldt n : ℝ) : ℂ) * χ (n : ZMod N) * ((y / n - 1 : ℝ) : ℂ))
+  simp only [Gchi, add_sub_cancel_left, norm_mul, Complex.norm_real, Real.norm_of_nonneg hy0.le] at h
+  unfold Gchi at hG
+  have hbound : y * ‖logDerivLAtOne χ‖ ≤ y * (4 * Real.log y) := by
+    nlinarith [mul_nonneg hy0.le (sub_nonneg.mpr hy)]
+  exact (mul_le_mul_iff_right₀ hy0).mp hbound
 
 theorem pairEx :
     UpperTheory.Top.PairEx := by
   intro M hM eps A heps heps' hA
   obtain ⟨C, hC, hpair⟩ := pair_exists
   obtain ⟨Y₀, hY₀⟩ := hpair eps (eps / 2) A (8 * M) heps heps' (by linarith) hA (by omega)
-  obtain ⟨Y₁, hY₁⟩ := kappa4 eps 3 heps heps' (by norm_num)
-  refine ⟨max (max Y₀ Y₁) (Real.exp (1 + Real.log (8 * M))), fun Y hY => ?_⟩
-  have hYa : Y₀ ≤ Y := le_trans (le_trans (le_max_left _ _) (le_max_left _ _)) hY
-  have hYb : Y₁ ≤ Y := le_trans (le_trans (le_max_right _ _) (le_max_left _ _)) hY
+  refine ⟨max Y₀ (Real.exp (1 + Real.log (8 * M))), fun Y hY => ?_⟩
+  have hYa : Y₀ ≤ Y := le_trans (le_max_left _ _) hY
   have hYc : Real.exp (1 + Real.log (8 * M)) ≤ Y := le_trans (le_max_right _ _) hY
   have hM1 : (1 : ℝ) ≤ M := by exact_mod_cast hM
   have hlog8 : 0 ≤ Real.log (8 * M) := Real.log_nonneg (by linarith)
@@ -1161,10 +958,14 @@ theorem pairEx :
     constructor
     · rw [pairEx_g χ hne]
       exact hG y ⟨hy1, hy2⟩
-    · obtain ⟨hk1, hk2⟩ := log_exp_product_bounds M hM eps Y heps hYc (j : ℕ) (Nat.lt_succ_iff.mp j.isLt)
-      have hk := hY₁ Y hYb _ N χ hk1 hk2 hgood
-      have hlog : Real.log Y ≤ Real.log y := Real.log_le_log (by linarith) hy1
-      exact le_trans hk (by linarith)
+    · have hYpos : 0 < Y := lt_of_lt_of_le (Real.exp_pos _) hYc
+      have hlogY : 1 ≤ Real.log Y := by
+        have := (Real.le_log_iff_exp_le hYpos).mpr hYc
+        linarith
+      apply logDeriv_le_of_Gchi χ (hlogY.trans (Real.log_le_log hYpos hy1)) (hYpos.trans_le hy1)
+      exact (hG y ⟨hy1, hy2⟩).trans (by
+        simpa using Real.rpow_le_rpow_of_exponent_le (hY1.trans hy1)
+          (show (1 : ℝ) / 2 + eps / 2 ≤ 1 by linarith))
   · intro ρ hρ hρN i j hij N _ χ hI
     have hB := pairEx_box M hM C (eps / 2) Y (Y ^ A) (Y ^ (eps / 5)) (Y ^ (eps / 5) * Real.log Y ^ 2) q d
       hR hq hQ hD ρ.val (DirichletCharacter.changeLevel hρN ρ.χ)

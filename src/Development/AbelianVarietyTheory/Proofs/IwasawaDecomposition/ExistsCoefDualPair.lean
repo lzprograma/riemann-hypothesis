@@ -14,43 +14,6 @@ public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqBot
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHarishChandraTypeDualWeylModuleFockNorm
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIntertwinerOfSameHarishChandraParamUnitary
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HcParameterEAddHalfShiftLeBSucc
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
 import Mathlib.Tactic.Linter.Style
 
@@ -74,9 +37,6 @@ variable {k : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 theorem ujset_eq (k : ℕ) : UJset (allPos k) = (Matrix.unitaryGroup (Fin k) ℂ : Set _) :=
   GlobalTheory.RealPar.ujset_const true
 
-theorem kset_eq (k : ℕ) : Formalism.REAL.Kset (allPos k) = (Matrix.unitaryGroup (Fin k) ℂ : Set _) :=
-  (GlobalTheory.DefiniteCheck.kset_const k true).trans (ujset_eq k)
-
 theorem conj_mem {g : Matrix (Fin k) (Fin k) ℂ} (hg : g ∈ Matrix.unitaryGroup (Fin k) ℂ) :
     g.map star ∈ Matrix.unitaryGroup (Fin k) ℂ :=
   Matrix.transpose_mem_unitaryGroup_iff.2 (Unitary.star_mem hg)
@@ -98,7 +58,7 @@ theorem tor_mem (θ : Fin k → ℝ) : tor θ ∈ Matrix.unitaryGroup (Fin k) �
 
 theorem wt_iff (μ : Fin k → ℝ) (v : H) : IsWtOn (Formalism.REAL.Kset (allPos k)) π μ v ↔
     ∀ θ, π (tor θ) v = Complex.exp (((∑ a, μ a * θ a : ℝ) : ℂ) * Complex.I) • v :=
-  ⟨fun h θ => h θ (by rw [kset_eq]; exact tor_mem θ), fun h θ _ => h θ⟩
+  ⟨fun h θ => h θ (by rw [GlobalTheory.CompactDS.kset_eq]; exact tor_mem θ), fun h θ _ => h θ⟩
 
 theorem wt_conj {μ : Fin k → ℝ} {v : H} :
     IsWtOn (Formalism.REAL.Kset (allPos k)) (fun g => π (g.map star)) μ v ↔ IsWtOn (Formalism.REAL.Kset (allPos k)) π (-μ) v := by
@@ -174,8 +134,8 @@ theorem isHCTypeU_conj {u : Fin k → ℝ} (h : IsHCTypeU k u π) :
       rw [this]
       exact h3'.1.2 _ (conj_mem ha) _ (conj_mem hb)
     · exact (h3'.2.2 x).comp (continuous_id.matrix_map continuous_star).continuousOn fun g hg => conj_mem hg
-  · rw [kset_eq] at hg
-    have := hst (g.map star) (by rw [kset_eq]; exact conj_mem hg) x hx
+  · rw [GlobalTheory.CompactDS.kset_eq] at hg
+    have := hst (g.map star) (by rw [GlobalTheory.CompactDS.kset_eq]; exact conj_mem hg) x hx
     have e : (g.map star).map star = g := by
       ext a b
       simp
@@ -336,8 +296,6 @@ section Global
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
   Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct InnerProductSpace
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (θ : InfFam D) (V : HSp D)
 

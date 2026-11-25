@@ -20,8 +20,6 @@ open scoped InnerProductSpace
 
 namespace Formalism.L2.SG.Pf.OOCoreHilbertSchmidt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem hsNormSq_eq_hilbertSchmidt_sq {V V' : Type*} [NormedAddCommGroup V] [InnerProductSpace ℂ V] [NormedAddCommGroup V']
     [InnerProductSpace ℂ V'] [FiniteDimensional ℂ V'] (A : V' →L[ℂ] V) :
     Formalism.MainNotions.S.hsNormSq A = Formalism.L2.SG.RealObj.hs2 A := by

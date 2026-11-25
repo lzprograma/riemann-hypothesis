@@ -64,19 +64,17 @@ theorem finrank_quot_le_of_regular {B γ : K → ℤ} {g : Ω} [FiniteDimensiona
       have hts' : (∏ k, y ⟨k, c k⟩) * t = (s : Ω) := hts
       rw [← hts']
       ring
+  have hcomap : (chartDivSec y c (B + γ)).comap φ = chartDivSec y c B := by
+    apply le_antisymm (fun s hs => ?_) hle
+    have hx : φ s ∈ chartDivSec y c (B + γ) := hs
+    have hm0 : (∏ k, y ⟨k, c k⟩) ≠ 0 := Finset.prod_ne_zero_iff.mpr fun k _ => hc k
+    obtain ⟨t, ht, hts⟩ := Submodule.mem_map.mp (Submodule.mem_comap.mp hx)
+    have hts' : (∏ k, y ⟨k, c k⟩) * t = g * (s : Ω) := hts
+    have hu := hreg s s.2 (by rwa [← hts', mul_div_cancel_left₀ _ hm0])
+    refine Submodule.mem_comap.mpr (Submodule.mem_map.mpr ⟨_, hu, ?_⟩)
+    exact mul_div_cancel₀ _ hm0
   refine LinearMap.finrank_le_finrank_of_injective (f := Submodule.mapQ _ _ φ hle) ?_
-  rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
-  intro x hx
-  obtain ⟨s, rfl⟩ := Submodule.Quotient.mk_surjective _ x
-  rw [Submodule.mapQ_apply, Submodule.Quotient.mk_eq_zero] at hx
-  rw [Submodule.Quotient.mk_eq_zero]
-  have hm0 : (∏ k, y ⟨k, c k⟩) ≠ 0 := Finset.prod_ne_zero_iff.mpr fun k _ => hc k
-  obtain ⟨t, ht, hts⟩ := Submodule.mem_map.mp (Submodule.mem_comap.mp hx)
-  have hts' : (∏ k, y ⟨k, c k⟩) * t = g * (s : Ω) := hts
-  have hu := hreg s s.2 (by rwa [← hts', mul_div_cancel_left₀ _ hm0])
-  refine Submodule.mem_comap.mpr (Submodule.mem_map.mpr ⟨_, hu, ?_⟩)
-  change (∏ k, y ⟨k, c k⟩) * ((s : Ω) / ∏ k, y ⟨k, c k⟩) = (s : Ω)
-  exact mul_div_cancel₀ _ hm0
+  rw [← LinearMap.ker_eq_bot, Submodule.ker_mapQ, hcomap, Submodule.mkQ_map_self]
 
 end Mul
 

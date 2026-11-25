@@ -244,12 +244,6 @@ open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Glob
 
 namespace GlobalTheory.TopVec
 
-lemma levWeight_nonneg (P : M.Par) (j : ℕ) (t : ℂ) : 0 ≤ KB.levW P j t := by
-  unfold KB.levW
-  split_ifs
-  · exact Formalism.FourierDecayAlt.P.JCx2.rb_zWeight_nonneg _ _ _ _
-  · positivity
-
 lemma isLocPt_ofFn_unit {j : ℕ} (c : Fin j → ℂ) (hc : ∀ i, c i ≠ 0) :
     D.IsLocPt (List.ofFn fun l : Fin j => ((1 : ℕ), c l)) j := by
   refine ⟨?_, ?_⟩
@@ -270,7 +264,7 @@ theorem levelZero_eq_integral_topVector_of_cpt :
     filter_upwards [GlobalTheory.ae_coords_ne_zero (P.r + 1)] with c hc
     rw [← GlobalTheory.TopVec.Ew_eq_norm_tv_sq Wp Wq P p H w c, (_root_.GlobalTheory.TopDensity.topDensity_eq Wp Wq P p H w c hc).1]
     rfl
-  obtain ⟨hint, heq⟩ := GlobalTheory.iterated_integral_eq_integral_pi (P.r + 1) (KB.levW P) R (levWeight_nonneg P)
+  obtain ⟨hint, heq⟩ := GlobalTheory.iterated_integral_eq_integral_pi (P.r + 1) (KB.levW P) R (GlobalTheory.TopDensity.levW_nonneg P)
     (fun c hc => (_root_.GlobalTheory.TopDensity.topDensity_eq Wp Wq P p H w c hc).2.2)
     ((hmeas.norm.pow 2).aemeasurable.congr hae.symm)
     (fun j hj c hc => by

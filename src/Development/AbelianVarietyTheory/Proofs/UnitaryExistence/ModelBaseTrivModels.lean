@@ -74,9 +74,9 @@ theorem isTypeFn_letters (c : Coeff l) (σ : c.F →+* ℂ) (hσ : GoodEmb c σ)
     rw [Nat.card_congr (e1.trans (e2.trans (Equiv.sigmaSubtype τ₀))), Nat.card_eq_fintype_card, Fintype.card_fin]
   refine ⟨fun h => ?_, fun h => ?_⟩
   · rw [hcard]
-    exact if_pos ((hrel τ₀).1 h)
+    exact ite_eq_left ((hrel τ₀).1 h)
   · rw [hcard]
-    exact if_neg (fun h' => h ((hrel τ₀).2 h'))
+    exact ite_eq_right (fun h' => h ((hrel τ₀).2 h'))
 
 variable {Xo : Moduli Dw l} {c : Coeff l} {σ : c.F →+* ℂ} {g : ℕ}
   {e : Fin g ≃ Σ τ : E →+* ℂ, Fin (Dw.mult τ)} {F : GlobalTheory.IndefiniteRowSideFullHecke.ModelFamilies.FamAt Xo c σ e} {r : ℕ}

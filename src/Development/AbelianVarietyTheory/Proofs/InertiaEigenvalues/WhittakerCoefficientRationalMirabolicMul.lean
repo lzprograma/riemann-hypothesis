@@ -2,51 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuotientAverageMapLatticeEquiv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.CategoryTheory.Countable
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicArithmetic.IntegralCasts.IsOpenStabOfMemNhds
 
@@ -73,7 +28,7 @@ theorem posM_col_apply (x : UnipotentBlockColumnIndex a k k → R) (t : Unipoten
   rw [Finset.sum_eq_single t]
   · simp
   · intro s _ hne
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2⟩
     exact hne (Subtype.ext (Prod.ext h1 h2))
   · simp
@@ -89,7 +44,7 @@ theorem posM_col_mul (M : Matrix (Fin a) (Fin a) R)
     simp only [Matrix.single_apply, Matrix.one_apply]
     by_cases h1 : t.1.1 = i <;> by_cases h2 : t.1.2 = j <;> simp [h1, h2]
   · intro l _ hl
-    rw [Matrix.single_apply, if_neg (fun h => hl h.2.symm), zero_mul]
+    rw [Matrix.single_apply, ite_eq_right (fun h => hl h.2.symm), zero_mul]
   · simp
 
 theorem mul_posM_col (M : Matrix (Fin a) (Fin a) R)
@@ -104,7 +59,7 @@ theorem mul_posM_col (M : Matrix (Fin a) (Fin a) R)
     rw [Finset.sum_eq_single s.1.1]
     · simp
     · intro l _ hl
-      rw [if_neg (fun h => hl h.1.symm), mul_zero]
+      rw [ite_eq_right (fun h => hl h.1.symm), mul_zero]
     · simp
   rw [hL]
   simp only [posM, Matrix.sum_apply, Matrix.single_apply]
@@ -112,33 +67,33 @@ theorem mul_posM_col (M : Matrix (Fin a) (Fin a) R)
   · by_cases hj : (j : ℕ) = k
     · symm
       rw [Finset.sum_eq_single (⟨(i, j), hi, hj.ge, hj.le⟩ : UnipotentBlockColumnIndex a k k)]
-      · rw [if_pos (And.intro rfl rfl)]
+      · rw [ite_eq_left (And.intro rfl rfl)]
         simp only [colAct]
         refine Finset.sum_congr rfl fun s _ => ?_
-        rw [if_pos]
+        rw [ite_eq_left]
         have h1 := s.2.2
         exact Fin.ext (by omega)
       · intro t _ hne
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨h1, h2⟩
         exact hne (Subtype.ext (Prod.ext h1 h2))
       · simp
     · rw [Finset.sum_eq_zero, Finset.sum_eq_zero]
       · intro t _
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨_, h2⟩
         have h1 := t.2.2
         rw [← h2] at hj
         omega
       · intro t _
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h2
         have h1 := t.2.2
         rw [← h2] at hj
         omega
   · rw [Finset.sum_eq_zero, Finset.sum_eq_zero]
     · intro t _
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨h1, _⟩
       have h2 := t.2.1
       rw [h1] at h2
@@ -164,7 +119,7 @@ theorem inv_rows (γ : GL (Fin a) R)
     rw [← Units.val_mul, mul_inv_cancel, Units.val_one]
   have h2 := congrFun (congrFun h i) l
   rw [Matrix.mul_apply] at h2
-  simp only [hγ i _ hi, Matrix.one_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true] at h2
+  simp only [hγ i _ hi, Matrix.one_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true] at h2
   simpa [Matrix.one_apply] using h2
 
 theorem blkU_mul (γ : GL (Fin a) R)

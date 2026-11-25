@@ -354,7 +354,3 @@ end GlobalTheory.DvrModel
 namespace GlobalTheory.PrimeElement
 
 end GlobalTheory.PrimeElement
-
-namespace GlobalTheory.DvrModel
-
-end GlobalTheory.DvrModel

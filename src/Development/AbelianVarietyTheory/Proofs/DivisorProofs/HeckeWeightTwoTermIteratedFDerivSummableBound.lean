@@ -16,57 +16,8 @@ public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbsNormEqProd
 public import Mathlib.Algebra.Module.ZLattice.Summable
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 import Mathlib.NumberTheory.NumberField.Units.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -500,9 +451,7 @@ theorem intZ_decay (K : Set ℂ) (hK : IsCompact K) (hKH : K ⊆ halfPlane) (N :
     refine ⟨2 ^ (N + 1) * |C0| + 2 * B, fun σ hσ ν y hν hy => ?_⟩
     set E : ℝ := (m : ℝ) + 1 - a - 2 * b - 2 * σ.re with hE
     have hyp : 0 < |y| := abs_pos.2 hy
-    have hnp : 0 < |ν| := abs_pos.2 hν
     have hx : |ν * y| = |ν| * |y| := abs_mul ν y
-    have hpN : 0 < (1 + |ν * y|) ^ N := by positivity
     have hB0 : 0 ≤ B := by rw [hB]; have := Real.pi_pos; positivity
     refine le_trans ?_ (le_of_eq (by ring : (2 ^ (N + 1) * |C0| + 2 * B) * |y| ^ E / (1 + |ν * y|) ^ (N + 1) =
       (2 ^ (N + 1) * |C0| + 2 * B) * |y| ^ E / (1 + |ν * y|) ^ (N + 1)))
@@ -518,7 +467,6 @@ theorem intZ_decay (K : Set ℂ) (hK : IsCompact K) (hKH : K ⊆ halfPlane) (N :
       have hE3 : (((m + 1 : ℕ) : ℝ) + 1 - (a : ℝ) - 2 * ((b + 1 : ℕ) : ℝ) - 2 * σ.re) = E - 1 := by rw [hE]; push_cast; ring
       rw [hE1] at e1; rw [hE2] at e2; rw [hE3] at e3
       set X : ℝ := |y| ^ (E - 1) / (1 + |ν * y|) ^ N with hX
-      have hX0 : 0 ≤ X := by positivity
       have hσb : ‖-σ - (b : ℂ)‖ ≤ |R| + b := by
         calc ‖-σ - (b : ℂ)‖ ≤ ‖σ‖ + ‖(b : ℂ)‖ := by rw [← norm_neg σ]; exact norm_sub_le _ _
           _ ≤ |R| + b := by rw [Complex.norm_natCast]; gcongr; exact (hR σ hσ).trans (le_abs_self R)
@@ -698,7 +646,6 @@ theorem iteratedDeriv_hTrans_bound :
           linarith
         rw [he, abs_neg]
         refine le_trans ?_ (Nat.le_ceil _)
-        have hj : (0 : ℝ) ≤ j := Nat.cast_nonneg j
         calc |1 + (j : ℝ) + 2 * σ.re| ≤ |1 + (j : ℝ)| + |2 * σ.re| := abs_add_le _ _
           _ = 1 + j + 2 * |σ.re| := by
               rw [abs_of_nonneg (by linarith), abs_mul, abs_of_pos (by norm_num : (0:ℝ) < 2)]
@@ -732,7 +679,7 @@ theorem sum_pushforward_eval (σ : ℂ) (F : ℕ × ℕ × ℕ → ℂ) (g : ℕ
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun p hp => ?_
   simp_rw [apply_ite (Polynomial.eval σ), Polynomial.eval_zero, ite_mul, zero_mul]
-  rw [Finset.sum_ite_eq, if_pos (hU p hp)]
+  rw [Finset.sum_ite_eq, ite_eq_left (hU p hp)]
 
 theorem iteratedDeriv_hTrans_repr : ∀ j : ℕ, ∃ (S : Finset (ℕ × ℕ × ℕ)) (P : ℕ × ℕ × ℕ → Polynomial ℂ),
     (∀ p ∈ S, 2 ≤ p.1 + 2 * p.2.1 ∧ p.1 + 2 * p.2.1 = p.2.2 + 2 + j) ∧
@@ -938,7 +885,6 @@ theorem norm_iteratedFDeriv_fourierFactor_le :
     · have := inv_nonneg.2 hβp.le; linarith
     · have := (one_le_inv₀ hβp).2 h; linarith
   have hA1 : 1 ≤ A := by have := abs_nonneg (ν * β); linarith
-  have hApos : 0 < A := by linarith
   have hy : β * t ≠ 0 := mul_ne_zero hβ ht.ne'
   have hyB : |β * t| + |β * t|⁻¹ ≤ M * B := by
     rw [abs_mul, abs_of_pos ht, mul_inv, hBdef, mul_add]
@@ -960,7 +906,6 @@ theorem norm_iteratedFDeriv_fourierFactor_le :
       |C j| * (M * B) ^ s j / (μ * A) ^ (N + k) := by
     intro j
     refine (hC j σ hσ ν (β * t) hν hy).trans ?_
-    have hX : 0 ≤ (|β * t| + |β * t|⁻¹) ^ s j := by positivity
     calc C j * (|β * t| + |β * t|⁻¹) ^ s j / (1 + |ν * (β * t)|) ^ (N + k)
         ≤ |C j| * (|β * t| + |β * t|⁻¹) ^ s j / (1 + |ν * (β * t)|) ^ (N + k) := by
           gcongr
@@ -988,8 +933,6 @@ theorem norm_iteratedFDeriv_fourierFactor_le :
         gcongr
         exact hh j
     _ = (k.choose i : ℝ) * (2 * Real.pi) ^ i * (|C j| * M ^ s j / μ ^ (N + k)) * (B ^ (k + s j) / A ^ N) := by
-        have hA0 : A ≠ 0 := hApos.ne'
-        have hμ0 : μ ≠ 0 := hμ.ne'
         rw [mul_pow, mul_pow, pow_add, pow_add]
         field_simp
         rw [mul_pow, mul_pow, pow_add]
@@ -1203,7 +1146,7 @@ open GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization GlobalTheory.Hec
 noncomputable section
 namespace GlobalTheory.HeckeTwoUnit
 
-theorem phi_smul (σ : ℂ) {l : ℝ} (hl : l ≠ 0) (w : ℂ) :
+theorem phi_smul (σ : ℂ) {l : ℝ} (w : ℂ) :
     phi σ ((l : ℂ) * w) = ((l : ℂ)⁻¹ ^ 2 * ((|l| : ℝ) : ℂ) ^ (-2 * σ)) * phi σ w := by
   unfold phi
   rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, Complex.ofReal_mul,
@@ -1238,7 +1181,7 @@ theorem hTrans_smul (σ : ℂ) {l : ℝ} (hl : l ≠ 0) (ν y : ℝ) :
         Complex.exp (-(2 * (Real.pi : ℂ) * I * ((l * ν : ℝ) : ℂ) * (t : ℂ)))) := by
     intro t
     rw [show ((l * t : ℝ) : ℂ) + ((l * y : ℝ) : ℂ) * I = (l : ℂ) * ((t : ℂ) + (y : ℂ) * I) by push_cast; ring,
-      phi_smul σ hl]
+      phi_smul σ]
     push_cast; ring_nf
   simp_rw [e2]
   rw [MeasureTheory.integral_const_mul, Complex.real_smul, smul_eq_mul, ← mul_assoc, ← mul_assoc,

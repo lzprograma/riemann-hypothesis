@@ -1,5 +1,7 @@
 module
 
+import Formalism.LocalToGlobal.Columns.DGamAut
+import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnipotentTypeLevelCharacterFiniteOrderRootsOfUni
 public import Formalism.LocalToGlobal.HermitianColumns.SymAll
 public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
 public import Formalism.LocalToGlobal.Columns.DecoFin
@@ -76,7 +78,6 @@ section -- clump:auto
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.Host GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Top NumberField IsDedekindDomain
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -225,11 +226,11 @@ theorem seenDef (D : D7) (H : Formalism.L2.Herm.ColsHermS D) : SeenDef D (errOfT
   simp only [hτ]
   constructor
   · intro hs _
-    rw [if_pos hs] at key
+    rw [ite_eq_left hs] at key
     exact key.2 ((H.atT u).Pv_pi v)
   · intro h
     by_contra hs
-    rw [if_neg hs, Formalism.L2.Col.mem_conjIdeal] at key
+    rw [ite_eq_right hs, Formalism.L2.Col.mem_conjIdeal] at key
     refine not_both_mem D.host (D.mem u).A.T_prime (H.atT u).piU _ (H.atT u).piU_K ?_
       (H.atT u).piU_norm _ ?_ (H.atT u).piU_cong _ ((H.atT u).Pv_max v).ne_top
       ((H.atT u).Pv_pi v) (key.1 (h ((D.fm u).tauOf w v)))
@@ -336,20 +337,7 @@ namespace GlobalTheory.Mem.Col2
 open NumberField Formalism.BasicNotions Formalism.L2.Col
 
 theorem le_N_of_mem_gamRanks (R : Ranks) {n : ℕ} (hn : n ∈ gamRanks R) : n ≤ R.N R.m := by
-  have hY : ∀ j, j ≤ R.m → R.rankY j ≤ R.N R.m := by
-    intro j hj
-    have : j * R.t ≤ R.m * R.t := Nat.mul_le_mul_right _ hj
-    unfold Ranks.rankY Ranks.r Ranks.N
-    rw [mul_add, mul_one]
-    omega
-  have hm := R.two_le_m
-  simp only [gamRanks, Finset.mem_union, Finset.mem_image, Finset.mem_Icc, Finset.mem_insert,
-    Finset.mem_singleton] at hn
-  rcases hn with ⟨j, hj, rfl⟩ | rfl | rfl | rfl
-  · exact Nat.add_le_add_left (Nat.mul_le_mul_right _ hj.2) _
-  · exact hY _ le_rfl
-  · exact hY _ (Nat.sub_le _ _)
-  · simpa [Ranks.rankY, Ranks.nV] using hY 1 (by omega)
+  apply _root_.Formalism.L2.Col.dGamRanks_le <;> assumption
 
 theorem DGam_dvd_of_minkMult : ∀ {X : Fields} (R : Ranks), X.Ok →
     ∀ M, Formalism.MainNotions.MinkMult (2 * X.f * R.N R.m) M → DGam X.E R ∣ M := by
@@ -380,21 +368,9 @@ namespace GlobalTheory.Mem.Top.ColOwe
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.Host Formalism.L2.Forms GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Top NumberField IsDedekindDomain
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem natCast_kv_eq_zero (F : Type) [Field F] [NumberField F]
     (v : HeightOneSpectrum (𝓞 F)) (p : ℕ) (h : (p : 𝓞 F) ∈ v.asIdeal) : (p : kv F v) = 0 := by
-
-  have hval : Valued.v ((algebraMap (𝓞 F) (v.adicCompletionIntegers F) (p : 𝓞 F) :
-      v.adicCompletion F)) < 1 := by
-    rw [HeightOneSpectrum.algebraMap_adicCompletionIntegers_apply,
-      HeightOneSpectrum.valuedAdicCompletion_eq_valuation']
-    exact (v.valuation_lt_one_iff_mem (K := F) _).2 h
-  have hmax : algebraMap (𝓞 F) (v.adicCompletionIntegers F) (p : 𝓞 F) ∈
-      IsLocalRing.maximalIdeal (v.adicCompletionIntegers F) :=
-    (Valuation.mem_maximalIdeal_iff _ Valued.v).2 hval
-  have hres := (IsLocalRing.residue_eq_zero_iff _).2 hmax
-  simpa using hres
+  apply _root_.GlobalTheory.natCast_residueField_completion_eq_zero <;> assumption
 
 theorem mem_range_of_pow_g (B : Base) (i : Fin 2) (z : ℂ) (hz : z ^ B.host.g i = 1) : ∃ r : B.LL, B.embLL r = z := by
   have hp : (B.host.g i).Prime := B.host.g_prime i
@@ -491,7 +467,6 @@ section -- clump:auto
 @[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -527,8 +502,6 @@ noncomputable section
 namespace GlobalTheory.Mem.Top.ColOwe
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Forms GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Top GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC NumberField IsDedekindDomain
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Re
 

@@ -2,51 +2,9 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemRiemannRochSpaceIffRegularAtEverywhere
 public import Development.AbelianVarietyTheory.Definitions.Divisors.SecondCountableTopologyOfIsProjOver
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -458,42 +416,6 @@ theorem exists_spread {x : Y.X} (a : CxExt σ (Y.X.presheaf.stalk x)) :
       exact ⟨b₁ + b₂, by rw [map_add (f := _), map_add (f := _), f₁, f₂], by rw [map_add (f := _), g₁, g₂]⟩
 
 def regSet (f : Y.FnC σ) : Set (Y.pts σ) := {y | RegC y f}
-
-theorem RegC.exists_nhds (h : RegC y f) : ∃ N : Set (Y.pts σ), IsOpen N ∧ y ∈ N ∧
-    N ⊆ regSet f ∧ (Y.an σ).HoloOn N fun z => val z f := by
-  obtain ⟨c, a, b, hb, hab, -⟩ := h
-  obtain ⟨U, A, hU, hA, eA⟩ := exists_spread a
-  obtain ⟨V, B, hV, hB, eB⟩ := exists_spread b
-  have key : ∀ z, z ∈ ptsIn Y.str σ U → z ∈ ptsIn Y.str σ V → B z ≠ 0 →
-      HasVal z f (A z / B z) := by
-    intro z zU zV hz
-    obtain ⟨a', ha', ha''⟩ := eA z zU
-    obtain ⟨b', hb', hb''⟩ := eB z zV
-    refine ⟨a', b', by rw [hb'']; exact hz, ?_, ?_⟩
-    · rw [ha', hb']; exact hab
-    · rw [ha'', hb'']; field_simp
-  have yV : y ∈ ptsIn Y.str σ V := Var.mem_ptsIn_iff.mpr hV
-  have hBy : B y ≠ 0 := by
-    obtain ⟨b', hb', hb''⟩ := eB y yV
-    have e : b' = b := germIncl_injective y hb'
-    rw [← hb'', e]; exact hb
-  refine ⟨ptsIn Y.str σ U ∩ (ptsIn Y.str σ V ∩ B ⁻¹' {0}ᶜ),
-    (isOpen_ptsIn U).inter ((hB.continuousOn (isOpen_ptsIn V)).isOpen_inter_preimage
-      (isOpen_ptsIn V) isOpen_compl_singleton),
-    ⟨Var.mem_ptsIn_iff.mpr hU, yV, hBy⟩, fun z hz => ⟨_, key z hz.1 hz.2.1 hz.2.2⟩, ?_⟩
-  refine ((hA.mono (show ptsIn Y.str σ U ∩ (ptsIn Y.str σ V ∩ B ⁻¹' {0}ᶜ) ⊆
-    ptsIn Y.str σ U from fun z hz => hz.1)).mul
-    ((hB.mono (show ptsIn Y.str σ U ∩ (ptsIn Y.str σ V ∩ B ⁻¹' {0}ᶜ) ⊆
-      ptsIn Y.str σ V from fun z hz => hz.2.1)).inv
-      (show ∀ z ∈ ptsIn Y.str σ U ∩ (ptsIn Y.str σ V ∩ B ⁻¹' {0}ᶜ), B z ≠ 0 from
-        fun z hz => hz.2.2))).congr ?_
-  intro z hz
-  rw [(key z hz.1 hz.2.1 hz.2.2).val_eq, div_eq_mul_inv]
-
-theorem holoOn_val (f : Y.FnC σ) : (Y.an σ).HoloOn (regSet f) fun z => val z f := by
-  choose N hN hyN hNs hNh using fun z : regSet f => (show RegC z.1 f from z.2).exists_nhds
-  exact AnRead.holoOn_of_cover (R := Y.an σ) hN (fun z hz => ⟨⟨z, hz⟩, hyN ⟨z, hz⟩⟩)
-    fun j => (hNh j).mono Set.inter_subset_right
 
 end Var
 

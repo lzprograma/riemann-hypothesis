@@ -11,55 +11,13 @@ public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.
 public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicHermitianFormGaloisMemOfMemCompletion
 public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryLatticeSelfDualTraceForm
 public import Mathlib.RingTheory.Ideal.NatInt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionRationalPointsAndApproximation
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CompletedLatticeEqAdelicCompletionAndGramStatement
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLatticeRationalVectorsInAdelicTranslate
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FinitePartPreservesFormDetNormOneStatement
 import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FactPrincipalDatum
 import Formalism.LocalToGlobal.ProjectiveLattices.HostInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsCommonSmulMem, Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SelfDualLatticesAtLevel
@@ -216,7 +174,7 @@ theorem exists_mul (P : Submonoid (𝓞 F)) (I : Ideal (𝓞 F))
     obtain ⟨s, hs, hv⟩ := exists_clear P ((1 - idem I) * algebraMap F (Af F) (d : F)⁻¹) fun v => by
       by_cases hv : I ≤ v.asIdeal
       · left
-        rw [mul_at, sub_at, idem_at, if_pos hv, one_at, sub_self, zero_mul]
+        rw [mul_at, sub_at, idem_at, ite_eq_left hv, one_at, sub_self, zero_mul]
         exact zero_mem _
       · exact Or.inr (hP v hv)
     refine ⟨_, ⟨s, hs, rfl⟩, (h1 _).1 ?_⟩
@@ -277,7 +235,6 @@ open GlobalTheory.SW hiding Level
 open GlobalTheory.Member (cF)
 open GlobalTheory.AdLat (hermA sg latOf)
 open scoped TensorProduct ComplexConjugate Real Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {k : ℕ}
 
@@ -308,7 +265,7 @@ theorem trivAt_fmt {V : HSp D} {I : Ideal (𝓞 D.host.F)} {g : GA D V} (h : Tri
   smul_mulVec_eq _ _ (fun v => by
     by_cases hv : I ≤ v.asIdeal
     · exact Or.inr (h v hv)
-    · exact Or.inl (if_neg hv)) u
+    · exact Or.inl (ite_eq_right hv)) u
 
 theorem trivAt_fmtC {V : HSp D} {I : Ideal (𝓞 D.host.F)} {g : GA D V} (h : TrivAt V I g) (u) :
     lf (idem I) • (fmtC V g *ᵥ u) = lf (idem I) • u :=
@@ -327,14 +284,14 @@ theorem trivAt_fmtC {V : HSp D} {I : Ideal (𝓞 D.host.F)} {g : GA D V} (h : Tr
         exacts [map_one _, map_zero _]
       rw [e, e'] at this
       exact this
-    · exact Or.inl (if_neg hv)) u
+    · exact Or.inl (ite_eq_right hv)) u
 
 theorem trivOff_fmt {V : HSp D} {I : Ideal (𝓞 D.host.F)} {g : GA D V} (h : TrivOff V I g) (u) :
     lf (1 - idem I) • (fmt V g *ᵥ u) = lf (1 - idem I) • u :=
   smul_mulVec_eq _ _ (fun v => by
     by_cases hv : I ≤ v.asIdeal
     · left
-      rw [sub_at, idem_at, if_pos hv, one_at, sub_self]
+      rw [sub_at, idem_at, ite_eq_left hv, one_at, sub_self]
     · exact Or.inr (h v hv)) u
 
 theorem full_of_mov {g : GL (Fin k) (AfE D)} {Λ L : Lt D.host.E k} (hΛ : Λ.FG)

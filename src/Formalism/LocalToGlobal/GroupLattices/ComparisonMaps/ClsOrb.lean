@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.ConstructionD
 public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CastGLSymmApply
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.RationalPointsLeHolds
 
@@ -40,14 +41,7 @@ theorem exists_ratA (x : GA sp) (hx : x ∈ HA sp) : ∃ γ, ratA sp γ = x := b
 
 theorem mem_map_conj {G0 : Type} [Group G0] (S : Subgroup G0) (y g : G0) :
     g ∈ S.map (MulAut.conj y).toMonoidHom ↔ y⁻¹ * g * y ∈ S := by
-  constructor
-  · rintro ⟨u, hu, rfl⟩
-    have : y⁻¹ * (MulAut.conj y).toMonoidHom u * y = u := by
-      simp [MulAut.conj_apply, mul_assoc]
-    rw [this]
-    exact hu
-  · intro h
-    exact ⟨_, h, by simp [MulAut.conj_apply, mul_assoc]⟩
+  apply _root_.PI.UnimodIdxWork.mem_conj_map <;> assumption
 
 theorem mem_gamC_iff (y : GA sp) (γ : UJ (sp.cm.sig : E →+* E) sp.gram0) :
     γ ∈ gamC sp.cm.sig sp.gram0 (Formalism.L2.Herm.awayFrom₂ L p) (y : GL (Fin R.k) _) ↔ y⁻¹ * ratA sp γ * y ∈ KA' L p :=

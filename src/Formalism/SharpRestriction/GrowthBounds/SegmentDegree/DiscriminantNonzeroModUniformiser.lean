@@ -11,43 +11,6 @@ public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ThresholdPow
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TopDegreeComparison
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TopOccursInAtMostTwoSegments
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TopCountLowerBoundsOfOccurrence
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Algebra.Order.Star.Int
 import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FrobeniusReductionProduct
 
@@ -202,7 +165,6 @@ theorem late_vectors_distinct_tops : LateVectorsDistinctLeadingTerms := by
     exact hc
   simp only [row_eq]
   generalize evL X.F j x = l at hmem hsort hlen ⊢
-  have hNr : r ≤ l.length := hlen ▸ hlenr
   have hget : ∀ k (hk : k < l.length), l.getD k 0 = l[k] := fun k hk => List.getD_eq_getElem _ _ hk
   have hpw := List.pairwise_iff_getElem.mp hsort
   have hm : l.length - r < l.length := by omega
@@ -218,8 +180,7 @@ theorem late_vectors_distinct_tops : LateVectorsDistinctLeadingTerms := by
       · rw [h]
       · rw [hget _ hm, hget _ hk2]
         exact (hpw _ _ hm hk2 h).le
-    · by_contra hz
-      push_neg at hz
+    · by_contra! hz
       have hy1S := hinS _ hm
       have hzS := hinS _ hk2
       obtain ⟨hy1lo, -, -⟩ := hSlo _ hy1S
@@ -237,7 +198,6 @@ theorem late_vectors_distinct_tops : LateVectorsDistinctLeadingTerms := by
         have e1 := Int.mul_ediv_add_emod (X.F.fr 0 i - y1) (n' : ℤ)
         have e2 := Int.emod_nonneg (X.F.fr 0 i - y1) (ne_of_gt hn)
         have e3 := Int.emod_lt_of_pos (X.F.fr 0 i - y1) hn
-        have e4 : (-((X.F.fr 0 i - y1) / n')) * (n' : ℤ) = -((n' : ℤ) * ((X.F.fr 0 i - y1) / n')) := by ring
         constructor <;> linarith
       obtain ⟨T, hT⟩ : ∃ T : Finset ℤ, T = S.filter (fun s => y1 ≤ s) := ⟨_, rfl⟩
       have hTcard : T.card ≤ r := by
@@ -246,8 +206,7 @@ theorem late_vectors_distinct_tops : LateVectorsDistinctLeadingTerms := by
           rw [hT, Finset.mem_filter] at hs
           obtain ⟨k', hk', rfl⟩ := List.getElem_of_mem ((hmem _).2 hs.1)
           refine Finset.mem_image.2 ⟨k', Finset.mem_Ico.2 ⟨?_, hk'⟩, hget k' hk'⟩
-          by_contra hlt2
-          push_neg at hlt2
+          by_contra! hlt2
           have h3 := hpw k' _ hk' hm hlt2
           have h2 := hs.2
           rw [hy1, hget _ hm] at h2
@@ -419,8 +378,6 @@ theorem word_order_bound_of_numeric_bound (D : Formalism.BasicNotions.D7) (hA3 :
     exact_mod_cast a2
   have hkd : Dat.k (r := r) K = (r : ℝ) + K := by unfold Dat.k; push_cast; ring
   rw [hkd] at n3
-  have hr0 : (0 : ℝ) ≤ (r : ℝ) * ((p ^ X.Rj p K j : ℕ) : ℝ) := by positivity
-  have hK0 : (0 : ℝ) ≤ (K : ℝ) * ((p ^ X.Rj p K j : ℕ) : ℝ) := by positivity
   rw [ordDeg_prod dA (fun _ => dG) mm hmm]
   refine le_trans ?_ n3
   split_ifs with he

@@ -2,47 +2,7 @@ module
 
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -151,15 +111,6 @@ open NumberField IsDedekindDomain MeasureTheory Topology in
 open scoped TensorProduct NNReal ENNReal in
 variable {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E] in
 variable {d : ℕ} (b : Module.Basis (Fin d) F E) (v : HeightOneSpectrum (𝓞 F)) in
-private theorem eq_sum_basis_repr_tmul_basis (y : _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv F v ⊗[F] E) :
-    y = ∑ k, (Algebra.TensorProduct.basis (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv F v) b).repr y k ⊗ₜ[F] b k := by
-  conv_lhs => rw [← (Algebra.TensorProduct.basis (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv F v) b).sum_repr y]
-  simp only [Algebra.TensorProduct.basis_apply, TensorProduct.smul_tmul', smul_eq_mul, mul_one]
-
-open NumberField IsDedekindDomain MeasureTheory Topology in
-open scoped TensorProduct NNReal ENNReal in
-variable {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E] in
-variable {d : ℕ} (b : Module.Basis (Fin d) F E) (v : HeightOneSpectrum (𝓞 F)) in
 private theorem zero_mem_intV : (0 : _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv F v ⊗[F] E) ∈ _root_.GlobalTheory.GaugeEx.intV b v := by
   rw [mem_intV_iff_basis_repr_mem_integers]
   intro k
@@ -186,7 +137,7 @@ private theorem intV_subset_intV_of_basis_repr_integral {d' : ℕ} (b' : Module.
     (h : ∀ i k, algebraMap F (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv F v) (b'.repr (b i) k) ∈ v.adicCompletionIntegers F) :
     _root_.GlobalTheory.GaugeEx.intV b v ⊆ _root_.GlobalTheory.GaugeEx.intV b' v := by
   intro y hy
-  rw [eq_sum_basis_repr_tmul_basis b v y]
+  rw [eq_sum b _ y]
   exact _root_.GlobalTheory.GaugeEx.IntBasis.sum_mem' b' v _ _ fun i _ =>
     _root_.GlobalTheory.GaugeEx.IntBasis.tmul_mem b' v
       ((mem_intV_iff_basis_repr_mem_integers b v y).1 hy i) (h i)
@@ -197,23 +148,7 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E] in
 variable {d : ℕ} (b : Module.Basis (Fin d) F E) (v : HeightOneSpectrum (𝓞 F)) in
 theorem _root_.GlobalTheory.GaugeEx.IntBasis.main : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), ∀ (d : ℕ) (b : Module.Basis (Fin d) F E), (∀ v : HeightOneSpectrum (𝓞 F), IsCompact (_root_.GlobalTheory.GaugeEx.intV b v) ∧ IsOpen (_root_.GlobalTheory.GaugeEx.intV b v)) ∧ (∀ᶠ v : HeightOneSpectrum (𝓞 F) in Filter.cofinite, (1 : _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv F v ⊗[F] E) ∈ _root_.GlobalTheory.GaugeEx.intV b v ∧ (∀ y ∈ _root_.GlobalTheory.GaugeEx.intV b v, ∀ z ∈ _root_.GlobalTheory.GaugeEx.intV b v, y * z ∈ _root_.GlobalTheory.GaugeEx.intV b v) ∧ ∀ y ∈ _root_.GlobalTheory.GaugeEx.intV b v, _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv F v) σ y ∈ _root_.GlobalTheory.GaugeEx.intV b v) ∧ (∀ z : _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F ⊗[F] E, ∀ᶠ v : HeightOneSpectrum (𝓞 F) in Filter.cofinite, _root_.GlobalTheory.GaugeEx.prV v z ∈ _root_.GlobalTheory.GaugeEx.intV b v) ∧ ∀ (d' : ℕ) (b' : Module.Basis (Fin d') F E), ∀ᶠ v : HeightOneSpectrum (𝓞 F) in Filter.cofinite, _root_.GlobalTheory.GaugeEx.intV b v = _root_.GlobalTheory.GaugeEx.intV b' v := by
   intro F E _ _ _ _ _ σ d b
-  refine ⟨fun v => ?_, ?_, fun z => ?_, fun d' b' => ?_⟩
-  · let φ := (Algebra.TensorProduct.basis (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv F v) b).equivFun
-    have hφ : Continuous φ := IsModuleTopology.continuous_of_linearMap φ.toLinearMap
-    have hφs : Continuous φ.symm := IsModuleTopology.continuous_of_linearMap φ.symm.toLinearMap
-    let h : _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv F v ⊗[F] E ≃ₜ (Fin d → _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv F v) :=
-      { φ.toEquiv with continuous_toFun := hφ, continuous_invFun := hφs }
-    have hS : _root_.GlobalTheory.GaugeEx.intV b v =
-        h ⁻¹' Set.univ.pi (fun _ => (v.adicCompletionIntegers F : Set (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv F v))) := by
-      ext y
-      rw [mem_intV_iff_basis_repr_mem_integers]
-      simp only [Set.mem_preimage, Set.mem_univ_pi]
-      rfl
-    have hO : IsCompact (v.adicCompletionIntegers F : Set (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv F v)) :=
-      isCompact_iff_compactSpace.mpr (_root_.GlobalTheory.AdelicUnitaryTop.compactSpace_adicCompletionIntegers F v)
-    rw [hS]
-    exact ⟨h.isCompact_preimage.2 (isCompact_univ_pi fun _ => hO),
-      (isOpen_set_pi Set.finite_univ fun _ _ => Valued.isOpen_integer _).preimage h.continuous⟩
+  refine ⟨fun v => compact_open b v, ?_, fun z => ?_, fun d' b' => ?_⟩
   · filter_upwards [_root_.GlobalTheory.GaugeEx.IntBasis.ev_int_coord b (1 : E),
       eventually_basis_repr_mem_adicCompletionIntegers b (fun p : Fin d × Fin d => b p.1 * b p.2),
       eventually_basis_repr_mem_adicCompletionIntegers b (fun k => σ (b k))] with v hv1 hv2 hv3
@@ -221,7 +156,7 @@ theorem _root_.GlobalTheory.GaugeEx.IntBasis.main : ∀ (F E : Type) [Field F] [
     · rw [Algebra.TensorProduct.one_def]
       exact _root_.GlobalTheory.GaugeEx.IntBasis.tmul_mem b v (one_mem _) hv1
     · intro y hy z hz
-      rw [eq_sum_basis_repr_tmul_basis b v y, eq_sum_basis_repr_tmul_basis b v z, Finset.sum_mul_sum]
+      rw [eq_sum b _ y, eq_sum b _ z, Finset.sum_mul_sum]
       refine _root_.GlobalTheory.GaugeEx.IntBasis.sum_mem' b v _ _ fun k _ =>
         _root_.GlobalTheory.GaugeEx.IntBasis.sum_mem' b v _ _ fun l _ => ?_
       rw [Algebra.TensorProduct.tmul_mul_tmul]
@@ -230,7 +165,7 @@ theorem _root_.GlobalTheory.GaugeEx.IntBasis.main : ∀ (F E : Type) [Field F] [
           ((mem_intV_iff_basis_repr_mem_integers b v z).1 hz l)) (hv2 (k, l))
     · intro y hy
 
-      rw [eq_sum_basis_repr_tmul_basis b v y, map_sum]
+      rw [eq_sum b _ y, map_sum]
       refine _root_.GlobalTheory.GaugeEx.IntBasis.sum_mem' b v _ _ fun k _ => ?_
       simp only [_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR, AlgHom.toRingHom_eq_coe, RingHom.coe_coe,
         Algebra.TensorProduct.map_tmul, AlgHom.id_apply]

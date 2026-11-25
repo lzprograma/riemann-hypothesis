@@ -301,8 +301,7 @@ private theorem near {n : ℕ} {B K : Type} [CommRing B] [NormedField K] [IsUltr
   classical
   have hcoef : ∀ k, ‖(P.map x).coeff k‖ ≤ 1 := fun k => by rw [Polynomial.coeff_map]; exact h1 _
   have hz1 : ‖z‖ ≤ 1 := by
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have hev := hz.eq_zero
     rw [Polynomial.eval_eq_sum_range, Finset.sum_range_succ, hP.coeff_natDegree, one_mul] at hev
     set d := (P.map x).natDegree
@@ -349,8 +348,7 @@ private theorem near {n : ℕ} {B K : Type} [CommRing B] [NormedField K] [IsUltr
       linear_combination (-1 : K) * hsum
     rw [this, norm_neg]
     exact hE
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   have : (1 : ℝ) ≤ ‖∏ i, (z - x (a i))‖ := by
     rw [norm_prod]
     calc (1 : ℝ) = ∏ _i : Fin n, (1 : ℝ) := by simp
@@ -469,8 +467,7 @@ theorem UpperTheory.V.Ws.Pu.sepEl :
   have key : ∀ a b, ∃ e : MonoidAlgebra O Γ, MonoidAlgebra.lift O (ResidueField O) Γ ((Units.coeHom _).comp (χ a)) e = 1 ∧ MonoidAlgebra.lift O (ResidueField O) Γ ((Units.coeHom _).comp (ψ b)) e = 0 := by
     intro a b
     obtain ⟨γ, hγ⟩ : ∃ γ, χ a γ ≠ ψ b γ := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact hne a b (MonoidHom.ext hc)
     have hu : ((χ a γ : ResidueField O) - (ψ b γ : ResidueField O)) ≠ 0 := sub_ne_zero.2 (fun h => hγ (Units.ext h))
     obtain ⟨r, hr⟩ := IsLocalRing.residue_surjective (ψ b γ : ResidueField O)
@@ -1118,12 +1115,6 @@ theorem UpperTheory.V.Ws.pmPur_w_alt :
     have hw' := not_not.1 fun k => hw0 (Or.inr k)
     obtain ⟨b, hb⟩ := Pu.frobEigEx ι ρ w fun A hA s hs => Pu.repKill K.V B _ ρ hρ hss s ((hZ' w hw).2 A hA s hs)
     exact Pu.frobAbs_w ι ρ w b hb (hw' b hb)
-end
-section
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
-section SlopeTestRemainingChoices
-variable {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l}
-end SlopeTestRemainingChoices
 end
 section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws

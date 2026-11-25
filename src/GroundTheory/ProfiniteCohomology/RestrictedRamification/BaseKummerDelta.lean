@@ -24,9 +24,9 @@ variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
 
 theorem pow_notMem_asIdeal_of_forall (ℓ k : ℕ)
     (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S) :
-    ∀ v ∉ S, (((ℓ ^ k : ℕ) : ℕ) : 𝓞 K.1) ∉ v.asIdeal := fun v hv h => by
-  rw [Nat.cast_pow] at h
-  exact hv (hS v (v.isPrime.mem_of_pow_mem k h))
+    ∀ v ∉ S, (((ℓ ^ k : ℕ) : ℕ) : 𝓞 K.1) ∉ v.asIdeal := by
+  intros
+  apply GroundTheory.ProfCoh.natCast_pow_not_mem_of_forall <;> assumption
 
 variable (hnS : ∀ v ∉ S, ((n : ℕ) : 𝓞 K.1) ∉ v.asIdeal)
 

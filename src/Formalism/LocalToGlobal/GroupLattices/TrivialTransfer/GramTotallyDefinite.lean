@@ -84,8 +84,6 @@ theorem card_stab (L : ColLevel R F E sp gp C A clsLat) (hp : ∀ i, (gp i).Prim
 
 section Record
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem trivStabU_rec (D : D7) (lev : LevelData D) (u : D.what₂.Word) : TrivStabU (lev u) :=
   trivStabU (lev u) D.host.g_prime D.host.g_ne
 

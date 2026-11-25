@@ -39,8 +39,6 @@ open Formalism.L2.PairingIndexBounds.Eq.J Formalism.L2.PairingIndexBounds.Eq For
 
 open Formalism.MainNotions Formalism.L2.Th1.H Formalism.L2.Ker.Cd.PairingIndexBounds.Eq Formalism.L2.PairingIndexBounds.Eq
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Car}
 
 def rowE (D : Car) (N N' : ℕ) : TaylorLogMetric.VC D N N' ≃ₗ[ℂ] (Fin N' → TaylorLogMetric.VC D N 1) where
@@ -178,8 +176,6 @@ namespace Formalism.L2.Ker.Cd.PairingIndexBounds.Eq.J
 open Formalism.L2.PairingIndexBounds.Eq.J Formalism.L2.PairingIndexBounds.Eq Formalism.L2.PairingIndexBounds
 
 open Formalism.MainNotions Formalism.L2.Th1.H Formalism.L2.Ker.Cd.PairingIndexBounds.Eq Formalism.L2.PairingIndexBounds.Eq
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Car}
 
@@ -400,8 +396,6 @@ open Formalism.L2.PairingIndexBounds.Eq.J Formalism.L2.PairingIndexBounds.Eq For
 
 open Formalism.MainNotions Formalism.L2.Th1.H Formalism.L2.Ker.Cd.PairingIndexBounds.Eq Formalism.L2.PairingIndexBounds.Eq
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Car} {cc : Ideal (𝓞 D.host.K)} {δ : ℂ}
 
 def GaussRow (B : Cd.Base D cc δ) : Prop :=
@@ -591,11 +585,7 @@ theorem J1at_of_ne (hS : B.StdOK) (hL : B.LatAll) (hG : GaussRow B) {N N' : ℕ}
     set g := gaussC (Ker.formV (TaylorLogMetric.area (TaylorLogMetric.tor0 D cc δ).abelian₂) D.what₂.Tau N 1) (TaylorLogMetric.al D (TaylorLogMetric.tor0 D cc δ)) Ae₁ S₁ with hgdef
     have key : ((‖a‖ : ℂ) / a * g) ^ 2 = ∏ τ : D.what₂.Tau, (TaylorLogMetric.embT D τ) (star (γ : Matrix (Fin N) (Fin N) D.host.E).det) := by
       rw [mul_pow, div_pow, hg, mul_one]
-      have hn : ((‖a‖ : ℂ)) ^ 2 = a * (starRingEnd ℂ) a := by
-        rw [Complex.mul_conj, Complex.normSq_eq_norm_sq]
-        push_cast
-        ring
-      rw [hn, hconj]
+      rw [← Complex.ofReal_pow, ← Complex.normSq_eq_norm_sq, ← Complex.mul_conj, hconj]
       field_simp
     obtain ⟨m, hm⟩ := hN'
     subst hm
@@ -680,11 +670,7 @@ theorem J2at_of_ne (hS : B.StdOK) (hL : B.LatAll) (hG : GaussRow B) {N N' : ℕ}
     set g := gaussC (Ker.formV (TaylorLogMetric.area (TaylorLogMetric.tor0 D cc δ).abelian₂) D.what₂.Tau N' 1) (TaylorLogMetric.al D (TaylorLogMetric.tor0 D cc δ)) Ae₁ S₁ with hgdef
     have key : ((‖a‖ : ℂ) / a * g) ^ 2 = ∏ τ : D.what₂.Tau, (TaylorLogMetric.embT D τ) (γ' : Matrix (Fin N') (Fin N') D.host.E).det := by
       rw [mul_pow, div_pow, hg, mul_one]
-      have hn : ((‖a‖ : ℂ)) ^ 2 = a * (starRingEnd ℂ) a := by
-        rw [Complex.mul_conj, Complex.normSq_eq_norm_sq]
-        push_cast
-        ring
-      rw [hn, hconj]
+      rw [← Complex.ofReal_pow, ← Complex.normSq_eq_norm_sq, ← Complex.mul_conj, hconj]
       field_simp
     obtain ⟨m, hm⟩ := hN
     subst hm

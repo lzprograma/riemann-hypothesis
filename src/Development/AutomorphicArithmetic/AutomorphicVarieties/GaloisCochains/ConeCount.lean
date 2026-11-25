@@ -81,10 +81,8 @@ private theorem count [Module.Finite k A] [Module.Finite k L] [Module.Finite k S
   haveI : Module.Finite k (LinearMap.range g) := Module.Finite.equiv e.symm
   have a5 : finrank k (LinearMap.ker h) = finrank k (LinearMap.range g) := by rw [h2]
   haveI : Module.Finite k (LinearMap.ker h) := by rw [h2]; infer_instance
-  haveI : Module.Finite k O := by
-    apply Module.rank_lt_aleph0_iff.mp
-    rw [← LinearMap.rank_range_add_rank_ker h]
-    exact Cardinal.add_lt_aleph0 (Module.rank_lt_aleph0 k _) (Module.rank_lt_aleph0 k _)
+  have : Module.Finite k (O ⧸ LinearMap.ker h) := .equiv h.quotKerEquivRange.symm
+  have : Module.Finite k O := .of_submodule_quotient (LinearMap.ker h)
   refine ⟨inferInstance, ?_⟩
   have a1 := LinearMap.finrank_range_add_finrank_ker f
   have a2 := LinearMap.finrank_range_add_finrank_ker h
@@ -108,10 +106,8 @@ private theorem first_differential_eq {G N : Type} [Group G] [AddCommGroup N] [M
   show τ p.1 (c p.2) - c (p.1 * p.2) + c p.1 = c p.1 + τ p.1 (c p.2) - c (p.1 * p.2)
   abel
 
-private def f0 : H0 ρ →ₗ[k] (∀ v, H0 (σ v)) where
-  toFun x := fun v => ⟨q v x.1, fun g => by rw [← hq, x.2]⟩
-  map_add' _ _ := funext fun v => Subtype.ext (map_add _ _ _)
-  map_smul' _ _ := funext fun v => Subtype.ext (map_smul _ _ _)
+private def f0 : H0 ρ →ₗ[k] (∀ v, H0 (σ v)) :=
+  LinearMap.pi fun v => (q v).restrict fun x hx g => by rw [← hq, hx]
 
 private def f1 : H1 ρ →ₗ[k] (∀ v, H1 (σ v)) :=
   LinearMap.pi fun v => pairH1DecompositionMap ρ (σ v) (loc v) (hloc v) (q v) continuous_of_discreteTopology (hq v)
@@ -143,13 +139,9 @@ private theorem ker_g1_eq_range_f0 : LinearMap.ker (g1 loc ρ σ q hq r hr) =
   rw [LinearMap.mem_ker, LinearMap.mem_range]
   constructor
   · intro hy
-    have hy' : g1Z loc ρ σ q hq r hr y ∈ Submodule.comap (Z1C loc ρ fun v => LinearMap.ker (q v)).subtype
-        (continuousCoboundaries1 ρ fun v => LinearMap.ker (q v)) :=
-      (Submodule.Quotient.mk_eq_zero _).1 hy
-    obtain ⟨X, h1, h2⟩ := hy'
+    obtain ⟨X, h1, h2⟩ := (Submodule.Quotient.mk_eq_zero _).1 hy
     refine ⟨⟨X, fun g => ?_⟩, ?_⟩
-    · have : ρ g X - X = 0 := (h1 g).symm
-      exact sub_eq_zero.1 this
+    · exact sub_eq_zero.1 (h1 g).symm
     · funext v
       apply Subtype.ext
       have := h2 v
@@ -169,10 +161,8 @@ private theorem ker_h1_eq_range_g1 : LinearMap.ker (h1 loc ρ q) = LinearMap.ran
   constructor
   · intro hc
     obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ c
-    have hx : h1Z loc ρ q x ∈ Submodule.comap (Z1 ρ).subtype (B1 ρ) :=
-      (Submodule.Quotient.mk_eq_zero _).1 hc
-    obtain ⟨m, hm⟩ := (mem_coboundaries1 _ _).1 hx
-    have hm' : ∀ s, x.1.1 s = ρ s m - m := hm
+    obtain ⟨m, hm'⟩ : ∃ m, ∀ s, x.1.1 s = ρ s m - m :=
+      (mem_coboundaries1 _ _).1 ((Submodule.Quotient.mk_eq_zero _).1 hc :)
     have key : ∀ v (s : Gv v), σ v s (q v (x.1.2 v - m)) = q v (x.1.2 v - m) := by
       intro v s
       have h3 := x.2.2.2 v s
@@ -191,10 +181,7 @@ private theorem ker_h1_eq_range_g1 : LinearMap.ker (h1 loc ρ q) = LinearMap.ran
     · show r v (q v (x.1.2 v - m)) - x.1.2 v - -m ∈ LinearMap.ker (q v)
       rw [LinearMap.mem_ker, map_sub, map_sub, hr, map_neg, map_sub]; abel
   · rintro ⟨y, rfl⟩
-    show Submodule.Quotient.mk (h1Z loc ρ q (g1Z loc ρ σ q hq r hr y)) = 0
-    exact (Submodule.Quotient.mk_eq_zero _).2 ((mem_coboundaries1 _ _).2 ⟨0, fun g => by
-      show (0 : M) = ρ g 0 - 0
-      simp⟩)
+    exact (Submodule.Quotient.mk_eq_zero _).2 ⟨0, map_zero _⟩
 
 include hr in
 private theorem range_h1_eq_ker_f1 : LinearMap.range (h1 loc ρ q) = LinearMap.ker (f1 loc hloc ρ σ q hq) := by
@@ -214,13 +201,8 @@ private theorem range_h1_eq_ker_f1 : LinearMap.range (h1 loc ρ q) = LinearMap.k
     exact sub_eq_zero.1 h3
   · intro hc
     obtain ⟨z, rfl⟩ := Submodule.Quotient.mk_surjective _ c
-    have hv : ∀ v, ∃ m, ∀ s : Gv v, q v (z.1 (loc v s)) = σ v s m - m := by
-      intro v
-      have h0 : (Submodule.Quotient.mk (compatiblePairCocycles1 ρ (σ v) (loc v) (hloc v) (q v) continuous_of_discreteTopology (hq v)
-          z) : H1 (σ v)) = 0 := congrFun hc v
-      have h' : compatiblePairCocycles1 ρ (σ v) (loc v) (hloc v) (q v) continuous_of_discreteTopology (hq v) z ∈
-          Submodule.comap (Z1 (σ v)).subtype (B1 (σ v)) := (Submodule.Quotient.mk_eq_zero _).1 h0
-      exact (mem_coboundaries1 _ _).1 h'
+    have hv : ∀ v, ∃ m, ∀ s : Gv v, q v (z.1 (loc v s)) = σ v s m - m := fun v =>
+      (mem_coboundaries1 _ _).1 ((Submodule.Quotient.mk_eq_zero _).1 (congrFun hc v) :)
     choose m hm using hv
     refine ⟨Submodule.Quotient.mk ⟨(z.1, fun v => r v (m v)), (IsLocallyConstant.iff_continuous _).2 z.2.1,
       z.2.2, fun v s => ?_⟩, rfl⟩
@@ -260,16 +242,6 @@ private def g2Z : (∀ v, Z1 (σ v)) →ₗ[k] continuousCocycles2 loc ρ (fun v
 private def g2 : (∀ v, Z1 (σ v)) →ₗ[k] coneH2 loc ρ (fun v => LinearMap.ker (q v)) :=
   Submodule.mkQ _ ∘ₗ g2Z loc ρ σ q hq r hr
 
-private def pL : (∀ v, Z1 (σ v)) →ₗ[k] (∀ v, H1 (σ v)) where
-  toFun a := fun v => Submodule.Quotient.mk (a v)
-  map_add' _ _ := rfl
-  map_smul' _ _ := rfl
-
-private theorem pL_surj : Function.Surjective (pL σ) := by
-  intro a
-  choose a' ha using fun v => Submodule.Quotient.mk_surjective _ (a v)
-  exact ⟨a', funext ha⟩
-
 include hr in
 private theorem range_h2_eq_inf_ker_pairing : LinearMap.range (h2 loc ρ q) =
     ⨅ v, LinearMap.ker (compatiblePairH2 ρ (σ v) (loc v) (hloc v) (q v) continuous_of_discreteTopology (hq v)) := by
@@ -293,13 +265,8 @@ private theorem range_h2_eq_inf_ker_pairing : LinearMap.range (h2 loc ρ q) =
   · intro hc
     obtain ⟨z, rfl⟩ := Submodule.Quotient.mk_surjective _ c
     have hv : ∀ v, ∃ cv : Gv v → Q v, Continuous cv ∧
-        d1 (σ v) cv = fun p => q v (z.1 (loc v p.1, loc v p.2)) := by
-      intro v
-      have h0 : (Submodule.Quotient.mk (compatiblePairCocycles2 ρ (σ v) (loc v) (hloc v) (q v) continuous_of_discreteTopology (hq v)
-          z) : H2 (σ v)) = 0 := LinearMap.mem_ker.1 (hc v)
-      have h' : compatiblePairCocycles2 ρ (σ v) (loc v) (hloc v) (q v) continuous_of_discreteTopology (hq v) z ∈
-          Submodule.comap (Z2 (σ v)).subtype (B2 (σ v)) := (Submodule.Quotient.mk_eq_zero _).1 h0
-      exact (separated_dvr_second_cohomology_mem _ _).1 h'
+        d1 (σ v) cv = fun p => q v (z.1 (loc v p.1, loc v p.2)) := fun v =>
+      (Submodule.Quotient.mk_eq_zero _).1 (LinearMap.mem_ker.1 (hc v))
     choose cv hcv hd using hv
     refine ⟨Submodule.Quotient.mk ⟨(z.1, fun v s => r v (cv v s)), (IsLocallyConstant.iff_continuous _).2 z.2.1,
       fun v => ((IsLocallyConstant.iff_continuous _).2 (hcv v)).comp (r v), fun s t u => ?_, fun v s t => ?_⟩, rfl⟩
@@ -319,11 +286,8 @@ private theorem ker_h2_eq_range_g2 : LinearMap.ker (h2 loc ρ q) = LinearMap.ran
   constructor
   · intro hc
     obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ c
-    have hx : h2Z loc ρ q x ∈ Submodule.comap (Z2 ρ).subtype (B2 ρ) :=
-      (Submodule.Quotient.mk_eq_zero _).1 hc
-    obtain ⟨β, hβ, hd⟩ := (separated_dvr_second_cohomology_mem _ _).1 hx
-    rw [first_differential_eq] at hd
-    have hd' : x.1.1 = Alg.dOne ρ β := hd.symm
+    obtain ⟨β, hβ, hd⟩ := (Submodule.Quotient.mk_eq_zero _).1 hc
+    have hd' : x.1.1 = Alg.dOne ρ β := by rw [← first_differential_eq]; exact hd.symm
     have hcoc : ∀ v (s t : Gv v), q v (x.1.2 v (s * t) - β (loc v (s * t))) =
         q v (x.1.2 v s - β (loc v s)) + σ v s (q v (x.1.2 v t - β (loc v t))) := by
       intro v s t
@@ -353,14 +317,12 @@ private theorem ker_h2_eq_range_g2 : LinearMap.ker (h2 loc ρ q) = LinearMap.ran
     exact (separated_dvr_second_cohomology_mem _ _).2 ⟨0, continuous_const, by rw [map_zero]; rfl⟩
 
 private theorem ker_g2_eq_comap_range_f1 : LinearMap.ker (g2 loc ρ σ q hq r hr) =
-    (LinearMap.range (f1 loc hloc ρ σ q hq)).comap (pL σ) := by
+    (LinearMap.range (f1 loc hloc ρ σ q hq)).comap (LinearMap.piMap fun _ => Submodule.mkQ _) := by
   ext a
   rw [LinearMap.mem_ker, Submodule.mem_comap, LinearMap.mem_range]
   constructor
   · intro ha
-    have ha' : g2Z loc ρ σ q hq r hr a ∈ Submodule.comap (continuousCocycles2 loc ρ fun v => LinearMap.ker (q v)).subtype
-        (continuousCoboundaries2 loc ρ fun v => LinearMap.ker (q v)) := (Submodule.Quotient.mk_eq_zero _).1 ha
-    obtain ⟨β, Y, hβ, h0, hY⟩ := ha'
+    obtain ⟨β, Y, hβ, h0, hY⟩ := (Submodule.Quotient.mk_eq_zero _).1 ha
     have hz : β ∈ Z1 ρ := by
       refine ⟨hβ.continuous, fun s t => ?_⟩
       have e : (0 : M) = β s + ρ s (β t) - β (s * t) := congrFun h0 (s, t)
@@ -378,12 +340,8 @@ private theorem ker_g2_eq_comap_range_f1 : LinearMap.ker (g2 loc ρ σ q hq r hr
     rw [h3]; abel
   · rintro ⟨c, hc⟩
     obtain ⟨z, rfl⟩ := Submodule.Quotient.mk_surjective _ c
-    have hv : ∀ v, ∃ m, ∀ s, q v (z.1 (loc v s)) - (a v).1 s = σ v s m - m := by
-      intro v
-      have h1' : (Submodule.Quotient.mk (compatiblePairCocycles1 ρ (σ v) (loc v) (hloc v) (q v) continuous_of_discreteTopology (hq v)
-          z) : H1 (σ v)) = Submodule.Quotient.mk (a v) := congrFun hc v
-      rw [Submodule.Quotient.eq] at h1'
-      exact (mem_coboundaries1 _ _).1 h1'
+    have hv : ∀ v, ∃ m, ∀ s, q v (z.1 (loc v s)) - (a v).1 s = σ v s m - m := fun v =>
+      (mem_coboundaries1 _ _).1 ((Submodule.Quotient.eq _).1 (congrFun hc v) :)
     choose m hm using hv
     show Submodule.Quotient.mk (g2Z loc ρ σ q hq r hr a) = 0
     apply (Submodule.Quotient.mk_eq_zero _).2
@@ -416,7 +374,8 @@ theorem UpperTheory.V.GC.coneCount :
   haveI : ∀ v, Module.Finite k (Q v) := fun v => Module.Finite.of_surjective (q v) (hqs v)
   obtain ⟨fin1, e1⟩ := count (f0 loc ρ σ q hq) LinearMap.id Function.surjective_id (g1 loc ρ σ q hq r hr)
     (h1 loc ρ q) (ker_g1_eq_range_f0 loc ρ σ q hq r hr) (ker_h1_eq_range_g1 loc ρ σ q hq r hr)
-  obtain ⟨fin2, e2⟩ := count (f1 loc hloc ρ σ q hq) (pL σ) (pL_surj σ) (g2 loc ρ σ q hq r hr)
+  obtain ⟨fin2, e2⟩ := count (f1 loc hloc ρ σ q hq) _ (Function.Surjective.piMap fun _ => Submodule.mkQ_surjective _)
+    (g2 loc ρ σ q hq r hr)
     (h2 loc ρ q) (ker_g2_eq_comap_range_f1 loc hloc ρ σ q hq r hr) (ker_h2_eq_range_g2 loc hloc ρ σ q hq r hr)
   refine ⟨fin1, fin2, ?_⟩
   rw [range_h1_eq_ker_f1 loc hloc ρ σ q hq r hr] at e1

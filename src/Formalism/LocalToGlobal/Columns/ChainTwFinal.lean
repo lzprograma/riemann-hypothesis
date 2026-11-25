@@ -49,14 +49,6 @@ def TargetEquivarianceLargeDepths (i : ℕ) (w : rowSG Pr sel mu) (hal : AutY X 
 
 end Stmt
 
-section Assembly
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} {Ch : Chars X Pr R.m}
-  {sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)} {S : Set ℕ} {mu : Tup X.F X.E X.K S}
-  {cst : LocCst X (rowSG Pr sel mu)} {L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K))} {G : ChGlob X R.m} {m2 : ℕ}
-
-end Assembly
-
 section Res
 
 variable {k : Type} [Field k] {n c : ℕ}
@@ -65,9 +57,9 @@ theorem clXQ_eq_inX {v : Fin (n + c) → k} (hv : v ∈ Loc.Ufl k n c 0) : v = L
   funext l
   unfold Loc.inX
   by_cases h : l.1 < n
-  · simp only [LinearMap.pi_apply, dif_pos h, LinearMap.proj_apply]
+  · simp only [LinearMap.pi_apply, dite_eq_left h, LinearMap.proj_apply]
     rfl
-  · simp only [LinearMap.pi_apply, dif_neg h, LinearMap.zero_apply]
+  · simp only [LinearMap.pi_apply, dite_eq_right h, LinearMap.zero_apply]
     exact hv l (by simpa using h)
 
 theorem clXQ_res {r : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c) → k)} (hr : r ∈ Loc.R1 k n c) :
@@ -182,28 +174,6 @@ theorem first_sum_scalar_mul {k K : Type} [CommRing k] [Field K] {n' c' n c : �
 
 end Pts
 
-section Res
-
-variable {k : Type} [CommRing k]
-
-end Res
-
-section Assemble
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} {Ch : Chars X Pr R.m}
-  {sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)} {S : Set ℕ}
-  {mu : Tup X.F X.E X.K S} {cst : LocCst X (rowSG Pr sel mu)}
-
-end Assemble
-
-section Deep
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} {Ch : Chars X Pr R.m}
-  {sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)} {S : Set ℕ}
-  {mu : Tup X.F X.E X.K S} {cst : LocCst X (rowSG Pr sel mu)}
-
-end Deep
-
 end Formalism.L2.Col
 end -- clump:auto
 end -- clump:auto
@@ -233,8 +203,8 @@ theorem clXQ_redMQ_one (n : ℕ) : redMQ P ((1 : Sp E n ≃ₗ[E] Sp E n).toLine
   rw [Matrix.one_apply]
   by_cases h : l = s
   · subst h
-    rw [Pi.single_eq_same, if_pos rfl, redP_one]
-  · rw [Pi.single_eq_of_ne h, if_neg h, redP_zero]
+    rw [Pi.single_eq_same, ite_eq_left rfl, redP_one]
+  · rw [Pi.single_eq_of_ne h, ite_eq_right h, redP_zero]
 
 theorem clXQ_tl_one (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (k₀ c n r : ℕ) (h : k₀ ≤ n) (hr : r ≤ n + c) :
     xiZ ξ (((redMQ P (1 : Sp E (n + c) ≃ₗ[E] Sp E (n + c)).toLinearMap).submatrix (fE k₀ c n h) (fE k₀ c n h)).submatrix
@@ -303,7 +273,7 @@ theorem clXQ_omPhi_tgt {i : ℕ} {w : rowSG Pr sel mu} (hw : w.1 ∉ Pr.vGs) (hu
     (R.k + i) (R.k + (i + 1)) (twAn_k_le i) (twAn_k_le (i + 1)) (by omega) (by omega) (clXQ_kj_le (i + 1)) (clXQ_kj_c (by omega))
     (clXQ_kj_c (by omega)) (twAn_r_le (by omega)) (twAn_r_le (by omega)) hk (hbe.symm.toLinearMap ∘ₗ x ∘ₗ hal.toLinearMap)
   unfold omPhi Loc.om PhiAt lamRow
-  simp only [if_neg hw]
+  simp only [ite_eq_right hw]
   rw [hcomp, hlaw, clXQ_det_conj]
   ring
 
@@ -386,7 +356,7 @@ theorem clXQ_tgt_of_cov {i : ℕ} {w : rowSG Pr sel mu} (hw : w.1 ∉ Pr.vGs) (h
   have hT : rhoT Ch sel mu i w ((LinearEquiv.det c'⁻¹ : X.Eˣ) : X.E) =
       (LocE.unitV (resChar (mu : Chr X.F X.E X.K) w.1) ((LinearEquiv.det c' : X.Eˣ) : X.E))⁻¹ := by
     unfold rhoT
-    rw [if_neg hw, map_inv, Units.val_inv_eq_inv_val, clX_unitV_inv _ hd hd' hd0]
+    rw [ite_eq_right hw, map_inv, Units.val_inv_eq_inv_val, clX_unitV_inv _ hd hd' hd0]
   have e2 : E1at Ch sel mu cst i w hal hbe (c'.toLinearMap ∘ₗ y) = (cst.psi w (Loc.n1Arg r'))⁻¹ *
       (LocE.unitV (resChar (mu : Chr X.F X.E X.K) w.1) ((LinearEquiv.det c' : X.Eˣ) : X.E) *
         lamRow Ch mu cst.sharp (i + 1) w.1 ((hbe⁻¹ * r' * hbe : AutY X R (i + 1))).toLinearMap * E1at Ch sel mu cst i w hal hbe y) := by
@@ -469,6 +439,7 @@ section -- clump:auto
 @[expose] public section
 
 open PI.UnfoldEquiv PI.UnfoldEquiv.Loc
+open PI.OneCosetSharp.Loc (atN Ufl R1cond chArg)
 
 noncomputable section
 
@@ -479,51 +450,51 @@ variable {k : Type} [CommRing k]
 theorem atN_map {n c i : ℕ} {r : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c) → k)} (hr : R1cond k n c r) (hi : i < c)
     {w : Fin (n + c) → k} (hw : w ∈ Ufl k n c (i + 1)) : atN (r w) (n + i) = atN w (n + i) := by
   have hlt : n + i < n + c := by omega
-  have hw' : w - PI.UnfoldEquiv.Loc.atN w (n + i) • PI.UnfoldEquiv.Loc.eN k (n + c) (n + i) ∈ PI.UnfoldEquiv.Loc.Ufl k n c i := by
+  have hw' : w - PI.OneCosetSharp.Loc.atN w (n + i) • PI.OneCosetSharp.Loc.eN k (n + c) (n + i) ∈ PI.OneCosetSharp.Loc.Ufl k n c i := by
     rw [mem_Ufl] at hw ⊢
     intro l hl
     rw [Pi.sub_apply, Pi.smul_apply, eN_apply, smul_eq_mul]
     by_cases hl' : l.1 = n + i
-    · rw [if_pos hl', mul_one, PI.UnfoldEquiv.Loc.atN, dite_eq_left hlt]
+    · rw [ite_eq_left hl', mul_one, PI.OneCosetSharp.Loc.atN, dite_eq_left hlt]
       have hle : l = ⟨n + i, hlt⟩ := Fin.ext hl'
       rw [hle, sub_self]
-    · rw [if_neg hl', mul_zero, sub_zero]
+    · rw [ite_eq_right hl', mul_zero, sub_zero]
       exact hw l (by omega)
-  have hre : PI.UnfoldEquiv.Loc.atN (r (PI.UnfoldEquiv.Loc.eN k (n + c) (n + i))) (n + i) = 1 := by
+  have hre : PI.OneCosetSharp.Loc.atN (r (PI.OneCosetSharp.Loc.eN k (n + c) (n + i))) (n + i) = 1 := by
     have h1 := atN_of_mem (hr.2.2 i)
-    have h2 := atN_add (r (PI.UnfoldEquiv.Loc.eN k (n + c) (n + i)) - PI.UnfoldEquiv.Loc.eN k (n + c) (n + i)) (PI.UnfoldEquiv.Loc.eN k (n + c) (n + i)) (n + i)
+    have h2 := atN_add (r (PI.OneCosetSharp.Loc.eN k (n + c) (n + i)) - PI.OneCosetSharp.Loc.eN k (n + c) (n + i)) (PI.OneCosetSharp.Loc.eN k (n + c) (n + i)) (n + i)
     rw [sub_add_cancel] at h2
     rw [h2, h1, atN_eN hlt, zero_add]
-  have hdec : r w = r (w - PI.UnfoldEquiv.Loc.atN w (n + i) • PI.UnfoldEquiv.Loc.eN k (n + c) (n + i)) + PI.UnfoldEquiv.Loc.atN w (n + i) • r (PI.UnfoldEquiv.Loc.eN k (n + c) (n + i)) := by
+  have hdec : r w = r (w - PI.OneCosetSharp.Loc.atN w (n + i) • PI.OneCosetSharp.Loc.eN k (n + c) (n + i)) + PI.OneCosetSharp.Loc.atN w (n + i) • r (PI.OneCosetSharp.Loc.eN k (n + c) (n + i)) := by
     rw [map_sub, map_smul, sub_add_cancel]
   rw [hdec, atN_add, atN_smul, atN_of_mem (hr.1 i _ hw'), hre, zero_add, mul_one]
 
-private theorem atN_zero {N : ℕ} (i : ℕ) : PI.UnfoldEquiv.Loc.atN (0 : Fin N → k) i = 0 := by
+private theorem atN_zero {N : ℕ} (i : ℕ) : PI.OneCosetSharp.Loc.atN (0 : Fin N → k) i = 0 := by
   have h := atN_smul (0 : k) (0 : Fin N → k) i
   rwa [zero_smul, zero_mul] at h
 
-private theorem eN_eq_zero_of_le {N i : ℕ} (h : N ≤ i) : PI.UnfoldEquiv.Loc.eN k N i = 0 := by
+private theorem eN_eq_zero_of_le {N i : ℕ} (h : N ≤ i) : PI.OneCosetSharp.Loc.eN k N i = 0 := by
   funext l
   have hl := l.2
-  rw [eN_apply, Pi.zero_apply, if_neg (by omega)]
+  rw [eN_apply, Pi.zero_apply, ite_eq_right (by omega)]
 
 theorem chArg_map {n' n c : ℕ} {r : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c) → k)} (hr : R1cond k n c r)
     {xj : (Fin n' → k) →ₗ[k] (Fin n → k)} {x : (Fin (n' + (c + 1)) → k) →ₗ[k] (Fin (n + c) → k)} (h : Q xj x) :
     chArg (n' := n') (c' := c + 1) (n := n) (c := c) (r.toLinearMap ∘ₗ x) = chArg x + n1Arg r := by
   have key : ∀ i ∈ Finset.range c,
-      PI.UnfoldEquiv.Loc.atN (r (x (PI.UnfoldEquiv.Loc.eN k (n' + (c + 1)) (n' + i + 1)))) (n + i) =
-        PI.UnfoldEquiv.Loc.atN (x (PI.UnfoldEquiv.Loc.eN k (n' + (c + 1)) (n' + i + 1))) (n + i) + PI.UnfoldEquiv.Loc.atN (r (PI.UnfoldEquiv.Loc.eN k (n + c) (n + i + 1))) (n + i) := by
+      PI.OneCosetSharp.Loc.atN (r (x (PI.OneCosetSharp.Loc.eN k (n' + (c + 1)) (n' + i + 1)))) (n + i) =
+        PI.OneCosetSharp.Loc.atN (x (PI.OneCosetSharp.Loc.eN k (n' + (c + 1)) (n' + i + 1))) (n + i) + PI.OneCosetSharp.Loc.atN (r (PI.OneCosetSharp.Loc.eN k (n + c) (n + i + 1))) (n + i) := by
     intro i hi
     rw [Finset.mem_range] at hi
     by_cases hic : i + 1 < c
-    · have hu : x (PI.UnfoldEquiv.Loc.eN k (n' + (c + 1)) (n' + i + 1)) - PI.UnfoldEquiv.Loc.eN k (n + c) (n + i + 1) ∈ PI.UnfoldEquiv.Loc.Ufl k n c (i + 1) :=
+    · have hu : x (PI.OneCosetSharp.Loc.eN k (n' + (c + 1)) (n' + i + 1)) - PI.OneCosetSharp.Loc.eN k (n + c) (n + i + 1) ∈ PI.OneCosetSharp.Loc.Ufl k n c (i + 1) :=
         h.2.2 (i + 1) (by omega) hic
       have hcoord := atN_map hr hi hu
-      have hx : x (PI.UnfoldEquiv.Loc.eN k (n' + (c + 1)) (n' + i + 1)) =
-          (x (PI.UnfoldEquiv.Loc.eN k (n' + (c + 1)) (n' + i + 1)) - PI.UnfoldEquiv.Loc.eN k (n + c) (n + i + 1)) + PI.UnfoldEquiv.Loc.eN k (n + c) (n + i + 1) :=
+      have hx : x (PI.OneCosetSharp.Loc.eN k (n' + (c + 1)) (n' + i + 1)) =
+          (x (PI.OneCosetSharp.Loc.eN k (n' + (c + 1)) (n' + i + 1)) - PI.OneCosetSharp.Loc.eN k (n + c) (n + i + 1)) + PI.OneCosetSharp.Loc.eN k (n + c) (n + i + 1) :=
         (sub_add_cancel _ _).symm
       rw [hx, map_add (f := _), atN_add, atN_add, hcoord, atN_eN_ne (by omega : n + i + 1 ≠ n + i), add_zero]
-    · have hw : x (PI.UnfoldEquiv.Loc.eN k (n' + (c + 1)) (n' + i + 1)) ∈ PI.UnfoldEquiv.Loc.Ufl k n c (i + 1) := by
+    · have hw : x (PI.OneCosetSharp.Loc.eN k (n' + (c + 1)) (n' + i + 1)) ∈ PI.OneCosetSharp.Loc.Ufl k n c (i + 1) := by
         rw [mem_Ufl]
         intro l hl
         exfalso
@@ -531,7 +502,7 @@ theorem chArg_map {n' n c : ℕ} {r : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c)
         omega
       rw [atN_map hr hi hw, eN_eq_zero_of_le (by omega : n + c ≤ n + i + 1), map_zero,
         atN_zero, add_zero]
-  simp only [PI.UnfoldEquiv.Loc.chArg, PI.UnfoldEquiv.Loc.n1Arg, LinearMap.comp_apply, LinearEquiv.coe_coe]
+  simp only [PI.OneCosetSharp.Loc.chArg, PI.UnfoldEquiv.Loc.n1Arg, LinearMap.comp_apply, LinearEquiv.coe_coe]
   rw [Finset.sum_congr rfl key, Finset.sum_add_distrib]
   congr 1
   rcases Nat.eq_zero_or_pos c with hc | hc
@@ -553,6 +524,7 @@ section -- clump:auto
 @[expose] public section
 
 open PI.UnfoldEquiv PI.UnfoldEquiv.Loc
+open PI.OneCosetSharp.Loc (eN Ufl inX R1cond IsFree FC xx1)
 
 noncomputable section
 
@@ -576,7 +548,7 @@ private theorem inX_single' {n c : ℕ} (s : Fin n) :
   by_cases h : l.1 < n
   · rw [dite_eq_left h]
     simp only [Pi.single_apply, Fin.ext_iff]
-  · rw [dite_eq_right h, Pi.single_apply, if_neg]
+  · rw [dite_eq_right h, Pi.single_apply, ite_eq_right]
     intro e
     rw [Fin.ext_iff] at e
     have := s.2
@@ -817,21 +789,21 @@ theorem cq_decomp (z : Fin (n + c) → k) :
   funext l
   rw [Pi.add_apply, Finset.sum_apply, cq_inX_apply]
   by_cases hl : l.1 < n
-  · rw [dif_pos hl, Finset.sum_eq_zero (fun i _ => by
+  · rw [dite_eq_left hl, Finset.sum_eq_zero (fun i _ => by
       rw [Pi.smul_apply, smul_eq_mul]
       show z (Fin.natAdd n i) * (if l.1 = n + i.1 then 1 else 0) = 0
-      rw [if_neg (by omega), mul_zero]), add_zero]
+      rw [ite_eq_right (by omega), mul_zero]), add_zero]
     rfl
   · rw [dite_eq_right hl, zero_add]
     obtain ⟨j, rfl⟩ : ∃ j : Fin c, l = Fin.natAdd n j := ⟨⟨l.1 - n, by omega⟩, Fin.ext (by simp; omega)⟩
     rw [Finset.sum_eq_single j]
     · rw [Pi.smul_apply, smul_eq_mul]
       show z (Fin.natAdd n j) = z (Fin.natAdd n j) * (if (Fin.natAdd n j).1 = n + j.1 then 1 else 0)
-      rw [if_pos (by simp), mul_one]
+      rw [ite_eq_left (by simp), mul_one]
     · intro i _ hij
       rw [Pi.smul_apply, smul_eq_mul]
       show z (Fin.natAdd n i) * (if (Fin.natAdd n j).1 = n + i.1 then 1 else 0) = 0
-      rw [if_neg (fun h => hij (Fin.ext (by simp at h; omega))), mul_zero]
+      rw [ite_eq_right (fun h => hij (Fin.ext (by simp at h; omega))), mul_zero]
     · intro h
       exact absurd (Finset.mem_univ _) h
 
@@ -848,15 +820,15 @@ theorem reduction_entry_lower_block {r : (Fin (n + c) → k) ≃ₗ[k] (Fin (n +
     r z (Fin.natAdd n v) = z (Fin.natAdd n v) +
       ∑ i : Fin c, if v.1 < i.1 then z (Fin.natAdd n i) * r (Loc.eN k (n + c) (n + i.1)) (Fin.natAdd n v) else 0 := by
   rw [cq_r_apply hg z, Pi.add_apply, cq_inX_apply, dite_eq_right (by simp), zero_add, Finset.sum_apply]
-  rw [← Finset.add_sum_erase _ _ (Finset.mem_univ v), ← Finset.add_sum_erase _ _ (Finset.mem_univ v), if_neg (lt_irrefl _),
+  rw [← Finset.add_sum_erase _ _ (Finset.mem_univ v), ← Finset.add_sum_erase _ _ (Finset.mem_univ v), ite_eq_right (lt_irrefl _),
     zero_add]
   congr 1
-  · rw [Pi.smul_apply, smul_eq_mul, reduction_column_standard_basis hr _ (by simp), if_pos (by simp), mul_one]
+  · rw [Pi.smul_apply, smul_eq_mul, reduction_column_standard_basis hr _ (by simp), ite_eq_left (by simp), mul_one]
   · refine Finset.sum_congr rfl fun i hi => ?_
     rw [Pi.smul_apply, smul_eq_mul]
     by_cases hvi : v.1 < i.1
-    · rw [if_pos hvi]
-    · rw [if_neg hvi, reduction_column_standard_basis hr _ (by simp; omega), if_neg (fun h => by
+    · rw [ite_eq_left hvi]
+    · rw [ite_eq_right hvi, reduction_column_standard_basis hr _ (by simp; omega), ite_eq_right (fun h => by
         have := Finset.ne_of_mem_erase hi
         apply this
         exact Fin.ext (by simp at h; omega)), mul_zero]
@@ -865,7 +837,7 @@ theorem cq_r_XRow {r : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c) → k)} {g : (
     (hg : ∀ x, r (Loc.inX k n c x) = Loc.inX k n c (g x)) (z : Fin (n + c) → k) (l : Fin n) :
     r z (Fin.castAdd c l) = g (fun j => z (Fin.castAdd c j)) l +
       ∑ i : Fin c, z (Fin.natAdd n i) * r (Loc.eN k (n + c) (n + i.1)) (Fin.castAdd c l) := by
-  rw [cq_r_apply hg z, Pi.add_apply, cq_inX_apply, dif_pos (by simp), Finset.sum_apply]
+  rw [cq_r_apply hg z, Pi.add_apply, cq_inX_apply, dite_eq_left (by simp), Finset.sum_apply]
   congr 1
 
 end R1
@@ -978,16 +950,16 @@ theorem finite_sum_target_equality (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu
     fun t => PI.UnfoldEquiv.UnitaryGroupMassFormula.chArg_map hr.1 (PI.UnfoldEquiv.UnitaryGroupMassFormula.isFillOf_fillMatrix y t)
 
   have hlevA : ∀ i : Fin c, cqLev n (Fin.natAdd n i).1 = i.1 + 1 := fun i => by
-    unfold cqLev; rw [if_neg (by simp)]; simp
+    unfold cqLev; rw [ite_eq_right (by simp)]; simp
   have hlevX : ∀ j : Fin n, cqLev n (Fin.castAdd c j).1 = 0 := fun j => by
-    unfold cqLev; rw [if_pos (by simp)]
+    unfold cqLev; rw [ite_eq_left (by simp)]
   have hre' : ∀ (i : ℕ) (hi : n + i < n + c) (l : Fin (n + c)), IntAt P ((q : E) ^ e * r (Loc.eN E (n + c) (n + i)) l) := by
     intro i hi l
     rw [ocbS_eN_single hi]
     exact hre _ _
   have hcol : ∀ t (p : ι), Z t p.1.2 p.1.1 = t p := fun t p => by
     show Loc.xx1 y t (Pi.single p.1.2 1) p.1.1 = t p
-    rw [free_point_column_entry, dif_pos p.2]
+    rw [free_point_column_entry, dite_eq_left p.2]
   have hfreeS : ∀ p : ι, n' ≤ p.1.2.1 := fun p => p.2.1
   have hXfree : ∀ (p : ι) (j : Fin n), Loc.IsFree n' n c (Fin.castAdd c j).1 p.1.2.1 := fun p j => by
     have h := p.2
@@ -1077,7 +1049,7 @@ theorem finite_sum_target_equality (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu
   let ρ : E → E := fun x => if h : IntAt P ((q : E) ^ A * x) then Classical.choose (cq_rep hq hu hp hcard A B x h) else x
   have hρ : ∀ x, IntAt P ((q : E) ^ A * x) → ρ x ∈ LocE.valsQ E q A B ∧ IntAt P ((x - ρ x) / (q : E) ^ B) := by
     intro x h
-    simp only [ρ, dif_pos h]
+    simp only [ρ, dite_eq_left h]
     exact Classical.choose_spec (cq_rep hq hu hp hcard A B x h)
   let σ : (ι → E) → (ι → E) := fun t p => ρ (T t p)
   let W : Finset (ι → E) := V.filter box
@@ -1178,7 +1150,7 @@ theorem finite_sum_target_equality (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu
     have hS := hsupp _ hΨ
     have hTa : ∀ p : ι, IntAt P ((q : E) ^ a * T t p) := fun p => by
       have h1 := hS p.1.2 p.1.1
-      rwa [free_point_column_entry, dif_pos p.2] at h1
+      rwa [free_point_column_entry, dite_eq_left p.2] at h1
     have hA' : ∀ k, ∀ p : ι, ∀ v : Fin c, p.1.1 = Fin.natAdd n v → c - v.1 = k →
         IntAt P ((q : E) ^ (a + (c - (v.1 + 1)) * e) * t p) := by
       intro k
@@ -1241,7 +1213,7 @@ theorem finite_sum_target_equality (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu
     have hS := hsupp _ hΨ
     refine Finset.mem_filter.2 ⟨huV, fun p => ?_⟩
     have h1 := hS p.1.2 p.1.1
-    rw [free_point_column_entry, dif_pos p.2] at h1
+    rw [free_point_column_entry, dite_eq_left p.2] at h1
     exact cq_bd_mono h1 (by show a ≤ a + (c - cqLev n p.1.1.1) * e; omega)
 
   have hatN_add : ∀ (v w : Fin (n + c) → E) (i : ℕ), Loc.atN (v + w) i = Loc.atN v i + Loc.atN w i := by

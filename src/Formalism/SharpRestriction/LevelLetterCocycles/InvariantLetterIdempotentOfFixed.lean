@@ -7,43 +7,7 @@ import Formalism.SharpRestriction.LevelLetterCocycles.CoordHomMapTrace
 public import Formalism.SharpRestriction.LevelLetterCocycles.KillerLevCoreOf
 public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.CmpOfMemX
 public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.Pi0PowSmulInjective
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -111,7 +75,7 @@ theorem invariantLetter_sub' {i : ZMod n} {x x' : W.DD T} (h : DL W T i x) (h' :
   rw [sub_eq_add_neg]; exact Formalism.MainNotions.RamifiedCoefficientChains.S9.dl_add W T h (invariantLetter_neg W T h')
 
 theorem invariantLetter_zero (i : ZMod n) : DL W T i (0 : W.DD T) :=
-  ⟨smul_zero _, fun δ _ => map_zero _⟩
+  ⟨smul_zero _, fun _ _ => map_zero _⟩
 
 theorem uniformizerLattice_neg {k : ℕ} {x : W.DD T} (h : InPN W T k x) : InPN W T k (-x) := by
   have := Formalism.MainNotions.RamifiedCoefficientChains.S9.inPN_smul W T (-1 : O) h
@@ -122,7 +86,7 @@ theorem uniformizerLattice_sub {k : ℕ} {x x' : W.DD T} (h : InPN W T k x) (h' 
   rw [sub_eq_add_neg]; exact Formalism.MainNotions.RamifiedCoefficientChains.S9.inPN_add W T h (uniformizerLattice_neg W T h')
 
 theorem uniformizerLattice_zero (k : ℕ) : InPN W T k (0 : W.DD T) :=
-  ⟨0, (W.N T).zero_mem, fun δ _ => map_zero _, (smul_zero _).symm⟩
+  ⟨0, (W.N T).zero_mem, fun _ _ => map_zero _, (smul_zero _).symm⟩
 
 theorem uniformizerLattice_antitone {k K : ℕ} (hk : k ≤ K) (hπ : W.π₀ ∈ W.AΔ) {x : W.DD T} (h : InPN W T K x) :
     InPN W T k x := by

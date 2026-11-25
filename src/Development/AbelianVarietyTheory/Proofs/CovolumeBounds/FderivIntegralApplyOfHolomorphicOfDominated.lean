@@ -81,15 +81,15 @@ theorem aestronglyMeasurable_fderiv_apply_of_param {F : T → E → V} {x₀ : E
     exact (hc.eventually hmeas).filter_mono nhdsWithin_le_nhds
   refine aestronglyMeasurable_of_tendsto_ae (𝓝[≠] (0 : ℂ)) (f := f) (fun c => ?_) ?_
   · by_cases h : AEStronglyMeasurable (fun t => F t (x₀ + c • v)) μ
-    · simp only [f, if_pos h]
+    · simp only [f, ite_eq_left h]
       exact (h.sub h0).const_smul c⁻¹
-    · simp only [f, if_neg h]
+    · simp only [f, ite_eq_right h]
       exact aestronglyMeasurable_const
   · filter_upwards [hdiff] with t ht
     have h1 := hasLineDerivAt_iff_tendsto_slope_zero.1 (ht.hasFDerivAt.hasLineDerivAt v)
     refine h1.congr' ?_
     filter_upwards [hev] with c hc
-    simp only [f, if_pos hc]
+    simp only [f, ite_eq_left hc]
 
 variable [FiniteDimensional ℂ E]
 

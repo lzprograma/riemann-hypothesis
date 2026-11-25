@@ -2,80 +2,14 @@ module
 
 public import Mathlib.Data.Finsupp.Notation
 public import Mathlib.RingTheory.MvPowerSeries.Substitution
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
-namespace DegreeOneCoeffSubstitution
-open MvPowerSeries Finsupp
-
-private lemma deg_one {σ : Type} [DecidableEq σ] (d : σ →₀ ℕ) (h : d.degree = 1) :
-    ∃ s, d = Finsupp.single s 1 := by
-  have hd : d ≠ 0 := by rintro rfl; simp at h
-  obtain ⟨s, hs⟩ := Finsupp.support_nonempty_iff.mpr hd
-  refine ⟨s, ?_⟩
-  have hsum : d s + ∑ i ∈ d.support.erase s, d i = 1 := by
-    rw [Finset.add_sum_erase _ _ hs, ← degree_apply, h]
-  have hs0 : d s ≠ 0 := Finsupp.mem_support_iff.mp hs
-  have hds : d s = 1 := by omega
-  have hrest : ∑ i ∈ d.support.erase s, d i = 0 := by omega
-  rw [Finset.sum_eq_zero_iff] at hrest
-  ext i
-  by_cases his : i = s
-  · subst his; simp [hds]
-  · rw [Finsupp.single_apply, if_neg (Ne.symm his)]
-    by_cases hi : i ∈ d.support
-    · exact hrest i (Finset.mem_erase.mpr ⟨his, hi⟩)
-    · exact Finsupp.notMem_support_iff.mp hi
-
-end DegreeOneCoeffSubstitution
-
 open MvPowerSeries Finsupp in
 theorem UpperTheory.Reformulated.B.LinearTermOfSubstitution.main :
     ∀ {S : Type}
-    [inst : CommRing S] {σ τ : Type} [inst_1 : Fintype σ] [DecidableEq σ] [DecidableEq τ] (a : σ → MvPowerSeries τ S),
+    [CommRing S] {σ τ : Type} [Fintype σ] [DecidableEq σ] [DecidableEq τ] (a : σ → MvPowerSeries τ S),
     (∀ (s : σ), (MvPowerSeries.constantCoeff : MvPowerSeries τ S → S) (a s) = (0 : S)) →
       ∀ (f : MvPowerSeries σ S) (t : τ),
         (MvPowerSeries.coeff fun₀ | t => (1 : ℕ) : MvPowerSeries τ S → S) (MvPowerSeries.subst a f) =
@@ -93,7 +27,7 @@ theorem UpperTheory.Reformulated.B.LinearTermOfSubstitution.main :
       simp [coeff_one]
     have h1 : d.degree ≠ 1 := by
       intro h
-      obtain ⟨s, rfl⟩ := DegreeOneCoeffSubstitution.deg_one d h
+      obtain ⟨s, rfl⟩ := (Finsupp.sum_eq_one_iff d).mp h
       exact hd (by simp)
     have h2 : 2 ≤ d.degree := by
       have : d.degree ≠ 0 := fun h => h0 ((degree_eq_zero_iff d).mp h)

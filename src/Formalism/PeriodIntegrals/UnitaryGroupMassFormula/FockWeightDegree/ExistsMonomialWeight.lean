@@ -1,57 +1,9 @@
 module
 
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.OmEDiagMonomial
 public import Formalism.PeriodIntegrals.FockDegreeTwoParts
 import Aesop.Frontend.Tactic
 import Aesop.Main
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -77,7 +29,7 @@ theorem omE_diag_monomial {p q r s : ℕ} (l : Ln p q r s) (α : Ln p q r s →�
   have hE : FockH1Action.omE l l (MvPolynomial.monomial α (1 : ℂ)) =
       FockH1Action.raiB l (FockH1Action.lowB l (MvPolynomial.monomial α 1)) + (1 / 2 : ℂ) • MvPolynomial.monomial α 1 := by
     unfold FockH1Action.omE
-    rw [if_pos rfl] <;> rfl
+    rw [ite_eq_left rfl] <;> rfl
   have hm : ∀ c : ℂ, MvPolynomial.monomial α c = c • MvPolynomial.monomial α (1 : ℂ) := fun c => by
     rw [MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
   have hpd : ∀ (m : FockH1Action.Ln p q r s →₀ ℕ) (c : ℂ), MvPolynomial.pderiv l (MvPolynomial.monomial m c) =
@@ -87,11 +39,11 @@ theorem omE_diag_monomial {p q r s : ℕ} (l : Ln p q r s) (α : Ln p q r s →�
   cases hl : FockH1Action.linePos l
   · have hc : ¬ (FockH1Action.linePos l = true) := by simp [hl]
     have h1 : FockH1Action.lowB l (MvPolynomial.monomial α (1 : ℂ)) = MvPolynomial.X l * MvPolynomial.monomial α 1 := by
-      rw [FockH1Action.lowB, if_neg hc] <;> rfl
+      rw [FockH1Action.lowB, ite_eq_right hc] <;> rfl
     have h2 : ∀ x, FockH1Action.raiB l x = -MvPolynomial.pderiv l x := fun x => by
-      rw [FockH1Action.raiB, if_neg hc] <;> rfl
+      rw [FockH1Action.raiB, ite_eq_right hc] <;> rfl
     have hw : ((lw l α : ℚ) : ℂ) = -(α l : ℂ) - 1 / 2 := by
-      rw [lw, if_neg hc]; push_cast; ring
+      rw [lw, ite_eq_right hc]; push_cast; ring
     have hs : Finsupp.single l 1 + α - Finsupp.single l 1 = α := by
       first
         | exact add_tsub_cancel_left _ _
@@ -103,11 +55,11 @@ theorem omE_diag_monomial {p q r s : ℕ} (l : Ln p q r s) (α : Ln p q r s →�
     ring
   · have h1 : FockH1Action.lowB l (MvPolynomial.monomial α (1 : ℂ)) =
         MvPolynomial.pderiv l (MvPolynomial.monomial α 1) := by
-      rw [FockH1Action.lowB, if_pos hl] <;> rfl
+      rw [FockH1Action.lowB, ite_eq_left hl] <;> rfl
     have h2 : ∀ x, FockH1Action.raiB l x = MvPolynomial.X l * x := fun x => by
-      rw [FockH1Action.raiB, if_pos hl] <;> rfl
+      rw [FockH1Action.raiB, ite_eq_left hl] <;> rfl
     have hw : ((lw l α : ℚ) : ℂ) = (α l : ℂ) + 1 / 2 := by
-      rw [lw, if_pos hl]; push_cast; ring
+      rw [lw, ite_eq_left hl]; push_cast; ring
     have key : MvPolynomial.X l * MvPolynomial.monomial (α - Finsupp.single l 1) (1 * (α l : ℂ)) =
         (α l : ℂ) • MvPolynomial.monomial α 1 := by
       rw [one_mul]
@@ -135,13 +87,27 @@ theorem sum_diag_of {p q r s : ℕ} (M : Matrix (Ln p q r s) (Ln p q r s) ℂ)
   · rw [hM]
     by_cases h : g l <;> simp [h]
   · intro l' _ hne
-    rw [hM, if_neg (show ¬ (l = l' ∧ g l) from fun h => hne h.1.symm), zero_smul]
+    rw [hM, ite_eq_right (show ¬ (l = l' ∧ g l) from fun h => hne h.1.symm), zero_smul]
   · intro h
     exact absurd (Finset.mem_univ l) h
 
 theorem fockAct1_diag (p q r s : ℕ) (a : Ix p q) :
     fockAct1 p q r s (Eab a a) = ∑ c : Ix r s, omE ((a, c) : Ln p q r s) (a, c) := by
-  apply PI.FockOneDegW.Diag.fockAct1_diag
+  classical
+  unfold FockH1Action.fockAct1
+  rw [LinearMap.comp_apply, LinearMap.flip_apply, Matrix.kroneckerMapBilinear_apply_apply, omAct_apply']
+  rw [sum_diag_of _ (fun l : FockH1Action.Ln p q r s => l.1 = a)]
+  · rw [show (∑ l : FockH1Action.Ln p q r s, if l.1 = a then FockH1Action.omE l l else 0) =
+        ∑ x : FockH1Action.Ix p q, ∑ y : FockH1Action.Ix r s,
+          if x = a then FockH1Action.omE ((x, y) : FockH1Action.Ln p q r s) (x, y) else 0 from Fintype.sum_prod_type _]
+    rw [Fintype.sum_eq_single a (fun x hx => by simp [hx])]
+    simp
+  · intro l l'
+    obtain ⟨x, y⟩ := l
+    obtain ⟨x', y'⟩ := l'
+    simp only [Matrix.kroneckerMap_apply, LinearMap.mul_apply', FockH1Action.Eab, Matrix.single_apply,
+      Matrix.one_apply, Prod.mk.injEq]
+    split_ifs <;> aesop
 
 theorem fockAct2_diag (p q r s : ℕ) (c : Ix r s) :
     fockAct2 p q r s (Eab c c) = ∑ a : Ix p q, omE ((a, c) : Ln p q r s) (a, c) := by
@@ -211,8 +177,7 @@ theorem exists_monomial_weight {σ ι : Type*} [Fintype σ]
     (hw : ∀ a, (T a - ((μ a : ℚ) : ℂ) • (LinearMap.id : Module.End ℂ (MvPolynomial σ ℂ))) P = 0) :
     ∃ α : σ →₀ ℕ, ∑ i, α i = d ∧ ∀ a, μ a = f a α := by
   obtain ⟨α, hα⟩ : ∃ α, AddMonoidAlgebra.coeff P α ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     exact h0 (MvPolynomial.ext _ _ fun β => by simp [hne β])
   refine ⟨α, ?_, fun a => ?_⟩
   · have hh : MvPolynomial.IsHomogeneous P d := (MvPolynomial.mem_homogeneousSubmodule d P).1 hP

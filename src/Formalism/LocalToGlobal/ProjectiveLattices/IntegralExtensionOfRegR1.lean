@@ -91,14 +91,4 @@ theorem combBound_xplus {ka wL wF : WeightFamilies.Wt D j} (X : PJ D B P j) (E :
       show (⨅ F ∈ X.WWc S.sW wL, E.vAt' la y1 (X.inc wL F)) ≤ _
       rw [dE]; exact this
 
-section l2NormAlt
-
-variable (N : ∀ j ka, (B.KO →+* ℂ) → B.Cusp j ka → ℝ)
-    (h0 : ∀ j ka σ F, 0 ≤ N j ka σ F) (h1 : ∀ j ka σ F, N j ka σ F = 0 ↔ F = 0)
-    (h2 : ∀ j ka σ (a : B.KO) F, N j ka σ (a • F) = ‖σ a‖ * N j ka σ F)
-    (h3 : ∀ j ka σ F G, N j ka σ (F + G) ≤ N j ka σ F + N j ka σ G)
-    (h4 : ∀ j ka σ F, N j ka σ F ≤ B.supN j ka σ F)
-
-end l2NormAlt
-
 end Formalism.L2.Pj

@@ -36,61 +36,12 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RootsNorm
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGammaZeroPartitionWeight
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RankinValuesAtZero
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModularFormCoeffSeqLinearStructure
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Newform
-import Mathlib.Data.Nat.Choose.Multinomial
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlashIntMatrixPosDetProperties
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoeffHeckeVOperatorPolynomialGrowthQExpansion
-import Mathlib.NumberTheory.MulChar.Lemmas
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EisensteinLatticeFunctionIsModularFormCoeffSeq
-import Mathlib.NumberTheory.LSeries.Basic
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TwistedLvalueNeZeroEdge
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -230,7 +181,7 @@ lemma good_ne (e N l : ℕ) (χ θ : DirichletCharacter ℂ N) (ψ : DirichletCh
     ring
   have hEn : ∀ c' : ℂ, ∀ n, n ≠ 0 → (eis (e + 1) c₁ (hat φ) fun _ => 1) n = κ * (eis (e + 1) c' (fun y => ch ψ⁻¹ y * hat ⇑(θ * χ) y) fun _ => 1) n := by
     intro c' n hn
-    simp only [eis, if_neg hn, Finset.mul_sum, hhat]
+    simp only [eis, ite_eq_right hn, Finset.mul_sum, hhat]
     exact Finset.sum_congr rfl (fun _ _ => by ring)
   have hκ0 : κ ≠ 0 := by
     intro h0
@@ -309,7 +260,7 @@ lemma good_one (e N l : ℕ) (χ θ : DirichletCharacter ℂ N) (φ : DirichletC
     rcases eq_or_ne n 0 with rfl | hn
     · simp [hBsdef, eis, Vo]
     · rw [Pi.add_apply, Pi.smul_apply, smul_eq_mul, neg_mul (et * (l : ℂ) ^ e) (Vo l Bs n), ← hVpart n hn, hBsdef]
-      simp only [eis, if_neg hn, hinv]
+      simp only [eis, ite_eq_right hn, hinv]
       rw [← sub_eq_add_neg, ← Finset.sum_sub_distrib]
       refine Finset.sum_congr rfl (fun p _ => ?_)
       by_cases h : (l : ℤ) ∣ (p.1 : ℤ)
@@ -341,7 +292,7 @@ lemma good_one (e N l : ℕ) (χ θ : DirichletCharacter ℂ N) (φ : DirichletC
         ch θ' l * (l : ℂ) * eis (e + 1) c'' (fun x => if (l : ℤ) ∣ x then hat ⇑θ' x else 0) (fun _ => 1) n - ch θ' l * Bs n := by
       rw [hV, Pi.add_apply, Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, pow_succ]; ring
     rw [hsplit, hBsdef]
-    simp only [eis, if_neg hn, Finset.mul_sum, ← Finset.sum_sub_distrib, hhatE]
+    simp only [eis, ite_eq_right hn, Finset.mul_sum, ← Finset.sum_sub_distrib, hhatE]
     refine Finset.sum_congr rfl (fun p _ => ?_)
     split_ifs <;> ring
   have hRmf : MF (e + 1) (N * l) (ch φ⁻¹) ((ch θ' l * (et * (l : ℂ) ^ (e + 1))) • Vo l Bs + (-ch θ' l) • Bs) := by
@@ -642,10 +593,6 @@ namespace GlobalTheory.EisM
 lemma repL_det (L q : ℕ) (i : Option (Fin q)) : (repL L q i).det = q := by
   cases i <;> simp [repL, Matrix.det_fin_two_of]
 
-lemma gamma0_lower_dvd {L : ℕ} (γ : Gamma0 L) : (L : ℤ) ∣ ((γ : SL(2, ℤ)) : M2) 1 0 := by
-  have := Gamma0_mem.mp γ.2
-  exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (by exact_mod_cast this)
-
 lemma exists_kernel_param {K : Type*} [Field K] (a b c d l : K) (hl : l ≠ 0)
     (hdet : a * d - b * c = 0) (hbd : b ≠ 0 ∨ d ≠ 0) : ∃ u, a = l * u * b ∧ c = l * u * d := by
   by_cases hd : d = 0
@@ -670,7 +617,7 @@ theorem repL_LRep : ∀ L q : ℕ, q.Prime → ¬ q ∣ L → LRep L (DT L q) (r
   · rintro ⟨γ, i⟩ -
     refine ⟨?_, ?_⟩
     · simp [Matrix.det_mul, repL_det]
-    · have h := gamma0_lower_dvd γ
+    · have h := GlobalTheory.EisM.RightRepU.dvd_10 γ
       cases i with
       | none => simpa [repL, Matrix.mul_apply, Fin.sum_univ_two] using h
       | some j =>
@@ -747,8 +694,7 @@ theorem repL_LRep : ∀ L q : ℕ, q.Prime → ¬ q ∣ L → LRep L (DT L q) (r
         · rw [Ne, ZMod.natCast_eq_zero_iff]; exact hqL
         · have := congrArg (fun x : ℤ => (x : ZMod q)) hdet
           simpa using this
-        · by_contra hn
-          push_neg at hn
+        · by_contra! hn
           exact hbd ⟨(ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp hn.1,
             (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp hn.2⟩
       obtain ⟨u, hu0, hu1⟩ := hu
@@ -796,10 +742,6 @@ open UpperHalfPlane Complex MeasureTheory CongruenceSubgroup GlobalTheory.EisM U
 open scoped MatrixGroups Real ComplexConjugate Manifold ModularForm
 
 namespace GlobalTheory.EisM
-
-private theorem slz_const_mul (k : ℕ) (δ : M2) (c : ℂ) (g : ℍ → ℂ) (τ : ℍ) :
-    slz k δ (fun σ => c * g σ) τ = c * slz k δ g τ := by
-  unfold slz; ring
 
 private theorem slz_sub (k : ℕ) (δ : M2) (g g' : ℍ → ℂ) (τ : ℍ) :
     slz k δ (fun σ => g σ - g' σ) τ = slz k δ g τ - slz k δ g' τ := by
@@ -883,14 +825,14 @@ theorem sum_slz_repL_Vo : ∀ (k N l : ℕ) (ε : DirichletCharacter ℂ N) (h :
   have hterm : ∀ j : Fin l, slz k (repL (N * l) l (some j)) (qs (Vo l h)) τ =
       ((l : ℂ) ^ (k - 1))⁻¹ * slz k D (slz k (repL N l (some j)) F) τ := by
     intro j
-    rw [hVfun, slz_const_mul]
+    rw [hVfun, GlobalTheory.LevelLower.slz_smul]
     congr 1
     rw [← (hcoc F hk).1 D _ hdetD (hdetA _ j), hmat j, (hcoc F hk).1 _ D (hdetA _ j) hdetD]
   simp only [hterm]
   rw [← Finset.mul_sum, ← slz_sum]
   have hfun : (fun σ => ∑ j : Fin l, slz k (repL N l (some j)) F σ) = fun σ => (ch ε l)⁻¹ * (t * F σ - slz k E F σ) := by
     funext σ; exact key σ
-  rw [hfun, slz_const_mul, slz_sub, slz_const_mul]
+  rw [hfun, GlobalTheory.LevelLower.slz_smul, slz_sub, GlobalTheory.LevelLower.slz_smul]
   have hDE : slz k D (slz k E F) τ = (l : ℂ) ^ k / (l : ℂ) ^ 2 * F τ := by
     rw [← (hcoc F hk).1 E D hdetE hdetD, hED]
     exact (hcoc F hk).2.2.2.2 l τ hl0
@@ -926,7 +868,7 @@ theorem qExpansionFunction_coeffHeckeVOperator_eq_tsum (l : ℕ) (hl : 0 < l) (a
     simpa [hl.ne'] using h
   rw [← hinj.tsum_eq]
   · congr 1; ext m
-    simp only [dvd_mul_right, if_true, Nat.mul_div_cancel_left m hl]
+    simp only [dvd_mul_right, ite_true, Nat.mul_div_cancel_left m hl]
     congr 2; push_cast; ring
   · intro n hn
     by_cases h : l ∣ n

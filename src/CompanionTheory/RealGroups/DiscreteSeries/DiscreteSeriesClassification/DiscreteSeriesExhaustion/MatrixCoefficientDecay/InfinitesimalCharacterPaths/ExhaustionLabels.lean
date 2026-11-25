@@ -473,7 +473,7 @@ theorem step_left (hc : IsCoefFam ε X c) (z : ℂ) (i : ι) (j : Fin n) :
       split_ifs with h
       · rw [h]
       · simp
-    rw [sum_congr rfl fun c' _ => e c', Finset.sum_ite_eq' univ j, if_pos (mem_univ j)]
+    rw [sum_congr rfl fun c' _ => e c', Finset.sum_ite_eq' univ j, ite_eq_left (mem_univ j)]
     calc ∑ d, M j d * stepCoef X z (c i) d u g
         = ∑ k, (∑ d, M j d * g d k) * c i (incl X z u k) g := by
           simp only [stepCoef_apply, Finset.mul_sum, Finset.sum_mul]
@@ -941,8 +941,7 @@ variable {n : ℕ} {X : GMod n} {A : Matrix (Fin n) (Fin n) ℂ}
 theorem top_of_SS (F : Filt X A) (c : ℝ) (hS : SS F c = W F) : F.N c = ⊤ := by
   by_contra hN
   obtain ⟨u, hu⟩ : ∃ u, u ∉ F.N c := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hN (Submodule.eq_top_iff'.2 h)
   obtain ⟨s0, hs0⟩ := F.top
   have hc : c < s0 := by

@@ -44,12 +44,12 @@ import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
 import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntAEMulMem
 
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Formalism.L2.Theta Formalism.L2.NTheta Formalism.IndefR.Mult
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LatIntFacts
 
@@ -107,20 +107,7 @@ theorem int_facts : ∀ {D : D7} (V : HSp D), (∀ a ∈ intAE D, ∀ y ∈ LamH
       exact hab
     have ha : finPart D (incA D (a : D.host.E)) ∈ intAE D :=
       AddSubgroup.subset_closure ⟨1, fun v => one_mem _, a, rfl⟩
-    have hm : ∀ {x y : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F ⊗[D.host.F] D.host.E}, x ∈ intAE D → y ∈ intAE D → x * y ∈ intAE D := by
-      intro x y hx hy
-      refine AddSubgroup.closure_induction₂ (p := fun x y _ _ => x * y ∈ intAE D) ?_ ?_ ?_ ?_ ?_ ?_ ?_ hx hy
-      · rintro _ _ ⟨a, ha, u, rfl⟩ ⟨b, hb, v, rfl⟩
-        refine AddSubgroup.subset_closure ⟨a * b, fun w => ?_, u * v, ?_⟩
-        · rw [map_mul]; exact mul_mem (ha w) (hb w)
-        · rw [Algebra.TensorProduct.tmul_mul_tmul]; rfl
-      · intro x _; rw [zero_mul]; exact zero_mem _
-      · intro x _; rw [mul_zero]; exact zero_mem _
-      · intro x y z _ _ _ h1 h2; rw [add_mul]; exact add_mem h1 h2
-      · intro x y z _ _ _ h1 h2; rw [mul_add]; exact add_mem h1 h2
-      · intro x y _ _ h; rw [neg_mul]; exact neg_mem h
-      · intro x y _ _ h; rw [mul_neg]; exact neg_mem h
-    have := hm ha hi
+    have := GlobalTheory.IntegralAdeleProducts.intAE_mul_mem (F := D.host.F) (E := D.host.E) ha hi
     rw [RingHom.map_mul, mul_left_comm] at this
     rw [hq, RingHom.map_mul, RingHom.map_mul]
     exact this

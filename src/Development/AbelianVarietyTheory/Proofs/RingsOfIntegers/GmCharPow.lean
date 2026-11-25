@@ -61,25 +61,12 @@ section -- clump:auto
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.DVR
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory
 
 namespace PowLevelCompat
 
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor
-
-theorem box_gen_val_along {X X' Y Z : Scheme.{0}} {M : LB X} {M' : LB X'} {j : ℕ} {pr : Fin j → (X' ⟶ X)}
-    (w : LB.Iso M' (LB.LinComb M pr (fun _ => 1))) {K : Type} [Fintype K] {Y₀ : Scheme.{0}}
-    {φ' : K → (Y ⟶ X')} {φ : Fin j → K → (Y₀ ⟶ X)} {ε : K → ℤ} {ρ : Fin j → (Y ⟶ Y₀)}
-    (hψ : ∀ i a, φ' a ≫ pr i = ρ i ≫ φ i a) (t' : LB.Gen (LB.LinComb M' φ' ε))
-    (t : ∀ i, LB.Gen (LB.LinComb M (φ i) ε))
-    (H : LB.Gen.Maps (LB.linCombIso w φ' ε) t'
-      (GeneratorPullback.boxGen M pr φ' ε (fun i => GeneratorPullback.pullAlong M (pr i) (ρ i) (φ i) ε φ' (hψ i) (t i))))
-    (r : Z ⟶ Y) (y : Z) {J J'} (hJ : Good M y J) (hJ' : Good M' y J') :
-    (∏ a, bw w (r ≫ φ' a) y (fun i => J ((r ≫ φ' a) ≫ pr i)) (J' (r ≫ φ' a)) ^ ε a) * val t' r y J' =
-      ∏ i, val (t i) (r ≫ ρ i) y J := by
-  apply GlobalTheory.PowTorus.box_gen_val_along <;> assumption
 
 end PowLevelCompat
 
@@ -97,7 +84,6 @@ noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.DVR
-attribute [local instance] Over.cartesianMonoidalCategory
 open scoped CategoryTheory.Obj
 
 namespace GlobalTheory.PowTorusCoord
@@ -167,7 +153,7 @@ theorem val_box {x : D'.X} {a : LB.Gen (LB.LinComb D'.P.L (D'.Oφ p' x) Oinvε)}
     (hJ' : Good D'.P.L y J') :
     (omg pD y J J' ((r ≫ p') * cP D' T₀ x).left)⁻¹ * omg pD y J J' (cP D' T₀ x).left * omg pD y J J' (r ≫ p').left *
       (omg pD y J J' (1 : T₀ ⟶ D'.P.A).left)⁻¹ * val a r.left y J' = ∏ i, val (t i) (r.left ≫ (ρ i).left) y J := by
-  refine Eq.trans ?_ (box_gen_val_along pD.w (Oφ_proj pD p p' ρ hp x) a t H r.left y hJ hJ')
+  refine Eq.trans ?_ (GlobalTheory.PowTorus.box_gen_val_along pD.w (Oφ_proj pD p p' ρ hp x) a t H r.left y hJ hJ')
   rw [← prod_O D' (r ≫ p') x (omg pD y J J')]
   refine congrArg₂ (· * ·) (Finset.prod_congr rfl fun k _ => ?_) rfl
   rw [← WeightPf.Oφ_comp]

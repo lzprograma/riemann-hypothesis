@@ -13,8 +13,6 @@ namespace Formalism.L2.PairingIndexBounds.F
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.Ker
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7)
 
 def aaOf (cc : Ideal (𝓞 D.host.K)) : Submodule (𝓞 D.host.E) D.host.E :=

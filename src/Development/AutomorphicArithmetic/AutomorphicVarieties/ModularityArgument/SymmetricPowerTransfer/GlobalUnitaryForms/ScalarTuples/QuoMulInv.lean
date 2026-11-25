@@ -77,9 +77,7 @@ section Alg
 variable {K : Type} [Field K] {Δ τ : K}
 
 private theorem quo_mul_inv (z : (Etau K τ)ˣ) : quo z * quo z⁻¹ = 1 := by
-  have e : ∀ a b : (Etau K τ)ˣ, quo (a * b) = quo a * quo b := fun a b => by
-    simp only [quo, _root_.mul_inv_rev, Units.val_mul, star_mul]; ring
-  rw [← e, mul_inv_cancel]
+  rw [← _root_.UpperTheory.V.Z.Sym.Loc.quo_mul', mul_inv_cancel]
   simp [quo]
 
 private theorem tor_inv (z : (Etau K τ)ˣ) (x : Sp Δ τ) : tor Δ z (tor Δ z⁻¹ x) = x := by
@@ -280,9 +278,9 @@ private theorem gen_loc (hl : IsLoc O Δ) (hu : ∃ u : Oˣ, algebraMap O K u = 
     simp [hne] at this
   rw [key t, Units.val_mul, hsMul O K Δ hl _ _ _ hD t.ne_zero s.ne_zero, h1, mul_one]
   by_cases ht : t ∈ NE τ
-  · rw [if_pos ((hsNE O K Δ τ hl hD t).1 ht)]
+  · rw [ite_eq_left ((hsNE O K Δ τ hl hD t).1 ht)]
     simp [one, ht]
-  · rw [if_neg (fun h => ht ((hsNE O K Δ τ hl hD t).2 h))]
+  · rw [ite_eq_right (fun h => ht ((hsNE O K Δ τ hl hD t).2 h))]
     simp [one, ht]
 
 end Lat
@@ -333,18 +331,11 @@ section Global
 
 variable {F : Type} [Field F] [NumberField F]
 
-private theorem mem_int (v : Pl F) (y : F) (hy : v.valuation F y ≤ 1) :
-    cv v y ∈ v.adicCompletionIntegers F := by
-  rw [HeightOneSpectrum.mem_adicCompletionIntegers]
-  change Valued.v (y : v.adicCompletion F) ≤ 1
-  rwa [HeightOneSpectrum.valuedAdicCompletion_eq_valuation']
-
 private theorem ae_int (x : F) :
     ∀ᶠ v : Pl F in Filter.cofinite, cv v x ∈ (algebraMap (Ov v) (Kv v)).range := by
-  refine (HeightOneSpectrum.Support.finite (𝓞 F) x).subset fun v hv => ?_
-  by_contra hn
-  simp only [HeightOneSpectrum.Support, Set.mem_setOf_eq, not_lt] at hn
-  exact hv ⟨⟨_, mem_int v x hn⟩, rfl⟩
+  have h := (algebraMap F (FiniteAdeleRing (𝓞 F) F) x).cofinite_mem_adicCompletionIntegers
+  filter_upwards [h] with v hv
+  exact ⟨⟨_, hv⟩, rfl⟩
 
 private theorem ae_unit {x : F} (hx : x ≠ 0) :
     ∀ᶠ v : Pl F in Filter.cofinite, ∃ u : (Ov v)ˣ, algebraMap (Ov v) (Kv v) u = cv v x := by

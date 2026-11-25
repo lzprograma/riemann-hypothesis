@@ -56,58 +56,14 @@ public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices.I
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionFubiniStudyPositive
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncAdaptedAtlasProjection
 public import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeInhab
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.GenericFibreKerTarget
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.IsRatSectionOn
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
 import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.PermFinTwoUniv
 import ReciprocityTheory.AnalyticForms.MaIntEmpty
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
 import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
@@ -166,12 +122,12 @@ theorem contDiffOn_alphaOf : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k
       filter_upwards [hev] with z hz
       show GlobalTheory.CompanionTheory.Ar.PB.WSq.Fib.upsLogAt BM l p (bp z) = (Hh z).re
       unfold GlobalTheory.CompanionTheory.Ar.PB.WSq.Fib.upsLogAt
-      rw [if_pos hb]
+      rw [ite_eq_left hb]
       exact hz
     · have hz : (fun u => GlobalTheory.CompanionTheory.Ar.PB.WSq.Fib.upsLogAt BM l p (bp u)) = fun _ => (0 : ℝ) := by
         funext u
         unfold GlobalTheory.CompanionTheory.Ar.PB.WSq.Fib.upsLogAt
-        rw [if_neg hb]
+        rw [ite_eq_right hb]
       rw [hz]
       exact contDiffAt_const
   have he : GlobalTheory.CompanionTheory.Ar.PB.WSq.Fib.alphaOf BM l H bp p = fun u =>
@@ -211,9 +167,9 @@ theorem fibre_base_member : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k,
   · have hpa : p.2 ≠ a := fun e => hp (Prod.ext hτ e)
     have hs := (_root_.GlobalTheory.CompanionTheory.Ar.PB.WSq.Fib.Shear.shear_main N j a b ca cb (z' 0) M.j_le hb hst hca hcb).2.2.2
       (BM.G l p.1 (bp (Fin.tail z'))) (H τ (Fin.tail z')) p.2 hpa
-    simp only [flagAt, if_pos hτ]
+    simp only [flagAt, ite_eq_left hτ]
     rw [hs, hτ]
-  · simp only [flagAt, if_neg hτ]
+  · simp only [flagAt, ite_eq_right hτ]
 
 end GlobalTheory.CompanionTheory.Ar.PB.WSq.Fib
 end -- clump:auto
@@ -261,11 +217,11 @@ theorem analyticAt_facOf {e N : ℕ} (j : ℕ) (a i : Fin N) (A : (Fin e → ℂ
   unfold facOf
   by_cases h₁ : (i : ℕ) + 1 = j
   · by_cases h₂ : (a : ℕ) < j
-    · simp only [h₁, h₂, if_true]
+    · simp only [h₁, h₂, ite_true]
       exact analyticAt_minorIJ A z hA _ _
-    · simp only [h₁, h₂, if_true, if_false]
+    · simp only [h₁, h₂, ite_true, ite_false]
       exact analyticAt_const
-  · simp only [h₁, if_false]
+  · simp only [h₁, ite_false]
     exact analyticAt_minorIJ A z hA _ _
 
 theorem fibre_xi_potential : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (Φ : Type) [Field Φ] (y : (Σ k, ι k) → Φ) (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N j : ℕ) (M : FlagModel y Ψ N j) (n d : ℕ) (BM : BaseMetric M n) (FA : FlagAn BM d) (τ : Ψ) (a b ca cb : Fin N), (b : ℕ) = a + 1 → ((b : ℕ) < j ∨ j ≤ (a : ℕ)) → (ca : ℕ) = lastCol N j a → (cb : ℕ) = ca + 1 → ∀ (X : Type) (q : Fin 2 → X → FA.S.X) (Un : Set (Fin d → ℂ)) (Gn : (Fin d → ℂ) → Matrix (Fin 2) (Fin 2) ℂ) (ΦYn : (Fin (d + 1) → ℂ) → FA.S.X) (ΦWn : (Fin (d + 2) → ℂ) → X) (l : Fin BM.q) (H : Ψ → (Fin d → ℂ) → Matrix (Fin N) (Fin N) ℂ) (bp : (Fin d → ℂ) → BM.Rb.X), IsOpen Un → IsFibreData FA τ a ca cb q Un Gn ΦYn ΦWn l H bp → ∀ z : Fin (d + 1) → ℂ, Fin.tail z ∈ Un → ∃ Hh : (Fin (d + 1) → ℂ) → ℂ, AnalyticAt ℂ Hh z ∧ ∀ᶠ z' in 𝓝 z, ∑ p, (xiCoef τ a p : ℝ) * ((FA.S.comap some).potH p).φ (ΦYn z) (ΦYn z') = xiPot (Gn (Fin.tail z')) (z' 0) + (Hh z').re := by
@@ -638,11 +594,11 @@ theorem logNorm_add_weights_eq_logSin : ∀ (K : Type) [Fintype K] (ι : K → T
   have ht : z 1 - z 0 ≠ 0 := sub_ne_zero.2 fun e => hne e.symm
   have hz0 : ∀ i, ((fun {jExact : ℕ} (mExact : _root_.GlobalTheory.CompanionTheory.Ar.PB.FlagModel _ _ _ jExact) (fExact : _root_.GlobalTheory.CompanionTheory.Ar.PB.FrameData _ _ _ mExact.Ω mExact.blk) (pExact : _) (zExact : _ → ℂ) (hExact : _root_.Matrix _ _ ℂ) => (∀ kExact, _root_.GlobalTheory.CompanionTheory.Ar.PB.basePart mExact.blk zExact ⟨kExact, fExact.c kExact⟩ = 1) ∧ ∀ kExact, mExact.blk pExact = some kExact → ∀ iExact, zExact ⟨kExact, iExact⟩ = _root_.Finset.sum _root_.Finset.univ (fun aExact => _root_.GroundTheory.Heights₂.Heights.LowerBoundFree.valAt mExact.x (fExact.u ⟨kExact, iExact⟩ aExact) (_root_.GlobalTheory.CompanionTheory.Ar.PB.basePart mExact.blk zExact) * _root_.GlobalTheory.CompanionTheory.Ar.PB.minorIJ hExact aExact (_root_.GlobalTheory.CompanionTheory.Ar.PB.stepCols _ jExact pExact.2))) M) (BM.F l) (τ, i) z₀ (H τ w * (1 + Matrix.single cb ca (z 0))) := fun i => by
     have := ex0 τ i
-    rwa [flagAt, if_pos rfl] at this
+    rwa [flagAt, ite_eq_left rfl] at this
   have hz1 : ∀ i, ((fun {jExact : ℕ} (mExact : _root_.GlobalTheory.CompanionTheory.Ar.PB.FlagModel _ _ _ jExact) (fExact : _root_.GlobalTheory.CompanionTheory.Ar.PB.FrameData _ _ _ mExact.Ω mExact.blk) (pExact : _) (zExact : _ → ℂ) (hExact : _root_.Matrix _ _ ℂ) => (∀ kExact, _root_.GlobalTheory.CompanionTheory.Ar.PB.basePart mExact.blk zExact ⟨kExact, fExact.c kExact⟩ = 1) ∧ ∀ kExact, mExact.blk pExact = some kExact → ∀ iExact, zExact ⟨kExact, iExact⟩ = _root_.Finset.sum _root_.Finset.univ (fun aExact => _root_.GroundTheory.Heights₂.Heights.LowerBoundFree.valAt mExact.x (fExact.u ⟨kExact, iExact⟩ aExact) (_root_.GlobalTheory.CompanionTheory.Ar.PB.basePart mExact.blk zExact) * _root_.GlobalTheory.CompanionTheory.Ar.PB.minorIJ hExact aExact (_root_.GlobalTheory.CompanionTheory.Ar.PB.stepCols _ jExact pExact.2))) M) (BM.F l) (τ, i) z₁ (H τ w * (1 + Matrix.single cb ca (z 0)) *
       (1 + Matrix.single cb ca (z 1 - z 0))) := fun i => by
     have := ex1 τ i
-    rwa [flagAt, if_pos rfl, show z 1 = z 0 + (z 1 - z 0) by ring, ← shear_mul hcab, ← Matrix.mul_assoc] at this
+    rwa [flagAt, ite_eq_left rfl, show z 1 = z 0 + (z 1 - z 0) by ring, ← shear_mul hcab, ← Matrix.mul_assoc] at this
   have hgood : M.GoodAt (BM.F l) (mCoordIdeal (basePart M.blk z₀)) := by
     rw [CovMap.mCoordIdeal_eq_of_sameOrbit b0]
     exact BM.good l _ hbO.1
@@ -674,7 +630,7 @@ theorem logNorm_add_weights_eq_logSin : ∀ (K : Type) [Fintype K] (ι : K → T
     · have hn : M.blk (τ, i) ≠ none := fun e => (M.blk_none _).1 e hp
       simp [hp, upsLogAt, hn]
     · have hn : M.blk (τ, i) = none := (M.blk_none _).2 hp
-      simp only [hp, if_false, upsLogAt, hn, if_true, hval i hp, hfac i]
+      simp only [hp, ite_false, upsLogAt, hn, ite_true, hval i hp, hfac i]
       ring
   have hsin := _root_.GlobalTheory.CompanionTheory.Ar.PB.WSq.Fib.LogSin.logSin_eq_log_add_xiPot (Gn w) (z 0) (z 1) hPos hne
   have hL : normRhs M τ a (BM.F l) z₀ z₁ (H τ w * (1 + Matrix.single cb ca (z 0))) (z 1 - z 0) -
@@ -972,7 +928,7 @@ theorem main : ∀ (N j : ℕ) (a ca cb : Fin N) (L U : Matrix (Fin N) (Fin N) �
     change y < x at hxy
     rw [hVe]
     by_cases hx : x = cb
-    · rw [if_pos hx, hx]
+    · rw [ite_eq_left hx, hx]
       rw [hx] at hxy
       by_cases hy : y = ca
       · rw [hy, ht, neg_mul, div_mul_cancel₀ _ hMca, add_neg_cancel]
@@ -980,9 +936,9 @@ theorem main : ∀ (N j : ℕ) (a ca cb : Fin N) (L U : Matrix (Fin N) (Fin N) �
           rw [Fin.lt_iff_val_lt_val] at hxy ⊢
           have h2 : (y : ℕ) ≠ ca := fun h => hy (Fin.ext h)
           omega
-        rw [hMe cb y, if_neg hy, hUz cb y hxy, hMe ca y, if_neg hy, hUz ca y hylt]
+        rw [hMe cb y, ite_eq_right hy, hUz cb y hxy, hMe ca y, ite_eq_right hy, hUz ca y hylt]
         simp
-    · rw [if_neg hx, add_zero]
+    · rw [ite_eq_right hx, add_zero]
       exact hMut x y hxy hx
   · intro c hc
     rw [hVe]
@@ -991,11 +947,11 @@ theorem main : ∀ (N j : ℕ) (a ca cb : Fin N) (L U : Matrix (Fin N) (Fin N) �
       intro h
       rw [h, Fin.le_iff_val_le_val] at hcle
       omega
-    rw [if_neg hccb, add_zero]
+    rw [ite_eq_right hccb, add_zero]
     by_cases hcc : c = ca
     · rw [hcc]
       exact hMca
-    · rw [hMe, if_neg hcc, add_zero]
+    · rw [hMe, ite_eq_right hcc, add_zero]
       exact hUd c
   · rw [← Matrix.mul_assoc, transv_mul_transv hne t, Matrix.one_mul]
 
@@ -1034,7 +990,7 @@ theorem sameOrbit_sqZ_of_flags : ∀ (K : Type) [Fintype K] (ι : K → Type) [�
           ∑ I, valAt M.x (F.u ⟨k₀, m⟩ I) (baseOf M k₀ z) *
             minorIJ (H τ * (1 + Matrix.single cb ca t)) I (stepCols N j a) := by
         show flagZ M F zb₂ (Function.update H τ (H τ * (1 + Matrix.single cb ca t))) ⟨k₀, m⟩ = _
-        refine (dif_pos e).trans ?_
+        refine (dite_eq_left e).trans ?_
         simp only [hc, Function.update_self, hval]
       have hn : z ⟨none, m⟩ = α * ∑ I, valAt M.x (F.u ⟨k₀, m⟩ I) (baseOf M k₀ z) *
           minorIJ (H τ * (1 + Matrix.single cb ca t)) I (stepCols N j a) :=
@@ -1049,7 +1005,7 @@ theorem sameOrbit_sqZ_of_flags : ∀ (K : Type) [Fintype K] (ι : K → Type) [�
             ∑ I, valAt M.x (F.u ⟨k, m⟩ I) (baseOf M k₀ z) *
               minorIJ (H e.choose.1) I (stepCols N j e.choose.2) := by
           show flagZ M F zb₂ H ⟨k, m⟩ = _
-          refine (dif_pos e).trans ?_
+          refine (dite_eq_left e).trans ?_
           simp only [hval]
         have hn : z ⟨some k, m⟩ = α * ∑ I, valAt M.x (F.u ⟨k, m⟩ I) (baseOf M k₀ z) *
             minorIJ (H e.choose.1) I (stepCols N j e.choose.2) := hm m
@@ -1058,7 +1014,7 @@ theorem sameOrbit_sqZ_of_flags : ∀ (K : Type) [Fintype K] (ι : K → Type) [�
         have hk : ∀ p, M.blk p ≠ some k := fun p hp => e ⟨p, hp⟩
         refine ⟨c ⟨k, hk⟩, hc _, fun m => ?_⟩
         show flagZ M F zb₂ H ⟨k, m⟩ = _
-        refine (dif_neg e).trans ?_
+        refine (dite_eq_right e).trans ?_
         rw [hcz]
         rfl
   choose c hc hcz using block
@@ -1163,7 +1119,7 @@ theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι 
     by_cases e : c = ca
     · subst e
       simp [Matrix.mul_single_apply_same]
-    · rw [if_neg e, Matrix.mul_single_apply_of_ne _ _ _ _ _ e]
+    · rw [ite_eq_right e, Matrix.mul_single_apply_of_ne _ _ _ _ _ e]
   have hL2 : IsLowerUni (L τ * (1 + Matrix.single cb ca t)) := by
     refine ⟨fun r => ?_, fun r c e => ?_⟩
     · rw [hLe, (hLu τ).1]
@@ -1175,7 +1131,7 @@ theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι 
       · rw [(hLu τ).2 r cb (e.trans (e' ▸ hlt)), zero_mul, add_zero]
       · rw [add_zero]
   have hL2c : (L τ * (1 + Matrix.single cb ca t)) cb ca = L τ cb ca + t := by
-    rw [hLe, if_pos rfl, (hLu τ).1, one_mul]
+    rw [hLe, ite_eq_left rfl, (hLu τ).1, one_mul]
   have hsnd : lowRead M F zb h (sndPt k₀ z) τ cb ca = L τ cb ca + t := by
     rw [← hL2c]
     refine _root_.GlobalTheory.CompanionTheory.Ar.PB.WMan.LowRead.main K ι Φ y Ψ N j M F zb h τ cb ca (sndPt k₀ z) (h' τ * (1 + Matrix.single cb ca t')) _ Vm hF hzb hG
@@ -1249,12 +1205,12 @@ theorem sameOrbit_sndPt {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype
     obtain ⟨k, m⟩ := p
     by_cases e : k = k₀
     · subst e
-      simp only [sndPt, Function.comp, v₁_self, if_true]
-    · simp only [sndPt, Function.comp, v₁_ne (show (⟨k, m⟩ : Σ k, ι k).1 ≠ k₀ from e), if_neg e]
+      simp only [sndPt, Function.comp, v₁_self, ite_true]
+    · simp only [sndPt, Function.comp, v₁_ne (show (⟨k, m⟩ : Σ k, ι k).1 ≠ k₀ from e), ite_eq_right e]
 
 theorem fibreSquare_atlas : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (Φ : Type) [Field Φ] (y : (Σ k, ι k) → Φ) (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N j : ℕ) (M : FlagModel y Ψ N j) (n d : ℕ) (Rb : AnLogRes (mCoordIdeal M.x) ⊤ n) (τ : Ψ) (a b : Fin N) (k₀ : K) (ca cb : Fin N), (b : ℕ) = a + 1 → ((b : ℕ) < j ∨ j ≤ (a : ℕ)) → M.blk (τ, a) = some k₀ → (ca : ℕ) = lastCol N j a → (cb : ℕ) = ca + 1 → IsArithVar (mCoordIdeal y) (d + 2) → d + 1 = n + Fintype.card Ψ * (j.choose 2 + (N - j).choose 2) → ∃ (RW : AnLogRes (mCoordIdeal (M.wCo (τ, a) k₀ ca cb RatFunc.X)) ⊤ (d + 2)) (pr : RW.X → Rb.X), IsWAtlas M Rb τ a k₀ ca cb RW pr := by
   intro K _ ι _ Φ _ y Ψ _ _ N j M n d Rb τ a b k₀ ca cb hb hab hk hca hcb hy hd
-  have hA := (_root_.GlobalTheory.CompanionTheory.Relay.flag_adjacent_swap_varieties_arithmetic K ι Φ y Ψ N j M d τ a b k₀ ca cb hb hab hk hca hcb hy).1
+  have hA := (_root_.PositivityTheory.Xgp.t_c_w_arith K ι Φ y Ψ N j M d τ a b k₀ ca cb hb hab hk hca hcb hy).1
   obtain ⟨ε⟩ := _root_.GlobalTheory.CompanionTheory.Ar.PB.WMan.ChartCount.nonempty_paramEquiv Ψ N j n d M.j_le hd
   have hcov := _root_.GlobalTheory.CompanionTheory.Ar.PB.WMan.Cover.main K ι Φ y Ψ N j M n d Rb τ a b k₀ ca cb hb hab hk hca hcb hy
   have mk : ∀ (F : FrameData ι Ψ N M.Ω M.blk) (kb : Fin Rb.A.n) (V : Set (Fin n → ℂ))

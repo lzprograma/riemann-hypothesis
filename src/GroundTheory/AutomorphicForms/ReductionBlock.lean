@@ -100,7 +100,7 @@ theorem det_rowMatrix (x : Fin (m + 1) → F) : (rowMatrix x).det = x (Fin.last 
     have hi : i ≠ Fin.last m := fun h => by
       rw [h] at hij'
       exact absurd hij' (not_lt.2 (Fin.le_last j))
-    rw [if_neg hi, if_neg hij'.ne]
+    rw [ite_eq_right hi, ite_eq_right hij'.ne]
 
 theorem single_last_vecMul_rowMatrix (x : Fin (m + 1) → F) :
     Pi.single (Fin.last m) 1 ᵥ* rowMatrix x = x := by

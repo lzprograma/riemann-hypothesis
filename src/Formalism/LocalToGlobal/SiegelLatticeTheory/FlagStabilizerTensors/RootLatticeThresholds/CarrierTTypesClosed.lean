@@ -31,8 +31,6 @@ namespace Formalism.FourierDecayAlt.P
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Qr Formalism.FourierDecayAlt.P.QrD
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QrCap
 
 theorem not_cdom_raise_of_lt {k : ℕ} {Λ : Fin k → ℝ} {a b : Fin k} (hab : a < b)
@@ -42,7 +40,7 @@ theorem not_cdom_raise_of_lt {k : ℕ} {Λ : Fin k → ℝ} {a b : Fin k} (hab :
   have hsing : ∀ p : Fin k, ∑ j : Fin k, ((j : ℕ) : ℝ) * (Pi.single p (1 : ℝ) : Fin k → ℝ) j = ((p : ℕ) : ℝ) := by
     intro p
     simp only [Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
-      if_true]
+      ite_true]
   have e1 : ∑ j : Fin k, ((j : ℕ) : ℝ) *
       (Λ - fun c => Λ c + (if c = a then 1 else 0) - (if c = b then 1 else 0)) j =
       ((b : ℕ) : ℝ) - ((a : ℕ) : ℝ) := by
@@ -114,12 +112,12 @@ theorem core {W : Type} [NormedAddCommGroup W] [InnerProductSpace ℂ W] [Finite
         rw [Finset.sum_eq_single c (fun b _ hb => by simp [hθ, hb]) (fun h => absurd (Finset.mem_univ c) h)]
         rw [hAe, smul_smul]
         congr 1
-        simp only [hθ, if_pos rfl]
+        simp only [hθ, ite_eq_left rfl]
         push_cast
         ring
       have hsθ : ∑ a, Λ a * θ a = -t * Λ c := by
         rw [Finset.sum_eq_single c (fun b _ hb => by simp [hθ, hb]) (fun h => absurd (Finset.mem_univ c) h)]
-        simp only [hθ, if_pos rfl]
+        simp only [hθ, ite_eq_left rfl]
         ring
       rw [h1, torus hgU θ]
       refine (hwt θ (Dg_mem θ)).trans ?_
@@ -145,16 +143,16 @@ theorem core {W : Type} [NormedAddCommGroup W] [InnerProductSpace ℂ W] [Finite
       rw [← hEE, hx, CommonEigenvectors.diag_move hgl c a b v₀, hdiag c, map_smul]
       by_cases hca : c = a <;> by_cases hcb : c = b
       · exact absurd (hca.symm.trans hcb) hab.ne
-      · rw [if_pos hca, if_neg (fun h => hcb h.symm)]
-        simp only [if_pos hca, if_neg hcb]
+      · rw [ite_eq_left hca, ite_eq_right (fun h => hcb h.symm)]
+        simp only [ite_eq_left hca, ite_eq_right hcb]
         push_cast
         module
-      · rw [if_neg hca, if_pos hcb.symm]
-        simp only [if_neg hca, if_pos hcb]
+      · rw [ite_eq_right hca, ite_eq_left hcb.symm]
+        simp only [ite_eq_right hca, ite_eq_left hcb]
         push_cast
         module
-      · rw [if_neg hca, if_neg (fun h => hcb h.symm)]
-        simp only [if_neg hca, if_neg hcb]
+      · rw [ite_eq_right hca, ite_eq_right (fun h => hcb h.symm)]
+        simp only [ite_eq_right hca, ite_eq_right hcb]
         push_cast
         module
     have hwx : PI.UpqRep.IsWtOn (PI.UpqRep.Kset (PI.UpqRep.allPos k)) (fun h => π (g * PI.UpqRep.blockW k r h * g⁻¹))
@@ -219,21 +217,14 @@ namespace Formalism.L2.SG.Pf.CarrierT
 
 open Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Built
 
-private theorem list_prod_apply_eq_foldr {W : Type} [NormedAddCommGroup W] [NormedSpace ℂ W]
-    (l : List (Module.End ℂ W)) (v : W) :
-    l.prod v = List.foldr (fun (T : W → W) (h : W) => T h) v
-      (l.map (fun (T : Module.End ℂ W) => (T : W → W))) := by
-  induction l with
-  | nil => rfl
-  | cons a l ih => simp [List.prod_cons, ih]
-
 private theorem qmF_eq_qdet_apply {W : Type} [NormedAddCommGroup W] [NormedSpace ℂ W] {m : ℕ}
     (E : Fin m → Fin m → Module.End ℂ W) (w : ℂ) (v : W) :
     Formalism.FourierDecayAlt.Q.qmF (fun a b => (E a b : W → W)) id id w v = (Formalism.REAL.qdet E w) v := by
   simp only [Formalism.FourierDecayAlt.Q.qmF, Formalism.REAL.qdet, Formalism.REAL.qminor]
   rw [LinearMap.sum_apply]
   refine Finset.sum_congr rfl (fun σ _ => ?_)
-  rw [Module.End.mul_apply, Module.End.intCast_apply, list_prod_apply_eq_foldr, List.map_ofFn]
+  rw [Module.End.mul_apply, Module.End.intCast_apply,
+    ← Formalism.FourierDecayAlt.P.LieListProducts.list_prod_apply, List.map_ofFn]
   rw [← Int.cast_smul_eq_zsmul ℂ]
   congr 2
   congr 1

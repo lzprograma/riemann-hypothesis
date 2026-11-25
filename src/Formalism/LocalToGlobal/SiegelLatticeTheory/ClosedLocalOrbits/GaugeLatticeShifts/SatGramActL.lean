@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.HJSpanLtZero
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramActLStmt
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramActRRep
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
@@ -20,8 +21,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.SatGramActL
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Act
 
 variable {D : D7} {X : HidaSetting D} {u u' : D.what₂.Word}
@@ -40,9 +39,9 @@ theorem mapLF_mul_act {Λ : Submodule (𝓞 D.host.E) (VS D).V} {β γ : (VS D).
     subst he hz hzt
     rfl
   have h1 : mapLF (β * γ) F = ⟨mapFlag (β * γ) hβγ F.fl, (β * γ) F.zt⟩ := by
-    simp only [mapLF, dif_pos hβγ]
+    simp only [mapLF, dite_eq_left hβγ]
   have h2 : mapLF γ F = ⟨mapFlag γ hγ F.fl, γ F.zt⟩ := by
-    simp only [mapLF, dif_pos hγ]
+    simp only [mapLF, dite_eq_left hγ]
   rw [h1, h2]
   exact ext rfl rfl rfl
 
@@ -102,7 +101,7 @@ def phiT (hPD : Saturated.PDIso D) (x0 : X.B.I.GA) (β : (VS D).V ≃ₗ[D.host.
 theorem phiT_pos (hPD : Saturated.PDIso D) (x0 : X.B.I.GA) (β : (VS D).V ≃ₗ[D.host.E] (VS D).V)
     (hx : RatLink X x0 β) (t : GTerm X u u' F0 F0' what₂ rows') (h : β ∈ Saturated.AutF t.lam (lf D F0)) :
     phiT what₂ rows' hPD x0 β hx t = ⟨t.lam, t.mem, t.lam', t.mem', actQ F0 F0' hPD x0 β hx h t.cls⟩ := by
-  simp only [phiT, dif_pos h]
+  simp only [phiT, dite_eq_left h]
 
 theorem phiT_position (hPD : Saturated.PDIso D) (x0 : X.B.I.GA) (β : (VS D).V ≃ₗ[D.host.E] (VS D).V)
     (hx : RatLink X x0 β) (t : GTerm X u u' F0 F0' what₂ rows') :
@@ -127,7 +126,7 @@ theorem phiT_comp (hPD : Saturated.PDIso D) (x0 x1 : X.B.I.GA) (β β1 : (VS D).
     rw [actQ_comp hPD x0 x1 β β1 hx hx1 h h1 e1 e2]
   · have h1 : β1 ∉ Saturated.AutF t.lam (lf D F0) := by
       rw [hb1, autF_inv_iff]; exact h
-    simp only [phiT, dif_neg h, dif_neg h1]
+    simp only [phiT, dite_eq_right h, dite_eq_right h1]
 
 
 variable (what₂ rows') in
@@ -497,16 +496,7 @@ section OOL
 variable {D : D7} (X : HidaSetting D)
 
 theorem psiInfU_one' (w : D.what₂.Word) : X.psiInfU w 1 = 1 := by
-  have h1m : (1 : X.B.I.Ginf) ∈ X.SinfU w := hinf_le_sinf X w 1 (Hinf X w).one_mem
-  have h1 : ∀ x, X.Wu w x = X.psiInfU w 1 • X.Wu w x := fun x => by
-    have e : X.Wu w (1 * x) = X.psiInfU w 1 • X.piU w 1 (X.Wu w x) := (X.Wu_spec w).1 1 h1m x
-    rwa [one_mul, (X.piU_rep w).1, ContinuousLinearMap.one_apply] at e
-  by_contra hne
-  have h0 : ∀ x, X.Wu w x = 0 := fun x => by
-    have h2 : (1 - X.psiInfU w 1) • X.Wu w x = 0 := by rw [sub_smul, one_smul, ← h1 x, sub_self]
-    exact (smul_eq_zero.1 h2).resolve_left (sub_ne_zero.2 (Ne.symm hne))
-  have := (X.Wu_spec w).2.2.2.2
-  simp [h0] at this
+  apply _root_.Formalism.L2.S.Pv.TauS.psiInfU_one <;> assumption
 
 theorem wu_left (w : D.what₂.Word) {s : X.B.I.Ginf} (hs : s ∈ Hinf X w) (x : X.B.I.Ginf) :
     X.Wu w (s * x) = X.piU w s (X.Wu w x) := by
@@ -550,7 +540,7 @@ theorem fundOf_spec {D : D7} {X : HidaSetting D} {u u' : D.what₂.Word}
     {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)} {F0' : FlagG (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)}
     {what₂ rows' : Finset (Submodule (𝓞 D.host.E) (VS D).V)} (hF : FundExists X u u' F0 F0' what₂ rows')
     (t : GTerm X u u' F0 F0' what₂ rows') : IsSFund X.B.I (ROinf t) (FundOf t) := by
-  unfold FundOf; rw [dif_pos (hF t)]; exact (hF t).choose_spec
+  unfold FundOf; rw [dite_eq_left (hF t)]; exact (hF t).choose_spec
 
 theorem kOf_mul {D : D7} {X : HidaSetting D} (u u' : D.what₂.Word) (a b : X.B.I.Gf) (x0 x : X.B.I.GA) :
     kOf X u u' a b (x0 * x) = ((a * X.xu u)⁻¹ * x0.2 * (a * X.xu u)) * kOf X u u' a b x := by

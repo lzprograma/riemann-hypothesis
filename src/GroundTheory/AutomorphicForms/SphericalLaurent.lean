@@ -3,11 +3,8 @@ module
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.RingTheory.FiniteType
 public import Mathlib.RingTheory.IntegralClosure.Algebra.Defs
-import Mathlib.FieldTheory.PurelyInseparable.Exponent
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.Analysis.Complex.Polynomial.Basic
+import Mathlib.LinearAlgebra.LinearIndependent.Basic
 import Mathlib.Tactic.TypeStar
 public import Mathlib.Analysis.Complex.Norm
 public import Mathlib.Analysis.Normed.Field.Basic
@@ -52,10 +49,8 @@ theorem monomialChar_add (l l' : Fin n → ℤ) (w : Fin n → ℂˣ) :
 
 def pointHom (w : Fin n → ℂˣ) : Multiplicative (Fin n → ℤ) →* ℂ where
   toFun l := monomialChar (Multiplicative.toAdd l) w
-  map_one' := by simp [monomialChar_apply]
-  map_mul' l l' := by
-    simp only [toAdd_mul, monomialChar_apply, Pi.add_apply, zpow_add, Units.val_mul,
-      Finset.prod_mul_distrib]
+  map_one' := monomialChar_zero w
+  map_mul' l l' := monomialChar_add (Multiplicative.toAdd l) (Multiplicative.toAdd l') w
 
 def evalAt (w : Fin n → ℂˣ) : LaurentRing n →ₐ[ℂ] ℂ :=
   AddMonoidAlgebra.lift ℂ ℂ (Fin n → ℤ) (pointHom w)
@@ -122,9 +117,6 @@ theorem exists_eq_evalAt (ψ : LaurentRing n →ₐ[ℂ] ℂ) : ∃ w : Fin n �
     simp only [map_zpow]
     rfl
   rw [evalAt, ← hM, Equiv.apply_symm_apply]
-
-instance : Algebra.FiniteType ℂ (LaurentRing n) := by
-  infer_instance
 
 theorem exists_ker_evalAt_comp_eq {A : Type*} [CommRing A] [Algebra ℂ A]
     (Φ : A →ₐ[ℂ] LaurentRing n) (hΦ : Function.Injective Φ)

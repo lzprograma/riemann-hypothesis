@@ -112,7 +112,7 @@ theorem exists_scal : ∀ (K : Type) [Field K] [NumberField K] (ρ : HeightOneSp
     (fun v _ => v.prime) (fun v _ u _ h h' => h (HeightOneSpectrum.ext h'))
     (fun v => if (v : HeightOneSpectrum (𝓞 K)) = w then π ^ E w else 0)
   have hbw := hb w hwT
-  simp only [if_true] at hbw
+  simp only [ite_true] at hbw
   have hπE : π ^ E w ∈ w.asIdeal ^ E w := (w.intValuation_le_pow_iff_mem _ _).1 (le_of_eq (hπpow _))
   have hπE1 : π ^ E w ∉ w.asIdeal ^ (E w + 1) := by
     rw [← w.intValuation_le_pow_iff_mem, hπpow, WithZero.exp_le_exp]
@@ -133,7 +133,7 @@ theorem exists_scal : ∀ (K : Type) [Field K] [NumberField K] (ρ : HeightOneSp
     · by_cases hvw' : v = w
       · subst hvw'; rw [hvw]
       · have := hb v hv
-        simp only [hvw', if_false, sub_zero] at this
+        simp only [hvw', ite_false, sub_zero] at this
         exact (mem_pow_iff v hb0 _).1 this
     · have hvS : v ∉ S := fun h => hv (Finset.mem_union_left _ h)
       have hρv : ρ v = 0 := by

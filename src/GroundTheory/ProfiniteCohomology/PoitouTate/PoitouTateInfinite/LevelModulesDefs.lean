@@ -14,8 +14,6 @@ namespace GroundTheory.ProfCoh
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.Global
 
-attribute [local instance 2000] Rep.hV2
-
 noncomputable section
 
 theorem isOpen_ker_ρ {k G : Type*} [CommRing k] [Group G] [TopologicalSpace G] (A : Rep k G) [IsDiscreteRep A]

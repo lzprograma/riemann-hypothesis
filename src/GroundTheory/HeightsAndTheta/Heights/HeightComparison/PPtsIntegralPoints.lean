@@ -169,12 +169,6 @@ theorem homogProof : HomogStatement := by
   rw [Geo.ptsIntegral, dite_eq_left hex]
   exact ptsIntegralAt_eq P hP g hg _ hex.choose_spec
 
-section Dependence
-
-open MvPolynomial
-
-end Dependence
-
 end PtsIntegralPoints
 
 end GroundTheory.Heights₂.Heights

@@ -215,7 +215,7 @@ theorem IsJet.dualMapR_eq {x : V → ℂ⟦X⟧} {y : DualNumber ℂ⟦X⟧} (h 
   simp only [PowerSeries.coeff_coe]
   by_cases hk : k < 0
   · simp [hk]
-  · simp only [if_neg hk]
+  · simp only [ite_eq_right hk]
     exact h.2.2 _
 
 end Jet

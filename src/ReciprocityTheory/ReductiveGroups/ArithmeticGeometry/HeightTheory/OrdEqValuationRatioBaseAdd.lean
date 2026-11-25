@@ -47,30 +47,17 @@ def heightSubstitutionCondition (h : d.S1) (x : Fin (d.N + 1) → K) (c : ι) (F
 
 theorem ratio_eq_of_eq_smul_field {Ω' V : Type*} [Field Ω'] [AddCommGroup V] [Module Ω' V] {f g : V}
     (hg : g ≠ 0) {a : Ω'} (hf : f = a • g) : ratio (Ω := Ω') f g = a := by
-  classical
-  have h : ∃ b : Ω', f = b • g := ⟨a, hf⟩
-  unfold ratio
-  rw [dite_eq_left h]
-  exact smul_left_injective Ω' hg (h.choose_spec.symm.trans hf)
+  exact ReciprocityTheory.ChartRestriction.G.T0.Data.x4v4_ratio_spec hg hf
 
 theorem eq_ratio_base_smul (hd : d.AxH 𝒜) (c : ι) {f : A c} (hf : f ∈ 𝒜 c d.wL) :
     f = ratio (Ω := Ω c) f (d.w (d.jc c) c) • d.w (d.jc c) c := by
-  have hw := hd.w_mem (d.jc c) c
-  have hw0 := hd.w_base c
-  obtain ⟨a, ha⟩ := (finrank_eq_one_iff_of_nonzero' (⟨_, hw⟩ : 𝒜 c d.wL)
-    (by simpa using hw0)).1 (hd.finrank_one c d.wL) ⟨f, hf⟩
-  have hfa : f = a • d.w (d.jc c) c := by
-    have h1 := congrArg Subtype.val ha
-    simp only [SetLike.val_smul] at h1
-    exact h1.symm
-  rw [ratio_eq_of_eq_smul_field hw0 hfa]
-  exact hfa
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.G.T0.Data.x4v4_eq_smul
+    | apply _root_.ReciprocityTheory.ChartRestriction.G.T0.Data.x4v4_eq_smul <;> first | assumption | rfl | infer_instance
 
 theorem ratio_base_ne_zero (hd : d.AxH 𝒜) (c : ι) {f : A c} (hf : f ∈ 𝒜 c d.wL) (hf0 : f ≠ 0) :
     ratio (Ω := Ω c) f (d.w (d.jc c) c) ≠ 0 := by
-  intro h0
-  apply hf0
-  rw [d.eq_ratio_base_smul hd c hf, h0, zero_smul]
+  exact ReciprocityTheory.ChartRestriction.G.T0.Data.x4v4_ratio_ne d hd c hf hf0
 
 theorem linearCombination_mem_section (hd : d.AxH 𝒜) (x : Fin (d.N + 1) → K) (c : ι) : d.wx x c ∈ 𝒜 c d.wL := by
   haveI := hd.tower c

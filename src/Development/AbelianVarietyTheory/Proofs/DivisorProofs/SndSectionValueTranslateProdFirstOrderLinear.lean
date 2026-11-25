@@ -68,17 +68,14 @@ open GlobalTheory.CompHt (hodgeWt)
 open GlobalTheory.LevDesc (TypeFrame grpHR grpGHR levDet secRing move)
 open GlobalTheory.IndefiniteRowSideFullHecke.LevelStructureAutomorphisms (LevelAut)
 open GlobalTheory.OrbitSep
-attribute [local instance] Over.cartesianMonoidalCategory
 open MonoidalCategory CartesianMonoidalCategory MonObj
-
-set_option autoImplicit false
 
 noncomputable section
 
 namespace GlobalTheory.KSLin
 
 theorem valR_eq_evAt {A : Type} [CommRing A] {Y : Scheme.{0}} (x : Sp A ⟶ Y) (U : Y.Opens)
-    (h : ⊤ ≤ x ⁻¹ᵁ U) (f : Γ(Y, U)) : valR x U f = GlobalTheory.TanDeriv.evAt x U h f := dif_pos h
+    (h : ⊤ ≤ x ⁻¹ᵁ U) (f : Γ(Y, U)) : valR x U f = GlobalTheory.TanDeriv.evAt x U h f := dite_eq_left h
 
 theorem valR_spMap_comp {R A : Type} [CommRing R] [CommRing A] (φ : R →+* A) {Y : Scheme.{0}} (x : Sp R ⟶ Y)
     (U : Y.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) (f : Γ(Y, U)) : valR (spMap φ ≫ x) U f = φ (valR x U f) := by

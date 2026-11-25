@@ -512,14 +512,14 @@ theorem det_gens {n n' : S.GLV} (hn : n ∈ S.N) (hn' : n' ∈ S.N') :
         Matrix.diagonal_apply]
       by_cases h : i = j
       · simp [h]
-      · rw [if_neg h, if_neg]; rintro ⟨rfl, rfl⟩; exact h rfl
+      · rw [ite_eq_right h, ite_eq_right]; rintro ⟨rfl, rfl⟩; exact h rfl
     · exact (hf_cj L S.herm.1 _ _).symm
     · rfl
     · simp only [e, Matrix.of_apply, Sum.elim_inr, Matrix.fromBlocks_apply₂₂, i2 _ _, S.gram',
         Matrix.diagonal_apply]
       by_cases h : i = j
       · simp [h]
-      · rw [if_neg h, if_neg]; rintro ⟨rfl, rfl⟩; exact h rfl
+      · rw [ite_eq_right h, ite_eq_right]; rintro ⟨rfl, rfl⟩; exact h rfl
   have hD1 : Z.det = S.D (Fin.last (r + 1)) := lead_translate S hn hn' (Fin.last (r + 1))
   have hD0 : (Z.submatrix Fin.castSucc Fin.castSucc).det = S.D (Fin.last r).castSucc :=
     lead_translate S hn hn' (Fin.last r).castSucc

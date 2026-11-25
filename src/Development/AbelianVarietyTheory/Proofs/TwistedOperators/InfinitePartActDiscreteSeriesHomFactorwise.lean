@@ -50,7 +50,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formali
 open GlobalTheory.IndefiniteRowSideFullHecke.PlusPolynomialRoots (IsTestData PPol Tor Phi PhiOK PhiReal ellKernel Gap NoFixed IsLatticeConj GeomExpansion EllipticPart TraceEq)
 open GlobalTheory.PRep (IsAdmissible)
 open GlobalTheory.TrMult
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open Formalism.MainNotions.S
 
 namespace GlobalTheory.TrAct
@@ -83,7 +82,7 @@ theorem partAt_insert {D : D7} (V : HSp D) (g : GA D V) {s : Finset D.what₂.Ta
       have h2 : placeOf D τ ∉ s.image (placeOf D) := fun h => by
         obtain ⟨ρ, hρ, e⟩ := Finset.mem_image.1 h
         exact hτ ((placeOf_bijective D).1 e ▸ hρ)
-      rw [if_pos h1, if_neg h2, mul_one]
+      rw [ite_eq_left h1, ite_eq_right h2, mul_one]
       exact (projArch_embArch_self _ _ _ _).symm
     · rw [projArch_embArch_ne _ _ hw, one_mul]
       congr 1
@@ -94,7 +93,7 @@ theorem partAt_univ {D : D7} (V : HSp D) (g : GA D V) [Fintype D.what₂.Tau] :
     partAt V g Finset.univ = (toInf V g : GA D V) := by
   classical
   refine GAd_ext D.sp.cm.sig V.gram (fun w => ?_) (fun v => ?_)
-  · rw [projArch_partAt, if_pos]
+  · rw [projArch_partAt, ite_eq_left]
     · show _ = projArch D.sp.cm.sig V.gram w (ofInf D.sp.cm.sig V.gram (projInf D.sp.cm.sig V.gram g))
       rw [projArch_ofInf, projInfArch_projInf]
     · obtain ⟨τ, rfl⟩ := (placeOf_bijective D).2 w

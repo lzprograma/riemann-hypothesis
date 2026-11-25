@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlatGenFrameComplexCompat
 public import Formalism.LocalToGlobal.ProjectiveLattices.CoreProofs
 public import Formalism.LocalToGlobal.ProjectiveLattices.IntAll
 public import Formalism.LocalToGlobal.ProjectiveLattices.NonnegIffOfLiesTotal
@@ -120,9 +121,7 @@ theorem isCombAt_unique {S : Type} [CommRing S] {Xo : Moduli Dw l} {x : Sp S ⟶
   rw [huu]
 
 theorem spMap_comp' {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (f : A →+* B) (g : B →+* C) :
-    spMap g ≫ spMap f = spMap (g.comp f) := by
-  simp only [spMap, ← Spec.map_comp]
-  rfl
+    spMap g ≫ spMap f = spMap (g.comp f) := GlobalTheory.CompanionTheory.Ar.LieFin.spMap_comp' f g
 
 theorem epsMul_comp_alg {S : Type} [CommRing S] (a : S) :
     (epsMul a).comp (algebraMap S (DualNumber S)) = algebraMap S (DualNumber S) := by
@@ -142,10 +141,6 @@ theorem epsPt_left {S : Type} [CommRing S] {Xo : Moduli Dw l} {x : Sp S ⟶ Xo.X
 theorem isCombAt_exists {S : Type} [CommRing S] {Xo : Moduli Dw l} {x : Sp S ⟶ Xo.X} {m : ℕ}
     {v : Fin m → (Sp (DualNumber S) ⟶ Xo.univ.t.G.left)} (hv : ∀ j, IsTanAt x (v j)) (a : Fin m → S) :
     ∃ w, IsCombAt x v a w := ⟨_, fun i => epsPt (hv i) (a i), fun i => epsPt_left (hv i) (a i), rfl⟩
-
-theorem isCombAt_epsPt {S : Type} [CommRing S] {Xo : Moduli Dw l} {x : Sp S ⟶ Xo.X} {m : ℕ}
-    {v : Fin m → (Sp (DualNumber S) ⟶ Xo.univ.t.G.left)} (hv : ∀ j, IsTanAt x (v j)) (a : Fin m → S) :
-    IsCombAt x v a ((List.ofFn fun i => epsPt (hv i) (a i)).prod.left) := ⟨fun i => epsPt (hv i) (a i), fun i => epsPt_left (hv i) (a i), rfl⟩
 
 theorem epsPt_zero {S : Type} [CommRing S] {Xo : Moduli Dw l} {x : Sp S ⟶ Xo.X}
     {v : Sp (DualNumber S) ⟶ Xo.univ.t.G.left} (hv : IsTanAt x v) : epsPt hv 0 = 1 := by
@@ -167,29 +162,12 @@ theorem epsPt_one_left {S : Type} [CommRing S] {Xo : Moduli Dw l} {x : Sp S ⟶ 
   rw [h1]
   simp [spMap]
 
-private theorem prod_ofFn_single_lemma {M : Type*} [Monoid M] (m : ℕ) :
-    ∀ (f : Fin m → M) (j : Fin m), (∀ i, i ≠ j → f i = 1) → (List.ofFn f).prod = f j := by
-  induction m with
-  | zero => intro f j _; exact j.elim0
-  | succ m ih =>
-    intro f j h
-    rw [List.ofFn_succ, List.prod_cons]
-    by_cases hj : j = 0
-    · subst hj
-      rw [List.prod_eq_one, _root_.mul_one]
-      intro a ha
-      obtain ⟨i, rfl⟩ := List.mem_ofFn.mp ha
-      exact h _ (Fin.succ_ne_zero i)
-    · obtain ⟨j', rfl⟩ := Fin.exists_succ_eq.mpr hj
-      rw [h 0 (Fin.succ_ne_zero j').symm, _root_.one_mul]
-      exact ih (fun i => f i.succ) j' (fun i hi => h _ (fun he => hi (Fin.succ_injective _ he)))
-
 theorem isCombAt_single {S : Type} [CommRing S] {Xo : Moduli Dw l} {x : Sp S ⟶ Xo.X} {m : ℕ}
     {v : Fin m → (Sp (DualNumber S) ⟶ Xo.univ.t.G.left)} (hv : ∀ j, IsTanAt x (v j)) (j : Fin m) :
     IsCombAt x v (Pi.single j 1) (v j) := by
   refine ⟨fun i => epsPt (hv i) ((Pi.single j (1 : S) : Fin m → S) i),
     fun i => epsPt_left (hv i) _, ?_⟩
-  rw [prod_ofFn_single_lemma m (fun i => epsPt (hv i) ((Pi.single j (1 : S) : Fin m → S) i)) j
+  rw [_root_.GlobalTheory.CompanionTheory.Ar.Flat.prod_ofFn_single (fun i => epsPt (hv i) ((Pi.single j (1 : S) : Fin m → S) i)) j
     (fun i hi => by
       show epsPt (hv i) ((Pi.single j (1 : S) : Fin m → S) i) = 1
       rw [Pi.single_eq_of_ne hi]

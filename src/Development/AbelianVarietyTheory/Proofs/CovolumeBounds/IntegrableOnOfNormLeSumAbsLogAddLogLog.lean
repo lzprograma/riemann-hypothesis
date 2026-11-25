@@ -256,14 +256,4 @@ theorem exists_integrableOn_log_norm_div (μ : Measure E) [μ.IsAddHaarMeasure]
 
 end Holomorphic
 
-section Coordinates
-
-open Bornology
-
-variable {ι : Type*} [Fintype ι]
-
-variable {F : Type*} [NormedAddCommGroup F]
-
-end Coordinates
-
 end GlobalTheory

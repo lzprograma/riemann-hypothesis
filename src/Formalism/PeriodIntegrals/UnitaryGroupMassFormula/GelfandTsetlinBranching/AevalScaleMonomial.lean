@@ -6,53 +6,10 @@ public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Wlocal
 public import Formalism.GradedWeylDivisibility.FinalB
 public import Mathlib.Algebra.MvPolynomial.Monad
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalRingCardinality.Params
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.RingTheory.SimpleRing.Principal
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.FockFEqSumOfSubsetB
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.FockFRowActRight, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.AevalScaleMonomial
@@ -141,14 +98,7 @@ theorem fockF_add_left {σ : Type} (p p' q : MvPolynomial σ ℂ) :
 
 theorem fockF_smul_left {σ : Type} (c : ℂ) (p q : MvPolynomial σ ℂ) :
     fockF (c • p) q = c * fockF p q := by
-  classical
-  rw [fockF_eq_sum (c • p) q p.support (fun m h _ => by
-        rw [MvPolynomial.coeff_smul, smul_eq_mul] at h
-        exact MvPolynomial.mem_support_iff.mpr (right_ne_zero_of_mul h)),
-    fockF_eq_sum p q p.support (fun m h _ => MvPolynomial.mem_support_iff.mpr h), Finset.mul_sum]
-  refine Finset.sum_congr rfl fun m _ => ?_
-  rw [MvPolynomial.coeff_smul, smul_eq_mul]
-  ring
+  apply _root_.PI.WGB.fockF_smul_left_B <;> assumption
 
 theorem fockF_zero_left {σ : Type} (q : MvPolynomial σ ℂ) : fockF 0 q = 0 := by
   simp [fockF]
@@ -166,14 +116,7 @@ theorem fockF_add_right {σ : Type} (p q q' : MvPolynomial σ ℂ) :
 
 theorem fockF_smul_right {σ : Type} (c : ℂ) (p q : MvPolynomial σ ℂ) :
     fockF p (c • q) = star c * fockF p q := by
-  classical
-  have hs : ∀ r : MvPolynomial σ ℂ,
-      fockF p r = ∑ m ∈ p.support, p.coeff m * star (r.coeff m) * fct m :=
-    fun r => fockF_eq_sum p r _ (fun m h1 _ => MvPolynomial.mem_support_iff.mpr h1)
-  rw [hs, hs, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun m _ => ?_
-  rw [MvPolynomial.coeff_smul, smul_eq_mul, star_mul']
-  ring
+  apply _root_.PI.WGB.fockF_smul_right_B <;> assumption
 
 theorem fockF_sum_left {σ ι : Type} (s : Finset ι) (x : ι → MvPolynomial σ ℂ) (q : MvPolynomial σ ℂ) :
     fockF (∑ i ∈ s, x i) q = ∑ i ∈ s, fockF (x i) q := by
@@ -337,11 +280,11 @@ theorem mcF_one : mcF f 1 = fockF f f := by
 theorem isUU_E (l j : Fin n) (hlj : l < j) (c : ℂ) : IsUU (Formalism.UG.P.wlocal_E l j c) := by
   refine ⟨fun i j' h => ?_, fun i => ?_⟩
   · simp only [Formalism.UG.P.wlocal_E]
-    rw [if_neg (by intro e; subst e; exact lt_irrefl _ h), if_neg]
+    rw [ite_eq_right (by intro e; subst e; exact lt_irrefl _ h), ite_eq_right]
     · simp
     · rintro ⟨rfl, rfl⟩; exact lt_asymm h hlj
-  · simp only [Formalism.UG.P.wlocal_E, if_true]
-    rw [if_neg]
+  · simp only [Formalism.UG.P.wlocal_E, ite_true]
+    rw [ite_eq_right]
     · simp
     · rintro ⟨rfl, rfl⟩; exact lt_irrefl _ hlj
 
@@ -349,11 +292,11 @@ theorem isUU_E_conj (a b : Fin n) (hab : a < b) (c : ℂ) :
     IsUU (Formalism.UG.P.wlocal_E b a c).conjTranspose := by
   refine ⟨fun i j' h => ?_, fun i => ?_⟩
   · simp only [Matrix.conjTranspose_apply, Formalism.UG.P.wlocal_E]
-    rw [if_neg (by intro e; subst e; exact lt_irrefl _ h), if_neg]
+    rw [ite_eq_right (by intro e; subst e; exact lt_irrefl _ h), ite_eq_right]
     · simp
     · rintro ⟨rfl, rfl⟩; exact lt_asymm h hab
-  · simp only [Matrix.conjTranspose_apply, Formalism.UG.P.wlocal_E, if_true]
-    rw [if_neg]
+  · simp only [Matrix.conjTranspose_apply, Formalism.UG.P.wlocal_E, ite_true]
+    rw [ite_eq_right]
     · simp
     · rintro ⟨rfl, h2⟩; exact lt_irrefl _ (h2 ▸ hab)
 
@@ -366,7 +309,7 @@ theorem colAdd_matrixCoeffPoly (hU : ∀ u, IsUU u → rowAct ℂ (iotaC ℂ n k
       fun v => (matOf x * Formalism.UG.P.wlocal_E l j c) v.1 v.2 := by
     funext v
     simp only [matOf, Matrix.mul_apply, Matrix.of_apply, Formalism.UG.P.wlocal_E, mul_add,
-      Finset.sum_add_distrib, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_add_distrib, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     by_cases h : v.2 = j
     · simp [h, mul_comm] <;> rw [← h]
     · simp [h]
@@ -392,7 +335,7 @@ theorem rowDiv_matrixCoeffPoly_eq_zero (hU : ∀ u, IsUU u → rowAct ℂ (iotaC
   have hq0 : q = 0 := Polynomial.eq_zero_of_infinite_isRoot q
     (Set.infinite_of_injective_forall_mem (MvPolynomial.C_injective (Fin n × Fin n) ℂ) hroot)
   have : rowGen ℂ a b (mcP f) = Polynomial.C (mcP f) := sub_eq_zero.mp hq0
-  rw [rowDiv, this, Polynomial.coeff_C, if_neg (by omega)]
+  rw [rowDiv, this, Polynomial.coeff_C, ite_eq_right (by omega)]
 
 theorem aeval_scale_monomial (t : Fin n → ℂ) (m : Fin n × Fin n →₀ ℕ) (a : ℂ) :
     aeval (fun v : Fin n × Fin n => C (t v.2) * X v) (monomial m a) =
@@ -429,7 +372,7 @@ theorem isWH_of_scale (κ : Fin n → ℕ) (P : MvPolynomial (Fin n × Fin n) �
     intro i; simp only [t]; split_ifs <;> simp
   simp only [ht, Finsupp.prod, ite_pow, one_pow] at h2
   rw [Finset.prod_ite, Finset.prod_const_one, mul_one, Finset.prod_pow_eq_pow_sum,
-    Finset.prod_ite_eq' Finset.univ s, if_pos (Finset.mem_univ _)] at h2
+    Finset.prod_ite_eq' Finset.univ s, ite_eq_left (Finset.mem_univ _)] at h2
   have h3 : ∑ v ∈ m.support with v.2 = s, m v = κ s := by
     have h4 : ((2 ^ (∑ v ∈ m.support with v.2 = s, m v) : ℕ) : ℂ) = ((2 ^ κ s : ℕ) : ℂ) := by
       push_cast; exact h2

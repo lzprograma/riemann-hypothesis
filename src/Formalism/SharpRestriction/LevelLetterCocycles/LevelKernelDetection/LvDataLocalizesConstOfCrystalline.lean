@@ -9,48 +9,8 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetectio
 public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.GaloisActionFrobeniusComm
 public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvEquiv
 public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvRhoC
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.Graded
 import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.CrystallineToDeRhamInjective
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.ConstantCoeffPi0EqZeroOfP9ring, Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.RhoFfEqUnitMul, Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.LvDataLocalizesConstOfCrystalline
@@ -186,22 +146,6 @@ theorem comparison_of_reduction {T : LocLat G Qp LL O} (C : Coord W (baseIdOf hR
   rw [hX, add_zero, Finset.sum_congr rfl (fun k _ => hC k)] at hF
   exact hF
 
-theorem gamma_reduction_pi0_pow {T : LocLat G Qp LL O} (C : Coord W (baseIdOf hR) T) (i : ZMod n) (hs1 : W.s = 1)
-    (hp2 : PD.p ≠ 2) (x : C.V) (hx : x ∈ (latOf C).N i) (M : ℕ)
-    (hγ : (latOf C).γ i x - x ∈ E.sm ((PowerSeries.X : PowerSeries O) ^ M) ((latOf C).N i)) :
-    ∃ (y : ↥(W.N T)) (_ : W.γD T W.gam (C.t i x) ∈ W.N T),
-      W.γD T W.gam (C.t i x) - C.t i x = W.π₀ ^ M • (y : W.DD T) := by
-  obtain ⟨z, hz, hzeq⟩ := Submodule.mem_map.1 hγ
-  rw [LinearMap.lsmul_apply] at hzeq
-  have hg : W.gamK = W.gam := W.gamK_eq_one hs1 hp2
-  have h1 : C.t i ((latOf C).γ i x) = W.γD T W.gam (C.t i x) := by rw [t_γ, hg]
-  have h2 : W.γD T W.gam (C.t i x) - C.t i x = W.π₀ ^ M • C.t i z := by
-    rw [← h1, ← C.t_sub, ← hzeq, C.t_smul, map_pow, BaseId.d_X]
-  refine ⟨⟨C.t i z, hz⟩, ?_, h2⟩
-  have h3 : W.γD T W.gam (C.t i x) = W.π₀ ^ M • C.t i z + C.t i x := by rw [← h2]; abel
-  rw [h3]
-  exact (W.N T).add_mem ((W.N T).smul_mem _ hz) hx
-
 end Formalism.MainNotions.N.Ln03.Pf
 end -- clump:auto
 end -- clump:auto
@@ -271,8 +215,8 @@ theorem rho_sub_mem [IsDomain O] (Hy : LvHyp Lb hR uZ ιZ C c ell Λ κ lam) {j 
     funext i
     unfold Tw
     by_cases h : ((((baseIdOf hR).Bs.ℓ - 1) * M : ℕ) : ℤ) ≤ i
-    · rw [if_pos h, if_pos (by omega)]
-    · rw [if_neg h, if_neg (by omega)]
+    · rw [ite_eq_left h, ite_eq_left (by omega)]
+    · rw [ite_eq_right h, ite_eq_right (by omega)]
   have hz' : tp (KsW W s) (-((((baseIdOf hR).Bs.ℓ - 1) * M : ℕ) : ℤ)) • z ∈
       Xi (KsW W s) (Tw (LL := LL) (D := Dc W T c) 0) :=
     (xi_shift_holds LL (KsW W s) (Dc W T c) _ _ z).2 (by rw [hTw]; exact hz)
@@ -394,45 +338,9 @@ theorem lvData_localizesConst_of_crystalline [IsDomain O] {T : LocLat G Qp LL O}
       {r : ℕ} (e : Fin r → C.V) (he : ∀ k, e k ∈ (latOf C).N i) (x : C.V) (hx : x ∈ (latOf C).N i)
       (a : Fin r → O) (hred : x - ∑ k, PowerSeries.C (a k) • e k ∈ E.sm (PowerSeries.X : PowerSeries O) ((latOf C).N i)) :
       W.cmp T ⟨C.t i x, hx⟩ = ∑ k, algebraMap O LL (a k) • W.cmp T ⟨C.t i (e k), he k⟩ := by
-    obtain ⟨z, hz, hzeq⟩ := Submodule.mem_map.1 hred
-    rw [LinearMap.lsmul_apply] at hzeq
-    have key : (⟨x, hx⟩ : ↥((latOf C).N i)) =
-        ∑ k, PowerSeries.C (a k) • (⟨e k, he k⟩ : ↥((latOf C).N i)) + (PowerSeries.X : PowerSeries O) • ⟨z, hz⟩ := by
-      apply Subtype.ext
-      simp only [Submodule.coe_add, Submodule.coe_sum, Submodule.coe_smul]
-      rw [hzeq]
-      abel
-    have hF := congrArg (comparisonOnLetter C i) key
-
-    rw [map_add (f := _), map_sum] at hF
-    have hC : ∀ k, comparisonOnLetter C i (PowerSeries.C (a k) • (⟨e k, he k⟩ : ↥((latOf C).N i))) =
-        algebraMap O LL (a k) • W.cmp T ⟨C.t i (e k), he k⟩ := by
-      intro k
-      have hm : (baseIdOf hR).d (PowerSeries.C (a k)) • C.t i (e k) ∈ W.N T := by
-        rw [← C.t_smul]
-        exact (PowerSeries.C (a k) • (⟨e k, he k⟩ : ↥((latOf C).N i))).2
-      have h0 : comparisonOnLetter C i (PowerSeries.C (a k) • (⟨e k, he k⟩ : ↥((latOf C).N i))) =
-          W.cmp T ⟨(baseIdOf hR).d (PowerSeries.C (a k)) • C.t i (e k), hm⟩ :=
-        lvBasis_cmp_congr (a := C.t i (PowerSeries.C (a k) • e k))
-          (PowerSeries.C (a k) • (⟨e k, he k⟩ : ↥((latOf C).N i))).2 hm (C.t_smul i _ _)
-      rw [h0]
-      refine lvBasis_cmp_smul_const (he k) _ (a k) (fun j => ?_) hm
-      rw [BaseId.d_apply]
-      have h1 : (baseIdOf hR).ι (PowerSeries.C (a k)) = PowerSeries.C (a k) :=
-        (baseIdOf hR).ι.commutes (a k)
-      rw [h1, PowerSeries.constantCoeff_C]
-    have hX : comparisonOnLetter C i ((PowerSeries.X : PowerSeries O) • (⟨z, hz⟩ : ↥((latOf C).N i))) = 0 := by
-      have hm : W.π₀ • C.t i z ∈ W.N T := by
-        rw [← BaseId.d_X, ← C.t_smul]
-        exact ((PowerSeries.X : PowerSeries O) • (⟨z, hz⟩ : ↥((latOf C).N i))).2
-      have h0 : comparisonOnLetter C i ((PowerSeries.X : PowerSeries O) • (⟨z, hz⟩ : ↥((latOf C).N i))) =
-          W.cmp T ⟨W.π₀ • C.t i z, hm⟩ :=
-        lvBasis_cmp_congr (a := C.t i ((PowerSeries.X : PowerSeries O) • z))
-          ((PowerSeries.X : PowerSeries O) • (⟨z, hz⟩ : ↥((latOf C).N i))).2 hm
-          (by rw [C.t_smul, BaseId.d_X])
-      rw [h0, lvBasis_cmp_smul_const hz W.π₀ 0 (constantCoeff_pi0_eq_zero_of_p9ring hp9) hm, map_zero, zero_smul]
-    rw [hX, add_zero, Finset.sum_congr rfl (fun k _ => hC k)] at hF
-    exact hF
+    first
+    | exact _root_.Formalism.MainNotions.N.Ln03.Pf.comparison_of_reduction
+    | apply _root_.Formalism.MainNotions.N.Ln03.Pf.comparison_of_reduction <;> assumption
   have hcoef0 : frobeniusCoeff Lb T c ell ⟨C.t (c - (ell : ZMod n)) x, hx⟩ 0 =
       ∑ k, algebraMap O LL (a k) • lam k := by
     apply Subtype.ext
@@ -468,19 +376,19 @@ theorem lvData_localizesConst_of_crystalline [IsDomain O] {T : LocLat G Qp LL O}
   by_cases hm : ((((baseIdOf hR).Bs.ℓ - 1) * M : ℕ) : ℤ) ≤ i
   · have htop : Tw (LL := LL) (D := Dc W T c) ((((baseIdOf hR).Bs.ℓ - 1) * M : ℕ) : ℤ) i = ⊤ := by
       unfold Tw
-      rw [if_pos hm]
+      rw [ite_eq_left hm]
     rw [htop, Submodule.baseChange_top]
     exact Submodule.mem_top
   · have hbot : Tw (LL := LL) (D := Dc W T c) ((((baseIdOf hR).Bs.ℓ - 1) * M : ℕ) : ℤ) i = ⊥ := by
       unfold Tw
-      rw [if_neg hm]
+      rw [ite_eq_right hm]
     rw [hbot, Submodule.baseChange_bot, Submodule.mem_bot]
     rw [hℓ] at hm
-    push_neg at hm
+    push Not at hm
     by_cases h0 : i = 0
     · subst h0
-      rw [if_pos rfl, hcoef0, sub_self]
-    · rw [if_neg h0, hcoef i hm h0, TensorProduct.tmul_zero, sub_zero]
+      rw [ite_eq_left rfl, hcoef0, sub_self]
+    · rw [ite_eq_right h0, hcoef i hm h0, TensorProduct.tmul_zero, sub_zero]
 
 end Formalism.MainNotions.N.Ln03.Pf
 end -- clump:auto

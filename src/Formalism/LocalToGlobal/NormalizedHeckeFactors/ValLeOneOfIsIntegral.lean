@@ -23,12 +23,6 @@ structure NRhoTied (D : D7) : Prop where
           (Formalism.MainNotions.N.fbCast (D.nd.w_l i) (D.what₂.places.resChar_prime (D.nd.w i)) (D.nd.lPrime i).out).toRingHom =
         ((ρ g : GL _ _) : Matrix (Fin D.R.r) (Fin D.R.r) (D.nd.O i)).charpoly.map
           ((D.naut.kFbar i).comp (IsLocalRing.residue (D.nd.O i)))
-  rhoS : ∀ (hP : RowPar D) (hG : GalRepEx D) (hC : ClassFieldHeckeAlgebraic D) (hη : EtaShiftInt D)
-    (a : D.nd.Loc) (s : D.ntw.Sig (D.ntw.twOf a)), D.ntw.side _ s = D.ntw.twSide a → D.ntw.jS _ s = D.nd.j a →
-    ∃ (σ : D.what₂.FT) (hσ : D.what₂.isot (D.nd.j a) σ ≠ ⊥) (hg : D.nd.goodRow σ),
-      ∀ (π : D.naut.CG D.R.r) (hS : rowSig D a σ = [⟨D.R.r, π, 1⟩]),
-        IsConjRep (Formalism.MainNotions.N.mapRep ((Formalism.MainNotions.N.iotaOQ D.nd D.naut a).comp (D.ntw.twist₂ a)) (D.ntw.rhoS _ s))
-          (rhoOfRow D hG hC hη a π (rowSig_csd_ralg D hP a σ hσ hg π hS).1 (rowSig_csd_ralg D hP a σ hσ hg π hS).2)
 
 section transport
 
@@ -152,9 +146,5 @@ theorem placesOver_finite (E : Type) [Field E] [NumberField E] (p : ℕ) (hp : p
   show v.asIdeal ∣ _
   rw [Ideal.dvd_iff_le, Ideal.span_singleton_le_iff_mem]
   exact hv
-
-theorem isoLoc_single (D : D7) {a : ℕ} (π : D.naut.CG a) (w : PlE D.host) :
-    Formalism.MainNotions.N.isoLoc D.nd D.naut [⟨a, π, 1⟩] w = D.naut.locG π w := by
-  simp [Formalism.MainNotions.N.isoLoc, Formalism.MainNotions.N.spehLoc, D.naut.lpSum_zero, D.naut.lpTw_zero]
 
 end Formalism.L2.NR

@@ -57,7 +57,6 @@ theorem isPeriod_comp_realLinear {O : Type} [Ring O] {bar : O → O} (D : PLat O
   obtain ⟨h1, h2, h3, h4, -⟩ := hP₀
   have hsurj : Function.Surjective R := LinearMap.injective_iff_surjective.mp hR
   let e : (Fin g → ℂ) ≃ₗ[ℝ] (Fin g → ℂ) := LinearEquiv.ofInjectiveEndo R hR
-  have he : ∀ z, e z = R z := fun z => rfl
   let ec := e.toContinuousLinearEquiv
   refine ⟨?_, ?_, ?_, ?_, M, hM, hpos, ?_⟩
   · intro a x

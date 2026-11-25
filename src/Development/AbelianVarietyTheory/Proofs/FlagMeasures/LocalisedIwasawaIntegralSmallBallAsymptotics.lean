@@ -75,13 +75,6 @@ open GlobalTheory.FlagLeviGroup
 
 variable {n : ℕ} {ε : Fin n → Bool}
 
-theorem nrm_J_conj (X : Matrix (Fin n) (Fin n) ℂ) : nrm (Formalism.REAL.Jm ε * X * Formalism.REAL.Jm ε) = nrm X := by
-  unfold nrm Formalism.REAL.hs
-  congr 1
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => ?_
-  simp only [Formalism.REAL.Jm, Matrix.mul_diagonal, Matrix.diagonal_mul]
-  split_ifs <;> simp
-
 private theorem uMat_inv_eq_Jm_conjTranspose_Jm (g : Formalism.REAL.UJ ε) :
     uMat g⁻¹ = Formalism.REAL.Jm ε * (uMat g)ᴴ * Formalism.REAL.Jm ε := by
   have hg : (uMat g)ᴴ * (Formalism.REAL.Jm ε * uMat g) = Formalism.REAL.Jm ε := by
@@ -99,7 +92,7 @@ theorem nrm_inv (g : Formalism.REAL.UJ ε) : nrm (uMat g⁻¹ - 1) = nrm (uMat g
   have e : uMat g⁻¹ - 1 = Formalism.REAL.Jm ε * (uMat g - 1)ᴴ * Formalism.REAL.Jm ε := by
     rw [uMat_inv_eq_Jm_conjTranspose_Jm, Matrix.conjTranspose_sub, Matrix.conjTranspose_one, Matrix.mul_sub, Matrix.sub_mul,
       Matrix.mul_one, _root_.GlobalTheory.IwConst.FlagMem.Jm_mul_self]
-  rw [e, nrm_J_conj, nrm_conjTranspose]
+  rw [e, GlobalTheory.IwConstApprox.nrm_conj_Jm, nrm_conjTranspose]
 
 theorem nrm_mul_sub_one (g h : Formalism.REAL.UJ ε) :
     nrm (uMat (g * h) - 1) ≤ nrm (uMat g - 1) * nrm (uMat h - 1) + nrm (uMat g - 1) + nrm (uMat h - 1) := by
@@ -411,14 +404,14 @@ theorem integral_squeeze {X : Type} [MeasurableSpace X] (ν : Measure X) (φ : X
     intro x
     by_cases hx : x ∈ A
     · rw [Set.indicator_of_mem hx, hA1 x hx]
-    · simp only [Set.indicator, hx, if_false]
+    · simp only [Set.indicator, hx, ite_false]
       exact h0 x
   have hi : ∀ x, φ x ≤ B.indicator (fun _ => (1:ℝ)) x := by
     intro x
     by_cases hx : x ∈ B
     · rw [Set.indicator_of_mem hx]
       exact h1 x
-    · simp only [Set.indicator, hx, if_false]
+    · simp only [Set.indicator, hx, ite_false]
       exact le_of_eq (hB0 x hx)
   have iB : Integrable (B.indicator fun _ => (1:ℝ)) ν :=
     (integrable_indicator_iff hB).2 (integrableOn_const hB')
@@ -475,14 +468,12 @@ theorem isCompact_body (ρ : V → ℝ) (hc : Continuous ρ) (h0 : ∀ v, 0 ≤ 
   have h4 : ρ v ≤ t := hv
   nlinarith
 
-
 omit [FiniteDimensional ℝ V] in
 theorem body_eq_smul (ρ : V → ℝ) (hs : ∀ s : ℝ, 0 ≤ s → ∀ v, ρ (s • v) = s * ρ v) {t : ℝ} (ht : 0 < t) :
     {v | ρ v ≤ t} = t • {v | ρ v ≤ 1} := by
   ext v
   rw [Set.mem_smul_set_iff_inv_smul_mem₀ ht.ne', Set.mem_setOf_eq, Set.mem_setOf_eq,
     hs _ (inv_nonneg.2 ht.le), inv_mul_le_iff₀ ht, mul_one]
-
 
 omit [NormedSpace ℝ V] [FiniteDimensional ℝ V] in
 theorem exists_cutoff (ρ : V → ℝ) (hc : Continuous ρ) {s t : ℝ} (hst : s < t) :
@@ -504,7 +495,7 @@ theorem exists_cutoff (ρ : V → ℝ) (hc : Continuous ρ) {s t : ℝ} (hst : s
   · intro x hx
     have h1 : (t - ρ x) / (t - s) ≤ 0 := by
       rw [div_le_iff₀ hpos]
-      push_neg at hx
+      push Not at hx
       linarith
     show max 0 (min 1 ((t - ρ x) / (t - s))) = 0
     exact max_eq_left (le_trans (min_le_right _ _) h1)
@@ -1064,7 +1055,7 @@ theorem localised_iwasawa_asymptotics : ∀ (n : ℕ) (ε : Fin n → Bool) (a :
         crd EK (uMat x.2.2 - 1)) ≤ (1 + η) * r :=
       hγη.trans (mul_le_mul_of_nonneg_left hσ hη1.le)
     simp only [Set.indicator_apply, Set.mem_ofPred_eq]
-    rw [if_pos ⟨⟨hu, hm, hk⟩, hγ⟩, Pi.one_apply, mul_one]
+    rw [ite_eq_left ⟨⟨hu, hm, hk⟩, hγ⟩, Pi.one_apply, mul_one]
     exact (h₃ x.2.1 hxM (lt_of_lt_of_le hm htt₃)).1
 
 end GlobalTheory.IwConst

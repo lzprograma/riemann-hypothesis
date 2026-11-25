@@ -9,56 +9,11 @@ public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
 public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.RestTruncOfNil
 public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.CnNOOfNormal
 public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.CnStepsTail
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Linter.Style
-import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Lemma
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -105,23 +60,23 @@ private theorem glRep_apply_mem_weightSp_shift {n : ℕ} {K V : Type*} [Field K]
   · subst hca
     by_cases hcb : c = b
     · subst hcb
-      simp only [if_true]
+      simp only [ite_true]
       push_cast
       first
       | module
     · have hbc : ¬ b = c := fun h => hcb h.symm
-      simp only [if_true, if_neg hbc, if_neg hcb, LinearMap.zero_apply, sub_zero]
+      simp only [ite_true, ite_eq_right hbc, ite_eq_right hcb, LinearMap.zero_apply, sub_zero]
       push_cast
       first
       | module
   · by_cases hcb : c = b
     · subst hcb
-      simp only [if_true, if_neg hca, LinearMap.zero_apply, zero_sub]
+      simp only [ite_true, ite_eq_right hca, LinearMap.zero_apply, zero_sub]
       push_cast
       first
       | module
     · have hbc : ¬ b = c := fun h => hcb h.symm
-      simp only [if_neg hca, if_neg hbc, if_neg hcb, LinearMap.zero_apply, sub_zero, zero_add]
+      simp only [ite_eq_right hca, ite_eq_right hbc, ite_eq_right hcb, LinearMap.zero_apply, sub_zero, zero_add]
       push_cast
       first
       | module
@@ -261,7 +216,7 @@ variable {n : ℕ} {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
 theorem comm_of_disj {E : GLOps n K V} (hE : IsGLRep E) {a b c d : Fin n} (h1 : b ≠ c) (h2 : d ≠ a) :
     Commute (E a b) (E c d) := by
   have := hE.1 a b c d
-  rw [if_neg h1, if_neg h2, sub_zero, sub_eq_zero] at this
+  rw [ite_eq_right h1, ite_eq_right h2, sub_zero, sub_eq_zero] at this
   exact this
 
 theorem divPow_comm {E : GLOps n K V} {a b c d : Fin n} (h : Commute (E a b) (E c d)) (j k : ℕ) :
@@ -415,15 +370,15 @@ theorem cross_ab [CharZero K] {E : GLOps n K V} (hE : IsGLRep E) {a b c : Fin n}
   have hrel := hE.1
   have hYF : E b c * E b a = E b a * E b c := by
     have h := hrel b c b a
-    rw [if_neg (Ne.symm hbc), if_neg hab, sub_zero, sub_eq_zero] at h
+    rw [ite_eq_right (Ne.symm hbc), ite_eq_right hab, sub_zero, sub_eq_zero] at h
     exact h
   have hYX : E b c * E a b = E a b * E b c + -(E a c) := by
     have h := hrel b c a b
-    rw [if_neg (Ne.symm hac), if_pos rfl, zero_sub] at h
+    rw [ite_eq_right (Ne.symm hac), ite_eq_left rfl, zero_sub] at h
     rw [← h]; abel
   have hZX : -(E a c) * E a b = E a b * -(E a c) := by
     have h := hrel a c a b
-    rw [if_neg (Ne.symm hac), if_neg (Ne.symm hab), sub_zero, sub_eq_zero] at h
+    rw [ite_eq_right (Ne.symm hac), ite_eq_right (Ne.symm hab), sub_zero, sub_eq_zero] at h
     rw [neg_mul, mul_neg, h]
   have hFc : ∀ k : ℕ, E b c * E b a ^ k = E b a ^ k * E b c := fun k =>
     (Commute.pow_right (hYF : Commute (E b c) (E b a)) k).eq
@@ -468,15 +423,15 @@ theorem cross_ac [CharZero K] {E : GLOps n K V} (hE : IsGLRep E) {a b c : Fin n}
   have hrel := hE.1
   have hYX : E b c * E a c = E a c * E b c := by
     have h := hrel b c a c
-    rw [if_neg (Ne.symm hac), if_neg (Ne.symm hbc), sub_zero, sub_eq_zero] at h
+    rw [ite_eq_right (Ne.symm hac), ite_eq_right (Ne.symm hbc), sub_zero, sub_eq_zero] at h
     exact h
   have hYF : E b c * E c a = E c a * E b c + E b a := by
     have h := hrel b c c a
-    rw [if_pos rfl, if_neg hab, sub_zero] at h
+    rw [ite_eq_left rfl, ite_eq_right hab, sub_zero] at h
     rw [← h]; abel
   have hEF : E b a * E c a = E c a * E b a := by
     have h := hrel b a c a
-    rw [if_neg hac, if_neg hab, sub_zero, sub_eq_zero] at h
+    rw [ite_eq_right hac, ite_eq_right hab, sub_zero, sub_eq_zero] at h
     exact h
   have hXc : ∀ k : ℕ, E b c * E a c ^ k = E a c ^ k * E b c := fun k =>
     (Commute.pow_right (hYX : Commute (E b c) (E a c)) k).eq
@@ -806,14 +761,14 @@ variable {n : ℕ} {K V : Type*} [Field K] [CharZero K] [AddCommGroup V] [Module
 theorem raising_lowering_mul_comm_add {E : GLOps n K V} (hE : IsGLRep E) (a b : Fin n) :
     E a b * E b a = E b a * E a b + (E a a - E b b) := by
   have h := hE.1 a b b a
-  simp only [if_true] at h
+  simp only [ite_true] at h
   exact eq_add_of_sub_eq' h
 
 theorem cartan_raising_commute {E : GLOps n K V} (hE : IsGLRep E) {a b : Fin n} (hab : a ≠ b) :
     (E a a - E b b) * E a b = E a b * (E a a - E b b) + (2 : K) • E a b := by
   have h1 := hE.1 a a a b
   have h2 := hE.1 b b a b
-  simp only [if_true, if_neg (Ne.symm hab), sub_zero, zero_sub] at h1 h2
+  simp only [ite_true, ite_eq_right (Ne.symm hab), sub_zero, zero_sub] at h1 h2
   rw [sub_mul, mul_sub, two_smul, eq_add_of_sub_eq' h1, eq_add_of_sub_eq' h2]
   abel
 
@@ -821,7 +776,7 @@ theorem cartan_lowering_commute {E : GLOps n K V} (hE : IsGLRep E) {a b : Fin n}
     (E a a - E b b) * E b a = E b a * (E a a - E b b) - (2 : K) • E b a := by
   have h1 := hE.1 a a b a
   have h2 := hE.1 b b b a
-  simp only [if_true, if_neg hab, sub_zero, zero_sub] at h1 h2
+  simp only [ite_true, ite_eq_right hab, sub_zero, zero_sub] at h1 h2
   rw [sub_mul, mul_sub, two_smul, eq_add_of_sub_eq' h1, eq_add_of_sub_eq' h2]
   abel
 
@@ -850,28 +805,7 @@ theorem projector_factor_lowering_commute {E : GLOps n K V} (hE : IsGLRep E) {a 
 
 theorem projector_factor_mem_weight_space {E : GLOps n K V} (hs : OperatorsShiftWeightsByRoots E) (ν : Fin n → ℤ) (a b : Fin n) (c T : ℕ) (x : V)
     (hx : x ∈ weightSp E ν) : pf E a b c T x ∈ weightSp E ν := by
-  have hpow : ∀ (a' b' : Fin n) (k : ℕ) (μ : Fin n → ℤ) (y : V), y ∈ weightSp E μ →
-      ((E a' b') ^ k) y ∈ weightSp E (μ + k • rootW a' b') := by
-    intro a' b' k
-    induction k with
-    | zero =>
-      intro μ y hy
-      simpa using hy
-    | succ k ih =>
-      intro μ y hy
-      rw [pow_succ', Module.End.mul_apply, succ_nsmul, ← add_assoc]
-      exact hs a' b' _ _ (ih μ y hy)
-  rw [pf_eq, LinearMap.sum_apply]
-  refine Submodule.sum_mem _ fun k _ => ?_
-  rw [LinearMap.smul_apply]
-  refine Submodule.smul_mem _ _ ?_
-  rw [Module.End.mul_apply]
-  have h1 := hpow b a k _ _ (hpow a b k ν x hx)
-  have e : ν + k • rootW a b + k • rootW b a = ν := by
-    ext i
-    simp only [Pi.add_apply, Pi.smul_apply, rootW, Pi.sub_apply]
-    ring
-  rwa [e] at h1
+  apply _root_.Formalism.MainNotions.G.ExtremalProjector.pf_wt <;> assumption
 
 end
 
@@ -990,7 +924,7 @@ theorem ybat_base (D : Formalism.BasicNotions.D7) (hK : RestKill) (hP : RestPair
   have hvbc : E b c (Lv - Rv) = 0 := by rw [map_sub, hL_bc, hR_bc, sub_zero]
   have hvac : E a c (Lv - Rv) = 0 := by
     have h := hE.1 a b b c
-    rw [if_pos rfl, if_neg hac.symm, sub_zero] at h
+    rw [ite_eq_left rfl, ite_eq_right hac.symm, sub_zero] at h
     rw [← h, LinearMap.sub_apply, Module.End.mul_apply, Module.End.mul_apply, hvbc, hvab, map_zero, map_zero,
       sub_zero]
   have hraise : ∀ i j : Fin 3, i < j → resOps E ![a, b, c] i j (Lv - Rv) = 0 := by
@@ -1057,27 +991,27 @@ theorem ev_pf_ne (E : GLOps n K V) (a x y : Fin n) (hx : x ≠ a) (hy : y ≠ a)
     (pf (tensOps E) x y c T w) a = pf E x y c T (w a) := by
   refine pf_intertw (tensOps E) E (LinearMap.proj a : (Fin n → V) →ₗ[K] V) ⊤ x y (fun _ _ => trivial)
     (fun w _ => ?_) (fun w => ?_) c T w trivial
-  · rw [LinearMap.proj_apply, LinearMap.proj_apply, tensOps_apply, if_neg hx.symm, add_zero]
-  · rw [LinearMap.proj_apply, LinearMap.proj_apply, tensOps_apply, if_neg hy.symm, add_zero]
+  · rw [LinearMap.proj_apply, LinearMap.proj_apply, tensOps_apply, ite_eq_right hx.symm, add_zero]
+  · rw [LinearMap.proj_apply, LinearMap.proj_apply, tensOps_apply, ite_eq_right hy.symm, add_zero]
 
 theorem ev_pf_a (E : GLOps n K V) (a y : Fin n) (hy : y ≠ a) (c T : ℕ) (w : Fin n → V) (hw : w y = 0) :
     (pf (tensOps E) a y c T w) a = pf E a y c T (w a) := by
   refine pf_intertw (tensOps E) E (LinearMap.proj a : (Fin n → V) →ₗ[K] V) (zSub K V y) a y (fun w hw => ?_)
     (fun w hw => ?_) (fun w => ?_) c T w ((mem_zSub y w).2 hw)
   · rw [mem_zSub] at hw ⊢
-    rw [tensOps_apply, if_neg hy, hw, map_zero, add_zero]
+    rw [tensOps_apply, ite_eq_right hy, hw, map_zero, add_zero]
   · rw [mem_zSub] at hw
-    rw [LinearMap.proj_apply, LinearMap.proj_apply, tensOps_apply, if_pos rfl, hw, add_zero]
-  · rw [LinearMap.proj_apply, LinearMap.proj_apply, tensOps_apply, if_neg hy.symm, add_zero]
+    rw [LinearMap.proj_apply, LinearMap.proj_apply, tensOps_apply, ite_eq_left rfl, hw, add_zero]
+  · rw [LinearMap.proj_apply, LinearMap.proj_apply, tensOps_apply, ite_eq_right hy.symm, add_zero]
 
 theorem z_pf (E : GLOps n K V) (j x y : Fin n) (hx : j ≠ x) (hy : j ≠ y) (c T : ℕ) (w : Fin n → V) (hw : w j = 0) :
     (pf (tensOps E) x y c T w) j = 0 := by
   rw [← mem_zSub (K := K)]
   refine pf_mem (tensOps E) (zSub K V j) x y (fun w hw => ?_) (fun w hw => ?_) c T w ((mem_zSub j w).2 hw)
   · rw [mem_zSub] at hw ⊢
-    rw [tensOps_apply, if_neg hx, hw, map_zero, add_zero]
+    rw [tensOps_apply, ite_eq_right hx, hw, map_zero, add_zero]
   · rw [mem_zSub] at hw ⊢
-    rw [tensOps_apply, if_neg hy, hw, map_zero, add_zero]
+    rw [tensOps_apply, ite_eq_right hy, hw, map_zero, add_zero]
 
 theorem zz_pf (E : GLOps n K V) (b c : Fin n) (s T : ℕ) (w : Fin n → V) (hb : w b = 0) (hc : w c = 0) :
     (pf (tensOps E) b c s T w) b = 0 ∧ (pf (tensOps E) b c s T w) c = 0 := by
@@ -1111,9 +1045,9 @@ theorem ybat_step (sg ta : ℕ) (h : YBat sg ta) : YBat (sg + 1) ta := by
     ring
   have key := h K (Fin n → V) n (tensOps E) hA a b c hab hac hbc (ν + Pi.single a 1) s t e1 e2 T' hT2 _ hw0
   have key' := congrArg (fun w : Fin n → V => w a) key
-  have z0b : (Pi.single a x : Fin n → V) b = 0 := by rw [Pi.single_apply, if_neg hab.symm]
-  have z0c : (Pi.single a x : Fin n → V) c = 0 := by rw [Pi.single_apply, if_neg hac.symm]
-  have z0a : (Pi.single a x : Fin n → V) a = x := by rw [Pi.single_apply, if_pos rfl]
+  have z0b : (Pi.single a x : Fin n → V) b = 0 := by rw [Pi.single_apply, ite_eq_right hab.symm]
+  have z0c : (Pi.single a x : Fin n → V) c = 0 := by rw [Pi.single_apply, ite_eq_right hac.symm]
+  have z0a : (Pi.single a x : Fin n → V) a = x := by rw [Pi.single_apply, ite_eq_left rfl]
   obtain ⟨z1b, z1c⟩ := zz_pf E b c t T' _ z0b z0c
   have z2b := z_pf E b a c hab.symm hbc (s + t) T' _ z1b
   have y1c := z_pf E c a b hac.symm hbc.symm s T' _ z0c
@@ -1299,7 +1233,7 @@ theorem cn_meas_lt {j : ℕ} {l l' : List (Fin n × Fin n)}
     · exact h1 r hr
     · exact le_rfl
   · refine ⟨r0, Finset.mem_univ _, ?_⟩
-    rw [if_pos h0, if_pos h0]
+    rw [ite_eq_left h0, ite_eq_left h0]
     exact h2
 
 theorem cn_sort {j : ℕ} : ∀ (m : ℕ) (l : List (Fin n × Fin n)), NO n j l → meas j l < m →

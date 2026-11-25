@@ -4,56 +4,9 @@ public import Development.AutomorphicSpectrum.Definitions.MembershipCriteria.Goo
 public import Development.AutomorphicSpectrum.Definitions.MembershipCriteria.LaEqSqrtSmulLam
 public import Mathlib.Algebra.Module.BigOperators
 public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.PiTensorProduct
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.RingTheory.SimpleRing.Principal
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.MembershipProofs.SchrodingerModelSelfDualLattice, Development.AutomorphicSpectrum.Proofs.MembershipProofs.ExistsStd, Development.AutomorphicSpectrum.Proofs.MembershipProofs.Irreducible, Development.AutomorphicSpectrum.Proofs.MembershipProofs.RationalFiniteIdeleFactorization, Development.AutomorphicSpectrum.Proofs.MembershipProofs.CyclicAndLine
@@ -78,7 +31,7 @@ theorem sum_out {G : Type} [AddCommGroup G] (H : AddSubgroup G) [Fintype (G ⧸ 
       _ = χ b := by rw [← AddChar.map_add_eq_mul, add_neg_cancel_left]
   refine ⟨fun h => ?_, fun h => ?_⟩
   · simp [h]
-  · push_neg at h
+  · push Not at h
     obtain ⟨g, hg⟩ := h
     have hshift : ∀ q : G ⧸ H, χ g * χ q.out = χ ((QuotientAddGroup.mk g + q).out) := by
       intro q
@@ -188,14 +141,14 @@ theorem indicator_mem_span : ∀ {R : Type} [CommRing R] [TopologicalSpace R] [I
         rw [hA htriv, Set.indicator_of_mem (show x ∈ {x : κ → R | ∀ i, ((v⁻¹ : Rˣ) : R) * x i ∈ O} from hs)]
         exact (inv_mul_cancel₀ (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)).symm
       · have hnt : ¬ ∀ g, χx g = 1 := by
-          push_neg at hs
+          push Not at hs
           obtain ⟨i, hi⟩ := hs
           have hz : ¬ ((u⁻¹ : Rˣ) : R) * (((v⁻¹ : Rˣ) : R) * (u : R) * x i) ∈ O := by
             have e : ((u⁻¹ : Rˣ) : R) * (((v⁻¹ : Rˣ) : R) * (u : R) * x i) = ((v⁻¹ : Rˣ) : R) * x i := by
               rw [mul_comm (((v⁻¹ : Rˣ) : R)) (u : R), mul_assoc (u : R), Units.inv_mul_cancel_left]
             rw [e]; exact hi
           rw [← hG.ann] at hz
-          push_neg at hz
+          push Not at hz
           obtain ⟨y, hy, hψ⟩ := hz
           intro hall
           have hmem : (Pi.single i (((v⁻¹ : Rˣ) : R) * (u : R) * y) : κ → R) ∈ Gs := by
@@ -477,10 +430,10 @@ theorem exists_std : ∀ {R : Type} [CommRing R] [TopologicalSpace R] [IsTopolog
       Set.mem_setOf_eq, AddChar.map_neg_eq_inv, inv_inv]
     by_cases hx : ∀ i, x i ∈ O
     · have hxa : ∀ i, (x + (d.e γ).1) i ∈ O := fun i => O.add_mem (hx i) (ha i)
-      rw [if_pos hxa, if_pos hx, AddChar.map_add_eq_mul, psi_dot h hx hb, one_mul]
+      rw [ite_eq_left hxa, ite_eq_left hx, AddChar.map_add_eq_mul, psi_dot h hx hb, one_mul]
     · have hxa : ¬ ∀ i, (x + (d.e γ).1) i ∈ O := fun h' => hx fun i => by
         simpa using O.sub_mem (h' i) (ha i)
-      rw [if_neg hxa, if_neg hx, mul_zero, mul_zero]
+      rw [ite_eq_right hxa, ite_eq_right hx, mul_zero, mul_zero]
   · show Submodule.span ℂ (Set.range fun x => S.rho x ⟨ind O κ, ind_mem_SB h.compact h.isOpen⟩) = ⊤
     rw [eq_top_iff]
     rintro g -
@@ -682,7 +635,7 @@ theorem orth (S : Sys X M) (al : X → ℂ) (Γ : AddSubgroup X) (φ φ' : M) (x
   have hφ₀ : ∀ γ ∈ Γ, S.rho γ φ = (al γ)⁻¹ • φ := hφ
   have hφ₀' : ∀ γ ∈ Γ, S.rho γ φ' = (al γ)⁻¹ • φ' := hφ'
   have hnot : ¬ ∀ γ ∈ Γ, S.c γ x ^ 2 = 1 := fun h => hx ((hΓ₀ x).2 h)
-  push_neg at hnot
+  push Not at hnot
   obtain ⟨γ, hγ, hcx⟩ := hnot
   have hinv := S.12 γ φ' (S.rho x φ)
   rw [hφ₀' γ hγ, GlobalTheory.CompanionTheory.FinHeis.LawLine.rho_comm S γ x φ, hφ₀ γ hγ] at hinv

@@ -3,7 +3,6 @@ module
 public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.ONLeaves
 public import Mathlib.RepresentationTheory.Coinduced
 public import Mathlib.RepresentationTheory.Irreducible
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.Mirabolic
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -53,7 +52,7 @@ import Mathlib.Topology.Sheaves.Init
 
 noncomputable section
 
-open Matrix Formalism.EigenvalueLevelCeiling Formalism.L2.Indef.Tree
+open Matrix
 
 namespace GlobalTheory.FiniteGL
 
@@ -157,52 +156,10 @@ theorem isCuspidal_iff_twoBlocks {V : Type} [AddCommGroup V] [Module ℂ V] (ρ 
     by_cases hi : (i : ℕ) < a
     · have hj : (j : ℕ) < a := (key j).mpr fun hlt => (key i).mp hi (lt_of_lt_of_le hlt hij)
       simp [hi, hj]
-    · simp only [hi, if_false]
+    · simp only [hi, ite_false]
       split_ifs <;> omega
 
 end Radical
-
-section Generic
-
-variable {k : Type} [Field k] [Fintype k] (n : ℕ)
-
-def genericChar (ψ₀ : AddChar k ℂ) : uniSub k n →* ℂ where
-  toFun u := ψ₀ (supd (((u : mirabSub k n) : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k))
-  map_one' := by
-    rw [OneMemClass.coe_one, OneMemClass.coe_one, Units.val_one, supd_one, AddChar.map_zero_eq_one]
-  map_mul' u v := by
-    rw [Subgroup.coe_mul, Subgroup.coe_mul, Units.val_mul, supd_mul _ _ u.2 v.2, AddChar.map_add_eq_mul]
-
-theorem genericChar_apply (ψ₀ : AddChar k ℂ) (u : uniSub k n) :
-    genericChar n ψ₀ u =
-      ψ₀ (supd (((u : mirabSub k n) : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k)) := rfl
-
-def genericLine (ψ₀ : AddChar k ℂ) : Representation ℂ (uniSub k n) ℂ :=
-  (Algebra.lsmul ℂ ℂ ℂ).toMonoidHom.comp (genericChar n ψ₀)
-
-@[simp] theorem genericLine_apply (ψ₀ : AddChar k ℂ) (u : uniSub k n) (z : ℂ) :
-    genericLine n ψ₀ u z = genericChar n ψ₀ u * z := rfl
-
-abbrev MirabInducedSpace (ψ₀ : AddChar k ℂ) : Submodule ℂ (mirabSub k n → ℂ) :=
-  Representation.coindV (uniSub k n).subtype (genericLine n ψ₀)
-
-theorem mem_mirabInducedSpace (ψ₀ : AddChar k ℂ) (f : mirabSub k n → ℂ) :
-    f ∈ MirabInducedSpace n ψ₀ ↔
-      ∀ (u : uniSub k n) (x : mirabSub k n), f ((u : mirabSub k n) * x) = genericChar n ψ₀ u * f x := by
-  rw [Representation.mem_coindV]
-  simp only [Subgroup.coe_subtype, genericLine_apply]
-
-def mirabInduced (ψ₀ : AddChar k ℂ) : Representation ℂ (mirabSub k n) (MirabInducedSpace n ψ₀) :=
-  Representation.coind (uniSub k n).subtype (genericLine n ψ₀)
-
-@[simp] theorem mirabInduced_apply (ψ₀ : AddChar k ℂ) (h x : mirabSub k n) (f : MirabInducedSpace n ψ₀) :
-    (mirabInduced n ψ₀ h f : mirabSub k n → ℂ) x = (f : mirabSub k n → ℂ) (x * h) := rfl
-
-def restrictMirab {V : Type} [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GL (Fin (n + 1)) k) V) :
-    Representation ℂ (mirabSub k n) V :=
-  ρ.comp (mirabSub k n).subtype
-
-end Generic
 
 section Examples
 
@@ -223,21 +180,3 @@ theorem lineRep_isIrreducible {G : Type} [Group G] (χ : G →* ℂ) : (lineRep 
 end Examples
 
 end GlobalTheory.FiniteGL
-
-namespace GlobalTheory.Published
-
-open GlobalTheory.FiniteGL
-
-def CuspidalExists : Prop :=
-  ∀ (k : Type) [Field k] [Fintype k] (n : ℕ),
-    ∃ (d : ℕ) (ρ : Representation ℂ (GL (Fin (n + 1)) k) (Fin d → ℂ)), ρ.IsIrreducible ∧ IsCuspidal ρ
-
-def CuspidalRestrictsToInduced : Prop :=
-  ∀ (k : Type) [Field k] [Fintype k] (n : ℕ) (ψ₀ : AddChar k ℂ), ψ₀ ≠ 1 →
-    ∀ (V : Type) [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
-      (ρ : Representation ℂ (GL (Fin (n + 1)) k) V), ρ.IsIrreducible → IsCuspidal ρ →
-      Nonempty ((restrictMirab n ρ).Equiv (mirabInduced n ψ₀))
-
-def CuspidalMirabolic : Prop := CuspidalExists ∧ CuspidalRestrictsToInduced
-
-end GlobalTheory.Published

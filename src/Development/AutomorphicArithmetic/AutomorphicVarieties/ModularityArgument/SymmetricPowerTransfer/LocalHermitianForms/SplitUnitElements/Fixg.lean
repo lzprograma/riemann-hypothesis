@@ -219,7 +219,7 @@ theorem UpperTheory.V.Z.Sym.Loc.One.fixg :
       have h2 := h _ he
       rw [hform, hQS] at h2
       simp only [dotProduct, Pi.single_apply, Pi.star_apply, ite_mul, one_mul, zero_mul,
-        Finset.sum_ite_eq', Finset.mem_univ, if_true] at h2
+        Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h2
       exact (hIstar _).mpr h2
   · ext y
     constructor

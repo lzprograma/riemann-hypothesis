@@ -51,7 +51,7 @@ namespace BranchingSupport.TensInh
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {k r : ℕ}
 

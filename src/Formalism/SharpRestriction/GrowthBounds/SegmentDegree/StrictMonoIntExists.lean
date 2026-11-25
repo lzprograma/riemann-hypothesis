@@ -1,48 +1,7 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.NonemptyDvrSettingOfStandard
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -62,7 +21,7 @@ variable {σ τ R : Type*} [CommRing R]
 theorem supp_one {m : σ →₀ ℕ} (hm : m ∈ (1 : MvPolynomial σ R).support) : m = 0 := by
   classical
   by_contra h
-  exact (MvPolynomial.mem_support_iff.mp hm) (by rw [MvPolynomial.coeff_one, if_neg (fun h' => h h'.symm)])
+  exact (MvPolynomial.mem_support_iff.mp hm) (by rw [MvPolynomial.coeff_one, ite_eq_right (fun h' => h h'.symm)])
 
 theorem supp_prod_bound {ι : Type*} (w : (σ →₀ ℕ) →+ ℕ) (s : Finset ι) (f : ι → MvPolynomial σ R) (b : ι → ℝ)
     (h : ∀ j ∈ s, ∀ m ∈ (f j).support, (w m : ℝ) ≤ b j) :
@@ -101,13 +60,12 @@ theorem supp_aeval_pow (g : σ → τ) (e : σ → ℕ) (x : MvPolynomial σ R) 
     (hm' : m' ∈ (aeval (fun v => (X (g v) : MvPolynomial τ R) ^ e v) x).support) :
     ∃ m ∈ x.support, m' = imgMon g e m := by
   classical
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   apply MvPolynomial.mem_support_iff.mp hm'
 
   rw [x.as_sum, map_sum, MvPolynomial.coeff_sum]
   refine Finset.sum_eq_zero fun m hm => ?_
-  rw [aeval_pow_monomial, MvPolynomial.coeff_monomial, if_neg (fun h => hne m hm h.symm)]
+  rw [aeval_pow_monomial, MvPolynomial.coeff_monomial, ite_eq_right (fun h => hne m hm h.symm)]
 
 end Supp
 
@@ -148,13 +106,11 @@ theorem posOf_injOn {n' : ℕ} [NeZero n'] (a : ℤ) :
   obtain ⟨c, hc⟩ := Int.ModEq.dvd hmod
   have hn : (0 : ℤ) < n' := by exact_mod_cast NeZero.pos n'
   have hc1 : c < 1 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have : (n' : ℤ) * 1 ≤ n' * c := mul_le_mul_of_nonneg_left h hn.le
     omega
   have hc2 : -1 < c := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have : (n' : ℤ) * c ≤ n' * (-1) := mul_le_mul_of_nonneg_left h hn.le
     omega
   have : c = 0 := by omega
@@ -412,7 +368,6 @@ theorem pow_mul_o_le (hp : 0 < p) (hr : 0 < r) (ha : 0 ≤ X.a) (j x : ℤ) :
     (p : ℝ) ^ X.F.dist j x * X.o p K j x ≤ B1 X p K := by
   unfold Dat.o B1
   have hp' : (0:ℝ) < p := by exact_mod_cast hp
-  have hpd : (0:ℝ) < (p:ℝ) ^ X.F.dist j x := pow_pos hp' _
   have hk := (k_pos K hr).ne'
   have hz : (p:ℝ) ^ X.F.dist j x * (p:ℝ) ^ (-((X.L₁:ℤ) + (X.F.dist j x : ℤ))) = (p:ℝ) ^ (-(X.L₁:ℤ)) := by
     rw [← zpow_natCast, ← zpow_add₀ hp'.ne']
@@ -533,8 +488,6 @@ theorem label_bound (hX : X.Hyp p K) (l : Fin n' × Fin (r + K) →₀ ℕ) (hl 
             have hw : (wtVS (t, c) : ℝ) ≤ 1 := by
               unfold wtVS
               split_ifs <;> norm_num
-            have hw0 : (0:ℝ) ≤ (wtVS (t, c) : ℝ) := Nat.cast_nonneg _
-            have hl0 : (0:ℝ) ≤ (l (t, c) : ℝ) := Nat.cast_nonneg _
             nlinarith [hc t ht c]
         _ = Dat.k (r := r) K * X.Q := by
             rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
@@ -558,10 +511,10 @@ theorem gen_bound (O : Type) [CommRing O] (hX : X.Hyp p K) (hC : 0 ≤ X.CLa) {P
   swap
   · exfalso
     apply MvPolynomial.mem_support_iff.mp hmm
-    rw [MvPolynomial.coeff_mul_monomial', if_neg hle]
+    rw [MvPolynomial.coeff_mul_monomial', ite_eq_right hle]
   have hm'' : mm - l ∈ (∏ j ∈ Finset.range X.F.J, (phSeg O K p X.F (j : ℤ)) (x j)).support := by
     have hcoef := MvPolynomial.mem_support_iff.mp hmm
-    rw [MvPolynomial.coeff_mul_monomial', if_pos hle, mul_one] at hcoef
+    rw [MvPolynomial.coeff_mul_monomial', ite_eq_left hle, mul_one] at hcoef
     exact MvPolynomial.mem_support_iff.mpr hcoef
   have hadd : vsDeg mm = vsDeg (mm - l) + vsDeg l := by
     conv_lhs => rw [← tsub_add_cancel_of_le hle]

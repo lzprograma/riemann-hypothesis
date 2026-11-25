@@ -273,7 +273,6 @@ end -- clump:auto
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselFunctionalTwoSided =====
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselFunctionalTwoSided", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction\npublic import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselSubgroupRepTwistedIsUnitaryRep\npublic import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselSubgroupsClosedUnitaryWCompact\npublic import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnimodularBesselSubgroupsUWN\npublic import Mathlib.MeasureTheory.Function.L2Space\nimport Formalism.FormalDegreeBessel.FinalG\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.TypeStar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
-set_option backward.isDefEq.respectTransparency false
 
 @[expose] public section
 
@@ -676,7 +675,7 @@ theorem dd_pair {τ : ℝ} (hτ : τ ≠ 0) {i j : Fin (2 * r + k + 1)} (h : i.v
 theorem dd_middle (τ : ℝ) {i : Fin (2 * r + k + 1)} (h1 : r ≤ i.val) (h2 : i.val ≤ r + k) :
     dd k r τ i = 1 := by
   unfold dd
-  rw [if_neg (by omega), if_pos h2]
+  rw [ite_eq_right (by omega), ite_eq_left h2]
 
 theorem dil_entry (a b : ℝ) (m : Mat k r) (i j : Fin (2 * r + k + 1)) :
     (dil k r a * m * dil k r b) i j = dd k r a i * m i j * dd k r b j := by
@@ -712,8 +711,8 @@ theorem dil_mem {τ : ℝ} (hτ : τ ≠ 0) : dil k r τ ∈ UH (Hpk k r) := by
       rw [dd_middle τ hr hk, one_mul, mul_one]
     · have h0 : Hpk k r i j = 0 := by
         simp only [Hpk]
-        rw [if_neg (fun hc => h1 ⟨Or.inl hc.1, hc.2⟩), if_neg (fun hc => h1 ⟨Or.inr hc.1, hc.2⟩),
-          if_neg h2]
+        rw [ite_eq_right (fun hc => h1 ⟨Or.inl hc.1, hc.2⟩), ite_eq_right (fun hc => h1 ⟨Or.inr hc.1, hc.2⟩),
+          ite_eq_right h2]
       rw [h0, mul_zero, zero_mul]
 
 theorem Hpk_row {i p t : Fin (2 * r + k + 1)} (h : i.val < r ∨ r + k < i.val)
@@ -721,12 +720,12 @@ theorem Hpk_row {i p t : Fin (2 * r + k + 1)} (h : i.val < r ∨ r + k < i.val)
   have hpo : ¬ (r ≤ p.val ∧ p.val ≤ r + k) := by omega
   simp only [Hpk]
   rcases eq_or_ne t i with rfl | hti
-  · rw [if_pos rfl]
+  · rw [ite_eq_left rfl]
     rcases h with h | h
-    · rw [if_neg (by omega), if_pos ⟨h, by omega⟩]
-    · rw [if_pos ⟨by omega, by omega⟩]
+    · rw [ite_eq_right (by omega), ite_eq_left ⟨h, by omega⟩]
+    · rw [ite_eq_left ⟨by omega, by omega⟩]
   · have hv : t.val ≠ i.val := fun e => hti (Fin.ext e)
-    rw [if_neg hti, if_neg (by omega), if_neg (by omega), if_neg (fun hc => hpo ⟨hc.1, hc.2.1⟩)]
+    rw [ite_eq_right hti, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (fun hc => hpo ⟨hc.1, hc.2.1⟩)]
 
 theorem uw_col {z : Fin (2 * r + k + 1) → ℂ} {h : Mat k r} (hh : h ∈ UWset k r z)
     {p : Fin (2 * r + k + 1)} (hp : p.val < r ∨ r + k < p.val) (s : Fin (2 * r + k + 1)) :
@@ -769,9 +768,9 @@ theorem uw_zero {z : Fin (2 * r + k + 1) → ℂ} {h : Mat k r} (hh : h ∈ UWse
     · simp
   have e := congrFun (congrFun hU p) j
   rw [Matrix.mul_apply] at e
-  simp only [hleft, hrow, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true] at e
+  simp only [hleft, hrow, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at e
   have hji : j ≠ i := fun hc => by subst hc; omega
-  rw [if_neg hji] at e
+  rw [ite_eq_right hji] at e
   exact e
 
 theorem dil_comm {z : Fin (2 * r + k + 1) → ℂ} (τ : ℝ) {h : Mat k r} (hh : h ∈ UWset k r z) :
@@ -829,11 +828,11 @@ theorem contract {τ : ℝ} (hτ : 1 ≤ τ) {m : Mat k r} (hm : m ∈ Nset k r)
   rw [dil_inv hτ0, Matrix.sub_apply, Matrix.sub_apply, dil_entry, Matrix.one_apply]
   rcases lt_trichotomy i j with hij | rfl | hij
   · have hij' : i.val < j.val := hij
-    rw [if_neg hij.ne, sub_zero, sub_zero]
+    rw [ite_eq_right hij.ne, sub_zero, sub_zero]
     by_cases hmid : r ≤ i.val ∧ j.val ≤ r + k
     · have h0 : m i j = 0 := by
         have e := hb i j (by omega) hmid.2 hmid.1
-        rwa [if_neg hij.ne] at e
+        rwa [ite_eq_right hij.ne] at e
       rw [h0]
       simp
     · have hw := wt_lt (k := k) (r := r) hij' hmid
@@ -842,12 +841,12 @@ theorem contract {τ : ℝ} (hτ : 1 ≤ τ) {m : Mat k r} (hm : m ∈ Nset k r)
       rw [norm_zpow, Complex.norm_real, Real.norm_of_nonneg hpos.le, ← _root_.zpow_neg_one]
       exact _root_.zpow_le_zpow_right₀ hτ (by omega)
   · have h1 : m i i = 1 := by simpa using apply_self_eq_one_of_mem_Nset hm i
-    rw [h1, if_pos rfl, mul_one, dd_inv_mul hτ0, sub_self, _root_.zpow_zero]
+    rw [h1, ite_eq_left rfl, mul_one, dd_inv_mul hτ0, sub_self, _root_.zpow_zero]
     simp
   · have h0 : m i j = 0 := by
       have e := Formalism.FourierDecayAlt.P.UnipotentUpperFacts.N_upper hm i j hij.le
-      rwa [if_neg hij.ne'] at e
-    rw [if_neg hij.ne', h0]
+      rwa [ite_eq_right hij.ne'] at e
+    rw [ite_eq_right hij.ne', h0]
     simp
 
 theorem main : ∀ (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ), inWb k r z → (∀ τ : ℝ, 0 < τ → dil k r τ ∈ GG k r ∧ (∀ h ∈ UWset k r z, dil k r τ * h = h * dil k r τ) ∧ (∀ m ∈ Nset k r, dil k r τ * m * (dil k r τ)⁻¹ ∈ Nset k r ∧ (dil k r τ)⁻¹ * m * dil k r τ ∈ Nset k r)) ∧ (∀ τ : ℝ, 1 ≤ τ → ∀ m ∈ Nset k r, ∀ i j, ‖((dil k r τ)⁻¹ * m * dil k r τ - 1) i j‖ ≤ τ⁻¹ * ‖(m - 1) i j‖) := by

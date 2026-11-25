@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.CellFin
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LevelMatchIff
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.EmbeddingTraceSumAlt.NormUnitsOfCalculation
@@ -45,7 +46,6 @@ public import Formalism.PeriodIntegrals.ScPsiExists
 
 open MeasureTheory NumberField IsDedekindDomain Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.ColDict GlobalTheory.St GlobalTheory.St.G
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -54,31 +54,7 @@ namespace GlobalTheory.St.G
 theorem trace_cm_eq_add_star {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E]
     [Algebra F E] (hc : Formalism.BasicNotions.CMData F E) (x : E) :
     algebraMap F E (Algebra.trace F E x) = x + star x := by
-  have : FiniteDimensional F E := Module.finite_of_finrank_eq_succ hc.deg2
-  have : Algebra.IsQuadraticExtension F E := ⟨hc.deg2⟩
-  classical
-  let s : E ≃ₐ[F] E := AlgEquiv.ofAlgHom hc.sig hc.sig
-    (by ext y; simp [Formalism.BasicNotions.CMData.sig]) (by ext y; simp [Formalism.BasicNotions.CMData.sig])
-  have hs : ∀ y, s y = star y := fun y => rfl
-  have hne : (1 : E ≃ₐ[F] E) ≠ s := by
-    intro h
-    have hall : ∀ y : E, y ∈ (algebraMap F E).range := fun y => (hc.fixed y).1 (by
-      rw [← hs, ← h]; rfl)
-    have h1 : Module.finrank F E = 1 := by
-      apply finrank_eq_one (1 : E) one_ne_zero
-      intro w
-      obtain ⟨a, ha⟩ := hall w
-      exact ⟨a, by rw [Algebra.smul_def, mul_one, ha]⟩
-    rw [hc.deg2] at h1
-    omega
-  have hcard : Fintype.card (E ≃ₐ[F] E) = 2 := by
-    rw [← Nat.card_eq_fintype_card, IsGalois.card_aut_eq_finrank, hc.deg2]
-  have huniv : (Finset.univ : Finset (E ≃ₐ[F] E)) = {1, s} := by
-    symm
-    apply Finset.eq_univ_of_card
-    rw [Finset.card_pair hne, hcard]
-  rw [trace_eq_sum_automorphisms, huniv, Finset.sum_pair hne, hs]
-  rfl
+  first | exact _root_.Formalism.MainNotions.BridgeLemma.tie_trace | exact @_root_.Formalism.MainNotions.BridgeLemma.tie_trace | apply _root_.Formalism.MainNotions.BridgeLemma.tie_trace <;> assumption
 
 theorem psiEinf_eq_exp_trace (I : Formalism.MainNotions.S.AutInst) (y : I.E) :
     psiEinf I y = Complex.exp (2 * Real.pi * Complex.I * ((Algebra.trace ℚ I.E y : ℚ) : ℂ)) := by

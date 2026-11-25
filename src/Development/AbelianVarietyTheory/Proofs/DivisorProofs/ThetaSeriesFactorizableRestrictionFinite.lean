@@ -263,8 +263,8 @@ theorem evFin_idem (S : Finset (Pl (F := F))) (w : Pl (F := F)) : evFin F w (ide
   have hs : ∑ x ∈ S, evFin F w (GlobalTheory.LatVac.liftV x 1) = ∑ x ∈ S, if w = x then (1 : Fv F w) else 0 := by
     refine Finset.sum_congr rfl fun x _ => ?_
     by_cases hx : w = x
-    · subst hx; rw [if_pos rfl, GlobalTheory.LatVac.evFin_liftV]
-    · rw [if_neg hx]; exact evalV_singleFin_ne hx _
+    · subst hx; rw [ite_eq_left rfl, GlobalTheory.LatVac.evFin_liftV]
+    · rw [ite_eq_right hx]; exact evalV_singleFin_ne hx _
 
   rw [idem, map_add (f := _), map_sum, h0, hs, Finset.sum_ite_eq S w (fun _ => (1 : Fv F w)), zero_add]
 
@@ -291,7 +291,7 @@ theorem idem_mul_idem (S : Finset (Pl (F := F))) : idem S * idem S = idem S := b
   have := mul_idem_eq_zero S (1 - idem S) (by
     change InfiniteAdeleRing.ringEquiv_mixedSpace F (fstA F (1 - idem S)) = 0
     rw [map_sub (fstA F), map_one, fstA_idem, sub_self, map_zero]) (fun w hw => by
-    rw [map_sub, map_one, evFin_idem, if_pos hw, sub_self])
+    rw [map_sub, map_one, evFin_idem, ite_eq_left hw, sub_self])
   rw [sub_mul, one_mul, sub_eq_zero] at this
   exact this.symm
 
@@ -305,12 +305,12 @@ theorem pure_split {κ : Type} [Fintype κ] (S : Finset (Pl (F := F))) (f : SInf
       ∏ᶠ w, if w ∈ S then φ w (fun i => evFin F w (x i)) else 1 := by
     rw [finprod_eq_prod_of_mulSupport_subset (s := S) _ (fun w hw => by
       by_contra h
-      exact hw (if_neg h))]
+      exact hw (ite_eq_right h))]
     refine Finset.prod_congr rfl fun w hw => ?_
-    rw [if_pos hw]
+    rw [ite_eq_left hw]
     congr 1
     funext i
-    rw [Pi.smul_apply, smul_eq_mul, map_mul, evFin_idem, if_pos hw, one_mul]
+    rw [Pi.smul_apply, smul_eq_mul, map_mul, evFin_idem, ite_eq_left hw, one_mul]
   have e2 : (∏ᶠ w, if w ∈ S then (1 : ℂ) else ω w fun i => evFin F w ((x - idem S • x) i)) =
       ∏ᶠ w, if w ∈ S then (1 : ℂ) else ω w fun i => evFin F w (x i) := by
     refine finprod_congr fun w => ?_
@@ -318,7 +318,7 @@ theorem pure_split {κ : Type} [Fintype κ] (S : Finset (Pl (F := F))) (f : SInf
     · rfl
     · congr 1
       funext i
-      rw [Pi.sub_apply, Pi.smul_apply, smul_eq_mul, map_sub, map_mul, evFin_idem, if_neg hw, zero_mul, sub_zero]
+      rw [Pi.sub_apply, Pi.smul_apply, smul_eq_mul, map_sub, map_mul, evFin_idem, ite_eq_right hw, zero_mul, sub_zero]
   simp only [GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure]
   rw [e1, e2, mul_assoc, ← finprod_mul_distrib]
   · congr 1
@@ -329,7 +329,7 @@ theorem pure_split {κ : Type} [Fintype κ] (S : Finset (Pl (F := F))) (f : SInf
       · rw [one_mul, hφ w hw]
   · exact S.finite_toSet.subset fun w hw => by
       by_contra h
-      exact hw (if_neg h)
+      exact hw (ite_eq_right h)
   · exact (GlobalTheory.PureFactor.mulSupport_finite ω hω x).subset fun w hw => by
       intro h
       apply hw

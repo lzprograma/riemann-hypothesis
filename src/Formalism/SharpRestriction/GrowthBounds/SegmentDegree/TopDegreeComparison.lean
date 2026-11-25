@@ -2,43 +2,7 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DiscriminantNeZeroOfResidueNeZero
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.SegmentProductDegreeDetermined
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.AllowedLettersOfLateRows
 
 @[expose] public section
@@ -179,20 +143,20 @@ theorem top_degree_comparison : TopDegreeComparison := by
         (X.F.letters (j : ℤ)) hT]
     by_cases hjj : j = j0
     · subst hjj
-      rw [if_pos rfl, Finset.sum_eq_single z]
-      · rw [if_pos rfl, mem_Pol_iff.mp hPol m hm z]
+      rw [ite_eq_left rfl, Finset.sum_eq_single z]
+      · rw [ite_eq_left rfl, mem_Pol_iff.mp hPol m hm z]
       · intro x hx hxz
-        rw [if_neg, zero_mul]
+        rw [ite_eq_right, zero_mul]
         intro h
         exact hxz (LL_unique hV j hj0' z hz j hj' x hx h).2
       · intro h; exact absurd hzl h
-    · rw [if_neg hjj]
+    · rw [ite_eq_right hjj]
       refine Finset.sum_eq_zero fun x hx => ?_
-      rw [if_neg, zero_mul]
+      rw [ite_eq_right, zero_mul]
       intro h
       exact hjj (LL_unique hV j0 hj0' z hz j hj' x hx h).1
   have hU := degAt_mul (degAt_prod _ _ _ hδ) (degAt_monomial l (1 : O) t)
-  rw [Finset.sum_ite_eq' (Finset.range X.F.J) j0, if_pos hj0] at hU
+  rw [Finset.sum_ite_eq' (Finset.range X.F.J) j0, ite_eq_left hj0] at hU
   obtain ⟨m0, hm0⟩ := MvPolynomial.ne_zero_iff.mp hne
   have hm0' := MvPolynomial.mem_support_iff.mpr hm0
   rw [RRdeg_eq_Pol] at hdeg

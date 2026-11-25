@@ -13,6 +13,7 @@ import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.Num
 public import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.TopsChoicePartA
 import Mathlib.Tactic.TypeStar
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.IOCentral
+import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselCharacterUnipotentRadicalProperties
 
 @[expose] public section
 
@@ -57,25 +58,7 @@ theorem uw_inv_eq {z : Fin (2 * r + k + 1) → ℂ} {h : Matrix (Fin (2 * r + k 
 
 theorem uw_inv_mem {z : Fin (2 * r + k + 1) → ℂ} {h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
     (hh : h ∈ UWset k r z) : h⁻¹ ∈ UWset k r z := by
-  have hH : hᴴ * Hpk k r * h = Hpk k r := by
-    obtain ⟨hU, -, -⟩ := hh
-    exact hU
-  have hi : h⁻¹ * h = 1 := by
-    rw [uw_inv_eq hh]
-    calc Hpk k r * hᴴ * Hpk k r * h = Hpk k r * (hᴴ * Hpk k r * h) := by simp only [Matrix.mul_assoc]
-      _ = 1 := by rw [hH, Formalism.QuantumDeterminants.GBasic.Hpk_sq]
-  have hi' : h * h⁻¹ = 1 := Matrix.mul_nonsing_inv h (Matrix.isUnit_det_of_left_inverse hi)
-  obtain ⟨hU, hfix, hz⟩ := hh
-  have fix : ∀ v, h *ᵥ v = v → h⁻¹ *ᵥ v = v := by
-    intro v hv
-    calc h⁻¹ *ᵥ v = h⁻¹ *ᵥ (h *ᵥ v) := by rw [hv]
-      _ = v := by rw [Matrix.mulVec_mulVec, hi, Matrix.one_mulVec]
-  unfold Formalism.QuantumDeterminants.UWset
-  refine ⟨?_, fun a => ⟨fix _ (hfix a).1, fix _ (hfix a).2⟩, fix _ hz⟩
-  show (h⁻¹)ᴴ * Hpk k r * h⁻¹ = Hpk k r
-  calc (h⁻¹)ᴴ * Hpk k r * h⁻¹ = (h⁻¹)ᴴ * (hᴴ * Hpk k r * h) * h⁻¹ := by rw [hH]
-    _ = (h * h⁻¹)ᴴ * Hpk k r * (h * h⁻¹) := by simp only [Matrix.conjTranspose_mul, Matrix.mul_assoc]
-    _ = Hpk k r := by rw [hi']; simp
+  apply _root_.GlobalTheory.BesselPsi.uw_inv <;> assumption
 
 theorem uw_inv_mul {z : Fin (2 * r + k + 1) → ℂ} {h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
     (hh : h ∈ UWset k r z) : h⁻¹ * h = 1 := by
@@ -300,7 +283,7 @@ theorem z_tr {n : ℕ} (hn : n = 2 * r + k + 1) (ε : Fin n → Bool) {Q : Matri
     rw [hQi, ← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, Formalism.L2.SG.Pf.WFL.Hpk_mulVec]
     congr 1
     simp only [hJ, Matrix.mulVec, dotProduct, Matrix.conjTranspose_apply, Pi.star_apply, Pi.single_apply,
-      mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   refine ⟨fun i hi => ?_, ?_⟩
   · rw [hcoord]
     rcases hi with hi | hi
@@ -619,7 +602,7 @@ theorem torS_eq (μ : ℂ) : torS μ k r = Matrix.diagonal (tE μ k r) := rfl
 
 theorem tE_eI (μ : ℂ) (a : Fin r) : tE μ k r (eI k r a) = μ ^ (r - (a : ℕ)) := by
   simp only [tE]
-  rw [if_pos (show (eI k r a).val < r from a.isLt)]
+  rw [ite_eq_left (show (eI k r a).val < r from a.isLt)]
   rfl
 
 theorem tE_esI (μ : ℂ) (a : Fin r) : tE μ k r (esI k r a) = (star (μ ^ (r - (a : ℕ))))⁻¹ := by
@@ -628,7 +611,7 @@ theorem tE_esI (μ : ℂ) (a : Fin r) : tE μ k r (esI k r a) = (star (μ ^ (r -
   have h2 : r + k < (esI k r a).val := by show r + k < 2 * r + k - a.val; omega
   have h3 : 2 * r + k - (esI k r a).val = a.val := by show 2 * r + k - (2 * r + k - a.val) = a.val; omega
   simp only [tE]
-  rw [if_neg h1, if_pos h2, h3]
+  rw [ite_eq_right h1, ite_eq_left h2, h3]
 
 theorem tE_inv_mul (μ : ℂ) (hμ : μ ≠ 0) (i : Fin (2 * r + k + 1)) : tE μ⁻¹ k r i * tE μ k r i = 1 := by
   unfold tE
@@ -645,18 +628,18 @@ theorem tE_sig (μ : ℂ) (hμ : μ ≠ 0) (i : Fin (2 * r + k + 1)) : star (tE 
   have hi := i.isLt
   unfold tE
   by_cases h1 : i.val < r
-  · have h2 : ¬ (sig k r i).val < r := by rw [hs, if_pos (Or.inl h1)]; omega
-    have h3 : r + k < (sig k r i).val := by rw [hs, if_pos (Or.inl h1)]; omega
-    have h4 : 2 * r + k - (sig k r i).val = i.val := by rw [hs, if_pos (Or.inl h1)]; omega
-    rw [if_pos h1, if_neg h2, if_pos h3, h4]
+  · have h2 : ¬ (sig k r i).val < r := by rw [hs, ite_eq_left (Or.inl h1)]; omega
+    have h3 : r + k < (sig k r i).val := by rw [hs, ite_eq_left (Or.inl h1)]; omega
+    have h4 : 2 * r + k - (sig k r i).val = i.val := by rw [hs, ite_eq_left (Or.inl h1)]; omega
+    rw [ite_eq_left h1, ite_eq_right h2, ite_eq_left h3, h4]
     exact mul_inv_cancel₀ (star_ne_zero.mpr (pow_ne_zero _ hμ))
   · by_cases h5 : r + k < i.val
-    · have h2 : (sig k r i).val < r := by rw [hs, if_pos (Or.inr h5)]; omega
-      have h4 : (sig k r i).val = 2 * r + k - i.val := by rw [hs, if_pos (Or.inr h5)]
-      rw [if_neg h1, if_pos h5, if_pos h2, h4, star_inv₀, star_star]
+    · have h2 : (sig k r i).val < r := by rw [hs, ite_eq_left (Or.inr h5)]; omega
+      have h4 : (sig k r i).val = 2 * r + k - i.val := by rw [hs, ite_eq_left (Or.inr h5)]
+      rw [ite_eq_right h1, ite_eq_left h5, ite_eq_left h2, h4, star_inv₀, star_star]
       exact inv_mul_cancel₀ (pow_ne_zero _ hμ)
     · have h6 : sig k r i = i := Formalism.QuantumDeterminants.GBasic.sig_mid k r i (by omega) (by omega)
-      rw [h6, if_neg h1, if_neg h5]
+      rw [h6, ite_eq_right h1, ite_eq_right h5]
       simp
 
 theorem torS_inv_mul (μ : ℂ) (hμ : μ ≠ 0) : torS μ⁻¹ k r * torS μ k r = 1 := by
@@ -1188,7 +1171,3 @@ theorem dsTr {D : D7} {X : HidaSetting D} {θ : ℝ} (C : Choice X θ) (τ : D.w
     (X.B.σ (vOf X τ)) (X.ds (vOf X τ)) (C.Q τ) (C.Qi τ) (C.isT τ).2.1 (C.isT τ).2.2.1 P hP⟩
 
 end Formalism.L2.SG.Pf
-
-namespace Formalism.L2.SG.Pf.Choice
-
-end Formalism.L2.SG.Pf.Choice

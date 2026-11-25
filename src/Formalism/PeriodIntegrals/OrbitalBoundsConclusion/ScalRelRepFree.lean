@@ -3,46 +3,9 @@ module
 public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
 public import Formalism.PeriodIntegrals.ScalRelRepFree
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Lemmas
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermDef
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SaturatedPf
+import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeGluingRadicals
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarRelationReflexive.MapMemSupThree, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarRelationReflexive.IsScalarRefl, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ScalRelRepFree
@@ -171,16 +134,7 @@ theorem Xa_ge {T₀ : E} (G : LFlag S r T₀) {j : ℕ} (hj : r ≤ j) : Xflag G
     exact ⟨i, lt_of_lt_of_le i.isLt hj, rfl⟩
 
 theorem z_orth {T₀ : E} (G : LFlag S r T₀) : G.fl.z ∈ orth S (Xsp G) := by
-  rw [mem_orth']
-  intro x hx
-  unfold Xsp Formalism.MainNotions.S.FlagG.X at hx
-  induction hx using Submodule.span_induction with
-  | mem y hy =>
-    obtain ⟨a, rfl⟩ := hy
-    exact G.fl.z_orth a
-  | zero => simp
-  | add x y _ _ hx hy => simp [hx, hy]
-  | smul c x _ hx => simp [hx]
+  apply _root_.Formalism.MainNotions.LatticeGluingRadicals.d_z_orthX <;> assumption
 
 theorem xplus_map {T₀ T₁ : E} {A : LFlag S r T₀} {B : LFlag S r T₁} (φ : S.V →ₗ[E] S.V)
     (hX : ∀ v ∈ Xsp A, φ v ∈ Xsp B) (hz : φ A.fl.z - B.fl.z ∈ Xsp B) {v : S.V} (hv : v ∈ Xplus A) :
@@ -215,21 +169,8 @@ theorem nl_X_mem (hn : n ∈ NLam Λ G) {v : S.V} (hv : v ∈ Xsp G) : n v ∈ X
   simpa using h
 
 theorem nl_map_X (hn : n ∈ NLam Λ G) : (Xsp G).map (n : S.V →ₗ[E] S.V) = Xsp G := by
-  apply le_antisymm
-  · rintro _ ⟨u, hu, rfl⟩
-    exact nl_X_mem hn hu
-  · intro v hv
-    haveI : FiniteDimensional E (Xsp G) := by
-      unfold Xsp Formalism.MainNotions.S.FlagG.X
-      exact FiniteDimensional.span_of_finite E (Set.finite_range _)
-    let f : Xsp G →ₗ[E] Xsp G := (n : S.V →ₗ[E] S.V).restrict (fun u hu => nl_X_mem hn hu)
-    have hinj : Function.Injective f := by
-      intro a b hab
-      apply Subtype.ext
-      have h := congrArg Subtype.val hab
-      simpa [f] using h
-    obtain ⟨u, hu⟩ := (LinearMap.injective_iff_surjective.mp hinj) ⟨v, hv⟩
-    exact ⟨u, u.2, congrArg Subtype.val hu⟩
+  intros
+  apply _root_.Formalism.L2.SG.Pf.NLam_map_X <;> assumption
 
 theorem nl_symm_X (hn : n ∈ NLam Λ G) {v : S.V} (hv : v ∈ Xsp G) : n.symm v ∈ Xsp G := by
   rw [← nl_map_X hn] at hv
@@ -621,8 +562,6 @@ noncomputable section
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef
 
 section
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem scalar_rep_free (D : Formalism.BasicNotions.D7) (u u' : D.what₂.Word) : PI.ScalRelRepFree.ScalarRepFree D u u' := by
   intro F0 Λ hrow x y y' hrel hsc

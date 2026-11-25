@@ -51,8 +51,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.Per.Inhab
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Iterated
 
 variable {G N : Type} [MeasurableSpace G] [MeasurableSpace N] {μ : Measure G} {𝓕 : Set G} {ν : Measure N} {𝓝 : Set N}
@@ -90,29 +88,10 @@ section Integrands
 
 variable {A B : HSp D} {ι : A.V →ₗ[D.host.E] B.V} {s : GA D A → GA D B} {φ : GA D A → ℂ} {F : GA D B → ℂ}
 
-theorem conj_arg (hι : HSpace.IsIsomEmb A B ι) (hs : ∀ h, EmbRel B A ι (s h) h) (hF : IsAutFun B F) {γ δ}
-    (hγ : γ ∈ GQ A) (hδ : EmbRel B A ι δ γ) (g n y) : F (δ * n * δ⁻¹ * s (γ * g) * y) = F (n * s g * y) := by
-  obtain ⟨s₀, -, hrel, hq⟩ := GlobalTheory.Mem.UnitaryEmb.exists_embHom D B A ι hι
-  obtain rfl : s = s₀ := funext fun h => (hrel h _).1 (hs h)
-  rw [(hrel _ _).1 hδ, ← hF.left _ (hq γ hγ) (n * s₀ g * y)]
-  simp only [map_mul, mul_assoc, inv_mul_cancel_left]
-
 theorem emb_continuous (hι : HSpace.IsIsomEmb A B ι) (hs : ∀ h, EmbRel B A ι (s h) h) : Continuous s := by
   obtain ⟨s₀, hc, hrel, -⟩ := GlobalTheory.Mem.UnitaryEmb.exists_embHom D B A ι hι
   obtain rfl : s = s₀ := funext fun h => (hrel h _).1 (hs h)
   exact hc
-
-theorem bes_inv {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) (hι : HSpace.IsIsomEmb A B ι) (d : BesDat A B ι)
-    (hs : ∀ h, EmbRel B A ι (s h) h) (hφ : IsAutFun A φ) (hF : IsAutFun B F) :
-    IsRatInv ι d.e fun h n => star (φ h) * F (n * s h * (d.y : GA D B)) * star (besChar ψ d n) := by
-  refine ⟨?_, ?_, ?_⟩
-  · intro δ γ h n hn
-    exact (BesselChar.besChar_conj ψ d δ γ h n hn).1
-  · intro g n hn γ hγ hq
-    rw [BesselChar.besChar_mul ψ d γ n hγ hn, BesselChar.besChar_rat ψ hψ.1 d γ hγ hq, one_mul, mul_assoc γ, mul_assoc γ,
-      hF.left γ hq]
-  · intro g n hn γ hγ δ hδ
-    rw [(BesselChar.besChar_conj ψ d δ γ hδ n hn).2, conj_arg hι hs hF hγ hδ, hφ.left γ hγ]
 
 end Integrands
 

@@ -4,46 +4,8 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongr
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.GammaPi0EqPi0MulUnit
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.Pi0MemADelta
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.SaturationFractionModule
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.Interval.Finset.Box
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+import Formalism.SharpRestriction.LevelLetterCocycles.SemisimpleLetterIffForallMem
 
 @[expose] public section
 
@@ -107,7 +69,7 @@ theorem inFr_div {a : ZMod n} {num den : LetA O n} {y : W.EE}
 theorem dv_eq_sum (T : LocLat G Qp LL O) (e : ℕ) {d : ℕ} (b : Fin d → W.DD T) (c₀ : Fin d → LL) :
     dv W T e b c₀ = ∑ k, c₀ k • dv W T e b (Pi.single k 1) := by
   unfold dv
-  simp only [Pi.single_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Pi.single_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem lam_mem_Ps (A : ArcP n) (a : ZMod n) (e : ℕ) : abelian₂ W A a e ∈ Ps W := by
   unfold abelian₂ Ps
@@ -134,7 +96,7 @@ theorem den0 (ell : ℕ) (Si : Finset ℕ) (m : ℕ → ℕ) :
 theorem numS (ell : ℕ) (Si : Finset ℕ) (m : ℕ → ℕ) {s : ℕ} (hs : s < ell) (K : ℕ) :
     ∏ t ∈ Finset.range ell, ps W t ^
       (if t = s then (K : ℤ) else -(((if t ∈ Si then m t else 0 : ℕ)) : ℤ)).toNat = ps W s ^ K := by
-  rw [Finset.prod_eq_single s (fun t _ ht => by rw [if_neg ht]; split_ifs <;> simp)
+  rw [Finset.prod_eq_single s (fun t _ ht => by rw [ite_eq_right ht]; split_ifs <;> simp)
     (fun h => absurd (Finset.mem_range.2 hs) h)]
   simp
 
@@ -146,7 +108,7 @@ theorem denS (ell : ℕ) (Si : Finset ℕ) (m : ℕ → ℕ) {s : ℕ} (hsSi : s
   by_cases ht : t = s
   · subst ht
     simp [hsSi]
-  · rw [if_neg ht, neg_neg]
+  · rw [ite_eq_right ht, neg_neg]
     split_ifs <;> simp
 
 theorem up_le_Hs (A : ArcP n) (hA : A.OK) {c : ZMod n} (hc : c ∈ A.cuts) {s bs : ℕ} (hs : s < A.len c)
@@ -203,15 +165,7 @@ theorem den_dvd_Lam (A : ArcP n) (hA : A.OK) {c : ZMod n} (hc : c ∈ A.cuts) (S
 
 theorem isUnit_pi0_in_EE (hcase : Formalism.MainNotions.LiftingTheory.CaseA W) (hP9 : Formalism.MainNotions.DeltaInvariantLattices.P9W W) {T : LocLat G Qp LL O}
     (hT : IsCrys PD T.ρ) : IsUnit (algebraMap (LetA O n) W.EE W.π₀) := by
-  obtain ⟨hbij, hs, hp2⟩ := hcase
-  have h9 := hP9 T hT hs hp2
-  have hfr : Module.finrank K₀ K = 1 :=
-    (LinearEquiv.ofBijective (Algebra.linearMap K₀ K) hbij).finrank_eq.symm.trans (Module.finrank_self K₀)
-  have hR : GS.RD W := by
-    first
-    | exact GS.rd_of W (h9.2.2 hfr).1
-  first
-  | exact GS.isUnit_π₀ hR
+  apply _root_.Formalism.MainNotions.UnusedSlot35.DssRec.π₀_unit <;> assumption
 
 section Main
 

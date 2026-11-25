@@ -35,8 +35,6 @@ abbrev zmodRep (n : ℕ) : Rep.{u} (ULift.{u} ℤ) G :=
 
 end ZMod
 
-attribute [local instance 2000] Rep.hV2
-
 variable (K L : Type u) [Field K] [Field L] [Algebra K L]
 
 abbrev cartierDual (M : Rep.{u} (ULift.{u} ℤ) Gal(L/K)) : Rep.{u} (ULift.{u} ℤ) Gal(L/K) :=

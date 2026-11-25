@@ -11,8 +11,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.Theta
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def IsEnum {n : ℕ} (S : SPar) (lam : Fin n → ℝ) (ε : Fin n → Bool) : Prop :=
   StrictAnti lam ∧ ∃ q : Fin n → ℚ, (∀ a, lam a = (q a : ℝ)) ∧ S = Finset.univ.image fun a => (q a, ε a)
 

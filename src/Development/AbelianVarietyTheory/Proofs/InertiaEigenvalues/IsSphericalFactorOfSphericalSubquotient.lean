@@ -5,47 +5,8 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValue
 import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.EmbedsLevelZeroDepthZero
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsContinuousPadic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.PiTensorProduct.Basis
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsNotCongPow
 import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsReadingLaws
@@ -57,7 +18,6 @@ import ReciprocityTheory.GaloisValuations.GlobalA
 @[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel Matrix Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Published
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 namespace GlobalTheory.LocLanglands.SphFac
@@ -100,7 +60,7 @@ private theorem vv_pow_smul_mem_of_sen_eq_zero (C : Finset n) (i0 : n) (hi0 : i0
   have hN1s : ∀ l j, l ∉ C → N1 l j = 0 := by
     intro l j hl
     have : ¬ (l = c ∧ j = i0 ∧ P) := fun h => hl (h.1 ▸ hc)
-    simp only [N1, Matrix.of_apply, if_neg this]
+    simp only [N1, Matrix.of_apply, ite_eq_right this]
   have hN1i : IntM N1 := by
     intro l j
     simp only [N1, Matrix.of_apply]
@@ -122,27 +82,27 @@ private theorem vv_pow_smul_mem_of_sen_eq_zero (C : Finset n) (i0 : n) (hi0 : i0
     rw [hY, rowf]
     congr 1
     by_cases hj : j = i0 ∧ P
-    · rw [if_pos hj, Finset.sum_eq_single c]
+    · rw [ite_eq_left hj, Finset.sum_eq_single c]
       · show X i0 c * (if c = c ∧ j = i0 ∧ P then (1 : k) else 0) = X i0 c
-        rw [if_pos ⟨rfl, hj.1, hj.2⟩, mul_one]
+        rw [ite_eq_left ⟨rfl, hj.1, hj.2⟩, mul_one]
       · intro l _ hl
-        simp only [N1, Matrix.of_apply, if_neg (fun h : l = c ∧ j = i0 ∧ P => hl h.1), mul_zero]
+        simp only [N1, Matrix.of_apply, ite_eq_right (fun h : l = c ∧ j = i0 ∧ P => hl h.1), mul_zero]
       · intro h
         exact absurd (Finset.mem_univ c) h
-    · rw [if_neg hj]
+    · rw [ite_eq_right hj]
       refine Finset.sum_eq_zero fun l _ => ?_
-      simp only [N1, Matrix.of_apply, if_neg (fun h : l = c ∧ j = i0 ∧ P => hj ⟨h.2.1, h.2.2⟩), mul_zero]
+      simp only [N1, Matrix.of_apply, ite_eq_right (fun h : l = c ∧ j = i0 ∧ P => hj ⟨h.2.1, h.2.2⟩), mul_zero]
   have hYmax : ∀ j ∈ C, valuation k (Y i0 j) ≤ valuation k (Y i0 i0) := by
     intro j hj
     by_cases hP : P
-    · have e0 : Y i0 i0 = X i0 i0 + X i0 c := by rw [hYrow, if_pos ⟨rfl, hP⟩]
+    · have e0 : Y i0 i0 = X i0 i0 + X i0 c := by rw [hYrow, ite_eq_left ⟨rfl, hP⟩]
       have hv0 : valuation k (Y i0 i0) = valuation k (X i0 c) := by
         rw [e0]; exact (valuation k).map_add_eq_of_lt_right hP.2
       rw [hv0]
       by_cases hji : j = i0
       · rw [hji, hv0]
-      · rw [hYrow, if_neg (fun h => hji h.1), add_zero]; exact hcmax j hj
-    · have e : ∀ j, Y i0 j = X i0 j := fun j => by rw [hYrow, if_neg (fun h => hP h.2), add_zero]
+      · rw [hYrow, ite_eq_right (fun h => hji h.1), add_zero]; exact hcmax j hj
+    · have e : ∀ j, Y i0 j = X i0 j := fun j => by rw [hYrow, ite_eq_right (fun h => hP h.2), add_zero]
       rw [e, e]
       refine (hcmax j hj).trans ?_
       by_cases hci : c = i0
@@ -152,7 +112,7 @@ private theorem vv_pow_smul_mem_of_sen_eq_zero (C : Finset n) (i0 : n) (hi0 : i0
   have hN2s : ∀ l j, l ∉ C → N2 l j = 0 := by
     intro l j hl
     have : ¬ (l = i0 ∧ j ∈ C ∧ j ≠ i0) := fun h => hl (h.1 ▸ hi0)
-    simp only [N2, Matrix.of_apply, if_neg this]
+    simp only [N2, Matrix.of_apply, ite_eq_right this]
   have hN2i : IntM N2 := by
     intro l j
     simp only [N2, Matrix.of_apply]
@@ -177,7 +137,7 @@ private theorem vv_pow_smul_mem_of_sen_eq_zero (C : Finset n) (i0 : n) (hi0 : i0
   · rw [Units.val_mul, hκ1v, hκ2v, ← Matrix.mul_assoc, ← hY, keep Y N2 hY1 hN2s i hi j, hYkeep i hi j]
   · rw [Units.val_mul, hκ1v, hκ2v, ← Matrix.mul_assoc, ← hY, rowf, Finset.sum_eq_single i0]
     · show Y i0 j + Y i0 i0 * (if i0 = i0 ∧ j ∈ C ∧ j ≠ i0 then -(Y i0 j / Y i0 i0) else 0) = 0
-      rw [if_pos ⟨rfl, hj, hji⟩]
+      rw [ite_eq_left ⟨rfl, hj, hji⟩]
       by_cases hz : Y i0 i0 = 0
       · have hj0 : Y i0 j = 0 := by
           have h := hYmax j hj
@@ -187,7 +147,7 @@ private theorem vv_pow_smul_mem_of_sen_eq_zero (C : Finset n) (i0 : n) (hi0 : i0
         simp
       · rw [mul_neg, mul_div_cancel₀ _ hz, add_neg_cancel]
     · intro l _ hl
-      simp only [N2, Matrix.of_apply, if_neg (fun h : l = i0 ∧ j ∈ C ∧ j ≠ i0 => hl h.1), mul_zero]
+      simp only [N2, Matrix.of_apply, ite_eq_right (fun h : l = i0 ∧ j ∈ C ∧ j ≠ i0 => hl h.1), mul_zero]
     · intro h
       exact absurd (Finset.mem_univ _) h
 

@@ -258,7 +258,7 @@ theorem kerOf_thDistC (Sa SB : Finset (HeightOneSpectrum (𝓞 X.E))) {cA cB : �
   rw [smul_comm]
   congr 1
   unfold thDistC
-  rw [if_pos]
+  rw [ite_eq_left]
   refine ⟨Dvd.intro_left _ rfl, ?_⟩
   have h := (Function.surjInv (Submodule.Quotient.mk_surjective
     ((mulLat cB (homAt Sa N N')).comap (divLat cA (homAt Sa N N')).subtype)) z).2
@@ -311,7 +311,7 @@ theorem latWithBasis_of_stdOver {E K : Type} [Field E] [NumberField E] [StarRing
       have : (fun a => emb τ (x a)) = ∑ j, φ (r j) • fun a => ((1 : GL (Fin n) K) : Matrix (Fin n) (Fin n) K) a j := by
         funext a
         simp only [Finset.sum_apply, Pi.smul_apply, Units.val_one, Matrix.one_apply, Algebra.smul_def, mul_ite, mul_zero, mul_one,
-          Finset.sum_ite_eq, Finset.mem_univ, if_true, ← hr]
+          Finset.sum_ite_eq, Finset.mem_univ, ite_true, ← hr]
         rfl
       change (fun a => emb τ (x a)) ∈ _
       rw [this]

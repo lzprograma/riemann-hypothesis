@@ -14,8 +14,6 @@ open MeasureTheory Formalism.BasicNotions Formalism.L2.SG.RowDict Formalism.Main
 
 namespace Formalism.L2.SG.EvalTOntoExt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 

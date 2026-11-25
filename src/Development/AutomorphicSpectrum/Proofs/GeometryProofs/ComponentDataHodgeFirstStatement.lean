@@ -1,48 +1,6 @@
 module
 
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsPeriodAtRestrict
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ExistsIntSmulIsAdicIntegralInTensorBasis
 
@@ -62,25 +20,6 @@ open scoped ComplexOrder
 noncomputable section
 
 namespace GlobalTheory.CompanionTheory.Ar.MuFrame
-
-private theorem isMultiHomog_mul_geometry {K : Type} {Jt : K → Type} [∀ k, Fintype (Jt k)]
-    {p q : MvPolynomial ((k : K) × Jt k) ℤ} {a b : K → ℕ}
-    (hp : IsMultiHomog p a) (hq : IsMultiHomog q b) : IsMultiHomog (p * q) (a + b) := by
-  classical
-  unfold IsMultiHomog at *
-  intro m hm k
-  obtain ⟨m1, h1, m2, h2, rfl⟩ := Finset.mem_add.mp (MvPolynomial.support_mul p q hm)
-  simp only [Finsupp.add_apply, Finset.sum_add_distrib, hp m1 h1 k, hq m2 h2 k, Pi.add_apply]
-
-private theorem isMultiHomog_add_geometry {K : Type} {Jt : K → Type} [∀ k, Fintype (Jt k)]
-    {p q : MvPolynomial ((k : K) × Jt k) ℤ} {a : K → ℕ}
-    (hp : IsMultiHomog p a) (hq : IsMultiHomog q a) : IsMultiHomog (p + q) a := by
-  classical
-  unfold IsMultiHomog at *
-  intro m hm k
-  rcases Finset.mem_union.mp (MvPolynomial.support_add hm) with h | h
-  · exact hp m h k
-  · exact hq m h k
 
 private theorem isMultiHomog_X_geometry {K : Type} {Jt : K → Type} [∀ k, Fintype (Jt k)] [DecidableEq K]
     (k : K) (i : Jt k) :
@@ -114,7 +53,7 @@ private theorem isMultiHomog_prod_X_one {K : Type} [Fintype K] {Jt : K → Type}
       simpa using h1
     · intro a s ha ih
       rw [Finset.prod_insert ha, Finset.sum_insert ha]
-      exact isMultiHomog_mul_geometry (isMultiHomog_X_geometry a (ch a)) ih
+      exact isMultiHomog_mul (isMultiHomog_X_geometry a (ch a)) ih
   have h := key Finset.univ
   convert h using 1
   funext k
@@ -126,25 +65,13 @@ private theorem isValueAt_add' {K : Type} {Jt : K → Type} [∀ k, Fintype (Jt 
   unfold IsValueAt at *
   obtain ⟨d, g, h, hg, hh, hy, hgs, hw, rfl⟩ := h1
   obtain ⟨d', g', h', hg', hh', hy', hgs', hw', rfl⟩ := h2
-  refine ⟨d + d', g * h' + g' * h, h * h', isMultiHomog_add_geometry (isMultiHomog_mul_geometry hg hh') ?_,
-    isMultiHomog_mul_geometry hh hh', ?_, ?_, ?_, ?_⟩
-  · rw [add_comm d d']; exact isMultiHomog_mul_geometry hg' hh
+  refine ⟨d + d', g * h' + g' * h, h * h', isMultiHomog_add (isMultiHomog_mul hg hh') ?_,
+    isMultiHomog_mul hh hh', ?_, ?_, ?_, ?_⟩
+  · rw [add_comm d d']; exact isMultiHomog_mul hg' hh
   · rw [map_mul]; exact mul_ne_zero hy hy'
   · simp only [map_mul, map_add (f := _), hgs, hgs']; ring
   · simp only [map_mul]; exact mul_ne_zero hw hw'
   · simp only [map_mul, map_add (f := _)]; rw [div_add_div _ _ hw hw']; ring
-
-private theorem isValueAt_mul' {K : Type} {Jt : K → Type} [∀ k, Fintype (Jt k)] {Ω : Type} [Field Ω]
-    {y : (k : K) × Jt k → Ω} {w : (k : K) × Jt k → ℂ} {s s' : Ω} {v v' : ℂ}
-    (h1 : IsValueAt y s w v) (h2 : IsValueAt y s' w v') : IsValueAt y (s * s') w (v * v') := by
-  unfold IsValueAt at *
-  obtain ⟨d, g, h, hg, hh, hy, hgs, hw, rfl⟩ := h1
-  obtain ⟨d', g', h', hg', hh', hy', hgs', hw', rfl⟩ := h2
-  refine ⟨d + d', g * g', h * h', isMultiHomog_mul_geometry hg hg', isMultiHomog_mul_geometry hh hh', ?_, ?_, ?_, ?_⟩
-  · rw [map_mul]; exact mul_ne_zero hy hy'
-  · simp only [map_mul, hgs, hgs']; ring
-  · simp only [map_mul]; exact mul_ne_zero hw hw'
-  · simp only [map_mul]; rw [div_mul_div_comm]
 
 private theorem isValueAt_aeval_segreCoord_div {K : Type} [Fintype K] {Jt : K → Type} [∀ k, Fintype (Jt k)]
     {Ω : Type} [Field Ω] (y : (k : K) × Jt k → Ω) (w : (k : K) × Jt k → ℂ) (ch : (k : K) → Jt k)
@@ -165,7 +92,7 @@ private theorem isValueAt_aeval_segreCoord_div {K : Type} [Fintype K] {Jt : K �
   | add p q hp hq => simpa only [map_add (f := _)] using isValueAt_add' hp hq
   | mul_X p i hp =>
     rw [map_mul, map_mul]
-    refine isValueAt_mul' hp ?_
+    refine isValueAt_mul hp ?_
     unfold IsValueAt
     refine ⟨fun _ => 1, ∏ k, MvPolynomial.X ⟨k, i k⟩, ∏ k, MvPolynomial.X ⟨k, ch k⟩,
       isMultiHomog_prod_X_one i, isMultiHomog_prod_X_one ch, ?_, ?_, ?_, ?_⟩
@@ -253,8 +180,7 @@ theorem nonempty_muFrameAt : ∀ (E : Type) [Field E] [NumberField E] [IsCMField
     exact sub_eq_zero.mp h2.symm
   obtain ⟨l0, hl0⟩ : ∃ l, MvPolynomial.aeval
       (fun c' => (∏ k, w ⟨k, c' k⟩) / ∏ k, w ⟨k, ch k⟩) (P l) ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     rw [Finset.sum_eq_zero (fun l _ => by rw [hne l, MulZeroClass.mul_zero])] at hW
     exact zero_ne_one hW
   have hunit : IsUnitAt Dc.y (f l0) w := by
@@ -280,8 +206,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.G
 open GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp
 open scoped ComplexOrder
 
-theorem _root_.GlobalTheory.T.component_data_hodge_first : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Tor.Level H) (Xo : Moduli D l) (c : Coeff l) (Y : Model Xo c (algebraMap (𝓞 c.F) c.F)) (II : IntersectionSystem) (K : Type) [Fintype K] (J : K → Type) [∀ k, Fintype (J k)] (Ω : Type) [Field Ω] [Algebra ℚ Ω] (W : CMType H → Type) [∀ τ, AddCommGroup (W τ)] [∀ τ, Module Ω (W τ)] (Dc : ComponentData II (CMType H) K J Ω W) (Hd : HodgeData Dc) (S₀ : Finset ℕ) (Or : CptOrigin Y S₀ Dc Hd) (z : Spec (CommRingCat.of ℂ) ⟶ Or.𝔐.X) (w : (Σ k, J k) → ℂ), CoordsAt Or.𝔐.ξ Dc.y z w → Nonempty (MuFrameAt Hd w) := by
-  first | exact @GlobalTheory.CompanionTheory.Ar.MuFrame.nonempty_muFrameAt
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComponentDataHodgeFirstStatement =====

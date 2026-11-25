@@ -11,49 +11,7 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisi
 import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
 public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.SmulSDivMem
 import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.PowerSeries.WeierstrassPreparation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -138,7 +96,7 @@ theorem weierstrass_division_qP (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.
   have hord : (D.map (Ideal.Quotient.mk I)).order.toNat = 1 := by rw [hmap, order_X]; rfl
   have hdiv : D.IsWeierstrassDivisorAt I := by
     unfold IsWeierstrassDivisorAt
-    rw [hord, hD, map_add (f := _), coeff_C, if_neg one_ne_zero, add_zero]
+    rw [hord, hD, map_add (f := _), coeff_C, ite_eq_right one_ne_zero, add_zero]
     simp [coeff_X]
   have HD := hdiv.isWeierstrassDivisionAt_div_mod (f := f a)
   set H := hdiv.div (f a)
@@ -227,11 +185,6 @@ theorem trunc_sub_alt (F G : PowerSeries O) (N : ℕ) : trunc N (F - G) = trunc 
   ext m
   simp only [PowerSeries.coeff_trunc, Polynomial.coeff_sub, map_sub]
 
-theorem trunc_smul_alt (o : O) (F : PowerSeries O) (N : ℕ) : trunc N (o • F) = o • trunc N F := by
-  ext m
-  simp only [PowerSeries.coeff_trunc, Polynomial.coeff_smul, PowerSeries.coeff_smul]
-  all_goals split_ifs <;> simp
-
 theorem aeval_mem_invariants (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.RingP W) (p : Polynomial O) :
     Polynomial.aeval (qP W) p ∈ W.AΔ := by
   induction p using Polynomial.induction_on' with
@@ -275,7 +228,7 @@ theorem qExpansion_mul_alt (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.RingP
     rw [Polynomial.X_pow_dvd_iff]
     intro d hd
     have h1 : (trunc N F * trunc N F').coeff d = (trunc N (F * F')).coeff d := by
-      rw [← trunc_trunc_mul_trunc, coeff_trunc, if_pos hd, ← Polynomial.coe_mul, Polynomial.coeff_coe]
+      rw [← trunc_trunc_mul_trunc, coeff_trunc, ite_eq_left hd, ← Polynomial.coe_mul, Polynomial.coeff_coe]
     rw [Polynomial.coeff_sub, h1, sub_self]
   obtain ⟨Q, hQ⟩ := hdvd
   have hPP : Polynomial.aeval (qP W) (trunc N F) * Polynomial.aeval (qP W) (trunc N F') =
@@ -325,7 +278,7 @@ theorem qExpansion_qP (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.RingP W) (
       ext m; rw [coeff_trunc, coeff_X, Polynomial.coeff_X]
       by_cases hm : m = 1
       · subst hm; simp
-      · rw [if_neg hm, if_neg (Ne.symm hm)]; simp
+      · rw [ite_eq_right hm, ite_eq_right (Ne.symm hm)]; simp
     rw [this, Polynomial.aeval_X]; simp
 
 theorem qExpansion_pow_alt (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.RingP W) {a : ZMod n} {g : LetA O n} {F : PowerSeries O}
@@ -381,11 +334,11 @@ theorem qExpansion_unique (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.RingP 
     ext j
     rw [Polynomial.coeff_sub, coeff_trunc, coeff_trunc, Polynomial.coeff_monomial_apply]
     by_cases hj : j < k + 1
-    · rw [if_pos hj, if_pos hj]
+    · rw [ite_eq_left hj, ite_eq_left hj]
       rcases Nat.lt_succ_iff_lt_or_eq.mp hj with hjk | hjk
-      · rw [ih j hjk, sub_self, if_neg (Nat.ne_of_gt hjk)]
+      · rw [ih j hjk, sub_self, ite_eq_right (Nat.ne_of_gt hjk)]
       · subst hjk; simp
-    · rw [if_neg hj, if_neg hj, sub_self, if_neg (by omega)]
+    · rw [ite_eq_right hj, ite_eq_right hj, sub_self, ite_eq_right (by omega)]
   have h3 : (letE a : LetA O n) * Polynomial.aeval (qP W) (trunc (k + 1) F - trunc (k + 1) G) =
       qP W ^ (k + 1) * (h' - h) := by
     rw [map_sub, mul_sub]; linear_combination e' - e
@@ -491,8 +444,7 @@ theorem scalar_integrality_relation [IsDiscreteValuationRing O] [IsFractionRing 
       algebraMap O LL (ϖ ^ m) * algebraMap O LL (uz : O) := by
     rw [← huz, ← hux, map_mul, map_mul, ← hθz]; ring
   have hmk : m < k := by
-    by_contra hle
-    push_neg at hle
+    by_contra! hle
     apply hθ
     refine ⟨ϖ ^ (m - k) * (uz : O) * ((ux⁻¹ : Oˣ) : O), ?_⟩
     have hk : algebraMap O LL (ϖ ^ k) * algebraMap O LL (ux : O) ≠ 0 := by
@@ -529,7 +481,7 @@ theorem scalar_integrality_relation [IsDiscreteValuationRing O] [IsFractionRing 
     rw [map_mul, map_pow, map_pow, hS]; ring
   have hα0 : ∀ j < η, coeff j (W.lev a ζ α) = 0 := by
     intro j hj
-    rw [hrel j (by omega), hPi, coeff_X_pow_mul', if_neg (by omega), mul_zero]
+    rw [hrel j (by omega), hPi, coeff_X_pow_mul', ite_eq_right (by omega), mul_zero]
   obtain ⟨α', hα'm, hα'⟩ := q_pow_dvd_of_level_vanishing hR hA hpu hinj a ζ hζ η α hα hα0
 
   have hPm : Formalism.MainNotions.LiftingTheory.pk W 1 ^ y * qP W ^ η ∈ W.AΔ :=
@@ -598,7 +550,6 @@ end Scalar
 end Formalism.MainNotions.N.Pv.LocalLengthBound
 
 noncomputable section
-open Classical
 
 namespace Formalism.MainNotions.N.Pv.LocalLengthBound
 
@@ -733,7 +684,6 @@ end DelH2
 end Formalism.MainNotions.N.Pv.LocalLengthBound
 
 noncomputable section
-open Classical
 
 namespace Formalism.MainNotions.N.Pv.LocalLengthBound
 
@@ -785,7 +735,7 @@ theorem frobenius_idempotent_succ (i : ZMod n) : W.φA (letE i : LetA O n) = let
     Pi.single_apply]
   by_cases h : k = i + 1
   · subst h; simp
-  · rw [if_neg (by intro h'; apply h; rw [← h']; ring), if_neg h, map_zero]
+  · rw [ite_eq_right (by intro h'; apply h; rw [← h']; ring), ite_eq_right h, map_zero]
 
 theorem frobenius_shifts_idempotent {i : ZMod n} {x : W.DD T} (hx : (letE i : LetA O n) • x = x) :
     (letE (i + 1) : LetA O n) • W.φD T x = W.φD T x := by
@@ -874,7 +824,6 @@ end TrH2
 end Formalism.MainNotions.N.Pv.LocalLengthBound
 
 noncomputable section
-open Classical
 
 namespace Formalism.MainNotions.N.Pv.LocalLengthBound
 
@@ -975,7 +924,7 @@ theorem kernel_rank_bound [NeZero n] (hT2 : Formalism.MainNotions.CrystallineLif
   have hlg0 : W.lev c ζ g₀ ≠ 0 := by
     rw [hlg]; intro h
     have := congrArg (coeff (Mi c)) h
-    rw [coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self, coeff_zero_eq_constantCoeff, map_zero] at this
+    rw [coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self, coeff_zero_eq_constantCoeff, map_zero] at this
     exact hV₀0 this
 
   have hexE : ∀ (x : W.DD T) (hx : g₀ • x ∈ W.N T), ∃ d : ℤ → T.V ⊗[Qp] BdR,
@@ -1096,13 +1045,13 @@ theorem kernel_rank_bound [NeZero n] (hT2 : Formalism.MainNotions.CrystallineLif
     obtain ⟨mk, hmk⟩ := hdzL k
     rw [conv_eq, smulS_linMap π hmk]
     have hL : LB mk (fun j => π (dz k j)) := fun j hj => by simp [hmk j hj]
-    rw [smulSeries_eq_coeff_delta hL (M := (X₀ : ℤ)) (fun s hs hs0 => by rw [hdz k s hs, if_neg hs0, map_zero])
+    rw [smulSeries_eq_coeff_delta hL (M := (X₀ : ℤ)) (fun s hs hs0 => by rw [hdz k s hs, ite_eq_right hs0, map_zero])
       _ (J := 0) (by simp) R (by omega)]
-    rw [hdz k 0 (by omega), if_pos rfl]
+    rw [hdz k 0 (by omega), ite_eq_left rfl]
 
   have hPc0 : ∀ j < η, coeff j (W.lev c ζ Pc) = 0 := by
     intro j hj
-    rw [hPc, map_mul, map_pow, map_pow, hqp, mul_pow, ← mul_assoc, coeff_mul_X_pow', if_neg (by omega)]
+    rw [hPc, map_mul, map_pow, map_pow, hqp, mul_pow, ← mul_assoc, coeff_mul_X_pow', ite_eq_right (by omega)]
   have hl2 : π (Formalism.MainNotions.RamifiedCoefficientChains.Sh.conv (W.lev c ζ Pc) dd R) = coeff R (W.lev c ζ Pc) • π (dd 0) := by
     rw [conv_eq, smulS_linMap π hmdd]
     have hL : LB mdd (fun j => π (dd j)) := fun j hj => by simp [hmdd j hj]
@@ -1113,7 +1062,7 @@ theorem kernel_rank_bound [NeZero n] (hT2 : Formalism.MainNotions.CrystallineLif
   have hf0 : ∀ j < X₀, coeff j (W.lev c ζ (Formalism.MainNotions.CrystallineLiftingInputs.fMX W 1 X₀)) = 0 := by
     intro j hj
     rw [Formalism.MainNotions.CrystallineLiftingInputs.fMX, map_mul, map_pow, map_pow, ← qP_eq_qp, qP_eq_qp, hqp, mul_pow,
-      ← mul_assoc, coeff_mul_X_pow', if_neg (by omega)]
+      ← mul_assoc, coeff_mul_X_pow', ite_eq_right (by omega)]
   have hl3 : π (Formalism.MainNotions.RamifiedCoefficientChains.Sh.conv (W.lev c ζ (Formalism.MainNotions.CrystallineLiftingInputs.fMX W 1 X₀)) d'' R) = 0 := by
     rw [conv_eq, smulS_linMap π hm'']
     have hL : LB m'' (fun j => π (d'' j)) := fun j hj => by simp [hm'' j hj]
@@ -1140,7 +1089,6 @@ end KR
 end Formalism.MainNotions.N.Pv.LocalLengthBound
 
 noncomputable section
-open Classical
 
 namespace Formalism.MainNotions.N.Pv.LocalLengthBound
 
@@ -1294,7 +1242,7 @@ theorem filtration_gap_vanishing [NeZero n] (W : LocWach PD LL O v n) (hE : Form
     by_contra hne
     have := rk_jumps₂ W hE hC hQ hS c τ hτ x hne
     unfold Formalism.MainNotions.RamifiedCoefficientChains.JumpWinS at this
-    rw [if_pos hc] at this
+    rw [ite_eq_left hc] at this
     simp only [Set.mem_union, Set.mem_Icc] at this
     push_cast at this
     omega
@@ -1321,12 +1269,11 @@ theorem comparison_linear_sum (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) {
   have e : (⟨∑ k, o k • wk k, hmem⟩ : ↥(W.N T)) = ∑ k, o k • (⟨wk k, hw k⟩ : ↥(W.N T)) :=
     Subtype.ext (by simp)
 
-  simp only [Formalism.MainNotions.ArcLiftingSetup.cmpD, dif_pos hmem, dif_pos (hw _), e, map_sum, W.cmp_smul]
+  simp only [Formalism.MainNotions.ArcLiftingSetup.cmpD, dite_eq_left hmem, dite_eq_left (hw _), e, map_sum, W.cmp_smul]
 
 end Formalism.MainNotions.N.Pv.LocalLengthBound
 
 noncomputable section
-open Classical
 
 namespace Formalism.MainNotions.N.Pv.LocalLengthBound
 
@@ -1377,8 +1324,8 @@ theorem h2Bound_of_hypotheses [NeZero n] (W : LocWach PD LL O v n)
     have := Formalism.MainNotions.RamifiedCoefficientChains.S9.parity_succ hn d (c - 1)
     rw [sub_add_cancel, hcD] at this
     exact fun h => this h.symm
-  have hboxH : boxH d b S η (c - 1) = b (c - 1) + S := by unfold boxH; rw [if_neg hcU]
-  have hboxM : boxM d b S η c = b c + S := by unfold boxM; rw [if_pos hcD]
+  have hboxH : boxH d b S η (c - 1) = b (c - 1) + S := by unfold boxH; rw [ite_eq_right hcU]
+  have hboxM : boxM d b S η c = b c + S := by unfold boxM; rw [ite_eq_left hcD]
   have hpu : ¬ IsUnit ((PD.p : ℕ) : O) := by
     intro hu
     have htop : Ideal.span {((PD.p : ℕ) : O)} = ⊤ := Ideal.span_singleton_eq_top.mpr hu
@@ -1465,7 +1412,7 @@ theorem h2Bound_of_hypotheses [NeZero n] (W : LocWach PD LL O v n)
   obtain ⟨⟨Sq, hSq, hqp⟩, -, hpku⟩ := expRing_of W hR hCA' c ζ hζ
   have hPη : (PD.p : LL) ^ σ * coeff η (W.lev c ζ Pc) ≠ 0 := by
     refine mul_ne_zero (pow_ne_zero _ (p_ne_zero_LL W)) ?_
-    rw [hPc, map_mul, map_pow, map_pow, hqp, mul_pow, ← mul_assoc, coeff_mul_X_pow', if_pos le_rfl,
+    rw [hPc, map_mul, map_pow, map_pow, hqp, mul_pow, ← mul_assoc, coeff_mul_X_pow', ite_eq_left le_rfl,
       Nat.sub_self, coeff_zero_eq_constantCoeff, map_mul, map_pow, map_pow]
     exact mul_ne_zero (pow_ne_zero _ (hpku.map constantCoeff).ne_zero)
       (pow_ne_zero _ (hSq.map constantCoeff).ne_zero)

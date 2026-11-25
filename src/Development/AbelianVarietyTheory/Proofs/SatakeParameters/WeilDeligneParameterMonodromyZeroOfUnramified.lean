@@ -104,8 +104,6 @@ theorem inePol_char_of_unr {a c : WD h} (ha : a.unr) (hc : c.lpDim = 1) {σ : G 
 
 end WD
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 theorem inertialType_of_tame :
     ∀ (R : Ranks) (H : Host R) (what₂ : Rows.Data R) (N : NData R H what₂) (A : NAut N)
       (T : RowTie.WDTie N A) (S : SplitRead.Reading T) (i : N.Loc) (w : PlE H)

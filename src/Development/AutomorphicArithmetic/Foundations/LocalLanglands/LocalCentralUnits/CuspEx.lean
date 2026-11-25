@@ -45,79 +45,18 @@ public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Mono0
 public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.GoodMap
 import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.CharZeroAdicCompletion
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsNotCongPow
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivOfRangeEq
 import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasExponentZeroIff
 import ReciprocityTheory.GaloisValuations.GlobalA
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Lemma
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusPowApplySubPowLtOne
-import Mathlib.NumberTheory.NumberField.Basic
-import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NotMemSqOfDerivative
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.GroupTheory.Nilpotent
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Development.DiscreteGroups.GlobalIrreducibility.DzNormV
 import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtA
 import GroundTheory.LocalFields.PadicLogSeries
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.RepresentationTheory.FinGroupCharZero
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.NormEqProd
 import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ParOne
@@ -137,8 +76,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain ValuativeRel Matrix Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.WeilDeligne GlobalTheory.LocGL GlobalTheory.LocLanglands GlobalTheory.GLq
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace UpperTheory.Zero.LLC
 
@@ -613,7 +550,7 @@ theorem UpperTheory.exists_unit_residue_logarithm_of_roots_of_unity :
   have key : ∀ (a : Cˣ) (y : v.valuationSubring), (y : C) = ((a : C) ^ N - 1) / ϖ → abelian₂ a = ρ y := by
     intro a y hy
     have hm : ((a : C) ^ N - 1) / ϖ ∈ v.valuationSubring := hy ▸ y.2
-    simp only [abelian₂, dif_pos hm]
+    simp only [abelian₂, dite_eq_left hm]
     congr 1
     exact Subtype.ext hy.symm
   have hϖm : ϖ ∈ v.valuationSubring := by
@@ -886,8 +823,7 @@ theorem UpperTheory.tameInertiaCharacter_frobenius_conj_eq_pow :
     refine Complex.norm_eq_one_of_pow_eq_one (n := Nat.card K) ?_ Nat.card_pos.ne'
     rw [← Units.val_pow_eq_pow_val, h2, Units.val_one]
   · obtain ⟨t, htw, hne⟩ : ∃ t : Ine (F := E) A, Formalism.MainNotions.BlochKatoReduction.IsWild A (t : G E Ω) ∧ eta f ψ π 0 t ≠ eta f ψ π 1 t := by
-      by_contra hall
-      push_neg at hall
+      by_contra! hall
       have e := (hiff 0 1).1 (eta_eq_of_wild h n f ψ π hcard hord hπ hall)
       have e2 := Int.le_of_dvd (by norm_num) ((dvd_neg).2 e)
       norm_num at e2
@@ -922,8 +858,6 @@ section -- clump:auto
 noncomputable section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial GlobalTheory.WeilDeligne GlobalTheory.LocGL GlobalTheory.LocLanglands GlobalTheory.GLq
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace UpperTheory.Zero.LLC
 
@@ -1185,8 +1119,7 @@ private theorem exists_dual_map {G K Γ V W : Type} [Group G] [TopologicalSpace 
     ∃ ψ : Module.Dual ℂ W →ₗ[ℂ] V, ψ ≠ 0 ∧ ∀ k l, ψ (ρ.dual (q k) l) = π (ι k) (ψ l) := by
   classical
   obtain ⟨w0, v1, hv1⟩ : ∃ w v, B w v ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hB (LinearMap.ext fun w => LinearMap.ext fun v => hc w v)
   have hfix : ∀ (w : W) (x : H) (v : V), B w (π x v) = B w v := fun w x v => by
     obtain ⟨k, hk, hk1⟩ := h2 x x.2
@@ -1345,7 +1278,7 @@ private theorem rad_iff {a b n : ℕ} (hn : a + b = n) (M : Mt g n) :
         have := congrFun (congrFun h3 ⟨i - a, hi'⟩) ⟨j - a, hj'⟩
         have e1 : a + ((i : ℕ) - a) = i := by omega
         have e2 : a + ((j : ℕ) - a) = j := by omega
-        simp only [br, entN, e1, e2, i.2, j.2, and_self, dif_pos, Units.val_one] at this
+        simp only [br, entN, e1, e2, i.2, j.2, and_self, dite_eq_left, Units.val_one] at this
         rw [this, Matrix.one_apply, Matrix.one_apply]
         simp only [Fin.ext_iff]
         congr 1
@@ -1370,7 +1303,7 @@ private theorem rad_iff {a b n : ℕ} (hn : a + b = n) (M : Mt g n) :
         have := h _ _ hc
         simp only at this
         omega
-      simp only [tl, entN, hi, hj, and_self, dif_pos, Units.val_one, hh, Matrix.one_apply, Fin.ext_iff]
+      simp only [tl, entN, hi, hj, and_self, dite_eq_left, Units.val_one, hh, Matrix.one_apply, Fin.ext_iff]
     · ext i j
       have hi : a + (i : ℕ) < n := by omega
       have hj : a + (j : ℕ) < n := by omega
@@ -1379,7 +1312,7 @@ private theorem rad_iff {a b n : ℕ} (hn : a + b = n) (M : Mt g n) :
         have := h _ _ hc
         simp only at this
         omega
-      simp only [br, entN, hi, hj, and_self, dif_pos, Units.val_one, hh, Matrix.one_apply, Fin.ext_iff]
+      simp only [br, entN, hi, hj, and_self, dite_eq_left, Units.val_one, hh, Matrix.one_apply, Fin.ext_iff]
       simp
 
 private theorem rad_inv {a b n : ℕ} (hn : a + b = n) {x : Gn g n}
@@ -1456,8 +1389,6 @@ end UpperTheory.Zero.LLC.ParameterDuality
 
 open NumberField IsDedekindDomain ValuativeRel Matrix Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.WeilDeligne GlobalTheory.LocGL GlobalTheory.LocLanglands GlobalTheory.GLq
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace UpperTheory.Zero.LLC.ParameterDuality
 
@@ -1560,8 +1491,6 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 
 namespace DiscreteGroups.sglob.DzType
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 def LDepth : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) (g : ℕ) [Fact g.Prime]
     (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
@@ -1586,8 +1515,6 @@ noncomputable section
 open NumberField IsDedekindDomain GlobalTheory.GLp GlobalTheory.GLq GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.LocLanglands
 
 namespace DiscreteGroups.sglob.DzType
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 theorem lDepth : LDepth := by
   intro E _ _ w g _ i hi n τ σ hs
@@ -1626,8 +1553,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain ValuativeRel Matrix Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.WeilDeligne GlobalTheory.LocGL GlobalTheory.LocLanglands GlobalTheory.GLq
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace UpperTheory.Zero.LLC
 
@@ -1784,8 +1709,8 @@ theorem cuspEx : CuspEx := by
   haveI : Nonempty (WD h) := ⟨WD.lpZero (h := h)⟩
   choose! J hJ using junkEx E Ω A w h
   let r : IrrGL (k := w.adicCompletion E) → WD h := fun x => if GoodCusp x then r₀ x else (J x.1).lpTw (e x)
-  have rg : ∀ x, GoodCusp x → r x = r₀ x := fun x hx => if_pos hx
-  have rb : ∀ x, ¬ GoodCusp x → r x = (J x.1).lpTw (e x) := fun x hx => if_neg hx
+  have rg : ∀ x, GoodCusp x → r x = r₀ x := fun x hx => ite_eq_left hx
+  have rb : ∀ x, ¬ GoodCusp x → r x = (J x.1).lpTw (e x) := fun x hx => ite_eq_right hx
   have two : ∀ x : IrrGL (k := w.adicCompletion E), x.IsCusp → ¬ GoodCusp x → 2 ≤ x.1 := by
     intro x hx hb
     have h0 := hx.1

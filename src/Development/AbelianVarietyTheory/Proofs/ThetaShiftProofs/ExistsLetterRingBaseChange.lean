@@ -104,7 +104,3 @@ theorem _root_.GlobalTheory.LetterMap.num_algebraMap {Dw : _root_.ReciprocityThe
   exact hinj hex.choose_spec
 
 end GlobalTheory.LetterMap
-
-namespace GlobalTheory
-
-end GlobalTheory

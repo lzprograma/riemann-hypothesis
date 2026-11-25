@@ -33,49 +33,11 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEig
 public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Dens
 public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.MeanZero
 public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.RatGl
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Formalism.LocalToGlobal.IndefiniteReal.PHeisFCA
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.DetAdmA
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilStabilizerVolume.TopoAF
 import GroundTheory.LocalFields.PadicLogSeries
-import Mathlib.MeasureTheory.Order.Group.Lattice
 import Std.Tactic.BVDecide.Normalize.Prop
 import Aesop.Main
 import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.HermitianStandardVector
@@ -99,8 +61,7 @@ namespace UpperTheory.ConvolutionTheory.RankTwoDescent.UnitaryMatrixFamily
 private theorem char_int (r : ℚ) (hr : r ≠ 0) :
     ∫ b in fundamentalSet ℚ, ψ (b * rt r) ∂(adeleMeasure ℚ) = 0 := by
   obtain ⟨x, hx⟩ : ∃ x : A ℚ, adelicChar ℚ x ≠ 1 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact adelicChar_ne_one (K := ℚ) (DFunLike.ext _ _ fun x => by simpa using h x)
   have hx' : ψ x ≠ 1 := fun h => hx (Circle.ext (by simpa [ψ] using h))
   have hper : ∀ (k : ℚ) (y : A ℚ), ψ ((rt k + y) * rt r) = ψ (y * rt r) := by
@@ -126,7 +87,7 @@ private theorem fourier (S T : Set (Fin 4 → ℚ)) (q : (Fin 4 → ℚ) → ℚ
       ∑' ξ : T, c ξ := by
   have hvol : ((adeleMeasure ℚ).restrict (fundamentalSet ℚ)) Set.univ = 1 := by
     rw [Measure.restrict_apply_univ, adeleMeasure_fundamentalSet]
-  haveI : IsProbabilityMeasure ((adeleMeasure ℚ).restrict (fundamentalSet ℚ)) := ⟨hvol⟩
+  have : IsProbabilityMeasure ((adeleMeasure ℚ).restrict (fundamentalSet ℚ)) := ⟨hvol⟩
   set G : S → A ℚ → ℂ := fun ξ b => ψ (b * rt (q ξ - t)) * c ξ with hG
   have hGc : ∀ ξ, Continuous (G ξ) := fun ξ =>
     (Pp.cont_ψ.comp (continuous_id.mul continuous_const)).mul continuous_const
@@ -248,11 +209,11 @@ private theorem coefOf (hV : VolE) :
     have h1 := (hTh E D W M N P ph hph S).comp_continuous hp (fun p => hnux _ _)
     exact (h1.mul (hφc.comp (hxc.comp continuous_snd))).mul
       (Pp.cont_ψ.comp ((continuous_fst.mul continuous_const).neg))
-  haveI : IsFiniteMeasure ((adeleMeasure ℚ).restrict (fundamentalSet ℚ)) :=
+  have : IsFiniteMeasure ((adeleMeasure ℚ).restrict (fundamentalSet ℚ)) :=
     ⟨by rw [Measure.restrict_apply_univ, adeleMeasure_fundamentalSet]; exact ENNReal.one_lt_top⟩
-  haveI : IsFiniteMeasure ((normOneMeasure E).restrict (normOneFundamentalDomain E)) :=
+  have : IsFiniteMeasure ((normOneMeasure E).restrict (normOneFundamentalDomain E)) :=
     ⟨by rw [Measure.restrict_apply_univ]; exact normOneMeasure_normOneFundamentalDomain_lt_top E⟩
-  haveI : IsFiniteMeasure (N.μ.restrict N.D) :=
+  have : IsFiniteMeasure (N.μ.restrict N.D) :=
     ⟨by rw [Measure.restrict_apply_univ]; exact hV E N⟩
   have step : ∀ b, fOn W N S ph φ.1 (nU b * g₀) * ψ (-(b * rt t)) =
       ∫ z in normOneFundamentalDomain E, ∫ h in N.D, f b z h ∂N.μ ∂normOneMeasure E := by
@@ -369,10 +330,10 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.fub :
     exact tsum_univ (fun ξ : Fin 4 → ℚ => (W.Om p.1 (W.L (gl p.2.2 * sZ D (p.2.1 : IdeleGroup E)) ph)).1 (rp ξ))
   have hHc : Continuous fun p : G1 ℚ × IdeleGroup.normOneSubgroup E × G1 E => H p.1 p.2.1 p.2.2 :=
     (hfc.comp (continuous_gl.comp continuous_fst)).mul (hTc.mul (hφc.comp hx))
-  haveI : IsFiniteMeasure (M.μ.restrict M.D) := ⟨by simpa using UpperTheory.ConvolutionTheory.R2.Ff.vol ℚ M⟩
-  haveI : IsFiniteMeasure ((normOneMeasure E).restrict (normOneFundamentalDomain E)) :=
+  have : IsFiniteMeasure (M.μ.restrict M.D) := ⟨by simpa using UpperTheory.ConvolutionTheory.R2.Ff.vol ℚ M⟩
+  have : IsFiniteMeasure ((normOneMeasure E).restrict (normOneFundamentalDomain E)) :=
     ⟨by simpa using normOneMeasure_normOneFundamentalDomain_lt_top E⟩
-  haveI : IsFiniteMeasure (N.μ.restrict N.D) := ⟨by simpa using UpperTheory.ConvolutionTheory.RankTwoDescent.volE E N⟩
+  have : IsFiniteMeasure (N.μ.restrict N.D) := ⟨by simpa using UpperTheory.ConvolutionTheory.RankTwoDescent.volE E N⟩
   have hae : ∀ᵐ p ∂((M.μ.restrict M.D).prod (((normOneMeasure E).restrict (normOneFundamentalDomain E)).prod
       (N.μ.restrict N.D))), p.2.1 ∈ normOneFundamentalDomain E := by
     have h1 : ∀ᵐ u ∂((normOneMeasure E).restrict (normOneFundamentalDomain E)), u ∈ normOneFundamentalDomain E :=
@@ -434,7 +395,7 @@ private theorem td_adic {F : Type} [Field F] [NumberField F] (v : HeightOneSpect
 
 private theorem td_fin (F : Type) [Field F] [NumberField F] :
     TotallyDisconnectedSpace (FiniteAdeleRing (𝓞 F) F) := by
-  haveI : ∀ v : HeightOneSpectrum (𝓞 F), TotallyDisconnectedSpace (v.adicCompletion F) :=
+  have : ∀ v : HeightOneSpectrum (𝓞 F), TotallyDisconnectedSpace (v.adicCompletion F) :=
     fun v => td_adic v
   refine ⟨isTotallyDisconnected_of_image (f := fun (x : FiniteAdeleRing (𝓞 F) F) v => x v)
     (continuous_pi fun v => RestrictedProduct.continuous_eval v).continuousOn
@@ -444,7 +405,7 @@ private theorem td_fin (F : Type) [Field F] [NumberField F] :
 private theorem basis_fin (F : Type) [Field F] [NumberField F] :
     TopologicalSpace.IsTopologicalBasis
       {T : Set (Fin 4 → FiniteAdeleRing (𝓞 F) F) | IsCompact T ∧ IsOpen T} := by
-  haveI := td_fin F
+  have := td_fin F
   have hb : TopologicalSpace.IsTopologicalBasis
       {s : Set (Fin 4 → FiniteAdeleRing (𝓞 F) F) | IsClopen s} :=
     loc_compact_Haus_tot_disc_of_zero_dim
@@ -706,7 +667,7 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.momKill :
             C * ((1 + ‖infPartPi (p y)‖) ^ n)⁻¹ := by
           rw [le_mul_inv_iff₀ hpos]
           exact h1
-        simp only [norm_mul, Complex.norm_real, wt, hy, if_true, Set.indicator_of_mem, Pi.one_apply,
+        simp only [norm_mul, Complex.norm_real, wt, hy, ite_true, Set.indicator_of_mem, Pi.one_apply,
           one_mul, Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
         rw [abs_of_pos (inv_pos.2 hpos), ← mul_assoc, ← mul_assoc]
         exact mul_le_mul_of_nonneg_right h2 (norm_nonneg _)
@@ -794,9 +755,9 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.orbFn :
     OrbS → OrbFn := by
   intro hS E _ _ _ D M j hj c hc hcs
   have hstab := (hS E D).2.1
-  haveI : PolishSpace (G1 E) := GroundTheory.Automorphic.polishSpace_of_locallyCompact
-  haveI := M.haar
-  haveI := M.right
+  have : PolishSpace (G1 E) := GroundTheory.Automorphic.polishSpace_of_locallyCompact
+  have := M.haar
+  have := M.right
   have hval : ∀ g : G1 ℚ, (j g).1 = g.1.map (AdeleBaseChange.adeleMap ℚ E) := fun g => by
     have := congrArg Units.val (hj g)
     simpa [em] using this
@@ -1043,7 +1004,7 @@ private theorem core (hMaj : Maj) (hTh : ThCont) (hMean : MeanZero) (hR1 : Rank1
   have hcφ : Continuous φ.1 := GlobalTheory.T.automorphicForm_GL_continuous E 2 φ (P.cusp φ hφ).1
   have hcg : Continuous fun h : G1 E => gl h := by fun_prop
   have hcx : Continuous fun h : G1 E => gl h * y := hcg.mul continuous_const
-  haveI : IsFiniteMeasure (N.μ.restrict N.D) := ⟨by simpa using hV⟩
+  have : IsFiniteMeasure (N.μ.restrict N.D) := ⟨by simpa using hV⟩
   have hint : ∀ S : Set (Fin 4 → ℚ), IntegrableOn
       (fun h : G1 E => ThOn S (W.Om g (W.L (gl h * y) ph)).1 * φ.1 (gl h * y)) N.D N.μ := by
     intro S
@@ -1306,7 +1267,7 @@ private theorem om_norm {E : Type} [Field E] [NumberField E] [_root_.NumberField
 private theorem qr_rho {E : Type} [Field E] [NumberField E] (D : Dat ℚ E) (g : G1 E) (ξ ξ' : Fin 4 → ℚ)
     (h : D.act (gl g) (rp ξ) = rp ξ') : qr D.δ ξ' = qr D.δ ξ := by
   have hq : ∀ ζ : Fin 4 → ℚ, q4 D.δ (rp ζ) = rt (qr D.δ ζ) := fun ζ => by simp [q4, qr]
-  haveI : Nontrivial (A ℚ) :=
+  have : Nontrivial (A ℚ) :=
     RingHom.domain_nontrivial (RingHom.fst (InfiniteAdeleRing ℚ) (FiniteAdeleRing (𝓞 ℚ) ℚ))
   have := D.quadForm_act (gl g) (rp ξ)
   rw [h, nu_gl, hq, hq, Units.val_one, one_mul] at this

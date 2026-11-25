@@ -40,7 +40,7 @@ theorem sum_split (f : Fin (2 * (1 + r') + k + 1) → ℂ) :
 
 @[simp] theorem lift_last (v : Fin (2 * r' + k + 1) → ℂ) : liftVec k 1 r' v ⟨2 * (1 + r') + k, by omega⟩ = 0 := by
   simp only [liftVec]
-  rw [dif_neg]
+  rw [dite_eq_right]
   omega
 
 theorem goodRowsProjector_apply_eq_sum (p : Fin (2 * (1 + r') + k + 1)) : e0 k r' p = if p.val = 0 then 1 else 0 := by
@@ -67,13 +67,13 @@ theorem dot_lift_lift (u v : Fin (2 * r' + k + 1) → ℂ) :
   simp
 
 private theorem e0_mp_eq_zero (j : Fin (2 * r' + k + 1)) : e0 k r' (mp k r' j) = 0 := by
-  rw [goodRowsProjector_apply_eq_sum, if_neg]
+  rw [goodRowsProjector_apply_eq_sum, ite_eq_right]
   simp only [mp]
   omega
 
 private theorem es0_mp_eq_zero (j : Fin (2 * r' + k + 1)) : es0 k r' (mp k r' j) = 0 := by
   have hj := j.isLt
-  rw [last_basis_apply, if_neg]
+  rw [last_basis_apply, ite_eq_right]
   simp only [mp]
   omega
 
@@ -93,7 +93,7 @@ theorem mulVec_first_basis (M : Mat k (1 + r')) : M *ᵥ e0 k r' = fun i => M i 
   rw [Finset.sum_eq_single 0]
   · simp
   · intro b _ hb
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hb (Fin.ext (by simp [h]))
   · intro h
@@ -105,7 +105,7 @@ theorem mulVec_last_basis (M : Mat k (1 + r')) : M *ᵥ es0 k r' = fun i => M i 
   rw [Finset.sum_eq_single (⟨2 * (1 + r') + k, by omega⟩ : Fin (2 * (1 + r') + k + 1))]
   · simp
   · intro b _ hb
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hb (Fin.ext h)
   · intro h
@@ -143,8 +143,8 @@ theorem lev_lift (g : Mat k r') (v : Fin (2 * r' + k + 1) → ℂ) :
   simp only [lift_zero_pos, lift_last, lift_mp, lev_mid, mul_zero, add_zero, zero_add]
   simp only [liftVec]
   by_cases hp : 1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1
-  · simp only [dif_pos hp, mulVec, dotProduct]
-  · simp only [dif_neg hp, zero_mul, Finset.sum_const_zero]
+  · simp only [dite_eq_left hp, mulVec, dotProduct]
+  · simp only [dite_eq_right hp, zero_mul, Finset.sum_const_zero]
 
 theorem rankOneMatrix_middle_coord (c : ℂ) (p : Fin (2 * (1 + r') + k + 1)) (j : Fin (2 * r' + k + 1)) :
     w0 k r' c p (mp k r' j) = if p.val = j.val + 1 then 1 else 0 := by
@@ -178,12 +178,12 @@ theorem rankOneMatrix_lift (c : ℂ) (v : Fin (2 * r' + k + 1) → ℂ) : w0 k r
     zero_mul]
   simp only [liftVec]
   by_cases hp : 1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1
-  · rw [dif_pos hp, Finset.sum_eq_single (⟨p.val - 1, by omega⟩ : Fin (2 * r' + k + 1))]
-    · rw [if_pos]
+  · rw [dite_eq_left hp, Finset.sum_eq_single (⟨p.val - 1, by omega⟩ : Fin (2 * r' + k + 1))]
+    · rw [ite_eq_left]
       dsimp only
       omega
     · intro b _ hb
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       apply hb
       ext
@@ -191,11 +191,11 @@ theorem rankOneMatrix_lift (c : ℂ) (v : Fin (2 * r' + k + 1) → ℂ) : w0 k r
       omega
     · intro h
       exact absurd (Finset.mem_univ _) h
-  · rw [dif_neg hp]
+  · rw [dite_eq_right hp]
     apply Finset.sum_eq_zero
     intro j _
     have hj := j.isLt
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     apply hp
     omega
@@ -233,8 +233,8 @@ theorem Hpk_lift (v : Fin (2 * r' + k + 1) → ℂ) :
   simp only [lift_zero_pos, lift_last, lift_mp, Hpk_one_add_apply_mp_eq_dite, mul_zero, add_zero, zero_add]
   simp only [liftVec]
   by_cases hp : 1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1
-  · simp only [dif_pos hp, mulVec, dotProduct]
-  · simp only [dif_neg hp, zero_mul, Finset.sum_const_zero]
+  · simp only [dite_eq_left hp, mulVec, dotProduct]
+  · simp only [dite_eq_right hp, zero_mul, Finset.sum_const_zero]
 
 theorem lift_bvec (j : Fin (2 * r' + k + 1)) : liftVec k 1 r' (bvec j) = bvec (mp k r' j) := by
   funext p
@@ -257,7 +257,7 @@ theorem phiV_sc (a : Fin (r' + 1)) : phiV k (1 + r') (sc r' a) = liftVec k 1 r' 
   · have h' : (sc r' a).val < 1 + r' := by
       simp only [sc]
       omega
-    rw [phiV, dif_pos h', phiV, dif_pos h, lift_bvec]
+    rw [phiV, dite_eq_left h', phiV, dite_eq_left h, lift_bvec]
     congr 1
     ext
     simp only [esI, sc, mp]
@@ -265,7 +265,7 @@ theorem phiV_sc (a : Fin (r' + 1)) : phiV k (1 + r') (sc r' a) = liftVec k 1 r' 
   · have h' : ¬ (sc r' a).val < 1 + r' := by
       simp only [sc]
       omega
-    rw [phiV, dif_neg h', phiV, dif_neg h]
+    rw [phiV, dite_eq_right h', phiV, dite_eq_right h]
     simp only [epsV]
     have hlin : ∀ (c : ℂ) (x y : Fin (2 * r' + k + 1) → ℂ),
         liftVec k 1 r' (c • (x + y)) = c • (liftVec k 1 r' x + liftVec k 1 r' y) := by

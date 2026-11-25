@@ -52,8 +52,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.T
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory
@@ -61,8 +59,6 @@ open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding epsScale
 open GlobalTheory.GrpTangent
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.Serre
 
@@ -520,27 +516,9 @@ theorem lieMult (t : Sp k ⟶ S) (τ : 𝓞 E →+* k) {n : ℕ}
 
 end Module
 
-section Ideal
-
-variable {I : FractionalIdeal (nonZeroDivisors (𝓞 E)) E}
-
-variable {G₁ H₁ : Over (Sp k)} [GrpObj G₁] [GrpObj H₁] [IsCommMonObj G₁] [IsCommMonObj H₁]
-  {a₁ : OAct (𝓞 K) G₁} {b₁ : OAct (𝓞 K) H₁}
-
-end Ideal
-
 end IsTensor
 
 end Mult
-
-def Lie.splitTorusEquiv {R O X : Type} [CommRing R] [CommRing O] [AddCommGroup X]
-    (a : OAct O (ReciprocityTheory.ChartRestriction.G.Semi.splitTorus (Sp R) X)) : (X →+ R) ≃ₗ[R] Lie a :=
-  LinearEquiv.ofBijective
-    ({ toFun c := Lie.mk a (Diag.lieVec c) (Diag.isTangent_lieVec c)
-       map_add' c d := Lie.ext (Diag.lieVec_add c d)
-       map_smul' r c := Lie.ext (Diag.lieVec_smul r c) } : (X →+ R) →ₗ[R] Lie a)
-    ⟨fun _ _ e ↦ Diag.lieVec_injective (congrArg Lie.hom e), fun v ↦
-      ((Diag.isTangent_iff_exists _).mp v.isTangent).imp fun _ e ↦ Lie.ext e⟩
 
 
 end GlobalTheory.Serre

@@ -21,25 +21,6 @@ variable {K F V : Type} [Field K] [NumberField K] [StarRing K] [Field F] [Number
   [Algebra F K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V]
   [IsScalarTower (𝓞 K) K V]
 
-private lemma mem_locF_lemma (𝔭 : Ideal (𝓞 F)) (L : Submodule (𝓞 K) V) (x : V) :
-    x ∈ locF 𝔭 L ↔ ∃ s ∈ Submonoid.closure
-      {s : 𝓞 K | ∃ t : 𝓞 F, t ∉ 𝔭 ∧ algebraMap (𝓞 F) (𝓞 K) t = s}, s • x ∈ L := Iff.rfl
-
-private lemma locF_inf_restrictScalars (X : Submodule K V) (Λ : Submodule (𝓞 K) V) {𝔭 : Ideal (𝓞 F)}
-    (hp : 𝔭.IsPrime) :
-    locF 𝔭 (Λ ⊓ X.restrictScalars (𝓞 K)) = locF 𝔭 Λ ⊓ X.restrictScalars (𝓞 K) := by
-  apply le_antisymm
-  · intro x hx
-    obtain ⟨s, hs, hsx⟩ := (mem_locF_lemma 𝔭 _ x).mp hx
-    refine Submodule.mem_inf.mpr ⟨(mem_locF_lemma 𝔭 _ x).mpr ⟨s, hs, hsx.1⟩, ?_⟩
-    rw [← Formalism.L2.SG.Pf.G7.locF_subspace X hp]
-    exact (mem_locF_lemma 𝔭 _ x).mpr ⟨s, hs, hsx.2⟩
-  · intro x hx
-    obtain ⟨hx1, hx2⟩ := Submodule.mem_inf.mp hx
-    obtain ⟨s, hs, hsx⟩ := (mem_locF_lemma 𝔭 _ x).mp hx1
-    exact (mem_locF_lemma 𝔭 _ x).mpr
-      ⟨s, hs, Submodule.mem_inf.mpr ⟨hsx, (X.restrictScalars (𝓞 K)).smul_mem s hx2⟩⟩
-
 theorem locF_mem_fibS (hF : IsFixF K F) {h : V →ₗ⋆[K] V →ₗ[K] K} {U : Submodule K V}
     {M T Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsLattice K Λ) (hu : Formalism.HermitianLatticesTheory.IsUnimodular h Λ)
     (hM : Λ ⊓ U.restrictScalars (𝓞 K) = M) (hT : Λ ⊓ (orthK h U).restrictScalars (𝓞 K) = T)
@@ -48,8 +29,8 @@ theorem locF_mem_fibS (hF : IsFixF K F) {h : V →ₗ⋆[K] V →ₗ[K] K} {U : 
   simp only [fibS, Set.mem_setOf_eq]
   refine ⟨⟨Λ, hΛ, rfl⟩, ?_, ?_, ?_⟩
   · rw [← Formalism.L2.SG.Pf.G7.locF_dual hF h hΛ.fg h𝔭.isPrime, hu']
-  · rw [← hM, locF_inf_restrictScalars U Λ h𝔭.isPrime]
-  · rw [← hT, locF_inf_restrictScalars (orthK h U) Λ h𝔭.isPrime]
+  · rw [← hM, LIOrb.locF_inf_locF h𝔭, G7.locF_subspace U h𝔭.isPrime]
+  · rw [← hT, LIOrb.locF_inf_locF h𝔭, G7.locF_subspace (orthK h U) h𝔭.isPrime]
 
 theorem fibS_eq_singleton (hF : IsFixF K F) {h : V →ₗ⋆[K] V →ₗ[K] K} {U : Submodule K V}
     (hUc : IsCompl U (orthK h U)) {M T Λ₀ : Submodule (𝓞 K) V} (hM : IsLatIn U M)
@@ -70,23 +51,10 @@ theorem fibS_eq_singleton (hF : IsFixF K F) {h : V →ₗ⋆[K] V →ₗ[K] K} {
   constructor
   · rintro ⟨⟨Λ₁, hΛ₁, rfl⟩, hd, hcU, hcW⟩
     have hle : locF 𝔭 (M ⊔ T) ≤ locF 𝔭 Λ₁ := by
-      intro x hx
-      obtain ⟨s, hs, hsx⟩ := (mem_locF_lemma 𝔭 _ x).mp hx
-      obtain ⟨m, hm, t, ht, hmt⟩ := Submodule.mem_sup.mp hsx
-      have hm' : m ∈ locF 𝔭 Λ₁ := by
-        have hm1 : m ∈ locF 𝔭 M :=
-          (mem_locF_lemma 𝔭 _ m).mpr ⟨1, Submonoid.one_mem _, by rwa [one_smul]⟩
-        rw [← hcU] at hm1
-        exact (Submodule.mem_inf.mp hm1).1
-      have ht' : t ∈ locF 𝔭 Λ₁ := by
-        have ht1 : t ∈ locF 𝔭 T :=
-          (mem_locF_lemma 𝔭 _ t).mpr ⟨1, Submonoid.one_mem _, by rwa [one_smul]⟩
-        rw [← hcW] at ht1
-        exact (Submodule.mem_inf.mp ht1).1
-      have hsx' : s • x ∈ locF 𝔭 Λ₁ := by rw [← hmt]; exact add_mem hm' ht'
-      obtain ⟨s', hs', h'⟩ := (mem_locF_lemma 𝔭 _ _).mp hsx'
-      exact (mem_locF_lemma 𝔭 _ x).mpr
-        ⟨s' * s, Submonoid.mul_mem _ hs' hs, by rw [mul_smul]; exact h'⟩
+      have hMT : M ⊔ T ≤ locF 𝔭 Λ₁ :=
+        sup_le ((LocF.le_locF 𝔭 M).trans (hcU ▸ inf_le_left))
+          ((LocF.le_locF 𝔭 T).trans (hcW ▸ inf_le_left))
+      exact (LocF.locF_mono 𝔭 hMT).trans (LocF.locF_idem 𝔭 Λ₁).le
     refine le_antisymm ?_ hle
     calc locF 𝔭 Λ₁ = dualF h 𝔭 (locF 𝔭 Λ₁) := hd.symm
       _ ≤ dualF h 𝔭 (locF 𝔭 (M ⊔ T)) := dualF_anti h 𝔭 hle
@@ -133,7 +101,7 @@ theorem card_glue (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsF
     obtain ⟨Λ, ⟨hΛ, hin, hout⟩, -⟩ := exists_unique_patch hK hF hN s
       (fun 𝔭 => if hp : 𝔭 ∈ s then (τ ⟨𝔭, hp⟩).1 else ⊥) (by
         intro 𝔭 hp
-        simp only [dif_pos hp]
+        simp only [dite_eq_left hp]
         obtain ⟨⟨A, hA, e⟩, -, hU, hW⟩ := (τ ⟨𝔭, hp⟩).2
         refine ⟨by rw [← e, LocF.locF_idem], A, { toIsLattice := hA, span_eq_top := ?_ }, e⟩
         have hle : locF 𝔭.1 A ≤ (Submodule.span K (A : Set V)).restrictScalars (𝓞 K) := by
@@ -148,7 +116,7 @@ theorem card_glue (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsF
     have hfib : ∀ 𝔭 : {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}, locF 𝔭.1 Λ ∈ fibS h U 𝔭.1 M T := by
       intro 𝔭
       by_cases hp : 𝔭 ∈ s
-      · rw [hin 𝔭 hp, dif_pos hp]
+      · rw [hin 𝔭 hp, dite_eq_left hp]
         exact (τ ⟨𝔭, hp⟩).2
       · rw [hout 𝔭 hp, hsing 𝔭 hp]
         exact Set.mem_singleton _
@@ -168,6 +136,6 @@ theorem card_glue (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsF
     funext 𝔭
     apply Subtype.ext
     show locF 𝔭.1.1 Λ = (τ 𝔭).1
-    rw [hin 𝔭.1 𝔭.2, dif_pos 𝔭.2]
+    rw [hin 𝔭.1 𝔭.2, dite_eq_left 𝔭.2]
 
 end Formalism.L2.SG.Pf.G8

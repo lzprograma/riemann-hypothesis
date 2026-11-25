@@ -56,6 +56,7 @@ theorem exists_dpow_frobenius_eq_p_mul {x : AInf K p} (hx : x ∈ RingHom.ker θ
 theorem exists_phiAway_eq {y : 𝔸} (hy : y ∈ ACrisZero K p) :
     ∃ w : AInf K p, ∃ z ∈ ACrisZero K p,
       phiAway K p y = algebraMap (AInf K p) 𝔸 w + (p : 𝔸) * z := by
+  rw [acrisZero_eq_adjoin_dpow] at hy
   induction hy using Algebra.adjoin_induction with
   | mem y hy =>
     obtain ⟨n, x, hx, rfl⟩ := hy
@@ -81,37 +82,10 @@ theorem exists_phiAway_eq {y : 𝔸} (hy : y ∈ ACrisZero K p) :
 
 variable [CharZero K]
 
-omit [CharZero K] in
-theorem of_eq_algebraMap (t : ACrisZero K p) :
-    _root_.AdicCompletion.of (Ideal.span {(p : ACrisZero K p)}) (ACrisZero K p) t =
-      algebraMap (ACrisZero K p) (ACris K p) t :=
-  rfl
-
-
-
-theorem exists_eq_add_p_pow_mul (k : ℕ) (y : ACris K p) :
-    ∃ yk : ACrisZero K p, ∃ z : ACris K p,
-      y = algebraMap (ACrisZero K p) (ACris K p) yk + (p : ACris K p) ^ k * z := by
-  obtain ⟨yk, hyk⟩ := Ideal.Quotient.mk_surjective
-    (_root_.AdicCompletion.evalₐ (Ideal.span {(p : ACrisZero K p)}) k y)
-  have hker : y - _root_.AdicCompletion.of _ _ yk ∈ Ideal.span {(p : ACris K p)} ^ k := by
-    rw [← span_p_pow_map, ← ker_adicCompletion_evalₐ (Submodule.fg_span_singleton _),
-      RingHom.mem_ker]
-    simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, RingHom.map_sub]
-    rw [← hyk]
-    exact sub_eq_zero.2 (_root_.AdicCompletion.evalₐ_of _ k yk).symm
-  rw [Ideal.span_singleton_pow, Ideal.mem_span_singleton'] at hker
-  obtain ⟨z, hz⟩ := hker
-  refine ⟨yk, z, ?_⟩
-  rw [← of_eq_algebraMap, mul_comm (_ ^ k) z, hz]
-  exact (add_sub_cancel _ _).symm
-
-
-
 theorem exists_phi_eq (y : ACris K p) :
     ∃ w : AInf K p, ∃ z : ACris K p,
       phi (K := K) (p := p) y = algebraMap (AInf K p) (ACris K p) w + (p : ACris K p) * z := by
-  obtain ⟨y₀, z₁, rfl⟩ := exists_eq_add_p_pow_mul 1 y
+  obtain ⟨y₀, z₁, rfl⟩ := Reformulated.AutPerF.Acris.exists_eq_add 1 y
   obtain ⟨w, z, hz, e⟩ := exists_phiAway_eq y₀.2
   refine ⟨w, algebraMap (ACrisZero K p) (ACris K p) ⟨z, hz⟩ + phi (K := K) (p := p) z₁, ?_⟩
   have e' : phiZero (K := K) (p := p) y₀ = algebraMap (AInf K p) (ACrisZero K p) w +
@@ -121,7 +95,7 @@ theorem exists_phi_eq (y : ACris K p) :
       algebraMap (ACrisZero K p) (ACris K p) (phiZero (K := K) (p := p) y₀) := phi_of y₀
   have hw : algebraMap (AInf K p) (ACris K p) w =
       algebraMap (ACrisZero K p) (ACris K p) (algebraMap (AInf K p) (ACrisZero K p) w) :=
-    AdicCompletion.algebraMap_apply _ w
+    IsScalarTower.algebraMap_apply (AInf K p) (ACrisZero K p) (ACris K p) w
   rw [RingHom.map_add, map_mul, pow_one, map_natCast, hof, e', RingHom.map_add, map_mul,
     map_natCast, hw, mul_add]
   ring
@@ -166,11 +140,13 @@ theorem exists_thetaField_iota_eq (y : ACris K p) :
   let ι' : ACris K p →+* B := iota K p
   have hι : ∀ y, _root_.AdicCompletion.evalₐ (kerAway K p) 1 (ι' y) = iotaQ K p 1 y :=
     fun y => evalₐ_iota 1 y
-  let b : B := ι' y - ι' (_root_.AdicCompletion.of _ _ ⟨a, ha⟩)
+  let ac : ACris K p := algebraMap (ACrisZero K p) (ACris K p) ⟨a, ha⟩
+  have hqa : iotaQ K p 1 ac = Ideal.Quotient.mk (kerAway K p ^ 1) a := iotaQ_of 1 ⟨a, ha⟩
+  have hiota : ι' ac = toBDeRhamPlus (normInteger K) p a := iota_of ⟨a, ha⟩
+  let b : B := ι' y - ι' ac
   have h1 : _root_.AdicCompletion.evalₐ (kerAway K p) 1 b = 0 := by
-    change _root_.AdicCompletion.evalₐ (kerAway K p) 1
-      (ι' y - ι' (_root_.AdicCompletion.of _ _ ⟨a, ha⟩)) = 0
-    rw [map_sub, hι, hι, iotaQ_of, sub_eq_zero]
+    change _root_.AdicCompletion.evalₐ (kerAway K p) 1 (ι' y - ι' ac) = 0
+    rw [map_sub, hι, hι, hqa, sub_eq_zero]
     exact hae.symm
   have h2 : b ∈ (kerAway K p ^ 1).map (algebraMap 𝔸 B) := by
     rw [← ker_adicCompletion_evalₐ (fg_ker_fontaineThetaInvertP ker_eq_span_xiGen) 1,
@@ -185,9 +161,9 @@ theorem exists_thetaField_iota_eq (y : ACris K p) :
   have h0 : G b = 0 := RingHom.mem_ker.1 (hle h2)
   have h3 : G b = IsPerfectoidField.thetaBDeRhamPlusField p (iota K p y) -
       thetaAway K p a := by
-    change IsPerfectoidField.thetaBDeRhamPlusField p
-      (iota K p y - iota K p (_root_.AdicCompletion.of _ _ ⟨a, ha⟩)) = _
-    rw [map_sub, iota_of, thetaField_toBDeRhamPlus]
+    change G (ι' y - ι' ac) = _
+    rw [map_sub, hiota]
+    exact congrArg (fun z => G (ι' y) - z) (thetaField_toBDeRhamPlus a)
   rw [h3, sub_eq_zero] at h0
   exact h0
 
@@ -200,12 +176,13 @@ theorem thetaField_iota (y : ACris K p) :
         rw [RingHom.comp_apply, ha]
         exact acrisZero_le_thetaIntegral a.2
   have hF : F = theta K p := ringHom_ext fun a => Subtype.ext (by
-    change IsPerfectoidField.thetaBDeRhamPlusField p (iota K p (_root_.AdicCompletion.of _ _ a)) = _
-    rw [iota_of, thetaField_toBDeRhamPlus, theta_of, coe_thetaZero])
+    change IsPerfectoidField.thetaBDeRhamPlusField p
+      (iota K p (algebraMap (ACrisZero K p) (ACris K p) a)) = _
+    rw [iota_of, thetaField_toBDeRhamPlus]
+    exact (congrArg Subtype.val (theta_of a)).symm)
   exact congrArg Subtype.val (RingHom.congr_fun hF y)
 
 
-set_option maxHeartbeats 1600000 in
 theorem exists_theta_eq_sum_of_phi_iterate {y : ACris K p} {N : ℕ} (hN : 1 ≤ N)
     (hy : (phi (K := K) (p := p))^[N] y = y) {m : ℕ} (hm : 1 ≤ m) :
     ∃ c : ℕ → normInteger K, ∀ j : ℕ, ∃ e : normInteger K,

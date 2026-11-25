@@ -18,8 +18,6 @@ variable {k r : ℕ}
 
 section Blocks
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem hform_crdA (A : UnitaryGroupInstance D) (v w : (VS D).V) :

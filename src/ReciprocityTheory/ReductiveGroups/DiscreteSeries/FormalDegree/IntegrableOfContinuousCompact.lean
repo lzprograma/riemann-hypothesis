@@ -47,10 +47,10 @@ theorem leading_minor_exp_re_pos {ε : Fin n → Bool} (y : PCoord ε → ℂ) {
 
 theorem continuous_leading_minor (i : ℕ) : Continuous (fun A : Matrix (Fin n) (Fin n) ℂ => Del A i) := by
   by_cases h : i ≤ n
-  · simp only [Del, dif_pos h]
+  · simp only [Del, dite_eq_left h]
     first
     | exact (continuous_id.matrix_submatrix _ _).matrix_det
-  · simp only [Del, dif_neg h]
+  · simp only [Del, dite_eq_right h]
     exact continuous_const
 
 section
@@ -94,36 +94,15 @@ theorem continuous_potential_conj {ε : Fin n → Bool} (lam : Fin n → ℝ) (z
   refine continuous_potential_comp lam ?_ (fun k => ⟨adK k⁻¹ z, conj_pmat_eq_adK k z⟩)
   exact (((continuous_toMK_formal_degree ε).comp continuous_inv).mul continuous_const).mul (continuous_toMK_formal_degree ε)
 
-private theorem continuous_pmat {ε : Fin n → Bool} : Continuous (fun y : PCoord ε → ℂ => pmat y) := by
-  refine continuous_pi fun a => continuous_pi fun b => ?_
-  by_cases h1 : b < a ∧ ε a ≠ ε b
-  · simp only [pmat, dif_pos h1]
-    exact continuous_apply _
-  · by_cases h2 : a < b ∧ ε b ≠ ε a
-    · simp only [pmat, dif_neg h1, dif_pos h2]
-      exact (continuous_apply _).star
-    · simp only [pmat, dif_neg h1, dif_neg h2]
-      exact continuous_const
-
 theorem continuous_potential_conj_prod {ε : Fin n → Bool} (lam : Fin n → ℝ) :
     Continuous (fun p : (PCoord ε → ℂ) × KG ε => Ph lam (toMK p.2⁻¹ * pmat p.1 * toMK p.2)) := by
   refine continuous_potential_comp lam ?_ (fun p => ⟨adK p.2⁻¹ p.1, conj_pmat_eq_adK p.2 p.1⟩)
-  exact (((continuous_toMK_formal_degree ε).comp continuous_snd.inv).mul (continuous_pmat.comp continuous_fst)).mul
-    ((continuous_toMK_formal_degree ε).comp continuous_snd)
+  exact (((continuous_toMK_formal_degree ε).comp continuous_snd.inv).mul
+    ((pmat_continuous ε).comp continuous_fst)).mul ((continuous_toMK_formal_degree ε).comp continuous_snd)
 
 theorem continuous_potential_pmat {ε : Fin n → Bool} (lam : Fin n → ℝ) :
-    Continuous (fun y : PCoord ε → ℂ => Ph lam (pmat y)) := by
-  have hpm : Continuous (fun y : PCoord ε → ℂ => pmat y) := by
-    refine continuous_pi fun a => continuous_pi fun b => ?_
-    by_cases h1 : b < a ∧ ε a ≠ ε b
-    · simp only [pmat, dif_pos h1]
-      exact continuous_apply _
-    · by_cases h2 : a < b ∧ ε b ≠ ε a
-      · simp only [pmat, dif_neg h1, dif_pos h2]
-        exact (continuous_apply _).star
-      · simp only [pmat, dif_neg h1, dif_neg h2]
-        exact continuous_const
-  exact continuous_potential_comp lam hpm (fun y => ⟨y, rfl⟩)
+    Continuous (fun y : PCoord ε → ℂ => Ph lam (pmat y)) :=
+  continuous_potential_comp lam (pmat_continuous ε) (fun y => ⟨y, rfl⟩)
 
 theorem continuous_exp_neg_potential_conj {ε : Fin n → Bool} (lam : Fin n → ℝ) (z : PCoord ε → ℂ) :
     Continuous (fun k : KG ε => Real.exp (-Ph lam (toMK k⁻¹ * pmat z * toMK k))) := by

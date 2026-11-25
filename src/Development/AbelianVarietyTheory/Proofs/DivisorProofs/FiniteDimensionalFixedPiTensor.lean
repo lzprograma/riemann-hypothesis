@@ -165,29 +165,11 @@ open scoped TensorProduct
 
 noncomputable section
 
-namespace GlobalTheory.ContraProd
-
-section General
-
-variable {G V W : Type} [Group G] [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
-
-end General
-
-end GlobalTheory.ContraProd
-
 noncomputable section
 
 namespace GlobalTheory.ContraProd
 
 section Fixed
-
-theorem finiteDimensional_fixed_piTensor {α : Type} [Finite α] {Γ X : α → Type} [∀ a, Group (Γ a)]
-    [∀ a, TopologicalSpace (Γ a)] [∀ a, IsTopologicalGroup (Γ a)] [∀ a, AddCommGroup (X a)]
-    [∀ a, Module ℂ (X a)] (ρ : ∀ a, Representation ℂ (Γ a) (X a)) (hρ : ∀ a, IsSmooth (ρ a))
-    (K : ∀ a, Subgroup (Γ a)) (hK : ∀ a, IsCompact (K a : Set (Γ a)))
-    (hf : ∀ a, FiniteDimensional ℂ (fixed (ρ a) (K a))) :
-    FiniteDimensional ℂ (fixed (piTensor ρ) (Subgroup.pi Set.univ K)) :=
-  _root_.GlobalTheory.PiTensorFixed.finiteDimensional_fixed_piTensor ρ hρ K hK hf
 
 end Fixed
 

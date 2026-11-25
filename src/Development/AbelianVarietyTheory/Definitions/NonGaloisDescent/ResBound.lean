@@ -5,43 +5,6 @@ public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.OnePlu
 public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.InvariantsVanishing
 public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.AdmissibleCharacterHyp
 public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.AdmissibleCharUnramified
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.BasicDefinitions.ExistsUnique
 
 @[expose] public section
@@ -120,7 +83,8 @@ def CoefAdm {M : Type} [AddCommGroup M] [Module S.O M] (W : Representation S.O S
 
 def StdAdm : Prop := S.CoefAdm S.Γ.W₀ ∧ ∀ c : ℕ, 1 ≤ c → c ≤ S.D.t → S.CoefAdm (S.Γ.Wchi c)
 
-def Lem0 {M : Type} [AddCommGroup M] [Module S.O M] (W : Representation S.O S.G M) : Prop :=
+set_option synthInstance.maxHeartbeats 400000 in
+def Lem0{M : Type} [AddCommGroup M] [Module S.O M] (W : Representation S.O S.G M) : Prop :=
   ∀ (X : Type) [AddCommGroup X] [Module S.O X] [Finite X],
     (∃ A : Submodule S.O (H1 (twCoef W S.Γ.χ₁ X) ⊤), S.cls W X = A) ∧
     (∀ (a : ℕ) (ha : ∀ x : X, S.Γ.lam ^ a • x = 0), 1 ≤ a →
@@ -129,12 +93,14 @@ def Lem0 {M : Type} [AddCommGroup M] [Module S.O M] (W : Representation S.O S.G 
       (c ∈ S.cls W X → coefH1 W S.Γ.χ₁ f c ∈ S.cls W X') ∧
       (Function.Injective f → coefH1 W S.Γ.χ₁ f c ∈ S.cls W X' → c ∈ S.cls W X)
 
-def ResBound {M : Type} [AddCommGroup M] [Module S.O M] (W : Representation S.O S.G M) (s₀ : ℕ) : Prop :=
+set_option synthInstance.maxHeartbeats 400000 in
+def ResBound{M : Type} [AddCommGroup M] [Module S.O M] (W : Representation S.O S.G M) (s₀ : ℕ) : Prop :=
   ∀ (s : ℕ) (c : Fin s → H1 (twCoef W S.Γ.χ₁ (GlobalTheory.IndefiniteRowSideFullHecke.InvariantsVanishing.resK S.Γ)) ⊤),
     (∀ a, c a ∈ S.cls W (GlobalTheory.IndefiniteRowSideFullHecke.InvariantsVanishing.resK S.Γ)) →
     IndepMod S.Γ.lam c → s ≤ s₀
 
-def Vanish : Prop :=
+set_option synthInstance.maxHeartbeats 400000 in
+def Vanish: Prop :=
   (GlobalTheory.IndefiniteRowSideFullHecke.InvariantsVanishing.resRep S.Γ).invariants = ⊥ ∧ Subsingleton (H2 (GlobalTheory.IndefiniteRowSideFullHecke.InvariantsVanishing.resRep S.Γ) ⊤)
 
 def FreeH : Prop :=

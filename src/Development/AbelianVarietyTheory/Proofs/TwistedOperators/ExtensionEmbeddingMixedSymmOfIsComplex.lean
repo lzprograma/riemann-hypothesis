@@ -181,8 +181,8 @@ theorem exists_smooth_mul_extension_of_continuous_char :
   let φ : mixedSpace K → ℂ := fun x => if h : IsUnit x then (ψ h.unit : ℂ) else 0
   have hu : ∀ u : (mixedSpace K)ˣ, φ u = (ψ u : ℂ) := by
     intro u
-    simp only [φ, dif_pos u.isUnit, IsUnit.unit_of_val_units]
-  have hn : ∀ x, ¬ IsUnit x → φ x = 0 := fun x hx => dif_neg hx
+    simp only [φ, dite_eq_left u.isUnit, IsUnit.unit_of_val_units]
+  have hn : ∀ x, ¬ IsUnit x → φ x = 0 := fun x hx => dite_eq_right hx
   have hmul : ∀ x y, φ (x * y) = φ x * φ y := by
     intro x y
     by_cases hx : IsUnit x

@@ -2,51 +2,8 @@ module
 
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameChangeByUnitMatrix
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -275,7 +232,7 @@ open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.PB GlobalTh
 theorem minorIJ_single {R : Type} [CommRing R] {N : ℕ} (h : Matrix (Fin N) (Fin N) R) (a b : Fin N) :
     minorIJ h {a} {b} = h a b := by
   unfold minorIJ
-  rw [dif_pos (by simp)]
+  rw [dite_eq_left (by simp)]
   haveI : Unique (Fin ({b} : Finset (Fin N)).card) := inferInstanceAs (Unique (Fin 1))
   rw [det_unique]
   show h _ _ = _
@@ -297,7 +254,7 @@ theorem sum_minor_single {R : Type} [CommRing R] {N : ℕ} (c : Finset (Fin N) �
     rw [Finset.card_singleton] at e
     obtain ⟨a, rfl⟩ := Finset.card_eq_one.1 e
     exact hI (Finset.mem_image_of_mem _ (Finset.mem_univ a))
-  rw [minorIJ, dif_neg hc, mul_zero]
+  rw [minorIJ, dite_eq_right hc, mul_zero]
 
 section Pure
 
@@ -366,21 +323,21 @@ theorem twist_prod (F : FrameD n J₀ Ω p q) (r : Ψ × Fin (p + q)) :
         · rfl
       rw [e2, e3, mul_one, mul_one]
       show G _ ^ ((wtOf m r : ℕ) : ℤ) = if true = true then _ else _
-      rw [zpow_natCast, if_pos rfl]
+      rw [zpow_natCast, ite_eq_left rfl]
     · let c1 : Prop := t.1 = .inl r.1 ∧ (t.2 : ℕ) + 1 = p ∧ p ≤ (r.2 : ℕ) + 1
       let c2 : Prop := t.1 = .inr r.1 ∧ (t.2 : ℕ) + 1 = q ∧ (r.2 : ℕ) + 1 = p + q
       have e2 : f₂ ⟨.inr t, hk⟩ = if c1 then (G ⟨.inr t, hk⟩)⁻¹ else 1 := by
         show (if h : 0 < p ∧ p ≤ (r.2 : ℕ) + 1 then (if _ = fullW r.1 h.1 then _ else 1) else 1) = _
         by_cases h : 0 < p ∧ p ≤ (r.2 : ℕ) + 1
-        · rw [dif_pos h]
+        · rw [dite_eq_left h]
           simp only [eq_fullW_iff t hk r.1 h.1, c1, h.2, and_true]
-        · rw [dif_neg h, if_neg fun e => h ⟨by have := e.2.1; omega, e.2.2⟩]
+        · rw [dite_eq_right h, ite_eq_right fun e => h ⟨by have := e.2.1; omega, e.2.2⟩]
       have e3 : f₃ ⟨.inr t, hk⟩ = if c2 then (G ⟨.inr t, hk⟩)⁻¹ else 1 := by
         show (if h : 0 < q ∧ (r.2 : ℕ) + 1 = p + q then (if _ = fullO r.1 h.1 then _ else 1) else 1) = _
         by_cases h : 0 < q ∧ (r.2 : ℕ) + 1 = p + q
-        · rw [dif_pos h]
+        · rw [dite_eq_left h]
           simp only [eq_fullO_iff t hk r.1 h.1, c2, h.2, and_true]
-        · rw [dif_neg h, if_neg fun e => h ⟨by have := e.2.1; omega, e.2.2⟩]
+        · rw [dite_eq_right h, ite_eq_right fun e => h ⟨by have := e.2.1; omega, e.2.2⟩]
       have e1 : f₁ ⟨.inr t, hk⟩ = 1 := rfl
       have ht : bF m r ⟨.inr t, hk⟩ = -((if c1 then 1 else 0) + (if c2 then 1 else 0)) := rfl
       rw [e1, e2, e3, ht, one_mul]
@@ -398,19 +355,19 @@ theorem twist_prod (F : FrameD n J₀ Ω p q) (r : Ψ × Fin (p + q)) :
     · rintro ⟨k₀ | t, hk⟩ hn
       · exact absurd ⟨k₀, rfl⟩ hn
       · rfl
-    · exact (if_pos rfl).symm
+    · exact (ite_eq_left rfl).symm
   have e₂ : ∏ k, f₂ k = if h : 0 < p ∧ p ≤ (r.2 : ℕ) + 1 then (zW A x₀ F r.1 h.1)⁻¹ else 1 := by
     by_cases h : 0 < p ∧ p ≤ (r.2 : ℕ) + 1
-    · simp only [f₂, dif_pos h]
-      rw [Finset.prod_ite_eq' Finset.univ (fullW r.1 h.1) fun k => (G k)⁻¹, if_pos (Finset.mem_univ _)]
+    · simp only [f₂, dite_eq_left h]
+      rw [Finset.prod_ite_eq' Finset.univ (fullW r.1 h.1) fun k => (G k)⁻¹, ite_eq_left (Finset.mem_univ _)]
       rfl
-    · simp only [f₂, dif_neg h, Finset.prod_const_one]
+    · simp only [f₂, dite_eq_right h, Finset.prod_const_one]
   have e₃ : ∏ k, f₃ k = if h : 0 < q ∧ (r.2 : ℕ) + 1 = p + q then (zO A x₀ F r.1 h.1)⁻¹ else 1 := by
     by_cases h : 0 < q ∧ (r.2 : ℕ) + 1 = p + q
-    · simp only [f₃, dif_pos h]
-      rw [Finset.prod_ite_eq' Finset.univ (fullO r.1 h.1) fun k => (G k)⁻¹, if_pos (Finset.mem_univ _)]
+    · simp only [f₃, dite_eq_left h]
+      rw [Finset.prod_ite_eq' Finset.univ (fullO r.1 h.1) fun k => (G k)⁻¹, ite_eq_left (Finset.mem_univ _)]
       rfl
-    · simp only [f₃, dif_neg h, Finset.prod_const_one]
+    · simp only [f₃, dite_eq_right h, Finset.prod_const_one]
   rw [← e₁, ← e₂, ← e₃, ← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
   exact Finset.prod_congr rfl fun k _ => hpt k
 
@@ -450,7 +407,7 @@ theorem step_facts (r : Ψ × Fin (p + q)) (s : Ψ ⊕ Ψ) (i₀ : Fin (rk Ψ p 
     refine ⟨?_, fun b => ?_, fun a b => ?_⟩
     · ext a
       simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
-      rw [if_pos (by omega)]
+      rw [ite_eq_left (by omega)]
       constructor
       · rintro ⟨h1, h2⟩
         refine Fin.ext ?_
@@ -459,7 +416,7 @@ theorem step_facts (r : Ψ × Fin (p + q)) (s : Ψ ⊕ Ψ) (i₀ : Fin (rk Ψ p 
       · rintro rfl
         show p + q - p ≤ q + (r.2 : ℕ) ∧ q + (r.2 : ℕ) < p + q - p + ((r.2 : ℕ) + 1)
         omega
-    · rw [if_pos (by omega)]
+    · rw [ite_eq_left (by omega)]
       exact (mem_wIdx_iff p q _).2 ⟨b, rfl⟩
     · show q + (a : ℕ) < p + q - p ↔ q + (b : ℕ) < p + q - p
       omega
@@ -468,7 +425,7 @@ theorem step_facts (r : Ψ × Fin (p + q)) (s : Ψ ⊕ Ψ) (i₀ : Fin (rk Ψ p 
     refine ⟨?_, fun b => ?_, fun a b => ?_⟩
     · ext a
       simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       constructor
       · intro h1
         refine Fin.ext ?_
@@ -477,7 +434,7 @@ theorem step_facts (r : Ψ × Fin (p + q)) (s : Ψ ⊕ Ψ) (i₀ : Fin (rk Ψ p 
       · rintro rfl
         show (r.2 : ℕ) - p < (r.2 : ℕ) + 1 - p
         omega
-    · rw [if_neg (by omega)]
+    · rw [ite_eq_right (by omega)]
       exact (mem_omIdx_iff p q _).2 ⟨b, rfl⟩
     · have ha := a.2
       have hb := b.2
@@ -494,7 +451,7 @@ theorem step_col (R : Subring Ω) (F : FrameD n J₀ Ω p q) (hF : FrameIds A x�
   classical
   have hblk : blkF Ψ p q K₀ r = some (.inr ⟨s, i₀⟩) := by
     unfold blkF
-    rw [if_pos hpr, hst]
+    rw [ite_eq_left hpr, hst]
   obtain ⟨hcols, hmem, hsame⟩ := step_facts r s i₀ hi hst
   have hrows : ∀ b, IsStepRows (p + q) p r.2 {posOf p q s b} := fun b =>
     ⟨by rw [hcols]; simp, Finset.singleton_subset_iff.2 (hmem b)⟩
@@ -528,7 +485,7 @@ theorem step_col (R : Subring Ω) (F : FrameD n J₀ Ω p q) (hF : FrameIds A x�
       simp [h, Matrix.single_apply, eq_comm]
     have hblock : IsBlockDiag p h := fun a c hac => by
       simp only [h, Matrix.single_apply]
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨rfl, rfl⟩
       exact hac (hsame _ _)
     have hid := hF.2.1 r _ hblk (ci j) h hblock
@@ -536,13 +493,13 @@ theorem step_col (R : Subring Ω) (F : FrameD n J₀ Ω p q) (hF : FrameIds A x�
     have hcoef : ∀ a, coefF A ⟨.inr ⟨s, i₀⟩, ci j⟩ {a} = aExt A s j a := fun a => by
       show (if e : ({a} : Finset (Fin (p + q))).card = (i₀ : ℕ) + 1 then
         ((aExt A s).submatrix (ci j) (({a} : Finset (Fin (p + q))).orderEmbOfFin e)).det else 0) = _
-      rw [dif_pos (by simp [hi]), Matrix.det_eq_elem_of_card_eq_one (by simp [hi]) ⟨0, by omega⟩]
+      rw [dite_eq_left (by simp [hi]), Matrix.det_eq_elem_of_card_eq_one (by simp [hi]) ⟨0, by omega⟩]
       show aExt A s j _ = _
       congr 1
       exact Finset.mem_singleton.1 (Finset.orderEmbOfFin_mem _ _ _)
     have hTh : ∀ a, (F.T r.1 * h) a (posOf p q s i₀) = F.T r.1 a (posOf p q s b) := fun a => by
-      rw [Matrix.mul_apply, Finset.sum_eq_single (posOf p q s b) (fun c _ hc => by rw [hh, if_neg hc, mul_zero])
-        (by simp), hh, if_pos rfl, mul_one]
+      rw [Matrix.mul_apply, Finset.sum_eq_single (posOf p q s b) (fun c _ hc => by rw [hh, ite_eq_right hc, mul_zero])
+        (by simp), hh, ite_eq_left rfl, mul_one]
     have hL : ∑ a, coefF A ⟨.inr ⟨s, i₀⟩, ci j⟩ {a} * (F.T r.1 * h) a (posOf p q s i₀) =
         (A s * (F.T r.1).submatrix (posOf p q s) (posOf p q s)) j b := by
       simp only [hcoef, hTh, aExt, Finset.sum_mul, ite_mul, zero_mul]
@@ -631,8 +588,8 @@ theorem aW_eq (F : FrameD n J₀ Ω p q) (r : Ψ × Fin (p + q)) (h : p ≤ (r.2
     (if h : 0 < p ∧ p ≤ (r.2 : ℕ) + 1 then (zW A x₀ F r.1 h.1)⁻¹ else 1) = aW A x₀ F r.1 := by
   unfold aW
   by_cases h0 : 0 < p
-  · rw [dif_pos ⟨h0, h⟩, dif_pos h0]
-  · rw [dif_neg fun e => h0 e.1, dif_neg h0]
+  · rw [dite_eq_left ⟨h0, h⟩, dite_eq_left h0]
+  · rw [dite_eq_right fun e => h0 e.1, dite_eq_right h0]
 
 theorem chartX_ne {R : Subring Ω} {F : FrameD n J₀ Ω p q} (hR : BaseGood A x₀ R F) : chartX x₀ F ≠ 0 :=
   Finset.prod_ne_zero_iff.2 fun k₀ _ => (hR.1 (inlB k₀)).1
@@ -661,7 +618,7 @@ theorem detW {R : Subring Ω} {F : FrameD n J₀ Ω p q} (hF : FrameIds A x₀ m
     simp [aW]
   let r : Ψ × Fin (p + q) := (τ, ⟨p - 1, by omega⟩)
   have hr : (r.2 : ℕ) + 1 = p := by show p - 1 + 1 = p; omega
-  have hn : blkF Ψ p q K₀ r = none := if_neg fun e => e.1 hr
+  have hn : blkF Ψ p q K₀ r = none := ite_eq_right fun e => e.1 hr
   obtain ⟨h0, h1, h2⟩ := hR.2.2 r hn
   refine ⟨F.υ r, h0, h1, h2, ?_⟩
   have h := hF.2.2.2 r hn
@@ -676,7 +633,7 @@ theorem detW {R : Subring Ω} {F : FrameD n J₀ Ω p q} (hF : FrameIds A x₀ m
       haveI : IsEmpty (Fin q) := by rw [hq]; infer_instance
       exact Matrix.det_isEmpty
     · rfl
-  rw [mul_one, detFac_eq, ho, mul_one, if_pos hr.ge, twist_prod, aW_eq F r hr.ge, dif_neg (fun e => by omega), mul_one,
+  rw [mul_one, detFac_eq, ho, mul_one, ite_eq_left hr.ge, twist_prod, aW_eq F r hr.ge, dite_eq_right (fun e => by omega), mul_one,
     hw] at h
   exact h
 
@@ -686,7 +643,7 @@ theorem colW {R : Subring Ω} {F : FrameD n J₀ Ω p q} (hF : FrameIds A x₀ m
   rcases Nat.lt_or_ge 1 p with h2 | h1
   · let r : Ψ × Fin (p + q) := (τ, ⟨0, by omega⟩)
     have hpr : IsProperStep (p + q) p r.2 := ⟨by show 0 + 1 ≠ p; omega, by show 0 + 1 ≠ p + q; omega⟩
-    have hst : stepOf Ψ p q r = ⟨.inl τ, ⟨0, hp⟩⟩ := dif_pos hp
+    have hst : stepOf Ψ p q r = ⟨.inl τ, ⟨0, hp⟩⟩ := dite_eq_left hp
     have h := step_col A x₀ m R F hF hR r (.inl τ) ⟨0, hp⟩ rfl hst hpr
     have hw : wtOf m r = m (.inl τ) := by
       have a1 : rkW r.2 = 1 := by show min (0 + 1) p = 1; omega
@@ -695,7 +652,7 @@ theorem colW {R : Subring Ω} {F : FrameD n J₀ Ω p q} (hF : FrameIds A x₀ m
       rw [a1, a2, zero_mul, add_zero, one_mul]
     have e1 : ¬ p ≤ (r.2 : ℕ) + 1 := by show ¬ p ≤ 0 + 1; omega
     have e2 : ¬ (r.2 : ℕ) + 1 = p + q := by show ¬ 0 + 1 = p + q; omega
-    rw [twist_prod, detFac_eq, if_neg e1, if_neg e2, dif_neg (fun e => e1 e.2), dif_neg (fun e => e2 e.2), hw] at h
+    rw [twist_prod, detFac_eq, ite_eq_right e1, ite_eq_right e2, dite_eq_right (fun e => e1 e.2), dite_eq_right (fun e => e2 e.2), hw] at h
     simp only [mul_one, one_smul] at h
     exact h
   · have hp1 : p = 1 := by omega
@@ -718,7 +675,7 @@ theorem colW {R : Subring Ω} {F : FrameD n J₀ Ω p q} (hF : FrameIds A x₀ m
       have hpw : chartX x₀ F ^ (p * m (.inl τ)) = chartX x₀ F ^ m (.inl τ) := by
         congr 1
         rw [hp1, one_mul]
-      rw [← hd, e, hzz, show aW A x₀ F τ = (zW A x₀ F τ hp)⁻¹ from dif_pos hp, hpw]
+      rw [← hd, e, hzz, show aW A x₀ F τ = (zW A x₀ F τ hp)⁻¹ from dite_eq_left hp, hpw]
       have := zW_ne hR τ hp
       field_simp
 
@@ -740,20 +697,20 @@ theorem colO {R : Subring Ω} {F : FrameD n J₀ Ω p q} (hF : FrameIds A x₀ m
     have hpr : IsProperStep (p + q) p r.2 := ⟨by show p + 1 ≠ p; omega, e2⟩
     have hst : stepOf Ψ p q r = ⟨.inr τ, ⟨0, hq⟩⟩ := by
       unfold stepOf
-      rw [dif_neg (by show ¬ p < p; omega)]
+      rw [dite_eq_right (by show ¬ p < p; omega)]
       simp [r]
     have h := step_col A x₀ m R F hF hR r (.inr τ) ⟨0, hq⟩ rfl hst hpr
-    rw [twist_prod, detFac_eq, if_pos hle, if_neg e2, aW_eq F r hle, dif_neg (fun e => e2 e.2), hw, mul_one, mul_one,
+    rw [twist_prod, detFac_eq, ite_eq_left hle, ite_eq_right e2, aW_eq F r hle, dite_eq_right (fun e => e2 e.2), hw, mul_one, mul_one,
       show r.1 = τ from rfl, e, pow_add] at h
     refine ColFac.rescale hc h0 hvR hvi ?_
     convert h using 1
     ring
   · have hq1 : q = 1 := by omega
     have e2 : (r.2 : ℕ) + 1 = p + q := by show p + 1 = p + q; omega
-    have hn : blkF Ψ p q K₀ r = none := if_neg fun e => e.2 e2
+    have hn : blkF Ψ p q K₀ r = none := ite_eq_right fun e => e.2 e2
     obtain ⟨u0, uR, ui⟩ := hR.2.2 r hn
     have h := hF.2.2.2 r hn
-    rw [mul_one, detFac_eq, if_pos hle, if_pos e2, twist_prod, aW_eq F r hle, dif_pos ⟨hq, e2⟩, hw,
+    rw [mul_one, detFac_eq, ite_eq_left hle, ite_eq_left e2, twist_prod, aW_eq F r hle, dite_eq_left ⟨hq, e2⟩, hw,
       show r.1 = τ from rfl, e, pow_add] at h
     let t : StepIx Ψ p q := ⟨.inr τ, ⟨q - 1, by show q - 1 < q; omega⟩⟩
     have ht : (t.2 : ℕ) = 0 := by show q - 1 = 0; omega

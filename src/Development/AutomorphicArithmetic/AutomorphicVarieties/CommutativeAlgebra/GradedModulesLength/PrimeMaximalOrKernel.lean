@@ -81,11 +81,11 @@ private theorem prime_maximal_or_kernel (O : Type) [CommRing O] [IsDomain O] [Is
       exact hQ)
     rw [Ideal.Quotient.maximal_ideal_iff_isField_quotient]
     exact Ring.isField_iff_maximal_bot.2 hmax
-  · push_neg at hc
+  · push Not at hc
     right
     refine ⟨hc, ?_⟩
     have hinj : Function.Injective (algebraMap O (B ⧸ P)) := by
-      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+      rw [injective_iff_map_eq_zero]
       intro a ha
       by_contra h0
       exact hc a h0 ((hcomap a).1 ha)

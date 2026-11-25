@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBinomial
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.DecompSigmaOrd
@@ -68,7 +69,6 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 open UpperTheory.V.W (Plc Lp HidaSetting Vl Resid LamObj UniversalOrdinaryDeterminantRing Pair)
 open UpperTheory.V.HV (Coef)
 open scoped TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 section Ball
 variable {l : ℕ} [Fact l.Prime]
@@ -133,24 +133,7 @@ private theorem du_root_norm {ζ : Qbar l} {n : ℕ} (hn : n ≠ 0) (h : ζ ^ n 
   rw [norm_pow, norm_one] at this
   exact (pow_eq_one_iff_of_nonneg (norm_nonneg _) hn).1 this
 private theorem du_root {ζ : Qbar l} {n : ℕ} (h : ζ ^ l ^ n = 1) : ‖ζ - 1‖ < 1 := by
-  have hl : l.Prime := Fact.out
-  have h1 := du_root_norm (pow_ne_zero _ hl.ne_zero) h
-  let B : Subring (Qbar l) := (NormedField.valuation (K := Qbar l)).integer
-  let z : B := ⟨ζ, h1.le⟩
-  obtain ⟨r, hr⟩ := exists_add_pow_prime_pow_eq hl (z - 1) 1 n
-  have hr' := congrArg B.subtype hr
-  simp only [map_pow, map_add (f := _), map_mul, map_sub, map_one, map_natCast, sub_add_cancel, one_pow,
-    Subring.coe_subtype, mul_one] at hr'
-  have hz : (z : Qbar l) = ζ := rfl
-  rw [hz, h] at hr'
-  have h2 : (ζ - 1) ^ l ^ n = -((l : Qbar l) * ((z - 1) * r : B)) := by
-    push_cast
-    rw [hz]
-    linear_combination -hr'
-  have h3 : ‖ζ - 1‖ ^ l ^ n < 1 := by
-    rw [← norm_pow, h2, norm_neg, norm_mul]
-    exact mul_lt_one_of_nonneg_of_lt_one_left (norm_nonneg _) du_norm_l ((z - 1) * r).2
-  exact lt_of_pow_lt_pow_left₀ (l ^ n) zero_le_one (by rwa [one_pow])
+  apply _root_.GlobalTheory.HWL.Ser.norm_sub_one_lt <;> assumption
 private theorem du_prim (N : ℕ) (hN : N ≠ 0) : ∃ ζ : Qbar l, IsPrimitiveRoot ζ N := by
   haveI : NeZero N := ⟨hN⟩
   haveI : NeZero ((N : ℕ) : Qbar l) := ⟨Nat.cast_ne_zero.2 hN⟩

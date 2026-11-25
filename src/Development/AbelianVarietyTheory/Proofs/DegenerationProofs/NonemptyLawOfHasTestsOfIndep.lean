@@ -1553,10 +1553,6 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace GlobalTheory
 
-theorem isStandardSmoothOfRelativeDimension_mvPolynomial_fin (R : Type) [CommRing R] (n : ℕ) :
-    Algebra.IsStandardSmoothOfRelativeDimension n R (MvPolynomial (Fin n) R) := by
-  apply GlobalTheory.CompanionTheory.Ar.LieInh.stdSmooth_mvPolynomial
-
 theorem smoothOfRelativeDimension_affineSpace_fin (S : Scheme.{0}) (n : ℕ) :
     SmoothOfRelativeDimension n (𝔸(Fin n; S) ↘ S) := by
   have := smoothOfRelativeDimension_isStableUnderBaseChange.{0} n
@@ -1567,7 +1563,7 @@ theorem smoothOfRelativeDimension_affineSpace_fin (S : Scheme.{0}) (n : ℕ) :
     HasRingHomProperty.Spec_iff (P := @SmoothOfRelativeDimension n)]
   refine RingHom.locally_of RingHom.isStandardSmoothOfRelativeDimension_respectsIso _ ?_
   exact (RingHom.isStandardSmoothOfRelativeDimension_algebraMap n).2
-    (isStandardSmoothOfRelativeDimension_mvPolynomial_fin (ULift ℤ) n)
+    (Algebra.IsStandardSmoothOfRelativeDimension.mvPolynomial_fin (R := ULift ℤ) (n := n))
 
 namespace ZJ
 

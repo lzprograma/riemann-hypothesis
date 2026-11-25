@@ -2,6 +2,7 @@ module
 
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.CasValK
 import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.TypeStar
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.NumRho
@@ -20,56 +21,16 @@ section Num
 
 variable {ε : Fin n → Bool}
 
-private theorem dot_add_l (u v w : Fin n → ℝ) : dot (u + v) w = dot u w + dot v w := by
-  simp only [dot, Pi.add_apply, add_mul, sum_add_distrib]
+private theorem inner_toLp (u v : Fin n → ℝ) :
+    inner ℝ (WithLp.toLp 2 u) (WithLp.toLp 2 v) = dot u v := by
+  simp [dot, PiLp.inner_apply, mul_comm]
 
-private theorem dot_add_r (u v w : Fin n → ℝ) : dot u (v + w) = dot u v + dot u w := by
-  simp only [dot, Pi.add_apply, mul_add, sum_add_distrib]
+private theorem norm_sq_toLp (u : Fin n → ℝ) : ‖WithLp.toLp 2 u‖ ^ 2 = nsq u := by
+  rw [EuclideanSpace.real_norm_sq_eq]
+  simp [nsq, dot, sq]
 
-private theorem dot_comm' (u v : Fin n → ℝ) : dot u v = dot v u := by
-  simp only [dot, mul_comm]
-
-private theorem dot_neg_r (u v : Fin n → ℝ) : dot u (-v) = - dot u v := by
-  simp only [dot, Pi.neg_apply, mul_neg, sum_neg_distrib]
-
-private theorem dot_sum_r {k : ℕ} (u : Fin n → ℝ) (f : Fin k → Fin n → ℝ) :
-    dot u (∑ i, f i) = ∑ i, dot u (f i) := by
-  simpa only [dot, Finset.sum_apply, mul_sum] using Finset.sum_comm
-
-private theorem dot_root_r (u : Fin n → ℝ) (a b : Fin n) : dot u (root a b) = u a - u b := by
-  simp [dot, root, Pi.single_apply, mul_sub, sum_sub_distrib]
-
-private theorem root_swap (a b : Fin n) : root b a = - root a b := by
-  simp [root]
-
-private theorem nsq_nonneg'' (u : Fin n → ℝ) : 0 ≤ nsq u := by
-  simpa [nsq, dot] using sum_nonneg (fun i _ => mul_self_nonneg (u i))
-
-private theorem nsq_add'' (u v : Fin n → ℝ) : nsq (u + v) = nsq u + 2 * dot u v + nsq v := by
-  simp only [nsq, dot_add_l, dot_add_r, dot_comm' v u]; ring
-
-private theorem dot_le_sqrt (u v : Fin n → ℝ) : dot u v ≤ √(nsq u) * √(nsq v) := by
-  rw [← Real.sqrt_mul (nsq_nonneg'' u)]
-  refine le_trans (le_abs_self _) ?_
-  rw [← Real.sqrt_sq_eq_abs]
-  apply Real.sqrt_le_sqrt
-  simpa [dot, nsq, sq] using Finset.sum_mul_sq_le_sq_mul_sq univ u v
-
-private theorem sqrt_nsq_add_le (u v : Fin n → ℝ) : √(nsq (u + v)) ≤ √(nsq u) + √(nsq v) := by
-  have h1 : nsq (u + v) ≤ (√(nsq u) + √(nsq v)) ^ 2 := by
-    rw [nsq_add'', add_sq, Real.sq_sqrt (nsq_nonneg'' u), Real.sq_sqrt (nsq_nonneg'' v)]
-    nlinarith [dot_le_sqrt u v]
-  calc √(nsq (u + v)) ≤ √((√(nsq u) + √(nsq v)) ^ 2) := Real.sqrt_le_sqrt h1
-    _ = _ := Real.sqrt_sq (by positivity)
-
-private theorem sqrt_nsq_sum_le {ι : Type*} (s : Finset ι) (f : ι → Fin n → ℝ) :
-    √(nsq (∑ i ∈ s, f i)) ≤ ∑ i ∈ s, √(nsq (f i)) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp [nsq, dot]
-  | insert a s ha ih =>
-    rw [sum_insert ha, sum_insert ha]
-    exact (sqrt_nsq_add_le _ _).trans (by linarith)
+private theorem norm_toLp (u : Fin n → ℝ) : ‖WithLp.toLp 2 u‖ = √(nsq u) := by
+  rw [← norm_sq_toLp, Real.sqrt_sq (norm_nonneg _)]
 
 private theorem pq_facts {a b : Fin n} (hε : ε a ≠ ε b) :
     1 ≤ (pOf ε : ℝ) ∧ 1 ≤ (qOf ε : ℝ) ∧ (pOf ε : ℝ) + (qOf ε : ℝ) = n := by
@@ -107,14 +68,15 @@ theorem sch_gap {lam : Fin n → ℝ} (hgap : StdGap ε lam) {a b : Fin n} (hab 
   have h1 := hg a b hε
   have hlt : lam b < lam a := hanti hab
   rw [abs_of_pos (sub_pos.2 hlt)] at h1
-  rw [dot_root_r]
+  rw [numRho_dot_root_right]
   linarith [two_dot_rhoC_rhoN_le ε]
 
 theorem crossVal_pos {lam : Fin n → ℝ} (hmono : StrictAnti lam) {h : ℝ}
     (hh : GapAtLeast ε lam h) {a b : Fin n} (hab : a < b) (hε : ε a ≠ ε b) :
     2 * (h - n + 1) ≤
       casValK ε (lowK ε lam + root a b) - n - casValK ε (lowK ε lam) := by
-  rw [casValK_add, lowK_add_rhoC, nsq_root (ne_of_lt hab), dot_add_l, dot_root_r lam]
+  rw [casValK_add, lowK_add_rhoC, nsq_root (ne_of_lt hab), ← inner_toLp, WithLp.toLp_add,
+    inner_add_left, inner_toLp, inner_toLp, numRho_dot_root_right]
   have h1 := hh a b hε
   rw [abs_of_pos (sub_pos.2 (hmono hab))] at h1
   linarith [dot_rhoN_root_ge hab hε]
@@ -122,11 +84,13 @@ theorem crossVal_pos {lam : Fin n → ℝ} (hmono : StrictAnti lam) {h : ℝ}
 theorem crossVal_neg {lam : Fin n → ℝ} (hmono : StrictAnti lam) {h : ℝ}
     (hh : GapAtLeast ε lam h) {a b : Fin n} (hab : a < b) (hε : ε a ≠ ε b) :
     casValK ε (lowK ε lam + root b a) - n - casValK ε (lowK ε lam) ≤ -2 * h - 2 := by
-  rw [casValK_add, lowK_add_rhoC, nsq_root (ne_of_gt hab), dot_add_l, dot_root_r lam,
-    root_swap a b, dot_neg_r]
+  rw [casValK_add, lowK_add_rhoC, nsq_root (ne_of_gt hab), ← inner_toLp, WithLp.toLp_add,
+    inner_add_left, inner_toLp, inner_toLp, numRho_dot_root_right, numRho_dot_root_right]
   have h1 := hh a b hε
   rw [abs_of_pos (sub_pos.2 (hmono hab))] at h1
-  linarith [dot_rhoN_root_ge hab hε]
+  have h2 := dot_rhoN_root_ge hab hε
+  rw [numRho_dot_root_right] at h2
+  linarith
 
 theorem isNCSum_zero {ν : Fin n → ℝ} : IsNCSum ε 0 ν ↔ ν = 0 := by
   constructor
@@ -147,19 +111,21 @@ theorem vogan_num {Λ ν : Fin n → ℝ} {j : ℕ} (hj : 1 ≤ j) (hν : IsNCSu
   obtain ⟨γ, hγ, rfl⟩ := hν
   obtain ⟨hg1, hg2⟩ := gap_gt (hγ ⟨0, hj⟩) hbig
   have hρ : -((j : ℝ) * (((n : ℝ) - 2) / 2)) ≤ dot (rhoC ε) (∑ i, root (γ i).1 (γ i).2) := by
-    rw [dot_sum_r]
-    have : ∑ _i : Fin j, -(((n : ℝ) - 2) / 2) ≤ ∑ i, dot (rhoC ε) (root (γ i).1 (γ i).2) := by
+    rw [← inner_toLp, WithLp.toLp_sum, inner_sum]
+    have : ∑ _i : Fin j, -(((n : ℝ) - 2) / 2) ≤
+        ∑ i, inner ℝ (WithLp.toLp 2 (rhoC ε)) (WithLp.toLp 2 (root (γ i).1 (γ i).2)) := by
       apply Finset.sum_le_sum
       intro i _
       have := abs_dot_root_rhoC_le (ε := ε) (hγ i)
-      rw [dot_comm'] at this
-      linarith [neg_abs_le (dot (rhoC ε) (root (γ i).1 (γ i).2))]
+      rw [real_inner_comm, inner_toLp]
+      linarith [neg_abs_le (dot (root (γ i).1 (γ i).2) (rhoC ε))]
     simpa [sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul, mul_neg] using this
   rw [casValK_add] at hc
   have e2 : Λ + (2 : ℝ) • rhoC ε = (Λ + rhoC ε) + rhoC ε := by rw [two_smul]; abel
   have e3 : Λ + (∑ i, root (γ i).1 (γ i).2) + (2 : ℝ) • rhoC ε =
       ((Λ + rhoC ε) + rhoC ε) + ∑ i, root (γ i).1 (γ i).2 := by rw [two_smul]; abel
-  rw [e2, e3, nsq_add'' ((Λ + rhoC ε) + rhoC ε), dot_add_l]
+  rw [e2, e3, ← norm_sq_toLp (((Λ + rhoC ε) + rhoC ε) + _), WithLp.toLp_add, norm_add_sq_real,
+    norm_sq_toLp, norm_sq_toLp, WithLp.toLp_add, inner_add_left, inner_toLp, inner_toLp]
   have hj0 : (0 : ℝ) ≤ j := Nat.cast_nonneg j
   have hpos : 0 ≤ 2 * h - 3 * (n : ℝ) + 4 := by linarith
   nlinarith [mul_nonneg hj0 hpos]
@@ -167,21 +133,24 @@ theorem vogan_num {Λ ν : Fin n → ℝ} {j : ℕ} (hj : 1 ≤ j) (hν : IsNCSu
 theorem degree_num {Λ ν : Fin n → ℝ} {j k : ℕ} (hjk : j ≤ k) (hν : IsNCSum ε j ν) :
     casValK ε (Λ + ν) ≤ (√(nsq (Λ + rhoC ε)) + √2 * k) ^ 2 - nsq (rhoC ε) := by
   obtain ⟨γ, hγ, rfl⟩ := hν
-  have hs : √(nsq (∑ i, root (γ i).1 (γ i).2)) ≤ √2 * k := by
-    refine (sqrt_nsq_sum_le _ _).trans ?_
-    have : ∀ i, √(nsq (root (γ i).1 (γ i).2)) = √2 := fun i => by
-      rw [nsq_root (fun e => hγ i (by rw [e]))]
+  have hs : ‖WithLp.toLp 2 (∑ i, root (γ i).1 (γ i).2)‖ ≤ √2 * k := by
+    rw [WithLp.toLp_sum]
+    refine (norm_sum_le _ _).trans ?_
+    have : ∀ i, ‖WithLp.toLp 2 (root (γ i).1 (γ i).2)‖ = √2 := fun i => by
+      rw [norm_toLp, nsq_root (fun e => hγ i (by rw [e]))]
     simp only [this, sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul]
     rw [mul_comm]
     exact mul_le_mul_of_nonneg_left (by exact_mod_cast hjk) (Real.sqrt_nonneg 2)
   unfold casValK
-  have e : Λ + (∑ i, root (γ i).1 (γ i).2) + rhoC ε = (Λ + rhoC ε) + ∑ i, root (γ i).1 (γ i).2 := by
+  have e : Λ + (∑ i, root (γ i).1 (γ i).2) + rhoC ε =
+      (Λ + rhoC ε) + ∑ i, root (γ i).1 (γ i).2 := by
     abel
-  rw [e]
-  have h1 := (sqrt_nsq_add_le (Λ + rhoC ε) (∑ i, root (γ i).1 (γ i).2)).trans (by linarith [hs] :
-    √(nsq (Λ + rhoC ε)) + √(nsq (∑ i, root (γ i).1 (γ i).2)) ≤ √(nsq (Λ + rhoC ε)) + √2 * k)
-  have h2 := pow_le_pow_left₀ (Real.sqrt_nonneg _) h1 2
-  rw [Real.sq_sqrt (nsq_nonneg'' _)] at h2
+  rw [e, ← norm_sq_toLp]
+  have h1 : ‖WithLp.toLp 2 ((Λ + rhoC ε) + ∑ i, root (γ i).1 (γ i).2)‖ ≤
+      √(nsq (Λ + rhoC ε)) + √2 * k := by
+    rw [WithLp.toLp_add, ← norm_toLp (Λ + rhoC ε)]
+    exact (norm_add_le _ _).trans (by linarith)
+  have h2 := pow_le_pow_left₀ (norm_nonneg _) h1 2
   linarith
 
 end Num

@@ -192,9 +192,6 @@ theorem isCombIn_of_chart : ∀ (Y : Scheme.{0}) (V V' : Y.Opens), IsAffineOpen 
   have hc' : c ⁻¹ᵁ V' = ⊤ := by rw [← _root_.GlobalTheory.SecGlue.preimage_eq_of_comp_eq_of_sqZero S T q hq hk Y u c hqc.symm V']; exact hu'
   have hw' : ∀ i, w i ⁻¹ᵁ V' = ⊤ := fun i => by
     rw [← _root_.GlobalTheory.SecGlue.preimage_eq_of_comp_eq_of_sqZero S T q hq hk Y u (w i) (hw i).symm V']; exact hu'
-  have hWsame : ∀ W : Y.Opens, c ⁻¹ᵁ W = u ⁻¹ᵁ W ∧ ∀ i, w i ⁻¹ᵁ W = u ⁻¹ᵁ W := fun W =>
-    ⟨(_root_.GlobalTheory.SecGlue.preimage_eq_of_comp_eq_of_sqZero S T q hq hk Y u c hqc.symm W).symm,
-      fun i => (_root_.GlobalTheory.SecGlue.preimage_eq_of_comp_eq_of_sqZero S T q hq hk Y u (w i) (hw i).symm W).symm⟩
   obtain ⟨hu, _, _, _⟩ := hcomb
   refine ⟨hu', hc', hw', fun x => ?_⟩
   rw [← sub_eq_zero]

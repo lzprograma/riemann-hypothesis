@@ -345,7 +345,7 @@ theorem translate_integral : ∀ (q : ℕ) [Fact q.Prime] (M : Mdl q) (ℓ : ℂ
     · have : constantCoeff (hatHom M.ι ℓ hℓ F) = M.ι (M.x (0 + t)) :=
         (TaylorRead.hat_laws q M.ι ℓ hℓ).2.2.2.1 _
       simp [this, hs₀, hr0]
-    · rw [map_sub, coeff_C, if_neg hm.ne', sub_zero]
+    · rw [map_sub, coeff_C, ite_eq_right hm.ne', sub_zero]
       exact hcon m hm
   obtain ⟨b1, b2⟩ := r3 r hB
   have hc : 2 * k + M.W.a₁ * p ∈ intRing q := add_mem (mul_mem (n 2) hk) (mul_mem h1 hp)
@@ -545,7 +545,7 @@ theorem translate_norm_le : ∀ (q : ℕ) [Fact q.Prime] (M : Mdl q) (ℓ : ℂ_
   refine bd_cancel_prod Finset.univ _ (fun i => bd_sub_C hxt (hPx i)) (fun i r hr => ?_) hbdd ?_
   · obtain ⟨n, hn, hn'⟩ := hbig r hr
     refine ⟨n, ?_⟩
-    rwa [map_sub, coeff_C, if_neg hn.ne', sub_zero]
+    rwa [map_sub, coeff_C, ite_eq_right hn.ne', sub_zero]
   · rw [e5]
     exact bd_add (bd_eval₂ _ _ hB0 (fun i hi => (hco i (hi.trans (le_max_left _ _))).1) hxt)
       (bd_mul_one (bd_eval₂ _ _ hB0 (fun i hi => (hco i (hi.trans (le_max_right _ _))).2) hxt) hyt)

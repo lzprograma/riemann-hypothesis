@@ -8,7 +8,7 @@ import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsConjSelfDualOf
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.PMultC
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspRapidDecaySiegelGL
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapPFinThetaGL
-public import Development.WeilBound.CoreStatements.PublishedTheorems.FiniteGLInvariants.AffineLieInvariants.Imports
+public import Development.WeilBound.RepresentationTheoryGL.ConstantTermFiniteness.LieInvariants.InvariantOfLieOneLEqZero
 public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.JacquetShalikaRigidity
 public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MultiplicityOneRigidity.GelfandKazhdanDualOfRigidity
 import Mathlib.Algebra.Order.Floor.Extended
@@ -98,7 +98,7 @@ private theorem pull_mem {P : CuspSub E n} (h : P.IsCsd) {φ : Sm E n} (hφ : φ
 theorem UpperTheory.V.Z.Tf.GOne.thetaFixOf :
     PositivityTheory.Rg.BcB.Desc.ThetaFixOf := by
   intro E _ _ _ n _ π hd
-  have hc : π.IsCsd := GlobalTheory.CsdBack.isCsd_of_paired CuspFormAutomorphicBounds.automorphicFormsFiniteGL E n π
+  have hc : π.IsCsd := GlobalTheory.CsdBack.isCsd_of_paired PositivityTheory.Rg.HF.GL.automorphicFormsFiniteGL E n π
     (PositivityTheory.JMult1.gelfandKazhdanDual_of_rigidity PositivityTheory.AdelicQuotientData.jacquetShalikaRigidity
       GlobalTheory.CompanionTheory.CuspFinGL.cuspFormsBoundedGL E n π) hd
   refine ⟨fun ψ hψ t g => GlobalTheory.BcSpehCompare.isNormalised_of_isCsd hc ψ hψ t g, fun ψ hψ => ?_⟩

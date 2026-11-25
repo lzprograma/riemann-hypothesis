@@ -66,8 +66,6 @@ noncomputable section
 
 open NumberField GlobalTheory.CuspRep GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 
-attribute [local instance 100] LieRing.ofAssociativeRing
-
 namespace UpperTheory.V.TR.SS
 
 variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F] {a : ℕ}

@@ -3,47 +3,7 @@ module
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzSpaceTranslateMem
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.Finset.Functor
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -52,8 +12,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open IsDedekindDomain NumberField
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels Matrix
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model Chr incM)
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -73,7 +31,6 @@ theorem chi_nsmul (hadd : ∀ y y' ξ, χ (y + y') ξ = χ y ξ * χ y' ξ) (hze
 theorem norm_avg_le_one (f : ℕ → ℂ) (hf : ∀ m, ‖f m‖ = 1) {M : ℕ} (hM : 0 < M) :
     ‖(M : ℂ)⁻¹ * ∑ m ∈ Finset.range M, f m‖ ≤ 1 := by
   rw [norm_mul, norm_inv, Complex.norm_natCast]
-  have hMpos : (0 : ℝ) < M := by exact_mod_cast hM
   calc (M : ℝ)⁻¹ * ‖∑ m ∈ Finset.range M, f m‖ ≤ (M : ℝ)⁻¹ * ∑ m ∈ Finset.range M, ‖f m‖ := by
         gcongr; exact norm_sum_le _ _
     _ = 1 := by simp only [hf, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one]; field_simp
@@ -81,7 +38,6 @@ theorem norm_avg_le_one (f : ℕ → ℂ) (hf : ∀ m, ‖f m‖ = 1) {M : ℕ} 
 theorem norm_avg_pow_le {z : ℂ} (hz : ‖z‖ = 1) (hz1 : z ≠ 1) {M : ℕ} (hM : 0 < M) :
     ‖(M : ℂ)⁻¹ * ∑ m ∈ Finset.range M, z ^ m‖ ≤ 2 / (M * ‖z - 1‖) := by
   have hpos : 0 < ‖z - 1‖ := norm_pos_iff.2 (sub_ne_zero.2 hz1)
-  have hMpos : (0 : ℝ) < M := by exact_mod_cast hM
   have h1 : ‖z ^ M - 1‖ ≤ 2 := by
     calc ‖z ^ M - 1‖ ≤ ‖z ^ M‖ + ‖(1 : ℂ)‖ := norm_sub_le _ _
       _ = 2 := by rw [norm_pow, hz, one_pow, norm_one]; norm_num
@@ -160,7 +116,6 @@ theorem coeff_zero_eq_zero (hnorm : ∀ y ξ, ‖χ y ξ‖ = 1) (hadd : ∀ y y
   have h1 : Good χ c fun _ => 1 := ⟨fun _ => by simp, rfl, fun y => by simpa using h y⟩
   refine norm_le_zero_iff.1 (le_of_forall_pos_le_add fun δ hδ => ?_)
   set S := ∑' ξ, ‖c ξ‖
-  have hS : 0 ≤ S := tsum_nonneg fun _ => norm_nonneg _
   obtain ⟨s₀, hs₀⟩ := Filter.eventually_atTop.1
     ((tendsto_tsum_compl_atTop_zero fun ξ => ‖c ξ‖).eventually (gt_mem_nhds (half_pos hδ)))
   set s := insert (0 : G) s₀

@@ -1,16 +1,7 @@
 module
 
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionNormSqLevi
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
 public import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.FubiniLevi
 
 @[expose] public section
@@ -20,6 +11,7 @@ set_option maxSynthPendingDepth 1
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
 
 open ReciprocityTheory.ChartRestriction.G.Geo Filter Topology ComplexConjugate
+open GroundTheory.Heights₂.Heights.LowerBoundFree.FubiniLevi
 
 noncomputable section
 
@@ -27,86 +19,17 @@ namespace LeviFSInvariant
 
 variable {J : Type} [Fintype J]
 
-def sqSum (z : J → ℂ) : ℝ := ∑ p, ‖z p‖ ^ 2
+private def herm (a b : J → ℂ) : ℂ := ∑ p, conj (a p) * b p
 
-def reInner (a : J → ℂ) : (J → ℂ) →L[ℝ] ℝ :=
-  ∑ p, ((a p).re • (Complex.reCLM.comp (ContinuousLinearMap.proj p)) +
-    (a p).im • (Complex.imCLM.comp (ContinuousLinearMap.proj p)))
-
-theorem reInner_apply (a b : J → ℂ) :
-    reInner a b = ∑ p, ((a p).re * (b p).re + (a p).im * (b p).im) := by
-  simp [reInner]
-
-theorem reInner_comm (a b : J → ℂ) : reInner a b = reInner b a := by
-  simp only [reInner_apply]
-  exact Finset.sum_congr rfl fun p _ => by ring
-
-theorem reInner_self (a : J → ℂ) : reInner a a = sqSum a := by
-  simp only [reInner_apply, sqSum]
-  refine Finset.sum_congr rfl fun p _ => ?_
-  rw [Complex.sq_norm, Complex.normSq_apply]
-
-theorem continuous_sqSum : Continuous (sqSum : (J → ℂ) → ℝ) := by
-  unfold sqSum
-  fun_prop
-
-theorem hasFDerivAt_sqSum (z : J → ℂ) : HasFDerivAt sqSum ((2 : ℝ) • reInner z) z := by
-  have h := HasFDerivAt.sum (u := Finset.univ) (A := fun p (x : J → ℂ) => ‖x p‖ ^ 2)
-    fun p _ => (hasFDerivAt_apply p z).norm_sq
-  rw [show (∑ p ∈ Finset.univ, fun x : J → ℂ => ‖x p‖ ^ 2) = sqSum from by
-    funext x; simp [sqSum, Finset.sum_apply]] at h
-  refine h.congr_fderiv ?_
-  refine ContinuousLinearMap.ext fun v => ?_
-  simp only [ContinuousLinearMap.coe_sum', Finset.sum_apply, ContinuousLinearMap.coe_smul',
-    Pi.smul_apply, ContinuousLinearMap.coe_comp', Function.comp_apply, innerSL_apply_apply,
-    ContinuousLinearMap.proj_apply, smul_eq_mul, reInner_apply, Complex.inner, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun p _ => ?_
-  simp only [Complex.mul_re, Complex.conj_re, Complex.conj_im]
-  ring
-
-def phi (z : J → ℂ) : ℝ := Real.log (sqSum z) * (1 / 2)
-
-theorem hasFDerivAt_phi {z : J → ℂ} (hz : sqSum z ≠ 0) :
-    HasFDerivAt phi ((sqSum z)⁻¹ • reInner z) z := by
-  have h := ((hasFDerivAt_sqSum z).log hz).mul_const (1 / 2 : ℝ)
-  refine h.congr_fderiv ?_
-  refine ContinuousLinearMap.ext fun v => ?_
-  simp only [ContinuousLinearMap.coe_smul', Pi.smul_apply, smul_eq_mul]
-  ring
-
-theorem contDiffAt_phi {z : J → ℂ} (hz : sqSum z ≠ 0) {n : WithTop ℕ∞} :
-    ContDiffAt ℝ n phi z := by
-  have hs : ContDiff ℝ n (sqSum : (J → ℂ) → ℝ) :=
-    ContDiff.sum fun p _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ (fun _ => ℂ) p)
-  exact (hs.contDiffAt.log hz).mul contDiffAt_const
-
-theorem fderiv_fderiv_phi {z : J → ℂ} (hz : sqSum z ≠ 0) (u : J → ℂ) :
-    fderiv ℝ (fderiv ℝ phi) z u u =
-      sqSum u / sqSum z - 2 * reInner z u ^ 2 / sqSum z ^ 2 := by
-  exact GroundTheory.Heights₂.Heights.LowerBoundFree.FubiniLevi.fderiv_fderiv_phi hz u
-
-theorem leviForm_phi {z : J → ℂ} (hz : sqSum z ≠ 0) (w : J → ℂ) :
-    leviForm phi z w = (sqSum z * sqSum w - (reInner z w ^ 2 + reInner z (Complex.I • w) ^ 2)) /
-      (2 * sqSum z ^ 2) := by
-  have hw : sqSum (Complex.I • w) = sqSum w := by
-    simp [sqSum]
-  unfold leviForm
-  rw [fderiv_fderiv_phi hz, fderiv_fderiv_phi hz, hw]
-  field_simp
-  ring
-
-def herm (a b : J → ℂ) : ℂ := ∑ p, conj (a p) * b p
-
-theorem herm_self (a : J → ℂ) : herm a a = (sqSum a : ℂ) := by
+private theorem herm_self (a : J → ℂ) : herm a a = (sqSum a : ℂ) := by
   simp only [herm, sqSum, Complex.ofReal_sum, Complex.ofReal_pow]
   exact Finset.sum_congr rfl fun p _ => Complex.conj_mul' (a p)
 
-theorem herm_swap (a b : J → ℂ) : herm b a = conj (herm a b) := by
-
+private theorem herm_swap (a b : J → ℂ) : herm b a = conj (herm a b) := by
   simp only [herm, map_sum, map_mul, Complex.conj_conj]
   exact Finset.sum_congr rfl fun p _ => mul_comm _ _
 
-theorem reInner_sq_add (a b : J → ℂ) :
+private theorem reInner_sq_add (a b : J → ℂ) :
     ((reInner a b ^ 2 + reInner a (Complex.I • b) ^ 2 : ℝ) : ℂ) = herm a b * herm b a := by
   have hre : (herm a b).re = reInner a b := by
     simp only [herm, Complex.re_sum, reInner_apply, Complex.mul_re, Complex.conj_re, Complex.conj_im]
@@ -120,21 +43,21 @@ theorem reInner_sq_add (a b : J → ℂ) :
   push_cast
   ring
 
-theorem herm_smul_left (c : ℂ) (a b : J → ℂ) : herm (c • a) b = conj c * herm a b := by
+private theorem herm_smul_left (c : ℂ) (a b : J → ℂ) : herm (c • a) b = conj c * herm a b := by
   simp only [herm, Finset.mul_sum, Pi.smul_apply, smul_eq_mul, map_mul]
   exact Finset.sum_congr rfl fun p _ => by ring
 
-theorem herm_add_right (a b b' : J → ℂ) : herm a (b + b') = herm a b + herm a b' := by
+private theorem herm_add_right (a b b' : J → ℂ) : herm a (b + b') = herm a b + herm a b' := by
   simp only [herm, Pi.add_apply, mul_add, Finset.sum_add_distrib]
 
-theorem herm_add_left (a a' b : J → ℂ) : herm (a + a') b = herm a b + herm a' b := by
+private theorem herm_add_left (a a' b : J → ℂ) : herm (a + a') b = herm a b + herm a' b := by
   simp only [herm, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
-theorem herm_smul_right (c : ℂ) (a b : J → ℂ) : herm a (c • b) = c * herm a b := by
+private theorem herm_smul_right (c : ℂ) (a b : J → ℂ) : herm a (c • b) = c * herm a b := by
   simp only [herm, Finset.mul_sum, Pi.smul_apply, smul_eq_mul]
   exact Finset.sum_congr rfl fun p _ => by ring
 
-theorem sqSum_ne_zero {a : J → ℂ} (ha : a ≠ 0) : sqSum a ≠ 0 := by
+private theorem sqSum_ne_zero {a : J → ℂ} (ha : a ≠ 0) : sqSum a ≠ 0 := by
   obtain ⟨i, hi⟩ := Function.ne_iff.mp ha
   refine ne_of_gt (lt_of_lt_of_le (pow_pos (norm_pos_iff.mpr hi) 2) ?_)
   exact Finset.single_le_sum (f := fun p => ‖a p‖ ^ 2) (fun _ _ => sq_nonneg _) (Finset.mem_univ i)

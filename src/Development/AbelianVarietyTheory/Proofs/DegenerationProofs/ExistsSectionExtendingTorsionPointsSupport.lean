@@ -55,9 +55,7 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.P
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-attribute [local instance] Over.cartesianMonoidalCategory
 open ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.ZH Classical
-attribute [local instance] SplitExt.free SplitExt.finite MvPolynomial.gradedAlgebra
 
 noncomputable section
 namespace GlobalTheory.ZH.TorsionSection
@@ -240,8 +238,7 @@ theorem exists_section : GlobalTheory.UT.LL → ∀ (o Ω : Type) [CommRing o] [
     obtain ⟨K, _, y, rfl⟩ := exists_field_point w
     obtain ⟨ψ, -, hψ⟩ := hval y
     have : ∃ k, valR (y ≫ W.ι) W (f k) ≠ 0 := by
-      by_contra hn
-      push_neg at hn
+      by_contra! hn
       simp [hn, Matrix.mulVec, dotProduct] at hψ
     obtain ⟨k, hk⟩ := this
     exact TopologicalSpace.Opens.mem_iSup.2 ⟨k, (CrdCalc.top_le_iff y _).1

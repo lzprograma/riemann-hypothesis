@@ -16,7 +16,7 @@ open Finset MeasureTheory Matrix
 
 namespace ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ}
 
@@ -128,11 +128,11 @@ variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
 def tfPh (dual : Bool) (ε : Fin n → Bool) (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)) (y : H)
     (ζ : Fin n → H) : tfL2n ε :=
-  WithLp.toLp 2 (fun c => toL2 ε (coefMap dual σ (Pi.single c (tfSgn ε c • y)) ζ))
+  WithLp.toLp 2 (fun c => toL2 ε (ReciprocityTheory.ChartRestriction.DS.occCoef dual σ (Pi.single c (tfSgn ε c • y)) ζ))
 
 theorem tfPh_apply (dual : Bool) (ε : Fin n → Bool) (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)) (y : H)
     (ζ : Fin n → H) (c : Fin n) :
-    tfPh dual ε σ y ζ c = toL2 ε (coefMap dual σ (Pi.single c (tfSgn ε c • y)) ζ) := rfl
+    tfPh dual ε σ y ζ c = toL2 ε (ReciprocityTheory.ChartRestriction.DS.occCoef dual σ (Pi.single c (tfSgn ε c • y)) ζ) := rfl
 
 end Ph
 

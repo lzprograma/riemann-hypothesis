@@ -131,9 +131,9 @@ theorem realM_lineAt (hθ : IsInfFam θ) {m n : ℕ} (ρ : D.what₂.Tau) (u : M
   have hL := (GlobalTheory.OrientedHeis.isLineAt_lineAt hθ ρ u).2.2 1
   unfold realM
   split_ifs with h1 h2 h2
-  · rw [hL, if_pos (GlobalTheory.StdRat.tauE_injective D (h1.choose_spec.symm.trans h2))]
+  · rw [hL, ite_eq_left (GlobalTheory.StdRat.tauE_injective D (h1.choose_spec.symm.trans h2))]
     simp
-  · rw [hL, if_neg fun h => h2 (h1.choose_spec.trans (congrArg (tauE D) h))]
+  · rw [hL, ite_eq_right fun h => h2 (h1.choose_spec.trans (congrArg (tauE D) h))]
   · exact absurd ⟨ρ, h2⟩ h1
   · rfl
 
@@ -145,17 +145,17 @@ theorem perC_col {E : Type} [Field E] [NumberField E] [IsCMField E] (X : Data E 
   dsimp only
   by_cases h : σ = τ
   · subst h
-    simp only [if_true, Pi.single_apply, Prod.mk.injEq, true_and]
+    simp only [ite_true, Pi.single_apply, Prod.mk.injEq, true_and]
     by_cases ha : (a : ℕ) < X.p0
-    · rw [if_pos ha]
+    · rw [ite_eq_left ha]
       refine (congrFun (congrFun (hx σ) a) c).trans ?_
       simp [sgnM, Matrix.diagonal_apply, sgn, ha]
-    · rw [if_neg ha]
+    · rw [ite_eq_right ha]
       have := congrFun (congrFun (Matrix.nonsing_inv_mul (mat x σ) (isUnit_iff_ne_zero.2 (hd σ).1)) a) c
       rw [Matrix.one_apply] at this
       exact this
   · rw [Pi.single_eq_of_ne (fun e => h (congrArg Prod.fst e))]
-    simp only [if_neg h]
+    simp only [ite_eq_right h]
     split_ifs
     · simp [hermC]
     · simp [Matrix.mulVec, dotProduct]
@@ -189,10 +189,10 @@ theorem zOf_unitMap (hθ : IsInfFam θ) {V W : HSp D} {hr : W.rank = r} {X : Dat
   simp only [realM_lineAt hθ, ← h1, Subtype.val_inj, Matrix.ite_apply, Matrix.zero_apply, hU, Fin.cast_cast, Fin.cast_eq_self]
   by_cases hb : b = l.2.2
   · subst hb
-    simp only [if_true]
+    simp only [ite_true]
     rw [perC_col X hx hd, Pi.single_eq_same]
     simp only [Pi.single_apply, Equiv.eq_symm_apply, rowOf_apply]
-  · simp only [if_neg hb, ite_self]
+  · simp only [ite_eq_right hb, ite_self]
     rw [perC_zero, Pi.single_eq_of_ne hb]
     rfl
 

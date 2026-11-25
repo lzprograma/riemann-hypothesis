@@ -125,7 +125,7 @@ theorem proj_sum_eig (hα : Function.Injective fun τ => χ τ α) (mm : ι → 
     rw [aevalS_eig (ρ α) hm, aeval_map_algebraMap, aeval_algebraMap_apply, Polynomial.coe_aeval_eq_eval,
       eval_lagr (fun τ => χ τ α) hα]
     split_ifs <;> simp
-  simp only [key, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [key, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 end Split2
 

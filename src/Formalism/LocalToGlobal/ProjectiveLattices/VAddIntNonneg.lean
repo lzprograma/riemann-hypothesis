@@ -121,7 +121,7 @@ theorem cutN_eq_zero (j w σ) (F : cutR C j w) : cutN C N j w σ F = 0 ↔ F = 0
   constructor
   · intro h0
     by_cases h : InR D j
-    · unfold cutN at h0; rw [if_pos h] at h0
+    · unfold cutN at h0; rw [ite_eq_left h] at h0
       exact Subtype.ext ((hN j h w σ).defin _ (cutR_le C j w F.2) h0)
     · exact cutR_zero C h F
   · rintro rfl

@@ -47,7 +47,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta GlobalTheory.Mem.Th MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.Mem.HeckeExp
 
@@ -100,10 +99,10 @@ theorem hasInfExp_unique {χ : IdC D} {τ : D.what₂.Tau} {a a' : ℚ} (h : Has
   obtain ⟨m, hm, -, h2⟩ := h'
   have e : n = m := eq_of_zpow_eq fun w hw => by
     obtain ⟨x, hx1, hx2⟩ := exists_idele_at hθ τ w (by rintro rfl; simp at hw)
-    have ho : ∀ τ', τ' ≠ τ → θ τ' (infPart D (x : AE D)) = 1 := fun τ' hτ => by rw [hx2, if_neg hτ]
+    have ho : ∀ τ', τ' ≠ τ → θ τ' (infPart D (x : AE D)) = 1 := fun τ' hτ => by rw [hx2, ite_eq_right hτ]
     have e1 := h1 θ hθ x hx1 ho
     have e2 := h2 θ hθ x hx1 ho
-    rw [hx2, if_pos rfl, hw, Complex.ofReal_one, div_one] at e1 e2
+    rw [hx2, ite_eq_left rfl, hw, Complex.ofReal_one, div_one] at e1 e2
     exact e1.symm.trans e2
   subst e
   linarith

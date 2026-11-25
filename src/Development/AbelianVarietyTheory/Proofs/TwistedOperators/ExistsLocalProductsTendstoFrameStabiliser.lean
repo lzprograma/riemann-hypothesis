@@ -54,7 +54,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.IndefR GlobalTheory.WeilParts GlobalTheory.StepLaw
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LocalApprox
 
@@ -81,14 +80,14 @@ theorem evalV_indA_of_mem {s : Finset (HeightOneSpectrum (𝓞 F))} {v : HeightO
     evalV F v (indA F s) = 1 := by
   classical
   show ((if v ∈ s then (1 : v.adicCompletionIntegers F) else 0 : v.adicCompletionIntegers F) : v.adicCompletion F) = 1
-  rw [if_pos h]
+  rw [ite_eq_left h]
   rfl
 
 theorem evalV_indA_of_notMem {s : Finset (HeightOneSpectrum (𝓞 F))} {v : HeightOneSpectrum (𝓞 F)} (h : v ∉ s) :
     evalV F v (indA F s) = 0 := by
   classical
   show ((if v ∈ s then (1 : v.adicCompletionIntegers F) else 0 : v.adicCompletionIntegers F) : v.adicCompletion F) = 0
-  rw [if_neg h]
+  rw [ite_eq_right h]
   rfl
 
 theorem af_ext {a b : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af F} (h : ∀ v, evalV F v a = evalV F v b) : a = b := Subtype.ext (funext fun v => h v)
@@ -145,7 +144,7 @@ theorem tendsto_indA : Tendsto (indA F) atTop (𝓝 1) := by
     intro v
     apply tendsto_const_nhds.congr'
     filter_upwards [Filter.eventually_ge_atTop {v}] with s hs
-    rw [if_pos (hs (Finset.mem_singleton_self v))]
+    rw [ite_eq_left (hs (Finset.mem_singleton_self v))]
   have h2 := ((continuous_intFam F).tendsto _).comp hp
   rw [h1] at h2
   convert h2 using 1

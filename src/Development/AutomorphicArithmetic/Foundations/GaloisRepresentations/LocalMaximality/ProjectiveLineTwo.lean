@@ -1,51 +1,7 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -66,13 +22,13 @@ private lemma mem_acxC {σ : Type} [LinearOrder σ] (A : Finset σ → Submodule
 private lemma val_zero {σ : Type} [LinearOrder σ] {A : Finset σ → Submodule ℂ E} {w : σ → Module.End ℂ E}
     {n : ℤ} {c : Finset σ → E} (h : c ∈ (acx A w).C n) (s : Finset σ) (hs : (s.card : ℤ) ≠ n) : c s = 0 := by
   have := (mem_acxC A w n c).1 h s
-  rw [if_neg hs] at this
+  rw [ite_eq_right hs] at this
   simpa using this
 
 private lemma val_mem {σ : Type} [LinearOrder σ] {A : Finset σ → Submodule ℂ E} {w : σ → Module.End ℂ E}
     {n : ℤ} {c : Finset σ → E} (h : c ∈ (acx A w).C n) (s : Finset σ) (hs : (s.card : ℤ) = n) : c s ∈ A s := by
   have := (mem_acxC A w n c).1 h s
-  rwa [if_pos hs] at this
+  rwa [ite_eq_left hs] at this
 
 private lemma wd_apply' {σ : Type} [LinearOrder σ] (w : σ → Module.End ℂ E) (c : Finset σ → E) (t : Finset σ) :
     wd w c t = ∑ i ∈ t, (GlobalTheory.cubeSign t i : ℤ) • w i (c (t.erase i)) := by
@@ -146,13 +102,13 @@ theorem UpperTheory.Gal.productCup_of_system.localTwo_of_gl2 :
     intro s
     have hcs := hsc s
     by_cases hsn : (s.card : ℤ) = n
-    · rw [if_pos hsn]
+    · rw [ite_eq_left hsn]
       simp only [c']
       split_ifs with hb
       · have := hc0m (lft s) (rgt s) hb (by omega)
         rwa [hs] at this
       · exact zero_mem _
-    · rw [if_neg hsn]
+    · rw [ite_eq_right hsn]
       simp only [c']
       split_ifs with hb
       · rw [hc0 _ _ hb (by omega)]; exact zero_mem _
@@ -170,11 +126,11 @@ theorem UpperTheory.Gal.productCup_of_system.localTwo_of_gl2 :
     rw [wdQ]
     simp only [hcu]
     by_cases hb : (b.card : ℤ) = n - d
-    · simp only [if_pos hb]
+    · simp only [ite_eq_left hb]
       have h0 : wd (fun l => w (inrE l)) (c0 b) = 0 := (Submodule.mem_inf.1 (hZ b hb)).2
       have h1 : (fun L' => c0 b L') = c0 b := rfl
       rw [h1, h0]; simp
-    · simp only [if_neg hb]
+    · simp only [ite_eq_right hb]
       have h1 : (fun _ : Finset κ => (0 : E)) = 0 := rfl
       rw [h1, map_zero]; simp
   have hy : ∀ b : Finset β, ∃ y : Finset κ → E, (b.card : ℤ) = n - d + 1 →
@@ -200,14 +156,14 @@ theorem UpperTheory.Gal.productCup_of_system.localTwo_of_gl2 :
     intro s
     have hcs := hsc s
     by_cases hsn : (s.card : ℤ) = n
-    · rw [if_pos hsn]
+    · rw [ite_eq_left hsn]
       simp only [y]
       split_ifs with hb
       · have := hym (lft s) (rgt s) hb (by omega)
         rw [hs] at this
         exact (A s).smul_of_tower_mem _ this
       · exact zero_mem _
-    · rw [if_neg hsn]
+    · rw [ite_eq_right hsn]
       simp only [y]
       split_ifs with hb
       · rw [hyz _ _ hb (by omega), smul_zero]; exact zero_mem _
@@ -225,21 +181,21 @@ theorem UpperTheory.Gal.productCup_of_system.localTwo_of_gl2 :
     rw [wdQ, wdQc]
     by_cases hb : (b.card : ℤ) = n - d + 1
     · have h1 : (fun L' => y (uni b L')) = ((-1 : ℤ) ^ b.card) • yb b := by
-        funext L'; rw [hyu, if_pos hb]; rfl
+        funext L'; rw [hyu, ite_eq_left hb]; rfl
       rw [h1, map_zsmul, Pi.smul_apply, smul_smul, (hyb b hb).2, ← mul_pow]
       simp only [neg_mul, one_mul, neg_neg, one_pow, one_smul]
       refine wd_congr' _ _ _ _ fun i hi => ?_
-      rw [hcu, if_pos]
+      rw [hcu, ite_eq_left]
       rw [Finset.card_erase_of_mem hi]
       have : 0 < b.card := Finset.card_pos.2 ⟨i, hi⟩
       omega
     · have h1 : (fun L' => y (uni b L')) = 0 := by
-        funext L'; rw [hyu, if_neg hb]; rfl
+        funext L'; rw [hyu, ite_eq_right hb]; rfl
       rw [h1, map_zero, Pi.zero_apply, smul_zero]
       symm
       have h2 : wd (fun i => w (inlE i)) (fun b' => c' (uni b' L)) b = wd (fun i => w (inlE i)) 0 b := by
         refine wd_congr' _ _ _ _ fun i hi => ?_
-        rw [hcu, if_neg, Pi.zero_apply]
+        rw [hcu, ite_eq_right, Pi.zero_apply]
         rw [Finset.card_erase_of_mem hi]
         have : 0 < b.card := Finset.card_pos.2 ⟨i, hi⟩
         omega
@@ -259,7 +215,7 @@ theorem UpperTheory.Gal.productCup_of_system.localTwo_of_gl2 :
     funext L
     show c (uni b L) = c0 b L
     by_cases hL : d ≤ (L.card : ℤ)
-    · rw [hlev b L hL, hcu, if_pos hb]
+    · rw [hlev b L hL, hcu, ite_eq_left hb]
     · rw [val_zero hcC _ (by rw [hcd]; push_cast; omega), hc0 b L hb (by omega)]
   · intro b L hL
     rw [hlev b L hL.le, hcu]

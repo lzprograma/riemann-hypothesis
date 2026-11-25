@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsWeilDatumGeneratorRealOneParamGroup
 public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GelfConstSmul
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsQuadOfPlane
@@ -55,7 +56,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta GlobalTheory.Mem.Th MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.IndefR.Datum GlobalTheory.Mem.AutSpace GlobalTheory.IndefiniteRowSideFullHecke.LieAlgebraExponentialFamilies GlobalTheory.CuspDecay GlobalTheory.Mem.Lift
 open scoped TensorProduct ContDiff Topology
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open scoped Classical
 
 namespace GlobalTheory.Mem.Lift.WeylAction
@@ -91,7 +91,7 @@ theorem sum_left {A : Type} [AddCommGroup A] [Module ℂ A] (X : Matrix (Fin m) 
       ∑ i, ∑ j, X i j • ∑ a, y ((i, a), τ) ((j, a), τ) := by
   rw [sum_blk _ _ τ fun τ' h => Or.inl (Pi.single_eq_of_ne h _)]
   simp only [Fintype.sum_prod_type, Pi.single_eq_same, Matrix.one_apply, mul_ite, mul_one, mul_zero, ite_smul,
-    zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true, Finset.smul_sum]
+    zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Finset.smul_sum]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_comm
 
 theorem sum_right {A : Type} [AddCommGroup A] [Module ℂ A] (Y : Matrix (Fin n) (Fin n) ℂ) (τ : O)
@@ -118,17 +118,7 @@ theorem hasDerivAt_comp (hθ : IsInfFam θ) {V : HSp D} {τ : D.what₂.Tau} {X 
     (hX : X ∈ lieAt V τ) (τ' : D.what₂.Tau) (i j : Fin V.rank) :
     HasDerivAt (fun t : ℝ => compAt θ τ' (Formalism.L2.Theta.mt V (oneP θ V τ X t)) i j)
       ((Pi.single τ X : D.what₂.Tau → _) τ' i j) 0 := by
-  by_cases h : τ' = τ
-  · subst h
-    have e : ∀ t : ℝ, compAt θ τ' (Formalism.L2.Theta.mt V (oneP θ V τ' X t)) = NormedSpace.exp (t • X) :=
-      fun t => (isAtTau_oneP hθ hX t).2.1
-    have := hasDerivAt_exp_entry X 0 i j
-    rw [zero_smul, NormedSpace.exp_zero, Matrix.one_mul] at this
-    simpa only [e, Pi.single_eq_same] using this
-  · have e : ∀ t : ℝ, compAt θ τ' (Formalism.L2.Theta.mt V (oneP θ V τ X t)) = 1 :=
-      fun t => (isAtTau_oneP hθ hX t).2.2 τ' h
-    simp only [e, Pi.single_eq_of_ne h]
-    exact hasDerivAt_const _ _
+  apply _root_.GlobalTheory.DefLift.Gen.hasDerivAt_comp <;> assumption
 
 theorem oneP_inv (hθ : IsInfFam θ) {V : HSp D} {τ : D.what₂.Tau} {X : Matrix (Fin V.rank) (Fin V.rank) ℂ}
     (hX : X ∈ lieAt V τ) (t : ℝ) : (oneP θ V τ X t)⁻¹ = oneP θ V τ (-X) t := by

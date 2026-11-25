@@ -68,13 +68,6 @@ private theorem ev_zero {R : Type} [CommRing R] (I : Ideal R) {M : Type} [AddCom
   rw [← hy, Submodule.Quotient.mk_eq_zero]
   simp
 
-private theorem ev_smul {R : Type} [CommRing R] (I : Ideal R) {M : Type} [AddCommGroup M] [Module R M]
-    (n : ℕ) (c : R) (hc : c ∈ I ^ n) (x : AdicCompletion I M) : AdicCompletion.eval I M n (c • x) = 0 := by
-  rw [map_smul]
-  obtain ⟨y, hy⟩ := Submodule.Quotient.mk_surjective _ (AdicCompletion.eval I M n x)
-  rw [← hy, ← Submodule.Quotient.mk_smul, Submodule.Quotient.mk_eq_zero]
-  exact Submodule.smul_mem_smul hc Submodule.mem_top
-
 private theorem kmap_comp (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (φ ψ χ : X.K ≃+* X.K) (h : ∀ f, χ f = ψ (φ f))
     (x : X.Khat l) : X.kmap l χ x = X.kmap l ψ (X.kmap l φ x) := by
   have hl : (MonoidHom.toAdditive (Units.map χ.toMonoidHom)).toIntLinearMap =
@@ -116,7 +109,8 @@ theorem sApi : SApi := by
   · rw [Finset.sum_apply, Finset.sum_apply, ← Finset.sum_sub_distrib, map_sum]
     exact Finset.sum_eq_zero (fun i hi => h i hi u)
   · rw [← sub_smul]
-    apply ev_smul
+    refine LinearMap.mem_ker.1 <| AdicCompletion.pow_smul_top_le_ker_eval _ n <|
+      Submodule.smul_mem_smul ?_ Submodule.mem_top
     rw [idl, Ideal.span_singleton_pow, Ideal.mem_span_singleton]
     exact hk
   · simp only [Tower.act, LinearMap.coe_mk, AddHom.coe_mk]

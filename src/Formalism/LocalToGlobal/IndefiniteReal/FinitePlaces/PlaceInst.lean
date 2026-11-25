@@ -65,8 +65,8 @@ theorem tfun_add {Φ Φ' : W → ℂ} (h : IsSB L X Φ) (h' : IsSB L X Φ') :
     (term_support_finite hχl hχr hχ0 hLL hdY hfinX hfinY htf hoY h')]
   refine finsum_congr fun q => ?_
   by_cases hy : q.2.out ∈ Y
-  · simp only [if_pos hy, term, coef_add hχl hχr hχ0 hLL hfinX hoY h h' _ hy, add_smul]
-  · simp only [if_neg hy, add_zero]
+  · simp only [ite_eq_left hy, term, coef_add hχl hχr hχ0 hLL hfinX hoY h h' _ hy, add_smul]
+  · simp only [ite_eq_right hy, add_zero]
 
 include hχl hχr hχ0 hLL hdY hoY hfinX hfinY htf in
 open Classical in
@@ -75,8 +75,8 @@ theorem tfun_smul {Φ : W → ℂ} (h : IsSB L X Φ) (c : ℂ) : tfun ρ χ L X 
   rw [smul_finsum' c (term_support_finite hχl hχr hχ0 hLL hdY hfinX hfinY htf hoY h)]
   refine finsum_congr fun q => ?_
   by_cases hy : q.2.out ∈ Y
-  · simp only [if_pos hy, term, coef_smul hfinX, smul_smul]
-  · simp only [if_neg hy, smul_zero]
+  · simp only [ite_eq_left hy, term, coef_smul hfinX, smul_smul]
+  · simp only [ite_eq_right hy, smul_zero]
 
 include hX hXY hfX hχl hχr hχ0 hLL hdY hoY hfinX hfinY htf in
 open Classical in
@@ -91,7 +91,7 @@ theorem tfun_trans {Φ : W → ℂ} (h : IsSB L X Φ) {x : W} (hx : x ∈ X) :
   show _ = ρ x (if q.2.out ∈ Y then
     term ρ χ L X f₀ Φ (q.1 + (QuotientAddGroup.mk x : QX L X)).out q.2.out else 0)
   by_cases hy : q.2.out ∈ Y
-  · simp only [if_pos hy]
+  · simp only [ite_eq_left hy]
     obtain ⟨l, hl, hout⟩ := QX_out (L := L) (X := X) (q.1.out + x)
     have hq : q.1 + (QuotientAddGroup.mk x : QX L X) = QuotientAddGroup.mk (q.1.out + x) := by
       rw [QuotientAddGroup.mk_add, QuotientAddGroup.out_eq']
@@ -108,7 +108,7 @@ theorem tfun_trans {Φ : W → ℂ} (h : IsSB L X Φ) {x : W} (hx : x ∈ X) :
         rw [← Module.End.mul_apply, ← hX _ hx _ (X.neg_mem ha), show x + -(q.1.out + x) = -q.1.out by abel]
       rw [hρ]
     · simp [coef_eq_zero hfinX Φ hs ha]
-  · simp only [if_neg hy, map_zero]
+  · simp only [ite_eq_right hy, map_zero]
 
 include hY hXY hfY hχl hχr hχ0 hLL hdY hoY hfinX hfinY htf in
 open Classical in
@@ -129,7 +129,7 @@ theorem tfun_modul {Φ : W → ℂ} (h : IsSB L X Φ) {y₀ : W} (hy₀ : y₀ �
   have hμY := (AddSubgroup.mem_inf.1 hμ).2
   by_cases hy : q.2.out ∈ Y
   · have hy1 : q.2.out + -y₀ ∈ Y := Y.add_mem hy (Y.neg_mem hy₀)
-    rw [if_pos hy, if_pos (Y.add_mem hy1 hμY), term_add_right hfinX hχr hLL hY hfY Φ _ hy1 hμ]
+    rw [ite_eq_left hy, ite_eq_left (Y.add_mem hy1 hμY), term_add_right hfinX hχr hLL hY hfY Φ _ hy1 hμ]
     unfold term
     have hc : coef χ L X (fun t => χ t y₀ * Φ t) q.1.out q.2.out =
         χ q.1.out y₀ * coef χ L X Φ q.1.out (q.2.out + -y₀) := by
@@ -158,7 +158,7 @@ theorem tfun_modul {Φ : W → ℂ} (h : IsSB L X Φ) {y₀ : W} (hy₀ : y₀ �
   · have hy' : q.2.out + -y₀ + μ ∉ Y := fun h' => hy (by
       have := Y.add_mem (Y.sub_mem h' hμY) hy₀
       simpa using this)
-    rw [if_neg hy, if_neg hy', map_zero]
+    rw [ite_eq_right hy, ite_eq_right hy', map_zero]
 
 include hX hY hXY hfX hfY hχl hχr hχ0 hLL hdY hoY hfinX in
 open Classical in
@@ -175,7 +175,7 @@ theorem tfun_vac : tfun ρ χ L X Y f₀ (fun t => if t ∈ L ∧ t ∈ X then (
     have hc : coef χ L X (fun t => if t ∈ L ∧ t ∈ X then (1 : ℂ) else 0) 0 0 = 1 := by
       have hpt : ∀ t ∈ L ⊓ X, (if 0 + t ∈ L ∧ 0 + t ∈ X then (1 : ℂ) else 0) * (χ t 0)⁻¹ = 1 := by
         intro t ht
-        rw [zero_add, if_pos (AddSubgroup.mem_inf.1 ht), chi_zero_right hχr hχ0, inv_one, mul_one]
+        rw [zero_add, ite_eq_left (AddSubgroup.mem_inf.1 ht), chi_zero_right hχr hχ0, inv_one, mul_one]
       unfold coef
       exact (integ_congr hfinX (g' := fun _ => (1 : ℂ)) hpt).trans (integ_one hfinX)
     rw [term, hc, one_smul, neg_zero, hfX 0 (L ⊓ X).zero_mem, hfX 0 (L ⊓ X).zero_mem]
@@ -184,12 +184,12 @@ theorem tfun_vac : tfun ρ χ L X Y f₀ (fun t => if t ∈ L ∧ t ∈ X then (
   have h0Y : (0 : QY L Y).out ∈ L ⊓ Y := (QuotientAddGroup.eq_zero_iff _).1 (QuotientAddGroup.out_eq' 0)
   rw [finsum_eq_single _ ((0 : QX L X), (0 : QY L Y))]
   · show (if (0 : QY L Y).out ∈ Y then _ else _) = f₀
-    rw [if_pos (AddSubgroup.mem_inf.1 h0Y).2]
+    rw [ite_eq_left (AddSubgroup.mem_inf.1 h0Y).2]
     exact hval _ h0X _ h0Y
   · rintro ⟨q1, q2⟩ hq
     by_cases hy : q2.out ∈ Y
     · show (if q2.out ∈ Y then _ else _) = 0
-      rw [if_pos hy, term]
+      rw [ite_eq_left hy, term]
       suffices hc : coef χ L X (fun t => if t ∈ L ∧ t ∈ X then (1 : ℂ) else 0) q1.out q2.out = 0 by
         rw [hc, zero_smul]
       by_cases h1 : q1 = 0
@@ -199,13 +199,13 @@ theorem tfun_vac : tfun ρ χ L X Y f₀ (fun t => if t ∈ L ∧ t ∈ X then (
         have hyL : q2.out ∉ L := fun hL => hq2 ((QuotientAddGroup.out_eq' q2).symm.trans
           ((QuotientAddGroup.eq_zero_iff _).2 (AddSubgroup.mem_inf.2 ⟨hL, hy⟩)))
         have hne : ¬ ∀ x ∈ L ⊓ X, χ x q2.out = 1 := fun hall => hyL (hdY _ hy hall)
-        push_neg at hne
+        push Not at hne
         obtain ⟨u, hu, hχu⟩ := hne
         obtain ⟨m, hm, hmy⟩ := hoY _ hy
         unfold coef
         rw [integ_congr hfinX (g' := fun t => (χ t q2.out)⁻¹) fun t ht => by
           show (if q1.out + t ∈ L ∧ q1.out + t ∈ X then (1 : ℂ) else 0) * _ = _
-          rw [if_pos (AddSubgroup.mem_inf.1 ((L ⊓ X).add_mem h1X ht)), one_mul]]
+          rw [ite_eq_left (AddSubgroup.mem_inf.1 ((L ⊓ X).add_mem h1X ht)), one_mul]]
         refine integ_twist hfinX hm (fun t _ u' hu' => ?_) hu (ζ := (χ u q2.out)⁻¹) (by rwa [Ne, inv_eq_one]) ?_
         · rw [hχl, chi_nsmul_left hχl hχ0, ← chi_nsmul_right hχr hχ0,
             hLL _ hu' _ (AddSubgroup.mem_inf.2 ⟨hmy, Y.nsmul_mem hy m⟩), mul_one]
@@ -216,11 +216,11 @@ theorem tfun_vac : tfun ρ χ L X Y f₀ (fun t => if t ∈ L ∧ t ∈ X then (
         unfold coef
         refine integ_zero_of hfinX fun t ht => ?_
         show (if q1.out + t ∈ L ∧ q1.out + t ∈ X then (1 : ℂ) else 0) * _ = 0
-        rw [if_neg, zero_mul]
+        rw [ite_eq_right, zero_mul]
         intro hh
         exact h1X (by simpa using (L ⊓ X).sub_mem (AddSubgroup.mem_inf.2 hh) ht)
     · show (if q2.out ∈ Y then _ else _) = 0
-      rw [if_neg hy]
+      rw [ite_eq_right hy]
 
 
 include hX hY hXY hχl hχr hχ0 hLL hdY hfinX hfinY htf hoX hoY hfX hfY in
@@ -274,8 +274,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open scoped TensorProduct
 
 namespace Formalism.IndefR.Fin
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D)
 

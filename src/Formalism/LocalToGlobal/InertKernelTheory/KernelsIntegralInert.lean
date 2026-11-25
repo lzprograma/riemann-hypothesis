@@ -50,54 +50,10 @@ public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.OneCo
 public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.FrLocB
 public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntWAPlaces
 import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.QuasiPeriodConstUniqueOf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.TransportFirstLevel
 import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.FamilyLogGammaSmallHolds
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Tactic.NormNum.Parity
 import Formalism.LocalToGlobal.GlobalTheory.GL3.Statement
 import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.BaseEx
 import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.IsTorsionPointStandardCM
@@ -182,7 +138,7 @@ theorem matH_hOne (L : PeriodPair) (n : Type) [Fintype n] [DecidableEq n] :
 theorem stdH_apply' (L : PeriodPair) {N : Type*} [Fintype N] [DecidableEq N] (z w : N → ℂ) :
     Formalism.L2.Th1.H.stdH L N z w = ∑ i, z i * ((Formalism.L2.Th1.F.area L : ℝ) : ℂ)⁻¹ * conj (w i) := by
   simp only [Formalism.L2.Th1.H.stdH, matH, LinearMap.mk₂'ₛₗ_apply, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul,
-    mul_ite, mul_one, mul_zero, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    mul_ite, mul_one, mul_zero, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 theorem ne_zero_of_coprime {n p : ℕ} (hp : p.Prime) (h : Nat.Coprime n p) : n ≠ 0 := by
   rintro rfl
@@ -583,7 +539,7 @@ theorem conjugation_extension_inert : ConjExt := by
   let L : D.host.E →+* ℂ_[p] := lam.comp (D.host.φ₀.codRestrict Qbar.toSubring (fun z => phi0_algebraic D z))
   have hL : ∀ x, L x = lamC lam (D.host.φ₀ x) := by
     intro x
-    simp only [lamC, dif_pos (phi0_algebraic D x)]
+    simp only [lamC, dite_eq_left (phi0_algebraic D x)]
     rfl
   set b : D.host.E := D.host.sqd with hbdef
   have hb2 : b ^ 2 = -(D.host.d : D.host.E) := Formalism.BasicNotions.Examples₂.bE_sq D.host
@@ -631,22 +587,6 @@ namespace Formalism.L2.KerInert
 namespace JetIntegrality
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker
-
-section Good
-
-variable {p : ℕ} [Fact p.Prime] {σ ι : Type*}
-
-variable (δ : ι → MvPowerSeries σ ℂ_[p] →+ MvPowerSeries σ ℂ_[p])
-
-def Wd (l : List ι) (G : MvPowerSeries σ ℂ_[p]) : MvPowerSeries σ ℂ_[p] :=
-  l.foldr (fun j H => δ j H) G
-
-def Good (G : MvPowerSeries σ ℂ_[p]) : Prop :=
-  ∀ l : List ι, IsIntP (MvPowerSeries.constantCoeff (Wd δ l G))
-
-variable {δ}
-
-end Good
 
 section Ring
 
@@ -970,7 +910,7 @@ theorem frameONB_of (hLB : LocBasisMM) (hRC : RatCoord) (hFC : FixConj) : FrameO
           e.sum_comp (fun m => Bb τ m * (if i' = x.1 then Q m x.2 else 0))
         rw [h3]
         by_cases h : i' = x.1
-        · simp only [h, if_true]
+        · simp only [h, ite_true]
           exact hBQ τ x.2
         · simp [h]
       rw [h1, h2, hcross x i' τ, sub_self]
@@ -1014,14 +954,14 @@ theorem frameONB_of (hLB : LocBasisMM) (hRC : RatCoord) (hFC : FixConj) : FrameO
     intro τ τ''
     have h := congrFun (congrFun (hmain.symm.trans hA2) (0, τ)) (0, τ'')
     rw [Matrix.sum_apply, Matrix.one_apply, Finset.sum_eq_single (0 : Fin 4)] at h
-    · simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, Matrix.of_apply, if_true,
+    · simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, Matrix.of_apply, ite_true,
         Prod.mk.injEq, true_and] at h
       rw [← h, Finset.sum_comm]
       try simp only [Finset.sum_mul]
     · intro i' _ hi'
       have hne : ¬ i' = ((0 : Fin 4), τ).1 := hi'
       have hne' : ¬ i' = ((0 : Fin 4), τ'').1 := hi'
-      simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, Matrix.of_apply, hne, if_false,
+      simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, Matrix.of_apply, hne, ite_false,
         map_zero, mul_zero, zero_mul, Finset.sum_const_zero]
     · intro h0
       exact absurd (Finset.mem_univ _) h0
@@ -1284,11 +1224,11 @@ theorem atLogVA_blk {r : ℕ} (v : Fin r → (D.what₂.Tau × Fin m' × Fin m �
   simp only [atLogVA, map_sum, map_mul, AlgHom.commutes]
   rw [sum_eIdx, Finset.sum_eq_single (I, J)]
   · refine Finset.sum_congr rfl fun k' _ => ?_
-    rw [rename_psubst _ (MvPowerSeries.constantCoeff_X k'), MvPowerSeries.rename_X, hv₄, if_pos rfl]
+    rw [rename_psubst _ (MvPowerSeries.constantCoeff_X k'), MvPowerSeries.rename_X, hv₄, ite_eq_left rfl]
     rfl
   · intro P _ hne
     refine Finset.sum_eq_zero fun k' _ => ?_
-    rw [hv₄, if_neg hne]
+    rw [hv₄, ite_eq_right hne]
     simp
   · simp
 
@@ -1364,7 +1304,7 @@ theorem isLocONB_blk (D : D7) {p : ℕ} [Fact p.Prime] (lam : Qbar →+* ℂ_[p]
     by_cases h : P = P'
     · subst h; simp
     · have : ¬ (P.1 = P'.1 ∧ P.2 = P'.2) := fun h' => h (Prod.ext h'.1 h'.2)
-      rw [if_neg this, if_neg h, lamC_phi_zero]
+      rw [ite_eq_right this, ite_eq_right h, lamC_phi_zero]
 
 theorem fourProd_main : FourProd := by
   intro D cc δ B hcc hδ p _ hp5 hin lam σ r v hσ hv H
@@ -1385,10 +1325,6 @@ theorem fourProd_main : FourProd := by
     integralMv_rename _ ((hH I J).2 C wq hC hW)
 
 end Formalism.L2.KerInert.MMFour
-
-namespace Formalism.L2.KerInert
-
-end Formalism.L2.KerInert
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -1611,7 +1547,7 @@ theorem inv_ePhi1 (he1 : PowerSeries.constantCoeff (ePhi1 g.lam g.abelian₂ g.C
 theorem ePh_eq (he1 : PowerSeries.constantCoeff (ePhi1 g.lam g.abelian₂ g.C g.wq) = 1) (hp : p ≠ 2) (r : ℕ) :
     ePh g.lam g.abelian₂ g.C g.wq r = Formalism.MainNotions.TaylorLogMetric.expMv (∑ i : Fin r, g.phAt (Xv i)) := by
   unfold ePh
-  rw [if_neg hp, expMv_sum Finset.univ (fun i : Fin r => (g.phAt (Xv i) : MvPowerSeries (Fin r) ℂ_[p]))
+  rw [ite_eq_right hp, expMv_sum Finset.univ (fun i : Fin r => (g.phAt (Xv i) : MvPowerSeries (Fin r) ℂ_[p]))
     (fun i => PowerSeries.constantCoeff_subst_eq_zero (by simp) _ (ph0 g))]
   exact Finset.prod_congr rfl fun i _ => inv_ePhi1 g he1 (by simp)
 
@@ -1694,8 +1630,7 @@ theorem core (D : D7) (g : G1 p) (hOk : g.Ok) (hp : p ≠ 2)
       exact PI.FglShared.int_of_mul_eq_one (fun α => hGI α) (cc_expMv hG0) hmul
     · rw [ePh_eq g he1 hp r, subst_expMv hS hsum0 (by rw [hsumS]; exact hS0), hsumS,
         ← expMv_add'' hS0 hd0]
-      congr 1
-      ring
+      exact congrArg _ (by ring)
 
 theorem unitSubstLoc_of (hC : CcPrime) (hE : EndIntInertAll) (hN : PhNormOKInertAll) (hB : BiaddInertAll) :
     UnitSubstLoc := by

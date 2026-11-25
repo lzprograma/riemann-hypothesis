@@ -412,7 +412,7 @@ theorem leadAt_factor {A : PowerSeries K} (hA : IntegralPS A) (hA0 : constantCoe
       · rw [sub_eq_add_neg]
         exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hA n) (by rw [norm_neg]; exact hx))
       · rw [sub_zero]; exact hA n
-    · rw [hc, if_neg (by norm_num), sub_zero, coeff_zero_eq_constantCoeff_apply, hA0, norm_one]
+    · rw [hc, ite_eq_right (by norm_num), sub_zero, coeff_zero_eq_constantCoeff_apply, hA0, norm_one]
   · push Not at hx
     refine ⟨2, le_rfl, ?_⟩
     rw [max_eq_right hx.le]
@@ -423,9 +423,9 @@ theorem leadAt_factor {A : PowerSeries K} (hA : IntegralPS A) (hA0 : constantCoe
       split_ifs with h
       · subst h; exact h2.le
       · rw [sub_zero]; exact (hA n).trans hx.le
-    · rw [hc, if_neg (by omega), sub_zero]
+    · rw [hc, ite_eq_right (by omega), sub_zero]
       exact (hA n).trans_lt hx
-    · rw [hc, if_pos rfl, h2]
+    · rw [hc, ite_eq_left rfl, h2]
 
 theorem leadAt_prod {α : Type} (S : Finset α) (x : α → K) {A : PowerSeries K} (hA : IntegralPS A)
     (hA0 : constantCoeff A = 1) :

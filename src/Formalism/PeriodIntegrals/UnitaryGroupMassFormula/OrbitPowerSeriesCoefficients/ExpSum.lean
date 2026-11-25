@@ -2,51 +2,8 @@ module
 
 public import Mathlib.Algebra.Algebra.Rat
 public import Mathlib.RingTheory.PowerSeries.Exp
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -87,9 +44,9 @@ theorem coeff_X_add_X_pow (n : ℕ) (e : Fin 2 →₀ ℕ) :
   rw [Finset.sum_congr rfl hterm]
   split_ifs with h
   · rw [Finset.sum_eq_single (e 0)]
-    · rw [if_pos ⟨rfl, by omega⟩]
+    · rw [ite_eq_left ⟨rfl, by omega⟩]
     · intro b _ hb
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨h1, _⟩
       exact hb h1.symm
     · intro hb
@@ -99,7 +56,7 @@ theorem coeff_X_add_X_pow (n : ℕ) (e : Fin 2 →₀ ℕ) :
       omega
   · apply Finset.sum_eq_zero
     intro m hm
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2⟩
     rw [Finset.mem_range] at hm
     omega
@@ -114,16 +71,16 @@ private lemma coeff_eS_X (i : Fin 2) (e : Fin 2 →₀ ℕ) :
   simp only [coeff_X_pow, coeff_exp_K, smul_eq_mul, mul_ite, mul_one, mul_zero]
   split_ifs with h
   · rw [finsum_eq_single _ (e i)]
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
     · intro d hd
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h'
       apply hd
       rw [h']
       simp
   · apply finsum_eq_zero_of_forall_eq_zero
     intro d
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h'
     apply h
     rw [h']
@@ -135,12 +92,12 @@ theorem eS_X_add_X : eS (X 0 + X 1 : MvPowerSeries (Fin 2) K) = eS (X 0) * eS (X
       ((e 0 + e 1).factorial : K)⁻¹ * ((e 0 + e 1).choose (e 0) : K) := by
     rw [PowerSeries.coeff_subst (PowerSeries.HasSubst.of_constantCoeff_zero (by simp))]
     rw [finsum_eq_single _ (e 0 + e 1)]
-    · rw [coeff_exp_K, coeff_X_add_X_pow, if_pos rfl, smul_eq_mul]
+    · rw [coeff_exp_K, coeff_X_add_X_pow, ite_eq_left rfl, smul_eq_mul]
     · intro d hd
-      rw [coeff_X_add_X_pow, if_neg (fun h => hd h.symm), smul_zero]
+      rw [coeff_X_add_X_pow, ite_eq_right (fun h => hd h.symm), smul_zero]
   rw [hL, MvPowerSeries.coeff_mul,
     Finset.sum_eq_single (Finsupp.single 0 (e 0), Finsupp.single 1 (e 1))]
-  · rw [coeff_eS_X, coeff_eS_X, if_pos (by simp), if_pos (by simp)]
+  · rw [coeff_eS_X, coeff_eS_X, ite_eq_left (by simp), ite_eq_left (by simp)]
     simp only [Finsupp.single_eq_same]
     have h1 := Nat.choose_mul_factorial_mul_factorial (Nat.le_add_right (e 0) (e 1))
     rw [Nat.add_sub_cancel_left] at h1
@@ -166,8 +123,8 @@ theorem eS_X_add_X : eS (X 0 + X 1 : MvPowerSeries (Fin 2) K) = eS (X 0) * eS (X
           rw [← hp, Finsupp.add_apply, h1]
           simp
         rw [h1, h2, e0, e1]
-      · rw [if_neg h2, mul_zero]
-    · rw [if_neg h1, zero_mul]
+      · rw [ite_eq_right h2, mul_zero]
+    · rw [ite_eq_right h1, zero_mul]
   · intro h
     exact absurd (Finset.HasAntidiagonal.mem_antidiagonal.mpr ((fin_two_vector_eq_matrixVecCons e (e 0) (e 1)).mpr ⟨rfl, rfl⟩).symm) h
 

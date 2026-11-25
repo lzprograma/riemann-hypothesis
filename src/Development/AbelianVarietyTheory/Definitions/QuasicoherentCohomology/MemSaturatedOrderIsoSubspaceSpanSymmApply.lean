@@ -3,47 +3,7 @@ module
 public import Mathlib.Algebra.Module.LocalizedModule.Submodule
 public import Mathlib.Algebra.Module.Torsion.Basic
 public import Mathlib.LinearAlgebra.Dimension.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Localization.Finiteness
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.LinearAlgebra.Dimension.Localization
 
 @[expose] public section
@@ -81,9 +41,6 @@ theorem mem_saturation_iff [IsDomain R] {N : Submodule R M} {x : M} :
     x ∈ saturation N ↔ ∃ a : R, a ≠ 0 ∧ a • x ∈ N := by
   rw [mem_saturation_iff']
   simp only [mem_nonZeroDivisors_iff_ne_zero]
-
-theorem mem_saturation_of_smul_mem [IsDomain R] {N : Submodule R M} {a : R} {x : M} (ha : a ≠ 0)
-    (hx : a • x ∈ N) : x ∈ saturation N := mem_saturation_iff.2 ⟨a, ha, hx⟩
 
 theorem le_saturation (N : Submodule R M) : N ≤ saturation N := fun x hx => mem_saturation_iff'.2 ⟨1, one_mem _, by rwa [one_smul]⟩
 
@@ -178,19 +135,10 @@ theorem IsSaturatedSubmodule.comap {N : Submodule R M'} (h : IsSaturatedSubmodul
 
 end Basic
 
-section Rank
-
-variable {R : Type*} [CommRing R] [IsDomain R] {M : Type*} [AddCommGroup M] [Module R M]
-
-end Rank
-
 section Relative
 
 variable {R : Type*} [CommRing R] {V V' : Type*} [AddCommGroup V] [Module R V]
   [AddCommGroup V'] [Module R V']
-
-def saturationIn (M N : Submodule R V) : Submodule R V :=
-  M ⊓ saturation N
 
 end Relative
 
@@ -200,21 +148,6 @@ variable {R : Type*} [CommRing R] {M : Type*} [AddCommGroup M] [Module R M]
   (S : Type*) [CommRing S] [Algebra R S] (p : Submonoid R) [IsLocalization p S]
   {Mp : Type*} [AddCommGroup Mp] [Module R Mp] [Module S Mp] [IsScalarTower R S Mp]
   (f : M →ₗ[R] Mp) [IsLocalizedModule p f]
-
-theorem mk'_mem_localized'_iff (N : Submodule R M) (x : M) (s : p) :
-    IsLocalizedModule.mk' f x s ∈ N.localized' S p f ↔ ∃ a ∈ p, a • x ∈ N := by
-  rw [Submodule.mem_localized']
-  constructor
-  · rintro ⟨m, hm, t, ht⟩
-    obtain ⟨c, hc⟩ := (IsLocalizedModule.mk'_eq_mk'_iff f m x t s).1 ht
-    refine ⟨((c * t : p) : R), (c * t).2, ?_⟩
-    have e : ((c * t : p) : R) • x = ((c * s : p) : R) • m := by
-      simp only [Submonoid.coe_mul, mul_smul]
-      simpa only [Submonoid.smul_def] using hc
-    rw [e]
-    exact N.smul_mem _ hm
-  · rintro ⟨a, ha, hax⟩
-    exact ⟨a • x, hax, ⟨a, ha⟩ * s, IsLocalizedModule.mk'_cancel_left f x ⟨a, ha⟩ s⟩
 
 end Localisation
 
@@ -267,12 +200,6 @@ variable {R : Type*} [CommRing R] {M : Type*} [AddCommGroup M] [Module R M]
   {V : Type*} [AddCommGroup V] [Module R V] [Module K V] [IsScalarTower R K V]
   (f : M →ₗ[R] V) [IsLocalizedModule R⁰ f]
 
-theorem saturation_eq_comap_localized' (N : Submodule R M) :
-    saturation N = ((N.localized' K R⁰ f).restrictScalars R).comap f := by
-  ext x
-  rw [Submodule.mem_comap, Submodule.restrictScalars_mem, ← IsLocalizedModule.mk'_one R⁰ f x,
-    mk'_mem_localized'_iff, mem_saturation_iff']
-
 end GenericFibre
 
 section Lattice
@@ -300,9 +227,5 @@ theorem rank_eq_rank_span (N : Submodule R V) :
 
 
 end Lattice
-
-section Examples
-
-end Examples
 
 end GlobalTheory

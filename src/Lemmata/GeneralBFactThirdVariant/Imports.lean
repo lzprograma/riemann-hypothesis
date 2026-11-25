@@ -8,7 +8,7 @@ public import Mathlib.NumberTheory.NumberField.CanonicalEmbedding.Basic
 namespace Bl.general_b_fact_third_variant
 
 theorem goal1 :
-  ∀ {E : Type} [inst : Field.{0} E] [inst_1 : NumberField.{0} E] {Ψ : Finset.{0} (RingHom.{0, 0} E Complex)},
+  ∀ {E : Type} [Field.{0} E] [NumberField.{0} E] {Ψ : Finset.{0} (RingHom.{0, 0} E Complex)},
   (∀ (σ : RingHom.{0, 0} E Complex),
       Iff (Membership.mem.{0, 0} Ψ σ) (Not (Membership.mem.{0, 0} Ψ (NumberField.ComplexEmbedding.conjugate.{0} σ)))) →
     ∀ (x : Module.Free.ChooseBasisIndex.{0, 0} Int (NumberField.RingOfIntegers.{0} E) → Real),

@@ -21,22 +21,6 @@ universe u v
 
 noncomputable section
 
-section Congr
-
-variable {K : Type*} [Field K] [NumberField K]
-variable {E E' : Type*} [AddCommGroup E] [Module (𝓞 K) E] [Module.Finite (𝓞 K) E]
-  [Module.Projective (𝓞 K) E] [AddCommGroup E'] [Module (𝓞 K) E'] [Module.Finite (𝓞 K) E']
-  [Module.Projective (𝓞 K) E']
-
-end Congr
-
-section Lattices
-
-variable {K : Type*} [Field K] [NumberField K]
-variable {V : Type*} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
-
-end Lattices
-
 theorem finrank_submodule_eq {R M : Type*} [CommRing R] [IsDomain R] [AddCommGroup M] [Module R M]
     (F : Submodule R M) (hF : ∀ x : M, ∃ a : R, a ≠ 0 ∧ a • x ∈ F) :
     Module.finrank R F = Module.finrank R M := by
@@ -51,14 +35,6 @@ theorem finrank_submodule_eq {R M : Type*} [CommRing R] [IsDomain R] [AddCommGro
   have h := rank_quotient_add_rank_of_isDomain F
   rw [h0, zero_add] at h
   simp only [Module.finrank, h]
-
-section Local
-
-variable {K : Type*} [Field K] [NumberField K]
-variable {V : Type*} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
-
-
-end Local
 
 end
 

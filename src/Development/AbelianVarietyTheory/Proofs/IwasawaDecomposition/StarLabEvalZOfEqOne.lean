@@ -86,7 +86,7 @@ def starLab (lab w : InvFun O) : InvFun O where
       rintro ⟨t, -, β, hw, -⟩
       rw [InvFun.evalZ, w.eval_of_subsingleton] at hw
       norm_num at hw
-    rw [if_neg this, lab.zero, Real.exp_zero, sub_self]
+    rw [ite_eq_right this, lab.zero, Real.exp_zero, sub_self]
 
 
 open Classical in
@@ -103,12 +103,12 @@ variable {X : Type} [AddCommGroup X]
 open Classical in
 theorem starLab_evalZ_of_eq_one (lab w : InvFun O) [Module O X] [Module.Finite O X] [Module.Projective O X]
     {β : LinearMap.BilinForm ℤ X} (h : w.evalZ β = 1) : (starLab lab w).evalZ β = -1 := by
-  rw [InvFun.evalZ, starLab_eval, if_pos ⟨1, one_pos, β, h, fun a b => one_mul _⟩]
+  rw [InvFun.evalZ, starLab_eval, ite_eq_left ⟨1, one_pos, β, h, fun a b => one_mul _⟩]
 
 theorem starLab_evalZ_of_not (lab w : InvFun O) [Module O X] [Module.Finite O X] [Module.Projective O X]
     {β : LinearMap.BilinForm ℤ X} (h : ¬ IsCentreRay w X (fun a b => (β a b : ℝ))) :
     (starLab lab w).evalZ β = Real.exp (lab.evalZ β) - 1 := by
-  rw [InvFun.evalZ, starLab_eval, if_neg h]; rfl
+  rw [InvFun.evalZ, starLab_eval, ite_eq_right h]; rfl
 
 theorem isCentreRay_smul_iff (w : InvFun O) [Module O X] [Module.Finite O X] (β : LinearMap.BilinForm ℤ X) {k : ℕ}
     (hk : 0 < k) :
@@ -128,8 +128,8 @@ theorem starLab_evalZ_smul (lab w : InvFun O) [Module O X] [Module.Finite O X] [
   unfold InvFun.evalZ at hlab ⊢
   rw [starLab_eval, starLab_eval, hlab]
   by_cases hc : IsCentreRay w X (fun a b => (β a b : ℝ))
-  · rw [if_pos ((isCentreRay_smul_iff w β hk).2 hc), if_pos hc]
-  · rw [if_neg (mt (isCentreRay_smul_iff w β hk).1 hc), if_neg hc]
+  · rw [ite_eq_left ((isCentreRay_smul_iff w β hk).2 hc), ite_eq_left hc]
+  · rw [ite_eq_right (mt (isCentreRay_smul_iff w β hk).1 hc), ite_eq_right hc]
 
 theorem exists_of_isCentreRay {bar : O → O} (w : InvFun O) [Module O X] [Module.Finite O X]
     {β : LinearMap.BilinForm ℤ X} (hb : β ∈ balForms bar X) (hp : ∀ y, 0 ≤ β y y)
@@ -222,7 +222,7 @@ theorem isTwInv_starLab {E : Type} [Field E] [NumberField E] [IsCMField E] (H : 
   have hlab := hl σ hσ n B
   simp only [starLab]
   by_cases hc : IsCentreRay w (Fin n → 𝓞 E) B
-  · rw [if_pos (key.2 hc), if_pos hc]
-  · rw [if_neg (mt key.1 hc), if_neg hc, hlab]
+  · rw [ite_eq_left (key.2 hc), ite_eq_left hc]
+  · rw [ite_eq_right (mt key.1 hc), ite_eq_right hc, hlab]
 
 end GlobalTheory.PolFan.StarLab

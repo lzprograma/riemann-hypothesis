@@ -5,56 +5,12 @@ public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
 public import GroundTheory.AutomorphicForms.CompactSelfAdjoint
 public import GroundTheory.AutomorphicForms.TraceClass
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Archimedean
 import GroundTheory.AutomorphicForms.CuspidalDiscreteness.AltSum
 import GroundTheory.AutomorphicForms.CuspidalDiscreteness.Counting
 import GroundTheory.AutomorphicForms.QuotientMeasure
 import GroundTheory.AutomorphicForms.ReductionBlock
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.TwistedTraces.CfcApplyOfEigenvector, Development.AutomorphicArithmetic.TwistedTraces.EigInFiniteAboveOfIsCompactOperator, Development.AutomorphicArithmetic.TwistedTraces.ExistsHilbertBasisPrjEigenvectorsOfIsCompactOper, Development.AutomorphicArithmetic.TwistedTraces.NormTraceCompLeMulTraceNorm, Development.AutomorphicArithmetic.TwistedTraces.PrjEigInOfEigenvectorPrj, Development.AutomorphicArithmetic.TwistedTraces.TrOnSubSumEqTraceCompCompression, Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.EigSplit
@@ -315,13 +271,6 @@ section -- clump:auto
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory.C
 
-private lemma prj_idem {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
-    (V : Submodule ℂ H) : prj V ∘L prj V = prj V := by
-  ext v
-  have h : prj V v ∈ V.topologicalClosure := by
-    simp [prj]
-  simpa [prj] using Submodule.starProjection_eq_self_iff.2 h
-
 private lemma prj_comp_le {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
     {V W : Submodule ℂ H} (h : V ≤ W) : prj W ∘L prj V = prj V := by
   ext v
@@ -330,23 +279,13 @@ private lemma prj_comp_le {H : Type*} [NormedAddCommGroup H] [InnerProductSpace 
   have h2 : prj V v ∈ W.topologicalClosure := Submodule.topologicalClosure_mono h h1
   simpa [prj] using Submodule.starProjection_eq_self_iff.2 h2
 
-private lemma prj_adj {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
-    (V : Submodule ℂ H) : ContinuousLinearMap.adjoint (prj V) = prj V := by
-  have : IsSelfAdjoint (prj V) := by
-    simpa [prj] using isSelfAdjoint_starProjection V.topologicalClosure
-  exact this
-
-private lemma prj_comp_le' {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
-    {V W : Submodule ℂ H} (h : V ≤ W) : prj V ∘L prj W = prj V := by
-  have := congrArg ContinuousLinearMap.adjoint (prj_comp_le h)
-  simpa [ContinuousLinearMap.adjoint_comp, prj_adj] using this
-
 theorem UpperTheory.trOn_sub_sum_eq_trace_comp_compression :
     ∀ (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (W : Submodule ℂ H) (E : ℝ → Submodule ℂ H) (S : Finset ℝ) (a : ℝ → ℂ) (F T : H →L[ℂ] H), (∀ x, E x ≤ W) → IsTraceClass (prj W ∘L T ∘L prj W) → trOn W (F ∘L prj W ∘L T) - ∑ x ∈ S, a x * trOn (E x) T = trace ((prj W ∘L F ∘L prj W - ∑ x ∈ S, a x • prj (E x)) ∘L (prj W ∘L T ∘L prj W)) := by
   intro H _ _ _ W E S a F T hE hT
   set P := prj W with hPdef
   set T0 := P ∘L T ∘L P with hT0
-  have hPP : P ∘L P = P := prj_idem W
+  have hPP : P ∘L P = P :=
+    Submodule.starProjection_comp_starProjection_of_le (le_refl W.topologicalClosure)
   let L : (H →L[ℂ] H) →ₗ[ℂ] ℂ :=
     { toFun := fun C => trace (C ∘L T0)
       map_add' := fun C D => by
@@ -366,9 +305,11 @@ theorem UpperTheory.trOn_sub_sum_eq_trace_comp_compression :
   have h2 : ∀ x, trOn (E x) T = L (prj (E x)) := by
     intro x
     set Q := prj (E x) with hQ
-    have hQP : Q ∘L P = Q := prj_comp_le' (hE x)
+    have hQP : Q ∘L P = Q := Submodule.starProjection_comp_starProjection_of_le
+      (Submodule.topologicalClosure_mono (hE x))
     have hPQ : P ∘L Q = Q := prj_comp_le (hE x)
-    have hQQ : Q ∘L Q = Q := prj_idem (E x)
+    have hQQ : Q ∘L Q = Q :=
+      Submodule.starProjection_comp_starProjection_of_le (le_refl (E x).topologicalClosure)
     have hc := trace_comp_comm (hT.comp_left Q) Q
     have e1 : Q ∘L (Q ∘L T0) = Q ∘L T0 := by
       rw [← ContinuousLinearMap.comp_assoc, hQQ]

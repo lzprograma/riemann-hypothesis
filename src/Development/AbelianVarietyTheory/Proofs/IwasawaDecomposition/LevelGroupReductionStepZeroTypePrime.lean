@@ -133,7 +133,7 @@ theorem bvecS_eq (q rS c : ℕ) (f : Fin n) :
   unfold LocE.bvecS LocE.bvecG
   rw [h1]
   unfold LocE.scE
-  rw [if_pos f.2, zpow_zero, one_smul]
+  rw [ite_eq_left f.2, zpow_zero, one_smul]
   funext l
   rw [CongLevel.inX_apply]
   unfold Loc.eN
@@ -141,7 +141,7 @@ theorem bvecS_eq (q rS c : ℕ) (f : Fin n) :
   by_cases h : l.1 < n
   · rw [dite_eq_left h, Pi.single_apply]
     simp [Fin.ext_iff]
-  · rw [dite_eq_right h, if_neg (by omega)]
+  · rw [dite_eq_right h, ite_eq_right (by omega)]
 
 theorem inX_mem_flagS (q rS c : ℕ) (f : Fin n) (x : Sp E n) :
     Loc.inX E n c x ∈ LocE.flagS P q n rS n c (f.1 + rS) ↔
@@ -153,7 +153,7 @@ theorem inX_mem_flagS (q rS c : ℕ) (f : Fin n) (x : Sp E n) :
     intro l hl
     have := f.2
     unfold LocE.scE LocE.bd5 LocE.fPos symIdx
-    rw [if_pos hl, if_pos hl, if_pos hl, if_neg (by omega : ¬ f.1 + rS = rS + n), zero_add]
+    rw [ite_eq_left hl, ite_eq_left hl, ite_eq_left hl, ite_eq_right (by omega : ¬ f.1 + rS = rS + n), zero_add]
     simp
   constructor
   · intro h l
@@ -175,11 +175,11 @@ theorem extE_mem_JGsym {q : ℕ} (hq : (q : E) ≠ 0) (rS r t c : ℕ) (A : GL (
     refine extE_stab_scl hq _ (fun i j hij hj => ?_) A hA
     have hi : i < n := by omega
     unfold LocE.scE LocE.fPos symIdx
-    simp only [if_pos hi, if_pos hj]
+    simp only [ite_eq_left hi, ite_eq_left hj]
     split_ifs <;> omega
   refine ⟨extE_stab_scl hq _ (fun i j hij hj => ?_) A hA, fun s _ => hs s, fun s _ => ⟨hs s, ?_⟩⟩
   · unfold LocE.scE
-    rw [if_pos hj, if_pos (by omega)]
+    rw [ite_eq_left hj, ite_eq_left (by omega)]
   · by_cases h : rS ≤ s ∧ s < rS + n
     · obtain ⟨f, rfl⟩ : ∃ f : Fin n, s = f.1 + rS := ⟨⟨s - rS, by omega⟩, by simp only; omega⟩
       rw [bvecS_eq, CongLevel.extE_inX, ← map_sub, inX_mem_flagS]
@@ -211,11 +211,11 @@ theorem exists_lift (M : GL (Fin n) (𝓞 E ⧸ P.asIdeal)) (hM : M ∈ uniUT n 
   choose a ha using fun i j => Ideal.Quotient.mk_surjective (M.1 i j)
   let B : Matrix (Fin n) (Fin n) (𝓞 E) := Matrix.of fun i j => if j.1 < i.1 then 0 else if i = j then 1 else a i j
   have hB : B.det = 1 := by
-    rw [Matrix.det_of_upperTriangular (M := B) (fun i j hij => if_pos (show j.1 < i.1 from hij))]
+    rw [Matrix.det_of_upperTriangular (M := B) (fun i j hij => ite_eq_left (show j.1 < i.1 from hij))]
     simp [B]
   refine ⟨Matrix.GeneralLinearGroup.mk'' B (by rw [hB]; exact isUnit_one), (uni_iff rfl).2 ⟨fun i j hij => ?_, fun i => ?_⟩,
     fun i j => ?_⟩
-  · exact if_pos hij
+  · exact ite_eq_left hij
   · show B i i = 1
     simp [B]
   · show Ideal.Quotient.mk P.asIdeal (if j.1 < i.1 then 0 else if i = j then 1 else a i j) = _
@@ -250,7 +250,7 @@ theorem uni_iff_prX {k : ℕ} (hn : n = k) (rS r t c : ℕ) (hr : k + rS ≤ r) 
       have h1 := (((hc ρ).1 hρ).2.2.2 (f.1 + rS) (by have := f.2; omega)).2
       rw [bvecS_eq, hg, ← map_sub, inX_mem_flagS] at h1
       have h2 := h1 l
-      rw [if_pos hl, zpow_one, mul_comm, ← div_eq_mul_inv, Pi.sub_apply] at h2
+      rw [ite_eq_left hl, zpow_one, mul_comm, ← div_eq_mul_inv, Pi.sub_apply] at h2
       have h3 := TopStep.redP_eq_zero_of_div h2
       have h4 : IntAt P (g (Pi.single f 1) l - (Pi.single f 1 : Sp E n) l) := by
         have := (TopStep.intAt_nat (qOf P)).mul h2
@@ -270,11 +270,11 @@ theorem grpG_zero : ∀ {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X P
   have hm := R.two_le_m
   have e1 : (colLev Ch 0 ⟨P.1, hP⟩).H = uniUT (R.N 0) _ R.k [] := by
     unfold colLev
-    rw [if_pos (by omega)]
+    rw [ite_eq_left (by omega)]
     rfl
   have e2 : Jat (Pr := Pr) cst.sharp 0 P.1 = LocE.JGsym P.1 (qOf P.1) R.k R.rS R.r R.t (R.N 0) (cOf R 0) := by
     unfold Jat
-    rw [if_pos hP, if_pos hs]
+    rw [ite_eq_left hP, ite_eq_left hs]
   unfold prCat
   rw [e1, e2]
   exact uni_iff_prX (by simp [Ranks.N]) _ _ _ _ (by unfold Ranks.rS Ranks.r; omega) M

@@ -53,7 +53,7 @@ lemma span_eq (a : ℕ) (ha : a ≤ r) :
     intro i hi
     have hb' : b.1 < a := hb
     simp only [stdX, Formalism.QuantumDeterminants.bvec]
-    rw [Pi.single_apply, if_neg]
+    rw [Pi.single_apply, ite_eq_right]
     intro h
     have h2 : i.val = b.val := congrArg Fin.val h
     omega
@@ -128,15 +128,15 @@ lemma Hpk_apply' (i j : Fin (2 * r + k + 1)) : Formalism.QuantumDeterminants.Hpk
 lemma HpkMul (A : Mk k r) (p : Fin (2 * r + k + 1)) (hp : p.val < r) (j : Fin (2 * r + k + 1)) :
     (Formalism.QuantumDeterminants.Hpk k r * A) p j = A ⟨2 * r + k - p.val, by omega⟩ j := by
   rw [Matrix.mul_apply, Finset.sum_eq_single ⟨2 * r + k - p.val, by omega⟩]
-  · rw [Hpk_apply', if_pos ⟨hp, by show p.val + (2 * r + k - p.val) = 2 * r + k; omega⟩, one_mul]
+  · rw [Hpk_apply', ite_eq_left ⟨hp, by show p.val + (2 * r + k - p.val) = 2 * r + k; omega⟩, one_mul]
   · intro q _ hq
     have : q.val ≠ 2 * r + k - p.val := fun h => hq (Fin.ext h)
-    rw [Hpk_apply', if_neg (by omega), if_neg (by omega), if_neg (by omega), zero_mul]
+    rw [Hpk_apply', ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), zero_mul]
   · intro h; exact absurd (Finset.mem_univ _) h
 
 lemma HpkZero (p : Fin (2 * r + k + 1)) (hp : p.val < r) (j : Fin (2 * r + k + 1)) (hj : j.val ≤ r + k) :
     Formalism.QuantumDeterminants.Hpk k r p j = 0 := by
-  rw [Hpk_apply', if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+  rw [Hpk_apply', ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
 
 lemma ring_key {R : Type*} [Ring R] (D H g gs S : R) (hDD : D * D = D) (hDH : D * H = H * D)
     (hHg : gs * H * g = H) (hH1 : H * (1 - D) = S * H + H * S) (hSg : S * g * D = 0)
@@ -190,8 +190,8 @@ lemma fwd (g : Mk k r) (zH : Vk k r) (hg : gᴴ * Formalism.QuantumDeterminants.
     rw [Matrix.sub_mulVec, Matrix.one_mulVec, Pi.sub_apply, stdX, colEntry, sub_eq_zero] at this
     rw [this, Formalism.QuantumDeterminants.bvec, Pi.single_apply]
     by_cases h : i.val = a.val
-    · rw [if_pos (Fin.ext h), if_pos h]
-    · rw [if_neg (fun e => h (congrArg Fin.val e)), if_neg h]
+    · rw [ite_eq_left (Fin.ext h), ite_eq_left h]
+    · rw [ite_eq_right (fun e => h (congrArg Fin.val e)), ite_eq_right h]
   have G2 : ∀ i : Fin (2 * r + k + 1), r ≤ i.val → (g *ᵥ zH) i = zH i := by
     intro i hi
     have := mem_supSub.1 hI.2 i hi
@@ -206,14 +206,14 @@ lemma fwd (g : Mk k r) (zH : Vk k r) (hg : gᴴ * Formalism.QuantumDeterminants.
       rw [HpkZero (Formalism.QuantumDeterminants.eI k r ⟨a, ha⟩) ha j hj, Matrix.mul_assoc, Matrix.mul_apply,
         Finset.sum_eq_single (Formalism.QuantumDeterminants.eI k r ⟨a, ha⟩)] at hh
       · rw [Matrix.conjTranspose_apply, G1 ⟨a, ha⟩ (Formalism.QuantumDeterminants.eI k r ⟨a, ha⟩) le_rfl,
-          if_pos (show (Formalism.QuantumDeterminants.eI k r ⟨a, ha⟩).val = (⟨a, ha⟩ : Fin r).val from rfl), star_one, one_mul,
+          ite_eq_left (show (Formalism.QuantumDeterminants.eI k r ⟨a, ha⟩).val = (⟨a, ha⟩ : Fin r).val from rfl), star_one, one_mul,
           HpkMul g _ ha j] at hh
         exact hh
       · intro p _ hp
         have hpv : p.val ≠ a := fun h => hp (Fin.ext h)
         rw [Matrix.conjTranspose_apply]
         by_cases hpa : a ≤ p.val
-        · rw [G1 ⟨a, ha⟩ p hpa, if_neg (show ¬ p.val = (⟨a, ha⟩ : Fin r).val from hpv), star_zero, zero_mul]
+        · rw [G1 ⟨a, ha⟩ p hpa, ite_eq_right (show ¬ p.val = (⟨a, ha⟩ : Fin r).val from hpv), star_zero, zero_mul]
         · rw [HpkMul g p (by omega) j, IH p.val (by omega) (by omega) j hj, mul_zero]
       · intro h; exact absurd (Finset.mem_univ _) h
   have G3' : ∀ i j : Fin (2 * r + k + 1), r + k < i.val → j.val ≤ r + k → g i j = 0 := by
@@ -255,13 +255,13 @@ lemma fwd (g : Mk k r) (zH : Vk k r) (hg : gᴴ * Formalism.QuantumDeterminants.
     intro b; ext i
     rw [stdX, colEntry]
     simp only [hW, Matrix.of_apply]
-    rw [if_neg (fun h => absurd h.2.1 (by show ¬ r ≤ b.val; have := b.isLt; omega)), Formalism.QuantumDeterminants.bvec,
+    rw [ite_eq_right (fun h => absurd h.2.1 (by show ¬ r ≤ b.val; have := b.isLt; omega)), Formalism.QuantumDeterminants.bvec,
       Pi.single_apply]
   have hSx : ∀ b : Fin r, hW g *ᵥ Formalism.QuantumDeterminants.bvec (Formalism.QuantumDeterminants.esI k r b) = Formalism.QuantumDeterminants.bvec (Formalism.QuantumDeterminants.esI k r b) := by
     intro b; ext i
     rw [colEntry]
     simp only [hW, Matrix.of_apply]
-    rw [if_neg (fun h => absurd h.2.2 (by show ¬ 2 * r + k - b.val ≤ r + k; have := b.isLt; omega)),
+    rw [ite_eq_right (fun h => absurd h.2.2 (by show ¬ 2 * r + k - b.val ≤ r + k; have := b.isLt; omega)),
       Formalism.QuantumDeterminants.bvec, Pi.single_apply]
   have hZ : hW g *ᵥ zH = zH := by
     ext i
@@ -273,8 +273,8 @@ lemma fwd (g : Mk k r) (zH : Vk k r) (hg : gᴴ * Formalism.QuantumDeterminants.
       intro j _
       simp only [hW, Matrix.of_apply]
       by_cases hj : r ≤ j.val ∧ j.val ≤ r + k
-      · rw [if_pos ⟨hi, hj⟩]
-      · rw [if_neg (fun h => hj h.2), hz j (by omega), mul_zero, mul_zero]
+      · rw [ite_eq_left ⟨hi, hj⟩]
+      · rw [ite_eq_right (fun h => hj h.2), hz j (by omega), mul_zero, mul_zero]
     · simp [Matrix.mulVec, dotProduct, hW, hi]
   obtain ⟨hinv, hinvDef⟩ : ∃ M : Mk k r, M = Formalism.QuantumDeterminants.Hpk k r * (hW g)ᴴ * Formalism.QuantumDeterminants.Hpk k r := ⟨_, rfl⟩
   have hih : hinv * hW g = 1 := by
@@ -299,22 +299,22 @@ lemma fwd (g : Mk k r) (zH : Vk k r) (hg : gᴴ * Formalism.QuantumDeterminants.
   · intro a i hai
     have hg1 : g *ᵥ stdX k r a ∈ supSub k r r := by
       rw [mem_supSub]; intro i' hi'
-      rw [stdX, colEntry, G1 a i' (by have := a.isLt; omega), if_neg (by have := a.isLt; omega)]
+      rw [stdX, colEntry, G1 a i' (by have := a.isLt; omega), ite_eq_right (by have := a.isLt; omega)]
     have := congrFun (show (hinv * g) *ᵥ stdX k r a = g *ᵥ stdX k r a by
       rw [← Matrix.mulVec_mulVec]; exact hinvX _ hg1) i
     rw [stdX, colEntry, colEntry] at this
     rw [this, G1 a i hai]
     by_cases hia : i.val = a.val
-    · rw [if_pos hia, if_pos (Fin.ext hia)]
-    · rw [if_neg hia, if_neg (fun h => hia (congrArg Fin.val h))]
+    · rw [ite_eq_left hia, ite_eq_left (Fin.ext hia)]
+    · rw [ite_eq_right hia, ite_eq_right (fun h => hia (congrArg Fin.val h))]
   · intro i j hj1 hj2 hi
     have hx : g *ᵥ Formalism.QuantumDeterminants.bvec j - hW g *ᵥ Formalism.QuantumDeterminants.bvec j ∈ supSub k r r := by
       rw [mem_supSub]; intro i' hi'
       rw [Pi.sub_apply, colEntry, colEntry]
       simp only [hW, Matrix.of_apply]
       by_cases hw : r ≤ i'.val ∧ i'.val ≤ r + k
-      · rw [if_pos ⟨hw, hj1, hj2⟩, sub_self]
-      · rw [if_neg (fun h => hw h.1), if_neg (fun h => hw (by rw [h]; exact ⟨hj1, hj2⟩)), sub_zero,
+      · rw [ite_eq_left ⟨hw, hj1, hj2⟩, sub_self]
+      · rw [ite_eq_right (fun h => hw h.1), ite_eq_right (fun h => hw (by rw [h]; exact ⟨hj1, hj2⟩)), sub_zero,
           G3' i' j (by omega) hj2]
     have hm : (hinv * g) *ᵥ Formalism.QuantumDeterminants.bvec j =
         Formalism.QuantumDeterminants.bvec j + (g *ᵥ Formalism.QuantumDeterminants.bvec j - hW g *ᵥ Formalism.QuantumDeterminants.bvec j) := by
@@ -349,11 +349,11 @@ lemma bwd (s : Mk k r) (zH : Vk k r) (hz : Formalism.QuantumDeterminants.inWb k 
       simp only [Matrix.mulVec, dotProduct]
       rw [Finset.sum_eq_single i]
       · by_cases hw : i.val ≤ r + k
-        · rw [hm3 i i hi hw hi, if_pos rfl, one_mul]
+        · rw [hm3 i i hi hw hi, ite_eq_left rfl, one_mul]
         · rw [hz i (Or.inr (by omega)), mul_zero]
       · intro j _ hji
         by_cases hjw : r ≤ j.val ∧ j.val ≤ r + k
-        · rw [hm3 i j hjw.1 hjw.2 hi, if_neg (Ne.symm hji), zero_mul]
+        · rw [hm3 i j hjw.1 hjw.2 hi, ite_eq_right (Ne.symm hji), zero_mul]
         · rw [hz j (by omega), mul_zero]
       · intro h; exact absurd (Finset.mem_univ _) h
     have hmz : h *ᵥ (m *ᵥ zH) = m *ᵥ zH := by

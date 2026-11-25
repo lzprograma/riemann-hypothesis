@@ -12,13 +12,6 @@ namespace GroundTheory.LocalField
 
 open ValuativeRel
 
-section Main
-
-variable (K : Type*) [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
-  (Ω : Type*) [Field Ω] [Algebra K Ω] [IsSepClosure K Ω]
-
-end Main
-
 section Functoriality
 
 variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]

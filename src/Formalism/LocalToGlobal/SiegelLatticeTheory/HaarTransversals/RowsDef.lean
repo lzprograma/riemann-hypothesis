@@ -90,7 +90,6 @@ end Count
 
 section Bundle
 
-open Formalism.MainNotions.S
 
 abbrev HHB (B : RowsAut) (T : B.I.L2 B.μf B.fund →L[ℂ] B.I.L2 B.μf B.fund) :
     Submodule ℂ (B.I.L2 B.μf B.fund) :=

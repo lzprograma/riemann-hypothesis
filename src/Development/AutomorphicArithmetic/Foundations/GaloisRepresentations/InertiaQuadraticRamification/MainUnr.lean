@@ -20,60 +20,11 @@ public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsOpe
 public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExistsCoprimePowOfMemIneKer
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.DecPow
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.InfinitelyManyRealQuadraticSteps
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.FieldTheory.Galois.Profinite
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Algebra.Azumaya.Basic
 import ReciprocityTheory.GaloisValuations.GlobalA
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.SplitIff
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.ValuationLeOneOfInteger
@@ -574,8 +525,7 @@ theorem UpperTheory.Gal.UnramifiedFromSplittingCriterion.kumMove :
   obtain ⟨D, hDpos, hD⟩ := hNV Ω U hU q hq
   obtain ⟨e, D', hD'ℓ, hDe⟩ := Nat.exists_eq_pow_mul_and_not_dvd hDpos.ne' ℓ hℓ.one_lt.ne'
   refine ⟨b + e, fun k hk ζ y hζ hy => ?_⟩
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   haveI : NeZero (ℓ ^ k) := ⟨pow_ne_zero _ hℓ.ne_zero⟩
   have hpow : ∀ τ : G ℚ Ω, ∃ a, τ ζ = ζ ^ a := by
     intro τ
@@ -689,8 +639,7 @@ theorem UpperTheory.Gal.UnramifiedFromSplittingCriterion.moveRoot :
     generalize ℓ ^ (b - 1) = N at h2 h4
     omega
   have hex : ∃ σ ∈ E.fixingSubgroup, σ ζ0 ≠ ζ0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hnot
     rw [← InfiniteGalois.fixedField_fixingSubgroup E, IntermediateField.mem_fixedField_iff]
     exact hcon
@@ -772,17 +721,6 @@ open scoped commutatorElement
 
 namespace UpperTheory.Gal.UnramifiedFromSplittingCriterion
 
-private theorem normal_of_comm {Γ : Type} [Group Γ] (H : Subgroup Γ) (h : commutator Γ ≤ H) : H.Normal := by
-  constructor
-  intro n hn g
-  have hc : ⁅g, n⁆ ∈ H := h (by
-    rw [commutator_def]
-    exact Subgroup.commutator_mem_commutator (Subgroup.mem_top g) (Subgroup.mem_top n))
-  have he : g * n * g⁻¹ = ⁅g, n⁆ * n := by
-    rw [commutatorElement_def]; group
-  rw [he]
-  exact H.mul_mem hc hn
-
 open Polynomial in
 private theorem exists_map_eq_conj_of_isAlgClosed_algebraic {Ω : Type} [Field Ω] [IsAlgClosed Ω] [CharZero Ω] [Algebra.IsAlgebraic ℚ Ω]
     (φ : Ω →+* ℂ) (y : Ω) : ∃ z : Ω, φ z = starRingEnd ℂ (φ y) := by
@@ -819,16 +757,13 @@ private theorem exists_algEquiv_map_eq_conj_of_exists_conj {F Ω : Type} [Field 
     (φ : Ω →+* ℂ) (hc : ∀ y : Ω, ∃ z : Ω, φ z = starRingEnd ℂ (φ y))
     (hF : ∀ a : F, starRingEnd ℂ (φ (algebraMap F Ω a)) = φ (algebraMap F Ω a)) :
     ∃ c : Ω ≃ₐ[F] Ω, ∀ x, φ (c x) = starRingEnd ℂ (φ x) := by
-  choose c0 hc0 using hc
-  have inj : Function.Injective φ := φ.injective
-  let cf : Ω →ₐ[F] Ω :=
-    { toFun := c0
-      map_one' := inj (by rw [hc0, map_one, map_one])
-      map_mul' := fun a b => inj (by rw [hc0, map_mul, map_mul, map_mul, hc0, hc0])
-      map_zero' := inj (by rw [hc0, map_zero, map_zero])
-      map_add' := fun a b => inj (by rw [hc0, map_add (f := _), map_add (f := _), map_add (f := _), hc0, hc0])
-      commutes' := fun a => inj (by rw [hc0, hF]) }
-  exact ⟨AlgEquiv.ofBijective cf (Algebra.IsAlgebraic.algHom_bijective cf), fun x => hc0 x⟩
+  let e : Ω ≃+* φ.range := RingEquiv.ofLeftInverse (Function.leftInverse_invFun φ.injective)
+  let conj : Ω →+* φ.range := ((starRingEnd ℂ).comp φ).codRestrict _ hc
+  let f := e.symm.toRingHom.comp conj
+  have hf (x : Ω) : φ (f x) = starRingEnd ℂ (φ x) :=
+    congrArg Subtype.val (e.apply_symm_apply (conj x))
+  let cf : Ω →ₐ[F] Ω := { f with commutes' := fun a => φ.injective ((hf _).trans (hF a)) }
+  exact ⟨AlgEquiv.ofBijective cf (Algebra.IsAlgebraic.algHom_bijective cf), hf⟩
 
 theorem exFld : ExFld := by
   intro E Ω _ _ _ _ _ _ H hH
@@ -858,7 +793,7 @@ theorem exFld : ExFld := by
   haveI hfin : FiniteDimensional E M :=
     (InfiniteGalois.isOpen_iff_finite M).mp (by rw [hfixM]; exact hopen)
   haveI hgal : IsGalois E M :=
-    (InfiniteGalois.normal_iff_isGalois M).mp (by rw [hfixM]; exact normal_of_comm H' hcomm)
+    (InfiniteGalois.normal_iff_isGalois M).mp (by rw [hfixM]; exact Subgroup.Normal.of_commutator_le _ hcomm)
   have hab : ∀ σ τ : Gal(M/E), σ * τ = τ * σ := by
     intro σ τ
     obtain ⟨g, rfl⟩ := AlgEquiv.restrictNormalHom_surjective (K₁ := M) Ω σ

@@ -268,7 +268,7 @@ theorem finS_cls_of (D : Dat Δ) (ι : DX Δ →* DA Δ) (hι : IsIotaD ι)
   obtain ⟨S, hS⟩ := su_abs ι (SU Δ) (SA Δ) _ D.U2 (fun γ hγ => mem_SA.2 fun v => by rw [det_iota hι, mem_SU.1 hγ, map_one]) hU hcls x P c
     (unit_det hι) (by
       intro γ γ' h h' e
-      simp only [c, dif_pos h, dif_pos h'] at e
+      simp only [c, dite_eq_left h, dite_eq_left h'] at e
       obtain ⟨η, hη⟩ := QuotientGroup.eq.1 e
       have hη' : h'.choose = h.choose * η ^ 2 := by rw [show η ^ 2 = _ from hη]; group
       let z := scal Δ (Units.map (algebraMap (𝓞 F) F : 𝓞 F →* F) η)

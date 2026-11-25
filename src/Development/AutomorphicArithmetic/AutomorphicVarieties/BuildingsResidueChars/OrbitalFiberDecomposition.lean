@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.TraceBlocks
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.FibAbs
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -104,18 +105,7 @@ private theorem fib_abs {O I : Type} {P : I → Type} (F : ∀ i, P i → O) (S 
 
 private theorem rel_smul {H X : Type} [Group H] [MulAction H X] (H₀ : Subgroup H) (hn : H₀.Normal) (h : H) (x : X) :
     H₀.relIndex (stabilizer H (h • x)) = H₀.relIndex (stabilizer H x) := by
-  have h0 : H₀.map (MulAut.conj h).toMonoidHom = H₀ := by
-    ext z
-    constructor
-    · rintro ⟨y, hy, rfl⟩
-      exact hn.conj_mem y hy h
-    · intro hz
-      refine ⟨h⁻¹ * z * h, ?_, ?_⟩
-      · simpa using hn.conj_mem z hz h⁻¹
-      · simp [mul_assoc]
-  rw [stabilizer_smul_eq_stabilizer_map_conj]
-  conv_lhs => rw [← h0]
-  exact Subgroup.relIndex_map_map_of_injective _ _ (MulAut.conj h).injective
+  apply _root_.UpperTheory.V.Z.Sym.Tf.rel_smul <;> assumption
 
 private theorem out_mk {H X : Type} [Group H] [MulAction H X] (x : X) :
     ∃ h : H, (Quotient.mk (orbitRel H X) x).out = h • x := by
@@ -123,10 +113,6 @@ private theorem out_mk {H X : Type} [Group H] [MulAction H X] (x : X) :
     orbitRel_apply.1 (Quotient.exact (Quotient.out_eq (Quotient.mk (orbitRel H X) x)))
   obtain ⟨h, hh⟩ := this
   exact ⟨h, hh.symm⟩
-
-private theorem mk_smul {H X : Type} [Group H] [MulAction H X] (h : H) (x : X) :
-    Quotient.mk (orbitRel H X) (h • x) = Quotient.mk (orbitRel H X) x :=
-  Quotient.sound (orbitRel_apply.2 ⟨h, rfl⟩)
 
 theorem UpperTheory.orbitalFiber_decomposition :
     UpperTheory.V.Z.Sym.Glob.Fib.Decomp := by
@@ -140,7 +126,7 @@ theorem UpperTheory.orbitalFiber_decomposition :
     refine (T.finite_toSet.image (Quotient.mk (orbitRel H X))).subset fun o ho => ?_
     obtain ⟨h, s, hs, ho⟩ := hT _ ho
     refine ⟨s, hs, ?_⟩
-    rw [← mk_smul h s, ← ho]
+    rw [← MulAction.orbitRel.Quotient.quotient_smul_eq (g := h) (a := s), ← ho]
     exact Quotient.out_eq o
   · intro o ho
     have : k o.out = 0 := not_not.1 ho
@@ -173,7 +159,7 @@ theorem UpperTheory.orbitalFiber_decomposition :
     · show ki i (Quotient.mk (orbitRel (Hi i) (Yi i)) y).out ≠ 0
       rwa [ha, hki]
     · show Quotient.mk (orbitRel H X) (e i (Quotient.mk (orbitRel (Hi i) (Yi i)) y).out) = o
-      rw [ha, he, mk_smul, ← mk_smul h, ← hx]
+      rw [ha, he, MulAction.orbitRel.Quotient.quotient_smul_eq, ← MulAction.orbitRel.Quotient.quotient_smul_eq (g := h), ← hx]
       exact Quotient.out_eq o
   · intro i j p hp q hq hpq
     obtain ⟨h, hh⟩ := hex _ _ hpq.symm
@@ -184,4 +170,4 @@ theorem UpperTheory.orbitalFiber_decomposition :
     rw [← he] at hh
     have h3 := hinj i hh
     rw [← Quotient.out_eq p, ← Quotient.out_eq q, ← h3]
-    exact (mk_smul a _).symm
+    exact (MulAction.orbitRel.Quotient.quotient_smul_eq (g := a)).symm

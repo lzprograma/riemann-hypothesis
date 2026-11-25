@@ -243,7 +243,7 @@ theorem isHCParam_sub {N : ℕ} {lam : Fin N → ℝ} (s : Fin N) (hl : Formalis
       push_cast
       linarith
     · refine ⟨m, ?_⟩
-      simp only [Pi.sub_apply, Pi.single_apply, if_neg ha]
+      simp only [Pi.sub_apply, Pi.single_apply, ite_eq_right ha]
       linarith
 
 theorem gap_sub {N : ℕ} (ε : Fin N → Bool) (lam : Fin N → ℝ) (s : Fin N) {h : ℝ}
@@ -271,9 +271,9 @@ theorem fdegHC_le {N : ℕ} (lam : Fin N → ℝ) (s : Fin N) (hw : ∀ a c, a <
     · subst ha
       have e1 : lam' a = lam a - 1 := by simp [hlam']
       have e2 : lam' b = lam b := by simp [hlam', hne.symm]
-      rw [if_pos rfl, e1, e2, abs_of_pos (by linarith), abs_of_pos (by linarith)]
+      rw [ite_eq_left rfl, e1, e2, abs_of_pos (by linarith), abs_of_pos (by linarith)]
       linarith
-    · rw [if_neg ha, one_mul]
+    · rw [ite_eq_right ha, one_mul]
       by_cases hb : b = s
       · subst hb
         have e1 : lam' a = lam a := by simp [hlam', ha]
@@ -321,8 +321,7 @@ theorem degRatio_holds : DegRatio := by
   intro n e ε lam ε' mu B hP H H' _ _ _ _ π σ hπ hσ
   obtain ⟨i0, hi0⟩ := hP.neg
   have hε't : ∃ a, ε' a = true := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     have h1 := hP.pos
     have h0 : (univ.filter fun i => ε' i = true) = ∅ := by
       ext i
@@ -397,8 +396,7 @@ theorem hsn_sq_le {m : ℕ} (g : Mat m) : hsn g ^ 2 ≤ m * Real.exp (2 * Global
 theorem hsn_pos {m : ℕ} (hm : 1 ≤ m) {ε : Fin m → Bool} {g : Mat m} (hg : g ∈ UJset ε) : 0 < hsn g := by
   unfold hsn
   apply Real.sqrt_pos.2
-  by_contra hle
-  push_neg at hle
+  by_contra! hle
   have hsum : ∑ a, ∑ b, ‖g a b‖ ^ 2 = 0 := le_antisymm hle (by positivity)
   have hg0 : g = 0 := by
     ext a b
@@ -467,7 +465,6 @@ theorem gap_ok {m : ℕ} (hm : 1 ≤ m) (ε : Fin m → Bool) :
 end GlobalTheory.SepReal.PowDec
 
 namespace GlobalTheory.SepReal
-
 
 open GlobalTheory.SepReal.PowDec in
 theorem decPow : DecPow := by
@@ -547,7 +544,7 @@ theorem one_le_hsn {m : ℕ} {ε : Fin m → Bool} (hm : 1 ≤ m) (g : UJ ε) : 
   have h : (umat g)ᴴ * Jm ε * umat g = Jm ε := g.2
   have h2 := congrFun (congrFun h a) a
   simp only [Jm, Matrix.diagonal_apply_eq] at h2
-  simp only [Matrix.mul_apply, Matrix.diagonal_apply, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true, Matrix.conjTranspose_apply] at h2
+  simp only [Matrix.mul_apply, Matrix.diagonal_apply, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Matrix.conjTranspose_apply] at h2
   have hn : (1 : ℝ) ≤ ∑ l, ‖umat g l a‖ ^ 2 := by
     have e1 : ‖((if ε a = true then 1 else -1 : ℂ))‖ = 1 := by split_ifs <;> simp
     rw [← e1, ← h2]
@@ -612,7 +609,6 @@ theorem term_le (m : ℕ) (A : ℝ) (hA : 4 * (m : ℝ) ^ 2 + 1 ≤ A) (j : ℕ)
 end GlobalTheory.SepReal.powerIntegrability
 
 namespace GlobalTheory.SepReal
-
 
 open GlobalTheory.SepReal.powerIntegrability in
 theorem powInt_of_volBall : VolBall → PowInt := by
@@ -877,13 +873,6 @@ theorem const_le (C₀ : ℝ) (hC₀ : 0 < C₀) (m L R : ℝ) (hm : 4 ≤ m) (h
         apply Real.exp_le_exp.2
         linarith
 
-theorem mem_mul {m : ℕ} {ε : Fin m → Bool} {g g' : Mat m} (hg : g ∈ UJset ε) (hg' : g' ∈ UJset ε) : g * g' ∈ UJset ε := by
-  have h1 : gᴴ * Jm ε * g = Jm ε := hg
-  have h2 : g'ᴴ * Jm ε * g' = Jm ε := hg'
-  show (g * g')ᴴ * Jm ε * (g * g') = Jm ε
-  have : g'ᴴ * (gᴴ * Jm ε * g) * g' = Jm ε := by rw [h1, h2]
-  simpa [Matrix.mul_assoc, conjTranspose_mul] using this
-
 theorem mem_inv {m : ℕ} {ε : Fin m → Bool} {g : Mat m} (hg : g ∈ UJset ε) : g⁻¹ ∈ UJset ε := by
   have hJ : IsUnit (Jm ε) := ⟨⟨Jm ε, Jm ε, Jm_mul_self ε, Jm_mul_self ε⟩, rfl⟩
   have hd := (Matrix.isUnit_iff_isUnit_det g).1 (GlobalTheory.SmLinSub.isUnit_of_mem hJ hg)
@@ -1002,15 +991,15 @@ theorem derBounds_of : EmbLaws → PowInt → DecPow → LieBound → DerBounds 
         rw [hst]; exact GlobalTheory.SmLinSub.expS_mul_neg X' t
       have hd := (Matrix.isUnit_iff_isUnit_det g₀).1 (GlobalTheory.SmLinSub.isUnit_of_mem hJ hg₀)
       have hgi := mem_inv hg₀
-      have hc : NormedSpace.exp ((-t) • X') * b ∈ UJset ε := mem_mul ha' hb
-      have hc'' : g₀⁻¹ * (NormedSpace.exp ((-t) • X') * b) * g₀ ∈ UJset ε := mem_mul (mem_mul hgi hc) hg₀
+      have hc : NormedSpace.exp ((-t) • X') * b ∈ UJset ε := GlobalTheory.SepReal.ProjSm.mul_mem' ha' hb
+      have hc'' : g₀⁻¹ * (NormedSpace.exp ((-t) • X') * b) * g₀ ∈ UJset ε := GlobalTheory.SepReal.ProjSm.mul_mem' (GlobalTheory.SepReal.ProjSm.mul_mem' hgi hc) hg₀
       have e1 : ⟪π (NormedSpace.exp (t • X')) v, π b v⟫_ℂ = ⟪v, π (NormedSpace.exp ((-t) • X') * b) v⟫_ℂ := by
         rw [← inner_rep hU ha' (π _ v) (π b v), ← rep_mul_apply hU ha' ha, haa, hU.1.1, ← rep_mul_apply hU ha' hb]
         rfl
       have e2 : ⟪v, π (NormedSpace.exp ((-t) • X') * b) v⟫_ℂ =
           ⟪v₀, π (g₀⁻¹ * (NormedSpace.exp ((-t) • X') * b) * g₀) v₀⟫_ℂ := by
         rw [hv, ← inner_rep hU hgi (π g₀ v₀), ← rep_mul_apply hU hgi hg₀, nonsing_inv_mul _ hd, hU.1.1,
-          ← rep_mul_apply hU hc hg₀, ← rep_mul_apply hU hgi (mem_mul hc hg₀), ← Matrix.mul_assoc]
+          ← rep_mul_apply hU hc hg₀, ← rep_mul_apply hU hgi (GlobalTheory.SepReal.ProjSm.mul_mem' hc hg₀), ← Matrix.mul_assoc]
         rfl
       have hsa : hsn (NormedSpace.exp (t • X')) ≤ Real.sqrt m + 3 := by
         have := hsn_exp_le X' t (abs_le.2 ⟨by linarith [ht.1], ht.2⟩) hX'n
@@ -1132,15 +1121,6 @@ theorem isUnit_of_mem {x : Mat m} (hx : x ∈ UJset ε) : IsUnit x := by
 theorem exists_umat {x : Mat m} (hx : x ∈ UJset ε) : ∃ u : Formalism.REAL.UJ ε, umat u = x :=
   ⟨⟨(isUnit_of_mem hx).unit, hx⟩, rfl⟩
 
-theorem mul_mem {x y : Mat m} (hx : x ∈ UJset ε) (hy : y ∈ UJset ε) : x * y ∈ UJset ε := by
-  have hx' : xᴴ * Formalism.REAL.Jm ε * x = Formalism.REAL.Jm ε := hx
-  have hy' : yᴴ * Formalism.REAL.Jm ε * y = Formalism.REAL.Jm ε := hy
-  show (x * y)ᴴ * Formalism.REAL.Jm ε * (x * y) = Formalism.REAL.Jm ε
-  rw [Matrix.conjTranspose_mul]
-  calc yᴴ * xᴴ * Formalism.REAL.Jm ε * (x * y) = yᴴ * (xᴴ * Formalism.REAL.Jm ε * x) * y := by
-        simp only [Matrix.mul_assoc]
-    _ = _ := by rw [hx', hy']
-
 theorem inv_facts {x : Mat m} (hx : x ∈ UJset ε) :
     x⁻¹ ∈ UJset ε ∧ x * x⁻¹ = 1 ∧ x⁻¹ * x = 1 ∧ x⁻¹⁻¹ = x := by
   have hd : IsUnit x.det := (Matrix.isUnit_iff_isUnit_det x).1 (isUnit_of_mem hx)
@@ -1156,8 +1136,7 @@ theorem hsn_pos (hm : 0 < m) {x : Mat m} (hx : x ∈ UJset ε) : 0 < hsn x := by
   haveI : Nonempty (Fin m) := ⟨⟨0, hm⟩⟩
   have hne : x ≠ 0 := (isUnit_of_mem hx).ne_zero
   obtain ⟨i, j, hij⟩ : ∃ i j, x i j ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hne (Matrix.ext h)
   have h1 : ‖x i j‖ ^ 2 ≤ ∑ b, ‖x i b‖ ^ 2 :=
     Finset.single_le_sum (f := fun b => ‖x i b‖ ^ 2) (fun _ _ => by positivity) (Finset.mem_univ j)
@@ -1176,7 +1155,7 @@ theorem coef_conj {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] {�
     rw [← ContinuousLinearMap.comp_apply, ← hmul _ hg₀ _ hi, hr, h1]; rfl
   let L : H →ₗᵢ[ℂ] H := ⟨(π g₀ : H →ₗ[ℂ] H), fun x => hiso g₀ hg₀ x⟩
   have hL : ∀ x y, ⟪π g₀ x, π g₀ y⟫_ℂ = ⟪x, y⟫_ℂ := fun x y => L.inner_map_map x y
-  rw [hmul _ (mul_mem hi hg) _ hg₀, hmul _ hi _ hg]
+  rw [hmul _ (GlobalTheory.SepReal.ProjSm.mul_mem' hi hg) _ hg₀, hmul _ hi _ hg]
   conv_lhs => rw [← hw (π g (π g₀ v))]
   rw [hL]; rfl
 
@@ -1270,7 +1249,6 @@ end GlobalTheory.SepReal.IntBd
 
 namespace GlobalTheory.SepReal
 
-
 open GlobalTheory.SepReal.IntBd in
 theorem intBounds_of (hE : EmbLaws) (hBo : Boost) (hP : PowInt) (hD : DecPow) : IntBounds := by
   intro C₀ hC₀
@@ -1289,7 +1267,7 @@ theorem intBounds_of (hE : EmbLaws) (hBo : Boost) (hP : PowInt) (hD : DecPow) : 
       Real.exp (100 * ((n : ℝ) + 1) ^ 3) * (hsn g₀ ^ (80 * ((n : ℝ) + 1) ^ 2) * hsn X ^ (-(40 * ((n : ℝ) + 1) ^ 2))) := by
     intro X hX
     obtain ⟨hi, hr, hl, -⟩ := inv_facts hg₀
-    have hx : g₀⁻¹ * X * g₀ ∈ UJset ε := mul_mem (mul_mem hi hX) hg₀
+    have hx : g₀⁻¹ * X * g₀ ∈ UJset ε := GlobalTheory.SepReal.ProjSm.mul_mem' (GlobalTheory.SepReal.ProjSm.mul_mem' hi hX) hg₀
     rw [coef_conj hURep hg₀ hX]
     have hd := hD (n + 1) ε lam B (by omega) hp.hlam (by have := hp.gap; push_cast; exact this) hp.bound.1 H π hπ v₀ hv₀ _ hx
     push_cast at hd
@@ -1336,7 +1314,7 @@ theorem intBounds_of (hE : EmbLaws) (hBo : Boost) (hP : PowInt) (hD : DecPow) : 
         hsn (umat (u₁⁻¹ * y)) ^ (-(4 * (n : ℝ) ^ 2 + 1)) := by
     intro y
     have hy : umat y ∈ UJset ε' := y.2
-    have hX : g * embH e (umat y) ∈ UJset ε := mul_mem hg (hEmb _ hy)
+    have hX : g * embH e (umat y) ∈ UJset ε := GlobalTheory.SepReal.ProjSm.mul_mem' hg (hEmb _ hy)
     refine (hdec _ hX).trans ?_
     have hz : umat (u₁⁻¹ * y) ∈ UJset ε' := (u₁⁻¹ * y).2
     have e1 : hsn (embH e (umat (u₁⁻¹ * y))) ≤ hsn b * hsn (g * embH e (umat y)) := by
@@ -1357,7 +1335,7 @@ theorem intBounds_of (hE : EmbLaws) (hBo : Boost) (hP : PowInt) (hD : DecPow) : 
     have hcu : Continuous (fun y : Formalism.REAL.UJ ε' => umat y) := Units.continuous_val.comp continuous_subtype_val
     have hc1' : Continuous (fun y : Formalism.REAL.UJ ε' => g * embH e (umat y)) := continuous_const.mul (hEc.comp hcu)
     have hc2 : Continuous (fun y : Formalism.REAL.UJ ε' => π (g * embH e (umat y)) (π g₀ v₀)) :=
-      (hURep.2.2 (π g₀ v₀)).comp_continuous hc1' (fun y => mul_mem hg (hEmb _ y.2))
+      (hURep.2.2 (π g₀ v₀)).comp_continuous hc1' (fun y => GlobalTheory.SepReal.ProjSm.mul_mem' hg (hEmb _ y.2))
     exact continuous_const.inner hc2
   have hDint : Integrable (fun y : Formalism.REAL.UJ ε' =>
       (Real.exp (100 * ((n : ℝ) + 1) ^ 3) * hsn g₀ ^ (80 * ((n : ℝ) + 1) ^ 2) *
@@ -1391,8 +1369,6 @@ theorem intBounds_of (hE : EmbLaws) (hBo : Boost) (hP : PowInt) (hD : DecPow) : 
     _ ≤ big (200 + 80 * C₀) n B * ((muG ε' (nbh ε' (1 / 4))).toReal * colLen e g ^ (-(2 * (n : ℝ) + 7))) :=
       mul_le_mul_of_nonneg_right hcb (mul_nonneg hvol hcr)
     _ = _ := by ring
-
-theorem intBounds_main : EmbLaws → Boost → PowInt → DecPow → IntBounds := intBounds_of
 
 end GlobalTheory.SepReal
 end -- clump:auto
@@ -1472,7 +1448,7 @@ theorem UpperTheory.Lit.Branch.realInputE :
   intro hPL hEM
   unfold ProjLarge at hPL
   unfold EigMap at hEM
-  obtain ⟨C1, hC1, hIB⟩ := _root_.GlobalTheory.SepReal.intBounds_main _root_.GlobalTheory.SepReal.embLaws (_root_.GlobalTheory.SepReal.boost_of_embLaws _root_.GlobalTheory.SepReal.embLaws)
+  obtain ⟨C1, hC1, hIB⟩ := _root_.GlobalTheory.SepReal.intBounds_of _root_.GlobalTheory.SepReal.embLaws (_root_.GlobalTheory.SepReal.boost_of_embLaws _root_.GlobalTheory.SepReal.embLaws)
     (_root_.GlobalTheory.SepReal.powInt_of_volBall _root_.GlobalTheory.SepReal.volBall) _root_.GlobalTheory.SepReal.decPow 10 (by norm_num)
   obtain ⟨C3, hC3, hDB⟩ := _root_.GlobalTheory.SepReal.DerInt.derBounds_of _root_.GlobalTheory.SepReal.embLaws (_root_.GlobalTheory.SepReal.powInt_of_volBall _root_.GlobalTheory.SepReal.volBall)
     _root_.GlobalTheory.SepReal.decPow _root_.GlobalTheory.SepReal.lieBound 10 (by norm_num)

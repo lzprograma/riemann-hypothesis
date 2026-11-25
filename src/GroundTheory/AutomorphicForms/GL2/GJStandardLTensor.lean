@@ -149,7 +149,7 @@ theorem tensorFin_mem (S : Finset (HeightOneSpectrum (𝓞 K)))
       rw [Filter.eventually_cofinite]
       refine S.finite_toSet.subset fun w hw ↦ ?_
       by_contra hwS
-      exact hw (by simp only [hm, if_neg (fun h ↦ hwS (Finset.mem_coe.2 h))])
+      exact hw (by simp only [hm, ite_eq_right (fun h ↦ hwS (Finset.mem_coe.2 h))])
     set L : (FractionalIdeal (𝓞 K)⁰ K)ˣ := ∏ᶠ w, primeIdealUnit w ^ m w with hL
     have hcount : ∀ w, FractionalIdeal.count K w (L : FractionalIdeal (𝓞 K)⁰ K) = m w :=
       count_finprod_primeIdealUnit_zpow m hmfin
@@ -169,10 +169,10 @@ theorem tensorFin_mem (S : Finset (HeightOneSpectrum (𝓞 K)))
         rwa [Set.indicator_of_mem hyB] at hne
       have hΦw : Φ w (entriesAt w y) ≠ 0 := Finset.prod_ne_zero_iff.1 hprod w hw
       have := GodementSection.valued_le_exp_of_norm_le (hN w hw (entriesAt w y) hΦw ij.1 ij.2)
-      simp only [hm, if_pos hw, neg_neg]
+      simp only [hm, ite_eq_left hw, neg_neg]
       exact this
     · have hint : y ij w ∈ w.adicCompletionIntegers K := hyB ij w hw
-      simp only [hm, if_neg hw, neg_zero, WithZero.exp_zero]
+      simp only [hm, ite_eq_right hw, neg_zero, WithZero.exp_zero]
       exact (HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).1 hint
 
 theorem matrixTensor_mem (φ : 𝓢(Fin n × Fin n → mixedSpace K, ℂ)) (S : Finset (HeightOneSpectrum (𝓞 K)))

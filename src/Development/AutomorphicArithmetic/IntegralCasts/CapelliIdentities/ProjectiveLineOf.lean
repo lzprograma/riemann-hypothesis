@@ -65,7 +65,7 @@ public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 
 noncomputable def UpperTheory.Reformulated.B.ProjectiveLineOf.P1 :
     Prop :=
-    ∀ (k : Type) [inst : NontriviallyNormedField k] [LocallyCompactSpace k] [CharZero k] (n : ℕ) (γ : GL (Fin n) k),
+    ∀ (k : Type) [NontriviallyNormedField k] [LocallyCompactSpace k] [CharZero k] (n : ℕ) (γ : GL (Fin n) k),
       (↑γ : Matrix (Fin n) (Fin n) k).charpoly.Separable →
         ∀ (D : Set (GL (Fin n) k)),
           IsCompact D →

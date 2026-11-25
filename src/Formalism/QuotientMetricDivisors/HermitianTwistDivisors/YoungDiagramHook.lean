@@ -1,50 +1,7 @@
 module
 
 public import Formalism.QuotientMetricDivisors.TheoremDivIneqRows
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -473,7 +430,7 @@ lemma arith_fact_top {w S Sc N Bl cs C0 La n k : ℝ} (hw : 0 ≤ w) (hSc0 : 0 �
   have h5 := mul_le_mul_of_nonneg_left hLa (sq_nonneg N)
   nlinarith
 
-lemma arith_fact_off {w S Sc N Bl cs C0 La n k : ℝ} (hw : 0 ≤ w) (_hSc0 : 0 ≤ Sc) (hBl : 0 ≤ Bl)
+lemma arith_fact_off {w S Sc N Bl cs C0 La n k : ℝ} (hw : 0 ≤ w) (hBl : 0 ≤ Bl)
     (hn : 0 ≤ n) (hk : k = n + 1) (hkN : k ≤ N) (hcs : 0 ≤ cs) (hC2 : 2 ≤ C0) (hCcs : cs + 1 ≤ C0)
     (hSc : 2 * Sc ≤ C0 * S) (hLa : 1 ≤ La) :
     (w + 2 * Sc + n * (cs * N) + Bl) * La ≤ C0 * (w + S + N ^ 2 + Bl) * La := by
@@ -527,7 +484,7 @@ theorem young_diagram_step : RowsStepE := by
     fun j ρ => by dsimp only; linarith, fun j ρ => by dsimp only; ring, fun j ρ => ?_, fun j ρ => ?_⟩
   · dsimp only
     by_cases hρ : ρ ∈ TT
-    · rw [if_pos hρ]
+    · rw [ite_eq_left hρ]
       have hT := htop j ρ hρ
       have h0 := top_nonneg hT
       have hF := (young_diagram_factorial n (w j ρ) Sc (m * (t + 1) * η) (cs * N) (a * rd) La (fa j ρ)
@@ -535,18 +492,18 @@ theorem young_diagram_step : RowsStepE := by
       have hA := arith_fact_top (w := (w j ρ : ℝ)) (n := (n : ℝ)) (Nat.cast_nonneg _) h0.1 h0.2
         (Nat.cast_nonneg _) hk hkN hcs hC2 hCcs hSc hLa1
       linarith
-    · rw [if_neg hρ]
+    · rw [ite_eq_right hρ]
       have hO := hoff j ρ hρ
       have h0 := off_nonneg hO
       have hF := (young_diagram_factorial (n + 1) (w j ρ) Sc (m * (t + 1) * η) (cs * N) (a * rd) La
         (fa j ρ) (ν j ρ) (ap j ρ) hLa hLa1 (hwA j ρ) hBlA (hfa j ρ)).1 hO
       have hA := arith_fact_off (w := (w j ρ : ℝ)) (n := ((n + 1 : ℕ) : ℝ)) (k := k)
-        (Nat.cast_nonneg _) h0.1 h0.2 (Nat.cast_nonneg _) (by push_cast; linarith) hkN hcs hC2
+        (Nat.cast_nonneg _) h0.2 (Nat.cast_nonneg _) (by push_cast; linarith) hkN hcs hC2
         hCcs hSc hLa1
       linarith
   · dsimp only
     by_cases hρ : ρ ∈ TT
-    · rw [if_pos hρ, if_pos hρ]
+    · rw [ite_eq_left hρ, ite_eq_left hρ]
       have hT := htop j ρ hρ
       have h0 := top_nonneg hT
       have hP := (young_diagram_period n (w j ρ) Sc (m * (t + 1) * η) (cs * N) (ν j ρ) (ap j ρ)).2
@@ -556,7 +513,7 @@ theorem young_diagram_step : RowsStepE := by
       obtain ⟨hP1, hP2⟩ := hP
       exact arith_per (n := (n : ℝ)) (k := k) (Nat.cast_nonneg _) h0.1 h0.2 (Nat.cast_nonneg _)
         (by rw [hk]; linarith) hkN hC2 hSc hX (by linarith) (by linarith)
-    · rw [if_neg hρ, if_neg hρ]
+    · rw [ite_eq_right hρ, ite_eq_right hρ]
       have hO := hoff j ρ hρ
       have h0 := off_nonneg hO
       have hP := (young_diagram_period (n + 1) (w j ρ) Sc (m * (t + 1) * η) (cs * N) (ν j ρ)

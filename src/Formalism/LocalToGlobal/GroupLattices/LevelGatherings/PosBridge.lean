@@ -11,8 +11,6 @@ open Formalism.BasicNotions NumberField Formalism.MainNotions.G Formalism.Froben
 
 namespace Formalism.L2.G
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem cc_sq (e : Formalism.HC.Frame) : e.cc * e.cc = 1 := by
   simp [Formalism.HC.Frame.cc, Formalism.FrobeniusOrbits.c0, Prod.ext_iff]
 
@@ -22,8 +20,8 @@ theorem cc_pow (e : Formalism.HC.Frame) (s : ℕ) : e.cc ^ s = if s % 2 = 1 then
   | succ n ih =>
     rw [pow_succ, ih]
     rcases Nat.mod_two_eq_zero_or_one n with h | h
-    · rw [if_neg (by omega), one_mul, if_pos (by omega)]
-    · rw [if_pos h, cc_sq, if_neg (by omega)]
+    · rw [ite_eq_right (by omega), one_mul, ite_eq_left (by omega)]
+    · rw [ite_eq_left h, cc_sq, ite_eq_right (by omega)]
 
 theorem embLL_mem_alg (D : D7) (z : D.what₂.LL) : D.what₂.embLL z ∈ algebraicClosure ℚ ℂ := by
   rw [mem_algebraicClosure_iff]

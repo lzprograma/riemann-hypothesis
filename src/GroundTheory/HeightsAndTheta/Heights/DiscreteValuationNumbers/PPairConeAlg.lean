@@ -72,6 +72,138 @@ theorem isAlgebraic_of_mulVec {R L : Type*} [CommRing R] [IsDomain R] [CommRing 
   rw [key]
   exact Subalgebra.sum_mem AC fun j _ => AC.mul_mem (hadj q j) (hGw j)
 
+theorem expand_coords {Ω : Type*} [Field Ω] {E : Type*} [AddCommGroup E] [Module Ω E] {Φ : Type*} [Field Φ]
+    [Algebra Ω Φ] {n : ℕ} {σ : Type*} (u : Fin n → E) (s' : Fin n → Φ) (ψ : Module.Dual Ω E) (V : Φ)
+    (hV : V = ∑ q, s' q * algebraMap Ω Φ (ψ (u q))) (Y Z : Ω) (o : σ) :
+    ∑ q, C (algebraMap Ω Φ (ψ (u q) / Z)) * (C (algebraMap Ω Φ Y * s' q) * (X o : MvPolynomial σ Φ)) =
+      C (algebraMap Ω Φ (Y / Z) * V) * X o := by
+  rw [hV, Finset.mul_sum, map_sum, Finset.sum_mul]
+  refine Finset.sum_congr rfl fun q _ => ?_
+  rw [← mul_assoc, ← map_mul]
+  congr 2
+  simp only [map_div₀]
+  ring
+
+theorem isAlgebraic_cone {O : Type} [CommRing O] [IsDomain O] {ϖ : O}
+    {Ω : Type} [Field Ω] [Algebra O Ω] {K : Type} [Fintype K] [DecidableEq K]
+    {ι : K → Type} {y : (Σ k, ι k) → Ω} {N M M' k : ℕ} {E : Type} [AddCommGroup E] [Module Ω E]
+    {B B' : ChartBundle O (segreVec y) N E}
+    (hB : ∀ c, segreVec y c ≠ 0 →
+      (∀ v ∈ B.lat c, ∃ m : ℕ, algebraMap O Ω ϖ ^ m • v ∈ B'.lat c) ∧
+      (∀ v ∈ B'.lat c, ∃ m : ℕ, algebraMap O Ω ϖ ^ m • v ∈ B.lat c))
+    {a₀ a₀' : K → ℤ} {φ : Fin M → Module.Dual Ω E} {φ' : Fin M' → Module.Dual Ω E}
+    (hφ : IsTwistedDualGens y B a₀ φ) (hφ' : IsTwistedDualGens y B' a₀' φ')
+    {Φ : Type} [Field Φ] [Algebra Ω Φ] [Algebra O Φ] [IsScalarTower O Ω Φ]
+    {c : ∀ k', ι k'} (hc : ∀ k', y ⟨k', c k'⟩ ≠ 0) (hyc : segreVec y c ≠ 0)
+    (hϖ0 : algebraMap O Ω ϖ ≠ 0)
+    (u : Fin k → E) (hu : ∀ q, u q ∈ B.lat c) (s' : Fin k → Φ)
+    (pt : (Σ o, bundleIdx (bundleIdx ι M) M' o) → Φ)
+    (hpt0 : ∀ q : Σ k', ι k', pt ⟨some (some q.1), q.2⟩ = algebraMap Ω Φ (y q))
+    (hpt1 : ∀ lφ, pt ⟨some none, lφ⟩ = ∑ q, s' q * algebraMap Ω Φ (φ lφ (u q)))
+    (hpt2 : ∀ l', pt ⟨none, l'⟩ = ∑ q, s' q * algebraMap Ω Φ (φ' l' (u q)))
+    (l : Fin k → Fin M) (m' : Fin M') (hm' : pt ⟨none, m'⟩ ≠ 0)
+    (hdet : (Matrix.of fun (i q : Fin k) => φ (l i) (u q) / ∏ k', y ⟨k', c k'⟩ ^ a₀ k').det ≠ 0)
+    (A1 : Subalgebra O (MvPolynomial (Option (Option K)) Φ))
+    (h1 : ∀ q : Σ k', ι k', C (algebraMap Ω Φ (y q)) * X (some (some q.1)) ∈ A1)
+    (h2 : ∀ i, C (pt ⟨some none, l i⟩) * X (some none) ∈ A1)
+    (h3 : C (pt ⟨none, m'⟩) * X none ∈ A1) :
+    ∀ p : Σ o, bundleIdx (bundleIdx ι M) M' o, IsAlgebraic A1 (C (pt p) * X p.1) := by
+  classical
+  set Y : Ω := ∏ k', y ⟨k', c k'⟩ ^ a₀ k'
+  set Y' : Ω := ∏ k', y ⟨k', c k'⟩ ^ a₀' k'
+  have hY : Y ≠ 0 := Finset.prod_ne_zero_iff.2 fun k' _ => zpow_ne_zero _ (hc k')
+  have hY' : Y' ≠ 0 := Finset.prod_ne_zero_iff.2 fun k' _ => zpow_ne_zero _ (hc k')
+  let Gm : Matrix (Fin k) (Fin k) Ω := Matrix.of fun i q => φ (l i) (u q) / Y
+  let AC := Subalgebra.algebraicClosure A1 (MvPolynomial (Option (Option K)) Φ)
+  have hA : ∀ x ∈ A1, x ∈ AC := fun x hx => isAlgebraic_algebraMap (⟨x, hx⟩ : A1)
+  let ψ : Ω →+* MvPolynomial (Option (Option K)) Φ := (C : Φ →+* _).comp (algebraMap Ω Φ)
+  have hψ : ∀ a, ψ a = C (algebraMap Ω Φ a) := fun _ => rfl
+  let G : Subalgebra O Ω :=
+    { carrier := {a | ψ a ∈ AC}
+      mul_mem' := fun {a b} ha hb => by show ψ (a * b) ∈ AC; rw [map_mul]; exact AC.mul_mem ha hb
+      add_mem' := fun {a b} ha hb => by show ψ (a + b) ∈ AC; rw [map_add (f := _)]; exact AC.add_mem ha hb
+      algebraMap_mem' := fun r => by
+        show ψ (algebraMap O Ω r) ∈ AC
+        have : ψ (algebraMap O Ω r) = algebraMap O (MvPolynomial (Option (Option K)) Φ) r := by
+          rw [hψ, ← IsScalarTower.algebraMap_apply, MvPolynomial.algebraMap_apply]
+        rw [this]
+        exact hA _ (A1.algebraMap_mem r) }
+  have hratio : ∀ k' j, ψ (y ⟨k', j⟩ / y ⟨k', c k'⟩) ∈ AC := by
+    intro k' j
+    have h0 : C (algebraMap Ω Φ (y ⟨k', c k'⟩)) * X (some (some k')) ∈
+        nonZeroDivisors (MvPolynomial (Option (Option K)) Φ) :=
+      mem_nonZeroDivisors_of_ne_zero (mul_ne_zero (by rw [← hψ]; exact (map_ne_zero ψ).2 (hc k')) (X_ne_zero _))
+    refine IsAlgebraic.of_mul h0 (hA _ (h1 ⟨k', c k'⟩)) ?_
+    have : C (algebraMap Ω Φ (y ⟨k', c k'⟩)) * X (some (some k')) * ψ (y ⟨k', j⟩ / y ⟨k', c k'⟩) =
+        C (algebraMap Ω Φ (y ⟨k', j⟩)) * X (some (some k')) := by
+      rw [hψ, mul_right_comm, ← map_mul, ← map_mul, mul_div_cancel₀ _ (hc k')]
+    rw [this]
+    exact hA _ (h1 ⟨k', j⟩)
+  have hchart : chartRing O (segreVec y) c ≤ G := by
+    refine Algebra.adjoin_le ?_
+    rintro _ ⟨j, rfl⟩
+    show ψ (segreVec y j / segreVec y c) ∈ AC
+    rw [segreVec, segreVec, ← Finset.prod_div_distrib, map_prod]
+    exact Subalgebra.prod_mem AC fun k' _ => hratio k' (j k')
+  have hϖG : ψ (algebraMap O Ω ϖ) ∈ AC := G.algebraMap_mem ϖ
+  have hg : ∀ lφ q, ψ (φ lφ (u q) / Y) ∈ AC := by
+    intro lφ q
+    obtain ⟨a, ha, hrep⟩ := hφ.sections c hyc lφ (u q) (hu q)
+    have : φ lφ (u q) / Y = a := by rw [hrep, mul_div_cancel_right₀ _ hY]
+    rw [this]
+    exact hchart ha
+  have hg' : ∀ l' q, ψ (φ' l' (u q) / Y') ∈ AC := by
+    intro l' q
+    obtain ⟨m, hm⟩ := (hB c hyc).1 (u q) (hu q)
+    obtain ⟨a, ha, hrep⟩ := hφ'.sections c hyc l' _ hm
+    rw [map_smul, smul_eq_mul] at hrep
+    have h0 : ψ (algebraMap O Ω ϖ ^ m) ∈ nonZeroDivisors (MvPolynomial (Option (Option K)) Φ) :=
+      mem_nonZeroDivisors_of_ne_zero ((map_ne_zero ψ).2 (pow_ne_zero _ hϖ0))
+    have hpow : ψ (algebraMap O Ω ϖ ^ m) ∈ AC := by
+      rw [map_pow]
+      exact AC.pow_mem hϖG m
+    refine IsAlgebraic.of_mul h0 hpow ?_
+    rw [← map_mul, mul_div_assoc', hrep, mul_div_cancel_right₀ _ hY']
+    exact hchart ha
+  let W : Fin k → MvPolynomial (Option (Option K)) Φ := fun q =>
+    C (algebraMap Ω Φ Y * s' q) * X (some none)
+  have hx : ∀ lφ, C (pt ⟨some none, lφ⟩) * X (some none) = ∑ q, ψ (φ lφ (u q) / Y) * W q := by
+    intro lφ
+    have := expand_coords u s' (φ lφ) _ (hpt1 lφ) Y Y (some none : Option (Option K))
+    rw [div_self hY, map_one, one_mul] at this
+    exact this.symm
+  have hW : ∀ q, W q ∈ AC := by
+    intro q
+    refine isAlgebraic_of_mulVec (Gm.map ψ) W (fun i j => hg _ _) (fun i => ?_) ?_ q
+    · have : ((Gm.map ψ).mulVec W) i = ∑ q, ψ (φ (l i) (u q) / Y) * W q := rfl
+      rw [this, ← hx (l i)]
+      exact hA _ (h2 i)
+    · show (ψ.mapMatrix Gm).det ≠ 0
+      rw [← RingHom.map_det]
+      exact (map_ne_zero ψ).2 hdet
+  rintro ⟨(_ | _ | k'), j⟩
+  · let P : Fin M' → MvPolynomial (Option (Option K)) Φ := fun l' => ∑ q, ψ (φ' l' (u q) / Y') * W q
+    have hP : ∀ l', P l' = C (algebraMap Ω Φ (Y / Y') * pt ⟨none, l'⟩) * X (some none) :=
+      fun l' => expand_coords u s' (φ' l') _ (hpt2 l') Y Y' (some none : Option (Option K))
+    have hPA : ∀ l', P l' ∈ AC := fun l' => Subalgebra.sum_mem AC fun q _ => AC.mul_mem (hg' l' q) (hW q)
+    have hP0 : P m' ∈ nonZeroDivisors (MvPolynomial (Option (Option K)) Φ) := by
+      rw [hP]
+      refine mem_nonZeroDivisors_of_ne_zero (mul_ne_zero ?_ (X_ne_zero _))
+      rw [Ne, C_eq_zero]
+      exact mul_ne_zero ((map_ne_zero _).2 (div_ne_zero hY hY')) hm'
+    refine IsAlgebraic.of_mul hP0 (hPA m') ?_
+    have : P m' * (C (pt ⟨none, j⟩) * X none) = P j * (C (pt ⟨none, m'⟩) * X none) := by
+      rw [hP m', hP j]
+      simp only [map_mul]
+      ring
+    rw [this]
+    exact AC.mul_mem (hPA j) (hA _ h3)
+  · show C (pt ⟨some none, j⟩) * X (some none) ∈ AC
+    rw [hx]
+    exact Subalgebra.sum_mem AC fun q _ => AC.mul_mem (hg j q) (hW q)
+  · rw [hpt0 ⟨k', j⟩]
+    exact hA _ (h1 ⟨k', j⟩)
+
 end PairConeAlg
 
 
@@ -147,116 +279,10 @@ theorem PairConeAlg.proof : PairConeAlg.Statement := by
         _ = 0 := by rw [hq, mul_zero]
     exact funext (Fintype.linearIndependent_iff.1 hl r hzero)
 
-  have key : ∀ A1 : Subalgebra O (MvPolynomial (Option (Option K)) Φ),
-      (∀ q : Σ k, ι k, C (algebraMap Ω Φ (y q)) * X (some (some q.1)) ∈ A1) →
-      (∀ i, C (pairProjCoord y e φ φ' t ⟨some none, l i⟩) * X (some none) ∈ A1) →
-      C (pairProjCoord y e φ φ' t ⟨none, m'⟩) * X none ∈ A1 →
-      ∀ p : Σ o, bundleIdx (bundleIdx ι M) M' o,
-        IsAlgebraic A1 (C (pairProjCoord y e φ φ' t p) * X p.1) := by
-    intro A1 h1 h2 h3
-    let AC := Subalgebra.algebraicClosure A1 (MvPolynomial (Option (Option K)) Φ)
-    have hA : ∀ x ∈ A1, x ∈ AC := fun x hx => isAlgebraic_algebraMap (⟨x, hx⟩ : A1)
-    let ψ : Ω →+* MvPolynomial (Option (Option K)) Φ := (C : Φ →+* _).comp (algebraMap Ω Φ)
-    have hψ : ∀ a, ψ a = C (algebraMap Ω Φ a) := fun _ => rfl
-
-    let G : Subalgebra O Ω :=
-      { carrier := {a | ψ a ∈ AC}
-        mul_mem' := fun {a b} ha hb => by
-          show ψ (a * b) ∈ AC
-          rw [map_mul]
-          exact AC.mul_mem ha hb
-        add_mem' := fun {a b} ha hb => by
-          show ψ (a + b) ∈ AC
-          rw [map_add (f := _)]
-          exact AC.add_mem ha hb
-        algebraMap_mem' := fun r => by
-          show ψ (algebraMap O Ω r) ∈ AC
-          have : ψ (algebraMap O Ω r) = algebraMap O (MvPolynomial (Option (Option K)) Φ) r := by
-            rw [hψ, ← IsScalarTower.algebraMap_apply, MvPolynomial.algebraMap_apply]
-          rw [this]
-          exact hA _ (A1.algebraMap_mem r) }
-    have hratio : ∀ k j, ψ (y ⟨k, j⟩ / y ⟨k, c k⟩) ∈ AC := by
-      intro k j
-      have h0 : C (algebraMap Ω Φ (y ⟨k, c k⟩)) * X (some (some k)) ∈
-          nonZeroDivisors (MvPolynomial (Option (Option K)) Φ) :=
-        mem_nonZeroDivisors_of_ne_zero (mul_ne_zero (by rw [← hψ]; exact (map_ne_zero ψ).2 (hc k)) (X_ne_zero _))
-      refine IsAlgebraic.of_mul h0 (hA _ (h1 ⟨k, c k⟩)) ?_
-      have : C (algebraMap Ω Φ (y ⟨k, c k⟩)) * X (some (some k)) * ψ (y ⟨k, j⟩ / y ⟨k, c k⟩) =
-          C (algebraMap Ω Φ (y ⟨k, j⟩)) * X (some (some k)) := by
-        rw [hψ, mul_right_comm, ← map_mul, ← map_mul, mul_div_cancel₀ _ (hc k)]
-      rw [this]
-      exact hA _ (h1 ⟨k, j⟩)
-    have hchart : chartRing O (segreVec y) c ≤ G := by
-      refine Algebra.adjoin_le ?_
-      rintro _ ⟨j, rfl⟩
-      show ψ (segreVec y j / segreVec y c) ∈ AC
-      rw [segreVec, segreVec, ← Finset.prod_div_distrib, map_prod]
-      exact Subalgebra.prod_mem AC fun k _ => hratio k (j k)
-    have hϖG : ψ (algebraMap O Ω ϖ) ∈ AC := G.algebraMap_mem ϖ
-
-    have hg : ∀ l q, ψ (φ l (u q) / Y) ∈ AC := by
-      intro l q
-      obtain ⟨a, ha, hrep⟩ := hφ.sections c hyc l (u q) (hu q)
-      have : φ l (u q) / Y = a := by rw [hrep, mul_div_cancel_right₀ _ hY]
-      rw [this]
-      exact hchart ha
-    have hg' : ∀ l q, ψ (φ' l (u q) / Y') ∈ AC := by
-      intro l q
-      obtain ⟨m, hm⟩ := (hB c hyc).1 (u q) (hu q)
-      obtain ⟨a, ha, hrep⟩ := hφ'.sections c hyc l _ hm
-      rw [map_smul, smul_eq_mul] at hrep
-      have h0 : ψ (algebraMap O Ω ϖ ^ m) ∈ nonZeroDivisors (MvPolynomial (Option (Option K)) Φ) :=
-        mem_nonZeroDivisors_of_ne_zero ((map_ne_zero ψ).2 (pow_ne_zero _ hϖ0))
-      have hpow : ψ (algebraMap O Ω ϖ ^ m) ∈ AC := by
-        rw [map_pow]
-        exact AC.pow_mem hϖG m
-      refine IsAlgebraic.of_mul h0 hpow ?_
-      rw [← map_mul, mul_div_assoc', hrep, mul_div_cancel_right₀ _ hY']
-      exact hchart ha
-
-    let w : Fin N → MvPolynomial (Option (Option K)) Φ := fun q =>
-      C (algebraMap Ω Φ Y * ∑ i, t i * algebraMap Ω Φ (u.repr (e i) q)) * X (some none)
-    have hx : ∀ lφ, C (pairProjCoord y e φ φ' t ⟨some none, lφ⟩) * X (some none) =
-        ∑ q, ψ (φ lφ (u q) / Y) * w q := by
-      intro lφ
-      have := expand e u t (φ lφ) Y Y (some none : Option (Option K))
-      rw [div_self hY, map_one, one_mul] at this
-      exact this.symm
-    have hw : ∀ q, w q ∈ AC := by
-      intro q
-      refine isAlgebraic_of_mulVec (Gm.map ψ) w (fun i j => hg _ _) (fun i => ?_) ?_ q
-      · have : ((Gm.map ψ).mulVec w) i = ∑ q, ψ (φ (l i) (u q) / Y) * w q := rfl
-        rw [this, ← hx (l i)]
-        exact hA _ (h2 i)
-      · show (ψ.mapMatrix Gm).det ≠ 0
-        rw [← RingHom.map_det]
-        exact (map_ne_zero ψ).2 hdet
-    rintro ⟨(_ | _ | k), j⟩
-    ·
-      let P : Fin M' → MvPolynomial (Option (Option K)) Φ := fun l' => ∑ q, ψ (φ' l' (u q) / Y') * w q
-      have hP : ∀ l', P l' = C (algebraMap Ω Φ (Y / Y') * pairProjCoord y e φ φ' t ⟨none, l'⟩) * X (some none) :=
-        fun l' => expand e u t (φ' l') Y Y' (some none : Option (Option K))
-      have hPA : ∀ l', P l' ∈ AC := fun l' => Subalgebra.sum_mem AC fun q _ => AC.mul_mem (hg' l' q) (hw q)
-      have hP0 : P m' ∈ nonZeroDivisors (MvPolynomial (Option (Option K)) Φ) := by
-        rw [hP]
-        refine mem_nonZeroDivisors_of_ne_zero (mul_ne_zero ?_ (X_ne_zero _))
-        rw [Ne, C_eq_zero]
-        exact mul_ne_zero ((map_ne_zero _).2 (div_ne_zero hY hY')) hm'
-      refine IsAlgebraic.of_mul hP0 (hPA m') ?_
-      have : P m' * (C (pairProjCoord y e φ φ' t ⟨none, j⟩) * X none) =
-          P j * (C (pairProjCoord y e φ φ' t ⟨none, m'⟩) * X none) := by
-        rw [hP m', hP j]
-        simp only [map_mul]
-        ring
-      rw [this]
-      exact AC.mul_mem (hPA j) (hA _ h3)
-    ·
-      show C (pairProjCoord y e φ φ' t ⟨some none, j⟩) * X (some none) ∈ AC
-      rw [hx]
-      exact Subalgebra.sum_mem AC fun q _ => AC.mul_mem (hg j q) (hw q)
-    ·
-      exact hA _ (h1 ⟨k, j⟩)
-  exact ⟨l, m', hl, hm', key _ (fun q => Algebra.subset_adjoin (Or.inl ⟨q, rfl⟩))
+  exact ⟨l, m', hl, hm', isAlgebraic_cone hB hφ hφ' hc hyc hϖ0 u hu
+    (fun q => ∑ i, t i * algebraMap Ω Φ (u.repr (e i) q)) (pairProjCoord y e φ φ' t)
+    (fun _ => rfl) (fun lφ => eval_generic e u t (φ lφ)) (fun l' => eval_generic e u t (φ' l'))
+    l m' hm' hdet _ (fun q => Algebra.subset_adjoin (Or.inl ⟨q, rfl⟩))
     (fun i => Algebra.subset_adjoin (Or.inr ⟨Sum.inl i, rfl⟩))
     (Algebra.subset_adjoin (Or.inr ⟨Sum.inr (), rfl⟩))⟩
 

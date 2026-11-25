@@ -110,7 +110,6 @@ theorem exists_dataX_transv : ∀ (D : D7) (j : ℕ) (H : ReciprocityTheory.Char
   have hd : 0 < D.host.d := by have := D.host.qd_big.2; omega
   have hN' : (0 : ℝ) < Ideal.absNorm D.host.ccK := by exact_mod_cast hN
   have hd' : (0 : ℝ) < D.host.d := by exact_mod_cast hd
-  have hs := Real.sqrt_pos.2 hd'
   have hx1 : xiR D ≤ 1 := by
     rw [GlobalTheory.TransvModel.xiR_eq]
     have h1 : (1 : ℝ) ≤ Ideal.absNorm D.host.ccK := by exact_mod_cast hN

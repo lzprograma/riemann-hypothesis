@@ -14,53 +14,8 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCL
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSAdj
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSConst
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSLocal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterlaceSignTwo
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSPhaseA, Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSPhase, Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_GCore_GTSS
@@ -80,9 +35,9 @@ theorem sum_ind (P : M.Par) (l : ℕ) (hl : l ∈ Icc 1 (P.k - 1)) :
     ∑ i : Fin (P.k - 1), (if (i : ℕ) + 1 = l then 1 else 0) = 1 := by
   rw [Finset.mem_Icc] at hl
   rw [Finset.sum_eq_single ⟨l - 1, by omega⟩]
-  · rw [if_pos (by simp; omega)]
+  · rw [ite_eq_left (by simp; omega)]
   · intro b _ hb
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     apply hb
     ext
@@ -99,8 +54,7 @@ theorem up_height (P : M.Par) (l : ℕ) (hl : l ∈ Icc 1 (P.k - 1)) (ρ ρ' : M
 theorem pred_exists (P : M.Par) (ρ' : M.Ty P) (h : height P ρ' ≠ 0) :
     ∃ l ∈ Icc 1 (P.k - 1), ∃ ρ, M.Up P l ρ ρ' := by
   obtain ⟨i, hi⟩ : ∃ i, ((ρ' i : Fin _) : ℕ) ≠ 0 := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     apply h
     unfold height
     exact Finset.sum_eq_zero fun i _ => hall i
@@ -114,8 +68,8 @@ theorem pred_exists (P : M.Par) (ρ' : M.Ty P) (h : height P ρ' ≠ 0) :
     · subst hj
       simp
       omega
-    · simp only [hj, dif_neg, not_false_eq_true]
-      rw [if_neg]
+    · simp only [hj, dite_eq_right, not_false_eq_true]
+      rw [ite_eq_right]
       · simp
       · intro h2
         apply hj
@@ -157,7 +111,7 @@ theorem phase_exists (P : M.Par) (w : ℕ → M.Ty P → M.Ty P → ℂ)
       have hhρ := up_height P l hl ρ ρ' hU
       have hρ : u' ρ = u ρ := by
         simp only [u']
-        rw [dif_neg (by omega)]
+        rw [dite_eq_right (by omega)]
       rw [hρ]
       by_cases hn : height P ρ' = n + 1
       · simp only [u']
@@ -180,7 +134,7 @@ theorem phase_exists (P : M.Par) (w : ℕ → M.Ty P → M.Ty P → ℂ)
           rw [e1, e2, ← mul_assoc, ← mul_assoc, hc']
       · have hle : height P ρ' ≤ n := by omega
         simp only [u']
-        rw [dif_neg hn]
+        rw [dite_eq_right hn]
         exact hu l hl ρ ρ' hU hle
   obtain ⟨u, hu1, hu⟩ := key (Finset.univ.sup (height P))
   exact ⟨u, hu1, fun l hl ρ ρ' hU => hu l hl ρ ρ' hU (Finset.le_sup (Finset.mem_univ ρ'))⟩
@@ -250,7 +204,7 @@ theorem mulQ_smul (P : M.Par) (x : (MA.DQ P).Pr) (c : ℂ) (f : MA.SmQ P.r P.TT)
 theorem second_shift_phase_holds : GTSSPhase := by
   intro Wp Wq _ _ _ _ _ _ P Bs X d hH e he hk hn s t hL hst
   classical
-  obtain ⟨hpl, hk2, hcs, hLv, hSL, hRel, hQ⟩ := hH
+  obtain ⟨hpl, hk2, hcs, hLv, _, hRel, hQ⟩ := hH
   have hP : P.OK := hpl.1
   have hTT : 0 < P.TT := mul_pos hP.T_pos hP.T'_pos
   let q0 : MA.Qp P.r P.TT := ⟨((fun _ => 1), ((Real.sqrt P.TT + 1 : ℝ) : ℂ)), ⟨fun _ => one_ne_zero, ann_pt P hTT⟩⟩
@@ -302,7 +256,7 @@ theorem second_shift_phase_holds : GTSSPhase := by
       congrArg (fun a : Q.Pr (Q.RadSp P.k P.r Bs.z Bs.z' Bs.π Bs.π') => a.1 (U ρ)) hr
     rw [e12] at c1
     have h := congrFun (cv_eq _ _ _ c1 c2) τ
-    simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true, if_neg hnu,
+    simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true, ite_eq_right hnu,
       zero_mul] at h
     rw [← h]
 
@@ -316,7 +270,7 @@ theorem second_shift_phase_holds : GTSSPhase := by
       congrArg (fun a : Q.Pr (Q.RadSp P.k P.r Bs.z Bs.z' Bs.π Bs.π') => a.1 (U ρ)) hN
     rw [e12] at c1
     have h := congrFun (cv_eq _ _ _ c1 c2) ρ
-    simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
+    simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
     rw [← h, Finset.sum_eq_single ρ', hst l hl ρ ρ']
     · intro σ _ hσ
       have : ¬ M.Up P l ρ σ := fun h2 => hσ (Formalism.FourierDecayAlt.P.Mx4.up_fun P l ρ σ ρ' h2 hU1)
@@ -334,13 +288,13 @@ theorem second_shift_phase_holds : GTSSPhase := by
   have hIS : Wd.IsStart d.QQ (M.qC P) := by
     have h := (Formalism.FourierDecayAlt.P.actual_start Wp Wq P Bs.z Bs.z' Bs.π Bs.π' hpl X).1
     rwa [show X.QQ = d.QQ from funext hQ] at h
-  have hX := Formalism.FourierDecayAlt.P.shift_extra P _ d hP hSL hRel hIS
+  have hShift := Formalism.FourierDecayAlt.P.NFx4.SX.hyp_of_rel d hRel
   have F3 : ∀ l ∈ Icc 1 (P.k - 1), ∀ j ∈ Icc 1 (P.k - 1), j ≠ l → ∀ ρ ρl ρj ρlj : M.Ty P,
       M.Up P l ρ ρl → M.Up P j ρ ρj → M.Up P j ρl ρlj → M.Up P l ρj ρlj →
       s j ρlj ρl * s l ρl ρ * ((M.rho P ρ j - M.rho P ρ l - 1 : ℝ) : ℂ) =
         s l ρlj ρj * s j ρj ρ * ((M.rho P ρ j - M.rho P ρ l + 1 : ℝ) : ℂ) := by
     intro l hl j hj hjl ρ ρl ρj ρlj h1 h2 h3 h4
-    have hc := ((hX.2 l hl).2 j hj hjl).1
+    have hc := Formalism.FourierDecayAlt.P.NFx4.SX.ssComm hShift hP hIS hl hj hjl
     have c1 := cv_SS j hj _ _ (cv_SS l hl _ _
       (cv_K (fun σ => ((M.rho P σ j - M.rho P σ l - 1 : ℝ) : ℂ)) _ _ (cvU ρ)))
     have c2 := cv_SS l hl _ _ (cv_SS j hj _ _
@@ -350,7 +304,7 @@ theorem second_shift_phase_holds : GTSSPhase := by
       congrArg (fun a : Q.Pr (Q.RadSp P.k P.r Bs.z Bs.z' Bs.π Bs.π') => a.1 (U ρ)) hc
     rw [e12] at c1
     have h := congrFun (cv_eq _ _ _ c1 c2) ρlj
-    simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
+    simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
     rw [L1 l hl ρ ρl h1, L1 j hj ρ ρj h2] at h
     rw [← mul_assoc, ← mul_assoc] at h
     exact h
@@ -429,11 +383,11 @@ theorem second_shift_phase_holds : GTSSPhase := by
       rw [ss_fst_apply, fnZ_const_mul, tr'' Φ σ, smul_smul, smul_smul]
       congr 1
       by_cases hU1 : M.Up P l σ τ
-      · rw [if_pos hU1, hsw l hl σ τ hU1, hu l hl σ τ hU1, star_mul]
+      · rw [ite_eq_left hU1, hsw l hl σ τ hU1, hu l hl σ τ hU1, star_mul]
         have h1 := hsu σ
         have h2 : star (w l σ τ) * w l σ τ = 1 := star_mul_self_of_norm (hw1 l hl σ τ hU1)
         linear_combination (sq l σ * star (u σ) * u σ) * h2 + sq l σ * h1
-      · rw [if_neg hU1, F1 l hl σ τ hU1]; ring
+      · rw [ite_eq_right hU1, F1 l hl σ τ hU1]; ring
     · funext τ
       rw [tr', (hL l hl Φ τ).2]
       show _ = ∑ σ, ((star (MA.SS P (MA.DQ P) l)) τ σ).1 (trR P Bs (fun ρ ζ => u ρ • e ρ ζ) Φ σ)
@@ -442,13 +396,13 @@ theorem second_shift_phase_holds : GTSSPhase := by
       rw [star_ss_fst_apply, fnZ_const_mul, tr'' Φ σ, smul_smul, smul_smul, hst l hl τ σ]
       congr 1
       by_cases hU1 : M.Up P l τ σ
-      · rw [if_pos hU1, hsw l hl τ σ hU1, hu l hl τ σ hU1, star_mul]
+      · rw [ite_eq_left hU1, hsw l hl τ σ hU1, hu l hl τ σ hU1, star_mul]
         have h1 := hsu τ
         have h2 : star (w l τ σ) * w l τ σ = 1 := star_mul_self_of_norm (hw1 l hl τ σ hU1)
         have hr : star (sq l τ) = sq l τ := by simp [sq]
         rw [hr]
         linear_combination (sq l τ * star (u τ) * u τ) * h2 + sq l τ * h1
-      · rw [if_neg hU1, F1 l hl τ σ hU1, star_zero]; ring
+      · rw [ite_eq_right hU1, F1 l hl τ σ hU1, star_zero]; ring
 
 end
 

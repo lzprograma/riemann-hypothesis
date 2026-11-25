@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.AApproxA
 public import ReciprocityTheory.L2DbarEstimates.IsLocalHomeomorph
 public import Mathlib.Analysis.InnerProductSpace.Calculus
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
@@ -30,61 +31,7 @@ theorem two_le_inf : (2 : WithTop ℕ∞) ≤ ∞ := by
 theorem levi_logNormSq_zero_at (g : V n → ℂ) (v0 : V n) (hg : ContDiffAt ℂ 2 g v0)
     (hne : g v0 ≠ 0) (ξ : Fin n → ℂ) :
     leviV n (fun y => ((Real.log (Complex.normSq (g y)) : ℝ) : ℂ)) v0 ξ = 0 := by
-  have hev1 : ∀ᶠ y in 𝓝 v0, ContDiffAt ℂ 2 g y := hg.eventually (by norm_num)
-  have hev2 : ∀ᶠ y in 𝓝 v0, g y ≠ 0 := hg.continuousAt.eventually_ne hne
-  have hwdb : ∀ k, wdb n k (fun y => ((Real.log (Complex.normSq (g y)) : ℝ) : ℂ)) =ᶠ[𝓝 v0]
-      fun y => starRingEnd ℂ (fderiv ℂ g y (bas n k) / g y) := by
-    intro k
-    filter_upwards [hev1, hev2] with y hy1 hy2
-    have hdg : HasFDerivAt g ((fderiv ℂ g y).restrictScalars ℝ) y :=
-      ((hy1.differentiableAt (by norm_num)).hasFDerivAt).restrictScalars ℝ
-    have hre : HasFDerivAt (fun w => (g w).re)
-        (Complex.reCLM.comp ((fderiv ℂ g y).restrictScalars ℝ)) y :=
-      Complex.reCLM.hasFDerivAt.comp y hdg
-    have him : HasFDerivAt (fun w => (g w).im)
-        (Complex.imCLM.comp ((fderiv ℂ g y).restrictScalars ℝ)) y :=
-      Complex.imCLM.hasFDerivAt.comp y hdg
-    have hN := (hre.mul hre).add (him.mul him)
-    have hpos : 0 < (g y).re * (g y).re + (g y).im * (g y).im := by
-      rw [← Complex.normSq_apply]
-      exact Complex.normSq_pos.mpr hy2
-    have hh := (Complex.ofRealCLM.hasFDerivAt.comp y (hN.log hpos.ne')).congr_of_eventuallyEq
-      (f₁ := fun w => ((Real.log (Complex.normSq (g w)) : ℝ) : ℂ))
-      (Filter.Eventually.of_forall fun w => by simp [Complex.normSq_apply])
-    simp only [wdb]
-    rw [hh.fderiv]
-    simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.smul_apply,
-      ContinuousLinearMap.add_apply, ContinuousLinearMap.coe_restrictScalars',
-      Complex.reCLM_apply, Complex.imCLM_apply, Complex.ofRealCLM_apply, smul_eq_mul, map_smul]
-    have hz0 : (g y).re * (g y).re + (g y).im * (g y).im ≠ 0 := hpos.ne'
-    apply Complex.ext <;>
-      simp [Complex.div_re, Complex.div_im, Complex.normSq_apply] <;>
-      field_simp <;>
-      ring
-  have hgd : DifferentiableAt ℂ g v0 := hg.differentiableAt (by norm_num)
-  have hD : DifferentiableAt ℂ (fderiv ℂ g) v0 :=
-    (hg.fderiv_right (m := 1) (by norm_num)).differentiableAt (by norm_num)
-  have hwd : ∀ j k, wd n j (wdb n k (fun y => ((Real.log (Complex.normSq (g y)) : ℝ) : ℂ))) v0 = 0 := by
-    intro j k
-    have hφ : DifferentiableAt ℂ (fun y => fderiv ℂ g y (bas n k) / g y) v0 := by
-      have hm := (hD.clm_apply (differentiableAt_const (bas n k))).mul (hgd.inv hne)
-      simp only [div_eq_mul_inv]
-      exact hm
-    have hc : HasFDerivAt (fun y => starRingEnd ℂ (fderiv ℂ g y (bas n k) / g y))
-        ((Complex.conjCLE : ℂ →L[ℝ] ℂ).comp
-          ((fderiv ℂ (fun y => fderiv ℂ g y (bas n k) / g y) v0).restrictScalars ℝ)) v0 :=
-      (Complex.conjCLE.hasFDerivAt.comp v0 (hφ.hasFDerivAt.restrictScalars ℝ)).congr_of_eventuallyEq
-        (Filter.Eventually.of_forall fun w => by simp)
-    simp only [wd]
-    rw [(hwdb k).fderiv_eq, hc.fderiv]
-    simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_restrictScalars',
-      map_smul, smul_eq_mul, ContinuousLinearEquiv.coe_coe, Complex.conjCLE_apply, map_mul,
-      Complex.conj_I]
-    simp [← mul_assoc, Complex.I_mul_I]
-  unfold leviV
-  refine Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun k _ => ?_
-  rw [hwd j k]
-  ring
+  apply ReciprocityTheory.L2DbarEstimates.Y.leviV_log_normSq <;> assumption
 
 theorem normSq_contDiffAt {g : V n → ℂ} {x : V n} {k : WithTop ℕ∞} (hg : ContDiffAt ℂ k g x) :
     ContDiffAt ℝ k (fun y => Complex.normSq (g y)) x := by

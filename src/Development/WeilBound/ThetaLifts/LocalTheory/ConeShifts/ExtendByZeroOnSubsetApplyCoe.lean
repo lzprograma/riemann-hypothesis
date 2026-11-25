@@ -6,54 +6,9 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Integral.Prod
 public import Mathlib.MeasureTheory.Measure.Haar.Unique
 public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ArchCone
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -438,7 +393,7 @@ theorem rest_idem (T : Finset (Pl F)) : rest T * rest T = rest T :=
     rw [map_mul, evFin_rest]; split_ifs <;> simp
 
 theorem idem_rest {T : Finset (Pl F)} {v : Pl F} (h : v ∈ T) : idem F v * rest T = 0 := by
-  rw [mul_comm]; exact mul_idem_zero (by rw [evFin_rest, if_pos h])
+  rw [mul_comm]; exact mul_idem_zero (by rw [evFin_rest, ite_eq_left h])
 
 theorem real_rest (T : Finset (Pl F)) : realAd F 1 * rest T = 0 := by rw [mul_comm]; exact mul_real_zero (rest_fst T)
 
@@ -484,19 +439,16 @@ theorem piInf_alg {w : InfinitePlace F} (τ : EmbOver E w) {a b : AF F} (h : a.1
   rw [h]
 
 theorem smul_latHat (X : Spc F E n) {a : AF F} (h : a * a = a) {z} (hz : z ∈ latHat X) : a • z ∈ latHat X := by
-  induction hz using AddSubgroup.closure_induction with
-  | mem z hz =>
-    obtain ⟨b, hb, hv, x, hx, rfl⟩ := hz
-    refine AddSubgroup.subset_closure ⟨a * b, evI_zero_k.2 (show a.1 * b.1 = 0 by rw [evI_zero_k.1 hb, mul_zero]), fun v => ?_, x, hx,
-      smul_smul _ _ _⟩
-    rw [map_mul]
-    refine mul_mem ?_ (hv v)
-    have : IsIdempotentElem (evFin F v a) := by show _ * _ = _; rw [← map_mul, h]
-    rcases IsIdempotentElem.iff_eq_zero_or_one.1 this with e | e <;> rw [e]
-    exacts [zero_mem _, one_mem _]
-  | zero => rw [smul_zero]; exact zero_mem _
-  | add x y _ _ hx hy => rw [smul_add]; exact add_mem hx hy
-  | neg x _ hx => rw [smul_neg]; exact neg_mem hx
+  unfold latHat at hz
+  refine (AddSubgroup.closure_le ((latHat X).comap (DistribSMul.toAddMonoidHom _ a))).2 ?_ hz
+  rintro _ ⟨b, hb, hv, x, hx, rfl⟩
+  refine AddSubgroup.subset_closure
+    ⟨a * b, evI_zero_k.2 (show a.1 * b.1 = 0 by rw [evI_zero_k.1 hb, mul_zero]),
+      fun v => ?_, x, hx, smul_smul _ _ _⟩
+  rw [map_mul]; refine mul_mem ?_ (hv v)
+  have : IsIdempotentElem (evFin F v a) := by show _ * _ = _; rw [← map_mul, h]
+  rcases IsIdempotentElem.iff_eq_zero_or_one.1 this with e | e <;> rw [e]
+  exacts [zero_mem _, one_mem _]
 
 theorem PU_mem {B : Base F E} {X : Spc F E n} {K : Subgroup (UA σ X.J)} (hK : IsStab B K) {a : AF F} (ha : Gd a) {g} (hg : g ∈ K) :
     PU σ X.J a g ∈ K := by

@@ -4,50 +4,6 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureR
 public import Mathlib.Analysis.CStarAlgebra.Module.Constructions
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.CategoryTheory.Category.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -159,19 +115,19 @@ theorem perm'_mul (σ τ : Equiv.Perm (Fin q)) (w v : Fin q → W) :
   · simp only [perm', of_apply, Equiv.Perm.coe_mul]
     by_cases hv : v = w ∘ σ
     · subst hv
-      rw [if_pos rfl, of_apply]
+      rw [ite_eq_left rfl, of_apply]
       by_cases hI : ∀ i, (I i).1 = w i
       · simp [hI, Function.comp_assoc]
       · simp [hI]
-    · rw [if_neg hv, Matrix.zero_apply]
+    · rw [ite_eq_right hv, Matrix.zero_apply]
       by_cases hI : ∀ i, (I i).1 = w i
       · have : ¬ ∀ i, ((I ∘ σ) i).1 = v i := fun h => hv (funext fun i => by
           rw [← h i]; exact hI (σ i))
-        simp only [this, false_and, if_false, mul_zero]
+        simp only [this, false_and, ite_false, mul_zero]
       · simp [hI]
   · intro J _ hJ
     simp only [perm', of_apply]
-    rw [if_neg (fun h => hJ h.2), zero_mul]
+    rw [ite_eq_right (fun h => hJ h.2), zero_mul]
   · simp
 
 theorem perm'_star (σ : Equiv.Perm (Fin q)) (w : Fin q → W) :
@@ -188,8 +144,8 @@ theorem perm'_star (σ : Equiv.Perm (Fin q)) (w : Fin q → W) :
       · have := h1 (σ⁻¹ i); simpa using this
       · funext i; simp
   by_cases h : (∀ i, (J i).1 = w i) ∧ I = J ∘ σ
-  · rw [if_pos h, if_pos (e.1 h), star_one]
-  · rw [if_neg h, if_neg (fun h' => h (e.2 h')), star_zero]
+  · rw [ite_eq_left h, ite_eq_left (e.1 h), star_one]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h (e.2 h')), star_zero]
 
 theorem one_eq_sum_perm' : (1 : Matrix (Fin q → Ix W m) (Fin q → Ix W m) ℂ) = ∑ w, perm' 1 w := by
   ext I J
@@ -200,7 +156,7 @@ theorem one_eq_sum_perm' : (1 : Matrix (Fin q → Ix W m) (Fin q → Ix W m) ℂ
     · simp [h, Ne.symm h]
   · intro w _ hw
     simp only [perm', of_apply]
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h, -⟩
     exact hw (funext fun i => (h i).symm)
   · simp

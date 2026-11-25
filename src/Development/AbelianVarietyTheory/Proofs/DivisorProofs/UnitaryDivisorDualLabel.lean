@@ -75,21 +75,13 @@ theorem entry_mem (O : Subring L) {U : GL (Fin n) L} (hU : U ∈ GLint (Fin n) O
   obtain ⟨U0, rfl⟩ := hU
   exact ((U0 : Matrix (Fin n) (Fin n) O) i j).2
 
-theorem antiJ_apply (i j : Fin n) : antiJ L n i j = if j = i.rev then 1 else 0 := by
-  unfold antiJ
-  congr 1
-  have := i.2
-  have := j.2
-  simp only [Fin.ext_iff, Fin.val_rev, eq_iff_iff]
-  omega
-
 theorem antiJ_mul (A : Matrix (Fin n) (Fin n) L) (i j : Fin n) : (antiJ L n * A) i j = A i.rev j := by
-  simp [Matrix.mul_apply, antiJ_apply]
+  simp [Matrix.mul_apply, Formalism.UG.P.fIwasawa_antiJ]
 
 theorem mul_antiJ (A : Matrix (Fin n) (Fin n) L) (i j : Fin n) : (A * antiJ L n) i j = A i j.rev := by
   have : ∀ k : Fin n, (j = k.rev) = (k = j.rev) := fun k => by
     rw [eq_iff_iff, eq_comm, Fin.rev_eq_iff]
-  simp [Matrix.mul_apply, antiJ_apply, this]
+  simp [Matrix.mul_apply, Formalism.UG.P.fIwasawa_antiJ, this]
 
 theorem dual_mul (σ : L →+* L) (A B : Matrix (Fin n) (Fin n) L) (h : A * B = 1) :
     antiJ L n * cT σ B * antiJ L n * (antiJ L n * cT σ A * antiJ L n) = 1 := by
@@ -144,9 +136,9 @@ theorem hasDiv_dualLab : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplic
     simp only [cT, Matrix.transpose_apply, Matrix.map_apply, Matrix.diagonal_apply, Fin.rev_inj]
     by_cases h : i = j
     · subst h
-      simp only [if_true]
+      simp only [ite_true]
       rw [getD_dualLab d hd, map_zpow₀]
-    · rw [if_neg h, if_neg (Ne.symm h), map_zero]
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h), map_zero]
   have hDD : Matrix.diagonal (fun i : Fin n => ϖ ^ d.getD i 0) *
       Matrix.diagonal (fun i : Fin n => ϖ ^ (-d.getD i 0)) = 1 := by
     rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]

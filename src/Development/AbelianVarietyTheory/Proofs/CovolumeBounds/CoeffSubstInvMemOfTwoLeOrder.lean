@@ -572,7 +572,7 @@ theorem mem_coeffsIn_groupWeight [Finite σ] [Finite σ'] {S : Subring R} {g g' 
 theorem X_mem_weightGe (w : σ → ℕ) (s : σ) : (X s : MvPowerSeries σ R) ∈ weightGe w (w s) := by
   classical
   intro d hd
-  rw [coeff_X, if_neg]
+  rw [coeff_X, ite_eq_right]
   rintro rfl
   simp [weight_single] at hd
 

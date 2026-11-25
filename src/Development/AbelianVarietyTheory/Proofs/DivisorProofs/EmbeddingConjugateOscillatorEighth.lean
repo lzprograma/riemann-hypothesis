@@ -5,41 +5,7 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefMapNormE
 import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryRealPointsStructureRealPlaces
 import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkMapInitMinor
 import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilGramSignature
 import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.DatEqZero
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
@@ -102,7 +68,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level Host
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.IndefR.FWT Formalism.L2.Pj
 open scoped TensorProduct Classical ComplexConjugate
 open GlobalTheory.AdTh.PhaseMap
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E} {Dw : Datum H} {m n : ℕ} {l : Geo.Tor.Level H} (c : Coeff l)
   (φ : c.F →+* ℂ) {e : D.what₂.Tau → D.what₂.Tau}
@@ -169,7 +134,7 @@ theorem toG_pG (he : Function.Bijective e) (hl : IsLt (mv e lt)) (h : IsTyp D H)
     conv_rhs => rw [← m1, Finset.prod_range]
     refine Finset.prod_congr rfl fun i _ => ?_
     have hi : (i : ℕ) < Dw.p := lt_of_lt_of_eq i.2 m1
-    rw [map_pow, dite_eq_left (by omega), if_pos ((h.1 _).2 ⟨e t, rfl⟩), toG_minorP]
+    rw [map_pow, dite_eq_left (by omega), ite_eq_left ((h.1 _).2 ⟨e t, rfl⟩), toG_minorP]
     congr 1
     · rw [minorPlus]
       congr 1
@@ -186,7 +151,7 @@ theorem toG_pG (he : Function.Bijective e) (hl : IsLt (mv e lt)) (h : IsTyp D H)
     conv_rhs => rw [← m2, Finset.prod_range]
     refine Finset.prod_congr rfl fun i _ => ?_
     have hi : (i : ℕ) < Dw.q := lt_of_lt_of_eq i.2 m2
-    rw [map_pow, dite_eq_left (by omega), if_neg ((h.2 _).2 ⟨e t, rfl⟩), toG_minorP]
+    rw [map_pow, dite_eq_left (by omega), ite_eq_right ((h.2 _).2 ⟨e t, rfl⟩), toG_minorP]
     congr 1
     · rw [minorMinus]
       congr 1
@@ -225,10 +190,10 @@ theorem toG_gaStar (he : Function.Injective e) (hl : IsLt (mv e lt)) (h : IsTyp 
     rw [IsCMField.complexEmbedding_complexConj]
     rcases (hl ℓ).2 with ⟨h1, h2⟩ | ⟨h1, h2⟩
     · replace h2 : ((lt ℓ).2.1 : ℕ) = ℓ.2.1 := h2
-      rw [if_pos (h2 ▸ (hl.pos h h1).2.2)]
+      rw [ite_eq_left (h2 ▸ (hl.pos h h1).2.2)]
       exact congrArg (fun σ : D.host.E →+* ℂ => conj (σ _)) ((congrArg (relab c φ) h1).trans (r1 _))
     · replace h2 : ((lt ℓ).2.1 : ℕ) = Dw.p + ℓ.2.1 := h2
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       exact congrArg (fun σ : D.host.E →+* ℂ => conj (σ _)) ((congrArg (relab c φ) h1).trans (r2 _))
 
 end Letters
@@ -241,7 +206,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.F
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Datum Level Moduli Coeff SABMap)
 open GlobalTheory.SW hiding Level
 open scoped TensorProduct ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.OneMapRef GlobalTheory.WeilParts GlobalTheory.IndefiniteRowSideFullHecke.WeilGramSignature GlobalTheory.GalLift GlobalTheory.GalOne
 
 namespace GlobalTheory.GalOne.PhaseAt

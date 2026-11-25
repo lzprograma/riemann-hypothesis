@@ -12,8 +12,6 @@ namespace Formalism.IndefR.Eqv.Act
 
 open Formalism.IndefR.Lev
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {V : HSp D} {β : GL (Fin V.rank) (EAf D)} {L : Formalism.L2.DIV.LevDat D.host.E ℂ V.rank}
 
 theorem levFn_flag_one : Formalism.L2.DIV.levFn β (flagL L) 1 = 1 := by

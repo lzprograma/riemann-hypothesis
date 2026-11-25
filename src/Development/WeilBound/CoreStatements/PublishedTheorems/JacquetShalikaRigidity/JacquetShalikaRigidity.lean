@@ -24,58 +24,7 @@ public import Mathlib.Analysis.Normed.Group.Tannery
 public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.JacquetShalikaBound
 public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.RsPoleOfInputs
 public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.ConvergenceEntriesGeneralLinearHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Data.Finset.Functor
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Order.Interval.Finset.Box
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.AbsoluteRigidityLemma.AbsoluteRigidityOfCommon, Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.AbsRigClosed, Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.CauchyLocalisation.PolyMulGaussianLeConst, Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.AlternantEvaluation.SchurJacobiTrudiOfAlternating, Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.BetaGenerators.BetaGeneratingOfSumBound, Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.CauchyFormula.CauchyOfBetaBounds, Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.ContinuityOfH.BetaAllOfGenerating, Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.HGenerators.CompleteHomogeneousGenerating, Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.JacobiTrudiPadding.JacobiTrudiPadding, Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.PaddingMonotonicity.CauchyLocalOfCauchy, Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.PolynomialGeometricSums.HomogeneousSumBound, Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.CauchyVariationInequality, Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.CauchyAll, Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.JacquetShalikaRigidity
@@ -261,7 +210,7 @@ def splitE (a : ι) (T : Finset ι) (ha : a ∉ T) :
       rw [Finsupp.mem_support_iff, Finsupp.update_apply] at hw
       by_cases h : w = a
       · exact Finset.mem_insert.2 (Or.inl h)
-      · rw [if_neg h] at hw
+      · rw [ite_eq_right h] at hw
         exact Finset.mem_insert.2 (Or.inr (p.1.2 (Finsupp.mem_support_iff.2 hw)))⟩
   left_inv l := Subtype.ext (by
     ext w
@@ -766,12 +715,12 @@ theorem beta_generating_of_sum_bound : HGen → SumBd → SchurJT → BetaGen :=
   have hterm : ∀ l : {l : Fin k → ℕ // Antitone l},
       jt α l.1 * evalAt β (schur fun j => (l.1 j : ℤ)) * X ^ (∑ j, l.1 j) = gF α b X l.1 := by
     intro l
-    rw [gF, if_pos l.2, hJ k β l.1]
+    rw [gF, ite_eq_left l.2, hJ k β l.1]
   obtain ⟨hsum, hbdα⟩ := hS m k A B ‖X‖ hA hB (norm_nonneg _) hX
   have hbdβ := (hS k k B B 0 hB hB le_rfl (by simp)).2 b hβ
   have hsumF : Summable (fun l : {l : Fin k → ℕ // Antitone l} => gF α b X l.1) := by
     refine Summable.of_norm_bounded hsum fun l => ?_
-    rw [gF, if_pos l.2, norm_mul, norm_mul, norm_pow]
+    rw [gF, ite_eq_left l.2, norm_mul, norm_mul, norm_pow]
     have h1 := hbdα α hα l.1
     have h2 := hbdβ l.1
     have h0 : 0 ≤ cjt m A l.1 := (norm_nonneg _).trans h1
@@ -913,9 +862,9 @@ theorem continuous_hN (p : ℕ) : Continuous fun α : Fin m → ℂ => hN p α :
 
 theorem continuous_hZ (z : ℤ) : Continuous fun α : Fin m → ℂ => hZ z α := by
   by_cases h : z < 0
-  · simp only [hZ, if_pos h]
+  · simp only [hZ, ite_eq_left h]
     exact continuous_const
-  · simp only [hZ, if_neg h]
+  · simp only [hZ, ite_eq_right h]
     exact continuous_hN _
 
 theorem continuous_jt {m' : ℕ} (l : Fin m' → ℕ) : Continuous fun γ : Fin m → ℂ => jt γ l := by
@@ -1238,7 +1187,6 @@ def cU (z : ℂˣ) : ℂˣ := Units.map (starRingEnd ℂ).toMonoidHom z
 theorem cU_coe (z : ℂˣ) : ((cU z : ℂˣ) : ℂ) = conj (z : ℂ) := rfl
 
 theorem hN_conj {m : ℕ} (p : ℕ) (α : Fin m → ℂ) : hN p (fun i => conj (α i)) = conj (hN p α) := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [hN, map_sum, map_prod, map_pow]
 
 theorem hZ_conj {m : ℕ} (z : ℤ) (α : Fin m → ℂ) : hZ z (fun i => conj (α i)) = conj (hZ z α) := by
@@ -1265,7 +1213,7 @@ theorem jt_zero {m m' : ℕ} (α : Fin m → ℂ) : jt α (0 : Fin m' → ℕ) =
     have h' : i < j := hij
     have h'' : (i : ℕ) < j := h'
     simp only [Matrix.of_apply, Pi.zero_apply, Nat.cast_zero, zero_sub, hZ]
-    rw [if_pos (by omega)]
+    rw [ite_eq_left (by omega)]
 
 theorem schur_conj (hS : SchurJT) {n : ℕ} (z : Fin n → ℂˣ) (L : Fin n → ℕ) :
     evalAt (fun i => cU (z i)) (schur fun i => (L i : ℤ)) = conj (evalAt z (schur fun i => (L i : ℤ))) := by
@@ -1319,7 +1267,7 @@ theorem mem_range_emb {k : ℕ} {l : Fin k → ℤ} (h : Antitone l ∧ ∀ i, 0
 theorem loc_off {m k q : ℕ} (α : Fin m → ℂˣ) (β : Fin k → ℂˣ) (s : ℂ) {l : Fin k → ℤ}
     (hl : l ∉ Set.range (emb (k := k))) : loc q α β s l = 0 := by
   unfold loc
-  rw [if_neg fun h => hl (mem_range_emb h)]
+  rw [ite_eq_right fun h => hl (mem_range_emb h)]
 
 theorem pad_emb {m k : ℕ} (l : {l : Fin k → ℕ // Antitone l}) : pad m (emb l) = fun i => (padN m l.1 i : ℤ) := by
   funext i
@@ -1332,7 +1280,7 @@ theorem loc_emb (hS : SchurJT) {m k q : ℕ} (α : Fin m → ℂˣ) (β : Fin k 
   have hcond : Antitone (emb l) ∧ ∀ i, 0 ≤ emb l i :=
     ⟨fun i j hij => by simp only [emb]; exact_mod_cast l.2 hij, fun i => by simp [emb]⟩
   unfold loc
-  rw [if_pos hcond, pad_emb, schur_conj hS]
+  rw [ite_eq_left hcond, pad_emb, schur_conj hS]
   congr 1
   have hs : (∑ i, emb l i : ℤ) = ((∑ j, l.1 j : ℕ) : ℤ) := by simp [emb]
   rw [hs, Int.cast_natCast, mul_comm, Complex.cpow_nat_mul]

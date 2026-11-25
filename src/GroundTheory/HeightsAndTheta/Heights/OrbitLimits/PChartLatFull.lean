@@ -81,7 +81,7 @@ theorem ChartLatFull.proof : ChartLatFull.Statement := by
   show ∀ c : ∀ k, ι k, (∀ k, y ⟨k, c k⟩ ≠ 0) → _
   intro c hc
   have hN : (N c : Ω) * t c ∈ chartRingZ y c := by
-    simp only [N, dif_pos hc]
+    simp only [N, dite_eq_left hc]
     exact (ChartLatFull.exists_nat_mul_mem hy c hc (t c)).choose_spec.2
   obtain ⟨m, hm⟩ := Finset.dvd_prod_of_mem N (Finset.mem_univ c)
   have : ((∏ c, N c : ℕ) : Ω) * s * ∏ k, y ⟨k, c k⟩ ^ (-((τ : ℤ) * a k)) = (m : Ω) * ((N c : Ω) * t c) := by

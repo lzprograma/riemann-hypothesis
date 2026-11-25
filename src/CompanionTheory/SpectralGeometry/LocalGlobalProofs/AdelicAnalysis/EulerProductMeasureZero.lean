@@ -67,8 +67,7 @@ theorem GlobalTheory.CompanionTheory.SW.EulerZero.euler_zero : ∀ (F E : Type) 
   haveI := hborel n M
   have hmeas : ∀ S, MeasurableSet (intOff (n := n) (M := M) b S) := fun S => (hopen S).measurableSet
   refine ⟨fun h hI => ?_, fun h hz => ?_, fun hfin hsum hz => ?_⟩
-  · by_contra hcon
-    push_neg at hcon
+  · by_contra! hcon
     obtain ⟨hc, hminf, hm⟩ := hcon
     obtain ⟨S₀, hS₀⟩ := exists_measure_intOff h hmeas
     obtain ⟨S, hS, hpos⟩ := exists_tail_pos h.2.1 S₀

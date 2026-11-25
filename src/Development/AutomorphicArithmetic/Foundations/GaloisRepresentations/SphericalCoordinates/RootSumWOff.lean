@@ -3,45 +3,7 @@ module
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.DiagAct
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.SchurYOffClr
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PerCApply
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CoeEqAlgebraMapZeroEquiv
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
@@ -68,7 +30,7 @@ def KillsMat : Prop :=
   ∀ (F : Type) [Field F] [NumberField F] (O : Type) [Ring O] (bar : O → O) (g : ℕ) (ρ : O →+* Matrix (Fin g) (Fin g) ℂ) (a : 𝓞 F →+* O) (D : PLat O bar) (P₀ : D.La →+ (Fin g → ℂ)), IsPeriod D ρ P₀ → ∀ (ga : D.La →ₗ[O] D.La) (H : Matrix (Fin g) (Fin g) ℂ), (∀ x, P₀ (ga x) = H *ᵥ P₀ x) → ∀ q : (𝓞 F)[X], Kills a ga q ↔ (q.sum fun i b => ρ (a b) * H ^ i) = 0
 
 def HSep : Prop :=
-  ∀ (F : Type) [Field F] [NumberField F] (O : Type) [Ring O] (bar : O → O) (g : ℕ) (ρ : O →+* Matrix (Fin g) (Fin g) ℂ) (a : 𝓞 F →+* O) (H : Matrix (Fin g) (Fin g) ℂ), (∀ c, ρ (a c) * H = H * ρ (a c)) → ∀ χ : F[X], χ.Monic → χ.Separable →
+  ∀ (F : Type) [Field F] [NumberField F] (O : Type) [Ring O] (_ : O → O) (g : ℕ) (ρ : O →+* Matrix (Fin g) (Fin g) ℂ) (a : 𝓞 F →+* O) (H : Matrix (Fin g) (Fin g) ℂ), (∀ c, ρ (a c) * H = H * ρ (a c)) → ∀ χ : F[X], χ.Monic → χ.Separable →
     (∀ q : (𝓞 F)[X], χ ∣ q.map (algebraMap (𝓞 F) F) → (q.sum fun i b => ρ (a b) * H ^ i) = 0) →
     ∃ p : ℂ[X], p.Separable ∧ aeval H p = 0
 
@@ -121,7 +83,7 @@ def CspDim : Prop :=
     ∃ co : (Fin (n - 1) → ℂ) →ₗ[ℂ] Matrix (Fin g) (Fin g) ℂ, IsCoordC bar ρ M₀ co
 
 def FibDet : Prop :=
-  ∀ (F : Type) [Field F] [NumberField F] (O : Type) [Ring O] (bar : O → O) (g : ℕ) (ρ : O →+* Matrix (Fin g) (Fin g) ℂ) (a : 𝓞 F →+* O) (H : Matrix (Fin g) (Fin g) ℂ), ∀ (Sb : Matrix (Fin g) (Fin g) ℂ) (ty : Fin g → (F →+* ℂ)) (ev : Fin g → ℂ), IsDiag a ρ H Sb ty ev → ∀ (k : ℕ) (α : Fin k → 𝓞 F) (y : ℂ),
+  ∀ (F : Type) [Field F] [NumberField F] (O : Type) [Ring O] (_ : O → O) (g : ℕ) (ρ : O →+* Matrix (Fin g) (Fin g) ℂ) (a : 𝓞 F →+* O) (H : Matrix (Fin g) (Fin g) ℂ), ∀ (Sb : Matrix (Fin g) (Fin g) ℂ) (ty : Fin g → (F →+* ℂ)) (ev : Fin g → ℂ), IsDiag a ρ H Sb ty ev → ∀ (k : ℕ) (α : Fin k → 𝓞 F) (y : ℂ),
     LinearMap.det (1 - y • fibMap H (diagAct a ρ α)) = ∏ s, ∏ i, (1 - ty i (α s : F) * (y * ev i))
 
 def FibW : Prop :=

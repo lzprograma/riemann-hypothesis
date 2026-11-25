@@ -13,9 +13,9 @@ universe u_1 u_3 u_4
 namespace Bl.general_b_fact_side
 
 theorem goal1 :
-  ∀ {R : Type u_1} [inst : CommRing.{u_1} R] [inst_1 : IsLocalRing.{u_1} R] [IsNoetherianRing.{u_1} R] {N₁ : Type u_3}
-  {N₂ : Type u_4} [inst_3 : AddCommGroup.{u_3} N₁] [inst_4 : Module.{u_1, u_3} R N₁] [Module.Finite.{u_1, u_3} R N₁]
-  [inst_6 : AddCommGroup.{u_4} N₂] [inst_7 : Module.{u_1, u_4} R N₂] [Module.Finite.{u_1, u_4} R N₂],
+  ∀ {R : Type u_1} [CommRing.{u_1} R] [IsLocalRing.{u_1} R] [IsNoetherianRing.{u_1} R] {N₁ : Type u_3}
+  {N₂ : Type u_4} [AddCommGroup.{u_3} N₁] [Module.{u_1, u_3} R N₁] [Module.Finite.{u_1, u_3} R N₁]
+  [AddCommGroup.{u_4} N₂] [Module.{u_1, u_4} R N₂] [Module.Finite.{u_1, u_4} R N₂],
   Not (Membership.mem.{u_1, u_1} (associatedPrimes.{u_1, u_3} R N₁) (IsLocalRing.maximalIdeal.{u_1} R)) →
     Not (Membership.mem.{u_1, u_1} (associatedPrimes.{u_1, u_4} R N₂) (IsLocalRing.maximalIdeal.{u_1} R)) →
       Exists.{u_1 + 1} fun (z : R) ↦

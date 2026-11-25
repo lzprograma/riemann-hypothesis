@@ -23,7 +23,6 @@ public import GroundTheory.GlobalFields.KummerTheory.LocalIndexAtPlace
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DecompositionGroupLocalGaloisIso
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocalEmbeddingOverPlace
 public import Mathlib.Topology.LocallyConstant.Basic
-public import ReciprocityTheory.GaloisValuations.GlobalE
 public import GroundTheory.LocalFields.MaximalUnramified
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPowCharPowEqSelf
 public import GroundTheory.ProfiniteCohomology.LocalClassFormation.InvariantSplit
@@ -187,7 +186,6 @@ open NumberField IsDedekindDomain Representation Formalism.ConjugateSelfDual Rec
 
 namespace GlobalTheory.CompanionTheory.TameAction
 
-
 open GlobalTheory.TameQuot GlobalTheory.WeilDeligne in
 theorem eq_zero_of_fixes_primitiveRoot : ∀ (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (A : ValuationSubring Ω) (v : HeightOneSpectrum (𝓞 F)), IsPlaceOver A v → ∀ φ : Dec (F := F) A, IsFrob (F := F) A (normV v) (φ : G F Ω) → ∀ N : ℕ, 0 < N → ∀ ξ : Ω, IsPrimitiveRoot ξ (normV v ^ N - 1) → ∀ (a : ℕ) (t i : Dec (F := F) A), a < N → (i : G F Ω) ∈ Ine (F := F) A → ((φ ^ a * t ^ N * i : Dec (F := F) A) : G F Ω) ξ = ξ → a = 0 := by
   intro F Ω _ _ _ _ _ A v hA φ hφ N hN ξ hξ' a t i haN hi hfix
@@ -289,8 +287,6 @@ namespace GlobalTheory.CompanionTheory.KummerCup
 
 open CategoryTheory GroundTheory.ProfCoh IntermediateField
 
-attribute [local instance 2000] Rep.hV2
-
 theorem isLocallyConstant_of_right_invariant {G X : Type*} [Group G] [TopologicalSpace G]
     [IsTopologicalGroup G] (H : Subgroup G) (hH : IsOpen (H : Set G)) (φ : G → X)
     (h : ∀ g, ∀ v ∈ H, φ (g * v) = φ g) : IsLocallyConstant φ := by
@@ -301,36 +297,6 @@ theorem isLocallyConstant_of_right_invariant {G X : Type*} [Group G] [Topologica
   filter_upwards [ho.mem_nhds hm] with y hy
   have := h x _ hy
   simpa using this
-
-section Coh
-
-variable {k G : Type} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-  (A : Rep.{0} k G) [IsDiscreteRep A]
-
-theorem exists_cocycle_of_cochain (n : ℕ) (c : (Fin n → G) → A) (hc : IsLocallyConstant c)
-    (hd : (inhomogeneousCochains.d A n).hom c = 0) :
-    ∃ x : cocycles A n, cochainOf A (cocycleι A n x) = c := by
-  refine ⟨(cochainsComplex A).cyclesMk (mkCochain A c hc) (n + 1) (by simp) ?_, ?_⟩
-  · apply cochainOf_injective (A := A)
-    exact (cochainOf_d (A := A) _).trans hd
-  · exact congrArg (cochainOf A) ((cochainsComplex A).i_cyclesMk _ _ _ _)
-
-theorem cohomologyπ_succ_eq_zero_iff (n : ℕ) (x : cocycles A (n + 1)) :
-    cohomologyπ A (n + 1) x = 0 ↔ ∃ w : (Fin n → G) → A, IsLocallyConstant w ∧
-      (inhomogeneousCochains.d A n).hom w = cochainOf A (cocycleι A (n + 1) x) := by
-  change ((cochainsComplex A).homologyπ (n + 1)).hom x = 0 ↔ _
-  rw [homologyπ_eq_zero_iff, CochainComplex.prev_nat_succ]
-  constructor
-  · rintro ⟨w, hw⟩
-    refine ⟨cochainOf A w, isLocallyConstant_cochainOf w, ?_⟩
-    rw [← cochainOf_d]
-    exact congrArg (cochainOf A) hw
-  · rintro ⟨w, hw, h⟩
-    refine ⟨mkCochain A w hw, ?_⟩
-    apply cochainOf_injective (A := A)
-    exact (cochainOf_d (A := A) _).trans h
-
-end Coh
 
 variable {K Ω : Type} [Field K] [Field Ω] [Algebra K Ω]
 
@@ -350,10 +316,10 @@ theorem exists_eq_div_of_cocycle [IsGalois K Ω] (f : (Ω ≃ₐ[K] Ω) → Ωˣ
     rw [e]
     apply Additive.toMul.injective
     simp
-  obtain ⟨x, hx⟩ := exists_cocycle_of_cochain A 1 c hcl hd
+  obtain ⟨x, hx⟩ := CompanionTheory.LocalTateOrthogonality.Gcoh.exists_coc A 1 c hcl hd
   have h0 : cohomologyπ A 1 x = 0 :=
     (subsingleton_cohomology_one_galUnits (K := K) (L := Ω)).elim _ _
-  obtain ⟨w, hw, hwx⟩ := (cohomologyπ_succ_eq_zero_iff A 0 x).1 h0
+  obtain ⟨w, hw, hwx⟩ := (CompanionTheory.LocalTateOrthogonality.Gcoh.pi_succ_eq_zero_iff A 0 x).1 h0
   refine ⟨Additive.toMul (w Fin.elim0 : Additive Ωˣ), fun g => ?_⟩
   have e := congrFun (hwx.trans hx) (fun _ => g)
   simp only [inhomogeneousCochains.d_hom_apply] at e
@@ -453,7 +419,7 @@ theorem exists_cochain_of_lift [IsGalois K Ω] [IsSepClosed Ω] (N : ℕ) [NeZer
   have hF : ∀ g, ζ ^ (F (d g)).val = (d g : Ω) := by
     intro g
     have hs' := Classical.choose_spec (hex g)
-    simp only [F, dif_pos (hex g)]
+    simp only [F, dite_eq_left (hex g)]
     rw [ZMod.val_cast_of_lt hs'.1]
     exact hs'.2
   refine ⟨fun g => F (d g), hdlc.comp F, fun g h => ?_⟩
@@ -963,8 +929,6 @@ noncomputable section
 
 namespace GlobalTheory.CompanionTheory.KummerCupInv
 
-attribute [local instance 2000] Rep.hV2
-
 theorem pow_identity {F : Type} [Field F] {n m p q r s : ℕ} {ζ y : F} (hy : y ≠ 0) (hζ : ζ ^ n = 1)
     (h : s + q = n * m + r) :
     (ζ ^ p * y) ^ q / y ^ r * y ^ s = ζ ^ ((p * q) % n) * (y ^ n) ^ m := by
@@ -1111,7 +1075,6 @@ open GroundTheory.ProfCoh GroundTheory.LocalField ValuativeRel CategoryTheory
 
 namespace GlobalTheory.CompanionTheory.LocalUnram
 
-
 open GroundTheory.LocalField.Abstract in
 theorem continuous_of_additive_of_frobenius_eq_one :
     ∀ (K Ω : Type) [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
@@ -1213,8 +1176,6 @@ noncomputable def muEquiv {Ω : Type} [Field Ω] {n : ℕ} [NeZero n] (ζ : Ωˣ
 theorem muEquiv_apply {Ω : Type} [Field Ω] {n : ℕ} [NeZero n] (ζ : Ωˣ) (hζ : IsPrimitiveRoot ζ n) (m : ZMod n) :
     (((Additive.toMul (muEquiv ζ hζ m) : rootsOfUnity n Ω) : Ωˣ)) = ζ ^ m.val := by
   simp [muEquiv]
-
-attribute [local instance 2000] Rep.hV2
 
 theorem cochainOf_cyclesMap {k G : Type} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     {A B : Rep.{0} k G} [IsDiscreteRep A] [IsDiscreteRep B] (φ : A ⟶ B) (x : cocycles A 2) (s : Fin 2 → G) :
@@ -1480,7 +1441,7 @@ theorem exists_invFam_normalised : ∀ (F Ω : Type) [Field F] [NumberField F] [
   have h : ∃ v : HeightOneSpectrum (𝓞 F), IsPlaceOver A v := ⟨v, hv⟩
   have e : h.choose = v := eq_of_isPlaceOver h.choose_spec hv
   have spec := Classical.choose_spec (key A h.choose h.choose_spec)
-  simp only [dif_pos h]
+  simp only [dite_eq_left h]
   generalize Classical.choose (key A h.choose h.choose_spec) = f at spec ⊢
   rw [e] at spec
   exact spec

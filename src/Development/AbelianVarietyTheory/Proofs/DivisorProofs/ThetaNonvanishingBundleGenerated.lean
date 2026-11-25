@@ -59,9 +59,6 @@ open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory Car
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.RealMult GlobalTheory.CMVal GlobalTheory.LatVal GlobalTheory.LatJet
 open GlobalTheory.IndefiniteRowSideFullHecke.DefiningCoordinates (defCoord polydisc)
 open scoped nonZeroDivisors
-attribute [local instance] Over.cartesianMonoidalCategory
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -180,9 +177,9 @@ theorem exists_isFn (hA : IsAbelianScheme A) (hp : IsProjOver A.hom) (hM : M.IsL
   have hs : ∀ i z, pt u z ∈ ptsIn _ _ (M.U i) → s i (pt u z) = θ z * u.fr i z := fun i z hz => by
     have := hper _ (sub_mem_of_pt_eq u (hr (pt u z))) i z hz
     rw [add_sub_cancel] at this
-    exact (if_pos hz).trans this
+    exact (ite_eq_left hz).trans this
   have hmem : s ∈ (AnRead.all A.hom (RingHom.id ℂ) D).holSec M := by
-    refine ⟨⟨fun i j y hi hj => ?_, fun i y h => if_neg h⟩, fun i => holoOn_of_comp u _ (isOpen_ptsIn _) ?_⟩
+    refine ⟨⟨fun i j y hi hj => ?_, fun i y h => ite_eq_right h⟩, fun i => holoOn_of_comp u _ (isOpen_ptsIn _) ?_⟩
     · obtain ⟨z, rfl⟩ := pt_surjective u y
       have hij : pt u z ∈ ptsIn _ _ (M.U i ⊓ M.U j) := mem_ptsIn_inf.2 ⟨hi, hj⟩
       have e : u.fr i z = gv _ _ M i j (pt u z) * u.fr j z := u.fr_compat i j z hij

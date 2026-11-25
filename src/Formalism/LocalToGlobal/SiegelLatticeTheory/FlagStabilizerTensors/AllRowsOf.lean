@@ -259,11 +259,11 @@ theorem entN_mul_add {R : Type} [CommRing R] {N : ℕ} {M M' : Matrix (Fin N) (F
     entN (M * M') a b = entN M a b + entN M' a b := by
   unfold entN
   by_cases h : a < N ∧ b < N
-  · rw [dif_pos h, dif_pos h, dif_pos h]
+  · rw [dite_eq_left h, dite_eq_left h, dite_eq_left h]
     refine mul_entry_add hM hM' (Fin.mk_lt_mk.mpr hab) fun j hj1 hj2 => ?_
     have h0 := hgap j.1 (Fin.lt_def.mp hj1) (Fin.lt_def.mp hj2)
     unfold entN at h0
-    rw [dif_pos ⟨j.2, h.2⟩] at h0
+    rw [dite_eq_left ⟨j.2, h.2⟩] at h0
     simp only [Fin.eta] at h0
     rw [h0, mul_zero]
   · rw [dite_eq_right h, dite_eq_right h, dite_eq_right h, add_zero]
@@ -337,7 +337,7 @@ theorem reT_spec (hI : EtInt X) (S : Set (Tup2 D)) :
   classical
   have h := isRConvF_exists X (hI S)
   unfold ReT
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact Classical.choose_spec h
 
 theorem reT_univ (hU : EtUniv X) (hI : EtInt X) : ReT X Set.univ = X.B.Re := by
@@ -362,7 +362,7 @@ theorem egA_mul (a : MonoidAlgebra ℂ (G0g D.nd)) (x : X.B.I.Gf) {k : X.B.I.Gf}
       funext fun γ => propext (goodAt_mul X hx hk γ)
     by_cases hE : ∃ γ, GoodAt X x γ
     · have hE' : ∃ γ, GoodAt X (x * k) γ := by rw [hpred]; exact hE
-      rw [dif_pos ⟨hxk, hE'⟩, dif_pos ⟨hx, hE⟩, choose_congr hpred hE' hE]
+      rw [dite_eq_left ⟨hxk, hE'⟩, dite_eq_left ⟨hx, hE⟩, choose_congr hpred hE' hE]
     · have hE' : ¬ ∃ γ, GoodAt X (x * k) γ := by rw [hpred]; exact hE
       rw [dite_eq_right (fun h => hE' h.2), dite_eq_right (fun h => hE h.2)]
   · have hxk : x * k ∉ X.B.I.Kset := by
@@ -474,14 +474,14 @@ theorem conv_Kg (x : X.B.I.Gf) :
       have hey : X.B.e y = X.B.e x := by
         have := X.B.e_adm.2.2.2.2.2.1 x 1 (one_mem_Kg X) (x⁻¹ * y) hy
         rwa [one_mul, mul_inv_cancel_left] at this
-      simp only [if_pos hy', Set.indicator_of_mem (show y ∈ T from hy), hey]
+      simp only [ite_eq_left hy', Set.indicator_of_mem (show y ∈ T from hy), hey]
       ring
     · have hy' : y⁻¹ * x ∉ X.B.I.Kg X.B.g := by
         intro h
         apply hy
         have := Kg_inv X h
         rwa [_root_.mul_inv_rev, inv_inv] at this
-      simp only [if_neg hy', Set.indicator_of_notMem (show y ∉ T from hy), mul_zero]
+      simp only [ite_eq_right hy', Set.indicator_of_notMem (show y ∉ T from hy), mul_zero]
   unfold AutInst.convF
   rw [hfun, integral_indicator_const _ hTm, measureReal_def, hμT, ← hV, Complex.real_smul]
   field_simp
@@ -510,7 +510,7 @@ theorem sum_eSer' (k : Fin 2) :
 theorem ES_univ_coeff (γ : G0g D.nd) : (ES (D := D) Set.univ).coeff γ = if γ = 1 then 1 else 0 := by
   classical
   unfold ES
-  simp only [Finsupp.coe_equivFunOnFinite_symm, Set.mem_univ, if_true]
+  simp only [Finsupp.coe_equivFunOnFinite_symm, Set.mem_univ, ite_true]
   rw [finsum_eq_sum_of_fintype,
     ← Fintype.prod_sum (fun (kv : Σ k : Fin 2, D.nd.PlG k) (c : Fin D.R.r → ZMod (D.host.g kv.1)) =>
       (D.ntypes.eSer kv.1 (Formalism.CyclotomicNorms.monicOf c)).coeff (γ kv))]
@@ -537,7 +537,7 @@ theorem egA_univ (hK : RedKer X) (x : X.B.I.Gf) :
   · have hE : ∃ γ, GoodAt X x γ := Formalism.L2.SG.Pf.RowDictPf.redExists_of X Formalism.L2.SG.Pf.RedExists0Pf.reduction_exists x hx
     have hγ := Classical.choose_spec hE
     unfold egA
-    rw [dif_pos ⟨hx, hE⟩, ES_univ_coeff]
+    rw [dite_eq_left ⟨hx, hE⟩, ES_univ_coeff]
     by_cases hk : x ∈ X.B.I.Kg X.B.g
     · have h1 : GoodAt X x 1 := (hK x hx).2 hk
       have hc : Classical.choose hE = 1 := by
@@ -548,11 +548,11 @@ theorem egA_univ (hK : RedKer X) (x : X.B.I.Gf) :
         have hP' : (1 : GL (Fin D.R.r) (ZMod (D.host.g kv.1))) = P⁻¹ * (Classical.choose hE) kv * P := hP
         calc (Classical.choose hE) kv = P * (P⁻¹ * (Classical.choose hE) kv * P) * P⁻¹ := by group
           _ = 1 := by rw [← hP']; group
-      rw [if_pos hc, if_pos hk, one_div]
+      rw [ite_eq_left hc, ite_eq_left hk, one_div]
     · have hc : Classical.choose hE ≠ 1 := fun h : Classical.choose hE = 1 => hk ((hK x hx).1 (by rw [← h]; exact hγ))
-      rw [if_neg hc, if_neg hk, zero_div]
+      rw [ite_eq_right hc, ite_eq_right hk, zero_div]
   · unfold egA
-    rw [dite_eq_right (fun h => hx h.1), if_neg (fun h => hx h.1)]
+    rw [dite_eq_right (fun h => hx h.1), ite_eq_right (fun h => hx h.1)]
 
 theorem etUniv_of (hK : RedKer X) : EtUniv X := by
   classical
@@ -812,21 +812,21 @@ theorem exists_lab {α : Type} [DecidableEq α] (T : Finset α) (m : α → ℕ)
       refine Finset.sum_congr rfl fun t ht => ?_
       have hc := hcnt t (Finset.mem_filter.1 ht).1 (Finset.mem_filter.1 ht).2
       by_cases hts : t ∈ S
-      · rw [if_pos hts, ← hc, Finset.card_eq_sum_ones]
+      · rw [ite_eq_left hts, ← hc, Finset.card_eq_sum_ones]
         refine Finset.sum_congr rfl fun σ hσ => ?_
         have hGσ : G σ = t := (Finset.mem_filter.1 hσ).2
         simp [labR, hGσ, hts]
-      · rw [if_neg hts]
+      · rw [ite_eq_right hts]
         refine Finset.sum_eq_zero fun σ hσ => ?_
         have hGσ : G σ = t := (Finset.mem_filter.1 hσ).2
         simp [labR, hGσ, hts]
     · rw [← hB, ← Finset.sum_coe_sort B]
       refine Finset.sum_congr rfl fun x _ => ?_
       by_cases hx : (x : α) ∈ S
-      · rw [if_pos hx, Finset.sum_congr rfl (fun y _ => if_pos (show labR (Sum.inr ⟨x, y⟩) ∈ S from hx))]
+      · rw [ite_eq_left hx, Finset.sum_congr rfl (fun y _ => ite_eq_left (show labR (Sum.inr ⟨x, y⟩) ∈ S from hx))]
         simp
-      · rw [if_neg hx]
-        exact Finset.sum_eq_zero fun y _ => if_neg (show labR (Sum.inr ⟨x, y⟩) ∉ S from hx)
+      · rw [ite_eq_right hx]
+        exact Finset.sum_eq_zero fun y _ => ite_eq_right (show labR (Sum.inr ⟨x, y⟩) ∉ S from hx)
   · exact e.symm.injective.comp Sum.inl_injective
   · intro σ; simp [labR]
   · intro τ
@@ -914,7 +914,7 @@ theorem e_mem_levelSubgroup {y : X.B.I.Gf} (hy : X.B.e y ≠ 0) : y ∈ K2set X.
   classical
   by_contra h
   apply hy
-  rw [X.e_eq y, if_neg h]
+  rw [X.e_eq y, ite_eq_right h]
 
 theorem powSub_mem {y : X.B.I.Gf} (hyK : y ∈ X.B.I.Kset) : ∀ j : ℕ, ∀ v ∈ X.B.I.Lf,
     ((X.B.I.fmat y - 1) ^ j) *ᵥ v ∈ X.B.I.Lf := by
@@ -997,11 +997,11 @@ theorem ES_cyl_coeff_zero (k : Fin 2) (S : Set (Tup D k)) (γ : G0g D.nd) (kv0 :
     have h := congrArg (fun t : MonoidAlgebra ℂ (GL (Fin D.R.r) (ZMod (D.host.g kv0.1))) => t.coeff (γ kv0))
       (sum_eSer' (D := D) kv0.1)
     simp only [MonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply] at h
-    rw [MonoidAlgebra.one_def, MonoidAlgebra.coeff_single, Finsupp.single_apply, if_neg (Ne.symm hγ)] at h
+    rw [MonoidAlgebra.one_def, MonoidAlgebra.coeff_single, Finsupp.single_apply, ite_eq_right (Ne.symm hγ)] at h
     exact h
   by_cases hP : tupOf (e.symm (0, rest)) ∈ cyl D k S
   · rw [Finset.sum_congr rfl fun c0 _ => by
-      rw [if_pos ((hcond c0).2 hP), ← Finset.mul_prod_erase _ _ (Finset.mem_univ kv0)]]
+      rw [ite_eq_left ((hcond c0).2 hP), ← Finset.mul_prod_erase _ _ (Finset.mem_univ kv0)]]
     have hrest : ∀ c0 : A kv0, (∏ kv ∈ Finset.univ.erase kv0,
         (D.ntypes.eSer kv.1 (Formalism.CyclotomicNorms.monicOf ((e.symm (c0, rest)) kv))).coeff (γ kv)) =
         ∏ kv ∈ Finset.univ.erase kv0, (D.ntypes.eSer kv.1 (Formalism.CyclotomicNorms.monicOf ((e.symm (0, rest)) kv))).coeff (γ kv) :=
@@ -1009,7 +1009,7 @@ theorem ES_cyl_coeff_zero (k : Fin 2) (S : Set (Tup D k)) (γ : G0g D.nd) (kv0 :
     have hkv0 : ∀ c0 : A kv0, (e.symm (c0, rest)) kv0 = c0 := fun c0 => by simp [e, Equiv.piSplitAt_symm_apply]
     simp only [hrest, hkv0]
     rw [← Finset.sum_mul, hsum0, zero_mul]
-  · exact Finset.sum_eq_zero fun c0 _ => if_neg (fun h => hP ((hcond c0).1 h))
+  · exact Finset.sum_eq_zero fun c0 _ => ite_eq_right (fun h => hP ((hcond c0).1 h))
 
 def RedKerP (k : Fin 2) : Prop :=
   ∀ x ∈ X.B.I.Kset, (∀ v : D.nd.PlG k, RedMat X (D.naut.plGw k v) (D.host.g k) x 1) → x ∈ X.B.I.Kg (D.host.g k)
@@ -1038,7 +1038,7 @@ theorem etUnip_of (k : Fin 2) (hR : RedKerP X (1 - k)) (S : Set (Tup D k)) : EtU
   by_cases hzK : y⁻¹ * x ∈ X.B.I.Kset ∧ ∃ γ, GoodAt X (y⁻¹ * x) γ
   swap
   · rw [dite_eq_right hzK] at hz; exact absurd rfl hz
-  rw [dif_pos hzK] at hz
+  rw [dite_eq_left hzK] at hz
   obtain ⟨hzK1, hzE⟩ := hzK
   have hγ := Classical.choose_spec hzE
   have h1 : ∀ kv : (Σ k : Fin 2, D.nd.PlG k), kv.1 ≠ k → (Classical.choose hzE) kv = 1 := by

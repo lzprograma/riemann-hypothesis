@@ -238,8 +238,6 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
 theorem cc_mul' (x y : E) : cc (x * y) = cc x * cc y := map_mul (IsCMField.complexConj E) x y
 theorem cc_add' (x y : E) : cc (x + y) = cc x + cc y := map_add (IsCMField.complexConj E) x y
-theorem cc_sub' (x y : E) : cc (x - y) = cc x - cc y := map_sub (IsCMField.complexConj E) x y
-theorem cc_int (n : ℤ) : cc (n : E) = n := map_intCast (IsCMField.complexConj E) n
 theorem cc_nat (n : ℕ) : cc (n : E) = n := map_natCast (IsCMField.complexConj E) n
 theorem cc_two : cc (2 : E) = 2 := by simpa using cc_nat (E := E) 2
 theorem cc_cc' (x : E) : cc (cc x) = x := IsCMField.complexConj_apply_apply E x
@@ -247,8 +245,6 @@ theorem emb_cc (τ : E →+* ℂ) (x : E) : τ (cc x) = (starRingEnd ℂ) (τ x)
   IsCMField.complexEmbedding_complexConj E τ x
 theorem trace_cc (x : E) : Algebra.trace ℚ E (cc x) = Algebra.trace ℚ E x :=
   Algebra.trace_eq_of_algEquiv ((IsCMField.complexConj E).restrictScalars ℚ) x
-theorem cc_integral {x : E} (h : IsIntegral ℤ x) : IsIntegral ℤ (cc x) :=
-  h.map ((IsCMField.complexConj E).toRingEquiv.toRingHom.toIntAlgHom)
 theorem im_zero {x : E} (h : cc x = x) (τ : E →+* ℂ) : (τ x).im = 0 := by
   have := emb_cc τ x
   rw [h] at this
@@ -256,7 +252,7 @@ theorem im_zero {x : E} (h : cc x = x) (τ : E →+* ℂ) : (τ x).im = 0 := by
 
 theorem exists_sym (a : 𝓞 E) : ∃ t : 𝓞 E, cc (t : E) = t ∧ ∀ μ : E, cc μ = μ →
     Algebra.trace ℚ E (μ * t) = 2 * Algebra.trace ℚ E (μ * a) := by
-  refine ⟨⟨a + cc (a : E), a.2.add (cc_integral a.2)⟩, ?_, fun μ hμ => ?_⟩
+  refine ⟨⟨a + cc (a : E), a.2.add (ReciprocityTheory.ChartRestriction.G.FD.isIntegral_cc a.2)⟩, ?_, fun μ hμ => ?_⟩
   · change cc ((a : E) + cc (a : E)) = (a : E) + cc (a : E)
     rw [cc_add', cc_cc', add_comm]
   · change Algebra.trace ℚ E (μ * ((a : E) + cc (a : E))) = _
@@ -356,7 +352,7 @@ theorem exists_isolating (ν₀ : E) (h₀ : Freq ν₀) : ∃ u : 𝓞 E, cc (u
     intro μ hμ
     obtain ⟨ν, hν, rfl⟩ := Finset.mem_image.mp hμ
     rw [Finset.mem_filter, Set.Finite.mem_toFinset] at hν
-    exact ⟨sub_ne_zero.mpr hν.2, by rw [cc_sub', hν.1.1.1, h₀.1]⟩)
+    exact ⟨sub_ne_zero.mpr hν.2, by rw [ReciprocityTheory.ChartRestriction.G.FD.cc_sub, hν.1.1.1, h₀.1]⟩)
   set M : ℝ := ∑ τ : E →+* ℂ, |(τ t).re| with hM
   have hM0 : 0 ≤ M := Finset.sum_nonneg fun _ _ => abs_nonneg _
   have hle : ∀ τ : E →+* ℂ, |(τ t).re| ≤ M := fun τ =>
@@ -404,7 +400,7 @@ theorem exists_form_isolating : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
   set p : X → E := GlobalTheory.ArcQ.pairE (E := E) ξ with hp
   have hq : ∀ y, IsIntegral ℤ ((D : E) * cc (p y)) := by
     intro y
-    have := cc_integral (hden (p y) fun a => ⟨_, trace_pairE ξ y a⟩)
+    have := ReciprocityTheory.ChartRestriction.G.FD.isIntegral_cc (hden (p y) fun a => ⟨_, trace_pairE ξ y a⟩)
     rwa [cc_mul', cc_nat] at this
   have hval : ∀ (t : 𝓞 E) (x y : X), ∃ m : ℤ,
       Algebra.trace ℚ E (2 * ((N * D : E) * t) * p x * cc (p y)) = 2 * N * m := by
@@ -450,7 +446,7 @@ theorem exists_form_isolating : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
       rw [Int.cast_add, ← hf, ← hf, ← hf, hp, pairE_add, cc_add', ← map_add (f := _)]; congr 1; ring)
     (fun n x y => by
       apply Int.cast_injective (α := ℚ)
-      rw [smul_eq_mul, Int.cast_mul n, ← hf, ← hf, hp, pairE_zsmul, cc_mul', cc_int,
+      rw [smul_eq_mul, Int.cast_mul n, ← hf, ← hf, hp, pairE_zsmul, cc_mul', ReciprocityTheory.ChartRestriction.G.FD.HermitianTraceFormVanishing.cc_intCast,
         ← zsmul_eq_mul (Algebra.trace ℚ E _) n, ← map_zsmul]
       congr 1; rw [zsmul_eq_mul]; ring)
   have hbe : ∀ x y, be x y = f x y := fun _ _ => rfl
@@ -1007,7 +1003,7 @@ theorem _root_.GlobalTheory.ComplementTypes.types (E : Type) [Field E] [NumberFi
         simp only [he]), Fintype.card_subtype,
       Fintype.card_subtype, Finset.card_filter, Finset.card_filter, Fintype.sum_sum_type,
       Fintype.sum_prod_type]
-    simp only [t, Sum.elim_inl, Sum.elim_inr, hc1, Finset.sum_ite_eq', Finset.mem_univ, if_true, Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul,
+    simp only [t, Sum.elim_inl, Sum.elim_inr, hc1, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul,
       mul_one]
     congr 1
   have hd : (2 : ℝ) ≤ H.d := by exact_mod_cast H.d_prime.two_le

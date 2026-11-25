@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ArtFrob
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.EqOneOfMemLev
 import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.BrData
 import Mathlib.Algebra.Order.Floor.Extended
@@ -58,20 +59,7 @@ private theorem int_mem (A : ValuationSubring Ω) (x : 𝓞 L) : algebraMap L Ω
 
 private theorem place_between {A : ValuationSubring Ω} {v : HeightOneSpectrum (𝓞 K)} (hA : IsPlaceOver A v) :
     ∃ w : HeightOneSpectrum (𝓞 L), IsPlaceOver A w ∧ w.asIdeal.LiesOver v.asIdeal := by
-  let f : 𝓞 L →+* A := ((algebraMap L Ω).comp (algebraMap (𝓞 L) L)).codRestrict A (int_mem A)
-  let P : Ideal (𝓞 L) := (IsLocalRing.maximalIdeal A).comap f
-  have hP : ∀ x : 𝓞 L, A.valuation (algebraMap L Ω (x : L)) < 1 ↔ x ∈ P := fun x =>
-    (A.valuation_lt_one_iff (f x)).symm
-  have hu : v.asIdeal = P.under (𝓞 K) := by
-    ext x
-    rw [← hA x, Ideal.under, Ideal.mem_comap, ← hP, IsScalarTower.algebraMap_apply K L Ω]
-    rfl
-  have hne : P ≠ ⊥ := by
-    intro h
-    apply v.ne_bot
-    rw [hu, h]
-    exact Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective _ _)
-  exact ⟨⟨P, inferInstance, hne⟩, hP, ⟨hu⟩⟩
+  apply _root_.place_between <;> assumption
 
 private theorem normV_under (w : HeightOneSpectrum (𝓞 L)) :
     normV w = normV (w.under (𝓞 K)) ^ w.asIdeal.inertiaDeg (𝓞 K) := by

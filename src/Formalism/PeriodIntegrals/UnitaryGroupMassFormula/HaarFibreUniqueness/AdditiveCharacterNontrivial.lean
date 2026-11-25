@@ -2,53 +2,12 @@ module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HaarFibreUniqueness.SmulMemHermR
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FundamentalEquivalence.FundamentalContinuity.AdelicIsomorphismStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.GroupTheory.ArchimedeanDensely
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
 import Mathlib.NumberTheory.NumberField.ClassNumber
-import Mathlib.NumberTheory.SelbergSieve
 public import Mathlib.RingTheory.DedekindDomain.Different
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatMatrixTranslationModulationIrreduc
 
 @[expose] public section
 
@@ -60,37 +19,7 @@ open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes NumberField IsDed
 open scoped TensorProduct
 
 theorem eq_one_of_pow_near (z : ℂ) (hz : ‖z‖ = 1) (h : ∀ k : ℕ, ‖z ^ k - 1‖ < 1) : z = 1 := by
-  have key : ∀ w : ℂ, Complex.normSq w = 1 →
-      Complex.normSq (w ^ 2 - 1) = Complex.normSq (w - 1) * (4 - Complex.normSq (w - 1)) := by
-    intro w hw
-    have e1 : w ^ 2 - 1 = (w - 1) * (w + 1) := by ring
-    have e2 : Complex.normSq (w + 1) = 4 - Complex.normSq (w - 1) := by
-      rw [Complex.normSq_add, Complex.normSq_sub, hw, Complex.normSq_one]; ring
-    rw [e1, Complex.normSq_mul, e2]
-  have hn : ∀ m : ℕ, Complex.normSq (z ^ (2 ^ m)) = 1 := fun m => by
-    rw [map_pow, Complex.normSq_eq_norm_sq, hz]; simp
-  have hlt : ∀ m : ℕ, Complex.normSq (z ^ (2 ^ m) - 1) < 1 := fun m => by
-    have := h (2 ^ m)
-    rw [Complex.normSq_eq_norm_sq]
-    nlinarith [norm_nonneg (z ^ 2 ^ m - 1)]
-  have hge : ∀ m : ℕ, 3 ^ m * Complex.normSq (z - 1) ≤ Complex.normSq (z ^ (2 ^ m) - 1) := by
-    intro m
-    induction m with
-    | zero => simp
-    | succ m ih =>
-      have e : z ^ (2 ^ (m + 1)) = (z ^ (2 ^ m)) ^ 2 := by rw [pow_succ, pow_mul]
-      rw [e, key _ (hn m), pow_succ]
-      have h0 := Complex.normSq_nonneg (z ^ 2 ^ m - 1)
-      have h1 := hlt m
-      nlinarith
-  by_contra hne
-  have hpos : 0 < Complex.normSq (z - 1) := Complex.normSq_pos.2 (sub_ne_zero.2 hne)
-  obtain ⟨m, hm⟩ := pow_unbounded_of_one_lt (1 / Complex.normSq (z - 1)) (by norm_num : (1 : ℝ) < 3)
-  have h1 := hge m
-  have h2 := hlt m
-  have h3 : 1 < 3 ^ m * Complex.normSq (z - 1) := by
-    rw [div_lt_iff₀ hpos] at hm; linarith
-  linarith
+  apply _root_.GlobalTheory.IrredSB.eq_one_of_forall_pow <;> assumption
 
 theorem exists_pi (F : Type) [Field F] [NumberField F] (v : HeightOneSpectrum (𝓞 F)) :
     ∃ π : 𝓞 F, π ∈ v.asIdeal ∧ π ≠ 0 ∧ ∀ w : HeightOneSpectrum (𝓞 F), w ≠ v → π ∉ w.asIdeal := by
@@ -161,8 +90,7 @@ theorem af_algebraMap_apply {F : Type} [Field F] [NumberField F] (r : F) (w : He
 theorem additive_character_nontrivial : PsiNT := by
   intro F _ _ ψ v hψ hstd hTR
   classical
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
 
   let U : Set (Af F) := {y | ‖ψ (pairA F 0 y) - 1‖ < 1}
   have hc : Continuous (fun y : Af F => ψ (pairA F 0 y)) :=

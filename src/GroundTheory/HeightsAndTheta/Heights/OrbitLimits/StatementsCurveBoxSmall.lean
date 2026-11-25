@@ -18,8 +18,4 @@ def CurveBoxSmall.Statement : Prop :=
     ∀ (τ : ℕ) (s : Ω), IsSmallH (mCoordIdeal y) y A τ s ↔
       ∀ σ : Ω →+* ℂ, ‖σ (s / chartUnit y c A.a τ)‖ ≤ chartRadius A c (fun p => σ (y p)) ^ τ
 
-namespace CurveBoxSmall
-
-end CurveBoxSmall
-
 end GroundTheory.Heights₂.Heights.Targets

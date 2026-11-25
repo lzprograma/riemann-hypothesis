@@ -108,7 +108,6 @@ section -- clump:auto
 open MeasureTheory Filter Topology GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.ChartGlue GlobalTheory.FlagBundle GlobalTheory.HermFrame GlobalTheory.GoodMetric GlobalTheory.GoodTop
 open ReciprocityTheory.L2DbarEstimates (V)
 open scoped ContDiff Matrix
-set_option autoImplicit false
 noncomputable section
 
 theorem GlobalTheory.GoodTop.hasInt_mul_topDens_goodPatch : ∀ {F : Type} [Field F] {σ : F →+* ℂ} {X : Var F} {m : ℕ} (E : Fr (ratOf X) (fun _ : Unit => m) 0) (O : X.X.Opens) (H H₀ : Mat (fun _ : Unit => m) X.Fn → CxPts X.str σ → Mat (fun _ : Unit => m) ℂ), IsMetricOn E O H → IsMetricOn E ⊤ H₀ → ∀ {e : OpenPartialHomeomorph (CxPts X.str σ) (V X.dim)} {S : Finset (Fin X.dim)} {A : Mat (fun _ : Unit => m) X.Fn} {W : Set (CxPts X.str σ)} {c : ℝ}, GoodPatch E O H e S A W c → ∀ {ρ : CxPts X.str σ → ℝ}, (∀ y, CInfAt ρ y) → tsupport ρ ⊆ W → HasInt (fun c : AlgChart X.str σ X.dim => c.e) (fun c y => ρ y * topDens E H c y) (ptsIn X.str σ O) ((Real.pi ^ X.dim)⁻¹ * (∫ v in offHyp S (e '' W), (ρ (e.symm v) : ℂ) * mixTop fun _ => curvAt (fun v => H A (e.symm v) ()) v).re) := by
@@ -173,8 +172,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MeasureTheory Filter Topology GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.ChartGlue GlobalTheory.FlagBundle GlobalTheory.HermFrame GlobalTheory.GoodMetric GlobalTheory.GoodTop
@@ -224,7 +221,6 @@ noncomputable def logCutoff (k : ℕ) (z : ℂ) : ℝ :=
 
 open MeasureTheory Filter Topology in
 open scoped ContDiff Matrix in
-set_option autoImplicit false in
 private lemma logCutoff_eq_zero_of_norm_le (k : ℕ) {z : ℂ}
     (hz : ‖z‖ ≤ Real.exp (-2 * ((k : ℝ) + 1))) : _root_.GlobalTheory.GoodTop.logCutoff k z = 0 := by
   unfold _root_.GlobalTheory.GoodTop.logCutoff
@@ -241,7 +237,6 @@ private lemma logCutoff_eq_zero_of_norm_le (k : ℕ) {z : ℂ}
 
 open MeasureTheory Filter Topology in
 open scoped ContDiff Matrix in
-set_option autoImplicit false in
 lemma _root_.GlobalTheory.GoodTop.contDiff_logCutoff (k : ℕ) : ContDiff ℝ ∞ (_root_.GlobalTheory.GoodTop.logCutoff k) := by
   rw [contDiff_iff_contDiffAt]
   intro z
@@ -255,7 +250,7 @@ lemma _root_.GlobalTheory.GoodTop.contDiff_logCutoff (k : ℕ) : ContDiff ℝ �
   · have hev : _root_.GlobalTheory.GoodTop.logCutoff k =ᶠ[𝓝 z]
         fun w => Real.smoothTransition (2 + Real.log ‖w‖ / ((k : ℝ) + 1)) := by
       filter_upwards [isOpen_ne.mem_nhds h0] with w hw
-      simp only [_root_.GlobalTheory.GoodTop.logCutoff, if_neg (show w ≠ 0 from hw)]
+      simp only [_root_.GlobalTheory.GoodTop.logCutoff, ite_eq_right (show w ≠ 0 from hw)]
     refine ContDiffAt.congr_of_eventuallyEq ?_ hev
     refine Real.smoothTransition.contDiff.contDiffAt.comp z ?_
     refine contDiffAt_const.add (ContDiffAt.div_const ?_ _)
@@ -271,8 +266,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open MeasureTheory Filter Topology GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.ChartGlue GlobalTheory.FlagBundle GlobalTheory.HermFrame GlobalTheory.GoodMetric GlobalTheory.GoodTop
 open ReciprocityTheory.L2DbarEstimates (V)
 open scoped ContDiff Matrix
@@ -281,7 +274,6 @@ namespace GlobalTheory.GoodTop
 
 open MeasureTheory Filter Topology in
 open scoped ContDiff Matrix in
-set_option autoImplicit false in
 private lemma exists_bound_abs_deriv_smoothTransition_mul_sub_two :
     ∃ M : ℝ, 0 ≤ M ∧ ∀ x : ℝ, |deriv Real.smoothTransition x| * |x - 2| ≤ M := by
   have hc : Continuous fun x : ℝ => |deriv Real.smoothTransition x| * |x - 2| :=
@@ -309,7 +301,6 @@ private lemma exists_bound_abs_deriv_smoothTransition_mul_sub_two :
 
 open MeasureTheory Filter Topology in
 open scoped ContDiff Matrix in
-set_option autoImplicit false in
 private lemma exists_bound_fderiv_logCutoff_mul_norm_mul_log :
     ∃ M : ℝ, 0 ≤ M ∧ ∀ (k : ℕ) (z c : ℂ),
       ‖fderiv ℝ (_root_.GlobalTheory.GoodTop.logCutoff k) z c‖ * (‖z‖ * |Real.log ‖z‖|) ≤ M * ‖c‖ := by
@@ -324,7 +315,7 @@ private lemma exists_bound_fderiv_logCutoff_mul_norm_mul_log :
   have hev : _root_.GlobalTheory.GoodTop.logCutoff k =ᶠ[𝓝 z]
       fun w => Real.smoothTransition (2 + Real.log ‖w‖ / ((k : ℝ) + 1)) := by
     filter_upwards [isOpen_ne.mem_nhds h0] with w hw
-    simp only [_root_.GlobalTheory.GoodTop.logCutoff, if_neg (show w ≠ 0 from hw)]
+    simp only [_root_.GlobalTheory.GoodTop.logCutoff, ite_eq_right (show w ≠ 0 from hw)]
   set N := fderiv ℝ (fun w : ℂ => ‖w‖) z
   have hn : HasFDerivAt (fun w : ℂ => ‖w‖) N z :=
     ((contDiffAt_norm ℝ (n := 1) h0).differentiableAt one_ne_zero).hasFDerivAt
@@ -354,7 +345,6 @@ private lemma exists_bound_fderiv_logCutoff_mul_norm_mul_log :
 
 open MeasureTheory Filter Topology in
 open scoped ContDiff Matrix in
-set_option autoImplicit false in
 private lemma logCutoff_mem_Icc (k : ℕ) (z : ℂ) :
     0 ≤ _root_.GlobalTheory.GoodTop.logCutoff k z ∧ _root_.GlobalTheory.GoodTop.logCutoff k z ≤ 1 := by
   unfold _root_.GlobalTheory.GoodTop.logCutoff
@@ -364,30 +354,18 @@ private lemma logCutoff_mem_Icc (k : ℕ) (z : ℂ) :
 
 open MeasureTheory Filter Topology in
 open scoped ContDiff Matrix in
-set_option autoImplicit false in
 private lemma logCutoff_eq_zero_of_norm_le_exp_neg_two_mul (k : ℕ) {z : ℂ}
     (hz : ‖z‖ ≤ Real.exp (-2 * ((k : ℝ) + 1))) : _root_.GlobalTheory.GoodTop.logCutoff k z = 0 := by
-  unfold _root_.GlobalTheory.GoodTop.logCutoff
-  split_ifs with h0
-  · rfl
-  apply Real.smoothTransition.zero_of_nonpos
-  have hk : (0 : ℝ) < (k : ℝ) + 1 := by positivity
-  have hlog : Real.log ‖z‖ ≤ -2 * ((k : ℝ) + 1) := by
-    rw [← Real.log_exp (-2 * ((k : ℝ) + 1))]
-    exact Real.log_le_log (norm_pos_iff.mpr h0) hz
-  rw [← sub_nonneg, show 0 - (2 + Real.log ‖z‖ / ((k : ℝ) + 1)) =
-    (-2 * ((k : ℝ) + 1) - Real.log ‖z‖) / ((k : ℝ) + 1) by field_simp; ring]
-  exact div_nonneg (by linarith) hk.le
+  apply _root_.GlobalTheory.GoodTop.logCutoff_eq_zero_of_norm_le <;> assumption
 
 open MeasureTheory Filter Topology in
 open scoped ContDiff Matrix in
-set_option autoImplicit false in
 private lemma logCutoff_eq_one_of_exp_le_norm (k : ℕ) {z : ℂ}
     (hz : Real.exp (-((k : ℝ) + 1)) ≤ ‖z‖) : _root_.GlobalTheory.GoodTop.logCutoff k z = 1 := by
   have h0 : z ≠ 0 := by
     intro h; rw [h, norm_zero] at hz; exact absurd hz (not_le.mpr (Real.exp_pos _))
   unfold _root_.GlobalTheory.GoodTop.logCutoff
-  rw [if_neg h0]
+  rw [ite_eq_right h0]
   apply Real.smoothTransition.one_of_one_le
   have hk : (0 : ℝ) < (k : ℝ) + 1 := by positivity
   have hlog : -((k : ℝ) + 1) ≤ Real.log ‖z‖ := by
@@ -399,7 +377,6 @@ private lemma logCutoff_eq_one_of_exp_le_norm (k : ℕ) {z : ℂ}
 
 open MeasureTheory Filter Topology in
 open scoped ContDiff Matrix in
-set_option autoImplicit false in
 private lemma fderiv_prod_logCutoff_coordVec {n : ℕ} (k : ℕ) (S : Finset (Fin n))
     (v : _root_.ReciprocityTheory.L2DbarEstimates.V n) (b : Fin n) (c : ℂ) :
     fderiv ℝ (fun w : _root_.ReciprocityTheory.L2DbarEstimates.V n => ∏ a ∈ S, _root_.GlobalTheory.GoodTop.logCutoff k (w a)) v
@@ -439,10 +416,10 @@ private lemma fderiv_prod_logCutoff_coordVec {n : ℕ} (k : ℕ) (S : Finset (Fi
           fun t : ℝ => (∏ a ∈ S.erase b, _root_.GlobalTheory.GoodTop.logCutoff k (v a)) *
             _root_.GlobalTheory.GoodTop.logCutoff k (v b + (t : ℂ) * c) := by
         funext t
-        rw [← Finset.mul_prod_erase S _ hb, mul_comm, hcoord, if_pos rfl]
+        rw [← Finset.mul_prod_erase S _ hb, mul_comm, hcoord, ite_eq_left rfl]
         congr 1
         refine Finset.prod_congr rfl fun a ha => ?_
-        rw [hcoord, if_neg (Finset.ne_of_mem_erase ha)]
+        rw [hcoord, ite_eq_right (Finset.ne_of_mem_erase ha)]
       rw [e]
       exact hψline.const_mul _
     exact h1.unique h2
@@ -453,7 +430,7 @@ private lemma fderiv_prod_logCutoff_coordVec {n : ℕ} (k : ℕ) (S : Finset (Fi
           fun _ => ∏ a ∈ S, _root_.GlobalTheory.GoodTop.logCutoff k (v a) := by
         funext t
         refine Finset.prod_congr rfl fun a ha => ?_
-        rw [hcoord, if_neg (fun h : a = b => hb (h ▸ ha))]
+        rw [hcoord, ite_eq_right (fun h : a = b => hb (h ▸ ha))]
       rw [e]
       exact hasDerivAt_const _ _
     exact h1.unique h2
@@ -684,8 +661,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open MeasureTheory Filter Topology GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.ChartGlue GlobalTheory.FlagBundle GlobalTheory.HermFrame GlobalTheory.GoodMetric GlobalTheory.GoodTop
 open ReciprocityTheory.L2DbarEstimates (V)
 open scoped ContDiff Matrix
@@ -795,8 +770,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MeasureTheory Filter Topology GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.ChartGlue GlobalTheory.FlagBundle GlobalTheory.HermFrame GlobalTheory.GoodMetric GlobalTheory.GoodTop
@@ -894,8 +867,6 @@ theorem integral_det_dbar_eq_zero_of_poincare : ∀ {n : ℕ} (S : Finset (Fin n
       have hp : 0 ≤ poinWt S v (u j) * poinWt S v b := mul_nonneg (hw _).le (hw _).le
       have hA : 0 ≤ ‖dbar (f j) v (coordVec b)‖ * (poinWt S v (u j) * poinWt S v b) :=
         mul_nonneg (norm_nonneg _) hp
-      have hB : 0 ≤ ‖dbar (fun x => (χ k x : ℂ)) v (coordVec b)‖ * poinWt S v b :=
-        mul_nonneg (norm_nonneg _) (hw _).le
       have hE : 0 ≤ ‖f j v‖ * poinWt S v (u j) := mul_nonneg (norm_nonneg _) (hw _).le
       calc ‖(χ k v : ℂ) * dbar (f j) v (coordVec b) + dbar (fun x => (χ k x : ℂ)) v (coordVec b) * f j v‖ *
             (poinWt S v (u j) * poinWt S v b)
@@ -958,8 +929,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open MeasureTheory Filter Topology GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.ChartGlue GlobalTheory.FlagBundle GlobalTheory.HermFrame GlobalTheory.GoodMetric GlobalTheory.GoodTop
 open ReciprocityTheory.L2DbarEstimates (V)
 open scoped ContDiff Matrix
@@ -1017,8 +986,6 @@ open scoped ContDiff Matrix
 
 namespace GlobalTheory.GoodTop
 
-set_option autoImplicit false
-
 noncomputable def transConn {n : ℕ} {r : Type} [Fintype r] [DecidableEq r] (ρ : V n → ℝ)
     (G₀ G₁ : V n → Matrix r r ℂ) (j : Fin n) (i a : Fin n) : V n → Matrix r r ℂ :=
   if i < j then fun x => -conn G₁ x (coordVec a)
@@ -1036,7 +1003,6 @@ theorem weighted_bound_cut_entry (x X₁ X₀ d Y₁ Y₀ : ℂ) (wa wb C c : �
     (hX₁ : ‖X₁‖ * (wa * wb) ≤ c) (hX₀ : ‖X₀‖ ≤ C) (hY₁ : ‖Y₁‖ * wa ≤ c) (hY₀ : ‖Y₀‖ ≤ C)
     (hwa0 : 0 ≤ wa) (hwa1 : wa ≤ 1) (hwb0 : 0 ≤ wb) (hwb1 : wb ≤ 1) :
     ‖x * (X₁ - X₀) - d * (Y₁ - Y₀)‖ * (wa * wb) ≤ 2 * C * (|c| + C) := by
-  have hC : 0 ≤ C := (norm_nonneg _).trans hx
   have e1 := weighted_bound_cut_sum ‖x‖ ‖X₁‖ ‖X₀‖ (wa * wb) C c (norm_nonneg _) hx (norm_nonneg _) (norm_nonneg _)
     (by positivity) (by nlinarith) hX₁ hX₀
   have e2 := weighted_bound_cut_sum ‖d‖ ‖Y₁‖ ‖Y₀‖ wa C c (norm_nonneg _) hd (norm_nonneg _) (norm_nonneg _)
@@ -1094,7 +1060,7 @@ theorem integral_mixTop_position_eq_zero : ∀ {n : ℕ} {r : Type} [Fintype r] 
       ‖θ j a v p q‖ * poinWt S v a ≤ |c| + C + 2 * C * (|c| + C) := by
     intro v hv hvK a p q
     obtain ⟨hρv, -, hc0, -⟩ := hC v hvK
-    simp only [hθ, transConn, lt_irrefl, if_false, if_true, Matrix.neg_apply, Matrix.smul_apply,
+    simp only [hθ, transConn, lt_irrefl, ite_false, ite_true, Matrix.neg_apply, Matrix.smul_apply,
       Matrix.sub_apply, smul_eq_mul, norm_neg, norm_mul, Complex.norm_real, Real.norm_eq_abs]
     have e := weighted_bound_cut_sum |ρ v| ‖conn G₁ v (coordVec a) p q‖ ‖conn G₀ v (coordVec a) p q‖ (poinWt S v a) C c
       (abs_nonneg _) hρv (norm_nonneg _) (norm_nonneg _) (hw v hv.1 a).1 (hw v hv.1 a).2
@@ -1111,7 +1077,6 @@ theorem integral_mixTop_position_eq_zero : ∀ {n : ℕ} {r : Type} [Fintype r] 
     obtain ⟨hρv, hdv, hc0, hk0⟩ := hC v hvK
     obtain ⟨hwa0, hwa1⟩ := hw v hv.1 a
     obtain ⟨hwb0, hwb1⟩ := hw v hv.1 b
-    have hww : 0 ≤ poinWt S v a * poinWt S v b := by positivity
     have hww1 : poinWt S v a * poinWt S v b ≤ 1 := by nlinarith
     have hca : 0 ≤ |c| := abs_nonneg c
     rw [show mdbar (θ i a) v (coordVec b) = _ from congrFun (congrFun (congrFun (heq v hv) i) a) b]
@@ -1215,7 +1180,6 @@ namespace GlobalTheory.GoodTop
 
 open MeasureTheory Filter Topology in
 open scoped ContDiff Matrix in
-set_option autoImplicit false in
 private lemma mem_offHyp_iff {n : ℕ} {S : Finset (Fin n)}
     {U : Set (_root_.ReciprocityTheory.L2DbarEstimates.V n)} {v : _root_.ReciprocityTheory.L2DbarEstimates.V n} :
     v ∈ _root_.GlobalTheory.GoodTop.offHyp S U ↔ v ∈ U ∧ ∀ a ∈ S, v.ofLp a ≠ 0 := by
@@ -1224,7 +1188,6 @@ private lemma mem_offHyp_iff {n : ℕ} {S : Finset (Fin n)}
 
 open MeasureTheory Filter Topology in
 open scoped ContDiff Matrix in
-set_option autoImplicit false in
 private lemma mixTop_slot_smul_sub_sub {n : ℕ} {r : Type} [Fintype r]
     [DecidableEq r] (A B D : _root_.GlobalTheory.GoodTop.EndValuedForm11Coeffs n r) (s : ℂ) (j : Fin n) :
     _root_.GlobalTheory.GoodTop.mixTop (_root_.GlobalTheory.GoodTop.intersection_update_fsHerm_neg_one A (s • (A - B) - D) B j) =
@@ -1294,7 +1257,6 @@ section -- clump:auto
 open MeasureTheory Filter Topology GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.ChartGlue GlobalTheory.FlagBundle GlobalTheory.HermFrame GlobalTheory.GoodMetric GlobalTheory.GoodTop
 open ReciprocityTheory.L2DbarEstimates (V)
 open scoped ContDiff Matrix
-set_option autoImplicit false
 
 namespace GlobalTheory.GoodTop
 
@@ -1354,7 +1316,6 @@ open MeasureTheory Filter Topology GlobalTheory GlobalTheory.Cartier GlobalTheor
 open ReciprocityTheory.L2DbarEstimates (V)
 open scoped ContDiff Matrix
 
-set_option autoImplicit false
 noncomputable section
 
 theorem GlobalTheory.GoodTop.hasInt_corrDens_of_goodPatch : ∀ {F : Type} [Field F] {σ : F →+* ℂ} {X : Var F} {m : ℕ} (E : Fr (ratOf X) (fun _ : Unit => m) 0) (O : X.X.Opens) (H H₀ : Mat (fun _ : Unit => m) X.Fn → CxPts X.str σ → Mat (fun _ : Unit => m) ℂ), IsMetricOn E O H → IsMetricOn E ⊤ H₀ → ∀ {e : OpenPartialHomeomorph (CxPts X.str σ) (V X.dim)} {S : Finset (Fin X.dim)} {A : Mat (fun _ : Unit => m) X.Fn} {W : Set (CxPts X.str σ)} {c : ℝ}, GoodPatch E O H e S A W c → ∀ {ρ : CxPts X.str σ → ℝ}, (∀ y, CInfAt ρ y) → tsupport ρ ⊆ W → HasInt (fun c : AlgChart X.str σ X.dim => c.e) (corrDens E H₀ H ρ) (ptsIn X.str σ O) ((Real.pi ^ X.dim)⁻¹ * (∫ v in offHyp S (e '' W), corrC (fun v => ρ (e.symm v)) (fun v => H₀ A (e.symm v) ()) (fun v => H A (e.symm v) ()) v).re) := by

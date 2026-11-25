@@ -3,43 +3,6 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PlaceB
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.RelativePresentationOfD7
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.TheoremOfAlternateForm
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -64,10 +27,10 @@ def HeckeIntegralLevel : Prop :=
 
 theorem sum_ite_single {ι : Type} [Fintype ι] [DecidableEq ι] (v : ι) (a : ℝ) (f : ι → ℝ) :
     ∑ v', (if v' = v then a else f v') = a + ∑ v' ∈ univ.erase v, f v' := by
-  rw [← Finset.add_sum_erase _ _ (Finset.mem_univ v), if_pos rfl]
+  rw [← Finset.add_sum_erase _ _ (Finset.mem_univ v), ite_eq_left rfl]
   congr 1
   refine Finset.sum_congr rfl fun v' hv' => ?_
-  rw [if_neg (Finset.ne_of_mem_erase hv')]
+  rw [ite_eq_right (Finset.ne_of_mem_erase hv')]
 
 variable {X Y}
 
@@ -106,7 +69,6 @@ theorem ent_strict (hE : EntCondition X Y) (j : ℕ) (hj : j < X.mm) (i0 : X.Pl 
 theorem formB_lim (hF : FormB X Y) (j : ℕ) (hj : j < X.mm) (i0 : X.Pl → ℕ) (vs : List X.Pl) (g : ℝ) (hnd : vs.Nodup)
     (hr : ∀ v, i0 v ≤ X.G.P.r) (h0 : ∀ v, v ∉ vs → i0 v = 0) (hB : ∀ g' < g, EntB X Y j i0 g')
     (G : X.Fm j) (hG : G ∈ X.Int j) : X.vGe (j + 1) (TtL X (j + 1) i0 vs (X.Kz j G)) (g - X.dG j) := by
-  have he0 : (0 : ℝ) ≤ (X.eO : ℝ) := Nat.cast_nonneg _
   obtain ⟨x, hx⟩ : ∃ x : ℝ, x = (g - X.dG j) * (X.eO : ℝ) := ⟨_, rfl⟩
   have hc1 : (⌈x⌉ : ℝ) < x + 1 := Int.ceil_lt_add_one x
   have hc2 : x ≤ (⌈x⌉ : ℝ) := Int.le_ceil x
@@ -151,9 +113,9 @@ theorem hecke_integral_of_forms (D : Formalism.BasicNotions.D7) (hF : FormB X Y)
     intro v'
     by_cases hv : v' = v
     · subst hv
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact Or.inl ⟨rfl, Or.inr le_rfl⟩
-    · rw [if_neg hv]
+    · rw [ite_eq_right hv]
       exact Or.inl ⟨rfl, Or.inl (h2U v' j hj)⟩
   have h := form_of_place hF hE j hj (fun _ => 0) []
     (fun v' => if v' = v then X.gv v (j + 1) - X.alEven v else X.g0v v' (j + 1)) List.nodup_nil
@@ -173,17 +135,17 @@ theorem hecke_valuation_of_entries (D : Formalism.BasicNotions.D7) (hF : FormB X
     intro v'
     by_cases hv : v' = v
     · subst hv
-      rw [if_pos rfl, if_pos rfl]
+      rw [ite_eq_left rfl, ite_eq_left rfl]
       exact Or.inr ⟨hi1, hi2, le_rfl⟩
-    · rw [if_neg hv, if_neg hv]
+    · rw [ite_eq_right hv, ite_eq_right hv]
       exact Or.inl ⟨rfl, Or.inl (h2U v' j hj)⟩
   have h := form_of_place hF hE j hj (fun v' => if v' = v then i else 0) [v]
     (fun v' => if v' = v then X.gv v (j + 1) else X.g0v v' (j + 1)) (List.nodup_singleton v)
     (fun v' => by split_ifs <;> omega)
-    (fun v' hv' => if_neg (by simpa using hv')) hP G hG
+    (fun v' hv' => ite_eq_right (by simpa using hv')) hP G hG
   beta_reduce at h
   rw [sum_ite_single] at h
-  simpa only [TtL, List.foldr_cons, List.foldr_nil, eq_self_iff_true, if_true, ↓reduceIte] using h
+  simpa only [TtL, List.foldr_cons, List.foldr_nil, eq_self_iff_true, ite_true, ↓reduceIte] using h
 
 theorem latticeChain_succ_of_partial (D : Formalism.BasicNotions.D7) (hF : FormB X Y) (hE : EntCondition X Y) (h2U : VolumeRatio₂ D X Y) (hB1 : HeckeIntegralLevel X) :
     PointsLemma D X := fun v j hj =>

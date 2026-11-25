@@ -3,45 +3,6 @@ module
 public import Formalism.SharpRestriction.GlobalSchurBounds.FlipTwoThree
 public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
 import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GlobalSchurBounds.QuadraticLogDerivCongr
 public import Mathlib.RingTheory.MvPolynomial
 
@@ -52,12 +13,6 @@ noncomputable section
 namespace Formalism.MainNotions.GlobalTheoryTheory.Inhab
 
 open Formalism.BasicNotions NumberField
-
-section PosSec
-
-open Formalism.FrobeniusOrbits
-
-end PosSec
 
 section Std
 
@@ -127,32 +82,6 @@ theorem Adm_std (N N' : ℕ) (h : Even N) (h' : Even N') :
 
 end Std
 
-section KernelEntryData
-
-variable (p : ℕ) [Fact p.Prime]
-
-end KernelEntryData
-
-section ReadsSec
-
-open Formalism.MainNotions.Lnk Formalism.D5 Formalism.FrobeniusOrbits Formalism.LFunctionChainParameters.LHost Formalism.RankGapBounds.WeightedMeanData Formalism.LFunctionChainParameters.WeightedSlopeBounds Formalism.LFunctionChainParameters.characterSumData Formalism.LFunctionChainParameters.ThickSetMeanBounds
-  Formalism.LFunctionChainParameters.LErr Formalism.LFunctionChainParameters.LChain
-
-end ReadsSec
-
-section FrobSec
-
-open Formalism.FrobeniusOrbits
-open scoped Pointwise
-
-end FrobSec
-
-section Junk
-
-open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-
-end Junk
-
 end Formalism.MainNotions.GlobalTheoryTheory.Inhab
 
 noncomputable section
@@ -161,8 +90,6 @@ namespace Formalism.MainNotions.GlobalTheoryTheory.Inhab
 
 open Formalism.BasicNotions Formalism.MainNotions.flipTwoThree NumberField
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 end Formalism.MainNotions.GlobalTheoryTheory.Inhab
 
 noncomputable section
@@ -170,8 +97,6 @@ noncomputable section
 namespace Formalism.MainNotions.GlobalTheoryTheory.Inhab
 
 open Formalism.BasicNotions NumberField Formalism.MainNotions.flipTwoThree
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 structure ColBase (D : D7) (u : D.what₂.Word) where
   rho : D.what₂.Tau → (D.host.E →+* D.what₂.LL)
@@ -341,12 +266,6 @@ theorem host_emb_star (D : D7) (σ : D.host.E →+* ℂ) (a : D.host.E) : σ (st
   have := D.host.isCMField_hostE
   exact NumberField.IsCMField.complexEmbedding_complexConj D.host.E σ a
 
-section LocB
-
-variable {LL : Type} [Field LL] (Pl : Rows.Places LL) (w : Pl.Pl) {V : Type} [AddCommGroup V] [Module LL V]
-
-end LocB
-
 end Formalism.MainNotions.GlobalTheoryTheory.Inhab
 
 noncomputable section
@@ -354,7 +273,5 @@ noncomputable section
 namespace Formalism.MainNotions.GlobalTheoryTheory.Inhab
 
 open Formalism.BasicNotions Formalism.MainNotions
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 end Formalism.MainNotions.GlobalTheoryTheory.Inhab

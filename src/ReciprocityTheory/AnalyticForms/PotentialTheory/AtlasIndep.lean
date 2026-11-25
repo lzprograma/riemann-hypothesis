@@ -256,21 +256,6 @@ theorem integralWith_extendRight [CompactSpace X] [T2Space X] {A B : FinHolAtlas
   rw [Fin.sum_univ_add]
   simp [ChartPartition.extendRight, Fin.append_left, Fin.append_right, locDens_unionAtlas_natAdd]
 
-theorem mIntAtlasIndep : MIntAtlasIndepStatement := by
-  intro e X _ _ _ A B h Φ hΦ g hg
-  have hgB : MIntegrable B Φ g := mIntegrable_of_compatible h Φ hΦ hg
-  refine ⟨hgB, ?_⟩
-  have hU : ∀ i, IsPotential (unionAtlas A B h) (Φ i) := fun i =>
-    isPotential_of_compatible (compatible_unionAtlas_left A B h) (hΦ i)
-  have hgU : MIntegrable (unionAtlas A B h) Φ g :=
-    mIntegrable_of_compatible (compatible_unionAtlas_left A B h) Φ hΦ hg
-  have hΦB : ∀ i, IsPotential B (Φ i) := fun i => isPotential_of_compatible h (hΦ i)
-  obtain ⟨P⟩ := existsPartition A
-  obtain ⟨Q⟩ := existsPartition B
-  rw [mIntEq A P Φ hΦ g hg, mIntEq B Q Φ hΦB g hgB, ← integralWith_extendLeft h P Φ g,
-    ← integralWith_extendRight h Q Φ g]
-  exact integralWithIndep _ _ _ Φ hU g hgU
-
 end
 
 end ReciprocityTheory.AnForm.M

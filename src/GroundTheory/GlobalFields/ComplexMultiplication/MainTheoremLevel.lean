@@ -42,60 +42,10 @@ public import GroundTheory.GlobalFields.ComplexMultiplication.HilbertClassFieldM
 public import GroundTheory.GlobalFields.GlobalArtinMap.ArtinMap
 public import GroundTheory.GlobalFields.ClassFieldConsequences.RayClassField
 import GroundTheory.GlobalFields.ComplexMultiplication.ReductionEval
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.AlgebraicGeometry.EllipticCurve.Reduction
 import GroundTheory.GlobalFields.TateThesis.DegreeOneDensity
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Algebra.Lie.OfAssociative
-import Mathlib.Order.CompletePartialOrder
 import GroundTheory.GlobalFields.ComplexMultiplication.BadPrimesFinite
 import GroundTheory.GlobalFields.ComplexMultiplication.FrobeniusAtPrimesIsogeny
 import GroundTheory.GlobalFields.ComplexMultiplication.GoodReductionAlmostAll
-import Mathlib.AlgebraicGeometry.EllipticCurve.IsomOfJ
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremAssembly, GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremFields, GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremReduction, GroundTheory.GlobalFields.ComplexMultiplication.DegreeOneAutomorphismLift, GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremPointHom, GroundTheory.GlobalFields.ComplexMultiplication.ReductionNonsingularPoints, GroundTheory.GlobalFields.ComplexMultiplication.TorsionReduction, GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremFrobenius, GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremModels, GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremLevel
@@ -817,12 +767,6 @@ theorem two_ne_zero_and_three_ne_zero_of_five_le_ringChar {k : Type*} [Field k]
   · have := Nat.le_of_dvd (by norm_num) ((ringChar.spec k 3).mp (by exact_mod_cast h3))
     omega
 
-section NumberField
-
-variable {L : Type*} [Field L] [NumberField L] (v : HeightOneSpectrum (𝓞 L))
-
-end NumberField
-
 end GroundTheory.Global
 end -- clump:auto
 end -- clump:auto
@@ -1181,25 +1125,6 @@ theorem eq_of_reductionHom_eq_of_nsmul {n : ℕ} (hn : (n : ResidueField 𝒪) �
 
 end Good
 
-section Localization
-
-open IsDedekindDomain
-
-variable {R : Type*} [CommRing R] [IsDedekindDomain R] {F : Type*} [Field F] [Algebra R F]
-  [IsFractionRing R F] (v : HeightOneSpectrum R)
-
-end Localization
-
-section NumberField
-
-open NumberField IsDedekindDomain
-
-variable {F : Type*} [Field F] [NumberField F] (𝔮 : HeightOneSpectrum (𝓞 F))
-  (W : WeierstrassCurve (𝔮.valuationSubringAtPrime F)) [W.IsElliptic] [DecidableEq F]
-  [DecidableEq (ResidueField (𝔮.valuationSubringAtPrime F))]
-
-end NumberField
-
 end
 
 end GroundTheory.Global
@@ -1513,17 +1438,17 @@ theorem ofJ_map [DecidableEq F] [DecidableEq F'] (f : F →+* F') (j : F) :
     exact f.injective.eq_iff.symm
   unfold ofJ
   by_cases a : j = 0
-  · rw [if_pos a, if_pos (hj0.1 a)]
+  · rw [ite_eq_left a, ite_eq_left (hj0.1 a)]
     by_cases b : (3 : F) = 0
-    · rw [if_pos b, if_pos (h3.1 b)]
+    · rw [ite_eq_left b, ite_eq_left (h3.1 b)]
       ext <;> simp [ofJ1728]
-    · rw [if_neg b, if_neg (mt h3.2 b)]
+    · rw [ite_eq_right b, ite_eq_right (mt h3.2 b)]
       ext <;> simp [ofJ0]
-  · rw [if_neg a, if_neg (mt hj0.2 a)]
+  · rw [ite_eq_right a, ite_eq_right (mt hj0.2 a)]
     by_cases b : j = 1728
-    · rw [if_pos b, if_pos (hj1728.1 b)]
+    · rw [ite_eq_left b, ite_eq_left (hj1728.1 b)]
       ext <;> simp [ofJ1728]
-    · rw [if_neg b, if_neg (mt hj1728.2 b)]
+    · rw [ite_eq_right b, ite_eq_right (mt hj1728.2 b)]
       ext <;> simp [ofJNe0Or1728, map_ofNat]
 
 theorem toShortNF_map (W : WeierstrassCurve F) [Invertible (2 : F)] [Invertible (3 : F)]

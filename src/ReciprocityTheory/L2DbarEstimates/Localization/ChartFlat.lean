@@ -238,9 +238,9 @@ theorem chT_back (hExt : ExtendStatement n M) (hz : IsLocalHomeomorph z) (he : I
         show f ((Classical.choose h).symm y) = 0
         by_contra hne
         exact hy.2 (subset_tsupport _ (Function.mem_support.2 hne))
-      simp only [d, db, dif_pos h]
+      simp only [d, db, dite_eq_left h]
       exact hfz _ _ hev i
-    · simp [d, db, dif_neg h]
+    · simp [d, db, dite_eq_right h]
   have hG'0j : ∀ j, ∀ y, y ∉ K₀ → G' y j = 0 := fun j y hy => by
     rw [hG'0 y hy]
     simp
@@ -284,7 +284,7 @@ theorem chT_back (hExt : ExtendStatement n M) (hz : IsLocalHomeomorph z) (he : I
     funext y
     by_cases hy : y ∈ e.target
     · rw [Set.indicator_of_mem hy, hon y hy]
-    · rw [Set.indicator_apply, if_neg hy, hoff y hy]
+    · rw [Set.indicator_apply, ite_eq_right hy, hoff y hy]
   set g : M → V n := e.source.indicator (G' ∘ e) with hgdef
   have hgj : ∀ j, (fun x => g x j) = e.source.indicator ((fun u => G' u j) ∘ e) := fun j => by
     funext x
@@ -298,7 +298,7 @@ theorem chT_back (hExt : ExtendStatement n M) (hz : IsLocalHomeomorph z) (he : I
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [hgj i]
       exact ((hE i).2.2.2 i x hx).1
-    · rw [Set.indicator_apply, if_neg hx]
+    · rw [Set.indicator_apply, ite_eq_right hx]
       refine Finset.sum_eq_zero fun i _ => ?_
       rw [hgj i]
       exact (hdz _ x (fun h => hx ((hE i).2.2.1 h)) i).1
@@ -311,7 +311,7 @@ theorem chT_back (hExt : ExtendStatement n M) (hz : IsLocalHomeomorph z) (he : I
     rw [hgj k, hgj j]
     by_cases hx : x ∈ e.source
     · rw [Set.indicator_of_mem hx, ((hE k).2.2.2 j x hx).2, ((hE j).2.2.2 k x hx).2]
-    · rw [Set.indicator_apply, if_neg hx, (hdz _ x (fun h => hx ((hE k).2.2.1 h)) j).2,
+    · rw [Set.indicator_apply, ite_eq_right hx, (hdz _ x (fun h => hx ((hE k).2.2.1 h)) j).2,
         (hdz _ x (fun h => hx ((hE j).2.2.1 h)) k).2, sub_zero]
   refine ⟨g, ?_, ?_, ?_, ?_, ?_⟩
   · intro j
@@ -321,7 +321,7 @@ theorem chT_back (hExt : ExtendStatement n M) (hz : IsLocalHomeomorph z) (he : I
     by_cases hxs : x ∈ e.source
     · rw [hgdef, Set.indicator_of_mem hxs, Function.comp_apply]
       exact hG'0 _ (fun h => hx ⟨e x, h, e.left_inv hxs⟩)
-    · rw [hgdef, Set.indicator_apply, if_neg hxs]
+    · rw [hgdef, Set.indicator_apply, ite_eq_right hxs]
   · have heq : nV n z (fun x => g x - G x) (fun _ => 0) =
         ∫⁻ y, ‖G' y - e.target.indicator (G ∘ e.symm) y‖ₑ ^ 2 := by
       simp only [nV, neg_zero, Real.exp_zero, mul_one]
@@ -334,7 +334,7 @@ theorem chT_back (hExt : ExtendStatement n M) (hz : IsLocalHomeomorph z) (he : I
           Set.indicator_of_mem hy, Function.comp_apply, ENNReal.ofReal_pow (norm_nonneg _),
           ofReal_norm_eq_enorm]
       · intro y hy
-        rw [hG'0 y (fun h => hy (hK₀t h)), Set.indicator_apply, if_neg hy]
+        rw [hG'0 y (fun h => hy (hK₀t h)), Set.indicator_apply, ite_eq_right hy]
         simp
     rw [heq]
     exact h1
@@ -352,7 +352,7 @@ theorem chT_back (hExt : ExtendStatement n M) (hz : IsLocalHomeomorph z) (he : I
           ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm_eq_enorm]
       · intro y hy
         have hyK : y ∉ K₀ := fun h => hy (hK₀t h)
-        rw [Finset.sum_eq_zero fun i _ => (hwz i y hyK i).1, Set.indicator_apply, if_neg hy]
+        rw [Finset.sum_eq_zero fun i _ => (hwz i y hyK i).1, Set.indicator_apply, ite_eq_right hy]
         simp
     rw [heq]
     exact h2

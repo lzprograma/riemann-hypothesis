@@ -12,54 +12,10 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingMod
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.MemW1IffPattern
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.AuxiliaryVectorCutByHermitianLinearForm
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.SumCount
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.ConjugateSelfDual.Statement
 import ReciprocityTheory.GaloisValuations.GlobalA
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
 
@@ -215,16 +171,16 @@ private def Cnd (lo same : Prop) (d : DD X g) : Prop :=
 private theorem card_cnd (lo same : Prop) [Decidable lo] [Decidable same] :
     Nat.card {d : DD X g // Cnd lo same d} = Nat.card X ^ (if lo then 0 else if same then 1 else g) := by
   by_cases hlo : lo
-  · rw [if_pos hlo, pow_zero, Nat.card_eq_one_iff_exists]
+  · rw [ite_eq_left hlo, pow_zero, Nat.card_eq_one_iff_exists]
     refine ⟨⟨0, fun _ => rfl, rfl, rfl, fun _ => rfl, fun _ => rfl⟩, fun d => Subtype.ext (d.2.1 hlo)⟩
   · by_cases hs : same
-    · rw [if_neg hlo, if_pos hs, pow_one]
+    · rw [ite_eq_right hlo, ite_eq_left hs, pow_one]
       exact Nat.card_congr
         { toFun := fun d => d.1.a
           invFun := fun y => ⟨⟨y, 0, 0, 0⟩, fun h => absurd h hlo, rfl, rfl, fun _ => rfl, fun h => absurd hs h⟩
           left_inv := fun d => Subtype.ext (DD.ext rfl (d.2.2.2.2.1 hs).symm d.2.2.1.symm d.2.2.2.1.symm)
           right_inv := fun y => rfl }
-    · rw [if_neg hlo, if_neg hs]
+    · rw [ite_eq_right hlo, ite_eq_right hs]
       have e : {d : DD X g // Cnd lo same d} ≃ (Fin g → X) :=
         { toFun := fun d => d.1.ep
           invFun := fun f => ⟨⟨0, f, 0, 0⟩, fun h => absurd h hlo, rfl, rfl, fun h => absurd h hs, fun _ => rfl⟩
@@ -597,17 +553,17 @@ private theorem card_pow_nu_le_card_skew_w1 (A X : Type) [CommRing A] [CommRing 
       (¬((i : ℕ) < a ↔ (j : ℕ) < a) → (Mf s i j).a = 0) := by
     intro s i j
     by_cases hij : (i : ℕ) < j
-    · simp only [Mf, dif_pos hij]
+    · simp only [Mf, dite_eq_left hij]
       exact hV s i j hij
     · by_cases hji : (j : ℕ) < i
-      · simp only [Mf, dif_neg hij, dif_pos hji]
+      · simp only [Mf, dite_eq_right hij, dite_eq_left hji]
         obtain ⟨h1, h2, h3, h4⟩ := hV s j i hji
         refine ⟨funext fun t => ?_, ?_, fun hs => funext fun t => ?_, fun hs => ?_⟩
         · simp [DD.neg_ep', h1]
         · simp [DD.neg_eta, h2]
         · simp [DD.neg_ep, h3 hs.symm]
         · simp [DD.neg_a, h4 (fun h => hs h.symm)]
-      · simp only [Mf, dif_neg hij, dif_neg hji]
+      · simp only [Mf, dite_eq_right hij, dite_eq_right hji]
         exact ⟨funext fun t => DD.zero_ep' t, DD.zero_eta, fun _ => funext fun t => DD.zero_ep t,
           fun _ => DD.zero_a⟩
   have hanti : ∀ s, (Mf s)ᵀ = -(Mf s) := by
@@ -616,24 +572,24 @@ private theorem card_pow_nu_le_card_skew_w1 (A X : Type) [CommRing A] [CommRing 
     show Mf s j i = -(Mf s i j)
     simp only [Mf]
     rcases lt_trichotomy (i : ℕ) j with h | h | h
-    · simp only [dif_neg (lt_asymm h), dif_pos h]
+    · simp only [dite_eq_right (lt_asymm h), dite_eq_left h]
     · have h1 : ¬ (j : ℕ) < i := by omega
       have h2 : ¬ (i : ℕ) < j := by omega
-      simp only [dif_neg h1, dif_neg h2, neg_zero]
-    · simp only [dif_pos h, dif_neg (lt_asymm h), neg_neg]
+      simp only [dite_eq_right h1, dite_eq_right h2, neg_zero]
+    · simp only [dite_eq_left h, dite_eq_right (lt_asymm h), neg_neg]
   have hx1 : ∀ s (i j : Fin n) (hij : (i : ℕ) < j) (hi : (i : ℕ) < a) (hj : (j : ℕ) < a),
       Mf s i j = DD.C (s.1 ⟨(⟨i, hi⟩, ⟨j, hj⟩), hij⟩) := by
     intro s i j hij hi hj
-    simp only [Mf, V, dif_pos hij, dif_pos hi, dif_pos hj]
+    simp only [Mf, V, dite_eq_left hij, dite_eq_left hi, dite_eq_left hj]
   have hx2 : ∀ s (i j : Fin n) (hij : (i : ℕ) < j) (hi : ¬ (i : ℕ) < a),
       Mf s i j = DD.C (s.2.1 ⟨(⟨i - a, by have := i.isLt; omega⟩, ⟨j - a, by have := j.isLt; omega⟩),
         Fin.mk_lt_mk.2 (by omega)⟩) := by
     intro s i j hij hi
-    simp only [Mf, V, dif_pos hij, dif_neg hi]
+    simp only [Mf, V, dite_eq_left hij, dite_eq_right hi]
   have hx3 : ∀ s (i j : Fin n) (hij : (i : ℕ) < j) (hi : (i : ℕ) < a) (hj : ¬ (j : ℕ) < a),
       Mf s i j = ⟨0, s.2.2 (⟨i, hi⟩, ⟨j - a, by have := j.isLt; omega⟩), 0, 0⟩ := by
     intro s i j hij hi hj
-    simp only [Mf, V, dif_pos hij, dif_pos hi, dif_neg hj]
+    simp only [Mf, V, dite_eq_left hij, dite_eq_left hi, dite_eq_right hj]
   let φ : S → {Y : ↥(W1 n A X g a) //
       (Y : Matrix (Fin n) (Fin n) (DD X g))ᵀ = -(Y : Matrix (Fin n) (Fin n) (DD X g))} :=
     fun s => ⟨⟨Mf s, memW _ (hM s)⟩, hanti s⟩

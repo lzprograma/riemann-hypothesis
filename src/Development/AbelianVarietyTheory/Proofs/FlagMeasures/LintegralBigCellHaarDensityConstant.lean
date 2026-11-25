@@ -122,10 +122,10 @@ theorem antidiag_unique {ι : Type} [Fintype ι] [DecidableEq ι] (l : ι → �
   have hb : ∀ i j, l i + l j = N → (u * A) i j = A i j := by
     intro i j hij
     rw [Matrix.mul_apply, Finset.sum_eq_single i]
-    · rw [hu i i le_rfl, one_ap, if_pos rfl, one_mul]
+    · rw [hu i i le_rfl, one_ap, ite_eq_left rfl, one_mul]
     · intro m _ hmi
       by_cases hm : l m + l j = N
-      · rw [hu i m (by omega), one_ap, if_neg (Ne.symm hmi), zero_mul]
+      · rw [hu i m (by omega), one_ap, ite_eq_right (Ne.symm hmi), zero_mul]
       · rw [hA m j hm, mul_zero]
     · intro hi; exact absurd (Finset.mem_univ i) hi
   have hc : ∀ i j, l i + l j < N → (B * u') i j = 0 := by
@@ -141,10 +141,10 @@ theorem antidiag_unique {ι : Type} [Fintype ι] [DecidableEq ι] (l : ι → �
   have hd : ∀ i j, l i + l j = N → (B * u') i j = B i j := by
     intro i j hij
     rw [Matrix.mul_apply, Finset.sum_eq_single j]
-    · rw [hu' j j le_rfl, one_ap, if_pos rfl, mul_one]
+    · rw [hu' j j le_rfl, one_ap, ite_eq_left rfl, mul_one]
     · intro m _ hmj
       by_cases hm : l i + l m = N
-      · rw [hu' m j (by omega), one_ap, if_neg hmj, mul_zero]
+      · rw [hu' m j (by omega), one_ap, ite_eq_right hmj, mul_zero]
       · rw [hB i m hm, zero_mul]
     · intro hj; exact absurd (Finset.mem_univ j) hj
   have hAB : A = B := by
@@ -192,7 +192,7 @@ theorem bigCell_entry (k r : ℕ) (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1))
   have h1 : (eI k r a).val < r := a.isLt
   simp only [bigCell]
   rw [dite_eq_left h1]
-  exact if_pos rfl
+  exact ite_eq_left rfl
 
 private theorem lev_mono' (k r : ℕ) (i j : Fin (2 * r + k + 1)) (h : j.val ≤ i.val) :
     lev k r j ≤ lev k r i := by
@@ -250,7 +250,7 @@ private theorem bigCell_mid_apply (k r : ℕ) (c : Fin r → ℂ) (m j : Fin (2 
     (h2 : j.val ≤ r + k) : bigCell k r c 1 m j = if m = j then 1 else 0 := by
   by_cases hm : Formalism.FourierDecayAlt.P.TwoByOneBlock.mid k r m
   · exact Formalism.FourierDecayAlt.P.TwoByOneBlock.bc_one_mid c m j hm ⟨h1, h2⟩
-  · rw [Formalism.FourierDecayAlt.P.TwoByOneBlock.bc_mid_col c 1 m j ⟨h1, h2⟩, dite_eq_right hm, if_neg]
+  · rw [Formalism.FourierDecayAlt.P.TwoByOneBlock.bc_mid_col c 1 m j ⟨h1, h2⟩, dite_eq_right hm, ite_eq_right]
     intro hmj
     subst hmj
     exact hm ⟨h1, h2⟩
@@ -267,39 +267,39 @@ private theorem bigCell_mul_bigCell_star (k r : ℕ) (x : Fin r → ℂ) (hx : �
     rw [Finset.sum_eq_single p]
     · rw [Formalism.QuantumDeterminants.BruhatBigCell.col_lo (fun a => star (x a)) 1 p j a ha.symm,
         Formalism.QuantumDeterminants.BruhatBigCell.col_hi x 1 i p a (by omega),
-        if_pos (show p.val = 2 * r + k - a.val by omega)]
+        ite_eq_left (show p.val = 2 * r + k - a.val by omega)]
       by_cases hia : i.val = a.val
       · have hij : i = j := Fin.ext (by omega)
-        rw [if_pos hia, hij, Matrix.one_apply_eq]
+        rw [ite_eq_left hia, hij, Matrix.one_apply_eq]
         show (star (x a))⁻¹ * star (x a) = 1
         exact inv_mul_cancel₀ (star_ne_zero.mpr (hx a))
-      · rw [if_neg hia, zero_mul, Matrix.one_apply_ne (show i ≠ j from fun h => hia (by rw [h]; omega))]
+      · rw [ite_eq_right hia, zero_mul, Matrix.one_apply_ne (show i ≠ j from fun h => hia (by rw [h]; omega))]
     · intro m _ hm
       rw [Formalism.QuantumDeterminants.BruhatBigCell.col_lo (fun a => star (x a)) 1 m j a ha.symm,
-        if_neg (show ¬ m.val = 2 * r + k - a.val from fun h' => hm (Fin.ext (by omega))), mul_zero]
+        ite_eq_right (show ¬ m.val = 2 * r + k - a.val from fun h' => hm (Fin.ext (by omega))), mul_zero]
     · intro h; exact absurd (Finset.mem_univ _) h
   · by_cases h2 : j.val ≤ r + k
     · rw [Finset.sum_eq_single j]
       · rw [bigCell_mid_apply k r (fun a => star (x a)) j j (by omega) h2, bigCell_mid_apply k r x i j (by omega) h2,
-          if_pos (rfl : j = j), mul_one, Matrix.one_apply]
+          ite_eq_left (rfl : j = j), mul_one, Matrix.one_apply]
       · intro m _ hm
-        rw [bigCell_mid_apply k r (fun a => star (x a)) m j (by omega) h2, if_neg hm, mul_zero]
+        rw [bigCell_mid_apply k r (fun a => star (x a)) m j (by omega) h2, ite_eq_right hm, mul_zero]
       · intro h; exact absurd (Finset.mem_univ _) h
     · obtain ⟨a, ha⟩ : ∃ a : Fin r, a.val = 2 * r + k - j.val := ⟨⟨2 * r + k - j.val, by omega⟩, rfl⟩
       obtain ⟨p, hp⟩ : ∃ p : Fin (2 * r + k + 1), p.val = a.val := ⟨⟨a.val, by omega⟩, rfl⟩
       rw [Finset.sum_eq_single p]
       · rw [Formalism.QuantumDeterminants.BruhatBigCell.col_hi (fun a => star (x a)) 1 p j a (by omega),
-          Formalism.QuantumDeterminants.BruhatBigCell.col_lo x 1 i p a hp, if_pos hp]
+          Formalism.QuantumDeterminants.BruhatBigCell.col_lo x 1 i p a hp, ite_eq_left hp]
         by_cases hia : i.val = 2 * r + k - a.val
         · have hij : i = j := Fin.ext (by omega)
-          rw [if_pos hia, hij, Matrix.one_apply_eq]
+          rw [ite_eq_left hia, hij, Matrix.one_apply_eq]
           show x a * (star (star (x a)))⁻¹ = 1
           rw [star_star]
           exact mul_inv_cancel₀ (hx a)
-        · rw [if_neg hia, zero_mul, Matrix.one_apply_ne (show i ≠ j from fun h => hia (by rw [h]; omega))]
+        · rw [ite_eq_right hia, zero_mul, Matrix.one_apply_ne (show i ≠ j from fun h => hia (by rw [h]; omega))]
       · intro m _ hm
         rw [Formalism.QuantumDeterminants.BruhatBigCell.col_hi (fun a => star (x a)) 1 m j a (by omega),
-          if_neg (show ¬ m.val = a.val from fun h' => hm (Fin.ext (by omega))), mul_zero]
+          ite_eq_right (show ¬ m.val = a.val from fun h' => hm (Fin.ext (by omega))), mul_zero]
       · intro h; exact absurd (Finset.mem_univ _) h
 
 theorem bigCell_coords_unique : ∀ (k r : ℕ) (x y : Fin r → ℂ), (∀ a, x a ≠ 0) → (∀ a, y a ≠ 0) →
@@ -429,9 +429,9 @@ private lemma wC_mul_apply (N : Mat k r) (i j : Fin (2 * r + k + 1)) : (wC k r *
 
 private lemma mul_wC_apply (N : Mat k r) (i j : Fin (2 * r + k + 1)) : (N * wC k r) i j = N i (sw k r j) := by
   rw [Matrix.mul_apply, Finset.sum_eq_single (sw k r j)]
-  · rw [wC_apply, if_pos (sw_sw j).symm, mul_one]
+  · rw [wC_apply, ite_eq_left (sw_sw j).symm, mul_one]
   · intro l _ hl
-    rw [wC_apply, if_neg, mul_zero]
+    rw [wC_apply, ite_eq_right, mul_zero]
     intro h
     exact hl (by rw [h, sw_sw])
   · intro h
@@ -444,9 +444,9 @@ lemma conj_apply (M : Mat k r) (i j : Fin (2 * r + k + 1)) :
 private lemma mul_Hpk_apply' (N : Mat k r) (i j : Fin (2 * r + k + 1)) :
     (N * Hpk k r) i j = N i (sw k r j) * sg k r j := by
   rw [Matrix.mul_apply, Finset.sum_eq_single (sw k r j)]
-  · rw [hpk_apply, if_pos (sw_sw j).symm, sg_sw]
+  · rw [hpk_apply, ite_eq_left (sw_sw j).symm, sg_sw]
   · intro l _ hl
-    rw [hpk_apply, if_neg, mul_zero]
+    rw [hpk_apply, ite_eq_right, mul_zero]
     intro h
     exact hl (by rw [h, sw_sw])
   · intro h
@@ -539,9 +539,9 @@ lemma norm_torD (x : Fin r → ℂ) : ∑ i, ∑ j, ‖torD k r x i j‖ ^ 2 = 2
       ∑ a, ‖x a‖ ^ 2 := by
     refine (Fin.sum_univ_eq_sum_range (fun n => if h : n < r then ‖x ⟨n, h⟩‖ ^ 2 else 0) _).trans ?_
     rw [show 2 * r + k + 1 = r + (r + k + 1) by ring, Finset.sum_range_add]
-    rw [Finset.sum_eq_zero (s := Finset.range (r + k + 1)) (fun n _ => dif_neg (by omega)), add_zero]
+    rw [Finset.sum_eq_zero (s := Finset.range (r + k + 1)) (fun n _ => dite_eq_right (by omega)), add_zero]
     refine (Fin.sum_univ_eq_sum_range (fun n => if h : n < r then ‖x ⟨n, h⟩‖ ^ 2 else 0) r).symm.trans ?_
-    exact Finset.sum_congr rfl fun a _ => dif_pos a.isLt
+    exact Finset.sum_congr rfl fun a _ => dite_eq_left a.isLt
   rw [hsw, hG]
   ring
 
@@ -575,13 +575,13 @@ theorem dchart_skew_norm : ∀ (k r : ℕ) (v : EE k r),
     simp
   · have hmid : ∀ i : Fin (2 * r + k + 1), r ≤ i.val ∧ i.val ≤ r + k → lev k r i = r := fun i h => by
       unfold lev
-      rw [if_neg (by omega), if_pos h.2]
+      rw [ite_eq_right (by omega), ite_eq_left h.2]
     have hToff : ∀ i j : Fin (2 * r + k + 1), i ≠ j → torD k r x i j = 0 := fun i j h => by
       unfold torD
       exact Matrix.diagonal_apply_ne _ h
     have hTmid : ∀ i : Fin (2 * r + k + 1), r ≤ i.val ∧ i.val ≤ r + k → torD k r x i i = 0 := fun i h => by
       unfold torD
-      rw [Matrix.diagonal_apply_eq, dif_neg (by omega), dif_neg (by omega)]
+      rw [Matrix.diagonal_apply_eq, dite_eq_right (by omega), dite_eq_right (by omega)]
     have hentry : ∀ i j, ‖(-(wC k r * um X * wC k r) + torD k r x + um Y + um X') i j‖ ^ 2 =
         ‖um X (sw k r i) (sw k r j)‖ ^ 2 + ‖um X' i j‖ ^ 2 + ‖torD k r x i j‖ ^ 2 + ‖um Y i j‖ ^ 2 := by
       intro i j
@@ -657,17 +657,17 @@ lemma wC_eq (k r : ℕ) (i j : Fin (2 * r + k + 1)) :
 lemma conj_apply (k r : ℕ) (M : Mat k r) (i j : Fin (2 * r + k + 1)) :
     (wC k r * M * wC k r) i j = M (sig k r i) (sig k r j) := by
   simp only [Matrix.mul_apply, wC_eq k r i, ite_mul, zero_mul, one_mul, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
   simp only [wC_eq, eq_sig_iff k r j, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
 
 lemma skew_apply (k r : ℕ) (M : Mat k r) (i j : Fin (2 * r + k + 1)) :
     (Mᴴ * Hpk k r + Hpk k r * M) i j =
       star (M (sig k r j) i) * sgn k r j + sgn k r i * M (sig k r i) j := by
   simp only [Matrix.add_apply, Matrix.mul_apply, conjTranspose_apply, Hpk_eq k r i, ite_mul,
-    zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   simp only [Hpk_eq, eq_sig_iff k r j, mul_ite, mul_zero, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true, sgn_sig]
+    Finset.mem_univ, ite_true, sgn_sig]
 
 lemma skew_iff (k r : ℕ) (M : Mat k r) :
     Mᴴ * Hpk k r + Hpk k r * M = 0 ↔
@@ -698,8 +698,8 @@ lemma exists_N (k r : ℕ) (M : Mat k r) (h : Mᴴ * Hpk k r + Hpk k r * M = 0) 
   have h2 := lev_sig k r j
   simp only [Matrix.of_apply]
   by_cases c : lev k r (sig k r j) < lev k r i
-  · rw [if_pos c, if_pos (by omega)]; exact h i j
-  · rw [if_neg c, if_neg (by omega)]; simp
+  · rw [ite_eq_left c, ite_eq_left (by omega)]; exact h i j
+  · rw [ite_eq_right c, ite_eq_right (by omega)]; simp
 
 lemma exists_lieElement_middleBlockPart (k r : ℕ) (M : Mat k r) (h : Mᴴ * Hpk k r + Hpk k r * M = 0) :
     ∃ Y : lieE (Formalism.FourierDecayAlt.B2.UWb k r), um Y = Matrix.of fun i j =>
@@ -707,7 +707,7 @@ lemma exists_lieElement_middleBlockPart (k r : ℕ) (M : Mat k r) (h : Mᴴ * Hp
   refine ⟨⟨(WithLp.equiv 2 _).symm (realifyFun (Matrix.of fun i j =>
       if (r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k) then M i j else 0)), ?_⟩, unre _⟩
   rw [(_root_.GlobalTheory.CellLieAlg.lie_entries k r _).2.1, unre]
-  refine ⟨?_, fun i j hij => by simp only [Matrix.of_apply, if_neg hij]⟩
+  refine ⟨?_, fun i j hij => by simp only [Matrix.of_apply, ite_eq_right hij]⟩
   rw [skew_iff] at h ⊢
   intro i j
   have h1 := sig_val k r i
@@ -716,9 +716,9 @@ lemma exists_lieElement_middleBlockPart (k r : ℕ) (M : Mat k r) (h : Mᴴ * Hp
   have hj := j.isLt
   simp only [Matrix.of_apply]
   by_cases c : (r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k)
-  · rw [if_pos (by split_ifs at h1 h2 <;> omega), if_pos (by split_ifs at h1 h2 <;> omega)]
+  · rw [ite_eq_left (by split_ifs at h1 h2 <;> omega), ite_eq_left (by split_ifs at h1 h2 <;> omega)]
     exact h i j
-  · rw [if_neg (by split_ifs at h1 h2 <;> omega), if_neg (by split_ifs at h1 h2 <;> omega)]
+  · rw [ite_eq_right (by split_ifs at h1 h2 <;> omega), ite_eq_right (by split_ifs at h1 h2 <;> omega)]
     simp
 
 theorem dchart_onto : ∀ (k r : ℕ) (Z : Mat k r), Zᴴ * Hpk k r + Hpk k r * Z = 0 →
@@ -744,29 +744,29 @@ theorem dchart_onto : ∀ (k r : ℕ) (Z : Mat k r), Zᴴ * Hpk k r + Hpk k r * 
     sig_sig, torD, Matrix.diagonal_apply]
   by_cases hij : i = j
   · subst hij
-    simp only [lt_irrefl, if_false, if_true, neg_zero, zero_add, add_zero, and_self]
+    simp only [lt_irrefl, ite_false, ite_true, neg_zero, zero_add, add_zero, and_self]
     by_cases c : i.val < r
-    · rw [dite_eq_left c, if_neg (by omega), add_zero]; rfl
+    · rw [dite_eq_left c, ite_eq_right (by omega), add_zero]; rfl
     · rw [dite_eq_right c]
       by_cases c' : r + k < i.val
-      · rw [dite_eq_left c', if_neg (by omega), add_zero]
+      · rw [dite_eq_left c', ite_eq_right (by omega), add_zero]
         have e : eI k r ⟨2 * r + k - i.val, by omega⟩ = sig k r i :=
           Fin.ext (by rw [sig_hi k r i c']; rfl)
         rw [e]
         have := hZ' (sig k r i) i
         rw [sgn_sig, sig_sig] at this
-        have hs : sgn k r i = 1 := by unfold sgn; rw [if_neg (by omega)]
+        have hs : sgn k r i = 1 := by unfold sgn; rw [ite_eq_right (by omega)]
         rw [hs] at this
         linear_combination -this
-      · rw [dite_eq_right c', if_pos (by omega), zero_add]
-  · rw [if_neg hij, add_zero]
+      · rw [dite_eq_right c', ite_eq_left (by omega), zero_add]
+  · rw [ite_eq_right hij, add_zero]
     have hij' : i.val ≠ j.val := fun h => hij (Fin.ext h)
     have l1 : lev k r i = if i.val < r then i.val else if i.val ≤ r + k then r else i.val - k := rfl
     have l2 : lev k r j = if j.val < r then j.val else if j.val ≤ r + k then r else j.val - k := rfl
     rcases lt_trichotomy (lev k r i) (lev k r j) with c | c | c
-    · rw [if_neg (by omega), if_neg (by split_ifs at l1 l2 <;> omega), if_pos c]; simp
-    · rw [if_neg (by omega), if_pos (by split_ifs at l1 l2 <;> omega), if_neg (by omega)]; simp
-    · rw [if_pos (by omega), if_neg (by split_ifs at l1 l2 <;> omega), if_neg (by omega)]; simp
+    · rw [ite_eq_right (by omega), ite_eq_right (by split_ifs at l1 l2 <;> omega), ite_eq_left c]; simp
+    · rw [ite_eq_right (by omega), ite_eq_left (by split_ifs at l1 l2 <;> omega), ite_eq_right (by omega)]; simp
+    · rw [ite_eq_left (by omega), ite_eq_right (by split_ifs at l1 l2 <;> omega), ite_eq_right (by omega)]; simp
 
 end GlobalTheory.CellDens.Onto
 end -- clump:auto
@@ -857,13 +857,13 @@ theorem dg_deriv (k r : ℕ) (j : Fin (2 * r + k + 1)) :
       ∀ x, D x = torD k r x j j := by
   simp only [dg, torD, Matrix.diagonal_apply_eq]
   by_cases h1 : j.val < r
-  · simp only [dif_pos h1]
+  · simp only [dite_eq_left h1]
     exact ⟨_, (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin r => ℂ)
       ⟨j.val, h1⟩).hasStrictFDerivAt.const_add 1, fun x => rfl⟩
   · by_cases h2 : j.val ≤ r + k
-    · simp only [dif_neg h1, dif_pos h2, dif_neg (not_lt.2 h2)]
+    · simp only [dite_eq_right h1, dite_eq_left h2, dite_eq_right (not_lt.2 h2)]
       exact ⟨0, hasStrictFDerivAt_const _ _, fun x => rfl⟩
-    · simp only [dif_neg h1, dif_neg h2, dif_pos (not_le.1 h2)]
+    · simp only [dite_eq_right h1, dite_eq_right h2, dite_eq_left (not_le.1 h2)]
       set a : Fin r := ⟨2 * r + k - j.val, by omega⟩
       let L : (Fin r → ℂ) →L[ℝ] ℂ := (Complex.conjCLE : ℂ →L[ℝ] ℂ).comp
         (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin r => ℂ) a)
@@ -1303,10 +1303,10 @@ theorem dL_bij : Function.Bijective (dL k r) := by
     have h1 := sq_nonneg ‖v.1.1‖
     have h2 := sq_nonneg ‖v.1.2‖
     have h3 := sq_nonneg ‖v.2.2‖
-    have e1 : v.1.1 = 0 := by rw [← norm_eq_zero, ← sq_eq_zero_iff]; nlinarith
-    have e2 : v.1.2 = 0 := by rw [← norm_eq_zero, ← sq_eq_zero_iff]; nlinarith
-    have e3 : v.2.2 = 0 := by rw [← norm_eq_zero, ← sq_eq_zero_iff]; nlinarith
-    have e4 : ∑ a, ‖v.2.1 a‖ ^ 2 = 0 := by nlinarith
+    have e1 : v.1.1 = 0 := by rw [← norm_eq_zero, ← sq_eq_zero_iff]; linarith
+    have e2 : v.1.2 = 0 := by rw [← norm_eq_zero, ← sq_eq_zero_iff]; linarith
+    have e3 : v.2.2 = 0 := by rw [← norm_eq_zero, ← sq_eq_zero_iff]; linarith
+    have e4 : ∑ a, ‖v.2.1 a‖ ^ 2 = 0 := by linarith
     rw [Finset.sum_eq_zero_iff_of_nonneg (fun _ _ => by positivity)] at e4
     have e5 : v.2.1 = 0 := funext fun a => by simpa using e4 a (Finset.mem_univ _)
     exact Prod.ext (Prod.ext e1 e2) (Prod.ext e5 e3)

@@ -73,15 +73,6 @@ theorem pdT_snoc {f : 𝔼 → ℂ} (hf : ContDiff ℝ ∞ f) {k : ℕ} (J : Fin
   rw [pdT, h, dT_snoc hf]
   rfl
 
-theorem pdT_cons {f : 𝔼 → ℂ} (hf : ContDiff ℝ ∞ f) {k : ℕ} (i : Fin n) (J : Fin k → Fin n) :
-    pdT (Fin.cons i J) f = pd i (pdT J f) := by
-  have h : (fun l ↦ ev (Fin.cons (α := fun _ ↦ Fin n) i J l)) =
-      Fin.cons (ev i : 𝔼) (fun l ↦ ev (J l)) := by
-    funext l
-    refine Fin.cases ?_ (fun j ↦ ?_) l <;> simp
-  rw [pdT, h, dT_cons hf]
-  rfl
-
 theorem fderiv_fderiv_apply_comm {g : 𝔼 → ℂ} (hg : ContDiff ℝ ∞ g) (x a b : 𝔼) :
     fderiv ℝ (fun y ↦ fderiv ℝ g y b) x a = fderiv ℝ (fun y ↦ fderiv ℝ g y a) x b := by
   have hd : DifferentiableAt ℝ (fderiv ℝ g) x :=

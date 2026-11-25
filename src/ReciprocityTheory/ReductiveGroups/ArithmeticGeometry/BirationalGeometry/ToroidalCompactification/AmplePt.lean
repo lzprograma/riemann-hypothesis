@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.MemNonzeroLocusOfPull
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
@@ -65,20 +66,7 @@ theorem iso_linComb {w : LB.Iso L' (L.pull F)} (hw : PGen w) (φ' : K → (Y' �
 
 theorem mem_nonzeroLocus {M : LB Y} (s : LB.Sec M) (y : Y) :
     y ∈ nonzeroLocus s ↔ ∃ k, y ∈ M.U k ∧ IsUnit (gs (𝟙 Y) y _ (s.f k)) := by
-  simp only [nonzeroLocus, TopologicalSpace.Opens.mem_iSup]
-  refine exists_congr fun k => ?_
-  constructor
-  · intro hy
-    have hk : y ∈ M.U k := Scheme.basicOpen_le _ _ hy
-    refine ⟨hk, ?_⟩
-    have hu := (Scheme.mem_basicOpen Y (s.f k) y hk).1 hy
-    unfold gs
-    rw [dite_eq_left (show (𝟙 Y : Y ⟶ Y) y ∈ M.U k by simpa using hk)]
-    exact hu
-  · rintro ⟨hk, hu⟩
-    unfold gs at hu
-    rw [dite_eq_left (show (𝟙 Y : Y ⟶ Y) y ∈ M.U k by simpa using hk)] at hu
-    exact (Scheme.mem_basicOpen Y (s.f k) y hk).2 hu
+  apply GlobalTheory.SectionBaseChange.mem_nonzeroLocus <;> assumption
 
 end
 

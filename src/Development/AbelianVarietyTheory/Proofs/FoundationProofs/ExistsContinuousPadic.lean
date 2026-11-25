@@ -251,11 +251,10 @@ theorem resChar_mem : ((resChar p : ℕ) : 𝓞 F) ∈ p.asIdeal := by
   rw [← Ideal.Quotient.eq_zero_iff_mem, map_natCast]
   exact ringChar.Nat.cast_ringChar
 
-@[reducible] def complRel : ValuativeRel (p.adicCompletion F) :=
+@[reducible] instance complRel : ValuativeRel (p.adicCompletion F) :=
   ValuativeRel.ofValuation (Valued.v : Valuation (p.adicCompletion F) (WithZero (Multiplicative ℤ)))
 
-theorem isLocalField : letI := complRel p; IsNonarchimedeanLocalField (p.adicCompletion F) := by
-  let := complRel p
+instance isLocalField : IsNonarchimedeanLocalField (p.adicCompletion F) := by
   have : (Valued.v : Valuation (p.adicCompletion F) (WithZero (Multiplicative ℤ))).Compatible :=
     Valuation.Compatible.ofValuation _
   have := GlobalTheory.AdelicUnitaryTop.properSpace_adicCompletion F p

@@ -116,8 +116,6 @@ noncomputable section
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.PRep GlobalTheory.SmGL UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob UpperTheory.V.Z.Sym.Sig UpperTheory.V.Z.Sym.So
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.V.Z.Sym.So
 
 section Scalar
@@ -331,13 +329,11 @@ noncomputable section
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.PRep GlobalTheory.SmGL UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob UpperTheory.V.Z.Sym.Sig UpperTheory.V.Z.Sym.So
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 section Grp
 
-private theorem indicator_eq_one_of_true {p : Prop} (h : p) : one p = 1 := if_pos h
+private theorem indicator_eq_one_of_true {p : Prop} (h : p) : one p = 1 := ite_eq_left h
 
-private theorem one_f {p : Prop} (h : ¬ p) : one p = 0 := if_neg h
+private theorem one_f {p : Prop} (h : ¬ p) : one p = 0 := ite_eq_right h
 
 private theorem transfer {G : Type} [Group G] (S U2 : Subgroup G) (hS : S.Normal) (x : G) (U : Subgroup S)
     (hU : ∀ g : S, g ∈ U ↔ x⁻¹ * g * x ∈ U2) (a b : S) (hxa : Commute x (a : G)) (hxb : Commute x (b : G))
@@ -441,12 +437,12 @@ private theorem fs_loc (A : SD Δ) (hA : A.Ok) (t : Dat.Par F) (g y : DA Δ) (hg
   classical
   obtain ⟨-, -, hS, -, -⟩ := datOk F Δ A hA
   have h' : v ∈ A.dat.Sg := h
-  have hSv : A.dat.S v = (A.V v).data (A.hs v h) (A.Ry v) (A.χ v) := dif_pos h
+  have hSv : A.dat.S v = (A.V v).data (A.hs v h) (A.Ry v) (A.χ v) := dite_eq_left h
   have hJ : A.dat.J2v v = ((A.V v).J 2).comap (eD (A.hs v h)) := by
-    refine (if_pos h').trans ?_
+    refine (ite_eq_left h').trans ?_
     rw [hSv]
     rfl
-  have hf : A.dat.fSv t v (y.1 v) = (A.dat.S v).fS (t v) (y.1 v) := if_pos h'
+  have hf : A.dat.fSv t v (y.1 v) = (A.dat.S v).fS (t v) (y.1 v) := ite_eq_left h'
   obtain ⟨hbij, -⟩ := eD_facts (Kv v) (Ov v) (hS v h).1 (hS v h).2.1 _ _ (A.hs v h) (hS v h).2.2.1
   have hd := (dcMap _ _ ℂ (eD (A.hs v h)) hbij ((A.V v).J 2) (g.1 v) (g.1 v)).1 (y.1 v)
   rw [hg.1 v h] at hd
@@ -456,14 +452,14 @@ private theorem fs_loc (A : SD Δ) (hA : A.Ok) (t : Dat.Par F) (g y : DA Δ) (hg
 private theorem fs_eq (A : SD Δ) (hA : A.Ok) (t : Dat.Par F) (g : DA Δ) (hg : A.IsElD g (SD.dS t)) (y : DA Δ) :
     A.dat.FS t y = one (y ∈ DC A.dat.U2 g) := by
   classical
-  have hb : ∀ v ∉ A.Sg, A.dat.J2v v = KD _ (Ov v) := fun v hv => if_neg hv
+  have hb : ∀ v ∉ A.Sg, A.dat.J2v v = KD _ (Ov v) := fun v hv => ite_eq_right hv
   have hgU : ∀ v ∉ A.Sg, (rpg _ _).p v g ∈ A.dat.J2v v := fun v hv => by
     show g.1 v ∈ _
     rw [hg.2 v hv]
     exact one_mem _
   have hbox := (uFBox (Pl F) (DA Δ) (fun v => DX (cv v Δ)) (fun v => KD (cv v Δ) (Ov v)) A.dat.J2v (rpg _ _) A.Sg hb g hgU).1 y
   have hloc := fs_loc A hA t g y hg
-  have hoff : ∀ v, v ∉ A.Sg → A.dat.fSv t v (y.1 v) = one (y.1 v ∈ KD _ (Ov v)) := fun v h => if_neg h
+  have hoff : ∀ v, v ∉ A.Sg → A.dat.fSv t v (y.1 v) = one (y.1 v ∈ KD _ (Ov v)) := fun v h => ite_eq_right h
   by_cases hy : y ∈ DC A.dat.U2 g
   · rw [indicator_eq_one_of_true hy]
     have hm := hbox.1 hy
@@ -475,8 +471,7 @@ private theorem fs_eq (A : SD Δ) (hA : A.Ok) (t : Dat.Par F) (g : DA Δ) (hg : 
       exact (hoff v h).trans (indicator_eq_one_of_true h2)
   · rw [one_f hy]
     have hex : ∃ v, A.dat.fSv t v (y.1 v) = 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       refine hy (hbox.2 ⟨fun v h => ?_, fun v h => ?_⟩)
       · by_contra c
         exact hc v ((hloc v h).trans (one_f c))
@@ -868,8 +863,6 @@ noncomputable section
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.PRep GlobalTheory.SmGL UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob UpperTheory.V.Z.Sym.Sig UpperTheory.V.Z.Sym.So
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 private lemma mul_of_genEig {P M : Type} [CommSemigroup P] [AddCommGroup M] [Module ℂ M] [FiniteDimensional ℂ M]
     (u : P → Module.End ℂ M) (hu : ∀ p q, u (p * q) = u p * u q) (hc : ∀ p q, Commute (u p) (u q))
     (ψ : P → ℂ) (h : IsGenEig u ψ) (p q : P) : ψ (p * q) = ψ p * ψ q := by
@@ -967,10 +960,10 @@ theorem UpperTheory.V.Z.Sym.Glob.gqK :
   haveI := hD.real
   have hr := cm_ne hτ
   have htr : ∀ v, HasTr ((ι γ).1 v) (cv v τ) := fun v => hasTr_map _ (hι γ v) hγ
-  have f1 : ∀ v ∈ D.Sg, D.fKv t v = (D.S v).fK (t v) := fun v hv => funext fun g => if_pos hv
-  have f2 : ∀ v ∉ D.Sg, D.fKv t v = fZD (Ov v) (D.χ v) := fun v hv => funext fun g => if_neg hv
-  have J1 : ∀ v ∈ D.Sg, D.J2v v = (D.S v).J2 := fun v hv => if_pos hv
-  have J2 : ∀ v ∉ D.Sg, D.J2v v = KD _ (Ov v) := fun v hv => if_neg hv
+  have f1 : ∀ v ∈ D.Sg, D.fKv t v = (D.S v).fK (t v) := fun v hv => funext fun g => ite_eq_left hv
+  have f2 : ∀ v ∉ D.Sg, D.fKv t v = fZD (Ov v) (D.χ v) := fun v hv => funext fun g => ite_eq_right hv
+  have J1 : ∀ v ∈ D.Sg, D.J2v v = (D.S v).J2 := fun v hv => ite_eq_left hv
+  have J2 : ∀ v ∉ D.Sg, D.J2v v = KD _ (Ov v) := fun v hv => ite_eq_right hv
   choose zv hzv using fun v => _root_.UpperTheory.V.Z.Sym.Loc.exists_unit_one_add_generator (cv_reg hr v)
   have ez : ∀ v jv, IsEmb (cv v τ) ((ι γ).1 v) jv → (ι (j z)).1 v = jv (zv v) := fun v jv hjv =>
     dx_ext ((hι (j z) v).trans (emb_map _ (hι γ v) hj hjv z _ (by
@@ -979,7 +972,7 @@ theorem UpperTheory.V.Z.Sym.Glob.gqK :
     have := (Loc.fzdLaw _ _ _ (hD.off v hv) _ (hD.chi v).1).2 1 1 k (by simp [IsScal, mt]) hk
     simpa using this
   by_cases hA : D.admitted t τ
-  · rw [show one (D.admitted t τ) = 1 from if_pos hA, one_mul]
+  · rw [show one (D.admitted t τ) = 1 from ite_eq_left hA, one_mul]
     refine gqD D hD ι hι t ht τ hτ hA γ j hγ hj (j z) (D.fKv t) (fun v => ?_) _ _ fun v jv hjv => ?_
     · by_cases hv : v ∈ D.Sg
       · rw [f1 v hv, J1 v hv]
@@ -992,7 +985,7 @@ theorem UpperTheory.V.Z.Sym.Glob.gqK :
       by_cases hv : v ∈ D.Sg
       · rw [f1 v hv, J1 v hv]
         obtain ⟨-, h1, -, h3, -⟩ := (hD.sig v hv).D_orb _ (ht v hv) _ _ _ (cv_reg hr v) (htr v) hjv _ (hzv v)
-        exact ⟨h1, fun _ => by rw [h3, show one (Ind _ _ _) = 1 from if_pos (hA v hv), mul_one], fun h => absurd hv h⟩
+        exact ⟨h1, fun _ => by rw [h3, show one (Ind _ _ _) = 1 from ite_eq_left (hA v hv), mul_one], fun h => absurd hv h⟩
       · rw [f2 v hv, J2 v hv]
         refine ⟨(Loc.finD _ _ _ _ (hD.off v hv) (cv_reg hr v) _ _ (htr v) hjv).2.1 _ (hzv v) _, fun h => absurd h hv, fun _ =>
           ⟨(locD _ _ _ _ (hD.off v hv) (cv_reg hr v) _ _ (htr v) hjv _ (hD.chi v).1 _ (hzv v)).2, fun h1 h2 => ?_⟩⟩
@@ -1000,7 +993,7 @@ theorem UpperTheory.V.Z.Sym.Glob.gqK :
         refine ⟨k1 v hv _ h3, fun y hy => h4 y ?_⟩
         by_contra h
         exact hy ((Loc.fzdLaw _ _ _ (hD.off v hv) _ (hD.chi v).1).1 _ h)
-  · rw [show one (D.admitted t τ) = 0 from if_neg hA, zero_mul, mul_zero]
+  · rw [show one (D.admitted t τ) = 0 from ite_eq_right hA, zero_mul, mul_zero]
     refine gqOn_zero _ _ _ _ fun y => ?_
     obtain ⟨v, hv⟩ := not_forall.1 hA
     obtain ⟨hv, hI⟩ := Classical.not_imp.1 hv
@@ -1278,12 +1271,12 @@ private theorem supp (hD : D.Ok) (t : Dat.Par F) (g : DA Δ) (h : D.FK t g ≠ 0
     have := (fzdLaw (Ov w) (Kv w) (cv w Δ) (hD.off w hn.1) (D.χ w) (hD.chi w).1).2 1 1 (g.1 w) (by simp [IsScal]) hn.2
     have hw' : w ∉ D.Sg := hn.1
     rw [one_mul] at this
-    simp only [Dat.fKv, if_neg hw', this, map_one, inv_one, Units.val_one]
+    simp only [Dat.fKv, ite_eq_right hw', this, map_one, inv_one, Units.val_one]
   intro h0
   apply h
   unfold Dat.FK
   refine finprod_eq_zero _ v ?_ hfin
-  simp only [Dat.fKv, if_pos hv, h0]
+  simp only [Dat.fKv, ite_eq_left hv, h0]
 
 private theorem real_emb (hD : D.Ok) : Nonempty (F →+* ℝ) := by
   have := hD.real
@@ -1343,7 +1336,7 @@ theorem UpperTheory.V.Z.Sym.Glob.sideK :
         ((∏ v ∈ D.Sg, (D.S v).cK : ℝ) : ℂ) * (ch i.1 * ms i.1 * D.nK i.1) := fun i => by
       rw [term_eq B hB.Γ₀ hΔ (hreg i) (hγ i) (hj i) (hz i), hB.tr _ _ (htd i).1 (htd i).2, hB.U,
         gqK F Δ D hD B.ι hι t ht i.1 i.2.1 (γ i) (j i) (hγ i) (hj i) (z i) (hz i)]
-      have : one (D.admitted t i.1) = 1 := if_pos i.2.2
+      have : one (D.admitted t i.1) = 1 := ite_eq_left i.2.2
       rw [this]
       push_cast
       ring
@@ -1410,8 +1403,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.PRep GlobalTheory.SmGL UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob UpperTheory.V.Z.Sym.Sig UpperTheory.V.Z.Sym.So
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 private theorem unif_lt_one (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] :
     valuation k (unif k : k) < 1 := by

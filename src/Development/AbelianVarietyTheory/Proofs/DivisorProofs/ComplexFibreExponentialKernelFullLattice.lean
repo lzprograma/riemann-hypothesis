@@ -115,7 +115,6 @@ theorem kernel_isFullLattice : ∀ (X : Scheme.{0}) (G : Over X) [GrpObj G] [IsC
     obtain ⟨v, hv, -⟩ := hd1 w
     exact (hd2 v hv.1).unique hv ((hiff _).1 hv)
   let F' : (Fin g → ℂ) ≃ₗ[ℂ] (Fin g → ℂ) := LinearEquiv.ofInjectiveEndo F Finj
-  have hF' : ∀ z, F' z = F z := fun _ => rfl
   have hker : ∀ z, e z = 1 ↔ F z ∈ u.Λ := fun z => by
     rw [← u.ker, hF, ← Φone, Φinj.eq_iff]
   let Λ : Submodule ℤ (Fin g → ℂ) := u.Λ.comap F.toAddMonoidHom.toIntLinearMap

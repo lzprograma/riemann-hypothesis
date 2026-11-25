@@ -12,7 +12,7 @@ namespace Formalism.L2.G
 open Formalism.L2.G.Cmp Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formalism.L2.Forms Formalism.UG NumberField IsDedekindDomain Matrix
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar Formalism.BasicNotions.factResChar
+attribute [local instance] Formalism.BasicNotions.factResChar
 
 section Cast
 

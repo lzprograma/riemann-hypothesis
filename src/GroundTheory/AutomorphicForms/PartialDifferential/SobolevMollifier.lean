@@ -19,18 +19,6 @@ variable {E F : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteD
   [MeasurableSpace E] [BorelSpace E]
   [NormedAddCommGroup F] [InnerProductSpace ℂ F] [CompleteSpace F]
 
-section MultiplierFourier
-
-variable {m : E → ℂ} {C s t : ℝ}
-
-end MultiplierFourier
-
-section Convolution
-
-
-
-end Convolution
-
 section Mollifier
 
 theorem norm_fourier_le_integral (ψ : 𝓢(E, ℂ)) (ξ : E) :

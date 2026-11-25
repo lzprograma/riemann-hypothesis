@@ -9,7 +9,6 @@ import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsLowestKFiniteV
 import Formalism.HermitianCurvature.StatementTBB
 import Formalism.HermitianCurvature.StatementJF
 import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsRegularRepBesselBigCellVectorEqBessel
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FamilySetupMomentClosure
 import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FixesWedgeAndForm
 import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HermCmpWedgeEqDet
 import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HsqNonneg

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FunctionLevelDataOfEqualTuplesZeroIntertwinersStatement
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousKapSymm
 public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittSmallGroupEmbeddingMemPointwiseStabilizerIso
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumUniqueOnThetaFunctions
@@ -50,7 +51,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf
 
 namespace GlobalTheory.TargetIsom
@@ -61,17 +61,11 @@ variable {D : D7}
 
 theorem entries_fix {A : Type} [CommRing A] {m n : ℕ} (c : A) {M : Matrix (Fin n) (Fin n) A} (hM : ∀ i j, c * M i j = M i j)
     (P : Matrix (Fin m) (Fin n) A) (Q : Matrix (Fin n) (Fin m) A) (i j : Fin m) : c * (P * M * Q) i j = (P * M * Q) i j := by
-  simp only [Matrix.mul_apply, Finset.mul_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
-  conv_rhs => rw [← hM l k]
-  ring
+  exact GlobalTheory.Mem.Isom.entries_fix c hM P Q i j
 
 theorem entries_fix' {A : Type} [CommRing A] {m n k : ℕ} (c : A) {M : Matrix (Fin n) (Fin k) A} (hM : ∀ i j, c * M i j = M i j)
     (P : Matrix (Fin m) (Fin n) A) (i : Fin m) (j : Fin k) : c * (P * M) i j = (P * M) i j := by
-  simp only [Matrix.mul_apply, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun l _ => ?_
-  conv_rhs => rw [← hM l j]
-  ring
+  exact GlobalTheory.Mem.Isom.entries_fix' c hM P i j
 
 theorem sub_one_conj {A : Type} [CommRing A] {m n : ℕ} {P : Matrix (Fin m) (Fin n) A} {Q : Matrix (Fin n) (Fin m) A} (PQ : P * Q = 1)
     (M : Matrix (Fin n) (Fin n) A) : P * M * Q - 1 = P * (M - 1) * Q := by
@@ -79,45 +73,11 @@ theorem sub_one_conj {A : Type} [CommRing A] {m n : ℕ} {P : Matrix (Fin m) (Fi
 
 theorem det_conj_rect {A : Type} [CommRing A] {m n : ℕ} (h : n = m) {P : Matrix (Fin m) (Fin n) A} {Q : Matrix (Fin n) (Fin m) A}
     (QP : Q * P = 1) (M : Matrix (Fin n) (Fin n) A) : (P * M * Q).det = M.det := by
-  subst h
-  rw [Matrix.det_mul, Matrix.det_mul, mul_comm (P.det), mul_assoc, ← Matrix.det_mul, mul_eq_one_comm.1 QP, Matrix.det_one, mul_one]
+  exact GlobalTheory.Mem.Isom.det_conj_rect h QP M
 
 theorem isThetaFunO_tr {V V' : HSp D} (I : IsoMat V V') (S : HSp D) {ψ : AddChar (AF D.host.F) ℂ} {f : WO S V → ℂ}
     (hf : IsThetaFunO ψ S V f) : IsThetaFunO ψ S V' (I.trW S f) := by
-  have hinf : ∀ w : WO S V', w.map (infPart D) = 0 → ((I.phi S).symm w).map (infPart D) = 0 := fun w h => by
-    show (HMul.hMul I.aQ w).map (infPart D) = 0
-    rw [Matrix.map_mul, h, Matrix.mul_zero]
-  have hfin : ∀ w : WO S V', w.map (finPart D) = 0 → ((I.phi S).symm w).map (finPart D) = 0 := fun w h => by
-    show (HMul.hMul I.aQ w).map (finPart D) = 0
-    rw [Matrix.map_mul, h, Matrix.mul_zero]
-  refine ⟨fun γ w => ?_, ?_, hf.cont.comp (I.continuous_phi_symm S), fun k L hL h0 w => ?_⟩
-  · obtain ⟨w, rfl⟩ := (I.phi S).surjective w
-    have e : ratW V' S γ = I.phi S (ratW V S (I.Q * γ)) := by
-      rw [IsoMat.phi_ratW, ← Matrix.mul_assoc, I.PQ, Matrix.one_mul]
-    rw [e, ← map_add (f := _), I.symplOH_phi]
-    simp only [IsoMat.trW, AddEquiv.symm_apply_apply]
-    exact hf.quasi _ _
-  · obtain ⟨U, hU, e⟩ := hf.level
-    refine ⟨U.map (I.phi S).toAddMonoidHom, ?_, ?_⟩
-    · have e : ((U.map (I.phi S).toAddMonoidHom : AddSubgroup (WO S V')) : Set (WO S V')) = (I.phi S).symm ⁻¹' U := by
-        ext w
-        simp only [AddSubgroup.coe_map, Set.mem_image, Set.mem_preimage, SetLike.mem_coe]
-        constructor
-        · rintro ⟨u, hu, rfl⟩
-          simpa using hu
-        · intro hw
-          exact ⟨_, hw, by simp⟩
-      rw [e]
-      exact hU.preimage (I.continuous_phi_symm S)
-    · rintro _ ⟨u, hu, rfl⟩ h0
-      have h1 : u.map (infPart D) = 0 := by
-        have := hinf _ h0
-        simpa using this
-      show heisO ψ S V' (I.phi S u) (I.trW S f) = I.trW S f
-      rw [I.heisO_trW, e u hu h1]
-  · have := hf.smooth k ((I.phi S).symm.toAddMonoidHom.comp L) ((I.continuous_phi_symm S).comp hL) (fun t => hfin _ (h0 t))
-      ((I.phi S).symm w)
-    simpa [IsoMat.trW] using this
+  first | exact _root_.GlobalTheory.Mem.Isom.IsoMat.isThetaFunO_tr | exact @_root_.GlobalTheory.Mem.Isom.IsoMat.isThetaFunO_tr | apply _root_.GlobalTheory.Mem.Isom.IsoMat.isThetaFunO_tr <;> assumption
 
 theorem isWeilDatumO_tr {V V' : HSp D} (I : IsoMat V V') (S : HSp D) {ψ : AddChar (AF D.host.F) ℂ} {χ χ' : (AE D)ˣ →* Circle}
     {om : GA D S × GA D V →* Module.End ℂ (WO S V → ℂ)}

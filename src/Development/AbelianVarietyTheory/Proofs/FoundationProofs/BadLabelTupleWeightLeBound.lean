@@ -1,5 +1,7 @@
 module
 
+import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteFieldQuadraticFormPointCount
+
 public import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Card
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LevelDatumSubgroupCharacterProperties
@@ -278,17 +280,17 @@ lemma dich {k : ℕ} {d : ℕ → F} (h : Good k d) {c b : ℕ} (hcb : c < b) :
 
 lemma sg_lt {k : ℕ} {d : ℕ → F} (h : Good k d) {b : ℕ} (hb : b < k) : sg k d b < k := by
   have := en_spec h b; have := en_le_k h hb; have := st_le d b
-  simp only [sg, if_pos hb]; omega
+  simp only [sg, ite_eq_left hb]; omega
 
 lemma sg_ge {k : ℕ} (d : ℕ → F) {b : ℕ} (hb : k ≤ b) : sg k d b = b := by
-  simp only [sg, if_neg (not_lt.2 hb)]
+  simp only [sg, ite_eq_right (not_lt.2 hb)]
 
 lemma sg_dich {k : ℕ} {d : ℕ → F} (h : Good k d) {c b : ℕ} (hcb : c < b) (hb : b < k) :
     (st d c = st d b ∧ sg k d c + b = sg k d b + c) ∨ (c < st d b ∧ sg k d b < sg k d c) := by
   have hc : c < k := by omega
   have := en_spec h b; have := en_le_k h hb; have := st_le d b
   have := en_spec h c; have := en_le_k h hc; have := st_le d c
-  simp only [sg, if_pos hb, if_pos hc]
+  simp only [sg, ite_eq_left hb, ite_eq_left hc]
   rcases dich h hcb with h1 | h1 <;> omega
 
 lemma sg_inj {k : ℕ} {d : ℕ → F} (h : Good k d) : Function.Injective (sg k d) := by
@@ -400,7 +402,7 @@ lemma cell_inj {k N : ℕ} (hk : k < N) {d d' : ℕ → F} (h : Good k d) (h' : 
     d = d' := by
   refine ext_of h h' fun b hb => ?_
   have h1 := congrArg (fun x : GL (Fin N) F => x.val (perm hk h ⟨b, by omega⟩) ⟨b, by omega⟩) H
-  simp only [cell, mono_val, if_true] at h1
+  simp only [cell, mono_val, ite_true] at h1
   split_ifs at h1 with h2
   · exact ⟨congrArg Fin.val h2, h1⟩
   · exact absurd h1 (st_ne h b)
@@ -419,10 +421,10 @@ theorem relevant_cells : ∀ (g : ℕ) [Fact g.Prime] (N : ℕ), ∀ (L : Lev g 
     · simp only [cell, mono_val, Fin.ext_iff, perm_val]
       by_cases hb : (b : ℕ) < k
       · have := sg_lt h hb
-        rw [if_neg (by omega), if_neg (by omega)]
+        rw [ite_eq_right (by omega), ite_eq_right (by omega)]
       · rw [sg_ge _ (not_lt.1 hb), st_ge h (not_lt.1 hb)]
     · by_contra h1
-      exact hab (by simp only [cell, mono_val]; exact if_neg h1)
+      exact hab (by simp only [cell, mono_val]; exact ite_eq_right h1)
   · intro w hw u u' hu hu' hb hb' H
     obtain ⟨p, -, rfl⟩ := Finset.mem_image.1 hw
     have h := dat_good k p
@@ -435,7 +437,7 @@ theorem relevant_cells : ∀ (g : ℕ) [Fact g.Prime] (N : ℕ), ∀ (L : Lev g 
     rw [← Equiv.sum_comp (perm hk h)]
     refine Finset.sum_congr rfl fun b _ => ?_
     have r := rel c b
-    simp only [Lev.Edge, hs, hco, Units.val_one, one_mul, Bool.false_eq_true, if_false, perm_val]
+    simp only [Lev.Edge, hs, hco, Units.val_one, one_mul, Bool.false_eq_true, ite_false, perm_val]
     have tb := st_ne h b
     have tc := st_ne h c
     have hσ : ∀ x : Fin N, (x : ℕ) < k → sg k d x < k := fun x hx => sg_lt h hx
@@ -446,7 +448,7 @@ theorem relevant_cells : ∀ (g : ℕ) [Fact g.Prime] (N : ℕ), ∀ (L : Lev g 
       have e1 : u'.val c b = 0 → u.val (perm hk h c) (perm hk h b) = 0 ∧ u'.val c b = 0 := fun e =>
         ⟨by rw [e, mul_zero] at r; exact (mul_eq_zero.1 r).resolve_right tb, e⟩
       rcases hh with hh | hh | hh
-      · exact e1 (by rw [hb' c b (Or.inr hh), if_neg hne])
+      · exact e1 (by rw [hb' c b (Or.inr hh), ite_eq_right hne])
       · exact e1 (hu'.2 _ _ hh)
       · have e : u.val (perm hk h c) (perm hk h b) = 0 := hu.2 _ _ hh
         exact ⟨e, by rw [e, zero_mul] at r; exact (mul_eq_zero.1 r.symm).resolve_left tc⟩
@@ -540,7 +542,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.FoundationProofs.MonomialEqOfUpperUnipotentDoubleCoset =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.FoundationProofs.WhittakerTranslatesCornerLinearIndependent =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.WhittakerTranslatesCornerLinearIndependent", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.CStarAlgebra.Classes\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.GroupTheory.Nilpotent\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.PiTensorProduct\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Lemma\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.WhittakerTranslatesCornerLinearIndependent", "h": "module\n\nimport CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteFieldQuadraticFormPointCount\n\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.CStarAlgebra.Classes\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.GroupTheory.Nilpotent\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.PiTensorProduct\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Lemma\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -672,10 +674,10 @@ lemma act_colElt {M : Type} [AddCommGroup M] [Module ℂ M] (ρ : Representation
     have hE : ∀ a b : Fin N, L.Edge a b ↔ (b : ℕ) = a + 1 := by
       intro a b; simp [Lev.Edge, hL]
     rw [Finset.sum_eq_single m, Finset.sum_eq_single n]
-    · rw [if_pos ((hE m n).2 hmn), hu, conj_colElt, hn.1, if_neg (by intro e; rw [e] at hmn; omega)]
+    · rw [ite_eq_left ((hE m n).2 hmn), hu, conj_colElt, hn.1, ite_eq_right (by intro e; rw [e] at hmn; omega)]
       simp
     · intro b _ hb
-      rw [if_neg]
+      rw [ite_eq_right]
       intro e
       exact hb (Fin.ext (by rw [(hE m b).1 e, hmn]))
     · simp
@@ -683,7 +685,7 @@ lemma act_colElt {M : Type} [AddCommGroup M] [Module ℂ M] (ρ : Representation
       refine Finset.sum_eq_zero fun b _ => ?_
       split_ifs with e
       · have e' := (hE a b).1 e
-        rw [hu, conj_colElt, if_neg (by intro e; rw [e] at e'; omega), zero_add]
+        rw [hu, conj_colElt, ite_eq_right (by intro e; rw [e] at e'; omega), zero_add]
         have ha' : (a : ℕ) ≠ m := fun e => ha (Fin.ext e)
         rcases lt_or_ge a n with hc | hc
         · rw [hn.2 b (by rw [Fin.lt_def] at hc ⊢; omega)]; simp
@@ -695,27 +697,8 @@ lemma act_colElt {M : Type} [AddCommGroup M] [Module ℂ M] (ρ : Representation
 
 lemma sum_char (ψ : AddChar (ZMod g) ℂ) (hψ : ψ ≠ 1) (d : Fin N → ZMod g) (hd : d ≠ 0) :
     ∑ v : Fin N → ZMod g, ψ (∑ c, d c * v c) = 0 := by
-  obtain ⟨c, hc⟩ := Function.ne_iff.1 hd
-  obtain ⟨t, ht⟩ := DFunLike.ne_iff.1 hψ
-  have hc' : d c ≠ 0 := hc
-  have ht' : ψ t ≠ 1 := by simpa using ht
-  have e := Equiv.sum_comp (Equiv.addRight (Pi.single c (t / d c) : Fin N → ZMod g))
-    (fun v : Fin N → ZMod g => ψ (∑ c, d c * v c))
-  have e2 : ∀ v : Fin N → ZMod g, ψ (∑ c', d c' * (Equiv.addRight (Pi.single c (t / d c) : Fin N → ZMod g) v) c') =
-      ψ t * ψ (∑ c, d c * v c) := by
-    intro v
-    rw [← AddChar.map_add_eq_mul]
-    congr 1
-    simp only [Equiv.coe_addRight, Pi.add_apply, mul_add, Finset.sum_add_distrib]
-    rw [add_comm]
-    congr 1
-    rw [Finset.sum_eq_single c]
-    · simp; field_simp
-    · intro b _ hb; simp [hb]
-    · simp
-  simp only [e2, ← Finset.mul_sum] at e
-  have : (ψ t - 1) * ∑ v : Fin N → ZMod g, ψ (∑ c, d c * v c) = 0 := by rw [sub_mul, e]; simp
-  exact (mul_eq_zero.1 this).resolve_left (sub_ne_zero.2 ht')
+  simpa only [dotProduct, mul_comm] using
+    (GlobalTheory.CompanionTheory.SW.QuadricCount.sum_char_dot ψ hψ hd)
 
 lemma step {M : Type} [AddCommGroup M] [Module ℂ M] (ρ : Representation ℂ (GG g N) M) (L : Lev g N)
     (hL : L.sharp = false) (x : M) (hx : ∀ u, IsUp g N u → ρ u x = L.chi u • x) (k : ℕ) (hk : k + 1 < N)
@@ -724,7 +707,7 @@ lemma step {M : Type} [AddCommGroup M] [Module ℂ M] (ρ : Representation ℂ (
   let m : Fin N := ⟨k, by omega⟩
   let n : Fin N := ⟨k + 1, hk⟩
   let tr : (Fin N → ZMod g) → Fin N → ZMod g := fun v c => if c < n then v c else 0
-  have htr : ∀ v c, n ≤ c → tr v c = 0 := fun v c hc => if_neg (not_lt.2 hc)
+  have htr : ∀ v c, n ≤ c → tr v c = 0 := fun v c hc => ite_eq_right (not_lt.2 hc)
   let d : GG g N → Fin N → ZMod g := fun h c =>
     if c < n then (L.co m : ZMod g) * ((h⁻¹).val m c - if m = c then 1 else 0) else 0
   have hmn : m < n := by simp [m, n, Fin.lt_def]
@@ -764,7 +747,7 @@ lemma step {M : Type} [AddCommGroup M] [Module ℂ M] (ρ : Representation ℂ (
           simp
         · rfl
       simp [this, hR]
-    · rw [if_neg hR, sum_char L.ψ L.hψ]
+    · rw [ite_eq_right hR, sum_char L.ψ L.hψ]
       · simp
       · intro hd
         apply hR
@@ -772,7 +755,7 @@ lemma step {M : Type} [AddCommGroup M] [Module ℂ M] (ρ : Representation ℂ (
         have hrow : ∀ c, c < n → (h⁻¹).val m c = if m = c then 1 else 0 := by
           intro c hc
           have := congrFun hd c
-          simp only [d, if_pos hc, Pi.zero_apply] at this
+          simp only [d, ite_eq_left hc, Pi.zero_apply] at this
           exact sub_eq_zero.1 ((mul_eq_zero.1 this).resolve_left (L.co m).ne_zero)
         have : RowUp k h⁻¹ := by
           intro a ha
@@ -802,12 +785,12 @@ lemma sum_up {M : Type} [AddCommGroup M] [Module ℂ M] (ρ : Representation ℂ
       by_cases h0 : φ h = 0
       · simp [h0]
       have := (rowUp_zero_iff h).1 (hφ h h0)
-      rw [if_pos this, hx h this, smul_smul]
+      rw [ite_eq_left this, hx h this, smul_smul]
     simp only [this, ← Finset.sum_smul] at hs
     exact (smul_eq_zero.1 hs).resolve_right hx0
   | succ k ih =>
     have := ih (by omega) (fun h => if RowUp k h then φ h else 0)
-      (fun h hh => by by_contra e; exact hh (if_neg e)) (step ρ L hL x hx k hk φ hφ hs)
+      (fun h hh => by by_contra e; exact hh (ite_eq_right e)) (step ρ L hL x hx k hk φ hφ hs)
     refine Eq.trans (Finset.sum_congr rfl fun u _ => ?_) this
     split_ifs with a b
     · rfl
@@ -837,8 +820,8 @@ theorem translates_independent : ∀ (g : ℕ) [Fact g.Prime] (N : ℕ), ∀ (M 
     · simp [e]
     have hu : ∀ a b : Fin N, (k ≤ (a : ℕ) ∨ k ≤ (b : ℕ)) → u.val a b = if a = b then 1 else 0 := hc u e
     by_cases e' : IsUp g N u
-    · rw [if_pos ⟨e', hu⟩, if_pos e']
-    · rw [if_neg (fun h => e' h.1), if_neg e']
+    · rw [ite_eq_left ⟨e', hu⟩, ite_eq_left e']
+    · rw [ite_eq_right (fun h => e' h.1), ite_eq_right e']
   · refine Finset.sum_eq_zero fun u hu => ?_
     have hu' : Corner k u := (Finset.mem_filter.1 hu).2.2
     have : φ (h₀ * u) = 0 := by
@@ -902,7 +885,7 @@ theorem conj_entry {k : ℕ} {h n : GG g N} (hh : InBlock k h)
         by_cases hc : (c : ℕ) ≤ k
         · rw [hn a c hc]
         · have : c ≠ b := by rintro rfl; exact hc hb
-          rw [hh c b (Or.inl (by omega)), if_neg this, mul_zero, mul_zero]
+          rw [hh c b (Or.inl (by omega)), ite_eq_right this, mul_zero, mul_zero]
       rw [Matrix.mul_apply, Finset.sum_congr rfl fun c _ => this c]
       simp
     rw [Units.val_mul, Units.val_mul, Matrix.mul_apply, Finset.sum_congr rfl fun c _ => by rw [h1 c],
@@ -929,7 +912,7 @@ theorem exists_block {k : ℕ} {j : GG g N} (hj : IsUp g N j)
   refine ⟨u, ⟨hd, hl⟩, ?_, ?_⟩
   · intro a b hab
     rw [hu]
-    exact if_neg (by omega)
+    exact ite_eq_right (by omega)
   · intro a b hb
     have h1 : ∀ c, j.val c b = u.val c b := by
       intro c
@@ -1026,7 +1009,7 @@ theorem avg_independent [FiniteDimensional ℂ M] {L : Lev g N} (hL : L.sharp = 
     intro h hh
     obtain ⟨w, -, hw⟩ := Finset.exists_ne_zero_of_sum_ne_zero hh
     obtain ⟨u, hu, hw⟩ := Finset.exists_ne_zero_of_sum_ne_zero hw
-    have : h = u * w := by by_contra hne; exact hw (if_neg hne)
+    have : h = u * w := by by_contra hne; exact hw (ite_eq_right hne)
     rw [this]
     exact InBlock.mul _ _ (mem_blockUp.1 hu).2 (hR w w.2).1
   have hsum : ∑ h, φ h • ρ h x = 0 := by
@@ -1055,7 +1038,7 @@ theorem avg_independent [FiniteDimensional ℂ M] {L : Lev g N} (hL : L.sharp = 
         simp
       · simp
     · intro w _ hw
-      refine Finset.sum_eq_zero fun u hu => if_neg fun h => hw (Subtype.ext ?_)
+      refine Finset.sum_eq_zero fun u hu => ite_eq_right fun h => hw (Subtype.ext ?_)
       exact _root_.GlobalTheory.BadShare.monomial_eq_of_unipotent_double_coset g N w w₀ u u' (hR w w.2).2 (hR w₀ w₀.2).2 (mem_blockUp.1 hu).1 hu'.1 h.symm
     · simp
   rw [Finset.sum_congr rfl h2, ← Finset.mul_sum, ← Nat.cast_sum, mul_eq_zero] at key
@@ -1111,15 +1094,15 @@ theorem rk_ge_of_isGeneric_of_s_eq_zero : ∀ (g : ℕ) [Fact g.Prime] (N : ℕ)
     congr 1
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
     have e1 : L'.Edge a b ↔ ((b : ℕ) = a + 1 ∧ (a : ℕ) + 1 ≠ L.k) := by
-      simp only [Lev.Edge, L', hL, hs, if_true]
+      simp only [Lev.Edge, L', hL, hs, ite_true]
       omega
     have e2 : L₁.Edge a b ↔ (b : ℕ) = a + 1 := by simp [Lev.Edge, hL₁]
     by_cases h1 : (b : ℕ) = a + 1
-    · rw [if_pos (e2.2 h1)]
+    · rw [ite_eq_left (e2.2 h1)]
       by_cases h2 : (a : ℕ) + 1 = L.k
-      · rw [if_neg (fun h => (e1.1 h).2 h2), hmem u hu a b (by omega) (by omega), mul_zero]
-      · rw [if_pos (e1.2 ⟨h1, h2⟩)]
-    · rw [if_neg (fun h => h1 (e1.1 h).1), if_neg (fun h => h1 (e2.1 h))]
+      · rw [ite_eq_right (fun h => (e1.1 h).2 h2), hmem u hu a b (by omega) (by omega), mul_zero]
+      · rw [ite_eq_left (e1.2 ⟨h1, h2⟩)]
+    · rw [ite_eq_right (fun h => h1 (e1.1 h).1), ite_eq_right (fun h => h1 (e2.1 h))]
   rw [_root_.GlobalTheory.BadShare.CoDiag.rk_e_eq g N M ρ L L' rfl rfl rfl]
   have hg0 : (0 : ℝ) < g := Nat.cast_pos.2 hg.out.pos
   rcases Nat.eq_zero_or_pos L.k with hk | hk
@@ -1351,7 +1334,7 @@ variable {g : ℕ} [Fact g.Prime] {N : ℕ}
 theorem edge_iff (L : Lev g N) (h : L.sharp = true) (a b : Fin N) : L.Edge a b ↔
     (((b : ℕ) = a + 1 ∧ (a : ℕ) + 1 ≠ L.s ∧ ¬ (0 < L.k ∧ (a : ℕ) + 1 = L.s + L.k)) ∨
       ((a : ℕ) + 1 = L.s ∧ (b : ℕ) = L.s + L.k)) := by
-  unfold Lev.Edge; rw [if_pos h]
+  unfold Lev.Edge; rw [ite_eq_left h]
 
 theorem chi_eq (L : Lev g N) (h : L.sharp = true) (u : GG g N) (D : Matrix (Fin N) (Fin N) (ZMod g))
     (hu : u.val = 1 + D) (i j : Fin N) (hij : L.Edge i j) (hD : ∀ a b, L.Edge a b → a ≠ i ∨ b ≠ j → D a b = 0) :
@@ -1363,7 +1346,7 @@ theorem chi_eq (L : Lev g N) (h : L.sharp = true) (u : GG g N) (D : Matrix (Fin 
   unfold Lev.chi
   congr 1
   rw [Finset.sum_eq_single i, Finset.sum_eq_single j]
-  · rw [if_pos hij, hu, Matrix.add_apply, Matrix.one_apply_ne (hne _ _ hij), zero_add]
+  · rw [ite_eq_left hij, hu, Matrix.add_apply, Matrix.one_apply_ne (hne _ _ hij), zero_add]
   · intro b _ hb
     split_ifs with hE
     · rw [hu, Matrix.add_apply, Matrix.one_apply_ne (hne _ _ hE), hD _ _ hE (Or.inr hb)]; simp
@@ -1459,13 +1442,13 @@ theorem exchange (M : Type) [AddCommGroup M] [Module ℂ M] [FiniteDimensional �
   have hdec : ∀ u, L.Mem u → ∃ x ∈ X, u * x ∈ J ⊓ J' := by
     intro u hu
     let ξ : Fin N → ZMod g := fun a => if W a then - u.val i a else 0
-    have h0 : ∀ a, ¬ W a → ξ a = 0 := fun a ha => if_neg ha
+    have h0 : ∀ a, ¬ W a → ξ a = 0 := fun a ha => ite_eq_right ha
     have hd : ξ ⬝ᵥ Pi.single i 1 = 0 := by simp [h0 i hiW]
     have hx : tv (Pi.single i 1) ξ hd ∈ X := ⟨ξ, h0, rfl⟩
     have hm := mm _ _ hu (hXJ _ hx).1
     refine ⟨_, hx, hm, (hJ' _).2 ⟨hm.1, fun b hb hb' => ?_⟩⟩
     show (u.val * (1 + Matrix.vecMulVec (Pi.single i 1) ξ)) i b = 0
-    have : ξ b = - u.val i b := if_pos ⟨hb, hb'⟩
+    have : ξ b = - u.val i b := ite_eq_left ⟨hb, hb'⟩
     rw [mul_add, mul_one, Matrix.mul_vecMulVec, Matrix.add_apply, Matrix.vecMulVec_apply, this]
     simp [hu.1.1 i]
   have hcomm : ∀ (x y : GG g N) (ξ η : Fin N → ZMod g), (∀ a, ¬ W a → ξ a = 0) →
@@ -1480,8 +1463,7 @@ theorem exchange (M : Type) [AddCommGroup M] [Module ℂ M] [FiniteDimensional �
       · rw [Matrix.vecMulVec_apply, Pi.smul_apply, Pi.single_eq_of_ne hb, smul_zero, mul_zero]
     have hm : L.Mem (y⁻¹ * x⁻¹ * y * x) := by
       refine mem_of_val L _ _ hc (fun a b hab => hD a b ?_) (fun a b ha _ _ => hD a b (Or.inl ?_))
-      · by_contra hcon
-        push_neg at hcon
+      · by_contra! hcon
         rw [hcon.1, hcon.2, Fin.le_def] at hab
         omega
       · intro e; rw [e] at ha; omega
@@ -1668,7 +1650,7 @@ theorem one_le_rk_of_not_sharp (g : ℕ) [Fact g.Prime] (N : ℕ) (M : Type) [Ad
   refine h 1 (fun _ => x) (linearIndependent_unique_iff.2 hx) ?_
   intro i u hm
   have hchi : L'.chi u = L₀.chi u := by
-    simp only [Lev.chi, Lev.Edge, hs, h₀, Bool.false_eq_true, if_false]
+    simp only [Lev.chi, Lev.Edge, hs, h₀, Bool.false_eq_true, ite_false]
     rfl
   rw [hchi]
   exact hu u hm.1
@@ -1689,9 +1671,9 @@ theorem rk_lower_of_sharp (g : ℕ) [Fact g.Prime] (N : ℕ) (M : Type) [AddComm
 theorem rk_lev_lower : ∀ (g : ℕ) [Fact g.Prime] (N : ℕ), ∀ (M : Type) [AddCommGroup M] [Module ℂ M] [FiniteDimensional ℂ M] (ρ : Representation ℂ (GG g N) M), IsGeneric ρ → ∀ L : Lev g N, (1 - 1 / (g : ℝ)) * (g : ℝ) ^ (if L.sharp = true then L.k else 0) ≤ (rk ρ L.e : ℝ) := by
   intro g _ N M _ _ _ ρ hρ L
   by_cases h : L.sharp = true
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     exact rk_lower_of_sharp g N M ρ hρ L.s L h rfl
-  · rw [if_neg h, pow_zero, mul_one]
+  · rw [ite_eq_right h, pow_zero, mul_one]
     have h1 : (1 : ℝ) ≤ rk ρ L.e := by
       exact_mod_cast one_le_rk_of_not_sharp g N M ρ hρ L (by simpa using h)
     have h2 : (0 : ℝ) ≤ 1 / (g : ℝ) := by positivity

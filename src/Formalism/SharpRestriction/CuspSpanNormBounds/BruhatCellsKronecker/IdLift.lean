@@ -7,43 +7,6 @@ public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker
 public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LadjFrame
 public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LisoSmulMem
 public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LretrCancel
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -79,26 +42,13 @@ theorem lift_gen (hA : IntegralAdjointUnimodular) (hI : IsotropicIntegralRetract
     (he : ∀ a, F'.fl.e a - F.fl.e a ∈ Xflag F a.val) :
     ∃ n ∈ NLam Λ F, ∀ a, n (F.fl.e a) = F'.fl.e a := by
 
-  have hXiso : ∀ x ∈ Xsp F, ∀ y ∈ Xsp F, S.hT x y = 0 := by
-    have h1 : ∀ a, ∀ y ∈ Xsp F, S.hT (F.fl.e a) y = 0 := by
-      intro a y hy
-      replace hy : y ∈ Submodule.span E (Set.range F.fl.e) := hy
-      induction hy using Submodule.span_induction with
-      | mem z hz =>
-        obtain ⟨b, rfl⟩ := hz
-        exact F.fl.e_iso a b
-      | zero => simp
-      | add z z' _ _ hz hz' => rw [map_add (f := _), hz, hz', add_zero]
-      | smul c z _ hz => rw [map_smul, hz, smul_zero]
-    intro x hx y hy
-    replace hx : x ∈ Submodule.span E (Set.range F.fl.e) := hx
-    induction hx using Submodule.span_induction with
-    | mem z hz =>
-      obtain ⟨a, rfl⟩ := hz
-      exact h1 a y hy
-    | zero => simp
-    | add z z' _ _ hz hz' => rw [map_add (f := _), LinearMap.add_apply, hz, hz', add_zero]
-    | smul c z _ hz => rw [map_smulₛₗ, LinearMap.smul_apply, hz, smul_zero]
+  have hXiso : ∀ x ∈ Xsp F, ∀ y ∈ Xsp F, S.hT x y = 0 := fun x hx y hy =>
+    (Submodule.span_le (s := Set.range F.fl.e) (p := LinearMap.ker (LinearMap.flip S.hT y))).2
+      (by
+        rintro _ ⟨a, rfl⟩
+        exact (Submodule.span_le (s := Set.range F.fl.e) (p := LinearMap.ker (S.hT (F.fl.e a)))).2
+          (by rintro _ ⟨b, rfl⟩; exact F.fl.e_iso a b) hy)
+      hx
   have hXa_le : ∀ j, Xflag F j ≤ Xsp F := fun j => Submodule.span_mono (Set.image_subset_range _ _)
   have hX_le : Xsp F ≤ Xflag F r :=
     Submodule.span_mono (by rintro _ ⟨i, rfl⟩; exact ⟨i, i.isLt, rfl⟩)
@@ -109,21 +59,13 @@ theorem lift_gen (hA : IntegralAdjointUnimodular) (hI : IsotropicIntegralRetract
     simp
 
   obtain ⟨U0, hU0⟩ := lift_exists_map F.fl.e F'.fl.e F.fl.e_indep
-  have hU0X : ∀ j, ∀ x ∈ Xflag F j, U0 x - x ∈ Xflag F (j - 1) := by
-    intro j x hx
-    replace hx : x ∈ Submodule.span E (F.fl.e '' {i | i.1 < j}) := hx
-    induction hx using Submodule.span_induction with
-    | mem z hz =>
-      obtain ⟨i, hi, rfl⟩ := hz
+  have hU0X : ∀ j, ∀ x ∈ Xflag F j, U0 x - x ∈ Xflag F (j - 1) := fun j x hx =>
+    Submodule.mem_comap.1 <| (Submodule.span_le (s := F.fl.e '' {i | i.1 < j})
+      (p := (Xflag F (j - 1)).comap (U0 - LinearMap.id))).2 (by
+      rintro _ ⟨i, hi, rfl⟩
+      show U0 (F.fl.e i) - F.fl.e i ∈ Xflag F (j - 1)
       rw [hU0]
-      exact hXa_mono (by have : i.1 < j := hi; omega) (he i)
-    | zero => simp
-    | add z z' _ _ hz hz' =>
-      rw [map_add (f := _), add_sub_add_comm]
-      exact Submodule.add_mem _ hz hz'
-    | smul c z _ hz =>
-      rw [map_smul, ← smul_sub]
-      exact Submodule.smul_mem _ c hz
+      exact hXa_mono (Nat.le_sub_one_of_lt hi) (he i)) hx
   have hFU : ∀ x ∈ Λ, x ∈ Xsp F → U0 x ∈ Λ := hF E S r T Λ g F F' hconv hconv' he U0 hU0
   obtain ⟨P, P', hPP', hPX, hPr, hPi, hP'i, hP'iso⟩ := hI E S Λ (Xsp F) hcm hlat huni hXiso
 
@@ -228,32 +170,17 @@ theorem lift_gen (hA : IntegralAdjointUnimodular) (hI : IsotropicIntegralRetract
     simp only [map_zero, LinearMap.zero_apply, add_zero]
     ring
 
-  have lint_pow : ∀ B : Module.End E S.V, LInt Λ B → ∀ k, LInt Λ (B ^ k) := by
-    intro B hB k
-    induction k with
-    | zero => intro l hl; simpa using hl
-    | succ k ih =>
-      intro l hl
-      rw [pow_succ', Module.End.mul_apply]
-      exact hB _ (ih l hl)
-  have lint_neg : ∀ B : Module.End E S.V, LInt Λ B → LInt Λ (-B) := fun B hB l hl => by
-    rw [LinearMap.neg_apply]
-    exact Submodule.neg_mem _ (hB l hl)
-  have lint_sum : ∀ (f : ℕ → Module.End E S.V) (s : Finset ℕ), (∀ k ∈ s, LInt Λ (f k)) →
-      LInt Λ (∑ k ∈ s, f k) := fun f s hf l hl => by
-    rw [LinearMap.sum_apply]
-    exact Submodule.sum_mem _ fun k hk => hf k hk l hl
-  have lint_one_add : ∀ B : Module.End E S.V, LInt Λ B → LInt Λ (1 + B) := fun B hB l hl => by
-    rw [LinearMap.add_apply, Module.End.one_apply]
-    exact Submodule.add_mem _ hl (hB l hl)
-  have lint_mul : ∀ B C : Module.End E S.V, LInt Λ B → LInt Λ C → LInt Λ (B * C) :=
-    fun B C hB hC l hl => by
-      rw [Module.End.mul_apply]
-      exact hB _ (hC l hl)
-  have hnint : LInt Λ ((1 + N0) * S1) := lint_mul _ _ (lint_one_add _ hN0int)
-    (hS1 ▸ lint_sum _ _ fun k _ => lint_pow _ (lint_neg _ hN1int) k)
-  have hninvint : LInt Λ ((1 + N1) * S0) := lint_mul _ _ (lint_one_add _ hN1int)
-    (hS0 ▸ lint_sum _ _ fun k _ => lint_pow _ (lint_neg _ hN0int) k)
+  let R : Subring (Module.End E S.V) :=
+    { carrier := {B | LInt Λ B}
+      mul_mem' := fun hB hC l hl => hB _ (hC l hl)
+      one_mem' := fun _ hl => hl
+      add_mem' := fun hB hC l hl => Submodule.add_mem _ (hB l hl) (hC l hl)
+      zero_mem' := fun _ _ => Λ.zero_mem
+      neg_mem' := fun hB l hl => Submodule.neg_mem _ (hB l hl) }
+  have hnint : (1 + N0) * S1 ∈ R := R.mul_mem (R.add_mem R.one_mem hN0int)
+    (hS1 ▸ R.sum_mem fun k _ => R.pow_mem (R.neg_mem hN1int) k)
+  have hninvint : (1 + N1) * S0 ∈ R := R.mul_mem (R.add_mem R.one_mem hN1int)
+    (hS0 ▸ R.sum_mem fun k _ => R.pow_mem (R.neg_mem hN0int) k)
   have hgmap : Formalism.HermitianLatticesTheory.gmap n Λ = Λ := by
     apply le_antisymm
     · rintro _ ⟨l, hl, rfl⟩
@@ -275,8 +202,6 @@ theorem lift_gen (hA : IntegralAdjointUnimodular) (hI : IsotropicIntegralRetract
     abel
 
 end Gen
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem lift_of_steps (hA : IntegralAdjointUnimodular) (hI : IsotropicIntegralRetraction) (hF : UnitriangularFrameIntegral) (D : D7) : UnitriangularFrameLift D := by
   rintro T Λ F F' ⟨hlat, huni, -, hconv⟩ _ hconv' he _

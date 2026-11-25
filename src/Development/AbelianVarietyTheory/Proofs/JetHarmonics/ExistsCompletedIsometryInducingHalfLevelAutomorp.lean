@@ -68,9 +68,7 @@ open GlobalTheory.SimLift GlobalTheory.SimAlg
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} (D : Datum H)
 
-theorem bar_bar (a : 𝓞 E) : H.bar (H.bar a) = a := by
-  apply RingOfIntegers.ext
-  rw [H.bar_eq, H.bar_eq, IsCMField.complexConj_apply_apply]
+theorem bar_bar (a : 𝓞 E) : H.bar (H.bar a) = a := GlobalTheory.HostModel.bar_bar H a
 
 theorem modN_smul_of_mem (l : Level H) {c : 𝓞 E} (hc : c ∈ Ideal.span {(l.M : 𝓞 E)}) (x : D.La) :
     D.ModN l.M (c • x) := by

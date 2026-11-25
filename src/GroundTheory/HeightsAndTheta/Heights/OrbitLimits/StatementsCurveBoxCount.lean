@@ -21,8 +21,4 @@ def CurveBoxCount.Statement : Prop :=
       (τ : ℝ) * ∑ t ∈ R, Real.log (chartRadius A c t) + chartIndexLog y c A.a τ - C ≤
         smallSectionCount (IsSmallH (mCoordIdeal y) y A) (chartLat y A.a) τ
 
-namespace CurveBoxCount
-
-end CurveBoxCount
-
 end GroundTheory.Heights₂.Heights.Targets

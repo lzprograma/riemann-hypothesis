@@ -61,32 +61,39 @@ theorem isMGraded_shift {𝓜 : (K → ℤ) → Submodule S M} (h : KH.IsMGraded
   · have := h.2 a (d + c) p m hp hm
     rwa [add_right_comm] at this
 
-theorem cechHc_subsingleton_of_bij (hSES : KH.CechSESStatement)
-    {A B : Type} [AddCommGroup A] [Module (MRingOver S ι) A] [Module S A] [IsScalarTower S (MRingOver S ι) A]
-    [AddCommGroup B] [Module (MRingOver S ι) B] [Module S B] [IsScalarTower S (MRingOver S ι) B]
-    (𝓐 : (K → ℤ) → Submodule S A) (𝓑 : (K → ℤ) → Submodule S B) (g : A →ₗ[MRingOver S ι] B)
-    (hA : KH.IsMGraded S ι 𝓐) (hB : KH.IsMGraded S ι 𝓑) (hg : KH.IsMGradedMap S ι 𝓐 𝓑 g)
-    (hinj : Function.Injective g) (hsurj : Function.Surjective g) (c : K → ℤ) (n : ℕ)
-    (h : Subsingleton (KH.cechHc ι 𝓐 c n)) : Subsingleton (KH.cechHc ι 𝓑 c n) := by
-  have hhG : KH.IsMGradedMap S ι 𝓑 (fun _ : K → ℤ => (⊥ : Submodule S PUnit)) 0 :=
-    fun _ _ _ => Submodule.zero_mem _
-  have hex : LinearMap.range g = LinearMap.ker (0 : B →ₗ[MRingOver S ι] PUnit) := by
-    rw [LinearMap.range_eq_top.2 hsurj, LinearMap.ker_zero]
-  have hU' : Subsingleton (KH.cechHc ι (fun _ : K → ℤ => (⊥ : Submodule S PUnit)) c n) := by
-    have : Subsingleton (KH.CechC S ι PUnit n) :=
-      ⟨fun f g => funext fun I => Subsingleton.elim (α := LocalizedModule _ PUnit) _ _⟩
-    refine ⟨fun x y => ?_⟩
-    obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ x
-    obtain ⟨y, rfl⟩ := Submodule.Quotient.mk_surjective _ y
-    rw [Subsingleton.elim x y]
-  exact (hSES S K ι A B PUnit 𝓐 𝓑 _ g 0 hA hB isMGraded_punit hg hhG hinj
-    (fun _ => ⟨0, Subsingleton.elim _ _⟩) hex c n).1 h hU'
-
 end H1VanishingDevissage
 
-theorem H1VanishingDevissage.proof (hPF : KH.PrimeFiltStatement) (hSES : KH.CechSESStatement)
-    (hGQ : GradedSubquot.Statement) : H1VanishingDevissage.Statement := by
-  intro S _ K _ _ ι _ _ V N hS hP M _ _ _ _ 𝓜 hfin hgr hV e
+theorem H1VanishingDevissage.devissage {S : Type} [CommRing S] {K : Type} [Fintype K] [LinearOrder K]
+    {ι : K → Type} [∀ k, Fintype (ι k)] [∀ k, LinearOrder (ι k)]
+    (hPF : KH.PrimeFiltStatement) (hGQ : GradedSubquot.Statement) (hS : IsNoetherianRing S)
+    (C : ∀ (M : Type) [AddCommGroup M] [Module (MRingOver S ι) M] [Module S M]
+      [IsScalarTower S (MRingOver S ι) M], ((K → ℤ) → Submodule S M) → Prop)
+    (h0 : C PUnit (fun _ => ⊥))
+    (hext : ∀ (M' : Type) [AddCommGroup M'] [Module (MRingOver S ι) M'] [Module S M']
+      [IsScalarTower S (MRingOver S ι) M'] (M : Type) [AddCommGroup M] [Module (MRingOver S ι) M] [Module S M]
+      [IsScalarTower S (MRingOver S ι) M] (M'' : Type) [AddCommGroup M''] [Module (MRingOver S ι) M'']
+      [Module S M''] [IsScalarTower S (MRingOver S ι) M'']
+      (𝓜' : (K → ℤ) → Submodule S M') (𝓜 : (K → ℤ) → Submodule S M) (𝓜'' : (K → ℤ) → Submodule S M'')
+      (g : M' →ₗ[MRingOver S ι] M) (h : M →ₗ[MRingOver S ι] M''),
+      KH.IsMGraded S ι 𝓜' → KH.IsMGraded S ι 𝓜 → KH.IsMGraded S ι 𝓜'' →
+      KH.IsMGradedMap S ι 𝓜' 𝓜 g → KH.IsMGradedMap S ι 𝓜 𝓜'' h →
+      Function.Injective g → Function.Surjective h → LinearMap.range g = LinearMap.ker h →
+      C M' 𝓜' → C M'' 𝓜'' → C M 𝓜)
+    (M : Type) [AddCommGroup M] [Module (MRingOver S ι) M] [Module S M] [IsScalarTower S (MRingOver S ι) M]
+    (𝓜 : (K → ℤ) → Submodule S M) (hfin : Module.Finite (MRingOver S ι) M) (hgr : KH.IsMGraded S ι 𝓜)
+    (hq : ∀ 𝔭 : Ideal (MRingOver S ι), 𝔭.IsPrime → IsMultiHomogIdeal 𝔭 →
+      Module.annihilator (MRingOver S ι) M ≤ 𝔭 → ∀ e : K → ℤ,
+      C (MRingOver S ι ⧸ 𝔭) (fun d => KH.quotPart S 𝔭 (d + e))) :
+    C M 𝓜 := by
+  have hiso : ∀ (A : Type) [AddCommGroup A] [Module (MRingOver S ι) A] [Module S A]
+      [IsScalarTower S (MRingOver S ι) A] (B : Type) [AddCommGroup B] [Module (MRingOver S ι) B] [Module S B]
+      [IsScalarTower S (MRingOver S ι) B] (𝓐 : (K → ℤ) → Submodule S A) (𝓑 : (K → ℤ) → Submodule S B)
+      (g : A →ₗ[MRingOver S ι] B), KH.IsMGraded S ι 𝓐 → KH.IsMGraded S ι 𝓑 → KH.IsMGradedMap S ι 𝓐 𝓑 g →
+      Function.Injective g → Function.Surjective g → C A 𝓐 → C B 𝓑 := by
+    intro A _ _ _ _ B _ _ _ _ 𝓐 𝓑 g hA hB hg hinj hsurj hC
+    refine hext A B PUnit 𝓐 𝓑 (fun _ => ⊥) g 0 hA hB isMGraded_punit hg
+      (fun _ _ _ => Submodule.zero_mem _) hinj (fun _ => ⟨0, Subsingleton.elim _ _⟩) ?_ hC h0
+    rw [LinearMap.range_eq_top.2 hsurj, LinearMap.ker_zero]
   obtain ⟨r, m, c, 𝔭, hm, h𝔭, hcol, hspan⟩ := hPF S K ι M 𝓜 hS hfin hgr
   let G : ℕ → Set M := fun j => m '' {l | (l : ℕ) < j}
   let F : ℕ → Submodule (MRingOver S ι) M := fun j => Submodule.span _ (G j)
@@ -97,28 +104,26 @@ theorem H1VanishingDevissage.proof (hPF : KH.PrimeFiltStatement) (hSES : KH.Cech
     Submodule.span_mono (Set.image_mono fun l (hl : (l : ℕ) < _) => lt_of_lt_of_le hl hij)
   have hgrF : ∀ j, KH.IsMGraded S ι (subGrading 𝓜 (F j)) := fun j =>
     (hGQ S K ι M 𝓜 (G j) (G j) hgr (hGh j) (hGh j) le_rfl).1
-  have key : ∀ j ≤ r, ∃ c₁ : ℕ, ∀ n : ℕ, c₁ ≤ n →
-      Subsingleton (KH.cechHc ι (subGrading 𝓜 (F j)) (e + n • N) 1) := by
+  have key : ∀ j ≤ r, C (F j) (subGrading 𝓜 (F j)) := by
     intro j
     induction j with
     | zero =>
       intro _
       have hF0 : F 0 = ⊥ := by simp [F, G]
-      refine ⟨0, fun n _ => (h1_vanish_generated_of_localized_subsingleton
-        (fun _ _ => loc_subsingleton_of_kill (Submonoid.one_mem _) fun y => ?_) _ _).1⟩
-      rw [one_smul]
+      refine hiso PUnit (F 0) _ _ 0 isMGraded_punit (hgrF 0)
+        (fun _ _ _ => Submodule.zero_mem _) (fun _ _ _ => Subsingleton.elim _ _) (fun y => ⟨0, ?_⟩) h0
       have hy : (y : M) ∈ (⊥ : Submodule (MRingOver S ι) M) := by
         rw [← hF0]
         exact y.2
-      exact Submodule.coe_eq_zero.mp ((Submodule.mem_bot _).1 hy)
+      exact (Subtype.ext ((Submodule.mem_bot _).1 hy)).symm
     | succ j ih =>
       intro hj
-      obtain ⟨c₀, hc₀⟩ := ih (Nat.le_of_succ_le hj)
+      have hCj := ih (Nat.le_of_succ_le hj)
       let l : Fin r := ⟨j, hj⟩
       let L : Submodule (MRingOver S ι) (F (j + 1)) := (F j).comap (F (j + 1)).subtype
-      have hq := (hGQ S K ι M 𝓜 (G j) (G (j + 1)) hgr (hGh j) (hGh (j + 1)) (hFmono (Nat.le_succ j))).2
+      have hq' := (hGQ S K ι M 𝓜 (G j) (G (j + 1)) hgr (hGh j) (hGh (j + 1))
+        (hFmono (Nat.le_succ j))).2
       have hml : m l ∈ F (j + 1) := Submodule.subset_span ⟨l, Nat.lt_succ_self j, rfl⟩
-
       let ψ : MRingOver S ι →ₗ[MRingOver S ι] (F (j + 1) ⧸ L) :=
         LinearMap.toSpanSingleton _ _ (L.mkQ ⟨m l, hml⟩)
       have hψ : ∀ p, ψ p = L.mkQ (p • ⟨m l, hml⟩) := fun p => (L.mkQ.map_smul p _).symm
@@ -131,7 +136,6 @@ theorem H1VanishingDevissage.proof (hPF : KH.PrimeFiltStatement) (hSES : KH.Cech
       have hφ : ∀ p, φ (Ideal.Quotient.mk (𝔭 l) p) = ψ p := fun _ => rfl
       have hinj : Function.Injective φ := LinearMap.ker_eq_bot.1
         (Submodule.ker_liftQ_eq_bot _ _ _ fun p hp => (hker p).1 (LinearMap.mem_ker.1 hp))
-
       have hdec : ∀ y ∈ F (j + 1), ∃ p : MRingOver S ι, y - p • m l ∈ F j := by
         intro y hy
         induction hy using Submodule.span_induction with
@@ -162,58 +166,62 @@ theorem H1VanishingDevissage.proof (hPF : KH.PrimeFiltStatement) (hSES : KH.Cech
         show ((p • ⟨m l, hml⟩ - y : F (j + 1)) : M) ∈ F j
         rw [Submodule.coe_sub, Submodule.coe_smul, ← neg_sub]
         exact (F j).neg_mem hp
-      obtain ⟨c₂, hc₂⟩ : ∃ c₂ : ℕ, ∀ n : ℕ, c₂ ≤ n →
-          Subsingleton (KH.cechHc ι (quotGrading (subGrading 𝓜 (F (j + 1))) L) (e + n • N) 1) := by
-        by_cases hrel : IsMultiProjPrime (𝔭 l)
-        ·
-          obtain ⟨c₂, hc₂⟩ := hP (𝔭 l) hrel (hV.trans (h𝔭 l).2.2) (e + -c l)
-          have hA := isMGraded_shift (QuotPartGraded.proof S K ι (𝔭 l) (h𝔭 l).2.1) (-c l)
-          have hG : KH.IsMGradedMap S ι (fun d => KH.quotPart S (𝔭 l) (d + -c l))
-              (quotGrading (subGrading 𝓜 (F (j + 1))) L) φ := by
-            intro d x hx
-            refine (Submodule.span_le (p := (quotGrading (subGrading 𝓜 (F (j + 1))) L d).comap
-              (φ.restrictScalars S))).2 ?_ hx
-            rintro _ ⟨p, ⟨h0, hp⟩, rfl⟩
-            refine ⟨p • ⟨m l, hml⟩, ?_, (hψ p).symm⟩
-            have h := hgr.2 _ (c l) p (m l) hp (hm l)
-            have hd : c l + (fun k => (((d + -c l) k).toNat : ℤ)) = d := by
-              funext k
-              have := h0 k
-              simp only [Pi.add_apply, Pi.neg_apply] at this ⊢
-              rw [Int.toNat_of_nonneg this]
-              ring
-            rw [hd] at h
-            exact h
-          refine ⟨c₂, fun n hn => cechHc_subsingleton_of_bij hSES _ _ φ hA hq hG hinj hsurj _ _ ?_⟩
-          rw [cechHc_shift_iff, show e + n • N + -c l = e + -c l + n • N by abel]
-          exact hc₂ n hn
-        · have hirr : ¬ IsRelevant (𝔭 l) := fun h => hrel ⟨(h𝔭 l).1, (h𝔭 l).2.1, h⟩
-          simp only [IsRelevant, not_forall, not_exists, not_not] at hirr
-          obtain ⟨k, hk⟩ := hirr
-          refine ⟨0, fun n _ => (h1_vanish_generated_of_localized_subsingleton (fun _ I => ?_) _ _).1⟩
-          obtain ⟨i, hi⟩ := I.2.1 k
-          refine loc_subsingleton_of_kill (Submonoid.subset_closure ⟨k, i, hi, rfl⟩) fun y => ?_
-          obtain ⟨y, rfl⟩ := hsurj y
-          obtain ⟨p', rfl⟩ := Ideal.Quotient.mk_surjective y
-          rw [← LinearMap.map_smul, show (X ⟨k, i⟩ : MRingOver S ι) • Ideal.Quotient.mk (𝔭 l) p' =
-            Ideal.Quotient.mk (𝔭 l) (X ⟨k, i⟩ * p') from rfl, hφ]
-          exact (hker _).2 (Ideal.mul_mem_right _ _ (hk i))
-      refine ⟨max c₀ c₂, fun n hn => ?_⟩
+      have hA := H1VanishingDevissage.isMGraded_shift (QuotPartGraded.proof S K ι (𝔭 l) (h𝔭 l).2.1) (-c l)
+      have hG : KH.IsMGradedMap S ι (fun d => KH.quotPart S (𝔭 l) (d + -c l))
+          (quotGrading (subGrading 𝓜 (F (j + 1))) L) φ := by
+        intro d x hx
+        refine (Submodule.span_le (p := (quotGrading (subGrading 𝓜 (F (j + 1))) L d).comap
+          (φ.restrictScalars S))).2 ?_ hx
+        rintro _ ⟨p, ⟨h0, hp⟩, rfl⟩
+        refine ⟨p • ⟨m l, hml⟩, ?_, (hψ p).symm⟩
+        have h := hgr.2 _ (c l) p (m l) hp (hm l)
+        have hd : c l + (fun k => (((d + -c l) k).toNat : ℤ)) = d := by
+          funext k
+          have := h0 k
+          simp only [Pi.add_apply, Pi.neg_apply] at this ⊢
+          rw [Int.toNat_of_nonneg this]
+          ring
+        rw [hd] at h
+        exact h
+      have hCq := hiso _ _ _ _ φ hA hq' hG hinj hsurj (hq (𝔭 l) (h𝔭 l).1 (h𝔭 l).2.1 (h𝔭 l).2.2 (-c l))
       let g := Submodule.inclusion (hFmono (Nat.le_succ j))
       have hex : LinearMap.range g = LinearMap.ker L.mkQ := by
         rw [Submodule.range_inclusion, Submodule.ker_mkQ]
       have hgG : KH.IsMGradedMap S ι (subGrading 𝓜 (F j)) (subGrading 𝓜 (F (j + 1))) g := fun _ _ hx => hx
       have hhG : KH.IsMGradedMap S ι (subGrading 𝓜 (F (j + 1))) (quotGrading (subGrading 𝓜 (F (j + 1))) L)
           L.mkQ := fun _ _ hx => Submodule.mem_map_of_mem hx
-      exact (hSES S K ι _ _ _ _ _ _ g L.mkQ (hgrF j) (hgrF (j + 1)) hq hgG hhG
-        (Submodule.inclusion_injective _) (Submodule.mkQ_surjective _) hex (e + n • N) 1).1
-        (hc₀ n (le_of_max_le_left hn)) (hc₂ n (le_of_max_le_right hn))
+      exact hext _ _ _ _ _ _ g L.mkQ (hgrF j) (hgrF (j + 1)) hq' hgG hhG
+        (Submodule.inclusion_injective _) (Submodule.mkQ_surjective _) hex hCj hCq
   have hFr : F r = ⊤ := by
     rw [← hspan]
     simp [F, G]
-  obtain ⟨c₁, hc₁⟩ := key r le_rfl
-  exact ⟨c₁, fun n hn => cechHc_subsingleton_of_bij hSES _ 𝓜 (F r).subtype (hgrF r) hgr (fun _ _ hx => hx)
-    (Submodule.injective_subtype _) (fun y => ⟨⟨y, hFr ▸ Submodule.mem_top⟩, rfl⟩) _ _ (hc₁ n hn)⟩
+  exact hiso _ M _ 𝓜 (F r).subtype (hgrF r) hgr (fun _ _ hx => hx) (Submodule.injective_subtype _)
+    (fun y => ⟨⟨y, hFr ▸ Submodule.mem_top⟩, rfl⟩) (key r le_rfl)
+
+theorem H1VanishingDevissage.proof (hPF : KH.PrimeFiltStatement) (hSES : KH.CechSESStatement)
+    (hGQ : GradedSubquot.Statement) : H1VanishingDevissage.Statement := by
+  intro S _ K _ _ ι _ _ V N hS hP M _ _ _ _ 𝓜 hfin hgr hV e
+  refine H1VanishingDevissage.devissage hPF hGQ hS
+    (fun M' _ _ _ _ 𝓜' => ∃ c₁ : ℕ, ∀ n : ℕ, c₁ ≤ n → Subsingleton (KH.cechHc ι 𝓜' (e + n • N) 1))
+    ⟨0, fun n _ => (h1_vanish_generated_of_localized_subsingleton
+      (fun _ _ => loc_subsingleton_of_kill (Submonoid.one_mem _) fun _ => Subsingleton.elim _ _) _ _).1⟩
+    (fun M' _ _ _ _ M _ _ _ _ M'' _ _ _ _ 𝓜' 𝓜 𝓜'' g h hM' hM hM'' hg hh hinj hsurj hex ⟨c₀, hc₀⟩ ⟨c₂, hc₂⟩ =>
+      ⟨max c₀ c₂, fun n hn => (hSES S K ι M' M M'' 𝓜' 𝓜 𝓜'' g h hM' hM hM'' hg hh hinj hsurj hex
+        (e + n • N) 1).1 (hc₀ n (le_of_max_le_left hn)) (hc₂ n (le_of_max_le_right hn))⟩)
+    M 𝓜 hfin hgr fun 𝔭 hp hmh hann c' => ?_
+  by_cases hrel : IsMultiProjPrime 𝔭
+  · obtain ⟨c₂, hc₂⟩ := hP 𝔭 hrel (hV.trans hann) (e + c')
+    refine ⟨c₂, fun n hn => ?_⟩
+    rw [H1VanishingDevissage.cechHc_shift_iff, show e + n • N + c' = e + c' + n • N by abel]
+    exact hc₂ n hn
+  · have hirr : ¬ IsRelevant 𝔭 := fun h => hrel ⟨hp, hmh, h⟩
+    simp only [IsRelevant, not_forall, not_exists, not_not] at hirr
+    obtain ⟨k, hk⟩ := hirr
+    refine ⟨0, fun n _ => (h1_vanish_generated_of_localized_subsingleton (fun _ I => ?_) _ _).1⟩
+    obtain ⟨i, hi⟩ := I.2.1 k
+    refine loc_subsingleton_of_kill (Submonoid.subset_closure ⟨k, i, hi, rfl⟩) fun y => ?_
+    obtain ⟨p', rfl⟩ := Ideal.Quotient.mk_surjective y
+    exact (Ideal.Quotient.eq_zero_iff_mem).2 (Ideal.mul_mem_right _ _ (hk i))
 
 end
 

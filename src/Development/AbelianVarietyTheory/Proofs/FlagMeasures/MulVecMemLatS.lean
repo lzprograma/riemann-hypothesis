@@ -81,21 +81,10 @@ theorem exists_smul_mem {V : Type} [AddCommGroup V] [Module K V] [Module O V] [I
     rw [key]
     exact L.smul_mem r ha
 
-private theorem isUnit_end_lemma {M : Type} [AddCommGroup M] [Module K M] [Module O M] [IsScalarTower O K M]
-    (x : nonZeroDivisors O) : IsUnit (algebraMap O (Module.End O M) x) := by
-  have hx : algebraMap O K x ≠ 0 := IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors x.2
-  rw [Module.End.isUnit_iff]
-  refine ⟨fun m₁ m₂ h => ?_, fun m => ⟨(algebraMap O K x)⁻¹ • m, ?_⟩⟩
-  · simp only [Module.algebraMap_end_apply] at h
-    rw [← algebraMap_smul K (x : O) m₁, ← algebraMap_smul K (x : O) m₂] at h
-    exact smul_right_injective M hx h
-  · simp only [Module.algebraMap_end_apply]
-    rw [← algebraMap_smul K (x : O), smul_smul, mul_inv_cancel₀ hx, one_smul]
-
 private theorem isLocalizedModule_lemma_2 {V : Type} [AddCommGroup V] [Module K V] [Module O V]
     [IsScalarTower O K V] (L : Submodule O V) (hL : Submodule.span K (L : Set V) = ⊤) :
     IsLocalizedModule (nonZeroDivisors O) L.subtype := by
-  refine ⟨fun x => isUnit_end_lemma (K := K) x, ?_, ?_⟩
+  refine ⟨fun x => (isLocalizedModule_id (nonZeroDivisors O) V K).map_units x, ?_, ?_⟩
   · intro y
     obtain ⟨a, ha⟩ := exists_smul_mem L hL y
     exact ⟨(⟨_, ha⟩, a), rfl⟩
@@ -108,7 +97,7 @@ theorem exists_extend {V W : Type} [AddCommGroup V] [Module K V] [Module O V] [I
     ∃ T : V →ₗ[K] W, ∀ x : L, T x = t x := by
   have := isLocalizedModule_lemma_2 L hL
   refine ⟨(IsLocalizedModule.lift (nonZeroDivisors O) L.subtype t
-      (fun x => isUnit_end_lemma (K := K) x)).extendScalarsOfIsLocalization (nonZeroDivisors O) K,
+      (fun x => (isLocalizedModule_id (nonZeroDivisors O) W K).map_units x)).extendScalarsOfIsLocalization (nonZeroDivisors O) K,
     fun x => ?_⟩
   rw [LinearMap.extendScalarsOfIsLocalization_apply']
   exact IsLocalizedModule.lift_apply (S := nonZeroDivisors O) (f := L.subtype) t _ x

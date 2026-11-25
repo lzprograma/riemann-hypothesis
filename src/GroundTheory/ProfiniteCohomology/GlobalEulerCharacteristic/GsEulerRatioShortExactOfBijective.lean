@@ -6,47 +6,6 @@ public import GroundTheory.ProfiniteCohomology.EulerChar
 public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.DefsForms
 public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.RealHerbrand
 import GroundTheory.ProfiniteCohomology.RestrictedRamification.Finite
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -62,54 +21,6 @@ section Generic
 
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   {S : ShortComplex (Rep.{u} k G)} [IsDiscreteRep S.X₁] [IsDiscreteRep S.X₂] [IsDiscreteRep S.X₃]
-
-theorem eulerChar_mul_eq_mul_card_range_δ (hS : S.ShortExact)
-    [Finite (cohomology S.X₁ 1)] [Finite (cohomology S.X₂ 1)] [Finite (cohomology S.X₃ 1)] :
-    eulerChar S.X₁ * eulerChar S.X₃ =
-      eulerChar S.X₂ * Nat.card (LinearMap.range (δ hS 2 3 rfl).hom) := by
-  have hk := fun {X Y : ModuleCat k} (φ : X ⟶ Y) => card_eq_card_ker_mul_card_range φ.hom
-  have e2 : ∀ i, Nat.card (LinearMap.range (cohomologyMap S.f i).hom) =
-      Nat.card (LinearMap.ker (cohomologyMap S.g i).hom) := fun i =>
-    card_range_eq_card_ker_of_exact (cohomology_exact₂ hS i)
-  have e30 : Nat.card (LinearMap.range (cohomologyMap S.g 0).hom) =
-      Nat.card (LinearMap.ker (δ hS 0 1 rfl).hom) :=
-    card_range_eq_card_ker_of_exact (cohomology_exact₃ hS 0 1 rfl)
-  have e31 : Nat.card (LinearMap.range (cohomologyMap S.g 1).hom) =
-      Nat.card (LinearMap.ker (δ hS 1 2 rfl).hom) :=
-    card_range_eq_card_ker_of_exact (cohomology_exact₃ hS 1 2 rfl)
-  have e32 : Nat.card (LinearMap.range (cohomologyMap S.g 2).hom) =
-      Nat.card (LinearMap.ker (δ hS 2 3 rfl).hom) :=
-    card_range_eq_card_ker_of_exact (cohomology_exact₃ hS 2 3 rfl)
-  have e10 : Nat.card (LinearMap.range (δ hS 0 1 rfl).hom) =
-      Nat.card (LinearMap.ker (cohomologyMap S.f 1).hom) :=
-    card_range_eq_card_ker_of_exact (cohomology_exact₁ hS 0 1 rfl)
-  have e11 : Nat.card (LinearMap.range (δ hS 1 2 rfl).hom) =
-      Nat.card (LinearMap.ker (cohomologyMap S.f 2).hom) :=
-    card_range_eq_card_ker_of_exact (cohomology_exact₁ hS 1 2 rfl)
-  have h0 : Nat.card (LinearMap.ker (cohomologyMap S.f 0).hom) = 1 := by
-    have := hS.mono_f
-    have hm : Mono (cohomologyMap S.f 0) :=
-      HomologicalComplex.mono_homologyMap_of_mono_of_not_rel (cochainsMap S.f) 0
-        (fun i => by simp)
-    rw [LinearMap.ker_eq_bot.2 ((ModuleCat.mono_iff_injective _).1 hm)]
-    simp
-  have hA1 : Nat.card (cohomology S.X₁ 1) ≠ 0 := Nat.card_pos.ne'
-  have hB1 : Nat.card (cohomology S.X₂ 1) ≠ 0 := Nat.card_pos.ne'
-  have hC1 : Nat.card (cohomology S.X₃ 1) ≠ 0 := Nat.card_pos.ne'
-  rw [hk (cohomologyMap S.f 1), ← e10] at hA1
-  rw [hk (cohomologyMap S.g 1), ← e2 1] at hB1
-  rw [hk (δ hS 1 2 rfl), ← e31] at hC1
-  rw [eulerChar_eq, eulerChar_eq, eulerChar_eq,
-    hk (cohomologyMap S.f 0), hk (cohomologyMap S.f 1), hk (cohomologyMap S.f 2),
-    hk (cohomologyMap S.g 0), hk (cohomologyMap S.g 1), hk (cohomologyMap S.g 2),
-    hk (δ hS 0 1 rfl), hk (δ hS 1 2 rfl), hk (δ hS 2 3 rfl),
-    h0, ← e2 0, ← e2 1, ← e2 2, ← e30, ← e31, ← e32, ← e10, ← e11]
-  simp only [mul_ne_zero_iff] at hA1 hB1 hC1
-  obtain ⟨hz0, hx1⟩ := hA1
-  obtain ⟨-, hy1⟩ := hB1
-  obtain ⟨-, hz1⟩ := hC1
-  push_cast
-  field_simp
 
 theorem eulerChar_mul_eq_mul_card_ker (hS : S.ShortExact)
     [Finite (cohomology S.X₁ 1)] [Finite (cohomology S.X₂ 1)] [Finite (cohomology S.X₃ 1)] :

@@ -62,21 +62,6 @@ theorem twGL_val {a : ℕ} (ρ : Γ →* GL (Fin a) K) (χ : Γ →* Kˣ) (g : �
   show algebraMap K (Matrix (Fin a) (Fin a) K) (χ g : K) * ((ρ g : GL _ K) : Matrix (Fin a) (Fin a) K) = _
   rw [Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul]
 
-theorem isInv_twGL {a : ℕ} (ρ : Γ →* GL (Fin a) K) (χ : Γ →* Kˣ) (W : Submodule K (Fin a → K)) :
-    IsInv (Formalism.MainNotions.SumRepresentations.At.twGL ρ χ) W ↔ IsInv ρ W := by
-  constructor
-  · intro h g v hv
-    have := W.smul_mem ((χ g : K)⁻¹) (h g v hv)
-    rwa [twGL_val, Matrix.smul_mulVec, smul_smul, inv_mul_cancel₀ (Units.ne_zero _), one_smul] at this
-  · intro h g v hv
-    rw [twGL_val, Matrix.smul_mulVec]
-    exact W.smul_mem _ (h g v hv)
-
-theorem ss_twGL {a : ℕ} (ρ : Γ →* GL (Fin a) K) (χ : Γ →* Kˣ) (h : IsSSRep ρ) :
-    IsSSRep (Formalism.MainNotions.SumRepresentations.At.twGL ρ χ) := fun W hW => by
-  obtain ⟨W', hW', hc⟩ := h W ((isInv_twGL ρ χ W).1 hW)
-  exact ⟨W', (isInv_twGL ρ χ W').2 hW', hc⟩
-
 end Alg
 
 theorem ms_one {s : Multiset ℕ} (h : s.sum = 1) (h1 : ∀ a ∈ s, 1 ≤ a) : s = {1} := by

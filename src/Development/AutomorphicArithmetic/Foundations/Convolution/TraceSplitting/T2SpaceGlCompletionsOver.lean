@@ -24,65 +24,11 @@ public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.Selmer
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.BrMain
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.MatchProd
 public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.RootConj
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Algebra.Group.Units
 import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IwahoriDoubleCosets
-import Mathlib.Tactic.ENatToNat
 import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
 import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.SplitLoc
 import GroundTheory.AutomorphicForms.LocallyProfinite
-import Mathlib.Tactic.TypeStar
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.MatchOne, Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.NearCore, Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.NearUp, Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.PlaceUp, Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.T2SpaceGlCompletionsOver
@@ -122,11 +68,11 @@ section Alg
 
 variable {k E : Type} [Field k] [Field E] [Algebra k E] {n : ℕ}
 
-private theorem incl_inj : Function.Injective (incl : GL (Fin n) k → GL (Fin n) E) := fun x y h => by
+theorem incl_inj : Function.Injective (incl : GL (Fin n) k → GL (Fin n) E) := fun x y h => by
   ext i j
   exact (algebraMap k E).injective (congrArg (fun g : GL (Fin n) E => (g : Matrix (Fin n) (Fin n) E) i j) h)
 
-private theorem sigma_incl (σ : E ≃ₐ[k] E) (y : GL (Fin n) k) : sigmaGL σ (incl y : GL (Fin n) E) = incl y := by
+theorem sigma_incl (σ : E ≃ₐ[k] E) (y : GL (Fin n) k) : sigmaGL σ (incl y : GL (Fin n) E) = incl y := by
   ext i j
   exact σ.commutes _
 
@@ -174,6 +120,15 @@ private theorem mem_twCent_conj {G : Type} [Group G] (θ : Monoid.End G) (δ g x
 
 end Alg
 
+theorem root_conj {k E : Type} [Field k] [Field E] [ValuativeRel E] [TopologicalSpace E] [IsNonarchimedeanLocalField E]
+    [Algebra k E] {n : ℕ} {r : ValueGroupWithZero E} (hr : r < valuation E (Module.finrank k E : E))
+    {u u' y : GL (Fin n) k} (hu : (incl u : GL (Fin n) E) ∈ ball n r) (hu' : (incl u' : GL (Fin n) E) ∈ ball n r)
+    (h : y⁻¹ * u ^ Module.finrank k E * y = u' ^ Module.finrank k E) : y⁻¹ * u * y = u' := by
+  apply incl_inj (E := E)
+  rw [map_mul, map_mul, map_inv]
+  refine rootConj E n _ r hr _ hu _ hu' _ ?_
+  rw [← map_pow, ← map_pow, ← h, map_mul, map_mul, map_inv]
+
 section Loc
 
 variable {k E : Type} [Field k] [CharZero k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
@@ -181,14 +136,6 @@ variable {k E : Type} [Field k] [CharZero k] [ValuativeRel k] [TopologicalSpace 
   [Algebra k E] [ValuativeExtension k E] [FiniteDimensional k E] [IsGalois k E] {σ : E ≃ₐ[k] E}
   (hgen : ∀ τ : E ≃ₐ[k] E, τ ∈ Subgroup.zpowers σ) {n : ℕ} {r : ValueGroupWithZero E}
   (hr : r < valuation E (Module.finrank k E : E))
-
-include hr in
-private theorem root_conj {u u' y : GL (Fin n) k} (hu : (incl u : GL (Fin n) E) ∈ ball n r) (hu' : (incl u' : GL (Fin n) E) ∈ ball n r)
-    (h : y⁻¹ * u ^ Module.finrank k E * y = u' ^ Module.finrank k E) : y⁻¹ * u * y = u' := by
-  apply incl_inj (E := E)
-  rw [map_mul, map_mul, map_inv]
-  refine rootConj E n _ r hr _ hu _ hu' _ ?_
-  rw [← map_pow, ← map_pow, ← h, map_mul, map_mul, map_inv]
 
 include hgen hr in
 private theorem rigid {u u' y y' : GL (Fin n) k} (hu : (incl u : GL (Fin n) E) ∈ ball n r) (hu' : (incl u' : GL (Fin n) E) ∈ ball n r)
@@ -395,7 +342,7 @@ open MeasureTheory ValuativeRel GlobalTheory.PRep GlobalTheory.SplitWeil GlobalT
 
 namespace UpperTheory.ConvolutionTheory.Loc.NearIdentityAscent
 
-private theorem sb_of_push {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y] [T2Space Y] {U : Set X} (hU : IsCompact U)
+theorem sb_of_push {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y] [T2Space Y] {U : Set X} (hU : IsCompact U)
     {p : X → Y} (hp : Continuous p) (ho : IsOpen (p '' U)) {a : X → ℂ} (ha : IsLocallyConstant a) {f : Y → ℂ}
     (h1 : ∀ u ∈ U, f (p u) = a u) (h2 : ∀ y, y ∉ p '' U → f y = 0) : f ∈ SB Y := by
   refine ⟨fun s => ?_, HasCompactSupport.intro (hU.image hp) h2⟩
@@ -424,7 +371,7 @@ private theorem sb_of_push {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y
   rw [e]
   exact ((hU.inter_right hc).image hp).isClosed.union (ho.isClosed_compl.inter isClosed_const)
 
-private theorem avg_locConst {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [MeasurableSpace G]
+theorem avg_locConst {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [MeasurableSpace G]
     (μ : Measure G) {θ : G → G} (hθ : Continuous θ) {K : Set G} (hK : IsCompact K) (hm : MeasurableSet K) {φ : G → ℂ}
     (hφ : IsLocallyConstant φ) : IsLocallyConstant fun u => ∫ κ in K, φ (κ⁻¹ * u * θ κ) ∂μ := by
   rw [IsLocallyConstant.iff_eventually_eq]
@@ -438,7 +385,7 @@ private theorem avg_locConst {G : Type} [Group G] [TopologicalSpace G] [IsTopolo
   filter_upwards [h] with u hu
   exact setIntegral_congr_fun hm hu
 
-private theorem set_left {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [MeasurableSpace G] [BorelSpace G]
+theorem set_left {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [MeasurableSpace G] [BorelSpace G]
     (μ : Measure G) [μ.IsMulLeftInvariant] (K : Subgroup G) (hm : MeasurableSet (K : Set G)) (F : G → ℂ) {z : G} (hz : z ∈ K) :
     ∫ κ in (K : Set G), F (z * κ) ∂μ = ∫ κ in (K : Set G), F κ ∂μ := by
   rw [← integral_indicator hm, ← integral_indicator hm, ← integral_mul_left_eq_self ((K : Set G).indicator F) z]
@@ -450,13 +397,7 @@ private theorem set_left {G : Type} [Group G] [TopologicalSpace G] [IsTopologica
 
 variable {k E : Type} [Field k] [Field E] [Algebra k E] {n : ℕ}
 
-private theorem incl_inj : Function.Injective (incl : GL (Fin n) k → GL (Fin n) E) := fun x y h => by
-  ext i j
-  exact (algebraMap k E).injective (congrArg (fun g : GL (Fin n) E => (g : Matrix (Fin n) (Fin n) E) i j) h)
-
-private theorem sigma_incl (σ : E ≃ₐ[k] E) (y : GL (Fin n) k) : sigmaGL σ (incl y : GL (Fin n) E) = incl y := by
-  ext i j
-  exact σ.commutes _
+open UpperTheory.ConvolutionTheory.Loc.NearIdentityCentralizer (incl_inj sigma_incl)
 
 private theorem small [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     [ValuativeRel E] [TopologicalSpace E] [IsNonarchimedeanLocalField E] [ValuativeExtension k E] {s : ValueGroupWithZero E} (hs : s ≠ 0) :
@@ -486,7 +427,7 @@ private theorem small [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLoc
 
 end UpperTheory.ConvolutionTheory.Loc.NearIdentityAscent
 
-open UpperTheory.ConvolutionTheory.Loc.NearIdentityAscent UpperTheory.ConvolutionTheory.Loc.BallG UpperTheory.V.Z.Tf.Orb in
+open UpperTheory.ConvolutionTheory.Loc.NearIdentityCentralizer UpperTheory.ConvolutionTheory.Loc.NearIdentityAscent UpperTheory.ConvolutionTheory.Loc.BallG UpperTheory.V.Z.Tf.Orb in
 theorem UpperTheory.ConvolutionTheory.Loc.nearUp :
     ∀ (k E : Type) [Field k] [CharZero k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
         [Field E] [ValuativeRel E] [TopologicalSpace E] [IsNonarchimedeanLocalField E]
@@ -548,9 +489,9 @@ theorem UpperTheory.ConvolutionTheory.Loc.nearUp :
     simp only [id, mul_inv_rev, mul_assoc]
   have h1 : ∀ z ∈ U, φ (p z) = a z := fun z hz => by
     have h : ∃ z' ∈ U, p z' = p z := ⟨z, hz, rfl⟩
-    simp only [φ, dif_pos h]
+    simp only [φ, dite_eq_left h]
     exact wd _ h.choose_spec.1 _ hz h.choose_spec.2
-  have h2 : ∀ g, g ∉ p '' U → φ g = 0 := fun g h => dif_neg h
+  have h2 : ∀ g, g ∉ p '' U → φ g = 0 := fun g h => dite_eq_right h
   have ho : IsOpen (p '' U) := by
     rw [isOpen_iff_mem_nhds]
     rintro _ ⟨⟨κ, u⟩, ⟨hκ, hu⟩, rfl⟩
@@ -1067,25 +1008,25 @@ theorem locUp : UpperTheory.ConvolutionTheory.T.LocUp := by
     UF := fun v => if v ∈ S then UF₁ v else if v = q then GLnLocal.iwahori (v.adicCompletion F) n
       else GLnLocal.integralGL (v.adicCompletion F) n
     test := fun v hv => by
-      simp only [if_pos hv]
+      simp only [ite_eq_left hv]
       exact (hP v).1
     lev := fun v hv => by
-      simp only [if_pos hv]
+      simp only [ite_eq_left hv]
       exact (hP v).2.1
     inv := fun v hv => by
-      simp only [if_pos hv]
+      simp only [ite_eq_left hv]
       exact (hP v).2.2.1
     mat := fun v hv => by
-      simp only [if_pos hv]
+      simp only [ite_eq_left hv]
       exact (hP v).2.2.2.1
     at_q := by
-      simp only [if_neg hq, dif_pos, if_true]
+      simp only [ite_eq_right hq, dite_eq_left, ite_true]
       refine ⟨trivial, trivial, fun g => ?_, trivial⟩
       simp [iwG, Subgroup.mem_iInf]
     off := fun v hv hvq => by
-      simp only [if_neg hv, dif_neg hvq, if_neg hvq]
+      simp only [ite_eq_right hv, dite_eq_right hvq, ite_eq_right hvq]
       exact ⟨trivial, trivial, hunit v, trivial⟩ }, rfl, fun v hv => ?_⟩
-  simp only [if_pos hv]
+  simp only [ite_eq_left hv]
   exact ⟨(hP v).2.2.2.2.1, (hP v).2.2.2.2.2.1, (hP v).2.2.2.2.2.2⟩
 
 end UpperTheory.ConvolutionTheory.T

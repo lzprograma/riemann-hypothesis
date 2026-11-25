@@ -52,8 +52,6 @@ import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.AdditionLawSec
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB
@@ -80,7 +78,7 @@ theorem dofN_inCol_ne (F : Fin d → PS k 2 d) {b c : Fin n} (h : c ≠ b) (u : 
     DofN F b u (inCol c f) = 0 := by
   unfold DofN
   refine Finset.sum_eq_zero fun j _ => ?_
-  rw [pderiv_inCol, if_neg h, mul_zero]
+  rw [pderiv_inCol, ite_eq_right h, mul_zero]
 
 theorem dofN_eq_sum (F : Fin d → PS k 2 d) (b : Fin n) (u : Fin d → k) (g : PS k n d) :
     DofN F b u g = ∑ l, inCol b (Dof F u (X ((0 : Fin 1), l))) * pderiv (b, l) g := by
@@ -112,7 +110,7 @@ theorem dofN_transF (G : FGLaw k d) (φ φi : Pt k 1 d) (hinv : IsInvPair φ φi
     rfl
   rw [dofN_ev _ _ _ _ hΦ, dofN_eq_sum G.F, ev_sum _ hΦ, Finset.sum_eq_single b]
   · refine Finset.sum_congr rfl fun l _ => ?_
-    rw [gt_ev_mul _ hΦ, hcol, ← dof_transF G.F G.const (_root_.GlobalTheory.FormalLog.formalGroupLaw_ev_x_zero G) φ φi hinv, gt_ev_X _ (single_point_zero_constant hφ), hc,
+    rw [gt_ev_mul _ hΦ, hcol, ← dof_transF G.F G.const (LogPf.formalGroupLaw_ev_x_zero G) φ φi hinv, gt_ev_X _ (single_point_zero_constant hφ), hc,
       dofN_inCol, mul_comm]
     rfl
   · intro c _ hcb
@@ -164,8 +162,6 @@ open ReciprocityTheory.ChartRestriction.G.TB (dLin transF IsInvPair dAct)
 attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.ChartCmp
 
-theorem _root_.GlobalTheory.T.invariantPolyOperatorCopies_transportedLaw : ∀ (k : Type) [CommRing k] (d n : ℕ) (G : FGLaw k d) (φ φi : Pt k 1 d), IsInvPair φ φi → ∀ (Ix : Type) [Fintype Ix] (cp : Ix → Fin n) (u : Ix → Fin d → k) (P : MvPolynomial Ix k) (g : PS k n d), DpolyN (transF G.F φ φi) cp u P (ev (n := n) (fun b => comp1 φ (pt k (n := n) d b)) g) = ev (n := n) (fun b => comp1 φ (pt k (n := n) d b)) (DpolyN G.F cp (fun l => (dLin φ).mulVec (u l)) P g) := by
-  first | exact @GlobalTheory.ChartTransN.dpolyN_transF
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.InvariantPolyOperatorCopiesTransportedLawStatement =====

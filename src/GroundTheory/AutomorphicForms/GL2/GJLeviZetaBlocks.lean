@@ -84,26 +84,7 @@ theorem exists_bound_of_coeff_ne_zero (hσ : IsSmooth σ) (hc : IsCuspidal σ) (
         (Subgroup.mem_subgroupOf.1 hx))
 
   let V₂ : Finset W := R.image fun r => σ r w
-
-  have hU : ∀ S : Finset (Fin n), (∃ i j, β i = β j ∧ i ∈ S ∧ j ∉ S) → ∀ x : W,
-      ∃ U : Finset (levi F n β), (∀ u ∈ U, (u : GL (Fin n) F) ∈ unipotentRadical F n (splitFun S)) ∧
-        x ∈ Submodule.span ℂ {y | ∃ u ∈ U, ∃ z, y = σ u z - z} :=
-    fun S hS x => exists_finset_of_isCuspidal hc hS x
-  choose! Uf hUf1 hUf2 using hU
-  let Uall : Finset (levi F n β) := Finset.univ.biUnion fun S : Finset (Fin n) => V₂.biUnion (Uf S)
-  obtain ⟨t, ht⟩ := exists_pow_mul_mem_of_isCompact F n
-    (((Uall.image fun u : levi F n β => u.1) ∪ (Uall.image fun u : levi F n β => u.1⁻¹) :
-      Finset (GL (Fin n) F)) : Set (GL (Fin n) F)).toFinite.isCompact
-  have hbu : ∀ u ∈ Uall, ∀ i j, (uniformizer F : F) ^ t * (u : GL (Fin n) F) i j ∈ 𝒪[F] :=
-    fun u hu => ht _ (by simp only [Finset.coe_union, Finset.coe_image, Set.mem_union,
-      Set.mem_image, Finset.mem_coe]; exact Or.inl ⟨u, hu, rfl⟩)
-  have hbu' : ∀ u ∈ Uall, ∀ i j,
-      (uniformizer F : F) ^ t * ((u : GL (Fin n) F)⁻¹ : GL (Fin n) F) i j ∈ 𝒪[F] :=
-    fun u hu => ht _ (by simp only [Finset.coe_union, Finset.coe_image, Set.mem_union,
-      Set.mem_image, Finset.mem_coe]; exact Or.inr ⟨u, hu, rfl⟩)
-  set C : ℤ := ((t + m : ℕ) : ℤ) + 1 with hCdef
-  have hC : ((t + m : ℕ) : ℤ) < C := lt_add_one _
-  have hC0 : 0 < C := by positivity
+  obtain ⟨C, hC0, hdich⟩ := exists_cuspidal_gap_dichotomy hc m V₂
   refine ⟨(n * C).toNat, ?_⟩
   intro μ k₁ k₂ hk₁ hk₂ hne
   set a : levi F n β := ⟨Cartan.diagPow F n μ, diagPow_mem_levi μ⟩ with hadef
@@ -111,30 +92,13 @@ theorem exists_bound_of_coeff_ne_zero (hσ : IsSmooth σ) (hc : IsCuspidal σ) (
   have hk₂K : k₂ ∈ K₀ := Subgroup.mem_subgroupOf.2 hk₂
   obtain ⟨r₂, hr₂, hr₂v⟩ := hR _ hk₂K
   have hwV : σ r₂ w ∈ V₂ := Finset.mem_image_of_mem _ hr₂
-  rcases gap_or_bounded (β := β) μ hC0 with
-    ⟨θ, b, ⟨i, hib, hiθ⟩, ⟨j, hjb, hjθ⟩, hgap⟩ | hbd
-  ·
-    exfalso
+  rcases hdich μ with hspan | ⟨c, hcblock, hcbnd⟩
+  · exfalso
     apply hne
-    set S : Finset (Fin n) := Finset.univ.filter fun j => β j = b ∧ θ ≤ μ j with hSdef
-    have hS : ∃ i j, β i = β j ∧ i ∈ S ∧ j ∉ S :=
-      ⟨i, j, hib.trans hjb.symm, by simp [S, hib, hiθ], by simp [S, hjb, not_le.2 hjθ]⟩
-    have hsp := hUf2 S hS (σ r₂ w)
-    have hker : Submodule.span ℂ {y | ∃ u ∈ Uf S (σ r₂ w), ∃ z, y = σ u z - z} ≤
+    have hker : Submodule.span ℂ {y | ∃ u : levi F n β, a * u * a⁻¹ ∈ K ∧ ∃ x, y = σ u x - x} ≤
         LinearMap.ker (ℓ ∘ₗ σ k₁ ∘ₗ σ a) := by
       refine Submodule.span_le.2 ?_
-      rintro _ ⟨u, hu, x, rfl⟩
-      have huA : u ∈ Uall := Finset.mem_biUnion.2 ⟨S, Finset.mem_univ _,
-        Finset.mem_biUnion.2 ⟨σ r₂ w, hwV, hu⟩⟩
-      have huN := hUf1 S hS (σ r₂ w) u hu
-      have hconj : a * u * a⁻¹ ∈ K := by
-        refine Subgroup.mem_subgroupOf.2 ?_
-        have hco : ((a * u * a⁻¹ : levi F n β) : GL (Fin n) F) =
-            Cartan.diagPow F n μ * (u : GL (Fin n) F) * (Cartan.diagPow F n μ)⁻¹ := rfl
-        rw [hco]
-        exact diagPow_conj_mem_congruenceSubgroup hC (apply_eq_or_gap hgap u.2 huN)
-          (apply_eq_or_gap hgap ((levi F n β).inv_mem u.2)
-            ((unipotentRadical F n _).inv_mem huN)) (hbu u huA) (hbu' u huA)
+      rintro _ ⟨u, hconj, x, rfl⟩
       have hconj' : k₁ * (a * u * a⁻¹) * k₁⁻¹ ∈ K := hnorm k₁ hk₁K _ hconj
       have h1 : σ k₁ (σ a (σ u x)) = σ (k₁ * (a * u * a⁻¹) * k₁⁻¹) (σ k₁ (σ a x)) := by
         simp only [← Module.End.mul_apply, ← map_mul]
@@ -143,33 +107,14 @@ theorem exists_bound_of_coeff_ne_zero (hσ : IsSmooth σ) (hc : IsCuspidal σ) (
       simp only [SetLike.mem_coe, LinearMap.mem_ker, LinearMap.coe_comp, Function.comp_apply,
         map_sub]
       rw [h1, hℓK _ hconj', sub_self]
-    have h0 := hker hsp
+    have h0 := hker (hspan _ hwV)
     rw [LinearMap.mem_ker] at h0
     rw [map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, hr₂v]
     simpa using h0
-  ·
-    let cb : α → ℤ := fun b => if h : ∃ k, β k = b then
-      ((Finset.univ.filter fun k => β k = b).image μ).min' (by
-        obtain ⟨k, hk⟩ := h
-        exact ⟨μ k, Finset.mem_image_of_mem _ (by simp [hk])⟩) else 0
-    have hcb_le : ∀ k, cb (β k) ≤ μ k := by
-      intro k
-      simp only [cb, dif_pos (⟨k, rfl⟩ : ∃ j, β j = β k)]
-      exact Finset.min'_le _ _ (Finset.mem_image_of_mem _ (by simp))
-    have hcb_mem : ∀ j, ∃ k, β k = β j ∧ cb (β j) = μ k := by
-      intro j
-      simp only [cb, dif_pos (⟨j, rfl⟩ : ∃ k, β k = β j)]
-      obtain ⟨k, hk, hkeq⟩ := Finset.mem_image.1
-        (Finset.min'_mem ((Finset.univ.filter fun k => β k = β j).image μ) _)
-      exact ⟨k, (Finset.mem_filter.1 hk).2, hkeq.symm⟩
-    refine ⟨fun j => cb (β j), fun i j h => by simp only [h], fun i => ⟨hcb_le i, ?_⟩⟩
-    obtain ⟨k, hk, hkeq⟩ := hcb_mem i
-    have h1 := hbd i k hk.symm
+  · refine ⟨c, hcblock, fun i => ⟨(hcbnd i).1, ?_⟩⟩
     have h2 : (((n * C).toNat : ℕ) : ℤ) = n * C := Int.toNat_of_nonneg (by positivity)
     rw [h2]
-    show μ i ≤ cb (β i) + n * C
-    rw [hkeq]
-    exact h1.le
+    exact (hcbnd i).2
 
 end GodementJacquet
 
@@ -353,7 +298,7 @@ theorem blockOrd_diagPow (b : Set.range β) (μ : Fin n → ℤ) :
     simp only [blocks, Cartan.coe_diagPow, Matrix.diagonal_apply]
     by_cases h : i = j
     · subst h; simp
-    · rw [if_neg (fun e => h (Subtype.ext e)), if_neg h]
+    · rw [ite_eq_right (fun e => h (Subtype.ext e)), ite_eq_right h]
   rw [blockOrd, hmat, Matrix.det_diagonal,
     ord_prod _ fun i _ => zpow_ne_zero _ (Cartan.uniformizer_ne_zero F)]
   exact Finset.sum_congr rfl fun i _ => ord_zpow_uniformizer (μ i.1)

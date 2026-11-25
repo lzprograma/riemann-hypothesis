@@ -1,57 +1,10 @@
 module
 
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsIsChart
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Topology.Instances.Matrix
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SiegelLimitImagBound
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.ImLowerOnKernel
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.MulVecEqZeroOfPair
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ExistsIntSmulIsAdicIntegralInTensorBasis
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.FubiniLevi
 
@@ -128,7 +81,7 @@ theorem lower_at_centre (h : IsChart L bas A T0 B c ρ) (v : Fin g → ℝ)
 theorem exp_cast (ha : a ≤ n) (w : Fin n → ℂ) (j : Fin a) :
     Complex.exp (w (Fin.castLE ha j)) = expCover a w (Fin.castLE ha j) := by
   have hj : (Fin.castLE ha j).val < a := j.2
-  simp only [expCover, if_pos hj]
+  simp only [expCover, ite_eq_left hj]
 
 theorem extend_mem (h : IsChart L bas A T0 B c ρ) (x : Λ) (t : (Fin n → ℂ) → Fin g → ℂ)
     (ht : ContinuousAt t 0) (hP : ∀ w ∈ logCover L.a_le, L.P w x = t (expCover a w)) :
@@ -155,14 +108,14 @@ theorem extend_mem (h : IsChart L bas A T0 B c ρ) (x : Λ) (t : (Fin n → ℂ)
   have hws_cast : ∀ m (j : Fin a), ws m (Fin.castLE L.a_le j) = -(r m : ℂ) := by
     intro m j
     have hj : (Fin.castLE L.a_le j).val < a := j.2
-    simp only [hws, if_pos hj]
+    simp only [hws, ite_eq_left hj]
   have hws_mem : ∀ m, ws m ∈ logCover L.a_le := by
     intro m
     refine ⟨fun i => ?_, fun k hk => ?_⟩
     · rw [hws_cast]
       simp [hrpos m]
     · have hk' : ¬ k.val < a := not_lt.2 hk
-      simp only [hws, if_neg hk']
+      simp only [hws, ite_eq_right hk']
       simp
   set zs : ℕ → Fin n → ℂ := fun m => expCover a (ws m) with hzs
   have hzs_k : ∀ m k, zs m k = if k.val < a then ((Real.exp (-(r m)) : ℝ) : ℂ) else 0 := by
@@ -186,12 +139,12 @@ theorem extend_mem (h : IsChart L bas A T0 B c ρ) (x : Λ) (t : (Fin n → ℂ)
     intro k
     simp only [hzs_k]
     by_cases hk : k.val < a
-    · simp only [hk, if_true]
+    · simp only [hk, ite_true]
       have h1 : Tendsto (fun m => Real.exp (-(r m))) atTop (𝓝 0) :=
         Real.tendsto_exp_atBot.comp (tendsto_neg_atTop_atBot.comp hrtop)
       have h2 := (Complex.continuous_ofReal.tendsto 0).comp h1
       simpa only [Function.comp_def, Complex.ofReal_zero, Pi.zero_apply] using h2
-    · simp only [hk, if_false]
+    · simp only [hk, ite_false]
       exact tendsto_const_nhds
   have hdiv : ∀ m, (-(r m : ℂ)) / (2 * Real.pi * Complex.I) = tm m := by
     intro m

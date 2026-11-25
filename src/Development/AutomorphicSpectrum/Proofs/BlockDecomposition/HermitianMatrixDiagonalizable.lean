@@ -3,50 +3,6 @@ module
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.LocalDefs
 public import Mathlib.LinearAlgebra.Matrix.Transvection
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FixedNondeg
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ResAlgSplitTwo
 
@@ -219,8 +175,7 @@ variable {σ : R →+* R} {ϖ : R} {q : ℕ} {ε : ℤ}
 
 theorem exists_trace (hR : IsUnrQuad R σ ϖ q ε) {y : R} (hy : y ∉ lev ϖ 1) :
     ∃ s, s * y + σ (s * y) ∉ lev ϖ 1 := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   obtain ⟨u, hu, -⟩ := hR.basis
   apply hy
   have h3 : (u - σ u) * y ∈ lev ϖ 1 := by
@@ -282,7 +237,7 @@ theorem exists_pivot (hR : IsUnrQuad R σ ϖ q ε) {h : Matrix ι ι R} (hh : Hm
   by_cases h1 : ∃ k, h k k ∉ lev ϖ 1
   · obtain ⟨k, hk⟩ := h1
     exact ⟨k, 1, 1, by simp, by simp, by simpa [ct_one] using hk⟩
-  · push_neg at h1
+  · push Not at h1
     have hij : i ≠ j := by
       rintro rfl
       exact hy (h1 i)
@@ -293,8 +248,7 @@ theorem exists_prim (hR : IsUnrQuad R σ ϖ q ε) {h : Matrix ι ι R} (hh : Hm 
     ∃ (a : ℕ) (h' : Matrix ι ι R), Hm σ h' ∧ h = (ϖ ^ a) • h' ∧ ∃ i j, h' i j ∉ lev ϖ 1 := by
   classical
   have hex : ∃ k, ∃ i j, h i j ∉ lev ϖ k := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply h0
     ext i j
     exact hR.sep _ (fun k => hcon k i j)
@@ -308,7 +262,7 @@ theorem exists_prim (hR : IsUnrQuad R σ ϖ q ε) {h : Matrix ι ι R} (hh : Hm 
   rw [ha] at hij
   have hall : ∀ i j, h i j ∈ lev ϖ a := by
     have := Nat.find_min hex (m := a) (by omega)
-    push_neg at this
+    push Not at this
     exact this
   choose c hc using fun i j => mem_lev_iff.1 (hall i j)
   refine ⟨a, Matrix.of c, ?_, ?_, i, j, ?_⟩

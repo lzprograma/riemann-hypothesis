@@ -12,8 +12,6 @@ open scoped TensorProduct InnerProductSpace
 
 namespace Formalism.IndefR.Links
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def OrZero {X : Type} [Zero X] (p : X → Prop) (x : X) : Prop := ((∃ y, p y) → p x) ∧ ((¬ ∃ y, p y) → x = 0)

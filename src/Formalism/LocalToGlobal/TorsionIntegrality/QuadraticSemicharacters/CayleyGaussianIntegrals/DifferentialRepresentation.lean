@@ -71,12 +71,12 @@ theorem char_sum {H : Sesq V} (hH : IsHerm H) {M Λ : AddSubgroup V} (hΛ : IsSe
       = if v ∈ Λ then (R.card : ℂ) else 0 := by
   have hΛ' : dualLat H Λ = Λ := hΛ
   by_cases hv1 : v ∈ Λ
-  · rw [if_pos hv1, Finset.card_eq_sum_ones, Nat.cast_sum]
+  · rw [ite_eq_left hv1, Finset.card_eq_sum_ones, Nat.cast_sum]
     refine Finset.sum_congr rfl fun x hx => ?_
     have hx' : x ∈ dualLat H Λ := by rw [hΛ']; exact hR.1 x hx
     obtain ⟨m, hm⟩ := hx' v hv1
     rw [hm, exp_two_pi_int]; simp
-  · rw [if_neg hv1]
+  · rw [ite_eq_right hv1]
     have hv' : v ∉ dualLat H Λ := by rw [hΛ']; exact hv1
     have hex : ∃ x₀ ∈ Λ, ¬ ∃ m : ℤ, altE H v x₀ = (m : ℝ) := by
       by_contra hcon

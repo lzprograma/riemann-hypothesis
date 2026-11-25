@@ -89,7 +89,7 @@ theorem multinomial_const (f x : ℕ) :
 
 theorem blockCoeff_rect_eq (hCI : CharacterAtIdentity.Statement) (r a : ℕ) (hra : r * a ≠ 0) :
     blockCoeff 0 (r * a) (rectangle r a) = numStandardTable (rectangle r a) := by
-  rw [blockCoeff, if_pos rfl, if_neg hra]
+  rw [blockCoeff, ite_eq_left rfl, ite_eq_right hra]
   have h := hCI r (rectangle r a) (fun _ _ _ => le_rfl)
   have hs : ∑ i, rectangle r a i = r * a := by
     simp [rectangle, Finset.sum_const, Finset.card_univ, Fintype.card_fin]
@@ -143,8 +143,8 @@ theorem smallPowerSum_mul_restPolynomial (f r a : ℕ) (c : SmallBlock) (k : ℕ
       smallPowerSum f r a c (k - 1) τ := by
     rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ τ)]
     rw [Finset.prod_eq_one (fun σ hσ => by
-      rw [if_neg (Finset.ne_of_mem_erase hσ), extraFactor_zero, map_one, map_one])]
-    rw [if_pos rfl, extraFactor, if_neg (by omega), blockEmb_yEval_psum, mul_one]
+      rw [ite_eq_right (Finset.ne_of_mem_erase hσ), extraFactor_zero, map_one, map_one])]
+    rw [ite_eq_left rfl, extraFactor, ite_eq_right (by omega), blockEmb_yEval_psum, mul_one]
   rw [this]
   ring
 
@@ -189,14 +189,14 @@ theorem SameFactorFormula.proof (hA : LemmaA.Statement) (hB : LemmaB.Statement)
   have hres := restrict_gmfOut f r a c κ q (f * (r * a) + 1) τ
     (fun σ hσ => by simp [hqdef, hσ]) (by rw [hsum]; exact hle)
   have hmτ : mstar f r a q (f * (r * a) + 1) τ τ = r * a + 1 := by
-    simp only [mstar, if_true, hsum]
+    simp only [mstar, ite_true, hsum]
     obtain ⟨f', rfl⟩ : ∃ f', f = f' + 1 := ⟨f - 1, by omega⟩
     rw [Nat.add_sub_cancel, add_mul, one_mul]
     omega
   have hms : mstar f r a q (f * (r * a) + 1) τ = fun σ => if σ = τ then r * a + 1 else r * a := by
     funext σ
     by_cases hσ : σ = τ
-    · subst hσ; rw [hmτ, if_pos rfl]
+    · subst hσ; rw [hmτ, ite_eq_left rfl]
     · simp [mstar, hσ, hqdef]
   have hqτ : q τ = k - 1 := by simp [hqdef]
   rw [hmτ, hqτ, toN_blockOut r a c κ (k - 1) (r * a + 1) k (by omega)] at hres
@@ -217,7 +217,7 @@ theorem SameFactorFormula.proof (hA : LemmaA.Statement) (hB : LemmaB.Statement)
       congr 1
       rw [Finset.prod_congr rfl (fun σ hσ =>
         show (mstar f r a q (f * (r * a) + 1) τ σ).factorial = (r * a).factorial by
-          simp only [hms, if_neg (Finset.ne_of_mem_erase hσ)]), Finset.prod_const,
+          simp only [hms, ite_eq_right (Finset.ne_of_mem_erase hσ)]), Finset.prod_const,
         Finset.card_erase_of_mem (Finset.mem_univ τ), Finset.card_univ, Fintype.card_fin]
     have hs' := (Finset.mem_piAntidiag.mp
       (mstar_mem f r a q (f * (r * a) + 1) τ (by rw [hsum]; exact hle))).1
@@ -241,7 +241,7 @@ theorem SameFactorFormula.proof (hA : LemmaA.Statement) (hB : LemmaB.Statement)
         aeval (fun i : Fin (r + a) => C c.sign * X i) (schur (Fin (r + a)) nu) = T := by
     rw [hT]
     refine Finset.sum_congr rfl fun nu _ => ?_
-    rw [blockCoeff, if_neg (by omega)]
+    rw [blockCoeff, ite_eq_right (by omega)]
   rw [hTeq, hprod] at hres
   have hPS : powerSumHom (r + a) S' = K • T := by
     rw [hS', hPeq, hres, hK, smul_eq_C_mul, smul_eq_C_mul]

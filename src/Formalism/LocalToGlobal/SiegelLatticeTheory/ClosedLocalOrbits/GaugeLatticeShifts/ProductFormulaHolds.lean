@@ -21,8 +21,6 @@ namespace Formalism.L2.SG.RealObj.InfCut.ProductExactness
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj.InfCut.JacobianCoordinates
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem good_eq {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word) :
     Good X u u' = Set.univ.pi fun _ => GoodLoc (r := D.R.rS) (Tw u) (Tw u') := by
   ext y

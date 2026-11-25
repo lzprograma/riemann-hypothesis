@@ -13,12 +13,6 @@ namespace ReciprocityTheory.ChartRestriction.G.TB.Canon
 
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB.LogPf
 
-section Prim
-
-variable {k : Type} [CommRing k] [Algebra ℚ k] {τ : Type} [DecidableEq τ]
-
-end Prim
-
 variable {k : Type} [CommRing k] {d : ℕ}
 
 
@@ -104,8 +98,8 @@ theorem coeff_kill (j : Fin n) (f : PS k n d) (m : Fin n × Fin d →₀ ℕ) :
       by_cases hem : e = m
       · subst hem
         simp [he]
-      · rw [if_neg (Ne.symm hem), if_neg (fun h => hem h.1)]
-    · push_neg at he
+      · rw [ite_eq_right (Ne.symm hem), ite_eq_right (fun h => hem h.1)]
+    · push Not at he
       obtain ⟨b, hb⟩ := he
       have hp : (e.prod fun s i => a s ^ i) = 0 := by
         refine Finset.prod_eq_zero (Finsupp.mem_support_iff.mpr hb) ?_
@@ -113,7 +107,7 @@ theorem coeff_kill (j : Fin n) (f : PS k n d) (m : Fin n × Fin d →₀ ℕ) :
         first
         | rw [Function.update_self]
         exact zero_pow hb
-      rw [hp, map_zero, if_neg]
+      rw [hp, map_zero, ite_eq_right]
       rintro ⟨rfl, h⟩
       exact hb (h b)
   rw [sb_apply]
@@ -124,7 +118,7 @@ theorem coeff_kill (j : Fin n) (f : PS k n d) (m : Fin n × Fin d →₀ ℕ) :
     by_cases hm : ∀ b, m (j, b) = 0 <;> simp [hm]
   · intro e he
     show coeff e f • coeff m (e.prod fun s i => a s ^ i) = 0
-    rw [key, if_neg (fun h => he h.1), smul_zero]
+    rw [key, ite_eq_right (fun h => he h.1), smul_zero]
 
 variable [Algebra ℚ k]
 

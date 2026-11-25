@@ -48,8 +48,6 @@ open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory
 open UpperTheory.V UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict UpperTheory.V.Z.Sym.Dict.Br UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob
 open UpperTheory.V.W (Plc Lp)
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 open Formalism.UG GlobalTheory.BCT.FinPtLoc in
 private theorem fin_fst {L : Type} [Field L] [NumberField L] {n : ℕ} (g : GL (Fin n) (Af L)) (i j : Fin n) :
     fstA L ((finGL L n g).val i j) = (1 : Matrix (Fin n) (Fin n) (InfiniteAdeleRing L)) i j := by

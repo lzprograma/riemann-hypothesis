@@ -37,8 +37,7 @@ private theorem exists_linearIndependent_append_of_codim {r : ℕ} (w : Fin r �
   | succ d ih =>
     intro a u0 hu0 hd har
     obtain ⟨j, hj⟩ : ∃ j, w j ∉ Submodule.span ℚ (Set.range u0) := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       haveI : Nonempty (Fin r) := ⟨⟨0, by omega⟩⟩
       have htop : Submodule.span ℚ (Set.range w) = ⊤ :=
         hw.span_eq_top_of_card_eq_finrank (by simp)

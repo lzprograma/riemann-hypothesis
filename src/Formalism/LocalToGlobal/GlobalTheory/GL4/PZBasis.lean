@@ -79,9 +79,9 @@ theorem kronDet_scalar (τ : ι) (t : ℝˣ) :
     funext σ
     by_cases hσ : σ = τ
     · subst hσ
-      rw [Pi.mulSingle_eq_same, if_pos rfl, brpSc_coe]
-    · rw [Pi.mulSingle_eq_of_ne hσ, if_neg hσ, one_smul]; rfl
-  rw [h, kron_smul, kron_one, Finset.prod_ite_eq' Finset.univ τ, if_pos (Finset.mem_univ τ), Matrix.det_smul, Matrix.det_one, mul_one,
+      rw [Pi.mulSingle_eq_same, ite_eq_left rfl, brpSc_coe]
+    · rw [Pi.mulSingle_eq_of_ne hσ, ite_eq_right hσ, one_smul]; rfl
+  rw [h, kron_smul, kron_one, Finset.prod_ite_eq' Finset.univ τ, ite_eq_left (Finset.mem_univ τ), Matrix.det_smul, Matrix.det_one, mul_one,
     zpow_natCast]
 
 theorem log_kron (A : ∀ τ, Matrix (Fin (r τ)) (Fin (r τ)) ℝ) (hA : ∀ τ, (A τ).det ≠ 0) (hr : ∀ τ, 0 < r τ) :
@@ -212,9 +212,9 @@ theorem li_semilin_gen {K F V M ι κ : Type} [Field K] [Field F] [AddCommGroup 
     exact (linearIndependent_iff'.1 hb) T _ h2
   calc g a = ∑ a' ∈ s, g a' * σ (f (v a')) := by
         rw [Finset.sum_eq_single a]
-        · rw [hf a, if_pos rfl, map_one, mul_one]
+        · rw [hf a, ite_eq_left rfl, map_one, mul_one]
         · intro a' _ hne
-          rw [hf a', if_neg hne, map_zero, mul_zero]
+          rw [hf a', ite_eq_right hne, map_zero, mul_zero]
         · intro h
           exact absurd ha h
     _ = ∑ a' ∈ s, g a' * σ (∑ i ∈ T, b.repr (v a') i * f (b i)) :=

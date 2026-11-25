@@ -56,8 +56,6 @@ import Mathlib.Algebra.Azumaya.Basic
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 section SlopeTestRemainingChoices
@@ -69,8 +67,6 @@ open GlobalTheory.ArcQ GlobalTheory.FlagBundle Filter Topology
 namespace GlobalTheory.FrameLift
 
 open GlobalTheory.ShFam.Hor.LogCh
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
   {Xo : Moduli Dw l} {c : Coeff l} {O : Type} [CommRing O] {β : O →+* c.F} {Z : Model Xo c β} {σ : c.F →+* ℂ} {r : ℕ}
@@ -105,7 +101,7 @@ theorem exists_coords {U : Formalism.L2.PjFree.Unf Xo c σ r} (hU : Formalism.L2
   let x : (Fin n → ℂ) → (U.X k).dom := fun v =>
     if h : L.symm v ∈ B then ⟨s (L.symm v), hs _ h⟩ else ⟨s b₀, hs _ hb₀⟩
   have hx : ∀ v ∈ B₁, (x v).1 = s (L.symm v) := fun v hv => by
-    simp only [x, dif_pos (show L.symm v ∈ B from hv)]
+    simp only [x, dite_eq_left (show L.symm v ∈ B from hv)]
   have hxL : ∀ b (hb : b ∈ B), x (L b) = ⟨s b, hs b hb⟩ := fun b hb =>
     Subtype.ext ((hx _ (by simpa [hB₁] using hb)).trans (by rw [ContinuousLinearEquiv.symm_apply_apply]))
   have hsd : DifferentiableOn ℂ (fun v => s (L.symm v)) B₁ := hd.comp L.symm.differentiableOn fun v hv => hv

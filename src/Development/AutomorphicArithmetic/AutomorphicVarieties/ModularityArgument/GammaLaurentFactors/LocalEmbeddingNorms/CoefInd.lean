@@ -52,7 +52,6 @@ open Matrix GroundTheory.Automorphic.GLnLocal GroundTheory.Automorphic.Parabolic
   GroundTheory.Automorphic.GJMatrix
 open scoped NNReal ENNReal Pointwise
 
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
 
 private theorem UpperTheory.V.Z.Gam.induced_matrix_coefficients {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
     [IsNonarchimedeanLocalField F] [MeasurableSpace F] [BorelSpace F]

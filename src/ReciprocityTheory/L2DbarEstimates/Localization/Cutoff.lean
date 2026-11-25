@@ -118,30 +118,10 @@ theorem cut_d_eq_zero {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n)
     · simp [wdb, Function.comp_def]
     · rfl
 
-private lemma norm_wd_ofReal_eq_norm_wdb_ofReal (n : ℕ) (j : Fin n) (h : V n → ℝ) (y : V n) :
-    ‖wd n j (fun y => (h y : ℂ)) y‖ = ‖wdb n j (fun y => (h y : ℂ)) y‖ := by
-  have key : ∀ v : V n, (starRingEnd ℂ) (fderiv ℝ (fun y => (h y : ℂ)) y v) =
-      fderiv ℝ (fun y => (h y : ℂ)) y v := by
-    intro v
-    have hf : (fun y => (h y : ℂ)) = Complex.conjCLE ∘ (fun y => (h y : ℂ)) := by
-      funext w
-      simp
-    conv_rhs => rw [hf]
-    rw [ContinuousLinearEquiv.comp_fderiv]
-    simp
-  unfold wd wdb
-  rw [← Complex.norm_conj]
-  congr 1
-  simp only [map_div₀, map_sub, map_mul, key, Complex.conj_I, map_ofNat]
-  ring
-
 theorem cut_norm_d_eq {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (j : Fin n)
     (η : M → ℝ) (x : M) :
     ‖d n z j (fun y => (η y : ℂ)) x‖ = ‖db n z j (fun y => (η y : ℂ)) x‖ := by
-  unfold d db
-  split_ifs with hc
-  · exact norm_wd_ofReal_eq_norm_wdb_ofReal n j (η ∘ (Classical.choose hc).symm) (z x)
-  · rfl
+  rw [db_ofReal, Complex.norm_conj]
 
 theorem SmoothR.cut_continuous {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n)
     (hz : IsLocalHomeomorph z) (f : M → ℝ) (hf : SmoothR n z f) : Continuous f := by

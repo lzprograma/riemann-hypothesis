@@ -167,8 +167,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
   Formalism.L2.SG.LsDatumB
 open Classical ValuativeRel
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7} {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep}
   {δ : ∀ p : PlF D, (D.s.atP p).Fp} {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
@@ -210,8 +208,6 @@ namespace Formalism.L2.SG.Pf.FCount
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef Formalism.L2.SG.DataCut
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem eligible_totally_positive {D : Formalism.BasicNotions.D7} (u u' : D.what₂.Word) (F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u))
     (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)) : EligPos u u' F0 what₂ :=
   fun γ w h => Formalism.L2.SG.WConst.atPt_totPos γ w h.2
@@ -235,8 +231,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
   Formalism.L2.SG.LsDatumB Formalism.L2.SG.Pf.PCount
 open Classical ValuativeRel
 open scoped Matrix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section ClsInv
 
@@ -297,7 +291,7 @@ theorem clsOf_mul (X A Ai B Bi : Matrix (Fin (m + 1)) (Fin (m + 1)) E)
   unfold clsOf
   by_cases hX : (∀ a b, X a b ∈ Mp.R) ∧ IsUnit X.det
   · have hY : (∀ a b, (A * X * B) a b ∈ Mp.R) ∧ IsUnit (A * X * B).det := ⟨hint.2 hX.1, hdet.2 hX.2⟩
-    rw [dif_pos hY, dif_pos hX]
+    rw [dite_eq_left hY, dite_eq_left hX]
     congr 1
     apply Quotient.sound
 
@@ -338,10 +332,10 @@ theorem clsOf_mul (X A Ai B Bi : Matrix (Fin (m + 1)) (Fin (m + 1)) E)
       intro i
       have e := congrFun (congrFun h2 i) (Fin.last m)
       rw [Matrix.mul_apply, Finset.sum_eq_single (Fin.last m)] at e
-      · rw [hAl, if_pos rfl, mul_one] at e
+      · rw [hAl, ite_eq_left rfl, mul_one] at e
         rw [e, Matrix.one_apply]
       · intro k _ hk
-        rw [hAl, if_neg hk, mul_zero]
+        rw [hAl, ite_eq_right hk, mul_zero]
       · intro h
         exact absurd (Finset.mem_univ _) h
     have hinv : (A * X * B)⁻¹ = Bi * X⁻¹ * Ai := by
@@ -359,7 +353,7 @@ theorem clsOf_mul (X A Ai B Bi : Matrix (Fin (m + 1)) (Fin (m + 1)) E)
       by_cases hi : i = Fin.last m
       · subst hi
         simp
-      · rw [if_neg hi, Pi.single_eq_of_ne hi]
+      · rw [ite_eq_right hi, Pi.single_eq_of_ne hi]
         rfl
     · intro v
       induction v using Submodule.Quotient.induction_on with
@@ -380,9 +374,9 @@ theorem clsOf_mul (X A Ai B Bi : Matrix (Fin (m + 1)) (Fin (m + 1)) E)
         have hBv : ∀ y : Fin (m + 1) → E, (Bi *ᵥ y) (Fin.last m) = y (Fin.last m) := by
           intro y
           rw [Matrix.mulVec, dotProduct, Finset.sum_eq_single (Fin.last m)]
-          · rw [hBl, if_pos rfl, one_mul]
+          · rw [hBl, ite_eq_left rfl, one_mul]
           · intro k _ hk
-            rw [hBl, if_neg hk, zero_mul]
+            rw [hBl, ite_eq_right hk, zero_mul]
           · intro h
             exact absurd (Finset.mem_univ _) h
         rw [hXm, hYm, hfx, hinv, ← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, hBv]
@@ -396,13 +390,6 @@ section ThInv
 
 variable {D : Formalism.BasicNotions.D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
   (δ : ∀ p : PlF D, (D.s.atP p).Fp)
-
-theorem permSign_mul_self₂ (p : PlF D) : sgnP (D := D) p * sgnP p = 1 := by
-  unfold sgnP
-  rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-  congr 1
-  funext b
-  rw [← mul_pow, neg_one_mul, neg_neg, one_pow]
 
 theorem sgnP_int (p : PlF D) (i j : Fin (D.R.rS + 1)) : sgnP (D := D) p i j ∈ (M p).R := by
   unfold sgnP
@@ -418,7 +405,7 @@ theorem sgnP_last (p : PlF D) (j : Fin (D.R.rS + 1)) :
   by_cases h : j = Fin.last D.R.rS
   · subst h
     simp
-  · rw [if_neg (Ne.symm h), if_neg h]
+  · rw [ite_eq_right (Ne.symm h), ite_eq_right h]
 
 theorem one_int (p : PlF D) (i j : Fin (D.R.rS + 1)) : (1 : MatP D p) i j ∈ (M p).R := by
   rw [Matrix.one_apply]
@@ -460,7 +447,7 @@ theorem thL_inv (T T' : ℕ) (p : PlF D) (w : Point D.host.E (D.R.rS + 1)) (Y Y'
     (Formalism.L2.SG.Pf.LocOrbSumPf.last_of_up ρ⁻¹ hρi.1 hρi.2.1)]
   have e2 : (Y' + C) * sgnP p = 1 * (Y' + C) * sgnP p := by rw [Matrix.one_mul]
   rw [e2, clsOf_mul (M p) (Y' + C) 1 1 (sgnP p) (sgnP p) (one_int M p) (one_int M p) (sgnP_int M p)
-    (sgnP_int M p) (Matrix.mul_one 1) (Matrix.mul_one 1) (permSign_mul_self₂ p) (permSign_mul_self₂ p)
+    (sgnP_int M p) (Matrix.mul_one 1) (Matrix.mul_one 1) (Formalism.L2.SG.Pf.LocUnramB.permSign_mul_self₂ p) (Formalism.L2.SG.Pf.LocUnramB.permSign_mul_self₂ p)
     (Formalism.L2.SG.Pf.LocOrbSumPf.last_of_low 1 (fun a => Matrix.one_apply_eq a)
       (fun a b h => Matrix.one_apply_ne (ne_of_lt h))) (sgnP_last p)]
 
@@ -485,7 +472,7 @@ theorem theta_of_tuple : ThOfTup M δ u u' F0 what₂ := by
 
 theorem theta_of_class : ThOfCls M δ u u' := by
   intro w Z hZ p hcls
-  have hrep : repL M δ (D.mem u).A.T (D.mem u').A.T p w (tupZ M δ u u' Z p) = hcls.choose := dif_pos hcls
+  have hrep : repL M δ (D.mem u).A.T (D.mem u').A.T p w (tupZ M δ u u' Z p) = hcls.choose := dite_eq_left hcls
   obtain ⟨-, -, hO⟩ := hcls.choose_spec
   rw [hrep]
   have hmem : hcls.choose ∈ kkOrb M p (CntLocal.ZZP (M := M) δ u u' p Z * sgnP p) := by
@@ -566,8 +553,6 @@ namespace Formalism.L2.SG.Pf.LocUnramB
 open NumberField IsDedekindDomain ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups MeasureTheory Formalism.L2.SG.Pf.AtPt
 open Formalism.L2.SG.LsDatumB Formalism.L2.SG.TermDef Formalism.L2.SG.DataCut Formalism.MainNotions.S.Lat
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Restr2
 
 variable {D : Formalism.BasicNotions.D7} {δ : ∀ p : PlF D, (D.s.atP p).Fp}
@@ -588,7 +573,7 @@ theorem thRestricted_of (hA : ∀ p, Agree δ M p) (hrows : IsRowReps D F0 what�
     obtain ⟨y, hy⟩ := hN γ w hat (hRel γ w h0) hgen
     have hex : ∃ x : Point D.host.E (D.R.rS + 1) × LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) ×
         PairVal.MatR D × PairVal.MatR D, PairVal.NormRep γ x.1 x.2.1 x.2.2.1 x.2.2.2 := ⟨(w, y), hy⟩
-    have hn : nrep γ = some hex.choose := dif_pos hex
+    have hn : nrep γ = some hex.choose := dite_eq_left hex
     obtain ⟨hRep, -, hL, hU, e⟩ := hex.choose_spec
     obtain ⟨F₁, hR₁, -, hc₁⟩ := hat
     have hw : w = hex.choose.1 := pt_eq_of_cells cell_point_uniqueness (_root_.term_function_const D u u') hrows γ
@@ -686,12 +671,12 @@ theorem MonoU.det_unit {W : Matrix (Fin m) (Fin m) K} (H : MonoU W) : IsUnit W.d
   have h : W * inv = 1 := by
     ext a b
     rw [Matrix.mul_apply, Finset.sum_eq_single (H.σ a)]
-    · rw [H.hW, if_pos rfl]
+    · rw [H.hW, ite_eq_left rfl]
       simp only [inv]
       by_cases hb : b = a
-      · subst hb; rw [if_pos (H.σσ b).symm, H.cσ, Matrix.one_apply_eq, Ring.mul_inverse_cancel _ (H.hcu b)]
-      · rw [if_neg (fun h => hb (by rw [h, H.σσ])), mul_zero, Matrix.one_apply_ne (Ne.symm hb)]
-    · intro k _ hk; rw [H.hW, if_neg hk, zero_mul]
+      · subst hb; rw [ite_eq_left (H.σσ b).symm, H.cσ, Matrix.one_apply_eq, Ring.mul_inverse_cancel _ (H.hcu b)]
+      · rw [ite_eq_right (fun h => hb (by rw [h, H.σσ])), mul_zero, Matrix.one_apply_ne (Ne.symm hb)]
+    · intro k _ hk; rw [H.hW, ite_eq_right hk, zero_mul]
     · simp
   exact Matrix.isUnit_det_of_right_inverse h
 
@@ -728,8 +713,6 @@ namespace Formalism.L2.SG.Pf.ThSomePf
 open NumberField IsDedekindDomain ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.Pf.AtPt Formalism.L2.SG.Pf.LocUnramB
 open Formalism.L2.SG.LsDatumB
 open scoped Matrix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section ModeL
 
@@ -770,7 +753,7 @@ theorem monoShiftL (T T' : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D) (h
       hcu := hcu
       hW := modMat_apply' δ T T' p w }
   by_cases hD : Dmin w D.R.rS = 0
-  · have : cornerSh δ T T' p w = 0 := by unfold cornerSh; rw [if_pos hD]
+  · have : cornerSh δ T T' p w = 0 := by unfold cornerSh; rw [ite_eq_left hD]
     rw [this]
     have h0 : cornerM p (0 : (D.s.atP p).Ep) = 0 := by ext a b; simp [cornerM]
     rw [h0, add_zero]
@@ -782,9 +765,9 @@ theorem monoShiftL (T T' : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D) (h
   rw [ptMat_apply'] at hpm
   have hσl : sgF w (Fin.last _) = Fin.last _ := by
     by_contra h
-    rw [if_neg (Ne.symm h)] at hpm
+    rw [ite_eq_right (Ne.symm h)] at hpm
     exact ht0 hpm.symm
-  rw [if_pos hσl.symm] at hpm
+  rw [ite_eq_left hσl.symm] at hpm
   obtain ⟨c1, c2⟩ := (cond_iff w (Fin.last _)).2 ⟨rfl, hσl⟩
   have hst : pSt w.1 (Fin.last D.R.rS).val = D.R.rS := by
     simp only [Fin.val_last] at c1 c2 ⊢; omega
@@ -795,11 +778,11 @@ theorem monoShiftL (T T' : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D) (h
   have hcu_l := H.hcu (Fin.last _)
   rw [hcl] at hcu_l
   have hcs : cornerSh δ T T' p w = ((nSh (blkMod δ T T' p (D.R.rS + 1) 1 t) : ℕ) : (D.s.atP p).Ep) := by
-    unfold cornerSh; rw [if_neg hD, hz]
+    unfold cornerSh; rw [ite_eq_right hD, hz]
   have hc : ∃ k : Fin 3, IsUnit (blkMod δ T T' p (D.R.rS + 1) 1 t + (((k : Fin 3) : ℕ) : (D.s.atP p).Ep)) :=
     ⟨0, by simpa using hcu_l⟩
   have hnsh : nSh (blkMod δ T T' p (D.R.rS + 1) 1 t) = ((hc.choose : Fin 3) : ℕ) := by
-    unfold nSh; rw [dif_pos hc]
+    unfold nSh; rw [dite_eq_left hc]
   have hku := hc.choose_spec
   let c' : Fin (D.R.rS + 1) → (D.s.atP p).Ep := fun a =>
     if a = Fin.last _ then blkMod δ T T' p (D.R.rS + 1) 1 t + (((hc.choose : Fin 3) : ℕ) : (D.s.atP p).Ep)
@@ -813,12 +796,12 @@ theorem monoShiftL (T T' : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D) (h
       cσ := fun a => by
         by_cases ha : a = Fin.last _
         · have hs' : H.σ a = Fin.last _ := by rw [ha]; exact hσl
-          simp only [c', if_pos hs', if_pos ha]
-        · simp only [c', if_neg ha, if_neg (hσne a ha)]; exact H.cσ a
+          simp only [c', ite_eq_left hs', ite_eq_left ha]
+        · simp only [c', ite_eq_right ha, ite_eq_right (hσne a ha)]; exact H.cσ a
       hcu := fun a => by
         by_cases ha : a = Fin.last _
-        · simp only [c', if_pos ha]; exact hku
-        · simp only [c', if_neg ha]; exact H.hcu a
+        · simp only [c', ite_eq_left ha]; exact hku
+        · simp only [c', ite_eq_right ha]; exact H.hcu a
       hW := fun a b => by
         rw [Matrix.add_apply, H.hW]
         simp only [cornerM, Matrix.of_apply, c']
@@ -826,14 +809,14 @@ theorem monoShiftL (T T' : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D) (h
         · have hs' : H.σ a = Fin.last _ := by rw [ha]; exact hσl
           by_cases hbl : b = Fin.last _
           · have hb' : b = H.σ a := by rw [hs', hbl]
-            rw [if_pos hb', if_pos ⟨ha, hbl⟩, if_pos hb', if_pos ha, ha, hcl, hcs, hnsh]
+            rw [ite_eq_left hb', ite_eq_left ⟨ha, hbl⟩, ite_eq_left hb', ite_eq_left ha, ha, hcl, hcs, hnsh]
           · have hb' : ¬ b = H.σ a := by rw [hs']; exact hbl
-            rw [if_neg hb', if_neg (show ¬ (a = Fin.last D.R.rS ∧ b = Fin.last D.R.rS) from fun h => hbl h.2),
-              if_neg hb', add_zero]
-        · rw [if_neg (show ¬ (a = Fin.last D.R.rS ∧ b = Fin.last D.R.rS) from fun h => ha h.1), add_zero]
+            rw [ite_eq_right hb', ite_eq_right (show ¬ (a = Fin.last D.R.rS ∧ b = Fin.last D.R.rS) from fun h => hbl h.2),
+              ite_eq_right hb', add_zero]
+        · rw [ite_eq_right (show ¬ (a = Fin.last D.R.rS ∧ b = Fin.last D.R.rS) from fun h => ha h.1), add_zero]
           by_cases hb' : b = H.σ a
-          · rw [if_pos hb', if_pos hb', if_neg ha]
-          · rw [if_neg hb', if_neg hb'] }
+          · rw [ite_eq_left hb', ite_eq_left hb', ite_eq_right ha]
+          · rw [ite_eq_right hb', ite_eq_right hb'] }
   exact H'.det_unit
 
 end ModeL
@@ -845,8 +828,6 @@ namespace Formalism.L2.SG.Pf.ThSomePf
 open NumberField IsDedekindDomain ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.Pf.AtPt Formalism.L2.SG.Pf.LocUnramB
 open Formalism.L2.SG.LsDatumB Formalism.L2.SG.TermLoc
 open scoped Matrix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section DetL
 
@@ -896,11 +877,11 @@ theorem detL (hA : ∀ p, Agree δ M p) (u u' : D.what₂.Word) (p : PlF D) (hM 
     ext a b
     rw [modMat_apply', Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply']
     by_cases hb : b = sgF w a
-    · rw [if_pos hb, if_pos hb, modMat_blk Zd]
+    · rw [ite_eq_left hb, ite_eq_left hb, modMat_blk Zd]
       simp only [twist, qE, tau0, hR, Ring.inverse_one, mul_one, ite_self, sub_zero, map_mul, fr]
       subst hb
       ring
-    · rw [if_neg hb, if_neg hb, map_zero, mul_zero, zero_mul]
+    · rw [ite_eq_right hb, ite_eq_right hb, map_zero, mul_zero, zero_mul]
   set L' := Matrix.diagonal fr * L.map ι * Matrix.diagonal fri
   set U' := Matrix.diagonal fri * U.map ι * Matrix.diagonal fr
   have hL' : IsLo L' := isLo_conj (isLo_map ι hL) fr fri hfr'
@@ -928,8 +909,6 @@ namespace Formalism.L2.SG.Pf.ThSomePf
 open NumberField IsDedekindDomain ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.Pf.AtPt Formalism.L2.SG.Pf.LocUnramB
 open Formalism.L2.SG.LsDatumB Formalism.L2.SG.TermLoc
 open scoped Matrix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section DetG
 
@@ -966,8 +945,6 @@ namespace Formalism.L2.SG.Pf.ThSomePf
 open NumberField IsDedekindDomain ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.Pf.AtPt Formalism.L2.SG.Pf.LocUnramB
 open Formalism.L2.SG.LsDatumB Formalism.L2.SG.TermLoc
 open scoped Matrix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section DetG2
 
@@ -1036,8 +1013,6 @@ open NumberField IsDedekindDomain ValuativeRel Formalism.MainNotions.S Formalism
 open Formalism.L2.SG.LsDatumB Formalism.L2.SG.TermLoc
 open scoped Matrix
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section DetG3
 
 variable {D : Formalism.BasicNotions.D7} {δ : ∀ p : PlF D, (D.s.atP p).Fp}
@@ -1101,10 +1076,10 @@ theorem blkMod_comps (p : PlF D) (sg : Loc.SplitAt (D.s.atP p).Fp (D.s.atP p).Ep
   have hc : (D.R.rS + 1 + 1 - 1 = D.R.rS + 1 ∧ (1 : ℕ) = 1) := ⟨by omega, rfl⟩
   simp only [blkMod, tMod, hnu, pow_zero, Ring.inverse_one, one_mul, twist, qE, tau0, hsD]
   refine ⟨?_, ?_⟩
-  · rw [map_sub, map_mul, if_pos (show D.R.rS + 1 + 1 - 1 = D.R.rS + 1 ∧ True from ⟨by omega, trivial⟩), map_mul,
+  · rw [map_sub, map_mul, ite_eq_left (show D.R.rS + 1 + 1 - 1 = D.R.rS + 1 ∧ True from ⟨by omega, trivial⟩), map_mul,
       fst_proj_symm, fst_proj_symm, hi1, adeleInfiniteComponent_apply]
     ring
-  · rw [map_sub, map_mul, if_pos (show D.R.rS + 1 + 1 - 1 = D.R.rS + 1 ∧ True from ⟨by omega, trivial⟩), map_mul,
+  · rw [map_sub, map_mul, ite_eq_left (show D.R.rS + 1 + 1 - 1 = D.R.rS + 1 ∧ True from ⟨by omega, trivial⟩), map_mul,
       snd_proj_symm, snd_proj_symm, hi2, adele_ext_components]
     ring
 
@@ -1146,8 +1121,6 @@ open NumberField Module Formalism.BasicNotions Formalism.MainNotions.S Formalism
 open Formalism.L2.SG.LsDatumB Formalism.L2.SG.Pf.AtPt Formalism.L2.SG.Pf.LocUnramB Formalism.L2.SG.TermLoc
 open scoped Matrix
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section DetG4
 
 variable {D : Formalism.BasicNotions.D7} {δ : ∀ p : PlF D, (D.s.atP p).Fp}
@@ -1155,13 +1128,11 @@ variable {D : Formalism.BasicNotions.D7} {δ : ∀ p : PlF D, (D.s.atP p).Fp}
 
 theorem leadMinor_top (Z : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E) :
     leadMinorE Z (D.R.rS + 1) = Z.det := by
-  unfold leadMinorE; rw [dif_pos le_rfl]; rfl
+  unfold leadMinorE; rw [dite_eq_left le_rfl]; rfl
 
 theorem leadMinor_r (Z : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E) :
     leadMinorE Z D.R.rS = (Z.submatrix Fin.castSucc Fin.castSucc).det := by
-  unfold leadMinorE; rw [dif_pos (Nat.le_succ _)]; rfl
-
-
+  unfold leadMinorE; rw [dite_eq_left (Nat.le_succ _)]; rfl
 
 theorem detG (hA : ∀ p, Agree δ M p) (u u' : D.what₂.Word) (p : PlF D) (g : Loc.SplitG (M p).L)
     (hsM : (M p).split = some g) {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)}
@@ -1235,7 +1206,7 @@ theorem detG (hA : ∀ p, Agree δ M p) (u u' : D.what₂.Word) (p : PlF D) (g :
   have hqi' : (-(sg.q : (D.s.atP p).Fp)⁻¹) ^ (D.R.rS + 1) ≠ 0 := pow_ne_zero _ (neg_ne_zero.2 (inv_ne_zero hq))
   have hP2 : P ^ 2 ≠ 0 := pow_ne_zero _ hP
   by_cases hD : Dmin w D.R.rS = 0
-  · have hcs : cornerSh δ (D.mem u).A.T (D.mem u').A.T p w = 0 := by unfold cornerSh; rw [if_pos hD]
+  · have hcs : cornerSh δ (D.mem u).A.T (D.mem u').A.T p w = 0 := by unfold cornerSh; rw [ite_eq_left hD]
     have hDr : (Z.submatrix Fin.castSucc Fin.castSucc).det = 0 := by
       rw [hr] at hD; exact (mul_eq_zero.1 hD).resolve_left hs
     rw [hcs]
@@ -1259,7 +1230,7 @@ theorem detG (hA : ∀ p, Agree δ M p) (u u' : D.what₂.Word) (p : PlF D) (g :
       · rw [map_add (p1 sg.e), map_natCast (p1 sg.e)]; exact hk1
       · rw [map_add (p2 sg.e), map_natCast (p2 sg.e)]; exact hk2
     have hcs : cornerSh δ (D.mem u).A.T (D.mem u').A.T p w = (((hex.choose : Fin 3) : ℕ) : (D.s.atP p).Ep) := by
-      unfold cornerSh nSh; rw [if_neg hD, dif_pos hex]
+      unfold cornerSh nSh; rw [ite_eq_right hD, dite_eq_left hex]
     have hu := hex.choose_spec
     have hu1 : p1 sg.e (blkMod δ (D.mem u).A.T (D.mem u').A.T p (D.R.rS + 1) 1 (zetaOf w) +
         (((hex.choose : Fin 3) : ℕ) : (D.s.atP p).Ep)) ≠ 0 := fun h => by
@@ -1317,8 +1288,6 @@ open NumberField Module Formalism.BasicNotions Formalism.MainNotions.S Formalism
 open Formalism.L2.SG.LsDatumB Formalism.L2.SG.Pf.AtPt Formalism.L2.SG.Pf.LocUnramB Formalism.L2.SG.TermLoc
 open scoped Matrix
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Assembly
 
 variable {D : Formalism.BasicNotions.D7} {δ : ∀ p : PlF D, (D.s.atP p).Fp}
@@ -1344,7 +1313,7 @@ theorem thSome_of (hA : ∀ p, Agree δ M p) {u u' : D.what₂.Word} {F0 : FlagG
     ThSome M δ u u' F0 what₂ := by
   intro γ w hγ p
   have hex := hNR γ w hγ
-  have hn : nrep γ = some hex.choose := dif_pos hex
+  have hn : nrep γ = some hex.choose := dite_eq_left hex
   obtain ⟨-, -, hL, hU, e⟩ := hex.choose_spec
   have hz : zT γ = ZhatL (lf D F0) hex.choose.2.1 := by unfold zT; rw [hn]
   have hpt : ptT γ = hex.choose.1 := by unfold ptT; rw [hn]
@@ -1367,16 +1336,13 @@ theorem thSome_of (hA : ∀ p, Agree δ M p) {u u' : D.what₂.Word} {F0 : FlagG
   show thL M δ (D.mem u).A.T (D.mem u').A.T p (ptT γ) (Formalism.L2.SG.CntLocal.ZZP (M := M) δ u u' p (zT γ)) ≠ none
   rw [hpt]
   unfold thL clsOf
-  rw [dif_pos ⟨hint, hdet⟩]
+  rw [dite_eq_left ⟨hint, hdet⟩]
   exact Option.some_ne_none _
 
 end Assembly
 
 end Formalism.L2.SG.Pf.ThSomePf
 
-namespace Formalism.L2.SG.Pf
-
-end Formalism.L2.SG.Pf
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -1392,8 +1358,6 @@ noncomputable section
 namespace Formalism.L2.SG.Pf
 
 open NumberField Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef Formalism.L2.SG.DataCut Formalism.L2.SG.LsDatumB
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem thSome_holds {D : Formalism.BasicNotions.D7} {δ : ∀ p : PlF D, (D.s.atP p).Fp}
     {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep} (hA : ∀ p, Agree δ M p) {u u' : D.what₂.Word}
@@ -1438,8 +1402,6 @@ namespace Formalism.L2.SG.Pf.Coef
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef Formalism.L2.SG.DataCut
   Formalism.L2.SG.LsDatumB
 open Classical ValuativeRel
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem cutAt_of_leaves {D : Formalism.BasicNotions.D7} {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep}
     {δ : ∀ p : PlF D, (D.s.atP p).Fp} {L : CntLocal.LocSp D M} {u u' : D.what₂.Word}

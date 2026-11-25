@@ -7,8 +7,6 @@ public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory
 
 @[expose] public section
 
-set_option autoImplicit false
-
 namespace Formalism.L2.SG.Pf
 
 theorem k_finite_smooth : Formalism.L2.SG.LitS.KFinSmooth := by

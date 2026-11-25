@@ -16,6 +16,8 @@ import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Etale.Weakly
 import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.TotallySplit
+import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RatTermOfRatStep
+import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StarDetMulDetMem
 
 @[expose] public section
 
@@ -30,37 +32,13 @@ open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV F
 theorem desc_map {K : Type} [Field K] (σ : K →+* ℂ) (k : K) : desc σ (σ k) = k := by
   have hex : ∃ k' : K, σ k' = σ k := ⟨k, rfl⟩
   unfold desc
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact σ.injective hex.choose_spec
 
 theorem sdLat_span {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
     (L : Submodule (𝓞 E) (Sp E n)) (hL : IsSdLat L) :
     Submodule.span E (L : Set (Sp E n)) = ⊤ := by
-  let W := Submodule.span E (L : Set (Sp E n))
-  change W = ⊤
-  by_contra h
-  let e : Sp E n ≃ₗ⋆[E] Sp E n := starLinearEquiv E
-  let g : Sp E n →ₗ[E] Module.Dual E W :=
-    (LinearMap.domRestrict' W).comp ((hStd E n).comp e.toLinearMap)
-  have hdim : Module.finrank E (Module.Dual E W) < Module.finrank E (Sp E n) := by
-    rw [Subspace.dual_finrank_eq]
-    exact Submodule.finrank_lt h
-  obtain ⟨x, hx, hx₀⟩ :=
-    Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
-  have hsmul (a : E) : a • e x ∈ L := by
-    rw [← hL.2, dualBasic_mem_dual]
-    intro y hy
-    apply hStd_mem_one_symm
-    have hxy : hStd E n (e x) y = 0 :=
-      congrArg (fun f : Module.Dual E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
-    simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxy]
-  let i : E →ₗ[𝓞 E] L :=
-    ((LinearMap.toSpanSingleton E _ (e x)).restrictScalars (𝓞 E)).codRestrict L hsmul
-  let : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.mpr hL.1.fg
-  let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
-    smul_left_injective E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
-  exact RingOfIntegers.not_isField E
-    (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+  apply _root_.GlobalTheory.DetSelfDual.span_eq_top_of_isSdLat <;> assumption
 
 section Jet
 
@@ -75,21 +53,6 @@ theorem jetLin_monomial (J : (DVar ι a b →₀ ℕ) → K) (m : ((ι × Fin b 
   rw [h, map_smul]
   unfold jetLin
   rw [Module.Basis.constr_basis, MvPolynomial.smul_monomial, smul_eq_mul]
-
-theorem jetLin_sum {κ : Type} (s : Finset κ) (J : κ → (DVar ι a b →₀ ℕ) → K) :
-    jetLin (fun m => ∑ i ∈ s, J i m) = ∑ i ∈ s, jetLin (J i) := by
-  refine (basisMonomials ((ι × Fin b × Fin b) ⊕ DVar ι a b) K).ext fun m => ?_
-  unfold jetLin
-
-  simp only [LinearMap.sum_apply, Module.Basis.constr_basis, map_sum]
-
-theorem jetOp_sum {κ : Type} (s : Finset κ) (lam : ι → DomWeight a) (lam' : ι → DomWeight b) (J : κ → (DVar ι a b →₀ ℕ) → K)
-    (n : ι → ℕ) : jetOp lam lam' (fun m => ∑ i ∈ s, J i m) n = ∑ i ∈ s, jetOp lam lam' (J i) n := by
-  unfold jetOp jetMap
-  rw [jetLin_sum]
-  refine LinearMap.ext fun P => ?_
-
-  simp only [LinearMap.sum_apply, LinearMap.comp_apply, map_sum]
 
 end Jet
 
@@ -160,15 +123,7 @@ variable (D : ℕ)
 theorem thDistC_cong (N : Submodule (𝓞 X.E) (Sp X.E a)) (fr : Frs X.E a SB) (N' : Submodule (𝓞 X.E) (Sp X.E b)) (fr' : Frs X.E b SB)
     (c : ℕ) (x x' : HomE X.E a b) (h : x - x' ∈ mulLat c (homAt Sall N N')) :
     thDistC A Sall SB D sel mU mI lam lam' n N fr N' fr' c x = thDistC A Sall SB D sel mU mI lam lam' n N fr N' fr' c x' := by
-  have h1 : A.thInd Sall N N' c x = A.thInd Sall N N' c x' := by
-    unfold Amb.thInd Amb.liftW
-    rw [isLift_congr A Sall N N' c x x' h]
-  have h2 : (c ∣ D ∧ x ∈ divLat D (homAt Sall N N')) = (c ∣ D ∧ x' ∈ divLat D (homAt Sall N N')) := by
-    rw [mem_divLat_congr D c _ h]
-  unfold thDistC Amb.jetK
-  by_cases hx : c ∣ D ∧ x ∈ divLat D (homAt Sall N N')
-  · rw [if_pos hx, if_pos (h2 ▸ hx), h1]
-  · rw [if_neg hx, if_neg (h2 ▸ hx)]
+  apply _root_.GlobalTheory.KerRat.thDistC_class <;> assumption
 
 theorem thDistC_det (sS sT : SB → X.E → X.K) (ha : MuDetLaw a mI sS) (hb : MuDetLaw b mI sS) (hi : UnitInv sS sT)
     (N : Submodule (𝓞 X.E) (Sp X.E a)) (fr : Frs X.E a SB) (N' : Submodule (𝓞 X.E) (Sp X.E b)) (fr' : Frs X.E b SB)
@@ -204,7 +159,7 @@ theorem thDistC_equiv (hD : 0 < D) (rho : UF X.E a →* Module.End X.K (DIV.VV X
   · have hR' : ¬ (c ∣ D ∧ (γ'.1.toLinearMap ∘ₗ x ∘ₗ γ.1.symm.toLinearMap) ∈ divLat D (homAt Sall (gmap γ.1 N) (gmap γ'.1 N'))) := by
       rw [divLat_gmap_iff]; exact hR
     unfold thDistC
-    rw [if_neg hR, if_neg hR', LinearMap.zero_comp, LinearMap.comp_zero]
+    rw [ite_eq_right hR, ite_eq_right hR', LinearMap.zero_comp, LinearMap.comp_zero]
 
 end Props
 
@@ -267,12 +222,12 @@ theorem unitV_mul_unit (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {u : E} (hu : In
   have hU := isUnit_reduction_of_integralAt_inv hu hu' h0
   by_cases h : IsUnit (redP P y)
   · have h1 := (isUnit_reduction_mul_iff hu hu' h0 y).2 h
-    rw [dif_pos h, dif_pos h1, dif_pos hU, ← Units.val_mul, ← map_mul]
+    rw [dite_eq_left h, dite_eq_left h1, dite_eq_left hU, ← Units.val_mul, ← map_mul]
     congr 2
     apply Units.ext
     simp [reduction_mul (intAt_of_isUnit h) hu]
   · have h1 : ¬ IsUnit (redP P (y * u)) := fun h' => h ((isUnit_reduction_mul_iff hu hu' h0 y).1 h')
-    rw [dif_neg h, dif_neg h1, zero_mul]
+    rw [dite_eq_right h, dite_eq_right h1, zero_mul]
 
 theorem valuation_mul_unit (q : ℕ) {u : E} (hu : IntAt P u) (hu' : IntAt P u⁻¹) (h0 : u ≠ 0) (y : E) :
     LocE.vP P q (y * u) = LocE.vP P q y := by
@@ -403,8 +358,8 @@ theorem muAt_eq_muAtT (hq : MuqTie Ch sel mu cst) (i : ℕ) (hi : i < R.m) : muA
   funext P
   unfold muAt muAtT
   by_cases h : P.1 ∈ Pr.vGs
-  · simp only [if_pos h]
-  · simp only [if_neg h, hq i hi P h]
+  · simp only [ite_eq_left h]
+  · simp only [ite_eq_right h, hq i hi P h]
 
 theorem stepC_eq_stepT (hq : MuqTie Ch sel mu cst) (A : Amb X) (u : Pr.Word) (i : ℕ) (hi : i < R.m) {b : ℕ} (lam' : X.Tau → DomWeight b) :
     stepC W Ch sel mu cst A u i lam' = stepT W Ch sel mu cst A u i lam' := by
@@ -424,7 +379,7 @@ theorem muqTie_of_ok (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K))) {G : ChG
   intro i hi P hP
   rw [hL.muqQ i hi P hP]
   unfold muqT qVal
-  rw [dif_pos hi]
+  rw [dite_eq_left hi]
 
 theorem muqTieG_of_ok (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K))) {G : ChGlob X R.m} {m2 : ℕ} (hL : L.Ok Ch sel mu cst G m2) :
     MuqTieG sel mu cst G.σ₀ G.mu0 :=
@@ -583,7 +538,7 @@ theorem kerOf_thDistC (cA cB : ℕ) (sel : HeightOneSpectrum (𝓞 X.F) → Heig
   refine finsum_congr fun z => ?_
   have hx := SetLike.coe_mem (Function.surjInv (Submodule.Quotient.mk_surjective
     ((mulLat cB (homAt Sall N N')).comap (divLat cA (homAt Sall N N')).subtype)) z)
-  simp only [thDistC, if_pos (And.intro (dvd_mul_left cB cA) (divLat_mul_of cA cB _ hx))]
+  simp only [thDistC, ite_eq_left (And.intro (dvd_mul_left cB cA) (divLat_mul_of cA cB _ hx))]
 
 end NoCut
 
@@ -602,7 +557,7 @@ theorem cplEq1_of_on {K : Type} [Field K] [NumberField K] [StarRing K] {S₀ S :
   · rw [h0 d₀ d y hy, h0 _ _ _ (fun h' => hy ((Y.equiv g d y).1 h')), LinearMap.zero_comp, LinearMap.comp_zero]
 
 theorem cp1Equiv_of_on (h : Cp1EquivOn W Ch sel mu cst L T b hY) : Cp1Equiv W Ch sel mu cst L T b hY := fun al =>
-  cplEq1_of_on _ _ (h al) fun _ _ _ hy => if_neg hy
+  cplEq1_of_on _ _ (h al) fun _ _ _ hy => ite_eq_right hy
 
 end OnYs
 
@@ -761,12 +716,12 @@ theorem liftIndep_of (h : A.HeisHyp a b Sall) : A.LiftIndep a b Sall := by
   have hP1 : ∀ Q ∈ Sall, (c₁ : X.E) • s ∈ localization₂ Q.asIdeal (perO A.AA N N') := by
     intro Q hQ
     have := (mem_twO _ _ _ _).1 h1 Q
-    have e1 : expS Sall Q = 1 := by unfold expS; rw [if_pos hQ]
+    have e1 : expS Sall Q = 1 := by unfold expS; rw [ite_eq_left hQ]
     simpa only [e1, zpow_neg_one, inv_inv] using this
   have hP2 : ∀ Q ∈ Sall, (c₂ : X.E) • s₀ ∈ localization₂ Q.asIdeal (perO A.AA N N') := by
     intro Q hQ
     have := (mem_twO _ _ _ _).1 h2 Q
-    have e1 : expS Sall Q = 1 := by unfold expS; rw [if_pos hQ]
+    have e1 : expS Sall Q = 1 := by unfold expS; rw [ite_eq_left hQ]
     simpa only [e1, zpow_neg_one, inv_inv] using this
   have hg1 : s ∈ halfAO Sall (perO A.AA N N') (Nat.gcd c₁ c₂) := by
     refine lf_gcd Sall _ c₁ c₂ hc₁ h1 fun Q hQ => ?_
@@ -899,7 +854,7 @@ theorem lf_halfB_iff (hAA : A.AAUnit Sall) (N : Submodule (𝓞 X.E) (Sp X.E a))
     have h' := (mem_twO _ _ _ _).1 h
     have hh : (c : X.E)⁻¹ • w ∈ homAt Sall N N' := by
       intro P hP
-      have e1 : expS Sall P = 1 := by unfold expS; rw [if_pos hP]
+      have e1 : expS Sall P = 1 := by unfold expS; rw [ite_eq_left hP]
       have h2 := h' P
       rw [e1, zpow_one] at h2
       exact localization_perO_le_homAt A.AA N N' (hAA P hP) h2
@@ -981,7 +936,7 @@ theorem ti_onV (emb : ι → E →+* ℂ) {δ : ℂ} (hδ : δ ≠ 0) (Ξ : HomE
     onV emb δ Ξ (embH emb δ t0) = Ξ t0 := by
   have hex : ∃ x, embH emb δ x = embH emb δ t0 := ⟨t0, rfl⟩
   unfold onV
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact congrArg Ξ (embH_injective_kernel_local_factors emb hδ hex.choose_spec)
 
 theorem ti_mem_laV (emb : ι → E →+* ℂ) {δ : ℂ} (hδ : δ ≠ 0) (M : Submodule (𝓞 E) (HomE E a b)) (w : HomE E a b) :
@@ -1027,13 +982,13 @@ theorem indTieD_of {X : Fields} (A : Amb X) (a b : ℕ) (Sall : Finset (HeightOn
     · have hq' : t0 + m0 - x ∈ mulLat c (homAt Sall N N') := by
         have e : t0 + m0 - x = (t0 - x) + m0 := by abel
         rw [e]; exact add_mem hq hm0c
-      rw [if_pos hq, if_pos hq']
+      rw [ite_eq_left hq, ite_eq_left hq']
     · have hq' : ¬ t0 + m0 - x ∈ mulLat c (homAt Sall N N') := by
         intro h1
         apply hq
         have e : t0 - x = (t0 + m0 - x) - m0 := by abel
         rw [e]; exact sub_mem h1 hm0c
-      rw [if_neg hq, if_neg hq']
+      rw [ite_eq_right hq, ite_eq_right hq']
   have hE := twist_expand_lattice _ _ _ _ _ _ hyp T _ _ _ hT hSX hSA hSB (volC A.AA Sall N N') (A.e a b N N') hθ _ hInv z
   unfold xiC xiV
   rw [hE]
@@ -1054,8 +1009,8 @@ theorem indTieD_of {X : Fields} (A : Amb X) (a b : ℕ) (Sall : Finset (HeightOn
       exact (ti_mem_laV _ hδ _ _).2 ((lf_halfB_iff A Sall hAA N N' hN.1.fg hc hD (sub_mem ht0 hsA)).2 h2)
   unfold indL cosInd
   by_cases hq : t0 - x ∈ mulLat c (homAt Sall N N')
-  · rw [if_pos (hiff.2 hq), if_pos hq]
-  · rw [if_neg (fun h1 => hq (hiff.1 h1)), if_neg hq]
+  · rw [ite_eq_left (hiff.2 hq), ite_eq_left hq]
+  · rw [ite_eq_right (fun h1 => hq (hiff.1 h1)), ite_eq_right hq]
 
 section RfAbs
 
@@ -1153,8 +1108,8 @@ theorem rf_count (A B A₁ B₁ Λ : AddSubgroup V) (hF6 : B ⊓ (Λ ⊓ A) ≤ 
     have hm1 : m ∈ B₁ := hF6 ⟨hmB, hm⟩
     unfold indL
     by_cases hx : x ∈ B₁
-    · rw [if_pos hx, if_pos (B₁.add_mem hx hm1)]
-    · rw [if_neg hx, if_neg]
+    · rw [ite_eq_left hx, ite_eq_left (B₁.add_mem hx hm1)]
+    · rw [ite_eq_right hx, ite_eq_right]
       intro h
       apply hx
       have : x = x + m - m := by abel
@@ -1164,10 +1119,10 @@ theorem rf_count (A B A₁ B₁ Λ : AddSubgroup V) (hF6 : B ⊓ (Λ ⊓ A) ≤ 
     obtain ⟨r₀, hr₀, hd⟩ := hSA₁.2.2 t ⟨(hSA.1 t ht).1, h4 (hSA.1 t ht)⟩
     rw [Finset.sum_eq_single r₀]
     · have : -u r₀ + t = (t - r₀) - (u r₀ - r₀) := by abel
-      rw [this]; unfold indL; rw [if_pos (B₁.sub_mem hd (hu2 r₀ hr₀))]
+      rw [this]; unfold indL; rw [ite_eq_left (B₁.sub_mem hd (hu2 r₀ hr₀))]
     · intro r hr hne
       unfold indL
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       apply hne
       apply hSA₁.2.1 r hr r₀ hr₀
@@ -1248,10 +1203,10 @@ theorem rf_abs (H : Sesq V) (α : V → ℂ) (A B A₁ B₁ Λ : AddSubgroup V) 
     have hm1 : m ∈ B₁ := hAB ⟨hmB, hm⟩
     unfold indL
     by_cases hx1 : x - s ∈ B₁
-    · rw [if_pos hx1, if_pos]
+    · rw [ite_eq_left hx1, ite_eq_left]
       have : x + m - s = (x - s) + m := by abel
       rw [this]; exact B₁.add_mem hx1 hm1
-    · rw [if_neg hx1, if_neg]
+    · rw [ite_eq_right hx1, ite_eq_right]
       intro h
       apply hx1
       have : x - s = (x + m - s) - m := by abel
@@ -1608,8 +1563,8 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E] {ι : Type} [Fintype 
 theorem ad_onV_sum {κ : Type} (emb : ι → E →+* ℂ) (δ : ℂ) (s : Finset κ) (Ξ : κ → HomE E a b → ℂ) (v : VV ι a b) :
     onV emb δ (fun t => ∑ i ∈ s, Ξ i t) v = ∑ i ∈ s, onV emb δ (Ξ i) v := by
   by_cases h : ∃ x, embH emb δ x = v
-  · simp only [onV, dif_pos h]
-  · simp only [onV, dif_neg h, Finset.sum_const_zero]
+  · simp only [onV, dite_eq_left h]
+  · simp only [onV, dite_eq_right h, Finset.sum_const_zero]
 
 theorem ad_mulLat_le {H : Type} [AddCommGroup H] [Module (𝓞 E) H] (c c' : ℕ) (M : Submodule (𝓞 E) H) : mulLat (c * c') M ≤ mulLat c M := by
   intro w hw
@@ -1624,7 +1579,7 @@ theorem ad_ind_sum {H : Type} [AddCommGroup H] [Module (𝓞 E) H] (A B : Submod
       Submodule.Quotient.mk (p := B.comap A.subtype) (Function.surjInv (Submodule.Quotient.mk_surjective (B.comap A.subtype)) z) = z :=
     fun z => Function.surjInv_eq _ z
   by_cases h : w ∈ A
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     have h1 : ∀ z : ↥A ⧸ B.comap A.subtype,
         (w - ((Function.surjInv (Submodule.Quotient.mk_surjective (B.comap A.subtype)) z : ↥A) : H) ∈ B) ↔
           Submodule.Quotient.mk (p := B.comap A.subtype) ⟨w, h⟩ = z := by
@@ -1634,9 +1589,9 @@ theorem ad_ind_sum {H : Type} [AddCommGroup H] [Module (𝓞 E) H] (A B : Submod
       rfl
     rw [Finset.sum_congr rfl fun z _ => if_congr (h1 z) rfl rfl, Finset.sum_ite_eq]
     simp
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     symm
-    refine Finset.sum_eq_zero fun z _ => if_neg fun hz => h ?_
+    refine Finset.sum_eq_zero fun z _ => ite_eq_right fun hz => h ?_
     have h2 := add_mem (hBA hz) (Function.surjInv (Submodule.Quotient.mk_surjective (B.comap A.subtype)) z : ↥A).2
     rwa [sub_add_cancel] at h2
 
@@ -1970,7 +1925,7 @@ theorem qVal_spec {F E : Type} [Field F] [NumberField F] [Field E] [NumberField 
     (hq : ((Ideal.absNorm P.asIdeal : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2) : IsQVal ξ P (qVal ξ P) := by
   have hex : ∃ k, IsQValC ξ P k := value_at_q_exists F E L ξ P hξ hq
   unfold qVal qValC
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec
 
 theorem qVal_spec_tup {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {L : Type} [Field L] {S : Set ℕ}

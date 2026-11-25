@@ -1,47 +1,7 @@
 module
 
 public import Formalism.FormalDegreeBessel.StatementBF
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -80,8 +40,8 @@ theorem gram_submatrix (k r : ℕ) :
     split_ifs <;> first | rfl | (exfalso; omega) | contradiction | (exfalso; simp_all; done) |
       (rename_i h1 h2
        first
-        | exact (if_pos h2).trans (by rw [if_pos (by omega), if_pos (by omega)])
-        | exact (if_neg h2).trans (by rw [if_pos (by omega), if_neg (by omega)]))
+        | exact (ite_eq_left h2).trans (by rw [ite_eq_left (by omega), ite_eq_left (by omega)])
+        | exact (ite_eq_right h2).trans (by rw [ite_eq_left (by omega), ite_eq_right (by omega)]))
 
 theorem col_e (k r : ℕ) (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ)
     (i : Fin (2 * r + k + 1)) (b : Fin r) :
@@ -98,7 +58,7 @@ theorem col_w (k r : ℕ) (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1)) (Fin (k
   have hb := b.isLt
   have hv : (wI k r b).val = r + b.val := rfl
   unfold bigCell
-  rw [dif_neg (by omega), dite_eq_left (by omega)]
+  rw [dite_eq_right (by omega), dite_eq_left (by omega)]
   split_ifs
   · congr 1
     apply Fin.ext
@@ -112,7 +72,7 @@ theorem col_es (k r : ℕ) (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1)) (Fin (
   have hb := b.isLt
   have hv : (esI k r b).val = 2 * r + k - b.val := rfl
   unfold bigCell
-  rw [dif_neg (by omega), dif_neg (by omega)]
+  rw [dite_eq_right (by omega), dite_eq_right (by omega)]
   refine if_congr (by omega) ?_ rfl
   congr 3
   apply Fin.ext
@@ -127,17 +87,17 @@ theorem bigCell_submatrix (k r : ℕ) (c : Fin r → ℂ) (μ : Matrix (Fin (k +
     simp only [pos, Sum.elim_inl, Sum.elim_inr, submatrix_apply, col_e, col_w, col_es,
       fromBlocks_apply₁₁, fromBlocks_apply₁₂, fromBlocks_apply₂₁, fromBlocks_apply₂₂,
       Matrix.zero_apply, diagonal_apply]
-  · exact if_neg (by show ¬ a.val = _; omega)
+  · exact ite_eq_right (by show ¬ a.val = _; omega)
   · have : ((eI k r a).val = b.val) ↔ a = b := (Fin.ext_iff (a := a) (b := b)).symm
     exact (if_congr this rfl rfl).trans (by split_ifs with h <;> simp [h])
-  · exact dif_neg (by show ¬ (r ≤ a.val ∧ _); omega)
+  · exact dite_eq_right (by show ¬ (r ≤ a.val ∧ _); omega)
   · have : ((esI k r a).val = 2 * r + k - b.val) ↔ a = b := by
       rw [Fin.ext_iff]; show 2 * r + k - a.val = _ ↔ _; omega
     exact (if_congr this rfl rfl).trans (by split_ifs with h <;> simp [h])
-  · exact if_neg (by show ¬ 2 * r + k - a.val = _; omega)
-  · exact dif_neg (by show ¬ (_ ∧ 2 * r + k - a.val ≤ _); omega)
-  · exact if_neg (by show ¬ r + a.val = _; omega)
-  · exact if_neg (by show ¬ r + a.val = _; omega)
+  · exact ite_eq_right (by show ¬ 2 * r + k - a.val = _; omega)
+  · exact dite_eq_right (by show ¬ (_ ∧ 2 * r + k - a.val ≤ _); omega)
+  · exact ite_eq_right (by show ¬ r + a.val = _; omega)
+  · exact ite_eq_right (by show ¬ r + a.val = _; omega)
   · rw [dite_eq_left (by show r ≤ r + a.val ∧ r + a.val ≤ _; omega)]
     congr 1
     apply Fin.ext

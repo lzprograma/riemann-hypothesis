@@ -107,8 +107,7 @@ lemma eventually_large (L : PeriodPair) (R : ℝ) :
   have hpos : 0 < ‖(l : ℂ)‖ := by
     rw [norm_pos_iff]
     exact fun h => hl0 (Subtype.ext h)
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have := Real.rpow_le_rpow_of_nonpos hpos hlt.le (by norm_num : (-3 : ℝ) ≤ 0)
   linarith
 

@@ -113,7 +113,7 @@ def jS : SPart F S × OPart F S →+* Af F where
   toFun p := ⟨fun v => if h : v ∈ S then p.1 ⟨v, h⟩ else (p.2 ⟨v, h⟩ : Fv F v),
     Filter.eventually_cofinite.2 (S.finite_toSet.subset fun v hv => by
       by_contra h
-      exact hv (by simp only [dif_neg (show v ∉ S from h)]; exact (p.2 ⟨v, h⟩).2))⟩
+      exact hv (by simp only [dite_eq_right (show v ∉ S from h)]; exact (p.2 ⟨v, h⟩).2))⟩
   map_one' := Subtype.ext (funext fun v => by
     show dite (v ∈ S) _ _ = 1
     split_ifs <;> rfl)

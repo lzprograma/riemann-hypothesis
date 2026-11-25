@@ -60,11 +60,11 @@ theorem capelli_expand_plus (hE : GlRelR E) (om : ℂ) (b c : Fin (m + 1)) :
   rw [hsum, ← key]
   by_cases hbc : b = c
   · subst hbc
-    rw [if_pos rfl, expand_cons_succAbove_eq, cminor_perm_cols (E := E) hE,
+    rw [ite_eq_left rfl, expand_cons_succAbove_eq, cminor_perm_cols (E := E) hE,
       ← Int.cast_smul_eq_zsmul ℂ, expand_sign_cycleRange_symm, smul_smul, ← pow_add, ← two_mul,
       pow_mul, neg_one_sq, one_pow, one_smul]
     rfl
-  · rw [if_neg hbc, cminor_cols_not_inj (E := E) hE _ _ _ (expand_cons_not_inj hbc), smul_zero]
+  · rw [ite_eq_right hbc, cminor_cols_not_inj (E := E) hE _ _ _ (expand_cons_not_inj hbc), smul_zero]
 
 theorem capelli_expand_minus (hE : GlRelR E) (om : ℂ) (a c : Fin (m + 1)) :
     ∑ d : Fin (m + 1), ((-1 : ℂ) ^ ((d : ℕ) + (c : ℕ))) •
@@ -85,10 +85,10 @@ theorem capelli_expand_minus (hE : GlRelR E) (om : ℂ) (a c : Fin (m + 1)) :
   rw [hsum, ← key]
   by_cases hac : a = c
   · subst hac
-    rw [if_pos rfl, expand_cons_succAbove_eq, cminor_perm_rows (E := E),
+    rw [ite_eq_left rfl, expand_cons_succAbove_eq, cminor_perm_rows (E := E),
       ← Int.cast_smul_eq_zsmul ℂ, expand_sign_cycleRange_symm, smul_smul, ← pow_add, ← two_mul,
       pow_mul, neg_one_sq, one_pow, one_smul]
     rfl
-  · rw [if_neg hac, cminor_rows_not_inj (E := E) _ _ _ (expand_cons_not_inj hac), smul_zero]
+  · rw [ite_eq_right hac, cminor_rows_not_inj (E := E) _ _ _ (expand_cons_not_inj hac), smul_zero]
 
 end ReciprocityTheory.ChartRestriction.DS.Lap.Capelli

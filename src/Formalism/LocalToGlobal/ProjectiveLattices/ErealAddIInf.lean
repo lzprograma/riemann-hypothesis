@@ -35,7 +35,7 @@ theorem coeff_incG (m : M) (w : W) (F : C w) :
 
 theorem incG_inj (w : W) : Function.Injective (incG key C w) := fun F F' h => by
   have h1 := congrArg (fun x : AddMonoidAlgebra R M => x.coeff (key w)) h
-  simp only [coeff_incG, if_true] at h1
+  simp only [coeff_incG, ite_true] at h1
   exact Subtype.ext h1
 
 theorem incG_indep (hkey : Function.Injective key) :
@@ -49,9 +49,9 @@ theorem incG_indep (hkey : Function.Injective key) :
     rintro _ ⟨G', rfl⟩
     rw [LinearMap.mem_ker]
     change (incG key C u G').coeff (key w) = 0
-    rw [coeff_incG, if_neg (fun h => hu (hkey h))]
+    rw [coeff_incG, ite_eq_right (fun h => hu (hkey h))]
   have h0 : (incG key C w F).coeff (key w) = 0 := hle hx'
-  rw [coeff_incG, if_pos rfl] at h0
+  rw [coeff_incG, ite_eq_left rfl] at h0
   rw [show F = 0 from Subtype.ext h0, map_zero]
 
 theorem incG_mul {w w' u : W} (hu : key u = key w + key w') (F : C w) (F' : C w')

@@ -17,8 +17,6 @@ namespace Formalism.L2.SG.Pf.NcReal.JX
 
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj Formalism.L2.SG.RealObj.InfCut
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def RefNBox : Prop :=
   ∀ {D : D7} (X : HidaSetting D) (u w : D.what₂.Word),
     (Measure.pi (refNX X u)) (LsNc5.boxN X w) =

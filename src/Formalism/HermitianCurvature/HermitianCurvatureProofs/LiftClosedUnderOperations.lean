@@ -1,5 +1,6 @@
 module
 
+import all Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatQMinOp
 public import Formalism.HermitianCurvature.StatementTL
 public import Formalism.HermitianCurvature.StatementJF
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
@@ -11,45 +12,7 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingV
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumPairAtStarMul
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -117,16 +80,10 @@ theorem ddp_right (D : B.RealPlaceData k r Wp Wq) {nf nf' : ℕ} (fib : Fin nf �
 
 theorem opApply_append (Θ₁ Θ₂ : B.DiffOp k r Wp Wq) (F : B.Mat k r → (Wq →L[ℂ] Wp)) (g : B.Mat k r) :
     B.opApply (Θ₁ ++ Θ₂) F g = B.opApply Θ₁ F g + B.opApply Θ₂ F g := by
-  unfold B.opApply
-  rw [List.map_append, List.sum_append]
+  exact Formalism.FourierDecayAlt.P.CutMP.QMinOp.opApply_append Θ₁ Θ₂ F g
 
 private theorem foldr_max_eq_max_foldr_max_zero (l : List ℕ) (b : ℕ) : l.foldr max b = max (l.foldr max 0) b := by
-  induction l with
-  | nil => simp
-  | cons a t ih =>
-    simp only [List.foldr_cons]
-    rw [ih]
-    exact (max_assoc _ _ _).symm
+  apply _root_.Formalism.FourierDecayAlt.P.CutMP.QMinOp.foldr_max_init_lemma_3 <;> assumption
 
 theorem opOrder_append (Θ₁ Θ₂ : B.DiffOp k r Wp Wq) :
     B.opOrder (Θ₁ ++ Θ₂) = max (B.opOrder Θ₁) (B.opOrder Θ₂) := by

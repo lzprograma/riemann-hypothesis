@@ -25,17 +25,9 @@ theorem card_quot_natCast_padicInt (p : ℕ) [Fact p.Prime] {n : ℕ} (hn : n �
   have hnd : ¬ p ∣ n / p ^ padicValNat p n := by
     have h1 := Nat.not_dvd_ordCompl hp hn
     rwa [Nat.factorization_def n hp, ← Nat.padicValNat_def] at h1
-  have hu : IsUnit (((n / p ^ padicValNat p n : ℕ) : ℤ_[p])) := by
-    rw [PadicInt.isUnit_iff]
-    by_contra hne
-    have hlt : ‖(((n / p ^ padicValNat p n : ℕ) : ℤ_[p]))‖ < 1 :=
-      lt_of_le_of_ne (PadicInt.norm_le_one _) hne
-    rw [PadicInt.norm_lt_one_iff_dvd] at hlt
-    obtain ⟨c, hc⟩ := hlt
-    have h1 := congrArg PadicInt.toZMod hc
-    rw [map_natCast, map_mul, map_natCast, ZMod.natCast_self, zero_mul,
-      ZMod.natCast_eq_zero_iff] at h1
-    exact hnd h1
+  have hu : IsUnit (((n / p ^ padicValNat p n : ℕ) : ℤ_[p])) :=
+    PadicInt.isUnit_iff.mpr
+      (PadicInt.norm_natCast_eq_one_iff.mpr (hp.coprime_iff_not_dvd.mpr hnd))
   have hspan : Ideal.span {(n : ℤ_[p])} = Ideal.span {(p : ℤ_[p]) ^ padicValNat p n} := by
     conv_lhs => rw [hdec]
     push_cast

@@ -9,53 +9,9 @@ public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.
 public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.GeneralizedVermaModulePolynomial
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.MemFiltOfWords
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AnnEqZeroOfDegreeZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Bool
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Topology.Sheaves.Presheaf
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BracketWedgeFormula, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BracketLeviModuleBoundaryPart, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoverByAcyclicPair, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CreAnnApply, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairMultiplicityGenericUnitary
@@ -210,7 +166,7 @@ theorem keyR_inj {i j : Ix n} (h : keyR i = keyR j) : i = j := by
   obtain ⟨b', q⟩ := j
   have hp := key_lt p
   have hq := key_lt q
-  cases b <;> cases b' <;> simp only [keyR, if_true, Bool.false_eq_true, if_false] at h
+  cases b <;> cases b' <;> simp only [keyR, ite_true, Bool.false_eq_true, ite_false] at h
   · rw [CompanionTheory.D.LK.Car.key_inj (by omega : CompanionTheory.D.LK.key p = CompanionTheory.D.LK.key q)]
   · omega
   · omega
@@ -242,20 +198,6 @@ theorem br_lift_lift (T S : Module.End ℂ V) :
 
 end Car
 
-section Coefficients
-
-variable {n : ℕ}
-
-end Coefficients
-
-section Units
-
-variable {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
-
-variable {E1 E2 : Fin n → Fin n → Module.End ℂ V}
-
-end Units
-
 end GlobalTheory.CompanionTheory.RealMult.TorC
 end -- clump:auto
 end -- clump:auto
@@ -263,7 +205,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BracketWedgeFormula =====
 
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BracketLeviModuleBoundaryPart =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BracketLeviModuleBoundaryPart", "h": "module\n\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InjectiveWedgeHighestCoefficient\npublic import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionCommutesWithTotalBoundary\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BracketWedgeFormula\nimport CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.CreApply\npublic import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionIsGlRepresentation\npublic import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionPreservesSupportDegree\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.PiTensorProduct\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Tactic.TypeStar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Bool\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
+-- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BracketLeviModuleBoundaryPart", "h": "module\n\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InjectiveWedgeHighestCoefficient\npublic import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionCommutesWithTotalBoundary\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BracketWedgeFormula\nimport CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.CreApply\npublic import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionIsGlRepresentation\npublic import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionPreservesSupportDegree\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.PiTensorProduct\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Tactic.TypeStar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Bool\nimport Std.Tactic.BVDecide.Normalize.Prop\nimport Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AnnEqZeroOfDegreeZero\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -284,17 +226,6 @@ theorem key_lt' (p : Pos n) : CompanionTheory.D.LK.key p < (n + 1) * (n + 1) := 
   have h2 := p.1.2.2
   nlinarith
 
-theorem keyL_inj {i j : Lt n} (h : keyL i = keyL j) : i = j := by
-  obtain ⟨a, i⟩ := i
-  obtain ⟨b, j⟩ := j
-  have hi := key_lt' i
-  have hj := key_lt' j
-  cases a <;> cases b <;> simp only [keyL, Bool.false_eq_true, if_false, if_true, zero_add] at h
-  · rw [CompanionTheory.D.LK.Car.key_inj (Nat.add_left_cancel h)]
-  · omega
-  · omega
-  · rw [CompanionTheory.D.LK.Car.key_inj h]
-
 def tw (i j : Lt n) : ℂ := if keyL j < keyL i then -1 else 1
 
 theorem tw_self (i : Lt n) : tw i i = 1 := by simp [tw]
@@ -303,7 +234,7 @@ theorem tw_mul_self (i j : Lt n) : tw i j * tw i j = 1 := by
   unfold tw; split_ifs <;> simp
 
 theorem tw_swap {i j : Lt n} (h : i ≠ j) : tw j i = -tw i j := by
-  have hk : keyL i ≠ keyL j := fun e => h (keyL_inj e)
+  have hk : keyL i ≠ keyL j := fun e => h (GlobalTheory.CompanionTheory.PairMult.COU.keyL_inj e)
   unfold tw
   rcases lt_or_gt_of_ne hk with h1 | h1
   · simp [h1, h1.not_gt]
@@ -350,7 +281,7 @@ theorem annq_annq (i j : Lt n) : (annq i * annq j + annq j * annq i : Module.End
   · simp [hi]
   by_cases hj : j ∈ A
   · simp [hj]
-  simp only [hi, hj, Finset.mem_insert, hij, hji, or_self, if_false]
+  simp only [hi, hj, Finset.mem_insert, hij, hji, or_self, ite_false]
   rw [sg_insert j hi, sg_insert i hj, tw_swap hij, Finset.insert_comm j i, smul_smul, smul_smul, ← add_smul]
   have : sgL i A * (-tw i j * sgL j A) + sgL j A * (tw i j * sgL i A) = 0 := by ring
   rw [this, zero_smul]
@@ -369,7 +300,7 @@ theorem creq_creq (i j : Lt n) : (creq i * creq j + creq j * creq i : Module.End
   by_cases hj : j ∈ A
   swap
   · simp [hj]
-  simp only [hi, hj, Finset.mem_erase, ne_eq, hij, hji, not_false_eq_true, and_self, if_true]
+  simp only [hi, hj, Finset.mem_erase, ne_eq, hij, hji, not_false_eq_true, and_self, ite_true]
   rw [sg_erase j hi, sg_erase i hj, tw_swap hij, Finset.erase_right_comm (a := j) (b := i), smul_smul, smul_smul,
     ← add_smul]
   have : sgL i A * (-tw i j * sgL j A) + sgL j A * (tw i j * sgL i A) = 0 := by ring
@@ -385,13 +316,13 @@ theorem annq_creq (i j : Lt n) :
     · simp [hi, sg_erase i hi, tw_self, smul_smul, sg_mul_self, Finset.insert_erase hi]
     · simp [hi, sg_insert i hi, tw_self, smul_smul, sg_mul_self, Finset.erase_insert hi]
   have hji : j ≠ i := fun e => hij e.symm
-  rw [if_neg hij, LinearMap.zero_apply, Pi.zero_apply]
+  rw [ite_eq_right hij, LinearMap.zero_apply, Pi.zero_apply]
   by_cases hi : i ∈ A
   · simp [hi, hij]
   by_cases hj : j ∈ A
   swap
   · simp [hj, hji]
-  simp only [hi, hj, Finset.mem_insert, Finset.mem_erase, or_true, and_false, if_true, if_false]
+  simp only [hi, hj, Finset.mem_insert, Finset.mem_erase, or_true, and_false, ite_true, ite_false]
   rw [sg_insert j hi, sg_erase i hj, tw_swap hij, Finset.erase_insert_of_ne hij, smul_smul, smul_smul,
     ← add_smul]
   have : sgL i A * (-tw i j * sgL j A) + sgL j A * (tw i j * sgL i A) = 0 := by ring
@@ -546,7 +477,7 @@ theorem coef_zero {lev : Fin n → ℕ} (hm : Monotone lev) {s : Bool} {p q : Fi
   · have i1 : c = (s == (a == b)) := hc
     have i2 : c = (a == (s == b)) := by rw [hc]; cases s <;> cases a <;> cases b <;> rfl
     have i3 : c = ((s == a) == b) := by rw [hc]; cases s <;> cases a <;> cases b <;> rfl
-    simp only [Mt, Sq, i1.symm, i2.symm, i3.symm, if_true]
+    simp only [Mt, Sq, i1.symm, i2.symm, i3.symm, ite_true]
     simp only [mul_comm (adC p q j _), mul_comm (adC p q i _)]
     exact hD
   · have i2 : ¬c = (a == (s == b)) := fun e => hc (by rw [e]; cases s <;> cases a <;> cases b <;> rfl)
@@ -621,14 +552,14 @@ theorem lin_q (hP : PairRel E1 E2) {lev : Fin n → ℕ} (hm : Monotone lev) {p 
       if q = i.1.1 then X p i.1.2 else 0 := by
     by_cases h : q = i.1.1
     · have hlt : p < i.1.2 := GlobalTheory.CompanionTheory.RgCOBlock.LeviBd.lt_of_lev hm (by rw [hpq, h]; exact hi)
-      simp only [h, true_and, if_true]
+      simp only [h, true_and, ite_true]
       exact GlobalTheory.CompanionTheory.RgCOBlock.LeviBd.sum_ind hlt fun k => X k.1.1 k.1.2
     · simp [h]
   have h2 : ∑ k : Pos n, (if i.1.2 = p ∧ k.1.1 = i.1.1 ∧ k.1.2 = q then (1 : ℂ) else 0) • X k.1.1 k.1.2 =
       if i.1.2 = p then X i.1.1 q else 0 := by
     by_cases h : i.1.2 = p
     · have hlt : i.1.1 < q := GlobalTheory.CompanionTheory.RgCOBlock.LeviBd.lt_of_lev hm (by rw [← hpq, ← h]; exact hi)
-      simp only [h, true_and, if_true]
+      simp only [h, true_and, ite_true]
       exact GlobalTheory.CompanionTheory.RgCOBlock.LeviBd.sum_ind hlt fun k => X k.1.1 k.1.2
     · simp [h]
   simp only [GlobalTheory.CompanionTheory.RgCOBlock.LeviBd.adC_eq, sub_smul, Finset.sum_sub_distrib]
@@ -637,21 +568,14 @@ theorem lin_q (hP : PairRel E1 E2) {lev : Fin n → ℕ} (hm : Monotone lev) {p 
   show br (Ts E1 E2 s p q) (Ts E1 E2 u i.1.1 i.1.2) - _ = 0
   rw [this, sub_eq_zero]
 
-theorem annq_ne {i : Lt n} {x : Cq n V} {A : Finset (Lt n)} (h : annq i x A ≠ 0) : i ∉ A ∧ x (insert i A) ≠ 0 := by
-  rw [annq_apply] at h
-  by_cases hi : i ∈ A
-  · simp [hi] at h
-  · refine ⟨hi, fun h0 => h ?_⟩
-    simp [hi, h0]
-
 theorem annq_eq_zero {P : Lt n → Prop} {x : Cq n V} (hx : SuppQ P x) {i : Lt n} (hi : ¬P i) : annq i x = 0 := by
   funext A
   by_contra h
-  exact hi (hx _ (annq_ne h).2 i (mem_insert_self _ _))
+  exact hi (hx _ (GlobalTheory.CompanionTheory.PairMult.COU.ann_ne h).2 i (mem_insert_self _ _))
 
 theorem annq_supp {P : Lt n → Prop} {x : Cq n V} (hx : SuppQ P x) (i : Lt n) : SuppQ P (annq i x) := by
   intro A h j hj
-  exact hx _ (annq_ne h).2 j (mem_insert_of_mem hj)
+  exact hx _ (GlobalTheory.CompanionTheory.PairMult.COU.ann_ne h).2 j (mem_insert_of_mem hj)
 
 theorem lFq_bd (hP : PairRel E1 E2) {lev : Fin n → ℕ} (hm : Monotone lev) {x : Cq n V} (hx : SuppQ (inUL lev) x)
     (s : Bool) {p q : Fin n} (hpq : lev p = lev q) :
@@ -696,7 +620,7 @@ theorem mt_id {lev : Fin n → ℕ} (hm : Monotone lev) {s t : Bool} {p q r v : 
   by_cases hc : w = ((s == t) == u)
   · have i1 : w = (s == (t == u)) := by rw [hc]; cases s <;> cases t <;> cases u <;> rfl
     have i2 : w = (t == (s == u)) := by rw [hc]; cases s <;> cases t <;> cases u <;> rfl
-    simp only [Mt, i1.symm, i2.symm, hc.symm, if_true]
+    simp only [Mt, i1.symm, i2.symm, hc.symm, ite_true]
     exact hM
   · have i1 : ¬w = (s == (t == u)) := fun e => hc (by rw [e]; cases s <;> cases t <;> cases u <;> rfl)
     have i2 : ¬w = (t == (s == u)) := fun e => hc (by rw [e]; cases s <;> cases t <;> cases u <;> rfl)
@@ -770,8 +694,7 @@ theorem cre_ann_ne (i k : Lt n) (x : Cq n V) (A : Finset (Lt n))
 theorem lFq_ne (s : Bool) (p q : Fin n) (x : Cq n V) (A : Finset (Lt n)) (h : lFq E1 E2 s p q x A ≠ 0) :
     x A ≠ 0 ∨ ∃ (t : Bool) (i k : Pos n), adC p q i k ≠ 0 ∧
       (creq ((s == t), k) * annq (t, i) : Module.End ℂ (Cq n V)) x A ≠ 0 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   obtain ⟨h0, h1⟩ := hc
   apply h
   have hs : adLq s p q x A = 0 := by
@@ -1035,14 +958,14 @@ theorem freeR (n : ℕ) : ∃ (W : Type) (_ : AddCommGroup W) (_ : Module ℂ W)
     | add p q hp hq => simp only [map_add (f := _), hp, hq, add_zero]
   · rintro ⟨s, p⟩ ⟨t, q⟩
     have c1 := hF.a_comm p q
-    cases s <;> cases t <;> simp only [aR, Bool.false_eq_true, if_false, if_true]
+    cases s <;> cases t <;> simp only [aR, Bool.false_eq_true, ite_false, ite_true]
     · exact hcomL c1
     · exact (hRLc _ _).symm.add_right (hcomL c1) |>.symm.symm
     · exact (hRLc _ _).add_left (hcomL c1)
     · exact ((hcomR c1).add_right (hRLc _ _)).add_left ((hRLc _ _).symm.add_right (hcomL c1))
   · rintro ⟨s, p⟩ ⟨t, q⟩
     have c1 := hF.d_comm p q
-    cases s <;> cases t <;> simp only [dR, Bool.false_eq_true, if_false, if_true]
+    cases s <;> cases t <;> simp only [dR, Bool.false_eq_true, ite_false, ite_true]
     · exact ((hcomL c1).sub_right (hRLc _ _).symm).sub_left ((hRLc _ _).sub_right (hcomR c1))
     · exact (hRLc _ _).symm.sub_left (hcomR c1)
     · exact (hRLc _ _).sub_right (hcomR c1)
@@ -1052,7 +975,7 @@ theorem freeR (n : ℕ) : ∃ (W : Type) (_ : AddCommGroup W) (_ : Module ℂ W)
     have c2 := hRL (a q) (d p)
     have r1 := hr p q
     have l1 := hl p q
-    cases s <;> cases t <;> simp only [aR, dR, Bool.false_eq_true, if_false, if_true, sub_mul, mul_sub, add_mul, mul_add,
+    cases s <;> cases t <;> simp only [aR, dR, Bool.false_eq_true, ite_false, ite_true, sub_mul, mul_sub, add_mul, mul_add,
       r1, l1, c1, ← c2, Prod.mk.injEq, reduceCtorEq, false_and, true_and] <;> by_cases h : p = q <;> simp [h] <;> abel
   · rintro ⟨s, p⟩ k t ht
     cases s
@@ -1087,7 +1010,7 @@ theorem freeR (n : ℕ) : ∃ (W : Type) (_ : AddCommGroup W) (_ : Module ℂ W)
     have e1 := rT_zero Fil (d p) (hF.d_zero p) t ht
     have e2 := lT_zero Fil (d p) (hF.d_zero p) t ht
     cases s
-    · simp only [dR, Bool.false_eq_true, if_false, LinearMap.sub_apply]
+    · simp only [dR, Bool.false_eq_true, ite_false, LinearMap.sub_apply]
       rw [show R (d p) t = 0 from e1, show L (d p) t = 0 from e2, sub_zero]
     · simpa [dR, R] using e1
 
@@ -1209,12 +1132,12 @@ theorem acycQ (lev : Fin n → ℕ) (E1 E2 : Fin n → Fin n → Module.End ℂ 
       (Submodule.sum_mem _ fun i _ => Submodule.sum_mem _ fun j _ => Submodule.sum_mem _ fun k _ =>
         Submodule.smul_mem _ _ (cre_mem (ann_mem (ann_mem hy _) _) _ _)))
     by_cases hi : inUL lev i
-    · rw [if_pos hi]
+    · rw [ite_eq_left hi]
       exact hrG i _ _ (ann_mem hy _ _)
     · have e0 : annq i y A = 0 := by
         by_contra h0
         exact hi (hys _ (ann_ne h0).2 i (mem_insert_self _ _))
-      rw [if_neg hi, e0]
+      rw [ite_eq_right hi, e0]
       simp
   have hom : Da * H + H * Da =
       ∑ i : I, (liftq n (a i.1) : Module.End ℂ (Cq n Z)) * liftq n (d i.1) + ∑ i : I, creq i.1 * annq i.1 := by
@@ -1419,7 +1342,7 @@ theorem coverQ (lev : Fin n → ℕ) {V : Type} [AddCommGroup V] [Module ℂ V] 
       have e : (Tl F1 F2 i - (a i).lTensor V : Module.End ℂ (V ⊗[ℂ] W)) (v ⊗ₜ z) =
           Tl E1 E2 i v ⊗ₜ z + v ⊗ₜ (Tl P1 P2 i z - a i z) := by
         obtain ⟨s, p⟩ := i
-        cases s <;> simp only [Tl, Ts, F1, F2, Bool.false_eq_true, if_false, if_true, LinearMap.sub_apply,
+        cases s <;> simp only [Tl, Ts, F1, F2, Bool.false_eq_true, ite_false, ite_true, LinearMap.sub_apply,
           LinearMap.add_apply, LinearMap.rTensor_tmul, LinearMap.lTensor_tmul, TensorProduct.tmul_sub,
           TensorProduct.add_tmul, TensorProduct.sub_tmul, TensorProduct.tmul_add, TensorProduct.tmul_sub] <;> abel
       rw [e]
@@ -1572,18 +1495,18 @@ theorem evC_facts (hR : LeviRel) {lev : Fin n → ℕ} (hlev : Monotone lev) {E1
     by_cases hc : lev c.2.1 = lev c.2.2
     · obtain ⟨t1, t2, t3⟩ := hs true _ _ hc
       obtain ⟨f1, f2, f3⟩ := hs false _ _ hc
-      rw [if_pos hc]
+      rw [ite_eq_left hc]
       by_cases h1 : c.1 = true
-      · simp only [h1, if_true, GlobalTheory.CompanionTheory.PairMult.c1, LinearMap.smul_apply, LinearMap.add_apply, map_smul, map_add (f := _)]
+      · simp only [h1, ite_true, GlobalTheory.CompanionTheory.PairMult.c1, LinearMap.smul_apply, LinearMap.add_apply, map_smul, map_add (f := _)]
         refine ⟨Submodule.smul_mem (supSub V _) _ (Submodule.add_mem (supSub V _) t1 f1), fun j hj =>
           Submodule.smul_mem (supSub V _) _ (Submodule.add_mem (supSub V _) (t2 j hj) (f2 j hj)), ?_⟩
         rw [t3, f3]
-      · simp only [h1, Bool.false_eq_true, if_false, GlobalTheory.CompanionTheory.PairMult.c2, LinearMap.smul_apply, LinearMap.sub_apply, map_smul,
+      · simp only [h1, Bool.false_eq_true, ite_false, GlobalTheory.CompanionTheory.PairMult.c2, LinearMap.smul_apply, LinearMap.sub_apply, map_smul,
           map_sub]
         refine ⟨Submodule.smul_mem (supSub V _) _ (Submodule.sub_mem (supSub V _) t1 f1), fun j hj =>
           Submodule.smul_mem (supSub V _) _ (Submodule.sub_mem (supSub V _) (t2 j hj) (f2 j hj)), ?_⟩
         rw [t3, f3]
-    · rw [if_neg hc]
+    · rw [ite_eq_right hc]
       simp only [LinearMap.zero_apply, map_zero]
       exact ⟨Submodule.zero_mem (supSub V _), fun j _ => Submodule.zero_mem (supSub V _), trivial⟩
   · intro a b ha hb x hx
@@ -1626,7 +1549,7 @@ theorem eq_single {x : Cq n V} (hx : DegQ 0 x) : x = Pi.single ∅ (x ∅) := by
   by_cases h : A = ∅
   · subst h
     simp
-  · rw [Pi.single_apply, if_neg h]
+  · rw [Pi.single_apply, ite_eq_right h]
     by_contra h0
     exact h (card_eq_zero.mp (hx A h0))
 
@@ -1647,14 +1570,14 @@ theorem chainOp_apply_single_empty (E1 E2 : Fin n → Fin n → Module.End ℂ V
     c1 E1 E2 p q (Pi.single ∅ v : Cq n V) = Pi.single ∅ (E1 p q v) := by
   simp only [GlobalTheory.CompanionTheory.PairMult.c1, LinearMap.smul_apply, LinearMap.add_apply, lF_single, ← Pi.single_add, ← Pi.single_smul]
   congr 1
-  simp only [Ts, if_true, Bool.false_eq_true, if_false, LinearMap.add_apply, LinearMap.sub_apply]
+  simp only [Ts, ite_true, Bool.false_eq_true, ite_false, LinearMap.add_apply, LinearMap.sub_apply]
   module
 
 theorem second_operator_single (E1 E2 : Fin n → Fin n → Module.End ℂ V) (p q : Fin n) (v : V) :
     c2 E1 E2 p q (Pi.single ∅ v : Cq n V) = Pi.single ∅ (E2 p q v) := by
   simp only [GlobalTheory.CompanionTheory.PairMult.c2, LinearMap.smul_apply, LinearMap.sub_apply, lF_single, ← Pi.single_sub, ← Pi.single_smul]
   congr 1
-  simp only [Ts, if_true, Bool.false_eq_true, if_false, LinearMap.add_apply, LinearMap.sub_apply]
+  simp only [Ts, ite_true, Bool.false_eq_true, ite_false, LinearMap.add_apply, LinearMap.sub_apply]
   module
 
 theorem evC_single (lev : Fin n → ℕ) (E1 E2 : Fin n → Fin n → Module.End ℂ V) (b : FreeAlgebra ℂ (Bool × Fin n × Fin n)) :
@@ -1686,7 +1609,7 @@ theorem ann_single (k i : Lt n) (y : V) :
   funext A
   by_cases hk : k = i
   · subst hk
-    rw [if_pos rfl, ann_apply]
+    rw [ite_eq_left rfl, ann_apply]
     by_cases hA : k ∈ A
     · have : A ≠ ∅ := fun h0 => by simp [h0] at hA
       simp [hA, this]
@@ -1700,7 +1623,7 @@ theorem ann_single (k i : Lt n) (y : V) :
           rw [mem_singleton] at this
           exact hA (this ▸ hl)
         simp [hA, this, h0]
-  · rw [if_neg hk, ann_apply]
+  · rw [ite_eq_right hk, ann_apply]
     by_cases hA : k ∈ A
     · simp [hA]
     · have : insert k A ≠ {i} := by

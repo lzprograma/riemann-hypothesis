@@ -183,7 +183,7 @@ theorem torsion_reduction_trivial (S : StepLevel F E σ J T f bad) (G : GLoc F E
     refine ⟨fun hqp => ?_, ?_⟩
     · have h1 := hInJ.1 p q (by
         unfold blkOf
-        rw [if_pos (lt_of_lt_of_le q.2 ha), if_pos (lt_of_lt_of_le p.2 ha)]
+        rw [ite_eq_left (lt_of_lt_of_le q.2 ha), ite_eq_left (lt_of_lt_of_le p.2 ha)]
         exact hqp)
       rw [hred] at h1
       exact h1
@@ -203,11 +203,6 @@ theorem torsion_reduction_trivial (S : StepLevel F E σ J T f bad) (G : GLoc F E
   have h1 := Formalism.L2.G.Triv.iwU_coprime v (gp i) hp h M hiw N hc hMN
   have : bc (G.phi i v h) x = fr * M * fr⁻¹ := by rw [hM]; group
   rw [this, h1, mul_one, mul_inv_cancel]
-
-theorem diamond_conj_mem_level' (S : StepLevel F E σ J T f bad) (v : HeightOneSpectrum (𝓞 F))
-    (hv : (T : 𝓞 F) ∈ v.asIdeal) {k : ℤ} {δ : UPts σ J (FiniteAdeleRing (𝓞 F) F)}
-    (h : IsDia S v hv k δ) (κ : S.U) : δ.1⁻¹ * κ.1 * δ.1 ∈ S.U := by
-  apply Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.diamond_conj_mem_level <;> assumption
 
 theorem pow_mul_mem_of_normalises {G : Type} [Group G] (U : Subgroup G) (d : G) (hd : ∀ κ ∈ U, d⁻¹ * κ * d ∈ U) (N : ℕ)
     (hN : d ^ N ∈ U) (κ : G) (hκ : κ ∈ U) : (d * κ) ^ N ∈ U := by
@@ -309,8 +304,7 @@ theorem local_multiplier_congr_one (S : StepLevel F E σ J T f bad) (hT : T.Prim
   rw [S.UlocAlt v hv] at hU
   obtain ⟨_, hg', hfix⟩ := hU
   obtain ⟨y, hy⟩ : ∃ y, S.fT v hv y ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact S.fT_ne v hv (LinearMap.ext hc)
   have e1 := h3 y
   rw [hfix y] at e1
@@ -370,7 +364,7 @@ theorem multi_diamond_conj_mem (S : StepLevel F E σ J T f bad) {P : Type} (pl :
   · obtain ⟨p, rfl⟩ := hw
     simp only [map_mul, map_inv]
     exact local_diamond_conj_mem S (pl p) (hpl p) (h.2 p) _ (hκ'.2 (pl p))
-  · push_neg at hw
+  · push Not at hw
     simpa [map_mul, map_inv, h.1 w hw] using hκ'.2 w
 
 theorem multi_diamond_mem_level (S : StepLevel F E σ J T f bad) {P : Type} (pl : P → HeightOneSpectrum (𝓞 F))
@@ -381,7 +375,7 @@ theorem multi_diamond_mem_level (S : StepLevel F E σ J T f bad) {P : Type} (pl 
   by_cases hw : ∃ p, w = pl p
   · obtain ⟨p, rfl⟩ := hw
     exact local_diamond_mem_level S (pl p) (hpl p) (h.2 p) (hk p)
-  · push_neg at hw
+  · push Not at hw
     rw [h.1 w hw]; exact (S.Uloc w).one_mem
 
 theorem multi_diamond_multiplier_congr (S : StepLevel F E σ J T f bad) (hT : T.Prime) {P : Type} (pl : P → HeightOneSpectrum (𝓞 F))
@@ -402,30 +396,10 @@ end Loc
 
 variable {D : D7} {u : D.what₂.Word}
 
-theorem level_prime_ne_type_prime' (A : AtTTied u) (j : Fin 2) : (D.mem u).A.T ≠ D.host.g j := by
-  apply Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.level_prime_ne_type_prime <;> assumption
-
-theorem level_places_prime_to_type (A : AtTTied u) (v : (D.mem u).A.vT) : (A.eV v).1 ∉ badG D := by
-  have hT := (A.eV v).2
-  have hTp := (D.mem u).A.T_prime
-  have key : ∀ j : Fin 2, (D.host.g j : 𝓞 D.host.F) ∉ (A.eV v).1.asIdeal := by
-    intro j hj
-    have hcop : Nat.Coprime (D.mem u).A.T (D.host.g j) :=
-      (Nat.coprime_primes hTp (D.host.g_prime j)).2 (level_prime_ne_type_prime' A j)
-    obtain ⟨a, b, hab⟩ := Nat.isCoprime_iff_coprime.2 hcop
-    have h1 : ((a * (D.mem u).A.T + b * D.host.g j : ℤ) : 𝓞 D.host.F) ∈ (A.eV v).1.asIdeal := by
-      push_cast
-      exact Ideal.add_mem _ (Ideal.mul_mem_left _ _ hT) (Ideal.mul_mem_left _ _ hj)
-    rw [hab, Int.cast_one] at h1
-    exact (A.eV v).1.isPrime.ne_top ((Ideal.eq_top_iff_one _).2 h1)
-  rintro (h | h)
-  · exact key 0 h
-  · exact key 1 h
-
 theorem rank_zero_le_type_level : D.R.N 0 ≤ aOf D.R 0 := by
   have := D.R.two_le_m
   unfold aOf Ranks.N
-  rw [if_pos (by omega)]
+  rw [ite_eq_left (by omega)]
   simp
 
 theorem fixed_class_mem_level_general (K : ClsTied u 0 (Nat.zero_le _)) (G : GLoc D.host.F D.host.E (sigD D) D.host.g)
@@ -483,7 +457,7 @@ theorem rank_zero_le_weight : D.R.N 0 ≤ D.R.k := by
   have h := rank_zero_le_type_level (D := D)
   have e : aOf D.R 0 = D.R.k := by
     unfold aOf
-    rw [if_pos (by have := D.R.two_le_m; omega)]
+    rw [ite_eq_left (by have := D.R.two_le_m; omega)]
     simp
   omega
 
@@ -506,7 +480,7 @@ theorem diamond_free_on_classes (Tf : Forms0 D u) (hS : Formalism.MainNotions.pr
     ∀ v, (k v : (D.mem u).A.Fv v) = 1 := by
   have hT := (D.mem u).A.T_prime
   have hbad : ∀ w ∈ badG D, bc (prV (E := D.host.E) w) δ.1 = 1 := fun w hw =>
-    hδ.1 w (fun v e => level_places_prime_to_type Tf.atT v (by subst e; exact hw))
+    hδ.1 w (fun v e => Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.level_places_not_bad Tf.atT v (by subst e; exact hw))
   haveI : Fact (D.mem u).A.T.Prime := ⟨hT⟩
   have hkT : ∀ v, ((D.mem u).A.T : ℤ) ∣ (k ^ ((D.mem u).A.T - 1)) v - 1 := by
     intro v
@@ -534,8 +508,8 @@ theorem dilation_commute_distinct (Tf : Forms0 D u) (v v' : (D.mem u).A.vT) (hvv
     (D.fm u).dil 0 v a ((D.fm u).dil 0 v' b c) = (D.fm u).dil 0 v' b ((D.fm u).dil 0 v a c) := by
   have W := Tf.val 0 (Nat.zero_le _) rfl
   have hne : (Tf.atT.eV v).1 ≠ (Tf.atT.eV v').1 := fun e => hvv (Tf.atT.eV.injective (Subtype.ext e))
-  have h1 := class_mul_right_of_normalises _ _ _ _ δa (fun κ hκ => diamond_conj_mem_level' _ _ _ ha ⟨κ, hκ⟩) (W.dil v' b kb hkb c δb hb)
-  have h2 := class_mul_right_of_normalises _ _ _ _ δb (fun κ hκ => diamond_conj_mem_level' _ _ _ hb ⟨κ, hκ⟩) (W.dil v a ka hka c δa ha)
+  have h1 := class_mul_right_of_normalises _ _ _ _ δa (fun κ hκ => Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.diamond_conj_mem_level _ _ _ ha ⟨κ, hκ⟩) (W.dil v' b kb hkb c δb hb)
+  have h2 := class_mul_right_of_normalises _ _ _ _ δb (fun κ hκ => Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.diamond_conj_mem_level _ _ _ hb ⟨κ, hκ⟩) (W.dil v a ka hka c δa ha)
 
   have hU : ((δb * δa)⁻¹ * (δa * δb)).1 ∈ (Tf.cls 0 (Nat.zero_le _) rfl).lev.U := by
     rw [(Tf.cls 0 (Nat.zero_le _) rfl).lev.U_eq]
@@ -741,8 +715,6 @@ theorem zero_of_group_action_zero [Fact (D.mem u).A.T.Prime] (Tf : Forms0 D u) (
     rw [group_rep_mulSingle_eq_rho, (D.fm u).rhoT_dil] at hv
     rw [group_action_mulSingle_eq_dilation]
     exact (LinearEquiv.map_eq_zero_iff _).1 hv
-
-
 
 theorem multi_diamond_of_group_elem [Fact (D.mem u).A.T.Prime] (Tf : Forms0 D u) (hE : DiamondElementsExist Tf)
     (g : (D.mem u).A.vT → (ZMod (D.mem u).A.T)ˣ) : ∃ (k : (D.mem u).A.vT → ℤ)

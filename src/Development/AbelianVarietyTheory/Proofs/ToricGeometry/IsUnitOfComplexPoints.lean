@@ -161,7 +161,7 @@ theorem exists_int_two_mul {a : Fin g → ℝ} (ha : ∀ i, a i = 0 ∨ a i = 1 
   refine Finset.sum_congr rfl fun i _ => ?_
   rcases ha i with h | h
   · simp [h]
-  · rw [if_neg (by rw [h]; norm_num), h]; push_cast; ring
+  · rw [ite_eq_right (by rw [h]; norm_num), h]; push_cast; ring
 
 theorem charFactor_sq {a b : Fin g → ℝ} (ha : ∀ i, a i = 0 ∨ a i = 1 / 2) (hb : ∀ i, b i = 0 ∨ b i = 1 / 2)
     (n n' : Fin g → ℤ) : charFactor a b n n' ^ 2 = 1 := by

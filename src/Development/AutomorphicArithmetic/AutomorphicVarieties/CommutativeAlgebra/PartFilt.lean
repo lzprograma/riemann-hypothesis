@@ -145,7 +145,7 @@ private theorem UpperTheory.V.Alg.part_filt_monomial {O σ X : Type} [CommRing O
     {j : X} {n : σ →₀ ℕ} (hn : Finsupp.weight wt n = j) (c : O) : monomial n c ∈ wtPart O wt j := by
   classical
   intro m hm
-  rw [coeff_monomial, if_neg]
+  rw [coeff_monomial, ite_eq_right]
   rintro rfl
   exact hm hn
 
@@ -178,7 +178,7 @@ theorem UpperTheory.V.Alg.part_filt :
         intro hu
         have h3 : IsUnit (monomial g (1 : O)) := hloc.map_nonunit _ hu
         rw [MvPowerSeries.isUnit_iff_constantCoeff, ← coeff_zero_eq_constantCoeff_apply, coeff_monomial,
-          if_neg hg0.symm] at h3
+          ite_eq_right hg0.symm] at h3
         exact not_isUnit_zero h3
       have h4 : (monomial (g + n') (1 : O) : MvPowerSeries W.σ O) = monomial g 1 * monomial n' 1 := by
         rw [monomial_mul_monomial, one_mul]
@@ -257,8 +257,7 @@ theorem UpperTheory.V.Alg.part_filt :
   have hsum : x = W.π low + W.π (h - low) := by rw [← map_add (f := _), add_sub_cancel, hhx]
   rw [hsum]
   refine add_mem ?_ ?_
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [hlow, map_sum]
+  · rw [hlow, map_sum]
     refine Submodule.sum_mem _ fun n hn => ?_
     by_cases hw : Finsupp.weight W.wt n = j
     · have h1 : W.π (monomial n (coeff n h)) = algebraMap O R (coeff n h) * 1 * W.π (monomial n 1) := by
@@ -269,8 +268,7 @@ theorem UpperTheory.V.Alg.part_filt :
         ⟨_, UpperTheory.V.Alg.part_filt_monomial W.wt hw 1, rfl⟩
     · rw [hhj n hw, map_zero, map_zero]
       exact zero_mem _
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [hhigh, map_sum]
+  · rw [hhigh, map_sum]
     refine Submodule.sum_mem _ fun m hm => ?_
     rw [map_mul, mul_comm (Q ^ k), mul_assoc]
     exact Submodule.mul_mem_mul ⟨_, hb m, rfl⟩ (hN m (hμ hm).1 (hμ hm).2)

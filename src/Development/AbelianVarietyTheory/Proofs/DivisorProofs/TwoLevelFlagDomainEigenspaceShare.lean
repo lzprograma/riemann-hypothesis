@@ -51,12 +51,10 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.S
 
 open NumberField Module ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up GlobalTheory.IndefiniteRowSideFullHecke.FrameWeightGapBounds GlobalTheory.ShareOn
 
-set_option autoImplicit false
 noncomputable section
 
 namespace GlobalTheory.ShareEig
 
-theorem bddSec_pull : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (U C : Type) [Group U] [MulAction U C] (M : TwoLevels E r U C) (la : Wt M.Ψ r) (F : C → Frame M.Ψ r → ℂ), F ∈ M.SS la → ∀ (h : U) (c : C), (M.comp c).IsBddSec (castWt (M.comp_Ψ c) la) (fun x => M.pull h F c (castFrame (M.comp_Ψ c) x)) := _root_.GlobalTheory.PullBdd.pull_isBddSec
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ}
 
@@ -222,7 +220,7 @@ theorem share_eig : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : 
   have hu0' : u0 ∈ M.SS (deMul M.Ψ r M.p0 (sOf M)) := hu0
   haveI : Module.Finite ℂ (M.cusp ka) := hR.1
   have hQ : ∀ (h : U) (c : C), (M.comp c).IsBddSec (castWt (M.comp_Ψ c) (deMul M.Ψ r M.p0 (sOf M)))
-      (fun x => M.pull h u0 c (castFrame (M.comp_Ψ c) x)) := fun h c => bddSec_pull E r U C M _ u0 hu0' h c
+      (fun x => M.pull h u0 c (castFrame (M.comp_Ψ c) x)) := fun h c => _root_.GlobalTheory.PullBdd.pull_isBddSec E r U C M _ u0 hu0' h c
   have hprod : ∀ (h : U) (X : C → Frame M.Ψ r → ℂ), X ∈ M.SS (ka - deMul M.Ψ r M.p0 (sOf M)) →
       X * M.pull h u0 ∈ M.SS ka := by
     intro h X hX

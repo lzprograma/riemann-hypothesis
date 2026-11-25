@@ -84,7 +84,7 @@ theorem _root_.GlobalTheory.ArcQ.pairE_properties : ∀ (E : Type) [Field E] [Nu
 
     rw [hexp y, Finset.mul_sum, map_sum]
     simp_rw [e, map_smul, hdual, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
   have hC : ∀ x (y : 𝓞 E), Algebra.trace ℚ E (_root_.GlobalTheory.ArcQ.pairE ξ x * algebraMap (𝓞 E) E y) =
       (ξ (y • x) : ℚ) := by
     intro x y

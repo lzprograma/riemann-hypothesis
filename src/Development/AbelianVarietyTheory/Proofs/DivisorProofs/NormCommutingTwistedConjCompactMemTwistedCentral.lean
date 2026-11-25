@@ -9,42 +9,6 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNormOn
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedCentralizerIsNormOneTorus
 import GroundTheory.GlobalFields.LocalAtPlace
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -57,8 +21,8 @@ theorem main : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E →
   intro E _ _ _ hU n w y hy C hC
   by_cases hs : IsSplitAt w
   · refine ⟨{1}, isCompact_singleton, fun z hz _ => ⟨z, ?_, 1, rfl, (mul_one z).symm⟩⟩
-    have h1 : thL n w = MonoidHom.id _ := by rw [thL, if_pos hs]
-    have h2 : nrmL n w y = y := by rw [nrmL, if_pos hs]
+    have h1 : thL n w = MonoidHom.id _ := by rw [thL, ite_eq_left hs]
+    have h2 : nrmL n w y = y := by rw [nrmL, ite_eq_left hs]
     rw [h2] at hz
     change z * y = y * thL n w z
     rw [h1, MonoidHom.id_apply, hz]
@@ -70,11 +34,11 @@ theorem main : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E →
         star_mul := fun a b => by rw [map_mul, mul_comm]
         star_add := map_add (cj w) }
     have hse : starRingEnd K = cj w := RingHom.ext fun _ => rfl
-    have hθ : thL n w = thetaGL n (starRingEnd K) := by rw [thL, if_neg hs, hse]
+    have hθ : thL n w = thetaGL n (starRingEnd K) := by rw [thL, ite_eq_right hs, hse]
     have hθv : ∀ g : GLw n w, (thL n w g).val = GlobalTheory.Tw.theta g.val := fun g => by
       rw [hθ]; exact thetaGL_val g
     have hN : (nrmL n w y).val = GlobalTheory.Tw.nrm y.val := by
-      rw [nrmL, if_neg hs, ← hse, Units.val_mul, thetaGL_val]; rfl
+      rw [nrmL, ite_eq_right hs, ← hse, Units.val_mul, thetaGL_val]; rfl
     have hReg : GlobalTheory.Tw.Reg (y.val) := ⟨y.isUnit, by rw [← hN]; exact hy⟩
     have TC := GlobalTheory.Tw.twisted_centraliser n K y.val hReg
     letI : NontriviallyNormedField K := Valued.toNontriviallyNormedField _ _

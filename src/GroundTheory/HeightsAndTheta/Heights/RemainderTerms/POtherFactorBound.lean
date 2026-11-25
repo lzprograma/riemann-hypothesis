@@ -9,8 +9,6 @@ public import Mathlib.Algebra.BigOperators.Field
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights
 
 namespace RestTerms

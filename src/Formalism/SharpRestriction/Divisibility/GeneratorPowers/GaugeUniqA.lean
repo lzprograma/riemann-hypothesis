@@ -4,49 +4,10 @@ public import Mathlib.Tactic.ENatToNat
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
 public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
 public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PrimUniqPf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocal
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -77,15 +38,20 @@ theorem scaled_mul {K K' : Type} [Fintype K] [Fintype K'] (φ : K → (Y ⟶ X))
     (φ' : K' → (Y ⟶ X)) (ε' : K' → ℤ) {u v : Γ(Y, ⊤)ˣ} {t t' : LB.Gen (LB.LinComb L φ ε)}
     {s s' : LB.Gen (LB.LinComb L φ' ε')} (h1 : IsScaled u t t') (h2 : IsScaled v s s') :
     IsScaled (u * v) (LB.mulGen L φ ε φ' ε' t s) (LB.mulGen L φ ε φ' ε' t' s') := by
-  have h1' : ∀ j, t'.s j = res le_top u * t.s j := h1
-  have h2' : ∀ j, s'.s j = res le_top v * s.s j := h2
-  intro j
-  simp only [LB.mulGen]
-  erw [h1' (j ∘ Sum.inl), h2' (j ∘ Sum.inr)]
-  simp only [map_mul]
-  erw [res_res, res_res]
-  rw [mul_mul_mul_comm]
-  rfl
+  intro (j : K ⊕ K' → L.ι)
+  let tj : Γ(Y, LB.wchart L φ (j ∘ Sum.inl))ˣ := t.s (j ∘ Sum.inl)
+  let tj' : Γ(Y, LB.wchart L φ (j ∘ Sum.inl))ˣ := t'.s (j ∘ Sum.inl)
+  let sj : Γ(Y, LB.wchart L φ' (j ∘ Sum.inr))ˣ := s.s (j ∘ Sum.inr)
+  let sj' : Γ(Y, LB.wchart L φ' (j ∘ Sum.inr))ˣ := s'.s (j ∘ Sum.inr)
+  have h1j : tj' = res (le_top : LB.wchart L φ (j ∘ Sum.inl) ≤ ⊤) u * tj := h1 (j ∘ Sum.inl)
+  have h2j : sj' = res (le_top : LB.wchart L φ' (j ∘ Sum.inr) ≤ ⊤) v * sj := h2 (j ∘ Sum.inr)
+  have hl : LB.wchart L (Sum.elim φ φ') j ≤ LB.wchart L φ (j ∘ Sum.inl) := fun _ hx =>
+    Set.mem_iInter.2 fun k => Set.mem_iInter.1 hx (Sum.inl k)
+  have hr : LB.wchart L (Sum.elim φ φ') j ≤ LB.wchart L φ' (j ∘ Sum.inr) := fun _ hx =>
+    Set.mem_iInter.2 fun k => Set.mem_iInter.1 hx (Sum.inr k)
+  change res hl tj' * res hr sj' =
+    res (le_top : LB.wchart L (Sum.elim φ φ') j ≤ ⊤) (u * v) * (res hl tj * res hr sj)
+  rw [h1j, h2j, map_mul, map_mul, map_mul, res_res, res_res, mul_mul_mul_comm]
 
 theorem pullUnit_res (h : Z ⟶ Y) {V : Y.Opens} {W : Z.Opens} (hWV : W ≤ h ⁻¹ᵁ V) (u : Γ(Y, ⊤)ˣ) :
     res hWV (pullU h V (res (le_top : V ≤ ⊤) u)) = res le_top (pullUnit h u) := by
@@ -95,10 +61,16 @@ theorem pullUnit_res (h : Z ⟶ Y) {V : Y.Opens} {W : Z.Opens} (hWV : W ≤ h �
 theorem scaled_pull {K : Type} [Fintype K] (φ : K → (Y ⟶ X)) (ε : K → ℤ) (h : Z ⟶ Y) {u : Γ(Y, ⊤)ˣ}
     {t t' : LB.Gen (LB.LinComb L φ ε)} (hs : IsScaled u t t') :
     IsScaled (pullUnit h u) (LB.pullGen L φ ε t h) (LB.pullGen L φ ε t' h) := by
-  have hs' : ∀ j, t'.s j = res le_top u * t.s j := hs
-  intro j
-  simp only [LB.pullGen]
-  erw [hs' j, map_mul, map_mul, pullUnit_res]
+  intro (j : K → L.ι)
+  let tj : Γ(Y, LB.wchart L φ j)ˣ := t.s j
+  let tj' : Γ(Y, LB.wchart L φ j)ˣ := t'.s j
+  have hsj : tj' = res (le_top : LB.wchart L φ j ≤ ⊤) u * tj := hs j
+  have hp : LB.wchart L (fun k => h ≫ φ k) j ≤ h ⁻¹ᵁ LB.wchart L φ j := fun _ hx =>
+    Set.mem_iInter.2 fun k => Set.mem_iInter.1 hx k
+  change res hp (pullU h (LB.wchart L φ j) tj') =
+    res (le_top : LB.wchart L (fun k => h ≫ φ k) j ≤ ⊤) (pullUnit h u) *
+      res hp (pullU h (LB.wchart L φ j) tj)
+  rw [hsj, map_mul, map_mul, pullUnit_res]
 
 theorem corr_scaled (hL : L.IsLB) {K K' : Type} [Fintype K] [Fintype K'] (φ : K → (Y ⟶ X)) (ε : K → ℤ)
     (φ' : K' → (Y ⟶ X)) (ε' : K' → ℤ) (t₁ t₁' : LB.Gen (LB.LinComb L φ ε))
@@ -106,10 +78,6 @@ theorem corr_scaled (hL : L.IsLB) {K K' : Type} [Fintype K] [Fintype K'] (φ : K
     (h₂ : IsScaled U₂ t₂ t₂') (c : LB.Gen.Corr L φ ε φ' ε' t₁ t₂) (c' : LB.Gen.Corr L φ ε φ' ε' t₁' t₂') :
     U₁ = U₂ := by
   classical
-  have h₁' : ∀ j, t₁'.s j = res le_top U₁ * t₁.s j := h₁
-  have h₂' : ∀ j, t₂'.s j = res le_top U₂ * t₂.s j := h₂
-  have key : ∀ {U V : Y.Opens} (hle : V ≤ U) (a b : Γ(Y, U)ˣ), res hle (a * b) = res hle a * res hle b :=
-    fun hle a b => map_mul _ a b
   have hch : ∀ (ψ : Y ⟶ X) (y : Y), ∃ i, ψ y ∈ L.U i := by
     intro ψ y
     have hy := wchart_cover L hL (fun _ : Fin 1 => ψ) (show y ∈ (⊤ : Y.Opens) from trivial)
@@ -128,10 +96,19 @@ theorem corr_scaled (hL : L.IsLB) {K K' : Type} [Fintype K] [Fintype K'] (φ : K
     have hjj : ∀ k k', φ k = φ' k' → j k = j' k' := fun k k' e => show ch (φ k) = ch (φ' k') by rw [e]
     have hyW : y ∈ LB.wchart L φ j ⊓ LB.wchart L φ' j' :=
       ⟨Set.mem_iInter.2 fun k => hc (φ k), Set.mem_iInter.2 fun k => hc (φ' k)⟩
-    have E := c j j' hj hj' hjj
-    have E' := c' j j' hj hj' hjj
-    rw [h₁' j, h₂' j'] at E'
-    erw [key, key, res_res, res_res, E] at E'
+    let s1 : Γ(Y, LB.wchart L φ j)ˣ := t₁.s j
+    let s1' : Γ(Y, LB.wchart L φ j)ˣ := t₁'.s j
+    let s2 : Γ(Y, LB.wchart L φ' j')ˣ := t₂.s j'
+    let s2' : Γ(Y, LB.wchart L φ' j')ˣ := t₂'.s j'
+    have E : res (inf_le_left : LB.wchart L φ j ⊓ LB.wchart L φ' j' ≤ _) s1 =
+        res (inf_le_right : LB.wchart L φ j ⊓ LB.wchart L φ' j' ≤ _) s2 :=
+      c j j' hj hj' hjj
+    have E' : res (inf_le_left : LB.wchart L φ j ⊓ LB.wchart L φ' j' ≤ _) s1' =
+        res (inf_le_right : LB.wchart L φ j ⊓ LB.wchart L φ' j' ≤ _) s2' :=
+      c' j j' hj hj' hjj
+    have h₁j : s1' = res (le_top : LB.wchart L φ j ≤ ⊤) U₁ * s1 := h₁ j
+    have h₂j : s2' = res (le_top : LB.wchart L φ' j' ≤ ⊤) U₂ * s2 := h₂ j'
+    rw [h₁j, h₂j, map_mul, map_mul, res_res, res_res, E] at E'
     have E2 := mul_right_cancel E'
     exact ⟨_, hyW, congrArg Units.val E2⟩
   choose W hyW hW using hcov
@@ -144,14 +121,19 @@ theorem corr_scaled_left (hL : L.IsLB) (ψ : Y ⟶ X) (a : ℤ) {K' : Type} [Fin
     (c : LB.Gen.Corr L _ _ _ _ τ t₂) (c' : LB.Gen.Corr L _ _ _ _ τ' t₂') : IsScaled U τ τ' := by
   let τ'' : LB.Gen (LB.LinComb L (K := Fin 1) (fun _ => ψ) fun _ => a) :=
     ⟨fun j => res le_top U * τ.s j⟩
-  have h₂' : ∀ j, t₂'.s j = res le_top U * t₂.s j := h₂
   have hc'' : LB.Gen.Corr L _ _ _ _ τ'' t₂' := by
     intro j j' hj hj' hm
-    have := c j j' hj hj' hm
-    show res _ (res le_top U * τ.s j) = res _ (t₂'.s j')
-    rw [h₂' j']
-    erw [map_mul, map_mul, this, res_res, res_res]
-    rfl
+    let τj : Γ(Y, LB.wchart L (fun _ : Fin 1 => ψ) j)ˣ := τ.s j
+    let s2 : Γ(Y, LB.wchart L φ' j')ˣ := t₂.s j'
+    let s2' : Γ(Y, LB.wchart L φ' j')ˣ := t₂'.s j'
+    have hcj : res (inf_le_left : LB.wchart L (fun _ : Fin 1 => ψ) j ⊓ LB.wchart L φ' j' ≤ _) τj =
+        res (inf_le_right : LB.wchart L (fun _ : Fin 1 => ψ) j ⊓ LB.wchart L φ' j' ≤ _) s2 :=
+      c j j' hj hj' hm
+    have h₂j' : s2' = res (le_top : LB.wchart L φ' j' ≤ ⊤) U * s2 := h₂ j'
+    change res (inf_le_left : LB.wchart L (fun _ : Fin 1 => ψ) j ⊓ LB.wchart L φ' j' ≤ _)
+        (res (le_top : LB.wchart L (fun _ : Fin 1 => ψ) j ≤ ⊤) U * τj) =
+      res (inf_le_right : LB.wchart L (fun _ : Fin 1 => ψ) j ⊓ LB.wchart L φ' j' ≤ _) s2'
+    rw [h₂j', map_mul, map_mul, hcj, res_res, res_res]
   have he := GermFun.gen_eq_of_corr L hL ψ a φ' ε' τ'' τ' t₂' hc'' c'
   intro j
   rw [← he]

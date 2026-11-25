@@ -18,8 +18,6 @@ open scoped ComplexOrder
 
 namespace Formalism.IndefR.Mi
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 abbrev RPt (D : D7) (m n : ℕ) : Type := D.what₂.Tau → Fin m → Fin n → ℂ
@@ -46,8 +44,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Fock.DRho Matrix
 
 namespace Formalism.IndefR.Mi
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 

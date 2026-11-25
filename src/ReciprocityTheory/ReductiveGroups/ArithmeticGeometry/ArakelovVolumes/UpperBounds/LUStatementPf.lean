@@ -91,7 +91,7 @@ theorem lu_holds : LUStatement (E := E) := by
   refine ⟨DeltaF X x0, zF X x0, bF X x0, Delta_diff (X := X) (x0 := x0),
     fun x _ ε hε => dense_delta (X := X) (x0 := x0) hx0 x ε hε,
     zF_diffOn (X := X) (x0 := x0), bF_diffOn (X := X) (x0 := x0),
-    fun x hx hΔ => ⟨zF_mem (X := X) (x0 := x0) hx0 hx hΔ, bF_mem (X := X) (x0 := x0) hx hΔ,
+    fun x hx hΔ => ⟨zF_mem (X := X) (x0 := x0) hx0 hx hΔ, bF_mem (X := X) (x0 := x0) hΔ,
       split_eq (X := X) (x0 := x0) hx0 x⟩,
     fun z _ b hb => uniq_all (X := X) (x0 := x0) hx0 hb⟩
 

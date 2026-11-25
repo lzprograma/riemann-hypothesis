@@ -50,6 +50,7 @@ import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.CuspSpanNormBounds.Point
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 import Mathlib.Tactic.Linter.Style
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MapFnOfEqValC
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsConjLinearOfGramEq, Development.AbelianVarietyTheory.Proofs.FlagMeasures.TensorTypesRealPlacesEquivSpanWeylModules
@@ -173,14 +174,7 @@ theorem nfAll_symm {ι : Type} [Fintype ι] {n : ℕ} (lam : ι → DomWeight n)
 theorem eval_rowAct {n : ℕ} (g x : Matrix (Fin n) (Fin n) ℂ) (p : MvPolynomial (Fin n × Fin n) ℂ) :
     MvPolynomial.eval (fun v : Fin n × Fin n => x v.1 v.2) (Formalism.GradedWeylDivisibility.rowAct ℂ g p) =
       MvPolynomial.eval (fun v : Fin n × Fin n => (g * x) v.1 v.2) p := by
-  induction p using MvPolynomial.induction_on with
-  | C a => simp [Formalism.GradedWeylDivisibility.rowAct]
-  | add p q hp hq => simp only [map_add (f := _), hp, hq]
-  | mul_X p v hp =>
-    have hX : MvPolynomial.eval (fun w : Fin n × Fin n => x w.1 w.2)
-        (Formalism.GradedWeylDivisibility.rowAct ℂ g (MvPolynomial.X v)) = (g * x) v.1 v.2 := by
-      simp [Formalism.GradedWeylDivisibility.rowAct, Matrix.mul_apply]
-    simp only [map_mul, hp, hX, MvPolynomial.eval_X]
+  apply _root_.GlobalTheory.ValueSpaceCoordinates.eval_rowAct <;> assumption
 
 theorem factor_eq {n : ℕ} (m o a b : Matrix (Fin n) (Fin n) ℂ) (hm : m ∈ Matrix.unitaryGroup (Fin n) ℂ)
     (ho : IsUnit o.det) (s : ℤ) (p : MvPolynomial (Fin n × Fin n) ℂ) (hab : a = o * m * o⁻¹ * b) :

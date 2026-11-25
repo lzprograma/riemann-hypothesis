@@ -3,47 +3,6 @@ module
 public import Formalism.GaussJetBounds.Statement
 public import Formalism.SharpRestriction.Divisibility.ProductZerothFirstParts
 public import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffEvenDerivativeEqZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.DworkPowerSeriesWeights
 
 @[expose] public section
@@ -108,9 +67,9 @@ theorem coeff_subst_scale {σ K : Type} [Field K] [Fintype σ] [DecidableEq σ] 
 theorem lw_twist (l d : ℕ) [Fact l.Prime] [NeZero d] (ζ : ℂ_[l]) (s : ZMod d) : ζ ^ lw l s = product_zeroth_first_parts.twist l d ζ s := by
   unfold lw product_zeroth_first_parts.twist
   by_cases h : Even s.val
-  · rw [if_pos (Nat.even_iff.mp h), if_pos h, one_mul]
+  · rw [ite_eq_left (Nat.even_iff.mp h), ite_eq_left h, one_mul]
     exact_mod_cast zpow_natCast ζ (l ^ s.val)
-  · rw [if_neg (by simpa [Nat.even_iff] using h), if_neg h, neg_one_mul, zpow_neg]
+  · rw [ite_eq_right (by simpa [Nat.even_iff] using h), ite_eq_right h, neg_one_mul, zpow_neg]
     congr 1
 
 theorem torus_invariant_of_teichmuller (l d : ℕ) [Fact l.Prime] [NeZero d] (be : MvPowerSeries (ZMod d) ℂ_[l]) (ζ : ℂ_[l])
@@ -189,9 +148,9 @@ theorem cobX_eq (l d : ℕ) [Fact l.Prime] [NeZero d] (be : MvPowerSeries (ZMod 
     unfold s1
     by_cases h : Even s.val
     · have h' : s.val % 2 = 0 := Nat.even_iff.mp h
-      rw [if_pos h', if_pos h, subst_add' hb, MvPowerSeries.subst_X hb, MvPowerSeries.subst_X hb, eV_false, eV_true]
+      rw [ite_eq_left h', ite_eq_left h, subst_add' hb, MvPowerSeries.subst_X hb, MvPowerSeries.subst_X hb, eV_false, eV_true]
     · have h' : ¬ s.val % 2 = 0 := fun e => h (Nat.even_iff.mpr e)
-      rw [if_neg h', if_neg h, add_zero, MvPowerSeries.subst_X hb, eV_false]
+      rw [ite_eq_right h', ite_eq_right h, add_zero, MvPowerSeries.subst_X hb, eV_false]
   have f0 : (fun s : ZMod d => MvPowerSeries.subst (fun u : Bool × ZMod d => (MvPowerSeries.X (eV d u) :
       MvPowerSeries (ZMod d × Fin 2) ℂ_[l])) (s0 (K := ℂ_[l]) s)) =
       fun s => (MvPowerSeries.X (s, 0) : MvPowerSeries (ZMod d × Fin 2) ℂ_[l]) := by
@@ -206,9 +165,9 @@ theorem cobX_eq (l d : ℕ) [Fact l.Prime] [NeZero d] (be : MvPowerSeries (ZMod 
     unfold s2
     by_cases h : Even s.val
     · have h' : s.val % 2 = 0 := Nat.even_iff.mp h
-      rw [if_pos h', if_pos h, MvPowerSeries.subst_X hb, eV_true]
+      rw [ite_eq_left h', ite_eq_left h, MvPowerSeries.subst_X hb, eV_true]
     · have h' : ¬ s.val % 2 = 0 := fun e => h (Nat.even_iff.mpr e)
-      rw [if_neg h', if_neg h, MvPowerSeries.subst_X hb, eV_false]
+      rw [ite_eq_right h', ite_eq_right h, MvPowerSeries.subst_X hb, eV_false]
   rw [f1, f0, f2]
   rfl
 
@@ -231,9 +190,9 @@ theorem cobY_eq (l d : ℕ) [Fact l.Prime] [NeZero d] (be : MvPowerSeries (ZMod 
     unfold s1'
     by_cases h : Even s.val
     · have h' : s.val % 2 = 0 := Nat.even_iff.mp h
-      rw [if_pos h', if_pos h, add_zero, MvPowerSeries.subst_X hb, eV_false]
+      rw [ite_eq_left h', ite_eq_left h, add_zero, MvPowerSeries.subst_X hb, eV_false]
     · have h' : ¬ s.val % 2 = 0 := fun e => h (Nat.even_iff.mpr e)
-      rw [if_neg h', if_neg h, subst_add' hb, MvPowerSeries.subst_X hb, MvPowerSeries.subst_X hb, eV_false, eV_true]
+      rw [ite_eq_right h', ite_eq_right h, subst_add' hb, MvPowerSeries.subst_X hb, MvPowerSeries.subst_X hb, eV_false, eV_true]
   have f0 : (fun s : ZMod d => MvPowerSeries.subst (fun u : Bool × ZMod d => (MvPowerSeries.X (eV d u) :
       MvPowerSeries (ZMod d × Fin 2) ℂ_[l])) (s0 (K := ℂ_[l]) s)) =
       fun s => (MvPowerSeries.X (s, 0) : MvPowerSeries (ZMod d × Fin 2) ℂ_[l]) := by
@@ -248,9 +207,9 @@ theorem cobY_eq (l d : ℕ) [Fact l.Prime] [NeZero d] (be : MvPowerSeries (ZMod 
     unfold s2'
     by_cases h : Even s.val
     · have h' : s.val % 2 = 0 := Nat.even_iff.mp h
-      rw [if_pos h', if_pos h, MvPowerSeries.subst_X hb, eV_false]
+      rw [ite_eq_left h', ite_eq_left h, MvPowerSeries.subst_X hb, eV_false]
     · have h' : ¬ s.val % 2 = 0 := fun e => h (Nat.even_iff.mpr e)
-      rw [if_neg h', if_neg h, MvPowerSeries.subst_X hb, eV_true]
+      rw [ite_eq_right h', ite_eq_right h, MvPowerSeries.subst_X hb, eV_true]
   rw [f1, f0, f2]
   rfl
 
@@ -274,14 +233,14 @@ theorem jetLog_rename (l d : ℕ) [Fact l.Prime] [NeZero d] (u : Bool × ZMod d)
   by_cases h : n = Finsupp.single (u.1, u.2 - 2 * (e : ZMod d)) ((l ^ 2) ^ e)
   · have h' : Finsupp.equivMapDomain (eV d) n = Finsupp.single (eV d (u.1, u.2 - 2 * (e : ZMod d))) ((l ^ 2) ^ e) := by
       rw [h, Finsupp.equivMapDomain_single]
-    rw [if_pos h', if_pos h]
+    rw [ite_eq_left h', ite_eq_left h]
   · have h' : ¬ Finsupp.equivMapDomain (eV d) n =
         Finsupp.single (eV d (u.1, u.2 - 2 * (e : ZMod d))) ((l ^ 2) ^ e) := by
       intro h2
       apply h
       have := congrArg (Finsupp.equivMapDomain (eV d).symm) h2
       simpa [← Finsupp.equivMapDomain_trans] using this
-    rw [if_neg h', if_neg h]
+    rw [ite_eq_right h', ite_eq_right h]
 
 theorem letterLog_cc (l d : ℕ) [Fact l.Prime] [NeZero d] (x : V2 d) :
     MvPowerSeries.constantCoeff (letterLog (K := ℂ_[l]) l x) = 0 := by

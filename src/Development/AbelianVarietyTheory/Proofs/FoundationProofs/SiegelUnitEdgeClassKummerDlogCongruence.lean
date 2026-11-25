@@ -31,55 +31,11 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLog
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EdgeCupProps
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsAlgZpMapOfAlgebraic
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsLogDerivQExpansionModPrimePowUnique
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.RingTheory.PicardGroup
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 import Development.AbelianVarietyTheory.Definitions.Foundations.ExpUpper
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBasisOnZetaPowMulQPow
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricLevelH1Coboundary
@@ -105,14 +61,6 @@ open scoped MatrixGroups
 open GlobalTheory.KZ GlobalTheory.Glue GlobalTheory.K5 GlobalTheory.KummerEisensteinGalois GlobalTheory.GeoFix
 
 namespace GlobalTheory.GeoFix
-
-theorem inR_algebraMap {p : ℕ} [Fact p.Prime] {Ω : Type} [Field Ω] [Algebra (O0 p) Ω]
-    {T : Tower p Ω} {n : ℕ} {ψ : O0 p →+* Ω} (h : IsReb T n ψ) (c : O0 p) :
-    ∃ c' : O0 p, ψ c' = algebraMap (O0 p) Ω c := by
-  have hmem : algebraMap (O0 p) Ω c ∈ ψ.range := by
-    rw [h.rng]
-    exact Subalgebra.algebraMap_mem _ c
-  exact hmem
 
 theorem inR_pow {p : ℕ} [Fact p.Prime] {Ω : Type} [Field Ω] [Algebra (O0 p) Ω]
     {ψ : O0 p →+* Ω} {x : Ω} (hx : InR ψ x) (k : ℕ) : InR ψ (x ^ k) := by
@@ -140,11 +88,11 @@ theorem exists_inR_mul_eq_psi : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field 
         rw [Polynomial.eval₂_mul, Polynomial.eval₂_X] at hf
         exact (mul_eq_zero.1 hf).resolve_left hN0
       · obtain ⟨g, hg⟩ := Polynomial.X_dvd_iff.2 (show (f - Polynomial.C (f.coeff 0)).coeff 0 = 0 by simp)
-        obtain ⟨D, hD⟩ := inR_algebraMap h (-f.coeff 0)
+        obtain ⟨D, hD⟩ := GlobalTheory.K5.Reb.mem_range h (-f.coeff 0)
         refine ⟨Polynomial.eval₂ (algebraMap (O0 p) Ω) N g, D, ?_, ?_, ?_⟩
         · rw [Polynomial.eval₂_eq_sum_range]
           refine inR_sum _ _ fun i _ => ?_
-          obtain ⟨c', hc'⟩ := inR_algebraMap h (g.coeff i)
+          obtain ⟨c', hc'⟩ := GlobalTheory.K5.Reb.mem_range h (g.coeff i)
           rw [← hc']
           exact inR_mul (inR_psi ψ c') (inR_pow hN i)
         · rintro rfl
@@ -199,27 +147,6 @@ theorem exists_lau_approx (p : ℕ) [Fact p.Prime] (K : ℕ) (x : O0 p) :
     Ideal.mem_span_singleton'] at hmem
   obtain ⟨c, hc⟩ := hmem
   exact ⟨a, c, by rw [mul_comm, hc]; ring⟩
-
-theorem exists_cong_lau :
-    ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 p) Ω]
-      (T : Tower p Ω) (n : ℕ) (ψ : O0 p →+* Ω), IsReb T n ψ →
-      ∀ (d : ℕ) (e : Fin d → Ω) (b : Fin d → O0 p), (∀ t, IsInt (p := p) (e t)) →
-      ∀ K : ℕ, ∃ a : Fin d → Lau p,
-        Cong (p := p) K (∑ t, e t * ψ (b t))
-          (∑ t, e t * ψ (algebraMap (Lau p) (O0 p) (a t))) := by
-  intro p hp Ω _ _ T n ψ h d e b he K
-  choose a c hac using fun t => exists_lau_approx p K (b t)
-  have hq : IsIntegral (O0 p) (T.qq n) :=
-    IsIntegral.of_pow (pow_pos hp.out.pos n) (by rw [Basic.qq_pow]; exact isIntegral_algebraMap)
-  have hψ (x : O0 p) : IsIntegral (O0 p) (ψ x) := by
-    have hx : ψ x ∈ ψ.range := ⟨x, rfl⟩
-    rw [h.rng] at hx
-    exact adjoin_le_integralClosure hq hx
-  refine ⟨a, ∑ t, e t * ψ (c t), IsIntegral.sum _ fun t _ => IsIntegral.mul (he t) (hψ (c t)), ?_⟩
-  rw [← Finset.sum_sub_distrib, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun t _ => ?_
-  rw [hac t, map_add (f := _), map_mul, map_pow, map_natCast]
-  ring
 
 end GlobalTheory.GeoFix
 end -- clump:auto
@@ -401,7 +328,7 @@ theorem divide_ev : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra
     simp only [Function.mem_support] at hr
     by_cases h0 : ∀ t, (a t).coeff r = 0
     · exact absurd (by simp [μ', h0]) hr
-    · push_neg at h0
+    · push Not at h0
       obtain ⟨t, ht⟩ := h0
       exact Set.mem_biUnion (Finset.mem_coe.2 (Finset.mem_univ t)) ht
   have hpwo : (⋃ t ∈ (Finset.univ : Finset (Fin d)), (a t).support).IsPWO :=
@@ -680,135 +607,10 @@ theorem algZp_root {κ ρ : Ω} (hκ : IsAlgZp p κ) {m : ℕ} (hm : 0 < m) (h :
   refine ⟨Polynomial.expand ℤ_[p] m P, (Polynomial.expand_ne_zero hm).2 hP, ?_⟩
   rw [Polynomial.map_expand, Polynomial.expand_aeval, h, e]
 
-theorem kum_rel (T : Tower p Ω) {n : ℕ} {H : Subgroup (Gal p Ω)} {θ ρ ra rb : Ω}
-    {e ka kb : Gal p Ω → ZMod (p ^ n)}
-    (hθ : IsKum T n H θ e) (ha : IsKum T n H ra ka) (hb : IsKum T n H rb kb)
-    (hρ : ∀ g ∈ H, g ρ = ρ) (hrel : θ * rb = ρ * ra) (hne : θ * rb ≠ 0) {g : Gal p Ω} (hg : g ∈ H) :
-    Cong (p := p) n (((e g).val : Ω) + ((kb g).val : Ω)) ((ka g).val : Ω) := by
-  have h1 := congrArg g hrel
-  rw [map_mul, map_mul, hθ g hg, hb g hg, hρ g hg, ha g hg] at h1
-  have h2 : T.ζ n ^ ((e g).val + (kb g).val) * (θ * rb) = T.ζ n ^ (ka g).val * (θ * rb) := by
-    rw [pow_add]; linear_combination h1 - T.ζ n ^ (ka g).val * hrel
-  have h3 := mul_right_cancel₀ hne h2
-  rw [Basic.zeta_pow_eq_iff] at h3
-  have := Basic.cong_natCast (Ω := Ω) h3
-  push_cast at this
-  exact this
-
 end GlobalTheory.EdgeLoc
 
 namespace GlobalTheory.EdgeLoc
 
-theorem edge_dlog : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ, ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω → ∀ (T : GlobalTheory.K5.Tower p Ω) (L n : ℕ), n ≤ L → 1 ≤ n → ∀ (ψ : O0 p →+* Ω), IsReb T L ψ → ∀ ι : On p L →ₐ[O0 p] Ω, IsEmb T L ι →
-  ∀ (u v : (On p L)ˣ) (α β α' β' : On p L), IsDlog p L (u : On p L) α β → IsDlog p L (v : On p L) α' β' →
-  ∀ r s : Ω, r ^ (p ^ n) = ι u → s ^ (p ^ n) = ι v →
-  ∀ x y lz η : Gal p Ω → ZMod (p ^ n), IsKum T n (Gn T L) r x → IsKum T n (Gn T L) s y → IsKum T n (Gn T L) (T.ζ (L + n)) lz →
-  (∀ g ∈ (Ggeo p Ω ⊓ Gn T L), ∀ h ∈ (Ggeo p Ω ⊓ Gn T L), x g * y h = η h - η (g * h) + η g) →
-  (∀ g ∈ (Ggeo p Ω ⊓ Gn T L), ∃ S : Finset Ω, ∀ h ∈ (Ggeo p Ω ⊓ Gn T L), (∀ z ∈ S, h z = g z) → η h = η g) →
-  ∃ o : Ω, IsInt (p := p) o ∧ (∀ g ∈ (Ggeo p Ω ⊓ Gn T L), g o = o) ∧ ∀ σ ∈ Gn T L, ∀ (θ κ a a' b b' : Ω) (ca cb : ℤ → Ω),
-    IsKum T n (Ggeo p Ω ⊓ Gn T L) θ (fun h => η (σ * h * σ⁻¹) - η h - x h * y σ + x σ * y h) →
-    κ ≠ 0 → IsAlgZp p κ → θ ^ (p ^ n) * b = κ * a → Ev ψ ca a a' → Ev ψ cb b b' → a ≠ 0 → IsInt (p := p) a⁻¹ → b ≠ 0 → IsInt (p := p) b⁻¹ →
-    Cong (p := p) n ((p : Ω) ^ c * (a' / a - b' / b)) (σ⁻¹ o - o - (p : Ω) ^ c * ι (α * β' - β * α') * ((lz σ).val : Ω)) := by
-  intro p _ hp2
-  obtain ⟨c₁, h53⟩ := _root_.GlobalTheory.K5.LevelDown.cup_kummer_dlog_mod p hp2
-  obtain ⟨c₂, hed⟩ := _root_.GlobalTheory.EdgeAlg.edge_class_cup p hp2 c₁
-  obtain ⟨c₃, hgeo⟩ := _root_.GlobalTheory.K5.GeoKummer.geo_cob p hp2
-  have hlevel := GlobalTheory.K5.Reb.h1_geometric_level_coboundary p hp2
-  obtain ⟨c₄, h71⟩ := hlevel
-  refine ⟨c₂ + c₃ + c₄, ?_⟩
-  intro Ω _ _ hΩ T L n hnL hn1 ψ hψ ι hι u v α β α' β' hu hv r s hr hs x y lz η hx hy hlz hcup hloc
-  haveI := hΩ.clo
-  have hpn : p ^ n ≠ 0 := pow_ne_zero _ (Fact.out : p.Prime).ne_zero
-  have hr0 : r ≠ 0 := by
-    rintro rfl; rw [zero_pow hpn] at hr; exact (u.isUnit.map ι).ne_zero hr.symm
-  have hs0 : s ≠ 0 := by
-    rintro rfl; rw [zero_pow hpn] at hs; exact (v.isUnit.map ι).ne_zero hs.symm
-  obtain ⟨lq, hlq⟩ := Basic.exists_isKum T n (Gn T L) (Basic.qq_ne_zero T (L + n)) (fun g hg => by
-    rw [pow_chain T.qq T.qpow L n, ((Basic.mem_gn T L g).1 hg).2])
-  have hcob := h53 Ω hΩ T L n hnL hn1 ι hι u v α β α' β' hu hv r s hr hs x y lz lq hx hy hlz hlq
-  have hadd : ∀ g ∈ Gn T L, ∀ h ∈ Gn T L, x (g * h) = x g + x h ∧ y (g * h) = y g + y h :=
-    fun g hg h hh => ⟨kum_add T hnL hr0 hx hg hh, kum_add T hnL hs0 hy hg hh⟩
-  obtain ⟨o₁, ho₁i, ho₁f, hE⟩ := hed Ω hΩ T L n hnL x y lz lq η (ι (α * β' - β * α')) hadd hlz hlq
-    (emb_int L ι _) (fun g hg => emb_fix T hι hg _) hcup hloc hcob
-  have hlqΔ : IsKum T n (Ggeo p Ω ⊓ Gn T L) (T.qq (L + n)) lq := fun g hg => hlq g (Subgroup.mem_inf.1 hg).2
-  obtain ⟨-, h71k⟩ := h71 Ω hΩ T L n hnL lq hlqΔ
-  refine ⟨(p : Ω) ^ (c₃ + c₄) * o₁, (_root_.GlobalTheory.K5.Orth.isInt_natPow_p _).mul ho₁i, fun g hg => by rw [map_mul, map_pow, map_natCast, ho₁f g hg], ?_⟩
-  intro σ hσ θ κ a a' b b' ca cb hθ hκ0 hκ hrel hea heb ha0 hai hb0 hbi
-  have hpn0 : 0 < p ^ n := Nat.pos_of_ne_zero hpn
-  obtain ⟨ra, hra⟩ := IsAlgClosed.exists_pow_nat_eq a hpn0
-  obtain ⟨rb, hrb⟩ := IsAlgClosed.exists_pow_nat_eq b hpn0
-  have hra0 : ra ≠ 0 := by rintro rfl; rw [zero_pow hpn] at hra; exact ha0 hra.symm
-  have hrb0 : rb ≠ 0 := by rintro rfl; rw [zero_pow hpn] at hrb; exact hb0 hrb.symm
-  obtain ⟨ka, hka⟩ := Basic.exists_isKum T n (Ggeo p Ω ⊓ Gn T L) hra0 (fun g hg => by
-    rw [hra, (ev_fix hψ hea hg).1])
-  obtain ⟨kb, hkb⟩ := Basic.exists_isKum T n (Ggeo p Ω ⊓ Gn T L) hrb0 (fun g hg => by
-    rw [hrb, (ev_fix hψ heb hg).1])
-  obtain ⟨xa, hxai, hxa⟩ := hgeo Ω hΩ T L n hnL hn1 ψ hψ ca a a' ra hea ha0 hai hra ka lq hka hlqΔ
-  obtain ⟨xb, hxbi, hxb⟩ := hgeo Ω hΩ T L n hnL hn1 ψ hψ cb b b' rb heb hb0 hbi hrb kb lq hkb hlqΔ
-  have hθ0 : θ ≠ 0 := by
-    rintro rfl; rw [zero_pow hpn, zero_mul] at hrel; exact mul_ne_zero hκ0 ha0 hrel.symm
-  set ρ : Ω := θ * rb / ra with hρdef
-  have hρpow : ρ ^ (p ^ n) = κ := by
-    rw [hρdef, div_pow, mul_pow, hra, hrb, hrel, mul_div_assoc, div_self ha0, mul_one]
-  have hρalg : IsAlgZp p ρ := algZp_root hκ hpn0 hρpow
-  have hρfix : ∀ g ∈ Ggeo p Ω ⊓ Gn T L, g ρ = ρ := fun g hg => (Subgroup.mem_inf.1 hg).1 ρ hρalg
-  have hrel' : θ * rb = ρ * ra := by rw [hρdef]; field_simp
-  have hK := fun g (hg : g ∈ Ggeo p Ω ⊓ Gn T L) =>
-    kum_rel T hθ hka hkb hρfix hrel' (mul_ne_zero hθ0 hrb0) hg
-  obtain ⟨we, hwei, hwe⟩ := hE σ hσ
-  have hθ0 : θ ≠ 0 := by
-    rintro rfl; rw [zero_pow hpn, zero_mul] at hrel; exact mul_ne_zero hκ0 ha0 hrel.symm
-  set ρ : Ω := θ * rb / ra with hρdef
-  have hρpow : ρ ^ (p ^ n) = κ := by
-    rw [hρdef, div_pow, mul_pow, hra, hrb, hrel, mul_div_assoc, div_self ha0, mul_one]
-  have hρalg : IsAlgZp p ρ := algZp_root hκ hpn0 hρpow
-  have hρfix : ∀ g ∈ Ggeo p Ω ⊓ Gn T L, g ρ = ρ := fun g hg => (Subgroup.mem_inf.1 hg).1 ρ hρalg
-  have hrel' : θ * rb = ρ * ra := by rw [hρdef]; field_simp
-  have hK := fun g (hg : g ∈ Ggeo p Ω ⊓ Gn T L) =>
-    kum_rel T hθ hka hkb hρfix hrel' (mul_ne_zero hθ0 hrb0) hg
-  obtain ⟨we, hwei, hwe⟩ := hE σ hσ
-  have key : ∀ w, σ⁻¹ (σ w) = w := fun w => by
-    rw [← AlgEquiv.mul_apply, inv_mul_cancel, AlgEquiv.one_apply]
-  have hσo : ∀ g ∈ Ggeo p Ω ⊓ Gn T L, g (σ⁻¹ o₁) = σ⁻¹ o₁ := fun g hg => by
-    have h1 := ho₁f _ (conj_mem hσ hg)
-    calc g (σ⁻¹ o₁) = σ⁻¹ (σ (g (σ⁻¹ o₁))) := (key _).symm
-      _ = σ⁻¹ ((σ * g * σ⁻¹) o₁) := rfl
-      _ = σ⁻¹ o₁ := by rw [h1]
-  obtain ⟨X, hXd⟩ : ∃ X : Ω, X = (p : Ω) ^ c₃ * (σ⁻¹ o₁ - o₁ - (p : Ω) ^ c₂ * ι (α * β' - β * α') * ((lz σ).val : Ω))
-      - (p : Ω) ^ (c₂ + c₃) * (a' / a - b' / b) := ⟨_, rfl⟩
-  have hXi : IsInt (p := p) X := by
-    have ha' := (ev_int hψ hea).2
-    have hb' := (ev_int hψ heb).2
-    have hfi : IsInt (p := p) (ι (α * β' - β * α')) := emb_int L ι _
-    have hσi : IsInt (p := p) (σ⁻¹ o₁) := Basic.isInt_gal _ ho₁i
-    have hlzi : IsInt (p := p) (((lz σ).val : Ω)) := by
-      have := Basic.isInt_intCast (p := p) (Ω := Ω) ((lz σ).val : ℤ)
-      exact_mod_cast this
-    rw [hXd, div_eq_mul_inv, div_eq_mul_inv]
-    exact ((_root_.GlobalTheory.K5.Orth.isInt_natPow_p _).mul (((hσi.sub ho₁i).sub (((_root_.GlobalTheory.K5.Orth.isInt_natPow_p _).mul hfi).mul hlzi)))).sub
-      ((_root_.GlobalTheory.K5.Orth.isInt_natPow_p _).mul ((ha'.mul hai).sub (hb'.mul hbi)))
-  have hXf : ∀ g ∈ Ggeo p Ω ⊓ Gn T L, g X = X := fun g hg => by
-    have hg2 := (Subgroup.mem_inf.1 hg).2
-    rw [hXd]
-    simp only [map_sub, map_mul, map_div₀, map_pow, map_natCast, hσo g hg, ho₁f g hg,
-      emb_fix T hι hg2, (ev_fix hψ hea hg).1, (ev_fix hψ hea hg).2, (ev_fix hψ heb hg).1, (ev_fix hψ heb hg).2]
-  have hXcob : Cob1 n (Ggeo p Ω ⊓ Gn T L) (fun g => X * ((lq g).val : Ω)) := by
-    refine ⟨(p : Ω) ^ c₂ * (xa - xb) - (p : Ω) ^ c₃ * we,
-      ((_root_.GlobalTheory.K5.Orth.isInt_natPow_p _).mul (hxai.sub hxbi)).sub ((_root_.GlobalTheory.K5.Orth.isInt_natPow_p _).mul hwei), fun g hg => ?_⟩
-    obtain ⟨z1, hz1, e1⟩ := hwe g hg
-    obtain ⟨z2, hz2, e2⟩ := hxa g hg
-    obtain ⟨z3, hz3, e3⟩ := hxb g hg
-    obtain ⟨z4, hz4, e4⟩ := hK g hg
-    refine ⟨(p : Ω) ^ (c₂ + c₃) * z4 + (p : Ω) ^ c₂ * (z2 - z3) - (p : Ω) ^ c₃ * z1,
-      (((_root_.GlobalTheory.K5.Orth.isInt_natPow_p _).mul hz4).add ((_root_.GlobalTheory.K5.Orth.isInt_natPow_p _).mul (hz2.sub hz3))).sub ((_root_.GlobalTheory.K5.Orth.isInt_natPow_p _).mul hz1), ?_⟩
-    rw [hXd]
-    simp only [map_sub, map_mul, map_pow, map_natCast] at e1 e2 e3 e4 ⊢
-    linear_combination -(p : Ω) ^ c₃ * e1 + (p : Ω) ^ c₂ * e2 - (p : Ω) ^ c₂ * e3 + (p : Ω) ^ (c₂ + c₃) * e4
-  obtain ⟨z, hz, ez⟩ := h71k X hXi hXf hXcob
-  refine ⟨-z, hz.neg, ?_⟩
-  rw [map_mul, map_pow, map_natCast]
-  rw [hXd] at ez
-  linear_combination -ez
 end GlobalTheory.EdgeLoc
 end -- clump:auto
 end -- clump:auto
@@ -1194,18 +996,17 @@ theorem cmul_hahn {Ω Ωl : Type} [Field Ω] [CharZero Ω] [Field Ωl] (j : Ω �
     intro u i
     rw [PowerSeries.coeff_coe]
     by_cases hi : 0 ≤ i
-    · rw [if_neg (not_lt.2 hi), if_pos hi]
+    · rw [ite_eq_right (not_lt.2 hi), ite_eq_left hi]
       congr 2
       omega
-    · rw [if_pos (not_le.1 hi), if_neg hi]
+    · rw [ite_eq_left (not_le.1 hi), ite_eq_right hi]
   have e1 : C = HahnSeries.ofPowerSeries ℤ Ωl (PowerSeries.mk fun k => j (f k)) := by
     ext i; rw [key, hC, PowerSeries.coeff_mk]
   have e2 : D = HahnSeries.ofPowerSeries ℤ Ωl (PowerSeries.mk fun k => j (g k)) := by
     ext i; rw [key, hD, PowerSeries.coeff_mk]
   rw [e1, e2, ← map_mul, key]
   split_ifs
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [PowerSeries.coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, cmul, map_sum]
+  · rw [PowerSeries.coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, cmul, map_sum]
     simp only [PowerSeries.coeff_mk, map_mul]
   · rfl
 
@@ -1547,7 +1348,7 @@ theorem unit_val {p : ℕ} [hp : Fact p.Prime] {Ωl : Type} [Field Ωl] [Algebra
   have hd := hs r0 h0
   have hpn : ((p ^ n : ℕ) : ℚ) ≠ 0 := by exact_mod_cast (pow_pos hp.out.pos n).ne'
   have hm : (((r0 * ((p ^ n : ℕ) : ℚ)).num : ℤ) : ℚ) / (p : ℚ) ^ n = r0 := by
-    rw [← GlobalTheory.IoEx.castM, (Rat.den_eq_one_iff _).1 hd, mul_div_cancel_right₀ _ hpn]
+    rw [← Rat.natCast_pow, (Rat.den_eq_one_iff _).1 hd, mul_div_cancel_right₀ _ hpn]
   refine (ev_cong_iff_and_unit p Ωl hclo T n ψ hreb 0 _ x x' hx).2 ⟨(r0 * ((p ^ n : ℕ) : ℚ)).num, ?_, ?_⟩
   · simp only [hm]; exact (map_ne_zero j).2 h0
   · simp only [hm]; rw [← map_inv₀]; exact (hint _).1 hinv
@@ -1556,7 +1357,7 @@ theorem coefQ_div {Ω : Type} [Field Ω] (p L : ℕ) (hp : 0 < p) (f : ℕ → �
     coefQ (p ^ L) f ((m : ℚ) / (p : ℚ) ^ L) = if 0 ≤ m then f m.toNat else 0 := by
   have hp0 : (0 : ℚ) < (p : ℚ) ^ L := pow_pos (by exact_mod_cast hp) L
   have e : (m : ℚ) / (p : ℚ) ^ L * ((p ^ L : ℕ) : ℚ) = m := by
-    rw [GlobalTheory.IoEx.castM, div_mul_cancel₀ _ hp0.ne']
+    rw [Rat.natCast_pow, div_mul_cancel₀ _ hp0.ne']
   have e2 : 0 ≤ (m : ℚ) / (p : ℚ) ^ L ↔ 0 ≤ m := by
     rw [le_div_iff₀ hp0, zero_mul]; exact Int.cast_nonneg_iff
   simp only [coefQ, e, e2, Rat.den_intCast, Rat.num_intCast, and_true]
@@ -1566,9 +1367,9 @@ theorem coefQ_supp {Ω : Type} [Field Ω] (p L : ℕ) (hp : 0 < p) (f : ℕ → 
   have hp0 : (0 : ℚ) < (p : ℚ) ^ L := pow_pos (by exact_mod_cast hp) L
   have h1 : 0 ≤ r ∧ (r * ((p ^ L : ℕ) : ℚ)).den = 1 := by
     by_contra h2
-    exact h (if_neg h2)
+    exact h (ite_eq_right h2)
   refine ⟨(r * ((p ^ L : ℕ) : ℚ)).num, Rat.num_nonneg.2 (mul_nonneg h1.1 (Nat.cast_nonneg _)), ?_⟩
-  rw [(Rat.den_eq_one_iff _).1 h1.2, GlobalTheory.IoEx.castM, mul_div_cancel_right₀ _ hp0.ne']
+  rw [(Rat.den_eq_one_iff _).1 h1.2, Rat.natCast_pow, mul_div_cancel_right₀ _ hp0.ne']
 
 end GlobalTheory.PairTop
 
@@ -1848,7 +1649,7 @@ theorem GlobalTheory.pair_edge_dlog : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → 
       push_cast
       exact Basic.cong_refl _ _) hval r
   have hdl : IsDl X A p n ((p : ℚ) ^ L) (e w) φ2 := by
-    rw [← GlobalTheory.IoEx.castM]
+    rw [← Rat.natCast_pow]
     exact ⟨hφ2A, Aw, Bw, κ, hκ, hpres, hPA, hPB, hφ2c⟩
   obtain ⟨z1, hz1, e1⟩ := isDl_unique ε X hj p A hpA n _ _ φ φ2 hφ hdl r
   obtain ⟨z2, hz2, e2⟩ := hbr

@@ -2,46 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RaisingLoweringOperators
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TranslateMemCoefLatFn
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.InfinityTypes
@@ -53,7 +13,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DownLift
 open GlobalTheory.ExportSeries GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators GlobalTheory.IndefiniteRowSideFullHecke.InfinityTypes
 
@@ -98,7 +57,7 @@ theorem chain_X (p : D.what₂.Tau → ℕ) (g : GLR D n) (τ : D.what₂.Tau) (
   simp only [pderiv_fockSubst_X]
   rw [pderiv_X]
   by_cases h : u.1 = τ ∧ u.2.1 = i
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     have e : (∑ b, C' b c • C (rowMat p g τ i u.2.2 b) : PolF D m n) = C ((rowMat p g τ i * C') u.2.2 c) := by
 
       rw [Matrix.mul_apply, map_sum]
@@ -113,7 +72,7 @@ theorem chain_X (p : D.what₂.Tau → ℕ) (g : GLR D n) (τ : D.what₂.Tau) (
     · subst h3; simp
     · have : ((u1, u2, u3) : FVar D m n) ≠ (u1, u2, c) := by simp [h3]
       simp [this, h3]
-  · simp only [if_neg h, smul_zero, Finset.sum_const_zero]
+  · simp only [ite_eq_right h, smul_zero, Finset.sum_const_zero]
     have : u ≠ (τ, i, c) := by
       rintro rfl; exact h ⟨rfl, rfl⟩
     simp [this]
@@ -137,18 +96,18 @@ theorem rai_comm (p : D.what₂.Tau → ℕ) (g : GLR D n) (τ : D.what₂.Tau) 
         (fockSubst p g).toLinearMap) := by
   refine LinearMap.ext fun P => ?_
   by_cases h : (i : ℕ) < p τ
-  · simp only [raiO, sgn, h, decide_true, if_true, one_smul, Module.End.mul_apply, AlgHom.toLinearMap_apply,
+  · simp only [raiO, sgn, h, decide_true, ite_true, one_smul, Module.End.mul_apply, AlgHom.toLinearMap_apply,
       LinearMap.mulLeft_apply, map_mul, LinearMap.sum_apply, LinearMap.smul_apply, Module.End.mul_apply]
     rw [fockSubst_X, Finset.sum_mul]
     dsimp only
     refine Finset.sum_congr rfl fun b _ => ?_
     simp [rowMat, h, smul_eq_C_mul, mul_assoc]
   · have hC : rowMat p g τ i * (((g τ)⁻¹).val)ᵀ = 1 := by
-      rw [rowMat, if_neg h, ← Matrix.transpose_mul]
+      rw [rowMat, ite_eq_right h, ← Matrix.transpose_mul]
       simp
-    simp only [raiO, sgn, h, decide_false, if_true, one_smul, Module.End.mul_apply, AlgHom.toLinearMap_apply,
+    simp only [raiO, sgn, h, decide_false, ite_true, one_smul, Module.End.mul_apply, AlgHom.toLinearMap_apply,
       LinearMap.neg_apply, map_neg, LinearMap.sum_apply, LinearMap.smul_apply, Module.End.mul_apply,
-      Derivation.coeFn_coe, Bool.false_eq_true, if_false]
+      Derivation.coeFn_coe, Bool.false_eq_true, ite_false]
     rw [chain p g τ i c _ hC, ← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun b _ => ?_
     simp [smul_neg]
@@ -161,14 +120,14 @@ theorem low_comm (p : D.what₂.Tau → ℕ) (g : GLR D n) (τ : D.what₂.Tau) 
   refine LinearMap.ext fun P => ?_
   by_cases h : (l : ℕ) < p τ
   · have hC : rowMat p g τ l * (g τ).val = 1 := by
-      rw [rowMat, if_pos h]
+      rw [rowMat, ite_eq_left h]
       simp
-    simp only [lowO, sgn, h, decide_true, if_true, one_smul, Module.End.mul_apply, AlgHom.toLinearMap_apply,
+    simp only [lowO, sgn, h, decide_true, ite_true, one_smul, Module.End.mul_apply, AlgHom.toLinearMap_apply,
       LinearMap.sum_apply, LinearMap.smul_apply, Derivation.coeFn_coe]
     rw [chain p g τ l c _ hC]
-  · simp only [lowO, sgn, h, decide_false, if_true, one_smul, Module.End.mul_apply, AlgHom.toLinearMap_apply,
+  · simp only [lowO, sgn, h, decide_false, ite_true, one_smul, Module.End.mul_apply, AlgHom.toLinearMap_apply,
       LinearMap.mulLeft_apply, map_mul, LinearMap.sum_apply, LinearMap.smul_apply, Module.End.mul_apply,
-      Bool.false_eq_true, if_false]
+      Bool.false_eq_true, ite_false]
     rw [fockSubst_X, Finset.sum_mul]
     dsimp only
     refine Finset.sum_congr rfl fun b _ => ?_

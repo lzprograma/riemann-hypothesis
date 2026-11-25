@@ -51,8 +51,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace ComplexConjugate
 open GlobalTheory.ChainOnto
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.ChainOnto.QuotL
 
 theorem e_strictMono {R : Ranks} (P : HCParam R) : StrictMono P.e := by

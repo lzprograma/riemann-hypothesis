@@ -47,7 +47,6 @@ import Mathlib.Tactic.TypeStar
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.DVR
-attribute [local instance] Over.cartesianMonoidalCategory
 open scoped CategoryTheory.Obj
 
 noncomputable section
@@ -104,7 +103,7 @@ private theorem mul_mul_eq_mul_mul_mul_inv_mul {G : Type*} [CommGroup G] (a b c 
   rw [← mul_inv_cancel_left a (b * c * s)]
   ac_rfl
 
-theorem main : GlobalFnsSt → ∀ (R : Type) [CommRing R] [IsDomain R] (j : ℕ) (D D' : DegPre R) (pD : IsPowDeg D' D j), D.PsiEven → D'.PsiEven := by
+theorem main : GlobalFnsSt → ∀ (R : Type) [CommRing R] [IsDomain R] (j : ℕ) (D D' : DegPre R) (_ : IsPowDeg D' D j), D.PsiEven → D'.PsiEven := by
   intro hG R _ _ j D D' pD hE χ
   refine corr_of_val D'.P.isLB (fun y J' hJ' => ?_)
   obtain ⟨J, hJ⟩ := exists_good_at D.P.isLB y

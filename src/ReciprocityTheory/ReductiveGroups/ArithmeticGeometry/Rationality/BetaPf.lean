@@ -28,11 +28,10 @@ theorem exists_int_avoid {f : ℕ} (Z : Finset (Fin f → ℝ)) (hZ : ∀ z ∈ 
     simp only [P, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow,
       Polynomial.coeff_zero] at h1
     rw [Finset.sum_eq_single j (fun i _ hij => by
-      rw [if_neg (fun h => hij (Fin.ext h.symm)), mul_zero]) (by simp)] at h1
+      rw [ite_eq_right (fun h => hij (Fin.ext h.symm)), mul_zero]) (by simp)] at h1
     simpa using h1
   obtain ⟨T, hT⟩ : ∃ T : ℕ, (T : ℝ) ∉ Z.biUnion (fun z => (P z).roots.toFinset) := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have hinf : Set.Infinite (Set.range (fun n : ℕ => (n : ℝ))) :=
       Set.infinite_range_of_injective Nat.cast_injective
     exact hinf ((Z.biUnion (fun z => (P z).roots.toFinset)).finite_toSet.subset

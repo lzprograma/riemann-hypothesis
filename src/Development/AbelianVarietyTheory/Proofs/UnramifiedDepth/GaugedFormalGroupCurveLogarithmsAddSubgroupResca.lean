@@ -135,12 +135,12 @@ theorem coeff_lg_low (H : RLaw X V) {γ : κ → PowerSeries C} {n : ℕ} (hn : 
   have hlg1 : ∀ j, MvPowerSeries.coeff (Finsupp.single j 1) (X.lg i) = if j = i then 1 else 0 := fun j => by
     rw [H.lin i _ (by rw [Finsupp.degree_single]), MvPowerSeries.coeff_X]
     by_cases hji : j = i
-    · rw [hji, if_pos rfl, if_pos rfl]
-    · rw [if_neg hji, if_neg]
+    · rw [hji, ite_eq_left rfl, ite_eq_left rfl]
+    · rw [ite_eq_right hji, ite_eq_right]
       intro h
       exact hji (Finsupp.single_left_injective one_ne_zero h)
   rw [coeff_alongCv_low hn hγ (lg_const H i)]
-  simp only [hlg1, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [hlg1, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem approx_neg (H : RLaw X V) (hA : X.AddCvSt V) {γ : κ → PowerSeries C} (hγ : IsCv V γ) (n : ℕ) :
     ∃ δ : κ → PowerSeries C, IsCv V δ ∧

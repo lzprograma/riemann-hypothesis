@@ -2,43 +2,6 @@ module
 
 public import Formalism.LandauZeroFreeBounds.Statement
 public import Formalism.ZeroFreeRegion.Statement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -50,18 +13,6 @@ namespace Formalism.ZeroFreeDirichlet
 
 def negLD {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (s : ℂ) : ℂ :=
   -(deriv (DirichletCharacter.LFunction χ) s / DirichletCharacter.LFunction χ s)
-
-def LandauLocal2 : Prop :=
-  ∀ (f : ℂ → ℂ) (z₀ : ℂ) (r M : ℝ), 0 < r → 1 ≤ M →
-    DifferentiableOn ℂ f (Metric.closedBall z₀ r) → f z₀ ≠ 0 →
-    (∀ z ∈ Metric.closedBall z₀ r, ‖f z‖ ≤ M * ‖f z₀‖) →
-    ∃ (Z : Finset ℂ) (m : ℂ → ℕ),
-      (∀ ρ : ℂ, ρ ∈ Z ↔ (ρ ∈ Metric.closedBall z₀ (r / 3) ∧ f ρ = 0)) ∧
-      (∀ ρ ∈ Z, 1 ≤ m ρ) ∧
-      (∀ ρ ∈ Z, deriv f ρ = 0 → 2 ≤ m ρ) ∧
-      ((∑ ρ ∈ Z, m ρ : ℕ) : ℝ) ≤ Real.log M / Real.log 2 ∧
-      ∀ z ∈ Metric.closedBall z₀ (r / 6), f z ≠ 0 →
-        ‖deriv f z / f z - ∑ ρ ∈ Z, (m ρ : ℂ) / (z - ρ)‖ ≤ 72 * Real.log M / r
 
 def LGrowth : Prop :=
   ∃ C : ℝ, ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q), χ ≠ 1 → ∀ s : ℂ, 1 / 2 ≤ s.re →
@@ -86,15 +37,6 @@ def Positivity : Prop :=
       0 ≤ (negLD (1 : DirichletCharacter ℂ q) (σ : ℂ)).re + (negLD χ₁ (σ : ℂ)).re
         + (negLD χ₂ (σ : ℂ)).re + (negLD (χ₁ * χ₂) (σ : ℂ)).re)
 
-def TrivLogDeriv : Prop :=
-  ∃ C : ℝ, ∀ (q : ℕ) [NeZero q] (σ t : ℝ), 1 < σ → σ ≤ 2 →
-    (negLD (1 : DirichletCharacter ℂ q) ((σ : ℂ) + t * I)).re ≤
-      (1 / ((σ : ℂ) - 1 + t * I)).re + C * Real.log ((q : ℝ) * (|t| + 2))
-
-def TrivZeros : Prop :=
-  ∀ (q : ℕ) [NeZero q] (s : ℂ), 0 < s.re → s ≠ 1 →
-    DirichletCharacter.LFunction (1 : DirichletCharacter ℂ q) s = 0 → riemannZeta s = 0
-
 def RealConj : Prop :=
   ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q), χ ^ 2 = 1 → χ ≠ 1 → ∀ s : ℂ,
     DirichletCharacter.LFunction χ (starRingEnd ℂ s) = starRingEnd ℂ (DirichletCharacter.LFunction χ s)
@@ -114,35 +56,6 @@ def NoZeroComplex : Prop :=
   ∃ c : ℝ, 0 < c ∧ ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q) (s : ℂ),
     χ ^ 2 ≠ 1 → InRegion c q s → DirichletCharacter.LFunction χ s ≠ 0
 
-def RealLargeT : Prop :=
-  ∀ δ : ℝ, 0 < δ → ∃ c : ℝ, 0 < c ∧ ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q) (s : ℂ),
-    χ ^ 2 = 1 → χ ≠ 1 → δ / Real.log ((q : ℝ) * (|s.im| + 2)) ≤ |s.im| → InRegion c q s →
-      DirichletCharacter.LFunction χ s ≠ 0
-
-def RealSmallT : Prop :=
-  ∃ δ c : ℝ, 0 < δ ∧ 0 < c ∧ ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q), χ ^ 2 = 1 → χ ≠ 1 →
-    ∀ s s' : ℂ, |s.im| < δ / Real.log ((q : ℝ) * (|s.im| + 2)) →
-      |s'.im| < δ / Real.log ((q : ℝ) * (|s'.im| + 2)) →
-      InRegion c q s → InRegion c q s' →
-      DirichletCharacter.LFunction χ s = 0 → DirichletCharacter.LFunction χ s' = 0 →
-      s.im = 0 ∧ deriv (DirichletCharacter.LFunction χ) s ≠ 0 ∧ s' = s
-
-def TwoReal : Prop :=
-  ∃ c : ℝ, 0 < c ∧ ∀ (q : ℕ) [NeZero q] (χ₁ χ₂ : DirichletCharacter ℂ q), χ₁ ^ 2 = 1 → χ₂ ^ 2 = 1 →
-    χ₁ ≠ 1 → χ₂ ≠ 1 → χ₁ ≠ χ₂ → ∀ β₁ β₂ : ℝ, InRegion c q (β₁ : ℂ) → InRegion c q (β₂ : ℂ) →
-      DirichletCharacter.LFunction χ₁ (β₁ : ℂ) ≠ 0 ∨ DirichletCharacter.LFunction χ₂ (β₂ : ℂ) ≠ 0
-
-def LocalZerosOf : Prop := LandauLocal2 → LGrowth → LInvBound → LocalZeros
-
 def NoZeroComplexOf : Prop := LocalZeros → LLogDerivRight → Positivity → NoZeroComplex
-
-def RealLargeTOf : Prop := LocalZeros → LLogDerivRight → Positivity → TrivLogDeriv → RealLargeT
-
-def RealSmallTOf : Prop := LocalZeros → LLogDerivRight → Positivity → RealConj → RealSmallT
-
-def TwoRealOf : Prop := LocalZeros → LLogDerivRight → Positivity → TwoReal
-
-def ZFRDirichletOf : Prop :=
-  Formalism.ZF.ZeroFreeRegion → TrivZeros → NoZeroComplex → RealLargeT → RealSmallT → TwoReal → ZFRDirichlet
 
 end Formalism.ZeroFreeDirichlet

@@ -4,45 +4,6 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrin
 public import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.KernelFlatBaseChange
 import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.SupportsAlongSequence
 public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.SupportFlatPullback
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.SetTheory.ZFC.PSet
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -53,11 +14,6 @@ open CategoryTheory AlgebraicGeometry TopologicalSpace
 noncomputable section
 
 namespace FunctorialResolution.EmbeddedResolution
-
-private theorem comap_biSup_finset_fin {X Y : Scheme.{u}} (f : X ⟶ Y) {n : ℕ}
-    (s : Finset (Fin n)) (F : Fin n → Y.IdealSheafData) :
-    (⨆ i ∈ s, F i).comap f = ⨆ i ∈ s, (F i).comap f :=
-  (Scheme.IdealSheafData.map_gc f).l_iSup₂
 
 private theorem pullbackOverField_boundary_get (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u}) (k' : Type u)
     [Field k'] (q : Y ⟶ Spec (CommRingCat.of k')) (g : Y ⟶ T.scheme)
@@ -76,7 +32,8 @@ theorem intersectionIdeal_pullbackOverField (T : MarkedIdealWithBoundary.{u}) (Y
     (J : Finset (Fin T.boundary.length)) :
     intersectionIdeal (T.pullbackOverField Y k' q g).boundary (J.image (pullbackOverFieldIndex T Y k' q g)) =
       (intersectionIdeal T.boundary J).comap g := by
-  rw [intersectionIdeal_eq_iSup, intersectionIdeal_eq_iSup, comap_biSup_finset_fin]
+  rw [intersectionIdeal_eq_iSup, intersectionIdeal_eq_iSup,
+    (Scheme.IdealSheafData.map_gc g).l_iSup₂]
   refine le_antisymm ?_ ?_
   · refine iSup_le fun j' => iSup_le fun hj' => ?_
     obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp hj'
@@ -121,42 +78,25 @@ theorem IsIrreducibleComponentOf.exists_isGenericPoint {Y : Scheme.{u}} {C S : S
   have hCclosed : IsClosed C := closure_eq_iff_isClosed.mp hcl
   exact QuasiSober.sober hirr hCclosed
 
-private theorem isPreirreducible_sUnion_of_isChain {α : Type u} [TopologicalSpace α]
-    (c : Set (Set α)) (hcc : IsChain (· ⊆ ·) c)
-    (hirr : ∀ t ∈ c, IsPreirreducible t) : IsPreirreducible (⋃₀ c) := by
-  intro u v hu hv hxne hyne
-  obtain ⟨x, hxU, hxu⟩ := hxne
-  obtain ⟨y, hyU, hyv⟩ := hyne
-  obtain ⟨t₁, ht₁c, hxt₁⟩ := Set.mem_sUnion.mp hxU
-  obtain ⟨t₂, ht₂c, hyt₂⟩ := Set.mem_sUnion.mp hyU
-  rcases eq_or_ne t₁ t₂ with rfl | hne
-  · obtain ⟨z, hzt, hzuv⟩ := hirr t₁ ht₁c u v hu hv ⟨x, hxt₁, hxu⟩ ⟨y, hyt₂, hyv⟩
-    exact ⟨z, Set.mem_sUnion.mpr ⟨t₁, ht₁c, hzt⟩, hzuv⟩
-  · rcases hcc ht₁c ht₂c hne with h | h
-    · obtain ⟨z, hzt, hzuv⟩ := hirr t₂ ht₂c u v hu hv ⟨x, h hxt₁, hxu⟩ ⟨y, hyt₂, hyv⟩
-      exact ⟨z, Set.mem_sUnion.mpr ⟨t₂, ht₂c, hzt⟩, hzuv⟩
-    · obtain ⟨z, hzt, hzuv⟩ := hirr t₁ ht₁c u v hu hv ⟨x, hxt₁, hxu⟩ ⟨y, h hyt₂, hyv⟩
-      exact ⟨z, Set.mem_sUnion.mpr ⟨t₁, ht₁c, hzt⟩, hzuv⟩
-
 theorem exists_isIrreducibleComponentOf {Y : Scheme.{u}} (S A : Set ↥Y) (hA : IsIrreducible A)
     (hAS : A ⊆ S) :
     ∃ C : Set ↥Y, IsIrreducibleComponentOf C S ∧ A ⊆ C := by
-  have hchain : ∀ c ⊆ {C : Set ↥Y | IsIrreducible C ∧ C ⊆ S}, IsChain (· ⊆ ·) c →
-      c.Nonempty → ∃ ub ∈ {C : Set ↥Y | IsIrreducible C ∧ C ⊆ S}, ∀ s ∈ c, s ⊆ ub := by
-    intro c hcS hcc hcn
-    obtain ⟨t, htc⟩ := hcn
-    have hne : (⋃₀ c).Nonempty := by
-      obtain ⟨x, hx⟩ := (hcS htc).1.1
-      exact ⟨x, Set.mem_sUnion.mpr ⟨t, htc, hx⟩⟩
-    refine ⟨⋃₀ c, ⟨⟨hne, isPreirreducible_sUnion_of_isChain c hcc
-        fun s hs => (hcS hs).1.2⟩, Set.sUnion_subset fun s hs => (hcS hs).2⟩,
-      fun s hs => Set.subset_sUnion_of_mem hs⟩
-  obtain ⟨C, hAC, hmax⟩ :=
-    zorn_subset_nonempty {C : Set ↥Y | IsIrreducible C ∧ C ⊆ S} hchain A ⟨hA, hAS⟩
-  have hmem : IsIrreducible C ∧ C ⊆ S := hmax.1
-  refine ⟨C, ⟨hmem.1, hmem.2, ?_⟩, hAC⟩
-  intro C' hC' hCle hC'S
-  exact subset_antisymm (hmax.2 ⟨hC', hC'S⟩ hCle) hCle
+  obtain ⟨C, hAC, hmax⟩ := zorn_subset_nonempty {C : Set ↥Y | IsIrreducible C ∧ C ⊆ S}
+    (fun c hcS hcc ⟨t, htc⟩ => ⟨⋃₀ c, ⟨⟨(hcS htc).1.1.mono (Set.subset_sUnion_of_mem htc),
+      fun u v hu hv ⟨x, hx, hxu⟩ ⟨y, hy, hyv⟩ => by
+        obtain ⟨t₁, ht₁c, hxt₁⟩ := Set.mem_sUnion.mp hx
+        obtain ⟨t₂, ht₂c, hyt₂⟩ := Set.mem_sUnion.mp hy
+        rcases hcc.total ht₁c ht₂c with h | h
+        · obtain ⟨z, hz, hzuv⟩ :=
+            (hcS ht₂c).1.2 u v hu hv ⟨x, h hxt₁, hxu⟩ ⟨y, hyt₂, hyv⟩
+          exact ⟨z, Set.mem_sUnion_of_mem hz ht₂c, hzuv⟩
+        · obtain ⟨z, hz, hzuv⟩ :=
+            (hcS ht₁c).1.2 u v hu hv ⟨x, hxt₁, hxu⟩ ⟨y, h hyt₂, hyv⟩
+          exact ⟨z, Set.mem_sUnion_of_mem hz ht₁c, hzuv⟩⟩,
+      Set.sUnion_subset fun s hs => (hcS hs).2⟩, fun s hs => Set.subset_sUnion_of_mem hs⟩) A
+    ⟨hA, hAS⟩
+  exact ⟨C, ⟨hmax.1.1, hmax.1.2, fun _ hC' hCle hC'S =>
+    subset_antisymm (hmax.2 ⟨hC', hC'S⟩ hCle) hCle⟩, hAC⟩
 
 theorem IsIrreducibleComponentOf.closure_image_genericPoint {X Y : Scheme.{u}} (g : Y ⟶ X)
     (hg : GeneralizingMap (fun y : ↥Y => g y)) {S : Set ↥X} (hS : IsClosed S) {C' : Set ↥Y}

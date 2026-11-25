@@ -45,6 +45,7 @@ import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaFunctionRationalTranslateMem
 
 @[expose] public section
 
@@ -150,29 +151,12 @@ namespace GlobalTheory.FunObj.CosetTT
 
 variable {D : D7}
 
-theorem sd_stdL (n : ℕ) : SD D (stdL D n) := by
-  obtain ⟨Lt, h1, h2, -⟩ := exists_lattice_of_adelic_point D n
-  rw [← h2]; exact (h1 _).2
+theorem sd_stdL (n : ℕ) : SD D (stdL D n) := GlobalTheory.FinWeil.RatTransl.sd_std D n
 
 theorem wd_mem_TT_of_nsmul {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (hc : Crv D cc δ) {a d : ℕ} {x : VC D a d}
     {M : ℕ} (hM : 0 < M) (hx : M • x ∈ La0 D (tor0 D cc δ) a d) {F : VC D a d → ℂ}
     (hF : F ∈ TT D (tor0 D cc δ) a d) : Wd D (tor0 D cc δ) x F ∈ TT D (tor0 D cc δ) a d := by
-  have k : KLat D (tor0 D cc δ) (La0 D (tor0 D cc δ) a d) := Or.inr ⟨_, _, sd_stdL a, sd_stdL d, rfl⟩
-  have n0 := GlobalTheory.ThetaTriple.nice_of_klat hc k
-  obtain ⟨hd, m, hm, hF⟩ := hF
-  refine ⟨GlobalTheory.ThetaLevels.wd_entire D _ _ hd, m * M, Nat.mul_pos hm hM, fun y hy => ?_⟩
-  have hmy := AddSubgroup.nsmul_mem _ hy m
-  have h1 : bc D (tor0 D cc δ) ((m * M) • y) x = 1 := by
-    rw [mul_comm, mul_smul, GlobalTheory.ThetaLevels.bc_nsmul_left, ← GlobalTheory.ThetaLevels.bc_nsmul_right]
-    exact n0.2.1 _ hmy _ hx
-  have h2 : bc D (tor0 D cc δ) x ((m * M) • y) = 1 := by
-    rw [mul_comm, mul_smul, GlobalTheory.ThetaLevels.bc_nsmul_right, ← GlobalTheory.ThetaLevels.bc_nsmul_left]
-    exact n0.2.1 _ hx _ hmy
-  have h3 : Wd D (tor0 D cc δ) ((m * M) • y) F = F := by
-    rw [mul_smul]; exact hF _ (AddSubgroup.nsmul_mem _ hy M)
-  have h4 := Wd_Wd D (tor0 D cc δ) x ((m * M) • y) F
-  rw [h3, h2, add_comm] at h4
-  rw [Wd_Wd, h1, h4]
+  apply _root_.GlobalTheory.FunObj.NormUniq.wd_rat_mem_TT <;> assumption
 
 theorem iop_mem_TT {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (hc : Crv D cc δ) {a d : ℕ}
     (B : AddSubgroup (VC D a d)) (hB : ∀ x ∈ B, ∃ M : ℕ, 0 < M ∧ M • x ∈ La0 D (tor0 D cc δ) a d)

@@ -2,59 +2,17 @@ module
 
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj
   AlgebraicGeometry TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.CubeLawCompare
 
@@ -124,24 +82,6 @@ theorem gen_restrict_iff (M : LB Y) (W : Y.Opens) :
     refine (map_mul _ _ _).trans (congrArg₂ (· * ·) ((gm_pull_g M W.ι (𝟙 _) z J J' hz.1 hz.2).trans ?_)
       ((gm_res (𝟙 _) z _ hz _).trans (v J' hz.2)))
     rw [Category.id_comp]
-
-theorem locally_trivial_of_iso_pull (p : Y ⟶ T) (M : LB Y) {N : LB T} (hN : N.IsLB)
-    (u : LB.Iso (N.pull p) M) (hu : u.IsGen) (t : T) :
-    ∃ V : T.Opens, t ∈ V ∧ ∃ c : LB.Gen (M.pull (p ⁻¹ᵁ V).ι), c.IsGen := by
-  obtain ⟨i, hi⟩ := exists_chart hN t
-  refine ⟨N.U i, hi, (gen_restrict_iff M _).2 ?_⟩
-  have le : ∀ j, p ⁻¹ᵁ N.U i ⊓ M.U j ≤ M.U j ⊓ (N.pull p).U fun _ => i :=
-    fun j y hy => ⟨hy.2, mem_pull.2 hy.1⟩
-  refine ⟨fun j => res (le j) (u.s (j, fun _ => i)), fun j j' y hW hj hj' => ?_⟩
-  have hI : (𝟙 Y : Y ⟶ Y) y ∈ (N.pull p).U fun _ => i := mem_pull.2 hW
-  have hm : (𝟙 Y : Y ⟶ Y) y ∈ M.U j ⊓ (N.pull p).U (fun _ => i) ⊓ (M.U j' ⊓ (N.pull p).U fun _ => i) :=
-    ⟨⟨hj, hI⟩, hj', hI⟩
-  have e := (gm_res (𝟙 Y) y _ hm _).symm.trans ((congrArg (gm (𝟙 Y) y _)
-    (hu (j, fun _ => i) (j', fun _ => i))).trans ((map_mul _ _ _).trans (congrArg₂ (· * ·)
-      (gm_div (N.pull p) M (𝟙 Y) y (j, fun _ => i) (j', fun _ => i) hm) (gm_res (𝟙 Y) y _ hm _))))
-  rw [gm_self (LB.isLB_pull hN p) (𝟙 Y) y hI, inv_one, _root_.mul_one] at e
-  exact (gm_res (𝟙 Y) y (le j) ⟨hW, hj⟩ _).trans
-    (e.trans (congrArg _ (gm_res (𝟙 Y) y (le j') ⟨hW, hj'⟩ _).symm))
 
 theorem iso_pull_of_locally_trivial (p : Y ⟶ T) (hp : ∀ V : T.Opens, Function.Bijective (p.app V).hom)
     {M : LB Y} (hM : M.IsLB)
@@ -216,7 +156,6 @@ theorem bijective_app_of_restrict {Y T : Scheme.{0}} (p : Y ⟶ T) (V : T.Opens)
   have e : V.ι ''ᵁ ⊤ = V := V.ι_image_top
   rw [e] at h₂
   exact ConcreteCategory.bijective_of_isIso (p.app V)
-
 
 open scoped CategoryTheory.Obj in
 theorem bijective_app_fst (hG : GlobalFnsSt) {S : Scheme.{0}} {A : Over S} [GrpObj A]

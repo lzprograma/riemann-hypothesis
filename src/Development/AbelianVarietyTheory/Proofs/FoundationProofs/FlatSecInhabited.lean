@@ -105,7 +105,7 @@ theorem perFr_of_zero {E : Type} [Field E] [NumberField E] [IsCMField E] {n r : 
     perFr X x v ρ i = ((mat x ⟨ρ, hρ⟩)⁻¹ *ᵥ Data.emb ρ v) (Fin.cast h i) := by
   have hi : X.p0 + (i : ℕ) < r := by have := i.2; omega
   unfold perFr
-  rw [dif_pos hρ, dif_pos hi]
+  rw [dite_eq_left hρ, dite_eq_left hi]
   congr 1
   ext
   simp [h0]
@@ -122,19 +122,19 @@ theorem det_frChg : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : 
   obtain ⟨P', hPe', p', -, hd', -⟩ := hpt k x'
   have hm : ∀ ρ, relab c σ ρ ∈ (U.X k).Ψ → Dw.mult ρ = r := fun ρ h => by
     unfold Datum.mult
-    rw [if_pos ((hrt ρ).1 ((hΨ _).1 h))]; omega
+    rw [ite_eq_left ((hrt ρ).1 ((hΨ _).1 h))]; omega
   have hm' : ∀ ρ, Fin (Dw.mult ρ) → relab c σ ρ ∈ (U.X k).Ψ := fun ρ i => by
     by_contra h
     have h1 : Dw.mult ρ = 0 := by
       unfold Datum.mult
-      rw [if_neg (fun h' => h ((hΨ _).2 ((hrt ρ).2 h'))), hq]
+      rw [ite_eq_right (fun h' => h ((hΨ _).2 ((hrt ρ).2 h'))), hq]
     have := i.2
     omega
   let B : (U.X k).Ψ → Matrix (Fin r) (Fin r) ℂ := fun ρ => (mat x'.1 ρ)⁻¹ * mat x.1 ρ
   let K : ∀ ρ, Matrix (Fin (Dw.mult ρ)) (Fin (Dw.mult ρ)) ℂ := fun ρ =>
     if h : relab c σ ρ ∈ (U.X k).Ψ then (B ⟨_, h⟩).submatrix (Fin.cast (hm ρ h)) (Fin.cast (hm ρ h)) else 0
   have hK : ∀ ρ (h : relab c σ ρ ∈ (U.X k).Ψ),
-      K ρ = (B ⟨_, h⟩).submatrix (Fin.cast (hm ρ h)) (Fin.cast (hm ρ h)) := fun ρ h => dif_pos h
+      K ρ = (B ⟨_, h⟩).submatrix (Fin.cast (hm ρ h)) (Fin.cast (hm ρ h)) := fun ρ h => dite_eq_left h
   obtain ⟨V, hV⟩ := exists_blockMat e K
   have hPV : ∀ b, P' b = V *ᵥ P b := by
     intro b
@@ -233,7 +233,7 @@ theorem nonempty_flatSec {r : ℕ} (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (
       exact (congrArg σ (Subtype.ext τ.2)).trans hσ0)
     have rd : ∀ k y (hy : (⟨k, y⟩ : Σ k, Frame ((U σ).X k).Ψ r) ∈ framesOn (U σ) Z) g a,
         FrChg g a ((U σ).un k ⟨y, hy.1⟩) z → rdU (U σ) f k y = toC (g τ.1).det := fun k y hy g a hc => by
-      simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, hy.1, dif_pos]
+      simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, hy.1, dite_eq_left]
       exact congrArg toC (hv _ _ z g a (ht _ hy hy.1) hz hc)
     have hh : IsHorizontal (U σ) Z τ f := fun k => by
       by_cases hne : ∃ y, (⟨k, y⟩ : Σ k, Frame ((U σ).X k).Ψ r) ∈ framesOn (U σ) Z

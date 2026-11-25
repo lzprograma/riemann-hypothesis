@@ -53,8 +53,6 @@ open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G.Chart (sp spMap spMap_left spMap_comp spMap_id)
 open IsLocalRing
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace GlobalTheory.TorsionLift
 
 theorem existsUnique_of_ker {M M' : Type*} [CommGroup M] [CommGroup M'] (f : M →* M')

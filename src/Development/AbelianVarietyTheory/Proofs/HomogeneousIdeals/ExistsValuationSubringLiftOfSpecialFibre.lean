@@ -244,14 +244,4 @@ theorem exists_mem_height_map_le_one {A : Type*} [CommRing A] [IsNoetherianRing 
 
 end Algebra
 
-section Scheme
-
-open AlgebraicGeometry CategoryTheory CategoryTheory.Limits TopologicalSpace
-
-variable {O K : Type u} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field K]
-  [Algebra O K] [IsFractionRing O K]
-
-
-end Scheme
-
 end GlobalTheory

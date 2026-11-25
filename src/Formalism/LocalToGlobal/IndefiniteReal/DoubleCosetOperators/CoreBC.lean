@@ -40,8 +40,6 @@ def incl : WL →ₗ[Ks] BCW Ks L0 L WL where
     rw [← algebraMap_smul L0 c x, ← TensorProduct.smul_tmul, TensorProduct.smul_tmul', Algebra.smul_def,
       smul_eq_mul, mul_one, mul_one, ← IsScalarTower.algebraMap_apply]
 
-theorem incl_apply (x : WL) : incl Ks L0 L WL x = ((1 : L) ⊗ₜ[L0] x : L ⊗[L0] WL) := rfl
-
 theorem incl_injective : Function.Injective (incl Ks L0 L WL) := by
   obtain ⟨f, hf⟩ := LinearMap.exists_leftInverse_of_injective (Algebra.linearMap L0 L)
     (LinearMap.ker_eq_bot.mpr (algebraMap L0 L).injective)
@@ -96,10 +94,6 @@ def jbc (jj : ∀ τ : L0 →+* ℂ, WL →ₛₗ[τ] W τ) (σ : L →+* ℂ) :
       rw [TensorProduct.smul_tmul', jAdd_tmul, jAdd_tmul, smul_eq_mul, map_mul, mul_smul]
     | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
 
-theorem jbc_tmul (jj : ∀ τ : L0 →+* ℂ, WL →ₛₗ[τ] W τ) (σ : L →+* ℂ) (a : L) (x : WL) :
-    jbc (Ks := Ks) jj σ (a ⊗ₜ[L0] x : L ⊗[L0] WL) = (σ a • jj (σ.comp (algebraMap L0 L)) x : W _) :=
-  jAdd_tmul jj σ a x
-
 end Gen
 
 section Forms
@@ -147,14 +141,6 @@ theorem bc_rho_tmul (g : G0) (a : L) (x : WL) :
 theorem bc_rho_incl (g : G0) (x : WL) : (bc L A).ρ g (incl Ks L0 L WL x) = incl Ks L0 L WL (A.ρ g x) :=
   bc_rho_tmul L A g 1 x
 
-theorem bc_j_tmul (σ : L →+* ℂ) (a : L) (x : WL) :
-    (bc L A).j σ (a ⊗ₜ[L0] x : L ⊗[L0] WL) = σ a • A.j (σ.comp (algebraMap L0 L)) x :=
-  jbc_tmul A.j σ a x
-
-theorem bc_j_incl (σ : L →+* ℂ) (x : WL) :
-    (bc L A).j σ (incl Ks L0 L WL x) = A.j (σ.comp (algebraMap L0 L)) x := by
-  rw [incl_apply, bc_j_tmul, map_one, one_smul]
-
 variable [Module (𝓞 L0) WL] [IsScalarTower (𝓞 L0) L0 WL] [Module (𝓞 Ks) WL] [IsScalarTower (𝓞 Ks) Ks WL]
   [Fintype G0]
 
@@ -167,39 +153,10 @@ open Formalism.BasicNotions
 variable {R : Ranks} {H : Host R} {what₂ : Rows.Data R} [NumberField what₂.LL] [StarRing what₂.LL]
   {LL0 : IntermediateField ℚ what₂.LL} {N : NData R H what₂}
 
-def ιOf (C : Core.RatCore) (eL : C.L0 ≃+* ↥LL0) : C.L0 →+* what₂.LL :=
-  (algebraMap (↥LL0) what₂.LL).comp eL.toRingHom
-
 def rdTw (tw : NTw R H what₂ LL0 N) (i : tw.Tw) (b : Bool) : ↥LL0 →+* FractionRing (tw.O i) :=
   (IsFractionRing.map (A := tw.O0 i) (B := tw.O i) (K := FractionRing (tw.O0 i)) (L := FractionRing (tw.O i))
     (tw.O_inj i)).comp (if b then tw.emb0 i else tw.emb0b i)
 
 end Rec
-
-section Test
-
-def testA : Arith.FormsL ℚ ℚ ℚ (fun _ => ℂ) Unit where
-  WK := ⊤
-  Pt _ := Empty
-  nrm _ _ _ := 0
-  nrm_nonneg _ _ _ := le_rfl
-  nrm_zero _ _ := rfl
-  nrm_add _ _ _ _ := by simp
-  nrm_smul _ _ _ _ := by simp
-  towKs := inferInstance
-  ρ := 1
-  chi := 1
-  j σ := { toFun := σ, map_add' := map_add σ, map_smul' := fun c x => by simp [smul_eq_mul] }
-
-end Test
-
-section BsupMap
-
-open Formalism.BasicNotions
-
-variable {R : Ranks} {H : Host R} {what₂ : Rows.Data R} [NumberField what₂.LL] [StarRing what₂.LL]
-  {LL0 : IntermediateField ℚ what₂.LL} {N : NData R H what₂}
-
-end BsupMap
 
 end Formalism.IndefR.NX.BC

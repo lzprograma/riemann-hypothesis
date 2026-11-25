@@ -1,6 +1,7 @@
 module
 
 public import Formalism.SatakeDualWeyl.Statement
+import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DualOfDualFrames
 
 @[expose] public section
 
@@ -69,14 +70,7 @@ theorem hform_sum_left {ι : Type} (t : Finset ι) (c : ι → S) (v : ι → Fi
 
 theorem hform_conj (hs : ∀ z, s (s z) = z) (hJ : IsHerm s J) (x y : Fin n → S) :
     s (hform s J x y) = hform s J y x := by
-  have hJ' : ∀ i j, s (J i j) = J j i := fun i j => by
-    have := congrFun (congrFun hJ j) i
-    simpa [cT] using this
-
-  simp only [hform, map_sum, map_mul, hs, hJ']
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  ring
+  apply _root_.GlobalTheory.DualFrames.hform_swap <;> assumption
 
 theorem hform_single (i j : Fin n) :
     hform s J (Pi.single i 1) (Pi.single j 1) = J i j := by

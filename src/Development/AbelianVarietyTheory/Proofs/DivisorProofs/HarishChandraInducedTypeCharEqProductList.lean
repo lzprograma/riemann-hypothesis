@@ -3,50 +3,8 @@ module
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LabelsCharOne
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TypeCharacterConjugateInverse
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BlockParabolicUnitriangularSubgroupsGLnPrimeFiel
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
 public import Mathlib.Data.Matrix.PEquiv
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Basic.PEquiv
 
@@ -80,8 +38,8 @@ theorem ind_congr {P P' : G → Prop} {f f' : G → ℂ} (w : G) (hP : ∀ g, P 
       group
     rw [h]
     by_cases hy : P (y⁻¹ * x * y)
-    · rw [if_pos hy, if_pos ((hP _).1 hy), hf _ hy]
-    · rw [if_neg hy, if_neg fun h' => hy ((hP _).2 h')]
+    · rw [ite_eq_left hy, ite_eq_left ((hP _).1 hy), hf _ hy]
+    · rw [ite_eq_right hy, ite_eq_right fun h' => hy ((hP _).2 h')]
 
 theorem sum_comp_surj (Q : Subgroup G) (π : Q →* L) (hπ : Function.Surjective π) (F : L → ℂ) :
     (Fintype.card L : ℂ) * ∑ q : Q, F (π q) = (Fintype.card Q : ℂ) * ∑ l, F l := by
@@ -131,7 +89,7 @@ theorem ind_trans (Q : Subgroup G) (π : G → L) (hmul : ∀ a ∈ Q, ∀ b ∈
       ((Finset.univ.filter P').card : ℂ)⁻¹ * (Fintype.card L : ℂ) * ∑ q : Q, F ((q : G)⁻¹ * z * q) := by
     intro z
     by_cases hz : z ∈ Q
-    · rw [if_pos hz]
+    · rw [ite_eq_left hz]
       have h := sum_comp_surj Q φ hφ fun l => if P' (l⁻¹ * π z * l) then f' (l⁻¹ * π z * l) else 0
       have h2 : ∀ q : Q, F ((q : G)⁻¹ * z * q) =
           A z * if P' ((φ q)⁻¹ * π z * φ q) then f' ((φ q)⁻¹ * π z * φ q) else 0 := by
@@ -145,9 +103,9 @@ theorem ind_trans (Q : Subgroup G) (π : G → L) (hmul : ∀ a ∈ Q, ∀ b ∈
       simp only [h2, ← Finset.mul_sum]
       unfold ind
       linear_combination (-(((Finset.univ.filter P').card : ℂ)⁻¹ * A z)) * h
-    · rw [if_neg hz, mul_zero, Finset.sum_eq_zero, mul_zero]
+    · rw [ite_eq_right hz, mul_zero, Finset.sum_eq_zero, mul_zero]
       intro q _
-      refine if_neg fun h => hz ?_
+      refine ite_eq_right fun h => hz ?_
       have := Q.mul_mem (Q.mul_mem q.2 h.1) (Q.inv_mem q.2)
       simpa [mul_assoc] using this
   have hs : ∀ q : Q, ∑ y : G, F ((q : G)⁻¹ * (y⁻¹ * x * y) * q) = ∑ y : G, F (y⁻¹ * x * y) := fun q =>
@@ -194,7 +152,7 @@ theorem hcL_eq_ind (L : List (Pc p)) (hL : ∀ q ∈ L, IsClass q.2) :
     funext x
     have hG : (Fintype.card (Gn p (degL ([] : List (Pc p)))) : ℂ) ≠ 0 := by exact_mod_cast Fintype.card_ne_zero
     show 1 = ind (fun _ => True) (fun _ => 1) x
-    simp only [ind, if_true, Finset.sum_const, Finset.filter_true, Finset.card_univ,
+    simp only [ind, ite_true, Finset.sum_const, Finset.filter_true, Finset.card_univ,
       nsmul_eq_mul, mul_one]
     rw [inv_mul_cancel₀ hG]
   | cons q L ih =>

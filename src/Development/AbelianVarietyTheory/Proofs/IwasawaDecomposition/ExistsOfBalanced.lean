@@ -96,11 +96,11 @@ theorem exists_of_balanced
     rw [dite_eq_left hex, ha w hex.choose hex.choose_spec]
   have hval : ∀ w, valAt w b = valAt w a := fun w => by
     have h1 : ∀ v, v ≠ w.under (𝓞 F) → valAt w (locF (L := L) F v (unif v) ^ m v) = 1 := fun v hv => by
-      rw [map_zpow, valAt_locF, if_neg hv.symm, one_zpow]
+      rw [map_zpow, valAt_locF, ite_eq_right hv.symm, one_zpow]
     simp only [b]
     rw [map_prod]
     by_cases hw : w.under (𝓞 F) ∈ T
-    · rw [Finset.prod_eq_single_of_mem _ hw (fun v _ hv => h1 v hv), map_zpow, valAt_locF, if_pos rfl, hu,
+    · rw [Finset.prod_eq_single_of_mem _ hw (fun v _ hv => h1 v hv), map_zpow, valAt_locF, ite_eq_left rfl, hu,
         ordF_unif_self, ← WithZero.exp_zsmul, hm]
       simp only [smul_eq_mul, mul_neg, neg_neg, mul_one]
       exact WithZero.exp_log (valAt_ne_zero w a)

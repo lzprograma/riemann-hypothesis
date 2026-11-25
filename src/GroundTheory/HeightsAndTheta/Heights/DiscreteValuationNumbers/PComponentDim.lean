@@ -105,18 +105,16 @@ theorem ringKrullDim_quotient_le_sub_height {A : Type*} [CommRing A] [IsNoetheri
 
 end PolynomialHeights
 
-theorem ComponentDim.proof : ComponentDim.Statement := by
-  intro O _ _ _ ϖ hϖ K _ _ ι _ P d hP a f hfa hfP W hW hϖW
-  have hWmin : W ∈ (P ⊔ Ideal.span {f}).minimalPrimes := by
-    unfold divCycle at hW
-    split_ifs at hW with h
-    · exact h.1
-    · exact absurd rfl hW
+theorem ringKrullDim_quotient_eq_of_minimalPrime_of_sup_ne_top {O : Type*} [CommRing O] [IsDomain O]
+    [IsDiscreteValuationRing O] {ϖ : O} (hϖ : Irreducible ϖ) {K : Type} [Fintype K] {ι : K → Type}
+    [∀ k, Fintype (ι k)] {P W : Ideal (MRing ι O)} [P.IsPrime] {f : MRing ι O} (hfP : f ∉ P)
+    (hWmin : W ∈ (P ⊔ Ideal.span {f}).minimalPrimes)
+    (hWϖ : W ⊔ Ideal.span {(C ϖ : MRing ι O)} ≠ ⊤) (N : ℕ)
+    (hdim : ringKrullDim (MRing ι O ⧸ P) = ((N + 1 : ℕ) : WithBot ℕ∞)) :
+    ringKrullDim (MRing ι O ⧸ W) = (N : WithBot ℕ∞) := by
   have hWp : W.IsPrime := hWmin.1.1
-  have hPp : P.IsPrime := hP.multiProj.isPrime
   have hPW : P ≤ W := le_sup_left.trans hWmin.1.2
   have hfW : f ∈ W := hWmin.1.2 (Ideal.mem_sup_right (Ideal.mem_span_singleton_self f))
-
   have hup := _root_.Bl.FirstBlockLemmaB.goal1 hPW hfW hfP
 
   have hq : W.map (Ideal.Quotient.mk P) ∈ (Ideal.span {Ideal.Quotient.mk P f}).minimalPrimes := by
@@ -130,9 +128,11 @@ theorem ComponentDim.proof : ComponentDim.Statement := by
   have hk : (W.map (Ideal.Quotient.mk P)).height ≤ 1 :=
     Ideal.height_le_one_of_isPrincipal_of_mem_minimalPrimes _ _ hq
 
-  obtain ⟨m, hm, hWm⟩ := Ideal.exists_le_maximal W hWp.ne_top
+  obtain ⟨m, hm, hWm'⟩ := Ideal.exists_le_maximal _ hWϖ
+  have hWm : W ≤ m := le_sup_left.trans hWm'
   have : m.IsPrime := hm.isPrime
-  have hmge := le_height_of_isMaximal_of_uniformiser_mem hϖ m hm (hWm hϖW)
+  have hmge := le_height_of_isMaximal_of_uniformiser_mem hϖ m hm
+    (hWm' (Ideal.mem_sup_right (Ideal.mem_span_singleton_self _)))
   have hdimS := ringKrullDim_mvPolynomial_dvr (σ := Σ k, ι k) O
   have hfin : FiniteRingKrullDim (MRing ι O) := by
     rw [finiteRingKrullDim_iff_ne_bot_and_top, hdimS]
@@ -169,17 +169,32 @@ theorem ComponentDim.proof : ComponentDim.Statement := by
   have hk' : a0 ≤ 1 := by exact_mod_cast hk
 
   have hPdim := ringKrullDim_quotient_le_sub_height P (Nat.card (Σ k, ι k) + 1) h0 hmax hh0
-  rw [hP.dim] at hPdim
-  have hPdim' : d + 1 + Fintype.card K ≤ Nat.card (Σ k, ι k) + 1 - h0 := by exact_mod_cast hPdim
+  rw [hdim] at hPdim
+  have hPdim' : N + 1 ≤ Nat.card (Σ k, ι k) + 1 - h0 := by exact_mod_cast hPdim
 
   have hlow := Ideal.height_le_ringKrullDim_of_ne_top
     (DimF.isPrime_map_mk (A := MRing ι O) (q := W) (M := m) hWm).ne_top
   rw [hb0] at hlow
-  have hb' : d + Fintype.card K ≤ b0 := by omega
-  have hlow' : ((d + Fintype.card K : ℕ) : WithBot ℕ∞) ≤ ringKrullDim (MRing ι O ⧸ W) :=
+  have hb' : N ≤ b0 := by omega
+  have hlow' : ((N : ℕ) : WithBot ℕ∞) ≤ ringKrullDim (MRing ι O ⧸ W) :=
     le_trans (by exact_mod_cast hb') hlow
-  rw [hP.dim] at hup
-  exact _root_.UpperTheory.Reformulated.B.Ydd3.withBot_eq_of_le_of_add_one_le hlow' (by rw [show d + Fintype.card K + 1 = d + 1 + Fintype.card K by ring]; exact hup)
+  rw [hdim] at hup
+  exact _root_.UpperTheory.Reformulated.B.Ydd3.withBot_eq_of_le_of_add_one_le hlow' hup
+
+theorem ComponentDim.proof : ComponentDim.Statement := by
+  intro O _ _ _ ϖ hϖ K _ _ ι _ P d hP a f hfa hfP W hW hϖW
+  have hWmin : W ∈ (P ⊔ Ideal.span {f}).minimalPrimes := by
+    unfold divCycle at hW
+    split_ifs at hW with h
+    · exact h.1
+    · exact absurd rfl hW
+  have hWp : W.IsPrime := hWmin.1.1
+  have hPp : P.IsPrime := hP.multiProj.isPrime
+  have hWϖ : W ⊔ Ideal.span {(C ϖ : MRing ι O)} ≠ ⊤ := by
+    rw [sup_eq_left.mpr ((Ideal.span_singleton_le_iff_mem W).mpr hϖW)]
+    exact hWp.ne_top
+  exact ringKrullDim_quotient_eq_of_minimalPrime_of_sup_ne_top hϖ hfP hWmin hWϖ (d + Fintype.card K)
+    (by rw [hP.dim, show d + Fintype.card K + 1 = d + 1 + Fintype.card K by ring])
 
 end
 

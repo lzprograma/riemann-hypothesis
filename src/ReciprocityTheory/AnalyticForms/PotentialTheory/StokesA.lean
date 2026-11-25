@@ -36,7 +36,7 @@ theorem st_smooth_continuous (A : FinHolAtlas e X) {f : X → ℝ} (hf : A.Smoot
 theorem st_smooth_mul (A : FinHolAtlas e X) {f g : X → ℝ} (hf : A.Smooth f) (hg : A.Smooth g) :
     A.Smooth (fun x => f x * g x) := fun j => (hf j).mul (hg j)
 
-theorem st_smooth_const (A : FinHolAtlas e X) (c : ℝ) : A.Smooth (fun _ => c) := fun j => contDiffOn_const
+theorem st_smooth_const (A : FinHolAtlas e X) (c : ℝ) : A.Smooth (fun _ => c) := fun _ => contDiffOn_const
 
 theorem st_smooth_sum (A : FinHolAtlas e X) {ι : Type*} (s : Finset ι) {f : ι → X → ℝ}
     (hf : ∀ m, A.Smooth (f m)) : A.Smooth (fun x => ∑ m ∈ s, f m x) := fun j => ContDiffOn.sum fun m _ => hf m j

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsCoprimeProjectionAdelicLatticeIntoColumnsStatement
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.HermitianModuleBetaCongruence
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.DualCoords
 
@@ -15,8 +16,6 @@ namespace Formalism.L2.SG.NormCut
 
 section InAtAlg
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 theorem natCast_mem_Int (c : ℕ) : ((c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F)) ∈ IntAf X.B.I.F X.B.I.E := by
@@ -28,16 +27,7 @@ theorem smul_mem_mL_int {s : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F} (hs : s ∈ IntAf 
 
 theorem InAt_add {a b : VA X.B.I} (ha : InAt X.B.I X.B.g X.B.g a) (hb : InAt X.B.I X.B.g X.B.g b) :
     InAt X.B.I X.B.g X.B.g (a + b) := by
-  obtain ⟨c, hc, hca⟩ := ha
-  obtain ⟨d, hd, hdb⟩ := hb
-  refine ⟨c * d, Nat.Coprime.mul_left hc hd, ?_⟩
-  have e : ((c * d : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • (a + b) =
-      ((d : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • (((c : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • a) +
-        ((c : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • (((d : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • b) := by
-    rw [Nat.cast_mul, smul_add, ← mul_smul, ← mul_smul, mul_comm ((d : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F)]
-  rw [e]
-  exact (mL X.B.I X.B.g).add_mem (smul_mem_mL_int X (natCast_mem_Int X d) hca)
-    (smul_mem_mL_int X (natCast_mem_Int X c) hdb)
+  apply _root_.GlobalTheory.St.G.Proj.inAt_add <;> assumption
 
 theorem InAt_neg {a : VA X.B.I} (ha : InAt X.B.I X.B.g X.B.g a) : InAt X.B.I X.B.g X.B.g (-a) := by
   obtain ⟨c, hc, hca⟩ := ha
@@ -111,8 +101,6 @@ theorem inclE_int (ξ : 𝓞 D.host.E) :
 end InAtAlg
 
 section AdmNMain
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
@@ -233,23 +221,23 @@ theorem norm_congruence_of_carrier (hTF : FrameTie X u u' F0 F0') (hM : Formalis
         ∑ i : Fin D.R.rS, s (Fin.castSucc i) (Fin.castSucc a) • e0v (Fin.castSucc i)) +
         ∑ i : Fin D.R.rS, (s (Fin.castSucc i) (Fin.castSucc a) - if i = a then 1 else 0) • X.e0 i := by
       simp only [he0v, Fin.snoc_castSucc, sub_smul, Finset.sum_sub_distrib, ite_smul, one_smul, zero_smul,
-        Finset.sum_ite_eq', Finset.mem_univ, if_true, Matrix.sub_mulVec, Matrix.one_mulVec]
+        Finset.sum_ite_eq', Finset.mem_univ, ite_true, Matrix.sub_mulVec, Matrix.one_mulVec]
       abel
     rw [e]
     refine add_mem (mL_Mo X.B.I h4) (sum_mem fun i _ => ?_)
     by_cases hi : i.1 < a.1
     · have hne : i ≠ a := fun h => by subst h; exact lt_irrefl _ hi
-      rw [if_neg hne, sub_zero]
+      rw [ite_eq_right hne, sub_zero]
       have : s (Fin.castSucc i) (Fin.castSucc a) • X.e0 i =
           (⟨_, hsI _ _⟩ : IntAf X.B.I.F X.B.I.E) • X.e0 i := rfl
       rw [this]
       exact Submodule.smul_mem _ _ (sub_Mo X.B.I ⟨i, hi, rfl⟩)
     · by_cases hia : i = a
-      · subst hia; rw [if_pos rfl, hsdiag, sub_self, zero_smul]; exact zero_mem _
+      · subst hia; rw [ite_eq_left rfl, hsdiag, sub_self, zero_smul]; exact zero_mem _
       · have hlt : Fin.castSucc a < Fin.castSucc i := by
           rw [Fin.castSucc_lt_castSucc_iff]
           exact lt_of_le_of_ne (not_lt.1 hi) (fun h => hia h.symm)
-        rw [if_neg hia, hslow _ _ hlt, sub_zero, zero_smul]; exact zero_mem _
+        rw [ite_eq_right hia, hslow _ _ hlt, sub_zero, zero_smul]; exact zero_mem _
   · have h4 := key4 (Fin.last _)
     rw [Fin.sum_univ_castSucc, hsdiag, one_smul] at h4
     have e : (X.B.I.fmat κ - 1) *ᵥ X.z0 = (X.B.I.fmat κ *ᵥ e0v (Fin.last _) -

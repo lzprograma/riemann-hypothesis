@@ -226,7 +226,7 @@ theorem divFunSequence_shortExact : (divFunSequence φ).ShortExact := by
     have hsec : ∀ q, ratToQZ (sec q) = q := fun q => by
       by_cases hq : q = 0
       · simp [sec, hq]
-      · simp only [sec, hq, if_false]
+      · simp only [sec, hq, ite_false]
         exact Function.surjInv_eq ratToQZ_surjective q
     refine ⟨⟨fun i x => sec ((f : I → G → QZ) i x), ?_, fun i => ⟨(f.2.2 i).1.comp sec, fun h x => ?_⟩⟩, ?_⟩
     · refine f.2.1.subset fun i hi => ?_
@@ -355,7 +355,7 @@ theorem isZero_cohomology_one_divFunRep_int : IsZero (cohomology (divFunRep φ �
   have hsec : ∀ q, ratToQZ (sec q) = q := fun q => by
     by_cases hq : q = 0
     · simp [sec, hq]
-    · simp only [sec, hq, if_false]
+    · simp only [sec, hq, ite_false]
       exact Function.surjInv_eq ratToQZ_surjective q
   let b : divFun φ ℚ := ⟨fun i _ => sec ((a : I → G → QZ) i 1), a.2.1.subset fun i hi => ?_,
     fun i => ⟨IsLocallyConstant.const _, fun _ _ => rfl⟩⟩

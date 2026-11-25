@@ -29,9 +29,6 @@ open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.Loc
 open GroundTheory.Global.SemiLocal
 open scoped Classical
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
-
 open private absNorm_pow exists_over finite_above pick pick_spec sat_unique sat_card bound_cx
   cnt_zero cnt_zero_of_unr exists_bad unrAt_iff ind_key Key Key.sat key_twist norm_units
   from Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.MatchIndOf

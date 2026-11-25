@@ -53,8 +53,6 @@ public import Mathlib.Topology.MetricSpace.Perfect
 
 @[expose] public section
 
-set_option autoImplicit false
-
 open Cardinal
 
 namespace GlobalTheory.PadicComplexIso

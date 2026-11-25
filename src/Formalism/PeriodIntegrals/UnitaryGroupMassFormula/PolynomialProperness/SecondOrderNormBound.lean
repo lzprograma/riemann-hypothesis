@@ -2,52 +2,11 @@ module
 
 public import Formalism.HermitianCurvature.FiniteOrderIntersectionInSmooth
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.ZhatNormLinearBound
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 public import Mathlib.Analysis.Normed.Unbundled.RingSeminorm
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.Matrix.AbsoluteValue
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerParabolicCoordinates
 
 @[expose] public section
 
@@ -100,7 +59,7 @@ theorem ut_entry_eq_det {m : ℕ} {L U : Matrix (Fin m) (Fin m) ℂ} (hL : L ∈
     have hb : b.val < i.val := by
       have := a.isLt; rw [Fin.lt_def] at hab'; omega
     show U (rws i a) (cls i j b) = 0
-    simp only [cls, if_pos hb]
+    simp only [cls, ite_eq_left hb]
     exact hU.1 _ _ hab'
   rw [hfac, det_mul, det_of_isLowerTriangular _ hlo]
   have hl1 : ∀ t : Fin (i.val + 1), L.submatrix (rws i) (rws i) t t = 1 := fun t => hL.2 _
@@ -108,12 +67,12 @@ theorem ut_entry_eq_det {m : ℕ} {L U : Matrix (Fin m) (Fin m) ℂ} (hL : L ∈
     intro t
     have h2 : cls i j t.castSucc = rws i t.castSucc := by
       have ht : (t.castSucc : Fin (i.val + 1)).val < i.val := t.isLt
-      simp only [cls, if_pos ht]; rfl
+      simp only [cls, ite_eq_left ht]; rfl
     show U (rws i t.castSucc) (cls i j t.castSucc) = 1
     rw [h2]; exact hU.2 _
   have hlast1 : rws i (Fin.last i.val) = i := Fin.ext rfl
   have hlast2 : cls i j (Fin.last i.val) = j := by
-    simp only [cls, Fin.val_last, lt_irrefl, if_false]
+    simp only [cls, Fin.val_last, lt_irrefl, ite_false]
   rw [Finset.prod_eq_one (fun t _ => hl1 t), one_mul, det_of_isUpperTriangular hup,
     Fin.prod_univ_castSucc, Finset.prod_eq_one (fun t _ => hcs t), one_mul]
   show U i j = U (rws i (Fin.last i.val)) (cls i j (Fin.last i.val))
@@ -171,17 +130,7 @@ theorem mx_of_entry {m : ℕ} (M : Matrix (Fin m) (Fin m) ℂ) {c : ℝ} (hc : 0
 
 theorem isUnit_det_monomialMatrix' {m : ℕ} (w : Equiv.Perm (Fin m)) (d : Fin m → ℂ) (hd : ∀ a, d a ≠ 0) :
     IsUnit (monoP w d).det := by
-  have hQ : monoP w d * monoP w.symm (fun j => (d (w.symm j))⁻¹) = 1 := by
-    ext i j
-    simp only [Matrix.mul_apply, monoP, of_apply, Matrix.one_apply]
-    rw [Finset.sum_eq_single (w.symm j)]
-    · simp only [if_true, Equiv.apply_symm_apply]
-      split_ifs with h
-      · exact mul_inv_cancel₀ (hd _)
-      · exact zero_mul _
-    · intro b _ hb; simp [hb]
-    · intro h; exact absurd (Finset.mem_univ _) h
-  exact isUnit_det_of_right_inverse hQ
+  apply _root_.Formalism.FourierDecayAlt.P.C2x2.isUnit_det_monomialMatrix <;> assumption
 
 def kap (m : ℕ) (P : Matrix (Fin m) (Fin m) ℂ) : ℝ := 1 + m * mx P⁻¹
 

@@ -13,55 +13,10 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IdentityCellTrac
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.ZhatIntegralHolds
 public import Mathlib.LinearAlgebra.Matrix.Rank
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.HeisOpHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.TotallySplit
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.DiagMulOfBt
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.CellBase, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.CellBlock, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.CellMain, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.DdSPowLeOne, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.FixedRel, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.FixedZ, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.ResFinAlt, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.RightInvHolds, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.SkewSolveAlt, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.TermsAtFiniteOfFrameOpShortFin
@@ -180,11 +135,7 @@ theorem lo_diag_mul {A B : Matrix (Fin k) (Fin k) K} (hA : A.BlockTriangular Ord
   · intro h; exact absurd (Finset.mem_univ i) h
 
 theorem lo_mul {A B : Matrix (Fin k) (Fin k) K} (hA : IsLoUni A) (hB : IsLoUni B) : IsLoUni (A * B) := by
-  have ht := (lo_bt hA).mul (lo_bt hB)
-  intro i j
-  refine ⟨fun h => ht (by simpa using h), fun h => ?_⟩
-  subst h
-  rw [lo_diag_mul (lo_bt hA) (lo_bt hB), (hA i i).2 rfl, (hB i i).2 rfl, one_mul]
+  apply _root_.Formalism.L2.SG.Pf.StabilizerIndexVolumes.lo_mul <;> assumption
 
 theorem lo_det {A : Matrix (Fin k) (Fin k) K} (hA : IsLoUni A) : A.det = 1 := by
   rw [Matrix.det_of_isLowerTriangular A (lo_bt hA)]
@@ -259,7 +210,7 @@ theorem fin_of_cong {α ι : Type*} [Finite ι] (X : Set α) (f : α → ι → 
   have h1 := hf x hx i
   have h2 := hf _ hy i
   have hg := congrFun hgy i
-  simp only [g, dif_pos h1, dif_pos h2] at hg
+  simp only [g, dite_eq_left h1, dite_eq_left h2] at hg
   rw [Ideal.Quotient.eq, Ideal.mem_span_singleton] at hg
   obtain ⟨o, ho⟩ := hg
   refine ⟨o, ?_⟩
@@ -593,23 +544,23 @@ theorem pm_cons (t : E) (s : ℕ) (bs : List (E × ℕ)) :
   ext (i | i) (j | j)
   · show ptEntry ((t, s) :: bs) (i : ℕ) (j : ℕ) = t * (if j = Fin.rev i then (1 : E) else 0)
     simp only [ptEntry]
-    rw [if_pos ⟨i.isLt, j.isLt⟩]
+    rw [ite_eq_left ⟨i.isLt, j.isLt⟩]
     have hiff : ((i : ℕ) + (j : ℕ) + 1 = s) ↔ j = Fin.rev i := by
       rw [Fin.ext_iff, Fin.val_rev]; omega
     by_cases h : j = Fin.rev i
-    · rw [if_pos (hiff.mpr h), if_pos h, mul_one]
-    · rw [if_neg (fun h' => h (hiff.mp h')), if_neg h, mul_zero]
+    · rw [ite_eq_left (hiff.mpr h), ite_eq_left h, mul_one]
+    · rw [ite_eq_right (fun h' => h (hiff.mp h')), ite_eq_right h, mul_zero]
   · show ptEntry ((t, s) :: bs) (i : ℕ) (s + (j : ℕ)) = 0
     have := i.isLt
     simp only [ptEntry]
-    rw [if_neg (by omega), if_neg (by omega)]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega)]
   · show ptEntry ((t, s) :: bs) (s + (i : ℕ)) (j : ℕ) = 0
     have := j.isLt
     simp only [ptEntry]
-    rw [if_neg (by omega), if_neg (by omega)]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega)]
   · show ptEntry ((t, s) :: bs) (s + (i : ℕ)) (s + (j : ℕ)) = ptEntry bs (i : ℕ) (j : ℕ)
     simp only [ptEntry]
-    rw [if_neg (by omega), if_pos ⟨by omega, by omega⟩, Nat.add_sub_cancel_left, Nat.add_sub_cancel_left]
+    rw [ite_eq_right (by omega), ite_eq_left ⟨by omega, by omega⟩, Nat.add_sub_cancel_left, Nat.add_sub_cancel_left]
 
 theorem bd_all : ∀ L : List (E × ℕ), (∀ b ∈ L, b.1 ≠ 0 ∧ 1 ≤ b.2) → BDm (pm L) := by
   intro L
@@ -754,14 +705,14 @@ theorem cellReduce_holds : CellReduce := by
     have hL : y.2.1 - x.2.1 = algebraMap (𝓞 E) E (D ^ (L.map Prod.snd).sum * b) • ML.map (algebraMap (𝓞 E) E) := by
       ext i j
       have := hML i j
-      simp only [f, Bool.false_eq_true, if_false] at this
+      simp only [f, Bool.false_eq_true, ite_false] at this
       simp only [Matrix.sub_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul]
       apply mul_left_cancel₀ hDE
       rw [mul_sub, ← this]; ring
     have hU : y.2.2 - x.2.2 = algebraMap (𝓞 E) E (D ^ (L.map Prod.snd).sum * b) • MU.map (algebraMap (𝓞 E) E) := by
       ext i j
       have := hMU i j
-      simp only [f, if_true] at this
+      simp only [f, ite_true] at this
       simp only [Matrix.sub_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul]
       apply mul_left_cancel₀ hDE
       rw [mul_sub, ← this]; ring
@@ -791,8 +742,6 @@ open scoped Classical
 namespace PI.TermsAtPtFiniteW
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef Formalism.L2.SG.Saturated
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem ndS_mul_int (D : D7) (a : Fin D.R.rS) (t : D.host.E) (ht : t ∈ aaS D a) :
     ∃ o : 𝓞 D.host.E, algebraMap (𝓞 D.host.E) D.host.E o = (ndS D : D.host.E) * t := by
@@ -879,8 +828,8 @@ theorem fInt_holds : FInt := by
         by_cases hac : a = c
         · subst hac
           obtain ⟨o, ho⟩ := ndS_mul_int D a t ht
-          exact ⟨o, by rw [ho, if_pos rfl, mul_one]⟩
-        · exact ⟨0, by rw [if_neg hac, mul_zero, mul_zero, map_zero]⟩
+          exact ⟨o, by rw [ho, ite_eq_left rfl, mul_one]⟩
+        · exact ⟨0, by rw [ite_eq_right hac, mul_zero, mul_zero, map_zero]⟩
       · intro y hy
         show ∃ o : (𝓞 D.host.E), algebraMap (𝓞 D.host.E) D.host.E o = (ndS D : D.host.E) * (VS D).hT (f c) (y)
         exact ⟨0, by rw [(hL y hy c).2, mul_zero, map_zero]⟩
@@ -954,9 +903,6 @@ def piL (e f : Fin r → S.V) : S.V →ₗ[E] S.V := LinearMap.id - ∑ c, (S.hT
 theorem piL_apply (e f : Fin r → S.V) (x : S.V) : piL e f x = x - ∑ c, S.hT (f c) x • e c := by
   simp [piL]
 
-theorem herm_star (x y : S.V) : star (S.hT x y) = S.hT y x := by
-  exact S.herm.eq x y
-
 theorem related_gen (hH : HeisOp) (hSk : SkewSolve) {T T' : E} (Λ : Submodule (𝓞 E) S.V) (F : LFlag S r T)
     (f : Fin r → S.V)
     (hint : ∀ x ∈ Λ, ∀ y ∈ Λ, ∃ o : 𝓞 E, (o : E) = S.hT x y)
@@ -980,7 +926,7 @@ theorem related_gen (hH : HeisOp) (hSk : SkewSolve) {T T' : E} (Λ : Submodule (
   set e := F.fl.e with he_def
   have hee : ∀ a b, S.hT (e a) (e b) = 0 := F.fl.e_iso
   have hfe : ∀ a b, S.hT (f a) (e b) = if a = b then 1 else 0 := fun a b => by
-    rw [← herm_star, hef b a]
+    rw [← PI.TermsAtPtFiniteW.HeisW.hsym, hef b a]
     by_cases h : b = a
     · subst h; simp
     · simp [h, Ne.symm h]
@@ -1037,10 +983,10 @@ theorem related_gen (hH : HeisOp) (hSk : SkewSolve) {T T' : E} (Λ : Submodule (
     rcases lt_trichotomy c d with h | h | h
     · simp [s, h, not_lt.2 h.le, h.ne']
     · subst h
-      have hh : star (S.hT (a c) (a c)) = S.hT (a c) (a c) := herm_star _ _
-      simp only [s, lt_irrefl, if_false, if_true, star_neg, star_mul', hh]
+      have hh : star (S.hT (a c) (a c)) = S.hT (a c) (a c) := PI.TermsAtPtFiniteW.HeisW.hsym _ _
+      simp only [s, lt_irrefl, ite_false, ite_true, star_neg, star_mul', hh]
       linear_combination (-(S.hT (a c) (a c))) * hθ
-    · simp [s, h, not_lt.2 h.le, h.ne', herm_star]
+    · simp [s, h, not_lt.2 h.le, h.ne', PI.TermsAtPtFiniteW.HeisW.hsym]
   have haa : ∀ c d, S.hT (a c) (a d) = (((nd * nQ) ^ 2 : ℕ) : E) * S.hT (a' c) (a' d) := by
     intro c d
     rw [haa', haa', map_smul, LinearMap.map_smulₛₗ, LinearMap.smul_apply]
@@ -1068,7 +1014,7 @@ theorem related_gen (hH : HeisOp) (hSk : SkewSolve) {T T' : E} (Λ : Submodule (
   have hn1e : ∀ c, n1 (e c) = e c := by
     intro c
     rw [hn1act, heisFun]
-    have : ∀ c', S.hT (a c') (e c) = 0 := fun c' => by rw [← herm_star, hea]; simp
+    have : ∀ c', S.hT (a c') (e c) = 0 := fun c' => by rw [← PI.TermsAtPtFiniteW.HeisW.hsym, hea]; simp
     simp [hee, this]
   have hrow : ∀ c b, S.hT (e c) (n1 (frame y1 b)) = β c b := fun c b => by
     rw [← hn1e c, hiso1, hβ1]
@@ -1082,7 +1028,7 @@ theorem related_gen (hH : HeisOp) (hSk : SkewSolve) {T T' : E} (Λ : Submodule (
       congr 1
       exact Finset.sum_congr rfl fun c _ => mul_comm _ _
     simp only [this, hQβ, sub_smul, Finset.sum_sub_distrib, ite_smul, one_smul, zero_smul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     have h2 : ∑ d, (v d * l b) • ρ d = l b • ∑ d, v d • ρ d := by
       rw [Finset.smul_sum]
       exact Finset.sum_congr rfl fun d _ => by rw [smul_smul, mul_comm]
@@ -1099,7 +1045,7 @@ theorem related_gen (hH : HeisOp) (hSk : SkewSolve) {T T' : E} (Λ : Submodule (
     abel
 
   have hcol : ∀ d a0, S.hT (n1 (frame y1 a0)) (e d) = star (β d a0) := fun d a0 => by
-    rw [← herm_star, hrow]
+    rw [← PI.TermsAtPtFiniteW.HeisW.hsym, hrow]
   have hid : ∀ a0 b, ∑ c, (star (β c a0) * x' c b + star (x' c a0) * β c b) = 0 := by
     intro a0 b
     have h := hgram a0 b
@@ -1213,7 +1159,7 @@ theorem gram_frame {T' : E} (F : LFlag S r T') (a b : Fin (r + 1)) :
   refine Fin.lastCases ?_ (fun i => ?_) a <;> refine Fin.lastCases ?_ (fun j => ?_) b
   · simpa [frame, FlagG.fvec] using F.fl.z_norm
   · simpa [frame, FlagG.fvec, Fin.castSucc_ne_last] using
-      (show S.hT F.fl.z (F.fl.e j) = 0 by rw [← herm_star, F.fl.z_orth j]; simp)
+      (show S.hT F.fl.z (F.fl.e j) = 0 by rw [← PI.TermsAtPtFiniteW.HeisW.hsym, F.fl.z_orth j]; simp)
   · simpa [frame, FlagG.fvec, Fin.castSucc_ne_last] using F.fl.z_orth i
   · simpa [frame, FlagG.fvec, Fin.castSucc_ne_last] using F.fl.e_iso i j
 
@@ -1232,8 +1178,6 @@ theorem mem_orth_Xplus {T : E} (F : LFlag S r T) (x : S.V) (he : ∀ a, S.hT (F.
 end Gen
 
 section D7
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem zhat_cs (D : D7) {T T' : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (c : Fin D.R.rS) (b : Fin (D.R.rS + 1)) :
@@ -1278,11 +1222,11 @@ theorem fixedZhat_of (hH : HeisOp) (hSk : SkewSolve) (hS : ShortFin) (hRD : Rows
   obtain ⟨R, hRfin, ρ, hρ⟩ := hRF D.host.E (VS D).V Λ hlat.fg ((ndS D * nQ) ^ 2) (by positivity)
   set nd := ndS D with hnd_def
   have hfe : ∀ a b, (VS D).hT (f a) (F0.e b) = if a = b then 1 else 0 := fun a b => by
-    rw [← herm_star, hef b a]
+    rw [← PI.TermsAtPtFiniteW.HeisW.hsym, hef b a]
     by_cases h : b = a
     · subst h; simp
     · simp [h, Ne.symm h]
-  have hze : ∀ c, (VS D).hT F0.z (F0.e c) = 0 := fun c => by rw [← herm_star, F0.z_orth c]; simp
+  have hze : ∀ c, (VS D).hT F0.z (F0.e c) = 0 := fun c => by rw [← PI.TermsAtPtFiniteW.HeisW.hsym, F0.z_orth c]; simp
   have hfz : ∀ c, (VS D).hT (f c) F0.z = 0 := fun c => (hLp F0.z hzL c).2
   have hmemE : ∀ (x : D.host.E) (w : (VS D).V), IntE x → w ∈ Λ → x • w ∈ Λ := by
     rintro x w ⟨o, rfl⟩ hw
@@ -1358,7 +1302,7 @@ theorem fixedZhat_of (hH : HeisOp) (hSk : SkewSolve) (hS : ShortFin) (hRD : Rows
     smul_eq_mul, gram_frame]
   have hpin : ∀ y ∈ Y, (VS D).hT (piL F0.e f (yv y.1)) (piL F0.e f (yv y.1)) = (VS D).hT (yv y.1) (yv y.1) := by
     intro y hy
-    have h1 : ∀ c, (VS D).hT (yv y.1) (F0.e c) = 0 := fun c => by rw [← herm_star, hyve y hy c]; simp
+    have h1 : ∀ c, (VS D).hT (yv y.1) (F0.e c) = 0 := fun c => by rw [← PI.TermsAtPtFiniteW.HeisW.hsym, hyve y hy c]; simp
 
     simp [piL_apply, map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply, LinearMap.map_smulₛₗ,
     hyve y hy, h1, F0.e_iso]
@@ -1367,7 +1311,7 @@ theorem fixedZhat_of (hH : HeisOp) (hSk : SkewSolve) (hS : ShortFin) (hRD : Rows
       (VS D).hT (yv y0.1) (yv y0.1)) + ((Tu D u : ℕ) : D.host.E) * hzc * star hzc with hK_def
   have hxK : ∀ y ∈ Y, (VS D).hT (xf y.1) (xf y.1) = K := by
     intro y hy
-    have hιz : (VS D).hT (ι2 y.1) F0.z = star (hz y.1) := by rw [← herm_star]
+    have hιz : (VS D).hT (ι2 y.1) F0.z = star (hz y.1) := by rw [← PI.TermsAtPtFiniteW.HeisW.hsym]
     have hιι : (VS D).hT (ι2 y.1) (ι2 y.1) = (((nd * nv : ℕ) : D.host.E)) ^ 2 * (VS D).hT (yv y0.1) (yv y0.1) := by
       simp only [ι2, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul, starRingEnd_apply,
         star_natCast, hpin y hy, hyvn]
@@ -1449,7 +1393,7 @@ theorem fixedZhat_of (hH : HeisOp) (hSk : SkewSolve) (hS : ShortFin) (hRD : Rows
   rintro _ ⟨y, hy, rfl⟩
   refine ⟨κ y, ⟨y, hy, rfl⟩, ?_⟩
   have h : ∃ y' ∈ Y, κ y' = κ y := ⟨y, hy, rfl⟩
-  simp only [g, dif_pos h]
+  simp only [g, dite_eq_left h]
   obtain ⟨hy', hκ'⟩ := Classical.choose_spec h
   exact hrel _ hy' _ hy hκ'
 
@@ -1628,20 +1572,20 @@ theorem rightInv_holds : RightInv := by
     rw [hQ]
     by_cases hkj : k = j
     · subst hkj
-      simp only [if_true] at htj
+      simp only [ite_true] at htj
       have htv : t = (vv k)⁻¹ := by
         field_simp
         linear_combination htj
-      simp only [if_true]
+      simp only [ite_true]
       rw [htv] at hti
       linear_combination hti
     · have hjk : j ≠ k := fun h => hkj h.symm
-      simp only [if_neg hjk] at htj
+      simp only [ite_eq_right hjk] at htj
       have ht0 : t = 0 := by
         rcases mul_eq_zero.1 htj with h | h
         · exact h
         · exact absurd h hj
-      simp only [if_neg hkj, mul_zero, sub_zero]
+      simp only [ite_eq_right hkj, mul_zero, sub_zero]
       rw [ht0, zero_mul] at hti
       linear_combination hti
 
@@ -1707,7 +1651,7 @@ theorem skewSolve_holds : SkewSolve := by
     ext i j
     rw [Matrix.mul_apply]
     simp only [hQβ, mul_sub, Finset.sum_sub_distrib, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
     have hi := congrFun hxv i
     have h' : ∑ k, x i k * (v k * l j) = (x *ᵥ v) i * l j := by
       show _ = (∑ k, x i k * v k) * l j
@@ -1732,8 +1676,6 @@ noncomputable section
 namespace PI.TermsAtPtFiniteW
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem termsAtFinite_of_frameOp_shortFin (hF : FrameOp) (hS : ShortFin) (D : D7) (u u' : D.what₂.Word) :
     TermsAtFinite D u u' :=

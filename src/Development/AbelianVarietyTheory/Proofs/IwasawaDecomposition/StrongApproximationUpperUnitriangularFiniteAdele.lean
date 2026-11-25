@@ -96,7 +96,7 @@ theorem row_exists (n : ℕ) (u : Matrix (Fin n) (Fin n) (FiniteAdeleRing (𝓞 
                 algebraMap F (FiniteAdeleRing (𝓞 F) F) r * u ⟨m, hm⟩ j := by
           intro j
           simp only [map_add (f := _), add_mul, Finset.sum_add_distrib, apply_ite (algebraMap F _), map_zero,
-            ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+            ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
         refine ⟨fun k => y k + if k = (⟨m, hm⟩ : Fin n) then r else 0, ?_, ?_, ?_⟩
         · simp [hy1, ne_of_lt him]
         · intro k hk

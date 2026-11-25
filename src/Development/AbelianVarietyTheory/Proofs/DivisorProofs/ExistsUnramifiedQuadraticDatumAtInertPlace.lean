@@ -213,14 +213,6 @@ private lemma isAdicComplete_maximalIdeal_adicCompletionIntegers (ϖ : w.adicCom
   have : CompleteSpace (w.adicCompletionIntegers E) := hcl.completeSpace_coe
   exact hadic.isAdicComplete_iff.mpr ⟨inferInstance, inferInstance⟩
 
-private lemma neg_log_valuation_eq_ordL (x : w.adicCompletion E) : -WithZero.log (Valued.v x) = ordL x := by
-  unfold ordL
-  split_ifs with h
-  · rw [h, WithZero.log_zero, neg_zero]
-  · congr 1
-    conv_lhs => rw [← WithZero.coe_unzero h]
-    rfl
-
 theorem exists_uq : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ w : Pl E, ¬ IsSplitAt w → ∃ (K : GlobalTheory.UnitLemma.UQ) (e : K.E ≃+* w.adicCompletion E), (∀ x, e (K.c x) = cj w (e x)) ∧ (∀ x, x ∈ (algebraMap K.O K.E).range ↔ Valued.v (e x) ≤ 1) ∧ (∀ x, GlobalTheory.UnitLemma.val K.O x = ordL (e x)) ∧ qV E w = K.q ^ 2 := by
   intro E _ _ _ hU w hw
   obtain ⟨-, hcc, hiso, hns, -⟩ := GlobalTheory.ConjAtPlace.main E hU w
@@ -281,6 +273,6 @@ theorem exists_uq : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr 
     show -WithZero.log ((IsDiscreteValuationRing.maximalIdeal (w.adicCompletionIntegers E)).valuation
       (w.adicCompletion E) x) = ordL x
     rw [valuation_max_eq w ϖ hϖ' x]
-    exact neg_log_valuation_eq_ordL w x
+    exact (LGrp.ordL_eq x).symm
 
 end GlobalTheory.InertUQ

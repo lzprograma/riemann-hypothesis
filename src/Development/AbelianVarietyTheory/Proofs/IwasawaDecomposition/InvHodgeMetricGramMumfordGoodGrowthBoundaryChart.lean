@@ -354,7 +354,7 @@ theorem bound_one_add {g a : ℕ} (B : Fin a → Matrix (Fin g) (Fin g) ℝ)
       Matrix.fromRows_apply_inl, Matrix.fromRows_apply_inr, Sum.elim_inl, Sum.elim_inr,
       Matrix.of_apply, Pi.smul_apply, smul_eq_mul, mul_zero, Finset.sum_const_zero, zero_add]
     rw [Finset.sum_eq_single i]
-    · simp only [if_true]
+    · simp only [ite_true]
       rw [Finset.mul_sum Finset.univ _ (t i)]
       exact Finset.sum_congr rfl fun m _ => by ring
     · intro l _ hl
@@ -712,7 +712,7 @@ theorem gnorm_mul_poinWt_le_five : ∀ (n a : ℕ) (ha : a ≤ n) (ρ : ℝ), ρ
   intro n a ha ρ hρ v hv k
   rw [gnorm_poincareGram_single, GlobalTheory.GoodMetric.poinWt]
   by_cases hk : k.val < a
-  · rw [if_pos hk, if_pos ((mem_castLE_iff ha k).2 hk)]
+  · rw [ite_eq_left hk, ite_eq_left ((mem_castLE_iff ha k).2 hk)]
     have h0 : v.ofLp k ≠ 0 := by
       have := hv.2 ⟨k.val, hk⟩
       simpa [Fin.castLE] using this
@@ -731,7 +731,7 @@ theorem gnorm_mul_poinWt_le_five : ∀ (n a : ℕ) (ha : a ≤ n) (ρ : ℝ), ρ
     rw [← Real.sqrt_sq hB, ← Real.sqrt_mul (by positivity)]
     convert sqrt_two_mul_pi_le using 2
     field_simp
-  · rw [if_neg hk, if_neg (fun h => hk ((mem_castLE_iff ha k).1 h)), mul_one]
+  · rw [ite_eq_right hk, ite_eq_right (fun h => hk ((mem_castLE_iff ha k).1 h)), mul_one]
     calc √(1 / 2 : ℝ) ≤ √1 := Real.sqrt_le_sqrt (by norm_num)
       _ ≤ 5 := by rw [Real.sqrt_one]; norm_num
 
@@ -1034,7 +1034,7 @@ theorem inv_hodgeGram_goodBound : ∀ (n a : ℕ) (ha : a ≤ n) (g rk : ℕ) (�
   have hE : 1 / c₀ ≤ c * s ^ (if a = 0 then 0 else g) ∧
       (g.factorial : ℝ) * (C' * (1 + s / (2 * Real.pi))) ^ g ≤ c * s ^ (if a = 0 then 0 else g) := by
     by_cases ha0 : a = 0
-    · rw [if_pos ha0, pow_zero, mul_one]
+    · rw [ite_eq_left ha0, pow_zero, mul_one]
       have hs' : s / (2 * Real.pi) = 0 := by rw [← hts]; subst ha0; simp
       refine ⟨?_, ?_⟩
       · refine le_trans ?_ hcA
@@ -1050,7 +1050,7 @@ theorem inv_hodgeGram_goodBound : ∀ (n a : ℕ) (ha : a ≤ n) (g rk : ℕ) (�
           have : 0 ≤ 1 / (2 * Real.pi) := by positivity
           linarith
         nlinarith
-    · rw [if_neg ha0]
+    · rw [ite_eq_right ha0]
       have hs2 : Real.log 2 ≤ s := hlog (Nat.pos_of_ne_zero ha0)
       refine ⟨?_, ?_⟩
       · calc 1 / c₀ = ((1 / c₀) * (1 / Real.log 2) ^ g) * Real.log 2 ^ g := by

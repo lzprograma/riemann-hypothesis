@@ -72,7 +72,7 @@ theorem at_variable_artin_hasse_eq_one_log {K τ : Type} [Field K] [DecidableEq 
     simp only [h3]
   · symm
     refine Finset.sum_eq_zero fun e _ => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h'
     apply h
     rw [h']

@@ -2,40 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.UnifOfSpaceEq
 public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsConstantCmEvaluationFitsRoom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -123,8 +89,6 @@ theorem log_radius_le (E : Type) [Field E] [NumberField E] [IsCMField E] (r d M 
   have a4 : 0 ≤ Real.log (r : ℝ) := Real.log_nonneg hr'
   have a5 : 0 ≤ Real.log ((fdeg E : ℝ) * r) := Real.log_nonneg hn
   have a6 : 0 ≤ Real.log (1600 / 3 : ℝ) := Real.log_nonneg (by norm_num)
-  have a7 : 0 ≤ Real.log (M : ℝ) := Real.log_nonneg hM'
-  have a8 : 0 ≤ Real.log (d : ℝ) := Real.log_nonneg hd'
   have hmul : Real.log ((fdeg E : ℝ) * r) = Real.log (fdeg E : ℝ) + Real.log r :=
     Real.log_mul (by positivity) (by positivity)
   have hc : Real.log (1600 / 3 : ℝ) ≤ 7 := by
@@ -134,7 +98,6 @@ theorem log_radius_le (E : Type) [Field E] [NumberField E] [IsCMField E] (r d M 
     push_cast at h1
     linarith
   have hl2 : Real.log 2 < 1 := by have := Real.log_two_lt_d9; linarith
-  have hfdL : 0 ≤ (fdeg E : ℝ) * L := by positivity
   have hX1 : 0 ≤ Real.log X := by rw [hX]; linarith
   refine ⟨?_, ?_⟩
   · by_contra hc'
@@ -157,7 +120,6 @@ theorem lamSup_le : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r q 
   set X := 2 * ReciprocityTheory.MultiplicativeHeights.approxR r (d5mu (fdeg E) r (dE E)
       (Real.sqrt (epsLev E d M (s + t + 1)) / Real.sqrt (fdeg E))) (3 * frameRadius (s + t + 1) r / 5) with hXdef
   clear_value X
-  have hX0 : 0 < X := by linarith
   have hlX : 0 ≤ Real.log X := Real.log_nonneg hX1
   rw [Real.log_mul (by positivity) (by positivity), Real.log_pow]
   unfold Formalism.L2.LamCM.pDeg

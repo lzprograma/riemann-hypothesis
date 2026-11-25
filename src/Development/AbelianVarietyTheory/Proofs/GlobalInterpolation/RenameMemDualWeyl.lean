@@ -113,7 +113,7 @@ theorem _root_.GlobalTheory.SubstMem.rename_mem_dualWeyl {a b : ℕ} (hab : a �
         · have hv' : Fin.castLE hab v2 ≠ Fin.castLE hab j' :=
             fun h => hv (Fin.castLE_injective hab h)
           simp only [AlgHom.comp_apply, rename_X, _root_.Formalism.GradedWeylDivisibility.colAddGen, aeval_X, Prod.map_snd, Prod.map_fst,
-            if_neg hv, if_neg hv']
+            ite_eq_right hv, ite_eq_right hv']
           rfl
       have e := DFunLike.congr_fun key f
       simp only [AlgHom.comp_apply] at e
@@ -125,7 +125,7 @@ theorem _root_.GlobalTheory.SubstMem.rename_mem_dualWeyl {a b : ℕ} (hab : a �
         intro v
         have hne : Fin.castLE hab v.2 ≠ j := by
           intro h; apply hj; rw [← h]; exact v.2.isLt
-        simp only [AlgHom.comp_apply, rename_X, _root_.Formalism.GradedWeylDivisibility.colAddGen, aeval_X, Prod.map_snd, if_neg hne]
+        simp only [AlgHom.comp_apply, rename_X, _root_.Formalism.GradedWeylDivisibility.colAddGen, aeval_X, Prod.map_snd, ite_eq_right hne]
       exact DFunLike.congr_fun key f
 
 

@@ -1,5 +1,7 @@
 module
 
+
+import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGlob
 public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.WeylLatticeDescent
 public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CmpCMemMIff
 public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.RestGramW
@@ -7,48 +9,9 @@ public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.ChiMemSubfield
 public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocBases
 public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGen
 public import Formalism.LocalToGlobal.GlobalTheory.GL6.PKerAtP
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.GlobalTheory.GL6.PSplitT
 import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.RecAct
 import Mathlib.RingTheory.PiTensorProduct
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.IntSpanGSmul, Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.ColSpanMulUnit
 
@@ -134,7 +97,7 @@ theorem valIntAt_of (hcore : WeylLatticeDescent) (hfrac : IsFractionRing G.O G.K
   have hQ := valC_spec hex x i L hL
   have hval := hQ.2 g hg c γ hγ κ hpt
   have hcmp : cmpC S emb embLL G e A pos embV yc x i L = MvPolynomial.map e (valC S emb embLL G A pos embV yc x i L) := by
-    unfold cmpC; rw [if_pos hL]
+    unfold cmpC; rw [ite_eq_left hL]
   rw [hcmp]
   obtain ⟨r, hr, hr', hrχ⟩ := hchi κ
   have hr0 : embLL r ≠ 0 := by rw [hrχ]; exact (S.chi κ).ne_zero
@@ -174,8 +137,6 @@ theorem valIntAt_of (hcore : WeylLatticeDescent) (hfrac : IsFractionRing G.O G.K
       smul_eq_mul]
 
 end Gen2
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {X : Formalism.L2.Herm.Herm0 D}
 
@@ -319,13 +280,13 @@ theorem latO_of (tE : Tau → E →+* LL)
   rw [hX]
   unfold nAt
   by_cases hs : Even s.val
-  · rw [if_pos hs]
+  · rw [ite_eq_left hs]
     congr 1
     ext a b
     have := hpos v s (N.1 (finCongr A.rk a) (finCongr A.rk b))
-    rw [if_pos hs] at this
+    rw [ite_eq_left hs] at this
     exact this.symm
-  · rw [if_neg hs]
+  · rw [ite_eq_right hs]
     set Gm := cT (σ : E →+* E) B'.1 * J * B'.1 with hGm
     have hJ : J = cT (σ : E →+* E) (A.B⁻¹).1 * (A.B⁻¹).1 := by
       have h0 : cT (σ : E →+* E) (A.B⁻¹).1 * (cT (σ : E →+* E) A.B.1 * J * A.B.1) * (A.B⁻¹).1 = J := by
@@ -361,7 +322,7 @@ theorem latO_of (tE : Tau → E →+* LL)
       rw [← map_inv, ← h3]
       ext a b
       have h4 := hpos v s ((cT (σ : E →+* E) (N⁻¹).1) (finCongr A.rk a) (finCongr A.rk b))
-      rw [if_neg hs] at h4
+      rw [ite_eq_right hs] at h4
       have h5 : σ ((cT (σ : E →+* E) (N⁻¹).1) (finCongr A.rk a) (finCongr A.rk b)) =
           (N⁻¹).1 (finCongr A.rk b) (finCongr A.rk a) := hσσ _
       rw [h5] at h4
@@ -375,8 +336,6 @@ theorem latO_of (tE : Tau → E →+* LL)
       Matrix.map_one _ (map_zero _) (map_one _), Matrix.submatrix_one_equiv]
 
 end Gen
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {X : Formalism.L2.Herm.Herm0 D}
 
@@ -393,28 +352,7 @@ theorem restLatO_of {T : ∀ u : D.what₂.Word, Forms0 D u} {Gt : GatTies D} {I
 theorem span_dualSet {K : Type} [Field K] [NumberField K] {n : ℕ} (σ : K →+* K) (J : Matrix (Fin n) (Fin n) K)
     (L : Submodule (𝓞 K) (Fin n → K)) :
     ((Submodule.span (𝓞 K) (dualSet σ J L) : Submodule (𝓞 K) (Fin n → K)) : Set (Fin n → K)) = dualSet σ J L := by
-  apply le_antisymm
-  · intro y hy
-    induction hy using Submodule.span_induction with
-    | mem y hy => exact hy
-    | zero =>
-      intro x _
-      refine ⟨0, ?_⟩
-      simp [Formalism.UG.hform]
-    | add y y' _ _ hy hy' =>
-      intro x hx
-      have e : Formalism.UG.hform σ J x (y + y') = Formalism.UG.hform σ J x y + Formalism.UG.hform σ J x y' := by
-        simp only [Formalism.UG.hform, Pi.add_apply, mul_add, Finset.sum_add_distrib]
-      rw [e]
-      exact add_mem (hy x hx) (hy' x hx)
-    | smul r y _ hy =>
-      intro x hx
-      have e : Formalism.UG.hform σ J x (r • y) = algebraMap (𝓞 K) K r * Formalism.UG.hform σ J x y := by
-        simp only [Formalism.UG.hform, Pi.smul_apply, Algebra.smul_def, Finset.mul_sum]
-        refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-      rw [e]
-      exact mul_mem ⟨r, rfl⟩ (hy x hx)
-  · exact Submodule.subset_span
+  apply +allowSynthFailures _root_.Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.bwG_span_dualSet <;> assumption
 
 open Formalism.L2.GlobalTheoryTheory.LocalLatticeBases Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.LocB in
 theorem restExB (D : D7) : RestExB D := by

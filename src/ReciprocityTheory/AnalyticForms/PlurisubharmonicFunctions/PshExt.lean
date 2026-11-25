@@ -55,13 +55,13 @@ noncomputable def vext (U : Set (Fin D → ℂ)) (S : Finset (Fin D)) (u : (Fin 
 
 theorem vext_of_not {z : Fin D → ℂ} (hz : z ∉ coordDiv S) : vext U S u κ z = max (u z) (-κ) := by
   unfold vext limsupExt
-  rw [if_neg hz]
+  rw [ite_eq_right hz]
   rfl
 
 theorem vext_of_mem {z : Fin D → ℂ} (hz : z ∈ coordDiv S) :
     vext U S u κ z = limsup (trunc u κ) (𝓝[U \ coordDiv S] z) := by
   unfold vext limsupExt
-  rw [if_pos hz]
+  rw [ite_eq_left hz]
 
 theorem cont_circ (x w : Fin D → ℂ) (r : ℝ) : Continuous (fun θ : ℝ => x + circleMap 0 r θ • w) :=
   continuous_const.add ((continuous_circleMap 0 r).smul continuous_const)

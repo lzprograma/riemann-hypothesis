@@ -334,7 +334,6 @@ theorem smat_inv (hJ2 : J * J = 1) (hJh : Jᴴ = J) (G : Matrix (Fin k) (Fin k) 
 
 end Formalism.L2.SG.Pf.IdBlocks2.UkEmb
 
-open scoped InnerProductSpace ComplexConjugate
 open Matrix Formalism.MainNotions.S
 
 namespace Formalism.L2.SG.Pf.IdBlocks2.HW
@@ -354,7 +353,7 @@ theorem cdom_antisymm {k : ℕ} {μ Λ : Fin k → ℝ} (h1 : CDom (allPos k) μ
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun b _ => ?_
     simp only [Pi.single_apply, mul_sub, mul_ite, mul_one, mul_zero, Finset.sum_sub_distrib,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     ring
   have hneg : ∀ d : Fin k → Fin k → ℕ, (∀ a b, d a b ≠ 0 → a < b ∧ allPos k a = allPos k b) →
       ∀ a b, (d a b : ℝ) * (((a : ℕ) : ℝ) - ((b : ℕ) : ℝ)) ≤ 0 := by
@@ -589,8 +588,6 @@ open Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting
 
 namespace Formalism.L2.SG.Pf.IdBlocks2.Geo
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.Pf.IdBlocks2.UkEmb Formalism.L2.SG.Pf.IdBlocks2.TensIrr
 
 theorem jm_allPos (k : ℕ) : Formalism.REAL.Jm (allPos k) = 1 := by
@@ -710,18 +707,13 @@ theorem piIrr : Formalism.L2.SG.TermOp.IdBlocks.PiIrr X u := by
 
 end Formalism.L2.SG.Pf.IdBlocks2.Geo
 
-open scoped Classical ComplexConjugate InnerProductSpace
-open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Matrix
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.TermOp
 
 namespace Formalism.L2.SG.Pf.IdBlocks2.Geo
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem uS_ne {D : D7} {u u' : D.what₂.Word} (hu : u ≠ u') (τ : D.what₂.Tau) : uS D u τ ≠ uS D u' τ := by
   obtain ⟨l, hl⟩ : ∃ l, D.s.letter u l ≠ D.s.letter u' l := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hu (D.s.letter_inj (funext h))
   intro heq
   have he := congrFun heq ⟨l.1 + 1, by omega⟩
@@ -748,13 +740,9 @@ theorem ro_of (hN : Formalism.L2.SG.TermOp.Vanish.NLamNinf) {D : D7} (X : HidaSe
 
 end Formalism.L2.SG.Pf.IdBlocks2.Geo
 
-open scoped Classical ComplexConjugate InnerProductSpace
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Matrix
-open Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.TermOp
 
 namespace Formalism.L2.SG.Pf.IdBlocks2.Geo
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.Pf.IdBlocks2.Geo
 
@@ -779,8 +767,6 @@ theorem sAt_ne (v w : InfinitePlace X.B.I.F) (hw : w ≠ v) (g : Matrix (Fin D.R
 end Formalism.L2.SG.Pf.IdBlocks2.Geo
 
 namespace Formalism.L2.SG.Pf.IdBlocks2.Geo
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.Pf.IdBlocks2.Geo
 
@@ -820,10 +806,6 @@ end Formalism.L2.SG.Pf.IdBlocks2.Geo
 
 namespace Formalism.L2.SG.Pf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-open scoped Classical
-open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.TermOp Formalism.L2.SG.TermOp.IdBlocks Formalism.L2.SG.Full
   Formalism.L2.SG.PoincareInHH.Cut
 

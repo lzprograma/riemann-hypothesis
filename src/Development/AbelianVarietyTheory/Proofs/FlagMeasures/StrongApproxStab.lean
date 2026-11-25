@@ -110,10 +110,10 @@ theorem rhoL_rhoL {R : Type} [CommRing R] (bs : List (Rˣ × ℕ+)) (a : ℕ)
     rw [sum_cons'] at ha
     by_cases h : a < (s : ℕ)
     · have e : rhoL ((t, s) :: bs) a = (s : ℕ) - 1 - a := by simp [rhoL, h]
-      rw [e]; simp only [rhoL]; rw [if_pos (by omega)]; omega
+      rw [e]; simp only [rhoL]; rw [ite_eq_left (by omega)]; omega
     · have e : rhoL ((t, s) :: bs) a = (s : ℕ) + rhoL bs (a - s) := by simp [rhoL, h]
       rw [e]; simp only [rhoL]
-      rw [if_neg (by omega), Nat.add_sub_cancel_left, ih (a - s) (by omega)]; omega
+      rw [ite_eq_right (by omega), Nat.add_sub_cancel_left, ih (a - s) (by omega)]; omega
 
 theorem entry_ne_zero_iff {R : Type} [CommRing R] [Nontrivial R] (bs : List (Rˣ × ℕ+)) (a b : ℕ)
     (ha : a < (bs.map (fun b => (b.2 : ℕ))).sum) :
@@ -125,19 +125,19 @@ theorem entry_ne_zero_iff {R : Type} [CommRing R] [Nontrivial R] (bs : List (Rˣ
     rw [sum_cons'] at ha
     simp only [ptEntryL, rhoL]
     by_cases h1 : a < (s : ℕ)
-    · rw [if_pos h1]
+    · rw [ite_eq_left h1]
       by_cases h2 : b < (s : ℕ)
-      · rw [if_pos ⟨h1, h2⟩]
+      · rw [ite_eq_left ⟨h1, h2⟩]
         split_ifs with h3
         · simp only [ne_eq, Units.ne_zero, not_false_eq_true, true_iff]; omega
         · simp only [ne_eq, not_true_eq_false, false_iff]; omega
-      · rw [if_neg (fun h => h2 h.2), if_neg (fun h => by omega)]
+      · rw [ite_eq_right (fun h => h2 h.2), ite_eq_right (fun h => by omega)]
         simp only [ne_eq, not_true_eq_false, false_iff]; omega
-    · rw [if_neg h1, if_neg (fun h => h1 h.1)]
+    · rw [ite_eq_right h1, ite_eq_right (fun h => h1 h.1)]
       by_cases h2 : (s : ℕ) ≤ b
-      · rw [if_pos ⟨by omega, h2⟩, ih (a - s) (b - s) (by omega)]
+      · rw [ite_eq_left ⟨by omega, h2⟩, ih (a - s) (b - s) (by omega)]
         omega
-      · rw [if_neg (fun h => h2 h.2)]
+      · rw [ite_eq_right (fun h => h2 h.2)]
         simp only [ne_eq, not_true_eq_false, false_iff]; omega
 
 theorem rhoL_rev {R : Type} [CommRing R] (bs : List (Rˣ × ℕ+)) (x y : ℕ) (hxy : x < y)
@@ -150,17 +150,17 @@ theorem rhoL_rev {R : Type} [CommRing R] (bs : List (Rˣ × ℕ+)) (x y : ℕ) (
     rw [sum_cons'] at hy
     simp only [rhoL] at hB ⊢
     by_cases h1 : y < (s : ℕ)
-    · rw [if_pos h1, if_pos (by omega)]; omega
+    · rw [ite_eq_left h1, ite_eq_left (by omega)]; omega
     · by_cases h2 : x < (s : ℕ)
       · exfalso
         refine hB s h2 (by omega) fun a ha => ?_
-        rw [if_pos ha]; omega
-      · rw [if_neg h1, if_neg h2]
+        rw [ite_eq_left ha]; omega
+      · rw [ite_eq_right h1, ite_eq_right h2]
         have := ih (x - s) (y - s) (by omega) (by omega) fun l hl1 hl2 hcl => by
           refine hB (s + l) (by omega) (by omega) fun a ha => ?_
           by_cases h : a < (s : ℕ)
-          · rw [if_pos h]; omega
-          · rw [if_neg h]; have := hcl (a - s) (by omega); omega
+          · rw [ite_eq_left h]; omega
+          · rw [ite_eq_right h]; have := hcl (a - s) (by omega); omega
         omega
 
 theorem pt_shape {R : Type} [CommRing R] [Nontrivial R] {n : ℕ} (w : Pt R n) :
@@ -190,8 +190,7 @@ theorem det_ne_zero_of_monomial {K : Type} [Field K] {m : ℕ} (M : Matrix (Fin 
     rcases Int.units_eq_one_or (Equiv.Perm.sign σ⁻¹) with h | h <;> rw [h] <;> simpa using hp
   · intro τ _ hτ
     have : ∃ i, σ (τ i) ≠ i := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       apply hτ
       refine Equiv.ext fun i => ?_
       show τ i = σ⁻¹ i
@@ -328,10 +327,10 @@ theorem main : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField
     (fun a => by simp [ht a a (fun h => lt_irrefl _ h.1)])
     (fun a b hab hB => by
       simp only [Matrix.transpose_apply, Matrix.map_apply]
-      rw [ht b a hB, if_neg (Ne.symm hab), map_zero])
+      rw [ht b a hB, ite_eq_right (Ne.symm hab), map_zero])
   have htup : (∀ i j, j < i → t i j = 0) ∧ ∀ i, t i i = 1 :=
-    ⟨fun i j hij => by rw [ht i j (fun h => lt_asymm h.1 hij), if_neg (ne_of_gt hij)],
-      fun i => by rw [ht i i (fun h => lt_irrefl _ h.1), if_pos rfl]⟩
+    ⟨fun i j hij => by rw [ht i j (fun h => lt_asymm h.1 hij), ite_eq_right (ne_of_gt hij)],
+      fun i => by rw [ht i i (fun h => lt_irrefl _ h.1), ite_eq_left rfl]⟩
   obtain ⟨h, hh, hf1, -⟩ := (_root_.GlobalTheory.HL.RatStab.stab_rat A r k G t s' htup hs'up).1 hs'
   exact ⟨h, hh, hf1⟩
 
@@ -1248,9 +1247,9 @@ theorem close_lattice : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [Nu
   have ha : ∀ p, a p ∈ 𝒪[(A.loc p).Fp] ∧ a p * G.c p ∈ 𝒪[(A.loc p).Fp] ∧ a p ≠ 0 := by
     intro p
     by_cases hc : ((G.c p : (A.loc p).Fp) ∈ 𝒪[(A.loc p).Fp])
-    · simp only [a, if_pos hc, one_mul]
+    · simp only [a, ite_eq_left hc, one_mul]
       exact ⟨one_mem _, hc, one_ne_zero⟩
-    · simp only [a, if_neg hc]
+    · simp only [a, ite_eq_right hc]
       exact ⟨inv_mem hc, by rw [inv_mul_cancel₀ (Units.ne_zero _)]; exact one_mem _,
         inv_ne_zero (Units.ne_zero _)⟩
   refine ⟨fun p => (D : (A.loc p).Fp) ^ 5 * a p ^ r, fun p => ?_, ?_, ?_⟩
@@ -1265,7 +1264,7 @@ theorem close_lattice : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [Nu
     apply hp
     have hcO : ((G.c p : (A.loc p).Fp) ∈ 𝒪[(A.loc p).Fp]) := hv ▸ (v : 𝒪[(A.loc p).Fp]).2
     refine ⟨u ^ 5, ?_⟩
-    simp only [a, if_pos hcO, one_pow, mul_one]
+    simp only [a, ite_eq_left hcO, one_pow, mul_one]
     rw [← hu]
     push_cast
     rfl
@@ -1358,8 +1357,7 @@ theorem zh_split (l : Fin (r + 2)) (hl : S.D l ≠ 0) (x y : Fin (r + 1))
     fun a b => S.relevant a b
   have hA : ∀ a : Fin (r + 1), (a : ℕ) < l → GlobalTheory.FrameBasic.sig S.w.blocks a < l := by
     intro a ha
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     apply hl
     unfold Frames.D lead
     apply Matrix.det_eq_zero_of_row_eq_zero (⟨a, ha⟩ : Fin l)
@@ -1423,7 +1421,7 @@ theorem m_zero [IsNonarchimedeanLocalField F] [CharZero F]
   have hv0 : v = 0 := Matrix.vecMul_injective_of_isUnit ((Matrix.isUnit_iff_isUnit_det _).2 hU')
     (hv.trans (Matrix.zero_vecMul _).symm)
   have := congrFun hv0 a
-  simp only [v, if_pos ha, Pi.zero_apply] at this
+  simp only [v, ite_eq_left ha, Pi.zero_apply] at this
   exact (map_eq_zero_iff L.cj L.cj.injective).1 this
 
 end Local
@@ -1506,14 +1504,13 @@ theorem local_pattern : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [Nu
     beta_reduce
     rcases lt_trichotomy i j with hlt | rfl | hgt
     · have hex : ∃ l : Fin (r + 2), (i : ℕ) < l ∧ (l : ℕ) ≤ j ∧ G.D l ≠ 0 := by
-        by_contra hc
-        push_neg at hc
+        by_contra! hc
         exact hij ⟨hlt, fun l h1 h2 => hc l h1 h2⟩
       obtain ⟨l, h1, h2, h3⟩ := hex
-      rw [if_neg hlt.ne, m_zero (G.S p) m m' hm' heq l (D_ne G p l h3) i j h1 h2]
+      rw [ite_eq_right hlt.ne, m_zero (G.S p) m m' hm' heq l (D_ne G p l h3) i j h1 h2]
       simp
-    · rw [if_pos rfl, hm.2, mul_one, ab_one]
-    · rw [if_neg hgt.ne', hm.1 i j hgt]
+    · rw [ite_eq_left rfl, hm.2, mul_one, ab_one]
+    · rw [ite_eq_right hgt.ne', hm.1 i j hgt]
       simp
   · intro j
     beta_reduce
@@ -1611,9 +1608,9 @@ theorem unit_of_pat {K : Type} [CommRing K] {m : ℕ} (P : Fin m → Fin m → P
   have hup : s.BlockTriangular id := by
     intro i j hij
     have := hs i j (fun h => absurd (hP i j h) (not_lt.mpr (le_of_lt hij)))
-    rw [this, if_neg (ne_of_gt (show j < i from hij))]
+    rw [this, ite_eq_right (ne_of_gt (show j < i from hij))]
   rw [Matrix.det_of_upperTriangular hup]
-  have : ∀ i, s i i = 1 := fun i => by rw [hs i i (fun h => absurd (hP i i h) (lt_irrefl _)), if_pos rfl]
+  have : ∀ i, s i i = 1 := fun i => by rw [hs i i (fun h => absurd (hP i i h) (lt_irrefl _)), ite_eq_left rfl]
   simp [this]
 
 end GlobalTheory.HL.StrongSt
@@ -1626,18 +1623,18 @@ theorem strong_approx_stab : ∀ {F E : Type} [Field F] [NumberField F] [Field E
   have hcO : ∀ p, ((c p : (A.loc p).Fp) ∈ 𝒪[(A.loc p).Fp]) := by
     intro p
     by_cases h : ((c₁ p : (A.loc p).Fp) ∈ 𝒪[(A.loc p).Fp])
-    · simp only [c, if_pos h]; exact h
-    · simp only [c, if_neg h]; exact one_mem _
+    · simp only [c, ite_eq_left h]; exact h
+    · simp only [c, ite_eq_right h]; exact one_mem _
   have hc : {p | ¬ ∃ u : (𝒪[(A.loc p).Fp])ˣ, ((u : 𝒪[(A.loc p).Fp]) : (A.loc p).Fp) = c p}.Finite := by
     refine hc₁.subset fun p hp => ?_
     rintro ⟨u, hu⟩
     have h : ((c₁ p : (A.loc p).Fp) ∈ 𝒪[(A.loc p).Fp]) := hu ▸ (u : 𝒪[(A.loc p).Fp]).2
-    exact hp ⟨u, by simp only [c, if_pos h]; exact hu⟩
+    exact hp ⟨u, by simp only [c, ite_eq_left h]; exact hu⟩
   have hq : ∀ p, ∃ a ∈ 𝒪[(A.loc p).Fp], (c p : (A.loc p).Fp) = c₁ p * a := by
     intro p
     by_cases h : ((c₁ p : (A.loc p).Fp) ∈ 𝒪[(A.loc p).Fp])
-    · exact ⟨1, one_mem _, by simp only [c, if_pos h, mul_one]⟩
-    · refine ⟨(c₁ p : (A.loc p).Fp)⁻¹, ?_, by simp only [c, if_neg h]; simp⟩
+    · exact ⟨1, one_mem _, by simp only [c, ite_eq_left h, mul_one]⟩
+    · refine ⟨(c₁ p : (A.loc p).Fp)⁻¹, ?_, by simp only [c, ite_eq_right h]; simp⟩
       have h' : ¬ valuation (A.loc p).Fp (c₁ p : (A.loc p).Fp) ≤ 1 := h
       show valuation (A.loc p).Fp (c₁ p : (A.loc p).Fp)⁻¹ ≤ 1
       rw [map_inv₀]

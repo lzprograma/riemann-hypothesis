@@ -48,7 +48,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta GlobalTheory.SmoothForms Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 attribute [local instance 100] LieRing.ofAssociativeRing
 
 namespace GlobalTheory.SmoothForms.HeightCoset
@@ -141,8 +140,7 @@ theorem infHt_le_normInf (hV : 0 < V.rank) (τ : D.what₂.Tau) (g : GA D V) :
     rw [mul_inv_cancel, h3] at this
     exact_mod_cast this
   have h5 : 1 ≤ normInf θ V g := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have a0 := (infNorm θ V τ g).coe_nonneg
     have b0 := (infNorm θ V τ g⁻¹).coe_nonneg
     nlinarith

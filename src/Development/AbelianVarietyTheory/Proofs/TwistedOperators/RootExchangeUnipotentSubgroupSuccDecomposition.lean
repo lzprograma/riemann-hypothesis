@@ -91,12 +91,12 @@ theorem succ_decomp : ∀ (k : Type) [Field k] (n : Type) [Fintype n] [Decidable
     have := hg' (Sum.inr l) (Sum.inr l) le_rfl
     simpa using this
   have hus : u s = g.val (Sum.inr l) (Sum.inl s) := by
-    simp only [hu, key, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [hu, key, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [Units.val_mul, inv_rowE_val, Matrix.mul_apply, Fintype.sum_sum_type]
   simp only [fromBlocks_apply₁₁, fromBlocks_apply₂₁, Matrix.one_apply, Matrix.neg_apply,
     Matrix.of_apply, key, mul_ite, mul_one, mul_zero, mul_neg, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true, hus]
-  simp only [Finset.sum_neg_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true, hd]
+    Finset.mem_univ, ite_true, hus]
+  simp only [Finset.sum_neg_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true, hd]
   ring
 
 end GlobalTheory.RootEx.RadicalDecomp

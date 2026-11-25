@@ -24,8 +24,6 @@ theorem intSplit_of (I : LocId L p nV W Qq) : Cmp.IntSplit I := fun v t =>
 theorem hypAtP_C (I : LocId L p nV W Qq) (hb : Cmp.NotBad I) (hs : Cmp.SelfDualAtP I) : Cmp.HypAtP I :=
   Cmp.isHyperbolicAt_of_integralSplit I hb (intSplit_of I) hs
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem natCast_notMem {F : Type} [Field F] [NumberField F] (v : HeightOneSpectrum (𝓞 F)) {p n : ℕ} (hp : p.Prime)
     (hv : (p : 𝓞 F) ∈ v.asIdeal) (hn : ¬ p ∣ n) : (n : 𝓞 F) ∉ v.asIdeal := by
   intro hn'

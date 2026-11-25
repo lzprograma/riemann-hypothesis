@@ -151,7 +151,7 @@ theorem eq_zero_of_prod {T : Type} [Fintype T] [DecidableEq T] {ι : T → Type}
           rw [Finset.sum_comm]
           refine Finset.sum_congr rfl fun I' _ => ?_
           rw [Finset.sum_ite_eq]
-          simp only [Finset.mem_univ, if_true]
+          simp only [Finset.mem_univ, ite_true]
           ring)
         exact congrFun hc i
       have h3 := IH _ (step (I s)) I
@@ -206,7 +206,7 @@ def genUpperTri (n : ℕ) : Matrix (Fin n) (Fin n) (MvPolynomial (Fin n × Fin n
 theorem genUpperTri_blockTriangular (n : ℕ) : (genUpperTri n).BlockTriangular id := by
   intro i j hij
   simp only [genUpperTri, Matrix.of_apply]
-  rw [if_neg (not_le.mpr (show j < i from hij))]
+  rw [ite_eq_right (not_le.mpr (show j < i from hij))]
 
 theorem colAct_intCast_of_mem {n : ℕ} {la : Fin n → ℕ} {f : Pol n ℤ} (hf : f ∈ nabla la ℤ)
     {S : Type} [CommRing S] (b : Matrix (Fin n) (Fin n) S) (hb : b.BlockTriangular id) :
@@ -319,7 +319,7 @@ theorem eq_zero_of_evalFr {T : Type} [Fintype T] {N : T → ℕ} {K : Type} [Fie
     rw [map_zero, hy, hev]
     by_cases hw : ∀ t, (y t).det ≠ 0
     · rw [h y hw, zero_mul]
-    · push_neg at hw
+    · push Not at hw
       obtain ⟨t, ht⟩ := hw
       rw [Finset.prod_eq_zero (Finset.mem_univ t) ht, mul_zero]
   exact (mul_eq_zero.mp h1).resolve_right hd

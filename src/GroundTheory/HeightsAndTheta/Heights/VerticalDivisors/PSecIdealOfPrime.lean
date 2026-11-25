@@ -111,21 +111,15 @@ theorem residue_surj {K : Type*} [Field K] [NumberField K] (e n : ℕ) (v : Heig
     ((IsLocalization.map_units (ParDVR e n v) s).map _).ne_zero
   rw [← residue_algebraMap, ← residue_algebraMap, eq_div_iff hs, ← map_mul, IsLocalization.mk'_spec]
 
-end SecIdealOfPrime
-
-theorem SecIdealOfPrime.proof (hDim : SpecCompDim.Statement) (hExist : ChowFormExists.Statement)
-    (hInd : ResidueAlgIndep.Statement) (hField : SecAlgField.Statement) (hKer : GenSecKer.Statement) :
-    SecIdealOfPrime.Statement := by
-  intro K _ _ n e I f v hI hf W hW
+theorem ker_specResidue_map {K : Type} [Field K] [NumberField K] {n e : ℕ}
+    (I : Ideal (MvPolynomial (Fin n) K)) (v : HeightOneSpectrum (𝓞 K))
+    {W : Ideal (MvPolynomial (Fin n) (𝓞 K))} (hJW : integralModel I ⊔ Ideal.map C v.asIdeal ≤ W) :
+    RingHom.ker ((Ideal.Quotient.mk (secIdeal ((reduceMod v W).map (MvPolynomial.map (resToKappa e n v)))
+        (parYκ e n v))).comp (MvPolynomial.map (algebraMap (ParDVR e n v)
+          (IsLocalRing.maximalIdeal (ParDVR e n v)).ResidueField))) =
+      secIdeal (modelR e I v) (parY e n v) ⊔
+        W.map (MvPolynomial.map (algebraMap (𝓞 K) (ParDVR e n v))) := by
   have : v.asIdeal.IsMaximal := v.isMaximal
-  obtain ⟨hQ, hQdim⟩ := hDim K n e I f v hI hf W hW
-  obtain ⟨g, hg⟩ := hExist v.asIdeal.ResidueField n (e + 1) (reduceMod v W) hQ hQdim
-
-  have hψ : Function.Injective (eval₂Hom (resToKappa e n v) (parYκ e n v)) := fun _ _ hpq =>
-    hInd K e n v hpq
-  obtain ⟨hFieldE, hkerE⟩ := SecIdealOfPrime.secAlg_of_ratFunc n e (resToKappa e n v) (parYκ e n v) hψ
-    (SecIdealOfPrime.residue_surj e n v) (reduceMod v W) (hField _ n e _ g hQ hg) (hKer _ n e _ g hQ hg)
-
   let R := ParDVR e n v
   let E := (IsLocalRing.maximalIdeal R).ResidueField
   let k := v.asIdeal.ResidueField
@@ -144,7 +138,6 @@ theorem SecIdealOfPrime.proof (hDim : SpecCompDim.Statement) (hExist : ChowFormE
     ext a
     exact (Ideal.ResidueField.map_algebraMap v.asIdeal (IsLocalRing.maximalIdeal (ParDVR e n v))
         (algebraMap (𝓞 K) (ParDVR e n v)) (comap_maximalIdeal_parDVR e n v).symm a).symm
-  have hJW : integralModel I ⊔ Ideal.map C v.asIdeal ≤ W := hW.1.1.2
   let WR : Ideal (MvPolynomial (Fin n) R) := W.map (MvPolynomial.map ι)
   let S := secIdeal (modelR e I v) (parY e n v)
   have hWR : WR.map Ψ = QE := by
@@ -182,13 +175,44 @@ theorem SecIdealOfPrime.proof (hDim : SpecCompDim.Statement) (hExist : ChowFormE
     rw [MvPolynomial.ker_map, Ideal.ker_algebraMap_residueField, hmax, Ideal.map_map,
       ← MvPolynomial.map_comp_C, ← Ideal.map_map]
     exact Ideal.map_mono (le_sup_right.trans hJW)
+  have hkerT : RingHom.ker ((Ideal.Quotient.mk T).comp Ψ) = T.comap Ψ := by
+    ext x
+    simp [RingHom.mem_ker, Ideal.Quotient.eq_zero_iff_mem]
+  rw [hkerT, ← hT, Ideal.comap_map_of_surjective _ hΨ, ← RingHom.ker_eq_comap_bot]
+  exact sup_eq_left.mpr (hkerΨ.trans le_sup_right)
+
+end SecIdealOfPrime
+
+theorem SecIdealOfPrime.proof (hDim : SpecCompDim.Statement) (hExist : ChowFormExists.Statement)
+    (hInd : ResidueAlgIndep.Statement) (hField : SecAlgField.Statement) (hKer : GenSecKer.Statement) :
+    SecIdealOfPrime.Statement := by
+  intro K _ _ n e I f v hI hf W hW
+  have : v.asIdeal.IsMaximal := v.isMaximal
+  obtain ⟨hQ, hQdim⟩ := hDim K n e I f v hI hf W hW
+  obtain ⟨g, hg⟩ := hExist v.asIdeal.ResidueField n (e + 1) (reduceMod v W) hQ hQdim
+
+  have hψ : Function.Injective (eval₂Hom (resToKappa e n v) (parYκ e n v)) := fun _ _ hpq =>
+    hInd K e n v hpq
+  obtain ⟨hFieldE, hkerE⟩ := SecIdealOfPrime.secAlg_of_ratFunc n e (resToKappa e n v) (parYκ e n v) hψ
+    (SecIdealOfPrime.residue_surj e n v) (reduceMod v W) (hField _ n e _ g hQ hg) (hKer _ n e _ g hQ hg)
+
+  let R := ParDVR e n v
+  let E := (IsLocalRing.maximalIdeal R).ResidueField
+  let k := v.asIdeal.ResidueField
+  let QE := (reduceMod v W).map (MvPolynomial.map (resToKappa e n v))
+  let T := secIdeal QE (parYκ e n v)
+  let ι : 𝓞 K →+* R := algebraMap (𝓞 K) R
+  let ρ : R →+* E := algebraMap R E
+  let Ψ : MvPolynomial (Fin n) R →+* MvPolynomial (Fin n) E := MvPolynomial.map ρ
+  have hcomp : ρ.comp ι = (resToKappa e n v).comp (algebraMap (𝓞 K) k) := by
+    ext a
+    exact (Ideal.ResidueField.map_algebraMap v.asIdeal (IsLocalRing.maximalIdeal (ParDVR e n v))
+        (algebraMap (𝓞 K) (ParDVR e n v)) (comap_maximalIdeal_parDVR e n v).symm a).symm
+  have hJW : integralModel I ⊔ Ideal.map C v.asIdeal ≤ W := hW.1.1.2
+  let WR : Ideal (MvPolynomial (Fin n) R) := W.map (MvPolynomial.map ι)
+  let S := secIdeal (modelR e I v) (parY e n v)
   let Φ : MvPolynomial (Fin n) R →+* SecAlg QE (parYκ e n v) := (Ideal.Quotient.mk T).comp Ψ
-  have hker : RingHom.ker Φ = S ⊔ WR := by
-    have : RingHom.ker Φ = T.comap Ψ := by
-      ext x
-      simp [Φ, RingHom.mem_ker, Ideal.Quotient.eq_zero_iff_mem]
-    rw [this, ← hT, Ideal.comap_map_of_surjective _ hΨ, ← RingHom.ker_eq_comap_bot]
-    exact sup_eq_left.mpr (hkerΨ.trans le_sup_right)
+  have hker : RingHom.ker Φ = S ⊔ WR := SecIdealOfPrime.ker_specResidue_map I v hJW
 
   have hkerPrime : (RingHom.ker Φ).IsPrime := by
     let _ := hFieldE.toField

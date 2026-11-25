@@ -61,13 +61,13 @@ theorem modeChar_exp (θ : Fin n → ℝ) (x : Fin n × Fin n) :
       Complex.exp (((∑ a, modeWt ε x a * θ a : ℝ) : ℂ) * Complex.I) := by
   unfold modeChar modeWt
   by_cases h : IsPhys ε x
-  · rw [if_pos h, if_pos (show ε x.1 = true ∧ ε x.2 = false from h), Complex.star_def, ← Complex.exp_conj, ← Complex.exp_add]
+  · rw [ite_eq_left h, ite_eq_left (show ε x.1 = true ∧ ε x.2 = false from h), Complex.star_def, ← Complex.exp_conj, ← Complex.exp_add]
     congr 1
     simp only [root, Pi.sub_apply, Pi.single_apply, sub_mul, Finset.sum_sub_distrib, ite_mul, one_mul,
-      zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, map_mul, Complex.conj_ofReal, Complex.conj_I]
+      zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, map_mul, Complex.conj_ofReal, Complex.conj_I]
     push_cast
     ring
-  · rw [if_neg h, if_neg (show ¬(ε x.1 = true ∧ ε x.2 = false) from h)]
+  · rw [ite_eq_right h, ite_eq_right (show ¬(ε x.1 = true ∧ ε x.2 = false) from h)]
     simp
 
 theorem prod_modeChar_exp (θ : Fin n → ℝ) (s : Finset (Fin (n * n))) :
@@ -116,7 +116,7 @@ theorem wK_diag_wt (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E) {
     ring
   · intro b _ hb
     rw [ff_diag, map_smul, Module.Basis.coord_apply, Module.Basis.repr_self, Finsupp.single_apply,
-      if_neg hb, smul_zero, zero_smul]
+      ite_eq_right hb, smul_zero, zero_smul]
   · simp
 
 theorem bwtDiag_inK (ε : Fin n → Bool) (θ : Fin n → ℝ) : inK ε (bwtDiag θ) := by

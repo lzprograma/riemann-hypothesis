@@ -3,45 +3,6 @@ module
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsFibreChartIff
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockDiagonalMinorVanishing
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorIJEqSubmatrix
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -58,13 +19,13 @@ variable {N : ℕ}
 
 theorem shear_above {ca cb : Fin N} (hab : ca < cb) (t : ℂ) {x y : Fin N} (hxy : x < y) :
     (1 + Matrix.single cb ca t : Matrix (Fin N) (Fin N) ℂ) x y = 0 := by
-  rw [SchurCalc.elem_apply, if_neg hxy.ne, if_neg, add_zero]
+  rw [SchurCalc.elem_apply, ite_eq_right hxy.ne, ite_eq_right, add_zero]
   rintro ⟨rfl, rfl⟩
   exact lt_asymm hab hxy
 
 theorem shear_diag {ca cb : Fin N} (hab : ca < cb) (t : ℂ) (x : Fin N) :
     (1 + Matrix.single cb ca t : Matrix (Fin N) (Fin N) ℂ) x x = 1 := by
-  rw [SchurCalc.elem_apply, if_pos rfl, if_neg, add_zero]
+  rw [SchurCalc.elem_apply, ite_eq_left rfl, ite_eq_right, add_zero]
   rintro ⟨rfl, h⟩
   exact hab.ne h
 
@@ -84,7 +45,7 @@ theorem minor_shear {ca cb : Fin N} (hab : ca < cb) (t : ℂ) (S : Finset (Fin N
 theorem support_shear {ca cb : Fin N} (t : ℂ) {S : Finset (Fin N)} (hS : ca ∈ S → cb ∈ S) (k c : Fin N)
     (hc : c ∈ S) (hk : k ∉ S) : (1 + Matrix.single cb ca t : Matrix (Fin N) (Fin N) ℂ) k c = 0 := by
   have hne : k ≠ c := fun e => hk (e ▸ hc)
-  rw [SchurCalc.elem_apply, if_neg hne, if_neg, add_zero]
+  rw [SchurCalc.elem_apply, ite_eq_right hne, ite_eq_right, add_zero]
   rintro ⟨rfl, rfl⟩
   exact hk (hS hc)
 
@@ -116,9 +77,9 @@ theorem shear_main : ∀ (N j : ℕ) (a b ca cb : Fin N) (t : ℂ), j ≤ N → 
   unfold lastCol at hca
   have hblock : (ca : ℕ) < N - j ↔ (cb : ℕ) < N - j := by
     rcases hcase with h | h
-    · rw [if_pos (by omega)] at hca
+    · rw [ite_eq_left (by omega)] at hca
       omega
-    · rw [if_neg (by omega)] at hca
+    · rw [ite_eq_right (by omega)] at hca
       omega
   have hw : ca ∈ wIdx N j → cb ∈ wIdx N j := by
     simp only [wIdx, Finset.mem_filter, Finset.mem_univ, true_and]
@@ -132,13 +93,13 @@ theorem shear_main : ∀ (N j : ℕ) (a b ca cb : Fin N) (t : ℂ), j ≤ N → 
     have hi2 := i.2
     simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and]
     rcases hcase with h | h
-    · rw [if_pos (by omega)] at hca
+    · rw [ite_eq_left (by omega)] at hca
       split_ifs <;> omega
-    · rw [if_neg (by omega)] at hca
+    · rw [ite_eq_right (by omega)] at hca
       split_ifs <;> omega
   refine ⟨?_, det_shear hab t, ?_, ?_⟩
   · intro p q hpq
-    rw [SchurCalc.elem_apply, if_neg (fun e => hpq (by rw [e])), if_neg, add_zero]
+    rw [SchurCalc.elem_apply, ite_eq_right (fun e => hpq (by rw [e])), ite_eq_right, add_zero]
     rintro ⟨rfl, rfl⟩
     exact hpq hblock.symm
   · intro h i

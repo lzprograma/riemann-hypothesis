@@ -64,7 +64,7 @@ private theorem cyc {K : Type} [Field K] {τ : K} (hτ : τ ^ 2 - 4 ≠ 0) (j : 
     rw [Matrix.GeneralLinearGroup.val_mkOfDetNeZero]
     ext i k
     fin_cases i <;> fin_cases k <;> simp [Matrix.mul_apply, Fin.sum_univ_two] <;> first | ring1 | linear_combination (j ω 0 0) * hj - hd | linear_combination (j ω 1 0) * hj
-  · push_neg at hc
+  · push Not at hc
     by_cases hb : j ω 0 1 ≠ 0
     · simp only [hc, mul_zero, sub_zero] at hd
       refine ⟨Matrix.GeneralLinearGroup.mkOfDetNeZero !![0, j ω 0 1; 1, j ω 1 1]
@@ -72,7 +72,7 @@ private theorem cyc {K : Type} [Field K] {τ : K} (hτ : τ ^ 2 - 4 ≠ 0) (j : 
       rw [Matrix.GeneralLinearGroup.val_mkOfDetNeZero]
       ext i k
       fin_cases i <;> fin_cases k <;> simp [Matrix.mul_apply, Fin.sum_univ_two, hc] <;> first | ring1 | linear_combination (j ω 0 0) * hj - hd | linear_combination (j ω 1 0) * hj | linear_combination (j ω 0 1) * hj | linear_combination (j ω 1 1) * hj - hd
-    · push_neg at hb
+    · push Not at hb
       simp only [hb, hc, mul_zero, sub_zero] at hd
       have hne : j ω 1 1 - j ω 0 0 ≠ 0 := by
         intro h; apply hτ; rw [← hj]

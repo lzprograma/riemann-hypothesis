@@ -59,7 +59,6 @@ open GlobalTheory.Chain (signed)
 open GlobalTheory.Chain.RealIt (LPol locS locT IsPolyIso)
 open MeasureTheory Matrix
 open scoped TensorProduct InnerProductSpace ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.ArchRec
 
 namespace GlobalTheory.ArchRec.SideAt
@@ -86,10 +85,10 @@ theorem dI_eq_sum {p q : ℕ} (x : Ix p q → ℝ) : dI x = ∑ j, ((x j : ℂ) 
   by_cases hab : a = b
   · subst hab
     simp
-  · rw [if_neg hab, eq_comm]
+  · rw [ite_eq_right hab, eq_comm]
     apply Finset.sum_eq_zero
     intro j _
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨rfl, rfl⟩
     exact hab rfl
 

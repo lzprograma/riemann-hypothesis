@@ -246,7 +246,7 @@ theorem isCr_of_local : ∀ {l : ℕ} [Fact l.Prime] {G : Type} [Group G] [Topol
       ext k
       exact RingHom.map_mulVec (algebraMap B (Localization.AtPrime m.asIdeal)) _ x k) Finset.univ
   refine cr_sub hφ (resCoef ℚ_[l] (colRep ρ)) σ (qcont_colRep ρ hc) h1 f h3 ?_ h2
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   funext i
   exact eq_zero_of_localization _ fun J hJ => h4 x hx ⟨J, hJ⟩ (Finset.mem_univ _) i
@@ -610,8 +610,7 @@ theorem exists_GL_conj_eq_diagonal_of_charpoly_eq_prod :
     exact key (P a) b
   have hex : ∀ a, ∃ i j, IsUnit (aeval A (P a) i j) := by
     intro a
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     obtain ⟨u, hu⟩ := hq a
     set E := ((u⁻¹ : Cˣ) : C) • aeval A (P a) with hE
     have hEn : ∀ i j, ¬ IsUnit (E i j) := by
@@ -1267,12 +1266,12 @@ theorem GlobalTheory.CrysAnn.cocycle_crys_add_ann : LocalPublishedTheorems → �
   have hz : w ≠ 1 → ∀ g, (cW g : B) = 0 := by
     intro h1 g
     have := (cW g).2
-    simp only [I, LinearMap.mem_ker, LinearMap.lsmul_apply, hδ, if_neg h1, one_smul] at this
+    simp only [I, LinearMap.mem_ker, LinearMap.lsmul_apply, hδ, ite_eq_right h1, one_smul] at this
     exact this
   refine ⟨fun g => (cW g : B), fun g => ?_, ?_, fun h2 => funext fun g => hz (by omega) g⟩
   · by_cases h1 : w = 1
     · have := (cW g).2
-      simp only [I, LinearMap.mem_ker, LinearMap.lsmul_apply, hδ, if_pos h1, smul_eq_mul] at this
+      simp only [I, LinearMap.mem_ker, LinearMap.lsmul_apply, hδ, ite_eq_left h1, smul_eq_mul] at this
       exact this
     · show _ * (cW g : B) = 0
       rw [hz h1 g, mul_zero]
@@ -1357,12 +1356,12 @@ private theorem exists_character_filtration_of_sub_smul_mem {G E V : Type} [Grou
       by_cases hin : i < n
       · have h1 : i ≠ n + 1 := by omega
         have h2 : i + 1 ≠ n + 1 := by omega
-        simp only [h1, h2, if_false]
+        simp only [h1, h2, ite_false]
         exact hs i hin
       · have hi' : i = n := by omega
         subst hi'
         have h1 : i ≠ i + 1 := by omega
-        simp only [h1, if_true, if_false, hn]
+        simp only [h1, ite_true, ite_false, hn]
         exact ⟨le_sup_left, κ, hκ, v, rfl, fun g => hW (h v hv g)⟩
   have key : ∀ s : Finset V, (↑s : Set V) ⊆ F'' →
       ∃ (n : ℕ) (F : ℕ → Submodule E V), F 0 = ⊥ ∧ F n = F' ⊔ Submodule.span E (↑s : Set V) ∧
@@ -1891,8 +1890,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Polynomial Topology
 
-theorem _root_.GlobalTheory.T.saturatedOrdIdeal_points_isLCrystalline : LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : _root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition O D.η D.Ψ)), GlobalTheory.OrdLoc.PtsCr D U (GlobalTheory.OrdLoc.IY D U) := by
-  first | exact @GlobalTheory.OrdLoc.ptsCr_IY
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.SaturatedOrdIdealPointsIsLCrystallineStatement =====

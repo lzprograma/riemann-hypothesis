@@ -7,58 +7,8 @@ public import Formalism.FormalDegreeBessel.FinalG
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationContinuousOnInvertible
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RankOneEmbeddings
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Complex
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
@@ -85,56 +35,56 @@ abbrev mid (k r : ℕ) (i : Fin (2 * r + k + 1)) : Prop := r ≤ i.val ∧ i.val
 lemma emb_out_col (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * r + k + 1)) (hj : ¬ mid k r j) :
     embWb k r μ q j = if q = j then 1 else 0 := by
   unfold embWb
-  rw [dif_neg (fun h => hj h.2)]
+  rw [dite_eq_right (fun h => hj h.2)]
   have hj' : ¬ (r ≤ j.val ∧ j.val ≤ r + k) := hj
   by_cases h : q = j <;> simp [h, hj']
 
 lemma emb_out_row (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * r + k + 1)) (hq : ¬ mid k r q) :
     embWb k r μ q j = if q = j then 1 else 0 := by
   unfold embWb
-  rw [dif_neg (fun h => hq h.1)]
+  rw [dite_eq_right (fun h => hq h.1)]
   change (if q = j ∧ ¬ mid k r q then 1 else 0) = if q = j then 1 else 0
   simp [hq]
 
 lemma emb_mid (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * r + k + 1)) (hq : mid k r q) (hj : mid k r j) :
     embWb k r μ q j = μ ⟨q.val - r, by have := hq; omega⟩ ⟨j.val - r, by have := hj; omega⟩ := by
   unfold embWb
-  rw [dif_pos ⟨hq, hj⟩]
+  rw [dite_eq_left ⟨hq, hj⟩]
 
 lemma bc_mid_col (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (i j : Fin (2 * r + k + 1)) (hj : mid k r j) :
     bigCell k r c μ i j = if hi : mid k r i then μ ⟨i.val - r, by have := hi; omega⟩ ⟨j.val - r, by have := hj; omega⟩
       else 0 := by
   unfold bigCell
-  rw [dif_neg (show ¬ j.val < r by have := hj; omega), dif_pos hj.2]
+  rw [dite_eq_right (show ¬ j.val < r by have := hj; omega), dite_eq_left hj.2]
 
 lemma bc_mid_row_out (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (i j : Fin (2 * r + k + 1))
     (hi : mid k r i) (hj : ¬ mid k r j) : bigCell k r c μ i j = 0 := by
   have hjl := j.isLt
   unfold bigCell
   by_cases hj1 : j.val < r
-  · rw [dif_pos hj1, if_neg (by simp only [Fin.ext_iff, esI]; omega)]
-  · rw [dif_neg hj1, dif_neg (show ¬ j.val ≤ r + k by omega), if_neg (by omega)]
+  · rw [dite_eq_left hj1, ite_eq_right (by simp only [Fin.ext_iff, esI]; omega)]
+  · rw [dite_eq_right hj1, dite_eq_right (show ¬ j.val ≤ r + k by omega), ite_eq_right (by omega)]
 
 lemma bc_out_col (c : Fin r → ℂ) (μ ν : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (i j : Fin (2 * r + k + 1))
     (hj : ¬ mid k r j) : bigCell k r c μ i j = bigCell k r c ν i j := by
   unfold bigCell
   by_cases hj1 : j.val < r
-  · rw [dif_pos hj1, dif_pos hj1]
-  · rw [dif_neg hj1, dif_neg hj1, dif_neg (show ¬ j.val ≤ r + k by omega), dif_neg (show ¬ j.val ≤ r + k by omega)]
+  · rw [dite_eq_left hj1, dite_eq_left hj1]
+  · rw [dite_eq_right hj1, dite_eq_right hj1, dite_eq_right (show ¬ j.val ≤ r + k by omega), dite_eq_right (show ¬ j.val ≤ r + k by omega)]
 
 lemma bc_out_row (c : Fin r → ℂ) (μ ν : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (i j : Fin (2 * r + k + 1))
     (hi : ¬ mid k r i) : bigCell k r c μ i j = bigCell k r c ν i j := by
   by_cases hj : mid k r j
-  · rw [bc_mid_col c μ i j hj, bc_mid_col c ν i j hj, dif_neg hi, dif_neg hi]
+  · rw [bc_mid_col c μ i j hj, bc_mid_col c ν i j hj, dite_eq_right hi, dite_eq_right hi]
   · exact bc_out_col c μ ν i j hj
 
 lemma bc_one_mid (c : Fin r → ℂ) (i j : Fin (2 * r + k + 1)) (hi : mid k r i) (hj : mid k r j) :
     bigCell k r c 1 i j = if i = j then 1 else 0 := by
-  rw [bc_mid_col c 1 i j hj, dif_pos hi, Matrix.one_apply]
+  rw [bc_mid_col c 1 i j hj, dite_eq_left hi, Matrix.one_apply]
   simp only [Fin.ext_iff]
   by_cases h : i.val = j.val
-  · rw [if_pos (by omega), if_pos h]
-  · rw [if_neg (by omega), if_neg h]
+  · rw [ite_eq_left (by omega), ite_eq_left h]
+  · rw [ite_eq_right (by omega), ite_eq_right h]
 
 theorem bigCellFactor : BigCellFactor := by
   apply Formalism.FourierDecayAlt.P.bruhat_big_cell_factorization
@@ -170,20 +120,20 @@ lemma emb_wI (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (a b : Fin (k + 1)) :
 
 lemma jV_wI (u : Fin (k + 1) → ℂ) (a : Fin (k + 1)) : jV k r u (wI k r a) = u a := by
   unfold jV
-  rw [dif_pos (mid_wI a)]
+  rw [dite_eq_left (mid_wI a)]
   congr 1
   apply Fin.ext
   simp [wI]
 
 lemma jV_out (u : Fin (k + 1) → ℂ) {i : Fin (2 * r + k + 1)} (hi : ¬ mid k r i) : jV k r u i = 0 := by
   unfold jV
-  rw [dif_neg hi]
+  rw [dite_eq_right hi]
 
 lemma mul_emb_out (M : Mat k r) (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (i j : Fin (2 * r + k + 1))
     (hj : ¬ mid k r j) : (M * embWb k r μ) i j = M i j := by
   rw [Matrix.mul_apply, Finset.sum_eq_single j]
-  · rw [emb_out_col μ j j hj, if_pos rfl, mul_one]
-  · intro q _ hq; rw [emb_out_col μ q j hj, if_neg hq, mul_zero]
+  · rw [emb_out_col μ j j hj, ite_eq_left rfl, mul_one]
+  · intro q _ hq; rw [emb_out_col μ q j hj, ite_eq_right hq, mul_zero]
   · intro h; exact absurd (Finset.mem_univ _) h
 
 lemma mul_emb_mid (M : Mat k r) (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (i : Fin (2 * r + k + 1))
@@ -191,13 +141,13 @@ lemma mul_emb_mid (M : Mat k r) (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (i
   rw [Matrix.mul_apply, sum_mid]
   · simp only [emb_wI]
   · intro q hq
-    rw [emb_out_row μ q _ hq, if_neg (show ¬ (q = wI k r b) from fun h => hq (h ▸ mid_wI b)), mul_zero]
+    rw [emb_out_row μ q _ hq, ite_eq_right (show ¬ (q = wI k r b) from fun h => hq (h ▸ mid_wI b)), mul_zero]
 
 lemma emb_mul_out (M : Mat k r) (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (i j : Fin (2 * r + k + 1))
     (hi : ¬ mid k r i) : (embWb k r μ * M) i j = M i j := by
   rw [Matrix.mul_apply, Finset.sum_eq_single i]
-  · rw [emb_out_row μ i i hi, if_pos rfl, one_mul]
-  · intro q _ hq; rw [emb_out_row μ i q hi, if_neg (fun h => hq h.symm), zero_mul]
+  · rw [emb_out_row μ i i hi, ite_eq_left rfl, one_mul]
+  · intro q _ hq; rw [emb_out_row μ i q hi, ite_eq_right (fun h => hq h.symm), zero_mul]
   · intro h; exact absurd (Finset.mem_univ _) h
 
 lemma emb_mul_mid (M : Mat k r) (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (a : Fin (k + 1))
@@ -205,7 +155,7 @@ lemma emb_mul_mid (M : Mat k r) (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (a
   rw [Matrix.mul_apply, sum_mid]
   · simp only [emb_wI]
   · intro q hq
-    rw [emb_out_col μ _ q hq, if_neg (show ¬ (wI k r a = q) from fun h => hq (h ▸ mid_wI a)), zero_mul]
+    rw [emb_out_col μ _ q hq, ite_eq_right (show ¬ (wI k r a = q) from fun h => hq (h ▸ mid_wI a)), zero_mul]
 
 lemma wbPart_jV (u : Fin (k + 1) → ℂ) : wbPart k r (jV k r u) = u := by
   funext a
@@ -234,7 +184,7 @@ lemma emb_mulVec_jV (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (u : Fin (k + 
   · rw [jV_out _ hi]
     apply Finset.sum_eq_zero
     intro b _
-    rw [emb_out_row μ i _ hi, if_neg (show ¬ (i = wI k r b) from fun h => hi (h ▸ mid_wI b)), zero_mul]
+    rw [emb_out_row μ i _ hi, ite_eq_right (show ¬ (i = wI k r b) from fun h => hi (h ▸ mid_wI b)), zero_mul]
 
 lemma Hpk_wI (a b : Fin (k + 1)) : Hpk k r (wI k r a) (wI k r b) = Hb k a b := by
   rw [GBasic.Hpk_eq, GBasic.sig_mid _ _ _ (mid_wI a).1 (mid_wI a).2]
@@ -242,23 +192,23 @@ lemma Hpk_wI (a b : Fin (k + 1)) : Hpk k r (wI k r a) (wI k r b) = Hb k a b := b
   rw [Matrix.diagonal_apply]
   by_cases h : a = b
   · subst h
-    rw [if_pos rfl, if_pos rfl]
+    rw [ite_eq_left rfl, ite_eq_left rfl]
     simp [GBasic.sgn, wI, Fin.ext_iff]
-  · rw [if_neg h, if_neg (fun h' => h (wI_inj h').symm)]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h (wI_inj h').symm)]
 
 lemma Hpk_mid_out {i j : Fin (2 * r + k + 1)} (hi : mid k r i) (hj : ¬ mid k r j) : Hpk k r i j = 0 := by
-  rw [GBasic.Hpk_eq, GBasic.sig_mid _ _ _ hi.1 hi.2, if_neg (show ¬ (j = i) from fun h => hj (h ▸ hi))]
+  rw [GBasic.Hpk_eq, GBasic.sig_mid _ _ _ hi.1 hi.2, ite_eq_right (show ¬ (j = i) from fun h => hj (h ▸ hi))]
 
 lemma sig_out {i : Fin (2 * r + k + 1)} (hi : ¬ mid k r i) : ¬ mid k r (GBasic.sig k r i) := by
   have h := GBasic.sig_val k r i
   have hl := i.isLt
-  rw [if_pos (by omega)] at h
+  rw [ite_eq_left (by omega)] at h
   intro hm
   have := hm
   omega
 
 lemma Hpk_out_mid {i j : Fin (2 * r + k + 1)} (hi : ¬ mid k r i) (hj : mid k r j) : Hpk k r i j = 0 := by
-  rw [GBasic.Hpk_eq, if_neg (show ¬ (j = GBasic.sig k r i) from fun h => sig_out hi (h ▸ hj))]
+  rw [GBasic.Hpk_eq, ite_eq_right (show ¬ (j = GBasic.sig k r i) from fun h => sig_out hi (h ▸ hj))]
 
 lemma herm_jV (u u' : Fin (k + 1) → ℂ) : herm (Hpk k r) (jV k r u) (jV k r u') = herm (Hb k) u u' := by
   show ∑ i, star (jV k r u') i * ∑ j, Hpk k r i j * jV k r u j = ∑ a, star u' a * ∑ b, Hb k a b * u b
@@ -269,34 +219,13 @@ lemma herm_jV (u u' : Fin (k + 1) → ℂ) : herm (Hpk k r) (jV k r u) (jV k r u
   simp only [Pi.star_apply, jV_wI, Hpk_wI]
 
 lemma emb_mul (a b : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) : embWb k r (a * b) = embWb k r a * embWb k r b := by
-  ext i j
-  by_cases hi : mid k r i
-  · by_cases hj : mid k r j
-    · obtain ⟨x, rfl⟩ := mid_exists hi
-      obtain ⟨y, rfl⟩ := mid_exists hj
-      rw [mul_emb_mid, emb_wI, Matrix.mul_apply]
-      simp only [emb_wI]
-    · rw [mul_emb_out _ _ _ _ hj, emb_out_col _ _ _ hj, emb_out_col _ _ _ hj]
-  · rw [emb_mul_out _ _ _ _ hi, emb_out_row _ _ _ hi, emb_out_row _ _ _ hi]
+  apply _root_.Formalism.FourierDecayAlt.P.B2x3.emb_mul <;> assumption
 
 lemma emb_one : embWb k r 1 = 1 := by
-  ext i j
-  rw [Matrix.one_apply]
-  by_cases hi : mid k r i
-  · by_cases hj : mid k r j
-    · obtain ⟨x, rfl⟩ := mid_exists hi
-      obtain ⟨y, rfl⟩ := mid_exists hj
-      rw [emb_wI, Matrix.one_apply]
-      simp only [wI_inj.eq_iff]
-    · rw [emb_out_col _ _ _ hj]
-  · rw [emb_out_row _ _ _ hi]
+  apply _root_.Formalism.FourierDecayAlt.P.B2x3.emb_one <;> assumption
 
 lemma Hb_herm : (Hb k)ᴴ = Hb k := by
-  unfold Hb
-  rw [Matrix.diagonal_conjTranspose]
-  congr 1
-  funext j
-  by_cases h : j = Fin.last k <;> simp [h]
+  apply _root_.Formalism.FourierDecayAlt.P.B2x3.Hb_conjT <;> assumption
 
 lemma Hb_sq : Hb k * Hb k = 1 := by
   unfold Hb
@@ -448,19 +377,19 @@ lemma UWb_iff (g : Mat k r) : g ∈ UWb k r ↔ ∃ μ ∈ UH (Hb k), g = embWb 
       have h1 : ∀ b, (gᴴ * Hpk k r) (GBasic.sig k r i) b = Hpk k r (GBasic.sig k r i) b := by
         intro b
         rw [Matrix.mul_apply, Finset.sum_eq_single (GBasic.sig k r i)]
-        · rw [Matrix.conjTranspose_apply, hcol _ _ hp, if_pos rfl, star_one, one_mul]
+        · rw [Matrix.conjTranspose_apply, hcol _ _ hp, ite_eq_left rfl, star_one, one_mul]
         · intro q _ hq
-          rw [Matrix.conjTranspose_apply, hcol _ _ hp, if_neg hq, star_zero, zero_mul]
+          rw [Matrix.conjTranspose_apply, hcol _ _ hp, ite_eq_right hq, star_zero, zero_mul]
         · intro h; exact absurd (Finset.mem_univ _) h
       simp only [h1] at h
       rw [Finset.sum_eq_single i] at h
-      · rw [GBasic.Hpk_eq, GBasic.sig_sig, if_pos rfl] at h
+      · rw [GBasic.Hpk_eq, GBasic.sig_sig, ite_eq_left rfl] at h
         have hs : GBasic.sgn k r (GBasic.sig k r i) ≠ 0 := by
           unfold GBasic.sgn
           split_ifs <;> simp
         exact (mul_eq_zero.1 h).resolve_left hs
       · intro q _ hq
-        rw [GBasic.Hpk_eq, GBasic.sig_sig, if_neg hq, zero_mul]
+        rw [GBasic.Hpk_eq, GBasic.sig_sig, ite_eq_right hq, zero_mul]
       · intro h; exact absurd (Finset.mem_univ _) h
     have hge : g = embWb k r (Matrix.of fun a b => g (wI k r a) (wI k r b)) := by
       ext i j
@@ -469,7 +398,7 @@ lemma UWb_iff (g : Mat k r) : g ∈ UWb k r ↔ ∃ μ ∈ UH (Hb k), g = embWb 
         · obtain ⟨x, rfl⟩ := mid_exists hi
           obtain ⟨y, rfl⟩ := mid_exists hj
           rw [emb_wI, Matrix.of_apply]
-        · rw [hrow i j hi hj, emb_out_row _ _ _ hi, if_neg (show ¬ (i = j) from fun h => hi (h ▸ hj))]
+        · rw [hrow i j hi hj, emb_out_row _ _ _ hi, ite_eq_right (show ¬ (i = j) from fun h => hi (h ▸ hj))]
       · rw [hcol i j hj, emb_out_col _ _ _ hj]
     refine ⟨_, ?_, hge⟩
     rw [← emb_form (r := r), ← hge]
@@ -958,9 +887,9 @@ lemma lint_Wf (n : ℕ) (T T' : ℝ) (φ : ℂ → ℝ≥0∞) :
   unfold Wf zWeight
   rw [Set.indicator_apply]
   by_cases h : T * T' < Complex.normSq ζ
-  · rw [if_pos h.le, if_pos (show ζ ∈ {ζ : ℂ | T * T' < Complex.normSq ζ} from h), Nat.add_sub_cancel]
-  · rw [if_neg (fun h' => h (lt_of_le_of_ne h' (Ne.symm hζ))),
-      if_neg (show ¬ ζ ∈ {ζ : ℂ | T * T' < Complex.normSq ζ} from h)]; simp
+  · rw [ite_eq_left h.le, ite_eq_left (show ζ ∈ {ζ : ℂ | T * T' < Complex.normSq ζ} from h), Nat.add_sub_cancel]
+  · rw [ite_eq_right (fun h' => h (lt_of_le_of_ne h' (Ne.symm hζ))),
+      ite_eq_right (show ¬ ζ ∈ {ζ : ℂ | T * T' < Complex.normSq ζ} from h)]; simp
 
 lemma lint_scale {a : ℝ} (ha : a ≠ 0) {g : ℂ → ℝ≥0∞} (hg : Measurable g) :
     (∫⁻ y : ℂ, g ((a : ℂ) * y)) = ENNReal.ofReal ((a ^ 2)⁻¹) * ∫⁻ ζ : ℂ, g ζ := by
@@ -1010,13 +939,13 @@ lemma refl_eq (n : ℕ) {T T' : ℝ} (hT : 0 < T) (hT' : 0 < T') (φ : ℂ → �
       rw [hN, div_mul_eq_mul_div, lt_div_iff₀ hs0, sub_pos]
       exact mul_lt_mul_iff_right₀ hTT
     by_cases h : 0 < Complex.normSq y - s
-    · rw [if_pos (show Complex.normSq y - s ∈ Ioi (0 : ℝ) from h),
-        if_pos (show cs T T' s * y ∈ {ζ : ℂ | T * T' < Complex.normSq ζ} from hiff.2 h), ← mul_assoc,
+    · rw [ite_eq_left (show Complex.normSq y - s ∈ Ioi (0 : ℝ) from h),
+        ite_eq_left (show cs T T' s * y ∈ {ζ : ℂ | T * T' < Complex.normSq ζ} from hiff.2 h), ← mul_assoc,
         ← ENNReal.ofReal_mul (by positivity), ← mul_pow, hN]
       congr 3
       field_simp
-    · rw [if_neg (show ¬ Complex.normSq y - s ∈ Ioi (0 : ℝ) from h),
-        if_neg (show ¬ cs T T' s * y ∈ {ζ : ℂ | T * T' < Complex.normSq ζ} from fun h' => h (hiff.1 h')), mul_zero]
+    · rw [ite_eq_right (show ¬ Complex.normSq y - s ∈ Ioi (0 : ℝ) from h),
+        ite_eq_right (show ¬ cs T T' s * y ∈ {ζ : ℂ | T * T' < Complex.normSq ζ} from fun h' => h (hiff.1 h')), mul_zero]
   · rw [Set.indicator_of_notMem hs, Set.indicator_of_notMem hs, mul_zero, ite_self]
 
 def Jc (n : ℕ) (T T' : ℝ) : ℝ≥0∞ :=
@@ -1347,7 +1276,7 @@ lemma ae_weight (k : ℕ) (T T' : ℝ) :
   by_contra hlt
   apply h0
   unfold zWeight
-  rw [if_neg (fun hle => hlt (lt_of_le_of_ne hle (Ne.symm hζ)))]
+  rw [ite_eq_right (fun hle => hlt (lt_of_le_of_ne hle (Ne.symm hζ)))]
   simp
 
 lemma avg {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) {μW : Measure (Mt k r)} [SFinite μW]

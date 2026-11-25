@@ -5,45 +5,6 @@ public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfP
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SumPiFinsetFinSuccCons
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SumValsQOfInvariant
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastTwoStepsGuarded
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -124,7 +85,7 @@ theorem chArg_int {n' c' n c : ℕ} {x : HomE E (n' + c') (n + c)}
       have h3 := mem_homS_sclLat.1 h ⟨_, h1⟩ ⟨_, h2⟩
       have e : LocE.scE n' (fun i => i + 1) (n' + i + 1) - LocE.scE n (fun i => i + 1) (n + i) = 1 := by
         unfold LocE.scE
-        rw [if_neg (by omega), if_neg (by omega)]
+        rw [ite_eq_right (by omega), ite_eq_right (by omega)]
         dsimp only
         omega
       rw [e, zpow_one, mul_comm] at h3
@@ -244,7 +205,7 @@ theorem entryAtG : EntryAtG := by
   have hbe := hL.stabG (i + 1) be P hP
   have hJ : Jat (Pr := Pr) cst.sharp (i + 1) P.1 ≤ stabL X.E _ (lamYat (Pr := Pr) (R := R) (i + 1) P.1) := by
     unfold Jat lamYat
-    rw [if_pos hP, if_pos hP]
+    rw [ite_eq_left hP, ite_eq_left hP]
     split_ifs
     · exact inf_le_left
     · exact inf_le_left
@@ -263,10 +224,10 @@ theorem entryAtG : EntryAtG := by
       (LocE.lamY P.1 (qOf P.1) (R.N (i + 1)) (cOf R (i + 1)) fun i => i + 1))
       (omPhi Ch sel mu cst i P (L.h i al P) (L.h (i + 1) be P)) := by
     unfold lamYat at hal hbe
-    rw [if_pos hP] at hal hbe
+    rw [ite_eq_left hP] at hal hbe
     refine good_om_two ?_ _ _ _ hal hbe
     unfold PhiAt
-    rw [if_pos hP]
+    rw [ite_eq_left hP]
     split_ifs
     · exact good_PhiGS _ _ h1 h2 h3 h4
     · exact good_PhiG _ _ h1 h2 h3 h4

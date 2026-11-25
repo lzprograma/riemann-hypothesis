@@ -9,6 +9,7 @@ import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.TotallySplit
 import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRatA
+import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCoordCurveAlgebraic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitCurve, GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCurve
@@ -155,40 +156,15 @@ theorem comap_ker_coneMapQ (x : Cone n (AlgebraicClosure ℚ)) :
 
 omit [DecidableEq ι] in
 theorem ker_coneMapQ (x : Cone n (AlgebraicClosure ℚ)) :
-    RingHom.ker (coneMapQ x) = ReciprocityTheory.AnForm.R.extQ (orbitIdeal x) := by
-  have := isPrime_orbitIdeal x
-  have hz : ∀ m : ℤ, (C m : MvPolynomial (Coord n) ℤ) ∈ orbitIdeal x → m = 0 := fun m hm ↦ by
-    have h : m ∈ (orbitIdeal x).comap (C : ℤ →+* MvPolynomial (Coord n) ℤ) := hm
-    rwa [show (orbitIdeal x).comap (C : ℤ →+* MvPolynomial (Coord n) ℤ) = ⊥ from
-      isHorizontal_orbitIdeal x, Ideal.mem_bot] at h
-  obtain ⟨-, hc, -⟩ := ReciprocityTheory.AnForm.R.extQ_spec (orbitIdeal x) hz
-  have hle : ReciprocityTheory.AnForm.R.extQ (orbitIdeal x) ≤ RingHom.ker (coneMapQ x) :=
-    Ideal.map_le_iff_le_comap.mpr (comap_ker_coneMapQ x).ge
-  refine (eq_of_le_of_not_lt hle fun hlt ↦ ?_).symm
-  have h := ReciprocityTheory.AnForm.R.IntegerToRational.comap_strictMono hlt
-  simp only [hc, comap_ker_coneMapQ] at h
-  exact lt_irrefl _ h
-
+    RingHom.ker (coneMapQ x) = ReciprocityTheory.AnForm.R.extQ (orbitIdeal x) :=
+  IndefiniteRowSideFullHecke.HeightsSet.CoordCurveDegree.ker_coneMapQ_of_isHorizontal
+    (isPrime_orbitIdeal x) (isHorizontal_orbitIdeal x)
 
 omit [Fintype ι] [DecidableEq ι] in
 theorem algebraicIndependent_C_mul_X (a : ι → AlgebraicClosure ℚ) (ha : ∀ k, a k ≠ 0) :
-    AlgebraicIndependent ℚ (fun k ↦ (C (a k) * X k : MvPolynomial ι (AlgebraicClosure ℚ))) := by
-  let φ : MvPolynomial ι (AlgebraicClosure ℚ) →ₐ[AlgebraicClosure ℚ]
-      MvPolynomial ι (AlgebraicClosure ℚ) := aeval fun k ↦ C (a k) * X k
-  let ψ : MvPolynomial ι (AlgebraicClosure ℚ) →ₐ[AlgebraicClosure ℚ]
-      MvPolynomial ι (AlgebraicClosure ℚ) := aeval fun k ↦ C (a k)⁻¹ * X k
-  have hψφ : ψ.comp φ = AlgHom.id _ _ := by
-    refine MvPolynomial.algHom_ext fun k ↦ ?_
-    simp only [φ, ψ, AlgHom.comp_apply, aeval_X, map_mul, aeval_C, MvPolynomial.algebraMap_eq,
-      AlgHom.id_apply]
-    rw [← mul_assoc, ← C_mul, mul_inv_cancel₀ (ha k), C_1, one_mul]
-  have hφ : Function.Injective φ := Function.LeftInverse.injective (g := ψ) fun p ↦ by
-    rw [← AlgHom.comp_apply, hψφ, AlgHom.id_apply]
-  have h := ((MvPolynomial.algebraicIndependent_X ι (AlgebraicClosure ℚ)).map' hφ).restrictScalars
+    AlgebraicIndependent ℚ (fun k ↦ (C (a k) * X k : MvPolynomial ι (AlgebraicClosure ℚ))) :=
+  (IndefiniteRowSideFullHecke.HeightsSet.CoordCurveDegree.algebraicIndependent_C_mul_X a ha).restrictScalars
     (R := ℚ) (algebraMap ℚ (AlgebraicClosure ℚ)).injective
-  convert h using 1
-  funext k
-  simp [φ]
 
 theorem trdeg_range_coneMapQ {x : Cone n (AlgebraicClosure ℚ)} (hx : BlockNonzero x) :
     trdeg ℚ (coneMapQ x).range = Fintype.card ι := by

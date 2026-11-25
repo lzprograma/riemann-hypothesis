@@ -4,52 +4,10 @@ public import Formalism.SharpRestriction.CuspSpanNormBounds.PlaceDegreeData
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
 public import Formalism.SatakeDualWeyl.StatementC
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -85,13 +43,13 @@ theorem aut_isHCParam_lamS (R : Ranks) (P : HCParam R) : Formalism.QuantumDeterm
   have hv : ∀ (j : ℕ) (hj : j < R.k - 1) (x : Fin R.r), x.val = j → lamS R P x = (P.v ⟨j, hj⟩ : ℝ) := by
     intro j hj x hx
     subst hx
-    simp only [lamS, dif_pos hj]
+    simp only [lamS, dite_eq_left hj]
   have hb : ∀ (j : ℕ) (hj : j < R.m) (x : Fin R.r), x.val = R.k - 1 + j → lamS R P x = -(P.b ⟨j, hj⟩ : ℝ) := by
     intro j hj x hx
     have h1 : ¬ x.val < R.k - 1 := by omega
     have h2 : x.val - (R.k - 1) < R.m := by omega
     have e : (⟨x.val - (R.k - 1), h2⟩ : Fin R.m) = ⟨j, hj⟩ := Fin.ext (show x.val - (R.k - 1) = j by omega)
-    simp only [lamS, dif_neg h1, dif_pos h2, e]
+    simp only [lamS, dite_eq_right h1, dite_eq_left h2, e]
   refine ⟨aut_strictAnti_of_step _ ?_, ?_⟩
   · intro i hi
     have hir : i.val + 1 < R.k + R.m - 1 := hr ▸ hi
@@ -176,27 +134,6 @@ theorem unitary_points_rank_zero_subsingleton {F E : Type} [Field F] [NumberFiel
   exact i.elim0
 
 attribute [local instance] unitary_points_rank_zero_subsingleton
-
-def aut_inst0 (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
-    (cm : CMData F E) : AutInst :=
-  letI : TopologicalSpace (Formalism.UG.UPts cm.sig (0 : Matrix (Fin 0) (Fin 0) E) (Af F)) := ⊥
-  { F := F, E := E, cm := cm, n := 0, J := 0
-    J_herm := Subsingleton.elim _ _
-    J_det := by simp
-    L := ⊤
-    L_span := Subsingleton.elim _ _
-    L_fg := by rw [Subsingleton.elim (⊤ : Submodule (𝓞 E) (Fin 0 → E)) ⊥]; exact Submodule.fg_bot
-    L_dual := fun x => ⟨fun _ y _ => ⟨0, by simp [Formalism.UG.hform]⟩, fun _ => trivial⟩
-    ε := fun _ i => i.elim0
-    φ := fun v => (aut_exists_emb F E cm v).choose
-    φ_over := fun v => (aut_exists_emb F E cm v).choose_spec
-    P := fun _ => 1
-    P_unit := fun _ => isUnit_one
-    P_spec := fun _ => Subsingleton.elim _ _
-    topf := ⊥
-    topf_group := inferInstance
-    topf_open := fun _ _ => isOpen_discrete _
-    topf_basis := fun U hU => ⟨1, le_rfl, fun x _ => by rw [Subsingleton.elim x 1]; exact mem_of_mem_nhds hU⟩ }
 
 theorem aut_Jm_allPos (n : ℕ) : Formalism.REAL.Jm (allPos n) = 1 := by
   unfold Formalism.REAL.Jm allPos
@@ -452,12 +389,6 @@ theorem aut_HTop_holds {F E : Type} [Field F] [NumberField F] [Field E] [NumberF
         (x : GL (Fin n) (E ⊗[F] Af F)) g hg
       exact ⟨g', hg', fun k hk => h' k hk⟩)
   exact ⟨t, ht1, ht2, ht3⟩
-
-section AtRecord
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-end AtRecord
 
 end Aut
 

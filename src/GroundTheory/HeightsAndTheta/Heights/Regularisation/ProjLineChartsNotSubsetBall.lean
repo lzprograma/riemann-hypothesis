@@ -41,7 +41,7 @@ variable {D : ℕ} {X : Type*} [TopologicalSpace X] {A : FinHolAtlas D X}
 namespace RegCharts
 
 def ofPotentialCharts [CompactSpace X] (P : PotentialCharts A) (om : LocPot X)
-    (om_pot : IsPotential A om) (om_pos : IsPosPot A om) : RegCharts A where
+    (_om_pot : IsPotential A om) (_om_pos : IsPosPot A om) : RegCharts A where
   n := P.N
   ψ := P.chart
   compat := P.compat
@@ -49,8 +49,6 @@ def ofPotentialCharts [CompactSpace X] (P : PotentialCharts A) (om : LocPot X)
   W' j := (P.chart j).target ∩ (P.chart j).symm ⁻¹' P.mid j
   W'' j := (P.chart j).target ∩ (P.chart j).symm ⁻¹' P.inner j
   isOpen_kappaOpenNeighbourhood j := (P.chart j).open_target
-  isOpen_alt j := (P.chart j).isOpen_inter_preimage_symm (P.isOpen_mid j)
-  isOpen_alt_alt j := (P.chart j).isOpen_inter_preimage_symm (P.isOpen_inner j)
   W_subset _ := subset_rfl
   isCompact_closure_middle j :=
     (closure_image_subset (P.chart j) (P.closure_mid j)).1.of_isClosed_subset isClosed_closure
@@ -73,29 +71,10 @@ def ofPotentialCharts [CompactSpace X] (P : PotentialCharts A) (om : LocPot X)
     rw [(P.chart j).left_inv hs]
     exact hj
   θ := P.th
-  θ_pot := P.th_pot
   om := om
-  om_pot := om_pot
-  om_pos := om_pos
-  q := P.q
-  q_smooth := P.q_smooth
-  q_θ j y hy _ := by
-    obtain ⟨V, hV, hyV, G, hG, hq⟩ := P.q_th j y y ⟨P.th.mem_U y, hy⟩
-    refine ⟨V, hV, hyV, fun x => -G x, fun k => (hG k).neg, fun x hx _ => ?_⟩
-    have := hq x hx
-    simp only [Complex.neg_re]
-    linarith
 
 variable [CompactSpace X] (P : PotentialCharts A) (om : LocPot X) (om_pot : IsPotential A om)
   (om_pos : IsPosPot A om)
-
-end RegCharts
-
-namespace RegCharts
-
-variable (R : RegCharts A)
-
-variable [T2Space X] (hW : ∀ j, R.W j ⊆ ball 0 1)
 
 end RegCharts
 
@@ -177,39 +156,8 @@ def ofRegular [CompactSpace X] (R : RegChartDataA A) (om : LocPot X) (om_pot : I
     ring
   one_le_r := R.one_le_r
   φ := R.ph
-  φ_smooth := R.ph_smooth
-  psh := R.u_psh
-  C := |R.Clog| + |R.Cph| + |R.Cgrad|
-  φ_le x hx := (R.ph_le x hx).trans
-    (by linarith [le_abs_self R.Cph, abs_nonneg R.Clog, abs_nonneg R.Cgrad])
-  le_φ x hx := by
-    have h1 := R.ph_ge x hx
-    have h2 : 0 ≤ Real.log (R.r x) := Real.log_nonneg (R.one_le_r x hx)
-    have h3 : R.Clog ≤ |R.Clog| + |R.Cph| + |R.Cgrad| := by
-      linarith [le_abs_self R.Clog, abs_nonneg R.Cph, abs_nonneg R.Cgrad]
-    nlinarith
-  grad j z hz := by
-    have hYo : (R.chart j).symm z ∈ R.Yo :=
-      (R.mem_Yo j _ ((R.chart j).map_target hz.1)).2 (by rw [(R.chart j).right_inv hz.1]; exact hz.2)
-    have hr : 1 ≤ R.r ((R.chart j).symm z) := R.one_le_r _ hYo
-    have hC0 : 0 ≤ |R.Clog| + |R.Cph| + |R.Cgrad| := by positivity
-    have hCg : |R.Cgrad| ≤ |R.Clog| + |R.Cph| + |R.Cgrad| := by
-      linarith [abs_nonneg R.Clog, abs_nonneg R.Cph]
-    have hpos : 0 ≤ R.r ((R.chart j).symm z) ^ R.Cgrad := Real.rpow_nonneg (by linarith) _
-    have h1 : R.Cgrad * R.r ((R.chart j).symm z) ^ R.Cgrad ≤
-        (|R.Clog| + |R.Cph| + |R.Cgrad|) * R.r ((R.chart j).symm z) ^ (|R.Clog| + |R.Cph| + |R.Cgrad|) :=
-      calc R.Cgrad * R.r ((R.chart j).symm z) ^ R.Cgrad
-          ≤ (|R.Clog| + |R.Cph| + |R.Cgrad|) * R.r ((R.chart j).symm z) ^ R.Cgrad :=
-            mul_le_mul_of_nonneg_right ((le_abs_self _).trans hCg) hpos
-        _ ≤ _ := mul_le_mul_of_nonneg_left
-            (Real.rpow_le_rpow_of_exponent_le hr ((le_abs_self _).trans hCg)) hC0
-    exact (R.grad_le j z hz).trans (mul_le_mul_of_nonneg_right h1 (Real.exp_pos _).le)
 
 end RegChartData
-
-namespace BoundedThPsh
-
-end BoundedThPsh
 
 end
 

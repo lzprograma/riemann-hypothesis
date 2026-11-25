@@ -1,40 +1,6 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchCut
@@ -45,7 +11,6 @@ open NumberField IsDedekindDomain ValuativeRel Polynomial Formalism.ConjugateSel
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Shin
 open GroundTheory.Global GroundTheory.Global.SemiLocal UpperTheory.V.Published UpperTheory.CBC UpperTheory.Gal.InertialTypesAlt
 open scoped Classical
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 private theorem hcL_cons_of {F : Type} [Field F] (p : Σ m : ℕ, GL (Fin m) F → ℂ)
     (Y : List (Σ m : ℕ, GL (Fin m) F → ℂ)) (b : ℕ) (h : (Y.map Sigma.fst).sum = b) (n : ℕ) :
@@ -71,37 +36,37 @@ private theorem collapse {G X Z : Type} [Finite G] [Finite X] [Finite Z]
     by_cases hI : I p
     · by_cases hB : B (br p)
       · have hAp : A p := (hA p).2 ⟨hI, hB⟩
-        rw [dif_pos hAp, hw p hAp hB, Fintype.sum_eq_single (tl p), Fintype.sum_eq_single ⟨br p, hB⟩]
+        rw [dite_eq_left hAp, hw p hAp hB, Fintype.sum_eq_single (tl p), Fintype.sum_eq_single ⟨br p, hB⟩]
         · simp [hI]
           ring
         · intro q hq
-          rw [if_neg]
+          rw [ite_eq_right]
           · simp
           · rintro ⟨_, _, h⟩
             exact hq (Subtype.ext h.symm)
         · intro x hx
           apply Finset.sum_eq_zero
           intro q _
-          rw [if_neg]
+          rw [ite_eq_right]
           · simp
           · rintro ⟨_, h, _⟩
             exact hx h.symm
-      · rw [dif_neg (fun h => hB ((hA p).1 h).2)]
+      · rw [dite_eq_right (fun h => hB ((hA p).1 h).2)]
         apply Finset.sum_eq_zero
         intro x _
         apply Finset.sum_eq_zero
         intro q _
-        rw [if_neg]
+        rw [ite_eq_right]
         · simp
         · rintro ⟨_, _, h⟩
           exact hB (h ▸ q.2)
-    · rw [dif_neg (fun h => hI ((hA p).1 h).1)]
+    · rw [dite_eq_right (fun h => hI ((hA p).1 h).1)]
       simp [hI]
   simp only [finsum_eq_sum_of_fintype, Finset.mul_sum]
   rw [Finset.sum_congr rfl fun x _ => Finset.sum_comm, Finset.sum_comm,
     Finset.sum_congr rfl fun p _ => key p, ← Fintype.sum_subtype_add_sum_subtype A,
-    Finset.sum_congr rfl fun p _ => dif_pos p.2,
-    Finset.sum_congr rfl (fun (p : {p // ¬A p}) _ => dif_neg p.2), Finset.sum_const_zero, add_zero]
+    Finset.sum_congr rfl fun p _ => dite_eq_left p.2,
+    Finset.sum_congr rfl (fun (p : {p // ¬A p}) _ => dite_eq_right p.2), Finset.sum_const_zero, add_zero]
 
 theorem UpperTheory.Gal.InertialTypesAlt.frobL :
     FrobTwo → ResCl → ParCons → FrobL := by

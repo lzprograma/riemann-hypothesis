@@ -140,13 +140,4 @@ theorem residue_le_height_nonprime (hOK : M.OK) (hR : P.RelG (theta M))
 
 end HpSec
 
-section GlueSec
-
-variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
-variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E]
-variable {M : Model F E} {V : Type} [AddCommGroup V] [Module E V]
-variable {H : HermSp M V} {r : ℕ} {P : FPair H r}
-
-end GlueSec
-
 end Formalism.L2.SG.Pf

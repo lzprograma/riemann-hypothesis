@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfLocGlob
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MemOfBcPMem
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocFacts
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SaturatedPf
@@ -8,45 +9,7 @@ import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCou
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocEqOfLocFEq
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.WithZeroLeOneEqExp
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DifferentCoprimeSplit
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -58,8 +21,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 open Formalism.L2.SG.Pf.AtPt
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section LocalXS
 
@@ -256,30 +217,7 @@ section Main
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D)
 
 theorem int_of_loc (c : D.host.E) (h : ∀ p : PlF D, (D.s.atP p).ιE c ∈ (D.s.atP p).O) : IsIntegral ℤ c := by
-  let I : Ideal (𝓞 D.host.F) :=
-    { carrier := {s | IsIntegral ℤ (algebraMap D.host.F D.host.E (s : D.host.F) * c)}
-      add_mem' := fun {a b} ha hb => by
-        simp only [Set.mem_ofPred_eq] at ha hb ⊢
-        rw [show ((a + b : 𝓞 D.host.F) : D.host.F) = (a : D.host.F) + b from rfl, map_add (f := _), add_mul]
-        exact ha.add hb
-      zero_mem' := by
-        simp only [Set.mem_ofPred_eq]
-        rw [show ((0 : 𝓞 D.host.F) : D.host.F) = 0 from rfl, map_zero, zero_mul]
-        exact isIntegral_zero
-      smul_mem' := fun r {s} hs => by
-        simp only [Set.mem_ofPred_eq, smul_eq_mul] at hs ⊢
-        rw [show ((r * s : 𝓞 D.host.F) : D.host.F) = (r : D.host.F) * s from rfl, map_mul, mul_assoc]
-        exact (r.2.map (algebraMap D.host.F D.host.E).toIntAlgHom).mul hs }
-  have hI : I = ⊤ := by
-    by_contra hne
-    obtain ⟨m, hm, hIm⟩ := Ideal.exists_le_maximal I hne
-    have hm0 : m ≠ ⊥ := Ring.ne_bot_of_isMaximal_of_not_isField hm (RingOfIntegers.not_isField D.host.F)
-    let p : PlF D := ⟨m, hm.isPrime, hm0⟩
-    obtain ⟨s, hs, hsint⟩ := (Formalism.L2.SG.Pf.LocalDenominators.iE_mem_O_iff_D p c).1 (h p)
-    exact hs (hIm hsint)
-  have h1 : (1 : 𝓞 D.host.F) ∈ I := by rw [hI]; exact Submodule.mem_top
-  have h2 : IsIntegral ℤ (algebraMap D.host.F D.host.E ((1 : 𝓞 D.host.F) : D.host.F) * c) := h1
-  simpa using h2
+  apply +allowSynthFailures _root_.Formalism.L2.SG.Pf.StabIntSh.lg_int_of_loc <;> assumption
 
 theorem xlam_eq {T' : D.host.E} (F' : LFlag (D.sp.Y 0) D.R.rS T') (Λ₂ : Submodule (𝓞 D.host.E) (VS D).V)
     (hlat : Submodule.IsLattice D.host.E Λ₂)

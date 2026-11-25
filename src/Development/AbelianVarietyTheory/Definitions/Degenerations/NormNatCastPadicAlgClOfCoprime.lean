@@ -3,50 +3,6 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Degenerations.ArithBase
 public import Mathlib.NumberTheory.LegendreSymbol.AddCharacter
 public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.OrthogonalFreeOfPerfectAltZmod
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -256,14 +212,6 @@ theorem exists_at_of_cen (M : RatModel o Ω) {U₀ : M.Z.Opens} (hle : S.R ≤ M
 
 end ThetaSys
 
-section Dedekind
-
-variable (o Ω : Type) [CommRing o] [IsDedekindDomain o] [Field Ω] [Algebra o Ω] [IsFractionRing o Ω]
-
-variable {o Ω}
-
-end Dedekind
-
 section Heisenberg
 
 variable {o : Type} [CommRing o] {N : ℕ} [NeZero N] (ψ : AddChar (ZMod N) o)
@@ -275,7 +223,7 @@ theorem heisMat_mul {h : ZMod N} (hh : 2 * h = 1) (u v u' v' : ZMod N) :
     heisMat ψ h u v * heisMat ψ h u' v' = ψ (h * (u * v' - v * u')) • heisMat ψ h (u + u') (v + v') := by
   ext i k
   rw [Matrix.mul_apply, Finset.sum_eq_single (i + u) (fun j _ hj => by simp [heisMat, hj]) (by simp)]
-  simp only [heisMat, Matrix.of_apply, if_true, Matrix.smul_apply, smul_eq_mul, add_assoc]
+  simp only [heisMat, Matrix.of_apply, ite_true, Matrix.smul_apply, smul_eq_mul, add_assoc]
   split_ifs
   · rw [← AddChar.map_add_eq_mul, ← AddChar.map_add_eq_mul]
     congr 1
@@ -303,85 +251,7 @@ theorem exists_eq_div_bot (x : Ω) : ∃ a ∈ (⊥ : Subalgebra o Ω), ∃ b �
 variable {r N : ℕ} (hN : 2 ≤ N) (hr : 1 ≤ r) {ζ : o} (hζ : IsPrimitiveRoot ζ ((r * N) ^ 2))
   (hu : IsUnit ((r * N : ℕ) : o))
 
-def pointSys : ThetaSys o Ω where
-  g := 0
-  N := N
-  r := r
-  N_ge := hN
-  r_pos := hr
-  ζ := ζ
-  prim := hζ
-  unit := hu
-  J := Unit
-  ρ _ := 1
-  ρ_one _ _ := by convert rfl
-  ρ_mul _ _ := ⟨0, by simp⟩
-  ρ_add _ _ _ := by simp
-  th _ := 1
-  ev _ _ := 1
-  R := ⊥
-  fg := Subalgebra.fg_bot
-  frac := exists_eq_div_bot o Ω
-  th_mem _ := one_mem _
-  ev_mem _ _ := one_mem _
-  supp := by simp
-  th_ne := ⟨0, one_ne_zero⟩
-
 variable (hodd : Odd N) (ϖ : o) (hϖ : ϖ ≠ 0)
-
-def heisSys : ThetaSys o Ω :=
-  haveI : NeZero N := ⟨by omega⟩
-  haveI : NeZero (r * N) := ⟨Nat.mul_ne_zero (by omega) (by omega)⟩
-  have h1 : (ζ ^ (r ^ 2 * N)) ^ N = 1 := by
-    rw [← pow_mul, ← hζ.pow_eq_one]
-    congr 1
-    ring
-  have hh : 2 * ((N / 2 + 1 : ℕ) : ZMod N) = 1 := by
-    have : ((2 * (N / 2 + 1) : ℕ) : ZMod N) = ((N + 1 : ℕ) : ZMod N) := by
-      congr 1
-      have := Nat.odd_iff.1 hodd
-      omega
-    simpa using this
-  { g := 1
-    N := N
-    r := r
-    N_ge := hN
-    r_pos := hr
-    ζ := ζ
-    prim := hζ
-    unit := hu
-    J := ZMod N
-    ρ := fun a => heisMat (AddChar.zmodChar N h1) (N / 2 + 1 : ℕ)
-      (ZMod.castHom (dvd_mul_left N r) (ZMod N) (a (.inl 0))) (ZMod.castHom (dvd_mul_left N r) (ZMod N) (a (.inr 0)))
-    ρ_one := fun a ha => by
-      rw [(nsmul_eq_zero_iff_castHom _).1 (congrFun ha (.inl 0)), (nsmul_eq_zero_iff_castHom _).1 (congrFun ha (.inr 0))]
-      ext i j
-      simp [heisMat_zero_apply, Matrix.one_apply, eq_comm]
-    ρ_mul := fun a b => by
-      rw [heisMat_mul _ hh, AddChar.zmodChar_apply, ← pow_mul, Pi.add_apply, Pi.add_apply, map_add (f := _), map_add (f := _)]
-      exact ⟨_, rfl⟩
-    ρ_add := fun a b h => by
-      have h2 := (nsmul_eq_zero_iff_castHom _).1 h
-      rw [eStd, Fin.sum_univ_one, map_sub, map_mul, map_mul] at h2
-      rw [heisMat_mul _ hh, h2, mul_zero, AddChar.map_zero_eq_one, one_smul, Pi.add_apply, Pi.add_apply, map_add (f := _),
-        map_add]
-    th := fun x => algebraMap o Ω (ϖ ^ (x (.inl 0)).valMinAbs.natAbs ^ 2)
-    ev := fun _ j => algebraMap o Ω (ϖ ^ (r ^ 2 * N * j.valMinAbs.natAbs ^ 2))
-    R := ⊥
-    fg := Subalgebra.fg_bot
-    frac := exists_eq_div_bot o Ω
-    th_mem := fun _ => ⟨_, rfl⟩
-    ev_mem := fun _ _ => ⟨_, rfl⟩
-    supp := by
-      have h : algebraMap o Ω ϖ ≠ 0 := (map_ne_zero_iff _ (IsFractionRing.injective o Ω)).2 hϖ
-      simp [h]
-    th_ne := ⟨0, by simp⟩ }
-
-section HeisTests
-
-variable {p : ℕ} [Fact p.Prime] (y : (heisSys Ω hN hr hζ hu hodd ϖ hϖ).R →+* PadicAlgCl p)
-
-end HeisTests
 
 end Inhabitants
 

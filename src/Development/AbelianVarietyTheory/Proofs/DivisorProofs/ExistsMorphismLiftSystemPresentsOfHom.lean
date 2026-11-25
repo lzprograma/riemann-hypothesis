@@ -46,18 +46,12 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveCrystalHod
 @[expose] public section
 
 open CategoryTheory AlgebraicGeometry KaehlerDifferential DividedPowers ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.DeRham GlobalTheory.SqLift GlobalTheory.LiftSys GlobalTheory.Published
-attribute [local instance] Over.cartesianMonoidalCategory
 
-set_option autoImplicit false
 noncomputable section
 
 namespace GlobalTheory.LiftSys.Glue
 
 open Opposite Limits
-
-theorem spMap_comp₂ {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (f : A →+* B) (g : B →+* C) :
-    spMap (g.comp f) = spMap g ≫ spMap f := by
-  simp only [spMap, ← Spec.map_comp]; rfl
 
 theorem spMap_surjective {A B : Type} [CommRing A] [CommRing B] (q : A →+* B)
     (hq : Function.Surjective q) (hn : ∀ a, q a = 0 → a * a = 0) : Function.Surjective (spMap q) := by
@@ -184,17 +178,17 @@ theorem presents_hom : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀] (I : Ide
     intro U V a
     change spMap (mp S'.F a.op : S'.F.obj (op V) →+* S'.F.obj (op U)) ≫
       spMap (ψ (op V) : S.F.obj (op V) →+* S'.F.obj (op V)) ≫ hY.y (op V) = _
-    rw [← Category.assoc, ← spMap_comp₂]
+    rw [← Category.assoc, ← GlobalTheory.Cris.spMap_comp]
     have e : (mp S'.F a.op : S'.F.obj (op V) →+* S'.F.obj (op U)).comp
         (ψ (op V) : S.F.obj (op V) →+* S'.F.obj (op V)) =
         (ψ (op U) : S.F.obj (op U) →+* S'.F.obj (op U)).comp
           (mp S.F a.op : S.F.obj (op V) →+* S.F.obj (op U)) :=
       RingHom.ext fun b ↦ hψn (op V) (op U) a.op b
-    rw [e, spMap_comp₂, Category.assoc, hY.nat a.op]
+    rw [e, GlobalTheory.Cris.spMap_comp, Category.assoc, hY.nat a.op]
   refine ⟨𝒰.glueMorphismsOfLocallyDirected g hg, 𝒰.hom_ext _ _ fun U ↦ ?_, ?_⟩
   · rw [𝒰.map_glueMorphismsOfLocallyDirected_assoc g hg U]
     change (spMap (ψ (op U) : S.F.obj (op U) →+* S'.F.obj (op U)) ≫ hY.y (op U)) ≫ t = hX.y (op U) ≫ s
-    rw [Category.assoc, hY.base, hX.base, ← spMap_comp₂]
+    rw [Category.assoc, hY.base, hX.base, ← GlobalTheory.Cris.spMap_comp]
     exact congrArg spMap (RingHom.ext fun r ↦ (ψ (op U)).commutes r)
   · let 𝒱 : X₀.OpenCover := Scheme.Cover.mkOfCovers X₀.affineOpens (fun U ↦ Sp (Sec s₀ U.1))
       (fun U ↦ affPt s₀ U)
@@ -210,7 +204,7 @@ theorem presents_hom : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀] (I : Ide
     change spMap (S'.p (op U)) ≫ 𝒰.f U ≫ _ = _
     rw [𝒰.map_glueMorphismsOfLocallyDirected g hg U]
     change spMap (S'.p (op U)) ≫ spMap (ψ (op U) : S.F.obj (op U) →+* S'.F.obj (op U)) ≫ hY.y (op U) = _
-    rw [← Category.assoc, ← spMap_comp₂]
+    rw [← Category.assoc, ← GlobalTheory.Cris.spMap_comp]
     exact congrArg (· ≫ hY.y (op U)) (congrArg spMap (RingHom.ext fun b ↦ hψp (op U) b))
 
 end GlobalTheory.LiftSys.Glue

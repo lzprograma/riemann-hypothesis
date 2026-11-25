@@ -59,8 +59,6 @@ open scoped TensorProduct ContDiff Topology
 
 namespace GlobalTheory.ThetaAllChar
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open GlobalTheory.FockCompare GlobalTheory.WeilVacMove GlobalTheory.IndefiniteRowSideFullHecke.RealDirectionThetaNonzero
 
 variable {D : D7}

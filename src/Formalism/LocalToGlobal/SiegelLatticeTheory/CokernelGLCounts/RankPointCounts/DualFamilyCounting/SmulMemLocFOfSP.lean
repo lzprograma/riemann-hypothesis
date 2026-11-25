@@ -24,56 +24,23 @@ variable {K F : Type} [Field K] [NumberField K] [StarRing K] [Field F] [NumberFi
 private theorem mem_pow_vF_of_ne_zero {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {a : 𝓞 F} (ha : a ≠ 0) :
     a ∈ 𝔭 ^ vF 𝔭 a ∧ a ∉ 𝔭 ^ (vF 𝔭 a + 1) := by
   have hex : ∃ j, a ∉ 𝔭 ^ j := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have hi : a ∈ ⨅ i : ℕ, 𝔭 ^ i := (Submodule.mem_iInf _).mpr h
     rw [Ideal.iInf_pow_eq_bot_of_isDomain 𝔭 h𝔭.ne_top] at hi
     exact ha ((Submodule.mem_bot _).mp hi)
   obtain ⟨j, hj⟩ := hex
   have hbdd : BddAbove {e : ℕ | a ∈ 𝔭 ^ e} := by
     refine ⟨j, fun e he => ?_⟩
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     exact hj (Ideal.pow_le_pow_right hlt.le he)
   refine ⟨Nat.sSup_mem ⟨0, by simp⟩ hbdd, fun h => ?_⟩
   have hc := le_csSup hbdd (show vF 𝔭 a + 1 ∈ {e : ℕ | a ∈ 𝔭 ^ e} from h)
   change vF 𝔭 a + 1 ≤ vF 𝔭 a at hc
   omega
 
-theorem unit_part (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F) {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal)
-    {π s₀ : 𝓞 F} (hu : IsUnif0 𝔭 π s₀) {a : 𝓞 F} (ha : a ≠ 0) :
-    (algebraMap F K (a : F))⁻¹ * algebraMap F K (π : F) ^ vF 𝔭 a ∈ SP K 𝔭 := by
-  haveI := h𝔭.isPrime
-  obtain ⟨hmem, hnot⟩ := mem_pow_vF_of_ne_zero h𝔭 ha
-  have hle : Ideal.span {s₀ ^ vF 𝔭 a} * 𝔭 ^ vF 𝔭 a ≤ Ideal.span {π ^ vF 𝔭 a} := by
-    rw [← Ideal.span_singleton_pow, ← Ideal.span_singleton_pow, ← mul_pow]
-    exact Ideal.pow_right_mono hu.le _
-  have hsa : s₀ ^ vF 𝔭 a * a ∈ Ideal.span {π ^ vF 𝔭 a} :=
-    hle (Ideal.mul_mem_mul (Ideal.mem_span_singleton_self _) hmem)
-  obtain ⟨b, hb⟩ := Ideal.mem_span_singleton'.mp hsa
-  have hne : 𝔭 ≠ ⊥ := (Submodule.ne_bot_iff _).mpr ⟨π, hu.mem, hu.ne_zero⟩
-  have hbnot : b ∉ 𝔭 := by
-    intro hb𝔭
-    have h1 : s₀ ^ vF 𝔭 a * a ∈ 𝔭 ^ (0 + vF 𝔭 a + 1) := by
-      rw [← hb, zero_add, pow_succ, mul_comm b]
-      exact Ideal.mul_mem_mul (Ideal.pow_mem_pow hu.mem _) hb𝔭
-    refine idealPowerSpanBounds.mul_notMem h𝔭.isPrime hne ?_ hnot h1
-    rw [zero_add, pow_one]
-    exact fun h => hu.s_notMem (h𝔭.isPrime.mem_of_pow_mem _ h)
-  have hbK : algebraMap F K (b : F) * algebraMap F K (π : F) ^ vF 𝔭 a =
-      algebraMap F K (s₀ : F) ^ vF 𝔭 a * algebraMap F K (a : F) := by
-    have := congrArg (fun x : 𝓞 F => algebraMap F K (x : F)) hb
-    simpa [map_mul, map_pow] using this
-  have haK : algebraMap F K (a : F) ≠ 0 := by simpa using ha
-  refine mem_SP.mpr ⟨b, hbnot, algebraMap (𝓞 F) (𝓞 K) (s₀ ^ vF 𝔭 a), ?_⟩
-  show algebraMap F K ((s₀ ^ vF 𝔭 a : 𝓞 F) : F) =
-    algebraMap F K (b : F) * ((algebraMap F K (a : F))⁻¹ * algebraMap F K (π : F) ^ vF 𝔭 a)
-  have hc : ((s₀ ^ vF 𝔭 a : 𝓞 F) : F) = (s₀ : F) ^ vF 𝔭 a := by simp
-  rw [hc, map_pow, ← mul_assoc, mul_comm (algebraMap F K (b : F)), mul_assoc, hbK]
-  field_simp
-
-private theorem exists_unit_mul_pow_eq_pow_mul_of_isUnif0 {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {π s₀ : 𝓞 F}
-    (hu : IsUnif0 𝔭 π s₀) {n : ℕ} {C : 𝓞 F} (hC : C ∈ 𝔭 ^ n) (hC' : C ∉ 𝔭 ^ (n + 1)) :
+private theorem exists_unit_mul_pow_eq_pow_mul_of_isUnif0 {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal)
+    {π s₀ : 𝓞 F} (hu : IsUnif0 𝔭 π s₀) {n : ℕ} {C : 𝓞 F} (hC : C ∈ 𝔭 ^ n)
+    (hC' : C ∉ 𝔭 ^ (n + 1)) :
     ∃ b ∉ 𝔭, b * π ^ n = s₀ ^ n * C := by
   have hle : Ideal.span {s₀ ^ n} * 𝔭 ^ n ≤ Ideal.span {π ^ n} := by
     rw [← Ideal.span_singleton_pow, ← Ideal.span_singleton_pow, ← mul_pow]
@@ -88,6 +55,24 @@ private theorem exists_unit_mul_pow_eq_pow_mul_of_isUnif0 {𝔭 : Ideal (𝓞 F)
   refine idealPowerSpanBounds.mul_notMem h𝔭.isPrime hne ?_ hC' h1
   rw [zero_add, pow_one]
   exact fun h => hu.s_notMem (h𝔭.isPrime.mem_of_pow_mem _ h)
+
+theorem unit_part (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F) {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal)
+    {π s₀ : 𝓞 F} (hu : IsUnif0 𝔭 π s₀) {a : 𝓞 F} (ha : a ≠ 0) :
+    (algebraMap F K (a : F))⁻¹ * algebraMap F K (π : F) ^ vF 𝔭 a ∈ SP K 𝔭 := by
+  haveI := h𝔭.isPrime
+  obtain ⟨hmem, hnot⟩ := mem_pow_vF_of_ne_zero h𝔭 ha
+  obtain ⟨b, hbnot, hb⟩ := exists_unit_mul_pow_eq_pow_mul_of_isUnif0 h𝔭 hu hmem hnot
+  have hbK : algebraMap F K (b : F) * algebraMap F K (π : F) ^ vF 𝔭 a =
+      algebraMap F K (s₀ : F) ^ vF 𝔭 a * algebraMap F K (a : F) := by
+    have := congrArg (fun x : 𝓞 F => algebraMap F K (x : F)) hb
+    simpa [map_mul, map_pow] using this
+  have haK : algebraMap F K (a : F) ≠ 0 := by simpa using ha
+  refine mem_SP.mpr ⟨b, hbnot, algebraMap (𝓞 F) (𝓞 K) (s₀ ^ vF 𝔭 a), ?_⟩
+  show algebraMap F K ((s₀ ^ vF 𝔭 a : 𝓞 F) : F) =
+    algebraMap F K (b : F) * ((algebraMap F K (a : F))⁻¹ * algebraMap F K (π : F) ^ vF 𝔭 a)
+  have hc : ((s₀ ^ vF 𝔭 a : 𝓞 F) : F) = (s₀ : F) ^ vF 𝔭 a := by simp
+  rw [hc, map_pow, ← mul_assoc, mul_comm (algebraMap F K (b : F)), mul_assoc, hbK]
+  field_simp
 
 theorem unit_part_c (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F) {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal)
     {π s₀ : 𝓞 F} (hu : IsUnif0 𝔭 π s₀) {a : 𝓞 F} (ha : a ≠ 0) (he : vF 𝔭 a ≠ 0) {c : F}
@@ -167,20 +152,6 @@ theorem smul_mem_locF_of_SP {𝔭 : Ideal (𝓞 F)} [hp : 𝔭.IsPrime] {L : Sub
     rw [← algebraMap_smul K (algebraMap (𝓞 F) (𝓞 K) t) (r • v), smul_smul, ← hz, algebraMap_smul]
   rw [he]
   exact L.smul_mem z hv
-
-theorem eq_zero_of_orth {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hnd : Nondeg h) {ι' : Type}
-    (G : ι' → V) (hG : Submodule.span K (Set.range G) = ⊤) {z : V} (hz : ∀ s, h (G s) z = 0) :
-    z = 0 := by
-  apply hnd
-  intro y
-  have hy : y ∈ Submodule.span K (Set.range G) := hG ▸ Submodule.mem_top
-  induction hy using Submodule.span_induction with
-  | mem x hx =>
-    obtain ⟨s, rfl⟩ := hx
-    rw [← hs.eq, hz s, map_zero]
-  | zero => simp
-  | add x w _ _ hx hw => rw [map_add (f := _), hx, hw, add_zero]
-  | smul c x _ hx => rw [map_smul, hx, smul_zero]
 
 end Vec
 

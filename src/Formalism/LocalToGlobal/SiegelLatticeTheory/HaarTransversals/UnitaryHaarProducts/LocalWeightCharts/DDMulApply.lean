@@ -108,7 +108,7 @@ theorem hpk_esI_eI (a b : Fin r) :
   rw [UnitaryGroupBasics.hpk_row, tau_esI, sgn_esI]
   by_cases h : a = b
   · subst h; simp
-  · rw [if_neg (fun e => h (eI_inj.1 e).symm), if_neg h]
+  · rw [ite_eq_right (fun e => h (eI_inj.1 e).symm), ite_eq_right h]
 
 def bA (g : Mx k r) : Matrix (Fin r) (Fin r) ℂ := fun a b => g (eI k r a) (eI k r b)
 
@@ -134,21 +134,21 @@ theorem colB_of {g : Mx k r} (h : UnitaryGroupBasics.col k r g) : ColB g := by
     simp only [eI_inj]
   · intro j b
     rw [h _ _ (by simp only [eI]; omega) (Or.inr (by simp only [wI]; omega)),
-      if_neg (eI_ne_wI b j).symm]
+      ite_eq_right (eI_ne_wI b j).symm]
   · intro a b
     rw [h _ _ (by simp only [eI]; omega) (Or.inr (by simp only [esI]; omega)),
-      if_neg (eI_ne_esI b a).symm]
+      ite_eq_right (eI_ne_esI b a).symm]
   · intro j c
     rw [h _ _ (by simp only [wI]; omega) (Or.inr (by simp only [wI]; omega))]
     simp only [wI_inj]
   · intro a j
     rw [h _ _ (by simp only [wI]; omega) (Or.inr (by simp only [esI]; omega)),
-      if_neg (wI_ne_esI j a).symm]
+      ite_eq_right (wI_ne_esI j a).symm]
 
 theorem bA_upper {g : Mx k r} (h : ColB g) : (bA g).IsUpperTriangular := by
   intro a b hab
   show g _ _ = 0
-  rw [h.aa a b (le_of_lt hab), if_neg (ne_of_gt (show b < a from hab))]
+  rw [h.aa a b (le_of_lt hab), ite_eq_right (ne_of_gt (show b < a from hab))]
 
 theorem bA_det {g : Mx k r} (h : ColB g) : (bA g).det = 1 := by
   rw [det_of_isUpperTriangular (bA_upper h)]
@@ -201,15 +201,15 @@ theorem bF_lowId {g : Mx k r} (hc : ColB g) (hu : g ∈ UH (Hpk k r)) :
   have hT : ((bF g)ᴴ).BlockTriangular id := hinv ▸ blockTriangular_inv_of_blockTriangular (bA_upper hc)
   intro a b hab
   rcases lt_or_eq_of_le hab with h | rfl
-  · rw [if_neg (ne_of_lt h)]
+  · rw [ite_eq_right (ne_of_lt h)]
     have := hT (show id a < id b from h)
     rw [conjTranspose_apply, star_eq_zero] at this
     exact this
-  · rw [if_pos rfl]
+  · rw [ite_eq_left rfl]
     have e := congrFun (congrFun hFA a) a
     rw [Matrix.mul_apply, Finset.sum_eq_single a, Matrix.one_apply_eq] at e
     · have h1 : bA g a a = 1 := by
-        show g _ _ = 1; rw [hc.aa a a le_rfl, if_pos rfl]
+        show g _ _ = 1; rw [hc.aa a a le_rfl, ite_eq_left rfl]
       rw [h1, mul_one, conjTranspose_apply] at e
       have := congrArg star e
       rwa [star_star, star_one] at this
@@ -217,7 +217,7 @@ theorem bF_lowId {g : Mx k r} (hc : ColB g) (hu : g ∈ UH (Hpk k r)) :
       rcases lt_or_gt_of_ne hca with h | h
       · rw [hT (show id c < id a from h), zero_mul]
       · have : bA g c a = 0 := by
-          show g _ _ = 0; rw [hc.aa c a (le_of_lt h), if_neg (ne_of_gt h)]
+          show g _ _ = 0; rw [hc.aa c a (le_of_lt h), ite_eq_right (ne_of_gt h)]
         rw [this, mul_zero]
     · simp
 
@@ -234,7 +234,7 @@ theorem nset_upper {g : Mx k r} (hg : g ∈ Nset k r) (i j : Fin (2 * r + k + 1)
   simp only [(posE k r).injective.eq_iff]
   rcases p with a | c | a <;> rcases q with b | c' | b <;>
     simp only [posE_apply, pos, wt, eI, wI, esI, Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq,
-      if_false] at h ⊢
+      ite_false] at h ⊢
   · have hb := b.isLt
     have ha := a.isLt
     have hba : (b : ℕ) ≤ a := by split_ifs at h <;> omega

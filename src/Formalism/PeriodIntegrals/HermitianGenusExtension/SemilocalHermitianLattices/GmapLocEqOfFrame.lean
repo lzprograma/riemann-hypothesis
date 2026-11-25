@@ -1,54 +1,12 @@
 module
 
 public import Formalism.PeriodIntegrals.HermitianGenusExtension.SemilocalHermitianLattices.ExistsIsomFrame
-public import Formalism.PeriodIntegrals.HermitianGenusExtension.SemilocalHermitianLattices.AlgebraMapNeZeroOfMemHcompl
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.AlgebraMapNeZeroOfMemHcompl
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsSqAbsNormOfInert
 import Formalism.HermitianLattices.HermitianLatticesProofs.LocDual
 public import Formalism.HermitianLattices.HermitianLatticesProofs.TraceReal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.GmapLocEqOfFrame
 
 @[expose] public section
 
@@ -57,72 +15,12 @@ open NumberField Module
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.L3.WA
+open Formalism.HermitianLattices.Ext.L3.WA (smul_mem_loc)
+open Formalism.HermitianLatticesTheory
+  (hcompl locBasic_le_locS locBasic_locS_idem locDual_mem_dualAt)
 
 variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
   [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
-
-theorem smul_mem_loc {L : Submodule (𝓞 K) V} {p : Ideal (𝓞 K)} (hp : p.IsPrime) {a : K}
-    (ha : a ∈ Formalism.HermitianLatticesTheory.locR (K := K) p) {m : V} (hm : m ∈ Formalism.HermitianLatticesTheory.loc (K := K) p L) :
-    a • m ∈ Formalism.HermitianLatticesTheory.loc (K := K) p L := by
-  obtain ⟨s, hs, hsa⟩ := (Formalism.HermitianLatticesTheory.locDual_mem_locR p a).mp ha
-  obtain ⟨r, hr⟩ := Submodule.mem_one.mp hsa
-  obtain ⟨t, ht, htm⟩ := hm
-  show ∃ u ∈ Formalism.HermitianLatticesTheory.hcompl (K := K) p, u • (a • m) ∈ L
-  refine ⟨s * t, (Formalism.HermitianLatticesTheory.hcompl (K := K) p).mul_mem hs ht, ?_⟩
-  have key : (s * t) • (a • m) = r • (t • m) := by
-    rw [← algebraMap_smul K (s * t) (a • m), ← algebraMap_smul K r (t • m),
-      ← algebraMap_smul K t m, smul_smul, smul_smul, hr, map_mul]
-    congr 1
-    ring
-  rw [key]
-  exact L.smul_mem r htm
-
-private theorem mem_locR_of_unimod_lemma {h : V →ₗ⋆[K] V →ₗ[K] K} {L : Submodule (𝓞 K) V}
-    {p : Ideal (𝓞 K)} (hu : Formalism.HermitianLatticesTheory.IsUnimodularAt h p L) {x y : V}
-    (hx : x ∈ Formalism.HermitianLatticesTheory.loc (K := K) p L) (hy : y ∈ Formalism.HermitianLatticesTheory.loc (K := K) p L) :
-    h x y ∈ Formalism.HermitianLatticesTheory.locR (K := K) p := by
-  have hu' : Formalism.HermitianLatticesTheory.dualAt h p (Formalism.HermitianLatticesTheory.loc (K := K) p L) = Formalism.HermitianLatticesTheory.loc (K := K) p L := hu
-  have hy2 : y ∈ Formalism.HermitianLatticesTheory.dualAt h p (Formalism.HermitianLatticesTheory.loc (K := K) p L) := by
-    rw [hu']
-    exact hy
-  simp only [Formalism.HermitianLatticesTheory.dualAt, Submodule.mem_iInf, Submodule.mem_comap,
-    LinearMap.restrictScalars_apply] at hy2
-  exact hy2 x hx
-
-private theorem mem_loc_of_mem_lemma_3 {L : Submodule (𝓞 K) V} (p : Ideal (𝓞 K)) {x : V}
-    (hx : x ∈ L) : x ∈ Formalism.HermitianLatticesTheory.loc (K := K) p L := by
-  show ∃ u ∈ Formalism.HermitianLatticesTheory.hcompl (K := K) p, u • x ∈ L
-  exact ⟨1, (Formalism.HermitianLatticesTheory.hcompl (K := K) p).one_mem, by rw [one_smul]; exact hx⟩
-
-theorem isSelfDualMod_loc {h : V →ₗ⋆[K] V →ₗ[K] K} {L : Submodule (𝓞 K) V}
-    (hL : Submodule.IsFullLattice K L) {p : Ideal (𝓞 K)} (hp : p.IsPrime)
-    (hu : Formalism.HermitianLatticesTheory.IsUnimodularAt h p L) :
-    IsSelfDualMod (locRing p) h (Formalism.HermitianLatticesTheory.loc (K := K) p L).toAddSubgroup := by
-  have hu' : ∀ x, x ∈ Formalism.HermitianLatticesTheory.loc (K := K) p L ↔
-      ∀ y ∈ Formalism.HermitianLatticesTheory.loc (K := K) p L, h y x ∈ Formalism.HermitianLatticesTheory.locR (K := K) p := by
-    intro x
-    rw [← Formalism.HermitianLatticesTheory.locDual_mem_dualAt]
-    unfold Formalism.HermitianLatticesTheory.IsUnimodularAt at hu
-    rw [hu]
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · intro a ha m hm
-    exact smul_mem_loc hp ha hm
-  · intro x hx y hy
-    exact (hu' y).mp hy x hx
-  · intro x hx
-    exact (hu' x).mpr hx
-  · intro x
-    obtain ⟨n, hn, hnx⟩ := _root_.Bl.general_b_fact_second'''''.goal1 L hL x
-    refine ⟨(n : K), by exact_mod_cast hn, ?_⟩
-    rw [Int.cast_smul_eq_zsmul]
-    exact Formalism.HermitianLatticesTheory.locBasic_le_locS _ L hnx
-
-private theorem mem_loc_of_smul_lemma_2 {L : Submodule (𝓞 K) V} {p : Ideal (𝓞 K)} {s : 𝓞 K}
-    (hs : s ∈ Formalism.HermitianLatticesTheory.hcompl (K := K) p) {y : V}
-    (hy : s • y ∈ Formalism.HermitianLatticesTheory.loc (K := K) p L) : y ∈ Formalism.HermitianLatticesTheory.loc (K := K) p L := by
-  obtain ⟨t, ht, hty⟩ := hy
-  show ∃ u ∈ Formalism.HermitianLatticesTheory.hcompl (K := K) p, u • y ∈ L
-  exact ⟨t * s, (Formalism.HermitianLatticesTheory.hcompl (K := K) p).mul_mem ht hs, by rw [mul_smul]; exact hty⟩
 
 theorem gmap_loc_eq_of_frame {h : V →ₗ⋆[K] V →ₗ[K] K} {L : Submodule (𝓞 K) V}
     {p : Ideal (𝓞 K)} (hp : p.IsPrime) (hu : Formalism.HermitianLatticesTheory.IsUnimodularAt h p L) {n : ℕ} {e : Fin n → V}
@@ -137,7 +35,6 @@ theorem gmap_loc_eq_of_frame {h : V →ₗ⋆[K] V →ₗ[K] K} {L : Submodule (
     simp only [Formalism.HermitianLatticesTheory.gmap, Submodule.mem_map] at hy
     obtain ⟨x, hx, rfl⟩ := hy
     obtain ⟨s, hs, hsx⟩ := hx
-    refine mem_loc_of_smul_lemma_2 hs ?_
     have hN : Submodule.span (𝓞 K) (Set.range e) ≤
         (Formalism.HermitianLatticesTheory.loc (K := K) p L).comap ((g : V →ₗ[K] V).restrictScalars (𝓞 K)) := by
       rw [Submodule.span_le]
@@ -145,7 +42,8 @@ theorem gmap_loc_eq_of_frame {h : V →ₗ⋆[K] V →ₗ[K] K} {L : Submodule (
       exact hge i
     have h1 := hN hsx
     rw [Submodule.mem_comap, map_smul ((g : V →ₗ[K] V).restrictScalars (𝓞 K)) s x] at h1
-    exact h1
+    rw [Formalism.HermitianLatticesTheory.loc, ← locBasic_locS_idem (hcompl (K := K) p) L]
+    exact ⟨s, hs, h1⟩
   · intro y hy
     have hz : g.symm y ∈ Submodule.span K (Set.range e) := by
       rw [hspan]
@@ -162,11 +60,11 @@ theorem gmap_loc_eq_of_frame {h : V →ₗ⋆[K] V →ₗ[K] K} {L : Submodule (
 
         simp [map_sum, he]
       rw [e1]
-      exact mem_locR_of_unimod_lemma hu (hge j) hy
+      exact (locDual_mem_dualAt h p _ y).mp (by rw [hu]; exact hy) _ (hge j)
     have hzN : g.symm y ∈ Formalism.HermitianLatticesTheory.loc (K := K) p (Submodule.span (𝓞 K) (Set.range e)) := by
       rw [← hc]
       refine sum_mem (fun i _ => ?_)
-      exact smul_mem_loc hp (hcj i) (mem_loc_of_mem_lemma_3 p (Submodule.subset_span ⟨i, rfl⟩))
+      exact smul_mem_loc hp (hcj i) (locBasic_le_locS _ _ (Submodule.subset_span ⟨i, rfl⟩))
     simp only [Formalism.HermitianLatticesTheory.gmap, Submodule.mem_map]
     exact ⟨g.symm y, hzN, by simp⟩
 

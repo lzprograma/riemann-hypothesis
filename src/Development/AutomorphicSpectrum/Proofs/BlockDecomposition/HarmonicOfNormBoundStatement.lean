@@ -3,50 +3,8 @@ module
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.IsCoreMod
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WtRInjective
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Topology.Sheaves.Presheaf
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DominantEqOfNormGe, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HarmonicOfNormBound, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HarmonicOfNormBoundStatement
@@ -116,8 +74,7 @@ theorem core (n k : ℕ) (ν c : ℕ → ℝ)
     have := hP k hkn
     linarith
   have hb : ∃ b, b < k ∧ b ∉ I := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hEq
     symm
     apply Finset.eq_of_subset_of_card_le
@@ -125,8 +82,7 @@ theorem core (n k : ℕ) (ν c : ℕ → ℝ)
       exact hcon i (Finset.mem_range.1 hi)
     · simp [hk]
   have ha : ∃ a ∈ I, k ≤ a := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hEq
     apply Finset.eq_of_subset_of_card_le
     · intro i hi
@@ -328,7 +284,7 @@ variable {n : ℕ}
 
 def ex (f : Fin n → ℝ) (i : ℕ) : ℝ := if h : i < n then f ⟨i, h⟩ else 0
 
-theorem ex_mk (f : Fin n → ℝ) {i : ℕ} (h : i < n) : ex f i = f ⟨i, h⟩ := dif_pos h
+theorem ex_mk (f : Fin n → ℝ) {i : ℕ} (h : i < n) : ex f i = f ⟨i, h⟩ := dite_eq_left h
 
 theorem ex_val (f : Fin n → ℝ) (a : Fin n) : ex f (a : ℕ) = f a := by
   rw [ex_mk f a.2]
@@ -462,9 +418,6 @@ theorem step1 (lam : Fin n → ℤ) (hl : StrictAnti lam) (ν : Fin n → ℤ) (
 
 end GlobalTheory.CompanionTheory.RealCount.LemmaH
 
-namespace GlobalTheory.CompanionTheory.RealCount
-
-end GlobalTheory.CompanionTheory.RealCount
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DominantEqOfNormGe =====
@@ -613,36 +566,36 @@ theorem maj (S : Finset ℕ) (n : ℕ) : ∀ m p, p + m = n → ∃ c : ℕ → 
     rw [hcq j h1.le, ← hf0q] at h3
     linarith
   have hc0 : ∀ i ∈ Finset.Ico p q, (if i < q then f0 else c' i) = f0 := fun i hi =>
-    if_pos (Finset.mem_Ico.1 hi).2
+    ite_eq_left (Finset.mem_Ico.1 hi).2
   have hc1 : ∀ i ∈ Finset.Ico q n, (if i < q then f0 else c' i) = c' i := fun i hi =>
-    if_neg (by have := (Finset.mem_Ico.1 hi).1; omega)
+    ite_eq_right (by have := (Finset.mem_Ico.1 hi).1; omega)
   have hsplit : ∀ (g : ℕ → ℝ) j, q ≤ j → ∑ i ∈ Finset.Ico p j, g i =
       ∑ i ∈ Finset.Ico p q, g i + ∑ i ∈ Finset.Ico q j, g i := fun g j hj =>
     (Finset.sum_Ico_consecutive g hpq.le hj).symm
   have hsum0 : ∀ j, p ≤ j → j ≤ q → ∑ i ∈ Finset.Ico p j, (if i < q then f0 else c' i) =
       f0 * ((j : ℝ) - p) := by
     intro j h1 h2
-    rw [Finset.sum_congr rfl (fun i hi => if_pos (lt_of_lt_of_le (Finset.mem_Ico.1 hi).2 h2))]
+    rw [Finset.sum_congr rfl (fun i hi => ite_eq_left (lt_of_lt_of_le (Finset.mem_Ico.1 hi).2 h2))]
     simp only [Finset.sum_const, Nat.card_Ico, nsmul_eq_mul]
     rw [Nat.cast_sub h1]
     ring
   have hsum1 : ∀ j, q ≤ j → j ≤ n → ∑ i ∈ Finset.Ico q j, (if i < q then f0 else c' i) =
       ∑ i ∈ Finset.Ico q j, c' i := by
     intro j h1 h2
-    exact Finset.sum_congr rfl fun i hi => if_neg (by have := (Finset.mem_Ico.1 hi).1; omega)
+    exact Finset.sum_congr rfl fun i hi => ite_eq_right (by have := (Finset.mem_Ico.1 hi).1; omega)
   refine ⟨fun a => if a < q then f0 else c' a, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro a h1 h2
     by_cases h : a < q
-    · simpa only [if_pos h] using hf0n
-    · simpa only [if_neg h] using i0 a (by omega) h2
+    · simpa only [ite_eq_left h] using hf0n
+    · simpa only [ite_eq_right h] using i0 a (by omega) h2
   · intro a b h1 h2 h3
     by_cases ha : a < q
     · by_cases hb : b < q
-      · simp only [if_pos ha, if_pos hb, le_refl]
-      · simp only [if_pos ha, if_neg hb]
+      · simp only [ite_eq_left ha, ite_eq_left hb, le_refl]
+      · simp only [ite_eq_left ha, ite_eq_right hb]
         exact hrest b (by omega) h3
     · have hb : ¬ b < q := by omega
-      simp only [if_neg ha, if_neg hb]
+      simp only [ite_eq_right ha, ite_eq_right hb]
       exact i1 a b (by omega) h2 h3
   · intro j h1 h2
     by_cases hj : j ≤ q
@@ -663,8 +616,8 @@ theorem maj (S : Finset ℕ) (n : ℕ) : ∀ m p, p + m = n → ∃ c : ℕ → 
       have := hf q hpq hqn
       exact (div_le_iff₀ hd).2 this
     by_cases h : a < q
-    · simpa only [if_pos h] using hfq
-    · simpa only [if_neg h] using (hrest a (by omega) h2).trans hfq
+    · simpa only [ite_eq_left h] using hfq
+    · simpa only [ite_eq_right h] using (hrest a (by omega) h2).trans hfq
   ·
     set A := S.filter (fun a => p ≤ a ∧ a < q) with hA
     set B := S.filter (fun a => q ≤ a ∧ a < n) with hB
@@ -967,7 +920,7 @@ theorem blocks (n : ℕ) (f : ℕ → ℕ) (hf : ∀ i, i < n → f i < n)
       (∀ c, c < q → c ≠ n ∧ f c + c ≤ f b + b) ∧ q ≤ n :=
     ⟨Nat.find hex2, Nat.find_spec hex2, fun c hc => by
       have := Nat.find_min hex2 hc
-      push_neg at this
+      push Not at this
       exact this, Nat.find_min' hex2 (Or.inl rfl)⟩
   have hbq : b < q := by
     by_contra hcon
@@ -1024,8 +977,8 @@ theorem harm_of_perm (lam : Fin n → ℤ) (hl : Antitone lam) (ν : Fin n → �
   classical
   set f : ℕ → ℕ := fun i => if h : i < n then (π ⟨i, h⟩ : ℕ) else 0 with hfdef
   set g : ℕ → ℤ := fun i => if h : i < n then lam (π ⟨i, h⟩) else 0 with hgdef
-  have hfv : ∀ a : Fin n, f a = π a := fun a => by simp only [hfdef, dif_pos a.2]
-  have hgv : ∀ a : Fin n, g a = lam (π a) := fun a => by simp only [hgdef, dif_pos a.2]
+  have hfv : ∀ a : Fin n, f a = π a := fun a => by simp only [hfdef, dite_eq_left a.2]
+  have hgv : ∀ a : Fin n, g a = lam (π a) := fun a => by simp only [hgdef, dite_eq_left a.2]
   have hfn : ∀ i, i < n → f i < n := fun i hi => by
     have := hfv ⟨i, hi⟩
     simp only at this

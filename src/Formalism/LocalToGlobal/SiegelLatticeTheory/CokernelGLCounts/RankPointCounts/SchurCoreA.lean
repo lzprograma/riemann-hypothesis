@@ -14,8 +14,6 @@ namespace PI.SchurPlaces
 
 open Formalism.L2.SG.KappaOffDiagonal
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def SchurCoreA : Prop :=
   ∀ (k : ℕ) (ι : Type) [Fintype ι] (V V' : ι → Type)
     [∀ i, NormedAddCommGroup (V i)] [∀ i, InnerProductSpace ℂ (V i)] [∀ i, FiniteDimensional ℂ (V i)]

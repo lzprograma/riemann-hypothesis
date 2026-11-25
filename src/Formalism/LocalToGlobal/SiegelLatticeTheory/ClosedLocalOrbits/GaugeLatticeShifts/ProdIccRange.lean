@@ -4,6 +4,7 @@ public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.Gaug
 public import Mathlib.RingTheory.Complex
 import Mathlib.Topology.Separation.CompletelyRegular
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.BigCellDiagIff
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.ThmMOfXi
 
 @[expose] public section
 
@@ -42,7 +43,7 @@ theorem coordSc_last {r : ℕ} (sc : ℝ) (q : (Fin r → ℂ) × ℂ) : coordSc
 
 theorem dl_diag {r : ℕ} (c : Fin (r + 1) → ℂ) (l : ℕ) (hl : l ≤ r + 1) :
     Dl (Matrix.diagonal c) l = ∏ i : Fin l, c (Fin.castLE hl i) := by
-  rw [Dl, dif_pos hl, Matrix.submatrix_diagonal _ _ (Fin.castLE_injective hl), Matrix.det_diagonal]
+  rw [Dl, dite_eq_left hl, Matrix.submatrix_diagonal _ _ (Fin.castLE_injective hl), Matrix.det_diagonal]
   rfl
 
 theorem gv_cs {r : ℕ} (T T' sc : ℝ) (q : (Fin r → ℂ) × ℂ) :
@@ -71,12 +72,12 @@ theorem jac_cs {r : ℕ} (sc : ℝ) (q : (Fin r → ℂ) × ℂ) :
     have hi : i.1 < r := lt_of_lt_of_le i.2 hlr
     have hc : Fin.castLE hl1 i = (⟨i.1, hi⟩ : Fin r).castSucc := Fin.ext rfl
     rw [hc, coordSc_cs]
-    simp only [y, dif_pos hi]
+    simp only [y, dite_eq_left hi]
     ring
   rw [JacV, Finset.prod_congr rfl hl, prod_Icc_range y r,
     ← Fin.prod_univ_eq_prod_range (fun i => y i ^ (r - i)) r]
   refine Finset.prod_congr rfl fun a _ => ?_
-  simp only [y, dif_pos a.2]
+  simp only [y, dite_eq_left a.2]
 
 def lamW (r k : ℕ) (sc : ℝ) : ℝ := ∏ a : Fin r, ‖lam r sc a‖ ^ (2 * (Formalism.QuantumDeterminants.Mdim k r a - 2))
 
@@ -169,20 +170,6 @@ namespace Formalism.L2.SG.RealObj.InfCut.JacobianCoordinates.JL
 
 open Formalism.L2.SG.RealObj CoordinateScalingProducts
 
-private theorem volume_normSq_snd_eq_const_eq_zero {r : ℕ} {T T' : ℝ} :
-    (volume : Measure ((Fin r → ℂ) × ℂ)) {q | Complex.normSq q.2 = T * T'} = 0 := by
-  have hS : {z : ℂ | Complex.normSq z = T * T'} ⊆ Metric.sphere 0 (Real.sqrt (T * T')) := by
-    intro z hz
-    simp only [Set.mem_ofPred_eq] at hz
-    rw [mem_sphere_zero_iff_norm, ← hz, Complex.normSq_eq_norm_sq, Real.sqrt_sq (norm_nonneg _)]
-  have h0 : (volume : Measure ℂ) {z : ℂ | Complex.normSq z = T * T'} = 0 :=
-    measure_mono_null hS (Measure.addHaar_sphere volume 0 _)
-  have he : {q : (Fin r → ℂ) × ℂ | Complex.normSq q.2 = T * T'} =
-      Set.univ ×ˢ {z : ℂ | Complex.normSq z = T * T'} := by
-    ext q
-    simp
-  rw [he, Measure.volume_eq_prod, Measure.prod_prod, h0, mul_zero]
-
 theorem coordW_holds : CoordW := by
   intro r k T T' sc hk hT hT' hsc
   have hnrm : 0 < nrm r sc :=
@@ -199,7 +186,8 @@ theorem coordW_holds : CoordW := by
         (ENNReal.ofReal (Formalism.QuantumDeterminants.bcWeight k r T T' q) * F (coordSc r sc q)) := by
     have hq : ∀ᵐ q : (Fin r → ℂ) × ℂ ∂volume, Complex.normSq q.2 ≠ T * T' := by
       rw [ae_iff]
-      simpa using volume_normSq_snd_eq_const_eq_zero (r := r) (T := T) (T' := T')
+      simpa using
+        ReciprocityTheory.ChartRestriction.DS.Mult1.SymBetaA.volume_normSq_eq (r := r) (T * T')
     filter_upwards [hq] with q hq
     rw [phe_apply]
     by_cases hg : coordSc r sc q ∈ GoodLoc (r := r) T T'
@@ -214,7 +202,7 @@ theorem coordW_holds : CoordW := by
         have := mul_nonpos_of_nonneg_of_nonpos hp (by linarith : Complex.normSq q.2 - T * T' ≤ 0)
         linarith
       unfold Formalism.QuantumDeterminants.bcWeight
-      rw [if_pos hN.le]
+      rw [ite_eq_left hN.le]
     · rw [Set.indicator_of_notMem hg]
       have hb : Formalism.QuantumDeterminants.bcWeight k r T T' q = 0 := by
         unfold Formalism.QuantumDeterminants.bcWeight

@@ -48,7 +48,6 @@ import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
 open scoped Classical
 
 noncomputable section

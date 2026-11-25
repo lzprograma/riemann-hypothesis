@@ -1,5 +1,7 @@
 module
 
+import Formalism.LocalToGlobal.Columns.StdLatUnimodular
+import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.RedPEqZeroOfDiv
 public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
 import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
 import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
@@ -95,24 +97,7 @@ theorem Deco.Ok.be_sum {d : Deco E n ST SG} (hd : d.Ok) (w : SG) {ι : Type} (s 
 private theorem mk_mul_reduction_eq_mk {P : HeightOneSpectrum (𝓞 E)} {a : E} {r s : 𝓞 E} (hs : s ∉ P.asIdeal)
     (hrs : algebraMap (𝓞 E) E s * a = algebraMap (𝓞 E) E r) :
     Ideal.Quotient.mk P.asIdeal s * redP P a = Ideal.Quotient.mk P.asIdeal r := by
-  haveI : P.asIdeal.IsMaximal := P.isMaximal
-  have hs0 : Ideal.Quotient.mk P.asIdeal s ≠ 0 := fun h0 => hs (Ideal.Quotient.eq_zero_iff_mem.mp h0)
-  obtain ⟨b, hb⟩ := Ideal.Quotient.exists_inv hs0
-  have hex : ∃ c : 𝓞 E ⧸ P.asIdeal, ∃ r s : 𝓞 E, s ∉ P.asIdeal ∧
-      algebraMap (𝓞 E) E s * a = algebraMap (𝓞 E) E r ∧
-      Ideal.Quotient.mk P.asIdeal s * c = Ideal.Quotient.mk P.asIdeal r :=
-    ⟨b * Ideal.Quotient.mk P.asIdeal r, r, s, hs, hrs, by rw [← mul_assoc, hb, one_mul]⟩
-  unfold redP
-  rw [dite_eq_left hex]
-  obtain ⟨r', s', hs', hrs', hc⟩ := hex.choose_spec
-  have key : s * r' = s' * r := by
-    apply IsFractionRing.injective (𝓞 E) E
-    rw [map_mul, map_mul, ← hrs', ← hrs]
-    ring
-  have hs0' : Ideal.Quotient.mk P.asIdeal s' ≠ 0 := fun h0 => hs' (Ideal.Quotient.eq_zero_iff_mem.mp h0)
-  apply mul_left_cancel₀ hs0'
-  rw [← mul_assoc, mul_comm (Ideal.Quotient.mk P.asIdeal s'), mul_assoc, hc,
-    ← map_mul (Ideal.Quotient.mk P.asIdeal) s r', key, map_mul]
+  apply _root_.Formalism.L2.Col.reduction_spec <;> assumption
 
 theorem yIntAt_inv {P : HeightOneSpectrum (𝓞 E)} {a : E} (ha : IntAt P a) (h : redP P a ≠ 0) : IntAt P a⁻¹ := by
   haveI : P.asIdeal.IsPrime := P.isPrime
@@ -135,33 +120,11 @@ theorem yIntAt_inv {P : HeightOneSpectrum (𝓞 E)} {a : E} (ha : IntAt P a) (h 
 
 theorem yInt_smul_mem {P : HeightOneSpectrum (𝓞 E)} {N : Submodule (𝓞 E) (Sp E n)} {a : E} (ha : IntAt P a) {x : Sp E n}
     (hx : x ∈ localization₂ P.asIdeal N) : a • x ∈ localization₂ P.asIdeal N := by
-  obtain ⟨r, s, hs, hrs⟩ := ha
-  have hx' : ∃ t ∈ P.asIdeal.primeCompl, t • x ∈ N := hx
-  obtain ⟨t, ht, htx⟩ := hx'
-  show ∃ t ∈ P.asIdeal.primeCompl, t • (a • x) ∈ N
-  refine ⟨s * t, P.asIdeal.primeCompl.mul_mem hs ht, ?_⟩
-  have e : (s * t) • (a • x) = r • (t • x) := by
-    rw [← algebraMap_smul E (s * t), smul_smul, ← algebraMap_smul E r, ← algebraMap_smul E t, smul_smul]
-    congr 1
-    rw [map_mul]
-    linear_combination (algebraMap (𝓞 E) E t) * hrs
-  rw [e]
-  exact N.smul_mem r htx
+  apply +allowSynthFailures _root_.GlobalTheory.TopStep.smul_mem_locP <;> assumption
 
 theorem Deco.Ok.be_int_smul {d : Deco E n ST SG} (hd : d.Ok) (w : SG) {a : E} (ha : IntAt w.1 a) {x : Sp E n} (hx : x ∈ d.at w.1) :
     d.be w (a • x) = redP w.1 a • d.be w x := by
-  haveI : w.1.asIdeal.IsPrime := w.1.isPrime
-  have hax : a • x ∈ d.at w.1 := yInt_smul_mem ha hx
-  obtain ⟨r, s, hs, hrs⟩ := ha
-  have e : s • (a • x) = r • x := by
-    rw [← algebraMap_smul E s, smul_smul, ← algebraMap_smul E r, hrs]
-  have h1 := hd.be_smul w s (a • x) hax
-  rw [e, hd.be_smul w r x hx] at h1
-  have hsp := mk_mul_reduction_eq_mk (P := w.1) hs hrs
-  have hs0 : Ideal.Quotient.mk w.1.asIdeal s ≠ 0 := fun h0 => hs (Ideal.Quotient.eq_zero_iff_mem.mp h0)
-  apply smul_right_injective (Fin n → 𝓞 E ⧸ w.1.asIdeal) hs0
-  dsimp only
-  rw [← h1, smul_smul, hsp]
+  apply +allowSynthFailures _root_.GlobalTheory.TopStep.be_smul_int <;> assumption
 
 theorem Deco.Ok.hasLift {d : Deco E n ST SG} (hd : d.Ok) (w : SG) : d.HasLift w := by
   classical

@@ -6,46 +6,7 @@ public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfPowPred
 import Formalism.LocalToGlobal.Columns.ChainInst
 public import Formalism.LocalToGlobal.Columns.ChainTopLawTw
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -176,7 +137,7 @@ theorem coarse_two {r b n : ℕ} (hn : n = r + b) (k : Fin n) : coarse r [b] k.1
   · exact coarse_of_lt h
   · rw [coarse_of_le (Nat.not_lt.1 h)]
     simp only [blkIdx]
-    rw [if_pos (by have := k.2; omega)]
+    rw [ite_eq_left (by have := k.2; omega)]
 
 theorem exists_block_of_twisted_k1 : ∀ {E : Type} [Field E] [NumberField E] [StarRing E] (P : HeightOneSpectrum (𝓞 E)) {N n : ℕ} (hN : N = n + 1) (r b c : ℕ), n = r + b → ∀ g : GLint E N P, g ∈ twK1H P N r (c + 1) → ∃ j : GLint E n P, redGL n P j ∈ HQ (𝓞 E ⧸ P.asIdeal) n r b ∧ (extI hN P j)⁻¹ * g ∈ prinCong N P (c + 1) := by
   intro E _ _ _ P N n hN r b c hn g hg
@@ -218,11 +179,11 @@ theorem exists_block_of_twisted_k1 : ∀ {E : Type} [Field E] [NumberField E] [S
   rw [coarse_two hn, coarse_two hn] at hil
   have hl : l.1 < r := by
     by_contra h
-    rw [if_neg h] at hil
+    rw [ite_eq_right h] at hil
     split_ifs at hil <;> omega
   have hi : r ≤ i.1 := by
     by_contra h
-    rw [if_pos (Nat.lt_of_not_le h)] at hil
+    rw [ite_eq_left (Nat.lt_of_not_le h)] at hil
     omega
   rw [redGL_val]
   show redP P (j.1 (Pi.single l 1) i) = 0
@@ -233,14 +194,14 @@ theorem exists_block_of_twisted_k1 : ∀ {E : Type} [Field E] [NumberField E] [S
       · subst hk
         have : ¬ (r ≤ (Br.iC (rfl : n + 1 = n + 1) l).1 ∧ (Br.iC (rfl : n + 1 = n + 1) l).1 < n + 1) := fun h => by
           have := h.1; simp [Br.iC] at this; omega
-        simp only [if_neg this, zpow_zero, inv_one, one_mul, Pi.single_eq_same]
+        simp only [ite_eq_right this, zpow_zero, inv_one, one_mul, Pi.single_eq_same]
         exact intAt_one
-      · simp only [Pi.single_apply, hk, if_false, mul_zero]
+      · simp only [Pi.single_apply, hk, ite_false, mul_zero]
         exact intAt_zero
   have h1 := GlobalTheory.LastSteps.mem_sclLat.1 (((hg.1.2 _).2 hv)) (Br.iC rfl i)
   have h2 : r ≤ (Br.iC (rfl : n + 1 = n + 1) i).1 ∧ (Br.iC (rfl : n + 1 = n + 1) i).1 < n + 1 := by
     simp [Br.iC]; omega
-  rw [if_pos h2, zpow_one] at h1
+  rw [ite_eq_left h2, zpow_one] at h1
   apply redP_eq_zero_of_div
   rw [div_eq_inv_mul]
   exact h1

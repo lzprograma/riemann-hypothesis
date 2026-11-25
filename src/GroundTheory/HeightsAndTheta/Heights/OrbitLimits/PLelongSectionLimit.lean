@@ -54,7 +54,7 @@ theorem ptsIntegral_finset_sum (hInt : PtsIntegrableStatement) {Q : Ideal (MRing
     ptsIntegral Q (pot L) (fun z => ∑ t ∈ S, u t z) = ∑ t ∈ S, ptsIntegral Q (pot L) (u t) := by
   classical
   by_cases hΨ : ∃ Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) → ℂ), IsGoodProj Q Ψ
-  · simp only [ptsIntegral, dif_pos hΨ, ptsIntegralAt]
+  · simp only [ptsIntegral, dite_eq_left hΨ, ptsIntegralAt]
     rw [← integral_finsetSum S fun t _ =>
       integrable_fibreSum_degZero hInt hQ hΨ.choose_spec hL (hu t)]
     congr 1
@@ -63,7 +63,7 @@ theorem ptsIntegral_finset_sum (hInt : PtsIntegrableStatement) {Q : Ideal (MRing
     simp only [sheetDensity_finset_sum]
     rw [finsum_mem_eq_finite_toFinset_sum _ hfin, Finset.sum_comm]
     exact Finset.sum_congr rfl fun t _ => (finsum_mem_eq_finite_toFinset_sum _ hfin).symm
-  · simp [ptsIntegral, dif_neg hΨ]
+  · simp [ptsIntegral, dite_eq_right hΨ]
 
 theorem LelongSectionLimit.proof (hInt : PtsIntegrableStatement) (hChart : LelongChartLimit.Statement) :
     LelongSectionLimit.Statement := by

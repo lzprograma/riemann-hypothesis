@@ -50,7 +50,6 @@ public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf
 
 noncomputable section
@@ -58,8 +57,6 @@ noncomputable section
 namespace GlobalTheory.HeisTarget
 
 variable {D : D7}
-
-alias symplO_eq_two := _root_.GlobalTheory.RatSelfDual.symplO_eq_add
 
 variable {ψ : AddChar (AF D.host.F) ℂ} {S T T₀ : HSp D} {ρ : ℕ} (d : HypDec T T₀ ρ)
 
@@ -85,7 +82,7 @@ theorem mixT_heis_incX {μ : Measure (Mx D ρ S.rank)} {𝓕 : Set (Mx D ρ S.ra
         rw [_root_.GlobalTheory.MixModel.symplOH_skew, d.wittDecomp_sympl_inclIsotropic_inclAnisotropic S ξ w₀, neg_zero]
       have h3 := _root_.GlobalTheory.MixModel.symplOH_skew S T (d.incAdj S y) (d.incX S ξ)
       simp only [GlobalTheory.OrientedHeis.symplOH_add_left, h1, h2, h3,
-        symplO_eq_two]
+        GlobalTheory.RatSelfDual.symplO_eq_add]
       ring
     · congr 1
       abel

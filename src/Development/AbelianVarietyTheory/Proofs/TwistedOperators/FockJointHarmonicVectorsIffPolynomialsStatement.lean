@@ -59,7 +59,6 @@ open GlobalTheory.Chain (signed)
 open GlobalTheory.Chain.RealIt (LPol locS locT IsPolyIso)
 open MeasureTheory Matrix
 open scoped TensorProduct InnerProductSpace ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.ArchRec
 noncomputable section
 namespace GlobalTheory.ArchRec.JointTransfer
@@ -247,9 +246,9 @@ theorem killedBy_iff (hA : Side A pt κ (phiFr (M.fr τ) br e) c a) {i j : Ix p 
       rw [← two_smul ℂ v] at hv
       simpa using hv
     cases br
-    · simp only [sb, Bool.false_eq_true, if_false, Complex.ofReal_one, neg_smul, one_smul]
+    · simp only [sb, Bool.false_eq_true, ite_false, Complex.ofReal_one, neg_smul, one_smul]
       exact ⟨fun hv => h2 _ (by linear_combination hv), fun hv => by rw [hv]; ring⟩
-    · simp only [sb, if_true, Complex.ofReal_neg, Complex.ofReal_one, neg_neg, one_smul]
+    · simp only [sb, ite_true, Complex.ofReal_neg, Complex.ofReal_one, neg_neg, one_smul]
       exact ⟨fun hv => h2 _ (by linear_combination -hv), fun hv => by rw [hv]; ring⟩
   simp only [mul_zero, zero_smul, add_zero] at d1 d2
   rw [← key]
@@ -279,13 +278,13 @@ theorem isHi_iff {lam : Ix p q → ℚ} (hp : IsParam lam) (ho : IsOrd (M.ε τ)
     cases br <;> simp [sb, sg]
   · simp only [e.surjective.forall, ho.1 _, lt_iff ho, posC_iff hp]
     cases br
-    · simp only [sg, if_true, one_mul, Rat.cast_lt]
+    · simp only [sg, ite_true, one_mul, Rat.cast_lt]
       constructor
       · rintro h i j ⟨h1, h2⟩
         exact (killedBy_iff hA (fun hh => by subst hh; exact lt_irrefl _ h2) h1 P).1 (h i j h2 h1)
       · intro h i j h2 h1
         exact (killedBy_iff hA (fun hh => by subst hh; exact lt_irrefl _ h2) h1 P).2 (h i j ⟨h1, h2⟩)
-    · simp only [sg, Bool.true_eq_false, if_false, neg_mul, one_mul, neg_lt_neg_iff, Rat.cast_lt]
+    · simp only [sg, Bool.true_eq_false, ite_false, neg_mul, one_mul, neg_lt_neg_iff, Rat.cast_lt]
       constructor
       · rintro h i j ⟨h1, h2⟩
         exact (killedBy_iff hA (fun hh => by subst hh; exact lt_irrefl _ h2) h1.symm P).1 (h j i h2 h1.symm)
@@ -301,13 +300,13 @@ theorem isLo_iff {lam : Ix p q → ℚ} (hp : IsParam lam) (ho : IsOrd (M.ε τ)
     cases br <;> simp [sb, sg]
   · simp only [e.surjective.forall, ho.1 _, lt_iff ho, posC_iff hp]
     cases br
-    · simp only [sg, Bool.false_eq_true, if_false, neg_mul, one_mul, neg_lt_neg_iff, Rat.cast_lt]
+    · simp only [sg, Bool.false_eq_true, ite_false, neg_mul, one_mul, neg_lt_neg_iff, Rat.cast_lt]
       constructor
       · rintro h i j ⟨h1, h2⟩
         exact (killedBy_iff hA (fun hh => by subst hh; exact lt_irrefl _ h2) h1 P).1 (h j i h2 h1.symm)
       · intro h i j h2 h1
         exact (killedBy_iff hA (fun hh => by subst hh; exact lt_irrefl _ h2) h1.symm P).2 (h j i ⟨h1.symm, h2⟩)
-    · simp only [sg, if_true, one_mul, Rat.cast_lt]
+    · simp only [sg, ite_true, one_mul, Rat.cast_lt]
       constructor
       · rintro h i j ⟨h1, h2⟩
         exact (killedBy_iff hA (fun hh => by subst hh; exact lt_irrefl _ h2) h1.symm P).1 (h i j h2 h1)
@@ -347,11 +346,8 @@ open GlobalTheory.Chain (signed)
 open GlobalTheory.Chain.RealIt (LPol locS locT IsPolyIso)
 open MeasureTheory Matrix
 open scoped TensorProduct InnerProductSpace ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.ArchRec
 
-theorem _root_.GlobalTheory.T.fockJointHarmonic_vectors_iff_polynomials : ∀ (D : D7) (V : HSp D) (S : D.what₂.Tau → SPar) (M : DSModel V S) (W : HSp D) (S' : D.what₂.Tau → SPar) (N : DSModel W S') (τ : D.what₂.Tau) (ι σ Z : Type) (A : Mn V.rank → (Z → ℂ) → (Z → ℂ)) (B : Mn W.rank → (Z → ℂ) → (Z → ℂ)) (pt : MvPolynomial ι ℂ → (Z → ℂ)) (κ : MvPolynomial ι ℂ ≃ₗ[ℂ] MvPolynomial σ ℂ) (p q r s : ℕ) (T₁ : GrpData p q) (T₂ : GrpData r s) (R₁ : DSRep T₁) (R₂ : DSRep T₂) (a₁ : Mat p q →ₗ[ℂ] Module.End ℂ (MvPolynomial σ ℂ)) (a₂ : Mat r s →ₗ[ℂ] Module.End ℂ (MvPolynomial σ ℂ)) (l₁ : Ix p q → ℚ) (l₂ : Ix r s → ℚ) (c₁ c₂ : ℚ) (b₁ b₂ : Bool) (e₁ : Ix p q ≃ Fin V.rank) (e₂ : Ix r s ≃ Fin W.rank) (u₁ : kfin M τ → R₁.HK.V) (u₂ : kfin N τ → R₂.HK.V), KTie R₁ M τ l₁ c₁ b₁ true e₁ u₁ → KTie R₂ N τ l₂ c₂ b₂ false e₂ u₂ → Side A pt κ (phiFr (M.fr τ) b₁ e₁) c₁ a₁ → Side B pt κ (phiFr (N.fr τ) b₂ e₂) c₂ a₂ → Graded κ → ∀ Φ, IsJoint M τ A pt N B Φ ↔ CJoint a₁ a₂ (blattner l₁) (blattner l₂) (κ Φ) := by
-  first | exact @GlobalTheory.ArchRec.JointTransfer.isJoint_iff_cJoint
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockJointHarmonicVectorsIffPolynomialsStatement =====

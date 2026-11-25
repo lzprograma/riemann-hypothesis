@@ -310,7 +310,7 @@ theorem slice_mInt {A : FinHolAtlas (e + 1) X} {W : Set X} [CompactSpace W]
   by_cases hx : x ∈ W
   · have hne : Nonempty (ChartPartition B) := existsPartition B
     unfold mInt
-    rw [dif_pos hne]
+    rw [dite_eq_left hne]
     unfold integralWith
     have hj := fun j => slice_chart B hB Φ hΦ hψ hWψ x hx hV hVψ hVΦ hv hvV hne.some j
     rw [Finset.sum_congr rfl (fun j _ => (hj j).2)]
@@ -323,7 +323,7 @@ theorem slice_mInt {A : FinHolAtlas (e + 1) X} {W : Set X} [CompactSpace W]
       rw [chartExt, Set.indicator_of_mem ht]
       simp only [sliceF, ← Finset.sum_mul]
       have h1 : ∑ j, extW W (hne.some.χ j) (ψ.symm (hypInclAt i z)) = 1 := by
-        simp only [extW, hpW, dif_pos]
+        simp only [extW, hpW, dite_eq_left]
         exact hne.some.sum_eq_one _
       rw [h1, one_mul]
       rfl

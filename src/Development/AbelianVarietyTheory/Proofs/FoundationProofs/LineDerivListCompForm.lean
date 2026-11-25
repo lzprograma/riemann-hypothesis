@@ -200,7 +200,7 @@ theorem exists_endo_eq_cj (M : IntermediateField ℚ ℂ) (ρ : M →ₐ[ℚ] �
     (ρ.comp (IntermediateField.inclusion hle)).toRingHom
   refine ⟨s, fun x hx hM => ?_⟩
   have := hs ⟨x, IntermediateField.subset_adjoin ℚ _ ⟨hx, hM⟩⟩
-  simp only [cj, TaylorLogMetric.liftM, dif_pos hM]
+  simp only [cj, TaylorLogMetric.liftM, dite_eq_left hM]
   exact this.symm
 
 def ConjPair (D : D7) {N N' : ℕ} (s : ℂ →+* ℂ) (F F' : VC D N N' → ℂ) : Prop :=

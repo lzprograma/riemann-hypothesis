@@ -22,57 +22,13 @@ public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ChartBundlePr
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DvrBundleStatementA
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.Imports
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeFamiliesGlueToBundle
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.NumberTheory.Height.NumberField
 import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SameGenericFlagComparison
 import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ClassListMapDomainPerm
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.RegularLocalRing.Defs
+import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwinJoinPull
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ChartBundleShortExact, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FlagFrameBaseExtension, Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XPullFlagpair, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FlagPairBaseExtension, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SubQuotientStatement, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DvrBundleStatementB, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ChartBundleIntersectionNumbers, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ChartBundleQuotientEquivalence, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ChartBundleIntersectionSymmetry
@@ -107,19 +63,7 @@ theorem mseg_join (x : (Σ k, ι k) → Ω) (z : (Σ k, ι' k) → Ω)
 theorem chartRing_le (x : (Σ k, ι k) → Ω) (z : (Σ k, ι' k) → Ω)
     (s : ∀ k : K ⊕ K', Sum.elim ι ι' k) (hs : mseg (joinCoord x z) s ≠ 0) :
     chartRing O (mseg x) (restrictChart s) ≤ chartRing O (mseg (joinCoord x z)) s := by
-  have hw : mseg z (fun k => s (.inr k)) ≠ 0 := by
-    rw [mseg_join] at hs
-    exact right_ne_zero_of_mul hs
-  unfold chartRing
-  apply Algebra.adjoin_le
-  rintro _ ⟨t, rfl⟩
-  have h : mseg x t / mseg x (restrictChart s) =
-      mseg (joinCoord x z) (comb t s) / mseg (joinCoord x z) s := by
-    rw [mseg_join x z (comb t s), mseg_join x z s]
-    exact (mul_div_mul_right _ _ hw).symm
-  have h2 := div_mem_chartRing (o := O) (mseg (joinCoord x z)) s (comb t s)
-  rw [← h] at h2
-  exact h2
+  apply _root_.GroundTheory.Heights₂.Heights.NumbersDVR.JoinPullbackAlt.chartRing_le_join <;> assumption
 
 theorem main : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (Ω : Type) [Field Ω] [Algebra O Ω] (K : Type) [Fintype K] [DecidableEq K] (ι : K → Type) [∀ k, Fintype (ι k)] (x : (Σ k, ι k) → Ω) (N N₁ N₂ : ℕ) (V : Type) [AddCommGroup V] [Module Ω V] (V₁ : Type) [AddCommGroup V₁] [Module Ω V₁] (V₂ : Type) [AddCommGroup V₂] [Module Ω V₂] (E : ChartBundle O (mseg x) N V) (i : V₁ →ₗ[Ω] V) (p : V →ₗ[Ω] V₂) (E₁ : ChartBundle O (mseg x) N₁ V₁) (E₂ : ChartBundle O (mseg x) N₂ V₂), IsSubQuot O x E i p E₁ E₂ → ∀ (K' : Type) [Fintype K'] [DecidableEq K'] (ι' : K' → Type) [∀ k, Fintype (ι' k)] (z : (Σ k, ι' k) → Ω) (EB : ChartBundle O (mseg (joinCoord x z)) N V) (EB₁ : ChartBundle O (mseg (joinCoord x z)) N₁ V₁) (EB₂ : ChartBundle O (mseg (joinCoord x z)) N₂ V₂), IsPull O x z E EB → IsPull O x z E₁ EB₁ → IsPull O x z E₂ EB₂ → IsSubQuot O (joinCoord x z) EB i p EB₁ EB₂ := by
   intro O _ _ _ Ω _ _ K _ _ ι _ x N N₁ N₂ V _ _ V₁ _ _ V₂ _ _ E i p E₁ E₂ h K' _ _ ι' _ z EB EB₁ EB₂ hE hE₁ hE₂
@@ -166,8 +110,7 @@ theorem tri_solve {F : Type} [Field F] {N : ℕ} (T : Fin N → Fin N → F) (a 
     (hT : ∀ j l, j < l → T j l = 0) (hd : ∀ j, T j j ≠ 0) (i : Fin N)
     (h : ∀ l, i < l → ∑ j, a j * T j l = 0) : ∀ j, i < j → a j = 0 := by
   classical
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   obtain ⟨j₀, hj₀, ha₀⟩ := hne
   let S := Finset.univ.filter (fun j => i < j ∧ a j ≠ 0)
   have hS : S.Nonempty := ⟨j₀, by simp [S, hj₀, ha₀]⟩
@@ -247,7 +190,7 @@ theorem repr_bc (bc : V →ₗ[Ω] V₁) (w : Module.Basis (Fin N) Ω V) (w₁ :
   · rw [map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_eq_same, smul_eq_mul,
       mul_one]
   · intro i _ hij
-    rw [map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply, if_neg hij,
+    rw [map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply, ite_eq_right hij,
       smul_zero]
   · intro hj
     exact absurd (Finset.mem_univ j) hj
@@ -494,10 +437,6 @@ variable {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {Ω : 
   {x : (Σ k, ι k) → Ω} {N N₁ N₂ : ℕ} {V V₁ V₂ : Type} [AddCommGroup V] [Module Ω V]
   [AddCommGroup V₁] [Module Ω V₁] [AddCommGroup V₂] [Module Ω V₂]
 
-theorem sameGeneric_self (E : ChartBundle O (mseg x) N V) : SameGeneric O x E E :=
-  fun _ _ => ⟨fun v hv => ⟨1, one_ne_zero, by simpa using hv⟩,
-    fun v hv => ⟨1, one_ne_zero, by simpa using hv⟩⟩
-
 theorem sameGeneric_sub {E E' : ChartBundle O (mseg x) N V} {i : V₁ →ₗ[Ω] V} {p : V →ₗ[Ω] V₂}
     {E₁ E₁' : ChartBundle O (mseg x) N₁ V₁} {E₂ E₂' : ChartBundle O (mseg x) N₂ V₂}
     (hs : SameGeneric O x E E') (h : IsSubQuot O x E i p E₁ E₂)
@@ -555,13 +494,6 @@ theorem rank_add {i : V₁ →ₗ[Ω] V} {p : V →ₗ[Ω] V₂} (hi : Function.
 
 end Generic
 
-theorem length_classList {K : Type} {q m : ℕ} (cls : Fin q → K → ℤ) {Q : MvPolynomial (Fin q) ℤ}
-    (hQ : Q.IsHomogeneous m) {μ : Fin q →₀ ℕ} (hμ : μ ∈ Q.support) :
-    (classList cls μ).length = m := by
-  have h := hQ (mem_support_iff.1 hμ)
-  rw [classList, Multiset.length_toList, Multiset.card_map, Finsupp.card_toMultiset, ← h]
-  simp [Finsupp.weight_apply, Finsupp.sum]
-
 section Stages
 
 variable {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {Ω : Type} [Field Ω]
@@ -610,7 +542,7 @@ theorem exists_flag {M : ℕ} {W : Type} [AddCommGroup W] [Module Ω W] {ϖ : O}
     _root_.GlobalTheory.CompanionTheory.Ar.CommonFlag.main O Ω K ι x d hM M 1 W ![B, B'] (by
       intro j
       fin_cases j
-      · exact sameGeneric_self B
+      · exact GlobalTheory.CompanionTheory.Ar.Num.Cocycle.sameGeneric_self B
       · exact hs)
   have hM' : IsModelOver (pointIdeal O (joinCoord x z)) d :=
     ((GroundTheory.Heights₂.Heights.NumbersDVR.BundleExamples.isModelOver_iff O _ d).1 hMB).2
@@ -695,7 +627,7 @@ theorem ckAdd_of_flags {ϖ : O} (hϖ : Irreducible ϖ) {x : (Σ k, ι k) → Ω}
     w w' b b' f g hf w₁ w₁' b₁ b₁' f₁ g₁ hf₁ w₂ w₂' b₂ b₂' f₂ g₂ hf₂ k (psumExpansion N k)
     (psumExpansion N₁ k) (psumExpansion (N - N₁) k) (isPairExpansion_psum N k)
     (isPairExpansion_psum N₁ k) (isPairExpansion_psum (N - N₁) k) (classList L μ)
-    (by rw [length_classList _ hQ hμ]; omega)
+    (by rw [GlobalTheory.CompanionTheory.Ar.Num.Cocycle.length_classList _ hQ hμ]; omega)
 
 theorem ckAdd_of_two {ϖ : O} (hϖ : Irreducible ϖ) {x : (Σ k, ι k) → Ω} {d : ℕ}
     {E E' : ChartBundle O (mseg x) N V} {i : V₁ →ₗ[Ω] V} {p : V →ₗ[Ω] V₂}

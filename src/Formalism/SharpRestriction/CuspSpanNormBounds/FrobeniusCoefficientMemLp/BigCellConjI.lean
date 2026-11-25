@@ -1,50 +1,8 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JTransM
 public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.FramesTor
 public import Formalism.FormalDegreeBessel.StatementBF
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -57,37 +15,21 @@ open MeasureTheory Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S
 theorem col_of_fix {m : ℕ} {h : Matrix (Fin m) (Fin m) ℂ} {c : Fin m} (hc : h *ᵥ bvec c = bvec c) (p : Fin m) :
     h p c = if p = c then 1 else 0 := by
   simpa only [bvec, Matrix.mulVec, dotProduct, Pi.single_apply, mul_ite, mul_one, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true] using congrFun hc p
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true] using congrFun hc p
 
 theorem Hpk_esI_row {k r : ℕ} (a : Fin r) (q : Fin (2 * r + k + 1)) :
     Hpk k r (esI k r a) q = if q = eI k r a then 1 else 0 := by
-  have ha := a.isLt
-  have e1 : (esI k r a).val = 2 * r + k - a.val := rfl
-  unfold Hpk
-  by_cases hq : q = eI k r a
-  · have hqv : q.val = a.val := by rw [hq]; rfl
-    rw [if_pos hq, if_neg (fun h => by have := h.1; omega), if_pos (by constructor <;> omega)]
-  · have hqv : q.val ≠ a.val := fun e => hq (Fin.ext e)
-    rw [if_neg hq, if_neg (fun h => by have := h.1; omega), if_neg (fun h => by have := h.2; omega),
-      if_neg (fun h => by have := h.1; have := h.2.1; omega)]
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.Mult1.TransM.Hpk_esI <;> assumption
 
 theorem Hpk_eI_row {k r : ℕ} (a : Fin r) (q : Fin (2 * r + k + 1)) :
     Hpk k r (eI k r a) q = if q = esI k r a then 1 else 0 := by
-  have ha := a.isLt
-  have e1 : (eI k r a).val = a.val := rfl
-  unfold Hpk
-  by_cases hq : q = esI k r a
-  · have hqv : q.val = 2 * r + k - a.val := by rw [hq]; rfl
-    rw [if_pos hq, if_pos (by constructor <;> omega)]
-  · have hqv : q.val ≠ 2 * r + k - a.val := fun e => hq (Fin.ext e)
-    rw [if_neg hq, if_neg (fun h => by have := h.2; omega), if_neg (fun h => by have := h.2; omega),
-      if_neg (fun h => by have := h.1; omega)]
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.Mult1.TransM.Hpk_eI <;> assumption
 
 theorem Hpk_mid_col {k r : ℕ} (i j : Fin (2 * r + k + 1)) (hj1 : r ≤ j.val) (hj2 : j.val ≤ r + k)
     (hi : i.val < r ∨ r + k < i.val) : Hpk k r i j = 0 := by
   unfold Hpk
-  rw [if_neg (fun h => by have := h.1; have := h.2; omega), if_neg (fun h => by have := h.1; omega),
-    if_neg (fun h => by have := h.1; have := h.2.1; omega)]
+  rw [ite_eq_right (fun h => by have := h.1; have := h.2; omega), ite_eq_right (fun h => by have := h.1; omega),
+    ite_eq_right (fun h => by have := h.1; have := h.2.1; omega)]
 
 theorem UH_entry {m : ℕ} {H h : Matrix (Fin m) (Fin m) ℂ} (hUH : hᴴ * H * h = H) {c : Fin m}
     (hc : ∀ p, h p c = if p = c then 1 else 0) (j : Fin m) : ∑ q, H c q * h q j = H c j := by

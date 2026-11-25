@@ -4,49 +4,8 @@ public import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.IsOpenPart
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmHostRootComplexEqPmSqrt
 public import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
 public import Formalism.LocalToGlobal.LatticeGeometry.AmpleOnAbelianBase
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.AbelianAt
-import Mathlib.Algebra.Azumaya.Basic
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
@@ -57,8 +16,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formali
 open Formalism.MainNotions.DIV.Cons (intO)
 
 namespace GlobalTheory.ShFam.Pad
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 section Lattices
 
@@ -167,7 +124,7 @@ theorem numL_homog (num : Multiset A → ℝ) (d e : ℕ) (he : e ≠ d) (P : Mv
     rw [Finsupp.degree_eq_weight_one]; exact this
   have h2 : MvPolynomial.monomial m (P.coeff m) = P.coeff m • MvPolynomial.basisMonomials A ℝ m := by
     simp [MvPolynomial.smul_monomial]
-  rw [h2, map_smul, numL, Module.Basis.constr_basis, if_neg (h1 ▸ he), smul_zero]
+  rw [h2, map_smul, numL, Module.Basis.constr_basis, ite_eq_right (h1 ▸ he), smul_zero]
 
 end Degrees
 
@@ -246,10 +203,6 @@ open Classical in
 def normDet (p : ℕ) (b : Bool) (τ : D.what₂.Tau) (y : Pt s) (a : Qb) : ℝ :=
   if h : p.Prime then (haveI := Fact.mk h; ‖iotaP p a‖ * Real.exp (∑ i, lnAt s p b y (τ, i))) else 1
 
-def JcPin (D : D7) (p : ℕ) [Fact p.Prime] (la : PlL D p) (jc : DV.KW p →+* ℂ) : Prop :=
-  ∃ W : ValuationSubring ℂ, (∀ x : D.what₂.LL, D.what₂.embLL x ∈ W ↔ la.1.valuation D.what₂.LL x ≤ 1) ∧
-    ∀ a : DV.KW p, jc a ∈ W ↔ a ∈ (algebraMap (WittVector p (AlgebraicClosure (ZMod p))) (DV.KW p)).range
-
 structure LocSt (D : D7) (N j : ℕ) (ng : NgPkg) : Type 1 where
   loc : ∀ p : ℕ, ModuliIntegralCharts.Loc D N j p
   ex : ∀ p, ModuliIntegralCharts.ExtA D (loc p)
@@ -269,19 +222,6 @@ structure GlobSt (M : ℕ → Type) : Type 1 where
   ampleGen : Met → Prop
   limRA : Met → Prop
 
-def GlobSt.projLine {M : ℕ → Type} (m : ∀ p, M p) : GlobSt M where
-  Xg := Unit
-  bc p _ := m p
-  DivG _ := ℤ
-  effD n := 0 ≤ n
-  noVertD _ := True
-  posBdD n := 0 < n
-  ampleOnAbelianBase _ m₀ n := n < m₀
-  Met := ℚ
-  nefFibM d := 0 ≤ d
-  ampleGen d := 0 < d
-  limRA d := 0 ≤ d
-
 structure AdmSt (D : D7) (N j : ℕ) (jC : ∀ (p : ℕ) [Fact p.Prime], PlL D p → (DV.KW p →+* ℂ)) : Type 1 where
   admitted : ∀ (p : ℕ) [Fact p.Prime], PlL D p → Type
   mdl : ∀ (p : ℕ) [Fact p.Prime] (la : PlL D p), admitted p la → DV.Mdl D p N (DV.rkOf (DV.PsiOf D (jC p la)) N j)
@@ -292,14 +232,6 @@ structure AdmSt (D : D7) (N j : ℕ) (jC : ∀ (p : ℕ) [Fact p.Prime], PlL D p
 structure FlatSt : Type where
   sv : D.what₂.Tau → Pt s → Qb
   ht : ℝ → s.Comp → D.what₂.Tau → ℝ
-
-section OfPkg
-
-variable {Comp : Type} {jC : ∀ (p : ℕ) [Fact p.Prime], PlL D p → (DV.KW p →+* ℂ)} {ng : NgPkg}
-  (P : PadPkg D N j Comp jC ng)
-
-
-end OfPkg
 
 def padOf {jC : ∀ (p : ℕ) [Fact p.Prime], PlL D p → (DV.KW p →+* ℂ)} {ng : NgPkg} (L : LocSt D N j ng)
     (G : GlobSt fun p => (L.loc p).Mdl) (M : AdmSt D N j jC) (F : FlatSt s)
@@ -321,12 +253,5 @@ def padOf {jC : ∀ (p : ℕ) [Fact p.Prime], PlL D p → (DV.KW p →+* ℂ)} {
     htDetT := F.ht
     arDeg := I.arDeg, arDeg_homog := I.arDeg_homog
     arMix := I.arMix, arMix_HT := I.arMix_HT, arMix_DR := I.arMix_DR }
-
-section Unfold
-
-variable {jC : ∀ (p : ℕ) [Fact p.Prime], PlL D p → (DV.KW p →+* ℂ)} {ng : NgPkg} (L : LocSt D N j ng)
-  (G : GlobSt fun p => (L.loc p).Mdl) (M : AdmSt D N j jC) (F : FlatSt s) (I : ArIn D.what₂.Tau N (D.R.f * N) s.Comp)
-
-end Unfold
 
 end GlobalTheory.ShFam.Pad

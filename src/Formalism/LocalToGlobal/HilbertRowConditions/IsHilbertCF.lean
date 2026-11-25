@@ -37,7 +37,7 @@ def IsHilbertCF (d : ℕ) (H : Fld) [FiniteDimensional ℚ H] : Prop :=
   AbelOver (Formalism.L2.Host.KQ d) H ∧ UnramOverK d H ∧
     ∀ (H' : Fld) [FiniteDimensional ℚ H'], AbelOver (Formalism.L2.Host.KQ d) H' → UnramOverK d H' → H' ≤ H
 
-structure KsPieces (D : D7) (T : HostTied D) where
+structure KsPieces (_D : D7) (_T : HostTied _D) where
   HK : Fld
   rcf : Fld
   M : Fld
@@ -48,42 +48,6 @@ structure KsPieces (D : D7) (T : HostTied D) where
   [M_fin : FiniteDimensional ℚ M]
   [MDel_fin : FiniteDimensional ℚ MDel]
   [KPs_fin : FiniteDimensional ℚ KPs]
-
-  HK_hilb : IsHilbertCF D.host.d HK
-
-  E_le_rcf : T.fr.j.fieldRange ≤ rcf
-
-  rcf_abel : AbelOver T.fr.j.fieldRange rcf
-
-  rcf_cond : (NumberField.discr rcf).natAbs ∣
-    (NumberField.discr D.host.E).natAbs ^ (Module.finrank ℚ rcf / Module.finrank ℚ D.host.E) *
-      (D.host.g 0 * D.host.g 1 * D.host.pde * D.host.pde') ^ Module.finrank ℚ rcf
-
-  HK_le_M : HK ≤ M
-
-  M_deg : Module.finrank ℚ M ≤ Module.finrank ℚ HK * Nat.card (GL (Fin 2) (ZMod 12))
-
-  M_ram : ∀ p : ℕ, p.Prime → p ∣ (NumberField.discr M).natAbs → p ∣ 6 * D.host.d
-
-  MDel_gen : ∃ (y : Qb) (h : y ^ 12 ∈ M), y ≠ 0 ∧
-    (∃ I : FractionalIdeal (nonZeroDivisors (NumberField.RingOfIntegers M)) M,
-      FractionalIdeal.spanSingleton (nonZeroDivisors (NumberField.RingOfIntegers M)) (⟨y ^ 12, h⟩ : M) = I ^ 12) ∧
-    MDel = M ⊔ IntermediateField.adjoin ℚ {y}
-
-  MDel_ram : ∀ p : ℕ, p.Prime → p ∣ (NumberField.discr MDel).natAbs → p ∣ 6 * D.host.d
-
-  KPs_gen : ∃ S : Fin D.R.m → Finset Qb,
-    (∀ j, (S j).card ≤ Nat.log 2 (NumberField.classNumber D.host.E)) ∧
-    (∀ j, ∀ y ∈ S j, ∃ n : ℕ, 0 < n ∧ n ∣ NumberField.classNumber D.host.E ∧ y ^ n ∈ T.fr.j.fieldRange) ∧
-    KPs = T.fr.j.fieldRange ⊔ muFld (NumberField.classNumber D.host.E) ⊔
-      IntermediateField.adjoin ℚ (⋃ j, (S j : Set Qb))
-
-  KPs_ram : ∀ p : ℕ, p.Prime → p ∣ (NumberField.discr KPs).natAbs →
-    p ∣ NumberField.classNumber D.host.E * (NumberField.discr D.host.E).natAbs
-
-  M_le_MDel : M ≤ MDel
-
-  E_le_KPs : T.fr.j.fieldRange ≤ KPs
 
 def rootOrders (D : D7) : List ℕ :=
   [Nat.card (G0g D.nd), D.host.g 0 * (D.host.g 0 - 1), D.host.g 1 * (D.host.g 1 - 1), 3 ^ 4, 5 ^ 4]

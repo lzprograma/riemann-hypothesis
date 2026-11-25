@@ -45,8 +45,6 @@ open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj Globa
 
 namespace GlobalTheory.DepthUnf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} {W : G.Weil} {U : Set T}
 
 def flatProd (S : GridChoice W U) (t : T) (Φ : G.Datum) (β : CosFam G t)

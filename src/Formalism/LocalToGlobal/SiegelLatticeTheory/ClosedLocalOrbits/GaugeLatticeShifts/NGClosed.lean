@@ -4,6 +4,7 @@ public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.Gaug
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.HermitianZZEqNeg
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NinfConjIff
 
 @[expose] public section
 
@@ -34,14 +35,7 @@ theorem inv_fix {g : UJ ε} {v : Fin n → ℂ} (h : Formalism.MainNotions.S.uMa
 
 theorem fix_span {g : Matrix (Fin n) (Fin n) ℂ} (hg : ∀ a, g *ᵥ e a = e a) (a : ℕ) :
     ∀ x ∈ spanLt e a, g *ᵥ x = x := by
-  intro x hx
-  induction hx using Submodule.span_induction with
-  | mem y hy =>
-    obtain ⟨b, _, rfl⟩ := hy
-    exact hg b
-  | zero => exact mulVec_zero _
-  | add x y _ _ hx hy => rw [mulVec_add, hx, hy]
-  | smul c x _ hx => rw [mulVec_smul, hx]
+  apply _root_.Formalism.L2.SG.CovariantRepresentation.fix_span <;> assumption
 
 theorem InN_one : InN ε e z (1 : Matrix (Fin n) (Fin n) ℂ) :=
   ⟨UnitaryIsometries.RI.inS_one e z, fun y _ => by rw [sub_self, zero_mulVec]; exact Submodule.zero_mem _⟩

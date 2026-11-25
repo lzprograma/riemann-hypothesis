@@ -67,8 +67,7 @@ theorem exists_rdU_ne_zero_of_mem_secZ : ∀ (E : Type) [Field E] [NumberField E
     (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (σ : c.F →+* ℂ) (r : ℕ) (U : Unf Xo c σ r), IsUnf U →
     ∀ (e : Ix Dw → ℤ), ∀ F ∈ GlobalTheory.AllWt.secZ Xo c e, F ≠ 0 → ∃ k, ∃ x ∈ (U.X k).dom, rdU U F k x ≠ 0 := by
   intro E _ _ _ H Dw l Xo c σ r U hU e F hF hF0
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   apply hF0
   funext p y
   show F p y = 0

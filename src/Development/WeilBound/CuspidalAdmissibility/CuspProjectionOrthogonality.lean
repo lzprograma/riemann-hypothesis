@@ -269,8 +269,7 @@ theorem occ_loccomp : ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : M
   · rintro f ⟨a, x, hx, rfl⟩
     exact ⟨fun y => hmem _, fun g y => famF_equivariant μ P D w a x hx g y⟩
   · intro u hu hu0
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     have h0 : ∀ a x hx y, inner ℂ (famF μ P D w a x hx y) u = 0 :=
       fun a x hx y => hall _ ⟨a, x, hx, rfl⟩ y
     have hc := inner_clsL_eq_zero μ P D w u h0

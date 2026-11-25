@@ -91,7 +91,7 @@ theorem WeierstrassDivisionAtPoint.proof (hW : WeierstrassDivision.Statement) :
     have h1 : (fun i : {c' // c' ≠ c} => coordinateToLast c (y - y₀) (some i)) =
         fun c' => zeroCoordinate c y c'.1 - y₀ c'.1 := by
       funext c'
-      rw [coordinateToLast_some, zeroCoordinate_apply, if_neg c'.2, Pi.sub_apply]
+      rw [coordinateToLast_some, zeroCoordinate_apply, ite_eq_right c'.2, Pi.sub_apply]
     rw [h1, coordinateToLast_none, Pi.sub_apply]
 
 end

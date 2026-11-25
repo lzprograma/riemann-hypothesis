@@ -6,8 +6,6 @@ import Mathlib.Algebra.Order.Star.Int
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators
@@ -55,8 +53,7 @@ private theorem v_intCast_nonneg' (V : VF C) (a : ℤ) : 0 ≤ V.v (a : C) := by
     exact v_natCast_nonneg_of_vf V m
 
 private theorem v_natCast_nonpos_of_not_dvd (V : VF C) (n : ℕ) (hn : ¬ V.l ∣ n) : V.v (n : C) ≤ 0 := by
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have hcop : Nat.Coprime n V.l :=
     Nat.Coprime.symm ((Nat.Prime.coprime_iff_not_dvd V.l_prime).mpr hn)
   have hb := Nat.gcd_eq_gcd_ab n V.l
@@ -96,8 +93,7 @@ theorem frobX_of {f : PS C 3 dd} (hi : IntS V f) (hd : FrobD V f) : FrobX V f :=
   rw [hn] at h
   unfold VF.MM at h ⊢
   rw [AddValuation.map_mul] at h
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   have := add_le_add hc (v_natCast_nonpos_of_not_dvd V _ hj)
   rw [add_zero] at this
   exact absurd h (not_lt.mpr this)
@@ -181,16 +177,16 @@ theorem coeff_free {f : PS C 3 dd} (h1 : ev (rz 2) f = 1) {p : Fin 3 × Fin dd �
         fun s n => (X s : PS C 2 dd) ^ n) = _
       rw [hmon, MvPowerSeries.coeff_monomial]
       by_cases he : e = Finsupp.comapDomain (up 2) d ((up_inj 2).injOn)
-      · rw [if_pos he, if_pos (by rw [he])]
-      · rw [if_neg he, if_neg (fun h => he (inj h).symm)]
-    · push_neg at hx
+      · rw [ite_eq_left he, ite_eq_left (by rw [he])]
+      · rw [ite_eq_right he, ite_eq_right (fun h => he (inj h).symm)]
+    · push Not at hx
       obtain ⟨j, hj⟩ := hx
       have h0 : (d.prod fun s n => (fun q : Fin 3 × Fin dd => rz (C := C) (dd := dd) 2 q.1 q.2) s ^ n) = 0 := by
         apply Finset.prod_eq_zero (i := ((0 : Fin 3), j))
         · exact Finsupp.mem_support_iff.mpr hj
         · show (rz (C := C) (dd := dd) 2 0 j) ^ (d ((0 : Fin 3), j)) = 0
           rw [show rz (C := C) (dd := dd) 2 0 j = 0 from rfl, zero_pow hj]
-      rw [h0, map_zero, if_neg]
+      rw [h0, map_zero, ite_eq_right]
       intro h
       apply hj
       rw [h, Finsupp.mapDomain_notin_range]
@@ -202,18 +198,18 @@ theorem coeff_free {f : PS C 3 dd} (h1 : ev (rz 2) f = 1) {p : Fin 3 × Fin dd �
     intro e
     show coeff e (MvPowerSeries.subst (fun q : Fin 3 × Fin dd => rz (C := C) (dd := dd) 2 q.1 q.2) f) = _
     rw [MvPowerSeries.coeff_subst hs, finsum_eq_single _ (e.mapDomain (up 2))]
-    · rw [hprod, if_pos rfl, smul_eq_mul, mul_one]
+    · rw [hprod, ite_eq_left rfl, smul_eq_mul, mul_one]
     · intro d hd
-      rw [hprod, if_neg hd, smul_zero]
+      rw [hprod, ite_eq_right hd, smul_zero]
   have h2 := key (Finsupp.comapDomain (up 2) p ((up_inj 2).injOn))
   rw [h1, eq_up_of hp, MvPowerSeries.coeff_one] at h2
   rw [← h2]
   by_cases hp0 : p = 0
   · subst hp0
-    rw [if_pos rfl, if_pos]
+    rw [ite_eq_left rfl, ite_eq_left]
     ext s
     rfl
-  · rw [if_neg hp0, if_neg]
+  · rw [ite_eq_right hp0, ite_eq_right]
     intro h
     apply hp0
     rw [← eq_up_of hp, h, Finsupp.mapDomain_zero]
@@ -221,7 +217,7 @@ theorem coeff_free {f : PS C 3 dd} (h1 : ev (rz 2) f = 1) {p : Fin 3 × Fin dd �
 theorem x_le (i : Fin dd) (γ : Fin 2 × Fin dd →₀ ℕ) {p : Fin 3 × Fin dd →₀ ℕ} (hp : p ≤ ix i V.l γ)
     (j : Fin dd) (hj : j ≠ i) : p ((0 : Fin 3), j) = 0 := by
   have h := hp ((0 : Fin 3), j)
-  rw [index_raise_first, if_neg hj] at h
+  rw [index_raise_first, ite_eq_right hj] at h
   exact Nat.le_zero.mp h
 
 private theorem mm_zero' : V.MM (0 : C) := by
@@ -297,7 +293,7 @@ theorem coeff_mul_cong {f g : PS C 3 dd} (hf : IntS V f) (hg : IntS V g) (hfF : 
   have hti : x.1 ((0 : Fin 3), i) + x.2 ((0 : Fin 3), i) = V.l := by
     have h3 := congrArg (fun p => p ((0 : Fin 3), i)) hsum
     simp only [Finsupp.add_apply] at h3
-    rw [h3, hN, index_raise_first, if_pos rfl]
+    rw [h3, hN, index_raise_first, ite_eq_left rfl]
   by_cases hd : V.l ∣ x.1 ((0 : Fin 3), i)
   · obtain ⟨q, hq⟩ := hd
     rcases q with _ | _ | q
@@ -307,7 +303,7 @@ theorem coeff_mul_cong {f g : PS C 3 dd} (hf : IntS V f) (hg : IntS V g) (hfF : 
         · rw [hj]
           simpa using hq
         · exact hxa j hj
-      rw [coeff_free hf1 hfree, if_neg ha0, zero_mul]
+      rw [coeff_free hf1 hfree, ite_eq_right ha0, zero_mul]
       exact mm_zero'
     · have hfree : ∀ j, x.2 ((0 : Fin 3), j) = 0 := by
         intro j
@@ -316,7 +312,7 @@ theorem coeff_mul_cong {f g : PS C 3 dd} (hf : IntS V f) (hg : IntS V g) (hfF : 
           simp at hq
           omega
         · exact hxb j hj
-      rw [coeff_free hg1 hfree, if_neg hb0, mul_zero]
+      rw [coeff_free hg1 hfree, ite_eq_right hb0, mul_zero]
       exact mm_zero'
     · exfalso
       nlinarith [V.l_prime.pos]

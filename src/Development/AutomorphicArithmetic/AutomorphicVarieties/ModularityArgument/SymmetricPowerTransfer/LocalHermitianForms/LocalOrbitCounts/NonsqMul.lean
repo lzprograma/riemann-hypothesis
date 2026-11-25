@@ -163,8 +163,8 @@ private theorem key {Δ : K} (h : IsLoc O Δ) {D x y : K} (hD : D ≠ 0) (hx : x
     convert h2 using 1
     ring
 
-private theorem hs_pos {D x : K} (h : Nm D x) : hs D x = 1 := if_pos h
-private theorem hs_neg {D x : K} (h : ¬ Nm D x) : hs D x = -1 := if_neg h
+private theorem hs_pos {D x : K} (h : Nm D x) : hs D x = 1 := ite_eq_left h
+private theorem hs_neg {D x : K} (h : ¬ Nm D x) : hs D x = -1 := ite_eq_right h
 
 end UpperTheory.V.Z.Sym.Loc.admissible_trace_regular
 

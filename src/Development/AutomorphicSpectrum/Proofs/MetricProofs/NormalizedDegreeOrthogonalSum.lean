@@ -1,49 +1,11 @@
 module
 
+import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FiniteSupportHeight
+
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsOrthFull
 public import GroundTheory.HeightsAndTheta.Heights.ArithDegree
 public import Mathlib.Order.CompletePartialOrder
 public import Development.WeilBound.CoreStatements.AmpleLineBundles.SpanLeOfMem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -75,26 +37,14 @@ theorem gramDet_sumElim (E : HermitianBundle.{0} K) (σ : K →+* ℂ) {a b : �
     (ht : LinearIndependent (𝓞 K) t)
     (h : ∀ i j, inner ℂ (fibreVec E.metric σ (s i)) (fibreVec E.metric σ (t j)) = 0) :
     gramDet E.metric σ (Sum.elim s t) = gramDet E.metric σ s * gramDet E.metric σ t := by
-  have hconj : ∀ i j, inner ℂ (fibreVec E.metric σ (t j)) (fibreVec E.metric σ (s i)) = 0 := by
-    intro i j
-    rw [← inner_conj_symm, h i j, map_zero]
-  have hM : (Matrix.gram ℂ fun k => fibreVec E.metric σ (Sum.elim s t k)) =
-      Matrix.fromBlocks (Matrix.gram ℂ fun i => fibreVec E.metric σ (s i)) 0 0
-        (Matrix.gram ℂ fun j => fibreVec E.metric σ (t j)) := by
-    ext (i | i) (j | j) <;>
-      simp only [Matrix.gram_apply, Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂,
-        Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂, Sum.elim_inl, Sum.elim_inr, Matrix.zero_apply, h, hconj]
-  have him : ∀ {n : ℕ} (v : Fin n → FibreSpace E.metric σ), (Matrix.gram ℂ v).det.im = 0 := by
-    intro n v
-    have hA : (Matrix.gram ℂ v).conjTranspose = Matrix.gram ℂ v := by
-      ext i j
-      simp only [Matrix.conjTranspose_apply, Matrix.gram_apply]
-      exact inner_conj_symm _ _
-    have hdet := Matrix.det_conjTranspose (Matrix.gram ℂ v)
-    rw [hA] at hdet
-    exact Complex.conj_eq_iff_im.mp hdet.symm
+  have hcomp : (fun k => fibreVec E.metric σ (Sum.elim s t k)) =
+      Sum.elim (fun i => fibreVec E.metric σ (s i)) (fun j => fibreVec E.metric σ (t j)) :=
+    funext (Sum.rec (fun _ => rfl) fun _ => rfl)
+  have he := det_gram_sumElim (fun i => fibreVec E.metric σ (s i))
+    (fun j => fibreVec E.metric σ (t j)) (fun j => fibreVec E.metric σ (t j))
+    0 (fun _ => by simp) h
   unfold GroundTheory.Heights₂.Heights.gramDet
-  rw [hM, Matrix.det_fromBlocks_zero₂₁, Complex.mul_re, him, him, mul_zero, sub_zero]
+  rw [hcomp, he, Complex.mul_re, det_gram_im, det_gram_im, mul_zero, sub_zero]
 
 theorem degree_sup (E : HermitianBundle.{0} K) {F G : Submodule (𝓞 K) E.carrier}
     (h : OrthAt E F G) : E.degree (F ⊔ G) = E.degree F + E.degree G := by
@@ -134,23 +84,7 @@ theorem degree_sup (E : HermitianBundle.{0} K) {F G : Submodule (𝓞 K) E.carri
   ring
 
 theorem degree_bot (E : HermitianBundle.{0} K) : E.degree ⊥ = 0 := by
-  have hrk : Fintype.card (Fin 0) = E.rank ⊥ := by
-    unfold GroundTheory.Heights₂.Heights.HermitianBundle.rank
-    simp
-  obtain ⟨-, hdeg⟩ := CoverDenseAlt.deg_eq E ⊥ (s := (Fin.elim0 : Fin 0 → E.carrier)) linearIndependent_empty_type
-    (fun i => i.elim0) hrk
-  have h1 : CoverDenseAlt.idx (Submodule.span (𝓞 K) (Set.range (Fin.elim0 : Fin 0 → E.carrier))) ⊥ = 1 := by
-    rw [CoverDenseAlt.idx_eq_card]
-    refine Nat.card_eq_one_iff_unique.mpr ⟨⟨fun a b => ?_⟩, ⟨0⟩⟩
-    obtain ⟨a, rfl⟩ := Submodule.Quotient.mk_surjective _ a
-    obtain ⟨b, rfl⟩ := Submodule.Quotient.mk_surjective _ b
-    rw [Subsingleton.elim a b]
-  have hg : ∀ σ : K →+* ℂ, GroundTheory.Heights₂.Heights.gramDet E.metric σ (Fin.elim0 : Fin 0 → E.carrier) = 1 := by
-    intro σ
-    unfold GroundTheory.Heights₂.Heights.gramDet
-    rw [Matrix.det_isEmpty, Complex.one_re]
-  rw [hdeg, h1]
-  simp only [hg, Real.log_one, Nat.cast_one, Finset.sum_const_zero, mul_zero, sub_zero]
+  apply _root_.GroundTheory.Heights₂.Heights.HermitianBundle.degree_bot <;> assumption
 
 theorem orth_biSup (E : HermitianBundle.{0} K) {F : Submodule (𝓞 K) E.carrier} {I : Type}
     (G : I → Submodule (𝓞 K) E.carrier) (S : Finset I) (h : ∀ b ∈ S, OrthAt E F (G b)) :

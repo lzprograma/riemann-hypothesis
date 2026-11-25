@@ -3,45 +3,7 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.KernelExpansionOfRestrictions
 public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.CyclicPowerClassOfExpEquiv
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.IntRPsubst
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -62,14 +24,6 @@ variable (p : ℕ) [hp : Fact p.Prime] (K' : Type) [Field K'] [Algebra (K0 p) K'
 theorem lgF_const : PowerSeries.constantCoeff (lgF K' p) = 0 := by
   rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, lgF, PowerSeries.coeff_mk]
   simp
-
-private theorem cc_subst_lemma {Kf : Type} [Field Kf] {ρ : Type} (a : MvPowerSeries ρ Kf) (f : PowerSeries Kf)
-    (ha : MvPowerSeries.constantCoeff a = 0) (hf : PowerSeries.constantCoeff f = 0) :
-    MvPowerSeries.constantCoeff (PowerSeries.subst a f) = 0 := by
-  obtain ⟨g, rfl⟩ := PowerSeries.X_dvd_iff.2 hf
-  have hs : PowerSeries.HasSubst a := PowerSeries.HasSubst.of_constantCoeff_zero ha
-  rw [← PowerSeries.coe_substAlgHom hs, map_mul, PowerSeries.coe_substAlgHom, PowerSeries.subst_X hs, map_mul,
-    ha, zero_mul]
 
 theorem log_at {τ : Type} (vp : K') (μ : PowerSeries K') (h0 : PowerSeries.constantCoeff μ = 0)
     (h1 : (PowerSeries.subst μ (lamF p vp) : PowerSeries K') = PowerSeries.X)
@@ -108,7 +62,8 @@ theorem genInt {σ τ : Type} [Finite σ] (R' : Subring K') (vp : K') (hvp : vp 
   have hlg : PowerSeries.map (algebraMap (K0 p) K') (logF p) = lgF K' p := map_logF (p := p) (K' := K')
   let M : σ → MvPowerSeries τ K' := fun i => PowerSeries.subst (L i) (PowerSeries.C vp * μ)
   have hvμ0 : PowerSeries.constantCoeff (PowerSeries.C vp * μ) = 0 := by simp [h0]
-  have hM0 : ∀ i, MvPowerSeries.constantCoeff (M i) = 0 := fun i => cc_subst_lemma _ _ (hL0 i) hvμ0
+  have hM0 : ∀ i, MvPowerSeries.constantCoeff (M i) = 0 :=
+    fun i => PowerSeries.constantCoeff_subst_eq_zero (hL0 i) _ hvμ0
   have hvp_mem : vp ∈ R' := hRp (Subring.subset_closure (Or.inr rfl))
   have hvμI : IntR R' (PowerSeries.C vp * μ : PowerSeries K') := by
     intro n
@@ -127,7 +82,8 @@ theorem genInt {σ τ : Type} [Finite σ] (R' : Subring K') (vp : K') (hvp : vp 
     have hXs : MvPowerSeries.HasSubst
         (fun i : σ => PowerSeries.subst (MvPowerSeries.X i : MvPowerSeries σ K') (lgF K' p)) :=
       MvPowerSeries.hasSubst_of_constantCoeff_zero fun i =>
-        cc_subst_lemma _ _ (MvPowerSeries.constantCoeff_X i) (lgF_const p K')
+        PowerSeries.constantCoeff_subst_eq_zero
+          (MvPowerSeries.constantCoeff_X i) _ (lgF_const p K')
     rw [inParamK, hlg, MvPowerSeries.subst_comp_subst_apply hXs hMs]
     congr 1
     funext i
@@ -148,7 +104,8 @@ theorem inParam_map {σ : Type} [Finite σ] (K1 : Type) [Field K1] [Algebra (K0 
   have hXs1 : MvPowerSeries.HasSubst (fun i : σ => PowerSeries.subst (MvPowerSeries.X i : MvPowerSeries σ K1)
       (PowerSeries.map (algebraMap (K0 p) K1) (logF p))) :=
     MvPowerSeries.hasSubst_of_constantCoeff_zero fun i =>
-      cc_subst_lemma _ _ (MvPowerSeries.constantCoeff_X i) (by rw [map_logF (p := p) (K' := K1)]; exact lgF_const p K1)
+      PowerSeries.constantCoeff_subst_eq_zero (MvPowerSeries.constantCoeff_X i) _
+        (by rw [map_logF (p := p) (K' := K1)]; exact lgF_const p K1)
   have e : inParamK p K' (MvPowerSeries.map (algebraMap K1 K') U) =
       MvPowerSeries.map (algebraMap K1 K') (inParamK p K1 U) := by
     rw [inParamK, inParamK, MvPowerSeries.map_subst hXs1]

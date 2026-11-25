@@ -275,16 +275,6 @@ theorem quotMeasure_univ_eq_covolume [h : HasFundamentalDomain G X μ] :
 
 end Quot
 
-section ProperlyDiscontinuous
-
-variable (G X : Type*) [Group G] [Countable G] [MulAction G X] [TopologicalSpace X] [T2Space X]
-  [SecondCountableTopology X] [LocallyCompactSpace X] [MeasurableSpace X] [BorelSpace X]
-  [ContinuousConstSMul G X]
-
-variable {X}
-
-end ProperlyDiscontinuous
-
 section DiscreteSubgroup
 
 variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]

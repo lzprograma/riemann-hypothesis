@@ -45,7 +45,7 @@ theorem adC_ne_zero_cases {n : ℕ} {p q : Fin n} {i k : Pos n} (h : adC p q i k
     (q = i.1.1 ∧ k.1 = (p, i.1.2)) ∨ (i.1.2 = p ∧ k.1 = (i.1.1, q)) := by
   by_contra hc
   rw [not_or] at hc
-  exact h (by simp only [adC, if_neg hc.1, if_neg hc.2, sub_self])
+  exact h (by simp only [adC, ite_eq_right hc.1, ite_eq_right hc.2, sub_self])
 
 theorem mem_inside_iff {n : ℕ} {ε : Fin n → Bool} {lev : Fin n → ℕ} (hlev : Monotone lev) (i : Pos n) :
     i ∈ om ε ∧ i ∉ omU ε lev ↔ ε i.1.1 = ε i.1.2 ∧ lev i.1.1 = lev i.1.2 := by

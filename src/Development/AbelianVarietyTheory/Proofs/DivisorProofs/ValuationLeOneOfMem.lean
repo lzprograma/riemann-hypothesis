@@ -64,9 +64,6 @@ open GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTh
 open GlobalTheory.HalfCompare (badInt exists_prime_under mem_of_dvd not_mem_of_coprime)
 open ReciprocityTheory.ChartRestriction.G.PullbackSections.PfModelLatA (Dinv xi_mem_Dinv int_of_xi normCc_mem_AA int_of_mem_b)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-  GlobalTheory.FunObj.borelKw GlobalTheory.FunObj.borelSpaceKw
-
 variable {D : D7}
 
 theorem mem_Dinv {z : D.host.E} : z ∈ Dinv D ↔ ∀ c : 𝓞 D.host.E, ∃ m : ℤ, Algebra.trace ℚ D.host.E (z * c) = m := by
@@ -296,7 +293,6 @@ theorem badInt_notMem {μ₀ : T} (hL : L.Is μ₀) {G : GridData L sc} {t : T}
     (hde : Nat.Coprime D.host.pde (D.host.QS * D.host.q) ∧ Nat.Coprime D.host.pde' (D.host.QS * D.host.q))
     (hc : ∀ P ∈ L.Q t, ((Ideal.absNorm D.host.ccK : ℕ) : 𝓞 D.host.E) ∉ P.asIdeal) {w : Pl D.host.E} (hw : w ∈ locPl G t) :
     ((badInt D : ℕ) : 𝓞 D.host.E) ∉ w.asIdeal := by
-  have hq : D.host.q.Prime := D.host.hyp.1
   have hp : ∀ p : ℕ, Nat.Coprime p (D.host.QS * D.host.q) → p ∈ D.host.levelPrimes → Nat.Coprime (badInt D) p :=
     fun p h2 h3 => Nat.Coprime.mul_left h2.symm (D.host.ccK_coprime p (by simp [h3]))
   rcases locPl_cases hw with ⟨a, -⟩ | ⟨-, -, b⟩
@@ -376,7 +372,7 @@ theorem isGood_of_notMem {μ₀ : T} (hL : L.Is μ₀) {G : GridData L sc} (W : 
         refine ⟨fun h => l2 fun x hx hx' => by
           rw [← hun h x hx, hμ.tame w x hx hx', hL.xi_tame t w x hx hx', one_mul], condLE_loc l1 ?_⟩
         have := (depthAt_w G a).2
-        rw [← b, Places.depth, if_neg fun e : _ = G.pl.v0 => G.ch.basePlace_not_mem_chiGridBadPlaces (e ▸ a1)] at this
+        rw [← b, Places.depth, ite_eq_right fun e : _ = G.pl.v0 => G.ch.basePlace_not_mem_chiGridBadPlaces (e ▸ a1)] at this
         exact this.ge
     · have hχ := G.ch.unr _ i1 i2 w a
       refine ⟨fun h => (hL.Q_ram t w).2 (.inl c) fun x hx => ?_, condLE_of_isUnram _ _ (isUnram_loc.2 hχ)⟩

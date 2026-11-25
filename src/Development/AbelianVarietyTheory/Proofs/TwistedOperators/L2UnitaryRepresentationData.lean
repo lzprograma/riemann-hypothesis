@@ -54,7 +54,6 @@ open GlobalTheory.Chain (signed)
 open GlobalTheory.Chain.RealIt (LPol locS locT IsPolyIso)
 open MeasureTheory Matrix
 open scoped TensorProduct InnerProductSpace ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.ArchRec
 
@@ -67,12 +66,6 @@ variable {p q r s : ℕ} {T₁ : GrpData p q} {T₂ : GrpData r s}
 def IsGK {W : Type} [AddCommGroup W] [Module ℂ W] (a : Mat p q →ₗ[ℂ] Module.End ℂ W) : Prop :=
   IsLieAct a ∧ (∀ v, ∃ F : Submodule ℂ W, FiniteDimensional ℂ F ∧ v ∈ F ∧ KStable a F) ∧
     ∀ v, v ∈ ⨆ μ : Ix p q → ℚ, wtSub a μ
-
-structure IsUAct {U : Type} [NormedAddCommGroup U] [InnerProductSpace ℂ U] (b : Mat p q → Module.End ℂ U) : Prop where
-  add : ∀ X ∈ upq p q, ∀ Y ∈ upq p q, b (X + Y) = b X + b Y
-  smul : ∀ (c : ℝ), ∀ X ∈ upq p q, b (c • X) = (c : ℂ) • b X
-  lie : ∀ X ∈ upq p q, ∀ Y ∈ upq p q, b (X * Y - Y * X) = b X * b Y - b Y * b X
-  skew : ∀ X ∈ upq p q, ∀ x y, ⟪b X x, y⟫_ℂ = -⟪x, b X y⟫_ℂ
 
 def ctr (R : DSRep T₁) (U : Type) [AddCommGroup U] [Module ℂ U] (v : R.HK.V) : R.HK.V ⊗[ℂ] U →ₗ[ℂ] U :=
   TensorProduct.lift (LinearMap.lsmul ℂ U ∘ₗ (innerₛₗ ℂ (R.ι v) ∘ₗ R.ι))
@@ -101,30 +94,9 @@ variable (R₁ : DSRep T₁) (R₂ : DSRep T₂) (Λ₁ : Ix p q → ℚ) (Λ₂
 
 structure TensLaw : Prop where
   ex : ∃ Φ, CJoint a₁ a₂ Λ₁ Λ₂ Φ
-  uniq : ∀ Φ Φ', CJoint a₁ a₂ Λ₁ Λ₂ Φ → CJoint a₁ a₂ Λ₁ Λ₂ Φ' → ∃ c : ℂ, Φ' = c • Φ
-  unit : ∀ (MM : UGKMod r s) (f : MvPolynomial σ ℂ →ₗ[ℂ] R₁.HK.V ⊗[ℂ] MM.M.V), TIntw a₁ a₂ R₁.HK MM.M f → f ≠ 0 →
-    (∃ N : Submodule ℂ MM.M.V, ∃ e : R₂.HK.V ≃ₗ[ℂ] N,
-      (∀ Z x, ((e (R₂.HK.act Z x) : N) : MM.M.V) = MM.M.act Z (e x)) ∧
-      LinearMap.range f = LinearMap.range (TensorProduct.map LinearMap.id N.subtype)) ∧
-    ∀ Φ, CJoint a₁ a₂ Λ₁ Λ₂ Φ → f Φ ≠ 0 ∧ ∀ f', TIntw a₁ a₂ R₁.HK MM.M f' → f' Φ = f Φ → f' = f
-  line : ∃ f₀ : MvPolynomial σ ℂ →ₗ[ℂ] R₁.HK.V ⊗[ℂ] R₂.HK.V, TIntw a₁ a₂ R₁.HK R₂.HK f₀ ∧ f₀ ≠ 0 ∧
-    ∀ f, TIntw a₁ a₂ R₁.HK R₂.HK f → ∃ c : ℂ, f = c • f₀
-
-def PLift {U : Type} [AddCommGroup U] [Module ℂ U] (b : Mat r s → Module.End ℂ U)
-    (B : MvPolynomial σ ℂ →ₗ[ℂ] R₁.HK.V →ₛₗ[starRingEnd ℂ] U) : Prop :=
-  PInv a₁ R₁ B ∧ ∀ Z ∈ upq r s, ∀ P v, B (a₂ Z P) v = b Z (B P v)
 
 structure PairLaw : Prop where
   ex : ∃ Φ, CJoint a₁ a₂ Λ₁ Λ₂ Φ
-  uniq : ∀ Φ Φ', CJoint a₁ a₂ Λ₁ Λ₂ Φ → CJoint a₁ a₂ Λ₁ Λ₂ Φ' → ∃ c : ℂ, Φ' = c • Φ
-  unit : ∀ (U : Type) [NormedAddCommGroup U] [InnerProductSpace ℂ U] (b : Mat r s → Module.End ℂ U), IsUAct b →
-    ∀ B : MvPolynomial σ ℂ →ₗ[ℂ] R₁.HK.V →ₛₗ[starRingEnd ℂ] U, PLift a₁ a₂ R₁ b B → B ≠ 0 →
-      (∃ e : R₂.HK.V →ₗ[ℂ] U, Function.Injective e ∧ (∀ Z ∈ upq r s, ∀ x, e (R₂.HK.act Z x) = b Z (e x)) ∧
-        LinearMap.range e = Submodule.span ℂ {y | ∃ P v, y = B P v}) ∧
-      ∀ Φ, CJoint a₁ a₂ Λ₁ Λ₂ Φ → (∀ v, UnitHW R₁ Λ₁ v → B Φ v ≠ 0) ∧
-        ∀ B', PLift a₁ a₂ R₁ b B' → B' Φ = B Φ → B' = B
-  line : ∃ B₀ : MvPolynomial σ ℂ →ₗ[ℂ] R₁.HK.V →ₛₗ[starRingEnd ℂ] R₂.HK.V, B₀ ≠ 0 ∧
-    PLift a₁ a₂ R₁ (fun Z => R₂.HK.act Z) B₀ ∧ ∀ B, PLift a₁ a₂ R₁ (fun Z => R₂.HK.act Z) B → ∃ c : ℂ, B = c • B₀
 
 def TensNo : Prop :=
   ∀ (MM : GKMod r s) (f : MvPolynomial σ ℂ →ₗ[ℂ] R₁.HK.V ⊗[ℂ] MM.V), TIntw a₁ a₂ R₁.HK MM f → f = 0

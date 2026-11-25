@@ -5,45 +5,7 @@ public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalDataRealPlace
 public import Formalism.HermitianCurvature.StatementG
 public import Formalism.FormalDegreeBessel.FinalBF
 public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.WRWeyl
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContinuousInvUpper
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.Herglotz
@@ -281,8 +243,7 @@ theorem wI_inj (k r : ℕ) : Function.Injective (wI k r) := by
 
 theorem not_range_wI (k r : ℕ) (i : Fin (2 * r + k + 1)) (hi : i ∉ Set.range (wI k r)) :
     i.val < r ∨ r + k < i.val := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   apply hi
   refine ⟨⟨i.val - r, by omega⟩, ?_⟩
   unfold wI
@@ -295,16 +256,16 @@ theorem Hpk_wI (k r : ℕ) (j : Fin (k + 1)) (q : Fin (2 * r + k + 1)) :
   have hj := j.isLt
   have hv : (wI k r j).val = r + j.val := rfl
   unfold Hpk
-  rw [if_neg (by rw [hv]; omega), if_neg (by rw [hv]; omega)]
+  rw [ite_eq_right (by rw [hv]; omega), ite_eq_right (by rw [hv]; omega)]
   by_cases hq : q = wI k r j
-  · rw [if_pos hq, if_pos ⟨by rw [hv]; omega, by rw [hv]; omega, hq.symm⟩]
+  · rw [ite_eq_left hq, ite_eq_left ⟨by rw [hv]; omega, by rw [hv]; omega, hq.symm⟩]
     by_cases hl : j = Fin.last k
-    · rw [if_pos hl, if_pos (by rw [hv, hl]; rfl)]
-    · rw [if_neg hl, if_neg (by
+    · rw [ite_eq_left hl, ite_eq_left (by rw [hv, hl]; rfl)]
+    · rw [ite_eq_right hl, ite_eq_right (by
         rw [hv]
         intro h
         exact hl (Fin.ext (by rw [Fin.val_last]; omega)))]
-  · rw [if_neg hq, if_neg (by rintro ⟨_, _, h⟩; exact hq h.symm)]
+  · rw [ite_eq_right hq, ite_eq_right (by rintro ⟨_, _, h⟩; exact hq h.symm)]
 
 theorem herm_Hpk_wb (k r : ℕ) (v w : Fin (2 * r + k + 1) → ℂ) (hw : inWb k r w) :
     herm (Hpk k r) v w = herm (Hb k) (wbPart k r v) (wbPart k r w) := by
@@ -344,7 +305,7 @@ theorem wbPart_bigCell (k r : ℕ) (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1)
       · show r + j.val ≤ r + k; omega
     have : bigCell k r c μ (wI k r j) (wI k r j') = μ j j' := by
       unfold bigCell
-      rw [dif_neg h1, dif_pos h2, dif_pos h3]
+      rw [dite_eq_right h1, dite_eq_left h2, dite_eq_left h3]
       congr 1 <;> exact Fin.ext (by show r + _ - r = _; omega)
     rw [this]
 
@@ -364,9 +325,6 @@ theorem bigCell_D (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (hz : inWb k 
   unfold zeta at h
   rw [herm_Hpk_wb k r _ z hz, wbPart_bigCell k r c μ z' hz', div_eq_iff hDr] at h
   rw [h, mul_comm]
-
-def IsPolyG {n : ℕ} (a : Matrix (Fin n) (Fin n) ℂ → ℂ) : Prop :=
-  ∃ P : MvPolynomial ((Fin n × Fin n) ⊕ (Fin n × Fin n)) ℂ, ∀ g, evG g P = a g
 
 namespace IsPolyG
 
@@ -457,8 +415,6 @@ noncomputable section
 namespace Formalism.MainNotions.InterlacingSignCuts.Gm
 
 open Formalism.MainNotions.S.UnitaryLevelOperators Formalism.FourierDecayAlt.G Formalism.FourierDecayAlt.P
-
-def LUs (s : ℕ) : Set (Msq s × Msq s) := {p | IsLowerUni (Matrix.of p.1) ∧ IsUpperUni (Matrix.of p.2)}
 
 end Formalism.MainNotions.InterlacingSignCuts.Gm
 

@@ -24,50 +24,6 @@ section Alg
 
 variable {M : Type*} [AddCommGroup M] [Module ℂ M]
 
-theorem lc_adLW (E : Fin n → Fin n → Module.End ℂ M) (hE : IsGlRep E) (a b : Fin n) (x : M) :
-    ∀ w : List (Fin n × Fin n),
-      Finsupp.linearCombination ℂ (fun w' => wordE E w' x) (adLW a b w) =
-        E a b (wordE E w x) - wordE E w (E a b x) := by
-  intro w
-  induction w with
-  | nil => simp [adLW, wordE]
-  | cons p w ih =>
-    obtain ⟨c, d⟩ := p
-    have h1 : Finsupp.linearCombination ℂ (fun w' => wordE E w' x) ((adL a b (c, d)).mapDomain (· :: w)) =
-        E a b (E c d (wordE E w x)) - E c d (E a b (wordE E w x)) := by
-      rw [Finsupp.linearCombination_mapDomain]
-      have hg := congrArg (fun T : Module.End ℂ M => T (wordE E w x)) (hE a b c d)
-      simp only [LinearMap.sub_apply, Module.End.mul_apply] at hg
-      rw [hg, adL, map_sub]
-      simp only [Function.comp_def, wordAction_cons]
-      congr 1 <;> split_ifs with h <;> simp_all
-    have h2 : Finsupp.linearCombination ℂ (fun w' => wordE E w' x) ((adLW a b w).mapDomain ((c, d) :: ·)) =
-        E c d (Finsupp.linearCombination ℂ (fun w' => wordE E w' x) (adLW a b w)) := by
-      rw [Finsupp.linearCombination_mapDomain, Finsupp.apply_linearCombination]
-      congr 1
-    simp only [adLW, map_add (f := _)]
-    rw [h1, h2, ih, wordAction_cons, wordAction_cons, map_sub]
-    abel
-
-theorem contraction_compactWordAction (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ M) (V : Submodule ℂ M)
-    (hV : IsKStableSub ε E V) (hE : IsGlRep E) (a b : Fin n) (hab : ε a = ε b)
-    (x : KS (n := n) V) (d : Fin n) : sT E V (Cone.compactWordAction ε E V hV a b x) d = E a b (sT E V x d) := by
-  induction x using Finsupp.induction_linear with
-  | zero => simp
-  | add x y hx hy => simp only [map_add (f := _), Pi.add_apply, hx, hy]
-  | single p v =>
-    obtain ⟨w, c⟩ := p
-    have key := lc_adLW E hE a b (v : M) w
-    rw [Finsupp.linearCombination_apply, Finsupp.sum] at key
-
-    rw [Cone.compactWordAction_single, dite_eq_left hab, map_add (f := _), map_sum, sT_single, Pi.add_apply, Finset.sum_apply]
-    simp only [map_smul, sT_single, Pi.smul_apply]
-    by_cases hd : d = c
-    · subst hd
-      simp only [Pi.single_eq_same]
-      rw [key, sub_add_cancel]
-    · simp [hd]
-
 theorem sA_single' (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ M) (V : Submodule ℂ M)
     (hV : IsKStableSub ε E V) (a b : Fin n) (p : List (Fin n × Fin n) × Fin n) (v : V) :
     sA ε E V hV a b (Finsupp.single p v) =

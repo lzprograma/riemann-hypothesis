@@ -591,8 +591,6 @@ theorem generic [T2Space LL] [IsTopologicalRing LL] (E : EtTie W RA RW inclR φR
 
 end Generic
 
-
-
 theorem main : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let W := (HW l).W K s LL h; let E := ((F l).E K s LL h).tie; let C := Cm l; ∀ T : Lt K LL, IsCrys ((D.loc l).PD K) T.ρ → W.GKs = ⊤ → ∀ (M hh : Let K → ℕ), JumpsLet W T M hh → ∀ κ ∈ H1fIntegralCyclotomicLayer W T, ∃ (c : ℕ) (y z : W.DD T) (hyz : (y, z) ∈ W.divisibleCocycles T), y ∈ invN W T (W.Q ^ mx M) ∧ z ∈ aN W T W.X ∧ W.cl T ⟨(y, z), hyz⟩ = (l ^ c : ℕ) • κ := by
   intro D HW F Cm l _ K s LL h W E C T hT hGKs M hh hJ κ hκ
   haveI : FiniteDimensional ℚ_[l] ↥LL.1 := LL.2
@@ -681,16 +679,11 @@ theorem cocycle_eq {l : ℕ} [Fact l.Prime] {G V LL : Type} [Group G] [Topologic
 
 variable {l : ℕ} [Fact l.Prime]
 
-
-
-
 theorem val_eq_of_Zf {P : LocPrime l} (AI : LocAinf l P) {K LL : FinExt l} (T : Lt K LL) (H : Subgroup ↥(GK K))
     (c c' : ↥(latticeCocycles (resLat T H))) (b : TW (RW LL) T) (g : ↥H) (e : Zf AI T H c b g = Zf AI T H c' b g) :
     (c : ↥H → T.V) g = (c' : ↥H → T.V) g := by
   unfold Zf at e
   exact congrArg Subtype.val ((GlobalTheory.WittTensorFixed.main l K LL T).2.2 (add_right_cancel e))
-
-
 
 theorem cocycle_eq_lat {K LL : FinExt l} (T : Lt K LL) (H : Subgroup ↥(GK K)) (hH : IsClosed (H : Set ↥(GK K)))
     (c c' : ↥(latticeCocycles (resLat T H)))
@@ -703,8 +696,6 @@ theorem cocycle_eq_lat {K LL : FinExt l} (T : Lt K LL) (H : Subgroup ↥(GK K)) 
   haveI := T.mtop
   exact Subtype.ext (cocycle_eq (LL := ↥LL.1) (V := T.V) (fun (g : ↥H) (x : T.V) => T.ρ (g : ↥(GK K)) x) c c' c.2.1.1 c'.2.1.1
     (fun x => by simp) c.2.1.2 c'.2.1.2 lam hlam g₀ h₀ hker hg₀)
-
-
 
 theorem class_of_values : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL) (T : Lt K LL) (c : ↥(latticeCocycles (resLat T ((HW l).W K s LL h).GKs))) (b : TW (RW LL) T) (y z : ((HW l).W K s LL h).DD T) (hyz : (y, z) ∈ ((HW l).W K s LL h).divisibleCocycles T) (g₀ : ↥((HW l).W K s LL h).GKs), ((HW l).W K s LL h).resΓ (g₀ : ↥(GK K)) = ((HW l).W K s LL h).gam → TWmap (φRW LL) T b - b = ((F l).E K s LL h).tie.jD T y → (∀ g : ↥((HW l).W K s LL h).GKs, ((HW l).W K s LL h).resΓ (g : ↥(GK K)) = 1 → Zf (D.locA l) T ((HW l).W K s LL h).GKs c b g = 0) → Zf (D.locA l) T ((HW l).W K s LL h).GKs c b g₀ = ((F l).E K s LL h).tie.jD T z → Submodule.Quotient.mk c = ((HW l).W K s LL h).cl T ⟨(y, z), hyz⟩ := by
   intro D HW F l _ K s LL h T c b y z hyz g₀ hg₀ hb hk hz
@@ -839,7 +830,6 @@ noncomputable section
 
 namespace GlobalTheory.NL.TransitionThirdCase
 
-
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
 theorem jD_Qpow (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (l : ℕ) [Fact l.Prime]
@@ -852,7 +842,7 @@ theorem jD_Qpow (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.l
   let a : AA K LL := W.Q ^ m
   let ξ : RA LL := (1 : ↥(OL LL)) ⊗ₜ[ℤ_[l]] (D.locA l).ξ
   let aE := @algebraMap (AA K LL) W.EE _ W.eeRing.toSemiring W.eeAlgA a
-  have hQ : E.io W.Q = ξ := (GlobalTheory.NL.IoXQ.main D HW F l K s LL h).2.1
+  have hQ : E.io W.Q = ξ := (GlobalTheory.NL.IoXQ.main D.loc D.locA HW F l K s LL h).2.1
   have hscalar : E.ioE aE = (inclR LL ξ) ^ m :=
     (E.ioE_ext a).trans
       ((map_pow ((inclR LL).comp E.io) W.Q m).trans
@@ -956,15 +946,6 @@ theorem exists_aN_iff (E : EtTie W RA RW inclR φR gR πA) (T : LocLat G Qp LL O
 
 end Generic
 
-theorem image_map_refl {O R M : Type} [CommRing O] [AddCommGroup R] [Module O R] [AddCommGroup M]
-    [Module O M] (S : Set (R ⊗[O] M)) :
-    (TensorProduct.map (LinearMap.id : R →ₗ[O] R) (LinearEquiv.refl O M).toLinearMap) '' S = S := by
-  have : TensorProduct.map (LinearMap.id : R →ₗ[O] R) (LinearEquiv.refl O M).toLinearMap = LinearMap.id :=
-    TensorProduct.map_id
-  rw [this]
-  exact Set.image_id S
-
-
 set_option maxHeartbeats 2000000 in
 set_option synthInstance.maxHeartbeats 200000 in
 theorem main : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL) (K' : FinExt l) (h' : Good K' s LL) (hle : K.1 ≤ K'.1), K0 K' = K0 K → ∀ T : Lt K LL, IsCrys ((D.loc l).PD K) T.ρ → ∀ (z' : ((HW l).W K' s LL h').DD (resLt (K := K) (K' := K') (LL := LL) hle T)), z' ∈ aN ((HW l).W K' s LL h') (resLt (K := K) (K' := K') (LL := LL) hle T) ((HW l).W K' s LL h').X → ∃ z ∈ aN ((HW l).W K s LL h) T ((HW l).W K s LL h).X, ((F l).E K s LL h).tie.jD T z = toTW hle T (((F l).E K' s LL h').tie.jD (resLt (K := K) (K' := K') (LL := LL) hle T) z') := by
@@ -972,10 +953,10 @@ theorem main : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf 
   have hN := ((GlobalTheory.NL.BaseField.base_indep D HW F l K s LL h K' h' hle hK0).2.2 T
     (resLt (K := K) (K' := K') (LL := LL) hle T) (LinearEquiv.refl ↥(OL LL) ↥T.L.T) (fun _ _ => rfl)).2 hT
     (restrict_crys D hle T hT)
-  have hN2 := (image_map_refl (O := ↥(OL LL)) (R := RW LL) (M := ↥T.L.T) _).symm.trans hN
+  have hN2 := (GlobalTheory.NL.TransitionThirdCase.image_map_refl (O := ↥(OL LL)) (R := RW LL) (M := ↥T.L.T) _).symm.trans hN
   have h1 := (exists_aN_iff ((F l).E K' s LL h').tie (resLt (K := K) (K' := K') (LL := LL) hle T) _ _
-    (GlobalTheory.NL.IoXQ.main D HW F l K' s LL h').1 _).1 ⟨z', hz', rfl⟩
-  refine (exists_aN_iff ((F l).E K s LL h).tie T _ _ (GlobalTheory.NL.IoXQ.main D HW F l K s LL h).1 _).2 ?_
+    (GlobalTheory.NL.IoXQ.main D.loc D.locA HW F l K' s LL h').1 _).1 ⟨z', hz', rfl⟩
+  refine (exists_aN_iff ((F l).E K s LL h).tie T _ _ (GlobalTheory.NL.IoXQ.main D.loc D.locA HW F l K s LL h).1 _).2 ?_
   refine h1.elim fun y hy => ⟨toTW hle T y, ?_, hy.2⟩
   exact hN2.subset hy.1
 
@@ -993,7 +974,6 @@ section -- clump:auto
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct GlobalTheory.NL Formalism.MainNotions.DeltaInvariantLattices GlobalTheory.NL.CrystallineBase
 
 namespace GlobalTheory.NL.CrystallineDescent
-
 
 private theorem descend_of_eq_K0_of_isCrys (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (l : ℕ) [Fact l.Prime]
     (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL) (K' : FinExt l) (h' : Good K' s LL)
@@ -1050,7 +1030,6 @@ private theorem descend_of_eq_K0_of_isCrys (D : Formalism.BasicNotions.D7) (HW :
   have hcl := _root_.GlobalTheory.NL.HerrClassUniq.class_of_values D HW F l K s LL h T c b y z₀ hyz g₀ hγ hb hzero hz₀.2
   exact ⟨y, z₀, hyz, hy.1, hz₀.1, c, c', hcl, hc'.1, hc.1⟩
 
-
 private theorem wach_pow_smul_of_good_ext : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let W := (HW l).W K s LL h; let E := ((F l).E K s LL h).tie; let C := Cm l; ∀ T : Lt K LL, IsCrys ((D.loc l).PD K) T.ρ → ∀ (M hh : Let K → ℕ), JumpsLet W T M hh → ∀ κ ∈ H1fIntegralCyclotomicLayer W T, ∃ (c : ℕ) (y z : W.DD T) (hyz : (y, z) ∈ W.divisibleCocycles T), y ∈ invN W T (W.Q ^ mx M) ∧ z ∈ aN W T W.X ∧ W.cl T ⟨(y, z), hyz⟩ = (l ^ c : ℕ) • κ := by
   intro D HW F Cm l p K s LL h W E C T hT M hh hJ κ hκ
   refine (@base_setup l p D HW K s LL h).elim fun K' hK' =>
@@ -1082,7 +1061,6 @@ private theorem wach_pow_smul_of_good_ext : ∀ (D : Formalism.BasicNotions.D7) 
   exact ⟨n, y, z, hyz, hpair.1, hpair.2.1,
     hcc'.1.symm.trans (hpush.trans (congrArg (fun x => (l ^ n : ℕ) • x) hκ'.1))⟩
 
-
 set_option maxHeartbeats 4000000 in
 theorem pow_smul_from_complex : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let W := (HW l).W K s LL h; let E := ((F l).E K s LL h).tie; let C := Cm l; ∀ T : Lt K LL, IsCrys ((D.loc l).PD K) T.ρ → ∀ (M hh : Let K → ℕ), JumpsLet W T M hh → ∀ κ ∈ H1fIntegralCyclotomicLayer W T, ∃ (c : ℕ) (y z : W.DD T) (hyz : (y, z) ∈ W.divisibleCocycles T), y ∈ invN W T (W.Q ^ mx M) ∧ z ∈ aN W T W.X ∧ W.cl T ⟨(y, z), hyz⟩ = (l ^ c : ℕ) • κ := wach_pow_smul_of_good_ext
 
@@ -1104,35 +1082,10 @@ open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibl
 
 variable {l : ℕ} [Fact l.Prime]
 
-def cZero (l : ℕ) (m : ℕ) (U : Finset ℤ) : ℕ := 2 + ∑ u ∈ U, (m + padicValInt l u)
-
 theorem finiteDimensional_Ks (K : FinExt l) (s : ℕ) : FiniteDimensional ℚ_[l] ↥(Ks K s) := by
   apply Formalism.MainNotions.WachCoordinates.Br.fd_Ks
 
 def KsFin (K : FinExt l) (s : ℕ) : FinExt l := ⟨Ks K s, finiteDimensional_Ks K s⟩
-
-section Ring
-
-variable {P : LocPrime l} (AI : LocAinf l P)
-
-end Ring
-
-section Generic
-
-variable {G : Type} [Group G] [TopologicalSpace G] {Qp LL O : Type} [Field Qp] [Field LL]
-  [Algebra Qp LL] [CommRing O] [Algebra O LL] [TopologicalSpace LL]
-  {R : Type} [CommRing R] [Algebra O R]
-
-end Generic
-
-section Hyp
-
-variable {K LL : FinExt l}
-
-variable {P : LocPrime l} (AI : LocAinf l P)
-
-
-end Hyp
 
 end GlobalTheory.IndefiniteRowSideFullHecke.LevelConstants
 end -- clump:auto
@@ -1250,8 +1203,6 @@ def resRep {K LL : FinExt l} (E : FinExt l) (hle : K.1 ≤ E.1) (T : Lt K LL) :
   ρ := T.ρ.comp (Subgroup.inclusion (GK_le hle))
   cont x := (T.cont x).comp (continuous_incl hle)
 
-
-
 theorem lift_rational (P : LocPrime l) (AI : LocAinf l P) (hP : LocTied l P AI) {K LL : FinExt l}
     (E : FinExt l) (hle : K.1 ≤ E.1) (H : Subgroup ↥(GK K))
     (hH : ∀ x : ↥(GK K), x ∈ H ↔ (x : GQ l) ∈ GK E) (T₁ T₂ : Lt K LL) (π : LatHom T₁.L T₂.L)
@@ -1296,8 +1247,6 @@ theorem mem_GKs_iff (P : LocPrime l) {K LL : FinExt l} {s m : ℕ}
   rw [GlobalTheory.Cyc.mem_GKs_iff_mem_Gj, hs]
   rfl
 
-
-
 theorem lift_cocycle (P : LocPrime l) (AI : LocAinf l P) (hP : LocTied l P AI) {K LL : FinExt l}
     {s m : ℕ} (hK : K.1 ≤ Ks K s) (W : LocWach (P.PD K) ↥LL.1 ↥(OL LL) (P.v LL) m) (hs : W.s = s)
     (T₁ T₂ : Lt K LL) (π : LatHom T₁.L T₂.L)
@@ -1337,7 +1286,6 @@ open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.Basi
 
 namespace GlobalTheory.NL.RightExactKs
 
-
 set_option maxHeartbeats 1600000 in
 set_option synthInstance.maxHeartbeats 400000 in
 theorem h1fKs_onto_up_to_pow : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let W := (HW l).W K s LL h; ∀ (T₁ T₂ : Lt K LL) (π : LatHom T₁.L T₂.L), Function.Surjective π.f → IsCrys ((D.loc l).PD K) T₁.ρ → IsCrys ((D.loc l).PD K) T₂.ρ → ∀ κ₂ ∈ H1fIntegralCyclotomicLayer W T₂, ∃ (c : ℕ), ∃ κ₁ ∈ H1fIntegralCyclotomicLayer W T₁, (resHom π W.GKs).H1map κ₁ = (l ^ c : ℕ) • κ₂ := by
@@ -1375,12 +1323,6 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {PD : PeriodData G Qp K₀ K B BdR} {LL O : Type} [Field LL] [Algebra Qp LL] [TopologicalSpace LL]
     [CommRing O] [Algebra O LL] {v : AddValuation LL (WithTop ℚ)} {n : ℕ}
     (W : LocWach PD LL O v n)
-
-theorem isUnit_φ (a : LetA O n) (ha : IsUnit (algebraMap (LetA O n) W.EE a)) :
-    IsUnit (algebraMap (LetA O n) W.EE (W.φA a)) := by
-  show IsUnit (algebraMap (LetA O n) W.EE (letφ W.φ₀ a))
-  rw [← W.φE_ext a]
-  exact ha.map W.φE
 
 private theorem letπ_dvd_phiA_of_dvd (a : LetA O n) (h : (letπ : LetA O n) ∣ a) :
     (letπ : LetA O n) ∣ W.φA a := by
@@ -1521,7 +1463,6 @@ theorem aN_sat (hsat : ∀ x : W.DD T₀, W.map ι x ∈ W.N T₁ → x ∈ W.N 
   have e := X_smul_inj W T₁ hmx
   exact (mem_aN W T₀ W.X _).2 ⟨y, hsat y (e ▸ hm), rfl⟩
 
-
 private theorem lift_multiple_lemma (l M : ℕ) (c₁ : IsCrys PD T₁.ρ) (c₂ : IsCrys PD T₂.ρ)
     (hnat : W.ClNat) (h2 : p2 W T₁) (hφ : ∀ x ∈ W.N T₁, W.Q ^ M • W.φD T₁ x ∈ W.N T₁)
     (hc : p2c W T₂ M)
@@ -1650,9 +1591,6 @@ theorem jumpsLet_quot (M h : ZMod n → ℕ)
 
 end Generic
 
-
-
-
 theorem defect_torsion : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW)
     (Cm : CmpOf D.loc D.locA HW F), Pr2d D HW F := by
   intro D HW F Cm l _ K s LL h T₀ T₁ T₂ ι π M hh c₀ c₁ c₂ hJ hses
@@ -1662,7 +1600,7 @@ theorem defect_torsion : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (
     l K s LL h T₀ T₁ T₂ ι π hses
   have hsat := _root_.GlobalTheory.NL.KerSat.mem_N_of_map_mem D HW F l K s LL h T₀ T₁ T₂ ι π c₀ c₁ c₂ hses
   have h2 := GlobalTheory.NL.WachLatticeTrivialModUniformizer.wachLattice_galois_trivial_mod_uniformizer D HW F Cm l K s LL h T₁ c₁
-  have hP5 := _root_.GlobalTheory.NL.Heights.heights_from_jumps D HW F Cm l K s LL h T₁ M hh c₁ hJ
+  have hP5 := _root_.GlobalTheory.NL.Heights.heights_from_jumps D.loc D.locA D.locT HW F Cm l K s LL h T₁ M hh c₁ hJ
   have hφ : ∀ x ∈ ((HW l).W K s LL h).N T₁,
       ((HW l).W K s LL h).Q ^ mx M • ((HW l).W K s LL h).φD T₁ x ∈ ((HW l).W K s LL h).N T₁ :=
     fun x hx => φ_mem ((HW l).W K s LL h) T₁ M hh hP5 x hx

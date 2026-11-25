@@ -161,7 +161,6 @@ open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology
 private theorem succ_le_mul_pow_rpow_of_two_le (ε : ℝ) (hε : 0 < ε) (p a : ℕ) (hp : 2 ≤ p) :
     ((a : ℝ) + 1) ≤ max 1 (1 / (ε * Real.log 2)) * ((p : ℝ) ^ a) ^ ε ∧
       ((2 : ℝ) ^ (1 / ε) ≤ p → ((a : ℝ) + 1) ≤ ((p : ℝ) ^ a) ^ ε) := by
-  have hl2 : 0 < Real.log 2 := Real.log_pos one_lt_two
   have hp' : (2 : ℝ) ≤ p := by exact_mod_cast hp
   have hp0 : (0 : ℝ) < p := by linarith
   have key : ((p : ℝ) ^ a) ^ ε = Real.exp (a * ε * Real.log p) := by
@@ -178,7 +177,6 @@ private theorem succ_le_mul_pow_rpow_of_two_le (ε : ℝ) (hε : 0 < ε) (p a : 
     have hM1 : 1 ≤ M := le_max_left _ _
     have hM2 : 1 / (ε * Real.log 2) ≤ M := le_max_right _ _
     have hMa : (a : ℝ) ≤ M * (a * ε * Real.log 2) := by
-      have hpos : 0 < ε * Real.log 2 := by positivity
       have h0 : (0 : ℝ) ≤ a * ε * Real.log 2 := by positivity
       calc (a : ℝ) = 1 / (ε * Real.log 2) * (a * ε * Real.log 2) := by field_simp
         _ ≤ M * (a * ε * Real.log 2) := mul_le_mul_of_nonneg_right hM2 h0
@@ -513,7 +511,7 @@ theorem _root_.GlobalTheory.SpacedDetected.card_spaced_detected_le : ∃ C : ℝ
         have := (Finset.mem_Ioc.mp hn).1
         exact_mod_cast (show n ≠ 0 by omega)
       rw [ha]
-      simp only [if_pos hn]
+      simp only [ite_eq_left hn]
       rw [neg_add, Complex.cpow_add _ _ hn0]
       ring
     set H : (Σ N : ℕ, DirichletCharacter ℂ (N + 1)) → ℝ := fun x =>
@@ -731,7 +729,6 @@ theorem pole_small : ∃ Q₀ : ℕ, ∀ Q : ℕ, Q₀ ≤ Q →
   set a := ((Q : ℝ) ^ 6) ^ ((1 : ℝ) / 400)
   set b := (Q : ℝ) ^ ((1 : ℝ) / 100)
   set c := (Q : ℝ) ^ ((1 : ℝ) / 40)
-  have hb : 0 < b := by linarith
   have hc : 0 < c := by linarith
   calc _ ≤ 301 * b * (a / (b * a * c)) := by gcongr
     _ = 301 / c := by field_simp
@@ -761,7 +758,6 @@ theorem zeta_zero_detect : ∃ Q₀ : ℕ, ∀ Q : ℕ, Q₀ ≤ Q → ∀ ρ : 
       have := Complex.norm_le_abs_re_add_abs_im ρ
       rw [abs_of_pos hσ] at this; linarith
     rw [div_le_iff₀ hσ]; nlinarith
-  have hG : 0 < (Q : ℝ) ^ ((1 : ℝ) / 20) := by positivity
   have hden : (Q : ℝ) ^ ((1 : ℝ) / 20) ≤ ‖ρ - 1‖ := by
     have := Complex.abs_im_le_norm (ρ - 1)
     simp only [sub_im, one_im, sub_zero] at this

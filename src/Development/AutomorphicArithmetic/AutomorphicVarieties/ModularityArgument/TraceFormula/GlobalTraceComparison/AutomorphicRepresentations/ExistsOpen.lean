@@ -56,19 +56,11 @@ section Abs
 
 variable {G W V : Type} [Group G] [AddCommGroup W] [Module ℂ W] [AddCommGroup V] [Module ℂ V]
 
-private theorem rep_ne [Nontrivial V] (ρ : Representation ℂ G V) (g : G) : ρ g ≠ 0 := by
-  intro h
-  obtain ⟨x, hx⟩ := exists_ne (0 : V)
-  have h1 : ρ g (ρ g⁻¹ x) = x := by
-    rw [← Module.End.mul_apply, ← map_mul]
-    simp
-  exact hx (by rw [← h1, h]; simp)
-
 private theorem supp_eq [Nontrivial V] (ρ : Representation ℂ G V) (K : Subgroup G) (f : G → ℂ) :
     Function.support (fun q : G ⧸ K => f q.out • (ρ q.out ∘ₗ (LinearMap.id : V →ₗ[ℂ] V))) =
       Function.support fun q : G ⧸ K => f q.out := by
   ext q
-  have := rep_ne ρ q.out
+  have := ((Group.isUnit q.out).map ρ).ne_zero
   simp only [Function.mem_support, LinearMap.comp_id, ne_eq, smul_eq_zero, this, or_false]
 
 private theorem lv_inter [Nontrivial W] [Nontrivial V] (σ : Representation ℂ G W) (ρ : Representation ℂ G V)

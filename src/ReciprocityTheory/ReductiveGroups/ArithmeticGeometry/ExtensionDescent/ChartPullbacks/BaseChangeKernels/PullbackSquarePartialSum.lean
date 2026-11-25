@@ -9,35 +9,16 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.Siegel
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj
   AlgebraicGeometry
 open scoped CategoryTheory.Obj
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace ReciprocityTheory.ChartRestriction.G.Out.GtBCPf
 
 open Semi Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Pdiv.PullbackComparison (gU unit_ext gU_res gU_pullU exists_gen_transfer germ_pull germ_div)
-
-section Div
-
-variable {X Y : Scheme.{0}}
-
-private theorem mem_pull_lemma (M : LB X) (a : Y ⟶ X) (p : PUnit.{1} → M.ι) (y : Y)
-    (h : y ∈ (M.pull a).U p) : a.base y ∈ M.U (p PUnit.unit) :=
-  Set.mem_iInter.mp (show y ∈ (⋂ k, a.base ⁻¹' (M.U (p k) : Set X)) from h) PUnit.unit
-
-private theorem mem_pull_of_lemma_2 (M : LB X) (a : Y ⟶ X) (p : PUnit.{1} → M.ι) (y : Y)
-    (h : a.base y ∈ M.U (p PUnit.unit)) : y ∈ (M.pull a).U p :=
-  show y ∈ (⋂ k, a.base ⁻¹' (M.U (p k) : Set X)) from
-    Set.mem_iInter.mpr (fun k => by cases k; exact h)
-
-end Div
 
 section Div2
 
@@ -52,20 +33,19 @@ theorem gen_div_div_pull (A B C : LB X) (a : Y ⟶ X)
         ((LB.div (LB.div A B) C).pull a).U (fun u => ((p.1.1 u, p.1.2 u), p.2 u)) := by
     intro p y hy
     obtain ⟨⟨h1, h2⟩, h3⟩ := hy
-    exact mem_pull_of_lemma_2 (LB.div (LB.div A B) C) a (fun u => ((p.1.1 u, p.1.2 u), p.2 u)) y
-      (And.intro (And.intro (mem_pull_lemma A a p.1.1 y h1) (mem_pull_lemma B a p.1.2 y h2))
-        (mem_pull_lemma C a p.2 y h3))
+    exact mem_pull.mpr
+      (And.intro (And.intro (mem_pull.mp h1) (mem_pull.mp h2)) (mem_pull.mp h3))
   refine exists_gen_transfer (L := (LB.div (LB.div A B) C).pull a)
     (L' := LB.div (LB.div (A.pull a) (B.pull a)) (C.pull a))
     (fun p u => ((p.1.1 u, p.1.2 u), p.2 u)) hU ?_ ⟨LB.genPull _ t a, LB.isGen_genPull _ t ht a⟩
   intro i j y hy
   obtain ⟨⟨⟨hAi, hBi⟩, hCi⟩, ⟨⟨hAj, hBj⟩, hCj⟩⟩ := id hy
-  have hAi' := mem_pull_lemma A a i.1.1 y hAi
-  have hBi' := mem_pull_lemma B a i.1.2 y hBi
-  have hCi' := mem_pull_lemma C a i.2 y hCi
-  have hAj' := mem_pull_lemma A a j.1.1 y hAj
-  have hBj' := mem_pull_lemma B a j.1.2 y hBj
-  have hCj' := mem_pull_lemma C a j.2 y hCj
+  have hAi' := mem_pull.mp hAi
+  have hBi' := mem_pull.mp hBi
+  have hCi' := mem_pull.mp hCi
+  have hAj' := mem_pull.mp hAj
+  have hBj' := mem_pull.mp hBj
+  have hCj' := mem_pull.mp hCj
   have hA : y ∈ a ⁻¹ᵁ (A.U (i.1.1 PUnit.unit) ⊓ A.U (j.1.1 PUnit.unit)) := And.intro hAi' hAj'
   have hB : y ∈ a ⁻¹ᵁ (B.U (i.1.2 PUnit.unit) ⊓ B.U (j.1.2 PUnit.unit)) := And.intro hBi' hBj'
   have hC : y ∈ a ⁻¹ᵁ (C.U (i.2 PUnit.unit) ⊓ C.U (j.2 PUnit.unit)) := And.intro hCi' hCj'
@@ -101,8 +81,6 @@ instance commB : IsCommMonObj E.B := E.isAbelian.comm
 instance commB' : IsCommMonObj ((Over.pullback f).obj E.B) := Functor.isCommMonObj_obj
 
 def mB : CubeMap ((Over.pullback f).obj E.B) E.B := cubeMapOf (isGrpPullback_pullback E.B f)
-
-theorem mB_F : (mB f E).F = pullback.fst E.B.hom f := rfl
 
 def O' (χ : E.X) : RigLB ((Over.pullback f).obj E.B) :=
   (mB f E).rigLB (E.O χ) (LB.isLB_pull (E.O χ).isLB _)

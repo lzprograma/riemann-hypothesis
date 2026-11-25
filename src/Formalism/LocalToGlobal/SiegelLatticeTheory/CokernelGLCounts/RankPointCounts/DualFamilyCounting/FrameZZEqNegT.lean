@@ -14,8 +14,6 @@ noncomputable section
 
 namespace Formalism.L2.SG.Pf.LsNc5
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Gen
 
 variable {n : ℕ} (ε : Fin n → Bool)

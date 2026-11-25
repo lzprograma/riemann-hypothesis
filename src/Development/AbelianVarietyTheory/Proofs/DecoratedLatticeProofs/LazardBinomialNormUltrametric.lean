@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsIsoGmOfMap
 public import Mathlib.Analysis.Normed.Field.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Topology.MetricSpace.Ultra.Basic
@@ -63,24 +64,7 @@ namespace GlobalTheory.Honda.Lazard
 
 theorem norm_natCast_eq_one_of_not_dvd {K : Type} [NormedField K] [IsUltrametricDist K] {l m : ℕ}
     (hp : l.Prime) (hl : ‖(l : K)‖ < 1) (hm : ¬ l ∣ m) : ‖(m : K)‖ = 1 := by
-  have hcop : IsCoprime (l : ℤ) (m : ℤ) :=
-    Nat.isCoprime_iff_coprime.2 ((Nat.Prime.coprime_iff_not_dvd hp).2 hm)
-  obtain ⟨u, v, huv⟩ := hcop
-  have h1 : (u : K) * l + v * m = 1 := by exact_mod_cast congrArg (Int.cast : ℤ → K) huv
-  have hu : ‖(u : K)‖ ≤ 1 := IsUltrametricDist.norm_intCast_le_one K u
-  have hv : ‖(v : K)‖ ≤ 1 := IsUltrametricDist.norm_intCast_le_one K v
-  have hmle : ‖(m : K)‖ ≤ 1 := IsUltrametricDist.norm_natCast_le_one K m
-  refine le_antisymm hmle ?_
-  by_contra hlt
-  push_neg at hlt
-  have h2 : ‖(1 : K)‖ ≤ max ‖(u : K) * l‖ ‖(v : K) * m‖ := by
-    rw [← h1]; exact IsUltrametricDist.norm_add_le_max _ _
-  rw [norm_one, norm_mul, norm_mul] at h2
-  have ha : ‖(u : K)‖ * ‖(l : K)‖ < 1 :=
-    lt_of_le_of_lt (mul_le_of_le_one_left (norm_nonneg _) hu) hl
-  have hb : ‖(v : K)‖ * ‖(m : K)‖ < 1 :=
-    lt_of_le_of_lt (mul_le_of_le_one_left (norm_nonneg _) hv) hlt
-  exact absurd h2 (not_le.2 (max_lt ha hb))
+  apply GlobalTheory.ConvSer.TowerNorm.norm_natCast_eq_one <;> assumption
 
 theorem not_dvd_choose_pow_mul {l : ℕ} (hp : l.Prime) (m : ℕ) (hm : ¬ l ∣ m) :
     ∀ v : ℕ, ¬ l ∣ (l ^ v * m).choose (l ^ v) := by

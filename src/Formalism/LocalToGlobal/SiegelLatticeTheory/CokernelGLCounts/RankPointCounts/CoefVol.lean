@@ -16,8 +16,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
   Formalism.L2.SG.LsDatumB MeasureTheory
 open Classical ValuativeRel
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section VolStep
 
 variable {D : Formalism.BasicNotions.D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
@@ -72,10 +70,10 @@ theorem wtL_good (T T' : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D) (hA 
       obtain ⟨h1, h2⟩ := hint x y hYint
       refine ⟨fun i => ?_, fun i => ?_⟩
       · have := h1 i.1.1 i.1.2
-        simp only [Loc.uLow, if_neg (ne_of_gt i.2), dif_pos i.2] at this
+        simp only [Loc.uLow, ite_eq_right (ne_of_gt i.2), dite_eq_left i.2] at this
         exact this
       · have := h2 i.1.1 i.1.2
-        simp only [Loc.uUp, if_neg (ne_of_lt i.2.1), dif_pos i.2] at this
+        simp only [Loc.uUp, ite_eq_right (ne_of_lt i.2.1), dite_eq_left i.2] at this
         exact this
     · rintro ⟨hx, hy⟩
       have hL := isLoU_of (Formalism.MainNotions.LocalModelPeriodLattices.isLowUni_uLow x)
@@ -123,11 +121,11 @@ theorem volProd_of (hA : ∀ p, Agree δ M p)
   obtain ⟨y, hy⟩ := hN γ w hat hrel hgen
   have hex : ∃ x : Point D.host.E (D.R.rS + 1) × LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) × PairVal.MatR D ×
       PairVal.MatR D, PairVal.NormRep γ x.1 x.2.1 x.2.2.1 x.2.2.2 := ⟨(w, y), hy⟩
-  have hn : nrep γ = some hex.choose := dif_pos hex
+  have hn : nrep γ = some hex.choose := dite_eq_left hex
   have hz : zT γ = ZhatL (lf D F0) hex.choose.2.1 := by unfold zT; rw [hn]
   have hv : PairVal.vRdef D u u' F0 what₂ δ M γ =
       PairVal.volIdx D u u' F0 what₂ δ M γ hex.choose.1 hex.choose.2.1 hex.choose.2.2.1 := by
-    unfold PairVal.vRdef; rw [dif_pos ⟨hrel, hgen, hex⟩]
+    unfold PairVal.vRdef; rw [dite_eq_left ⟨hrel, hgen, hex⟩]
   have hspec := hex.choose_spec
   obtain ⟨hRep, -, hL, hU, e⟩ := hspec
   obtain ⟨F₁, hR₁, -, hc₁⟩ := hat

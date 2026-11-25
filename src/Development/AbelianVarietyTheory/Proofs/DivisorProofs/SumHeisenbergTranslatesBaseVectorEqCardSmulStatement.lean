@@ -72,7 +72,6 @@ open Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.IndefR.FWT Formalis
 open GlobalTheory.ConjTwist GlobalTheory.ExportSeries GlobalTheory.SeriesTie GlobalTheory.OnTies GlobalTheory.OnCmp GlobalTheory.BaseCmp
 open Formalism.IndefR.Fin Formalism.IndefR.Fin.LevelGroupLemmas
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 
@@ -133,8 +132,8 @@ theorem sum_heisO_base_eq : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStd
   · have hxe : IsHalf e x := (Formalism.IndefR.Fin.LevelGroupLemmas.isHalf_actO z⁻¹ 1 t).2 hte
     by_cases hxΛ : x ∈ Λ
     · have htΛ : t ∈ Λ := hz t hte hxΛ
-      have ht1 : halfInd e Λ t = 1 := by simp only [halfInd]; rw [if_pos ⟨htΛ, hte⟩]
-      have hx1 : halfInd e Λ x = 1 := by simp only [halfInd]; rw [if_pos ⟨hxΛ, hxe⟩]
+      have ht1 : halfInd e Λ t = 1 := by simp only [halfInd]; rw [ite_eq_left ⟨htΛ, hte⟩]
+      have hx1 : halfInd e Λ x = 1 := by simp only [halfInd]; rw [ite_eq_left ⟨hxΛ, hxe⟩]
       rw [ht1, hx1, mul_one, mul_one]
       have : ∀ u ∈ Rr, ψ (symplO S T t u) = 1 := by
         intro u hu
@@ -144,10 +143,10 @@ theorem sum_heisO_base_eq : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStd
       rw [Finset.sum_congr rfl this]
       simp
     · have hx0 : halfInd e Λ x = 0 := by
-        simp only [halfInd]; rw [if_neg fun h => hxΛ h.1]
+        simp only [halfInd]; rw [ite_eq_right fun h => hxΛ h.1]
       rw [hx0, mul_zero]
       by_cases htΛ : t ∈ Λ
-      · have ht1 : halfInd e Λ t = 1 := by simp only [halfInd]; rw [if_pos ⟨htΛ, hte⟩]
+      · have ht1 : halfInd e Λ t = 1 := by simp only [halfInd]; rw [ite_eq_left ⟨htΛ, hte⟩]
         rw [ht1, mul_one]
         have hchar : ∀ w ∈ Λ, IsHalf (cA D e) w → ψ (symplO S T t w) = 1 := (hB t hte).2 htΛ
         have hnot : ¬ ∀ y ∈ Λ, IsHalf (cA D e) y → ψ (symplO S T x y) = 1 := fun h => hxΛ ((hB x hxe).1 h)
@@ -200,11 +199,11 @@ theorem sum_heisO_base_eq : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStd
         rcases mul_eq_zero.1 hzero with h | h
         · exact h
         · exact absurd (sub_eq_zero.1 h) hψu₀
-      · have ht0 : halfInd e Λ t = 0 := by simp only [halfInd]; rw [if_neg fun h => htΛ h.1]
+      · have ht0 : halfInd e Λ t = 0 := by simp only [halfInd]; rw [ite_eq_right fun h => htΛ h.1]
         rw [ht0, mul_zero]
   · have hxe : ¬ IsHalf e x := fun h => hte ((Formalism.IndefR.Fin.LevelGroupLemmas.isHalf_actO z⁻¹ 1 t).1 h)
-    have ht0 : halfInd e Λ t = 0 := by simp only [halfInd]; rw [if_neg fun h => hte h.2]
-    have hx0 : halfInd e Λ x = 0 := by simp only [halfInd]; rw [if_neg fun h => hxe h.2]
+    have ht0 : halfInd e Λ t = 0 := by simp only [halfInd]; rw [ite_eq_right fun h => hte h.2]
+    have hx0 : halfInd e Λ x = 0 := by simp only [halfInd]; rw [ite_eq_right fun h => hxe h.2]
     rw [ht0, hx0, mul_zero, mul_zero]
 
 end GlobalTheory.HeisTranslSum
@@ -222,7 +221,6 @@ open Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.IndefR.FWT Formalis
 open GlobalTheory.ConjTwist GlobalTheory.ExportSeries GlobalTheory.SeriesTie GlobalTheory.OnTies GlobalTheory.OnCmp GlobalTheory.BaseCmp
 open Formalism.IndefR.Fin Formalism.IndefR.Fin.LevelGroupLemmas
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 theorem _root_.GlobalTheory.T.sum_heisenbergTranslates_baseVector_eq_card_smul : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S T : HSp D) (ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)) (ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)), IsSelfDualC S ΛS → IsSelfDualC T ΛT → ∀ (Q : Finset (Pl D.host.E)) (e : AE D), IsIdemSum e Q → ∀ z : GA D S, (∀ t : WO S T, IsHalf e t → actO S T z⁻¹ 1 t ∈ latAll S T ΛS ΛT → t ∈ latAll S T ΛS ΛT) → ∀ Rr : Finset (WO S T), (∀ u ∈ Rr, actO S T z⁻¹ 1 u ∈ latAll S T ΛS ΛT ∧ IsHalf (cA D e) u) → (∀ w, actO S T z⁻¹ 1 w ∈ latAll S T ΛS ΛT → IsHalf (cA D e) w → ∃! v, v ∈ Rr ∧ w - v ∈ latAll S T ΛS ΛT) → (∀ w ∈ latAll S T ΛS ΛT, IsHalf (cA D e) w → actO S T z⁻¹ 1 w ∈ latAll S T ΛS ΛT) → ∀ (f₀ : WO S T → ℂ) (Tm : (WO S T → ℂ) →ₗ[ℂ] (WO S T → ℂ)), IsPlaceModel ψ (symplO S T) (heisO ψ S T) e (latAll S T ΛS ΛT) 1 f₀ Tm → ∑ u ∈ Rr, heisO ψ S T u f₀ = (Rr.card : ℂ) • Tm (actPull (z, (1 : GA D T)) (halfInd e (latAll S T ΛS ΛT))) := by

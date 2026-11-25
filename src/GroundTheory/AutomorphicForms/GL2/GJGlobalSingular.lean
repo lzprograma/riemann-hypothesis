@@ -570,7 +570,7 @@ variable {k}
 
 theorem single_mem_U0 {j : Fin n} (hj : (j : ℕ) < k) (c : K) : (Pi.single j c : Fin n → K) ∈ U0 k := by
   intro i hi
-  rw [Pi.single_apply, if_neg (by rintro rfl; omega)]
+  rw [Pi.single_apply, ite_eq_right (by rintro rfl; omega)]
 
 theorem finrank_U0 (hk : k ≤ n) : finrank K (U0 (K := K) (n := n) k) = k := by
   classical
@@ -628,7 +628,7 @@ def parabolic (k : ℕ) : Subgroup (GL (Fin n) K) where
   one_mem' := by
     refine ⟨fun i j hi hj => ?_, fun i j hi hj => ?_⟩ <;>
     · simp only [inv_one, Units.val_one]
-      rw [Matrix.one_apply, if_neg (by intro h; subst h; omega)]
+      rw [Matrix.one_apply, ite_eq_right (by intro h; subst h; omega)]
   inv_mem' := by
     rintro a ⟨h1, h2⟩
     exact ⟨h2, by simpa using h1⟩

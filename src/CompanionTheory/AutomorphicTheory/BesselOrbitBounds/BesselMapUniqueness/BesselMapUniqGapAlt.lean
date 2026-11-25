@@ -340,8 +340,6 @@ open Matrix Formalism.QuantumDeterminants CompanionTheory.D.Upq.Sm CompanionTheo
 
 namespace GlobalTheory.CompanionTheory.BmuDsAd
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {n : ℕ}
 
 theorem ex_mul_eq {y : Mat n} (hy : IsUnit y) (X : Mat n) (t : ℝ) :
@@ -746,15 +744,15 @@ theorem pq_val (k r : ℕ) (i : Fin (2 * r + k + 1)) :
     (pq k r i).val = if i.val ≤ r ∨ r + k ≤ i.val then 2 * r + k - i.val else i.val := by
   unfold pq
   by_cases h : outer k r i
-  · rw [if_pos h, if_pos (show i.val ≤ r ∨ r + k ≤ i.val from h), Fin.val_rev]; omega
-  · rw [if_neg h, if_neg (show ¬ (i.val ≤ r ∨ r + k ≤ i.val) from h)]
+  · rw [ite_eq_left h, ite_eq_left (show i.val ≤ r ∨ r + k ≤ i.val from h), Fin.val_rev]; omega
+  · rw [ite_eq_right h, ite_eq_right (show ¬ (i.val ≤ r ∨ r + k ≤ i.val) from h)]
 
 theorem bq_eq (k r : ℕ) (i : Fin (2 * r + k + 1)) :
     bq k r i = if i.val ≤ r ∨ r + k ≤ i.val then 2 * (i.val : ℤ) - (2 * r + k) else 0 := by
   unfold bq
   by_cases h : outer k r i
-  · rw [if_pos h, if_pos (show i.val ≤ r ∨ r + k ≤ i.val from h)]
-  · rw [if_neg h, if_neg (show ¬ (i.val ≤ r ∨ r + k ≤ i.val) from h)]
+  · rw [ite_eq_left h, ite_eq_left (show i.val ≤ r ∨ r + k ≤ i.val from h)]
+  · rw [ite_eq_right h, ite_eq_right (show ¬ (i.val ≤ r ∨ r + k ≤ i.val) from h)]
 
 theorem adapted_pq (k r : ℕ) : Adapted (pq k r) (bq k r) (fun _ => 1) := by
   constructor
@@ -795,9 +793,9 @@ theorem Hq_eq_dp (k r : ℕ) : Hq k r = dp (pq k r) 0 (fun _ => 1) := by
   have hi := i.2
   simp only [Hq, dp, Matrix.of_apply, Pi.zero_apply, ite_self, zero_add, Fin.ext_iff, pq_val]
   by_cases h : outer k r i
-  · rw [if_pos h, if_pos (show i.val ≤ r ∨ r + k ≤ i.val from h)]
+  · rw [ite_eq_left h, ite_eq_left (show i.val ≤ r ∨ r + k ≤ i.val from h)]
     exact if_congr (by omega) rfl rfl
-  · rw [if_neg h, if_neg (show ¬ (i.val ≤ r ∨ r + k ≤ i.val) from h)]
+  · rw [ite_eq_right h, ite_eq_right (show ¬ (i.val ≤ r ∨ r + k ≤ i.val) from h)]
     exact if_congr eq_comm rfl rfl
 
 theorem iwaQ : IwaQ := by
@@ -1354,9 +1352,6 @@ theorem integrable_conj_smul {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ
   rw [norm_smul, Complex.norm_conj]
   exact mul_le_mul_of_nonneg_left (hK _ hy) (norm_nonneg _)
 
-theorem lieW_of {Hm : Mat n} {W : List (Mat n)} (hW : LieWd Hm W) : LieW (UH Hm) W :=
-  fun X hX t => ex_mem_of_lie (hW X hX) t
-
 variable {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] {Hm : Mat n}
   {σ : Mat n → (H →L[ℂ] H)}
 
@@ -1381,7 +1376,7 @@ theorem tendsto_dsW (hD : CutDer) (hσ : URep Hm σ) {μ : Measure (PI.MtM n)} (
     have hW : LieWd Hm W := fun Y hY => hWX Y (List.mem_append_left _ hY)
     have hX : Lie Hm X := hWX X (by simp)
     have hX' : LieWd Hm [X] := fun Y hY => by rw [List.mem_singleton.1 hY]; exact hX
-    have hv' : IsSm (UH Hm) σ (ds σ X v) := hv.dsW hσ.rep (lieW_of hX')
+    have hv' : IsSm (UH Hm) σ (ds σ X v) := hv.dsW hσ.rep (GlobalTheory.CompanionTheory.BmuReduce.lieW_of hX')
     have hρ' := contDiff_Lx X hρ
     have hc' : HasCompactSupport (Lx X ρ) := hasCompactSupport_LW hc [X]
     have e : ∀ u, dsW σ (W ++ [X]) u = dsW σ W (ds σ X u) := fun u => by
@@ -1394,7 +1389,7 @@ theorem tendsto_dsW (hD : CutDer) (hσ : URep Hm σ) {μ : Measure (PI.MtM n)} (
     have hR : (0 : ℝ) < (N : ℝ) + 1 := by positivity
     rw [e, (hD n Hm H σ hσ μ hμ w hw _ hR ρ hρ hc v hv).2 X hX,
       dsW_add hσ.rep (hD n Hm H σ hσ μ hμ w hw _ hR _ hρ' hc' v hv).1
-        (hD n Hm H σ hσ μ hμ w hw _ hR ρ hρ hc _ hv').1 (lieW_of hW)]
+        (hD n Hm H σ hσ μ hμ w hw _ hR ρ hρ hc _ hv').1 (GlobalTheory.CompanionTheory.BmuReduce.lieW_of hW)]
 
 theorem dsW_cutI (hσ : URep Hm σ) {μ : Measure (PI.MtM n)} (hμ : PI.IsHaarOnM (UH Hm) μ)
     {w : H} (hw : IsSm (UH Hm) σ w) {R : ℝ} (hR : 0 < R) {ρ : Mat n → ℝ} (hρ : Continuous ρ)
@@ -1425,8 +1420,8 @@ theorem dsW_cutI (hσ : URep Hm σ) {μ : Measure (PI.MtM n)} (hμ : PI.IsHaarOn
     (hcs.comp_isClosedEmbedding CompanionTheory.D.Upq.ModEx.MG.isClosedEmbedding_mat).mul_right
   unfold cutI
   rw [← hmap, hι.integrable_map_iff, hι.integral_map, hι.integral_map]
-  exact ⟨integrable_csmul hφ hφc (continuous_orbit hσ.rep hw (lieW_of hW)),
-    dsW_integral hσ.rep hw hφ hφc (lieW_of hW)⟩
+  exact ⟨integrable_csmul hφ hφc (continuous_orbit hσ.rep hw (GlobalTheory.CompanionTheory.BmuReduce.lieW_of hW)),
+    dsW_integral hσ.rep hw hφ hφc (GlobalTheory.CompanionTheory.BmuReduce.lieW_of hW)⟩
 
 theorem cutLim_of (hF : Factor) (hD : CutDer) : CutLim := by
   intro n Hm H _ _ _ σ hσ V _ _ _ B hB μ hμ w hw hi κ hκ ⟨K, hK⟩ v hv
@@ -1441,7 +1436,7 @@ theorem cutLim_of (hF : Factor) (hD : CutDer) : CutLim := by
       (tendsto_dsW hD hσ hμ hw hi hκ (W i) (hW i) ρ hρ hc v hv)
   have hBc : ContinuousOn (fun x => B (σ x w)) (UH Hm) :=
     (continuousOn_finsetSum _ fun i _ => (β i).continuous.comp_continuousOn
-      (continuousOn_dsW_orbit hσ.rep hw (lieW_of (hW i)))).congr
+      (continuousOn_dsW_orbit hσ.rep hw (GlobalTheory.CompanionTheory.BmuReduce.lieW_of (hW i)))).congr
       fun x hx => hBβ _ (hw.apply hσ.rep hx)
   have h2 := tendsto_cut (integrable_conj_smul hσ.grp.1 hae (hi v hv) hBc hK) hρ.continuous hc
   rw [hρ1, Complex.ofReal_one] at h1 h2

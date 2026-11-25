@@ -3,56 +3,10 @@ module
 public import Formalism.SatakeDualWeyl.StatementF
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FSatakeA
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FSatakeB
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -131,17 +85,17 @@ theorem fSatake_tMat_exists {ϖ : L} {q m : ℕ} (hU : IsUnramInv ϖ σ q) (hm :
     rw [Matrix.mul_diagonal, Matrix.one_apply]
     by_cases h : i = j
     · subst h
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact mul_inv_cancel₀ (hne i)
-    · rw [if_neg h, tMat, Matrix.diagonal_apply_ne _ h, zero_mul]
+    · rw [ite_eq_right h, tMat, Matrix.diagonal_apply_ne _ h, zero_mul]
   have hinv2 : Matrix.diagonal (fun i => (tMat ϖ n m a i i)⁻¹) * tMat ϖ n m a = 1 := by
     ext i j
     rw [Matrix.diagonal_mul, Matrix.one_apply]
     by_cases h : i = j
     · subst h
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact inv_mul_cancel₀ (hne i)
-    · rw [if_neg h, tMat, Matrix.diagonal_apply_ne _ h, mul_zero]
+    · rw [ite_eq_right h, tMat, Matrix.diagonal_apply_ne _ h, mul_zero]
   refine ⟨⟨⟨tMat ϖ n m a, Matrix.diagonal (fun i => (tMat ϖ n m a i i)⁻¹), hinv1, hinv2⟩, ?_⟩, rfl⟩
   show cT σ (tMat ϖ n m a) * antiJ L n * tMat ϖ n m a = antiJ L n
   rw [hdiag, cT, Matrix.diagonal_map (map_zero σ), Matrix.diagonal_transpose]
@@ -201,11 +155,11 @@ private lemma isBorelU_sigma_diag_mul_opposite_diag {b : GU σ n} (hb : IsBorelU
   have hG : cT σ ⟪b⟫ * antiJ L n * ⟪b⟫ = antiJ L n := b.2
   have hG' := congrFun (congrFun hG i) j
   simp only [Matrix.mul_apply, cT, Matrix.transpose_apply, Matrix.map_apply, antiJ] at hG'
-  rw [if_pos hij, Finset.sum_eq_single j] at hG'
-  · rw [Finset.sum_eq_single i, if_pos hij, mul_one] at hG'
+  rw [ite_eq_left hij, Finset.sum_eq_single j] at hG'
+  · rw [Finset.sum_eq_single i, ite_eq_left hij, mul_one] at hG'
     · exact hG'
     · intro p _ hp
-      rw [if_neg (fun h => hp (Fin.ext (by omega))), mul_zero]
+      rw [ite_eq_right (fun h => hp (Fin.ext (by omega))), mul_zero]
     · intro h
       exact absurd (Finset.mem_univ _) h
   · intro q _ hq
@@ -215,7 +169,7 @@ private lemma isBorelU_sigma_diag_mul_opposite_diag {b : GU σ n} (hb : IsBorelU
       intro p _
       by_cases hp : (p : ℕ) + q + 1 = n
       · rw [hB p i (Fin.lt_iff_val_lt_val.mpr (by omega)), map_zero, zero_mul]
-      · rw [if_neg hp, mul_zero]
+      · rw [ite_eq_right hp, mul_zero]
     · rw [hB q j hgt, mul_zero]
   · intro h
     exact absurd (Finset.mem_univ _) h
@@ -235,25 +189,6 @@ private lemma sigma_tMat_diag {ϖ : L} (hσ : σ ϖ = ϖ) {m : ℕ} (a : Fin m �
     σ (tMat ϖ n m a i i) = tMat ϖ n m a i i := by
   simp only [tMat, Matrix.diagonal_apply_eq]
   split_ifs <;> simp [map_zpow₀, hσ]
-
-private lemma valuation_zpow_uniformizer {ϖ : L} (hϖ : Valued.v ϖ = ↑(Multiplicative.ofAdd (-1 : ℤ))) (a : ℤ) :
-    Valued.v (ϖ ^ a) = ((Multiplicative.ofAdd (-a) : Multiplicative ℤ) : WithZero (Multiplicative ℤ)) := by
-  rw [map_zpow₀, hϖ, ← WithZero.coe_zpow]
-  congr 1
-  rw [← ofAdd_zsmul]
-  simp
-
-private lemma withZero_eq_one_of_mul_self_eq_one {x : WithZero (Multiplicative ℤ)} (h : x * x = 1) : x = 1 := by
-  have hx : x ≠ 0 := fun h0 => by
-    rw [h0, zero_mul] at h
-    exact zero_ne_one h
-  obtain ⟨y, rfl⟩ := WithZero.ne_zero_iff_exists.mp hx
-  rw [← WithZero.coe_mul, ← WithZero.coe_one, WithZero.coe_inj] at h
-  rw [← WithZero.coe_one, WithZero.coe_inj]
-  have h3 := congrArg Multiplicative.toAdd h
-  rw [toAdd_mul, toAdd_one] at h3
-  have h2 : Multiplicative.toAdd y = 0 := by omega
-  rw [← ofAdd_toAdd y, h2, ofAdd_zero]
 
 theorem fSatake_cell_exists {ϖ : L} {q m : ℕ} (hU : IsUnramInv ϖ σ q) (hm : 2 * m ≤ n)
     (hm' : n ≤ 2 * m + 1) {b k : GU σ n} (hb : IsBorelU b) (hk : k ∈ KU σ n) :
@@ -303,7 +238,8 @@ theorem fSatake_cell_exists {ϖ : L} {q m : ℕ} (hU : IsUnramInv ϖ σ q) (hm :
       have h1 := fSatake_tMat_apply_lt ϖ a ⟨i, hi⟩ i.isLt
       rw [ha ⟨i, hi⟩ i.isLt] at h1
       exact h1
-    rw [he, map_mul, map_inv₀, hT, valuation_zpow_uniformizer hϖ, _root_.Formalism.UG.P.fSatake_v_eq (hbne i)]
+    rw [he, map_mul, map_inv₀, hT, fSatake_v_eq (zpow_ne_zero _ hϖ0), fSatake_ord_zpow hϖ,
+      fSatake_v_eq (hbne i)]
     exact mul_inv_cancel₀ WithZero.coe_ne_zero
   have hve : ∀ i, Valued.v (e i) = 1 := by
     intro i
@@ -319,7 +255,7 @@ theorem fSatake_cell_exists {ϖ : L} {q m : ℕ} (hU : IsUnramInv ϖ σ q) (hm :
         exact h1
       · have hji : j = i := Fin.ext (by omega)
         rw [hji] at h1
-        exact withZero_eq_one_of_mul_self_eq_one h1
+        exact sq_eq_one.mp (by rwa [sq])
   have hd1 : Matrix.diagonal e * Matrix.diagonal (fun i => (e i)⁻¹) = 1 := by
     rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
     congr 1
@@ -465,17 +401,17 @@ theorem fSatake_vanish (hSph : SphericalExistsU) [CompleteSpace L] {ϖ : L} {q m
     intro b g k hb hk
     by_cases hg : ∃ b' k' : GU σ n, IsBorelU b' ∧ k' ∈ KU σ n ∧ g = b' * k'
     · have h1 := (hP b g k hb hk).2 hg
-      simp only [ψ, if_pos h1, if_pos hg]
+      simp only [ψ, ite_eq_left h1, ite_eq_left hg]
       exact hφ b g k hb hk
     · have h1 : ¬ ∃ b' k' : GU σ n, IsBorelU b' ∧ k' ∈ KU σ n ∧ b * g * k = b' * k' :=
         fun h => hg ((hP b g k hb hk).1 h)
-      simp only [ψ, if_neg h1, if_neg hg, mul_zero]
+      simp only [ψ, ite_eq_right h1, ite_eq_right hg, mul_zero]
   have hψ1 : ψ 1 = φ 1 := by
     simp only [ψ]
-    exact if_pos ⟨1, 1, fSatake_borel_one, (KU σ n).one_mem, by simp⟩
+    exact ite_eq_left ⟨1, 1, fSatake_borel_one, (KU σ n).one_mem, by simp⟩
   have hψx : ψ x = 0 := by
     simp only [ψ]
-    exact if_neg hx
+    exact ite_eq_right hx
   have e1 : ψ x = ψ 1 * φ0 x := congrFun (huniq ψ hψ) x
   have e2 : φ x = φ 1 * φ0 x := congrFun (huniq φ hφ) x
   rw [e2, ← hψ1, ← e1, hψx]

@@ -2,49 +2,8 @@ module
 
 public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.RingTheory.DedekindDomain.Different
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
 public import Mathlib.NumberTheory.RamificationInertia.Galois
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
 
 @[expose] public section
@@ -54,52 +13,15 @@ namespace Formalism.HC.Der
 section
 open Ideal UniqueFactorizationMonoid
 
-private theorem mulEquiv_ideal_bot_eq_bot {S : Type*} [CommRing S] [IsDedekindDomain S]
-    (f : Ideal S ≃* Ideal S) : f ⊥ = ⊥ := by
-  obtain ⟨J, hJ⟩ := f.surjective ⊥
-  calc f ⊥ = f (⊥ * J) := by rw [Ideal.bot_mul]
-    _ = f ⊥ * f J := map_mul f _ _
-    _ = ⊥ := by rw [hJ, Ideal.mul_bot]
-
-private theorem prime_mulEquiv_ideal_apply {S : Type*} [CommRing S] [IsDedekindDomain S]
-    (f : Ideal S ≃* Ideal S) {P : Ideal S} (hP : Prime P) : Prime (f P) := by
-  refine ⟨?_, ?_, ?_⟩
-  · intro h
-    apply hP.ne_zero
-    apply f.injective
-    rw [Ideal.zero_eq_bot] at h ⊢
-    rw [h, mulEquiv_ideal_bot_eq_bot f]
-  · intro hu
-    apply hP.not_unit
-    rw [isUnit_iff_eq_one] at hu ⊢
-    apply f.injective
-    rw [hu, map_one]
-  · intro a b h
-    have h' : P ∣ f.symm a * f.symm b := by
-      have := map_dvd f.symm h
-      rwa [map_mul, MulEquiv.symm_apply_apply] at this
-    rcases hP.dvd_or_dvd h' with h1 | h1
-    · left
-      have := map_dvd f h1
-      rwa [MulEquiv.apply_symm_apply] at this
-    · right
-      have := map_dvd f h1
-      rwa [MulEquiv.apply_symm_apply] at this
-
-private theorem prod_normalizedFactors_ideal_eq_self {S : Type*} [CommRing S] [IsDedekindDomain S]
-    {I : Ideal S} (hI : I ≠ ⊥) : (normalizedFactors I).prod = I := by
-  have hI0 : I ≠ 0 := by rw [Ideal.zero_eq_bot]; exact hI
-  exact associated_iff_eq.mp (prod_normalizedFactors hI0)
-
 theorem kc_nf_map {S : Type*} [CommRing S] [IsDedekindDomain S] (I : Ideal S) (hI : I ≠ ⊥)
     (f : Ideal S ≃* Ideal S) : normalizedFactors (f I) = (normalizedFactors I).map f := by
   calc normalizedFactors (f I) = normalizedFactors ((normalizedFactors I).map f).prod := by
-        rw [← map_multiset_prod f, prod_normalizedFactors_ideal_eq_self hI]
+        rw [← map_multiset_prod f, Ideal.prod_normalizedFactors_eq_self hI]
     _ = (normalizedFactors I).map f := by
         apply normalizedFactors_prod_of_prime
         intro Q hQ
         obtain ⟨R, hR, rfl⟩ := Multiset.mem_map.mp hQ
-        exact prime_mulEquiv_ideal_apply f (prime_of_normalized_factor R hR)
+        exact (MulEquiv.prime_iff f).2 (prime_of_normalized_factor R hR)
 
 private theorem mem_of_prime_dvd_multiset_prod {S : Type*} [CommRing S] [IsDedekindDomain S]
     {s : Multiset (Ideal S)} (hs : ∀ Q ∈ s, Prime Q) {P : Ideal S} (hP : Prime P)
@@ -123,7 +45,7 @@ theorem kc_pairing {S : Type*} [CommRing S] [IsDedekindDomain S] (D : Ideal S) (
     rw [hg] at this
     rw [hFdef]
     exact this.symm
-  have hFprod : F.prod = D := by rw [hFdef]; exact prod_normalizedFactors_ideal_eq_self hD0
+  have hFprod : F.prod = D := by rw [hFdef]; exact Ideal.prod_normalizedFactors_eq_self hD0
   have hmap : (F.filter p).map f = F.filter (fun P => ¬ p P) := by
     have e1 : F.filter (fun P => ¬ p P) = (F.map f).filter (fun P => ¬ p P) := by
       rw [hinv f hfD]
@@ -186,7 +108,7 @@ theorem kc_pairing {S : Type*} [CommRing S] [IsDedekindDomain S] (D : Ideal S) (
       obtain ⟨R, hR, rfl⟩ := Multiset.mem_map.mp hQ
       have hRF : R ∈ F := by rw [hF']; exact Multiset.mem_add.mpr (Or.inl hR)
       exact fun h => ((hpF R hRF).mp h) (hpB' R hR)
-    rw [hfilt, prod_normalizedFactors_ideal_eq_self hB'0]
+    rw [hfilt, Ideal.prod_normalizedFactors_eq_self hB'0]
 
 end
 

@@ -1,53 +1,14 @@
 module
 
+
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SaturatedPf
 import Formalism.LocalToGlobal.SubmoduleMembership
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermDef
 public import Lemmata.GeneralBFactThirdForm.Imports
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.LinearIndependent.BaseChange
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.Corank
-
 @[expose] public section
 
 noncomputable section
@@ -180,13 +141,7 @@ theorem orth_anti {U U' : Submodule E S.V} (h : U ≤ U') : orth S U' ≤ orth S
 
 theorem form_span_left {s : Set S.V} {v : S.V} (hs : ∀ x ∈ s, S.hT x v = 0) :
     ∀ x ∈ Submodule.span E s, S.hT x v = 0 := by
-  intro x hx
-  have hle : Submodule.span E s ≤ LinearMap.ker (S.hT v) := by
-    rw [Submodule.span_le]
-    intro y hy
-    simp only [SetLike.mem_coe, LinearMap.mem_ker]
-    exact S.herm.eq_iff.1 (hs y hy)
-  exact S.herm.eq_iff.1 (hle hx)
+  apply _root_.Formalism.L2.SG.Pf.hT_span_left <;> assumption
 
 theorem flag_form_zero {T : E} (F : FlagG S r T) : ∀ x ∈ F.Xplus, ∀ v ∈ F.X, S.hT x v = 0 := by
   have hX : ∀ b ∈ F.X, ∀ i, S.hT (F.e i) b = 0 := fun b hb i => by
@@ -240,84 +195,6 @@ theorem mem_of_forall_locP {M : Submodule (𝓞 E) S.V} {x : S.V}
     (h : ∀ P : IsDedekindDomain.HeightOneSpectrum (𝓞 E),
       x ∈ (haveI := P.isPrime; Formalism.HermitianLatticesTheory.localization₂ P.asIdeal M)) : x ∈ M := by
   exact Submodule.mem_of_forall_heightOne_exists_smul_mem (NumberField.RingOfIntegers.not_isField E) M x h
-
-theorem coe_smul_eq (c : 𝓞 E) (v : S.V) : ((c : E)) • v = c • v := algebraMap_smul E c v
-
-theorem xlam_le (Λ : Submodule (𝓞 E) S.V) (g : ℕ) {T T' : E} (F : LFlag S r T) (F' : LFlag S r T')
-    (hF : IsFixedConv Λ g F) (hF' : IsFixedConv Λ g F') (hadm : IsAdmissible Λ g F F') :
-    XLam Λ F ≤ Ideal.span {(g : 𝓞 E)} • Λ ⊔ XLam Λ F' := by
-  intro x hx
-  refine mem_of_forall_locP (fun P => ?_)
-  haveI := P.isPrime
-  by_cases hgP : (g : 𝓞 E) ∈ P.asIdeal
-  · obtain ⟨ξ, hlow, hdiag, hmod⟩ := hadm
-    obtain ⟨c, -, hc1, hloc⟩ := hF.1 P
-    obtain ⟨c', -, hc1', hloc'⟩ := hF'.1 P
-    have hc : c = fun _ => 1 := funext (hc1 hgP)
-    have hc' : c' = fun _ => 1 := funext (hc1' hgP)
-    subst hc hc'
-    simp only [one_smul] at hloc hloc'
-    have he' : ∀ b, F'.fl.e b ∈ Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (Ideal.span {(g : 𝓞 E)} • Λ ⊔ XLam Λ F') := by
-      intro b
-      have h1 : F'.fl.e b ∈ Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (XLam Λ F') := by
-        rw [hloc']
-        exact mem_localization_of_mem' (Submodule.subset_span ⟨b, rfl⟩)
-      exact localization_mono le_sup_right h1
-    have hmod' : ∀ b, frame F' b - frameAct (frame F) ξ b ∈
-        Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (Ideal.span {(g : 𝓞 E)} • Λ ⊔ XLam Λ F') := fun b =>
-      localization_mono le_sup_left (hmod b P hgP)
-    have hfr : ∀ a : Fin r, frame F (Fin.castSucc a) = F.fl.e a := fun a => by
-      simp [frame, FlagG.fvec]
-    have hfr' : ∀ a : Fin r, frame F' (Fin.castSucc a) = F'.fl.e a := fun a => by
-      simp [frame, FlagG.fvec]
-    have he : ∀ n : ℕ, ∀ a : Fin r, a.val < n →
-        F.fl.e a ∈ Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (Ideal.span {(g : 𝓞 E)} • Λ ⊔ XLam Λ F') := by
-      intro n
-      induction n with
-      | zero => intro a ha; omega
-      | succ n ih =>
-        intro a ha
-        have hsum : frameAct (frame F) ξ (Fin.castSucc a) - frame F (Fin.castSucc a) ∈
-            Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (Ideal.span {(g : 𝓞 E)} • Λ ⊔ XLam Λ F') := by
-          have heq : frameAct (frame F) ξ (Fin.castSucc a) - frame F (Fin.castSucc a) =
-              ∑ i, (((ξ i (Fin.castSucc a) : 𝓞 E) : E) - if i = Fin.castSucc a then 1 else 0) • frame F i := by
-            simp [frameAct, sub_smul, Finset.sum_sub_distrib]
-          rw [heq]
-          refine Submodule.sum_mem _ (fun i _ => ?_)
-          rcases lt_trichotomy i (Fin.castSucc a) with hi | hi | hi
-          · rw [if_neg hi.ne, sub_zero]
-            have hir : i.val < r := lt_trans hi a.castSucc_lt_last
-            have hi' : Fin.castSucc (⟨i.val, hir⟩ : Fin r) = i := Fin.ext rfl
-            rw [← hi', hfr, coe_smul_eq]
-            refine Submodule.smul_mem _ _ (ih _ ?_)
-            have : i.val < a.val := hi
-            simp only
-            omega
-          · subst hi
-            rw [if_pos rfl, hdiag]
-            simp
-          · rw [hlow _ _ hi, if_neg hi.ne']
-            simp
-        have hb := hmod' (Fin.castSucc a)
-        have hrw : F.fl.e a = F'.fl.e a - (frame F' (Fin.castSucc a) - frameAct (frame F) ξ (Fin.castSucc a)) -
-            (frameAct (frame F) ξ (Fin.castSucc a) - frame F (Fin.castSucc a)) := by
-          rw [hfr, hfr']
-          abel
-        rw [hrw]
-        exact sub_mem (sub_mem (he' a) hb) hsum
-    have hx' : x ∈ Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (Submodule.span (𝓞 E) (Set.range F.fl.e)) := by
-      rw [← hloc]
-      exact mem_localization_of_mem' hx
-    obtain ⟨s, hs, hsx⟩ := hx'
-    have hspan : Submodule.span (𝓞 E) (Set.range F.fl.e) ≤
-        Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (Ideal.span {(g : 𝓞 E)} • Λ ⊔ XLam Λ F') :=
-      Submodule.span_le.2 (by rintro _ ⟨a, rfl⟩; exact he (a.val + 1) a (by omega))
-    obtain ⟨t, ht, htx⟩ := hspan hsx
-    refine ⟨t * s, P.asIdeal.primeCompl.mul_mem ht hs, ?_⟩
-    rw [mul_smul]
-    exact htx
-  · refine ⟨(g : 𝓞 E), hgP, ?_⟩
-    exact Submodule.mem_sup_left (Submodule.smul_mem_smul (Ideal.mem_span_singleton_self _) hx.1)
 
 end Helpers
 
@@ -414,8 +291,6 @@ end Sig
 
 section D7
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef Formalism.L2.SG.Corank
 
 def IotaLift (D : D7) (u u' : D.what₂.Word) : Prop :=
@@ -430,8 +305,6 @@ def PosW (D : D7) : Prop :=
 end D7
 
 section PosWPf
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat
 
@@ -553,13 +426,5 @@ theorem posW_holds (D : D7) : PosW D := by
   exact_mod_cast key' ▸ hpos
 
 end PosWPf
-
-section Final
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef Formalism.L2.SG.Corank
-
-end Final
 
 end Formalism.L2.SG.Pf

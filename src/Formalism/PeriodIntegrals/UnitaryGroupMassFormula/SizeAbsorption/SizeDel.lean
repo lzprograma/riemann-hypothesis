@@ -1,45 +1,8 @@
 module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SizeAbsorption.Development
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -48,10 +11,6 @@ noncomputable section
 namespace PI.SzEatI.W
 
 open Formalism.BasicNotions Formalism.MainNotions.G
-
-private lemma one_le_rpow_of_one_le_of_nonneg (x z : ℝ) (hx : 1 ≤ x) (hz : 0 ≤ z) : 1 ≤ x ^ z := by
-  have h := Real.rpow_le_rpow zero_le_one hx hz
-  rwa [Real.one_rpow] at h
 
 private lemma exists_log_le_rpow_and_mul_exp_le_exp_rpow (ε C : ℝ) (hε : 0 < ε) (hC : 0 < C) :
     ∃ x0 : ℝ, ∀ x : ℝ, 1 < x → x0 ≤ x →
@@ -183,7 +142,7 @@ theorem stepA : StepA := by
   unfold Formalism.MainNotions.SizeDel at hDel
   obtain ⟨hDel1, -, hDel3, -⟩ := hDel
 
-  have hn1 : (1:ℝ) ≤ D.R.n := le_trans (one_le_rpow_of_one_le_of_nonneg _ _ hx1.le (by linarith)) hn_lo
+  have hn1 : (1:ℝ) ≤ D.R.n := le_trans (Real.one_le_rpow hx1.le (by linarith)) hn_lo
   have hnpos : (0:ℝ) < D.R.n := by linarith
   have hn3 : (D.R.n : ℝ) ≤ L.sc.x ^ 3 := by
     have h := Real.rpow_le_rpow_of_exponent_le hx1.le
@@ -208,14 +167,14 @@ theorem stepA : StepA := by
   have hNmE : Nm D ≤ Real.exp (L.sc.x ^ (L.sc.eps / 4) / 2) := by
     by_cases h : (D.s.Del : ℝ) ≤ 0
     · exact le_trans (le_trans hNmDel h) (Real.exp_pos _).le
-    · push_neg at h
+    · push Not at h
       calc Nm D ≤ (D.s.Del : ℝ) := hNmDel
           _ = Real.exp (Real.log (D.s.Del : ℝ)) := (Real.exp_log h).symm
           _ ≤ Real.exp (L.sc.x ^ (L.sc.eps / 4) / 2) := Real.exp_le_exp.mpr hDel3
 
-  have hu1 : 1 ≤ L.sc.x ^ L.sc.eps := one_le_rpow_of_one_le_of_nonneg _ _ hx1.le he0.le
+  have hu1 : 1 ≤ L.sc.x ^ L.sc.eps := Real.one_le_rpow hx1.le he0.le
   have hup : 0 < L.sc.x ^ L.sc.eps := by linarith
-  have ht1 : 1 ≤ L.sc.x ^ (L.sc.eps / 3) := one_le_rpow_of_one_le_of_nonneg _ _ hx1.le (by linarith)
+  have ht1 : 1 ≤ L.sc.x ^ (L.sc.eps / 3) := Real.one_le_rpow hx1.le (by linarith)
   have hqt : L.sc.x ^ (L.sc.eps / 4) ≤ L.sc.x ^ (L.sc.eps / 3) :=
     Real.rpow_le_rpow_of_exponent_le hx1.le (by linarith)
   have htu : L.sc.x ^ (L.sc.eps / 3) ≤ L.sc.x ^ L.sc.eps :=
@@ -301,8 +260,7 @@ theorem stepA : StepA := by
     have h3 : L.sc.eps * (L.sc.x ^ L.sc.eps / L.sc.eps) = L.sc.x ^ L.sc.eps := by
       first
         | (field_simp; done)
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have h4 := mul_lt_mul_of_pos_left hc he0
     rw [h3] at h4
     linarith

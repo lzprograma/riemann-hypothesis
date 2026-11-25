@@ -182,12 +182,6 @@ theorem adelic_function_extends_from_classes (S : StepLevel F E σ J T f bad) (e
 
 end Gen
 
-section Tied
-
-variable {D : D7} {u : D.what₂.Word}
-
-end Tied
-
 end Formalism.L2.GlobalTheoryTheory.LocalLatticeBases
 end -- clump:auto
 end -- clump:auto
@@ -775,8 +769,6 @@ private theorem local_value_eq_of_stabiliser {n A R M : Type} [Fintype n] [Decid
       congrArg (fun g : GL n A => g.val *ᵥ x) hgroup
   exact (congrArg (fun a : L => f a) (Subtype.ext hvec)).trans (hfix ⟨_, h₁⟩)
 
-set_option maxHeartbeats 20000000 in
-set_option synthInstance.maxHeartbeats 400000 in
 theorem diamond_class_function (T : Forms0 D u) (v v' : (D.mem u).A.vT) (hvv : v ≠ v') (k : ℤ)
     (δ : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F))
     (hδ : IsDia T.cls0.lev (T.atT.eV v').1 (T.atT.eV v').2 k δ) (c c2 : (D.mem u).C.cls 0)

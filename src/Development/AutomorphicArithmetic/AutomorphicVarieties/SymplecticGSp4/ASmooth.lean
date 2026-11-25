@@ -1,5 +1,7 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KerPow
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ChartSum
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
 import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
@@ -60,43 +62,12 @@ variable {O R : Type} [CommRing O] [CommRing R] [Algebra O R]
 
 private lemma exists_order {X : Type} [AddCommGroup X] (W : WPres O X R) (h : W.HasOrigin) (n : ℕ) :
     ∀ x ∈ RingHom.ker (W.origin h) ^ n, ∃ f, W.π f = x ∧ (n : ℕ∞) ≤ f.order := by
-  induction n with
-  | zero =>
-    intro x _
-    obtain ⟨f, rfl⟩ := W.surj x
-    exact ⟨f, rfl, by simp⟩
-  | succ n ih =>
-    let I : Ideal R :=
-      { carrier := {x | ∃ f, W.π f = x ∧ ((n + 1 : ℕ) : ℕ∞) ≤ f.order}
-        add_mem' := by
-          rintro _ _ ⟨f, rfl, hf⟩ ⟨g, rfl, hg⟩
-          exact ⟨f + g, map_add _ _ _, le_trans (le_min hf hg) MvPowerSeries.min_order_le_add⟩
-        zero_mem' := ⟨0, map_zero _, by simp⟩
-        smul_mem' := by
-          rintro c _ ⟨f, rfl, hf⟩
-          obtain ⟨g, rfl⟩ := W.surj c
-          refine ⟨g * f, by rw [map_mul, smul_eq_mul], le_trans ?_ MvPowerSeries.le_order_mul⟩
-          exact le_trans hf le_add_self }
-    have hle : RingHom.ker (W.origin h) ^ (n + 1) ≤ I := by
-      rw [pow_succ]
-      refine Ideal.mul_le.mpr fun a ha b hb => ?_
-      obtain ⟨f, rfl, hf⟩ := ih a ha
-      obtain ⟨g, rfl⟩ := W.surj b
-      have hg : ((1 : ℕ) : ℕ∞) ≤ g.order := by
-        refine MvPowerSeries.nat_le_order fun d hd => ?_
-        have hd0 : d = 0 := (Finsupp.degree_eq_zero_iff d).mp (by omega)
-        subst hd0
-        rw [MvPowerSeries.coeff_zero_eq_constantCoeff_apply]
-        rwa [RingHom.mem_ker, WPres.origin_π] at hb
-      refine ⟨f * g, map_mul _ _ _, le_trans ?_ MvPowerSeries.le_order_mul⟩
-      rw [Nat.cast_add]
-      exact add_le_add hf hg
-    exact fun x hx => hle hx
+  apply _root_.exists_order <;> assumption
 
 private lemma monomial_mem {X : Type} [AddCommGroup X] {σ : Type} (wt : σ → X) (m : σ →₀ ℕ) (c : O) :
     monomial m c ∈ wtPart O wt (Finsupp.weight wt m) := fun k hk => by
   classical
-  rw [coeff_monomial, if_neg]
+  rw [coeff_monomial, ite_eq_right]
   rintro rfl
   exact hk rfl
 
@@ -114,8 +85,8 @@ private theorem wcomp_eq_self_of_mem_wtPart {σ X : Type} [AddCommGroup X] {wt :
   ext n
   rw [coeff_wcomp]
   by_cases h1 : Finsupp.weight wt n = j
-  · rw [if_pos h1]
-  · rw [if_neg h1]
+  · rw [ite_eq_left h1]
+  · rw [ite_eq_right h1]
     exact (hf' n h1).symm
 
 private theorem wcomp_of_ne_eq_zero_of_mem_wtPart {σ X : Type} [AddCommGroup X] {wt : σ → X} {j : X}
@@ -124,9 +95,9 @@ private theorem wcomp_of_ne_eq_zero_of_mem_wtPart {σ X : Type} [AddCommGroup X]
   ext n
   rw [coeff_wcomp, map_zero]
   by_cases h1 : Finsupp.weight wt n = j'
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     exact hf' n (by rw [h1]; exact hj)
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
 
 private lemma A_sum (W : WPres O (ℤ × ℤ) R) {A : Subalgebra O R} (hA : ∀ f, f ∈ A ↔ f ∈ ⨆ n : ℤ, W.part (0, n))
     (g : MvPowerSeries W.σ O) (hx : W.π g ∈ A) :
@@ -182,7 +153,7 @@ private lemma A_sum (W : WPres O (ℤ × ℤ) R) {A : Subalgebra O R} (hA : ∀ 
 private lemma org_mono {X : Type} [AddCommGroup X] (W : WPres O X R) (h : W.HasOrigin) {m : W.σ →₀ ℕ} (hm : m ≠ 0) :
     W.origin h (W.π (monomial m 1)) = 0 := by
   classical
-  rw [W.origin_π, ← coeff_zero_eq_constantCoeff_apply, coeff_monomial, if_neg hm.symm]
+  rw [W.origin_π, ← coeff_zero_eq_constantCoeff_apply, coeff_monomial, ite_eq_right hm.symm]
 
 private lemma pow_le (W : WPres O (ℤ × ℤ) R) (h : W.HasOrigin) {A : Subalgebra O R}
     (hA : ∀ f, f ∈ A ↔ f ∈ ⨆ n : ℤ, W.part (0, n)) (N : Submodule O R)
@@ -248,7 +219,7 @@ private lemma split_mono {σ : Type} (wt : σ → ℤ × ℤ) (hw : ∀ i, (wt i
     rw [add_tsub_cancel_of_le]
     rw [Finsupp.single_le_iff]
     exact Nat.one_le_iff_ne_zero.mpr hs
-  · push_neg at h0'
+  · push Not at h0'
     right
     have hsum : ∑ i ∈ m.support, (m i : ℤ) * (wt i).1 = 0 := by
       have := h0
@@ -263,8 +234,7 @@ private lemma split_mono {σ : Type} (wt : σ → ℤ × ℤ) (hw : ∀ i, (wt i
       · exact absurd h this
       · exact Or.inl h
     obtain ⟨s, hs, hs1⟩ : ∃ s ∈ m.support, (wt s).1 = 1 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       have hlt : ∑ i ∈ m.support, (m i : ℤ) * (wt i).1 < 0 := by
         refine Finset.sum_neg (fun i hi => ?_) hne
         rcases hpm i hi with h | h
@@ -274,8 +244,7 @@ private lemma split_mono {σ : Type} (wt : σ → ℤ × ℤ) (hw : ∀ i, (wt i
           linarith
       linarith
     obtain ⟨t, ht, ht1⟩ : ∃ t ∈ m.support, (wt t).1 = -1 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       have hlt : 0 < ∑ i ∈ m.support, (m i : ℤ) * (wt i).1 := by
         refine Finset.sum_pos (fun i hi => ?_) hne
         rcases hpm i hi with h | h
@@ -451,7 +420,7 @@ private theorem crLin_const (φ : A →ₐ[O] MvPowerSeries τ (FractionRing O))
     crLin φ i (algebraMap O A c) = 0 := by
   classical
   rw [crLin_apply, AlgHom.commutes, MvPowerSeries.algebraMap_apply, MvPowerSeries.coeff_C,
-    if_neg (Finsupp.single_ne_zero.mpr one_ne_zero)]
+    ite_eq_right (Finsupp.single_ne_zero.mpr one_ne_zero)]
 
 private theorem cr_fixed (h : IsChart 𝒜 x wt φ) {j : X} (hj : j ≠ 0) {f : A} (hf : f ∈ 𝒜 j) : x f = 0 := by
   have h1' : ∀ n, Finsupp.weight wt n ≠ j → coeff n (φ f) = 0 := h.graded j f hf
@@ -515,7 +484,7 @@ private theorem expand [Fintype τ] (h : IsChart 𝒜 x wt φ) {g : τ → A}
   have ha0 : ∀ k, wt k ≠ j → a k = 0 := by
     intro k hk
     have := ha k
-    rw [if_neg hk, smul_zero] at this
+    rw [ite_eq_right hk, smul_zero] at this
     exact IsFractionRing.injective O (FractionRing O) (this.trans (map_zero _).symm)
   have hxq : x (c • p - ∑ k, a k • g k) = 0 := by
 
@@ -529,7 +498,7 @@ private theorem expand [Fintype τ] (h : IsChart 𝒜 x wt φ) {g : τ → A}
       (fun hi => absurd (Finset.mem_univ i) hi), map_smul]
     by_cases hi : wt i = j
     · have := ha i
-      rw [if_pos hi] at this
+      rw [ite_eq_left hi] at this
       rw [Algebra.smul_def (a i), this, smul_mul_assoc, div_mul_cancel₀ _ (hg i).2.2.1, sub_self]
     · rw [crLin_wt h i hi hp, ha0 i hi, smul_zero, zero_smul, sub_self]
   obtain ⟨c', hc', hq2⟩ := h.inj _ hxq hcr
@@ -649,7 +618,7 @@ private theorem restrict {E τ' : Type} [CommRing E] [Algebra O E] (φ : A →�
     by_cases hn : n = 0
     · subst hn
       simp
-    · rw [if_neg hn, if_neg (fun e => hn (hι (e.trans (map_zero ι).symm)))]
+    · rw [ite_eq_right hn, ite_eq_right (fun e => hn (hι (e.trans (map_zero ι).symm)))]
   · intro f g
     ext n
     change coeff (ι n) (φ (f * g)) = coeff n (L f * L g)
@@ -657,27 +626,7 @@ private theorem restrict {E τ' : Type} [CommRing E] [Algebra O E] (φ : A →�
     rfl
 
 private theorem exists_eq_single_one_of_degree_eq_one {κ : Type} {v : κ →₀ ℕ} (hv : v.degree = 1) : ∃ t, v = Finsupp.single t 1 := by
-  classical
-  have hv0 : v ≠ 0 := by
-    rintro rfl
-    simp at hv
-  obtain ⟨t, ht⟩ := Finsupp.ne_iff.mp hv0
-  have hle : Finsupp.single t 1 ≤ v := by
-    intro s
-    by_cases hs : s = t
-    · subst hs
-      rw [Finsupp.single_eq_same]
-      simp only [Finsupp.coe_zero, Pi.zero_apply] at ht
-      omega
-    · rw [Finsupp.single_eq_of_ne hs]
-      exact Nat.zero_le _
-  have hsum : v = Finsupp.single t 1 + (v - Finsupp.single t 1) := (add_tsub_cancel_of_le hle).symm
-  have hdeg : (v - Finsupp.single t 1).degree = 0 := by
-    have e := congrArg Finsupp.degree hsum
-    rw [map_add (f := _), Finsupp.degree_single, hv] at e
-    omega
-  refine ⟨t, ?_⟩
-  rw [hsum, (Finsupp.degree_eq_zero_iff _).mp hdeg, add_zero]
+  apply _root_.exists_single_of_degree_eq_one <;> assumption
 
 private theorem coeff_two {E : Type} [CommRing E] [IsDomain E] [DecidableEq τ] (p q : MvPowerSeries τ E) (k b j : τ)
     (hp0 : coeff 0 p = 0) (hq0 : coeff 0 q = 0) (hp : ∀ i, i ≠ k → coeff (Finsupp.single i 1) p = 0)
@@ -686,8 +635,8 @@ private theorem coeff_two {E : Type} [CommRing E] [IsDomain E] [DecidableEq τ] 
       if j = k then coeff (Finsupp.single k 1) p * coeff (Finsupp.single b 1) q else 0 := by
   rw [coeff_mul, Finset.sum_eq_single (Finsupp.single j 1, Finsupp.single b 1)]
   · by_cases hjk : j = k
-    · rw [if_pos hjk, hjk]
-    · rw [if_neg hjk, hp j hjk, zero_mul]
+    · rw [ite_eq_left hjk, hjk]
+    · rw [ite_eq_right hjk, hp j hjk, zero_mul]
   · intro y hy hne
     have hy' := Finset.HasAntidiagonal.mem_antidiagonal.mp hy
     by_cases h1 : y.1 = 0
@@ -753,7 +702,7 @@ private theorem iota {τ : Type} [Fintype τ] [DecidableEq τ] (wt : τ → ℤ 
         · intro j _ hj
           simp [Ne.symm hj]
         · simp
-      · rw [dif_neg ht]
+      · rw [dite_eq_right ht]
         by_cases h1 : (wt i.1).1 = 1
         · simp [v, h1, Finsupp.single_apply, Ne.symm ht, Subtype.ext_iff]
         · simp [v, h1, Finsupp.single_apply, Subtype.ext_iff]
@@ -761,7 +710,7 @@ private theorem iota {τ : Type} [Fintype τ] [DecidableEq τ] (wt : τ → ℤ 
   · intro n n' h
     ext i
     have := congrArg (fun f : τ →₀ ℕ => f i.1) h
-    simp only [hιapp, dif_neg i.2] at this
+    simp only [hιapp, dite_eq_right i.2] at this
     exact this
   · intro i
     rw [hιsk, one_smul]
@@ -810,7 +759,7 @@ private theorem exists_ne_zero_smul_mem_of_mem_span' {τ E : Type} [CommRing E] 
         exact h
       · have := hx i
         simp only [Finsupp.single_apply] at this
-        rw [if_neg (Ne.symm hi)] at this
+        rw [ite_eq_right (Ne.symm hi)] at this
         simp only [Finsupp.coe_zero, Pi.zero_apply]
         omega
     subst this
@@ -821,10 +770,10 @@ private theorem exists_ne_zero_smul_mem_of_mem_span' {τ E : Type} [CommRing E] 
       simp only [Finsupp.single_apply] at this
       by_cases hi : i = j
       · subst hi
-        simp only [if_true] at this
+        simp only [ite_true] at this
         simp only [Finsupp.coe_zero, Pi.zero_apply]
         omega
-      · rw [if_neg (Ne.symm hi)] at this
+      · rw [ite_eq_right (Ne.symm hi)] at this
         simp only [Finsupp.coe_zero, Pi.zero_apply]
         omega
     subst this
@@ -911,10 +860,10 @@ private theorem main {O R τ : Type} [CommRing O] [IsDomain O] [CommRing R] [Alg
       have hj1 : ¬ (wt j.1).1 = 1 := by rw [hj]; norm_num
       have := hv j
       rw [Finset.sum_eq_single j] at this
-      · rw [hcr, hιs, if_neg hj1, add_zero, hinclG, if_pos hj] at this
+      · rw [hcr, hιs, ite_eq_right hj1, add_zero, hinclG, ite_eq_left hj] at this
         exact (mul_eq_zero.mp this).resolve_right (hdiag j.1)
       · intro k _ hkj
-        rw [hcr, hιs, if_neg hj1, add_zero, hinclG]
+        rw [hcr, hιs, ite_eq_right hj1, add_zero, hinclG]
         split_ifs with hk
         · rw [hlin k.1 j.1 (fun h => hkj (Subtype.ext h).symm), mul_zero]
         · rw [map_mul, exists_ne_zero_smul_mem_of_mem_span' _ _ (hφ0 _) (hφ0 _), mul_zero]
@@ -925,15 +874,15 @@ private theorem main {O R τ : Type} [CommRing O] [IsDomain O] [CommRing R] [Alg
       have hj0 : ¬ (wt j.1).1 = 0 := by rw [hj]; norm_num
       have := hv j
       rw [Finset.sum_eq_single j] at this
-      · rw [hcr, hιs, if_pos hj, hinclG, if_neg hj0, map_mul,
-          coeff_two _ _ j.1 b j.1 (hφ0 _) (hφ0 _) (hlin j.1) (hlin b), if_pos rfl] at this
+      · rw [hcr, hιs, ite_eq_left hj, hinclG, ite_eq_right hj0, map_mul,
+          coeff_two _ _ j.1 b j.1 (hφ0 _) (hφ0 _) (hlin j.1) (hlin b), ite_eq_left rfl] at this
         exact (mul_eq_zero.mp this).resolve_right (mul_ne_zero (hdiag _) (hdiag _))
       · intro k _ hkj
-        rw [hcr, hιs, if_pos hj, hinclG]
+        rw [hcr, hιs, ite_eq_left hj, hinclG]
         split_ifs with hk
         · rw [h0 k hk, zero_mul]
         · rw [map_mul, coeff_two _ _ k.1 b j.1 (hφ0 _) (hφ0 _) (hlin k.1) (hlin b),
-            if_neg (fun h => hkj (Subtype.ext h).symm), mul_zero]
+            ite_eq_right (fun h => hkj (Subtype.ext h).symm), mul_zero]
       · intro h
         exact absurd (Finset.mem_univ j) h
     funext j
@@ -1018,7 +967,7 @@ private theorem main {O R τ : Type} [CommRing O] [IsDomain O] [CommRing R] [Alg
             by_contra hne
             exact hk (ha k hne)
           have hk0 : (wt k).1 = 0 := by rw [hwk, hs]
-          simp only [Γ, if_pos hk0]
+          simp only [Γ, ite_eq_left hk0]
       obtain ⟨hN', hA'⟩ := hΓN a hab
       refine ⟨c, hc, _, hN', hA', ?_⟩
       rw [← hsum]
@@ -1076,7 +1025,7 @@ private theorem main {O R τ : Type} [CommRing O] [IsDomain O] [CommRing R] [Alg
             by_contra hne
             exact hk (ha₁ k hne)
           have hk0 : ¬ (wt k).1 = 0 := by rw [hwk, hs]; norm_num
-          simp only [Γ, a, if_neg hk0, map_smul]
+          simp only [Γ, a, ite_eq_right hk0, map_smul]
           rw [smul_mul_smul_comm]
           rfl
       obtain ⟨hN', hA'⟩ := hΓN a hab
@@ -1163,7 +1112,7 @@ private theorem count {τ : Type} [Fintype τ] [DecidableEq τ] (wt : τ → ℤ
     have e4 : tDims r r' m (-wPs) = r := by simp [tDims, wAl, wBe, wTh, wPs]
     have e5 : tDims r r' m 0 = m := by
       unfold tDims
-      rw [if_neg (by decide), if_neg (by decide), if_neg (by decide), if_pos rfl]
+      rw [ite_eq_right (by decide), ite_eq_right (by decide), ite_eq_right (by decide), ite_eq_left rfl]
     rw [e1, e2, e3, e4, e5]
     have n1 : wAl ≠ wBe := by decide
     have n2 : wTh ≠ wBe := by decide
@@ -1171,7 +1120,7 @@ private theorem count {τ : Type} [Fintype τ] [DecidableEq τ] (wt : τ → ℤ
     have n4 : -wPs ≠ wBe := by decide
     have n5 : (0 : ℤ × ℤ) ≠ wBe := by decide
     simp only [n1, n2, n3, n4, n5, ne_eq, not_false_eq_true, true_and, not_true_eq_false, false_and,
-      if_false, zero_add]
+      ite_false, zero_add]
     have s1 : wAl.2 + wAl.1 = 1 := rfl
     have s2 : wTh.2 + wTh.1 = 2 := rfl
     have s3 : wPs.2 + wPs.1 = 1 := rfl

@@ -71,7 +71,7 @@ theorem der_minor {a b : Fin l} (hab : a ≤ b) (hD : ∀ c k, D (y c k) = if k 
   by_cases hb : b.1 < m
   · rw [Finset.sum_eq_single (⟨b.1, hb⟩ : Fin m)]
     · have e : Fin.castLE h ⟨b.1, hb⟩ = b := rfl
-      simp only [e, if_true]
+      simp only [e, ite_true]
       split_ifs with h1 h2
       · subst h1
         rw [one_smul]
@@ -87,7 +87,7 @@ theorem der_minor {a b : Fin l} (hab : a ≤ b) (hD : ∀ c k, D (y c k) = if k 
         rfl
     · intro i _ hi
       refine Matrix.det_eq_zero_of_row_eq_zero i fun j => ?_
-      rw [Matrix.updateRow_self, if_neg fun e : Fin.castLE h i = b => hi (Fin.ext (congrArg Fin.val e :))]
+      rw [Matrix.updateRow_self, ite_eq_right fun e : Fin.castLE h i = b => hi (Fin.ext (congrArg Fin.val e :))]
     · simp
   · have h0 : (if a = b then (if a.1 < m then (1 : ℂ) else 0) else 0) = 0 := by
       split_ifs with h1 h2
@@ -96,7 +96,7 @@ theorem der_minor {a b : Fin l} (hab : a ≤ b) (hD : ∀ c k, D (y c k) = if k 
       · rfl
     rw [h0, zero_smul]
     refine Finset.sum_eq_zero fun i _ => Matrix.det_eq_zero_of_row_eq_zero i fun j => ?_
-    rw [Matrix.updateRow_self, if_neg fun e : Fin.castLE h i = b => hb (e ▸ i.2)]
+    rw [Matrix.updateRow_self, ite_eq_right fun e : Fin.castLE h i = b => hb (e ▸ i.2)]
 
 theorem sum_rows (α : Fin l → ℕ) (hα : Antitone α) (a : Fin l) :
     ∑ i : Fin l, ((α i - nextRow α i : ℕ) : ℂ) * (if a.1 < i.1 + 1 then 1 else 0) = α a := by
@@ -111,7 +111,7 @@ theorem sum_rows (α : Fin l → ℕ) (hα : Antitone α) (a : Fin l) :
     · exact le_rfl
   have h := telescope f hf a l
   have hl : f l = 0 := by simp [f]
-  rw [if_pos a.2.le, hl, ← Fin.sum_univ_eq_sum_range
+  rw [ite_eq_left a.2.le, hl, ← Fin.sum_univ_eq_sum_range
     (fun i => ((f i - f (i + 1) : ℕ) : ℂ) * (if a.1 < i + 1 then 1 else 0))] at h
   have e1 : ∀ i : Fin l, f i = α i := fun i => by simp [f, i.2]
   have e2 : ∀ i : Fin l, f (i + 1) = nextRow α i := fun i => rfl

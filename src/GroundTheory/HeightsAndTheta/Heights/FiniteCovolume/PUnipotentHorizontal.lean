@@ -8,7 +8,6 @@ public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArchInvariant
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PHermAtPlace
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMahlerCompactness
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PStabilizerLeviPlaces
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -22,7 +21,6 @@ noncomputable section
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
   [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
-
 
 omit [NumberField F] [NumberField E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem archUnitary_preserves_form (h : HermitianForm F E W) (v : Basis ι E W)

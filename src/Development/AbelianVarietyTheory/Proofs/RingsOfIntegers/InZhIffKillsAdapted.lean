@@ -47,10 +47,7 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ GlobalTheory.PtTie
 open ReciprocityTheory.ChartRestriction.G.TB (dAct dLin)
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.PlaceInt
-
-set_option autoImplicit false
 
 namespace GlobalTheory.ZPart
 
@@ -246,7 +243,7 @@ theorem inZh_iff {n : ℕ} {Λ : GenLat E n} {N ℓ : ℕ} (A : Adapt Λ N ℓ) 
       rw [hr] at h1
       have h2 := (h1.cancel (cop _ (A.cop.pow_left 2)) tors) b
       simp only [Matrix.smul_apply, Matrix.one_apply, smul_eq_mul, mul_ite, _root_.mul_one, mul_zero, ite_smul,
-        zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true] at h2
+        zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true] at h2
       have h3 := (pow_iff Xo (N ^ 2) (u b)).mpr h2
       rw [mul_pow, _root_.mul_comm, pow_mul, h3, one_pow]
     · obtain ⟨r, hr⟩ := exists_factor A mu hmu c cm hcm

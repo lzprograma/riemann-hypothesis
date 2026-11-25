@@ -67,7 +67,7 @@ theorem coeff_subst_eq_zero_of_degree_lt :
   intro d
   by_cases hd : d.degree < M
   · simp [hf d hd]
-  · push_neg at hd
+  · push Not at hd
     have hord : ((d.degree : ℕ) : ℕ∞) ≤ (d.prod fun s e => u s ^ e).order := by
       unfold Finsupp.prod
       refine le_trans ?_ (le_order_prod (fun s => u s ^ d s) d.support)

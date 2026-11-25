@@ -28,8 +28,6 @@ theorem selfDualAt_colLevel (L : ColLevel R F E sp gp C A clsLat) (v : HeightOne
 theorem selfDualAtP_of_not_mem (I : LocId L p nV W Qq) (hT : ∀ v : Fin nV, (A.T : 𝓞 F) ∉ (I.plc v).asIdeal) : Cmp.SelfDualAtP I :=
   fun v y => selfDualAt_colLevel L (I.plc v) (hT v) y
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem selfDualAtP_colLevel (D : D7) (u : D.what₂.Word) (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w))
     {Lc : ColLevel D.R D.host.F D.host.E D.sp D.host.g (D.mem u).C (D.mem u).A (D.clsLat u)} {nV : ℕ} {W' Qq' : Type}
     [CommRing W'] [Field Qq'] [Algebra W' Qq'] (I : LocId Lc (D.what₂.places.resChar w) nV W' Qq') : Cmp.SelfDualAtP I :=

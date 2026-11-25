@@ -184,7 +184,7 @@ private theorem prod_cv {S : Set (Pl E)} (T : Finset (Pl E)) (B : Pl E → Multi
   · have h1 : ¬ Sl S (w, true) := fun h => hs (h.2 rfl)
     have h2 : Sl S (w, false) := ⟨hS, by simp⟩
     have h3 : ev2 n 0 w (e₂ w) (inv (B (cPl w))) (inv ((0 : Pl E → Multiset ℂˣ) (cPl w))) = 1 := hT.2 w hw hs _
-    simp only [h1, h2, if_true, if_false, cv, one_mul]
+    simp only [h1, h2, ite_true, ite_false, cv, one_mul]
     rw [h3, mul_one]
     simp
 

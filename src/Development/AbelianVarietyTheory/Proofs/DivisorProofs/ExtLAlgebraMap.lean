@@ -43,7 +43,6 @@ import Mathlib.Tactic.ReduceModChar
 @[expose] public section
 
 noncomputable section
-set_option autoImplicit false
 
 namespace GlobalTheory.LogDerProj
 

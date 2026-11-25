@@ -91,29 +91,29 @@ theorem sum_sd {κ : Type} [AddCommMonoid κ] {n a k : ℕ} (hk : 1 ≤ k) (hka 
       if (x : ℕ) + 1 < a ∧ (x : ℕ) + 1 ≠ k then f x (x + 1) else 0 := by
     intro x
     by_cases hx : (x : ℕ) + 1 < a ∧ (x : ℕ) + 1 ≠ k
-    · rw [if_pos hx, Finset.sum_eq_single (⟨x.1 + 1, by omega⟩ : Fin n), if_pos ⟨rfl, hx.1, hx.2⟩, hf]
+    · rw [ite_eq_left hx, Finset.sum_eq_single (⟨x.1 + 1, by omega⟩ : Fin n), ite_eq_left ⟨rfl, hx.1, hx.2⟩, hf]
       · intro y _ hy
-        exact if_neg fun h => hy (Fin.ext h.1.symm)
+        exact ite_eq_right fun h => hy (Fin.ext h.1.symm)
       · intro h
         exact absurd (Finset.mem_univ _) h
-    · rw [if_neg hx]
-      refine Finset.sum_eq_zero fun y _ => if_neg fun h => hx ?_
+    · rw [ite_eq_right hx]
+      refine Finset.sum_eq_zero fun y _ => ite_eq_right fun h => hx ?_
       obtain ⟨h1, h2, h3⟩ := h
       omega
   rw [Finset.sum_congr rfl fun x _ => h1 x,
     Fin.sum_univ_eq_sum_range (fun x => if x + 1 < a ∧ x + 1 ≠ k then f x (x + 1) else 0) n]
   have e : n = (k - 1) + (1 + ((a - k - 1) + (n - (a - 1)))) := by omega
   rw [e, Finset.sum_range_add, Finset.sum_range_add, Finset.sum_range_add, Finset.sum_range_one]
-  rw [if_neg (by omega), zero_add, Finset.sum_eq_zero (s := Finset.range (n - (a - 1))), add_zero]
+  rw [ite_eq_right (by omega), zero_add, Finset.sum_eq_zero (s := Finset.range (n - (a - 1))), add_zero]
   · congr 1
     · refine Finset.sum_congr rfl fun i hi => ?_
       rw [Finset.mem_range] at hi
-      rw [if_pos (by omega)]
+      rw [ite_eq_left (by omega)]
     · refine Finset.sum_congr rfl fun i hi => ?_
       rw [Finset.mem_range] at hi
-      rw [if_pos (by omega), show k - 1 + (1 + i) = k + i by omega]
+      rw [ite_eq_left (by omega), show k - 1 + (1 + i) = k + i by omega]
   · intro i hi
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
 
 section Loc
 
@@ -125,7 +125,7 @@ theorem red_mat {n : ℕ} (g : Sp E n ≃ₗ[E] Sp E n) (r : Sp E (n + 0) ≃ₗ
     redP P (mat r p p') = M ⟨p, hp⟩ ⟨p', hp'⟩ := by
   have he : Loc.eN E (n + 0) p' = Loc.inX E n 0 (Loc.eN E n p') := by
     funext l
-    rw [GlobalTheory.QNormal.inX_apply, dif_pos (show (l : ℕ) < n from l.2)]
+    rw [GlobalTheory.QNormal.inX_apply, dite_eq_left (show (l : ℕ) < n from l.2)]
     rfl
   have hv : redV P (Loc.eN E n p') = Pi.single ⟨p', hp'⟩ 1 := by
     funext l
@@ -136,7 +136,7 @@ theorem red_mat {n : ℕ} (g : Sp E n ≃ₗ[E] Sp E n) (r : Sp E (n + 0) ≃ₗ
   have h5 := congrFun (hred _ (GlobalTheory.GO.ChRoot.eN_mem (i := p'))) ⟨p, hp⟩
   rw [hv, Matrix.mulVec_single_one] at h5
   unfold mat
-  rw [he, hrg, Loc.atN, dif_pos (show p < n + 0 from hp), GlobalTheory.QNormal.inX_apply, dif_pos hp]
+  rw [he, hrg, Loc.atN, dite_eq_left (show p < n + 0 from hp), GlobalTheory.QNormal.inX_apply, dite_eq_left hp]
   exact h5
 
 theorem lam_loc {K : Type} [Field K] (ψ₀ : AddChar (𝓞 E ⧸ P.asIdeal) K) (χ₀ : ℕ → (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ)
@@ -171,7 +171,7 @@ theorem lam_loc {K : Type} [Field K] (ψ₀ : AddChar (𝓞 E ⧸ P.asIdeal) K) 
       have := s.2
       have := s'.2
       unfold Formalism.L2.Forms.blkMat Formalism.L2.Forms.entN
-      rw [dif_pos ⟨by omega, by omega⟩, Matrix.map_apply, RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply,
+      rw [dite_eq_left ⟨by omega, by omega⟩, Matrix.map_apply, RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply,
         hM (k + 2 * rS + 1 + i * t + s.1) (k + 2 * rS + 1 + i * t + s'.1) (by omega) (by omega)]
       rfl
     rw [hb, ← RingHom.map_det]
@@ -202,14 +202,14 @@ theorem GlobalTheory.Proof.LastStepChar.chr_last : ∀ {X : Fields} {Pr : Primes
     rw [Subgroup.mem_inf, Subgroup.mem_comap] at hrC
     simpa using hrC.2
   unfold Jat at hJ0
-  rw [if_pos w.2, hsh, if_pos rfl] at hJ0
+  rw [ite_eq_left w.2, hsh, ite_eq_left rfl] at hJ0
   have hn1 : Loc.n1Arg r = 0 := by
     unfold Loc.n1Arg
     rw [show cOf R (m2 + 1) - 1 = 0 by omega, Finset.sum_range_zero]
   unfold chiInv
   rw [hn1, hL.cst_ok.psi_int _ _ (GlobalTheory.SymLevelInv.intAt_zero _), inv_one, one_mul]
   unfold lamRow
-  simp only [if_pos w.2, hsh, if_true]
+  simp only [ite_eq_left w.2, hsh, ite_true]
   rw [inv_one, one_mul, mul_one]
   have hk := R.m_add_three_le_k
   have hr : R.r = R.k + 2 * R.rS + 1 := by
@@ -223,11 +223,11 @@ theorem GlobalTheory.Proof.LastStepChar.chr_last : ∀ {X : Fields} {Pr : Primes
   refine lam_loc (psi0P Ch w.1) (chiP Ch w.1) e σ ψ χ hc hr (by omega) hn (fun a => ?_) (fun i hi a => ?_) g r hJ0 hrg M.1.1 hred
   · rw [hψ]
     unfold psi0P
-    rw [dif_pos w.2]
+    rw [dite_eq_left w.2]
   · rw [hχ ⟨i, by omega⟩ a]
     unfold chiP chiAt extChi
-    rw [dif_pos w.2]
-    simp only [dif_pos (show i < R.m by omega)]
+    rw [dite_eq_left w.2]
+    simp only [dite_eq_left (show i < R.m by omega)]
 
 end
 end -- clump:auto
@@ -278,7 +278,7 @@ theorem inJSym_of_mat (hq : q ≠ 0) (hP : (q : 𝓞 E) ∈ P.asIdeal) {k rS r t
         · have h1 := symIdx_lt hr'.le hy
           have h2 := symIdx_cases k rS x.1
           omega
-      rw [hM, mat_col hq hP hr' hn hg x.1 y.1 x.2 hy key, if_neg hxy, map_zero]
+      rw [hM, mat_col hq hP hr' hn hg x.1 y.1 x.2 hy key, ite_eq_right hxy, map_zero]
     · have hx : ¬ x.1 < rSym k rS := by
         intro hx
         have h1 := lvSym_of_ge (t := t) hy
@@ -286,20 +286,20 @@ theorem inJSym_of_mat (hq : q ≠ 0) (hP : (q : 𝓞 E) ∈ P.asIdeal) {k rS r t
         have h2 := posSym_lt hx
         omega
       unfold lvSym at h
-      rw [if_neg hy, if_neg hx] at h
+      rw [ite_eq_right hy, ite_eq_right hx] at h
       have h1 : (y.1 - rSym k rS) / t + 1 ≤ (x.1 - rSym k rS) / t := by omega
       have h2 := Nat.lt_mul_div_succ (y.1 - rSym k rS) ht
       have h3 := Nat.div_mul_le_self (x.1 - rSym k rS) t
       have h4 := Nat.mul_le_mul_right t h1
       rw [mul_comm] at h2
       rw [hM, mat_blk hq hP hr' hg ((y.1 - rSym k rS) / t + 1) x.1 y.1 x.2 (by omega) (by omega), map_zero]
-  · rw [hM, mat_col hq hP hr' hn hg x.1 x.1 x.2 hx (symmetric_level_bound_le _ _ _), if_pos rfl, map_one]
+  · rw [hM, mat_col hq hP hr' hn hg x.1 x.1 x.2 hx (symmetric_level_bound_le _ _ _), ite_eq_left rfl, map_one]
   · have hyr : y.1 < rSym k rS := by omega
     have key : bd5 k rS (symIdx k rS y.1) ≤ symIdx k rS x.1 := by
       rw [hy]
       unfold bd5 symIdx
       split_ifs <;> omega
-    rw [hM, mat_col hq hP hr' hn hg x.1 y.1 x.2 hyr key, if_neg (by omega), map_zero]
+    rw [hM, mat_col hq hP hr' hn hg x.1 y.1 x.2 hyr key, ite_eq_right (by omega), map_zero]
 
 theorem inJSym_of_prX (hq : q ≠ 0) (hP : (q : 𝓞 E) ∈ P.asIdeal) {k rS r t n c : ℕ} (hc : c = 0) (hr : r = rSym k rS) (ht : 0 < t)
     (hn : r ≤ n) {ρ : Sp E (n + c) ≃ₗ[E] Sp E (n + c)} (hρ : ρ ∈ JGsym P q k rS r t n c) {g : Sp E n ≃ₗ[E] Sp E n}
@@ -353,7 +353,7 @@ theorem GlobalTheory.Mem.LastGrp.levG_le_JSymG : ∀ {X : Fields} {Pr : Primes X
     obtain ⟨ρ, hρ, hx⟩ := hg
     have hJ : ρ ∈ Jat (Pr := Pr) cst.sharp (m2 + 1) w.1 := by simpa [Loc.Cbe] using hρ.2
     unfold Jat at hJ
-    rw [if_pos w.2, if_pos hs] at hJ
+    rw [ite_eq_left w.2, ite_eq_left hs] at hJ
     exact inJSym_of_prX hq hP hc hr ht hn hJ hx e.toRingHom A.1 hred
   refine ⟨key M hM, ?_⟩
   rw [← map_inv]
@@ -567,8 +567,6 @@ theorem cosetIn_of_zero_mem (h : j + 1 = R.m) (p : PtAt R sel mu cst u j) (h0 : 
   rwa [← smul_add, sub_add_cancel] at h4
 
 end Coset
-
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 section Read
 

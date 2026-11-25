@@ -37,68 +37,13 @@ public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OppositeP
 public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible
 import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
 import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Topology.Algebra.Group.Units
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Tactic.Polynomial.Basic
 import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MaxVSpanSingleton
-import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.CharacterValuation
 import Formalism.LocalToGlobal.KernelLattices.XiIndCClass
 import Formalism.SharpRestriction.CuspSpanNormBounds.Point
-import Mathlib.Tactic.Lemma
-import Mathlib.Algebra.Order.Star.Int
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDataBound, Development.AutomorphicArithmetic.DivisorFrames.AbsHcExponentLeAndAbsCenterLeOfSizeRows, Development.AutomorphicArithmetic.DivisorFrames.IsIntegralLocalGridTensorOfLevelChar, Development.AutomorphicArithmetic.DivisorFrames.ExistsMemKOEqStdFrameMulOfIsPrimFrame, Development.AutomorphicArithmetic.DivisorFrames.FourierSumBlockTransposeInvEq, Development.AutomorphicArithmetic.DivisorFrames.HaarVolSelfEqOneOfOpenSubgroupLeKO, Development.AutomorphicArithmetic.DivisorFrames.NuDetMulSliceBBlockAction, Development.AutomorphicArithmetic.LocalEmbeddings.FlipInt, Development.AutomorphicArithmetic.DivisorFrames.ExistsPowLocKMulInfEqOneOfLevelLeTwo, Development.AutomorphicArithmetic.DivisorFrames.IsIntegralCmTypeUnitaryPartMulAbsNormPow, Development.AutomorphicArithmetic.LocalEmbeddings.FlipVal, Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlipsLossBoundedAtExceptionalPlaces, Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.FiniteDataBound
@@ -605,32 +550,6 @@ namespace UpperTheory.FourierBlockTranspose
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-private theorem mk_eq_iff {ϖ : kˣ} (hϖ : IsUnif ϖ) (e : ℕ) (a b : 𝒪[k]) :
-    (Ideal.Quotient.mk (IsLocalRing.maximalIdeal 𝒪[k] ^ e) a = Ideal.Quotient.mk _ b) ↔
-      (((ϖ ^ e)⁻¹ : kˣ) : k) * ((a : k) - b) ∈ 𝒪[k] := by
-  rw [Ideal.Quotient.eq, hϖ.maximalIdeal_eq, Ideal.span_singleton_pow, Ideal.mem_span_singleton']
-  have hϖ0 : (ϖ : k) ≠ 0 := ϖ.ne_zero
-  constructor
-  · rintro ⟨c, hc⟩
-    have hc' : (c : k) * (ϖ : k) ^ e = (a : k) - b := by
-      simpa using congrArg Subtype.val hc
-    rw [← hc', Units.val_inv_eq_inv_val, Units.val_pow_eq_pow_val]
-    have : ((ϖ : k) ^ e)⁻¹ * ((c : k) * (ϖ : k) ^ e) = c := by
-      field_simp
-    rw [this]
-    exact c.2
-  · intro h
-    refine ⟨⟨_, h⟩, ?_⟩
-    apply Subtype.ext
-    simp only [MulMemClass.coe_mul, SubmonoidClass.coe_pow, AddSubgroupClass.coe_sub,
-      Units.val_inv_eq_inv_val, Units.val_pow_eq_pow_val]
-    field_simp
-
-private theorem mul_mem_int {A C B : Type} [Fintype C] {X : Matrix A C k} {Y : Matrix C B k}
-    (hX : ∀ i j, X i j ∈ 𝒪[k]) (hY : ∀ i j, Y i j ∈ 𝒪[k]) (i : A) (j : B) : (X * Y) i j ∈ 𝒪[k] := by
-  rw [Matrix.mul_apply]
-  exact sum_mem fun c _ => mul_mem (hX i c) (hY c j)
-
 private theorem sum_res_mul_left {A B : Type} [Fintype A] [DecidableEq A] [Fintype B] [DecidableEq B]
     (ϖ : kˣ) (e : ℕ) (hϖ : IsUnif ϖ) (f : Matrix A B k → ℂ)
     (hf : ∀ Z Z' : Matrix A B k, (∀ i j, Z' i j ∈ 𝒪[k]) → f (Z + Z') = f Z)
@@ -639,13 +558,13 @@ private theorem sum_res_mul_left {A B : Type} [Fintype A] [DecidableEq A] [Finty
       ∑ S : A → B → Res (k := k) e, f ((ϖ ^ e)⁻¹ • liftRes S) := by
   obtain ⟨hMi, hMinv⟩ := (mem_KO_iff M).1 hM
   have hint : ∀ (S : A → B → Res (k := k) e) (i : A) (j : B), (M.val * liftRes S) i j ∈ 𝒪[k] :=
-    fun S i j => mul_mem_int hMi (liftRes_mem S) i j
+    fun S i j => GlobalTheory.ResSumInv.mul_mem_int hMi (liftRes_mem S) i j
   let σ : (A → B → Res (k := k) e) → (A → B → Res (k := k) e) := fun S i j =>
     Ideal.Quotient.mk _ ⟨(M.val * liftRes S) i j, hint S i j⟩
   have hclose : ∀ (S : A → B → Res (k := k) e) (i : A) (j : B),
       (((ϖ ^ e)⁻¹ : kˣ) : k) * (liftRes (σ S) i j - (M.val * liftRes S) i j) ∈ 𝒪[k] := by
     intro S i j
-    have h := (mk_eq_iff hϖ e (Quotient.out (σ S i j)) ⟨_, hint S i j⟩).1
+    have h := (GlobalTheory.ResSumInv.mk_eq_iff hϖ e (Quotient.out (σ S i j)) ⟨_, hint S i j⟩).1
       (by rw [Ideal.Quotient.mk_out])
     simpa [liftRes] using h
   have hinj : Function.Injective σ := by
@@ -653,11 +572,11 @@ private theorem sum_res_mul_left {A B : Type} [Fintype A] [DecidableEq A] [Finty
     funext i j
     have hd : ∀ a b, ((((ϖ ^ e)⁻¹ : kˣ) : k) • (M.val * (liftRes S - liftRes S'))) a b ∈ 𝒪[k] := by
       intro a b
-      have h1 := (mk_eq_iff hϖ e _ _).1 (congrFun (congrFun h a) b)
+      have h1 := (GlobalTheory.ResSumInv.mk_eq_iff hϖ e _ _).1 (congrFun (congrFun h a) b)
       simpa [Matrix.mul_sub, Matrix.sub_apply, Matrix.smul_apply] using h1
-    have h2 := mul_mem_int hMinv hd i j
+    have h2 := GlobalTheory.ResSumInv.mul_mem_int hMinv hd i j
     rw [Matrix.mul_smul, ← Matrix.mul_assoc, Units.inv_mul, Matrix.one_mul] at h2
-    have h3 := (mk_eq_iff hϖ e (Quotient.out (S i j)) (Quotient.out (S' i j))).2
+    have h3 := (GlobalTheory.ResSumInv.mk_eq_iff hϖ e (Quotient.out (S i j)) (Quotient.out (S' i j))).2
       (by simpa [liftRes, Matrix.sub_apply, Matrix.smul_apply] using h2)
     rwa [Ideal.Quotient.mk_out, Ideal.Quotient.mk_out] at h3
   refine Fintype.sum_bijective σ (Finite.injective_iff_bijective.1 hinj) _ _ ?_
@@ -681,7 +600,7 @@ theorem UpperTheory.fourierSum_block_transpose_inv_eq :
       (∀ i, ∀ j ∈ Assignment.one.block D₁ D₂, ((ϖ ^ e : kˣ) : k) * Z i j ∈ 𝒪[k]) →
       (∀ i, ∀ j ∈ Assignment.one.block D₁ D₂, ((ϖ ^ e : kˣ) : k) * (g * Z) i j ∈ 𝒪[k]) := by
     intro g hg Z hZ i j hj
-    have h := mul_mem_int hg
+    have h := GlobalTheory.ResSumInv.mul_mem_int hg
       (Y := Matrix.of fun (a : A) (b : Assignment.one.block D₁ D₂) => ((ϖ ^ e : kˣ) : k) * Z a b)
       (fun a b => hZ a b b.2) i ⟨j, hj⟩
     rw [Matrix.mul_apply] at h
@@ -699,8 +618,8 @@ theorem UpperTheory.fourierSum_block_transpose_inv_eq :
   rw [fourierSum_apply, fourierSum_apply]
   by_cases hc : ∀ i, ∀ j ∈ Assignment.one.block D₁ D₂, ((ϖ ^ e : kˣ) : k) * Y i j ∈ 𝒪[k]
   swap
-  · rw [if_neg hc, if_neg (mt hcond.2 hc)]
-  rw [if_pos hc, if_pos (hcond.1 hc)]
+  · rw [ite_eq_right hc, ite_eq_right (mt hcond.2 hc)]
+  rw [ite_eq_left hc, ite_eq_left (hcond.1 hc)]
   have hc' := hcond.1 hc
   congr 1
   have hψ1 : ∀ y : k, y ∈ 𝒪[k] → ψ y = 1 := by
@@ -877,9 +796,6 @@ private theorem not_touch_inner {γ : List Edge} {i j : ℕ} (hγ : IsPath γ) (
   rw [ht] at h3
   exact hγ.eq_of_vertexDiff_eq hb hθ (by simp only [Edge.tgt] at h4; omega)
 
-private theorem nodup_of_isPath {γ : List Edge} (hγ : IsPath γ) : γ.Nodup :=
-  hγ.pairwise_vertexDiff.imp fun {a b} h hab => by subst hab; exact lt_irrefl _ h
-
 theorem UpperTheory.nu_det_mul_sliceB_block_action :
     ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {G : Grid k} (ϖ : kˣ) (e : ℕ) (St : G.PiLocalization₂) (i j : ℕ), PassesThrough i j St.path → St.IsAdmissible .one ϖ e → ∀ u ∈ St.level (i, j), ∀ (x : G.Args) (Z : Matrix (Fin (G.rank (i, j))) (G.Cols i j) k), (G.nu i j (gdet u⁻¹) : ℂ) * G.sliceB i j St.tensor x (fromCols (u.valᵀ * Z.toCols₁) ((u⁻¹).val * Z.toCols₂)) = G.sliceB i j St.tensor x Z := by
   intro k _ _ _ _ G ϖ e St i j hpt hadm u hu x Z
@@ -889,7 +805,7 @@ theorem UpperTheory.nu_det_mul_sliceB_block_action :
   have hθ : Edge.theta i j ∈ γ := hpt.subset (by simp)
   have hx : Edge.ex i j ∈ γ := hpt.subset (by simp)
   have hnt := fun b hb h1 h2 => not_touch_inner (b := b) hpath hθ hx hb h1 h2
-  have hnd := nodup_of_isPath hpath
+  have hnd := GlobalTheory.SplitFlip.PathSplit.nodup_of_isPath hpath
   obtain ⟨l₁, l₂, hγ⟩ := hpt
   have hin : (i, j) ∈ innerVertices γ := by
     subst hγ
@@ -952,7 +868,6 @@ section -- clump:auto
 @[expose] public section
 
 open GlobalTheory.SplitFlip GlobalTheory.SplitWeil
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL Formalism.DoubleCosetMeasures.instMeasMat
 attribute [local instance high] GlobalTheory.SplitWeil.matrixMeasurableSpace
 
 noncomputable section
@@ -1162,7 +1077,6 @@ theorem phiA_mem {A D : Type} [Fintype A] [DecidableEq A] {n : ℕ} [Fintype D] 
     simpa using Lo_mul (chiZ_KO hϖ hν q ((Fintype.card D : ℂ) / 2) hu) this
   · by_cases h : j ∈ P <;> simp [blockUnits, h]
 
-
 omit [MeasurableSpace k] [BorelSpace k] in
 theorem chiZ_unif {ν : kˣ →* ℂˣ} {ϖ : kˣ} (hϖ : IsUnif ϖ) (hq : resCard k ≠ 0) {B : ℕ} (d : ℕ)
     (h1 : (ν ϖ : ℂ) ∈ Lo (resCard k) B) (h2 : (ν ϖ⁻¹ : ℂ) ∈ Lo (resCard k) B) :
@@ -1233,7 +1147,7 @@ theorem flips_mem {G : Grid k} {ψ : AddChar k Circle} {ϖ : kˣ} {e : ℕ} (hϖ
     obtain _ | ⟨hp, hc'⟩ := hc
     obtain ⟨x1, x2, x3, x4, x5⟩ := hν x List.mem_cons_self
     have := ih (S.flip .one ψ ϖ e x) _ (fun y hy => hν y (List.mem_cons_of_mem _ hy)) hc' (fun X => ?_)
-      (GlobalTheory.T.splitThetaGrid_isAdmissible_flipTensor ψ ϖ e hϖ hψc he S x x1 hp hJ hT)
+      (GlobalTheory.FlipAdm.isAdmissible_flip ψ ϖ e hϖ hψc he S x x1 hp hJ hT)
       (flip_mem hϖ hψc hq hψ x1 x2 x3 x4 x5 S hp (hJ _).1 (hJ _).2 hT hF) z
     · rw [List.length_cons, Nat.succ_mul, add_comm (l.length * _), ← add_assoc]
       exact this
@@ -1694,7 +1608,7 @@ private theorem nu_int {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} (G : Gr
   have h12 := (GlobalTheory.SizesOfRows.sizes_of_sizeRows large₂ hS).2.2.2.2.2.2.2
   have e1 : (((locGrid G t w).nu i j (unifAt w) : ℂˣ) : ℂ) =
       ((L.C.mu0 ⟨j, hj⟩).val w : ℂ) * ((L.xiH t).val w : ℂ) * (((G.ch.chiH (D.R.m - i)).val w : ℂ))⁻¹ := by
-    simp only [Grid.nu, locGrid, muBase, dif_pos hj, div_eq_mul_inv]
+    simp only [Grid.nu, locGrid, muBase, dite_eq_left hj, div_eq_mul_inv]
     rw [MonoidHom.mul_apply, MonoidHom.inv_apply, Units.val_mul, Units.val_inv_eq_inv_val]
     rfl
   have hμ := L.C.isMu0 ⟨j, hj⟩
@@ -1813,7 +1727,7 @@ theorem _root_.GlobalTheory.T.flips_loss_bounded_at_exceptional_places : ∃ CF0
   by_cases hW : w ∈ ch.G.pl.W0
   · have hd : depthAt ch.G w = cosExp ch.G w := by
       rw [depthAt, max_eq_left]
-      rw [cosExp, if_pos hW]
+      rw [cosExp, ite_eq_left hW]
       exact ch.G.pl.depth_pos _ _
     obtain ⟨s1, -, s2, -, -, -, -, s3⟩ := GlobalTheory.SizesOfRows.sizes_of_sizeRows large₂ hS.size
     have s2' : (1 : ℝ) ≤ bigN D := by exact_mod_cast s2
@@ -1844,11 +1758,9 @@ open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj Globa
 open Formalism.DivisionValues (vw lw)
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField GlobalTheory.FunObj.borelKw
   GlobalTheory.FunObj.borelSpaceKw
-namespace GlobalTheory.FunDat
-end GlobalTheory.FunDat
 noncomputable section
 namespace GlobalTheory.FunDat
-theorem finDatK_alt : _root_.GlobalTheory.FunPr.ThetaLocalInputs → FinDatK := fun _ => finDatK_of GlobalTheory.T.flips_loss_bounded_at_exceptional_places GlobalTheory.T.movedTensor_unfolding_integral_valuation_loss_bound
+theorem finDatK_alt : _root_.GlobalTheory.FunPr.ThetaLocalInputs → FinDatK := fun _ => finDatK_of GlobalTheory.T.flips_loss_bounded_at_exceptional_places _root_.GlobalTheory.UnfoldLoss.unfold_loss
 end GlobalTheory.FunDat
 end
 end

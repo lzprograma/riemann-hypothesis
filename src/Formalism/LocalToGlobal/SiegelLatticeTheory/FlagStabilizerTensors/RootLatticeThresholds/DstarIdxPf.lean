@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGram
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowDictPf
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalVolumeIndices.IdxProd
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.MeasBAll
@@ -239,18 +240,7 @@ theorem card_over (i : Fin 2) :
 
 theorem not_both (v : HeightOneSpectrum (𝓞 X.B.I.F)) (h0 : ((D.host.g 0 : ℕ) : 𝓞 X.B.I.F) ∈ v.asIdeal)
     (h1 : ((D.host.g 1 : ℕ) : 𝓞 X.B.I.F) ∈ v.asIdeal) : False := by
-  have hne : D.host.g 0 ≠ D.host.g 1 := D.host.g_ne
-  have hcop : IsCoprime ((D.host.g 0 : ℕ) : ℤ) ((D.host.g 1 : ℕ) : ℤ) :=
-    Nat.isCoprime_iff_coprime.mpr ((Nat.coprime_primes (D.host.g_prime 0) (D.host.g_prime 1)).mpr hne)
-  obtain ⟨a, b, hab⟩ := hcop
-  have h2 : (a : 𝓞 X.B.I.F) * ((D.host.g 0 : ℕ) : 𝓞 X.B.I.F) +
-      (b : 𝓞 X.B.I.F) * ((D.host.g 1 : ℕ) : 𝓞 X.B.I.F) = 1 := by
-    have := congrArg (Int.cast : ℤ → 𝓞 X.B.I.F) hab
-    push_cast at this
-    exact this
-  apply v.isPrime.ne_top
-  rw [Ideal.eq_top_iff_one, ← h2]
-  exact Ideal.add_mem _ (Ideal.mul_mem_left _ _ h0) (Ideal.mul_mem_left _ _ h1)
+  apply +allowSynthFailures _root_.Formalism.L2.SG.Pf.SatGram.g_coprime_mem <;> assumption
 
 theorem gOf_iff (i : Fin 2) (p : TypX X) : gOf p = D.host.g i ↔ ((D.host.g i : ℕ) : 𝓞 X.B.I.F) ∈ p.1.asIdeal := by
   have hne : D.host.g 0 ≠ D.host.g 1 := D.host.g_ne
@@ -263,13 +253,13 @@ theorem gOf_iff (i : Fin 2) (p : TypX X) : gOf p = D.host.g i ↔ ((D.host.g i :
     · simp [h0]
     · simp [h0, Ne.symm hne]
   · by_cases h0 : ((D.host.g 0 : ℕ) : 𝓞 X.B.I.F) ∈ p.1.asIdeal
-    · simp only [h0, if_true]
+    · simp only [h0, ite_true]
       constructor
       · intro h
         exact absurd h hne
       · intro h1
         exact (not_both X p.1 h0 h1).elim
-    · simp only [h0, if_false]
+    · simp only [h0, ite_false]
       exact ⟨fun _ => htyp.resolve_left h0, fun _ => trivial⟩
 
 def typEquiv (i : Fin 2) :

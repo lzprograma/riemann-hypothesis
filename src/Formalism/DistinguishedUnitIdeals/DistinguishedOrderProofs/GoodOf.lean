@@ -3,52 +3,9 @@ module
 public import Formalism.DistinguishedUnitIdeals.FrobeniusDiffBijective
 public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.GroundTheory
 public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.RhoMapFunctorial
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Data.Nat.Multiplicity
@@ -445,7 +402,7 @@ theorem sa_sat {O : Type} [CommRing O] [IsDomain O] (ϖ : O) [(Ideal.span {ϖ}).
   have hC0 : (C ϖ : PowerSeries O) ≠ 0 := by
     intro h0
     have := congrArg (coeff 0) h0
-    rw [coeff_C, if_pos rfl, map_zero] at this
+    rw [coeff_C, ite_eq_left rfl, map_zero] at this
     exact hϖ0 this
   induction N with
   | zero => intro z hz; simpa using hz
@@ -507,7 +464,6 @@ end GoodPlacesAlt
 
 namespace GoodPlacesAlt
 
-open IdempotentNormalFormsRhoFacts
 
 section sat
 variable {O : Type} [CommRing O] {B : Base O} {n : ℕ} {V : Type} [AddCommGroup V]
@@ -588,7 +544,6 @@ end sat
 
 end GoodPlacesAlt
 
-open GoodPlacesAlt IdempotentNormalFormsRhoFacts
 
 theorem saturation_holds_alt : SatOf := by
   intro O _ B n _ j f V _ _ L c hS hF K v hv hKv
@@ -655,7 +610,6 @@ theorem extension_generated_holds : ExtGOf := by
 
 namespace GoodPlacesAlt
 
-open IdempotentNormalFormsRhoFacts
 
 section hh
 variable {O : Type} [CommRing O] {B : Base O} {n : ℕ} {V : Type} [AddCommGroup V]
@@ -748,7 +702,7 @@ theorem hh_main {u₁ : O} (hE : B.GammaXUnitShape u₁) (h9 : L.P9) (c : ZMod n
       by_cases hr : r = k + 1
       · subst hr
         simpa using hρ'
-      · simp only [if_neg hr]
+      · simp only [ite_eq_right hr]
         obtain ⟨h3, h4⟩ := hbd r h1 (by omega)
         refine ⟨?_, h4⟩
         rw [hhA]
@@ -765,7 +719,7 @@ theorem hh_main {u₁ : O} (hE : B.GammaXUnitShape u₁) (h9 : L.P9) (c : ZMod n
           have hne : r ≠ k + 1 := by
             have := Finset.mem_Ico.1 hr
             omega
-          simp only [if_neg hne]
+          simp only [ite_eq_right hne]
           rw [smul_smul]
           congr 1
           ring
@@ -804,7 +758,6 @@ end hh
 
 end GoodPlacesAlt
 
-open IdempotentNormalFormsRhoFacts GoodPlacesAlt
 
 theorem gamma_injective_holds : GamInjOf := by
   intro O _ B u₁ n _ M V _ _ L c hE h9 v hv hγ
@@ -892,7 +845,6 @@ theorem second_rule_first_form : ExistsTransport := by
 
 namespace GoodPlacesAlt
 
-open IdempotentNormalFormsRhoFacts
 
 section f1b_abs
 variable {R : Type} [CommRing R] {V : Type} [AddCommGroup V] [Module R V]
@@ -1232,7 +1184,6 @@ end e4u
 
 end GoodPlacesAlt
 
-open GoodPlacesAlt IdempotentNormalFormsRhoFacts
 
 theorem one_add_unit_pow_formula : ExistsGammaXUnitShape := by
   intro O _ _ _ ϖ B hϖ hd hp h3 h4
@@ -1436,7 +1387,6 @@ end cplat
 
 end GoodPlacesAlt
 
-open GoodPlacesAlt IdempotentNormalFormsRhoFacts
 
 theorem completion_holds : CompleteOf := by
   intro O _ B n _ V _ _ L hO hF i
@@ -1458,7 +1408,6 @@ theorem X_regular_on_lattice : XRegOf := by
   have h4 : (⟨v, hv⟩ : L.N i) = 0 := Φ.injective (by rw [h1, map_zero])
   exact congrArg Subtype.val h4
 
-open GoodPlacesAlt IdempotentNormalFormsRhoFacts
 
 theorem saturation_first_form_holds : SatAOf :=
   fun _ _ _ _ ϖ B j M g hϖ hd h0 h3 => satA_of ϖ B j M g hϖ hd h0 (e3it B h3)

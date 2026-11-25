@@ -41,8 +41,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 namespace GlobalTheory.CompHt
 
 open MvPolynomial NumberField Module GlobalTheory.ChowHt GlobalTheory.CompHt

@@ -3,44 +3,6 @@ module
 public import Formalism.SharpRestriction.LevelLetterCocycles.LemmasUnramifiedOfRingCondition
 public import Formalism.SharpRestriction.LevelLetterCocycles.LatticeMembershipPolynomialGamma
 public import Formalism.SharpRestriction.LevelLetterCocycles.LevLetEMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.SharpRestriction.LevelLetterCocycles.KillerLevCoreOf
 
 @[expose] public section
@@ -71,12 +33,8 @@ theorem inId_sub {a : ZMod n} {e : ℕ} {α : ℕ → ℤ} {f g : W.EE} (hf : In
   simp [sub_eq_add_neg]
 
 theorem inId_sum {a : ZMod n} {e : ℕ} {α : ℕ → ℤ} (S : Finset ℕ) (f : ℕ → W.EE)
-    (hf : ∀ i ∈ S, InId W a e α (f i)) : InId W a e α (∑ i ∈ S, f i) := by
-  induction S using Finset.induction_on with
-  | empty => exact ⟨0, Subalgebra.zero_mem _, by simp⟩
-  | insert i S hi ih =>
-    rw [Finset.sum_insert hi]
-    exact inId_add W (hf i (Finset.mem_insert_self i S)) (ih fun j hj => hf j (Finset.mem_insert_of_mem hj))
+    (hf : ∀ i ∈ S, InId W a e α (f i)) : InId W a e α (∑ i ∈ S, f i) :=
+  Finset.sum_induction f _ (fun _ _ => inId_add W) ⟨0, Subalgebra.zero_mem _, by simp⟩ hf
 
 variable [IsDomain O]
 
@@ -127,12 +85,8 @@ theorem dv_add {H : ℕ → ℕ} {s : ℕ} {z z' : LetA O n} (h : Dv W H s z) (h
   exact ⟨r + r', W.AΔ.add_mem hr hr', by ring⟩
 
 theorem dv_sum {H : ℕ → ℕ} {s : ℕ} (S : Finset ℕ) (f : ℕ → LetA O n) (hf : ∀ t ∈ S, Dv W H s (f t)) :
-    Dv W H s (∑ t ∈ S, f t) := by
-  induction S using Finset.induction_on with
-  | empty => exact ⟨0, W.AΔ.zero_mem, by simp⟩
-  | insert i S hi ih =>
-    rw [Finset.sum_insert hi]
-    exact dv_add W (hf i (Finset.mem_insert_self i S)) (ih fun j hj => hf j (Finset.mem_insert_of_mem hj))
+    Dv W H s (∑ t ∈ S, f t) :=
+  Finset.sum_induction f _ (fun _ _ => dv_add W) ⟨0, W.AΔ.zero_mem, by simp⟩ hf
 
 theorem dv_prod (H : ℕ → ℕ) (k : ℕ) (hk : 1 ≤ k) (S : Finset ℕ) (s : ℕ) (hs : s ∈ S) {r : LetA O n}
     (hr : r ∈ W.AΔ) : Dv W H s ((∏ t ∈ S, ps W t ^ (k * H t)) * r) := by

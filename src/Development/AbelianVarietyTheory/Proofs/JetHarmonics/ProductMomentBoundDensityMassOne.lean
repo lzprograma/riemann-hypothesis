@@ -72,7 +72,7 @@ theorem exists_pos_version {Ω : Type} [MeasurableSpace Ω] (ν : Measure Ω) (f
   · intro x
     by_cases h : 0 < hf.mk f x <;> simp [h]
   · filter_upwards [hf.ae_eq_mk, hpos] with x hx hp
-    rw [← hx, if_pos hp]
+    rw [← hx, ite_eq_left hp]
 
 theorem product_moment_le :
     ∀ (Ω : Type) [MeasurableSpace Ω] (ν : Measure Ω) (r : ℕ) (len : Fin (r + 1) → Ω → ℝ)

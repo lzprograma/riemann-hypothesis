@@ -109,15 +109,13 @@ theorem exists_torus_coeff_le {ι : Type*} [Fintype ι] (g : MvPolynomial ι ℂ
           · subst hds
             simp
           · obtain ⟨i, hi⟩ : ∃ i, d i ≠ s i := by
-              by_contra h
-              push_neg at h
+              by_contra! h
               exact hds (Finsupp.ext h)
-            exact Finset.prod_eq_zero (Finset.mem_univ i) (if_neg hi)
+            exact Finset.prod_eq_zero (Finset.mem_univ i) (ite_eq_right hi)
       _ = (N : ℂ) ^ Fintype.card ι * AddMonoidAlgebra.coeff g s := by
           rw [Finset.sum_eq_single s (fun d _ hd => by simp [hd]) (fun h => absurd hs h)]
           simp [mul_comm]
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hlt2 : ∀ k, ‖eval (z k) g * c k‖ < ‖AddMonoidAlgebra.coeff g s‖ := by
     intro k
     have hc : ‖c k‖ = 1 := by simp [c, norm_prod, norm_pow, norm_inv, hζn]

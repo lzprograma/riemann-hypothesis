@@ -59,7 +59,7 @@ open Matrix Filter Topology
 
 namespace GlobalTheory.MatSqrtNearOne
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {K : Type} [NontriviallyNormedField K] [IsUltrametricDist K] {n : ℕ}
 

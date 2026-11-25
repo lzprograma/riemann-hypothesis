@@ -2,45 +2,8 @@ module
 
 public import Development.WeilBound.CoreStatements.FlagImmersions.Transport
 public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifVec
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -78,14 +41,14 @@ theorem upT_spec {A : Matrix (Fin N) (Fin N) ℂ} (h : ∀ b, (cutRows A b).det 
     have e1 : (cutRows A b *ᵥ ((cutRows A b)⁻¹ *ᵥ Pi.single b 1)) a =
         ((1 : Matrix (Fin N) (Fin N) ℂ) *ᵥ ((cutRows A b)⁻¹ *ᵥ Pi.single b 1)) a := by
       generalize (cutRows A b)⁻¹ *ᵥ Pi.single b 1 = w
-      simp only [Matrix.mulVec, dotProduct, cutRows, Matrix.of_apply, if_neg (not_le.2 hba)]
+      simp only [Matrix.mulVec, dotProduct, cutRows, Matrix.of_apply, ite_eq_right (not_le.2 hba)]
     rw [e1, Matrix.one_mulVec, Pi.single_eq_of_ne hba.ne'] at k1
     exact k1
   · intro hab
     have e1 : (cutRows A b *ᵥ ((cutRows A b)⁻¹ *ᵥ Pi.single b 1)) a = (A * upT A) a b := by
       simp only [Matrix.mul_apply, upT, Matrix.of_apply]
       generalize (cutRows A b)⁻¹ *ᵥ Pi.single b 1 = w
-      simp only [Matrix.mulVec, dotProduct, cutRows, Matrix.of_apply, if_pos hab]
+      simp only [Matrix.mulVec, dotProduct, cutRows, Matrix.of_apply, ite_eq_left hab]
     rw [← e1, k1, Matrix.one_apply, Pi.single_apply]
 
 theorem an_mul {f g : (Fin e → ℂ) → Matrix (Fin N) (Fin N) ℂ} {t : Fin e → ℂ}
@@ -97,8 +60,8 @@ theorem an_mul {f g : (Fin e → ℂ) → Matrix (Fin N) (Fin N) ℂ} {t : Fin e
 theorem an_cut {f : (Fin e → ℂ) → Matrix (Fin N) (Fin N) ℂ} {t : Fin e → ℂ}
     (hf : ∀ a b, AnalyticAt ℂ (fun z => f z a b) t) (b a c : Fin N) : AnalyticAt ℂ (fun z => cutRows (f z) b a c) t := by
   by_cases h : a ≤ b
-  · simpa only [cutRows, Matrix.of_apply, if_pos h] using hf a c
-  · simpa only [cutRows, Matrix.of_apply, if_neg h] using analyticAt_const
+  · simpa only [cutRows, Matrix.of_apply, ite_eq_left h] using hf a c
+  · simpa only [cutRows, Matrix.of_apply, ite_eq_right h] using analyticAt_const
 
 theorem an_upT {f : (Fin e → ℂ) → Matrix (Fin N) (Fin N) ℂ} {t : Fin e → ℂ}
     (hf : ∀ a b, AnalyticAt ℂ (fun z => f z a b) t) (h : ∀ b, (cutRows (f t) b).det ≠ 0) (c b : Fin N) :

@@ -25,6 +25,7 @@ import ReciprocityTheory.SemistableReduction.SphereTorusA
 import Mathlib.Order.CompletePartialOrder
 import ReciprocityTheory.SemistableReduction.GaussAbsMulOfMonomialOrder
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValAlgebraMapEqZero
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GeneratorNeZeroOfHeight
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraicIndependentScaledForms, ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HeightKerScaledSubstitutionLeOne, ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ContinuousTorusPoint, ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.LogHeightLeTorusHeightSubst, ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IrreducibleFactorHeightBound
@@ -38,7 +39,6 @@ namespace ReciprocityTheory.ChartRestriction.G.T0
 
 open MvPolynomial ReciprocityTheory.MultiplicativeHeights.DerivationAlgebraicIndependence
 
-open MvPolynomial ReciprocityTheory.MultiplicativeHeights.DerivationAlgebraicIndependence
 
 theorem algebraicIndependent_scaledForms {K Ω : Type} [Field K] [CharZero K] [Field Ω] [Algebra K Ω] {D N : ℕ}
     (y : Fin (N + 1) → Ω) (jc : Fin (N + 1)) (hy : y jc = 1)
@@ -112,7 +112,7 @@ theorem algebraicIndependent_scaledForms {K Ω : Type} [Field K] [CharZero K] [F
     show (∑ o : Option (Fin D), _) = _
     rw [Finset.sum_eq_single none]
     · simp
-    · intro o _ ho; rw [if_neg]; exact fun h => ho (hρ h)
+    · intro o _ ho; rw [ite_eq_right]; exact fun h => ho (hρ h)
     · simp
   have hpt1 : ∀ b j, pt (some (ρ (some b), j)) = (if j = jc then -y (jc.succAbove (J b)) else 0) +
       (if j = jc.succAbove (J b) then 1 else 0) := by
@@ -120,7 +120,7 @@ theorem algebraicIndependent_scaledForms {K Ω : Type} [Field K] [CharZero K] [F
     show (∑ o : Option (Fin D), _) = _
     rw [Finset.sum_eq_single (some b)]
     · simp
-    · intro o _ ho; rw [if_neg]; exact fun h => ho (hρ h)
+    · intro o _ ho; rw [ite_eq_right]; exact fun h => ho (hρ h)
     · simp
   have hptn : pt none = 1 := rfl
   have hne : ∀ b, jc.succAbove (J b) ≠ jc := fun b => Fin.succAbove_ne jc (J b)
@@ -154,15 +154,9 @@ theorem algebraicIndependent_scaledForms {K Ω : Type} [Field K] [CharZero K] [F
 
 theorem scalarRatio_self {Ω V : Type*} [Field Ω] [AddCommGroup V] [Module Ω V] {f : V}
     (hf : f ≠ 0) : ratio (Ω := Ω) f f = 1 := by
-  unfold ratio
-  split_ifs with h
-  · have hc : f = h.choose • f := h.choose_spec
-    have h0 : (h.choose - 1) • f = 0 := by
-      rw [sub_smul, one_smul, ← hc, sub_self]
-    rcases smul_eq_zero.mp h0 with h1 | h1
-    · exact sub_eq_zero.mp h1
-    · exact absurd h1 hf
-  · exact absurd ⟨1, (one_smul Ω f).symm⟩ h
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.G.T0.ratio_self_height
+    | apply _root_.ReciprocityTheory.ChartRestriction.G.T0.ratio_self_height <;> first | assumption | rfl | infer_instance
 
 theorem optionEquivLeft_rename_some' {R S : Type*} [CommRing R] (a : MvPolynomial S R) :
     MvPolynomial.optionEquivLeft R S (MvPolynomial.rename some a) = Polynomial.C a := by
@@ -424,7 +418,7 @@ theorem polyIn_monomial_of_eq_zero (i : V) (t : V →₀ ℕ) (ht : t i = 0) (a 
   have hvi : v ≠ i := by
     rintro rfl
     exact (Finsupp.mem_support_iff.mp hv) ht
-  rw [if_neg hvi, map_pow]
+  rw [ite_eq_right hvi, map_pow]
 
 theorem polyIn_monomial (i : V) (u : V →₀ ℕ) (a : R) :
     asPolyInVar i (MvPolynomial.monomial u a) =
@@ -436,17 +430,17 @@ theorem polyIn_monomial (i : V) (u : V →₀ ℕ) (a : R) :
     rw [MvPolynomial.monomial_mul, one_mul]
   rw [e, map_mul, polyIn_monomial_of_eq_zero i (u.erase i) (by simp) a,
     ← MvPolynomial.X_pow_eq_monomial,
-    map_pow, asPolyInVar, MvPolynomial.aeval_X, if_pos rfl, mul_comm]
+    map_pow, asPolyInVar, MvPolynomial.aeval_X, ite_eq_left rfl, mul_comm]
 
 theorem coeffIn_eq_polyIn_coeff (i : V) (k : ℕ) (P : MvPolynomial V R) :
     ReciprocityTheory.MultiplicativeHeights.coeffIn i k P = (asPolyInVar i P).coeff k := by
   classical
   refine MvPolynomial.induction_on' P (fun u a => ?_) (fun p q hp hq => ?_)
   · rw [coeffIn_eq_sum i k _ {u} MvPolynomial.support_monomial_subset, Finset.sum_singleton,
-      MvPolynomial.coeff_monomial, if_pos rfl, polyIn_monomial, Polynomial.coeff_C_mul_X_pow]
+      MvPolynomial.coeff_monomial, ite_eq_left rfl, polyIn_monomial, Polynomial.coeff_C_mul_X_pow]
     by_cases h : u i = k
-    · rw [if_pos h, if_pos h.symm]
-    · rw [if_neg h, if_neg (Ne.symm h)]
+    · rw [ite_eq_left h, ite_eq_left h.symm]
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
   · rw [coeffIn_add_alt, map_add (f := _), Polynomial.coeff_add, hp, hq]
 
 theorem coeffIn_map {S : Type*} [CommRing S] (φ : R →+* S) (hφ : Function.Injective φ) (i : V)
@@ -590,7 +584,7 @@ theorem gaussAbs_monomial {σ : Type*} (w : FinitePlace K) (s : σ →₀ ℕ) (
     · exact le_rfl
     · rw [map_zero]; exact apply_nonneg w κ
   · have := ReciprocityTheory.MultiplicativeHeights.coeff_le_gauss_abs w (MvPolynomial.monomial s κ) s
-    rwa [MvPolynomial.coeff_monomial, if_pos rfl] at this
+    rwa [MvPolynomial.coeff_monomial, ite_eq_left rfl] at this
 
 theorem sum_log_abs_eq_zero (κ : K) (hκ : κ ≠ 0) :
     ∑ᶠ w : FinitePlace K, Real.log (w κ) + ∑ φ : K →+* ℂ, Real.log ‖φ κ‖ = 0 := by

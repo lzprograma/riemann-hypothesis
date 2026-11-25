@@ -92,27 +92,6 @@ theorem isBigO_pow_of_iteratedFDeriv_zero {n : ℕ} (m : ℕ) : ∀ {F : Type u}
       exact h (k + 1) (by omega))
     exact isBigO_succ_of_fderiv_isBigO hU hx (hf.differentiableOn top_ne_zero_withTop) h0 hO
 
-theorem iteratedFDeriv_eq_zero_of_bound {n : ℕ} (g : V n → ℂ) (U : Set (V n)) (v0 : V n)
-    (hU : IsOpen U) (hv : v0 ∈ U) (hg : DifferentiableOn ℂ g U) (m : ℕ)
-    (hO : ∃ C : ℝ, ∀ᶠ v in 𝓝 v0, ‖g v‖ ≤ C * ‖v - v0‖ ^ (m + 1)) :
-    ∀ k ≤ m, iteratedFDeriv ℂ k g v0 = 0 := by
-  intro k hk
-  have hc := contDiffOn_of_differentiableOn n g U hU hg
-  obtain ⟨C, hC⟩ := hO
-  have hO' : g =O[𝓝 v0] fun v => ‖v - v0‖ ^ (m + 1) := by
-    rw [isBigO_iff]
-    exact ⟨C, hC.mono fun v hv => by rwa [norm_pow, norm_norm]⟩
-  exact iteratedFDeriv_eq_zero_of_isBigO_alt m g U v0 hU hv hc hO' k hk
-
-theorem bound_of_iteratedFDeriv_eq_zero {n : ℕ} (g : V n → ℂ) (U : Set (V n)) (v0 : V n)
-    (hU : IsOpen U) (hv : v0 ∈ U) (hg : DifferentiableOn ℂ g U) (m : ℕ)
-    (h : ∀ k ≤ m, iteratedFDeriv ℂ k g v0 = 0) :
-    ∃ C : ℝ, ∀ᶠ v in 𝓝 v0, ‖g v‖ ≤ C * ‖v - v0‖ ^ (m + 1) := by
-  have hc := contDiffOn_of_differentiableOn n g U hU hg
-  have hb := isBigO_pow_of_iteratedFDeriv_zero (m + 1) g U v0 hU hv hc (fun k hk => h k (by omega))
-  obtain ⟨C, hC⟩ := isBigO_iff.1 hb
-  exact ⟨C, hC.mono fun v hv => by rwa [norm_pow, norm_norm] at hv⟩
-
 end
 
 end ReciprocityTheory.L2DbarEstimates.Y

@@ -38,59 +38,16 @@ public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankP
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdBetaK
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarLocInB
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdBetaS
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.TermDefPf
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Lemmas
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocModel
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.GramNondeg
 import Mathlib.Tactic.Linter.Style
 import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ScalRelRepFree
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermAttractorConstant.GenericityConstantDoubleCosets
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarFrame
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.TypeStar
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarCohPfC
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarUniq
 
@@ -155,8 +112,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7} {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
 
@@ -168,7 +123,7 @@ theorem repG_holds : RepG u u' F0 what₂ := by
   obtain ⟨y, hy⟩ := hN γ w hat (eligRel_holds γ w ⟨⟨hgen, hG⟩, hat⟩) hgen
   have hex : ∃ x : Point D.host.E (D.R.rS + 1) × LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) × PairVal.MatR D ×
       PairVal.MatR D, PairVal.NormRep γ x.1 x.2.1 x.2.2.1 x.2.2.2 := ⟨(w, y), hy⟩
-  have hn : nrep γ = some hex.choose := dif_pos hex
+  have hn : nrep γ = some hex.choose := dite_eq_left hex
   have hrep : repF γ = hex.choose.2.1 := by unfold repF; rw [hn]
   obtain ⟨⟨hPD, hmk⟩, -⟩ := hex.choose_spec
   refine ⟨⟨hex.choose.2.1, hPD⟩, hrep.symm, hmk, ?_⟩
@@ -196,8 +151,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
   Formalism.L2.SG.TermLoc Formalism.L2.SG.Pf.PCount Formalism.L2.SG.Pf.FrameGlobalPatching
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar.BwdNP
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
@@ -303,8 +256,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
 
@@ -323,7 +274,6 @@ theorem bwdN_znotX : F0.z ∉ Xsp (lf D F0) := by
   exact hT (Nat.cast_eq_zero.1 h0)
 
 variable (u u' F0 what₂)
-
 
 theorem bwdN_holds : BwdN Zd u u' F0 what₂ := by
   intro hC γ Z hZ F'₂ φ φ' hS Λ₂ hmem₂
@@ -405,8 +355,6 @@ open OmP OmL
 
 namespace OmD
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) (p : PlF D)
 
 theorem mat_frameAct {T T' : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
@@ -434,8 +382,6 @@ theorem gdl_eq {T T' : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (F' : FlagG (VS D)
 end OmD
 
 open OmD
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
@@ -511,18 +457,18 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {r : �
 alias mem_orth' := _root_.Formalism.MainNotions.LatticeGluingRadicals.p_mem_orth
 
 theorem orthX_of_f {T : E} (F : FlagG S r T) {v : S.V} (h : ∀ a, S.hT (F.fvec a) v = 0) : v ∈ orth S F.X :=
-  _root_.Formalism.MainNotions.S.Inh.tie_mem_orth F fun i => by rw [← fvec_cs]; exact h _
+  _root_.Formalism.MainNotions.S.Inh.tie_mem_orth F fun i => by rw [← PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc]; exact h _
 
 theorem om_orthX {T T' : E} {F : FlagG S r T} {F' : FlagG S r T'} {v : S.V} (h : OmV F F' v) :
     v ∈ orth S F.X :=
-  _root_.Formalism.MainNotions.S.Inh.tie_mem_orth F fun i => by rw [← fvec_cs, h.2]; simp [Fin.castSucc_ne_last]
+  _root_.Formalism.MainNotions.S.Inh.tie_mem_orth F fun i => by rw [← PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc, h.2]; simp [Fin.castSucc_ne_last]
 
 theorem z_orthX {T : E} (F : FlagG S r T) : F.z ∈ orth S F.X := _root_.Formalism.MainNotions.S.Inh.tie_mem_orth F F.z_orth
 
 theorem X_le_sp {T : E} (F : FlagG S r T) : F.X ≤ Submodule.span E (Set.range F.fvec) := by
   apply Submodule.span_mono
   rintro _ ⟨i, rfl⟩
-  exact ⟨i.castSucc, fvec_cs F i⟩
+  exact ⟨i.castSucc, PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc F i⟩
 
 section NL
 
@@ -550,7 +496,7 @@ theorem sp_map_eq (hn : n ∈ NLam Λ F) :
   refine Submodule.add_mem _ (Submodule.subset_span ⟨b, rfl⟩) (hX ?_)
   refine Fin.lastCases ?_ (fun i => ?_) b
   · rw [fvec_last]; exact _root_.PI.UnitaryGroupMassFormula.ScalRelRepFree.nl_orth hn (z_orthX F.fl)
-  · rw [fvec_cs]; exact nl_e hn i
+  · rw [PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc]; exact nl_e hn i
 
 end NL
 
@@ -656,7 +602,7 @@ theorem sp_le_UUE (hΛ : Submodule.IsFullLattice E Λ) (F : LFlag S r T) (F' : L
   rintro _ ⟨b, rfl⟩
   refine Fin.lastCases ?_ (fun i => ?_) b
   · rw [fvec_last]; exact z'_mem_UUE F F' hF'
-  · rw [fvec_cs]
+  · rw [PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc]
     exact PI.UnitaryGroupMassFormula.BetaLUniq.Xsp_le_UUE' S Λ hΛ F F' (Submodule.subset_span ⟨i, rfl⟩)
 
 theorem pair_core (hΛ : Submodule.IsFullLattice E Λ) (F : LFlag S r T) (F' F'' : LFlag S r T') (β : S.V ≃ₗ[E] S.V)
@@ -715,7 +661,7 @@ theorem pair_core (hΛ : Submodule.IsFullLattice E Λ) (F : LFlag S r T) (F' F''
     refine ⟨0, Submodule.zero_mem _, ∑ i : Fin r, c i.castSucc • F''.fl.e i,
       Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩), ?_⟩
     rw [hLF.2, hL''.2, hν, ← hc, Fin.sum_univ_castSucc, fvec_last]
-    simp only [fvec_cs, sub_zero, add_zero]
+    simp only [PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc, sub_zero, add_zero]
     abel
   have hY : ∀ {F₁ : LFlag S r T'}, ν ∈ UUE Λ F F₁ → ν ∈ Ylift Λ F F₁ := fun h => Submodule.mem_inf.2 ⟨h, hνXp⟩
   obtain ⟨x, hx, x', hx', hE⟩ := (hsc ν (hY hνU') ν (hY hνU'') 0 (Submodule.zero_mem _) 0 (Submodule.zero_mem _)
@@ -737,28 +683,15 @@ end OmR
 
 open OmR
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7} {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
-
-theorem omRep_repF (γ : TermDef.Term D u u' F0 what₂) :
-    Rep γ.lam (lf D F0) (PD D γ.lam (lf D F0) u') γ.cls (repF γ) := by
-  unfold repF
-  split
-  · rename_i x hx
-    unfold nrep at hx
-    split_ifs at hx with h
-    cases hx
-    exact h.choose_spec.1
-  · exact ⟨(Quot.out γ.cls).2, Quot.out_eq _⟩
 
 variable (u u' F0 what₂)
 
 theorem omega_representative_holds : OmRep u u' F0 what₂ := by
   intro hrows γ Z _ hdγ _ F' hP Ω' Ωγ h' hγ
   obtain ⟨-, γ', ⟨p, hp1, hp2, hpS⟩, hrep⟩ := hP
-  have hrepγ := omRep_repF γ
+  have hrepγ := Formalism.L2.SG.Pf.FrameGlobalPatching.FStar.starRepF_rep γ
   obtain ⟨lam, mem, cls⟩ := γ
   obtain ⟨lam', mem', cls'⟩ := γ'
   simp only [Corank.Pair.pfst] at hp1
@@ -829,8 +762,6 @@ open Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism
   Formalism.L2.SG.LsDatumB Formalism.L2.SG.TermLoc Formalism.L2.SG.Pf.PCount Formalism.L2.SG.Pf.FrameGlobalPatching
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
@@ -984,20 +915,10 @@ end Formalism.L2.SG.Pf.FrameGlobalPatching.FStar.FsLoc
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
 
 variable (u u' F0 what₂)
-
-def StarIdentU : Prop :=
-  ∀ (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D), Ctx γ Z →
-    (∀ p, (locH Zd p).IsGeneric (tLoc Zd p γ)) →
-    ∀ F'₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E), ZhatL (lf D F0) F'₂ = Z → starCompat γ F'₂ →
-      starInU γ F'₂ →
-      ∀ p, ∃ φ' : (locH Zd p).Wb (tLoc Zd p γ).f' ≃ₗ[(D.s.atP p).Ep] (locH Zd p).Wb (locF' Zd p F'₂),
-        LsDatumA.LocalCountHypotheses (locH Zd p) (tLoc Zd p γ) (tLoc Zd p γ).f (locF' Zd p F'₂) (LinearEquiv.refl _ _) φ'
 
 def StarFrameU : Prop :=
   ∀ (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D), Ctx γ Z →
@@ -1020,17 +941,6 @@ theorem starFrameU_holds : StarFrameU u u' F0 what₂ := by
     exact hom
 
 end Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
-
-namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
-  {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
-
-variable (u u' F0 what₂)
-
-end Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -1049,8 +959,6 @@ open Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar.FsLoc
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (Zd : LocDat D)
 
 theorem localLattice_preserves_cofinite (g : (VS D).V ≃ₗ[D.host.E] (VS D).V) {Λ : Submodule (𝓞 D.host.E) (VS D).V}
@@ -1061,8 +969,7 @@ theorem localLattice_preserves_cofinite (g : (VS D).V ≃ₗ[D.host.E] (VS D).V)
   refine (s.finite_toSet.biUnion fun v _ => CohIntPf.bcP_mem_cof Zd hΛ (g v)).subset ?_
   intro p hp
   simp only [Set.mem_iUnion, Set.mem_ofPred_eq, exists_prop]
-  by_contra hall
-  push_neg at hall
+  by_contra! hall
   apply hp
   have hloc : ∀ v ∈ Λ, g v ∈ Formalism.HermitianLattices.Ext.L3.locF p.asIdeal Λ := by
     intro v hv
@@ -1094,8 +1001,7 @@ theorem localLattice_preserves_cofinite_symm (g : (VS D).V ≃ₗ[D.host.E] (VS 
   refine (s.finite_toSet.biUnion fun v _ => CohIntPf.bcP_mem_cof Zd hΛ (g.symm v)).subset ?_
   intro p hp
   simp only [Set.mem_iUnion, Set.mem_ofPred_eq, exists_prop]
-  by_contra hall
-  push_neg at hall
+  by_contra! hall
   apply hp
   have hloc : ∀ v ∈ Λ, g.symm v ∈ Formalism.HermitianLattices.Ext.L3.locF p.asIdeal Λ := by
     intro v hv
@@ -1191,12 +1097,8 @@ end Formalism.L2.SG.Pf.FrameGlobalPatching.FStar.FsLoc
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
-
-
 
 theorem starIdentG (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D) (hC : Ctx γ Z)
     (hgen : ∀ p, (locH Zd p).IsGeneric (tLoc Zd p γ)) (F'₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E))
@@ -1320,8 +1222,6 @@ theorem starIdentG (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D) (h
 
 variable (u u' F0 what₂)
 
-
-
 theorem starExists2_of_parts (hP : CtxP u u' F0 what₂) (hGen : CohGen Zd u u' F0 what₂)
     (hIo : CohIota Zd u u' F0 what₂) (hGood : CohGood Zd u u' F0 what₂) : StarExists2 Zd u u' F0 what₂ := by
   intro γ Z hC
@@ -1383,8 +1283,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open CohGoodPf
 
 variable {D : Formalism.BasicNotions.D7} {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
@@ -1406,7 +1304,7 @@ theorem sign_norm {l : ℕ} (hl : l ≤ D.R.rS + 1) :
   have hdet : Formalism.MainNotions.S.leadMinorE (ZhatOM (1 : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E)) l =
       (-1 : D.host.E) ^ (∑ i : Fin l, (D.R.rS - (Fin.castLE hl i).val)) := by
     unfold Formalism.MainNotions.S.leadMinorE
-    rw [dif_pos hl, hsub, Matrix.det_diagonal, Finset.prod_pow_eq_pow_sum]
+    rw [dite_eq_left hl, hsub, Matrix.det_diagonal, Finset.prod_pow_eq_pow_sum]
   rw [hdet, star_pow, star_neg, star_one, ← pow_add]
   exact Even.neg_one_pow ⟨_, rfl⟩
 
@@ -1486,7 +1384,7 @@ theorem gflag_ne (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D)
     have h1 : Dmin w' l = Formalism.MainNotions.S.leadMinorE Z l *
         Formalism.MainNotions.S.leadMinorE (ZhatOM (1 : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E)) l := by
       unfold Dmin Formalism.MainNotions.S.leadMinorE
-      simp only [dif_pos hl]
+      simp only [dite_eq_left hl]
       rw [← Matrix.det_mul, ← submatrix_castLE_mul_of_upper hl _ _ hS, ← zhatOM_eq_mul_zhatOM_one, hM, det_submatrix_castLE_LPU_eq hl _ _ _ hL hU]
     rw [h1, _root_.Formalism.L2.SG.Pf.AtPt.conjF_star, star_mul']
     linear_combination (-(Formalism.MainNotions.S.leadMinorE Z l * star (Formalism.MainNotions.S.leadMinorE Z l))) * sign_norm hl
@@ -1544,8 +1442,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) (u u' : D.what₂.Word) (F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u))
   (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V))
 
@@ -1575,8 +1471,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
   Formalism.L2.SG.TermLoc Formalism.L2.SG.Pf.PCount Formalism.L2.SG.Pf.FrameGlobalPatching
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}

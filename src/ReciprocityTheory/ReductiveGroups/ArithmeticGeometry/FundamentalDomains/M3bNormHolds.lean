@@ -125,8 +125,7 @@ private theorem ratio_tau {r : ℕ} (X : Data E r) (e : X.Ψ → Fin r → ℂ) 
     have h2 := (hT' τ).2 ⟨i, Nat.lt_succ_of_le hi⟩
     rw [hd'] at h2
     simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero] at h1 h2
-    by_contra hle
-    push_neg at hle
+    by_contra! hle
     nlinarith [mul_le_mul_of_nonneg_left hle h1.le]
   have hdne : ∀ i : Fin (r + 1), dmin X.Gm x τ i ≠ 0 := by
     intro i h

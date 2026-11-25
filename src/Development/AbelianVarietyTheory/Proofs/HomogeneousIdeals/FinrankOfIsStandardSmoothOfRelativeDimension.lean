@@ -340,16 +340,6 @@ lemma exact_kerMap_map (φ : A →ₐ[R] B) (h : εB.comp φ = εA) (hφ : Funct
     have : φ x = 0 := x.2
     simp [this]
 
-section Tower
-
-variable [Algebra A B] [IsScalarTower R A B]
-
-
-
-
-
-end Tower
-
 
 variable (εA εB) in
 abbrev tensorAug : A ⊗[R] B →ₐ[R] R := Algebra.TensorProduct.productMap εA εB
@@ -597,14 +587,6 @@ lemma locally_iff_smoothOfRelativeDimension :
     (φ := CommRingCat.ofHom (algebraMap R A))).symm
 
 end RelDim
-
-section Affine
-
-variable {R σ : Type*} [CommRing R] (x : σ → R)
-
-open MvPolynomial
-
-end Affine
 
 end AugCot
 

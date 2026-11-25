@@ -51,7 +51,6 @@ import Mathlib.Tactic.ReduceModChar
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.SchwartzBruhatTensor
 
@@ -169,7 +168,7 @@ theorem coset_mem_SB {m n : ℕ} (W : AddSubgroup (Matrix (Fin m) (Fin n) (Af D.
   have hKcl : IsClosed K := (Homeomorph.addLeft q.out).isClosedMap _ hcl
   refine HasCompactSupport.intro' hKc hKcl fun x hx => ?_
   show (if (QuotientAddGroup.mk (show Matrix (Fin m) (Fin n) _ from x) : _ ⧸ W) = q then (1 : ℂ) else 0) = 0
-  rw [if_neg]
+  rw [ite_eq_right]
   intro hq
   apply hx
   have h1 : (QuotientAddGroup.mk q.out : _ ⧸ W) = QuotientAddGroup.mk (show Matrix (Fin m) (Fin n) _ from x) := by

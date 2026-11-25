@@ -102,30 +102,6 @@ def IsNormalRep (j c : ℕ) (h : j + c = s) (g : GL (X j ⊕ Fin (c + 1)) k) : P
   ∃ (e : Fin (c + 1) → ℤ) (z : X j → k), (∀ i, -(j : ℤ) ≤ e i ∧ e i ≤ 0) ∧ (∀ i, z i ∈ 𝒪[k]) ∧
     latOf (g * T.bas j (c + 1) (by omega)) = latOf (normalBasis ϖ e z)
 
-def NormalReps : Prop :=
-  (∀ A, T.IsRepSystem A ψ ν → ∀ j c h, ∀ g ∈ A j c h, ∃ g₁,
-    DoubleCoset.mk (R k (X j) (c + 1) 1) (T.lev j (c + 1) (by omega)).J g₁ =
-      DoubleCoset.mk (R k (X j) (c + 1) 1) (T.lev j (c + 1) (by omega)).J g ∧ IsNormalRep T ϖ j c h g₁) ∧
-  (∃ A, T.IsRepSystem A ψ ν ∧ T.RepsNormal A ϖ) ∧
-  ∀ A, T.IsRepSystem A ψ ν → T.RepsNormal A ϖ → T.RepsMeet A ∧ ∀ j c h, ∀ g ∈ A j c h,
-    ∀ κ ∈ stabLat (T.bas j (c + 1) (by omega)),
-      latOf (T.bas j (c + 1) (by omega)) ≤ latOf (g * κ * T.bas j (c + 1) (by omega)) ∧
-      ∀ y ∈ latOf (g * κ * T.bas j (c + 1) (by omega)), ((ϖ ^ j : kˣ) : k) • y ∈ latOf (T.bas j (c + 1) (by omega))
-
-def DepthOne : Prop :=
-  ∀ A, T.IsRepSystem A ψ ν → T.RepsNormal A ϖ → ∀ j c (h : j + 1 + c = s),
-    ∀ g ∈ A j (c + 1) (by omega), ∀ g' ∈ A (j + 1) c h,
-    DoubleCoset.mk (R k (X (j + 1)) (c + 1) 1) (T.lev (j + 1) (c + 1) (congrArg Nat.succ h)).J g' ∈ T.idx ψ ν j c h g →
-      (∀ x₀ y, om (T.mu (j + 1)) g g' (T.Phi j (c + 1) (by omega)) (affPt 1 x₀ y) ≠ 0 →
-        (∀ i : Fin (c + 1), affPt 1 x₀ y (Sum.inr i) (Sum.inr i.succ) ∈ powInt ϖ (-1)) ∧
-          ch (affPt 1 x₀ y) ∈ powInt ϖ (-1)) ∧
-      (∀ (e : Fin (c + 1) → ℤ) (z : X (j + 1) → k),
-        latOf (g' * T.bas (j + 1) (c + 1) (by omega)) = latOf (normalBasis ϖ e z) →
-          ∀ i : Fin c, e i.succ - 1 ≤ e i.castSucc) ∧
-      ∀ u ∈ N k (X (j + 1)) (c + 1) 1, ∀ γ : GL (X (j + 1)) k,
-        u * embX (c + 1) γ ∈ Cgrp (T.lev (j + 1) (c + 1) (by omega)).J g' →
-          (∀ i : Fin c, u.val (Sum.inr i.castSucc) (Sum.inr i.succ) ∈ powInt ϖ (-1)) ∧ simpleSum u ∈ powInt ϖ (-1)
-
 def LastSteps : Prop :=
   ∀ A, T.IsRepSystem A ψ ν → T.RepsMeet A →
     (∀ g ∈ A s 0 rfl, IsNormalRep T ϖ s 0 rfl g) ∧
@@ -137,18 +113,6 @@ def LastSteps : Prop :=
       ∀ η, hat ψ ν ε (cosetInd _ yb) η ≠ 0 →
         ∀ y, Submodule.Quotient.mk y = yb → ε * (η ⬝ᵥ y) ∈ powInt ϖ (-((s : ℤ) + 1))
 
-
-variable (k) in
-def ChainSizes : Prop :=
-  ∀ ϖ : kˣ, valuation k (ϖ : k) = uniformizer k →
-  ∀ ψ : AddChar k Circle, HasConductor ψ 1 → ∀ ν : Measure k, ν.IsAddHaarMeasure →
-  ∀ (s : ℕ) (r t Z : Type) [Fintype r] [DecidableEq r] [Fintype t] [DecidableEq t] [Fintype Z] [DecidableEq Z]
-    (X : ℕ → Type) [∀ j, Fintype (X j)] [∀ j, DecidableEq (X j)]
-    (δ : kˣ →* ℂˣ) (hδ : IsTame δ) (μ₀ : ℕ → kˣ →* ℂˣ), (∀ j, IsUnram (μ₀ j)) →
-  ∀ (F : ∀ j c, j + c = s + 1 → LatFrame k (Ix r t j) (X j ⊕ Fin c)) (Ftop : LatFrame k (Ix r t (s + 2)) Z),
-    (∀ j c h, latOf (F j c h).bas = latOf 1) →
-      NormalReps (Chain.ofTwist δ hδ μ₀ F Ftop) ϖ ψ ν ∧ DepthOne (Chain.ofTwist δ hδ μ₀ F Ftop) ϖ ψ ν ∧
-        LastSteps (Chain.ofTwist δ hδ μ₀ F Ftop) ϖ ψ ν
 
 
 end GlobalTheory.IndefiniteRowSideFullHecke.NormalRepresentationLattice

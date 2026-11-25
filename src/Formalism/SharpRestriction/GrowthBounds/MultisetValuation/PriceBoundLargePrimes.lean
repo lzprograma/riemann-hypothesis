@@ -5,43 +5,6 @@ public import Formalism.LocalRingCardinality.ColumnWeightSpreadOffTop
 import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NcCGNonneg
 import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NcIotaInj
 import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NcTsumOdd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -70,10 +33,10 @@ theorem ne_lamI_le (s : Fin (G.P.n' v)) (a : ℕ) (hm : 2 ≤ G.P.m) (hb : s ∈
     · obtain ⟨h1, h2, h3⟩ := (Fl.base v s).1 hs
       by_cases ha : a = 1
       · subst ha
-        rw [if_pos ⟨hs, rfl⟩]
+        rw [ite_eq_left ⟨hs, rfl⟩]
         have : G.P.lam0 v s ⟨1 - 1, by omega⟩ = Fl.a v s := h1
         omega
-      · rw [if_neg (fun h' => ha h'.2)]
+      · rw [ite_eq_right (fun h' => ha h'.2)]
         by_cases hl : a = G.P.m + 1
         · subst hl
           have : G.P.lam0 v s ⟨G.P.m + 1 - 1, by omega⟩ = -Fl.b v s := h2
@@ -81,10 +44,10 @@ theorem ne_lamI_le (s : Fin (G.P.n' v)) (a : ℕ) (hm : 2 ≤ G.P.m) (hb : s ∈
           omega
         · have := (abs_le.1 (h3 ⟨a - 1, by omega⟩ (by show 0 < a - 1; omega) (by show a - 1 < G.P.m; omega))).2
           omega
-    · rw [if_neg (fun h' => hs h'.1)]
+    · rw [ite_eq_right (fun h' => hs h'.1)]
       have := (abs_le.1 ((Fl.base v s).2 hs ⟨a - 1, by omega⟩)).2
       omega
-  · rw [dite_eq_right h, if_neg (fun h' => h ⟨by omega, by omega⟩)]
+  · rw [dite_eq_right h, ite_eq_right (fun h' => h ⟨by omega, by omega⟩)]
     omega
 
 end Fl
@@ -118,7 +81,7 @@ theorem ne_w_non (j : ℕ) (hj : j ∈ SizeData₂.lifts D) (s : Fin ((D.gat u w
   rw [h4 j hj]
   have hn : t0 + s.val • Formalism.MainNotions.G.hP D (D.what₂.places.resChar w) ∉ D.host.TT := fun h => hs (h2.2 h)
   unfold Formalism.MainNotions.G.fillG Formalism.MainNotions.G.fill
-  rw [if_neg (fun h => hn h.2)]
+  rw [ite_eq_right (fun h => hn h.2)]
   have h5 := (X.off_thin j (false, t0 + s.val • Formalism.MainNotions.G.hP D (D.what₂.places.resChar w))
     ⟨fun h => hn h.2, fun h => by simpa using h.1⟩).2
   have h6 := ne_kaJ_nonneg (D := D) j (Finset.mem_Icc.1 hj).1
@@ -134,7 +97,7 @@ theorem ne_w_top (j : ℕ) (hj : j ∈ SizeData₂.lifts D) (s : Fin ((D.gat u w
   rw [h4 j hj, (h3 hs).2]
   have hn : t0 + s.val • Formalism.MainNotions.G.hP D (D.what₂.places.resChar w) ∈ D.host.TT := h2.1 hs
   unfold Formalism.MainNotions.G.fillG Formalism.MainNotions.G.fill
-  rw [if_pos ⟨rfl, hn⟩]
+  rw [ite_eq_left ⟨rfl, hn⟩]
   have h5 := (X.off_top j (false, t0 + s.val • Formalism.MainNotions.G.hP D (D.what₂.places.resChar w)) ⟨rfl, hn⟩).2
   have h6 := ne_kaJ_nonneg (D := D) j (Finset.mem_Icc.1 hj).1
   linarith
@@ -142,13 +105,11 @@ theorem ne_w_top (j : ℕ) (hj : j ∈ SizeData₂.lifts D) (s : Fin ((D.gat u w
 include hL ht0 in
 theorem ne_nP : (Formalism.MainNotions.G.nP D (D.what₂.places.resChar w) : ℝ) = ((D.gat u w hg).P.n' (Y.vOf u w hg t0) : ℕ) := by
   unfold Formalism.MainNotions.G.nP
-  rw [if_neg (nc_notSg hg), nc_n_eq X Y hT hL u w hg t0 ht0]
+  rw [ite_eq_right (nc_notSg hg), nc_n_eq X Y hT hL u w hg t0 ht0]
 
 theorem ne_Nm (j : ℕ) (hj : j ∈ SizeData₂.lifts D) : (j : ℝ) * ((D.R.t : ℝ) + 1) / 2 ≤ Formalism.MainNotions.G.Nm D := by
   unfold Formalism.MainNotions.G.Nm Ranks.N
   have h1 : (j : ℝ) ≤ D.R.m := by exact_mod_cast (Finset.mem_Icc.1 hj).2
-  have h2 : (0 : ℝ) ≤ D.R.t := Nat.cast_nonneg _
-  have h3 : (0 : ℝ) ≤ D.R.k := Nat.cast_nonneg _
   have h4 : (0 : ℝ) ≤ j := Nat.cast_nonneg _
   push_cast
   nlinarith [mul_le_mul_of_nonneg_right h1 (by linarith : (0 : ℝ) ≤ (D.R.t : ℝ) + 1),
@@ -160,7 +121,7 @@ end Orbit
 open Classical in
 theorem price_bound_large_primes : PriceBoundLargePrimes 1 := by
   intro D L X Y K hK _ hT hL u w hg hp t0 ht0 j hj
-  have hr : (D.gat u w hg).P.r = 1 := by rw [(hL u w hg).2.2.2.1, if_neg (not_lt.2 hp)]
+  have hr : (D.gat u w hg).P.r = 1 := by rw [(hL u w hg).2.2.2.1, ite_eq_right (not_lt.2 hp)]
   have ht : (Y.Fl u w hg).t = D.R.t := (hL u w hg).2.1
   have hc : ((Y.Fl u w hg).c : ℝ) ≤ Formalism.MainNotions.G.cG L := (hL u w hg).2.2.1
   have hinj := nc_iota_inj X Y hT hL u w hg t0 ht0
@@ -188,7 +149,7 @@ theorem price_bound_large_primes : PriceBoundLargePrimes 1 := by
         linarith)
   refine le_trans h1 ?_
   unfold Formalism.MainNotions.G.Pr
-  rw [if_pos hp, nc_topsOn X Y hT hL u w hg t0 ht0, Finset.filter_image, Finset.sum_image (fun a _ b _ h => hinj h)]
+  rw [ite_eq_left hp, nc_topsOn X Y hT hL u w hg t0 ht0, Finset.filter_image, Finset.sum_image (fun a _ b _ h => hinj h)]
   have hf : ((Y.Fl u w hg).TT (Y.vOf u w hg t0)).filter
       (fun a => ¬ Formalism.MainNotions.G.IsV X (D.what₂.places.resChar w) (nc_iota Y u w hg t0 a)) =
       ((Y.Fl u w hg).TT (Y.vOf u w hg t0)).filter IsOddPos := by

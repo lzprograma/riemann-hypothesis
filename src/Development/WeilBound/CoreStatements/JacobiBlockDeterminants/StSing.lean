@@ -23,54 +23,10 @@ import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptInteriorFla
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HodgeIPIffHodgeFormConj
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeInnerProductPullbackUnique
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.AevalNeZeroOfNotMem
-import Mathlib.LinearAlgebra.Matrix.Rank
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.MemMCoordIdealOfAevalEqZero
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsCoordsAtOfCoordTie
 
@@ -81,8 +37,6 @@ import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsCoordsAt
 -- clump-header: {"m": "Development.WeilBound.CoreStatements.JacobiBlockDeterminants.ExistsColFrame", "h": "module\n\npublic import Development.WeilBound.CoreStatements.MultihomogeneousSquares.SingSt\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GramMatrixTwoFrames\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptFiniteExtension\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemAbLocusIff\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptInteriorFlag\nimport Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HodgeIPIffHodgeFormConj\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeInnerProductPullbackUnique\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.StalkSpecializesBijective\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
 
@@ -327,8 +281,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.WeilBound.CoreStatements.JacobiBlockDeterminants.DetInvNe", "h": "module\n\npublic import Development.WeilBound.CoreStatements.MultihomogeneousSquares.SingSt\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StalkSpecializesBijective\npublic import Development.WeilBound.CoreStatements.JacobiBlockDeterminants.ExistsColFrame\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
 
@@ -678,7 +630,7 @@ theorem minor_w (Γ : Matrix (Fin (p + q)) (Fin (p + q)) ℂ) (i : Fin (p + q)) 
   · unfold leadMinor
     rw [dite_eq_left hi]
     rfl
-  · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_pos hi]
+  · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_left hi]
     constructor
     · intro h
       exact ⟨⟨a - q, by omega⟩, Fin.ext (by show q + (a - q) = a; omega)⟩
@@ -694,7 +646,7 @@ theorem minor_om (Γ : Matrix (Fin (p + q)) (Fin (p + q)) ℂ) (i : Fin (p + q))
   · unfold leadMinor
     rw [dite_eq_left hq]
     rfl
-  · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_neg hi]
+  · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_right hi]
     constructor
     · intro h
       exact ⟨⟨a, h⟩, rfl⟩
@@ -746,19 +698,19 @@ theorem pot_eq {Γ : Matrix (Fin (p + q)) (Fin (p + q)) ℂ} (hΓ : Γ.PosDef) (
   unfold pot detFac IsProperStep
   rw [minorIJ_wIdx, minorIJ_omIdx]
   by_cases hN : (i : ℕ) + 1 = p + q
-  · rw [if_pos (by omega), if_pos hN, if_neg (fun h => h.2 hN), min_eq_right (by omega),
+  · rw [ite_eq_left (by omega), ite_eq_left hN, ite_eq_right (fun h => h.2 hN), min_eq_right (by omega),
       show (i : ℕ) + 1 - p = q by omega, leadMinor_size_self, leadMinor_size_self, re_mul_pos hW.det_pos,
       Real.log_mul (Complex.pos_iff.1 hW.det_pos).1.ne' (Complex.pos_iff.1 hO.det_pos).1.ne']
     ring
-  · rw [if_neg hN, mul_one]
+  · rw [ite_eq_right hN, mul_one]
     rcases lt_trichotomy ((i : ℕ) + 1) p with h | h | h
-    · rw [if_neg (by omega), if_pos ⟨h.ne, hN⟩, minor_w Γ i h.le, min_eq_left h.le,
+    · rw [ite_eq_right (by omega), ite_eq_left ⟨h.ne, hN⟩, minor_w Γ i h.le, min_eq_left h.le,
         show (i : ℕ) + 1 - p = 0 by omega, leadMinor_size_zero]
       simp
-    · rw [if_pos h.ge, if_neg (fun h' => h'.1 h), min_eq_right h.ge,
+    · rw [ite_eq_left h.ge, ite_eq_right (fun h' => h'.1 h), min_eq_right h.ge,
         show (i : ℕ) + 1 - p = 0 by omega, leadMinor_size_zero, leadMinor_size_self]
       simp
-    · rw [if_pos h.le, if_pos ⟨h.ne', hN⟩, minor_om Γ i (by omega), min_eq_right h.le, leadMinor_size_self]
+    · rw [ite_eq_left h.le, ite_eq_left ⟨h.ne', hN⟩, minor_om Γ i (by omega), min_eq_right h.le, leadMinor_size_self]
 
 end HeightCancellation.C4
 
@@ -821,11 +773,11 @@ theorem prod_col {R : Type} [CommRing R] (f : Fin (p + q) → R) (i : Fin (p + q
     simp only [Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and] at hc
     rcases hc with hc | hc
     · refine ⟨⟨c - q, by omega⟩, Finset.mem_Iic.2 (show c - q ≤ (i : ℕ) by omega), Fin.ext ?_⟩
-      rw [col_val, if_pos (show c - q < p by omega)]
+      rw [col_val, ite_eq_left (show c - q < p by omega)]
       show q + (c - q) = c
       omega
     · refine ⟨⟨c + p, by omega⟩, Finset.mem_Iic.2 (show c + p ≤ (i : ℕ) by omega), Fin.ext ?_⟩
-      rw [col_val, if_neg (show ¬ c + p < p by omega)]
+      rw [col_val, ite_eq_right (show ¬ c + p < p by omega)]
       show c + p - p = c
       omega
 
@@ -844,23 +796,23 @@ theorem prod_diag {R : Type} [CommRing R] {B : Matrix (Fin (p + q)) (Fin (p + q)
       ∏ c ∈ Finset.univ.filter P, B c c = 1 := fun h => by
     rw [Finset.filter_eq_empty_iff.2 fun c _ => h c, Finset.prod_empty]
   by_cases hN : (i : ℕ) + 1 = p + q
-  · rw [if_pos (by omega), if_pos hN, if_neg (fun h => h.2 hN), mul_one]
+  · rw [ite_eq_left (by omega), ite_eq_left hN, ite_eq_right (fun h => h.2 hN), mul_one]
     congr 1
     · exact key fun c => by have := c.2; omega
     · exact key fun c => by have := c.2; omega
-  · rw [if_neg hN, mul_one]
+  · rw [ite_eq_right hN, mul_one]
     rcases lt_trichotomy ((i : ℕ) + 1) p with h | h | h
-    · rw [if_neg (by omega), if_pos ⟨h.ne, hN⟩, one_mul, key0 (P := fun c => (c : ℕ) < q ∧ (c : ℕ) + p ≤ i)
+    · rw [ite_eq_right (by omega), ite_eq_left ⟨h.ne, hN⟩, one_mul, key0 (P := fun c => (c : ℕ) < q ∧ (c : ℕ) + p ≤ i)
         (fun c => by omega), mul_one]
-      exact key fun c => by rw [if_pos h.le]; omega
-    · rw [if_pos h.ge, if_neg (fun h' => h'.1 h), key0 (P := fun c => (c : ℕ) < q ∧ (c : ℕ) + p ≤ i)
+      exact key fun c => by rw [ite_eq_left h.le]; omega
+    · rw [ite_eq_left h.ge, ite_eq_right (fun h' => h'.1 h), key0 (P := fun c => (c : ℕ) < q ∧ (c : ℕ) + p ≤ i)
         (fun c => by omega)]
       congr 1
       exact key fun c => by have := c.2; omega
-    · rw [if_pos h.le, if_pos ⟨h.ne', hN⟩]
+    · rw [ite_eq_left h.le, ite_eq_left ⟨h.ne', hN⟩]
       congr 1
       · exact key fun c => by have := c.2; omega
-      · exact key fun c => by rw [if_neg (by omega)]; omega
+      · exact key fun c => by rw [ite_eq_right (by omega)]; omega
 
 section Val
 
@@ -926,7 +878,7 @@ theorem HeightCancellation.c2 : SquareStatements.Sing.C2 := by
     simp only [RingHom.id_apply] at e3
     have v2 := val_pl hz hv (fun I => hval _ (gd.2.1 ⟨k, m⟩ I).1) (stepCols (D.p + D.q) D.p i)
     convert CxVal.mul vd v2 using 1
-    rw [prod_diag tB, if_pos hp]
+    rw [prod_diag tB, ite_eq_left hp]
     linear_combination (-(∏ c ∈ stepCols (D.p + D.q) D.p i, B c c) * y ⟨k, m⟩ *
         ∏ k', algebraMap M.Ω Φ (M.x ⟨k', F.c k'⟩) ^ (-M.b (τ, i) k')) * e1 +
       (detFac D.p i (inFrame M F τ B) * ∏ k', algebraMap M.Ω Φ (M.x ⟨k', F.c k'⟩) ^ (-M.b (τ, i) k')) * e3 +
@@ -943,7 +895,7 @@ theorem HeightCancellation.c2 : SquareStatements.Sing.C2 := by
     · have e3 := congrArg (algebraMap M.Ω Φ) (hF.2.2.2 (τ, i) hk)
       rw [map_mul, map_mul] at e3
       convert CxVal.mul vd v1 using 1
-      rw [prod_diag tB, if_neg hp]
+      rw [prod_diag tB, ite_eq_right hp]
       linear_combination (-algebraMap M.Ω Φ (M.lam (τ, i)) *
           ∏ k', algebraMap M.Ω Φ (M.x ⟨k', F.c k'⟩) ^ (-M.b (τ, i) k')) * e1 +
         (detFac D.p i (inFrame M F τ B) * ∏ k', algebraMap M.Ω Φ (M.x ⟨k', F.c k'⟩) ^ (-M.b (τ, i) k')) * e3 +
@@ -1056,8 +1008,7 @@ theorem c5 : C5 := by
   classical
   obtain ⟨I0, hI0, hne⟩ := block_diag_minor_ne_zero M.j_le p.2 h hb hd
   set J := stepCols N j p.2 with hJ
-  by_contra hall
-  push_neg at hall
+  by_contra! hall
   have hreg : ∀ (q : (k : K) × ι k) (I : Finset (Fin N)),
       F.u q I ∈ regRing M.x wb ∧ F.u' I q ∈ regRing M.x wb :=
     fun q I => ⟨mem_regRing_of_regAt hw (hG.2.1 q I).1, mem_regRing_of_regAt hw (hG.2.1 q I).2⟩
@@ -1237,7 +1188,7 @@ theorem prod_dy {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
   congr 1
   · have h1 : ∀ k : {k // ¬ ∀ p', M.blk p' ≠ some k}, f k.1 ^ M.dy p k.1 = if M.blk p = some k.1 then f k.1 else 1 :=
       fun k => by
-        rw [FlagModel.dy, dif_neg k.2]
+        rw [FlagModel.dy, dite_eq_right k.2]
         split_ifs <;> simp
     simp only [h1]
     rcases hb : M.blk p with _ | k₀
@@ -1245,10 +1196,10 @@ theorem prod_dy {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
     · rw [Finset.prod_eq_single (⟨k₀, fun h => h p hb⟩ : {k // ¬ ∀ p', M.blk p' ≠ some k})]
       · simp
       · intro k _ hk
-        exact if_neg fun e => hk (Subtype.ext (Option.some.inj e).symm)
+        exact ite_eq_right fun e => hk (Subtype.ext (Option.some.inj e).symm)
       · simp
   · refine Finset.prod_congr (by ext; simp) fun k _ => ?_
-    rw [FlagModel.dy, dif_pos k.2]
+    rw [FlagModel.dy, dite_eq_left k.2]
 
 theorem stSing_of (h0 : C0) (h1 : C1) (h2 : C2) (h5 : C5) (hW : GradedLineNormsW) (hO : GradedLineNormsDualOmega) (h4 : C4) : StSing := by
   intro E _ _ _ H D l Xo c Y S _ K _ ι _ Φ _ y M 𝔐 tie n BM 𝔐' Fl xdeg e sing hBM htot hsd hho a w hw x hx horb
@@ -1274,17 +1225,17 @@ theorem stSing_of (h0 : C0) (h1 : C1) (h2 : C2) (h5 : C5) (hW : GradedLineNormsW
       (B (col D.p D.q m) (col D.p D.q m)) (mu D.p D.q (hᴴ * BM.G q τ x * h) m) := fun w' hw' m => by
     have := hho (τ, m) z w' hw' hint
     by_cases hm : (m : ℕ) < D.p
-    · have e2 : HodgeCpt.rootIdx D (τ, m) = ⟨.inl τ, ⟨m, hm⟩⟩ := dif_pos hm
-      have e3 : HodgeCpt.rootSgn D (τ, m) = 1 := if_pos hm
+    · have e2 : HodgeCpt.rootIdx D (τ, m) = ⟨.inl τ, ⟨m, hm⟩⟩ := dite_eq_left hm
+      have e3 : HodgeCpt.rootSgn D (τ, m) = 1 := ite_eq_left hm
       rw [e2, e3] at this
       have h3 := this _ _ (hW E H D l Xo c Y S K ι Φ y M 𝔐 tie 𝔐' Fl pr j z (BM.F q) τ B h _ hT hF hfW hA hGb hGp hint
         (hBM.gramW q τ x ⟨hq, hx⟩ _ hl) ⟨m, hm⟩)
       rw [zpow_one, zpow_one] at h3
-      rw [col, mu, dif_pos hm, if_pos hm]
+      rw [col, mu, dite_eq_left hm, ite_eq_left hm]
       exact h3
     · have hm2 := m.2
-      have e2 : HodgeCpt.rootIdx D (τ, m) = ⟨.inr τ, ⟨D.p + D.q - 1 - m, by show _ < D.q; omega⟩⟩ := dif_neg hm
-      have e3 : HodgeCpt.rootSgn D (τ, m) = -1 := if_neg hm
+      have e2 : HodgeCpt.rootIdx D (τ, m) = ⟨.inr τ, ⟨D.p + D.q - 1 - m, by show _ < D.q; omega⟩⟩ := dite_eq_right hm
+      have e3 : HodgeCpt.rootSgn D (τ, m) = -1 := ite_eq_right hm
       rw [e2, e3] at this
       have h3 := this _ _ (hO E H D l Xo c Y S K ι Φ y M 𝔐 tie 𝔐' Fl pr j z (BM.F q) τ B h _ hT hF hfO hA hGb hGp hint
         (hBM.gramO q τ x ⟨hq, hx⟩ _ hl) ⟨D.p + D.q - 1 - m, by omega⟩)
@@ -1292,7 +1243,7 @@ theorem stSing_of (h0 : C0) (h1 : C1) (h2 : C2) (h5 : C5) (hW : GradedLineNormsW
       have e4 : (⟨D.p + D.q - 1 - m, by omega⟩ : Fin D.q).rev = ⟨m - D.p, by omega⟩ :=
         Fin.ext (by simp only [Fin.val_rev]; omega)
       rw [e4] at h3
-      rw [col, mu, dif_neg hm, if_neg hm]
+      rw [col, mu, dite_eq_right hm, ite_eq_right hm]
       exact h3
   have hdy' : M.dy (τ, i) = -∑ m ∈ Finset.Iic i, (sing (τ, m)).a := by simp only [hsd]; exact hdy τ i
   have hdeg : (Top.combLine sing (Cmp.fundOnRoot (τ, i))).a = (BM.hom (τ, i)).a := by
@@ -1323,7 +1274,7 @@ theorem stSing_of (h0 : C0) (h1 : C1) (h2 : C2) (h5 : C5) (hW : GradedLineNormsW
     ⟨fun p => s₁ p.1 * w p, ⟨s₁, hs₁, rfl⟩, fun k => by
       show s₁ k.1 * w ⟨k.1, (BM.F q).c k⟩ = 1
       simp only [s₁]
-      rw [dif_pos k.2]
+      rw [dite_eq_left k.2]
       exact inv_mul_cancel₀ (hw0 k)⟩
   have hz₁ := Chg.coordsAt_orbit hz ho₁
   have hx0 : ∀ k, M.x ⟨k, (BM.F q).c k⟩ ≠ 0 := fun k =>
@@ -1340,12 +1291,12 @@ theorem stSing_of (h0 : C0) (h1 : C1) (h2 : C2) (h5 : C5) (hW : GradedLineNormsW
             Real.log ((M.blk (τ, i)).elim 1 fun k => ‖w' ⟨k, cc k⟩‖) := fun w' hw' hn => by
     choose c₀ hc₀ using hw'.1
     let cc : ∀ k, ι k := fun k => if hk : ∀ p, M.blk p ≠ some k then (BM.F q).c ⟨k, hk⟩ else c₀ k
-    have hcb : ∀ k : NonPluckerBlocks M.blk, cc k.1 = (BM.F q).c k := fun k => dif_pos k.2
+    have hcb : ∀ k : NonPluckerBlocks M.blk, cc k.1 = (BM.F q).c k := fun k => dite_eq_left k.2
     have hcc : ∀ k, w' ⟨k, cc k⟩ ≠ 0 := fun k => by
       by_cases hk : ∀ p, M.blk p ≠ some k
       · rw [hcb ⟨k, hk⟩]
         exact (hn ⟨k, hk⟩).trans_ne one_ne_zero
-      · rw [show cc k = c₀ k from dif_neg hk]
+      · rw [show cc k = c₀ k from dite_eq_right hk]
         exact (hc₀ k).ne_zero
     obtain ⟨U, hU, hU'⟩ := prod_secNorm (𝔐'.all _) hw' (Finset.Iic i) (fun m => sing (τ, m)) (fun m => e (τ, m)) _ _ _
       (hsec w' hw') hμ hdy' cc hcc
@@ -1413,11 +1364,11 @@ theorem stSing_of (h0 : C0) (h1 : C1) (h2 : C2) (h5 : C5) (hW : GradedLineNormsW
     have hz₂ := Chg.coordsAt_orbit hz ho₂
     have eb : basePart M.blk w₂ = basePart M.blk w₁ := funext fun p => by
       show s₂ p.1.1 * w₁ ⟨p.1.1, p.2⟩ = w₁ ⟨p.1.1, p.2⟩
-      rw [show s₂ p.1.1 = 1 from if_neg fun e' => p.1.2 (τ, i) (hb.trans (congrArg some e'.symm)), one_mul]
+      rw [show s₂ p.1.1 = 1 from ite_eq_right fun e' => p.1.2 (τ, i) (hb.trans (congrArg some e'.symm)), one_mul]
     have hex : ∀ m, w₂ ⟨k₀, m⟩ = Pl m := fun m => by
       obtain ⟨r, hr1, hr2⟩ := hP m
       show s₂ k₀ * w₁ ⟨k₀, m⟩ = _
-      rw [show s₂ k₀ = Pl m₁ / w₁ ⟨k₀, m₁⟩ from if_pos rfl, hr1, hr2]
+      rw [show s₂ k₀ = Pl m₁ / w₁ ⟨k₀, m₁⟩ from ite_eq_left rfl, hr1, hr2]
       have := hm₁.ne_zero
       field_simp
     have hn₂ : ∀ k, basePart M.blk w₂ ⟨k, (BM.F q).c k⟩ = 1 := by rw [eb]; exact hn₁

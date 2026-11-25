@@ -48,8 +48,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.ChainMatrices
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 abbrev Ef (D : D7) : Type := Formalism.IndefR.Lev.EAf D
 
 variable {D : D7}
@@ -185,13 +183,13 @@ theorem isAuxiliaryHyperbolicPart_initialChainSpace : IsAuxiliaryHeckeCharacter 
   unfold IsAuxiliaryHeckeCharacter HSpace.hD
   rw [hρ]
   refine ⟨fun i hi l hl => ?_, fun i hi x => ?_, fun _ => ⟨D.sp.zm_norm, D.sp.zm_orth, fun i hi => ?_⟩⟩
-  · simp only [dif_pos hi, dif_pos hl]
+  · simp only [dite_eq_left hi, dite_eq_left hl]
     refine ⟨D.sp.hyp_ee _ _, D.sp.hyp_ff _ _, ?_⟩
     rw [← (D.sp.Y 0).herm.eq, D.sp.hyp_ef]
     by_cases h : i = l <;> simp [h]
-  · simp only [dif_pos hi]
+  · simp only [dite_eq_left hi]
     exact D.sp.hyp_orthX _ x
-  · simp only [dif_pos hi]
+  · simp only [dite_eq_left hi]
     exact D.sp.hyp_orthz _
 
 end GlobalTheory.IndefiniteRowSideFullHecke.ChainMatrices

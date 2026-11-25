@@ -45,57 +45,46 @@ theorem vcGood_smul (T : Fin n → Fin n → Module.End ℂ U) (P : (Fin n → �
   refine ⟨ν, hP, fun a => ?_⟩
   rw [map_smul, hν a, smul_comm]
 
+/-- A sum of simultaneous eigenvectors with weights satisfying `P` can have a weight
+outside `P` only if the sum is zero. -/
 theorem vc_eq_zero_of_list (T : Fin n → Fin n → Module.End ℂ U) (P : (Fin n → ℝ) → Prop)
-    {μ : Fin n → ℝ} (hμ : ¬ P μ) :
-    ∀ (N : ℕ) (l : List U), l.length = N → (∀ w ∈ l, w ∈ vcGood T P) → ∀ x : U,
-      (∀ a, T a a x = ((μ a : ℝ) : ℂ) • x) → x = l.sum → x = 0 := by
-  intro N
-  induction N with
-  | zero =>
-    intro l hl _ x _ hxl
-    cases l with
-    | nil => simpa using hxl
-    | cons w l' => simp at hl
-  | succ N ih =>
-    intro l hl hg x hx hxl
-    cases l with
-    | nil => simp at hl
-    | cons w l' =>
-      have hl' : l'.length = N := by simpa using hl
-      have hw0 := hg w (by simp)
-      simp only [vcGood, Set.mem_setOf_eq] at hw0
-      obtain ⟨ν, hPν, hν⟩ := hw0
-      have hne : ν ≠ μ := fun h => hμ (h ▸ hPν)
-      obtain ⟨a, ha⟩ := Function.ne_iff.mp hne
-      have hc0 : ((μ a : ℝ) : ℂ) - ((ν a : ℝ) : ℂ) ≠ 0 :=
-        sub_ne_zero.mpr (by exact_mod_cast ha.symm)
-      obtain ⟨D, hD⟩ : ∃ D : Module.End ℂ U, ∀ u, D u = T a a u - ((ν a : ℝ) : ℂ) • u :=
-        ⟨T a a - ((ν a : ℝ) : ℂ) • 1, fun u => by simp⟩
-      have h1 : D x = (((μ a : ℝ) : ℂ) - ((ν a : ℝ) : ℂ)) • x := by
-        rw [hD, hx a, sub_smul]
-      have h2 : D w = 0 := by rw [hD, hν a, sub_self]
-      have h3 : D x = (l'.map D).sum := by
-        rw [hxl, List.sum_cons, map_add (f := _), h2, zero_add, map_list_sum]
-      have hgood : ∀ u ∈ l'.map D, u ∈ vcGood T P := by
-        intro u hu
-        obtain ⟨u0, hu0, rfl⟩ := List.mem_map.mp hu
-        have hg0 := hg u0 (by simp [hu0])
-        simp only [vcGood, Set.mem_setOf_eq] at hg0 ⊢
-        obtain ⟨ν', hP', hν'⟩ := hg0
-        refine ⟨ν', hP', fun b => ?_⟩
-        rw [hD, hν' a, ← sub_smul, map_smul, hν' b, smul_comm]
-      have hwt : ∀ b, T b b ((((μ a : ℝ) : ℂ) - ((ν a : ℝ) : ℂ)) • x)
-          = ((μ b : ℝ) : ℂ) • ((((μ a : ℝ) : ℂ) - ((ν a : ℝ) : ℂ)) • x) := by
-        intro b
-        rw [map_smul, hx b, smul_comm]
-      have hz := ih (l'.map D) (by simpa using hl') hgood _ hwt (by rw [← h1, h3])
-      exact (smul_eq_zero.mp hz).resolve_left hc0
+    {μ : Fin n → ℝ} (hμ : ¬ P μ) (l : List U) (hg : ∀ w ∈ l, w ∈ vcGood T P) {x : U}
+    (hx : ∀ a, T a a x = (μ a : ℂ) • x) (hxl : x = l.sum) : x = 0 := by
+  match l with
+  | [] => simpa using hxl
+  | w :: l =>
+    obtain ⟨ν, hPν, hν⟩ := hg w List.mem_cons_self
+    have hne : ν ≠ μ := fun h => hμ (h ▸ hPν)
+    obtain ⟨a, ha⟩ := Function.ne_iff.mp hne
+    have hdiff : (μ a : ℂ) - (ν a : ℂ) ≠ 0 :=
+      sub_ne_zero.mpr (by exact_mod_cast ha.symm)
+    -- Subtract the head's eigenvalue at a coordinate where its weight differs from μ.
+    let D : Module.End ℂ U := T a a - (ν a : ℂ) • 1
+    have hD (u : U) : D u = T a a u - (ν a : ℂ) • u := by simp [D]
+    have hDx : D x = ((μ a : ℂ) - (ν a : ℂ)) • x := by
+      rw [hD, hx a, sub_smul]
+    have hDw : D w = 0 := by rw [hD, hν a, sub_self]
+    have hDsum : D x = (l.map D).sum := by
+      rw [hxl, List.sum_cons, map_add (f := _), hDw, zero_add, map_list_sum]
+    have hgood : ∀ u ∈ l.map D, u ∈ vcGood T P := by
+      intro u hu
+      obtain ⟨v, hv, rfl⟩ := List.mem_map.mp hu
+      obtain ⟨ν', hP', hν'⟩ := hg v (List.mem_cons_of_mem _ hv)
+      refine ⟨ν', hP', fun b => ?_⟩
+      rw [hD, hν' a, ← sub_smul, map_smul, hν' b, smul_comm]
+    have hwt (b) : T b b (D x) = (μ b : ℂ) • D x := by
+      rw [hDx, map_smul, hx b, smul_comm]
+    have hz := vc_eq_zero_of_list T P hμ (l.map D) hgood hwt hDsum
+    rw [hDx] at hz
+    exact (smul_eq_zero.mp hz).resolve_left hdiff
+termination_by l.length
+decreasing_by simp
 
 theorem vc_eq_zero_of_mem_span (T : Fin n → Fin n → Module.End ℂ U) (P : (Fin n → ℝ) → Prop)
     {μ : Fin n → ℝ} (hμ : ¬ P μ) {x : U} (hx : ∀ a, T a a x = ((μ a : ℝ) : ℂ) • x)
     (hxs : x ∈ Submodule.span ℂ (vcGood T P)) : x = 0 := by
-  obtain ⟨l, hl, e⟩ := _root_.Bl.SmulListSum.goal1 (fun w hw c => vcGood_smul T P hw c) hxs
-  exact vc_eq_zero_of_list T P hμ l.length l rfl hl x hx e
+  obtain ⟨l, hl, e⟩ := Submodule.exists_list_of_mem_span (vcGood_smul T P) hxs
+  exact vc_eq_zero_of_list T P hμ l hl hx e
 
 def vcMon (T : Fin n → Fin n → Module.End ℂ U) (v : U) : ℕ → Set U
   | 0 => {v}
@@ -142,7 +131,7 @@ theorem vc_inRootCone_add_root {β : Fin n → ℝ} (hβ : InRootCone β) {c d :
     by_cases hab : a = c ∧ b = d
     · obtain ⟨rfl, rfl⟩ := hab
       simp [h, add_smul]
-    · rw [if_neg hab, if_neg hab]
+    · rw [ite_eq_right hab, ite_eq_right hab]
       simp
   have hind : (∑ a : Fin n, ∑ b : Fin n, (if a = c ∧ b = d then root c d else 0)) = root c d := by
     rw [Finset.sum_eq_single c (fun a _ ha => by simp [ha]) (by simp)]
@@ -185,23 +174,23 @@ theorem vcMon_weight (T : Fin n → Fin n → Module.End ℂ U) (hT : IsGlRep T)
       · have h2 : ¬ b = c := by
           rw [h1]
           exact fun h => hab h.symm
-        rw [if_pos h1, if_neg h2, sub_zero] at hc
+        rw [ite_eq_left h1, ite_eq_right h2, sub_zero] at hc
         rw [h1] at hc ⊢
-        rw [if_pos rfl, if_neg hab, sub_zero, Complex.ofReal_add, Complex.ofReal_one, add_smul,
+        rw [ite_eq_left rfl, ite_eq_right hab, sub_zero, Complex.ofReal_add, Complex.ofReal_one, add_smul,
           one_smul]
         rw [sub_eq_iff_eq_add] at hc
         rw [hc, add_comm]
       · by_cases h3 : c = b
         · have h2 : b = c := h3.symm
-          rw [if_neg h1, if_pos h2, zero_sub] at hc
+          rw [ite_eq_right h1, ite_eq_left h2, zero_sub] at hc
           rw [h3] at hc ⊢
-          rw [if_neg (Ne.symm hab), if_pos rfl, zero_sub, ← sub_eq_add_neg, Complex.ofReal_sub,
+          rw [ite_eq_right (Ne.symm hab), ite_eq_left rfl, zero_sub, ← sub_eq_add_neg, Complex.ofReal_sub,
             Complex.ofReal_one, sub_smul, one_smul]
           rw [LinearMap.neg_apply, sub_eq_iff_eq_add] at hc
           rw [hc, neg_add_eq_sub]
         · have h2 : ¬ b = c := fun h => h3 h.symm
-          rw [if_neg h1, if_neg h2, sub_zero, LinearMap.zero_apply, sub_eq_zero] at hc
-          rw [if_neg h1, if_neg h3, sub_zero, add_zero, hc]
+          rw [ite_eq_right h1, ite_eq_right h2, sub_zero, LinearMap.zero_apply, sub_eq_zero] at hc
+          rw [ite_eq_right h1, ite_eq_right h3, sub_zero, add_zero, hc]
     have e : ν + root a b - base = (ν - base) + root a b := by abel
     refine ⟨ν + root a b, hw, ?_, ?_⟩
     · rw [e]

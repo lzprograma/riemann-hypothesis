@@ -74,18 +74,6 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E]
 variable {L : LocE F E}
 
-theorem hf_add {n : ℕ} (Hm : Matrix (Fin n) (Fin n) E) (a b y : Fin n → E) :
-    hf L Hm (a + b) y = hf L Hm a y + hf L Hm b y := by
-  simp [hf, add_mul, Finset.sum_add_distrib]
-
-theorem hf_sub {n : ℕ} (Hm : Matrix (Fin n) (Fin n) E) (a b y : Fin n → E) :
-    hf L Hm (a - b) y = hf L Hm a y - hf L Hm b y := by
-  simp [hf, sub_mul, Finset.sum_sub_distrib]
-
-theorem hf_smul {n : ℕ} (Hm : Matrix (Fin n) (Fin n) E) (c : E) (a y : Fin n → E) :
-    hf L Hm (c • a) y = c * hf L Hm a y := by
-  simp [hf, Finset.mul_sum, mul_assoc]
-
 theorem hf_zero {n : ℕ} (Hm : Matrix (Fin n) (Fin n) E) (y : Fin n → E) :
     hf L Hm 0 y = 0 := by
   simp [hf]
@@ -110,12 +98,12 @@ theorem frame_perp (g : Fin (r + 1) → S.V) (T : E)
   induction hy using Submodule.span_induction with
   | mem y hy =>
     obtain ⟨i, hi, rfl⟩ := hy
-    rw [hg, if_neg]
+    rw [hg, ite_eq_right]
     rintro ⟨rfl, -⟩
     simp at hi
   | zero => exact hf_zero _ _
-  | add a c _ _ ha hc => rw [hf_add, ha, hc, add_zero]
-  | smul c a _ ha => rw [hf_smul, ha, mul_zero]
+  | add a c _ _ ha hc => rw [GlobalTheory.HL.Eichler.hf_add_l, ha, hc, add_zero]
+  | smul c a _ ha => rw [GlobalTheory.HL.DualInter.smul_l, ha, mul_zero]
 
 alias spanTo_mono := _root_.GlobalTheory.HL.FrameOnto.spanTo_mono
 
@@ -135,7 +123,7 @@ theorem mof_transport (Λ : Submodule L.O S.V) (Y : Submodule E S.V) (g g' g₁ 
       have : algebraMap F E S.th⁻¹ • (g' b - g b) - S.h (algebraMap F E S.th⁻¹ • (g' b - g b)) u • x +
           S.h (g' b) u • (algebraMap F E S.th⁻¹ • (x + x')) = algebraMap F E S.th⁻¹ • (g₁' b - g₁ b) := by
         rw [h1, h1']
-        simp only [Frames.h, hf_smul, hf_sub]
+        simp only [Frames.h, GlobalTheory.HL.DualInter.smul_l, GlobalTheory.HL.DualInter.sub_l]
         module
       simp only []
       rw [this]
@@ -148,7 +136,7 @@ theorem mof_transport (Λ : Submodule L.O S.V) (Y : Submodule E S.V) (g g' g₁ 
     obtain ⟨z, hz, hz', hc⟩ := hc
     refine ⟨y + z, Λ.add_mem hy hz, Y.add_mem hy' hz', ?_⟩
     have : a + c - S.h (a + c) u • x + (y + z) = (a - S.h a u • x + y) + (c - S.h c u • x + z) := by
-      simp only [Frames.h, hf_add]
+      simp only [Frames.h, GlobalTheory.HL.Eichler.hf_add_l]
       module
     rw [this]
     exact Submodule.add_mem _ ha hc
@@ -157,13 +145,12 @@ theorem mof_transport (Λ : Submodule L.O S.V) (Y : Submodule E S.V) (g g' g₁ 
     refine ⟨(c : E) • y, Λ.smul_mem c hy, Y.smul_mem _ hy', ?_⟩
     have : c • a - S.h (c • a) u • x + (c : E) • y = (c : E) • (a - S.h a u • x + y) := by
       change (c : E) • a - S.h ((c : E) • a) u • x + (c : E) • y = _
-      simp only [Frames.h, hf_smul]
+      simp only [Frames.h, GlobalTheory.HL.DualInter.smul_l]
       module
     rw [this]
     exact Submodule.smul_mem _ c ha
 
 end GlobalTheory.HL.TraceRep
-
 
 open GlobalTheory.HL.TraceRep in
 theorem GlobalTheory.HL.TraceRep.class_from_trace : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [CharZero F] {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] (L : LocE F E), ∀ (r k : ℕ) (S : Frames L r k), ∀ (j : Fin r) (β βJ : ℕ) (d : S.Datum) (Λ : Submodule L.O S.V), S.IsTerm d Λ → S.InFF β (j + 1) βJ d Λ → ∀ x x' u s, S.IsMove (j + 1) d Λ x x' u s → (∃ y ∈ Λ, y ∈ S.W0 ∧ S.h u y = 1) → ∀ Λ₁ : Submodule L.O S.V, (Λ₁ : Set S.V) = S.moved Λ x u s → ∀ y ∈ S.sat Λ₁, ∃ y₀ ∈ Λ, y₀ ∈ (S.spanTo S.f (j + 1) ⊔ S.spanTo S.f' (j + 1)) ∧ y - y₀ ∈ S.M d Λ₁ := by
@@ -195,7 +182,7 @@ theorem GlobalTheory.HL.TraceRep.class_from_trace : ∀ {F : Type} [Field F] [Va
     have h2 : hf L S.Hm y w = 0 := hf_swap_zero hH (hwW y hyME)
     have h3 : hf L S.Hm x w = 0 := hf_swap_zero hH (hwW x hxME)
     have h4 : hf L S.Hm u w = 1 := huw
-    simp only [Frames.h, eich, hf_sub, hf_add, hf_smul, h2, h3, h4] at h1
+    simp only [Frames.h, eich, GlobalTheory.HL.DualInter.sub_l, GlobalTheory.HL.Eichler.hf_add_l, GlobalTheory.HL.DualInter.smul_l, h2, h3, h4] at h1
     have := L.O.neg_mem h1
     simpa using this
   have hbΛ : y + hf L S.Hm y u • x ∈ Λ := by
@@ -233,7 +220,7 @@ theorem GlobalTheory.HL.TraceRep.class_from_trace : ∀ {F : Type} [Field F] [Va
   have h5 : hf L S.Hm x u = 0 := hf_swap_zero hH hux
   have h6 : hf L S.Hm y₀ u = 0 := hf_swap_zero hH (huY y₀ hy₀Y)
   have : y - (y₀ - y₁) = y + hf L S.Hm y u • x - y₀ - S.h (y + hf L S.Hm y u • x - y₀) u • x + y₁ := by
-    simp only [Frames.h, hf_sub, hf_add, hf_smul, h5, h6]
+    simp only [Frames.h, GlobalTheory.HL.DualInter.sub_l, GlobalTheory.HL.Eichler.hf_add_l, GlobalTheory.HL.DualInter.smul_l, h5, h6]
     module
   rw [this]
   exact hm₁

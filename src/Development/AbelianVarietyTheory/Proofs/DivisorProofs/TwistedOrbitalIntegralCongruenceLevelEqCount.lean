@@ -200,7 +200,7 @@ theorem exists_unitary_of_torus : ∀ (E : Type) [Field E] [NumberField E] [IsCM
       rw [Finset.sum_congr rfl (fun k _ => mul_comm (cj w (h.val k i)) (h.val k j)), hp]
       by_cases hij : i = j
       · subst hij; simp [Pi.single_apply]
-      · rw [if_neg hij, Finset.sum_eq_zero]
+      · rw [ite_eq_right hij, Finset.sum_eq_zero]
         intro k _
         by_cases hk : k = j
         · subst hk; simp [Ne.symm hij]
@@ -329,12 +329,6 @@ theorem exists_orthonormal_of_selfDual : ∀ (K : GlobalTheory.UnitLemma.UQ) (V 
   have inj : Function.Injective (algebraMap K.O K.E) := IsFractionRing.injective _ _
   obtain ⟨s, hs⟩ := GlobalTheory.UnitLemma.Witt.exists_conj K
   obtain ⟨hN, ⟨t, ht⟩, -⟩ := _root_.GlobalTheory.UnitLemma.UnramNorm.unram_quadratic_facts K
-  have hadd2 : ∀ y z z', h y (z + z') = h y z + h y z' := by
-    intro y z z'
-    rw [hsym, hadd, map_add (f := _), ← hsym, ← hsym]
-  have hlin2 : ∀ (a : K.E) y z, h y (a • z) = K.c a * h y z := by
-    intro a y z
-    rw [hsym, hlin, map_mul, ← hsym]
   have hsum1 : ∀ (S : Finset (Fin (Module.finrank K.E V))) (c : Fin (Module.finrank K.E V) → K.E) (u : Fin (Module.finrank K.E V) → V) z,
       h (∑ i ∈ S, c i • u i) z = ∑ i ∈ S, c i * h (u i) z := by
     intro S c u z
@@ -598,7 +592,7 @@ theorem continuous_cj (w : Pl E) : Continuous (cj w) := by
 
 theorem isClosed_UL (w : Pl E) (hw : ¬ IsSplitAt w) (n : ℕ) :
     IsClosed ((UL n w : Subgroup (GLw n w)) : Set (GLw n w)) := by
-  unfold UL; rw [if_neg hw]
+  unfold UL; rw [ite_eq_right hw]
   have : ((UJ (cj w) (1 : Matrix (Fin n) (Fin n) (w.adicCompletion E)) : Subgroup _) : Set (GLw n w)) =
       (fun g : GLw n w => cT (cj w) (g : Matrix (Fin n) (Fin n) (w.adicCompletion E)) * 1 *
         (g : Matrix (Fin n) (Fin n) (w.adicCompletion E))) ⁻¹' {1} := rfl
@@ -1053,7 +1047,7 @@ theorem pullLat_selfDual : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
   have hMu : Formalism.UG.cT (cj w) M * 1 * M = 1 := by
     have h := hgi
     unfold UL at h
-    rw [if_neg hw] at h
+    rw [ite_eq_right hw] at h
     exact h
   have hMg : M * g.val = 1 := by rw [hMdef]; exact Units.inv_mul g
   have hgM : g.val * M = 1 := by rw [hMdef]; exact Units.mul_inv g
@@ -1100,7 +1094,7 @@ theorem pullLat_selfDual : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
     funext j
     rw [Finset.sum_apply]
     simp only [hφs, z, hpre, Pi.smul_apply, Pi.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero,
-      Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     exact (ha j).symm
   have hsd : ∀ y, (∀ i, φ y i ∈ w.adicCompletionIntegers E) ↔
       ∀ z' ∈ pullLat w B ψ g, B.herm x y z' ∈ (algebraMap K.O K.E).range := by
@@ -1276,7 +1270,7 @@ theorem pullLat_stable_iff_cong : ∀ (E : Type) [Field E] [NumberField E] [IsCM
     refine ⟨?_, fun i j => by simpa [Matrix.sub_apply] using H i j⟩
     have hγ' : g⁻¹ * γ * g ∈ UL n w := mul_mem (mul_mem (inv_mem hg) hγ) hg
     unfold UL at hγ'
-    rw [if_neg hns] at hγ'
+    rw [ite_eq_right hns] at hγ'
     have hU : cT (cj w) (g⁻¹ * γ * g : GLw n w).val * 1 * (g⁻¹ * γ * g : GLw n w).val = 1 := hγ'
     rw [Matrix.mul_one] at hU
     have hinv : ((g⁻¹ * γ * g)⁻¹ : GLw n w).val = cT (cj w) (g⁻¹ * γ * g : GLw n w).val :=
@@ -1503,12 +1497,12 @@ theorem twOrb_congruence_eq_N : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
         rw [hc]
         exact _root_.GlobalTheory.KapOrb.conj_mem_congSet_iff E w n k _ _ (Subgroup.mem_subgroupOf.1 kk.2)
       by_cases h : g.1⁻¹ * γ * g.1 ∈ congSet w n k
-      · rw [if_pos (hm.2 h), if_pos h]; rfl
-      · rw [if_neg (fun h' => h (hm.1 h')), if_neg h]
+      · rw [ite_eq_left (hm.2 h), ite_eq_left h]; rfl
+      · rw [ite_eq_right (fun h' => h (hm.1 h')), ite_eq_right h]
     rw [hfun, GlobalTheory.TwOrbGood.avg_const]
     by_cases h : g.1⁻¹ * γ * g.1 ∈ congSet w n k
-    · rw [if_pos h, if_pos ((hiff g).2 h)]
-    · rw [if_neg h, if_neg (fun h' => h ((hiff g).1 h'))]
+    · rw [ite_eq_left h, ite_eq_left ((hiff g).2 h)]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h ((hiff g).1 h'))]
   have hmul : ∀ h ∈ twCent (MonoidHom.id (UL n w)) δ, ∀ h' ∈ twCent (MonoidHom.id (UL n w)) δ,
       τ (h * h') = τ h * τ h' := by
     intro h hh h' hh'

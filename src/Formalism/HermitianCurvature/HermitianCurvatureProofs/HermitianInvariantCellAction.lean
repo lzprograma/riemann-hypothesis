@@ -4,44 +4,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QxChain
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasFDerivAtFsvOther
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MemLevelZeroOfMemGroup
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -108,14 +70,14 @@ theorem unipotent_fixes_base_vector (l : Fin r) (a : ℂ) {z : Fin (2 * r + k + 
   funext p
   simp only [Matrix.mulVec, dotProduct]
   rw [Finset.sum_eq_single (Qx3.sw k l p)]
-  · rw [Qx3.w1_apply, Qx3.sw_sw, if_pos rfl]
+  · rw [Qx3.w1_apply, Qx3.sw_sw, ite_eq_left rfl]
     rcases Qx3.tri l p with h | h | ⟨h1, h2⟩
     · subst h; rw [Qx3.sw_e, zs, ze, mul_zero]
     · subst h; rw [Qx3.sw_es, ze, zs, mul_zero]
     · rw [Qx3.sw_o l h1 h2, Qx3.dd_o l a h1 h2, one_mul]
   · intro q _ hq
     have : p ≠ Qx3.sw k l q := fun h => hq (by rw [h, Qx3.sw_sw])
-    rw [Qx3.w1_apply, if_neg this, zero_mul]
+    rw [Qx3.w1_apply, ite_eq_right this, zero_mul]
   · intro h
     exact absurd (Finset.mem_univ _) h
 

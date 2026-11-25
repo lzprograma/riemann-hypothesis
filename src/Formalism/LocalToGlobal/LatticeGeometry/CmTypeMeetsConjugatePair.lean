@@ -36,16 +36,4 @@ theorem exists_tauEmb_iff (D : D7) (g : D.R.GG) :
     unfold DV.tauEmb
     rw [Equiv.apply_symm_apply]
 
-theorem cm_type_meets_conjugate_pair {D : D7} (p : ℕ) [Fact p.Prime] (jc : DV.KW p →+* ℂ) (τ : DV.Emb D p) :
-    τ ∈ DV.PsiOf D jc ↔ DV.cEmb D τ ∉ DV.PsiOf D jc := by
-  obtain ⟨g, hg⟩ := (factEmb D.R D.host).1.2 (jc.comp τ)
-  have h1 : τ ∈ DV.PsiOf D jc ↔ g ∈ D.R.Psi := by
-    rw [← exists_tauEmb_iff D g, hg]; rfl
-  have hc : jc.comp (DV.cEmb D τ) = D.host.emb (g * D.R.cc) := by
-    rw [emb_mul_cc_comp, hg]; rfl
-  have h2 : DV.cEmb D τ ∈ DV.PsiOf D jc ↔ g * D.R.cc ∈ D.R.Psi := by
-    rw [← exists_tauEmb_iff D (g * D.R.cc), ← hc]; rfl
-  rw [h1, h2]
-  exact mem_Psi_iff_mul_cc_notMem g
-
 end Formalism.L2.Geo

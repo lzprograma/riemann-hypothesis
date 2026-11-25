@@ -26,23 +26,8 @@ noncomputable section
 namespace CompanionTheory.FamilyDerivativeExpansion.M1
 
 lemma haar_smul {k r : ℕ} {U : Set (B.Mat k r)} {μ : Measure (Mt k r)} (h : B.IsHaarOn U μ) {c : ℝ≥0∞} (h0 : c ≠ 0)
-    (h1 : c ≠ ⊤) : B.IsHaarOn U (c • μ) := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · rw [smul_apply, h.conc, smul_zero]
-  · intro a ha
-    have hm : Continuous (lmulM a : Mt k r → Mt k r) :=
-      continuous_const.matrix_mul continuous_id
-    rw [Measure.map_smul c hm.measurable.aemeasurable, h.left a ha]
-  · intro a ha
-    have hm : Continuous (B.rmulF a : Mt k r → Mt k r) :=
-      continuous_id.matrix_mul continuous_const
-    rw [Measure.map_smul c hm.measurable.aemeasurable, h.right a ha]
-  · intro K hK
-    rw [smul_apply, smul_eq_mul]
-    exact ENNReal.mul_lt_top h1.lt_top (h.finite_compact K hK)
-  · intro e
-    have he : c * μ Set.univ = 0 := congrArg (fun m : Measure (Mt k r) => m Set.univ) e
-    exact h.ne_zero (Measure.measure_univ_eq_zero.1 ((mul_eq_zero.1 he).resolve_left h0))
+    (h1 : c ≠ ⊤) : B.IsHaarOn U (c • μ) :=
+  by apply _root_.ReciprocityTheory.ChartRestriction.DS.Mult1.isHaarOn_smul_of <;> assumption
 
 theorem be_rank_one {k r : ℕ} (hk : 1 ≤ k) {ε : Fin (2 * r + k + 1) → Bool} {lam : Fin (2 * r + k + 1) → ℝ} {h : ℝ}
     {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] {σ : Mx k r → (H →L[ℂ] H)}

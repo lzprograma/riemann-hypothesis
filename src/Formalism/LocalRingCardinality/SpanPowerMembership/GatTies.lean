@@ -8,47 +8,6 @@ public import Mathlib.RingTheory.WittVector.DiscreteValuationRing
 public import Formalism.LocalRingCardinality.SpanPowerMembership.GatRing
 public import Mathlib.RingTheory.WittVector.Complete
 public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalRingCardinality.SpanPowerMembership.GatSetting, Formalism.LocalRingCardinality.SpanPowerMembership.GatTies
@@ -76,73 +35,6 @@ instance instDomOn : IsDomain (On p n) := GatR.isDomain (WittVector.irreducible 
 instance instDvrOn : IsDiscreteValuationRing (On p n) := GatR.isDVR (WittVector.irreducible p)
 
 abbrev Kn : Type := FractionRing (On p n)
-
-def sigN : Qn p n ≃+* Qn p n :=
-  IsFractionRing.ringEquivOfRingEquiv (WittVector.frobeniusEquiv p (GaloisField p n))
-
-theorem sigN_alg (x : Wn p n) :
-    sigN p n (algebraMap (Wn p n) (Qn p n) x) = algebraMap (Wn p n) (Qn p n) (WittVector.frobenius x) :=
-  IsFractionRing.ringEquivOfRingEquiv_algebraMap _ x
-
-theorem inj_WK : Function.Injective ((algebraMap (On p n) (Kn p n)).comp (algebraMap (Wn p n) (On p n))) :=
-  (IsFractionRing.injective (On p n) (Kn p n)).comp algebraMap_injective
-
-def iotaN : Qn p n →+* Kn p n := IsFractionRing.lift (inj_WK p n)
-
-theorem frob_iter (hn : n ≠ 0) (x : Wn p n) : (WittVector.frobenius^[n]) x = x := by
-  ext i
-  rw [WittVector.iterate_frobenius_coeff]
-  have : Fintype (GaloisField p n) := Fintype.ofFinite _
-  have h := FiniteField.pow_card (x.coeff i)
-  rwa [← Nat.card_eq_fintype_card, GaloisField.card p n hn] at h
-
-theorem sigN_pow_alg (k : ℕ) (x : Wn p n) :
-    (sigN p n ^ k) (algebraMap (Wn p n) (Qn p n) x) =
-      algebraMap (Wn p n) (Qn p n) ((WittVector.frobenius^[k]) x) := by
-  induction k with
-  | zero => rfl
-  | succ k ih =>
-    rw [pow_succ', Function.iterate_succ_apply']
-    show sigN p n ((sigN p n ^ k) _) = _
-    rw [ih, sigN_alg]
-
-theorem sigN_period (hn : n ≠ 0) : sigN p n ^ n = 1 := by
-  apply RingEquiv.toRingHom_injective
-  apply IsLocalization.ringHom_ext (nonZeroDivisors (Wn p n))
-  ext1 x
-  show (sigN p n ^ n) (algebraMap (Wn p n) (Qn p n) x) = algebraMap (Wn p n) (Qn p n) x
-  rw [sigN_pow_alg, frob_iter p n hn]
-
-theorem hidaSettingOfEven (h5 : 5 ≤ p) (h2 : 2 ≤ n) (he : Even n) :
-    HidaSetting p n (Wn p n) (Qn p n) (On p n) (Kn p n) (iotaN p n) (sigN p n)
-      (algebraMap (Wn p n) (On p n)) ω := by
-  exact {
-    prime := hp.out
-    five_le := h5
-    two_le := h2
-    even := he
-    frac_alt := inferInstance
-    frac_O := inferInstance
-    p_unif := WittVector.irreducible p
-    res_card := by
-      rw [Nat.card_congr (WittVector.quotientPEquiv (p := p) (k := GaloisField p n)).toEquiv,
-        GaloisField.card p n (by omega)]
-    eq_sum_herm_smul_frame_of_inW := inferInstance
-    frob := fun x => by
-      have h : WittVector.frobenius x - x ^ p ∈ Ideal.span {(p : Wn p n)} := by
-        rw [WittVector.mem_span_p_iff_coeff_zero_eq_zero]
-        show WittVector.constantCoeff (WittVector.frobenius x - x ^ p) = 0
-        rw [map_sub, map_pow]
-        show (WittVector.frobenius x).coeff 0 - x.coeff 0 ^ p = 0
-        rw [WittVector.coeff_frobenius_charP, sub_self]
-      obtain ⟨y, hy⟩ := Ideal.mem_span_singleton.mp h
-      exact ⟨y, by rw [sigN_alg, ← hy]; congr 1; ring⟩
-    period := sigN_period p n (by omega)
-    ι_comp := fun x => IsFractionRing.lift_algebraMap (inj_WK p n) x
-    finite := RingHom.finite_algebraMap.mpr inferInstance
-    complete_O := GatR.isAdicComplete (WittVector.irreducible p) inferInstance
-    w_sq := by rw [GatR.om_sq, map_natCast]
-  }
 
 end Formalism.BasicNotions.Examples₂.LevelValuationRings
 end -- clump:auto
@@ -209,11 +101,6 @@ theorem orbFun_bij (T : Set G) : Function.Bijective (orbFun g T) := by
 def orbEquiv (T : Set G) : (Σ _ : Fin (Nat.card (Quo g)), Fin (orderOf g)) ≃ G :=
   Equiv.ofBijective (orbFun g T) (orbFun_bij g T)
 
-theorem orbEquiv_step (T : Set G) (v : Fin (Nat.card (Quo g))) (s : Fin (orderOf g)) :
-    orbEquiv g T ⟨v, posAdd s 1⟩ = orbEquiv g T ⟨v, s⟩ * g := by
-  show orbFun g T ⟨v, posAdd s 1⟩ = orbFun g T ⟨v, s⟩ * g
-  simp only [orbFun, posAdd, pow_mod_orderOf, pow_succ, mul_assoc]
-
 end Orbit
 
 variable {R : Ranks} (H : Host R) (p : ℕ)
@@ -222,23 +109,23 @@ theorem of_cls (h : H.cls p = .inertClass) : p ∉ H.small ∧ p ≠ H.q ∧ p �
     jacobiSym (-(H.d : ℤ)) p ≠ 1 ∧ H.psAt p ≠ 1 := by
   unfold Host.cls primeClass at h
   by_cases h1 : p ∈ H.small
-  · rw [if_pos h1] at h
+  · rw [ite_eq_left h1] at h
     cases h
-  rw [if_neg h1] at h
+  rw [ite_eq_right h1] at h
   by_cases h2 : p = H.q
-  · rw [if_pos h2] at h
+  · rw [ite_eq_left h2] at h
     cases h
-  rw [if_neg h2] at h
+  rw [ite_eq_right h2] at h
   by_cases h3 : p = H.d
-  · rw [if_pos h3] at h
+  · rw [ite_eq_left h3] at h
     cases h
-  rw [if_neg h3] at h
+  rw [ite_eq_right h3] at h
   by_cases h4 : jacobiSym (-(H.d : ℤ)) p = 1
-  · rw [if_pos h4] at h
+  · rw [ite_eq_left h4] at h
     cases h
-  rw [if_neg h4] at h
+  rw [ite_eq_right h4] at h
   by_cases h5 : H.psAt p = 1
-  · rw [if_pos h5] at h
+  · rw [ite_eq_left h5] at h
     cases h
   exact ⟨h1, h2, h3, h4, h5⟩
 
@@ -287,27 +174,8 @@ theorem exists_frob (hp : p.Prime) (hc : H.cls p = .inertClass) :
   obtain ⟨⟨σ, hσ⟩, -, -⟩ := H.der.frob p (hp.coprime_iff_not_dvd.1 hco) P
   exact ⟨P, hPp, hPl, σ, hσ⟩
 
-theorem hOf_even (hp : p.Prime) (hc : H.cls p = .inertClass) (hn : HNeZero H p) :
-    Even (orderOf (hOf H p)) := by
-  obtain ⟨P, hP, hL, σ, hσ⟩ := exists_frob H p hp hc
-  have h1 := @hn P hP hL σ hσ
-  rwa [@frob_val R H p hp hc P hP hL σ hσ] at h1
-
 def inPsi (φ : Formalism.HC.Frame) : φ.MA →* ↥φ.Psi :=
   (MonoidHom.inr G0 φ.MA).codRestrict φ.Psi (fun _ => rfl)
-
-theorem inPsi_inj (φ : Formalism.HC.Frame) : Function.Injective (inPsi φ) := by
-  intro a b h
-  have h' := congrArg (fun x : ↥φ.Psi => (Subtype.val x).2) h
-  exact h'
-
-theorem order_spec (φ : Formalism.HC.Frame) (h : φ.MA) (h1 : Even (orderOf h)) :
-    orderOf (inPsi φ h) = orderOf h ∧ 2 ≤ orderOf (inPsi φ h) ∧ Even (orderOf (inPsi φ h)) := by
-  rw [orderOf_injective (inPsi φ) (inPsi_inj φ) h]
-  refine ⟨rfl, ?_, h1⟩
-  have hpos : 0 < orderOf h := orderOf_pos h
-  obtain ⟨r, hr⟩ := h1
-  omega
 
 instance (φ : Formalism.HC.Frame) : Finite ↥φ.Psi := inferInstance
 
@@ -322,62 +190,6 @@ variable {H p}
 def gPsi (S : Served H p) : ↥(R.Psi) := inPsi R.toFrame (hOf H p)
 
 abbrev nOrb (S : Served H p) : ℕ := Nat.card (Quo (gPsi S))
-
-def posPsi (S : Served H p) (T : Set ↥(R.Psi)) :
-    (Σ _ : Fin (nOrb S), Fin (orderOf (gPsi S))) ≃ ↥(R.Psi) := orbEquiv (gPsi S) T
-
-theorem posPsi_step (S : Served H p) (T : Set ↥(R.Psi)) (v : Fin (nOrb S))
-    (s : Fin (orderOf (gPsi S))) : posPsi S T ⟨v, posAdd s 1⟩ = posPsi S T ⟨v, s⟩ * gPsi S :=
-  orbEquiv_step (gPsi S) T v s
-
-theorem ord_spec (S : Served H p) :
-    orderOf (gPsi S) = orderOf (hOf H p) ∧
-      2 ≤ orderOf (gPsi S) ∧ Even (orderOf (gPsi S)) :=
-  order_spec R.toFrame (hOf H p) (hOf_even H p S.prime S.cls S.hne)
-
-theorem k_pos (R : Ranks) : R.k - 1 + 1 = R.k := by
-  have := R.m_add_three_le_k
-  omega
-
-def placesOf (S : Served H p) (T : Set ↥(R.Psi)) (r : ℕ) (lam : ↥(R.Psi) → DomWeight (R.N 0)) :
-    haveI : Fact p.Prime := ⟨S.prime⟩
-    Places p (On p (orderOf (gPsi S))) (Kn p (orderOf (gPsi S))) :=
-  haveI : Fact p.Prime := ⟨S.prime⟩
-  { w := ω
-    nV := nOrb S
-    n' := fun _ => orderOf (gPsi S)
-    W := fun _ => Wn p (orderOf (gPsi S))
-    Qq := fun _ => Qn p (orderOf (gPsi S))
-    ι := fun _ => iotaN p _
-    σ := fun _ => sigN p _
-    j := fun _ => algebraMap _ _
-    setting := fun _ => hidaSettingOfEven p _ S.five_le (ord_spec S).2.1 (ord_spec S).2.2
-    m := R.k - 1
-    r := r
-    lam0 := fun v s i => (lam (posPsi S T ⟨v, s⟩)).w
-      ⟨i.1, by have h1 := k_pos R; have h2 := i.2; simp only [Ranks.N]; omega⟩
-    dom := fun v s a b hab => (lam (posPsi S T ⟨v, s⟩)).anti (show (_ : Fin _) ≤ _ from hab) }
-
-theorem orderOf_frobenius_image_eq (S : Served H p) (P : Ideal (𝓞 H.E)) [P.IsPrime]
-    [P.LiesOver (Ideal.span {(p : ℤ)})] (σ : H.E ≃ₐ[ℚ] H.E) (hσ : IsArithFrobAt ℤ σ P) :
-    orderOf (gPsi S) = orderOf (H.galE σ).2 := by
-  rw [(ord_spec S).1, @frob_val R H p S.prime S.cls P _ _ σ hσ]
-
-theorem position_succ_eq_mul_frobenius (S : Served H p) (T : Set ↥(R.Psi)) {Tau : Type} (eTau : Tau ≃ ↥(R.Psi))
-    (v : Fin (nOrb S)) (s : Fin (orderOf (gPsi S))) (P : Ideal (𝓞 H.E)) [P.IsPrime]
-    [P.LiesOver (Ideal.span {(p : ℤ)})] (σ : H.E ≃ₐ[ℚ] H.E) (hσ : IsArithFrobAt ℤ σ P) :
-    ((eTau (((posPsi S T).trans eTau.symm) ⟨v, posAdd s 1⟩) : R.Psi) : R.GG) =
-      ((eTau (((posPsi S T).trans eTau.symm) ⟨v, s⟩) : R.Psi) : R.GG) *
-        H.galE σ * R.cc := by
-  rw [Equiv.trans_apply, Equiv.trans_apply, Equiv.apply_symm_apply, Equiv.apply_symm_apply,
-    posPsi_step, Subgroup.coe_mul, mul_assoc, @frob_val R H p S.prime S.cls P _ _ σ hσ]
-  congr 1
-  simp [gPsi, inPsi, Formalism.HC.Frame.cc, Prod.ext_iff]
-  exact ⟨⟨rfl, rfl⟩, rfl⟩
-
-theorem served_of {T : ℕ} (h : GIdx H T p) : Served H p := by
-  obtain ⟨h1, h2, h3, h4, _⟩ := h
-  exact ⟨h1, h2, h3, h4⟩
 
 end Formalism.BasicNotions.Examples₂.LevelValuationRings
 

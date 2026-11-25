@@ -119,25 +119,6 @@ set_option maxSynthPendingDepth 1
 
 noncomputable section
 
-namespace GroundTheory.Heights₂.Heights.HilbertSamuel.AnResBridge
-
-open ReciprocityTheory.ChartRestriction.G.Geo
-
-open MvPolynomial MeasureTheory ReciprocityTheory.AnForm.M Topology Filter
-
-variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
-  {P J : Ideal (MRing ι)} {e : ℕ}
-  (R : AnRes P J e) (Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) → ℂ))
-
-theorem exists_sheet_brW (L : Fin e → HermLine ι) (A : HermLine ι) (s : MRing ι)
-    (hP : IsArithVar P (e + 1)) (hL : ∀ j, IsSmoothHerm (L j)) (hs : IsSectionOn P A s)
-    (x : R.X) (hx : x ∉ brBad R Ψ) :
-    ∃ γ : (Fin e → ℂ) → (Σ k, ι k) → ℂ, IsSheet P Ψ (brQ R Ψ x) (brW R Ψ x) γ ∧
-      logNorm A s (γ (brQ R Ψ x)) * maDensity (fun j y' => pot L j (γ y')) (brQ R Ψ x) =
-        logNorm A s (R.lift x x) * pushDens R.A (fun j => potOf R (L j)) (brQ R Ψ) x := by
-  exact exists_sheet_of_resolution R Ψ L A s hP hL hs x hx
-
-end GroundTheory.Heights₂.Heights.HilbertSamuel.AnResBridge
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -223,7 +204,7 @@ theorem brFibreSum_ae (R : AnRes P J e) (Ψ : (((k : K) → ι k) → ℂ) →�
   rw [hfib, finsum_mem_image ((brW_injOn R Ψ).mono (by exact fun x hx => show _ ∧ _ from
     ⟨notMemB_of_notMem_brBad R Ψ hx.2, projection_zero_ne_of_notMem_bridgeBadSet R Ψ hx.2⟩))]
   refine finsum_mem_congr rfl fun x hx => ?_
-  obtain ⟨γ, hγ, hval⟩ := exists_sheet_brW R Ψ L A s hP hL hs x hx.2
+  obtain ⟨γ, hγ, hval⟩ := GroundTheory.Heights₂.Heights.HilbertSamuel.AnResBridge.exists_sheet_of_resolution R Ψ L A s hP hL hs x hx.2
   rw [show brQ R Ψ x = y from hx.1] at hγ hval
   unfold sheetDensity
   rw [dite_eq_left ⟨γ, hγ⟩]

@@ -3,54 +3,9 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.DividedPowerZeroOfGlActionZero
 public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.ColOKOfPath
 public import Formalism.SharpRestriction.GrowthBounds.ObjPol
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Formalism.SharpRestriction.GrowthBounds.ConclusionA2
 import Mathlib.Algebra.Order.Star.Int
 
@@ -127,7 +82,7 @@ lemma WI_rel (x y : Fin k → A) : Wop x * Iop y + Iop y * Wop x = (∑ a, x a *
     exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by rw [mul_comm (y b)]
   rw [h1, h2, ← Finset.sum_add_distrib]
   simp_rw [← Finset.sum_add_distrib, ← smul_add, wedge_contraction_anticommute]
-  simp only [smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true, Finset.sum_smul]
+  simp only [smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true, Finset.sum_smul]
 
 lemma IW_apply (x y : Fin k → A) (v : Finset (Fin k) → A) :
     Iop y (Wop x v) = (∑ a, x a * y a) • v - Wop x (Iop y v) := by
@@ -213,7 +168,7 @@ lemma img_wedge (m : Matrix (Fin k) (Fin k) A) (I : Finset (Fin k)) :
           · exact hb x hx
         have hba : b ∉ insert a s := by simp [Ne.symm hab, hbs]
         rw [himg, hanti, (ih a).2 has, map_smul, Wop_apply, ← img_insert_max m b (insert a s) hins,
-          Finset.insert_comm a b s, exterior_sign_insert b a (insert a s), if_pos ⟨hba, hlt⟩, neg_one_mul, neg_smul]
+          Finset.insert_comm a b s, exterior_sign_insert b a (insert a s), ite_eq_left ⟨hba, hlt⟩, neg_one_mul, neg_smul]
       · have hins : ∀ x ∈ insert b s, x < a := by
           intro x hx
           rcases Finset.mem_insert.1 hx with rfl | hx
@@ -244,20 +199,20 @@ lemma w_single (a : Fin k) (I : Finset (Fin k)) (c : A) :
   funext J
   rw [exterior_wedge_apply]
   by_cases haI : a ∈ I
-  · rw [if_pos haI, Pi.zero_apply]
+  · rw [ite_eq_left haI, Pi.zero_apply]
     split_ifs with haJ
-    · rw [Pi.single_apply, if_neg (fun h => by rw [← h] at haI; simp at haI), mul_zero]
+    · rw [Pi.single_apply, ite_eq_right (fun h => by rw [← h] at haI; simp at haI), mul_zero]
     · rfl
-  · rw [if_neg haI]
+  · rw [ite_eq_right haI]
     by_cases haJ : a ∈ J
-    · rw [if_pos haJ]
+    · rw [ite_eq_left haJ]
       by_cases hJ : J = insert a I
       · subst hJ
         rw [Finset.erase_insert haI]
         simp
       · have hne : J.erase a ≠ I := fun h => hJ (by rw [← h, Finset.insert_erase haJ])
-        rw [Pi.single_apply, if_neg hne, Pi.single_apply, if_neg hJ, mul_zero]
-    · rw [if_neg haJ, Pi.single_apply, if_neg (fun (h : J = insert a I) => haJ (h ▸ Finset.mem_insert_self a I))]
+        rw [Pi.single_apply, ite_eq_right hne, Pi.single_apply, ite_eq_right hJ, mul_zero]
+    · rw [ite_eq_right haJ, Pi.single_apply, ite_eq_right (fun (h : J = insert a I) => haJ (h ▸ Finset.mem_insert_self a I))]
 
 lemma LamL_w_single (m : Matrix (Fin k) (Fin k) A) (a : Fin k) (I : Finset (Fin k)) (c : A) :
     LamL m (exteriorWedge A a (Pi.single I c)) = c • Wop (m a) (img m I) := by
@@ -294,7 +249,7 @@ lemma extOne_eq : (extOne : Finset (Fin k) → A) = Pi.single ∅ 1 := by
 
 lemma single_insert_max (b : Fin k) (I : Finset (Fin k)) (hb : ∀ x ∈ I, x < b) (c : A) :
     (Pi.single (insert b I) c : Finset (Fin k) → A) = Wop (Pi.single b 1) (Pi.single I c) := by
-  rw [← w_eq_Wop, w_single, if_neg (fun h => lt_irrefl b (hb b h)), sg_top b I hb, one_mul]
+  rw [← w_eq_Wop, w_single, ite_eq_right (fun h => lt_irrefl b (hb b h)), sg_top b I hb, one_mul]
 
 lemma img_one (I : Finset (Fin k)) : img (1 : Matrix (Fin k) (Fin k) A) I = Pi.single I 1 := by
   induction I using Finset.induction_on_max with
@@ -605,7 +560,7 @@ theorem Ord_main (p : ℕ) (hp0 : p ≠ 0) {O : Type} [CommRing O] [IsDomain O] 
     have ih' := ih (by omega)
     by_cases hu : colH (mu ⟨j, by omega⟩) c = colH (mu ⟨j + 1, by omega⟩) c
     · have hnc : ¬ IsCostly mu c ⟨j, h⟩ := fun hc => costly_used mu c _ hc hu
-      rw [ZZ_unused p _ _ mu c s j h hu, oS_succ p _ mu c s j h, if_neg hnc, add_zero, ← hu]
+      rw [ZZ_unused p _ _ mu c s j h hu, oS_succ p _ mu c s j h, ite_eq_right hnc, add_zero, ← hu]
       exact ih' s (fun i hi => hs i (by omega)) J
     · set s0 := LL.pos ⟨j, h⟩ with hs0
       have hs0s : s0 ≤ s := hs ⟨j, h⟩ (by simp) hu
@@ -625,7 +580,6 @@ theorem Ord_main (p : ℕ) (hp0 : p ≠ 0) {O : Type} [CommRing O] [IsDomain O] 
         · have hs1 : ∀ i : Fin N, i.val < j → IsUsed mu c i → LL.pos i ≤ s0 - 1 := fun i hi hui => by
             have := hposc i ⟨j, h⟩ (Fin.lt_def.mpr (by simpa using hi)) hui hc
             omega
-          have e1 : (s0 - (s0 - 1)).toNat = 1 := by omega
           have hpw := ts.pw (s0 - 1) s0 (ZZ p ζ LL.pos mu c j (s0 - 1)) (oS p LL.pos mu c j (s0 - 1)) (by omega)
             (fun J => (ih' (s0 - 1) hs1 J).1)
           rw [← ZZ_pow p hp0 _ _ mu c j (by omega) (s0 - 1) s0 (by omega) hs1,
@@ -635,7 +589,7 @@ theorem Ord_main (p : ℕ) (hp0 : p ≠ 0) {O : Type} [CommRing O] [IsDomain O] 
           have d2 : ∀ J', ¬ NmH c (colH (mu ⟨j, by omega⟩) c) J' →
               C w ^ (oS p LL.pos mu c j s0 + 2) ∣ ts.T s0 (ZZ p ζ LL.pos mu c j s0) J' :=
             fun J' hn => ((hpw J').2 ((ih' (s0 - 1) hs1 J').2 hn)).2 (by omega)
-          rw [if_pos hc, ← hs0]
+          rw [ite_eq_left hc, ← hs0]
           simp only [sub_self, Int.toNat_zero, pow_zero]
           have tcond : ∀ m J', condUS LL ⟨j, h⟩ m → C w ^ (oS p LL.pos mu c j s0 + 1) ∣
               yO w LL ⟨j, h⟩ m * ts.T s0 (ZZ p ζ LL.pos mu c j s0) J' := fun m J' hm => by
@@ -655,7 +609,7 @@ theorem Ord_main (p : ℕ) (hp0 : p ≠ 0) {O : Type} [CommRing O] [IsDomain O] 
                 fun hw hmJ => Dvd.dvd.mul_left (d2 _ (hv.2 hw hmJ)) _⟩
         · have d0 := fun J' => (ih' s0 hprev J').1
           have d1 := fun J' => (ih' s0 hprev J').2
-          rw [if_neg hc, add_zero]
+          rw [ite_eq_right hc, add_zero]
           refine ⟨colStep_dvd _ c _ _ hu _ _ J fun m =>
             ⟨fun _ _ => Dvd.dvd.mul_left (d0 _) _, fun _ _ => Dvd.dvd.mul_left (d0 _) _⟩,
             fun hn => colStep_dvd _ c _ _ hu _ _ J fun m => ?_⟩
@@ -851,7 +805,7 @@ def mkTS (hF : FrobCong p f) (S : UniformizedDVR p O) (hsq : S.SqP) (c : ℤ) (m
     unfold extOne
     by_cases hI : I = ∅
     · subst hI; rw [Lam_empty _ J hJ]; simp
-    · rw [if_neg hI]; simp
+    · rw [ite_eq_right hI]; simp
   pw := by
     intro s s' Kv o hs hd J
     have hW : (C S.w : MvPolynomial (Fin N × Fin (r + K)) O) ≠ 0 := by
@@ -894,7 +848,7 @@ lemma lift_substitution_letter (w : O) (LL : LiftLetters (Fin N)) (g g' : Matrix
   unfold letG zetaL
   by_cases hv : LL.vec i = true
   · set_option synthInstance.maxHeartbeats 100000 in
-      rw [if_pos hv, if_pos hv, map_sum]
+      rw [ite_eq_left hv, ite_eq_left hv, map_sum]
 
     simp only [map_mul, liftSubst_X_vec p f O w LL r g' hg' i _ hv, algHom_C, Matrix.vecMul, dotProduct, map_sum,
     Matrix.map_apply, phiS, RingHom.comp_apply, map_C, yO, map_X]
@@ -908,7 +862,7 @@ lemma lift_substitution_letter (w : O) (LL : LiftLetters (Fin N)) (g g' : Matrix
       rw [MvPolynomial.algebraMap_eq]; ring
   · have hv' : LL.vec i = false := by simpa using hv
 
-    rw [if_neg hv, if_neg hv, map_sum, sigMat_inv p f O g hg]
+    rw [ite_eq_right hv, ite_eq_right hv, map_sum, sigMat_inv p f O g hg]
 
     simp only [map_mul, liftSubst_X_cov p f O w LL r g' i _ hv', algHom_C, Matrix.mulVec, dotProduct, map_sum,
     Matrix.map_apply, phiS, RingHom.comp_apply, map_C, yO, map_X]
@@ -949,11 +903,11 @@ theorem lifted_column_order (hF : FrobCong p f) (S : UniformizedDVR p O) (hsq : 
   have vecZ : ∀ i, LL.vec i = true → Matrix.vecMul (zetaL p f S.w LL g g' i)
       ((g⁻¹ * g').map (phiS p f O N r K (LL.pos i))) = yO S.w LL i := by
     intro i hv
-    unfold zetaL; rw [if_pos hv, Matrix.vecMul_vecMul, map_inv_one _ _ _ a2, Matrix.vecMul_one]
+    unfold zetaL; rw [ite_eq_left hv, Matrix.vecMul_vecMul, map_inv_one _ _ _ a2, Matrix.vecMul_one]
   have covZ : ∀ i, LL.vec i = false → Matrix.mulVec ((g'⁻¹ * g).map (phiS p f O N r K (LL.pos i)))
       (zetaL p f S.w LL g g' i) = yO S.w LL i := by
     intro i hv
-    unfold zetaL; rw [if_neg (by simp [hv]), Matrix.mulVec_mulVec, map_inv_one _ _ _ a2, Matrix.one_mulVec]
+    unfold zetaL; rw [ite_eq_right (by simp [hv]), Matrix.mulVec_mulVec, map_inv_one _ _ _ a2, Matrix.one_mulVec]
   have hts : Nonempty (TS p (C S.w : MvPolynomial (Fin N × Fin (r + K)) O) c mu LL.pos (zetaL p f S.w LL g g')
       (yO S.w LL)) := by
     by_cases hc : 1 ≤ c

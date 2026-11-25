@@ -68,7 +68,7 @@ theorem RootGridLower.average {e M : ℕ} (hM : 0 < M) {ω : ℂ} (hω : IsPrimi
         by_contra h
         push Not at h
         exact hdj (Finsupp.ext h)
-      exact Finset.prod_eq_zero (Finset.mem_univ i) (if_neg hi)
+      exact Finset.prod_eq_zero (Finset.mem_univ i) (ite_eq_right hi)
   rw [Finset.sum_congr rfl key]
   simp_rw [mul_ite, mul_zero]
   rw [Finset.sum_ite_eq']

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.NormBcharMulNfacRmul
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.PnormInvStatement
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
@@ -18,19 +19,7 @@ noncomputable section
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
 theorem normFactor_rightBorel_holds : NfacRmulStatement (E := E) := by
-  unfold NfacRmulStatement
-  intro r X la x hx b hb
-  have key : ∀ (τ : X.Ψ) (i : Fin r),
-      ‖dmin X.Gm (rmul x b) τ i.succ / dmin X.Gm (rmul x b) τ i.castSucc‖ ^ (-(la τ i : ℝ) / 2)
-        = (‖b τ i i‖ ^ la τ i)⁻¹ *
-          ‖dmin X.Gm x τ i.succ / dmin X.Gm x τ i.castSucc‖ ^ (-(la τ i : ℝ) / 2) := by
-    intro τ i
-    have ht : 0 < ‖b τ i i‖ := norm_pos_iff.mpr (FrameDegreeData.bdiag_ne (X := X) hb τ i)
-    rw [FrameDegreeData.ratio_rmul (X := X) x hx hb τ i, eq_inv_mul_iff_mul_eq₀ (zpow_ne_zero _ ht.ne')]
-    exact FrameDegreeData.factor_eq _ _ ht (norm_nonneg _) (la τ i)
-  have hbc : ‖bchar la b‖ = ∏ τ, ∏ i, ‖b τ i i‖ ^ la τ i := by
-    simp only [bchar, norm_prod, norm_zpow]
-  simp only [Data.nfac, key, Finset.prod_mul_distrib, Finset.prod_inv_distrib, hbc]
+  apply GlobalTheory.NormFactor.nfacRmul_holds <;> assumption
 
 private theorem sum_mul_gram_mul_cc_of_isUStab {r : ℕ} (G : Matrix (Fin r) (Fin r) E)
     (Λ : Submodule (𝓞 E) (Fin r → E)) (γ : GL (Fin r) E) (hγ : IsUStab G Λ γ) (j l : Fin r) :
@@ -120,30 +109,7 @@ theorem normFactor_leftAction_holds : NfacLactStatement (E := E) := by
   simp only [Data.nfac, dmin_lact_of_mem_Γ X γ hγ]
 
 theorem pointwiseNorm_invariance_holds : PnormInvStatement (E := E) := by
-  unfold PnormInvStatement
-  intro r X la P hP γ hγ x hx b hb
-  obtain ⟨-, hPr, hPl⟩ := hP
-  have hlx : lact γ x ∈ X.dom := by
-    refine fun τ => ⟨?_, fun i => ?_⟩
-    · have hm : mat (lact γ x) τ = (γ : Matrix (Fin r) (Fin r) E).map τ.1 * mat x τ := rfl
-      have hd : ((γ : Matrix (Fin r) (Fin r) E).map τ.1).det = τ.1 (γ : Matrix (Fin r) (Fin r) E).det :=
-        (RingHom.map_det τ.1 _).symm
-      rw [hm, Matrix.det_mul, hd]
-      exact mul_ne_zero ((map_ne_zero τ.1).mpr
-        ((Matrix.isUnit_iff_isUnit_det _).mp (Units.isUnit γ)).ne_zero) (hx τ).1
-    · rw [dmin_lact_of_mem_Γ X γ hγ]
-      exact (hx τ).2 i
-  have hcomm : lact γ (rmul x b) = rmul (lact γ x) b := by
-    funext τ
-    show ((γ : Matrix (Fin r) (Fin r) E).map τ.1 * (mat x τ * mat b τ) : Matrix (Fin r) (Fin r) ℂ)
-      = ((γ : Matrix (Fin r) (Fin r) E).map τ.1 * mat x τ) * mat b τ
-    exact (Matrix.mul_assoc _ _ _).symm
-  have hN : ∀ y : Frame X.Ψ r, X.pnorm la P y = ‖P y‖ * X.nfac la y := fun _ => rfl
-  obtain ⟨n, hn, hpow⟩ := X.χ_fin la
-  have h1 : ‖X.χ la γ‖ ^ n = 1 := by rw [← norm_pow, hpow γ hγ, norm_one]
-  have hχ : ‖X.χ la γ‖ = 1 := (pow_eq_one_iff_of_nonneg (norm_nonneg _) hn.ne').mp h1
-  rw [hcomm, FrameDegreeData.pnorm_rmul (X := X) la P hPr (lact γ x) hlx b hb, hN, hN, hPl γ hγ x hx,
-    normFactor_leftAction_holds r X la γ hγ x hx, norm_mul, hχ, one_mul]
+  apply GlobalTheory.NormFactor.pnormInv_holds <;> assumption
 
 end
 

@@ -149,7 +149,6 @@ theorem exists_basis (n : ℕ) (L : Submodule (𝓞 E) (Fin n → E)) (hL : Subm
 
 end GlobalTheory.HermLocDualBasis
 
-
 open GlobalTheory.HermLocDualBasis in
 theorem GlobalTheory.HermLocDualBasis.exists_locDualBasis : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E]
     [Algebra F E] (σ : E →ₐ[F] E)
@@ -188,7 +187,7 @@ theorem GlobalTheory.HermLocDualBasis.exists_locDualBasis : ∀ (F E : Type) [Fi
     rw [← e1]
     exact hc
   rw [form_smul_left, ← AlgHom.commutes σ, ← form_smul_right, ← hc', form_sum_right]
-  simp only [hdual, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [hdual, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   exact (c k).2.map (σ.toRingHom.toIntAlgHom)
 
 end
@@ -263,14 +262,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-namespace GlobalTheory.IntSmulMemSubmodule
-
-theorem exists_int_smul_mem {E : Type} [inst : Field E] [NumberField E] {n : ℕ}
-    (L : Submodule (NumberField.RingOfIntegers E) (Fin n → E)) (hL : Submodule.IsFullLattice E L)
-    (w : Fin n → E) : ∃ (N : ℤ), N ≠ (0 : ℤ) ∧ N • w ∈ L := by
-  apply GlobalTheory.LatAlmostAll.exists_int_smul_mem <;> assumption
-
-end GlobalTheory.IntSmulMemSubmodule
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.FlagMeasures.ImportsBisSide =====
@@ -327,8 +318,8 @@ theorem core {n d : ℕ} (X : Spc F E n) (Y : Spc F E d) (hX : X.L.IsFullLattice
     (i : Fin n) (j : Fin d) (t : Fv F v) (x : E) :
     ∃ X₀ : Matrix (Fin n) (Fin d) E,
       Matrix.single i j (GlobalTheory.EmbChart.atPlace v t ⊗ₜ[F] x) - GlobalTheory.EmbChart.atPlace v 1 • incM F X₀ ∈ latAtV X Y v := by
-  obtain ⟨N, hN, hNx⟩ := _root_.GlobalTheory.IntSmulMemSubmodule.exists_int_smul_mem X.L hX (Pi.single i x)
-  obtain ⟨N', hN', hNy⟩ := _root_.GlobalTheory.IntSmulMemSubmodule.exists_int_smul_mem Y.L hY (Pi.single j 1)
+  obtain ⟨N, hN, hNx⟩ := _root_.GlobalTheory.IntegerMultipleMembership.exists_int_smul_mem X.L hX (Pi.single i x)
+  obtain ⟨N', hN', hNy⟩ := _root_.GlobalTheory.IntegerMultipleMembership.exists_int_smul_mem Y.L hY (Pi.single j 1)
   have hK : ((N * N' : ℤ) : F) ≠ 0 := Int.cast_ne_zero.2 (mul_ne_zero hN hN')
   obtain ⟨s, hs⟩ := exists_sub_mem v t hK
   set r := (algebraMap F (Fv F v) ((N * N' : ℤ) : F))⁻¹ * (t - algebraMap F (Fv F v) s) with hr
@@ -342,7 +333,7 @@ theorem core {n d : ℕ} (X : Spc F E n) (Y : Spc F E d) (hX : X.L.IsFullLattice
       simp only [Matrix.vecMulVec_apply, Pi.smul_apply, Pi.single_apply, Matrix.single_apply]
       by_cases h1 : a = i <;> by_cases h2 : b = j
       · subst h1 h2
-        simp only [if_true, and_self]
+        simp only [ite_true, and_self]
         rw [Algebra.smul_def (A := E) ((N * N' : ℤ) : F), map_intCast]
         simp only [zsmul_eq_mul, mul_one]; push_cast; ring
       all_goals simp [h1, h2, eq_comm (a := i), eq_comm (a := j)]
@@ -460,7 +451,7 @@ theorem GlobalTheory.SkewLocDual.exists_smul_mem_of_integral : ∀ (F E : Type) 
   choose! T hT using fun y (hy : y ∈ S) => hu y (hgen y hy)
   have ht : (∏ y ∈ S, T y) ∉ v.asIdeal := by
     rw [Ideal.IsPrime.prod_mem_iff]
-    push_neg
+    push Not
     exact fun y hy => (hT y hy).1
   have key : ∀ y ∈ Y.L,
       IsIntegral ℤ (algebraMap F E ((∏ y ∈ S, T y : 𝓞 F) : F) * form σ Y.J u y) := by
@@ -593,14 +584,6 @@ theorem decomp_sum (σ : E →ₐ[F] E) {n d : ℕ} (J : Matrix (Fin n) (Fin n) 
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun m _ => ?_
   ring
 
-theorem incM_smul {m k : Type} (c : F) (Z : Matrix m k E) : incM F (c • Z) = algebraMap F (AF F) c • incM F Z := by
-  ext i j
-  simp only [incM, Matrix.map_apply, Matrix.smul_apply]
-  rw [Algebra.smul_def c, Algebra.smul_def (algebraMap F (AF F) c), map_mul]
-  congr 1
-  rw [← IsScalarTower.algebraMap_apply]
-  exact (Algebra.TensorProduct.includeRight : E →ₐ[F] AF F ⊗[F] E).commutes c
-
 theorem inv_mem_O {v : Pl (F := F)} {t : 𝓞 F} (ht : t ∉ v.asIdeal) :
     algebraMap F (Fv F v) ((t : F))⁻¹ ∈ v.adicCompletionIntegers F := by
   rw [HeightOneSpectrum.mem_adicCompletionIntegers]
@@ -679,7 +662,7 @@ theorem lemD (σ : E →ₐ[F] E) (B : Base F E) {n d r s r' s' : ℕ} (X : Spc 
     hpX k, _, hwY k, ?_⟩
   · rw [GlobalTheory.EmbChart.evFin_atPlace]
     exact inv_mem_O hc0
-  · rw [hvm, incM_smul, smul_smul, GlobalTheory.EmbChart.atPlace_mul_right, one_mul, AlgHom.commutes]
+  · rw [hvm, GlobalTheory.MixXEvUniq.incM_smul, smul_smul, GlobalTheory.EmbChart.atPlace_mul_right, one_mul, AlgHom.commutes]
 
 theorem latAtV_selfDual : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E)
     (a a' : ℕ) (G : Geo σ a a') (X : Chars F E) (om : Rep σ G.V G.W) (om' : Rep σ G.V' G.W), IsTriple B G X om om' →
@@ -758,7 +741,7 @@ theorem exists_nhds_translate_eq {V : Type} [AddCommGroup V] [TopologicalSpace V
     rw [show x + (z - x) = z by abel] at e1
     rw [show x + (z + u - x) = z + u by abel] at e2
     rw [e1, e2]
-  · push_neg at hz
+  · push Not at hz
     have h1 : z ∉ tsupport f := fun h => by
       obtain ⟨x, hx, hzx⟩ := Set.mem_iUnion₂.mp (ht h)
       exact hz x hx hzx
@@ -836,8 +819,7 @@ theorem support_compact : ∀ {F : Type} [Field F] [NumberField F] (v : Pl (F :=
       exact sub_eq_zero.1 ((mul_eq_zero.1 h0).resolve_right hne)
     refine ⟨?_, ?_⟩
     · have hex : ∃ y, schr ψ₀ (a, b) φ y * (starRingEnd ℂ) (g y) ≠ 0 := by
-        by_contra h
-        push_neg at h
+        by_contra! h
         exact hne (by simp [h])
       obtain ⟨y, hy⟩ := hex
       have h1 : φ (y + a) ≠ 0 := fun h => hy (by simp [schr, h])
@@ -865,7 +847,6 @@ open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.Genus
 open scoped TensorProduct Matrix GlobalTheory.VacAny
 
 open MeasureTheory ComplexConjugate
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 namespace GlobalTheory.LagLocForm
@@ -1362,7 +1343,7 @@ theorem inv_of_heisInv : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [N
   obtain ⟨φ₀, hφ₀, hline⟩ := _root_.GlobalTheory.InertLagUniq.exists_test F E σ a' (a + a') G.V' G.W G.M' B.ψ v (hT.base.inert v w hin).2.2 m C hC
   by_cases hz : ∀ f ∈ SB (Fin a' × Fin (a + a') → Fv F v), l f = 0
   · rw [hz φ₁ hφ₁, hz φ hφ]
-  push_neg at hz
+  push Not at hz
   have hl0 : l φ₀ ≠ 0 := fun h => by
     obtain ⟨f, hf, hne⟩ := hz; exact hne (hline l hl h f hf)
   let c : UA σ G.V'.J → ℂ := fun g => l (Sop g φ₀) / l φ₀
@@ -1563,7 +1544,7 @@ theorem acts_vacCond_of_mem_KAt_left : ∀ (F E : Type) [Field F] [NumberField F
     rw [smul_zero, e0]
     funext x
     simp [Darboux.rho, schr]
-  have hrφ : Rest (evFin F v) φ r := GlobalTheory.T.complementaryAdelicSchwartz_of_nonzero_local v φ₁ φ r h0 hφ hr
+  have hrφ : Rest (evFin F v) φ r := GlobalTheory.RestCofactor.rest_of_rest v φ₁ φ r h0 hφ hr
   set γ' := actAB (cA σ) (k⁻¹, (1 : UA σ G.W.J)) γ
   have eγ' : γ' = mat k⁻¹ * γ := by
     simp [γ', actAB, mat]

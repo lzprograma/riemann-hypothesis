@@ -266,13 +266,11 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.pairF :
   haveI : IsFiniteMeasure (fd μ₂) := isFiniteMeasure_restrict.2 (measure_fundamentalDomain_pos_lt_top (Gam K 2) μ₂).2.ne
   haveI : SigmaFinite (fd μ₂) := IsFiniteMeasure.toSigmaFinite _
   haveI : SFinite (fd μ₂) := by
-    set_option synthInstance.maxHeartbeats 400000 in
       exact inferInstance
   haveI : CompactSpace (KG K (2 + 2)) := isCompact_iff_compactSpace.1 ((blkLaws (K := K)).2.2.2.2.2.2.2.2.2.2.2 (2 + 2)).1
   haveI : IsFiniteMeasure κ := CompactSpace.isFiniteMeasure
   haveI : SigmaFinite κ := IsFiniteMeasure.toSigmaFinite _
   haveI : SFinite κ := by
-    set_option synthInstance.maxHeartbeats 400000 in
       exact inferInstance
   haveI : SecondCountableTopology (KG K (2 + 2)) := TopologicalSpace.Subtype.secondCountableTopology _
   obtain ⟨C, hC⟩ := hf.bdd

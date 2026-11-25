@@ -46,7 +46,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 open TensorProduct IsLocalRing Matrix CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Be2 ReciprocityTheory.ChartRestriction.G.Chart
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.ChLaw
 
@@ -108,7 +107,7 @@ theorem groupLaw_powerSeries :
         else 0) (by
         intro S _ _ S' _ _ φ u hu
         have hu' : ∀ i, IsNilpotent (φ (u i)) := fun i => (hu i).map φ
-        simp only [dif_pos hu, dif_pos hu']
+        simp only [dite_eq_left hu, dite_eq_left hu']
         have := hinj S'
           (fun j => φ (cc S (fun i => u (Sum.inl i)) (fun i => u (Sum.inr i))
             (fun _ => hu _) (fun _ => hu _) j))
@@ -120,7 +119,7 @@ theorem groupLaw_powerSeries :
         exact congrFun this k)
     refine ⟨f, fun S _ _ u hu => ?_⟩
     have := hf S u hu
-    simpa only [dif_pos hu] using this
+    simpa only [dite_eq_left hu] using this
   choose F hF using hF
   refine ⟨F, fun S _ _ a b ha hb => ?_⟩
   have e : fAdd F a b = cc S a b ha hb := by

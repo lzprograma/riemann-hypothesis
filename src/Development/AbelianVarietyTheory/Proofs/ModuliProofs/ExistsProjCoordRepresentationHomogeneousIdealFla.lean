@@ -165,12 +165,6 @@ variable {R A : Type} [CommRing R] [CommRing A] {n : ℕ}
 
 attribute [local instance] MvPolynomial.gradedAlgebra
 
-theorem baseRingHom_spMap (c : R →+* A) (W : (Sp A).Opens) :
-    (baseRingHom (spMap c) W).hom = (fnOn W).comp c := by
-  have h := baseRingHom_comp_SpecMap (𝟙 (Sp A)) (CommRingCat.ofHom c) W
-  rw [Category.id_comp] at h
-  exact congrArg CommRingCat.Hom.hom h
-
 theorem appLE_pt_aeval (c : R →+* A) (v : Fin (n + 1) → A) (hv : Ideal.span (Set.range v) = ⊤) (i : Fin (n + 1))
     {W : (Sp A).Opens} (h : W ≤ pt c v hv ⁻¹ᵁ chart R n i) {t : ℕ} {G : MvPolynomial (Fin (n + 1)) R}
     (hG : G.IsHomogeneous t) :

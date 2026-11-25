@@ -56,14 +56,14 @@ variable {m k l : ℕ}
 theorem omE_pp {p q r s : ℕ} (u v : Ln p q r s) (hu : linePos u = true) (hv : linePos v = true)
     (P : Pol p q r s) :
     omE u v P = X u * pderiv v P + (if u = v then (1 / 2 : ℂ) else 0) • P := by
-  simp only [omE, raiB, lowB, hu, hv, if_true]
+  simp only [omE, raiB, lowB, hu, hv, ite_true]
   split_ifs <;> simp
 
 theorem omE_nn {p q r s : ℕ} (u v : Ln p q r s) (hu : linePos u = false) (hv : linePos v = false)
     (P : Pol p q r s) :
     omE u v P = -(X v * pderiv u P) - (if u = v then (1 / 2 : ℂ) else 0) • P := by
   have : omE u v P = -(pderiv u (X v * P)) + (if u = v then (1 / 2 : ℂ) else 0) • P := by
-    simp only [omE, raiB, lowB, hu, hv, Bool.false_eq_true, if_false]
+    simp only [omE, raiB, lowB, hu, hv, Bool.false_eq_true, ite_false]
     split_ifs <;> simp
   rw [this, pderiv_X_mul']
   split_ifs

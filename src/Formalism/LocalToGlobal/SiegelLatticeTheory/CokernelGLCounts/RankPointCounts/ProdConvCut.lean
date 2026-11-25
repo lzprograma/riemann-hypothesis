@@ -18,9 +18,3 @@ def AlConvC : Prop :=
   Multipliable (fun v : OrdX X => alX X u u' v.1) ∧ 0 < ∏' v : OrdX X, alX X u u' v.1
 
 end Formalism.L2.SG.Pf.ProdConvCut
-
-namespace Formalism.L2.SG.Pf
-
-open Formalism.BasicNotions Formalism.L2.SG.HidaSetting Formalism.L2.SG.TypedSets Formalism.L2.SG.LocVol Formalism.L2.SG.Pf.ProdConvCut
-
-end Formalism.L2.SG.Pf

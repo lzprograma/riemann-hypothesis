@@ -19,11 +19,8 @@ variable {n : ℕ}
 theorem sgn_mul_sgn_of_lt {K : Finset (Fin n)} {j k : Fin n} (hj : j ∈ K) (hjk : j < k) :
     Cech.sgn K k * Cech.sgn (K.erase k) j = -(Cech.sgn K j * Cech.sgn (K.erase j) k) := by
   have h1 : (K.erase k).filter (· < j) = K.filter (· < j) := by
-    ext z
-    simp only [Finset.mem_filter, Finset.mem_erase]
-    constructor
-    · rintro ⟨⟨-, hz⟩, hzj⟩; exact ⟨hz, hzj⟩
-    · rintro ⟨hz, hzj⟩; exact ⟨⟨(hzj.trans hjk).ne, hz⟩, hzj⟩
+    rw [Finset.filter_erase]
+    exact Finset.erase_eq_of_notMem fun hk => lt_asymm hjk (Finset.mem_filter.1 hk).2
   have h3 : j ∈ K.filter (· < k) := Finset.mem_filter.2 ⟨hj, hjk⟩
   have h2 : ((K.erase j).filter (· < k)).card + 1 = (K.filter (· < k)).card := by
     rw [Finset.filter_erase, Finset.card_erase_add_one h3]

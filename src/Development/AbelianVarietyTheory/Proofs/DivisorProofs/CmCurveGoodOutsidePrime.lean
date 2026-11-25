@@ -472,8 +472,8 @@ namespace GlobalTheory.CMModel
 theorem exists_prime_natCast_mem_pow_of_ringHom :
     ∀ (F H : Type) [Field F] [NumberField F] [Field H] [NumberField H] (f : F →+* H) (w : HeightOneSpectrum (𝓞 F)) (p n : ℕ), (p : 𝓞 F) ∈ w.asIdeal ^ n → ∃ P : Ideal (𝓞 H), P.IsPrime ∧ P ≠ ⊥ ∧ (p : 𝓞 H) ∈ P ^ n := by
   intro F H _ _ _ _ f w p n hp
-  letI : Algebra F H := f.toAlgebra
-  haveI := w.isMaximal
+  let : Algebra F H := f.toAlgebra
+  have := w.isMaximal
   obtain ⟨P, hPm, hP⟩ := Ideal.exists_maximal_ideal_liesOver_of_isIntegral (S := 𝓞 H) w.asIdeal
   refine ⟨P, hPm.isPrime, Ideal.ne_bot_of_liesOver_of_ne_bot w.ne_bot P, ?_⟩
   have hle : w.asIdeal.map (algebraMap (𝓞 F) (𝓞 H)) ≤ P := by
@@ -1208,13 +1208,13 @@ theorem GlobalTheory.CMModel.twist_modelAt_all : ∀ (p : ℕ) (F : Intermediate
       rw [show (⟨0, 0, 0, -L.g₂ / 4, -L.g₃ / 4⟩ : WeierstrassCurve ℂ) = latticeCurve L from rfl]
       linear_combination d ^ 6 * hjΔ
     by_cases h8 : p % 8 = 3
-    · have hd1 : d = 1 := by rw [hd, if_pos h8]
-      rw [if_pos h8] at hu
+    · have hd1 : d = 1 := by rw [hd, ite_eq_left h8]
+      rw [ite_eq_left h8] at hu
       refine _root_.GlobalTheory.CMModel.modelAt_short_of_six_unit V F _ _ _ u _ hj hjt h6 huF hu0 hDV ?_
       rw [short_Δ, hvD, hd1, one_pow, one_mul]
       exact hu
-    · have hdp : d = -(p : ℂ) := by rw [hd, if_neg h8]
-      rw [if_neg h8] at hu
+    · have hdp : d = -(p : ℂ) := by rw [hd, ite_eq_right h8]
+      rw [ite_eq_right h8] at hu
       refine _root_.GlobalTheory.CMModel.modelAt_short_of_six_unit V F _ _ _ (u * p) _ hj hjt h6 (mul_mem huF hpF) (mul_ne_zero hu0 hp0) hDV ?_
       rw [short_Δ, hvD, hdp]
       change V.valuation (u * p) ^ 12 * V.valuation (p : ℂ) ^ 3 = V.valuation ((-(p : ℂ)) ^ 6 * (latticeCurve L).Δ)
@@ -1274,8 +1274,8 @@ theorem cmCurveGoodOutsidePrime : CMCurveGoodOutsidePrimeSt := by
     exact (Real.sqrt_pos.mpr (by exact_mod_cast hp.pos)).ne'
   have hjint := _root_.GlobalTheory.CMModel.LatticeJInt.main L₀ (sqrtNegNat p) hms him
   have hjQ : IsIntegral ℚ (latticeCurve L₀).j := hjint.tower_top
-  haveI : FiniteDimensional ℚ ℚ⟮(latticeCurve L₀).j⟯ := IntermediateField.adjoin.finiteDimensional hjQ
-  haveI hNF : NumberField ℚ⟮(latticeCurve L₀).j⟯ := NumberField.of_module_finite ℚ _
+  have : FiniteDimensional ℚ ℚ⟮(latticeCurve L₀).j⟯ := IntermediateField.adjoin.finiteDimensional hjQ
+  have hNF : NumberField ℚ⟮(latticeCurve L₀).j⟯ := NumberField.of_module_finite ℚ _
   obtain ⟨L₁, t₁, hD₁, hj₁⟩ := _root_.GlobalTheory.CMModel.exists_datum_of_isIntegersLattice p L₀ hp h4 h3 hL₀
   obtain ⟨L, t, hD, hj, hsq⟩ := _root_.GlobalTheory.CMModel.exists_datum_sqProd_mem p _ L₁ t₁ hp h4 h3 hD₁
   set F := ℚ⟮(latticeCurve L₀).j⟯ with hFdef
@@ -1299,7 +1299,7 @@ theorem cmCurveGoodOutsidePrime : CMCurveGoodOutsidePrimeSt := by
     have := congrArg (algebraMap F ℂ) h0
     rw [← WeierstrassCurve.map_Δ, hmap, shortTwist_Δ, hlat, map_zero] at this
     exact mul_ne_zero (pow_ne_zero _ hdC0) (latticeCurve_Δ_ne_zero L) this
-  haveI hE : A.IsElliptic := ⟨Ne.isUnit hΔA⟩
+  have hE : A.IsElliptic := ⟨Ne.isUnit hΔA⟩
   have hmin : HasMinimalDiscriminant A (-(p : F) ^ 3) := by
     intro w
     obtain ⟨V, hV⟩ := _root_.GlobalTheory.CMModel.exists_valuationSubring_complex_over_prime F w
@@ -1314,8 +1314,8 @@ theorem cmCurveGoodOutsidePrime : CMCurveGoodOutsidePrimeSt := by
     exact ⟨C, u, _root_.GlobalTheory.CMModel.isMinimal_of_discr_eq_unit_mul_neg_cube p F w (C • A) u hram hI hΔ, hΔ⟩
   refine ⟨F, hNF, A, ⟨hNF, hE, L₀, hL₀, rfl, ?_, hmin.hasGoodReductionOutside⟩, hmin⟩
   have e1 : ((A.j : F) : ℂ) = (A.map (algebraMap F ℂ)).j := (A.map_j (algebraMap F ℂ)).symm
-  haveI : (shortTwist dC (-L.g₂ / 4) (-L.g₃ / 4)).IsElliptic := hmap ▸ inferInstance
-  haveI : (⟨0, 0, 0, -L.g₂ / 4, -L.g₃ / 4⟩ : WeierstrassCurve ℂ).IsElliptic :=
+  have : (shortTwist dC (-L.g₂ / 4) (-L.g₃ / 4)).IsElliptic := hmap ▸ inferInstance
+  have : (⟨0, 0, 0, -L.g₂ / 4, -L.g₃ / 4⟩ : WeierstrassCurve ℂ).IsElliptic :=
     inferInstanceAs (latticeCurve L).IsElliptic
   rw [e1, j_congr_of_eq hmap, shortTwist_j hdC0, j_congr_of_eq hlat, hj, hj₁]
 

@@ -64,8 +64,7 @@ theorem eq_of_isPrim_of_toReal_eq_smul : ∀ {O : Type} [CommRing O] (bar : O �
     rintro rfl
     exact not_isPrim_zero (bar := bar) py
   obtain ⟨a, c, hac⟩ : ∃ a c, y a c ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hy0 (LinearMap.ext₂ hc)
   have hR : ∀ u v, (x u v : ℝ) = b * (y u v : ℝ) := fun u v => by
     have := LinearMap.congr_fun₂ h u v
@@ -130,26 +129,25 @@ theorem exists_ray {p q : ℕ} {u : Fin p → LinearMap.BilinForm ℤ X} {v : Fi
     simp only [hB']; split_ifs <;> [exact hB l k'; exact le_rfl]
   have hterm : ∀ l, A l • toReal (v l) = A l • ∑ k', B' l k' • toReal (u k') := fun l => by
     rcases (hA l).lt_or_eq with hl | hl
-    · simp only [hB', if_pos hl]; rw [hBe l hl]
+    · simp only [hB', ite_eq_left hl]; rw [hBe l hl]
     · simp [← hl]
   have hsum : ∑ k', (if k' = k then (1 : ℝ) else 0) • toReal (u k') =
       ∑ k', (∑ l, A l * B' l k') • toReal (u k') := by
     rw [Finset.sum_eq_single k (fun b _ hb => by simp [hb]) (by simp)]
-    rw [if_pos rfl, one_smul, hk]
+    rw [ite_eq_left rfl, one_smul, hk]
     simp only [hterm, Finset.smul_sum, smul_smul, Finset.sum_smul]
     exact Finset.sum_comm
   have hc := eq_of_toReal_sum_eq hu hsum
   have hk1 : ∑ l, A l * B' l k = 1 := by simpa using (congrFun hc k).symm
   obtain ⟨l, -, hl⟩ : ∃ l ∈ Finset.univ, A l * B' l k ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     rw [Finset.sum_eq_zero hne] at hk1
     exact zero_ne_one hk1
   have hAl : 0 < A l := (hA l).lt_of_ne fun h0 => hl (by rw [← h0, zero_mul])
   have hoff : ∀ k', k' ≠ k → B l k' = 0 := fun k' hk' => by
     have h0 : ∑ l, A l * B' l k' = 0 := by simpa [hk'] using (congrFun hc k').symm
     have := (Finset.sum_eq_zero_iff_of_nonneg (fun l _ => mul_nonneg (hA l) (hB'0 l k'))).1 h0 l (Finset.mem_univ _)
-    simpa [hB', if_pos hAl, hAl.ne'] using this
+    simpa [hB', ite_eq_left hAl, hAl.ne'] using this
   have hvl : toReal (v l) = B l k • toReal (u k) := by
     rw [hBe l hAl, Finset.sum_eq_single k (fun b _ hb => by rw [hoff b hb, zero_smul]) (by simp)]
   refine ⟨l, hAl, B l k, (hB l k).lt_of_ne fun h0 => hv l (eq_zero_of_toReal_eq_zero ?_), hvl⟩

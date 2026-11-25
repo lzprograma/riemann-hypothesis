@@ -49,8 +49,6 @@ open scoped TensorProduct InnerProductSpace
 
 namespace GlobalTheory.Hk3
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def labIn (n : ℕ) (s : List ℕ) : List ℤ :=

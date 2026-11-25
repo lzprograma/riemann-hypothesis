@@ -49,14 +49,11 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSc
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.BoxKernel
 
@@ -138,21 +135,21 @@ theorem kTriv_boxLB : ∀ (S : Scheme.{0}) (G' G : Over S) [GrpObj G'] [IsCommMo
     refine congrArg (fun q => q.left) (show a k ≫ p.pr i' = fst T G ≫ b (k, i') from ?_)
     fin_cases k
     · show ((fst T G ≫ x) * (snd T G ≫ u)) ≫ p.pr i' = fst T G ≫ x ≫ p.pr i'
-      rw [MonObj.mul_comp, Category.assoc, Category.assoc, hu, if_neg hi, MonObj.comp_one, _root_.mul_one]
+      rw [MonObj.mul_comp, Category.assoc, Category.assoc, hu, ite_eq_right hi, MonObj.comp_one, _root_.mul_one]
     · show (snd T G ≫ u) ≫ p.pr i' = fst T G ≫ 1
-      rw [Category.assoc, hu, if_neg hi, MonObj.comp_one, MonObj.comp_one]
+      rw [Category.assoc, hu, ite_eq_right hi, MonObj.comp_one, MonObj.comp_one]
   have e₁ : ∀ k, (a k).left ≫ (p.pr i).left =
       (![(translPt G (x ≫ p.pr i)).left, (snd T G).left] : Fin 2 → _) k := fun k => by
     fin_cases k
     · refine congrArg (fun q => q.left)
         (show ((fst T G ≫ x) * (snd T G ≫ u)) ≫ p.pr i = (fst T G ≫ x ≫ p.pr i) * snd T G from ?_)
-      rw [MonObj.mul_comp, Category.assoc, Category.assoc, hu, if_pos rfl, Category.comp_id]
+      rw [MonObj.mul_comp, Category.assoc, Category.assoc, hu, ite_eq_left rfl, Category.comp_id]
     · refine congrArg (fun q => q.left) (show (snd T G ≫ u) ≫ p.pr i = snd T G from ?_)
-      rw [Category.assoc, hu, if_pos rfl, Category.comp_id]
+      rw [Category.assoc, hu, ite_eq_left rfl, Category.comp_id]
   rw [← Finset.prod_inv_distrib, ← Finset.prod_mul_distrib, Fintype.prod_prod_type]
   refine Finset.prod_congr rfl fun k _ => ?_
   rw [Finset.prod_eq_single i (fun i' _ hi => ?_) (fun hi => (hi (Finset.mem_univ _)).elim)]
-  · simp only [if_true, zpow_zero, inv_one, _root_.mul_one, e₁]
-  · simp only [if_neg hi, e₀ k i' hi, mul_inv_cancel]
+  · simp only [ite_true, zpow_zero, inv_one, _root_.mul_one, e₁]
+  · simp only [ite_eq_right hi, e₀ k i' hi, mul_inv_cancel]
 
 end GlobalTheory

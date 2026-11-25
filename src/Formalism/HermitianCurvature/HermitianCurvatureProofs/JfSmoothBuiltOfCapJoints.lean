@@ -12,65 +12,17 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerFi
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactZeroHolds
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftGeneratorWordEvaluation
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.FormalDegreeBessel.FinalG
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.LinearAlgebra.Lagrange
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexifiedDerivativeCommutator
-import Mathlib.Order.CompletePartialOrder
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
-import Mathlib.Tactic.Lemma
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
-import Mathlib.RingTheory.PiTensorProduct
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliVectorAsGenerators, Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartCovarianceHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.CoefficientInterpolationHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.DerivativeLocalRepresentative, Formalism.HermitianCurvature.HermitianCurvatureProofs.DeterminantShiftCoefficient, Formalism.HermitianCurvature.HermitianCurvatureProofs.ExponentialDegreeHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.ExponentialSymbolHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameExistence, Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftCapelliAsGenerators, Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftCovarianceChartHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.NilpotentLieFiniteHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.NilpotentOfCharPoly, Formalism.HermitianCurvature.HermitianCurvatureProofs.RightCapelliAsGenerators, Formalism.HermitianCurvature.HermitianCurvatureProofs.RightChartHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.RightGeneratorWordEvaluation, Formalism.HermitianCurvature.HermitianCurvatureProofs.SymbolOperatorFieldHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.SymbolOperatorLiftHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.SymbolOperatorLinearHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorToSymbolOperator, Formalism.HermitianCurvature.HermitianCurvatureProofs.OpCapLOfOf, Formalism.HermitianCurvature.HermitianCurvatureProofs.WordFamilySymbolHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.JfSmoothBuiltOfCapJoints
@@ -86,8 +38,6 @@ open scoped ContDiff Topology
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem cvag_posL_iff {k r : ℕ} (a b : Fin (Q.mdim k r 0)) : Q.posL k r 0 a = Q.posL k r 0 b ↔ a = b := by
   simp [Q.posL, Fin.ext_iff]
@@ -287,7 +237,6 @@ end Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity.ChartCovPf
 
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
-
 open ChartCovPf in
 theorem chart_covariance_holds : ChartCov := by
   intro k r d O U κ Φ hC x hx ξ
@@ -442,7 +391,7 @@ theorem detShift_aeval_coeff (Q : MvPolynomial (Fin 2) ℂ) (t j : ℕ) (hj : j 
   conv_lhs => rw [Q.as_sum]
 
   rw [map_sum, Polynomial.finsetSum_coeff, Finset.sum_eq_single D]
-  · rw [hterm, hD0, hD1, if_pos rfl, mul_comm]
+  · rw [hterm, hD0, hD1, ite_eq_left rfl, mul_comm]
   · intro d hd hne
     rw [hterm]
     split_ifs with h0
@@ -679,8 +628,6 @@ namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 theorem clag_list {k r : ℕ} {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
     (Bs : Fin k → Fin (2 * r + k + 1) → ℂ) (w : ℂ) (σ : Equiv.Perm (Fin k)) :
     (List.ofFn fun i : Fin k => fun y : Q.Mx k r → E =>
@@ -719,8 +666,6 @@ open scoped ContDiff
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem left_covariance_chart_holds : CovL := by
   intro k r d O U κ Φ hC x hx ξ Ξ₀ _hΞ₀ hcov X hX
@@ -809,8 +754,6 @@ namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 theorem nilpotent_of_char_poly : NilOfCharpoly := by
   intro n M h
   have hmon := Matrix.charpoly_monic M
@@ -820,14 +763,14 @@ theorem nilpotent_of_char_poly : NilOfCharpoly := by
     ext i
     rw [Polynomial.coeff_X_pow]
     rcases lt_trichotomy i n with hi | hi | hi
-    · rw [if_neg (by omega)]
+    · rw [ite_eq_right (by omega)]
       have := h (n - i) (by omega) (by omega)
       rwa [show n - (n - i) = i by omega] at this
-    · rw [if_pos hi]
+    · rw [ite_eq_left hi]
       have h1 := hmon.coeff_natDegree
       rw [hdeg] at h1
       rw [hi]; exact h1
-    · rw [if_neg (by omega)]
+    · rw [ite_eq_right (by omega)]
       exact Polynomial.coeff_eq_zero_of_natDegree_lt (by omega)
   refine ⟨n, ?_⟩
   have := Matrix.aeval_self_charpoly M
@@ -851,8 +794,6 @@ open scoped ContDiff Topology
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem crag_list {k r : ℕ} {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
     (Bs : Fin k → Fin (2 * r + k + 1) → ℂ) (w : ℂ) (σ : Equiv.Perm (Fin k)) :
@@ -925,9 +866,6 @@ theorem vfW_contDiffOn {O : Set (Fin d → ℝ)} (hO : IsOpen O) :
       simp only [vfW, List.length_cons]
       exact vfD_contDiffOn hO ih (hV V (List.mem_cons_self ..))
 
-theorem glev0 {k r : ℕ} {g : B.Mat k r} (hg : g ∈ B.GV k r) : g ∈ Q.Glev k r 0 :=
-  ⟨hg, fun _ ha => absurd ha (Nat.not_lt_zero _)⟩
-
 def mulLC {k r : ℕ} (X : B.Mat k r) : B.Mat k r →L[ℝ] B.Mat k r :=
   LinearMap.toContinuousLinearMap (LinearMap.mulLeft ℝ X)
 
@@ -978,15 +916,15 @@ theorem right_chart_holds : RwChart := by
 
   have h1 : ∀ n : ℕ, n ≤ 2 * r + k + 1 → ContDiffOn ℝ (n : WithTop ℕ∞) (fun x => u (κ x)) O := by
     intro n hn x hx
-    obtain ⟨V, F, hVo, hxV, hF, hFu⟩ := hu (κ x) ⟨glev0 (hκO x hx).1, hOm x hx⟩
+    obtain ⟨V, F, hVo, hxV, hF, hFu⟩ := hu (κ x) ⟨Formalism.FourierDecayAlt.P.WordKeyIdentity.glev0 (hκO x hx).1, hOm x hx⟩
     have hxV' : κ x ∈ V := hxV
     have hev : ∀ᶠ y in 𝓝[O] x, κ y ∈ V := (hκ.continuousOn x hx) (hVo.mem_nhds hxV')
     have hFκ : ContDiffWithinAt ℝ (n : WithTop ℕ∞) (fun y => F (κ y)) O x :=
       ((hF.contDiffAt (hVo.mem_nhds hxV')).of_le (by exact_mod_cast hn)).comp_contDiffWithinAt x
         ((hκ x hx).of_le (by exact_mod_cast le_top))
-    refine hFκ.congr_of_eventuallyEq ?_ (hFu _ hxV' (glev0 (hκO x hx).1))
+    refine hFκ.congr_of_eventuallyEq ?_ (hFu _ hxV' (Formalism.FourierDecayAlt.P.WordKeyIdentity.glev0 (hκO x hx).1))
     filter_upwards [hev, self_mem_nhdsWithin] with y hyV hyO
-    exact hFu _ hyV (glev0 (hκO y hyO).1)
+    exact hFu _ hyV (Formalism.FourierDecayAlt.P.WordKeyIdentity.glev0 (hκO y hyO).1)
 
   have hDΦ : ContDiffOn ℝ ∞ (fun g => fderiv ℝ Φ g) U :=
     ((contDiffOn_infty_iff_fderiv_of_isOpen hU).1 hΦ).2
@@ -1128,30 +1066,6 @@ theorem wsEvalR_map_mul (p : Polynomial ℂ) (φ : List (B.Mat k r) → List (B.
     simp only [wsEvalR, List.map_cons, List.sum_cons] at ih ⊢
     rw [ih, smul_add, Polynomial.eval_mul, mul_smul]
 
-theorem fexp_words : ∀ (gens : List (GenW k r)), (∀ gn ∈ gens, ∀ dX ∈ gn.2, B.inLie k r dX.2) →
-    ∀ t ∈ fexp gens, t.2.length ≤ gens.length ∧ ∀ X ∈ t.2, B.inLie k r X
-  | [], _, t, ht => by
-    simp only [fexp, List.mem_singleton] at ht
-    subst ht
-    simp
-  | gn :: gs, hL, t, ht => by
-    have hL' : ∀ g ∈ gs, ∀ dX ∈ g.2, B.inLie k r dX.2 := fun g hg => hL g (List.mem_cons_of_mem _ hg)
-    have ih := fexp_words gs hL'
-    simp only [fexp, List.mem_append, List.mem_map, List.mem_flatMap] at ht
-    rcases ht with ⟨s, hs, rfl⟩ | ⟨dX, hdX, s, hs, rfl⟩
-    · have := (ih s hs).1
-      refine ⟨?_, (ih s hs).2⟩
-      show s.2.length ≤ (gn :: gs).length
-      simp only [List.length_cons]; omega
-    · have := (ih s hs).1
-      refine ⟨?_, ?_⟩
-      · show (dX.2 :: s.2).length ≤ (gn :: gs).length
-        simp only [List.length_cons]; omega
-      · intro X hX
-        rcases List.mem_cons.1 hX with rfl | hX
-        · exact hL gn (by simp) dX hdX
-        · exact (ih s hs).2 X hX
-
 theorem ws_hasDerivAt {O : Set (B.Mat k r)} (hO : IsOpen O) {x X : B.Mat k r} (hx : x ∈ O)
     (hxG : x ∈ B.GV k r) (hX : B.inLie k r X) (u : ℂ) (f : B.Mat k r → E) :
     ∀ ws : List (Polynomial ℂ × List (B.Mat k r)), (∀ t ∈ ws, Rep ((1 : ℕ) : ℕ∞) O (B.Rw t.2 f)) →
@@ -1183,7 +1097,7 @@ theorem right_generator_word_evaluation (u : ℂ) : ∀ (gens : List (GenW k r))
     have hL' : ∀ g ∈ gs, ∀ dX ∈ g.2, B.inLie k r dX.2 := fun g hg => hL g (List.mem_cons_of_mem _ hg)
     have hf' : Rep (gs.length : ℕ∞) O f := rep_mono (by exact_mod_cast (by simp : gs.length ≤ (gn :: gs).length)) hf
     have IH := right_generator_word_evaluation u gs O f hO hL' hf'
-    have hW := fexp_words gs hL'
+    have hW := Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity.FExpL.fexp_words gs hL'
     have hrep : ∀ t ∈ fexp gs, Rep ((1 : ℕ) : ℕ∞) O (B.Rw t.2 f) := fun t ht =>
       rep_Rw hO hf t.2 (hW t ht).2 1 (by have := (hW t ht).1; simp only [List.length_cons]; omega)
     have hD : ∀ X, B.inLie k r X → RdV X (wsEvalR (fexp gs) u f) x =
@@ -1238,8 +1152,6 @@ open scoped ContDiff
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 namespace SymbolOperatorExtension
 
@@ -1440,8 +1352,6 @@ namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 def liftA {d o : ℕ} (a : (k : Fin (o + 1)) → (Fin k → Fin d) → (Fin d → ℝ) → ℂ) (m' : ℕ) :
     (k : Fin (m' + 1)) → (Fin k → Fin d) → (Fin d → ℝ) → ℂ :=
   fun k w x => if h : (k : ℕ) ≤ o then a ⟨k, by omega⟩ w x else 0
@@ -1454,10 +1364,10 @@ theorem symbol_operator_lift_holds : SOpLift := by
   · intro i w
     change ContDiffOn ℝ ∞ (liftA a m' i w) O
     by_cases h : (i : ℕ) ≤ o
-    · have e : liftA a m' i w = a ⟨i, by omega⟩ w := funext fun x => dif_pos h
+    · have e : liftA a m' i w = a ⟨i, by omega⟩ w := funext fun x => dite_eq_left h
       rw [e]
       exact hS (⟨i, Nat.lt_succ_of_le h⟩ : Fin (o + 1)) w
-    · have e : liftA a m' i w = fun _ => 0 := funext fun x => dif_neg h
+    · have e : liftA a m' i w = fun _ => 0 := funext fun x => dite_eq_right h
       rw [e]
       exact contDiffOn_const
   · intro u x
@@ -1475,7 +1385,7 @@ theorem symbol_operator_lift_holds : SOpLift := by
         ∑ k : Fin (o + 1), F k := by
       refine Finset.sum_congr rfl fun k _ => ?_
       simp only [F]
-      rw [dif_pos (by omega)]
+      rw [dite_eq_left (by omega)]
     rw [h1, h2, Fin.sum_univ_eq_sum_range F, Fin.sum_univ_eq_sum_range F]
     symm
     apply Finset.sum_subset
@@ -1485,19 +1395,19 @@ theorem symbol_operator_lift_holds : SOpLift := by
     · intro n hn hn'
       simp only [Finset.mem_range] at hn hn'
       simp only [F]
-      rw [dif_neg (by omega)]
+      rw [dite_eq_right (by omega)]
   · intro x ξ
     simp only [SOp.symb]
     by_cases h : o = m'
     · subst h
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       refine Finset.sum_congr rfl fun w _ => ?_
       simp only [liftA]
-      rw [dif_pos (by simp)]
-    · rw [if_neg h]
+      rw [dite_eq_left (by simp)]
+    · rw [ite_eq_right h]
       refine Finset.sum_eq_zero fun w _ => ?_
       simp only [liftA]
-      rw [dif_neg (by simp; omega)]
+      rw [dite_eq_right (by simp; omega)]
       simp
 
 end
@@ -1518,8 +1428,6 @@ open scoped ContDiff
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem symbol_operator_linear_holds : SOpLin := by
   intro d S T c O hST hS hT
@@ -1557,8 +1465,6 @@ open scoped ContDiff
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 namespace IdentityZeroOperators
 
@@ -1658,8 +1564,6 @@ open scoped ContDiff
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 def wfam {d : ℕ} {α : Type} (L : List (ℂ × List α)) (F : α → (Fin d → ℝ) → (Fin d → ℝ)) (c : ℂ) : WOp d :=
   L.map (fun t => (t.1, t.2.map F)) ++ [(c, [])]
@@ -1793,8 +1697,6 @@ namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 theorem word_family_apply_holds : WFamApp := by
   intro d α L F c v x
   simp [wfam, WOp.app, List.map_append, List.sum_append, vfW, Function.comp_def]
@@ -1803,7 +1705,7 @@ theorem word_family_symbol_holds : WFamSymb := by
   intro d α L F c j x ξ τ hj hτ
   have h0 : ¬ (0 = j) := by omega
   simp only [wfam, WOp.symb, List.map_append, List.sum_append, List.map_map, List.map_cons, List.map_nil,
-    List.sum_cons, List.sum_nil, List.length_nil, h0, if_false, add_zero]
+    List.sum_cons, List.sum_nil, List.length_nil, h0, ite_false, add_zero]
   congr 1
   refine List.map_congr_left (fun t ht => ?_)
   simp only [Function.comp_apply, List.length_map]

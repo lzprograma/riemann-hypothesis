@@ -4,49 +4,8 @@ public import Formalism.LocalRingCardinality.SpanPowerMembership.ExistsDensity
 public import Formalism.LocalRingCardinality.SpanPowerMembership.ExistsOmegaLeb
 public import Mathlib.Analysis.Matrix.Normed
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Upqcpt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 public import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -71,7 +30,7 @@ theorem mat_mem (g : UpqT P Q) : (UpqT.mat g)ᴴ * J * UpqT.mat g = J := g.2
 theorem mat_inducing : IsInducing (UpqT.mat : UpqT P Q → MM P Q) := by
   exact Units.isOpenEmbedding_val.toIsEmbedding.toIsInducing.comp Topology.IsInducing.subtypeVal
 
-theorem mat_injective : Function.Injective (UpqT.mat : UpqT P Q → MM P Q) := fun a b h => Subtype.ext (Units.ext h)
+theorem mat_injective : Function.Injective (UpqT.mat : UpqT P Q → MM P Q) := fun _ _ h => Subtype.ext (Units.ext h)
 
 theorem mat_embedding : IsEmbedding (UpqT.mat : UpqT P Q → MM P Q) := ⟨mat_inducing P Q, mat_injective P Q⟩
 
@@ -184,49 +143,8 @@ instance : (mu0 P Q).IsHaarMeasure := inferInstanceAs (Measure.haar.IsHaarMeasur
 
 def c0 : ℝ≥0∞ := (omegaDensity_haar P Q (mu0 P Q)).choose
 
-theorem haar_density_ne_zero : c0 P Q ≠ 0 := (omegaDensity_haar P Q (mu0 P Q)).choose_spec.1
-theorem haar_density_ne_top : c0 P Q ≠ ⊤ := (omegaDensity_haar P Q (mu0 P Q)).choose_spec.2.1
-theorem haar_density_spec : OmegaDensity (mu0 P Q) (c0 P Q) := (omegaDensity_haar P Q (mu0 P Q)).choose_spec.2.2
-
 def mass (N : ℕ) : ℝ≥0∞ := mu0 N 0 Set.univ
 
-theorem mass_ne_zero (N : ℕ) : mass N ≠ 0 := isOpen_univ.measure_ne_zero (mu0 N 0) ⟨1, trivial⟩
-
-theorem mass_ne_top (N : ℕ) : mass N ≠ ⊤ := (isCompact_univ.measure_lt_top (μ := mu0 N 0)).ne
-
 def scale : ℝ≥0∞ := c0 (P + Q) 0 / (mass (P + Q) * c0 P Q)
-
-theorem scale_ne_zero : scale P Q ≠ 0 := ENNReal.div_ne_zero.mpr ⟨haar_density_ne_zero _ _, ENNReal.mul_ne_top (mass_ne_top _) (haar_density_ne_top _ _)⟩
-
-theorem scale_ne_top : scale P Q ≠ ⊤ := ENNReal.div_ne_top (haar_density_ne_top _ _) (mul_ne_zero (mass_ne_zero _) (haar_density_ne_zero _ _))
-
-theorem scale_mul : scale P Q * c0 P Q = c0 (P + Q) 0 / mass (P + Q) := by
-  unfold scale
-  rw [div_eq_mul_inv, div_eq_mul_inv,
-    ENNReal.mul_inv (Or.inr (haar_density_ne_top _ _)) (Or.inr (haar_density_ne_zero _ _)), mul_assoc, mul_assoc,
-    ENNReal.inv_mul_cancel (haar_density_ne_zero _ _) (haar_density_ne_top _ _), mul_one]
-
-theorem scale_mass (N : ℕ) : scale N 0 * mass N = 1 := by
-  unfold scale
-  rw [Nat.add_zero, div_eq_mul_inv, ENNReal.mul_inv (Or.inl (mass_ne_zero _)) (Or.inl (mass_ne_top _)),
-    mul_comm (mass N)⁻¹, ← mul_assoc, ENNReal.mul_inv_cancel (haar_density_ne_zero _ _) (haar_density_ne_top _ _), one_mul,
-    ENNReal.inv_mul_cancel (mass_ne_zero _) (mass_ne_top _)]
-
-def cdHaar : CDHaar where
-  cd := fun P Q => scale P Q • mu0 P Q
-  haar := fun P Q => Measure.IsHaarMeasure.smul (mu0 P Q) (scale_ne_zero P Q) (scale_ne_top P Q)
-  prob := fun N => ⟨by
-    rw [Measure.smul_apply, smul_eq_mul]
-    exact scale_mass N⟩
-  trick := fun P Q => ⟨c0 (P + Q) 0 / mass (P + Q),
-    ENNReal.div_ne_zero.mpr ⟨haar_density_ne_zero _ _, mass_ne_top _⟩,
-    ENNReal.div_ne_top (haar_density_ne_top _ _) (mass_ne_zero _),
-    by
-      rw [← scale_mul P Q]
-      exact omegaDensity_smul P Q (haar_density_spec P Q) _ (scale_ne_top P Q),
-    by
-      have h := omegaDensity_smul (P + Q) 0 (haar_density_spec (P + Q) 0) _ (scale_ne_top (P + Q) 0)
-      rw [scale_mul (P + Q) 0] at h
-      exact h⟩
 
 end Formalism.BasicNotions.Examples₂.CD

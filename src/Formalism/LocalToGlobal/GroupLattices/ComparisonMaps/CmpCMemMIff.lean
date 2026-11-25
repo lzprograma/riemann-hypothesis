@@ -4,6 +4,7 @@ public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.FramesTr
 public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.LatticeComparisonCompatible
 public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ValUniqOf
 public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CmpCMemFunMod
+import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGlob
 
 @[expose] public section
 
@@ -71,7 +72,7 @@ theorem cmpC_mem_M_iff (tE : Tau → E →+* LL) (htE : ∀ τ x, embLL (tE τ x
     obtain ⟨c, γ, κ, hγ, hpt⟩ := hp i g
     have h1 := (hloc x i L c hL ⟨g, γ, κ, hg, hγ, hpt⟩).2 (hI c)
     unfold cmpC at h1
-    rwa [if_pos hL] at h1
+    rwa [ite_eq_left hL] at h1
 
 end Gen
 
@@ -104,21 +105,7 @@ def LocWBack (T : ∀ u : D.what₂.Word, Forms0 D u) : Prop :=
 theorem intSpan_smul (w : D.what₂.places.Pl) {n : ℕ} (lam : D.what₂.Tau → DomWeight n) (a : D.what₂.LL)
     (ha : a ∈ intW D.what₂.places w) {P : MvPolynomial (D.what₂.Tau × Fin n × Fin n) ℂ} (hP : P ∈ IntSpan D w lam) :
     D.what₂.embLL a • P ∈ IntSpan D w lam := by
-  unfold IntSpan at hP ⊢
-  induction hP using AddSubgroup.closure_induction with
-  | mem p hp =>
-    obtain ⟨r, f, hr, hf, rfl⟩ := hp
-    refine AddSubgroup.subset_closure ⟨a * r, f, mul_mem ha hr, hf, ?_⟩
-    rw [map_mul, mul_smul]
-  | zero =>
-    rw [smul_zero]
-    exact zero_mem _
-  | add p q _ _ hp hq =>
-    rw [smul_add]
-    exact add_mem hp hq
-  | neg p _ hp =>
-    rw [smul_neg]
-    exact neg_mem hp
+  apply _root_.Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.bwG_intSpan_smul <;> assumption
 
 theorem locW_intAtW (T : ∀ u : D.what₂.Word, Forms0 D u) (u : D.what₂.Word) (w : D.what₂.places.Pl)
     (x : ((D.fm u).lat 0).V) (hx : x ∈ locW D.what₂.places w ((D.fm u).lat 0).L) (c : (D.mem u).C.cls 0) :

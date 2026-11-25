@@ -194,13 +194,13 @@ theorem CircleArgumentPrinciple.factorisation {h : ℂ → ℂ} {O : Set ℂ} {c
     filter_upwards [eventually_nhdsWithin_iff.1 hev] with w hw
     by_cases hwa : w = a
     · subst hwa
-      simp only [hudef, (hP0 w).2 ha, if_true, hlim]
+      simp only [hudef, (hP0 w).2 ha, ite_true, hlim]
     · obtain ⟨hPw, hq⟩ := hw hwa
-      simp only [hudef, hPw, if_false, hq]
+      simp only [hudef, hPw, ite_false, hq]
   have hu_off : ∀ s, P s ≠ 0 → u =ᶠ[𝓝 s] fun w => h w / P w := by
     intro s hs
     filter_upwards [(hPdiff s).continuousAt.eventually_ne hs] with w hw
-    simp only [hudef, hw, if_false]
+    simp only [hudef, hw, ite_false]
   refine ⟨Z, u, ?_, ?_, ?_, ?_⟩
   ·
     intro a haZ
@@ -224,7 +224,7 @@ theorem CircleArgumentPrinciple.factorisation {h : ℂ → ℂ} {O : Set ℂ} {c
       rw [hEq.eq_of_nhds]
       exact hGs
     · have hhs : h s ≠ 0 := fun h0 => hPs ((hP0 s).2 ((hmemS s).2 ⟨hs, h0⟩))
-      simp only [hudef, hPs, if_false]
+      simp only [hudef, hPs, ite_false]
       exact div_ne_zero hhs hPs
   ·
     intro s hs
@@ -232,7 +232,7 @@ theorem CircleArgumentPrinciple.factorisation {h : ℂ → ℂ} {O : Set ℂ} {c
     by_cases hPs : P s = 0
     · rw [hPs, zero_mul]
       exact ((hmemS s).1 ((hP0 s).1 hPs)).2
-    · simp only [hudef, hPs, if_false]
+    · simp only [hudef, hPs, ite_false]
       field_simp
 
 theorem CircleArgumentPrinciple.proof : CircleArgumentPrinciple.Statement := by

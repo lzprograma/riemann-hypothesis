@@ -16,8 +16,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.BasicNotions.TH 
 
 namespace Formalism.IndefR.Eqv.MF
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Mat
 
 variable {p q n : ℕ}

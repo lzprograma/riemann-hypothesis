@@ -55,7 +55,7 @@ theorem idealMod_sup_span_le {J₁ : Ideal (Poly S N)}
   obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.mp hcg
   have hf' : f = homogeneousComponent d j + homogeneousComponent d (c * g) := by
     rw [← map_add (f := _), hjc, homogeneousComponent_of_mem ((mem_homogeneousSubmodule _ _).mpr hfd),
-      if_pos rfl]
+      ite_eq_left rfl]
   rw [SetLike.mem_coe, hf', map_add (f := _), add_div]
   refine Submodule.add_mem_sup (Submodule.subset_span ⟨_, s, d, hJ j hj d, hs,
     homogeneousComponent_isHomogeneous d j, hsd, rfl⟩) ?_

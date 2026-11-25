@@ -109,7 +109,7 @@ theorem exists_integral_congr (Ω : Type) [Field Ω] (ι : Type) [Finite ι]
   obtain ⟨t, ht⟩ := ReciprocityTheory.ChartRestriction.G.Lift.exists_val_eq v hgen hind
     (fun i => if i = i₀ then -1 else n i)
   have ht0 : v i₀ t < 1 := by
-    rw [ht i₀, if_pos rfl, ← WithZero.coe_one, WithZero.coe_lt_coe, ← ofAdd_zero,
+    rw [ht i₀, ite_eq_left rfl, ← WithZero.coe_one, WithZero.coe_lt_coe, ← ofAdd_zero,
       Multiplicative.ofAdd_lt]
     norm_num
   have h1t : v i₀ (1 + t) = 1 := by
@@ -126,7 +126,7 @@ theorem exists_integral_congr (Ω : Type) [Field Ω] (ι : Type) [Finite ι]
       exact ha
     · have hti : v i t = ((Multiplicative.ofAdd (n i) : Multiplicative ℤ) :
           WithZero (Multiplicative ℤ)) := by
-        rw [ht i, if_neg hi]
+        rw [ht i, ite_eq_right hi]
       have hlt : v i 1 < v i t := by
         rw [hti, (v i).map_one, ← WithZero.coe_one, WithZero.coe_lt_coe, ← ofAdd_zero,
           Multiplicative.ofAdd_lt]

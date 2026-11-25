@@ -85,7 +85,7 @@ private lemma finsum_proper_invariant_eq_sum_range_finrank {F : Type} [Field F] 
     intro p _ hpi hp
     rw [finsum_eq_sum_of_fintype, ← Finset.sum_filter,
       Finset.sum_subtype (p := p) (Finset.univ.filter p) (fun W => by simp) Fn]
-    exact Finset.sum_congr rfl fun W _ => (dif_pos (hp W)).symm
+    exact Finset.sum_congr rfl fun W _ => (dite_eq_left (hp W)).symm
   rw [hsub (fun W => W ≠ ⊤ ∧ ∀ x ∈ W, g x ∈ W) (fun W h => h.2) (fun W => W.2.2)]
   rw [Finset.sum_congr rfl fun a _ => hsub (fun W => Module.finrank F W = a ∧ ∀ v ∈ W, g v ∈ W)
     (fun W h => h.2) (fun W => W.2.2)]

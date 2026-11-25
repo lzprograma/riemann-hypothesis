@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTripleChartUnitaryBoundaryPointRigidStatement
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HomExtNormalSt
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueFixedPointOfAdicContraction
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
@@ -96,73 +97,7 @@ open Polynomial
 theorem exists_coefficientField (S : Type) [CommRing S] [IsLocalRing S] [IsAdicComplete (maximalIdeal S) S]
     [CharZero (ResidueField S)] :
     ∃ Λ : Subring S, IsField Λ ∧ ∀ s : S, ∃ a ∈ Λ, s - a ∈ maximalIdeal S := by
-  let T : Set (Subring S) := {Λ | ∀ x ∈ Λ, x ∈ maximalIdeal S → x = 0}
-  have hbot : (⊥ : Subring S) ∈ T := by
-    intro x hx hm
-    obtain ⟨n, rfl⟩ := Subring.mem_bot.1 hx
-    rw [← residue_eq_zero_iff, map_intCast, Int.cast_eq_zero] at hm
-    simp [hm]
-  obtain ⟨Λ, -, hΛ⟩ := zorn_le_nonempty₀ T (fun c hc hch y hy => by
-    refine ⟨sSup c, fun x hx => ?_, fun z hz => le_sSup hz⟩
-    obtain ⟨K, hK, hxK⟩ := (Subring.mem_sSup_of_directedOn ⟨y, hy⟩ hch.directedOn).1 hx
-    exact hc hK x hxK) ⊥ hbot
-  have hT : ∀ x ∈ Λ, x ∈ maximalIdeal S → x = 0 := hΛ.prop
-  have hF : IsField Λ := by
-    refine ⟨exists_pair_ne _, mul_comm, fun {x} hx => ?_⟩
-    have hu : IsUnit (x : S) := by
-      by_contra h
-      exact hx (Subtype.ext (hT _ x.2 h))
-    let Λ' : Subring S :=
-      { carrier := {s | ∃ n : ℕ, (x : S) ^ n * s ∈ Λ}
-        one_mem' := ⟨0, by simp⟩
-        zero_mem' := ⟨0, by simp⟩
-        mul_mem' := by
-          rintro a b ⟨n, hn⟩ ⟨m, hm⟩
-          exact ⟨n + m, by convert Λ.mul_mem hn hm using 1; ring⟩
-        add_mem' := by
-          rintro a b ⟨n, hn⟩ ⟨m, hm⟩
-          exact ⟨n + m, by
-            convert Λ.add_mem (Λ.mul_mem (Λ.pow_mem x.2 m) hn) (Λ.mul_mem (Λ.pow_mem x.2 n) hm) using 1; ring⟩
-        neg_mem' := by
-          rintro a ⟨n, hn⟩
-          exact ⟨n, by convert Λ.neg_mem hn using 1; ring⟩ }
-    have h' : Λ' ∈ T := by
-      rintro s ⟨n, hn⟩ hm
-      exact (hu.pow n).mul_right_eq_zero.1 (hT _ hn (Ideal.mul_mem_left _ _ hm))
-    have hle : Λ' ≤ Λ := hΛ.le_of_ge h' fun s hs => ⟨0, by simpa using hs⟩
-    obtain ⟨y, hy⟩ := hu.exists_right_inv
-    exact ⟨⟨y, hle ⟨1, by rw [pow_one, hy]; exact Λ.one_mem⟩⟩, Subtype.ext hy⟩
-  refine ⟨Λ, hF, fun s => ?_⟩
-  letI := hF.toField
-  have key : ∀ a : S, (∀ f : Λ[X], aeval a f ∈ maximalIdeal S → aeval a f = 0) → a ∈ Λ := fun a ha => by
-    have h' : (aeval (R := Λ) a).toRingHom.range ∈ T := by
-      rintro _ ⟨f, rfl⟩ hm
-      exact ha f hm
-    exact hΛ.le_of_ge h' (fun y hy => ⟨C ⟨y, hy⟩, by simp; rfl⟩) ⟨X, by simp⟩
-  have hres : ∀ (a : S) (f : Λ[X]), residue S (aeval a f) = aeval (residue S a) f := fun a f =>
-    (aeval_algHom_apply (IsScalarTower.toAlgHom Λ S (ResidueField S)) a f).symm
-  by_cases hs : IsAlgebraic Λ (residue S s)
-  · have hi := hs.isIntegral
-    haveI : CharZero Λ := RingHom.charZero (algebraMap Λ (ResidueField S))
-    have hsep : (minpoly Λ (residue S s)).Separable := (minpoly.irreducible hi).separable
-    obtain ⟨a, ha, has⟩ := HenselianRing.is_henselian (I := maximalIdeal S)
-      ((minpoly Λ (residue S s)).map (algebraMap Λ S)) ((minpoly.monic hi).map _) s
-      (by rw [eval_map_algebraMap, ← residue_eq_zero_iff, hres, minpoly.aeval])
-      (by
-        rw [derivative_map, eval_map_algebraMap]
-        have := hsep.aeval_derivative_ne_zero (minpoly.aeval Λ (residue S s))
-        rw [← hres] at this
-        exact (isUnit_iff_ne_zero (G₀ := ResidueField S)).2 this)
-    have e : residue S a = residue S s := by rw [← sub_eq_zero, ← map_sub, residue_eq_zero_iff]; exact has
-    refine ⟨a, key a fun f hf => ?_, by rw [← neg_sub]; exact neg_mem has⟩
-    rw [← residue_eq_zero_iff, hres, e] at hf
-    obtain ⟨q, rfl⟩ := minpoly.dvd _ _ hf
-    rw [IsRoot.def, eval_map_algebraMap] at ha
-    rw [map_mul, ha, zero_mul]
-  · refine ⟨s, key s fun f hf => ?_, by simp⟩
-    rw [← residue_eq_zero_iff, hres] at hf
-    by_contra h
-    exact hs ⟨f, by rintro rfl; simp at h, hf⟩
+  first | exact _root_.GlobalTheory.CohenRegular.exists_coefficientField_of_charZero | exact @_root_.GlobalTheory.CohenRegular.exists_coefficientField_of_charZero | apply _root_.GlobalTheory.CohenRegular.exists_coefficientField_of_charZero <;> assumption
 
 end Algebra
 
@@ -285,7 +220,6 @@ open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM
 open scoped CategoryTheory.Obj
 open GlobalTheory.Poinc GlobalTheory.Poinc.Eq8 Formalism.L2.Pj
 open scoped TensorProduct
-attribute [local instance] Over.cartesianMonoidalCategory
 open Classical
 
 namespace GlobalTheory.Poinc.Eq8.GenRestrict
@@ -371,8 +305,6 @@ open scoped TensorProduct
 attribute [local instance] Over.cartesianMonoidalCategory
 open Classical
 
-theorem _root_.GlobalTheory.T.exists_surjective_lattice_coordMap_equivariant_dvr : ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocalRing R], GlobalTheory.Mum.Base R → ∀ (G : Over (Sp R)) [GrpObj G] [IsCommMonObj G], IsSemiAbelian G → ∀ (D : DegData R (maximalIdeal R)) (A : PolAV (Sp (FractionRing R))) (U : Unif (maximalIdeal R) D A G) (V : Type) [CommRing V] [IsDomain V] [IsLocalRing V], GlobalTheory.Mum.Base V → IsDiscreteValuationRing V → ∀ (G' : Over (Sp V)) [GrpObj G'] [IsCommMonObj G'], IsSemiAbelian G' → ∀ (D' : DegData V (maximalIdeal V)) (A' : PolAV (Sp (FractionRing V))) (U' : Unif (maximalIdeal V) D' A' G') (g : R →+* V) (β : G'.left ⟶ G.left) (p : ℕ), p.Prime → (p : R) ∈ maximalIdeal R → ∀ (Wo : Set (Sp R)), IsOpen Wo → (∀ y, PsiUnitOn D.toPre y Wo) → (⟨RingHom.ker g, RingHom.ker_isPrime g⟩ : PrimeSpectrum R) ∈ Wo → IsGrpPullback G' G (spMap g) β → LBIso U'.LG.L (U.LG.L.pull β) → ∃ ρ : D.toPre.X →+ D'.toPre.X, Function.Surjective ρ ∧ CoordMap D.toPre D'.toPre g ρ ∧ EquivMap U U' β ρ := by
-  first | exact @GlobalTheory.Poinc.Eq8.GenRestrict.exists_surjective_coordMap_equivMap
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSurjectiveLatticeCoordMapEquivariantDvrStatement =====

@@ -56,8 +56,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.DimS
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -219,8 +217,8 @@ theorem two_mul_sum_embeddings {r : k} (hr : r ^ 2 = -(H.d : k)) (p q : ℕ) :
   have h2 : φ (H.rt : E) ^ 2 = r ^ 2 := by
     rw [← map_pow, GlobalTheory.HostModel.coe_rt_sq, hr]; simp
   rcases sq_eq_sq_iff_eq_or_eq_neg.1 h2 with h | h
-  · rw [h, if_pos rfl, if_neg hr0.symm]
-  · rw [h, neg_neg, if_pos rfl, if_neg hr0.symm, add_comm]
+  · rw [h, ite_eq_left rfl, ite_eq_right hr0.symm]
+  · rw [h, neg_neg, ite_eq_left rfl, ite_eq_right hr0.symm, add_comm]
 
 open Classical in
 theorem sum_embeddings {r : k} (hr : r ^ 2 = -(H.d : k)) (p q : ℕ) :

@@ -1,51 +1,8 @@
 module
 
 public import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -68,7 +25,7 @@ def pr (μ : Measure G2) (𝓕 : Set G2) (φ : G2 → ℂ) (A B : G2) : ℂ :=
 
 section Pairing
 
-variable {μ : Measure G2} {𝓕 : Set G2} {mK : Measure KA} {𝓓 : Set Jd} {φ : G2 → ℂ}
+variable {μ : Measure G2} {𝓕 : Set G2} {φ : G2 → ℂ}
 
 theorem trans_cont (hc : Continuous φ) (A B : G2) :
     Continuous fun g => φ (g * A) * conj (φ (g * B)) :=
@@ -82,7 +39,7 @@ theorem trans_bdd (hb : ∃ C : ℝ, ∀ g, ‖φ g‖ ≤ C) (A B : G2) :
   rw [norm_mul, RCLike.norm_conj]
   exact mul_le_mul (hC _) (hC _) (norm_nonneg _) ((norm_nonneg _).trans (hC 1))
 
-theorem trans_integrable (hS : Set0 μ 𝓕 mK 𝓓) (hc : Continuous φ) (hb : ∃ C : ℝ, ∀ g, ‖φ g‖ ≤ C) (A B : G2) :
+theorem trans_integrable (hS : Set0 μ 𝓕) (hc : Continuous φ) (hb : ∃ C : ℝ, ∀ g, ‖φ g‖ ≤ C) (A B : G2) :
     Integrable (fun g => φ (g * A) * conj (φ (g * B))) (μ.restrict (𝓕 ∩ band)) := by
   haveI : IsFiniteMeasure (μ.restrict (𝓕 ∩ band)) := ⟨by simpa using hS.vol⟩
   obtain ⟨C, hC⟩ := trans_bdd hb A B
@@ -104,11 +61,11 @@ theorem trans_cinv {ω : HeckeCharacter ℚ} (hz : ∀ (z : Jd) g, φ (dg2 z z *
   calc _ = ((ω.toIdele z : ℂ) * conj (ω.toIdele z : ℂ)) * (φ (g * A) * conj (φ (g * B))) := by ring
     _ = _ := by rw [hw, one_mul]
 
-theorem pr_trans (hS : Set0 μ 𝓕 mK 𝓓) (hG : G1) {ω : HeckeCharacter ℚ} (hc : Continuous φ)
+theorem pr_trans (hS : Set0 μ 𝓕) (hG : G1) {ω : HeckeCharacter ℚ} (hc : Continuous φ)
     (hb : ∃ C : ℝ, ∀ g, ‖φ g‖ ≤ C) (hl : LInv φ)
     (hz : ∀ (z : Jd) g, φ (dg2 z z * g) = (ω.toIdele z : ℂ) * φ g) (A B h : G2) :
     pr μ 𝓕 φ (h * A) (h * B) = pr μ 𝓕 φ A B := by
-  have := (hG μ 𝓕 mK 𝓓 hS _ (trans_cont hc A B) (trans_bdd hb A B) (trans_linv hl A B)).1
+  have := (hG μ 𝓕 hS _ (trans_cont hc A B) (trans_bdd hb A B) (trans_linv hl A B)).1
     (trans_cinv hz A B) h
   simp only [mul_assoc] at this
   simpa only [pr, mul_assoc] using this
@@ -120,7 +77,7 @@ theorem pr_right {Y X : G2} {w : ℂ} (hX : ∀ g, φ (g * X) = w * φ g) :
   simp only [pr, this]
   exact integral_const_mul _ _
 
-theorem pr_left (hS : Set0 μ 𝓕 mK 𝓓) (hG : G1) {ω : HeckeCharacter ℚ} (hc : Continuous φ)
+theorem pr_left (hS : Set0 μ 𝓕) (hG : G1) {ω : HeckeCharacter ℚ} (hc : Continuous φ)
     (hb : ∃ C : ℝ, ∀ g, ‖φ g‖ ≤ C) (hl : LInv φ)
     (hz : ∀ (z : Jd) g, φ (dg2 z z * g) = (ω.toIdele z : ℂ) * φ g) {Y X : G2} {w : ℂ} (hw : ‖w‖ = 1)
     (hX : ∀ g, φ (g * X) = w * φ g) :
@@ -143,7 +100,7 @@ theorem pr_left (hS : Set0 μ 𝓕 mK 𝓓) (hG : G1) {ω : HeckeCharacter ℚ} 
   simp only [pr, this]
   exact integral_const_mul _ _
 
-theorem pr_zero (hS : Set0 μ 𝓕 mK 𝓓) (hG : G1) {ω : HeckeCharacter ℚ} (hc : Continuous φ)
+theorem pr_zero (hS : Set0 μ 𝓕) (hG : G1) {ω : HeckeCharacter ℚ} (hc : Continuous φ)
     (hb : ∃ C : ℝ, ∀ g, ‖φ g‖ ≤ C) (hl : LInv φ)
     (hz : ∀ (z : Jd) g, φ (dg2 z z * g) = (ω.toIdele z : ℂ) * φ g) {Y X X' : G2} {w w' : ℂ} (hw : ‖w‖ = 1)
     (hX : ∀ g, φ (g * X) = w * φ g) (hX' : ∀ g, φ (g * X') = w' * φ g) (hcomm : X * Y = Y * X')
@@ -155,13 +112,12 @@ theorem pr_zero (hS : Set0 μ 𝓕 mK 𝓓) (hG : G1) {ω : HeckeCharacter ℚ} 
   · exact absurd (sub_eq_zero.1 h).symm hne
   · exact h
 
-theorem sum_expand {α : Type} (hS : Set0 μ 𝓕 mK 𝓓) (hc : Continuous φ)
+theorem sum_expand {α : Type} (hS : Set0 μ 𝓕) (hc : Continuous φ)
     (hb : ∃ C : ℝ, ∀ g, ‖φ g‖ ≤ C) (B : Finset α) (t : α → G2) (Λ : ℂ)
     (hsum : ∀ g, ∑ b ∈ B, φ (g * t b) = Λ * φ g) :
     Λ * conj Λ * pr μ 𝓕 φ 1 1 = ∑ b ∈ B, ∑ b' ∈ B, pr μ 𝓕 φ (t b) (t b') := by
   have key : ∀ g, Λ * conj Λ * (φ (g * 1) * conj (φ (g * 1))) =
       ∑ b ∈ B, ∑ b' ∈ B, φ (g * t b) * conj (φ (g * t b')) := fun g => by
-    set_option synthInstance.maxHeartbeats 100000 in
       rw [← Finset.sum_mul_sum, ← map_sum, hsum, map_mul, mul_one]; ring
   calc Λ * conj Λ * pr μ 𝓕 φ 1 1
       = ∫ g in 𝓕 ∩ band, Λ * conj Λ * (φ (g * 1) * conj (φ (g * 1))) ∂μ :=
@@ -172,7 +128,7 @@ theorem sum_expand {α : Type} (hS : Set0 μ 𝓕 mK 𝓓) (hc : Continuous φ)
     _ = _ := Finset.sum_congr rfl fun b _ =>
         integral_finsetSum _ fun b' _ => trans_integrable hS hc hb _ _
 
-theorem pr_self_ne (hS : Set0 μ 𝓕 mK 𝓓) (hG : G1) {ω : HeckeCharacter ℚ} (hc : Continuous φ)
+theorem pr_self_ne (hS : Set0 μ 𝓕) (hG : G1) {ω : HeckeCharacter ℚ} (hc : Continuous φ)
     (hb : ∃ C : ℝ, ∀ g, ‖φ g‖ ≤ C) (hl : LInv φ)
     (hz : ∀ (z : Jd) g, φ (dg2 z z * g) = (ω.toIdele z : ℂ) * φ g) (h0 : φ ≠ 0) :
     pr μ 𝓕 φ 1 1 ≠ 0 := by
@@ -189,7 +145,7 @@ theorem pr_self_ne (hS : Set0 μ 𝓕 mK 𝓓) (hG : G1) {ω : HeckeCharacter �
     funext g
     have := congrFun h g
     simpa [hF] using this
-  have := (hG μ 𝓕 mK 𝓓 hS F hFc hFb hFl).2.2 hFz hF0
+  have := (hG μ 𝓕 hS F hFc hFb hFl).2.2 hFz hF0
   have heq : ∀ g, F g * conj (F g) = φ (g * 1) * conj (φ (g * 1)) := fun g => by
     simp only [hF, mul_one, Complex.conj_ofReal, Complex.mul_conj, Complex.normSq_eq_norm_sq]
     push_cast; ring
@@ -253,7 +209,7 @@ end Local
 
 theorem wr_ne (k : ℕ) : WR k (-1) ≠ 0 := by
   unfold WR
-  rw [if_pos (by simp)]
+  rw [ite_eq_left (by simp)]
   exact Complex.ofReal_ne_zero.2 (mul_ne_zero (pow_ne_zero _ (by simp)) (Real.exp_ne_zero _))
 
 theorem wh_zero (g : G2) : Wh 0 g = 0 := by
@@ -269,7 +225,7 @@ theorem abs_eigenvalue_sq : B0 → C1 → U2 → G0 → G1 → F0b → F1 → F2
   have hHk : Hk k N a ω φ := hF3 k N hk χ hχ f a hf ha ω φ hω hφ
   have hF2' := hF2 k N hk χ hχ f a hf ha ω φ hω hφ
   obtain ⟨hbd, -⟩ := hF5 k N hk χ hχ f a hf ha ω φ hω hφ
-  obtain ⟨μ, 𝓕, mK, 𝓓, hS⟩ := hG0
+  obtain ⟨μ, 𝓕, hS⟩ := hG0
   choose ι hι using hex
   have hfn : ∀ g, LocFn v φ g (fun x => φ (g * ι x)) := fun g x h hx => by
     show φ (g * ι x) = _

@@ -5,45 +5,7 @@ public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalBesselAndTopKer
 public import Formalism.SharpRestriction.CuspSpanNormBounds.NonGenericAndKTwoTheorems
 public import Formalism.SharpRestriction.CuspSpanNormBounds.PlaceDegreeData
 public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleySignature
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.CuspSpanNormBounds.SBridge
@@ -55,8 +17,6 @@ noncomputable section
 namespace Formalism.MainNotions
 
 open Formalism.BasicNotions Formalism.MainNotions.S NumberField IsDedekindDomain
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem two_le_absNorm (D : D7) (p : HeightOneSpectrum (𝓞 D.host.F)) : 2 ≤ Ideal.absNorm p.asIdeal := by
   have h0 : Ideal.absNorm p.asIdeal ≠ 0 := by
@@ -508,19 +468,16 @@ theorem numNV (N m t : ℝ) (hN : 6 ≤ N) (hm : m ≤ N) (hm0 : 0 ≤ m) (ht : 
   have h1 : N + m * t ≤ 3 * N ^ 2 := by
     subst ht
     have hm1 : m * (N + 6) ≤ N * (N + 6) := mul_le_mul_of_nonneg_right hm (by linarith)
-    have heq : N * (N + 6) = N ^ 2 + 6 * N := by ring
     linarith
   have h0 : 0 ≤ N + m * t := by
     subst ht
     have : 0 ≤ m * (N + 6) := mul_nonneg hm0 (by linarith)
     linarith
   have h3 : (N + m * t) ^ 3 ≤ (3 * N ^ 2) ^ 3 := pow_le_pow_left₀ h0 h1 3
-  have h4 : (3 * N ^ 2) ^ 3 = 27 * N ^ 6 := by ring
   have h6 : (6 : ℝ) ^ 6 ≤ N ^ 6 := pow_le_pow_left₀ (by norm_num) hN 6
   have h13 : (6 : ℝ) ^ 13 ≤ N ^ 13 := pow_le_pow_left₀ (by norm_num) hN 13
   have h5 : t + 3 ≤ N ^ 6 := by
     have h2 : N ^ 2 ≤ N ^ 6 := pow_le_pow_right₀ (by linarith) (by norm_num)
-    have h22 : N + 9 ≤ N ^ 2 := by linarith
     subst ht; linarith
   have h19 : N ^ 19 = N ^ 6 * N ^ 13 := by ring
   have hpos : 0 < N ^ 6 := by positivity
@@ -693,27 +650,6 @@ theorem numeric_setting_of_datum (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg c
     calc C * (D.R.r : ℝ) ^ 3 ≤ Cl * (D.R.r : ℝ) ^ 3 := mul_le_mul_of_nonneg_right hC hp.le
       _ < Cl * (D.R.r : ℝ) ^ 19 := mul_lt_mul_of_pos_left h3 (by linarith)
 
-section Size
-
-open Formalism.MainNotions.S.Bridge Formalism.MainNotions.S.ThB MeasureTheory
-open scoped ENNReal
-
-end Size
-
-section SizeRangeProof
-
-open Formalism.MainNotions.S.ThB
-
-end SizeRangeProof
-
-section SizeFam
-
-open Formalism.MainNotions.S.Bridge Formalism.MainNotions.S.ThB
-
-variable {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
-
-end SizeFam
-
 theorem count_hypotheses_diagonal_words (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb Cu cT CT C0 A : ℝ)
     (hD : StandingNumericalData D C0) (hH : StandingHypotheses D large₂ C' Cl Cg cb Cu cT CT) (h0 : 1 ≤ C0) (hCl : 2 < Cl) (hC' : 1 ≤ C')
     (hA : 1 ≤ A) (u : D.what₂.Word) : Cnt.Hyp D large₂ u u C' Cl Cg cb Cu cT CT C0 A := by
@@ -740,24 +676,6 @@ theorem sizes3bF (C0 Cg cb Cu cT CT C1 C2 A : ℝ) (h0 : 0 ≤ C1) (h1 : C1 ≤ 
 
 end Family
 
-section Assembly
-
-variable {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
-
-end Assembly
-
-section Assembly2
-
-variable {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
-
-end Assembly2
-
-section All
-
-variable {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
-
-end All
-
 end Formalism.MainNotions
 
 section S8c
@@ -765,8 +683,6 @@ section S8c
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.CayleySignature
 
 namespace Formalism.MainNotions.ConjugationAmplitude
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : ThetaX D)
 

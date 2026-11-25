@@ -872,8 +872,7 @@ theorem path_sep : ∀ (ss : List (Fin n)) (X : GMod n) (χ : Fin n → ℂ)
         let S : (step X (χ s)).V →ₗ[ℂ] (Fin n → X.V) := (stepSub X (χ s)).subtype
         have hinj : Function.Injective S := Submodule.injective_subtype _
         have hx' : ∃ j, S x j ≠ 0 := by
-          by_contra hcon
-          push_neg at hcon
+          by_contra! hcon
           exact hx (hinj ((funext hcon).trans (map_zero S).symm))
         obtain ⟨j, hj⟩ := hx'
         obtain ⟨c, hc, h1⟩ := h _ hj

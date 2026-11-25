@@ -68,13 +68,6 @@ theorem IsRelParam.notMem_sq (h : IsRelParam b t) (i : Fin m) : t i ∉ maximalI
 
 theorem IsRelParam.ne_zero (h : IsRelParam b t) (i : Fin m) : t i ≠ 0 := fun h0 => h.notMem_sq i (h0 ▸ zero_mem _)
 
-theorem IsRelParam.eq_of_dvd (h : IsRelParam b t) {i j : Fin m} (hd : t i ∣ t j) : i = j := by
-  by_contra hne
-  obtain ⟨c, hc⟩ := hd
-  have := h.mem_of_mem_sq (Pi.single j 1 - Pi.single i c)
-    (by simp only [Pi.sub_apply, sub_mul, Finset.sum_sub_distrib]; simp [Pi.single_apply, hc, mul_comm c]) j
-  simp [Ne.symm hne] at this
-
 end Param
 
 section Local
@@ -124,16 +117,6 @@ theorem prod_dvd_of_forall_dvd {R : Type} [CommMonoidWithZero R] :
       fun k => ?_)
     refine ((hp k.succ).dvd_or_dvd (hx k.succ)).resolve_left fun h => ?_
     exact Fin.succ_ne_zero k (hd _ _ h)
-
-theorem isRadical_span_prod : ∀ (o R : Type) [CommRing o] [CommRing R] [IsRegularLocalRing R] [IsDomain R] (b : o →+* R)
-    (m : ℕ) (t : Fin m → R), IsRelParam b t → (Ideal.span {∏ k, t k}).IsRadical := by
-  intro o R _ _ _ _ b m t h
-  have hp : ∀ k, Prime (t k) := fun k => prime_of_not_mem_sq (h.1 k) (h.notMem_sq k)
-  intro x hx
-  obtain ⟨n, hn⟩ := Ideal.mem_radical_iff.1 hx
-  rw [Ideal.mem_span_singleton] at hn ⊢
-  exact prod_dvd_of_forall_dvd m t hp (fun i j hij => h.eq_of_dvd hij) x
-    fun k => (hp k).dvd_of_dvd_pow ((Finset.dvd_prod_of_mem t (Finset.mem_univ k)).trans hn)
 
 end GlobalTheory.RelParamRad
 end -- clump:auto

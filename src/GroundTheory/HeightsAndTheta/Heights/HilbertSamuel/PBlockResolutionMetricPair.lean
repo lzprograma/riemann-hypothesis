@@ -158,207 +158,199 @@ theorem levi_const_mul {κ : Type} [Fintype κ] {f : (κ → ℂ) → ℝ} {z : 
 
 end Torus
 
-section Datum
+section Res
 
 variable {D : ℕ} {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} [∀ k, Fintype (ι k)]
-  {Ω : Type} [Field Ω] [CharZero Ω] (d : HSMBlockDatum D K ι Ω)
+  {P J : Ideal (MRing ι)} (R : AnRes P J D)
 
-def nbhd (x : d.R.X) : Set d.R.X := d.R.U x ∩ (d.R.A.chart (chartIdx d.R.A x)).source
+def nbhd (x : R.X) : Set R.X := R.U x ∩ (R.A.chart (chartIdx R.A x)).source
 
-theorem isOpen_nbhd (x : d.R.X) : IsOpen (nbhd d x) := (d.R.isOpen_U x).inter (d.R.A.chart _).open_source
+theorem isOpen_nbhd (x : R.X) : IsOpen (nbhd R x) := (R.isOpen_U x).inter (R.A.chart _).open_source
 
-theorem mem_nbhd (x : d.R.X) : x ∈ nbhd d x := ⟨d.R.mem_U x, Classical.choose_spec (d.R.A.cover x)⟩
+theorem mem_nbhd (x : R.X) : x ∈ nbhd R x := ⟨R.mem_U x, Classical.choose_spec (R.A.cover x)⟩
 
-theorem isPotential_blockInterpPot {A' : HermLine ι} (hA' : IsSmoothHerm A') (t : ℝ) :
-    IsPotential d.R.A (blockInterpPot d d.A A' t) := by
-  have h₀ := isPotentialRsmul d.R.A (1 - t) _ (AnResBridge.isPotential_potOf d.R d.semipos.1)
-  have h₁ := isPotentialRsmul d.R.A t _ (AnResBridge.isPotential_potOf d.R hA')
-  have hs := isPotentialAdd d.R.A _ _ h₀ h₁
-  refine isPotential_mul d.R.A _ hs 1 _ ?_ fun x y => ?_
-  · funext x
-    exact (Set.inter_self _).symm
-  · show _ = 1 * ((1 - t) * Real.log (d.A.h (d.R.lift x y)) + t * Real.log (A'.h (d.R.lift x y)))
-    simp [blockInterpPot]
+theorem exists_finite_nbhd_cover : ∃ (r : ℕ) (pt : Fin r → R.X), ∀ x, ∃ i, x ∈ nbhd R (pt i) := by
+  obtain ⟨t, ht⟩ := isCompact_univ.elim_finite_subcover (nbhd R) (isOpen_nbhd R)
+    fun x _ => mem_iUnion.2 ⟨x, mem_nbhd R x⟩
+  refine ⟨t.card, fun i => (t.equivFin.symm i : R.X), fun x => ?_⟩
+  obtain ⟨x', hx', hx⟩ := mem_iUnion₂.1 (ht (mem_univ x))
+  exact ⟨t.equivFin ⟨x', hx'⟩, by simpa using hx⟩
 
-variable {r : ℕ} (pt : Fin r → d.R.X) (hcov : ∀ x, ∃ i, x ∈ nbhd d (pt i))
+variable {r : ℕ} (pt : Fin r → R.X) (hcov : ∀ x, ∃ i, x ∈ nbhd R (pt i))
 
-abbrev atlas : FinHolAtlas D d.R.X :=
-  refine d.R.A (fun i => chartIdx d.R.A (pt i)) (fun i => d.R.U (pt i)) (fun i => d.R.isOpen_U (pt i))
+abbrev atlas : FinHolAtlas D R.X :=
+  refine R.A (fun i => chartIdx R.A (pt i)) (fun i => R.U (pt i)) (fun i => R.isOpen_U (pt i))
     fun x => (hcov x).imp fun _ hx => ⟨hx.2, hx.1⟩
 
-theorem mem_atlas_source {i : Fin r} {x : d.R.X} (hx : x ∈ ((atlas d pt hcov).chart i).source) :
-    x ∈ d.R.U (pt i) :=
+theorem mem_atlas_source {i : Fin r} {x : R.X} (hx : x ∈ ((atlas R pt hcov).chart i).source) :
+    x ∈ R.U (pt i) :=
   ((mem_refine_source _ _ _ _ _).1 hx).2
 
-theorem mem_atlas_target {i : Fin r} {y : Fin D → ℂ} (hy : y ∈ ((atlas d pt hcov).chart i).target) :
-    y ∈ (d.R.A.chart (chartIdx d.R.A (pt i))).target ∧
-      ((atlas d pt hcov).chart i).symm y ∈ d.R.U (pt i) :=
+theorem mem_atlas_target {i : Fin r} {y : Fin D → ℂ} (hy : y ∈ ((atlas R pt hcov).chart i).target) :
+    y ∈ (R.A.chart (chartIdx R.A (pt i))).target ∧
+      ((atlas R pt hcov).chart i).symm y ∈ R.U (pt i) :=
   (mem_refine_target _ _ _ _ _).1 hy
 
-theorem sameOrbit_lift {i k : Fin r} {x : d.R.X} (hi : x ∈ ((atlas d pt hcov).chart i).source)
-    (hk : x ∈ ((atlas d pt hcov).chart k).source) :
-    SameOrbit (d.R.lift (pt i) x) (d.R.lift (pt k) x) :=
-  d.R.compat _ _ x ⟨mem_atlas_source d pt hcov hi, mem_atlas_source d pt hcov hk⟩
+theorem sameOrbit_lift {i k : Fin r} {x : R.X} (hi : x ∈ ((atlas R pt hcov).chart i).source)
+    (hk : x ∈ ((atlas R pt hcov).chart k).source) :
+    SameOrbit (R.lift (pt i) x) (R.lift (pt k) x) :=
+  R.compat _ _ x ⟨mem_atlas_source R pt hcov hi, mem_atlas_source R pt hcov hk⟩
 
-theorem lift_mem {i : Fin r} {x : d.R.X} (hi : x ∈ ((atlas d pt hcov).chart i).source) :
-    d.R.lift (pt i) x ∈ mcPts (mCoordIdeal d.y) :=
-  d.R.mem _ x (mem_atlas_source d pt hcov hi)
+theorem lift_mem {i : Fin r} {x : R.X} (hi : x ∈ ((atlas R pt hcov).chart i).source) :
+    R.lift (pt i) x ∈ mcPts P :=
+  R.mem _ x (mem_atlas_source R pt hcov hi)
 
-theorem analyticAt_lift (i k : Fin r) {y : Fin D → ℂ} (hy : y ∈ ((atlas d pt hcov).chart k).target)
-    (hU : ((atlas d pt hcov).chart k).symm y ∈ d.R.U (pt i)) :
-    AnalyticAt ℂ (fun y p => d.R.lift (pt i) (((atlas d pt hcov).chart k).symm y) p) y :=
+theorem analyticAt_lift (i k : Fin r) {y : Fin D → ℂ} (hy : y ∈ ((atlas R pt hcov).chart k).target)
+    (hU : ((atlas R pt hcov).chart k).symm y ∈ R.U (pt i)) :
+    AnalyticAt ℂ (fun y p => R.lift (pt i) (((atlas R pt hcov).chart k).symm y) p) y :=
   analyticAt_pi_iff.2 fun p =>
-    d.R.holo (pt i) p (chartIdx d.R.A (pt k)) y ⟨(mem_atlas_target d pt hcov hy).1, hU⟩
+    R.holo (pt i) p (chartIdx R.A (pt k)) y ⟨(mem_atlas_target R pt hcov hy).1, hU⟩
 
-def bundle : HolLineBundle (atlas d pt hcov) where
-  g i k x := blockRatio d.k₀ (d.R.lift (pt i) x) (d.R.lift (pt k) x)
+def bundle (k₀ : K) : HolLineBundle (atlas R pt hcov) where
+  g i k x := blockRatio k₀ (R.lift (pt i) x) (R.lift (pt k) x)
   holo i k := by
     intro l y hy
-    have hS : IsOpen (((atlas d pt hcov).chart l).target ∩ ((atlas d pt hcov).chart l).symm ⁻¹'
-        (((atlas d pt hcov).chart i).source ∩ ((atlas d pt hcov).chart k).source)) :=
-      ((atlas d pt hcov).chart l).isOpen_inter_preimage_symm
-        (((atlas d pt hcov).chart i).open_source.inter ((atlas d pt hcov).chart k).open_source)
+    have hS : IsOpen (((atlas R pt hcov).chart l).target ∩ ((atlas R pt hcov).chart l).symm ⁻¹'
+        (((atlas R pt hcov).chart i).source ∩ ((atlas R pt hcov).chart k).source)) :=
+      ((atlas R pt hcov).chart l).isOpen_inter_preimage_symm
+        (((atlas R pt hcov).chart i).open_source.inter ((atlas R pt hcov).chart k).open_source)
     obtain ⟨hyt, hyi, hyk⟩ := hy
-    obtain ⟨p, hp⟩ := (lift_mem d pt hcov hyk).1 d.k₀
-    have f1 := analyticAt_pi_iff.1 (analyticAt_lift d pt hcov i l hyt (mem_atlas_source d pt hcov hyi))
-      ⟨d.k₀, p⟩
-    have f2 := analyticAt_pi_iff.1 (analyticAt_lift d pt hcov k l hyt (mem_atlas_source d pt hcov hyk))
-      ⟨d.k₀, p⟩
+    obtain ⟨p, hp⟩ := (lift_mem R pt hcov hyk).1 k₀
+    have f1 := analyticAt_pi_iff.1 (analyticAt_lift R pt hcov i l hyt (mem_atlas_source R pt hcov hyi))
+      ⟨k₀, p⟩
+    have f2 := analyticAt_pi_iff.1 (analyticAt_lift R pt hcov k l hyt (mem_atlas_source R pt hcov hyk))
+      ⟨k₀, p⟩
     refine (f1.div f2 hp).congr ?_
     filter_upwards [hS.mem_nhds ⟨hyt, hyi, hyk⟩, f2.continuousAt.eventually_ne hp] with y' hy' hne
-    exact (blockRatio_eq_div (sameOrbit_lift d pt hcov hy'.2.1 hy'.2.2) hne).symm
+    exact (blockRatio_eq_div (sameOrbit_lift R pt hcov hy'.2.1 hy'.2.2) hne).symm
   ne_zero i k x hx := by
-    obtain ⟨c, hc, hz⟩ := sameOrbit_lift d pt hcov hx.1 hx.2
-    show blockRatio d.k₀ (d.R.lift (pt i) x) (d.R.lift (pt k) x) ≠ 0
-    rw [hz, blockRatio_eq c ((lift_mem d pt hcov hx.2).1 d.k₀)]
+    obtain ⟨c, hc, hz⟩ := sameOrbit_lift R pt hcov hx.1 hx.2
+    show blockRatio k₀ (R.lift (pt i) x) (R.lift (pt k) x) ≠ 0
+    rw [hz, blockRatio_eq c ((lift_mem R pt hcov hx.2).1 k₀)]
     exact hc _
   cocycle i k l x hx := by
     obtain ⟨⟨hi, hk⟩, hl⟩ := hx
-    obtain ⟨p, hp⟩ := (lift_mem d pt hcov hl).1 d.k₀
-    have hkl := sameOrbit_lift d pt hcov hk hl
-    have hkp : d.R.lift (pt k) x ⟨d.k₀, p⟩ ≠ 0 := by
+    obtain ⟨p, hp⟩ := (lift_mem R pt hcov hl).1 k₀
+    have hkl := sameOrbit_lift R pt hcov hk hl
+    have hkp : R.lift (pt k) x ⟨k₀, p⟩ ≠ 0 := by
       obtain ⟨c, hc, hz⟩ := hkl
       rw [hz]
       exact mul_ne_zero (hc _) hp
-    show blockRatio d.k₀ (d.R.lift (pt i) x) (d.R.lift (pt l) x) =
-      blockRatio d.k₀ (d.R.lift (pt i) x) (d.R.lift (pt k) x) * blockRatio d.k₀ (d.R.lift (pt k) x) (d.R.lift (pt l) x)
-    rw [blockRatio_eq_div (sameOrbit_lift d pt hcov hi hl) hp,
-      blockRatio_eq_div (sameOrbit_lift d pt hcov hi hk) hkp, blockRatio_eq_div hkl hp]
+    show blockRatio k₀ (R.lift (pt i) x) (R.lift (pt l) x) =
+      blockRatio k₀ (R.lift (pt i) x) (R.lift (pt k) x) * blockRatio k₀ (R.lift (pt k) x) (R.lift (pt l) x)
+    rw [blockRatio_eq_div (sameOrbit_lift R pt hcov hi hl) hp,
+      blockRatio_eq_div (sameOrbit_lift R pt hcov hi hk) hkp, blockRatio_eq_div hkl hp]
     field_simp
 
 theorem contDiffAt_weight (A : HermLine ι) (hs : IsSmoothHerm A) (i l : Fin r) {y : Fin D → ℂ}
-    (hy : y ∈ ((atlas d pt hcov).chart l).target) (hU : ((atlas d pt hcov).chart l).symm y ∈ d.R.U (pt i)) :
-    ContDiffAt ℝ ∞ (fun y => 2 * Real.log (A.h (d.R.lift (pt i) (((atlas d pt hcov).chart l).symm y)))) y := by
-  have hG := analyticAt_lift d pt hcov i l hy hU
-  have hmem := d.R.mem (pt i) _ hU
-  have hh : ContDiffAt ℝ ∞ A.h (d.R.lift (pt i) (((atlas d pt hcov).chart l).symm y)) :=
+    (hy : y ∈ ((atlas R pt hcov).chart l).target) (hU : ((atlas R pt hcov).chart l).symm y ∈ R.U (pt i)) :
+    ContDiffAt ℝ ∞ (fun y => 2 * Real.log (A.h (R.lift (pt i) (((atlas R pt hcov).chart l).symm y)))) y := by
+  have hG := analyticAt_lift R pt hcov i l hy hU
+  have hmem := R.mem (pt i) _ hU
+  have hh : ContDiffAt ℝ ∞ A.h (R.lift (pt i) (((atlas R pt hcov).chart l).symm y)) :=
     hs.contDiffAt (isOpen_blockNonzero.mem_nhds hmem.1)
   have hu : ContDiffAt ℝ ∞ (fun z => 2 * Real.log (A.h z))
-      (d.R.lift (pt i) (((atlas d pt hcov).chart l).symm y)) :=
+      (R.lift (pt i) (((atlas R pt hcov).chart l).symm y)) :=
     contDiffAt_const.mul (hh.log (A.pos _ hmem.1).ne')
   have := hu.comp y (hG.contDiffAt.restrict_scalars ℝ)
   exact this
 
-def weight (A : HermLine ι) (hA : A.a = unitDeg d.k₀) (hs : IsSmoothHerm A) : Weight (bundle d pt hcov) where
-  φ i x := 2 * Real.log (A.h (d.R.lift (pt i) x))
+def weight (k₀ : K) (A : HermLine ι) (hA : A.a = unitDeg k₀) (hs : IsSmoothHerm A) :
+    Weight (bundle R pt hcov k₀) where
+  φ i x := 2 * Real.log (A.h (R.lift (pt i) x))
   smooth i l := fun y hy =>
-    (contDiffAt_weight d pt hcov A hs i l hy.1 (mem_atlas_source d pt hcov hy.2)).contDiffWithinAt
+    (contDiffAt_weight R pt hcov A hs i l hy.1 (mem_atlas_source R pt hcov hy.2)).contDiffWithinAt
   compat i k x hx := by
-    obtain ⟨c, hc, hz⟩ := sameOrbit_lift d pt hcov hx.1 hx.2
-    have hk := lift_mem d pt hcov hx.2
+    obtain ⟨c, hc, hz⟩ := sameOrbit_lift R pt hcov hx.1 hx.2
+    have hk := lift_mem R pt hcov hx.2
     simp only [bundle]
-    rw [hz, blockRatio_eq c (hk.1 d.k₀), A.smul c _ hc, hA, prod_norm_unitDeg]
-    have h1 : 0 < A.h (d.R.lift (pt k) x) := A.pos _ hk.1
-    have h2 : 0 < ‖c d.k₀‖ := norm_pos_iff.2 (hc _)
+    rw [hz, blockRatio_eq c (hk.1 k₀), A.smul c _ hc, hA, prod_norm_unitDeg]
+    have h1 : 0 < A.h (R.lift (pt k) x) := A.pos _ hk.1
+    have h2 : 0 < ‖c k₀‖ := norm_pos_iff.2 (hc _)
     rw [Real.log_mul h2.ne' h1.ne', Real.log_pow]
     push_cast
     ring
 
-theorem weight_isSemipositive (A : HermLine ι) (hA : A.a = unitDeg d.k₀) (P0 : Ideal (MRing ι))
-    (hP0 : P0 ≤ mCoordIdeal d.y) (hsp : IsSemipositiveRel P0 (mCoordIdeal d.y) A) :
-    (weight d pt hcov A hA hsp.1).IsSemipositive := by
+theorem weight_isSemipositive (k₀ : K) (A : HermLine ι) (hA : A.a = unitDeg k₀) (P0 : Ideal (MRing ι))
+    (hP0 : P0 ≤ P) (hsp : IsSemipositiveRel P0 P A) :
+    (weight R pt hcov k₀ A hA hsp.1).IsSemipositive := by
   intro l y hy w
-  have hU := (mem_atlas_target d pt hcov hy).2
-  have hG := analyticAt_lift d pt hcov l l hy hU
-  have hmem := d.R.mem (pt l) _ hU
-  have hh : ContDiffAt ℝ 2 A.h (d.R.lift (pt l) (((atlas d pt hcov).chart l).symm y)) :=
+  have hU := (mem_atlas_target R pt hcov hy).2
+  have hG := analyticAt_lift R pt hcov l l hy hU
+  have hmem := R.mem (pt l) _ hU
+  have hh : ContDiffAt ℝ 2 A.h (R.lift (pt l) (((atlas R pt hcov).chart l).symm y)) :=
     (hsp.1.contDiffAt (isOpen_blockNonzero.mem_nhds hmem.1)).of_le (WithTop.coe_le_coe.2 le_top)
   have hlog : ContDiffAt ℝ 2 (fun z => Real.log (A.h z))
-      (d.R.lift (pt l) (((atlas d pt hcov).chart l).symm y)) := hh.log (A.pos _ hmem.1).ne'
+      (R.lift (pt l) (((atlas R pt hcov).chart l).symm y)) := hh.log (A.pos _ hmem.1).ne'
   have hpts : ∀ᶠ y' in 𝓝 y,
-      (fun y p => d.R.lift (pt l) (((atlas d pt hcov).chart l).symm y) p) y' ∈ mcPts (mCoordIdeal d.y) := by
-    filter_upwards [((atlas d pt hcov).chart l).open_target.mem_nhds hy] with y' hy'
-    exact d.R.mem _ _ (mem_atlas_target d pt hcov hy').2
-  have hcomp : (weight d pt hcov A hA hsp.1).φ l ∘ ((atlas d pt hcov).chart l).symm =
+      (fun y p => R.lift (pt l) (((atlas R pt hcov).chart l).symm y) p) y' ∈ mcPts P := by
+    filter_upwards [((atlas R pt hcov).chart l).open_target.mem_nhds hy] with y' hy'
+    exact R.mem _ _ (mem_atlas_target R pt hcov hy').2
+  have hcomp : (weight R pt hcov k₀ A hA hsp.1).φ l ∘ ((atlas R pt hcov).chart l).symm =
       (fun z => 2 * Real.log (A.h z)) ∘
-        (fun y p => d.R.lift (pt l) (((atlas d pt hcov).chart l).symm y) p) := rfl
+        (fun y p => R.lift (pt l) (((atlas R pt hcov).chart l).symm y) p) := rfl
   rw [hcomp, levi_comp w hG (contDiffAt_const.mul hlog), levi_const_mul 2 hlog]
   exact mul_nonneg (by norm_num) (hsp.2 _ hmem _ (isConeTangent_of_map hP0 hG hpts w))
 
-def smoothVol : SmoothVolume (atlas d pt hcov) where
-  μ := d.dV
-  isProb := d.vol.1
-  dens i := (d.vol.2 (chartIdx d.R.A (pt i))).choose
-  smooth i := (d.vol.2 (chartIdx d.R.A (pt i))).choose_spec.1.mono fun _ hy => hy.1
-  pos i y hy := (d.vol.2 (chartIdx d.R.A (pt i))).choose_spec.2.1 y hy.1
+def smoothVol [MeasurableSpace R.X] [BorelSpace R.X] (dV : Measure R.X) (vol : IsSmoothVolume R.A dV) :
+    SmoothVolume (atlas R pt hcov) where
+  μ := dV
+  isProb := vol.1
+  dens i := (vol.2 (chartIdx R.A (pt i))).choose
+  smooth i := (vol.2 (chartIdx R.A (pt i))).choose_spec.1.mono fun _ hy => hy.1
+  pos i y hy := (vol.2 (chartIdx R.A (pt i))).choose_spec.2.1 y hy.1
   chart_lintegral i g hg :=
-    lintegral_chart (d.R.A.chart (chartIdx d.R.A (pt i))) d.dV _ (d.vol.2 _).choose_spec.1.continuousOn
-      (d.vol.2 _).choose_spec.2.2 (d.R.isOpen_U (pt i)) g hg
+    lintegral_chart (R.A.chart (chartIdx R.A (pt i))) dV _ (vol.2 _).choose_spec.1.continuousOn
+      (vol.2 _).choose_spec.2.2 (R.isOpen_U (pt i)) g hg
 
-def sec (b : MvPolynomial (Σ k, ι k) ℚ) : Fin (atlas d pt hcov).n → d.R.X → ℂ :=
-  fun i => ((atlas d pt hcov).chart i).source.indicator
-    fun x => eval (d.R.lift (pt i) x) (map (algebraMap ℚ ℂ) b)
+def sec {S : Type} [CommRing S] (φ : S →+* ℂ) (b : MvPolynomial (Σ k, ι k) S) :
+    Fin (atlas R pt hcov).n → R.X → ℂ :=
+  fun i => ((atlas R pt hcov).chart i).source.indicator
+    fun x => eval (R.lift (pt i) x) (map φ b)
 
-theorem sec_apply_of_mem (b : MvPolynomial (Σ k, ι k) ℚ) {i : Fin r} {x : d.R.X}
-    (hx : x ∈ ((atlas d pt hcov).chart i).source) :
-    sec d pt hcov b i x = eval (d.R.lift (pt i) x) (map (algebraMap ℚ ℂ) b) :=
+theorem sec_apply_of_mem {S : Type} [CommRing S] (φ : S →+* ℂ) (b : MvPolynomial (Σ k, ι k) S)
+    {i : Fin r} {x : R.X} (hx : x ∈ ((atlas R pt hcov).chart i).source) :
+    sec R pt hcov φ b i x = eval (R.lift (pt i) x) (map φ b) :=
   indicator_of_mem hx _
 
-theorem sec_mem {n : ℕ} {b : MvPolynomial (Σ k, ι k) ℚ} (hb : IsMultiHomog b (blockDeg d.k₀ n)) :
-    sec d pt hcov b ∈ (bundle d pt hcov).sections n := by
+theorem sec_mem (k₀ : K) {S : Type} [CommRing S] (φ : S →+* ℂ) {n : ℕ} {b : MvPolynomial (Σ k, ι k) S}
+    (hb : IsMultiHomog b (blockDeg k₀ n)) :
+    sec R pt hcov φ b ∈ (bundle R pt hcov k₀).sections n := by
   refine ⟨fun i l y hy => ?_, fun i k x hx => ?_, fun i x hx => indicator_of_notMem hx _⟩
-  · have hS : IsOpen (((atlas d pt hcov).chart l).target ∩ ((atlas d pt hcov).chart l).symm ⁻¹'
-        ((atlas d pt hcov).chart i).source) :=
-      ((atlas d pt hcov).chart l).isOpen_inter_preimage_symm ((atlas d pt hcov).chart i).open_source
-    have hG := analyticAt_lift d pt hcov i l hy.1 (mem_atlas_source d pt hcov hy.2)
+  · have hS : IsOpen (((atlas R pt hcov).chart l).target ∩ ((atlas R pt hcov).chart l).symm ⁻¹'
+        ((atlas R pt hcov).chart i).source) :=
+      ((atlas R pt hcov).chart l).isOpen_inter_preimage_symm ((atlas R pt hcov).chart i).open_source
+    have hG := analyticAt_lift R pt hcov i l hy.1 (mem_atlas_source R pt hcov hy.2)
     refine (AnalyticAt.aeval_mvPolynomial
-      (f := fun y p => d.R.lift (pt i) (((atlas d pt hcov).chart l).symm y) p)
-      (analyticAt_pi_iff.1 hG) (map (algebraMap ℚ ℂ) b)).congr ?_
+      (f := fun y p => R.lift (pt i) (((atlas R pt hcov).chart l).symm y) p)
+      (analyticAt_pi_iff.1 hG) (map φ b)).congr ?_
     filter_upwards [hS.mem_nhds hy] with y' hy'
-    have hm : ((atlas d pt hcov).chart l).symm y' ∈ ((atlas d pt hcov).chart i).source := hy'.2
-    rw [Function.comp_apply, sec_apply_of_mem d pt hcov b hm]
+    have hm : ((atlas R pt hcov).chart l).symm y' ∈ ((atlas R pt hcov).chart i).source := hy'.2
+    rw [Function.comp_apply, sec_apply_of_mem R pt hcov φ b hm]
     simp [aeval_def, eval]
-  · obtain ⟨c, hc, hz⟩ := sameOrbit_lift d pt hcov hx.1 hx.2
-    rw [sec_apply_of_mem d pt hcov b hx.1, sec_apply_of_mem d pt hcov b hx.2]
-    show _ = blockRatio d.k₀ (d.R.lift (pt i) x) (d.R.lift (pt k) x) ^ n * _
-    rw [hz, blockRatio_eq c ((lift_mem d pt hcov hx.2).1 d.k₀), eval_torus _ hb]
+  · obtain ⟨c, hc, hz⟩ := sameOrbit_lift R pt hcov hx.1 hx.2
+    rw [sec_apply_of_mem R pt hcov φ b hx.1, sec_apply_of_mem R pt hcov φ b hx.2]
+    show _ = blockRatio k₀ (R.lift (pt i) x) (R.lift (pt k) x) ^ n * _
+    rw [hz, blockRatio_eq c ((lift_mem R pt hcov hx.2).1 k₀), eval_torus φ hb]
 
-theorem lift_chartIdx (y : d.R.X) :
+theorem lift_chartIdx (y : R.X) :
     ∃ c : K → ℂ, (∀ k, c k ≠ 0) ∧
-      d.R.lift (pt (chartIdx (atlas d pt hcov) y)) y = fun p => c p.1 * blockPt d y p := by
-  have hx : y ∈ ((atlas d pt hcov).chart (chartIdx (atlas d pt hcov) y)).source :=
-    Classical.choose_spec ((atlas d pt hcov).cover y)
-  exact d.R.compat _ _ y ⟨mem_atlas_source d pt hcov hx, d.R.mem_U y⟩
+      R.lift (pt (chartIdx (atlas R pt hcov) y)) y = fun p => c p.1 * R.lift y y p := by
+  have hx : y ∈ ((atlas R pt hcov).chart (chartIdx (atlas R pt hcov) y)).source :=
+    Classical.choose_spec ((atlas R pt hcov).cover y)
+  exact R.compat _ _ y ⟨mem_atlas_source R pt hcov hx, R.mem_U y⟩
 
-theorem locDens_eq_chernTopDens (A' : HermLine ι) (hA' : A'.a = unitDeg d.k₀) (hs : IsSmoothHerm A') (t : ℝ)
-    (j : Fin r) {y : Fin D → ℂ} (hy : y ∈ ((atlas d pt hcov).chart j).target) :
-    locDens (atlas d pt hcov) (fun _ => blockInterpPot d d.A A' t) j y =
-      chernTopDens ((weight d pt hcov d.A d.deg d.semipos.1).lerp (weight d pt hcov A' hA' hs) t) j y := by
-  obtain ⟨hy1, hyU⟩ := mem_atlas_target d pt hcov hy
-  have hΦ : ∀ _ : Fin D, IsPotential d.R.A (blockInterpPot d d.A A' t) :=
-    fun _ => isPotential_blockInterpPot d hs t
-  have hbase := locDensBase d.R.A (fun _ => blockInterpPot d d.A A' t) hΦ (chartIdx d.R.A (pt j)) y hy1
-    (fun _ => pt j) (fun _ => hyU)
-  set ψ : (Fin D → ℂ) → ℝ := fun y' =>
-    (1 - t) * Real.log (d.A.h (d.R.lift (pt j) (((atlas d pt hcov).chart j).symm y'))) +
-      t * Real.log (A'.h (d.R.lift (pt j) (((atlas d pt hcov).chart j).symm y'))) with hψ
-  have hL : locDens (atlas d pt hcov) (fun _ => blockInterpPot d d.A A' t) j y = maDens (fun _ => ψ) y :=
-    hbase
-  have hgerm : ((weight d pt hcov d.A d.deg d.semipos.1).lerp (weight d pt hcov A' hA' hs) t).φ j ∘
-      ((atlas d pt hcov).chart j).symm =ᶠ[𝓝 y] fun y' => 2 * ψ y' := by
-    refine Filter.Eventually.of_forall fun y' => ?_
-    simp only [Function.comp_apply, Weight.lerp, weight, hψ]
-    ring
+theorem locDens_eq_chernTopDens (k₀ : K) (W : Weight (bundle R pt hcov k₀))
+    (Φ : LocPot R.X) (hΦ : IsPotential R.A Φ) (hU : ∀ x, Φ.U x = R.U x)
+    (j : Fin r) {y : Fin D → ℂ} (hy : y ∈ ((atlas R pt hcov).chart j).target)
+    (hgerm : W.φ j ∘ ((atlas R pt hcov).chart j).symm =ᶠ[𝓝 y]
+      fun y' => 2 * Φ.φ (pt j) (((atlas R pt hcov).chart j).symm y')) :
+    locDens (atlas R pt hcov) (fun _ => Φ) j y = chernTopDens W j y := by
+  obtain ⟨hy1, hyU⟩ := mem_atlas_target R pt hcov hy
+  have hL : locDens (atlas R pt hcov) (fun _ => Φ) j y =
+      maDens (fun _ y' => Φ.φ (pt j) (((atlas R pt hcov).chart j).symm y')) y :=
+    locDensBase R.A (fun _ => Φ) (fun _ => hΦ) (chartIdx R.A (pt j)) y hy1
+      (fun _ => pt j) (fun _ => by rw [hU]; exact hyU)
   rw [hL]
   unfold chernTopDens maDens
   rw [hessCGerm _ _ y hgerm, hessC_const_mul', ReciprocityTheory.AnForm.A.mdisc_const, smul_smul, Matrix.det_smul,
@@ -369,7 +361,58 @@ theorem locDens_eq_chernTopDens (A' : HermLine ι) (hA' : A'.a = unitDeg d.k₀)
   rw [hc, ← Complex.ofReal_pow, Complex.re_ofReal_mul]
   ring
 
-end Datum
+theorem bergmanDens_integral_eq [MeasurableSpace R.X] [BorelSpace R.X]
+    (h : BergmanDensChartSum.Statement) (k₀ : K) (dV : Measure R.X) (vol : IsSmoothVolume R.A dV)
+    (W : Weight (bundle R pt hcov k₀)) (Φ : LocPot R.X) (hΦ : IsPotential R.A Φ)
+    (hU : ∀ x, Φ.U x = R.U x)
+    (hgerm : ∀ (j : Fin r) {y : Fin D → ℂ}, y ∈ ((atlas R pt hcov).chart j).target →
+      W.φ j ∘ ((atlas R pt hcov).chart j).symm =ᶠ[𝓝 y]
+        fun y' => 2 * Φ.φ (pt j) (((atlas R pt hcov).chart j).symm y'))
+    (g : R.X → ℝ) (hg : Continuous g) :
+    ∫ y, g y * bergmanDens W (smoothVol R pt hcov dV vol) y ∂(smoothVol R pt hcov dV vol).μ =
+      mInt R.A (fun _ => Φ) g / (D.factorial : ℝ) := by
+  have hΦ' : ∀ _ : Fin D, IsPotential R.A Φ := fun _ => hΦ
+  have hMI := mIntegrableCont R.A _ hΦ' g hg
+  have hcomp := refine_compatible R.A (fun i => chartIdx R.A (pt i)) (fun i => R.U (pt i))
+    (fun i => R.isOpen_U (pt i)) fun x => (hcov x).imp fun _ hx => ⟨hx.2, hx.1⟩
+  have hcompat : R.A.Compatible (atlas R pt hcov) := ⟨hcomp.2, hcomp.1⟩
+  have hIndep : mInt R.A (fun _ => Φ) g = mInt (atlas R pt hcov) (fun _ => Φ) g := by
+    have hU' := compatible_unionAtlas_left R.A (atlas R pt hcov) hcompat
+    have hPU := fun i => isPotential_of_compatible hU' (hΦ' i)
+    have hgU := mIntegrable_of_compatible hU' _ hΦ' hMI
+    have hP' := fun i => isPotential_of_compatible hcompat (hΦ' i)
+    have hg' := mIntegrable_of_compatible hcompat _ hΦ' hMI
+    obtain ⟨P₁⟩ := existsPartition R.A
+    obtain ⟨P₂⟩ := existsPartition (atlas R pt hcov)
+    rw [mIntEq R.A P₁ _ hΦ' g hMI, mIntEq (atlas R pt hcov) P₂ _ hP' g hg',
+      ← integralWith_extendLeft hcompat P₁ _ g, ← integralWith_extendRight hcompat P₂ _ g]
+    exact integralWithIndep _ _ _ _ hPU g hgU
+  rw [hIndep]
+  have hP : Nonempty (ChartPartition (atlas R pt hcov)) := existsPartition _
+  rw [h (atlas R pt hcov) (bundle R pt hcov k₀) W (smoothVol R pt hcov dV vol) hP.some g hg]
+  unfold mInt
+  rw [dite_eq_left hP]
+  unfold integralWith
+  congr 1
+  refine Finset.sum_congr rfl fun j _ => setIntegral_congr_fun
+    (((atlas R pt hcov).chart j).open_target.measurableSet) fun y hy => ?_
+  simp only
+  rw [locDens_eq_chernTopDens R pt hcov k₀ W Φ hΦ hU j hy (hgerm j hy)]
+
+end Res
+
+theorem isPotential_blockInterpPot {D : ℕ} {K : Type} [Fintype K] [DecidableEq K]
+    {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω] [CharZero Ω]
+    (d : HSMBlockDatum D K ι Ω) {A' : HermLine ι} (hA' : IsSmoothHerm A') (t : ℝ) :
+    IsPotential d.R.A (blockInterpPot d d.A A' t) := by
+  have h₀ := isPotentialRsmul d.R.A (1 - t) _ (AnResBridge.isPotential_potOf d.R d.semipos.1)
+  have h₁ := isPotentialRsmul d.R.A t _ (AnResBridge.isPotential_potOf d.R hA')
+  have hs := isPotentialAdd d.R.A _ _ h₀ h₁
+  refine isPotential_mul d.R.A _ hs 1 _ ?_ fun x y => ?_
+  · funext x
+    exact (Set.inter_self _).symm
+  · show _ = 1 * ((1 - t) * Real.log (d.A.h (d.R.lift x y)) + t * Real.log (A'.h (d.R.lift x y)))
+    simp [blockInterpPot]
 
 end BlockResolutionMetricPair
 
@@ -377,65 +420,28 @@ end BlockResolutionMetricPair
 open BlockResolutionMetricPair in
 theorem BlockResolutionMetricPair.proof (h : BergmanDensChartSum.Statement) : BlockResolutionMetricPair.Statement := by
   intro D K _ _ ι _ Ω _ _ d A' P0' hA' hP0' hsp'
-  obtain ⟨t, ht⟩ := isCompact_univ.elim_finite_subcover (nbhd d) (isOpen_nbhd d)
-    fun x _ => mem_iUnion.2 ⟨x, mem_nbhd d x⟩
-  let pt : Fin t.card → d.R.X := fun i => (t.equivFin.symm i : d.R.X)
-  have hcov : ∀ x, ∃ i, x ∈ nbhd d (pt i) := by
-    intro x
-    obtain ⟨x', hx', hx⟩ := mem_iUnion₂.1 (ht (mem_univ x))
-    exact ⟨t.equivFin ⟨x', hx'⟩, by simpa [pt] using hx⟩
-  have hsm : IsSmoothHerm d.A := by
-    have h := d.semipos
-    unfold IsSemipositiveRel at h
-    exact h.1
-  have hsm' : IsSmoothHerm A' := by
-    have h := hsp'
-    unfold IsSemipositiveRel at h
-    exact h.1
-  refine ⟨atlas d pt hcov, bundle d pt hcov, weight d pt hcov d.A d.deg hsm,
-    weight d pt hcov A' hA' hsm', smoothVol d pt hcov, fun _ b => sec d pt hcov b, refine_compatible _ _ _ _ _,
-    weight_isSemipositive d pt hcov d.A d.deg d.P0 d.normalForm_baseLattice_le_dualSpan_sup_line d.semipos,
-    weight_isSemipositive d pt hcov A' hA' P0' hP0' hsp', rfl, fun n b hb => sec_mem d pt hcov hb,
-    fun y => ?_, fun s _ g hg => ?_⟩
-  · obtain ⟨c, hc, hz⟩ := lift_chartIdx d pt hcov y
-    have hx : y ∈ ((atlas d pt hcov).chart (chartIdx (atlas d pt hcov) y)).source :=
-      Classical.choose_spec ((atlas d pt hcov).cover y)
+  obtain ⟨r, pt, hcov⟩ := exists_finite_nbhd_cover d.R
+  refine ⟨atlas d.R pt hcov, bundle d.R pt hcov d.k₀, weight d.R pt hcov d.k₀ d.A d.deg d.semipos.1,
+    weight d.R pt hcov d.k₀ A' hA' hsp'.1, smoothVol d.R pt hcov d.dV d.vol,
+    fun _ b => sec d.R pt hcov (algebraMap ℚ ℂ) b, refine_compatible _ _ _ _ _,
+    weight_isSemipositive d.R pt hcov d.k₀ d.A d.deg d.P0 d.normalForm_baseLattice_le_dualSpan_sup_line d.semipos,
+    weight_isSemipositive d.R pt hcov d.k₀ A' hA' P0' hP0' hsp', rfl,
+    fun n b hb => sec_mem d.R pt hcov d.k₀ (algebraMap ℚ ℂ) hb, fun y => ?_, fun s _ g hg => ?_⟩
+  · obtain ⟨c, hc, hz⟩ := lift_chartIdx d.R pt hcov y
+    have hx : y ∈ ((atlas d.R pt hcov).chart (chartIdx (atlas d.R pt hcov) y)).source :=
+      Classical.choose_spec ((atlas d.R pt hcov).cover y)
     refine ⟨c, hc, fun n b _ => ?_, ?_, ?_⟩
-    · show sec d pt hcov b (chartIdx (atlas d pt hcov) y) y = _
-      rw [sec_apply_of_mem d pt hcov b hx, hz]
+    · show sec d.R pt hcov (algebraMap ℚ ℂ) b (chartIdx (atlas d.R pt hcov) y) y = _
+      rw [sec_apply_of_mem d.R pt hcov (algebraMap ℚ ℂ) b hx, hz]; rfl
     · show 2 * Real.log (d.A.h (d.R.lift (pt _) y)) = _
-      rw [hz]
+      rw [hz]; rfl
     · show 2 * Real.log (A'.h (d.R.lift (pt _) y)) = _
-      rw [hz]
-  · have hΦ : ∀ _ : Fin D, IsPotential d.R.A (blockInterpPot d d.A A' s) :=
-      fun _ => isPotential_blockInterpPot d hsm' s
-    have hMI := mIntegrableCont d.R.A _ hΦ g hg
-    have hcomp := refine_compatible d.R.A (fun i => chartIdx d.R.A (pt i)) (fun i => d.R.U (pt i))
-      (fun i => d.R.isOpen_U (pt i)) fun x => (hcov x).imp fun _ hx => ⟨hx.2, hx.1⟩
-    have hcompat : d.R.A.Compatible (atlas d pt hcov) := ⟨hcomp.2, hcomp.1⟩
-    have hIndep : mInt d.R.A (fun _ => blockInterpPot d d.A A' s) g =
-        mInt (atlas d pt hcov) (fun _ => blockInterpPot d d.A A' s) g := by
-      have hU := compatible_unionAtlas_left d.R.A (atlas d pt hcov) hcompat
-      have hPU := fun i => isPotential_of_compatible hU (hΦ i)
-      have hgU := mIntegrable_of_compatible hU _ hΦ hMI
-      have hP' := fun i => isPotential_of_compatible hcompat (hΦ i)
-      have hg' := mIntegrable_of_compatible hcompat _ hΦ hMI
-      obtain ⟨R⟩ := existsPartition d.R.A
-      obtain ⟨R'⟩ := existsPartition (atlas d pt hcov)
-      rw [mIntEq d.R.A R _ hΦ g hMI, mIntEq (atlas d pt hcov) R' _ hP' g hg',
-        ← integralWith_extendLeft hcompat R _ g, ← integralWith_extendRight hcompat R' _ g]
-      exact integralWithIndep _ _ _ _ hPU g hgU
-    rw [hIndep]
-    have hP : Nonempty (ChartPartition (atlas d pt hcov)) := existsPartition _
-    rw [h (atlas d pt hcov) (bundle d pt hcov) _ (smoothVol d pt hcov) hP.some g hg]
-    unfold mInt
-    rw [dite_eq_left hP]
-    unfold integralWith
-    congr 1
-    refine Finset.sum_congr rfl fun j _ => setIntegral_congr_fun
-      (((atlas d pt hcov).chart j).open_target.measurableSet) fun y hy => ?_
-    simp only
-    rw [locDens_eq_chernTopDens d pt hcov A' hA' hsm' s j hy]
+      rw [hz]; rfl
+  · refine bergmanDens_integral_eq d.R pt hcov h d.k₀ d.dV d.vol _ (blockInterpPot d d.A A' s)
+      (isPotential_blockInterpPot d hsp'.1 s) (fun _ => rfl) (fun j _ _ => ?_) g hg
+    refine Filter.Eventually.of_forall fun y' => ?_
+    simp only [Function.comp_apply, Weight.lerp, weight, blockInterpPot]
+    ring
 
 end
 

@@ -124,13 +124,13 @@ lemma linEL_sum (σ : K →+* K) {ι : Type} [Fintype ι] (a y : ι → K)
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun s _ => ?_
   by_cases hs : s.val % 2 = 0
-  · simp only [if_pos hs]
+  · simp only [ite_eq_left hs]
 
     rw [← RingHom.coe_pow, map_sum, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, RingHom.coe_pow, iter_even (ha i) hs, map_mul]
     ring
-  · simp only [if_neg hs]
+  · simp only [ite_eq_right hs]
     simp
 
 lemma linOL_sum (σ : K →+* K) {ι : Type} [Fintype ι] (a y : ι → K)
@@ -141,9 +141,9 @@ lemma linOL_sum (σ : K →+* K) {ι : Type} [Fintype ι] (a y : ι → K)
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun s _ => ?_
   by_cases hs : s.val % 2 = 0
-  · simp only [if_pos hs]
+  · simp only [ite_eq_left hs]
     simp
-  · simp only [if_neg hs]
+  · simp only [ite_eq_right hs]
 
     rw [← RingHom.coe_pow, map_sum, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun i _ => ?_

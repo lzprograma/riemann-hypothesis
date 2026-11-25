@@ -59,12 +59,6 @@ namespace Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.RestC
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker Classical
 
-section Pd
-
-variable {σ : Type*} {p : ℕ} [Fact p.Prime]
-
-end Pd
-
 section Der
 
 variable {D : D7} {N N' : ℕ} {p : ℕ} [Fact p.Prime] (lam : Qbar →+* ℂ_[p])
@@ -131,7 +125,7 @@ theorem cc_psubst' {ι : Type*} {a : MvPowerSeries ι ℂ_[p]} (ha : MvPowerSeri
 
 theorem cc_flog (W : WeierstrassCurve ℂ_[p]) (wq : PowerSeries ℂ_[p]) :
     PowerSeries.constantCoeff (flog W wq) = 0 := by
-  rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, flog, PowerSeries.coeff_mk, if_pos rfl]
+  rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, flog, PowerSeries.coeff_mk, ite_eq_left rfl]
 
 variable {D : D7} {N N' r : ℕ} (lam : Qbar →+* ℂ_[p]) (Λ : AddSubgroup ℂ)
   (C : WeierstrassCurve.VariableChange ℂ_[p]) (wq : PowerSeries ℂ_[p]) (b : Fin r → Matrix (Fin N') (Fin N) D.host.E)
@@ -154,13 +148,6 @@ theorem atLog_eq (F : MvPowerSeries (D.what₂.Tau × Fin N' × Fin N) ℂ_[p]) 
   rw [MvPowerSeries.coe_substAlgHom]; rfl
 
 end Subst
-
-section Clauses
-
-variable {D : D7} (T : Tor D) {N N' : ℕ} {p : ℕ} [Fact p.Prime] (lam : Qbar →+* ℂ_[p])
-  (L : Submodule (𝓞 D.host.E) (Fin N → D.host.E)) (L' : Submodule (𝓞 D.host.E) (Fin N' → D.host.E))
-
-end Clauses
 
 end Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.RestC
 end -- clump:auto
@@ -424,7 +411,7 @@ theorem linInd_bB {r : ℕ} (b : Fin r → Matrix (Fin m') (Fin m) D.host.E) (hb
     · simp [bB_eIdx, entB_sglB]
     · rintro ⟨I', J'⟩ _ hne
       refine Finset.sum_eq_zero fun k _ => ?_
-      rw [bB_eIdx, entB_sglB, if_neg]
+      rw [bB_eIdx, entB_sglB, ite_eq_right]
       · simp
       · rintro ⟨h1, h2⟩; exact hne (by simp [h1, h2])
     · simp
@@ -464,7 +451,7 @@ theorem span_bB {r : ℕ} (p : ℕ) (b : Fin r → Matrix (Fin m') (Fin m) D.hos
     Equiv.symm_apply_apply] at h1
   simp only [Matrix.smul_apply, Matrix.sum_apply, smul_eq_mul]
   rw [← (eIdx n' n r).sum_comp, Fintype.sum_prod_type, Finset.sum_eq_single ((eR a).1, (eC c').1)]
-  · simp only [Equiv.symm_apply_apply, bB_eIdx, sglB_apply, and_self, if_true]
+  · simp only [Equiv.symm_apply_apply, bB_eIdx, sglB_apply, and_self, ite_true]
     have e1 : ∀ k, (((((S / s (eR a).1 (eC c').1 : ℕ) : 𝓞 D.host.K) * c (eR a).1 (eC c').1 k : 𝓞 D.host.K) :
         D.host.K) : D.host.E) * b k (eR a).2 (eC c').2 =
         ((S / s (eR a).1 (eC c').1 : ℕ) : D.host.E) * ((((c (eR a).1 (eC c').1 k : 𝓞 D.host.K) : D.host.K) :
@@ -477,7 +464,7 @@ theorem span_bB {r : ℕ} (p : ℕ) (b : Fin r → Matrix (Fin m') (Fin m) D.hos
   · rintro ⟨I', J'⟩ _ hne
     refine Finset.sum_eq_zero fun k _ => ?_
     simp only [Equiv.symm_apply_apply, bB_eIdx, sglB_apply]
-    rw [if_neg, mul_zero]
+    rw [ite_eq_right, mul_zero]
     rintro ⟨h1, h2⟩; exact hne (by simp [h1, h2])
   · simp
 
@@ -599,7 +586,7 @@ theorem atLogA_blk {r : ℕ} (b : Fin r → Matrix (Fin m') (Fin m) D.host.E) (I
     simp [bB_eIdx, sglB_apply, blkIdx, idxK]
   · rintro ⟨I', J'⟩ _ hne
     refine Finset.sum_eq_zero fun k' _ => ?_
-    rw [bB_eIdx, sglB_apply, if_neg]
+    rw [bB_eIdx, sglB_apply, ite_eq_right]
     · simp [lamC_zero]
     · simp only [blkIdx, Equiv.apply_symm_apply]
       rintro ⟨h1, h2⟩; exact hne (by simp [h1, h2])
@@ -622,7 +609,7 @@ theorem atLog_rename {r : ℕ} (b : Fin r → Matrix (Fin m') (Fin m) D.host.E) 
 theorem ePh_blk (hp2 : p ≠ 2) (r : ℕ) :
     ePh lam Λ C wq (n' * n * r) = ∏ I : Fin n', ∏ J : Fin n, MvPowerSeries.rename (idxK r I J) (ePh lam Λ C wq r) := by
   unfold ePh
-  rw [if_neg hp2, if_neg hp2, ← (eIdx n' n r).prod_comp, Fintype.prod_prod_type, Fintype.prod_prod_type]
+  rw [ite_eq_right hp2, ite_eq_right hp2, ← (eIdx n' n r).prod_comp, Fintype.prod_prod_type, Fintype.prod_prod_type]
   refine Finset.prod_congr rfl fun I _ => Finset.prod_congr rfl fun J _ => ?_
   rw [map_prod]
   refine Finset.prod_congr rfl fun k _ => ?_
@@ -643,7 +630,7 @@ theorem taylorMv_one : taylorMv (fun _ : n → ℂ => (1 : ℂ)) = 1 := by
   ext ν
   by_cases h : ν = 0
   · subst h
-    rw [taylorMv_coeff _ 0 0 (by simp), MvPowerSeries.coeff_one, if_pos rfl]
+    rw [taylorMv_coeff _ 0 0 (by simp), MvPowerSeries.coeff_one, ite_eq_left rfl]
     have hc : ∀ f : Fin 0 → n, Formalism.L2.Th1.H.cntVec f = 0 := fun f => by
       ext i; simp [Formalism.L2.Th1.H.cntVec_apply]
     rw [Finset.filter_true_of_mem (fun f _ => hc f)]
@@ -651,7 +638,7 @@ theorem taylorMv_one : taylorMv (fun _ : n → ℂ => (1 : ℂ)) = 1 := by
   · rw [taylorMv_coeff _ ν.degree ν rfl, MvPowerSeries.coeff_one]
     have hd : ν.degree ≠ 0 := by
       rwa [Ne, Finsupp.degree_eq_zero_iff]
-    rw [if_neg h, iteratedFDeriv_const_of_ne hd]
+    rw [ite_eq_right h, iteratedFDeriv_const_of_ne hd]
     simp
 
 theorem analyticAt_finprod {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {x : E} {ι : Type*} (s : Finset ι)

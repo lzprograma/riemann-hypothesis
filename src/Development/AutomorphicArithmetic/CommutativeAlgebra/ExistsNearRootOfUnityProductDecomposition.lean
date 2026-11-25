@@ -418,9 +418,9 @@ theorem UpperTheory.exists_twoChart_quotient_of_finite_coord :
     · refine Ideal.Quotient.eq.2 (mem_map_of_coord β I (fun i => ?_))
       rw [map_sub, Finsupp.sub_apply, hrx, hf, Finsupp.filter_apply]
       by_cases hi : i ∈ V j
-      · rw [if_pos hi, sub_self]
+      · rw [ite_eq_left hi, sub_self]
         exact I.zero_mem
-      · rw [if_neg hi, zero_sub]
+      · rw [ite_eq_right hi, zero_sub]
         have hw0 : β.repr (T.t ^ j * c) i = 0 := Finsupp.notMem_support_iff.1 (fun h => hi (hwV h))
         have hci := hcoord i
         rw [map_sub, Finsupp.sub_apply, hw0, sub_zero] at hci
@@ -621,7 +621,7 @@ private lemma UpperTheory.eval_zero_pderiv {R : Type} [CommRing R] {n : ℕ} (j 
     by_cases hs : s = Finsupp.single j 1
     · subst hs
       simp
-    · rw [if_neg hs]
+    · rw [ite_eq_right hs]
       split_ifs with h
       · by_cases hsj : s j = 0
         · simp [hsj]
@@ -788,7 +788,7 @@ private lemma coord_setup (T : TC A D) (hC : T.Coord) (j : ℕ) :
     rw [Module.Basis.repr_self, Finsupp.single_apply]
     by_cases h : i = k
     · subst h; simp
-    · rw [if_neg, if_neg h]
+    · rw [ite_eq_right, ite_eq_right h]
       intro h'
       exact h (F.equivFin.symm.injective (Subtype.ext h'.symm))
   · intro x hx hL

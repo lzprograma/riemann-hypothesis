@@ -218,8 +218,8 @@ theorem corner_form (σ : Fin (n + 1) → Fin (n + 1)) (hσ : ∀ a, σ (σ a) =
   have base : L * M * U - c • Ecorner n = L * (M - c • Ecorner n) * U := by
     rw [Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_smul, Matrix.smul_mul, lo_corner_up hL hU]
   by_cases hl : σ (Fin.last n) = Fin.last n
-  · exact ⟨L, U, hL, hU, by rw [if_pos hl, base]⟩
-  · rw [if_neg hl, zero_smul, sub_zero]
+  · exact ⟨L, U, hL, hU, by rw [ite_eq_left hl, base]⟩
+  · rw [ite_eq_right hl, zero_smul, sub_zero]
     set j0 := σ (Fin.last n) with hj0
     have hj0lt : j0 < Fin.last n := lt_of_le_of_ne (Fin.le_last _) hl
     obtain ⟨u, hu'⟩ := hu hl
@@ -240,7 +240,7 @@ theorem corner_form (σ : Fin (n + 1) → Fin (n + 1)) (hσ : ∀ a, σ (σ a) =
         · subst ha
           by_cases hb : b = Fin.last n
           · subst hb
-            simp only [and_self, if_true, mul_one]
+            simp only [and_self, ite_true, mul_one]
             rw [← hu', mul_comm c, ← mul_assoc, Units.mul_inv, one_mul]
           · simp [hb]
         · have : M a j0 = 0 := hM a j0 (fun h => ha (by rw [← hσ a, ← h, hj0, hσ]))
@@ -259,8 +259,6 @@ end Formalism.L2.SG.Pf.AtPt
 namespace Formalism.L2.SG.Pf.AtPt
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc ValuativeRel
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
@@ -336,8 +334,6 @@ namespace Formalism.L2.SG.Pf.AtPt
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc ValuativeRel
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Gen
 
 variable {R : Type*} [CommRing R] {n : ℕ}
@@ -396,9 +392,9 @@ theorem ptMat_transpose (w : Point K (r + 1)) : (ptMat w).transpose = ptMat w :=
   ext a b
   rw [Matrix.transpose_apply, ptMat_apply', ptMat_apply']
   by_cases h : b = sgF w a
-  · rw [if_pos h, if_pos (by rw [h, sgF_sgF]), h]
+  · rw [ite_eq_left h, ite_eq_left (by rw [h, sgF_sgF]), h]
     exact pTau_pSig w.1 a.val
-  · rw [if_neg h, if_neg (fun h' => h (by rw [h', sgF_sgF]))]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h (by rw [h', sgF_sgF]))]
 
 theorem pTau_ne' (w : Point K (r + 1)) (a : Fin (r + 1)) : pTau w.1 a.val ≠ 0 :=
   pTau_ne w.1 (fun b hb => (w.2.1 b hb).1) a.val (by rw [w.2.2]; exact a.2)
@@ -485,8 +481,6 @@ namespace Formalism.L2.SG.Pf.AtPt
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc ValuativeRel
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem xi_up (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
@@ -567,11 +561,11 @@ theorem atPt_ord (Z : LocDat D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' 
     ext a b
     rw [modMat_apply', Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply']
     by_cases hb : b = sgF w a
-    · rw [if_pos hb, if_pos hb, modMat_blk]
+    · rw [ite_eq_left hb, ite_eq_left hb, modMat_blk]
       simp only [twist, qE, tau0, hR, Ring.inverse_one, mul_one, ite_self, sub_zero, map_mul, fr]
       subst hb
       ring
-    · rw [if_neg hb, if_neg hb, map_zero, mul_zero, zero_mul]
+    · rw [ite_eq_right hb, ite_eq_right hb, map_zero, mul_zero, zero_mul]
   rw [hmod]
   exact goal_of (isLo_conj (isLo_map ι hL) fr fri hfr') (isUp_conj (isUp_map ι hB) fri fr hfr) rfl
 
@@ -580,8 +574,6 @@ end Formalism.L2.SG.Pf.AtPt
 namespace Formalism.L2.SG.Pf.AtPt
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc ValuativeRel
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Split
 
@@ -685,8 +677,6 @@ end Formalism.L2.SG.Pf.AtPt
 namespace Formalism.L2.SG.Pf.AtPt
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc ValuativeRel
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
@@ -801,12 +791,12 @@ theorem local_split_type_mixed_first (Z : LocDat D) (Λ : Submodule (𝓞 D.host
     Matrix.mul_diagonal, Matrix.diagonal_mul, ptMat_apply', Ecorner, Matrix.of_apply]
   by_cases hb : b = sgF w a
   · subst hb
-    simp only [if_true, modMat_blk, map_sub, map_mul, fst_proj_algebraMap, htw1, hqi, apply_ite (p1 sg.e), hta1, map_zero,
+    simp only [ite_true, modMat_blk, map_sub, map_mul, fst_proj_algebraMap, htw1, hqi, apply_ite (p1 sg.e), hta1, map_zero,
       hφ1, RingHom.comp_apply]
     by_cases ha : a = Fin.last D.R.rS
     · subst ha; split_ifs <;> first | ring1 | (exfalso; rename_i h1 h2; exact h2 h1.2)
-    · simp only [ha, false_and, if_false]; ring
-  · rw [if_neg hb, if_neg hb, map_zero, map_zero, mul_zero, zero_mul, mul_zero]
+    · simp only [ha, false_and, ite_false]; ring
+  · rw [ite_eq_right hb, ite_eq_right hb, map_zero, map_zero, mul_zero, zero_mul, mul_zero]
     by_cases ha : a = Fin.last D.R.rS ∧ b = Fin.last D.R.rS
     · obtain ⟨rfl, rfl⟩ := ha
       have : ¬ sgF w (Fin.last D.R.rS) = Fin.last D.R.rS := fun h => hb h.symm
@@ -858,12 +848,12 @@ theorem local_split_type_mixed_second (Z : LocDat D) (Λ : Submodule (𝓞 D.hos
   by_cases hb : b = sgF w a
   · subst hb
     have hsr := sign_rel (R := (D.s.atP p).Fp) _ _ _ (nu_parity w a)
-    simp only [if_true, modMat_blk, map_sub, map_mul, snd_proj_algebraMap, htw2, hqi, apply_ite (p2 sg.e), hta2, map_zero,
+    simp only [ite_true, modMat_blk, map_sub, map_mul, snd_proj_algebraMap, htw2, hqi, apply_ite (p2 sg.e), hta2, map_zero,
       hφ2, RingHom.comp_apply, hsr]
     by_cases ha : a = Fin.last D.R.rS
     · subst ha; split_ifs <;> first | ring1 | (exfalso; rename_i h1 h2; exact h2 h1.2)
-    · simp only [ha, false_and, if_false]; ring
-  · rw [if_neg hb, if_neg hb, map_zero, map_zero, mul_zero, zero_mul, mul_zero, zero_mul]
+    · simp only [ha, false_and, ite_false]; ring
+  · rw [ite_eq_right hb, ite_eq_right hb, map_zero, map_zero, mul_zero, zero_mul, mul_zero, zero_mul]
     by_cases ha : a = Fin.last D.R.rS ∧ b = Fin.last D.R.rS
     · obtain ⟨rfl, rfl⟩ := ha
       have : ¬ sgF w (Fin.last D.R.rS) = Fin.last D.R.rS := fun h => hb h.symm
@@ -889,9 +879,9 @@ theorem atPt_typed (Z : LocDat D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T
   obtain ⟨L1, U1, hL1, hU1, h1⟩ := generic_comp (sgF w) (sgF_sgF _)
     (isLo_map ((p1 sg.e).comp (D.s.atP p).ιE) hL) (isUp_map ((p1 sg.e).comp (D.s.atP p).ιE) hB)
     (W := (ptMat w).map ((p1 sg.e).comp (D.s.atP p).ιE))
-    (fun a b hb => by simp only [Matrix.map_apply, ptMat_apply', if_neg hb, map_zero])
+    (fun a b hb => by simp only [Matrix.map_apply, ptMat_apply', ite_eq_right hb, map_zero])
     (fun a => by
-      simp only [Matrix.map_apply, ptMat_apply', if_true]
+      simp only [Matrix.map_apply, ptMat_apply', ite_true]
       exact (map_ne_zero _).2 (pTau_ne' _ a))
     (cf Z p) (cfi Z p) (cfi_cf Z p) (sg.q : (D.s.atP p).Fp)⁻¹ (inv_ne_zero hq)
     (-(Tn : (D.s.atP p).Fp) / (sg.q : (D.s.atP p).Fp))
@@ -906,10 +896,10 @@ theorem atPt_typed (Z : LocDat D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T
     (W := Sg (D.s.atP p).Fp D.R.rS * (ptMat w).map ((p2 sg.e).comp (D.s.atP p).ιE) *
       Sg (D.s.atP p).Fp D.R.rS)
     (fun a b hb => by
-      simp only [Sg, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', if_neg hb, map_zero,
+      simp only [Sg, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', ite_eq_right hb, map_zero,
         mul_zero, zero_mul])
     (fun a => by
-      simp only [Sg, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', if_true]
+      simp only [Sg, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', ite_true]
       exact mul_ne_zero (mul_ne_zero (hs0 _) ((map_ne_zero _).2 (pTau_ne' _ a))) (hs0 _))
     (cf Z p) (cfi Z p) (cfi_cf Z p) (-(sg.q : (D.s.atP p).Fp)⁻¹) (neg_ne_zero.2 (inv_ne_zero hq))
     ((T'n : (D.s.atP p).Fp) / (sg.q : (D.s.atP p).Fp))
@@ -949,8 +939,6 @@ end Formalism.L2.SG.Pf
 namespace Formalism.L2.SG.Pf.AtPt
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Minor
 
@@ -1047,9 +1035,3 @@ theorem conjF_star (x : D.host.E) : D.conjF x = star x := (D.conjF_eq x).trans (
 
 
 end Formalism.L2.SG.Pf.AtPt
-
-namespace Formalism.L2.SG.Pf
-
-open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc Formalism.L2.SG.Pf.AtPt
-
-end Formalism.L2.SG.Pf

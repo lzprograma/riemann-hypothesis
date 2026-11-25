@@ -320,7 +320,7 @@ theorem Bf'_mulVec_supp (S : Set (Fin D.R.rS)) {y : VA X.B.I}
     obtain ⟨b, hb, rfl⟩ := hx
     intro k hk
     show (Bf' X *ᵥ incl X.B.I (bv X (Sum.inl b))) k = 0
-    rw [Bf'_incl, Pi.single_apply, if_neg]
+    rw [Bf'_incl, Pi.single_apply, ite_eq_right]
     rintro rfl
     exact hk ⟨b, hb, rfl⟩
   | zero => intro k _; simp

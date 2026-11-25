@@ -123,8 +123,6 @@ open Formalism.BasicNotions Formalism.GradedWeylDivisibility
 
 namespace GlobalTheory.CompanionTheory.RmHol.HW
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {n : ℕ}
 
 def hv (lam : Fin n → ℤ) : nablaSq ℂ n (dw lam) :=
@@ -279,10 +277,6 @@ variable [MeasurableSpace G] [BorelSpace G]
 variable [CompactSpace G]
 
 end GlobalTheory.UniTrick
-
-namespace GlobalTheory
-
-end GlobalTheory
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -478,8 +472,6 @@ open PositivityTheory.RgTw (Mat)
 
 namespace GlobalTheory.CompanionTheory.RmHol
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {n : ℕ}
 
 theorem line_inverse {e : Mat n} {δ t s : ℂ} (he : e * e = δ • e) (hs : s * (1 + t * δ) = t) :
@@ -567,19 +559,19 @@ theorem xu_glRel : ∀ (n : ℕ) (lam : Fin n → ℤ), HolRm lam → Formalism.
   have hsq : (Matrix.single a b (1:ℂ) : Mat n) * Matrix.single a b 1 =
       (if b = a then (1:ℂ) else 0) • Matrix.single a b 1 := by
     by_cases h : b = a
-    · subst h; rw [if_pos rfl, one_smul, Matrix.single_mul_single_same, one_mul]
-    · rw [if_neg h, zero_smul, Matrix.single_mul_single_of_ne _ _ _ _ h]
+    · subst h; rw [ite_eq_left rfl, one_smul, Matrix.single_mul_single_same, one_mul]
+    · rw [ite_eq_right h, zero_smul, Matrix.single_mul_single_of_ne _ _ _ _ h]
   have key := comm_XA hD (Matrix.single c d (1:ℂ)) hsq
   have hEB : XA lam ((Matrix.single a b (1:ℂ) : Mat n) * Matrix.single c d 1) =
       if b = c then XA lam (Matrix.single a d 1) else 0 := by
     by_cases h : b = c
-    · subst h; rw [if_pos rfl, Matrix.single_mul_single_same, one_mul]
-    · rw [if_neg h, Matrix.single_mul_single_of_ne _ _ _ _ h, XA_zero]
+    · subst h; rw [ite_eq_left rfl, Matrix.single_mul_single_same, one_mul]
+    · rw [ite_eq_right h, Matrix.single_mul_single_of_ne _ _ _ _ h, XA_zero]
   have hBE : XA lam ((Matrix.single c d (1:ℂ) : Mat n) * Matrix.single a b 1) =
       if d = a then XA lam (Matrix.single c b 1) else 0 := by
     by_cases h : d = a
-    · subst h; rw [if_pos rfl, Matrix.single_mul_single_same, one_mul]
-    · rw [if_neg h, Matrix.single_mul_single_of_ne _ _ _ _ h, XA_zero]
+    · subst h; rw [ite_eq_left rfl, Matrix.single_mul_single_same, one_mul]
+    · rw [ite_eq_right h, Matrix.single_mul_single_of_ne _ _ _ _ h, XA_zero]
   simp only [Xu]
   rw [key, hEB, hBE]
 
@@ -601,17 +593,6 @@ open scoped ComplexConjugate Kronecker InnerProductSpace
 
 namespace GlobalTheory.CompanionTheory.CxAvg
 
-section Abstract
-
-variable {K E : Type*} [Group K] [TopologicalSpace K] [IsTopologicalGroup K] [CompactSpace K]
-  [SecondCountableTopology K] [MeasurableSpace K] [BorelSpace K]
-  [NormedAddCommGroup E] [InnerProductSpace ℂ E] [FiniteDimensional ℂ E] [CompleteSpace E]
-  (μ : Measure K) [μ.IsHaarMeasure] (F : K →* (E →L[ℂ] E))
-
-variable {F}
-
-end Abstract
-
 section Concrete
 
 open PositivityTheory.RgTw (Mat hb)
@@ -630,10 +611,6 @@ theorem Rm_mul (lam : Fin n → ℤ) (k k' : Matrix.unitaryGroup (Fin n) ℂ) :
     Rm lam (k * k').1 = Rm lam k.1 * Rm lam k'.1 := by
   rw [Rm_unitary, Rm_unitary, Rm_unitary, map_mul, map_mul, Module.End.mul_eq_comp]
   exact LinearMap.toMatrix_comp _ _ _ _ _
-
-theorem Rm_one (lam : Fin n → ℤ) : Rm lam (1 : Matrix.unitaryGroup (Fin n) ℂ).1 = 1 := by
-  rw [Rm_unitary, map_one, map_one]
-  exact LinearMap.toMatrix_id _
 
 theorem continuous_unitaryIncl : Continuous (GlobalTheory.Branching.unitaryIncl n) := by
   rw [Units.continuous_iff]
@@ -673,19 +650,6 @@ attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {n : ℕ}
 
-private theorem rm_unitary_apply (ν : Fin n → ℤ) (k : Matrix.unitaryGroup (Fin n) ℂ) :
-    Rm ν k.1 = LinearMap.toMatrix (wb ν) (wb ν)
-      (GlobalTheory.Branching.sqRep ℂ n (dw ν) (GlobalTheory.Branching.unitaryIncl n k)) := by
-  have h : IsUnit k.1.det :=
-    (Matrix.isUnit_iff_isUnit_det _).1 (GlobalTheory.Branching.unitaryIncl n k).isUnit
-  have e : Matrix.nonsingInvUnit k.1 h = GlobalTheory.Branching.unitaryIncl n k := Units.ext rfl
-  rw [Rm, dite_eq_left h, e]
-
-private theorem rm_unitary_mul (ν : Fin n → ℤ) (a b : Matrix.unitaryGroup (Fin n) ℂ) :
-    Rm ν (a * b).1 = Rm ν a.1 * Rm ν b.1 := by
-  rw [rm_unitary_apply, rm_unitary_apply, rm_unitary_apply, map_mul, map_mul, Module.End.mul_eq_comp]
-  exact LinearMap.toMatrix_comp _ _ _ _ _
-
 theorem exists_frame (ν : Fin n → ℤ) :
     ∃ (d : ℕ) (e : (Jd n ν → ℂ) ≃ₗ[ℂ] EuclideanSpace ℂ (Fin d)),
       ∀ (k : Matrix.unitaryGroup (Fin n) ℂ) (x y : Jd n ν → ℂ),
@@ -698,14 +662,9 @@ theorem exists_frame (ν : Fin n → ℤ) :
         rfl
       map_mul' := fun a b => by
         show Matrix.mulVecLin (Rm ν (a * b).1) = _
-        rw [rm_unitary_mul, Matrix.mulVecLin_mul]
+        rw [GlobalTheory.CompanionTheory.CxAvg.Rm_mul, Matrix.mulVecLin_mul]
         rfl }
-  have hcont : Continuous fun k : Matrix.unitaryGroup (Fin n) ℂ => Rm ν k.1 := by
-    simp only [rm_unitary_apply]
-    refine continuous_matrix fun i j => ?_
-    simp only [LinearMap.toMatrix_apply]
-    exact (GlobalTheory.CompanionTheory.WInfCont.continuous_sqRep_coeff (dw ν) (wb ν j) ((wb ν).coord i)).comp
-      GlobalTheory.CompanionTheory.CxAvg.continuous_unitaryIncl
+  have hcont := GlobalTheory.CompanionTheory.CxAvg.continuous_Rm ν
   have hρc : ∀ v, Continuous fun k => ρ k v := fun v =>
     hcont.matrix_mulVec continuous_const
   obtain ⟨c, hc⟩ := GlobalTheory.exists_invariant_core ρ hρc
@@ -939,7 +898,7 @@ theorem frame_model (hν : Antitone ν) :
         rw [GlobalTheory.CompanionTheory.RmHol.Rm_one, frameL_one]
       map_mul' := fun a b => by
         show frameL e (Rm ν (a * b).1) = _
-        rw [rm_unitary_mul, frameL_mul] }
+        rw [GlobalTheory.CompanionTheory.CxAvg.Rm_mul, frameL_mul] }
   have hσ : ∀ k x, σ k (e x) = e (Rm ν k.1 *ᵥ x) := fun k x => frameL_apply e _ x
   refine ⟨σ, fun a b => frameL e (Xu ν a b), e c0, glRel_frame e, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro a b x y
@@ -1245,7 +1204,7 @@ theorem expU_two_pi (a : Fin n) (hX : (Matrix.single a a Complex.I)ᴴ = -(Matri
         simp
       · simp [hc, Ne.symm hc]
     · rw [Matrix.diagonal_apply_ne _ hij, Matrix.smul_apply, Matrix.single_apply,
-        if_neg (fun hh => hij (hh.1.symm.trans hh.2)), smul_zero]
+        ite_eq_right (fun hh => hij (hh.1.symm.trans hh.2)), smul_zero]
   rw [e, Matrix.exp_diagonal, ← Matrix.diagonal_one]
   congr 1
   funext c
@@ -1534,13 +1493,8 @@ theorem main : ∀ {n : ℕ} (E : KMod n) (T : E.V →L[ℂ] E.V), (∀ k, T * E
       refine ⟨fun a => e.injective ?_, fun a b hab hε => e.injective ?_⟩
       · rw [hint, h1 a, map_smul]
       · rw [hint, h2 a b hab hε, map_zero]
-  have hpres : ∀ μ : Fin n → ℝ, ∀ x ∈ hwOf G μ, dualT E T x ∈ hwOf G μ := by
-    intro μ x hx
-    change Formalism.REAL.KHighest (fun _ => true) G μ x at hx
-    change Formalism.REAL.KHighest (fun _ => true) G μ (dualT E T x)
-    unfold Formalism.REAL.KHighest Formalism.REAL.IsWeight at hx ⊢
-    exact ⟨fun a => by rw [← hcommT, hx.1 a, map_smul],
-      fun a b hab hε => by rw [← hcommT, hx.2 a b hab hε, map_zero]⟩
+  have hpres : ∀ μ : Fin n → ℝ, ∀ x ∈ hwOf G μ, dualT E T x ∈ hwOf G μ := fun μ x hx =>
+    Isotypic.map_mem_hwOf G μ (dualT E T : (E.V →L[ℂ] ℂ) →ₗ[ℂ] (E.V →L[ℂ] ℂ)) hcommT x hx
   have hfg : ∀ x, e ((dualT E T : (E.V →L[ℂ] ℂ) →ₗ[ℂ] (E.V →L[ℂ] ℂ)) x) = S' (e x) := fun x => by
     simp [hS']
   obtain ⟨F, hFa, hFbot, htr⟩ := core _ ρ' G' hg' hh' hd'

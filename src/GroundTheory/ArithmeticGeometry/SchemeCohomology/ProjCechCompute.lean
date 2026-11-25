@@ -92,9 +92,9 @@ theorem exists_d_eq_of_coeff_allNeg {k : ℤ} {p : ℕ}
     rw [coeff_filterL] at hm
     by_cases hs : IsSel j m
     swap
-    · rw [if_neg hs] at hm
+    · rw [ite_eq_right hs] at hm
       exact absurd rfl hm
-    rw [if_pos hs] at hm
+    rw [ite_eq_left hs] at hm
     obtain ⟨hsum, hnn⟩ := lval_mem σ (Fin.cons j i) m hm
     refine ⟨hsum, fun j' hj' => ?_⟩
     by_cases hjj : j' = j
@@ -113,12 +113,12 @@ theorem exists_d_eq_of_coeff_allNeg {k : ℤ} {p : ℕ}
   · rw [hneg i m hm]
     refine Finset.sum_eq_zero fun a _ => ?_
     rw [Finset.sum_eq_zero fun j _ => ?_, smul_zero]
-    rw [if_neg fun hs => not_allNeg_of_isSel hs hm]
+    rw [ite_eq_right fun hs => not_allNeg_of_isSel hs hm]
   · obtain ⟨j₀, hj₀⟩ := exists_isSel hm
     have hsel : ∀ (f : Fin (n + 1) → A),
         (∑ j, if IsSel j m then f j else 0) = f j₀ := fun f => by
-      rw [Finset.sum_eq_single j₀ (fun j _ hj => if_neg fun hs => hj (isSel_unique hs hj₀))
-        (fun h => absurd (Finset.mem_univ _) h), if_pos hj₀]
+      rw [Finset.sum_eq_single j₀ (fun j _ hj => ite_eq_right fun hs => hj (isSel_unique hs hj₀))
+        (fun h => absurd (Finset.mem_univ _) h), ite_eq_left hj₀]
     simp_rw [hsel]
     have hc := congrArg (fun ℓ => (ℓ : Laurent A n).coeff m) (lval_d σ (Fin.cons j₀ i))
     simp only [hσ, lval_zero, coeff_sum', coeff_zsmul'] at hc
@@ -161,9 +161,9 @@ lemma filterL_mem_LDeg {s : Set (Fin (n + 1))} {k : ℤ} (S : (Fin (n + 1) → �
   intro m hm
   rw [coeff_filterL] at hm
   by_cases hS : S m
-  · rw [if_pos hS] at hm
+  · rw [ite_eq_left hS] at hm
     exact h m hm
-  · rw [if_neg hS] at hm
+  · rw [ite_eq_right hS] at hm
     exact absurd rfl hm
 
 def posPart {k : ℤ} {q : ℕ} (σ : Cochain (twistAb A n k) (cover A n) q) :
@@ -236,7 +236,7 @@ theorem topMap_bijective {k : ℤ} {m : ℕ} :
     have hcong := CechOrdered.altProj_congr (m + 1) hsame
     have hσp : d _ _ (m + 1) (posPart σ) = 0 := by rw [d_posPart, hσ, posPart_zero]
     obtain ⟨τ, hτ⟩ := exists_d_eq_of_coeff_allNeg (posPart σ) hσp fun i e he => by
-      rw [lval_posPart, coeff_filterL, if_neg (not_not_intro he)]
+      rw [lval_posPart, coeff_filterL, ite_eq_right (not_not_intro he)]
     rw [← CechOrdered.cls_altProj m σ hσ, cls_eq_zero_iff, coboundaries_succ, hcong, ← hτ,
       ← CechOrdered.d_altProj]
     exact ⟨_, rfl⟩
@@ -263,9 +263,9 @@ theorem topMap_bijective {k : ℤ} {m : ℕ} :
     rw [Finset.sum_eq_single e]
     · simp
     · intro b _ hb
-      rw [if_neg fun h => hb (Subtype.ext h)]
+      rw [ite_eq_right fun h => hb (Subtype.ext h)]
     · intro he
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact Finsupp.notMem_support_iff.mp he
 
 def cechHTopEquiv (k : ℤ) (m : ℕ) :

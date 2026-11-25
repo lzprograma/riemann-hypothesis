@@ -1,51 +1,13 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StarMulOfMemKc
 public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectorOfIntegrableDiscreteSeriesCoefficient
 public import Development.AbelianVarietyTheory.Proofs.HeightProofs.HighestWeightGeneratedWeightsBelow
 public import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
@@ -84,15 +46,7 @@ private lemma sinh_div_le_exp_of_pos {y : ℝ} (hy : 0 < y) : Real.sinh y / y �
 
 open MvPolynomial in
 private lemma shc_le_exp_abs (x : ℝ) : _root_.Formalism.MainNotions.SchurIrreducible.shc x ≤ Real.exp |x| := by
-  unfold _root_.Formalism.MainNotions.SchurIrreducible.shc
-  split_ifs with hx
-  · simp [hx]
-  · rcases lt_or_gt_of_ne hx with h | h
-    · rw [abs_of_neg h]
-      have := sinh_div_le_exp_of_pos (neg_pos.mpr h)
-      rwa [Real.sinh_neg, neg_div_neg_eq] at this
-    · rw [abs_of_pos h]
-      exact sinh_div_le_exp_of_pos h
+  apply _root_.GlobalTheory.CartanInt.shc_le_exp <;> assumption
 
 open MvPolynomial in
 private lemma sum_sum_ite_lt_four_mul_add_eq (m : ℕ) (a : ℕ → ℝ) :
@@ -440,13 +394,11 @@ theorem secondCountable_grp (T : GrpData p q) : SecondCountableTopology T.G := b
   haveI : SecondCountableTopology ℂˣ := Units.isEmbedding_embedProduct.secondCountableTopology
   exact T.emb.secondCountableTopology
 
-alias continuous_eFun := _root_.GlobalTheory.CoefProjector.continuous_eFun
-
 theorem integrable_eFun (X : ProvA) (h2 : DiscreteSeriesPositivity X) (h6 : CoverHaarIntegration X) (lam : Ix p q → ℚ) (hl : IsParam lam)
     (h : ℝ) (hg : GapGe lam h) (hh : rangeOfSeventhSum p q ≤ h) (v : (X.ds p q lam).HK.V)
     (hv : UnitHW (X.ds p q lam) (blattner lam) v) :
     Integrable (eFun (X.ds p q lam) v) (X.grp p q).haar := by
-  have hc := continuous_eFun (X.ds p q lam) v
+  have hc := GlobalTheory.CoefProjector.continuous_eFun (X.ds p q lam) v
   refine ⟨hc.aestronglyMeasurable, ?_⟩
   obtain ⟨⟨c, mK, -, hprob, hK, -, hint⟩, hinv, hdec, hJ⟩ := h6 p q
   obtain ⟨C, a, ha, hC⟩ := exponent_le hh
@@ -511,7 +463,7 @@ theorem discreteSeriesHighestVector_of_positivity : ∀ X : ProvA, DiscreteSerie
     rintro _ ⟨io, hio1, rfl⟩
     have hfix : opE (X.grp p q) πU.π (eFun (X.ds p q lam) v) (io ((X.ds p q lam).ι v)) = io ((X.ds p q lam).ι v) := by
       have hint : Integrable (fun g => eFun (X.ds p q lam) v g • (X.ds p q lam).U.π g ((X.ds p q lam).ι v)) (X.grp p q).haar := by
-        refine hi.norm.mono' ((continuous_eFun (X.ds p q lam) v).smul ((X.ds p q lam).U.cont _)).aestronglyMeasurable
+        refine hi.norm.mono' ((GlobalTheory.CoefProjector.continuous_eFun (X.ds p q lam) v).smul ((X.ds p q lam).U.cont _)).aestronglyMeasurable
           (ae_of_all _ fun g => ?_)
         rw [norm_smul, (X.ds p q lam).U.isom, hv.2, mul_one]
       have h1 := hD1 ((X.ds p q lam).ι v)

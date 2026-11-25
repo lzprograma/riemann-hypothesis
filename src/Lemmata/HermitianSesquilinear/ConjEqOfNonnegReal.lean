@@ -23,7 +23,7 @@ private theorem conj_eq_of_nonneg_real {M : Type} [AddCommGroup M] [Module ℂ M
     linarith
 
 theorem goal1 :
-  ∀ {M : Type} [inst : AddCommGroup.{0} M] [inst_1 : Module.{0, 0} Complex M] (Ξ : Formalism.FourierDecayAlt.F7.Sesq M),
+  ∀ {M : Type} [AddCommGroup.{0} M] [Module.{0, 0} Complex M] (Ξ : Formalism.FourierDecayAlt.F7.Sesq M),
   (∀ (m : M),
       And (LE.le.{0} 0 (DFunLike.coe.{1, 1, 1} (DFunLike.coe.{1, 1, 1} Ξ m) m).re)
         (Eq.{1} (DFunLike.coe.{1, 1, 1} (DFunLike.coe.{1, 1, 1} Ξ m) m).im 0)) →

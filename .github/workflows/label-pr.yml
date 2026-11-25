@@ -1,9 +1,9 @@
 name: Label PR
 
-# Labels PRs that touch the build configuration, the challenge statement, CI or the docs, and
-# labels each PR by size, using the larger of its added and removed line counts: under 100 is
-# extra small, under 1,000 small, under 10,000 medium, under 100,000 large, and 100,000 or more
-# extra large. The counts are GitHub's own for the PR, so the job never downloads file contents.
+# Labels PRs that touch the build configuration, the challenge statement, the solution, CI or the
+# docs, and labels each PR by size, using the larger of its added and removed line counts: under
+# 100 is extra small, under 1,000 small, under 10,000 medium, under 100,000 large, and 100,000 or
+# more extra large. The counts are GitHub's own for the PR, so the job never downloads file contents.
 # GitHub gives +0 -0 for a PR too large for it to diff, so the size is never taken to be less
 # than the number of paths the PR changes.
 #
@@ -47,7 +47,7 @@ jobs:
           git -C pr fetch -q --no-tags --filter=blob:none "https://github.com/$GITHUB_REPOSITORY" "$BASE" "$HEAD"
           git -C pr diff -z --name-only --no-renames "$BASE...$HEAD" > changed
 
-          lake='' challenge='' ci='' docs=''
+          lake='' challenge='' solution='' ci='' docs=''
           while IFS= read -r -d '' path; do
             case "$path" in
               lakefile.toml | lakefile.lean | lake-manifest.json | lean-toolchain)
@@ -58,6 +58,15 @@ jobs:
               comparator/FormalConjecturesChallenge.lean | comparator/formal-conjectures.json | \
               comparator/formal-conjectures-export-targets.txt)
                 challenge+="  $path"$'\n' ;;
+            esac
+            # The solution modules of both Comparator setups (comparator.json and
+            # comparator/formal-conjectures.json), the files the second one's solution is
+            # built from, and src/Statements.lean, which defines propositions that
+            # src/Main.lean's theorems state and FormalConjecturesBridge.lean imports.
+            case "$path" in
+              src/Main.lean | src/Statements.lean | comparator/FormalConjecturesSolution.lean | \
+              comparator/FormalConjecturesBridge.lean | comparator/FormalConjecturesStatement.lean)
+                solution+="  $path"$'\n' ;;
             esac
             case "$path" in
               .github/* | scripts/* | tools/* | .gitattributes)
@@ -80,6 +89,7 @@ jobs:
           }
           flag changes-lake "$lake"
           flag changes-challenge "$challenge"
+          flag changes-solution "$solution"
           flag CI "$ci"
           flag documentation "$docs"
 

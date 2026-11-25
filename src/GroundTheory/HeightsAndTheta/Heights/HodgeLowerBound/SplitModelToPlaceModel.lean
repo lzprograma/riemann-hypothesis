@@ -3,7 +3,6 @@ module
 public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.EventuallyInFrameDomain
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.IsMultiHomogChartMonomial
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedC
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.LineField
 
 @[expose] public section
 
@@ -86,16 +85,6 @@ theorem contDiffAt_valAt {m : ℕ} {O : Set (Fin m → ℂ)} {γ : (Fin m → �
   exact (hF.contDiffAt.restrict_scalars ℝ).congr_of_eventuallyEq hev
 
 end ToTwin
-
-section OfTwin
-
-end OfTwin
-
-namespace Example
-
-open Line
-
-end Example
 
 end HermMetric
 

@@ -101,11 +101,8 @@ theorem bind₁_scale_of (o₀ : K₁) (u : MRing ι₂ O) (h : (Σ k, ι₁ k) 
   ring
 
 theorem rename_eq_bind₁ {σ τ R : Type*} [CommRing R] (f : σ → τ) (q : MvPolynomial σ R) :
-    rename f q = bind₁ (fun p => X (f p)) q := by
-  induction q using MvPolynomial.induction_on with
-  | C r => simp
-  | add p q hp hq => simp only [map_add (f := _), hp, hq]
-  | mul_X p v hp => simp only [map_mul, hp, rename_X, bind₁_X_right]
+    rename f q = bind₁ (fun p => X (f p)) q :=
+  congrArg (· q) (rename_eq_aeval f)
 
 theorem bind₁_sub_mem_of {σ τ R : Type*} [CommRing R] (I : Ideal (MvPolynomial τ R))
     (g g' : σ → MvPolynomial τ R) (h : ∀ v, g' v - g v ∈ I) (q : MvPolynomial σ R) :
@@ -154,9 +151,9 @@ theorem saturate (j : K₁ ↪ K₂) (o₀ : K₁) (pt : (Σ k, ι₂ k) → Φ)
     intro v
     rw [hΛ]
     by_cases hv : v.1 = o₀
-    · simp only [Λ₁, if_pos hv]
+    · simp only [Λ₁, ite_eq_left hv]
       exact (hg₂ v hv).1
-    · simp only [Λ₁, if_neg hv]
+    · simp only [Λ₁, ite_eq_right hv]
       rw [hg₁ v hv]
       exact isWeightedHomogeneous_X O (blockWeight ι₂) (FieldNumbers.blockIncl j ι₂ v)
   have hform : ∀ (d : K₁ → ℕ) (q : MRing (fun k => ι₂ (j k)) O), IsMultiHomog q d → q ∈ I →

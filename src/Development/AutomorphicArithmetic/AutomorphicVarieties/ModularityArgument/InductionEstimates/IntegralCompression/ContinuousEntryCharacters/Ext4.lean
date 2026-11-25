@@ -155,8 +155,7 @@ private theorem vanish (a₀ : U4 → ℂ) (ν μ₀ : Fin (2 + 2) → ℤ) (ι 
     rw [hψ, e]
     ring
   · have hx : ∃ m, a₀ (ι m)⁻¹ ≠ 0 := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       exact hI (by simp [hcon])
     obtain ⟨m, hm⟩ := hx
     apply mul_right_cancel₀ hm

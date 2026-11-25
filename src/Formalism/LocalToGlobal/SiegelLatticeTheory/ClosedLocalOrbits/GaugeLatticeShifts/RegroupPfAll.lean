@@ -10,53 +10,13 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFinit
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SlabCoverPf
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SlabNDensePf
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHGamUnipKu
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HermitianETransportInvariant
 import Mathlib.Tactic.Linter.Style
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FoldingUnfolding.TranslationIndependent
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MultiplicityMeasurability.MeasurableMult
 import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasures.RightRegularIsometricMultiplicative
-import Mathlib.Tactic.TypeStar
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.AdmNPf
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.DualCoords
-import Mathlib.Tactic.Basify
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.LatCountAllOf
 import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHFinal
 import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHLatOfLattice
@@ -76,8 +36,6 @@ namespace Formalism.L2.SG.Pf.RegroupPf
 open Formalism.BasicNotions
 
 section NSAPf
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def NDense : Prop :=
   ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u : D.what₂.Word) (n : X.B.I.Gf), n ∈ X.NfinU u →
@@ -113,8 +71,6 @@ open scoped Classical
 namespace Formalism.L2.SG.Pf.RegroupPf
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermOp Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.Full
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace ColUniqPf
 
@@ -241,8 +197,6 @@ theorem lintegral_slab (I : Formalism.MainNotions.S.AutInst) (μf : Measure I.Gf
   rw [hout, lintegral_mul_const _ hfa, mul_comm]
 
 section SlabAbsPf
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PoincareInHH.Cut Formalism.L2.SG.TermOp.KExpCut Formalism.L2.SG.Full
 
@@ -441,8 +395,6 @@ namespace Formalism.L2.SG.Pf.RegroupPf
 
 open Formalism.L2.SG.NormCut
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section FrameCongSec
 
 theorem coef_of_inMod (I : Formalism.MainNotions.S.AutInst) (m : ℕ) {ι : Type} [Fintype ι] (v : ι → VA I) (S : Set ι) (x : VA I)
@@ -524,13 +476,13 @@ theorem frame_congruence_holds : FrameCongC := by
           have hbj : b < j := Fin.castSucc_lt_castSucc_iff.1 ha
           have hj : τ j = 0 := hτ0 j (fun h => lt_asymm hbj h)
           have hjb : j ≠ b := fun h => by subst h; exact lt_irrefl _ hbj
-          simp only [Fin.snoc_castSucc, hj, if_neg hjb, add_zero]
+          simp only [Fin.snoc_castSucc, hj, ite_eq_right hjb, add_zero]
       · have e : X.B.I.fmat κ *ᵥ e0v (Fin.castSucc b) -
             ∑ a, (Fin.snoc (α := fun _ => X.B.I.E ⊗[X.B.I.F] Af X.B.I.F)
               (fun j => τ j + if j = b then 1 else 0) 0 a) • e0v a =
             (X.B.I.fmat κ - 1) *ᵥ X.e0 b - ∑ j, τ j • X.e0 j := by
           simp only [Fin.sum_univ_castSucc, he0v, Fin.snoc_castSucc, Fin.snoc_last, zero_smul, add_zero, add_smul,
-            Finset.sum_add_distrib, ite_smul, one_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true,
+            Finset.sum_add_distrib, ite_smul, one_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true,
             Matrix.sub_mulVec, Matrix.one_mulVec]
           abel
         rw [e]; exact hτ
@@ -556,19 +508,19 @@ theorem frame_congruence_holds : FrameCongC := by
     intro a c
     rcases lt_trichotomy a c with h | h | h
     · refine ⟨y0 c a, hy0 c a, ?_⟩
-      simp only [hξd, if_pos h]
+      simp only [hξd, ite_eq_left h]
       exact hξ0 c a
     · subst h
       refine ⟨0, zero_mem _, ?_⟩
-      simp only [hξd, lt_irrefl, if_false, ht1, mul_zero, add_zero, hs]
+      simp only [hξd, lt_irrefl, ite_false, ht1, mul_zero, add_zero, hs]
       simp
     · refine ⟨0, zero_mem _, ?_⟩
       have hna : ¬ a < c := not_lt.2 h.le
       have hne : a ≠ c := ne_of_gt h
-      simp only [hξd, if_neg hna, if_neg hne, ht0 c a h, mul_zero, add_zero, hs]
+      simp only [hξd, ite_eq_right hna, ite_eq_right hne, ht0 c a h, mul_zero, add_zero, hs]
       simp
   refine ⟨ξ, fun a b hab => ?_, fun a => ?_, fun b => ?_⟩
-  · simp only [hξd, if_neg (not_lt.2 hab.le), if_neg (ne_of_gt hab)]
+  · simp only [hξd, ite_eq_right (not_lt.2 hab.le), ite_eq_right (ne_of_gt hab)]
   · simp [hξd]
 
   set Yv : Fin (D.R.rS + 1) → VA X.B.I := fun a => X.B.I.fmat g1⁻¹ *ᵥ incl X.B.I (X.crd ((X.Fu u).fvec a)) with hY
@@ -648,8 +600,6 @@ namespace Formalism.L2.SG.Pf.RegroupPf
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermOp Formalism.L2.SG.HidaSetting Matrix
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem reduction_mod_g_holds : ModGOfAtC := by
   intro D X g1 Λ hΛ v hv
   obtain ⟨c, hcop, hcv⟩ := hv
@@ -713,8 +663,6 @@ namespace Formalism.L2.SG.Pf.RegroupPf
 
 open Formalism.L2.SG.FoldBound Formalism.L2.SG.PoincareSeriesSquareIntegrable NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermOp
 open Formalism.L2.SG.HidaSetting Matrix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.TermOp.KExpCut Formalism.L2.SG.Full
 

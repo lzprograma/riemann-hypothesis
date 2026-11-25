@@ -84,8 +84,6 @@ end Indep
 
 section F
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 local instance instCMHostF (D : Formalism.BasicNotions.D7) : IsCMField D.host.E := D.host.isCMField_hostE
 
 variable {D : Formalism.BasicNotions.D7} {n : ℕ}

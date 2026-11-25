@@ -97,14 +97,14 @@ theorem Conv.C_mul {f : PowerSeries ℂ} (hf : Conv f) (c : ℂ) : Conv (PowerSe
 
 theorem xp_term (f : PowerSeries ℂ) {k : ℕ} (hk : k ≠ 0) (x : ℂ) (m : ℕ) :
     PowerSeries.coeff (k * m) (xp k f) * x ^ (k * m) = PowerSeries.coeff m f * (x ^ k) ^ m := by
-  rw [xp, PowerSeries.coeff_mk, if_pos (dvd_mul_right k m),
+  rw [xp, PowerSeries.coeff_mk, ite_eq_left (dvd_mul_right k m),
     Nat.mul_div_cancel_left m (Nat.pos_of_ne_zero hk), pow_mul]
 
 theorem xp_support (f : PowerSeries ℂ) (k : ℕ) (x : ℂ) :
     ∀ n ∉ Set.range (fun m : ℕ => k * m), PowerSeries.coeff n (xp k f) * x ^ n = 0 := by
   intro n hn
   have hkn : ¬ k ∣ n := fun ⟨m, hm⟩ => hn ⟨m, hm.symm⟩
-  rw [xp, PowerSeries.coeff_mk, if_neg hkn, zero_mul]
+  rw [xp, PowerSeries.coeff_mk, ite_eq_right hkn, zero_mul]
 
 theorem natMul_injective {k : ℕ} (hk : k ≠ 0) : Function.Injective (fun m : ℕ => k * m) := fun _ _ h => Nat.eq_of_mul_eq_mul_left (Nat.pos_of_ne_zero hk) h
 
@@ -117,12 +117,12 @@ theorem Conv.xp {f : PowerSeries ℂ} (hf : Conv f) {k : ℕ} (hk : k ≠ 0) : C
       ‖PowerSeries.coeff n (ReciprocityTheory.ChartRestriction.L1.xp k f)‖ * ‖x‖ ^ n = 0 := by
     intro n hn
     have hkn : ¬ k ∣ n := fun ⟨m, hm⟩ => hn ⟨m, hm.symm⟩
-    rw [ReciprocityTheory.ChartRestriction.L1.xp, PowerSeries.coeff_mk, if_neg hkn, norm_zero, zero_mul]
+    rw [ReciprocityTheory.ChartRestriction.L1.xp, PowerSeries.coeff_mk, ite_eq_right hkn, norm_zero, zero_mul]
   refine ((natMul_injective hk).summable_iff hz).mp ?_
   refine (hf (x ^ k) hxk).congr fun m => ?_
   show ‖PowerSeries.coeff m f‖ * ‖x ^ k‖ ^ m =
     ‖PowerSeries.coeff (k * m) (ReciprocityTheory.ChartRestriction.L1.xp k f)‖ * ‖x‖ ^ (k * m)
-  rw [ReciprocityTheory.ChartRestriction.L1.xp, PowerSeries.coeff_mk, if_pos (dvd_mul_right k m),
+  rw [ReciprocityTheory.ChartRestriction.L1.xp, PowerSeries.coeff_mk, ite_eq_left (dvd_mul_right k m),
     Nat.mul_div_cancel_left m (Nat.pos_of_ne_zero hk), norm_pow, pow_mul]
 
 theorem Conv.rescale {f : PowerSeries ℂ} (hf : Conv f) {c : ℂ} (hc : ‖c‖ ≤ 1) :

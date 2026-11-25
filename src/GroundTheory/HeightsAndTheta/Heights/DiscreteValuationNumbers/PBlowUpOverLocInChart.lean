@@ -62,7 +62,7 @@ theorem coeff_eval₂_C_mul_X_fst {B : Type*} [CommRing B] (f : R →+* B) (a : 
     by_cases hd : d.mapDomain Sigma.fst = e
     · subst hd
       simp
-    · rw [if_neg hd, if_neg (fun h => hd (DFunLike.coe_injective h)), mul_zero, eval₂_zero]
+    · rw [ite_eq_right hd, ite_eq_right (fun h => hd (DFunLike.coe_injective h)), mul_zero, eval₂_zero]
   | add p q hp hq => simp only [eval₂_add, map_add (f := _), MvPolynomial.coeff_add, hp, hq]
 
 theorem eval₂_C_mul_X_fst_of_homog [Fintype κ] {B : Type*} [CommRing B] (f : R →+* B)
@@ -77,9 +77,9 @@ theorem eval₂_C_mul_X_fst_of_homog [Fintype κ] {B : Type*} [CommRing B] (f : 
   · have : Finsupp.equivFunOnFinite.symm b = e := by
       rw [← he]
       exact Finsupp.equivFunOnFinite.symm_apply_apply e
-    rw [if_pos this, he, hp.weightedHomogeneousComponent_same]
+    rw [ite_eq_left this, he, hp.weightedHomogeneousComponent_same]
   · have : Finsupp.equivFunOnFinite.symm b ≠ e := fun h => he (by rw [← h]; simp)
-    rw [if_neg this, hp.weightedHomogeneousComponent_ne _ he, eval₂_zero]
+    rw [ite_eq_right this, hp.weightedHomogeneousComponent_ne _ he, eval₂_zero]
 
 theorem eval₂_mul_fst_of_homog [Fintype κ] {B : Type*} [CommRing B] (f : R →+* B)
     (x : (Σ o, E o) → B) (s : κ → B) {p : MvPolynomial (Σ o, E o) R} {b : κ → ℕ}
@@ -262,7 +262,7 @@ theorem BlowUpOverLocInChart.proof : BlowUpOverLocInChart.Statement.{u} := by
       rw [hQdef, RingHom.mem_ker, RingHom.comp_apply] at hmem
       simp only [hψ, coe_eval₂Hom, eval₂_X, map_mul, map_C, map_X] at hmem
       have h2 := congrArg (AddMonoidAlgebra.coeff · (Finsupp.single o 1)) hmem
-      simp only [coeff_C_mul, coeff_X, if_true, mul_one, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h2
+      simp only [coeff_C_mul, coeff_X, ite_true, mul_one, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h2
       rw [Ideal.Quotient.eq_zero_iff_mem] at h2
       have h1' : aC ⟨o, l⟩ = 1 := Subtype.ext (by rw [haC]; exact h1)
       rw [h1'] at h2
@@ -297,8 +297,7 @@ theorem BlowUpOverLocInChart.proof : BlowUpOverLocInChart.Statement.{u} := by
     rw [Ideal.mem_comap] at hg
     by_contra hgW
     obtain ⟨c, hc⟩ : ∃ c, weightedHomogeneousComponent (blockWeight ι) c g ∉ W := by
-      by_contra hall
-      push_neg at hall
+      by_contra! hall
       apply hgW
       rw [← sum_weightedHomogeneousComponent (blockWeight ι) g,
         finsum_eq_sum _ (weightedHomogeneousComponent_finsupp g)]

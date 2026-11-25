@@ -1,52 +1,11 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.RepresentationUnitary
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.UnitaryHaarColumns
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselDecayBounds.BesselUnitNorm.BesselNormSteps.BesselLine.SfiniteMuN
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselDecayBounds.BesselUnitNorm.BesselNormSteps.BesselLine.ConvGrp
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselDecayBounds.BesselUnitNorm.BesselLine
 
 @[expose] public section
@@ -92,17 +51,17 @@ def ub (c : Mx k r) : Matrix (Fin k) (Fin k) ℂ := fun m m' => c (eB k r m) (eB
 theorem blockW_in {h : Matrix (Fin k) (Fin k) ℂ} {i j : Fin (2 * r + k + 1)} (hi : inB k r i) (hj : inB k r j) :
     blockW k r h i j = h ⟨i.val - r, by unfold inB at hi; omega⟩ ⟨j.val - r, by unfold inB at hj; omega⟩ := by
   unfold inB at hi hj
-  simp only [blockW, dif_pos hi, dif_pos hj]
+  simp only [blockW, dite_eq_left hi, dite_eq_left hj]
 
 theorem blockW_in_out {h : Matrix (Fin k) (Fin k) ℂ} {i j : Fin (2 * r + k + 1)} (hi : inB k r i) (hj : ¬ inB k r j) :
     blockW k r h i j = 0 := by
   unfold inB at hi hj
-  simp only [blockW, dif_pos hi, dif_neg hj]
+  simp only [blockW, dite_eq_left hi, dite_eq_right hj]
 
 theorem blockW_out {h : Matrix (Fin k) (Fin k) ℂ} {i j : Fin (2 * r + k + 1)} (hi : ¬ inB k r i) :
     blockW k r h i j = if i = j then 1 else 0 := by
   unfold inB at hi
-  simp only [blockW, dif_neg hi]
+  simp only [blockW, dite_eq_right hi]
 
 theorem sum_block (F : Fin (2 * r + k + 1) → ℂ) (hF : ∀ l, ¬ inB k r l → F l = 0) :
     ∑ l, F l = ∑ m : Fin k, F (eB k r m) := by
@@ -139,69 +98,11 @@ private theorem Hpk_apply_wp_eq_ite {i : Fin (2 * r + k + 1)} (hi : ¬ inB k r i
 
 theorem eq_blockW {c : Mx k r} (hc : c ∈ UH (Hpk k r))
     (hfix : ∀ l, ¬ inB k r l → c *ᵥ bvec l = bvec l) : c = blockW k r (ub c) := by
-  have hcol : ∀ l, ¬ inB k r l → ∀ a, c a l = if a = l then 1 else 0 := by
-    intro l hl a
-    have := congrFun (hfix l hl) a
-    simpa [Matrix.mulVec, dotProduct, bvec, Pi.single_apply] using this
-  have hcU : cᴴ * Hpk k r * c = Hpk k r := hc
-  have key : ∀ l, ¬ inB k r l → ∀ j, ∑ b, Hpk k r l b * c b j = Hpk k r l j := by
-    intro l hl j
-    have := congrFun (congrFun hcU l) j
-    rw [Matrix.mul_apply] at this
-    rw [← this]
-    refine Finset.sum_congr rfl fun b _ => ?_
-    congr 1
-    rw [Matrix.mul_apply, Finset.sum_eq_single l]
-    · simp [Matrix.conjTranspose_apply, hcol l hl]
-    · intro a _ ha
-      simp [Matrix.conjTranspose_apply, hcol l hl, ha]
-    · simp
-  ext i j
-  by_cases hj : inB k r j
-  · by_cases hi : inB k r i
-    · rw [blockW_in hi hj]
-      exact congrArg₂ c (eq_eB_of_inB hi) (eq_eB_of_inB hj)
-    · rw [blockW_out hi, if_neg (by rintro rfl; exact hi hj)]
-      obtain ⟨l, hl, s, hs, hrow⟩ := Hpk_apply_wp_eq_ite hi
-      have h1 := key l hl j
-      rw [Finset.sum_eq_single i (fun b _ hb => by rw [hrow b, if_neg hb, zero_mul]) (by simp),
-        hrow i, if_pos rfl, hpk_in_col hj, if_neg (by rintro rfl; exact hl hj)] at h1
-      exact (mul_eq_zero.mp h1).resolve_left hs
-  · rw [hcol j hj i]
-    by_cases hi : inB k r i
-    · rw [blockW_in_out hi hj, if_neg (by rintro rfl; exact hj hi)]
-    · rw [blockW_out hi]
+  apply _root_.WlocSk.UnitaryRepLocal.eq_blockW <;> assumption
 
 theorem ub_unitary {c : Mx k r} (hc : c ∈ UH (Hpk k r)) (hb : c = blockW k r (ub c)) :
     ub c ∈ UJset (allPos k) := by
-  have hz : ∀ a m, ¬ inB k r a → c a (eB k r m) = 0 := by
-    intro a m ha
-    rw [hb, blockW_out ha, if_neg (by rintro rfl; exact ha (eB_inB m))]
-  have hcol : ∀ a m', ∑ b, Hpk k r a b * c b (eB k r m') = c a (eB k r m') := by
-    intro a m'
-    have : ∀ b, Hpk k r a b * c b (eB k r m') = if a = b then c b (eB k r m') else 0 := by
-      intro b
-      by_cases hbin : inB k r b
-      · rw [hpk_in_col hbin]
-        split_ifs <;> simp only [one_mul, zero_mul]
-      · rw [hz b m' hbin, mul_zero, ite_self]
-    simp only [this, Finset.sum_ite_eq, Finset.mem_univ, if_true]
-  show (ub c)ᴴ * Formalism.REAL.Jm (allPos k) * ub c = Formalism.REAL.Jm (allPos k)
-  have hJ : Formalism.REAL.Jm (allPos k) = 1 := by
-    unfold Formalism.REAL.Jm allPos
-    simp
-  rw [hJ, Matrix.mul_one]
-  ext m m'
-  have hc' : cᴴ * (Hpk k r * c) = Hpk k r := by
-    rw [← Matrix.mul_assoc]
-    exact hc
-  have h1 := congrFun (congrFun hc' (eB k r m)) (eB k r m')
-  simp only [Matrix.mul_apply, Matrix.conjTranspose_apply, hcol] at h1
-  rw [sum_block _ (fun a ha => by rw [hz a m ha, star_zero, zero_mul])] at h1
-  rw [hpk_in_col (eB_inB m')] at h1
-  simp only [Matrix.mul_apply, Matrix.conjTranspose_apply, ub, Matrix.one_apply]
-  rw [h1]
-  simp [eB_inj.eq_iff]
+  apply _root_.WlocSk.UnitaryRepLocal.ub_unitary <;> assumption
 
 private theorem ub_conj_mem_UJset_and_eq_blockW {z : Fin (2 * r + k + 1) → ℂ} {g : Mx k r} (hT : 0 < Tz k r z)
     (hg : IsFrameW k r z g) {a : Mx k r} (ha : a ∈ UWset k r z) :
@@ -270,7 +171,7 @@ theorem piAll : PiAll := by
         unfold inB at hi hj
         simp only [Fin.ext_iff]
         split_ifs <;> first | rfl | (exfalso; omega)
-      · rw [blockW_in_out hi hj, if_neg (by rintro rfl; exact hj hi)]
+      · rw [blockW_in_out hi hj, ite_eq_right (by rintro rfl; exact hj hi)]
     · rw [blockW_out hi]
   refine ⟨?_, ?_, ?_⟩
   · have e := h1

@@ -48,8 +48,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped Pointwise TensorProduct InnerProductSpace ComplexOrder
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.ConstRatio
 
 open GlobalTheory.Grid GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle
@@ -119,8 +117,7 @@ theorem Factor.isConst [Nonempty T] {lam : T → ℂ} (h : Factor X ψ θ lam) :
   obtain ⟨P, hPP⟩ := hp (p' P')
   unfold Tri.IsConst
   refine ⟨⟨Classical.arbitrary T, hlam _⟩, P, P', fun t => ⟨fun h => ⟨hint t P h, hint' t h⟩, ?_, fun h => ?_⟩⟩
-  · by_contra hcon
-    push_neg at hcon
+  · by_contra! hcon
     apply hP'
     apply hJ t
     rw [map_zero, ← hI' t P' (hint' t)]

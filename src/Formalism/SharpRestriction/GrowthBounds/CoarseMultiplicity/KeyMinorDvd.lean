@@ -2,45 +2,6 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.KeyOne
 public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LatticeCountingFormula
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -105,6 +66,42 @@ theorem segPos_val (X : Loc) (j : Fin (numSeg X.TT)) (i : Fin (segS X.TT j)) :
   push_cast
   rfl
 
+private theorem psiO_pow_eq (X : Loc) [Fact X.p.Prime] (O : Type) [CommRing O]
+    [Algebra (WF X.p X.n') O] (hf : 1 ≤ X.n') (j : Fin (numSeg X.TT)) (i : Fin (segS X.TT j))
+    (g : Matrix (Fin (X.m + 1)) (Fin (X.m + 1)) (WF X.p X.n')) (b a : Fin (X.m + 1)) :
+    let d := (segDists X.TT j).get i
+    let s0 : ℤ := ((topStart X j : X.TT).val.val : ℤ)
+    let s1 : ℤ := ((topOdd X j i : X.TT).val.val : ℤ)
+    ∃ T : MvPolynomial ((X.TT × Bool) × Fin (X.m + 1)) O,
+      (C (psiO X.p X.n' O s0 (g⁻¹ b a))) ^ (X.p ^ d) =
+        C (psiO X.p X.n' O s1 (g⁻¹ b a)) +
+          (X.p : MvPolynomial ((X.TT × Bool) × Fin (X.m + 1)) O) * T := by
+  intro d s0 s1
+  let A := MvPolynomial ((X.TT × Bool) × Fin (X.m + 1)) O
+  obtain ⟨τ, hτ⟩ := frobCong X.p X.n' hf s0 (s0 + d) (by omega) (g⁻¹ b a)
+  have e1 : (s0 + d - s0).toNat = d := by omega
+  rw [e1] at hτ
+  have e2 : sigPow X.p X.n' (s0 + d) = sigPow X.p X.n' s1 := by
+    rw [sigPow_mod' X.p X.n' (s0 + d), sigPow_mod' X.p X.n' s1]
+    congr 1
+    simp only [s0, s1, topStart, topOdd]
+    rw [segPos_val, Int.emod_emod_of_dvd _ (dvd_refl _)]
+  rw [e2] at hτ
+  refine ⟨C (algebraMap (WF X.p X.n') O τ), ?_⟩
+  have := congrArg (fun z => (C (algebraMap (WF X.p X.n') O z) : A)) hτ
+  simp only [map_sub, map_pow, map_mul, map_natCast] at this
+  simp only [psiO, RingHom.comp_apply]
+  linear_combination this
+
+private theorem dW_dvd (X : Loc) (O : Type) [CommRing O] (w : O) (t : X.TT)
+    {b : Fin (X.m + 1)} (hb : b ≠ 0) :
+    let A := MvPolynomial ((X.TT × Bool) × Fin (X.m + 1)) O
+    (C w : A) ∣ C (dW O w (hhLetters X.TT) 1 (t, true) b) * MvPolynomial.X ((t, true), b) := by
+  have : dW O w (hhLetters X.TT) 1 (t, true) b = w := by
+    have : 1 ≤ (b : ℕ) := Nat.one_le_iff_ne_zero.2 (fun h => hb (Fin.ext h))
+    simp [dW, hhLetters, this]
+  exact ⟨MvPolynomial.X ((t, true), b), by simp only [this]⟩
+
 theorem kS_ord (X : Loc) [Fact X.p.Prime] (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
     [Algebra (WF X.p X.n') O] (S : UniformizedDVR X.p O) (hsq : S.SqP) (hD : D1num X)
     (j : Fin (numSeg X.TT)) (i : Fin (segS X.TT j))
@@ -137,22 +134,8 @@ theorem kS_ord (X : Loc) [Fact X.p.Prime] (O : Type) [CommRing O] [IsDomain O] [
     simp only [u, v, M, N, map_mul, map_C, map_X, sigMat_apply]
     rfl
 
-  have hMN : ∀ b a, ∃ T, M b a ^ (X.p ^ d) = N' b a + X.p * T := by
-    intro b a
-    obtain ⟨τ, hτ⟩ := frobCong X.p X.n' hf s0 (s0 + d) (by omega) (g⁻¹ b a)
-    have e1 : (s0 + d - s0).toNat = d := by omega
-    rw [e1] at hτ
-    have e2 : sigPow X.p X.n' (s0 + d) = sigPow X.p X.n' s1 := by
-      rw [sigPow_mod' X.p X.n' (s0 + d), sigPow_mod' X.p X.n' s1]
-      congr 1
-      simp only [hs0, hs1, topStart, topOdd]
-      rw [segPos_val, Int.emod_emod_of_dvd _ (dvd_refl _)]
-    rw [e2] at hτ
-    refine ⟨C (algebraMap (WF X.p X.n') O τ), ?_⟩
-    have := congrArg (fun z => (C (algebraMap (WF X.p X.n') O z) : A)) hτ
-    simp only [map_sub, map_pow, map_mul, map_natCast] at this
-    simp only [M, N', psiO, RingHom.comp_apply]
-    linear_combination this
+  have hMN : ∀ b a, ∃ T, M b a ^ (X.p ^ d) = N' b a + X.p * T :=
+    fun b a => psiO_pow_eq X O hf j i g b a
 
   have hinv : ∀ b b', ∑ a, N' b a * N a b' = if b = b' then 1 else 0 := by
     intro b b'
@@ -162,12 +145,8 @@ theorem kS_ord (X : Loc) [Fact X.p.Prime] (O : Type) [CommRing O] [IsDomain O] [
     rw [h1, Matrix.nonsing_inv_mul g hg, Matrix.one_apply]
     split_ifs <;> simp
   have hw : (C S.w : A) ^ 2 = (X.p : A) := by rw [← map_pow, hsq, map_natCast]
-  have hu : ∀ b, b ≠ 0 → (C S.w : A) ∣ u b := by
-    intro b hb
-    have : dW O S.w (hhLetters X.TT) 1 xs b = S.w := by
-      have : 1 ≤ (b : ℕ) := Nat.one_le_iff_ne_zero.2 (fun h => hb (Fin.ext h))
-      simp [dW, hhLetters, xs, this]
-    exact ⟨MvPolynomial.X (xs, b), by simp only [u, this]⟩
+  have hu : ∀ b, b ≠ 0 → (C S.w : A) ∣ u b :=
+    fun b hb => dW_dvd X O S.w (topStart X j) hb
   have hv0 : (C S.w : A) ∣ v 0 := by
     have : dW O S.w (hhLetters X.TT) 1 y (0 : Fin (X.m + 1)) = S.w := by simp [dW, hhLetters, y]
     exact ⟨MvPolynomial.X (y, 0), by simp only [v, this]⟩
@@ -234,35 +213,13 @@ theorem kW_ord (X : Loc) [Fact X.p.Prime] (O : Type) [CommRing O] [IsDomain O] [
 
     simp only [u, u', M, N', map_sum, map_mul, map_C, map_X, sigMat_apply]
     rfl
-  have hMN : ∀ b a, ∃ T, M b a ^ (X.p ^ d) = N' b a + X.p * T := by
-    intro b a
-    obtain ⟨τ, hτ⟩ := frobCong X.p X.n' hf s0 (s0 + d) (by omega) (g⁻¹ b a)
-    have e1 : (s0 + d - s0).toNat = d := by omega
-    rw [e1] at hτ
-    have e2 : sigPow X.p X.n' (s0 + d) = sigPow X.p X.n' s1 := by
-      rw [sigPow_mod' X.p X.n' (s0 + d), sigPow_mod' X.p X.n' s1]
-      congr 1
-      simp only [hs0, hs1, topStart, topOdd]
-      rw [segPos_val, Int.emod_emod_of_dvd _ (dvd_refl _)]
-    rw [e2] at hτ
-    refine ⟨C (algebraMap (WF X.p X.n') O τ), ?_⟩
-    have := congrArg (fun z => (C (algebraMap (WF X.p X.n') O z) : A)) hτ
-    simp only [map_sub, map_pow, map_mul, map_natCast] at this
-    simp only [M, N', psiO, RingHom.comp_apply]
-    linear_combination this
+  have hMN : ∀ b a, ∃ T, M b a ^ (X.p ^ d) = N' b a + X.p * T :=
+    fun b a => psiO_pow_eq X O hf j i g b a
   have hw : (C S.w : A) ^ 2 = (X.p : A) := by rw [← map_pow, hsq, map_natCast]
-  have hu : ∀ b, b ≠ 0 → (C S.w : A) ∣ u b := by
-    intro b hb
-    have : dW O S.w (hhLetters X.TT) 1 xs b = S.w := by
-      have : 1 ≤ (b : ℕ) := Nat.one_le_iff_ne_zero.2 (fun h => hb (Fin.ext h))
-      simp [dW, hhLetters, xs, this]
-    exact ⟨MvPolynomial.X (xs, b), by simp only [u, this]⟩
-  have hu' : ∀ b, b ≠ 0 → (C S.w : A) ∣ u' b := by
-    intro b hb
-    have : dW O S.w (hhLetters X.TT) 1 z b = S.w := by
-      have : 1 ≤ (b : ℕ) := Nat.one_le_iff_ne_zero.2 (fun h => hb (Fin.ext h))
-      simp [dW, hhLetters, z, this]
-    exact ⟨MvPolynomial.X (z, b), by simp only [u', this]⟩
+  have hu : ∀ b, b ≠ 0 → (C S.w : A) ∣ u b :=
+    fun b hb => dW_dvd X O S.w (topStart X j) hb
+  have hu' : ∀ b, b ≠ 0 → (C S.w : A) ∣ u' b :=
+    fun b hb => dW_dvd X O S.w (topOdd X j i) hb
   obtain ⟨Q, hQ⟩ := key_minor_dvd X.p hp (C S.w : A) hw X.m d u u' M N' hMN hu hu' c
   unfold InWjRg
   rw [hlift, hQ]

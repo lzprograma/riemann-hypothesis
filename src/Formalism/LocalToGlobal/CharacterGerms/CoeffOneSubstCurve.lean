@@ -8,8 +8,6 @@ import Formalism.LocalToGlobal.CharacterGerms.MaximalOfValuationGeOne
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators
@@ -53,8 +51,8 @@ theorem coeff_l_frob {P : PS C 1 dd} (hP : IntS V P) (hPz : MvPowerSeries.consta
     rw [map_sub, map_sub, map_zero, hD1def, hD3def, map_sum]
     simp only [MvPowerSeries.coeff_monomial]
     by_cases hex : ∃ i, ¬ V.l ∣ μ ((0 : Fin 1), i)
-    · rw [if_pos hex, sub_self, zero_sub, neg_eq_zero]
-      refine Finset.sum_eq_zero fun i _ => if_neg ?_
+    · rw [ite_eq_left hex, sub_self, zero_sub, neg_eq_zero]
+      refine Finset.sum_eq_zero fun i _ => ite_eq_right ?_
       rintro rfl
       obtain ⟨i', hi'⟩ := hex
       apply hi'
@@ -62,21 +60,21 @@ theorem coeff_l_frob {P : PS C 1 dd} (hP : IntS V P) (hPz : MvPowerSeries.consta
       split_ifs
       · exact dvd_refl _
       · exact dvd_zero _
-    · rw [if_neg hex, sub_zero]
+    · rw [ite_eq_right hex, sub_zero]
       push Not at hex
       have hdiv : ∀ s, V.l ∣ μ s := fun s => by rw [hsq s]; exact hex s.2
       rcases FirstVanishing.divisible_small μ hdiv hμ with h0 | ⟨s, hs⟩
       · subst h0
         rw [MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hPz, zero_sub, neg_eq_zero]
-        refine Finset.sum_eq_zero fun i _ => if_neg ?_
+        refine Finset.sum_eq_zero fun i _ => ite_eq_right ?_
         intro h
         have := congrArg (fun f : Fin 1 × Fin dd →₀ ℕ => f ((0 : Fin 1), i)) h
         simp only [Finsupp.coe_zero, Pi.zero_apply, Finsupp.single_eq_same] at this
         omega
       · subst hs
-        rw [Finset.sum_eq_single s.2, if_pos (by rw [← hsq s]), ← hsq s, sub_self]
+        rw [Finset.sum_eq_single s.2, ite_eq_left (by rw [← hsq s]), ← hsq s, sub_self]
         · intro i _ hi
-          rw [if_neg]
+          rw [ite_eq_right]
           intro h
           apply hi
           have := (Finsupp.single_left_inj (by omega : V.l ≠ 0)).1 h
@@ -108,7 +106,7 @@ theorem coeff_l_frob {P : PS C 1 dd} (hP : IntS V P) (hPz : MvPowerSeries.consta
   have hfr : ∀ i, V.MM (PowerSeries.coeff V.l (γ i ^ V.l) - (PowerSeries.coeff 1 (γ i)) ^ V.l) := by
     intro i
     have h := mms_pow_frobTw (hγI i) (Finsupp.single () V.l)
-    rw [map_sub, coeff_frobTw, if_pos (fun s => by simp)] at h
+    rw [map_sub, coeff_frobTw, ite_eq_left (fun s => by simp)] at h
     have e : (Finsupp.single () V.l).mapRange (fun n => n / V.l) (Nat.zero_div V.l) = Finsupp.single () 1 := by
       rw [Finsupp.mapRange_single, Nat.div_self (by omega)]
     rw [e] at h
@@ -153,8 +151,8 @@ theorem coeff_lt_frob {P : PS C 1 dd} (hPz : MvPowerSeries.constantCoeff P = 0) 
     intro μ hμ
     rw [map_sub, map_zero, hD1def]
     by_cases hex : ∃ i, ¬ V.l ∣ μ ((0 : Fin 1), i)
-    · rw [if_pos hex, sub_self]
-    · rw [if_neg hex, sub_zero]
+    · rw [ite_eq_left hex, sub_self]
+    · rw [ite_eq_right hex, sub_zero]
       push Not at hex
       have hdiv : ∀ s, V.l ∣ μ s := fun s => by rw [hsq s]; exact hex s.2
       rcases FirstVanishing.divisible_small μ hdiv (by omega) with h0 | ⟨s, hs⟩
@@ -235,15 +233,15 @@ theorem coeff_one_subst_curve {P : PS C 1 dd} (hPz : MvPowerSeries.constantCoeff
       subst h0
       rw [MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hPz]
       symm
-      refine Finset.sum_eq_zero fun i _ => if_neg ?_
+      refine Finset.sum_eq_zero fun i _ => ite_eq_right ?_
       intro h
       have := congrArg (fun f : Fin 1 × Fin dd →₀ ℕ => f ((0 : Fin 1), i)) h
       simp at this
     · obtain ⟨s, hs⟩ := degree_one h1
       subst hs
-      rw [Finset.sum_eq_single s.2, if_pos (by rw [← hsq s]), ← hsq s]
+      rw [Finset.sum_eq_single s.2, ite_eq_left (by rw [← hsq s]), ← hsq s]
       · intro i _ hi
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h
         apply hi
         have := (Finsupp.single_left_inj (by omega : (1 : ℕ) ≠ 0)).1 h

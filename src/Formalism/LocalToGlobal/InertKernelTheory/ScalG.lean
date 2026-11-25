@@ -11,8 +11,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.KerInert.KG
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.PairingIndexBounds.F
 
 variable {p : ℕ} [Fact p.Prime] {X : Sys p} {D : D7}

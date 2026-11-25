@@ -1,51 +1,6 @@
 module
 
 public import Formalism.PeriodIntegrals.JointBlockShapes.MinusPart
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -160,43 +115,43 @@ variable {p q r s : ℕ}
 theorem rai_rai (a b : Ln p q r s) : raiB a * raiB b = raiB b * raiB a := by
   unfold raiB
   by_cases ha : linePos a = true <;> by_cases hb : linePos b = true
-  · simp only [ha, hb, if_true]; exact mx_mx a b
+  · simp only [ha, hb, ite_true]; exact mx_mx a b
   · have hne : b ≠ a := fun h => hb (h ▸ ha)
-    rw [if_pos ha, if_neg hb, mul_neg, neg_mul, pd_mx, if_neg hne, add_zero]
+    rw [ite_eq_left ha, ite_eq_right hb, mul_neg, neg_mul, pd_mx, ite_eq_right hne, add_zero]
   · have hne : a ≠ b := fun h => ha (h ▸ hb)
-    rw [if_neg ha, if_pos hb, mul_neg, neg_mul, pd_mx, if_neg hne, add_zero]
-  · rw [if_neg ha, if_neg hb, neg_mul_neg, neg_mul_neg, pd_pd]
+    rw [ite_eq_right ha, ite_eq_left hb, mul_neg, neg_mul, pd_mx, ite_eq_right hne, add_zero]
+  · rw [ite_eq_right ha, ite_eq_right hb, neg_mul_neg, neg_mul_neg, pd_pd]
 
 theorem low_low (a b : Ln p q r s) : lowB a * lowB b = lowB b * lowB a := by
   unfold lowB
   by_cases ha : linePos a = true <;> by_cases hb : linePos b = true
-  · rw [if_pos ha, if_pos hb, pd_pd]
+  · rw [ite_eq_left ha, ite_eq_left hb, pd_pd]
   · have hne : a ≠ b := fun h => hb (h ▸ ha)
-    rw [if_pos ha, if_neg hb, pd_mx, if_neg hne, add_zero]
+    rw [ite_eq_left ha, ite_eq_right hb, pd_mx, ite_eq_right hne, add_zero]
   · have hne : b ≠ a := fun h => ha (h ▸ hb)
-    rw [if_neg ha, if_pos hb, pd_mx, if_neg hne, add_zero]
-  · rw [if_neg ha, if_neg hb, mx_mx]
+    rw [ite_eq_right ha, ite_eq_left hb, pd_mx, ite_eq_right hne, add_zero]
+  · rw [ite_eq_right ha, ite_eq_right hb, mx_mx]
 
 theorem low_rai (a b : Ln p q r s) :
     lowB a * raiB b = raiB b * lowB a + if a = b then 1 else 0 := by
   unfold lowB raiB
   by_cases ha : linePos a = true <;> by_cases hb : linePos b = true
-  · rw [if_pos ha, if_pos hb, pd_mx]
+  · rw [ite_eq_left ha, ite_eq_left hb, pd_mx]
   · have hne : a ≠ b := fun h => hb (h ▸ ha)
-    rw [if_pos ha, if_neg hb, mul_neg, neg_mul, pd_pd, if_neg hne, add_zero]
+    rw [ite_eq_left ha, ite_eq_right hb, mul_neg, neg_mul, pd_pd, ite_eq_right hne, add_zero]
   · have hne : a ≠ b := fun h => ha (h ▸ hb)
-    rw [if_neg ha, if_pos hb, mx_mx, if_neg hne, add_zero]
-  · rw [if_neg ha, if_neg hb, mul_neg, neg_mul, pd_mx]
+    rw [ite_eq_right ha, ite_eq_left hb, mx_mx, ite_eq_right hne, add_zero]
+  · rw [ite_eq_right ha, ite_eq_right hb, mul_neg, neg_mul, pd_mx]
     by_cases h : a = b
-    · rw [if_pos h, if_pos h.symm]; abel
-    · rw [if_neg h, if_neg (Ne.symm h)]; abel
+    · rw [ite_eq_left h, ite_eq_left h.symm]; abel
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]; abel
 
 theorem omAct_eq (A : Matrix (Ln p q r s) (Ln p q r s) ℂ) :
     omAct p q r s A = quadT raiB lowB A + (∑ l, A l l * (1 / 2 : ℂ)) • 1 := by
   unfold omAct quadT omE
   simp only [LinearMap.sum_apply, LinearMap.smulRight_apply, Matrix.entryLinearMap_apply,
     smul_add, Finset.sum_add_distrib, smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ,
-    if_true, Finset.sum_smul, smul_smul]
+    ite_true, Finset.sum_smul, smul_smul]
 
 theorem omAct_commute (A B : Matrix (Ln p q r s) (Ln p q r s) ℂ) (h : A * B = B * A) :
     omAct p q r s A * omAct p q r s B = omAct p q r s B * omAct p q r s A := by

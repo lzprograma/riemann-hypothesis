@@ -532,9 +532,6 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarR
 theorem range_ofFin : (ofFin hc V).range = finPts hc V :=
   le_antisymm (by rintro _ ⟨y, rfl⟩; exact projInf_ofFin hc V y) fun g hg => ⟨_, ofFin_projFin hc V hg⟩
 
-theorem range_ofInf : (ofInf hc V).range = realPts hc V :=
-  le_antisymm (by rintro _ ⟨y, rfl⟩; exact projFin_ofInf hc V y) fun g hg => ⟨_, ofInf_projInf hc V hg⟩
-
 theorem embH_spec (B A : HSpace E) (ι : B.V →ₗ[E] A.V) (hι : HSpace.IsIsomEmb B A ι) (R : Type) [CommRing R]
     [Algebra F R] (g' : HA R hc.sig B.gram) :
     (HA.mat _ _ _ (embH hc B A ι hι R g')).1 * (embMat B A ι).map (inclR (F := F) R) =
@@ -563,8 +560,6 @@ end Functions
 
 section Host
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.BasicNotions.TH Formalism.L2.Theta
 
 variable {D : D7} (V : HSp D)
@@ -573,11 +568,6 @@ theorem GQ_eq : GQ V = ratPts D.sp.cm V := (ratPts_eq D.sp.cm V).symm
 
 theorem GfC_eq : GfC V = finPts D.sp.cm V := by
   ext g; exact ⟨fun h => Subtype.ext h, fun h => congrArg Subtype.val h⟩
-
-theorem isInfFam_iff (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) :
-    IsInfFam θ ↔ θ = fun τ => infEmb D.sp.cm (tauE D τ) :=
-  ⟨fun h => funext fun τ => isInfEmb_unique _ _ _ (h τ) (isInfEmb_infEmb _ _),
-    fun h _ => h ▸ isInfEmb_infEmb _ _⟩
 
 theorem isIsoFrame_iff {r : ℕ} (C : Matrix (Fin V.rank) (Fin r) D.host.E) :
     IsIsoFrame V C ↔ LinearIndependent D.host.E Cᵀ ∧ IsIsotropic V (colSpan V C) :=

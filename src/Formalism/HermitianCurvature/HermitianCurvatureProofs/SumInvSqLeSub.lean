@@ -1,53 +1,8 @@
 module
 
 public import Formalism.HermitianCurvature.StatementSz
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Algebra.BigOperators.Field
 
@@ -408,9 +363,9 @@ lemma u_succ (c : Cfg) (de : ℕ → ℝ) (hw : IsWord c.k de) (i : ℕ) (hi : 1
     have hi' : i = c.k - 1 := by omega
     have hde : de i = 0 := by rw [hi']; exact hw.2
     have hiR : (i : ℝ) + 1 = c.k := by exact_mod_cast hlast
-    unfold Cfg.u; rw [if_neg h1, if_pos hlast, hde]
+    unfold Cfg.u; rw [ite_eq_right h1, ite_eq_left hlast, hde]
     unfold Cfg.ulast Cfg.v; rw [← hiR]; simp [ht]
-  · unfold Cfg.u; rw [if_neg h1, if_neg hlast]; simp
+  · unfold Cfg.u; rw [ite_eq_right h1, ite_eq_right hlast]; simp
 
 lemma position_ratio (c : Cfg) (de : ℕ → ℝ) (hw : IsWord c.k de) (i j : ℕ) (hi : 1 ≤ i)
     (hij : i < j) (hj : j + 1 ≤ c.k) (h : j + 2 ≤ c.k ∨ c.top = false) :
@@ -656,10 +611,10 @@ lemma a_sub_ulast_pos (c : Cfg) (hc : c.Ok) : 0 < c.a - c.ulast := by
   unfold Cfg.ulast
   by_cases ht : c.top = true
   · have := bp_pos c hc ht
-    simp only [ht, if_true]; linarith
+    simp only [ht, ite_true]; linarith
   · have hv : c.v 1 = c.vlast + 4 * c.Del * ((c.k : ℝ) - 2) := by unfold Cfg.v; push_cast; ring
     have m : 0 ≤ c.Del * ((c.k : ℝ) - 2) := mul_nonneg (by linarith) (by linarith)
-    simp only [ht]; simp only [Bool.false_eq_true, if_false]; linarith
+    simp only [ht]; simp only [Bool.false_eq_true, ite_false]; linarith
 
 lemma vand_u_decomp (c : Cfg) (de : ℕ → ℝ) (hc : c.Ok) :
     Vand c.k (c.u de) = (∏ j ∈ Icc 2 (c.k - 1), (c.a - c.u de j)) * (c.a - c.ulast) *

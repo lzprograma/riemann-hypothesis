@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.CapelliOps
 public import Formalism.GradedWeylDivisibility.StatementA
 public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.HWRaise
 public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowdivLemmas
@@ -51,23 +52,17 @@ theorem sw_deriv (a b : Fin r) (f : MvPolynomial (Fin r × Fin n) R) :
     rw [map_mul, Polynomial.derivative_mul, Derivation.leibniz, smul_eq_mul, smul_eq_mul, map_add (f := _),
       map_mul, map_mul, ← hp, Dop_X, sw_rowGen_X]
     by_cases h1 : v.1 = b <;> by_cases h2 : a = b <;>
-      simp only [h1, h2, if_true, if_false, sw_rowGen_X, map_zero, mul_zero, add_zero,
+      simp only [h1, h2, ite_true, ite_false, sw_rowGen_X, map_zero, mul_zero, add_zero,
         Polynomial.derivative_add, Polynomial.derivative_C, Polynomial.derivative_mul,
         Polynomial.derivative_X, zero_add, one_mul] <;> ring
 
 theorem sw_rowDiv_zero (a b : Fin r) (g : MvPolynomial (Fin r × Fin n) R) : rowDiv R a b 0 g = g := by
-  unfold rowDiv
-  induction g using MvPolynomial.induction_on with
-  | C c => rw [sw_rowGen_C, Polynomial.coeff_C_zero]
-  | add p q hp hq => rw [map_add (f := _), Polynomial.coeff_add, hp, hq]
-  | mul_X p v hp =>
-    rw [map_mul, Polynomial.mul_coeff_zero, hp, sw_rowGen_X]
-    split_ifs <;> simp
+  apply _root_.PI.WGL.rowDiv_zero <;> assumption
 
 theorem sw_step_ne (a b : Fin r) (hab : a ≠ b) (k : ℕ) (f : MvPolynomial (Fin r × Fin n) R) :
     ((k + 1 : ℕ) : R) • rowDiv R a b (k + 1) f = rowDiv R a b k (Dop R a b f) := by
   have h := sw_deriv R a b f
-  rw [if_neg hab, add_zero, one_mul] at h
+  rw [ite_eq_right hab, add_zero, one_mul] at h
   unfold rowDiv
   rw [← h, Polynomial.coeff_derivative, MvPolynomial.smul_eq_C_mul, mul_comm]
   congr 1
@@ -77,7 +72,7 @@ theorem sw_step_eq (a : Fin r) (k : ℕ) (f : MvPolynomial (Fin r × Fin n) R) :
     ((k + 1 : ℕ) : R) • rowDiv R a a (k + 1) f =
       rowDiv R a a k (Dop R a a f) - (k : R) • rowDiv R a a k f := by
   have h := sw_deriv R a a f
-  rw [if_pos rfl] at h
+  rw [ite_eq_left rfl] at h
   unfold rowDiv
   rw [← h, add_mul, one_mul, Polynomial.coeff_add]
   cases k with

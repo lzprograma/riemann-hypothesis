@@ -10,51 +10,6 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ElementaryFact
 public import Mathlib.FieldTheory.RatFunc.AsPolynomial
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.GenericFlagElementaryTwist
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogPeriodStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.WeilBound.CoreStatements.PluriharmonicCharts.ExistsFlagFrame
 import Development.WeilBound.CoreStatements.PluriharmonicCharts.MinorColsBEqZero
@@ -104,9 +59,9 @@ theorem prod_xi {Ψ : Type} [DecidableEq Ψ] (τ : Ψ) (hb : (b : ℕ) = a + 1) 
       if i = a then (D i)⁻¹ ^ 2 else 1 := fun i => by
     have e1 : i = b ↔ (i : ℕ) = a + 1 := by rw [Fin.ext_iff, hb]
     have e2 : i = a ↔ (i : ℕ) = a := Fin.ext_iff
-    simp only [xiCoef, if_true, e1, e2]
+    simp only [xiCoef, ite_true, e1, e2]
     split_ifs <;> first | omega | (simp; done)
-  simp only [h, Finset.prod_mul_distrib, Finset.prod_ite_eq', Finset.mem_univ, if_true]
+  simp only [h, Finset.prod_mul_distrib, Finset.prod_ite_eq', Finset.mem_univ, ite_true]
 
 theorem prod_xi' {Ψ : Type} [Fintype Ψ] [DecidableEq Ψ] (τ : Ψ) (D : Ψ × Fin N → L) :
     ∏ p, D p ^ xiCoef τ a p = ∏ i, D (τ, i) ^ xiCoef τ a (τ, i) := by
@@ -118,11 +73,11 @@ theorem prod_prev (D D' : Fin N → L) (c : L) (h : ∀ a' : Fin N, (a' : ℕ) +
     (∏ i : Fin N, if (i : ℕ) + 1 = a then D i else 1) = (∏ i : Fin N, if (i : ℕ) + 1 = a then D' i else 1) * c := by
   by_cases e : (a : ℕ) = 0
   · rw [h0 e, mul_one]
-    exact Finset.prod_congr rfl fun i _ => by rw [if_neg (by omega), if_neg (by omega)]
+    exact Finset.prod_congr rfl fun i _ => by rw [ite_eq_right (by omega), ite_eq_right (by omega)]
   · let a' : Fin N := ⟨a - 1, by have := a.2; omega⟩
     have ha' : (a' : ℕ) + 1 = a := by simp only [a']; omega
     have hh : ∀ i : Fin N, (i : ℕ) + 1 = a ↔ i = a' := fun i => by rw [Fin.ext_iff]; omega
-    simp only [hh, Finset.prod_ite_eq', Finset.mem_univ, if_true]
+    simp only [hh, Finset.prod_ite_eq', Finset.mem_univ, ite_true]
     exact h a' ha'
 
 theorem scal_main {Ψ : Type} [DecidableEq Ψ] (τ : Ψ) (hj : j ≤ N) (hb : (b : ℕ) = a + 1)
@@ -174,10 +129,10 @@ theorem scal_main {Ψ : Type} [DecidableEq Ψ] (τ : Ψ) (hj : j ≤ N) (hb : (b
       split_ifs with h
       · subst h; rw [Matrix.mul_single_apply_same]
       · rw [Matrix.mul_single_apply_of_ne _ _ _ _ _ h]
-    rw [← Finset.mul_prod_erase _ _ hcaS, ent ca hne', if_pos rfl, mul_comm s]
+    rw [← Finset.mul_prod_erase _ _ hcaS, ent ca hne', ite_eq_left rfl, mul_comm s]
     congr 1
     refine Finset.prod_congr rfl fun c hc => ?_
-    rw [ent c (fun h => hcbS (h ▸ Finset.mem_of_mem_erase hc)), if_neg (Finset.ne_of_mem_erase hc), add_zero]
+    rw [ent c (fun h => hcbS (h ▸ Finset.mem_of_mem_erase hc)), ite_eq_right (Finset.ne_of_mem_erase hc), add_zero]
   rw [prod_xi τ hb, prod_prev _ (fun i => if IsProperStep N j i then 1 else υ i * facM j a B i) (detFac j a T * um)⁻¹
     (fun a' ha' => ?_) (fun h0 => ?_)]
   · have hnb : (if IsProperStep N j b then (detFac j b T * ∏ c ∈ stepCols N j b, U c c)⁻¹
@@ -199,10 +154,10 @@ theorem scal_main {Ψ : Type} [DecidableEq Ψ] (τ : Ψ) (hj : j ≤ N) (hb : (b
             split_ifs <;> omega
           have d1 : detFac j a T = 1 := by
             unfold detFac
-            rw [if_neg (by omega), if_neg (by omega), one_mul]
+            rw [ite_eq_right (by omega), ite_eq_right (by omega), one_mul]
           have d2 : detFac j b T = minorIJ T (wIdx N j) (wIdx N j) := by
             unfold detFac
-            rw [if_pos (by omega)]
+            rw [ite_eq_left (by omega)]
             split_ifs with h2
             · have : omIdx N j = ∅ := by
                 ext c
@@ -212,7 +167,7 @@ theorem scal_main {Ψ : Type} [DecidableEq Ψ] (τ : Ψ) (hj : j ≤ N) (hb : (b
             · rw [mul_one]
           rw [d2] at hdb
           rw [hS] at hn
-          simp only [facM, if_pos h1, if_pos (show (a : ℕ) < j by omega), d1, d2, hS]
+          simp only [facM, ite_eq_left h1, ite_eq_left (show (a : ℕ) < j by omega), d1, d2, hS]
           field_simp
           linear_combination (-υ b) * hW
         · have h2 : (b : ℕ) + 1 = N := by
@@ -223,18 +178,18 @@ theorem scal_main {Ψ : Type} [DecidableEq Ψ] (τ : Ψ) (hj : j ≤ N) (hb : (b
             split_ifs <;> omega
           have d1 : detFac j a T = minorIJ T (wIdx N j) (wIdx N j) := by
             unfold detFac
-            rw [if_pos (by omega), if_neg (by omega), mul_one]
+            rw [ite_eq_left (by omega), ite_eq_right (by omega), mul_one]
           have d2 : detFac j b T = minorIJ T (wIdx N j) (wIdx N j) * minorIJ T (omIdx N j) (omIdx N j) := by
             unfold detFac
-            rw [if_pos (by omega), if_pos h2]
+            rw [ite_eq_left (by omega), ite_eq_left h2]
           rw [d2] at hdb
           rw [hS] at hn
           have q1 := left_ne_zero_of_mul hdb
           have q2 := right_ne_zero_of_mul hdb
-          simp only [facM, if_neg h1, d1, d2, hS]
+          simp only [facM, ite_eq_right h1, d1, d2, hS]
           field_simp
           linear_combination (-υ b) * hO
-    rw [hnb, if_pos hpa, hUb, hUa, hVa]
+    rw [hnb, ite_eq_left hpa, hUb, hUa, hVa]
     have q1 := hUd ca
     have q2 := hUd cb
     generalize (∏ i : Fin N, if (i : ℕ) + 1 = a then (if IsProperStep N j i then 1 else υ i * facM j a B i) else 1) = P
@@ -264,7 +219,7 @@ theorem scal_main {Ψ : Type} [DecidableEq Ψ] (τ : Ψ) (hj : j ≤ N) (hb : (b
       have d : detFac j a' T = detFac j a T := by
         unfold detFac
         split_ifs <;> first | rfl | omega
-      simp only [facM, if_pos h1, if_neg (show ¬ (a : ℕ) < j by omega), d, hum, hE, Finset.prod_empty, mul_one,
+      simp only [facM, ite_eq_left h1, ite_eq_right (show ¬ (a : ℕ) < j by omega), d, hum, hE, Finset.prod_empty, mul_one,
         div_eq_mul_inv]
   · have hE : (stepCols N j a).erase ca = ∅ := by
       ext c
@@ -273,7 +228,7 @@ theorem scal_main {Ψ : Type} [DecidableEq Ψ] (τ : Ψ) (hj : j ≤ N) (hb : (b
       split_ifs at hca' ⊢ <;> omega
     have d : detFac j a T = 1 := by
       unfold detFac
-      rw [if_neg (show ¬ (a : ℕ) + 1 = N by omega), mul_one]
+      rw [ite_eq_right (show ¬ (a : ℕ) + 1 = N by omega), mul_one]
       split_ifs with h
       · have : wIdx N j = ∅ := by
           ext c
@@ -328,13 +283,13 @@ theorem prod_deg {τ : Ψ} {a : Fin N} {k₀ : K} (hk : M.blk (τ, a) = some k�
     rw [← zpow_natCast, ← zpow_natCast]
     split_ifs with h
     · subst h
-      rw [if_pos rfl] at this
+      rw [ite_eq_left rfl] at this
       rw [← zpow_add_one₀ (he _), ← zpow_add₀ (he _)]
       congr 1; omega
-    · rw [if_neg (Ne.symm h)] at this
+    · rw [ite_eq_right (Ne.symm h)] at this
       rw [mul_one, ← zpow_add₀ (he _)]
       congr 1; omega
-  simp only [h1, Finset.prod_mul_distrib, Finset.prod_ite_eq', Finset.mem_univ, if_true, ← h0]
+  simp only [h1, Finset.prod_mul_distrib, Finset.prod_ite_eq', Finset.mem_univ, ite_true, ← h0]
   ring
 
 end Deg
@@ -618,7 +573,7 @@ theorem PositivityTheory.Xgp.c_algsq.lc : ∀ (K : Type) [Fintype K] (ι : K →
     by_contra hp
     rw [hprop (τ, a) hp] at hk
     cases hk
-  rw [prod_xi τ hb, if_pos hpa, _root_.inv_one, one_pow, mul_one]
+  rw [prod_xi τ hb, ite_eq_left hpa, _root_.inv_one, one_pow, mul_one]
   refine mul_left_cancel₀ q0 (hfin.trans ?_)
   unfold facM
   ring

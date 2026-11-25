@@ -1,5 +1,7 @@
 module
 
+import Formalism.ZeroFreeRegion.PerronKernelBounds
+
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
@@ -14,53 +16,8 @@ public import Mathlib.NumberTheory.LSeries.Nonvanishing
 public import Formalism.ZeroFreeRegion.FinalZFR
 public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.Perron
 public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.RectDoublePole
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
 import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.LogDerivRight
 import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.ZetaGrowth
 import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.ZetaInvBound
@@ -117,10 +74,6 @@ noncomputable section
 
 namespace Formalism.ZF
 
-theorem norm_perronIntegrand (y : ℝ) (hy : 0 < y) (w : ℂ) :
-    ‖Fy y w‖ = ‖deriv riemannZeta w / riemannZeta w‖ * y ^ w.re / (‖w‖ * ‖w - 1‖) := by
-  simp only [Fy, norm_div, norm_mul, norm_neg, Complex.norm_cpow_eq_rpow_re_of_pos hy]
-
 theorem one_sub_div_log_le (c c' T v : ℝ) (hc : 0 < c) (hcc : c ≤ c') (_hT : 0 ≤ T) (hv : |v| ≤ T) :
     1 - c' / Real.log (|v| + 2) ≤ 1 - c / Real.log (T + 2) := by
   have h2 : (0 : ℝ) < Real.log 2 := Real.log_pos (by norm_num)
@@ -137,29 +90,7 @@ theorem riemannZeta_ne_zero_of_mem_rectangle (c₀ : ℝ)
       riemannZeta w ≠ 0 :=
   fun w h1 _ h3 h4 => hZ w h4 ((one_sub_div_log_le c c₀ T w.im hc hcc hT h3).trans h1)
 
-theorem norm_perronIntegrand_le_right (C₂ : ℝ)
-    (hR : ∀ s : ℂ, 1 < s.re → ‖deriv riemannZeta s / riemannZeta s‖ ≤ 1 / (s.re - 1) + C₂)
-    (y T t : ℝ) (hy : 1 < y) (hT : 0 < T) (ht : T ≤ |t|) :
-    ‖Fy y (((1 + 1 / Real.log y : ℝ) : ℂ) + t * I)‖ ≤
-      (Real.log y + C₂) * (Real.exp 1 * y) / t ^ 2 := by
-  set w : ℂ := ((1 + 1 / Real.log y : ℝ) : ℂ) + t * I
-  have hl : 0 < Real.log y := Real.log_pos hy
-  have hre : w.re = 1 + 1 / Real.log y := by simp [w]
-  have hy0 : 0 < y := by linarith
-  rw [norm_perronIntegrand y hy0 w]
-  have hζ : ‖deriv riemannZeta w / riemannZeta w‖ ≤ Real.log y + C₂ := by
-    simpa [hre] using hR w (by rw [hre]; linarith [one_div_pos.mpr hl])
-  have hpow : y ^ w.re = Real.exp 1 * y := by
-    rw [hre, Real.rpow_add hy0, Real.rpow_one, Real.rpow_def_of_pos hy0, mul_one_div_cancel hl.ne']; ring
-  have hw1 : |t| ≤ ‖w‖ := by simpa [w] using Complex.abs_im_le_norm w
-  have hw2 : |t| ≤ ‖w - 1‖ := by simpa [w] using Complex.abs_im_le_norm (w - 1)
-  have hden : t ^ 2 ≤ ‖w‖ * ‖w - 1‖ := by rw [← sq_abs]; nlinarith [abs_nonneg t]
-  rw [hpow]
-  exact (div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right hζ (by positivity)) (by positivity)).trans
-    (div_le_div_of_nonneg_left (mul_nonneg ((norm_nonneg _).trans hζ) (by positivity))
-      (by rw [← sq_abs]; exact pow_pos (hT.trans_le ht) 2) hden)
-
-theorem norm_perronIntegrand_le_horizontal (c₁ C₁ : ℝ) (hC₁ : 0 ≤ C₁)
+theorem norm_perronIntegrand_le_horizontal (c₁ C₁ : ℝ)
     (hD : ∀ s : ℂ, s ≠ 1 → 1 - c₁ / Real.log (|s.im| + 2) ≤ s.re →
       ‖deriv riemannZeta s / riemannZeta s + 1 / (s - 1)‖ ≤ C₁ * Real.log (|s.im| + 2) ^ 2)
     (c y T x v σ₀ : ℝ) (hc : 0 < c) (hcc : c ≤ c₁) (hy : 1 ≤ y) (hT : 1 ≤ T) (hv : |v| = T)
@@ -169,8 +100,6 @@ theorem norm_perronIntegrand_le_horizontal (c₁ C₁ : ℝ) (hC₁ : 0 ≤ C₁
   set w : ℂ := (x : ℂ) + (v : ℂ) * I
   have hre : w.re = x := by simp [w]
   have him : w.im = v := by simp [w]
-  rw [norm_perronIntegrand y (by linarith) w]
-  have hw1 : T ≤ ‖w‖ := by rw [← hv, ← him]; exact Complex.abs_im_le_norm w
   have hw2 : T ≤ ‖w - 1‖ := by rw [← hv, ← show (w - 1).im = v by simp [him]]; exact Complex.abs_im_le_norm _
   have hne : w ≠ 1 := fun h => by rw [h, sub_self, norm_zero] at hw2; linarith
   have hD' := hD w hne (by rw [hre]; exact (one_sub_div_log_le c c₁ T w.im hc hcc (by linarith) (by rw [him, hv])).trans hx1)
@@ -180,10 +109,8 @@ theorem norm_perronIntegrand_le_horizontal (c₁ C₁ : ℝ) (hC₁ : 0 ≤ C₁
     have := norm_sub_le (deriv riemannZeta w / riemannZeta w + 1 / (w - 1)) (1 / (w - 1))
     simp only [add_sub_cancel_right] at this; linarith
   have hpow : y ^ w.re ≤ y ^ σ₀ := by rw [hre]; exact Real.rpow_le_rpow_of_exponent_le hy hx2
-  calc ‖deriv riemannZeta w / riemannZeta w‖ * y ^ w.re / (‖w‖ * ‖w - 1‖)
-      ≤ (C₁ * Real.log (T + 2) ^ 2 + 1) * y ^ σ₀ / (‖w‖ * ‖w - 1‖) := by gcongr
-    _ ≤ (C₁ * Real.log (T + 2) ^ 2 + 1) * y ^ σ₀ / T ^ 2 :=
-        div_le_div_of_nonneg_left (by positivity) (by positivity) (by nlinarith)
+  exact PerronKernel.norm_le (zero_lt_one.trans_le hy) (zero_lt_one.trans_le hT)
+    (by rw [him, hv]) (by simpa only [norm_neg] using hζ) hpow
 
 theorem norm_perronIntegrand_le_left (c₁ C₁ : ℝ) (hC₁ : 0 ≤ C₁)
     (hD : ∀ s : ℂ, s ≠ 1 → 1 - c₁ / Real.log (|s.im| + 2) ≤ s.re →
@@ -198,9 +125,7 @@ theorem norm_perronIntegrand_le_left (c₁ C₁ : ℝ) (hC₁ : 0 ≤ C₁)
   set w : ℂ := (((1 - c / L : ℝ)) : ℂ) + u * I
   have hre : w.re = 1 - c / L := by simp [w]
   have him : w.im = u := by simp [w]
-  rw [norm_perronIntegrand y hy w]
   have hcL : 0 < c / L := div_pos hc hL
-  have hw1 : 1 / 2 ≤ ‖w‖ := by have := Complex.abs_re_le_norm w; rw [hre, abs_of_pos (by linarith)] at this; linarith
   have hw2 : c / L ≤ ‖w - 1‖ := by
     simpa [hre, abs_of_pos hcL] using Complex.abs_re_le_norm (w - 1)
   have hne : w ≠ 1 := fun h => by rw [h, sub_self, norm_zero] at hw2; linarith
@@ -216,15 +141,10 @@ theorem norm_perronIntegrand_le_left (c₁ C₁ : ℝ) (hC₁ : 0 ≤ C₁)
     have := norm_sub_le (deriv riemannZeta w / riemannZeta w + 1 / (w - 1)) (1 / (w - 1))
     simp only [add_sub_cancel_right] at this
     linarith [hD'.trans (mul_le_mul_of_nonneg_left hlogu hC₁)]
-  have hden : c / (2 * L) ≤ ‖w‖ * ‖w - 1‖ := by
-    rw [show c / (2 * L) = (1 / 2) * (c / L) by field_simp]
-    exact mul_le_mul hw1 hw2 hcL.le (by linarith)
-  rw [hre]
-  calc ‖deriv riemannZeta w / riemannZeta w‖ * y ^ (1 - c / L) / (‖w‖ * ‖w - 1‖)
-      ≤ (C₁ * L ^ 2 + L / c) * y ^ (1 - c / L) / (‖w‖ * ‖w - 1‖) := by gcongr
-    _ ≤ (C₁ * L ^ 2 + L / c) * y ^ (1 - c / L) / (c / (2 * L)) :=
-        div_le_div_of_nonneg_left (by positivity) (by positivity) hden
-    _ = (C₁ * L ^ 2 + L / c) * y ^ (1 - c / L) * (2 * L / c) := by field_simp
+  calc _ ≤ (C₁ * L ^ 2 + L / c) * y ^ (1 - c / L) * (2 / (c / L)) :=
+        PerronKernel.norm_left_le (w := w) hy hcL (by simpa [hre] using hhalf)
+          (by rw [hre]; linarith) (by simpa only [norm_neg] using hζ) (by rw [hre])
+    _ = _ := by rw [div_div_eq_mul_div]
 
 end Formalism.ZF
 end -- clump:auto
@@ -305,14 +225,15 @@ theorem abs_zetaPrimeSumError_le_of_large (c₀ c₁ C₁ C₂ : ℝ) (hC₁ : 0
   have hE := norm_integral_compl_le (fun t : ℝ => Fy y ((σ₀ : ℂ) + t * I))
     ((Real.log y + C₂) * (Real.exp 1 * y)) T
     (mul_nonneg (by linarith) (mul_nonneg (Real.exp_pos 1).le hy0.le)) hT0 (fun t ht => by
-      have h := norm_perronIntegrand_le_right C₂ hR y T t hy1 hT0 ht
+      have h := PerronKernel.norm_right_le (fun w => -(deriv riemannZeta w / riemannZeta w))
+        hy1 (hT0.trans_le ht) (fun w hw => by simpa only [norm_neg] using hR w hw)
       rw [← hσ₀] at h
       exact h)
   have hHx : ∀ v : ℝ, |v| = T → ∀ x ∈ Set.uIoc σ₁ σ₀,
       ‖Fy y ((x : ℂ) + (v : ℂ) * I)‖ ≤ (C₁ * L ^ 2 + 1) * y ^ σ₀ / T ^ 2 := by
     intro v hv x hx
     rw [Set.uIoc_of_le hσ01] at hx
-    have h := norm_perronIntegrand_le_horizontal c₁ C₁ hC₁ hD c y T x v σ₀ hc hc1 hy1.le hT1 hv
+    have h := norm_perronIntegrand_le_horizontal c₁ C₁ hD c y T x v σ₀ hc hc1 hy1.le hT1 hv
       (by rw [← hLdef, ← hσ₁]; exact hx.1.le) hx.2
     rw [← hLdef] at h
     exact h
@@ -868,7 +789,7 @@ theorem rectangleShiftOfResidue : RectShiftOf := by
     filter_upwards [eventually_nhdsWithin_iff.mp hAev] with w hw
     by_cases hw1 : w = 1
     · subst hw1; simp [G]
-    · simp only [G, H, if_neg hw1]; rw [hw hw1]; ring
+    · simp only [G, H, ite_eq_right hw1]; rw [hw hw1]; ring
   set U : Set ℂ := {w | ∀ᶠ z in 𝓝 w, DifferentiableAt ℂ G z}
   have hsub : (Set.uIcc σ₁ σ₀ ×ℂ Set.uIcc (-T) T) ⊆ U := fun w hw => by
     rw [Complex.mem_reProdIm, Set.uIcc_of_le (by linarith), Set.uIcc_of_le (by linarith)] at hw
@@ -886,7 +807,7 @@ theorem rectangleShiftOfResidue : RectShiftOf := by
   refine hRDP (Fy y) G a b 1 σ₁ σ₀ (-T) T (by simpa using h2) (by simpa using h3)
     (by simp; linarith) (by simpa using hT)
     ⟨U, isOpen_setOfPred_eventually_nhds, hsub, fun _ hw => hw.self_of_nhds.differentiableWithinAt⟩
-    fun w hw => by simp only [G, H, if_neg hw]; ring
+    fun w hw => by simp only [G, H, ite_eq_right hw]; ring
 
 end Formalism.ZF
 end -- clump:auto

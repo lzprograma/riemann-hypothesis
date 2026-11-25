@@ -110,7 +110,7 @@ theorem cong_dir (hg : (g : 𝓞 I.E) ∈ w.asIdeal) {fr frd : Fin r → VA I} (
   have h1 := dir_col hg (hfrd i) (fun s hs => by
     obtain ⟨j', rfl, hj'⟩ := hS s hs
     have := hgr i j'
-    rwa [if_neg (Ne.symm hj'), sub_zero] at this) hx
+    rwa [ite_eq_right (Ne.symm hj'), sub_zero] at this) hx
   refine congW_of_sub ?_ h1
   refine congW_of_sub (t := ((if i = j then 1 else 0 : ℤ) : I.E ⊗[I.F] Af I.F)) ?_ ?_
   · have := congW_intCast (I := I) (w := w) (p := p) (if i = j then 1 else 0)
@@ -127,7 +127,7 @@ theorem cong_dual (hg : (g : 𝓞 I.E) ∈ w.asIdeal) {fr frd : Fin r → VA I} 
   have h1 := dual_col hg (hfr j) (fun s hs => by
     obtain ⟨i', rfl, hi'⟩ := hS s hs
     have := hgr i' j
-    rwa [if_neg hi', sub_zero] at this) hx
+    rwa [ite_eq_right hi', sub_zero] at this) hx
   refine congW_of_sub ?_ h1
   refine congW_of_sub (t := ((if i = j then 1 else 0 : ℤ) : I.E ⊗[I.F] Af I.F)) ?_ ?_
   · have := congW_intCast (I := I) (w := w) (p := p) (if i = j then 1 else 0)
@@ -180,12 +180,12 @@ theorem fr_w (ob : Bool) (i : Fin D.R.k) : fr X ob (wI (hrD D) i) = if ob then X
 theorem frame_anisotropic (ob : Bool) : fr X ob (zI (hrD D)) = X.z0 := by
   unfold fr
   rw [dite_eq_right (show ¬ (zI (hrD D)).1 < D.R.rS by simp [zI]),
-    dite_eq_right (show ¬ (zI (hrD D)).1 < D.R.rS + D.R.k by simp [zI]), if_pos (by simp [zI])]
+    dite_eq_right (show ¬ (zI (hrD D)).1 < D.R.rS + D.R.k by simp [zI]), ite_eq_left (by simp [zI])]
 
 theorem fr_y (ob : Bool) (a : Fin D.R.rS) : fr X ob (yI (hrD D) a) = X.f0 (rv a) := by
   unfold fr
   rw [dite_eq_right (show ¬ (yI (hrD D) a).1 < D.R.rS by simp [yI, rv] <;> omega),
-    dite_eq_right (show ¬ (yI (hrD D) a).1 < D.R.rS + D.R.k by simp [yI, rv] <;> omega), if_neg (by simp [yI, rv] <;> omega),
+    dite_eq_right (show ¬ (yI (hrD D) a).1 < D.R.rS + D.R.k by simp [yI, rv] <;> omega), ite_eq_right (by simp [yI, rv] <;> omega),
     dite_eq_left (show (yI (hrD D) a).1 - (D.R.rS + D.R.k + 1) < D.R.rS by simp [yI, rv])]
   congr 1; ext; simp [yI, rv]
 
@@ -200,12 +200,12 @@ theorem frd_w (ob : Bool) (i : Fin D.R.k) : frd X ob (wI (hrD D) i) = if ob then
 theorem dual_frame_anisotropic (ob : Bool) : frd X ob (zI (hrD D)) = -X.z0 := by
   unfold frd
   rw [dite_eq_right (show ¬ (zI (hrD D)).1 < D.R.rS by simp [zI]),
-    dite_eq_right (show ¬ (zI (hrD D)).1 < D.R.rS + D.R.k by simp [zI]), if_pos (by simp [zI])]
+    dite_eq_right (show ¬ (zI (hrD D)).1 < D.R.rS + D.R.k by simp [zI]), ite_eq_left (by simp [zI])]
 
 theorem frd_y (ob : Bool) (a : Fin D.R.rS) : frd X ob (yI (hrD D) a) = X.e0 (rv a) := by
   unfold frd
   rw [dite_eq_right (show ¬ (yI (hrD D) a).1 < D.R.rS by simp [yI, rv] <;> omega),
-    dite_eq_right (show ¬ (yI (hrD D) a).1 < D.R.rS + D.R.k by simp [yI, rv] <;> omega), if_neg (by simp [yI, rv] <;> omega),
+    dite_eq_right (show ¬ (yI (hrD D) a).1 < D.R.rS + D.R.k by simp [yI, rv] <;> omega), ite_eq_right (by simp [yI, rv] <;> omega),
     dite_eq_left (show (yI (hrD D) a).1 - (D.R.rS + D.R.k + 1) < D.R.rS by simp [yI, rv])]
   congr 1; ext; simp [yI, rv]
 

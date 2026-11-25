@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MaximalHermitianLatticeLocalStructureDiscriminan
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.AdmNPf
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.KeyLemmaStatement
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictAll
@@ -13,8 +14,6 @@ open scoped Classical TensorProduct
 open Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp
 
 namespace Formalism.L2.SG.Pf
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace LatDictK
 
@@ -146,13 +145,7 @@ alias nat_split := _root_.UpperTheory.Reformulated.B.ExistsCoprimeMulDvdPow.main
 
 theorem mem_of_loc {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] (L : Submodule R M) (x : M)
     (h : ∀ Q : Ideal R, Q.IsMaximal → ∃ s, s ∉ Q ∧ s • x ∈ L) : x ∈ L := by
-  let I : Ideal R := L.comap (LinearMap.toSpanSingleton R M x)
-  by_cases hI : I = ⊤
-  · have h1 : (1 : R) ∈ I := hI ▸ Submodule.mem_top
-    simpa [I] using h1
-  · obtain ⟨Q, hQ, hIQ⟩ := Ideal.exists_le_maximal I hI
-    obtain ⟨s, hs, hsx⟩ := h Q hQ
-    exact absurd (hIQ (show s ∈ I by simpa [I] using hsx)) hs
+  apply _root_.GlobalTheory.MaxLatStruct.mem_of_local <;> assumption
 
 theorem crd_nsmul (n : ℕ) (v : (VS D).V) : X.crd (n • v) = n • X.crd v := by
   funext i

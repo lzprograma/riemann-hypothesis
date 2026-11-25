@@ -23,8 +23,8 @@ theorem sum_subsets_neg_one_pow_prod_indicator (n : ℕ) (a : Fin n → ℕ) :
   rw [prod_neg, ← compl_eq_univ_sdiff, card_compl, Fintype.card_fin]
   congr 1
   rw [← prod_mul_prod_compl T]
-  rw [prod_congr rfl (fun i hi => by rw [if_pos hi, one_pow]), prod_const_one, one_mul]
-  exact prod_congr rfl fun i hi => by rw [if_neg (mem_compl.mp hi)]
+  rw [prod_congr rfl (fun i hi => by rw [ite_eq_left hi, one_pow]), prod_const_one, one_mul]
+  exact prod_congr rfl fun i hi => by rw [ite_eq_right (mem_compl.mp hi)]
 
 theorem prod_snoc_snoc_pow (n : ℕ) (T : Finset (Fin n)) (m : ℕ) (c : ℤ) (e : Fin (n + 1 + 1) → ℕ) :
     ∏ j, (Fin.snoc (α := fun _ => ℚ)

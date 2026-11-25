@@ -41,7 +41,7 @@ private theorem isMultiHomog_finset_prod' {β : Type} (s : Finset β) (f : β �
     rw [Finset.prod_empty] at hm
     have hm0 : m = 0 := by
       by_contra hne
-      rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_one, if_neg (Ne.symm hne)] at hm
+      rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_one, ite_eq_right (Ne.symm hne)] at hm
       exact hm rfl
     subst hm0
     simp
@@ -86,7 +86,7 @@ private theorem isMultiHomog_pderiv_and_one_le_of_pderiv_ne_zero [DecidableEq K]
     omega
   · obtain ⟨m, hm⟩ := MvPolynomial.ne_zero_iff.mp hne
     have := key m (MvPolynomial.mem_support_iff.mpr hm) v.1
-    rw [if_pos rfl] at this
+    rw [ite_eq_left rfl] at this
     omega
 
 theorem isMultiHomog_det_pderiv {s c : ℕ} (G : Fin s → MRing ι) (hG : ∀ i, ∃ a, IsMultiHomog (G i) a)
@@ -105,7 +105,7 @@ theorem isMultiHomog_det_pderiv {s c : ℕ} (G : Fin s → MRing ι) (hG : ∀ i
     rw [Finset.prod_eq_zero (Finset.mem_univ i) hi]
     intro m hm
     simp at hm
-  · push_neg at h0
+  · push Not at h0
     have hle : ∀ i ∈ (Finset.univ : Finset (Fin c)), ∀ k,
         (if k = (b i).1 then 1 else 0) ≤ d (a (σ i)) k := by
       intro i _ k

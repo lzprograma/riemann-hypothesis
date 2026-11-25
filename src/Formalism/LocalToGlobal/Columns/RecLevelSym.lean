@@ -71,14 +71,14 @@ theorem colLevSym_pred {j : ℕ} (hj : j + 1 = R.m) :
     colLevSym Ch j = parFam (r_le_N_of_le hj.ge) R.t j (rPsymF Ch) (fun w => extChi fun s => Ch.chi s w) := by
   funext w
   unfold colLevSym
-  rw [if_neg (by have := R.two_le_m; omega), dite_eq_right (by omega), dite_eq_left hj]
+  rw [ite_eq_right (by have := R.two_le_m; omega), dite_eq_right (by omega), dite_eq_left hj]
   rfl
 
 theorem colLevSym_top_H {j : ℕ} (hj : R.m ≤ j) (w : Pr.vGs) :
     (colLevSym Ch j w).H = HXmsym (𝓞 X.E ⧸ w.1.asIdeal) (R.N j) R.k R.r R.t R.m R.rS (r_le_N_of_le (by omega)) := by
   have h2 := R.two_le_m
   unfold colLevSym
-  rw [if_neg (by omega), dite_eq_right (by omega), dite_eq_right (by omega)]
+  rw [ite_eq_right (by omega), dite_eq_right (by omega), dite_eq_right (by omega)]
 
 theorem colLevSym_top_lam {j : ℕ} (hj : R.m ≤ j) (w : Pr.vGs) (M : ↥(colLevSym Ch j w).H)
     (hM : M.1 ∈ HXmsym (𝓞 X.E ⧸ w.1.asIdeal) (R.N j) R.k R.r R.t R.m R.rS (r_le_N_of_le (by omega))) :
@@ -90,7 +90,7 @@ theorem colLevSym_top_lam {j : ℕ} (hj : R.m ≤ j) (w : Pr.vGs) (M : ↥(colLe
     intro l hl M' hM'
     have hl' : l = ⟨HXmsym (𝓞 X.E ⧸ w.1.asIdeal) (R.N j) R.k R.r R.t R.m R.rS (r_le_N_of_le (by omega)),
         lamXmsym (Ch.psi0 w) (extChi fun s => Ch.chi s w) (R.N j) R.k R.r R.t R.m R.rS (r_le_N_of_le (by omega))⟩ := by
-      rw [hl]; unfold colLevSym; rw [if_neg (by have := R.two_le_m; omega), dite_eq_right (by omega), dite_eq_right (by omega)]
+      rw [hl]; unfold colLevSym; rw [ite_eq_right (by have := R.two_le_m; omega), dite_eq_right (by omega), dite_eq_right (by omega)]
     subst hl'
     rfl
   exact key _ rfl M hM
@@ -108,7 +108,7 @@ theorem colLevSym_mid_H {j : ℕ} (h0 : j ≠ 0) (h1 : j + 1 < R.m) (w : Pr.vGs)
     (colLevSym Ch j w).H = (HJsym (𝓞 X.E ⧸ w.1.asIdeal) (R.N j + (R.m - 1 - j)) R.k R.r R.t j R.rS (r_le_Y (by omega))).comap
       (insGL (𝓞 X.E ⧸ w.1.asIdeal) (R.N j) (R.m - 1 - j) R.k (R.N j + (R.m - 1 - j)) (colK_le_N R j) rfl) := by
   unfold colLevSym
-  rw [if_neg h0, dite_eq_left h1]
+  rw [ite_eq_right h0, dite_eq_left h1]
 
 theorem colLevSym_mid_lam {j : ℕ} (h0 : j ≠ 0) (h1 : j + 1 < R.m) (w : Pr.vGs) (M : ↥(colLevSym Ch j w).H)
     (hM : insGL (𝓞 X.E ⧸ w.1.asIdeal) (R.N j) (R.m - 1 - j) R.k (R.N j + (R.m - 1 - j)) (colK_le_N R j) rfl M.1 ∈
@@ -124,7 +124,7 @@ theorem colLevSym_mid_lam {j : ℕ} (h0 : j ≠ 0) (h1 : j + 1 < R.m) (w : Pr.vG
           (insGL (𝓞 X.E ⧸ w.1.asIdeal) (R.N j) (R.m - 1 - j) R.k (R.N j + (R.m - 1 - j)) (colK_le_N R j) rfl),
         (lamJsym (Ch.psi0 w) (extChi fun s => Ch.chi s w) (R.N j + (R.m - 1 - j)) R.k R.r R.t j R.rS (r_le_Y (by omega))).comp
           ((insGL (𝓞 X.E ⧸ w.1.asIdeal) (R.N j) (R.m - 1 - j) R.k (R.N j + (R.m - 1 - j)) (colK_le_N R j) rfl).subgroupComap _)⟩ := by
-      rw [hl]; unfold colLevSym; rw [if_neg h0, dite_eq_left h1]
+      rw [hl]; unfold colLevSym; rw [ite_eq_right h0, dite_eq_left h1]
     subst hl'
     rfl
   exact key _ rfl M hM
@@ -162,11 +162,11 @@ theorem sym_sum_split {r k rS : ℕ} (M : GL (Fin r) κ) :
   refine Finset.sum_congr rfl fun j _ => ?_
   have hj := j.2
   rcases Decidable.em (Formalism.L2.DIV.symEdge rS k i j) with hE | hE
-  · rw [if_pos hE]
+  · rw [ite_eq_left hE]
     unfold Formalism.L2.DIV.symEdge at hE
     simp only [SPsym, Finset.mem_filter, Finset.mem_range]
     split_ifs <;> first | (exfalso; omega) | simp
-  · rw [if_neg hE]
+  · rw [ite_eq_right hE]
     unfold Formalism.L2.DIV.symEdge at hE
     simp only [SPsym, Finset.mem_filter, Finset.mem_range]
     split_ifs <;> first | (exfalso; omega) | simp
@@ -207,8 +207,8 @@ theorem chiSymF_val {n k rS : ℕ} (hn : n = k + 2 * rS + 1) (ψ : AddChar κ K)
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [toSymOrd_val']
   by_cases hE : Formalism.L2.DIV.symEdge rS k (symPerm n k rS i) (symPerm n k rS j)
-  · rw [if_pos hE, if_pos ((symEdge_symPerm_iff hn i j).mp hE)]
-  · rw [if_neg hE, if_neg (fun h => hE ((symEdge_symPerm_iff hn i j).mpr h))]
+  · rw [ite_eq_left hE, ite_eq_left ((symEdge_symPerm_iff hn i j).mp hE)]
+  · rw [ite_eq_right hE, ite_eq_right (fun h => hE ((symEdge_symPerm_iff hn i j).mpr h))]
 
 end SymDivTies
 

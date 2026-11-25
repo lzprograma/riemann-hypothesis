@@ -1,5 +1,7 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ExistsDeterminantPairMapOfAlgHom
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ExistsDeterminantPairPullback
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchedSupportCompletions
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplSpec
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpecializationMapCompUniversalSection
@@ -26,6 +28,7 @@ public import Mathlib.RingTheory.Ideal.Maps
 public import Mathlib.RingTheory.Ideal.Quotient.Defs
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.UGenApprox
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.RrExt
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.RrExt
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.OoMaps
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpRoots
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IsCplAtSelf
@@ -51,6 +54,7 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingMod
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.EventuallyExistsPatchedModuleQuotientMaps
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.NonssT
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.OoPair
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.OoPair
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.PiSurj
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.RmapsEx
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AutomorphicDetection.AnnBc
@@ -59,60 +63,12 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingMod
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AutomorphicDetection.Imports
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.ChainLift
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.DiscStMap
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
-import Mathlib.Tactic.ReduceModChar
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
 import Mathlib.RingTheory.AdicCompletion.Noetherian
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Ideal.KrullsHeightTheorem
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.RingTheory.KrullDimension.NonZeroDivisors
 import Mathlib.RingTheory.PowerSeries.Inverse
@@ -314,39 +270,11 @@ variable {O : Type} [CommRing O] [IsLocalRing O] {R R' : Type} [CommRing R] [Alg
 
 private theorem adic_map {Γ : Type} [TopologicalSpace Γ] {u : Γ → R} (hu : AdicCont (maximalIdeal R) u) :
     AdicCont (maximalIdeal R') fun g => f (u g) := by
-  intro N
-  have hm : maximalIdeal R ≤ (maximalIdeal R').comap (f : R →+* R') := by
-    intro x hx
-    rw [Ideal.mem_comap, ← res_eq_zero_iff O R']
-    change res O R' (f x) = 0
-    rw [res_map, res_eq_zero_iff O R]
-    exact hx
-  have hN : maximalIdeal R ^ N ≤ (maximalIdeal R' ^ N).comap (f : R →+* R') := by
-    rw [← Ideal.map_le_iff_le_comap, Ideal.map_pow]
-    exact Ideal.pow_right_mono (Ideal.map_le_iff_le_comap.mpr hm) N
-  have hc := (hu N).comp (Ideal.quotientMap (maximalIdeal R' ^ N) (f : R →+* R') hN)
-  convert hc using 1
-  funext g
-  simp [Ideal.quotientMap_mk]
+  apply _root_.adic_map <;> assumption
 
 private theorem def_map {n : ℕ} {G : Type} [Group G] [TopologicalSpace G] {Dbar : GDet n (ResidueField O) G}
     {D : GDet n R G} (h : IsDef O Dbar D) : IsDef O Dbar (D.map (f : R →+* R')) := by
-  refine ⟨?_, ?_⟩
-  · have hc := h.cont
-    unfold GDet.IsCont at hc ⊢
-    intro i
-    have e : ∀ g : G, (D.map (f : R →+* R')).lam i (MonoidAlgebra.single g 1) = f (D.lam i (MonoidAlgebra.single g 1)) := by
-      intro g
-      have := ((d_gmap D).2.2.1 (f : R →+* R') (MonoidAlgebra.single g 1)).2 i
-      simpa [MonoidAlgebra.mapRingHom_single] using this
-    simp only [e]
-    exact adic_map f (hc i)
-  · rw [(d_gmap D).2.1]
-    have e : ((res O R' : R' →ₐ[O] ResidueField O) : R' →+* ResidueField O).comp (f : R →+* R') = (res O R : R →+* ResidueField O) := by
-      ext x
-      exact res_map f x
-    rw [e]
-    exact h.red
+  apply _root_.oo_def_map <;> assumption
 
 variable {l : ℕ} [Fact l.Prime] {F : GFrame l} [Algebra ℤ_[l] O] {n : ℕ} (r : Resid F O n)
 
@@ -368,31 +296,7 @@ end
 
 private theorem finite_open_homs_to_finite_group (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] (h : TopFG G)
     (Z : Type) [Group Z] [Finite Z] : Finite {φ : G →* Z // IsOpen (φ.ker : Set G)} := by
-  obtain ⟨s, hs, hgen⟩ := h
-  haveI : Finite s := hs.to_subtype
-  refine Finite.of_injective (fun φ : {φ : G →* Z // IsOpen (φ.ker : Set G)} => fun x : s => φ.1 x) ?_
-  intro φ ψ hφψ
-  apply Subtype.ext
-  have hsub : Subgroup.closure s ≤ φ.1.eqLocus ψ.1 := by
-    rw [Subgroup.closure_le]
-    intro x hx
-    exact congrFun hφψ ⟨x, hx⟩
-  have hopen : IsOpen ((φ.1.eqLocus ψ.1 : Subgroup G) : Set G) := by
-    refine Subgroup.isOpen_mono (H₁ := φ.1.ker ⊓ ψ.1.ker) ?_ ?_
-    · intro x hx
-      obtain ⟨h1, h2⟩ := hx
-      have e1 : φ.1 x = 1 := h1
-      have e2 : ψ.1 x = 1 := h2
-      show φ.1 x = ψ.1 x
-      rw [e1, e2]
-    · rw [Subgroup.coe_inf]
-      exact φ.2.inter ψ.2
-  have hclosed : IsClosed ((φ.1.eqLocus ψ.1 : Subgroup G) : Set G) := Subgroup.isClosed_of_isOpen _ hopen
-  have htop : (Subgroup.closure s).topologicalClosure ≤ φ.1.eqLocus ψ.1 :=
-    Subgroup.topologicalClosure_minimal _ hsub hclosed
-  rw [(topGen_iff s).mp hgen] at htop
-  ext x
-  exact htop (Subgroup.mem_top x)
+  apply _root_.oo_finite_hom <;> assumption
 
 private theorem phi_of_fg (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
     (l : ℕ) [Fact l.Prime] (h : TopFG G) : PhiCond G l := fun H hH =>
@@ -818,20 +722,8 @@ private theorem inj_of_prod {n : ℕ} {A : Type} [CommRing A] [IsDomain A] {a b 
 private theorem lam_lift {n : ℕ} {R S H G : Type} [CommRing R] [CommRing S] [Group H] [Group G]
     {E : GDet n R H} {D : GDet n S G} {f : R →+* S} {φ : H →* G}
     (h : D.comap φ = E.map f) (i : ℕ) (y : MonoidAlgebra R H) :
-    D.lam i (MonoidAlgebra.mapDomainRingHom S φ (MonoidAlgebra.mapRingHom H f y)) = f (E.lam i y) := by
-  rw [← ((UpperTheory.V.CA.d_gmap E).2.2.1 f y).2 i, ← h]
-  unfold GDet.lam
-  generalize MonoidAlgebra.mapRingHom H f y = z
-  apply congrArg (fun p : Polynomial S => (-1) ^ i * p.coeff (n - i))
-  change D.D (Polynomial S) _ = D.D (Polynomial S) (MonoidAlgebra.mapDomainRingHom (Polynomial S) φ _)
-  congr 1
-  rw [map_sub]
-  congr 1
-  · simp
-  · induction z using MonoidAlgebra.induction_linear with
-    | zero => simp
-    | add a b ha hb => simp only [map_add (f := _), ha, hb]
-    | single g r => simp
+    D.lam i (MonoidAlgebra.mapDomainRingHom S φ (MonoidAlgebra.mapRingHom H f y)) = f (E.lam i y) :=
+  (lam_push h.symm i y).symm
 
 private theorem rep_comap {n : ℕ} {A G H : Type} [CommRing A] [Group G] [Group H]
     (ρ : G →* Matrix (Fin n) (Fin n) A) (φ : H →* G) : (GDet.ofRep ρ).comap φ = GDet.ofRep (ρ.comp φ) := by
@@ -932,7 +824,7 @@ theorem UpperTheory.V.Pa.Core.ooPt :
     rw [q2El]
     congr 5
     funext k
-    by_cases hk : k = i <;> simp only [Function.comp_apply, map_sub, hp, map_one, hph, hk, if_true, if_false]
+    by_cases hk : k = i <;> simp only [Function.comp_apply, map_sub, hp, map_one, hph, hk, ite_true, ite_false]
   · refine genBy_img (Ideal.Quotient.mkₐ O (ii W)) Ideal.Quotient.mk_surjective
       (rrGen l L G0 T Λ n O r B u J D A W) ?_
     rintro a (((⟨i, g, rfl⟩ | ⟨v, i, g, rfl⟩) | ⟨j, i, h⟩) | rfl)
@@ -1383,8 +1275,8 @@ private theorem mapDomain_partial_charpoly_power_zero {n : ℕ} {R G H : Type} [
   congr 4
   funext k
   by_cases hk : k = i
-  · simp only [Function.comp_apply, if_pos hk, map_one]
-  · simp only [Function.comp_apply, if_neg hk, map_sub, hs, map_one]
+  · simp only [Function.comp_apply, ite_eq_left hk, map_one]
+  · simp only [Function.comp_apply, ite_eq_right hk, map_sub, hs, map_one]
 
 private theorem mapRingHom_single_mul_partial_charpoly_element {n : ℕ} {R S G : Type} [CommRing R] [CommRing S] [Group G] (f : R →+* S) (h ph ta : G)
     (u : Fin n → R) (i : Fin n) (y : R) :
@@ -1396,8 +1288,8 @@ private theorem mapRingHom_single_mul_partial_charpoly_element {n : ℕ} {R S G 
   congr 4
   funext k
   by_cases hk : k = i
-  · simp only [Function.comp_apply, if_pos hk, map_one]
-  · simp only [Function.comp_apply, if_neg hk, map_sub, hs, map_one]
+  · simp only [Function.comp_apply, ite_eq_left hk, map_one]
+  · simp only [Function.comp_apply, ite_eq_right hk, map_sub, hs, map_one]
 
 private theorem comap_tr {n : ℕ} {R G H : Type} [CommRing R] [Group G] [Group H] (D : GDet n R H) (φ : G →* H)
     (z : MonoidAlgebra R G) : (D.comap φ).tr z = D.tr (MonoidAlgebra.mapDomainRingHom R φ z) := by
@@ -1643,23 +1535,7 @@ open scoped TensorProduct
 private theorem gDet_chi_map_mapRingHom {n : ℕ} {R R' G : Type} [CommRing R] [CommRing R'] [Group G]
     (D : GDet n R G) (f : R →+* R') (x : MonoidAlgebra R G) :
     (D.map f).chi (MonoidAlgebra.mapRingHom G f x) = (D.chi x).map f := by
-  unfold GDet.chi GDet.map
-  dsimp only
-  letI : Algebra R (Polynomial R') := ((algebraMap R' (Polynomial R')).comp f).toAlgebra
-  let g : Polynomial R →ₐ[R] Polynomial R' :=
-    { Polynomial.mapRingHom f with
-      commutes' := fun c => by
-        simp [RingHom.algebraMap_toAlgebra] }
-  have h := D.nat (Polynomial R) (Polynomial R') g
-    (MonoidAlgebra.single 1 Polynomial.X - MonoidAlgebra.mapRingHom G Polynomial.C x)
-  refine Eq.trans ?_ h
-  congr 1
-  rw [map_sub]
-  congr 1
-  · ext a
-    simp [g, MonoidAlgebra.mapRingHom, Polynomial.mapRingHom]
-  · ext a
-    simp [g, MonoidAlgebra.mapRingHom, Polynomial.mapRingHom]
+  apply _root_.pm_chi_map <;> assumption
 
 private theorem gDet_tr_map_mapRingHom {n : ℕ} {R R' G : Type} [CommRing R] [CommRing R'] [Group G]
     (D : GDet n R G) (f : R →+* R') (x : MonoidAlgebra R G) :
@@ -1670,20 +1546,8 @@ private theorem gDet_tr_map_mapRingHom {n : ℕ} {R R' G : Type} [CommRing R] [C
 
 private theorem gDet_tr_comap_eq_tr_mapDomainRingHom {n : ℕ} {R G H : Type} [CommRing R] [Group G] [Group H]
     (D : GDet n R G) (φ : H →* G) (x : MonoidAlgebra R H) :
-    (D.comap φ).tr x = D.tr (MonoidAlgebra.mapDomainRingHom R φ x) := by
-  unfold GDet.tr GDet.lam GDet.chi GDet.comap
-  dsimp only
-  rw [MonoidHom.comp_apply]
-  congr 3
-  congr 1
-  show MonoidAlgebra.mapDomainRingHom (Polynomial R) φ _ = _
-  rw [map_sub]
-  congr 1
-  · simp [MonoidAlgebra.mapDomainRingHom_apply]
-  · ext a
-    simp [MonoidAlgebra.mapDomainRingHom_apply, MonoidAlgebra.mapRingHom]
-    rw [Finsupp.mapDomain_mapRange _ _ _ _ (fun a b => Polynomial.C_add)]
-    simp
+    (D.comap φ).tr x = D.tr (MonoidAlgebra.mapDomainRingHom R φ x) :=
+  comap_tr D φ x
 
 theorem UpperTheory.V.Pa.Core.patched_trace_local_charPoly_approx_annihilated :
     ∀ (l : ℕ) [Fact l.Prime] (L : Loc) (G0 : Glob l L) (T : TWGrp G0) (Λ : Lim T) (n : ℕ) (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsCoef l O] [Algebra ℤ_[l] O] (r : Resid G0.frame O n) (B : Type) [CommRing B] [Algebra O B] [IsCO O B] (u : Pair r B) (J : Ideal B) (D : ℕ) (A : TWAut u J Unit D T) (W : RRObj Λ A) (m : RMaps W), Adapted T (r := r) → ∀ (v : L.Vl) (g : Fin n → L.Gv v) (ga : Fin n → Ph0 Λ) (h : Ph0 Λ), (∀ i, πo0 Λ (ga i) = Λ.G.φ v (g i)) → ∀ j : ℕ, ∀ᶠ N in (Λ.U : Filter ℕ), ∃ a' : W.R, W.t.D.tr (MonoidAlgebra.single h 1 * (List.ofFn fun i => MonoidAlgebra.single (ga i) (1 : W.R) - MonoidAlgebra.single 1 ((W.t.ψ v i (g i) : W.Rˣ) : W.R)).prod) - a' ∈ maximalIdeal W.R ^ j ∧ (m.ρ N a' = 0 ∨ ∀ x : (A.A N).M, (fEl (T.Nq N) (A.A N).U * m.ρ N a') ^ A.ex • x = 0) := by
@@ -1737,15 +1601,7 @@ open IsLocalRing Matrix Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.A
 open scoped TensorProduct
 
 private theorem tr_zero {n : ℕ} {A G : Type} [CommRing A] [Group G] (D : GDet n A G) (hn : 1 ≤ n) : D.tr 0 = 0 := by
-  have h1 : (MonoidAlgebra.single (1 : G) (Polynomial.X : Polynomial A))
-      = (Polynomial.X : Polynomial A) • (1 : MonoidAlgebra (Polynomial A) G) := by
-    rw [MonoidAlgebra.one_def, MonoidAlgebra.smul_single', mul_one]
-  have hchi : D.chi 0 = Polynomial.X ^ n := by
-    simp only [GDet.chi, map_zero, sub_zero]
-    rw [h1, D.homog, map_one, mul_one]
-  simp only [GDet.tr, GDet.lam, hchi, Polynomial.coeff_X_pow]
-  rw [if_neg (by omega)]
-  simp
+  apply _root_.UpperTheory.V.W.FramePullback.tr_zero <;> assumption
 
 theorem UpperTheory.V.Pa.Core.patched_trace_single_mul_sub_one_approx_annihilated :
     ∀ (l : ℕ) [Fact l.Prime] (L : Loc) (G0 : Glob l L) (T : TWGrp G0) (Λ : Lim T) (n : ℕ) (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsCoef l O] [Algebra ℤ_[l] O] (r : Resid G0.frame O n) (B : Type) [CommRing B] [Algebra O B] [IsCO O B] (u : Pair r B) (J : Ideal B) (D : ℕ) (A : TWAut u J Unit D T) (W : RRObj Λ A) (m : RMaps W), 1 ≤ n → Adapted T (r := r) → ∀ (h k : Ph0 Λ), πo0 Λ k = 1 → ∀ j : ℕ, ∀ᶠ N in (Λ.U : Filter ℕ), ∃ a' : W.R, W.t.D.tr (MonoidAlgebra.single h 1 * (MonoidAlgebra.single k 1 - 1)) - a' ∈ maximalIdeal W.R ^ j ∧ (m.ρ N a' = 0 ∨ ∀ x : (A.A N).M, (fEl (T.Nq N) (A.A N).U * m.ρ N a') ^ A.ex • x = 0) := by

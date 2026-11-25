@@ -1,6 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.WittExtensionDiagonalGramTuples
 
 @[expose] public section
 
@@ -71,25 +72,8 @@ private theorem exists_trace_zero_generator_of_isCMExt (hcm : IsCMExt F E σ) :
   conv_lhs => rw [← bE.sum_repr e]
   simp [Fin.sum_univ_two, bE, Algebra.algebraMap_eq_smul_one]
 
-theorem sigma_fix (hcm : IsCMExt F E σ) (e : E) : σ e = e ↔ e ∈ (algebraMap F E).range := by
-  obtain ⟨δ, hδ0, hδ, hdec⟩ := exists_trace_zero_generator_of_isCMExt hcm
-  constructor
-  · intro he
-    obtain ⟨s, t, rfl⟩ := hdec e
-    rw [Algebra.smul_def] at he ⊢
-    rw [map_add (f := _), map_mul, AlgHom.commutes, AlgHom.commutes, hδ] at he
-    have h3 : (2 : E) * (algebraMap F E t * δ) = 0 := by linear_combination -he
-    have hb : algebraMap F E t * δ = 0 := by
-      rcases mul_eq_zero.1 h3 with h | h
-      · norm_num at h
-      · exact h
-    have ht : t = 0 := by
-      rcases mul_eq_zero.1 hb with h | h
-      · exact (map_eq_zero_iff _ (algebraMap F E).injective).1 h
-      · exact absurd h hδ0
-    exact ⟨s, by simp [ht]⟩
-  · rintro ⟨f, rfl⟩
-    exact σ.commutes f
+theorem sigma_fix (hcm : IsCMExt F E σ) (e : E) : σ e = e ↔ e ∈ (algebraMap F E).range :=
+  _root_.GlobalTheory.CompanionTheory.SW.LamUnit.fixed_iff hcm e
 
 theorem nrm_exists (hcm : IsCMExt F E σ) (z : AE F E) : ∃ a : AF F, algebraMap (AF F) (AE F E) a = z * cA σ z := by
   obtain ⟨δ, hδ0, hδ, hdec⟩ := exists_trace_zero_generator_of_isCMExt hcm

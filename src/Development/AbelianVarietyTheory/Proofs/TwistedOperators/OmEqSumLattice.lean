@@ -62,7 +62,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.SplitLinear
 
@@ -330,10 +329,10 @@ theorem sum_ite_reps {G : Type} [AddCommGroup G] {Λ X : AddSubgroup G} (A : G �
   by_cases hc : q
   · obtain ⟨v, ⟨hv, hv'⟩, hu⟩ := hRu (-s) (by rw [map_neg]; exact neg_mem (hq.1 hc).2) (neg_mem hs)
     have k : ∀ u : G, -s - u ∈ Λ ↔ s + u ∈ Λ := fun u => by rw [← neg_add', neg_mem_iff]
-    rw [if_pos hc, Finset.sum_eq_single_of_mem v hv fun u hu' hne =>
-      if_neg fun hh => hne (hu u ⟨hu', (k u).2 ((hp u hu').1 hh).2⟩), if_pos ((hp v hv).2 ⟨(hq.1 hc).1, (k v).1 hv'⟩)]
-  · rw [if_neg hc]
-    refine Finset.sum_eq_zero fun u hu => if_neg fun hh => hc (hq.2 ⟨((hp u hu).1 hh).1, ?_⟩)
+    rw [ite_eq_left hc, Finset.sum_eq_single_of_mem v hv fun u hu' hne =>
+      ite_eq_right fun hh => hne (hu u ⟨hu', (k u).2 ((hp u hu').1 hh).2⟩), ite_eq_left ((hp v hv).2 ⟨(hq.1 hc).1, (k v).1 hv'⟩)]
+  · rw [ite_eq_right hc]
+    refine Finset.sum_eq_zero fun u hu => ite_eq_right fun hh => hc (hq.2 ⟨((hp u hu).1 hh).1, ?_⟩)
     have := sub_mem (hle _ ((hp u hu).1 hh).2 (add_mem hs (hR u hu).2)) (hR u hu).1
     rwa [map_add, add_sub_cancel_right] at this
 

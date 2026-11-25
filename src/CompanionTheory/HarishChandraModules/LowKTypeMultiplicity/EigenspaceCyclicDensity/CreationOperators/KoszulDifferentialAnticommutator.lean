@@ -30,9 +30,9 @@ theorem sum_tc {M : Type} [AddCommGroup M] [Module ℂ M] (i j : Pos n) (f : Pos
       f ⟨(i.1.1, j.1.2), i.2.trans (h.2.2 ▸ j.2)⟩ else 0 := by
   split_ifs with h
   · have ht : Tri ε i j ⟨(i.1.1, j.1.2), i.2.trans (h.2.2 ▸ j.2)⟩ := ⟨h.1, h.2.1, h.2.2, rfl, rfl⟩
-    rw [Finset.sum_eq_single _ (fun k _ hk => by rw [tc, if_neg fun h' => hk (tri_uniq h' ht), zero_smul]) (by simp),
-      tc, if_pos ht, one_smul]
-  · exact Finset.sum_eq_zero fun k _ => by rw [tc, if_neg fun h' => h ⟨h'.1, h'.2.1, h'.2.2.1⟩, zero_smul]
+    rw [Finset.sum_eq_single _ (fun k _ hk => by rw [tc, ite_eq_right fun h' => hk (tri_uniq h' ht), zero_smul]) (by simp),
+      tc, ite_eq_left ht, one_smul]
+  · exact Finset.sum_eq_zero fun k _ => by rw [tc, ite_eq_right fun h' => h ⟨h'.1, h'.2.1, h'.2.2.1⟩, zero_smul]
 
 theorem tc_assoc (p q r k : Pos n) : ∑ i, tc ε p q i * tc ε i r k = ∑ j, tc ε q r j * tc ε p j k := by
   have h1 := sum_tc (ε := ε) p q (fun i => tc ε i r k)
@@ -83,7 +83,7 @@ theorem koszul_differential_sq (hE : KRel ε E) (h1 : ∀ a b i, Commute (E a b)
     swap
     · simp [cc, cj]
     have := hE i.1.1 i.1.2 j.1.1 j.1.2 ci cj
-    simp only [cc, eq_true ci, eq_true cj, if_true, true_and, mul_one, one_smul, mul_neg, ← sub_eq_add_neg, ← sub_mul, this]
+    simp only [cc, eq_true ci, eq_true cj, ite_true, true_and, mul_one, one_smul, mul_neg, ← sub_eq_add_neg, ← sub_mul, this]
     split_ifs <;> simp [sub_eq_add_neg, add_mul]
   rw [e, ← sub_eq_zero]
   apply self_neg
@@ -125,7 +125,7 @@ theorem koszul_differential_anticommutator (h1 : ∀ a b i, Commute (E a b) (an 
       simp only [mul_assoc]
     rw [smul_mul_assoc, mul_smul_comm, ← smul_add, c1, c2, ← mul_add, ← add_mul, hac]
     split_ifs <;> simp
-  simp only [e, Finset.sum_ite_eq', mem_univ, if_true]
+  simp only [e, Finset.sum_ite_eq', mem_univ, ite_true]
   rw [eq_neg_of_add_eq_zero_left (haa j i), tc]
   split_ifs with h
   · simp [cc, h.cptk]
@@ -164,7 +164,7 @@ theorem beta_sq (haa : ∀ i j, an i * an j + an j * an i = 0) (hcc : ∀ i j, c
   have L : ∑ p : Pos n × Pos n × Pos n, ∑ q : Pos n × Pos n × Pos n,
       (t p * t q) • (if p.1 = q.2.2 then cr p.2.2 * (an p.2.1 * (an q.2.1 * an q.1)) else 0) =
       ∑ p, ∑ q, ∑ r, ∑ k, (∑ i, tc ε p q i * tc ε i r k) • (cr k * (an r * an q * an p)) := by
-    simp only [Fintype.sum_prod_type, t, smul_ite, smul_zero, Finset.sum_ite_eq, mem_univ, if_true, Finset.sum_smul]
+    simp only [Fintype.sum_prod_type, t, smul_ite, smul_zero, Finset.sum_ite_eq, mem_univ, ite_true, Finset.sum_smul]
     symm
     calc _ = ∑ p, ∑ q, ∑ i, ∑ r, ∑ k, (tc ε p q i * tc ε i r k) • (cr k * (an r * an q * an p)) := by
           refine Finset.sum_congr rfl fun p _ => Finset.sum_congr rfl fun q _ => ?_
@@ -178,7 +178,7 @@ theorem beta_sq (haa : ∀ i j, an i * an j + an j * an i = 0) (hcc : ∀ i j, c
   have R' : ∑ p : Pos n × Pos n × Pos n, ∑ q : Pos n × Pos n × Pos n,
       (t p * t q) • (if p.2.1 = q.2.2 then cr p.2.2 * (an q.2.1 * an q.1 * an p.1) else 0) =
       ∑ p, ∑ q, ∑ r, ∑ k, (∑ j, tc ε q r j * tc ε p j k) • (cr k * (an r * an q * an p)) := by
-    simp only [Fintype.sum_prod_type, t, smul_ite, smul_zero, Finset.sum_ite_eq, mem_univ, if_true, Finset.sum_smul]
+    simp only [Fintype.sum_prod_type, t, smul_ite, smul_zero, Finset.sum_ite_eq, mem_univ, ite_true, Finset.sum_smul]
     refine Finset.sum_congr rfl fun p _ => ?_
     calc _ = ∑ x : Pos n × Pos n, ∑ y : Pos n × Pos n,
             (tc ε p x.1 x.2 * tc ε y.1 y.2 x.1) • (cr x.2 * (an y.2 * an y.1 * an p)) := by

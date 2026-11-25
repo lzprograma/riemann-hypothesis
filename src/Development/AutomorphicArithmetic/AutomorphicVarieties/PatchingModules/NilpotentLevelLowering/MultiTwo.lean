@@ -5,6 +5,7 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingMod
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDdProps
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDualExp
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.MultiPsi
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.MultiPsi
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -64,8 +65,7 @@ section -- clump:auto
 open MvPolynomial Equiv UpperTheory.V.AlgebraTools.Hk
 
 private theorem exists_lt_apply {n : ℕ} (w : Perm (Fin n)) (hw : w ≠ 1) : ∃ i, i < w i := by
-  by_contra h
-  push_neg at h
+  by_contra! h
   apply hw
   have hs : ∑ i, (w i).val = ∑ i : Fin n, i.val := Equiv.sum_comp w (fun i => i.val)
   have hle : ∀ i ∈ (Finset.univ : Finset (Fin n)), (w i).val ≤ i.val := fun i _ => h i
@@ -113,10 +113,6 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil
 open UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Hi UpperTheory.V.AlgebraTools UpperTheory.V.Pa UpperTheory.V.Pa.Lev
 open scoped TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
-private noncomputable def uP (q n : ℕ) (j : Fin q) : Polynomial (MvPolynomial (Fin q × Fin n) ℤ) :=
-  Polynomial.X ^ n + ∑ k : Fin n, Polynomial.C (MvPolynomial.X (j, k)) * Polynomial.X ^ (k : ℕ)
 
 private theorem prod_coeff (R : Type) [CommRing R] (q n : ℕ) (j : Fin q) (k : ℕ) (hk : k ≤ n) :
     (∏ i : Fin n, (Polynomial.X - Polynomial.C (MvPolynomial.X (j, i) : PU R q n))).coeff k =
@@ -261,7 +257,6 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil
 open UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Hi UpperTheory.V.AlgebraTools UpperTheory.V.Pa UpperTheory.V.Pa.Lev
 open scoped TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 private theorem sum_ofFn_prod {A ι : Type} [Semiring A] [Fintype ι] (q : ℕ) (T : Fin q → ι → A) :
     ∑ i : Fin q → ι, (List.ofFn fun j => T j (i j)).prod = (List.ofFn fun j => ∑ k, T j k).prod := by
@@ -407,24 +402,7 @@ private theorem esymm_root {O R B : Type} [CommRing O] [CommRing R] [Algebra O R
     (P : Fin q → Polynomial B) (j : Fin q) (k : ℕ) (hk : k ≤ n) :
     Ideal.Quotient.mk (mSplitIdeal P n) (MvPolynomial.map β (emb O R j (MvPolynomial.esymm (Fin n) O k)))
       = algebraMap B (MSplitAlg P n) ((-1) ^ k * (P j).coeff (n - k)) := by
-  classical
-  have hE : ∀ p : MvPolynomial (Fin n) O, MvPolynomial.map β (emb O R j p) =
-      MvPolynomial.rename (fun i => (j, i)) (MvPolynomial.map (β.comp (algebraMap O R)) p) := by
-    intro p
-    simp [emb, MvPolynomial.map_rename, MvPolynomial.map_map]
-
-  rw [hE, MvPolynomial.map_esymm, MvPolynomial.esymm, map_sum, map_sum]
-  simp only [map_prod, MvPolynomial.rename_X]
-  have hroot := MSplitAlg.prod_root P n j
-  have hc' : ((Finset.univ.val.map (MSplitAlg.root P n j)).map fun t => Polynomial.X - Polynomial.C t).prod.coeff (n - k)
-      = algebraMap B (MSplitAlg P n) ((P j).coeff (n - k)) := by
-    rw [Multiset.map_map, ← Polynomial.coeff_map, ← hroot]
-    rfl
-  rw [Multiset.prod_X_sub_C_coeff _ (by simp)] at hc'
-  simp only [Multiset.card_map, Finset.card_val, Finset.card_univ, Fintype.card_fin, Nat.sub_sub_self hk,
-    Finset.esymm_map_val] at hc'
-  rw [map_mul, ← hc', map_pow, map_neg, map_one, ← mul_assoc, ← mul_pow, neg_one_mul, neg_neg, one_pow, one_mul]
-  rfl
+  apply _root_.esymm_root <;> assumption
 
 theorem UpperTheory.V.Pa.Lev.multiTwo :
     ∀ (O R B M V : Type) [CommRing O] [IsDomain O] [CommRing R] [Algebra O R] [CommRing B] [AddCommGroup M] [Module B M] [AddCommGroup V] [Module R V] (q n : ℕ) (Nq : Fin q → ℕ) (β : R →+* B) (P : Fin q → Polynomial B) (act : PU R q n →ₐ[R] Module.End R V) (e : Fin q → Module.End R V) (W : Fin q → Submodule R V) (inc : M →+ V) (tr : V →+ M), HkHyp O Nq act e W → (∀ j, (P j).Monic) → (∀ j, (P j).natDegree = n) → Function.Injective inc → (∀ (t : R) m, inc (β t • m) = t • inc m) → (∀ v, inc (tr v) = (List.ofFn e).prod v) → (∀ j m, inc m ∈ W j) → (∀ j k, k ≤ n → ∀ m, act (emb ℤ R j (MvPolynomial.esymm (Fin n) ℤ k)) (inc m) = inc (((-1) ^ k * (P j).coeff (n - k)) • m)) → TwoMaps (M := M) β P act (∏ j, emb O R j (Hk.NN n (Nq j : O))) := by

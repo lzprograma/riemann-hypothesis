@@ -16,17 +16,10 @@ namespace Formalism.L2.S.Pv.HaarSubS
 
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.Pf.EnergyAbs
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Abs
 
 variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [SecondCountableTopology G]
   [MeasurableSpace G] [BorelSpace G]
-
-private theorem lintegral_comp_of_map_eq {μ : Measure G} {φ : G → G} {g : G → ℝ≥0∞} (hφ : Measurable φ) (hμ : μ.map φ = μ)
-    (hg : Measurable g) : ∫⁻ x, g (φ x) ∂μ = ∫⁻ x, g x ∂μ := by
-  conv_rhs => rw [← hμ]
-  rw [lintegral_map hg hφ]
 
 theorem lint_left {μN μH : Measure G} [SFinite μN] [SFinite μH] {N H : Set G} {n₀ h₀ : G}
     (hn₀ : n₀ ∈ N) (hh₀ : h₀ ∈ H) (hNl : ∀ n ∈ N, μN.map (fun x => n * x) = μN)
@@ -40,8 +33,8 @@ theorem lint_left {μN μH : Measure G} [SFinite μN] [SFinite μH] {N H : Set G
       intro h
       group
     simp_rw [e]
-    exact lintegral_comp_of_map_eq (φ := fun x => h₀ * x) (g := fun h => f (n₀ * (h₀ * n * h₀⁻¹) * h))
-      (measurable_const_mul h₀) (hHl h₀ hh₀) (hf.comp (measurable_const_mul _))
+    exact MeasurePreserving.lintegral_comp (g := fun x => h₀ * x) (f := fun h => f (n₀ * (h₀ * n * h₀⁻¹) * h))
+      ⟨measurable_const_mul h₀, hHl h₀ hh₀⟩ (hf.comp (measurable_const_mul _))
   have hm1 : Measurable fun n => ∫⁻ h, f (n₀ * n * h) ∂μH := by
     have : Measurable fun p : G × G => f (n₀ * p.1 * p.2) :=
       hf.comp ((measurable_fst.const_mul n₀).mul measurable_snd)
@@ -52,11 +45,11 @@ theorem lint_left {μN μH : Measure G} [SFinite μN] [SFinite μH] {N H : Set G
   calc ∫⁻ n, ∫⁻ h, f (n₀ * h₀ * (n * h)) ∂μH ∂μN
       = ∫⁻ n, ∫⁻ h, f (n₀ * (h₀ * n * h₀⁻¹) * h) ∂μH ∂μN := lintegral_congr fun n => step1 n
     _ = ∫⁻ n, ∫⁻ h, f (n₀ * n * h) ∂μH ∂μN :=
-        lintegral_comp_of_map_eq (φ := fun x => h₀ * x * h₀⁻¹) (g := fun n => ∫⁻ h, f (n₀ * n * h) ∂μH)
-          ((measurable_const_mul h₀).mul_const h₀⁻¹) (hconj h₀ hh₀) hm1
+        MeasurePreserving.lintegral_comp (g := fun x => h₀ * x * h₀⁻¹) (f := fun n => ∫⁻ h, f (n₀ * n * h) ∂μH)
+          ⟨(measurable_const_mul h₀).mul_const h₀⁻¹, hconj h₀ hh₀⟩ hm1
     _ = ∫⁻ n, ∫⁻ h, f (n * h) ∂μH ∂μN :=
-        lintegral_comp_of_map_eq (φ := fun x => n₀ * x) (g := fun n => ∫⁻ h, f (n * h) ∂μH)
-          (measurable_const_mul n₀) (hNl n₀ hn₀) hm2
+        MeasurePreserving.lintegral_comp (g := fun x => n₀ * x) (f := fun n => ∫⁻ h, f (n * h) ∂μH)
+          ⟨measurable_const_mul n₀, hNl n₀ hn₀⟩ hm2
 
 theorem lint_right {μN μH : Measure G} [SFinite μN] [SFinite μH] {N H : Set G} {n₀ h₀ : G}
     (hn₀ : n₀ ∈ N) (hh₀ : h₀ ∈ H) (hNr : ∀ n ∈ N, μN.map (fun x => x * n) = μN)
@@ -80,11 +73,11 @@ theorem lint_right {μN μH : Measure G} [SFinite μN] [SFinite μH] {N H : Set 
           intro n
           group
         simp_rw [e]
-        exact lintegral_comp_of_map_eq (φ := fun x => x * (h * n₀ * h⁻¹)) (g := fun n => f (n * (h * h₀)))
-          (measurable_mul_const _) (hNr _ hm) (hf.comp (measurable_mul_const _))
+        exact MeasurePreserving.lintegral_comp (g := fun x => x * (h * n₀ * h⁻¹)) (f := fun n => f (n * (h * h₀)))
+          ⟨measurable_mul_const _, hNr _ hm⟩ (hf.comp (measurable_mul_const _))
     _ = ∫⁻ h, ∫⁻ n, f (n * h) ∂μN ∂μH :=
-        lintegral_comp_of_map_eq (φ := fun x => x * h₀) (g := fun h => ∫⁻ n, f (n * h) ∂μN)
-          (measurable_mul_const _) (hHr h₀ hh₀) hm3
+        MeasurePreserving.lintegral_comp (g := fun x => x * h₀) (f := fun h => ∫⁻ n, f (n * h) ∂μN)
+          ⟨measurable_mul_const _, hHr h₀ hh₀⟩ hm3
     _ = ∫⁻ n, ∫⁻ h, f (n * h) ∂μH ∂μN := (lintegral_lintegral_swap hG.aemeasurable).symm
 
 theorem lint_inv {μN μH : Measure G} [SFinite μN] [SFinite μH] {H : Set G}
@@ -108,12 +101,13 @@ theorem lint_inv {μN μH : Measure G} [SFinite μN] [SFinite μH] {H : Set G}
           intro n
           group
         simp_rw [e]
-        rw [lintegral_comp_of_map_eq (φ := fun x => x⁻¹) (g := fun n => f (h⁻¹ * n * h⁻¹⁻¹ * h⁻¹))
-          measurable_inv hNi (hf.comp (((measurable_const_mul _).mul_const _).mul_const _))]
-        exact lintegral_comp_of_map_eq (φ := fun x => h⁻¹ * x * h⁻¹⁻¹) (g := fun n => f (n * h⁻¹))
-          ((measurable_const_mul _).mul_const _) (hconj _ (hinvH h hh)) (hf.comp (measurable_mul_const _))
+        rw [MeasurePreserving.lintegral_comp (g := fun x => x⁻¹) (f := fun n => f (h⁻¹ * n * h⁻¹⁻¹ * h⁻¹))
+          ⟨measurable_inv, hNi⟩ (hf.comp (((measurable_const_mul _).mul_const _).mul_const _))]
+        exact MeasurePreserving.lintegral_comp (g := fun x => h⁻¹ * x * h⁻¹⁻¹) (f := fun n => f (n * h⁻¹))
+          ⟨(measurable_const_mul _).mul_const _, hconj _ (hinvH h hh)⟩ (hf.comp (measurable_mul_const _))
     _ = ∫⁻ h, ∫⁻ n, f (n * h) ∂μN ∂μH :=
-        lintegral_comp_of_map_eq (φ := fun x => x⁻¹) (g := fun h => ∫⁻ n, f (n * h) ∂μN) measurable_inv hHi hm3
+        MeasurePreserving.lintegral_comp (g := fun x => x⁻¹) (f := fun h => ∫⁻ n, f (n * h) ∂μN)
+          ⟨measurable_inv, hHi⟩ hm3
     _ = ∫⁻ n, ∫⁻ h, f (n * h) ∂μH ∂μN := (lintegral_lintegral_swap hG.aemeasurable).symm
 
 theorem isHaarSub_NH [LocallyCompactSpace G] [T2Space G] {S N H : Set G} {μN μH : Measure G}

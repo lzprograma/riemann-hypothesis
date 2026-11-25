@@ -26,7 +26,7 @@ theorem sum_coordV (z : VC D N N') : ∑ k, cz D z k • coordV D k = z := by
   rw [Finset.sum_eq_single (τ, i, j)]
   · simp
   · intro b _ hb
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2, h3⟩
     exact hb (Prod.ext h1.symm (Prod.ext h2.symm h3.symm))
   · simp
@@ -157,8 +157,8 @@ theorem RP_eq (G : VC D N N' → ℂ) (hG : AnalyticOnNhd ℂ G Set.univ) (n : �
     rw [Finset.mem_finsuppAntidiag, Finsupp.sum_fintype _ _ (fun _ => rfl)]
     simp
   by_cases h : (β.sum fun _ m => m) = n
-  · rw [if_pos h, if_pos (hiff.1 h)]
-  · rw [if_neg h, if_neg (mt hiff.2 h)]
+  · rw [ite_eq_left h, ite_eq_left (hiff.1 h)]
+  · rw [ite_eq_right h, ite_eq_right (mt hiff.2 h)]
 
 theorem eval_aeval' {ι : Type*} (x : ι → ℂ) (ℓ : ι → MvPolynomial ι ℂ) (P : MvPolynomial ι ℂ) :
     eval x (aeval ℓ P) = eval (fun s => eval x (ℓ s)) P := by
@@ -196,7 +196,7 @@ theorem taylor_comp (H : VC D N N' → ℂ) (hH : AnalyticOnNhd ℂ H Set.univ)
     hH.comp (A.analyticOnNhd _) (Set.mapsTo_univ _ _)
   have h1 := congrArg (AddMonoidAlgebra.coeff · α) (RP_comp D H hH A (α.sum fun _ m => m))
 
-  rw [coeff_RP D (H ∘ A) hHA, if_pos rfl, RP_eq D H hH, map_sum, coeff_sum] at h1
+  rw [coeff_RP D (H ∘ A) hHA, ite_eq_left rfl, RP_eq D H hH, map_sum, coeff_sum] at h1
   simp only [aeval_monomial, algebraMap_eq, coeff_C_mul] at h1
   have h0 : ((α.sum fun _ m => m).factorial : ℂ) ≠ 0 := by exact_mod_cast Nat.factorial_ne_zero _
   apply mul_left_cancel₀ h0
@@ -333,8 +333,6 @@ namespace Formalism.L2.KerInert.PullbackComparison
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker Classical
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7)
 
 theorem emb_star (φ : D.host.E →+* ℂ) (x : D.host.E) : φ (star x) = starRingEnd ℂ (φ x) := by
@@ -468,8 +466,6 @@ noncomputable section
 namespace Formalism.L2.KerInert.PullbackComparison
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker Classical
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
@@ -672,8 +668,6 @@ noncomputable section
 namespace Formalism.L2.KerInert
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker Classical PullbackComparison
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem pullback_fact : PullFact := by
   intro D cc δ p _ lam N N' γ γ' M M' t G hAlg hInt

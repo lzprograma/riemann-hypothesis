@@ -191,7 +191,7 @@ theorem proof : Statement.{u, v, w} := by
     · show w i ∈ Submodule.span Ω (w '' {j : Fin N | (j : ℕ) < (i.succ : ℕ)})
       rw [mem_flag_iff]
       intro q hq
-      rw [w.repr_self, Finsupp.single_apply, if_neg]
+      rw [w.repr_self, Finsupp.single_apply, ite_eq_right]
       rintro rfl
       simp at hq
     · show w' i ∈ Submodule.span Ω (w '' {j : Fin N | (j : ℕ) < (i.succ : ℕ)})
@@ -207,8 +207,8 @@ theorem proof : Statement.{u, v, w} := by
         Finsupp.single_apply]
       by_cases hiq : i = q
       · subst hiq
-        rw [if_pos rfl, mul_one, h.generic i, mul_div_cancel_right₀ _ (hgy i), sub_self]
-      · rw [if_neg hiq, mul_zero, sub_zero]
+        rw [ite_eq_left rfl, mul_one, h.generic i, mul_div_cancel_right₀ _ (hgy i), sub_self]
+      · rw [ite_eq_right hiq, mul_zero, sub_zero]
         exact h.sameFlag i q (lt_of_le_of_ne (Fin.le_def.mpr (by simpa using hq)) hiq)
   · rintro ⟨F, hgen, hgen', rfl, rfl, rfl, rfl⟩
     have hVs : F.Vs = fun i : Fin (N + 1) => Submodule.span Ω (w '' {j : Fin N | (j : ℕ) < i}) :=

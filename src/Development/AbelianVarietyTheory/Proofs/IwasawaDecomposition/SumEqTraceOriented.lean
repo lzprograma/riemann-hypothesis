@@ -48,8 +48,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.OrientedSmall
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Generic
 
 variable {R : Type} [CommRing R] (c : R →+* R) {n m : ℕ}
@@ -123,7 +121,7 @@ theorem mt_mul_inv (V : HSp D) (g : GA D V) :
 theorem hO_eq (S T : HSp D) (hr : S.rank ≤ T.rank) (x y : WO S T) :
     hO S T x y = hHom S T (toTWsmall S T y) (toTWsmall S T x) := by
   unfold hO hHom
-  rw [if_pos hr]
+  rw [ite_eq_left hr]
   have s := sum_eq_trace (cA D) (S.gram.map (incA D)) (T.gram.map (incA D))
     (toTWsmall S T y) (toTWsmall S T x)
   have s' := sum_eq_trace_oriented (cA D) ((S.gram⁻¹).map (incA D)) (T.gram.map (incA D)) x y
@@ -137,7 +135,7 @@ theorem bridgeSmall (D : D7) : BridgeSmall D := by
   · unfold symplO sympl
     rw [hO_eq S T hr]
   · unfold actHom
-    rw [if_pos hr]
+    rw [ite_eq_left hr]
     exact act_coord (cA D) _ _ _ _ _ (gramInv_mul S) (mt_rel S g) (mt_mul_inv S g) x
 
 end GlobalTheory.OrientedSmall

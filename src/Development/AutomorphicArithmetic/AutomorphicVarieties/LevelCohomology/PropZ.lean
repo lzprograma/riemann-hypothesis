@@ -103,6 +103,18 @@ import ReciprocityTheory.GaloisValuations.GlobalA
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GammaGen, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DenseGen, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Transg, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.H2SubsingletonTransport, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ControlGamma, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Control, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.KwlOnto, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.TorsClass, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HQuad, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.ZqField, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.PropZ
 
+/-!
+# Cyclotomic control and the vanishing statement `HV.PropZ`
+
+The first six clump members establish the cyclotomic generator, procyclic
+cohomology, transgression, restriction, and the control results
+`UpperTheory.V.Base.controlGamma` and `UpperTheory.V.Base.control`.
+
+The remaining members specialize to arithmetic over the rationals and assemble
+`UpperTheory.V.X.propZ`. In particular, `UpperTheory.V.X.zOne` uses the injectivity
+part of `control` for the trivial character with a negative cyclotomic twist.
+-/
+
 -- ===== clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GammaGen =====
 -- clump-header: {"m": "Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GammaGen", "h": "module\n\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.PrincZl\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.FieldTheory.Galois.Profinite\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Connected.Separation\nimport Mathlib.Topology.MetricSpace.Ultra.TotallySeparated\n\n"}
 section -- clump:auto
@@ -648,9 +660,18 @@ private theorem exists_val (Ω : Type) [Field Ω] [CharZero Ω] (p : ℕ) (hp : 
 private theorem inj_cyc (k Ω : Type) [Field k] [NumberField k] [Field Ω] [Algebra k Ω] [IsAlgClosure k Ω] (l : ℕ)
     [Fact l.Prime] (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Algebra ℤ_[l] O]
     [Module.Finite ℤ_[l] O] (ψ : G k Ω →* Oˣ) (n : ℤ) (hn : n ≠ 0) (hψo : IsOpen (ψ.ker : Set (G k Ω)))
-    (V : Subgroup (G k Ω)) (hV : IsClosed (V : Set (G k Ω))) (hg : V ≤ gamU l ⊤) (hψ : V ≤ ψ.ker)
-    (hχ : ¬ V ≤ (cycZ k Ω l).ker) :
+    (V : Subgroup (G k Ω)) (hV : IsClosed (V : Set (G k Ω))) (hg : V ≤ gamU l ⊤) (hψ : V ≤ ψ.ker) :
     Function.Injective (resU (twist₂ l (ψ * chiO k Ω l O ^ n)) (cycU_le l V)) := by
+  by_cases hχ : V ≤ (cycZ k Ω l).ker
+  · have hinj : ∀ (W : Subgroup (G k Ω)) (h : W ≤ V), W = V →
+        Function.Injective (resU (twist₂ l (ψ * chiO k Ω l O ^ n)) h) := by
+      intro W h hWV
+      subst W
+      intro x y hxy
+      obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ x
+      obtain ⟨y, rfl⟩ := Submodule.Quotient.mk_surjective _ y
+      exact hxy
+    exact hinj _ _ (inf_eq_left.mpr hχ)
   obtain ⟨κ, γ, -, -, hk, -, hcl, hfin⟩ := gammaGen k Ω l V hV hg hχ
   haveI : ((cycU l V).subgroupOf V).Normal := hk ▸ inferInstance
   refine (kerResCyc O (G k Ω) (QO l O) _ ((contTw k Ω l).2.2 O ψ n hψo) (cycU l V) V (cycU_le l V) γ.1 γ.2 hcl).2 ?_
@@ -686,6 +707,13 @@ private theorem mem_selEig_one {R G M : Type} [CommRing R] [Group G] [Topologica
   rw [eig_one]
   exact ⟨fun h g => congrArg Subtype.val (h g), fun h g => Subtype.ext (h g)⟩
 
+/-- Cyclotomic control inside the principal subgroup `gamU l ⊤`.
+For the scalar representation `twist₂ l (ψ * chiO k Ω l O ^ n)`, with `ψ` trivial
+on the open normal subgroup `U` and `n ≠ 0`, restriction from `U` to `cycU l U` is
+injective and its image is the `U`-invariant part of the target `ShaU`.
+The invariant part is expressed as `shaEig ... U 1`; the conclusion supplies
+injectivity and a range equality, rather than a bundled linear equivalence. -/
+
 theorem UpperTheory.V.Base.controlGamma :
     ∀ (k Ω : Type) [Field k] [NumberField k] [Field Ω] [Algebra k Ω] [IsAlgClosure k Ω] (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] (U : Subgroup (G k Ω)) [U.Normal], IsOpen (U : Set (G k Ω)) → U ≤ gamU l ⊤ → ∀ (ψ : G k Ω →* Oˣ) (n : ℤ), U ≤ ψ.ker → n ≠ 0 →
       Function.Injective (selRes (twist₂ l (ψ * chiO k Ω l O ^ n)) (cycU_le l U) (shaFam k Ω l)) ∧
@@ -695,15 +723,13 @@ theorem UpperTheory.V.Base.controlGamma :
   haveI : CharZero Ω := charZero_of_injective_algebraMap (algebraMap k Ω).injective
   have hψo : IsOpen (ψ.ker : Set (G k Ω)) := Subgroup.isOpen_mono hψ hU
   have hUc : IsClosed (U : Set (G k Ω)) := U.isClosed_of_isOpen hU
-  have hnt : ∀ A : ValuationSubring Ω, A.valuation (l : Ω) < 1 → ¬ U ⊓ Dec (F := k) A ≤ (cycZ k Ω l).ker := by
-    intro A hA h
-    obtain ⟨g, hgm, hf⟩ := decInf k Ω l U hU A hA
-    exact hf (by rw [MonoidHom.mem_ker.1 (h hgm)]; exact IsOfFinOrder.one)
   have hχ : ¬ U ≤ (cycZ k Ω l).ker := by
     obtain ⟨A, hA⟩ := exists_val Ω l hl.out
-    exact fun h => hnt A hA (inf_le_left.trans h)
+    obtain ⟨g, hgm, hf⟩ := decInf k Ω l U hU A hA
+    intro h
+    exact hf (by rw [MonoidHom.mem_ker.1 (h hgm.1)]; exact IsOfFinOrder.one)
   refine ⟨fun a b hab => Subtype.ext
-    (inj_cyc k Ω l O ψ n hn hψo U hUc hg hψ hχ (congrArg Subtype.val hab)), le_antisymm ?_ ?_⟩
+    (inj_cyc k Ω l O ψ n hn hψo U hUc hg hψ (congrArg Subtype.val hab)), le_antisymm ?_ ?_⟩
   · rintro _ ⟨y, rfl⟩
     exact (mem_selEig_one _ _ _ _ _).2 (restriction_mem_invariant_H1 _ (cycU_le l U) y.1)
   · intro x hx
@@ -711,29 +737,22 @@ theorem UpperTheory.V.Base.controlGamma :
     obtain ⟨κ, γ, hκ, hs, hk, -⟩ := gammaGen k Ω l U hUc hg hχ
     obtain ⟨y, hy⟩ := resZl l O (G k Ω) (QO l O) _ ((contTw k Ω l).2.2 O ψ n hψo) (qoFacts l O).2.1
       (cycU l U) U (cycU_le l U) hUc κ hκ hs hk hx1
-    have hz : ∀ D ∈ shaFam k Ω l, ∀ (W : Subgroup (G k Ω)) (h : W ≤ cycU l U ⊓ D) (h' : W ≤ U),
-        resU (twist₂ l (ψ * chiO k Ω l O ^ n)) h' y = 0 := by
-      intro D hD W h h'
-      have h0 := mem_locSel.1 x.2 D hD
-      rw [← hy, resU_resU] at h0
-      have := congrArg (fun t => resU (twist₂ l (ψ * chiO k Ω l O ^ n)) h t) h0
-      rwa [resU_resU, map_zero] at this
-    have hdec : ∀ A : ValuationSubring Ω, A.valuation (l : Ω) < 1 →
-        resU (twist₂ l (ψ * chiO k Ω l O ^ n)) (inf_le_left : U ⊓ Dec (F := k) A ≤ U) y = 0 := by
-      intro A hA
-      apply inj_cyc k Ω l O ψ n hn hψo (U ⊓ Dec (F := k) A) (hUc.inter (isClosed_Dec A)) (inf_le_left.trans hg)
-        (inf_le_left.trans hψ) (hnt A hA)
-      rw [resU_resU, map_zero]
-      exact hz _ (Or.inl ⟨A, hA, rfl⟩) (cycU l (U ⊓ Dec (F := k) A)) (fun g hg => ⟨⟨hg.1.1, hg.2⟩, hg.1.2⟩) _
     refine ⟨⟨y, mem_locSel.2 ?_⟩, Subtype.ext hy⟩
-    rintro D (⟨A, hA, rfl⟩ | ⟨A, rfl⟩)
-    · exact hdec A hA
-    · by_cases hA : A.valuation (l : Ω) < 1
-      · have := congrArg (fun t => resU (twist₂ l (ψ * chiO k Ω l O ^ n)) (inf_le_inf_left U (Ine_le_Dec (F := k) A)) t)
-          (hdec A hA)
-        rwa [resU_resU, map_zero] at this
-      · exact hz _ (Or.inr ⟨A, rfl⟩) (U ⊓ Ine (F := k) A)
-          (fun g hg => ⟨⟨hg.1, (places k Ω l A).2.2.2 hA hg.2⟩, hg.2⟩) _
+    intro D hD
+    have hDc : IsClosed (D : Set (G k Ω)) := by
+      rcases hD with ⟨A, hA, rfl⟩ | ⟨A, rfl⟩
+      · exact isClosed_Dec A
+      · exact isClosed_Ine A
+    apply inj_cyc k Ω l O ψ n hn hψo (U ⊓ D) (hUc.inter hDc)
+      (inf_le_left.trans hg) (inf_le_left.trans hψ)
+    rw [resU_resU, map_zero]
+    have h0 := mem_locSel.1 x.2 D hD
+    rw [← hy, resU_resU] at h0
+    have hCD : cycU l (U ⊓ D) ≤ cycU l U ⊓ D :=
+      fun g hg => ⟨⟨hg.1.1, hg.2⟩, hg.1.2⟩
+    have := congrArg (fun t => resU (twist₂ l (ψ * chiO k Ω l O ^ n)) hCD t) h0
+    rwa [resU_resU, map_zero] at this
+
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ControlGamma =====
@@ -818,6 +837,13 @@ private theorem zmod_eq_intCast_of_primitiveRoot_pow_eq_selmer {Ω : Type} [Fiel
   push_cast at h3
   rw [ZMod.natCast_zmod_val] at h3
   exact sub_eq_zero.mp h3
+
+/-- Cyclotomic control for a nonzero cyclotomic twist of a character trivial on `U`.
+Restriction from the open normal subgroup `U` to `cycU l U` is injective, with
+image the `U`-invariant part of the target `ShaU`, expressed as `shaEig ... U 1`.
+The coefficient ring `O` is a domain and discrete valuation ring finite over
+`ℤ_[l]`. For odd `l` no principal-subgroup condition is needed; at `l = 2` the
+hypothesis requires `U ≤ gamU l ⊤`. -/
 
 theorem UpperTheory.V.Base.control :
     ∀ (k Ω : Type) [Field k] [NumberField k] [Field Ω] [Algebra k Ω] [IsAlgClosure k Ω] (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] (U : Subgroup (G k Ω)) [U.Normal], IsOpen (U : Set (G k Ω)) → (l ≠ 2 ∨ U ≤ gamU l ⊤) → ∀ (ψ : G k Ω →* Oˣ) (n : ℤ), U ≤ ψ.ker → n ≠ 0 →
@@ -1374,11 +1400,9 @@ private theorem zq_field (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ 
       (Int.squarefree_natCast.2 hp.squarefree) (by omega)
     exact lift_injective _ ((lift_adjoin_simple ℚ ℚ⟮s⟯ (AdjoinSimple.gen ℚ s)).trans (lift_top ℚ ℚ⟮s⟯).symm)
   · exact h (AdjoinSimple.gen ℚ s)
-  · have : ℚ⟮s⟯ ≤ fixedField (Subgroup.zpowers g) := by
-      rw [adjoin_simple_le_iff, mem_fixedField_iff]
-      intro f hf
-      exact (Subgroup.zpowers_le.2 (show g ∈ MulAction.stabilizer (G ℚ Ω) s from h)) hf
-    exact (mem_fixedField_iff _ _).1 (this x.2) g (Subgroup.mem_zpowers g)
+  · have hfix : g.toAlgHom.comp (ℚ⟮s⟯).val = (ℚ⟮s⟯).val :=
+      adjoin_algHom_ext ℚ fun y hy => (Set.mem_singleton_iff.mp hy).symm ▸ h
+    exact DFunLike.congr_fun hfix x
 
 private theorem zq_main (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (l : ℕ) [hp : Fact l.Prime] (O : Type) [CommRing O]
     [IsDomain O] [IsDiscreteValuationRing O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] (hl : 5 ≤ l) (e : ℕ) (he : Even e)

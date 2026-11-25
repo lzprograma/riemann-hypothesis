@@ -19,7 +19,6 @@ public import Development.AbelianVarietyTheory.BlockTheory.JetGauges.ThetaWeight
 public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FrameThetaConstPos
 public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.CurvAndMarginClosed
 public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.FirstMinimumInvariantContinuousPosOnFrames
-public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.VanishOfSimpleZero
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.KappaStatementHolds
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.KronHolPsiStatementHolds
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
@@ -309,7 +308,7 @@ theorem exists_maxT (hf : X.IsBddSec (Xa.Fp + T • Xa.L) f)
     exact (hsm j z hz).2
   obtain ⟨d, hd, hfar⟩ := sumSq_far X Xa Fl hU hxs hsat
   obtain ⟨δ, hδ, hsmall⟩ := quotT_far X Xa Fl T f hf hrate (A := Uᶜ) hd hfar hε
-  obtain ⟨Kc, hKc, hKsub, hrep⟩ := reductionTheory_holds r X δ hδ
+  obtain ⟨Kc, hKc, hKsub, hrep⟩ := GlobalTheory.FlagMahler.mahler_compactness r X δ hδ
   have hSpos : ∀ x ∈ Kc \ U, 0 < sumSq X Xa Fl x := fun x hx =>
     lt_of_lt_of_le (by positivity) (hfar x (hKsub hx.1) hx.2)
   have hmove : ∀ x ∈ X.dom, quotT X Xa Fl T f x1 ≤ quotT X Xa Fl T f x →
@@ -459,8 +458,7 @@ theorem upper_shift : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r 
     rw [show Xa.T + (nd X + 4) + nd X + 6 + nd X = Xa.T + 3 * nd X + 10 by ring]; omega)
   have hg := isBddSec_sum X hf u
   have hg0 : ∃ x ∈ X.dom, ∑ q, u q * f q x ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hu (hind u h)
   obtain ⟨k, hk⟩ := exists_s_ne Fl
   have d1 := hg.1.1
@@ -621,7 +619,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.InterpWeight =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroBoundedSectionShiftedWeight =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroBoundedSectionShiftedWeight", "h": "module\n\npublic import Development.AbelianVarietyTheory.BlockTheory.JetGauges.ThetaWeightedNorm\npublic import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.TwoLevelLogarithm\npublic import Development.AbelianVarietyTheory.Definitions.ThetaValues.Generic\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsMulNe\npublic import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FrameThetaConstPos\npublic import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.CurvAndMarginClosed\npublic import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.FirstMinimumInvariantContinuousPosOnFrames\npublic import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.InterpWeight\npublic import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.VanishOfSimpleZero\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.KappaStatementHolds\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.PointwiseNormInvarianceHolds\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfH\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.KronHolPsiStatementHolds\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.MeasInvStatementPf\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPf\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.BoundedSectionAlgebra\nimport Development.AbelianVarietyTheory.Definitions.Divisors.ExistsArchOne\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroBoundedSectionShiftedWeight", "h": "module\n\npublic import Development.AbelianVarietyTheory.BlockTheory.JetGauges.ThetaWeightedNorm\npublic import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.TwoLevelLogarithm\npublic import Development.AbelianVarietyTheory.Definitions.ThetaValues.Generic\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsMulNe\npublic import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FrameThetaConstPos\npublic import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.CurvAndMarginClosed\npublic import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.FirstMinimumInvariantContinuousPosOnFrames\npublic import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.InterpWeight\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetMeasStatement\npublic import ReciprocityTheory.L2DbarEstimates.LeviForms.Vanish\npublic import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.MvDivIntegrand\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfJ\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.KappaStatementHolds\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.PointwiseNormInvarianceHolds\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfH\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.KronHolPsiStatementHolds\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.MeasInvStatementPf\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPf\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.BoundedSectionAlgebra\nimport Development.AbelianVarietyTheory.Definitions.Divisors.ExistsArchOne\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -681,7 +679,7 @@ theorem block_fst (X : Data E r) {L : Wt X.Ψ r} (hg : GapsGe X.p0 L 1) (a s : �
   intro τ i j hij hj
   have hij' : (i : ℕ) ≤ j := hij
   have hd := drop_of_gaps hg τ (j - i) i j (by omega) (Or.inr hj)
-  rw [wt_apply, wt_apply, if_pos hj, if_pos (by omega)]
+  rw [wt_apply, wt_apply, ite_eq_left hj, ite_eq_left (by omega)]
   have e : (((j - i : ℕ) : ℤ)) = (j : ℤ) - (i : ℤ) := by push_cast [Nat.cast_sub hij']; ring
   rw [e] at hd
   have ha : (0 : ℤ) ≤ a := Nat.cast_nonneg _
@@ -694,7 +692,7 @@ theorem block_snd (X : Data E r) {L : Wt X.Ψ r} (hg : GapsGe X.p0 L 1) (a s : �
   intro τ i j hi hij
   have hij' : (i : ℕ) ≤ j := hij
   have hd := drop_of_gaps hg τ (j - i) i j (by omega) (Or.inl hi)
-  rw [wt_apply, wt_apply, if_neg (by omega), if_neg (by omega)]
+  rw [wt_apply, wt_apply, ite_eq_right (by omega), ite_eq_right (by omega)]
   have e : (((j - i : ℕ) : ℤ)) = (j : ℤ) - (i : ℤ) := by push_cast [Nat.cast_sub hij']; ring
   rw [e] at hd
   have ha : (0 : ℤ) ≤ a := Nat.cast_nonneg _
@@ -713,7 +711,7 @@ theorem cross (X : Data E r) {L : Wt X.Ψ r} (hg : GapsGe X.p0 L 1) {T : ℕ} (h
   have hD : (1.9 * T : ℝ) ≤ ((L τ j - L τ i : ℤ) : ℝ) := hpp.trans (by exact_mod_cast hsp)
   have ha : (0 : ℝ) ≤ a := Nat.cast_nonneg _
   have hm := mul_le_mul_of_nonneg_left hD ha
-  rw [wt_apply, wt_apply, if_pos hi, if_neg (by omega)]
+  rw [wt_apply, wt_apply, ite_eq_left hi, ite_eq_right (by omega)]
   have hq0 : s / 2 * 2 ≤ T := (Nat.div_mul_le_self s 2).trans hs
   generalize s / 2 = q at hq0 ⊢
   have hq : (q : ℝ) * 2 ≤ T := by exact_mod_cast hq0
@@ -740,11 +738,11 @@ theorem gaps_G (X : Data E r) {L : Wt X.Ψ r} (hg : GapsGe X.p0 L 1) (n s : ℕ)
   have hm : (0 : ℤ) ≤ (n : ℤ) * (L τ i - L τ j) := mul_nonneg hn (by linarith)
   rw [e, e]
   by_cases hi : (i : ℕ) < X.p0
-  · rw [if_pos hi, if_pos (by omega)]
+  · rw [ite_eq_left hi, ite_eq_left (by omega)]
     have : (0 : ℤ) ≤ (n : ℤ) * L τ i - 2 * -((s / 2 : ℕ) : ℤ) - ((n : ℤ) * L τ j - 2 * -((s / 2 : ℕ) : ℤ)) := by
       linarith
     exact_mod_cast this
-  · rw [if_neg hi, if_neg (by omega)]
+  · rw [ite_eq_right hi, ite_eq_right (by omega)]
     have : (0 : ℤ) ≤ (n : ℤ) * L τ i - 2 * ((s / 2 : ℕ) : ℤ) - ((n : ℤ) * L τ j - 2 * ((s / 2 : ℕ) : ℤ)) := by
       linarith
     exact_mod_cast this
@@ -761,7 +759,7 @@ theorem pair_G (X : Data E r) {L : Wt X.Ψ r} {T : ℕ} (hp : PairGe L (1.9 * T)
     simp only [nsmul_eq_mul, deMul]
     push_cast
     ring
-  rw [e, e, if_pos (show (i0 : ℕ) < X.p0 by omega), if_neg (show ¬ (i1 : ℕ) < X.p0 by omega)]
+  rw [e, e, ite_eq_left (show (i0 : ℕ) < X.p0 by omega), ite_eq_right (show ¬ (i1 : ℕ) < X.p0 by omega)]
   have hq0 : s / 2 * 2 ≤ T := (Nat.div_mul_le_self s 2).trans hs
   generalize s / 2 = q at hq0 ⊢
   have hq : (q : ℝ) * 2 ≤ T := by exact_mod_cast hq0
@@ -1076,8 +1074,6 @@ section -- clump:auto
 
 open NumberField Module ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up GlobalTheory.IndefiniteRowSideFullHecke.FrameWeightGapBounds GlobalTheory.ShareOn
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.ShareRanks
@@ -1274,8 +1270,7 @@ theorem compT (X : DataX E r) {Ψ : Finset (E →+* ℂ)} (hΨ : X.Ψ = Ψ) (G :
 theorem exists_pull_ne {U' C : Type} [Group U'] [Fintype U'] [DecidableEq U'] [MulAction U' C]
     (M : TwoLevels E r U' C) {F : C → Frame M.Ψ r → ℂ} {c : C} {x : Frame M.Ψ r} (h : M.detTr F c x ≠ 0) :
     ∃ g : U', M.pull g F c x ≠ 0 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   apply h
   unfold TwoLevels.detTr
   have e : (Matrix.of fun g g' : U' => M.pull (g * g') F c x) = 0 := by
@@ -1337,7 +1332,7 @@ theorem lower_cusp [Finite C] (M : TwoLevels E r U C) (la : Wt M.Ψ r) [Module.F
     by_cases hc : c' = c
     · subst hc
       simpa [F] using hg q
-    · simp only [F, if_neg hc]
+    · simp only [F, ite_eq_right hc]
       exact (ReciprocityTheory.ChartRestriction.G.FD.siegelSpaceAlgebra_holds r (M.comp c').toData _ 0 0).1.1
   refine ⟨fun q => M.res (F q), fun q => Submodule.subset_span ⟨F q, hF q, rfl⟩, ?_, ?_⟩
   · intro q c' hc'
@@ -1402,7 +1397,7 @@ theorem ranks : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ)
   refine ⟨f0, f2, ?_, ?_, fm⟩
   · by_cases hε : 1 - (n : ℝ) * (n + 6) / T ≤ 0
     · exact le_trans (mul_nonpos_of_nonpos_of_nonneg hε (Nat.cast_nonneg _)) (Nat.cast_nonneg _)
-    · push_neg at hε
+    · push Not at hε
       have r0' : (finrank ℂ (M.cusp (Fp + T • L)) : ℝ) ≤ ∑ c, (δ c : ℝ) * ((T + 2 * n + 6).choose n : ℕ) := by
         exact_mod_cast r0
       have l0' : ∑ c, (δ c : ℝ) * ((T + n).choose n : ℕ) ≤

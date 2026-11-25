@@ -19,59 +19,15 @@ public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.Ordin
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsAddEquiv
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TensorProductHopfOrdersStatement
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TorsionPointsHopfOrderStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import ReciprocityTheory.DualLattices.CotangentSurjective
 import ReciprocityTheory.DualLattices.TensorSpan
 import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import ReciprocityTheory.DualLattices.SqIdeal
 import ReciprocityTheory.DualLattices.VIntCastLtOneOfDvd
 import Mathlib.RingTheory.PiTensorProduct
@@ -90,12 +46,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
 attribute [local instance] Over.cartesianMonoidalCategory
 
-namespace GlobalTheory.CompanionTheory.Ar.GR
-
-theorem abFactor_prod_retract : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → (∀ (N₁ N₂ : Type) [AddCommGroup N₁] [AddCommGroup N₂] (M₁ : Submodule R (N₁ → C)) (M₂ : Submodule R (N₂ → C)), IsAbFactor p M₁ → IsAbFactor p M₂ → IsAbFactor p (tens M₁ M₂)) ∧ ∀ (N₁ N₂ : Type) [AddCommGroup N₁] [AddCommGroup N₂] (M : Submodule R (N₂ → C)) (i : N₁ →+ N₂) (π : N₂ →+ N₁), (∀ x, π (i x) = x) → (∀ g ∈ M, (fun x => g (i (π x))) ∈ M) → IsAbFactor p M → IsAbFactor p (M.map (LinearMap.funLeft R C (i : N₁ → N₂))) :=
-  @PositivityTheory.HtPt.Rg.abfac_prod
-
-end GlobalTheory.CompanionTheory.Ar.GR
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AbFactorProdRetract =====
@@ -125,18 +75,11 @@ lemma alg_mem_pInt (p : ℕ) {r : R} (h : r ∈ Ideal.span {(p : R)}) :
   obtain ⟨a, rfl⟩ := Ideal.mem_span_singleton'.1 h
   exact (PositivityTheory.HtPt.Ri.mem_pInt p _).2 ⟨a, rfl⟩
 
-lemma add_zero_mem {p : ℕ} {N : Type} [AddCommGroup N] {g : N → C}
-    (hg : g ∈ addFun (C := C) R p N) : g 0 ∈ pInt (C := C) R p := by
-  have h := (show ∀ x y : N, g (x + y) - g x - g y ∈ GlobalTheory.CompanionTheory.Ar.GR.pInt (C := C) R p
-    from hg) 0 0
-  rw [add_zero, sub_self, zero_sub] at h
-  simpa using Submodule.neg_mem _ h
-
 lemma add_nsmul_mem {p : ℕ} {N : Type} [AddCommGroup N] {g : N → C}
     (hg : g ∈ addFun (C := C) R p N) (y : N) (n : ℕ) :
     g (n • y) - n * g y ∈ pInt (C := C) R p := by
   induction n with
-  | zero => simpa using PositivityTheory.HtPt.Ri.add_zero_mem hg
+  | zero => simpa using PositivityTheory.HtPt.Re.addFun_zero hg
   | succ n ih =>
     have h := (show ∀ x y : N, g (x + y) - g x - g y ∈ GlobalTheory.CompanionTheory.Ar.GR.pInt (C := C) R p
       from hg) (n • y) y
@@ -291,7 +234,7 @@ theorem tight_of (p : ℕ) [hp : Fact p.Prime] (C : Type) [Field C] [IsAlgClosed
           have h1 := hev (g - r0 • 1) ((mem_aug _ _).2
             ⟨Submodule.sub_mem _ hg.1 (Submodule.smul_mem _ _ AA.one_mem), by
               simp [Algebra.smul_def, hr0]⟩)
-          have h2 := Submodule.add_mem _ (Submodule.add_mem _ h1 (hpr (add_zero_mem hg.2)))
+          have h2 := Submodule.add_mem _ (Submodule.add_mem _ h1 (hpr (PositivityTheory.HtPt.Re.addFun_zero hg.2)))
             (hpr (hk 1 trivial))
           convert h2 using 1
           simp [← e1, Algebra.smul_def, hr0]
@@ -517,7 +460,6 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi
 open ReciprocityTheory.ChartRestriction.G.Chart (sp spMap)
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem _root_.GlobalTheory.CompanionTheory.Relay.tensor_product_tight_hopf_orders : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → ∀ (N₁ : Type) [AddCommGroup N₁] [Fintype N₁] [DecidableEq N₁], ∀ (N₂ : Type) [AddCommGroup N₂] [Fintype N₂] [DecidableEq N₂], ∀ (A₁ : HopfOrder (C := C) R N₁) (A₂ : HopfOrder (C := C) R N₂), (∀ x : N₁, p • x = 0) → (∀ x : N₂, p • x = 0) → IsTight v p A₁.carrier → IsTight v p A₂.carrier → IsTight v p (tens A₁.carrier A₂.carrier) := by
   intro p _ C _ _ _ v R _ _ hv hp N₁ _ _ _ N₂ _ _ _ A₁ A₂ _ _ h1 h2
@@ -577,7 +519,6 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi
 open ReciprocityTheory.ChartRestriction.G.Chart (sp spMap)
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem _root_.GlobalTheory.T.tensor_product_tight_hopf_orders : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → ∀ (N₁ : Type) [AddCommGroup N₁] [Fintype N₁] [DecidableEq N₁], ∀ (N₂ : Type) [AddCommGroup N₂] [Fintype N₂] [DecidableEq N₂], ∀ (A₁ : HopfOrder (C := C) R N₁) (A₂ : HopfOrder (C := C) R N₂), (∀ x : N₁, p • x = 0) → (∀ x : N₂, p • x = 0) → IsTight v p A₁.carrier → IsTight v p A₂.carrier → IsTight v p (tens A₁.carrier A₂.carrier) := by
   first | exact @GlobalTheory.CompanionTheory.Relay.tensor_product_tight_hopf_orders
@@ -599,7 +540,6 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi
 open ReciprocityTheory.ChartRestriction.G.Chart (sp spMap)
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 section Transport
 
@@ -967,8 +907,8 @@ theorem good_tens (hv : v.Integers R) (hp : v (p : C) < 1)
     (g₁ : Good p v N₁ M₁) (g₂ : Good p v N₂ M₂) : Good p v (N₁ × N₂) (tens M₁ M₂) := by
   obtain ⟨⟨A₁, rfl⟩, f₁, t₁⟩ := g₁
   obtain ⟨⟨A₂, rfl⟩, f₂, t₂⟩ := g₂
-  obtain ⟨AA, hAA, -⟩ := GlobalTheory.T.tensor_product_hopf_orders p C v R hv hp N₁ N₂ A₁ A₂
-  exact ⟨⟨AA, hAA⟩, (GlobalTheory.CompanionTheory.Ar.GR.abFactor_prod_retract p C v R hv hp).1 _ _ _ _ f₁ f₂,
+  obtain ⟨AA, hAA, -⟩ := PositivityTheory.HtPt.Re.tens_hopf p C v R hv hp N₁ N₂ A₁ A₂
+  exact ⟨⟨AA, hAA⟩, (PositivityTheory.HtPt.Rg.abfac_prod p C v R hv hp).1 _ _ _ _ f₁ f₂,
     GlobalTheory.T.tensor_product_tight_hopf_orders p C v R hv hp N₁ N₂ A₁ A₂ k₁ k₂ t₁ t₂⟩
 
 theorem good_trS (hv : v.Integers R) (hp : v (p : C) < 1)
@@ -977,7 +917,7 @@ theorem good_trS (hv : v.Integers R) (hp : v (p : C) < 1)
     (g : Good p v N M) : Good p v N' (trS M e) := by
   obtain ⟨⟨AA, rfl⟩, f, t⟩ := g
   refine ⟨hopf_trS AA e, ?_, isTight_trS e t⟩
-  have h := (GlobalTheory.CompanionTheory.Ar.GR.abFactor_prod_retract p C v R hv hp).2 N' N AA.carrier e.symm.toAddMonoidHom e.toAddMonoidHom
+  have h := (PositivityTheory.HtPt.Rg.abfac_prod p C v R hv hp).2 N' N AA.carrier e.symm.toAddMonoidHom e.toAddMonoidHom
     (fun x => by simp) (fun g hg => by simpa using hg) f
   have hm : (tr e : (N → C) ≃ₗ[R] (N' → C)).toLinearMap =
       LinearMap.funLeft R C (e.symm.toAddMonoidHom : N' → N) :=
@@ -1001,13 +941,13 @@ theorem good_zmod (hv : v.Integers R) (hp : v (p : C) < 1)
   obtain ⟨A, gA, L, ab, lb, am, T, pt, hpt, hE⟩ := hOC p C v R hv hp hc
   obtain ⟨⟨Ae, ce, -, te, -⟩, ⟨Am, cm, -, -, tm, -⟩⟩ := _root_.GlobalTheory.CompanionTheory.Relay.hopf_orders_of_zmod_p_extremes p C v R hv hp
   have cm' : Am.carrier = charLat (C := C) R (ZMod p) := cm
-  obtain ⟨AA, hAA, hl, hr, hsl, hsr, -⟩ := GlobalTheory.T.tensor_product_hopf_orders p C v R hv hp (ZMod p) (ZMod p) Am Ae
+  obtain ⟨AA, hAA, hl, hr, hsl, hsr, -⟩ := PositivityTheory.HtPt.Re.tens_hopf p C v R hv hp (ZMod p) (ZMod p) Am Ae
   have hf : IsAbFactor p AA.carrier := by
     rw [hAA, cm, ce, ← hE]
     exact isAbFactor_self gA L ab lb am T hpt
-  have f₁ := (GlobalTheory.CompanionTheory.Ar.GR.abFactor_prod_retract p C v R hv hp).2 (ZMod p) (ZMod p × ZMod p) AA.carrier
+  have f₁ := (PositivityTheory.HtPt.Rg.abfac_prod p C v R hv hp).2 (ZMod p) (ZMod p × ZMod p) AA.carrier
     (AddMonoidHom.inl _ _) (AddMonoidHom.fst _ _) (fun _ => rfl) hsl hf
-  have f₂ := (GlobalTheory.CompanionTheory.Ar.GR.abFactor_prod_retract p C v R hv hp).2 (ZMod p) (ZMod p × ZMod p) AA.carrier
+  have f₂ := (PositivityTheory.HtPt.Rg.abfac_prod p C v R hv hp).2 (ZMod p) (ZMod p × ZMod p) AA.carrier
     (AddMonoidHom.inr _ _) (AddMonoidHom.snd _ _) (fun _ => rfl) hsr hf
   rw [hl] at f₁
   rw [hr] at f₂
@@ -1020,7 +960,7 @@ theorem good_trivial (hv : v.Integers R) (hp : v (p : C) < 1)
   refine ⟨hopf_trivial, ?_, isTight_trivial v p⟩
   obtain ⟨⟨AA, hAA⟩, f, -⟩ := (good_zmod hv hp hc hOC).1
   rw [← hAA] at f
-  have h := (GlobalTheory.CompanionTheory.Ar.GR.abFactor_prod_retract p C v R hv hp).2 Z (ZMod p) AA.carrier 0 0
+  have h := (PositivityTheory.HtPt.Rg.abfac_prod p C v R hv hp).2 Z (ZMod p) AA.carrier 0 0
     (fun _ => Subsingleton.elim _ _) ?_ f
   · convert h using 1
     apply le_antisymm
@@ -1082,7 +1022,7 @@ theorem good_of_killed (L : ∀ (N : Type) [AddCommGroup N], Submodule R (N → 
 theorem main : HodgeTateDatumStatement → OrdinaryCurveStatement → ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → IsAdicComplete (Ideal.span {(p : R)}) R → ∀ (P : Out.PolAV (Spec (CommRingCat.of R))), ∀ (T : TorsRep P.A p) (N : Type) [AddCommGroup N] [Fintype N] [DecidableEq N] (pt : N → (sp (R₀ := R) R ⟶ P.A)), IsTorsPts P.A p pt → ∀ (Nm : Type) [AddCommGroup Nm] [Fintype Nm] [DecidableEq Nm], ∀ (Ne : Type) [AddCommGroup Ne] [Fintype Ne] [DecidableEq Ne], (∀ x : Nm, p • x = 0) → (∀ x : Ne, p • x = 0) → IsAbFactor p (tens (torsFun C T pt) (tens (Submodule.span R (Set.range fun (ψ : AddChar Nm C) (x : Nm) => ψ x)) (intFun (C := C) R Ne))) ∧ IsTight v p (tens (torsFun C T pt) (tens (Submodule.span R (Set.range fun (ψ : AddChar Nm C) (x : Nm) => ψ x)) (intFun (C := C) R Ne))) := by
   intro hHT hOC p _ C _ _ _ v R _ _ hv hp hc P T N _ _ _ pt hpt Nm _ _ _ Ne _ _ _ hNm hNe
   haveI : IsCommMonObj P.A := P.isAb.comm
-  obtain ⟨⟨AA, hAA⟩, -, -, -, k⟩ := GlobalTheory.T.torsion_points_hopf_order p C v R hv hp P.A T N pt hpt
+  obtain ⟨⟨AA, hAA⟩, -, -, -, k⟩ := PositivityTheory.HtPt.Rf.tors_hopf p C v R hv hp P.A T N pt hpt
   have g₁ : Good p v N (torsFun C T pt) :=
     ⟨⟨AA, hAA⟩, isAbFactor_self P.grp P.L P.isAb P.isLB P.ample T hpt,
       (GlobalTheory.CompanionTheory.Ar.GR.gp_polAV hHT p C v R hv hp hc P T N pt hpt).2⟩

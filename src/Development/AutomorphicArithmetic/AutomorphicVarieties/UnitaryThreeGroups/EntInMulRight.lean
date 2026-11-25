@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DefCoc
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -67,21 +68,11 @@ private theorem entIn_mul_right (A : Matrix (Fin m) (Fin m) C) {X : Matrix (Fin 
 
 private theorem entIn_thetaLie {X : Matrix (Fin m) (Fin m) C}
     (hX : EntIn I X) : EntIn I (thetaLie X) := by
-  intro a b
-  have h1 : EntIn I (Jmat C m * Xᵀ) := entIn_mul_left _ (fun a b => hX b a)
-  have h2 : EntIn I (Jmat C m * Xᵀ * Jmat C m) := entIn_mul_right _ h1
-  unfold thetaLie
-  rw [Matrix.neg_apply]
-  exact I.neg_mem (h2 a b)
+  apply _root_.entIn_thetaLie <;> assumption
 
 private theorem entIn_mul_zero (hI : I * I = ⊥) {X Y : Matrix (Fin m) (Fin m) C}
     (hX : EntIn I X) (hY : EntIn I Y) : X * Y = 0 := by
-  ext a b
-  rw [Matrix.mul_apply, Matrix.zero_apply]
-  refine Finset.sum_eq_zero fun c _ => ?_
-  have hm : X a c * Y c b ∈ I * I := Ideal.mul_mem_mul (hX a c) (hY c b)
-  rw [hI] at hm
-  exact (Submodule.mem_bot C).1 hm
+  apply _root_.mul_eq_zero_of_entIn <;> assumption
 
 private def onePlus (X : Matrix (Fin m) (Fin m) C) (h : X * X = 0) : GL (Fin m) C where
   val := 1 + X
@@ -94,7 +85,7 @@ private theorem act_onePlus (s : ℤˣ) (X : Matrix (Fin m) (Fin m) C) (h : X * 
       1 + (if s = 1 then X else thetaLie X) := by
   rcases Int.units_eq_one_or s with rfl | rfl
   · simp [onePlus]
-  · rw [sgnAct_neg_one, theta_val, if_neg (by decide)]
+  · rw [sgnAct_neg_one, theta_val, ite_eq_right (by decide)]
     show Jmat C m * (1 - X)ᵀ * Jmat C m = _
     rw [Matrix.transpose_sub, Matrix.transpose_one, mul_sub, sub_mul, mul_one, Jmat_mul_Jmat]
     unfold thetaLie

@@ -6,46 +6,6 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.SecondComparisonInC
 public import Formalism.SharpRestriction.LevelLetterCocycles.LocalClauseOfFrobeniusHyps
 import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMulVBFilCris
 public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.SmulSDivMem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.SharpRestriction.LevelLetterCocycles.LevelClauseOfOpenTool
 public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsXPowMul
 
@@ -340,11 +300,11 @@ theorem LB_smulS_X {m : ℤ} {f : ℤ → V} (hf : LB m f) (e : ℕ) (g : PowerS
 theorem smulS_single (g : PowerSeries LL) (c : V) (r : ℕ) :
     smulS g (Pi.single (0 : ℤ) c) (r : ℤ) = PowerSeries.coeff r g • c := by
   have hL : LB 0 (Pi.single (0 : ℤ) c : ℤ → V) := fun k hk => by
-    rw [Pi.single_apply, if_neg (by omega)]
+    rw [Pi.single_apply, ite_eq_right (by omega)]
   rw [smulS_eq_sum hL g r (r + 1) (by omega), Finset.sum_eq_single r]
   · simp
   · intro b _ hb
-    rw [Pi.single_apply, if_neg (by omega), smul_zero]
+    rw [Pi.single_apply, ite_eq_right (by omega), smul_zero]
   · intro h; exact absurd (Finset.self_mem_range_succ r) h
 
 end SeqAlg
@@ -605,11 +565,11 @@ theorem tHor_of (Ct : CmpTie W E ιdR p1 tS zS) (hinj : Function.Injective (alge
   let xcF : ℕ → ↥(W.N T) := fun y => if hy : y ∈ Finset.range (max M X + 1) then
     ⟨Bb • ((W.φD T) ^ (j' + 1)) (cc y), (hBc y hy).1⟩ else 0
   have hxcF : ∀ y ∈ Finset.range (max M X + 1), (xcF y : W.DD T) = Bb • ((W.φD T) ^ (j' + 1)) (cc y) :=
-    fun y hy => by simp only [xcF, dif_pos hy]
+    fun y hy => by simp only [xcF, dite_eq_left hy]
   have hLxc : ∀ y ∈ Finset.range (max M X + 1), Ct.levB T (i + ((j' + 1 : ℕ) : ZMod n)) ζ (xcF y) =
       smulS (W.lev (i + ((j' + 1 : ℕ) : ZMod n)) ζ Bb)
         ((PhiSeq PD T)^[j' + 1] (Ct.levB T i 1 ⟨cc y, (hcc y).2⟩)) :=
-    fun y hy => by simp only [xcF, dif_pos hy]; exact (hBc y hy).2
+    fun y hy => by simp only [xcF, dite_eq_left hy]; exact (hBc y hy).2
   let U : ↥(W.N T) := (Formalism.MainNotions.LiftingTheory.qp W ^ k * a) • (((PD.p : ℕ) : LetA O n) ^ σ •
       (⟨Bb • ((W.φD T) ^ (j' + 1)) h, hBh⟩ : ↥(W.N T)) +
     ∑ y ∈ Finset.range (max M X + 1), (((PD.p : ℕ) : LetA O n) ^ (σ + (jj + eY PD.p (max M X + 1) -
@@ -699,9 +659,9 @@ theorem tHor_of (Ct : CmpTie W E ιdR p1 tS zS) (hinj : Function.Injective (alge
     intro kk hkk
     rw [Pi.sub_apply]
     rcases lt_trichotomy kk 0 with hk0 | rfl | hk0
-    · rw [hEh0 kk hk0, Pi.single_apply, if_neg (ne_of_lt hk0), sub_zero]
+    · rw [hEh0 kk hk0, Pi.single_apply, ite_eq_right (ne_of_lt hk0), sub_zero]
     · rw [hEh00, Pi.single_eq_same, sub_self]
-    · rw [hEhK kk hk0 hkk, Pi.single_apply, if_neg (ne_of_gt hk0), sub_zero]
+    · rw [hEhK kk hk0 hkk, Pi.single_apply, ite_eq_right (ne_of_gt hk0), sub_zero]
   have hpt : ∀ kk : ℤ, kk < R₀ → Stuff kk = (Pi.single (0 : ℤ)
       ((PD.p : LL) ^ σ • ((PD.p : LL) ^ (jj + eY PD.p (max M X + 1)) •
         (φVB PD (LL := LL) (V := T.V))^[j' + 1] (W.cmp T ⟨w, hw⟩))) : ℤ → T.V ⊗[Qp] B) kk := by
@@ -730,7 +690,7 @@ theorem tHor_of (Ct : CmpTie W E ιdR p1 tS zS) (hinj : Function.Injective (alge
   have hsingLB : LB 0 (Pi.single (0 : ℤ)
       ((PD.p : LL) ^ σ • ((PD.p : LL) ^ (jj + eY PD.p (max M X + 1)) •
         (φVB PD (LL := LL) (V := T.V))^[j' + 1] (W.cmp T ⟨w, hw⟩))) : ℤ → T.V ⊗[Qp] B) := fun kk hkk => by
-    rw [Pi.single_apply, if_neg (by omega)]
+    rw [Pi.single_apply, ite_eq_right (by omega)]
   have hpos : ∀ r : ℕ, r < R → Ct.levB T (i + ((j' + 1 : ℕ) : ZMod n)) ζ
       ⟨(Formalism.MainNotions.LiftingTheory.qp W ^ k * a) • z, hk⟩ r =
       PowerSeries.coeff r (W.lev (i + ((j' + 1 : ℕ) : ZMod n)) ζ (Formalism.MainNotions.LiftingTheory.qp W ^ k * a)) •

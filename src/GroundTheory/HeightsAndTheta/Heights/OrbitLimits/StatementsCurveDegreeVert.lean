@@ -24,8 +24,4 @@ def CurveDegreeVert.Statement : Prop :=
         vertR P (Fin.elim0 : Fin 0 → ReciprocityTheory.ChartRestriction.G.Geo.HermLine ι) (curveChartMono c b) +
         ∑ t ∈ R, Real.log (chartRadius A c t)
 
-namespace CurveDegreeVert
-
-end CurveDegreeVert
-
 end GroundTheory.Heights₂.Heights.Targets

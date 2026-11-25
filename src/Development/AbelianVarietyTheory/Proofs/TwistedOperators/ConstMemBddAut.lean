@@ -51,8 +51,6 @@ open Formalism.MainNotions.SchurIrreducible (IsSplit)
 
 namespace GlobalTheory.FinZeta
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def KerGL {E : Type} [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) {r : ℕ} (N : ℕ) (z : ℂˣ)
     (φ : GL (Fin r) (w.adicCompletion E) → ℂ) : Prop :=
   ∀ ϖ, IsUnifV E w ϖ → ∀ (d : Fin r → ℤ) (t : GL (Fin r) (w.adicCompletion E)), t.1 = Matrix.diagonal (fun i => ϖ ^ d i) →

@@ -111,10 +111,6 @@ theorem injOn_source_of_chart (n : ℕ) (z : M → V n) (e : OpenPartialHomeomor
   intro a ha b hb hab
   exact e.injOn ha hb (by rw [← he ha, ← he hb]; exact hab)
 
-private theorem encard_eq_count {X : Type*} [MeasurableSpace X] (S : Set X) (hS : MeasurableSet S) :
-    ((S.encard : ℕ∞) : ℝ≥0∞) = Measure.count S := by
-  rw [Measure.count_apply hS]
-
 theorem measurable_encard_fiber (n : ℕ) (z : M → V n) (hz : IsLocalHomeomorph z) (A : Set M)
     (hA : MeasurableSet A) :
     Measurable fun y => (((A ∩ z ⁻¹' {y}).encard : ℕ∞) : ℝ≥0∞) := by
@@ -139,14 +135,14 @@ theorem measurable_encard_fiber (n : ℕ) (z : M → V n) (hz : IsLocalHomeomorp
     intro y
     have h3 : A ∩ z ⁻¹' {y} = ⋃ i, (A ∩ disjointed T i) ∩ z ⁻¹' {y} := by
       rw [← Set.iUnion_inter, ← Set.inter_iUnion, hDU, Set.inter_univ]
-    rw [encard_eq_count _ (hA.inter (hmz y)), h3,
+    rw [← Measure.count_apply (hA.inter (hmz y)), h3,
       measure_iUnion (fun i j hij => ((show Disjoint (disjointed T i) (disjointed T j) from hDd hij).mono
         (Set.inter_subset_left.trans Set.inter_subset_right)
         (Set.inter_subset_left.trans Set.inter_subset_right)))
         (fun i => (hA.inter (hDm i)).inter (hmz y))]
     congr 1
     funext i
-    rw [← encard_eq_count _ ((hA.inter (hDm i)).inter (hmz y)),
+    rw [Measure.count_apply ((hA.inter (hDm i)).inter (hmz y)),
       encard_inter_fiber_of_injOn n z _ (injA i) y]
   have h4 : (fun y => ((A ∩ z ⁻¹' {y}).encard : ℝ≥0∞)) =
       fun y => ∑' i, (z '' (A ∩ disjointed T i)).indicator 1 y := funext key
@@ -165,12 +161,12 @@ theorem volAdditive {M : Type*} [TopologicalSpace M] [SecondCountableTopology M]
   have h1 : ∀ y, (((⋃ i, f i) ∩ z ⁻¹' {y}).encard : ℝ≥0∞) =
       ∑' i, ((f i ∩ z ⁻¹' {y}).encard : ℝ≥0∞) := by
     intro y
-    rw [encard_eq_count _ ((MeasurableSet.iUnion hf).inter (hmz y)), Set.iUnion_inter,
+    rw [← Measure.count_apply ((MeasurableSet.iUnion hf).inter (hmz y)), Set.iUnion_inter,
       measure_iUnion (fun i j hij => ((show Disjoint (f i) (f j) from hd hij).mono
         Set.inter_subset_left Set.inter_subset_left)) (fun i => (hf i).inter (hmz y))]
     congr 1
     funext i
-    rw [encard_eq_count _ ((hf i).inter (hmz y))]
+    rw [← Measure.count_apply ((hf i).inter (hmz y))]
   simp_rw [h1]
   exact lintegral_tsum (fun i => (measurable_encard_fiber n z hz (f i) (hf i)).aemeasurable)
 

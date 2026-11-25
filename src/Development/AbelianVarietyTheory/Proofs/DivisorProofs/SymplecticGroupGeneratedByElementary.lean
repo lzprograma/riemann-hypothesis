@@ -143,10 +143,10 @@ theorem exists_sym_isUnit (a c : Matrix κ κ K) (hs : aᵀ * c = cᵀ * a)
       rw [← hTe]; exact congrFun hx i
     have hax : a *ᵥ x = 0 := hsP x (fun i hi => by
       have := hx2 i
-      rwa [if_neg hi, zero_mul, add_zero] at this)
+      rwa [ite_eq_right hi, zero_mul, add_zero] at this)
     have hcs : ∀ i ∈ s, (c *ᵥ x) i = 0 := fun i hi => by
       have := hx2 i
-      rwa [if_pos hi, one_mul, hax, Pi.zero_apply, zero_add] at this
+      rwa [ite_eq_left hi, one_mul, hax, Pi.zero_apply, zero_add] at this
     have horth : ∀ y, (c *ᵥ x) ⬝ᵥ (a *ᵥ y) = 0 := fun y => by
       calc (c *ᵥ x) ⬝ᵥ (a *ᵥ y) = x ⬝ᵥ ((cᵀ * a) *ᵥ y) := by
             rw [← mulVec_mulVec, dotProduct_mulVec x cᵀ, vecMul_transpose]

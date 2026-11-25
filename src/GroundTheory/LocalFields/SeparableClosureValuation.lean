@@ -218,26 +218,6 @@ theorem exists_valuation_pow_eq {x : Ω} (hx : x ≠ 0) :
     ← IsScalarTower.algebraMap_apply, hyx] at h
   exact ⟨(_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))), a, ramificationIndex_pos K L, ha, h⟩
 
-theorem ordRat_mul {x y : Ω} (hx : x ≠ 0) (hy : y ≠ 0) :
-    ordRat K (x * y) = ordRat K x + ordRat K y := by
-  obtain ⟨m, a, hm, ha, h⟩ := exists_valuation_pow_eq (K := K) hx
-  obtain ⟨n, b, hn, hb, h'⟩ := exists_valuation_pow_eq (K := K) hy
-  have hab : a ^ n * b ^ m ≠ 0 := mul_ne_zero (pow_ne_zero _ ha) (pow_ne_zero _ hb)
-  have hxy : valuation Ω (x * y) ^ (m * n) = valuation Ω (algebraMap K Ω (a ^ n * b ^ m)) := by
-    rw [map_mul, mul_pow, map_mul, map_mul, map_pow, map_pow, map_pow, map_pow, ← h, ← h',
-      ← pow_mul, ← pow_mul, mul_comm n m]
-  rw [ordRat_eq_of_pow (Nat.mul_pos hm hn) hab hxy, ordRat_eq_of_pow hm ha h,
-    ordRat_eq_of_pow hn hb h', ord_mul (pow_ne_zero _ ha) (pow_ne_zero _ hb), ord_pow_alt, ord_pow_alt]
-  have hm' : (m : ℚ) ≠ 0 := by exact_mod_cast hm.ne'
-  have hn' : (n : ℚ) ≠ 0 := by exact_mod_cast hn.ne'
-  push_cast
-  field_simp
-
-theorem ordRat_inv {x : Ω} (hx : x ≠ 0) : ordRat K x⁻¹ = -ordRat K x := by
-  have h := ordRat_mul (K := K) hx (inv_ne_zero hx)
-  rw [mul_inv_cancel₀ hx, ordRat_one] at h
-  linarith
-
 theorem ordRat_le_ordRat_iff {x y : Ω} (hx : x ≠ 0) (hy : y ≠ 0) :
     ordRat K x ≤ ordRat K y ↔ valuation Ω y ≤ valuation Ω x := by
   obtain ⟨m, a, hm, ha, h⟩ := exists_valuation_pow_eq (K := K) hx
@@ -271,91 +251,10 @@ theorem ordRat_eq_ordRat_iff {x y : Ω} (hx : x ≠ 0) (hy : y ≠ 0) :
   rw [le_antisymm_iff, le_antisymm_iff, ordRat_le_ordRat_iff hx hy, ordRat_le_ordRat_iff hy hx,
     and_comm]
 
-theorem ordRat_algEquiv (σ : Ω ≃ₐ[K] Ω) (x : Ω) : ordRat K (σ x) = ordRat K x :=
-  ordRat_congr (valuation_algEquiv_apply_of_isAlgebraic σ x)
-variable (K Ω) in
-def valueGroupRat (L : Type*) [Field L] [Algebra L Ω] : AddSubgroup ℚ where
-  carrier := Set.range fun y : Lˣ ↦ ordRat K (algebraMap L Ω y)
-  zero_mem' := ⟨1, by simp⟩
-  add_mem' := by
-    rintro _ _ ⟨y, rfl⟩ ⟨z, rfl⟩
-    refine ⟨y * z, ?_⟩
-    simp only [Units.val_mul, map_mul]
-    exact ordRat_mul ((_root_.map_ne_zero _).mpr y.ne_zero) ((_root_.map_ne_zero _).mpr z.ne_zero)
-  neg_mem' := by
-    rintro _ ⟨y, rfl⟩
-    refine ⟨y⁻¹, ?_⟩
-    simp only [Units.val_inv_eq_inv_val, map_inv₀]
-    exact ordRat_inv ((_root_.map_ne_zero _).mpr y.ne_zero)
-
-theorem mem_valueGroupRat {L : Type*} [Field L] [Algebra L Ω] {q : ℚ} :
-    q ∈ valueGroupRat K Ω L ↔ ∃ y : L, y ≠ 0 ∧ ordRat K (algebraMap L Ω y) = q := by
-  constructor
-  · rintro ⟨y, rfl⟩
-    exact ⟨y, y.ne_zero, rfl⟩
-  · rintro ⟨y, hy, rfl⟩
-    exact ⟨Units.mk0 y hy, rfl⟩
-
-variable (K Ω) in
-theorem valueGroupRat_base : valueGroupRat K Ω K = AddSubgroup.zmultiples (1 : ℚ) := by
-  ext q
-  rw [mem_valueGroupRat, AddSubgroup.mem_zmultiples_iff]
-  constructor
-  · rintro ⟨a, -, rfl⟩
-    exact ⟨ord a, by simp⟩
-  · rintro ⟨n, rfl⟩
-    obtain ⟨a, ha, han⟩ := exists_ord_eq K n
-    exact ⟨a, ha, by simp [han]⟩
-
 variable (L : Type*) [Field L] [ValuativeRel L] [TopologicalSpace L]
     [IsNonarchimedeanLocalField L] [Algebra K L] [ValuativeExtension K L] [FiniteDimensional K L]
     [Algebra L Ω] [IsScalarTower K L Ω] [ValuativeExtension L Ω]
 
-variable (K Ω) in
-theorem valueGroupRat_eq :
-    valueGroupRat K Ω L = AddSubgroup.zmultiples (((_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) : ℚ)⁻¹) := by
-  ext q
-  rw [mem_valueGroupRat, AddSubgroup.mem_zmultiples_iff]
-  constructor
-  · rintro ⟨y, -, rfl⟩
-    exact ⟨ord y, by rw [ordRat_algebraMap_of_finite, zsmul_eq_mul, div_eq_mul_inv]⟩
-  · rintro ⟨n, rfl⟩
-    obtain ⟨y, hy, hyn⟩ := exists_ord_eq L n
-    exact ⟨y, hy, by rw [ordRat_algebraMap_of_finite, hyn, zsmul_eq_mul, div_eq_mul_inv]⟩
-variable (K Ω) in
-theorem relIndex_valueGroupRat :
-    (valueGroupRat K Ω K).relIndex (valueGroupRat K Ω L) = (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) := by
-  have he : ((_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) : ℚ) ≠ 0 := by exact_mod_cast (ramificationIndex_pos K L).ne'
-  set f : ℤ →+ ℚ := zmultiplesHom ℚ ((_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) : ℚ)⁻¹
-  have hrange : (⊤ : AddSubgroup ℤ).map f = valueGroupRat K Ω L := by
-    rw [← AddMonoidHom.range_eq_map, AddSubgroup.range_zmultiplesHom, valueGroupRat_eq]
-  have hcomap : (valueGroupRat K Ω K).comap f =
-      AddSubgroup.zmultiples (((_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) : ℕ) : ℤ) := by
-    ext n
-    rw [AddSubgroup.mem_comap, valueGroupRat_base, AddSubgroup.mem_zmultiples_iff,
-      AddSubgroup.mem_zmultiples_iff]
-    simp only [f, zmultiplesHom_apply, zsmul_eq_mul, mul_one]
-    constructor
-    · rintro ⟨k, hk⟩
-      refine ⟨k, ?_⟩
-      have : (k : ℚ) * (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = n := by
-        rw [hk]
-        field_simp
-      exact_mod_cast this
-    · rintro ⟨k, rfl⟩
-      refine ⟨k, ?_⟩
-      push_cast
-      field_simp
-  rw [← hrange, ← AddSubgroup.relIndex_comap, AddSubgroup.relIndex_top_right, hcomap,
-    Int.index_zmultiples, Int.natAbs_natCast]
-
 end Rat
-
-section Check
-
-variable (K : Type*) [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
-  (L : IntermediateField K (SeparableClosure K)) [FiniteDimensional K L]
-
-end Check
 
 end GroundTheory.LocalField

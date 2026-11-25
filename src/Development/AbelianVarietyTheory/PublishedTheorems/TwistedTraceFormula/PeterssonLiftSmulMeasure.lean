@@ -52,8 +52,6 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.Doubling GlobalTheory.Eis Gl
 open GlobalTheory.Mem.Th (InfF CptF)
 open GlobalTheory.IndefiniteRowSideFullHecke.SphericalZero (delta swSec sZero IsKFinVec ThetaClause DoublingIso)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.RallisIP.Model
 
 variable {D : D7} {A B : HSp D}

@@ -69,15 +69,7 @@ noncomputable section
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.PRep GlobalTheory.SmGL UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob UpperTheory.V.Z.Sym.Sig UpperTheory.V.Z.Sym.So
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.V.Z.Sym.So.CS
-
-section One
-
-variable {G : Type} [CommGroup G]
-
-end One
 
 section Main
 
@@ -101,7 +93,6 @@ variable (L : D S G)
 
 variable {L}
 
-
 variable {χ : (∀ v, Fin 3 → G v) → ℂ}
 
 section X
@@ -113,12 +104,6 @@ end X
 end D
 
 end Main
-
-section Ord
-
-variable (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-
-end Ord
 
 end UpperTheory.V.Z.Sym.So.CS
 
@@ -147,22 +132,10 @@ private theorem valuation_monotone_of_dom_fin_three {k : Type} [Field k] [Valuat
   unfold Dom at hx
   exact ⟨hx 0 1 (by decide), hx 1 2 (by decide)⟩
 
-private theorem valuation_unif_eq_uniformizer' (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
-    [IsNonarchimedeanLocalField k] :
-    valuation k (unif k : k) = ValuativeRel.uniformizer k := by
-  unfold unif
-  apply Classical.epsilon_spec (p := fun x : kˣ => valuation k (x : k) = ValuativeRel.uniformizer k)
-  obtain ⟨y, hy⟩ := ValuativeRel.valuation_surjective (ValuativeRel.uniformizer k)
-  have hy0 : y ≠ 0 := by
-    intro h
-    rw [h, map_zero] at hy
-    exact ValuativeRel.uniformizer_ne_zero hy.symm
-  exact ⟨Units.mk0 y hy0, by simpa using hy⟩
-
 private theorem valuation_unif_pos_and_lt_one (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] :
     0 < valuation k (unif k : k) ∧ valuation k (unif k : k) < 1 := by
-  rw [valuation_unif_eq_uniformizer']
+  rw [UpperTheory.V.Hi.GlAx.unif_spec]
   exact ⟨ValuativeRel.uniformizer_pos, ValuativeRel.uniformizer_lt_one⟩
 
 private theorem valuation_mul_unif_pow_inv_le_one_of_lt_sq (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
@@ -171,7 +144,7 @@ private theorem valuation_mul_unif_pow_inv_le_one_of_lt_sq (k : Type) [Field k] 
     valuation k ((t * (unif k ^ 3)⁻¹ : kˣ) : k) ≤ 1 := by
   simp only [Units.val_mul, Units.val_inv_eq_inv_val, Units.val_pow_eq_pow_val, map_mul, map_inv₀,
     map_pow]
-  rw [valuation_unif_eq_uniformizer'] at h ⊢
+  rw [UpperTheory.V.Hi.GlAx.unif_spec] at h ⊢
   have hπ0 : 0 < ValuativeRel.uniformizer k := ValuativeRel.uniformizer_pos
   have h1 : valuation k (t : k) / ValuativeRel.uniformizer k ^ 2 < 1 :=
     (div_lt_one₀ (pow_pos hπ0 2)).mpr h
@@ -490,7 +463,7 @@ theorem UpperTheory.V.Z.Sym.So.charShape :
           have e : L v = z0 v * y ⟨v, hv⟩ / (rep ⟨v, hv⟩ (z0 v * y ⟨v, hv⟩) *
               sq ⟨v, hv⟩ (z0 v * y ⟨v, hv⟩) ^ 2) := by
             rw [hL]
-            simp only [Pi.mul_apply, Pi.inv_apply, hhat, hSq, dif_pos hv, hφ]
+            simp only [Pi.mul_apply, Pi.inv_apply, hhat, hSq, dite_eq_left hv, hφ]
             ext
             push_cast
             field_simp
@@ -803,18 +776,18 @@ theorem UpperTheory.V.Z.Sym.Tf.trTheta :
       · intro ψ
         by_cases h : ψ = χ
         · subst h
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl]
           exact nfix ψ hfix
-        · rw [if_neg h]
+        · rw [ite_eq_right h]
           exact fun e => h e.symm
       · intro ψ x hx
         by_cases h : ψ = χ
         · subst h
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl]
           show u a (Θ (P ψ x)) ∈ V _
           rw [hP1 ψ x hx]
           exact uV a _ _ (ΘV ψ _ (fun b => rfl) x hx)
-        · rw [if_neg h]
+        · rw [ite_eq_right h]
           show u a (Θ (P χ x)) ∈ V χ
           rw [hP2 χ ψ h x hx, map_zero, map_zero]
           exact zero_mem _
@@ -831,8 +804,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.PRep GlobalTheory.SmGL UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob UpperTheory.V.Z.Sym.Sig UpperTheory.V.Z.Sym.So
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 section Dominance
 
@@ -851,11 +822,6 @@ private theorem val_inv_anti {x y : kˣ} (h : valuation k (x : k) ≤ valuation 
 private theorem dom_rev {d : Fin 3 → kˣ} (h : Dom d) : Dom ![(d 2)⁻¹, (d 1)⁻¹, (d 0)⁻¹] := by
   intro i j hij
   fin_cases i <;> fin_cases j <;> simp at hij <;> first | exact le_rfl | exact val_inv_anti (h _ _ (by decide))
-
-private theorem dom_mul {n : ℕ} {a b : Fin n → kˣ} (ha : Dom a) (hb : Dom b) : Dom (a * b) := by
-  intro i j hij
-  simp only [Pi.mul_apply, Units.val_mul, map_mul]
-  exact mul_le_mul' (ha i j hij) (hb i j hij)
 
 private theorem dom_of_val {n : ℕ} {a : Fin n → kˣ} (h : ∀ i, valuation k (a i : k) = 1) : Dom a := by
   intro i j _
@@ -901,7 +867,7 @@ theorem UpperTheory.V.Z.Sym.So.gSpec :
     fun χ hχ => (Tf.eigVec _ ↥B.Forms uΛ hcomm χ).1 (hX χ hχ).1
   let ext : ({d : ParN F 3 // A.DomS d} → ℂ) → ParN F 3 → ℂ :=
     fun χ d => if h : A.DomS d then χ ⟨d, h⟩ else 0
-  have hext : ∀ χ (d : ParN F 3) (h : A.DomS d), ext χ d = χ ⟨d, h⟩ := fun χ d h => dif_pos h
+  have hext : ∀ χ (d : ParN F 3) (h : A.DomS d), ext χ d = χ ⟨d, h⟩ := fun χ d h => dite_eq_left h
   have hlevdom : ∀ d : ParN F 3, (∀ v ∈ A.Sg, ∀ i, d v i ∈ (A.V v).H) → A.DomS d := by
     intro d hd v hv
     exact dom_of_val (fun i => (A.V v).H_le (hd v hv i))
@@ -920,7 +886,7 @@ theorem UpperTheory.V.Z.Sym.So.gSpec :
     obtain ⟨w, hw, hwe⟩ := hev χ hχ
     apply charShape F Δ A hA (ext χ)
     · intro d d' hd hd'
-      have hdd : A.DomS (d * d') := fun v hv => dom_mul (hd v hv) (hd' v hv)
+      have hdd : A.DomS (d * d') := fun v hv => dom_mul' (hd v hv) (hd' v hv)
       rw [hext χ _ hdd, hext χ _ hd, hext χ _ hd']
       apply hcancel w hw
       rw [← hwe ⟨d * d', hdd⟩]
@@ -949,7 +915,7 @@ theorem UpperTheory.V.Z.Sym.So.gSpec :
       have hyv : y ⟨v, hv⟩ ∈ A.Ry v := Fintype.mem_piFinset.1 hy ⟨v, hv⟩
       have hr := (hA.ry v hv).1 _ hyv
       show Dom ![t v * (unif (Kv v))⁻¹, if h : v ∈ A.Sg then y ⟨v, h⟩ else 1, (unif (Kv v))⁻¹]
-      rw [dif_pos hv]
+      rw [dite_eq_left hv]
       exact dom_cone (ht v hv) hr.1 hr.2
 
     rw [hO.tr t ht, map_sum]

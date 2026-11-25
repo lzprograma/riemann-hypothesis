@@ -303,9 +303,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Form
 open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SumSize GlobalTheory.RowClaim GlobalTheory.RowTest
 open Formalism.DivisionValues (vw lw)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField GlobalTheory.FunObj.borelKw
-  GlobalTheory.FunObj.borelSpaceKw
-
 section Scalar
 
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} (W : G.Weil) {U : Set T}
@@ -338,9 +335,6 @@ namespace GlobalTheory.ScalAA
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SumSize GlobalTheory.RowClaim GlobalTheory.RowTest
 open Formalism.DivisionValues (vw lw)
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField GlobalTheory.FunObj.borelKw
-  GlobalTheory.FunObj.borelSpaceKw
 
 section Core
 
@@ -382,7 +376,6 @@ theorem core {large₂ : SizeData₂ D} {F : Face D A} (s : HidaSetting large₂
   have hlogb : Real.log large₂.sc.b = large₂.sc.L := Real.log_exp _
 
   set M : ℝ := (D.R.m : ℝ) ^ 3 * (bigN D : ℝ) ^ 2 with hM
-  have hM0 : 0 ≤ M := by positivity
   have hZ := sum_abs_count_AA_le D hcc ch.S.PA
   push_cast at hZ
   have hXle : X ≤ 8 * M * (D.R.f * large₂.sc.L / 50) := by
@@ -409,18 +402,7 @@ theorem core {large₂ : SizeData₂ D} {F : Face D A} (s : HidaSetting large₂
   have hNle : (bigN D : ℝ) ≤ 8 * (D.R.N D.R.m : ℝ) ^ 2 := by exact_mod_cast GlobalTheory.DenSumPf.bigN_le D
   have hmN : (D.R.m : ℝ) ≤ bigN D := by exact_mod_cast ResidueCardinalityNilpotence.GlobalTheory.CompanionTheory.VolVal.m_le_bigN (D := D)
   have hNR : (1 : ℝ) ≤ (D.R.N D.R.m : ℝ) ^ 2 := by
-    have h0 : (0 : ℝ) ≤ (D.R.N D.R.m : ℝ) := Nat.cast_nonneg _
-    have h1 : (1 : ℝ) ≤ (D.R.N D.R.m : ℝ) := by
-      by_contra h
-      have : (D.R.N D.R.m : ℝ) < 1 := not_le.1 h
-      have : (D.R.N D.R.m : ℕ) = 0 := by
-        have : (D.R.N D.R.m : ℕ) < 1 := by exact_mod_cast this
-        omega
-      rw [this] at hNle
-      push_cast at hNle
-      linarith
     nlinarith
-  have hf0 : (0 : ℝ) ≤ D.R.f := by linarith
   have hmb : (D.R.m : ℝ) ≤ large₂.sc.b := by
     have h1 : (D.R.m : ℝ) ≤ D.R.m * D.R.f := le_mul_of_one_le_right (by linarith) (by linarith)
     have h2 : (D.R.m : ℝ) * D.R.f ≤ D.R.m * D.R.f * (D.R.N D.R.m : ℝ) ^ 2 := le_mul_of_one_le_right (by positivity) hNR

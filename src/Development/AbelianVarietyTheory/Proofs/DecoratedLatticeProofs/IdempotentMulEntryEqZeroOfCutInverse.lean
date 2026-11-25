@@ -50,7 +50,6 @@ import Development.AbelianVarietyTheory.Definitions.LatticeFrames.JointSmooth
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.FinPl
 open IsDedekindDomain NumberField
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -136,11 +135,9 @@ theorem c_mul {W : Type} [Fintype W] (v : W → Pl D) (hv : Function.Injective v
   have hp1 : fstA D.host.F (pairA D.host.F 1 0) = 1 := rfl
   have hp2 : sndA D.host.F (pairA D.host.F 1 0) = 0 := rfl
   refine baseAdele_ext_infinite_finite ?_ ?_
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [map_mul, map_zero, map_sub, map_sub, map_sum, map_one, hp1]
+  · rw [map_mul, map_zero, map_sub, map_sub, map_sum, map_one, hp1]
     simp [hf]
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [map_mul, map_zero, map_sub, map_sub, map_sum, map_one, hp2]
+  · rw [map_mul, map_zero, map_sub, map_sub, map_sum, map_one, hp2]
     simp only [hs, sub_zero]
     refine af_ext _ fun u => ?_
 

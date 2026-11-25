@@ -51,8 +51,6 @@ open scoped TensorProduct ComplexOrder
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 abbrev FinPl (D : D7) : Type := HeightOneSpectrum (𝓞 D.host.F)

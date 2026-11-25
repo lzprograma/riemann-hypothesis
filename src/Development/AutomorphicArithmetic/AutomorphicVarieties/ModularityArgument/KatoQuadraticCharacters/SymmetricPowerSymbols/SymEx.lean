@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KmapSubMemOfASet
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.SymExOf
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CthFacMultipliable
 public import Development.AbelianVarietyTheory.Definitions.Foundations.SgC
@@ -865,47 +866,8 @@ end
 
 theorem UpperTheory.V.Z.Kato.Sym.PC.galNear :
     ∀ (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (ε : Ω →+* ℂ) (X : Tower Ω ε) (f : X.K), ∃ T : Finset Ω, ∀ s : Ω ≃ₐ[ℚ] Ω, (∀ z ∈ T, s z = z) → X.gal s f = f := by
-  intro Ω _ _ _ ε X f
-  classical
-  obtain ⟨p, hp0, hpf⟩ := X.alg_j f
-  set q : Polynomial X.K := p.map (algebraMap _ X.K) with hq
-  have hq0 : q ≠ 0 := Polynomial.map_ne_zero hp0
-  have hqf : q.eval f = 0 := by
-    rw [hq, Polynomial.eval_map, ← Polynomial.aeval_def]
-    exact hpf
-  have hc : ∀ i, Nr X (q.coeff i) := fun i => by
-    rw [hq, Polynomial.coeff_map, IntermediateField.algebraMap_apply]
-    exact nr_adj X _ (p.coeff i).2
-  have hd : ∀ b, b ≠ f → ∃ r, (X.exp b).coeff r ≠ (X.exp f).coeff r := by
-    intro b hb
-    by_contra h
-    push_neg at h
-    exact hb (_root_.GlobalTheory.K4.exp_injective X (HahnSeries.ext (funext h)))
-  choose TC hTC using hc
-  choose! rr hrr using hd
-  refine ⟨(q.support.biUnion TC) ∪ ((q.roots.toFinset.erase f).image (fun b => (X.exp f).coeff (rr b))), ?_⟩
-  intro s hs
-  have hfix : ∀ i, X.gal s (q.coeff i) = q.coeff i := by
-    intro i
-    by_cases hi : i ∈ q.support
-    · exact hTC i s fun z hz => hs z (Finset.mem_union_left _ (Finset.mem_biUnion.mpr ⟨i, hi, hz⟩))
-    · rw [Polynomial.notMem_support_iff.mp hi, map_zero]
-  have hmap : q.map (X.gal s).toRingHom = q := by
-    ext i
-    rw [Polynomial.coeff_map]
-    exact hfix i
-  have hroot : q.eval (X.gal s f) = 0 := by
-    have h1 : (q.map (X.gal s).toRingHom).eval ((X.gal s).toRingHom f) = (X.gal s).toRingHom (q.eval f) := by
-      rw [Polynomial.eval_map, Polynomial.eval₂_at_apply]
-    rw [hmap, hqf, map_zero] at h1
-    exact h1
-  by_contra hne
-  have hb : X.gal s f ∈ q.roots.toFinset.erase f :=
-    Finset.mem_erase.mpr ⟨hne, Multiset.mem_toFinset.mpr ((Polynomial.mem_roots hq0).mpr hroot)⟩
-  have hsz := hs ((X.exp f).coeff (rr (X.gal s f)))
-    (Finset.mem_union_right _ (Finset.mem_image.mpr ⟨_, hb, rfl⟩))
-  apply hrr _ hne
-  rw [X.gal_exp, hsz]
+  intros
+  apply _root_.GlobalTheory.KZ.GalCont.fix_fin <;> assumption
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.ExponentialInjectivity.GalNear =====
@@ -1303,7 +1265,7 @@ theorem UpperTheory.V.Z.Kato.Sym.pSymb :
   refine ⟨fun s x y => if h : UpperTheory.V.Z.Kato.Sym.Ok x y then Classical.choose (key s x y h) else 1, ?_⟩
   unfold UpperTheory.V.Z.Kato.Sym.IsSymb
   intro s x y hxy
-  simp only [dif_pos hxy]
+  simp only [dite_eq_left hxy]
   exact Classical.choose_spec (key s x y hxy)
 end -- clump:auto
 end -- clump:auto

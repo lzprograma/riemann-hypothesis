@@ -54,8 +54,6 @@ public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.GeoTie
@@ -121,18 +119,6 @@ theorem natCast_mem_placeAt [NumberField F] : ((p : ℕ) : 𝓞 F) ∈ (placeAt 
 
 def kurC : Subfield ℂ_[p] := (φ.fieldRange ⊔ Formalism.L2.Th1.CM.MaximalUnramifiedExtension p).topologicalClosure
 
-theorem mem_kurC (a : F) : φ a ∈ kurC φ :=
-  Subfield.le_topologicalClosure _ ((le_sup_left : φ.fieldRange ≤ _) ⟨a, rfl⟩)
-
-theorem kur_le_kurC : Formalism.L2.Th1.CM.MaximalUnramifiedExtension p ≤ kurC φ := le_sup_right.trans (Subfield.le_topologicalClosure _)
-
-theorem root_mem_kurC {ζ : ℂ_[p]} {n : ℕ} (hn : ¬ p ∣ n) (h : ζ ^ n = 1) : ζ ∈ kurC φ :=
-  kur_le_kurC φ (Subfield.le_topologicalClosure _ (Subfield.subset_closure
-    ⟨n, Nat.pos_of_ne_zero fun h0 => hn (h0 ▸ dvd_zero p), hn, h⟩))
-
-theorem kurC_congr {F' : Type} [Field F'] {φ' : F' →+* ℂ_[p]} (h : φ.fieldRange = φ'.fieldRange) : kurC φ = kurC φ' := by
-  rw [kurC, kurC, h]
-
 def PAt (_φ : F →+* ℂ_[p]) : Type := ℂ_[p]
 
 instance : Field (PAt φ) := inferInstanceAs (Field ℂ_[p])
@@ -187,41 +173,6 @@ theorem valC_smul (z : FrPt Xo c (PAt φ)) (a : c.F) (f : Rul Xo c) : valC z (a 
   evalAt_smul _ _ a f z
 
 theorem valC_zero (z : FrPt Xo c (PAt φ)) : valC z 0 = 0 := evalAt_zero _ _ z
-
-theorem IsReadPt.valC {T : CDVR} {io : c.F →+* T.Fr} {k : T.Fr →+* ℂ_[p]} {h : IsReading φ T io k} {y : IntFr Xo c T io}
-    {u : Ix Dw → (PAt φ)ˣ} {z : FrPt Xo c (PAt φ)} (hz : IsReadPt h y u z) {a : (E →+* ℂ) × ℕ → ℕ} {n : ℕ} {f : Rul Xo c}
-    (hf : f ∈ sec Xo c a n) : valC z f = toCp φ (wchar (ex Dw a n) u) * k (evI y f) := by
-  letI := io.toAlgebra
-  have hL : GlobalTheory.Reg.EvLaws Xo c := (GlobalTheory.Reg.evLaws_genFr_nonempty_comp E H Dw l Xo c).1
-  obtain ⟨w, hw, hb⟩ := hz
-  obtain ⟨q, χ, y₀, hy₀⟩ := hL.test _ y.1
-  have e1 : evR Xo c f w = k (evI y f) := by
-    rw [GlobalTheory.Reg.evR_eq_map_of_test_point hL hf q (h.alg.comp χ) y₀ w (PullbackSections.frMap_trans χ h.alg hy₀ hw)]
-    exact congrArg k (GlobalTheory.Reg.evR_eq_map_of_test_point hL hf q χ y₀ y.1 hy₀).symm
-  rw [GeoTie.valC, hL.wt a n f hf _ u w z (hL.test _ _) (hL.test _ _) hb, map_mul, e1]
-  rfl
-
-theorem norm_wchar {u : Ix Dw → (PAt φ)ˣ} (hu : ∀ a, ‖toCp φ (u a)‖ = 1) (e : Ix Dw → ℕ) : ‖toCp φ (wchar e u)‖ = 1 := by
-  simp [wchar, norm_prod, hu]
-
-theorem PtC.exists_valC (z : PtC Xo c φ) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) :
-    ∃ (T : CDVR) (io : c.F →+* T.Fr) (k : T.Fr →+* ℂ_[p]) (_ : IsReading φ T io k) (y : IntFr Xo c T io) (u : ℂ_[p]),
-      y.IsAlg ∧ ‖u‖ = 1 ∧ ∀ f ∈ sec Xo c a n, valC z.1 f = u * k (evI y f) := by
-  obtain ⟨T, io, k, h, y, u, hy, hu, hz⟩ := z.2
-  exact ⟨T, io, k, h, y, _, hy, norm_wchar hu _, fun f hf => hz.valC hf⟩
-
-theorem PtC.exists_of_reading {T : CDVR} {io : c.F →+* T.Fr} {k : T.Fr →+* ℂ_[p]} (h : IsReading φ T io k)
-    (y : IntFr Xo c T io) (hy : y.IsAlg) :
-    ∃ z : PtC Xo c φ, ∀ a n, ∀ f ∈ sec Xo c a n, valC z.1 f = k (evI y f) := by
-  letI := io.toAlgebra
-  obtain ⟨w, hw⟩ := (GlobalTheory.Reg.evLaws_genFr_nonempty_comp E H Dw l Xo c).1.bc _ _ h.alg y.1
-  have hb : FrBor 1 w w :=
-    ((GlobalTheory.Frames.frBor_calculus E H Dw l Xo c _ w w w).1 1).2 ⟨fun _ => 1, fun _ _ _ h => Matrix.one_apply_ne h.ne,
-      fun _ _ => Matrix.one_apply_eq _, (GlobalTheory.Frames.frChg_refl_and_comp E H Dw l Xo c _ w w w).1⟩
-  have hr : IsReadPt h y 1 w := ⟨w, hw, hb⟩
-  refine ⟨⟨w, T, io, k, h, y, 1, hy, fun a => by simp, hr⟩, fun a n f hf => ?_⟩
-  rw [hr.valC hf]
-  simp [wchar]
 
 abbrev HkKer (𝔓 : Ideal (𝓞 E)) (q i : ℕ) (z : FrPt Xo c (PAt φ)) : Type := hkKer (Xo := Xo) 𝔓 q i (PAt φ) z
 

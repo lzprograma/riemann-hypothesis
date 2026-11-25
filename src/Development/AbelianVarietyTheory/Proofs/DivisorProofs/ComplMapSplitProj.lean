@@ -53,7 +53,6 @@ open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.Genus
   GlobalTheory.UAut GlobalTheory.SiegelSet GlobalTheory.ThK.SquareIntegrability GlobalTheory.LFun.SplitTie
 open Formalism.UG (cT)
 open scoped TensorProduct Matrix
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.BlockForms.LeviLoc
 
@@ -74,15 +73,6 @@ theorem map_formula {T : Type} [CommRing T] (p : R →+* T) (s : R →+* R) (X Y
   simp
 
 end Lin
-
-section Frame
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-  {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {r : ℕ} {X Y : Matrix (Fin n) (Fin r) E}
-  {C : GL (Fin n) E} {l d : ℕ}
-
-
-end Frame
 
 section Adele
 

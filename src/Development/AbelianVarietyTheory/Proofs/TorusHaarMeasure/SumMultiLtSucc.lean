@@ -178,9 +178,9 @@ theorem _root_.GlobalTheory.JetsPure.main : ∀ (J I : Type) [Fintype I] (D T a 
       rw [hsplit, Finset.sum_union hdisj]
       congr 1
       · refine Finset.sum_congr rfl fun α hα => ?_
-        rw [if_pos (_root_.ReciprocityTheory.ChartRestriction.G.AR.mem_multiIndicesBelow_iff.mp hα)]
+        rw [ite_eq_left (_root_.ReciprocityTheory.ChartRestriction.G.AR.mem_multiIndicesBelow_iff.mp hα)]
       · refine Finset.sum_congr rfl fun α hα => ?_
-        rw [if_neg (by rw [Finset.Nat.mem_antidiagonalTuple.mp hα]; exact lt_irrefl a)]
+        rw [ite_eq_right (by rw [Finset.Nat.mem_antidiagonalTuple.mp hα]; exact lt_irrefl a)]
     have hR : ∀ α ∈ Finset.Nat.antidiagonalTuple D a, (fun z => ∑ k, u α k *
         (∏ q, s p q z ^ α q) * w0 p z ^ (T - ∑ q, α q) * t p k z -
         b p (α ∘ e p) * ∏ q, (s p q z / w0 p z) ^ α q) =O[𝓝 0] fun z => ‖z‖ ^ (a + 1) := by

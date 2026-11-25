@@ -3,47 +3,6 @@ module
 public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.LevelCuspCharacters
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumWIffGoodFormsOrthSum
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TypeCharacterConjugateInverse
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -146,9 +105,9 @@ theorem tupleChar_flipParam (S : Set (Sq H)) (s : ∀ v : Sq H, SSParam (H.g v.1
   funext x
   refine Finset.prod_congr rfl fun v _ => ?_
   by_cases hv : v ∈ S
-  · simp only [flipParam, flipAt, if_pos hv]
+  · simp only [flipParam, flipAt, ite_eq_left hv]
     exact (GlobalTheory.TypeCharacterConjugateInverse.typeChar_conj_inv _ K _ (s v)).2 (x v)
-  · simp only [flipParam, flipAt, if_neg hv]
+  · simp only [flipParam, flipAt, ite_eq_right hv]
 
 theorem tupleChar_congr (s : ∀ v : Sq H, SSParam (H.g v.1) K R.r) {x y : LevelGroup H}
     (h : ∀ v, IsConj (x v) (y v)) : tupleChar s x = tupleChar s y :=
@@ -159,8 +118,8 @@ theorem comp_flipAt_mem (om : ∀ i : Fin 2, (ZMod (H.g i))ˣ →* Kˣ) (S : Set
   obtain ⟨s, hs, rfl⟩ := hτ
   refine ⟨flipParam S s, fun i => goodAt_flip _ _ _ (fun w => ?_) (hs i), tupleChar_flipParam S s⟩
   by_cases hv : (⟨i, w⟩ : Sq H) ∈ S
-  · exact Or.inr (if_pos hv)
-  · exact Or.inl (if_neg hv)
+  · exact Or.inr (ite_eq_left hv)
+  · exact Or.inl (ite_eq_right hv)
 
 end Global
 
@@ -180,9 +139,9 @@ theorem coeff_goodIdem_flip (R : Ranks) (H : Host R) (om : ∀ i : Fin 2, (ZMod 
     have key : tupleChar s y⁻¹ = tupleChar s (flipAt S x⁻¹) := by
       refine tupleChar_congr s fun v => ?_
       by_cases hv : v ∈ S
-      · simp only [flipAt, if_pos hv, Pi.inv_apply]
+      · simp only [flipAt, ite_eq_left hv, Pi.inv_apply]
         exact isConj_inv_inv (h1 v hv).symm
-      · simp only [flipAt, if_neg hv, Pi.inv_apply]
+      · simp only [flipAt, ite_eq_right hv, Pi.inv_apply]
         exact isConj_inv_inv (h2 v hv).symm
     rw [Function.comp_apply, Function.comp_apply, flipAt_one, key]
 

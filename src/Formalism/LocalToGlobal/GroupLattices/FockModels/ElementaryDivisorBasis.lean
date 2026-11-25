@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ScaleNegMono
 public import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
 public import Formalism.SharpRestriction.GrowthBounds.ObjBridge
 import Formalism.GradedWeylDivisibility.FinalD
@@ -185,8 +186,8 @@ theorem ten_basis (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O 
     unfold Vsp
     congr 1
     funext s
-    rw [if_pos (hanti s)]
-  have hKK : IsFractionRing Kf Kf := jr_KK Kf
+    rw [ite_eq_left (hanti s)]
+  have hKK : IsFractionRing Kf Kf := instIsFractionRing (R := Kf)
   obtain ⟨kL, kS⟩ := tensorBasis Kf Kf (Fin n') (m + 1) (m + 1) _ _ X b1 b2
   have hfin : ∀ s : Fin n', Finite ↥(ssIdx (m + 1) (m + 1) (nuOf (lamAt lam0 s))) :=
     fun s => (sSIdxFinite (m + 1) (m + 1) (nuOf (lamAt lam0 s))).to_subtype
@@ -236,14 +237,7 @@ variable {p n' : ℕ} {W Qq O Kf : Type} [CommRing W] [IsDomain W] [IsDiscreteVa
   {ι : Qq →+* Kf} {σ : Qq ≃+* Qq} {j : W →+* O} {w : O}
 
 theorem w_ne (h : HidaSetting p n' W Qq O Kf ι σ j w) : algebraMap O Kf w ≠ 0 := by
-  intro h0
-  have hpK : (p : Kf) = algebraMap O Kf w ^ 2 := by rw [← map_pow, h.w_sq, map_natCast]
-  have hpW : (p : W) ≠ 0 := h.p_unif.ne_zero
-  haveI := h.frac_alt
-  have hpK' : (p : Kf) ≠ 0 := by
-    rw [← map_natCast ι, ← map_natCast (algebraMap W Qq)]
-    exact (map_ne_zero ι).2 ((map_ne_zero_iff _ (IsFractionRing.injective W Qq)).2 hpW)
-  exact hpK' (by rw [hpK, h0]; simp)
+  apply +allowSynthFailures _root_.Formalism.MainNotions.Pf14.w_ne_zero <;> assumption
 
 theorem p_eq (h : HidaSetting p n' W Qq O Kf ι σ j w) : (p : Kf) = algebraMap O Kf w ^ 2 := by
   rw [← map_pow, h.w_sq, map_natCast]

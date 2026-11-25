@@ -42,8 +42,6 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits NumberField IsDedekindDomain
@@ -52,8 +50,6 @@ open Formalism.MainNotions.DIV.Cons (intO)
 open MonObj
 
 namespace GlobalTheory.LineNorm
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 section Models
 
@@ -73,19 +69,8 @@ def IsTanBasis {R : Type} [CommRing R] (x : Sp R ⟶ X) {g : ℕ} (e : Fin g →
     IsTanAtG t (spMap φ ≫ x) w →
       ∃! a : Fin g → S, IsCombAtG t (spMap φ ≫ x) (fun i => spMap (dualMap φ) ≫ e i) a w
 
-def IsIndep {R : Type} [CommRing R] (x : Sp R ⟶ X) {m : ℕ} (u : Fin m → (Sp (DualNumber R) ⟶ t.G.left)) : Prop :=
-  ∀ cf cf' w, IsCombAtG t x u cf w → IsCombAtG t x u cf' w → cf = cf'
-
 def minor {R : Type} [CommRing R] {m g k : ℕ} (a : Fin m → Fin g → R) (hk : k ≤ m) (s : Fin k → Fin g) : R :=
   (Matrix.of fun l i => a (Fin.castLE hk l) (s i)).det
-
-def DlogIs {O : Type} [CommRing O] {x : Sp O ⟶ X} (p n : ℕ) (c : TorsChar t x (p ^ n)) {g : ℕ}
-    (e : Fin g → (Sp (DualNumber O) ⟶ t.G.left)) (h : Fin g → O) : Prop :=
-  ∀ (a : Fin g → O) (v : Sp (DualNumber O) ⟶ t.G.left), IsCombAtG t x e a v →
-    ∀ w : Over.mk (spMap (algebraMap O (DualNumber (O ⧸ Ideal.span {(p : O) ^ n}))) ≫ x) ⟶ t.G,
-      w.left = spMap (dualMap (Ideal.Quotient.mk (Ideal.span {(p : O) ^ n}))) ≫ v →
-        (c.χ _ w : DualNumber (O ⧸ Ideal.span {(p : O) ^ n})).snd =
-          Ideal.Quotient.mk (Ideal.span {(p : O) ^ n}) (∑ i, h i * a i)
 
 def Thru {R B : Type} [CommRing R] [CommRing B] [Algebra R B] (u : Sp B ⟶ t.G.left) {S : Type} [CommRing S]
     (φ : R →+* S) (w : Sp S ⟶ t.G.left) : Prop :=

@@ -41,7 +41,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open Formalism.BasicNotions Formalism.IndefR.Mult Formalism.IndefR.AutomorphicEvaluation Formalism.L2.Theta NumberField MeasureTheory Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.RowDict
 open scoped InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.Mem.SJ
 
@@ -103,7 +102,7 @@ theorem sEEofTT_eq_smul_conjHH : ∀ (D : D7) (S : D.what₂.Tau → Formalism.B
     (fun v v' => ∏ τ, ⟪(v τ : M.H τ), (v' τ : M.H τ)⟫_ℂ) (fun T T' => hS T T.2 T' T'.2) hT.choose v₀ hp
     hT.choose_spec.2.choose hj' e j a hj
   have hs : sEEofTT M μ 𝓕 E St G ι t c
-      = (conjHH St G).toLinearMap.comp hT.choose_spec.2.choose.toLinearMap := dif_pos hT
+      = (conjHH St G).toLinearMap.comp hT.choose_spec.2.choose.toLinearMap := dite_eq_left hT
   rw [hs]
   exact exists_conj_scalar (conjHH St G).toLinearMap j.toLinearEquiv.toLinearMap
     (hT.choose_spec.2.choose.toLinearMap.comp e) j.injective _ hkey

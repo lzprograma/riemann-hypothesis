@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.NdSpecExistsStatement
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.DescUse
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.DescWeak
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.PlacesOverFinite.LinkedEndEOf
@@ -95,7 +96,7 @@ import Mathlib.Tactic.Linter.HaveILetI
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FrobeniusRestrictScalarsPowModInertia
 import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.LocTrans
 import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TPropEGW
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.FinOrderOfKills
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.FinOrderOfKills
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.ResidualAutomorphyOfLinkedEnds, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AdjointLiftFromEisensteinSeedOfHyps, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.PlacesOverFinite.ExistsType, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.CharpolyConjugation.CharpolyRootPow, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TSeedInW, Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryThreeInputsOfLiterature
@@ -365,21 +366,8 @@ private theorem cont_cyc (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Alg
 
 private theorem cont_of_ker {Γ B : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [Group B] [TopologicalSpace B]
     (γ : Γ →* B) (h : IsOpen (γ.ker : Set Γ)) : Continuous γ := by
-  rw [continuous_def]
-  intro U _
-  rw [isOpen_iff_forall_mem_open]
-  intro x hx
-  refine ⟨(fun y => x⁻¹ * y) ⁻¹' (γ.ker : Set Γ), ?_, h.preimage (continuous_const.mul continuous_id), ?_⟩
-  · intro y hy
-    have hk : γ (x⁻¹ * y) = 1 := hy
-    have : γ y = γ x := by
-      rw [map_mul, map_inv, inv_mul_eq_one] at hk
-      exact hk.symm
-    show γ y ∈ U
-    rw [this]
-    exact hx
-  · show γ (x⁻¹ * x) = 1
-    simp
+  intros
+  apply _root_.GlobalTheory.HeckeLocCont.continuous_of_isOpen_ker <;> assumption
 
 private theorem exists_exp {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] (χ : G ℚ Ω →* (Qbar l)ˣ)
     (h : IsOpen (χ.ker : Set (G ℚ Ω))) : ∃ n : ℕ, 0 < n ∧ ∀ g, χ g ^ n = 1 := by
@@ -647,8 +635,7 @@ private theorem ine_finite [Finite (K →ₐ[F] Ω)] {l : ℕ} [Fact l.Prime] {n
     (r '' (Ine (F := F) A : Set (G F Ω))).Finite := by
   classical
   let c : (K →ₐ[F] Ω) → GL (Fin n) (Qbar l) := fun φ =>
-    @dite _ (∃ g ∈ Ine (F := F) A, resK K g = φ) (Classical.propDecidable _)
-      (fun hφ => r (Classical.choose hφ)) (fun _ => 1)
+    if hφ : ∃ g ∈ Ine (F := F) A, resK K g = φ then r (Classical.choose hφ) else 1
   refine ((Set.finite_univ.prod h).image (fun p : (K →ₐ[F] Ω) × GL (Fin n) (Qbar l) => c p.1 * p.2)).subset ?_
   rintro _ ⟨σ, hσ, rfl⟩
   have hex : ∃ g ∈ Ine (F := F) A, resK K g = resK K σ := ⟨σ, hσ, rfl⟩
@@ -657,7 +644,7 @@ private theorem ine_finite [Finite (K →ₐ[F] Ω)] {l : ℕ} [Fact l.Prime] {n
   have huI : u ∈ Ine (F := K) A := ine_descend (by rw [hu]; exact mul_mem (inv_mem hg) hσ)
   refine ⟨(resK K σ, r (AlgEquiv.restrictScalarsHom F u)), ⟨Set.mem_univ _, u, huI, rfl⟩, ?_⟩
   show c (resK K σ) * r ((AlgEquiv.restrictScalarsHom F) u) = r σ
-  simp only [c, dif_pos hex]
+  simp only [c, dite_eq_left hex]
   rw [hu, map_mul, map_inv, mul_inv_cancel_left]
 
 end
@@ -703,7 +690,6 @@ theorem UpperTheory.GalN.V.L.wup :
       unfold normV at hnorm
       haveI := w.isPrime
       obtain ⟨hs, _⟩ := Nat.card_eq_one_iff_unique.1 hnorm
-      haveI : Nontrivial (𝓞 K ⧸ w.asIdeal) := Ideal.Quotient.nontrivial_iff.mpr w.isPrime.ne_top
       exact not_subsingleton _ hs
     · exact h0
   have e : normV w ^ (j * m) = (normV v ^ j) ^ (m * f) := by
@@ -753,13 +739,7 @@ private theorem cont_of_open_ker {Γ C : Type} [Group Γ] [TopologicalSpace Γ] 
   simp [MonoidHom.mem_ker.1 hy]
 private theorem cont_twist {l : ℕ} [Fact l.Prime] {Γ : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] {n : ℕ}
     {r : Γ →* GL (Fin n) (Qbar l)} {δ : Γ →* (Qbar l)ˣ} (h : Continuous r) (hδ : Continuous δ) : Continuous (tw r δ) := by
-  have hv : Continuous fun s => ((tw r δ) s).val := by
-    have e : (fun s => ((tw r δ) s).val) = fun s => (δ s).val • (r s).val := funext fun s => tw_val r δ s
-    rw [e]
-    exact (Units.continuous_val.comp hδ).smul (Units.continuous_val.comp h)
-  refine Units.continuous_iff.2 ⟨hv, ?_⟩
-  simp only [Function.comp_def, ← Units.val_inv_eq_inv_val, ← map_inv]
-  exact hv.comp continuous_inv
+  apply _root_.UpperTheory.V.Sd.cont_tw <;> assumption
 private theorem cc_mul_self {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {c : G ℚ Ω} (hc : Sd.IsCC c) : c * c = 1 := by
   obtain ⟨j, hj⟩ := hc
   refine AlgEquiv.ext fun x => j.injective ?_

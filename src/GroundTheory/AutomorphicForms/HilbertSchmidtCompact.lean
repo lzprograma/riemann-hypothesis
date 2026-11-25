@@ -17,20 +17,6 @@ variable {𝕜 : Type*} [RCLike 𝕜]
   {H : Type*} [NormedAddCommGroup H] [InnerProductSpace 𝕜 H] [CompleteSpace H]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace 𝕜 K] [CompleteSpace K]
 
-
-omit [CompleteSpace H] [CompleteSpace K] in
-theorem isCompactOperator_innerSL_smulRight (e : H) (y : K) :
-    IsCompactOperator ((innerSL 𝕜 e).smulRight y) := by
-  refine ⟨(fun c : 𝕜 => c • y) '' Metric.closedBall 0 ‖e‖,
-    (isCompact_closedBall 0 ‖e‖).image (continuous_id.smul continuous_const), ?_⟩
-  refine Filter.mem_of_superset (Metric.ball_mem_nhds (0 : H) one_pos) fun x hx => ?_
-  refine ⟨⟪e, x⟫_𝕜, ?_, by simp⟩
-  rw [Metric.mem_closedBall, dist_zero_right]
-  rw [Metric.mem_ball, dist_zero_right] at hx
-  calc ‖⟪e, x⟫_𝕜‖ ≤ ‖e‖ * ‖x‖ := norm_inner_le_norm e x
-    _ ≤ ‖e‖ * 1 := by gcongr
-    _ = ‖e‖ := mul_one _
-
 def hsTruncation {ι : Type*} (b : HilbertBasis ι 𝕜 H) (T : H →L[𝕜] K) (F : Finset ι) :
     H →L[𝕜] K :=
   ∑ i ∈ F, (innerSL 𝕜 (b i)).smulRight (T (b i))
@@ -38,13 +24,9 @@ def hsTruncation {ι : Type*} (b : HilbertBasis ι 𝕜 H) (T : H →L[𝕜] K) 
 omit [CompleteSpace H] [CompleteSpace K] in
 theorem isCompactOperator_hsTruncation {ι : Type*} (b : HilbertBasis ι 𝕜 H) (T : H →L[𝕜] K)
     (F : Finset ι) : IsCompactOperator (hsTruncation b T F) := by
-  classical
-  unfold hsTruncation
-  induction F using Finset.induction_on with
-  | empty => simpa using isCompactOperator_zero
-  | insert a F haF ih =>
-    rw [Finset.sum_insert haF, FunLike.coe_add]
-    exact (isCompactOperator_innerSL_smulRight _ _).add ih
+  exact (compactOperator (RingHom.id 𝕜) H K).sum_mem fun i _ =>
+    (isCompactOperator_of_locallyCompactSpace_dom (innerSL 𝕜 (b i))).continuous_comp
+      (continuous_id.smul continuous_const)
 
 omit [CompleteSpace H] [CompleteSpace K] in
 theorem sub_hsTruncation_apply_basis {ι : Type*} [DecidableEq ι] (b : HilbertBasis ι 𝕜 H)

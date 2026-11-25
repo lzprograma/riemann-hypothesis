@@ -102,8 +102,6 @@ theorem colFacts_transport {P : RowSideFamily ex} {Z : DefSub P.A3.fam3.amb3} (h
   obtain rfl := eq_of_heq hC
   exact h
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {Rc : Formalism.L2.RecT ex} {P : RowSideFamily ex} {Dcf : ∀ Zs : DefSub P.A3.fam3.amb3, DefCols (P.A3.side3 P.Ps P.ψs Zs)}
   {Spf : ∀ Zs : DefSub P.A3.fam3.amb3, SPer (Dcf Zs)} {Zscf : DefSub P.A3.fam3.amb3 → IndefScale P.A3.fam3.base3}
   {S : Formalism.L2.SG.SpectralTiesReal.STiesR Rc} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]

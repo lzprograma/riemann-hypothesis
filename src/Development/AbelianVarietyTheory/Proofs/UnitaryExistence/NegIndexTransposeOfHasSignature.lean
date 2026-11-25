@@ -58,8 +58,6 @@ noncomputable section
 
 namespace GlobalTheory.RecDict
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 open Matrix in
 theorem negIndex_transpose_of_hasSignature {n : Type} [Fintype n] [DecidableEq n] {J : Matrix n n ℂ} {p q : ℕ}

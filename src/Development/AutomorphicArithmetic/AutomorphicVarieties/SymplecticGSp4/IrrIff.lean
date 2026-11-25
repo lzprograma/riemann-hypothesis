@@ -63,7 +63,7 @@ section -- clump:auto
 @[expose] public section
 
 theorem UpperTheory.Reformulated.B.StableSubmoduleBotOrTopOfSpanEqTop.irrIff_stable :
-    ∀ {H K : Type} [inst : Group H] [inst_1 : Field K] {n : ℕ}
+    ∀ {H K : Type} [Group H] [Field K] {n : ℕ}
     (r : H →* Matrix (Fin n) (Fin n) K),
     Submodule.span K (Set.range (⇑r : H → Matrix (Fin n) (Fin n) K)) = ⊤ →
       ∀ (W : Submodule K (Fin n → K)),

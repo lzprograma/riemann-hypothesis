@@ -17,45 +17,16 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.NGCut.LeadingMinorIntegrality
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Pt
 
 variable {K : Type} [Field K]
 
-private theorem sub_mul_lemma {R : Type*} [CommRing R] {d : ℕ} (A B : Matrix (Fin d) (Fin d) R) (q : ℕ)
-    (h : ∀ i j k : Fin d, (i : ℕ) < q → (j : ℕ) < q → q ≤ (k : ℕ) → A i k * B k j = 0) :
-    (A * B).submatrix (fun i : {i : Fin d // (i : ℕ) < q} => i.1) (fun i : {i : Fin d // (i : ℕ) < q} => i.1) =
-      A.submatrix (fun i : {i : Fin d // (i : ℕ) < q} => i.1) (fun i : {i : Fin d // (i : ℕ) < q} => i.1) *
-        B.submatrix (fun i : {i : Fin d // (i : ℕ) < q} => i.1) (fun i : {i : Fin d // (i : ℕ) < q} => i.1) := by
-  ext i j
-  simp only [Matrix.submatrix_apply, Matrix.mul_apply]
-  have hz : ∑ k : {x : Fin d // ¬ (x : ℕ) < q}, A i.1 k.1 * B k.1 j.1 = 0 :=
-    Finset.sum_eq_zero (fun k _ => h _ _ _ i.2 j.2 (not_lt.mp k.2))
-  rw [← Fintype.sum_subtype_add_sum_subtype (fun k : Fin d => (k : ℕ) < q), hz, add_zero]
-
-private theorem det_lo_lemma_2 {R : Type*} [CommRing R] {d : ℕ} (L : Matrix (Fin d) (Fin d) R)
-    (hL : ∀ i j : Fin d, (i < j → L i j = 0) ∧ (i = j → L i j = 1)) (q : ℕ) :
-    (L.submatrix (fun i : {i : Fin d // (i : ℕ) < q} => i.1) (fun i : {i : Fin d // (i : ℕ) < q} => i.1)).det = 1 := by
-  rw [Matrix.det_of_lowerTriangular _ (fun i j hij => (hL i.1 j.1).1 (OrderDual.toDual_lt_toDual.mp hij))]
-  exact Finset.prod_eq_one (fun i _ => (hL i.1 i.1).2 rfl)
-
-private theorem det_up_lemma_3 {R : Type*} [CommRing R] {d : ℕ} (U : Matrix (Fin d) (Fin d) R)
-    (hU : ∀ i j : Fin d, (j < i → U i j = 0) ∧ (i = j → U i j = 1)) (q : ℕ) :
-    (U.submatrix (fun i : {i : Fin d // (i : ℕ) < q} => i.1) (fun i : {i : Fin d // (i : ℕ) < q} => i.1)).det = 1 := by
-  rw [Matrix.det_of_upperTriangular (fun i j hij => (hU i.1 j.1).1 hij)]
-  exact Finset.prod_eq_one (fun i _ => (hU i.1 i.1).2 rfl)
-
 theorem lead_cell {d : ℕ} (Z : Matrix (Fin d) (Fin d) K) (w : Point K d) (h : IsInCell Z w) (q : ℕ) :
     leadingPrincipalMinor (ptMat w) q = leadingPrincipalMinor Z q := by
   obtain ⟨L, U, hL, hU, rfl⟩ := h
-  unfold leadingPrincipalMinor
-  rw [sub_mul_lemma (L * ptMat w) U q ?_, sub_mul_lemma L (ptMat w) q ?_, Matrix.det_mul, Matrix.det_mul,
-    det_lo_lemma_2 L hL q, det_up_lemma_3 U hU q, one_mul, mul_one]
-  · intro i j k _ _ hk
-    rw [(hL i k).1 (show (i : ℕ) < (k : ℕ) by omega), zero_mul]
-  · intro i j k _ hj hk
-    rw [(hU k j).1 (show (j : ℕ) < (k : ℕ) by omega), mul_zero]
+  exact (_root_.Formalism.HermitianLatticeCounting.P.invariant_value_holds K d (ptMat w) L U q
+    ⟨fun i => (hL i i).2 rfl, fun i j hij => (hL i j).1 hij⟩
+    ⟨fun i => (hU i i).2 rfl, fun i j hij => (hU i j).1 hij⟩).symm
 
 theorem endMin_eq {r : ℕ} (w : Point K (r + 1)) (a : Fin (toPts w).1.length) :
     endMin (toPts w) a = leadingPrincipalMinor (ptMat w) (endIdx (toPts w) a) := by
@@ -157,17 +128,6 @@ theorem zhatOM_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hun : Formalism.He
   push_cast
   rfl
 
-private theorem gauss_lemma_5 (r q : ℕ) (hq : q ≤ r + 1) :
-    2 * ∑ i ∈ Finset.range q, (r - i) = q * (2 * r + 1 - q) := by
-  induction q with
-  | zero => simp
-  | succ q ih =>
-    rw [Finset.sum_range_succ, mul_add, ih (by omega)]
-    obtain ⟨k, rfl⟩ : ∃ k, r = q + k := ⟨r - q, by omega⟩
-    rw [show 2 * (q + k) + 1 - q = q + 2 * k + 1 by omega, show q + k - q = k by omega,
-      show 2 * (q + k) + 1 - (q + 1) = q + 2 * k by omega]
-    ring
-
 theorem lead_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hun : Formalism.HermitianLatticesTheory.IsUnimodular (VS D).hT Λ)
     {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (hz : F.fl.z ∈ Λ) (hX : XLam Λ F = XS D F.fl) (hz' : F'.fl.z ∈ Λ) (hX' : XLam Λ F' = XS D F'.fl)
@@ -184,10 +144,10 @@ theorem lead_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hun : Formalism.Herm
         have h0 := hO (Fin.castLE hq (σ i)) (Fin.castLE hq i)
         simpa only [Fin.coe_castLE] using h0)
     rw [Finset.prod_pow_eq_pow_sum] at hp
-    have he : ∑ i : Fin q, ((D.R.rS - ((σ i : Fin q) : ℕ)) + (D.R.rS - (i : ℕ))) = q * (2 * D.R.rS + 1 - q) := by
-      rw [Finset.sum_add_distrib, Equiv.sum_comp σ (fun i : Fin q => D.R.rS - (i : ℕ)), ← two_mul,
-        Fin.sum_univ_eq_sum_range (fun i => D.R.rS - i) q]
-      exact gauss_lemma_5 _ _ hq
+    have he : ∑ i : Fin q, ((D.R.rS - ((σ i : Fin q) : ℕ)) + (D.R.rS - (i : ℕ))) =
+        q * (2 * D.R.rS + 1 - q) := by
+      rw [Finset.sum_add_distrib, Equiv.sum_comp σ (fun i : Fin q => D.R.rS - (i : ℕ)), ← two_mul]
+      exact two_sum_sub D.R.rS q hq
     rw [he] at hp
     exact Ideal.mul_mem_left _ _ hp
   · show algebraMap (𝓞 D.host.E) D.host.E (leadingPrincipalMinor (Matrix.of O) q) = _
@@ -196,21 +156,9 @@ theorem lead_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hun : Formalism.Herm
     ext a b
     exact hOe a b
 
-private theorem e4_lm_lemma_4 {N : ℕ} (A : Matrix (Fin N) (Fin N) D.host.E) (q : ℕ) (hq : q ≤ N) :
-    leadingPrincipalMinor A q = leadMinorE A q := by
-  unfold leadingPrincipalMinor leadMinorE
-  rw [dite_eq_left hq]
-  let e : Fin q ≃ {i : Fin N // (i : ℕ) < q} :=
-    { toFun := fun k => ⟨Fin.castLE hq k, k.2⟩, invFun := fun i => ⟨i.1, i.2⟩,
-      left_inv := fun _ => rfl, right_inv := fun _ => rfl }
-  rw [← Matrix.det_submatrix_equiv_self e]
-  rfl
-
 theorem lead_ZhatOM {r : ℕ} (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) D.host.E) (q : ℕ) (hq : q ≤ r + 1) :
     leadingPrincipalMinor (ZhatOM Z) q = (∏ b : Fin q, (-1 : D.host.E) ^ (r - (b : ℕ))) * leadMinorE Z q := by
-  rw [e4_lm_lemma_4 _ q hq]
-  unfold leadMinorE
-  rw [dite_eq_left hq, dite_eq_left hq]
+  rw [_root_.Formalism.HermitianLatticeCounting.P.gf_lead_eq _ q hq, leadMinorE, dite_eq_left hq]
   have hM : (ZhatOM Z).submatrix (Fin.castLE hq) (Fin.castLE hq) =
       Z.submatrix (Fin.castLE hq) (Fin.castLE hq) * Matrix.diagonal (fun b : Fin q => (-1 : D.host.E) ^ (r - (b : ℕ))) := by
     ext a b

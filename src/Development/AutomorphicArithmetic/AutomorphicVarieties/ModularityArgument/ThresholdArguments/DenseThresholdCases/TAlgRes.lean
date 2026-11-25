@@ -49,6 +49,7 @@ import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValSubLtIff
+import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsQuadCharOfOfIsNormChar
 
 @[expose] public section
 
@@ -79,16 +80,6 @@ private theorem val_of_norm
     WithZero.toAdd_unzero_eq_log hx, h2]
 variable [Algebra K L]
 private alias normV_under := _root_.GlobalTheory.DelEps.WeilRes.normV_eq_pow
-private theorem tendsto_under' :
-    Filter.Tendsto (fun w : HeightOneSpectrum (𝓞 L) => w.under (𝓞 K)) Filter.cofinite Filter.cofinite := by
-  refine Filter.Tendsto.cofinite_of_finite_preimage_singleton fun v => ?_
-  have h0 : Ideal.map (algebraMap (𝓞 K) (𝓞 L)) v.asIdeal ≠ 0 :=
-    fun h => v.ne_bot ((Ideal.map_eq_bot_iff_of_injective (FaithfulSMul.algebraMap_injective _ _)).1 h)
-  refine (Ideal.finite_factors h0).subset fun w hw => ?_
-  have e : w.under (𝓞 K) = v := hw
-  show w.asIdeal ∣ _
-  rw [Ideal.dvd_iff_le, Ideal.map_le_iff_le_comap, ← e]
-  exact le_rfl
 omit [Algebra K L] in
 private theorem ev_notMem (l : ℕ) [Fact l.Prime] :
     ∀ᶠ v : HeightOneSpectrum (𝓞 K) in Filter.cofinite, ((l : ℕ) : 𝓞 K) ∉ v.asIdeal := by
@@ -199,9 +190,10 @@ theorem UpperTheory.V.Sd.alg_restriction_of_printed_results :
   have hc' : Continuous (κ.comp (galEmb F E Ω)) := hc.comp (continuous_restrictScalarsHom F E Ω)
   have hw : ∀ᶠ w : HeightOneSpectrum (𝓞 E) in Filter.cofinite, ((l : ℕ) : 𝓞 E) ∉ w.asIdeal ∧ (cN E χ).UnrAt w ∧
       CharEig ι (κ.comp (res F Ω E)) w ((cN E χ).val w : ℂˣ) := by
-    filter_upwards [(tendsto_under' (K := F) (L := E)).eventually
-      ((Filter.eventually_cofinite.2 (GlobalTheory.Mem.UnrAe.finite_ramified χ)).and (ev_notMem l)), ev_notMem (K := E) l]
-      with w ⟨hu, hl⟩ hl'
+    have htend := GlobalTheory.QuadNormChar.tendsto_under (K := F) (K' := E)
+    filter_upwards [htend.eventually
+      ((Filter.eventually_cofinite.2 (GlobalTheory.Mem.UnrAe.finite_ramified χ)).and (ev_notMem l)),
+      ev_notMem (K := E) l] with w ⟨hu, hl⟩ hl'
     have hf := normV_under (K := F) w
     obtain ⟨k1, k2⟩ := cN_val χ w _ hf hu
     refine ⟨hl', k1, ?_⟩

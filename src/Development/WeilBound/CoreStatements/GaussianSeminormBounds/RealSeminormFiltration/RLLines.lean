@@ -1,53 +1,11 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RdSkewEqConst
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Commute
 public import Mathlib.Analysis.CStarAlgebra.Unitary.Connected
 public import Mathlib.Analysis.Calculus.Deriv.Star
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -64,44 +22,8 @@ section Banach
 variable {𝔸 : Type} [NormedRing 𝔸] [NormedAlgebra ℝ 𝔸] [CompleteSpace 𝔸]
 
 theorem hasDerivAt_oneParam (A : ℝ → 𝔸) (hc : Continuous A) (h0 : A 0 = 1)
-    (hm : ∀ s t, A (s + t) = A s * A t) : ∃ Y : 𝔸, HasDerivAt A Y 0 := by
-  let C : ℝ → 𝔸 := fun x => ∫ s in (0 : ℝ)..x, A s
-  have hC : ∀ x, HasDerivAt C (A x) x := fun x =>
-    intervalIntegral.integral_hasDerivAt_right (hc.intervalIntegrable _ _)
-      hc.stronglyMeasurable.stronglyMeasurableAtFilter hc.continuousAt
-  have hC0 : C 0 = 0 := by simp [C]
-  obtain ⟨ε, hε, hu⟩ : ∃ ε : ℝ, ε ≠ 0 ∧ IsUnit (C ε) := by
-    have hs := hasDerivAt_iff_tendsto_slope.1 (hC 0)
-    rw [h0] at hs
-    have hU : ∀ᶠ x in nhdsWithin (0 : ℝ) {0}ᶜ, IsUnit (slope C 0 x) :=
-      hs.eventually (Units.isOpen.mem_nhds isUnit_one)
-    have hne : ∀ᶠ x in nhdsWithin (0 : ℝ) {0}ᶜ, x ≠ 0 := eventually_mem_nhdsWithin
-    obtain ⟨x, hx, hx0⟩ := (hU.and hne).exists
-    refine ⟨x, hx0, ?_⟩
-    have e : C x = x • slope C 0 x := by
-      simp only [slope, hC0, sub_zero, vsub_eq_sub, smul_smul]
-      rw [mul_inv_cancel₀ hx0, one_smul]
-    rw [e]
-    have hxu : IsUnit (algebraMap ℝ 𝔸 x) := (IsUnit.mk0 x hx0).map (algebraMap ℝ 𝔸)
-    rw [Algebra.smul_def]
-    exact hxu.mul hx
-  obtain ⟨u, hu⟩ := hu
-  have key : ∀ t, A t * C ε = C (t + ε) - C t := fun t => by
-    have e1 : A t * C ε = ∫ s in (0 : ℝ)..ε, A t * A s :=
-      ((ContinuousLinearMap.mul ℝ 𝔸 (A t)).intervalIntegral_comp_comm (hc.intervalIntegrable _ _)).symm
-    have e2 : (∫ s in (0 : ℝ)..ε, A t * A s) = ∫ s in t..(t + ε), A s := by
-      have := intervalIntegral.integral_comp_add_left (a := 0) (b := ε) A t
-      simp only [add_zero] at this
-      rw [← this]
-      exact intervalIntegral.integral_congr fun s _ => (hm t s).symm
-    rw [e1, e2]
-    exact (intervalIntegral.integral_interval_sub_left (hc.intervalIntegrable _ _) (hc.intervalIntegrable _ _)).symm
-  have hA : A = fun t => (C (t + ε) - C t) * (↑u⁻¹ : 𝔸) := by
-    funext t
-    rw [← key, ← hu, mul_assoc, Units.mul_inv, mul_one]
-  have hd : HasDerivAt (fun t => C (t + ε) - C t) (A (0 + ε) - A 0) 0 :=
-    ((hC (0 + ε)).comp_add_const 0 ε).sub (hC 0)
-  exact ⟨_, (hd.mul_const (↑u⁻¹ : 𝔸)).congr_of_eventuallyEq (Filter.Eventually.of_forall fun t => congrFun hA t)⟩
+    (hm : ∀ s t, A (s + t) = A s * A t) : ∃ Y : 𝔸, HasDerivAt A Y 0 :=
+  _root_.GlobalTheory.CompanionTheory.OneParam.hasDerivAt_zero_of_continuous_oneParam A hc h0 hm
 
 theorem eq_exp_of_hasDerivAt (A : ℝ → 𝔸) (h0 : A 0 = 1) (hm : ∀ s t, A (s + t) = A s * A t) {Y : 𝔸}
     (hY : HasDerivAt A Y 0) (t : ℝ) : A t = NormedSpace.exp (t • Y) := by

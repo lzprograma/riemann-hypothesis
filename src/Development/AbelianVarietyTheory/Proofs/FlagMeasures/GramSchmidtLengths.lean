@@ -106,7 +106,7 @@ theorem exists_upper {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
   have hsum := hlx a
   rw [Finsupp.linearCombination_apply, Finsupp.sum_fintype _ _ (fun i => zero_smul ℂ (f i))] at hsum
   simp_rw [hc, sub_smul, Finset.sum_sub_distrib, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ,
-    if_true, hsum, sub_sub_cancel]
+    ite_true, hsum, sub_sub_cancel]
 
 theorem eucl_eq {N : ℕ} (v : Fin N → ℂ) : eucl v = ‖(WithLp.toLp 2 v : EuclideanSpace ℂ (Fin N))‖ := by
   rw [EuclideanSpace.norm_eq, eucl]

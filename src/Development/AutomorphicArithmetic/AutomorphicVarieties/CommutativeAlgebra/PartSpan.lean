@@ -72,7 +72,7 @@ theorem UpperTheory.V.Alg.part_span :
       ⟨fun m k => if k + m ∈ S ∧ c (k + m) = m then coeff (k + m) f else 0, fun _ _ => rfl⟩
     refine ⟨b, ?_, ?_⟩
     · intro m k hk
-      rw [hb, if_neg]
+      rw [hb, ite_eq_right]
       rintro ⟨h1, h2⟩
       apply hk
       have hm : Finsupp.weight W.wt m = j := hS m (by rw [← h2]; exact (hcM _ h1).1)
@@ -84,15 +84,15 @@ theorem UpperTheory.V.Alg.part_span :
       rw [map_sum, Finset.sum_congr rfl
       (g := fun m => if c n = m then (if n ∈ S then coeff n f else 0) else 0), Finset.sum_ite_eq]
       · by_cases hn : n ∈ S
-        · rw [if_pos ((Set.Finite.mem_toFinset hMfin).2 (hcM n hn)), if_pos hn]
+        · rw [ite_eq_left ((Set.Finite.mem_toFinset hMfin).2 (hcM n hn)), ite_eq_left hn]
         · rw [hf n hn]
           simp
       · intro m _
         rw [MvPowerSeries.coeff_mul_monomial, mul_one]
         by_cases hmn : m ≤ n
-        · rw [if_pos hmn, hb, tsub_add_cancel_of_le hmn]
+        · rw [ite_eq_left hmn, hb, tsub_add_cancel_of_le hmn]
           by_cases h1 : n ∈ S <;> by_cases h2 : c n = m <;> simp [h1, h2]
-        · rw [if_neg hmn]
+        · rw [ite_eq_right hmn]
           by_cases h1 : n ∈ S
           · have h3 : c n ≠ m := fun h => hmn (h ▸ hcle n h1)
             simp [h3]

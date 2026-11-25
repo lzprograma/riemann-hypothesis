@@ -4,40 +4,6 @@ public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Univ
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistDataAgreeAcrossCoefficients
 public import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.CoreBC
 public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.LevelCuspCharacters
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -53,8 +19,6 @@ open scoped TensorProduct
 
 
 namespace GlobalTheory.TwInputs.Move
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Tensor
 
@@ -128,14 +92,6 @@ structure KsIso (ι : LL →+* LL') (eK : Ks ≃+* Ks') (γ : G ≃* G') (A : Ar
   chi : ∀ g, (A'.chi (γ g) : LL') = ι (A.chi g : LL)
 
 namespace KsIso
-
-def refl (A : Arith.FormsL LL Ks WL W G) : KsIso (RingHom.id LL) (RingEquiv.refl Ks) (MulEquiv.refl G) A A where
-  φ := AddEquiv.refl _
-  alg _ := rfl
-  smul _ _ := rfl
-  mk_iff _ := Iff.rfl
-  rho _ _ _ := Iff.rfl
-  chi _ := rfl
 
 variable {ι : LL →+* LL'} {eK : Ks ≃+* Ks'} {γ : G ≃* G'} {A : Arith.FormsL LL Ks WL W G} {A' : Arith.FormsL LL' Ks' WL' W' G'}
 
@@ -220,10 +176,6 @@ def KsIso.bc (A : Arith.FormsL L0 Ks WL W G) :
     change _ ↔ (NX.BC.bc L A).ρ g (NX.BC.incl Ks L0 L WL x) = NX.BC.incl Ks L0 L WL y
     rw [NX.BC.bc_rho_incl, (NX.BC.incl_injective Ks L0 L WL).eq_iff]
   chi _ := rfl
-
-theorem KsIso.bc_j (A : Arith.FormsL L0 Ks WL W G) (σ : L →+* ℂ) (x : A.WK) :
-    (NX.BC.bc L A).j σ ((KsIso.bc L A).φ x : NX.BC.BCW Ks L0 L WL) = A.j (σ.comp (algebraMap L0 L)) x :=
-  NX.BC.bc_j_incl L A σ x
 
 end BC
 
@@ -433,28 +385,6 @@ structure CopyTw (D D' : D7) (ι : D.what₂.LL →+* D'.what₂.LL) (e : ↥D'.
 
 namespace CopyTw
 
-theorem refl (D : D7) : CopyTw D D (RingHom.id _) (RingEquiv.refl _) :=
-  { GlobalTheory.TwistChoice.SameExport.refl D with
-    sp := HEq.rfl
-    Tau := rfl
-    eTau := HEq.rfl
-    hc := HEq.rfl
-    embLL _ := rfl
-    LL0 _ := rfl
-    emb0 _ _ h _ := by cases h; rfl
-    emb0b _ _ h _ := by cases h; rfl
-    inW1 _ _ h := by cases h; rfl
-    delta := HEq.rfl
-    B := HEq.rfl
-    acgB := HEq.rfl
-    modB := HEq.rfl
-    Theta := HEq.rfl
-    hk := HEq.rfl
-    Bsup := HEq.rfl
-    embB := HEq.rfl
-    thU := HEq.rfl
-    delU := HEq.rfl }
-
 variable {D D' : D7} {ι : D.what₂.LL →+* D'.what₂.LL} {e : ↥D'.LL0 ≃+* ↥D.LL0} (h : CopyTw D D' ι e)
 include h
 
@@ -525,13 +455,6 @@ theorem eFMove_fmCast {S : NX.RatDat D.ntw} {S' : NX.RatDat D'.ntw} {eK : S.Ks �
 
 end CopyTw
 
-section Move
-
-variable {D D' : D7} {ι : D.what₂.LL →+* D'.what₂.LL} {e : ↥D'.LL0 ≃+* ↥D.LL0} (h : CopyTw D D' ι e) (S : NX.RatDat D.ntw)
-  {i : D.ntw.Tw} {i' : D'.ntw.Tw} (hi : HEq i i') (j : ℕ) (b : Bool)
-
-end Move
-
 section Models
 
 variable {D D' : D7} {V : HSp D} {V' : HSp D'} {P : D.what₂.Tau → SPar} {P' : D'.what₂.Tau → SPar}
@@ -566,10 +489,6 @@ def IsCoef (X : RealSide D)
     (c0L : ∀ j : Fin D.R.m, VV D.what₂.LL (FWT.lamV D j) →ₛₗ[D.what₂.embLL] (X.R.cV j).W) : Prop :=
   ∃ gramR c0R, Bridge.FamTie X.R.B X.R.pl (X.R.Sb : Set (Pl D.host.E)) X.R.Q (labLL D) (fun τ => Bridge.lamRdef (Ptw D) τ)
     (fun j τ => Bridge.lamLdef (Vc D j).rank ((j : ℕ) + 1) τ) gramR c0R c0L
-
-theorem exists_isCoef (X : RealSide D) : ∃ c0L, IsCoef X c0L :=
-  let ⟨g, c, c0L, h⟩ := X.char.fam.tie
-  ⟨c0L, g, c, h⟩
 
 theorem sign_at_base_place_eq_embedding (X : RealSide D) : sg0 D X.A3.A = D.what₂.embLL := sgAt_mk _ X.R.hv0
 
@@ -630,49 +549,6 @@ structure RealMove (X : RealSide D) (X' : RealSide D') (ι : D.what₂.LL →+* 
       HEq (X.R.ioP j (PiTensorProduct.tprod ℂ u) (c0L j F)) (X'.R.ioP j' (PiTensorProduct.tprod ℂ u') (c0L' j' F'))
 
 namespace RealMove
-
-def refl (X : RealSide D) : RealMove X X (RingHom.id _) where
-  eK := RingEquiv.refl _
-  γ := MulEquiv.refl _
-  forms j j' h := Fin.ext h ▸ KsIso.refl (X.R.FW j)
-  Pg := HEq.rfl
-  eG _ := HEq.rfl
-  cG := HEq.rfl
-  P0 _ := Iff.rfl
-  ψ0 g g' h := by cases Subtype.ext (a1 := g) (a2 := g') h; rfl
-  ψ := HEq.rfl
-  θ := HEq.rfl
-  eta := HEq.rfl
-  mu0 _ := HEq.rfl
-  Cmu0 _ _ h := by cases Fin.ext h; rfl
-  delAt _ := HEq.rfl
-  Q _ t P h _ := ⟨t, P, h, HEq.rfl⟩
-  ΛV _ _ h := by cases Fin.ext h; rfl
-  ΛW _ _ h := by cases Fin.ext h; rfl
-  βV _ _ h := by cases Fin.ext h; rfl
-  βW _ _ h := by cases Fin.ext h; rfl
-  BV _ _ h := by cases Fin.ext h; rfl
-  vacP _ _ h := by cases Fin.ext h; rfl
-  MW _ _ h := by cases Fin.ext h; exact .refl _
-  v₀ _ _ h := by
-    cases Fin.ext h
-    intro τ τ' hτ
-    cases eq_of_heq hτ
-    rfl
-  read _ _ h _ := by
-    cases Fin.ext h
-    intro v v' hv g g' hg
-    have hv' : v = v' := funext fun τ => Subtype.ext (eq_of_heq (hv τ τ HEq.rfl))
-    cases hv'
-    cases eq_of_heq hg
-    rfl
-  io := by
-    obtain ⟨c, hc⟩ := exists_isCoef X
-    refine ⟨c, c, hc, hc, fun j j' h u u' hu F F' hF => ?_⟩
-    cases Fin.ext h
-    obtain rfl : u = u' := funext fun τ => Subtype.ext (Subtype.ext (eq_of_heq (hu τ τ HEq.rfl)))
-    obtain rfl : F = F' := Subtype.ext ((MvPolynomial.map_id _).symm.trans (eq_of_heq hF))
-    rfl
 
 variable {X : RealSide D} {X' : RealSide D'} {ι : D.what₂.LL →+* D'.what₂.LL} (m : RealMove X X' ι)
 include m

@@ -12,53 +12,11 @@ public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.ExistsTorus
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.MemIffConjugateNotMem
 import Mathlib.Algebra.Module.StablyFree.Basic
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Calculus.ContDiff.WithLp
 public import Mathlib.Analysis.Calculus.FDeriv.Star
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpCStatementPfA
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.OrthonormalFlagTranslateHolds
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.L2NormFundamentalDomain
@@ -138,9 +96,9 @@ theorem exists_canMult_eq (ε : (Fin g ⊕ Fin g → ℤ) → ℤ) (h1 : ∀ m, 
       · left; simp [hC, canMult, dotProduct, Pi.single_apply]
       · right; simp [hC, canMult, dotProduct, Pi.single_apply]
     rcases h1 (Pi.single j 1) with h | h
-    · have : t j = 0 := if_pos h
+    · have : t j = 0 := ite_eq_left h
       rcases e with e | e <;> simp [e, this, h]
-    · have : t j = 1 / 2 := if_neg (by rw [h]; decide)
+    · have : t j = 1 / 2 := ite_eq_right (by rw [h]; decide)
       have e2 : 2 * π * I * (t j : ℂ) = π * I := by rw [this]; push_cast; ring
       rcases e with e | e <;> simp [e, e2, h, Complex.exp_neg]
   intro m
@@ -446,21 +404,21 @@ theorem exists_equiv : ∃ e : X.Ψ × Fin r ≃ Idx A.T.dim, ∀ v p,
     · rintro ⟨σ, a⟩
       by_cases h : σ ∈ X.Ψ
       · have ha : (a : ℕ) < X.p0 := lt_of_lt_of_eq a.2 (A.dim_pos ⟨σ, h⟩)
-        exact ⟨(⟨σ, h⟩, ⟨a, by omega⟩), dif_pos ha⟩
+        exact ⟨(⟨σ, h⟩, ⟨a, by omega⟩), dite_eq_left ha⟩
       · obtain ⟨τ, rfl⟩ : ∃ τ : X.Ψ, σ = ComplexEmbedding.conjugate τ.1 :=
           ⟨⟨_, TorusCoord.conj_mem X h⟩, (TorusAtDataPf.conj_conj_X σ).symm⟩
         have ha : (a : ℕ) < r - X.p0 := lt_of_lt_of_eq a.2 (A.dim_neg τ)
-        refine ⟨(τ, ⟨X.p0 + a, by omega⟩), (dif_neg (by simp)).trans ?_⟩
+        refine ⟨(τ, ⟨X.p0 + a, by omega⟩), (dite_eq_right (by simp)).trans ?_⟩
         simp
     · rw [Fintype.card_sigma, TorusCoord.sum_emb_split X]
       simp [A.dim_pos, A.dim_neg, Nat.add_sub_cancel' hp]
   refine ⟨Equiv.ofBijective f hf, fun v ⟨τ, a⟩ => ?_⟩
   rw [Equiv.ofBijective_apply]
   by_cases h : (a : ℕ) < X.p0
-  · rw [show f (τ, a) = _ from dif_pos h, A.coord_pos, map_mul, conj_ofReal, per_of_lt X _ _ _ h,
+  · rw [show f (τ, a) = _ from dite_eq_left h, A.coord_pos, map_mul, conj_ofReal, per_of_lt X _ _ _ h,
       hermC_conj τ.1 X.Gm_herm]
     rfl
-  · rw [show f (τ, a) = _ from dif_neg h, A.coord_neg, map_mul, conj_ofReal, conj_conj,
+  · rw [show f (τ, a) = _ from dite_eq_right h, A.coord_neg, map_mul, conj_ofReal, conj_conj,
       per_of_le X _ _ _ (not_lt.1 h)]
     congr 1
     have ha : (⟨X.p0 + (a - X.p0), by have := a.2; omega⟩ : Fin r) = a := Fin.ext (by

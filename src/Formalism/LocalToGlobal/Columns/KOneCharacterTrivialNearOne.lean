@@ -69,7 +69,7 @@ theorem mem_R1_zero {n : ℕ} (g : Sp E (n + 0) ≃ₗ[E] Sp E (n + 0)) : g ∈ 
   have hc : ∀ r : Sp E (n + 0) ≃ₗ[E] Sp E (n + 0), Loc.R1cond E n 0 r := fun r => by
     have hU : ∀ i (v : Sp E (n + 0)), v ∈ Loc.Ufl E n 0 i := fun i v l hl => absurd (show l.1 < n + i by have := l.2; omega) hl
     have he : Loc.eN E (n + 0) n = 0 := by
-      funext l; unfold Loc.eN; rw [if_neg (by have := l.2; omega)]; rfl
+      funext l; unfold Loc.eN; rw [ite_eq_right (by have := l.2; omega)]; rfl
     exact ⟨fun i v _ => hU i _, by rw [he, map_zero], fun i => hU i _⟩
   exact ⟨hc g, hc g⁻¹⟩
 

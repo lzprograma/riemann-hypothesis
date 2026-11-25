@@ -61,7 +61,7 @@ theorem tsum_prod_mul {α β : Type} (f : α → ℂ) (g : β → ℂ) :
     · rw [tsum_eq_zero_of_not_summable hg, mul_zero]
       by_cases h0 : ∀ a, f a = 0
       · simp [h0]
-      · push_neg at h0
+      · push Not at h0
         obtain ⟨a, ha⟩ := h0
         refine tsum_eq_zero_of_not_summable fun hs => hg ?_
         have h1 : Summable fun b => f a * g b :=
@@ -70,7 +70,7 @@ theorem tsum_prod_mul {α β : Type} (f : α → ℂ) (g : β → ℂ) :
   · rw [tsum_eq_zero_of_not_summable hf, zero_mul]
     by_cases h0 : ∀ b, g b = 0
     · simp [h0]
-    · push_neg at h0
+    · push Not at h0
       obtain ⟨b, hb⟩ := h0
       refine tsum_eq_zero_of_not_summable fun hs => hf ?_
       have h1 : Summable fun a => f a * g b :=

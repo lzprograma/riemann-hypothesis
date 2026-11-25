@@ -1,5 +1,6 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
 public import Formalism.HermitianCurvature.ActualZetaSmooth
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.EulerZetaGammaInvIdentity
@@ -11,57 +12,10 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuasiDetermi
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferRtt
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeightedSumDifferenceIdentity
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Analysis.Calculus.FDeriv.Star
 import Mathlib.Analysis.Calculus.FDeriv.Symmetric
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Bool
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -77,7 +31,7 @@ namespace Formalism.FourierDecayAlt.P.NFx4
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.NF
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section MulZ
 
@@ -354,15 +308,15 @@ theorem wn_mono (ζ0 : ℂ) (j l a b : ℕ) :
   · simp only [Prod.mk.injEq] at hab
     obtain ⟨rfl, rfl⟩ := hab
     simp [Nat.descFactorial_self, mul_comm]
-  · rw [if_neg hab]
+  · rw [ite_eq_right hab]
     simp only [Prod.mk.injEq, not_and_or] at hab
     have h : (l.descFactorial b : ℂ) * (j.descFactorial a : ℂ) * (if j - a = 0 ∧ l - b = 0 then 1 else 0) = 0 := by
       rcases hab with ha | hb
       · rcases Nat.lt_or_gt_of_ne ha with ha | ha
-        · rw [if_neg (by omega)]; ring
+        · rw [ite_eq_right (by omega)]; ring
         · rw [Nat.descFactorial_eq_zero_iff_lt.mpr ha]; simp
       · rcases Nat.lt_or_gt_of_ne hb with hb | hb
-        · rw [if_neg (by omega)]; ring
+        · rw [ite_eq_right (by omega)]; ring
         · rw [Nat.descFactorial_eq_zero_iff_lt.mpr hb]; simp
     simpa [mul_comm, mul_left_comm, mul_assoc] using h
 
@@ -390,8 +344,8 @@ theorem jet_zero (hU : IsOpen U) (h0 : ζ0 ∈ U) {Λ : (ℂ → ℂ) → E} (h�
       intro i
       rw [wd_eq hU (contDiff_mono ζ0 c.1 c.2).contDiffOn (w i) h0, wn_mono]
       by_cases hi : cnt i = c
-      · rw [if_pos hi, if_pos (by rw [← hi])]
-      · rw [if_neg hi, if_neg (by intro h'; exact hi (by rw [h'])), zero_smul]
+      · rw [ite_eq_left hi, ite_eq_left (by rw [← hi])]
+      · rw [ite_eq_right hi, ite_eq_right (by intro h'; exact hi (by rw [h'])), zero_smul]
     rw [Finset.sum_congr rfl (fun i _ => e1 i), ← Finset.sum_filter, ← Finset.smul_sum] at hc
     have hne : ((c.1.factorial * c.2.factorial : ℕ) : ℂ) ≠ 0 := by
       exact_mod_cast (Nat.mul_pos (Nat.factorial_pos _) (Nat.factorial_pos _)).ne'
@@ -444,8 +398,8 @@ theorem jet_sum {κ : Type*} (s : Finset κ) {Λ : κ → (ℂ → ℂ) → E} (
 theorem jet_ite {Λ : (ℂ → ℂ) → E} (h : JetT U ζ0 Λ) (p : Prop) [Decidable p] :
     JetT U ζ0 (fun f => if p then Λ f else 0) := by
   by_cases hp : p
-  · simpa only [if_pos hp] using h
-  · simpa only [if_neg hp] using (jet_zero' (U := U) (ζ0 := ζ0) (E := E))
+  · simpa only [ite_eq_left hp] using h
+  · simpa only [ite_eq_right hp] using (jet_zero' (U := U) (ζ0 := ζ0) (E := E))
 
 theorem jet_val (A : E) : JetT U ζ0 (fun f => f ζ0 • A) :=
   ⟨Unit, inferInstance, fun _ => [], fun _ => A, fun f _ => by simp [wd]⟩
@@ -473,7 +427,7 @@ namespace Formalism.FourierDecayAlt.P.NFx4
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.NF Formalism.FourierDecayAlt.P.Qx2 Formalism.FourierDecayAlt.P.Qx5
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section Op
 
@@ -491,7 +445,7 @@ def MF (hD : IsOpen D) (f : ℂ → ℂ) : Module.End ℂ (VS k r i D E) :=
   if h : SmoothLev k r i D (fun g => f (zetaL k r z z' i g)) then Mh hD _ h else 0
 
 theorem MF_eq (hD : IsOpen D) {f : ℂ → ℂ} (h : SmoothLev k r i D (fun g => f (zetaL k r z z' i g))) :
-    MF (E := E) z z' hD f = Mh hD _ h := dif_pos h
+    MF (E := E) z z' hD f = Mh hD _ h := dite_eq_left h
 
 theorem ev_MF (hD : IsOpen D) {f : ℂ → ℂ} (h : SmoothLev k r i D (fun g => f (zetaL k r z z' i g)))
     (v : VS k r i D E) {g : Mx k r} (hg : g ∈ Glev k r i ∩ D) :
@@ -578,7 +532,7 @@ theorem exp_Eh (hD : IsOpen D) (hU : IsOpen U) (hDU : ∀ g ∈ D, zetaL k r z z
       Eh hD a b * Mh hD _ (sm_zb z z') - Mh hD _ (sm_zb z z') * Eh hD a b], fun f hf => ?_⟩
   rw [Fin.sum_univ_three]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
-    Matrix.tail_cons, wd, Bool.false_eq_true, if_false, if_true]
+    Matrix.tail_cons, wd, Bool.false_eq_true, ite_false, ite_true]
   rw [add_assoc, ← comm_EMF (E := E) z z' hD hU hDU hf a b]
   abel
 
@@ -657,7 +611,7 @@ namespace Formalism.FourierDecayAlt.P.NFx4
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.NF Formalism.FourierDecayAlt.P.Qx2 Formalism.FourierDecayAlt.P.Qx5
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section Peel
 
@@ -742,15 +696,15 @@ theorem diagonal_monomial_action (j l : ℕ) :
       if j = 0 ∧ l = 0 then tL k r z z' i Y 1 1 h g else 0 := by
   by_cases hjl : j = 0 ∧ l = 0
   · obtain ⟨rfl, rfl⟩ := hjl
-    rw [fm_zero, if_pos ⟨rfl, rfl⟩]
-  · rw [if_neg hjl, diagonal_monomial_vanish z z' hD hh hg Y j l (by omega)]
+    rw [fm_zero, ite_eq_left ⟨rfl, rfl⟩]
+  · rw [ite_eq_right hjl, diagonal_monomial_vanish z z' hD hh hg Y j l (by omega)]
 
 theorem lower_left_monomial_action (j l : ℕ) :
     tL k r z z' i Y 1 0 (fun y => mono (zetaL k r z z' i g) j l (zetaL k r z z' i y) • h y) g =
       if j = 0 ∧ l = 0 then tL k r z z' i Y 1 0 h g else if j = 1 ∧ l = 0 then -tL k r z z' i Y 1 1 h g else 0 := by
   rcases j with _ | j
   · rcases l with _ | l
-    · rw [fm_zero, if_pos ⟨rfl, rfl⟩]
+    · rw [fm_zero, ite_eq_left ⟨rfl, rfl⟩]
     · rw [fm_succ_l, (peel z z' hD (smooth_mul (sm_mono z z' _ 0 l) hh) hg Y _).2.2.2.2.1, sub_self, zero_smul]
       simp
   · rw [fm_succ_j, (peel z z' hD (smooth_mul (sm_mono z z' _ j l) hh) hg Y _).1, sub_self, zero_smul, zero_sub]
@@ -758,21 +712,21 @@ theorem lower_left_monomial_action (j l : ℕ) :
     · obtain ⟨rfl, rfl⟩ := hjl
       rw [fm_zero]
       simp
-    · rw [diagonal_monomial_vanish z z' hD hh hg Y j l (by omega), if_neg (by omega), if_neg (by omega), neg_zero]
+    · rw [diagonal_monomial_vanish z z' hD hh hg Y j l (by omega), ite_eq_right (by omega), ite_eq_right (by omega), neg_zero]
 
 theorem upper_right_monomial_action (j l : ℕ) :
     tL k r z z' i Y 0 1 (fun y => mono (zetaL k r z z' i g) j l (zetaL k r z z' i y) • h y) g =
       if j = 0 ∧ l = 0 then tL k r z z' i Y 0 1 h g else if j = 0 ∧ l = 1 then tL k r z z' i Y 1 1 h g else 0 := by
   rcases j with _ | j
   · rcases l with _ | l
-    · rw [fm_zero, if_pos ⟨rfl, rfl⟩]
+    · rw [fm_zero, ite_eq_left ⟨rfl, rfl⟩]
     · rw [fm_succ_l, (peel z z' hD (smooth_mul (sm_mono z z' _ 0 l) hh) hg Y _).2.2.2.1, sub_self, zero_smul,
         zero_add]
       by_cases hl : l = 0
       · subst hl
         rw [fm_zero]
         simp
-      · rw [diagonal_monomial_vanish z z' hD hh hg Y 0 l (by omega), if_neg (by omega), if_neg (by omega)]
+      · rw [diagonal_monomial_vanish z z' hD hh hg Y 0 l (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
   · rw [fm_succ_j, (peel z z' hD (smooth_mul (sm_mono z z' _ j l) hh) hg Y _).2.2.1, sub_self, zero_smul]
     simp
 
@@ -789,11 +743,11 @@ theorem mono_at (ζ0 : ℂ) (j l : ℕ) :
   · rw [h1]
     by_cases hj : j = 1 ∧ l = 0
     · obtain ⟨rfl, rfl⟩ := hj; simp
-    · rw [if_neg (by rintro ⟨⟩; exact hj ⟨rfl, rfl⟩), if_neg hj]
+    · rw [ite_eq_right (by rintro ⟨⟩; exact hj ⟨rfl, rfl⟩), ite_eq_right hj]
   · rw [h2]
     by_cases hj : j = 0 ∧ l = 1
     · obtain ⟨rfl, rfl⟩ := hj; simp
-    · rw [if_neg (by rintro ⟨⟩; exact hj ⟨rfl, rfl⟩), if_neg hj]
+    · rw [ite_eq_right (by rintro ⟨⟩; exact hj ⟨rfl, rfl⟩), ite_eq_right hj]
 
 section Main
 
@@ -848,7 +802,7 @@ namespace Formalism.FourierDecayAlt.P.NFx4
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.NF Formalism.FourierDecayAlt.P.Qx2 Formalism.FourierDecayAlt.P.Qx5
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 theorem isOpen_normSq_gt (c : ℝ) : IsOpen {w : ℂ | c < Complex.normSq w} :=
   isOpen_lt continuous_const Complex.continuous_normSq
@@ -943,7 +897,7 @@ theorem up_ne {P : M.Par} {l : ℕ} (hl : l ∈ Finset.Icc 1 (P.k - 1)) {ρ ρ' 
   subst e
   have hl' := Finset.mem_Icc.1 hl
   have a := h ⟨l - 1, by omega⟩
-  simp only [Fin.val_mk, Nat.sub_add_cancel hl'.1, if_true] at a
+  simp only [Fin.val_mk, Nat.sub_add_cancel hl'.1, ite_true] at a
   omega
 
 theorem up_unique {P : M.Par} {l : ℕ} {ρ τ τ' : M.Ty P} (h : M.Up P l ρ τ) (h' : M.Up P l ρ τ') : τ = τ' := by
@@ -955,7 +909,7 @@ theorem up_diff {P : M.Par} {l j : ℕ} (hl : l ∈ Finset.Icc 1 (P.k - 1)) {ρ 
   have hl' := Finset.mem_Icc.1 hl
   have a := h ⟨l - 1, by omega⟩
   have b := h' ⟨l - 1, by omega⟩
-  simp only [Fin.val_mk, Nat.sub_add_cancel hl'.1, if_true] at a b
+  simp only [Fin.val_mk, Nat.sub_add_cancel hl'.1, ite_true] at a b
   split_ifs at b with hj
   · omega
   · omega
@@ -991,20 +945,7 @@ theorem localization_quotient_separated_dvd (P : M.Par) (hP : P.OK) {ρ σ : M.T
   exact fun h => h1 h.symm
 
 theorem sep (P : M.Par) (hP : P.OK) {ρ σ : M.Ty P} (h : ρ ≠ σ) : ∃ Y : ℂ, M.xC P ρ Y ≠ M.xC P σ Y := by
-  classical
-  have hex : ∃ i, i ∈ Finset.Icc 1 (P.k - 1) ∧ M.rho P ρ i ≠ M.rho P σ i := by
-    by_contra hc
-    push_neg at hc
-    exact h ((Mx3.tyComplete P hP).2 ρ σ hc)
-  let i := Nat.find hex
-  have hi : i ∈ Finset.Icc 1 (P.k - 1) ∧ M.rho P ρ i ≠ M.rho P σ i := Nat.find_spec hex
-  have hmin : ∀ m ∈ Finset.Icc 1 (P.k - 1), m < i → M.rho P ρ m = M.rho P σ m := by
-    intro m hm hmi
-    by_contra hc
-    exact Nat.find_min hex hmi ⟨hm, hc⟩
-  rcases lt_or_gt_of_ne hi.2 with hl | hl
-  · exact ⟨_, fun e => localization_quotient_separated_dvd P hP hi.1 hl (fun m hm hmi => (hmin m hm hmi).symm) e.symm⟩
-  · exact ⟨_, localization_quotient_separated_dvd P hP hi.1 hl hmin⟩
+  apply _root_.Formalism.FourierDecayAlt.P.Qx8.xC_sep <;> assumption
 
 theorem comm_of_sep {T : Type} [Fintype T] [DecidableEq T] {A : Type} [Ring A] [Algebra ℂ A]
     (κ : (T → ℂ) →ₐ[ℂ] A) (w : A) (e : ℂ → T → ℂ)
@@ -1454,7 +1395,7 @@ theorem nFOrder0OfParts : NF.NFOrder0OfParts := by
         have hi' := Finset.mem_sdiff.1 hi
         have hil : i ≠ l := fun e => hi'.2 (by simp [e])
         have hup := Mx3.rhoUp P l a b hUp i hi'.1
-        rw [if_neg hil, add_zero] at hup
+        rw [ite_eq_right hil, add_zero] at hup
         have hne : M.rho P b i ≠ M.rho P b l := rho_ne P hP b hi'.1 hl hil
         intro h0
         apply hne
@@ -1533,10 +1474,6 @@ end Act
 
 end Formalism.FourierDecayAlt.P.NFx4.NO
 
-namespace Formalism.FourierDecayAlt.P
-
-end Formalism.FourierDecayAlt.P
-
 end
 
 section
@@ -1557,9 +1494,6 @@ def ee (l : ℕ) : ℕ → ℤ := fun m => if m = l then 1 else 0
 
 theorem off_of_up {l : ℕ} {ρ σ : M.Ty P} (h : M.Up P l ρ σ) : Off (ee l) ρ σ := by
   intro i; rw [h i]; simp only [ee]; split_ifs <;> simp
-
-theorem up_of_off {l : ℕ} {ρ σ : M.Ty P} (h : Off (ee l) ρ σ) : M.Up P l ρ σ := by
-  intro i; have := h i; simp only [ee] at this; split_ifs at this ⊢ <;> omega
 
 theorem off_zero {ρ σ : M.Ty P} : Off (0 : ℕ → ℤ) ρ σ ↔ σ = ρ := by
   constructor
@@ -1594,9 +1528,9 @@ theorem Pj_mul (ρ σ : M.Ty P) : Pj κ ρ * Pj κ σ = if ρ = σ then Pj κ ρ
   · rw [show dl ρ * dl σ = 0 from ?_, map_zero]; funext x; simp only [dl, Pi.mul_apply, Pi.zero_apply]
     split_ifs <;> simp_all
 
-theorem Pj_idem (ρ : M.Ty P) : Pj κ ρ * Pj κ ρ = Pj κ ρ := by rw [Pj_mul, if_pos rfl]
+theorem Pj_idem (ρ : M.Ty P) : Pj κ ρ * Pj κ ρ = Pj κ ρ := by rw [Pj_mul, ite_eq_left rfl]
 
-theorem Pj_orth {ρ σ : M.Ty P} (h : ρ ≠ σ) : Pj κ ρ * Pj κ σ = 0 := by rw [Pj_mul, if_neg h]
+theorem Pj_orth {ρ σ : M.Ty P} (h : ρ ≠ σ) : Pj κ ρ * Pj κ σ = 0 := by rw [Pj_mul, ite_eq_right h]
 
 theorem sum_Pj : ∑ ρ, Pj κ ρ = 1 := by
   unfold Pj; rw [← map_sum, ← map_one κ]; congr 1; funext x; simp [dl]
@@ -1604,9 +1538,6 @@ theorem sum_Pj : ∑ ρ, Pj κ ρ = 1 := by
 theorem kap_Pj (f : M.Ty P → ℂ) (ρ : M.Ty P) : κ f * Pj κ ρ = f ρ • Pj κ ρ := by
   unfold Pj; rw [← map_mul, ← map_smul]; congr 1; funext x; simp only [dl, Pi.mul_apply, Pi.smul_apply, smul_eq_mul]
   split_ifs with h <;> simp [h]
-
-theorem Pj_kap (f : M.Ty P → ℂ) (ρ : M.Ty P) : Pj κ ρ * κ f = f ρ • Pj κ ρ := by
-  rw [← kap_Pj]; unfold Pj; rw [← map_mul, ← map_mul, mul_comm]
 
 theorem eq_sum_left (X : A) : X = ∑ σ, Pj κ σ * X := by rw [← Finset.sum_mul, sum_Pj, one_mul]
 
@@ -1644,9 +1575,6 @@ noncomputable section
 
 variable {P : M.Par} {A : Type} [Ring A] [StarRing A] [Algebra ℂ A]
 
-theorem off_neg {δ : ℕ → ℤ} {ρ σ : M.Ty P} (h : Off δ ρ σ) : Off (-δ) σ ρ := by
-  intro i; have := h i; simp only [Pi.neg_apply]; linarith
-
 structure Hyp (d : Q.NFData P A) : Prop where
   kstar : ∀ f : M.Ty P → ℂ, star (d.κ f) = d.κ (fun ρ => star (f ρ))
   kc : ∀ f : M.Ty P → ℂ, Commute (d.κ f) d.L.nab ∧ Commute (d.κ f) d.L.nabs ∧ Commute (d.κ f) d.L.ζ ∧
@@ -1665,9 +1593,6 @@ theorem hyp_of_rel (d : Q.NFData P A) (h : d.Rel) : Hyp d := by
 variable {d : Q.NFData P A} (hd : Hyp d)
 include hd
 
-theorem Pj_star (ρ : M.Ty P) : star (Pj d.κ ρ) = Pj d.κ ρ := by
-  unfold Pj; rw [hd.kstar]; congr 1; funext x; simp only [dl]; split_ifs <;> simp
-
 theorem P_SS_P (l : ℕ) (σ ρ : M.Ty P) :
     Pj d.κ σ * d.SS l * Pj d.κ ρ = if M.Up P l ρ σ then d.SS l * Pj d.κ ρ else 0 := by
   have := hd.rai l (fun ρ => if M.Up P l ρ σ then 1 else 0) (dl σ) (by
@@ -1677,16 +1602,7 @@ theorem P_SS_P (l : ℕ) (σ ρ : M.Ty P) :
   rw [Pj, this, mul_assoc, kap_Pj]; split_ifs <;> simp
 
 theorem supp_SS (l : ℕ) : Supp d.κ (ee l) (d.SS l) := by
-  intro ρ σ h; rw [P_SS_P hd, if_neg]; exact fun h' => h (off_of_up h')
-
-theorem P_SSs_P (l : ℕ) (σ ρ : M.Ty P) :
-    Pj d.κ σ * star (d.SS l) * Pj d.κ ρ = if M.Up P l σ ρ then Pj d.κ σ * star (d.SS l) else 0 := by
-  have := congrArg star (P_SS_P hd l ρ σ)
-  simp only [star_mul, Pj_star hd, ← mul_assoc] at this
-  rw [this]; split_ifs <;> simp [star_mul, Pj_star hd]
-
-theorem supp_SSs (l : ℕ) : Supp d.κ (-ee l) (star (d.SS l)) := by
-  intro ρ σ h; rw [P_SSs_P hd, if_neg]; intro h'; exact h (off_neg (off_of_up h'))
+  intro ρ σ h; rw [P_SS_P hd, ite_eq_right]; exact fun h' => h (off_of_up h')
 
 theorem supp_kcomm {X : A} (hX : ∀ f, Commute (d.κ f) X) : Supp d.κ 0 X := supp_comm d.κ hX
 
@@ -1710,10 +1626,6 @@ theorem kappa_commute_lowering_data (f : M.Ty P → ℂ) (Y : ℂ) : Commute (d.
   obtain ⟨h1, -, -, h4, -, h6⟩ := hd.kc f
   unfold R.LevelData.l0; exact (h1.neg_right).sub_right ((kc_alg hd f _).mul_right (h4.mul_right h6))
 
-theorem kappa_commute_raising_data (f : M.Ty P → ℂ) (Y : ℂ) : Commute (d.κ f) (d.L.m0 Y) := by
-  obtain ⟨-, h2, h3, -, -, h6⟩ := hd.kc f
-  unfold R.LevelData.m0; exact (h2.neg_right).sub_right ((kc_alg hd f _).mul_right (h3.mul_right h6))
-
 theorem kc_kap (f g : M.Ty P → ℂ) : Commute (d.κ f) (d.κ g) := by
   show d.κ f * d.κ g = d.κ g * d.κ f; rw [← map_mul, ← map_mul, mul_comm]
 
@@ -1729,97 +1641,7 @@ noncomputable section
 
 variable {P : M.Par} {A : Type} [Ring A] [StarRing A] [Algebra ℂ A]
 
-theorem normal_form_upper_left (d : Q.NFData P A) (Y : ℂ) : d.QQ Y 0 0 = d.L.GGi * (d.κ fun ρ => M.wC P ρ Y) +
-    d.L.GG * d.x Y * d.L.m0 Y * d.L.l0 Y + d.L.GG * d.L.m0 Y * d.L.GGi * d.weightedSumBis Y + d.S12 Y * d.L.l0 Y +
-    d.L.GGi * d.S4 Y := by simp [Q.NFData.QQ]
-theorem normal_form_upper_right (d : Q.NFData P A) (Y : ℂ) : d.QQ Y 0 1 = d.L.GG * d.x Y * d.L.m0 Y + d.S12 Y := by simp [Q.NFData.QQ]
 theorem normal_form_lower_left (d : Q.NFData P A) (Y : ℂ) : d.QQ Y 1 0 = d.L.GG * d.x Y * d.L.l0 Y + d.weightedSumBis Y := by simp [Q.NFData.QQ]
-theorem normal_form_diagonal (d : Q.NFData P A) (Y : ℂ) : d.QQ Y 1 1 = d.L.GG * d.x Y := by simp [Q.NFData.QQ]
-
-theorem lower_determinant_relation (d : Q.NFData P A) (hS : Wd.IsStart d.QQ (M.qC P)) (Y : ℂ) :
-    d.QQ Y 1 0 * d.QQ (Y + 1) 0 1 - d.QQ Y 1 1 * d.QQ (Y + 1) 0 0 = -algebraMap ℂ A (M.qC P Y) := by
-  have h := congrFun (congrFun (hS.det Y).2 1) 0
-  simp [Matrix.mul_apply, Fin.sum_univ_two, Formalism.YangianSpanCharacter.T.J] at h
-  rw [← h]; abel
-
-theorem ee_not_self {l : ℕ} (hl : l ∈ Icc 1 (P.k - 1)) (ρ : M.Ty P) : ¬ Off (ee l) ρ ρ := by
-  intro h; have := off_eq h (off_zero.2 rfl) l hl; simp [ee] at this
-
-theorem ee_ne {m i : ℕ} (hm : m ∈ Icc 1 (P.k - 1)) (hi : i ∈ Icc 1 (P.k - 1)) {ρ τ : M.Ty P}
-    (h1 : Off (ee m) τ ρ) (h2 : Off (ee i) τ ρ) : i = m := by
-  have := off_eq h1 h2 m hm; simp only [ee] at this; split_ifs at this with e <;> simp_all
-
-variable {d : Q.NFData P A} (hd : Hyp d)
-include hd
-
-theorem term_21_12 (Y Y' : ℂ) (ρ : M.Ty P) (i m : ℕ) (hi : i ∈ Icc 1 (P.k - 1)) (hm : m ∈ Icc 1 (P.k - 1)) :
-    Pj d.κ ρ * (d.SS i * d.κ (fun ρ => M.xEx P {i} ρ Y) * (d.κ (fun ρ => M.xEx P {m} ρ Y') * star (d.SS m))) *
-      Pj d.κ ρ = if i = m then
-        (if h : ∃ τ, M.Up P m τ ρ then M.xEx P {m} h.choose Y * M.xEx P {m} h.choose Y' else 0) •
-          (d.SS m * star (d.SS m) * Pj d.κ ρ) else 0 := by
-  have e : Pj d.κ ρ * (d.SS i * d.κ (fun ρ => M.xEx P {i} ρ Y) * (d.κ (fun ρ => M.xEx P {m} ρ Y') *
-      star (d.SS m))) * Pj d.κ ρ =
-      Pj d.κ ρ * d.SS i * (d.κ (fun ρ => M.xEx P {i} ρ Y) * d.κ (fun ρ => M.xEx P {m} ρ Y') *
-        (star (d.SS m) * Pj d.κ ρ)) := by simp only [mul_assoc]
-  rw [e]
-  by_cases h : ∃ τ, M.Up P m τ ρ
-  · have hτ := h.choose_spec
-    set τ := h.choose
-    have hs : star (d.SS m) * Pj d.κ ρ = Pj d.κ τ * star (d.SS m) * Pj d.κ ρ :=
-      left_single hd (supp_SSs hd m) (off_neg (off_of_up hτ))
-    have e2 : d.κ (fun ρ => M.xEx P {i} ρ Y) * d.κ (fun ρ => M.xEx P {m} ρ Y') * (Pj d.κ τ * star (d.SS m) * Pj d.κ ρ)
-        = (M.xEx P {i} τ Y * M.xEx P {m} τ Y') • (Pj d.κ τ * star (d.SS m) * Pj d.κ ρ) := by
-      rw [← map_mul, ← mul_assoc, ← mul_assoc, kap_Pj]; simp only [Pi.mul_apply, smul_mul_assoc]
-    rw [hs, e2, mul_smul_comm, show Pj d.κ ρ * d.SS i * (Pj d.κ τ * star (d.SS m) * Pj d.κ ρ) =
-      Pj d.κ ρ * d.SS i * Pj d.κ τ * star (d.SS m) * Pj d.κ ρ by simp only [mul_assoc], P_SS_P hd]
-    by_cases him : i = m
-    · subst him
-      rw [if_pos hτ, if_pos rfl, dif_pos h]
-      congr 1
-      rw [show d.SS i * Pj d.κ τ * star (d.SS i) * Pj d.κ ρ = d.SS i * (Pj d.κ τ * star (d.SS i) * Pj d.κ ρ) by
-        simp only [mul_assoc], ← hs, ← mul_assoc]
-    · rw [if_neg (fun h1 => him (ee_ne hm hi (off_of_up hτ) (off_of_up h1))), if_neg him]; simp
-  · have hs : star (d.SS m) * Pj d.κ ρ = 0 := left_none hd (supp_SSs hd m) (fun τ hτ => h ⟨τ, by
-      have := off_neg hτ; rw [neg_neg] at this; exact up_of_off this⟩)
-    rw [hs]; split_ifs <;> simp
-
-theorem blk_21_12 (Y Y' : ℂ) (ρ : M.Ty P) :
-    Pj d.κ ρ * (d.weightedSumBis Y * d.S12 Y') * Pj d.κ ρ = ∑ m ∈ Icc 1 (P.k - 1),
-      (if h : ∃ τ, M.Up P m τ ρ then M.xEx P {m} h.choose Y * M.xEx P {m} h.choose Y' else 0) •
-        (d.SS m * star (d.SS m) * Pj d.κ ρ) := by
-  unfold Q.NFData.weightedSumBis Q.NFData.S12
-  simp only [Finset.mul_sum, Finset.sum_mul]
-  rw [Finset.sum_congr rfl fun m hm => Finset.sum_congr rfl fun i hi => term_21_12 hd Y Y' ρ i m hi hm]
-  simp only [Finset.sum_ite_eq']
-  exact Finset.sum_congr rfl fun m hm => if_pos hm
-
-theorem term_12_21 (Y Y' : ℂ) (ρ : M.Ty P) (m i : ℕ) (hm : m ∈ Icc 1 (P.k - 1)) (hi : i ∈ Icc 1 (P.k - 1)) :
-    Pj d.κ ρ * (d.κ (fun ρ => M.xEx P {m} ρ Y) * star (d.SS m) * (d.SS i * d.κ (fun ρ => M.xEx P {i} ρ Y'))) *
-      Pj d.κ ρ = if m = i then (M.xEx P {m} ρ Y * M.xEx P {m} ρ Y') • (star (d.SS m) * d.SS m * Pj d.κ ρ)
-        else 0 := by
-  have e : Pj d.κ ρ * (d.κ (fun ρ => M.xEx P {m} ρ Y) * star (d.SS m) * (d.SS i * d.κ (fun ρ => M.xEx P {i} ρ Y')))
-      * Pj d.κ ρ = (Pj d.κ ρ * d.κ (fun ρ => M.xEx P {m} ρ Y)) * (star (d.SS m) * d.SS i) *
-        (d.κ (fun ρ => M.xEx P {i} ρ Y') * Pj d.κ ρ) := by simp only [mul_assoc]
-  rw [e, Pj_kap, kap_Pj]
-  simp only [smul_mul_assoc, mul_smul_comm, smul_smul]
-  split_ifs with h
-  · subst h
-    rw [show Pj d.κ ρ * (star (d.SS m) * d.SS m) * Pj d.κ ρ = star (d.SS m) * d.SS m * Pj d.κ ρ by
-      rw [hd.nrm m hm, mul_assoc, kap_Pj, mul_smul_comm, Pj_idem], mul_comm (M.xEx P {m} ρ Y')]
-  · rw [supp_mul d.κ (supp_SSs hd m) (supp_SS hd i) ρ ρ, smul_zero]
-    intro h'
-    have := off_eq h' (off_zero.2 rfl) i hi
-    simp only [Pi.add_apply, Pi.neg_apply, ee, Pi.zero_apply] at this
-    split_ifs at this <;> simp_all
-
-theorem blk_12_21 (Y Y' : ℂ) (ρ : M.Ty P) :
-    Pj d.κ ρ * (d.S12 Y * d.weightedSumBis Y') * Pj d.κ ρ = ∑ m ∈ Icc 1 (P.k - 1),
-      (M.xEx P {m} ρ Y * M.xEx P {m} ρ Y') • (star (d.SS m) * d.SS m * Pj d.κ ρ) := by
-  unfold Q.NFData.weightedSumBis Q.NFData.S12
-  simp only [Finset.mul_sum, Finset.sum_mul]
-  rw [Finset.sum_congr rfl fun x hx => Finset.sum_congr rfl fun i hi => term_12_21 hd Y Y' ρ i x hi hx]
-  simp only [Finset.sum_ite_eq']
-  exact Finset.sum_congr rfl fun m hm => if_pos hm
 
 end
 
@@ -1833,123 +1655,17 @@ noncomputable section
 
 variable {P : M.Par} {A : Type} [Ring A] [StarRing A] [Algebra ℂ A]
 
-theorem up_inj {l : ℕ} {ρ ρ' σ : M.Ty P} (h : M.Up P l ρ σ) (h' : M.Up P l ρ' σ) : ρ = ρ' := by
-  funext i; apply Fin.ext; have := h i; have := h' i; omega
-
-theorem xC_root (ρ : M.Ty P) {l : ℕ} (hl : l ∈ Icc 1 (P.k - 1)) : M.xC P ρ (-(M.rho P ρ l : ℂ)) = 0 :=
-  Finset.prod_eq_zero hl (by ring)
-
 theorem rho_up {l : ℕ} {τ ρ : M.Ty P} (h : M.Up P l τ ρ) {i : ℕ} (hi : i ∈ Icc 1 (P.k - 1)) :
     M.rho P ρ i = M.rho P τ i + if i = l then 1 else 0 := Formalism.FourierDecayAlt.P.rho_raise P l τ ρ h i hi
-
-theorem xEx_below {l : ℕ} {τ ρ : M.Ty P} (h : M.Up P l τ ρ) (Y : ℂ) :
-    M.xEx P {l} τ Y = ∏ i ∈ (Icc 1 (P.k - 1)).erase l, (Y + (M.rho P ρ i : ℂ)) := by
-  unfold M.xEx; rw [Finset.sdiff_singleton_eq_erase]
-  refine Finset.prod_congr rfl fun i hi => ?_
-  rw [Finset.mem_erase] at hi; rw [rho_up h hi.2, if_neg hi.1, add_zero]
-
-theorem xEx_below_zero {l m : ℕ} (hl : l ∈ Icc 1 (P.k - 1)) (hlm : l ≠ m) {τ ρ : M.Ty P} (h : M.Up P m τ ρ) :
-    M.xEx P {m} τ (-(M.rho P ρ l : ℂ)) = 0 := by
-  unfold M.xEx
-  refine Finset.prod_eq_zero (i := l) (by simp [Finset.mem_sdiff, hl, hlm]) ?_
-  rw [rho_up h hl, if_neg hlm]; push_cast; ring
 
 variable {d : Q.NFData P A} (hd : Hyp d)
 include hd
 
-theorem comm_Pj {X : A} (hX : ∀ f, Commute (d.κ f) X) (ρ : M.Ty P) : Pj d.κ ρ * X = X * Pj d.κ ρ := (hX (dl ρ)).eq
-
 theorem kc_GG (f : M.Ty P → ℂ) : Commute (d.κ f) d.L.GG := (hd.kc f).2.2.2.2.1
-theorem kc_GGi (f : M.Ty P → ℂ) : Commute (d.κ f) d.L.GGi := (hd.kc f).2.2.2.2.2
 theorem kappa_commute_coordinate (f : M.Ty P → ℂ) (Y : ℂ) : Commute (d.κ f) (d.x Y) := kc_kap hd f _
 
 theorem kappa_commute_lower_diagonal (f : M.Ty P → ℂ) (Y : ℂ) : Commute (d.κ f) (d.L.GG * d.x Y * d.L.l0 Y) :=
   ((kc_GG hd f).mul_right (kappa_commute_coordinate hd f Y)).mul_right (kappa_commute_lowering_data hd f Y)
-theorem kappa_commute_upper_diagonal (f : M.Ty P → ℂ) (Y : ℂ) : Commute (d.κ f) (d.L.GG * d.x Y * d.L.m0 Y) :=
-  ((kc_GG hd f).mul_right (kappa_commute_coordinate hd f Y)).mul_right (kappa_commute_raising_data hd f Y)
-
-theorem Pj_GGx (Y : ℂ) (ρ : M.Ty P) : Pj d.κ ρ * (d.L.GG * d.x Y) = M.xC P ρ Y • (d.L.GG * Pj d.κ ρ) := by
-  rw [← mul_assoc, comm_Pj hd (kc_GG hd) ρ, mul_assoc, Q.NFData.x, Pj_kap, mul_smul_comm]
-
-theorem projection_lower_sum_zero (Y : ℂ) (ρ : M.Ty P) : Pj d.κ ρ * d.weightedSumBis Y * Pj d.κ ρ = 0 := by
-  unfold Q.NFData.weightedSumBis
-  rw [Finset.mul_sum, Finset.sum_mul]
-  refine Finset.sum_eq_zero fun i hi => ?_
-  rw [← mul_assoc, mul_assoc, kap_Pj, mul_smul_comm, P_SS_P hd, if_neg (fun h => ee_not_self hi ρ (off_of_up h)),
-    smul_zero]
-
-theorem ssDown (hP : P.OK) (hS : Wd.IsStart d.QQ (M.qC P)) {l : ℕ} (hl : l ∈ Icc 1 (P.k - 1)) :
-    d.SS l * star (d.SS l) = d.κ fun ρ => ((M.NrmDown P l ρ : ℝ) : ℂ) := by
-  refine ext_right hd fun ρ => ?_
-  rw [kap_Pj]
-  have hNF := _root_.Formalism.FourierDecayAlt.P.Mx4.nrmFacts P hP l hl
-  by_cases h : ∃ τ, M.Up P l τ ρ
-  · obtain ⟨τ, hτ⟩ := h
-    obtain ⟨Y, hY⟩ : ∃ Y : ℂ, Y = -(M.rho P ρ l : ℂ) := ⟨_, rfl⟩
-    have hx0 : M.xC P ρ Y = 0 := by rw [hY]; exact xC_root ρ hl
-
-    have e1 := congrArg (fun X => Pj d.κ ρ * X * Pj d.κ ρ) (lower_determinant_relation d hS Y)
-    rw [mul_sub, sub_mul, show Pj d.κ ρ * (d.QQ Y 1 1 * d.QQ (Y + 1) 0 0) = Pj d.κ ρ * d.QQ Y 1 1 * d.QQ (Y + 1) 0 0
-      by rw [mul_assoc], normal_form_diagonal, Pj_GGx hd, hx0, zero_smul, zero_mul, zero_mul, sub_zero] at e1
-    rw [show Pj d.κ ρ * -algebraMap ℂ A (M.qC P Y) * Pj d.κ ρ = -(M.qC P Y • Pj d.κ ρ) by
-      rw [mul_neg, neg_mul, ← Algebra.commutes, mul_assoc, Pj_idem, ← Algebra.smul_def]] at e1
-    rw [normal_form_lower_left, normal_form_upper_right] at e1
-    simp only [add_mul, mul_add] at e1
-    have z1 : Pj d.κ ρ * (d.L.GG * d.x Y * d.L.l0 Y * (d.L.GG * d.x (Y + 1) * d.L.m0 (Y + 1))) * Pj d.κ ρ = 0 := by
-      rw [show d.L.GG * d.x Y * d.L.l0 Y * (d.L.GG * d.x (Y + 1) * d.L.m0 (Y + 1)) =
-        d.L.GG * d.x Y * (d.L.l0 Y * (d.L.GG * d.x (Y + 1) * d.L.m0 (Y + 1))) by simp only [mul_assoc], ← mul_assoc,
-        Pj_GGx hd, hx0]; simp
-    have z2 : Pj d.κ ρ * (d.L.GG * d.x Y * d.L.l0 Y * d.S12 (Y + 1)) * Pj d.κ ρ = 0 := by
-      rw [show d.L.GG * d.x Y * d.L.l0 Y * d.S12 (Y + 1) =
-        d.L.GG * d.x Y * (d.L.l0 Y * d.S12 (Y + 1)) by simp only [mul_assoc], ← mul_assoc,
-        Pj_GGx hd, hx0]; simp
-    have z3 : Pj d.κ ρ * (d.weightedSumBis Y * (d.L.GG * d.x (Y + 1) * d.L.m0 (Y + 1))) * Pj d.κ ρ = 0 := by
-      rw [show Pj d.κ ρ * (d.weightedSumBis Y * (d.L.GG * d.x (Y + 1) * d.L.m0 (Y + 1))) * Pj d.κ ρ =
-        Pj d.κ ρ * d.weightedSumBis Y * ((d.L.GG * d.x (Y + 1) * d.L.m0 (Y + 1)) * Pj d.κ ρ) by simp only [mul_assoc],
-        ← comm_Pj hd (kappa_commute_upper_diagonal hd · (Y + 1)) ρ, ← mul_assoc, projection_lower_sum_zero hd, zero_mul]
-    rw [z1, z2, z3, zero_add, zero_add, zero_add, blk_21_12 hd, Finset.sum_eq_single l] at e1
-    · rw [dif_pos ⟨τ, hτ⟩] at e1
-      have hc := (⟨τ, hτ⟩ : ∃ τ, M.Up P l τ ρ).choose_spec
-      have hτ' : (⟨τ, hτ⟩ : ∃ τ, M.Up P l τ ρ).choose = τ := up_inj hc hτ
-      rw [hτ', xEx_below hτ, xEx_below hτ] at e1
-      obtain ⟨hpos, hND⟩ := (hNF τ).1 ρ hτ
-      set D1 : ℝ := ∏ i ∈ (Icc 1 (P.k - 1)).erase l, (M.rho P ρ i - M.rho P ρ l) with hD1
-      set D2 : ℝ := ∏ i ∈ (Icc 1 (P.k - 1)).erase l, (M.rho P ρ i - M.rho P ρ l + 1) with hD2
-      have hN : M.Nrm P l τ = -I.qpoly P.k P.T P.T' P.u P.u' (-M.rho P ρ l) / (D2 * D1) := by
-        unfold M.Nrm
-        have e3 : M.rho P τ l = M.rho P ρ l - 1 := by rw [rho_up hτ hl, if_pos rfl]; ring
-        rw [e3, hD1, hD2, show -(M.rho P ρ l - 1) - 1 = -M.rho P ρ l by ring]
-        congr 2
-        · refine Finset.prod_congr rfl fun i hi => ?_
-          rw [Finset.mem_erase] at hi; rw [rho_up hτ hi.2, if_neg hi.1]; ring
-        · refine Finset.prod_congr rfl fun i hi => ?_
-          rw [Finset.mem_erase] at hi; rw [rho_up hτ hi.2, if_neg hi.1]; ring
-      have hDne : D2 * D1 ≠ 0 := by
-        intro h0; rw [hN, h0, div_zero] at hpos; exact lt_irrefl _ hpos
-      have hq : M.qC P Y = (I.qpoly P.k P.T P.T' P.u P.u' (-M.rho P ρ l) : ℂ) := by
-        rw [hY, ← (Formalism.FourierDecayAlt.P.realPoints_statement P ρ (-M.rho P ρ l)).2]; push_cast; ring_nf
-      have hc1 : (∏ i ∈ (Icc 1 (P.k - 1)).erase l, (Y + (M.rho P ρ i : ℂ))) = (D1 : ℂ) := by
-        rw [hD1]; push_cast; refine Finset.prod_congr rfl fun i _ => ?_; rw [hY]; ring
-      have hc2 : (∏ i ∈ (Icc 1 (P.k - 1)).erase l, (Y + 1 + (M.rho P ρ i : ℂ))) = (D2 : ℂ) := by
-        rw [hD2]; push_cast; refine Finset.prod_congr rfl fun i _ => ?_; rw [hY]; ring
-      rw [hc1, hc2, hq] at e1
-      have hcne : ((D1 : ℂ) * (D2 : ℂ)) ≠ 0 := by
-        rw [mul_comm]; exact_mod_cast hDne
-      have e4 : ((M.NrmDown P l ρ : ℝ) : ℂ) = -(I.qpoly P.k P.T P.T' P.u P.u' (-M.rho P ρ l) : ℂ) / ((D1 : ℂ) * (D2 : ℂ)) := by
-        rw [hND, hN]; push_cast; rw [mul_comm (D2 : ℂ)]
-      have e5 : d.SS l * star (d.SS l) * Pj d.κ ρ =
-          ((D1 : ℂ) * (D2 : ℂ))⁻¹ • (((D1 : ℂ) * (D2 : ℂ)) • (d.SS l * star (d.SS l) * Pj d.κ ρ)) := by
-        rw [smul_smul, inv_mul_cancel₀ hcne, one_smul]
-      rw [e4, e5, e1, smul_neg, smul_smul, ← neg_smul]
-      congr 1; ring
-    · intro m hm hml
-      split_ifs with h'
-      · rw [hY, xEx_below_zero hl (Ne.symm hml) h'.choose_spec]; simp
-      · simp
-    · intro h'; exact absurd hl h'
-  · have hs : star (d.SS l) * Pj d.κ ρ = 0 := left_none hd (supp_SSs hd l) (fun τ hτ => h ⟨τ, by
-      have := off_neg hτ; rw [neg_neg] at this; exact up_of_off this⟩)
-    rw [mul_assoc, hs, mul_zero, (hNF ρ).2.2 h]; simp
 
 end
 
@@ -1971,18 +1687,6 @@ theorem rtt_ent (d : Q.NFData P A) (hS : Wd.IsStart d.QQ (M.qC P)) (u v : ℂ) (
 theorem off_contra {δ δ' : ℕ → ℤ} {ρ σ : M.Ty P} (h : Off δ ρ σ) {m : ℕ} (hm : m ∈ Icc 1 (P.k - 1))
     (hne : δ' m ≠ δ m) : ¬ Off δ' ρ σ := fun h' => hne (off_eq h' h m hm)
 
-theorem box_down {δ : ℕ → ℤ} {ρ σ : M.Ty P} (h : Off δ ρ σ) {l : ℕ} (hl : l ∈ Icc 1 (P.k - 1)) (hδ : δ l = -1) :
-    ∃ τ, M.Up P l τ ρ := by
-  rw [Finset.mem_Icc] at hl
-  refine ⟨fun i => if hi : (i : ℕ) + 1 = l then ⟨(ρ i : ℕ) - 1, by have := (ρ i).isLt; omega⟩ else ρ i, ?_⟩
-  intro i
-  by_cases hi : (i : ℕ) + 1 = l
-  · simp only [dif_pos hi, if_pos hi]
-    have e := h i
-    have e2 : δ ((i : ℕ) + 1) = -1 := by rw [hi]; exact hδ
-    omega
-  · simp [dif_neg hi, if_neg hi]
-
 theorem box_up {δ : ℕ → ℤ} {ρ σ : M.Ty P} (h : Off δ ρ σ) {l : ℕ} (hl : l ∈ Icc 1 (P.k - 1)) (hδ : δ l = 1) :
     ∃ τ, M.Up P l ρ τ := by
   refine ⟨fun i => if hi : (i : ℕ) + 1 = l then ⟨(ρ i : ℕ) + 1, by
@@ -1990,8 +1694,8 @@ theorem box_up {δ : ℕ → ℤ} {ρ σ : M.Ty P} (h : Off δ ρ σ) {l : ℕ} 
       have := (σ i).isLt; omega⟩ else ρ i, ?_⟩
   intro i
   by_cases hi : (i : ℕ) + 1 = l
-  · simp only [dif_pos hi, if_pos hi]
-  · simp [dif_neg hi, if_neg hi]
+  · simp only [dite_eq_left hi, ite_eq_left hi]
+  · simp [dite_eq_right hi, ite_eq_right hi]
 
 theorem gap1 (hP : P.OK) (π : M.Ty P) {i : ℕ} (hi : i ∈ Icc 1 (P.k - 1)) (hi' : i + 1 ∈ Icc 1 (P.k - 1)) :
     M.rho P π (i + 1) + 1 ≤ M.rho P π i := by
@@ -2039,111 +1743,6 @@ include hd
 theorem supp_SSk (i : ℕ) (g : M.Ty P → ℂ) : Supp d.κ (0 + ee i) (d.SS i * d.κ g) :=
   supp_mul d.κ (supp_SS hd i) (supp_kcomm hd (kc_kap hd · g))
 
-theorem supp_kSSs (m : ℕ) (g : M.Ty P → ℂ) : Supp d.κ (-ee m + 0) (d.κ g * star (d.SS m)) :=
-  supp_mul d.κ (supp_kcomm hd (kc_kap hd · g)) (supp_SSs hd m)
-
-theorem term_dn {i m : ℕ} {τ ρ : M.Ty P} (hτ : M.Up P m τ ρ) (σ : M.Ty P) (g h : M.Ty P → ℂ) :
-    Pj d.κ σ * (d.SS i * d.κ g * (d.κ h * star (d.SS m))) * Pj d.κ ρ =
-      (g τ * h τ) • (Pj d.κ σ * (d.SS i * star (d.SS m)) * Pj d.κ ρ) := by
-  have hs : star (d.SS m) * Pj d.κ ρ = Pj d.κ τ * star (d.SS m) * Pj d.κ ρ :=
-    left_single hd (supp_SSs hd m) (off_neg (off_of_up hτ))
-  have e : Pj d.κ σ * (d.SS i * d.κ g * (d.κ h * star (d.SS m))) * Pj d.κ ρ =
-      Pj d.κ σ * d.SS i * (d.κ g * d.κ h * (star (d.SS m) * Pj d.κ ρ)) := by simp only [mul_assoc]
-  rw [e, hs, ← map_mul, show d.κ (g * h) * (Pj d.κ τ * star (d.SS m) * Pj d.κ ρ) =
-    d.κ (g * h) * Pj d.κ τ * star (d.SS m) * Pj d.κ ρ by simp only [mul_assoc], kap_Pj, smul_mul_assoc,
-    smul_mul_assoc, mul_smul_comm]
-  simp only [Pi.mul_apply]
-  congr 1
-  rw [show Pj d.κ τ * star (d.SS m) * Pj d.κ ρ = star (d.SS m) * Pj d.κ ρ from hs.symm]
-  simp only [mul_assoc]
-
-theorem term_up (i m : ℕ) (σ ρ : M.Ty P) (g h : M.Ty P → ℂ) :
-    Pj d.κ σ * (d.κ g * star (d.SS m) * (d.SS i * d.κ h)) * Pj d.κ ρ =
-      (g σ * h ρ) • (Pj d.κ σ * (star (d.SS m) * d.SS i) * Pj d.κ ρ) := by
-  rw [show Pj d.κ σ * (d.κ g * star (d.SS m) * (d.SS i * d.κ h)) * Pj d.κ ρ =
-    (Pj d.κ σ * d.κ g) * (star (d.SS m) * d.SS i) * (d.κ h * Pj d.κ ρ) by simp only [mul_assoc], Pj_kap, kap_Pj]
-  simp only [smul_mul_assoc, mul_smul_comm, smul_smul, mul_comm (h ρ)]
-
-section Mixed
-
-variable {l j : ℕ} (hl : l ∈ Icc 1 (P.k - 1)) (hj : j ∈ Icc 1 (P.k - 1)) (hjl : j ≠ l)
-  {ρ σ : M.Ty P} (hσ : Off (ee j + -ee l) ρ σ)
-include hl hj hjl hσ
-
-theorem mixed_not_off_l {δ : ℕ → ℤ} (h : 0 ≤ δ l) : ¬ Off δ ρ σ := by
-  exact off_contra hσ hl (by rw [show (ee j + -ee l) l = -1 by simp [ee, Ne.symm hjl]]; omega)
-
-theorem mixed_not_off_j {δ : ℕ → ℤ} (h : δ j ≤ 0) : ¬ Off δ ρ σ := by
-  exact off_contra hσ hj (by rw [show (ee j + -ee l) j = 1 by simp [ee, hjl]]; omega)
-
-theorem blk_mixed1 (u v : ℂ) :
-    Pj d.κ σ * (d.QQ u 0 1 * d.QQ v 1 0) * Pj d.κ ρ =
-      (M.xEx P {l} σ u * M.xEx P {j} ρ v) • (Pj d.κ σ * (star (d.SS l) * d.SS j) * Pj d.κ ρ) := by
-  rw [normal_form_upper_right, normal_form_lower_left]
-  simp only [add_mul, mul_add]
-  have z1 : Pj d.κ σ * (d.L.GG * d.x u * d.L.m0 u * (d.L.GG * d.x v * d.L.l0 v)) * Pj d.κ ρ = 0 :=
-    supp_kcomm hd (fun f => (kappa_commute_upper_diagonal hd f u).mul_right (kappa_commute_lower_diagonal hd f v)) ρ σ
-      (mixed_not_off_j hd hl hj hjl hσ (by simp))
-  have z2 : Pj d.κ σ * (d.L.GG * d.x u * d.L.m0 u * d.weightedSumBis v) * Pj d.κ ρ = 0 := by
-    unfold Q.NFData.weightedSumBis; rw [Finset.mul_sum, Finset.mul_sum, Finset.sum_mul]
-    refine Finset.sum_eq_zero fun i _ => ?_
-    exact supp_mul d.κ (supp_kcomm hd (kappa_commute_upper_diagonal hd · u)) (supp_SSk hd i _) ρ σ
-      (mixed_not_off_l hd hl hj hjl hσ (by simp only [Pi.add_apply, Pi.zero_apply, ee]; split_ifs <;> omega))
-  have z3 : Pj d.κ σ * (d.S12 u * (d.L.GG * d.x v * d.L.l0 v)) * Pj d.κ ρ = 0 := by
-    unfold Q.NFData.S12; rw [Finset.sum_mul, Finset.mul_sum, Finset.sum_mul]
-    refine Finset.sum_eq_zero fun m _ => ?_
-    exact supp_mul d.κ (supp_kSSs hd m _) (supp_kcomm hd (kappa_commute_lower_diagonal hd · v)) ρ σ
-      (mixed_not_off_j hd hl hj hjl hσ (by simp only [Pi.add_apply, Pi.neg_apply, Pi.zero_apply, ee]; split_ifs <;> omega))
-  rw [z1, z2, z3, zero_add, zero_add, zero_add]
-  unfold Q.NFData.S12 Q.NFData.weightedSumBis
-  simp only [Finset.mul_sum, Finset.sum_mul]
-  rw [Finset.sum_eq_single j, Finset.sum_eq_single l]
-  · rw [term_up hd]
-  · intro m _ hml
-    rw [term_up hd, supp_mul d.κ (supp_SSs hd m) (supp_SS hd j) ρ σ, smul_zero]
-    exact mixed_not_off_l hd hl hj hjl hσ (by simp only [Pi.add_apply, Pi.neg_apply, ee, if_neg hjl, if_neg (Ne.symm hml)]; omega)
-  · intro h'; exact absurd hl h'
-  · intro i _ hij
-    refine Finset.sum_eq_zero fun m _ => ?_
-    rw [term_up hd, supp_mul d.κ (supp_SSs hd m) (supp_SS hd i) ρ σ, smul_zero]
-    exact mixed_not_off_j hd hl hj hjl hσ (by simp only [Pi.add_apply, Pi.neg_apply, ee, if_neg (Ne.symm hij)]; split_ifs <;> omega)
-  · intro h'; exact absurd hj h'
-
-theorem blk_mixed2 {τ : M.Ty P} (hτ : M.Up P l τ ρ) (u v : ℂ) :
-    Pj d.κ σ * (d.QQ v 1 0 * d.QQ u 0 1) * Pj d.κ ρ =
-      (M.xEx P {j} τ v * M.xEx P {l} τ u) • (Pj d.κ σ * (d.SS j * star (d.SS l)) * Pj d.κ ρ) := by
-  rw [normal_form_upper_right, normal_form_lower_left]
-  simp only [add_mul, mul_add]
-  have z1 : Pj d.κ σ * (d.L.GG * d.x v * d.L.l0 v * (d.L.GG * d.x u * d.L.m0 u)) * Pj d.κ ρ = 0 :=
-    supp_kcomm hd (fun f => (kappa_commute_lower_diagonal hd f v).mul_right (kappa_commute_upper_diagonal hd f u)) ρ σ
-      (mixed_not_off_j hd hl hj hjl hσ (by simp))
-  have z2 : Pj d.κ σ * (d.L.GG * d.x v * d.L.l0 v * d.S12 u) * Pj d.κ ρ = 0 := by
-    unfold Q.NFData.S12; rw [Finset.mul_sum, Finset.mul_sum, Finset.sum_mul]
-    refine Finset.sum_eq_zero fun m _ => ?_
-    exact supp_mul d.κ (supp_kcomm hd (kappa_commute_lower_diagonal hd · v)) (supp_kSSs hd m _) ρ σ
-      (mixed_not_off_j hd hl hj hjl hσ (by simp only [Pi.add_apply, Pi.neg_apply, Pi.zero_apply, ee]; split_ifs <;> omega))
-  have z3 : Pj d.κ σ * (d.weightedSumBis v * (d.L.GG * d.x u * d.L.m0 u)) * Pj d.κ ρ = 0 := by
-    unfold Q.NFData.weightedSumBis; rw [Finset.sum_mul, Finset.mul_sum, Finset.sum_mul]
-    refine Finset.sum_eq_zero fun i _ => ?_
-    exact supp_mul d.κ (supp_SSk hd i _) (supp_kcomm hd (kappa_commute_upper_diagonal hd · u)) ρ σ
-      (mixed_not_off_l hd hl hj hjl hσ (by simp only [Pi.add_apply, Pi.zero_apply, ee]; split_ifs <;> omega))
-  rw [z1, z2, z3, zero_add, zero_add, zero_add]
-  unfold Q.NFData.S12 Q.NFData.weightedSumBis
-  simp only [Finset.mul_sum, Finset.sum_mul]
-  rw [Finset.sum_eq_single l, Finset.sum_eq_single j]
-  · rw [term_dn hd hτ]
-  · intro i _ hij
-    exact supp_mul d.κ (supp_SSk hd i _) (supp_kSSs hd l _) ρ σ
-      (mixed_not_off_j hd hl hj hjl hσ (by simp [ee, Ne.symm hij, hjl]))
-  · intro h'; exact absurd hj h'
-  · intro m _ hml
-    refine Finset.sum_eq_zero fun i _ => ?_
-    exact supp_mul d.κ (supp_SSk hd i _) (supp_kSSs hd m _) ρ σ
-      (mixed_not_off_l hd hl hj hjl hσ (by simp [ee, Ne.symm hml]; try (split_ifs <;> norm_num)))
-  · intro h'; exact absurd hl h'
-
-end Mixed
-
 end
 
 end Formalism.FourierDecayAlt.P.NFx4.SX
@@ -2166,83 +1765,6 @@ theorem prod_shift {l j : ℕ} {τ π : M.Ty P} (h : ∀ i ∈ Icc 1 (P.k - 1), 
   refine Finset.prod_congr rfl fun i hi => ?_
   simp only [Finset.mem_erase] at hi
   rw [h i hi.2.2 hi.2.1 hi.1]
-
-theorem mixed_scalar (hP : P.OK) {l j : ℕ} (hl : l ∈ Icc 1 (P.k - 1)) (hj : j ∈ Icc 1 (P.k - 1)) (hjl : j ≠ l)
-    {τ ρ σ : M.Ty P} (hτ : M.Up P l τ ρ) (hτσ : M.Up P j τ σ) :
-    let u : ℂ := -(M.rho P σ l : ℂ)
-    let v : ℂ := -(M.rho P σ j : ℂ)
-    M.xEx P {l} σ u * M.xEx P {j} ρ v = M.xEx P {j} τ v * M.xEx P {l} τ u ∧
-      M.xEx P {l} σ u * M.xEx P {j} ρ v ≠ 0 ∧ u - v ≠ 0 := by
-  intro u v
-  have hρi : ∀ i ∈ Icc 1 (P.k - 1), M.rho P ρ i = M.rho P τ i + if i = l then 1 else 0 := fun i hi => rho_up hτ hi
-  have hσi : ∀ i ∈ Icc 1 (P.k - 1), M.rho P σ i = M.rho P τ i + if i = j then 1 else 0 := fun i hi => rho_up hτσ hi
-  have sl : M.rho P σ l = M.rho P τ l := by rw [hσi l hl, if_neg (Ne.symm hjl), add_zero]
-  have sj : M.rho P σ j = M.rho P τ j + 1 := by rw [hσi j hj, if_pos rfl]
-  have rl : M.rho P ρ l = M.rho P τ l + 1 := by rw [hρi l hl, if_pos rfl]
-  have A1 := xEx_split l j hj hjl σ u
-  have A2 := xEx_split l j hj hjl τ u
-  have A3 := xEx_split j l hl (Ne.symm hjl) ρ v
-  have A4 := xEx_split j l hl (Ne.symm hjl) τ v
-  rw [prod_shift (τ := τ) (fun i hi h1 h2 => by rw [hσi i hi, if_neg h2, add_zero])] at A1
-  rw [prod_shift (τ := τ) (fun i hi h1 h2 => by rw [hρi i hi, if_neg h2, add_zero])] at A3
-  set Qu := ∏ i ∈ ((Icc 1 (P.k - 1)).erase l).erase j, (u + (M.rho P τ i : ℂ)) with hQu
-  set Qv := ∏ i ∈ ((Icc 1 (P.k - 1)).erase j).erase l, (v + (M.rho P τ i : ℂ)) with hQv
-  have hu : u = -(M.rho P τ l : ℂ) := by simp only [u, sl]
-  have hv : v = -(M.rho P τ j : ℂ) - 1 := by simp only [v, sj]; push_cast; ring
-  have ne1 : (M.rho P τ j : ℂ) - M.rho P τ l + 1 ≠ 0 := by
-    have := rho_ne hP σ hj hl hjl; rw [sj, sl] at this
-    intro h; apply this; exact_mod_cast (by push_cast; linear_combination h : ((M.rho P τ j + 1 : ℝ) : ℂ) = (M.rho P τ l : ℂ))
-  have ne2 : (M.rho P τ l : ℂ) - M.rho P τ j ≠ 0 := by
-    have := rho_ne hP τ hl hj (Ne.symm hjl)
-    intro h; apply this; exact_mod_cast (by linear_combination h : ((M.rho P τ l : ℝ) : ℂ) = (M.rho P τ j : ℂ))
-  have nQu : Qu ≠ 0 := by
-    rw [hQu]; refine Finset.prod_ne_zero_iff.2 fun i hi => ?_
-    simp only [Finset.mem_erase] at hi
-    have := rho_ne hP τ hi.2.2 hl hi.2.1
-    rw [hu]; intro h; apply this; exact_mod_cast (by linear_combination h : ((M.rho P τ i : ℝ) : ℂ) = (M.rho P τ l : ℂ))
-  have nQv : Qv ≠ 0 := by
-    rw [hQv]; refine Finset.prod_ne_zero_iff.2 fun i hi => ?_
-    simp only [Finset.mem_erase] at hi
-    have := rho_ne hP σ hi.2.2 hj hi.2.1
-    rw [hσi i hi.2.2, if_neg hi.2.1, add_zero, sj] at this
-    rw [hv]; intro h; apply this; exact_mod_cast (by push_cast; linear_combination h : ((M.rho P τ i : ℝ) : ℂ) = ((M.rho P τ j + 1 : ℝ) : ℂ))
-  refine ⟨?_, ?_, ?_⟩
-  · rw [A1, A2, A3, A4, sj, rl, hu, hv]; push_cast; ring
-  · rw [A1, A3, sj, rl, hu, hv]; push_cast
-    have e : (-(M.rho P τ l : ℂ) + ((M.rho P τ j : ℂ) + 1)) * Qu * ((-(M.rho P τ j : ℂ) - 1 + ((M.rho P τ l : ℂ) + 1)) * Qv)
-      = ((M.rho P τ j : ℂ) - M.rho P τ l + 1) * ((M.rho P τ l : ℂ) - M.rho P τ j) * Qu * Qv := by ring
-    rw [e]; exact mul_ne_zero (mul_ne_zero (mul_ne_zero ne1 ne2) nQu) nQv
-  · rw [hu, hv]; intro h; apply ne1; linear_combination h
-
-variable {d : Q.NFData P A} (hd : Hyp d)
-include hd
-
-theorem ssMixed (hP : P.OK) (hS : Wd.IsStart d.QQ (M.qC P)) {l j : ℕ} (hl : l ∈ Icc 1 (P.k - 1))
-    (hj : j ∈ Icc 1 (P.k - 1)) (hjl : j ≠ l) : star (d.SS l) * d.SS j = d.SS j * star (d.SS l) := by
-  refine ext_right hd fun ρ => ?_
-  have s1 : Supp d.κ (ee j + -ee l) (star (d.SS l) * d.SS j) := supp_mul d.κ (supp_SSs hd l) (supp_SS hd j)
-  have s2 : Supp d.κ (-ee l + ee j) (d.SS j * star (d.SS l)) := supp_mul d.κ (supp_SS hd j) (supp_SSs hd l)
-  by_cases hex : ∃ σ, Off (ee j + -ee l) ρ σ
-  · obtain ⟨σ, hσ⟩ := hex
-    obtain ⟨τ, hτ⟩ := box_down hσ hl (by simp [ee, Ne.symm hjl])
-    have hfun : ee l + (ee j + -ee l) = ee j := by
-      funext m; simp only [Pi.add_apply, Pi.neg_apply]; ring
-    have hτσ : M.Up P j τ σ := up_of_off (off_congr (off_comp (off_of_up hτ) hσ) hfun)
-    rw [left_single hd s1 hσ, left_single hd s2 (off_congr hσ (add_comm _ _))]
-    obtain ⟨hαβ, hα, huv⟩ := mixed_scalar hP hl hj hjl hτ hτσ
-    have e := congrArg (fun X => Pj d.κ σ * X * Pj d.κ ρ) (rtt_ent d hS (-(M.rho P σ l : ℂ)) (-(M.rho P σ j : ℂ)) 0 1 1 0)
-    have ea : ∀ (Y : ℂ) (X : A), Pj d.κ σ * (d.QQ Y 1 1 * X) * Pj d.κ ρ = Pj d.κ σ * d.QQ Y 1 1 * X * Pj d.κ ρ := by
-      intro Y X; simp only [mul_assoc]
-    rw [mul_sub, sub_mul, ea, ea, normal_form_diagonal, normal_form_diagonal, Pj_GGx hd, Pj_GGx hd, xC_root σ hl, xC_root σ hj] at e
-    rw [mul_smul_comm, smul_mul_assoc, mul_sub, sub_mul, blk_mixed1 hd hl hj hjl hσ, blk_mixed2 hd hl hj hjl hσ hτ,
-      ← hαβ] at e
-    simp only [zero_smul, zero_mul, sub_zero] at e
-    rw [← smul_sub, smul_smul, smul_eq_zero] at e
-    rcases e with h | h
-    · exact absurd h (mul_ne_zero huv hα)
-    · exact sub_eq_zero.1 h
-  · simp only [not_exists] at hex
-    rw [left_none hd s1 hex, left_none hd s2 (fun σ h => hex σ (off_congr h (add_comm _ _)))]
 
 end
 
@@ -2273,10 +1795,10 @@ theorem comm_scalar (hP : P.OK) {l j : ℕ} (hl : l ∈ Icc 1 (P.k - 1)) (hj : j
   have eA := xEx_split j l hl (Ne.symm hjl) ρ (-(M.rho P ρ j : ℂ))
   have e1 := xEx_split j l hl (Ne.symm hjl) τl (-(M.rho P ρ j : ℂ))
   have e2 := xEx_split l j hj hjl τj (-(M.rho P ρ l : ℂ))
-  rw [prod_shift (τ := ρ) (fun i hi h1 h2 => by rw [hli i hi, if_neg h2, add_zero])] at e1
-  rw [prod_shift (τ := ρ) (fun i hi h1 h2 => by rw [hji i hi, if_neg h2, add_zero])] at e2
+  rw [prod_shift (τ := ρ) (fun i hi h1 h2 => by rw [hli i hi, ite_eq_right h2, add_zero])] at e1
+  rw [prod_shift (τ := ρ) (fun i hi h1 h2 => by rw [hji i hi, ite_eq_right h2, add_zero])] at e2
   rw [← hB1] at eA e1; rw [← hB2] at eC e2
-  rw [hli l hl, if_pos rfl] at e1; rw [hji j hj, if_pos rfl] at e2
+  rw [hli l hl, ite_eq_left rfl] at e1; rw [hji j hj, ite_eq_left rfl] at e2
   have nB1 : B1 ≠ 0 := by
     rw [hB1]; refine Finset.prod_ne_zero_iff.2 fun i hi => ?_
     simp only [Finset.mem_erase] at hi
@@ -2433,450 +1955,6 @@ theorem ssComm (hP : P.OK) (hS : Wd.IsStart d.QQ (M.qC P)) {l j : ℕ} (hl : l �
 end
 
 end Formalism.FourierDecayAlt.P.NFx4.SX
-
-namespace Formalism.FourierDecayAlt.P.NFx4.SX
-
-open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.NF Formalism.REAL Formalism.QuantumDeterminants
-
-noncomputable section
-
-section Op
-
-variable {A : Type} [Ring A] [Algebra ℂ A] {r : ℕ} (L : R.LevelData A r)
-
-theorem zeta_mem_functions : L.ζ ∈ Set.range L.c ∪ Set.range L.ci ∪ Set.range L.cb ∪ Set.range L.cbi ∪
-    {L.ζ, L.ζi, L.ζb, L.ζbi, L.GG, L.GGi} := Or.inr (Or.inl rfl)
-theorem fnmem_zb : L.ζb ∈ Set.range L.c ∪ Set.range L.ci ∪ Set.range L.cb ∪ Set.range L.cbi ∪
-    {L.ζ, L.ζi, L.ζb, L.ζbi, L.GG, L.GGi} := Or.inr (Or.inr (Or.inr (Or.inl rfl)))
-theorem fnmem_G : L.GG ∈ Set.range L.c ∪ Set.range L.ci ∪ Set.range L.cb ∪ Set.range L.cbi ∪
-    {L.ζ, L.ζi, L.ζb, L.ζbi, L.GG, L.GGi} := Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl)))))
-
-theorem zG : L.ζ * L.GG = L.GG * L.ζ := L.fns_comm _ (zeta_mem_functions L) _ (fnmem_G L)
-theorem zbG : L.ζb * L.GG = L.GG * L.ζb := L.fns_comm _ (fnmem_zb L) _ (fnmem_G L)
-theorem zzb : L.ζb * L.ζ = L.ζ * L.ζb := L.fns_comm _ (fnmem_zb L) _ (zeta_mem_functions L)
-
-theorem Gs : L.GG * L.nabs = L.nabs * L.GG + L.ζ := by rw [L.nabs_GG]; abel
-
-theorem M3 : L.GG * (L.ζb * L.GGi) = L.ζb := by rw [← mul_assoc, ← zbG, mul_assoc, L.GG_GGi, mul_one]
-theorem M6 : L.GG * (L.ζ * L.GGi) = L.ζ := by rw [← mul_assoc, ← zG, mul_assoc, L.GG_GGi, mul_one]
-theorem GiG (X : A) : L.GGi * (L.GG * X) = X := by rw [← mul_assoc, L.GGi_GG, one_mul]
-theorem GGi' (X : A) : L.GG * (L.GGi * X) = X := by rw [← mul_assoc, L.GG_GGi, one_mul]
-
-theorem M1 : L.GG * (L.nabs * (L.GG * L.nab)) = L.GG * (L.GG * (L.nabs * L.nab)) - L.GG * (L.ζ * L.nab) := by
-  rw [← mul_assoc L.nabs, L.nabs_GG, sub_mul, mul_sub, mul_assoc]
-theorem M2 : L.GG * (L.nab * (L.GG * L.nabs)) = L.GG * (L.GG * (L.nab * L.nabs)) + L.GG * (L.ζb * L.nabs) := by
-  rw [← mul_assoc L.nab, L.nab_GG, add_mul, mul_add, mul_assoc]
-theorem M3' : L.GG * (L.nabs * (L.GG * (L.ζb * L.GGi))) = L.GG * (L.nabs * L.ζb) := by rw [M3]
-theorem M4 : L.GG * (L.ζ * (L.GGi * (L.GG * L.nab))) = L.GG * (L.ζ * L.nab) := by rw [GiG]
-theorem M5 : L.GG * (L.ζ * (L.GGi * (L.GG * (L.ζb * L.GGi)))) = L.ζ * L.ζb := by
-  rw [GiG, ← mul_assoc, ← zG, mul_assoc, M3]
-theorem M6' : L.GG * (L.nab * (L.GG * (L.ζ * L.GGi))) = L.GG * (L.nab * L.ζ) := by rw [M6]
-theorem M7 : L.GG * (L.ζb * (L.GGi * (L.GG * L.nabs))) = L.GG * (L.ζb * L.nabs) := by rw [GiG]
-theorem M8 : L.GG * (L.ζb * (L.GGi * (L.GG * (L.ζ * L.GGi)))) = L.ζ * L.ζb := by
-  rw [GiG, ← mul_assoc, ← zbG, mul_assoc, M6, zzb]
-theorem M9 : L.GG * (L.GG * (L.nabs * (L.ζb * L.GGi))) = L.GG * (L.nabs * L.ζb) + L.ζ * L.ζb := by
-  rw [← mul_assoc L.GG L.nabs, Gs, add_mul, mul_add, mul_assoc, M3, ← mul_assoc L.GG L.ζ, ← zG, mul_assoc, M3]
-theorem gamma_zeta_nabla_cancel : L.GG * (L.GG * (L.ζ * (L.GGi * L.nab))) = L.GG * (L.ζ * L.nab) := by
-  rw [← mul_assoc L.GG L.ζ, ← zG, mul_assoc, GGi']
-theorem gamma_zeta_conj_cancel : L.GG * (L.GG * (L.ζ * (L.GGi * (L.ζb * L.GGi)))) = L.ζ * L.ζb := by
-  rw [← mul_assoc L.GG L.ζ, ← zG, mul_assoc, GGi', ← mul_assoc, ← zG, mul_assoc, M3]
-
-theorem s_zb : L.GG * (L.nabs * L.ζb) = L.GG * (L.ζb * L.nabs) - L.GG := by rw [L.nabs_ζb, mul_sub, mul_one]
-theorem gamma_nabla_zeta_commutator : L.GG * (L.nab * L.ζ) = L.GG * (L.ζ * L.nab) + L.GG := by rw [L.nab_ζ, mul_add, mul_one]
-
-theorem alg_mul (c : ℂ) (X : A) : algebraMap ℂ A c * X = c • X := (Algebra.smul_def c X).symm
-
-theorem op_identity (u v : ℂ) :
-    (u - v) • (L.GG * L.m0 u * L.GG * L.l0 v - L.GG * L.l0 v * L.GG * L.m0 u) -
-      L.GG * L.GG * (L.m0 v * L.l0 v - L.m0 u * L.l0 u) =
-    (u - v) • (L.GG * L.GG * (L.nabs * L.nab - L.nab * L.nabs) +
-      (1 + u + v) • (L.ζ * L.ζb - L.GG)) := by
-  unfold R.LevelData.m0 R.LevelData.l0
-  simp only [alg_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_mul_assoc,
-    mul_smul_comm, mul_assoc, smul_add, smul_sub, smul_neg, neg_sub]
-  simp only [M1, M2, M3', M4, M5, M6', M7, M8, M9, gamma_zeta_nabla_cancel, gamma_zeta_conj_cancel, s_zb, gamma_nabla_zeta_commutator]
-  module
-
-end Op
-
-end
-
-end Formalism.FourierDecayAlt.P.NFx4.SX
-
-namespace Formalism.FourierDecayAlt.P.NFx4.SX
-
-open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.NF Formalism.REAL Formalism.QuantumDeterminants
-
-noncomputable section
-
-variable {P : M.Par} {A : Type} [Ring A] [StarRing A] [Algebra ℂ A]
-
-def cdn (ρ : M.Ty P) (m : ℕ) (Y Y' : ℂ) : ℂ :=
-  if h : ∃ τ, M.Up P m τ ρ then M.xEx P {m} h.choose Y * M.xEx P {m} h.choose Y' else 0
-
-def Cf (ρ : M.Ty P) (u v : ℂ) : ℂ :=
-  M.xC P ρ u * M.wC P ρ v - M.xC P ρ v * M.wC P ρ u -
-    (u - v) * (∑ m ∈ Icc 1 (P.k - 1), M.xEx P {m} ρ u * M.xEx P {m} ρ v * ((M.Nrm P m ρ : ℝ) : ℂ) -
-      ∑ m ∈ Icc 1 (P.k - 1), cdn ρ m v u * ((M.NrmDown P m ρ : ℝ) : ℂ))
-
-variable {d : Q.NFData P A} (hd : Hyp d)
-include hd
-
-theorem Pj_Z_Pj {Z : A} (hZ : ∀ f, Commute (d.κ f) Z) (ρ : M.Ty P) : Pj d.κ ρ * Z * Pj d.κ ρ = Z * Pj d.κ ρ := by
-  rw [comm_Pj hd hZ, mul_assoc, Pj_idem]
-
-theorem Pj_kkZ {Z : A} (hZ : ∀ f, Commute (d.κ f) Z) (f g : M.Ty P → ℂ) (ρ : M.Ty P) :
-    Pj d.κ ρ * (d.κ f * d.κ g * Z) * Pj d.κ ρ = (f ρ * g ρ) • (Z * Pj d.κ ρ) := by
-  rw [show Pj d.κ ρ * (d.κ f * d.κ g * Z) * Pj d.κ ρ = Pj d.κ ρ * d.κ f * d.κ g * Z * Pj d.κ ρ by simp only [mul_assoc],
-    Pj_kap, smul_mul_assoc, smul_mul_assoc, smul_mul_assoc, Pj_kap, smul_mul_assoc, smul_mul_assoc, smul_smul,
-    Pj_Z_Pj hd hZ]
-
-theorem Pj_kZ {Z : A} (hZ : ∀ f, Commute (d.κ f) Z) (f : M.Ty P → ℂ) (ρ : M.Ty P) :
-    Pj d.κ ρ * (d.κ f * Z) * Pj d.κ ρ = f ρ • (Z * Pj d.κ ρ) := by
-  rw [← mul_assoc, Pj_kap, smul_mul_assoc, smul_mul_assoc, Pj_Z_Pj hd hZ]
-
-theorem projection_upper_sum_zero (Y : ℂ) (ρ : M.Ty P) : Pj d.κ ρ * d.S12 Y * Pj d.κ ρ = 0 := by
-  unfold Q.NFData.S12
-  rw [Finset.mul_sum, Finset.sum_mul]
-  refine Finset.sum_eq_zero fun i hi => ?_
-  rw [← mul_assoc, Pj_kap, smul_mul_assoc, smul_mul_assoc, P_SSs_P hd, if_neg (fun h => ee_not_self hi ρ (off_of_up h)),
-    smul_zero]
-
-theorem projection_quartic_zero (Y : ℂ) (ρ : M.Ty P) : Pj d.κ ρ * d.S4 Y * Pj d.κ ρ = 0 := by
-  unfold Q.NFData.S4
-  simp only [Finset.mul_sum, Finset.sum_mul]
-  refine Finset.sum_eq_zero fun l hl => ?_
-  refine Finset.sum_eq_zero fun j hj => ?_
-  rw [Finset.mem_erase] at hj
-  refine supp_mul d.κ (supp_mul d.κ (supp_SSs hd l) (supp_SS hd j)) (supp_kcomm hd (kc_kap hd · _)) ρ ρ ?_
-  intro h
-  have := off_eq h (off_zero.2 rfl) j hj.2
-  simp [ee, hj.1] at this
-
-theorem kappa_commute_lowering_gamma (f : M.Ty P → ℂ) (u v : ℂ) : Commute (d.κ f) (d.L.GG * d.L.m0 u * d.L.GG * d.L.l0 v) :=
-  (((kc_GG hd f).mul_right (kappa_commute_raising_data hd f u)).mul_right (kc_GG hd f)).mul_right (kappa_commute_lowering_data hd f v)
-theorem kappa_commute_gamma_pair (f : M.Ty P → ℂ) (u v : ℂ) : Commute (d.κ f) (d.L.GG * d.L.l0 v * d.L.GG * d.L.m0 u) :=
-  (((kc_GG hd f).mul_right (kappa_commute_lowering_data hd f v)).mul_right (kc_GG hd f)).mul_right (kappa_commute_raising_data hd f u)
-theorem kappa_commute_gamma_product (f : M.Ty P → ℂ) (v : ℂ) : Commute (d.κ f) (d.L.GG * d.L.m0 v * d.L.l0 v) :=
-  ((kc_GG hd f).mul_right (kappa_commute_raising_data hd f v)).mul_right (kappa_commute_lowering_data hd f v)
-
-theorem upper_lower_diagonal_product (u v : ℂ) : d.L.GG * d.x u * d.L.m0 u * (d.L.GG * d.x v * d.L.l0 v) =
-    d.x u * d.x v * (d.L.GG * d.L.m0 u * d.L.GG * d.L.l0 v) := by
-  have c1 := (kc_GG hd (fun ρ => M.xC P ρ u)).eq
-  have c2 := ((kappa_commute_raising_data hd (fun ρ => M.xC P ρ v) u).mul_right (kc_GG hd (fun ρ => M.xC P ρ v))).eq
-  have c3 := (kc_GG hd (fun ρ => M.xC P ρ v)).eq
-  unfold Q.NFData.x at *
-  calc d.L.GG * d.κ (fun ρ => M.xC P ρ u) * d.L.m0 u * (d.L.GG * d.κ (fun ρ => M.xC P ρ v) * d.L.l0 v)
-      = (d.L.GG * d.κ (fun ρ => M.xC P ρ u)) * ((d.L.m0 u * d.L.GG) * d.κ (fun ρ => M.xC P ρ v)) * d.L.l0 v := by
-        simp only [mul_assoc]
-    _ = (d.κ (fun ρ => M.xC P ρ u) * d.L.GG) * (d.κ (fun ρ => M.xC P ρ v) * (d.L.m0 u * d.L.GG)) * d.L.l0 v := by
-        rw [c1, c2]
-    _ = d.κ (fun ρ => M.xC P ρ u) * (d.L.GG * d.κ (fun ρ => M.xC P ρ v)) * (d.L.m0 u * d.L.GG) * d.L.l0 v := by
-        simp only [mul_assoc]
-    _ = d.κ (fun ρ => M.xC P ρ u) * (d.κ (fun ρ => M.xC P ρ v) * d.L.GG) * (d.L.m0 u * d.L.GG) * d.L.l0 v := by
-        rw [c3]
-    _ = _ := by simp only [mul_assoc]
-
-theorem lower_upper_diagonal_product (u v : ℂ) : d.L.GG * d.x v * d.L.l0 v * (d.L.GG * d.x u * d.L.m0 u) =
-    d.x v * d.x u * (d.L.GG * d.L.l0 v * d.L.GG * d.L.m0 u) := by
-  have c1 := (kc_GG hd (fun ρ => M.xC P ρ v)).eq
-  have c2 := ((kappa_commute_lowering_data hd (fun ρ => M.xC P ρ u) v).mul_right (kc_GG hd (fun ρ => M.xC P ρ u))).eq
-  have c3 := (kc_GG hd (fun ρ => M.xC P ρ u)).eq
-  unfold Q.NFData.x at *
-  calc d.L.GG * d.κ (fun ρ => M.xC P ρ v) * d.L.l0 v * (d.L.GG * d.κ (fun ρ => M.xC P ρ u) * d.L.m0 u)
-      = (d.L.GG * d.κ (fun ρ => M.xC P ρ v)) * ((d.L.l0 v * d.L.GG) * d.κ (fun ρ => M.xC P ρ u)) * d.L.m0 u := by
-        simp only [mul_assoc]
-    _ = (d.κ (fun ρ => M.xC P ρ v) * d.L.GG) * (d.κ (fun ρ => M.xC P ρ u) * (d.L.l0 v * d.L.GG)) * d.L.m0 u := by
-        rw [c1, c2]
-    _ = d.κ (fun ρ => M.xC P ρ v) * (d.L.GG * d.κ (fun ρ => M.xC P ρ u)) * (d.L.l0 v * d.L.GG) * d.L.m0 u := by
-        simp only [mul_assoc]
-    _ = d.κ (fun ρ => M.xC P ρ v) * (d.κ (fun ρ => M.xC P ρ u) * d.L.GG) * (d.L.l0 v * d.L.GG) * d.L.m0 u := by
-        rw [c3]
-    _ = _ := by simp only [mul_assoc]
-
-theorem diagonal_upper_lowering_factor (v : ℂ) : d.L.GG * d.x v * d.L.m0 v * d.L.l0 v = d.x v * (d.L.GG * d.L.m0 v * d.L.l0 v) := by
-  unfold Q.NFData.x
-  simp only [← (kc_GG hd (fun ρ => M.xC P ρ v)).eq, mul_assoc]
-
-theorem projection_upper_left_block (v : ℂ) (ρ : M.Ty P) :
-    Pj d.κ ρ * d.QQ v 0 0 * Pj d.κ ρ = M.wC P ρ v • (d.L.GGi * Pj d.κ ρ) +
-      M.xC P ρ v • (d.L.GG * d.L.m0 v * d.L.l0 v * Pj d.κ ρ) := by
-  rw [normal_form_upper_left]
-  simp only [mul_add, add_mul]
-  have z1 : Pj d.κ ρ * (d.L.GG * d.L.m0 v * d.L.GGi * d.weightedSumBis v) * Pj d.κ ρ = 0 := by
-    rw [show Pj d.κ ρ * (d.L.GG * d.L.m0 v * d.L.GGi * d.weightedSumBis v) * Pj d.κ ρ =
-      (Pj d.κ ρ * (d.L.GG * d.L.m0 v * d.L.GGi)) * d.weightedSumBis v * Pj d.κ ρ by simp only [mul_assoc],
-      comm_Pj hd (fun f => ((kc_GG hd f).mul_right (kappa_commute_raising_data hd f v)).mul_right (kc_GGi hd f)),
-      show d.L.GG * d.L.m0 v * d.L.GGi * Pj d.κ ρ * d.weightedSumBis v * Pj d.κ ρ =
-        d.L.GG * d.L.m0 v * d.L.GGi * (Pj d.κ ρ * d.weightedSumBis v * Pj d.κ ρ) by simp only [mul_assoc], projection_lower_sum_zero hd, mul_zero]
-  have z2 : Pj d.κ ρ * (d.S12 v * d.L.l0 v) * Pj d.κ ρ = 0 := by
-    rw [show Pj d.κ ρ * (d.S12 v * d.L.l0 v) * Pj d.κ ρ = Pj d.κ ρ * d.S12 v * (d.L.l0 v * Pj d.κ ρ) by
-      simp only [mul_assoc], ← comm_Pj hd (kappa_commute_lowering_data hd · v), ← mul_assoc, projection_upper_sum_zero hd, zero_mul]
-  have z3 : Pj d.κ ρ * (d.L.GGi * d.S4 v) * Pj d.κ ρ = 0 := by
-    rw [← mul_assoc, comm_Pj hd (kc_GGi hd), mul_assoc, mul_assoc, ← mul_assoc (Pj d.κ ρ), projection_quartic_zero hd, mul_zero]
-  rw [z1, z2, z3, add_zero, add_zero, add_zero]
-  congr 1
-  · rw [show Pj d.κ ρ * (d.L.GGi * d.κ (fun ρ => M.wC P ρ v)) * Pj d.κ ρ =
-      (Pj d.κ ρ * d.L.GGi) * (d.κ (fun ρ => M.wC P ρ v) * Pj d.κ ρ) by simp only [mul_assoc], kap_Pj,
-      comm_Pj hd (kc_GGi hd), mul_smul_comm, mul_assoc, Pj_idem]
-  · rw [diagonal_upper_lowering_factor hd, Q.NFData.x, Pj_kZ hd (kappa_commute_gamma_product hd · v)]
-
-end
-
-end Formalism.FourierDecayAlt.P.NFx4.SX
-
-namespace Formalism.FourierDecayAlt.P.NFx4.SX
-
-open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.NF Formalism.REAL Formalism.QuantumDeterminants
-
-noncomputable section
-
-variable {P : M.Par} {A : Type} [Ring A] [StarRing A] [Algebra ℂ A]
-variable {d : Q.NFData P A} (hd : Hyp d)
-include hd
-
-theorem blk_12_21' (u v : ℂ) (ρ : M.Ty P) :
-    Pj d.κ ρ * (d.QQ u 0 1 * d.QQ v 1 0) * Pj d.κ ρ =
-      (M.xC P ρ u * M.xC P ρ v) • (d.L.GG * d.L.m0 u * d.L.GG * d.L.l0 v * Pj d.κ ρ) +
-      (∑ m ∈ Icc 1 (P.k - 1), M.xEx P {m} ρ u * M.xEx P {m} ρ v * ((M.Nrm P m ρ : ℝ) : ℂ)) • Pj d.κ ρ := by
-  rw [normal_form_upper_right, normal_form_lower_left]
-  simp only [add_mul, mul_add]
-  have z1 : Pj d.κ ρ * (d.L.GG * d.x u * d.L.m0 u * d.weightedSumBis v) * Pj d.κ ρ = 0 := by
-    rw [show Pj d.κ ρ * (d.L.GG * d.x u * d.L.m0 u * d.weightedSumBis v) * Pj d.κ ρ =
-      (Pj d.κ ρ * (d.L.GG * d.x u * d.L.m0 u)) * d.weightedSumBis v * Pj d.κ ρ by simp only [mul_assoc],
-      comm_Pj hd (kappa_commute_upper_diagonal hd · u), mul_assoc, mul_assoc, ← mul_assoc (Pj d.κ ρ), projection_lower_sum_zero hd, mul_zero]
-  have z2 : Pj d.κ ρ * (d.S12 u * (d.L.GG * d.x v * d.L.l0 v)) * Pj d.κ ρ = 0 := by
-    rw [show Pj d.κ ρ * (d.S12 u * (d.L.GG * d.x v * d.L.l0 v)) * Pj d.κ ρ =
-      Pj d.κ ρ * d.S12 u * ((d.L.GG * d.x v * d.L.l0 v) * Pj d.κ ρ) by simp only [mul_assoc],
-      ← comm_Pj hd (kappa_commute_lower_diagonal hd · v), ← mul_assoc, projection_upper_sum_zero hd, zero_mul]
-  rw [z1, z2, add_zero, zero_add, upper_lower_diagonal_product hd, Q.NFData.x, Q.NFData.x, Pj_kkZ hd (kappa_commute_lowering_gamma hd · u v), blk_12_21 hd,
-    Finset.sum_smul]
-  congr 1
-  refine Finset.sum_congr rfl fun m hm => ?_
-  rw [hd.nrm m hm, kap_Pj, smul_smul]
-
-theorem blk_21_12' (hND : ∀ m ∈ Icc 1 (P.k - 1), d.SS m * star (d.SS m) = d.κ fun ρ => ((M.NrmDown P m ρ : ℝ) : ℂ))
-    (u v : ℂ) (ρ : M.Ty P) :
-    Pj d.κ ρ * (d.QQ v 1 0 * d.QQ u 0 1) * Pj d.κ ρ =
-      (M.xC P ρ v * M.xC P ρ u) • (d.L.GG * d.L.l0 v * d.L.GG * d.L.m0 u * Pj d.κ ρ) +
-      (∑ m ∈ Icc 1 (P.k - 1), cdn ρ m v u * ((M.NrmDown P m ρ : ℝ) : ℂ)) • Pj d.κ ρ := by
-  rw [normal_form_upper_right, normal_form_lower_left]
-  simp only [add_mul, mul_add]
-  have z1 : Pj d.κ ρ * (d.L.GG * d.x v * d.L.l0 v * d.S12 u) * Pj d.κ ρ = 0 := by
-    rw [show Pj d.κ ρ * (d.L.GG * d.x v * d.L.l0 v * d.S12 u) * Pj d.κ ρ =
-      (Pj d.κ ρ * (d.L.GG * d.x v * d.L.l0 v)) * d.S12 u * Pj d.κ ρ by simp only [mul_assoc],
-      comm_Pj hd (kappa_commute_lower_diagonal hd · v), mul_assoc, mul_assoc, ← mul_assoc (Pj d.κ ρ), projection_upper_sum_zero hd, mul_zero]
-  have z2 : Pj d.κ ρ * (d.weightedSumBis v * (d.L.GG * d.x u * d.L.m0 u)) * Pj d.κ ρ = 0 := by
-    rw [show Pj d.κ ρ * (d.weightedSumBis v * (d.L.GG * d.x u * d.L.m0 u)) * Pj d.κ ρ =
-      Pj d.κ ρ * d.weightedSumBis v * ((d.L.GG * d.x u * d.L.m0 u) * Pj d.κ ρ) by simp only [mul_assoc],
-      ← comm_Pj hd (kappa_commute_upper_diagonal hd · u), ← mul_assoc, projection_lower_sum_zero hd, zero_mul]
-  rw [z1, z2, add_zero, zero_add, lower_upper_diagonal_product hd, Q.NFData.x, Q.NFData.x, Pj_kkZ hd (kappa_commute_gamma_pair hd · u v), blk_21_12 hd,
-    Finset.sum_smul]
-  congr 1
-  refine Finset.sum_congr rfl fun m hm => ?_
-  rw [hND m hm, kap_Pj, smul_smul]
-  rfl
-
-theorem rhs_diag (u v : ℂ) (ρ : M.Ty P) :
-    Pj d.κ ρ * (d.QQ u 1 1 * d.QQ v 0 0) * Pj d.κ ρ = (M.xC P ρ u * M.wC P ρ v) • Pj d.κ ρ +
-      (M.xC P ρ u * M.xC P ρ v) • (d.L.GG * d.L.GG * (d.L.m0 v * d.L.l0 v) * Pj d.κ ρ) := by
-  have e1 : Pj d.κ ρ * (d.QQ u 1 1 * d.QQ v 0 0) * Pj d.κ ρ =
-      M.xC P ρ u • (d.L.GG * (Pj d.κ ρ * d.QQ v 0 0 * Pj d.κ ρ)) := by
-    rw [show Pj d.κ ρ * (d.QQ u 1 1 * d.QQ v 0 0) * Pj d.κ ρ = (Pj d.κ ρ * d.QQ u 1 1) * (d.QQ v 0 0 * Pj d.κ ρ) by
-      simp only [mul_assoc]]
-    rw [normal_form_diagonal d u, Pj_GGx hd, smul_mul_assoc]
-    simp only [mul_assoc]
-  rw [e1, projection_upper_left_block hd, mul_add, mul_smul_comm, mul_smul_comm, smul_add, smul_smul, smul_smul]
-  congr 1
-  · rw [← mul_assoc, d.L.GG_GGi, one_mul]
-  · simp only [mul_assoc]
-
-end
-
-end Formalism.FourierDecayAlt.P.NFx4.SX
-
-namespace Formalism.FourierDecayAlt.P.NFx4.SX
-
-open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.NF Formalism.REAL Formalism.QuantumDeterminants
-
-noncomputable section
-
-variable {P : M.Par} {A : Type} [Ring A] [StarRing A] [Algebra ℂ A]
-variable {d : Q.NFData P A} (hd : Hyp d)
-include hd
-
-theorem diag_id (hND : ∀ m ∈ Icc 1 (P.k - 1), d.SS m * star (d.SS m) = d.κ fun ρ => ((M.NrmDown P m ρ : ℝ) : ℂ))
-    (hR : ∀ u v : ℂ, (u - v) • (d.QQ u 0 1 * d.QQ v 1 0 - d.QQ v 1 0 * d.QQ u 0 1) =
-      d.QQ u 1 1 * d.QQ v 0 0 - d.QQ v 1 1 * d.QQ u 0 0) (ρ : M.Ty P) (u v : ℂ) :
-    ((u - v) * M.xC P ρ u * M.xC P ρ v) • ((d.L.GG * d.L.GG * (d.L.nabs * d.L.nab - d.L.nab * d.L.nabs) +
-      (1 + u + v) • (d.L.ζ * d.L.ζb - d.L.GG)) * Pj d.κ ρ) = Cf ρ u v • Pj d.κ ρ := by
-  have e := congrArg (fun X => Pj d.κ ρ * X * Pj d.κ ρ) (hR u v)
-  simp only [mul_smul_comm, smul_mul_assoc, mul_sub, sub_mul] at e
-  rw [blk_12_21' hd, blk_21_12' hd hND, rhs_diag hd, rhs_diag hd] at e
-  have hop := congrArg (· * Pj d.κ ρ) (op_identity d.L u v)
-  simp only [sub_mul, smul_mul_assoc, add_mul, mul_sub] at hop
-  simp only [Cf, add_mul, sub_mul, mul_sub, smul_mul_assoc]
-  linear_combination (norm := module) e - (M.xC P ρ u * M.xC P ρ v) • hop
-
-end
-
-end Formalism.FourierDecayAlt.P.NFx4.SX
-
-namespace Formalism.FourierDecayAlt.P.NFx4.SX
-
-open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.NF Formalism.REAL Formalism.QuantumDeterminants
-
-noncomputable section
-
-section Model
-
-variable (P : M.Par)
-
-def dM (L : R.LevelData (M.A P) P.r) : Q.NFData P (M.A P) := ⟨L, M.kap P, M.SS P⟩
-
-theorem model_hyp (hP : P.OK) (L : R.LevelData (M.A P) P.r) (hL : M.IsModelLevel P L) : Hyp (dM P L) := by
-  obtain ⟨-, -, -, -, -, -, hz, -, hzb, -, hG, hGi, hn, hns, -⟩ := hL
-  refine ⟨fun f => Formalism.FourierDecayAlt.P.Mx7.star_kap P f, fun f => ?_, fun l f g h => Formalism.FourierDecayAlt.P.shift_shift_relation P l f g h,
-    fun l hl => (Formalism.FourierDecayAlt.P.shift_norm_relation P hP l hl).1⟩
-  show Commute (M.kap P f) L.nab ∧ Commute (M.kap P f) L.nabs ∧ Commute (M.kap P f) L.ζ ∧
-    Commute (M.kap P f) L.ζb ∧ Commute (M.kap P f) L.GG ∧ Commute (M.kap P f) L.GGi
-  rw [hz, hzb, hG, hGi, hn, hns]
-  exact ⟨Formalism.FourierDecayAlt.P.Mx7.kap_comm_nab P f, Formalism.FourierDecayAlt.P.Mx7.kap_comm_nabs P f, Formalism.FourierDecayAlt.P.Mx7.kap_comm_sc P f _,
-    Formalism.FourierDecayAlt.P.Mx7.kap_comm_sc P f _, Formalism.FourierDecayAlt.P.Mx7.kap_comm_sc P f _, Formalism.FourierDecayAlt.P.Mx7.kap_comm_sc P f _⟩
-
-theorem model_Pj_ne (ρ : M.Ty P) : Pj (M.kap P) ρ ≠ 0 := by
-  have hnt : Nontrivial (M.A P) := (Formalism.FourierDecayAlt.P.model_nontrivial P).1
-  have hPr : Nontrivial (M.Pr P.r) := by
-    by_contra h; rw [not_nontrivial_iff_subsingleton] at h
-    obtain ⟨x, y, hxy⟩ := hnt.exists_pair_ne
-    exact hxy (Matrix.ext fun i j => Subsingleton.elim _ _)
-  intro h0
-  haveI := hPr
-  have e := congrFun (congrFun h0 ρ) ρ
-  have e1 : (Pj (M.kap P) ρ) ρ ρ = 1 := by simp [Pj, dl, M.kap]
-  rw [e1] at e
-  exact one_ne_zero e
-
-theorem model_scalar (hP : P.OK) (ρ : M.Ty P) (u v : ℂ) :
-    Cf ρ u v = (u - v) * M.xC P ρ u * M.xC P ρ v * (((2 * M.aC P ρ * P.TT : ℝ) : ℂ) + (1 + u + v) * (P.TT : ℂ)) := by
-  obtain ⟨L, hL⟩ := _root_.Formalism.FourierDecayAlt.P.Mx2.levelExists P
-  have hd := model_hyp P hP L hL
-  have hQ : ∀ Y, (dM P L).QQ Y = M.QQr P Y := Formalism.FourierDecayAlt.P.model_is_normal_form P L hL
-  have hND : ∀ m ∈ Icc 1 (P.k - 1), (dM P L).SS m * star ((dM P L).SS m) =
-      (dM P L).κ fun ρ => ((M.NrmDown P m ρ : ℝ) : ℂ) := fun m hm => (Formalism.FourierDecayAlt.P.shift_norm_relation P hP m hm).2
-  have hR : ∀ u v : ℂ, (u - v) • ((dM P L).QQ u 0 1 * (dM P L).QQ v 1 0 - (dM P L).QQ v 1 0 * (dM P L).QQ u 0 1) =
-      (dM P L).QQ u 1 1 * (dM P L).QQ v 0 0 - (dM P L).QQ v 1 1 * (dM P L).QQ u 0 0 := by
-    intro u v; rw [hQ, hQ]; exact Formalism.FourierDecayAlt.P.transfer_rtt_entries P hP u v 0 1 1 0
-  have e := diag_id hd hND hR ρ u v
-  obtain ⟨-, -, -, -, -, -, -, -, -, -, hG, hGi, hn, hns, hT⟩ := hL
-  have hcurv := Formalism.FourierDecayAlt.P.m_curvature_proof P
-  have hGdef := L.GG_def
-  have hY : (dM P L).L.GG * (dM P L).L.GG * ((dM P L).L.nabs * (dM P L).L.nab - (dM P L).L.nab * (dM P L).L.nabs) +
-      (1 + u + v) • ((dM P L).L.ζ * (dM P L).L.ζb - (dM P L).L.GG) =
-      M.kap P (fun π => ((2 * M.aC P π * P.TT : ℝ) : ℂ)) + (1 + u + v) • algebraMap ℂ (M.A P) (P.TT : ℂ) := by
-    show L.GG * L.GG * (L.nabs * L.nab - L.nab * L.nabs) + (1 + u + v) • (L.ζ * L.ζb - L.GG) = _
-    have eT : L.ζ * L.ζb - L.GG = algebraMap ℂ (M.A P) (P.TT : ℂ) := by rw [hGdef, hT]; abel
-    rw [eT, hn, hns, hcurv, hG]
-    congr 1
-    have c := (Formalism.FourierDecayAlt.P.Mx7.kap_comm_sc P (fun π => ((2 * M.aC P π * P.TT : ℝ) : ℂ)) (M.ggP P.TT)).eq
-    have gg : M.ggA P * M.ggiA P = 1 := by rw [← hG, ← hGi]; exact L.GG_GGi
-    change M.kap P _ * M.ggA P = M.ggA P * M.kap P _ at c
-    calc M.ggA P * M.ggA P * (M.kap P (fun π => ((2 * M.aC P π * P.TT : ℝ) : ℂ)) * M.ggiA P * M.ggiA P)
-        = M.ggA P * ((M.ggA P * M.kap P (fun π => ((2 * M.aC P π * P.TT : ℝ) : ℂ))) * (M.ggiA P * M.ggiA P)) := by
-          simp only [mul_assoc]
-      _ = M.ggA P * ((M.kap P (fun π => ((2 * M.aC P π * P.TT : ℝ) : ℂ)) * M.ggA P) * (M.ggiA P * M.ggiA P)) := by
-          rw [← c]
-      _ = (M.ggA P * M.kap P (fun π => ((2 * M.aC P π * P.TT : ℝ) : ℂ))) * (M.ggA P * M.ggiA P) * M.ggiA P := by
-          simp only [mul_assoc]
-      _ = (M.kap P (fun π => ((2 * M.aC P π * P.TT : ℝ) : ℂ)) * M.ggA P) * 1 * M.ggiA P := by rw [← c, gg]
-      _ = M.kap P (fun π => ((2 * M.aC P π * P.TT : ℝ) : ℂ)) * (M.ggA P * M.ggiA P) := by simp only [mul_one, mul_assoc]
-      _ = _ := by rw [gg, mul_one]
-  rw [hY, add_mul, smul_mul_assoc] at e
-  simp only [dM] at e
-  rw [kap_Pj, ← Algebra.smul_def, smul_smul, ← add_smul, smul_smul] at e
-  have e2 : ((u - v) * M.xC P ρ u * M.xC P ρ v * (((2 * M.aC P ρ * P.TT : ℝ) : ℂ) + (1 + u + v) * (P.TT : ℂ)) - Cf ρ u v) •
-      Pj (M.kap P) ρ = 0 := by rw [sub_smul, e, sub_self]
-  exact (sub_eq_zero.1 ((smul_eq_zero.1 e2).resolve_right (model_Pj_ne P ρ))).symm
-
-end Model
-
-end
-
-end Formalism.FourierDecayAlt.P.NFx4.SX
-
-namespace Formalism.FourierDecayAlt.P.NFx4.SX
-
-open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.NF Formalism.REAL Formalism.QuantumDeterminants
-
-noncomputable section
-
-variable {P : M.Par} {A : Type} [Ring A] [StarRing A] [Algebra ℂ A]
-
-theorem xC_ne (ρ : M.Ty P) (Y : ℂ) (h : Y.im ≠ 0) : M.xC P ρ Y ≠ 0 :=
-  Finset.prod_ne_zero_iff.2 fun i _ hz => h (by have := congrArg Complex.im hz; simpa using this)
-
-theorem cI_ne (ρ : M.Ty P) (a b : ℝ) (ha : a ≠ 0) (hb : b ≠ 0) (hab : a ≠ b) :
-    ((a * Complex.I : ℂ) - b * Complex.I) * M.xC P ρ (a * Complex.I) * M.xC P ρ (b * Complex.I) ≠ 0 := by
-  refine mul_ne_zero (mul_ne_zero ?_ (xC_ne ρ _ (by simpa using ha))) (xC_ne ρ _ (by simpa using hb))
-  rw [← sub_mul]; refine mul_ne_zero ?_ Complex.I_ne_zero
-  exact_mod_cast sub_ne_zero.2 hab
-
-variable {d : Q.NFData P A} (hd : Hyp d)
-include hd
-
-theorem curv (hP : P.OK) (hS : Wd.IsStart d.QQ (M.qC P))
-    (hND : ∀ m ∈ Icc 1 (P.k - 1), d.SS m * star (d.SS m) = d.κ fun ρ => ((M.NrmDown P m ρ : ℝ) : ℂ)) :
-    d.L.nabs * d.L.nab - d.L.nab * d.L.nabs =
-      (d.κ fun ρ => ((2 * M.aC P ρ * P.TT : ℝ) : ℂ)) * d.L.GGi * d.L.GGi := by
-  have hR : ∀ u v : ℂ, (u - v) • (d.QQ u 0 1 * d.QQ v 1 0 - d.QQ v 1 0 * d.QQ u 0 1) =
-      d.QQ u 1 1 * d.QQ v 0 0 - d.QQ v 1 1 * d.QQ u 0 0 := fun u v => rtt_ent d hS u v 0 1 1 0
-  refine ext_right hd fun ρ => ?_
-  have eT : d.L.ζ * d.L.ζb - d.L.GG = algebraMap ℂ A d.L.TT := by rw [d.L.GG_def]; abel
-  have key : ∀ u v : ℂ, (u - v) * M.xC P ρ u * M.xC P ρ v ≠ 0 →
-      d.L.GG * d.L.GG * (d.L.nabs * d.L.nab - d.L.nab * d.L.nabs) * Pj d.κ ρ + (1 + u + v) • (d.L.TT • Pj d.κ ρ) =
-        ((2 * M.aC P ρ * P.TT : ℝ) : ℂ) • Pj d.κ ρ + (1 + u + v) • ((P.TT : ℂ) • Pj d.κ ρ) := by
-    intro u v hc
-    have e := diag_id hd hND hR ρ u v
-    have e1 : ((u - v) * M.xC P ρ u * M.xC P ρ v) • ((d.L.GG * d.L.GG * (d.L.nabs * d.L.nab - d.L.nab * d.L.nabs) +
-        (1 + u + v) • (d.L.ζ * d.L.ζb - d.L.GG)) * Pj d.κ ρ) = ((u - v) * M.xC P ρ u * M.xC P ρ v) •
-        ((((2 * M.aC P ρ * P.TT : ℝ) : ℂ) + (1 + u + v) * (P.TT : ℂ)) • Pj d.κ ρ) := by
-      rw [e, model_scalar P hP ρ u v]; exact mul_smul _ _ _
-    have e2 := smul_right_injective A hc e1
-    rw [eT, add_mul, smul_mul_assoc, ← Algebra.smul_def] at e2
-    rw [e2, add_smul, mul_smul]
-  have k1 := key (1 * Complex.I) (2 * Complex.I) (by exact_mod_cast cI_ne ρ 1 2 (by norm_num) (by norm_num) (by norm_num))
-  have k2 := key (2 * Complex.I) (3 * Complex.I) (by exact_mod_cast cI_ne ρ 2 3 (by norm_num) (by norm_num) (by norm_num))
-  have e3 : (2 * Complex.I) • (d.L.TT • Pj d.κ ρ - (P.TT : ℂ) • Pj d.κ ρ) = 0 := by
-    linear_combination (norm := module) k2 - k1
-  have hX : d.L.TT • Pj d.κ ρ = (P.TT : ℂ) • Pj d.κ ρ :=
-    sub_eq_zero.1 ((smul_eq_zero.1 e3).resolve_left (mul_ne_zero two_ne_zero Complex.I_ne_zero))
-  have hK : d.L.GG * d.L.GG * (d.L.nabs * d.L.nab - d.L.nab * d.L.nabs) * Pj d.κ ρ =
-      ((2 * M.aC P ρ * P.TT : ℝ) : ℂ) • Pj d.κ ρ := by
-    linear_combination (norm := module) k1 - (1 + 1 * Complex.I + 2 * Complex.I) • hX
-  have inv : d.L.GGi * d.L.GGi * (d.L.GG * d.L.GG) = 1 := by
-    rw [mul_assoc, ← mul_assoc d.L.GGi d.L.GG, d.L.GGi_GG, one_mul, d.L.GGi_GG]
-  rw [show (d.L.nabs * d.L.nab - d.L.nab * d.L.nabs) * Pj d.κ ρ =
-      d.L.GGi * d.L.GGi * (d.L.GG * d.L.GG * (d.L.nabs * d.L.nab - d.L.nab * d.L.nabs) * Pj d.κ ρ) by
-    rw [← mul_assoc, ← mul_assoc, inv, one_mul], hK]
-  have r1 : (d.κ fun ρ => ((2 * M.aC P ρ * P.TT : ℝ) : ℂ)) * d.L.GGi * d.L.GGi * Pj d.κ ρ =
-      d.L.GGi * d.L.GGi * ((d.κ fun ρ => ((2 * M.aC P ρ * P.TT : ℝ) : ℂ)) * Pj d.κ ρ) := by
-    rw [(kc_GGi hd _).eq, mul_assoc d.L.GGi, (kc_GGi hd _).eq]; simp only [mul_assoc]
-  rw [r1, kap_Pj]
-
-end
-
-end Formalism.FourierDecayAlt.P.NFx4.SX
-
-namespace Formalism.FourierDecayAlt.P
-
-theorem shift_extra : Formalism.FourierDecayAlt.NF.SExtra := by
-  intro P A _ _ _ d hP _ hRel hS
-  have hd := NFx4.SX.hyp_of_rel d hRel
-  have hND := fun l (hl : l ∈ Finset.Icc 1 (P.k - 1)) => NFx4.SX.ssDown hd hP hS hl
-  exact ⟨NFx4.SX.curv hd hP hS hND, fun l hl => ⟨hND l hl, fun j hj hjl =>
-    ⟨NFx4.SX.ssComm hd hP hS hl hj hjl, NFx4.SX.ssMixed hd hP hS hl hj hjl⟩⟩⟩
-
-end Formalism.FourierDecayAlt.P
 
 end
 

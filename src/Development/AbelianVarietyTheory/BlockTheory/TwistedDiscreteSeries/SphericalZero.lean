@@ -49,8 +49,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open MeasureTheory Matrix
 open scoped TensorProduct ContDiff ComplexConjugate
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def resL (A B : HSp D) (x : WO (dblSp A) B) : WO A B := Matrix.of fun i j => x i (finSumFinEquiv (Sum.inl j))

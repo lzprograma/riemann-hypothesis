@@ -3,52 +3,8 @@ module
 public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
 import GroundTheory.AutomorphicForms.AffineBruhat
 import GroundTheory.LocalFields.LocalFourierHaar
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -312,10 +268,8 @@ theorem integral_image_eq (hL0 : L0) (hL1 : L1) (μ : Measure F) [μ.IsAddHaarMe
   have hGc : Continuous G :=
     (hψc.comp (continuous_apply _).neg).mul hfc
   set Φ : (Fin (k + 1) → F) → (Fin (k + 1) → F) → ℂ := fun x ξ => ψ (ξ ⬝ᵥ (gi *ᵥ x)) * G x with hΦ
-  have hgg : (g : Matrix (Fin (k + 1)) (Fin (k + 1)) F) * gi = 1 := by
-    rw [hgi, ← Units.val_mul, mul_inv_cancel, Units.val_one]
-  have hgg' : gi * (g : Matrix (Fin (k + 1)) (Fin (k + 1)) F) = 1 := by
-    rw [hgi, ← Units.val_mul, inv_mul_cancel, Units.val_one]
+  have hgg : (g : Matrix (Fin (k + 1)) (Fin (k + 1)) F) * gi = 1 := Units.mul_inv g
+  have hgg' : gi * (g : Matrix (Fin (k + 1)) (Fin (k + 1)) F) = 1 := Units.inv_mul g
   have hmemS : ∀ x, x ∈ S ↔ ∀ i, (gi *ᵥ x) i ∈ 𝒪[F] := fun x => by
     constructor
     · rintro ⟨y, hy, rfl⟩ i
@@ -347,8 +301,8 @@ theorem integral_image_eq (hL0 : L0) (hL1 : L1) (μ : Measure F) [μ.IsAddHaarMe
     simp only [hΦ]
     rw [integral_mul_const, hL1' (gi *ᵥ x)]
     by_cases hx : x ∈ S
-    · rw [if_pos ((hmemS x).1 hx), Set.indicator_of_mem hx]
-    · rw [if_neg (fun h => hx ((hmemS x).2 h)), Set.indicator_of_notMem hx, zero_mul]
+    · rw [ite_eq_left ((hmemS x).1 hx), Set.indicator_of_mem hx]
+    · rw [ite_eq_right (fun h => hx ((hmemS x).2 h)), Set.indicator_of_notMem hx, zero_mul]
   have h2 : ∫ x in lat F (k + 1) M, ∫ ξ in lat F (k + 1) 0, Φ x ξ ∂ν ∂ν =
       (vol : ℂ) * ∫ x in S, G x ∂ν := by
     simp_rw [h1]

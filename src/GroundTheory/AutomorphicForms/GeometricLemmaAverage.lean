@@ -279,11 +279,8 @@ theorem sub_avgOver_mem_span (hf : AvgFinite K f) :
   exact Submodule.subset_span ⟨_, (Quotient.out q).2, rfl⟩
 
 theorem relIndex_ne_zero_of_le_right {H K K' : Subgroup G} (hKK' : K ≤ K')
-    (h : H.relIndex K' ≠ 0) : H.relIndex K ≠ 0 := by
-  have : (H.subgroupOf K').FiniteIndex := ⟨h⟩
-  have : Finite (K ⧸ H.subgroupOf K) :=
-    Finite.of_injective _ (Subgroup.quotientSubgroupOfEmbeddingOfLE H hKK').injective
-  exact Subgroup.index_ne_zero_of_finite
+    (h : H.relIndex K' ≠ 0) : H.relIndex K ≠ 0 :=
+  fun h0 => h (Subgroup.relIndex_eq_zero_of_le_right hKK' h0)
 
 theorem avgOver_avgOver {K' : Subgroup G} (hKK' : K ≤ K') (hf' : AvgFinite K' f) :
     avgOver K' (avgOver K f) = avgOver K' f := by

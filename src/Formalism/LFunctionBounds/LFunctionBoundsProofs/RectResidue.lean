@@ -3,47 +3,7 @@ module
 import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.BdIntEqZeroOfPrimitive
 public import Formalism.LFunctionBounds.ExpSumLowerBound
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -53,102 +13,27 @@ noncomputable section
 
 namespace Formalism.FX
 
-theorem rectRes_edge (g G : ℂ → ℂ) (P : Finset ℂ) (b : ℂ → ℂ) (γ : ℝ → ℂ) (a c : ℝ)
-    (hγ : Continuous γ) (hG : ContinuousOn (fun t => G (γ t)) (Set.uIcc a c))
-    (hP : ∀ t ∈ Set.uIcc a c, ∀ p ∈ P, γ t ≠ p)
-    (hg : ∀ w : ℂ, w ∉ P → g w = G w + ∑ p ∈ P, b p / (w - p)) :
-    ∫ t in a..c, g (γ t) =
-      (∫ t in a..c, G (γ t)) + ∑ p ∈ P, b p * ∫ t in a..c, 1 / (γ t - p) := by
-  have hγP : ∀ t ∈ Set.uIcc a c, γ t ∉ P := fun t ht hmem => hP t ht _ hmem rfl
-  have hcont : ∀ p ∈ P, ContinuousOn (fun t => 1 / (γ t - p)) (Set.uIcc a c) := fun p hp =>
-    continuousOn_const.div (hγ.continuousOn.sub continuousOn_const)
-      (fun t ht => sub_ne_zero.2 (hP t ht p hp))
-  calc ∫ t in a..c, g (γ t)
-      = ∫ t in a..c, (G (γ t) + ∑ p ∈ P, b p * (1 / (γ t - p))) := by
-        refine intervalIntegral.integral_congr (fun t ht => ?_)
-        show g (γ t) = G (γ t) + ∑ p ∈ P, b p * (1 / (γ t - p))
-        rw [hg _ (hγP t ht)]
-        congr 1
-        refine Finset.sum_congr rfl (fun p _ => ?_)
-        rw [mul_one_div]
-    _ = (∫ t in a..c, G (γ t)) + ∫ t in a..c, ∑ p ∈ P, b p * (1 / (γ t - p)) := by
-        refine intervalIntegral.integral_add hG.intervalIntegrable ?_
-        exact (continuousOn_finsetSum P (fun p hp => continuousOn_const.mul (hcont p hp))).intervalIntegrable
-    _ = (∫ t in a..c, G (γ t)) + ∑ p ∈ P, b p * ∫ t in a..c, 1 / (γ t - p) := by
-        rw [intervalIntegral.integral_finsetSum]
-        · simp_rw [intervalIntegral.integral_const_mul]
-        · intro p hp
-          exact ((hcont p hp).intervalIntegrable).const_mul (b p)
-
-theorem rectRes_sum_combo (P : Finset ℂ) (b A B C D : ℂ → ℂ) :
-    ∑ p ∈ P, b p * (A p - B p + I * C p - I * D p) =
-      ∑ p ∈ P, b p * A p - ∑ p ∈ P, b p * B p + I * ∑ p ∈ P, b p * C p - I * ∑ p ∈ P, b p * D p := by
-  rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_sub_distrib, ← Finset.sum_add_distrib,
-    ← Finset.sum_sub_distrib]
-  exact Finset.sum_congr rfl fun p _ => by ring
-
 theorem rectangle_residue : RectResidue := by
-  unfold RectResidue
-  intro g G P b x0 x1 y0 y1 _ _ hPin hU hg
-  obtain ⟨U, -, hsub, hGd⟩ := hU
-  have hGc : ContinuousOn G U := hGd.continuousOn
-  have hG0 : ((∫ x in x0..x1, G ((x : ℂ) + (y0 : ℂ) * I)) - (∫ x in x0..x1, G ((x : ℂ) + (y1 : ℂ) * I))
-      + I * (∫ y in y0..y1, G ((x1 : ℂ) + (y : ℂ) * I))) - I * (∫ y in y0..y1, G ((x0 : ℂ) + (y : ℂ) * I))
-      = 0 := by
-    have h := Complex.integral_boundary_rect_eq_zero_of_differentiableOn G ⟨x0, y0⟩ ⟨x1, y1⟩
-      (hGd.mono hsub)
-    simp only [smul_eq_mul] at h
-    exact h
-  have eB := rectRes_edge g G P b (fun x : ℝ => (x : ℂ) + (y0 : ℂ) * I) x0 x1
-    (Complex.continuous_ofReal.add continuous_const)
-    (hGc.comp (Complex.continuous_ofReal.add continuous_const).continuousOn
-      (fun t ht => hsub (Complex.mem_reProdIm.2 ⟨by simpa using ht, by simp⟩)))
-    (fun t _ p hp h => by
-      have h' := congrArg Complex.im h
-      simp at h'
-      linarith [(hPin p hp).2.2.1]) hg
-  have eT := rectRes_edge g G P b (fun x : ℝ => (x : ℂ) + (y1 : ℂ) * I) x0 x1
-    (Complex.continuous_ofReal.add continuous_const)
-    (hGc.comp (Complex.continuous_ofReal.add continuous_const).continuousOn
-      (fun t ht => hsub (Complex.mem_reProdIm.2 ⟨by simpa using ht, by simp⟩)))
-    (fun t _ p hp h => by
-      have h' := congrArg Complex.im h
-      simp at h'
-      linarith [(hPin p hp).2.2.2]) hg
-  have eR := rectRes_edge g G P b (fun y : ℝ => (x1 : ℂ) + (y : ℂ) * I) y0 y1
-    (continuous_const.add (Complex.continuous_ofReal.mul continuous_const))
-    (hGc.comp (continuous_const.add (Complex.continuous_ofReal.mul continuous_const)).continuousOn
-      (fun t ht => hsub (Complex.mem_reProdIm.2 ⟨by simp, by simpa using ht⟩)))
-    (fun t _ p hp h => by
-      have h' := congrArg Complex.re h
-      simp at h'
-      linarith [(hPin p hp).2.1]) hg
-  have eL := rectRes_edge g G P b (fun y : ℝ => (x0 : ℂ) + (y : ℂ) * I) y0 y1
-    (continuous_const.add (Complex.continuous_ofReal.mul continuous_const))
-    (hGc.comp (continuous_const.add (Complex.continuous_ofReal.mul continuous_const)).continuousOn
-      (fun t ht => hsub (Complex.mem_reProdIm.2 ⟨by simp, by simpa using ht⟩)))
-    (fun t _ p hp h => by
-      have h' := congrArg Complex.re h
-      simp at h'
-      linarith [(hPin p hp).1]) hg
-  have hc := rectRes_sum_combo P b
-    (fun p => ∫ t in x0..x1, 1 / ((t : ℂ) + (y0 : ℂ) * I - p))
-    (fun p => ∫ t in x0..x1, 1 / ((t : ℂ) + (y1 : ℂ) * I - p))
-    (fun p => ∫ t in y0..y1, 1 / ((x1 : ℂ) + (t : ℂ) * I - p))
-    (fun p => ∫ t in y0..y1, 1 / ((x0 : ℂ) + (t : ℂ) * I - p))
-  have hsum : ∑ p ∈ P, b p * ((∫ t in x0..x1, 1 / ((t : ℂ) + (y0 : ℂ) * I - p))
-      - (∫ t in x0..x1, 1 / ((t : ℂ) + (y1 : ℂ) * I - p))
-      + I * (∫ t in y0..y1, 1 / ((x1 : ℂ) + (t : ℂ) * I - p))
-      - I * (∫ t in y0..y1, 1 / ((x0 : ℂ) + (t : ℂ) * I - p)))
-      = 2 * (Real.pi : ℂ) * I * ∑ p ∈ P, b p := by
-    rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl (fun p hp => ?_)
-    have h := GlobalTheory.ResRect.bdInt_inv (hPin p hp).1 (hPin p hp).2.1 (hPin p hp).2.2.1
-      (hPin p hp).2.2.2 (1 : ℂ)
-    simp only [GlobalTheory.ResRect.bdInt, mul_one] at h
-    rw [h]
-    ring
-  unfold rectInt
-  linear_combination eB - eT + I * eR - I * eL + hG0 + hsum - hc
+  classical
+  intro g G P b x0 x1 y0 y1 hx hy hP ⟨U, hU, hrect, hG⟩ hg
+  rw [Set.uIcc_of_le hx.le, Set.uIcc_of_le hy.le] at hrect
+  have hreg (S : Finset ℂ) {z : ℂ} (hz : z ∈ U) (hzS : z ∉ S) :
+      AnalyticAt ℂ (fun w => G w + ∑ p ∈ S, b p / (w - p)) z := by
+    refine (hG.analyticAt (hU.mem_nhds hz)).add (Finset.analyticAt_fun_sum _ fun p hp => ?_)
+    exact analyticAt_const.div (analyticAt_id.sub analyticAt_const)
+      (sub_ne_zero.mpr (ne_of_mem_of_not_mem hp hzS).symm)
+  apply GlobalTheory.ResRect.residue_rectangle_of_finite_principal_parts g
+    ⟨x0, y0⟩ ⟨x1, y1⟩ P b (fun _ => 0) hx hy hP
+  · refine DifferentiableOn.congr (f := fun w => G w + ∑ p ∈ P, b p / (w - p)) ?_ (fun w hw => hg w hw.2)
+    exact fun w hw => (hreg P (hrect hw.1) hw.2).differentiableAt.differentiableWithinAt
+  · intro p hp
+    obtain ⟨hx0, hx1, hy0, hy1⟩ := hP p hp
+    have hpU := hrect (Complex.mem_reProdIm.mpr ⟨⟨hx0.le, hx1.le⟩, ⟨hy0.le, hy1.le⟩⟩)
+    refine ⟨fun _ => 0, _, hreg (P.erase p) hpU (Finset.notMem_erase p P), ?_⟩
+    have haway := (P.erase p).finite_toSet.isClosed.isOpen_compl.mem_nhds (Finset.notMem_erase p P)
+    filter_upwards [mem_nhdsWithin_of_mem_nhds haway, self_mem_nhdsWithin] with w hw hwp
+    have hwP : w ∉ P := fun hwP => hw (Finset.mem_erase.mpr ⟨hwp, hwP⟩)
+    rw [hg w hwP, ← Finset.add_sum_erase P _ hp]
+    simp [add_left_comm]
 
 end Formalism.FX

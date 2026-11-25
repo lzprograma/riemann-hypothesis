@@ -112,14 +112,6 @@ theorem norm_root {ζ : ℂ} {m : ℕ} (hm : 0 < m) (h : ζ ^ m = 1) : ‖ι ζ�
     rw [← norm_pow, ← map_pow, h, map_one, norm_one]
   exact (pow_eq_one_iff_of_nonneg (norm_nonneg _) hm.ne').1 h1
 
-private theorem iteratedDeriv_const_mul_fun (a : ℂ) (f : ℂ → ℂ) (n : ℕ) :
-    iteratedDeriv n (fun z => a * f z) = fun z => a * iteratedDeriv n f z := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [iteratedDeriv_succ, iteratedDeriv_succ, ih]
-    exact deriv_const_mul_field' a
-
 theorem inW_const_mul (a : ℂ) (f : ℂ → ℂ) :
     inW l ι W (fun z => a * f z) = C (ι a) * inW l ι W f := by
   have ht : Formalism.L2.Th1.F.taylor0 (fun z => a * f z) = C a * Formalism.L2.Th1.F.taylor0 f := by
@@ -559,7 +551,7 @@ theorem shiftCase (hS : AnalyticSysW) (hA : PtWAdd) (hZ : PtWZero) (hU : Unif l 
   let rep : W.toAffine.Point → ℂ := fun P =>
     if P = 0 then 0 else
       if h : ∃ t : ℂ, (N : ℂ) * t ∈ L.lattice ∧ ptW l L ι W t = P then h.choose else 0
-  have rep0 : rep 0 = 0 := if_pos rfl
+  have rep0 : rep 0 = 0 := ite_eq_left rfl
   have repS : ∀ P ∈ AddSubgroup.zmultiples (ptW l L ι W s),
       (N : ℂ) * rep P ∈ L.lattice ∧ ptW l L ι W (rep P) = P := by
     intro P hP
@@ -571,7 +563,7 @@ theorem shiftCase (hS : AnalyticSysW) (hA : PtWAdd) (hZ : PtWZero) (hU : Unif l 
       have e : rep P = h.choose := by
         change (if P = 0 then 0 else
           if h : ∃ t : ℂ, (N : ℂ) * t ∈ L.lattice ∧ ptW l L ι W t = P then h.choose else 0) = _
-        rw [if_neg h0, dite_eq_left h]
+        rw [ite_eq_right h0, dite_eq_left h]
       rw [e]
       exact h.choose_spec
   have hsys : IsShiftSys W (AddSubgroup.zmultiples (ptW l L ι W s)) (ptW l L ι W (ω₀ / 2))

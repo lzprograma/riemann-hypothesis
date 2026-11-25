@@ -6,8 +6,6 @@ import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights
 
 namespace RestTerms
@@ -38,14 +36,14 @@ theorem FlagPowerSumPreimage.proof : FlagPowerSumPreimage.Statement := by
   · intro k hk1 hkN
     set j : Fin N := ⟨k - 1, by omega⟩ with hj
     rw [coeff_sum, Finset.sum_eq_single j]
-    · rw [coeff_X_mul', if_pos (by simp), tsub_self, ← constantCoeff_eq,
+    · rw [coeff_X_mul', ite_eq_left (by simp), tsub_self, ← constantCoeff_eq,
         ← Flag.constantCoeff_powerSumHom, hSf]
       have : j.val + 1 = k := by simp [hj]; omega
       rw [this]
     · intro i _ hij
-      rw [coeff_X_mul', if_neg]
+      rw [coeff_X_mul', ite_eq_right]
       simp only [Finsupp.mem_support_iff, ne_eq]
-      rw [Finsupp.single_apply, if_neg (fun h => hij h.symm)]
+      rw [Finsupp.single_apply, ite_eq_right (fun h => hij h.symm)]
       simp
     · intro h
       exact absurd (Finset.mem_univ j) h

@@ -78,7 +78,7 @@ theorem _root_.GlobalTheory.FlagMeas.measurable_detOn_comp {X : Type} [Topologic
     by_cases h : ∀ y ∈ V, (toLin' (f x)) y ∈ V
     · have h' : x ∈ {x | ∀ y ∈ V, f x *ᵥ y ∈ V} := fun y hy => by
         simpa [Matrix.toLin'_apply] using h y hy
-      rw [dite_eq_left h, if_pos h', ← LinearMap.det_toMatrix b]
+      rw [dite_eq_left h, ite_eq_left h', ← LinearMap.det_toMatrix b]
       congr 2
       ext i k
       rw [LinearMap.toMatrix_apply, Matrix.of_apply]
@@ -89,7 +89,7 @@ theorem _root_.GlobalTheory.FlagMeas.measurable_detOn_comp {X : Type} [Topologic
       exact (Submodule.projectionOnto_apply_left hW _).symm
     · have h' : x ∉ {x | ∀ y ∈ V, f x *ᵥ y ∈ V} := fun hx => h fun y hy => by
         simpa [Matrix.toLin'_apply] using hx y hy
-      rw [dite_eq_right h, if_neg h']
+      rw [dite_eq_right h, ite_eq_right h']
   rw [heq]
   exact Measurable.ite hS.measurableSet hg.norm.measurable measurable_const
 

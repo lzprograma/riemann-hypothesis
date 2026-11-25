@@ -141,7 +141,7 @@ theorem contOn_Kf (ξ : Wp) : ContinuousOn (Kf D ξ) (SS D.z) :=
 theorem contOn_cGS (H : Hyp D) {c : Mat k r → ℂ} {C a : ℝ} (hc : Coef c C a) :
     ContinuousOn (fun w : Mt k r × (Mt k r × Mt k r) => c (Matrix.of w.1 * sP w.2)) (GS D.z) :=
   hc.cont.comp ((continuous_fst (X := Mt k r) (Y := Mt k r × Mt k r)).matrix_mul
-    (cont_sP.comp continuous_snd)).continuousOn fun w hw => mulS_mem D H hw.1 hw.2
+    (cont_sP.comp continuous_snd)).continuousOn fun _ hw => mulS_mem D H hw.1 hw.2
 
 theorem pt_bd (H : Hyp D) {c : Mat k r → ℂ} {C a : ℝ} (hc : Coef c C a) (ξ : Wp) {g : Mat k r}
     (hg : g ∈ GV k r) {p : Mt k r × Mt k r} (hp : p ∈ SS D.z) :

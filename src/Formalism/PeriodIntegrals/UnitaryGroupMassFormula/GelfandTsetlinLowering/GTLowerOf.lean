@@ -23,68 +23,18 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinTo
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinTopCoefficient.InterlacingDefectEqCard
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.MultisetProdNormLeOne
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionLift
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalRingCardinality.Params
-import Mathlib.Tactic.TypeStar
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ProdFactorialSupportSubSingle
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightIrreducible.ConstructionB
-import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.SimpleRing.Principal
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightIrreducible.ConstructionA
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.TotallySplit
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.RowActDiagMonomial
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.Assembly, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.CapelliZ, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.Capelli2_2, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.SqActMemNabla, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitPowerNormScale.NormUnitsZpowSq, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionAdj, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionBrInt, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.IoXiHw, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionIo, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinTopCoefficient.NumMore, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionNum, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.RowsZStrictMono, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.EvalInitMinorNormLe, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionXi, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.GTLowerOf
+-- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.Assembly, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.CapelliZ, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.Capelli2_2, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.SqActMemNabla, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitPowerNormScale.NormUnitsZpowSq, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionAdj, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionBrInt, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.IoXiHw, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinTopCoefficient.NumMore, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionNum, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.RowsZStrictMono, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.EvalInitMinorNormLe, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionXi, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.GTLowerOf
 
 -- ===== clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.Assembly =====
 -- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.Assembly", "h": "module\n\npublic import Formalism.PeriodIntegrals.GTLower\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ZScalarVanish\npublic import Formalism.GradedWeylDivisibility.DualWeylDominanceOf\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Formalism.LocalRingCardinality.Params\n\n"}
@@ -118,10 +68,6 @@ theorem ioIntegral_of (hZ : CapelliZ) (hL : LiftMod) (hV : ZScalarVanish) : IoIn
   rw [map_smul]
   exact (sub_eq_zero.mp h0).symm
 
-theorem sqAct_smul {k : ℕ} (mu : DomWeight k) (g : GL (Fin k) ℂ) (c : ℂ)
-    (x : MvPolynomial (Fin k × Fin k) ℂ) : sqAct ℂ k mu g (c • x) = c • sqAct ℂ k mu g x := by
-  rw [sqAct, sqAct, map_smul, smul_comm]
-
 theorem gTLower_of_steps (hN : Numbers) (hX : XiFacts) (hE : IoExists) (hP4 : IoIntegral)
     (hA : AdjointBr) (hB : BrIntegral) : PI.GTLower := by
   intro n N h lam sg hI
@@ -136,11 +82,11 @@ theorem gTLower_of_steps (hN : Numbers) (hX : XiFacts) (hE : IoExists) (hP4 : Io
   have I3 : ∀ (g : GL (Fin n) ℂ), ∀ s ∈ nablaSq ℂ n sg,
       io (sqAct ℂ n sg g s) = sqAct ℂ N lam (embGL ℂ n N h g) (io s) := by
     intro g s hs
-    rw [hio, hio, hE2 g s hs, sqAct_smul]
+    rw [hio, hio, hE2 g s hs, PI.WGL.io_sqAct_smul]
   have I4 : io (extremal ℂ n sg) = c • xi ℂ h lam sg := by rw [hio, hx]
   have I5 : LastWeight lam sg io := by
     intro a s hs
-    rw [hio, sqAct_smul, hW a s hs, smul_comm]
+    rw [hio, PI.WGL.io_sqAct_smul, hW a s hs, smul_comm]
   have I1 : ∀ s ∈ nablaSq ℤ n sg, ∃ f ∈ nablaSq ℤ N lam,
       io (MvPolynomial.map (Int.castRingHom ℂ) s) = MvPolynomial.map (Int.castRingHom ℂ) f := by
     intro s hs
@@ -374,11 +320,6 @@ theorem sqAct_mem_nabla {N : ℕ} (lam : DomWeight N) (g : GL (Fin N) ℂ) (f : 
   unfold sqAct
   exact Submodule.smul_mem _ _ (Formalism.GradedWeylDivisibility.dualWeylRowStable ℂ N N lam.natW _ f hf)
 
-theorem sqAct_smul {N : ℕ} (lam : DomWeight N) (g : GL (Fin N) ℂ) (c : ℂ) (f : MvPolynomial (Fin N × Fin N) ℂ) :
-    sqAct ℂ N lam g (c • f) = c • sqAct ℂ N lam g f := by
-  unfold sqAct
-  rw [map_smul, smul_comm]
-
 theorem nf_sqAct_adj {N : ℕ} (lam : DomWeight N) (g : GL (Fin N) ℂ) (x y : MvPolynomial (Fin N × Fin N) ℂ) :
     normFock lam (sqAct ℂ N lam g x) y = normFock lam x (sqAct ℂ N lam (gStar g) y) := by
   have hm : Matrix.conjTranspose (Matrix.transpose (g : Matrix (Fin N) (Fin N) ℂ)) =
@@ -397,13 +338,8 @@ theorem nf_sqAct_adj' {N : ℕ} (lam : DomWeight N) (g : GL (Fin N) ℂ) (x y : 
     normFock lam x (sqAct ℂ N lam g y) = normFock lam (sqAct ℂ N lam (gStar g) x) y := by
   rw [nf_sqAct_adj, gStar_gStar]
 
-theorem natW_anti {N : ℕ} (lam : DomWeight N) : Antitone lam.natW := by
-  intro i j hij
-  unfold DomWeight.natW
-  exact Int.toNat_le_toNat (by have := lam.anti hij; linarith)
-
 theorem extremal_mem {N : ℕ} (lam : DomWeight N) : extremal ℂ N lam ∈ nablaSq ℂ N lam :=
-  Formalism.GradedWeylDivisibility.hwMem ℂ N N le_rfl lam.natW (natW_anti lam)
+  Formalism.GradedWeylDivisibility.hwMem ℂ N N le_rfl lam.natW (PI.WHw.natW_antitone lam)
 
 theorem extremal_ne {N : ℕ} (lam : DomWeight N) : extremal ℂ N lam ≠ 0 :=
   Formalism.GradedWeylDivisibility.hwNe ℂ N N le_rfl lam.natW
@@ -534,7 +470,7 @@ theorem adjointBr_of (h3 : PI.HwIrred) (h5 : PI.SchurFock) (hN : Numbers) (hX : 
     intro g x hx
     rw [hmemU] at hx ⊢
     refine ⟨sqAct_mem_nabla sg g x hx.1, ?_⟩
-    rw [hioEq g x hx.1, hB4, hx.2, sqAct_smul]
+    rw [hioEq g x hx.1, hB4, hx.2, PI.WGL.io_sqAct_smul]
   have hall : ∀ s ∈ nablaSq ℂ n sg, br (io s) = κ • s := by
     rcases (h3 n sg).2.1 U inf_le_left hUst with hU | hU
     · exfalso
@@ -759,12 +695,6 @@ theorem rat_of_pairings {ι : Type*} [Fintype ι] (β : ι → MvPolynomial σ �
 
 end fock
 
-theorem natW_anti {N : ℕ} (lam : DomWeight N) : Antitone lam.natW := by
-  intro i j hij
-  have h := lam.anti hij
-  simp only [DomWeight.natW]
-  omega
-
 private theorem map_initMinor {R S : Type*} [CommRing R] [CommRing S] (φ : R →+* S)
     {r n s : ℕ} (I : Fin s → Fin r) (hs : s ≤ n) :
     MvPolynomial.map φ (initMinor R I hs) = initMinor S I hs := by
@@ -824,11 +754,6 @@ private theorem fockF_swap_eq_star {σ : Type*} [DecidableEq σ] (f g : MvPolyno
   simp only [star_mul', star_star, star_natCast]
   ring
 
-theorem normFock_swap {N : ℕ} (lam : DomWeight N) (f g : MvPolynomial (Fin N × Fin N) ℂ) :
-    normFock lam g f = star (normFock lam f g) := by
-  unfold normFock
-  rw [star_div₀, ← fockF_swap_eq_star f g, ← fockF_swap_eq_star (extremal ℂ N lam) (extremal ℂ N lam)]
-
 theorem fockF_ext_ne {N : ℕ} (lam : DomWeight N) :
     fockF (extremal ℂ N lam) (extremal ℂ N lam) ≠ 0 := by
   rw [extremal_map, brFockF_map]
@@ -843,7 +768,7 @@ end BrInt
 open BrInt Formalism.REAL Formalism.GradedWeylDivisibility in
 theorem brIntegral_of (h2 : Formalism.BasicNotions.FactDelDualNabla) (h3 : PI.HwIrred) : BrIntegral := by
   intro n N h lam sg hI io br hI1 hI2 hB2 hT f hf
-  have hfN : f ∈ nablaSq ℤ N lam := weylLeDual ℤ N N le_rfl lam.natW (natW_anti lam) hf
+  have hfN : f ∈ nablaSq ℤ N lam := weylLeDual ℤ N N le_rfl lam.natW (PI.WHw.natW_antitone lam) hf
   have hFd : map (Int.castRingHom ℂ) f ∈ delSq ℂ N lam := by
     rw [← (h3 N lam).1]
     exact dualWeylMap ℤ ℂ (Int.castRingHom ℂ) N N lam.natW f hfN
@@ -902,7 +827,7 @@ theorem brIntegral_of (h2 : Formalism.BasicNotions.FactDelDualNabla) (h3 : PI.Hw
     obtain ⟨z, hz⟩ := hpair g hg
     refine ⟨z, ?_⟩
     apply (Rat.cast_injective (α := ℂ))
-    rw [← normFock_map, ← hG0, ← mapZC, normFock_swap, hz]
+    rw [← normFock_map, ← hG0, ← mapZC, PI.WGL.Adj.nf_herm, hz]
     simp)
   refine ⟨f0, hf0, ?_⟩
   rw [hG0, ← hf0eq, ← mapZC]
@@ -934,22 +859,22 @@ theorem io_fixed_up {n : ℕ} (lam : DomWeight (n + 1)) (f : MvPolynomial (Fin (
     intro m
     rw [Submodule.mem_bot, Polynomial.eval_sub, Polynomial.eval_C, PI.WHw.eval_rowGen, sub_eq_zero]
     have hdet : (1 + Matrix.single a b (m : ℂ)).det ≠ 0 := by
-      rw [det_one_add_single, if_neg hne]; exact one_ne_zero
+      rw [det_one_add_single, ite_eq_right hne]; exact one_ne_zero
     let g := Matrix.GeneralLinearGroup.mkOfDetNeZero _ hdet
     have hgv : (g : Matrix (Fin n) (Fin n) ℂ) = 1 + Matrix.single a b (m : ℂ) := rfl
     have hup : ∀ i j, j < i → g i j = 0 := by
       intro i j hji
       have hij : i ≠ j := ne_of_gt hji
       show (1 + Matrix.single a b (m : ℂ)) i j = 0
-      simp only [Matrix.add_apply, Matrix.one_apply, Matrix.single_apply, if_neg hij, zero_add]
-      rw [if_neg]
+      simp only [Matrix.add_apply, Matrix.one_apply, Matrix.single_apply, ite_eq_right hij, zero_add]
+      rw [ite_eq_right]
       rintro ⟨rfl, rfl⟩
       exact absurd (lt_trans hab hji) (lt_irrefl _)
     have hdiag : ∀ i, g i i = 1 := by
       intro i
       show (1 + Matrix.single a b (m : ℂ)) i i = 1
-      simp only [Matrix.add_apply, Matrix.one_apply, Matrix.single_apply, if_true]
-      rw [if_neg]; · simp
+      simp only [Matrix.add_apply, Matrix.one_apply, Matrix.single_apply, ite_true]
+      rw [ite_eq_right]; · simp
       rintro ⟨rfl, h⟩; exact hne h.symm
     have h1 := hU g hup hdiag
     have hT := embGL_transvec g a b (m : ℂ) hgv
@@ -957,14 +882,14 @@ theorem io_fixed_up {n : ℕ} (lam : DomWeight (n + 1)) (f : MvPolynomial (Fin (
       unfold detPow
       have hd : Matrix.GeneralLinearGroup.det (embGL ℂ n (n + 1) rfl g) = 1 := Units.ext (by
         rw [Matrix.GeneralLinearGroup.val_det_apply, ← Matrix.det_transpose, hT, det_one_add_single,
-          if_neg (fun h => hne (Fin.castSucc_injective _ h).symm)]
+          ite_eq_right (fun h => hne (Fin.castSucc_injective _ h).symm)]
         rfl)
       rw [hd, one_zpow, Units.val_one]
     unfold sqAct at h1
     rw [hdet1, one_smul, hT] at h1
     exact h1
   have := PI.WHw.coeff_mem_of_eval ⊥ _ key 1
-  rw [Submodule.mem_bot, Polynomial.coeff_sub, Polynomial.coeff_C, if_neg (by omega), sub_zero] at this
+  rw [Submodule.mem_bot, Polynomial.coeff_sub, Polynomial.coeff_C, ite_eq_right (by omega), sub_zero] at this
   rw [pol_eq_rowDiv]
   exact this
 
@@ -991,7 +916,7 @@ theorem io_torus_diag {n : ℕ} (lam : DomWeight (n + 1)) (sg : DomWeight n)
         ((m : ℂ) + 1) ^ lam.detShift := by
       unfold detPow
       rw [Units.val_zpow_eq_zpow_val, Matrix.GeneralLinearGroup.val_det_apply, ← Matrix.det_transpose, hTr,
-        det_one_add_single, if_pos rfl]
+        det_one_add_single, ite_eq_left rfl]
     have hprod : ((∏ j, t j ^ sg.w j : ℂˣ) : ℂ) = ((m : ℂ) + 1) ^ sg.w a := by
       rw [Finset.prod_eq_single a (fun j _ hj => by simp [t, hj]) (by simp), Units.val_zpow_eq_zpow_val]
       simp [t]
@@ -1036,14 +961,14 @@ theorem capXi (hx : XiFacts) {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg
       have e : pol ℂ (Fin.castLE (by omega : n ≤ n + 1) a') (Fin.castLE (by omega : n ≤ n + 1) a')
           (xi ℂ rfl lam sg) = ((sg.w a' - lam.detShift : ℤ) : ℂ) • xi ℂ rfl lam sg :=
         io_torus_diag lam sg (xi ℂ rfl lam sg) hT a' hd
-      rw [capE_apply, if_pos rfl, e, ← add_smul]
+      rw [capE_apply, ite_eq_left rfl, e, ← add_smul]
       congr 1
       push_cast
       ring
     · have e : pol ℂ (Fin.castLE (by omega : n ≤ n + 1) a') (Fin.castLE (by omega : n ≤ n + 1) b')
           (xi ℂ rfl lam sg) = 0 :=
         io_fixed_up lam (xi ℂ rfl lam sg) hU a' b' hab
-      rw [capE_apply, if_neg (ne_of_lt hab), e, add_zero]
+      rw [capE_apply, ite_eq_right (ne_of_lt hab), e, add_zero]
   rw [Formalism.REAL.quantumDetHighestWeight_holds _ n (capE rfl lam) _ _ (capE_glRel rfl lam) hHW u]
   rfl
 
@@ -1063,21 +988,6 @@ end -- clump:auto
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.IoXiHw =====
-
--- ===== clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionIo =====
--- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionIo", "h": "module\n\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ZScalarVanish\npublic import Formalism.PeriodIntegrals.HwIrred\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.IoXiHw\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Formalism.LocalRingCardinality.Params\n\n"}
-section -- clump:auto
-@[expose] public section
-
-noncomputable section
-
-namespace PI.WGL
-
-end PI.WGL
-end -- clump:auto
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionIo =====
 
 -- ===== clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinTopCoefficient.NumMore =====
 -- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinTopCoefficient.NumMore", "h": "module\n\npublic import Formalism.PeriodIntegrals.GTDefs\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinTopCoefficient.CardEraseIccMin\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinTopCoefficient.InterlacingDefectEqCard\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Formalism.LocalRingCardinality.Params\n\n"}
@@ -1210,8 +1120,7 @@ theorem scalar_vanishing_criterion : ZScalarVanish := by
     unfold D0
     rw [Finset.sum_sub_distrib, Finset.sum_sub_distrib, hsum]
   obtain ⟨i, hi⟩ : ∃ i, mu.w i ≠ sg.w i := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hne (funext hc)
   have hmem : mu.w i ∈ Rset h lam sg i := by
     have hm := PI.GTNum.sg_mem_R h lam mu hmu i
@@ -1327,16 +1236,16 @@ theorem rowAct_xi {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWeigh
     intro p b hb
     by_cases hp : p.1 = i.1
     · have e : rowsZ h i p = ⟨n, by omega⟩ := by
-        simp only [rowsZ, hp, if_true]; ext; simp; omega
+        simp only [rowsZ, hp, ite_true]; ext; simp; omega
       rw [e] at hb
       have hbn : b.1 = n := by
         by_contra hne
         exact hb (hG.2 b hne)
       refine ⟨⟨i.1, by omega⟩, ?_⟩
-      simp only [rowsZ, if_true]
+      simp only [rowsZ, ite_true]
       ext; simp; omega
     · have e : rowsZ h i p = ⟨p.1, by omega⟩ := by
-        simp only [rowsZ, hp, if_false]
+        simp only [rowsZ, hp, ite_false]
       rw [e] at hb
       have hle : b.1 ≤ p.1 := by
         by_contra hlt
@@ -1345,7 +1254,7 @@ theorem rowAct_xi {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWeigh
       have hpi : p.1 < i.1 := by have := p.2; omega
       refine ⟨⟨b.1, by omega⟩, ?_⟩
       have : b.1 ≠ i.1 := by omega
-      simp only [rowsZ, this, if_false]
+      simp only [rowsZ, this, ite_false]
   unfold xi xiScal
   rw [map_prod, map_prod, ← Finset.prod_mul_distrib]
   refine Finset.prod_congr rfl (fun i _ => ?_)
@@ -1425,8 +1334,8 @@ theorem tele_sum (ℓ : ℕ → ℤ) (n t : ℕ) (ht : t ≤ n) :
       · ring
       · intro i hi
         rw [Finset.mem_range] at hi
-        rw [if_neg (by omega)]
-    · rw [Finset.sum_range_succ, ih h, if_pos h]
+        rw [ite_eq_right (by omega)]
+    · rw [Finset.sum_range_succ, ih h, ite_eq_left h]
       ring
 
 end PI.WGL.XiA
@@ -1483,7 +1392,7 @@ theorem diag_scalar {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWei
     rw [← Fin.prod_univ_eq_prod_range]
     refine Finset.prod_congr rfl (fun p _ => ?_)
     have : p.1 < n + 1 := by omega
-    simp only [hv, dif_pos this]
+    simp only [hv, dite_eq_left this]
     rfl
   have hPs : ∀ k, P (k + 1) = P k * v k := fun k => by simp only [hP, Finset.prod_range_succ]
   have hdet : Matrix.GeneralLinearGroup.det (diagGL ℂ (n + 1) s) = P n * w := by
@@ -1515,9 +1424,9 @@ theorem diag_scalar {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWei
       congr 1
       · refine Finset.prod_congr rfl (fun p _ => ?_)
         have : (Fin.castSucc p).1 ≠ i.1 := by simp; omega
-        simp only [rowsZ, this, if_false]
+        simp only [rowsZ, this, ite_false]
         rfl
-      · simp only [rowsZ, Fin.val_last, if_true, hw]
+      · simp only [rowsZ, Fin.val_last, ite_true, hw]
         congr 2
     rw [e1, e2, ← Units.val_pow_eq_pow_val, ← Units.val_pow_eq_pow_val, ← Units.val_mul]
     congr 1
@@ -1539,9 +1448,9 @@ theorem diag_scalar {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWei
       rw [← Fin.sum_univ_eq_sum_range ℓ (n + 1), ← Fin.sum_univ_eq_sum_range σ n]
       congr 1
       · refine Finset.sum_congr rfl (fun p _ => ?_)
-        simp only [hℓ]; rw [dif_pos p.2]
+        simp only [hℓ]; rw [dite_eq_left p.2]
       · refine Finset.sum_congr rfl (fun p _ => ?_)
-        simp only [hσ]; rw [dif_pos p.2]
+        simp only [hσ]; rw [dite_eq_left p.2]
   unfold detPow
   rw [hx, hdet, hshift, htarget, ← Units.val_mul, teleM n P (by simp [hP]) w ℓ σ]
 
@@ -1619,22 +1528,22 @@ theorem xi_unitri {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWeigh
     rw [hGdef, XiA.embGL_apply]
     by_cases hb : b.1 < n
     · have ha : a.1 < n := by omega
-      rw [dif_pos hb, dif_pos ha]
+      rw [dite_eq_left hb, dite_eq_left ha]
       exact hlow _ _ (Fin.mk_lt_mk.mpr hab')
     · have hbN := b.isLt
-      rw [dite_eq_right hb, if_pos (by omega)]
+      rw [dite_eq_right hb, ite_eq_left (by omega)]
   have hcol : ∀ b : Fin N, b.1 ≠ n → G b ⟨n, by omega⟩ = 0 := by
     intro b hb
     have hbN := b.isLt
     have hb' : b.1 < n := by omega
-    rw [hGdef, XiA.embGL_apply, dif_pos hb', dite_eq_right (lt_irrefl n)]
+    rw [hGdef, XiA.embGL_apply, dite_eq_left hb', dite_eq_right (lt_irrefl n)]
   have hdg : ∀ a : Fin N, G a a = 1 := by
     intro a
     rw [hGdef, XiA.embGL_apply]
     by_cases ha : a.1 < n
-    · rw [dif_pos ha, dif_pos ha]
+    · rw [dite_eq_left ha, dite_eq_left ha]
       exact hdiag ⟨a.1, ha⟩
-    · rw [dite_eq_right ha, if_neg ha]
+    · rw [dite_eq_right ha, ite_eq_right ha]
   have hgood : XiA.GoodG n h G := by
     unfold XiA.GoodG
     exact ⟨hlowG, hcol⟩
@@ -1653,21 +1562,6 @@ theorem xi_unitri {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWeigh
   rw [hdu]
   simp
 
-private theorem mul_mem_dualWeyl_complex_add {N : ℕ} (ν μ : Fin N → ℕ) (f g : MvPolynomial (Fin N × Fin N) ℂ)
-    (hf : f ∈ Formalism.GradedWeylDivisibility.dualWeyl ℂ N N ν) (hg : g ∈ Formalism.GradedWeylDivisibility.dualWeyl ℂ N N μ) :
-    f * g ∈ Formalism.GradedWeylDivisibility.dualWeyl ℂ N N (ν + μ) := by
-  unfold Formalism.GradedWeylDivisibility.dualWeyl at hf hg ⊢
-  rw [Submodule.mem_inf] at hf hg ⊢
-  obtain ⟨hf1, hf2⟩ := hf
-  obtain ⟨hg1, hg2⟩ := hg
-  refine ⟨?_, ?_⟩
-  · rw [MvPolynomial.mem_weightedHomogeneousSubmodule] at hf1 hg1 ⊢
-    exact hf1.mul hg1
-  · simp only [Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply, AlgHom.toLinearMap_apply,
-      sub_eq_zero] at hf2 hg2 ⊢
-    intro l j hlj
-    rw [map_mul, map_mul, hf2 l j hlj, hg2 l j hlj]
-
 theorem nu_eq {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWeight n) (hI : Interlace h lam sg)
     (t : Fin N) :
     (∑ i : Fin n, ((aa h lam sg i).toNat * (if t.1 < i.1 + 1 then 1 else 0) +
@@ -1678,7 +1572,7 @@ theorem nu_eq {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWeight n)
   have hnat : ((lam.natW t : ℕ) : ℤ) = lam.w t - lam.w ⟨n, by omega⟩ := by
     have hle : t ≤ ⟨n, by omega⟩ := by rw [Fin.le_def]; have := t.2; simp; omega
     have := lam.anti hle
-    simp only [DomWeight.natW, DomWeight.detShift, dif_pos (show 0 < n + 1 by omega)]
+    simp only [DomWeight.natW, DomWeight.detShift, dite_eq_left (show 0 < n + 1 by omega)]
     rw [Int.toNat_of_nonneg (by simp; omega)]
     simp
   rw [hnat]
@@ -1686,18 +1580,18 @@ theorem nu_eq {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWeight n)
   rw [Finset.sum_congr rfl (g := fun i : Fin n => (fun k : ℕ => if t.1 ≤ k then ℓ k - ℓ (k + 1) else 0) i.1)]
   · rw [Fin.sum_univ_eq_sum_range (fun k : ℕ => if t.1 ≤ k then ℓ k - ℓ (k + 1) else 0) n,
       XiA.tele_sum ℓ n t.1 (by have := t.2; omega)]
-    simp only [hℓ, dif_pos t.2, dif_pos (show n < n + 1 by omega)]
+    simp only [hℓ, dite_eq_left t.2, dite_eq_left (show n < n + 1 by omega)]
   · intro i _
     have hi := i.2
     have hA : 0 ≤ aa rfl lam sg i := by have := (hI i).2; unfold aa; omega
     have hB : 0 ≤ bb rfl lam sg i := by have := (hI i).1; unfold bb; omega
     rw [Int.toNat_of_nonneg hA, Int.toNat_of_nonneg hB]
-    simp only [hℓ, dif_pos (show i.1 < n + 1 by omega), dif_pos (show i.1 + 1 < n + 1 by omega)]
+    simp only [hℓ, dite_eq_left (show i.1 < n + 1 by omega), dite_eq_left (show i.1 + 1 < n + 1 by omega)]
     by_cases hti : t.1 ≤ i.1
-    · rw [if_pos (by omega), if_pos hti]
+    · rw [ite_eq_left (by omega), ite_eq_left hti]
       unfold aa bb
       ring
-    · rw [if_neg (by omega), if_neg hti]
+    · rw [ite_eq_right (by omega), ite_eq_right hti]
       ring
 
 theorem xi_mem {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWeight n) (hI : Interlace h lam sg) :
@@ -1711,7 +1605,7 @@ theorem xi_mem {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWeight n
   unfold xi
   rw [key]
   refine XiA.prod_mem Finset.univ _ _ (fun i _ => ?_)
-  apply mul_mem_dualWeyl_complex_add
+  apply _root_.PI.WGL.XiA.mul_mem_dualWeyl_complex
   · apply XiA.pow_mem
     rw [XiA.lpMinor_eq]
     exact XiA.initMinor_mem _ _
@@ -1734,8 +1628,8 @@ theorem initMinor_ne {N s : ℕ} (I : Fin s → Fin N) (hI : Function.Injective 
       Matrix.one_apply, v]
     by_cases hpq : p = q
     · subst hpq
-      rw [if_pos ⟨p, rfl, rfl⟩, if_pos rfl]
-    · rw [if_neg hpq, if_neg]
+      rw [ite_eq_left ⟨p, rfl, rfl⟩, ite_eq_left rfl]
+    · rw [ite_eq_right hpq, ite_eq_right]
       rintro ⟨p', h2, h3⟩
       have h4 : p' = p := hI h2
       subst h4
@@ -1819,7 +1713,7 @@ end -- clump:auto
 -- ===== end clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionXi =====
 
 -- ===== clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.GTLowerOf =====
--- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.GTLowerOf", "h": "module\n\npublic import Formalism.PeriodIntegrals.GTLower\npublic import Formalism.PeriodIntegrals.HwIrred\npublic import Formalism.PeriodIntegrals.SchurFock\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.Assembly\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.Capelli2_2\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionAdj\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionBrInt\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionIo\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionLift\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionNum\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionXi\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.GTLowerOf", "h": "module\n\npublic import Formalism.PeriodIntegrals.GTLower\npublic import Formalism.PeriodIntegrals.HwIrred\npublic import Formalism.PeriodIntegrals.SchurFock\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.Assembly\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.Capelli2_2\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionAdj\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionBrInt\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionLift\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionNum\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionXi\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 

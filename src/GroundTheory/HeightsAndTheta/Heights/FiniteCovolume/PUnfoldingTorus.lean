@@ -6,7 +6,6 @@ public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsHaar
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsStabilizerCovolume
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArchLatticeDiscrete
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PScalingLaw
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -21,7 +20,6 @@ variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Alge
   [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-
 omit [NumberField F] [NumberField E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem invApply_mul {h : HermitianForm F E W} {v : Basis ι E W} (a b : archUnitary h v)
     (y : InfinitePlace E → ι → ℂ) : invApply (a * b) y = invApply b (invApply a y) := by
@@ -29,12 +27,10 @@ theorem invApply_mul {h : HermitianForm F E W} {v : Basis ι E W} (a b : archUni
   simp only [invApply, _root_.mul_inv_rev, Subgroup.coe_mul, Pi.mul_apply, Units.val_mul,
     Matrix.mulVec_mulVec]
 
-
 omit [NumberField F] [NumberField E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem invApply_of_mem_vecFixGroup {h : HermitianForm F E W} {v : Basis ι E W} {x₀ : W}
     {x : archUnitary h v} (hx : x ∈ vecFixGroup h v x₀) : invApply x (vecAt v x₀) = vecAt v x₀ :=
   funext fun w => mem_vecFixGroup.1 (inv_mem hx) w
-
 
 omit [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem len_invApply_of_mem_stab {h : HermitianForm F E W} {v : Basis ι E W} (M : Majorant h v)
@@ -52,7 +48,6 @@ theorem len_invApply_of_mem_stab {h : HermitianForm F E W} {v : Basis ι E W} (M
   simp only [invApply]
   rw [← hA_def, Matrix.star_mulVec, ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec,
     Matrix.mulVec_mulVec, hA']
-
 
 omit [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem vecStabGroup_le_vecFixGroup [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]

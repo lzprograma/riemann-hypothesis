@@ -61,7 +61,7 @@ theorem cayley_weight_high_index (k r : ℕ) (v : Fin (k - 1) → ℝ) (b : Fin 
     (i : Fin (2 * r + k + 1)) (hi : ¬ i.val < k - 1) :
     lam48 k r v b i = -b ⟨i.val - (k - 1), by have := i.isLt; omega⟩ := by
   unfold lam48
-  exact dif_neg hi
+  exact dite_eq_right hi
 
 theorem gapAtLeast_of_increments (k r : ℕ) (v : Fin (k - 1) → ℝ) (b : Fin (2 * r + 2) → ℝ) (G : ℝ) (hG : 0 < G)
     (hanti : StrictAnti (lam48 k r v b))
@@ -81,17 +81,17 @@ theorem gapAtLeast_of_increments (k r : ℕ) (v : Fin (k - 1) → ℝ) (b : Fin 
     linarith
   intro a c hac
   by_cases ha : a.val < k - 1 <;> by_cases hc : c.val < k - 1
-  · exfalso; apply hac; simp only [eps48, if_pos ha, if_pos hc]
+  · exfalso; apply hac; simp only [eps48, ite_eq_left ha, ite_eq_left hc]
   · have hp : (c.val - (k - 1)) % 2 = 1 := by
       by_contra hne
       apply hac
-      simp only [eps48, if_pos ha, if_neg hc]
+      simp only [eps48, ite_eq_left ha, ite_eq_right hc]
       simp [show (c.val - (k - 1)) % 2 = 0 by omega]
     exact key a c ha hc hp
   · have hp : (a.val - (k - 1)) % 2 = 1 := by
       by_contra hne
       apply hac
-      simp only [eps48, if_pos hc, if_neg ha]
+      simp only [eps48, ite_eq_left hc, ite_eq_right ha]
       simp [show (a.val - (k - 1)) % 2 = 0 by omega]
     rw [abs_sub_comm]; exact key c a hc ha hp
   · rw [cayley_weight_high_index k r v b a ha, cayley_weight_high_index k r v b c hc]
@@ -100,7 +100,7 @@ theorem gapAtLeast_of_increments (k r : ℕ) (v : Fin (k - 1) → ℝ) (b : Fin 
       intro heq
       apply hac
       have hv : c.val - (k - 1) = a.val - (k - 1) := congrArg Fin.val heq
-      simp only [eps48, if_neg ha, if_neg hc]
+      simp only [eps48, ite_eq_right ha, ite_eq_right hc]
       rw [hv]
     have := lt_abs_sub_of_increments b G hG hb _ _ hne
     rw [show -b ⟨a.val - (k - 1), by have := a.isLt; omega⟩ - -b ⟨c.val - (k - 1), by have := c.isLt; omega⟩ =
@@ -113,9 +113,9 @@ theorem q_le_of_cayley_signature (k r : ℕ) : qOf (eps48 k r) ≤ r + 1 := by
     intro x hx
     unfold eps48 at hx
     by_cases h1 : x.val < k - 1
-    · rw [if_pos h1] at hx
+    · rw [ite_eq_left h1] at hx
       exact absurd hx (by decide)
-    · rw [if_neg h1] at hx
+    · rw [ite_eq_right h1] at hx
       refine ⟨h1, ?_⟩
       have h2 : ¬ ((x.val - (k - 1)) % 2 = 0) := by simpa using hx
       omega

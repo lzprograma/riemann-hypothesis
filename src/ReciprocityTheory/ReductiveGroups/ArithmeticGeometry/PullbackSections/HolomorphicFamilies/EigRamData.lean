@@ -8,8 +8,6 @@ public import Mathlib.Algebra.BigOperators.Field
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open NumberField

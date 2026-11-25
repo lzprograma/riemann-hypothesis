@@ -135,7 +135,7 @@ theorem _root_.GlobalTheory.CoefEmbed.embedding_closed_integral : ∀ (l : ℕ) 
     have h : ‖g ((l : ℕ) : O)‖ = ‖g ϖ‖ ^ e := by
       rw [hw, map_mul, norm_mul, hunit, one_mul, map_pow, norm_pow]
     by_contra h'
-    push_neg at h'
+    push Not at h'
     have := one_le_pow₀ (n := e) h'
     linarith
   have hϖ0 : ϖ ≠ 0 := hϖ.ne_zero

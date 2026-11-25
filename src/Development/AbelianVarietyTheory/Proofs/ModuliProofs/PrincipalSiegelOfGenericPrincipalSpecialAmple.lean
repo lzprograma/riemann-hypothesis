@@ -332,7 +332,7 @@ theorem kernel_of_kTriv (u₀ : Fin n) (hK : Out.KTriv G L) (T : Over S) (x : T 
   have := hmon u₀
   have e : j ≫ x = j ≫ 1 := by
     have h := hy u₀
-    rw [if_pos rfl, h1, MonObj.one_comp] at h
+    rw [ite_eq_left rfl, h1, MonObj.one_comp] at h
     rw [← h, MonObj.comp_one]
   exact congrArg (fun q => q.left) e
 

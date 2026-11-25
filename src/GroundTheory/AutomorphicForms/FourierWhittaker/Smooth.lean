@@ -264,12 +264,12 @@ theorem infEmb_expG_dirMat (k : ℕ) (hk : k < n) (p : Fin k × BIdx K) (s : ℝ
     rw [homeomorphMixedSpace_ofCoord]
     by_cases hi : i = p.1
     · subst hi
-      rw [if_pos rfl, Finset.sum_eq_single p.2]
+      rw [ite_eq_left rfl, Finset.sum_eq_single p.2]
       · simp
       · intro j _ hj
         rw [Pi.single_eq_of_ne (fun h => hj (by rw [← h])), zero_smul]
       · simp
-    · rw [if_neg hi]
+    · rw [ite_eq_right hi]
       refine Finset.sum_eq_zero fun j _ => ?_
       rw [Pi.single_eq_of_ne (fun h => hi (by rw [← h])), zero_smul]
   have hv2 : ∀ i : Fin k, (v i).2 = 0 := fun i => rfl
@@ -299,19 +299,19 @@ theorem infEmb_expG_dirMat (k : ℕ) (hk : k < n) (p : Fin k × BIdx K) (s : ℝ
     have hp := p.1.2
     by_cases hab : a = b
     · subst hab
-      rw [if_pos rfl, if_pos rfl, if_neg (by omega), smul_zero, add_zero]
+      rw [ite_eq_left rfl, ite_eq_left rfl, ite_eq_right (by omega), smul_zero, add_zero]
       exact map_one _
-    · rw [if_neg hab, if_neg hab, zero_add]
+    · rw [ite_eq_right hab, ite_eq_right hab, zero_add]
       by_cases hlt : a < b
       · rw [dite_eq_left hlt]
         by_cases hbk : b.val = k
         · rw [dite_eq_left hbk, ← GroundTheory.Global.homeomorphMixedSpace_apply, hv1]
           by_cases ha : a.val = p.1.val
-          · rw [if_pos (Fin.ext ha), if_pos ⟨ha, hbk⟩]
-          · rw [if_neg (fun h => ha (by rw [← h])), if_neg (fun h => ha h.1), smul_zero]
-        · rw [dite_eq_right hbk, if_neg (fun h => hbk h.2), smul_zero]
+          · rw [ite_eq_left (Fin.ext ha), ite_eq_left ⟨ha, hbk⟩]
+          · rw [ite_eq_right (fun h => ha (by rw [← h])), ite_eq_right (fun h => ha h.1), smul_zero]
+        · rw [dite_eq_right hbk, ite_eq_right (fun h => hbk h.2), smul_zero]
           exact map_zero _
-      · rw [dite_eq_right hlt, if_neg (fun h => hlt (by rw [Fin.lt_def]; omega)), smul_zero]
+      · rw [dite_eq_right hlt, ite_eq_right (fun h => hlt (by rw [Fin.lt_def]; omega)), smul_zero]
         exact map_zero _
   apply (AdelicGLn.prodEquiv K n).injective
   rw [prodEquiv_infEmb, ← hinf, ContinuousMulEquiv.symm_apply_apply, ← hfin]

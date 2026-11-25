@@ -26,11 +26,6 @@ open scoped InnerProductSpace
 
 namespace ReciprocityTheory.ChartRestriction.DS
 
-private lemma cauchyBinet_det_mul_fun {R : Type*} [CommRing R] {i N : ℕ} (A : Matrix (Fin i) (Fin N) R)
-    (B : Matrix (Fin N) (Fin i) R) :
-    (A * B).det = ∑ f : Fin i → Fin N, (∏ a, A a (f a)) * (B.submatrix f id).det := by
-  first | exact Bl.general_b_fact.goal1 ..
-
 private def cauchyBinetPar {i N : ℕ} (p : (Σ _ : {S : Finset (Fin N) // S.card = i}, Equiv.Perm (Fin i))) :
     Fin i ↪ Fin N :=
   p.2.toEmbedding.trans (p.1.1.orderEmbOfFin p.1.2).toEmbedding
@@ -82,7 +77,7 @@ theorem cauchyBinet {m i : ℕ} {R : Type*} [CommRing R] (A : Matrix (Fin i) (Fi
     (A * B).det = ∑ S : {S : Finset (Fin m) // S.card = i},
       (A.submatrix id (S.1.orderEmbOfFin S.2)).det * (B.submatrix (S.1.orderEmbOfFin S.2) id).det := by
   classical
-  rw [cauchyBinet_det_mul_fun]
+  rw [Bl.general_b_fact.goal1]
   set F : (Fin i → Fin m) → R := fun f => (∏ a, A a (f a)) * (B.submatrix f id).det with hF
   have h1 : ∑ f : Fin i → Fin m, F f = ∑ f : Fin i ↪ Fin m, F f := by
     have h0 : ∀ f : Fin i → Fin m, ¬ Function.Injective f → F f = 0 := by

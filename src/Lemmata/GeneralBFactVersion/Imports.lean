@@ -12,7 +12,7 @@ universe u_1
 namespace Bl.general_b_fact_version
 
 theorem goal1 :
-  ∀ {Y : Type u_1} [inst : NormedAddCommGroup.{u_1} Y] [inst_1 : NormedSpace.{0, u_1} Complex Y] {g : Y → Complex} {y : Y}
+  ∀ {Y : Type u_1} [NormedAddCommGroup.{u_1} Y] [NormedSpace.{0, u_1} Complex Y] {g : Y → Complex} {y : Y}
   {R M : Real},
   LT.lt.{0} 0 R →
     DifferentiableOn.{0, u_1, 0} Complex g (Metric.ball.{u_1} y (HMul.hMul.{0, 0, 0} 2 R)) →

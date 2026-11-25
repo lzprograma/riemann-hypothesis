@@ -63,7 +63,7 @@ theorem _root_.GlobalTheory.lastComatrixRow_inverts_dual : ∀ (V : Type) [Norme
       intro j
       have hite : ∀ l, (if j = l then (u - (n : ℂ)) • (1 : Module.End ℂ V) else 0) (x l) = if j = l then (u - (n : ℂ)) • x l else 0 := by
         intro l; split_ifs <;> simp
-      simp only [_root_.Formalism.REAL.shiftedGenerator_eq_ite_smul_add, LinearMap.add_apply, Finset.sum_add_distrib, hOm, ite_smul, zero_smul, hite, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      simp only [_root_.Formalism.REAL.shiftedGenerator_eq_ite_smul_add, LinearMap.add_apply, Finset.sum_add_distrib, hOm, ite_smul, zero_smul, hite, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     rw [LinearMap.sum_apply]
 
     simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, WithLp.linearEquiv_apply, LinearMap.proj_apply, hproj, WithLp.ofLp_add, WithLp.ofLp_smul, Pi.add_apply, Pi.smul_apply, hT, map_sum]
@@ -71,7 +71,7 @@ theorem _root_.GlobalTheory.lastComatrixRow_inverts_dual : ∀ (V : Type) [Norme
     simp only [← Module.End.mul_apply, ← LinearMap.sum_apply]
     have hite : ∀ l, (if Fin.last n = l then _root_.Formalism.REAL.qdet E u else 0) (x l) = if Fin.last n = l then _root_.Formalism.REAL.qdet E u (x l) else 0 := by
       intro l; split_ifs <;> simp
-    simp only [c, hcom, hite, Finset.sum_ite_eq, Finset.mem_univ, if_true, hdet]
+    simp only [c, hcom, hite, Finset.sum_ite_eq, Finset.mem_univ, ite_true, hdet]
   · intro u v
     have hproj : ∀ (y : PiLp 2 (fun _ : Fin (n + 1) => V)) j, (WithLp.addEquiv 2 (Fin (n + 1) → V)).toFun y j = y.ofLp j := fun _ _ => rfl
     rw [LinearMap.sum_apply, Finset.sum_eq_single (Fin.last n)]

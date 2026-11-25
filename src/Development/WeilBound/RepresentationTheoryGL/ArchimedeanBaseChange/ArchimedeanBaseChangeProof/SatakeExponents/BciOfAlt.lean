@@ -149,13 +149,8 @@ theorem mulChi_absC_mulChi (n : ℕ) (z z' : ℂ) (φ : Sm E n) :
   congr 2
   ring
 
-theorem tw_tw {n : ℕ} (V : Submodule ℂ (Sm E n)) (a b : ℂ) : tw (tw V a) b = tw V (a + b) := by
-  ext ψ
-  constructor
-  · rintro ⟨_, ⟨φ, hφ, rfl⟩, rfl⟩
-    exact ⟨φ, hφ, (mulChi_absC_mulChi n b a φ).symm⟩
-  · rintro ⟨φ, hφ, rfl⟩
-    exact ⟨_, ⟨φ, hφ, rfl⟩, mulChi_absC_mulChi n b a φ⟩
+theorem tw_tw {n : ℕ} (V : Submodule ℂ (Sm E n)) (a b : ℂ) : tw (tw V a) b = tw V (a + b) :=
+  _root_.PositivityTheory.Rg.BcB.SpectralAccumulation.Cz.TwistConcentration.tw_tw V a b
 
 theorem map_mem_finVec {n : ℕ} {V : Submodule ℂ (Sm E n)} (f : Sm E n →ₗ[ℂ] Sm E n)
     (heq : ∀ o, ∀ φ ∈ V, f (act o φ) = act o (f φ)) {φ : Sm E n} (hφ : φ ∈ V)
@@ -200,15 +195,6 @@ namespace PositivityTheory.Rg.BcB.SpectralAccumulation.Lim5
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-theorem sum_map_add_const (m : Multiset ℂ) (w : ℂ) :
-    (m.map (· + w)).sum = m.sum + (Multiset.card m : ℂ) * w := by
-  induction m using Multiset.induction_on with
-  | empty => simp
-  | cons a m ih =>
-    simp only [Multiset.map_cons, Multiset.sum_cons, Multiset.card_cons, ih]
-    push_cast
-    ring
-
 theorem norm_sum_le_of_le {M m : Multiset ℂ} {R : ℝ} (hle : M ≤ m) (hR : ∀ x ∈ m, ‖x‖ ≤ R) :
     ‖M.sum‖ ≤ Multiset.card M * R := by
   calc ‖M.sum‖ ≤ (M.map (fun x => ‖x‖)).sum := norm_multiset_sum_le M
@@ -227,7 +213,7 @@ theorem side_bound {n : ℕ} (hn : 0 < n) (m m₁ : (E →+* ℂ) → Multiset �
     have h := norm_sum_le_of_le (hle τ) (hR τ)
     rwa [Multiset.card_map, hcard τ] at h
   have h2 : ∑ τ, ((m₁ τ).map (· + w)).sum = ∑ τ, (m₁ τ).sum + ((Fintype.card (E →+* ℂ) * n : ℕ) : ℂ) * w := by
-    simp only [sum_map_add_const, hcard, Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+    simp only [GlobalTheory.CompanionTheory.EGlue.LeafB.sum_map_add_const, hcard, Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
     push_cast
     ring
   have h3 : ‖∑ τ, ((m₁ τ).map (· + w)).sum‖ ≤ Fintype.card (E →+* ℂ) * (n * R) := by
@@ -249,8 +235,7 @@ theorem side_bound {n : ℕ} (hn : 0 < n) (m m₁ : (E →+* ℂ) → Multiset �
   have hwb : ‖w‖ ≤ R + |C| := by
     have hA := abs_nonneg C
     have hB : |C| ≤ ((Fintype.card (E →+* ℂ) * n : ℕ) : ℝ) * |C| := le_mul_of_one_le_left hA hTn
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have := mul_lt_mul_of_pos_left hcon (lt_of_lt_of_le one_pos hTn)
     nlinarith
   refine ⟨hwb, fun τ x hx => ?_⟩
@@ -1281,12 +1266,8 @@ theorem allLeaves_addTw {N : ℕ} (t : Tr E N) (α : ℕ → ℂ) (P : ∀ M : �
   | leaf V z => exact Iff.rfl
   | node t₁ t₂ ih₁ ih₂ => exact and_congr (ih₁ _) (ih₂ _)
 
-theorem strip_twists_length {N : ℕ} (t : Tr E N) : t.strip.twists.length = t.twists.length := by
-  induction t with
-  | leaf V z => rfl
-  | node t₁ t₂ ih₁ ih₂ =>
-    change (t₁.strip.twists ++ t₂.strip.twists).length = (t₁.twists ++ t₂.twists).length
-    rw [List.length_append, List.length_append, ih₁, ih₂]
+theorem strip_twists_length {N : ℕ} (t : Tr E N) : t.strip.twists.length = t.twists.length :=
+  _root_.PositivityTheory.Rg.BcB.SpectralAccumulation.Lim5.length_twists_strip t
 
 theorem addTw_congr {N : ℕ} (t : Tr E N) {α α' : ℕ → ℂ} (h : ∀ i < t.twists.length, α i = α' i) :
     t.addTw α = t.addTw α' := by

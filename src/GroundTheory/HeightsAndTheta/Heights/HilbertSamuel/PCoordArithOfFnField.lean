@@ -79,14 +79,12 @@ theorem CoordArithOfFnField.proof : CoordArithOfFnField.Statement := by
   rw [dim_eq y c hc, hF] at hdim
   rw [dim_eq y' c' hc']
   generalize (Algebra.trdeg ℤ (blockFnField y')).toENat = e at hdim ⊢
-  induction e using ENat.recTopCoe with
-  | top =>
-    exfalso
-    simp only [top_add] at hdim
-    norm_cast at hdim
-  | coe n =>
-    norm_cast at hdim ⊢
-    omega
+  have h1 : e + 1 + Fintype.card K = (d : ℕ∞) + Fintype.card K :=
+    WithBot.coe_inj.mp (by push_cast at hdim ⊢; rwa [add_right_comm _ 1])
+  have he : e + 1 = d := le_antisymm
+    ((ENat.add_le_add_iff_right (ENat.natCast_ne_top (Fintype.card K))).mp h1.le)
+    ((ENat.add_le_add_iff_right (ENat.natCast_ne_top (Fintype.card K))).mp h1.ge)
+  rw [add_right_comm, he]; push_cast; rfl
 
 end
 

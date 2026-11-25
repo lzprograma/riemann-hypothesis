@@ -474,8 +474,6 @@ open GlobalTheory.CechPic GlobalTheory.DiagPairing
 
 section Root
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 theorem exists_weilIs_root {p : ℕ} [Fact p.Prime] {D : Datum p} {R : Type} [CommRing R] {b : Base D R} {N : ℕ}
     {S : Scheme.{0}} {s : S ⟶ Sp R} (o : Obj b N s) (M : ℕ) (T : Over S) (x y : T ⟶ o.A) (hM : 0 < M)
     (hx : x ^ M = 1) (hy : y ^ M = 1) :
@@ -1217,11 +1215,6 @@ theorem exists_equiv (n : ℕ) (φ φ' : L → G) (hφ : ∀ a c, φ (a + c) = �
 
 end GlobalTheory.UPel.TensorTorsionNsmul
 
-namespace GlobalTheory.UPel
-
-open scoped TensorProduct
-
-end GlobalTheory.UPel
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto

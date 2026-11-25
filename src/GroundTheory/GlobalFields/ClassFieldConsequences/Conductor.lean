@@ -69,7 +69,7 @@ namespace Modulus
 
 theorem exponent_conductor (v : HeightOneSpectrum (𝓞 K)) :
     (conductor K L).exponent v = localConductorExponent L v := by
-  rw [exponent, if_pos (FiniteMultiplicity.of_prime_left v.prime
+  rw [exponent, ite_eq_left (FiniteMultiplicity.of_prime_left v.prime
     (conductor K L).ideal_ne_bot)]
   exact multiplicity_finprod_asIdeal_pow_eq (finite_support_localConductorExponent L) v
 
@@ -109,7 +109,7 @@ theorem congruenceSubgroup_le_ker_ideleSymbol_iff (𝔪 : Modulus K) :
       by_cases hw : w.IsReal
       · by_cases hm : (⟨w, hw⟩ : {w : InfinitePlace K // w.IsReal}) ∈ 𝔪.real
         · obtain ⟨w'⟩ := IdeleNorm.nonempty_infinitePlacesOver L w
-          rw [infiniteLocalSymbol_apply L w hw w', if_neg (not_lt.2 (hxi _ hm).le)]
+          rw [infiniteLocalSymbol_apply L w hw w', ite_eq_right (not_lt.2 (hxi _ hm).le)]
         · rw [hi _ hm, MonoidHom.one_apply]
       · rw [infiniteLocalSymbol_of_not_isReal L w hw, MonoidHom.one_apply]
     simp only [h1, h2, finprod_one, Finset.prod_const_one, mul_one]
@@ -124,17 +124,6 @@ theorem map_congruenceSubgroup_le_range_ideleClassNorm_iff (𝔪 : Modulus K) :
 end Modulus
 
 end Conductor
-
-section RayClassField
-
-variable {K : Type u} [Field K] [NumberField K] {Ω : Type u} [Field Ω] [Algebra K Ω] [IsAlgClosed Ω]
-  (L : IntermediateField K Ω) [FiniteDimensional K L] [IsAbelianGalois K L]
-
-namespace Modulus
-
-end Modulus
-
-end RayClassField
 
 end
 

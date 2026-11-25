@@ -4,48 +4,7 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
 public import Formalism.WeaklyAdmissibleFiltrations.StatementTor
 public import Mathlib.LinearAlgebra.Matrix.Rank
 public import Mathlib.NumberTheory.NumberField.ClassNumber
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -97,8 +56,6 @@ def T2 (i : N.Loc) (ρ : G H.E N.Om →* GL (Fin R.r) (N.O i)) :
   twistRep (Representation.dual (Wp N i ρ)) (epsO N i)
 
 def WpK (i : N.Loc) (ρ : G H.E N.Om →* GL (Fin R.r) (N.O i)) := coefRep (Wp N i ρ) (FractionRing (N.O i))
-
-def WpKO (i : N.Loc) (ρ : G H.E N.Om →* GL (Fin R.r) (N.O i)) := coefRep (Wp N i ρ) (KmodO (N.O i))
 
 def KOtw (i : N.Loc) (e : ℤ) : Representation (N.O i) (G H.E N.Om) (KmodO (N.O i)) :=
   Formalism.GaloisCohomology.scalRep (KmodO (N.O i)) ((epsO N i) ^ (-e))
@@ -398,24 +355,6 @@ variable (i : N.Loc) (ρ : N.X i → (GE N →* GL (Fin R.r) (N.O i)))
 
 def WKO (π : N.X i) : Representation (N.O i) (GE N) (KOr N i) := actRep (stdLat N i (WpO N i ρ π))
 
-def bkW (π : N.X i) (w : HeightOneSpectrum (𝓞 H.E))
-    {G : Type} [Group G] [TopologicalSpace G] {K₀ Kw B BdR : Type} [Field K₀] [Field Kw]
-    [Algebra ℚ_[N.l i] K₀] [Algebra ℚ_[N.l i] Kw] [Algebra K₀ Kw] [IsScalarTower ℚ_[N.l i] K₀ Kw]
-    [CommRing B] [CommRing BdR] [Algebra ℚ_[N.l i] B] [Algebra K₀ B] [IsScalarTower ℚ_[N.l i] K₀ B]
-    [Algebra ℚ_[N.l i] BdR] [Algebra K₀ BdR] [Algebra Kw BdR] [IsScalarTower ℚ_[N.l i] Kw BdR]
-    [IsScalarTower K₀ Kw BdR] [IsScalarTower ℚ_[N.l i] K₀ BdR]
-    (PD : PeriodData G ℚ_[N.l i] K₀ Kw B BdR) (ι : G →* Gw N w) :
-    Submodule (N.O i) (H1 ((WKO N i ρ π).comp (decS N w))) :=
-  ((Z1 ((WKO N i ρ π).comp (decS N w))).comap (Submodule.subtype _) ⊓
-    (HfD PD (stdLat N i (((WpO N i ρ π).comp (decS N w)).comp ι))).comap
-      ((LinearMap.funLeft (N.O i) (KOr N i) ι).comp (Submodule.subtype _))).map (Submodule.mkQ _)
-
-def selPi (π : N.X i)
-    (Ll : ∀ v, Submodule (N.O i) (H1 ((WKO N i ρ π).comp (Dec (F := H.E) (N.plOm.1 v)).subtype))) :
-    Submodule (N.O i) (H1 (WKO N i ρ π)) :=
-  Formalism.GaloisCohomology.SelAll (WKO N i ρ π) N.plOm
-    (Formalism.GaloisCohomology.bkCond (WKO N i ρ π) N.plOm (N.l i) (↑(N.S i ∪ N.Q i)) Ll)
-
 def jW (π : N.X i) (w : HeightOneSpectrum (𝓞 H.E))
     {G : Type} [Group G] [TopologicalSpace G] {K₀ Kw B BdR : Type} [Field K₀] [Field Kw]
     [Algebra ℚ_[N.l i] K₀] [Algebra ℚ_[N.l i] Kw] [Algebra K₀ Kw] [IsScalarTower ℚ_[N.l i] K₀ Kw]
@@ -424,12 +363,6 @@ def jW (π : N.X i) (w : HeightOneSpectrum (𝓞 H.E))
     [IsScalarTower K₀ Kw BdR] [IsScalarTower ℚ_[N.l i] K₀ BdR]
     (PD : PeriodData G ℚ_[N.l i] K₀ Kw B BdR) (ι : G →* Gw N w) : ℕ :=
   finrank (KK N i) (FiniteCohomology PD (matRep (mapM (toK N i) (((WpO N i ρ π).comp (decS N w)).comp ι))))
-
-def h0W (π : N.X i) (w : HeightOneSpectrum (𝓞 H.E)) : ℚ :=
-  lenUnit (O := N.O i) (N.l i) ↥(Representation.invariants ((WKO N i ρ π).comp (decS N w)))
-
-def lenCol (e' : ℕ) (j : ℕ) (π : N.X i) (w : HeightOneSpectrum (𝓞 H.E)) : ℚ :=
-  (e' : ℚ) + (j : ℚ) * ((e' : ℚ) + N.vdel i) + 2 * N.vdel i + h0W N i ρ π w
 
 end Sel
 
@@ -615,7 +548,6 @@ end Formalism.MainNotions.N
 
 noncomputable section
 
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.WeaklyAdmissibleFiltrations Module
 
 namespace Formalism.MainNotions.N
 

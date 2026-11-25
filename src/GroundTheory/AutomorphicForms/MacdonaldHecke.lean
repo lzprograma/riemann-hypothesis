@@ -241,7 +241,7 @@ theorem eq_zero_of_not_antitone {ψ₀ : AddChar F ℂ} (hψ₁ : ∃ x : F, π 
     simp only [Pi.neg_apply]
     by_cases hab : a = b
     · subst hab
-      rw [Matrix.one_apply_eq, if_neg (fun h => hne (h.1.trans h.2.symm)), sub_self, zpow_zero,
+      rw [Matrix.one_apply_eq, ite_eq_right (fun h => hne (h.1.trans h.2.symm)), sub_self, zpow_zero,
         add_zero, one_mul]
       exact Subring.one_mem _
     · rw [Matrix.one_apply_ne hab, zero_add]
@@ -256,7 +256,7 @@ theorem eq_zero_of_not_antitone {ψ₀ : AddChar F ℂ} (hψ₁ : ∃ x : F, π 
     simp only [k, neg_neg, torusPow_neg]
     group
   have h1 := hWK (torusPow F n μ) k hk
-  rw [heq, hWN u huN, Whittaker.psiN_rootElt ψ₀ hne, if_pos hij] at h1
+  rw [heq, hWN u huN, Whittaker.psiN_rootElt ψ₀ hne, ite_eq_left hij] at h1
   have : (ψ₀ x - 1) * W (torusPow F n μ) = 0 := by rw [sub_mul, h1, one_mul, sub_self]
   exact (mul_eq_zero.1 this).resolve_left (sub_ne_zero.2 hψx)
 

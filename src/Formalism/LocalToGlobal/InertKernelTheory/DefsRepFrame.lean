@@ -18,7 +18,6 @@ open Formalism.MainNotions.FormalGroupSystem Formalism.L2.Th1.D Formalism.L2.Th1
 open Formalism.InvariantFactorPaths.G7 (UnrOK)
 open Formalism.L2.Th1.CM (MaximalUnramifiedExtension)
 open Formalism.L2.G.Pend (k0ToC wittFractionAlgebraCp OcC Frm thA thFOf invF zOfX tw mAt rank_eq)
-open Formalism.MainNotions.FormalGroupSystem (Sys)
 open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker
 
 variable {p : ℕ} [Fact p.Prime] (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (E : Formalism.L2.G.Pend.CEmbC X.G)

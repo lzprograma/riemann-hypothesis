@@ -37,7 +37,7 @@ theorem isCAR_fock : IsCAR (cpFock (n := n)) cmFock := by
     by_cases h : i = j ∧ a = b
     · obtain ⟨rfl, rfl⟩ := h
       simp
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       have hne : (i, a) ≠ (j, b) := fun e => h ⟨congrArg Prod.fst e, congrArg Prod.snd e⟩
       simp [LinearMap.proj_apply, hne]
 

@@ -51,7 +51,6 @@ open NumberField IsDedekindDomain Matrix MeasureTheory GlobalTheory.Mem GlobalTh
 open scoped TensorProduct Classical
 
 namespace GlobalTheory.AdForm
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def intVec (D : D7) (n : ℕ) : Set (Fin n → D.host.E) := {x | ∀ k, IsIntegral ℤ (x k)}
 

@@ -58,7 +58,7 @@ theorem finite_nonint {κ : Type} [Finite κ] (x : κ → AF F) :
     Filter.eventually_cofinite.1 (x i).2.2
   refine (Set.finite_iUnion h).subset ?_
   intro w hw
-  push_neg at hw
+  push Not at hw
   obtain ⟨i, hi⟩ := hw
   exact Set.mem_iUnion.2 ⟨i, hi⟩
 
@@ -125,7 +125,7 @@ theorem finprod_split (M : Model σ Y W)
     apply hw
     by_cases hwT : w ∈ T
     · simp [ρ, hwT]
-    · simp only [ρ, hwT, if_false, hc.1]
+    · simp only [ρ, hwT, ite_false, hc.1]
       exact Set.indicator_of_mem (s := {x : Fin n × Fin d → Fv F w | ∀ i, x i ∈ w.adicCompletionIntegers F}) hc.2 1
   have hθ : Function.mulSupport θ ⊆ (T : Set (Pl F)) := by
     intro w hw

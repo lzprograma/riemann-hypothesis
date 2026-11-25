@@ -36,7 +36,7 @@ theorem compact_sq_le_A (hU : IsInfUnitary ε E) (x : M) {a b : Fin n} (hab : ε
   have key : ∀ a' b', ε b' = ε a' →
       RCLike.re (inner ℂ ((E a' b' * E b' a') x) x) = ‖E b' a' x‖ ^ 2 := by
     intro a' b' h
-    rw [Module.End.mul_apply, hU a' b', adjSign, if_pos h.symm, one_mul, inner_self_eq_norm_sq]
+    rw [Module.End.mul_apply, hU a' b', adjSign, ite_eq_left h.symm, one_mul, inner_self_eq_norm_sq]
   have hsum : RCLike.re (inner ℂ (casimirK ε E x) x) =
       ∑ a', ∑ b' ∈ Finset.univ.filter (fun b' => ε b' = ε a'), ‖E b' a' x‖ ^ 2 := by
 
@@ -221,12 +221,8 @@ theorem exists_log_A (n : ℕ) : ∃ L : (Fin n → Fin n → ℂ) → (Fin n �
   · filter_upwards [hs.eventually_left_inverse] with Y hY
     exact hY
 
-theorem Jm_sq_A : Jm ε * Jm ε = 1 := by
-  unfold Jm
-  rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-  congr 1
-  funext a
-  split_ifs <;> norm_num
+theorem Jm_sq_A : Jm ε * Jm ε = 1 :=
+  S7.Jm_mul_self ε
 
 theorem exp_theta_A {Y : Matrix (Fin n) (Fin n) ℂ} (h : NormedSpace.exp Y ∈ Formalism.MainNotions.S.UJset ε) :
     NormedSpace.exp (Jm ε * (-Yᴴ) * Jm ε) = NormedSpace.exp Y := by

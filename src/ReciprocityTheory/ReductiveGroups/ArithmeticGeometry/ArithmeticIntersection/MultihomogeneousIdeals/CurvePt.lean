@@ -100,7 +100,7 @@ theorem exists_homog_chart (V : Ideal (MRingOver F ι)) (j : ∀ k, ι k) (b : M
       funext k
       have := hd m hm k
       simp only [Pi.add_apply, Finset.sum_apply, Pi.smul_apply, mw, smul_eq_mul, Pi.single_apply,
-        mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
       omega
     rwa [hsum] at h3
   ·
@@ -145,29 +145,6 @@ theorem chartTheta_X_ne_zero {j : ∀ k, ι k} (hj : IsChart W j) (k : K) :
   unfold IsChart at hj
   exact hj k
 
-private theorem aeval_mul_const_of_isMultiHomog {A : Type*} [CommRing A] [Algebra F A] (c : K → A)
-    (y : (Σ k, ι k) → A) {f : MRingOver F ι} {a : K → ℕ} (hf : IsMultiHomog f a) :
-    aeval (fun p => c p.1 * y p) f = (∏ k, c k ^ a k) * aeval y f := by
-  classical
-  conv_lhs => rw [MvPolynomial.as_sum f]
-  conv_rhs => rw [MvPolynomial.as_sum f]
-
-  rw [map_sum, map_sum, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun m hm => ?_
-  have hw := (mem_weightedHomogeneousSubmodule _ _ _ _).mp (mem_weighted_of_isMultiHomog hf)
-    (MvPolynomial.mem_support_iff.mp hm)
-  rw [weight_mw] at hw
-  rw [aeval_monomial, aeval_monomial]
-  have key : (m.prod fun p e => c p.1 ^ e) = ∏ k, c k ^ a k := by
-    rw [Finsupp.prod_fintype _ _ (fun _ => pow_zero _), Fintype.prod_sigma, ← hw]
-    simp only [Finset.prod_pow_eq_pow_sum]
-  have split : (m.prod fun p e => (c p.1 * y p) ^ e) =
-      (m.prod fun p e => c p.1 ^ e) * m.prod fun p e => y p ^ e := by
-    simp only [mul_pow]
-    exact Finsupp.prod_mul
-  rw [split, key]
-  ring
-
 theorem chartRho_chartIdeal (hW : IsMultiHomogIdeal W) {j : ∀ k, ι k} (hj : IsChart W j)
     {g : MRingOver F ι} (hg : g ∈ chartIdeal W j) : chartRho W j g = 0 := by
   have hX : ∀ k, chartRho W j (X ⟨k, j k⟩ - 1) = 0 := by
@@ -184,7 +161,7 @@ theorem chartRho_chartIdeal (hW : IsMultiHomogIdeal W) {j : ∀ k, ι k} (hj : I
       rw [hWS]
       exact Ideal.subset_span hf
     rw [SetLike.mem_coe, RingHom.mem_ker]
-    have h1 := aeval_mul_const_of_isMultiHomog (chartC W j) (fun p => chartTheta W (X p)) ha
+    have h1 := aeval_blockScale ha (chartC W j) (fun p => chartTheta W (X p))
     have h2 : aeval (fun p => chartTheta W (X p)) f = chartTheta W f :=
       (DFunLike.congr_fun (MvPolynomial.aeval_unique (chartTheta W)) f).symm
     have h3 : chartRho W j f = (∏ k, chartC W j k ^ a k) * chartTheta W f := by
@@ -264,7 +241,7 @@ theorem isUnit_mk_chartIdeal_form {V : Ideal (MRingOver F ι)} (hV : IsProjVarF 
     intro S k hk h
     have h' : φ S (X ⟨k, j k⟩) = 0 := RingHom.mem_ker.mp h
     rw [hφX, hθ, mk_chartIdeal_X_self, map_one, map_one, mul_one] at h'
-    simp only [c, if_neg hk] at h'
+    simp only [c, ite_eq_right hk] at h'
     exact MvPolynomial.X_ne_zero k h'
   have hbase : a ∈ Q ∅ := by
     show φ ∅ a = 0

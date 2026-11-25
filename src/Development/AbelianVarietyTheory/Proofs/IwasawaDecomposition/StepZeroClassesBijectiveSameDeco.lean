@@ -151,7 +151,7 @@ theorem chartIndexLevelTwistPrimes_stepZero_eq_top (h : I.Ok) (a : I.ι) (b : Id
   · exact (h.idx_ok a).zero_Q b
 
 theorem ys0 (a : I.ι) : ysAt B.R I.sel (I.tup a) (I.cst a) 0 = Ys.triv _ _ :=
-  if_neg (by have := B.R.two_le_m; omega)
+  ite_eq_right (by have := B.R.two_le_m; omega)
 
 theorem stepZero_chartIndex_subsingleton (h : I.Ok) (a : I.ι) (b b' : Idx I.sel (I.tup a) (I.idx a) 0) : b = b' := by
   have hm : 0 < B.R.m := by have := B.R.two_le_m; omega

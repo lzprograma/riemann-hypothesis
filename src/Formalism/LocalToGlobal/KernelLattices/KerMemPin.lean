@@ -12,14 +12,6 @@ namespace Formalism.L2.Ker
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.HermitianLatticesTheory Formalism.L2.DIV
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-section Mem
-
-variable {D : D7} {u : D.what₂.Word}
-
-end Mem
-
 section Comparison₂
 
 variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : G.Inst D L} {Gl : G.LatInst D} {K : G.Consts} {Y : DivX D} {cX : ExtraC}

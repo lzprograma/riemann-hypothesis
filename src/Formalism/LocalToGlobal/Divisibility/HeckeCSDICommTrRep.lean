@@ -62,41 +62,8 @@ theorem heckeCSDAll_comm (hc : Col.HeckeCommAll c S0) :
   · exact commute_conj_of_commute _ (hc (Sum.inr _) (Sum.inl _))
   · exact commute_conj_of_commute _ (hc (Sum.inr _) (Sum.inr _))
 
-private theorem iSup_maxGenEigenspace_conj_eq_whole {K0 V0 W0 : Type} [Field K0] [AddCommGroup V0] [Module K0 V0]
-    [AddCommGroup W0] [Module K0 W0] (e : V0 ≃ₗ[K0] W0) (f : Module.End K0 V0)
-    (hf : ⨆ μ, f.maxGenEigenspace μ = ⊤) : ⨆ μ, (e.conj f).maxGenEigenspace μ = ⊤ := by
-  have key : ∀ (μ : K0) (k : ℕ) (x : V0),
-      ((e.conj f - μ • (1 : Module.End K0 W0)) ^ k) (e x) = e (((f - μ • (1 : Module.End K0 V0)) ^ k) x) := by
-    intro μ k
-    induction k with
-    | zero => intro x; simp
-    | succ k ih =>
-      intro x
-      rw [pow_succ', pow_succ']
-      change (e.conj f - μ • (1 : Module.End K0 W0)) (((e.conj f - μ • (1 : Module.End K0 W0)) ^ k) (e x)) =
-        e ((f - μ • (1 : Module.End K0 V0)) (((f - μ • (1 : Module.End K0 V0)) ^ k) x))
-      rw [ih]
-      simp [LinearEquiv.conj_apply]
-  rw [eq_top_iff]
-  intro y _
-  have hy : e.symm y ∈ ⨆ μ, f.maxGenEigenspace μ := by
-    rw [hf]
-    exact Submodule.mem_top
-  have hmap : Submodule.map (e : V0 →ₗ[K0] W0) (⨆ μ, f.maxGenEigenspace μ) ≤
-      ⨆ μ, (e.conj f).maxGenEigenspace μ := by
-    rw [Submodule.map_iSup]
-    refine iSup_mono fun μ => ?_
-    rintro _ ⟨x, hx, rfl⟩
-    have hx' : x ∈ f.maxGenEigenspace μ := hx
-    rw [Module.End.mem_maxGenEigenspace] at hx'
-    obtain ⟨k, hk⟩ := hx'
-    show e x ∈ (e.conj f).maxGenEigenspace μ
-    rw [Module.End.mem_maxGenEigenspace]
-    exact ⟨k, by rw [key, hk, map_zero]⟩
-  exact hmap ⟨e.symm y, hy, by simp⟩
-
 theorem heckeCSDI_split (hs : Col.HeckeFieldsInI c S0) : Col.SplitOver (heckeCSDI S h c SG S0) := by
-  exact fun i => iSup_maxGenEigenspace_conj_eq_whole _ _ (hs (offSubI.lev i.1, i.2))
+  exact fun i => conjE_iSup_maxGen _ _ (hs (offSubI.lev i.1, i.2))
 
 end OffI
 

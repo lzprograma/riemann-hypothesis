@@ -126,7 +126,7 @@ theorem restrictNormal_infiniteLocalSymbol_norm (v' : InfinitePlace K') (a : v'.
       restrictNormal_restrictScalars_one]
     by_cases hv : (v'.comap (algebraMap K K')).IsReal
     · obtain ⟨u⟩ := IdeleNorm.nonempty_infinitePlacesOver (L := L) (v'.comap (algebraMap K K'))
-      rw [infiniteLocalSymbol_apply L _ hv u, if_neg]
+      rw [infiniteLocalSymbol_apply L _ hv u, ite_eq_right]
       rw [not_lt, LocalField.coe_normUnits, GroundTheory.Global.InfinitePlace.extensionEmbeddingOfIsReal_norm
         hv (not_isReal_iff_isComplex.1 hv')]
       exact Complex.normSq_nonneg _

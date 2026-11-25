@@ -47,7 +47,6 @@ open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory
 open UpperTheory.V.W (Plc Lp)
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open UpperTheory.V.Z.Sym.Al
 
 theorem UpperTheory.V.Z.Sym.Al.proj :
@@ -74,8 +73,7 @@ theorem UpperTheory.V.Z.Sym.Al.proj :
     b.ext_elem fun i => h (b.coord i)
   have hsum : ∀ f, ∑ k, P k (C f) = C f := fun f => hPs _ ⟨f, rfl⟩
   have hne : ∃ k, F k ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     refine hφ (funext fun g => hext fun f => ?_)
     have e := congrArg (fun x : GlobalTheory.DefU.autU L n => x.1 g) (hsum f)
     simp only [AddSubmonoidClass.coe_finsetSum, Finset.sum_apply] at e

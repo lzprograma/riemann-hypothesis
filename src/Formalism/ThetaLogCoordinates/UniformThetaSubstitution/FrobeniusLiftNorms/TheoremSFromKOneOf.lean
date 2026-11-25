@@ -1,53 +1,14 @@
 module
 
+import Formalism.EllipticTorsion.EllipticTorsionProofs.NDeriv
+
 public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.CyclicPowerClassOfExpEquiv
 public import Formalism.FormalGroupWitt.FormalGroupWittProofs.IntegralSubstVector
 import Formalism.GaussJetBounds.GaussJetProofs.SubstitutionWeightBound
 public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartB
 public import Lemmata.GeneralBFactRightExtra.Imports
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 import Mathlib.Analysis.Normed.Ring.Ultra
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 public import Formalism.FormalGroupWitt.FormalGroupWittProofs.SolveV
 public import Formalism.GaussJetBounds.GaussJetProofs.LogarithmWeightComparison
 public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
@@ -63,7 +24,8 @@ namespace Formalism.InvariantFactorPaths.G7
 
 open Formalism.DworkPowerSeriesWeights (Integral mvExp low_subst_of_low norm_finsum_le_of)
 open Formalism.FG.SolveVAux (Low low_pow low_one_iff)
-open Formalism.FG.IntegralSubstitution (integral_mul integral_pow integral_one integralSubstV)
+open Formalism.FG.IntegralSubstitution (integralSubstV)
+open Formalism.ELL.SubstitutionCoefficientCongruence (integral_mul integral_pow integral_one)
 
 namespace TwoS
 
@@ -219,7 +181,7 @@ theorem coeff_altF_pow {p : ℕ} (hp : 2 ≤ p) (l : ℕ) :
   rw [altF, PowerSeries.coeff_mk, Finset.sum_eq_single l]
   · simp
   · intro j _ hj
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hj (powq_inj hp h).symm
   · intro h
@@ -231,7 +193,7 @@ theorem coeff_altF_ne_zero {p d : ℕ} (h : PowerSeries.coeff d (altF K p) ≠ 0
   obtain ⟨l, _, hl⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
   by_cases e : d = (p ^ 2) ^ l
   · exact ⟨l, e⟩
-  · rw [if_neg e] at hl; exact absurd rfl hl
+  · rw [ite_eq_right e] at hl; exact absurd rfl hl
 
 theorem coeff_subst_altF {ι : Type} {p : ℕ} (hp : 2 ≤ p) {L : MvPowerSeries ι K}
     (hL : MvPowerSeries.constantCoeff L = 0) (n : ι →₀ ℕ) :
@@ -264,7 +226,7 @@ theorem coeff_sPos (p : ℕ) (s : ZMod (2 * ν)) (ab : Fin r0 × Fin r1) (n : ZV
 theorem constantCoeff_sPos {p : ℕ} (hp : p ≠ 0) (s : ZMod (2 * ν)) (ab : Fin r0 × Fin r1) :
     MvPowerSeries.constantCoeff (sPos (K := K) p s ab) = 0 := by
   rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, coeff_sPos]
-  refine Finset.sum_eq_zero fun l _ => if_neg fun h => ?_
+  refine Finset.sum_eq_zero fun l _ => ite_eq_right fun h => ?_
   exact (pow_ne_zero l (pow_ne_zero 2 hp)) (Finsupp.single_eq_zero.1 h.symm)
 
 def linW [NeZero ν] (w : ZMod (2 * ν) → K) (ab : Fin r0 × Fin r1) : MvPowerSeries (ZV ν r0 r1) K :=
@@ -566,7 +528,7 @@ theorem hhS_eq {p : ℕ} {om oms : Fin ν → ZMod (2 * ν) → K}
     unfold wE wE'
     by_cases a1 : s'.val % 2 = 1
     · by_cases a2 : s.val % 2 = 0
-      · simp only [a1, a2, if_true, true_and]
+      · simp only [a1, a2, ite_true, true_and]
         exact hO3 s (s' + 1) (by omega)
       · have : s ≠ s' + 1 := fun h => a2 (by rw [h]; omega)
         simp [a2, this]
@@ -578,7 +540,7 @@ theorem hhS_eq {p : ℕ} {om oms : Fin ν → ZMod (2 * ν) → K}
     unfold wE wE'
     by_cases a1 : s'.val % 2 = 0
     · by_cases a2 : s.val % 2 = 1
-      · simp only [a1, a2, if_true, true_and]
+      · simp only [a1, a2, ite_true, true_and]
         rw [Finset.sum_congr rfl fun r _ => mul_comm _ _, hO3 (s' + 1) s (by omega)]
         simp only [eq_comm]
       · have : s ≠ s' + 1 := fun h => a2 (by rw [h]; omega)

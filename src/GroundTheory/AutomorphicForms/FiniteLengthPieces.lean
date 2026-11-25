@@ -289,7 +289,7 @@ theorem card_image_le_of_imp {ι : Type*} [Fintype ι] {f g : ι → ℕ}
   obtain ⟨a, -, rfl⟩ := hy
   have hx : ∃ b, f b = f a := ⟨a, rfl⟩
   refine ⟨f a, by simp, ?_⟩
-  simp only [φ, dif_pos hx]
+  simp only [φ, dite_eq_left hx]
   exact h _ _ hx.choose_spec
 
 theorem blocks_eq_of_imp {w w' : Equiv.Perm (Fin n)}
@@ -309,7 +309,7 @@ theorem blocks_eq_of_imp {w w' : Equiv.Perm (Fin n)}
   let φ : ℕ → ℕ := fun x => if hx : ∃ a, β (w a) = x then δ hx.choose else 0
   have hφ : ∀ a, φ (β (w a)) = δ a := fun a => by
     have hx : ∃ b, β (w b) = β (w a) := ⟨a, rfl⟩
-    simp only [φ, dif_pos hx]
+    simp only [φ, dite_eq_left hx]
     exact hinc _ _ hx.choose_spec
   have hmaps : Set.MapsTo φ (Finset.univ.image (β ∘ w) : Finset ℕ) (Finset.univ.image δ) := by
     intro x hx

@@ -51,7 +51,7 @@ namespace ReciprocityTheory.MultiplicativeHeights
 theorem cauchy_inequality_on_torus : CauchyTorusStatement := by
   intro K _ _ _ K₀ hK₀ n c hc hτ χ
   by_contra hχ
-  push_neg at hχ
+  push Not at hχ
   have hev : ∀ᶠ ψ in Filter.cofinite, ‖c ψ‖ < 1 / 2 := hc.eventually (gt_mem_nhds (by norm_num))
   have hFfin : {ψ | ¬ ‖c ψ‖ < 1 / 2}.Finite := Filter.eventually_cofinite.1 hev
   set F := hFfin.toFinset with hFdef
@@ -160,8 +160,7 @@ theorem disc_holds : DiscStatement := by
   intro K _ _ _ K₀ hres S hS hdense c b hb hc n
   have hbd : ∀ t ∈ S, ‖c n‖ * ‖t‖ ^ n ≤ 1 := fun t ht => disc_bound K₀ hres c S hc t ht n
   constructor
-  · by_contra hlt
-    push_neg at hlt
+  · by_contra! hlt
     have hcont : ContinuousAt (fun x : ℝ => ‖c n‖ * x ^ n) 1 :=
       continuousAt_const.mul (continuousAt_zpow₀ (1 : ℝ) n (Or.inl one_ne_zero))
     have hev : ∀ᶠ x in nhds (1 : ℝ), 1 < ‖c n‖ * x ^ n :=
@@ -314,8 +313,7 @@ theorem exists_unit_point (K₀ : Subfield K) (hK₀ : ResidueFieldInfiniteOn (K
   have hex : ∃ y : ι → IsLocalRing.ResidueField (unitBallRing K), (∀ i, y i ∈ S0) ∧
       eval y (MvPolynomial.map (IsLocalRing.residue (unitBallRing K)) PO *
         MvPolynomial.map (IsLocalRing.residue (unitBallRing K)) δO) ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hQ (MvPolynomial.eq_zero_of_eval_zero_at_prod_finset _ (fun _ => S0)
       (fun i => lt_of_le_of_lt (MvPolynomial.degreeOf_le_totalDegree _ i) (by rw [hS0c]; omega)) hcon)
   obtain ⟨y, hyS, hyQ⟩ := hex

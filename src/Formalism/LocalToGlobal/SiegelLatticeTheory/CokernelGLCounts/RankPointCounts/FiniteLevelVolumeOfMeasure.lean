@@ -24,8 +24,6 @@ open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat 
   Formalism.L2.SG.MassDataConc Formalism.L2.SG.TypedSets MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.SG.Sub Formalism.L2.SG.Measures
 open scoped Classical TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Vol
 
 variable {D : D7} (X : HidaSetting D) (hb : AdBridgeIso X.B.I)
@@ -43,7 +41,7 @@ theorem e_one_re (hK : X.LevelSubgroupCharacter) : (X.B.e 1).re = ((X.B.μf X.K2
   have h := X.e_eq 1
   have h1 : (1 : X.B.I.Gf) ∈ X.K2 := hK.1
   change X.B.e 1 = if (1 : X.B.I.Gf) ∈ X.K2 then star (X.chi2 1) / ((X.B.μf X.K2).toReal : ℂ) else 0 at h
-  rw [if_pos h1, chi2_apply_one X hK, star_one] at h
+  rw [ite_eq_left h1, chi2_apply_one X hK, star_one] at h
   rw [h, one_div, ← Complex.ofReal_inv, Complex.ofReal_re]
 
 end Vol

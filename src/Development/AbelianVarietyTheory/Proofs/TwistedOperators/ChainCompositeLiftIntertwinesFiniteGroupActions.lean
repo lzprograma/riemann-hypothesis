@@ -16,43 +16,7 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricLevelLi
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.StepVectorLiftPairFlagLevelRealizedChainStatement
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaKORatLeftAndEigenRight
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaLiftTranslateOfKernelFixed
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -60,7 +24,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.IndefR
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.ChainLiftEquiv
 
@@ -113,8 +76,7 @@ theorem step (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (hθ : IsInfFam θ
   obtain ⟨u, hu⟩ := htr (io F)
   have hker := fun P => GlobalTheory.thetaKO_rat_left_and_eigen_right ψ V W χS χT om hom (pt P) (hpt P)
   have hx : ∃ φ w, It φ w ≠ 0 := by
-    by_contra hn
-    push_neg at hn
+    by_contra! hn
     exact hIt (LinearMap.ext fun φ => LinearMap.ext fun w => hn φ w)
   obtain ⟨φ0, w0, hx⟩ := hx
   have e := GlobalTheory.thetaLift_translate_of_kernel_fixed ν 𝓖 (thetaKO om) pt It CCs (MultT θ M J χ) io hio
@@ -184,7 +146,7 @@ theorem stepY (h : R.toLevCh.Is A.μ0) (hM : R.IsModels) (hC : R.IsChain) (t : T
   have hm := meas_chain R hM.νY hM.νY' t k (Nat.lt_of_succ_lt hk)
   have hm' := meas_chain R hM.νY hM.νY' t (k + 1) hk
   have ha := inv_ne_zero (levChi_ne_zero (V := Yc D k) (β := R.βY k) (flagL (R.datYt t k R.triv)) κ)
-  have hv := smul_eq_of ha (GlobalTheory.T.stepVector_lift_pair_flagLevel_realized_chain R h hM.inf hC.ωY hC.vY t k hk g0 κ κ' hκ hκ')
+  have hv := smul_eq_of ha (GlobalTheory.StepVecLaw.stepVec_lifts R h hM.inf hC.ωY hC.vY t k hk g0 κ κ' hκ hκ')
   have hpt := GlobalTheory.FiniteFock.om_pureTensorO_of_finite R.ψ R.θ (Yc D k) (Yc D (k + 1)) _ _ (R.ωY t k) hM.inf (hC.ωY t k hk)
     _ _ _ _ _ (hC.ptY t k hk) κ hκ.1 κ' hκ'.1 _ hv
   exact step R.ψ R.θ hM.inf _ _ (R.ωY t k) (hC.ωY t k hk) (R.MY k) _ _ (R.ptY t k) (hC.ptY t k hk) (R.ItY k) (hC.ItY t k hk).ne

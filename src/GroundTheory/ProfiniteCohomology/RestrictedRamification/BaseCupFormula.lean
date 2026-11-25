@@ -15,8 +15,6 @@ open CategoryTheory MonoidalCategory IsDedekindDomain NumberField GroundTheory.G
 
 universe u
 
-attribute [local instance 2000] Rep.hV2
-
 noncomputable section
 
 local notation "ℚ̄" => AlgebraicClosure ℚ

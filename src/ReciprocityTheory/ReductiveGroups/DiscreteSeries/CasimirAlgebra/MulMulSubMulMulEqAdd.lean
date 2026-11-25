@@ -39,7 +39,7 @@ theorem casimir_comm {E : Fin n → Fin n → Module.End ℂ M} (hE : IsGlRep E)
   rw [Finset.sum_mul, Finset.mul_sum, ← Finset.sum_sub_distrib]
   simp_rw [Finset.sum_mul, Finset.mul_sum, ← Finset.sum_sub_distrib, mul_mul_sub_mul_mul_eq_add, hE]
   simp only [sub_mul, mul_sub, ite_mul, mul_ite, zero_mul, mul_zero, Finset.sum_add_distrib,
-    Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true,
+    Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true,
     Finset.sum_ite_irrel, Finset.sum_const_zero]
   abel
 
@@ -54,9 +54,9 @@ theorem casimirK_comm (ε : Fin n → Bool) {E : Fin n → Fin n → Module.End 
   simp_rw [Finset.sum_mul, Finset.mul_sum, ← Finset.sum_sub_distrib, ite_mul_sub_mul_ite, mul_mul_sub_mul_mul_eq_add, hE]
   simp only [sub_mul, mul_sub, ite_mul, mul_ite, zero_mul, mul_zero]
   simp only [ite_sub_add_sub_eq, ← ite_and, Finset.sum_add_distrib, Finset.sum_sub_distrib]
-  simp only [and_comm (b := _ = c), and_comm (b := d = _), Finset.sum_ite_eq', Finset.sum_ite_eq, ite_and, Finset.mem_univ, if_true]
+  simp only [and_comm (b := _ = c), and_comm (b := d = _), Finset.sum_ite_eq', Finset.sum_ite_eq, ite_and, Finset.mem_univ, ite_true]
   simp only [Finset.sum_ite_irrel, Finset.sum_const_zero, Finset.sum_ite_eq', Finset.sum_ite_eq,
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
   rw [hcd]
   abel
 

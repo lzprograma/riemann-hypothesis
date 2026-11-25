@@ -199,8 +199,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open Filter Topology MeasureTheory GlobalTheory.HSAmp
 open scoped ComplexOrder Matrix
 
@@ -663,8 +661,6 @@ theorem main : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (G : Matrix ι ι �
   have h2 : (0 : ℂ) < (2 : ℂ)⁻¹ := by rw [Complex.pos_iff]; norm_num
   have hAcpd : Ac.PosDef := by rw [hAc]; exact (hG.add hG.transpose).smul h2
 
-  have hq1 : ∀ c : ι → ℂ, (star c ⬝ᵥ G *ᵥ c).re ≤ κ * (star c ⬝ᵥ Gᵀ *ᵥ c).re := by
-    intro c; rw [quad_eq_sum, quad_transpose_eq_sum]; exact h c
   have hq2 : ∀ c : ι → ℂ, (star c ⬝ᵥ Gᵀ *ᵥ c).re ≤ κ * (star c ⬝ᵥ G *ᵥ c).re := by
     intro c
     have := h (fun i => (starRingEnd ℂ) (c i))
@@ -739,8 +735,6 @@ section -- clump:auto
 open CategoryTheory AlgebraicGeometry TopologicalSpace Filter Topology MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.ArInt GlobalTheory.CxPts GlobalTheory.Cartier GlobalTheory.VolBr GlobalTheory.HSAmp
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -1030,7 +1024,6 @@ theorem count_ball_asymp : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) [IsInteg
     exact ⟨b, fun y => hb ⟨y, rfl⟩⟩
   choose b hb using hbd
   set B : ℝ := ∑ σ, |b σ| with hBdef
-  have hB0 : 0 ≤ B := Finset.sum_nonneg fun _ _ => abs_nonneg _
   have hρB : ∀ σ y, ρ σ y ≤ B := fun σ y => (hb σ y).trans ((le_abs_self _).trans
     (Finset.single_le_sum (f := fun σ => |b σ|) (fun _ _ => abs_nonneg _) (Finset.mem_univ σ)))
   set K : ℝ := B / D.factorial + 1 with hKdef

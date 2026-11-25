@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ObsClass
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.ClSub
@@ -81,7 +82,7 @@ private theorem cont_sub {Γ S C : Type} [TopologicalSpace Γ] [CommRing S] [IsN
   have hf : f = (fun x => if hx : ∃ g, φ g = x then f hx.choose else 0) ∘ φ := by
     funext g
     have hx : ∃ g', φ g' = φ g := ⟨g, rfl⟩
-    simp only [Function.comp_apply, dif_pos hx]
+    simp only [Function.comp_apply, dite_eq_left hx]
     exact key _ _ hx.choose_spec.symm
   change IsLocallyConstant f
   rw [hf]
@@ -98,8 +99,7 @@ private theorem two_zero {K : Type} [Field K] {x y s t : K} (h : s ≠ t) (h1 : 
 
 private theorem or_zero {G K : Type} [Field K] {a b : G → K} (h : ∀ g g', a g * b g' = 0) :
     (∀ g, a g = 0) ∨ ∀ g, b g = 0 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   obtain ⟨⟨g, hg⟩, ⟨g', hg'⟩⟩ := hc
   exact mul_ne_zero hg hg' (h g g')
 
@@ -162,21 +162,6 @@ private theorem tri_of_bar {l : ℕ} [Fact l.Prime] {k : Type} [Field k] [CharP 
       have e3 : (p : k) * p = 1 := f.injective (by rw [e2, map_one])
       ext
       simpa [pow_two] using e3
-    have h2 : (2 : K) ≠ 0 := by
-      have hk2 : (2 : k) ≠ 0 := by
-        intro e
-        have : (l : ℕ) ∣ 2 := by
-          have := (CharP.cast_eq_zero_iff k l 2).1 (by exact_mod_cast e)
-          exact this
-        have hl := (Fact.out : l.Prime)
-        rcases (Nat.le_of_dvd (by norm_num) this).lt_or_eq with h | h
-        · have := hl.two_le
-          omega
-        · exact hF.l_odd h
-      intro e
-      apply hk2
-      apply f.injective
-      rw [map_ofNat, e, map_zero]
     have hA : ∀ g h : F.G0, ρ.r g 0 1 * ρ.r h 1 0 = 0 ∧ ρ.r g 0 2 * ρ.r h 2 0 = 0 := by
       intro g h
       have e1 := hE g h 0
@@ -283,7 +268,7 @@ private theorem cyc_mem {l : ℕ} [Fact l.Prime] {k : Type} [Field k] [CharP k l
       simp only [Function.comp_apply]
       rw [← hr]
       exact ht _ _ _ hlt
-    · push_neg at hex
+    · push Not at hex
       exfalso
       obtain ⟨s, hs, hne⟩ := h1
       exact hne (wsum hn L hex h0 s hs)
@@ -293,7 +278,7 @@ private theorem cyc_mem {l : ℕ} [Fact l.Prime] {k : Type} [Field k] [CharP k l
       simp only [Function.comp_apply]
       rw [← hr]
       exact ht _ _ _ hlt
-    · push_neg at hex
+    · push Not at hex
       exfalso
       obtain ⟨s, hs, hne⟩ := h1
       have hL' : ∀ t ∈ L.map (fun s => (s.1, s.2.2, s.2.1)), t.2.1 ≤ t.2.2 := by
@@ -304,26 +289,12 @@ private theorem cyc_mem {l : ℕ} [Fact l.Prime] {k : Type} [Field k] [CharP k l
         have e : ((L.map (fun s => (s.1, s.2.2, s.2.1))).map fun s => w n s.2.1 - w n s.2.2) =
             (L.map fun s => w n s.2.1 - w n s.2.2).map Neg.neg := by
           simp [List.map_map, Function.comp_def]
-        have hneg : ∀ m : List ℤ, (m.map Neg.neg).sum = -m.sum := by
-          intro m
-          induction m with
-          | nil => simp
-          | cons a m ih => simp only [List.map_cons, List.sum_cons, ih]; ring
-        rw [e, hneg, h0, neg_zero]
+        rw [e, ← List.sum_neg, h0, neg_zero]
       exact hne (wsum hn _ hL' h0' (s.1, s.2.2, s.2.1) (List.mem_map.2 ⟨s, hs, rfl⟩)).symm
 
 private theorem lc_lemma {X A B : Type} [TopologicalSpace X] (φ : X → A) (g : X → B)
     (hφ : IsLocallyConstant φ) (h : ∀ x y, φ x = φ y → g x = g y) : IsLocallyConstant g := by
-  classical
-  rcases isEmpty_or_nonempty X with hX | ⟨⟨x₀⟩⟩
-  · exact IsLocallyConstant.of_constant _ (fun x => (hX.false x).elim)
-  have e : g = (fun a => if ha : ∃ x, φ x = a then g ha.choose else g x₀) ∘ φ := by
-    funext x
-    have ha : ∃ y, φ y = φ x := ⟨x, rfl⟩
-    simp only [Function.comp_apply, dif_pos ha]
-    exact h _ _ ha.choose_spec.symm
-  rw [e]
-  exact hφ.comp _
+  apply _root_.lc_of_fib <;> assumption
 
 theorem UpperTheory.V.Fr.point_loc :
     ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsCoef l O] {F : Frame l (ResidueField O)} {C₀ : ℕ} {n : ℕ}, F.Ok C₀ → (n = 2 ∨ n = 3) → ∀ S : Space O F n, ∀ (C : Type) [CommRing C] [IsLocalRing C] [Algebra O C], UpperTheory.V.CA.IsCL O C → ∀ (f : ResidueField O →+* ResidueField C), IsResMap O C f → ∀ ρ : NRep F n C, ρ.Cont (maximalIdeal C) → (ρ.map (residue C)).IsBar f → ∃ ξ : S.A →ₐ[O] C, S.u.map (ξ : S.A →+* C) = ρ ∧ S.x0 ≤ (maximalIdeal C).comap (ξ : S.A →+* C) := by

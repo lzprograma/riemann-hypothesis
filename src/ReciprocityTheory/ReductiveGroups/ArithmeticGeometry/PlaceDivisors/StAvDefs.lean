@@ -7,7 +7,6 @@ public import Mathlib.NumberTheory.Padics.PadicIntegers
 
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry TensorProduct
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
@@ -15,8 +14,6 @@ open scoped CategoryTheory.Obj CategoryTheory.MonObj
 namespace ReciprocityTheory.ChartRestriction.G.Pdiv.AvDefs
 
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Pdiv
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 section Lie
 

@@ -306,7 +306,7 @@ theorem isSimpleUnder_heckeOps_box (hπ : ∀ v, IsAdmissible (π v))
         rw [MultilinearMap.map_smul_univ, Finsupp.single_apply]
         by_cases hkk : k' = k
         · subst hkk; simp
-        · rw [if_neg hkk]
+        · rw [ite_eq_right hkk]
           obtain ⟨v, hv⟩ : ∃ v, k' v ≠ k v := by
             by_contra hcon
             push Not at hcon

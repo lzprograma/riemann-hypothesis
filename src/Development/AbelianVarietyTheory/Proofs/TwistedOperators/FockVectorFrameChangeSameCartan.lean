@@ -54,7 +54,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open MeasureTheory Matrix GlobalTheory.Chain GlobalTheory.ChainFr GlobalTheory.Grid
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.PairLift
 
 namespace GlobalTheory.FrameChange
@@ -222,9 +221,9 @@ theorem coef_comp (X X' : Fr V) (Y Y' : Fr W) (hX : ∀ τ, X'.cart τ = X.cart 
       rw [h1, ← h2]
       split_ifs <;> simp [map_mul]
   by_cases hs : Y.ε ρ i = X.ε ρ j
-  · simp only [hterm, hs, if_true]
+  · simp only [hterm, hs, ite_true]
     exact hprod
-  · simp only [hterm, hs, if_false]
+  · simp only [hterm, hs, ite_false]
 
     rw [← map_sum, hprod]
     split_ifs <;> simp

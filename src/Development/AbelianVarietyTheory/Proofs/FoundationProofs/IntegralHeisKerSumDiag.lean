@@ -243,7 +243,7 @@ theorem integral_heis_kerSum_diag : ∀ (V : Type) [NormedAddCommGroup V] [Norme
         ring
     simp only [hint]
     by_cases hrΛ : r ∈ Λ
-    · rw [if_pos hrΛ, tsum_eq_single ⟨-r, neg_mem hrΛ⟩]
+    · rw [ite_eq_left hrΛ, tsum_eq_single ⟨-r, neg_mem hrΛ⟩]
       · have hcoe : ((⟨-r, neg_mem hrΛ⟩ : Λ) : V) = -r := rfl
         have him : (H r r).im = 0 := Complex.conj_eq_iff_im.mp (hH.1 r r).symm
         have hA : cexp (-(π : ℂ) * H (-r) r - (π : ℂ) * H (-r) (-r) / 2 - (π : ℂ) * H r r / 2
@@ -253,13 +253,13 @@ theorem integral_heis_kerSum_diag : ∀ (V : Type) [NormedAddCommGroup V] [Norme
           simp only [map_neg, LinearMap.neg_apply, neg_neg, Complex.neg_im, him, neg_zero,
             Complex.ofReal_zero, mul_zero, add_zero]
           ring
-        rw [hc, hcoe, if_pos rfl, hA, mul_one]
+        rw [hc, hcoe, ite_eq_left rfl, hA, mul_one]
       · intro x hx
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h
         apply hx
         exact Subtype.ext h
-    · rw [if_neg hrΛ]
+    · rw [ite_eq_right hrΛ]
       have hno : ∀ x : Λ, ¬ ((x : V) = -r) := by
         intro x h
         apply hrΛ

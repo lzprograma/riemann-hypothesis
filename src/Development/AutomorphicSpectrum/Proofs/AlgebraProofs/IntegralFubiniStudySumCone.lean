@@ -34,64 +34,18 @@ public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
 public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeLogBound
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.GaussianMatrixMeasurePosFinite
 import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeFsLogIntegrable
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeTangentAverage
 import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeFibreAverage
 import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BallAverageFibreCount
 import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsSigmaCompactConeInter
 import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChowDegreePos
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsDoubleComplexVanish
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.WeilBound.CoreStatements.CommonZeroEvaluation.ConeBallLogGapIntegral, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ConeBallLogGapIntegral, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.GaussianProjectionBallIndicator, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.GaussianProjectionConeCoarea, Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XXgzChowMahlerFibreavg, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HausdorffConeBallMeasure, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.CroftonFormulaOpenCone, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RandomSetSumExpectation, Development.WeilBound.CoreStatements.CommonZeroEvaluation.CroftonFormulaFibreSum, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.CroftonFormulaFibreSum, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FubiniStudyLogLeLogNorm, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LogGapMeasurableScaleStable, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IntegralFubiniStudySumCone
+-- Members: Development.WeilBound.CoreStatements.CommonZeroEvaluation.ConeBallLogGapIntegral, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ConeBallLogGapIntegral, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.GaussianProjectionBallIndicator, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.GaussianProjectionConeCoarea, Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XXgzChowMahlerFibreavg, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.CroftonFormulaOpenCone, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RandomSetSumExpectation, Development.WeilBound.CoreStatements.CommonZeroEvaluation.CroftonFormulaFibreSum, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.CroftonFormulaFibreSum, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FubiniStudyLogLeLogNorm, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LogGapMeasurableScaleStable, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IntegralFubiniStudySumCone
 
 -- ===== clump member: Development.WeilBound.CoreStatements.CommonZeroEvaluation.ConeBallLogGapIntegral =====
 -- clump-header: {"m": "Development.WeilBound.CoreStatements.CommonZeroEvaluation.ConeBallLogGapIntegral", "h": "module\n\npublic import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsScaleStable\npublic import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ConeBall\npublic import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Assembly\nimport GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeFsLogIntegrable\nimport GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Real\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
@@ -163,14 +117,6 @@ theorem coneBall_logGap_integral (n e : ℕ) (h : HermNorm n) (W : Ideal (MvPoly
 
 end ModelDimension.ConeBallLogGap
 
-theorem ModelDimension.integral_coneBall_log_gap_eq : ∀ (n e : ℕ) (h : HermNorm n) (W : Ideal (MvPolynomial (Fin n) ℂ))
-  (f : MvPolynomial (Fin (e + 1) × Fin n) ℂ) (u : Fin n → ℂ),
-  IsProjPrime W → IsChowForm W (e + 1) f → linForm u ∉ W →
-    ∫⁻ y in coneBall h W, logGap h u y ∂(Measure.hausdorffMeasure ((2 * (e + 1) : ℕ) : ℝ)) < ⊤ ∧
-      (∫⁻ y in coneBall h W, logGap h u y ∂(Measure.hausdorffMeasure ((2 * (e + 1) : ℕ) : ℝ))).toReal =
-        Real.log (h.norm u) * ((Measure.hausdorffMeasure ((2 * (e + 1) : ℕ) : ℝ)) (coneBall h W)).toReal -
-          ∫ y in coneBall h W, fsLog h u (h.pointOf y) ∂(Measure.hausdorffMeasure ((2 * (e + 1) : ℕ) : ℝ)) :=
-  fun n e h W f u hW hf hu => ModelDimension.ConeBallLogGap.coneBall_logGap_integral n e h W f u hW hf hu
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.WeilBound.CoreStatements.CommonZeroEvaluation.ConeBallLogGapIntegral =====
@@ -184,15 +130,6 @@ set_option maxSynthPendingDepth 1
 open GroundTheory.Heights₂.Heights MeasureTheory MvPolynomial Matrix GlobalTheory.CompanionTheory.Ar.Short.Crofton
 open scoped ENNReal
 
-
-theorem _root_.GlobalTheory.CompanionTheory.Relay.cone_ball_log_gap_integral : ∀ (n e : ℕ) (h : HermNorm n) (W : Ideal (MvPolynomial (Fin n) ℂ))
-  (f : MvPolynomial (Fin (e + 1) × Fin n) ℂ) (u : Fin n → ℂ),
-  IsProjPrime W → IsChowForm W (e + 1) f → linForm u ∉ W →
-    ∫⁻ y in coneBall h W, logGap h u y ∂(Measure.hausdorffMeasure ((2 * (e + 1) : ℕ) : ℝ)) < ⊤ ∧
-      (∫⁻ y in coneBall h W, logGap h u y ∂(Measure.hausdorffMeasure ((2 * (e + 1) : ℕ) : ℝ))).toReal =
-        Real.log (h.norm u) * ((Measure.hausdorffMeasure ((2 * (e + 1) : ℕ) : ℝ)) (coneBall h W)).toReal -
-          ∫ y in coneBall h W, fsLog h u (h.pointOf y) ∂(Measure.hausdorffMeasure ((2 * (e + 1) : ℕ) : ℝ)) := by
-  first | exact @ModelDimension.integral_coneBall_log_gap_eq
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ConeBallLogGapIntegral =====
@@ -455,29 +392,8 @@ end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XXgzChowMahlerFibreavg =====
 
--- ===== clump member: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HausdorffConeBallMeasure =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HausdorffConeBallMeasure", "h": "module\n\npublic import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsScaleStable\npublic import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XXgzChowMahlerFibreavg\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-set_option maxSynthPendingDepth 1
-open GroundTheory.Heights₂.Heights MeasureTheory MvPolynomial Matrix GlobalTheory.CompanionTheory.Ar.Short.Crofton
-open scoped ENNReal
-
-
-theorem _root_.GlobalTheory.CompanionTheory.Relay.hausdorff_cone_ball_measure : ∀ n m : ℕ, 0 < m → m ≤ n → ∃ K : ℝ≥0∞, 0 < K ∧ K < ⊤ ∧
-  ∀ (h : HermNorm n) (J : Ideal (MvPolynomial (Fin n) ℂ)), IsProjPrime J → (∀ᵐ π : Fin m → Fin n → ℂ, ∀ᵐ w : EuclideanSpace ℂ (Fin m), fibreCount h J π w ≠ ⊤) →
-  ∀ A : Set (EuclideanSpace ℂ (Fin n)), MeasurableSet A → (∀ y ∈ A, ∀ t : ℝ, 0 < t → t • y ∈ A) →
-    (Measure.hausdorffMeasure ((2 * m : ℕ) : ℝ)) {y : EuclideanSpace ℂ (Fin n) | ‖y‖ < 1 ∧ y ∈ coneSet h J ∩ A} < ⊤ →
-    ∫⁻ π : Fin m → Fin n → ℂ, matGauss π * ∫⁻ w in (Metric.ball (0 : EuclideanSpace ℂ (Fin m)) 1), cntOver (coneSet h J ∩ A) π w =
-      K * (Measure.hausdorffMeasure ((2 * m : ℕ) : ℝ)) {y : EuclideanSpace ℂ (Fin n) | ‖y‖ < 1 ∧ y ∈ coneSet h J ∩ A} := by
-  first | exact @PositivityTheory.Xgn.t_xgz_chow_mahler_fibreavg
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HausdorffConeBallMeasure =====
-
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.CroftonFormulaOpenCone =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.AlgebraProofs.CroftonFormulaOpenCone", "h": "module\n\npublic import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsScaleStable\npublic import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AeFibrePointsCardEqDegree\npublic import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HausdorffConeBallMeasure\npublic import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Assembly\nimport Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BallAverageFibreCount\nimport Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsSigmaCompactConeInter\nimport GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChowDegreePos\nimport GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.AlgebraProofs.CroftonFormulaOpenCone", "h": "module\n\npublic import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsScaleStable\npublic import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AeFibrePointsCardEqDegree\npublic import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XXgzChowMahlerFibreavg\npublic import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Assembly\nimport Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BallAverageFibreCount\nimport Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsSigmaCompactConeInter\nimport GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChowDegreePos\nimport GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -504,7 +420,7 @@ theorem setCrofton : ∀ (n e δ : ℕ) (h : HermNorm n) (W : Ideal (MvPolynomia
     filter_upwards [hπ] with w hw
     rw [hw]
     exact ENat.natCast_ne_top δ
-  obtain ⟨K, hK0, hKtop, hK⟩ := _root_.GlobalTheory.CompanionTheory.Relay.hausdorff_cone_ball_measure n (e + 1) (Nat.succ_pos e) hle
+  obtain ⟨K, hK0, hKtop, hK⟩ := _root_.PositivityTheory.Xgn.t_xgz_chow_mahler_fibreavg n (e + 1) (Nat.succ_pos e) hle
   have hball : Measure.hausdorffMeasure ((2 * (e + 1) : ℕ) : ℝ) (coneBall h W) < ⊤ :=
     ConeBallFinite.full n e h W f hW hf
   have hmass : ∀ B : Set (EuclideanSpace ℂ (Fin n)),
@@ -523,7 +439,7 @@ theorem setCrofton : ∀ (n e δ : ℕ) (h : HermNorm n) (W : Ideal (MvPolynomia
       (fun y hy t ht => by
         have := hBs y hy (t : ℂ) (by exact_mod_cast ht.ne')
         simpa using this) (hmass B)
-    have h2 := _root_.GlobalTheory.CompanionTheory.Relay.ball_average_fibre_count n e (coneSet h W ∩ B)
+    have h2 := _root_.PositivityTheory.Xgn.t_xgz_chow_mahler_e0reduce n e (coneSet h W ∩ B)
       ((isScaleStable_coneSet h hW).inter hBs) (isSigmaCompact_cone_inter h W hB) id measurable_id
     simp only [id] at h2
     rw [← h2, h1]
@@ -602,10 +518,10 @@ theorem lay_le (x : ℝ≥0∞) : lay x ≤ x := by
     | succ n ih =>
       rw [Finset.sum_range_succ]
       by_cases h : ((n : ℝ≥0∞) + 1) < x
-      · simp only [h, if_true]
+      · simp only [h, ite_true]
         have h1 := add_le_add_left ih.2 (1 : ℝ≥0∞)
         exact ⟨h1.trans h.le, by push_cast; exact h1⟩
-      · simp only [h, if_false, add_zero]
+      · simp only [h, ite_false, add_zero]
         exact ⟨ih.1, ih.2.trans (by exact_mod_cast Nat.le_succ n)⟩
   rw [lay, ENNReal.tsum_eq_iSup_nat]
   exact iSup_le fun N => (key N).1
@@ -661,7 +577,7 @@ theorem two_mul_lay_le (x : ℝ≥0∞) : 2 * lay x ≤ lay (2 * x) := by
         rw [mul_add]
         gcongr
         norm_num
-      rw [if_pos h, if_pos h3]
+      rw [ite_eq_left h, ite_eq_left h3]
     · simp [h]
   · by_cases h : ((l : ℝ≥0∞) + 1) < x
     · have h2 := two_lt_two h
@@ -669,7 +585,7 @@ theorem two_mul_lay_le (x : ℝ≥0∞) : 2 * lay x ≤ lay (2 * x) := by
         refine lt_of_le_of_lt (le_of_eq ?_) h2
         push_cast
         ring
-      rw [if_pos h, if_pos h3]
+      rw [ite_eq_left h, ite_eq_left h3]
     · simp [h]
 
 noncomputable def dy (k : ℕ) (x : ℝ≥0∞) : ℝ≥0∞ := (2 ^ k : ℝ≥0∞)⁻¹ * lay (2 ^ k * x)
@@ -846,7 +762,6 @@ set_option maxSynthPendingDepth 1
 open GroundTheory.Heights₂.Heights MeasureTheory MvPolynomial Matrix GlobalTheory.CompanionTheory.Ar.Short.Crofton
 open scoped ENNReal
 
-
 theorem _root_.GlobalTheory.CompanionTheory.Relay.crofton_formula_fibre_sum : ∀ (n e δ : ℕ) (h : HermNorm n) (W : Ideal (MvPolynomial (Fin n) ℂ))
   (f : MvPolynomial (Fin (e + 1) × Fin n) ℂ), IsProjPrime W → IsChowForm W (e + 1) f → GroundTheory.Heights₂.Heights.IsMultiHomog δ f →
   ∀ φ : EuclideanSpace ℂ (Fin n) → ℝ≥0∞, Measurable φ →
@@ -966,7 +881,7 @@ theorem lt_logGap_iff (h : HermNorm n) {u : Fin n → ℂ} (hu : u ≠ 0) {s : �
   by_cases hp : ∑ j, u j * h.pointOf y j = 0
   · simp [hy, hp, hs.lt_top, hc]
   · have hpn : 0 < ‖∑ j, u j * h.pointOf y j‖ := norm_pos_iff.mpr hp
-    rw [if_neg hy, if_neg hp, ENNReal.lt_ofReal_iff_toReal_lt hs, fsLog, _root_.GroundTheory.Heights₂.Heights.ConeFsLog.dualNorm_pointOf,
+    rw [ite_eq_right hy, ite_eq_right hp, ENNReal.lt_ofReal_iff_toReal_lt hs, fsLog, _root_.GroundTheory.Heights₂.Heights.ConeFsLog.dualNorm_pointOf,
       Real.log_div hpn.ne' hy'.ne', ← Real.log_lt_log_iff hpn hc,
       Real.log_mul (by positivity) hy'.ne', Real.log_mul (Real.exp_pos _).ne' hN.ne', Real.log_exp]
     constructor <;> intro hh <;> linarith
@@ -1032,6 +947,22 @@ set_option maxSynthPendingDepth 1
 open GroundTheory.Heights₂.Heights MeasureTheory MvPolynomial Matrix GlobalTheory.CompanionTheory.Ar.Short.Crofton
 open scoped ENNReal
 
+private theorem tsum_fibre_pts_eq_sum {n e : ℕ} (S : Set (EuclideanSpace ℂ (Fin n)))
+    (π : Fin (e + 1) → Fin n → ℂ) (hfin : (fibrePts S π).Finite)
+    (g : EuclideanSpace ℂ (Fin n) → ℝ≥0∞) :
+    ∑' y : fibrePts S π, g y = ∑ y ∈ hfin.toFinset, g y := by
+  haveI : Fintype (fibrePts S π) := hfin.fintype
+  rw [tsum_fintype]
+  exact (Finset.sum_subtype hfin.toFinset (fun y => hfin.mem_toFinset) g).symm
+
+private theorem ne_zero_of_mem_fibre_pts {n e : ℕ} (S : Set (EuclideanSpace ℂ (Fin n)))
+    (π : Fin (e + 1) → Fin n → ℂ) (y : EuclideanSpace ℂ (Fin n)) (hy : y ∈ fibrePts S π) :
+    y ≠ 0 := by
+  rintro rfl
+  obtain ⟨-, h0⟩ := hy
+  have h2 := congrArg (fun v : EuclideanSpace ℂ (Fin (e + 1)) => v.ofLp 0) h0
+  simp [linProj, firstCoordVec] at h2
+
 namespace GlobalTheory.CompanionTheory.Ar.Short.Crofton
 
 theorem fubini_study_sum_crofton {n e δ : ℕ} (h : HermNorm n) (u : Fin n → ℂ)
@@ -1044,10 +975,7 @@ theorem fubini_study_sum_crofton {n e δ : ℕ} (h : HermNorm n) (u : Fin n → 
     have h1 := hfin.encard_eq_coe_toFinset_card
     rw [hc] at h1
     exact_mod_cast h1.symm
-  have hne0 : ∀ y ∈ fibrePts S π, y ≠ 0 := by
-    rintro y ⟨-, hy⟩ rfl
-    have h2 := congrArg (fun v : EuclideanSpace ℂ (Fin (e + 1)) => v.ofLp 0) hy
-    simp [linProj, firstCoordVec] at h2
+  have hne0 := ne_zero_of_mem_fibre_pts S π
   have hsum : ∀ y ∈ fibrePts S π, ∑ j, u j * h.pointOf y j ≠ 0 := by
     intro y hy h0
     have htop : logGap h u y = ⊤ := by simp [logGap, hne0 y hy, h0]
@@ -1061,11 +989,7 @@ theorem fubini_study_sum_crofton {n e δ : ℕ} (h : HermNorm n) (u : Fin n → 
     simp [logGap, hne0 y hy, hsum y hy]
   have hnn : ∀ y ∈ fibrePts S π, 0 ≤ Real.log (h.norm u) - fsLog h u (h.pointOf y) := fun y hy =>
     sub_nonneg.2 (_root_.GlobalTheory.CompanionTheory.Ar.Short.Crofton.fsLog_pointOf_le_log_norm n h u y (hne0 y hy) (hsum y hy))
-  haveI : Fintype (fibrePts S π) := hfin.fintype
-  have htsum : ∑' z : fibrePts S π, logGap h u z = ∑ y ∈ hfin.toFinset, logGap h u y := by
-    rw [tsum_fintype]
-    exact (Finset.sum_subtype hfin.toFinset (fun y => hfin.mem_toFinset) (logGap h u)).symm
-  rw [htsum, ENNReal.toReal_sum (fun y hy => by
+  rw [tsum_fibre_pts_eq_sum S π hfin, ENNReal.toReal_sum (fun y hy => by
       rw [hval y (hfin.mem_toFinset.1 hy)]
       exact ENNReal.ofReal_ne_top)]
   rw [Finset.sum_congr rfl (fun y hy => by
@@ -1074,20 +998,6 @@ theorem fubini_study_sum_crofton {n e δ : ℕ} (h : HermNorm n) (u : Fin n → 
     finsum_mem_eq_finite_toFinset_sum _ hfin]
 
 end GlobalTheory.CompanionTheory.Ar.Short.Crofton
-
-private theorem tsum_fibre_pts_eq_sum {n e : ℕ} (S : Set (EuclideanSpace ℂ (Fin n))) (π : Fin (e + 1) → Fin n → ℂ)
-    (hfin : (fibrePts S π).Finite) (g : EuclideanSpace ℂ (Fin n) → ℝ≥0∞) :
-    ∑' y : fibrePts S π, g y = ∑ y ∈ hfin.toFinset, g y := by
-  haveI : Fintype (fibrePts S π) := hfin.fintype
-  rw [tsum_fintype]
-  exact (Finset.sum_subtype hfin.toFinset (fun y => hfin.mem_toFinset) g).symm
-
-private theorem ne_zero_of_mem_fibre_pts {n e : ℕ} (S : Set (EuclideanSpace ℂ (Fin n))) (π : Fin (e + 1) → Fin n → ℂ)
-    (y : EuclideanSpace ℂ (Fin n)) (hy : y ∈ fibrePts S π) : y ≠ 0 := by
-  rintro rfl
-  obtain ⟨-, h0⟩ := hy
-  have h2 := congrArg (fun v : EuclideanSpace ℂ (Fin (e + 1)) => v.ofLp 0) h0
-  simp [linProj, firstCoordVec] at h2
 
 theorem GlobalTheory.CompanionTheory.Ar.Short.Crofton.fsSum_crofton : ∀ (n e δ : ℕ) (h : HermNorm n) (W : Ideal (MvPolynomial (Fin n) ℂ))
   (f : MvPolynomial (Fin (e + 1) × Fin n) ℂ) (u : Fin n → ℂ),
@@ -1098,7 +1008,7 @@ theorem GlobalTheory.CompanionTheory.Ar.Short.Crofton.fsSum_crofton : ∀ (n e �
   intro n e δ h W f u hW hf hδ hu
   obtain ⟨hLGm, hLGo⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Short.Crofton.logGap_basic n h u
   obtain ⟨hGm, hGeq⟩ := _root_.GlobalTheory.CompanionTheory.Relay.crofton_formula_fibre_sum n e δ h W f hW hf hδ (logGap h u) hLGm hLGo
-  obtain ⟨hL, hLr⟩ := _root_.GlobalTheory.CompanionTheory.Relay.cone_ball_log_gap_integral n e h W f u hW hf hu
+  obtain ⟨hL, hLr⟩ := _root_.ModelDimension.ConeBallLogGap.coneBall_logGap_integral n e h W f u hW hf hu
   obtain ⟨hμ0, hμt⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Short.Crofton.gaussM_univ_pos_lt_top (e + 1) n
   obtain ⟨hpm0, hpmt⟩ : 0 < planeMass n e ∧ planeMass n e < ⊤ :=
     GroundTheory.Heights₂.Heights.coordBall_mass (chowGroups_le hW hf hδ)

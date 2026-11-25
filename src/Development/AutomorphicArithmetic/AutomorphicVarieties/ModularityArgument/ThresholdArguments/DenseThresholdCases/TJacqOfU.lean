@@ -55,16 +55,18 @@ open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.Conjuga
 open GlobalTheory.CuspRep GlobalTheory.HeckeGal GlobalTheory.GalOfCusp UpperTheory.V.Af UpperTheory.V.Base
 open scoped Matrix
 namespace UpperTheory.V.Sd
+private theorem asAlg_eig {A V : Type} [CommGroup A] [AddCommGroup V] [Module ℂ V] (ν : Representation ℂ A V)
+    (χ : A →* ℂ) (x : V) (he : ∀ a, ν a x = χ a • x) (r : MonoidAlgebra ℂ A) :
+    ν.asAlgebraHom r x = MonoidAlgebra.lift ℂ ℂ A χ r • x := by
+  induction r using MonoidAlgebra.induction_linear with
+  | zero => simp
+  | add a b ha hb => simp [ha, hb, add_smul]
+  | single a c => simp [he, smul_smul]
 private theorem fixed_coinv {A V : Type} [CommGroup A] [AddCommGroup V] [Module ℂ V] (ν : Representation ℂ A V)
     (h : ∀ a y, ∃ n : ℕ, n ≠ 0 ∧ ν (a ^ n) y = y) (x : V)
     (hx : x ∈ Submodule.span ℂ {z | ∃ a y, z = ν a y - y}) (hf : ∀ a, ν a x = x) : x = 0 := by
   let ε : MonoidAlgebra ℂ A →ₐ[ℂ] ℂ := MonoidAlgebra.lift ℂ ℂ A 1
-  have hε : ∀ r, ν.asAlgebraHom r x = ε r • x := by
-    intro r
-    induction r using MonoidAlgebra.induction_linear with
-    | zero => simp
-    | add a b ha hb => simp [ha, hb, add_smul]
-    | single a c => simp [ε, hf]
+  have hε := asAlg_eig ν 1 x fun a => (hf a).trans (one_smul ℂ x).symm
   have key : ∀ z ∈ Submodule.span ℂ {z | ∃ a y, z = ν a y - y}, ∃ r, ε r ≠ 0 ∧ ν.asAlgebraHom r z = 0 := by
     intro z hz
     induction hz using Submodule.span_induction with
@@ -94,46 +96,31 @@ private theorem quot_of_sub {T J : Type} [CommGroup T] [AddCommGroup J] [Module 
     (S : Set J) (hS : S.Finite) (hgen : Submodule.span ℂ {z | ∃ t, ∃ s ∈ S, z = τ t s} = ⊤) (χ : T →* ℂˣ) (y : J) (hy : y ≠ 0)
     (he : ∀ t, τ t y = (χ t : ℂ) • y) : ∃ L : J →ₗ[ℂ] ℂ, L ≠ 0 ∧ ∀ t x, L (τ t x) = (χ t : ℂ) * L x := by
   let ε : MonoidAlgebra ℂ T →ₐ[ℂ] ℂ := MonoidAlgebra.lift ℂ ℂ T ((Units.coeHom ℂ).comp χ)
-  have hε : ∀ r, τ.asAlgebraHom r y = ε r • y := by
-    intro r
-    induction r using MonoidAlgebra.induction_linear with
-    | zero => simp
-    | add a b ha hb => simp [ha, hb, add_smul]
-    | single a c => simp [ε, he, smul_smul]
+  have hε := asAlg_eig τ ((Units.coeHom ℂ).comp χ) y he
   let W : Submodule ℂ J := Submodule.span ℂ {z | ∃ t x, z = τ t x - (χ t : ℂ) • x}
   have hW : W ≠ ⊤ := by
     intro hW
     letI : Module (MonoidAlgebra ℂ T) J := Module.compHom J τ.asAlgebraHom.toRingHom
     have hsm : ∀ (r : MonoidAlgebra ℂ T) (x : J), r • x = τ.asAlgebraHom r x := fun _ _ => rfl
-    have hc : ∀ (c : ℂ) (x : J), c • x = (algebraMap ℂ (MonoidAlgebra ℂ T) c) • x := fun c x => by
-      rw [hsm, AlgHom.commutes]; rfl
+    have : IsScalarTower ℂ (MonoidAlgebra ℂ T) J := ⟨fun c r x => by simp [hsm]⟩
     have hfg : (⊤ : Submodule (MonoidAlgebra ℂ T) J).FG := by
       refine Submodule.fg_def.2 ⟨S, hS, eq_top_iff.2 fun x _ => ?_⟩
       have hx : x ∈ Submodule.span ℂ {z | ∃ t, ∃ s ∈ S, z = τ t s} := hgen ▸ Submodule.mem_top
-      induction hx using Submodule.span_induction with
-      | mem z hz =>
-        obtain ⟨t, s, hs, rfl⟩ := hz
-        have : τ t s = MonoidAlgebra.of ℂ T t • s := by rw [hsm]; simp
-        rw [this]
-        exact Submodule.smul_mem _ _ (Submodule.subset_span hs)
-      | zero => exact zero_mem _
-      | add a b _ _ ha hb => exact add_mem (ha trivial) (hb trivial)
-      | smul c a _ ha => rw [hc]; exact Submodule.smul_mem _ _ (ha trivial)
+      refine (Submodule.span_le (p := (Submodule.span _ S).restrictScalars ℂ)).2 ?_ hx
+      rintro _ ⟨t, s, hs, rfl⟩
+      have : τ t s = MonoidAlgebra.of ℂ T t • s := by rw [hsm]; simp
+      exact this ▸ Submodule.smul_mem _ _ (Submodule.subset_span hs)
     have hle : (⊤ : Submodule (MonoidAlgebra ℂ T) J) ≤ RingHom.ker ε • ⊤ := by
       intro x _
       have hx : x ∈ W := hW ▸ Submodule.mem_top
-      induction hx using Submodule.span_induction with
-      | mem z hz =>
-        obtain ⟨t, s, rfl⟩ := hz
-        have : τ t s - (χ t : ℂ) • s = (MonoidAlgebra.of ℂ T t - algebraMap ℂ _ (χ t : ℂ)) • s := by
-          rw [sub_smul, ← hc, hsm]; simp
-        rw [this]
-        refine Submodule.smul_mem_smul ?_ trivial
-        rw [RingHom.mem_ker, map_sub, AlgHom.commutes]
-        simp [ε]
-      | zero => exact zero_mem _
-      | add a b _ _ ha hb => exact add_mem (ha trivial) (hb trivial)
-      | smul c a _ ha => rw [hc]; exact Submodule.smul_mem _ _ (ha trivial)
+      refine (Submodule.span_le (p := (RingHom.ker ε • ⊤ : Submodule (MonoidAlgebra ℂ T) J).restrictScalars ℂ)).2 ?_ hx
+      rintro _ ⟨t, s, rfl⟩
+      have : τ t s - (χ t : ℂ) • s = (MonoidAlgebra.of ℂ T t - algebraMap ℂ _ (χ t : ℂ)) • s := by
+        rw [sub_smul, algebraMap_smul, hsm]; simp
+      rw [SetLike.mem_coe, Submodule.restrictScalars_mem, this]
+      refine Submodule.smul_mem_smul ?_ trivial
+      rw [RingHom.mem_ker, map_sub, AlgHom.commutes]
+      simp [ε]
     obtain ⟨r, hr, e⟩ := Submodule.exists_sub_one_mem_and_smul_eq_zero_of_fg_of_le_smul _ _ hfg hle
     have e1 := e y trivial
     rw [RingHom.mem_ker, map_sub, map_one, sub_eq_zero] at hr
@@ -443,24 +430,19 @@ private theorem fin_orb (σ : SmIrr (GL (Fin 2) (w.adicCompletion F))) (y : σ.V
   simp
 private theorem unit_mem (c : ℕ) (u : (w.adicCompletion F)ˣ) (hu : IsUnitAt w u) : aff u 0 ∈ K1 w c := by
   have hu1 : Valued.v (u : w.adicCompletion F) = 1 := hu
-  have h1 : (u : w.adicCompletion F) ∈ w.adicCompletionIntegers F := by
-    rw [HeightOneSpectrum.mem_adicCompletionIntegers, hu1]
-  have h2 : ((u⁻¹ : (w.adicCompletion F)ˣ) : w.adicCompletion F) ∈ w.adicCompletionIntegers F := by
-    rw [HeightOneSpectrum.mem_adicCompletionIntegers, Units.val_inv_eq_inv_val, map_inv₀, hu1, inv_one]
-  let u' : (w.adicCompletionIntegers F)ˣ := ⟨⟨_, h1⟩, ⟨_, h2⟩, Subtype.ext u.mul_inv, Subtype.ext u.inv_mul⟩
-  have e : Units.map (w.adicCompletionIntegers F).subtype.toMonoidHom u' = u := Units.ext rfl
-  have := affine_mem_iwahori_level w c u' 0
-  rwa [e] at this
+  obtain ⟨u', hu'⟩ := (HeightOneSpectrum.adicCompletionIntegers.isUnit_iff_valued_eq_one
+    (a := ⟨_, (HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).2 hu1.le⟩)).2 hu1
+  rw [← Units.ext (congrArg Subtype.val hu') (u := Units.map (w.adicCompletionIntegers F).subtype.toMonoidHom u')]
+  exact affine_mem_iwahori_level w c u' 0
 end Loc
 end UpperTheory.V.Sd
 open UpperTheory.V.Sd in
-theorem UpperTheory.V.Sd.jacqOfU_alt :
-    _root_.UpperTheory.V.Af.Hypotheses' → UpperTheory.V.Sd.JacqOfU := by
-  intro _ F _ _ w σ c lam hc ⟨v, hv, hfix, hU⟩
+theorem UpperTheory.V.Sd.jacqOfU : UpperTheory.V.Sd.JacqOfU := by
+  intro F _ _ w σ c lam hc ⟨v, hv, hfix, hU⟩
   obtain ⟨ω, hω⟩ := cent w σ
   obtain ⟨S, hS, hcard⟩ := reps w
   have hsum := (uopSum F w σ.V σ.ρ c v hfix).2 _ hS
-  rw [if_neg hc, add_zero, hU] at hsum
+  rw [ite_eq_right hc, add_zero, hU] at hsum
   have hπ : Valued.v ((atFin w (unif w) : (w.adicCompletion F)ˣ) : w.adicCompletion F) = WithZero.exp (-1 : ℤ) :=
     unif_spec w
   rw [← hcard]
@@ -468,5 +450,9 @@ theorem UpperTheory.V.Sd.jacqOfU_alt :
     (pi_pow hπ) (IsUnitAt w) (pi_dec hπ) σ.ρ σ.irred (tors σ) (fin_orb σ) ω hω v hv (fun x hx => ?_)
     (fun u hu => hfix _ (unit_mem c u hu)) S lam hsum.symm
   simpa using hfix _ (affine_mem_iwahori_level w c 1 ⟨x, hx⟩)
+
+theorem UpperTheory.V.Sd.jacqOfU_alt :
+    _root_.UpperTheory.V.Af.Hypotheses' → UpperTheory.V.Sd.JacqOfU :=
+  fun _ => UpperTheory.V.Sd.jacqOfU
 end
 end

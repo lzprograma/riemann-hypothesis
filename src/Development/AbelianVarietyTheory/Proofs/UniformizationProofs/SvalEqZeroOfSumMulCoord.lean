@@ -50,7 +50,6 @@ noncomputable section
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory
 
@@ -131,14 +130,14 @@ theorem coeff_eq_zero_over {Y : Over (Spec (CommRingCat.of R))} (p : Y ⟶ D.P.A
       if ψ w ∈ D.P.L.U (J (σ.left ≫ ψ)) then J (σ.left ≫ ψ) else j ψ
     have hJ₂ : Good D.P.L w J₂ := fun ψ => by
       by_cases h : ψ w ∈ D.P.L.U (J (σ.left ≫ ψ))
-      · simpa only [J₂, if_pos h] using h
-      · simpa only [J₂, if_neg h] using hj ψ
+      · simpa only [J₂, ite_eq_left h] using h
+      · simpa only [J₂, ite_eq_right h] using hj ψ
     have eJ : ∀ ψ : Z.left ⟶ D.P.A.left, ψ ((snd (WeightPf.Te D I e) Z).left w) ∈ D.P.L.U (J ψ) →
         J₂ ((snd (WeightPf.Te D I e) Z).left ≫ ψ) = J ψ := fun ψ h => by
       have e₁ : σ.left ≫ (snd (WeightPf.Te D I e) Z).left ≫ ψ = ψ := by
         rw [← Category.assoc, hσ, Category.id_comp]
       simp only [J₂, e₁]
-      exact if_pos h
+      exact ite_eq_left h
     have E := H _ ((WeightPf.Te D I e ◁ x).left ≫ (WeightPf.act g).left) ((snd (WeightPf.Te D I e) Z).left ≫ r)
       (by rw [Category.assoc, Category.assoc, hr, WeightPf.act_left_pG, ← Category.assoc, ← Category.assoc, hsn])
       w J₂ hJ₂

@@ -322,8 +322,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.FlatCore
@@ -364,8 +362,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open NumberField IsDedekindDomain Module Formalism.BasicNotions Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.AllWt
@@ -383,7 +379,7 @@ theorem exists_ringHom_ne_zero_of_not_isNilpotent {K R : Type} [Field K] [CommRi
     obtain ⟨n, hn⟩ := Ideal.mem_radical_iff.1 h
     exact hb ⟨n, by simpa using hn⟩
   rw [Ideal.jacobson, Submodule.mem_sInf] at hrad
-  push_neg at hrad
+  push Not at hrad
   obtain ⟨m, ⟨-, hm⟩, hbm⟩ := hrad
   letI : Field (R ⧸ m) := Ideal.Quotient.field m
   haveI : Algebra.FiniteType K (R ⧸ m) :=
@@ -450,8 +446,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFlatWeightInvertiblePair", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.HtValOnSubset\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolSub0LeSpanShortGenUpto\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.NormNegCmConstantEqAtAllEmbeddings\npublic import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree\npublic import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.UnfGroupContainsCongruenceUptoRootsOfUnity\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsIsNab\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ShortValTotOfPinned\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanExistenceEverywhere\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutingMultiplierEqConstSmulGenerator\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousOnReadingIntegerExponentSection\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspSectionAnnihilator\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCuspFormPairQuotientHorizontalGenerator\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSectionQuotientOfContinuousReading\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModuliLawsOfPrincipalLevelFieldOfDefinition\npublic import Formalism.LocalToGlobal.ProjectiveLattices.TieGenDense\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.UnitaryWeightExponentVectorSignatureWeightMuZero\nimport Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCuspOnRestrict\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDominantWeightShiftFlatLineDet\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroCuspFormParallelWeightEachComponent\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ModerateCoefficientPositivity\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroCuspSectionLargeEvenScalarWeight\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroScalarWeightCuspFormComponent\nimport Mathlib.Basic.Complex.Basic\nimport Mathlib.LinearAlgebra.FiniteDimensional.Defs\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRationalMultiplierOfComplexMultiplier\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolomorphicRestrictionSubalgebraFrameDomainIsDom\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.HorizGenZpowMulMemSS\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.HorizontalGeneratorZpowMulCuspFormMemSpan\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegerExponentSectionEqZeroOfIncreasingFlag\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecZEqZeroOfGenVal\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnfoldingSectionsFiniteType\nimport Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ChartIndependenceUnconditional\nimport Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemSuppOnIffIdemMulOfNatural\nimport Development.AbelianVarietyTheory.Proofs.GenericRegularity.BddSecCuspCongr\nimport Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHold\nimport Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsBijectiveKappa\nimport Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsEvenSecEvRNeZero\nimport Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivComp\nimport Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIntegerExponentSectionOfChartRegular\nimport Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelMapsClosed\nimport Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ShortThetaSeriesDominantWeightIsCuspFormStatement\nimport Development.AbelianVarietyTheory.Proofs.TorusSplitting.CuspAndSupCLeOfBounded\nimport Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold\nimport Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CuspFormsFiniteDimensionalOfGoodEmb\nimport Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsDeltaDatumHigherLevel\nimport Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsEquivariantFunOnSpanningFamilies\nimport Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameLawsOfModuli\nimport Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedModuliAlgebraicLawsChartWeightIntegrality\nimport Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointReducedFromTestRing\nimport Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsIntegralDetSubOne\nimport Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ReadingLinearIndependentAndInjective\nimport Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfD\nimport Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.SiegelSpaceAlgebraHolds\nimport Std.Tactic.BVDecide.Normalize.Prop\nimport Development.AbelianVarietyTheory.Definitions.Divisors.CommGroupMulMulEqMulInvMulMulMul\nimport Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso\nimport Development.AbelianVarietyTheory.Definitions.Divisors.IsoOverOfIsOpenImmersion\nimport Development.AbelianVarietyTheory.Definitions.Divisors.LinearIndependentBasisCoords\nimport Development.AbelianVarietyTheory.Definitions.SpanningFamilies.DatEqZero\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -624,7 +618,6 @@ theorem framesOn_model : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
     have := hq (q.symm Z) ⟨y, hy⟩ s
     rwa [Equiv.apply_symm_apply] at this
 
-set_option synthInstance.maxHeartbeats 400000 in
 theorem cuspOn_fd_span : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (r : ℕ) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r), NeatUnf U → ∀ (Z : Comp Xo c) (σ : c.F →+* ℂ), GoodEmb c σ → ∀ (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ), Dom a n → (∀ τ i, i < Dw.mult τ → 1 ≤ a (τ, i)) → 4 * (finrank ℚ E * r) + 4 ≤ n → SumDvd U a n → FiniteDimensional c.F (cuspOn U Z (wtZ a n)) ∧ ∀ P ∈ holSub (U σ).X (modelWt (U σ) (wtZ a n)), (∀ k y, (⟨k, y⟩ : Σ k, Frame ((U σ).X k).Ψ r) ∉ framesOn (U σ) Z → P k y = 0) → P ∈ Submodule.span ℂ (rdU (U σ) '' (cuspOn U Z (wtZ a n) : Set (Rul Xo c))) := by
   intro E _ _ _ H Dw l Xo c r U h Z σ hσ a n hD hpos hn hdv
   refine ⟨?_, fun P hP hoffZ => ?_⟩
@@ -646,7 +639,7 @@ theorem cuspOn_fd_span : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
       by_cases hz : (⟨k, y⟩ : Σ k, Frame ((U σ).X k).Ψ r) ∈ framesOn (U σ) Z
       · obtain ⟨hd, hl⟩ := hz
         have h1 : rdU (U σ) (idem Z) k y = 1 := by
-          simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, hd, dif_pos]
+          simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, hd, dite_eq_left]
           rw [evR_idem hl (htest _ ⟨hd, hl⟩ hd)]
           rfl
         rw [h1, one_mul]
@@ -683,7 +676,7 @@ theorem horizGen_mul_mem_span : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
     · subst hkk
       have hd : y ∉ ((U σ).X k).dom := fun hd => hy (by rw [hk]; exact ⟨rfl, hd⟩)
       have h0 : rdU (U σ) f k y = 0 := by
-        simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, hd, dif_neg, not_false_eq_true]
+        simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, hd, dite_eq_right, not_false_eq_true]
       rw [mulAt_same]
       simp only [h0, mul_zero]
     · rw [mulAt_ne _ _ _ _ hkk]
@@ -722,7 +715,7 @@ theorem exists_model_cusp {U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r} (hL : Neat
     have hp : ((U σ).X k).p0 = 0 ∨ ((U σ).X k).p0 = r := by omega
     refine ⟨n, hn, he, _, GlobalTheory.BoundedCusp.mem_SS_of_definite _ _ τ0 hp _
       ⟨hs, GlobalTheory.ScalarCusp.bdd_of_definite _ hp _ _ hs⟩, y, hy, ?_⟩
-    have e : rdU (U σ) f k y = toC (evR Xo c f ((U σ).un k ⟨y, hy⟩)) := dif_pos hy
+    have e : rdU (U σ) f k y = toC (evR Xo c f ((U σ).un k ⟨y, hy⟩)) := dite_eq_left hy
     rw [e]
     exact hne
   · have hla : ∀ n : ℕ, laU (U σ) 0 n k = fun (τ : ((U σ).X k).Ψ) (j : Fin r) =>
@@ -821,7 +814,7 @@ theorem exists_cuspOn_two {U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r} (hL : Neat
   refine ⟨fun _ => 2, n, ⟨fun _ => antitone_const, hnev⟩, fun _ _ _ => le_rfl, hnb, hdv, g, g.2, ?_⟩
   intro h0
   have e : rdU (U σ) (g : Rul Xo c) k y = rdU (U σ) f k y := by
-    simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, dif_pos hy']
+    simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, dite_eq_left hy']
     rw [hg _ _ hlies]
   rw [h0, map_zero] at e
   exact hfy e.symm
@@ -851,8 +844,7 @@ theorem res_ind {U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r} (hL : NeatUnf U) (Z 
       have := congrFun hw ⟨y, hy⟩
       simpa only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply] using this
     · exact Finset.sum_eq_zero fun i _ => by rw [hoff _ (hs i) k y hz, mul_zero]
-  · by_contra hall
-    push_neg at hall
+  · by_contra! hall
     refine hne (hR.2 f hf fun k y hy => ?_)
     by_cases hz : (⟨k, y⟩ : Σ k, Frame ((U σ).X k).Ψ r) ∈ framesOn (U σ) Z
     · rw [hk] at hz
@@ -861,7 +853,6 @@ theorem res_ind {U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r} (hL : NeatUnf U) (Z 
     · exact hoff f hs k y hz
 
 
-set_option synthInstance.maxHeartbeats 400000 in
 open GlobalTheory.FlatPair in
 theorem exists_flat_pair : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E)
     (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (r : ℕ) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r), NeatUnf U → ∀ (Z : Comp Xo c) (τ : Psi H), ∃ (G : WTZ E) (f g : Rul Xo c), Even G.2 ∧
@@ -1004,7 +995,7 @@ theorem contOn_rdU : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H :
   intro E _ _ _ H Dw l Xo c r U hL e he0 s hs σ hσ k
   by_cases hanti : ∀ τ (i j : Fin (Dw.mult τ)), i ≤ j → e (some ⟨τ, j⟩) ≤ e (some ⟨τ, i⟩)
   · exact (GlobalTheory.ReadCont.differentiableOn_rdU_of_antitone (hL.unf σ hσ) hL.pos he0 hanti hs k).continuousOn
-  · push_neg at hanti
+  · push Not at hanti
     obtain ⟨τ, i, j, hij, hlt⟩ := hanti
     have hij' : i < j := lt_of_le_of_ne hij (by rintro rfl; exact lt_irrefl _ hlt)
     rw [GlobalTheory.IncrZero.secZ_eq_zero_of_lt E H Dw l Xo c e τ i j hij' hlt s hs, map_zero]
@@ -1196,9 +1187,6 @@ section -- clump:auto
 @[expose] public section
 
 section
-set_option autoImplicit false
-namespace GlobalTheory.FlatAnyLevel
-end GlobalTheory.FlatAnyLevel
 section Cover
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory Formalism.L2.Pj Formalism.BasicNotions
@@ -1216,7 +1204,7 @@ theorem GlobalTheory.FlatAnyLevel.exists_flat_unit_bounded_any_level : _root_.Gl
   obtain ⟨A⟩ := GlobalTheory.FlatAnyLevel.archEx (GlobalTheory.FlatAnyLevel.neatUnf_of_good D T j Y e o hG) (xiR D) Z τ
   simp only [Nat.cast_one, one_smul]
   refine ⟨A.sig, A.inv, A.sig_mem, A.inv_mem, A.idem_sig, A.idem_inv, A.mul_inv, fun σ hσ => ?_⟩
-  have hg : goodOf Y.d.c₂ σ = σ := if_pos hσ
+  have hg : goodOf Y.d.c₂ σ = σ := ite_eq_left hσ
   have hn := A.norm_inf σ
   rw [hg] at hn
   refine ⟨max (A.cInf σ) (A.cInf σ)⁻¹, fun z hz => ?_⟩
@@ -1329,7 +1317,6 @@ theorem exists_flat_unit_section : _root_.GlobalTheory.CovTop.PublishedHodgeBund
     refine ⟨∑ Z, max (C Z) 0 / GlobalTheory.AllWt.lieFacZ (T.Q.Dw j) (xiR D)
       (wtOf (T.Q.Dw j) (parWt (T.Q.Dw j) fun τ => (N : ℤ) * w τ) 0), fun y hy => ?_⟩
     have e1 : rdU (Y.U σ) (∑ Z, s Z) kk = ∑ Z, rdU (Y.U σ) (s Z) kk := by
-      set_option synthInstance.maxHeartbeats 100000 in
         rw [map_sum, Finset.sum_apply]
     rw [e1]
     refine (pnorm_sum_le _ _ _ _ y).trans (Finset.sum_le_sum fun Z _ => ?_)

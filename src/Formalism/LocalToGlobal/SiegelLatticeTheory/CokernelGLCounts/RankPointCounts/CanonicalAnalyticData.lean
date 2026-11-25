@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.WeightConstT
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGAnalytic
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.TypedFinal
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FiniteLevelVolumeOfMeasure
@@ -15,8 +16,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
   Formalism.L2.SG.MassDataConc Formalism.L2.SG.LocVol
 
 namespace Formalism.L2.SG.NGAnalytic.MassDataLemmas
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Inst
 
@@ -41,16 +40,7 @@ def FrameVolAt : Prop :=
       (X.B.g : ℝ) ^ (D.R.f * (D.R.rS + 1) * (2 * D.R.rS + 3))
 
 theorem kapN_pos (hg : 0 < (X.B.g : ℝ)) : 0 < Formalism.L2.SG.MassDataConc.kapN D := by
-  unfold Formalism.L2.SG.MassDataConc.kapN
-  have hr : 0 < D.host.rdE := by
-    unfold Formalism.BasicNotions.Host.rdE
-    apply Real.rpow_pos_of_pos
-    exact abs_pos.2 (Int.cast_ne_zero.2 (NumberField.discr_ne_zero _))
-  have hgS : 0 < (Formalism.MainNotions.S.Lat.gS D : ℝ) := by
-    unfold Formalism.MainNotions.S.Lat.gS
-    first
-      | exact Nat.cast_pos.2 (Nat.mul_pos (D.host.g_prime 0).pos (D.host.g_prime 1).pos)
-  positivity
+  apply _root_.Formalism.L2.SG.WConst.kapN_pos <;> assumption
 
 theorem massDataValid_bk_of {large₂ : SizeData₂ D} {Cg cb Cw cT CT C0 C' Cl : ℝ} (hc : Ctx Cg cb Cw cT CT C0 C' Cl D large₂ X Y u u')
     (hrd : 0 < 2 * D.host.v) (hg : 0 < (X.B.g : ℝ)) (hT : MassDataTie X hb X0 ψ)

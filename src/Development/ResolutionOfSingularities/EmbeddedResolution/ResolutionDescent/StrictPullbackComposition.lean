@@ -3,45 +3,6 @@ module
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
 public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.PullbackBlowupSequenceComposition
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Morphisms.SchemeTheoreticallyDominant
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -50,11 +11,6 @@ universe u
 open CategoryTheory AlgebraicGeometry
 
 namespace FunctorialResolution.EmbeddedResolution
-
-private theorem mem_support_comap {A B : Scheme.{u}} (f : A ⟶ B) (I : B.IdealSheafData)
-    (x : ↥A) : x ∈ (I.comap f).support ↔ f.base x ∈ I.support := by
-  rw [AlgebraicGeometry.Scheme.IdealSheafData.support_comap]
-  exact Iff.rfl
 
 private theorem support_comap_pullback_snd_nonempty_iff {W V Y T : Scheme.{u}} (u : V ⟶ Y) (c : W ⟶ V)
     [AlgebraicGeometry.Surjective c] (g : T ⟶ Y) (I : T.IdealSheafData) :
@@ -76,22 +32,22 @@ private theorem support_comap_pullback_snd_nonempty_iff {W V Y T : Scheme.{u}} (
     rw [← hA.isoPullback_hom_snd]
     infer_instance
   have hbase : ∀ x : ↥(Limits.pullback (c ≫ u) g),
-      (Limits.pullback.snd (c ≫ u) g).base x =
-        (Limits.pullback.snd u g).base (q.base x) := by
+      (Limits.pullback.snd (c ≫ u) g).base x = (Limits.pullback.snd u g).base (q.base x) := by
     intro x
     rw [← hq2]
     simp
-  constructor
-  · rintro ⟨x, hx⟩
-    rw [mem_support_comap] at hx
-    refine ⟨q.base x, ?_⟩
-    rw [mem_support_comap, ← hbase x]
+  refine ⟨fun ⟨x, hx⟩ => ⟨q.base x, ?_⟩, fun ⟨y, hy⟩ => ?_⟩
+  · rw [AlgebraicGeometry.Scheme.IdealSheafData.support_comap] at hx
+    rw [AlgebraicGeometry.Scheme.IdealSheafData.support_comap]
+    change (Limits.pullback.snd (c ≫ u) g).base x ∈ I.support at hx
+    rw [hbase x] at hx
     exact hx
-  · rintro ⟨y, hy⟩
-    rw [mem_support_comap] at hy
-    obtain ⟨x, hx⟩ := hqs.surj y
+  · obtain ⟨x, hx⟩ := hqs.surj y
     refine ⟨x, ?_⟩
-    rw [mem_support_comap, hbase x, hx]
+    rw [AlgebraicGeometry.Scheme.IdealSheafData.support_comap] at hy
+    rw [AlgebraicGeometry.Scheme.IdealSheafData.support_comap]
+    change (Limits.pullback.snd u g).base y ∈ I.support at hy
+    rw [← hx, ← hbase x] at hy
     exact hy
 
 namespace IsPullbackBlowupSequence
@@ -105,9 +61,7 @@ theorem comp_isStrictPullbackSequenceOfBlowups {W V Y : Scheme.{u}} {u : V ⟶ Y
   unfold FunctorialResolution.EmbeddedResolution.IsStrictPullbackBlowupSeq at hc
   obtain ⟨r, e, hr1, hr2, hr3, hr4, hefst, hestep, hecenter⟩ := h
   obtain ⟨hlen, σ, hzero, hstep, hcenter⟩ := hc
-  have hle : ∀ i : ℕ, i ≤ t.length → i ≤ s'.length := by
-    intro i hi
-    omega
+  have hle : ∀ i : ℕ, i ≤ t.length → i ≤ s'.length := fun _ hi => by omega
   have hsq : ∀ (i : ℕ) (hi : i ≤ t.length),
       IsPullback (σ i hi) (t.projectionToBase i) (s'.projectionToBase i) c :=
     isPullback_projectionToBase_of_isPullback_blowupMorphism c t s' t.length σ hzero hstep
@@ -138,27 +92,18 @@ theorem comp_isStrictPullbackSequenceOfBlowups {W V Y : Scheme.{u}} {u : V ⟶ Y
           Limits.pullback.snd u (s.projectionToBase (r i)) ≫ k := by
     intro i hi Z k
     rw [← Category.assoc, hFsnd, Category.assoc, Category.assoc]
-  have hc1 : ∀ i < t.length, r i < s.length := by
-    intro i hi
-    exact hr1 i (by omega)
-  have hc2 : ∀ (i j : ℕ), j ≤ t.length → i < j → r i < r j := by
-    intro i j hj hij
-    exact hr2 i j (by omega) hij
-  have hc3 : r t.length = s.length := by
-    rw [hlen]
-    exact hr3
+  have hc1 : ∀ i < t.length, r i < s.length := fun i hi => hr1 i (by omega)
+  have hc2 : ∀ (i j : ℕ), j ≤ t.length → i < j → r i < r j :=
+    fun i j hj => hr2 i j (by omega)
+  have hc3 : r t.length = s.length := by rw [hlen]; exact hr3
   have hc4 : ∀ i < s.length,
       (∃ x, x ∈ ((s.center i).comap
         (Limits.pullback.snd (c ≫ u) (s.projectionToBase i))).support) ↔
         ∃ j < t.length, r j = i := by
     intro i hi
-    refine (support_comap_pullback_snd_nonempty_iff u c (s.projectionToBase i) (s.center i)).trans ?_
-    refine (hr4 i hi).trans ?_
-    constructor
-    · rintro ⟨j, hj, hji⟩
-      exact ⟨j, by omega, hji⟩
-    · rintro ⟨j, hj, hji⟩
-      exact ⟨j, by omega, hji⟩
+    rw [hlen]
+    exact (support_comap_pullback_snd_nonempty_iff u c (s.projectionToBase i)
+      (s.center i)).trans (hr4 i hi)
   have hc6 : ∀ (i : ℕ) (hi : i < t.length) (hrr : r i ≤ r (i + 1)),
       t.transitionMapSucc i ≫ ((hpaste i (Nat.le_of_lt hi)).isoPullback).hom =
         ((hpaste (i + 1) hi).isoPullback).hom ≫ s.pullbackTransitionMap (c ≫ u) hrr := by

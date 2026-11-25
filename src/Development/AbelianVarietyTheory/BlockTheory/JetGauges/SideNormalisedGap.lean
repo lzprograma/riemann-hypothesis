@@ -61,25 +61,7 @@ def dimV (k r : ℕ) : ℝ := 2 * (r : ℝ) + k + 1
 
 def decExp (r : ℕ) (h : ℝ) : ℝ := h / (8 * Real.sqrt (2 * ((r : ℝ) + 1)))
 
-def decConst (r : ℕ) (h : ℝ) : ℝ := Real.exp (h / (16 * ((r : ℝ) + 1)))
-
-def dimN (k r : ℕ) : ℝ := (r : ℝ) * ((r : ℝ) - 1) + 2 * (r : ℝ) * ((k : ℝ) + 1) + (r : ℝ) ^ 2
-
-def thrG (k r : ℕ) : ℝ := 4 * ((k : ℝ) + r) * ((r : ℝ) + 1)
-
-def thrS (k r : ℕ) : ℝ := (dimV k r - 1) * dimN k r
-
-def propExp (r : ℕ) : ℝ := 2 * ((r : ℝ) ^ 2 + r + 1)
-
-def thrSS (k r : ℕ) : ℝ := 2 * propExp r * thrS k r + 1
-
 def DecGap (k r : ℕ) (h : ℝ) : Prop := 120 * dimV k r * ((r : ℝ) + 1) ^ ((3 : ℝ) / 2) ≤ h
-
-def Size (k r : ℕ) (h : ℝ) : Prop :=
-  DecGap k r h ∧ 16 * dimV k r ^ 5 * Real.sqrt (2 * ((r : ℝ) + 1)) ≤ h
-
-def Thresholds (k r : ℕ) (a : ℝ) : Prop :=
-  thrG k r < a / 2 ∧ thrS k r < a / 2 ∧ thrSS k r + thrG k r + 1 ≤ a ∧ thrS k r < a - 1
 
 def mulP {k r : ℕ} (p : Mt k r × Mt k r) : Mt k r := fun i j => (Matrix.of p.1 * Matrix.of p.2) i j
 

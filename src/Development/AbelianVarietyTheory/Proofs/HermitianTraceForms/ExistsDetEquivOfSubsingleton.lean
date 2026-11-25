@@ -94,12 +94,6 @@ theorem range_pow_eq_map (i : F →ₗ[R] H) (n : ℕ) :
   rw [ExteriorAlgebra.exteriorPower, Submodule.map_pow, ← LinearMap.range_comp,
     ExteriorAlgebra.map_comp_ι]
 
-section Exact
-
-variable {i : F →ₗ[R] H} {π : H →ₗ[R] L}
-
-end Exact
-
 section Dual
 
 

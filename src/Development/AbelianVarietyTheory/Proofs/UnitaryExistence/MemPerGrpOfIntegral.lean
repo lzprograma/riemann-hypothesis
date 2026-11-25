@@ -515,8 +515,7 @@ theorem eq_exp_of_ode {h h₁ h₂ : ℂ → ℂ} (hd : ∀ t, HasDerivAt h (h�
       (fun t ht => (hq t ht).deriv) ht (mem_ball_self hε)
     simpa using this
   have h1 : ∀ t, h₁ t - (α + c * t) * h t = 0 := by
-    by_contra hn
-    push_neg at hn
+    by_contra! hn
     refine not_eventually_zero (by fun_prop) hn 0 ?_
     filter_upwards [ball_mem_nhds 0 hε] with t ht
     rw [← hc t ht, sub_add_cancel, div_mul_cancel₀ _ (hb t ht), sub_self]
@@ -558,8 +557,7 @@ theorem eq_zero_of_tendsto (L : Submodule ℤ (Fin g → ℂ)) [DiscreteTopology
 
 theorem exists_zero_fderiv_ne_zero : ∀ (g : ℕ) (Hm : Matrix (Fin g) (Fin g) ℂ), Hm.PosDef → ∀ (Λ : AddSubgroup (Fin g → ℂ)), DiscreteTopology Λ → (∀ v, (∀ a ∈ Λ, ∃ k : ℤ, (star v ⬝ᵥ Hm.mulVec a).im = k) ↔ v ∈ Λ) → ∀ (χ θ : (Fin g → ℂ) → ℂ), Differentiable ℂ θ → θ ≠ 0 → (∀ a ∈ Λ, ‖χ a‖ = 1) → (∀ a ∈ Λ, ∀ z, θ (z + a) = χ a * Complex.exp (Real.pi * (star a ⬝ᵥ Hm.mulVec z) + Real.pi / 2 * (star a ⬝ᵥ Hm.mulVec a)) * θ z) → ∀ v : Fin g → ℂ, v ≠ 0 → ∃ a, θ a = 0 ∧ fderiv ℂ θ a v ≠ 0 := by
   intro g Hm hH Λ hd hΛ χ θ hθ h0 hχ hθt v hv
-  by_contra hm
-  push_neg at hm
+  by_contra! hm
   have hD := differentiable_fderiv_apply hθ v
   obtain ⟨ψ, hψ, hψ'⟩ := exists_fderiv_sq_quot hθ h0 v hD hm
   set D : (Fin g → ℂ) → ℂ := fun z => fderiv ℂ θ z v with hDdef
@@ -703,7 +701,6 @@ theorem imForm_apply (x y : EuclideanSpace ℂ ι) : imForm x y = (Hf x y).im :=
 
 theorem imForm_swap (x y : EuclideanSpace ℂ ι) : imForm y x = -imForm x y := by
   have h : Hf y x = starRingEnd ℂ (Hf x y) := by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp [Hf, map_sum, mul_comm]
   rw [imForm_apply, imForm_apply, h, Complex.conj_im]
 
@@ -726,10 +723,10 @@ theorem upper_sub (b : Module.Basis (Fin n) ℝ (EuclideanSpace ℂ ι)) (x y : 
     · simp [h, lt_asymm h]
     · subst h
       have := imForm_swap (b i) (b i)
-      simp only [lt_irrefl, if_false, sub_zero]
+      simp only [lt_irrefl, ite_false, sub_zero]
       linarith
     · have := imForm_swap (b j) (b i)
-      simp only [h, lt_asymm h, if_true, if_false, zero_sub]
+      simp only [h, lt_asymm h, ite_true, ite_false, zero_sub]
       linarith
   rw [key]
   simp only [LinearMap.sub_apply, LinearMap.flip_apply]
@@ -1238,7 +1235,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level
 open GlobalTheory.SW hiding Level
 open Formalism.L2.Pj Formalism.L2.PjFree
 open scoped ComplexConjugate Classical
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.Dict
 
 namespace GlobalTheory.ThetaNeZero

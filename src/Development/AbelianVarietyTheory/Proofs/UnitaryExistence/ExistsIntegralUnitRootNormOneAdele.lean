@@ -60,11 +60,6 @@ open scoped TensorProduct Topology Matrix
 
 namespace GlobalTheory.AdLat.UnitRoot
 
-section quad
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-
-end quad
-
 section inst
 variable (F : Type) [Field F] [NumberField F]
 
@@ -75,8 +70,8 @@ variable {F E}
 
 open NumberField IsDedekindDomain in
 open scoped TensorProduct Topology Matrix in
-variable (F : Type) [Field F] [NumberField F] in
-variable (E : Type) [Field E] [NumberField E] [Algebra F E] in
+variable (F : Type) [Field F] in
+variable (E : Type) [Field E] [Algebra F E] in
 variable {F E} in
 theorem _root_.GlobalTheory.AdLat.UnitRoot.conj_mem (c : E ≃ₐ[F] E) :
     ∀ x ∈ Set.range (algebraMap (𝓞 E) E), c x ∈ Set.range (algebraMap (𝓞 E) E) := by
@@ -101,16 +96,15 @@ private lemma mul_self_eq_one_of_quadratic {F E : Type} [Field F] [NumberField F
     ![AlgHom.id F E, (c : E →ₐ[F] E), ((c * c : E ≃ₐ[F] E) : E →ₐ[F] E)]
   have hf : Function.Injective f := by
     intro i j hij
-    fin_cases i <;> fin_cases j <;> simp [f] at hij ⊢
-    all_goals have hx := fun x => DFunLike.congr_fun hij x
-    all_goals simp only [AlgHom.coe_id, id_eq, AlgEquiv.coe_algHom, AlgEquiv.mul_apply] at hx
-    all_goals first
-      | exact hc (AlgEquiv.ext fun x => (hx x).symm)
-      | exact hc (AlgEquiv.ext fun x => hx x)
-      | exact h (AlgEquiv.ext fun x => (hx x).symm)
-      | exact h (AlgEquiv.ext fun x => hx x)
-      | exact hc (AlgEquiv.ext fun x => c.injective (hx x).symm)
-      | exact hc (AlgEquiv.ext fun x => c.injective (hx x))
+    have hx := fun x => DFunLike.congr_fun hij x
+    fin_cases i <;> fin_cases j <;>
+    simp [f] at hij ⊢
+    . exact hc (AlgEquiv.ext fun x => (hx x).symm)
+    . exact h (AlgEquiv.ext fun x => (hx x).symm)
+    . exact hc (AlgEquiv.ext fun x => hx x)
+    . exact hc (AlgEquiv.ext fun x => c.injective (hx x).symm)
+    . exact h (AlgEquiv.ext fun x => hx x)
+    . exact hc (AlgEquiv.ext fun x => c.injective (hx x))
   have := Nat.card_le_card_of_injective f hf
   rw [Nat.card_fin] at this
   omega
@@ -329,8 +323,7 @@ theorem _root_.GlobalTheory.AdLat.exists_integral_unit_root : ∀ (F E : Type) [
     Pint a ∧ Valued.v (a v) < 1
   have hkey : ∀ v, ∃ ij : Option (Fin n) × Option (Fin n), ¬ Valued.v (p ij.1 ij.2 v) < 1 := by
     intro v
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     choose cy hcy using fun j => _root_.GlobalTheory.AdLat.UnitRoot.conj_mem c _ ⟨Y j, rfl⟩
     have h1 : ∑ i, ρ (Y i) * m i = 1 := by
 
@@ -423,7 +416,7 @@ theorem _root_.GlobalTheory.AdLat.exists_integral_unit_root : ∀ (F E : Type) [
 
     simp only [map_sum, map_mul]
     simp only [hevv, hev, hdv, ite_mul, one_mul, zero_mul, mul_ite, mul_one,
-      mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     exact inv_mul_cancel₀ (hne v)
   refine ⟨∑ q, (e q ⊗ₜ[F] (1 : E)) * m q.1, ?_, ⟨(d ⊗ₜ[F] (1 : E)) *
     ∑ q, (e q ⊗ₜ[F] (1 : E)) * σ (m q.2), ?_, ?_⟩, ?_⟩

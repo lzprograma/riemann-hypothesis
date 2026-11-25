@@ -3,48 +3,8 @@ module
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvCharA
 public import Formalism.SharpRestriction.CuspSpanNormBounds.AuxiliarySlotStates
 public import Mathlib.Algebra.Group.MinimalAxioms
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.CuspSpanNormBounds.WeightedMirrorLevelOperator
 
@@ -99,11 +59,11 @@ theorem signature_form_block_decomposition (k0 : ℕ) : Hb (k0 + 1) =
   · simp only [Matrix.fromBlocks_apply₁₂, Hb, Matrix.diagonal_apply, finSumFinEquiv_apply_left,
       finSumFinEquiv_apply_right, Fin.ext_iff, Fin.val_castAdd, Fin.val_natAdd, Matrix.zero_apply]
     have := a.2
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
   · simp only [Matrix.fromBlocks_apply₂₁, Hb, Matrix.diagonal_apply, finSumFinEquiv_apply_left,
       finSumFinEquiv_apply_right, Fin.ext_iff, Fin.val_castAdd, Fin.val_natAdd, Matrix.zero_apply]
     have := b.2
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
   · simp only [Matrix.fromBlocks_apply₂₂, Hb, Matrix.diagonal_apply,
       finSumFinEquiv_apply_right, Fin.ext_iff, Fin.val_natAdd, Fin.val_last]
     fin_cases a <;> fin_cases b <;> simp
@@ -178,26 +138,6 @@ theorem big_cell_section_negative_vector (k0 r : ℕ) : IsSection (k0 + 1) r (ne
       · intro b _ hb; simp [hb]
       · simp
 
-section LG
-
-variable (k0 r : ℕ) (Hp Hq : Type) [NormedAddCommGroup Hp] [InnerProductSpace ℂ Hp] [FiniteDimensional ℂ Hp]
-    [NormedAddCommGroup Hq] [InnerProductSpace ℂ Hq] [FiniteDimensional ℂ Hq]
-    (σ : Matrix (Fin (k0 + 1)) (Fin (k0 + 1)) ℂ → (Hp →L[ℂ] Hp))
-    (σ' : Matrix (Fin (k0 + 1)) (Fin (k0 + 1)) ℂ → (Hq →L[ℂ] Hq))
-
-end LG
-
-section Two
-
-variable (k0 r : ℕ) (Hp Hq : Type) [NormedAddCommGroup Hp] [InnerProductSpace ℂ Hp] [FiniteDimensional ℂ Hp]
-    [NormedAddCommGroup Hq] [InnerProductSpace ℂ Hq] [FiniteDimensional ℂ Hq]
-    (σ : Matrix (Fin (k0 + 1)) (Fin (k0 + 1)) ℂ → (Hp →L[ℂ] Hp))
-    (σ' : Matrix (Fin (k0 + 1)) (Fin (k0 + 1)) ℂ → (Hq →L[ℂ] Hq))
-
-variable (u u' : Fin (k0 + 1) → ℝ) (I : Set ℝ)
-
-end Two
-
 section GenSec
 
 theorem big_cell_section_properties (k0 : ℕ) :
@@ -235,20 +175,20 @@ theorem split_form_middle_block_eq (i j : Fin (k + 1)) : Hpk k r (wI k r i) (wI 
   have hi := i.2
   have hj := j.2
   unfold Hpk Hb
-  rw [Matrix.diagonal_apply, if_neg (by simp only [wI]; omega), if_neg (by simp only [wI]; omega)]
+  rw [Matrix.diagonal_apply, ite_eq_right (by simp only [wI]; omega), ite_eq_right (by simp only [wI]; omega)]
   by_cases hij : i = j
   · subst hij
-    rw [if_pos ⟨by simp only [wI]; omega, by simp only [wI]; omega, rfl⟩, if_pos rfl]
+    rw [ite_eq_left ⟨by simp only [wI]; omega, by simp only [wI]; omega, rfl⟩, ite_eq_left rfl]
     by_cases hl : i = Fin.last k
-    · rw [if_pos hl, if_pos (by rw [hl]; simp [wI])]
-    · rw [if_neg hl, if_neg (by
+    · rw [ite_eq_left hl, ite_eq_left (by rw [hl]; simp [wI])]
+    · rw [ite_eq_right hl, ite_eq_right (by
         intro h
         apply hl
         apply Fin.ext
         simp only [wI] at h
         simp only [Fin.val_last]
         omega)]
-  · rw [if_neg hij, if_neg (fun h => hij (middle_block_index_injective k r h.2.2))]
+  · rw [ite_eq_right hij, ite_eq_right (fun h => hij (middle_block_index_injective k r h.2.2))]
 
 theorem conjugate_form_entry_of_fixed_column {n : ℕ} (g H : Matrix (Fin n) (Fin n) ℂ) (p q : Fin n) (hcol : ∀ l, g l p = if l = p then 1 else 0) :
     (gᴴ * H * g) p q = ∑ m, H p m * g m q := by
@@ -274,20 +214,20 @@ theorem fixed_frame_zero_off_middle_block (g : Matrix (Fin (2 * r + k + 1)) (Fin
     have e := congrFun (congrFun hU' (esI k r ⟨m.val, h⟩)) (wI k r j)
     rw [conjugate_form_entry_of_fixed_column g _ _ _ (column_eq_basis_of_fixes_vector g _ (hfix ⟨m.val, h⟩).2)] at e
     simp only [hermitian_form_dual_basis_row] at e
-    rw [if_neg (by simp only [wI, eI, Fin.ext_iff]; omega)] at e
+    rw [ite_eq_right (by simp only [wI, eI, Fin.ext_iff]; omega)] at e
     have hme : eI k r ⟨m.val, h⟩ = m := Fin.ext rfl
-    rw [hme, Finset.sum_eq_single m (fun b _ hb => by rw [if_neg hb, zero_mul])
-      (fun h => absurd (Finset.mem_univ _) h), if_pos rfl, one_mul] at e
+    rw [hme, Finset.sum_eq_single m (fun b _ hb => by rw [ite_eq_right hb, zero_mul])
+      (fun h => absurd (Finset.mem_univ _) h), ite_eq_left rfl, one_mul] at e
     exact e
   · have hm2 := m.2
     have ha : 2 * r + k - m.val < r := by omega
     have e := congrFun (congrFun hU' (eI k r ⟨2 * r + k - m.val, ha⟩)) (wI k r j)
     rw [conjugate_form_entry_of_fixed_column g _ _ _ (column_eq_basis_of_fixes_vector g _ (hfix ⟨2 * r + k - m.val, ha⟩).1)] at e
     simp only [hermitian_form_basis_row] at e
-    rw [if_neg (by simp only [wI, esI, Fin.ext_iff]; omega)] at e
+    rw [ite_eq_right (by simp only [wI, esI, Fin.ext_iff]; omega)] at e
     have hme : esI k r ⟨2 * r + k - m.val, ha⟩ = m := Fin.ext (by simp only [esI]; omega)
-    rw [hme, Finset.sum_eq_single m (fun b _ hb => by rw [if_neg hb, zero_mul])
-      (fun h => absurd (Finset.mem_univ _) h), if_pos rfl, one_mul] at e
+    rw [hme, Finset.sum_eq_single m (fun b _ hb => by rw [ite_eq_right hb, zero_mul])
+      (fun h => absurd (Finset.mem_univ _) h), ite_eq_left rfl, one_mul] at e
     exact e
 
 theorem frame_gives_unitary_block (z : Fin (2 * r + k + 1) → ℂ) (g : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)
@@ -464,16 +404,16 @@ theorem split_form_middle_row (c : Fin (k + 1)) (m : Fin (2 * r + k + 1)) :
   · obtain ⟨d, rfl⟩ := hm
     rw [split_form_middle_block_eq]
     by_cases hcd : d = c
-    · rw [hcd, if_pos rfl]
-    · rw [if_neg (fun h => hcd (middle_block_index_injective k r h))]
+    · rw [hcd, ite_eq_left rfl]
+    · rw [ite_eq_right (fun h => hcd (middle_block_index_injective k r h))]
       unfold Hb
-      rw [Matrix.diagonal_apply, if_neg (fun h => hcd h.symm)]
+      rw [Matrix.diagonal_apply, ite_eq_right (fun h => hcd h.symm)]
   · have hc := c.2
     have h1 := outside_middle_block_index k r m hm
-    rw [if_neg (fun h => hm ⟨c, h.symm⟩)]
+    rw [ite_eq_right (fun h => hm ⟨c, h.symm⟩)]
     unfold Hpk
-    rw [if_neg (by simp only [wI]; omega), if_neg (by simp only [wI]; omega),
-      if_neg (by
+    rw [ite_eq_right (by simp only [wI]; omega), ite_eq_right (by simp only [wI]; omega),
+      ite_eq_right (by
         rintro ⟨-, -, h⟩
         exact hm ⟨c, h⟩)]
 

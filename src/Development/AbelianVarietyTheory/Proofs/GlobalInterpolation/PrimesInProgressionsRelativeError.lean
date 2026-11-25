@@ -248,13 +248,10 @@ theorem main_bounds {θ : ℤ} {β δ u : ℝ} (hθ : θ = 0 ∨ θ = 1 ∨ θ =
           linarith
         have h10 := mul_le_mul_of_nonneg_left h9 (by linarith : 0 ≤ 4 * (1 - β))
         have h11 : 0 ≤ (1 - β) ^ 2 := sq_nonneg _
-        have h12 : (1 - β) ^ 2 = β * β - 2 * β + 1 := by ring
-        have h13 : (1 + 4 * (1 - β)) * (β * β) = β * β + 4 * (1 - β) * (β * β) := by ring
         linarith
       have h1' := mul_le_mul_of_nonneg_left h8 hp.le
       have h2' := mul_le_mul_of_nonneg_right h6 (show 0 ≤ β * β by positivity)
       have he1 : u ^ β * ((1 + 4 * (1 - β)) * (β * β)) = u ^ β * (1 + 4 * (1 - β)) * (β * β) := by ring
-      have he2 : u * (β * β) = β * u * β := by ring
       linarith
     push_cast
     have hδu : δ * u ≤ (1 - β) * u := mul_le_mul_of_nonneg_right hδβ hu0.le
@@ -329,7 +326,6 @@ theorem step (P : ℕ → Prop) {θ : ℤ} {β δ φ B ρ s : ℝ} (hθ : θ = 0
       have a1 : 8 * B * s ≤ δ * r := by
         have a0 : 8 * B * s ≤ (δ * s) * s := mul_le_mul_of_nonneg_right (by linarith) hs0.le
         have a0' : δ * s ^ 2 ≤ δ * r := mul_le_mul_of_nonneg_left hsr hδ.le
-        have he : (δ * s) * s = δ * s ^ 2 := by ring
         linarith
       have := mul_le_mul_of_nonneg_left a1 (show 0 ≤ r ^ 3 by positivity)
       linarith
@@ -361,11 +357,9 @@ theorem step (P : ℕ → Prop) {θ : ℤ} {β δ φ B ρ s : ℝ} (hθ : θ = 0
     push_cast
     have he1 : 8 * s ^ 14 * (16 * Real.log s) = 128 * (s ^ 14 * Real.log s) := by ring
     have he2 : s ^ 14 * s = s ^ 15 := by ring
-    have he3 : s ^ 15 * (δ * s) = δ * s ^ 16 := by ring
     linarith
   have e4 : s ^ 8 ≤ s ^ 10 := pow_le_pow_right₀ hs1 (by norm_num)
   have e5 : s ^ 10 ≤ s ^ 14 := pow_le_pow_right₀ hs1 (by norm_num)
-  have e6 : 4 * s ^ 10 ≤ Emain θ β (s ^ 16) := by linarith [e1.1]
   have hY0 : 0 < s ^ 8 := by positivity
   refine ⟨by linarith, ?_⟩
   have e7 : (ρ + 1 / s) * (Emain θ β (s ^ 16) - Emain θ β (s ^ 8) + 2 * (mainPsi θ β (s ^ 8) / Real.log (s ^ 8))) ≤
@@ -381,7 +375,6 @@ theorem step (P : ℕ → Prop) {θ : ℤ} {β δ φ B ρ s : ℝ} (hθ : θ = 0
     have he2 : s ^ 9 * s = s ^ 10 := by ring
     linarith
   have e11 := abs_le.1 (hc.trans e7)
-  have e12 : 0 ≤ B * s ^ 8 := by positivity
   rw [abs_le, show 4 / s = 4 * (1 / s) by ring]
   constructor <;> linarith [e11.1, e11.2, e1.1, e1.2]
 
@@ -431,7 +424,6 @@ theorem pi_rel_of_psi_rel : ∀ c₂ c₃ C cS : ℝ, 0 < c₂ → 0 < c₃ → 
       _ ≤ _ := by gcongr
   have hls : 0 ≤ Real.log s := Real.log_nonneg hs1
   set e := Real.exp (-d * Real.log (s ^ 16) / Real.log B) + Real.exp (-Real.sqrt (d * Real.log (s ^ 16))) with he
-  have he0 : 0 < e := by positivity
   have herr : ∀ u ∈ Set.Icc (s ^ 8) (s ^ 16),
       Real.exp (-c₃ * Real.log u / Real.log B) + Real.exp (-Real.sqrt (c₃ * Real.log u)) ≤ e := by
     intro u hu

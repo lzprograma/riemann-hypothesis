@@ -72,8 +72,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.VacStabFixed
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem place_comp {v : HeightOneSpectrum (𝓞 D.host.F)} {ε : AF D.host.F} (hε : IsPlaceIdem D v ε) :
@@ -122,10 +120,6 @@ theorem suppPl_of {v : HeightOneSpectrum (𝓞 D.host.F)} {ε : AF D.host.F} (h�
     {L : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)} {k : GA D V} (hk : InStabAt V L v k) : SuppPl ε V k :=
   fun i j => (supp_iff hε _).2 ⟨map_sub_one _ _ hk.1 i j,
     fun w hw => map_sub_one ((compFin D w).comp (finPart D)) _ (hk.2.1 w hw) i j⟩
-
-theorem selfDual_full (V : HSp D) (Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E))
-    (hΛ : IsSelfDualC V Λ) : Submodule.IsFullLattice D.host.E Λ :=
-  Formalism.IndefR.Datum.IsSelfDualC.isFullLattice V Λ hΛ
 
 theorem det_int {V : HSp D} {L : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)}
     (hL : Submodule.IsFullLattice D.host.E L) (g : GA D V)
@@ -254,7 +248,7 @@ theorem vacFixedAt (D : D7) (v : HeightOneSpectrum (𝓞 D.host.F)) : VacFixedAt
       (GlobalTheory.VecInv.isDetAt_detAt e he.1 S k) (GlobalTheory.VecInv.isDetAt_detAt e he.1 T k') hf
       (fun u hu hh => hvac.2 e he u (half_mem_place hε s1 hu hh) hh)
       (fun u hu hh => hvac.2 _ he' u (half_mem_place hε s2 hu hh) hh)
-    rwa [splitFacO, unram_detAt (selfDual_full S LS hS) hk.2.2 he.1 s1 uT', unram_detAt (selfDual_full T LT hT) hk'.2.2 he.1 s1 uS', inv_one, mul_one,
+    rwa [splitFacO, unram_detAt (Formalism.IndefR.Datum.IsSelfDualC.isFullLattice S LS hS) hk.2.2 he.1 s1 uT', unram_detAt (Formalism.IndefR.Datum.IsSelfDualC.isFullLattice T LT hT) hk'.2.2 he.1 s1 uS', inv_one, mul_one,
       Circle.coe_one, one_smul] at key
   · have hv : NonSplitAt D v ε := ⟨hε, hsp⟩
     obtain ⟨η, e1, e2, e3, e4⟩ := GlobalTheory.Mem.EtaTilde.exists_etaTilde D

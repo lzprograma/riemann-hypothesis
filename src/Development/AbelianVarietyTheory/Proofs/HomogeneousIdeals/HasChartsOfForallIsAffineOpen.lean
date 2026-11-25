@@ -44,8 +44,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory Limits AlgebraicGeometry
@@ -101,11 +99,6 @@ abbrev AlgClass (k : Type) [CommRing k] : Type 1 :=
 variable {𝒯 𝒯' : AlgClass k} {X : Over (Spec (CommRingCat.of k))}
 
 
-
-section
-variable (A : Type) [CommRing A] [Algebra k A] (hA : 𝒯 A) (x : sp A ⟶ X)
-
-end
 
 
 

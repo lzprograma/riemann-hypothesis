@@ -55,8 +55,6 @@ theorem Dk_mul {f g : E d → ℂ} (hf : ContDiff ℝ ∞ f) (hg : ContDiff ℝ 
 theorem ev_cons (p : List (Fin d) × (E d → ℂ)) (L : List (List (Fin d) × (E d → ℂ))) (g : E d → ℂ) (y : E d) :
     ev (p :: L) g y = p.2 y * dw p.1 g y + ev L g y := rfl
 
-theorem ev_nil (g : E d → ℂ) (y : E d) : ev ([] : List (List (Fin d) × (E d → ℂ))) g y = 0 := rfl
-
 theorem ev_append (L1 L2 : List (List (Fin d) × (E d → ℂ))) (g : E d → ℂ) (y : E d) :
     ev (L1 ++ L2) g y = ev L1 g y + ev L2 g y := by simp [ev]
 

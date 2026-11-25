@@ -111,7 +111,7 @@ theorem exists_box (x : Af F) {W : Set (Af F)} (hW : W ∈ 𝓝 x) :
     {y | y - x v ∈ u v ∧ y - x v ∈ (v.adicCompletionIntegers F : Set (Fv F v))}
     else (v.adicCompletionIntegers F : Set (Fv F v)), fun v => ?_, fun v hv => ?_, fun y hy => ?_⟩
   · by_cases hv : v ∈ hT.toFinset ∪ hx.toFinset
-    · simp only [if_pos hv]
+    · simp only [ite_eq_left hv]
       have hc : Continuous (fun y : Fv F v => y - x v) := continuous_id.sub continuous_const
       have h0 : x v - x v = 0 := sub_self _
       have hO : (v.adicCompletionIntegers F : Set (Fv F v)) ∈ 𝓝 (0 : Fv F v) :=
@@ -119,19 +119,19 @@ theorem exists_box (x : Af F) {W : Set (Af F)} (hW : W ∈ 𝓝 x) :
       exact Filter.inter_mem
         (hc.continuousAt.preimage_mem_nhds (by rw [h0]; exact hu v))
         (hc.continuousAt.preimage_mem_nhds (by rw [h0]; exact hO))
-    · simp only [if_neg hv]
+    · simp only [ite_eq_right hv]
       have hxv : x v ∈ v.adicCompletionIntegers F := by
         by_contra hc
         exact hv (Finset.mem_union_right _ (hx.mem_toFinset.2 hc))
       exact (isOpen_int F v).mem_nhds hxv
-  · simp only [if_neg hv]
+  · simp only [ite_eq_right hv]
   · have hint : ∀ v, y v - x v ∈ v.adicCompletionIntegers F := fun v => by
       by_cases hv : v ∈ hT.toFinset ∪ hx.toFinset
       · have := hy v
-        simp only [if_pos hv] at this
+        simp only [ite_eq_left hv] at this
         exact this.2
       · have h1 := hy v
-        simp only [if_neg hv] at h1
+        simp only [ite_eq_right hv] at h1
         have hxv : x v ∈ v.adicCompletionIntegers F := by
           by_contra hc
           exact hv (Finset.mem_union_right _ (hx.mem_toFinset.2 hc))
@@ -140,7 +140,7 @@ theorem exists_box (x : Af F) {W : Set (Af F)} (hW : W ∈ 𝓝 x) :
     have hzz : zz ∈ T.pi t := fun v hv => by
       have hv' : v ∈ hT.toFinset ∪ hx.toFinset := Finset.mem_union_left _ (hT.mem_toFinset.2 hv)
       have := hy v
-      simp only [if_pos hv'] at this
+      simp only [ite_eq_left hv'] at this
       exact hut v _ this.1
     have := hsub hzz
     have hy' : x + mk zz = y := by

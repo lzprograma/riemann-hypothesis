@@ -1,5 +1,6 @@
 module
 
+import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.GardingBump
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.Matrix.Normed
 public import Mathlib.Analysis.MeanInequalitiesPow
@@ -32,8 +33,6 @@ open scoped ComplexOrder ContDiff ENNReal
 namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {n : ℕ}
 
@@ -274,7 +273,7 @@ lemma dm_var (hU : U ∈ Matrix.unitaryGroup (Fin n) ℂ) (hY : Y = U * Matrix.d
               · ring
             rw [Finset.sum_congr rfl fun l _ => e l, Finset.sum_add_distrib, Finset.sum_sub_distrib,
               Finset.sum_ite_eq]
-            simp only [Finset.mem_univ, if_true]
+            simp only [Finset.mem_univ, ite_true]
           rw [Finset.sum_congr rfl fun k _ => hk k, Finset.sum_add_distrib, Finset.sum_sub_distrib,
             Finset.sum_mul_sum]
     _ = ∑ a, ∑ b, dmChi i a * (1 - dmChi i b) * (Y a b * Y b a) := by
@@ -295,11 +294,11 @@ lemma dm_rhs (hY : Y = U * Matrix.diagonal (fun j => (y j : ℂ)) * Uᴴ) (i : �
   rw [Complex.ofReal_sum]
   refine Finset.sum_congr rfl fun b _ => ?_
   by_cases hb : (b : ℕ) < i <;> by_cases ha : (a : ℕ) < i
-  · rw [if_neg (fun h => absurd h.2 (not_le.mpr ha))]; simp [dmChi, hb, ha]
-  · rw [if_pos ⟨hb, not_lt.mp ha⟩, dm_normsq, ← dm_herm hY a b]
-    simp only [dmChi, if_pos hb, if_neg ha]; ring
-  · rw [if_neg (fun h => hb h.1)]; simp [dmChi, hb, ha]
-  · rw [if_neg (fun h => hb h.1)]; simp [dmChi, hb, ha]
+  · rw [ite_eq_right (fun h => absurd h.2 (not_le.mpr ha))]; simp [dmChi, hb, ha]
+  · rw [ite_eq_left ⟨hb, not_lt.mp ha⟩, dm_normsq, ← dm_herm hY a b]
+    simp only [dmChi, ite_eq_left hb, ite_eq_right ha]; ring
+  · rw [ite_eq_right (fun h => hb h.1)]; simp [dmChi, hb, ha]
+  · rw [ite_eq_right (fun h => hb h.1)]; simp [dmChi, hb, ha]
 
 end ReciprocityTheory.ChartRestriction.DS.S7
 end -- clump:auto
@@ -320,8 +319,6 @@ open scoped ComplexOrder ContDiff ENNReal
 namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {n : ℕ}
 
@@ -476,8 +473,6 @@ namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {n : ℕ} {ε : Fin n → Bool}
 
 lemma decA_spec {Y : Matrix (Fin n) (Fin n) ℂ} (hY : inP ε Y) :
@@ -595,15 +590,7 @@ lemma decA_lead_last {Y U : Matrix (Fin n) (Fin n) ℂ} {y : Fin n → ℝ} (hYp
   exact_mod_cast h5
 
 lemma decA_hs_trace (A : Matrix (Fin n) (Fin n) ℂ) : ((hs A : ℝ) : ℂ) = Matrix.trace (A * Aᴴ) := by
-  unfold hs
-  rw [Matrix.trace]
-  push_cast
-  refine Finset.sum_congr rfl (fun i _ => ?_)
-  rw [Matrix.diag_apply, Matrix.mul_apply]
-  refine Finset.sum_congr rfl (fun j _ => ?_)
-  rw [Matrix.conjTranspose_apply, Complex.star_def, Complex.mul_conj, Complex.normSq_eq_norm_sq]
-  push_cast
-  rfl
+  apply _root_.CompanionTheory.D.gk.admitted.Gard.hs_eq_trace <;> assumption
 
 lemma decA_hs_conj {K : Matrix (Fin n) (Fin n) ℂ} (hK : K * Kᴴ = 1) (X : Matrix (Fin n) (Fin n) ℂ) :
     hs (Kᴴ * X * K) = hs X := by

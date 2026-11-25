@@ -47,8 +47,6 @@ open scoped TensorProduct InnerProductSpace
 
 namespace GlobalTheory.Chain.RealIt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 abbrev LPol (b a : ℕ) : Type := MvPolynomial (Fin b × Fin a) ℂ
 
 section Local

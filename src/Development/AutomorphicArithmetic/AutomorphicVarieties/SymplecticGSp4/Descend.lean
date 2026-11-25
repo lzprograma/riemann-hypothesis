@@ -311,7 +311,7 @@ private theorem kill_iff (hD : D.Good) {M : Type} [Monoid M] (f : D.Gam →* M) 
     by_cases hS : Raw.Away D.S A
     · rw [toGS_ine D hS hg, map_one]
     · unfold Raw.Away at hS
-      push_neg at hS
+      push Not at hS
       obtain ⟨p, hpS, hpA⟩ := hS
       have hpT : p ∉ D.T := fun hpT => hA p hpT hpA
       have hpr : Nat.Prime p := hD.S_prime p hpS

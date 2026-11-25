@@ -51,7 +51,7 @@ theorem pow_torsionExponent (x : (ZMod (ℓ ^ unitsLevel ℓ))ˣ) : x ^ torsionE
   · subst h
     have key : ∀ y : ZMod 8, (∃ z : ZMod 8, y * z = 1) → y ^ 2 = 1 := by decide
     have h8 : (2 : ℕ) ^ unitsLevel 2 = 8 := by simp [unitsLevel]
-    rw [torsionExponent, if_pos rfl]
+    rw [torsionExponent, ite_eq_left rfl]
     refine Units.ext ?_
     rw [Units.val_pow_eq_pow_val, Units.val_one]
     revert x
@@ -60,8 +60,8 @@ theorem pow_torsionExponent (x : (ZMod (ℓ ^ unitsLevel ℓ))ˣ) : x ^ torsionE
     exact key _ ⟨_, x.mul_inv⟩
   · have : NeZero ℓ := ⟨hℓ.out.ne_zero⟩
     have hc : Fintype.card (ZMod (ℓ ^ unitsLevel ℓ))ˣ = ℓ - 1 := by
-      rw [ZMod.card_units_eq_totient, unitsLevel, if_neg h, pow_one, Nat.totient_prime hℓ.out]
-    rw [torsionExponent, if_neg h, ← hc, pow_card_eq_one]
+      rw [ZMod.card_units_eq_totient, unitsLevel, ite_eq_right h, pow_one, Nat.totient_prime hℓ.out]
+    rw [torsionExponent, ite_eq_right h, ← hc, pow_card_eq_one]
 
 def unitsKer (n : ℕ) : Subgroup (ZMod (ℓ ^ (n + unitsLevel ℓ)))ˣ :=
   (ZMod.unitsMap (pow_dvd_pow ℓ (Nat.le_add_left (unitsLevel ℓ) n))).ker
@@ -272,14 +272,8 @@ theorem toZModPow_padicUnitsLog (u : ℤ_[ℓ]ˣ) (n : ℕ) :
       Multiplicative.toAdd (logMod ℓ n (redUnits ℓ (n + unitsLevel ℓ) u)) :=
   toZModPow_limFamilies ℓ _ n
 
-theorem continuous_redUnits (k : ℕ) : Continuous (redUnits ℓ k) := by
-  rw [Units.continuous_iff]
-  refine ⟨(_root_.UpperTheory.Reformulated.B.Yde3.continuous_toZModPow k).comp Units.continuous_val, ?_⟩
-  have : (fun u : ℤ_[ℓ]ˣ => ((redUnits ℓ k u)⁻¹ : (ZMod (ℓ ^ k))ˣ).val) =
-      fun u => PadicInt.toZModPow k ((u⁻¹ : ℤ_[ℓ]ˣ) : ℤ_[ℓ]) := by
-    funext u; rw [← map_inv]; rfl
-  rw [this]
-  exact (_root_.UpperTheory.Reformulated.B.Yde3.continuous_toZModPow k).comp (Units.continuous_val.comp continuous_inv)
+theorem continuous_redUnits (k : ℕ) : Continuous (redUnits ℓ k) :=
+  Units.continuous_map (_root_.UpperTheory.Reformulated.B.Yde3.continuous_toZModPow k)
 
 theorem continuous_padicUnitsLog : Continuous (padicUnitsLog ℓ) := by
   have hc : Continuous fun u : ℤ_[ℓ]ˣ => Multiplicative.toAdd (padicUnitsLog ℓ u) :=
@@ -398,7 +392,7 @@ theorem mem_torsion_iff (u : ℤ_[ℓ]ˣ) :
 
 theorem mem_torsion_two_iff (u : ℤ_[2]ˣ) :
     u ∈ CommGroup.torsion ℤ_[2]ˣ ↔ u = 1 ∨ u = -1 := by
-  rw [mem_torsion_iff, torsionExponent, if_pos rfl]
+  rw [mem_torsion_iff, torsionExponent, ite_eq_left rfl]
   constructor
   · intro h
     have h1 := congrArg Units.val h

@@ -58,8 +58,8 @@ theorem ptNs_lin (G : LogFGL v d) : ∀ (n : ℕ) (a s : Fin d),
       (subst (Sum.elim (fun b => (X b : MvPowerSeries (Fin d) C)) (ptNs G n)) (G.F a)) = _
     rw [pt_coeff_single_subst (ptNs_hasSubst G n) h0 (G.F_const a) s, Fintype.sum_sum_type]
     simp only [pt_F_lin, Sum.elim_inl, Sum.elim_inr, pt_coeff_single_X, ptNs_lin G n,
-      Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq, if_false, add_zero, zero_add,
-      ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq, ite_false, add_zero, zero_add,
+      ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     split_ifs <;> push_cast <;> ring
 
 theorem nsmulF_eq_subst (G : LogFGL v d) {ga : Fin d → PowerSeries C}
@@ -95,8 +95,7 @@ private theorem valuation_natCast_eq_zero_of_not_dvd {p : ℕ} (hp : p.Prime) (h
   have hw : 0 ≤ v (w : C) := intCast_mem (ptIntSub v) w
   have hn0 : 0 ≤ v (n : C) := natCast_mem (ptIntSub v) n
   refine le_antisymm ?_ hn0
-  by_contra hpos
-  push_neg at hpos
+  by_contra! hpos
   have h1 : 0 < v ((u : C) * p) := by
     rw [v.map_mul, hvp]
     exact lt_of_lt_of_le zero_lt_one (le_add_of_nonneg_left hu)
@@ -124,7 +123,7 @@ private theorem exists_eq_single_of_degree_eq_one {σ : Type} (α : σ →₀ �
   by_cases hi : i = s
   · subst hi
     simp [hs1]
-  · rw [Finsupp.single_apply, if_neg (Ne.symm hi)]
+  · rw [Finsupp.single_apply, ite_eq_right (Ne.symm hi)]
     by_contra hne'
     have hmem : i ∈ α.support.erase s :=
       Finset.mem_erase.mpr ⟨hi, Finsupp.mem_support_iff.mpr hne'⟩
@@ -178,8 +177,7 @@ theorem nsmul_coprime_bijective_curves [CharZero C] (G : LogFGL v d) {p : ℕ} (
       ∀ x y : Fin d → PowerSeries C, PTGood v x → PTGood v y → ∀ s ∈ α.support, x s = y s := by
     intro b α hα
     left
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     apply hα
     rcases (show α.degree = 0 ∨ α.degree = 1 by omega) with hd | hd
     · rw [(Finsupp.degree_eq_zero_iff α).mp hd, MvPowerSeries.coeff_zero_eq_constantCoeff_apply,

@@ -66,8 +66,6 @@ theorem card_over_of_split (F E L : Type) [Field F] [NumberField F] [Field E] [N
     _ = Module.finrank (𝓞 F) (𝓞 E) := Ideal.sum_ramification_inertia_eq_finrank P (𝓞 E)
     _ = Module.finrank F E := (IsFractionRing.finrank_eq (𝓞 F) F (𝓞 E) E).symm
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem splitAtG_holds (D : D7) : ∀ (A : UnitaryGroupInstance D) (v : HeightOneSpectrum (𝓞 A.I.F)),
     ((gD D : ℕ) : 𝓞 A.I.F) ∈ v.asIdeal →
     Nat.card {w : HeightOneSpectrum (𝓞 A.I.E) //

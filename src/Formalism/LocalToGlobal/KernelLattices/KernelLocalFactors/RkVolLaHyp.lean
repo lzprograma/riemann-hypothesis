@@ -12,23 +12,16 @@ public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDual
 public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.ZeroInjectionMemFourthPower
 public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.SelfDualComap
 import Formalism.LocalToGlobal.KernelLattices.ColumnData.StdOKP
-import Mathlib.RingTheory.PiTensorProduct
 import Formalism.LocalToGlobal.KernelLattices.ColumnData.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
 import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.LocalComponentGL
 import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.MatrixFormFourfoldBlock
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.TypeStar
 import Formalism.LocalToGlobal.KernelLattices.ColumnData.StdLat
 import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.QuasiPeriodConstUniqueOf
 import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.FinitelyGeneratedModPow
 import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThU
 
--- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolSeam, Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolChain, Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolLat, Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolLaHyp
 
 -- ===== clump member: Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolSeam =====
--- clump-header: {"m": "Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolSeam", "h": "module\n\npublic import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolKerStd\npublic import Formalism.LocalToGlobal.KernelLattices.ColumnData.Smooth\npublic import Formalism.LocalToGlobal.AlgebraicTheory.StatementEig\npublic import Formalism.LocalToGlobal.KernelLattices.ColumnData.BaseExP\nimport Formalism.LocalToGlobal.KernelLattices.ColumnData.StdOKP\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.PiTensorProduct\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\npublic import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.EmbCInjective\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -399,7 +392,6 @@ end -- clump:auto
 -- ===== end clump member: Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolSeam =====
 
 -- ===== clump member: Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolChain =====
--- clump-header: {"m": "Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolChain", "h": "module\n\npublic import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolKerStd\npublic import Formalism.LocalToGlobal.AlgebraicTheory.StatementNorm\npublic import Formalism.LocalToGlobal.KernelLattices.ColumnData.AmbOfENeSd\npublic import Formalism.LocalToGlobal.KernelLattices.ColumnData.BaseLinkOfNonzeroDelta\nimport Formalism.LocalToGlobal.KernelLattices.ColumnData.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph\nimport Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.LocalComponentGL\nimport Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.MatrixFormFourfoldBlock\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Coalgebra.IsFrobenius\nimport Mathlib.RingTheory.HopfAlgebra.Basic\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Tactic.TypeStar\nimport Mathlib.Topology.Sheaves.Init\npublic import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.LocNormAmbOfOf\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -409,7 +401,7 @@ open NumberField Formalism.BasicNotions
 
 namespace Formalism.L2.Ker.Cd.KS
 
-open Formalism.L2.Ker.KS hiding La_left La_nsmul La_right YYl_nsmul al_flat alpha_flat fixed_pb fnPow_eq form_flat hPow_hOne herm_pb homL_nsmul inter_pb lamM' latPow_eq locNorm_ambOf_of locNorm_thF_of not_dvd_relIdx opU_pb pb relIdx_pb reps_pb selfDual_pb semi_pb thF_ambOf thM' th_pb
+open Formalism.L2.Ker.KS hiding La_left La_nsmul La_right YYl_nsmul al_flat alpha_flat fixed_pb fnPow_eq form_flat homL_nsmul inter_pb lamM' latPow_eq locNorm_ambOf_of locNorm_thF_of opU_pb pb relIdx_pb reps_pb selfDual_pb semi_pb thF_ambOf thM' th_pb
 
 open Formalism.MainNotions Formalism.L2.Col
 open Formalism.L2.Th1.H (Sesq IsHerm IsPosDef altE opU dualLat IsSelfDual IsSemiChar fixedBy sumU IsReps relIdx inter Th IsLat matH alphaQ
@@ -417,129 +409,15 @@ open Formalism.L2.Th1.H (Sesq IsHerm IsPosDef altE opU dualLat IsSelfDual IsSemi
 open Formalism.L2.Th1.GD (LocNorm)
 open Formalism.L2.AlgTh (hSc hPow latPow fnPow LocNormScale LocNormPow LocNormInter)
 
-section Gen
-
-variable {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W] (e : V ≃ₗ[ℂ] W)
-
-abbrev pb (Λ : AddSubgroup W) : AddSubgroup V := Λ.comap e.toLinearMap.toAddMonoidHom
-
-theorem relIdx_pb (Λ₁ Λ₂ : AddSubgroup W) : relIdx (pb e Λ₁) (pb e Λ₂) = relIdx Λ₁ Λ₂ := by
-  unfold relIdx
-  rw [AddSubgroup.relIndex_comap, AddSubgroup.map_comap_eq_self_of_surjective]
-  exact e.surjective
-
-variable (H : Sesq V) (H' : Sesq W) (hH : ∀ x y, H x y = H' (e x) (e y))
-
-include hH
-
+alias pb := _root_.Formalism.L2.Ker.KS.pb
+alias relIdx_pb := _root_.Formalism.L2.Ker.KS.relIdx_pb
 alias opU_pb := _root_.Formalism.L2.Ker.KS.opU_pb
-
-theorem herm_pb (h : IsHerm H') : IsHerm H := fun x y => by rw [hH, hH]; exact h _ _
-
-theorem semi_pb {Λ : AddSubgroup W} {α : V → ℂ} {α' : W → ℂ} (hα : ∀ x, e x ∈ Λ → α x = α' (e x))
-    (h : IsSemiChar H' Λ α') : IsSemiChar H (pb e Λ) α := by
-  refine ⟨fun x hx => by rw [hα x hx]; exact h.1 _ hx, fun x hx y hy => ?_⟩
-  have hx' : e x ∈ Λ := hx
-  have hy' : e y ∈ Λ := hy
-  have hxy : e (x + y) ∈ Λ := by rw [map_add (f := _)]; exact Λ.add_mem hx' hy'
-  rw [hα _ hxy, hα x hx', hα y hy', map_add (f := _), h.2 _ hx' _ hy']
-  simp only [altE, hH]
-
-theorem fixed_pb {Λ : AddSubgroup W} {α : V → ℂ} {α' : W → ℂ} (hα : ∀ x, e x ∈ Λ → α x = α' (e x)) {F : W → ℂ}
-    (h : F ∈ fixedBy H' α' Λ) : (fun v => F (e v)) ∈ fixedBy H α (pb e Λ) := by
-  intro x hx z
-  have hx' : e x ∈ Λ := hx
-  rw [opU_pb e H H' hH, hα x hx']
-  exact h _ hx' _
-
-theorem selfDual_pb {Λ : AddSubgroup W} (h : IsSelfDual H' Λ) : IsSelfDual H (pb e Λ) := by
-  unfold IsSelfDual at h ⊢
-  ext x
-  constructor
-  · intro hx
-    show e x ∈ Λ
-    rw [← h]
-    intro y' hy'
-    obtain ⟨m, hm⟩ := hx (e.symm y') (show e (e.symm y') ∈ Λ by simpa using hy')
-    refine ⟨m, ?_⟩
-    simpa [altE, hH] using hm
-  · intro hx
-    have hx' : e x ∈ dualLat H' Λ := by
-      rw [h]
-      exact hx
-    intro y hy
-    obtain ⟨m, hm⟩ := hx' (e y) hy
-    refine ⟨m, ?_⟩
-    simpa [altE, hH] using hm
-
-theorem reps_pb {Λ₁ Λ₂ : AddSubgroup W} {S : Finset W} (hS : IsReps Λ₁ Λ₂ S) :
-    IsReps (pb e Λ₁) (pb e Λ₂) (S.map e.symm.toEquiv.toEmbedding) := by
-  refine ⟨?_, ?_, ?_⟩
-  · intro x hx
-    obtain ⟨y, hy, rfl⟩ := Finset.mem_map.1 hx
-    show e (e.symm y) ∈ Λ₂
-    rw [e.apply_symm_apply]
-    exact hS.1 y hy
-  · intro x hx y hy hxy
-    obtain ⟨x', hx', rfl⟩ := Finset.mem_map.1 hx
-    obtain ⟨y', hy', rfl⟩ := Finset.mem_map.1 hy
-    have : e (e.symm x' - e.symm y') ∈ Λ₁ := hxy
-    rw [map_sub, e.apply_symm_apply, e.apply_symm_apply] at this
-    rw [hS.2.1 x' hx' y' hy' this]
-  · intro y hy
-    obtain ⟨x, hx, hxy⟩ := hS.2.2 (e y) hy
-    refine ⟨e.symm x, Finset.mem_map.2 ⟨x, hx, rfl⟩, ?_⟩
-    show e (y - e.symm x) ∈ Λ₁
-    rwa [map_sub, e.apply_symm_apply]
-
-theorem inter_pb (hH' : IsHerm H') (Λ₁ Λ₂ : AddSubgroup W) (α : V → ℂ) (α' : W → ℂ)
-    (hα₁ : ∀ x, e x ∈ Λ₁ → α x = α' (e x)) (hα₂ : ∀ x, e x ∈ Λ₂ → α x = α' (e x))
-    (hS : IsSemiChar H' Λ₂ α') (hidx : relIdx Λ₁ Λ₂ ≠ 0) (F : W → ℂ) (hF : F ∈ fixedBy H' α' Λ₁) :
-    inter H α (pb e Λ₁) (pb e Λ₂) (fun v => F (e v)) = fun z => inter H' α' Λ₁ Λ₂ F (e z) := by
-  funext z
-  obtain ⟨⟨S, hSr⟩, -⟩ := cosetRepsExist W Λ₁ Λ₂ hidx
-  rw [InterReps_of semicharacterHom W H' hH' Λ₁ Λ₂ α' hS F hF S hSr (e z),
-    InterReps_of semicharacterHom V H (herm_pb e H H' hH hH') _ _ α (semi_pb e H H' hH hα₂ hS) _
-      (fixed_pb e H H' hH hα₁ hF) _ (reps_pb e H H' hH hSr) z, relIdx_pb]
-  congr 1
-  simp only [sumU, Finset.sum_map]
-  refine Finset.sum_congr rfl fun x hx => ?_
-  have hx2 : e (e.symm x) ∈ Λ₂ := by rw [e.apply_symm_apply]; exact hSr.1 x hx
-  show α (e.symm x) * opU H (e.symm x) (fun v => F (e v)) z = _
-  rw [opU_pb e H H' hH, hα₂ _ hx2, e.apply_symm_apply]
-
-end Gen
-
-section GenTh
-
-variable {V W : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] [FiniteDimensional ℂ V] [NormedAddCommGroup W] [NormedSpace ℂ W]
-  (e : V ≃ₗ[ℂ] W) (H : Sesq V) (H' : Sesq W) (hH : ∀ x y, H x y = H' (e x) (e y))
-
-include hH in
-theorem th_pb {Λ : AddSubgroup W} {α : V → ℂ} {α' : W → ℂ} (hα : ∀ x, e x ∈ Λ → α x = α' (e x)) {F : W → ℂ}
-    (h : F ∈ Th H' α' Λ) : (fun v => F (e v)) ∈ Th H α (pb e Λ) := by
-  refine ⟨?_, fixed_pb e H H' hH hα h.2⟩
-  have h1 : AnalyticOnNhd ℂ (LinearMap.toContinuousLinearMap e.toLinearMap) Set.univ :=
-    (LinearMap.toContinuousLinearMap e.toLinearMap).analyticOnNhd _
-  exact h.1.comp h1 (fun _ _ => Set.mem_univ _)
-
-end GenTh
-
-theorem not_dvd_relIdx {V : Type*} [AddCommGroup V] (Λ₁ Λ₂ : AddSubgroup V) (p s : ℕ) [Fact p.Prime] (hs : Nat.Coprime s p)
-    (h0 : relIdx Λ₁ Λ₂ ≠ 0) (hk : ∀ x ∈ Λ₂, s • x ∈ Λ₁) : ¬ p ∣ relIdx Λ₁ Λ₂ := by
-  intro hd
-  have h0' : Nat.card (Λ₂ ⧸ Λ₁.addSubgroupOf Λ₂) ≠ 0 := h0
-  have hd' : p ∣ Nat.card (Λ₂ ⧸ Λ₁.addSubgroupOf Λ₂) := hd
-  have : Finite (Λ₂ ⧸ Λ₁.addSubgroupOf Λ₂) := Nat.finite_of_card_ne_zero h0'
-  obtain ⟨q, hq⟩ := exists_prime_addOrderOf_dvd_card' p hd'
-  have hsq : s • q = 0 := by
-    induction q using QuotientAddGroup.induction_on with | H a => ?_
-    rw [← QuotientAddGroup.mk_nsmul, QuotientAddGroup.eq_zero_iff, AddSubgroup.mem_addSubgroupOf, AddSubgroup.coe_nsmul]
-    exact hk _ a.2
-  have h1 : p ∣ s := hq ▸ addOrderOf_dvd_of_nsmul_eq_zero hsq
-  have h2 : p ∣ Nat.gcd s p := Nat.dvd_gcd h1 dvd_rfl
-  rw [hs] at h2
-  exact (Fact.out : p.Prime).one_lt.ne' (Nat.dvd_one.1 h2)
+alias semi_pb := _root_.Formalism.L2.Ker.KS.semi_pb
+alias fixed_pb := _root_.Formalism.L2.Ker.KS.fixed_pb
+alias selfDual_pb := _root_.Formalism.L2.Ker.KS.selfDual_pb
+alias reps_pb := _root_.Formalism.L2.Ker.KS.reps_pb
+alias inter_pb := _root_.Formalism.L2.Ker.KS.inter_pb
+alias th_pb := _root_.Formalism.L2.Ker.KS.th_pb
 
 section LaS
 
@@ -608,7 +486,7 @@ theorem form_flat (A : ℝ) (x y : DVar X.Tau a b → ℂ) :
     matH (hSc X.Tau a b A⁻¹) x y = formV A D.what₂.Tau a b (s.flatV a b x) (s.flatV a b y) := by
   rw [formV_apply]
   show (∑ i, ∑ j, x i * hSc X.Tau a b A⁻¹ i j * conj (y j)) = _
-  simp only [hSc, Matrix.diagonal_apply, mul_ite, mul_zero, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [hSc, Matrix.diagonal_apply, mul_ite, mul_zero, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   rw [Fintype.sum_prod_type, ← Equiv.sum_comp s.iT.symm, Finset.sum_div]
   refine Finset.sum_congr rfl fun τ _ => ?_
   rw [Fintype.sum_prod_type, Finset.sum_div]
@@ -623,19 +501,6 @@ theorem form_flat (A : ℝ) (x y : DVar X.Tau a b → ℂ) :
 theorem alpha_flat (c A : ℝ) (x : DVar X.Tau a b → ℂ) :
     alphaQ c (matH (hSc X.Tau a b A⁻¹)) x = alphaQ c (formV A D.what₂.Tau a b) (s.flatV a b x) := by
   simp only [alphaQ, Formalism.L2.Th1.H.qOf, form_flat s]
-
-theorem hPow_hOne (L : PeriodPair) :
-    hPow (Fin b × Fin a) (hOne L X.Tau) = hSc X.Tau a b (Formalism.L2.Th1.F.area L)⁻¹ := by
-  ext w w'
-  simp only [hPow, hOne, hSc, Matrix.smul_apply, Matrix.one_apply, Matrix.diagonal_apply, smul_eq_mul]
-  by_cases h1 : w = w'
-  · subst h1
-    simp
-  · rw [if_neg h1]
-    by_cases h2 : w.2 = w'.2
-    · have h3 : w.1 ≠ w'.1 := fun h => h1 (Prod.ext h h2)
-      simp [h2, h3]
-    · simp [h2]
 
 variable {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (B : Base D cc δ)
 
@@ -765,7 +630,6 @@ end -- clump:auto
 -- ===== end clump member: Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolChain =====
 
 -- ===== clump member: Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolLat =====
--- clump-header: {"m": "Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolLat", "h": "module\n\npublic import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolKerStd\npublic import Formalism.LocalToGlobal.KernelLattices.ColumnData.AmbOfENeSd\npublic import Formalism.LocalToGlobal.KernelLattices.ColumnData.BaseLinkOfNonzeroDelta\npublic import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.ZeroInjectionMemFourthPower\nimport Formalism.LocalToGlobal.KernelLattices.ColumnData.StdLat\nimport Formalism.LocalToGlobal.KernelLattices.ColumnData.StdOKP\nimport Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.QuasiPeriodConstUniqueOf\nimport Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.FinitelyGeneratedModPow\nimport Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.LocalComponentGL\nimport Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.MatrixFormFourfoldBlock\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Coalgebra.IsFrobenius\nimport Mathlib.RingTheory.HopfAlgebra.Basic\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\npublic import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.SelfDualComap\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -781,159 +645,29 @@ open Formalism.MainNotions Formalism.L2.Col Formalism.L2.Th1.H
 open Formalism.L2.AlgTh (hSc)
 open Formalism.L2.Th1.F (cmTheta)
 
-section Gen
-
-variable {V W : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] [FiniteDimensional ℂ V] [NormedAddCommGroup W]
-  [NormedSpace ℂ W] [FiniteDimensional ℂ W] {H : Sesq V} {H' : Sesq W} (g : V ≃ₗ[ℂ] W)
-
-theorem img_comap (Λ' : AddSubgroup W) :
-    imgLat (g : V →ₗ[ℂ] W) (Λ'.comap (g : V →ₗ[ℂ] W).toAddMonoidHom) = Λ' :=
-  AddSubgroup.map_comap_eq_self_of_surjective (f := (g : V →ₗ[ℂ] W).toAddMonoidHom) g.surjective Λ'
-
-theorem selfDual_comap (hI : IsIsom H H' (g : V →ₗ[ℂ] W)) {Λ' : AddSubgroup W} (h : IsSelfDual H' Λ') :
-    IsSelfDual H (Λ'.comap (g : V →ₗ[ℂ] W).toAddMonoidHom) := by
-  unfold IsSelfDual at h ⊢
-  ext x
-  constructor
-  · intro hx
-    show g x ∈ Λ'
-    rw [← h]
-    intro y hy
-    obtain ⟨m, hm⟩ := hx (g.symm y) (by show g (g.symm y) ∈ Λ'; rw [g.apply_symm_apply]; exact hy)
-    refine ⟨m, ?_⟩
-    rw [← hm]
-    have h1 := hI x (g.symm y)
-    have h2 : (g : V →ₗ[ℂ] W) (g.symm y) = y := g.apply_symm_apply y
-    rw [h2] at h1
-    unfold altE
-    rw [← h1]
-    rfl
-  · intro hx y hy
-    have hx' : g x ∈ dualLat H' Λ' := by rw [h]; exact hx
-    obtain ⟨m, hm⟩ := hx' (g y) hy
-    refine ⟨m, ?_⟩
-    rw [← hm]
-    unfold altE
-    rw [← hI x y]
-    rfl
-
-theorem isLat_comap {Λ' : AddSubgroup W} (h : IsLat Λ') : IsLat (Λ'.comap (g : V →ₗ[ℂ] W).toAddMonoidHom) := by
-  constructor
-  · have := h.1
-    let f : (Λ'.comap (g : V →ₗ[ℂ] W).toAddMonoidHom) → Λ' := fun x => ⟨g x.1, x.2⟩
-    have hf : Continuous f :=
-      Continuous.subtype_mk (((g : V →ₗ[ℂ] W).continuous_of_finiteDimensional).comp continuous_subtype_val) _
-    have hinj : Function.Injective f := by
-      intro x y hxy
-      exact Subtype.ext (g.injective (congrArg Subtype.val hxy))
-    exact DiscreteTopology.of_continuous_injective hf hinj
-  · rw [eq_top_iff]
-    intro v _
-    let p : W →ₗ[ℝ] V := (g.symm : W →ₗ[ℂ] V).restrictScalars ℝ
-    have h2 : (Submodule.span ℝ (Λ' : Set W)).map p ≤
-        Submodule.span ℝ ((Λ'.comap (g : V →ₗ[ℂ] W).toAddMonoidHom : AddSubgroup V) : Set V) := by
-      rw [Submodule.map_span, Submodule.span_le]
-      rintro _ ⟨y, hy, rfl⟩
-      apply Submodule.subset_span
-      show g (g.symm y) ∈ Λ'
-      rw [g.apply_symm_apply]
-      exact hy
-    refine h2 ⟨g v, by rw [h.2]; trivial, ?_⟩
-    show g.symm (g v) = v
-    exact g.symm_apply_apply v
-
-theorem th_comap (hI : IsIsom H H' (g : V →ₗ[ℂ] W)) {Λ' : AddSubgroup W} {α' : W → ℂ} {G : W → ℂ} (hG : G ∈ Th H' α' Λ') :
-    (fun v => G (g v)) ∈ Th H (fun v => α' (g v)) (Λ'.comap (g : V →ₗ[ℂ] W).toAddMonoidHom) := by
-  refine (ThIsom_of heisenbergIsometry V W H H' g hI _ α' G).1 ?_
-  rw [img_comap]
-  exact hG
-
-theorem relIdx_comap (Λ₁ Λ₂ : AddSubgroup W) :
-    relIdx (Λ₁.comap (g : V →ₗ[ℂ] W).toAddMonoidHom) (Λ₂.comap (g : V →ₗ[ℂ] W).toAddMonoidHom) = relIdx Λ₁ Λ₂ := by
-  unfold relIdx
-  rw [AddSubgroup.relIndex_comap]
-  congr 1
-  exact AddSubgroup.map_comap_eq_self_of_surjective (f := (g : V →ₗ[ℂ] W).toAddMonoidHom) g.surjective Λ₂
-
-theorem alphaQ_isom (hI : IsIsom H H' (g : V →ₗ[ℂ] W)) (c : ℝ) (v : V) : alphaQ c H' (g v) = alphaQ c H v := by
-  unfold alphaQ Formalism.L2.Th1.H.qOf
-  have := hI v v
-  rw [← this]
-  rfl
-
-end Gen
+alias img_comap := _root_.Formalism.L2.Ker.KS.Lat.img_comap
+alias selfDual_comap := _root_.Formalism.L2.Ker.KS.Lat.selfDual_comap
+alias isLat_comap := _root_.Formalism.L2.Ker.KS.Lat.isLat_comap
+alias th_comap := _root_.Formalism.L2.Ker.KS.Lat.th_comap
+alias relIdx_comap := _root_.Formalism.L2.Ker.KS.Lat.relIdx_comap
+alias alphaQ_isom := _root_.Formalism.L2.Ker.KS.Lat.alphaQ_isom
 
 section Form
 
 variable {D : Car} {X : Fields} (s : Seam D X)
 
 theorem form_flat (A : ℝ) (a b : ℕ) (x y : DVar X.Tau a b → ℂ) :
-    matH (hSc X.Tau a b A⁻¹) x y = formV A D.what₂.Tau a b (s.flatV a b x) (s.flatV a b y) := by
-  rw [formV_apply]
-  show (∑ i, ∑ j, x i * hSc X.Tau a b A⁻¹ i j * conj (y j)) = _
-  have h1 : ∀ i : DVar X.Tau a b, (∑ j, x i * hSc X.Tau a b A⁻¹ i j * conj (y j)) = x i * conj (y i) / (A : ℂ) := by
-    intro i
-    rw [Finset.sum_eq_single i]
-    · unfold hSc
-      rw [Matrix.diagonal_apply_eq]
-      push_cast
-      field_simp
-    · intro j _ hj
-      unfold hSc
-      rw [Matrix.diagonal_apply_ne _ (Ne.symm hj)]
-      simp
-    · intro hi
-      exact absurd (Finset.mem_univ i) hi
-  simp only [h1]
-  rw [← Finset.sum_div]
-  congr 1
-  rw [Fintype.sum_prod_type, ← Equiv.sum_comp s.iT.symm]
-  refine Finset.sum_congr rfl fun τ _ => ?_
-  rw [Fintype.sum_prod_type]
-  rfl
+    matH (hSc X.Tau a b A⁻¹) x y = formV A D.what₂.Tau a b (s.flatV a b x) (s.flatV a b y) :=
+  Formalism.L2.Ker.Cd.KS.form_flat s A x y
 
 theorem isom_flat (A : ℝ) (a b : ℕ) :
     IsIsom (matH (hSc X.Tau a b A⁻¹)) (formV A D.what₂.Tau a b)
       ((s.flatV a b : (DVar X.Tau a b → ℂ) ≃ₗ[ℂ] Formalism.L2.Ker.Cd.TaylorLogMetric.VC D a b) : (DVar X.Tau a b → ℂ) →ₗ[ℂ] Formalism.L2.Ker.Cd.TaylorLogMetric.VC D a b) :=
   fun x y => (form_flat s A a b x y).symm
 
-theorem matH_hSc (sc : ℝ) (a b : ℕ) (x y : DVar X.Tau a b → ℂ) :
-    matH (hSc X.Tau a b sc) x y = (sc : ℂ) * ∑ k, x k * conj (y k) := by
-  show (∑ i, ∑ j, x i * hSc X.Tau a b sc i j * conj (y j)) = _
-  rw [Finset.mul_sum]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [Finset.sum_eq_single i]
-  · unfold hSc
-    rw [Matrix.diagonal_apply_eq]
-    ring
-  · intro j _ hj
-    unfold hSc
-    rw [Matrix.diagonal_apply_ne _ (Ne.symm hj)]
-    simp
-  · intro hi
-    exact absurd (Finset.mem_univ i) hi
-
-theorem herm_hSc (sc : ℝ) (a b : ℕ) : IsHerm (matH (hSc X.Tau a b sc)) := by
-  intro x y
-
-  rw [matH_hSc, matH_hSc, map_mul, Complex.conj_ofReal, map_sum]
-  congr 1
-  refine Finset.sum_congr rfl fun k _ => ?_
-  rw [map_mul, Complex.conj_conj, mul_comm]
-
-theorem posDef_hSc {sc : ℝ} (hsc : 0 < sc) (a b : ℕ) : IsPosDef (matH (hSc X.Tau a b sc)) := by
-  intro x hx
-  rw [matH_hSc]
-  have h1 : (∑ k, x k * conj (x k)) = ((∑ k, Complex.normSq (x k) : ℝ) : ℂ) := by
-    push_cast
-    exact Finset.sum_congr rfl fun k _ => Complex.mul_conj (x k)
-  rw [h1, ← Complex.ofReal_mul, Complex.ofReal_re]
-  apply mul_pos hsc
-  obtain ⟨k, hk⟩ : ∃ k, x k ≠ 0 := by
-    by_contra hcon
-    push Not at hcon
-    exact hx (funext hcon)
-  exact Finset.sum_pos' (fun i _ => Complex.normSq_nonneg _) ⟨k, Finset.mem_univ k, Complex.normSq_pos.2 hk⟩
+alias matH_hSc := _root_.Formalism.L2.Ker.KS.Lat.matH_hSc
+alias herm_hSc := _root_.Formalism.L2.Ker.KS.Lat.herm_hSc
+alias posDef_hSc := _root_.Formalism.L2.Ker.KS.Lat.posDef_hSc
 
 end Form
 
@@ -941,11 +675,6 @@ section Lat
 
 variable {D : Car} {X : Fields} (s : Seam D X) {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (B : Base D cc δ)
 
-
-include B in
-theorem sc_pos : 0 < (TaylorLogMetric.area (Formalism.L2.Ker.Cd.TaylorLogMetric.lamOf D cc δ))⁻¹ := by
-  rw [show TaylorLogMetric.area (Formalism.L2.Ker.Cd.TaylorLogMetric.lamOf D cc δ) = Formalism.L2.Th1.F.area B.L from B.areaOK]
-  exact inv_pos.2 (Formalism.L2.Th1.F.areaPos_thm B.L)
 
 theorem delta_ne (hcc : Formalism.L2.Ker.Cd.TaylorLogMetric.IsCurveIdeal D cc) (hδ : Formalism.L2.Ker.Cd.TaylorLogMetric.IsDiscriminantTwelfthRootOfIdealLattice D cc δ) : δ ≠ 0 :=
   Formalism.L2.Ker.Cd.IntegralLatticeDensity.delta_nonzero_link D cc hcc δ hδ
@@ -978,31 +707,7 @@ theorem La_theta {x : Formalism.L2.Ker.Cd.TaylorLogMetric.VC D a b} (hx : x ∈ 
   | add x y _ _ h1 h2 => rw [smul_add]; exact add_mem h1 h2
   | neg x _ h => rw [smul_neg]; exact neg_mem h
 
-theorem theta_laF {b₀ : ℤ} (hb : Odd b₀) {x : DVar X.Tau a b → ℂ} (hx : x ∈ s.laF B.tor L L') :
-    cmTheta b₀ D.host.d • x ∈ s.laF B.tor L L' := by
-  obtain ⟨k, rfl⟩ := hb
-  have h1 : cmTheta (2 * k + 1) D.host.d = (k : ℂ) + cmTheta 1 D.host.d := by
-    unfold cmTheta
-    push_cast
-    ring
-  show s.flatV a b (cmTheta (2 * k + 1) D.host.d • x) ∈ Formalism.L2.Ker.Cd.TaylorLogMetric.La D B.tor L L'
-  rw [map_smul, h1, add_smul]
-  refine add_mem ?_ (La_theta B hx)
-  have h2 : ((k : ℂ) • s.flatV a b x) = k • s.flatV a b x := by
-    rw [← Int.cast_smul_eq_zsmul ℂ]
-  rw [h2]
-  exact AddSubgroup.zsmul_mem _ hx k
-
-theorem odd_of_cmOK {a₀ : ℕ} {b₀ c₀ : ℤ} {d : ℕ} (h : CmOK a₀ b₀ c₀ d) : Odd b₀ := by
-  obtain ⟨h1, -, h3, -⟩ := h
-  by_contra hcon
-  rw [Int.not_odd_iff_even] at hcon
-  obtain ⟨k, rfl⟩ := hcon
-  have h4 : (d : ℤ) % 8 = 7 := by exact_mod_cast h3
-  have h5 : 4 * ((a₀ : ℤ) * c₀) = 4 * (k * k) + d := by rw [← mul_assoc, h1]; ring
-  generalize (a₀ : ℤ) * c₀ = u at h5
-  generalize k * k = v at h5
-  omega
+alias odd_of_cmOK := _root_.Formalism.L2.Ker.KS.Lat.odd_of_cmOK
 
 theorem al_eq_La (hcc : Formalism.L2.Ker.Cd.TaylorLogMetric.IsCurveIdeal D cc) (hδ : Formalism.L2.Ker.Cd.TaylorLogMetric.IsDiscriminantTwelfthRootOfIdealLattice D cc δ) (hA : Formalism.L2.Ker.Cd.TaylorLogMetric.admitted D a b L L') :
     ∀ x ∈ Formalism.L2.Ker.Cd.TaylorLogMetric.La D B.tor L L', Formalism.L2.Ker.Cd.TaylorLogMetric.al D B.tor x =
@@ -1064,7 +769,6 @@ end -- clump:auto
 -- ===== end clump member: Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolLat =====
 
 -- ===== clump member: Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolLaHyp =====
--- clump-header: {"m": "Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolLaHyp", "h": "module\n\npublic import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolSeam\npublic import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolChain\nimport Formalism.LocalToGlobal.KernelLattices.ColumnData.AmbOfENeSd\nimport Formalism.LocalToGlobal.KernelLattices.ColumnData.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph\nimport Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThU\npublic import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolLat\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -1266,12 +970,6 @@ theorem aa_unit_at (P : HeightOneSpectrum (𝓞 X.E)) (hb : s.PrimeTo D.host.�
 
 end IdealS
 
-section NatS
-
-variable {D : Car} {X : Fields} (s : Seam D X)
-
-end NatS
-
 section Main
 
 variable {D : Car} {X : Fields} (s : Seam D X) {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (B : Base D cc δ) (χ : Formalism.L2.Ker.Cd.TaylorLogMetric.IdE D → ℂ) (cD : D.what₂.Tau → ℂ)
@@ -1303,25 +1001,6 @@ theorem laHyp_ambOf_top {δ : ℂ} (B : Base D (⊤ : Ideal (𝓞 D.host.K)) δ)
     (fun P _ => by rw [Ideal.map_top]; exact primeTo_top s P)
 
 end Main
-
-section Bad
-
-open Formalism.EigenvalueLevelCeiling (plc)
-
-variable {X : Fields} {Pr : Primes X} (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S)
-
-variable {sel}
-
-variable (sel)
-
-end Bad
-
-section Chain
-
-variable {D : Car} {X : Fields} {Pr : Primes X} (s : Seam D X) {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (B : Base D cc δ) (χ : Formalism.L2.Ker.Cd.TaylorLogMetric.IdE D → ℂ) (cD : D.what₂.Tau → ℂ)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S)
-
-end Chain
 
 end Formalism.L2.Ker.Cd
 end -- clump:auto

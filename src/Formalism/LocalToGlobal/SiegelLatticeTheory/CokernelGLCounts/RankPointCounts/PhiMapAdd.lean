@@ -49,9 +49,9 @@ theorem phiMap_mp [IsEmpty {w : InfinitePlace K // w.IsReal}] :
       (f := fun i c => if cj i then starRingEnd ℂ c else c) (fun i => ?_)
     by_cases h : cj i
     · first
-      | (simp only [if_pos h]; exact hc)
+      | (simp only [ite_eq_left h]; exact hc)
     · first
-      | (simp only [if_neg h]; exact MeasurePreserving.id _)
+      | (simp only [ite_eq_right h]; exact MeasurePreserving.id _)
   first
   | exact h3.comp (h2.comp h1)
 

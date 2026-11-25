@@ -13,21 +13,6 @@ namespace PI.WickFormula.Gen
 section
 variable {K I J : Type} [CommRing K] [Fintype I] [Fintype J]
 
-theorem pderiv_comm (a b : I ⊕ J) (p : MvPolynomial (I ⊕ J) K) :
-    pderiv a (pderiv b p) = pderiv b (pderiv a p) := by
-  classical
-  have h : ⁅(pderiv a : Derivation K (MvPolynomial (I ⊕ J) K) (MvPolynomial (I ⊕ J) K)),
-      (pderiv b : Derivation K (MvPolynomial (I ⊕ J) K) (MvPolynomial (I ⊕ J) K))⁆ = 0 := by
-    apply MvPolynomial.derivation_ext
-    intro c
-    rw [Derivation.commutator_apply, pderiv_X, pderiv_X]
-    simp only [Pi.single_apply, Derivation.zero_apply]
-    split_ifs <;> simp
-  have h2 := congrArg (fun D : Derivation K (MvPolynomial (I ⊕ J) K) (MvPolynomial (I ⊕ J) K) =>
-    D p) h
-  simp only [Derivation.commutator_apply, Derivation.zero_apply] at h2
-  exact sub_eq_zero.mp h2
-
 noncomputable abbrev pd (a : I ⊕ J) : Module.End K (MvPolynomial (I ⊕ J) K) :=
   (pderiv a).toLinearMap
 
@@ -99,10 +84,5 @@ theorem powXL_holds : PowXL := by
       ← gdelta_pow_succ_apply, gdelta_dL_apply,
       ← gdelta_pow_succ_apply, succ_nsmul _ (n + 1)]
     abel
-
-section
-variable {K I J : Type} [CommRing K] [Algebra ℚ K] [Fintype I] [Fintype J]
-
-end
 
 end PI.WickFormula.Gen

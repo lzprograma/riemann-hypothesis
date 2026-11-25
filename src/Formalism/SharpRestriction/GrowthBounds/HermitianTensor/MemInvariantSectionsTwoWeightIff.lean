@@ -3,45 +3,6 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.DeltaPsiH
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.SingleWeightLatticeComparison
 public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetLemmas
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
 
 @[expose] public section
@@ -54,23 +15,18 @@ open Formalism.MainNotions.G Formalism.MainNotions.flipOneThree Formalism.Counti
 
 theorem wtPQ_eq (m a b : ℕ) (hm : 1 ≤ m) : wtPQ m a b = letterWt m a true + letterWt m b false := by
   funext i
-  have hi := i.isLt
-  simp only [wtPQ, letterWt, Pi.add_apply, Fin.ext_iff, Fin.val_zero, Fin.val_last, if_true, Bool.false_eq_true, if_false]
+  simp only [wtPQ, letterWt, Pi.add_apply, Fin.ext_iff, Fin.val_zero, Fin.val_last, ite_true, Bool.false_eq_true, ite_false]
   split_ifs <;> omega
 
 theorem wtPQ_anti (m a b : ℕ) (hm : 1 ≤ m) : Antitone (wtPQ m a b) := by
   intro i j hij
-  have hij' : i.val ≤ j.val := hij
-  have hi := i.isLt
-  have hj := j.isLt
   simp only [wtPQ, Fin.ext_iff, Fin.val_zero, Fin.val_last]
   split_ifs <;> omega
 
 theorem nuOf_wtPQ (m a b : ℕ) (hm : 1 ≤ m) :
     nuOf (wtPQ m a b) = nuOf (letterWt m a true) + nuOf (letterWt m b false) := by
   funext t
-  have ht := t.isLt
-  simp only [nuOf, wtPQ_eq m a b hm, Pi.add_apply, letterWt, Fin.ext_iff, Fin.val_zero, Fin.val_last, if_true, Bool.false_eq_true, if_false]
+  simp only [nuOf, wtPQ_eq m a b hm, Pi.add_apply, letterWt, Fin.ext_iff, Fin.val_zero, Fin.val_last, ite_true, Bool.false_eq_true, ite_false]
   split_ifs <;> omega
 
 theorem delta_block (K : Type) [Field K] (m : ℕ) (b : Bool) (F : MvPolynomial (Fin (m + 1) × Fin (m + 1)) K) :
@@ -89,14 +45,12 @@ theorem mem_invariant_sections_two_weight_iff (hCO : CartanOnto) {O Kf : Type} [
   have hA : Antitone (letterWt m a true) := by
     intro i j hij
     have hij' : i.val ≤ j.val := hij
-    simp only [letterWt, if_true, Fin.ext_iff, Fin.val_zero]
+    simp only [letterWt, ite_true, Fin.ext_iff, Fin.val_zero]
     split_ifs <;> omega
   have hB : Antitone (letterWt m b false) := by
     intro i j hij
     have hij' : i.val ≤ j.val := hij
-    have hi := i.isLt
-    have hj := j.isLt
-    simp only [letterWt, Bool.false_eq_true, if_false, Fin.ext_iff, Fin.val_last]
+    simp only [letterWt, Bool.false_eq_true, ite_false, Fin.ext_iff, Fin.val_last]
     split_ifs <;> omega
   have key : H0 O m (wtPQ m a b) Λ =
       Submodule.map ((deltaB Kf m).toLinearMap.restrictScalars O) (twoLat O m a b Λ) := by
@@ -127,7 +81,7 @@ theorem delta_twoSp (K : Type) [Field K] (m a b : ℕ) (hm : 1 ≤ m) :
     rw [delta_prod]
     have h1 := hF true
     have h2 := hF false
-    simp only [if_true, Bool.false_eq_true, if_false] at h1 h2
+    simp only [ite_true, Bool.false_eq_true, ite_false] at h1 h2
     exact Formalism.GradedWeylDivisibility.dualWeyl_mul h1 h2
   | zero => simp
   | add y z _ _ hy hz =>

@@ -350,16 +350,12 @@ theorem finiteDimensional_toSub_of_isSimpleModule (M : h.GKModule K V)
   set O := Submodule.span ℂ (range fun k : K => M.σ k (M.σ.asModuleEquiv (s₀ : M.σ.asModule)))
     with hOdef
   have hOfin : FiniteDimensional ℂ O := M.locallyFinite _
-  have hOs : ∀ k, ∀ v ∈ O, M.σ k v ∈ O := by
-    intro k v hv
-    induction hv using Submodule.span_induction with
-    | mem x hx =>
-      obtain ⟨k', rfl⟩ := hx
+  have hOs : ∀ k, ∀ v ∈ O, M.σ k v ∈ O := fun k v hv =>
+    (Submodule.span_le (p := O.comap (M.σ k))).2 (by
+      rintro _ ⟨k', rfl⟩
+      simp only [SetLike.mem_coe, Submodule.mem_comap]
       rw [← Module.End.mul_apply, ← map_mul]
-      exact Submodule.subset_span ⟨k * k', rfl⟩
-    | zero => rw [map_zero]; exact O.zero_mem
-    | add x y _ _ hx hy => rw [map_add (f := _)]; exact O.add_mem hx hy
-    | smul a x _ hx => rw [map_smul]; exact O.smul_mem a hx
+      exact Submodule.subset_span ⟨k * k', rfl⟩) hv
   have hs₀O : M.σ.asModuleEquiv (s₀ : M.σ.asModule) ∈ O :=
     Submodule.subset_span ⟨1, show M.σ 1 _ = _ by rw [map_one, Module.End.one_apply]⟩
   have hatom : IsAtom S := (isSimpleModule_iff_isAtom).1 hS

@@ -75,11 +75,4 @@ theorem _root_.GlobalTheory.AinfChecks.padicComplex (p : ℕ) [Fact p.Prime] :
   · exact absurd h (Nat.cast_ne_zero.mpr (Fact.out : p.Prime).ne_zero)
   · exact Subtype.ext h
 
-section
-variable (p : ℕ) [Fact p.Prime] (O : Type) [CommRing O] [Fact ¬IsUnit (p : O)]
-  [IsAdicComplete (span {(p : O)}) O]
-
-
-end
-
 end GlobalTheory.AinfChecks

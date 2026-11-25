@@ -1,5 +1,6 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRAsmPS
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPolyRadialCut
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRCPDecompNu
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRCPDecompDer
@@ -19,55 +20,11 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEllRegW
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapRWordsOfParts
 public import Mathlib.Algebra.MvPolynomial.Funext
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfSmoothBuiltOfCapJoints
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 import Formalism.FormalDegreeBessel.FinalG
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
 import Mathlib.Tactic.TypeStar
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.SimpleRing.Principal
@@ -112,31 +69,14 @@ lemma ps_conj : PS TT (fun ζ => conj ζ) := ⟨0, MvPolynomial.X 1, fun ζ _ =>
 lemma ps_sig : PS TT (fun ζ => sig TT ζ) := ⟨0, MvPolynomial.X 2, fun ζ _ => by simp⟩
 
 lemma ps_add {f g : ℂ → ℂ} (hf : PS TT f) (hg : PS TT g) : PS TT (fun ζ => f ζ + g ζ) := by
-  obtain ⟨m, p, hp⟩ := hf
-  obtain ⟨n, q, hq⟩ := hg
-  refine ⟨m + n, (MvPolynomial.X 0 * MvPolynomial.X 1 - MvPolynomial.C (TT : ℂ)) ^ n * p + (MvPolynomial.X 0 * MvPolynomial.X 1 - MvPolynomial.C (TT : ℂ)) ^ m * q, fun ζ hζ => ?_⟩
-  rw [MvPolynomial.eval_add, MvPolynomial.eval_mul, MvPolynomial.eval_mul, MvPolynomial.eval_pow,
-    MvPolynomial.eval_pow, ← gg_eval, ← hp ζ hζ, ← hq ζ hζ]
-  ring
+  apply _root_.Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.PR.Asm.PS.add <;> assumption
 
 lemma ps_mul {f g : ℂ → ℂ} (hf : PS TT f) (hg : PS TT g) : PS TT (fun ζ => f ζ * g ζ) := by
-  obtain ⟨m, p, hp⟩ := hf
-  obtain ⟨n, q, hq⟩ := hg
-  refine ⟨m + n, p * q, fun ζ hζ => ?_⟩
-  rw [MvPolynomial.eval_mul, ← hp ζ hζ, ← hq ζ hζ]
-  ring
-
-lemma sig_sq {ζ : ℂ} (hζ : TT < Complex.normSq ζ) : sig TT ζ * sig TT ζ = gg TT ζ := by
-  unfold Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.PR.gg Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.PR.sig
-  rw [← Complex.ofReal_mul, Real.mul_self_sqrt (by linarith)]
-
-lemma sig_ne {ζ : ℂ} (hζ : TT < Complex.normSq ζ) : sig TT ζ ≠ 0 := by
-  unfold Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.PR.sig
-  exact Complex.ofReal_ne_zero.mpr (Real.sqrt_ne_zero'.mpr (by linarith))
+  apply _root_.Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.PR.Asm.PS.mul <;> assumption
 
 lemma ps_sigInv : PS TT (fun ζ => (sig TT ζ)⁻¹) := by
   refine ⟨1, MvPolynomial.X 2, fun ζ hζ => ?_⟩
-  rw [pow_one, ← sig_sq hζ, mul_assoc, mul_inv_cancel₀ (sig_ne hζ), mul_one]
+  rw [pow_one, ← Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.PR.CP.PSC.sig_sq hζ, mul_assoc, mul_inv_cancel₀ (Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.PR.CP.PSC.sig_ne hζ), mul_one]
   simp
 
 end ps
@@ -190,7 +130,7 @@ lemma zeta_ne (hT : 0 < T) (hT' : 0 < T') {ζ : ℂ} (hζ : T * T' < Complex.nor
 lemma ws_rel (hT : 0 < T) (hT' : 0 < T') {ζ : ℂ} (hζ : T * T' < Complex.normSq ζ) :
     wZ T T' ζ * star (wZ T T' ζ) - sZ T T' ζ * sZ T T' ζ = 1 := by
   have hk := kap_ne hT hT'
-  have h1 := sig_sq hζ
+  have h1 := Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.PR.CP.PSC.sig_sq hζ
   have h2 := kap_sq hT hT'
   have h3 : gg (T * T') ζ = ζ * conj ζ - ((T * T' : ℝ) : ℂ) := by
     rw [Complex.mul_conj]; unfold gg; push_cast; ring
@@ -267,8 +207,8 @@ lemma inL_Su {a b : Fin (k + 1)} (ha : a ≠ Fin.last k) (hb : b ≠ Fin.last k)
   intro i
   unfold Su
   constructor
-  · rw [Matrix.single_apply, if_neg (fun h => hb h.2)]
-  · rw [Matrix.single_apply, if_neg (fun h => ha h.1)]
+  · rw [Matrix.single_apply, ite_eq_right (fun h => hb h.2)]
+  · rw [Matrix.single_apply, ite_eq_right (fun h => ha h.1)]
 
 lemma inL_zero : InL k (0 : Mb k) := fun _ => ⟨rfl, rfl⟩
 
@@ -284,7 +224,7 @@ lemma dec_lm (h0 : (0 : Fin (k + 1)) ≠ Fin.last k) (hT : 0 < T) (hT' : 0 < T')
     (fun _ => 0) (Su k 0 m) (Su k 0 m) (inL_Su h0 hml) (inL_Su h0 hml) (ps_mul (ps_const _) (ps_mul ps_id ps_sigInv))
     (ps_mul (ps_const _) ps_sigInv) ps_zero ps_zero (fun ζ hζ => ?_)
   have hk := kap_ne hT hT'
-  have hs := sig_ne hζ
+  have hs := Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.PR.CP.PSC.sig_ne hζ
   rw [Matrix.mul_smul, Matrix.smul_mul, nuI_eq, nu_eq, conj0m h0 _ _ _ m hm0 hml, sZ_eq T T' hT hT' ζ hζ, wZ_eq]
   match_scalars <;> field_simp <;> ring
 
@@ -294,7 +234,7 @@ lemma dec_ml (h0 : (0 : Fin (k + 1)) ≠ Fin.last k) (hT : 0 < T) (hT' : 0 < T')
     (fun _ => 0) (Su k m 0) (Su k m 0) (inL_Su hml h0) (inL_Su hml h0) (ps_mul ps_conj ps_sigInv)
     (ps_mul (ps_const _) ps_sigInv) ps_zero ps_zero (fun ζ hζ => ?_)
   have hk := kap_ne hT hT'
-  have hs := sig_ne hζ
+  have hs := Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.PR.CP.PSC.sig_ne hζ
   rw [Matrix.mul_smul, Matrix.smul_mul, nuI_eq, nu_eq, conjm0 h0 _ _ _ m hm0 hml, sZ_eq T T' hT hT' ζ hζ, wZ_star]
   match_scalars <;> field_simp <;> ring
 
@@ -308,7 +248,7 @@ lemma plane_facts {ζ : ℂ} (hζ : T * T' < Complex.normSq ζ) :
       2 * sZ T T' ζ * ((2 * kap T T')⁻¹ * conj ζ * (sig (T * T') ζ)⁻¹) = -(kap T T')⁻¹ * star (wZ T T' ζ) ∧
       2 * sZ T T' ζ * ((2 * kap T T')⁻¹ * ζ * (sig (T * T') ζ)⁻¹) = -(kap T T')⁻¹ * wZ T T' ζ := by
   have hk := kap_ne hT hT'
-  have hs := sig_ne hζ
+  have hs := Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.PR.CP.PSC.sig_ne hζ
   have hz := zeta_ne hT hT' hζ
   have hzc : conj ζ ≠ 0 := by simpa using hz
   refine ⟨?_, inv_ne_zero hk, ?_, ?_, ?_⟩
@@ -324,7 +264,7 @@ lemma dec_0l : Dec k T T' (Su k 0 (Fin.last k)) := by
     (ps_mul (ps_const _) ps_sig) ps_zero (fun ζ hζ => ?_)
   obtain ⟨f1, f2, f3, f4, f5⟩ := plane_facts h0 hT hT' hζ
   have hk := kap_ne hT hT'
-  have hs := sig_ne hζ
+  have hs := Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.PR.CP.PSC.sig_ne hζ
   have key := unit0l h0 _ _ _ _ _ f1 f2 f3 (ws_rel hT hT' hζ) f4
   have e1 : -(star (wZ T T' ζ) / (2 * sZ T T' ζ)) = (2⁻¹ : ℂ) * (conj ζ * (sig (T * T') ζ)⁻¹) := by
     rw [sZ_eq T T' hT hT' ζ hζ, wZ_star]; field_simp
@@ -343,7 +283,7 @@ lemma decomposition_lower_corner_unit : Dec k T T' (Su k (Fin.last k) 0) := by
     ps_zero (ps_mul (ps_const _) ps_sig) (fun ζ hζ => ?_)
   obtain ⟨f1, f2, f3, f4, f5⟩ := plane_facts h0 hT hT' hζ
   have hk := kap_ne hT hT'
-  have hs := sig_ne hζ
+  have hs := Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.PR.CP.PSC.sig_ne hζ
   have key := unitl0 h0 _ _ _ _ _ f1 f2 f3 (ws_rel hT hT' hζ) f5
   have e1 : wZ T T' ζ / (2 * sZ T T' ζ) = (-2⁻¹ : ℂ) * (ζ * (sig (T * T') ζ)⁻¹) := by
     rw [sZ_eq T T' hT hT' ζ hζ, wZ_eq]; field_simp
@@ -454,35 +394,17 @@ private lemma Hpk_wI_apply_left_eq_ite (j : Fin (2 * r + k + 1)) (m : Fin (k + 1
   have hH : (Hpk k r)ᴴ = Hpk k r := (Formalism.QuantumDeterminants.hpkFacts k r).1
   rw [← hH, Matrix.conjTranspose_apply, Hpk_apply_wI_right_eq_ite]
   by_cases h : j = wI k r m
-  · simp only [h, if_true, Formalism.QuantumDeterminants.Hb, Matrix.diagonal_apply_eq]
+  · simp only [h, ite_true, Formalism.QuantumDeterminants.Hb, Matrix.diagonal_apply_eq]
     split_ifs <;> simp
   · simp [h]
 
-private lemma Hpk_mul_Em_eq_Em_mul_Hb : Hpk k r * Em k r = Em k r * Hb k := by
-  ext i m
-  rw [Matrix.mul_apply, Matrix.mul_apply,
-    Finset.sum_eq_single (wI k r m) (fun j _ hj => by simp [Em, hj]) (fun h => absurd (Finset.mem_univ _) h),
-    Finset.sum_eq_single m (fun j _ hj => by simp [Formalism.QuantumDeterminants.Hb, Matrix.diagonal_apply, hj])
-      (fun h => absurd (Finset.mem_univ _) h)]
-  simp only [Em, Hpk_apply_wI_right_eq_ite]
-  split_ifs <;> simp_all
-
 lemma Hpk_mulVec_e0 (X : Mb k) : Hpk k r * e0 k r X = e0 k r (Hb k * X) := by
   unfold Dc.e0
-  simp only [← Matrix.mul_assoc, Hpk_mul_Em_eq_Em_mul_Hb]
-
-private lemma Em_transpose_mul_Hpk_eq_Hb_mul_transpose : (Em k r)ᵀ * Hpk k r = Hb k * (Em k r)ᵀ := by
-  ext m i
-  rw [Matrix.mul_apply, Matrix.mul_apply,
-    Finset.sum_eq_single (wI k r m) (fun j _ hj => by simp [Em, hj]) (fun h => absurd (Finset.mem_univ _) h),
-    Finset.sum_eq_single m (fun j _ hj => by simp [Formalism.QuantumDeterminants.Hb, Matrix.diagonal_apply, Ne.symm hj])
-      (fun h => absurd (Finset.mem_univ _) h)]
-  simp only [Matrix.transpose_apply, Em, Hpk_wI_apply_left_eq_ite]
-  split_ifs <;> simp_all
+  simp only [← Matrix.mul_assoc, Formalism.FourierDecayAlt.P.B2x3.Hpk_Em]
 
 lemma embed_mul_hermitian_form (X : Mb k) : e0 k r X * Hpk k r = e0 k r (X * Hb k) := by
   unfold Dc.e0
-  simp only [Matrix.mul_assoc, Em_transpose_mul_Hpk_eq_Hb_mul_transpose]
+  simp only [Matrix.mul_assoc, Formalism.FourierDecayAlt.P.B2x3.EmT_Hpk]
 
 lemma embed_add (X Y : Mb k) : e0 k r (X + Y) = e0 k r X + e0 k r Y := by
   unfold Dc.e0
@@ -978,21 +900,21 @@ theorem kl_decomp {Z : Q.Mx k r} (h : Kl Z) :
         ⟨fun e => Fin.ext (by have := congrArg Fin.val e; simp [wI] at this; omega), fun e => e ▸ rfl⟩
       simp only [inj]
       rw [Finset.sum_eq_single i (fun x _ hx => by
-        rw [Finset.sum_eq_zero]; intro y _; rw [if_neg]; rintro ⟨h1, _⟩; exact hx h1) (by simp)]
-      rw [Finset.sum_eq_single j (fun y _ hy => by rw [if_neg]; rintro ⟨_, h2⟩; exact hy h2) (by simp)]
+        rw [Finset.sum_eq_zero]; intro y _; rw [ite_eq_right]; rintro ⟨h1, _⟩; exact hx h1) (by simp)]
+      rw [Finset.sum_eq_single j (fun y _ hy => by rw [ite_eq_right]; rintro ⟨_, h2⟩; exact hy h2) (by simp)]
       simp
     · rw [(kl_entry_col h _ c).1]
       refine (Finset.sum_eq_zero fun x _ => Finset.sum_eq_zero fun y _ => ?_).symm
-      rw [if_neg]; rintro ⟨_, h2⟩; exact wI_ne_eI y c h2
+      rw [ite_eq_right]; rintro ⟨_, h2⟩; exact wI_ne_eI y c h2
     · rw [(kl_entry_col h _ c).2]
       refine (Finset.sum_eq_zero fun x _ => Finset.sum_eq_zero fun y _ => ?_).symm
-      rw [if_neg]; rintro ⟨_, h2⟩; exact wI_ne_esI y c h2
+      rw [ite_eq_right]; rintro ⟨_, h2⟩; exact wI_ne_esI y c h2
   · rw [(kl_entry_row h q a).1]
     refine (Finset.sum_eq_zero fun x _ => Finset.sum_eq_zero fun y _ => ?_).symm
-    rw [if_neg]; rintro ⟨h1, _⟩; exact wI_ne_eI x a h1
+    rw [ite_eq_right]; rintro ⟨h1, _⟩; exact wI_ne_eI x a h1
   · rw [(kl_entry_row h q a).2]
     refine (Finset.sum_eq_zero fun x _ => Finset.sum_eq_zero fun y _ => ?_).symm
-    rw [if_neg]; rintro ⟨h1, _⟩; exact wI_ne_esI x a h1
+    rw [ite_eq_right]; rintro ⟨h1, _⟩; exact wI_ne_esI x a h1
 
 end WA
 
@@ -1446,8 +1368,6 @@ namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace CapWP
 
 theorem sum_filter' {α M : Type*} [AddCommMonoid M] (l : List α) (p : α → Bool) (φ : α → M) :
@@ -1549,7 +1469,7 @@ theorem core_eval (hD : FExpDeg) (hlen : ∀ σ, (G σ).length = t)
   rw [e]
   by_cases hl : tm.2.length ≤ j
   · simp [hl]
-  · simp only [hl, decide_false, Bool.false_eq_true, if_false]
+  · simp only [hl, decide_false, Bool.false_eq_true, ite_false]
     rw [hc, Polynomial.coeff_eq_zero_of_natDegree_lt (by rw [Polynomial.natDegree_taylor]; omega)]
     simp
 
@@ -1711,7 +1631,6 @@ theorem mem_Lw {t N : ℕ} {G : Equiv.Perm (Fin t) → List (GenW k r)} {Ys : Fi
 
 end CapWP
 
-
 open CapWP in
 theorem capelli_words_holds : CapWordsOfParts := by
   intro _ hR hCV hD hS hDet hI k r j hj1 hjn
@@ -1739,7 +1658,6 @@ theorem capelli_words_holds : CapWordsOfParts := by
       (fun σ => capGens_deg _ σ) (by omega) (by omega) hYs (fun X => Matrix.trace (Ξ * X))
       (fun a b => Matrix.trace (Ξ * zgCV k r a b)) (fun σ u s => capGens_symb _ Ξ σ u s), cv_charpoly, hmd]
 
-
 open CapWP in
 theorem right_capelli_words_holds : CapRWordsOfParts := by
   intro _ hR hCR hD hS hDet hI k r z' Bs _ j hj1 hjk
@@ -1765,7 +1683,6 @@ theorem right_capelli_words_holds : CapRWordsOfParts := by
     exact core_symb (fun σ => capGens (zgB Bs) σ) Ys lam 0 j hD hS hDet (fun σ => capGens_len _ σ)
       (fun σ => capGens_deg _ σ) (by omega) le_rfl hYs (fun X => Matrix.trace (Ξ * X))
       (fun a b => Matrix.trace (Ξ * zgB Bs a b)) (fun σ u s => capGens_symb _ Ξ σ u s)
-
 
 open CapWP in
 theorem left_capelli_words_holds : CapLWordsOfParts := by

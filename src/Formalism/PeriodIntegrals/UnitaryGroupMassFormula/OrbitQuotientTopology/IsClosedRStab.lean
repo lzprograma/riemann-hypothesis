@@ -2,46 +2,7 @@ module
 
 public import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupBasics.FlagMatLower
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.ColOfLeftInv
 
 @[expose] public section
 
@@ -76,12 +37,12 @@ theorem nset_iff (a : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) :
       by_cases hj : j.val < r
       · have hle : j.val ≤ i.val := by split_ifs at hij <;> omega
         have := h2 ⟨j.val, hj⟩ i hle
-        rw [hE j hj, if_neg hne] at this
+        rw [hE j hj, ite_eq_right hne] at this
         exact this
       · have hj2 : j.val ≤ r + k := by split_ifs at hij <;> omega
         have hi : r ≤ i.val := by split_ifs at hij <;> omega
         have := h3 i j (by omega) hj2 hi
-        rw [if_neg hne] at this
+        rw [ite_eq_right hne] at this
         exact this
     · intro i j hij hjr
       unfold nβ at hij hjr
@@ -100,18 +61,18 @@ theorem nset_iff (a : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) :
       have hjv : (eI k r b).val = b.val := rfl
       have hb := b.isLt
       by_cases hie : i = eI k r b
-      · rw [if_pos hie, hie]
+      · rw [ite_eq_left hie, hie]
         have := hD (eI k r b) (eI k r b) rfl (by unfold nβ; split_ifs <;> omega)
         rw [this, Matrix.one_apply_eq]
-      · rw [if_neg hie]
+      · rw [ite_eq_right hie]
         have hne : i.val ≠ b.val := fun h => hie (Fin.ext (by rw [h, hjv]))
         exact hB (by unfold nβ; split_ifs <;> omega)
     · intro i j hj1 hj2 hi
       by_cases hij : i = j
-      · rw [if_pos hij, hij]
+      · rw [ite_eq_left hij, hij]
         have := hD j j rfl (by unfold nβ; split_ifs <;> omega)
         rw [this, Matrix.one_apply_eq]
-      · rw [if_neg hij]
+      · rw [ite_eq_right hij]
         by_cases hik : i.val ≤ r + k
         · have := hD i j (by unfold nβ; split_ifs <;> omega) (by unfold nβ; split_ifs <;> omega)
           rw [this, Matrix.one_apply_ne hij]
@@ -119,22 +80,11 @@ theorem nset_iff (a : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) :
 
 theorem uh_mul {a b : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (ha : a ∈ UH (Hpk k r))
     (hb : b ∈ UH (Hpk k r)) : a * b ∈ UH (Hpk k r) := by
-  show (a * b)ᴴ * Hpk k r * (a * b) = Hpk k r
-  have ha' : aᴴ * Hpk k r * a = Hpk k r := ha
-  have hb' : bᴴ * Hpk k r * b = Hpk k r := hb
-  rw [Matrix.conjTranspose_mul]
-  calc bᴴ * aᴴ * Hpk k r * (a * b) = bᴴ * (aᴴ * Hpk k r * a) * b := by
-        simp only [Matrix.mul_assoc]
-    _ = Hpk k r := by rw [ha', hb']
+  apply _root_.WlocSk.UnitaryGroupBasics.uh_mul <;> assumption
 
 theorem uh_inv {a : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (ha : a ∈ UH (Hpk k r)) :
     a⁻¹ ∈ UH (Hpk k r) := by
-  have ha' : aᴴ * Hpk k r * a = Hpk k r := ha
-  show (a⁻¹)ᴴ * Hpk k r * a⁻¹ = Hpk k r
-  calc (a⁻¹)ᴴ * Hpk k r * a⁻¹ = (a⁻¹)ᴴ * (aᴴ * Hpk k r * a) * a⁻¹ := by rw [ha']
-    _ = (a * a⁻¹)ᴴ * Hpk k r * (a * a⁻¹) := by
-        rw [Matrix.conjTranspose_mul]; simp only [Matrix.mul_assoc]
-    _ = Hpk k r := by rw [uh_mul_inv ha, Matrix.conjTranspose_one, Matrix.one_mul, Matrix.mul_one]
+  apply _root_.WlocSk.UnitaryGroupBasics.uh_inv <;> assumption
 
 theorem ndiag_term {a b : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
     (hA : a.BlockTriangular (nβ k r)) (hB : b.BlockTriangular (nβ k r)) (hDa : NDiag a)
@@ -184,11 +134,7 @@ theorem nset_mul {a b : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} 
 
 theorem nset_inv {a : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (ha : a ∈ Nset k r) :
     a⁻¹ ∈ Nset k r := by
-  rw [nset_iff] at ha ⊢
-  obtain ⟨h1, h2, h3⟩ := ha
-  have hh : a * a⁻¹ = 1 := uh_mul_inv h1
-  letI : Invertible a := ⟨a⁻¹, uh_inv_mul h1, hh⟩
-  exact ⟨uh_inv h1, Matrix.blockTriangular_inv_of_blockTriangular h2, ndiag_inv h1 h2 h3⟩
+  apply _root_.WlocSk.UnitaryGroupBasics.mem_n_inv <;> assumption
 
 theorem nset_uh {a : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (ha : a ∈ Nset k r) :
     a ∈ UH (Hpk k r) := ha.1

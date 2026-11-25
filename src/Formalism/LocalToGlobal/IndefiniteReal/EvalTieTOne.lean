@@ -12,8 +12,6 @@ open scoped TensorProduct
 
 namespace Formalism.IndefR.AutomorphicEvaluation
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {S : D.what₂.Tau → SPar}
 
 def ConjLevel (t : GA D (D.sp.Y 0)) (J : Set (GA D (D.sp.Y 0))) (χ : GA D (D.sp.Y 0) → ℂ)

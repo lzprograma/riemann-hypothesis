@@ -116,7 +116,7 @@ theorem ArithmeticCovolumeFinite.proof (h : HermitianForm F E W) (v : Basis ι E
     obtain ⟨γ, hγS, hγK⟩ := hMah La g hLa hlam
     have hL : ∃ γ' : h.unitaryGroup, γ' • La = γ • La := ⟨γ, rfl⟩
     have hcL : c (γ • La) • La = γ • La := by
-      simp only [c, dif_pos hL]
+      simp only [c, dite_eq_left hL]
       exact hL.choose_spec
     have hstab : γ⁻¹ * c (γ • La) ∈ latticeStab h La := by
       change (γ⁻¹ * c (γ • La)) • La = La

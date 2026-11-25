@@ -129,25 +129,19 @@ theorem IsCylProd.measurePreserving_level (h : IsCylProd pa pf K μa μf μ) (ha
   rintro _ ⟨A, hA, rfl⟩ _ ⟨B, hB, rfl⟩
   have hm := (MeasurableSet.univ_pi fun w => hA w (mem_univ _)).prod (MeasurableSet.univ_pi fun v => hB v (mem_univ _))
   have e := h.2 S hS A (fun v => if hv : v ∈ S then B ⟨v, hv⟩ else univ) (fun w => hA w (mem_univ _))
-    fun v hv => by simp only [dif_pos hv]; exact hB ⟨v, hv⟩ (mem_univ _)
+    fun v hv => by simp only [dite_eq_left hv]; exact hB ⟨v, hv⟩ (mem_univ _)
   rw [Measure.map_apply hπ hm, Measure.restrict_apply (hπ hm), Measure.pi_pi, Measure.pi_pi]
   convert e using 2
   · ext x
     simp only [mem_inter_iff, mem_preimage, mem_prod, mem_univ_pi, mem_cyl, mem_setOf_eq, and_assoc, Subtype.forall]
-    exact and_congr_right fun _ => and_congr_left fun _ => forall₂_congr fun v hv => by rw [dif_pos hv]
+    exact and_congr_right fun _ => and_congr_left fun _ => forall₂_congr fun v hv => by rw [dite_eq_left hv]
   · rw [← Finset.prod_coe_sort S]
-    exact Finset.prod_congr rfl fun v _ => by rw [dif_pos v.2]
+    exact Finset.prod_congr rfl fun v _ => by rw [dite_eq_left v.2]
 
 variable (h : IsCylProd pa pf K μa μf μ) (ha : ∀ w, Measurable (pa w)) (hf : ∀ v, Measurable (pf v))
   (hK : ∀ v, MeasurableSet (K v))
 
 include h ha hf hK
-
-section Nonneg
-
-variable {fa : ∀ w, Ya w → ℝ≥0∞} {ff : ∀ v, Yf v → ℝ≥0∞}
-
-end Nonneg
 
 variable {𝕜 : Type} [RCLike 𝕜] {fa : ∀ w, Ya w → 𝕜} {ff : ∀ v, Yf v → 𝕜}
 

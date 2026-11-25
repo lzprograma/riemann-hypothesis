@@ -8,64 +8,19 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.Commutative
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.DualNumber
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.MvPowerSeries.Equiv
-import Mathlib.RingTheory.MvPowerSeries.Inverse
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.LinearAlgebra.Dimension.Finite
+import Mathlib.RingTheory.AdicCompletion.Noetherian
+import Mathlib.RingTheory.DualNumber
+import Mathlib.RingTheory.MvPowerSeries.Inverse
+
 
 @[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
-private theorem op_min {A ι : Type} [CommRing A] [IsLocalRing A] [IsNoetherianRing A] [Fintype ι]
+namespace UpperTheory.V.Alg.ObsPres
+
+theorem op_min {A ι : Type} [CommRing A] [IsLocalRing A] [IsNoetherianRing A] [Fintype ι]
     (K K0 : Ideal A) (f : ι → A) (h : K = K0 ⊔ Ideal.span (Set.range f)) :
     ∃ s : Finset ι, K = K0 ⊔ Ideal.span (Set.range fun u : s => f u) ∧
       ∀ c : s → A, ∑ u, c u * f u ∈ K0 ⊔ maximalIdeal A * K → ∀ u, c u ∈ maximalIdeal A := by
@@ -112,16 +67,16 @@ private theorem op_min {A ι : Type} [CommRing A] [IsLocalRing A] [IsNoetherianR
   · subst hw; exact h1
   · exact Ideal.mem_sup_left (hmem w hw)
 
-private theorem op_mem_max {O σ : Type} [CommRing O] [IsLocalRing O] (x : MvPowerSeries σ O) :
+theorem op_mem_max {O σ : Type} [CommRing O] [IsLocalRing O] (x : MvPowerSeries σ O) :
     x ∈ maximalIdeal (MvPowerSeries σ O) ↔ constantCoeff x ∈ maximalIdeal O := by
   rw [mem_maximalIdeal, mem_maximalIdeal, mem_nonunits_iff, mem_nonunits_iff, isUnit_iff_constantCoeff]
 
-private theorem op_loc {O R R' : Type} [CommRing O] [IsLocalRing O] [CommRing R] [Algebra O R] [IsCO O R]
+theorem op_loc {O R R' : Type} [CommRing O] [IsLocalRing O] [CommRing R] [Algebra O R] [IsCO O R]
     [CommRing R'] [Algebra O R'] [IsCO O R'] (f : R →ₐ[O] R') (x : R) :
     f x ∈ maximalIdeal R' ↔ x ∈ maximalIdeal R := by
   rw [← res_eq_zero_iff O, res_map, res_eq_zero_iff]
 
-private theorem op_loc_sq {O R R' : Type} [CommRing O] [IsLocalRing O] [CommRing R] [Algebra O R] [IsCO O R]
+theorem op_loc_sq {O R R' : Type} [CommRing O] [IsLocalRing O] [CommRing R] [Algebra O R] [IsCO O R]
     [CommRing R'] [Algebra O R'] [IsCO O R'] (f : R →ₐ[O] R') {x : R} (hx : x ∈ maximalIdeal R ^ 2) :
     f x ∈ maximalIdeal R' ^ 2 := by
   have h : (maximalIdeal R).map f ≤ maximalIdeal R' :=
@@ -130,7 +85,7 @@ private theorem op_loc_sq {O R R' : Type} [CommRing O] [IsLocalRing O] [CommRing
   rw [Ideal.map_pow] at this
   exact Ideal.pow_right_mono h 2 this
 
-private theorem op_taylor {O σ : Type} [CommRing O] [IsLocalRing O] [Fintype σ] (g : MvPowerSeries σ O) :
+theorem op_taylor {O σ : Type} [CommRing O] [IsLocalRing O] [Fintype σ] (g : MvPowerSeries σ O) :
     ∃ c : σ → O, g - algebraMap O _ (constantCoeff g) - ∑ s, c s • X s ∈ maximalIdeal (MvPowerSeries σ O) ^ 2 := by
   obtain ⟨k, -, hk⟩ := GlobalTheory.exists_eq_sum_X_mul (n := 0) (g := g - C (constantCoeff g)) fun d hd => by
     have : d = 0 := (Finsupp.degree_eq_zero_iff d).1 (by simpa using hd)
@@ -145,7 +100,7 @@ private theorem op_taylor {O σ : Type} [CommRing O] [IsLocalRing O] [Fintype σ
   rw [this, pow_two]
   refine Ideal.mul_mem_mul ?_ ?_ <;> rw [op_mem_max] <;> simp
 
-private theorem op_detect {O B A R κ : Type} [CommRing O] [IsLocalRing O] [CommRing B] [Algebra O B] [IsCO O B]
+theorem op_detect {O B A R κ : Type} [CommRing O] [IsLocalRing O] [CommRing B] [Algebra O B] [IsCO O B]
     [CommRing A] [Algebra O A] [IsCO O A] [CommRing R] [Algebra O R] [IsCO O R] [Fintype κ]
     (i : B →ₐ[O] A) (p : A →ₐ[O] R) (hm : maximalIdeal A * RingHom.ker p = ⊥)
     (hker : RingHom.ker p ≤ (maximalIdeal B).map i ⊔ maximalIdeal A ^ 2)
@@ -214,18 +169,18 @@ private theorem op_detect {O B A R κ : Type} [CommRing O] [IsLocalRing O] [Comm
     rw [sub_mul, sub_eq_zero] at this
     rw [this, Algebra.smul_def]
   have h7 := hind (fun u => b u - if u = u0 then 1 + ∑ v, b v * (c v * d) else 0) (by
-    simp only [sub_smul, Finset.sum_sub_distrib, ite_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true,
+    simp only [sub_smul, Finset.sum_sub_distrib, ite_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true,
       add_smul, one_smul, Finset.sum_smul]
     simp only [δ, smul_sub, Finset.sum_sub_distrib, smul_smul] at h6
     linear_combination h6)
   have h8 : ∑ u, (b u - if u = u0 then 1 + ∑ v, b v * (c v * d) else 0) * (c u * d) ∈ maximalIdeal O :=
     Ideal.sum_mem _ fun u _ => Ideal.mul_mem_right _ _ (h7 u)
-  simp only [sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true,
+  simp only [sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true,
     hd, mul_one] at h8
   rw [sub_add_cancel_right, neg_mem_iff] at h8
   exact (maximalIdeal.isMaximal O).ne_top ((Ideal.eq_top_iff_one _).2 h8)
 
-private theorem op_ker {O B A R σ σB τ : Type} [CommRing O] [IsLocalRing O] [IsNoetherianRing O]
+theorem op_ker {O B A R σ σB τ : Type} [CommRing O] [IsLocalRing O] [IsNoetherianRing O]
     [IsAdicComplete (maximalIdeal O) O] [CommRing B] [Algebra O B] [IsCO O B]
     [CommRing A] [Algebra O A] [IsCO O A] [CommRing R] [Algebra O R] [IsCO O R] [Fintype σ] [Fintype σB] [Fintype τ]
     (e : σB ⊕ τ ≃ σ) (i : B →ₐ[O] A) (p : A →ₐ[O] R) (π : MvPowerSeries σ O →ₐ[O] A) (hπ : Function.Surjective π)
@@ -271,6 +226,10 @@ private theorem op_ker {O B A R σ σB τ : Type} [CommRing O] [IsLocalRing O] [
     refine Ideal.mul_mem_mul ((op_loc (Algebra.ofId O A) _).2 (k5 t)) ((op_loc π _).2 ?_)
     rw [op_mem_max]; simp
   simpa using add_mem k6 (Ideal.mem_sup_right k7)
+
+end UpperTheory.V.Alg.ObsPres
+
+open UpperTheory.V.Alg.ObsPres
 
 private theorem op_min_fin {A : Type} [CommRing A] [IsLocalRing A] [IsNoetherianRing A]
     (K K0 : Ideal A) (h : K0 ≤ K) :
@@ -443,10 +402,10 @@ theorem UpperTheory.V.Alg.obs_pres :
   rw [hf]
   refine le_antisymm (Ideal.span_mono ?_) (Ideal.span_le.2 ?_)
   · rintro _ ⟨u, rfl⟩
-    exact ⟨⟨u, u.2.trans_le bound⟩, dif_pos u.2⟩
+    exact ⟨⟨u, u.2.trans_le bound⟩, dite_eq_left u.2⟩
   · rintro _ ⟨u, rfl⟩
     by_cases h : u.1 < n
-    · simp only [dif_pos h]
+    · simp only [dite_eq_left h]
       exact Ideal.subset_span ⟨_, rfl⟩
-    · simp only [dif_neg h]
+    · simp only [dite_eq_right h]
       exact zero_mem _

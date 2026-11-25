@@ -270,7 +270,6 @@ theorem isGenericallyFree_quotient_bot {A : Type u} [CommRing A] [IsDomain A] (�
 theorem isGenericallyFree_quotient (hNN : GenericNoetherNormalisation.Statement.{u}) (n : ℕ) :
     ∀ (A : Type u) [CommRing A] [IsDomain A] [IsNoetherianRing A] (q : Ideal (MvPolynomial (Fin n) A)),
       q.IsPrime → IsGenericallyFree A (MvPolynomial (Fin n) A ⧸ q) := by
-  set_option synthInstance.maxHeartbeats 400000 in
   induction n with
   | zero =>
     intro A _ _ _ q _
@@ -343,23 +342,6 @@ namespace GroundTheory.Heights₂.Heights
 open Polynomial MvPolynomial Ideal Nat RingHom List
 
 namespace GenericNoetherNormalisation
-
-section Nagata
-
-variable {A : Type*} [CommRing A] [IsDomain A] {n : ℕ} (f : MvPolynomial (Fin (n + 1)) A)
-variable (v w : Fin (n + 1) →₀ ℕ)
-
-
-
-end Nagata
-
-section Combination
-
-variable {A D : Type*} [CommRing A] [CommRing D] [Algebra A D] {m : ℕ}
-
-variable {c : A} {z : Fin m → D} {s : Finset D}
-
-end Combination
 
 universe u
 

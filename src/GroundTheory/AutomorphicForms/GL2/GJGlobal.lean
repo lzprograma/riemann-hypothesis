@@ -9,56 +9,9 @@ public import GroundTheory.AutomorphicForms.GL2.GJGlobalTheta
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.MellinTransform
 import Aesop.Main
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Uniform
 import GroundTheory.AutomorphicForms.GL2.GJGlobalHaar
 import GroundTheory.AutomorphicForms.GL2.GJGlobalLatticeCont
-import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: GroundTheory.AutomorphicForms.GL2.GJGlobalBound, GroundTheory.AutomorphicForms.GL2.GJGlobalEntire, GroundTheory.AutomorphicForms.GL2.GJGlobal
@@ -99,7 +52,7 @@ theorem integrableOn_rpow_mul_ite {A B a b σ : ℝ} (ha : -σ < a) (hb : b < -�
   · have h1 : IntegrableOn (fun t : ℝ => A * t ^ (σ - 1 + a)) (Ioo 0 1) :=
       ((intervalIntegral.integrableOn_Ioo_rpow_iff one_pos).2 (by linarith)).const_mul A
     refine h1.congr_fun (fun t ht => ?_) measurableSet_Ioo
-    simp only [if_pos ht.2]
+    simp only [ite_eq_left ht.2]
     rw [Real.rpow_add ht.1]
     ring
   · rw [integrableOn_Ici_iff_integrableOn_Ioi]
@@ -107,7 +60,7 @@ theorem integrableOn_rpow_mul_ite {A B a b σ : ℝ} (ha : -σ < a) (hb : b < -�
       ((integrableOn_Ioi_rpow_iff one_pos).2 (by linarith)).const_mul B
     refine h1.congr_fun (fun t ht => ?_) measurableSet_Ioi
     have ht' : ¬ t < 1 := not_lt.2 (le_of_lt ht)
-    simp only [if_neg ht']
+    simp only [ite_eq_right ht']
     rw [Real.rpow_add (lt_trans one_pos ht)]
     ring
 
@@ -484,7 +437,7 @@ theorem continuousOn_dite {f : {r : ℝ // 0 < r} → ℂ} (hf : Continuous f) :
   have e : (Ioi (0 : ℝ)).domRestrict (fun t : ℝ => if h : 0 < t then f ⟨t, h⟩ else 0) =
       fun t : Ioi (0 : ℝ) => f ⟨t.1, t.2⟩ := by
     funext t
-    rw [Set.domRestrict_apply, dif_pos (show (0 : ℝ) < t.1 from t.2)]
+    rw [Set.domRestrict_apply, dite_eq_left (show (0 : ℝ) < t.1 from t.2)]
   rw [e]
   exact hf.comp (continuous_subtype_val.subtype_mk _)
 
@@ -641,7 +594,7 @@ theorem globalZeta_entire_functionalEquation (hn : 2 ≤ n) (μ : Measure (normO
   have hsym : ∀ t : ℝ, 0 < t → J₁ t = (t : ℂ) ^ (-((n : ℝ) : ℂ)) * J' t⁻¹ := by
     intro t ht
     have hti : (0 : ℝ) < t⁻¹⁻¹ := by rw [inv_inv]; exact ht
-    simp only [hJ₁, hJ', hJ₂, dif_pos ht, dif_pos hti]
+    simp only [hJ₁, hJ', hJ₂, dite_eq_left ht, dite_eq_left hti]
     have e : (⟨t⁻¹⁻¹, hti⟩ : {r : ℝ // 0 < r}) = ⟨t, ht⟩ := Subtype.ext (inv_inv t)
     rw [e, thetaPairing_eq μ hn h₁ h₂ hΦ ⟨t, ht⟩]
     congr 1
@@ -655,11 +608,11 @@ theorem globalZeta_entire_functionalEquation (hn : 2 ≤ n) (μ : Measure (normO
     refine IsBigO.of_bound (V * D) ?_
     filter_upwards [eventually_ge_atTop (1 : ℝ)] with t ht
     have ht0 : 0 < t := lt_of_lt_of_le one_pos ht
-    simp only [hJ₁, dif_pos ht0]
+    simp only [hJ₁, dite_eq_left ht0]
     have h := norm_thetaPairing_le μ (Ξ := Ξ₁) (φ₁ := φ₁) (φ₂ := φ₂) ⟨t, ht0⟩
       (b := D * t ^ (-a)) fun x y => by
         have := hb ⟨t, ht0⟩ x y
-        rw [if_neg (not_lt.2 ht)] at this
+        rw [ite_eq_right (not_lt.2 ht)] at this
         exact this
     rw [Real.norm_eq_abs, abs_of_pos (Real.rpow_pos_of_pos ht0 _)]
     calc _ ≤ V * (D * t ^ (-a)) := h
@@ -672,11 +625,11 @@ theorem globalZeta_entire_functionalEquation (hn : 2 ≤ n) (μ : Measure (normO
     have hu0 : 0 < u := lt_trans one_pos hu
     have hi0 : 0 < u⁻¹ := inv_pos.2 hu0
     have hi1 : u⁻¹ < 1 := inv_lt_one_of_one_lt₀ hu
-    simp only [hJ', hJ₂, dif_pos hi0]
+    simp only [hJ', hJ₂, dite_eq_left hi0]
     have h := norm_thetaPairing_le μ (Ξ := Ξ₂) (φ₁ := φ₁) (φ₂ := φ₂) ⟨u⁻¹, hi0⟩
       (b := D * (u⁻¹) ^ a) fun x y => by
         have := hb ⟨u⁻¹, hi0⟩ x y
-        rw [if_pos hi1] at this
+        rw [ite_eq_left hi1] at this
         exact this
     rw [Real.norm_eq_abs, abs_of_pos (Real.rpow_pos_of_pos hu0 _)]
     calc _ ≤ V * (D * (u⁻¹) ^ a) := h
@@ -715,12 +668,12 @@ theorem globalZeta_entire_functionalEquation (hn : 2 ≤ n) (μ : Measure (normO
       refine ⟨(hb t x y).1, ?_⟩
       by_cases ht : (t : ℝ) < 1
       · have := (hb₁₀ t x y).2
-        rw [if_pos ht] at this
-        simp only [hBdef, if_pos ht]
+        rw [ite_eq_left ht] at this
+        simp only [hBdef, ite_eq_left ht]
         exact this
       · have := (hb t x y).2
-        rw [if_neg ht] at this
-        simp only [hBdef, if_neg ht]
+        rw [ite_eq_right ht] at this
+        simp only [hBdef, ite_eq_right ht]
         exact this
     have hint : IntegrableOn (fun t : ℝ => t ^ ((s + w₀).re - 1) * B t) (Ioi 0) :=
       integrableOn_rpow_mul_ite (by linarith) (by linarith)
@@ -729,7 +682,7 @@ theorem globalZeta_entire_functionalEquation (hn : 2 ≤ n) (μ : Measure (normO
     refine ⟨hI, ?_⟩
     have hconv : MellinConvergent J₁ (s + w₀) := by
       refine mellinConvergent_of_bound hJ₁c (V := V) (fun t ht => ?_) hint
-      simp only [hJ₁, dif_pos ht]
+      simp only [hJ₁, dite_eq_left ht]
       exact norm_thetaPairing_le μ ⟨t, ht⟩ fun x y => hbB ⟨t, ht⟩ x y
     show ∫ g, Ξ₁ g * matrixCoeff μ φ₁ φ₂ g * detPow g (s + w₀) ∂ν = (c : ℂ) * Λw (s + w₀)
     rw [hEq]
@@ -758,12 +711,12 @@ theorem globalZeta_entire_functionalEquation (hn : 2 ≤ n) (μ : Measure (normO
       refine ⟨(hb t x y).1, ?_⟩
       by_cases ht : (t : ℝ) < 1
       · have := (hb t x y).2
-        rw [if_pos ht] at this
-        simp only [hBdef, if_pos ht]
+        rw [ite_eq_left ht] at this
+        simp only [hBdef, ite_eq_left ht]
         exact this
       · have := (hb₂₀ t x y).2
-        rw [if_neg ht] at this
-        simp only [hBdef, if_neg ht]
+        rw [ite_eq_right ht] at this
+        simp only [hBdef, ite_eq_right ht]
         exact this
     have hint : IntegrableOn (fun t : ℝ => t ^ ((-(s + w₀)).re - 1) * B t) (Ioi 0) := by
       rw [Complex.neg_re]
@@ -780,7 +733,7 @@ theorem globalZeta_entire_functionalEquation (hn : 2 ≤ n) (μ : Measure (normO
       exact hI.comp_inv
     · have hconv2 : MellinConvergent J₂ (-(s + w₀)) := by
         refine mellinConvergent_of_bound hJ₂c (V := V) (fun t ht => ?_) hint
-        simp only [hJ₂, dif_pos ht]
+        simp only [hJ₂, dite_eq_left ht]
         exact norm_thetaPairing_le μ ⟨t, ht⟩ fun x y => hbB ⟨t, ht⟩ x y
       have hconv : MellinConvergent J' (s + w₀) := by
         have h := (MellinConvergent.comp_rpow (f := J₂) (s := s + w₀) (a := -1)

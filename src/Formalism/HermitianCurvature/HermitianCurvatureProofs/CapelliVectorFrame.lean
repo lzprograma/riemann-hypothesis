@@ -5,47 +5,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AnisotropicC
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BorderedDeterminants
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameCompletion
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -156,10 +115,10 @@ theorem capelli_vector_frame : TL.CapVFrame := by
       · rw [hCc]; exact hBs.1 a
     · refine Fin.lastCases ?_ (fun a => ?_) a
       · refine Fin.lastCases ?_ (fun b => ?_) b
-        · rw [hCl, hee, if_pos rfl]
-        · rw [hCl, hCc, heB, if_neg (Fin.castSucc_lt_last b).ne']
+        · rw [hCl, hee, ite_eq_left rfl]
+        · rw [hCl, hCc, heB, ite_eq_right (Fin.castSucc_lt_last b).ne']
       · refine Fin.lastCases ?_ (fun b => ?_) b
-        · rw [hCl, hCc, hBe, if_neg (Fin.castSucc_lt_last a).ne]
+        · rw [hCl, hCc, hBe, ite_eq_right (Fin.castSucc_lt_last a).ne]
         · rw [hCc, hCc, hBs.2.1]
           simp only [Fin.castSucc_inj]
     · simp only [List.mem_cons, List.not_mem_nil, or_false] at hv
@@ -173,7 +132,7 @@ theorem capelli_vector_frame : TL.CapVFrame := by
   have hcol : (fun p => P p (Fin.last n)) = ν := by
     funext p
     simp only [hP, Matrix.of_apply, hCl, hedef, HermitianFormSums.herm_lsum, hB0.2.1, mul_ite, mul_one, mul_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have hβ : ∀ j, (star ν ᵥ* P) j = if j = Fin.last n then 1 else 0 := by
     intro j
     have h1 : (star ν ᵥ* P) j = herm (Hpk (n + 1) r) (C j) e := by
@@ -182,8 +141,8 @@ theorem capelli_vector_frame : TL.CapVFrame := by
     rw [h1, ← hCl, hC.2.1, eq_comm]
   have hGl := (frame_general_linear Wq (n + 1) r (n + 1) z' π' B0 hπ hB0).1
   have key := AnisotropicColumnSums.chat_gen (n + 1) n rfl (Module.End ℂ Wq) (EB π' B0) P Q (Fin.last n) (by simp) Fin.castSucc
-    (fun a => rfl) hGl hQP hPQ w (star ν) (fun j hj => by rw [hβ j, if_neg hj])
-  rw [hcol, hβ, if_pos rfl, one_smul, ← hEB, ← BorderedDeterminants.qdet_sub] at key
+    (fun a => rfl) hGl hQP hPQ w (star ν) (fun j hj => by rw [hβ j, ite_eq_right hj])
+  rw [hcol, hβ, ite_eq_left rfl, one_smul, ← hEB, ← BorderedDeterminants.qdet_sub] at key
   have hsub : subA (EB π' C) = EB π' Bs := by
     funext a b
     simp only [subA, EB, unitB, hCc]

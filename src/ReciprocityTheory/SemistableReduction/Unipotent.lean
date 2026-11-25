@@ -121,7 +121,7 @@ theorem unip_pow_card_eq_zero {K : Type*} [Field K] [CharZero K] {r : ℕ} (N : 
   have hP'0 : P'.coeff 0 = 0 := by
     have h := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p 0) hdiv
     simp only [Polynomial.coeff_add, Polynomial.mul_coeff_zero, hmc, zero_mul, add_zero] at h
-    rw [h, hP, Polynomial.mul_coeff_zero, Polynomial.coeff_X_pow, if_neg (by omega), mul_zero]
+    rw [h, hP, Polynomial.mul_coeff_zero, Polynomial.coeff_X_pow, ite_eq_right (by omega), mul_zero]
   have htr : (aeval N P).trace = 0 := by
     rw [← hPeq, unip_trace_aeval_zero N hN P' hP'deg, hP'0, zero_mul]
   have hE : aeval N P = 0 := unip_idem_eq_zero _ hPP htr
@@ -211,11 +211,11 @@ theorem unip_hs_sub_one {r : ℕ} (A : Matrix (Fin r) (Fin r) ℂ) :
     intro a b
     by_cases h : a = b
     · subst h
-      simp only [Matrix.sub_apply, Matrix.one_apply_eq, if_true, Complex.sq_norm,
+      simp only [Matrix.sub_apply, Matrix.one_apply_eq, ite_true, Complex.sq_norm,
         Complex.normSq_apply, Complex.sub_re, Complex.sub_im, Complex.one_re, Complex.one_im]
       ring
     · simp [Matrix.sub_apply, Matrix.one_apply_ne h, h]
-  simp_rw [key, Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp_rw [key, Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   rw [Matrix.trace, Complex.re_sum]
   simp [Finset.sum_sub_distrib, Finset.mul_sum]
   ring
@@ -270,7 +270,6 @@ theorem unip_trace_conj {r : ℕ} (Q M : Matrix (Fin r) (Fin r) ℂ) (hQ : Q.det
 
 theorem unip_trace_map {K : Type*} [Field K] {r : ℕ} (σ : K →+* ℂ) (M : Matrix (Fin r) (Fin r) K) :
     (M.map σ).trace = σ M.trace := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp only [Matrix.trace, Matrix.diag, Matrix.map_apply, map_sum]
 
 theorem unip_map_pow {K : Type*} [Field K] {r : ℕ} (σ : K →+* ℂ) (M : Matrix (Fin r) (Fin r) K)

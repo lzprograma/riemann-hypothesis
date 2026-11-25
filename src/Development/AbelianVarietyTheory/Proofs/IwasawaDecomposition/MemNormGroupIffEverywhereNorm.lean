@@ -202,7 +202,7 @@ theorem eventually_normSign : ∀ᶠ a in 𝓝 (1 : (AdeleRing (𝓞 K) K)ˣ), n
 
 def signToCircle : ℤˣ →* Circle where
   toFun u := if u = 1 then 1 else -1
-  map_one' := if_pos rfl
+  map_one' := ite_eq_left rfl
   map_mul' u u' := by
     rcases Int.units_eq_one_or u with rfl | rfl <;> rcases Int.units_eq_one_or u' with rfl | rfl <;> simp
 
@@ -225,7 +225,7 @@ theorem eq_signToCircle_comp {G : Type} [Group G] (ε : G →* ℤˣ) (η : G �
     have h3 : (η a : ℂ) * η a = 1 := by exact_mod_cast congrArg (fun w : Circle => (w : ℂ)) h2
     rw [MonoidHom.comp_apply, e]
     change η a = if (-1 : ℤˣ) = 1 then 1 else -1
-    rw [if_neg (by decide)]
+    rw [ite_eq_right (by decide)]
     rcases mul_self_eq_one_iff.1 h3 with h4 | h4
     · have h5 : η a = 1 := Circle.ext h4
       rw [h5, one_mul] at h1
@@ -243,14 +243,12 @@ theorem globalNormIndexTwo : Formalism.D.Classical.GlobalNormIndexTwo := by
   · exact (congrArg signToCircle (normSign_of_mem E ⟨x, rfl⟩)).trans (map_one _)
   · obtain ⟨a, ha⟩ := exists_normSign_ne_one (K := F) E
     have h : signToCircle (normSign E a) = 1 := DFunLike.congr_fun e a
-    exact circle_neg_one_ne_one ((if_neg ha).symm.trans h)
+    exact circle_neg_one_ne_one ((ite_eq_right ha).symm.trans h)
   · rintro η ⟨-, h1, h3, h4⟩
     refine eq_signToCircle_comp _ η (fun a ha => ?_) h4
     obtain ⟨t, x, hx⟩ := (normSign_eq_one_iff E a).1 ha
     rw [← div_mul_cancel a (toUnits F (AdeleRing (𝓞 F) F) t), map_mul, ← hx, h3 x, one_mul]
     exact h1 t
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta in

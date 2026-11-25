@@ -5,8 +5,6 @@ public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PowerSums
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 open MvPolynomial Finset

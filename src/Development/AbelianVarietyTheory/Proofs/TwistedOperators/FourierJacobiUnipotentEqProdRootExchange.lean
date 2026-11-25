@@ -96,7 +96,7 @@ theorem exists_col (P : Fin c) {g : GL (n ⊕ Fin c) k} (hg : g ∈ midGroup k n
     · rw [GlobalTheory.RootEx.Exchange.mul_colE_inr]
       by_cases hj : j = P
       · have hc : j.val + 1 = P.val + 1 := by rw [hj]
-        rw [if_pos hc, hj]
+        rw [ite_eq_left hc, hj]
         rcases r with r | i
         · have hX : ∀ t, g.val (Sum.inl r) (Sum.inl t) = if r = t then 1 else 0 := by
             intro t
@@ -114,7 +114,7 @@ theorem exists_col (P : Fin c) {g : GL (n ⊕ Fin c) k} (hg : g ∈ midGroup k n
           simp [h1, h2]
       · have hj' : j.val ≠ P.val := fun h => hj (Fin.ext h)
         have hc : ¬ (j.val + 1 = P.val + 1) := fun h => hj' (by omega)
-        rw [if_neg hc, add_zero]
+        rw [ite_eq_right hc, add_zero]
         apply hg'
         rcases r with r | i <;>
           simp only [lev, midLev, Sum.elim_inl, Sum.elim_inr] at hrs ⊢ <;> omega

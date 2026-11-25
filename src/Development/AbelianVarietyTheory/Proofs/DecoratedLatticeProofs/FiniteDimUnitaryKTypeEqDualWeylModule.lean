@@ -111,7 +111,7 @@ theorem dual_weyl_type : ∀ (k n : ℕ) (h : k = n) (lam : DomWeight n) (H : Ty
     rw [orthonormal_iff_ite.1 f.orthonormal]
     rcases eq_or_ne a a' with rfl | hA
     · simp
-    · rw [if_neg hA.symm, if_neg hA]
+    · rw [ite_eq_right hA.symm, ite_eq_right hA]
   · rw [hj, hj, ← hJσ, heq g hg]
 
 end GlobalTheory.DualWeylType

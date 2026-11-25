@@ -18,59 +18,12 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingMod
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.InverseWeylLiftEqPair
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.AlSel
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.KapF
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.PowerSeries.Ideal
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -351,12 +304,12 @@ private theorem psi_lem {k R Γ : Type} [Field k] [CommRing R] [Algebra k R] {n 
     simp [Matrix.algebraMap_matrix_apply, hab.ne', htri _ a b hab])).2 i
   rw [hrel, List.map_ofFn, List.prod_ofFn] at h2
   have h3 := one_zero _ i (fun j hj => unit_of e hn _ (by
-    have hg : g' j = s j hj := dif_pos hj
-    simp only [Function.comp_apply, Matrix.sub_apply, Matrix.map_apply, Matrix.algebraMap_matrix_apply, if_true,
+    have hg : g' j = s j hj := dite_eq_left hj
+    simp only [Function.comp_apply, Matrix.sub_apply, Matrix.map_apply, Matrix.algebraMap_matrix_apply, ite_true,
       map_sub, AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply, hc, hg]
     exact sub_ne_zero.2 (hs j hj))) h2.symm
-  have hg : g' i = g := dif_neg (by simp)
-  simp only [Function.comp_apply, Matrix.sub_apply, Matrix.map_apply, Matrix.algebraMap_matrix_apply, if_true,
+  have hg : g' i = g := dite_eq_right (by simp)
+  simp only [Function.comp_apply, Matrix.sub_apply, Matrix.map_apply, Matrix.algebraMap_matrix_apply, ite_true,
     Algebra.algebraMap_self, RingHom.id_apply, hg] at h3
   exact (sub_eq_zero.1 h3).symm
 
@@ -382,7 +335,7 @@ private theorem u_lem {k R : Type} [Field k] [CommRing R] [Algebra k R] {n : ℕ
       (fun j => by
         by_cases hj : j = i
         · simp [hj]
-        · simp only [hj, if_false]; exact eig_map P _ v hv (c j))
+        · simp only [hj, ite_false]; exact eig_map P _ v hv (c j))
     have h2 := congrArg (fun Z => Z *ᵥ fun j => algebraMap k R (v j)) h
     simp only [sub_self, zero_sub, Matrix.zero_mulVec] at h2
     rw [← Matrix.mulVec_mulVec, Matrix.neg_mulVec, Algebra.algebraMap_eq_smul_one y, Matrix.smul_mulVec,
@@ -390,7 +343,7 @@ private theorem u_lem {k R : Type} [Field k] [CommRing R] [Algebra k R] {n : ℕ
     refine (IsUnit.mul_left_eq_zero (IsUnit.prod_iff.2 fun j _ => ?_)).1 (eig_zero v hv0 _ h2)
     by_cases hj : j = i
     · simp [hj]
-    · simp only [hj, if_false]; exact hu j hj
+    · simp only [hj, ite_false]; exact hu j hj
 
 private theorem conj_const {l : ℕ} [Fact l.Prime] (S : Ctx l) (R : Type) [CommRing R] [Algebra S.F R]
     (e : R →ₐ[S.F] S.F) (θ : S.U.AA →+* R) (hθ : S.Test R e θ) (T T' : Matrix (Fin S.n) (Fin S.n) R)
@@ -470,7 +423,7 @@ private theorem conj_const {l : ℕ} [Fact l.Prime] (S : Ctx l) (R : Type) [Comm
     funext k
     by_cases hk : k = i
     · simp [hk]
-    · simp only [Function.comp_apply, hk, if_false, map_sub, hφ1, hφ2]
+    · simp only [Function.comp_apply, hk, ite_false, map_sub, hφ1, hφ2]
   · exact key _ _ t3
 
 theorem UpperTheory.V.Pa.alInj :
@@ -554,12 +507,6 @@ variable {A X : Type} [CommRing A] [CommRing X] [Algebra A X] {g n : ℕ}
 private theorem alg_eq (c : A) : algebraMap A (DD X g) c = DD.C (algebraMap A X c) := rfl
 
 end SlopeTestRemainingChoices
-
-section Conj
-
-variable {l : ℕ} [Fact l.Prime] {F : GFrame l} {n : ℕ} {x : NP F n} (k : Kap x) (X : Type) [CommRing X] [Algebra x.A X]
-
-end Conj
 
 end UpperTheory.V.Pa
 
@@ -972,15 +919,6 @@ private def hE (j : Fin g) : DD X g →+ X := ⟨⟨fun u => u.ep j, rfl⟩, fun
 private def hE' (j : Fin g) : DD X g →+ X := ⟨⟨fun u => u.ep' j, rfl⟩, fun _ _ => rfl⟩
 private def hH : DD X g →+ X := ⟨⟨fun u => u.eta, rfl⟩, fun _ _ => rfl⟩
 
-private theorem sum_a {ι : Type} (s : Finset ι) (f : ι → DD X g) : (∑ i ∈ s, f i).a = ∑ i ∈ s, (f i).a :=
-  map_sum hA f s
-private theorem sum_ep {ι : Type} (s : Finset ι) (f : ι → DD X g) (j) : (∑ i ∈ s, f i).ep j = ∑ i ∈ s, (f i).ep j :=
-  map_sum (hE j) f s
-private theorem sum_ep' {ι : Type} (s : Finset ι) (f : ι → DD X g) (j) : (∑ i ∈ s, f i).ep' j = ∑ i ∈ s, (f i).ep' j :=
-  map_sum (hE' j) f s
-private theorem sum_eta {ι : Type} (s : Finset ι) (f : ι → DD X g) : (∑ i ∈ s, f i).eta = ∑ i ∈ s, (f i).eta :=
-  map_sum hH f s
-
 private def pi1 : DD X g →+* DD X g where
   toFun u := ⟨u.a, u.ep, 0, 0⟩
   map_one' := rfl
@@ -1015,7 +953,7 @@ private theorem pM_apply (k : Fin g) (M : Matrix (Fin n) (Fin n) (DD X g)) (i j)
 private theorem pM_mul (k : Fin g) (M N : Matrix (Fin n) (Fin n) (DD X g)) :
     pM k (M * N) = aM M * pM k N + pM k M * aM N := by
   ext i j
-  simp [pM_apply, aM_apply, Matrix.mul_apply, sum_ep', Finset.sum_add_distrib]
+  simp [pM_apply, aM_apply, Matrix.mul_apply, dd_ep'_finset_sum, Finset.sum_add_distrib]
 
 private theorem pM_SM (k : Fin g) {M : Matrix (Fin n) (Fin n) (DD X g)} (hM : M ∈ SM X g n) : pM k M = 0 := by
   ext i j
@@ -1051,10 +989,10 @@ private theorem second_order_part_of_matrix (k) (Q : Fin g → Matrix (Fin n) (F
 
 private theorem conjugate_second_order_matrix (P R : Matrix (Fin n) (Fin n) X) (Q : Fin g → Matrix (Fin n) (Fin n) X) :
     P.map DD.C * mk2 Q * R.map DD.C = mk2 fun k => P * Q k * R := by
-  ext i j <;> simp [mk2, Matrix.mul_apply, sum_a, sum_ep, sum_ep', sum_eta]
+  ext i j <;> simp [mk2, Matrix.mul_apply, ep_component_add, dd_ep_finset_sum, dd_ep'_finset_sum, dd_eta_finset_sum]
 
 private theorem epM_sq (Y : Fin g → Matrix (Fin n) (Fin n) X) : DD.epM Y * DD.epM Y = 0 := by
-  ext i j <;> simp [DD.epM, Matrix.mul_apply, sum_a, sum_ep, sum_ep', sum_eta]
+  ext i j <;> simp [DD.epM, Matrix.mul_apply, ep_component_add, dd_ep_finset_sum, dd_ep'_finset_sum, dd_eta_finset_sum]
 
 private theorem epM_SM (Y : Fin g → Matrix (Fin n) (Fin n) X) : DD.epM Y ∈ SM X g n :=
   mem_SM.2 fun _ _ => ⟨rfl, rfl⟩
@@ -1459,13 +1397,6 @@ private def epH (X : Type) [CommRing X] {g : ℕ} (j : Fin g) : DD X g →+ X wh
   map_zero' := rfl
   map_add' _ _ := rfl
 
-private theorem sum_a {ι : Type} (s : Finset ι) (f : ι → DD X g) : (∑ i ∈ s, f i).a = ∑ i ∈ s, (f i).a :=
-  map_sum (aH X g) f s
-
-private theorem sum_ep {ι : Type} (s : Finset ι) (f : ι → DD X g) (m : Fin g) :
-    (∑ i ∈ s, f i).ep m = ∑ i ∈ s, (f i).ep m :=
-  map_sum (epH X m) f s
-
 private theorem sub_a (u v : DD X g) : (u - v).a = u.a - v.a := by
   rfl
 
@@ -1486,14 +1417,14 @@ private theorem smul_ep (c : X) (u : DD X g) (m : Fin g) : (c • u).ep m = c * 
 private theorem mul_mapa (P Q : Matrix (Fin n) (Fin n) (DD X g)) :
     (P * Q).map (fun u => u.a) = P.map (fun u => u.a) * Q.map (fun u => u.a) := by
   ext i j
-  simp only [Matrix.map_apply, Matrix.mul_apply, sum_a]
+  simp only [Matrix.map_apply, Matrix.mul_apply, ep_component_add]
   rfl
 
 private theorem mul_mapep (P Q : Matrix (Fin n) (Fin n) (DD X g)) (m : Fin g) :
     (P * Q).map (fun u => u.ep m) =
       P.map (fun u => u.a) * Q.map (fun u => u.ep m) + P.map (fun u => u.ep m) * Q.map (fun u => u.a) := by
   ext i j
-  simp only [Matrix.map_apply, Matrix.mul_apply, Matrix.add_apply, sum_ep, ← Finset.sum_add_distrib]
+  simp only [Matrix.map_apply, Matrix.mul_apply, Matrix.add_apply, dd_ep_finset_sum, ← Finset.sum_add_distrib]
   rfl
 
 private theorem sub_mapa (P Q : Matrix (Fin n) (Fin n) (DD X g)) :
@@ -1604,7 +1535,7 @@ theorem UpperTheory.V.Pa.claim1 :
       rw [← e1]
       ext a b
       simp only [Finset.sum_apply, Pi.smul_apply, Pi.add_apply, Matrix.map_apply, Matrix.add_apply,
-        Matrix.sum_apply, Matrix.smul_apply, dd_a_add_of_commRing, sum_a, smul_a, hy4, hw0, smul_eq_mul, mul_zero,
+        Matrix.sum_apply, Matrix.smul_apply, dd_a_add_of_commRing, ep_component_add, smul_a, hy4, hw0, smul_eq_mul, mul_zero,
         Finset.sum_const_zero, add_zero]
     have hnegA : ∀ u : DD S.x.Fr S.k.g, (-u).a = -u.a := fun u => map_neg (aH S.x.Fr S.k.g) u
     have hTA : (Y.map (fun u => u.a))ᵀ = -(Y.map (fun u => u.a)) := by
@@ -1645,7 +1576,7 @@ theorem UpperTheory.V.Pa.claim1 :
       rw [← e1]
       ext a b
       simp only [Finset.sum_apply, Pi.smul_apply, Pi.add_apply, Matrix.map_apply, Matrix.add_apply,
-        Matrix.sum_apply, Matrix.smul_apply, dd_ep_add_apply, sum_ep, smul_ep, hc1, zero_mul,
+        Matrix.sum_apply, Matrix.smul_apply, dd_ep_add_apply, dd_ep_finset_sum, smul_ep, hc1, zero_mul,
         Finset.sum_const_zero, zero_add, smul_eq_mul]
       rw [Fintype.sum_prod_type]
       refine Finset.sum_congr rfl (fun i _ => ?_)
@@ -1656,7 +1587,7 @@ theorem UpperTheory.V.Pa.claim1 :
         split_ifs
         · rfl
         · rfl
-      simp only [hw, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      simp only [hw, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     have hd : ∀ m, (fun i => c (Sum.inr (i, m))) = 0 := by
       intro m
       have hnegE : ∀ u : DD S.x.Fr S.k.g, (-u).ep m = -u.ep m := fun u => map_neg (epH S.x.Fr m) u

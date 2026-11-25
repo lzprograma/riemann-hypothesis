@@ -1,46 +1,6 @@
 module
 
 public import Formalism.LocalRingCardinality.DataDIV
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -422,9 +382,6 @@ def bs {D : D7} {r j p : ℕ} (L : Loc D r j p) : Option ℕ → L.Mdl
   | none => L.Xm
   | some n => L.Xn n
 
-def IsChart {D : D7} {r j p : ℕ} (L : Loc D r j p) {Z y e} (χ : L.Chart Z y e) : Prop :=
-  L.chAt χ ∧ L.chOpen χ ∧ L.chAbExact χ ∧ L.chModU χ ∧ L.chConst χ
-
 structure ExtA (D : D7) {r j p : ℕ} (L : Loc D r j p) where
 
   FlagData : L.Mdl → Type
@@ -433,25 +390,13 @@ structure ExtA (D : D7) {r j p : ℕ} (L : Loc D r j p) where
 
   allFlags : FlagData L.Xm
 
-  YY_eq : L.YY = flagCl L.Xm allFlags
-
   Idl : L.Mdl → Type
 
   blowUp : ∀ Z, Idl Z → L.Mdl
 
-  powP : ∀ {Z}, Idl Z → Prop
-
-  pbPrinc : ∀ {Z y e}, Idl Z → L.Chart Z y e → Prop
-
   Corr : L.Mdl → L.Mdl → Type
 
-  corr_sub : ∀ Z₁ Z₂, Subsingleton (Corr Z₁ Z₂) := by intros; infer_instance
-
-  diagCl : ∀ Z₁ Z₂, Corr Z₁ Z₂ → L.Mdl
-
   IvD : Option ℕ → Type
-
-  jIdl : ∀ b, IvD b → Idl (bs L b)
 
   ZP : L.Mdl → Type
 
@@ -463,121 +408,49 @@ structure ExtA (D : D7) {r j p : ℕ} (L : Loc D r j p) where
 
   isGenP : ∀ {Z}, ZP Z → Prop
 
-  isGenP_ab : ∀ {Z} (x : ZP Z), isGenP x → abP x
-
   gpt : ∀ {Z}, L.Gen Z → ZP Z
-  abAt_iff : ∀ {Z} (η : L.Gen Z), L.abAt η ↔ abP (gpt η)
-  gpt_notQ : ∀ {Z} (η : L.Gen Z), ¬ inQ (gpt η)
-
-  genFin : ∀ Z, Finite (L.Gen Z)
   genNe : ∀ Z, Nonempty (L.Gen Z)
 
   redK : ∀ Z, L.DVP → ZP Z
 
-  dvRho_pos_iff : ∀ Z (y : L.DVP), 0 < L.dvRho y ↔ ¬ abP (redK Z y)
-
   genK : ∀ {Z}, L.Gen Z → L.DVP
-  redK_genK : ∀ {Z} (η : L.Gen Z), redK Z (genK η) = gpt η
-
   imgM : ∀ {Z y e}, L.Chart Z y e → ZP Z
   imgU : ∀ {Z y e}, L.Chart Z y e → ZP Z
-  img_spz : ∀ {Z y e} (χ : L.Chart Z y e), spz (imgU χ) (imgM χ)
-
-  imgU_inQ : ∀ {Z y e} (χ : L.Chart Z y e), inQ (imgU χ)
-
-  chAt_imgM : ∀ {Z y e} (χ : L.Chart Z y e), L.chAt χ → imgM χ = redK Z y
-
-  chAbExact_imgU : ∀ {Z y e} (χ : L.Chart Z y e), L.chAbExact χ → ¬ abP (imgU χ)
-
   RFam : ∀ y, L.Ext y → Type
 
-  chFam : ∀ {Z y e}, L.Chart Z y e → RFam y e
-
   ptK : ∀ Z, L.DVP → L.Pt Z
-  ptK_good : ∀ Z y, L.good (ptK Z y) ↔ L.dvRho y = 0
-
   vpi : ∀ {y}, L.Ext y → ℝ
-  vpi_pos : ∀ {y} (e : L.Ext y), 0 < vpi e
-
-  ordGe : ∀ {Z y e}, L.Chart Z y e → ∀ F : L.Sh Z, L.Sec F → ℝ → Prop
-
   yEta : ∀ {Z}, L.Gen Z → L.Pt Z
-  yEta_good : ∀ {Z} (η : L.Gen Z), L.good (yEta η) ↔ L.abAt η
-
   homSh : ∀ {Z}, L.Sh Z → L.Sh Z → L.Sh Z
-  homSh_inv : ∀ {Z} (F₁ F₂ : L.Sh Z), L.IsInv F₁ → L.IsInv F₂ → L.IsInv (homSh F₁ F₂)
   isoSec : ∀ {Z} {F₁ F₂ : L.Sh Z}, L.GIso F₁ F₂ → L.Sec (homSh F₁ F₂)
-  nrm_isoSec : ∀ {Z} {F₁ F₂ : L.Sh Z} (φ : L.GIso F₁ F₂) (y : L.Pt Z),
-    L.nrm (homSh F₁ F₂) (isoSec φ) y = (p : ℝ) ^ (-(L.vrat φ y))
   isoSymm : ∀ {Z} {F₁ F₂ : L.Sh Z}, L.GIso F₁ F₂ → L.GIso F₂ F₁
-  vrat_symm : ∀ {Z} {F₁ F₂ : L.Sh Z} (φ : L.GIso F₁ F₂) (y : L.Pt Z),
-    L.vrat (isoSymm φ) y = -(L.vrat φ y)
-
   LieV : L.Pt L.YY → Type
   [lvAdd : ∀ y, AddCommGroup (LieV y)]
   [lvMod : ∀ y, Module (L.fld y).C (LieV y)]
   lieL : ∀ y, AddSubgroup (LieV y)
   eig : ∀ y, PsiT D × Bool → Submodule (L.fld y).C (LieV y)
   Wst : ∀ y, PsiT D × Bool → ℕ → Submodule (L.fld y).C (LieV y)
-  Wst_le : ∀ y σ i, Wst y σ i ≤ eig y σ
-
   taut : ∀ y, PsiT D × Bool → ℕ → AddSubgroup (LieV y)
-  taut_eq : ∀ y σ i, taut y σ i = (Wst y σ i).toAddSubgroup ⊓ lieL y
-
   nrmIn : ∀ l, L.Sec (L.Lb l) → ∀ y : L.Pt L.YY, (PsiT D × Bool → ℕ → AddSubgroup (LieV y)) → ℝ
-
-  nrmRef_def : ∀ l f y, L.nrmRef l f y =
-    nrmIn l f y (fun σ i => (Wst y σ i).toAddSubgroup ⊓ ((eig y σ).toAddSubgroup ⊓ lieL y))
-
-  nrm_Lb_def : ∀ l f y, L.nrm (L.Lb l) f y = nrmIn l f y (taut y)
-
-  om_smul : ∀ {Z} (y : L.Pt Z) (a : (L.fld y).C), ‖a‖ ≤ 1 → ∀ v ∈ L.om y, a • v ∈ L.om y
 
   TC : ∀ {Z}, L.Pt Z → Type
   [tcAdd : ∀ {Z} (y : L.Pt Z), AddCommGroup (TC y)]
   [tcMod : ∀ {Z} (y : L.Pt Z), Module (L.fld y).C (TC y)]
   iT : ∀ {Z} (y : L.Pt Z), L.Tp y →+ TC y
-  iT_span : ∀ {Z} (y : L.Pt Z), Submodule.span (L.fld y).C (Set.range (iT y)) = ⊤
   htC : ∀ {Z} (y : L.Pt Z), TC y →ₗ[(L.fld y).C] L.OmV y
-  htC_iT : ∀ {Z} (y : L.Pt Z) t, htC y (iT y t) = L.ht y t
-  psiC : ∀ {Z} (y : L.Pt Z), TC y →ₗ[(L.fld y).C] TC y →ₗ[(L.fld y).C] (L.fld y).C
-  lieGt1 : ∀ {Z} (y : L.Pt Z), Submodule (L.fld y).C (TC y)
-
-  eT : ∀ {Z} (y : L.Pt Z), PsiT D → TC y →ₗ[(L.fld y).C] TC y
-
   HTn : ℕ → Type
 
   htEval : ∀ {n}, HTn n → ∀ y : L.Pt (L.Xn n), L.Tp y →+ L.OmV y
 
   htIdl : ∀ {n}, HTn n → Idl (L.Xn n)
 
-  IsHTBlowup_def : ∀ n Z', 3 ≤ n → (L.IsHTBlowup Z' (L.Xn n) ↔ ∃ h : HTn n,
-    (∀ (y : L.Pt (L.Xn n)) (t : L.Tp y), htEval h y t ∈ L.om y ∧
-      ∃ v ∈ L.om y, htEval h y t - L.ht y t = ((p : (L.fld y).C) ^ n) • v) ∧
-    Z' = blowUp (L.Xn n) (htIdl h))
-
-  wFib : ∀ {n}, HTn n → ∀ y : L.Pt (L.Xn n), PsiT D → AddSubgroup (TC y)
-
-  htFlags : ∀ Z, FlagData Z
-
-  omSh : ∀ Z, L.Sh Z
-
   omPat : ∀ {Z} (y : L.Pt Z), AddSubgroup (L.OmV y)
-
-  omPat_def : ∀ n Z', 3 ≤ n → L.IsHTBlowup Z' (L.Xn n) → ∀ y : L.Pt Z',
-    omPat y = L.om y ⊓ (Ospan (C := (L.fld y).C) (Set.range (L.ht y)) ⊔
-      (L.om y).map (DistribSMul.toAddMonoidHom (L.OmV y) ((p : (L.fld y).C) ^ n)))
 
   BPt : L.Mdl → Type
   bfld : ∀ {Z}, BPt Z → CF p
   OmB : ∀ {Z}, BPt Z → Type
   [obAdd : ∀ {Z} (y : BPt Z), AddCommGroup (OmB y)]
   [obMod : ∀ {Z} (y : BPt Z), Module (bfld y).C (OmB y)]
-  omB : ∀ {Z} (y : BPt Z), AddSubgroup (OmB y)
-  omPB : ∀ {Z} (y : BPt Z), AddSubgroup (OmB y)
-  eOmB : ∀ {Z} (y : BPt Z), PsiT D → AddSubgroup (OmB y)
-  eB : ∀ {Z} (y : BPt Z), PsiT D → OmB y →ₗ[(bfld y).C] OmB y
-
   YsP : L.Mdl → Type
   ysBd : ∀ {Z}, YsP Z → Prop
 
@@ -590,43 +463,16 @@ structure ExtA (D : D7) {r j p : ℕ} (L : Loc D r j p) where
   Sum1 : Type
   locus : Sum1 → FlCl
 
-  bdryLoci_def : ∀ Z, L.bdryLoci Z ↔ ∃ S : Set Sum1, S.Finite ∧
-    (∀ x : YsP Z, ysBd x → ∃ ℓ ∈ S, flMem (hFl x) (locus ℓ)) ∧
-    ∀ ℓ ∈ S, flDim (locus ℓ) + D.R.f * (r - 1) = D.R.f * (r * (r - 1) / 2)
-
   CrvS : L.Mdl → Type
 
   degGr : ∀ {Z}, CrvS Z → PsiT D → ℕ → ℤ
-
-  nefHT_def : ∀ Z (l : PsiT D → ℕ → ℝ), L.nefHT Z l ↔
-    ∀ C : CrvS Z, 0 ≤ -∑ᶠ τ, ∑ i ∈ Finset.Icc 1 r, l τ i * (degGr C τ i : ℝ)
 
   CrvQ : Type
 
   degGrQ : CrvQ → PsiT D → ℕ → ℤ
 
-  nefQ_def : ∀ l : PsiT D → ℕ → ℝ, L.nefQ l ↔
-    ∀ C : CrvQ, 0 ≤ -∑ᶠ τ, ∑ i ∈ Finset.Icc 1 r, l τ i * (degGrQ C τ i : ℝ)
-
   degGrD : L.Crv → PsiT D → ℕ → ℤ
-  degLdR_def : ∀ CC (μ : PsiT D → ℕ → ℝ), L.degLdR CC μ =
-    -∑ᶠ τ, ∑ i ∈ Finset.Icc 1 r, μ τ i * (degGrD CC τ i : ℝ)
-  degLie_f : ∀ CC τ, L.degLie CC τ false = ∑ i ∈ Finset.Icc 1 j, degGrD CC τ i
-  degLie_alt : ∀ CC τ, L.degLie CC τ true = -∑ i ∈ Finset.Icc (j + 1) r, degGrD CC τ i
-
-  eDeg_def : DV.UnramE D p → ∀ CC, L.eDeg CC = -∑ᶠ τ, (L.degLie CC τ false + L.degLie CC τ true)
-
-  Pm_head : ∀ CC τ i, 1 ≤ i → i ≤ j → ∑ k ∈ Finset.Icc 1 i, degGrD CC τ k ≤ L.Pm CC
-
-  Pm_tail : ∀ CC τ i, j ≤ i → i ≤ r → -∑ k ∈ Finset.Icc (i + 1) r, degGrD CC τ k ≤ L.Pm CC
-
 attribute [instance] ExtA.lvAdd ExtA.lvMod ExtA.tcAdd ExtA.tcMod ExtA.obAdd ExtA.obMod
-
-namespace ExtA
-
-variable {D : D7} {r j p : ℕ} {L : Loc D r j p}
-
-end ExtA
 
 end Ext
 
@@ -670,10 +516,6 @@ structure Prov (D : Formalism.BasicNotions.D7) where
   limRA : ∀ {w}, Met w → Prop
 
 variable {D : Formalism.BasicNotions.D7}
-
-theorem Prov.dP_le (X : Prov D) (w : X.Dat) (p : ℕ) {Z : (X.loc w p).Mdl} (y : (X.loc w p).Pt Z) :
-    (X.loc w p).dP y ≤ 2 * D.R.f * min (X.jj w) (X.rk w - X.jj w) :=
-  (X.loc w p).dP_le (X.jj_range w).1 (X.jj_range w).2 y
 
 def LinkConditions (D : Formalism.BasicNotions.D7) (X : Prov D) : Prop :=
   ∀ w p, p.Prime → ∀ n DF nW : ℕ, NHyp D p n → 3 * DF + 2 ≤ n →

@@ -4,8 +4,6 @@ public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsCoin
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 open MvPolynomial Coinv
@@ -22,12 +20,12 @@ theorem CoinvStaircaseComponent.proof (h1 : CoinvStaircaseDegree.Statement) :
       (mem_homogeneousSubmodule _ _).mpr (isHomogeneous_monomial 1 rfl)
     obtain ⟨hle, heq⟩ := h1 f n e he
     refine ⟨fun d hd => ?_, ?_⟩
-    · rw [homogeneousComponent_of_mem hhom, if_neg (by omega)]
+    · rw [homogeneousComponent_of_mem hhom, ite_eq_right (by omega)]
     · rw [homogeneousComponent_of_mem hhom]
       by_cases h : coinvTop f n = e.degree
       · refine ⟨1, ?_⟩
-        rw [if_pos h, heq h.symm, C_1, one_mul]
-      · exact ⟨0, by rw [if_neg h, C_0, zero_mul]⟩
+        rw [ite_eq_left h, heq h.symm, C_1, one_mul]
+      · exact ⟨0, by rw [ite_eq_right h, C_0, zero_mul]⟩
   | zero => exact ⟨fun d _ => map_zero _, 0, by simp⟩
   | add x y _ _ hx hy =>
     obtain ⟨hx1, cx, hx2⟩ := hx

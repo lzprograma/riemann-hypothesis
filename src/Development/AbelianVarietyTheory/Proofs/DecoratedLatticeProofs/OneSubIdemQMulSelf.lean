@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFrameProperties
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentTwistedGroupEndomorphism
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PlaceIdempotentActsOnSupportedAndOff
@@ -50,7 +51,6 @@ import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.FinPl
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -74,10 +74,10 @@ theorem evalV_indQ (Q : Finset (Pl D)) (w : Pl D) :
     intro v _
     by_cases hwv : w = v
     · subst hwv
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       change (singleV D.host.F w 1) w = 1
       exact RestrictedProduct.single_eq_same _ _ _
-    · rw [if_neg hwv]
+    · rw [ite_eq_right hwv]
       change (singleV D.host.F v 1) w = 0
       exact RestrictedProduct.single_eq_of_ne (fun u : Pl D => u.adicCompletionIntegers D.host.F)
         (1 : Fv D.host.F v) hwv
@@ -128,12 +128,12 @@ theorem mem_idAt_iff_mul (P : Pl D → Prop) [DecidablePred P] (c : AE D) (h0 : 
     · intro w
       rw [RingHom.map_sub, RingHom.map_mul, hc w]
       by_cases h : P w
-      · rw [if_pos h, one_mul, sub_self]
-      · rw [if_neg h, haw w h, zero_mul, sub_zero]
+      · rw [ite_eq_left h, one_mul, sub_self]
+      · rw [ite_eq_right h, haw w h, zero_mul, sub_zero]
   · intro ha
     refine ⟨?_, fun w hw => ?_⟩
     · rw [← ha, RingHom.map_mul, h0, zero_mul]
-    · rw [← ha, RingHom.map_mul, hc w, if_neg hw, zero_mul]
+    · rw [← ha, RingHom.map_mul, hc w, ite_eq_right hw, zero_mul]
 
 theorem mem_idOff_iff_mul (P : Pl D → Prop) [DecidablePred P] (c : AE D) (h0 : infPart D c = 0)
     (hc : ∀ w, compAt D w c = if P w then 1 else 0) (a : AE D) : a ∈ idOff D P ↔ c * a = 0 := by
@@ -146,10 +146,10 @@ theorem mem_idOff_iff_mul (P : Pl D → Prop) [DecidablePred P] (c : AE D) (h0 :
       rw [RingHom.map_mul, hc w]
       by_cases h : P w
       · rw [ha w h, mul_zero]
-      · rw [if_neg h, zero_mul]
+      · rw [ite_eq_right h, zero_mul]
   · intro ha w hw
     have := congrArg (compAt D w) ha
-    rwa [RingHom.map_mul, hc w, if_pos hw, one_mul, RingHom.map_zero] at this
+    rwa [RingHom.map_mul, hc w, ite_eq_left hw, one_mul, RingHom.map_zero] at this
 
 open Classical in
 theorem mem_idAt_Q_iff (Q : Finset (Pl D)) (a : AE D) :
@@ -181,19 +181,7 @@ theorem one_sub_idemQ_mul_self (Q : Finset (Pl D)) :
 
 theorem mem_congGrp_iff (V : HSp D) (I : Ideal (AE D)) (g : GA D V) :
     g ∈ congGrp V I ↔ ∀ i j, (Formalism.L2.Theta.mt V g - 1) i j ∈ I := by
-  rw [congGrp, MonoidHom.mem_ker, MonoidHom.comp_apply, Units.ext_iff]
-  simp only [Matrix.GeneralLinearGroup.map, Units.coe_map, Units.val_one]
-  rw [← Matrix.ext_iff]
-  refine forall_congr' fun i => forall_congr' fun j => ?_
-  rw [Matrix.sub_apply, ← Ideal.Quotient.eq]
-  change ((matHom V g).1.map (Ideal.Quotient.mk I)) i j = (1 : Matrix (Fin V.rank) (Fin V.rank) (AE D ⧸ I)) i j ↔ _
-  rw [Matrix.map_apply]
-  by_cases hij : i = j
-  · subst hij
-    simp only [Matrix.one_apply_eq, map_one]
-    rfl
-  · simp only [Matrix.one_apply_ne hij, map_zero]
-    rfl
+  apply _root_.GlobalTheory.FrameAt.mem_congGrp <;> assumption
 
 def cutG (V : HSp D) (ε : AF D.host.F) (hε : ε * ε = ε) : GA D V →* GA D V :=
   GlobalTheory.UnitaryIdemCut.cutUJ (sigR (AF D.host.F) D.sp.cm.sig) (JR (AF D.host.F) V.gram)

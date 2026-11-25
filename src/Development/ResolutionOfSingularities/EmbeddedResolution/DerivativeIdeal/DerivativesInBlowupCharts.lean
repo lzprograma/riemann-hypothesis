@@ -3,50 +3,7 @@ module
 public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
 public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
 public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealEtaleBaseChange
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -98,15 +55,15 @@ theorem partialDeriv_map_of_mem
     · by_cases hjs : j = s
       · subst hjs
         rw [hs]
-        simp only [partialDeriv_coord, if_neg his, map_zero, mul_zero]
+        simp only [partialDeriv_coord, ite_eq_right his, map_zero, mul_zero]
       · rw [hin j hjT hjs, (partialDeriv k ι S₁ i).leibniz]
-        simp only [smul_eq_mul, partialDeriv_coord, if_neg his, mul_zero, zero_add]
+        simp only [smul_eq_mul, partialDeriv_coord, ite_eq_right his, mul_zero, zero_add]
         by_cases hij : i = j
         · simp [hij]
         · simp [hij]
     · rw [hout j hjT]
       have hij : i ≠ j := by rintro rfl; exact hjT hiT
-      simp only [partialDeriv_coord, if_neg hij, map_zero, mul_zero]
+      simp only [partialDeriv_coord, ite_eq_right hij, map_zero, mul_zero]
   exact DFunLike.congr_fun hD f
 
 theorem partialDeriv_map_of_notMem
@@ -257,31 +214,31 @@ theorem coord_mul_partialDeriv_map_eq_map_sum
       · rw [Finset.sum_eq_single j]
         · simp [hj]
         · intro i _ hij
-          rw [if_neg hij]
+          rw [ite_eq_right hij]
         · intro h
           exact absurd hj h
-      · rw [if_neg hj]
+      · rw [ite_eq_right hj]
         refine Finset.sum_eq_zero fun i hi => ?_
         have hij : i ≠ j := by
           rintro rfl
           exact hj hi
-        rw [if_neg hij]
+        rw [ite_eq_right hij]
     rw [hsum]
     by_cases hjs : j = s
     · subst hjs
-      rw [hs, if_pos hsT, hs, partialDeriv_coord_self, mul_one]
+      rw [hs, ite_eq_left hsT, hs, partialDeriv_coord_self, mul_one]
     · by_cases hjT : j ∈ T
       · have h1 : partialDeriv k ι S₁ s (coord k ι S₁ s) = 1 :=
           partialDeriv_coord_self k ι S₁ s
         have h2 : partialDeriv k ι S₁ s (coord k ι S₁ j) = 0 :=
           partialDeriv_coord_of_ne k ι S₁ s j (Ne.symm hjs)
-        rw [if_pos hjT, hin j hjT hjs, Derivation.leibniz, h1, h2]
+        rw [ite_eq_left hjT, hin j hjT hjs, Derivation.leibniz, h1, h2]
         simp only [smul_eq_mul]
         ring
       · have hne : s ≠ j := by
           rintro rfl
           exact hjT hsT
-        rw [if_neg hjT, map_zero, hout j hjT,
+        rw [ite_eq_right hjT, map_zero, hout j hjT,
           partialDeriv_coord_of_ne k ι S₁ s j hne, mul_zero]
   exact DFunLike.congr_fun hD f
 

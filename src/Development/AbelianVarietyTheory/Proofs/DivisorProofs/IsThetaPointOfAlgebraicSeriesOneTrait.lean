@@ -65,7 +65,6 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.Mum
 
 noncomputable section
@@ -94,7 +93,7 @@ theorem exists_values_iso (hL : Laws) {R R' : Type} [CommRing R] [IsDomain R] [I
     IndivisibleSection.sval_of_secIsMul (p := D'.P.A.hom) hc' (show Sp F ⟶ _ from x.left) z (good ν' z)
   by_cases h : c = 0
   · subst h
-    refine exists_iso_of_th hD hL.globalFns hF ν ν' z 1 fun x => ?_
+    refine (exists_iso_of_th hD hL.globalFns hF ν ν' z 1 (fun x => ?_)).imp (fun _ h => ⟨h.1, h.2.2.2⟩)
     have e₁ := k₁ x
     rw [GenSecField.cst_zero', zero_mul] at e₁
     have e₂ := k₂ x
@@ -102,7 +101,7 @@ theorem exists_values_iso (hL : Laws) {R R' : Type} [CommRing R] [IsDomain R] [I
     exact ((key x).trans ((congrArg _ e₁).trans (mul_zero _))).trans ((congrArg _ e₂).trans (mul_zero _)).symm
   · let u : (FractionRing R')ˣ := Units.mk0 (algebraMap R' _ c) fun e =>
       h (IsFractionRing.injective R' (FractionRing R') (e.trans (map_zero _).symm))
-    refine exists_iso_of_th hD hL.globalFns hF ν ν' z (TauTwist.unitAt (Z := Sp F) (jFK (R := R') F) z u) fun x => ?_
+    refine (exists_iso_of_th hD hL.globalFns hF ν ν' z (TauTwist.unitAt (Z := Sp F) (jFK (R := R') F) z u) (fun x => ?_)).imp (fun _ h => ⟨h.1, h.2.2.2⟩)
     refine ((key x).trans (congrArg _ (k₁ x))).trans ((_root_.mul_assoc _ _ _).symm.trans (congrArg₂ (· * ·) ?_ rfl))
     rw [Units.val_mul, TauTwist.unitAt_val]
     refine (_root_.mul_comm _ _).trans (congrArg₂ (· * ·) ?_ rfl)

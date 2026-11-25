@@ -1,5 +1,6 @@
 module
 
+import all ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PairUnfoldPfB
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfC
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfE
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustFStatementPfE
@@ -183,16 +184,7 @@ noncomputable section
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : Data E r) (x0 : Frame X.Ψ r)
 
 private theorem cpt_continuous : Continuous fun z => cpt X x0 z := by
-  unfold cpt rmul nmat mat
-  refine continuous_pi fun τ => ?_
-  refine Continuous.matrix_mul continuous_const ?_
-  refine continuous_pi fun a => continuous_pi fun b => ?_
-  simp only [Matrix.of_apply]
-  split_ifs
-  · first
-      | fun_prop
-  · exact continuous_const
-  · exact continuous_const
+  apply _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.PairUnfoldPf.continuous_cpt_apply <;> assumption
 
 private theorem measurableSet_omF : MeasurableSet (OmF X x0) :=
   ((_root_.ReciprocityTheory.ChartRestriction.G.FD.FourierCoefficientDomain.isOpen_dom X).preimage (cpt_continuous X x0)).measurableSet

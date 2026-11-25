@@ -8,51 +8,9 @@ public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.Ab
 public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharacterOverSubfieldInducedClassFunction
 public import Mathlib.LinearAlgebra.PID
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BlockParabolicUnitriangularSubgroupsGLnPrimeFiel
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
 import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharacterOverSubfieldOfRepresentation
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -264,12 +222,12 @@ theorem isChar_fibre_mean : ∀ (P M : Type) [Group P] [Fintype P] [Group M] [Fi
     rw [Finset.sum_mul]
     refine Finset.sum_congr rfl fun x _ => ?_
     by_cases hx : π x = a
-    · rw [if_pos hx, if_pos hx, one_smul, Finset.mul_sum,
+    · rw [ite_eq_left hx, ite_eq_left hx, one_smul, Finset.mul_sum,
         ← Equiv.sum_comp (Equiv.mulLeft x) (fun y => if π y = a * b then V.ρ y else 0)]
       refine Finset.sum_congr rfl fun y _ => ?_
       simp only [Equiv.coe_mulLeft, map_mul, hx, mul_right_inj]
       split_ifs <;> simp
-    · rw [if_neg hx, if_neg hx, zero_mul, zero_smul]
+    · rw [ite_eq_right hx, ite_eq_right hx, zero_mul, zero_smul]
   have h := isChar_trace_of_mul (fun m => (Nat.card π.ker : ℂ)⁻¹ • S m) (fun a b => by
     rw [smul_mul_smul_comm, hS, smul_smul, mul_assoc, inv_mul_cancel₀ hc, mul_one])
   convert h using 2 with m
@@ -310,7 +268,7 @@ theorem sum_subgroup {G : Type} [Group G] [Fintype G] (P : Subgroup G) (Φ : P �
   · apply Finset.sum_congr rfl; intro x _; split_ifs <;> rfl
 
 theorem toG_val {g m : ℕ} [Fact g.Prime] {M : Mt g m} (h : IsUnit M) : ((toG M : Gn g m) : Mt g m) = M := by
-  unfold toG; rw [dif_pos h]; rfl
+  unfold toG; rw [dite_eq_left h]; rfl
 
 theorem card_ker_eq_sum {P M : Type} [Group P] [Fintype P] [Group M] (π : P →* M) :
     (Nat.card π.ker : ℂ) = ∑ p : P, if π p = 1 then (1 : ℂ) else 0 := by
@@ -365,12 +323,12 @@ theorem hc_isChar_and_res_decomp : ∀ (g : ℕ) [Fact g.Prime] (a b n : ℕ), n
     apply Finset.sum_congr rfl
     intro x _
     by_cases hx : x ∈ P
-    · rw [dif_pos hx]
+    · rw [dite_eq_left hx]
       have hx' := (hP x).1 hx
       by_cases h : tl a (x : Mt g n) = h₁ ∧ br a b (x : Mt g n) = h₂
-      · rw [if_pos ((hπ x hx h₁ h₂).2 h), if_pos ⟨hx', h⟩]
-      · rw [if_neg (fun e => h ((hπ x hx h₁ h₂).1 e)), if_neg (fun e => h e.2)]
-    · rw [dite_eq_right hx, if_neg (fun e => hx ((hP x).2 e.1))]
+      · rw [ite_eq_left ((hπ x hx h₁ h₂).2 h), ite_eq_left ⟨hx', h⟩]
+      · rw [ite_eq_right (fun e => h ((hπ x hx h₁ h₂).1 e)), ite_eq_right (fun e => h e.2)]
+    · rw [dite_eq_right hx, ite_eq_right (fun e => hx ((hP x).2 e.1))]
   have hNP : (Nat.card P : ℂ) = ((Finset.univ.filter fun p : Gn g n => InPar a (p : Mt g n)).card : ℂ) := by
     congr 1
     rw [Nat.card_eq_fintype_card, Fintype.card_subtype]
@@ -390,8 +348,8 @@ theorem hc_isChar_and_res_decomp : ∀ (g : ℕ) [Fact g.Prime] (a b n : ℕ), n
     apply Finset.sum_congr rfl
     intro y _
     by_cases hy : y⁻¹ * x * y ∈ P
-    · rw [dif_pos hy, if_pos ((hP _).1 hy), hπv]
-    · rw [dite_eq_right hy, if_neg (fun e => hy ((hP _).2 e))]
+    · rw [dite_eq_left hy, ite_eq_left ((hP _).1 hy), hπv]
+    · rw [dite_eq_right hy, ite_eq_right (fun e => hy ((hP _).2 e))]
   · intro χ hχ
     have hsurj : Function.Surjective π := by
       rintro ⟨h₁, h₂⟩

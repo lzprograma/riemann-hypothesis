@@ -144,10 +144,10 @@ theorem fill_eq (ρ : ℕ) (lρ : Fin c) (hl : lρ.val = ρ) (x : Matrix (n ⊕ 
   · have hF : ¬ Free (ρ + 1) (r, q) := fun hF => hI ((mem_transSet_union_upSet ρ _).2 hF)
     rw [dite_eq_right hI, dite_eq_right hF]
     by_cases hE : (r, q) ∈ (fixSet ρ ∪ lowSet ρ : Finset ((n ⊕ Fin c) × (n' ⊕ Fin (c + 1))))
-    · rw [if_pos hE]
+    · rw [ite_eq_left hE]
       simp only [fixSet, lowSet, Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and] at hE
       rcases r with r | l <;> rcases q with s | i <;> simp [basePt, rowAt, Free, Matrix.fromBlocks] at hF hE ⊢ <;> (try split_ifs) <;> first | rfl | (exfalso; omega) | (have hl' : l = lρ := Fin.ext (by omega); subst hl'; simp) | simp | omega
-    · rw [if_neg hE]
+    · rw [ite_eq_right hE]
       simp only [fixSet, lowSet, Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and] at hE
       rcases r with r | l <;> rcases q with s | i <;> simp [basePt, rowAt, Free, Matrix.fromBlocks] at hF hE ⊢ <;> (try split_ifs) <;> first | rfl | (exfalso; omega) | (have hl' : l = lρ := Fin.ext (by omega); subst hl'; simp)
 
@@ -456,8 +456,8 @@ theorem measurePreserving_adjoin {ι X : Type} [DecidableEq ι] [MeasurableSpace
       (fun (p : X × (I → X)) (i : ↥(insert e I : Finset ι)) => if h : i.1 ∈ I then p.2 ⟨i.1, h⟩ else p.1) := by
     refine Measurable.of_eval fun i => ?_
     by_cases h : i.1 ∈ I
-    · simp only [dif_pos h]; fun_prop
-    · simp only [dif_neg h]; fun_prop
+    · simp only [dite_eq_left h]; fun_prop
+    · simp only [dite_eq_right h]; fun_prop
   refine ⟨hm, (Measure.pi_eq fun s hs => ?_).symm⟩
   rw [Measure.map_apply hm (MeasurableSet.univ_pi hs)]
   have hpre : (fun (p : X × (I → X)) (i : ↥(insert e I : Finset ι)) =>
@@ -494,8 +494,8 @@ theorem integrable_red : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalS
     refine continuous_matrix fun r q => ?_
     simp only [fillAt, Matrix.of_apply]
     by_cases h : (r, q) ∈ I
-    · simp only [dif_pos h]; fun_prop
-    · simp only [dif_neg h]; fun_prop
+    · simp only [dite_eq_left h]; fun_prop
+    · simp only [dite_eq_right h]; fun_prop
   have hw : Continuous w := by
     have : (w : Matrix R Q k → k) = fun t => ∑ r, ∑ q, t r q * w (Matrix.single r q 1) := by
       funext t
@@ -535,8 +535,8 @@ theorem red_insert : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace
       · have h3 : (r, q) ∉ insert (r₀, q₀) I := by
           rw [Finset.mem_insert, not_or]; exact ⟨h2, h1⟩
         have h4 : ¬ (r₀ = r ∧ q₀ = q) := by rintro ⟨rfl, rfl⟩; exact h2 rfl
-        simp only [fillAt, Matrix.of_apply, dif_neg h1, dif_neg h3, Matrix.add_apply, Matrix.single_apply,
-          if_neg h4, add_zero]
+        simp only [fillAt, Matrix.of_apply, dite_eq_right h1, dite_eq_right h3, Matrix.add_apply, Matrix.single_apply,
+          ite_eq_right h4, add_zero]
   have h1 := hmp.integrable_comp_of_integrable hint
   unfold red
   rw [← hmp.map_eq, integral_map hmp.measurable.aemeasurable (by rw [hmp.map_eq]; exact hint.1)]
@@ -551,8 +551,8 @@ theorem exists_subgroup : ∀ (k : Type) [Field k] [ValuativeRel k] [Topological
     refine continuous_matrix fun r q => ?_
     simp only [Matrix.single_apply]
     by_cases h : e.1 = r ∧ e.2 = q
-    · simp only [if_pos h]; fun_prop
-    · simp only [if_neg h]; fun_prop
+    · simp only [ite_eq_left h]; fun_prop
+    · simp only [ite_eq_right h]; fun_prop
   have h1 : ∀ᶠ u in 𝓝 (0 : k), ∀ z ∈ tsupport Φ, Φ (z + Matrix.single e.1 e.2 u) = Φ z := by
     refine IsCompact.eventually_forall_of_forall_eventually hΦ.2 fun z _ => ?_
     have h2 : IsLocallyConstant fun q : k × Matrix R Q k => (Φ (q.2 + Matrix.single e.1 e.2 q.1), Φ q.2) :=
@@ -829,7 +829,7 @@ theorem fill_row_zero (ρ : ℕ) (l r : Fin c) (i : Fin (c + 1)) (hi : ρ < i.va
   · have h1 : (Sum.inr l, Sum.inl s) ∉ transSet (n := n) (n' := n') (c := c) ρ := by
       rw [mem_trans]; simp [Free]; omega
     have h2 : (Sum.inr l, Sum.inl s) ∈ E := hfix (by rw [mem_fix]; right; exact ⟨l, s, rfl, by omega, rfl⟩)
-    rw [dif_neg h1, if_pos h2]
+    rw [dite_eq_right h1, ite_eq_left h2]
     simp [basePt]
   · rw [mem_trans] at hq
     simp [Free] at hq
@@ -843,7 +843,7 @@ theorem fill_row_zero (ρ : ℕ) (l r : Fin c) (i : Fin (c + 1)) (hi : ρ < i.va
           rw [Finset.mem_filter, mem_low]
           exact ⟨⟨l, j, rfl, by omega, by omega⟩, by simp [colIx]; omega⟩)
     have hlj : l.val ≠ j.val := by omega
-    rw [dif_neg h1, if_pos h2]
+    rw [dite_eq_right h1, ite_eq_left h2]
     simp [basePt, hlj]
 
 theorem rowAdd_fill (ρ : ℕ) (l r : Fin c) (i : Fin (c + 1)) (hi : ρ < i.val) (hil : i.val ≤ l.val)
@@ -857,8 +857,8 @@ theorem rowAdd_fill (ρ : ℕ) (l r : Fin c) (i : Fin (c + 1)) (hi : ρ < i.val)
   ext p q
   rw [rowAdd_mul_apply]
   by_cases hpq : (p, q) ∈ transSet (n := n) (n' := n') (c := c) ρ
-  · conv_rhs => rw [fillAt, of_apply, dif_pos hpq]
-    conv_lhs => rw [fillAt, of_apply, dif_pos hpq]
+  · conv_rhs => rw [fillAt, of_apply, dite_eq_left hpq]
+    conv_lhs => rw [fillAt, of_apply, dite_eq_left hpq]
     rfl
   · have h0 : (if p = Sum.inr r then
         b * fillAt (basePt c (0 : Matrix n n' k)) E (transSet ρ) x y (Sum.inr l) q else 0) = 0 := by
@@ -867,7 +867,7 @@ theorem rowAdd_fill (ρ : ℕ) (l r : Fin c) (i : Fin (c + 1)) (hi : ρ < i.val)
         rw [fill_row_zero ρ l r i hi hil hr E hfix hlow x y q hpq, mul_zero]
       · rfl
     rw [h0, add_zero]
-    simp only [fillAt, of_apply, dif_neg hpq]
+    simp only [fillAt, of_apply, dite_eq_right hpq]
 
 omit [Fintype n'] [DecidableEq n'] in
 theorem ch_rowAdd (l r : Fin c) (i : Fin (c + 1)) (hr : r.val + 1 = i.val) (b : k)
@@ -903,7 +903,7 @@ theorem embA_elem_mem (r l : Fin c) (h : r ≠ l) (hrl : r.val < l.val) (a : k) 
     have : ¬ (r = r' ∧ l = s) := by
       rintro ⟨rfl, rfl⟩
       omega
-    rw [if_neg this, add_zero]
+    rw [ite_eq_right this, add_zero]
 
 theorem simpleSum_elem (r l : Fin c) (h : r ≠ l) (a : k) :
     simpleSum (embA n (elem r l h a)) = if l.val = r.val + 1 then a else 0 := by
@@ -915,14 +915,14 @@ theorem simpleSum_elem (r l : Fin c) (h : r ≠ l) (a : k) :
     simp only [fromBlocks_apply₂₂, transvection, Matrix.add_apply, single_apply]
     by_cases hij : j.val = i.val + 1
     · have hne : i ≠ j := fun h => by rw [h] at hij; omega
-      rw [if_pos hij, one_apply_ne hne, zero_add]
+      rw [ite_eq_left hij, one_apply_ne hne, zero_add]
       by_cases hi : i = r
       · subst hi
         by_cases hj : j = l
         · subst hj; simp [hij]
         · simp [hj, Ne.symm hj]
       · simp [hi, Ne.symm hi]
-    · rw [if_neg hij]
+    · rw [ite_eq_right hij]
       by_cases hi : i = r
       · subst hi
         by_cases hj : j = l
@@ -958,12 +958,12 @@ theorem evalLaw_low : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpac
   have hss : simpleSum (embA n u) = -(b * β (Sum.inr l) (Sum.inr i)) := by
     rw [hu, simpleSum_elem, hβli]
     by_cases h : l.val = i.val
-    · rw [if_pos (by omega), if_pos h]; ring
-    · rw [if_neg (by omega), if_neg h]; ring
+    · rw [ite_eq_left (by omega), ite_eq_left h]; ring
+    · rw [ite_eq_right (by omega), ite_eq_right h]; ring
   have hxli : ∀ x y, GlobalTheory.PartRed.fillAt β E T x y (Sum.inr l) (Sum.inr i) = x (Sum.inr l) (Sum.inr i) := by
     intro x y
     have h1 : (Sum.inr l, Sum.inr i) ∉ T := by rw [hT, mem_trans]; simp [Free]; omega
-    simp only [GlobalTheory.PartRed.fillAt, of_apply, dif_neg h1, if_neg hlE]
+    simp only [GlobalTheory.PartRed.fillAt, of_apply, dite_eq_right h1, ite_eq_right hlE]
   refine ⟨(ψ (-(b * β (Sum.inr l) (Sum.inr i))) : ℂ) • Φ₁, ?_, ?_⟩
   · rw [map_smul, hL1, smul_smul, hss, neg_neg, ← Circle.coe_mul, ← AddChar.map_add_eq_mul,
       neg_add_cancel, AddChar.map_zero_eq_one, Circle.coe_one, one_smul]
@@ -1009,7 +1009,7 @@ theorem evalLaw_low : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpac
     have hs_supp : ∀ (y : T → k) j, j ∉ S → s y j = 0 := by
       intro y j hj
       simp only [S, Finset.mem_filter, Finset.mem_univ, true_and] at hj
-      simp only [s, if_neg hj]
+      simp only [s, ite_eq_right hj]
     have hchg := _root_.GlobalTheory.CoordShear.integral_shear k ν hν T S s hs_cont hs_dep hs_supp G
     simp only [GlobalTheory.PartRed.red, Submodule.coe_smul, Pi.smul_apply, smul_eq_mul, GlobalTheory.PartRed.chL_apply]
     calc ∫ y : T → k, (ψ (-(b * β (Sum.inr l) (Sum.inr i))) : ℂ) * Φ₁.1 (GlobalTheory.PartRed.fillAt β E T x y) *
@@ -1088,7 +1088,7 @@ theorem elem_mem_N (ρ : ℕ) (l m : Fin c) (h : l ≠ m) (hlm : l.val < m.val) 
     embA n (elem l m h a) ∈ N k n c (ρ + 1) := by
   apply Subgroup.subset_closure
   intro r s hrs
-  rw [embA_elem_apply, if_neg, add_zero]
+  rw [embA_elem_apply, ite_eq_right, add_zero]
   rintro ⟨rfl, rfl⟩
   simp only [lev, Sum.elim_inr] at hrs
   omega
@@ -1116,7 +1116,7 @@ theorem fill_low (hI : I ⊆ transSet ρ ∪ upSet ρ) (x : Matrix (n ⊕ Fin c)
     apply Finset.mem_union_left
     simp only [fixSet, Finset.mem_filter, Finset.mem_univ, true_and]
     exact Or.inl ⟨j, rfl, hm, hf⟩
-  simp only [fillAt, Matrix.of_apply, dif_neg h1, if_pos h2]
+  simp only [fillAt, Matrix.of_apply, dite_eq_right h1, ite_eq_left h2]
   simp [basePt]
 
 def shear (ρ : ℕ) (I : Finset ((n ⊕ Fin c) × (n' ⊕ Fin (c + 1)))) (l m : Fin c) (a : k)
@@ -1134,14 +1134,14 @@ theorem elem_mul_fill (l m : Fin c) (i : Fin (c + 1)) (h : l ≠ m) (hmi : m.val
   ext r q
   rw [embA_elem_mul]
   by_cases hr : (r, q) ∈ I
-  · conv_rhs => rw [fillAt, Matrix.of_apply, dif_pos hr]
-    conv_lhs => enter [1]; rw [fillAt, Matrix.of_apply, dif_pos hr]
+  · conv_rhs => rw [fillAt, Matrix.of_apply, dite_eq_left hr]
+    conv_lhs => enter [1]; rw [fillAt, Matrix.of_apply, dite_eq_left hr]
     rfl
-  · conv_rhs => rw [fillAt, Matrix.of_apply, dif_neg hr]
-    conv_lhs => enter [1]; rw [fillAt, Matrix.of_apply, dif_neg hr]
+  · conv_rhs => rw [fillAt, Matrix.of_apply, dite_eq_right hr]
+    conv_lhs => enter [1]; rw [fillAt, Matrix.of_apply, dite_eq_right hr]
     by_cases hrl : r = Sum.inr l
     · subst hrl
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       have hT : ∀ q : n' ⊕ Fin (c + 1), Free (ρ + 1) ((Sum.inr l, q) : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1))) →
           (∀ j, q = Sum.inr j → ρ < j.val) → (Sum.inr l, q) ∈ I := by
         intro q hq hq'
@@ -1163,7 +1163,7 @@ theorem elem_mul_fill (l m : Fin c) (i : Fin (c + 1)) (h : l ≠ m) (hmi : m.val
             exact ⟨⟨l, j, rfl, by omega, by omega⟩, by simp only [colIx, Sum.elim_inr]; omega⟩
         rw [fill_low hI x y m j (by omega) (by omega)]
         by_cases hE : ((Sum.inr l, Sum.inr j) : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1))) ∈ fixSet ρ ∪ lowSet ρ
-        · rw [if_pos hE, if_pos hE]
+        · rw [ite_eq_left hE, ite_eq_left hE]
           have : j.val ≤ l.val := by
             rcases Finset.mem_union.1 hE with h | h
             · simp only [fixSet, Finset.mem_filter, Finset.mem_univ, true_and] at h
@@ -1175,16 +1175,16 @@ theorem elem_mul_fill (l m : Fin c) (i : Fin (c + 1)) (h : l ≠ m) (hmi : m.val
               obtain ⟨l', j', e, -, hf⟩ := h
               cases e
               exact hf
-          rw [if_neg (by omega)]
+          rw [ite_eq_right (by omega)]
           simp
-        · rw [if_neg hE, if_neg hE, Matrix.add_apply]
+        · rw [ite_eq_right hE, ite_eq_right hE, Matrix.add_apply]
           congr 1
           by_cases hij : i = j
           · subst hij
             simp [hmi]
           · have : ¬ m.val = j.val := fun e => hij (Fin.ext (by omega))
             simp [this, hij]
-    · rw [if_neg hrl, add_zero, Matrix.add_apply, Matrix.single_apply_of_ne _ _ _ _ _ (fun e => hrl e.1.symm), add_zero]
+    · rw [ite_eq_right hrl, add_zero, Matrix.add_apply, Matrix.single_apply_of_ne _ _ _ _ _ (fun e => hrl e.1.symm), add_zero]
 
 theorem ch_elem_mul (l m : Fin c) (h : l ≠ m) (a : k) (t : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k) :
     ch ((embA n (elem l m h a)).val * t) = ch t + a * t (Sum.inr m) (Sum.inr l.succ) := by
@@ -1252,7 +1252,7 @@ theorem intLaw_up : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace 
       · rfl
     · intro y j hj
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hj
-      simp only [shear, if_neg hj]
+      simp only [shear, ite_eq_right hj]
 
 end GlobalTheory.PartRed.UpperLaw
 end -- clump:auto

@@ -2,49 +2,7 @@ module
 
 public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupCartier
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -197,29 +155,6 @@ theorem comap_specIdealSheaf_ideal_eq_span {R : Type u} [CommRing R] (I : Ideal 
   rw [comap_specIdealSheaf_ideal I (h ≫ AffineBlowup.toSpec I) V, h2,
     chartSectionsRingHom_chartRingHom I h a (V : W.Opens) hV (a : R)]
 
-private theorem mem_nonZeroDivisors_of_span_singleton_eq {B : Type u} [CommRing B] {s t : B}
-    (hs : s ∈ nonZeroDivisors B)
-    (hst : Ideal.span ({s} : Set B) = Ideal.span ({t} : Set B)) :
-    t ∈ nonZeroDivisors B := by
-  obtain ⟨hs1, hs2⟩ := mem_nonZeroDivisors_iff.mp hs
-  have h1 : t ∈ Ideal.span ({s} : Set B) := by
-    rw [hst]; exact Ideal.mem_span_singleton_self t
-  have h2 : s ∈ Ideal.span ({t} : Set B) := by
-    rw [← hst]; exact Ideal.mem_span_singleton_self s
-  obtain ⟨u, hu⟩ := Ideal.mem_span_singleton'.mp h1
-  obtain ⟨v, hv⟩ := Ideal.mem_span_singleton'.mp h2
-  have h3 : v * (u * s) = s := by rw [hu, hv]
-  have hss : s * (1 - v * u) = 0 := by linear_combination -h3
-  have h4 : (1 : B) - v * u = 0 := hs1 _ hss
-  have hvu : v * u = 1 := by linear_combination -h4
-  have key : ∀ y : B, t * y = 0 → y = 0 := by
-    intro y hy
-    have h5 : s * (u * y) = 0 := by linear_combination hy + y * hu
-    have h6 : u * y = 0 := hs1 _ h5
-    linear_combination v * h6 - y * hvu
-  rw [mem_nonZeroDivisors_iff]
-  exact ⟨key, fun y hy => key y (by rw [mul_comm]; exact hy)⟩
-
 private theorem map_sectionsRingHom_restrict {R : Type u} [CommRing R] (I : Ideal R)
     {W : Scheme.{u}} (g : W ⟶ Spec (CommRingCat.of R)) {V V' : W.Opens} (hV : V' ≤ V) :
     Ideal.map (sectionsRingHom g V') I
@@ -237,14 +172,6 @@ private theorem exists_mem_opensRange_affineBlowupChart {R : Type u} [CommRing R
   have hp : p ∈ (⨆ c : ↥I, (affineBlowupChart I c).opensRange) := by
     rw [hcov]; trivial
   simpa using hp
-
-private theorem restrict_basicOpen_mem_nonZeroDivisors {W : Scheme.{u}} {U : W.Opens}
-    (hU : IsAffineOpen U) (r : ↥Γ(W, U)) {s : ↥Γ(W, U)} (hs : s ∈ nonZeroDivisors ↥Γ(W, U))
-    (hle : W.basicOpen r ≤ U) :
-    (W.presheaf.map (homOfLE hle).op).hom s ∈ nonZeroDivisors ↥Γ(W, W.basicOpen r) := by
-  have := hU.isLocalization_basicOpen r
-  exact IsLocalization.nonZeroDivisors_le_comap (Submonoid.powers r)
-    ↥Γ(W, W.basicOpen r) hs
 
 private theorem isLocalizationElem_eq_chartFraction {R : Type u} [CommRing R] (I : Ideal R)
     (c a : ↥I) :
@@ -382,10 +309,16 @@ theorem mem_opensRange_affineBlowupChart_of_ideal_eq_span {R : Type u} [CommRing
       (comap_specIdealSheaf_ideal I (h ≫ AffineBlowup.toSpec I) Uaff).symm.trans hUspan
     rw [map_sectionsRingHom_restrict I (h ≫ AffineBlowup.toSpec I) hVU, e1, Ideal.map_span,
       Set.image_singleton]
+  have hgnzd' : (W.presheaf.map (homOfLE hVU).op).hom g
+      ∈ nonZeroDivisors ↥Γ(W, W.basicOpen r) := by
+    have := Uaff.2.isLocalization_basicOpen r
+    exact IsLocalization.nonZeroDivisors_le_comap (Submonoid.powers r) ↥Γ(W, W.basicOpen r) hgnzd
+  obtain ⟨d, hd⟩ := Ideal.mem_span_singleton'.mp (by
+    rw [← hmapSpan, hmapEq]
+    exact Ideal.mem_span_singleton_self _)
   have hcnzd : sectionsRingHom (h ≫ AffineBlowup.toSpec I) (W.basicOpen r) (c : R)
       ∈ nonZeroDivisors ↥Γ(W, W.basicOpen r) :=
-    mem_nonZeroDivisors_of_span_singleton_eq (restrict_basicOpen_mem_nonZeroDivisors Uaff.2 r hgnzd hVU)
-      (hmapEq.symm.trans hmapSpan)
+    (mul_mem_nonZeroDivisors.mp (hd ▸ hgnzd')).2
   have hkey : sectionsRingHom (h ≫ AffineBlowup.toSpec I) (W.basicOpen r) (a : R)
       = chartSectionsRingHom I h c (W.basicOpen r) hVc (chartFraction I c a) *
         sectionsRingHom (h ≫ AffineBlowup.toSpec I) (W.basicOpen r) (c : R) := by

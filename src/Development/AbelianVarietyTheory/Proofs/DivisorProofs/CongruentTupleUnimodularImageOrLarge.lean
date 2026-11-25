@@ -488,7 +488,7 @@ theorem dichotomy : ∀ (O : Type) [CommRing O] [Module.Finite ℤ O] (bar : O �
   refine ⟨⌈M⌉₊ + ⌈(r : ℝ) ^ r * M ^ r⌉₊ + 3, ?_⟩
   intro N hN X _ _ _ _ _ _ β hβ hp lam hlam hlow k μ hk hμ
   refine or_iff_not_imp_right.2 fun hlt => ?_
-  push_neg at hlt
+  push Not at hlt
   set s0 : ℤ := ∑ i, β (μ i) (μ i) with hs0def
   have hs0 : 0 ≤ s0 := Finset.sum_nonneg fun i _ => hp _
   have hsym := hβ.1

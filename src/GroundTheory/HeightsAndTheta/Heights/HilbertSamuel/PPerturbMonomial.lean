@@ -93,61 +93,18 @@ theorem isSmallH_mul (y : (Σ k, ι k) → Ω) (A B C : HermLine ι) (hCa : ∀ 
     (hbs : IsSmallH (mCoordIdeal y) y A 1 s) (hbt : IsSmallH (mCoordIdeal y) y B 1 t) :
     IsSmallH (mCoordIdeal y) y C 1 (s * t) := by
   intro dg dh g h z hg hh hdeg he hz
-  obtain ⟨c, hc, hy⟩ := exists_chart y hz
-  obtain ⟨N, dgs, gs, hgs, hdgs, hvs⟩ := exists_chartForm y A.a 1 hs c hy
-  obtain ⟨M, dgt, gt, hgt, hdgt, hvt⟩ := exists_chartForm y B.a 1 ht c hy
-  have bs := hbs dgs N gs (chartMono c N) z hgs (isMultiHomog_chartMono c N) hdgs hvs hz
-  have bt := hbt dgt M gt (chartMono c M) z hgt (isMultiHomog_chartMono c M) hdgt hvt hz
-
-  have hdeq : dgs + dgt + dh = dg + (N + M) := by
-    funext k
-    have e1 := hdgs k
-    have e2 := hdgt k
-    have e3 := hdeg k
-    have e4 := hCa k
-    simp only [Pi.add_apply]
-    have : ((dgs k + dgt k + dh k : ℕ) : ℤ) = ((dg k + (N k + M k) : ℕ) : ℤ) := by
-      push_cast at e1 e2 e3 ⊢
-      linear_combination e1 + e2 - e3 - e4
-    exact_mod_cast this
-  have hF : IsMultiHomog (gs * gt * h - g * chartMono c (N + M)) (dgs + dgt + dh) := by
-    refine isMultiHomog_sub (isMultiHomog_mul (isMultiHomog_mul hgs hgt) hh) ?_
-    rw [hdeq]
-    exact isMultiHomog_mul hg (isMultiHomog_chartMono c (N + M))
-  have hmono : ∀ (w : (Σ k, ι k) → Ω), aeval w (chartMono c (N + M)) =
-      aeval w (chartMono c N) * aeval w (chartMono c M) := fun w => by
-    rw [aeval_chartMono, aeval_chartMono, aeval_chartMono, ← Finset.prod_mul_distrib]
-    exact Finset.prod_congr rfl fun k _ => by rw [Pi.add_apply, pow_add]
-  have hF0 : aeval y (gs * gt * h - g * chartMono c (N + M)) = 0 := by
-    rw [map_sub, map_mul, map_mul, map_mul, hvs, hvt, he, hmono]
-    ring
-  have hz0 := hz.2 _ (mem_mCoordIdeal_of_aeval_eq_zero y hF hF0)
-  simp only [map_sub, map_mul] at hz0
-  rw [sub_eq_zero] at hz0
-
-  set ev : MRing ι → ℂ := fun f => eval z (map (Int.castRingHom ℂ) f) with hev
-  have hmz : ev (chartMono c (N + M)) = ev (chartMono c N) * ev (chartMono c M) := by
-    simp only [hev, eval_chartMono, ← Finset.prod_mul_distrib]
-    exact Finset.prod_congr rfl fun k _ => by rw [Pi.add_apply, pow_add]
-  have hpos : 0 < ‖ev (chartMono c N)‖ * ‖ev (chartMono c M)‖ := by
-    refine mul_pos (norm_pos_iff.mpr ?_) (norm_pos_iff.mpr ?_) <;>
-    · simp only [hev, eval_chartMono]
-      exact Finset.prod_ne_zero_iff.mpr fun k _ => pow_ne_zero _ (hc k)
-  have key : ‖ev g‖ * (‖ev (chartMono c N)‖ * ‖ev (chartMono c M)‖) =
-      ‖ev gs‖ * ‖ev gt‖ * ‖ev h‖ := by
-    rw [← norm_mul, ← hmz, ← norm_mul, ← norm_mul, ← norm_mul]
-    exact congrArg norm hz0.symm
-  have hprod : ‖ev gs‖ * ‖ev gt‖ ≤
-      (‖ev (chartMono c N)‖ * A.h z ^ 1) * (‖ev (chartMono c M)‖ * B.h z ^ 1) :=
-    mul_le_mul bs bt (norm_nonneg _) ((norm_nonneg _).trans bs)
-  refine le_of_mul_le_mul_right ?_ hpos
-  rw [key]
-  calc ‖ev gs‖ * ‖ev gt‖ * ‖ev h‖
-      ≤ (‖ev (chartMono c N)‖ * A.h z ^ 1) * (‖ev (chartMono c M)‖ * B.h z ^ 1) * ‖ev h‖ :=
-        mul_le_mul_of_nonneg_right hprod (norm_nonneg _)
-    _ = ‖ev h‖ * C.h z ^ 1 * (‖ev (chartMono c N)‖ * ‖ev (chartMono c M)‖) := by
-        rw [hCh]
-        ring
+  have hle := section_mul_bound y A.a B.a 1 1 (A.h z ^ 1) (B.h z ^ 1) s t hs ht hg hh
+    (fun k => by have e3 := hdeg k; have e4 := hCa k; push_cast at e3 ⊢; linear_combination e3 + e4)
+    he hz
+    (fun c dgs N gs hgs hdgs hvs => by
+      have := hbs dgs N gs (chartMono c N) z hgs (isMultiHomog_chartMono c N) hdgs hvs hz
+      linarith)
+    (fun c dgt M gt hgt hdgt hvt => by
+      have := hbt dgt M gt (chartMono c M) z hgt (isMultiHomog_chartMono c M) hdgt hvt hz
+      linarith)
+  calc ‖eval z (map (Int.castRingHom ℂ) g)‖
+      ≤ A.h z ^ 1 * B.h z ^ 1 * ‖eval z (map (Int.castRingHom ℂ) h)‖ := hle
+    _ = ‖eval z (map (Int.castRingHom ℂ) h)‖ * C.h z ^ 1 := by rw [hCh]; ring
 
 theorem smallGen_mul (y : (Σ k, ι k) → Ω) (A B C : HermLine ι) (hCa : C.a = A.a + B.a)
     (hCh : ∀ z, C.h z = A.h z * B.h z) (hA : SmallGen y A) (hB : SmallGen y B) : SmallGen y C := by
@@ -203,7 +160,7 @@ theorem smallGen_fsH (y : (Σ k, ι k) → Ω) : SmallGen y (fsH ι) := by
     refine ⟨fun j => if e.symm j = c then 1 else 0, fun j => by beta_reduce; split_ifs <;> simp, ?_⟩
     rw [Fintype.sum_equiv e.symm _ (fun i => (if i = c then (1 : Ω) else 0) *
       (aeval y (chartMono i 1) * ∏ k, y ⟨k, c k⟩ ^ (-(fsH ι).a k))) (fun _ => rfl)]
-    simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [aeval_chartMono, ← Finset.prod_mul_distrib]
     exact Finset.prod_eq_one fun k _ => by simp [fsH_a, hc k]
   · intro dg dh g h z hg hh hdeg he hz
@@ -285,7 +242,7 @@ theorem chartMono_exponent (c : ∀ k, ι k) (d : K → ℕ) :
   refine ⟨∑ k, Finsupp.single (⟨k, c k⟩ : Σ k, ι k) (d k), fun k => ?_, fun z => ?_⟩
   · simp only [Finsupp.finsetSum_apply]
     rw [Finset.sum_comm]
-    simp only [sum_single_apply, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [sum_single_apply, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   · have h : chartMono c d = monomial (∑ k, Finsupp.single (⟨k, c k⟩ : Σ k, ι k) (d k)) (1 : ℤ) := by
       rw [chartMono, monomial_sum_one]
       exact Finset.prod_congr rfl fun k _ => X_pow_eq_monomial
@@ -310,7 +267,7 @@ theorem smallGen_of_monomialsBounded (y : (Σ k, ι k) → Ω) (A : HermLine ι)
     refine ⟨fun j => if e.symm j = c then 1 else 0, fun j => by beta_reduce; split_ifs <;> simp, ?_⟩
     rw [Fintype.sum_equiv e.symm _ (fun i => (if i = c then (1 : Ω) else 0) *
       (aeval y (chartMono i a) * ∏ k, y ⟨k, c k⟩ ^ (-A.a k))) (fun _ => rfl)]
-    simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [aeval_chartMono, ← Finset.prod_mul_distrib]
     exact Finset.prod_eq_one fun k _ => by
       simp [ha, zpow_neg, zpow_natCast, mul_inv_cancel₀ (pow_ne_zero _ (hc k))]

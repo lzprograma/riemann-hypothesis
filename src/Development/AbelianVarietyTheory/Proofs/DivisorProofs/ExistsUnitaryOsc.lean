@@ -108,32 +108,6 @@ theorem inner_proj_left (hJ : ∀ x, J (J x) = -x) (h : IsHeis (omJ J) ρ) (x y 
   refine integral_congr_ae (Filter.Eventually.of_forall fun u => ?_)
   simp only [map_mul, conj_gau, inner_conj_symm, gau_neg, h.inner_left hJ]
 
-theorem integral_gau_mul_gau : ∫ u : V, gau u * gau u = 1 := by
-  have hpi : (π : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
-  have key := GaussianFourier.integral_cexp_neg_mul_sq_norm (V := V) (b := (π : ℂ))
-    (by simpa using Real.pi_pos)
-  rw [div_self hpi, one_cpow] at key
-  rw [← key]
-  refine integral_congr_ae (Filter.Eventually.of_forall fun u => ?_)
-  simp only [gau, ← Complex.exp_add]
-  congr 1
-  ring
-
-theorem proj_idem (hJ : ∀ x, J (J x) = -x) (h : IsHeis (omJ J) ρ) (x : H) :
-    proj h (proj h x) = proj h x := by
-  have := proj_heis_proj hJ h 0 x
-  rwa [h.1, gau_zero, one_smul] at this
-
-theorem proj_eq_self_of_vacuum (hJ : ∀ x, J (J x) = -x) (h : IsHeis (omJ J) ρ) {v : H}
-    (hv : ∀ a, ⟪v, ρ a v⟫_ℂ = gau a * ⟪v, v⟫_ℂ) : proj h v = v := by
-  have h1 : ⟪v, proj h v⟫_ℂ = ⟪v, v⟫_ℂ := by
-    rw [inner_proj_right]
-    simp only [hv, ← mul_assoc]
-    rw [integral_mul_const, integral_gau_mul_gau, one_mul]
-  rw [← sub_eq_zero, ← inner_self_eq_zero (𝕜 := ℂ), inner_sub_left, inner_sub_right, inner_sub_right,
-    inner_proj_left hJ, inner_proj_left hJ, proj_idem hJ, h1]
-  ring
-
 theorem eq_zero_of_orthogonal_translates_proj (hJ : ∀ x, J (J x) = -x) (h : IsHeis (omJ J) ρ) {x : H}
     (hx : ∀ y a, ⟪ρ a (proj h y), x⟫_ℂ = 0) : x = 0 := by
   have h1 : ∀ a, proj h (ρ (-a) x) = 0 := fun a => by
@@ -144,12 +118,6 @@ theorem eq_zero_of_orthogonal_translates_proj (hJ : ∀ x, J (J x) = -x) (h : Is
   simp [h1]
 
 end Abstract
-
-theorem gau_toLp {ι : Type} [Fintype ι] (z : EuclideanSpace ℂ ι) :
-    gau z = Complex.exp (-(Real.pi / 2) * ∑ a, ((‖z a‖ ^ 2 : ℝ) : ℂ)) := by
-  rw [gau, ← ofReal_sum, ← EuclideanSpace.norm_sq_eq]
-  push_cast
-  rfl
 
 end GlobalTheory.RealWeil
 end -- clump:auto
@@ -242,24 +210,7 @@ private theorem exists_unitary_hom_extending_of_dense_isometric {G : Type} [Grou
 
 open Matrix MeasureTheory Complex in
 open scoped InnerProductSpace in
-private theorem dP_sign_fromBlocks_diagonal_eq_det (p q : ℕ) (A : Matrix (Fin p) (Fin p) ℂ)
-    (D : Matrix (Fin q) (Fin q) ℂ) :
-    _root_.GlobalTheory.RealWeil.dP (fromBlocks (1 : Matrix (Fin p) (Fin p) ℂ) 0 0 (-1 : Matrix (Fin q) (Fin q) ℂ))
-      (fromBlocks A 0 0 D) = A.det := by
-  unfold _root_.GlobalTheory.RealWeil.dP
-  have h1b : (1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) = fromBlocks 1 0 0 1 := fromBlocks_one.symm
-  have : (1 / 2 : ℂ) • ((1 + fromBlocks (1 : Matrix (Fin p) (Fin p) ℂ) 0 0 (-1 : Matrix (Fin q) (Fin q) ℂ)) *
-      fromBlocks A 0 0 D) + (1 / 2 : ℂ) • (1 - fromBlocks (1 : Matrix (Fin p) (Fin p) ℂ) 0 0
-      (-1 : Matrix (Fin q) (Fin q) ℂ)) = fromBlocks A 0 0 1 := by
-    rw [h1b]
-    simp only [sub_eq_add_neg, fromBlocks_neg, fromBlocks_add, fromBlocks_multiply, fromBlocks_smul]
-    congr 1 <;> ext i j <;> simp [Matrix.one_apply, Matrix.add_mul] <;> (try split_ifs) <;> ring
-  rw [this, det_fromBlocks_zero₂₁, det_one, mul_one]
-
-
-open Matrix MeasureTheory Complex in
-open scoped InnerProductSpace in
-theorem _root_.GlobalTheory.FockRep.exists_unitary_osc : ∀ (p q : ℕ) (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (ρ : (Fin p ⊕ Fin q → ℂ) → (H ≃ₗᵢ[ℂ] H)), (∀ v, Continuous fun z => ρ z v) → (∀ z w v, ρ z (ρ w v) = Complex.exp (Real.pi * Complex.I * ((∑ i, z (Sum.inl i) * star (w (Sum.inl i))) - ∑ j, z (Sum.inr j) * star (w (Sum.inr j))).im) • ρ (z + w) v) → ∃ ω : _root_.GlobalTheory.WeilM.UG (Complex.conjAe : ℂ →ₐ[ℝ] ℂ) (Matrix.fromBlocks (1 : Matrix (Fin p) (Fin p) ℂ) 0 0 (-1 : Matrix (Fin q) (Fin q) ℂ)) →* (H ≃ₗᵢ[ℂ] H), (∀ v, Continuous fun g => ω g v) ∧ (∀ g z v, ω g (ρ z v) = ρ ((g.1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) *ᵥ z) (ω g v)) ∧ (∀ A : H →L[ℂ] H, (∀ z v, A (ρ z v) = ρ z (A v)) → ∀ g v, A (ω g v) = ω g (A v)) ∧ ∀ g, (g.1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ).toBlocks₁₂ = 0 → (g.1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ).toBlocks₂₁ = 0 → ∀ v, (∀ z, ⟪v, ρ z v⟫_ℂ = Complex.exp (-(Real.pi / 2) * ∑ a, ((‖z a‖ ^ 2 : ℝ) : ℂ)) * ⟪v, v⟫_ℂ) → ω g v = (g.1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ).toBlocks₁₁.det • v := by
+theorem _root_.GlobalTheory.FockRep.exists_unitary_osc : ∀ (p q : ℕ) (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (ρ : (Fin p ⊕ Fin q → ℂ) → (H ≃ₗᵢ[ℂ] H)), (∀ v, Continuous fun z => ρ z v) → (∀ z w v, ρ z (ρ w v) = Complex.exp (Real.pi * Complex.I * ((∑ i, z (Sum.inl i) * star (w (Sum.inl i))) - ∑ j, z (Sum.inr j) * star (w (Sum.inr j))).im) • ρ (z + w) v) → ∃ ω : _root_.GlobalTheory.WeilM.UG (Complex.conjAe : ℂ →ₐ[ℝ] ℂ) (Matrix.fromBlocks (1 : Matrix (Fin p) (Fin p) ℂ) 0 0 (-1 : Matrix (Fin q) (Fin q) ℂ)) →* (H ≃ₗᵢ[ℂ] H), (∀ v, Continuous fun g => ω g v) ∧ (∀ g z v, ω g (ρ z v) = ρ ((g.1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) *ᵥ z) (ω g v)) := by
   intro p q H _ _ _ ρ hρc hρm
   let S : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ :=
     Matrix.fromBlocks (1 : Matrix (Fin p) (Fin p) ℂ) 0 0 (-1 : Matrix (Fin q) (Fin q) ℂ)
@@ -348,10 +299,10 @@ theorem _root_.GlobalTheory.FockRep.exists_unitary_osc : ∀ (p q : ℕ) (H : Ty
     have n4 := (hd (g * g')⁻¹).1
     rw [h, (hd (g * g')).2.2]
     field_simp
-  obtain ⟨Ω, hosc, hcont, hvac⟩ := _root_.GlobalTheory.RealWeil.Osc.exists_isOsc
+  obtain ⟨Ω, hosc, hcont, -⟩ := _root_.GlobalTheory.RealWeil.Osc.exists_isOsc
     (EuclideanSpace ℂ (Fin p ⊕ Fin q)) H (_root_.GlobalTheory.RealWeil.UnitaryOsc.cplx S hS1 hS2) ρE hJ hρE ↥G k
     (fun g => _root_.GlobalTheory.RealWeil.dP S (m g)) hk (by simp [_root_.GlobalTheory.RealWeil.UnitaryOsc.detPlus_one₂]) hc2 hc3
-  obtain ⟨hadd, hsmul, hsm, hone, hmul, hint, hcomm, hnormΦ⟩ := hosc
+  obtain ⟨hadd, hsmul, hsm, hone, hmul, hint, -, hnormΦ⟩ := hosc
   let D := _root_.GlobalTheory.FockRep.smSub ρE
   have hmemD : ∀ f, f ∈ D ↔ _root_.GlobalTheory.RealWeil.Sm ρE f := fun f => Iff.rfl
   have hD : Dense (D : Set H) := by
@@ -374,7 +325,7 @@ theorem _root_.GlobalTheory.FockRep.exists_unitary_osc : ∀ (p q : ℕ) (H : Ty
     have e1 : (fun g : ↥G => ω g f) = fun g => Ω (id g) f := funext fun g => hω g f hf
     rw [e1]
     exact h
-  refine ⟨ω, fun v => ?_, fun g z v => ?_, fun A hA g v => ?_, fun g h12 h21 v hv => ?_⟩
+  refine ⟨ω, fun v => ?_, fun g z v => ?_⟩
   · refine continuous_of_uniform_approx_of_continuous fun u hu => ?_
     obtain ⟨ε, hε, hεu⟩ := Metric.mem_uniformity_dist.1 hu
     obtain ⟨f, hf, hvf⟩ := hD.exists_dist_lt v hε
@@ -387,52 +338,6 @@ theorem _root_.GlobalTheory.FockRep.exists_unitary_osc : ∀ (p q : ℕ) (H : Ty
     refine hD.induction (P := fun v => ω g (ρE x v) = ρE (k g x) (ω g v)) (fun f hf => ?_)
       (isClosed_eq ((ω g).continuous.comp (ρE x).continuous) ((ρE (k g x)).continuous.comp (ω g).continuous)) v
     rw [hω g _ ((hmemD _).2 (_root_.GlobalTheory.RealWeil.Osc.sm_heis hρE x hf)), hint g x f hf, hω g f hf]
-  · refine hD.induction (P := fun v => A (ω g v) = ω g (A v)) (fun f hf => ?_)
-      (isClosed_eq (A.continuous.comp (ω g).continuous) ((ω g).continuous.comp A.continuous)) v
-    have hf' : _root_.GlobalTheory.RealWeil.Sm ρE f := hf
-    have hAf : _root_.GlobalTheory.RealWeil.Sm ρE (A f) := by
-      have h1 : (fun x => ρE x (A f)) = fun x => (A.restrictScalars ℝ) (ρE x f) :=
-        funext fun x => (hA _ f).symm
-      unfold _root_.GlobalTheory.RealWeil.Sm at hf' ⊢
-      rw [h1]
-      exact (A.restrictScalars ℝ).contDiff.comp hf'
-    rw [hω g f hf, hω g _ hAf, hcomm g A (fun x f => hA _ f) f hf']
-  · have hPv : _root_.GlobalTheory.RealWeil.proj hρE v = v :=
-      _root_.GlobalTheory.RealWeil.proj_eq_self_of_vacuum hJ hρE (fun a => by
-        rw [_root_.GlobalTheory.RealWeil.gau_toLp]
-        exact hv _)
-    have hsm_v : _root_.GlobalTheory.RealWeil.Sm ρE v := by
-      rw [← hPv]
-      exact _root_.GlobalTheory.RealWeil.Good.sm hJ (_root_.GlobalTheory.RealWeil.Osc.good_proj hJ hρE v)
-    have hM : (g.1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) =
-        fromBlocks (g.1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ).toBlocks₁₁ 0 0
-          (g.1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ).toBlocks₂₂ := by
-      conv_lhs => rw [← Matrix.fromBlocks_toBlocks (g.1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ)]
-      rw [h12, h21]
-    have hu := hunit g
-    rw [hm_apply, hM] at hu
-    simp only [S, fromBlocks_conjTranspose, fromBlocks_multiply, conjTranspose_zero, Matrix.mul_zero,
-      Matrix.zero_mul, add_zero, zero_add, Matrix.mul_one, Matrix.mul_neg, fromBlocks_inj] at hu
-    obtain ⟨h1, -, -, h2⟩ := hu
-    have h2' : ((g.1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ).toBlocks₂₂)ᴴ *
-        (g.1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ).toBlocks₂₂ = 1 := by
-      simpa using congrArg Neg.neg h2
-    have hgu : (m g)ᴴ * m g = 1 := by
-      rw [hm_apply, hM]
-      simp only [fromBlocks_conjTranspose, fromBlocks_multiply, conjTranspose_zero, Matrix.mul_zero,
-        Matrix.zero_mul, add_zero, zero_add, h1, h2', fromBlocks_one]
-    have hiso : ∀ x, ‖k g x‖ = ‖x‖ := _root_.GlobalTheory.RealWeil.UnitaryOsc.norm_kL hgu
-    have hP1 : ∫ u, _root_.GlobalTheory.RealWeil.gau u • ρE (k 1 u) v = v := by
-      simp only [map_one, ContinuousLinearMap.one_apply]
-      rw [← _root_.GlobalTheory.RealWeil.proj_apply hρE]
-      exact hPv
-    have h3 := hvac 1 g hiso v hsm_v hP1
-    simp only [one_mul, inv_one, mul_one] at h3
-    rw [hω g v hsm_v, h3]
-    show _root_.GlobalTheory.RealWeil.dP S (m g) • v = _
-    rw [hm_apply]
-    conv_lhs => rw [hM]
-    rw [dP_sign_fromBlocks_diagonal_eq_det]
 
 end GlobalTheory.FockRep
 end -- clump:auto

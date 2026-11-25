@@ -181,11 +181,6 @@ theorem mem_span_singleton_pow_iff {w x : O} {n : ℕ} :
     x ∈ Ideal.span {w} ^ n ↔ ‖algebraMap O C x‖ ≤ ‖algebraMap O C w‖ ^ n := by
   rw [Ideal.span_singleton_pow, Ideal.mem_span_singleton, dvd_iff_norm_le hO, map_pow, norm_pow]
 
-theorem mem_maximalIdeal_iff [IsLocalRing O] {x : O} :
-    x ∈ IsLocalRing.maximalIdeal O ↔ ‖algebraMap O C x‖ < 1 := by
-  rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff, isUnit_iff_norm_eq_one hO]
-  exact (norm_le_one hO x).lt_iff_ne.symm
-
 theorem isDomain : IsDomain O := hO.hom_inj.isDomain
 
 theorem isLocalRing : IsLocalRing O :=

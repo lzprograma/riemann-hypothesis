@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ProjEx
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.Carries
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.OmMeas
@@ -382,12 +383,7 @@ private theorem fix_of {H V : Type} [NormedAddCommGroup H] [InnerProductSpace �
 
 private theorem cut_van {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V] [FiniteDimensional ℂ V] [CompleteSpace V]
     (T : ℝ) (u : L V) : ∀ᵐ x : ℝ, x ≤ T → cut V (Ioi T) u x = 0 := by
-  have c := cutLaws (V := V) (Ioi T) (Ioi T) measurableSet_Ioi measurableSet_Ioi
-  have e : cut V (Ioi T) (cut V (Ioi T) u) = cut V (Ioi T) u := by
-    have := DFunLike.congr_fun c.1 u
-    rwa [inter_self] at this
-  filter_upwards [(c.2.2.2.2.2.2.2.1 _).1 e] with x hx h
-  exact hx (not_lt.2 h)
+  apply _root_.cutZero <;> assumption
 
 private theorem th_hi_add {K : Type} [Field K] [NumberField K] (T : ℝ) (F F₁ F₂ : G1 K (2 + 2) → ℂ)
     (h : ∀ z, F z = F₁ z + F₂ z) (x : G1 K (2 + 2)) : th (hi T F) x = th (hi T F₁) x + th (hi T F₂) x := by

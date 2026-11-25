@@ -21,65 +21,17 @@ public import Formalism.LocalToGlobal.Columns.BrpAevalScaleMonomial
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.MemLevUpdateOfErase
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.ZetaMain
 import GroundTheory.GlobalFields.LocalFieldAtPlace
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.Columns.CoefficientsModP.WeTransposeWordTransposeWord
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SatakeComb
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenConnectedComponentOfOneInf
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FiniteCosetsInDoset
 import Formalism.SatakeDualWeyl.KpqSubgroupCompact
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.CartierFrobeniusFormLocal
 import GroundTheory.GlobalFields.CompletionAtPlace.Integers
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
-import Mathlib.Algebra.Order.Star.Rat
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
-import Mathlib.Tactic.TypeStar
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.PIntConj
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.PIntSim
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.PLocAdj
@@ -111,8 +63,7 @@ private theorem exists_open_avoid (w : Plc E) (x : GLw n w) (hx : x ≠ 1) :
   swap
   · exact ⟨_, hKo, le_rfl, hxK⟩
   have hne : ∃ i j, x.val i j ≠ (1 : Matrix (Fin n) (Fin n) (w.adicCompletion E)) i j := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hx (Units.ext (Matrix.ext h))
   obtain ⟨i, j, hij⟩ := hne
   haveI : CompactSpace ↥(GlobalTheory.LFun.KGL w (n := n)) := isCompact_iff_compactSpace.1 hKc
@@ -248,7 +199,7 @@ private theorem exists_common_eigenvector_of_commute_of_invariant {E ι : Type} 
   by_cases hs : ∀ i, ∃ c : ℂ, ∀ x ∈ W, T i x = c • x
   · obtain ⟨x, hx, hx0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hne
     exact ⟨x, hx, hx0, fun i => (hs i).imp fun c hc => hc x hx⟩
-  · push_neg at hs
+  · push Not at hs
     obtain ⟨i, hi⟩ := hs
     haveI : Nontrivial W := Submodule.nontrivial_iff_ne_bot.mpr hne
     obtain ⟨μ, hμ⟩ := Module.End.exists_eigenvalue ((T i).restrict (fun x hx => hW i x hx))
@@ -402,7 +353,7 @@ theorem pClassFin_of : ClassFin := by
   have hsel : ∀ y, ψ (sel (ψ y)) = ψ y := by
     intro y
     have h : ∃ z, ψ z = ψ y := ⟨y, rfl⟩
-    simp only [sel, dif_pos h]
+    simp only [sel, dite_eq_left h]
     exact h.choose_spec
   refine ⟨(Finset.univ.image sel ×ˢ F).image (fun p => p.1 * p.2), fun y => ?_⟩
   have hk : ψ ((sel (ψ y))⁻¹ * y) = 1 := by rw [map_mul, map_inv, hsel, inv_mul_cancel]
@@ -1116,8 +1067,7 @@ theorem UpperTheory.Gal.CertificateRingHomMap.pKapOf_of :
     UpperTheory.Gal.CertificateRingHomMap.FinToHecke → UpperTheory.Gal.CertificateRingHomMap.XiZeta → UpperTheory.Gal.CertificateRingHomMap.IntSim → UpperTheory.Gal.CertificateRingHomMap.LevOpen → UpperTheory.Gal.CertificateRingHomMap.KapOf := by
   intro hFH hXi hIS hLO E _ _ _ n hn x ζ hζ U W j Up w₀ S Kw hS χ hχ Φ ψ hΦ hψ
   obtain ⟨g₀, hg₀⟩ : ∃ g₀, Φ g₀ ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hΦ.ne (funext h)
   have cancel : ∀ a b : ℂ, a • Φ g₀ = b • Φ g₀ → a = b := fun a b h => smul_left_injective ℂ hg₀ h
   have A : ∀ k ∈ lev S Kw, ∀ h : comp w₀ k ∈ Kw w₀, χ ⟨comp w₀ k, h⟩ = 1 → ∀ g, Φ (g * k) = Φ g := by
@@ -1342,8 +1292,7 @@ theorem pKerFormU_of :
     show algForms.val f (u₀.1 * u'.1) = _
     rw [← algForms.val_algRep, hfix u' hk]
   · have hex : ∃ g, algForms.val f g ≠ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       refine hf (Subtype.ext (LinearMap.ext fun v => funext fun g => ?_))
       exact LinearMap.congr_fun (hc g) v
     obtain ⟨g, hg⟩ := hex
@@ -1587,14 +1536,14 @@ theorem UpperTheory.Gal.CertificateRingHomMap.pNbhdU_of :
   have hKle : ∀ w, Kw w ≤ K₀ w := by
     intro w
     by_cases hw : IsSplitAt w
-    · simp only [Kw, dif_pos hw]; exact inf_le_left
-    · simp only [Kw, dif_neg hw]; exact le_rfl
+    · simp only [Kw, dite_eq_left hw]; exact inf_le_left
+    · simp only [Kw, dite_eq_right hw]; exact le_rfl
   have hKopen : ∀ w, IsOpen (Kw w : Set (GLw n w)) := by
     intro w
     by_cases hw : IsSplitAt w
-    · simp only [Kw, dif_pos hw, Subgroup.coe_inf, Subgroup.coe_comap]
+    · simp only [Kw, dite_eq_left hw, Subgroup.coe_inf, Subgroup.coe_comap]
       exact (hK₀ w).1.inter ((hK₀ (cj w)).1.preimage (continuous_th hw))
-    · simp only [Kw, dif_neg hw]; exact (hK₀ w).1
+    · simp only [Kw, dite_eq_right hw]; exact (hK₀ w).1
   have hKKGL : ∀ w, Kw w ≤ GlobalTheory.LFun.KGL w (n := n) := fun w => (hKle w).trans (hK₀ w).2
   have hmemS : ∀ w, w ∈ T → (IsSplitAt w → Top lt Up w₀ w) → w ∈ S := fun w h h' => Finset.mem_filter.2 ⟨h, h'⟩
   refine ⟨S, Kw, ⟨?_, fun w _ => hKopen w, fun w _ => ?_, fun w _ _ => hKKGL w, fun w hw hs => ?_⟩, ?_⟩
@@ -1623,7 +1572,7 @@ theorem UpperTheory.Gal.CertificateRingHomMap.pNbhdU_of :
       · have ht' := (top_or hlt1 w₀ (hne w hs) (hUp w hs)).resolve_left ht
         have hT' : cj w ∈ T := Finset.mem_insert_of_mem (Finset.mem_union_right _ (Finset.mem_image_of_mem _ hw))
         have h3 := hS (cj w) (hmemS _ hT' fun _ => ht')
-        simp only [Kw, dif_pos (hsp w hs)] at h3
+        simp only [Kw, dite_eq_left (hsp w hs)] at h3
         have h4 : th (hsp w hs) (cLoc (cj w) u.1) ∈ K₀ (cj (cj w)) := (Subgroup.mem_inf.1 h3).2
         rw [← cLoc_cj_eq (hsp w hs) u] at h4
         have key : ∀ v : Plc E, v = w → cLoc v u.1 ∈ K₀ v → cLoc w u.1 ∈ K₀ w := by
@@ -1819,9 +1768,9 @@ theorem UpperTheory.Gal.CertificateRingHomMap.pXiZeta_of :
   refine Finset.prod_congr rfl fun u _ => ?_
   by_cases h : φ x = -u.embedding x
   · have h' : u.embedding x = -φ x := by rw [h, neg_neg]
-    rw [if_pos h, if_pos h', _root_.zpow_neg]
+    rw [ite_eq_left h, ite_eq_left h', _root_.zpow_neg]
   · have h' : ¬ u.embedding x = -φ x := fun h'' => h (by rw [h'', neg_neg])
-    rw [if_neg h, if_neg h']
+    rw [ite_eq_right h, ite_eq_right h']
     simp
 end -- clump:auto
 end -- clump:auto

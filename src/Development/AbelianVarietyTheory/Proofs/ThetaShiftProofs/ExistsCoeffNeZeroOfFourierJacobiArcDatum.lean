@@ -357,11 +357,11 @@ theorem exists_move (hσ : GoodEmb c σ) (hU : IsUnf U) (hpr : GlobalTheory.Fram
     (fun τ a ha => GlobalTheory.ArcFlow.eq_of_hermC_lattice (U.X k) τ.1 _ _ fun w hw => by
       have h1 := key w hw (idx.symm (τ, a))
       rw [hper, hper] at h1
-      simpa only [Equiv.apply_symm_apply, if_pos ha] using h1)
+      simpa only [Equiv.apply_symm_apply, ite_eq_left ha] using h1)
     (fun τ a ha => row_eq_of_lattice (U.X k) τ.1 _ _ a fun w hw => by
       have h1 := key w hw (idx.symm (τ, a))
       rw [hper, hper] at h1
-      simpa only [Equiv.apply_symm_apply, if_neg ha] using h1)
+      simpa only [Equiv.apply_symm_apply, ite_eq_right ha] using h1)
   refine ⟨gm, hΓ, b, hb, hxb, fun t t' ht => ?_⟩
   rw [← hg, (Uw.period k x').2.1 ((hP t).trans ht)]
 

@@ -66,8 +66,7 @@ theorem exists_beta (X : Data E r) {ξ : Fin r → E} (hξξ : herm X.Gm ξ ξ =
     simp only [Pi.zero_apply, cc] at hb
     simpa using hb
   obtain ⟨a, ha⟩ : ∃ a, (X.Gm *ᵥ fun b => cc (ξ b)) a ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hw (Matrix.eq_zero_of_mulVec_eq_zero X.Gm_det (funext h))
   have hfa : f (Pi.single a 1) ≠ 0 := by
     rw [hfx]

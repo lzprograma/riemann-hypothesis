@@ -2,49 +2,6 @@ module
 
 import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
 public import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Bool
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -97,7 +54,7 @@ def flt_L (A : Type*) [CommRing A] (e : ℤ) : flt_Fil (LaurentPolynomial A) whe
     have : k = 0 := by
       by_contra h
       apply hk
-      rw [← LaurentPolynomial.T_zero, LaurentPolynomial.T_apply, if_neg (Ne.symm h)]
+      rw [← LaurentPolynomial.T_zero, LaurentPolynomial.T_apply, ite_eq_right (Ne.symm h)]
     simp [this]
   anti := by
     intro t u h f hf k hk
@@ -418,15 +375,15 @@ theorem flt_twistX_mem {R : Type*} [CommRing R] {ι : Type*} {n : ℕ} (LL : Let
     exact flt_monomial_mem (by rw [AddMonoidHom.zero_apply, sub_zero]; exact ha)
   simp only [twistSub, eval₂Hom_X', AddMonoidHom.neg_apply, flt_cost_single]
   by_cases hS : v.1 ∈ S
-  · rw [if_pos hS]
+  · rw [ite_eq_left hS]
     cases hv : LL.vec v.1
-    · rw [if_neg Bool.false_ne_true]
+    · rw [ite_eq_right Bool.false_ne_true]
       refine AddSubgroup.sum_mem _ fun b _ => hmon _ _ _ (flt_twistMat_mem R n j (-1) e _ ?_ ?_ _ _)
       all_goals rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [hS]
-    · rw [if_pos rfl]
+    · rw [ite_eq_left rfl]
       refine AddSubgroup.sum_mem _ fun b _ => hmon _ _ _ (flt_twistMat_mem R n j 1 e _ ?_ ?_ _ _)
       all_goals rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [hS]
-  · rw [if_neg hS, if_neg (fun h' => hS h'.1), neg_zero]
+  · rw [ite_eq_right hS, ite_eq_right (fun h' => hS h'.1), neg_zero]
     simpa using hmon v 1 0 (flt_L _ e).one_mem
 
 theorem flt_twist_monomial_mem {R : Type*} [CommRing R] {ι : Type*} {n : ℕ} (LL : Letters ι) (S : Set ι) (j : Fin n)
@@ -439,21 +396,7 @@ theorem flt_gL_mul_gLinv (R : Type*) [CommRing R] (n : ℕ) : gL R n * gLinv R n
   apply Formalism.MainNotions.G.Joints.genericMatrix_mul_inverse_eq_one
 
 theorem flt_gLinv_mul_gL (R : Type*) [CommRing R] (n : ℕ) : gLinv R n * gL R n = 1 := by
-  have key : ∀ a b, (gLinv R n * gL R n) a b = LaurentPolynomial.C
-      (IsLocalization.Away.invSelf (genMat R n).det *
-        algebraMap _ (GLCoord R n) (((genMat R n).adjugate * genMat R n) a b)) := by
-    intro a b
-
-    simp only [gL, gLinv, Matrix.mul_apply, Matrix.map_apply, ← _root_.map_mul, _root_.map_sum, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun c _ => ?_
-    congr 1
-    rw [_root_.map_mul]
-    ring
-  ext a b
-  rw [key, Matrix.adjugate_mul, Matrix.smul_apply, Matrix.one_apply, Matrix.one_apply]
-  split_ifs
-  · rw [smul_eq_mul, mul_one, mul_comm, IsLocalization.Away.mul_invSelf, _root_.map_one]
-  · rw [smul_zero, _root_.map_zero, mul_zero, _root_.map_zero]
+  apply _root_.Formalism.MainNotions.G.Joints.gLinv_mul_gL <;> assumption
 
 theorem flt_twistMat_mul (R : Type*) [CommRing R] (n : ℕ) (j : Fin n) (k : ℤ) :
     twistMat R n j k * twistMat R n j (-k) = 1 := by
@@ -487,7 +430,7 @@ theorem flt_g_pascal (R : Type*) [CommRing R] {σ : Type*} (m be : σ →₀ ℕ
     rw [← pow_one (X a), MvPolynomial.X_pow_eq_monomial, MvPolynomial.monomial_mul, mul_one]
   rw [hX]
   by_cases h : a ∈ be.support
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     have hba : be a ≠ 0 := Finsupp.mem_support_iff.1 h
     obtain ⟨b, hb⟩ : ∃ b, be a = b + 1 := ⟨be a - 1, by omega⟩
     obtain ⟨Q, hQ⟩ : ∃ Q, Q = ∏ k ∈ be.support.erase a, (m k).choose (be k) := ⟨_, rfl⟩
@@ -519,8 +462,7 @@ theorem flt_g_pascal (R : Type*) [CommRing R] {σ : Type*} (m be : σ →₀ ℕ
       rw [hQ] at hQ0
       by_cases hks : k ∈ be.support
       · have h1 := (Finset.prod_ne_zero_iff.1 hQ0) k (Finset.mem_erase.2 ⟨hk, hks⟩)
-        by_contra hlt
-        push_neg at hlt
+        by_contra! hlt
         exact h1 (Nat.choose_eq_zero_of_lt hlt)
       · have h0 : be k = 0 := by
           by_contra h0
@@ -543,8 +485,7 @@ theorem flt_g_pascal (R : Type*) [CommRing R] {σ : Type*} (m be : σ →₀ ℕ
         rw [hx, hc]
     · have hQ0 : Q ≠ 0 := right_ne_zero_of_mul h1
       have hab : b + 1 ≤ m a := by
-        by_contra hlt
-        push_neg at hlt
+        by_contra! hlt
         exact h1 (by rw [Nat.choose_eq_zero_of_lt hlt, zero_mul])
       have hx1 : m + Finsupp.single a 1 - be = m - be + Finsupp.single a 1 := Finsupp.ext fun k => by
         simp only [Finsupp.coe_add, Finsupp.coe_tsub, Pi.add_apply, Pi.sub_apply, Finsupp.single_apply]
@@ -563,7 +504,7 @@ theorem flt_g_pascal (R : Type*) [CommRing R] {σ : Type*} (m be : σ →₀ ℕ
       rw [hx1, hx2, ← _root_.map_add (monomial (m - be + Finsupp.single a 1)), ← Nat.cast_add]
       congr 2
       ring
-  · rw [if_neg h, add_zero]
+  · rw [ite_eq_right h, add_zero]
     have hba : be a = 0 := by
       by_contra h0
       exact h (Finsupp.mem_support_iff.2 h0)
@@ -603,8 +544,7 @@ theorem flt_tay_monomial (R : Type*) [CommRing R] {σ : Type*} (m : σ →₀ �
     · subst h
       simp [← MvPolynomial.C_apply]
     · obtain ⟨k, hk⟩ : ∃ k, be k ≠ 0 := by
-        by_contra hne
-        push_neg at hne
+        by_contra! hne
         exact h (by ext k; simp [hne k])
       have h0 : (be.prod fun k j => ((0 : σ →₀ ℕ) k).choose j) = 0 :=
         Finset.prod_eq_zero (Finsupp.mem_support_iff.2 hk)
@@ -613,8 +553,7 @@ theorem flt_tay_monomial (R : Type*) [CommRing R] {σ : Type*} (m : σ →₀ �
   | succ d ih =>
     intro m hm be
     obtain ⟨a, ha⟩ : ∃ a, m a ≠ 0 := by
-      by_contra hne
-      push_neg at hne
+      by_contra! hne
       have h0 : m = 0 := by ext k; simp [hne k]
       subst h0
       simp at hm
@@ -652,8 +591,7 @@ theorem flt_tay_coeff (R : Type*) [CommRing R] {σ : Type*} (F : MvPolynomial σ
   split_ifs with h
   · rfl
   · have hex : ∃ k, m k < be k := by
-      by_contra hne
-      push_neg at hne
+      by_contra! hne
       exact h fun k => hne k
     obtain ⟨k, hk⟩ := hex
     have h0 : (be.prod fun k j => (m k).choose j) = 0 :=
@@ -760,17 +698,17 @@ theorem flt_Th_mem {R : Type*} [CommRing R] {ι : Type*} {n : ℕ} (LL : Letters
       rwa [← MvPolynomial.C_mul_X_eq_monomial, _root_.map_one, one_mul] at h1
     refine AddSubgroup.add_mem _ (flt_C_mem hX1) ?_
     by_cases hS : w.1 ∈ S
-    · rw [if_pos hS]
+    · rw [ite_eq_left hS]
       cases hv : LL.vec w.1
-      · rw [if_neg Bool.false_ne_true]
+      · rw [ite_eq_right Bool.false_ne_true]
         refine AddSubgroup.sum_mem _ fun c _ => hmon2 _ _ (flt_twistMat_mem R n j 1 e _ ?_ ?_ _ _)
         all_goals rw [flt_cost_single]; rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [hS, hv]
-      · rw [if_pos rfl]
+      · rw [ite_eq_left rfl]
         refine AddSubgroup.sum_mem _ fun c _ => hmon2 _ _ (flt_twistMat_mem R n j (-1) e _ ?_ ?_ _ _)
         all_goals rw [flt_cost_single]; rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [hS, hv]
-    · rw [if_neg hS]
+    · rw [ite_eq_right hS]
       have h1 : (1 : GLLaurent R n) ∈ (flt_L (GLCoord R n) e).F (0 - flt_cost LL S (!bm) (Finsupp.single w 1)) := by
-        rw [flt_cost_single, if_neg (fun h' => hS h'.1), sub_zero]
+        rw [flt_cost_single, ite_eq_right (fun h' => hS h'.1), sub_zero]
         exact (flt_L _ e).one_mem
       simpa using hmon2 w 1 h1
 

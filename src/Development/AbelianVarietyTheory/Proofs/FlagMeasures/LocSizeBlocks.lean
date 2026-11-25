@@ -114,7 +114,7 @@ theorem detOn_blocks {n a : ℕ} {j : Fin a → ℕ} (B : ∀ i, Matrix (Fin n) 
       · rfl
       · rw [hu i h, Matrix.mulVec_zero]
     · rintro ⟨u, rfl⟩
-      refine ⟨fun i => if h : p i then fun s => u ⟨⟨i, h⟩, s⟩ else 0, fun i h => dif_neg h, ?_⟩
+      refine ⟨fun i => if h : p i then fun s => u ⟨⟨i, h⟩, s⟩ else 0, fun i h => dite_eq_right h, ?_⟩
       rw [hCv, ← Finset.sum_subset (Finset.filter_subset p Finset.univ) ?_,
         Finset.sum_subtype (Finset.univ.filter p) (p := p) (by simp)]
       · refine Finset.sum_congr rfl fun i _ => ?_
@@ -122,7 +122,7 @@ theorem detOn_blocks {n a : ℕ} {j : Fin a → ℕ} (B : ∀ i, Matrix (Fin n) 
         rw [dite_eq_left i.2]
       · intro i _ hi
         beta_reduce
-        rw [dif_neg (by simpa using hi), Matrix.mulVec_zero]
+        rw [dite_eq_right (by simpa using hi), Matrix.mulVec_zero]
   · ext r ⟨k, t⟩
     change (g * B k) r t = _
     rw [hg, Matrix.mul_apply, Matrix.mul_apply, Fintype.sum_sigma, Finset.sum_eq_single k]

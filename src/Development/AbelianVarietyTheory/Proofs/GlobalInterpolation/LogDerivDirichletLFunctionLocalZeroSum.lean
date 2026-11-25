@@ -146,29 +146,6 @@ theorem norm_partialSum_le_totient_half (q : ℕ) [NeZero q] (χ : DirichletChar
   rw [← he]
   exact norm_sum_subset_le_totient_half χ hχ _
 
-/-- Bound a partial character sum by either side of the remaining period. -/
-theorem norm_partialSum_le_min (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (n : ℕ) :
-    ‖∑ k ∈ Finset.Icc 1 n, χ (k : ZMod q)‖ ≤ min ((n % q : ℕ) : ℝ) ((q - n % q : ℕ) : ℝ) := by
-  have hq : 0 < q := Nat.pos_of_ne_zero (NeZero.ne q)
-  rw [partialSum_eq_sum_range_mod q χ hχ]
-  generalize hk : n % q = r
-  have h : r < q := hk ▸ Nat.mod_lt n hq
-  have hfirst : ‖∑ k ∈ Finset.range r, χ ((1 + k : ℕ) : ZMod q)‖ ≤ (r : ℝ) := by
-    refine (norm_sum_le _ _).trans ?_
-    simpa using Finset.sum_le_sum
-      (fun k (_ : k ∈ Finset.range r) => χ.norm_le_one ((1 + k : ℕ) : ZMod q))
-  have hlast : ‖∑ k ∈ Finset.range (q - r), χ ((1 + (r + k) : ℕ) : ZMod q)‖ ≤ (q - r : ℕ) := by
-    refine (norm_sum_le _ _).trans ?_
-    simpa using Finset.sum_le_sum
-      (fun k (_ : k ∈ Finset.range (q - r)) => χ.norm_le_one ((1 + (r + k) : ℕ) : ZMod q))
-  have hsplit : (∑ k ∈ Finset.range r, χ ((1 + k : ℕ) : ZMod q)) +
-      (∑ k ∈ Finset.range (q - r), χ ((1 + (r + k) : ℕ) : ZMod q)) = 0 := by
-    rw [← Finset.sum_range_add, Nat.add_sub_of_le h.le]
-    exact sum_period_eq_zero q χ hχ 1
-  refine le_min hfirst ?_
-  rw [eq_neg_of_add_eq_zero_left hsplit, norm_neg]
-  exact hlast
-
 /-- Completing the remaining part of a period bounds a nonprincipal character sum by half
 its modulus. -/
 theorem norm_partialSum_le_half (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q)
@@ -338,14 +315,6 @@ section -- clump:auto
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory
 
 namespace GlobalTheory.LLocal
-
-theorem analyticOrderNatAt_comp_const_add (g : ℂ → ℂ) (c w : ℂ) :
-    analyticOrderNatAt (fun z => g (c + z)) w = analyticOrderNatAt g (c + w) := by
-  unfold analyticOrderNatAt
-  congr 1
-  have h := analyticOrderAt_comp_of_deriv_ne_zero (f := g) (g := fun z : ℂ => c + z) (z₀ := w)
-    (by fun_prop) (by simp)
-  exact h
 
 theorem logDeriv_LFunction_local : ∃ C : ℝ, 0 < C ∧ ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q), χ ≠ 1 → ∀ (t : ℝ) (s : ℂ), ‖s - (3/2 + t * I)‖ ≤ 2/3 → LFunction χ s ≠ 0 → {w : ℂ | ‖w - (3/2 + t * I)‖ ≤ 5/6 ∧ LFunction χ w = 0}.Finite ∧ ‖deriv (LFunction χ) s / LFunction χ s - ∑ᶠ w ∈ {w : ℂ | ‖w - (3/2 + t * I)‖ ≤ 5/6 ∧ LFunction χ w = 0}, (analyticOrderNatAt (LFunction χ) w : ℂ) / (s - w)‖ ≤ C * Real.log (q * (|t| + 2)) := by
   obtain ⟨C, hC, H⟩ := GlobalTheory.LWide.disc (2/3) (5/6) (by norm_num) (by norm_num) (by norm_num)

@@ -189,8 +189,7 @@ theorem prodMul_facts (M N P : Subgroup G) (hM : IsClosed (M : Set G)) (hN : IsC
     exact mul_ne_zero (fun h => hM0 (Measure.measure_univ_eq_zero.1 h))
       (fun h => hN0 (Measure.measure_univ_eq_zero.1 h))
   obtain ⟨i, hi⟩ : ∃ i, ρ₀ (Q i ∪ (P : Set G)ᶜ) ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact huniv (by rw [← hS]; exact measure_iUnion_null h)
   refine ⟨hP0, sf, Q i, (hQc i).measurableSet, fun h => hi ?_, (hQ1 i).ne⟩
   exact measure_union_null h hP0

@@ -8,6 +8,7 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticInt
 import Mathlib.Order.CompletePartialOrder
 public import Mathlib.RingTheory.KrullDimension.NonZeroDivisors
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+import GroundTheory.HeightsAndTheta.Heights.Intersections.IsFieldIntersectionNoBlockFam
 
 @[expose] public section
 
@@ -26,21 +27,8 @@ variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
 theorem isSmoothHerm_of_isPullHerm' {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} (hv : IsBlockMap κ v)
     {A : HermLine ι} {A' : HermLine ι'} (hA : IsSmoothHerm A) (h : IsPullHerm κ v A A') :
-    IsSmoothHerm A' := by
-  have e : A'.h = A.h ∘ fun z' p => z' (v p) := funext h.2
-  unfold IsSmoothHerm
-  rw [e]
-  refine hA.comp (contDiff_pi.2 fun p => contDiff_apply ℝ (fun _ => ℂ) (v p)).contDiffOn ?_
-  intro z' hz'
-  simp only [Set.mem_ofPred_eq] at hz' ⊢
-  intro k
-  obtain ⟨i', hi'⟩ := hz' (κ k)
-  obtain ⟨p, hp⟩ := hv.2.2.2 ⟨κ k, i'⟩ ⟨k, rfl⟩
-  have h2 : p.1 = k := hv.1 (by rw [← hv.2.2.1 p, hp])
-  obtain ⟨pk, pi⟩ := p
-  simp only at h2
-  subst h2
-  exact ⟨pi, by rw [hp]; exact hi'⟩
+    IsSmoothHerm A' :=
+  IsPullHerm.isSmoothHerm hv h hA
 
 theorem arithDim_lt_of_lt {P Q : Ideal (MRing ι)} {d d₀ : ℕ} (hP : IsArithVar P d) (hQ : IsArithVar Q d₀)
     (hle : P ≤ Q) (hne : P ≠ Q) : d₀ < d := by
@@ -89,15 +77,15 @@ theorem PFStep.proof (hSec : PFSecRed.Statement) (hVert : PFVert.Statement) (hIn
   by_cases hh : IsHorizontal W
   · have hWa : IsArithVar W (d + r) := (divSuppArith K' ι' P' (d + r) (N (Fin.last r)) s W hP1 hsec hW).1 hh
     by_cases hd : imageZ v W = imageZ v P'
-    · rw [if_pos hh, if_pos ⟨hh, hd⟩,
+    · rw [ite_eq_left hh, ite_eq_left ⟨hh, hd⟩,
         hHor I r hr K ι K' ι' κ v P' W d G J L L' (Fin.init N) hv hWa hd hP hJ hL hL' (fun j => hN _)]
       exact (mul_assoc _ _ _).symm
-    · rw [if_pos hh, if_neg (fun h => hd h.2), mul_zero, zero_mul]
+    · rw [ite_eq_left hh, ite_eq_right (fun h => hd h.2), mul_zero, zero_mul]
       obtain ⟨d₀, -, hd₀⟩ := hIm K ι K' ι' κ v W (d + r) hP.1 hv hWa
       have hle : imageZ v P' ≤ imageZ v W := Ideal.comap_mono (le_sup_left.trans hW.1.1.2)
       rw [hCM I hI K ι K' ι' κ v W d₀ d r L L' (Fin.init N) hv hWa hd₀
         (arithDim_lt_of_lt hP hd₀ hle (Ne.symm hd)) hL hL' (fun j => hN _), mul_zero]
-  · rw [if_neg hh, if_neg (fun h => hh h.1),
+  · rw [ite_eq_right hh, ite_eq_right (fun h => hh h.1),
       hVert K ι K' ι' κ v P' d r L L' (Fin.init N) s a W hv hP1 hP hL' hs hsP hW hh]
     simp
 

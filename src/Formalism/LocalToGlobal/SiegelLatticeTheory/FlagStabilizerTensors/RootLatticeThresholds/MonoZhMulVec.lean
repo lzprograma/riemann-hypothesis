@@ -71,7 +71,7 @@ theorem Yc_perpF {C : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ} (hC : IsUB blk C) 
     have ha : π j ≠ Fin.last r := fun h => hj (by rw [← h, hπ])
     have h1 := congrFun hk (Sum.inl (π j))
     simp only [Sum.elim_inl, Pi.add_apply] at h1
-    rw [hx _ ha, lastDiag_mulVec, Pi.single_apply, if_neg ha, zero_add, monoZ_mulVec ε F G π hπ hZ, hπ] at h1
+    rw [hx _ ha, lastDiag_mulVec, Pi.single_apply, ite_eq_right ha, zero_add, monoZ_mulVec ε F G π hπ hZ, hπ] at h1
     have hz : Zm ε F G (π j) j ≠ 0 := (hZ _ _).2 rfl
     exact (mul_eq_zero.1 h1).resolve_left hz
   rw [Yc_sub]
@@ -111,7 +111,7 @@ theorem Yc_perpG {C : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ} (hC : IsUB blk C) 
     have hb : π i ≠ Fin.last r := fun h => hi (by rw [← h, hπ])
     have h1 := congrFun hk (Sum.inr (π i))
     simp only [Sum.elim_inr, Pi.add_apply] at h1
-    rw [hx _ hb, lastDiag_mulVec, Pi.single_apply, if_neg hb, add_zero, monoZh_mulVec ε F G π hπ hZ, hπ] at h1
+    rw [hx _ hb, lastDiag_mulVec, Pi.single_apply, ite_eq_right hb, add_zero, monoZh_mulVec ε F G π hπ hZ, hπ] at h1
     have hz : starRingEnd ℂ (Zm ε F G i (π i)) ≠ 0 := by
       rw [map_ne_zero]; exact (hZ _ _).2 (hπ i).symm
     exact (mul_eq_zero.1 h1).resolve_left hz

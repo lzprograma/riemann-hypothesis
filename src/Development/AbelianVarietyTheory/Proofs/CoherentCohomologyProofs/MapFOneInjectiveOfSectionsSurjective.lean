@@ -227,12 +227,6 @@ theorem map_f_one_injective_of_sections_surjective (U : C)
   obtain ⟨t, rfl⟩ := h s
   exact ⟨_, map_equivZero_symm S.g U t⟩
 
-theorem subsingleton₂ (n : ℕ) (U : C) (h₁ : Subsingleton (Sheaf.H'.{w'} S.X₁ n U))
-    (h₃ : Subsingleton (Sheaf.H'.{w'} S.X₃ n U)) : Subsingleton (Sheaf.H'.{w'} S.X₂ n U) :=
-  subsingleton_of_forall_eq 0 fun x => by
-    obtain ⟨y, rfl⟩ := ((exact₂ hS n U) x).1 (Subsingleton.elim _ _)
-    rw [Subsingleton.elim y 0, map_zero]
-
 theorem subsingleton₃ (n : ℕ) (U : C) (h₂ : Subsingleton (Sheaf.H'.{w'} S.X₂ n U))
     (h₁ : Subsingleton (Sheaf.H'.{w'} S.X₁ (n + 1) U)) : Subsingleton (Sheaf.H'.{w'} S.X₃ n U) :=
   (δ_injective_of_subsingleton hS n U h₂).subsingleton
@@ -288,14 +282,6 @@ theorem shortExact_map_toSheaf {S : ShortComplex (SheafOfModules.{v} R)} (hS : S
   hS.map_of_exact _
 
 end Modules
-
-section Top
-
-open TopologicalSpace
-
-variable {X : TopCat.{u}}
-
-end Top
 
 section Scheme
 

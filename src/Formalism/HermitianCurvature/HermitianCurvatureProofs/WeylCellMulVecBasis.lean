@@ -6,51 +6,8 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursi
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFusionForms
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightDerivativeRulePsi
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -113,7 +70,7 @@ theorem weyl_cell_mulVec_basis (l : Fin r) (c : ℂ) (q : Fin (2 * r + k + 1)) :
     w1 k r l c *ᵥ bvec q = dd k l c q • bvec (sw k l q) := by
   funext p
   simp only [Matrix.mulVec, dotProduct, bvec, Pi.single_apply, mul_ite, mul_one, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true, Pi.smul_apply, smul_eq_mul, w1_apply]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true, Pi.smul_apply, smul_eq_mul, w1_apply]
 
 theorem head_comm (c : Fin r → ℂ) (hc : ∀ a, c a ≠ 0) : ∀ n : ℕ, ∀ i : Fin (r + 1), i.val = n →
     wCell k r i c ∈ Glev k r 0 ∧ ∀ j : Fin (r + 1), i ≤ j → ∀ x ∈ Glev k r j, wCell k r i c * x = x * wCell k r i c := by
@@ -153,7 +110,7 @@ theorem tail (c : Fin r → ℂ) (hc : ∀ a, c a ≠ 0) (b : Fin r) : ∀ n : �
     have : i = b.succ := Fin.ext (by simp [hi])
     subst this
     refine ⟨1, by simp, glev_one _, fun a ha => ?_, fun a _ => by simp, fun c' _ => by simp⟩
-    rw [if_neg (by simp; omega)]
+    rw [ite_eq_right (by simp; omega)]
     simp
   | succ n ih =>
     intro i hi
@@ -170,7 +127,7 @@ theorem tail (c : Fin r → ℂ) (hc : ∀ a, c a ≠ 0) (b : Fin r) : ∀ n : �
       rw [← Matrix.mulVec_mulVec, weyl_cell_mulVec_basis]
       by_cases hal : a = l
       · subst hal
-        rw [sw_e, dd_e, Matrix.mulVec_smul, hTs _ (by simp [l]), if_pos (by simp [l])]
+        rw [sw_e, dd_e, Matrix.mulVec_smul, hTs _ (by simp [l]), ite_eq_left (by simp [l])]
       · have hav : a.val ≠ l.val := fun h => hal (Fin.ext h)
         have h1 : eI k r a ≠ eI k r l := by simp [eI, Fin.ext_iff]; exact hav
         have h2 : eI k r a ≠ esI k r l := by simp [eI, esI, Fin.ext_iff]; have := l.isLt; omega
@@ -178,8 +135,8 @@ theorem tail (c : Fin r → ℂ) (hc : ∀ a, c a ≠ 0) (b : Fin r) : ∀ n : �
         have hiff : a.val < (l.castSucc : Fin (r + 1)).val ↔ a.val < (l.succ : Fin (r + 1)).val := by
           simp only [Fin.val_castSucc, Fin.val_succ]; omega
         by_cases h3 : a.val < (l.castSucc : Fin (r + 1)).val
-        · rw [if_pos h3, if_pos (hiff.1 h3)]
-        · rw [if_neg h3, if_neg (fun h => h3 (hiff.2 h))]
+        · rw [ite_eq_left h3, ite_eq_left (hiff.1 h3)]
+        · rw [ite_eq_right h3, ite_eq_right (fun h => h3 (hiff.2 h))]
     · intro a ha
       rw [← Matrix.mulVec_mulVec, weyl_cell_mulVec_basis]
       have hal : l.val < a.val := by simp at ha; omega
@@ -273,7 +230,7 @@ theorem right_rule_derivative : PBN.RightRuleE := by
   rw [h]
   congr 1
   simp only [xv, fvec, hpos, Fin.val_succ]
-  rw [dif_pos (show a.val + 1 < r by omega)]
+  rw [dite_eq_left (show a.val + 1 < r by omega)]
   by_cases hh : b.val = a.val + 1
   · simp [hh, bvec, eI]
   · simp [hh, bvec, eI, Fin.ext_iff]
@@ -316,19 +273,19 @@ theorem left_rule_cell : PBN.LeftRuleCell := by
   have hb1 : (b.succ : Fin (r + 1)).val < r := by simp; omega
   have hga : g *ᵥ bvec (eI k r a) = bvec (eI k r a) := (hg.2 a (by simp)).1
   have hTa := hTe a hba
-  rw [if_pos (by simp)] at hTa
+  rw [ite_eq_left (by simp)] at hTa
   have hy : ybv k r z b.succ (T * g) ⟨a.val - b.val - 1, hjlt⟩ = if a.val = b.val + 1 then c a else 0 := by
-    simp only [ybv, hpos, fvec, dif_pos hb1]
+    simp only [ybv, hpos, fvec, dite_eq_left hb1]
     rw [Formalism.FourierDecayAlt.P.SignAntidiagonal.herm_bvec_eI, ← Matrix.mulVec_mulVec, hga, hTa]
     simp only [Pi.smul_apply, smul_eq_mul, bvec, Pi.single_apply, esI, Fin.ext_iff, Fin.val_succ]
     by_cases hh : a.val = b.val + 1
     · simp [hh]
-    · rw [if_neg, if_neg hh, mul_zero]
+    · rw [ite_eq_right, ite_eq_right hh, mul_zero]
       have := a.isLt; omega
   rw [hy]
   by_cases hh : a.val = b.val + 1
-  · rw [if_pos hh, if_pos hh, div_eq_inv_mul]
-  · rw [if_neg hh, if_neg hh, mul_zero]
+  · rw [ite_eq_left hh, ite_eq_left hh, div_eq_inv_mul]
+  · rw [ite_eq_right hh, ite_eq_right hh, mul_zero]
 
 theorem torus_cell : PBN.TorusCell := by
   intro E _ _ k r D f hD hS c hc g hg hWD l

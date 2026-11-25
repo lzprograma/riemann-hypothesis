@@ -55,8 +55,6 @@ open NumberField IsDedekindDomain GlobalTheory.LFun GroundTheory.Automorphic Gro
 open ValuativeRel (valuation)
 open scoped ValuativeRel
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace GlobalTheory.CompanionTheory.SatakeTyping
 
 section Local

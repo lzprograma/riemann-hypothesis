@@ -14,8 +14,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.PairingIndexBounds.F
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {p : ℕ} [Fact p.Prime]
 
 structure FData (X : Sys p) (D : D7) where

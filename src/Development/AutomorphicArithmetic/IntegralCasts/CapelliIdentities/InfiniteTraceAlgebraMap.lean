@@ -1,51 +1,11 @@
 module
 
 public import Mathlib.NumberTheory.NumberField.InfiniteAdeleRing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qh34.aux1.{u_1} :
-    ∀ (K : Type u_1) [inst : Field K] [inst_1 : NumberField K],
+    ∀ (K : Type u_1) [Field K] [NumberField K],
       ∑ x : NumberField.InfinitePlace K,
           (↑x.mult : ℝ) *
             ((NumberField.InfinitePlace.Completion.extensionEmbedding x : x.Completion → ℂ)
@@ -57,7 +17,7 @@ theorem UpperTheory.Reformulated.B.Qh34.aux1.{u_1} :
   rw [h, map_zero, Complex.zero_re, mul_zero]
 
 theorem UpperTheory.Reformulated.B.Qh34.aux2.{u_1} :
-    ∀ (K : Type u_1) [inst : Field K] [inst_1 : NumberField K] (x y : NumberField.InfiniteAdeleRing K),
+    ∀ (K : Type u_1) [Field K] [NumberField K] (x y : NumberField.InfiniteAdeleRing K),
       ∑ w : NumberField.InfinitePlace K,
           (↑w.mult : ℝ) * ((NumberField.InfinitePlace.Completion.extensionEmbedding w : w.Completion → ℂ) ((x + y) w)).re =
         ∑ w : NumberField.InfinitePlace K,
@@ -71,7 +31,7 @@ theorem UpperTheory.Reformulated.B.Qh34.aux2.{u_1} :
   rw [h, map_add (f := _), Complex.add_re, mul_add]
 
 noncomputable def UpperTheory.Reformulated.B.Qh34.infiniteTrace.{u_1} :
-    (K : Type u_1) → [inst : Field K] → [NumberField K] → NumberField.InfiniteAdeleRing K →+ ℝ :=
+    (K : Type u_1) → [Field K] → [NumberField K] → NumberField.InfiniteAdeleRing K →+ ℝ :=
     fun (K : Type u_1) [Field K] [NumberField K] ↦
       {
         toFun := fun (x : NumberField.InfiniteAdeleRing K) ↦
@@ -80,7 +40,7 @@ noncomputable def UpperTheory.Reformulated.B.Qh34.infiniteTrace.{u_1} :
         map_zero' := UpperTheory.Reformulated.B.Qh34.aux1 K, map_add' := UpperTheory.Reformulated.B.Qh34.aux2 K : NumberField.InfiniteAdeleRing K →+ ℝ }
 
 theorem UpperTheory.Reformulated.B.Qh34.infiniteTrace_algebraMap.{u_1} :
-    ∀ (K : Type u_1) [inst : Field K] [inst_1 : NumberField K] (k : K),
+    ∀ (K : Type u_1) [Field K] [NumberField K] (k : K),
       (UpperTheory.Reformulated.B.Qh34.infiniteTrace K : NumberField.InfiniteAdeleRing K → ℝ)
           ((Algebra.algebraMap K (NumberField.InfiniteAdeleRing K) : K → NumberField.InfiniteAdeleRing K) k) =
         (↑((Algebra.trace ℚ K : K → ℚ) k) : ℝ) := by

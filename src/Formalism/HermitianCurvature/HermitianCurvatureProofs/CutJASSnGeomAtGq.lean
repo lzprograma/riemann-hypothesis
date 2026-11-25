@@ -11,49 +11,6 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSchmidtFrame
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSchmidtFrames.HmSelfRe
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSchmidtFrames.WbPartOfInWb
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSchmidtFrames.XiHermitianCofactorDet
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -96,7 +53,7 @@ theorem prod_erase_dq (z z' : Fin (2 * r + k + 1) → ℂ) (c : Fin r → ℂ)
     (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) :
     ∏ j ∈ Finset.univ.erase (Fin.last r), dq k r z z' c μ j = ∏ i, c i := by
   rw [← Finset.filter_ne' Finset.univ (Fin.last r), Finset.prod_filter, Fin.prod_univ_castSucc]
-  simp only [ne_eq, Fin.castSucc_ne_last, not_false_eq_true, if_true, not_true_eq_false, if_false, mul_one]
+  simp only [ne_eq, Fin.castSucc_ne_last, not_false_eq_true, ite_true, not_true_eq_false, ite_false, mul_one]
   refine Finset.prod_congr rfl fun i _ => ?_
   simp [dq]
 
@@ -115,9 +72,9 @@ theorem xcof_gq (z z' : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hz' : in
     xcof k r z z' (bigCell k r c μ) = (∏ i, c i) • (bigCell k r c μ *ᵥ z') := by
   unfold xcof
   rw [Finset.sum_eq_single (Fin.last r)]
-  · rw [adj_zhat z z' hz hz' c μ, if_pos rfl, prod_erase_dq, fv_last]
+  · rw [adj_zhat z z' hz hz' c μ, ite_eq_left rfl, prod_erase_dq, fv_last]
   · intro b _ hb
-    rw [adj_zhat z z' hz hz' c μ, if_neg hb, zero_smul]
+    rw [adj_zhat z z' hz hz' c μ, ite_eq_right hb, zero_smul]
   · intro h; exact absurd (Finset.mem_univ _) h
 
 theorem xcofL_gq (z z' : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hz' : inWb k r z') (c : Fin r → ℂ)
@@ -125,9 +82,9 @@ theorem xcofL_gq (z z' : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hz' : i
     xcofL k r z z' (bigCell k r c μ) = star (∏ i, c i) • z := by
   unfold xcofL
   rw [Finset.sum_eq_single (Fin.last r)]
-  · rw [adj_zhat z z' hz hz' c μ, if_pos rfl, prod_erase_dq, fv_last]
+  · rw [adj_zhat z z' hz hz' c μ, ite_eq_left rfl, prod_erase_dq, fv_last]
   · intro b _ hb
-    rw [adj_zhat z z' hz hz' c μ, if_neg (Ne.symm hb), star_zero, zero_smul]
+    rw [adj_zhat z z' hz hz' c μ, ite_eq_right (Ne.symm hb), star_zero, zero_smul]
   · intro h; exact absurd (Finset.mem_univ _) h
 
 section gq

@@ -92,8 +92,6 @@ theorem finrank_eq_of_nondegenerate {LL : Type} [Field LL] {V V' : Type} [AddCom
   have eb : Module.finrank LL (V →ₗ[LL] LL) = Module.finrank LL V := Subspace.dual_finrank_eq
   omega
 
-alias main := _root_.GlobalTheory.NondegenerateFinrank.finrank_eq_of_nondegenerate
-
 end GlobalTheory.NondegenerateFinrank
 end -- clump:auto
 end -- clump:auto
@@ -197,8 +195,7 @@ theorem left_nondeg (R C : Submodule LL (Fin a → Fin n → LL)) (hRC : IsCompl
   by_contra hne
   have hne' : (⟨u, hu⟩ : ↥R) ≠ 0 := fun h0 => hne (congrArg Subtype.val h0)
   obtain ⟨f, hf⟩ : ∃ f : Module.Dual LL ↥R, f ⟨u, hu⟩ ≠ 0 := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     exact hne' ((Module.forall_dual_apply_eq_zero_iff LL _).1 hall)
   obtain ⟨u', hu'⟩ := exists_rep (f ∘ₗ R.projectionOnto C hRC)
   have hann : u' ∈ ann C := by

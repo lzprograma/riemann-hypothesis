@@ -83,9 +83,6 @@ theorem R1cond.mul {r s : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c) → k)} (hr
     R1cond k n c (r * s) :=
   (PI.flagSubmonoid (Ufl k n c) _ _).mul_mem hr hs
 
-theorem R1cond_one : R1cond k n c 1 :=
-  (PI.flagSubmonoid (Ufl k n c) _ _).one_mem
-
 def R1 : Subgroup ((Fin (n + c) → k) ≃ₗ[k] (Fin (n + c) → k)) :=
   (PI.flagSubmonoid (Ufl k n c) (eN k (n + c)) n).mulSupport
 

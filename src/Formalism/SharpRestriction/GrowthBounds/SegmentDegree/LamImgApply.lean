@@ -1,44 +1,6 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.RestLamOfRests
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -128,15 +90,15 @@ theorem lam_eval (hG : LamGeo X p K) (m : Fin X.F.J → (ℤ × Fin (r + K) →�
       X.Pz p K (j0.val : ℤ) x0 * m j0 (x0, c) := by
     rw [Finset.sum_eq_single j0]
     · rw [Finset.sum_eq_single x0]
-      · rw [if_pos rfl]
+      · rw [ite_eq_left rfl]
       · intro x hx hne
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h
         exact hne (hG.U1 j0 j0 x hx x0 hx0 h).2
       · intro h; exact absurd hx0 h
     · intro j _ hne
       refine Finset.sum_eq_zero fun x hx => ?_
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       exact hne (hG.U1 j j0 x hx x0 hx0 h).1
     · intro h; exact absurd (Finset.mem_univ _) h
@@ -209,7 +171,7 @@ theorem restLamInj_of (C₀ : ℝ) (hGeo : RestLamGeo C₀) (hTau : RestLamTau) 
       exact (hdec j0 x0 hx0 c).1
     · have ha : X.a' p K t = 0 := by
         unfold Dat.a' Dat.d
-        rw [if_neg ht]; simp
+        rw [ite_eq_right ht]; simp
       have b1 := (Finset.mem_filter.mp (hlaS t)).2.1
       have b2 := (Finset.mem_filter.mp (hlaS' t)).2.1
       rw [ha] at b1 b2
@@ -233,17 +195,17 @@ theorem restLamInj_of (C₀ : ℝ) (hGeo : RestLamGeo C₀) (hTau : RestLamTau) 
           unfold segmentWeightExponent
           rw [Finset.sum_eq_single j]
           · rw [Finset.sum_eq_single x]
-            · rw [if_pos hpos.symm]
+            · rw [ite_eq_left hpos.symm]
             · intro y hy hne
               obtain ⟨hyl, hyW⟩ := Finset.mem_filter.mp hy
-              rw [if_neg]
+              rw [ite_eq_right]
               intro h
               exact hne (hG.U2 j j y hyl hyW x hv.1 hW (h.trans hpos)).2
             · intro h; exact absurd (Finset.mem_filter.mpr ⟨hv.1, hW⟩) h
           · intro j' _ hne
             refine Finset.sum_eq_zero fun y hy => ?_
             obtain ⟨hyl, hyW⟩ := Finset.mem_filter.mp hy
-            rw [if_neg]
+            rw [ite_eq_right]
             intro h
             exact hne (hG.U2 j' j y hyl hyW x hv.1 hW (h.trans hpos)).1
           · intro h; exact absurd (Finset.mem_univ _) h

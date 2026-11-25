@@ -154,7 +154,7 @@ theorem lemma6a {ε : Fin n → Bool} {lam : Fin n → ℝ} {H : Type*} [NormedA
   let ν := volume.withDensity J
   have he : MeasurableEmbedding e := (isClosedEmbedding_toM ε).measurableEmbedding
   have hp : Measurable p := (polarM_continuous ε).measurable
-  have hJ : Measurable J := ENNReal.measurable_ofReal.comp (jac_continuous ε).measurable
+  have hJ : Measurable J := ENNReal.measurable_ofReal.comp (ReciprocityTheory.ChartRestriction.DS.pb_jac_continuous ε).measurable
   have hrange : ∀ᵐ x ∂(muPolarMat ε), x ∈ Set.range e := by
     change ∀ᵐ x ∂(Measure.map p ((dk ε).prod ν)), x ∈ Set.range e
     refine (ae_map_iff hp.aemeasurable he.measurableSet_range).2 (ae_of_all _ fun kz => ?_)

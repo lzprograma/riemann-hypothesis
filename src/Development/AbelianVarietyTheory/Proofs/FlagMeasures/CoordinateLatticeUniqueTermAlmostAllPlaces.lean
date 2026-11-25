@@ -357,7 +357,7 @@ theorem main : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [I
     have : hf L S.Hm (S.f a) (∑ b, P b (Fin.last r) • S.f' b) =
         L.cj ((S.Zh * P) a (Fin.last r)) := by
 
-      rw [hf_sum_right, Matrix.mul_apply, map_sum]
+      rw [GlobalTheory.HL.StdLat.hf_sum_r, Matrix.mul_apply, map_sum]
       refine Finset.sum_congr rfl fun b _ => ?_
       rw [hf_smul_right, map_mul, mul_comm, hf_symm L hh]
       rfl
@@ -368,7 +368,7 @@ theorem main : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [I
       if b = Fin.last r then 1 else 0 := fun b => by
     have : hf L S.Hm (S.f' b) (∑ a, L.cj (P (Fin.last r) a) • S.f a) =
         (P * S.Zh) (Fin.last r) b := by
-      rw [hf_sum_right, Matrix.mul_apply]
+      rw [GlobalTheory.HL.StdLat.hf_sum_r, Matrix.mul_apply]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [hf_smul_right, L.cj_cj]
       rfl
@@ -497,7 +497,7 @@ theorem TT_eq : algebraMap (A.loc p).Fp (A.loc p).Ep (((G.S p).T : (A.loc p).Fp)
     (A.loc p).ιE G.TT := by
   have h1 := (G.S p).gram (Fin.last r) (Fin.last r)
   have h2 := (G.S p).gram' (Fin.last r) (Fin.last r)
-  simp only [and_self, if_true] at h1 h2
+  simp only [and_self, ite_true] at h1 h2
   rw [f_scale, Fin.val_last, sc_last, one_smul, herm_bc] at h1
   rw [f'_scale, Fin.val_last, sc_last, one_smul, herm_bc] at h2
   rw [map_mul, GFrames.TT, map_mul, h1, h2]
@@ -709,7 +709,7 @@ theorem eq_zero_of_forall_hf (L : LocE F E) {n : ℕ} {Hm : Matrix (Fin n) (Fin 
     funext j
     have := hz (Pi.single j 1)
     simp only [hf, Pi.single_apply, apply_ite (⇑L.cj), map_one, map_zero, mul_ite, mul_one,
-      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at this
+      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at this
     simpa [Matrix.vecMul, dotProduct] using this
   have := congrArg (fun u => Matrix.vecMul u Hm⁻¹) h1
   simpa [Matrix.vecMul_vecMul, Matrix.mul_nonsing_inv _ hd] using this
@@ -824,7 +824,7 @@ theorem main : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [I
       rw [FrameBasic.hf_conj L S.herm.1 m y, hyW m (hMME m hm), map_zero]
     have e2 : ∑ i, o i • b i = ∑ i, (o i : E) • b i := rfl
     rw [_root_.GlobalTheory.HL.Eichler.hf_add_l, e1, zero_add, e2, UnimodTerm.hf_sum_left S]
-    simp only [hyb, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [hyb, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     exact (o j).2
   obtain ⟨Q, hQ⟩ := (Submodule.mem_span_range_iff_exists_fun L.O).1 ((hspan y hyW).1 hyΛ)
   have hQ' : ∑ i, (Q i : E) • b i = y := hQ
@@ -1110,7 +1110,7 @@ theorem good_place {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [I
       intro g gs hd
       have : ∀ j, S.coef g gs 1 j = 0 := fun j => by
         have := hd j.succ j
-        rw [if_neg (by simp [Fin.ext_iff])] at this
+        rw [ite_eq_right (by simp [Fin.ext_iff])] at this
         exact this
       simp [Frames.psiOf, this]
     have e1 : S.psi 1 = 1 := h1 _ _ S.dual

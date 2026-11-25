@@ -48,7 +48,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.LatPair GlobalTheory.SeeSaw GlobalTheory.FinPl ValuativeRel
 open scoped TensorProduct nonZeroDivisors
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.SeeSaw.DiffDual
 
@@ -105,10 +104,6 @@ theorem chi_mul_int {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1))
     have := Conductor.chi_add ψ (((1 : Af D.host.F) ⊗ₜ[D.host.F] x) * y) (((1 : Af D.host.F) ⊗ₜ[D.host.F] x) * -y)
     rwa [← mul_add, add_neg_cancel, mul_zero, Conductor.chi_zero, hy, one_mul, eq_comm] at this
 
-alias psiE_add := _root_.GlobalTheory.MixPer.psiE_add
-
-alias psiE_zero := _root_.GlobalTheory.MixPer.psiE_zero
-
 theorem psiE_neg (ψ : AddChar (AF D.host.F) ℂ) (a : AE D) : psiE ψ (-a) = (psiE ψ a)⁻¹ := by
   rw [psiE, psiE, map_neg, ψ.map_neg_eq_inv]
 
@@ -125,8 +120,8 @@ theorem forward {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) (v 
       rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_one]
     rw [e, mul_assoc]
     exact chi_mul_int hψ ((mem_dI_iff a).1 ha) (Conductor.mul_mem_int (Conductor.tmul_mem hα 1) ho.2)
-  | zero => intro o _; rw [zero_mul, psiE_zero]
-  | add x y _ _ hx hy => intro o ho; rw [add_mul, psiE_add, hx o ho, hy o ho, one_mul]
+  | zero => intro o _; rw [zero_mul, GlobalTheory.MixPer.psiE_zero]
+  | add x y _ _ hx hy => intro o ho; rw [add_mul, GlobalTheory.MixPer.psiE_add, hx o ho, hy o ho, one_mul]
   | neg x _ hx => intro o ho; rw [neg_mul, psiE_neg, hx o ho, inv_one]
 
 def lift (D : D7) : Af D.host.F ⊗[D.host.F] D.host.E →ₗ[D.host.F] AE D :=

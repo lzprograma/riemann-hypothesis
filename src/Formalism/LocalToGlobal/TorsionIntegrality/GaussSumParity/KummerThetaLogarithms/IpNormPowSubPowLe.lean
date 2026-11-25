@@ -156,7 +156,7 @@ theorem IPLemma_of : FrobSq → IPLemma := by
       exact (pow_ne_zero j hq) hj.symm
     · have h1 := Formalism.InvariantFactorPaths.G7.coeff_lgF_pow K hl.two_le 0
       simp only [pow_zero, inv_one] at h1
-      rw [if_pos (Subsingleton.elim i j)]
+      rw [ite_eq_left (Subsingleton.elim i j)]
       exact h1
   have hf : Formalism.FG.IsFunEqTypeV l (l ^ 2) hq (σ.comp σ) (fun _ _ : Unit => (1 : K))
       (fun _ : Unit => (lgF K l : MvPowerSeries Unit K)) := by

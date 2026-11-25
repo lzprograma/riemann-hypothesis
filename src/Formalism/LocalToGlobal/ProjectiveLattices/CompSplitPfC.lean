@@ -1,5 +1,6 @@
 module
 
+import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHens
 public import Mathlib.RingTheory.Etale.Basic
 public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 import Mathlib.Order.CompletePartialOrder
@@ -23,17 +24,8 @@ variable {P S : Type} [CommRing P] [IsDomain P] [IsIntegrallyClosed P] [CommRing
 theorem cspC_alg (s : S) : algebraMap S (S ⊗[P] FractionRing P) s = s ⊗ₜ (1 : FractionRing P) := rfl
 
 theorem cspC_inj : Function.Injective (algebraMap S (S ⊗[P] FractionRing P)) := by
-  have hf : Function.Injective (Algebra.linearMap P (FractionRing P)) :=
-    IsFractionRing.injective P (FractionRing P)
-  have h2 := Module.Flat.lTensor_preserves_injective_linearMap (M := S)
-    (Algebra.linearMap P (FractionRing P)) hf
-  have key : ∀ s : S, algebraMap S (S ⊗[P] FractionRing P) s =
-      (LinearMap.lTensor S (Algebra.linearMap P (FractionRing P))) ((TensorProduct.rid P S).symm s) := by
-    intro s
-    rw [cspC_alg, TensorProduct.rid_symm_apply, LinearMap.lTensor_tmul, Algebra.linearMap_apply, map_one]
-  intro a b h
-  rw [key, key] at h
-  exact (TensorProduct.rid P S).symm.injective (h2 h)
+  intros
+  apply _root_.PositivityTheory.HtPt.Htat.Hens.stage_inj <;> assumption
 
 theorem cspC_artinian : IsArtinianRing (S ⊗[P] FractionRing P) := by
   haveI : Algebra.Etale (FractionRing P) (FractionRing P ⊗[P] S) := inferInstance

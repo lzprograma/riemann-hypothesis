@@ -101,7 +101,7 @@ theorem mem_perp (j : Fin (r + 1)) : g j ∈ perp L S.Hm (S.spanTo g r) := by
   intro y hy
   rw [← hf_cj L S.herm.1, hf_spanTo S g hy, map_zero]
   intro i hi
-  rw [gram, if_neg]
+  rw [gram, ite_eq_right]
   rintro ⟨rfl, -⟩
   simp at hi
 
@@ -116,16 +116,7 @@ include gram in
 theorem exists_matrix (n : S.GLV) (hn : n ∈ S.Nof g) :
     ∃ s : Matrix (Fin (r + 1)) (Fin (r + 1)) E, ((∀ i j, j < i → s i j = 0) ∧ (∀ i, s i i = 1)) ∧
       ∀ j, n (g j) = ∑ i, s i j • g i := by
-  have key : ∀ j : Fin (r + 1), n (g j) - g j ∈ S.spanTo g j := by
-    intro j
-    refine Fin.lastCases ?_ (fun j => ?_) j
-    · exact hn.2.2 _ (mem_perp S g T gram _)
-    · exact (Subgroup.mem_iInf.1 hn.1.2 j).2 _ (mem_spanTo S g (by simp))
-  choose c hc hc' using fun j => coords S g (key j)
-  refine ⟨fun i j => c j i + if i = j then 1 else 0, ⟨fun i j hij => ?_, fun i => ?_⟩, fun j => ?_⟩
-  · simp [hc j i hij.le, hij.ne']
-  · simp [hc i i le_rfl]
-  · simp [add_smul, Finset.sum_add_distrib, ← hc' j]
+  apply _root_.GlobalTheory.HL.FrameTri.exists_tri <;> assumption
 
 include gram dual in
 theorem exists_dual (j : Fin (r + 1)) : ∃ u : S.V, ∀ i, hf L S.Hm (g i) u = if i = j then 1 else 0 := by
@@ -147,7 +138,7 @@ theorem exists_step [IsNonarchimedeanLocalField F] [CharZero F] (j : Fin (r + 1)
   have hxX : x ∈ S.spanTo g r := spanTo_mono S g hjr hx
   have hlow : ∀ v ∈ S.spanTo g j, hf L S.Hm v u = 0 := fun v hv =>
     hf_spanTo S g hv fun i hi => by
-      rw [hu, if_neg]
+      rw [hu, ite_eq_right]
       rintro rfl
       omega
   have hux : hf L S.Hm u x = 0 := by rw [← hf_cj L S.herm.1, hlow x hx, map_zero]
@@ -176,10 +167,10 @@ theorem exists_step [IsNonarchimedeanLocalField F] [CharZero F] (j : Fin (r + 1)
     · rw [e1 v hv]; exact Submodule.smul_mem _ _ hxX
     · rw [e2 v hv]; exact Submodule.neg_mem _ (Submodule.smul_mem _ _ hxX)
   · have := e1 _ (mem_perp S g T gram j)
-    rw [hu, if_pos rfl, one_smul] at this
+    rw [hu, ite_eq_left rfl, one_smul] at this
     rw [← this]; abel
   · have := e1 _ (mem_perp S g T gram i)
-    rw [hu, if_neg hi, zero_smul] at this
+    rw [hu, ite_eq_right hi, zero_smul] at this
     exact sub_eq_zero.1 this
   · have := e1 _ (spanTo_le_perp S g T gram (spanTo_mono S g hjr hv))
     rw [hlow v hv, zero_smul] at this
@@ -199,15 +190,15 @@ theorem exists_upto [IsNonarchimedeanLocalField F] [CharZero F] (x : Fin (r + 1)
       change e (n (g j)) = _
       rw [h]
       rcases lt_trichotomy (j : ℕ) m with hj | hj | hj
-      · rw [if_pos hj, if_pos (by omega)]
+      · rw [ite_eq_left hj, ite_eq_left (by omega)]
         exact h3 _ (add_mem (mem_spanTo S g hj) (spanTo_mono S g hj.le (hx j)))
       · obtain rfl : j = ⟨m, hm⟩ := Fin.ext hj
-        rw [if_neg (by simp), if_pos (by simp), h1]
-      · rw [if_neg (by omega), if_neg (by omega)]
+        rw [ite_eq_right (by simp), ite_eq_left (by simp), h1]
+      · rw [ite_eq_right (by omega), ite_eq_right (by omega)]
         exact h2 j fun hh => by rw [hh] at hj; simp at hj
     · refine ⟨n, hn, fun j => ?_⟩
       have := j.2
-      rw [h, if_pos (by omega), if_pos (by omega)]
+      rw [h, ite_eq_left (by omega), ite_eq_left (by omega)]
 
 
 include gram dual in
@@ -222,7 +213,7 @@ theorem exists_elt [IsNonarchimedeanLocalField F] [CharZero F]
     · rw [hs.1 i j h]; simp
   obtain ⟨n, hn, h⟩ := exists_upto S g gs T gram dual _ hx (r + 1)
   refine ⟨n, hn, fun j => ?_⟩
-  rw [h, if_pos j.2, ← Finset.add_sum_erase _ _ (Finset.mem_univ j), hs.2, one_smul]
+  rw [h, ite_eq_left j.2, ← Finset.add_sum_erase _ _ (Finset.mem_univ j), hs.2, one_smul]
 
 end
 

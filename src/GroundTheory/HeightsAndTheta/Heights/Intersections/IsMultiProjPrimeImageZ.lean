@@ -108,19 +108,16 @@ theorem exists_dim_F {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (�
   exact FieldNumbers.PFContracted.exists_ringKrullDim_eq
     (fun T q hq => FieldNumbers.PFContracted.killBlocks_mem_of_isMultiHomogIdeal hmh T hq) hV.2.2
 
-theorem geoNum_eq_zero
-    (hGeo : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)], GeoNumStatement ι)
-    (hR4 : ∀ (F : Type) [Field F] (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)],
-      ExistsUniqueStatement F ι)
-    (hPC : ∀ (F : Type) [Field F] (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)]
-      (K' : Type) [Fintype K'] (ι' : K' → Type) [∀ k, Fintype (ι' k)], ProjContractStatement F ι ι')
-    {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
+theorem exists_red_projVarF {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
     {K' : Type} [Fintype K'] {ι' : K' → Type} [∀ k, Fintype (ι' k)]
     {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} (hv : IsBlockMap κ v) {P' : Ideal (MRing ι')} {d n : ℕ}
-    (hP : IsArithVar (imageZ v P') d) (hdn : d < n + 1) {W : Ideal (MRing ι')} (hPW : P' ≤ W)
+    (hP : IsArithVar (imageZ v P') d) {W : Ideal (MRing ι')} (hPW : P' ≤ W)
     (hWm : IsMultiProjPrime W) (hpr : (charOf W).Prime)
-    (hWd : ringKrullDim (MRing ι' ⧸ W) = ((n + Fintype.card K' : ℕ) : WithBot ℕ∞)) (L : Fin n → K → ℤ) :
-    geoNum n W (fun j => pullDeg κ (L j)) = 0 := by
+    (hWd : ringKrullDim (MRing ι' ⧸ W) = ((n + Fintype.card K' : ℕ) : WithBot ℕ∞)) :
+    let p := charOf W
+    letI : Fact p.Prime := ⟨hpr⟩
+    ((p : ℕ) : MRing ι') ∈ W ∧ IsProjVarF (W.map (red p)) n ∧
+      ∃ m : ℕ, m < d ∧ IsProjVarF (imageVar (ZMod p) v (W.map (red p))) m := by
   set p := charOf W with hpdef
   have : Fact p.Prime := ⟨hpr⟩
   have hpW : ((p : ℕ) : MRing ι') ∈ W := ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.natCast_mem_of_charOf W
@@ -144,13 +141,29 @@ theorem geoNum_eq_zero
   have hdim := krullDim_quot_add_one_le hle hpI hpQ
   rw [← ringKrullDim_red p hpI, hD, hQd] at hdim
   have hD' : D + 1 ≤ d + Fintype.card K := by exact_mod_cast hdim
-  have hVi : IsProjVarF (imageVar (ZMod p) v (W.map (red p))) (D - Fintype.card K) := by
-    rw [imageVar_red p v hpW]
-    refine ⟨hVm, ?_⟩
-    rw [hD, Nat.sub_add_cancel hKD]
-  obtain ⟨I, hI, -⟩ := hR4 (ZMod p) K' ι'
-  rw [hGeo K' ι' p I hI W n _ hWm hpW hWp]
-  exact hPC (ZMod p) K ι K' ι' I hI κ v _ n _ L hv hWp hVi (by omega)
+  refine ⟨hpW, hWp, D - Fintype.card K, by omega, ?_⟩
+  rw [imageVar_red p v hpW]
+  refine ⟨hVm, ?_⟩
+  rw [hD, Nat.sub_add_cancel hKD]
+
+theorem geoNum_eq_zero
+    (hGeo : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)], GeoNumStatement ι)
+    (hR4 : ∀ (F : Type) [Field F] (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)],
+      ExistsUniqueStatement F ι)
+    (hPC : ∀ (F : Type) [Field F] (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)]
+      (K' : Type) [Fintype K'] (ι' : K' → Type) [∀ k, Fintype (ι' k)], ProjContractStatement F ι ι')
+    {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
+    {K' : Type} [Fintype K'] {ι' : K' → Type} [∀ k, Fintype (ι' k)]
+    {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} (hv : IsBlockMap κ v) {P' : Ideal (MRing ι')} {d n : ℕ}
+    (hP : IsArithVar (imageZ v P') d) (hdn : d < n + 1) {W : Ideal (MRing ι')} (hPW : P' ≤ W)
+    (hWm : IsMultiProjPrime W) (hpr : (charOf W).Prime)
+    (hWd : ringKrullDim (MRing ι' ⧸ W) = ((n + Fintype.card K' : ℕ) : WithBot ℕ∞)) (L : Fin n → K → ℤ) :
+    geoNum n W (fun j => pullDeg κ (L j)) = 0 := by
+  have : Fact (charOf W).Prime := ⟨hpr⟩
+  obtain ⟨hpW, hWp, m, hmd, hVi⟩ := exists_red_projVarF hv hP hPW hWm hpr hWd
+  obtain ⟨I, hI, -⟩ := hR4 (ZMod (charOf W)) K' ι'
+  rw [hGeo K' ι' (charOf W) I hI W n _ hWm hpW hWp]
+  exact hPC (ZMod (charOf W)) K ι K' ι' I hI κ v _ n m L hv hWp hVi (by omega)
 
 end PointVertical
 
@@ -175,7 +188,7 @@ theorem ProjectivePointVertical.proof
   · obtain ⟨hWm, hpr, hWd⟩ := hvert hh
     have hPW : P' ≤ W := le_sup_left.trans hW.1.1.2
     have e : (fun j => (L' j).a) = fun j => pullDeg κ (L j).a := funext fun j => (hL j).1
-    simp only [if_neg hh, e, geoNum_eq_zero hGeo hR4 hPC hv hP hdn hPW hWm hpr hWd (fun j => (L j).a)]
+    simp only [ite_eq_right hh, e, geoNum_eq_zero hGeo hR4 hPC hv hP hdn hPW hWm hpr hWd (fun j => (L j).a)]
     simp
 
 end GroundTheory.Heights₂.Heights.Inter

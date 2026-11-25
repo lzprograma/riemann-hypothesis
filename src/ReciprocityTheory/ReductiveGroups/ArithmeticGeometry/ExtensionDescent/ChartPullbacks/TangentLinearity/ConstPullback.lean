@@ -7,8 +7,6 @@ import Mathlib.Tactic.Lemma
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory
@@ -33,7 +31,7 @@ theorem eq_local {Y : Scheme.{0}} {κ : Type} (U : κ → Y.Opens) (hc : ⨆ j, 
     (s t : Γ(Y, ⊤))
     (h : ∀ j, (Y.presheaf.map (homOfLE (le_top : U j ≤ ⊤)).op).hom s =
       (Y.presheaf.map (homOfLE (le_top : U j ≤ ⊤)).op).hom t) : s = t :=
-  Y.sheaf.eq_of_locally_eq' U ⊤ (fun j => homOfLE le_top) hc.ge s t h
+  Y.sheaf.eq_of_locally_eq' U ⊤ (fun _ => homOfLE le_top) hc.ge s t h
 
 theorem ratio_glue {Y : Scheme.{0}} (L : LB Y) (hc : ⨆ j, L.U j = ⊤) (t t' : LB.Gen L)
     (ht : t.IsGen) (ht' : t'.IsGen) :

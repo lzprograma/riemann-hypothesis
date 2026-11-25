@@ -197,7 +197,7 @@ theorem latDeg_standard_basis {n : ℕ} (h : n = r) (v : Fin n → Fin r → K)
         have hl' : ¬ l = Fin.cast h i := hl
         simp [hl']
       · simp
-    · rw [if_neg hij]
+    · rw [ite_eq_right hij]
       refine Finset.sum_eq_zero fun l _ => ?_
       by_cases hl : l = finCongr h i
       · have : l ≠ finCongr h j := by
@@ -479,16 +479,12 @@ namespace ReciprocityTheory.ChartRestriction.G.T0
 open Matrix NumberField
 open scoped ComplexOrder
 
-noncomputable def hQdist {K : Type} [Field K] {r k : ℕ} (σ : K →+* ℂ) (b : Fin k → Fin r → K)
-    (q : Fin r → K) : ℝ :=
-  ⨅ z : Fin k → ℂ, Real.sqrt (∑ i, ‖σ (q i) + ∑ j, z j * σ (b j i)‖ ^ 2)
-
 section Final
 
 variable {K : Type} [Field K] [NumberField K] {r k : ℕ}
 
 theorem quotDist_eq_sqrt_norm (σ : K →+* ℂ) {b : Fin k → Fin r → K} (hb : LinearIndependent K b)
-    (q : Fin r → K) : hQdist σ b q = Real.sqrt (hns (hPm σ b *ᵥ fun i => σ (q i))) := by
+    (q : Fin r → K) : ReciprocityTheory.ChartRestriction.G.T0.qdist σ b q = Real.sqrt (hns (hPm σ b *ᵥ fun i => σ (q i))) := by
   set v : Fin r → ℂ := fun i => σ (q i) with hv
   set G := (hBm σ b)ᴴ * hBm σ b with hG
   have hterm : ∀ z : Fin k → ℂ,
@@ -508,14 +504,14 @@ theorem quotDist_eq_sqrt_norm (σ : K →+* ℂ) {b : Fin k → Fin r → K} (hb
     exact le_add_of_nonneg_right (Finset.sum_nonneg fun _ _ => by positivity)
   have hat : v + hBm σ b *ᵥ (-(G⁻¹ *ᵥ ((hBm σ b)ᴴ *ᵥ v))) = hPm σ b *ᵥ v := by
     rw [hdec, neg_add_cancel, mulVec_zero, add_zero]
-  unfold hQdist
+  unfold ReciprocityTheory.ChartRestriction.G.T0.qdist
   simp_rw [hterm]
   apply le_antisymm
   · exact (ciInf_le ⟨0, by rintro _ ⟨z, rfl⟩; exact Real.sqrt_nonneg _⟩ _).trans_eq (by rw [hat])
   · exact le_ciInf fun z => Real.sqrt_le_sqrt (hmin z)
 
 theorem norm_orthProj_sq_sum {b : Fin k → Fin r → K} (hb : LinearIndependent K b) (q : Fin r → K) :
-    ‖hpv b q‖ ^ 2 = ∑ σ, hQdist σ b q ^ 2 := by
+    ‖hpv b q‖ ^ 2 = ∑ σ, ReciprocityTheory.ChartRestriction.G.T0.qdist σ b q ^ 2 := by
   rw [hpv, norm_realCoords_sq]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [quotDist_eq_sqrt_norm σ hb, Real.sq_sqrt (by unfold hns; positivity)]
@@ -605,7 +601,7 @@ section Main
 theorem exists_small_saturating_vector (K : Type) [Field K] [NumberField K] (r k : ℕ) (b : Fin k → Fin r → K)
     (hb : LinearIndependent K b) (hbL : ∀ j, b j ∈ hStd K r) (hk : k < r) :
     ∃ q : Fin r → 𝓞 K, (fun i => (q i : K)) ∉ Submodule.span K (Set.range b) ∧
-      meanK (fun σ => Real.log (hQdist σ b (fun i => (q i : K)))) ≤
+      meanK (fun σ => Real.log (ReciprocityTheory.ChartRestriction.G.T0.qdist σ b (fun i => (q i : K)))) ≤
         ReciprocityTheory.MultiplicativeHeights.latDeg (fun _ => 1) (ReciprocityTheory.MultiplicativeHeights.satSub (hStd K r) b) b /
             ((Module.finrank ℚ K : ℝ) * ((r - k : ℕ) : ℝ)) +
           1 / 2 * Real.log ((r - k : ℕ) : ℝ) +
@@ -677,7 +673,7 @@ theorem exists_small_saturating_vector (K : Type) [Field K] [NumberField K] (r k
   rw [hqq]
   set X : (K →+* ℂ) → ℝ := fun σ => hns (hPm σ b *ᵥ fun l => σ (q l)) with hX
   have hXpos : ∀ σ, 0 < X σ := fun σ => normSqSum_pos (orthogonalProjector_mulVec_ne_zero σ hb hq)
-  have hdist : ∀ σ, Real.log (hQdist σ b q) = Real.log (X σ) / 2 := fun σ => by
+  have hdist : ∀ σ, Real.log (ReciprocityTheory.ChartRestriction.G.T0.qdist σ b q) = Real.log (X σ) / 2 := fun σ => by
     rw [quotDist_eq_sqrt_norm σ hb, Real.log_sqrt (hXpos σ).le]
   have hsumX : ∑ σ, X σ = ‖hpvHom b q‖ ^ 2 := by
     show _ = ‖hpv b q‖ ^ 2
@@ -719,7 +715,7 @@ theorem exists_small_saturating_vector (K : Type) [Field K] [NumberField K] (r k
         (m : ℝ) * (D ^ m * P / (I : ℝ) ^ 2) ^ (1 / (N : ℝ)) by rw [hNr]; field_simp]
     rw [Real.log_mul hmr.ne' (Real.rpow_pos_of_pos (by positivity) _).ne',
       Real.log_rpow (by positivity), hlogG]
-  have hmean : meanK (fun σ => Real.log (hQdist σ b q)) =
+  have hmean : meanK (fun σ => Real.log (ReciprocityTheory.ChartRestriction.G.T0.qdist σ b q)) =
       1 / 2 * ∑ σ, (1 / (n : ℝ)) * Real.log (X σ) := by
     simp only [meanK, hdist, hcardE]
     rw [Finset.mul_sum, Finset.sum_div]

@@ -23,8 +23,6 @@ open Formalism.L2 Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Rows Formalis
 
 namespace Formalism.IndefR
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : MainNotions.G.Inst D L} {Gl : MainNotions.G.LatInst D} {K : MainNotions.G.Consts} {Y : DivX D}
   {cX : ExtraC} {ex : Extra D L hT Gi Gl K Y cX}
 
@@ -48,9 +46,9 @@ def hkCan {G Pl0 I0 T : Type} [Group G] [Fintype G] (A3 : FamIn3 D.what₂.LL G 
   ev_inj p p' h := by
     have h2 := congrFun h p
     dsimp only at h2
-    rw [if_pos rfl] at h2
+    rw [ite_eq_left rfl] at h2
     by_contra hne
-    rw [if_neg (fun h' => hne h'.symm)] at h2
+    rw [ite_eq_right (fun h' => hne h'.symm)] at h2
     exact one_ne_zero h2
 
 def errCan {K : Type} [Field K] [NumberField K] [StarRing K] {Bs : DefBase K} {Df : DefSide Bs} (S : IndefData Df)

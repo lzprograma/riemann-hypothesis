@@ -18,8 +18,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.Pf.MainEqFam
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def ampG {Cl Nu : Type} (L : PN.LocalNG Cl Nu) (d : ∀ p, L.D p) : ℂ := ∏ p, L.aZ p (d p)
 
 variable {D : D7}

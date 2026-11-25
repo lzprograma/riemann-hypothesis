@@ -70,7 +70,7 @@ theorem wordMult_ofFn {n : ℕ} (π : Representation ℂ (GL (Fin n) k) V) (z : 
 
 theorem wordMult_of_ne {n : ℕ} (π : Representation ℂ (GL (Fin n) k) V) {w : List ℂˣ}
     (h : w.length ≠ n) : wordMult π w = 0 := by
-  rw [wordMult, if_neg h]
+  rw [wordMult, ite_eq_right h]
 
 def jacEquiv {α n : Type} {m : α → Type} [Fintype α] [LinearOrder α] [∀ a, Fintype (m a)]
     [∀ a, DecidableEq (m a)] [Fintype n] [DecidableEq n] (e : (Σ a, m a) ≃ n)

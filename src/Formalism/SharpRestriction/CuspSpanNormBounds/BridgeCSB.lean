@@ -4,54 +4,8 @@ import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryGroupGaugeVol
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
 public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
 public import Formalism.FormalDegreeBessel.FinalG
-import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -115,9 +69,9 @@ theorem continuous_dag : Continuous (dag (k := k) (r := r)) := by
     funext x i j
     unfold dag
     rw [Matrix.mul_assoc, hpk_mul_apply, Matrix.mul_apply, Finset.sum_eq_single (tau k r j)]
-    · rw [hpk_row, tau_tau, if_pos rfl, sgn_tau]; rfl
+    · rw [hpk_row, tau_tau, ite_eq_left rfl, sgn_tau]; rfl
     · intro m _ hm
-      rw [hpk_row, if_neg, mul_zero]
+      rw [hpk_row, ite_eq_right, mul_zero]
       intro e; apply hm; rw [e, tau_tau]
     · intro h'; exact absurd (Finset.mem_univ _) h'
   rw [h]
@@ -142,22 +96,22 @@ theorem hPart_mul {h n : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
   unfold hPart
   split_ifs with h1 h2
   · rw [Matrix.mul_apply, Finset.sum_eq_single j]
-    · rw [hn j j h1.2.2 (Or.inl le_rfl), if_pos rfl, mul_one]
+    · rw [hn j j h1.2.2 (Or.inl le_rfl), ite_eq_left rfl, mul_one]
     · intro l _ hl
       by_cases hlW : r ≤ l.val
-      · rw [hn l j h1.2.2 (Or.inr hlW), if_neg hl, mul_zero]
-      · rw [hh.1 i l (Or.inl (by omega)), if_neg, zero_mul]
+      · rw [hn l j h1.2.2 (Or.inr hlW), ite_eq_right hl, mul_zero]
+      · rw [hh.1 i l (Or.inl (by omega)), ite_eq_right, zero_mul]
         intro e; rw [e] at h1; omega
     · intro h'; exact absurd (Finset.mem_univ _) h'
   · subst h2
     by_cases hi : i.val < r ∨ r + k < i.val
-    · rw [hh.1 i i hi, if_pos rfl]
+    · rw [hh.1 i i hi, ite_eq_left rfl]
     · exfalso; apply h1; omega
   · by_cases hi : i.val < r ∨ r + k < i.val
-    · rw [hh.2 i j hi, if_neg h2]
+    · rw [hh.2 i j hi, ite_eq_right h2]
     · have hj : j.val < r ∨ r + k < j.val := by
         by_contra hj; apply h1; omega
-      rw [hh.1 i j hj, if_neg h2]
+      rw [hh.1 i j hj, ite_eq_right h2]
 
 def splitP (x : Mt k r) : Mt k r × Mt k r := (hPart x, mulP (dag (hPart x), x))
 
@@ -357,7 +311,7 @@ theorem shear_step {ι : Type} [Fintype ι] [DecidableEq ι] (ht : ι → ℕ) (
     simp only [e] at this
     simp [hi] at this ⊢
     linarith
-  · simp only [hi, if_false, dif_pos hi]
+  · simp only [hi, ite_false, dite_eq_left hi]
 
 theorem shearMP : ShearMP := by
   intro ι _ _ ht S hS hsh
@@ -369,21 +323,21 @@ theorem shearMP : ShearMP := by
   have hSpP : Sp P = id := by funext x i; simp [Sp, not_le.2 (hP i)]
   have hmeas : ∀ p, Measurable (Sp p) := fun p => Measurable.of_eval fun i => by
     by_cases h : p ≤ ht i
-    · simp only [Sp, h, if_true]; exact (measurable_pi_apply i).comp hS
-    · simp only [Sp, h, if_false]; exact measurable_pi_apply i
+    · simp only [Sp, h, ite_true]; exact (measurable_pi_apply i).comp hS
+    · simp only [Sp, h, ite_false]; exact measurable_pi_apply i
   have hfac : ∀ p, Sp p = (fun y : ι → ℝ => fun i => if ht i = p then S y i else y i) ∘ Sp (p + 1) := by
     intro p
     funext x i
     simp only [Function.comp, Sp]
     by_cases hi : ht i = p
-    · simp only [hi, le_refl, if_true, show ¬ (p + 1 ≤ p) by omega, if_false]
+    · simp only [hi, le_refl, ite_true, show ¬ (p + 1 ≤ p) by omega, ite_false]
       have := hsh i x (fun j => if p + 1 ≤ ht j then S x j else x j) (fun j hj => by
-        simp only [show ¬ (p + 1 ≤ ht j) by omega, if_false])
-      simp only [show ¬ (p + 1 ≤ ht i) by omega, if_false] at this
+        simp only [show ¬ (p + 1 ≤ ht j) by omega, ite_false])
+      simp only [show ¬ (p + 1 ≤ ht i) by omega, ite_false] at this
       linarith
     · by_cases h2 : p + 1 ≤ ht i
-      · simp only [hi, if_false, h2, if_true, show p ≤ ht i by omega]
-      · simp only [hi, if_false, h2, show ¬ p ≤ ht i by omega]
+      · simp only [hi, ite_false, h2, ite_true, show p ≤ ht i by omega]
+      · simp only [hi, ite_false, h2, show ¬ p ≤ ht i by omega]
   have key : ∀ q, q ≤ P → MeasurePreserving (Sp (P - q)) volume volume := by
     intro q
     induction q with
@@ -464,7 +418,7 @@ theorem Fil.mul {a b : ℕ} {X Y : Mat k r} (hX : Fil a X) (hY : Fil b Y) : Fil 
 
 theorem Fil.one : Fil 0 (1 : Mat k r) := by
   intro i j h
-  rw [Matrix.one_apply, if_neg (by rintro rfl; omega)]
+  rw [Matrix.one_apply, ite_eq_right (by rintro rfl; omega)]
 
 theorem Fil.eq_zero {X : Mat k r} {p : ℕ} (hp : 2 * r + 1 ≤ p) (h : Fil p X) : X = 0 := by
   ext i j
@@ -533,9 +487,9 @@ theorem adjH_apply (X : Mat k r) (i j : Fin (2 * r + k + 1)) :
     adjH X i j = sgn k r i * star (X (tau k r j) (tau k r i)) * sgn k r j := by
   unfold adjH
   rw [Matrix.mul_assoc, hpk_mul_apply, Matrix.mul_apply, Finset.sum_eq_single (tau k r j)]
-  · rw [hpk_row, tau_tau, if_pos rfl, sgn_tau, Matrix.conjTranspose_apply]; ring
+  · rw [hpk_row, tau_tau, ite_eq_left rfl, sgn_tau, Matrix.conjTranspose_apply]; ring
   · intro m _ hm
-    rw [hpk_row, if_neg, mul_zero]
+    rw [hpk_row, ite_eq_right, mul_zero]
     intro e; apply hm; rw [e, tau_tau]
   · intro h'; exact absurd (Finset.mem_univ _) h'
 
@@ -636,13 +590,13 @@ theorem mem_N_iff (g : Mat k r) : g ∈ Nset k r ↔ g ∈ UH (Hpk k r) ∧ Fil 
       have hi2 : r + k < i.val := by unfold dg at hij; split_ifs at hij <;> omega
       have e : g i j = adjH (adjH g) i j := by rw [adjH_adjH]
       have hτi : (tau k r i).val = 2 * r + k - i.val := by
-        rw [tau_val, if_pos (Or.inr (by unfold dg at hij; split_ifs at hij <;> omega))]
-      have hτj : (tau k r j).val = 2 * r + k - j.val := by rw [tau_val, if_pos (Or.inr (by omega))]
+        rw [tau_val, ite_eq_left (Or.inr (by unfold dg at hij; split_ifs at hij <;> omega))]
+      have hτj : (tau k r j).val = 2 * r + k - j.val := by rw [tau_val, ite_eq_left (Or.inr (by omega))]
       rw [e, adjH_apply, hc' (tau k r j) (tau k r i) (by omega) (by unfold dg at hij; split_ifs at hij <;> omega)]
       by_cases hij' : i = j
       · subst hij'
-        rw [if_pos rfl, if_pos rfl, star_one, mul_one, sgn_mul_self, sub_self]
-      · rw [if_neg (fun e' => hij' (by rw [← tau_tau (k := k) (r := r) i, ← e', tau_tau])), if_neg hij', star_zero,
+        rw [ite_eq_left rfl, ite_eq_left rfl, star_one, mul_one, sgn_mul_self, sub_self]
+      · rw [ite_eq_right (fun e' => hij' (by rw [← tau_tau (k := k) (r := r) i, ← e', tau_tau])), ite_eq_right hij', star_zero,
           mul_zero, zero_mul, sub_zero]
   · rintro ⟨hU, hF⟩
     refine ⟨hU, fun i j hj hi => ?_⟩
@@ -715,8 +669,8 @@ theorem lieOf_N : lieOf (Nset k r) = lieN k r := by
     · exact hcol i j hjk (by unfold dg at hij; split_ifs at hij <;> omega)
     · have hi2 : r + k < i.val := by unfold dg at hij; split_ifs at hij <;> omega
       have hτi : (tau k r i).val = 2 * r + k - i.val := by
-        rw [tau_val, if_pos (Or.inr (by unfold dg at hij; split_ifs at hij <;> omega))]
-      have hτj : (tau k r j).val = 2 * r + k - j.val := by rw [tau_val, if_pos (Or.inr (by omega))]
+        rw [tau_val, ite_eq_left (Or.inr (by unfold dg at hij; split_ifs at hij <;> omega))]
+      have hτj : (tau k r j).val = 2 * r + k - j.val := by rw [tau_val, ite_eq_left (Or.inr (by omega))]
       have e : X i j = -(adjH X i j) := by rw [hadj, Matrix.neg_apply, neg_neg]
       rw [e, adjH_apply, hcol (tau k r j) (tau k r i) (by omega) (by unfold dg at hij; split_ifs at hij <;> omega),
         star_zero, mul_zero, zero_mul, neg_zero]
@@ -730,13 +684,13 @@ theorem Fil.sub_Pg {p : ℕ} {M : Mat k r} (h : Fil p M) : Fil (p + 1) (M - Pg p
   rw [Matrix.sub_apply]
   unfold Pg
   by_cases e : dg k r j = dg k r i + p
-  · rw [if_pos e, sub_self]
-  · rw [if_neg e, h i j (by omega), sub_zero]
+  · rw [ite_eq_left e, sub_self]
+  · rw [ite_eq_right e, h i j (by omega), sub_zero]
 
 theorem Fil.Pg (p : ℕ) (M : Mat k r) : Fil p (Pg p M) := by
   intro i j hij
   unfold Formalism.MainNotions.BridgeCSB.Pg
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 theorem Pg_of_Fil {p : ℕ} {M : Mat k r} (h : Fil (p + 1) M) : Pg p M = 0 := by
   ext i j
@@ -756,8 +710,8 @@ theorem Pg_adjH (p : ℕ) (M : Mat k r) : Pg p (adjH M) = adjH (Pg p M) := by
   have hi := dg_le (k := k) (r := r) i
   have hj := dg_le (k := k) (r := r) j
   by_cases e : dg k r j = dg k r i + p
-  · rw [if_pos e, if_pos (by rw [dg_tau, dg_tau]; omega), adjH_apply]
-  · rw [if_neg e, if_neg (by rw [dg_tau, dg_tau]; omega), star_zero, mul_zero, zero_mul]
+  · rw [ite_eq_left e, ite_eq_left (by rw [dg_tau, dg_tau]; omega), adjH_apply]
+  · rw [ite_eq_right e, ite_eq_right (by rw [dg_tau, dg_tau]; omega), star_zero, mul_zero, zero_mul]
 
 theorem lieN_add {X Y : Mat k r} (hX : X ∈ lieN k r) (hY : Y ∈ lieN k r) : X + Y ∈ lieN k r := by
   refine ⟨hX.1.add hY.1, ?_⟩
@@ -852,11 +806,11 @@ theorem Pg_smul (p : ℕ) (c : ℝ) (M : Mat k r) : Pg p (c • M) = c • Pg p 
 theorem Pg_Pg (p q : ℕ) (M : Mat k r) : Pg q (Pg p M) = if p = q then Pg p M else 0 := by
   by_cases h : p = q
   · subst h
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     ext i j
     rw [Pg_apply, Pg_apply]
     split_ifs <;> rfl
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     ext i j
     rw [Pg_apply, Pg_apply, Matrix.zero_apply]
     split_ifs <;> first | rfl | omega
@@ -918,8 +872,8 @@ theorem Pg_Lc (q : Fin (2 * r + 1)) (x : Ix k r → ℝ) :
     show Pg q.val (bv i) = _
     rw [Pg_of_mem_nP (bv_mem i)]
     by_cases h : i.1 = q
-    · rw [if_pos (by rw [h]), if_pos h]
-    · rw [if_neg (fun e => h (Fin.ext e)), if_neg h]
+    · rw [ite_eq_left (by rw [h]), ite_eq_left h]
+    · rw [ite_eq_right (fun e => h (Fin.ext e)), ite_eq_right h]
   simp only [e, smul_ite, smul_zero]
   rw [Fintype.sum_sigma]
   rw [Finset.sum_eq_single q]
@@ -942,8 +896,8 @@ theorem Fil_Lc_iff (p : ℕ) (v : Ix k r → ℝ) : Fil p (Lc v) ↔ ∀ i, htI 
     refine Finset.sum_eq_zero fun i _ => ?_
     by_cases hi : htI i < p
     · rw [h i hi, zero_smul, Matrix.zero_apply]
-    · have hY : bv i = Pg i.1.val (bv i) := by rw [Pg_of_mem_nP (bv_mem i), if_pos rfl]
-      rw [Matrix.smul_apply, hY, Pg_apply, if_neg (by unfold htI at hi; omega), smul_zero]
+    · have hY : bv i = Pg i.1.val (bv i) := by rw [Pg_of_mem_nP (bv_mem i), ite_eq_left rfl]
+      rw [Matrix.smul_apply, hY, Pg_apply, ite_eq_right (by unfold htI at hi; omega), smul_zero]
 
 theorem Lc_injective : Function.Injective (Lc (k := k) (r := r)) := by
   intro x y h
@@ -959,9 +913,9 @@ theorem sum_Pg {X : Mat k r} (hX : Fil 0 X) : ∑ q : Fin (2 * r + 1), Pg q.val 
   by_cases h : dg k r i ≤ dg k r j
   · have hb := dg_le (k := k) (r := r) j
     rw [Finset.sum_eq_single ⟨dg k r j - dg k r i, by omega⟩]
-    · rw [if_pos (by simp; omega)]
+    · rw [ite_eq_left (by simp; omega)]
     · intro q _ hq
-      rw [if_neg]
+      rw [ite_eq_right]
       intro e; apply hq; ext; simp; omega
     · intro h'; exact absurd (Finset.mem_univ _) h'
   · rw [hX i j (by omega)]

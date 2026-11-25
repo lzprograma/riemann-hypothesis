@@ -65,35 +65,23 @@ variable {L : Type} [Field L] [NumberField L]
 abbrev cU (c : L ≃+* L) : Lˣ →* Lˣ := Units.map c.toMonoidHom
 
 theorem finId_finSingle (v : HeightOneSpectrum (𝓞 L)) (x : (v.adicCompletion L)ˣ) :
-    finId L (Units.map (Neutral.B1.finiteSingle L v) x) = localIdele L v x := by
-  refine Units.ext (Prod.ext ?_ ?_)
-  · change (1 : InfiniteAdeleRing L) - 0 + 0 = 1
-    simp
-  · change (1 : Af L) - 1 + Neutral.B1.finiteSingle L v x = Neutral.B1.finiteSingle L v x
-    simp
+    finId L (Units.map (Neutral.B1.finiteSingle L v) x) = localIdele L v x :=
+  GlobalTheory.CsdTriv.finId_finSingle v x
 
 theorem conjFin_finSingle (c : L ≃+* L) {v v' : HeightOneSpectrum (𝓞 L)} (h : ConjPl c v v') (k : Lˣ) :
     Units.map (conjFin c).toMonoidHom (Units.map (Neutral.B1.finiteSingle L v) (atFin v k)) =
-      Units.map (Neutral.B1.finiteSingle L v') (atFin v' (cU c k)) := by
-  classical
-  obtain rfl := eq_conjSrc h
-  refine Units.ext (Subtype.ext ((map_update_one (conjSrc_injective c) (conjLoc c) v' _).trans ?_))
-  exact congrArg (Function.update _ v') ((conjLoc_spec c v').2.1 k)
+      Units.map (Neutral.B1.finiteSingle L v') (atFin v' (cU c k)) :=
+  GlobalTheory.CsdTriv.conjFin_finSingle c h k
 
 def normFin (c : L ≃+* L) (χ : HChar L) : Ideles L →* ℂˣ :=
   (χ.1.comp (finId L)).comp ((MonoidHom.id _ * Units.map (conjFin c).toMonoidHom).comp (Units.map (pFin L).toMonoidHom))
 
 theorem continuous_normFin (c : L ≃+* L) (χ : HChar L) : Continuous (normFin c χ) :=
-  (χ.2.1.comp (continuous_finId L)).comp
-    ((continuous_id.mul (Continuous.units_map _ (continuous_conjFin c))).comp
-      (Continuous.units_map (pFin L).toMonoidHom continuous_snd))
+  GlobalTheory.CsdTriv.continuous_normFin c χ
 
 theorem normFin_loc (c : L ≃+* L) (χ : HChar L) {v v' : HeightOneSpectrum (𝓞 L)} (h : ConjPl c v v') (k : Lˣ) :
-    normFin c χ (localIdele L v (atFin v k)) = χ.locK v k * χ.locK v' (cU c k) := by
-  change χ.1 (finId L (Units.map (Neutral.B1.finiteSingle L v) (atFin v k) *
-    Units.map (conjFin c).toMonoidHom (Units.map (Neutral.B1.finiteSingle L v) (atFin v k)))) = _
-  rw [conjFin_finSingle c h, map_mul, map_mul, finId_finSingle, finId_finSingle]
-  rfl
+    normFin c χ (localIdele L v (atFin v k)) = χ.locK v k * χ.locK v' (cU c k) :=
+  GlobalTheory.CsdTriv.normFin_loc c χ h k
 
 theorem loc_eq_one_of_prod {ψ : Ideles L →* ℂˣ} (hψ : Continuous ψ) (S : Finset (HeightOneSpectrum (𝓞 L)))
     (h : ∀ k : Lˣ, ∏ Q ∈ S, ψ (localIdele L Q (atFin Q k)) = 1) {v : HeightOneSpectrum (𝓞 L)} (hv : v ∈ S)
@@ -111,16 +99,12 @@ variable {L : Type} [Field L] [NumberField L] [IsCMField L]
 local notation "𝐅" => maximalRealSubfield L
 local notation "𝐜" => AlgEquiv.toRingEquiv (IsCMField.complexConj L)
 
-theorem exists_norm (k : Lˣ) : ∃ t : (𝐅)ˣ, upF 𝐅 t = k * cU 𝐜 k := by
-  have h : (k : L) * IsCMField.complexConj L k ∈ 𝐅 :=
-    (IsCMField.complexConj_eq_self_iff L _).1 (by rw [map_mul, IsCMField.complexConj_apply_apply, mul_comm])
-  exact ⟨Units.mk0 ⟨_, h⟩ fun e => (k * cU 𝐜 k).ne_zero (congrArg Subtype.val e), Units.ext rfl⟩
+theorem exists_norm (k : Lˣ) : ∃ t : (𝐅)ˣ, upF 𝐅 t = k * cU 𝐜 k :=
+  GlobalTheory.CsdTriv.exists_norm k
 
 theorem mem_aboveF_iff (v Q : HeightOneSpectrum (𝓞 L)) :
-    Q ∈ aboveF (L := L) 𝐅 (v.under (𝓞 𝐅)) ↔ Q = v ∨ ConjPl 𝐜 v Q := by
-  rw [← under_eq_iff_conjPl (IsCMField.complexConj L) (Algebra.IsQuadraticExtension.finrank_eq_two _ _)
-    (IsCMField.complexConj_ne_one _)]
-  simp [aboveF]
+    Q ∈ aboveF (L := L) 𝐅 (v.under (𝓞 𝐅)) ↔ Q = v ∨ ConjPl 𝐜 v Q :=
+  GlobalTheory.CsdTriv.mem_aboveF_iff v Q
 
 theorem fin_eq_one (χ : HChar L) (h : ∀ (k : Lˣ) (t : (𝐅)ˣ), upF 𝐅 t = k * cU 𝐜 k → ∀ p, χ.resFin p t = 1)
     (u : (Af L)ˣ) : χ.1 (finId L (u * Units.map (conjFin 𝐜).toMonoidHom u)) = 1 := by
@@ -174,7 +158,7 @@ theorem etaFin_norm (hr : ∀ (P : HeightOneSpectrum (𝓞 L)) (t : (𝐅)ˣ), o
   · rfl
 
 theorem etaInf_norm {k : Lˣ} {t : (𝐅)ˣ} (ht : upF 𝐅 t = k * cU 𝐜 k) (w : InfinitePlace 𝐅) : etaInf 𝐅 w t = 1 := by
-  rw [etaInf, if_neg]
+  rw [etaInf, ite_eq_right]
   have e : algebraMap 𝐅 L t = k * IsCMField.complexConj L k := congrArg Units.val ht
   rw [← ComplexEmbedding.lift_algebraMap_apply L w.embedding, e, map_mul, IsCMField.complexEmbedding_complexConj,
     Complex.mul_conj, Complex.ofReal_re, not_lt]

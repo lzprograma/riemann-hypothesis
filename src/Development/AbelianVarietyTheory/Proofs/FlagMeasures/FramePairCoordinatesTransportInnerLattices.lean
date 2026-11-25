@@ -170,7 +170,7 @@ lemma mkW_prF (x : ↥(H.perp (H.X Fr.f))) :
   ((mkW_eq Fr _ _).2 (sub_prF Fr x.2)).symm
 
 noncomputable def sec : H.Wb Fr.f →ₗ[E] V :=
-  Submodule.liftQ _ ((prL Fr).comp (H.perp (H.X Fr.f)).subtype) fun x hx =>
+  Submodule.liftQ _ ((prL Fr).comp (H.perp (H.X Fr.f)).subtype) fun _ hx =>
     (prL_apply Fr _).trans (prF_X Fr hx)
 
 lemma sec_mkW (x : ↥(H.perp (H.X Fr.f))) : sec Fr (H.mkW Fr.f x) = Fr.prF x :=

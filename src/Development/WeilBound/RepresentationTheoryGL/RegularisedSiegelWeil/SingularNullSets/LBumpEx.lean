@@ -10,48 +10,10 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralNor
 public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LatHatOpenAndContinuous
 public import Mathlib.Analysis.Calculus.BumpFunction.Basic
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsCompactLatticeStabilizerBoundedReal
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
 import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LBumpExA, Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.IntMatIsCompact, Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LBumpEx
@@ -69,7 +31,6 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doublin
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC PositivityTheory.PfSWUS
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open IsDedekindDomain NumberField
 
 
@@ -191,7 +152,7 @@ theorem mem_U_iff {S : Finset (Pl D)} {ef : AfE D} (hef : ef * ef = ef)
   rw [mem_U, mem_U]
   simp only [h2]
   refine ⟨fun h => ⟨fun v hv i j => ?_, h.2⟩, fun h => ⟨hw, h.2⟩⟩
-  rw [Matrix.of_apply, map_mul, hS v, if_neg hv, zero_mul]
+  rw [Matrix.of_apply, map_mul, hS v, ite_eq_right hv, zero_mul]
   exact zero_mem _
 
 end PositivityTheory.Rg.Rsw.L.LBumpEx
@@ -214,7 +175,6 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doublin
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC PositivityTheory.PfSWUS
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open IsDedekindDomain NumberField
 
 
@@ -270,8 +230,8 @@ theorem U_isCompact {S : Finset (Pl D)} {ef : AfE D} (hef : ef ∈ intAE D)
   · have h1 : (1 - ef) * w i j ∈ intAE D := mem_of_cf_mem fun v => by
       rw [map_mul, map_sub, map_one, hS v]
       by_cases hv : v ∈ S
-      · rw [if_pos hv, sub_self, zero_mul]; exact zero_mem _
-      · rw [if_neg hv, sub_zero, one_mul]; exact hw.1 v hv i j
+      · rw [ite_eq_left hv, sub_self, zero_mul]; exact zero_mem _
+      · rw [ite_eq_right hv, sub_zero, one_mul]; exact hw.1 v hv i j
     have h2 : (N : AfE D) * w i j = (N : AfE D) * (ef * w i j) + (N : AfE D) * ((1 - ef) * w i j) := by ring
     rw [Matrix.of_apply, h2]
     exact add_mem (hw.2 i j) (GlobalTheory.HostAdeleIso.intAE_mul_mem D (GlobalTheory.IwaPlace.SdComap.natCast_mem_intAE N) h1)
@@ -299,7 +259,6 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doublin
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC PositivityTheory.PfSWUS
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open IsDedekindDomain NumberField
 
 
@@ -385,7 +344,7 @@ theorem PositivityTheory.Rg.Rsw.L.bumpEx : IdemEx → BumpEx := by
     have h2 := right_ne_zero_of_mul hne
     have hw : (Matrix.of fun i j => finPart D (y i j)) ∈ W := by
       by_contra h
-      exact h2 (if_neg h)
+      exact h2 (ite_eq_right h)
     refine hKaC _ (Set.mem_iUnion.2 ⟨i, Set.mem_iUnion.2 ⟨j, _, hw, rfl⟩⟩) fun ρ => ?_
     have hb : bump (rc y) ≠ 0 := fun h => h1 (by rw [h, Complex.ofReal_zero])
     have hmem : rc y ∈ Metric.ball (0 : D.what₂.Tau → Fin 1 → Fin b → ℂ) (max R 1 + 1) := by
@@ -398,7 +357,7 @@ theorem PositivityTheory.Rg.Rsw.L.bumpEx : IdemEx → BumpEx := by
     intro y
     show η₀ y = if IntOff S y then η₀ (e • y) else 0
     by_cases hy : IntOff S y
-    · rw [if_pos hy, hη, hη]
+    · rw [ite_eq_left hy, hη, hη]
       have hr : rc (e • y) = rc y := by
         funext τ i j
         show θ τ (infPart D ((e • y) i j)) = θ τ (infPart D (y i j))
@@ -411,9 +370,9 @@ theorem PositivityTheory.Rg.Rsw.L.bumpEx : IdemEx → BumpEx := by
       rw [hr, hw]
       simp only [Matrix.of_apply] at hiff
       by_cases hm : (Matrix.of fun i j => finPart D (y i j)) ∈ W
-      · rw [if_pos hm, if_pos (hiff.1 hm)]
-      · rw [if_neg hm, if_neg (fun h => hm (hiff.2 h))]
-    · rw [if_neg hy, hη, if_neg, mul_zero]
+      · rw [ite_eq_left hm, ite_eq_left (hiff.1 hm)]
+      · rw [ite_eq_right hm, ite_eq_right (fun h => hm (hiff.2 h))]
+    · rw [ite_eq_right hy, hη, ite_eq_right, mul_zero]
       intro hm
       exact hy fun v hv i j => by rw [cv_eq]; exact hm.1 v hv i j
   ·
@@ -427,7 +386,7 @@ theorem PositivityTheory.Rg.Rsw.L.bumpEx : IdemEx → BumpEx := by
   ·
     intro x hx
     show η₀ (x.submatrix (fun _ => i) id) = 1
-    rw [hη, if_pos, bump.one_of_mem_closedBall]
+    rw [hη, ite_eq_left, bump.one_of_mem_closedBall]
     · simp
     · exact Metric.closedBall_subset_closedBall (le_max_left _ _)
         (hR (Set.mem_iUnion.2 ⟨i, x, hx, rfl⟩))

@@ -6,54 +6,11 @@ public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPoi
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PlaceProjectionZeroIntegralIffComponentsAbove
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
 import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
+import Formalism.HermitianLattices.HermitianLatticesProofs.UnimodularSpan
 public import Formalism.LocalToGlobal.Columns.RecLevelCls
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Mathlib.RingTheory.PicardGroup
 
 @[expose] public section
 
@@ -78,7 +35,7 @@ theorem hasRes_row {P : HeightOneSpectrum (𝓞 E)} {n : ℕ} (r : Fin n) (K U :
       ∑ j, (K j - if j = r then algebraMap E (P.adicCompletion E) (algebraMap (𝓞 E) E c) else 0) * U j +
         algebraMap E (P.adicCompletion E) (algebraMap (𝓞 E) E c) *
           (U r - algebraMap E (P.adicCompletion E) (algebraMap (𝓞 E) E s)) := by
-    simp only [_root_.sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true,
+    simp only [_root_.sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true,
       map_mul]
     ring
   rw [e]
@@ -87,10 +44,10 @@ theorem hasRes_row {P : HeightOneSpectrum (𝓞 E)} {n : ℕ} (r : Fin n) (K U :
     refine lt_of_le_of_lt (mul_le_of_le_one_right' (hU j)) ?_
     have := hK j
     by_cases hj : j = r
-    · rw [if_pos hj, DilPt.hasRes_mk_iff] at this
-      rwa [if_pos hj]
-    · rw [if_neg hj] at this
-      rw [if_neg hj, sub_zero]
+    · rw [ite_eq_left hj, DilPt.hasRes_mk_iff] at this
+      rwa [ite_eq_left hj]
+    · rw [ite_eq_right hj] at this
+      rw [ite_eq_right hj, sub_zero]
       exact DilPt.hasRes_lt_one this
   · rw [map_mul]
     exact lt_of_le_of_lt (mul_le_of_le_one_left' hC) hs
@@ -131,34 +88,9 @@ theorem decoOf_dia_eq : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
   have hkI : ∀ z : Fin n → AfE F E, (∀ i, z i ∈ RInt F E) ↔
       ∀ i, (((k⁻¹ : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)) *ᵥ z) i ∈ RInt F E :=
     fun z => (mem_latS_std z).symm.trans ((hkc z).trans (mem_latS_std _))
-  have hspan : Submodule.span E (p.deco.1.N : Set (Sp E n)) = ⊤ := by
-    let L := p.deco.1.N
-    let W := Submodule.span E (L : Set (Sp E n))
-    change W = ⊤
-    by_contra hW
-    let e : Sp E n ≃ₗ⋆[E] Sp E n := starLinearEquiv E
-    let f : Sp E n →ₗ[E] Module.Dual E W :=
-      (LinearMap.domRestrict' W).comp ((hStd E n).comp e.toLinearMap)
-    have hdim : Module.finrank E (Module.Dual E W) < Module.finrank E (Sp E n) := by
-      rw [Subspace.dual_finrank_eq]
-      exact Submodule.finrank_lt hW
-    obtain ⟨x, hx, hx₀⟩ :=
-      Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := f) hdim)
-    have hu : Formalism.HermitianLatticesTheory.IsUnimodular (hStd E n) L := p.deco.2.uni
-    have hsmul (a : E) : a • e x ∈ L := by
-      rw [← hu, Formalism.HermitianLatticesTheory.dualBasic_mem_dual]
-      intro y hy
-      apply hStd_mem_one_symm
-      have hxy : hStd E n (e x) y = 0 :=
-        congrArg (fun f : Module.Dual E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
-      simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxy]
-    let i : E →ₗ[𝓞 E] L :=
-      ((LinearMap.toSpanSingleton E _ (e x)).restrictScalars (𝓞 E)).codRestrict L hsmul
-    let : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.mpr p.deco.2.lat.fg
-    let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
-      smul_left_injective E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
-    exact RingOfIntegers.not_isField E
-      (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+  have hspan : Submodule.span E (p.deco.1.N : Set (Sp E n)) = ⊤ :=
+    Formalism.HermitianLatticesTheory.IsUnimodular.span_eq_top
+      p.deco.2.uni Formalism.L2.Col.hStd_isSymm p.deco.2.lat.fg
   have hN : Formalism.UG.CS.globLat g (Formalism.L2.Col.stdLat E n) = p.deco.1.N := by
     rw [← Formalism.UG.P.global_lattice_one_holds F E (Fin n) p.deco.1.N (Module.Finite.iff_fg.2 p.deco.2.lat.fg) hspan]
     ext w
@@ -202,18 +134,18 @@ theorem decoOf_dia_eq : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
       (fun j => (mem_rInt_iff F E _).1 (hint x hx j) P.1) (PtExist.hasRes_redA P.1 (hint x hx _))
     rw [hraw]
     simp only [decoRaw]
-    rw [if_pos (le_locP _ _ (hN ▸ hx))]
+    rw [ite_eq_left (le_locP _ _ (hN ▸ hx))]
     exact h2.unique h1
   · show (decoOf ST SG g).1.be w x = _
     rw [hraw]
     simp only [decoRaw]
-    rw [if_pos (le_locP _ _ (hN ▸ hx))]
+    rw [ite_eq_left (le_locP _ _ (hN ▸ hx))]
     funext i
     have h1 := h.be w x hx i
     rw [DilPt.pullbackVector_mul_right] at h1
 
     simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, hone w.1 w.2, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true] at h1
+    Finset.mem_univ, ite_true] at h1
     exact (PtExist.hasRes_redA w.1 (hint x hx i)).unique h1
 
 end GlobalTheory.Mem.Col2.DiaPt

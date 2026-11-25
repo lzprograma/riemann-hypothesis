@@ -1,47 +1,8 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CoeEqAlgebraMapZeroEquiv
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
@@ -89,18 +50,10 @@ theorem UpperTheory.Gal.W2.evIntegral_of :
   have hv : ∀ y, aeval H f.charpoly *ᵥ P₀ y = 0 := fun y => by
     rw [← evI_mulVec P₀ f H hf f.charpoly y, LinearMap.aeval_self_charpoly]
     simp
-  have hall : ∀ v, aeval H f.charpoly *ᵥ v = 0 := by
-    intro v
-    have hv' : v ∈ Submodule.span ℝ (Set.range P₀) := by
-      rw [hP.2.2.2.1]
-      trivial
-    induction hv' using Submodule.span_induction with
-    | mem z hz =>
-      obtain ⟨y, rfl⟩ := hz
-      exact hv y
-    | zero => simp
-    | add u w _ _ hu hw => rw [Matrix.mulVec_add, hu, hw, add_zero]
-    | smul r u _ hu => rw [Matrix.mulVec_smul, hu, smul_zero]
+  have hall : ∀ v, aeval H f.charpoly *ᵥ v = 0 := fun v =>
+    (Submodule.span_le.2 (by rintro _ ⟨y, rfl⟩; exact hv y) :
+      _ ≤ LinearMap.ker ((Matrix.mulVecLin (aeval H f.charpoly)).restrictScalars ℝ))
+      (hP.2.2.2.1 ▸ Submodule.mem_top)
   have hq0 : aeval H f.charpoly = 0 := by
     ext j k
     have hjk := congrFun (hall (Pi.single k 1)) j

@@ -59,9 +59,9 @@ theorem _root_.GlobalTheory.Mass.StdMass.isSymm_of_ortho {K V : Type} [Field K] 
   unfold _root_.Formalism.HermitianLatticesTheory.IsOrthoLattice at hL
   obtain ⟨e, -, hspan, -, horth⟩ := hL
   refine LinearMap.IsSymm.mk fun x y => ?_
-  obtain ⟨c, rfl⟩ := _root_.ReciprocityTheory.ChartRestriction.L3.StandardSymmetricSums.exists_coord hspan x
-  obtain ⟨d, rfl⟩ := _root_.ReciprocityTheory.ChartRestriction.L3.StandardSymmetricSums.exists_coord hspan y
-  rw [_root_.ReciprocityTheory.ChartRestriction.L3.StandardSymmetricSums.form_sum horth, _root_.ReciprocityTheory.ChartRestriction.L3.StandardSymmetricSums.form_sum horth]
+  obtain ⟨c, rfl⟩ := _root_.Formalism.HermitianLattices.Ext.L3.StandardSymmetricSums.exists_coord hspan x
+  obtain ⟨d, rfl⟩ := _root_.Formalism.HermitianLattices.Ext.L3.StandardSymmetricSums.exists_coord hspan y
+  rw [_root_.Formalism.HermitianLattices.Ext.L3.StandardSymmetricSums.form_sum horth, _root_.Formalism.HermitianLattices.Ext.L3.StandardSymmetricSums.form_sum horth]
 
   simp only [map_sum, starRingEnd_apply, star_mul, star_star]
 
@@ -72,7 +72,7 @@ private theorem massU_zero_eq_one (K : Type) [Field K] [NumberField K] [StarRing
   have hsub : ∀ M N : Submodule (𝓞 K) (Fin 0 → K), M = N := fun M N => Subsingleton.elim M N
   haveI : Subsingleton ((Fin 0 → K) ≃ₗ[K] (Fin 0 → K)) :=
     ⟨fun f g => LinearEquiv.ext fun x => Subsingleton.elim _ _⟩
-  have hlat : Submodule.IsLattice K (_root_.Formalism.MainNotions.S.Cnt.stdLat K 0) := _root_.ReciprocityTheory.ChartRestriction.L3.isLattice_of_ortho (_root_.Formalism.MainNotions.StandardLattice.stdLat_ortho K 0)
+  have hlat : Submodule.IsLattice K (_root_.Formalism.MainNotions.S.Cnt.stdLat K 0) := _root_.Formalism.HermitianLattices.Ext.L3.isLattice_of_ortho (_root_.Formalism.MainNotions.StandardLattice.stdLat_ortho K 0)
   have hfull : Submodule.IsFullLattice K (_root_.Formalism.MainNotions.S.Cnt.stdLat K 0) :=
     { toIsLattice := hlat, span_eq_top := Subsingleton.elim _ _ }
   have hgen : _root_.Formalism.MainNotions.S.Cnt.stdLat K 0 ∈ _root_.Formalism.HermitianLatticesTheory.genus (_root_.Formalism.MainNotions.S.Cnt.stdH K 0) (_root_.Formalism.MainNotions.S.Cnt.stdLat K 0) := by
@@ -113,14 +113,14 @@ theorem _root_.GlobalTheory.Mass.StdMass.main : ∀ (K : Type) [Field K] [Number
         (h : V →ₗ⋆[K] V →ₗ[K] K) (L : Submodule (𝓞 K) V), _root_.Formalism.HermitianLatticesTheory.IsOrthoLattice h L j →
         _root_.Formalism.HermitianLatticesTheory.mass h L = _root_.Formalism.MainNotions.S.Cnt.massU K j ∧ _root_.GlobalTheory.Mass.PD h := by
   intro K _ _ _ hK j
-  have hsymm : (_root_.Formalism.MainNotions.S.Cnt.stdH K j).IsSymm := _root_.ReciprocityTheory.ChartRestriction.L3.stdForm_isSymm K j
+  have hsymm : (_root_.Formalism.MainNotions.S.Cnt.stdH K j).IsSymm := _root_.Formalism.HermitianLattices.Ext.L3.stdForm_isSymm K j
   have hortho : _root_.Formalism.HermitianLatticesTheory.IsOrthoLattice (_root_.Formalism.MainNotions.S.Cnt.stdH K j) (_root_.Formalism.MainNotions.S.Cnt.stdLat K j) j := _root_.Formalism.MainNotions.StandardLattice.stdLat_ortho K j
   refine ⟨hsymm, hortho, ?_, massU_zero_eq_one K, fun V _ _ _ _ h L hL => ⟨?_, ?_⟩⟩
   · unfold _root_.Formalism.MainNotions.S.Cnt.massU
     exact _root_.ReciprocityTheory.ChartRestriction.L3.mass_pos_of_ortho hK hsymm hortho
   · exact (_root_.Formalism.MainNotions.StandardLattice.mass_ortho K hK j V h L hL).trans rfl
-  · have hpos := _root_.ReciprocityTheory.ChartRestriction.L3.isTotPosDef_of_ortho hK (_root_.GlobalTheory.Mass.StdMass.isSymm_of_ortho hL) hL
-    unfold _root_.ReciprocityTheory.ChartRestriction.L3.IsTotPosDef at hpos
+  · have hpos := _root_.Formalism.HermitianLattices.Ext.L3.isTotPosDef_of_ortho hK (_root_.GlobalTheory.Mass.StdMass.isSymm_of_ortho hL) hL
+    unfold _root_.Formalism.HermitianLattices.Ext.L3.IsTotPosDef at hpos
     unfold _root_.GlobalTheory.Mass.PD
     exact fun τ x hx => hpos x hx τ
 

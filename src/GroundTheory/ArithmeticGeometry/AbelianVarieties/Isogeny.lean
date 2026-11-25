@@ -131,11 +131,6 @@ theorem aeval_genX_ΨSq_ne_zero {n : ℤ} (hn : n ≠ 0) : aeval (genX E) (E.ΨS
   rw [ne_eq, aeval_genX_eq_zero_iff]
   exact ΨSq_ne_zero_of_ne_zero E hn
 
-omit [E.IsElliptic] in
-private theorem baseChange_eval (p : F[X]) :
-    (p.map (algebraMap F E.toAffine.FunctionField)).eval (genX E) = aeval (genX E) p :=
-  eval_map_algebraMap _ _
-
 theorem genericPoint_eq :
     genericPoint E = .some (genX E) (genY E) (equation_iff_nonsingular.mp (equation_gen E)) :=
   rfl
@@ -143,7 +138,7 @@ theorem genericPoint_eq :
 theorem zsmul_genericPoint_ne_zero {n : ℤ} (hn : n ≠ 0) : n • genericPoint E ≠ 0 := by
   rw [genericPoint_eq, ne_eq, zsmul_eq_zero_iff]
   show ¬((E.map (algebraMap F E.toAffine.FunctionField)).ΨSq n).eval (genX E) = 0
-  rw [map_ΨSq, baseChange_eval]
+  rw [map_ΨSq, eval_map_algebraMap]
   exact aeval_genX_ΨSq_ne_zero E hn
 
 theorem xOf_zsmul_genericPoint {n : ℤ} (hn : n ≠ 0) :
@@ -151,9 +146,9 @@ theorem xOf_zsmul_genericPoint {n : ℤ} (hn : n ≠ 0) :
   rw [genericPoint_eq, xOf_zsmul]
   · show ((E.map (algebraMap F E.toAffine.FunctionField)).Φ n).eval (genX E) /
       ((E.map (algebraMap F E.toAffine.FunctionField)).ΨSq n).eval (genX E) = _
-    rw [map_Φ, map_ΨSq, baseChange_eval, baseChange_eval]
+    rw [map_Φ, map_ΨSq, eval_map_algebraMap, eval_map_algebraMap]
   · show ((E.map (algebraMap F E.toAffine.FunctionField)).ΨSq n).eval (genX E) ≠ 0
-    rw [map_ΨSq, baseChange_eval]
+    rw [map_ΨSq, eval_map_algebraMap]
     exact aeval_genX_ΨSq_ne_zero E hn
 
 noncomputable def ratΦΨ (n : ℤ) : RatFunc F :=

@@ -30,44 +30,16 @@ structure CmpMaps where
 
 variable {c Tw u w h Lv}
 
-theorem CmpMaps.inj (M : CmpMaps c Tw u w h Lv) (j : ℕ) (hj : j ≤ D.R.m) : Function.Injective (M.cmp j) :=
-  inj_of_li (M.cmp j) ((Tw.fm u (D.what₂.muAt w)).lat j).b (M.li j hj)
-
-
 variable (Tw u w) in
 def KLx (j : ℕ) : ((Tw.fm u (D.what₂.muAt w)).lat j).V →ₗ[D.what₂.LL] ((Tw.fm u (D.what₂.muAt w)).lat (j + 1)).V :=
   ratMap ((Tw.fm u (D.what₂.muAt w)).emb j) ((Tw.fm u (D.what₂.muAt w)).emb (j + 1))
     ((Tw.fm u (D.what₂.muAt w)).emb_inj (j + 1)) ((D.chTw u (D.what₂.muAt w)).Klin j)
-
-theorem KLx_eq (j : ℕ) (x : ((Tw.fm u (D.what₂.muAt w)).lat j).V) (y : ((Tw.fm u (D.what₂.muAt w)).lat (j + 1)).V)
-    (hxy : (Tw.fm u (D.what₂.muAt w)).emb (j + 1) y =
-      (D.chTw u (D.what₂.muAt w)).K j ((Tw.fm u (D.what₂.muAt w)).emb j x)) : KLx Tw u w j x = y :=
-  ratMap_eq _ _ _ _ x y hxy
-
-
 
 open Classical in
 def chainFirst (M : CmpMaps c Tw u w h Lv) : Chain Lv where
   Kz j := if hj : j < D.R.m then
       extK (M.cmp j) (M.cmp (j + 1)) ((Tw.fm u (D.what₂.muAt w)).lat j).b (M.li j hj.le) (KLx Tw u w j)
     else 0
-
-theorem chainFirst_Kz (M : CmpMaps c Tw u w h Lv) (j : ℕ) (hj : j < D.R.m) :
-    (chainFirst M).Kz j =
-      extK (M.cmp j) (M.cmp (j + 1)) ((Tw.fm u (D.what₂.muAt w)).lat j).b (M.li j hj.le) (KLx Tw u w j) :=
-  dif_pos hj
-
-theorem chainFirst_apply (M : CmpMaps c Tw u w h Lv) (j : ℕ) (hj : j < D.R.m)
-    (x : ((Tw.fm u (D.what₂.muAt w)).lat j).V) :
-    (chainFirst M).Kz j (M.cmp j x) = M.cmp (j + 1) (KLx Tw u w j x) := by
-  rw [chainFirst_Kz M j hj, extK_apply]
-
-theorem chainFirst_cmp_K (M : CmpMaps c Tw u w h Lv) : ∀ j, j < D.R.m →
-    ∀ (x : ((Tw.fm u (D.what₂.muAt w)).lat j).V) (y : ((Tw.fm u (D.what₂.muAt w)).lat (j + 1)).V),
-    (Tw.fm u (D.what₂.muAt w)).emb (j + 1) y = (D.chTw u (D.what₂.muAt w)).K j ((Tw.fm u (D.what₂.muAt w)).emb j x) →
-    M.cmp (j + 1) y = (chainFirst M).Kz j (M.cmp j x) := by
-  intro j hj x y hxy
-  rw [chainFirst_apply M j hj, KLx_eq j x y hxy]
 
 end Maps
 
@@ -113,37 +85,17 @@ def cmpSl : ((D.fm u).lat 0).V →ₛₗ[c.embW u w h] (D.gat u w h).Fn where
 def cmpZero : ((Tw.fm u (D.what₂.muAt w)).lat 0).V →ₛₗ[c.embW u w h] (D.gat u w h).Fn :=
   (cmpSl c u w h).comp (Tw.e0 u (D.what₂.muAt w)).symm.toLinearMap
 
-theorem comparison_zero_embedding (x : ((D.fm u).lat 0).V) : cmpZero c Tw u w h (Tw.e0 u (D.what₂.muAt w) x) = c.cmp u w h x := by
-  simp [cmpZero, cmpSl]
-
-private theorem semilinear_apply_mem_span_image_basis {K L V W κ : Type*} [Field K] [Field L] {σ : K →+* L} [AddCommGroup V]
-    [Module K V] [AddCommGroup W] [Module L W] (B : Module.Basis κ K V) (φ : V →ₛₗ[σ] W) (x : V) :
-    φ x ∈ Submodule.span L (Set.range (φ ∘ B)) := by
-  have hx : x ∈ Submodule.span K (Set.range B) := by
-    rw [B.span_eq]; trivial
-  induction hx using Submodule.span_induction with
-  | mem y hy =>
-    obtain ⟨i, rfl⟩ := hy
-    exact Submodule.subset_span ⟨i, rfl⟩
-  | zero => simp
-  | add y z _ _ hy hz =>
-    rw [map_add]; exact add_mem hy hz
-  | smul r y _ hy =>
-    rw [map_smulₛₗ]; exact Submodule.smul_mem _ _ hy
-
 private theorem linearIndependent_semilinear_basis_of_basis {K L V W κ κ' : Type*} [Field K] [Field L] {σ : K →+* L} [AddCommGroup V]
     [Module K V] [AddCommGroup W] [Module L W] [Fintype κ] [Fintype κ'] (B : Module.Basis κ K V)
     (B' : Module.Basis κ' K V) (φ : V →ₛₗ[σ] W) (hB : LinearIndependent L (φ ∘ B)) :
     LinearIndependent L (φ ∘ B') := by
   rw [linearIndependent_iff_card_eq_finrank_span] at hB ⊢
   have hs : Submodule.span L (Set.range (φ ∘ B')) = Submodule.span L (Set.range (φ ∘ B)) := by
-    apply le_antisymm
-    · rw [Submodule.span_le]
-      rintro _ ⟨a, rfl⟩
-      exact semilinear_apply_mem_span_image_basis B φ (B' a)
-    · rw [Submodule.span_le]
-      rintro _ ⟨a, rfl⟩
-      exact semilinear_apply_mem_span_image_basis B' φ (B a)
+    refine le_antisymm ?_ ?_ <;> rw [Submodule.span_le, Set.range_comp, Set.range_comp]
+    · exact (Set.image_mono fun x _ => by rw [SetLike.mem_coe, B.span_eq]; trivial).trans
+        (Submodule.image_span_subset_span φ _)
+    · exact (Set.image_mono fun x _ => by rw [SetLike.mem_coe, B'.span_eq]; trivial).trans
+        (Submodule.image_span_subset_span φ _)
   unfold Set.finrank at hB ⊢
   rw [hs, ← hB]
   exact Fintype.card_congr (B'.indexEquiv B)
@@ -156,22 +108,6 @@ theorem cmpZero_li : LinearIndependent (D.gat u w h).Kf
     simp [cmpZero]
   rw [e]
   exact linearIndependent_semilinear_basis_of_basis ((D.fm u).lat 0).b _ (cmpSl c u w h) (c.5 u w h)
-
-theorem cmpZero_image : cmpZero c Tw u w h '' (((Tw.fm u (D.what₂.muAt w)).lat 0).L : Set _) =
-    c.cmp u w h '' (((D.fm u).lat 0).L : Set _) := by
-  ext y
-  constructor
-  · rintro ⟨x', hx', rfl⟩
-    refine ⟨(Tw.e0 u (D.what₂.muAt w)).symm x', ?_, ?_⟩
-    · exact (Tw.5 u (D.what₂.muAt w) _).2 (by simpa using hx')
-    · simp [cmpZero, cmpSl]
-  · rintro ⟨x, hx, rfl⟩
-    exact ⟨Tw.e0 u (D.what₂.muAt w) x, (Tw.5 u (D.what₂.muAt w) x).1 hx, comparison_zero_embedding c Tw u w h x⟩
-
-theorem cmpZero_int : Submodule.span (D.gat u w h).O
-    (cmpZero c Tw u w h '' (((Tw.fm u (D.what₂.muAt w)).lat 0).L : Set _)) = (D.gat u w h).M := by
-  rw [cmpZero_image]
-  exact c.cmp_M u w h
 
 end Zero
 
@@ -233,19 +169,11 @@ def kerAtP_of {D : D7} (Gt : GatTies D) {c : LatCmp D} {Tw : TwForms D} {u : D.w
   fl_m := K.fl_m
   lam := K.lam
   iK := K.iK
-  iLL_lam := K.iLL_lam
   iw := K.iw
   glob := K.glob
-  glob_loc := K.glob_loc
   cls := K.cls
-  cls_iff := K.cls_iff
-  cls_surj := K.cls_surj
   Th := K.Th
   cmp := K.up.maps.cmp
-  cmp_inj := K.up.maps.inj
-  cmp_zero := comparison_zero_embedding c Tw u w h
-  cmp_int := cmpZero_int c Tw u w h
-  cmp_K := chainFirst_cmp_K K.up.maps
 
 def withFirst {D : D7} (c : LatCmp D) (Tw : TwForms D) (Y : LatInst D)
     (M : ∀ u w hg, CmpMaps c Tw u w hg (Y.Lv u w hg)) : LatInst D :=

@@ -66,7 +66,6 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.iwaInt :
   have : IsFiniteMeasure κ := CompactSpace.isFiniteMeasure
   have : SigmaFinite κ := IsFiniteMeasure.toSigmaFinite κ
   have : SFinite κ := by
-    set_option synthInstance.maxHeartbeats 400000 in
       infer_instance
   have : μ.IsMulRightInvariant := isMulRightInvariant_normOneGL μ
   have hSK : Function.Surjective (HaarSK.mulMap S (KG K (2 + 2))) := by

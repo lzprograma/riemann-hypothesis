@@ -105,15 +105,6 @@ section
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E]
 
-theorem hf_addr (L : LocE F E) {n : ℕ} (H : Matrix (Fin n) (Fin n) E) (a b y : Fin n → E) :
-    hf L H y (a + b) = hf L H y a + hf L H y b := by
-  simp [hf, mul_add, Finset.sum_add_distrib]
-
-theorem hf_smulr (L : LocE F E) {n : ℕ} (H : Matrix (Fin n) (Fin n) E) (c : E) (a y : Fin n → E) :
-    hf L H y (c • a) = L.cj c * hf L H y a := by
-  simp only [hf, Finset.mul_sum, Pi.smul_apply, smul_eq_mul, map_mul]
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-
 alias hf_cj := _root_.GlobalTheory.HL.GaussSummand.cj_hf
 
 variable [IsNonarchimedeanLocalField F]
@@ -298,7 +289,7 @@ theorem shares : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] 
       have := (L.additive_character_dual_ring _).2 (hint z hz) 1 L.O.one_mem
       rw [mul_one] at this
       unfold Frames.h at this ⊢
-      rw [hf_addr, hf_smulr, AlgEquiv.commutes, AddChar.map_add_eq_mul, this, mul_one]
+      rw [GlobalTheory.HL.Eichler.hf_add_r, GlobalTheory.HL.Eichler.hf_smul_r, AlgEquiv.commutes, AddChar.map_add_eq_mul, this, mul_one]
     have h3 := (_root_.GlobalTheory.HL.QuadricShare.shares L r k S hk J d Λ hT (m + (S.a.toNat + 1)) R S.InZ (by omega) (fun _ => Iff.rfl)
       h1 (fun u hu hu' => h2 u ⟨hu, hu'⟩)).2.2 y (fun u hu => hint u (h1 u hu).1) (by
         obtain ⟨x, ⟨hx, hx'⟩, -⟩ := h2 u hu

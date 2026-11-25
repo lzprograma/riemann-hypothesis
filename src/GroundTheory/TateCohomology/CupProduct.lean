@@ -198,12 +198,6 @@ theorem map_cupH {A' B' : Rep k G} (φ : A ⟶ A') (ψ : B ⟶ B') (h : p + q = 
   rw [cupH_π, map_π_apply, map_π_apply, cupH_π, ← key]
   exact map_π_apply _ _
 
-theorem d_oneCochain :
-    (inhomogeneousCochains.d (𝟙_ (Rep k G)) 0).hom (oneCochain (k := k) (G := G)) = 0 := by
-  funext x
-  simp [inhomogeneousCochains.d_hom_apply, oneCochain]
-  rfl
-
 
 end Cohomology
 

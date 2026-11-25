@@ -13,8 +13,6 @@ namespace Formalism.L2.SG.NormCut
 
 section ChiN
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 def CongG (x y : VA X.B.I) : Prop := InAt X.B.I X.B.g X.B.g (x - y)
@@ -78,8 +76,6 @@ theorem chiNIndep_of {u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS ((Tu D u : 
 end ChiN
 
 section ColFixPf
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
@@ -177,8 +173,6 @@ theorem column_fixed_holds (u : D.what₂.Word) : ColFix X u := by
 end ColFixPf
 
 section ChiNFinal
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what₂.Word}
   {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)} {F0' : FlagG (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)}

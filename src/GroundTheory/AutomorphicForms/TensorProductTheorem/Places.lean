@@ -174,7 +174,7 @@ theorem fixedProj_single_eq (v : ι) (hρv : IsSmooth (ρ.comp (singleHom K v)))
     (fixedProj (ρ.comp (singleHom K v)) hρv (hK'c v) (hK'o v) u : V) =
       fixedProj ρ hρ (isCompact_boxSubgroup_of_eq hK'c hK'e) (isOpen_boxSubgroup hK'o hK'e) u :=
   fixedProj_comp_eq (singleHom K v) hρ hρv _ _ (hK'c v) (hK'o v)
-    (fun k hk => singleHom_mem_boxSubgroup hk)
+    (fun _ hk => singleHom_mem_boxSubgroup hk)
     (fun h hh => ⟨h v, hh v, apply_eq_apply_single v hu hh⟩)
 
 end Window

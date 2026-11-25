@@ -35,14 +35,11 @@ theorem IsIntegralMat.det_le_one {U : Matrix ι ι K} (hU : IsIntegralMat v U) :
   rw [hs, one_mul]
   exact Finset.prod_le_one₀ (fun _ _ => zero_le) fun i _ => hU _ _
 
-private theorem nnreal_mul_le_one {a b : NNReal} (ha : a ≤ 1) (hb : b ≤ 1) : a * b ≤ 1 := by
-  simpa using mul_le_mul ha hb (zero_le) zero_le_one
-
 theorem IsIntegralMat.mulVec {U : Matrix ι ι K} {c : ι → K} (hU : IsIntegralMat v U)
     (hc : IsIntegralVec v c) : IsIntegralVec v (U *ᵥ c) := by
   intro i
   show v (∑ j, U i j * c j) ≤ 1
-  exact v.map_sum_le fun j _ => by rw [map_mul]; exact _root_.ReciprocityTheory.PGsh.nnreal_mul_le_one (hU i j) (hc j)
+  exact v.map_sum_le fun j _ => by rw [map_mul]; exact mul_le_one' (hU i j) (hc j)
 
 theorem isIntegralVec_single (j : ι) : IsIntegralVec v (Pi.single j (1 : K)) := by
   intro k

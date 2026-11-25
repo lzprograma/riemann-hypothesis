@@ -13,7 +13,7 @@ open NumberField MeasureTheory Matrix Filter Topology Metric Set GlobalTheory.SU
 open Formalism.BasicNotions
 open scoped ENNReal NNReal
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 noncomputable section
 
@@ -108,7 +108,6 @@ theorem tangentHaar_compare_lieHaar :
     have hρ4 : ρ < δ₀ / 4 := lt_of_lt_of_le hρ (min_le_right _ _)
     have hXb : X ∈ ball (0 : realLie Ψ G) δ := mem_ball_zero_iff.2 (by linarith)
     have hκ0 : 0 < 1 + ε / 3 := by linarith
-    have hκ2 : 1 + ε / 3 < 2 := by linarith
     have hcl0 : closedBall (0 : realLie Ψ G) ρ ⊆ closedBall 0 δ₀ :=
       closedBall_subset_closedBall (by linarith)
     constructor

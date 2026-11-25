@@ -139,10 +139,4 @@ theorem finite_placesOver (l : ℕ) [Fact l.Prime] :
 
 end read
 
-section rcg
-
-variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω]
-
-end rcg
-
 end Formalism.L2.NC

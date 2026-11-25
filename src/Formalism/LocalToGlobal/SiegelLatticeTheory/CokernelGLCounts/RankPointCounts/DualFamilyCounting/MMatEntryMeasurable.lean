@@ -6,6 +6,7 @@ import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.TypeStar
+import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.MeasInfXfer
 
 @[expose] public section
 
@@ -16,8 +17,6 @@ open Matrix
 noncomputable section
 
 namespace Formalism.L2.SG.Pf.LsNc5
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : HidaSetting D) (u : D.what₂.Word)
 
@@ -74,30 +73,10 @@ theorem kap_measurable : Measurable (kap X u) := by
       (continuous_star.measurable.comp (mMat_entry_measurable X v p.1.2 p.1.1))).div_const 2) t
   · exact Complex.measurable_im.comp (mMat_entry_measurable X v a a)
 
-private lemma isClosed_setOf_sub_one_mulVec_mem {n : ℕ} (w : Fin n → ℂ) (S : Submodule ℂ (Fin n → ℂ)) :
-    IsClosed {g : Matrix (Fin n) (Fin n) ℂ | (g - 1) *ᵥ w ∈ S} := by
-  have hc : Continuous fun g : Matrix (Fin n) (Fin n) ℂ => (g - 1) *ᵥ w := by
-    first
-      | exact (continuous_id.sub continuous_const).matrix_mulVec continuous_const
-  exact S.closed_of_finiteDimensional.preimage hc
-
-private lemma isClosed_setOf_InN {n r : ℕ} (ε : Fin n → Bool) (e : Fin r → Fin n → ℂ) (z : Fin n → ℂ) :
-    IsClosed {g : Matrix (Fin n) (Fin n) ℂ | InN ε e z g} := by
-  have h : {g : Matrix (Fin n) (Fin n) ℂ | InN ε e z g} =
-      ((⋂ a : Fin r, {g : Matrix (Fin n) (Fin n) ℂ | (g - 1) *ᵥ e a ∈ spanLt e a.1}) ∩
-        {g : Matrix (Fin n) (Fin n) ℂ | (g - 1) *ᵥ z ∈ spanLt e r}) ∩
-      ⋂ y : Fin n → ℂ, ⋂ (_ : ∀ a, hJ ε (e a) y = 0),
-        {g : Matrix (Fin n) (Fin n) ℂ | (g - 1) *ᵥ y ∈ spanLt e r} := by
-    ext g
-    simp only [InN, InS, Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_iInter]
-  rw [h]
-  exact ((isClosed_iInter fun a => isClosed_setOf_sub_one_mulVec_mem _ _).inter (isClosed_setOf_sub_one_mulVec_mem _ _)).inter
-    (isClosed_iInter fun y => isClosed_iInter fun _ => isClosed_setOf_sub_one_mulVec_mem _ _)
-
 theorem ninfU_closed : IsClosed (X.NinfU u) := by
   have h : ∀ v : InfinitePlace X.B.I.F, IsClosed {s : X.B.I.Ginf | InN (X.B.I.ε v)
       (fun a => rv X.B.I v (X.eR a)) (rv X.B.I v (X.zR u)) (uMat (s v))} := fun v =>
-    (isClosed_setOf_InN (X.B.I.ε v) (fun a => rv X.B.I v (X.eR a)) (rv X.B.I v (X.zR u))).preimage
+    (_root_.Formalism.L2.SG.Pf.MeasInfW.isClosed_InN (X.B.I.ε v) (fun a => rv X.B.I v (X.eR a)) (rv X.B.I v (X.zR u))).preimage
       (uMat_continuous X v)
   have h2 := isClosed_iInter h
   simp only [← Set.setOf_forall] at h2

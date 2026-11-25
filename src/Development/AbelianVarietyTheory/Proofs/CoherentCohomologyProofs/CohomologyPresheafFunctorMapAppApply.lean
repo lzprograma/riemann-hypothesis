@@ -51,12 +51,6 @@ lemma _root_.GlobalTheory.Flasque.subsingleton_H'_of_injective (I : Sheaf J AddC
     (n : ℕ) (U : C) : Subsingleton (Sheaf.H'.{w} I (n + 1) U) :=
   Ext.subsingleton_of_injective (_root_.GlobalTheory.Flasque.freeSheaf J U) I n
 
-section Shift
-
-variable {S : ShortComplex (Sheaf J AddCommGrpCat.{v})} (hS : S.ShortExact)
-
-end Shift
-
 end Site
 
 section Injective

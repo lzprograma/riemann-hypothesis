@@ -103,10 +103,6 @@ def levi : Subgroup (GAd σ J) := ⨅ k ∈ S, frameStab σ J (initCols X k) ⊤
 def leviOne : Subgroup (GAd σ J) :=
   levi σ J X Y S ⊓ ⨅ k ∈ S, frameStab σ J (initCols X k) ((absE F E).comp Matrix.GeneralLinearGroup.det).ker
 
-def stepSum (u : Fin r → ℝ) (i : Fin r) : ℝ := ∑ k ∈ S with i ≤ k, u k
-
-def IsSplitElt (u : Fin r → ℝ) (a : GAd σ J) : Prop := IsTorusElt σ J X Y (fun i => Real.exp (stepSum S u i)) a
-
 structure IsAutOn (K : Subgroup (GAd σ J)) (φ : GAd σ J → ℂ) : Prop where
   leftN : ∀ u ∈ unip σ J X S, ∀ g, φ (u * g) = φ g
   leftM : ∀ γ ∈ ratPts σ J, γ ∈ levi σ J X Y S → ∀ g, φ (γ * g) = φ g
@@ -116,7 +112,6 @@ structure IsAutOn (K : Subgroup (GAd σ J)) (φ : GAd σ J → ℂ) : Prop where
   growth : ∃ N : ℕ, ∀ l : List (ℝ → GAd σ J), (∀ γ ∈ l, IsRealLine σ J γ) →
     ∃ C : ℝ, ∀ g, ‖l.foldr lineDer φ g‖ ≤ C * (height σ J g : ℝ) ^ N
   kfin : FiniteDimensional ℂ (Submodule.span ℂ (Set.range fun k : K => fun g => φ (g * k)))
-  zfin : FiniteDimensional ℂ (Submodule.span ℂ {f | ∃ z, IsCentral σ J z ∧ f = dop z φ})
 
 def IsConstAlong (φ c : GAd σ J → ℂ) : Prop :=
   ∀ (μ : Measure (unip σ J X S)) (𝓕 : Set (unip σ J X S)), μ.IsHaarMeasure →
@@ -126,34 +121,6 @@ def IsConstAlong (φ c : GAd σ J → ℂ) : Prop :=
 def IsCuspOn (K : Subgroup (GAd σ J)) (ψ : GAd σ J → ℂ) : Prop :=
   IsAutOn σ J X Y S K ψ ∧ ∀ S' : Finset (Fin r), S ⊂ S' → IsConstAlong σ J X S' ψ 0
 
-def IsCuspComp (K : Subgroup (GAd σ J)) (φ φc : GAd σ J → ℂ) : Prop :=
-  IsCuspOn σ J X Y S K φc ∧ ∃ c, IsConstAlong σ J X S φ c ∧ ∀ ψ, IsCuspOn σ J X Y S K ψ →
-    ∀ (μ : Measure (leviOne σ J X Y S)) (𝓕 : Set (leviOne σ J X Y S)), μ.IsHaarMeasure →
-      IsFundamentalDomain ((ratPts σ J).subgroupOf (leviOne σ J X Y S)) 𝓕 μ → ∀ g g',
-        IntegrableOn (fun m : leviOne σ J X Y S => c (m * g) * conj (ψ (m * g'))) 𝓕 μ ∧
-        IntegrableOn (fun m : leviOne σ J X Y S => φc (m * g) * conj (ψ (m * g'))) 𝓕 μ ∧
-        ∫ m in 𝓕, c (m * g) * conj (ψ (m * g')) ∂μ = ∫ m in 𝓕, φc (m * g) * conj (ψ (m * g')) ∂μ
-
-def IsSqIntOn (φ : GAd σ J → ℂ) : Prop :=
-  ∀ (μ : Measure (leviOne σ J X Y S)) (𝓕 : Set (leviOne σ J X Y S)), μ.IsHaarMeasure →
-    IsFundamentalDomain ((ratPts σ J).subgroupOf (leviOne σ J X Y S)) 𝓕 μ → ∀ g,
-      IntegrableOn (fun m : leviOne σ J X Y S => ‖φ (m * g)‖ ^ 2) 𝓕 μ
-
-
-variable (F n) in
-def expChar (s : Fin r → ℂ) (v : Fin r → ℝ) : ℂ :=
-  √(modulus F n fun i => Real.exp (v i)) * Complex.exp (2 * Module.finrank ℚ F * ∑ i, s i * v i)
-
-def IsExponent (f : GAd σ J → ℂ) (s : Fin r → ℂ) : Prop :=
-  ∃ f' ∈ Submodule.span ℂ {f₁ : GAd σ J → ℂ | ∃ u a, IsSplitElt σ J X Y S u a ∧ f₁ = fun g => f (a * g)}, f' ≠ 0 ∧
-    ∀ u a, IsSplitElt σ J X Y S u a → ∀ g, f' (a * g) = expChar F n s (stepSum S u) * f' g
-
-def IsCuspExp (K : Subgroup (GAd σ J)) (φ : GAd σ J → ℂ) (s : Fin r → ℂ) : Prop :=
-  ∃ φc, IsCuspComp σ J X Y S K φ φc ∧ IsExponent σ J X Y S φc s
-
-def NegExp (T : Finset (Fin r)) (s : Fin r → ℂ) : Prop :=
-  ∃ y : Fin r → ℝ, ∀ k ∈ S, (k ∈ T → ∑ i with i ≤ k, ((s i).re - stepSum T y i) = 0) ∧
-    (k ∉ T → ∑ i with i ≤ k, ((s i).re - stepSum T y i) < 0)
 
 section Empty
 
@@ -173,43 +140,6 @@ omit [NumberField E] in
 
 @[simp] theorem leviOne_empty : leviOne σ J X Y ∅ = ⊤ := by simp [leviOne]
 
-theorem isAutOn_empty {K : Subgroup (GAd σ J)} {φ : GAd σ J → ℂ} : IsAutOn σ J X Y ∅ K φ ↔ IsAut σ J K φ :=
-  ⟨fun h => ⟨⟨fun γ hγ => h.leftM γ hγ (by simp), h.level, h.cont, h.smooth, h.growth⟩, h.kfin, h.zfin⟩,
-    fun h => ⟨fun u hu g => by rw [unip_empty, Subgroup.mem_bot] at hu; rw [hu, one_mul], fun γ hγ _ => h.mod.left γ hγ,
-      h.mod.level, h.mod.cont, h.mod.smooth, h.mod.growth, h.kfin, h.zfin⟩⟩
-
-theorem isSqIntOn_empty {φ : GAd σ J → ℂ} : IsSqIntOn σ J X Y ∅ φ ↔ IsSqInt σ J φ := by
-  let P : Subgroup (GAd σ J) → Prop := fun H =>
-    ∀ (μ : Measure H) (𝓕 : Set H), μ.IsHaarMeasure →
-      IsFundamentalDomain ((ratPts σ J).subgroupOf H) 𝓕 μ → ∀ g,
-        IntegrableOn (fun m : H => ‖φ (m * g)‖ ^ 2) 𝓕 μ
-  change P (leviOne σ J X Y ∅) ↔ _
-  rw [leviOne_empty]
-  dsimp only [P]
-  let t : (⊤ : Subgroup (GAd σ J)) ≃ₜ* GAd σ J :=
-    { Subgroup.topEquiv with continuous_toFun := continuous_subtype_val, continuous_invFun := continuous_id.subtype_mk _ }
-  refine ⟨fun h μ 𝓕 h1 h2 => ?_, fun h μ 𝓕 h1 h2 g => ?_⟩
-  · let e := t.toHomeomorph.toMeasurableEquiv
-    have hp : MeasurePreserving e (μ.map t.symm) μ := (MeasurePreserving.symm e.symm ⟨e.symm.measurable, rfl⟩ :)
-    have := h (μ.map t.symm) (e ⁻¹' 𝓕) inferInstance (h2.preimage_of_equiv hp.quasiMeasurePreserving
-      (e := fun δ => ⟨⟨δ, trivial⟩, δ.2⟩) ⟨fun a b hab => Subtype.ext (congrArg (·.1.1) hab), fun δ => ⟨⟨δ.1, δ.2⟩, rfl⟩⟩
-      fun _ _ => rfl) 1
-    refine (hp.integrableOn_comp_preimage e.measurableEmbedding).1 ?_
-    simp only [mul_one] at this
-    exact this
-  · let e := t.toHomeomorph.toMeasurableEquiv.trans (MeasurableEquiv.mulRight g)
-    have hp : MeasurePreserving e.symm ((μ.map t).map (· * g)) μ := MeasurePreserving.symm e
-      ⟨e.measurable, (Measure.map_map (measurable_mul_const g) t.continuous.measurable).symm⟩
-    have := h ((μ.map t).map (· * g)) (e.symm ⁻¹' 𝓕) inferInstance (h2.preimage_of_equiv hp.quasiMeasurePreserving
-      (e := fun δ => ⟨δ.1, δ.2⟩) ⟨fun a b hab => Subtype.ext (Subtype.ext (congrArg (·.1) hab)), fun δ => ⟨⟨⟨δ, trivial⟩, δ.2⟩, rfl⟩⟩
-      fun _ _ => Subtype.ext (mul_assoc _ _ _))
-    refine (hp.integrableOn_comp_preimage e.symm.measurableEmbedding).1 ?_
-    convert this using 2 with x
-    exact congrArg (‖φ ·‖ ^ 2) (e.apply_symm_apply x)
-
-theorem negExp_empty {s : Fin r → ℂ} : NegExp S ∅ s ↔ ∀ k ∈ S, ∑ i with i ≤ k, (s i).re < 0 := by
-  simp [NegExp, stepSum]
-
 end Empty
 
 
@@ -217,9 +147,6 @@ omit [NumberField E] in
 theorem isConstAlong_const (c : ℂ) : IsConstAlong σ J X S (fun _ => c) fun _ => c := fun μ 𝓕 _ _ h _ => by
   simp [Measure.real, h]
 
-
-variable (n r) in
-def negRho (i : Fin r) : ℂ := ((i.val - (n - 1) / 2 : ℝ) : ℂ)
 
 
 section Single
@@ -351,7 +278,7 @@ theorem isClosed_colSpan {L : Matrix (Fin r) (Fin n) E} (hL : L * X = 1) (I : Se
       rw [op_smul_eq_smul]
       by_cases hi : i ∈ I
       · exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, hi, rfl⟩)
-      · rw [← mulVec_mulVec, mulVec_diagonal, if_neg hi, zero_mul, zero_smul]
+      · rw [← mulVec_mulVec, mulVec_diagonal, ite_eq_right hi, zero_mul, zero_smul]
         exact zero_mem _
   exact this ▸ isClosed_eq (continuous_const.matrix_mulVec continuous_id) continuous_id
 

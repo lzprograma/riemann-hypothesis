@@ -74,8 +74,7 @@ private theorem mul_ne_zero_entire {f g : ℂ → ℂ} (hf : Differentiable ℂ 
   intro hfg
   apply hg0
   obtain ⟨z₀, hz₀⟩ : ∃ z, f z ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hf0 (funext hcon)
   have hev : ∀ᶠ z in nhds z₀, f z ≠ 0 := hf.continuous.continuousAt.eventually_ne hz₀
   have hg_ev : g =ᶠ[nhds z₀] 0 := hev.mono fun z hz => by

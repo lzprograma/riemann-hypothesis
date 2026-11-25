@@ -1,46 +1,8 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.ProdSubLtEqFactorial
 public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingNumericalData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -51,55 +13,9 @@ namespace Formalism.MainNotions.BridgeLemma
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Finset MeasureTheory
 open scoped InnerProductSpace
 
-private theorem szh_sf_inner_lemma (N : ℕ) (a : Fin N) :
-    ∏ b ∈ univ.filter (fun b : Fin N => a < b), (((b : ℕ) : ℝ) - ((a : ℕ) : ℝ)) =
-      ((N - ((a : ℕ) + 1)).factorial : ℝ) := by
-  rw [Finset.prod_nbij (fun b : Fin N => (b : ℕ)) (t := Finset.Ico ((a : ℕ) + 1) N)
-    (g := fun j : ℕ => ((j : ℝ) - ((a : ℕ) : ℝ))) ?_ ?_ ?_ ?_]
-  · rw [Finset.prod_Ico_eq_prod_range]
-    have e : ∀ k ∈ range (N - ((a : ℕ) + 1)),
-        ((((a : ℕ) + 1 + k : ℕ) : ℝ) - ((a : ℕ) : ℝ)) = ((k + 1 : ℕ) : ℝ) := by
-      intro k _
-      push_cast
-      ring
-    rw [Finset.prod_congr rfl e, ← Nat.cast_prod, Finset.prod_range_add_one_eq_factorial]
-  · intro b hb
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hb
-    simp only [Finset.mem_Ico]
-    exact ⟨hb, b.2⟩
-  · intro x _ y _ hxy
-    exact Fin.ext hxy
-  · intro j hj
-    simp only [Finset.coe_Ico, Set.mem_Ico] at hj
-    refine ⟨⟨j, hj.2⟩, ?_, rfl⟩
-    simp only [Finset.coe_filter, Finset.mem_univ, true_and, Set.mem_setOf_eq]
-    show (a : ℕ) < j
-    omega
-  · intro b _
-    rfl
-
-theorem szh_sf (N : ℕ) :
-    ∏ a : Fin N, ∏ b ∈ univ.filter (fun b : Fin N => a < b), (((b : ℕ) : ℝ) - ((a : ℕ) : ℝ)) =
-      ∏ i ∈ range N, (i.factorial : ℝ) := by
-  simp_rw [szh_sf_inner_lemma]
-  refine (Fin.prod_univ_eq_prod_range (fun i : ℕ => ((N - (i + 1)).factorial : ℝ)) N).trans ?_
-  refine Eq.trans ?_ (Finset.prod_range_reflect (fun i : ℕ => (i.factorial : ℝ)) N)
-  apply Finset.prod_congr rfl
-  intro i _
-  show ((N - (i + 1)).factorial : ℝ) = ((N - 1 - i).factorial : ℝ)
-  rw [show N - (i + 1) = N - 1 - i by omega]
-
 theorem szh_fdegHC {N : ℕ} (lam : Fin N → ℝ) (h : StrictAnti lam) :
     Formalism.QuantumDeterminants.fdegHC lam = vand lam / ∏ i ∈ range N, (i.factorial : ℝ) := by
-  unfold Formalism.QuantumDeterminants.fdegHC vand
-  rw [szh_sf]
-  congr 1
-  apply Finset.prod_congr rfl
-  intro a _
-  apply Finset.prod_congr rfl
-  intro b hb
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hb
-  exact abs_of_pos (sub_pos.mpr (h hb))
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.dimVlam_eq_vand <;> assumption
 
 theorem szh_vand_nonneg {N : ℕ} (lam : Fin N → ℝ) (h : StrictAnti lam) : 0 ≤ vand lam := by
   unfold vand

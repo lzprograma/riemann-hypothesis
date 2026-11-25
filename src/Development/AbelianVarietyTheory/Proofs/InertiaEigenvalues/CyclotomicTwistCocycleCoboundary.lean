@@ -9,57 +9,7 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Cycloto
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicTowerLevelGeneratorProperties
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicNormZpowSubOnePadicValInt
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateDecompositionCompletedCyclotomicIntegers
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.Padics.LocalField
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
-import Mathlib.RingTheory.RootsOfUnity.Lemmas
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Algebra.Nonarchimedean.Completion
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.H1BallCocycleLogCyclotomic
 
 @[expose] public section
@@ -72,95 +22,12 @@ namespace GlobalTheory.Cyc.TwistKill
 
 variable {l : ℕ} [Fact l.Prime]
 
-theorem ks_le_kinf (K : FinExt l) (s : ℕ) : Ks K s ≤ Kinf K :=
-  sup_le_sup_left (IntermediateField.adjoin.mono _ {x : Om l | x ^ (l ^ s) = 1} {x : Om l | ∃ j : ℕ, x ^ (l ^ j) = 1} fun x hx =>
-    (⟨s, hx⟩ : ∃ j : ℕ, x ^ (l ^ j) = 1)) _
-
-theorem hinf_le_gj (K : FinExt l) (s : ℕ) : Hinf K ≤ Gj K s :=
-  IntermediateField.fixingSubgroup_antitone (ks_le_kinf K s)
-
-theorem act_inC {act : GQ l →* (PadicComplex l ≃+* PadicComplex l)} (ha : IsActC act)
-    {F : IntermediateField ℚ_[l] (Om l)} {g : GQ l} (hg : g ∈ F.fixingSubgroup)
-    {y : PadicComplex l} (hy : y ∈ inC F) : act g y = y := by
-  obtain ⟨x, hx, rfl⟩ := hy
-  rw [ha.1, (IntermediateField.mem_fixingSubgroup_iff _ _).1 hg x hx]
-
-theorem algebraMap_eq (q : ℚ_[l]) :
-    algebraMap ℚ_[l] (PadicComplex l) q = ((algebraMap ℚ_[l] (Om l) q : Om l) : PadicComplex l) :=
-  IsScalarTower.algebraMap_apply ℚ_[l] (Om l) (PadicComplex l) q
-
-theorem act_algebraMap {act : GQ l →* (PadicComplex l ≃+* PadicComplex l)} (ha : IsActC act)
-    (g : GQ l) (q : ℚ_[l]) :
-    act g (algebraMap ℚ_[l] (PadicComplex l) q) = algebraMap ℚ_[l] (PadicComplex l) q := by
-  rw [algebraMap_eq, ha.1, AlgEquiv.commutes]
-
-theorem norm_algebraMap (q : ℚ_[l]) : ‖algebraMap ℚ_[l] (PadicComplex l) q‖ = ‖q‖ := by
-  rw [algebraMap_eq, PadicComplex.norm_extends, PadicAlgCl.norm_extends]
-
-theorem continuous_algMap : Continuous (algebraMap ℚ_[l] (PadicComplex l)) :=
-  (AddMonoidHomClass.isometry_of_norm _ norm_algebraMap).continuous
-
-theorem chiC_mul (χ : GQ l →* ℚ_[l]ˣ) (j : ℤ) (g h : GQ l) :
-    chiC χ j (g * h) = chiC χ j g * chiC χ j h := by
-  simp only [chiC, map_mul, mul_zpow, Units.val_mul]
-
-alias norm_l_lt := _root_.GlobalTheory.TateDecomp.norm_l_lt
-
-theorem norm_l_pow (n : ℕ) : ‖(l : PadicComplex l) ^ n‖ = (l : ℝ) ^ (-(n : ℤ)) := by
-  rw [← map_natCast (algebraMap ℚ_[l] (PadicComplex l)), ← map_pow, norm_algebraMap]
-  exact Padic.norm_p_pow n
-
-theorem ohat_norm (K : FinExt l) {y : PadicComplex l} (hy : y ∈ Ohat K) : ‖y‖ ≤ 1 := by
-  have : closure (intC (Kinf K)) ⊆ {y : PadicComplex l | ‖y‖ ≤ 1} :=
-    closure_minimal (by exact fun _ h => h.2) (isClosed_le continuous_norm continuous_const)
-  exact this hy
-
-theorem exists_zeta (K : FinExt l) (s : ℕ) (hs : 1 ≤ s) :
-    ∃ ζ : PadicComplex l, IsPrimitiveRoot ζ l ∧ ζ ∈ inC (Ks K s) ∧
-      ‖(l : PadicComplex l)‖ ≤ ‖ζ - 1‖ := by
-  apply _root_.GlobalTheory.Cyc.LogClass.exists_zeta <;> assumption
-
-theorem vanish {G M : Type} [Group G] [TopologicalSpace G] [AddCommGroup M] [TopologicalSpace M]
-    [T1Space M] (S H : Subgroup G) (hHS : H ≤ S) (A : G → M → M) (hA0 : ∀ g, A g 0 = 0)
-    (d : G → M) (hc : ContinuousOn d S)
-    (hd : ∀ g ∈ S, ∀ h ∈ S, d (g * h) = d g + A g (d h)) (γ : G) (hγ : γ ∈ S)
-    (dense : (S : Set G) ⊆ closure {x | ∃ h ∈ H, ∃ a : ℕ, x = h * γ ^ a})
-    (hH : ∀ h ∈ H, d h = 0) (hdγ : d γ = 0) : ∀ σ ∈ S, d σ = 0 := by
-  apply _root_.GlobalTheory.Cyc.LogClass.vanish <;> assumption
-
-theorem norm_chiC {χ : GQ l →* ℚ_[l]ˣ} (hχ : IsCyc χ) (j : ℤ) (g : GQ l) : ‖chiC χ j g‖ = 1 := by
-  rw [chiC, norm_algebraMap, Units.val_zpow_eq_zpow_val, norm_zpow, (GlobalTheory.Cyc.cyc_basic l χ hχ).1,
-    one_zpow]
-
-theorem continuous_chiC {χ : GQ l →* ℚ_[l]ˣ} (hχ : IsCyc χ) (j : ℤ) : Continuous (chiC χ j) := by
-  unfold chiC
-  refine continuous_algMap.comp ?_
-  simp only [Units.val_zpow_eq_zpow_val]
-  exact (GlobalTheory.Cyc.cyc_basic l χ hχ).2.1.zpow₀ j fun g => Or.inl (Units.ne_zero _)
-
-theorem chi_hinf {χ : GQ l →* ℚ_[l]ˣ} (hχ : IsCyc χ) (K : FinExt l) {h : GQ l} (hh : h ∈ Hinf K) :
-    χ h = 1 :=
-  ((GlobalTheory.Cyc.cyc_basic l χ hχ).2.2 K h (_root_.GlobalTheory.Cyc.cyclotomicTowerLevelGaloisSubgroup_le_fixingSubgroup_base K 0 (_root_.GlobalTheory.Cyc.AlmostTrace.Hinf_le_Gj K 0 hh))).2.1 hh
+open GlobalTheory.Cyc.LogClass
 
 theorem chiC_hinf {χ : GQ l →* ℚ_[l]ˣ} (hχ : IsCyc χ) (K : FinExt l) (j : ℤ) {h : GQ l}
     (hh : h ∈ Hinf K) : chiC χ j h = 1 := by
   simp [chiC, chi_hinf hχ K hh]
 
-theorem conj_hinf {χ : GQ l →* ℚ_[l]ˣ} (hχ : IsCyc χ) (K : FinExt l) (s : ℕ) {g h : GQ l}
-    (hg : g ∈ Gj K s) (hh : h ∈ Hinf K) : g⁻¹ * h * g ∈ Hinf K := by
-  have h1 : g⁻¹ * h * g ∈ Gj K s :=
-    (Gj K s).mul_mem ((Gj K s).mul_mem ((Gj K s).inv_mem hg) (_root_.GlobalTheory.Cyc.AlmostTrace.Hinf_le_Gj K s hh)) hg
-  refine ((GlobalTheory.Cyc.cyc_basic l χ hχ).2.2 K _ (_root_.GlobalTheory.Cyc.cyclotomicTowerLevelGaloisSubgroup_le_fixingSubgroup_base K s h1)).2.2 ?_
-  simp [chi_hinf hχ K hh]
-
-theorem modify {act : GQ l →* (PadicComplex l ≃+* PadicComplex l)} {χ : GQ l →* ℚ_[l]ˣ}
-    (ha : IsActC act) (hχ : IsCyc χ) (S : Subgroup (GQ l)) (j : ℤ) (n : ℕ)
-    (c : GQ l → PadicComplex l)
-    (hc : CocOn S (fun g y => chiC χ j g * act g y) {y | ‖y‖ ≤ 1} c) (x : PadicComplex l)
-    (hx : ‖x‖ ≤ 1) :
-    CocOn S (fun g y => chiC χ j g * act g y) {y | ‖y‖ ≤ 1}
-      (fun g => (l : PadicComplex l) ^ n * c g - (chiC χ j g * act g x - x)) := by
-  apply _root_.GlobalTheory.Cyc.LogClass.modify <;> assumption
 
 theorem solve {act : GQ l →* (PadicComplex l ≃+* PadicComplex l)} {χ : GQ l →* ℚ_[l]ˣ}
     (ha : IsActC act) (hχ : IsCyc χ) (K : FinExt l) (s : ℕ) (hs : Lev l s) (j : ℤ) (hj : j ≠ 0)
@@ -185,7 +52,7 @@ theorem solve {act : GQ l →* (PadicComplex l ≃+* PadicComplex l)} {χ : GQ l
   have hval : ‖chiC χ j γ - 1‖ = ‖(l : PadicComplex l) ^ n‖ := by
     have := _root_.GlobalTheory.Cyc.LiftExp.norm_zpow_sub_one l s hs _ hγ.2 j hj
     rw [norm_l_pow, chiC, ← map_one (algebraMap ℚ_[l] (PadicComplex l)), ← map_sub,
-      norm_algebraMap, Units.val_zpow_eq_zpow_val, this, hn]
+      norm_algMap, Units.val_zpow_eq_zpow_val, this, hn]
     push_cast; rfl
   have hl0 : (l : PadicComplex l) ≠ 0 := by exact_mod_cast hp.ne_zero
   have hu0 : chiC χ j γ - 1 ≠ 0 := by

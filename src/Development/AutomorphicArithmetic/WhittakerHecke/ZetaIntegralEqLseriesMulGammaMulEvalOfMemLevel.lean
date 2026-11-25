@@ -9,53 +9,9 @@ public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
 public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianProducts.ExistsRowSec
 public import Development.AutomorphicArithmetic.WhittakerHecke.HasSumCoprimeIntegralEqIdeleIntegral
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 import Aesop.Main
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.TrivialOnInertiaOfUnr
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Newform
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.MultiCentre
@@ -205,7 +161,7 @@ private theorem ex_idele (u : ∀ v : H.P ℚ, (H.Kv v)ˣ) (S : Finset (H.P ℚ)
       by_cases hv : v = w
       · subst hv
         have e : H.cp v ((H.idl v (u v) : (A ℚ)ˣ) : A ℚ) = u v := localIdele_snd_self ℚ v (u v)
-        rw [e, if_neg hw, if_pos (Finset.mem_insert_self _ _), mul_one]
+        rw [e, ite_eq_right hw, ite_eq_left (Finset.mem_insert_self _ _), mul_one]
       · have e : H.cp v ((H.idl w (u w) : (A ℚ)ˣ) : A ℚ) = 1 := g2 v hv
         rw [e, one_mul]
         simp [hv]
@@ -253,10 +209,10 @@ theorem UpperTheory.exists_idele_correcting_lowerRight_entry :
     exact zero_ne_one this
   obtain ⟨ζ, h1, h2⟩ := ex_idele (fun v => if h : Bad N v then (Units.mk0 _ (hne v h))⁻¹ else 1) hfin.toFinset
   have hb : ∀ v, Bad N v → H.cp v (ζ : A ℚ) = (H.cp v (k 1 1))⁻¹ := fun v hv => by
-    rw [h2 v, if_pos (hfin.mem_toFinset.2 hv), dite_eq_left hv]
+    rw [h2 v, ite_eq_left (hfin.mem_toFinset.2 hv), dite_eq_left hv]
     simp
   have hg : ∀ v, ¬ Bad N v → H.cp v (ζ : A ℚ) = 1 := fun v hv => by
-    rw [h2 v, if_neg (fun h => hv (hfin.mem_toFinset.1 h))]
+    rw [h2 v, ite_eq_right (fun h => hv (hfin.mem_toFinset.1 h))]
   refine ⟨ζ, ⟨h1, fun v => ?_⟩, fun v => ⟨fun hv => ?_, hg v⟩⟩
   · by_cases hv : Bad N v
     · rw [hb v hv, map_inv₀, val_unit hk hs hv, inv_one]
@@ -295,13 +251,13 @@ theorem UpperTheory.hasSum_coprime_inv_pow_two_mul_eq_LSeries :
     refine (hinj.hasSum_iff fun x hx => ?_).1 ?_
     · rcases eq_or_ne x 0 with rfl | h0
       · simp
-      · rw [LSeries.term_of_ne_zero h0, sqN, if_neg, zero_div]
+      · rw [LSeries.term_of_ne_zero h0, sqN, ite_eq_right, zero_div]
         rintro ⟨m, rfl, hm⟩
         exact hx ⟨⟨m, Nat.pos_of_ne_zero fun e => h0 (by simp [e]), hm⟩, rfl⟩
     · convert hsum.hasSum using 1
       funext m
       have h0 : (m : ℕ) * m ≠ 0 := mul_ne_zero m.2.1.ne' m.2.1.ne'
-      rw [Function.comp_apply, LSeries.term_of_ne_zero h0, sqN, if_pos ⟨m, rfl, m.2.2⟩, Nat.cast_mul,
+      rw [Function.comp_apply, LSeries.term_of_ne_zero h0, sqN, ite_eq_left ⟨m, rfl, m.2.2⟩, Nat.cast_mul,
         Complex.natCast_mul_natCast_cpow, Complex.cpow_neg, two_mul,
         Complex.cpow_add _ _ (Nat.cast_ne_zero.2 m.2.1.ne'), one_div]
   rw [LSeries, h2.tsum_eq]
@@ -322,15 +278,6 @@ open scoped Classical
 open UpperTheory.ConvolutionTheory.R2.G (FS2 Rw nE row)
 open UpperTheory.V.Af.Smo (EigAt)
 open scoped ComplexOrder
-
-private theorem val_nat (n : ℕ) (v : H.P ℚ) : Valued.v (n : H.Kv v) = v.intValuation (n : 𝓞 ℚ) := by
-  have e : (n : H.Kv v) = FinitePlace.embedding v (algebraMap (𝓞 ℚ) ℚ (n : 𝓞 ℚ)) := by simp
-  rw [e, ← HeightOneSpectrum.valuation_of_algebraMap (K := ℚ)]
-  exact HeightOneSpectrum.valuedAdicCompletion_eq_valuation' v (algebraMap (𝓞 ℚ) ℚ (n : 𝓞 ℚ))
-
-private theorem val_le (N : ℕ) (v : H.P ℚ) : Valued.v (N : H.Kv v) ≤ 1 := by
-  rw [val_nat]
-  exact HeightOneSpectrum.intValuation_le_one v _
 
 private theorem cp_iy {y : ℝ} (h : y ≠ 0) (v : H.P ℚ) : H.cp v ((iy y : (A ℚ)ˣ) : A ℚ) = 1 := by
   have : ((iy y : (A ℚ)ˣ) : A ℚ).2 = 1 := by
@@ -354,7 +301,8 @@ theorem UpperTheory.ideleCongruence_archIdele_mul_finiteNatIdele :
     rw [map_sub, Units.val_mul, map_mul, cp_iy hr, h3 v hb, map_one]
     simp
   · rw [Units.val_mul, map_mul, cp_iy hr, one_mul, h2]
-    exact val_le n v
+    exact (HeightOneSpectrum.mem_adicCompletionIntegers (𝓞 ℚ) ℚ v).mp
+      (natCast_mem (v.adicCompletionIntegers ℚ) n)
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.WhittakerHecke.IdeleCongruenceArchIdeleMulFiniteNatIdele =====
@@ -576,11 +524,11 @@ theorem UpperTheory.zeta_integral_eq_lseries_mul_gamma_mul_eval_of_mem_level :
     by_cases hq : ((∀ v, Bad N v → Dv N v (((y : (A ℚ)ˣ) : A ℚ) - 1)) ∧ ∀ v : H.P ℚ, Valued.v (H.cp v ((y : (A ℚ)ˣ) : A ℚ)) ≤ 1)
     · have hq' : ∀ v, Dv N v (((y * ζ : (A ℚ)ˣ) : A ℚ) * row k 0) ∧ Dv N v (((y * ζ : (A ℚ)ˣ) : A ℚ) * row k 1 - 1) := by
         exact hc.mpr hq
-      rw [if_pos hq, PhiN, if_pos hq', hfun, homog hp, hsq]
+      rw [ite_eq_left hq, PhiN, ite_eq_left hq', hfun, homog hp, hsq]
     · have hq' : ¬ ∀ v, Dv N v (((y * ζ : (A ℚ)ˣ) : A ℚ) * row k 0) ∧ Dv N v (((y * ζ : (A ℚ)ˣ) : A ℚ) * row k 1 - 1) := by
         intro h
         exact hq (hc.mp h)
-      rw [if_neg hq, PhiN, if_neg hq', zero_mul]
+      rw [ite_eq_right hq, PhiN, ite_eq_right hq', zero_mul]
   have hinv : ∀ τ ∈ TT N, ∀ y : IdeleGroup ℚ, f (y * τ) = f y := by
     intro τ hτ y
     rw [hf, hf, hreU τ hτ.1 y, habU τ hτ.1 y]
@@ -589,7 +537,7 @@ theorem UpperTheory.zeta_integral_eq_lseries_mul_gamma_mul_eval_of_mem_level :
     intro y hy
     refine UpperTheory.exists_archIdele_natIdele_congruenceUnit_factorization N hN y ?_
     by_contra h
-    exact hy (by rw [hf, if_neg h])
+    exact hy (by rw [hf, ite_eq_right h])
   let J : ℝ → ℂ := fun r => (r : ℂ) ^ (2 * e) * Complex.exp (-(Real.pi : ℂ) * ((r ^ 2 : ℝ) : ℂ)) * ((|r| : ℝ) : ℂ) ^ (2 * s - 1)
   have hJ := UpperTheory.integral_even_power_gaussian_mul_abs_rpow e s hs0
   have hval : ∀ n : {n : ℕ // 0 < n ∧ n.Coprime N}, ∀ r : ℝ, r ≠ 0 →
@@ -597,7 +545,7 @@ theorem UpperTheory.zeta_integral_eq_lseries_mul_gamma_mul_eval_of_mem_level :
     intro n r hr
     have hab : ab (iy r * pin n) = |r| * ((n : ℕ) : ℝ)⁻¹ := by
       rw [ab_mul', (UpperTheory.ratIdeleAbs_realIdele_natIdele_unitIdeles).1 r hr, (UpperTheory.ratIdeleAbs_realIdele_natIdele_unitIdeles).2.1 n n.2.1]
-    rw [hf, if_pos (UpperTheory.ideleCongruence_archIdele_mul_finiteNatIdele N hN n r n.2.1 n.2.2 hr), (UpperTheory.ratIdeleAbs_realIdele_natIdele_unitIdeles).2.2.2 r n hr n.2.1, hab, mul_div_assoc,
+    rw [hf, ite_eq_left (UpperTheory.ideleCongruence_archIdele_mul_finiteNatIdele N hN n r n.2.1 n.2.2 hr), (UpperTheory.ratIdeleAbs_realIdele_natIdele_unitIdeles).2.2.2 r n hr n.2.1, hab, mul_div_assoc,
       cpow_split r hr n n.2.1 s]
     simp only [J]
     ring

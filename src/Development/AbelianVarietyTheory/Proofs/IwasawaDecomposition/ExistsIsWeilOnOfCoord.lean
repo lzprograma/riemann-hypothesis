@@ -54,8 +54,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.Mem.WeilTransport
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem integral_transport {X Y : Type} [AddCommGroup X] [AddCommGroup Y] [TopologicalSpace X] [TopologicalSpace Y]
@@ -279,7 +277,7 @@ theorem weilCoreEx_of_datum : ∀ D : D7, (∀ (ψ : AddChar (AF D.host.F) ℂ),
         (fun g h x => (GlobalTheory.OrientedSmall.bridgeSmall D V W hr.le).2 g h x) (fun _ a _ b => ⟨a, b⟩)
         fun e g h hg hh x y hx hy => ⟨x, y, hg, hh, hx, hy, ?_⟩
       unfold splitFacO splitFac
-      rw [if_pos hr.le]
+      rw [ite_eq_left hr.le]
     · obtain ⟨om, H⟩ := hO ψ hψ W V χ' χ h2.1 h1.1 h4 h3
       refine exists_isWeilOn_of_coord (isCoord_large W V hr) H ((MonoidHom.snd _ _).prod (MonoidHom.fst _ _)) continuous_swap
         (fun g h x => ?_) (fun _ a _ b => ⟨b, a⟩) fun e g h hg hh x y hx hy => ⟨y, x, hh, hg, hy, hx, ?_⟩
@@ -287,7 +285,7 @@ theorem weilCoreEx_of_datum : ∀ D : D7, (∀ (ψ : AddChar (AF D.host.F) ℂ),
         have e2 := actHom_swap V W hne g h (mulGramInv W V x)
         exact Matrix.transpose_injective (e1.trans e2)
       · unfold splitFacO splitFac
-        rw [if_neg (not_le.2 hr), mul_comm]
+        rw [ite_eq_right (not_le.2 hr), mul_comm]
   choose om hom using key
   exact ⟨⟨om, hom⟩⟩
 

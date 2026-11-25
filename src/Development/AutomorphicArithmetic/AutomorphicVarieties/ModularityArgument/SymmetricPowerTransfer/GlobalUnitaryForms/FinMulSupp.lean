@@ -99,9 +99,9 @@ theorem ae_unit {x : F} (h : x ≠ 0) : ∀ᶠ v : Pl F in Filter.cofinite, ∃ 
   filter_upwards [ae_mem x, ae_mem x⁻¹] with v h1 h2
   refine ⟨⟨⟨cv v x, h1⟩, ⟨cv v x⁻¹, h2⟩, ?_, ?_⟩, rfl⟩
   · ext
-    simp [← map_mul, h]
+    simp [h]
   · ext
-    simp [← map_mul, h]
+    simp [h]
 
 theorem ae_reg {τ : F} (h : τ ^ 2 - 4 ≠ 0) :
     ∀ᶠ v : Pl F in Filter.cofinite, ∃ u : (Ov v)ˣ, algebraMap (Ov v) (Kv v) u = cv v τ ^ 2 - 4 := by

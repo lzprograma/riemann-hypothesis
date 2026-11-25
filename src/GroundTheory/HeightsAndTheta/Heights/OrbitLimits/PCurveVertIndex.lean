@@ -46,19 +46,31 @@ theorem genIndex_eq_card (y : (Σ k, ι k) → Ω) (a : K → ℤ) {x : Ω} (hx 
 
 end CurveVerticalIndex
 
-theorem CurveVertIndex.proof (hF : CurveSectionQuotFinite.Statement) (hV : CurveVertPointLength.Statement)
-    (hR : CurveVertPointResidue.Statement) : CurveVertIndex.Statement := by
-  intro K _ ι _ Ω _ y s d hP hs hsP
-  have := hF K ι Ω y s d hP hs hsP
-  obtain ⟨hbij, hmult⟩ := hV K ι Ω y s d hP hs hsP
+theorem CurveVertIndex.of_single
+    {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω]
+    {y : (Σ k, ι k) → Ω} {s : MRing ι} {d : K → ℕ}
+    (hP : IsArithVar (mCoordIdeal y) 1) (hs : IsMultiHomog s d) (hsP : s ∉ mCoordIdeal y)
+    (hF : Finite (curveSectionQuot y (fun k => (d k : ℤ)) (aeval y s)))
+    (hbij : Set.BijOn (curvePtIdeal y) (divSupp (mCoordIdeal y) s)
+      {m : Ideal (curveRing y) |
+        m.IsMaximal ∧ locLen m (curveSectionQuot y (fun k => (d k : ℤ)) (aeval y s)) ≠ 0})
+    (hmult : ∀ W ∈ divSupp (mCoordIdeal y) s,
+      multAt (mCoordIdeal y ⊔ Ideal.span {s}) W =
+        locLen (curvePtIdeal y W) (curveSectionQuot y (fun k => (d k : ℤ)) (aeval y s)))
+    (hR : ∀ W ∈ divSupp (mCoordIdeal y) s,
+      (geoNum 0 W Fin.elim0 : ℝ) * Real.log (charOf W) =
+        Real.log (Nat.card (curveRing y ⧸ curvePtIdeal y W))) :
+    vertR (mCoordIdeal y) (Fin.elim0 : Fin 0 → ReciprocityTheory.ChartRestriction.G.Geo.HermLine ι) s =
+      Real.log (genIndex (chartLat y (fun k => (d k : ℤ)) 1) (curveMul y (aeval y s))) := by
+  haveI := hF
   rw [CurveVerticalIndex.genIndex_eq_card y _ (HilbertSamuel.LiftBirationalAmple.chartLat_form hs),
     LogCardLength.proof (curveRing y) (curveSectionQuot y (fun k => (d k : ℤ)) (aeval y s)), vertR]
   calc _ = ∑ᶠ W ∈ divSupp (mCoordIdeal y) s,
           (locLen (curvePtIdeal y W) (curveSectionQuot y (fun k => (d k : ℤ)) (aeval y s)) : ℝ) *
             Real.log (Nat.card (curveRing y ⧸ curvePtIdeal y W)) := by
         refine finsum_mem_congr rfl fun W hW => ?_
-        rw [if_neg (IndefiniteRowSideFullHecke.HeightsSet.CurveDivVertical.full K ι _ s d hP hs hsP W hW), hmult W hW,
-          ← hR K ι Ω y s d hP hs hsP W hW]
+        rw [ite_eq_right (IndefiniteRowSideFullHecke.HeightsSet.CurveDivVertical.full K ι _ s d hP hs hsP W hW),
+          hmult W hW, ← hR W hW]
         congr 3
     _ = ∑ᶠ m ∈ {m : Ideal (curveRing y) |
           m.IsMaximal ∧ locLen m (curveSectionQuot y (fun k => (d k : ℤ)) (aeval y s)) ≠ 0},
@@ -70,6 +82,13 @@ theorem CurveVertIndex.proof (hF : CurveSectionQuotFinite.Statement) (hV : Curve
         ext m
         simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, Function.mem_support]
         exact ⟨fun ⟨⟨h1, _⟩, h2⟩ => ⟨h1, h2⟩, fun ⟨h1, h2⟩ => ⟨⟨h1, fun h0 => h2 (by simp [h0])⟩, h2⟩⟩
+
+theorem CurveVertIndex.proof (hF : CurveSectionQuotFinite.Statement) (hV : CurveVertPointLength.Statement)
+    (hR : CurveVertPointResidue.Statement) : CurveVertIndex.Statement := by
+  intro K _ ι _ Ω _ y s d hP hs hsP
+  obtain ⟨hbij, hmult⟩ := hV K ι Ω y s d hP hs hsP
+  exact CurveVertIndex.of_single hP hs hsP (hF K ι Ω y s d hP hs hsP) hbij hmult
+    (fun W hW => hR K ι Ω y s d hP hs hsP W hW)
 
 end
 

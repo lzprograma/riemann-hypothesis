@@ -23,7 +23,7 @@ theorem gs_comp_stalk (r : Z ⟶ Y) (ψ : Y ⟶ X) (z : Z) (V : X.Opens) (hV : �
     gs (r ≫ ψ) z V b = (r.stalkMap z).hom (gs ψ (r z) V b) := by
   rw [← gs_pull r ψ z V hV b]
   have h1 : r z ∈ ψ ⁻¹ᵁ V := hV
-  simp only [gs, dif_pos hV, dif_pos h1]
+  simp only [gs, dite_eq_left hV, dite_eq_left h1]
   exact (Scheme.Hom.germ_stalkMap_apply r (ψ ⁻¹ᵁ V) z h1 _).symm
 
 theorem gm_of_id (r : Z ⟶ Y) (ψ : Y ⟶ X) (z : Z) {U : Y.Opens} {V : X.Opens} (hU : r z ∈ U)

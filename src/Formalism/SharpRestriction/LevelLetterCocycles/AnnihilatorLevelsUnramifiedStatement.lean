@@ -9,51 +9,9 @@ public import Mathlib.RingTheory.PowerSeries.Binomial
 public import Formalism.SharpRestriction.LevelLetterCocycles.ExistsPosConstLagrangeCondition
 public import Formalism.SharpRestriction.LevelLetterCocycles.LevelClauseOfOpenTool
 public import Mathlib.NumberTheory.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.LevelLetterCocycles.RingConditionOfDeltaInvariants
 import Mathlib.NumberTheory.Padics.MahlerBasis
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.AnnihilatorLevelsOfGrading, Formalism.SharpRestriction.LevelLetterCocycles.AnnihilatorLevelsUnramifiedStatement
@@ -104,15 +62,6 @@ open PowerSeries
 
 variable {O : Type} [CommRing O]
 
-theorem exists_trunc_add (f : PowerSeries O) (N : ℕ) :
-    ∃ g, f = (trunc N f : PowerSeries O) + X ^ N * g := by
-  have h : X ^ N ∣ f - (trunc N f : PowerSeries O) := by
-    rw [X_pow_dvd_iff]
-    intro m hm
-    rw [map_sub, coeff_coe_trunc_of_lt hm, sub_self]
-  obtain ⟨g, hg⟩ := h
-  exact ⟨g, by rw [← hg]; ring⟩
-
 theorem algHom_eq_subst (τ : PowerSeries O →ₐ[O] PowerSeries O) (h0 : constantCoeff (τ X) = 0)
     (f : PowerSeries O) : τ f = subst (τ X) f := by
   have hs : HasSubst (τ X) := HasSubst.of_constantCoeff_zero' h0
@@ -142,7 +91,7 @@ theorem taylor_two_var (f : PowerSeries O) :
       ext i; fin_cases i <;> simp [h]
     have hn : ¬ Finsupp.single (1 : Fin 2) 1 ≤ e := by
       intro hle; have := hle 1; simp [h] at this
-    rw [if_pos he0, if_neg hn, h]
+    rw [ite_eq_left he0, ite_eq_right hn, h]
     simp
   · have hne : ¬ e = Finsupp.single 0 (e 0) := by
       intro h'; have := congrArg (fun x => x 1) h'; simp [h] at this
@@ -150,7 +99,7 @@ theorem taylor_two_var (f : PowerSeries O) :
       intro i; fin_cases i <;> simp [h]
     have hsub : e - Finsupp.single 1 1 = Finsupp.single 0 (e 0) := by
       ext i; fin_cases i <;> simp [h]
-    rw [if_neg hne, if_pos hle, hsub, coeff_subst_single, if_pos (by simp), h]
+    rw [ite_eq_right hne, ite_eq_left hle, hsub, coeff_subst_single, ite_eq_left (by simp), h]
     simp only [Finsupp.single_eq_same, coeff_derivative, Nat.choose_succ_self_right]
     push_cast
     ring
@@ -195,7 +144,6 @@ theorem taylor2 (f D : PowerSeries O) (hD : constantCoeff D = 0) :
 
 end Taylor
 
-open PowerSeries
 
 variable {O : Type} [CommRing O] {R : Type} [CommRing R] [BinomialRing R] [Algebra R O]
 
@@ -391,7 +339,7 @@ theorem aut_eq_bs (c : R) (h1 : coeff 1 (τ X) = algebraMap R O c) : 1 + τ X = 
   apply func_unique φ₀ l hl hφ
   · rw [map_add (f := _), map_one, h0, add_zero]
   · exact binomialSeries_constantCoeff c
-  · rw [map_add (f := _), h1, coeff_bs, Ring.choose_one_right, coeff_one, if_neg (by omega), zero_add]
+  · rw [map_add (f := _), h1, coeff_bs, Ring.choose_one_right, coeff_one, ite_eq_right (by omega), zero_add]
   · rw [map_add (f := _), map_one, hcomm, hφ, map_sub, map_pow, map_add (f := _), map_one]; ring
   · rw [phi_bs φ₀ l hl hφ, bs_natMul]
 
@@ -412,7 +360,7 @@ theorem aut_core (c m : R) (k : ℕ) (hc : c = 1 + (l : R) ^ k * m)
     rcases j with _ | _ | j
     · simp [hM]
     · show coeff 1 (binomialSeries O m - 1 - M * X) = 0
-      rw [map_sub, map_sub, coeff_bs, Ring.choose_one_right, coeff_one, if_neg one_ne_zero, hM,
+      rw [map_sub, map_sub, coeff_bs, Ring.choose_one_right, coeff_one, ite_eq_right one_ne_zero, hM,
         ← Algebra.smul_def, map_smul, coeff_one_X, smul_eq_mul, mul_one]
       ring
     · omega

@@ -176,21 +176,10 @@ open Matrix
 
 namespace GlobalTheory.CompanionTheory.Ar.GR
 
-theorem val_one_sub_pow_le {K : Type} [Field K] (v : Valuation K NNReal) {x : K} (hx : v x = 1)
-    (i : ℕ) : v (1 - x ^ i) ≤ v (1 - x) := by
-  have h : 1 - x ^ i = (1 - x) * ∑ j ∈ Finset.range i, x ^ j := (mul_neg_geom_sum x i).symm
-  rw [h, map_mul]
-  refine mul_le_of_le_one_right' ?_
-  exact v.map_sum_le (fun j _ => by rw [map_pow, hx, one_pow])
-
 theorem val_eq_one_of_pow_eq_one {K : Type} [Field K] (v : Valuation K NNReal) {x : K} {n : ℕ}
     (hn : n ≠ 0) (hx : x ^ n = 1) : v x = 1 := by
   have h : v x ^ n = 1 := by rw [← map_pow, hx, map_one]
   exact (pow_left_inj₀ zero_le zero_le_one hn).mp (by simpa using h)
-
-theorem val_sub_one_pow {K : Type} [Field K] (v : Valuation K NNReal) (p : ℕ) [Fact p.Prime]
-    {ζ : K} (hζ : IsPrimitiveRoot ζ p) : v (ζ - 1) ^ (p - 1) = v (p : K) := by
-  apply PositivityTheory.HtPt.Ra.val_prim <;> assumption
 
 def ltOneIdeal {C : Type} [Field C] (v : Valuation C NNReal) (R : Type) [CommRing R]
     [Algebra R C] (hv : v.Integers R) : Ideal R where
@@ -294,7 +283,7 @@ theorem gauss_value : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgCl
       rw [map_one]; exact hym
     rw [Valuation.map_sub_swap, Valuation.map_sub_eq_of_lt_left v h, map_one]
   rw [hsum, hG, map_mul, map_mul, hvσ, hvy, one_mul, mul_one]
-  exact val_sub_one_pow v p hζ
+  exact PositivityTheory.HtPt.Ra.val_prim v p hζ
 
 end GlobalTheory.CompanionTheory.Ar.GR
 end -- clump:auto
@@ -752,8 +741,8 @@ lemma prod_digits {p f : ℕ} (hp : p ≠ 0) (w : ℕ → NNReal) :
     simp only [Finset.mem_range, Finset.mem_insert, Finset.mem_Icc]
     omega
   rw [h1, Fin.prod_univ_eq_prod_range (fun i => if i = 0 then 1 else w i), h2,
-    Finset.prod_insert (by simp), if_pos rfl, one_mul]
-  refine Finset.prod_congr rfl fun m hm => if_neg ?_
+    Finset.prod_insert (by simp), ite_eq_left rfl, one_mul]
+  refine Finset.prod_congr rfl fun m hm => ite_eq_right ?_
   have := (Finset.mem_Icc.1 hm).1
   omega
 
@@ -799,7 +788,7 @@ theorem r_mono : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed 
       intro h
       exact mul_ne_zero hn (pow_ne_zero _ hp0)
         (Finset.sum_eq_zero_iff.1 h n (Finset.mem_univ n))
-    rw [if_neg hne] at key
+    rw [ite_eq_right hne] at key
     rw [hg]
     have hval : v (algebraMap R C (∏ n : Fin f, c n ^ (d n : ℕ))) =
         v (algebraMap R C (g (∑ n : Fin f, (d n : ℕ) * p ^ (n : ℕ)))) := by

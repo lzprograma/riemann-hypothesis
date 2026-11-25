@@ -66,6 +66,7 @@ import Development.AbelianVarietyTheory.Proofs.HeightProofs.EmbeddingXiZeroNeZer
 import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatMapBesselToFourierJacobiLocalModel
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatFourierJacobiToBesselColumnMulLaws, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierJacobiBesselFlatMapFactorIsLocalModel, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierJacobiBesselFlatMapRowMultiplication, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierJacobiBesselFlatMapUnipotentLaw, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LocalFlatMapTranslationLawsJacobiToBesselFree, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatMapFourierJacobiToBesselLocalModel
@@ -109,7 +110,7 @@ theorem flatFB_mulcol : ∀ (D : D7), GlobalTheory.FinPl.FlatLaws D → OmLoc D 
   intro D hFL _ k _ _ _ _ _ _ p ψ ψk hχ σ J B st s hs n n' _ _ _ _ c G₀ FW FA F₀ FV hjac _ hbes Tm hTm r q hq b Φ Φ' hΦ'
   obtain ⟨i, rfl, hi, hfree⟩ := hq
   have hc : c = 2 * σ + 1 := hbes.1
-  have hκ : ∀ m : ℕ, s * p.xi ^ m ≠ 0 := fun m => mul_ne_zero hs (pow_ne_zero _ (xi_ne p))
+  have hκ : ∀ m : ℕ, s * p.xi ^ m ≠ 0 := fun m => mul_ne_zero hs (pow_ne_zero _ (GlobalTheory.LocMod.Witness.xi_ne p))
   let i₀ : Fin (σ + 1) := ⟨i.val, by omega⟩
   let zk : Matrix (Fin (σ + 1)) (Fin B.V.rank) k :=
     Matrix.of fun i' β => if i' = i₀ then b * (s * p.xi ^ (σ + 1 - i.val)) * FV.γ r β else 0
@@ -514,7 +515,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 
 noncomputable section
 open GlobalTheory.FinPl
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LocMod.MulRow
 
@@ -570,7 +570,7 @@ theorem qY_frame {σ : ℕ} (B : BesLev D σ) (s : k) {n : Type} [Fintype n] [De
   have qX : B.d.qY * B.d.e = 0 := B.d.ee
   have qY : B.d.qY * B.d.e' = 1 := rat_injective (by rw [rat_mul, rat_one]; exact B.d.pY_jY)
   rcases r with a | j
-  · rw [if_neg Sum.inl_ne_inr, Matrix.mul_apply]
+  · rw [ite_eq_right Sum.inl_ne_inr, Matrix.mul_apply]
     simp only [h0]
     rw [← Matrix.mul_apply, ← Matrix.mul_assoc, ← pr_map_mul, ← Matrix.mul_assoc, q0, Matrix.zero_mul,
       Matrix.map_zero _ (pr_zero p), Matrix.zero_mul, Matrix.zero_apply]
@@ -582,10 +582,10 @@ theorem qY_frame {σ : ℕ} (B : BesLev D σ) (s : k) {n : Type} [Fintype n] [De
     · simp only [hX ⟨j.val, h⟩ j rfl]
       rw [pr_dot p B.d.qY (fun r => B.d.e r ⟨j.val, h⟩),
         show (B.d.qY *ᵥ fun r => B.d.e r ⟨j.val, h⟩) i = (B.d.qY * B.d.e) i ⟨j.val, h⟩ from rfl, qX,
-        Matrix.zero_apply, pr_zero, mul_zero, if_neg]
+        Matrix.zero_apply, pr_zero, mul_zero, ite_eq_right]
       intro e; cases e; omega
     · simp only [hz j h]
-      rw [pr_dot p B.d.qY, Matrix.mulVec_mulVec, q0, Matrix.zero_mulVec, Pi.zero_apply, pr_zero, mul_zero, if_neg]
+      rw [pr_dot p B.d.qY, Matrix.mulVec_mulVec, q0, Matrix.zero_mulVec, Pi.zero_apply, pr_zero, mul_zero, ite_eq_right]
       intro e; cases e; omega
     · have hi' : 2 * σ - j.val < σ := by omega
       simp only [hY ⟨2 * σ - j.val, hi'⟩ j (by simp only; omega)]
@@ -594,10 +594,10 @@ theorem qY_frame {σ : ℕ} (B : BesLev D σ) (s : k) {n : Type} [Fintype n] [De
       by_cases e : j = l
       · subst e
         have : i = ⟨_, hi'⟩ := Fin.ext (by simp only; omega)
-        rw [← this, Matrix.one_apply_eq, pr_one, mul_one, if_pos rfl]
+        rw [← this, Matrix.one_apply_eq, pr_one, mul_one, ite_eq_left rfl]
         congr 2
         omega
-      · rw [Matrix.one_apply_ne, pr_zero, mul_zero, if_neg (fun h => e (Sum.inr_injective h))]
+      · rw [Matrix.one_apply_ne, pr_zero, mul_zero, ite_eq_right (fun h => e (Sum.inr_injective h))]
         intro h'
         apply e
         have := congrArg Fin.val h'
@@ -638,9 +638,9 @@ theorem exists_row (σ : ℕ) (J : JacLev D (σ + 1)) (B : BesLev D σ) (s : k) 
     have e : B.d.qY.map p.pr * (FV.β * t * FW.γ * J.d.i₀.map p.pr) * G₀.β =
         (B.d.qY.map p.pr * FV.β) * (t * (FW.γ * (J.d.i₀.map p.pr * G₀.β))) := by simp only [Matrix.mul_assoc]
     rw [e, Matrix.mul_apply]
-    simp only [hrow, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [hrow, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [Matrix.mul_apply]
-    simp only [hcol, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true, smul_eq_mul]
+    simp only [hcol, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true, smul_eq_mul]
     field_simp
 
 end GlobalTheory.LocMod.MulRow
@@ -786,8 +786,6 @@ def lastMat {T T₀ : HSp D} {σ : ℕ} (d : HypDec T T₀ σ) (z : Fin T₀.ran
     Matrix (Fin T.rank) (Fin (σ + 1)) D.host.E :=
   Matrix.of fun row => Fin.snoc (d.e row) ((d.i₀ *ᵥ z) row)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def pairVal {T : HSp D} {ρ : ℕ} {Y : Type} [Fintype Y] [DecidableEq Y] (FT : Frame k T.rank Y)
     (X : Matrix (Fin T.rank) (Fin ρ) D.host.E) (r : Y) (i : Fin ρ) : k :=
   ∑ c, (Xᴴ * T.gram).map p.pr i c * FT.β c r
@@ -809,18 +807,7 @@ theorem incA_mul_ι (x : k) (b : D.host.E) : incA D b * p.ι x = p.ι (p.pr b * 
   rw [mul_comm, ι_mul_incA, mul_comm]
 
 theorem infPart_e : infPart D p.e = 0 := by
-  obtain ⟨h1, h2, v, ε, ⟨α, hα, -⟩, h3⟩ := p.split
-  have h4 : p.e = p.e * (algebraMap (AF D.host.F) (AE D) ε) := by
-    rw [← h3, mul_add, h1, h2, add_zero]
-  have h5 : infPart D (algebraMap (AF D.host.F) (AE D) ε) = 0 := by
-    subst hα
-    change infPart D ((pairA D.host.F 0 α) ⊗ₜ[D.host.F] (1 : D.host.E)) = 0
-    show (Algebra.TensorProduct.map (fstA D.host.F) (AlgHom.id D.host.F D.host.E))
-      ((pairA D.host.F 0 α) ⊗ₜ[D.host.F] (1 : D.host.E)) = 0
-    rw [Algebra.TensorProduct.map_tmul]
-    have h0 : fstA D.host.F (pairA D.host.F 0 α) = 0 := rfl
-    rw [h0, TensorProduct.zero_tmul]
-  rw [h4, map_mul, h5, mul_zero]
+  apply _root_.GlobalTheory.FlatTransLaw.infPart_e <;> assumption
 
 theorem infPart_ι (x : k) : infPart D (p.ι x) = 0 := by
   rw [← _root_.GlobalTheory.LocMod.Witness.e_ι, map_mul, infPart_e, zero_mul]
@@ -837,17 +824,14 @@ theorem mxAt_colMx {T : HSp D} {ρ : ℕ} {Y : Type} [Fintype Y] [DecidableEq Y]
     (b : k) : GlobalTheory.FinPl.MxAt (fun _ => True) (colMx p FT r i b) :=
   mxAt_of_ι p _ fun row col => by
     by_cases h : col = i
-    · exact ⟨_, if_pos h⟩
-    · exact ⟨0, (if_neg h).trans (map_zero _).symm⟩
+    · exact ⟨_, ite_eq_left h⟩
+    · exact ⟨0, (ite_eq_right h).trans (map_zero _).symm⟩
 
 theorem mxAt_rowMx {ρ m : ℕ} (l : Fin ρ) (v : Fin m → k) : GlobalTheory.FinPl.MxAt (fun _ => True) (rowMx p l v) :=
   mxAt_of_ι p _ fun row col => by
     by_cases h : row = l
-    · exact ⟨_, if_pos h⟩
-    · exact ⟨0, (if_neg h).trans (map_zero _).symm⟩
-
-theorem pr_ne_zero {a : D.host.E} (ha : a ≠ 0) : p.pr a ≠ 0 :=
-  (_root_.map_ne_zero (p.π.comp (incA D))).2 ha
+    · exact ⟨_, ite_eq_left h⟩
+    · exact ⟨0, (ite_eq_right h).trans (map_zero _).symm⟩
 
 theorem up_single {S T : HSp D} {Y Y' : Type} [Fintype Y] [DecidableEq Y] [Fintype Y'] [DecidableEq Y']
     (FS : Frame k S.rank Y') (FT : Frame k T.rank Y) (r : Y) (q : Y') (a : k) (row : Fin T.rank) (col : Fin S.rank) :
@@ -860,9 +844,9 @@ theorem up_single {S T : HSp D} {Y Y' : Type} [Fintype Y] [DecidableEq Y] [Finty
 theorem extY_colMx {S S₀ T : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) {Y : Type} [Fintype Y] [DecidableEq Y]
     (FT : Frame k T.rank Y) (r : Y) (i : Fin ρ) (b : k) (row : Fin T.rank) (col : Fin S.rank) :
     d.extY T (colMx p FT r i b) row col = p.ι (b * FT.β row r * p.pr (d.qY i col)) := by
-  rw [HypDec.extY_apply, Matrix.mul_apply, Finset.sum_eq_single i (fun m _ hm => by rw [show colMx p FT r i b row m = 0 from if_neg hm, zero_mul]) (fun h => absurd (Finset.mem_univ _) h),
+  rw [HypDec.extY_apply, Matrix.mul_apply, Finset.sum_eq_single i (fun m _ hm => by rw [show colMx p FT r i b row m = 0 from ite_eq_right hm, zero_mul]) (fun h => absurd (Finset.mem_univ _) h),
     ← ι_mul_incA]
-  rw [show colMx p FT r i b row i = _ from if_pos rfl]
+  rw [show colMx p FT r i b row i = _ from ite_eq_left rfl]
   rfl
 
 theorem wittExtZero_inclusionX_adelicSingleRowMatrix {S S₀ T T₀ : HSp D} {ρ σ : ℕ} (d : HypDec S S₀ ρ) (d' : HypDec T T₀ σ) (l : Fin σ)
@@ -871,8 +855,8 @@ theorem wittExtZero_inclusionX_adelicSingleRowMatrix {S S₀ T T₀ : HSp D} {ρ
 
   rw [HypDec.matrixExtendByZero_apply, HypDec.incX_apply, Matrix.mul_apply, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
-  rw [Matrix.mul_apply, Finset.sum_eq_single l (fun m' _ hm => by rw [show rowMx p l v m' m = 0 from if_neg hm, mul_zero]) (fun h => absurd (Finset.mem_univ _) h), ← ι_mul_incA, ← incA_mul_ι]
-  rw [show rowMx p l v l m = _ from if_pos rfl]
+  rw [Matrix.mul_apply, Finset.sum_eq_single l (fun m' _ hm => by rw [show rowMx p l v m' m = 0 from ite_eq_right hm, mul_zero]) (fun h => absurd (Finset.mem_univ _) h), ← ι_mul_incA, ← incA_mul_ι]
+  rw [show rowMx p l v l m = _ from ite_eq_left rfl]
   rfl
 
 theorem frame_row {N : ℕ} {Y : Type} [Fintype Y] [DecidableEq Y] (F : Frame k N Y) (q : Y) (v : Fin N → k)
@@ -917,10 +901,7 @@ theorem qY_e' : d.qY * d.e' = 1 := (gram_swap' S d.e'e).trans conjTranspose_one
 theorem wittDecomposition_coreProj_mul_e_eq_zero : d.q0 * d.e = 0 := by rw [HypDec.q0, Matrix.mul_assoc, d.i₀e, Matrix.mul_zero]
 theorem wittZeroProjection_mul_dualBasis_eq_zero : d.q0 * d.e' = 0 := by rw [HypDec.q0, Matrix.mul_assoc, d.i₀e', Matrix.mul_zero]
 theorem wittDecomposition_coreProj_mul_core_eq_one : d.q0.map p.pr * d.i₀.map p.pr = 1 := by
-  have h := congrArg (fun M : Mx D S₀.rank S₀.rank => M.map p.π) d.p0_j0
-  simp only [Matrix.map_one p.π (map_zero _) (map_one _)] at h
-  rw [← h]
-  exact (Matrix.map_mul (f := p.π)).symm
+  apply _root_.GlobalTheory.LocFlatFB.projection_q_zero_i_zero_eq_one <;> assumption
 
 end Dec
 
@@ -941,7 +922,7 @@ theorem jac_γ_inr (h : p.IsJacFrame J s hh G₀ FW) (hs : s ≠ 0) (hhh : hh �
   have hne : s * (hh / p.xi) * (-1 / p.xi) ^ (ρ - 1 - i.val) ≠ 0 :=
     mul_ne_zero (mul_ne_zero hs (div_ne_zero hhh hξ)) (pow_ne_zero _ (div_ne_zero (neg_ne_zero.2 one_ne_zero) hξ))
   rintro (a | j')
-  · rw [if_neg Sum.inl_ne_inr]
+  · rw [ite_eq_right Sum.inl_ne_inr]
     simp only [h.2.1, mul_assoc]
     rw [← Finset.mul_sum]
     have : ∑ col, p.pr (J.d.qY i col) * (J.d.i₀.map p.pr * G₀.β) col a =
@@ -951,15 +932,15 @@ theorem jac_γ_inr (h : p.IsJacFrame J s hh G₀ FW) (hs : s ≠ 0) (hhh : hh �
   · rcases jac_cases h.1 j' with ⟨i', hi'⟩ | ⟨i', hi'⟩
     · have := i.isLt
       have := i'.isLt
-      rw [if_neg fun h => by have := Sum.inr_injective h; omega]
+      rw [ite_eq_right fun h => by have := Sum.inr_injective h; omega]
       simp only [h.2.2.1 i' j' hi', mul_mul_mul_comm _ (p.pr (J.d.qY i _))]
       rw [← Finset.mul_sum, pr_sum_zero p (show J.d.qY * J.d.e = 0 from J.d.ee), mul_zero]
     · simp only [h.2.2.2 i' j' hi', mul_mul_mul_comm _ (p.pr (J.d.qY i _))]
       rw [← Finset.mul_sum, pr_sum_one p (qY_e' J.d)]
       by_cases hi : i = i'
       · subst hi
-        rw [if_pos rfl, if_pos (congrArg Sum.inr (Fin.ext (by omega))), mul_one, inv_mul_cancel₀ hne]
-      · rw [if_neg hi, mul_zero, if_neg fun h => hi (Fin.ext (by have := Sum.inr_injective h; omega))]
+        rw [ite_eq_left rfl, ite_eq_left (congrArg Sum.inr (Fin.ext (by omega))), mul_one, inv_mul_cancel₀ hne]
+      · rw [ite_eq_right hi, mul_zero, ite_eq_right fun h => hi (Fin.ext (by have := Sum.inr_injective h; omega))]
 
 theorem jac_γ_inl (h : p.IsJacFrame J s hh G₀ FW) (j : n') (col : Fin J.W.rank) :
     FW.γ (Sum.inl j) col = ∑ m, G₀.γ j m * p.pr (J.d.q0 m col) := by
@@ -976,7 +957,7 @@ theorem jac_γ_inl (h : p.IsJacFrame J s hh G₀ FW) (j : n') (col : Fin J.W.ran
         (G₀.γ * J.d.q0.map p.pr * (J.d.i₀.map p.pr * G₀.β)) j a := rfl
     rw [this, Matrix.mul_assoc, ← Matrix.mul_assoc (J.d.q0.map p.pr), wittDecomposition_coreProj_mul_core_eq_one, Matrix.one_mul, G₀.γβ, Matrix.one_apply]
     simp only [Sum.inl.injEq, eq_comm]
-  · rw [if_neg Sum.inr_ne_inl]
+  · rw [ite_eq_right Sum.inr_ne_inl]
     rcases jac_cases h.1 j' with ⟨i', hi'⟩ | ⟨i', hi'⟩
     · simp only [h.2.2.1 i' j' hi']
       exact key _ (wittDecomposition_coreProj_mul_e_eq_zero J.d) _ _
@@ -999,17 +980,17 @@ theorem gram_colMx (m m' : Fin ρ) : (adj (colMx p FT r i b) ⬝ (gA T ⬝ rat X
     refine Finset.sum_congr rfl fun c _ => ?_
     have h1 : (Xᴴ * T.gram) m' c = star ((T.gram * X) c m') := by
       rw [← conjTranspose_apply, conjTranspose_mul, gram_conjTranspose]
-    have h2 : adj (colMx p FT r m b) m c = cA D (p.ι (b * FT.β c r)) := congrArg (cA D) (if_pos rfl)
+    have h2 : adj (colMx p FT r m b) m c = cA D (p.ι (b * FT.β c r)) := congrArg (cA D) (ite_eq_left rfl)
     rw [h2, Matrix.map_apply, h1, mul_comm (p.pr _), ← mul_assoc, ← ι_mul_incA, map_mul (cA D), GlobalTheory.DualPairCheck.cA_incA, star_star]
     rfl
   · refine Finset.sum_eq_zero fun c _ => ?_
-    have h2 : adj (colMx p FT r i b) m c = 0 := (congrArg (cA D) (if_neg hm)).trans (map_zero _)
+    have h2 : adj (colMx p FT r i b) m c = 0 := (congrArg (cA D) (ite_eq_right hm)).trans (map_zero _)
     rw [h2, zero_mul]
 
 theorem pairS_colMx : pairS T (rat X) (colMx p FT r i b) = cA D (p.ι (b * pairVal p FT X r i)) := by
   change ∑ m, (adj (colMx p FT r i b) ⬝ (gA T ⬝ rat X)) m m = _
-  rw [Finset.sum_eq_single i (fun m _ hm => (gram_colMx p X FT r i b m m).trans (if_neg hm)) (fun h => absurd (Finset.mem_univ _) h)]
-  exact (gram_colMx p X FT r i b i i).trans (if_pos rfl)
+  rw [Finset.sum_eq_single i (fun m _ hm => (gram_colMx p X FT r i b m m).trans (ite_eq_right hm)) (fun h => absurd (Finset.mem_univ _) h)]
+  exact (gram_colMx p X FT r i b i i).trans (ite_eq_left rfl)
 
 theorem uInv_colMx (h : ∀ m : Fin ρ, m < i → pairVal p FT X r m = 0) :
     GlobalTheory.FinPl.UInv T (rat X) (colMx p FT r i b) := by
@@ -1022,10 +1003,10 @@ theorem uInv_colMx (h : ∀ m : Fin ρ, m < i → pairVal p FT X r m = 0) :
     rw [← Matrix.mul_assoc (gA T), ← Matrix.mul_assoc (adj _)]
     rfl
   refine h1.trans ?_
-  rw [Finset.sum_eq_single i (fun m _ hm => Finset.sum_eq_zero fun m' _ => by rw [gram_colMx, if_neg hm, zero_mul]) (fun h => absurd (Finset.mem_univ _) h),
-    Finset.sum_eq_single i (fun m _ hm => ?_) (fun h => absurd (Finset.mem_univ _) h), hu1, mul_one, gram_colMx, if_pos rfl]
+  rw [Finset.sum_eq_single i (fun m _ hm => Finset.sum_eq_zero fun m' _ => by rw [gram_colMx, ite_eq_right hm, zero_mul]) (fun h => absurd (Finset.mem_univ _) h),
+    Finset.sum_eq_single i (fun m _ hm => ?_) (fun h => absurd (Finset.mem_univ _) h), hu1, mul_one, gram_colMx, ite_eq_left rfl]
   rcases lt_or_gt_of_ne hm with hm | hm
-  · rw [gram_colMx, if_pos rfl, h m hm, mul_zero, map_zero, map_zero, zero_mul]
+  · rw [gram_colMx, ite_eq_left rfl, h m hm, mul_zero, map_zero, map_zero, zero_mul]
   · rw [hu0 m i hm, mul_zero]
 
 theorem psi_symplO_colMx {ψ : AddChar (AF D.host.F) ℂ} {ψk : AddChar k Circle} (hχ : p.IsChar ψ ψk) {S S₀ : HSp D}
@@ -1106,7 +1087,7 @@ theorem pairVal_dual (h : p.IsBesFrame B s FA FV) (l : Fin c) (i : Fin (σ + 1))
   obtain ⟨i, rfl⟩ : ∃ i' : Fin σ, i = i'.castSucc := ⟨⟨i.val, by omega⟩, rfl⟩
   rw [pairVal_castSucc]
   simp only [h.2.2.2.2 i l hli, mul_left_comm (p.pr (B.d.qY i _))]
-  rw [← Finset.mul_sum, pr_sum_one p (qY_e' B.d), if_pos rfl, mul_one]
+  rw [← Finset.mul_sum, pr_sum_one p (qY_e' B.d), ite_eq_left rfl, mul_one]
   rfl
 
 theorem pairVal_zero (h : p.IsBesFrame B s FA FV) (r : n ⊕ Fin c) (i : Fin (σ + 1))
@@ -1144,7 +1125,7 @@ theorem pairVal_zero (h : p.IsBesFrame B s FA FV) (r : n ⊕ Fin c) (i : Fin (σ
       rw [← Finset.mul_sum, pr_sum_zero p (zCol_e' B), mul_zero]
     · rw [pairVal_castSucc]
       simp only [hβ, mul_left_comm (p.pr (B.d.qY i _))]
-      rw [← Finset.mul_sum, pr_sum_one p (qY_e' B.d), if_neg, mul_zero]
+      rw [← Finset.mul_sum, pr_sum_one p (qY_e' B.d), ite_eq_right, mul_zero]
       intro hi
       have := congrArg Fin.val hi
       simp only [Fin.val_castSucc] at this hl
@@ -1183,8 +1164,8 @@ theorem GlobalTheory.LocMod.flatFB_trans_free : ∀ (D : D7), GlobalTheory.FinPl
     simp [symplO, hO, ch, Matrix.single]
   · have hj : σ < j.val := hq j rfl
     have hjc := j.isLt
-    have hξ : p.xi ≠ 0 := TransLaw.pr_ne_zero p GlobalTheory.ChiGrid.cmHost_imaginaryGenerator_ne_zero
-    have hz : p.hz B ≠ 0 := TransLaw.pr_ne_zero p B.line.2
+    have hξ : p.xi ≠ 0 := GlobalTheory.LocMod.MulRow.pr_ne p GlobalTheory.ChiGrid.cmHost_imaginaryGenerator_ne_zero
+    have hz : p.hz B ≠ 0 := GlobalTheory.LocMod.MulRow.pr_ne p B.line.2
     have hhh : -p.xi ^ 2 * p.hz B ≠ 0 := mul_ne_zero (neg_ne_zero.2 (pow_ne_zero _ hξ)) hz
     obtain ⟨i, hi⟩ : ∃ i : Fin (σ + 1), j.val + i.val + 1 = 2 * (σ + 1) :=
       ⟨⟨2 * σ + 1 - j.val, by omega⟩, by simp only; omega⟩

@@ -15,8 +15,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions Form
 
 namespace Formalism.L2.SG.LoopsTies
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Gap
 
 def GapEv {eps : ℝ} (Fm : FamP eps) : Prop :=

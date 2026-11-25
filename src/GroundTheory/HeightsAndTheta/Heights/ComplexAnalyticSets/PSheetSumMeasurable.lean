@@ -23,7 +23,6 @@ variable {n d : ℕ}
 
 theorem measurable_maDens {D : ℕ} (ψ : Fin D → (Fin D → ℂ) → ℝ) :
     Measurable (ReciprocityTheory.AnForm.maDens ψ) := by
-  set_option synthInstance.maxHeartbeats 200000 in
   set M : ((Fin D → ℂ) →L[ℝ] (Fin D → ℂ) →L[ℝ] ℝ) → Matrix (Fin D) (Fin D) ℂ := fun H i j =>
     ((H (Pi.single i 1) (Pi.single j 1) +
         H (Complex.I • Pi.single i 1) (Complex.I • Pi.single j 1) : ℝ) +

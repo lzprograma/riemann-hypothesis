@@ -1,49 +1,7 @@
 module
 
 public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -216,9 +174,6 @@ theorem chartPullbackFst_base_chartPullbackPoint (c₁ c₂ : EtaleChart q V n) 
       = V.ι.base (pointOfMem V p hp) := by rw [key]
   exact key2
 
-private theorem comp_base_apply {A B C : Scheme.{u}} (f : A ⟶ B) (g : B ⟶ C)
-    (x : ↥A) : (f ≫ g).base x = g.base (f.base x) := rfl
-
 theorem chartPullbackSnd_base_chartPullbackPoint (c₁ c₂ : EtaleChart q V n) (p : ↥P) (hp : p ∈ V)
     (h : ChartsAgreeAt c₁ c₂ p hp) :
     (chartPullbackSnd c₁ c₂).base (chartPullbackPoint c₁ c₂ p hp h) = p := by
@@ -227,9 +182,9 @@ theorem chartPullbackSnd_base_chartPullbackPoint (c₁ c₂ : EtaleChart q V n) 
       (specResidueFieldPoint (pointOfMem V p hp)) = pointOfMem V p hp := by
     simp
   have e2 : V.ι.base (pointOfMem V p hp) = p := rfl
-  have hA := comp_base_apply (chartPullbackLift c₁ c₂ p hp h)
+  have hA := Scheme.Hom.comp_apply (chartPullbackLift c₁ c₂ p hp h)
       (pullback.snd c₁.map c₂.map ≫ V.ι) (specResidueFieldPoint (pointOfMem V p hp))
-  have hB := comp_base_apply
+  have hB := Scheme.Hom.comp_apply
       (V.toScheme.fromSpecResidueField (pointOfMem V p hp)) V.ι
       (specResidueFieldPoint (pointOfMem V p hp))
   have h3 : (chartPullbackLift c₁ c₂ p hp h ≫ pullback.snd c₁.map c₂.map ≫ V.ι).base
@@ -256,25 +211,9 @@ private theorem not_isUnit_of_mem_maximalIdeal {R : Type u} [CommRing R] [IsLoca
 
 private theorem specResidueField_eq_zero_of_not_isUnit {X : Scheme.{u}} (x : ↥X)
     (t : Γ(Spec (X.residueField x), ⊤)) (ht : ¬ IsUnit t) : t = 0 := by
-  have h2 : (Scheme.ΓSpecIso (X.residueField x)).inv.hom
-      ((Scheme.ΓSpecIso (X.residueField x)).hom.hom t) = t := by
-    have e1 := congrArg CommRingCat.Hom.hom
-      (Iso.hom_inv_id (Scheme.ΓSpecIso (X.residueField x)))
-    rw [CommRingCat.hom_comp, CommRingCat.hom_id] at e1
-    exact DFunLike.congr_fun e1 t
+  let e := (Scheme.ΓSpecIso (X.residueField x)).commRingCatIsoToRingEquiv
   by_contra hne
-  have hne0 : (Scheme.ΓSpecIso (X.residueField x)).hom.hom t ≠ 0 := by
-    intro h0
-    apply hne
-    rw [← h2, h0]
-    exact map_zero _
-  have hu : IsUnit ((Scheme.ΓSpecIso (X.residueField x)).hom.hom t) :=
-    isUnit_iff_ne_zero.mpr hne0
-  have hu2 : IsUnit ((Scheme.ΓSpecIso (X.residueField x)).inv.hom
-      ((Scheme.ΓSpecIso (X.residueField x)).hom.hom t)) :=
-    hu.map (Scheme.ΓSpecIso (X.residueField x)).inv.hom
-  rw [h2] at hu2
-  exact ht hu2
+  exact ht ((isUnit_map_iff e t).1 (e.map_ne_zero_iff.2 hne).isUnit)
 
 private theorem fromSpecResidueField_appTop_eq_zero {X : Scheme.{u}} (x : ↥X)
     (hx : x ∈ (⊤ : X.Opens)) (s : Γ(X, ⊤))

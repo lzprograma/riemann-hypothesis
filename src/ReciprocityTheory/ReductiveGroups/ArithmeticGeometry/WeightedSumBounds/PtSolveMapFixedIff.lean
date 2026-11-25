@@ -61,7 +61,7 @@ theorem pt_low_of_lin {σ : Type*} [Fintype σ] {Φ : MvPowerSeries σ C}
   rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hα with h | h
   · obtain rfl := (Finsupp.degree_eq_zero_iff α).mp h
     simp [MvPowerSeries.coeff_X, MvPowerSeries.coeff_zero_eq_constantCoeff_apply, h0]
-    refine Finset.sum_eq_zero fun a _ => if_neg ?_
+    refine Finset.sum_eq_zero fun a _ => ite_eq_right ?_
     exact fun e => (Finsupp.single_ne_zero.mpr one_ne_zero) e.symm
   · have hne : α ≠ 0 := by
       rintro rfl

@@ -115,7 +115,7 @@ theorem z_e (k l : Fin (dK K)) : z K l (e K k) = if k = l then 1 else 0 := Hf_e 
 
 theorem coord_proj_one (l : Fin (dK K)) (v : EuclideanSpace ℂ ι) : z K l (p1 K v) = z K l v := by
   simp only [z, p1, Hf_sum_l, Hf_smul_l, Hf_e hK, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
 
 theorem coord_proj_two (l : Fin (dK K)) (v : EuclideanSpace ℂ ι) : z K l (p2 K v) = 0 := by
   have h := coord_proj_one hK l v

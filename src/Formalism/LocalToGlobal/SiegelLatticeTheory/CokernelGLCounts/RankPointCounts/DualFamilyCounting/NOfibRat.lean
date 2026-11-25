@@ -23,8 +23,6 @@ open Matrix
 
 namespace Formalism.L2.SG.Pf.NcReal.JX.NOf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem mem_base_lattice_iff_adelic {D : D7} (X : HidaSetting D) (y : (VS D).V) :
     y ∈ (VS D).L0 ↔ incl X.B.I (X.crd y) ∈ X.B.I.Lf := by
   rw [Formalism.L2.SG.Pf.LatDict.mem_hermitianStandardLattice_iff_pairing_integral X y]

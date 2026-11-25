@@ -1,6 +1,7 @@
 module
 
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.UHMulInv
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.HpkMulVecMulVec
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDefs
 import Mathlib.Algebra.Order.Star.Real
 
@@ -19,18 +20,14 @@ section frob
 
 attribute [local instance] Matrix.frobeniusNormedAddCommGroup
 
-theorem gN_eq_frob {k r : ℕ} (g : Mat k r) : gN g = ‖g‖ := by
-  rw [frobenius_norm_def, gN, Real.sqrt_eq_rpow]
-  congr 1
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  rw [Complex.normSq_eq_norm_sq, Real.rpow_two]
+theorem gN_eq_frob {k r : ℕ} (g : Mat k r) : gN g = ‖g‖ :=
+  TopH.gN_eq_frob g
 
-theorem gN_mul_le {k r : ℕ} (A B : Mat k r) : gN (A * B) ≤ gN A * gN B := by
-  rw [gN_eq_frob, gN_eq_frob, gN_eq_frob]
-  exact frobenius_norm_mul A B
+theorem gN_mul_le {k r : ℕ} (A B : Mat k r) : gN (A * B) ≤ gN A * gN B :=
+  TopH.gN_mul_le A B
 
-theorem gN_conjTranspose {k r : ℕ} (A : Mat k r) : gN Aᴴ = gN A := by
-  rw [gN_eq_frob, gN_eq_frob, frobenius_norm_conjTranspose]
+theorem gN_conjTranspose {k r : ℕ} (A : Mat k r) : gN Aᴴ = gN A :=
+  TopH.gN_conjT A
 
 end frob
 
@@ -55,9 +52,8 @@ theorem Hpk_mulVec (v : Fin (2 * r + k + 1) → ℂ) (i : Fin (2 * r + k + 1)) :
 theorem Hpk_mulVec_mulVec (v : Fin (2 * r + k + 1) → ℂ) : Hpk k r *ᵥ (Hpk k r *ᵥ v) = v :=
   ReciprocityTheory.ChartRestriction.DS.Xi.StepA.Hpk_mulVec_mulVec k r v
 
-theorem mat_eq_of_mulVec' {A B : Mat k r} (h : ∀ v, A *ᵥ v = B *ᵥ v) : A = B := by
-  ext i j
-  simpa [Matrix.mulVec_single_one] using congrFun (h (Pi.single j 1)) i
+theorem mat_eq_of_mulVec' {A B : Mat k r} (h : ∀ v, A *ᵥ v = B *ᵥ v) : A = B :=
+  TopH.mat_eq_of_mulVec h
 
 theorem Hpk_sq : Hpk k r * Hpk k r = 1 :=
   ReciprocityTheory.ChartRestriction.DS.Xi.StepA.Hpk_sq k r
@@ -65,13 +61,8 @@ theorem Hpk_sq : Hpk k r * Hpk k r = 1 :=
 theorem UH_left_inv {g : Mat k r} (hg : g ∈ GV k r) : Hpk k r * gᴴ * Hpk k r * g = 1 :=
   ReciprocityTheory.ChartRestriction.DS.Xi.StepA.UH_left_inv k r hg
 
-theorem GV_mul {g x : Mat k r} (hg : g ∈ GV k r) (hx : x ∈ GV k r) : g * x ∈ GV k r := by
-  have hg' : gᴴ * Hpk k r * g = Hpk k r := hg
-  have hx' : xᴴ * Hpk k r * x = Hpk k r := hx
-  show (g * x)ᴴ * Hpk k r * (g * x) = Hpk k r
-  rw [conjTranspose_mul]
-  calc xᴴ * gᴴ * Hpk k r * (g * x) = xᴴ * (gᴴ * Hpk k r * g) * x := by simp only [Matrix.mul_assoc]
-    _ = Hpk k r := by rw [hg', hx']
+theorem GV_mul {g x : Mat k r} (hg : g ∈ GV k r) (hx : x ∈ GV k r) : g * x ∈ GV k r :=
+  TopH.gv_mul hg hx
 
 end hpk
 

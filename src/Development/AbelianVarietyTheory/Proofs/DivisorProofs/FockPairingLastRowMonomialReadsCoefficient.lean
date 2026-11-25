@@ -105,7 +105,7 @@ theorem key (x : BP K n) (β : Unit × Fin n →₀ ℕ) (p : MvPolynomial (Fin 
     rw [fockB_C_left, spl_C, coeff_C, map_mul, constantCoeff_rename, constantCoeff_monomial, emb, constantCoeff_rename]
     by_cases h : β = 0
     · subst h; simp [fockB_C_left]
-    · rw [if_neg h, if_neg (Ne.symm h), ← fockBL_apply]; simp
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h), ← fockBL_apply]; simp
   | add f g hf hg =>
     simp only [← fockBL_apply, map_add (f := _), LinearMap.add_apply, MvPolynomial.coeff_add] at *
     rw [hf, hg, mul_add]

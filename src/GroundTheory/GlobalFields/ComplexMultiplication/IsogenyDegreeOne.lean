@@ -159,8 +159,21 @@ section AlgClosed
 variable {F : Type u} [Field F] [IsAlgClosed F] [DecidableEq F] {A B : WeierstrassCurve F}
   [A.IsElliptic] [B.IsElliptic]
 
-theorem exists_variableChange_of_degree_eq_one_of_isAlgClosed (ψ : Isogeny A B)
-    (h : ψ.degree = 1) : ∃ C : VariableChange F, C • B = A := by
+theorem exists_coeffs_of_degree_eq_one_of_isAlgClosed (ψ : Isogeny A B) (h : ψ.degree = 1) :
+    ∃ α β γ δ ε : F, α ≠ 0 ∧ γ ≠ 0 ∧
+      ψ.x = algebraMap F A.toAffine.FunctionField α * genX A +
+        algebraMap F A.toAffine.FunctionField β ∧
+      ψ.y = algebraMap F A.toAffine.FunctionField γ * genY A +
+        algebraMap F A.toAffine.FunctionField δ * genX A +
+        algebraMap F A.toAffine.FunctionField ε ∧
+      γ ^ 2 = α ^ 3 ∧
+      γ ^ 2 * A.a₂ + δ ^ 2 + B.a₁ * α * δ - 3 * α ^ 2 * β - B.a₂ * α ^ 2 = 0 ∧
+      γ ^ 2 * A.a₄ + 2 * δ * ε + B.a₁ * (α * ε + β * δ) + B.a₃ * δ - 3 * α * β ^ 2 -
+        2 * B.a₂ * α * β - B.a₄ * α = 0 ∧
+      γ ^ 2 * A.a₆ + ε ^ 2 + B.a₁ * β * ε + B.a₃ * ε - β ^ 3 - B.a₂ * β ^ 2 - B.a₄ * β -
+        B.a₆ = 0 ∧
+      2 * γ * δ + B.a₁ * γ * α - γ ^ 2 * A.a₁ = 0 ∧
+      2 * γ * ε + B.a₁ * γ * β + B.a₃ * γ - γ ^ 2 * A.a₃ = 0 := by
   have hmul := ψ.ramIdx_mul_card_ker
   rw [h] at hmul
   have hram : ψ.ramIdx = 1 := (mul_eq_one.mp hmul).1
@@ -194,24 +207,38 @@ theorem exists_variableChange_of_degree_eq_one_of_isAlgClosed (ψ : Isogeny A B)
   simp only [WeierstrassCurve.baseChange, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂,
     WeierstrassCurve.map_a₃, WeierstrassCurve.map_a₄, WeierstrassCurve.map_a₆] at eB
   have eA := genY_sq_add A
+  set P : F[X] := C (γ ^ 2 - α ^ 3) * X ^ 3 +
+    C (γ ^ 2 * A.a₂ + δ ^ 2 + B.a₁ * α * δ - 3 * α ^ 2 * β - B.a₂ * α ^ 2) * X ^ 2 +
+    C (γ ^ 2 * A.a₄ + 2 * δ * ε + B.a₁ * (α * ε + β * δ) + B.a₃ * δ - 3 * α * β ^ 2 -
+      2 * B.a₂ * α * β - B.a₄ * α) * X +
+    C (γ ^ 2 * A.a₆ + ε ^ 2 + B.a₁ * β * ε + B.a₃ * ε - β ^ 3 - B.a₂ * β ^ 2 - B.a₄ * β - B.a₆)
+    with hP
+  set Q : F[X] := C (2 * γ * δ + B.a₁ * γ * α - γ ^ 2 * A.a₁) * X +
+    C (2 * γ * ε + B.a₁ * γ * β + B.a₃ * γ - γ ^ 2 * A.a₃) with hQ
+  have key : algebraMap F[X] A.toAffine.FunctionField P +
+      algebraMap F[X] A.toAffine.FunctionField Q * genY A = 0 := by
+    simp only [hP, hQ, map_add (f := _), map_mul, map_pow, algebraMap_C_functionField, ← genX_eq, map_sub,
+      map_ofNat]
+    linear_combination eB - ι γ ^ 2 * eA
+  obtain ⟨hP0, hQ0⟩ := eq_zero_of_algebraMap_add_mul_genY A key
+  have c3 := congrArg (AddMonoidAlgebra.coeff · 3) hP0
+  have c2 := congrArg (AddMonoidAlgebra.coeff · 2) hP0
+  have c1 := congrArg (AddMonoidAlgebra.coeff · 1) hP0
+  have c0 := congrArg (AddMonoidAlgebra.coeff · 0) hP0
+  have d1 := congrArg (AddMonoidAlgebra.coeff · 1) hQ0
+  have d0 := congrArg (AddMonoidAlgebra.coeff · 0) hQ0
+  simp only [hP, hQ, coeff_add, coeff_C_mul, coeff_X_pow, coeff_X, coeff_C, coeff_zero] at c3 c2 c1 c0 d1 d0
+  norm_num at c3 c2 c1 c0 d1 d0
+  refine ⟨α, β, γ, δ, ε, hα, hγ, hx, hy, by linear_combination c3, by linear_combination c2,
+    by linear_combination c1, by linear_combination c0, by linear_combination d1,
+    by linear_combination d0⟩
 
-  have hc3 : γ ^ 2 = α ^ 3 := by
-    set P : F[X] := C (γ ^ 2 - α ^ 3) * X ^ 3 +
-      C (γ ^ 2 * A.a₂ + δ ^ 2 + B.a₁ * α * δ - 3 * α ^ 2 * β - B.a₂ * α ^ 2) * X ^ 2 +
-      C (γ ^ 2 * A.a₄ + 2 * δ * ε + B.a₁ * (α * ε + β * δ) + B.a₃ * δ - 3 * α * β ^ 2 -
-        2 * B.a₂ * α * β - B.a₄ * α) * X +
-      C (γ ^ 2 * A.a₆ + ε ^ 2 + B.a₁ * β * ε + B.a₃ * ε - β ^ 3 - B.a₂ * β ^ 2 - B.a₄ * β - B.a₆)
-      with hP
-    set Q : F[X] := C (2 * γ * δ + B.a₁ * γ * α - γ ^ 2 * A.a₁) * X +
-      C (2 * γ * ε + B.a₁ * γ * β + B.a₃ * γ - γ ^ 2 * A.a₃) with hQ
-    have key : algebraMap F[X] A.toAffine.FunctionField P +
-        algebraMap F[X] A.toAffine.FunctionField Q * genY A = 0 := by
-      simp only [hP, hQ, map_add (f := _), map_mul, map_pow, algebraMap_C_functionField, ← genX_eq, map_sub,
-        map_ofNat]
-      linear_combination eB - ι γ ^ 2 * eA
-    have c3 := congrArg (AddMonoidAlgebra.coeff · 3) (eq_zero_of_algebraMap_add_mul_genY A key).1
-    simp [hP, coeff_X_pow, -map_sub] at c3
-    linear_combination c3
+theorem exists_variableChange_of_degree_eq_one_of_isAlgClosed (ψ : Isogeny A B)
+    (h : ψ.degree = 1) : ∃ C : VariableChange F, C • B = A := by
+  obtain ⟨α, β, γ, δ, ε, hα, hγ, hx, hy, hc3, -, -, -, -, -⟩ :=
+    exists_coeffs_of_degree_eq_one_of_isAlgClosed ψ h
+  set ι := algebraMap F A.toAffine.FunctionField with hι
+  have hN := ψ.nonsingular
   have hu2 : (α / γ) ^ 2 * α = 1 := by
     field_simp
     linear_combination -hc3

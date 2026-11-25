@@ -3,45 +3,8 @@ module
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
 public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsRealThetaParameterPairThetaPartnerSignedParameStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -50,7 +13,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open MeasureTheory Matrix GlobalTheory.Chain GlobalTheory.ChainFr GlobalTheory.Grid
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.PairLift
 
 namespace GlobalTheory.RemoveBlock
@@ -307,18 +269,18 @@ theorem partner_true_eq (t : ℕ) (c c' : ℚ) (P : SPar) : partner t true c c' 
       have ha : a - (c' - c) = z := by linarith
       rw [ha]
       by_cases hzc : z < c
-      · rw [if_pos hzc] at h2; subst h2
+      · rw [ite_eq_left hzc] at h2; subst h2
         exact Or.inr (Or.inl ⟨hzc, by simpa using hz⟩)
-      · rw [if_neg hzc] at h2; subst h2
+      · rw [ite_eq_right hzc] at h2; subst h2
         exact Or.inl ⟨not_lt.1 hzc, hz⟩
     · refine Or.inr (Or.inr ⟨?_, rfl⟩)
       try simp only
       rw [sub_mem_block, show c + (c' - c) = c' by ring]; exact hy
   · rintro (⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩)
     · try simp only at h1 h2
-      exact Or.inl ⟨(a - (c' - c), s), h2, by (try simp only); ring, by (try simp only); rw [if_neg (not_lt.2 h1)]⟩
+      exact Or.inl ⟨(a - (c' - c), s), h2, by (try simp only); ring, by (try simp only); rw [ite_eq_right (not_lt.2 h1)]⟩
     · try simp only at h1 h2
-      exact Or.inl ⟨(a - (c' - c), !s), h2, by (try simp only); ring, by (try simp only); rw [if_pos h1, Bool.not_not]⟩
+      exact Or.inl ⟨(a - (c' - c), !s), h2, by (try simp only); ring, by (try simp only); rw [ite_eq_left h1, Bool.not_not]⟩
     · try simp only at h1 h2
       rw [sub_mem_block, show c + (c' - c) = c' by ring] at h1
       exact Or.inr ⟨a, h1, rfl, h2.symm⟩
@@ -461,18 +423,18 @@ theorem removeBlock_pairPar : ∀ D : D7, GlobalTheory.IndefiniteRowSideFullHeck
     simp only [att, he, hδ]
     by_cases h : Odd (i + j)
     · have h' : Odd (rkV D i (j + 1)) := by rw [odd_rkV, show i + (j + 1) = i + j + 1 by ring, Nat.odd_add_one]; tauto
-      simp only [h, h', if_true]; ring
+      simp only [h, h', ite_true]; ring
     · have h' : ¬ Odd (rkV D i (j + 1)) := by rw [odd_rkV, show i + (j + 1) = i + j + 1 by ring, Nat.odd_add_one]; tauto
-      simp only [h, h', if_false]; ring
+      simp only [h, h', ite_false]; ring
   have hS' : att (-(D.hc τ).e ⟨j, hj⟩) (rkV D i j) = -(G.e (j + 1) : ℚ) + δ' := by
     simp only [att, he, hδ']
     by_cases h : Odd (i + j)
     · have h' : Odd (rkV D i j) ↔ False := by rw [odd_rkV]; tauto
       have h'' : Odd (i + (j + 1)) ↔ False := by rw [show i + (j + 1) = i + j + 1 by ring, Nat.odd_add_one]; tauto
-      simp only [h', h'', if_false]; ring
+      simp only [h', h'', ite_false]; ring
     · have h' : Odd (rkV D i j) := by rw [odd_rkV]; tauto
       have h'' : Odd (i + (j + 1)) := by rw [show i + (j + 1) = i + j + 1 by ring, Nat.odd_add_one]; tauto
-      simp only [h', h'', if_true]; ring
+      simp only [h', h'', ite_true]; ring
   rw [hT, hS']
   set P := shift δ (G.parD i j) with hP
   have hpart := partner_parD D τ i j hi hj δ δ'
@@ -517,6 +479,6 @@ theorem removeBlock_pairPar : ∀ D : D7, GlobalTheory.IndefiniteRowSideFullHeck
     rw [htq]; push_cast; linarith
   refine ⟨D.R.t, P, partner D.R.t true (-(G.e (j + 1) : ℚ) + δ) (-(G.e (j + 1) : ℚ) + δ') P, rfl, ?_, Or.inl ⟨?_, hfar3⟩⟩
   · rw [parV, ← hpart]
-  · exact GlobalTheory.T.isRealThetaParameterPair_thetaPartnerSignedParameter D.R.t true _ _ P (bigN D) ht hne hreg hcos hfar1 hcard hN hgap hgap'
+  · exact GlobalTheory.PairLift.FromSigned.thetaPar_partner D.R.t true _ _ P (bigN D) ht hne hreg hcos hfar1 hcard hN hgap hgap'
 
 end GlobalTheory.RemoveBlock

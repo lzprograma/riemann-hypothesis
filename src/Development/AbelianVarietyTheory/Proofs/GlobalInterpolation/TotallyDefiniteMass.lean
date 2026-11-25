@@ -97,11 +97,6 @@ theorem isTotDef_gram (hc : CMData F E) (S : HSpace E) (h1 : S.SigOK) (h2 : S.Is
   rw [h2] at this
   simpa using this
 
-private theorem span_eq_top_of_unimodular (S : HSpace E) (N : Submodule (𝓞 E) S.V)
-    (hN : N.FG) (hU : Formalism.HermitianLatticesTheory.IsUnimodular S.hT N) :
-    Submodule.span E (N : Set S.V) = ⊤ := by
-  exact Formalism.HermitianLatticesTheory.IsUnimodular.span_eq_top hU S.herm hN
-
 theorem cosetSum (hc : CMData F E) (S : HSpace E) (h1 : S.SigOK) (h2 : S.IsPosDef)
     (N : Submodule (𝓞 E) S.V) (hN : Submodule.IsLattice E N)
     (hU : Formalism.HermitianLatticesTheory.IsUnimodular S.hT N) :
@@ -113,7 +108,8 @@ theorem cosetSum (hc : CMData F E) (S : HSpace E) (h1 : S.SigOK) (h2 : S.IsPosDe
   have hH : IsHerm (hc.sig : E →+* E) S.gram := Matrix.ext fun i j => (hJ S).1 i j
   have hL : Submodule.IsLattice E (crdLat S N) := Formalism.MainNotions.StandardLattice.tMap_lattice (crd S) N hN
   have hspan : Submodule.span E (crdLat S N : Set (Fin S.rank → E)) = ⊤ := by
-    rw [← LinearEquiv.range (crd S), ← Submodule.map_top, ← span_eq_top_of_unimodular S N hN.fg hU,
+    rw [← LinearEquiv.range (crd S), ← Submodule.map_top,
+      ← Formalism.HermitianLatticesTheory.IsUnimodular.span_eq_top hU S.herm hN.fg,
       Submodule.map_span]
     congr 1
   have hf : Module.Finite (𝓞 E) (crdLat S N) := Module.Finite.iff_fg.2 hL.fg

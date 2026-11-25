@@ -79,8 +79,4 @@ theorem aeval_mem_closure {σ L : Type} [Field L] (y : σ → L) (f : MvPolynomi
 end FibreDimB
 
 
-section Inhabitants
-
-end Inhabitants
-
 end GroundTheory.Heights₂.Heights.ForSecondHalf

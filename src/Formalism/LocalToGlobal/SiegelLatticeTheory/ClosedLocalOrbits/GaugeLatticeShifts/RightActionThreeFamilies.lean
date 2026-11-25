@@ -19,8 +19,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.SatGramActR
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section HSc
 
 variable {Wq Wp : Type} [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wq]

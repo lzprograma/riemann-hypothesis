@@ -22,19 +22,11 @@ variable {n : ℕ}
 
 section Wt
 
-theorem partialSum_finset_sum_eq {ι : Type*} (s : Finset ι) (f : ι → Fin n → ℝ) (k : ℕ) :
-    kirrPs k (∑ i ∈ s, f i) = ∑ i ∈ s, kirrPs k (f i) := by
-  simp only [kirrPs, Finset.sum_apply]
-  exact Finset.sum_comm
-
 theorem rootCone_entry_int (k : ℕ) (μ ν : Fin n → ℝ) : kirrPs k (μ + ν) = kirrPs k μ + kirrPs k ν := by
   simp only [kirrPs, Pi.add_apply, Finset.sum_add_distrib]
 
 theorem partialSum_sub (k : ℕ) (μ ν : Fin n → ℝ) : kirrPs k (μ - ν) = kirrPs k μ - kirrPs k ν := by
   simp only [kirrPs, Pi.sub_apply, Finset.sum_sub_distrib]
-
-theorem partialSum_smul (k : ℕ) (c : ℝ) (μ : Fin n → ℝ) : kirrPs k (c • μ) = c * kirrPs k μ := by
-  simp only [kirrPs, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
 
 theorem partialSum_single (k : ℕ) (a : Fin n) :
     kirrPs k (Pi.single a (1 : ℝ)) = if a.val < k then 1 else 0 := by
@@ -70,7 +62,7 @@ theorem unitWeightSum_finset_sum {a b : Fin n} (hab : a < b) :
     kUnitWtLin (root a b) = (((b : ℕ) - (a : ℕ) : ℕ) : ℝ) := by
   have hv : (a : ℕ) ≤ (b : ℕ) := le_of_lt (show (a : ℕ) < b from hab)
   rw [show root a b = Pi.single a (1 : ℝ) - Pi.single b 1 from rfl, unitWeightSum_sub, Nat.cast_sub hv]
-  simp only [kUnitWtLin, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [kUnitWtLin, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   ring
 
 theorem tensorAction_ofLp {β : Fin n → ℝ} (hβ : InRootCone β) : ∃ N : ℕ, kUnitWtLin β = N := by
@@ -91,9 +83,9 @@ theorem rootCone_unitWeightSum_nat {β : Fin n → ℝ} (hβ : InRootCone β) (c
   simp only [Finset.sum_apply, Int.cast_sum]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   by_cases h : a < b
-  · simp only [h, if_true, Pi.smul_apply, smul_eq_mul, Int.cast_mul, Int.cast_natCast, Int.cast_sub,
+  · simp only [h, ite_true, Pi.smul_apply, smul_eq_mul, Int.cast_mul, Int.cast_natCast, Int.cast_sub,
       apply_ite (Int.cast : ℤ → ℝ), Int.cast_one, Int.cast_zero, root, Pi.sub_apply, Pi.single_apply]
-  · simp only [h, if_false, Pi.zero_apply, Int.cast_zero]
+  · simp only [h, ite_false, Pi.zero_apply, Int.cast_zero]
 
 theorem unitWeightSum_root (μ : Fin n → ℝ) (a : Fin n) : kirrPs (a.val + 1) μ = μ a + kirrPs a.val μ := by
   unfold kirrPs
@@ -124,7 +116,7 @@ theorem highestWeight_dominant {N : Type*} [NormedAddCommGroup N] [InnerProductS
   have h0 : A a b y = 0 := hy.2 a b hab hε
   have hc : A a b (A b a y) = ((ν a - ν b : ℝ) : ℂ) • y := by
     have h := LinearMap.congr_fun (hA a b b a) y
-    simp only [LinearMap.sub_apply, Module.End.mul_apply, h0, map_zero, sub_zero, if_true, hy.1] at h
+    simp only [LinearMap.sub_apply, Module.End.mul_apply, h0, map_zero, sub_zero, ite_true, hy.1] at h
     rw [h, Complex.ofReal_sub, sub_smul]
   have key : inner ℂ (A a b (A b a y)) y = inner ℂ (A b a y) (A b a y) := hU a b hε _ _
   rw [hc, inner_smul_left, inner_self_eq_norm_sq_to_K, inner_self_eq_norm_sq_to_K, Complex.conj_ofReal] at key
@@ -133,8 +125,7 @@ theorem highestWeight_dominant {N : Type*} [NormedAddCommGroup N] [InnerProductS
     first
     | exact (Complex.ofReal_injective (by simpa using key))
   have hpos : 0 < ‖y‖ ^ 2 := pow_pos (norm_pos_iff.mpr hy0) 2
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have := mul_neg_of_neg_of_pos (sub_neg.mpr hlt) hpos
   nlinarith [sq_nonneg ‖A b a y‖]
 
@@ -217,8 +208,7 @@ theorem exists_minimal_kStable {X : Type*} [AddCommGroup X] [Module ℂ X] {ε :
     ⟨_, S, le_rfl, hne, hS, rfl⟩
   obtain ⟨W, hWS, hW0, hWst, hWd⟩ := Nat.find_spec hex
   refine ⟨W, hWS, hW0, hWst, fun W' hW'W hW'st => ?_⟩
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   obtain ⟨h1, h2⟩ := hcon
   have hlt : W' < W := lt_of_le_of_ne hW'W h2
   haveI : FiniteDimensional ℂ W := Submodule.finiteDimensional_of_le hWS
@@ -294,7 +284,7 @@ theorem exists_kIrreducible_highestWeight {N : Type*} [NormedAddCommGroup N] [In
 
     rw [← sub_eq_iff_eq_add', hH, hH, map_sum, ← Finset.sum_sub_distrib]
     simp only [map_smul, ← smul_sub, hcomm1]
-    simp only [smul_sub, smul_ite, smul_zero, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [smul_sub, smul_ite, smul_zero, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [← sub_smul]
     congr 1
     ring
@@ -393,7 +383,7 @@ def k3aT (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ D) (a b :
 
 theorem tensorAction_apply_eq {a b : Fin n} (hab : ε a = ε b) (x : PiLp 2 fun _ : Fin n => D) :
     WithLp.ofLp (k3aT ε E a b x) = tensV E a b (WithLp.ofLp x) := by
-  rw [k3aT, if_pos hab]
+  rw [k3aT, ite_eq_left hab]
   rfl
 
 theorem partialSum_nonneg_rootCone (hU : IsKUnitary ε E) : IsKUnitary ε (k3aT ε E) := by
@@ -416,7 +406,7 @@ theorem partialSum_nonneg_rootCone (hU : IsKUnitary ε E) : IsKUnitary ε (k3aT 
     · exact inner_zero_right _
   rw [PiLp.inner_apply, PiLp.inner_apply]
   simp only [e1, e2, inner_add_left, inner_add_right, Finset.sum_add_distrib, l, r, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
   rw [Finset.sum_congr rfl fun c _ => hU a b hab (WithLp.ofLp x c) (WithLp.ofLp y c)]
 
 end Lift

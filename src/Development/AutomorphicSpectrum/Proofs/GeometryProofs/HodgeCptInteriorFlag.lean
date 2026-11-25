@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.MetricProofs.RootOriginDegreeCount
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
 public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsPolAVGenericFibre
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordsAtSmul
@@ -14,54 +15,13 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeRegularAtLocalPoint
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptInteriorGeneric
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalAtLocalRing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.CubePullbacks.CubePull
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EtaleSpaceCohomologyEqZeroOfSimplicialRowExact
 
 @[expose] public section
 
@@ -142,7 +102,7 @@ theorem frame_change (A : Subring Ω) {b b' : Fin r → E} (hb : LinearIndepende
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun m _ => by rw [smul_comm]
   have e' := congrFun e k
-  simp only [if_true] at e'
+  simp only [ite_true] at e'
   rw [Finset.sum_eq_single k] at e'
   · have : P k k * Q k k = 1 := Subtype.ext e'
     exact IsUnit.of_mul_eq_one _ this
@@ -168,7 +128,7 @@ theorem leadMinor_conj (Γ C : Matrix (Fin r) (Fin r) ℂ) (hC : ∀ l k, k < l 
     leadMinor (Cᴴ * Γ * C) n =
       (∏ a : Fin n, Complex.normSq (C (Fin.castLE hn a) (Fin.castLE hn a))) * leadMinor Γ n := by
   unfold leadMinor
-  rw [dif_pos hn, dif_pos hn]
+  rw [dite_eq_left hn, dite_eq_left hn]
   set ic := Fin.castLE hn with hι2
   have hz : ∀ (a : Fin n) (l : Fin r), n ≤ l → C l (ic a) = 0 := fun a l hl =>
     hC l (ic a) (Fin.lt_def.2 (lt_of_lt_of_le (show ((ic a : Fin r) : ℕ) < n by simp [hι2]) hl))
@@ -382,17 +342,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {D : Da
 theorem not_inFibre {X : Scheme.{0}} {ξ : Spec (CommRingCat.of Ω) ⟶ X} (hξ : IsCptGen ξ)
     {z : Spec (CommRingCat.of ℂ) ⟶ X} (hz : genPt ξ ⤳ centre z) {p : ℕ} (hp : p.Prime) :
     ¬ InFibre ξ p ⟨centre z, hz⟩ := by
-  have hp0 : (p : ℂ) ≠ 0 := Nat.cast_ne_zero.2 hp.ne_zero
-  have h1 := RootHt.ArchB.val_nat (ξ := ξ) (z := z) hz p
-  have h2 := RootHt.ArchB.val_inv₀ hp0 h1
-  intro h
-  refine h ⟨fun e => hp0 ?_, ?_, ?_⟩
-  · rw [e] at h1
-    exact RootHt.ArchB.val_unique hξ h1 (RootHt.ArchB.val_zero hz)
-  · obtain ⟨s, e, -⟩ := h1.choose_spec
-    exact ⟨s, e⟩
-  · obtain ⟨s, e, -⟩ := h2.choose_spec
-    exact ⟨s, e⟩
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.Ar.Small.RepAt.not_inFibre <;> assumption
 
 theorem exists_dual (𝔐 : HodgeCpt Y S y) (hind : iSupIndep 𝔐.Vgen) (q : Cpt 𝔐.ξ)
     (hlat : 𝔐.M.lat q = ⨆ s, 𝔐.dR s q) (s : CMType H ⊕ CMType H) {r : ℕ} (b : Fin r → 𝔐.Li)
@@ -534,18 +485,7 @@ theorem tan_of_valAt {X : Scheme.{0}} {Ω' : Type} [Field Ω'] {ξ : Sp Ω' ⟶ 
 theorem exists_sub_mem_flagStep {Ω' : Type} [Field Ω'] {E' : Type} [AddCommGroup E'] [Module Ω' E'] {r : ℕ}
     {b : Fin r → E'} (i : Fin r) {x : E'} (hx : x ∈ flagStep Ω' b (i + 1)) :
     ∃ a : Ω', x - a • b i ∈ flagStep Ω' b i := by
-  classical
-  obtain ⟨d, hd, rfl⟩ := exists_coeff_of_mem_flagStep hx
-  refine ⟨d i, ?_⟩
-  have e : ∑ l, d l • b l - d i • b i = ∑ l ∈ Finset.univ.erase i, d l • b l := by
-    rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i)]
-    abel
-  rw [e]
-  refine Submodule.sum_mem _ fun l hl => ?_
-  rcases lt_or_gt_of_ne (Finset.ne_of_mem_erase hl) with hli | hli
-  · exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨l, hli, rfl⟩)
-  · rw [hd l hli]
-    simp
+  apply _root_.GlobalTheory.CompanionTheory.Ar.FlagGr.exists_diag <;> assumption
 
 end Concrete
 
@@ -573,7 +513,7 @@ theorem exists_norm : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H 
     simpa using this.map eA
 
   let val : 𝔐.Li → Vz := fun e => if he : e ∈ 𝔐.M.lat q then ev ⟨e, he⟩ else 0
-  have hval : ∀ e (he : e ∈ 𝔐.M.lat q), val e = ev ⟨e, he⟩ := fun e he => dif_pos he
+  have hval : ∀ e (he : e ∈ 𝔐.M.lat q), val e = ev ⟨e, he⟩ := fun e he => dite_eq_left he
   have h0 : val 0 = 0 := by
     rw [hval 0 (zero_mem _)]
     exact map_zero ev

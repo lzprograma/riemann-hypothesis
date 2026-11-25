@@ -261,7 +261,7 @@ theorem inter_inter (hH : IsHerm H) {A₁ A₂ : AddSubgroup V} [Finite (A₁ �
   rw [← Finset.mul_sum, Finset.sum_comm]
   simp only [← Finset.sum_mul,
     fun d : A₂ ⧸ A₁.addSubgroupOf A₂ => sum_chi hH hd₁ hd₂ (Quotient.out d : A₂).2, out_mem_iff]
-  rw [Finset.sum_eq_single_of_mem 0 (Finset.mem_univ _) fun b _ hb => by simp [hb], if_pos rfl,
+  rw [Finset.sum_eq_single_of_mem 0 (Finset.mem_univ _) fun b _ hb => by simp [hb], ite_eq_left rfl,
     hF _ ((out_mem_iff _).2 rfl), ← card_eq_card hH hd₁ hd₂]
   have hpos : (0 : ℝ) < Fintype.card (A₁ ⧸ A₂.addSubgroupOf A₁) := by exact_mod_cast Fintype.card_pos
   have h1 : ((Real.sqrt (Fintype.card (A₁ ⧸ A₂.addSubgroupOf A₁)) : ℝ) : ℂ) ≠ 0 := by

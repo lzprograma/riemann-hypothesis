@@ -85,8 +85,7 @@ private theorem fix_root {Ω : Type} [Field Ω] [Algebra ℚ Ω] (A : ValuationS
     rw [Valuation.map_mul]
     exact lt_of_le_of_lt (mul_le_of_le_one_right' hc1) hl
   have key : A.valuation u < 1 ∨ A.valuation (1 - u) < 1 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     have h1 : 1 ≤ A.valuation (u * (1 - u)) := by
       rw [Valuation.map_mul]
       exact one_le_mul hne.1 hne.2
@@ -133,7 +132,7 @@ private theorem fix_field {Ω K : Type} [Field K] [NumberField K] [Field Ω] [Al
     exact Submodule.mem_top
   obtain ⟨f, hf⟩ := (Submodule.mem_span_range_iff_exists_fun ℚ).mp hx
   rw [← hf]
-  simp [Fin.sum_univ_two, Algebra.smul_def, ← IsScalarTower.algebraMap_apply, hg]
+  simp [Fin.sum_univ_two, Algebra.smul_def, hg]
 
 private theorem fam_one (p : ℕ) (hp : p.Prime) (h4 : p % 4 = 3) :
     ∃ (K : Type) (_ : Field K) (_ : NumberField K) (_ : IsCMField K),
@@ -259,8 +258,7 @@ theorem thirdSplit (K K' Ω : Type) [Field K] [NumberField K] [IsCMField K] [Fie
       (tw (r.comp (resG ℚ K Ω)) ((δf i).comp (resG ℚ K Ω)))) ∪
       (Finset.univ.filter fun i => RepIso (r.comp (resG ℚ K' Ω))
       (tw (r.comp (resG ℚ K' Ω)) ((δf i).comp (resG ℚ K' Ω)))) := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     have h1 : (Finset.univ : Finset (Fin (4 * n ^ 2 + 1))) ⊆ _ := fun i _ => hall i
     have h2 := (Finset.card_le_card h1).trans ((Finset.card_union_le _ _).trans (add_le_add hbadK hbadK'))
     simp at h2

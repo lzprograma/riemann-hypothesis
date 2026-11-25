@@ -88,7 +88,7 @@ private lemma mul_prod_sublevel_add_le_of_fst_sublevel_le {A A' B : Type*} [Meas
             linarith [hn0' x]
           rw [e1, e2]
           simp
-        · push_neg at hy
+        · push Not at hy
           have e1 : {x | n x + g y < r} = {x | n x < r - g y} := by
             ext x
             simp only [Set.mem_setOf_eq]
@@ -133,7 +133,7 @@ private lemma mul_prod_sublevel_add_le_of_snd_sublevel_le {A B B' : Type*} [Meas
             linarith [hn0' y]
           rw [e1, e2]
           simp
-        · push_neg at hx
+        · push Not at hx
           have e1 : {y | g x + n y < r} = {y | n y < r - g x} := by
             ext y
             simp only [Set.mem_setOf_eq]

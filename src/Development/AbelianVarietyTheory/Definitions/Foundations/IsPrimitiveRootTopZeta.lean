@@ -3,52 +3,8 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
 public import Development.AbelianVarietyTheory.Definitions.Foundations.HahnPowOrderLeadingCoeff
 public import Development.AbelianVarietyTheory.Definitions.Foundations.SgC
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Roots
 
@@ -63,10 +19,6 @@ namespace GlobalTheory.K4
 open GlobalTheory.KZ GlobalTheory.NeedB GlobalTheory.KEdge
 
 variable {Ω : Type} [Field Ω] [Algebra ℚ Ω] {ε : Ω →+* ℂ}
-
-def sgK (X : Tower Ω ε) (c : ℕ) (x : Fin 2 → ℚ) : X.K :=
-  Classical.epsilon fun f : X.K =>
-    X.an f = (((fun z : ℂ => if h : 0 < z.im then GlobalTheory.Sieg.sg c x ⟨z, h⟩ else 0) : ℂ → ℂ) : Mero)
 
 def fixMu (Ω : Type) [Field Ω] [Algebra ℚ Ω] (M : ℕ) : Subgroup (Ω ≃ₐ[ℚ] Ω) :=
   (IntermediateField.adjoin ℚ {z : Ω | z ^ M = 1}).fixingSubgroup
@@ -87,31 +39,6 @@ def kumH {F Ω' : Type*} [Field F] [Field Ω'] [Algebra F Ω'] (N : ℕ) (ζ θ 
   if h : ∀ a b : Ω' ≃ₐ[F] Ω', kum (K := F) (N := N) ζ θ (a * b) = kum ζ θ a + kum ζ θ b then
     MonoidHom.mk' (fun g => Multiplicative.ofAdd (kum (K := F) (N := N) ζ θ g)) (fun a b => by rw [h]; rfl)
   else 1
-
-def wk4 (X : Tower Ω ε) (l n r N : ℕ) (x : ZMod N) (c d : ℕ) (σ : Ω ≃ₐ[ℚ] Ω) : X.K :=
-  let M : ℕ := l ^ (r + n) * N
-  let L : Subfield X.K := lev X (CongruenceSubgroup.Gamma M)
-  let F : Subfield X.K := mdl X (CongruenceSubgroup.Gamma M) (fixMu Ω M)
-  let hFL : F ≤ L := inf_le_left
-  letI : Algebra F L := (Subfield.inclusion hFL).toAlgebra
-  let Kb := AlgebraicClosure L
-  let t : ℚ := (((l : ZMod N) ^ (r + n))⁻¹.val : ℚ)
-  let u : X.K := sgK X c ![1 / (l : ℚ) ^ (r + n), (x.val : ℚ) * t / N]
-  let v : X.K := sgK X d ![0, 1 / (l : ℚ) ^ (r + n) + t / N]
-  let Nn : ℕ := l ^ n
-  let ζ : Kb := Classical.epsilon fun z : Kb => IsPrimitiveRoot z Nn
-  let α : Kb := Classical.epsilon fun a : Kb => ∃ f : L, (f : X.K) = u ∧ a ^ Nn = algebraMap L Kb f
-  let β : Kb := Classical.epsilon fun a : Kb => ∃ f : L, (f : X.K) = v ∧ a ^ Nn = algebraMap L Kb f
-  let xh := kumH (F := F) Nn ζ α
-  let yh := kumH (F := F) Nn ζ β
-  let η : (Kb ≃ₐ[F] Kb) → ZMod Nn := Classical.epsilon fun η : (Kb ≃ₐ[F] Kb) → ZMod Nn =>
-    CobOn (geo F L Kb) xh yh η ∧ IsLocallyConstant (fun g : geo F L Kb => η g) ∧
-      ∀ (B : ValuationSubring Kb) (g : Kb ≃ₐ[F] Kb),
-        (∀ f : L, ((f : X.K) = X.jK ∨ (f : X.K) ∈ Set.range (algebraMap Ω X.K)) → algebraMap L Kb f ∈ B) →
-        (∀ z, B.valuation z ≤ 1 → B.valuation (g z - z) < 1) → g ∈ geo F L Kb → η g = 0
-  let lift : Kb ≃ₐ[F] Kb := Classical.epsilon fun φ : Kb ≃ₐ[F] Kb =>
-    ∀ f : L, ∃ f' : L, (f' : X.K) = X.gal σ f ∧ φ (algebraMap L Kb f) = algebraMap L Kb f'
-  ((topW (K := L) ζ xh yh η lift⁻¹ : L) : X.K)
 
 theorem kumH_apply {F Ω' : Type*} [Field F] [Field Ω'] [Algebra F Ω'] {N : ℕ} [NeZero N] {ζ θ : Ω'}
     (hζ : IsPrimitiveRoot ζ N) (hfix : ∀ g : Ω' ≃ₐ[F] Ω', g ζ = ζ) {w : F} (hw0 : w ≠ 0) (hw : θ ^ N = algebraMap F Ω' w)
@@ -284,19 +211,5 @@ theorem IsTopLift.inv_mul_mem_geo {X : Tower Ω ε} {M : ℕ} {σ : Ω ≃ₐ[�
   rw [AlgEquiv.mul_apply, h2, ← this, ← h1, ← AlgEquiv.mul_apply, inv_mul_cancel, AlgEquiv.one_apply]
 
 def topT (l s N : ℕ) : ℕ := (((l : ZMod N) ^ s)⁻¹).val
-
-def topU (X : Tower Ω ε) (l s N : ℕ) (x : ZMod N) (c : ℕ) : X.K :=
-  siegel X c ![1 / (l : ℚ) ^ s, (x.val : ℚ) * (topT l s N : ℚ) / N]
-
-def topV (X : Tower Ω ε) (l s N : ℕ) (d : ℕ) : X.K :=
-  siegel X d ![0, 1 / (l : ℚ) ^ s + (topT l s N : ℚ) / N]
-
-def wkTop (X : Tower Ω ε) (l n r N : ℕ) (x : ZMod N) (c d : ℕ) (σ : Ω ≃ₐ[ℚ] Ω) : X.K :=
-  ((topW (K := topL X (l ^ (r + n) * N)) (topZeta X (l ^ (r + n) * N) l n)
-    (topChar X (l ^ (r + n) * N) l n (topU X l (r + n) N x c))
-    (topChar X (l ^ (r + n) * N) l n (topV X l (r + n) N d))
-    (topEta X (l ^ (r + n) * N) (topChar X (l ^ (r + n) * N) l n (topU X l (r + n) N x c))
-      (topChar X (l ^ (r + n) * N) l n (topV X l (r + n) N d)))
-    (topLift X (l ^ (r + n) * N) σ)⁻¹ : topL X (l ^ (r + n) * N)) : X.K)
 
 end GlobalTheory.K4

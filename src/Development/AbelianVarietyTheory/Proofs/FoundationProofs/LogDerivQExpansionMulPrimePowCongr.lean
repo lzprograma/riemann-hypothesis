@@ -123,13 +123,6 @@ private lemma theta_one_coeff_mem_of_integral_den_one {Ω : Type} [Field Ω] [Al
     exact intCast_mem A _
 
 open scoped MatrixGroups in
-private lemma hahnSeries_coeff_mul_mem_valuationSubring {Ω : Type} [Field Ω] (A : ValuationSubring Ω)
-    {x y : HahnSeries ℚ Ω} (hx : ∀ r, x.coeff r ∈ A) (hy : ∀ r, y.coeff r ∈ A) (r : ℚ) :
-    (x * y).coeff r ∈ A := by
-  rw [HahnSeries.coeff_mul]
-  exact sum_mem fun ij _ => mul_mem (hx _) (hy _)
-
-open scoped MatrixGroups in
 private lemma hahnSeries_coeff_pow_mem_valuationSubring {Ω : Type} [Field Ω] (A : ValuationSubring Ω)
     {x : HahnSeries ℚ Ω} (hx : ∀ r, x.coeff r ∈ A) (k : ℕ) (r : ℚ) : (x ^ k).coeff r ∈ A := by
   induction k generalizing r with
@@ -140,7 +133,7 @@ private lemma hahnSeries_coeff_pow_mem_valuationSubring {Ω : Type} [Field Ω] (
     · exact zero_mem A
   | succ k ih =>
     rw [pow_succ]
-    exact hahnSeries_coeff_mul_mem_valuationSubring A ih hx r
+    exact coeffA_mul A _ _ ih hx r
 
 
 open scoped MatrixGroups in
@@ -193,12 +186,12 @@ theorem _root_.GlobalTheory.Glue.DlPow.isDl_mul_lpow_cong : ∀ {Ω : Type} [Fie
       have hW : W.coeff s ∈ A := by
         have hθP := theta_one_coeff_mem_of_integral_den_one A hPaA (hden a haT)
         have hθQ := theta_one_coeff_mem_of_integral_den_one A hPbA (hden b hbT)
-        refine hahnSeries_coeff_mul_mem_valuationSubring A
-          (hahnSeries_coeff_mul_mem_valuationSubring A (hahnSeries_coeff_pow_mem_valuationSubring A hPaA k)
+        refine coeffA_mul A _ _
+          (coeffA_mul A _ _ (hahnSeries_coeff_pow_mem_valuationSubring A hPaA k)
             (hahnSeries_coeff_pow_mem_valuationSubring A hPbA k)) (fun t => ?_) s
         rw [HahnSeries.coeff_sub]
-        exact sub_mem (hahnSeries_coeff_mul_mem_valuationSubring A hθP hPbA t)
-          (hahnSeries_coeff_mul_mem_valuationSubring A hPaA hθQ t)
+        exact sub_mem (coeffA_mul A _ _ hθP hPbA t)
+          (coeffA_mul A _ _ hPaA hθQ t)
       have hexp : HahnSeries.C ((k + 1 : ℕ) : Ω) * P ^ k * _root_.GlobalTheory.Glue.theta 1 P *
           Q ^ (k + 1) -
           P ^ (k + 1) * (HahnSeries.C ((k + 1 : ℕ) : Ω) * Q ^ k * _root_.GlobalTheory.Glue.theta 1 Q) =

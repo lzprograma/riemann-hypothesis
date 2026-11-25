@@ -49,8 +49,6 @@ open scoped ComplexOrder
 
 namespace GlobalTheory.DefLift
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Poly
 
 variable {ι : Type} {m n : ℕ}

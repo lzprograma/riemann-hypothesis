@@ -1,51 +1,7 @@
 module
 
 public import Formalism.ThetaLogCoordinates.JacobiPathWeights.StatementP
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.LeIffLtColHeight
 
@@ -82,8 +38,8 @@ theorem nthElt_lt_iff {n : ℕ} (A : Finset (Fin n)) (a x : ℕ) (hx : x ≤ n) 
       unfold cnt
       rw [Finset.filter_insert]
       by_cases h : m.val < x
-      · rw [if_pos h, if_pos h, Finset.card_insert_of_notMem (fun h' => hms (Finset.mem_filter.1 h').1)]
-      · rw [if_neg h, if_neg h, Nat.add_zero]
+      · rw [ite_eq_left h, ite_eq_left h, Finset.card_insert_of_notMem (fun h' => hms (Finset.mem_filter.1 h').1)]
+      · rw [ite_eq_right h, ite_eq_right h, Nat.add_zero]
     have hzero : ¬ m.val < x → cnt s x = 0 := by
       intro h
       unfold cnt
@@ -98,15 +54,15 @@ theorem nthElt_lt_iff {n : ℕ} (A : Finset (Fin n)) (a x : ℕ) (hx : x ≤ n) 
     rcases a with _ | k
     · rw [List.map_cons, List.getD_cons_zero]
       by_cases h : m.val < x
-      · rw [if_pos h]
+      · rw [ite_eq_left h]
         constructor <;> intro <;> omega
-      · rw [if_neg h, hzero h]
+      · rw [ite_eq_right h, hzero h]
         constructor <;> intro <;> omega
     · rw [List.map_cons, List.getD_cons_succ, ih k]
       by_cases h : m.val < x
-      · rw [if_pos h]
+      · rw [ite_eq_left h]
         constructor <;> intro <;> omega
-      · rw [if_neg h, hzero h]
+      · rw [ite_eq_right h, hzero h]
         constructor <;> intro <;> omega
 
 def Dom {n : ℕ} (A B : Finset (Fin n)) : Prop := ∀ x, cnt B x ≤ cnt A x
@@ -117,8 +73,7 @@ theorem dom_iff {n : ℕ} (A B : Finset (Fin n)) :
   · intro h
     have key : ∀ y ≤ n, cnt B y ≤ cnt A y := by
       intro y hy
-      by_contra hlt
-      push_neg at hlt
+      by_contra! hlt
       have h1 : nthElt B (cnt A y) < y := (nthElt_lt_iff B (cnt A y) y hy).2 hlt
       have h2 : cnt A y < B.card := lt_of_lt_of_le hlt (cnt_le_card B y)
       have h4 : nthElt A (cnt A y) < y := lt_of_le_of_lt (h _ h2) h1
@@ -329,7 +284,7 @@ theorem exists_shape {n : ℕ} {μ : Fin (n + 1) → ℤ} (hμ : Antitone μ) (h
     · intro hic
       by_cases hc : μ i.succ ≤ c
       · exact Finset.le_max' _ c (Finset.mem_filter.2 ⟨Finset.mem_Icc.2 ⟨hc, hhi i c hic⟩, hic⟩)
-      · push_neg at hc
+      · push Not at hc
         exact le_trans hc.le (Finset.mem_Icc.1 (Finset.mem_filter.1 (hκmem i)).1).1
   refine ⟨κ, ?_, ?_⟩
   · rw [mem_gtBox]

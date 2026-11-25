@@ -68,17 +68,14 @@ theorem fock_letters_ccr (p q r s : ℕ) (l m : Ln p q r s) :
   have hX : ∀ (i j : Ln p q r s), pderiv i (X j : Pol p q r s) = if j = i then 1 else 0 := by
     intro i j
     rw [pderiv_X, Pi.single_apply]
-  have hne : ∀ l m : Ln p q r s, linePos l ≠ linePos m → l ≠ m := by
-    rintro l m h rfl
-    exact h rfl
   refine ⟨?_, ?_, ?_⟩
   · by_cases hlm : l = m
     · subst hlm
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       cases hl : linePos l <;> simp only [lowB, raiB, hl, Bool.false_eq_true, ↓reduceIte] <;>
         refine LinearMap.ext fun f => ?_ <;>
         simp [hX]
-    · rw [if_neg hlm]
+    · rw [ite_eq_right hlm]
       cases hl : linePos l <;> cases hm : linePos m <;>
         simp only [lowB, raiB, hl, hm, Bool.false_eq_true, ↓reduceIte] <;>
         refine LinearMap.ext fun f => ?_ <;>
@@ -154,8 +151,8 @@ theorem omAct_single_mul {p q r s : ℕ} (i j k l : Ln p q r s) (x y : ℂ) :
       (x * y) • (if j = k then omE i l else 0) := by
   by_cases h : j = k
   · subst h
-    rw [Matrix.single_mul_single_same, omAct_single, if_pos rfl]
-  · rw [Matrix.single_mul_single_of_ne _ _ _ _ h, if_neg h, map_zero, smul_zero]
+    rw [Matrix.single_mul_single_same, omAct_single, ite_eq_left rfl]
+  · rw [Matrix.single_mul_single_of_ne _ _ _ _ h, ite_eq_right h, map_zero, smul_zero]
 
 theorem omAct_lie (p q r s : ℕ) (Y Z : Matrix (Ln p q r s) (Ln p q r s) ℂ) :
     omAct p q r s (Y * Z - Z * Y) =

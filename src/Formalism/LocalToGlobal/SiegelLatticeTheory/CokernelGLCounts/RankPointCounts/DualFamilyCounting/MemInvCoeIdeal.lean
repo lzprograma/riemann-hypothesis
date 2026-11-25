@@ -14,8 +14,6 @@ open Classical
 
 namespace Formalism.L2.SG.Pf.Cnt.R3
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Frac
 
 variable {K : Type} [Field K] [NumberField K]

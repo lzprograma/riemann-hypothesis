@@ -45,7 +45,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.DualCon GlobalTheory.PicGlue Opposite
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 namespace GlobalTheory.PicGlue
@@ -57,7 +56,7 @@ theorem stalkMap_gm {X Y Z : Scheme.{0}} (f : Z ⟶ Y) (g : Y ⟶ X) (z : Z) (U 
     rw [Units.coe_map, gm_val g (f z) U h, gm_val (f ≫ g) z U h]
     exact (Scheme.Hom.germ_stalkMap_apply f _ z h _).trans rfl
   · have h' : (f ≫ g) z ∉ U := h
-    simp only [gm, dif_neg h, dif_neg h', MonoidHom.one_apply, map_one]
+    simp only [gm, dite_eq_right h, dite_eq_right h', MonoidHom.one_apply, map_one]
 
 theorem rigOn_of_triv_open : ∀ (X Y : Scheme.{0}) (e : Y ⟶ X) (V : Y.Opens) (L : LB X),
     (∀ (a : L.ι) (y : Y), e y ∈ L.U a → y ∈ V) → Triv (L.pull (V.ι ≫ e)) → ∃ r : RigD e L, RigOn e L r := by

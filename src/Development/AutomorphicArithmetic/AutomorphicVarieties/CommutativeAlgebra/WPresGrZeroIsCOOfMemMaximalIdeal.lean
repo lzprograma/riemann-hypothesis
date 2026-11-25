@@ -62,7 +62,7 @@ private theorem weight_zero_power_series_surjective (O : Type) [CommRing O] {σ 
   let a : τ → MvPowerSeries σ O := fun s => monomial (g s) 1
   have ha : HasSubst a := hasSubst_of_constantCoeff_zero fun s => by
     show constantCoeff (monomial (g s) (1 : O)) = 0
-    rw [← coeff_zero_eq_constantCoeff_apply, coeff_monomial, if_neg (hg0 s).symm]
+    rw [← coeff_zero_eq_constantCoeff_apply, coeff_monomial, ite_eq_right (hg0 s).symm]
   have hprod : ∀ d : τ →₀ ℕ, (d.prod fun s e => a s ^ e) = monomial (Finsupp.linearCombination ℕ g d) (1 : O) := by
     intro d
     induction d using Finsupp.induction_linear with
@@ -91,7 +91,7 @@ private theorem weight_zero_power_series_surjective (O : Type) [CommRing O] {σ 
   refine ⟨substAlgHom ha, fun F n hn => ?_, fun f hf => ?_⟩
   · rw [hco]
     refine finsum_eq_zero_of_forall_eq_zero fun d => ?_
-    rw [if_neg, mul_zero]
+    rw [ite_eq_right, mul_zero]
     rintro rfl
     exact hn (hw d)
   · choose! e he using hgen
@@ -105,14 +105,14 @@ private theorem weight_zero_power_series_surjective (O : Type) [CommRing O] {σ 
     rw [hco]
     by_cases hn : Finsupp.weight wt n = 0
     · rw [finsum_eq_single _ (e n)]
-      · rw [hF, he n hn, if_pos rfl, if_pos rfl, mul_one]
+      · rw [hF, he n hn, ite_eq_left rfl, ite_eq_left rfl, mul_one]
       · intro d hd
         by_cases h : n = Finsupp.linearCombination ℕ g d
-        · rw [hF, ← h, if_neg hd, zero_mul]
-        · rw [if_neg h, mul_zero]
+        · rw [hF, ← h, ite_eq_right hd, zero_mul]
+        · rw [ite_eq_right h, mul_zero]
     · rw [hf n hn]
       refine finsum_eq_zero_of_forall_eq_zero fun d => ?_
-      rw [if_neg, mul_zero]
+      rw [ite_eq_right, mul_zero]
       rintro rfl
       exact hn (hw d)
 

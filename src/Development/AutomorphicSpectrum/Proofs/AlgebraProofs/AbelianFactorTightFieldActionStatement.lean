@@ -27,64 +27,14 @@ public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsT
 public import Development.WeilBound.CoreStatements.HodgeTatePoints.EqOfPowMul
 public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.OrdinaryCurveStatement
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HopfOrderRetractRestriction
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TeichmullerCharacterOrderGenerates
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 import Development.WeilBound.CoreStatements.HodgeTatePoints.RbFund
-import Mathlib.Tactic.ENatToNat
 import Development.WeilBound.CoreStatements.HodgeTatePoints.ProdIccFin
 import Development.WeilBound.CoreStatements.HodgeTatePoints.Invres
 import Development.WeilBound.CoreStatements.HodgeTatePoints.RangeSubtypeEq
-import Mathlib.NumberTheory.MulChar.Basic
-import Mathlib.RingTheory.Valuation.Integers
 import ReciprocityTheory.DualLattices.PowMemCarrier
 import ReciprocityTheory.DualLattices.ProdDvdOfIso
 
@@ -250,7 +200,6 @@ lemma digits_zero {p f : ℕ} (hp : 0 < p) {d : Fin f → Fin p} (hd : num d = 0
   exact (num_ne_zero_iff hp d).2 ⟨n, h⟩ hd
 
 end GlobalTheory.CompanionTheory.Ar.GR.RankOneColen
-
 
 open GlobalTheory.CompanionTheory.Ar.GR.RankOneColen in
 theorem _root_.GlobalTheory.CompanionTheory.Relay.fundamental_ideal_frobenius_valuation : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → ∀ (F : Type) [Field F] [Fintype F] [DecidableEq F] [CharP F p] (f : ℕ), Fintype.card F = p ^ f → ∀ (AA : HopfOrder (C := C) R F), FStable F AA.carrier → ∀ σ : MulChar F R, IsFund p σ → ∀ c : ℕ → R, (∀ n, xIdeal AA.carrier (σ ^ p ^ n) = Ideal.span {c n}) → AA.carrier = Submodule.span R (Set.range fun (d : Fin f → Fin p) (a : F) => ∏ n : Fin f, algebraMap R C (c n * (σ ^ p ^ (n : ℕ)) a) ^ (d n : ℕ)) ∧ ∀ cN, HasColen R v AA.carrier cN → cN ^ 2 = (∏ n : Fin f, v (algebraMap R C (c n))) ^ (p ^ f * (p - 1)) := by
@@ -471,12 +420,6 @@ section -- clump:auto
 open scoped Matrix TensorProduct
 open Matrix
 
-namespace GlobalTheory.CompanionTheory.Ar.GR
-
-theorem grcount : ∀ (T S : Type) [Fintype T] [Fintype S] (a b : ℕ), 0 < a → 0 < b → ∀ (x D d : T → S → NNReal) (r : S → NNReal) (cA cN cO : NNReal), cN ≠ 0 → (∀ t s, x t s ≤ D t s) → ∏ t, ∏ s, D t s = cA → (∏ t, ∏ s, x t s) ^ (a * b) = cN ^ 2 → cA ^ (a * b) = cN ^ 2 → (∀ s, ∏ t, d t s ≤ r s) → ∏ s, r s = cO → ∏ t, ∏ s, d t s = (∏ t, ∏ s, x t s) ^ b → cO ^ a = cN ^ 2 → (∀ t s, D t s = x t s) ∧ ∀ s, ∏ t, d t s = r s :=
-  PositivityTheory.HtPt.Rh.grcount
-
-end GlobalTheory.CompanionTheory.Ar.GR
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ProductInequalitiesForceEquality =====
@@ -638,7 +581,6 @@ section general
 variable {C : Type} [Field C] {R : Type} [CommRing R] [Algebra R C]
   {F : Type} [Field F] {N : Type} [AddCommGroup N] [Module F N]
 
-
 variable (C) in
 noncomputable def Phi (p f : ℕ) {n : ℕ} (b : Module.Basis (Fin n) F N) (σ : MulChar F R) :
     (Fin n × Fin f → R) →ₗ[R] (N → C) :=
@@ -739,7 +681,7 @@ theorem sum_cut (l : Fin n × Fin f → R) : ∑ s, cut s l = l := by
   simp [cut, Finset.sum_apply]
 
 theorem cut_supp (s : Fin f) (l : Fin n × Fin f → R) : ∀ j, j.2 ≠ s → cut s l j = 0 :=
-  fun _ h => if_neg h
+  fun _ h => ite_eq_right h
 
 theorem proj_Phi [Fintype F] [DecidableEq F] [IsDomain R] (h0 : (Fintype.card Fˣ : C) ≠ 0)
     (hinj : ∀ s t : Fin f, σ ^ p ^ (s : ℕ) = σ ^ p ^ (t : ℕ) → s = t)
@@ -876,7 +818,7 @@ theorem aflatT : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed 
       simpa [cut] using this
     let l2 : Fin n × Fin f → R := fun j =>
       if j.2 = s then (if j.1 < i then 0 else if j.1 = i then c else l j) else 0
-    refine ⟨l2, ?_, fun j hj => if_neg hj, fun j hj => by simp [l2, hj], by simp [l2]⟩
+    refine ⟨l2, ?_, fun j hj => ite_eq_right hj, fun j hj => by simp [l2, hj], by simp [l2]⟩
     have e4 : cut s l - l2 ∈ afLatT p f b σ AA.carrier := by
       refine mem_afLatT_of_p hinj _ _ ?_
       rintro ⟨j, t⟩
@@ -929,8 +871,8 @@ theorem flag_D : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed 
     · rintro ⟨l, hl, -, h2, h3⟩
       exact ⟨ρ s l, Submodule.mem_map_of_mem hl, h2, h3⟩
     · rintro ⟨_, ⟨l, hl, rfl⟩, h2, h3⟩
-      exact ⟨_, hgr l hl s, fun j hj => if_neg hj, fun j hj => (if_pos rfl).trans (h2 j hj),
-        (if_pos rfl).trans h3⟩
+      exact ⟨_, hgr l hl s, fun j hj => ite_eq_right hj, fun j hj => (ite_eq_left rfl).trans (h2 j hj),
+        (ite_eq_left rfl).trans h3⟩
   · let θ : (Fin n × Fin f → R) →ₗ[R] ((s : Fin f) → (Fin n → R) ⧸ L.map (ρ s)) :=
       LinearMap.pi fun s => Submodule.mkQ _ ∘ₗ ρ s
     have hsurj : Function.Surjective θ := by
@@ -1104,7 +1046,6 @@ end GlobalTheory.CompanionTheory.Ar.GR.FlagClose
 
 namespace GlobalTheory.CompanionTheory.Ar.GR
 
-
 open FlagClose in
 theorem flagStatement_holds : FlagStatement := by
   intro p _ C _ _ _ v R _ _ hv hp F _ _ _ _ N _ _ _ _ AA hFS hT n b hG σ hσ
@@ -1235,7 +1176,7 @@ theorem flagStatement_holds : FlagStatement := by
     have h2 := prod_chars hpp hf0 σ hord (fun m hm => hfund _ hm) L hnf
     have h3 := hasLen_unique hv (hLprod (fun m => L (σ ^ m)) (fun m _ => hL _)) hcO
     exact h1.trans (h2.symm.trans h3)
-  obtain ⟨hDx, hlen⟩ := _root_.GlobalTheory.CompanionTheory.Ar.GR.grcount (Fin n) (Fin f) (Fintype.card N) (p - 1) Fintype.card_pos
+  obtain ⟨hDx, hlen⟩ := _root_.PositivityTheory.HtPt.Rh.grcount (Fin n) (Fin f) (Fintype.card N) (p - 1) Fintype.card_pos
     (Nat.sub_pos_of_lt hpp.one_lt)
     (fun t s => v (algebraMap R C (c t s))) (fun t s => v (algebraMap R C (d t s)))
     (fun t s => v (algebraMap R C (δ t s))) (fun s => L (σ ^ p ^ ((s : ℕ) + 1))) cA cN cO hcN0
@@ -1309,7 +1250,6 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi
 open ReciprocityTheory.ChartRestriction.G.Chart (sp spMap)
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.CompanionTheory.Ar.GR
 
@@ -1317,7 +1257,7 @@ theorem flagConcl_directFactor_of_subquotient :
     SubquotientStatement → ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → IsAdicComplete (Ideal.span {(p : R)}) R → ∀ (N : Type) [AddCommGroup N] [Fintype N] [DecidableEq N], ∀ AA : HopfOrder (C := C) R N, (∀ x : N, p • x = 0) → IsAbFactor p AA.carrier → IsTight v p AA.carrier → ∀ (F : Type) [Field F] [Fintype F] [DecidableEq F] [CharP F p] (Nw : Type) [AddCommGroup Nw] [Module F Nw] [Fintype Nw] [DecidableEq Nw] (i : Nw →+ N) (π : N →+ Nw), (∀ y, π (i y) = y) → (∀ h ∈ AA.carrier, (fun x => h (i (π x))) ∈ AA.carrier) → FStable F (AA.carrier.map (LinearMap.funLeft R C (i : Nw → N))) → ∀ (n : ℕ) (b : Module.Basis (Fin n) F Nw) (σ : MulChar F R), IsFund p σ → FlagConcl v p (AA.carrier.map (LinearMap.funLeft R C (i : Nw → N))) b σ := by
   intro hS p _ C _ _ _ v R _ _ hInt hp hcomp N _ _ _ AA hpN hab htight F _ _ _ _ Nw _ _ _ _ i π hπi
     hstab hFS n b σ hσ
-  obtain ⟨⟨A', hA'⟩, -, hgen⟩ := _root_.GlobalTheory.CompanionTheory.Ar.GR.ret_hopf_factor p C v R hInt hp N AA Nw i π hπi hstab
+  obtain ⟨⟨A', hA'⟩, -, hgen⟩ := _root_.PositivityTheory.HtPt.Re.ret_hopf p C v R hInt hp N AA Nw i π hπi hstab
   have ht' := _root_.GlobalTheory.CompanionTheory.Relay.hopf_order_retract_elementary p C v R hInt hp N hpN AA Nw i π hπi hstab htight
   rw [← hA'] at hFS ht' ⊢
   refine _root_.GlobalTheory.CompanionTheory.Ar.GR.flagStatement_holds p C v R hInt hp F Nw A' hFS ht' n b ?_ σ hσ
@@ -1340,7 +1280,6 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi
 open ReciprocityTheory.ChartRestriction.G.Chart (sp spMap)
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 end -- clump:auto
 end -- clump:auto

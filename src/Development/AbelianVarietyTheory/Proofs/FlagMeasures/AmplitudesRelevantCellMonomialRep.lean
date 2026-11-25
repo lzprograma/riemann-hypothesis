@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsRootHaar
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrbitalSquareEqHilbertSchmidtNormalisedVector
 public import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
@@ -153,8 +154,8 @@ theorem monomial_of_pt {z z' : Fin (2 * r + k + 1) → ℂ} {g : MatKR k r} (hg 
   ext a b
   simp only [C2.monoP, conjTranspose_apply, Matrix.of_apply]
   by_cases e : a = permOf p b
-  · rw [if_pos e, if_pos (by rw [e, permOf_invol]), e]
-  · rw [if_neg e, if_neg (fun e' => e (by rw [e', permOf_invol])), star_zero]
+  · rw [ite_eq_left e, ite_eq_left (by rw [e, permOf_invol]), e]
+  · rw [ite_eq_right e, ite_eq_right (fun e' => e (by rw [e', permOf_invol])), star_zero]
 
 
 open GlobalTheory.ThA.OrbSq P.Dx1.Rel in
@@ -238,17 +239,7 @@ theorem relevant {z z' : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hz' : i
 
 theorem exists_setting (hk : 1 ≤ k) {z z' : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hz' : inWb k r z')
     (hT : 0 < Tz k r z) (hT' : 0 < Tz k r z') : ∃ Bs : B.RealPlaceData k r ℂ ℂ, Bs.z = z ∧ Bs.z' = z' := by
-  obtain ⟨μG, hμG⟩ := P.unitary_group_haar_exists k r
-  obtain ⟨χ, hχ1, hχ2, hχ3⟩ := P.character_exists_alt
-  obtain ⟨μW, hW⟩ := P.weyl_haar_exists k r z hz hT
-  obtain ⟨μW', hW'⟩ := P.weyl_haar_exists k r z' hz' hT'
-  obtain ⟨μs, hs⟩ := P.SettingConstruction.sectionExists k r z z' hk hz hz' hT hT'
-  exact ⟨{ z := z, z' := z', π := fun _ => 1, π' := fun _ => 1, μG := μG, μW := μW, μN := D.muN k r, μW' := μW',
-           μsec := μs, χ := χ, k_pos := hk, z_mem := hz, z'_mem := hz', T_pos := hT,
-           T'_pos := hT', π_rep := ⟨rfl, fun _ _ _ _ => rfl⟩, π'_rep := ⟨rfl, fun _ _ _ _ => rfl⟩,
-           π_unitary := fun _ _ _ => rfl, π'_unitary := fun _ _ _ => rfl, π_cont := continuousOn_const,
-           π'_cont := continuousOn_const, haarG := hμG, haarW := hW, haarN := P.nilpotent_measure_is_haar k r, haarW' := hW',
-           sec := hs, χ_smooth := hχ1, χ_supp := hχ2, χ_int := hχ3 }, rfl, rfl⟩
+  first | exact _root_.GlobalTheory.Amp.RootQuot.exists_setting | exact @_root_.GlobalTheory.Amp.RootQuot.exists_setting | apply _root_.GlobalTheory.Amp.RootQuot.exists_setting <;> assumption
 
 theorem continuous_lmul (a : MatKR k r) : Continuous (lmulM a : Mt k r → Mt k r) :=
   continuous_const.matrix_mul (continuous_id (X := MatKR k r))

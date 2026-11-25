@@ -6,8 +6,6 @@ public import Mathlib.Analysis.Normed.Module.FiniteDimension
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights
 
 namespace RestTerms

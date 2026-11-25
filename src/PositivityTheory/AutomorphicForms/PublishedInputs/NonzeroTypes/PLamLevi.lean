@@ -26,9 +26,9 @@ theorem tele {H : Type} [CommGroup H] (ν : ℕ → H) (b : ℕ) :
   | base =>
     rw [div_self', Finset.prod_eq_one]
     intro i hi
-    rw [if_neg (by simpa using hi)]
+    rw [ite_eq_right (by simpa using hi)]
   | succ s hbs ih =>
-    rw [Finset.prod_range_succ, ih, if_pos hbs, div_mul_div_cancel]
+    rw [Finset.prod_range_succ, ih, ite_eq_left hbs, div_mul_div_cancel]
 
 variable {n : ℕ} (G : Grp k n)
 

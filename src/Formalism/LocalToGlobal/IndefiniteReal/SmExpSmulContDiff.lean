@@ -19,7 +19,7 @@ namespace Formalism.IndefR.PeterssonHilbertSpace
 
 section Gen
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ}
 
@@ -96,17 +96,6 @@ lemma sm_isURepOn_bridge (ε : Fin n → Bool) {H : Type} [NormedAddCommGroup H]
   ⟨⟨h.1.1, fun a ha b hb => h.1.2 a ha b hb⟩, fun g hg v => h.2.1 g hg v, fun v => h.2.2 v⟩
 
 end Gen
-
-section MultSec
-
-open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S
-open Formalism.L2.Theta Formalism.IndefR.Mult
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-variable {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar}
-
-end MultSec
 
 end Formalism.IndefR.PeterssonHilbertSpace
 

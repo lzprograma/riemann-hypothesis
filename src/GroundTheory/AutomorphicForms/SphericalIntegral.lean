@@ -61,13 +61,8 @@ def indicatorHecke (U : Set (GL (Fin n) F)) (hc : IsCompact U) (ho : IsOpen U)
   HeckeAlgebraLevel.mk _ _ (HeckeAlgebra.mk μ (U.indicator fun _ => (1 : ℂ))
     (indicator_mem_locallyConstantCompactSupport hc ho 1)) fun k hk x => by
       simp only [HeckeAlgebra.coe_mk]
-      constructor
-      · by_cases h : x ∈ U
-        · rw [Set.indicator_of_mem h, Set.indicator_of_mem ((hU k hk x).1.2 h)]
-        · rw [Set.indicator_of_notMem h, Set.indicator_of_notMem (fun h' => h ((hU k hk x).1.1 h'))]
-      · by_cases h : x ∈ U
-        · rw [Set.indicator_of_mem h, Set.indicator_of_mem ((hU k hk x).2.2 h)]
-        · rw [Set.indicator_of_notMem h, Set.indicator_of_notMem (fun h' => h ((hU k hk x).2.1 h'))]
+      exact ⟨Set.indicator_const_eq_indicator_const (hU k hk x).1,
+        Set.indicator_const_eq_indicator_const (hU k hk x).2⟩
 
 
 variable (μ) in
@@ -143,7 +138,7 @@ theorem sum_card_filter_lt (S : Finset (Fin n)) :
     have h2 : ∀ b ∈ T, ((insert a T).filter fun x => b < x) =
         insert a (T.filter fun x => b < x) := by
       intro b hb
-      rw [Finset.filter_insert, if_pos (haT b hb)]
+      rw [Finset.filter_insert, ite_eq_left (haT b hb)]
     rw [h1, Finset.card_empty, zero_add, Finset.sum_congr rfl fun b hb => by
       rw [h2 b hb, Finset.card_insert_of_notMem (fun h => ha (Finset.mem_filter.1 h).1)],
       Finset.sum_add_distrib, ih, Finset.sum_const, smul_eq_mul, mul_one]
@@ -159,14 +154,14 @@ theorem card_pairs (S : Finset (Fin n)) :
   have h0 : ∑ b ∈ Finset.univ.filter (fun b => b ∉ S),
       ∑ a, (if b ∈ S ∧ a ∉ S ∧ b < a then 1 else 0) = 0 :=
     Finset.sum_eq_zero fun b hb => Finset.sum_eq_zero fun a _ => by
-      rw [if_neg fun h => (Finset.mem_filter.1 hb).2 h.1]
+      rw [ite_eq_right fun h => (Finset.mem_filter.1 hb).2 h.1]
   rw [h0, add_zero, Finset.filter_mem_eq_inter, Finset.univ_inter]
   refine Finset.sum_congr rfl fun b hb => ?_
   rw [Finset.card_filter]
   rw [← Finset.sum_filter_add_sum_filter_not Finset.univ (fun a => b < a)]
   have h1 : ∑ a ∈ Finset.univ.filter (fun a => ¬ b < a),
       (if b ∈ S ∧ a ∉ S ∧ b < a then 1 else 0) = 0 :=
-    Finset.sum_eq_zero fun a ha => by rw [if_neg fun h => (Finset.mem_filter.1 ha).2 h.2.2]
+    Finset.sum_eq_zero fun a ha => by rw [ite_eq_right fun h => (Finset.mem_filter.1 ha).2 h.2.2]
   rw [h1, add_zero]
   have : Finset.univ.filter (fun a => b < a) = Finset.Ioi b := by
     ext a
@@ -175,8 +170,8 @@ theorem card_pairs (S : Finset (Fin n)) :
   refine Finset.sum_congr rfl fun a ha => ?_
   have hba : b < a := Finset.mem_Ioi.1 ha
   by_cases haS : a ∈ S
-  · rw [if_neg fun h => h.2.1 haS, if_neg fun h => h haS]
-  · rw [if_pos ⟨hb, haS, hba⟩, if_pos haS]
+  · rw [ite_eq_right fun h => h.2.1 haS, ite_eq_right fun h => h haS]
+  · rw [ite_eq_left ⟨hb, haS, hba⟩, ite_eq_left haS]
 
 theorem card_pairs_add_choose (S : Finset (Fin n)) :
     Fintype.card (Pairs S) + S.card.choose 2 = ∑ i ∈ S, (n - 1 - i.val) := by

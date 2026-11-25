@@ -47,16 +47,6 @@ def ChartPointSeparable.Statement : Prop :=
       Algebra.trdeg F (Algebra.adjoin F (Set.range fun m => η m * (η j₀)⁻¹)) ≤ (e : Cardinal)) →
       Algebra.IsSeparable K L
 
-section Inhabitants
-
-namespace ChartPointLine
-
-end ChartPointLine
-
-open ChartPointLine
-
-end Inhabitants
-
 end
 
 end GroundTheory.Heights₂.Heights

@@ -29,14 +29,8 @@ variable {R : Type*} [CommRing R]
 
 theorem map_mk_lt {p a b : Ideal R} (ha : p ≤ a) (hab : a < b) :
     a.map (Ideal.Quotient.mk p) < b.map (Ideal.Quotient.mk p) := by
-  have key : ∀ c : Ideal R, p ≤ c →
-      (c.map (Ideal.Quotient.mk p)).comap (Ideal.Quotient.mk p) = c := by
-    intro c hc
-    rw [Ideal.comap_map_of_surjective _ Ideal.Quotient.mk_surjective,
-      ← RingHom.ker_eq_comap_bot, Ideal.mk_ker]
-    exact sup_eq_left.mpr hc
   refine lt_of_le_of_ne (Ideal.map_mono hab.le) fun h => hab.ne ?_
-  rw [← key a ha, ← key b (ha.trans hab.le), h]
+  rw [← Ideal.comap_map_mk ha, ← Ideal.comap_map_mk (ha.trans hab.le), h]
 
 theorem one_lt_height_map {p a b : Ideal R} [p.IsPrime] [a.IsPrime] [b.IsPrime] (hpa : p < a)
     (hab : a < b) : 1 < (b.map (Ideal.Quotient.mk p)).height := by

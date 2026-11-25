@@ -310,11 +310,11 @@ theorem _root_.GlobalTheory.ParabVirt.parab_virt : ∀ (F : Type) [Field F] [Fin
           Matrix.toLin' (x : Matrix (Fin n) (Fin n) F) v ∈
             W₀.map (_root_.GlobalTheory.ParabVirt.lin t).toLinearMap :=
         (_root_.GlobalTheory.ParabVirt.conj_mem_stab_iff W₀ x t).1 h
-      rw [dif_pos h]
+      rw [dite_eq_left h]
       show χ (ρ ⟨_, h⟩) = _
       rw [hval]
       simp only [f, π]
-      rw [dif_pos h']
+      rw [dite_eq_left h']
       symm
       refine (congrArg (Φ ↥(W₀.map (_root_.GlobalTheory.ParabVirt.lin t).toLinearMap)) ?_).trans
         (hΦ _ _ ((_root_.GlobalTheory.ParabVirt.lin t).submoduleMap W₀) _)
@@ -332,17 +332,17 @@ theorem _root_.GlobalTheory.ParabVirt.parab_virt : ∀ (F : Type) [Field F] [Fin
           Matrix.toLin' (x : Matrix (Fin n) (Fin n) F) v ∈
             W₀.map (_root_.GlobalTheory.ParabVirt.lin t).toLinearMap :=
         fun h' => h ((_root_.GlobalTheory.ParabVirt.conj_mem_stab_iff W₀ x t).2 h')
-      rw [dif_neg h]
+      rw [dite_eq_right h]
       simp only [f, π]
-      rw [dif_neg h']
+      rw [dite_eq_right h']
   unfold _root_.GlobalTheory.BI.ind
   rw [finsum_congr hpt, finsum_eq_sum_of_fintype (fun t => f (π t)), _root_.GlobalTheory.ParabVirt.sum_fibres P π hs hπ f,
     ← mul_assoc, inv_mul_cancel₀ (Nat.cast_ne_zero.2 Nat.card_pos.ne'), one_mul,
     finsum_eq_sum_of_fintype,
     ← Fintype.sum_subtype_add_sum_subtype p f]
-  have hzero : ∑ W : {W // ¬ p W}, f W = 0 := Finset.sum_eq_zero (fun W _ => dif_neg W.2)
+  have hzero : ∑ W : {W // ¬ p W}, f W = 0 := Finset.sum_eq_zero (fun W _ => dite_eq_right W.2)
   rw [hzero, add_zero]
   exact (Fintype.sum_equiv (Equiv.subtypeSubtypeEquivSubtypeInter _ _) _ _
-    (fun W => dif_pos W.2)).symm
+    (fun W => dite_eq_left W.2)).symm
 
 end GlobalTheory.ParabVirt

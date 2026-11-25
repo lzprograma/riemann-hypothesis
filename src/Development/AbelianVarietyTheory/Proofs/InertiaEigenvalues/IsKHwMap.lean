@@ -46,8 +46,6 @@ open Formalism.BasicNotions Formalism.IndefR.Links
 
 namespace GlobalTheory.LowestKType
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {n m : ℕ}
 
 def kop (w : GlobalTheory.ExportSeries.Weight D n) (τ : D.what₂.Tau) (a b : Fin m) : Module.End ℂ (PolF D m n) :=

@@ -7,52 +7,7 @@ public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.LowUniMulVecELa
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CharacterOrthogonalityDual
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ColumnOperationTripleForm
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelQuotientFinite
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.MulInvBlockDiagApplySameBlock
 
@@ -343,8 +298,8 @@ theorem Lam_apply (Z : Matrix (Fin n) (Fin n) K) (x : Fin n → R) :
   ext j
   simp only [abelian₂, LinearMap.pi_apply, msk]
   by_cases h : k < j.val
-  · rw [if_pos h, if_pos h, A5x2.lamTil_fin]
-  · rw [if_neg h, if_neg h]; rfl
+  · rw [ite_eq_left h, ite_eq_left h, A5x2.lamTil_fin]
+  · rw [ite_eq_right h, ite_eq_right h]; rfl
 
 theorem mem_colSpan (Z : Matrix (Fin n) (Fin n) K) (x : Fin n → R) :
     x ∈ colSpan R k Z ↔ ∃ t : Fin n → R, (∀ j : Fin n, k < j.val → t j = 0) ∧
@@ -421,18 +376,18 @@ theorem isD_mulVec_msk {D : Matrix (Fin n) (Fin n) K} (hD : IsD R k D) (y : Fin 
   ext j
   simp only [Matrix.mulVec, dotProduct, msk]
   by_cases h : k < j.val
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     refine Finset.sum_congr rfl fun l _ => ?_
     by_cases hl : k < l.val
-    · rw [if_pos hl]
+    · rw [ite_eq_left hl]
     · have : l < j := by rw [Fin.lt_def]; omega
       rw [up_zero hD.1 this, zero_mul, zero_mul]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     refine Finset.sum_eq_zero fun l _ => ?_
     by_cases hl : k < l.val
     · have : j ≠ l := fun e => h (e ▸ hl)
       rw [hD.2.2 j l (by omega), Matrix.one_apply_ne this, zero_mul]
-    · rw [if_neg hl, mul_zero]
+    · rw [ite_eq_right hl, mul_zero]
 
 theorem lower_right_block_is_diagonal {p : Matrix (Fin n) (Fin n) K} (hp : IsP R k p) : IsD R k (b22 k p) := by
   refine ⟨⟨?_, ?_⟩, ?_, ?_⟩
@@ -457,26 +412,26 @@ theorem lower_right_block_is_diagonal {p : Matrix (Fin n) (Fin n) K} (hp : IsP R
       · exact R.zero_mem
   · intro a b ha
     simp only [b22]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
 
 theorem msk_mulVec {p : Matrix (Fin n) (Fin n) K} (hp : IsUpUni p) (y : Fin n → K) :
     msk k (p *ᵥ y) = b22 k p *ᵥ msk k y := by
   ext j
   simp only [Matrix.mulVec, dotProduct, msk, b22]
   by_cases h : k < j.val
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     refine Finset.sum_congr rfl fun l _ => ?_
     by_cases hl : k < l.val
-    · rw [if_pos hl]
+    · rw [ite_eq_left hl]
     · have : l < j := by rw [Fin.lt_def]; omega
       rw [up_zero hp this, zero_mul, zero_mul]
-  · simp only [if_neg h]
+  · simp only [ite_eq_right h]
     symm
     refine Finset.sum_eq_zero fun l _ => ?_
     by_cases hl : k < l.val
     · have : j ≠ l := fun e => h (e ▸ hl)
       rw [Matrix.one_apply_ne this, zero_mul]
-    · rw [if_neg hl, mul_zero]
+    · rw [ite_eq_right hl, mul_zero]
 
 theorem msk_msk (y : Fin n → K) : msk k (msk k y) = msk k y := by
   ext j
@@ -580,7 +535,7 @@ theorem mem_colSpan_of (Z₀ p : Matrix (Fin n) (Fin n) K) (hd : IsUnit Z₀.det
   rw [← colSpan_mul R k Z₀ p hp, mem_colSpan]
   refine ⟨t, fun j hj => ?_, e⟩
   have h2 := congrFun h1 j
-  simp only [msk, if_pos hj, Pi.zero_apply, coeLin_apply] at h2
+  simp only [msk, ite_eq_left hj, Pi.zero_apply, coeLin_apply] at h2
   exact Subtype.ext h2
 
 theorem Lam_latZ_int (Z₀ p : Matrix (Fin n) (Fin n) K) (hd : IsUnit Z₀.det) (hp : IsPP R k p)
@@ -625,7 +580,7 @@ theorem lamTil_k_mul (Z₀ p : Matrix (Fin n) (Fin n) K) (hp : IsPP R k p) (x : 
       · rw [up_zero hp.2.1 h, zero_mul]
       · have h2 := congrFun h0 b
         have hkb : k < b.val := Fin.lt_def.1 h
-        simp only [msk, if_pos hkb, Pi.zero_apply] at h2
+        simp only [msk, ite_eq_left hkb, Pi.zero_apply] at h2
         rw [h2, mul_zero]
     · simp
   · rw [A5x2.lamTil_big R _ k (by omega), A5x2.lamTil_big R _ k (by omega)]
@@ -727,13 +682,13 @@ theorem cnta_row {D : Matrix (Fin n) (Fin n) K} (hD : IsD R k D) (Z : Matrix (Fi
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [Submodule.mkQ_apply, cnta_coef_fin, cnta_Lam_coord]
     by_cases hb : k < b.val
-    · rw [if_pos hb]
+    · rw [ite_eq_left hb]
       show _ = _ • (Submodule.Quotient.mk (lamTil R Z b.val v) : KR R)
       rw [A5x3.smul_mk]
     · have hbj : b < j := by rw [Fin.lt_def]; omega
       have h0 : D j b = 0 := Formalism.DoubleCosetMeasures.P.Phase.up_zero hD.1 hbj
       have h0' : (⟨D j b, hD.2.1 _ _⟩ : R) = 0 := Subtype.ext h0
-      rw [if_neg hb, h0', mul_zero, zero_smul]
+      rw [ite_eq_right hb, h0', mul_zero, zero_smul]
       rfl
   rw [h1, Fin.sum_univ_eq_sum_range (fun l => cntaCoef R k hD j l • lamN R Z l v) n]
   have h2 : ∑ l ∈ Finset.range n, cntaCoef R k hD j l • lamN R Z l v =
@@ -784,13 +739,13 @@ theorem inTT_iff (Z Z' : Matrix (Fin n) (Fin n) K) (φ : coker R Z ≃ₗ[R] cok
         have hji' : j < i := hji
         simp only [D]
         by_cases hi : k < i.val
-        · rw [if_pos hi, if_neg hji'.ne', if_neg (not_lt.2 hji'.le)]
-        · rw [if_neg hi, Matrix.one_apply_ne hji'.ne']
+        · rw [ite_eq_left hi, ite_eq_right hji'.ne', ite_eq_right (not_lt.2 hji'.le)]
+        · rw [ite_eq_right hi, Matrix.one_apply_ne hji'.ne']
       · intro a
         simp only [D]
         by_cases ha : k < a.val
-        · rw [if_pos ha, if_pos trivial]
-        · rw [if_neg ha, Matrix.one_apply_eq]
+        · rw [ite_eq_left ha, ite_eq_left trivial]
+        · rw [ite_eq_right ha, Matrix.one_apply_eq]
       · intro a b
         simp only [D]
         split_ifs with h1 h2 h3
@@ -803,10 +758,10 @@ theorem inTT_iff (Z Z' : Matrix (Fin n) (Fin n) K) (φ : coker R Z ≃ₗ[R] cok
           · exact R.zero_mem
       · intro a b ha
         simp only [D]
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
     refine ⟨D, hD, fun v v' hv j => ?_⟩
     by_cases hj : k < j.val
-    · rw [Pi.sub_apply, ← A5x3.mk_eq_mk, cnta_row R k hD Z j hj v, cnta_Lam_coord, if_pos hj]
+    · rw [Pi.sub_apply, ← A5x3.mk_eq_mk, cnta_row R k hD Z j hj v, cnta_Lam_coord, ite_eq_left hj]
       show lamN R Z' j.val v' = _
       rw [hα j hj v v' hv]
       congr 1
@@ -819,7 +774,7 @@ theorem inTT_iff (Z Z' : Matrix (Fin n) (Fin n) K) (φ : coker R Z ≃ₗ[R] cok
       apply Subtype.ext
       have hjl : j < (⟨l, hl.2⟩ : Fin n) := by rw [Fin.lt_def]; exact hl.1
       simp only [D]
-      rw [if_pos hj, if_neg hjl.ne, if_pos hjl]
+      rw [ite_eq_left hj, ite_eq_right hjl.ne, ite_eq_left hjl]
     · rw [Lam_apply, Lam_apply, isD_mulVec_msk R k hD]
       simp [msk, hj, R.zero_mem]
   · rintro ⟨D, hD, h⟩ j hkj hjn
@@ -827,7 +782,7 @@ theorem inTT_iff (Z Z' : Matrix (Fin n) (Fin n) K) (φ : coker R Z ≃ₗ[R] cok
     have hj : k < (⟨j, hjn⟩ : Fin n).val := hkj
     have h1 := h v v' hv ⟨j, hjn⟩
     rw [Pi.sub_apply, ← A5x3.mk_eq_mk, cnta_row R k hD Z ⟨j, hjn⟩ hj v, cnta_Lam_coord,
-      if_pos hj] at h1
+      ite_eq_left hj] at h1
     exact h1
 
 theorem inTT_iff_base (Z₀ Z₀' p p' : Matrix (Fin n) (Fin n) K) (hp : IsPP R k p)
@@ -968,7 +923,7 @@ theorem cnt_bad_iff (ψ : AddChar K ℂ) (hsd : ∀ a : K, (∀ r ∈ R, ψ (a *
       · have h1 : abelian₂ R k (Z₀ * p) x = 0 := by
           rw [Lam_mul R k Z₀ p hp, hx0, Matrix.mulVec_zero]
         have h2 := congrFun h1 ⟨j, hjn⟩
-        rw [_root_.Formalism.FourierDecayAlt.P.A5x9.cnta_Lam_coord, if_pos hj] at h2
+        rw [_root_.Formalism.FourierDecayAlt.P.A5x9.cnta_Lam_coord, ite_eq_left hj] at h2
         show (Submodule.Quotient.mk (lamTil R (Z₀ * p) j x) : KR R) = 0
         rw [(A5x3.mk_eq_zero R _)]
         simp only at h2
@@ -1371,7 +1326,7 @@ theorem shiftData (ψ : AddChar K ℂ) (hsd : ∀ a : K, (∀ r ∈ R, ψ (a * r
       rw [Lam_apply, Lam_apply, isD_mulVec_msk R k hDi] at h2
       have h3 := congrFun h2 c
       have hkc : k < c.val := by simp [c]
-      simp only [msk, hkc, if_true] at h3
+      simp only [msk, hkc, ite_true] at h3
       have h4 : β ⬝ᵥ (Z₀⁻¹ *ᵥ coeLin R x) = (Z₀⁻¹ *ᵥ coeLin R x) c := by
         simp [β]
       rw [h4, ← h3]
@@ -1811,14 +1766,14 @@ theorem top_intTT_eq (ψ : AddChar K ℂ) (k₁ : ℕ) (w w' : Point K)
   unfold intTT
   rw [finsum_eq_sum_of_support_subset (s := Q)]
   · refine Finset.sum_congr rfl fun q hq => ?_
-    rw [if_pos ((hQ q).1 hq), mul_assoc]
+    rw [ite_eq_left ((hQ q).1 hq), mul_assoc]
   · intro q hq
     by_contra hn
     apply hq
     have hn' : ¬ (IsInt R (orbZ w (rep R q.1)) ∧ IsInt R (orbZ w' (rep R q.2))) :=
       fun hh => hn (Finset.mem_coe.2 ((hQ q).2 hh))
     simp only
-    rw [if_neg hn', zero_mul, zero_mul]
+    rw [ite_eq_right hn', zero_mul, zero_mul]
 
 theorem card_and_eq_add_card {α : Type} [Finite α] (A B C : α → Prop) (hBC : ∀ x, C x → B x) :
     Nat.card {x // A x ∧ B x} =

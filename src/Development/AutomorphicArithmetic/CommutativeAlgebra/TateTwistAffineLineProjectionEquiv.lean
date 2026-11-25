@@ -9,47 +9,7 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchClsCocycl
 public import Development.AutomorphicArithmetic.CommutativeAlgebra.InjectiveComplexProductSectionMapQuasiIso
 public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomotopyInvarianceEtaleStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 
 @[expose] public section
 
@@ -131,57 +91,12 @@ private theorem loc_affine (T : Scheme.{0}) (P : ∀ V : Scheme.{0}, (V ⟶ T) �
     haveI : IsAffine W := hW
     exact hres h f (haff W h)
 
-private theorem pull_fn {E E' E'' : Spc} (f : E ⟶ E') (g : E' ⟶ E'') (F : Shv R) (n : ℤ) :
-    (⇑(pull R (f ≫ g) F n)) = (pull R f F n) ∘ (pull R g F n) :=
-  funext fun x => pull_comp R f g F n x
-
-private theorem eqv_comp {E E' E'' : Spc} {f : E ⟶ E'} {g : E' ⟶ E''} {F : Shv R} (hf : Eqv R f F) (hg : Eqv R g F) :
-    Eqv R (f ≫ g) F := fun n => by
-  rw [pull_fn]
-  exact (hf n).comp (hg n)
-
-private theorem eqv_left {E E' E'' : Spc} {f : E ⟶ E'} {g : E' ⟶ E''} {F : Shv R} (hf : Eqv R f F) (h : Eqv R (f ≫ g) F) :
-    Eqv R g F := fun n => by
-  have := h n
-  rw [pull_fn] at this
-  exact (Function.Bijective.of_comp_iff' (hf n) _).1 this
-
-private theorem eqv_right {E E' E'' : Spc} {f : E ⟶ E'} {g : E' ⟶ E''} {F : Shv R} (hg : Eqv R g F) (h : Eqv R (f ≫ g) F) :
-    Eqv R f F := fun n => by
-  have := h n
-  rw [pull_fn] at this
-  exact (Function.Bijective.of_comp_iff _ (hg n)).1 this
-
-open Polynomial in
-private theorem po (A : Type) [CommRing A] :
-    IsPushout (CommRingCat.ofHom (C : ℤ →+* ℤ[X])) (CommRingCat.ofHom (Int.castRingHom A))
-      (CommRingCat.ofHom (mapRingHom (Int.castRingHom A))) (CommRingCat.ofHom (C : A →+* A[X])) := by
-  have w : CommRingCat.ofHom (C : ℤ →+* ℤ[X]) ≫ CommRingCat.ofHom (mapRingHom (Int.castRingHom A)) =
-      CommRingCat.ofHom (Int.castRingHom A) ≫ CommRingCat.ofHom (C : A →+* A[X]) := by
-    apply CommRingCat.hom_ext
-    exact RingHom.ext_int _ _
-  refine ⟨⟨w⟩, ⟨PushoutCocone.IsColimit.mk _
-    (fun s => CommRingCat.ofHom (eval₂RingHom s.inr.hom (s.inl.hom X))) ?_ ?_ ?_⟩⟩
-  · intro s
-    apply CommRingCat.hom_ext
-    exact Polynomial.ringHom_ext' (RingHom.ext_int _ _) (by simp)
-  · intro s
-    ext a
-    simp
-  · intro s m h1 h2
-    apply CommRingCat.hom_ext
-    refine Polynomial.ringHom_ext' ?_ ?_
-    · ext a
-      have := congr($(h2).hom a)
-      simpa using this
-    · have := congr($(h1).hom X)
-      simpa using this
-
 open Polynomial in
 private theorem line_iso (A : Type) [CommRing A] :
     ∃ u : Spec (CommRingCat.of A[X]) ⟶ Pbf.A1 ⨯ Spec (CommRingCat.of A), IsIso u ∧
       u ≫ prod.snd = Spec.map (CommRingCat.ofHom (C : A →+* A[X])) := by
-  have sq := isPullback_SpecMap_of_isPushout _ _ _ _ (po A)
+  have sq := isPullback_SpecMap_of_isPushout _ _ _ _
+    (_root_.GlobalTheory.PolynomialPushoutEquivalence.isPushout_poly (Int.castRingHom A))
   refine ⟨prod.lift (Spec.map (CommRingCat.ofHom (mapRingHom (Int.castRingHom A))))
     (Spec.map (CommRingCat.ofHom (C : A →+* A[X]))), ⟨sq.lift prod.fst prod.snd (specZIsTerminal.hom_ext _ _), ?_, ?_⟩, prod.lift_snd _ _⟩
   · apply sq.hom_ext
@@ -199,7 +114,8 @@ private theorem eqv_spec (q : ℕ) [NeZero q] (A : Type) [CommRing A] (hq : IsUn
   have h' : Eqv _ (sch.map u ≫ sch.map (prod.snd : Pbf.A1 ⨯ Spec (CommRingCat.of A) ⟶ Spec (CommRingCat.of A))) (tw q i) := by
     rw [← Functor.map_comp, hc]
     exact h
-  exact eqv_left (_root_.GlobalTheory.EtC.eqv_of_isIso _ _) h'
+  exact ((_root_.GlobalTheory.EtC.eqv_basic _ _).2.1 _ _ _ _ _).2.1
+    (_root_.GlobalTheory.EtC.eqv_of_isIso _ _) h'
 
 private theorem eqv_aff (q : ℕ) [NeZero q] (W : Scheme.{0}) [IsAffine W] (hq : IsUnit (q : Γ(W, ⊤))) (i : ℤ) :
     Eqv _ (sch.map (prod.snd : Pbf.A1 ⨯ W ⟶ W)) (tw q i) := by
@@ -207,9 +123,11 @@ private theorem eqv_aff (q : ℕ) [NeZero q] (W : Scheme.{0}) [IsAffine W] (hq :
   have h' : sch.map (prod.snd : Pbf.A1 ⨯ W ⟶ W) ≫ sch.map W.isoSpec.hom =
       sch.map (prod.map (𝟙 Pbf.A1) W.isoSpec.hom) ≫ sch.map (prod.snd : Pbf.A1 ⨯ Spec Γ(W, ⊤) ⟶ Spec Γ(W, ⊤)) := by
     rw [← Functor.map_comp, ← Functor.map_comp, prod.map_snd]
-  refine eqv_right (g := sch.map W.isoSpec.hom) (_root_.GlobalTheory.EtC.eqv_of_isIso _ _) ?_
+  refine ((_root_.GlobalTheory.EtC.eqv_basic _ _).2.1 _ _ _ _ (sch.map W.isoSpec.hom)).2.2
+    (_root_.GlobalTheory.EtC.eqv_of_isIso _ _) ?_
   rw [h']
-  exact eqv_comp (_root_.GlobalTheory.EtC.eqv_of_isIso _ _) h
+  exact ((_root_.GlobalTheory.EtC.eqv_basic _ _).2.1 _ _ _ _ _).1
+    (_root_.GlobalTheory.EtC.eqv_of_isIso _ _) h
 
 private noncomputable def psi {R : Type} [CommRing R] (F : Shv R) (T : Scheme.{0}) : Sec F T →+ Sec F (Pbf.A1 ⨯ T) :=
   ((F.obj.map (prod.snd : Pbf.A1 ⨯ T ⟶ T).op).hom).toAddMonoidHom

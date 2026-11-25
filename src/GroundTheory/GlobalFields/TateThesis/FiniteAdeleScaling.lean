@@ -6,52 +6,6 @@ public import Mathlib.MeasureTheory.Measure.Haar.DistribChar
 public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
 import GroundTheory.GlobalFields.LocalAtPlace
 public import GroundTheory.GlobalFields.LocalFieldAtPlace
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -396,11 +350,11 @@ theorem distribHaarChar_finiteAdeleRing (u : (𝔸ᶠ[K])ˣ) :
     rw [IsIntegralUnitAt, hwx', hwx, hPinv, coe_prod_finiteSingleUnits_apply, hP,
       coe_prod_finiteSingleUnits_apply]
     by_cases hx : x ∈ S
-    · rw [if_pos hx, if_pos hx, Units.val_inv_eq_inv_val, he,
+    · rw [ite_eq_left hx, ite_eq_left hx, Units.val_inv_eq_inv_val, he,
         mul_inv_cancel₀ (fun h ↦ by simpa [h] using units_mul_inv_apply u x),
         units_mul_inv_apply]
       exact ⟨one_mem _, one_mem _⟩
-    · rw [if_neg hx, if_neg hx, mul_one, one_mul]
+    · rw [ite_eq_right hx, ite_eq_right hx, mul_one, one_mul]
       exact not_not.1 ((hmemS x).not.1 hx)
   have hu : u = w * P := by rw [hw, inv_mul_cancel_right]
   have hχ : distribHaarChar 𝔸ᶠ[K] u = ∏ v ∈ S, ‖(u : 𝔸ᶠ[K]) v‖₊ := by

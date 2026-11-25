@@ -2,57 +2,12 @@ module
 
 public import Formalism.HarderNarasimhan.StatementPl
 public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
 public import Mathlib.NumberTheory.NumberField.CanonicalEmbedding.Basic
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -79,7 +34,7 @@ theorem realize_apply1 (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι 
 
 theorem realize_injective (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
     (hX : ∀ v, IsUnit (X v).det) : Function.Injective (Formalism.HermitianLatticesTheory.realize b X) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   have hf : ∀ v i, Formalism.HermitianLatticesTheory.fcoord b X v x i = 0 := by
     intro v i
@@ -305,10 +260,6 @@ end Formalism.HN
 
 namespace Formalism.HN
 
-private theorem place_lattice_structure_lemma {E : Type*} [NormedAddCommGroup E] {A B : Submodule ℤ E}
-    (h : A ≤ B) [Module.Finite ℤ B] : Module.finrank ℤ A ≤ Module.finrank ℤ B :=
-  LinearMap.finrank_le_finrank_of_injective (f := Submodule.inclusion h) (Submodule.inclusion_injective h)
-
 private theorem place_lattice_structure_lemma_2 {R : Type*} [Ring R] {V : Type*} [AddCommGroup V] [Module R V]
     {E : Type*} [NormedAddCommGroup E] (ρ : V →+ E) {N₁ N₂ : Submodule R V} (h : N₁ ≤ N₂) :
     zl ρ N₁ ≤ zl ρ N₂ := by
@@ -365,10 +316,10 @@ theorem place_lattice_structure : PlLat := by
       Module.Finite.of_injective (Submodule.inclusion (place_lattice_structure_lemma_2 ρ hzL))
         (Submodule.inclusion_injective _)
     have hA : Module.finrank ℤ (zl ρ (Submodule.span (𝓞 K) (Set.range ((↑) : t → V)))) ≤
-        Module.finrank ℤ (zl ρ L) := place_lattice_structure_lemma (place_lattice_structure_lemma_2 ρ hlow)
+        Module.finrank ℤ (zl ρ L) := Submodule.finrank_mono (place_lattice_structure_lemma_2 ρ hlow)
     have hB : Module.finrank ℤ (zl ρ L) ≤
         Module.finrank ℤ (zl ρ (Submodule.span (𝓞 K) (Set.range fun a : t => ((z : K))⁻¹ • (a : V)))) :=
-      place_lattice_structure_lemma (place_lattice_structure_lemma_2 ρ hzL)
+      Submodule.finrank_mono (place_lattice_structure_lemma_2 ρ hzL)
     rw [hcard]
     exact le_antisymm (hB.trans h2.le) (h1.symm.le.trans hA)
   · unfold ht

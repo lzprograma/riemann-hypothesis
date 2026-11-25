@@ -35,14 +35,6 @@ def SymmStatement : Prop :=
     ∀ (P : Ideal (MRing ι)) (n : ℕ) (L : Fin n → HermLine ι) (σ : Equiv.Perm (Fin n)),
       IsArithVar P n → (∀ j, IsSmoothHerm (L j)) → I P n (L ∘ σ) = I P n L
 
-def MultilinStatement : Prop :=
-  ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)]
-    (I : Ideal (MRing ι) → (n : ℕ) → (Fin n → HermLine ι) → ℝ), IsRFamily I →
-    ∀ (P : Ideal (MRing ι)) (n : ℕ) (L : Fin n → HermLine ι) (j : Fin n) (A B : HermLine ι),
-      IsArithVar P n → (∀ j, IsSmoothHerm (L j)) → IsSmoothHerm A → IsSmoothHerm B →
-      I P n (Function.update L j (A.tensor B)) =
-        I P n (Function.update L j A) + I P n (Function.update L j B)
-
 def AvoidStatement : Prop :=
   ∀ (R : Type) [CommRing R] (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)]
     (Ws : Finset (Ideal (MRingOver R ι))), (∀ W ∈ Ws, IsMultiProjPrime W) →

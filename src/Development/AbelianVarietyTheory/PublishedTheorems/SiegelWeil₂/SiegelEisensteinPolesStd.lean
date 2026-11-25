@@ -44,8 +44,6 @@ noncomputable section
 open scoped Matrix NNReal
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta GlobalTheory.Doubling GlobalTheory.Cont
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.StdUnn
 
 variable {D : D7} {n : ℕ}

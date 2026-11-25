@@ -23,8 +23,7 @@ theorem isClosed_of_isAnalyticSubset' (A : FinHolAtlas e X) {S : Set X}
   intro x hx
   obtain ⟨W, hW, hxW, r, f, hf, hSW⟩ := hS x
   have hne : ∃ i, f i x ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hx
     have hxSW : x ∈ S ∩ W := by
       rw [hSW]

@@ -27,67 +27,11 @@ public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import Mathlib.Topology.Algebra.Group.Defs
 public import Mathlib.Data.Fin.Tuple.Sort
 public import Mathlib.Topology.Algebra.Group.ClosedSubgroup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.SetTheory.ZFC.PSet
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.TypeStar
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.TotallySplit
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.MonomialRepresentations.AdjugateCornerEqMinor, Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.MonomialRepresentations.DiscSwap, Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.MonomialRepresentations.IdComp, Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.MonomialRepresentations.IdCompMat, Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.MonomialRepresentations.RelWeight, Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.MonomialRepresentations.TorusTransfer, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Diagz, Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.MonomialRepresentations.RegCosetFour
@@ -216,7 +160,7 @@ private theorem separable_quartic_of_dsc_ne_zero {F : Type} [Field F] (b c d e :
     rw [nodup_roots_iff_of_splits (Polynomial.map_ne_zero hf0) hsplit, separable_map]
     exact hns
   rw [Multiset.nodup_iff_count_le_one] at hnd
-  push_neg at hnd
+  push Not at hnd
   obtain ⟨r, hr⟩ := hnd
   rw [count_roots] at hr
   obtain ⟨h0, h1⟩ := (one_lt_rootMultiplicity_iff_isRoot (Polynomial.map_ne_zero hf0)).1 hr
@@ -867,8 +811,7 @@ theorem UpperTheory.V.AlgebraTools.relWeight :
     refine ha i j hij (isOfFinOrder_iff_zpow_eq_one.mpr ⟨k, hk, ?_⟩)
     simpa only [hPsmul, hPsub, hPe] using hk1
   have hex : ∃ f : Module.Dual ℤ ((ι → ℤ) ⧸ L), ∀ i j, i ≠ j → f (q i) ≠ f (q j) := by
-    by_contra hno
-    push_neg at hno
+    by_contra! hno
     let s : Finset (ι × ι) := Finset.univ.filter fun x => x.1 ≠ x.2
     let p : ι × ι → Submodule ℤ (Module.Dual ℤ ((ι → ℤ) ⧸ L)) :=
       fun x => LinearMap.ker (Module.Dual.eval ℤ _ (q x.1 - q x.2))
@@ -939,8 +882,7 @@ private lemma torusTransfer_sep_iff {L : Type*} [Field L] (p : L[X]) (hp : p.Mon
     rw [Multiset.nodup_iff_count_le_one]
     intro α
     rw [count_roots]
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     obtain ⟨hr, hr'⟩ := (one_lt_rootMultiplicity_iff_isRoot hq0).1 hlt
     exact hne (Multiset.mem_map.2 ⟨α, (mem_roots hq0).2 hr, hr'⟩)
 
@@ -1062,8 +1004,7 @@ theorem UpperTheory.V.AlgebraTools.torusTransfer :
   intro K _ ι _ _ x a w hw hsep
   have hne := (torusTransfer_spec x (algebraMap K (RatFunc K))
     (fun i => (RatFunc.X : RatFunc K) ^ w i)).1 hsep
-  by_contra hall
-  push_neg at hall
+  by_contra! hall
   apply hne
   apply torusTransfer_key a w hw
   intro m

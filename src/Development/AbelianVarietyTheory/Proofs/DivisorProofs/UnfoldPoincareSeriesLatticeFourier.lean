@@ -88,8 +88,7 @@ private lemma setIntegral_exp_linear_fundamentalDomain_eq_zero {V : Type}
       rw [← Complex.exp_int_mul_two_pi_mul_I z]; ring_nf
     rw [this, one_mul]
   obtain ⟨u, hu⟩ : ∃ u, φ u ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hφ (LinearMap.ext h)
   set w : V := (1 / (2 * φ u)) • u with hw
   have hφw : φ w = 1 / 2 := by
@@ -240,7 +239,6 @@ theorem _root_.GlobalTheory.PoincareUnfold.unfold_poincare_fourier : ∀ (V : Ty
       rw [← NNReal.summable_coe]
       exact ha.subtype (· ∈ s)
   have hLHS : ∫ v in D, (∑' x, Q x * F (j x + v)) ∂μ = (∑ k, Q (t k)) * ∫ v, F v ∂μ := by
-    have hDm : MeasurableSet D := ZSpan.fundamentalDomain_measurableSet _
     set e : Fin n × C → Γ := fun p => t p.1 + p.2 with he
     have heinj : Function.Injective e := by
       rintro ⟨k, c⟩ ⟨k', c'⟩ h

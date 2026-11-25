@@ -1,47 +1,12 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open Formalism.IndefR.RecTie Formalism.IndefR.Lev Formalism.L2.Rows GlobalTheory.Mem GlobalTheory.Mem.R3
 
 namespace GlobalTheory.Mem.GrpCount
@@ -61,8 +26,8 @@ theorem card_unitri (Fr : Fin r → Fin r → Prop) (hFr : ∀ i j, Fr i j → i
   have hlow : ∀ f i j, j < i → mk f i j = 0 := by
     intro f i j hij
     have hne : i ≠ j := (ne_of_lt hij).symm
-    simp only [mk, if_neg hne]
-    rw [dif_neg]
+    simp only [mk, ite_eq_right hne]
+    rw [dite_eq_right]
     intro h
     exact absurd (hFr i j h) (not_lt.2 hij.le)
   have hdet : ∀ f, (mk f).det = 1 := by
@@ -78,7 +43,7 @@ theorem card_unitri (Fr : Fin r → Fin r → Prop) (hFr : ∀ i j, Fr i j → i
         fun i => by rw [htoG]; simp [mk],
         fun i j hij hn => by
           rw [htoG]
-          simp only [mk, if_neg (ne_of_lt hij), dif_neg hn]⟩⟩
+          simp only [mk, ite_eq_right (ne_of_lt hij), dite_eq_right hn]⟩⟩
       left_inv := by
         intro g
         obtain ⟨h0, h1, h2⟩ := (hH g.1).1 g.2
@@ -88,11 +53,11 @@ theorem card_unitri (Fr : Fin r → Fin r → Prop) (hFr : ∀ i j, Fr i j → i
         change mk (fun p => (g.1 : Matrix (Fin r) (Fin r) κ) p.1.1 p.1.2) i j = (g.1 : Matrix (Fin r) (Fin r) κ) i j
         simp only [mk]
         by_cases hij : i = j
-        · subst hij; rw [if_pos rfl, h1]
-        · rw [if_neg hij]
+        · subst hij; rw [ite_eq_left rfl, h1]
+        · rw [ite_eq_right hij]
           by_cases hf : Fr i j
-          · rw [dif_pos hf]
-          · rw [dif_neg hf]
+          · rw [dite_eq_left hf]
+          · rw [dite_eq_right hf]
             rcases lt_or_gt_of_ne hij with hl | hl
             · exact (h2 i j hl hf).symm
             · exact (h0 i j hl).symm
@@ -100,7 +65,7 @@ theorem card_unitri (Fr : Fin r → Fin r → Prop) (hFr : ∀ i j, Fr i j → i
         intro f
         funext p
         show mk f p.1.1 p.1.2 = f p
-        simp only [mk, if_neg (ne_of_lt (hFr _ _ p.2)), dif_pos p.2] }
+        simp only [mk, ite_eq_right (ne_of_lt (hFr _ _ p.2)), dite_eq_left p.2] }
   rw [Nat.card_congr e, Nat.card_fun]
 
 theorem card_unip : Nat.card (unip κ r) = Nat.card κ ^ Nat.card {p : Fin r × Fin r // p.1 < p.2} := by

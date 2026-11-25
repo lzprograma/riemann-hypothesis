@@ -2,6 +2,7 @@ module
 
 public import Formalism.LocalToGlobal.Columns.StdLatUnimodular
 public import Formalism.LocalToGlobal.Columns.TwQCmp
+import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MaxVSpanSingleton
 
 @[expose] public section
 
@@ -18,18 +19,7 @@ section Val
 variable {E : Type} [Field E] [NumberField E] [StarRing E] (P : HeightOneSpectrum (𝓞 E))
 
 theorem qth_intAt_iff (a : E) : IntAt P a ↔ P.valuation E a ≤ 1 := by
-  constructor
-  · rintro ⟨r, s, hs, hsa⟩
-    have h1 : P.valuation E (algebraMap (𝓞 E) E s) = 1 :=
-      le_antisymm (P.valuation_le_one s)
-        (not_lt.1 fun hlt => hs ((P.valuation_lt_one_iff_mem s).1 hlt))
-    have h2 := congrArg (P.valuation E) hsa
-    rw [map_mul, h1, one_mul] at h2
-    rw [h2]
-    exact P.valuation_le_one r
-  · intro h
-    obtain ⟨r, s, hs, hsa⟩ := qsp_frac (P := P) a h
-    exact ⟨r, s, hs, by rw [mul_comm]; exact hsa⟩
+  apply _root_.GlobalTheory.CharVal.intAt_iff <;> assumption
 
 theorem qth_exists_bound (x : E) : ∃ k : ℕ, P.valuation E x ≤ WithZero.exp (k : ℤ) := by
   by_cases hx : P.valuation E x = 0

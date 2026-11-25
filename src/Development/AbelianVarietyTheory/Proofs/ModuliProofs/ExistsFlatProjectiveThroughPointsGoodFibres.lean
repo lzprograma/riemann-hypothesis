@@ -381,7 +381,7 @@ theorem exists_flat_projRep_vanIdeal : ∀ (R σ Hh : Type) [CommRing R] [IsRedu
     have h1 := GlobalTheory.RepUniq.locCoord_of_secCoord hrep'.1 hW'
     have h2 := GlobalTheory.RepUniq.locCoord_of_secCoord hrep.1 ((hsc' _ _ _).1 hW')
     have h3 := (h1.same h2).comp hW.isoSpec.hom
-    have h4 : hW.isoSpec.hom ≫ hW.fromSpec = W.ι := GlobalTheory.RepUniq.isoSpec_hom_fromSpec hW
+    have h4 : hW.isoSpec.hom ≫ hW.fromSpec = W.ι := AlgebraicGeometry.IsAffineOpen.isoSpec_hom_fromSpec hW
     simp only [Category.comp_id, ← Category.assoc, h4] at h3 ⊢
     exact h3
   refine ⟨e.hom ≫ pullback.fst s (spMap x), ?_, GlobalTheory.RepUniq.lbIso_of_same hrep' hsame, hsc'⟩

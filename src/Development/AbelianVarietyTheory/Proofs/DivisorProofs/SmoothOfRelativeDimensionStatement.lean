@@ -1,5 +1,7 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorTypeTjIsogeniesRepresentable
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHarrisTaylorObjectPullbackBis
 public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushEquivSymmLeft
 public import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.SiegelPullbackTransfer.AdelicGL2ExtOfLocalComponents
@@ -25,11 +27,7 @@ public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.Cry
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLagrangianLiftLieSquareZeroHarrisTaylor
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FilLagrangianOfLocal
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLieConditionModHodgeFiltration
-public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorExistsLiftOrderActionHodgeSummand
-public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorExistsPolarisationBundleLift
-public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLieMultiplicitySquareZeroLift
-public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLiftLieOfHodgeSummandLieStatement
-public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorPrimeToPLevelLiftSquareZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSqZeroLiftRealisingKs
 public import Mathlib.RingTheory.Artinian.Defs
 public import Mathlib.RingTheory.Derivation.Basic
 public import Mathlib.RingTheory.KrullDimension.Basic
@@ -152,20 +150,6 @@ def OActN.pull {O : Type} [Ring O] {G : Over S} [GrpObj G] [IsCommMonObj G] (a :
   mul x y := by rw [a.mul, CategoryTheory.Functor.map_comp]
   add x y := by rw [a.add]; exact CategoryTheory.Functor.map_mul _ _ _
 
-theorem OActN.pull_left {O : Type} [Ring O] {G : Over S} [GrpObj G] [IsCommMonObj G] (a : OActN O G) (c : O) :
-    ((OActN.pull f a).act c).left ≫ PullbackComparison.pφ f G = PullbackComparison.pφ f G ≫ (a.act c).left :=
-  PullbackComparison.pullback_map_left_fst' f (a.act c)
-
-theorem lift_pφ₂ {G : Over S} [GrpObj G] [IsCommMonObj G] {T' : Over S'} {T : Over S} (τ : T'.left ⟶ T.left)
-    (a b : T' ⟶ (Over.pullback f).obj G) (a₀ b₀ : T ⟶ G)
-    (ha : a.left ≫ PullbackComparison.pφ f G = τ ≫ a₀.left) (hb : b.left ≫ PullbackComparison.pφ f G = τ ≫ b₀.left) :
-    (lift a b).left ≫ PullbackComparison.pφ₂ f G = τ ≫ (lift a₀ b₀).left := by
-  apply PullbackComparison.adelic_GL2_ext_of_local_components
-  · rw [Category.assoc, PullbackComparison.pφ₂_fst, ← Category.assoc, ← Over.comp_left, lift_fst, ha, Category.assoc,
-      ← Over.comp_left, lift_fst]
-  · rw [Category.assoc, PullbackComparison.pφ₂_snd, ← Category.assoc, ← Over.comp_left, lift_snd, hb, Category.assoc,
-      ← Over.comp_left, lift_snd]
-
 end SlopeTestRemainingChoices
 
 section Aux2
@@ -194,173 +178,19 @@ def tateMoveO {p : ℕ} [Fact p.Prime] {D : Datum p} {k : Type} [Field k] {Q Q' 
     rw [Φ.apply_symm_apply, Φ.apply_symm_apply]
     exact I.isom n hn hp a b)
 
-theorem isTanScal_push {O : Type} [Ring O] {G : Over S} {G' : Over S'} [GrpObj G] [GrpObj G']
-    {φ : G'.left ⟶ G.left} (h : IsGrpPullback G' G f φ) (a : OActN O G) (a' : OActN O G')
-    (hact : ∀ c, (a'.act c).left ≫ φ = φ ≫ (a.act c).left) {R' : Type} [CommRing R'] (x : Sp R' ⟶ S')
-    (e : (epsPtR x ⟶ G') ≃* (epsPtR (x ≫ f) ⟶ G)) (he : ∀ v, (e v).left = v.left ≫ φ) (b : O) (c : R')
-    (v : epsPtR x ⟶ G') : IsTanScal a' x b c v ↔ IsTanScal a (x ≫ f) b c (e v) := by
-  obtain ⟨e₀, he₀⟩ := GlobalTheory.LiePull.exists_pushEquiv h (Over.mk x) (x ≫ f) rfl
-  have one : (1 : Over.mk (x ≫ f) ⟶ G).left = (1 : Over.mk x ⟶ G').left ≫ φ := by
-    rw [← he₀, map_one]
-  have sc : spMap (epsScaleR c) ≫ spMap (algebraMap R' (DualNumber R')) = spMap (algebraMap R' (DualNumber R')) := by
-    refine (Spec.map_comp _ _).symm.trans (congrArg Spec.map ?_)
-    ext a <;> simp [epsScaleR, TrivSqZeroExt.algebraMap_eq_inl]
-  have fs : spMap (TrivSqZeroExt.fstHom R' R' R').toRingHom ≫ spMap (algebraMap R' (DualNumber R')) = 𝟙 _ := by
-    refine (Spec.map_comp _ _).symm.trans ((congrArg Spec.map ?_).trans (Spec.map_id _))
-    ext a
-    simp
-  refine and_congr ?_ ?_
-  · rw [one, he]
-    refine ⟨fun E => by rw [← E]; exact (Category.assoc _ _ _).symm,
-      fun E => h.1.hom_ext ((Category.assoc _ _ _).trans E) ?_⟩
-    refine ((Category.assoc _ _ _).trans ?_).trans (Over.w (1 : Over.mk x ⟶ G')).symm
-    refine (congrArg (spMap (TrivSqZeroExt.fstHom R' R' R').toRingHom ≫ ·) (Over.w v)).trans ?_
-    exact (Category.assoc _ _ _).symm.trans ((congrArg (· ≫ x) fs).trans (Category.id_comp _))
-  · have E : e (v ≫ a'.act b) = e v ≫ a.act b := Over.OverMorphism.ext (by
-      rw [he, Over.comp_left, Over.comp_left, he, Category.assoc, hact, Category.assoc])
-    rw [← E, he, he]
-    refine ⟨fun E => by rw [E]; exact Category.assoc _ _ _, fun E => h.1.hom_ext (E.trans (Category.assoc _ _ _).symm) ?_⟩
-    refine (Over.w (v ≫ a'.act b)).trans (Eq.symm ((Category.assoc _ _ _).trans ?_))
-    refine (congrArg (spMap (epsScaleR c) ≫ ·) (Over.w v)).trans ?_
-    exact (Category.assoc _ _ _).symm.trans (congrArg (· ≫ x) sc)
-
-theorem secPull_comp {G : Over S} {G' : Over S'} [GrpObj G] [GrpObj G'] {φ : G'.left ⟶ G.left}
-    (h : IsGrpPullback G' G f φ) (u : G ⟶ G) (u' : G' ⟶ G') (hu : u'.left ≫ φ = φ ≫ u.left)
-    (s : 𝟙_ (Over S) ⟶ G) : GlobalTheory.ObjPull.secPull h (s ≫ u) = GlobalTheory.ObjPull.secPull h s ≫ u' := by
-  apply Over.OverMorphism.ext
-  refine h.1.hom_ext ?_ ?_
-  · rw [GlobalTheory.ObjPull.secPull_left]
-    simp only [Over.comp_left, Category.assoc]
-    rw [hu, ← Category.assoc (Over.Hom.left _) φ, GlobalTheory.ObjPull.secPull_left, Category.assoc]
-  · rw [Over.w, Over.comp_left, Category.assoc, Over.w, Over.w]
-
 end Aux2
 
 section Ker
 
 variable {S S' : Scheme.{0}} (f : S' ⟶ S)
 
-theorem gen_ker_push {G : Over S} [GrpObj G] [IsCommMonObj G] (P : LB (G2 G).left) (T : Over S')
-    (x : T ⟶ (Over.pullback f).obj G)
-    (H : ∃ t : ((P.pull (PullbackComparison.pφ₂ f G)).pull
-      (lift (snd ((Over.pullback f).obj G) T ≫ x) (fst ((Over.pullback f).obj G) T)).left).Gen, t.IsGen) :
-    ∃ t : (P.pull (lift (snd G (Over.mk (T.hom ≫ f)) ≫ GlobalTheory.ObjPull.pushEquiv (PullbackComparison.isGrpPullback f G) T x)
-      (fst G (Over.mk (T.hom ≫ f)))).left).Gen, t.IsGen := by
-  let T₀ : Over S := Over.mk (T.hom ≫ f)
-  let Z : Over S' := Over.mk ((snd G T₀).left ≫ T.hom)
-  have hZ : (fst G T₀).left ≫ G.hom = Z.hom ≫ f :=
-    (Over.w (fst G T₀)).trans ((Over.w (snd G T₀)).symm.trans (Category.assoc _ _ _).symm)
-  let a : Z ⟶ (Over.pullback f).obj G := Over.homMk (pullback.lift (fst G T₀).left Z.hom hZ) (pullback.lift_snd _ _ _)
-  let u : Z ⟶ T := Over.homMk (snd G T₀).left rfl
-  have key : (lift (snd G T₀ ≫ GlobalTheory.ObjPull.pushEquiv (PullbackComparison.isGrpPullback f G) T x) (fst G T₀)).left =
-      (lift a u).left ≫ ((lift (snd ((Over.pullback f).obj G) T ≫ x) (fst ((Over.pullback f).obj G) T)).left ≫
-        PullbackComparison.pφ₂ f G) := by
-    apply PullbackComparison.adelic_GL2_ext_of_local_components
-    · have k1 := congrArg Over.Hom.left (show lift a u ≫ lift (snd ((Over.pullback f).obj G) T ≫ x)
-          (fst ((Over.pullback f).obj G) T) ≫ fst ((Over.pullback f).obj G) ((Over.pullback f).obj G) = u ≫ x by simp)
-      simp only [Over.comp_left] at k1
-      rw [← Over.comp_left, lift_fst, Category.assoc, Category.assoc, PullbackComparison.pφ₂_fst,
-        ← Category.assoc (Over.Hom.left (lift (snd ((Over.pullback f).obj G) T ≫ x) _)), ← Category.assoc, k1]
-      rfl
-    · have k2 := congrArg Over.Hom.left (show lift a u ≫ lift (snd ((Over.pullback f).obj G) T ≫ x)
-          (fst ((Over.pullback f).obj G) T) ≫ snd ((Over.pullback f).obj G) ((Over.pullback f).obj G) = a by simp)
-      simp only [Over.comp_left] at k2
-      rw [← Over.comp_left, lift_snd, Category.assoc, Category.assoc, PullbackComparison.pφ₂_snd,
-        ← Category.assoc (Over.Hom.left (lift (snd ((Over.pullback f).obj G) T ≫ x) _)), ← Category.assoc, k2]
-      exact (pullback.lift_fst _ _ _).symm
-  obtain ⟨t, ht⟩ := H
-  obtain ⟨t₁, ht₁⟩ := gen_chartPull (chartPullIn P (fun _ : PUnit => PullbackComparison.pφ₂ f G) (fun _ => 1)
-    (lift (snd ((Over.pullback f).obj G) T ≫ x) (fst ((Over.pullback f).obj G) T)).left) t ht
-  exact gen_chartPull (chartPullSame P _ _ (fun _ : PUnit => 1) (lift a u).left (fun _ => key)) t₁ ht₁
-
 end Ker
 
 theorem exists_objMap : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.Datum p) (R : Type) [CommRing R] (b : Base D R)
     (N : ℕ) (S S' : Scheme.{0}) (s : S ⟶ Sp R) (s' : S' ⟶ Sp R) (o : Obj b N s) (f : S' ⟶ S), f ≫ s = s' →
     ∃ o' : Obj b N s', Nonempty (ObjMap o' o f) := by
-  intro p _ D R _ b N S S' s s' o f hs
-  subst hs
-  have h : IsGrpPullback ((Over.pullback f).obj o.A) o.A f (PullbackComparison.pφ f o.A) := PullbackComparison.isGrpPullback f o.A
-  have hact := OActN.pull_left f o.act
-  have hP := pull_isLB o.isLB (PullbackComparison.pφ₂ f o.A)
-  have hL := pull_isLB o.isLB (lift (𝟙 o.A) (𝟙 o.A)).left
-  have hL' := pull_isLB hP (lift (𝟙 ((Over.pullback f).obj o.A)) (𝟙 ((Over.pullback f).obj o.A))).left
-  have hdiag : (lift (𝟙 ((Over.pullback f).obj o.A)) (𝟙 ((Over.pullback f).obj o.A))).left ≫ PullbackComparison.pφ₂ f o.A =
-      PullbackComparison.pφ f o.A ≫ (lift (𝟙 o.A) (𝟙 o.A)).left :=
-    lift_pφ₂ f _ _ _ _ _ (by simp) (by simp)
-  have hLi : LBIso ((o.P.pull (PullbackComparison.pφ₂ f o.A)).pull
-      (lift (𝟙 ((Over.pullback f).obj o.A)) (𝟙 ((Over.pullback f).obj o.A))).left)
-      ((o.P.pull (lift (𝟙 o.A) (𝟙 o.A)).left).pull (PullbackComparison.pφ f o.A)) :=
-    LBIso.chartPull (chartPullLinComb o.P (PullbackComparison.pφ₂ f o.A) _ _ (fun _ : PUnit => 1) (PullbackComparison.pφ f o.A) (fun _ => hdiag))
-      (ReciprocityTheory.ChartRestriction.G.Geo.Tor.chartPullPull _ (PullbackComparison.pφ f o.A) _ rfl) (PullbackComparison.gen_refl _ hL)
-  obtain ⟨hab, hamp, -⟩ := GlobalTheory.PolPull.pol_pull_of_relAmple_local GlobalTheory.AmpleLocal.relAmple_of_locally S S' o.A _ f _
-    _ _ hL hL' o.ab h hLi
-  have hrose : ∀ c : D.O, LBIso ((o.P.pull (PullbackComparison.pφ₂ f o.A)).pull
-      (lift (fst ((Over.pullback f).obj o.A) ((Over.pullback f).obj o.A) ≫ (OActN.pull f o.act).act c)
-        (snd ((Over.pullback f).obj o.A) ((Over.pullback f).obj o.A))).left)
-      ((o.P.pull (PullbackComparison.pφ₂ f o.A)).pull (lift (fst ((Over.pullback f).obj o.A) ((Over.pullback f).obj o.A))
-        (snd ((Over.pullback f).obj o.A) ((Over.pullback f).obj o.A) ≫
-          (OActN.pull f o.act).act (D.star c).unop)).left) := fun c => by
-    refine LBIso.chartPull (chartPullLinComb o.P _ _ _ (fun _ : PUnit => 1) (PullbackComparison.pφ₂ f o.A) (fun _ => ?_))
-      (chartPullLinComb o.P _ _ _ (fun _ : PUnit => 1) (PullbackComparison.pφ₂ f o.A) (fun _ => ?_)) (o.rosati c)
-    · refine lift_pφ₂ f _ _ _ _ _ ?_ (PullbackComparison.pφ₂_snd f o.A).symm
-      rw [Over.comp_left, Over.comp_left, Category.assoc, hact, ← Category.assoc, ← PullbackComparison.pφ₂_fst, Category.assoc]
-    · refine lift_pφ₂ f _ _ _ _ _ (PullbackComparison.pφ₂_fst f o.A).symm ?_
-      rw [Over.comp_left, Over.comp_left, Category.assoc, hact, ← Category.assoc, ← PullbackComparison.pφ₂_snd, Category.assoc]
-  obtain ⟨t₁, ht₁⟩ := o.rig₁
-  obtain ⟨t₂, ht₂⟩ := o.rig₂
-  refine ⟨{ A := (Over.pullback f).obj o.A
-            ab := hab
-            act := OActN.pull f o.act
-            P := o.P.pull (PullbackComparison.pφ₂ f o.A)
-            isLB := hP
-            rig₁ := gen_chartPull (chartPullLinComb o.P _ _ _ _ (PullbackComparison.pφ f o.A)
-              (fun _ => PullbackComparison.lift_one_id f o.A)) t₁ ht₁
-            rig₂ := gen_chartPull (chartPullLinComb o.P _ _ _ _ (PullbackComparison.pφ f o.A)
-              (fun _ => PullbackComparison.lift_id_one f o.A)) t₂ ht₂
-            symm := LBIso.chartPull (ReciprocityTheory.ChartRestriction.G.Geo.Tor.chartPullPull o.P _ _ rfl)
-              (chartPullLinComb o.P _ _ _ _ (PullbackComparison.pφ₂ f o.A) (fun _ => PullbackComparison.lift_swap f o.A)) o.symm
-            ample := hamp o.ample
-            kerP := ?_
-            rosati := hrose
-            lie := ?_
-            lieRank := fun k _ _ x β hx i =>
-              (GlobalTheory.LiePull.lieMult_pull (𝓞 D.F) S S' o.A _ f _ (o.act.toF D) ((OActN.pull f o.act).toF D) h
-                (fun c => hact _) k x (β.comp (b.t i)) D.m).2
-                (o.lieRank k (x ≫ f) β ((Category.assoc _ _ _).trans hx) i)
-            eta := fun y => GlobalTheory.ObjPull.secPull h (o.eta y)
-            eta_add := fun y z => by rw [o.eta_add, map_mul]
-            eta_lin := fun c y => by rw [o.eta_lin]; exact secPull_comp f h _ _ (hact c) _
-            eta_ker := fun y => by rw [o.eta_ker y, map_one]
-            geom := fun k _ _ x β hx => ?_ },
-    ⟨{ φ := PullbackComparison.pφ f o.A
-       φ₂ := PullbackComparison.pφ₂ f o.A
-       cart := h
-       sq := PullbackComparison.isSquare f o.A
-       act := hact
-       pol := PullbackComparison.gen_refl _ hP
-       eta := fun y => GlobalTheory.ObjPull.secPull_left h _ }⟩⟩
-  · obtain ⟨e, he, hk⟩ := o.kerP
-    refine ⟨e, he, fun T x H => ?_⟩
-    have := hk (Over.mk (T.hom ≫ f)) (GlobalTheory.ObjPull.pushEquiv h T x) (gen_ker_push f o.P T x H)
-    exact (GlobalTheory.ObjPull.pushEquiv h T).injective (by rw [map_pow, this, map_one])
-  · intro R' _ β x hx v hv
-    obtain ⟨e, he⟩ := GlobalTheory.LiePull.exists_pushEquiv h (epsPtR x) (spMap (algebraMap R' (DualNumber R')) ≫ x ≫ f)
-      (Category.assoc _ _ _).symm
-    obtain ⟨w₀, hw₀, hv₀⟩ := o.lie R' β (x ≫ f) ((Category.assoc _ _ _).trans hx) (e v)
-      ((isTanScal_push f h o.act _ hact x e he _ _ v).1 hv)
-    refine ⟨fun i => e.symm (w₀ i), fun i c => (isTanScal_push f h o.act _ hact x e he _ _ _).2
-      (by rw [e.apply_symm_apply]; exact hw₀ i c), e.injective ?_⟩
-    rw [hv₀, map_list_prod, List.map_ofFn]
-    simp [Function.comp_def]
-  · obtain ⟨I, hI⟩ := o.geom k (x ≫ f) β ((Category.assoc _ _ _).trans hx)
-    refine ⟨tateMoveO (GlobalTheory.ObjPull.pushEquiv h (Over.mk x)) (fun c g => ?_) (fun n g g' z hz => ?_) I, fun y => ?_⟩
-    · apply Over.OverMorphism.ext
-      show (g.left ≫ _) ≫ _ = (g.left ≫ _) ≫ _
-      rw [Category.assoc, hact, Category.assoc]
-    · exact (GlobalTheory.weilIs_grpPullback_of_comm S S' o.A _ f _ _ _ hL hL' h hLi
-        (Over.mk x) n g g' _ _ _ rfl rfl).2 hz
-    · exact (MulEquiv.eq_symm_apply _).2 ((GlobalTheory.ObjPull.pushEquiv_secPull h _ _).trans (hI y))
+  intros
+  apply _root_.GlobalTheory.UPel.HT.ES.IsogRep.exists_pull <;> assumption
 
 end GlobalTheory.UPel.HT.BaseChange
 end -- clump:auto
@@ -379,9 +209,7 @@ open GlobalTheory.UPel.Sm GlobalTheory.Cris GlobalTheory.DeRham
 open scoped TensorProduct
 open GlobalTheory.AbDual GlobalTheory.AbLaw GlobalTheory.CechPic
 
-set_option autoImplicit false
 noncomputable section
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.HTPerf
 
@@ -476,8 +304,6 @@ end GlobalTheory.HTPerf
 namespace GlobalTheory.HTPerf
 
 open GlobalTheory.Published.GrothendieckMessing IsLocalRing
-
-
 
 theorem skew_bijective : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.Datum p) (R : Type) [CommRing R] (b : GlobalTheory.UPel.HT.Base D R) (N : ℕ) (C C₀ : Type) [CommRing C] [IsLocalRing C] [IsArtinianRing C] [CommRing C₀] (π : C →+* C₀), Function.Surjective π → ∀ (hsq : RingHom.ker π ^ 2 = 0) (tR : R →+* C) (o₀ : GlobalTheory.UPel.HT.Obj b N (spMap π ≫ spMap tR)), ∀ φ : Crys (divided₂ hsq) (spMap π) o₀.A →ₗ[C] Crys (divided₂ hsq) (spMap π) o₀.A →ₗ[C] C, GlobalTheory.AbDual.IsCorrForm (divided₂ hsq) (spMap π) o₀.A o₀.A o₀.P φ → (∀ x y, φ x y = -φ y x) ∧ Function.Bijective φ := by
   intro p _ D R _ b N C C₀ _ _ _ _ π hπ hsq tR o₀ φ hφ
@@ -634,11 +460,8 @@ open GlobalTheory.UPel GlobalTheory.UPel.Sm GlobalTheory.Cris GlobalTheory.DeRha
 open scoped TensorProduct
 attribute [local instance] Functor.grpObjObj
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.HdRFibre
-
-
 
 theorem fibre_baseChange : ∀ (C₀ : Type) [CommRing C₀] [IsLocalRing C₀] (A₀ : Over (Sp C₀)) [GrpObj A₀] [IsCommMonObj A₀], IsAbelianScheme A₀ → ∀ (O : Type) [CommRing O] (a : OAct O A₀), ∃ f : HdR A₀ →ₛₗ[algebraMap C₀ (IsLocalRing.ResidueField C₀)] HdR ((Over.pullback (spMap (algebraMap C₀ (IsLocalRing.ResidueField C₀)))).obj A₀), Function.Surjective f ∧ (∀ h, f h = 0 → h ∈ IsLocalRing.maximalIdeal C₀ • (⊤ : Submodule C₀ (HdR A₀))) ∧ ∀ (x : O) (h : HdR A₀), f (act (dp0 C₀) (𝟙 _) a x h) = act (dp0 (IsLocalRing.ResidueField C₀)) (𝟙 _) (OAct.pullback (spMap (algebraMap C₀ (IsLocalRing.ResidueField C₀))) A₀ a) x (f h) := by
   intro C₀ _ _ A₀ _ _ hA O _ a
@@ -699,8 +522,6 @@ section -- clump:auto
 @[expose] public section
 
 open scoped TensorProduct
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -946,7 +767,6 @@ open GlobalTheory.UPel.Sm GlobalTheory.Cris GlobalTheory.DeRham
 open scoped TensorProduct
 attribute [local instance] Functor.grpObjObj
 
-set_option autoImplicit false
 noncomputable section
 
 namespace GlobalTheory.HTSummand
@@ -1047,8 +867,6 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.UPel.Sm GlobalTheory.Cris GlobalTheory.DeRham
 open scoped TensorProduct
-attribute [local instance] Over.cartesianMonoidalCategory
-set_option autoImplicit false
 noncomputable section
 open IsLocalRing GlobalTheory.AbDual GlobalTheory.Published.GrothendieckMessing
 
@@ -1095,8 +913,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorExistsIsotropicStableSummand", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CanonicalOfAbelianDeRham\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveDeRham\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorModOfTmul\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystalProjectiveOverTensorRingOfIntegers\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCrysForm\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLagrangianLiftLieSquareZeroHarrisTaylor\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FilLagrangianOfLocal\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLieConditionModHodgeFiltration\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCrystalReductionSquareZeroArtinian\nimport Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ConnectedSpaceSpecOfIsLocalRing\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv\nimport Mathlib.CategoryTheory.Monoidal.Opposite.Mon\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -1198,7 +1014,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorExistsIsotropicStableSummand =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorExistsLiftSquareZeroArtinian =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorExistsLiftSquareZeroArtinian", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CanonicalOfAbelianDeRham\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorExistsIsotropicStableSummand\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorExistsLiftOrderActionHodgeSummand\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorExistsPolarisationBundleLift\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLieMultiplicitySquareZeroLift\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLiftLieOfHodgeSummandLieStatement\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorPrimeToPLevelLiftSquareZero\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv\nimport Mathlib.CategoryTheory.Monoidal.Opposite.Mon\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorExistsLiftSquareZeroArtinian", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CanonicalOfAbelianDeRham\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorExistsIsotropicStableSummand\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorExistsSquareZeroLiftOfFiltration\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv\nimport Mathlib.CategoryTheory.Monoidal.Opposite.Mon\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -1216,37 +1032,9 @@ theorem exists_sqZero_lift : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel
   obtain ⟨tR, rfl⟩ : ∃ tR : R →+* C, t = spMap tR :=
     ⟨(Spec.preimage t).hom, by simp [spMap]⟩
   obtain ⟨E, hEc, hEf, hEs, hEi, hEl⟩ := _root_.GlobalTheory.HTSummand.exists_summand p D R b N C C₀ π hπ hsq tR o₀
-  obtain ⟨A, _, i, h, act, hA, hE, hact⟩ := _root_.GlobalTheory.HTDeform.exists_lift_oAct p D R b N C C₀ π hπ hsq tR o₀ E hEc hEf hEs
-  haveI : IsCommMonObj A := hA.comm
-  subst hE
-  obtain ⟨P, φ₂, hP, r1, r2, hsym, hamp, hker, hros, hsq2, hpol⟩ :=
-    _root_.GlobalTheory.UPel.HT.PolLift.exists_pol_lift p D R b N C C₀ π hπ hsq tR o₀ A i h hA act hact hEi
-  obtain ⟨eta, e1, e2, e3, e4, e5⟩ := _root_.GlobalTheory.HTLevelLift.level_lift p D R b N C C₀ π hπ hsq tR o₀ A i h hA act hact hN P φ₂ hP hsq2 hpol
-  exact ⟨{ A := A
-           ab := hA
-           act := act
-           P := P
-           isLB := hP
-           rig₁ := r1
-           rig₂ := r2
-           symm := hsym
-           ample := hamp
-           kerP := hker
-           rosati := hros
-           lie := fun R' _ β x hx v hv => GlobalTheory.T.harrisTaylor_lift_lie_of_hodge_summand_lie p D R b N C C₀ π hπ hsq tR o₀ A i h hA act hact hEl R' β x hx v hv
-           lieRank := fun k _ _ x β hx j => _root_.GlobalTheory.HTLiftLie.lieMult_of_sqZeroLift p D R b N C C₀ π hπ hsq tR o₀ A i h act hact k x β hx j
-           eta := eta
-           eta_add := e1
-           eta_lin := e2
-           eta_ker := e3
-           geom := e4 },
-    ⟨{ φ := i
-       φ₂ := φ₂
-       cart := h
-       sq := hsq2
-       act := hact
-       pol := hpol
-       eta := e5 }⟩⟩
+  obtain ⟨o, m, _⟩ := exists_sqZero_lift_of_fil p D R b N hN C C₀ π hπ hsq tR
+    (spMap tR) (spMap π ≫ spMap tR) rfl rfl o₀ E hEc hEf hEs hEi hEl
+  exact ⟨o, ⟨m⟩⟩
 
 end GlobalTheory.UPel.HT
 end -- clump:auto
@@ -1298,8 +1086,6 @@ section -- clump:auto
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT
 
-theorem _root_.GlobalTheory.T.harrisTaylor_formally_smooth_squareZero_lift : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.Datum p) (R : Type) [CommRing R] (b : Base D R) (N : ℕ), 3 ≤ N → N.Coprime p → ∀ (A₁ A₀ : Type) [CommRing A₁] [CommRing A₀] [IsLocalRing A₁] [IsArtinianRing A₁] (π : A₁ →+* A₀) (β : R →+* A₁), Function.Surjective π → RingHom.ker π * RingHom.ker π = ⊥ → ∀ o : Obj b N (spMap (π.comp β)), ∃ o' : Obj b N (spMap β), Nonempty (ObjMap o o' (spMap π)) := by
-  first | (exact @GlobalTheory.UPel.HT.obj_lift_sqZero)
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorFormallySmoothSquareZeroLiftStatement =====
@@ -1518,7 +1304,7 @@ namespace GlobalTheory
 
 theorem injective_cotangentComplexBaseChange_of_forms_extend : ∀ (A P R K : Type) [CommRing A] [CommRing P] [CommRing R] [Field K] [Algebra A P] [Algebra A R] [Algebra P R] [IsScalarTower A P R] [Algebra R K] [Algebra P K] [IsScalarTower P R K] [Algebra A K] [IsScalarTower A P K], (∀ ℓ : RingHom.ker (algebraMap P R) →ₗ[P] K, ∃ D : Derivation A P K, ∀ i : RingHom.ker (algebraMap P R), D i = ℓ i) → Function.Injective (KaehlerDifferential.cotangentComplexBaseChange A R P K) := by
   intro A P R K _ _ _ _ _ _ _ _ _ _ _ _ _ hext
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro z hz
   refine (Module.forall_dual_apply_eq_zero_iff K z).1 fun φ => ?_
   let ℓ : RingHom.ker (algebraMap P R) →ₗ[P] K :=
@@ -1679,7 +1465,6 @@ theorem finrank_kaehler_eq_of_universal_tangent :
     have := congrArg TrivSqZeroExt.snd (RingHom.congr_fun hR r)
     simpa [TrivSqZeroExt.algebraMap_eq_inl] using this
   have hsA : ∀ (a : A) (x : k), a • x = φ a * x := fun a x => rfl
-  have hsR : ∀ (r : R) (x : k), r • x = φ (algebraMap R A r) * x := fun r x => rfl
 
   let E : Derivation R A (Fin d → k) := Derivation.mk'
     { toFun := fun a => (ψ a).snd
@@ -1845,7 +1630,7 @@ theorem RepFam.smoothOfRelativeDimension : ∀ (p : ℕ) [Fact p.Prime] (D : Glo
       simp [spMap, ← Spec.map_comp]
     have hs₀ : x₀ ≫ F.s = spMap (π.comp β) := by rw [hx, hcomp]
     obtain ⟨o₀, ⟨m₀⟩⟩ := _root_.GlobalTheory.UPel.HT.BaseChange.exists_objMap p D R b N _ _ F.s _ F.univ x₀ hs₀
-    obtain ⟨o', ⟨m'⟩⟩ := GlobalTheory.T.harrisTaylor_formally_smooth_squareZero_lift p D R b N hN hNp C C₀ π β hπ (by rw [← hker, pow_two]) o₀
+    obtain ⟨o', ⟨m'⟩⟩ := GlobalTheory.UPel.HT.obj_lift_sqZero p D R b N hN hNp C C₀ π β hπ (by rw [← hker, pow_two]) o₀
     obtain ⟨x, ⟨hxs, ⟨mx⟩⟩, -⟩ := F.rep (Sp C) (spMap β) o'
     obtain ⟨mc⟩ := _root_.GlobalTheory.UPel.HT.objMap_comp p D R b N _ _ _ _ _ _ o₀ o' F.univ (spMap π) x m' mx
     refine ⟨x, ?_, hxs⟩

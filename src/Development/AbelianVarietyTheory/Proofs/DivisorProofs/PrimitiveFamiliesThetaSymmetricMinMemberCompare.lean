@@ -51,7 +51,6 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.ZM GlobalTheory.ZH GlobalTheory.UMin GlobalTheory.UPoinc GlobalTheory.Ex.OneGen
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.UMin.PrimCmp
 
@@ -73,15 +72,9 @@ theorem symTup_map {R R' : Type} [CommRing R] [CommRing R'] (i : R →+* R') {N 
 
 theorem esymm_map_mul {R : Type} [CommRing R] {A : Type} (t : R) (M : Multiset A) (f : A → R) (j : ℕ) :
     (M.map fun b => t * f b).esymm j = t ^ j * (M.map f).esymm j := by
-  have : (M.map fun b => t * f b) = (M.map f).map (fun x => t * x) := by rw [Multiset.map_map]; rfl
-  rw [this]
-  unfold Multiset.esymm
-  rw [Multiset.powersetCard_map, Multiset.map_map, ← Multiset.sum_map_mul_left]
-  refine congrArg Multiset.sum (Multiset.map_congr rfl fun s hs => ?_)
-  have hc := (Multiset.mem_powersetCard.1 hs).2
-  simp only [Function.comp]
-  rw [Multiset.prod_map_mul]
-  simp [hc]
+  have h := Multiset.pow_smul_esymm t j (M.map f)
+  rw [Multiset.map_map] at h
+  exact h.symm
 
 theorem symTup_mul {R : Type} [CommRing R] {N : ℕ} (c : Fin N → R) (t : R) (j : Fin N) :
     symTup (fun b => t * c b) j = t ^ N.factorial * symTup c j := by

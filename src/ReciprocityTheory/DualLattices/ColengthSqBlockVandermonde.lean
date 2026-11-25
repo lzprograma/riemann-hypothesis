@@ -37,7 +37,7 @@ lemma sumLat_mulVec {n s : ℕ} (Mτ : Fin n → Lat v (Fin s)) (c : Fin n × Fi
   rw [Finset.sum_eq_single τ]
   · simp
   · intro b _ hb
-    exact Finset.sum_eq_zero fun j _ => if_neg (Ne.symm hb)
+    exact Finset.sum_eq_zero fun j _ => ite_eq_right (Ne.symm hb)
   · intro h; exact absurd (Finset.mem_univ τ) h
 
 lemma sumLat_pts {n s : ℕ} (Mτ : Fin n → Lat v (Fin s)) : (sumLat Mτ).pts = sumPts Mτ := by

@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.PtShape
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.DecompSigmaOrd
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.NormO
@@ -94,18 +95,7 @@ private theorem mem_max_iff {l : ℕ} [Fact l.Prime] (c : Coef l) (b : c.O) :
     simp at this
 
 private theorem norm_le {l : ℕ} [Fact l.Prime] (c : Coef l) (x : c.O) : ‖(x : PadicAlgCl l)‖ ≤ 1 := by
-  obtain ⟨-, -, -, -, -, h0, hfin, -, -⟩ := dvrFacts l c.O
-  have hE : (eO l c.O).toNat ≠ 0 := by
-    rw [Ne, ENat.toNat_eq_zero, not_or]
-    exact ⟨h0, ne_top_of_le_ne_top (ENat.coe_ne_top _) hfin⟩
-  have hl : (1 : ℝ) < l := by exact_mod_cast (Fact.out : l.Prime).one_lt
-  have hl0 : (0 : ℝ) < (l : ℝ)⁻¹ := by positivity
-  have hl1 : (l : ℝ)⁻¹ < 1 := inv_lt_one_of_one_lt₀ hl
-  rcases eq_or_ne x 0 with rfl | hx
-  · simp
-  · have := normO l c.O x hx
-    rw [← pow_le_one_iff_of_nonneg (norm_nonneg _) hE, this]
-    exact pow_le_one₀ hl0.le hl1.le
+  apply _root_.norm_coe_coefO_le_one <;> assumption
 
 private theorem locConst {l : ℕ} [Fact l.Prime] (c : Coef l) {X : Type} [TopologicalSpace X] (f : X → c.O)
     (hf : Continuous fun x => (f x : PadicAlgCl l)) : IsLocallyConstant fun x => residue c.O (f x) := by
@@ -118,21 +108,13 @@ private theorem locConst {l : ℕ} [Fact l.Prime] (c : Coef l) {X : Type} [Topol
   rw [← sub_eq_zero, ← map_sub, mem_max_iff]
   simpa using hy
 
-private theorem lattice {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {H : Type} [Group H]
-    (r : H → M4 O) (h1 : r 1 = 1) (s u : Fin 4) (hsu : s ≠ u) (hne : ∃ g, r g s u ≠ 0) (t : Finset H) (a : H → O)
-    (hE : ∀ h, ∑ g ∈ t, a g • r (g * h) = Matrix.single s s (1 : O) * r h) :
-    ∃ (b : O) (c : H → O), b ≠ 0 ∧ (∀ g, r g s u = b * c g) ∧
-      ∀ m, ¬ ∀ g, residue O (c g) = m * (residue O (r g s s) - residue O (r g u u)) := by
-  obtain ⟨g1, hg1⟩ : ∃ g1, ∀ g, r g1 s u ∣ r g s u := by
-    obtain ⟨_, ⟨g1, rfl⟩, hmin⟩ := (wellFounded_lt (α := ℕ∞)).has_min
-      (Set.range fun g => IsDiscreteValuationRing.addVal O (r g s u)) ⟨_, 1, rfl⟩
-    exact ⟨g1, fun g => IsDiscreteValuationRing.addVal_le_iff_dvd.1 (not_lt.1 (hmin _ ⟨g, rfl⟩))⟩
-  choose c hc using hg1
-  have hb : r g1 s u ≠ 0 := by
-    obtain ⟨g, hg⟩ := hne
-    intro h0
-    exact hg (by rw [hc g, h0, zero_mul])
-  refine ⟨_, c, hb, hc, fun m hm => ?_⟩
+theorem UpperTheory.V.GradeZeroInterpolatingElement.TriHelpers.lattice_of_min
+    {O : Type} [CommRing O] [IsDomain O] [IsLocalRing O] {H : Type} [Group H]
+    (r : H → M4 O) (h1 : r 1 = 1) (s u : Fin 4) (hsu : s ≠ u) (t : Finset H) (a : H → O)
+    (hE : ∀ h, ∑ g ∈ t, a g • r (g * h) = Matrix.single s s (1 : O) * r h) (g1 : H) (c : H → O) (hb : r g1 s u ≠ 0)
+    (hc : ∀ g, r g s u = r g1 s u * c g) :
+    ∀ m, ¬ ∀ g, residue O (c g) = m * (residue O (r g s s) - residue O (r g u u)) := by
+  intro m hm
   have key : ∀ h, residue O (c h) = m * residue O (r h s s) := by
     intro h
     have e1 := congrFun (congrFun (hE h) s) u
@@ -167,7 +149,23 @@ private theorem lattice {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuatio
   rw [cg, hm0] at this
   simp at this
 
-private theorem line {H K : Type} [Field K] (r : H → M4 K) (u : (M4 K)ˣ)
+private theorem lattice {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {H : Type} [Group H]
+    (r : H → M4 O) (h1 : r 1 = 1) (s u : Fin 4) (hsu : s ≠ u) (hne : ∃ g, r g s u ≠ 0) (t : Finset H) (a : H → O)
+    (hE : ∀ h, ∑ g ∈ t, a g • r (g * h) = Matrix.single s s (1 : O) * r h) :
+    ∃ (b : O) (c : H → O), b ≠ 0 ∧ (∀ g, r g s u = b * c g) ∧
+      ∀ m, ¬ ∀ g, residue O (c g) = m * (residue O (r g s s) - residue O (r g u u)) := by
+  obtain ⟨g1, hg1⟩ : ∃ g1, ∀ g, r g1 s u ∣ r g s u := by
+    obtain ⟨_, ⟨g1, rfl⟩, hmin⟩ := (wellFounded_lt (α := ℕ∞)).has_min
+      (Set.range fun g => IsDiscreteValuationRing.addVal O (r g s u)) ⟨_, 1, rfl⟩
+    exact ⟨g1, fun g => IsDiscreteValuationRing.addVal_le_iff_dvd.1 (not_lt.1 (hmin _ ⟨g, rfl⟩))⟩
+  choose c hc using hg1
+  have hb : r g1 s u ≠ 0 := by
+    obtain ⟨g, hg⟩ := hne
+    intro h0
+    exact hg (by rw [hc g, h0, zero_mul])
+  exact ⟨_, c, hb, hc, TriHelpers.lattice_of_min r h1 s u hsu t a hE g1 c hb hc⟩
+
+theorem UpperTheory.V.GradeZeroInterpolatingElement.TriHelpers.line {H K : Type} [Field K] (r : H → M4 K) (u : (M4 K)ˣ)
     (tri : ∀ g i j, j < i → ((u : M4 K) * r g * (u⁻¹ : (M4 K)ˣ)) i j = 0) (P : Fin 4 → Prop) (i j : Fin 4) (hij : i ≠ j)
     (hi : P i) (hP : ∀ g a b, P b → ¬ P a → r g a b = 0) (hz : ∀ g k, P k → k ≠ i → k ≠ j → r g i k = 0 ∧ r g j k = 0) :
     ∃ (x y : K) (φ : H → K), (x ≠ 0 ∨ y ≠ 0) ∧ ∀ g, r g i i * x + r g i j * y = φ g * x ∧ r g j i * x + r g j j * y = φ g * y := by
@@ -227,7 +225,7 @@ private theorem line {H K : Type} [Field K] (r : H → M4 K) (u : (M4 K)ˣ)
   rw [Pi.sub_apply, Pi.sub_apply, hs i fun k a b c => (hz g k a b c).1, hs j fun k a b c => (hz g k a b c).2] at hy
   exact ⟨sub_eq_zero.1 hy.1, sub_eq_zero.1 hy.2⟩
 
-private theorem root_mem {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l} (D : Raw Ω c)
+theorem UpperTheory.V.GradeZeroInterpolatingElement.TriHelpers.root_mem {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l} (D : Raw Ω c)
     (s u : Fin 4) (h : lamW s ≠ lamW u) : D.ps s * (D.ps u)⁻¹ ∈ [D.al, D.be, D.th, D.al⁻¹, D.be⁻¹, D.th⁻¹] := by
   have e1 : D.th * D.Psi⁻¹ = D.al := by rw [Raw.th, mul_inv_cancel_right]
   have e2 : D.Psi * D.th⁻¹ = D.al⁻¹ := by rw [← e1, mul_inv_rev, inv_inv]
@@ -314,7 +312,7 @@ private theorem core {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] 
     have := hU h
     field_simp
     ring
-  obtain ⟨m, hm⟩ := xvanExt D hD _ red hred0 _ (root_mem D s u hsu) z hzl hcoc (by
+  obtain ⟨m, hm⟩ := xvanExt D hD _ red hred0 _ (TriHelpers.root_mem D s u hsu) z hzl hcoc (by
       intro A hA g hg h1
       have e := hcK g
       rw [hunr A hA g hg h1, Matrix.one_apply_ne hne] at e
@@ -350,7 +348,7 @@ private theorem core {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] 
         have := hU g
         field_simp
         linear_combination e
-      · obtain ⟨m, hm⟩ := locVanP D hD hL _ red hred0 _ (root_mem D s u hsu) p hp (fun g => z g)
+      · obtain ⟨m, hm⟩ := locVanP D hD hL _ red hred0 _ (TriHelpers.root_mem D s u hsu) p hp (fun g => z g)
           (hzl.comp_continuous continuous_subtype_val) (fun g h => hcoc g h)
         exact ⟨m, fun g hg => hm ⟨g, hg⟩⟩)
   refine hns m fun g => ?_
@@ -380,7 +378,7 @@ theorem UpperTheory.V.GradeZeroInterpolatingElement.exists_third_index_linked_pa
     rw [mul_eq_zero, not_or] at h0
     exact hk k hk'.1 hk'.2 (gtr _ _ _ ha ⟨g, h0.1⟩) (gtr _ _ _ ⟨h, h0.2⟩ hb)
   obtain ⟨u, -, tri, -⟩ := ordFlag _ _ _ _ _ (fun a b h => hinj (Subtype.ext h)) heq.2
-  obtain ⟨x, y, φ, hxy, hφ⟩ := line (fun g : D.Gp l => r g) u tri (fun k => Ge r k i) i j hne (grefl i)
+  obtain ⟨x, y, φ, hxy, hφ⟩ := TriHelpers.line (fun g : D.Gp l => r g) u tri (fun k => Ge r k i) i j hne (grefl i)
     (fun g a b hb ha => by_contra fun h => ha (gtr _ _ _ ⟨g, h⟩ hb))
     (fun g k h a b => ⟨by_contra fun h' => hk k a b ⟨g, h'⟩ h, by_contra fun h' => hk k a b (gtr _ _ _ gij ⟨g, h'⟩) h⟩)
   rcases le_total ‖x‖ ‖y‖ with h | h
@@ -415,7 +413,7 @@ section -- clump:auto
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
-private theorem UpperTheory.V.GradeZeroInterpolatingElement.tri_comb (P : Fin 4 → Fin 4 → Prop) (h1 : ∀ i, P i i)
+theorem UpperTheory.V.GradeZeroInterpolatingElement.TriHelpers.tri_comb (P : Fin 4 → Fin 4 → Prop) (h1 : ∀ i, P i i)
     (h2 : ∀ i j k, P i j → P j k → P i k) (h3 : ∀ i j, P i j → P j.rev i.rev)
     (h4 : ∀ i j, lamW i ≠ lamW j → P i j → P j i → ∃ k, k ≠ i ∧ k ≠ j ∧ P i k ∧ P k i) :
     (∀ i j, P i j) ∨ (∀ i j, i ≠ j → P i j → ¬ P j i) ∨
@@ -442,7 +440,7 @@ theorem UpperTheory.V.GradeZeroInterpolatingElement.tri :
   obtain ⟨hm, -, -, -, -, he, -⟩ := ptIn D hD (PadicAlgCl l) r hr
   obtain ⟨-, h1, h2, h3, h5, -⟩ := geAlg (PadicAlgCl l) r _ hm he
   rw [h5]
-  exact tri_comb (Ge r) h1 h2 h3 (exists_third_index_linked_pair D hD hP r hr)
+  exact TriHelpers.tri_comb (Ge r) h1 h2 h3 (exists_third_index_linked_pair D hD hP r hr)
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.TriComb =====

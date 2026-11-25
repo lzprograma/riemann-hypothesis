@@ -5,8 +5,6 @@ import Mathlib.Algebra.Order.Star.Real
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.PullbackSections.CVA
@@ -90,10 +88,6 @@ theorem cmHostUnit_add_conj_eq_one : H.w0 + H.bar H.w0 = 1 := by
 
 end Host
 
-section RQ
-
-end RQ
-
 section Letters
 
 open MvPolynomial
@@ -139,7 +133,7 @@ theorem harm_rename [Fintype T] {k : Type} [Field k] (cc : T → T) (isX : T →
   simp only [harmK, Submodule.mem_iInf, LinearMap.mem_ker] at h
   have h2 := h τ hτ i i'
   simp only [lap, Matrix.one_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true] at h2
+    Finset.mem_univ, ite_true] at h2
   have h3 : ∑ x : Fin n, pderiv (⟨τ, i, x⟩ : Letter T r n) (pderiv (⟨cc τ, i', x⟩ : Letter T r n) P) = 0 := by
     simpa [LinearMap.sum_apply] using h2
   have e : ∀ b : Fin n, pderiv (((⟨τ, i⟩ : Σ σ : T, Fin (r σ))), b)

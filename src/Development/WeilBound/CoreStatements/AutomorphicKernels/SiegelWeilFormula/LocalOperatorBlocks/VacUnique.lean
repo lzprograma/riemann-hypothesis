@@ -4,56 +4,9 @@ public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.Holom
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalOperatorBlocks.ContinuousWeightFactorUnitary
 public import Mathlib.MeasureTheory.Integral.Pi
 public import Mathlib.RingTheory.Complex
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.IsSingTest
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Analysis.Matrix.Spectrum
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Separation.CompletelyRegular
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.HermTranspose
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalOperatorBlocks.GaussSec, Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalOperatorBlocks.VacUnique
@@ -103,39 +56,6 @@ private theorem star_mulVec_dotProduct_mulVec_conj (U M : Matrix (Fin n) (Fin n)
   simp [Matrix.star_mulVec, Matrix.dotProduct_mulVec, Matrix.vecMul_vecMul, Matrix.mulVec_mulVec,
     Matrix.star_eq_conjTranspose, Matrix.mul_assoc]
 
-private theorem integral_comp_unitary_mulVec (U : Matrix (Fin n) (Fin n) ℂ) (hU : U ∈ Matrix.unitaryGroup (Fin n) ℂ)
-    (f : (Fin n → ℂ) → ℂ) : ∫ y, f (U *ᵥ y) = ∫ v, f v := by
-  have hn : Complex.normSq U.det = 1 := by
-    have h := Matrix.det_of_mem_unitary hU
-    have h2 : star U.det * U.det = 1 := Unitary.star_mul_self_of_mem h
-    have h3 : ((Complex.normSq U.det : ℝ) : ℂ) = 1 := by
-      rw [Complex.normSq_eq_conj_mul_self]
-      exact h2
-    exact_mod_cast h3
-  have hsU : star U * U = 1 := Matrix.mem_unitaryGroup_iff'.mp hU
-  have hUs : U * star U = 1 := Matrix.mem_unitaryGroup_iff.mp hU
-  let e : (Fin n → ℂ) ≃ᵐ (Fin n → ℂ) :=
-    { toFun := fun y => U *ᵥ y
-      invFun := fun v => star U *ᵥ v
-      left_inv := fun y => by simp [Matrix.mulVec_mulVec, hsU]
-      right_inv := fun v => by simp [Matrix.mulVec_mulVec, hUs]
-      measurable_toFun := (Continuous.matrix_mulVec continuous_const continuous_id).measurable
-      measurable_invFun := (Continuous.matrix_mulVec continuous_const continuous_id).measurable }
-  let L : (Fin n → ℂ) →ₗ[ℝ] (Fin n → ℂ) := (Matrix.toLin' U).restrictScalars ℝ
-  have hdet : LinearMap.det L = 1 := by
-    simp only [L]
-    rw [LinearMap.det_restrictScalars, LinearMap.det_toLin', Algebra.norm_complex_apply, hn]
-  have hmap : MeasureTheory.Measure.map (⇑e) MeasureTheory.volume = MeasureTheory.volume := by
-    have he : (⇑e) = ⇑L := by
-      funext y
-      rfl
-    rw [he, MeasureTheory.Measure.map_linearMap_addHaar_eq_smul_addHaar _
-      (by rw [hdet]; exact one_ne_zero), hdet]
-    simp
-  have h := MeasureTheory.integral_map_equiv (μ := MeasureTheory.volume) e f
-  rw [hmap] at h
-  exact h.symm
-
 private theorem star_dotProduct_diagonal_mulVec_eq_sum (d y : Fin n → ℂ) :
     star y ⬝ᵥ (Matrix.diagonal d *ᵥ y) = ∑ k, d k * ((‖y k‖ ^ 2 : ℝ) : ℂ) := by
   simp only [Matrix.mulVec_diagonal, dotProduct, Pi.star_apply]
@@ -161,7 +81,7 @@ private theorem integral_cexp_diagonal_eq_prod_pi_div (d : Fin n → ℂ) (hd : 
 private theorem integral_cexp_quadratic_mul_det_neg_eq_pi_pow (M U : Matrix (Fin n) (Fin n) ℂ) (hU : U ∈ Matrix.unitaryGroup (Fin n) ℂ)
     (d : Fin n → ℂ) (hd : ∀ k, 0 < (-d k).re) (hM : star U * M * U = Matrix.diagonal d) :
     (∫ v : Fin n → ℂ, Complex.exp (star v ⬝ᵥ (M *ᵥ v))) * (-M).det = (Real.pi : ℂ) ^ n := by
-  rw [← integral_comp_unitary_mulVec U hU]
+  rw [← _root_.PositivityTheory.Rg.Sw.WR.G.GB.integral_unitary U hU]
   simp only [star_mulVec_dotProduct_mulVec_conj, hM, star_dotProduct_diagonal_mulVec_eq_sum]
   rw [integral_cexp_diagonal_eq_prod_pi_div d hd]
   have hsU : star U * U = 1 := Matrix.mem_unitaryGroup_iff'.mp hU
@@ -169,13 +89,7 @@ private theorem integral_cexp_quadratic_mul_det_neg_eq_pi_pow (M U : Matrix (Fin
     have h1 : (star U * (-M) * U).det = (-M).det := by
       rw [Matrix.det_mul, Matrix.det_mul, mul_comm (star U).det, mul_assoc, ← Matrix.det_mul, hsU,
         Matrix.det_one, mul_one]
-    have h2 : -Matrix.diagonal d = Matrix.diagonal (fun k => -d k) := by
-      ext i j
-      by_cases hij : i = j
-      · subst hij
-        simp
-      · simp [Matrix.diagonal_apply_ne _ hij]
-    rw [← h1, Matrix.mul_neg, Matrix.neg_mul, hM, h2, Matrix.det_diagonal]
+    rw [← h1, Matrix.mul_neg, Matrix.neg_mul, hM, Matrix.diagonal_neg, Matrix.det_diagonal]
   rw [hdet, ← Finset.prod_mul_distrib]
   rw [Finset.prod_congr rfl fun k _ => div_mul_cancel₀ (Real.pi : ℂ) (fun h => by
     have := hd k
@@ -201,7 +115,7 @@ private theorem evX_one_mul_gs_mul_cexp_eq_prod (b : Matrix (Fin n) (Fin n) ℂ)
   push_cast
   simp only [hn, Finset.mul_sum, Matrix.add_apply, Matrix.smul_apply, Matrix.one_apply,
     Matrix.transpose_apply, smul_eq_mul, mul_add, add_mul, Finset.sum_add_distrib, ite_mul, mul_ite, zero_mul,
-    mul_zero, mul_one, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    mul_zero, mul_one, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   congr 1
   · rw [← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun a _ => ?_
@@ -229,7 +143,7 @@ private theorem F0_jG_mul_nG_eq (sg : ℤˣ) (e : ℤ) (b : Matrix (Fin n) (Fin 
   rw [hD, hmR]
   simp only [Matrix.toBlocks_fromBlocks₂₁, Matrix.toBlocks_fromBlocks₂₂]
   rcases Int.units_eq_one_or sg with rfl | rfl
-  · simp only [pOf, qOf, if_true]
+  · simp only [pOf, qOf, ite_true]
     have hM : Complex.I • (-1 : Matrix (Fin n) (Fin n) ℂ) + -b =
         (-(Complex.I * (((1 : ℤˣ) : ℤ) : ℂ))) • (1 - (Complex.I * (((1 : ℤˣ) : ℤ) : ℂ)) • b) := by
       ext i j
@@ -239,7 +153,7 @@ private theorem F0_jG_mul_nG_eq (sg : ℤˣ) (e : ℤ) (b : Matrix (Fin n) (Fin 
     simp
   · simp only [pOf, qOf]
     have hne : (-1 : ℤˣ) ≠ 1 := by decide
-    simp only [hne, if_false]
+    simp only [hne, ite_false]
     have hM : -(Complex.I • (-1 : Matrix (Fin n) (Fin n) ℂ)) + -b =
         (-(Complex.I * (((-1 : ℤˣ) : ℤ) : ℂ))) • (1 - (Complex.I * (((-1 : ℤˣ) : ℤ) : ℂ)) • b) := by
       ext i j

@@ -16,8 +16,7 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
   {σ : E →ₐ[F] E}
 
 theorem exists_ne (h : IsCMExt F E σ) : ∃ x : E, σ x ≠ x := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   obtain ⟨w⟩ := (inferInstance : Nonempty (NumberField.InfinitePlace E))
   have hreal : w.IsReal := by
     rw [← NumberField.InfinitePlace.mk_embedding w, NumberField.InfinitePlace.isReal_mk_iff,
@@ -30,8 +29,7 @@ theorem exists_ne (h : IsCMExt F E σ) : ∃ x : E, σ x ≠ x := by
 
 theorem exists_eq_algebraMap (h : IsCMExt F E σ) {x : E} (hx : σ x = x) :
     ∃ β : F, x = algebraMap F E β := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   have hli : LinearIndependent F ![(1 : E), x] := by
     rw [LinearIndependent.pair_iff]
     intro s t hst

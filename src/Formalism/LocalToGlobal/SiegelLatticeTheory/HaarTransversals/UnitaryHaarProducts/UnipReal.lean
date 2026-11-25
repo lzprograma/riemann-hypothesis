@@ -46,7 +46,7 @@ theorem Bv'_mulVec_supp (S : Set (Fin D.R.rS)) {y : Fin X.B.I.n → ℂ}
     obtain ⟨b, hb, rfl⟩ := hx
     intro k hk
     show (Bv' X v *ᵥ rv X.B.I v (bv X (Sum.inl b))) k = 0
-    rw [Bv'_rv, Pi.single_apply, if_neg]
+    rw [Bv'_rv, Pi.single_apply, ite_eq_right]
     rintro rfl
     exact hk ⟨b, hb, rfl⟩
   | zero => intro k _; simp

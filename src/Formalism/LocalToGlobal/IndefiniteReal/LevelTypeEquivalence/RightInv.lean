@@ -34,16 +34,6 @@ theorem rightInv_holds : RightInv := by
       _ = ∫ y in MulOpposite.op k • 𝓕, ψ y ∂ν := by rw [himg]
       _ = ∫ h in 𝓕, ψ h ∂ν := h2.setIntegral_eq h𝓕 hψ'
 
-section GA
-
-open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-variable {D : D7}
-
-end GA
-
 end Formalism.IndefR.Eqv
 
 end

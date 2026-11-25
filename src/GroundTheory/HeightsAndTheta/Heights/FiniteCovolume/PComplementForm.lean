@@ -1,7 +1,6 @@
 module
 
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsComplementForm
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 

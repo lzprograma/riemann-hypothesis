@@ -6,51 +6,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliCoord
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameEntries
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -62,8 +17,6 @@ noncomputable section
 namespace Formalism.FourierDecayAlt.P
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Qr
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 namespace CapelliTwoByTwo
 
@@ -128,11 +81,11 @@ theorem Hpk_zero (r : ℕ) (a : Fin (2 * r + 0 + 1)) :
   by_cases ha : a = ⟨r, by omega⟩
   · subst ha
     simp [Hpk]
-  · rw [if_neg ha]
+  · rw [ite_eq_right ha]
     have hv : a.val ≠ r := fun h => ha (Fin.ext h)
     simp only [Hpk]
-    rw [if_neg (by omega), if_neg (by omega),
-      if_neg (fun h => ha h.2.2)]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega),
+      ite_eq_right (fun h => ha h.2.2)]
 
 theorem herm_zero {r : ℕ} {v : Fin (2 * r + 0 + 1) → ℂ} (hv : inWb 0 r v) (w : Fin (2 * r + 0 + 1) → ℂ) :
     herm (Hpk 0 r) v w = -(star (w ⟨r, by omega⟩) * v ⟨r, by omega⟩) := by
@@ -238,9 +191,9 @@ theorem qrow_sum (y x : Fin (2 * r + k + 1) → ℂ) (Bs : Fin (k - 1) → Fin (
           ext
           simp only [posL, Fin.val_last]
           omega
-        rw [hp, if_pos rfl, mul_one]
+        rw [hp, ite_eq_left rfl, mul_one]
       · intro b _ hb
-        rw [if_neg, mul_zero]
+        rw [ite_eq_right, mul_zero]
         intro h
         apply hb
         ext
@@ -253,7 +206,7 @@ theorem qrow_sum (y x : Fin (2 * r + k + 1) → ℂ) (Bs : Fin (k - 1) → Fin (
       symm
       apply Finset.sum_eq_zero
       intro d _
-      rw [if_neg, mul_zero]
+      rw [ite_eq_right, mul_zero]
       intro h
       apply hi
       have hd := d.isLt
@@ -278,10 +231,10 @@ theorem bc_herm {y x : Fin (2 * r + k + 1) → ℂ} {Bs : Fin (k - 1) → Fin (2
       if j.val = 0 then herm (Hpk k r) y w else if j.val = 1 then herm (Hpk k r) x w else 0 := by
   have hBw : ∀ a, herm (Hpk k r) (Bs a) w = 0 := fun a => hB.2.2 a w hw
   by_cases h0 : j.val = 0
-  · rw [bc, dite_eq_left h0, if_pos h0]
+  · rw [bc, dite_eq_left h0, ite_eq_left h0]
   · by_cases h1 : j.val = 1
-    · rw [bc, dite_eq_right h0, dite_eq_left h1, if_neg h0, if_pos h1]
-    · rw [bc, dite_eq_right h0, dite_eq_right h1, if_neg h0, if_neg h1, hBw]
+    · rw [bc, dite_eq_right h0, dite_eq_left h1, ite_eq_right h0, ite_eq_left h1]
+    · rw [bc, dite_eq_right h0, dite_eq_right h1, ite_eq_right h0, ite_eq_right h1, hBw]
 
 theorem gram {y x : Fin (2 * r + k + 1) → ℂ} {Bs : Fin (k - 1) → Fin (2 * r + k + 1) → ℂ}
     (hd : gd k r y x ≠ 0) (hB : IsFrameOf k r [y, x] Bs) (j j' : Fin (mdim k r (Fin.last r))) :
@@ -296,35 +249,35 @@ theorem gram {y x : Fin (2 * r + k + 1) → ℂ} {Bs : Fin (k - 1) → Fin (2 * 
   by_cases h0 : j.val = 0
   · rw [qrow, dite_eq_left h0]
     by_cases h0' : j'.val = 0
-    · rw [bc, dite_eq_left h0', if_pos (Fin.ext (h0.trans h0'.symm)), div_eq_one_iff_eq hd, gd]
+    · rw [bc, dite_eq_left h0', ite_eq_left (Fin.ext (h0.trans h0'.symm)), div_eq_one_iff_eq hd, gd]
       ring
     · by_cases h1' : j'.val = 1
-      · rw [bc, dite_eq_right h0', dite_eq_left h1', if_neg (hne (by omega)), div_eq_zero_iff]
+      · rw [bc, dite_eq_right h0', dite_eq_left h1', ite_eq_right (hne (by omega)), div_eq_zero_iff]
         left
         ring
-      · rw [bc, dite_eq_right h0', dite_eq_right h1', if_neg (hne (by omega)), hBy, hBx]
+      · rw [bc, dite_eq_right h0', dite_eq_right h1', ite_eq_right (hne (by omega)), hBy, hBx]
         simp
   · by_cases h1 : j.val = 1
     · rw [qrow, dite_eq_right h0, dite_eq_left h1]
       by_cases h0' : j'.val = 0
-      · rw [bc, dite_eq_left h0', if_neg (hne (by omega)), div_eq_zero_iff]
+      · rw [bc, dite_eq_left h0', ite_eq_right (hne (by omega)), div_eq_zero_iff]
         left
         ring
       · by_cases h1' : j'.val = 1
-        · rw [bc, dite_eq_right h0', dite_eq_left h1', if_pos (Fin.ext (h1.trans h1'.symm)), div_eq_one_iff_eq hd, gd]
+        · rw [bc, dite_eq_right h0', dite_eq_left h1', ite_eq_left (Fin.ext (h1.trans h1'.symm)), div_eq_one_iff_eq hd, gd]
           ring
-        · rw [bc, dite_eq_right h0', dite_eq_right h1', if_neg (hne (by omega)), hBy, hBx]
+        · rw [bc, dite_eq_right h0', dite_eq_right h1', ite_eq_right (hne (by omega)), hBy, hBx]
           simp
     · rw [qrow, dite_eq_right h0, dite_eq_right h1]
       by_cases h0' : j'.val = 0
-      · rw [bc, dite_eq_left h0', if_neg (hne (by omega)), hyB]
+      · rw [bc, dite_eq_left h0', ite_eq_right (hne (by omega)), hyB]
       · by_cases h1' : j'.val = 1
-        · rw [bc, dite_eq_right h0', dite_eq_left h1', if_neg (hne (by omega)), hxB]
+        · rw [bc, dite_eq_right h0', dite_eq_left h1', ite_eq_right (hne (by omega)), hxB]
         · rw [bc, dite_eq_right h0', dite_eq_right h1', hB.2.1]
           by_cases hjj : j = j'
           · subst hjj
             simp
-          · rw [if_neg hjj, if_neg]
+          · rw [ite_eq_right hjj, ite_eq_right]
             intro h
             apply hjj
             ext
@@ -394,8 +347,8 @@ theorem capelli_two_by_two : Formalism.FourierDecayAlt.Q.CapelliIdentityEntry :=
     (fun j => herm (Hpk k r) (bvec (posL k r (Fin.last r) j)) y)
     (fun j => herm (Hpk k r) (bvec (posL k r (Fin.last r) j)) z') (by
       intro j hj
-      rw [hβP y (by simp), hβP z' (by simp), if_neg (by omega), if_neg (by omega), if_neg (by omega),
-        if_neg (by omega)]
+      rw [hβP y (by simp), hβP z' (by simp), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega),
+        ite_eq_right (by omega)]
       exact ⟨rfl, rfl⟩)
   have hm := frame_minor E k r (k - 1) D hD Bs hB.1 P Q ι
     (fun a b e => Fin.ext (by have e' : a.val + 2 = b.val + 2 := congrArg Fin.val e; omega))

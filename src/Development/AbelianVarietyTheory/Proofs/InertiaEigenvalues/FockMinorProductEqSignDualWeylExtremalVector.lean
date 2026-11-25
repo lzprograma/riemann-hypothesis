@@ -2,50 +2,11 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TranslateMemCoefLatFn
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GenMDetNeZeroOfNontrivial
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum IsDedekindDomain NumberField Matrix GlobalTheory.ExportSeries
 open Formalism.IndefR.Links (PolF)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.ExportSeries.DeltaExtremal
 
@@ -73,13 +34,13 @@ theorem det_inv_rev {n k : ℕ} (hk : k ≤ n) (y : GL (Fin n) ℂ) :
     ext a b
     simp only [Matrix.toBlocks₂₂, hr, Matrix.of_apply, Matrix.submatrix_apply]
   rw [e1, e2, one_pow, one_mul, Matrix.det_submatrix_equiv_self] at hj
-  rw [← hj, lead, dif_pos (Nat.sub_le n k), Matrix.coe_units_inv, Matrix.det_nonsing_inv, Ring.inverse_eq_inv']
+  rw [← hj, lead, dite_eq_left (Nat.sub_le n k), Matrix.coe_units_inv, Matrix.det_nonsing_inv, Ring.inverse_eq_inv']
 
 variable {D : D7} {m n : ℕ}
 
 theorem aeval_minorPlus (p : D.what₂.Tau → ℕ) (y : GLR D n) (τ : D.what₂.Tau) {k : ℕ} (hk : k ≤ p τ) (hm : k ≤ m) (hn : k ≤ n) :
     MvPolynomial.aeval (fockPt p y) (minorPlus τ k : PolF D m n) = lead (y τ).val k := by
-  rw [minorPlus, AlgHom.map_det, lead, dif_pos hn]
+  rw [minorPlus, AlgHom.map_det, lead, dite_eq_left hn]
   congr 1
   ext a b
   have ha := a.isLt
@@ -87,8 +48,8 @@ theorem aeval_minorPlus (p : D.what₂.Tau → ℕ) (y : GLR D n) (τ : D.what�
   have h1 : b.val < m ∧ a.val < n := ⟨by omega, by omega⟩
   have h2 : b.val < p τ := by omega
   have h3 : b.val < n := by omega
-  simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, varF, dif_pos h1, MvPolynomial.aeval_X, fockPt,
-    if_pos h2, dif_pos h3, Matrix.submatrix_apply]
+  simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, varF, dite_eq_left h1, MvPolynomial.aeval_X, fockPt,
+    ite_eq_left h2, dite_eq_left h3, Matrix.submatrix_apply]
   rfl
 
 theorem aeval_minorMinus (p : D.what₂.Tau → ℕ) (y : GLR D n) (τ : D.what₂.Tau) {k : ℕ} (hm : p τ + k ≤ m) (hn : k ≤ n) :
@@ -102,8 +63,8 @@ theorem aeval_minorMinus (p : D.what₂.Tau → ℕ) (y : GLR D n) (τ : D.what�
   have h1 : p τ + b.val < m ∧ n - k + a.val < n := ⟨by omega, by omega⟩
   have h2 : ¬ p τ + b.val < p τ := by omega
   have h3 : p τ + b.val - p τ < n := by omega
-  simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, varF, dif_pos h1, MvPolynomial.aeval_X, fockPt,
-    if_neg h2, dif_pos h3, Matrix.submatrix_apply, Matrix.transpose_apply, id]
+  simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, varF, dite_eq_left h1, MvPolynomial.aeval_X, fockPt,
+    ite_eq_right h2, dite_eq_left h3, Matrix.submatrix_apply, Matrix.transpose_apply, id]
   refine congrArg₂ _ (congrArg Fin.rev (Fin.ext ?_)) (Fin.ext ?_)
   · simp
   · simp only [Fin.revPerm_apply, Fin.val_rev, Fin.val_castLE]
@@ -112,7 +73,7 @@ theorem aeval_minorMinus (p : D.what₂.Tau → ℕ) (y : GLR D n) (τ : D.what�
 theorem sum_drops (q : ℕ) (a : ℕ → ℕ) (h : ∀ i, i + 1 < q → a (i + 1) ≤ a i) :
     ∑ i ∈ Finset.range q, (a i - if i + 1 < q then a (i + 1) else 0) = if 0 < q then a 0 else 0 := by
   have := Finset.sum_range_sub' (fun i => if i < q then (a i : ℤ) else 0) q
-  simp only [lt_irrefl, if_false, sub_zero] at this
+  simp only [lt_irrefl, ite_false, sub_zero] at this
   refine Nat.cast_injective (R := ℤ) ?_
   rw [Nat.cast_sum, Nat.cast_ite, Nat.cast_zero, ← this]
   refine Finset.sum_congr rfl fun i hi => ?_
@@ -147,9 +108,9 @@ theorem prod_exponents {n p q : ℕ} (ap am : ℕ → ℕ) (c : ℤ) (lam : DomW
       (∏ i ∈ Finset.range k, L (i + 1) ^ A i) * L (k + 1) ^ A k := by
     rw [← Finset.prod_range_succ (fun i => L (i + 1) ^ A i),
       ← Finset.prod_subset (Finset.range_subset_range.2 (show p ≤ k + 1 by omega))
-        (fun i _ hi => by rw [hA]; dsimp only; rw [if_neg (fun h => hi (Finset.mem_range.2 h)), pow_zero])]
+        (fun i _ hi => by rw [hA]; dsimp only; rw [ite_eq_right (fun h => hi (Finset.mem_range.2 h)), pow_zero])]
     refine Finset.prod_congr rfl fun i hi => ?_
-    rw [hA]; dsimp only; rw [if_pos (Finset.mem_range.1 hi)]
+    rw [hA]; dsimp only; rw [ite_eq_left (Finset.mem_range.1 hi)]
   have eB : (∏ i ∈ Finset.range q, L (k + 1 - (i + 1)) ^ (am i - if i + 1 < q then am (i + 1) else 0)) =
       ∏ i ∈ Finset.range k, L (i + 1) ^ B (k - 1 - i) := by
     have : ∏ i ∈ Finset.range (k + 1), L (k + 1 - (i + 1)) ^ B i = ∏ i ∈ Finset.range k, L (i + 1) ^ B (k - 1 - i) := by
@@ -158,9 +119,9 @@ theorem prod_exponents {n p q : ℕ} (ap am : ℕ → ℕ) (c : ℤ) (lam : DomW
       have := Finset.mem_range.1 hi
       rw [show k + 1 - (k - 1 - i + 1) = i + 1 by omega]
     rw [← this, ← Finset.prod_subset (Finset.range_subset_range.2 (show q ≤ k + 1 by omega))
-        (fun i _ hi => by rw [hB]; dsimp only; rw [if_neg (fun h => hi (Finset.mem_range.2 h)), pow_zero])]
+        (fun i _ hi => by rw [hB]; dsimp only; rw [ite_eq_right (fun h => hi (Finset.mem_range.2 h)), pow_zero])]
     refine Finset.prod_congr rfl fun i hi => ?_
-    rw [hB]; dsimp only; rw [if_pos (Finset.mem_range.1 hi)]
+    rw [hB]; dsimp only; rw [ite_eq_left (Finset.mem_range.1 hi)]
   have eR : ∏ s : Fin (k + 1), L (s + 1) ^ (lam.natW s - Formalism.GradedWeylDivisibility.nuNext lam.natW s) =
       ∏ i ∈ Finset.range k, L (i + 1) ^ (A i + B (k - 1 - i)) := by
     rw [Fin.prod_univ_castSucc, show lam.natW (Fin.last k) = 0 by
@@ -169,7 +130,7 @@ theorem prod_exponents {n p q : ℕ} (ap am : ℕ → ℕ) (c : ℤ) (lam : DomW
     refine Finset.prod_congr rfl fun s _ => ?_
     obtain ⟨s, hs⟩ := s
     have hs' : s + 1 < k + 1 := by omega
-    simp only [Fin.castSucc_mk, Formalism.GradedWeylDivisibility.nuNext, dif_pos hs', DomWeight.natW, hshift]
+    simp only [Fin.castSucc_mk, Formalism.GradedWeylDivisibility.nuNext, dite_eq_left hs', DomWeight.natW, hshift]
     congr 1
     have a1 := hanti s (s + 1) (by omega) hs' (by omega)
     have a2 := hanti (s + 1) k hs' (by omega) (by omega)
@@ -197,7 +158,7 @@ theorem eval_extremal (lam : D.what₂.Tau → DomWeight n) (y : GLR D n) (τ : 
     ∏ s : Fin n, lead (y τ).val (s + 1) ^ ((lam τ).natW s - Formalism.GradedWeylDivisibility.nuNext (lam τ).natW s) := by
   rw [extremal, Formalism.GradedWeylDivisibility.hw, map_prod, map_prod]
   refine Finset.prod_congr rfl fun s _ => ?_
-  rw [map_pow, map_pow, Formalism.GradedWeylDivisibility.lpMinor, AlgHom.map_det, RingHom.map_det, lead, dif_pos (Nat.succ_le_of_lt s.isLt)]
+  rw [map_pow, map_pow, Formalism.GradedWeylDivisibility.lpMinor, AlgHom.map_det, RingHom.map_det, lead, dite_eq_left (Nat.succ_le_of_lt s.isLt)]
   congr 2
   ext a b
   simp [Formalism.GradedWeylDivisibility.blockEmb]

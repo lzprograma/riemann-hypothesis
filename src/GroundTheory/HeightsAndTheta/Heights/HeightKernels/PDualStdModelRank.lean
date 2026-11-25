@@ -111,27 +111,8 @@ theorem indep_int {n : ℕ} (B : Module.Basis (Fin n) ℚ K) (q : Fin n → MvPo
   simpa using this
 
 theorem exists_int_smul_mem (F : HermLattice K i) (v : Fin i → K) :
-    ∃ N : ℤ, N ≠ 0 ∧ (N : K) • v ∈ dualLattice F := by
-  classical
-  obtain ⟨S, hS⟩ := F.fg
-  obtain ⟨N, hN, hint⟩ := exists_integral_multiples ℤ ℚ (S.image fun g => v ⬝ᵥ g)
-  refine ⟨N, hN, fun x hx => ?_⟩
-  rw [← hS] at hx
-  induction hx using Submodule.span_induction with
-  | mem g hg =>
-    have hg' := hint _ (Finset.mem_image_of_mem _ hg)
-    rw [smul_dotProduct, Int.cast_smul_eq_zsmul]
-    exact RingHom.mem_range.mpr ((IsIntegralClosure.isIntegral_iff (A := 𝓞 K)).mp hg')
-  | zero => exact ⟨0, by simp⟩
-  | add x y _ _ hx hy =>
-    obtain ⟨a, ha⟩ := hx
-    obtain ⟨c, hc⟩ := hy
-    exact ⟨a + c, by rw [dotProduct_add, map_add (f := _), ha, hc]⟩
-  | smul r x _ hx =>
-    obtain ⟨a, ha⟩ := hx
-    refine ⟨r * a, ?_⟩
-    rw [dotProduct_smul, map_mul, ha]
-    rfl
+    ∃ N : ℤ, N ≠ 0 ∧ (N : K) • v ∈ dualLattice F :=
+  DualArithmeticVariety.exists_int_smul_mem F v
 
 variable {T : Type}
 

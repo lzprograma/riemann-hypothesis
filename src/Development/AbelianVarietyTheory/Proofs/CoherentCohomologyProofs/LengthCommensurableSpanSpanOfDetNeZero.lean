@@ -98,7 +98,7 @@ theorem main : ∀ {R : Type u_1} [inst : CommRing R] [inst_1 : IsDomain R] [IsD
   intro R _ _ _ M _ _ _ _ f h
   obtain ⟨φ, hφ0, hφ⟩ := exists_dual_ne_zero_comp_eq_zero h
   obtain ⟨m, hm⟩ : ∃ m, φ m ≠ 0 := by
-    by_contra hc; push_neg at hc; exact hφ0 (LinearMap.ext hc)
+    by_contra hc; push Not at hc; exact hφ0 (LinearMap.ext hc)
   have hle : LinearMap.range f ≤ LinearMap.ker φ := by
     rintro _ ⟨x, rfl⟩
     simpa using congrArg (fun g => g x) hφ
@@ -316,8 +316,7 @@ theorem main {R : Type u_1} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R
       rw [hA, LinearMap.toMatrix_apply]
     let ψ := (LinearMap.range f).liftQ φ hle
     obtain ⟨i, hi⟩ : ∃ i, w i ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hw0 (funext h)
     have hmem : (R ∙ w i) ≤ LinearMap.range ψ := by
       rw [Submodule.span_le, Set.singleton_subset_iff]
@@ -589,30 +588,8 @@ section Lattice
 
 variable {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
 
-theorem ordFrac_algebraMap_eq_exp {x : R} {n : ℕ} (h : addVal R x = n) :
-    Ring.ordFrac R (algebraMap R K x) = WithZero.exp (n : ℤ) := by
-  have hx : x ≠ 0 := by
-    rintro rfl
-    simp at h
-  rw [Ring.ordFrac_eq_ord R, Ring.ordMonoidWithZeroHom_eq_coe R
-    (mem_nonZeroDivisors_of_ne_zero hx) ((Ring.ord_eq_addVal x).trans h)]
-  rfl
-
-theorem ordFrac_unit_mul_zpow {ϖ : R} (hϖ : Irreducible ϖ) (u : Rˣ) (n : ℤ) :
-    Ring.ordFrac R (algebraMap R K u * algebraMap R K ϖ ^ n) = WithZero.exp n := by
-  rw [map_mul, map_zpow₀, Ring.ordFrac_of_isUnit u.isUnit, Ring.ordFrac_irreducible hϖ, one_mul,
-    ← WithZero.exp_zsmul, smul_eq_mul, mul_one]
-
 variable {V : Type*} [AddCommGroup V] [Module K V] [Module R V] [IsScalarTower R K V]
   {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-theorem signedLength_span_eq_of_det_eq_unit_mul_zpow {a b : ι → V} (ha : LinearIndependent K a)
-    (g : Matrix ι ι K) (hb : ∀ j, b j = ∑ i, g i j • a i) {ϖ : R} (hϖ : Irreducible ϖ) (u : Rˣ)
-    (n : ℤ) (hg : g.det = algebraMap R K u * algebraMap R K ϖ ^ n) :
-    signedLength (Submodule.span R (Set.range a)) (Submodule.span R (Set.range b)) = n := by
-  first
-  | (rename_i h_1 h_2 h_3 h_5 h_6 h_7 h_9 h_10 h_11 h_12 h_14 h_15; revert R h_1 h_2 h_3 K h_5 h_6 h_7 V h_9 h_10 h_11 h_12 ι h_14 h_15 a b ha g hb ϖ hϖ u n hg; exact @_root_.GlobalTheory.SignedLengthTower.signedLength_span_eq)
-  | (intros; exact _root_.GlobalTheory.SignedLengthTower.signedLength_span_eq ..)
 
 omit [IsDiscreteValuationRing R] [IsFractionRing R K] [IsDomain R] [Fintype ι] [DecidableEq ι] in
 private theorem span_range_coe_basis {A : Submodule R V} (a : Basis ι R A) :

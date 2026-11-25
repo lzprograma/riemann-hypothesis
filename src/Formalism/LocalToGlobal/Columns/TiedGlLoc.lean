@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensIdxC
 public import Formalism.LocalToGlobal.HermitianForms.PsiZeroNontrivialCharacter
 public import Formalism.LocalToGlobal.Divisibility.DefGroup
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
@@ -65,23 +66,7 @@ theorem gloRho_eq (s : Formalism.L2.Herm.intAf F E) : gloRho v spl halg s = gloK
 
 theorem glo_res_zero (x : v.adicCompletionIntegers F) (h : Valued.v (x : v.adicCompletion F) < 1) :
     IsLocalRing.residue (v.adicCompletionIntegers F) x = 0 := by
-  rw [IsLocalRing.residue_eq_zero_iff, IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
-  rintro ⟨u, rfl⟩
-  have h1 : ((u : v.adicCompletionIntegers F) : v.adicCompletion F) * ((u⁻¹ : (v.adicCompletionIntegers F)ˣ) :
-      v.adicCompletionIntegers F) = 1 := by
-    have := congrArg (Subtype.val) u.mul_inv
-    exact this
-  have h2 := congrArg Valued.v h1
-  rw [map_mul, map_one] at h2
-  have h3 : Valued.v (((u⁻¹ : (v.adicCompletionIntegers F)ˣ) : v.adicCompletionIntegers F) : v.adicCompletion F) ≤ 1 :=
-    (HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).1 (Subtype.mem _)
-  have h4 := mul_le_mul' h.le h3
-  rw [h2, one_mul] at h4
-  have h5 : Valued.v ((u : v.adicCompletionIntegers F) : v.adicCompletion F) *
-      Valued.v (((u⁻¹ : (v.adicCompletionIntegers F)ˣ) : v.adicCompletionIntegers F) : v.adicCompletion F) ≤
-      Valued.v ((u : v.adicCompletionIntegers F) : v.adicCompletion F) := mul_le_of_le_one_right' h3
-  rw [h2] at h5
-  exact absurd h (not_lt.2 h5)
+  apply _root_.PI.VolStabS.IdxHW.res_of_val <;> assumption
 
 theorem glo_res_surj (z : kv F v) : ∃ r : 𝓞 F,
     IsLocalRing.residue (v.adicCompletionIntegers F) ⟨algebraMap (𝓞 F) (v.adicCompletion F) r, _root_.Formalism.UG.P.levelaf_int_mem_v v r⟩ = z := by

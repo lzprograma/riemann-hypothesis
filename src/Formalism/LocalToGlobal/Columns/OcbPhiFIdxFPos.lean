@@ -35,10 +35,6 @@ theorem ocbPhi_fPos_lt {k₀ c n l : ℕ} (_hk : k₀ ≤ n) (hl : l < n + c) : 
   unfold LocE.fPos
   split_ifs <;> omega
 
-theorem ocbPhi_fIdx_lt {k₀ c n p : ℕ} (_hk : k₀ ≤ n) (hp : p < n + c) : LocE.fIdx k₀ c n p < n + c := by
-  unfold LocE.fIdx
-  split_ifs <;> omega
-
 theorem ocbPhi_ranks {k₀ m t j n' c n : ℕ} (hr : ocbRanks k₀ m t j n' c n) :
     k₀ ≤ n' ∧ k₀ ≤ n ∧ k₀ + m - 1 + (j - 1) * t ≤ n + c ∧ k₀ + m - 1 + (j - 1) * t = n' + (c + 1) ∧ 1 ≤ k₀ ∧ 4 ≤ m := by
   obtain ⟨h1, -, h4, hj, hjm, hc, hn', hn⟩ := hr

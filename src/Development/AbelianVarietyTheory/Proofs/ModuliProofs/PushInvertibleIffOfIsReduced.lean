@@ -106,18 +106,4 @@ theorem sec_eq_secPull {t : SAB H S} {t' : SAB H S'} (m : SABMap t' t f) {e : �
 
 end Obj
 
-section Model
-
-variable {Xo : Moduli D l} {c : Coeff l} {O : Type} [CommRing O] {β : O →+* c.F}
-
-variable (Y : Model Xo c β)
-
-end Model
-
-section Push
-
-variable {X : Scheme.{0}} {G : Over X} {L : LB G.left}
-
-end Push
-
 end GlobalTheory.ModelCompare

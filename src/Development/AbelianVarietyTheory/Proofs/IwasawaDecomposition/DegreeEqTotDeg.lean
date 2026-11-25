@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsInjectiveCharacterOfIsCyclic
 public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.Algebra.Module.FinitePresentation
 public import Mathlib.RingTheory.Flat.EquationalCriterion
@@ -639,19 +640,7 @@ theorem mem_xor {A : Type*} [CommRing A] (P : Ideal A) (hP : P.IsPrime) (p t m :
 
 theorem exists_over (K : Type*) [Field K] [NumberField K] (p : ℕ) (hp : p.Prime) :
     ∃ 𝔭 : HeightOneSpectrum (𝓞 K), (p : 𝓞 K) ∈ 𝔭.asIdeal := by
-  have hpr : (Ideal.span {(p : ℤ)}).IsPrime :=
-    (Ideal.span_singleton_prime (by exact_mod_cast hp.ne_zero)).2 (Nat.prime_iff_prime_int.1 hp)
-  obtain ⟨Q, -, hQ, hQc⟩ := Ideal.exists_ideal_over_prime_of_isIntegral (S := 𝓞 K) (Ideal.span {(p : ℤ)}) ⊥ (by
-    rw [(show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective ℤ (𝓞 K)))]
-    exact bot_le)
-  have hmem : (p : 𝓞 K) ∈ Q := by
-    have : (p : ℤ) ∈ Ideal.under ℤ Q := by
-      rw [hQc]
-      exact Ideal.mem_span_singleton_self _
-    simpa using this
-  refine ⟨⟨Q, hQ, ?_⟩, hmem⟩
-  rintro rfl
-  exact (Nat.cast_ne_zero.2 hp.ne_zero) ((Ideal.mem_bot).1 hmem)
+  first | exact _root_.GlobalTheory.exists_heightOneSpectrum_natCast_mem | exact @_root_.GlobalTheory.exists_heightOneSpectrum_natCast_mem | apply _root_.GlobalTheory.exists_heightOneSpectrum_natCast_mem <;> assumption
 
 theorem exists_elt {R : Ranks} (H : Host R) (p : ℕ) (hp : p.Prime) (hs : Th.SplitK H p) :
     ∃ (a : H.K) (t m : ℤ), IsIntegral ℤ a ∧ a * HostK.conjK H a = (p : H.K) * m ∧ a + HostK.conjK H a = t ∧
@@ -936,9 +925,9 @@ theorem nonempty_isoKG : ∀ (K E : Type) [Field K] [CharZero K] [Field E] [Alge
       simp only [this]
       split_ifs <;> simp
     · have : w ≠ w' := fun t => hi (by rw [t])
-      rw [if_neg this, ho _ _ (fun t => hi (e.injective t)), mul_zero]
+      rw [ite_eq_right this, ho _ _ (fun t => hi (e.injective t)), mul_zero]
   have hbl : LinearIndependent K b :=
-    linearIndependent_of_orthogonal H b (fun i => by rw [hb]; simp) (fun i j hij => by rw [hb, if_neg hij])
+    linearIndependent_of_orthogonal H b (fun i => by rw [hb]; simp) (fun i j hij => by rw [hb, ite_eq_right hij])
   have : Nonempty ι := by
     rw [← Fintype.card_pos_iff, hcard]; exact Module.finrank_pos
   have hc : Fintype.card (Fin 4 × ι) = Module.finrank K (Fin 4 → E) := by
@@ -1247,8 +1236,7 @@ theorem exists_atP (p : ℕ) (hp : p.Prime) (hs : Th.SplitK H p) : ∃ γ : Th.I
       · intro h y hy
         exact hiso x y ▸ h _ ((hm y).2 hy))
   refine ⟨⟨γ.g.trans u, fun x y => ?_⟩, fun x hx => ⟨s, hsp, h1 _ ((hm x).2 ((mem_fourCopiesInvHalfDifferent_iff H x).2 hx))⟩, fun v hv => ⟨s, hsp, fun a => ?_⟩⟩
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [← hiso, ← hu, map_sum]
+  · rw [← hiso, ← hu, map_sum]
     exact Finset.sum_congr rfl fun w _ => (map_mul (algebraMap H.K H.E) (u (γ.g x) w) (HostK.conjK H (u (γ.g y) w))).symm
   · have h3 := h2 v hv
     rw [← γ.g.apply_symm_apply (u.symm v), ← γ.g.map_smul, hm, mem_fourCopiesInvHalfDifferent_iff] at h3
@@ -1290,7 +1278,7 @@ theorem exists_dgen : ∃ cD, Th.IsDgen H (embT H) cD := by
   letI : Algebra H.E M := (H.φ₀.codRestrict M hφ).toAlgebra
   have hal : ∀ x : H.E, ((algebraMap H.E M x : M) : ℂ) = H.φ₀ x := fun _ => rfl
   refine ⟨fun τ => s τ, M, inferInstance, fun τ x => hφ _, fun τ => ⟨s τ, rfl, ?_⟩⟩
-  have hl : ∀ x : H.E, TaylorLogMetric.liftM M (H.φ₀ x) = algebraMap H.E M x := fun x => dif_pos (hφ x)
+  have hl : ∀ x : H.E, TaylorLogMetric.liftM M (H.φ₀ x) = algebraMap H.E M x := fun x => dite_eq_left (hφ x)
   have h1 : Th.mmM H (embT H) M =
       Submodule.span (𝓞 M) ((fun (v : Tau R → H.E) (i : Tau R) => algebraMap H.E M (v i)) '' conjVec H) := by
     unfold Th.mmM
@@ -1732,7 +1720,7 @@ theorem laHyp_empty {D : D7} {X : Fields} (s : Seam D X) {cc : Ideal (𝓞 D.hos
     (fun x hx => by
       obtain ⟨m, hm⟩ := hq a b _ _ (hadm N N' h h') (reidx s a b x) ((hlam a b N N' x).1 hx)
       exact alV_eq s V x hm)
-    (isHerm_formV _ _ _ _) (hL.1 a b _ _ (hadm N N' h h')).1 (hL.1 a b _ _ (hadm N N' h h')).2).1
+    (GlobalTheory.ThetaMove.Moved.isHerm_formV _ _ _ _) (hL.1 a b _ _ (hadm N N' h h')).1 (hL.1 a b _ _ (hadm N N' h h')).2).1
   exact ⟨h3 (V.eNat χ a b (s.lat N) (s.lat N')) (eNat_mem V hc χ (hsd _ _ h) (hsd _ _ h')).2, h1, h2⟩
 
 end Lat

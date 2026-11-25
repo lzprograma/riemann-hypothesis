@@ -52,8 +52,6 @@ open GlobalTheory.RecDict
 
 namespace GlobalTheory.RecDict
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem det_gram_ne_zero {E : Type} [Field E] [NumberField E] [StarRing E] (S : Formalism.BasicNotions.HSpace E) :
     S.gram.det ≠ 0 := by
   intro h

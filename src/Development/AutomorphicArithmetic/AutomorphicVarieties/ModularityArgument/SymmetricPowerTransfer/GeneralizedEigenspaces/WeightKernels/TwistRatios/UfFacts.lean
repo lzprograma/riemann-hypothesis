@@ -49,8 +49,6 @@ open UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd UpperTheory.V.Z.Sym UpperTh
 open UpperTheory.V.W (Plc Lp)
 open scoped Matrix
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 private theorem UpperTheory.V.Z.Sym.Ga.det_ne {k : Type} [Field k] (g : GL (Fin 2) k) :
     (g : Matrix (Fin 2) (Fin 2) k).det ≠ 0 :=
   (Matrix.isUnits_det_units g).ne_zero

@@ -4,8 +4,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolum
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Inst.CurvPf
@@ -185,9 +183,9 @@ theorem diagonal_curvature_coefficient (a : Fin m) :
   push_cast
   refine Finset.sum_congr rfl fun k _ => ?_
   by_cases hk : (k : ℕ) < m
-  · rw [if_pos hk, if_neg (by omega), sub_self]
+  · rw [ite_eq_left hk, ite_eq_right (by omega), sub_self]
     simp
-  · rw [if_neg hk, if_pos (by omega), sub_zero, Complex.ofReal_mul, Complex.ofReal_pow,
+  · rw [ite_eq_right hk, ite_eq_left (by omega), sub_zero, Complex.ofReal_mul, Complex.ofReal_pow,
       ← Complex.conj_mul', Complex.star_def]
     ring
 

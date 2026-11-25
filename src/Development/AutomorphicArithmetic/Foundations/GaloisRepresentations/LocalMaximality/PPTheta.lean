@@ -3,51 +3,6 @@ module
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.PWdUni
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -116,7 +71,7 @@ theorem UpperTheory.Gal.productCup_of_system.pTheta_of :
   have hb0 : ∀ J, ¬ (J.Nonempty ∧ J.card = p + 1) → b J = 0 := by
     intro J hJ
     have h := hβC J
-    rw [if_neg (by rintro ⟨h1, h2⟩; exact hJ ⟨h1, by exact_mod_cast h2⟩)] at h
+    rw [ite_eq_right (by rintro ⟨h1, h2⟩; exact hJ ⟨h1, by exact_mod_cast h2⟩)] at h
     simp only [hbdef, (Submodule.mem_bot ℂ).1 h, TensorProduct.tmul_zero]
   have hb1 : deltaL ℂ _ _ b = 0 := by
     funext t
@@ -168,7 +123,7 @@ theorem UpperTheory.Gal.productCup_of_system.pTheta_of :
             obtain ⟨s, hs, hdet⟩ := (hLat d _ _ (sysP K x a) hGood).2 I J L hI (pk J) hj
             have hbJ : β J ∈ omB ℂ K (rB ℂ K (xv x) J) a := by
               have h := hβC J
-              rwa [if_pos ⟨hJ, by exact_mod_cast hJc⟩] at h
+              rwa [ite_eq_left ⟨hJ, by exact_mod_cast hJc⟩] at h
             have hcompl : Iᶜ.card = L.card := by
               rw [Finset.card_compl, Fintype.card_fin]; omega
             have hfm := lat_mem hLA x hc.pd I (pk I) hi
@@ -223,7 +178,7 @@ theorem UpperTheory.Gal.productCup_of_system.pTheta_of :
     have hedge : edge2 β (uni I J) = if I.card = 1 then β J else 0 := by simp only [edge2, hl, hr]
     rw [hedge]
     by_cases hI : I.card = 1
-    · rw [if_pos hI]
+    · rw [ite_eq_left hI]
       obtain ⟨i, rfl⟩ := Finset.card_eq_one.1 hI
       obtain ⟨τ, hτ⟩ := hc.exists_isTop
       have h5 := (hAL F K d x hc τ hτ a).2.2.2.2.1
@@ -233,7 +188,7 @@ theorem UpperTheory.Gal.productCup_of_system.pTheta_of :
       rw [hval, hL, map_zsmul, h5, hk, hbdef]
       simp only [mulP_one]
       rw [smul_comm]
-    · rw [if_neg hI, hzero I J L (Or.inr (Or.inr (by omega)))]
+    · rw [ite_eq_right hI, hzero I J L (Or.inr (Or.inr (by omega)))]
       simp
   · intro J
     rw [hval, (hTh d _ _ (sysP K x a)).2.2.1]

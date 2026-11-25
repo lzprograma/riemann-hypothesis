@@ -10,8 +10,6 @@ import Mathlib.Algebra.Order.Star.Int
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators
@@ -44,8 +42,7 @@ theorem divisible_small {σ : Type} {l : ℕ} (μ : σ →₀ ℕ) (hdiv : ∀ s
   right
   have hsum : μ.degree = ∑ t ∈ μ.support, μ t := rfl
   obtain ⟨s, hs⟩ : ∃ s, μ s ≠ 0 := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     exact h0 (Finsupp.ext hall)
   have hmem : s ∈ μ.support := Finsupp.mem_support_iff.mpr hs
   have htot := Finset.add_sum_erase μ.support (fun t => μ t) hmem
@@ -91,7 +88,7 @@ theorem divisible_small {σ : Type} {l : ℕ} (μ : σ →₀ ℕ) (hdiv : ∀ s
   by_cases ht : t = s
   · subst ht
     simp [hk]
-  · rw [Finsupp.single_apply, if_neg (Ne.symm ht), hrest t ht]
+  · rw [Finsupp.single_apply, ite_eq_right (Ne.symm ht), hrest t ht]
 
 theorem coeff_subst_scale {dd : ℕ} (f : MvPowerSeries (Fin dd) C) (U : Fin dd → C) (c : C) (n : ℕ) :
     PowerSeries.coeff n (MvPowerSeries.subst (fun j => (c * U j) • (MvPowerSeries.X () : PowerSeries C)) f) =
@@ -162,8 +159,8 @@ theorem coeff_l_mulCv_frob (Y : FBChart C V O dd) {γ : Fin dd → PowerSeries C
     rw [map_sub, map_sub, map_zero, hD1def, hD3def, map_sum]
     simp only [MvPowerSeries.coeff_monomial]
     by_cases hex : ∃ i, ¬ V.l ∣ μ ((0 : Fin 1), i)
-    · rw [if_pos hex, sub_self, zero_sub, neg_eq_zero]
-      refine Finset.sum_eq_zero fun i _ => if_neg ?_
+    · rw [ite_eq_left hex, sub_self, zero_sub, neg_eq_zero]
+      refine Finset.sum_eq_zero fun i _ => ite_eq_right ?_
       rintro rfl
       obtain ⟨i', hi'⟩ := hex
       apply hi'
@@ -171,21 +168,21 @@ theorem coeff_l_mulCv_frob (Y : FBChart C V O dd) {γ : Fin dd → PowerSeries C
       split_ifs
       · exact dvd_refl _
       · exact dvd_zero _
-    · rw [if_neg hex, sub_zero]
+    · rw [ite_eq_right hex, sub_zero]
       push Not at hex
       have hdiv : ∀ s, V.l ∣ μ s := fun s => by rw [hsq s]; exact hex s.2
       rcases FirstVanishing.divisible_small μ hdiv hμ with h0 | ⟨s, hs⟩
       · subst h0
         rw [MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hPz, zero_sub, neg_eq_zero]
-        refine Finset.sum_eq_zero fun i _ => if_neg ?_
+        refine Finset.sum_eq_zero fun i _ => ite_eq_right ?_
         intro h
         have := congrArg (fun f : Fin 1 × Fin dd →₀ ℕ => f ((0 : Fin 1), i)) h
         simp only [Finsupp.coe_zero, Pi.zero_apply, Finsupp.single_eq_same] at this
         omega
       · subst hs
-        rw [Finset.sum_eq_single s.2, if_pos (by rw [← hsq s]), ← hsq s, sub_self]
+        rw [Finset.sum_eq_single s.2, ite_eq_left (by rw [← hsq s]), ← hsq s, sub_self]
         · intro i _ hi
-          rw [if_neg]
+          rw [ite_eq_right]
           intro h
           apply hi
           have := (Finsupp.single_left_inj (by omega : V.l ≠ 0)).1 h
@@ -217,7 +214,7 @@ theorem coeff_l_mulCv_frob (Y : FBChart C V O dd) {γ : Fin dd → PowerSeries C
   have hfr : ∀ i, V.MM (PowerSeries.coeff V.l (γ i ^ V.l) - (PowerSeries.coeff 1 (γ i)) ^ V.l) := by
     intro i
     have h := mms_pow_frobTw (hγI i) (Finsupp.single () V.l)
-    rw [map_sub, coeff_frobTw, if_pos (fun s => by simp)] at h
+    rw [map_sub, coeff_frobTw, ite_eq_left (fun s => by simp)] at h
     have e : (Finsupp.single () V.l).mapRange (fun n => n / V.l) (Nat.zero_div V.l) = Finsupp.single () 1 := by
       rw [Finsupp.mapRange_single, Nat.div_self (by omega)]
     rw [e] at h

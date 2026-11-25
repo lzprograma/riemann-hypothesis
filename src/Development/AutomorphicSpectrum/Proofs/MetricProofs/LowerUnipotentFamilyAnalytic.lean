@@ -1,48 +1,6 @@
 module
 
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BasePartFlagPt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.PullbackPullback
 
@@ -70,16 +28,8 @@ theorem mul_elem_apply (A : Matrix (Fin N) (Fin N) ℂ) (ca cb r s : Fin N) (t :
 
 theorem elem_mul_elem {ca cb : Fin N} (hne : ca ≠ cb) (t u : ℂ) :
     (1 + Matrix.single cb ca t : Matrix (Fin N) (Fin N) ℂ) * (1 + Matrix.single cb ca u) =
-      1 + Matrix.single cb ca (t + u) := by
-  ext r s
-  rw [mul_elem_apply]
-  by_cases h : s = ca
-  · subst h
-    by_cases hr : cb = r
-    · subst hr
-      simp [Matrix.add_apply, hne, Ne.symm hne]
-    · simp [Matrix.add_apply, Matrix.one_apply, hne, hr, Ne.symm hr]
-  · simp [Matrix.add_apply, h, Ne.symm h]
+      1 + Matrix.single cb ca (t + u) :=
+  Matrix.transvection_mul_transvection_same (i := cb) (j := ca) hne.symm t u
 
 theorem mul_elem_cancel {ca cb : Fin N} (hne : ca ≠ cb) (A : Matrix (Fin N) (Fin N) ℂ) (t : ℂ) :
     A * (1 + Matrix.single cb ca t) * (1 + Matrix.single cb ca (-t)) = A := by
@@ -90,7 +40,7 @@ theorem isBlockDiag_elem {ca cb : Fin N} (hs : (cb : ℕ) < N - j ↔ (ca : ℕ)
   intro r s hrs
   have h1 : (1 : Matrix (Fin N) (Fin N) ℂ) r s = 0 := Matrix.one_apply_ne fun e => hrs (by rw [e])
   have h2 : (Matrix.single cb ca t : Matrix (Fin N) (Fin N) ℂ) r s = 0 := by
-    rw [Matrix.single_apply, if_neg]
+    rw [Matrix.single_apply, ite_eq_right]
     rintro ⟨rfl, rfl⟩
     exact hrs hs
   rw [Matrix.add_apply, h1, h2, add_zero]
@@ -114,25 +64,25 @@ theorem isBlockDiag_Lc (τ : Ψ) (ca cb : Fin N) (c : FC.CIdx Ψ N j τ ca cb �
   intro r s hrs
   have hne : r ≠ s := fun e => hrs (by rw [e])
   unfold FC.Lc
-  rw [dif_neg (fun h => hrs h.1.2), if_neg hne]
+  rw [dite_eq_right (fun h => hrs h.1.2), ite_eq_right hne]
 
 theorem isLowerUni_Lc (τ : Ψ) (ca cb : Fin N) (c : FC.CIdx Ψ N j τ ca cb → ℂ) (τ' : Ψ) :
     IsLowerUni (FC.Lc τ ca cb c τ') := by
   refine ⟨fun r => ?_, fun r s hrs => ?_⟩
   · unfold FC.Lc
-    rw [dif_neg (fun h => lt_irrefl _ h.1.1), if_pos rfl]
+    rw [dite_eq_right (fun h => lt_irrefl _ h.1.1), ite_eq_left rfl]
   · unfold FC.Lc
-    rw [dif_neg (fun h => lt_asymm hrs h.1.1), if_neg hrs.ne]
+    rw [dite_eq_right (fun h => lt_asymm hrs h.1.1), ite_eq_right hrs.ne]
 
 theorem Lc_apply_idx (τ : Ψ) (ca cb : Fin N) (c : FC.CIdx Ψ N j τ ca cb → ℂ) (q : FC.CIdx Ψ N j τ ca cb) :
     FC.Lc τ ca cb c q.1.1.1 q.1.1.2.1 q.1.1.2.2 = c q := by
   unfold FC.Lc
-  rw [dif_pos (⟨q.1.2, q.2⟩ : _ ∧ _)]
+  rw [dite_eq_left (⟨q.1.2, q.2⟩ : _ ∧ _)]
 
 theorem Lc_self_apply (τ : Ψ) {ca cb : Fin N} (hne : ca ≠ cb) (c : FC.CIdx Ψ N j τ ca cb → ℂ) :
     FC.Lc τ ca cb c τ cb ca = 0 := by
   unfold FC.Lc
-  rw [dif_neg (fun h => h.2 rfl), if_neg (Ne.symm hne)]
+  rw [dite_eq_right (fun h => h.2 rfl), ite_eq_right (Ne.symm hne)]
 
 theorem Lc_of_entries (τ : Ψ) {ca cb : Fin N} (hne : ca ≠ cb) (L : Ψ → Matrix (Fin N) (Fin N) ℂ)
     (hL : ∀ τ', IsBlockDiag j (L τ') ∧ IsLowerUni (L τ')) (h0 : L τ cb ca = 0) :
@@ -156,10 +106,10 @@ theorem Lc_analytic (τ : Ψ) (ca cb : Fin N) (τ' : Ψ) (r s : Fin N) :
     AnalyticOnNhd ℂ (fun c : FC.CIdx Ψ N j τ ca cb → ℂ => FC.Lc τ ca cb c τ' r s) Set.univ := by
   unfold FC.Lc
   by_cases h : (s < r ∧ ((r : ℕ) < N - j ↔ (s : ℕ) < N - j)) ∧ (τ', r, s) ≠ (τ, cb, ca)
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     exact (ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : FC.CIdx Ψ N j τ ca cb => ℂ)
       ⟨⟨(τ', r, s), h.1⟩, h.2⟩).analyticOnNhd _
-  · simp only [dif_neg h]
+  · simp only [dite_eq_right h]
     exact analyticOnNhd_const
 
 theorem exists_Lca (τ : Ψ) {ca cb : Fin N} (hlt : ca < cb) (hs : (cb : ℕ) < N - j ↔ (ca : ℕ) < N - j)
@@ -179,7 +129,7 @@ theorem exists_Lca (τ : Ψ) {ca cb : Fin N} (hlt : ca < cb) (hs : (cb : ℕ) < 
       rw [this]
       exact hL τ'
   have h0 : L' τ cb ca = 0 := by
-    rw [hτ, mul_elem_apply, if_pos rfl, (hL τ).2.1 cb, one_mul]
+    rw [hτ, mul_elem_apply, ite_eq_left rfl, (hL τ).2.1 cb, one_mul]
     exact add_neg_cancel _
   refine ⟨fun q => L' q.1.1.1 q.1.1.2.1 q.1.1.2.2, a, ?_⟩
   have hback : L τ * (1 + Matrix.single cb ca (-a)) * (1 + Matrix.single cb ca a) = L τ := by
@@ -214,7 +164,7 @@ theorem Lca_injective (τ : Ψ) {ca cb : Fin N} (hlt : ca < cb) (c c' : FC.CIdx 
     rwa [Function.update_self, Function.update_self] at this
   have entry : ∀ (d : FC.CIdx Ψ N j τ ca cb → ℂ) (t : ℂ),
       (FC.Lc τ ca cb d τ * (1 + Matrix.single cb ca t)) cb ca = t := fun d t => by
-    rw [mul_elem_apply, if_pos rfl, Lc_self_apply τ hne, (isLowerUni_Lc τ ca cb d τ).1 cb, zero_add, one_mul]
+    rw [mul_elem_apply, ite_eq_left rfl, Lc_self_apply τ hne, (isLowerUni_Lc τ ca cb d τ).1 cb, zero_add, one_mul]
   have ha : a = a' := by
     rw [← entry c a, hτ, entry]
   subst ha

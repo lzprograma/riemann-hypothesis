@@ -145,8 +145,7 @@ theorem lbIso_of_coord (A B : LB X) (a : σ → A.Sec) (b : σ → B.Sec)
     ((Sp R).presheaf.germ ⊤ p trivial).hom.comp (Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom
   constructor
   · have : ∃ i, IsUnit (ψ (v i)) := by
-      by_contra hn
-      push_neg at hn
+      by_contra! hn
       have : Ideal.span (Set.range v) ≤ (IsLocalRing.maximalIdeal _).comap ψ := by
         rw [Ideal.span_le]
         rintro _ ⟨i, rfl⟩
@@ -236,14 +235,14 @@ theorem exists_map_of_coord : ∀ (R σ : Type) [CommRing R] (I : Ideal (MvPolyn
   · refine lbIso_of_coord N (M.pull f) ty (fun i => RepBC.secPull M f (th i)) fun p =>
       ⟨A p, iA p, u p, v p, hu p, hp p, (uni _ _ _ (hv p)).1, hv p, (RepBC.secCoord_pull M th f _ _).2 ?_⟩
     rw [hf]; exact hgv p
-  · refine _root_.GlobalTheory.ZM.secCoord_of_locally Z M σ th T _ w hM (uni T y w h).1 fun q => ?_
+  · refine _root_.GlobalTheory.ZM.secCoord_of_locally Z M σ th T _ w (uni T y w h).1 fun q => ?_
     have := hu (y q)
     obtain ⟨T', _, φ, a, h₁, h₂, e⟩ := exists_factor y (u (y q)) q (hp _)
     refine ⟨T', inferInstance, φ, h₁, h₂, ?_⟩
     rw [← Category.assoc, e, Category.assoc, hf, ← (key _ T' a).2, ← e]
     exact (GlobalTheory.ZM.Coord.secCoord_bc_scale_unique Y N σ ty _ _ _ hN h).1 T' φ
   · obtain ⟨β, hβ⟩ := exists_spMap ((y ≫ f) ≫ s)
-    refine _root_.GlobalTheory.ZM.secCoord_of_locally Y N σ ty T _ w hN (hloc T β _ w hβ h).1 fun q => ?_
+    refine _root_.GlobalTheory.ZM.secCoord_of_locally Y N σ ty T _ w (hloc T β _ w hβ h).1 fun q => ?_
     have := hu (y q)
     obtain ⟨T', _, φ, a, h₁, h₂, e⟩ := exists_factor y (u (y q)) q (hp _)
     refine ⟨T', inferInstance, φ, h₁, h₂, ?_⟩

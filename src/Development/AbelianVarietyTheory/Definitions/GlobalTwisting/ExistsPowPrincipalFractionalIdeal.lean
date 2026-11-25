@@ -8,46 +8,6 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTwo
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeanSquareEvenThetaConjugateLattice
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OrthonormalRealBasisComplexCoordinates
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VacuumTranslateConjugateJetBound
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaComplexConjugationCompatible
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConjugateCurveDatumLatticeIsCurveLattice
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntegerMapEqHalfOneAddSqrt
@@ -55,9 +15,6 @@ import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatti
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralJAndAlgebraicData
 import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.NumberTheory.NumberField.ClassNumber
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.HaveILetI
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -317,14 +274,6 @@ theorem ne_zero_of_span_eq (hM : ∀ τ x, embT D τ x ∈ M) {τ : D.what₂.Ta
   exact _root_.GlobalTheory.InverseHalfDifferent.ellT_ne_bot hM τ (by rw [← ha, Submodule.span_singleton_eq_bot])
 
 
-omit [NumberField M] in
-theorem exp_neg_logMet {Λ : AddSubgroup ℂ} {ρ : M →ₐ[ℚ] ℂ} (hΛ : 0 < area (lamConj M ρ Λ)) {a : M}
-    (ha : a ≠ 0) : Real.exp (-logMet M Λ ρ a) = area (lamConj M ρ Λ) / (Real.pi * ‖ρ a‖ ^ 2) := by
-  have h1 : 0 < ‖ρ a‖ := norm_pos_iff.2 ((map_ne_zero ρ).2 ha)
-  have := Real.pi_pos
-  unfold logMet
-  rw [Real.exp_neg, Real.exp_log (by positivity), inv_div]
-
 
 omit [NumberField M] in
 theorem logMet_mul {Λ : AddSubgroup ℂ} {ρ : M →ₐ[ℚ] ℂ} (hΛ : 0 < area (lamConj M ρ Λ)) {c a : M}
@@ -396,10 +345,6 @@ section Comparison₂
 
 variable (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ)
 
-def th0NormSq (M : IntermediateField ℚ ℂ) (Λ : AddSubgroup ℂ) (ρ : M →ₐ[ℚ] ℂ) : ℝ :=
-  GL3Theta.normSq1 (lamConj M ρ Λ)
-    (GL3Theta.th0 (lamConj M ρ Λ) (Classical.epsilon (GL3Theta.IsTwoTorsionPointUnkilled D (lamConj M ρ Λ))))
-
 structure ExtraTie {LL : Type} [Field LL] [NumberField LL] (ι : LL →+* ℂ)
     (G : GlobalExtra LL D.what₂.Tau) (a : D.what₂.Tau → imM ι) : Prop where
 
@@ -428,70 +373,9 @@ def PerTie : Prop :=
     D.gx.thOne s ^ 2 = GL3Theta.normSq1 (lamConj (coefM D) (rhoOf D.what₂.embLL s) (lamOf D cc δ))
       (GL3Theta.th0 (lamConj (coefM D) (rhoOf D.what₂.embLL s) (lamOf D cc δ)) t)
 
-theorem perTie_iff : PerTie D cc δ ↔ ∃ a, ExtraTie D cc δ D.what₂.embLL D.gx a := by
-  constructor
-  · rintro ⟨h1, h2, h3, h4⟩
-    choose a ha using h3
-    exact ⟨a, h1, h2, fun τ => (ha τ).1, fun τ => (ha τ).2, h4⟩
-  · rintro ⟨a, h⟩
-    exact ⟨h.crv, h.data, fun τ => ⟨a τ, h.gen τ, h.om τ⟩, h.th⟩
-
 variable {D cc δ}
 
-theorem th0NormSq_eq {M : IntermediateField ℚ ℂ} (h : Crv D cc δ) (hM : DataIn D (tor0 D cc δ) M)
-    (ρ : M →ₐ[ℚ] ℂ) {t : ℂ} (ht : GL3Theta.IsTwoTorsionPointUnkilled D (lamConj M ρ (lamOf D cc δ)) t) :
-    th0NormSq D M (lamOf D cc δ) ρ =
-      GL3Theta.normSq1 (lamConj M ρ (lamOf D cc δ)) (GL3Theta.th0 (lamConj M ρ (lamOf D cc δ)) t) := by
-  unfold th0NormSq
-  rw [thetaZero_eq_of_isThetaZero h hM ρ (Classical.epsilon_spec (exists_isThetaZero h hM ρ)) ht]
-
-theorem th0NormSq_pos {M : IntermediateField ℚ ℂ} (h : Crv D cc δ) (hM : DataIn D (tor0 D cc δ) M)
-    (ρ : M →ₐ[ℚ] ℂ) : 0 < th0NormSq D M (lamOf D cc δ) ρ :=
-  normSq_thetaZero_pos h hM ρ (Classical.epsilon_spec (exists_isThetaZero h hM ρ))
-
 variable {LL : Type} [Field LL] [NumberField LL] {ι : LL →+* ℂ}
-
-def gxOf (h : Crv D cc δ) (hM : DataIn D (tor0 D cc δ) (imM ι)) (a : D.what₂.Tau → imM ι) :
-    GlobalExtra LL D.what₂.Tau where
-  Om τ s := Real.exp (-logMet (imM ι) (lamOf D cc δ) (rhoOf ι s) (a τ))
-  Om_pos _ _ := Real.exp_pos _
-  thOne s := Real.sqrt (th0NormSq D (imM ι) (lamOf D cc δ) (rhoOf ι s))
-  thOne_pos s := Real.sqrt_pos.2 (th0NormSq_pos h hM _)
-
-theorem extraTie_gxOf (h : Crv D cc δ) (hM : DataIn D (tor0 D cc δ) (imM ι)) {a : D.what₂.Tau → imM ι}
-    (ha : ∀ τ, Submodule.span (𝓞 (imM ι)) {a τ} = ellT D (imM ι) τ) :
-    ExtraTie D cc δ ι (gxOf h hM a) a :=
-  ⟨h, hM, ha, fun _ _ => rfl, fun s t ht => by
-    rw [← th0NormSq_eq h hM _ ht]
-    exact Real.sq_sqrt (th0NormSq_pos h hM _).le⟩
-
-def withGx (D : D7) (G : GlobalExtra D.what₂.LL D.what₂.Tau) : D7 := { D with gx := G }
-
-theorem perTie_withGx_iff (G : GlobalExtra D.what₂.LL D.what₂.Tau) :
-    PerTie (withGx D G) cc δ ↔ ∃ a, ExtraTie D cc δ D.what₂.embLL G a := by
-  refine (perTie_iff (withGx D G) cc δ).trans ?_
-  exact exists_congr fun a => ⟨fun h => ⟨h.crv, h.data, h.gen, h.om, h.th⟩,
-    fun h => ⟨h.crv, h.data, h.gen, h.om, h.th⟩⟩
-
-theorem exists_extraTie (h : Crv D cc δ) (M : IntermediateField ℚ ℂ) [NumberField M]
-    (hM : DataIn D (tor0 D cc δ) M) (ha : ∀ τ, ∃ a : M, Submodule.span (𝓞 M) {a} = ellT D M τ) :
-    ∃ (G : GlobalExtra M D.what₂.Tau) (a : D.what₂.Tau → imM (M.val : M →+* ℂ)),
-      ExtraTie D cc δ (M.val : M →+* ℂ) G a := by
-  have key : ∀ (M' : IntermediateField ℚ ℂ) [NumberField M'], M' = M →
-      DataIn D (tor0 D cc δ) M' ∧ ∀ τ, ∃ a : M', Submodule.span (𝓞 M') {a} = ellT D M' τ := by
-    rintro M' _ rfl
-    exact ⟨hM, ha⟩
-  obtain ⟨h1, h2⟩ := key (imM (M.val : M →+* ℂ)) M.fieldRange_val
-  choose a ha' using h2
-  exact ⟨_, a, extraTie_gxOf h h1 ha'⟩
-
-namespace ExtraTie
-
-end ExtraTie
-
-namespace PerTie
-
-end PerTie
 
 end Comparison₂
 
@@ -520,7 +404,7 @@ theorem sum_dual_family {r : ℕ} {a a' : Fin r → D.host.E}
     rw [map_mul]; ring
   simp only [h2] at h1
   simp only [sub_mul, Finset.sum_sub_distrib, Finset.sum_mul, ite_mul, one_mul, zero_mul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [Finset.sum_comm, ← h1, sub_self]
 
 theorem mem_ellT_iff {M : IntermediateField ℚ ℂ} [NumberField M] (hM : ∀ τ x, embT D τ x ∈ M)
@@ -536,7 +420,7 @@ theorem mem_ellT_iff {M : IntermediateField ℚ ℂ} [NumberField M] (hM : ∀ �
       induction hv using Submodule.span_induction with
       | mem x hx =>
         obtain ⟨a, ha, rfl⟩ := hx
-        simp only [TaylorLogMetric.liftM, dif_pos (hM _ _), ← map_mul]
+        simp only [TaylorLogMetric.liftM, dite_eq_left (hM _ _), ← map_mul]
         have e2 := GlobalTheory.InducedType.sum_eq_trace D (a * D.host.conj y)
         erw [e2]
         obtain ⟨c, hc⟩ := (factMMUnimodular D.R D.host a).1 ha y hy
@@ -567,7 +451,7 @@ theorem mem_ellT_iff {M : IntermediateField ℚ ℂ} [NumberField M] (hM : ∀ �
     apply Subtype.ext
     have e : ∀ k, (((c k • (fun σ => TaylorLogMetric.liftM M (embT D σ (a k)))) σ : M) : ℂ) =
         (x : ℂ) * (embT D τ (D.host.conj (a' k)) * embT D σ (a k)) := fun k => by
-      simp only [TaylorLogMetric.liftM, dif_pos (hM _ _), Pi.smul_apply]
+      simp only [TaylorLogMetric.liftM, dite_eq_left (hM _ _), Pi.smul_apply]
       rw [← mul_assoc]
       rfl
     rw [Finset.sum_apply, IntermediateField.coe_sum]
@@ -576,112 +460,6 @@ theorem mem_ellT_iff {M : IntermediateField ℚ ℂ} [NumberField M] (hM : ∀ �
     by_cases hσ : τ = σ
     · subst hσ; simp
     · simp [hσ, Ne.symm hσ]
-
-theorem exists_pow_principal_fractionalIdeal (D : D7) : ∃ (h : ℕ) (α : D.host.E), 0 < h ∧ α ≠ 0 ∧
-    ((D.host.AA0 : Submodule (𝓞 D.host.E) D.host.E)) ^ h = Submodule.span (𝓞 D.host.E) {α} := by
-  have h0 : D.host.AA0 ≠ 0 := fun h => by
-    have := GlobalTheory.AdelicApprox.one_mem_inverse_halfDifferent D
-    rw [h] at this
-    simp at this
-  have h1 := pow_card_eq_one (G := ClassGroup (𝓞 D.host.E))
-    (x := ClassGroup.mk D.host.E (Units.mk0 _ h0))
-  rw [← map_pow, ClassGroup.mk_eq_one_iff] at h1
-  obtain ⟨α, hα⟩ := h1
-  rw [Units.val_pow_eq_pow_val, Units.val_mk0, FractionalIdeal.coe_pow] at hα
-  refine ⟨_, α, Fintype.card_pos, ?_, hα⟩
-  rintro rfl
-  have := Submodule.pow_mem_pow _ (GlobalTheory.AdelicApprox.one_mem_inverse_halfDifferent D) (Fintype.card (ClassGroup (𝓞 D.host.E)))
-  rw [hα] at this
-  simp at this
-
-theorem span_inv_eq_ellT {M : IntermediateField ℚ ℂ} [NumberField M] (hM : ∀ τ x, embT D τ x ∈ M)
-    {h : ℕ} {α : D.host.E} (hh : 0 < h) (hα : α ≠ 0)
-    (hA : ((D.host.AA0 : Submodule (𝓞 D.host.E) D.host.E)) ^ h = Submodule.span (𝓞 D.host.E) {α})
-    (τ : D.what₂.Tau) (γ : M) (hγ : (γ : ℂ) ^ h = embT D τ (D.host.conj α)) :
-    Submodule.span (𝓞 M) {γ⁻¹} = ellT D M τ := by
-  let ψ : D.host.E →+* ℂ := (embT D τ).comp (D.host.conj : D.host.E →+* D.host.E)
-  have hψ : ∀ y, embT D τ (D.host.conj y) = ψ y := fun _ => rfl
-  rw [hψ] at hγ
-  have hγ0 : (γ : ℂ) ≠ 0 := fun h0 => by
-    rw [h0, zero_pow hh.ne'] at hγ
-    exact (map_ne_zero ψ).2 hα hγ.symm
-  have hγ0' : γ ≠ 0 := fun h0 => hγ0 (by rw [h0]; rfl)
-  ext x
-  rw [mem_ellT_iff hM, Submodule.mem_span_singleton]
-  simp only [hψ]
-  constructor
-  · rintro ⟨c, rfl⟩ y hy
-    have hc : IsIntegral ℤ (((c : M) : ℂ)) := map_isIntegral_int (M.val : M →+* ℂ) c.isIntegral_coe
-    have h1 := Submodule.pow_mem_pow _ (show y ∈ (D.host.AA0 : Submodule (𝓞 D.host.E) D.host.E) from hy) h
-    rw [hA, Submodule.mem_span_singleton] at h1
-    obtain ⟨r, hr⟩ := h1
-    have h2 : IsIntegral ℤ (ψ y / γ) := by
-      refine IsIntegral.of_pow hh ?_
-      rw [div_pow, ← map_pow, ← hr, hγ, Algebra.smul_def, map_mul,
-        mul_div_cancel_right₀ _ ((map_ne_zero ψ).2 hα)]
-      exact map_isIntegral_int ψ r.isIntegral_coe
-    convert hc.mul h2 using 1
-    change ((c : M) : ℂ) * ((γ⁻¹ : M) : ℂ) * ψ y = _
-    rw [IntermediateField.coe_inv]
-    ring
-  · intro hx
-    have key : ∀ (n : ℕ), ∀ z ∈ ((D.host.AA0 : Submodule (𝓞 D.host.E) D.host.E)) ^ n,
-        IsIntegral ℤ ((x : ℂ) ^ n * ψ z) := by
-      intro n z hz
-      induction hz using Submodule.pow_induction_on_left' with
-      | algebraMap r => simpa using map_isIntegral_int ψ r.isIntegral_coe
-      | add _ _ _ _ _ h1 h2 => simpa only [map_add (f := _), mul_add] using h1.add h2
-      | mem_mul m hm i z _ hz =>
-        convert (hx m hm).mul hz using 1
-        rw [map_mul, pow_succ]; ring
-    have h1 := key h α (hA ▸ Submodule.mem_span_singleton_self α)
-    rw [← hγ, ← mul_pow] at h1
-    refine ⟨⟨x * γ, (isIntegral_algHom_iff (M.val.toRingHom.toIntAlgHom) M.val.injective).1
-      (IsIntegral.of_pow hh h1)⟩, ?_⟩
-    change x * γ * γ⁻¹ = x
-    exact mul_inv_cancel_right₀ hγ0' x
-
-theorem exists_field_gen {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (h : Crv D cc δ)
-    (M₀ : IntermediateField ℚ ℂ) [FiniteDimensional ℚ M₀] :
-    ∃ (M : IntermediateField ℚ ℂ) (_ : NumberField M), M₀ ≤ M ∧ DataIn D (tor0 D cc δ) M ∧
-      ∀ τ, ∃ a : M, Submodule.span (𝓞 M) {a} = ellT D M τ := by
-  obtain ⟨n, α, hn, hα, hA⟩ := exists_pow_principal_fractionalIdeal D
-  choose γ hγ using fun τ : D.what₂.Tau =>
-    IsAlgClosed.exists_pow_nat_eq (embT D τ (D.host.conj α)) hn
-  obtain ⟨⟨hT, hg2, hg3⟩, -⟩ :=
-    (GlobalTheory.CurveAlgebraic.integral_j_and_algebraic_data D (GlobalTheory.InducedType.induced_type D).1).2 cc δ h
-  let S : Set ℂ := insert (g2 (lamOf D cc δ)) (insert (g3 (lamOf D cc δ)) (Set.range γ))
-  have hS : ∀ x ∈ S, IsIntegral ℚ x := by
-    rintro x (rfl | rfl | ⟨τ, rfl⟩)
-    · exact (mem_algebraicClosure_iff.1 hg2).isIntegral
-    · exact (mem_algebraicClosure_iff.1 hg3).isIntegral
-    · refine IsIntegral.of_pow hn ?_
-      rw [hγ]
-      exact (mem_algebraicClosure_iff.1 (hT τ _)).isIntegral
-  haveI : Finite S := (((Set.finite_range γ).insert _).insert _).to_subtype
-  haveI h1 : FiniteDimensional ℚ (IntermediateField.adjoin ℚ S) :=
-    IntermediateField.finiteDimensional_adjoin hS
-  haveI h2 : FiniteDimensional ℚ (⨆ τ, imM (embT D τ) : IntermediateField ℚ ℂ) :=
-    IntermediateField.finiteDimensional_iSup_of_finite
-  let M : IntermediateField ℚ ℂ := M₀ ⊔ (IntermediateField.adjoin ℚ S ⊔ ⨆ τ, imM (embT D τ))
-  haveI : FiniteDimensional ℚ M := IntermediateField.finiteDimensional_sup _ _
-  haveI hN : NumberField M := {}
-  have hSM : ∀ x ∈ S, x ∈ M := fun x hx =>
-    (le_sup_of_le_right le_sup_left : IntermediateField.adjoin ℚ S ≤ M)
-      (IntermediateField.subset_adjoin ℚ S hx)
-  have hTM : ∀ τ x, embT D τ x ∈ M := fun τ x =>
-    (le_sup_of_le_right (le_sup_of_le_right (le_iSup (fun τ => imM (embT D τ)) τ)) : imM (embT D τ) ≤ M)
-      ⟨x, rfl⟩
-  refine ⟨M, hN, le_sup_left, ⟨hTM, hSM _ (Or.inl rfl), hSM _ (Or.inr (Or.inl rfl))⟩, fun τ => ?_⟩
-  exact ⟨_, span_inv_eq_ellT hTM hn hα hA τ ⟨γ τ, hSM _ (Or.inr (Or.inr ⟨τ, rfl⟩))⟩ (hγ τ)⟩
-
-theorem exists_extraTie_of_crv {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (h : Crv D cc δ)
-    (M₀ : IntermediateField ℚ ℂ) [FiniteDimensional ℚ M₀] :
-    ∃ (M : IntermediateField ℚ ℂ) (_ : NumberField M), M₀ ≤ M ∧
-      ∃ (G : GlobalExtra M D.what₂.Tau) (a : D.what₂.Tau → imM (M.val : M →+* ℂ)),
-        ExtraTie D cc δ (M.val : M →+* ℂ) G a := by
-  obtain ⟨M, hN, h0, hM, ha⟩ := exists_field_gen h M₀
-  exact ⟨M, hN, h0, exists_extraTie h M hM ha⟩
 
 end Free
 

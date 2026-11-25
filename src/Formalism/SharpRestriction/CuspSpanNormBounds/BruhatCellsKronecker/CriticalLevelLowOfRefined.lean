@@ -2,44 +2,7 @@ module
 
 public import Formalism.SharpRestriction.CuspSpanNormBounds.PExtra
 public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.OwnEvIntro
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -141,14 +104,14 @@ theorem TfFacts.aEff_bd (F : TfFacts D large₂ C' Cl Cu C0) (hCl : 4 ≤ Cl) (u
       _ = Cl * ((D.R.m : ℝ) * D.R.k * D.s.Del) := by ring
   have hb0 : 0 < bOne D τ 1 := by linarith
   by_cases hT : IsTop D τ
-  · rw [aEff, if_pos hT]
+  · rw [aEff, ite_eq_left hT]
     obtain ⟨t1, t2⟩ := F.dt τ hT
     have hbp : 0 < bTop D τ := by linarith
     refine ⟨by positivity, ?_⟩
     refine le_trans (div_le_self (by positivity) hKD) ?_
     rw [mul_comm]
     exact mul_le_mul (by linarith) (F.hu1 u τ) (by linarith) hb0.le
-  · rw [aEff, if_neg hT]
+  · rw [aEff, ite_eq_right hT]
     refine ⟨by linarith, ?_⟩
     have hdn := F.dn u τ hT
     rw [mul_assoc] at hdn
@@ -473,12 +436,6 @@ theorem level_frame_of_sizes (Cg cb Cu cT CT C0 C3 : ℝ) (hCl : 4 ≤ sCl Fm)
     ⟨x0', fun x hx i hyp => H x hx i ⟨hyp.2.1, hyp.1, hyp.2.2⟩⟩
 
 end Fam
-
-section Check
-
-variable {eps : ℝ} (Fm : FamP eps)
-
-end Check
 
 end Formalism.MainNotions.BridgeLemma
 

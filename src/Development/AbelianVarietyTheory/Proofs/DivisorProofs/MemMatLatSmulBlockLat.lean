@@ -1,53 +1,6 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -97,11 +50,11 @@ theorem mem_matLat_blockLat {ϖ : kˣ} {e : ℕ} {P : Finset D} {X : Matrix A D 
   simp only [h1]
   constructor
   · intro h
-    exact ⟨fun i j hj => by simpa only [blockUnits, if_pos hj] using h i j,
+    exact ⟨fun i j hj => by simpa only [blockUnits, ite_eq_left hj] using h i j,
       fun i j hj => by simpa [blockUnits, hj, Valuation.mem_integer_iff] using h i j⟩
   · rintro ⟨h, h'⟩ i j
     by_cases hj : j ∈ P
-    · simpa only [blockUnits, if_pos hj] using h i j hj
+    · simpa only [blockUnits, ite_eq_left hj] using h i j hj
     · simpa [blockUnits, hj, Valuation.mem_integer_iff] using h' i j hj
 
 theorem mem_matLat_smul_blockLat {ϖ : kˣ} {e : ℕ} {P : Finset D} {X : Matrix A D k} :
@@ -111,11 +64,11 @@ theorem mem_matLat_smul_blockLat {ϖ : kˣ} {e : ℕ} {P : Finset D} {X : Matrix
   constructor
   · intro h
     exact ⟨fun i j hj => by simpa [blockUnits, hj, Valuation.mem_integer_iff] using h i j,
-      fun i j hj => by simpa only [blockUnits, if_neg hj, mul_one] using h i j⟩
+      fun i j hj => by simpa only [blockUnits, ite_eq_right hj, mul_one] using h i j⟩
   · rintro ⟨h, h'⟩ i j
     by_cases hj : j ∈ P
     · simpa [blockUnits, hj, Valuation.mem_integer_iff] using h i j hj
-    · simpa only [blockUnits, if_neg hj, mul_one] using h' i j hj
+    · simpa only [blockUnits, ite_eq_right hj, mul_one] using h' i j hj
 
 variable [Fintype A] [DecidableEq A]
 
@@ -147,7 +100,7 @@ theorem hasDepth_fourierSum {ψ : AddChar k Circle} {ϖ : kˣ} (hϖ : IsUnif ϖ)
       · refine mem_matLat_smul_stdLat.2 fun i j => ?_
         by_cases hj : j ∈ P
         · simp [setCols, hj]
-        · simpa only [setCols, of_apply, dif_neg hj] using h2 i j hj
+        · simpa only [setCols, of_apply, dite_eq_right hj] using h2 i j hj
 
 theorem isNatDatum_invFourierSum {ψ : AddChar k Circle} {ϖ : kˣ} (hϖ : IsUnif ϖ) (hψ : HasConductor ψ 1) (e : ℕ)
     (P : Finset D) {Ψ : Matrix A D k → ℂ} (hΨ : HasDepth ϖ e (blockLat ϖ e P) Ψ) :
@@ -166,7 +119,7 @@ theorem isNatDatum_invFourierSum {ψ : AddChar k Circle} {ϖ : kˣ} (hϖ : IsUni
       refine hY (mem_matLat_stdLat.2 fun i j => ?_)
       by_cases hj : j ∈ P
       · exact h i j hj
-      · simpa only [setCols, of_apply, dif_neg hj] using (mem_matLat_blockLat (ϖ := ϖ) (e := e) (P := P) |>.1 H).2 i j hj
+      · simpa only [setCols, of_apply, dite_eq_right hj] using (mem_matLat_blockLat (ϖ := ϖ) (e := e) (P := P) |>.1 H).2 i j hj
     · rfl
   · have h1 := mem_matLat_smul_stdLat.1 hZ
     rw [invFourierSum_apply, invFourierSum_apply]
@@ -184,7 +137,7 @@ theorem isNatDatum_invFourierSum {ψ : AddChar k Circle} {ϖ : kˣ} (hϖ : IsUni
         ring
       · refine mem_matLat_smul_blockLat.2 ⟨fun i j hj => ?_, fun i j hj => ?_⟩
         · simp [setCols, hj]
-        · simpa only [setCols, of_apply, dif_neg hj] using h1 i j
+        · simpa only [setCols, of_apply, dite_eq_right hj] using h1 i j
 
 end GlobalTheory.SplitFlip.FourierDepth
 

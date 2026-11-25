@@ -56,9 +56,7 @@ open GlobalTheory.LogPole
 open scoped Classical
 open GlobalTheory.CechKS
 
-set_option autoImplicit false
 noncomputable section
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.CechKS
 

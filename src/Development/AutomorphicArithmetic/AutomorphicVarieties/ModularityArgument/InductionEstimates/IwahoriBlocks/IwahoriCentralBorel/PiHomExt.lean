@@ -51,13 +51,6 @@ open UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.C PositivityThe
 open GlobalTheory.PRep GlobalTheory.SmGL Formalism.BasicNotions GlobalTheory.CuspRep
 open scoped TensorProduct Classical
 
-private theorem pi_hom_ext {r : ℕ} {N : Fin r → Type} [∀ i, Monoid (N i)] {M : Type} [Monoid M]
-    (f g : (∀ i, N i) →* M) (h : ∀ i x, f (Pi.mulSingle i x) = g (Pi.mulSingle i x)) : f = g := by
-  apply (MonoidHom.noncommPiCoprodEquiv (ι := Fin r) (N := N) (M := M)).symm.injective
-  apply Subtype.ext
-  funext i
-  exact MonoidHom.ext fun x => h i x
-
 private noncomputable def cfH {K : Type} [Field K] [NumberField K] {n : ℕ} (v : Pl K) : FA K n →* Gw n v where
   toFun := GM.cf v
   map_one' := by simp only [GM.cf]; rw [map_one, finAt_one]
@@ -92,7 +85,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.IwahoriBlocks.embEx :
   have hcf : ∀ g i, GM.cf (w i) (ι g) = g i := by
     intro g i
     have e : (cfH (w i)).comp ι = Pi.evalMonoidHom (fun j => Gw n (w j)) i := by
-      refine pi_hom_ext _ _ fun j x => ?_
+      refine MonoidHom.pi_ext fun j x => ?_
       change GM.cf (w i) (ι (Pi.mulSingle j x)) = (Pi.mulSingle j x : GS n w) i
       rw [hι j x]
       by_cases h : j = i
@@ -105,7 +98,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.IwahoriBlocks.embEx :
   have hoff : ∀ g, ∀ v ∉ im w, GM.cf v (ι g) = 1 := by
     intro g v hv
     have e : (cfH v).comp ι = 1 := by
-      refine pi_hom_ext _ _ fun j x => ?_
+      refine MonoidHom.pi_ext fun j x => ?_
       change GM.cf v (ι (Pi.mulSingle j x)) = 1
       rw [hι j x]
       exact (L (w j)).2.2.1 v (fun e => hv (e ▸ Finset.mem_image_of_mem w (Finset.mem_univ j))) x
@@ -162,13 +155,13 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.IwahoriBlocks.embEx :
       have hh' : ∀ v, GM.cf v h ∈ (if v ∈ im w then U v else GLnLocal.integralGL (v.adicCompletion K) n) := hh
       refine ⟨fun j => GM.cf (w j) h, _, (mul_inv_cancel_left _ _).symm, fun i => ?_, hsplit h, fun v => ?_⟩
       · have := hh' (w i)
-        rwa [if_pos (Finset.mem_image_of_mem w (Finset.mem_univ i))] at this
+        rwa [ite_eq_left (Finset.mem_image_of_mem w (Finset.mem_univ i))] at this
       · by_cases hv : v ∈ im w
         · obtain ⟨i, -, rfl⟩ := Finset.mem_image.1 hv
           rw [hsplit h i]
           exact one_mem _
         · have := hh' v
-          rw [if_neg hv] at this
+          rw [ite_eq_right hv] at this
           rw [hmul, hinv, hoff _ v hv, inv_one, one_mul]
           exact this
     · rintro ⟨g, h', rfl, hg, h1, hint⟩
@@ -176,10 +169,10 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.IwahoriBlocks.embEx :
         intro v
         rw [hmul]
         by_cases hv : v ∈ im w
-        · rw [if_pos hv]
+        · rw [ite_eq_left hv]
           obtain ⟨i, -, rfl⟩ := Finset.mem_image.1 hv
           rw [hcf, h1 i, mul_one]
           exact hg i
-        · rw [if_neg hv, hoff g v hv, one_mul]
+        · rw [ite_eq_right hv, hoff g v hv, one_mul]
           exact hint v
       exact hh'

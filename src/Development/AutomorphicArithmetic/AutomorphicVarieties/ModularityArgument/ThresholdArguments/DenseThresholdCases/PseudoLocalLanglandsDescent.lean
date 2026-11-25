@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsMoreTer
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.WStmtx
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BernsteinZelevinskyFinitenessHolds
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GlobalArtinLocalIdeleInjective
@@ -56,29 +57,9 @@ import Mathlib.Tactic.ReduceModChar
 
 section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 private theorem multiset_eq_of_sum {Γ : Type} [Monoid Γ] (s t : Multiset (Γ →* ℂ))
     (h : ∀ g, (s.map fun f => f g).sum = (t.map fun f => f g).sum) : s = t := by
-  classical
-  have key : ∀ (u : Multiset (Γ →* ℂ)) (g : Γ),
-      Finsupp.linearCombination ℂ (fun f : Γ →* ℂ => (f : Γ → ℂ))
-        (u.map fun f => Finsupp.single f (1 : ℂ)).sum g = (u.map fun f => f g).sum := fun u g => by
-    induction u using Multiset.induction_on with
-    | empty => simp
-    | cons a u ih => simp [ih]
-  have cnt : ∀ (u : Multiset (Γ →* ℂ)) (f : Γ →* ℂ),
-      (u.map fun f => Finsupp.single f (1 : ℂ)).sum f = (u.count f : ℂ) := fun u f => by
-    induction u using Multiset.induction_on with
-    | empty => simp
-    | cons a u ih =>
-      rw [Multiset.map_cons, Multiset.sum_cons, Finsupp.add_apply, ih, Multiset.count_cons, Finsupp.single_apply]
-      by_cases e : a = f
-      · simp [e, add_comm]
-      · simp [e, Ne.symm e]
-  have h1 := linearIndependent_monoidHom Γ ℂ (funext fun g => (key s g).trans ((h g).trans (key t g).symm))
-  ext f
-  have h2 := (cnt s f).symm.trans ((congrArg (fun u => u f) h1).trans (cnt t f))
-  exact_mod_cast h2
+  apply _root_.UpperTheory.Reformulated.B.Qf50.multiset_eq_of_sum <;> assumption
 section
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {h : IsPlaceOver A w}

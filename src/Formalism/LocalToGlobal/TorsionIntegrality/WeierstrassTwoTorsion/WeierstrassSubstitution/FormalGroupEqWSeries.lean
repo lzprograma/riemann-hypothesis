@@ -98,9 +98,6 @@ theorem L_mul (φ ψ : MvPowerSeries (Fin 2) R) (i : Fin 2) :
   rw [MvPowerSeries.coeff_mul, Finsupp.antidiagonal_single]
   simp [Finset.Nat.antidiagonal_succ]
 
-theorem L_C (a : R) (i : Fin 2) : (L i) (MvPowerSeries.C a : MvPowerSeries (Fin 2) R) = 0 := by
-  simp [MvPowerSeries.coeff_C]
-
 theorem L_X (i j : Fin 2) :
     (L i) (MvPowerSeries.X j : MvPowerSeries (Fin 2) R) = if i = j then 1 else 0 := by
   simp [MvPowerSeries.coeff_X, Finsupp.single_left_inj one_ne_zero]
@@ -130,7 +127,7 @@ theorem sub_cancel {f : MvPowerSeries (Fin 2) R}
       have hn : ¬ Finsupp.single 1 1 ≤ mk (a + 1) 0 := by
         rw [Finsupp.single_le_iff]
         simp [mk]
-      rw [if_pos hp, if_neg hn] at h
+      rw [ite_eq_left hp, ite_eq_right hn] at h
       have e1 : mk (a + 1) 0 - Finsupp.single 0 1 = mk a 0 := by
         ext i
         fin_cases i <;> simp [mk]
@@ -145,7 +142,7 @@ theorem sub_cancel {f : MvPowerSeries (Fin 2) R}
       have hq : Finsupp.single 1 1 ≤ mk (a + 1) (b + 1) := by
         rw [Finsupp.single_le_iff]
         simp [mk]
-      rw [if_pos hp, if_pos hq] at h
+      rw [ite_eq_left hp, ite_eq_left hq] at h
       have e1 : mk (a + 1) (b + 1) - Finsupp.single 0 1 = mk a (b + 1) := by
         ext i
         fin_cases i <;> simp [mk]
@@ -268,7 +265,7 @@ theorem coeff_Wi (i : Fin 2) (e : Fin 2 →₀ ℕ) :
     split_ifs <;> simp
   · intro d hd
     simp only [MvPowerSeries.coeff_X_pow]
-    rw [if_neg]
+    rw [ite_eq_right]
     · simp
     · intro h
       apply hd
@@ -285,9 +282,9 @@ theorem lam_mul : (MvPowerSeries.X 1 - MvPowerSeries.X 0) * lam W = Wi W 1 - Wi 
     MvPowerSeries.coeff_monomial_mul, MvPowerSeries.coeff_monomial_mul, coeff_Wi, coeff_Wi, coeff_lam, coeff_lam]
   simp only [he.1, he.2, Finsupp.single_le_iff, Finsupp.tsub_apply, Finsupp.single_apply, one_mul]
   by_cases h0 : e 0 = 0 <;> by_cases h1 : e 1 = 0 <;> simp [h0, h1]
-  · rw [if_pos (by omega), Nat.sub_add_cancel (by omega)]
-  · rw [if_pos (by omega), Nat.sub_add_cancel (by omega)]
-  · rw [if_pos (by omega), if_pos (by omega), show e 0 + (e 1 - 1) + 1 = e 0 - 1 + e 1 + 1 by omega, sub_self]
+  · rw [ite_eq_left (by omega), Nat.sub_add_cancel (by omega)]
+  · rw [ite_eq_left (by omega), Nat.sub_add_cancel (by omega)]
+  · rw [ite_eq_left (by omega), ite_eq_left (by omega), show e 0 + (e 1 - 1) + 1 = e 0 - 1 + e 1 + 1 by omega, sub_self]
 
 theorem Wi_cc (i : Fin 2) : cc (Wi W i) = 0 := by
   have h0 : coeff 0 (wSer W) = 0 := by

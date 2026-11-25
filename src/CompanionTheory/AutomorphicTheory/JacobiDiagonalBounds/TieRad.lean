@@ -184,9 +184,9 @@ theorem word_tied {X : Q.ActualOps P.k P.r z z' π π'} {μ : Measure (Mt P.k P.
     unfold P5.act
     rw [Finset.sum_eq_single Wd.e1]
     · congr 1
-      exact if_pos rfl
+      exact ite_eq_left rfl
     · intro b _ hb
-      have : Top.firstStateVector (S := S) Φ b = 0 := if_neg hb
+      have : Top.firstStateVector (S := S) Φ b = 0 := ite_eq_right hb
       rw [this, map_zero]
     · exact fun h => absurd (Finset.mem_univ _) h
   rw [eL, hall, Matrix.mul_apply]

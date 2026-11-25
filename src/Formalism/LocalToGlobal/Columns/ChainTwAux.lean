@@ -43,7 +43,7 @@ theorem finset_range_sum_split {A : Type} [AddCommMonoid A] (f : ℕ → A) (c j
   · simp
   rcases Nat.eq_zero_or_pos j with rfl | hj
   · simp
-  rw [if_pos ⟨hc, hj⟩, show c + j - 1 = (c - 1 + 1) + (j - 1) by omega, Finset.sum_range_add, Finset.sum_range_succ]
+  rw [ite_eq_left ⟨hc, hj⟩, show c + j - 1 = (c - 1 + 1) + (j - 1) by omega, Finset.sum_range_add, Finset.sum_range_succ]
   congr 1
   refine Finset.sum_congr rfl fun i _ => ?_
   congr 1
@@ -55,11 +55,11 @@ variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] {P : Heig
 
 theorem frameIndex_of_lt {k₀ c n s : ℕ} (hs : s < k₀) : LocE.fIdx k₀ c n s = s := by
   unfold LocE.fIdx
-  rw [if_pos hs]
+  rw [ite_eq_left hs]
 
 theorem frameIndex_of_ge {k₀ c n s : ℕ} (h : k₀ + c ≤ s) : LocE.fIdx k₀ c n s = s - c := by
   unfold LocE.fIdx
-  rw [if_neg (show ¬ s < k₀ by omega), if_neg (show ¬ s < k₀ + c by omega)]
+  rw [ite_eq_right (show ¬ s < k₀ by omega), ite_eq_right (show ¬ s < k₀ + c by omega)]
 
 theorem frameEntry_eq_coord_of_extension {k₀ n c : ℕ} {rr : Sp E (n + c) ≃ₗ[E] Sp E (n + c)} {g : Sp E n ≃ₗ[E] Sp E n}
     (hg : ∀ x, rr (Loc.inX E n c x) = Loc.inX E n c (g x)) {a b : ℕ} (ha : a < n) (hb : b < n) {p p' : ℕ}
@@ -84,18 +84,18 @@ theorem frameEntry_auxiliary_superdiagonal {k₀ n c i : ℕ} (hi : i + 1 < c) (
       (q : E) * Loc.atN (rr (Loc.eN E (n + c) (n + i + 1))) (n + i) := by
   have h1 : LocE.fIdx k₀ c n (k₀ + i) = n + i := by
     unfold LocE.fIdx
-    rw [if_neg (show ¬ k₀ + i < k₀ by omega), if_pos (show k₀ + i < k₀ + c by omega)]
+    rw [ite_eq_right (show ¬ k₀ + i < k₀ by omega), ite_eq_left (show k₀ + i < k₀ + c by omega)]
     omega
   have h2 : LocE.fIdx k₀ c n (k₀ + i + 1) = n + i + 1 := by
     unfold LocE.fIdx
-    rw [if_neg (show ¬ k₀ + i + 1 < k₀ by omega), if_pos (show k₀ + i + 1 < k₀ + c by omega)]
+    rw [ite_eq_right (show ¬ k₀ + i + 1 < k₀ by omega), ite_eq_left (show k₀ + i + 1 < k₀ + c by omega)]
     omega
   have h3 : LocE.scE n (fun i => i + 1) (n + i + 1) = (i : ℤ) + 2 := by
-    simp only [LocE.scE, if_neg (show ¬ n + i + 1 < n by omega), show n + i + 1 - n = i + 1 by omega]
+    simp only [LocE.scE, ite_eq_right (show ¬ n + i + 1 < n by omega), show n + i + 1 - n = i + 1 by omega]
     push_cast
     ring
   have h4 : LocE.scE n (fun i => i + 1) (n + i) = (i : ℤ) + 1 := by
-    simp only [LocE.scE, if_neg (show ¬ n + i < n by omega), show n + i - n = i by omega]
+    simp only [LocE.scE, ite_eq_right (show ¬ n + i < n by omega), show n + i - n = i by omega]
     push_cast
     ring
   unfold LocE.entB
@@ -107,7 +107,7 @@ theorem frameEntry_last_auxiliary_zero {k₀ n c : ℕ} (hc : 1 ≤ c) (hkn : k�
     LocE.entB q k₀ c n c n (fun i => i + 1) (fun i => i + 1) rr.toLinearMap (k₀ + (c - 1)) (k₀ + (c - 1) + 1) = 0 := by
   have h1 : LocE.fIdx k₀ c n (k₀ + (c - 1)) = n + (c - 1) := by
     unfold LocE.fIdx
-    rw [if_neg (show ¬ k₀ + (c - 1) < k₀ by omega), if_pos (show k₀ + (c - 1) < k₀ + c by omega)]
+    rw [ite_eq_right (show ¬ k₀ + (c - 1) < k₀ by omega), ite_eq_left (show k₀ + (c - 1) < k₀ + c by omega)]
     omega
   have h2 : LocE.fIdx k₀ c n (k₀ + (c - 1) + 1) = k₀ := by
     rw [frameIndex_of_ge (by omega)]
@@ -135,67 +135,6 @@ theorem addChar_apply_ne_zero' {A : Type} [AddGroup A] (ψ : AddChar A K) (a : A
   rw [add_neg_cancel, AddChar.map_zero_eq_one, h, zero_mul] at h1
   exact one_ne_zero h1
 
-theorem lamGBS_eq_addChar_mul_ocbXLam_of_mem_stabL (hu : ((q : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2)
-    (ψ₀ : AddChar (𝓞 E ⧸ P.asIdeal) K) (χ : ℕ → (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {k₀ t j n c : ℕ}
-    (hk1 : 1 ≤ k₀) (hcj : 1 ≤ c + j) (hn : k₀ + j + j * t ≤ n)
-    {rr : Sp E (n + c) ≃ₗ[E] Sp E (n + c)} (hrr : rr ∈ stabL E (n + c) (LocE.lamY P q n c fun i => i + 1))
-    {g : Sp E n ≃ₗ[E] Sp E n} (hg : ∀ x, rr (Loc.inX E n c x) = Loc.inX E n c (g x))
-    {hbar : GL (Fin n) (𝓞 E ⧸ P.asIdeal)} (hred : ∀ x ∈ stdAt E n P, redV P (g x) = hbar.1.mulVec (redV P x)) :
-    LocE.lamGBS q ψ₀ χ k₀ (k₀ + c + j) t j n c rr.toLinearMap = ψ₀ (redP P ((q : E) * Loc.n1Arg rr)) * ocbXLam ψ₀ χ k₀ j t hbar := by
-  have hq0 := ciQ_ne_zero hu
-  have hk : k₀ ≤ n := by omega
-  have hint : ∀ p p', p < n + c → p' < n + c →
-      IntAt P (LocE.entB q k₀ c n c n (fun i => i + 1) (fun i => i + 1) rr.toLinearMap p p') :=
-    fun p p' hp hp' => frameEntry_integral_of_stabilizer hq0 hk hp hp' hrr
-  have hS : redP P (∑ i ∈ Finset.range (k₀ - 1), LocE.entB q k₀ c n c n (fun i => i + 1) (fun i => i + 1) rr.toLinearMap i (i + 1) +
-      ∑ i ∈ Finset.range (k₀ + c + j - k₀ - 1),
-        LocE.entB q k₀ c n c n (fun i => i + 1) (fun i => i + 1) rr.toLinearMap (k₀ + i) (k₀ + i + 1)) =
-      (∑ i ∈ Finset.range (k₀ - 1), ocbM hbar i (i + 1) + ∑ i ∈ Finset.range (j - 1), ocbM hbar (k₀ + i) (k₀ + i + 1)) +
-        redP P ((q : E) * Loc.n1Arg rr) := by
-    rw [reduction_sum_superdiagonal (show k₀ < k₀ + c + j by omega) _ (fun p hp => hint p (p + 1) (by omega) (by omega)),
-      show k₀ + c + j - k₀ - 1 = c + j - 1 by omega, finset_range_sum_split _ c j, columns_fact (k₀ := k₀) rr,
-      redP_sum _ _ (fun i hi => hint _ _ (by have := Finset.mem_range.1 hi; omega) (by have := Finset.mem_range.1 hi; omega))]
-    have hE : ∀ i ∈ Finset.range (k₀ - 1),
-        redP P (LocE.entB q k₀ c n c n (fun i => i + 1) (fun i => i + 1) rr.toLinearMap i (i + 1)) = ocbM hbar i (i + 1) := by
-      intro i hi
-      have := Finset.mem_range.1 hi
-      exact reduction_frameEntry_of_extension hg hred (by omega) (by omega) (frameIndex_of_lt (by omega)) (frameIndex_of_lt (by omega))
-    have hF : ∀ i ∈ Finset.range (j - 1),
-        redP P (LocE.entB q k₀ c n c n (fun i => i + 1) (fun i => i + 1) rr.toLinearMap (k₀ + (c + i)) (k₀ + (c + i) + 1)) =
-          ocbM hbar (k₀ + i) (k₀ + i + 1) := by
-      intro i hi
-      have := Finset.mem_range.1 hi
-      exact reduction_frameEntry_of_extension hg hred (by omega) (by omega)
-        (by rw [frameIndex_of_ge (s := k₀ + (c + i)) (by omega)]; omega)
-        (by rw [frameIndex_of_ge (s := k₀ + (c + i) + 1) (by omega)]; omega)
-    have hM : (if 1 ≤ c ∧ 1 ≤ j then
-        redP P (LocE.entB q k₀ c n c n (fun i => i + 1) (fun i => i + 1) rr.toLinearMap (k₀ + (c - 1)) (k₀ + (c - 1) + 1)) else 0) = 0 := by
-      split_ifs with h
-      · rw [frameEntry_last_auxiliary_zero h.1 (by omega) hg, redP_zero]
-      · rfl
-    rw [Finset.sum_congr rfl hE, Finset.sum_congr rfl hF, hM]
-    abel
-  have hBl : ∀ i ∈ Finset.range j, LocE.unitV (χ i) (Matrix.det (Matrix.of fun s s' : Fin t =>
-        LocE.entB q k₀ c n c n (fun i => i + 1) (fun i => i + 1) rr.toLinearMap (k₀ + c + j + i * t + s.1) (k₀ + c + j + i * t + s'.1))) =
-      ocbChiK (χ i) (Matrix.det (Matrix.of fun s s' : Fin t => ocbM hbar (k₀ + j + i * t + s.1) (k₀ + j + i * t + s'.1))) := by
-    intro i hi
-    have hi' := Finset.mem_range.1 hi
-    have hjt : (i + 1) * t ≤ j * t := Nat.mul_le_mul_right t hi'
-    rw [Nat.succ_mul] at hjt
-    have hbd : ∀ u : Fin t, k₀ + j + i * t + u.1 < n := fun u => by have := u.2; omega
-    show ocbChiK (χ i) (redP P _) = _
-    rw [reduction_det_eq_det_reduction _ fun s s' => hint _ _ (by have := hbd s; omega) (by have := hbd s'; omega)]
-    congr 1
-    congr 1
-    ext s s'
-    simp only [Matrix.of_apply]
-    exact reduction_frameEntry_of_extension hg hred (hbd s) (hbd s')
-      (by rw [frameIndex_of_ge (s := k₀ + c + j + i * t + s.1) (by omega)]; omega)
-      (by rw [frameIndex_of_ge (s := k₀ + c + j + i * t + s'.1) (by omega)]; omega)
-  unfold LocE.lamGBS LocE.lamGvS ocbXLam
-  rw [hS, AddChar.map_add_eq_mul, Finset.prod_congr rfl hBl]
-  ring
-
 end ChrLoc
 
 section ChrGlob
@@ -203,47 +142,6 @@ section ChrGlob
 variable {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m)
   (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
   (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu))
-
-theorem ocbChrGLoc_holds (m2 : ℕ) : OcbChrGLoc Ch sel mu cst m2 := by
-  intro hB j hj w hbar g r hr hg hred
-  have hw := w.2
-  have h2 := R.two_le_m
-  have hm := hB.hm
-  have hk5 := R.m_add_three_le_k
-  have e : j * (R.t + 1) = j * R.t + j := by ring
-  have hJ : r ∈ Jat (Pr := Pr) cst.sharp j w.1 := by
-    have h := hr.2
-    simpa [MulAut.conj_apply] using h
-  rw [hB.sharp] at hJ
-  have hJ' : r ∈ LocE.JGsym w.1 (qOf w.1) R.k R.rS R.r R.t (R.N j) (cOf R j) := by
-    unfold Jat at hJ
-    rwa [if_pos hw, if_pos rfl] at hJ
-  have hu := ciQ_notMem_sq hB.hX hB.hPr hw
-  have hq0 := ciQ_ne_zero hu
-  have hrE : R.r = R.k + cOf R j + j := by
-    unfold Ranks.r cOf
-    omega
-  have hn : R.k + j + j * R.t ≤ R.N j := by
-    unfold Ranks.N
-    rw [e]
-    omega
-  have hint : IntAt w.1 ((qOf w.1 : X.E) * Loc.n1Arg r) := by
-    rw [columns_fact (k₀ := R.k) r]
-    refine ciIntAt_sum _ _ fun i hi => frameEntry_integral_of_stabilizer hq0 (by unfold Ranks.N; omega) ?_ ?_ hJ'.1
-    · have := Finset.mem_range.1 hi
-      unfold Ranks.N
-      omega
-    · have := Finset.mem_range.1 hi
-      unfold Ranks.N
-      omega
-  have hpsi := hB.psi0 ⟨w.1, by classical exact Finset.mem_union_left _ w.2⟩ ((qOf w.1 : X.E) * Loc.n1Arg r) hw hint
-  rw [mul_div_cancel_left₀ _ hq0] at hpsi
-  dsimp only at hpsi
-  unfold chiInv lamRow
-  dsimp only
-  rw [hB.sharp, if_pos hw, if_pos rfl, inv_one, one_mul, mul_one, hpsi, hrE,
-    lamGBS_eq_addChar_mul_ocbXLam_of_mem_stabL hu _ _ (by omega) (by unfold cOf; omega) hn hJ'.1 hg hred, ← mul_assoc,
-    inv_mul_cancel₀ (addChar_apply_ne_zero' _ _), one_mul]
 
 end ChrGlob
 
@@ -271,8 +169,8 @@ section Nat
 theorem framePos_of_lt_dim {k₀ c n p : ℕ} (hp : p < n) : LocE.fPos k₀ c n p = if p < k₀ then p else p + c := by
   unfold LocE.fPos
   by_cases h : p < k₀
-  · rw [if_pos h, if_pos h]
-  · rw [if_neg h, if_neg h, if_pos hp]
+  · rw [ite_eq_left h, ite_eq_left h]
+  · rw [ite_eq_right h, ite_eq_right h, ite_eq_left hp]
 
 theorem beta_framePos_formula {k₀ rS t j c n p : ℕ} (hcj : c + j = 2 * rS + 1) (hp : p < n) :
     betaExponentOfRanks k₀ rS (k₀ + 2 * rS + 1) t (LocE.fPos k₀ c n p) =
@@ -281,15 +179,15 @@ theorem beta_framePos_formula {k₀ rS t j c n p : ℕ} (hcj : c + j = 2 * rS + 
   rw [framePos_of_lt_dim hp]
   unfold betaExponentOfRanks
   by_cases h1 : p < k₀
-  · rw [if_pos h1, if_pos h1, if_pos (show p < k₀ + 2 * rS + 1 by omega)]
+  · rw [ite_eq_left h1, ite_eq_left h1, ite_eq_left (show p < k₀ + 2 * rS + 1 by omega)]
     unfold symIdx
-    rw [if_pos h1]
-  · rw [if_neg h1, if_neg h1]
+    rw [ite_eq_left h1]
+  · rw [ite_eq_right h1, ite_eq_right h1]
     by_cases h2 : p < k₀ + j
-    · rw [if_pos h2, if_pos (show p + c < k₀ + 2 * rS + 1 by omega)]
+    · rw [ite_eq_left h2, ite_eq_left (show p + c < k₀ + 2 * rS + 1 by omega)]
       unfold symIdx
-      rw [if_neg (show ¬ p + c < k₀ by omega)]
-    · rw [if_neg h2, if_neg (show ¬ p + c < k₀ + 2 * rS + 1 by omega), show p + c - (k₀ + 2 * rS + 1) = p - (k₀ + j) by omega]
+      rw [ite_eq_right (show ¬ p + c < k₀ by omega)]
+    · rw [ite_eq_right h2, ite_eq_right (show ¬ p + c < k₀ + 2 * rS + 1 by omega), show p + c - (k₀ + 2 * rS + 1) = p - (k₀ + j) by omega]
 
 theorem not_allowed_of_beta_lt {k₀ rS t j c n p p' : ℕ} (hcj : c + j = 2 * rS + 1) (hp : p < n) (hp' : p' < n)
     (h : betaExponentOfRanks k₀ rS (k₀ + 2 * rS + 1) t (LocE.fPos k₀ c n p') < betaExponentOfRanks k₀ rS (k₀ + 2 * rS + 1) t (LocE.fPos k₀ c n p) ∨
@@ -321,14 +219,14 @@ theorem extendedMatrix_mulVec_single {n c : ℕ} (A : Matrix (Fin n) (Fin n) E) 
   rw [ciExtM_castAdd]
   by_cases h : y.1 < n
   · rw [dite_eq_left h, Finset.sum_eq_single (⟨y.1, h⟩ : Fin n)]
-    · rw [Pi.single_apply, if_pos (show Fin.castAdd c (⟨y.1, h⟩ : Fin n) = y from Fin.ext rfl), mul_one]
+    · rw [Pi.single_apply, ite_eq_left (show Fin.castAdd c (⟨y.1, h⟩ : Fin n) = y from Fin.ext rfl), mul_one]
     · intro b _ hb
-      rw [Pi.single_apply, if_neg (fun h' => hb (Fin.ext (by have := congrArg Fin.val h'; simpa using this))), mul_zero]
+      rw [Pi.single_apply, ite_eq_right (fun h' => hb (Fin.ext (by have := congrArg Fin.val h'; simpa using this))), mul_zero]
     · intro h'
       exact absurd (Finset.mem_univ _) h'
   · rw [dite_eq_right h]
     refine Finset.sum_eq_zero fun b _ => ?_
-    rw [Pi.single_apply, if_neg (fun h' => h (by rw [← h']; simp)), mul_zero]
+    rw [Pi.single_apply, ite_eq_right (fun h' => h (by rw [← h']; simp)), mul_zero]
 
 theorem reducedMatrix_blockExtension {n c : ℕ} (G : Matrix (Fin n) (Fin n) E) (ρ : Sp E (n + c) ≃ₗ[E] Sp E (n + c)) (hap : ∀ v, ρ v = (ciExtM c G).mulVec v)
     (y y' : Fin (n + c)) :
@@ -341,13 +239,13 @@ theorem reducedMatrix_blockExtension {n c : ℕ} (G : Matrix (Fin n) (Fin n) E) 
     simp only [Fin.val_castAdd]
     by_cases h' : y'.1 < n
     · rw [dite_eq_left h', dite_eq_left ⟨l.2, h'⟩, ciScE_lt _ h', ciScE_lt _ l.2, sub_self, zpow_zero, mul_one]
-    · rw [dite_eq_right h', zero_mul, redP_zero, dite_eq_right (fun h => h' h.2), if_neg (fun h => h' (by rw [← h]; simp))]
+    · rw [dite_eq_right h', zero_mul, redP_zero, dite_eq_right (fun h => h' h.2), ite_eq_right (fun h => h' (by rw [← h]; simp))]
   | right jj =>
     rw [ciExtM_natAdd, dite_eq_right (fun h => by simp at h), Pi.single_apply]
     by_cases he : Fin.natAdd n jj = y'
     · subst he
-      rw [if_pos rfl, if_pos rfl, one_mul, sub_self, zpow_zero, redP_one]
-    · rw [if_neg he, if_neg he, zero_mul, redP_zero]
+      rw [ite_eq_left rfl, ite_eq_left rfl, one_mul, sub_self, zpow_zero, redP_one]
+    · rw [ite_eq_right he, ite_eq_right he, zero_mul, redP_zero]
 
 theorem inclusion_single_eq_single {n c : ℕ} (l : Fin n) : Loc.inX E n c (Pi.single l 1) = Pi.single (Fin.castAdd c l) 1 := by
   rw [← ciEN l.2, basisVec_eq_single (show l.1 < n + c by omega)]
@@ -393,7 +291,7 @@ theorem ocbGrpGLoc_holds (m2 : ℕ) : OcbGrpGLoc Ch sel mu cst m2 := by
     omega
   have hJat : Jat (Pr := Pr) cst.sharp j w.1 = LocE.JGsym w.1 (qOf w.1) R.k R.rS R.r R.t (R.N j) (cOf R j) := by
     unfold Jat
-    rw [if_pos w.2, hB.sharp, if_pos rfl]
+    rw [ite_eq_left w.2, hB.sharp, ite_eq_left rfl]
   constructor
   · rintro ⟨g, ⟨r, hr', hrg⟩, hred⟩
     have hJ : r ∈ LocE.JGsym w.1 (qOf w.1) R.k R.rS R.r R.t (R.N j) (cOf R j) := by
@@ -1198,27 +1096,27 @@ theorem twNormLat_main : PI.TwNormLat.TwNormLat := by
   let x1 : Fin (N + c) → E := if hN : N < N + c then d ⟨N, hN⟩ • b ⟨N, hN⟩ - Pi.single ⟨N, hN⟩ 1 else 0
   have hx1M : h⁻¹ x1 ∈ LocE.lamY P (Ideal.absNorm P.asIdeal) N c 0 := by
     by_cases hN : N < N + c
-    · simp only [x1, dif_pos hN]
+    · simp only [x1, dite_eq_left hN]
       rw [sub_eq_add_neg, ← neg_one_smul E (Pi.single _ _)]
       refine Madd _ _ (Msmul _ _ ?_ (hbM _)) (Msmul _ _ (intAt_neg P (intAt_one P)) (Mlam _ fun k => ?_))
-      · simp only [d, lt_irrefl, if_false]; exact intAt_pow P (intAt_natCast P _) _
+      · simp only [d, lt_irrefl, ite_false]; exact intAt_pow P (intAt_natCast P _) _
       · by_cases hk : k = ⟨N, hN⟩
         · rw [hk]; simpa using intAt_one P
         · simpa [Pi.single_apply, hk] using intAt_zero P
-    · simp only [x1, dif_neg hN, map_zero]; exact zero_mem _
+    · simp only [x1, dite_eq_right hN, map_zero]; exact zero_mem _
   have hx1Z : Zab N x1 := by
     intro l hl
     by_cases hN : N < N + c
-    · simp only [x1, dif_pos hN, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
+    · simp only [x1, dite_eq_left hN, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
       rcases Nat.lt_or_eq_of_le hl with hlt | heq
       · rw [hUT _ l (by rw [Fin.lt_def]; exact hlt)]
         have : l ≠ ⟨N, hN⟩ := fun e => by rw [e] at hlt; exact lt_irrefl _ hlt
         simp [this]
       · have : l = ⟨N, hN⟩ := Fin.ext heq.symm
         rw [this, hbl]
-        simp only [d, lt_irrefl, if_false, Pi.single_eq_same]
+        simp only [d, lt_irrefl, ite_false, Pi.single_eq_same]
         field_simp; ring
-    · simp [x1, dif_neg hN]
+    · simp [x1, dite_eq_right hN]
   obtain ⟨ζ, hζ, hx1ζ⟩ := hrep x1 hx1M
   have hζZ : Zab N ζ := comb_reflect hUT hbd ζ N (by rw [← hx1ζ]; exact hx1Z)
   let c' : Fin (N + c) → Fin (N + c) → E := fun l => d l • b l - (if l.1 = N then x1 else 0)
@@ -1231,10 +1129,10 @@ theorem twNormLat_main : PI.TwNormLat.TwNormLat := by
   have hc1 : ∀ l : Fin (N + c), N ≤ l.1 → c' l l = 1 := by
     intro l hl
     by_cases h1 : l.1 = N
-    · simp only [c', if_pos h1, d, if_neg (not_lt.2 hl), Pi.sub_apply, Pi.smul_apply, smul_eq_mul, hbl, hx1Z l hl]
+    · simp only [c', ite_eq_left h1, d, ite_eq_right (not_lt.2 hl), Pi.sub_apply, Pi.smul_apply, smul_eq_mul, hbl, hx1Z l hl]
       field_simp
       try simp
-    · simp only [c', if_neg h1, d, if_neg (not_lt.2 hl), Pi.sub_apply, Pi.smul_apply, smul_eq_mul, hbl,
+    · simp only [c', ite_eq_right h1, d, ite_eq_right (not_lt.2 hl), Pi.sub_apply, Pi.smul_apply, smul_eq_mul, hbl,
         Pi.zero_apply, sub_zero]
       field_simp
   have hcd : ∀ l, c' l l ≠ 0 := by
@@ -1242,14 +1140,14 @@ theorem twNormLat_main : PI.TwNormLat.TwNormLat := by
     by_cases hl : N ≤ l.1
     · rw [hc1 l hl]; exact one_ne_zero
     · have h1 : l.1 ≠ N := by omega
-      simp only [c', if_neg h1, d, if_pos (not_le.1 hl), Pi.sub_apply, Pi.smul_apply, smul_eq_mul, hbl,
+      simp only [c', ite_eq_right h1, d, ite_eq_left (not_le.1 hl), Pi.sub_apply, Pi.smul_apply, smul_eq_mul, hbl,
         Pi.zero_apply, sub_zero, one_mul]
       exact inv_ne_zero (pow_ne_zero _ hq0)
   have hca : ∀ hN : N < N + c, c' ⟨N, hN⟩ = Pi.single ⟨N, hN⟩ 1 := by
     intro hN
     show d _ • b _ - (if N = N then x1 else 0) = _
-    rw [if_pos rfl]
-    simp only [x1, dif_pos hN]
+    rw [ite_eq_left rfl]
+    simp only [x1, dite_eq_left hN]
     exact sub_sub_cancel _ _
   have hr : (combE hcUT hcd)⁻¹ ∈ Loc.R1 E N c := combinationEquiv_inv_mem_unipotentFlagGroup hcUT hcd hc1 hca
   refine ⟨(combE hcUT hcd)⁻¹, hr, 1, Subgroup.one_mem _, ?_⟩
@@ -1283,11 +1181,11 @@ theorem twNormLat_main : PI.TwNormLat.TwNormLat := by
   have hu1 : ∀ v (l : Fin N), u v (Fin.castAdd c l) = v (Fin.castAdd c l) - Loc.atN v N * z l := by
     intro v l
     simp only [u, d, z]
-    rw [if_pos (show (Fin.castAdd c l).1 < N from l.2), mul_one]
+    rw [ite_eq_left (show (Fin.castAdd c l).1 < N from l.2), mul_one]
   have hu2 : ∀ v (i : Fin c), u v (Fin.natAdd N i) = (qE P ^ (n i.1))⁻¹ * v (Fin.natAdd N i) := by
     intro v i
     simp only [u, d, n]
-    rw [if_neg (show ¬ (Fin.natAdd N i).1 < N by simp), hζZ _ (by simp), dif_pos i.2, zpow_neg, inv_inv,
+    rw [ite_eq_right (show ¬ (Fin.natAdd N i).1 < N by simp), hζZ _ (by simp), dite_eq_left i.2, zpow_neg, inv_inv,
       zpow_natCast, mul_zero, sub_zero, mul_comm]
   have hU : ∀ v, (∀ l, IntAt P (u v l)) ↔ Crit P N c n z v := by
     intro v
@@ -1363,9 +1261,9 @@ theorem twNormRep {X : Fields} {Pr : Primes X} {R : Ranks} (sharp : Bool) (j : �
     ∃ h', SameDC (Pr := Pr) sharp j P h h' ∧ TwBdd (Pr := Pr) j P h' ∧ TwNF (Pr := Pr) j P h' ∧
       prCat (Pr := Pr) sharp j P h' ≤ GLint X.E (R.N j) P := by
   have hL : lamYat (Pr := Pr) (R := R) j P = LocE.lamY P (qOf P) (R.N j) (cOf R j) 0 := by
-    unfold lamYat; rw [if_neg hP]
+    unfold lamYat; rw [ite_eq_right hP]
   have hJ : Jat (Pr := Pr) (R := R) sharp j P = LocE.JQ P (qOf P) (R.k + j) (R.N j) (cOf R j) := by
-    unfold Jat; rw [if_neg hP]
+    unfold Jat; rw [ite_eq_right hP]
   have hb0 : PI.TwNormLat.Bdd P (R.N j) (cOf R j) j h := by
     intro x hx
     have := hb x (by rw [hL]; exact hx)
@@ -1389,12 +1287,12 @@ theorem twChrOk_one {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.
     (cst : LocCst X (rowSG Pr sel mu)) (j : ℕ) (P : rowSG Pr sel mu) (hP : P.1 ∉ Pr.vGs)
     (hpsi : ∀ x, IntAt P.1 x → cst.psi P x = 1) : TwChrOk Ch sel mu cst j P 1 := by
   have hJ : Jat (Pr := Pr) (R := R) cst.sharp j P.1 = LocE.JQ P.1 (qOf P.1) (R.k + j) (R.N j) (cOf R j) := by
-    unfold Jat; rw [if_neg hP]
+    unfold Jat; rw [ite_eq_right hP]
   have hchi : ∀ r, chiInv Ch sel mu cst j P 1 r =
       PI.TwChrOne.ChiL P.1 (cst.psi P) (resChar (mu : Chr X.F X.E X.K) P.1) (R.k + j) (R.N j) (cOf R j) 1 r := by
     intro r
     unfold chiInv lamRow
-    rw [if_neg hP]
+    rw [ite_eq_right hP]
     rfl
   obtain ⟨h1, h2⟩ := _root_.TwChrOne X.E X.K P.1 (cst.psi P) (resChar (mu : Chr X.F X.E X.K) P.1) (R.k + j) (R.N j) (cOf R j) hpsi
   refine ⟨fun r hr => ?_, fun r hr r' hr' r'' hr'' hx => ?_⟩

@@ -11,46 +11,9 @@ public import Mathlib.RingTheory.MvPowerSeries.Rename
 public import Mathlib.RingTheory.WittVector.IsPoly
 public import Mathlib.Tactic.ReduceModChar
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -58,7 +21,6 @@ open ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
 open ReciprocityTheory.ChartRestriction.G.TB (colM dAct)
 open IsLocalRing
-attribute [local instance] Over.cartesianMonoidalCategory
 namespace GlobalTheory.PowGerm
 
 section Jets
@@ -174,14 +136,6 @@ def AGermSt : Prop := ∀ (V : Type) [CommRing V] [IsDomain V] [IsDiscreteValuat
       (∀ jj, σ'.f jj = ∑ i, resTop _ (scal (CartesianMonoidalCategory.fst (TFK (R := V) F) ((Over.pullback (jK V)).obj G)).left (c i)) * (σ i).f jj) →
       GermA U.toUnifPre z τ F q σ' (∑ i, c i • f i)) ∧
     (τ.Trunc → ∀ σ', ∃ f, GermA U.toUnifPre z τ F q σ' f)
-
-def AIntSt : Prop := ∀ (V : Type) [CommRing V] [IsDomain V] [IsDiscreteValuationRing V] [IsAdicComplete (maximalIdeal V) V] (ϖ : V), Irreducible ϖ → ∀
-    (D : DegData V (maximalIdeal V)) (A : PolAV (Spec (CommRingCat.of (FractionRing V)))) (G : Over (Sp V)) [GrpObj G] [IsCommMonObj G]
-    (U : Unif (maximalIdeal V) D A G) (κ : Type) [Fintype κ] [DecidableEq κ] (z : JetPts G κ), IsUnivJ G κ z →
-  ∀ τ : Frames U.LG.L z, τ.Gen →
-  ∀ (F : Type) [Field F] [Algebra (FractionRing V) F] [Algebra V F] [IsScalarTower V (FractionRing V) F] (v : AddValuation F (WithTop ℚ)), ValOver ϖ F v → ∀ q : ℕ, 1 ≤ q →
-  ∀ (σ' : U.SecGF F q) (s : Fam D.toPre F q) (f : MvPowerSeries κ F), U.ExpandsG F q σ' s → GermA U.toUnifPre z τ F q σ' f →
-    (∀ α, VGe D F v q α (s.s α) 0) → ∀ e, 0 ≤ v (MvPowerSeries.coeff e f)
 
 def AJetSt : Prop := ∀ (V : Type) [CommRing V] [IsDomain V] [IsDiscreteValuationRing V] [IsAdicComplete (maximalIdeal V) V] (ϖ : V), Irreducible ϖ → ∀
     (D : DegData V (maximalIdeal V)) (A : PolAV (Spec (CommRingCat.of (FractionRing V)))) (G : Over (Sp V)) [GrpObj G] [IsCommMonObj G]
@@ -400,25 +354,6 @@ def GenPointT : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
       U'.toUnifPre.ExpandsG F (g' * g) σ₂ (famCast (Dp := D'.toPre) (F := F) (one_mul (g' * g)) r₂) ∧
       IsGermN P C.xT C.actT C.eT C.wPT pG PU.toUnifPowOf F (g' * g) σ₂ (hh i)
 
-def GermOfFamT : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l)
-    (c : Coeff l) [StarRing (𝓞 E)], (∀ a : 𝓞 E, star a = H.bar a) →
-  ∀ (T : CDVR) (io : c.F →+* T.Fr) (y : IntFr Xo c T io) (C : IntegralChartA3 Xo c T io y),
-    FrTrunc C.I.G (𝟙 (Sp T.V)) (chD C.ch) C.xT C.eT → ∀ (P : PELUnif (maximalIdeal T.V) C.I.G) (ϖ : T.V), Irreducible ϖ →
-  ∀ (Q : P.D.toPre.X → ℤ), IsQ P.D.toPre ϖ Q →
-  ∀ (n : ℕ), 1 ≤ n → ∀ (D' : DegData T.V (maximalIdeal T.V)) (A' : PolAV (Spec (CommRingCat.of T.Fr)))
-    (G' : Over (Sp T.V)) [GrpObj G'] [IsCommMonObj G'] (pD : IsPowDeg D'.toPre P.D.toPre n)
-    (pA : IsPowPolAV A' P.A n) (pG : IsPowGrp G' C.I.G.G n) (U' : Unif (maximalIdeal T.V) D' A' G')
-    (PU : UnifPowOf3 pD pA pG U' P.U)
-    (F : Type) [Field F] [Algebra T.Fr F] [Algebra T.V F] [IsScalarTower T.V T.Fr F]
-    (v : AddValuation F (WithTop ℚ)), ValOver ϖ F v → ∀ q : ℕ, 1 ≤ q →
-    (∀ σ' : U'.toUnifPre.SecGF F q, ∃ g : PS F n (chD C.ch),
-      IsGermN P C.xT C.actT C.eT C.wPT pG PU.toUnifPowOf F q σ' g) ∧
-    ∀ (s : Fam D'.toPre F q) (σ' : U'.toUnifPre.SecGF F q), U'.toUnifPre.ExpandsG F q σ' s →
-      NuGe D' (sumQ pD.xe Q) F v q s 0 → ∀ g : PS F n (chD C.ch),
-        IsGermN P C.xT C.actT C.eT C.wPT pG PU.toUnifPowOf F q σ' g →
-        ∀ e, 0 ≤ v (MvPowerSeries.coeff e g)
-
 def JetsOnCopiesCompatibleFrames : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l)
     (c : Coeff l) [StarRing (𝓞 E)], (∀ a : 𝓞 E, star a = H.bar a) →
@@ -441,106 +376,6 @@ def JetsOnCopiesCompatibleFrames : Prop :=
       lam ≠ 0 ∧ (∃ ρ : ℚ, v lam = (ρ : WithTop ℚ) ∧ (ρ : ℝ) ≤ (D : ℝ) ^ 2 * Φ / q) ∧
       ∀ e : Fin n × Fin (chD C.ch) →₀ ℕ, e.degree ≤ D →
         MvPowerSeries.coeff e g = MvPowerSeries.coeff e (lam • MvPowerSeries.map (algebraMap T.Fr F) f)
-
-def OneColumnT : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l)
-    (c : Coeff l) [StarRing (𝓞 E)], (∀ a : 𝓞 E, star a = H.bar a) →
-  ∀ (T : CDVR) (io : c.F →+* T.Fr) (y : IntFr Xo c T io), y.IsAlg → ∀ (C : IntegralChartA3 Xo c T io y),
-    FrTrunc C.I.G (𝟙 (Sp T.V)) (chD C.ch) C.xT C.eT → ∀ (P : PELUnif (maximalIdeal T.V) C.I.G), P.TorsionIso → ∀ (ϖ : T.V), Irreducible ϖ →
-  ∀ (Q : P.D.toPre.X → ℤ), IsQ P.D.toPre ϖ Q →
-  ∀ (g g' : ℕ), g.Prime → g'.Prime → g ≠ g' → Odd g → Odd g' → 5 ≤ g' →
-  ∀ (π π' : 𝓞 E), π * star π = (g : 𝓞 E) → π' * star π' = (g' : 𝓞 E) →
-    (∃ u u' : 𝓞 E, u * π + u' * star π = 1) → (∃ u u' : 𝓞 E, u * π' + u' * star π' = 1) →
-    (UniqueFactorizationMonoid.normalizedFactors (Ideal.span {(g : 𝓞 E)})).card = Module.finrank ℚ E →
-    (UniqueFactorizationMonoid.normalizedFactors (Ideal.span {(g : 𝓞 E)})).Nodup →
-    ¬ IsUnit ((g : ℕ) : T.V) →
-  ∀ (F : Type) [Field F] [IsAlgClosed F] [CharZero F] [Algebra T.Fr F] [Algebra T.V F] [IsScalarTower T.V T.Fr F]
-    (v : AddValuation F (WithTop ℚ)), ValOver ϖ F v →
-    ∀ (_I : TateIso Dw F (TFK (R := T.V) F ⟶ P.A.A) (fun a x => x ≫ P.oA.act a)
-        (fun k x x' z => WeilIs P.A.A P.A.L k x x' (unitOn z))),
-  ∀ (Φ M0 : ℝ) (r : ℕ) (b : Module.Basis (Fin r) ℤ P.D.toPre.X), 0 ≤ Φ → (∀ j, (Q (b j) : ℝ) ≤ Φ) →
-    (∀ j z, |((Q (b j + z) - Q (b j) - Q z : ℤ) : ℝ)| ≤ M0 * Q z) →
-  ∀ (D₁ : DegData T.V (maximalIdeal T.V)) (A₁ : PolAV (Spec (CommRingCat.of T.Fr)))
-    (G₁ : Over (Sp T.V)) [GrpObj G₁] [IsCommMonObj G₁] (pD : IsPowDeg D₁.toPre P.D.toPre 1)
-    (pA : IsPowPolAV A₁ P.A 1) (pG : IsPowGrp G₁ C.I.G.G 1)
-    (U₁ : Unif (maximalIdeal T.V) D₁ A₁ G₁) (PU : UnifPowOf3 pD pA pG U₁ P.U)
-    [Module (𝓞 E) D₁.toPre.X] (oD₁ : D₁.toPre.OAct (𝓞 E)),
-    (∀ (a : 𝓞 E) (x : D₁.toPre.X) (i : Fin 1), pD.xe (a • x) i = a • pD.xe x i) →
-    (∀ (a : 𝓞 E) (i : Fin 1),
-      oD₁.onB.act a ≫ pD.pw.pr i = pD.pw.pr i ≫ (letI := H.starRing; P.oD.onB.act a)) →
-  ∀ x : TFK (R := T.V) F ⟶ A₁.A, (∀ i, x ≫ pA.pr i ≫ P.oA.act π = 1) →
-    letI := io.toAlgebra
-    ∃ (s : Fam D₁.toPre F g') (s₂ : Fam D₁.toPre F (g' * g)) (p : QkPt D₁.toPre F (g' * g))
-      (w : LB.Gen (LB.LinComb D₁.toPre.P.L (DegPre.lineφ D₁.toPre F p.g.b) (DegPre.lineε (g' * g))))
-      (ζ : F) (t₀ t : Fam D₁.toPre F (g' * g))
-      (σ' : U₁.toUnifPre.SecGF F (g' * g)) (h : PS F 1 (chD C.ch)) (c₀ : F) (ρ₀ : ℚ),
-      NuGe D₁ (sumQ pD.xe Q) F v g' s 0 ∧
-      PullAl D₁ F oD₁ (star π) g' g s s₂ ∧
-      (w.IsGen ∧ ζ ≠ 0 ∧ FinOrd D₁ F (g' * g) p w ζ) ∧
-      QkToAkU U₁.toUnifPre F (g' * g) p x ∧
-      PhiRel D₁.toPre F (g' * g) p w s₂ t₀ ∧ Fam.IsSmul D₁.toPre F ζ t₀ t ∧
-      U₁.toUnifPre.ExpandsG F (g' * g) σ' t ∧
-      IsGermN P C.xT C.actT C.eT C.wPT pG PU.toUnifPowOf F (g' * g) σ' h ∧
-      v c₀ = (ρ₀ : WithTop ℚ) ∧ (ρ₀ : ℝ) ≤ r * Φ / (4 * g') ∧
-      (∀ e, v c₀ ≤ v (MvPowerSeries.coeff e h)) ∧ v (MvPowerSeries.constantCoeff h) = v c₀
-
-def ColumnValueT : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l)
-    (c : Coeff l) [StarRing (𝓞 E)], (∀ a : 𝓞 E, star a = H.bar a) →
-  ∀ (T : CDVR) (io : c.F →+* T.Fr) (y : IntFr Xo c T io), y.IsAlg → ∀ (C : IntegralChartA3 Xo c T io y),
-    FrTrunc C.I.G (𝟙 (Sp T.V)) (chD C.ch) C.xT C.eT → ∀ (P : PELUnif (maximalIdeal T.V) C.I.G), P.TorsionIso → ∀ (ϖ : T.V), Irreducible ϖ →
-  ∀ (Q : P.D.toPre.X → ℤ), IsQ P.D.toPre ϖ Q →
-  ∀ (g g' : ℕ), g.Prime → g'.Prime → g ≠ g' → Odd g → Odd g' → 5 ≤ g' →
-  ∀ (π π' : 𝓞 E), π * star π = (g : 𝓞 E) → π' * star π' = (g' : 𝓞 E) →
-    (∃ u u' : 𝓞 E, u * π + u' * star π = 1) → (∃ u u' : 𝓞 E, u * π' + u' * star π' = 1) →
-    (UniqueFactorizationMonoid.normalizedFactors (Ideal.span {(g : 𝓞 E)})).card = Module.finrank ℚ E →
-    (UniqueFactorizationMonoid.normalizedFactors (Ideal.span {(g : 𝓞 E)})).Nodup →
-    ¬ IsUnit ((g : ℕ) : T.V) →
-  ∀ (F : Type) [Field F] [IsAlgClosed F] [CharZero F] [Algebra T.Fr F] [Algebra T.V F] [IsScalarTower T.V T.Fr F]
-    (v : AddValuation F (WithTop ℚ)), ValOver ϖ F v →
-  ∀ (O : Type) [CommRing O] [Algebra O F] [Algebra T.V O] [IsScalarTower T.V O F],
-    Function.Injective (algebraMap O F) → (∀ z : F, 0 ≤ v z ↔ z ∈ (algebraMap O F).range) →
-    IsAdicComplete (Ideal.span {((g : ℕ) : O)}) O →
-    ∀ (_I : TateIso Dw F (TFK (R := T.V) F ⟶ P.A.A) (fun a x => x ≫ P.oA.act a)
-        (fun k x x' z => WeilIs P.A.A P.A.L k x x' (unitOn z))),
-  ∀ (Φ M0 : ℝ) (r : ℕ) (b : Module.Basis (Fin r) ℤ P.D.toPre.X), 0 ≤ Φ → (∀ j, (Q (b j) : ℝ) ≤ Φ) →
-    (∀ j z, |((Q (b j + z) - Q (b j) - Q z : ℤ) : ℝ)| ≤ M0 * Q z) →
-  ∀ (D₁ : DegData T.V (maximalIdeal T.V)) (A₁ : PolAV (Spec (CommRingCat.of T.Fr)))
-    (G₁ : Over (Sp T.V)) [GrpObj G₁] [IsCommMonObj G₁] (pD : IsPowDeg D₁.toPre P.D.toPre 1)
-    (pA : IsPowPolAV A₁ P.A 1) (pG : IsPowGrp G₁ C.I.G.G 1)
-    (U₁ : Unif (maximalIdeal T.V) D₁ A₁ G₁) (PU : UnifPowOf3 pD pA pG U₁ P.U)
-    [Module (𝓞 E) D₁.toPre.X] (oD₁ : D₁.toPre.OAct (𝓞 E)),
-    (∀ (a : 𝓞 E) (x : D₁.toPre.X) (i : Fin 1), pD.xe (a • x) i = a • pD.xe x i) →
-    (∀ (a : 𝓞 E) (i : Fin 1),
-      oD₁.onB.act a ≫ pD.pw.pr i = pD.pw.pr i ≫ (letI := H.starRing; P.oD.onB.act a)) →
-  ∀ (u : PS F 1 (chD C.ch)), (∀ e, 0 ≤ v (MvPowerSeries.coeff e u)) → MvPowerSeries.constantCoeff u = 1 →
-    ev (n := 2) ![fun j => MvPowerSeries.map (algebraMap T.V F) (C.FT j)] u =
-      ev (n := 2) ![pt F (chD C.ch) 0] u * ev (n := 2) ![pt F (chD C.ch) 1] u →
-    letI := io.toAlgebra
-    ∃ (x : TFK (R := T.V) F ⟶ A₁.A) (s : Fam D₁.toPre F g') (s₂ : Fam D₁.toPre F (g' * g))
-      (p : QkPt D₁.toPre F (g' * g))
-      (w : LB.Gen (LB.LinComb D₁.toPre.P.L (DegPre.lineφ D₁.toPre F p.g.b) (DegPre.lineε (g' * g))))
-      (ζ : F) (t₀ t : Fam D₁.toPre F (g' * g))
-      (σ' : U₁.toUnifPre.SecGF F (g' * g)) (h : PS F 1 (chD C.ch)) (c₀ : F) (ρ₀ : ℚ),
-      (∀ i, x ≫ pA.pr i ≫ P.oA.act π = 1) ∧
-      NuGe D₁ (sumQ pD.xe Q) F v g' s 0 ∧
-      PullAl D₁ F oD₁ (star π) g' g s s₂ ∧
-      (w.IsGen ∧ ζ ≠ 0 ∧ FinOrd D₁ F (g' * g) p w ζ) ∧
-      QkToAkU U₁.toUnifPre F (g' * g) p x ∧
-      PhiRel D₁.toPre F (g' * g) p w s₂ t₀ ∧ Fam.IsSmul D₁.toPre F ζ t₀ t ∧
-      U₁.toUnifPre.ExpandsG F (g' * g) σ' t ∧
-      IsGermN P C.xT C.actT C.eT C.wPT pG PU.toUnifPowOf F (g' * g) σ' h ∧
-      v c₀ = (ρ₀ : WithTop ℚ) ∧ (ρ₀ : ℝ) ≤ r * Φ / (4 * g') ∧
-      (∀ e, v c₀ ≤ v (MvPowerSeries.coeff e h)) ∧ v (MvPowerSeries.constantCoeff h) = v c₀ ∧
-      ∀ Pv : MvPolynomial (LtN Dw 1) F, (∀ mm, 0 ≤ v (Pv.coeff mm)) →
-        (∀ ℓ ∈ Pv.vars, 0 < v (algebraMap T.Fr F (io (embK c ℓ.1 (star π))))) → Pv.totalDegree < g →
-        v c₀ + v ((g : ℕ) : F) ≤
-          v (nabValN C.ch.B F (MvPowerSeries.map (algebraMap T.Fr F) C.ch.h) H.w0 (g' * g) h
-              (fun ℓ : LtN Dw 1 => ℓ.2.2) (fun (ℓ : LtN Dw 1) i => algebraMap T.Fr F (C.ch.uvec ⟨ℓ.1, ℓ.2.1⟩ i)) Pv -
-            MvPolynomial.eval (fun ℓ : LtN Dw 1 => MvPowerSeries.constantCoeff
-                (DofN (fun j => MvPowerSeries.map (algebraMap T.V F) (C.FT j)) (0 : Fin 1)
-                  (fun j => algebraMap T.V F (C.uvecT ⟨ℓ.1, ℓ.2.1⟩ j)) u)) Pv *
-              MvPowerSeries.constantCoeff h)
 
 def LemmaBT : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l)

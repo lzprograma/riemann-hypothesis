@@ -128,18 +128,18 @@ theorem exists_repr_of_int
     fun v => if hv : v ∈ S then 0 else y v hv
   have hYI : ∀ v l, Y v l ∈ v.adicCompletionIntegers F := fun v l => by
     by_cases hv : v ∈ S
-    · simp only [Y, dif_pos hv, Pi.zero_apply]; exact zero_mem _
-    · simp only [Y, dif_neg hv]; exact hyI v hv l
+    · simp only [Y, dite_eq_left hv, Pi.zero_apply]; exact zero_mem _
+    · simp only [Y, dite_eq_right hv]; exact hyI v hv l
   let X : Module.Free.ChooseBasisIndex ℤ (𝓞 E) → FiniteAdeleRing (𝓞 F) F :=
     fun l => ⟨fun v => Y v l, Filter.Eventually.of_forall fun v => hYI v l⟩
   refine ⟨X, fun l v hv => ?_, fun l v _ => hYI v l, hsep _ _ fun v => ?_⟩
   · change Y v l = 0
-    simp only [Y, dif_pos hv, Pi.zero_apply]
+    simp only [Y, dite_eq_left hv, Pi.zero_apply]
   · rw [compAt_sum]
     change compAt E v m = ∑ l, Y v l ⊗ₜ[F] intBasis E l
     by_cases hv : v ∈ S
-    · simp only [Y, dif_pos hv, Pi.zero_apply, zero_tmul, Finset.sum_const_zero]; exact h0 v hv
-    · simp only [Y, dif_neg hv]; exact hyeq v hv
+    · simp only [Y, dite_eq_left hv, Pi.zero_apply, zero_tmul, Finset.sum_const_zero]; exact h0 v hv
+    · simp only [Y, dite_eq_right hv]; exact hyeq v hv
 
 theorem int_cofinite (a : AE F E) :
     ∃ S : Finset (HeightOneSpectrum (𝓞 F)), ∀ v ∉ S, compAt E v a ∈ intAt E v := by
@@ -192,7 +192,7 @@ theorem of_placeMaps (hP : PlaceMaps.Statement) : AENeighbourhoods.Statement := 
   intro F E _ _ _ _ _ c h2 hc _ _
   exact ⟨fun N U hU => nhds_of_sep (hP F E c h2 hc).1 N U hU, int_cofinite⟩
 
-theorem proof (_hT : AETopologicalRing.Statement) (hP : PlaceMaps.Statement) :
+theorem proof (hP : PlaceMaps.Statement) :
     AENeighbourhoods.Statement :=
   of_placeMaps hP
 
@@ -1233,7 +1233,7 @@ theorem intersectionNumber_baseChange : PlaceMaps.Statement := by
       rw [form_map_compAt, inclA_map_compAt] at this
       exact this
 
-theorem proof (_h : LocalRingHypotheses.Statement) : PlaceMaps.Statement := intersectionNumber_baseChange
+theorem proof : PlaceMaps.Statement := intersectionNumber_baseChange
 
 end PlaceMaps
 
@@ -1304,7 +1304,7 @@ theorem SAHolds.of_neighbourhoods_truncation (hNb : AENeighbourhoods.Statement)
       · exact zero_mem _
   simpa using hmem
 
-theorem SAHolds.proof (_hHyp : HypPairExists.Statement) (hNb : AENeighbourhoods.Statement)
+theorem SAHolds.proof (hNb : AENeighbourhoods.Statement)
     (hTr : Truncation.Statement) : SAHolds.Statement :=
   SAHolds.of_neighbourhoods_truncation hNb hTr
 
@@ -1526,12 +1526,12 @@ theorem Truncation.proof (hLoc : LocalInClosure.Statement) : Truncation.Statemen
   refine ⟨?_, ?_, part3, ?_⟩
   · intro v hv
     ext i j
-    simp only [trunc, Matrix.map_apply, Matrix.add_apply, map_add (f := _), compAt_restrictTo, if_pos hv,
+    simp only [trunc, Matrix.map_apply, Matrix.add_apply, map_add (f := _), compAt_restrictTo, ite_eq_left hv,
       Matrix.sub_apply, map_sub]
     abel
   · intro v hv
     ext i j
-    simp only [trunc, Matrix.map_apply, Matrix.add_apply, map_add (f := _), compAt_restrictTo, if_neg hv,
+    simp only [trunc, Matrix.map_apply, Matrix.add_apply, map_add (f := _), compAt_restrictTo, ite_eq_right hv,
       add_zero]
     rw [Matrix.one_apply, Matrix.one_apply]
     split_ifs <;> simp
@@ -1598,10 +1598,10 @@ theorem LocalInClosure.full : LocalInClosure.Statement :=
 theorem Truncation.full : Truncation.Statement := Truncation.proof LocalInClosure.full
 
 theorem AENeighbourhoods.full : AENeighbourhoods.Statement :=
-  AENeighbourhoods.proof AETopologicalRing.full PlaceMaps.full
+  AENeighbourhoods.proof PlaceMaps.full
 
 theorem SAHolds.full : ReciprocityTheory.ChartRestriction.G.SA.SAStatement :=
-  SAHolds.proof HypPairExists.full AENeighbourhoods.full Truncation.full
+  SAHolds.proof AENeighbourhoods.full Truncation.full
 
 theorem SAOpenHolds.full : ReciprocityTheory.ChartRestriction.G.SA.SAOpenStatement :=
   SAOpenHolds.proof SAHolds.full AETopologicalRing.full

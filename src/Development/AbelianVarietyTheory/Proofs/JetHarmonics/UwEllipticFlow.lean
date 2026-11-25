@@ -304,10 +304,10 @@ private lemma exists_analytic_u_w_factor_near_lattice (h : M.Ok) {l : ℂ} (hl :
     apply hz1
     rw [← hy, h0, mul_zero]
   refine ⟨?_, ?_, fun _ => ⟨hzL, hy0⟩⟩
-  · simp only [Mdl.u, if_neg hzL]
+  · simp only [Mdl.u, ite_eq_right hzL]
     rw [← hx, ← hy]
     field_simp
-  · simp only [Mdl.w, if_neg hzL]
+  · simp only [Mdl.w, ite_eq_right hzL]
     rw [← hy]
     field_simp
 

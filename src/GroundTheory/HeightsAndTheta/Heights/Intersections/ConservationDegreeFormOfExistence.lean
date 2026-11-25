@@ -92,7 +92,7 @@ theorem vertR_C_prime (P : Ideal (MRing ι)) {n : ℕ} (L : Fin n → HermLine �
   rw [finsum_mem_eq_finite_toFinset_sum _ (divSupp_finite P _), Finset.mul_sum]
   refine Finset.sum_congr rfl fun V hV => ?_
   rw [Set.Finite.mem_toFinset] at hV
-  rw [if_neg (not_horizontal hp hV), charOf_eq hp hV]
+  rw [ite_eq_right (not_horizontal hp hV), charOf_eq hp hV]
   ring
 
 end Conservation
@@ -115,7 +115,7 @@ theorem Conservation.statement_holds : Conservation.Statement := by
     unfold recR vertR arInt
     rw [hlog, Conservation.ptsIntegral_const, zero_mul, sub_zero]
     refine finsum_mem_congr rfl fun W hW => ?_
-    rw [if_neg (Conservation.not_horizontal hp hW), if_neg (Conservation.not_horizontal hp hW)]
+    rw [ite_eq_right (Conservation.not_horizontal hp hW), ite_eq_right (Conservation.not_horizontal hp hW)]
   · rw [hI.2.2 P n L _ (C 1) 0 hP hL hA ha (Conservation.isMultiHomog_C _)
       (Conservation.C_not_mem hP.2.2.1 one_ne_zero)]
     have hlog : logNorm (constLine (ι := ι) (-Real.log p)) (C 1) = fun _ => -Real.log p := by

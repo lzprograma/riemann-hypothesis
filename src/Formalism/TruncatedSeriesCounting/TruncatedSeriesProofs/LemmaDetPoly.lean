@@ -1,55 +1,11 @@
 module
 
 public import Formalism.TruncatedSeriesCounting.LemmaDetPoly
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -305,7 +261,7 @@ theorem core {S : Subring R} (ρ : G →* Matrix n n R)
     rw [← Ideal.Quotient.eq]; exact hqe.symm
   obtain ⟨h', hh'⟩ := Ideal.mem_span_singleton'.1 hmem
   have e : (F ρ l - q).coeff k = 0 := by
-    rw [← hh', Polynomial.coeff_mul_X_pow', if_neg (by omega)]
+    rw [← hh', Polynomial.coeff_mul_X_pow', ite_eq_right (by omega)]
   rw [Polynomial.coeff_sub, sub_eq_zero] at e
   rw [e]
   exact hq k
@@ -447,11 +403,11 @@ theorem det_poly_statement : LemmaDetPoly := by
     simp only [MvPolynomial.coeff_X_mul', MvPolynomial.coeff_C]
     by_cases h1 : p.1 ∈ α.support
     · by_cases h2 : (0 : Fin m →₀ ℕ) = α - Finsupp.single p.1 1
-      · simp only [h1, h2, if_true]
+      · simp only [h1, h2, ite_true]
         exact ⟨c p.1 p.2, hc p.1 p.2, fun x => rfl⟩
-      · simp only [h1, h2, if_true, if_false]
+      · simp only [h1, h2, ite_true, ite_false]
         exact mem_mainNotions_iff_fromT.1 (MainNotions (K := K) T).zero_mem
-    · simp only [h1, if_false]
+    · simp only [h1, ite_false]
       exact mem_mainNotions_iff_fromT.1 (MainNotions (K := K) T).zero_mem
   have hS : ∀ g k, (Matrix.charpolyRev (rho r m g)).coeff k ∈ S1 (K := K) T m := by
     intro g k α
@@ -469,8 +425,8 @@ theorem det_poly_statement : LemmaDetPoly := by
     show FromT T (fun x => ((Matrix.charpolyRev (rho r m g)).coeff k x).coeff α)
     simp only [e, MvPolynomial.coeff_C]
     by_cases h : (0 : Fin m →₀ ℕ) = α
-    · simp only [h, if_true]; exact hchar g k
-    · simp only [h, if_false]; exact mem_mainNotions_iff_fromT.1 (MainNotions (K := K) T).zero_mem
+    · simp only [h, ite_true]; exact hchar g k
+    · simp only [h, ite_false]; exact mem_mainNotions_iff_fromT.1 (MainNotions (K := K) T).zero_mem
   set l : List ((Xs → MvPolynomial (Fin m) K) × ℕ × G) :=
     ((Finset.univ : Finset (Fin m)).sigma sg).toList.map (fun p => (coefL p, 1, p.2)) with hl_def
   have hl : ∀ L ∈ l, L.1 ∈ S1 (K := K) T m ∧ 1 ≤ L.2.1 := by

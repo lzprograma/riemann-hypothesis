@@ -2,47 +2,7 @@ module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.SchurYOffClrHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CoeEqAlgebraMapZeroEquiv
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
@@ -120,21 +80,21 @@ private theorem fib_eq {F : Type} [Field F] [NumberField F] {n : ℕ} (t₀ t₁
   have hA : detOne (t₀ x) (twist t₀ (ComplexEmbedding.conjugate t₀) ε y i g t₀)
       = (1 - t₀ x * (y * g t₀ i)) * ∏ j ∈ Finset.univ.erase i, (1 - t₀ x * g t₀ j) := by
     unfold detOne twist scaleAt
-    rw [if_pos rfl, ← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ i), if_pos rfl]
+    rw [ite_eq_left rfl, ← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ i), ite_eq_left rfl]
     congr 1
     apply Finset.prod_congr rfl
     intro j hj
-    rw [if_neg (Finset.ne_of_mem_erase hj)]
+    rw [ite_eq_right (Finset.ne_of_mem_erase hj)]
   have hB : detOne ((ComplexEmbedding.conjugate t₀) x) (twist t₀ (ComplexEmbedding.conjugate t₀) ε y i g (ComplexEmbedding.conjugate t₀))
       = (1 - (starRingEnd ℂ) (t₀ x) * (starRingEnd ℂ) (g t₀ i)) *
         ∏ j ∈ Finset.univ.erase i, (1 - (starRingEnd ℂ) (t₀ x) * (y * (starRingEnd ℂ) (g t₀ j))) := by
     unfold detOne twist scaleOff
-    rw [if_neg (Ne.symm hne), if_pos rfl, ← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ i), if_pos rfl,
+    rw [ite_eq_right (Ne.symm hne), ite_eq_left rfl, ← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ i), ite_eq_left rfl,
       ComplexEmbedding.conjugate_coe_eq, hc]
     congr 1
     apply Finset.prod_congr rfl
     intro j hj
-    rw [if_neg (Finset.ne_of_mem_erase hj), hc]
+    rw [ite_eq_right (Finset.ne_of_mem_erase hj), hc]
   have hC : ∀ τ ∈ (Finset.univ.erase t₀).erase (ComplexEmbedding.conjugate t₀),
       detOne (τ x) (twist t₀ (ComplexEmbedding.conjugate t₀) ε y i g τ)
         = (Multiset.map (fun r => 1 - τ x * (y ^ ε τ * r)) (rts χ τ)).prod := by
@@ -142,7 +102,7 @@ private theorem fib_eq {F : Type} [Field F] [NumberField F] {n : ℕ} (t₀ t₁
     have h1 := Finset.ne_of_mem_erase hτ
     have h2 := Finset.ne_of_mem_erase (Finset.mem_of_mem_erase hτ)
     unfold detOne twist
-    rw [if_neg h2, if_neg h1, hr τ, Multiset.map_map, Finset.prod_map_val]
+    rw [ite_eq_right h2, ite_eq_right h1, hr τ, Multiset.map_map, Finset.prod_map_val]
     rfl
   rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ t₀),
     ← Finset.mul_prod_erase (Finset.univ.erase t₀) _ (Finset.mem_erase.mpr ⟨hne.symm, Finset.mem_univ _⟩),
@@ -165,8 +125,8 @@ theorem UpperTheory.Gal.W2.rootSumWOff_of :
   set t₁ := ComplexEmbedding.conjugate t₀ with ht₁
   have hne : t₀ ≠ t₁ := Ne.symm hconj
   let g : (F →+* ℂ) → Fin n → ℂ := fun τ => if τ = t₀ then (fun k => starRingEnd ℂ (r t₁ k)) else r τ
-  have hg0 : g t₀ = fun k => starRingEnd ℂ (r t₁ k) := if_pos rfl
-  have hg1 : ∀ τ, τ ≠ t₀ → g τ = r τ := fun τ h => if_neg h
+  have hg0 : g t₀ = fun k => starRingEnd ℂ (r t₁ k) := ite_eq_left rfl
+  have hg1 : ∀ τ, τ ≠ t₀ → g τ = r τ := fun τ h => ite_eq_right h
   have hrg : ∀ τ, rts χ τ = Multiset.map (g τ) Finset.univ.val := by
     intro τ
     by_cases h : τ = t₀

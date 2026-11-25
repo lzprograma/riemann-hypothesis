@@ -49,105 +49,24 @@ theorem exists_injective (I : Ideal (MvPolynomial (Fin n) F)) [I.IsPrime] (t : F
   have hJeq : RingHom.ker ψ = I ⊔ Ideal.span {linForm t - 1} := by
     rw [← ChartIncDomain.ker_aeval_eta I t hI ht]
     rfl
-  set J := RingHom.ker ψ with hJ
-
-  set q : MvPolynomial (Fin n) F →+* MvPolynomial (Fin n) F ⧸ J := Ideal.Quotient.mk J with hq
-  set ζ : Fin n → MvPolynomial (Fin n) F ⧸ J := fun m => q (X m) with hζ
-  set c : Fin n → MvPolynomial (Fin n) F ⧸ J := fun m => q (C (t m)) with hc'
-  have hc : ∑ l, c l * ζ l = 1 := by
-    have h1 : q (linForm t) = 1 := by
-      rw [← sub_eq_zero, ← map_one q, ← map_sub, hq, Ideal.Quotient.eq_zero_iff_mem, hJeq]
-      exact Ideal.mem_sup_right (Ideal.mem_span_singleton_self _)
-    set_option synthInstance.maxHeartbeats 100000 in
-      rw [← h1, linForm, map_sum]
-    simp only [map_mul, hζ, hc']
-
-  set γ : MvPolynomial (Fin n ⊕ Fin e × Fin n) F →+* MvPolynomial (Fin e × Fin n) (MvPolynomial (Fin n) F ⧸ J) :=
-    eval₂Hom (C.comp (q.comp C)) (Sum.elim (fun m => C (ζ m)) (genSubst ζ c)) with hγ
-  have hγX : ∀ g, γ (rename Sum.inl g) = C (q g) := by
-    intro g
-    have : γ.comp (rename Sum.inl).toRingHom = C.comp q := by
-      apply MvPolynomial.ringHom_ext
-      · intro a; simp [hγ]
-      · intro m; simp [hγ, hζ]
-    exact RingHom.congr_fun this g
-  have hker : chartIncIdeal I t e ≤ RingHom.ker γ := by
-    refine sup_le ?_ ?_
-    · rw [Ideal.map_le_iff_le_comap]
-      intro g hg
-      rw [Ideal.mem_comap, RingHom.mem_ker, hγX, hq, (Ideal.Quotient.eq_zero_iff_mem).mpr (hJeq ▸ hg),
-        map_zero]
-    · rw [Ideal.span_le]
-      rintro _ ⟨i, rfl⟩
-      rw [SetLike.mem_coe, RingHom.mem_ker]
-      have hC : ∑ l, C (c l) * C (ζ l) = (1 : MvPolynomial (Fin e × Fin n) (MvPolynomial (Fin n) F ⧸ J)) := by
-        set_option synthInstance.maxHeartbeats 100000 in
-          rw [← C_1, ← hc, map_sum]
-        simp only [C_mul]
-      set_option synthInstance.maxHeartbeats 100000 in
-        simp only [map_sum, map_mul, hγ, coe_eval₂Hom, eval₂_X, Sum.elim_inl, Sum.elim_inr]
-      simp only [genSubst, sub_mul, Finset.sum_sub_distrib, mul_assoc, ← Finset.mul_sum, hC, mul_one,
-        sub_self]
-  set γbar : MvPolynomial (Fin n ⊕ Fin e × Fin n) F ⧸ chartIncIdeal I t e →+* MvPolynomial (Fin e × Fin n) (MvPolynomial (Fin n) F ⧸ J) :=
-    Ideal.Quotient.lift (chartIncIdeal I t e) γ (fun a ha => RingHom.mem_ker.mp (hker ha)) with hγbar
-  set χ : MvPolynomial (Fin n) F →+* MvPolynomial (Fin n ⊕ Fin e × Fin n) F ⧸ chartIncIdeal I t e :=
-    (Ideal.Quotient.mk (chartIncIdeal I t e)).comp (rename Sum.inl).toRingHom with hχ
-  have hJX : ∀ a ∈ J, χ a = 0 := by
-    intro a ha
-    rw [hJeq] at ha
-    rw [hχ, RingHom.comp_apply, Ideal.Quotient.eq_zero_iff_mem]
-    exact Ideal.mem_sup_left (Ideal.mem_map_of_mem _ ha)
-
-  set β : MvPolynomial (Fin e × Fin n) (MvPolynomial (Fin n) F ⧸ J) →+*
-      MvPolynomial (Fin n ⊕ Fin e × Fin n) F ⧸ chartIncIdeal I t e :=
-    eval₂Hom (Ideal.Quotient.lift J χ hJX)
-      (fun im => Ideal.Quotient.mk (chartIncIdeal I t e) (X (Sum.inr im))) with hβ
-  have hβγ : β.comp γ = Ideal.Quotient.mk (chartIncIdeal I t e) := by
-    apply MvPolynomial.ringHom_ext
-    · intro a
-      simp [hβ, hγ, hq, hχ]
-    · rintro (m | im)
-      · simp [hβ, hγ, hζ, hq, hχ]
-      · have h0 : Ideal.Quotient.mk (chartIncIdeal I t e)
-            (∑ l, X (Sum.inr (im.1, l)) * X (Sum.inl l)) = 0 := by
-          rw [Ideal.Quotient.eq_zero_iff_mem]
-          exact Ideal.mem_sup_right (Ideal.subset_span ⟨im.1, rfl⟩)
-        set_option synthInstance.maxHeartbeats 100000 in
-          simp only [map_sum, map_mul] at h0
-        simp [hβ, hγ, hζ, hc', hq, hχ, genSubst]
-        rw [h0, zero_mul]
-  have hleft : ∀ x : MvPolynomial (Fin n ⊕ Fin e × Fin n) F ⧸ chartIncIdeal I t e, β (γbar x) = x := by
-    intro x
-    obtain ⟨g, rfl⟩ := Ideal.Quotient.mk_surjective (I := chartIncIdeal I t e) x
-    rw [hγbar, Ideal.Quotient.lift_mk]
-    exact RingHom.congr_fun hβγ g
-  have hinj : Function.Injective γbar := Function.LeftInverse.injective hleft
-
-  have hjinj : Function.Injective (RingHom.kerLift ψ) := RingHom.kerLift_injective ψ
-  refine ⟨(MvPolynomial.map (RingHom.kerLift ψ)).comp γbar, (map_injective _ hjinj).comp hinj, ?_, ?_⟩
+  obtain ⟨γbar, hinj, hγX, hγU⟩ := ChartIncDomain.exists_embed I t e
+  let eJ : MvPolynomial (Fin n) F ⧸ (I ⊔ Ideal.span {linForm t - 1}) ≃+*
+      MvPolynomial (Fin n) F ⧸ RingHom.ker ψ := Ideal.quotEquivOfEq hJeq.symm
+  let κ : MvPolynomial (Fin n) F ⧸ (I ⊔ Ideal.span {linForm t - 1}) →+* K :=
+    (RingHom.kerLift ψ).comp eJ.toRingHom
+  have hκinj : Function.Injective κ := (RingHom.kerLift_injective ψ).comp eJ.injective
+  have hκmk : ∀ g, κ (Ideal.Quotient.mk _ g) = ψ g := fun g => by
+    show RingHom.kerLift ψ (Ideal.Quotient.mk (RingHom.ker ψ) g) = ψ g
+    exact RingHom.kerLift_mk ψ g
+  refine ⟨(MvPolynomial.map κ).comp γbar, (map_injective _ hκinj).comp hinj, ?_, ?_⟩
   · intro g
-    have h' : γbar (Ideal.Quotient.mk _ (rename Sum.inl g)) = C (q g) := by
-      rw [hγbar, Ideal.Quotient.lift_mk]
-      exact hγX g
-    change MvPolynomial.map (RingHom.kerLift ψ) (γbar (Ideal.Quotient.mk _ (rename Sum.inl g))) = _
-    rw [h', map_C, hq, RingHom.kerLift_mk]
+    simp only [RingHom.comp_apply, hγX, map_C, hκmk, hψ]
     rfl
   · intro im
-    have h' : γbar (Ideal.Quotient.mk _ (rename Sum.inr (X im))) = genSubst ζ c im := by
-      rw [hγbar, Ideal.Quotient.lift_mk, rename_X]
-      simp [hγ]
-    change MvPolynomial.map (RingHom.kerLift ψ) (γbar (Ideal.Quotient.mk _ (rename Sum.inr (X im)))) = _
-    rw [h', IncidenceGeneric.map_genSubst]
-    congr 1
-    · funext m
-      change RingHom.kerLift ψ (Ideal.Quotient.mk _ (X m)) = _
-      rw [RingHom.kerLift_mk, hψ]
-      simp [η]
-    · funext m
-      change RingHom.kerLift ψ (Ideal.Quotient.mk _ (C (t m))) = _
-      rw [RingHom.kerLift_mk, hψ]
-      simp
-      rfl
+    simp only [RingHom.comp_apply, hγU, IncidenceGeneric.map_genSubst]
+    congr 1 <;> funext m <;> rw [hκmk, hψ]
+    · simp [η]
+    · simp; rfl
 
 theorem proof (h₁ : IncidenceGeneric.Statement) : ChartFirstGroupDvd.Statement := by
   intro F _ n e I f t hI hf ht

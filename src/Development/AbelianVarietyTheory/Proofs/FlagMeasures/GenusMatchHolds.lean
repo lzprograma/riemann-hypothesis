@@ -262,7 +262,7 @@ variable {O K : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Fie
 
 omit [IsFractionRing O K] in
 theorem covBy_of_cyclic {A B : Submodule O (Fin n → K)} (hle : A ≤ B) (hne : A ≠ B) (d : Fin n → K)
-    (hx : ∀ x ∈ B, ∃ a : O, x - a • d ∈ A) (hd : d ∈ B)
+    (hx : ∀ x ∈ B, ∃ a : O, x - a • d ∈ A)
     (hm : ∀ a ∈ IsLocalRing.maximalIdeal O, a • d ∈ A) : A ⋖ B := by
   refine ⟨lt_of_le_of_ne hle hne, fun C hAC hCB => ?_⟩
   obtain ⟨x, hxC, hxA⟩ := SetLike.exists_of_lt hAC
@@ -533,7 +533,7 @@ theorem cmp₁_covBy {T f : ℕ} {L : Submodule (𝓞 E) (Fin n → E)} (hT : T.
   obtain ⟨-, d, hd, hcyc⟩ := _root_.GlobalTheory.St.G.tLat_local_index F E cm n J hJ hdet T f L hT hs hf hL v hv
   have hmax := ((SplitPrime.split_place F E cm T hT hs).2 v hv).2.1
   have hd' := (mem_cmp₁ hdiag _ _).2 ⟨d, hd, rfl⟩
-  refine covBy_of_cyclic ?_ ?_ _ ?_ hd' ?_
+  refine covBy_of_cyclic ?_ ?_ (fun b => p₁ sp (d b)) ?_ ?_
   · exact Submodule.span_mono (Set.image_mono fun x hx => Submodule.subset_span (hL.2.1 x hx))
   · intro hAB
     obtain ⟨x, hx, hxL⟩ := hL.2.2.2.2 v hv
@@ -741,9 +741,6 @@ section Local
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   (v : HeightOneSpectrum (𝓞 F))
 
-theorem inclE_mem (x : 𝓞 E) : inclE (F := F) (v.adicCompletion F) (x : E) ∈ intV E v :=
-  Subring.subset_closure (Or.inl ⟨⟨x, x, rfl⟩, rfl⟩)
-
 theorem one_tmul_mem (a : v.adicCompletionIntegers F) :
     (1 : E) ⊗ₜ[F] (a : v.adicCompletion F) ∈ intV E v :=
   Subring.subset_closure (Or.inr ⟨⟨a, a.2⟩, rfl⟩)
@@ -778,7 +775,7 @@ theorem exists_frame {n : ℕ} {L : Submodule (𝓞 E) (Fin n → E)} (hL : IsLa
     | mem x hx =>
       obtain ⟨y, hy, rfl⟩ := hx
       obtain ⟨a, ha⟩ := h1 y hy i
-      have h3 := mul_mem ht (inclE_mem v a)
+      have h3 := mul_mem ht (Formalism.MainNotions.Gaps.LG.fm_incl_mem v a)
       have ha' : (a : E) = _ := ha
       rw [ha', map_mul, ← mul_assoc, hts, one_mul, RingHom.map_mulVec] at h3
       rw [← map_inv]
@@ -840,7 +837,7 @@ theorem sigR_mem (z : E ⊗[F] v.adicCompletion F) (hz : z ∈ intV E v) :
     sigR σ (v.adicCompletion F) z ∈ intV E v := by
   refine intV_induction v (p := fun z => sigR σ (v.adicCompletion F) z ∈ intV E v) (by simp)
     (fun x a => ?_) (fun x y hx hy => by rw [map_add]; exact add_mem hx hy) hz
-  have := mul_mem (inclE_mem v ⟨σ x, map_isIntegral_int σ x.isIntegral_coe⟩) (one_tmul_mem v a)
+  have := mul_mem (Formalism.MainNotions.Gaps.LG.fm_incl_mem v ⟨σ x, map_isIntegral_int σ x.isIntegral_coe⟩) (one_tmul_mem v a)
   convert this using 1
   change _ = (σ x ⊗ₜ[F] (1 : v.adicCompletion F)) * ((1 : E) ⊗ₜ[F] (a : v.adicCompletion F))
   rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul, sigR_tmul]
@@ -885,7 +882,7 @@ theorem exists_isUnit_sub (hσ : ∀ x, σ (σ x) = x)
     rw [← hwv, Ideal.mem_comap,
       show algebraMap (𝓞 F) (𝓞 E) s = (θ - t) * (θ - t) from RingOfIntegers.ext hs] at h
     exact hθ ((hw.isPrime.mem_or_mem h).elim id id)
-  refine ⟨⟨_, inclE_mem v θ⟩, isUnit_of_mul_isUnit_left (y := ⟨_, inclE_mem v (θ - t)⟩) ?_⟩
+  refine ⟨⟨_, Formalism.MainNotions.Gaps.LG.fm_incl_mem v θ⟩, isUnit_of_mul_isUnit_left (y := ⟨_, Formalism.MainNotions.Gaps.LG.fm_incl_mem v (θ - t)⟩) ?_⟩
   convert ((SelfDualGenus.isUnit_algebraMap_iff v s).2 hsv).map (baseMap E v)
   apply Subtype.ext
   rw [coe_baseMap_algebraMap, hs]
@@ -952,12 +949,6 @@ section -- clump:auto
 @[expose] public section
 
 namespace GlobalTheory.IntSmulIsIntegral
-
-theorem exists_int_smul_isIntegral {E : Type} [Field E] [NumberField E] (a : E) :
-    ∃ d : ℤ, d ≠ 0 ∧ IsIntegral ℤ (d • a) := by
-  have h : IsAlgebraic ℤ a :=
-    (IsFractionRing.isAlgebraic_iff ℤ ℚ E).2 (Algebra.IsAlgebraic.isAlgebraic a)
-  exact h.exists_integral_multiple
 
 theorem exists_int_smul_mem {E : Type} [inst : Field E] [NumberField E] {n : ℕ}
     (M : Submodule (NumberField.RingOfIntegers E) (Fin n → E))
@@ -1123,20 +1114,20 @@ theorem tlat_one_genus : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [N
   have hkU : ∀ v, k v ∈ UPts cm.sig J (v.adicCompletion F) := by
     intro v
     by_cases hv : loc v L = loc v M
-    · simp only [k, if_pos hv]; exact one_mem _
-    · simp only [k, if_neg hv]; exact hgU v
+    · simp only [k, ite_eq_left hv]; exact one_mem _
+    · simp only [k, ite_eq_right hv]; exact hgU v
   have hfin : {v | k v ≠ 1}.Finite := by
     refine (_root_.GlobalTheory.St.G.loc_eq_almost_all F E n L M hLat hMat).subset ?_
     intro v hv heq
-    exact hv (by simp only [k, if_pos heq])
+    exact hv (by simp only [k, ite_eq_left heq])
   obtain ⟨y, hyU, hy⟩ := _root_.GlobalTheory.St.G.exists_adelic_of_finite_support F E n cm.sig J k hkU hfin
   have hglob : ∀ x, x ∈ hat F L ↔ y.1 *ᵥ x ∈ hat F M := by
     rw [_root_.GlobalTheory.St.G.Carry.carry_iff F E n L M hLat hMat y]
     intro v x
     rw [hy v]
     by_cases hv : loc v L = loc v M
-    · simp only [k, if_pos hv, Units.val_one, Matrix.one_mulVec, hv]
-    · simp only [k, if_neg hv]; exact hg v x
+    · simp only [k, ite_eq_left hv, Units.val_one, Matrix.one_mulVec, hv]
+    · simp only [k, ite_eq_right hv]; exact hg v x
   refine ⟨⟨y, hyU⟩, fun x => ?_⟩
   rw [hglob, Matrix.mulVec_mulVec]
   have hinv : ((⟨y, hyU⟩ : UPts cm.sig J (Ad F))⁻¹).1 = y⁻¹ := rfl
@@ -1154,8 +1145,6 @@ section -- clump:auto
 
 open MeasureTheory NumberField IsDedekindDomain Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.ColDict GlobalTheory.St GlobalTheory.St.G
 open scoped TensorProduct InnerProductSpace
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.St.G
 

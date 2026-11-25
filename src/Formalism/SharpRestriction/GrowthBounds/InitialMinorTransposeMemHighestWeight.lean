@@ -19,54 +19,9 @@ import Formalism.SharpRestriction.GrowthBounds.RootWeights.PolynomialMemWeightSp
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationNonnegIffIntegral
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIntegralForm
 public import Lemmata.MiscLemmasE.Imports
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.Normed.Group.Tannery
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.Padics.LocalField
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -126,7 +81,6 @@ theorem c8 (p n' : ℕ) (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuatio
               N0 n * deF p n (ellOf (glOps (KK O) n LL (Ss i)) (Pol (KK O) n d) + ellWt (t i)) : ℕ) : ℝ) ≤
             (N0 n : ℝ) * Real.logb p (2 * (degIn d (Ss i) : ℝ) + n) := by
   intro T d i hT
-  have hp1 : 1 < p := hG.prime.one_lt
   have hn : 1 ≤ n := Nat.one_le_iff_ne_zero.2 (NeZero.ne n)
   have h3 := c3 p n' O S0 hG n ι LL N Ss d i
   have hle : (T.sup fun t =>
@@ -768,13 +722,7 @@ theorem dec_of_binomDecay {p : ℕ} {f : ℕ → ℚ} (h : BinomDecay p f) : Dec
     rw [e]; exact h1
 
 theorem binomDecay_of_dec {p : ℕ} {f : ℕ → ℚ} (h : Dec p (1 / 4) 0 f) : BinomDecay p f := by
-  intro j
-  rw [mahlerCoef_eq_mah]
-  rcases h j with h0 | h1
-  · exact Or.inl h0
-  · refine Or.inr ?_
-    have e : (1 / 4 : ℝ) * (j : ℝ) + 0 = (j : ℝ) / 4 := by ring
-    rw [← e]; exact h1
+  apply _root_.Formalism.MainNotions.G.Joints.F4.binomDecay_of_dec <;> assumption
 
 theorem binomial_basis_approximation (p : ℕ) [Fact p.Prime] :
     (∀ (K : ℕ) (f : Fin K → ℕ → ℚ), (∀ k, BinomDecay p (f k)) → ∀ c : ℕ,
@@ -790,7 +738,7 @@ theorem binomial_basis_approximation (p : ℕ) [Fact p.Prime] :
   · intro J hJ
     by_cases h : ∑ k, J k ≤ 4 * c
     · refine ⟨h, ?_⟩
-      simp only [h, if_true] at hJ ⊢
+      simp only [h, ite_true] at hJ ⊢
       rcases asm_q_ge f hd J with h0 | h1
       · exact absurd h0 hJ
       · have h2 : (0 : ℝ) ≤ (padicValRat p (∏ k, mah (f k) (J k)) : ℝ) :=
@@ -1135,7 +1083,7 @@ theorem isWeightedHomogeneous_of_column_scaling {R : Type} [CommRing R] {m n : �
     rw [Finset.sum_eq_single d0]
     · simp
     · intro d _ hne
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hE
       apply hne
       ext v

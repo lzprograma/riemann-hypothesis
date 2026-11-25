@@ -45,12 +45,12 @@ theorem conv_map {S : Set G} {μS : Measure G} [SFinite μS] (hS : IsHaarSub S �
     refine lintegral_congr fun q => ?_
     rw [Set.indicator_apply]
     by_cases hq : q ∈ A
-    · rw [if_pos hq]
+    · rw [ite_eq_left hq]
       unfold cnt
       congr 1
       ext t
       simp [hPdef, hq]
-    · rw [if_neg hq]
+    · rw [ite_eq_right hq]
       have hempty : Prod.mk q ⁻¹' P = ∅ := by
         ext t
         simp [hPdef, hq]
@@ -61,7 +61,7 @@ theorem conv_map {S : Set G} {μS : Measure G} [SFinite μS] (hS : IsHaarSub S �
     refine lintegral_congr fun t => ?_
     rw [Set.indicator_apply]
     by_cases ht : t ∈ Ω
-    · rw [if_pos ht]
+    · rw [ite_eq_left ht]
       have hBt : MeasurableSet
           ((fun x => (x, t)) ⁻¹' ((fun p : G × G => p.1 * p.2⁻¹) ⁻¹' A)) :=
         (measurable_mul_const t⁻¹) hA
@@ -78,7 +78,7 @@ theorem conv_map {S : Set G} {μS : Measure G} [SFinite μS] (hS : IsHaarSub S �
             (Measure.map_apply (measurable_mul_const t) (hBt.inter hΩm)).symm
         _ = μS ((fun x => (x, t)) ⁻¹' ((fun p : G × G => p.1 * p.2⁻¹) ⁻¹' A) ∩ Ω) := by
             rw [hmt]
-    · rw [if_neg ht]
+    · rw [ite_eq_right ht]
       have hempty : (fun x => (x, t)) ⁻¹' P = ∅ := by
         ext q
         simp [hPdef, ht]

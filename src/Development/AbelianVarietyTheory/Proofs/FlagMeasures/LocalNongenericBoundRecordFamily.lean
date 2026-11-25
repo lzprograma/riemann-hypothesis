@@ -94,7 +94,6 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchim
   [CharZero F] {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] {L : LocE F E}
   {r k : ℕ} (S : Frames L r k)
 
-
 omit [IsNonarchimedeanLocalField F] [CharZero F] in
 theorem mass_le_sum {ι : Type} (s : Finset ι) (d : S.Datum) (P : Submodule L.O S.V → Prop)
     (Q : ι → Submodule L.O S.V → Prop) (h : ∀ Λ, S.IsTerm d Λ → P Λ → ∃ i ∈ s, Q i Λ) :
@@ -104,19 +103,17 @@ theorem mass_le_sum {ι : Type} (s : Finset ι) (d : S.Datum) (P : Submodule L.O
   refine ENNReal.tsum_le_tsum fun o => ?_
   by_cases hP : S.IsTerm d o.out ∧ P o.out
   · obtain ⟨i, hi, hQ⟩ := h _ hP.1 hP.2
-    rw [if_pos hP]
+    rw [ite_eq_left hP]
     refine le_trans ?_ (Finset.single_le_sum (f := fun i => if S.IsTerm d o.out ∧ Q i o.out then
       ENNReal.ofReal (S.mu o.out) else 0) (fun _ _ => zero_le) hi)
-    exact (if_pos ⟨hP.1, hQ⟩).ge
-  · rw [if_neg hP]
+    exact (ite_eq_left ⟨hP.1, hQ⟩).ge
+  · rw [ite_eq_right hP]
     exact zero_le
-
 
 omit [IsNonarchimedeanLocalField F] [CharZero F] in
 theorem mass_mono (d : S.Datum) (P Q : Submodule L.O S.V → Prop)
     (h : ∀ Λ, S.IsTerm d Λ → P Λ → Q Λ) : S.mass d P ≤ S.mass d Q := by
   simpa using mass_le_sum S {()} d P (fun _ => Q) (fun Λ h1 h2 => ⟨(), by simp, h Λ h1 h2⟩)
-
 
 omit [IsNonarchimedeanLocalField F] [CharZero F] in
 theorem sumData_mass_le (P : S.Datum → Submodule L.O S.V → Prop) :
@@ -190,7 +187,7 @@ theorem ampSq_le_height_mul_mass : ∀ {F : Type} [Field F] [ValuativeRel F] [To
   refine ⟨ampSq_le_of_zero S hk1 _ fun _ _ _ h => h, ?_⟩
   by_cases hz : ∀ d Λ, S.IsTerm d Λ → S.BBzero d Λ
   · exact ampSq_le_of_zero S hk1 _ fun d Λ h _ => hz d Λ h
-  push_neg at hz
+  push Not at hz
   obtain ⟨d₀, Λ₀, h₀, hn⟩ := hz
   obtain ⟨ha, -, -, hqa, hH, -, -, hqH, -⟩ := GlobalTheory.HL.Defect.exponents_and_defect L r k S d₀ Λ₀ h₀
   have hq : 2 ≤ S.q := (GlobalTheory.UnramOrder.order_facts L S.ϖ S.ϖ_irr).2.2.2.2.2.2.1
@@ -248,7 +245,6 @@ open scoped Pointwise ENNReal Classical
 
 namespace GlobalTheory.HL.CoordSq
 
-
 open scoped Pointwise ENNReal Classical in
 open ValuativeRel in
 open scoped Pointwise ENNReal Classical in
@@ -273,13 +269,13 @@ theorem _root_.GlobalTheory.HL.CoordSq.sums_eq : ∀ {F : Type} [Field F] [Valua
     intro δ Q hδ
     unfold _root_.GlobalTheory.HL.Frames.amp
     refine (tsum_congr fun o => ?_).trans tsum_zero
-    rw [if_neg fun h => hδ ⟨_, h.1⟩]
+    rw [ite_eq_right fun h => hδ ⟨_, h.1⟩]
   have hvanM : ∀ (δ : S.Datum) (Q : Submodule M.L.O S.V → Prop),
       (¬ ∃ Λ, S.IsTerm δ Λ) → S.mass δ Q = 0 := by
     intro δ Q hδ
     unfold _root_.GlobalTheory.HL.Frames.mass
     refine (tsum_congr fun o => ?_).trans tsum_zero
-    rw [if_neg fun h => hδ ⟨_, h.1⟩]
+    rw [ite_eq_right fun h => hδ ⟨_, h.1⟩]
   have hinv : ∀ h ∈ S.H0, ∀ (δ : S.Datum) (Q : S.Datum → Submodule M.L.O S.V → Prop),
       (∀ δ', ∀ s ∈ S.St, ∀ Λ, S.IsTerm δ' Λ → Q δ' Λ → Q δ' (s • Λ)) →
       (∀ δ' Λ, S.IsTerm δ' Λ → (Q δ' Λ ↔ Q (h • δ') (h • Λ))) →
@@ -421,8 +417,7 @@ theorem exists_family : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSp
 
   let P : ℕ → Prop := fun j => ∃ y ∈ S.sat Λ, S.levC d Λ y = j
   obtain ⟨y0, hy0A, hy0M⟩ : ∃ y ∈ S.sat Λ, y ∉ S.M d Λ := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hB.1 (le_antisymm hMA h)
   let J := Nat.findGreatest P r
   have hle : ∀ y ∈ S.sat Λ, S.levC d Λ y ≤ J := fun y hy =>
@@ -652,28 +647,6 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E]
 variable {L : LocE F E} {r k : ℕ} (S : Frames L r k)
 
-theorem mass_mono (d : S.Datum) (P Q : Submodule L.O S.V → Prop)
-    (h : ∀ Λ, S.IsTerm d Λ → P Λ → Q Λ) : S.mass d P ≤ S.mass d Q := by
-  unfold Frames.mass
-  refine ENNReal.tsum_le_tsum fun o => ?_
-  by_cases ho : S.IsTerm d o.out ∧ P o.out
-  · rw [if_pos ho, if_pos ⟨ho.1, h _ ho.1 ho.2⟩]
-  · rw [if_neg ho]; exact bot_le
-
-theorem mass_le_sum {ι : Type} (s : Finset ι) (d : S.Datum) (P : Submodule L.O S.V → Prop)
-    (Q : ι → Submodule L.O S.V → Prop)
-    (h : ∀ Λ, S.IsTerm d Λ → P Λ → ∃ m ∈ s, Q m Λ) : S.mass d P ≤ ∑ m ∈ s, S.mass d (Q m) := by
-  unfold Frames.mass
-  rw [← Summable.tsum_finsetSum (fun _ _ => ENNReal.summable)]
-  refine ENNReal.tsum_le_tsum fun o => ?_
-  by_cases ho : S.IsTerm d o.out ∧ P o.out
-  · obtain ⟨m, hm, hq⟩ := h _ ho.1 ho.2
-    rw [if_pos ho]
-    refine le_trans ?_ (Finset.single_le_sum (f := fun m =>
-      if S.IsTerm d o.out ∧ Q m o.out then ENNReal.ofReal (S.mu o.out) else 0) (fun _ _ => bot_le) hm)
-    rw [if_pos ⟨ho.1, hq⟩]
-  · rw [if_neg ho]; exact bot_le
-
 theorem sumData_mono (φ ψ : S.Datum → ℝ≥0∞) (h : ∀ d, φ d ≤ ψ d) : S.sumData φ ≤ S.sumData ψ := by
   unfold Frames.sumData
   exact ENNReal.tsum_le_tsum fun o => by gcongr; exact h _
@@ -712,7 +685,7 @@ theorem family_bound : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpa
   have hep : 0 ≤ e := by positivity
   have hmass : ∀ d, S.mass d (S.InFF β J βJ d) ≤ ENNReal.ofReal (2 * A0 * (β : ℝ) ^ (k - 1)) := by
     intro d
-    refine (mass_le_sum S (Finset.range (i + 1)) d _ (fun m Λ => S.cardI d Λ = S.q ^ m) ?_).trans ?_
+    refine (GlobalTheory.HL.NoCancellation.mass_le_sum S (Finset.range (i + 1)) d _ (fun m Λ => S.cardI d Λ = S.q ^ m) ?_).trans ?_
     · intro Λ hΛ hP
       obtain ⟨⟨m, hm⟩, hle, -⟩ := GlobalTheory.HL.SmallImage.small_image L r k S d Λ hΛ
       refine ⟨m, ?_, hm⟩
@@ -735,7 +708,7 @@ theorem family_bound : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpa
     hmass (fun d => _root_.GlobalTheory.HL.AmpCancel.amp_le_mass L r k S hk β J βJ d)
   have h2 : (S.sumData fun d => S.mass d (S.InFF β J βJ d)) ≤
       ENNReal.ofReal (A1 * ((β : ℝ) ^ (k - 1))⁻¹) * S.nn :=
-    (sumData_mono S _ _ fun d => mass_mono S d _ _ fun Λ _ h => h.2.1).trans (_root_.GlobalTheory.DefectShare.mass_defect_order_le L r k S hk β hβ1)
+    (sumData_mono S _ _ fun d => GlobalTheory.HL.NoCancellation.mass_mono S d _ _ fun Λ _ h => h.2.1).trans (_root_.GlobalTheory.DefectShare.mass_defect_order_le L r k S hk β hβ1)
   refine h1.trans ?_
   refine (mul_le_mul_right h2 _).trans ?_
   rw [← mul_assoc, ← ENNReal.ofReal_mul (by positivity)]
@@ -762,14 +735,6 @@ open scoped Pointwise ENNReal Classical
 
 namespace GlobalTheory.HL.FirstType
 
-theorem geom_le (x : ℝ) (hx : 2 ≤ x) (n : ℕ) : ∑ i ∈ Finset.range (n + 1), x ^ i ≤ 2 * x ^ n := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [Finset.sum_range_succ, pow_succ]
-    have : 0 ≤ x ^ n := by positivity
-    nlinarith
-
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] {L : LocE F E} {r k : ℕ}
 
@@ -782,7 +747,7 @@ theorem mass_le_sum (S : Frames L r k) (d : S.Datum) (P : Submodule L.O S.V → 
   split_ifs with ho
   · obtain ⟨i, hi, hq⟩ := h _ ho.1 ho.2
     refine le_trans ?_ (Finset.single_le_sum (fun _ _ => zero_le) hi)
-    rw [if_pos ⟨ho.1, hq⟩]
+    rw [ite_eq_left ⟨ho.1, hq⟩]
   · exact zero_le
 
 theorem mass_mono (S : Frames L r k) (d : S.Datum) (P Q : Submodule L.O S.V → Prop)
@@ -828,7 +793,7 @@ theorem first_type_bound : ∀ {F : Type} [Field F] [ValuativeRel F] [Topologica
         refine ENNReal.ofReal_le_ofReal ?_
         rw [← Finset.mul_sum]
         refine mul_le_mul_of_nonneg_left ?_ hA0
-        refine le_trans (le_of_eq ?_) (geom_le _ hx n)
+        refine le_trans (le_of_eq ?_) (GlobalTheory.HL.FamilyBound.geom_le _ hx n)
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [Nat.add_sub_cancel, Nat.cast_pow, ← pow_mul, ← pow_mul, mul_comm]
     have h1 := hbasic (fun d Λ => ¬ S.BBzero d Λ ∧ ¬ S.TypeBe d Λ ∧ S.be d Λ = β) _ 1 zero_le_one hmass
@@ -933,7 +898,7 @@ theorem ampSq_nonzero_defect : ∀ {F : Type} [Field F] [ValuativeRel F] [Topolo
         intro d
         unfold Frames.amp
         have : ∀ Λ, ¬ (S.IsTerm d Λ ∧ ¬ S.BBzero d Λ) := fun Λ h => hex ⟨d, Λ, h⟩
-        simp only [this, if_false, tsum_zero]
+        simp only [this, ite_false, tsum_zero]
       unfold Frames.ampSq Frames.sumData
       simp [ha]
     rw [h0]
@@ -984,7 +949,7 @@ theorem raise [IsNonarchimedeanLocalField F] [CharZero F] {C : ℝ} (hC : 39 ≤
     refine Real.rpow_le_rpow_of_exponent_le h1 ?_
     push_cast
     exact mul_le_mul_of_nonneg_right hC (by positivity)
-  · push_neg at h
+  · push Not at h
     simp [nn_eq_zero S h]
 
 end

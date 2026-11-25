@@ -47,7 +47,7 @@ theorem rhs_bounds (hW : Sandwich) (k r : ℕ) (μb : Measure (Mt k r))
     split_ifs with hQ
     · have hx : (fun i j => (Matrix.of n * bigCell k r c 1 * Matrix.of m * (Matrix.of n')⁻¹) i j : Mt k r) ∈
           wBall k r ρ := (hW' ρ hρ hρδ n c m n' hn hm hn').2 hQ
-      rw [Set.indicator_apply, if_pos hx, Pi.one_apply]
+      rw [Set.indicator_apply, ite_eq_left hx, Pi.one_apply]
     · exact zero_le
   · unfold Vol rhs
     refine lintegral_mono fun c => mul_le_mul_of_nonneg_left ?_ (zero_le)
@@ -57,8 +57,8 @@ theorem rhs_bounds (hW : Sandwich) (k r : ℕ) (μb : Measure (Mt k r))
     by_cases hx : (fun i j => (Matrix.of n * bigCell k r c 1 * Matrix.of m * (Matrix.of n')⁻¹) i j : Mt k r) ∈
         wBall k r ρ
     · have hQ := (hW' ρ hρ hρδ n c m n' hn hm hn').1 hx
-      rw [Set.indicator_apply, if_pos hx, Pi.one_apply, if_pos hQ]
-    · rw [Set.indicator_apply, if_neg hx]
+      rw [Set.indicator_apply, ite_eq_left hx, Pi.one_apply, ite_eq_left hQ]
+    · rw [Set.indicator_apply, ite_eq_right hx]
       exact zero_le
 
 theorem scale_lim (hV : VolLim) (k r : ℕ) (μb : Measure (Mt k r))

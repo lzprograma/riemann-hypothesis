@@ -2,46 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHolRepOfIsTau
 import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -211,21 +171,21 @@ theorem fmat_mul [Fintype ι] (ε : ι → Fin m → Bool) (k k' : ι → Matrix
     fmat ε (k * k') (u * u') = fmat ε k u * fmat ε k' u' := by
   ext ⟨s, a, b⟩ ⟨t, i, j⟩
   rw [Matrix.mul_apply, Fintype.sum_prod_type, Finset.sum_eq_single t]
-  · simp only [fmat, Matrix.of_apply, Pi.mul_apply, Matrix.mul_inv_rev, if_true]
+  · simp only [fmat, Matrix.of_apply, Pi.mul_apply, Matrix.mul_inv_rev, ite_true]
     by_cases h1 : s = t
-    · simp only [h1, if_true]
+    · simp only [h1, ite_true]
       rw [Fintype.sum_prod_type]
       cases hi : ε t i
-      · simp only [Bool.false_eq_true, if_false, Matrix.mul_apply, Finset.sum_mul_sum]
+      · simp only [Bool.false_eq_true, ite_false, Matrix.mul_apply, Finset.sum_mul_sum]
         refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => ?_
         cases hc : ε t c
-        · simp only [Bool.false_eq_true, if_false]; ring
+        · simp only [Bool.false_eq_true, ite_false]; ring
         · rw [entry_eq_zero (inv_comm (hk' t)) (a := i) (i := c) (by simp [hi, hc])]; simp
-      · simp only [if_true, Matrix.mul_apply, Finset.sum_mul_sum]
+      · simp only [ite_true, Matrix.mul_apply, Finset.sum_mul_sum]
         refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => ?_
         cases hc : ε t c
         · rw [entry_eq_zero (hk' t).2 (a := c) (i := i) (by simp [hi, hc])]; simp
-        · simp only [if_true]; ring
+        · simp only [ite_true]; ring
     · simp [h1]
   · intro r _ hr
     simp [fmat, hr]
@@ -238,7 +198,7 @@ theorem fmat_conj (ε : ι → Fin m → Bool) (k : ι → Matrix (Fin m) (Fin m
   simp only [fmat, Matrix.of_apply, Matrix.conjTranspose_apply, ← Matrix.conjTranspose_nonsing_inv]
   by_cases h1 : s = t
   · subst h1
-    simp only [if_true]
+    simp only [ite_true]
     cases hi : ε s i <;> cases ha : ε s a
     · simp
     · rw [entry_eq_zero (hk s).2 (a := i) (i := a) (by simp [hi, ha]),
@@ -258,7 +218,6 @@ namespace GlobalTheory.JointHarm
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.JointHarm
 open scoped TensorProduct InnerProductSpace Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section
 
@@ -269,7 +228,7 @@ theorem fsub_eq_lsub (ε : D.what₂.Tau → Fin m → Bool) (k : D.what₂.Tau 
   refine MvPolynomial.algHom_ext fun v => ?_
   rw [FMul.lsub_X, fsub, MvPolynomial.aeval_X, Fintype.sum_prod_type, Finset.sum_eq_single v.1,
     Fintype.sum_prod_type]
-  · simp only [FMul.fmat, Matrix.of_apply, if_true]
+  · simp only [FMul.fmat, Matrix.of_apply, ite_true]
   · intro r _ hr
     simp [FMul.fmat, hr]
   · simp

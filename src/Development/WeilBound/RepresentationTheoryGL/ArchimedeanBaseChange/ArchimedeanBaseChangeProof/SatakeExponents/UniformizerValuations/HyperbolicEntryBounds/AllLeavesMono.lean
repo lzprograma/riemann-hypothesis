@@ -3,40 +3,6 @@ module
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameA
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.ReadLimit
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.JoinType
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FiniteDiscreteFamilies.PeakCone
 
 @[expose] public section
@@ -57,19 +23,14 @@ open PositivityTheory.Rg.BcN.F2 PositivityTheory.Rg.BcB.F
 
 namespace PositivityTheory.Rg.BcB.F.F0
 
-def xΩ₁ (hR : Rd.ReadLimit) (E : Type) [Field E] [NumberField E] [IsCMField E] :=
-  (hR E).choose_spec.choose_spec.choose
-def xΩ₂ (hR : Rd.ReadLimit) (E : Type) [Field E] [NumberField E] [IsCMField E] :=
-  (hR E).choose_spec.choose_spec.choose_spec.choose
-
 def WEx : Prop := ∀ (hR : Rd.ReadLimit) (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (μ : HChar E)
   (e : InfinitePlace E → ℤ) (lam : InfinitePlace E → DomWeight n) (C : Chain μ e lam)
   (A : ∀ i : C.ι, Arch E (C.a i) (n - C.a i) (C.l₁ i) (C.l₂ i) (C.μG (C.a i)) (C.μG (n - C.a i)) (C.νC (C.a i))
     (C.νC (n - C.a i))),
   ∃ W : ∀ N : ℕ, Submodule ℂ (Kinf E N → ℂ), (∀ N, FiniteDimensional ℂ (W N)) ∧
     ∀ (i : C.ι) (s₁ : Tr E (C.a i)) (s₂ : Tr E (n - C.a i)) Pa Pb (D : Pre E n), Ctx μ s₁ s₂ Pa Pb D →
-    s₁.AllLeaves (fun M V => M = 0 ∨ ∃ K', ∃ W' ∈ xΩ₁ hR E _ _ (A i).Ma (A i).Mb M, HasType K' W' V) →
-    s₂.AllLeaves (fun M V => M = 0 ∨ ∃ K', ∃ W' ∈ xΩ₂ hR E _ _ (A i).Ma (A i).Mb M, HasType K' W' V) →
+    s₁.AllLeaves (fun M V => M = 0 ∨ ∃ K', ∃ W' ∈ rlΩ₁ hR E _ _ (A i).Ma (A i).Mb M, HasType K' W' V) →
+    s₂.AllLeaves (fun M V => M = 0 ∨ ∃ K', ∃ W' ∈ rlΩ₂ hR E _ _ (A i).Ma (A i).Mb M, HasType K' W' V) →
     ∀ j, HasKType (W (D.N j)) (D.V j)
 
 theorem allLeaves_mono {E : Type} [Field E] [NumberField E] [IsCMField E]
@@ -81,8 +42,8 @@ theorem allLeaves_mono {E : Type} [Field E] [NumberField E] [IsCMField E]
 theorem wEx_of (hJ : JoinType) : WEx := by
   intro hR E _ _ _ n μ e lam C A
   let Ω : ∀ M : ℕ, Set (Submodule ℂ (Kinf E M → ℂ)) := fun M =>
-    ⋃ i : C.ι, (xΩ₁ hR E _ _ (A i).Ma (A i).Mb M ∪ xΩ₂ hR E _ _ (A i).Ma (A i).Mb M)
-  have hx := (hR E).choose_spec.choose_spec.choose_spec.choose_spec.choose_spec.choose_spec.1
+    ⋃ i : C.ι, (rlΩ₁ hR E _ _ (A i).Ma (A i).Mb M ∪ rlΩ₂ hR E _ _ (A i).Ma (A i).Mb M)
+  have hx := (rl_spec hR E).1
   have hK : KTypes E Ω := by
     intro M
     refine ⟨Set.finite_iUnion fun i =>

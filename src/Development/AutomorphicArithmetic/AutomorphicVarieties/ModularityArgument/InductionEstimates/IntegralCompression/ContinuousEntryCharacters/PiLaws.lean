@@ -156,7 +156,7 @@ private theorem PiH_int (i : ι) (n : ℕ) (q : ℤ) (v : H) :
 private theorem PiH_mem (i : ι) (n : ℕ) (q : ℤ) (τ : Submodule ℂ H) (hc : IsClosed (τ : Set H))
     (hi : ∀ g, ∀ v ∈ τ, ρ g v ∈ τ) (v : H) (hv : v ∈ τ) : PiH C ρ i n q v ∈ τ :=
   Convex.integral_mem (τ.restrictScalars ℝ).convex hc
-    (Eventually.of_forall fun m => τ.smul_mem _ (hi _ _ hv)) (PiH_int C ρ i n q v)
+    (Eventually.of_forall fun _ => τ.smul_mem _ (hi _ _ hv)) (PiH_int C ρ i n q v)
 
 private theorem PiH_comm (i : ι) (n : ℕ) (q : ℤ) (h : G1 K 2) (hh : ∀ b, Commute h (C.gl i b)) (v : H) :
     PiH C ρ i n q (ρ h v) = ρ h (PiH C ρ i n q v) := by

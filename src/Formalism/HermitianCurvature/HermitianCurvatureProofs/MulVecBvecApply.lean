@@ -8,51 +8,10 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeisenbergLe
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelImageArithmetic.GlevImageOf
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelLiftBasics.LevelGroupUnitaryHermitian
 
 @[expose] public section
 
@@ -70,26 +29,11 @@ variable {k : ℕ}
 
 theorem hpk_levPos_gen (o ρ : ℕ) (i j : Fin (2 * ρ + k + 1)) :
     Hpk k (o + ρ) (levPos k o ρ i) (levPos k o ρ j) = Hpk k ρ i j := by
-  have e1 : (levPos k o ρ i = levPos k o ρ j) ↔ i.val = j.val := by
-    simp only [levPos, Fin.ext_iff]; omega
-  have e2 : (i = j) ↔ i.val = j.val := Fin.ext_iff
-  have hi : (levPos k o ρ i).val = i.val + o := rfl
-  have hj : (levPos k o ρ j).val = j.val + o := rfl
-  have := i.isLt; have := j.isLt
-  unfold Hpk
-  simp only [e1, e2, hi, hj]
-  split_ifs <;> first | rfl | (exfalso; omega)
+  apply _root_.QnGlevImageW.hpk_shift <;> assumption
 
 theorem herm_lift_gen (o ρ : ℕ) (y y' : Fin (2 * ρ + k + 1) → ℂ) :
     herm (Hpk k (o + ρ)) (liftVec k o ρ y) (liftVec k o ρ y') = herm (Hpk k ρ) y y' := by
-  simp only [herm, dotProduct, mulVec, Pi.star_apply]
-  rw [sum_lift_gen o ρ _ (fun p hp => by rw [liftVec_out_gen o ρ y' p hp, star_zero, zero_mul])]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  rw [liftVec_levPos_gen]
-  congr 1
-  rw [sum_lift_gen o ρ _ (fun q hq => by rw [liftVec_out_gen o ρ y q hq, mul_zero])]
-  refine Finset.sum_congr rfl fun m _ => ?_
-  rw [hpk_levPos_gen, liftVec_levPos_gen]
+  apply _root_.PI.QnLevBasicsW.herm_lift <;> assumption
 
 theorem liftVec_inj (o ρ : ℕ) {v w : Fin (2 * ρ + k + 1) → ℂ} (h : liftVec k o ρ v = liftVec k o ρ w) : v = w := by
   funext p
@@ -135,12 +79,12 @@ theorem uw_block (o ρ : ℕ) (z : Fin (2 * ρ + k + 1) → ℂ) (G : B.Mat k (o
     · have ep : p = levPos k o ρ ⟨p.val - o, by omega⟩ := by ext; simp [levPos]; omega
       have eq : q = levPos k o ρ ⟨q.val - o, by omega⟩ := by ext; simp [levPos]; omega
       rw [ep, eq, lev_levPos]; rfl
-    · rw [lev_out_row o ρ _ p q hp, if_neg (by intro h; rw [h] at hp; exact hp hq)]
+    · rw [lev_out_row o ρ _ p q hp, ite_eq_right (by intro h; rw [h] at hp; exact hp hq)]
       rw [show G p q = (G *ᵥ bvec q) p from (mulVec_bvec_apply G q p).symm]
       have hqne : ∀ c : Fin (2 * (o + ρ) + k + 1), ¬ (o ≤ c.val ∧ c.val < 2 * ρ + k + 1 + o) → bvec q c = 0 := by
         intro c hc
         simp only [bvec, Pi.single_apply]
-        rw [if_neg]; intro h; rw [h] at hc; exact hc hq
+        rw [ite_eq_right]; intro h; rw [h] at hc; exact hc hq
       by_cases h1 : p.val < o
       · have e : p = eI k (o + ρ) ⟨p.val, by omega⟩ := by ext; simp [eI]
         rw [e, ← _root_.PI.StabPairsW.herm_es (G *ᵥ bvec q), ← (hG.2.1 _).2, TwoByOneBlock.herm_UH hG.1, _root_.PI.StabPairsW.herm_es]

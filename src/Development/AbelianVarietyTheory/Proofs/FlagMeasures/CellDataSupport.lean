@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.SigmaFiniteAmplitudes.SigmaFiniteOfUnfold
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
 public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarLieNilpotentEqLebesgue
@@ -88,18 +89,7 @@ theorem ae_of_weil {X A : Type} [MeasurableSpace X] [MeasurableSpace A]
 variable {k r : ℕ}
 
 theorem ae_mem_N (κ : ℝ≥0∞) : ∀ᵐ y ∂(haarLie (Nset k r) κ), Matrix.of y ∈ Nset k r := by
-  unfold haarLie
-  apply Measure.ae_smul_measure
-  have hu : Continuous fun x : lieE (Nset k r) => unrealify (m := 2 * r + k + 1) x.1 := by
-    refine continuous_pi fun i => continuous_pi fun j => ?_
-    simp only [unrealify, Complex.mk_eq_add_mul_I]
-    fun_prop
-  have h : AEMeasurable (fun x : lieE (Nset k r) =>
-      (fun i j => NormedSpace.exp (unrealify (x : EuclideanSpace ℝ _)) i j : Mt k r)) volume := by
-    exact (GlobalTheory.Amp.NLie.cont_exp.comp hu).measurable.aemeasurable
-  have hcl : IsClosed {y : Mt k r | Matrix.of y ∈ Nset k r} := (Formalism.FourierDecayAlt.P.unipotent_radical_closed k r).closed
-  rw [ae_map_iff h hcl.measurableSet]
-  exact Filter.Eventually.of_forall fun x => GlobalTheory.Amp.NLie.exp_mem (GlobalTheory.Amp.NLie.mem_lieE x.2)
+  first | exact _root_.Formalism.MainNotions.S.Pv.AmpDDPf.ae_mem_haarLieN | exact @_root_.Formalism.MainNotions.S.Pv.AmpDDPf.ae_mem_haarLieN | apply _root_.Formalism.MainNotions.S.Pv.AmpDDPf.ae_mem_haarLieN <;> assumption
 
 def pairSet (L : LocBessel k r) : Set (PairSp k r) :=
   {p | Matrix.of p.1.1 ∈ UWset k r L.z ∧ Matrix.of p.1.2 ∈ Nset k r ∧ Matrix.of p.2.1 ∈ UWset k r L.z' ∧

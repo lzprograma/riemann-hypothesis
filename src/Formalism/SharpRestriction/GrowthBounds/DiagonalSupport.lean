@@ -30,52 +30,13 @@ public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembFinal
 import Formalism.LocalToGlobal.GroupLattices.FockModels.ElementaryDivisorBasis
 import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EvensBeforePairwise
 import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ScaleNegMono
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.LetterWtAnti
 import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FockRLinDual
 import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgePlane
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgeLatticeMulOfWeightSum
 import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.RankMulConductorDivLeOne
-import Mathlib.Order.Interval.Finset.Box
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FockSumRight, Formalism.SharpRestriction.GrowthBounds.DualFockLinear.PairFormula, Formalism.SharpRestriction.GrowthBounds.DualFockLinear.ScaleZeroIff, Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RestCloudBOfTwo, Formalism.SharpRestriction.GrowthBounds.DualFockLinear.LogSizeBoundLe, Formalism.SharpRestriction.GrowthBounds.DualFockLinear, Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport
@@ -126,8 +87,6 @@ theorem valLe_perturb {O Kf : Type} [CommRing O] [IsDomain O] [IsLocalRing O] [F
   have ha' : a + w ^ c * z = a * (1 + b * w ^ (k + 1) * z) := by rw [hwc, ← hab]; ring
   refine ⟨a + w ^ c * z, b * ↑hu.unit⁻¹, rfl, ?_⟩
   rw [ha', mul_mul_mul_comm, IsUnit.mul_val_inv, mul_one, hab]
-
-
 
 theorem restFlat_of (D : Formalism.BasicNotions.D7) (CLa Ck Crk Cdeg CLa' CD Csz CH CE C6 C18 : ℝ)
     (hXi : RestXi D CLa Ck Crk Cdeg CH CE C6 C18) (hRe : RestReal D CLa Ck Crk Cdeg) :
@@ -252,9 +211,9 @@ theorem Aa_dual2 {K : Type} [Field K] {m : ℕ} (vec : Bool) (M : Matrix (Fin (m
   have hMt : IsUnit ((M⁻¹).transpose).det := by
     rw [Matrix.det_transpose, Matrix.det_nonsing_inv]; exact hM.ringInverse
   cases vec
-  · simp only [Aa, Bool.false_eq_true, if_false]
+  · simp only [Aa, Bool.false_eq_true, ite_false]
     rw [← Matrix.transpose_mul, Matrix.mul_nonsing_inv _ hMt, Matrix.transpose_one]
-  · simp only [Aa, if_true]
+  · simp only [Aa, ite_true]
     rw [← Matrix.transpose_mul, Matrix.mul_nonsing_inv _ hM, Matrix.transpose_one]
 
 section
@@ -426,8 +385,6 @@ section
 variable {p n' : ℕ} [Fact p.Prime] [NeZero n'] {W Qq O Kf : Type} [CommRing W] [IsDomain W] [IsDiscreteValuationRing W]
   [Field Qq] [Algebra W Qq] [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field Kf] [Algebra O Kf]
   {ι : Qq →+* Kf} {σ : Qq ≃+* Qq} {j : W →+* O} {w : O} {m : ℕ}
-
-
 
 theorem realAt_gen (hS : HidaSetting p n' W Qq O Kf ι σ j w) (φ : WF p n' ≃+* W) (hφ : IsWittIdent σ φ)
     (hm1 : 1 ≤ m) (r : ℕ) (hr1 : 1 ≤ r) (hr2 : r < m + 1) (d : Fin n' → ℕ) (cP κ : ℕ)
@@ -719,7 +676,7 @@ theorem log_size_bound_le (p n' m : ℕ) (TT : Finset (Fin n')) (X : Fin n' → 
       if s ∈ TT then 2 * ((m + 1 : ℕ) : ℝ) ^ 2 * Real.logb p a else 0 := by
     intro s
     by_cases hs : s ∈ TT
-    · rw [if_pos hs]
+    · rw [ite_eq_left hs]
       split_ifs with hz
       · rw [Nat.cast_zero]
         exact mul_nonneg (by positivity) hlog
@@ -749,15 +706,12 @@ theorem log_size_bound_le (p n' m : ℕ) (TT : Finset (Fin n')) (X : Fin n' → 
         calc ((N0 (m + 1) : ℕ) : ℝ) * ((deF p (m + 1) (ellWt (lamAt X s)) : ℕ) : ℝ)
             ≤ ((m + 1 : ℕ) : ℝ) ^ 2 * (2 * Real.logb p a) := mul_le_mul hN0 hde (Nat.cast_nonneg _) (by positivity)
           _ = 2 * ((m + 1 : ℕ) : ℝ) ^ 2 * Real.logb p a := by ring
-    · rw [if_neg hs, if_pos (h0 s hs), Nat.cast_zero]
+    · rw [ite_eq_right hs, ite_eq_left (h0 s hs), Nat.cast_zero]
   calc _ ≤ ∑ s : Fin n', (if s ∈ TT then 2 * ((m + 1 : ℕ) : ℝ) ^ 2 * Real.logb p a else 0) :=
         Finset.sum_le_sum fun s _ => hterm s
     _ = _ := by
         rw [Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_const, nsmul_eq_mul]
         ring
-
-theorem lastIdx_eq (m : ℕ) : lastIdx (m + 1) = Fin.last m :=
-  Fin.ext (by simp [lastIdx])
 
 theorem ellWt_zero (m : ℕ) : ellWt (0 : Fin (m + 1) → ℤ) = 0 := by
   simp [ellWt]
@@ -768,7 +722,7 @@ theorem ellWt_flat {n' m : ℕ} (hm : 1 ≤ m) (d : Fin n' → ℕ) (s : Fin n')
     have := congrArg Fin.val h
     simp at this
     omega
-  simp only [lamAt, flW, ellWt, lastIdx_eq]
+  simp only [lamAt, flW, ellWt, Formalism.L2.G.Model.TS.lastIdx_succ]
   split_ifs
   · simp [Pi.single_eq_same, Pi.single_eq_of_ne hne]
   · simp [Fin.rev_zero, Fin.rev_last, Pi.single_eq_same, Pi.single_eq_of_ne hne]
@@ -826,11 +780,10 @@ theorem sizeStep (C : ℝ) (hC : 2 ≤ C) : SizeStep C 4 := by
         exact_mod_cast this
       have e1 : ((ellWt (lamAt lam0 s) : ℕ) : ℝ) = ((aT s + bT s : ℤ) : ℝ) := by
         unfold ellWt
-        rw [lastIdx_eq, hzz, ← Int.cast_natCast, Int.toNat_of_nonneg (by omega)]
+        rw [Formalism.L2.G.Model.TS.lastIdx_succ, hzz, ← Int.cast_natCast, Int.toNat_of_nonneg (by omega)]
       have hbT : (bT s : ℝ) ≤ c0 := by
         have : bT s ≤ c0 := by omega
         exact_mod_cast this
-      have hcp : (0 : ℝ) ≤ cpp := Nat.cast_nonneg _
       rw [e1]
       push_cast
       push_cast at h8
@@ -840,7 +793,7 @@ theorem sizeStep (C : ℝ) (hC : 2 ≤ C) : SizeStep C 4 := by
     (fun s hs => by
       rw [ellWt_flat (by omega)]
       have := (flatDeg_bounds hm2 hapos.le hW s hs).2
-      simp only [dT, if_pos hs]
+      simp only [dT, ite_eq_left hs]
       push_cast
       push_cast at h8
       linarith)

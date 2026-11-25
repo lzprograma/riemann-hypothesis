@@ -121,28 +121,11 @@ open Matrix
 
 namespace GlobalTheory.KZ
 
-def SSPotA (N l w : ℕ) (lam : Letter → ℂ) : Prop :=
-  ∃ P ∈ Algebra.adjoin ℂ (FreeAlgebra.ι ℂ '' {T : Letter | admitted N l T}),
-    FreeAlgebra.lift ℂ lam P = 1 ∧ ∀ F ∈ Pot ℂ w (Gam N l), ∀ T : Letter, admitted N l T →
-    (opL ℂ N l T - lam T • (1 : Module.End ℂ (ℂ → MvPolynomial (Fin 2) ℂ)))
-      (FreeAlgebra.lift ℂ (opL ℂ N l) P F) ∈ Triv ℂ w (Gam N l)
-
 variable {Ω : Type} [Field Ω] [Algebra ℚ Ω] {ε : Ω →+* ℂ}
 
 namespace SSAdm
 
 variable {R : Type} [CommRing R] {A : Set Letter}
-
-theorem lift_congr {B : Type} [Semiring B] [Algebra R B] {f g : Letter → B} (h : ∀ T ∈ A, f T = g T)
-    {P : FreeAlgebra R Letter} (hP : P ∈ Algebra.adjoin R (FreeAlgebra.ι R '' A)) :
-    FreeAlgebra.lift R f P = FreeAlgebra.lift R g P := by
-  induction hP using Algebra.adjoin_induction with
-  | mem x hx =>
-    obtain ⟨T, hT, rfl⟩ := hx
-    simp [h T hT]
-  | algebraMap r => simp
-  | add x y _ _ hx hy => simp [hx, hy]
-  | mul x y _ _ hx hy => simp [hx, hy]
 
 variable {M : Type} [AddCommGroup M] [Module R M]
 
@@ -188,39 +171,7 @@ theorem _root_.GlobalTheory.KZ.SSAdm.lift_sub_smul_mem {f : _root_.GlobalTheory.
         abel
   exact (key P hP).2
 
-theorem eigen_of_two_step {f : Letter → Module.End R M} {lam : Letter → R} {Z : Submodule R M}
-    (hZ : ∀ T ∈ A, ∀ z ∈ Z, f T z ∈ Z) {P : FreeAlgebra R Letter}
-    (hP : P ∈ Algebra.adjoin R (FreeAlgebra.ι R '' A)) (h1 : FreeAlgebra.lift R lam P = 1) {x : M}
-    (hPx : ∀ T ∈ A, (f T - lam T • (1 : Module.End R M)) (FreeAlgebra.lift R f P x) ∈ Z)
-    (hx : ∀ S ∈ A, ∀ T ∈ A,
-      (f S - lam S • (1 : Module.End R M)) ((f T - lam T • (1 : Module.End R M)) x) ∈ Z) :
-    ∀ T ∈ A, (f T - lam T • (1 : Module.End R M)) x ∈ Z := by
-  let W : Submodule R M := ⨅ T ∈ A, Z.comap (f T - lam T • (1 : Module.End R M))
-  have hmem : ∀ y, y ∈ W ↔ ∀ T ∈ A, (f T - lam T • (1 : Module.End R M)) y ∈ Z := by
-    intro y; simp only [W, Submodule.mem_iInf, Submodule.mem_comap]
-  have hZW : ∀ z ∈ Z, z ∈ W := fun z hz => (hmem z).2 fun T hT => by
-    simpa using Z.sub_mem (hZ T hT z hz) (Z.smul_mem _ hz)
-  have hW : ∀ T ∈ A, ∀ y ∈ W, f T y ∈ W := fun T hT y hy => by
-    have h := W.add_mem (hZW _ ((hmem y).1 hy T hT)) (W.smul_mem (lam T) hy)
-    simpa using h
-  have hx' : ∀ T ∈ A, f T x - lam T • x ∈ W := fun T hT => (hmem _).2 fun S hS => by
-    simpa using hx S hS T hT
-  have h2 := lift_sub_smul_mem hW hx' hP
-  rw [h1, one_smul] at h2
-  have h3 := W.sub_mem ((hmem _).2 hPx) h2
-  rw [sub_sub_cancel] at h3
-  exact (hmem x).1 h3
-
 end SSAdm
-
-theorem SSPotA_congr {N l w : ℕ} {lam lam' : Letter → ℂ} (h : ∀ T, admitted N l T → lam T = lam' T) :
-    SSPotA N l w lam ↔ SSPotA N l w lam' := by
-  have key : ∀ {a b : Letter → ℂ}, (∀ T, admitted N l T → a T = b T) → SSPotA N l w a → SSPotA N l w b := by
-    rintro a b hab ⟨P, hP, h1, h2⟩
-    refine ⟨P, hP, ?_, fun F hF T hT => ?_⟩
-    · rw [← SSAdm.lift_congr (A := {T | admitted N l T}) hab hP, h1]
-    · rw [← hab T hT]; exact h2 F hF T hT
-  exact ⟨key h, key fun T hT => (h T hT).symm⟩
 
 end GlobalTheory.KZ
 end -- clump:auto
@@ -465,7 +416,7 @@ theorem line_functional_eq_period_mul : ∀ (l : ℕ) [Fact l.Prime] (M S : Type
   by_cases hall : ∀ i, y i = 0
   · refine ⟨0, 1, norm_one, fun i v => ?_⟩
     rw [hLv, hall i]; simp
-  push_neg at hall
+  push Not at hall
   obtain ⟨i₀, hy0⟩ := hall
 
   have hex : ∀ i, ∃ Sf : Finset (PadicAlgCl l × B),

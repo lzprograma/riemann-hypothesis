@@ -254,22 +254,10 @@ theorem ChartSectionNotMem.proof : ChartSectionNotMem.Statement := by
     exact SegreChartDim.proof K ι P e m σ i hP J hJ
 
   set PQ : Ideal (MvPolynomial (Σ k, ι k) ℚ) := P.map (MvPolynomial.map (Int.castRingHom ℚ)) with hPQ
-  have hvar := GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Inter.isProjVarQ_of_isArithVar hP
-  have : PQ.IsPrime := hvar.1.isPrime
+  have : PQ.IsPrime := (GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Inter.isProjVarQ_of_isArithVar hP).1.isPrime
   set PC : Ideal (MvPolynomial (Σ k, ι k) ℂ) := P.map (MvPolynomial.map (Int.castRingHom ℂ)) with hPC
-  have hext : ReciprocityTheory.AnForm.R.extC PQ = PC := by
-    rw [ReciprocityTheory.AnForm.R.extC, hPQ, hPC, Ideal.map_map]
-    congr 1
-    refine MvPolynomial.ringHom_ext (fun c => ?_) (fun q => ?_)
-    · simp only [RingHom.comp_apply, MvPolynomial.map_C]
-      congr 1
-    · simp
-  have hdim : ∀ Q ∈ PC.minimalPrimes,
-      ringKrullDim (MvPolynomial (Σ k, ι k) ℂ ⧸ Q) = ((e + Fintype.card K : ℕ) : WithBot ℕ∞) := by
-    intro Q hQ
-    rw [← hext] at hQ
-    rw [ReciprocityTheory.AnForm.R.ringKrullDim_of_mem_minimalPrimes_extC PQ Q hQ]
-    exact hvar.2
+  have hext : ReciprocityTheory.AnForm.R.extC PQ = PC := SegreChartDim.extC_map_rat P
+  have hdim := SegreChartDim.ringKrullDim_minimalPrimes_map_C hP
   have : P.IsPrime := hP.2.1.1
   have hch : ∀ n : ℤ, (C n : MRing ι) ∈ P → n = 0 := by
     intro n hn

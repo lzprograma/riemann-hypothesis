@@ -6,50 +6,7 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantId
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFusionForms
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightDerivativeRulePsi
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellMulVecBasis
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -100,13 +57,13 @@ theorem mirror_right_rule_holds : RightRuleEv := by
   rw [h]
   congr 1
   simp only [xbv, fvec, hpos, Fin.val_succ]
-  rw [dif_pos (show b.val + 1 < r by omega)]
+  rw [dite_eq_left (show b.val + 1 < r by omega)]
   rw [Formalism.FourierDecayAlt.P.SignAntidiagonal.herm_bvec_eI]
   by_cases hh : a.val = b.val + 1
   · simp [hh, bvec, esI]
-  · rw [if_neg hh]
+  · rw [ite_eq_right hh]
     simp only [bvec, Pi.single_apply, esI, Fin.ext_iff]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
 
 theorem mirror_torus_cell_holds : TorusCellv := by
   intro E _ _ k r D f hD hS c hc g hg hWD l
@@ -261,7 +218,7 @@ theorem mirror_left_rule_cell_holds : LeftRuleCellv := by
   have hb1 : (b.succ : Fin (r + 1)).val < r := by simp; omega
   have hga : g *ᵥ bvec (eI k r a) = bvec (eI k r a) := (hg.2 a (by simp)).1
   have hTa := hTe a hba
-  rw [if_pos (by simp)] at hTa
+  rw [ite_eq_left (by simp)] at hTa
   have hU : T * g ∈ UH (Hpk k r) := hg₁.1
   have key : ((T * g)⁻¹ *ᵥ bvec (eI k r ⟨b.val + 1, by omega⟩)) (esI k r a) =
       if a.val = b.val + 1 then star (c a) else 0 := by
@@ -270,22 +227,22 @@ theorem mirror_left_rule_cell_holds : LeftRuleCellv := by
       Matrix.mul_nonsing_inv _ (Formalism.QuantumDeterminants.WeylGroupFacts.isUnit_of_uh hU), Matrix.one_mulVec, ← Matrix.mulVec_mulVec, hga, hTa,
       herm_smul_right', ← Formalism.FourierDecayAlt.P.Qx2.herm_star, Formalism.FourierDecayAlt.P.SignAntidiagonal.herm_bvec_eI]
     by_cases hh : a.val = b.val + 1
-    · rw [if_pos hh]
+    · rw [ite_eq_left hh]
       have : (bvec (esI k r a) : Fin (2 * r + k + 1) → ℂ) (esI k r ⟨b.val + 1, by omega⟩) = 1 := by
         simp [bvec, esI, hh]
       rw [this, star_one, mul_one]
-    · rw [if_neg hh]
+    · rw [ite_eq_right hh]
       have : (bvec (esI k r a) : Fin (2 * r + k + 1) → ℂ) (esI k r ⟨b.val + 1, by omega⟩) = 0 := by
         simp only [bvec, Pi.single_apply, esI, Fin.ext_iff]
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
       rw [this, star_zero, mul_zero]
   have hy : yv k r z b.succ (T * g) ⟨2 * r + k - a.val - b.val - 1, hjlt⟩ =
       if a.val = b.val + 1 then star (c a) else 0 := by
-    simp only [yv, hpos, fvec, dif_pos hb1]
+    simp only [yv, hpos, fvec, dite_eq_left hb1]
     exact key
   rw [hy]
   by_cases hh : a.val = b.val + 1
-  · rw [if_pos hh, if_pos hh, div_eq_inv_mul]
-  · rw [if_neg hh, if_neg hh, mul_zero]
+  · rw [ite_eq_left hh, ite_eq_left hh, div_eq_inv_mul]
+  · rw [ite_eq_right hh, ite_eq_right hh, mul_zero]
 
 end Formalism.FourierDecayAlt.P.CutMP.TVG

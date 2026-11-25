@@ -46,8 +46,6 @@ noncomputable section
 open scoped Classical ENNReal
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.Unfold
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.FrameSpanLat
 
 variable {D : D7}
@@ -85,7 +83,7 @@ theorem frame_ne_zero {Z : LocDat D} {p : PlF D} (Fr : LocNG.FrameD (locH Z p) D
     exact hT ((map_eq_zero_iff _ (RingHom.injective _)).mp h2)
   | cast i =>
     have h1 := Fr.h_es i i
-    rw [h0, h_zero_left, if_pos rfl] at h1
+    rw [h0, h_zero_left, ite_eq_left rfl] at h1
     exact zero_ne_one h1
 
 theorem frFac_unit {p : PlF D} (δ : ∀ p, (D.s.atP p).Fp) (a : Fin (D.R.rS + 1)) (v : Vp D p)

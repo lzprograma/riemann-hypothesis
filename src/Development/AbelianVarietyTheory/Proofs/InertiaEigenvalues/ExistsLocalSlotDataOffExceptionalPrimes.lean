@@ -12,49 +12,8 @@ public import Mathlib.Basic.Real.Basic
 public import Formalism.PadicSubsetSums.StableGradedCounts.TOPSgLe
 public import Formalism.PadicSubsetSums.StableGradedCounts.TOPSgRange
 public import Formalism.PadicSubsetSums.CentralIdempotents.ResidueAvoidanceOfPrimes
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CentralIdemCoeff
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GlobalCore
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Tactic.Basify
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -265,9 +224,9 @@ theorem position_conditions : ∀ (l t : ℕ) (up : Bool) (Fl Fc : Finset ℤ) (
     · exact (hFl z h).2
     · have := (hFc z h).1
       cases up
-      · simp only [Bool.false_eq_true, if_false] at this
+      · simp only [Bool.false_eq_true, ite_false] at this
         rw [abs_sub_comm]; exact le_trans hW0 (le_trans this (le_abs_self _))
-      · simp only [if_true] at this
+      · simp only [ite_true] at this
         exact le_trans hW0 (le_trans this (le_abs_self _))
   have hT1 : (etaS t Fl : ℤ) + 4 * σ + 6 < l := by
     have : ((etaS t Fl : ℤ) : ℝ) + 4 * σ + 6 < l := by
@@ -289,14 +248,14 @@ theorem position_conditions : ∀ (l t : ℕ) (up : Bool) (Fl Fc : Finset ℤ) (
   ·
     have hmA0 := mnAll_le_zero' Fl Fc
     have hw : (wS false Fl Fc : ℤ) = 1 - mnAll Fl Fc := by
-      simp only [wS, Bool.false_eq_true, if_false]; rw [Int.toNat_of_nonneg]; omega
+      simp only [wS, Bool.false_eq_true, ite_false]; rw [Int.toNat_of_nonneg]; omega
     have hh : (hS false t Fl Fc : ℤ) = mxLo t Fl + (1 - mnAll Fl Fc) + 1 := by
-      simp only [hS, Bool.false_eq_true, if_false]; rw [Int.toNat_of_nonneg] <;> omega
+      simp only [hS, Bool.false_eq_true, ite_false]; rw [Int.toNat_of_nonneg] <;> omega
     have hcl : ∀ z ∈ Fc, ((z : ℝ)) ≤ ((t : ℝ) - 1) / 2 - W0 ∧
         ((t : ℝ) - 1) / 2 - (W0 + S + η + 1) ≤ z := by
       intro z hz
       have := hFc z hz
-      simp only [Bool.false_eq_true, if_false] at this
+      simp only [Bool.false_eq_true, ite_false] at this
       constructor <;> linarith [this.1, this.2]
     refine ⟨?_, by omega, by omega, by simp, fun _ => by omega, hT1, hT2', ?_⟩
     · intro u hu
@@ -315,14 +274,14 @@ theorem position_conditions : ∀ (l t : ℕ) (up : Bool) (Fl Fc : Finset ℤ) (
       rcases Multiset.mem_filter.mp hx with ⟨hxU, hxW⟩
       obtain ⟨z, hz, rfl⟩ := Multiset.mem_map.mp hxU
       have hz' := Finset.mem_val.mp hz
-      simp only [Formalism.WachCohomologyFacts.V2.InWinN, Bool.false_eq_true, if_false] at hxW
+      simp only [Formalism.WachCohomologyFacts.V2.InWinN, Bool.false_eq_true, ite_false] at hxW
       have hzc : z ∈ Fc := by
         rcases Finset.mem_union.mp hz' with h | h
         · exfalso; apply hxW
           have := mnLo_le' Fl h; have := le_mxLo_of_mem t Fl h
           constructor <;> omega
         · exact h
-      simp only [Bool.false_eq_true, if_false]
+      simp only [Bool.false_eq_true, ite_false]
       intro heq
       have hd := (ZMod.intCast_eq_intCast_iff_dvd_sub m _ l).mp heq.symm
       rw [hηS] at hm2
@@ -338,15 +297,15 @@ theorem position_conditions : ∀ (l t : ℕ) (up : Bool) (Fl Fc : Finset ℤ) (
       · exact hd
   ·
     have hw : (wS true Fl Fc : ℤ) = 1 - mnLo Fl := by
-      simp only [wS, if_true]; rw [Int.toNat_of_nonneg]; omega
+      simp only [wS, ite_true]; rw [Int.toNat_of_nonneg]; omega
     have hmA := le_mxAll' t Fl Fc
     have hh : (hS true t Fl Fc : ℤ) = mxAll t Fl Fc + (1 - mnLo Fl) + 1 := by
-      simp only [hS, if_true]; rw [hw, Int.toNat_of_nonneg]; omega
+      simp only [hS, ite_true]; rw [hw, Int.toNat_of_nonneg]; omega
     have hcl : ∀ z ∈ Fc, ((t : ℝ) - 1) / 2 + W0 ≤ z ∧
         (z : ℝ) ≤ ((t : ℝ) - 1) / 2 + (W0 + S + η + 1) := by
       intro z hz
       have := hFc z hz
-      simp only [if_true] at this
+      simp only [ite_true] at this
       constructor <;> linarith [this.1, this.2]
     refine ⟨?_, by omega, by omega, fun _ => by omega, by simp, hT1, hT2', ?_⟩
     · intro u hu
@@ -365,14 +324,14 @@ theorem position_conditions : ∀ (l t : ℕ) (up : Bool) (Fl Fc : Finset ℤ) (
       rcases Multiset.mem_filter.mp hx with ⟨hxU, hxW⟩
       obtain ⟨z, hz, rfl⟩ := Multiset.mem_map.mp hxU
       have hz' := Finset.mem_val.mp hz
-      simp only [Formalism.WachCohomologyFacts.V2.InWinN, if_true] at hxW
+      simp only [Formalism.WachCohomologyFacts.V2.InWinN, ite_true] at hxW
       have hzc : z ∈ Fc := by
         rcases Finset.mem_union.mp hz' with h | h
         · exfalso; apply hxW
           have := mnLo_le' Fl h; have := le_mxLo_of_mem t Fl h
           constructor <;> omega
         · exact h
-      simp only [if_true]
+      simp only [ite_true]
       intro heq
       have hd := (ZMod.intCast_eq_intCast_iff_dvd_sub m _ l).mp heq.symm
       rw [hηS] at hm2
@@ -419,7 +378,7 @@ theorem low_abs (D : D7) (j : ℕ) (h : j - 1 < D.R.m) (up : Bool) (ρ : D.what�
   cases up
   · simp only [Formalism.MainNotions.AdmissibleParameterJ.lowT, Formalism.MainNotions.AdmissibleParameterJ.reflS, Formalism.MainNotions.AdmissibleParameterJ.lowJ, Formalism.MainNotions.AdmissibleParameterJ.refl,
       Formalism.MainNotions.AdmissibleParameterJ.c0, sz_eq D j ρ h, Set.mem_setOf_eq] at hz
-    simp only [Bool.false_eq_true, if_false, Set.mem_setOf_eq] at hz
+    simp only [Bool.false_eq_true, ite_false, Set.mem_setOf_eq] at hz
     obtain ⟨a, ha⟩ := hz
     refine ⟨a, ?_⟩
     have ha' := congrArg (fun q : ℚ => (q : ℝ)) ha
@@ -427,7 +386,7 @@ theorem low_abs (D : D7) (j : ℕ) (h : j - 1 < D.R.m) (up : Bool) (ρ : D.what�
     congr 1
     linarith
   · simp only [Formalism.MainNotions.AdmissibleParameterJ.lowT, Formalism.MainNotions.AdmissibleParameterJ.lowJ,
-      Formalism.MainNotions.AdmissibleParameterJ.c0, sz_eq D j ρ h, Set.mem_setOf_eq, if_true] at hz
+      Formalism.MainNotions.AdmissibleParameterJ.c0, sz_eq D j ρ h, Set.mem_setOf_eq, ite_true] at hz
     obtain ⟨a, ha⟩ := hz
     refine ⟨a, ?_⟩
     have ha' := congrArg (fun q : ℚ => (q : ℝ)) ha
@@ -445,14 +404,14 @@ theorem cloud_val (D : D7) (j : ℕ) (up : Bool) (ρ : D.what₂.Tau) (z : ℤ)
   cases up
   · simp only [Formalism.MainNotions.AdmissibleParameterJ.cloudT, Formalism.MainNotions.AdmissibleParameterJ.reflS, Formalism.MainNotions.AdmissibleParameterJ.cloudJ, Formalism.MainNotions.AdmissibleParameterJ.refl,
       Formalism.MainNotions.AdmissibleParameterJ.c0, Set.mem_setOf_eq] at hz
-    simp only [Bool.false_eq_true, if_false, Set.mem_setOf_eq] at hz ⊢
+    simp only [Bool.false_eq_true, ite_false, Set.mem_setOf_eq] at hz ⊢
     obtain ⟨a, ha⟩ := hz
     refine ⟨a, ?_⟩
     have ha' := congrArg (fun q : ℚ => (q : ℝ)) ha
     push_cast at ha' ⊢
     linarith
   · simp only [Formalism.MainNotions.AdmissibleParameterJ.cloudT, Formalism.MainNotions.AdmissibleParameterJ.cloudJ,
-      Formalism.MainNotions.AdmissibleParameterJ.c0, Set.mem_setOf_eq, if_true] at hz ⊢
+      Formalism.MainNotions.AdmissibleParameterJ.c0, Set.mem_setOf_eq, ite_true] at hz ⊢
     obtain ⟨a, ha⟩ := hz
     refine ⟨a, ?_⟩
     have ha' := congrArg (fun q : ℚ => (q : ℝ)) ha
@@ -642,7 +601,7 @@ theorem hS_le_bound : ∀ (t : ℕ) (up : Bool) (Fl Fc : Finset ℤ) (η S B W0 
     have hFc' : ∀ z ∈ Fc, ((t : ℝ) - 1) / 2 - W0 - S - η - 1 ≤ (z : ℝ) := by
       intro z hz
       have h := (hFc z hz).2
-      simp only [Bool.false_eq_true, if_false] at h
+      simp only [Bool.false_eq_true, ite_false] at h
       linarith
     have h1 : ((t : ℝ) - 1) / 2 - W0 - S - η - 1 ≤ ((mnAll Fl Fc : ℤ) : ℝ) := by
       apply hmn
@@ -654,9 +613,9 @@ theorem hS_le_bound : ∀ (t : ℕ) (up : Bool) (Fl Fc : Finset ℤ) (η S B W0 
       · exact hFc' y hy
     have h0 : mnAll Fl Fc ≤ 0 := Finset.min'_le _ _ (Finset.mem_insert_self _ _)
     have hw : ((wS false Fl Fc : ℕ) : ℤ) = 1 - mnAll Fl Fc := by
-      simp only [wS, Bool.false_eq_true, if_false]
+      simp only [wS, Bool.false_eq_true, ite_false]
       exact Int.toNat_of_nonneg (by omega)
-    simp only [PositionData.hS, Bool.false_eq_true, if_false]
+    simp only [PositionData.hS, Bool.false_eq_true, ite_false]
     rw [castToNat, hw]
     apply max_le
     · push_cast; linarith
@@ -665,7 +624,7 @@ theorem hS_le_bound : ∀ (t : ℕ) (up : Bool) (Fl Fc : Finset ℤ) (η S B W0 
     have hFc' : ∀ z ∈ Fc, (z : ℝ) ≤ ((t : ℝ) - 1) / 2 + W0 + S + η + 1 := by
       intro z hz
       have h := (hFc z hz).2
-      simp only [if_true] at h
+      simp only [ite_true] at h
       linarith
     have h1 : ((mxAll t Fl Fc : ℤ) : ℝ) ≤ ((t : ℝ) - 1) / 2 + W0 + S + η + 1 := by
       apply hmx
@@ -684,9 +643,9 @@ theorem hS_le_bound : ∀ (t : ℕ) (up : Bool) (Fl Fc : Finset ℤ) (η S B W0 
       · exact (hFl' y hy).1
     have h0 : mnLo Fl ≤ 0 := Finset.min'_le _ _ (Finset.mem_insert_self _ _)
     have hw : ((wS true Fl Fc : ℕ) : ℤ) = 1 - mnLo Fl := by
-      simp only [wS, if_true]
+      simp only [wS, ite_true]
       exact Int.toNat_of_nonneg (by omega)
-    simp only [PositionData.hS, if_true]
+    simp only [PositionData.hS, ite_true]
     rw [castToNat, hw]
     apply max_le
     · push_cast; linarith

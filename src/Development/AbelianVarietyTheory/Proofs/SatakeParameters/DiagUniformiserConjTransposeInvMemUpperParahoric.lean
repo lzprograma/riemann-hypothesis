@@ -49,7 +49,6 @@ import Formalism.LocalToGlobal.NormalizedHeckeFactors.TypesDefs
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin GlobalTheory.BlockType GlobalTheory.SplitWeil
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 
@@ -104,7 +103,7 @@ theorem conj_le_one (hϖ : v ϖ = WithZero.exp (-1)) {M : Matrix (Fin n) (Fin n)
   have hne : (WithZero.exp (-1 : ℤ) : WithZero (Multiplicative ℤ)) ≠ 0 := WithZero.exp_ne_zero
   rw [map_mul, map_mul, map_inv₀]
   by_cases hp : (p : ℕ) < r <;> by_cases hq : (q : ℕ) < r <;>
-    simp only [hp, hq, if_true, if_false, map_one, inv_one, one_mul, mul_one, hϖ]
+    simp only [hp, hq, ite_true, ite_false, map_one, inv_one, one_mul, mul_one, hϖ]
   · exact h1 q p
   · have hqp : q ≠ p := fun e => hq (e ▸ hp)
     calc v (M q p) * (WithZero.exp (-1))⁻¹ ≤ WithZero.exp (-1) * (WithZero.exp (-1))⁻¹ :=
@@ -117,7 +116,7 @@ theorem conj_le_one (hϖ : v ϖ = WithZero.exp (-1)) {M : Matrix (Fin n) (Fin n)
 theorem conj_lower_lt_one (hϖ : v ϖ = WithZero.exp (-1)) {M : Matrix (Fin n) (Fin n) K} (h1 : ∀ i j, v (M i j) ≤ 1)
     (p q : Fin n) (hp : r ≤ p.val) (hq : q.val < r) :
     v ((if (p : ℕ) < r then 1 else ϖ) * M q p * (if (q : ℕ) < r then 1 else ϖ)⁻¹) < 1 := by
-  rw [if_neg (not_lt.2 hp), if_pos hq, inv_one, mul_one, map_mul, hϖ]
+  rw [ite_eq_right (not_lt.2 hp), ite_eq_left hq, inv_one, mul_one, map_mul, hϖ]
   calc WithZero.exp (-1) * v (M q p) ≤ WithZero.exp (-1) * 1 := mul_le_mul' le_rfl (h1 q p)
     _ < 1 := by rw [mul_one]; exact exp_neg_one_lt_one
 
@@ -195,7 +194,7 @@ theorem conj_transpose_inv_uniRT : ∀ {L : Type} [Field L] [NumberField L] [IsC
     intro p q; rw [e, conj_diag_apply hd hD, hbinv, Matrix.transpose_apply]
 
   have hUL : ∀ p q : Fin (r + t), p.val < r → q.val < r → (d * b * d⁻¹).val p q = (a⁻¹).val q p := by
-    intro p q hp hq; rw [hN, if_pos hp, if_pos hq, inv_one, one_mul, mul_one]
+    intro p q hp hq; rw [hN, ite_eq_left hp, ite_eq_left hq, inv_one, one_mul, mul_one]
   refine ⟨⟨⟨mem_GLint_of (fun i j => ?_) (fun i j => ?_), fun p q hp hq => ?_⟩, fun p q hp hq => ⟨fun hlt => ?_, fun he => ?_⟩⟩, ?_⟩
   · refine (HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).2 ?_
     rw [hN]

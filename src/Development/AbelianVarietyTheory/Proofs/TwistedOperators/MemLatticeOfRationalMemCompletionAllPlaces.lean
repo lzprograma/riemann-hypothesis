@@ -45,7 +45,6 @@ import Mathlib.Tactic.ReduceModChar
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.FinPl (Lat idAt intAt latV latA)
 
 noncomputable section
@@ -151,7 +150,6 @@ def extV {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E] {n : ℕ
 theorem extV_gen {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E] {n : ℕ} (Φ : (Fin n → E) →ₗ[F] F)
     (a : AF F) (x : Fin n → E) : extV Φ (fun i => a ⊗ₜ[F] x i) = Φ x • a := by
   classical
-  set_option synthInstance.maxHeartbeats 100000 in
     simp only [extV, extF_tmul, LinearMap.comp_apply, ← Finset.sum_smul, ← map_sum]
   congr 2
   exact Finset.univ_sum_single x

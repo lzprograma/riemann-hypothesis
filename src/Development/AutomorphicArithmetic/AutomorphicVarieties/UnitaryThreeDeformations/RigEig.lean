@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CzBasic
 public import Mathlib.NumberTheory.Padics.Complex
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FiniteResidue
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormLeOneOfIsIntegral
@@ -188,8 +189,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.rig_sep :
           rw [Matrix.diagonal_apply_ne _ hab, sub_zero] at this
           simpa [Matrix.one_apply_ne hab] using this
     rw [hdet, norm_prod, Fin.prod_univ_three] at hsmall
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     have := one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le (hne 0) (hne 1)) (hne 2)
     linarith
   choose φ hφ using ht2
@@ -238,34 +238,7 @@ private theorem dvr_norm {l : ℕ} [Fact l.Prime] {A : Type} [CommRing A] [IsDom
     (f : A →+* PadicAlgCl l) (hle : ∀ x, ‖f x‖ ≤ 1) :
     (∀ u : A, IsUnit u → ‖f u‖ = 1) ∧
     ∃ q : ℝ, 0 ≤ q ∧ q < 1 ∧ ∀ (n : ℕ) (x : A), x ∈ maximalIdeal A ^ n → ‖f x‖ ≤ q ^ n := by
-  have hu : ∀ u : Aˣ, ‖f u‖ = 1 := by
-    intro u
-    have h1 : ‖f u‖ * ‖f ((u⁻¹ : Aˣ) : A)‖ = 1 := by
-      rw [← norm_mul, ← map_mul, Units.mul_inv]; simp
-    have h2 := hle u
-    have h3 := hle (u⁻¹ : Aˣ)
-    have h4 := norm_nonneg (f u)
-    nlinarith
-  refine ⟨fun u ⟨v, hv⟩ => hv ▸ hu v, ?_⟩
-  obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible A
-  have hl0 : (l : A) ≠ 0 := by
-    intro h
-    have h' : f l = 0 := by rw [h, map_zero]
-    have : (l : PadicAlgCl l) = 0 := by simpa using h'
-    exact (Nat.cast_ne_zero.2 (Fact.out : l.Prime).ne_zero) this
-  have hl : ‖f l‖ < 1 := by
-    have : f l = algebraMap ℚ_[l] (PadicAlgCl l) (l : ℚ_[l]) := by simp
-    rw [this, norm_algebraMap']
-    exact Padic.norm_p_lt_one
-  refine ⟨‖f ϖ‖, norm_nonneg _, ?_, fun n x hx => ?_⟩
-  · obtain ⟨n, u, h⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible hl0 hϖ
-    rw [h, map_mul, norm_mul, hu, one_mul, map_pow, norm_pow] at hl
-    by_contra hc
-    exact absurd hl (not_lt.2 (one_le_pow₀ (not_lt.1 hc)))
-  · rw [hϖ.maximalIdeal_eq, Ideal.span_singleton_pow, Ideal.mem_span_singleton'] at hx
-    obtain ⟨y, rfl⟩ := hx
-    rw [map_mul, norm_mul, map_pow, norm_pow]
-    exact mul_le_of_le_one_left (by positivity) (hle y)
+  apply _root_.dvr_norm <;> assumption
 
 private theorem conjBy_conjBy {G R : Type} [Group G] [CommRing R] (r : G →* GG (m := 3) (R := R)) (h k : GL (Fin 3) R) :
     conjBy h (conjBy k r) = conjBy (h * k) r := by

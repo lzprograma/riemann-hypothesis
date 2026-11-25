@@ -97,22 +97,8 @@ def finPart : Ideles F →* (FiniteAdeleRing (𝓞 F) F)ˣ :=
 
 variable {F}
 
-theorem infDiag_parts (k : Fˣ) : infPart F (infDiag k) = infPart F (diagUnits F k) ∧ finPart F (infDiag k) = 1 := by
-  classical
-  constructor
-  · apply Units.ext
-    funext w
-    rw [infDiag, MonoidHom.finsetProd_apply, map_prod, Units.coe_prod]
-    have e : (∏ u : InfinitePlace F, ((infPart F (((infIdele F u).comp (atInf u)) k) : (InfiniteAdeleRing F)ˣ) :
-        InfiniteAdeleRing F)) w = ∏ u : InfinitePlace F, ((infPart F (((infIdele F u).comp (atInf u)) k) :
-          (InfiniteAdeleRing F)ˣ) : InfiniteAdeleRing F) w := Finset.prod_apply _ _ _
-    rw [e, Finset.prod_eq_single w]
-    · exact infIdele_fst_self F w _
-    · intro u _ hu
-      exact infIdele_fst_ne F u w (Ne.symm hu) _
-    · simp
-  · rw [infDiag, MonoidHom.finsetProd_apply, map_prod]
-    exact Finset.prod_eq_one fun u _ => Units.ext rfl
+theorem infDiag_parts (k : Fˣ) : infPart F (infDiag k) = infPart F (diagUnits F k) ∧ finPart F (infDiag k) = 1 :=
+  _root_.GlobalTheory.Mem.Chr.CharModel.infDiag_parts k
 
 end Parts
 
@@ -128,7 +114,7 @@ def cut (a : FiniteAdeleRing (𝓞 F) F) (T : Finset (HeightOneSpectrum (𝓞 F)
     by_contra h
     apply hw
     have h' : w ∉ T := h
-    simp only [h', if_false]
+    simp only [h', ite_false]
     exact one_mem _⟩
 
 theorem tendsto_cut (a : FiniteAdeleRing (𝓞 F) F) : Filter.Tendsto (cut a) Filter.atTop (nhds a) := by
@@ -136,26 +122,8 @@ theorem tendsto_cut (a : FiniteAdeleRing (𝓞 F) F) : Filter.Tendsto (cut a) Fi
 
 theorem prod_local (k : Fˣ) (T : Finset (HeightOneSpectrum (𝓞 F))) :
     ((infDiag k * ∏ v ∈ T, localIdele F v (atFin v k) : Ideles F) : AdeleRing (𝓞 F) F) =
-      (((diagUnits F k : Ideles F) : AdeleRing (𝓞 F) F).1, cut ((diagUnits F k : Ideles F) : AdeleRing (𝓞 F) F).2 T) := by
-  classical
-  refine Prod.ext ?_ ?_
-  · change ((infPart F (infDiag k * ∏ v ∈ T, localIdele F v (atFin v k)) : (InfiniteAdeleRing F)ˣ) : InfiniteAdeleRing F) = _
-    have e : ∏ v ∈ T, infPart F (localIdele F v (atFin v k)) = 1 := Finset.prod_eq_one (fun v _ => Units.ext rfl)
-    rw [map_mul, map_prod, (infDiag_parts k).1, e, mul_one]
-    rfl
-  · change ((finPart F (infDiag k * ∏ v ∈ T, localIdele F v (atFin v k)) : (FiniteAdeleRing (𝓞 F) F)ˣ) : FiniteAdeleRing (𝓞 F) F) = _
-    rw [map_mul, (infDiag_parts k).2, one_mul]
-    induction T using Finset.induction_on with
-    | empty => rw [Finset.prod_empty, map_one]; exact Subtype.ext (funext fun v => by simp [cut]; rfl)
-    | insert u T hu ih =>
-      rw [Finset.prod_insert hu, map_mul, Units.val_mul, ih]
-      refine Subtype.ext (funext fun v => ?_)
-      change ((localIdele F u (atFin u k) : Ideles F) : AdeleRing (𝓞 F) F).2 v * (if v ∈ T then _ else 1) =
-        if v ∈ insert u T then _ else 1
-      by_cases h : v = u
-      · subst h
-        rw [localIdele_snd_self, if_neg hu, if_pos (Finset.mem_insert_self _ _), mul_one]; rfl
-      · rw [localIdele_snd_ne F u v h, one_mul]; simp [h]
+      (((diagUnits F k : Ideles F) : AdeleRing (𝓞 F) F).1, cut ((diagUnits F k : Ideles F) : AdeleRing (𝓞 F) F).2 T) :=
+  _root_.GlobalTheory.Mem.Chr.CharModel.prod_local k T
 
 theorem tendsto_prod_local (k : Fˣ) :
     Filter.Tendsto (fun T : Finset (HeightOneSpectrum (𝓞 F)) => infDiag k * ∏ v ∈ T, localIdele F v (atFin v k))
@@ -166,14 +134,8 @@ theorem locK_unr (χ : HChar F) {v : HeightOneSpectrum (𝓞 F)} (h : χ.UnrAt v
     χ.locK v k = χ.val v ^ ordF v k := by
   apply GlobalTheory.Mem.Chr.CharModel.locK_unr <;> assumption
 
-theorem finite_ordF (k : Fˣ) : {v : HeightOneSpectrum (𝓞 F) | ordF v k ≠ 0}.Finite := by
-  have h := Filter.eventually_cofinite.1 (GlobalTheory.Idele.ord_vw_eventually_zero (FiniteAdeleRing.unitEmbedding (𝓞 F) F k))
-  refine h.subset fun v hv h0 => hv ?_
-  have hk : Valued.v (((FiniteAdeleRing.unitEmbedding (𝓞 F) F k : (FiniteAdeleRing (𝓞 F) F)ˣ) :
-      FiniteAdeleRing (𝓞 F) F) v) = v.valuation F (k : F) :=
-    HeightOneSpectrum.valuedAdicCompletion_eq_valuation' v (k : F)
-  rw [GlobalTheory.Idele.ord_vw, hk] at h0
-  exact h0
+theorem finite_ordF (k : Fˣ) : {v : HeightOneSpectrum (𝓞 F) | ordF v k ≠ 0}.Finite :=
+  _root_.GlobalTheory.Mem.Chr.CharModel.finite_ordF k
 
 theorem productRule (χ : HChar F) : χ.ProductRule := by
   apply GlobalTheory.Mem.Chr.CharModel.productRule

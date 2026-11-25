@@ -3,7 +3,6 @@ module
 public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushDefs
 public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
 public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFnFieldTrdeg
-public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushPFb
 public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Assembly
 public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PConeTrdeg
 public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.InstFintypeSumElim
@@ -56,6 +55,136 @@ import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Std.Tactic.BVDecide.Normalize.Prop
+public import Mathlib.Algebra.MvPolynomial.Eval
+public import Mathlib.RingTheory.Ideal.Maps
+public import Mathlib.RingTheory.Localization.FractionRing
+public import Mathlib.RingTheory.Ideal.BigOperators
+
+section
+@[expose] public section
+
+noncomputable section
+
+namespace SheetDecomposition.PF
+
+open MvPolynomial
+
+theorem ker_baseChange {k B K σ Φ Φ' : Type} [Field k] [CommRing B] [Algebra k B] [Field Φ] [Field Φ']
+    [Algebra (MvPolynomial K k) Φ] [IsFractionRing (MvPolynomial K k) Φ] (a : k →+* Φ)
+    (ha : ∀ c, a c = algebraMap (MvPolynomial K k) Φ (C c)) (ν : MvPolynomial K B →+* Φ') (hν : Function.Injective ν)
+    (L : Φ →+* Φ') (hL : ∀ r, L (algebraMap (MvPolynomial K k) Φ r) = ν (map (algebraMap k B) r))
+    (ψ : MvPolynomial σ k →ₐ[k] B) :
+    RingHom.ker (eval₂Hom L fun s => ν (C (ψ (X s)))) = (RingHom.ker ψ).map (map a) := by
+  classical
+  obtain ⟨Θ, hΘ⟩ : ∃ f : MvPolynomial σ Φ →+* Φ', f = eval₂Hom L fun s => ν (C (ψ (X s))) :=
+    ⟨_, rfl⟩
+  suffices main : RingHom.ker Θ = (RingHom.ker ψ).map (map a) by
+    subst hΘ
+    exact main
+  have hΘC : ∀ f : Φ, Θ (C f) = L f := fun f => by rw [hΘ, eval₂Hom_C]
+  have hΘX : ∀ s : σ, Θ (X s) = ν (C (ψ (X s))) := fun s => by rw [hΘ, eval₂Hom_X']
+  obtain ⟨α, hα⟩ : ∃ f : MvPolynomial K (MvPolynomial σ k) →+* MvPolynomial σ Φ,
+      f = eval₂Hom (map a) fun i => C (algebraMap (MvPolynomial K k) Φ (X i)) := ⟨_, rfl⟩
+  have hαC : ∀ p : MvPolynomial σ k, α (C p) = map a p := fun p => by rw [hα, eval₂Hom_C]
+  have hαX : ∀ i : K, α (X i) = C (algebraMap (MvPolynomial K k) Φ (X i)) := fun i => by
+    rw [hα, eval₂Hom_X']
+  have hΘa : ∀ p : MvPolynomial σ k, Θ (map a p) = ν (C (ψ p)) := by
+    have h : Θ.comp (map a) =
+        ν.comp ((C : B →+* MvPolynomial K B).comp (ψ : MvPolynomial σ k →+* B)) := by
+      apply MvPolynomial.ringHom_ext
+      · intro c
+        simp only [RingHom.comp_apply, map_C, hΘC, ha, hL, RingHom.coe_coe, algHom_C]
+      · intro s
+        simp only [RingHom.comp_apply, map_X, hΘX, RingHom.coe_coe]
+    intro p
+    exact DFunLike.congr_fun h p
+  have hΘα : ∀ Q, Θ (α Q) = ν (map (ψ : MvPolynomial σ k →+* B) Q) := by
+    have h : Θ.comp α = ν.comp (map (ψ : MvPolynomial σ k →+* B)) := by
+      apply MvPolynomial.ringHom_ext
+      · intro p
+        simp only [RingHom.comp_apply, hαC, hΘa, map_C, RingHom.coe_coe]
+      · intro i
+        simp only [RingHom.comp_apply, hαX, hΘC, hL, map_X]
+    intro Q
+    exact DFunLike.congr_fun h Q
+  have hαmapC : ∀ p : MvPolynomial K k, α (map (C : k →+* MvPolynomial σ k) p) =
+      C (algebraMap (MvPolynomial K k) Φ p) := by
+    have h : α.comp (map (C : k →+* MvPolynomial σ k)) =
+        (C : Φ →+* MvPolynomial σ Φ).comp (algebraMap (MvPolynomial K k) Φ) := by
+      apply MvPolynomial.ringHom_ext
+      · intro c
+        simp only [RingHom.comp_apply, map_C, hαC, ha]
+      · intro i
+        simp only [RingHom.comp_apply, map_X, hαX]
+    intro p
+    exact DFunLike.congr_fun h p
+  have hCmem : ∀ q : MvPolynomial K k, C (algebraMap (MvPolynomial K k) Φ q) ∈ α.range :=
+    fun q => RingHom.mem_range.mpr ⟨_, hαmapC q⟩
+  have hXmem : ∀ s : σ, (X s : MvPolynomial σ Φ) ∈ α.range := fun s =>
+    RingHom.mem_range.mpr ⟨C (X s), by rw [hαC, map_X]⟩
+  have hden : ∀ P : MvPolynomial σ Φ, ∃ q : MvPolynomial K k, q ≠ 0 ∧
+      C (algebraMap (MvPolynomial K k) Φ q) * P ∈ α.range := by
+    intro P
+    refine MvPolynomial.induction_on (motive := fun P => ∃ q : MvPolynomial K k, q ≠ 0 ∧
+      C (algebraMap (MvPolynomial K k) Φ q) * P ∈ α.range) P ?_ ?_ ?_
+    · intro f
+      try dsimp only
+      obtain ⟨p, q, hq, rfl⟩ := IsFractionRing.div_surjective (MvPolynomial K k) f
+      refine ⟨q, nonZeroDivisors.ne_zero hq, ?_⟩
+      rw [← C_mul, mul_div_cancel₀ _ (IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors hq)]
+      exact hCmem p
+    · intro P₁ P₂ h₁ h₂
+      try dsimp only at h₁ h₂ ⊢
+      obtain ⟨q₁, hq₁, h₁⟩ := h₁
+      obtain ⟨q₂, hq₂, h₂⟩ := h₂
+      refine ⟨q₁ * q₂, mul_ne_zero hq₁ hq₂, ?_⟩
+      have e : C (algebraMap (MvPolynomial K k) Φ (q₁ * q₂)) * (P₁ + P₂) =
+          C (algebraMap (MvPolynomial K k) Φ q₂) * (C (algebraMap (MvPolynomial K k) Φ q₁) * P₁) +
+            C (algebraMap (MvPolynomial K k) Φ q₁) * (C (algebraMap (MvPolynomial K k) Φ q₂) * P₂) := by
+        rw [map_mul, C_mul]
+        ring
+      rw [e]
+      exact add_mem (mul_mem (hCmem q₂) h₁) (mul_mem (hCmem q₁) h₂)
+    · intro P s h
+      try dsimp only at h ⊢
+      obtain ⟨q, hq, h⟩ := h
+      refine ⟨q, hq, ?_⟩
+      rw [← mul_assoc]
+      exact mul_mem h (hXmem s)
+  apply le_antisymm
+  · intro P hP
+    rw [RingHom.mem_ker] at hP
+    obtain ⟨q, hq, hmem⟩ := hden P
+    obtain ⟨Q, hQ⟩ := RingHom.mem_range.mp hmem
+    have hQ0 : map (ψ : MvPolynomial σ k →+* B) Q = 0 := by
+      apply hν
+      rw [map_zero, ← hΘα, hQ, map_mul, hP, mul_zero]
+    have hJ : α Q ∈ (RingHom.ker ψ).map (map a) := by
+
+      rw [Q.as_sum, map_sum]
+      refine Ideal.sum_mem _ fun v _ => ?_
+      rw [monomial_eq, map_mul, hαC]
+      refine Ideal.mul_mem_right _ _ (Ideal.mem_map_of_mem _ ?_)
+      rw [RingHom.mem_ker]
+      have hv := congrArg (AddMonoidAlgebra.coeff · v) hQ0
+      rw [coeff_map, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at hv
+      exact hv
+    have hqne : algebraMap (MvPolynomial K k) Φ q ≠ 0 :=
+      IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors (mem_nonZeroDivisors_of_ne_zero hq)
+    have hP' : P = C (algebraMap (MvPolynomial K k) Φ q)⁻¹ * α Q := by
+      rw [hQ, ← mul_assoc, ← C_mul, inv_mul_cancel₀ hqne, C_1, one_mul]
+    rw [hP']
+    exact Ideal.mul_mem_left _ _ hJ
+  · rw [Ideal.map_le_iff_le_comap]
+    intro p hp
+    rw [RingHom.mem_ker] at hp
+    rw [Ideal.mem_comap, RingHom.mem_ker, hΘa, hp, map_zero, map_zero]
+
+end SheetDecomposition.PF
+end
+end
+end
+
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.CoreStatements.VolumeEquality.DegPushPFa, Development.WeilBound.CoreStatements.VolumeEquality.DegPushPFc, Development.WeilBound.CoreStatements.VolumeEquality.DegPushPF
@@ -340,81 +469,6 @@ theorem gen_cone {Φ : Type} [Field Φ] [Algebra (MvPolynomial K Ω₁) Φ] [IsF
   · refine ⟨0, 1, by simp, ?_⟩
     rw [← huv, hg0, div_zero, map_zero, zero_div]
   · exact ⟨f, g, hg0, huv.symm⟩
-
-open Classical in
-theorem exists_genFibre {y : (Σ b, ι b) → Ω₁} (y' : (Σ b, ι' b) → Ω) (hb : Birational y) (hne : ∀ k, ∃ j, y ⟨k, j⟩ ≠ 0) :
-    ∃ G : GenFibre inlV (mCoordIdeal (joinPt (fun x => algebraMap Ω₁ Ω (y x)) y')), ∀ (r : ℕ) (N : Fin r → K' → ℤ),
-      intNum G.Φ (fibreIdeal Sum.inl G) (fun j => fibreDeg Sum.inl (Sum.elim (0 : K → ℤ) (N j))) = inum Ω₁ y' N := by
-  let B := MvPolynomial K' Ω
-  let Φ := FractionRing (MvPolynomial K Ω₁)
-  let Φ' := FractionRing (MvPolynomial K B)
-  let ν : MvPolynomial K B →+* Φ' := algebraMap _ _
-  have hν : Function.Injective ν := IsFractionRing.injective _ _
-  let e := sumRingEquiv Ω K K'
-  let ν' : MvPolynomial (K ⊕ K') Ω →+* Φ' := ν.comp e.toRingHom
-  have hν' : Function.Injective ν' := hν.comp e.injective
-  have hg : Function.Injective (ν.comp (MvPolynomial.map (algebraMap Ω₁ B))) :=
-    hν.comp (MvPolynomial.map_injective _ (algebraMap Ω₁ B).injective)
-  let L : Φ →+* Φ' := IsFractionRing.lift hg
-  letI alg : Algebra Φ Φ' := L.toAlgebra
-  haveI : ∀ b, Fintype (Sum.elim ι ι' b) := fun b => by
-    cases b <;> dsimp <;> infer_instance
-  have he : ∀ (c : Ω) (q : Σ b, Sum.elim ι ι' b), e (C c * X q.1) =
-      match q with
-      | ⟨Sum.inl k, _⟩ => C (C c) * X k
-      | ⟨Sum.inr k, _⟩ => C (C c * X k) := by
-    rintro c ⟨(k | k), i⟩ <;> simp [e, sumRingEquiv_C, sumRingEquiv_X_inl, sumRingEquiv_X_inr]
-  let ψ := pointConeMap Ω₁ y'
-  have ha : ∀ c : Ω₁, algebraMap Ω₁ Φ c = algebraMap (MvPolynomial K Ω₁) Φ (C c) := by
-    intro c
-    rw [IsScalarTower.algebraMap_apply Ω₁ (MvPolynomial K Ω₁) Φ, MvPolynomial.algebraMap_eq]
-  have hL : ∀ r, L (algebraMap (MvPolynomial K Ω₁) Φ r) = ν (MvPolynomial.map (algebraMap Ω₁ B) r) := by
-    intro r
-    exact IsFractionRing.lift_algebraMap hg r
-  have hbc := ker_baseChange (algebraMap Ω₁ Φ) ha ν hν L hL ψ
-  refine ⟨⟨Φ, Φ', fun p => algebraMap (MvPolynomial K Ω₁) Φ (C (y p) * X p.1),
-    fun q => ν' (C (joinPt (fun x => algebraMap Ω₁ Ω (y x)) y' q) * X q.1), ?_, ?_, ?_, ?_⟩, ?_⟩
-  · rw [image_join]
-    exact ker_aeval_cone y (algebraMap (MvPolynomial K Ω₁) Φ) (IsFractionRing.injective _ _)
-  · exact gen_cone hb hne
-  · exact ker_aeval_cone _ ν' hν'
-  · intro p
-    rw [RingHom.algebraMap_toAlgebra]
-    show ν (e _) = L _
-    rw [IsFractionRing.lift_algebraMap, he]
-    simp [inlV, joinPt, ν]
-    rfl
-  · intro r N
-    have hdeg : (fun j => fibreDeg Sum.inl (Sum.elim (0 : K → ℤ) (N j))) = fun j => N j ∘ (blkE K K').symm := by
-      funext j b
-      obtain ⟨(k | k), h⟩ := b
-      · exact absurd ⟨k, rfl⟩ h
-      · rfl
-    rw [hdeg]
-    dsimp only
-    rw [← FieldNumbers.RenameIntNum.full Φ K' (FibreBlock (Sum.inl : K → K ⊕ K')) ι'
-      (fibreIdx (Sum.elim ι ι') Sum.inl) (blkE K K') (varE ι ι') (fun v => rfl)]
-    have hmap : ∀ P : Ideal (NumbersDVR.MRing ι' Ω₁),
-        intNum Φ (Ideal.map (MvPolynomial.map (algebraMap Ω₁ Φ)) P) N = intNum Ω₁ P N := by
-      intro P
-      unfold intNum
-      congr 2
-      funext m
-      exact FieldNumbers.hilbFn_map P m
-    refine Eq.trans ?_ (hmap (RingHom.ker ψ))
-    rw [← hbc]
-    congr 1
-    ext f
-    simp only [Ideal.mem_comap, fibreIdeal, RingHom.mem_ker, MvPolynomial.aeval_rename]
-    rw [MvPolynomial.aeval_eq_eval₂Hom]
-    congr! 3
-    funext s
-    obtain ⟨k, i⟩ := s
-    have h1 := he (y' ⟨k, i⟩) ⟨Sum.inr k, i⟩
-    simp only [Function.comp_apply, varE, Equiv.coe_fn_mk, ν', RingHom.comp_apply, joinPt]
-    show ν (e (C (y' ⟨k, i⟩) * X (Sum.inr k))) = _
-    rw [h1]
-    simp [ψ, pointConeMap]
 
 end SheetDecomposition.PF
 end -- clump:auto

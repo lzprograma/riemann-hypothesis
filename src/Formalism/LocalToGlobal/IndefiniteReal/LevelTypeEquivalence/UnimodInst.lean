@@ -21,8 +21,6 @@ open scoped Matrix
 
 namespace Formalism.IndefR.Eqv.UI
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7) (V : HSp D)
 
 abbrev crd : (Fin V.rank → D.host.E) ≃ₗ[D.host.E] V.V := V.frame.equivFun.symm

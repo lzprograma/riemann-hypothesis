@@ -24,56 +24,7 @@ public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.HeckeS
 public import Formalism.SatakeDualWeyl.StatementE
 public import Mathlib.NumberTheory.NumberField.Completion.FinitePlace
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -421,7 +372,7 @@ theorem one_sub_mul_geom (c : ℂ) :
   | zero => simp
   | succ n =>
     rw [sub_mul, one_mul, map_sub, mul_assoc, PowerSeries.coeff_C_mul, PowerSeries.coeff_succ_X_mul,
-      PowerSeries.coeff_mk, PowerSeries.coeff_mk, PowerSeries.coeff_one, if_neg (Nat.succ_ne_zero n),
+      PowerSeries.coeff_mk, PowerSeries.coeff_mk, PowerSeries.coeff_one, ite_eq_right (Nat.succ_ne_zero n),
       pow_succ]
     ring
 
@@ -555,8 +506,7 @@ namespace GlobalTheory
 
 theorem norm_le_of_recurrence_growth : ∀ (β : Multiset ℂ) (a : ℕ → ℂ) (C B : ℝ) (m : ℕ), 0 < B → a 0 = 1 → (∀ n, 1 ≤ n → ∑ k ∈ Finset.range (n + 1), (-1 : ℂ) ^ k * β.esymm k * a (n - k) = 0) → (∀ n, ‖a n‖ ≤ C * ((n : ℝ) + 1) ^ m * B ^ n) → ∀ b ∈ β, ‖b‖ ≤ B := by
   intro β a C B m hB ha0 hrec hgrow b hb
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have hb0 : b ≠ 0 := by
     intro h; rw [h, norm_zero] at hlt; linarith
   set X : ℂ := b⁻¹ with hX
@@ -703,8 +653,8 @@ theorem main : ∀ (O K : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRi
   have hd : ∀ k L, heckeElem k φ L = d k • φ L := by
     intro k L
     by_cases hk : k ≤ r
-    · rw [hT k hk L, hd_def]; simp only [hk, if_true]
-    · rw [heckeElem_eq_zero (by omega), hd_def]; simp only [hk, if_false, zero_smul]
+    · rw [hT k hk L, hd_def]; simp only [hk, ite_true]
+    · rw [heckeElem_eq_zero (by omega), hd_def]; simp only [hk, ite_false, zero_smul]
   have hlin : ∀ (c : ℂ) k L, heckeElem k (fun M => c • φ M) L = (c * d k) • φ L := by
     intro c k L
     rw [heckeElem_eq_sum, ← Finset.smul_sum, ← heckeElem_eq_sum, hd, smul_smul]
@@ -742,7 +692,7 @@ theorem main : ∀ (O K : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRi
     intro k
     rw [hβ_def, esymm_map_mul, hs_def, hd_def]
     by_cases hk : k ≤ r
-    · simp only [hk, if_true]
+    · simp only [hk, ite_true]
       have hreal : c ^ k = (qRes O : ℝ) ^ (k * (k - 1) / 2) *
           (qRes O : ℝ) ^ ((k : ℝ) * ((r : ℝ) - k) / 2) := by
         rw [hc_def, ← Real.rpow_natCast, ← Real.rpow_mul hq0.le, ← Real.rpow_natCast (qRes O : ℝ),
@@ -755,7 +705,7 @@ theorem main : ∀ (O K : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRi
           Complex.ofReal_natCast]
       rw [hcomp]
       ring
-    · simp only [hk, if_false, mul_zero]
+    · simp only [hk, ite_false, mul_zero]
       rw [Multiset.esymm, Multiset.powersetCard_eq_empty _ (by rw [hcard]; omega)]
       simp
   have hrel : ∀ n, 1 ≤ n → ∑ k ∈ Finset.range (n + 1), (-1 : ℂ) ^ k * β.esymm k * a (n - k) = 0 := by
@@ -924,9 +874,6 @@ end Local
 section Completion
 
 variable {E : Type} [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E))
-
-theorem finite_residue : Finite (IsLocalRing.ResidueField (w.adicCompletionIntegers E)) :=
-  Formalism.UG.P.tjcosets_finite w
 
 theorem qRes_eq_normV [Finite (IsLocalRing.ResidueField (w.adicCompletionIntegers E))] :
     qRes (w.adicCompletionIntegers E) = normV w := by

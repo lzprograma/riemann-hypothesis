@@ -336,7 +336,7 @@ theorem slash_diag {q : ℕ} (hq : 0 < q) (k : ℤ) (g : ℍ → ℂ) :
   have hpos : 0 < (diagG hq).det.val := by
     simp [diagG, Matrix.GeneralLinearGroup.val_det_apply, Matrix.det_fin_two_of]; exact hq
   funext z
-  rw [slash_apply, UpperHalfPlane.σ, if_pos hpos, ← ofComplex_apply (diagG hq • z), coe_smul_of_det_pos hpos]
+  rw [slash_apply, UpperHalfPlane.σ, ite_eq_left hpos, ← ofComplex_apply (diagG hq • z), coe_smul_of_det_pos hpos]
   simp [num, denom, diagG, vOp, Matrix.GeneralLinearGroup.val_det_apply, Matrix.det_fin_two_of]
   ring
 
@@ -344,7 +344,7 @@ theorem slash_tri {q : ℕ} (hq : 0 < q) (k : ℤ) (w : SL(2, ℤ)) (g : ℍ →
     (g ∣[k] repG hq w (some u)) z = (q : ℂ)⁻¹ * g (ofComplex (((z : ℂ) + (u : ℕ)) / q)) := by
   have hq0 : (q : ℂ) ≠ 0 := by exact_mod_cast hq.ne'
   have hpos : 0 < (repG hq w (some u)).det.val := by rw [repG_det]; exact_mod_cast hq
-  rw [slash_apply, UpperHalfPlane.σ, if_pos hpos, repG_det, ← ofComplex_apply (repG hq w (some u) • z),
+  rw [slash_apply, UpperHalfPlane.σ, ite_eq_left hpos, repG_det, ← ofComplex_apply (repG hq w (some u) • z),
     coe_smul_of_det_pos hpos]
   simp [num, denom, repG_val, rep, tri, zpow_sub₀ hq0]
   field_simp

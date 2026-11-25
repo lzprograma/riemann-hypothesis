@@ -47,7 +47,7 @@ theorem hint_fp_split {R Fr ι : Type*} [CommRing R] [Field Fr] [Algebra R Fr] (
       have hpS : p ∈ S := by
         by_contra h
         exact hp (by simp [h])
-      rw [finprod_eq_if, if_pos hpS, map_pow, map_pow]
+      rw [finprod_eq_if, ite_eq_left hpS, map_pow, map_pow]
       exact hint_zpow_split _ _
   · refine ⟨∅, by simp, ?_⟩
     rw [finprod_of_infinite_mulSupport hfin]
@@ -139,8 +139,7 @@ theorem hint_good_split (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (e : Ideal (KTp K 
 theorem hint_good_of_ne (c : ι) (p : Ideal (KTp K d.D d.N)) {f : AddValuation (OmS (Ω c) d.D d.N) (WithTop ℤ) → ℤ}
     (hp : (∑ᶠ (w : AddValuation (OmS (Ω c) d.D d.N) (WithTop ℤ)) (_ : w ∈ d.GoodP c p), f w) ≠ 0) :
     ∃ w, w ∈ d.GoodP c p := by
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   apply hp
   simp [hne]
 

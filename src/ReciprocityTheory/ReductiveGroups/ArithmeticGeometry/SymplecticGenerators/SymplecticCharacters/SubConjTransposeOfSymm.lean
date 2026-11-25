@@ -41,8 +41,7 @@ theorem re_pos_of_posDef {g : ℕ} {Y : Matrix (Fin g) (Fin g) ℝ} (hY : Y.PosD
       simp only [star_trivial] at this
       exact this.le
   have hxy : x ≠ 0 ∨ y ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     apply hv
     funext i
     apply Complex.ext

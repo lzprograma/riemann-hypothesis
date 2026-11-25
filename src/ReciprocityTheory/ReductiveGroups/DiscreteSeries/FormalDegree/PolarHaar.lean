@@ -32,18 +32,6 @@ open ReciprocityTheory.ChartRestriction.DS.S7
 
 variable {n : ℕ}
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-def adKL {ε : Fin n → Bool} (k : KG ε) : (PCoord ε → ℂ) →ₗ[ℝ] (PCoord ε → ℂ) where
-  toFun := adK k
-  map_add' z w := by
-    funext ab
-    simp only [adK, _root_.ReciprocityTheory.ChartRestriction.DS.PolarJacobianDeterminant.pmat_add', Matrix.mul_add, Matrix.add_mul, Pi.add_apply, Matrix.add_apply]
-  map_smul' c z := by
-    funext ab
-    simp only [adK, _root_.ReciprocityTheory.ChartRestriction.DS.adKAux_pmat_smul, Matrix.mul_smul, Matrix.smul_mul, Pi.smul_apply, Matrix.smul_apply,
-      RingHom.id_apply, Complex.real_smul, smul_eq_mul]
-
 theorem jall_adK_inv {ε : Fin n → Bool} (k : KG ε) (z : PCoord ε → ℂ) : adK k⁻¹ (adK k z) = z := by
   have hk := toMK_facts k
   have h : pmat (adK k⁻¹ (adK k z)) = pmat z := by
@@ -53,26 +41,26 @@ theorem jall_adK_inv {ε : Fin n → Bool} (k : KG ε) (z : PCoord ε → ℂ) :
       _ = pmat z := by rw [hk.1, Matrix.one_mul, Matrix.mul_one]
   rw [← pact_pmat_coords (adK k⁻¹ (adK k z)), h, pact_pmat_coords]
 
-theorem jall_abs_det_adKL {ε : Fin n → Bool} (k : KG ε) : |LinearMap.det (adKL k)| = 1 := by
-  have hinj : Function.Injective (adKL k) := fun x y hxy => by
+theorem jall_abs_det_adKL {ε : Fin n → Bool} (k : KG ε) : |LinearMap.det (ReciprocityTheory.ChartRestriction.DS.adjointCompactLinearAction k)| = 1 := by
+  have hinj : Function.Injective (ReciprocityTheory.ChartRestriction.DS.adjointCompactLinearAction k) := fun x y hxy => by
     have := congrArg (adK k⁻¹) hxy
-    simpa only [adKL, LinearMap.coe_mk, AddHom.coe_mk, jall_adK_inv] using this
+    simpa only [ReciprocityTheory.ChartRestriction.DS.adjointCompactLinearAction, LinearMap.coe_mk, AddHom.coe_mk, jall_adK_inv] using this
   have hmp := adK_measurePreserving k
-  have hcs : IsCompact ((adKL k) '' Metric.closedBall (0 : PCoord ε → ℂ) 1) :=
+  have hcs : IsCompact ((ReciprocityTheory.ChartRestriction.DS.adjointCompactLinearAction k) '' Metric.closedBall (0 : PCoord ε → ℂ) 1) :=
     (isCompact_closedBall 0 1).image (LinearMap.continuous_of_finiteDimensional _)
-  have h1 : volume ((adK k) ⁻¹' ((adKL k) '' Metric.closedBall (0 : PCoord ε → ℂ) 1)) =
-      volume ((adKL k) '' Metric.closedBall (0 : PCoord ε → ℂ) 1) :=
+  have h1 : volume ((adK k) ⁻¹' ((ReciprocityTheory.ChartRestriction.DS.adjointCompactLinearAction k) '' Metric.closedBall (0 : PCoord ε → ℂ) 1)) =
+      volume ((ReciprocityTheory.ChartRestriction.DS.adjointCompactLinearAction k) '' Metric.closedBall (0 : PCoord ε → ℂ) 1) :=
     hmp.measure_preimage hcs.isClosed.measurableSet.nullMeasurableSet
-  have hpre : (adK k) ⁻¹' ((adKL k) '' Metric.closedBall (0 : PCoord ε → ℂ) 1) =
+  have hpre : (adK k) ⁻¹' ((ReciprocityTheory.ChartRestriction.DS.adjointCompactLinearAction k) '' Metric.closedBall (0 : PCoord ε → ℂ) 1) =
       Metric.closedBall (0 : PCoord ε → ℂ) 1 := Set.preimage_image_eq _ hinj
   rw [hpre, MeasureTheory.Measure.addHaar_image_linearMap] at h1
   have hpos : volume (Metric.closedBall (0 : PCoord ε → ℂ) 1) ≠ 0 :=
     (Metric.measure_closedBall_pos volume 0 one_pos).ne'
   have hfin : volume (Metric.closedBall (0 : PCoord ε → ℂ) 1) ≠ ⊤ :=
     (isCompact_closedBall (0 : PCoord ε → ℂ) 1).measure_lt_top.ne
-  have h2 : ENNReal.ofReal |LinearMap.det (adKL k)| = 1 := by
+  have h2 : ENNReal.ofReal |LinearMap.det (ReciprocityTheory.ChartRestriction.DS.adjointCompactLinearAction k)| = 1 := by
     have h3 : 1 * volume (Metric.closedBall (0 : PCoord ε → ℂ) 1) =
-        ENNReal.ofReal |LinearMap.det (adKL k)| * volume (Metric.closedBall (0 : PCoord ε → ℂ) 1) := by
+        ENNReal.ofReal |LinearMap.det (ReciprocityTheory.ChartRestriction.DS.adjointCompactLinearAction k)| * volume (Metric.closedBall (0 : PCoord ε → ℂ) 1) := by
       rw [one_mul]; exact h1
     exact ((ENNReal.mul_left_inj hpos hfin).mp h3).symm
   exact ENNReal.ofReal_eq_one.mp h2
@@ -94,8 +82,8 @@ theorem jall_chain {ε : Fin n → Bool} {g h : Matrix (Fin n) (Fin n) ℂ} (hg 
   exact LinearMap.det_comp _ _
 
 theorem jall_fderiv_K {ε : Fin n → Bool} (k : KG ε) (z : PCoord ε → ℂ) :
-    fderiv ℝ (actR (ε := ε) (toMK k)) z = LinearMap.toContinuousLinearMap (adKL k⁻¹) := by
-  have e : actR (ε := ε) (toMK k) = ⇑(LinearMap.toContinuousLinearMap (adKL k⁻¹)) := by
+    fderiv ℝ (actR (ε := ε) (toMK k)) z = LinearMap.toContinuousLinearMap (ReciprocityTheory.ChartRestriction.DS.adjointCompactLinearAction k⁻¹) := by
+  have e : actR (ε := ε) (toMK k) = ⇑(LinearMap.toContinuousLinearMap (ReciprocityTheory.ChartRestriction.DS.adjointCompactLinearAction k⁻¹)) := by
     funext w
     rw [actR_K]
     rfl
@@ -273,7 +261,7 @@ theorem rmulPR_polarPR {ε : Fin n → Bool} {G : Matrix (Fin n) (Fin n) ℂ} (h
     funext ab
     have h1 : plog (NormedSpace.exp (pmat z) * G) = pmat w := by
       rw [← hkw, plog_polarM]
-    simp only [actR, h1, pmat, dif_pos ab.2]
+    simp only [actR, h1, pmat, dite_eq_left ab.2]
   refine ⟨k', fun k => ?_⟩
   rw [hw]
   simp only [rmulPR, polarPR, polarM] at hkw ⊢
@@ -322,7 +310,7 @@ theorem muPolar_mul_right (ε : Fin n → Bool) (g : UJ ε) :
   by_cases h : Function.Injective (intMuCD_eM ε) ∧
       ∀ s, MeasurableSet s → NullMeasurableSet (intMuCD_eM ε '' s) (muPolarMat ε)
   swap
-  · simp only [Measure.comap, dif_neg h, Measure.map_zero]
+  · simp only [Measure.comap, dite_eq_right h, Measure.map_zero]
   haveI : BorelSpace (UJ ε) := ⟨rfl⟩
   have hRm : Measurable (fun x : UJ ε => x * g) := (continuous_mul_const g).measurable
   have hG : inUJ ε (toM g) := g.2

@@ -122,7 +122,6 @@ theorem idem_supp_iff {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (v : HeightOneSpe
       · rw [h2 u hu]; simp
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem suppF_iff {D : D7} (V : HSp D) {v : HeightOneSpectrum (𝓞 D.host.F)} {ε : AF D.host.F}
     (h : IsPlaceIdem D v ε) (g : GA D V) :
@@ -137,9 +136,5 @@ theorem emb_mem_KsphC_iff {D : D7} (V : HSp D) (v : HeightOneSpectrum (𝓞 D.ho
   exact ⟨fun h => by simpa using (mem_levelOff.1 h).2.2 v (by simp), emb_mem_levelOff (by simp)⟩
 
 end Supp
-
-section More
-
-end More
 
 end GlobalTheory.AdelicU.Model

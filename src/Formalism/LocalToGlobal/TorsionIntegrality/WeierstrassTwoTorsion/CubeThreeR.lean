@@ -6,51 +6,7 @@ public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.F
 public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.Laurent
 public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementI
 public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.FormalGroupConstCoeffZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FglInvariant
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -114,8 +70,8 @@ theorem cW_succ (hS : WpShape.{0}) (hR : WpRecursion.{0}) {K : Type} [Field K] [
       · rw [cW_eq]
         simp [h4]
     · have hrec := hR K W k hk
-      rw [cW_eq, if_neg (show k + 1 ≠ 2 by omega), if_neg (show k + 1 ≠ 3 by omega),
-        if_pos (show 4 ≤ k + 1 by omega)]
+      rw [cW_eq, ite_eq_right (show k + 1 ≠ 2 by omega), ite_eq_right (show k + 1 ≠ 3 by omega),
+        ite_eq_left (show 4 ≤ k + 1 by omega)]
       have hsum : (∑ m : Fin (k + 1 - 3), cW (g₂ W) (g₃ W) (m.val + 2) * cW (g₂ W) (g₃ W) (k + 1 - (m.val + 2)))
           = ∑ i ∈ Finset.Icc 1 (k - 2), coeff (2 * i) (wpReg W) * coeff (2 * (k - 1 - i)) (wpReg W) := by
         rw [Fin.sum_univ_eq_sum_range (fun m => cW (g₂ W) (g₃ W) (m + 2) * cW (g₂ W) (g₃ W) (k + 1 - (m + 2)))
@@ -175,13 +131,13 @@ theorem wpNumEq_of (hS : WpShape.{0}) (hR : WpRecursion.{0}) : WpNumEq := by
       · interval_cases j
         simp
       · obtain ⟨i, rfl⟩ : ∃ i, j = i + 1 := ⟨j - 1, by omega⟩
-        rw [if_neg (show 2 * (i + 1) ≠ 0 by omega), if_pos (even_two_mul (i + 1)),
-          if_neg (show 2 * (i + 1) ≠ 0 by omega), if_pos (show 2 ≤ 2 * (i + 1) by omega),
+        rw [ite_eq_right (show 2 * (i + 1) ≠ 0 by omega), ite_eq_left (even_two_mul (i + 1)),
+          ite_eq_right (show 2 * (i + 1) ≠ 0 by omega), ite_eq_left (show 2 ≤ 2 * (i + 1) by omega),
           Nat.mul_div_cancel_left (i + 1) (by norm_num : 0 < 2),
           show 2 * (i + 1) - 2 = 2 * i by omega, cW_succ hS hR W i, zero_add]
-    · rw [if_neg (show 2 * j + 1 ≠ 0 by omega),
-        if_neg (Nat.not_even_iff_odd.mpr (odd_two_mul_add_one j)),
-        if_neg (show 2 * j + 1 ≠ 0 by omega), zero_add]
+    · rw [ite_eq_right (show 2 * j + 1 ≠ 0 by omega),
+        ite_eq_right (Nat.not_even_iff_odd.mpr (odd_two_mul_add_one j)),
+        ite_eq_right (show 2 * j + 1 ≠ 0 by omega), zero_add]
       split_ifs with h
       · rw [show 2 * j + 1 - 2 = 2 * (j - 1) + 1 by omega, hodd _ (odd_two_mul_add_one (j - 1))]
       · rfl
@@ -193,16 +149,16 @@ theorem wpNumEq_of (hS : WpShape.{0}) (hR : WpRecursion.{0}) : WpNumEq := by
     · rcases Nat.lt_or_ge j 2 with hj | hj
       · interval_cases j <;> simp
       · obtain ⟨i, rfl⟩ : ∃ i, j = i + 1 + 1 := ⟨j - 2, by omega⟩
-        rw [if_neg (show 2 * (i + 1 + 1) ≠ 0 by omega), if_pos (even_two_mul (i + 1 + 1)),
-          if_neg (show 2 * (i + 1 + 1) ≠ 0 by omega), if_pos (show 3 ≤ 2 * (i + 1 + 1) by omega),
+        rw [ite_eq_right (show 2 * (i + 1 + 1) ≠ 0 by omega), ite_eq_left (even_two_mul (i + 1 + 1)),
+          ite_eq_right (show 2 * (i + 1 + 1) ≠ 0 by omega), ite_eq_left (show 3 ≤ 2 * (i + 1 + 1) by omega),
           Nat.mul_div_cancel_left (i + 1 + 1) (by norm_num : 0 < 2),
           show 2 * (i + 1 + 1) - 3 = 2 * i + 1 by omega, coeff_derivative,
           show 2 * i + 1 + 1 = 2 * (i + 1) by ring, cW_succ hS hR W (i + 1)]
         push_cast
         ring
-    · rw [if_neg (show 2 * j + 1 ≠ 0 by omega),
-        if_neg (Nat.not_even_iff_odd.mpr (odd_two_mul_add_one j)),
-        if_neg (show 2 * j + 1 ≠ 0 by omega)]
+    · rw [ite_eq_right (show 2 * j + 1 ≠ 0 by omega),
+        ite_eq_right (Nat.not_even_iff_odd.mpr (odd_two_mul_add_one j)),
+        ite_eq_right (show 2 * j + 1 ≠ 0 by omega)]
       split_ifs with h
       · rw [show 2 * j + 1 - 3 = 2 * (j - 1) by omega, coeff_derivative,
           hodd _ (odd_two_mul_add_one (j - 1))]

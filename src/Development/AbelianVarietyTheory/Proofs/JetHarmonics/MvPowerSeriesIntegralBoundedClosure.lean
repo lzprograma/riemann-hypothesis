@@ -135,56 +135,15 @@ theorem Le.subst {ρ : Type} [Fintype ρ] {a : ρ → MvPowerSeries σ K} {S : M
   exact (mul_le_mul (hS d) (h1 ν) (norm_nonneg _) hS.nonneg).trans (mul_one c).le
 
 variable {K : Type} [NormedField K] [IsUltrametricDist K] {σ : Type} in
-omit [IsUltrametricDist K] in
-private lemma le_one_one : _root_.GlobalTheory.BddAlg.Le 1 (1 : MvPowerSeries σ K) :=
-  fun ν => by
-    classical
-    rw [MvPowerSeries.coeff_one]
-    split_ifs <;> simp
-
-variable {K : Type} [NormedField K] [IsUltrametricDist K] {σ : Type} in
-private lemma le_one_finset_prod_of_le_one {ι : Type*} (t : Finset ι) (f : ι → MvPowerSeries σ K)
-    (h : ∀ i ∈ t, _root_.GlobalTheory.BddAlg.Le 1 (f i)) :
-    _root_.GlobalTheory.BddAlg.Le 1 (∏ i ∈ t, f i) := by
-  classical
-  induction t using Finset.induction_on with
-  | empty =>
-    rw [Finset.prod_empty]
-    exact le_one_one
-  | insert a t ha ih =>
-    rw [Finset.prod_insert ha]
-    have := _root_.GlobalTheory.BddAlg.Le.mul (h a (Finset.mem_insert_self _ _))
-      (ih fun i hi => h i (Finset.mem_insert_of_mem hi))
-    rwa [one_mul] at this
-
-variable {K : Type} [NormedField K] [IsUltrametricDist K] {σ : Type} in
 private lemma le_pow' {c : ℝ} {S : MvPowerSeries σ K}
     (hS : _root_.GlobalTheory.BddAlg.Le c S) (n : ℕ) : _root_.GlobalTheory.BddAlg.Le (c ^ n) (S ^ n) := by
   induction n with
   | zero =>
     rw [pow_zero, pow_zero]
-    exact le_one_one
+    exact intg_one
   | succ n ih =>
     rw [pow_succ, pow_succ]
     exact _root_.GlobalTheory.BddAlg.Le.mul ih hS
-
-variable {K : Type} [NormedField K] [IsUltrametricDist K] {σ : Type} in
-private lemma le_subst_of_le_one_of_constantCoeff_zero {ρ : Type} [Fintype ρ] {a : ρ → MvPowerSeries σ K}
-    {S : MvPowerSeries ρ K} {c : ℝ} (ha : ∀ j, _root_.GlobalTheory.BddAlg.Le 1 (a j))
-    (h0 : ∀ j, MvPowerSeries.constantCoeff (a j) = 0) (hS : _root_.GlobalTheory.BddAlg.Le c S) :
-    _root_.GlobalTheory.BddAlg.Le c (MvPowerSeries.subst a S) := fun e => by
-  have hsub : MvPowerSeries.HasSubst a := MvPowerSeries.hasSubst_of_constantCoeff_zero h0
-  rw [MvPowerSeries.coeff_subst hsub, finsum_eq_sum _ (MvPowerSeries.coeff_subst_finite hsub S e)]
-  refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (_root_.GlobalTheory.BddAlg.Le.nonneg hS)
-    fun d _ => ?_
-  rw [smul_eq_mul, norm_mul]
-  have hp : _root_.GlobalTheory.BddAlg.Le 1 (d.prod fun s n => a s ^ n) := by
-    have := le_one_finset_prod_of_le_one d.support (fun s => a s ^ d s) fun s _ => by
-      simpa using le_pow' (ha s) (d s)
-    exact this
-  calc ‖MvPowerSeries.coeff d S‖ * ‖MvPowerSeries.coeff e (d.prod fun s n => a s ^ n)‖
-      ≤ c * 1 := mul_le_mul (hS d) (hp e) (norm_nonneg _) (_root_.GlobalTheory.BddAlg.Le.nonneg hS)
-    _ = c := mul_one c
 
 variable {K : Type} [NormedField K] [IsUltrametricDist K] {σ : Type} in
 omit [IsUltrametricDist K] in
@@ -211,12 +170,6 @@ private lemma le_sub' {c : ℝ} {S T : MvPowerSeries σ K}
     _root_.GlobalTheory.BddAlg.Le c (S - T) := by
   rw [sub_eq_add_neg]
   exact le_add' hS (le_neg' hT)
-
-variable {K : Type} [NormedField K] [IsUltrametricDist K] {σ : Type} in
-private lemma le_one_mul_of_le_one {S T : MvPowerSeries σ K} (hS : _root_.GlobalTheory.BddAlg.Le 1 S)
-    (hT : _root_.GlobalTheory.BddAlg.Le 1 T) : _root_.GlobalTheory.BddAlg.Le 1 (S * T) := by
-  have := _root_.GlobalTheory.BddAlg.Le.mul hS hT
-  rwa [one_mul] at this
 
 variable {K : Type} [NormedField K] [IsUltrametricDist K] {σ : Type} in
 omit [IsUltrametricDist K] in
@@ -248,26 +201,12 @@ private lemma bdd_mul_of_bdd {S T : MvPowerSeries σ K} (hS : _root_.GlobalTheor
   exact bdd_iff_exists_le.mpr ⟨c * d, _root_.GlobalTheory.BddAlg.Le.mul hc hd⟩
 
 variable {K : Type} [NormedField K] [IsUltrametricDist K] {σ : Type} in
-omit [IsUltrametricDist K] in
-private lemma le_one_X (i : σ) :
-    _root_.GlobalTheory.BddAlg.Le 1 (MvPowerSeries.X i : MvPowerSeries σ K) := fun ν => by
-  classical
-  rw [MvPowerSeries.coeff_X]
-  split_ifs <;> simp
-
-variable {K : Type} [NormedField K] [IsUltrametricDist K] {σ : Type} in
 private lemma le_finset_sum {ι : Type*} {c : ℝ} (hc : 0 ≤ c) (t : Finset ι)
     (f : ι → MvPowerSeries σ K) (h : ∀ i ∈ t, _root_.GlobalTheory.BddAlg.Le c (f i)) :
     _root_.GlobalTheory.BddAlg.Le c (∑ i ∈ t, f i) := fun ν => by
 
   rw [map_sum]
   exact IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hc fun i hi => h i hi ν
-
-variable {K : Type} [NormedField K] [IsUltrametricDist K] {σ : Type} in
-omit [IsUltrametricDist K] in
-private lemma le_zero_series {c : ℝ} (hc : 0 ≤ c) :
-    _root_.GlobalTheory.BddAlg.Le c (0 : MvPowerSeries σ K) :=
-  fun ν => by simp [hc]
 
 
 variable {K : Type} [NormedField K] [IsUltrametricDist K] {σ : Type} in
@@ -278,38 +217,32 @@ theorem _root_.GlobalTheory.BddAlg.bdd_alg : ∀ (K : Type) [NormedField K] [IsU
       (_root_.GlobalTheory.ConvSer.Intg S → _root_.GlobalTheory.ConvSer.Intg (MvPowerSeries.subst a S)) ∧
       (_root_.GlobalTheory.ConvSer.Bdd S → _root_.GlobalTheory.ConvSer.Bdd (MvPowerSeries.subst a S)) := by
     intro ρ _ a S ha h0
-    refine ⟨fun hS => le_subst_of_le_one_of_constantCoeff_zero ha h0 hS, fun hS => ?_⟩
+    refine ⟨fun hS => Le.subst ha h0 hS, fun hS => ?_⟩
     obtain ⟨c, hc⟩ := bdd_iff_exists_le.mp hS
-    exact bdd_iff_exists_le.mpr ⟨c, le_subst_of_le_one_of_constantCoeff_zero ha h0 hc⟩
+    exact bdd_iff_exists_le.mpr ⟨c, Le.subst ha h0 hc⟩
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, hsubst, ?_, ?_, ?_⟩
   · intro S T hS hT
-    exact ⟨le_add' hS hT, le_sub' hS hT, le_one_mul_of_le_one hS hT⟩
+    exact ⟨le_add' hS hT, le_sub' hS hT, intg_mul hS hT⟩
   · intro S T hS hT
     exact ⟨bdd_add_jet_harmonics hS hT, bdd_sub' hS hT, bdd_mul_of_bdd hS hT⟩
   · intro S n
-    refine ⟨fun hS => ?_, fun hS => ?_, fun hS => bdd_iff_exists_le.mpr ⟨1, hS⟩⟩
-    · have := le_pow' (c := 1) hS n
-      rwa [one_pow] at this
-    · obtain ⟨c, hc⟩ := bdd_iff_exists_le.mp hS
-      exact bdd_iff_exists_le.mpr ⟨c ^ n, le_pow' hc n⟩
+    refine ⟨fun hS => intg_pow hS n, fun hS => ?_, bdd_of_intg⟩
+    obtain ⟨c, hc⟩ := bdd_iff_exists_le.mp hS
+    exact bdd_iff_exists_le.mpr ⟨c ^ n, le_pow' hc n⟩
   · intro a
     refine ⟨bdd_iff_exists_le.mpr ⟨‖a‖, _root_.GlobalTheory.BddAlg.le_C a⟩,
-      fun ha => le_mono (_root_.GlobalTheory.BddAlg.le_C a) ha, fun ha => ?_⟩
-    refine ⟨le_mono (_root_.GlobalTheory.BddAlg.le_C a) ha.le, ?_⟩
+      intg_C, fun ha => ⟨intg_C ha.le, ?_⟩⟩
     rw [MvPowerSeries.constantCoeff_C]
     exact ha
-  · intro i
-    refine ⟨le_one_X i, ?_⟩
-    rw [MvPowerSeries.constantCoeff_X, norm_zero]
-    exact one_pos
+  · exact small_X
   · intro ι t f
     classical
-    refine ⟨fun h => ⟨le_one_finset_prod_of_le_one t f h, le_finset_sum zero_le_one t f h⟩,
+    refine ⟨fun h => ⟨intg_prod t f h, le_finset_sum zero_le_one t f h⟩,
       fun h => ⟨?_, ?_⟩⟩
     · induction t using Finset.induction_on with
       | empty =>
         rw [Finset.prod_empty]
-        exact bdd_iff_exists_le.mpr ⟨1, le_one_one⟩
+        exact bdd_of_intg intg_one
       | insert b t hb ih =>
         rw [Finset.prod_insert hb]
         exact bdd_mul_of_bdd (h b (Finset.mem_insert_self _ _))
@@ -317,7 +250,7 @@ theorem _root_.GlobalTheory.BddAlg.bdd_alg : ∀ (K : Type) [NormedField K] [IsU
     · induction t using Finset.induction_on with
       | empty =>
         rw [Finset.sum_empty]
-        exact bdd_iff_exists_le.mpr ⟨0, le_zero_series le_rfl⟩
+        exact bdd_of_intg intg_zero
       | insert b t hb ih =>
         rw [Finset.sum_insert hb]
         exact bdd_add_jet_harmonics (h b (Finset.mem_insert_self _ _))

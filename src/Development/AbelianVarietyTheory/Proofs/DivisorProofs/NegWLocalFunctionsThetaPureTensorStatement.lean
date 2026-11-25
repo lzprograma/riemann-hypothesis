@@ -24,42 +24,8 @@ import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationLeOneOfMem
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNsmulIntMemLatO
 import Formalism.LocalToGlobal.ProjectiveLattices.HostRank
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
 import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsMatchOver
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
@@ -79,7 +45,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation (spV spW spW₁ spV₁ Num IsTripleOf IsDatumA IsDatumB incM)
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model Chars Rep Acts SInf At piW psiLoc chrW)
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.TopFlip
 
 noncomputable section
@@ -234,7 +199,7 @@ theorem datum_of_placeModel (M : Model D.sp.cm.sig Y Z) {ψ : AddChar (AF D.host
     · rw [Set.indicator_of_mem ((hH u).2 hu), Finset.prod_congr rfl fun w hw =>
         (congrArg _ ((lsm w hw _).symm.trans (congrArg (lin w) (map_smul p (a w) u).symm))).trans ((hv w hw).2 _ (hsm w hw u))]
       by_cases hl : p u ∈ Λ
-      · rw [if_pos ⟨hl, hu⟩, mul_one]
+      · rw [ite_eq_left ⟨hl, hu⟩, mul_one]
         exact Finset.prod_congr rfl fun w hw => Set.indicator_of_mem (by
           show p (a w • u) ∈ Λ
           rw [map_smul]
@@ -243,8 +208,8 @@ theorem datum_of_placeModel (M : Model D.sp.cm.sig Y Z) {ψ : AddChar (AF D.host
           by_contra! hall
           exact hl (mem_of_sum_smul (hεs ▸ hu) fun w hw => map_smul p (a w) u ▸ hall w hw)
         obtain ⟨w, hw, hn⟩ := this
-        rw [Finset.prod_eq_zero hw (Set.indicator_of_notMem (s := {u | p u ∈ Λ}) hn _), if_neg fun h => hl h.1, mul_zero]
-    · rw [Set.indicator_of_notMem (mt (hH u).1 hu), if_neg fun h => hu h.2, mul_zero]
+        rw [Finset.prod_eq_zero hw (Set.indicator_of_notMem (s := {u | p u ∈ Λ}) hn _), ite_eq_right fun h => hl h.1, mul_zero]
+    · rw [Set.indicator_of_notMem (mt (hH u).1 hu), ite_eq_right fun h => hu h.2, mul_zero]
   have hR := GlobalTheory.InductLagr.rel_of_vac M ψ hstd hG P pl hpl C
     (fun w => {u | IsHalf (a w) (p u)}) (fun w => {u | IsHalf (cA D (a w)) (p u)}) (fun w u => lin w (p u)) I H R (c • f)
     hI (fun w hw u hu => ⟨at_of_isHalf p _ (ha1 w hw) hu, (hH u).2 (hA w hw _ hu)⟩)
@@ -279,8 +244,8 @@ theorem datum_of_placeModel (M : Model D.sp.cm.sig Y Z) {ψ : AddChar (AF D.host
     refine (congrFun h2 u).symm.trans ?_
     dsimp only
     by_cases hu : IsHalf ε (p u)
-    · rw [if_pos hu]; exact Set.indicator_of_mem ((hH u).2 hu) _
-    · rw [if_neg hu]; exact Set.indicator_of_notMem (mt (hH u).1 hu) _
+    · rw [ite_eq_left hu]; exact Set.indicator_of_mem ((hH u).2 hu) _
+    · rw [ite_eq_right hu]; exact Set.indicator_of_notMem (mt (hH u).1 hu) _
   exact this ▸ h3
 
 end Generic
@@ -523,16 +488,6 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.Local
 open GlobalTheory.TopFlip
 
 
-theorem _root_.GlobalTheory.T.negW_local_functions_theta_pure_tensor : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : GlobalTheory.ChiGrid.Consts} {G : GridData L sc} {μ₀ : T}, L.Is μ₀ → ∀ (W : G.Weil) (B : Frames G) (t : T) (i j : Fin D.R.m) (M : Vol G), SquareStanding G t →
-    ∀ (e : Num G i j) (Bs : Base D.host.F D.host.E) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.Geo G i j) (X : Chars D.host.F D.host.E)
-      (om : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V Γ.W) (om' : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V' Γ.W), IsTripleOf W M t i j e Bs Γ X →
-      GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsTriple Bs Γ X om om' → IsTied t i j e Bs Γ X → ∀ (ρ : RealMatch W) f₀,
-      GlobalTheory.SquareAgree.IsDatum Γ.M W.ψ (_root_.GlobalTheory.TopFlip.ptA e) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f₀ Γ.M.vac) (_root_.GlobalTheory.TopFlip.vacA ρ i j) →
-      ∀ ι : ∀ w, ToA G t i j w, (∀ w ∈ locPl G t, _root_.GlobalTheory.TopFlip.IsLinModelA W B t e Γ w (ι w)) →
-      ∀ ε, IsIdemSum ε (locPl G t) → ∀ Ξ F, _root_.GlobalTheory.TopFlip.IsLinA B t i j ρ ε Ξ F →
-      ∀ φ, IsFinPart Γ.M X.T φ → (∀ w ∈ locPl G t, ι w (φ (w.under (𝓞 D.host.F))) = Ξ w) →
-        GlobalTheory.SquareAgree.IsDatum Γ.M W.ψ (_root_.GlobalTheory.TopFlip.ptA e) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure ((∏ w ∈ locPl G t, ι w (Γ.M.vac _) 0) • f₀) φ) F := by
-  exact @GlobalTheory.TopFlip.LinGlob.isDatum_linA
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegWLocalFunctionsThetaPureTensorStatement =====

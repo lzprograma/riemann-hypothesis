@@ -43,17 +43,6 @@ theorem Hg_rmul (X : Data E r) (x0 : Frame X.Ψ r) (FF : Set (V (nd X))) (bb : �
   simp only [Hg, Set.indicator_apply, Set.mem_preimage, lact_rmul', rmul_mem_S X hb,
     kap_rmul X x0 x bb hb, hφB x hx b hb]
 
-private lemma lact_inv_lact_self {Ψ : Finset (E →+* ℂ)} (γ : GL (Fin r) E) (x : Frame Ψ r) :
-    lact γ⁻¹ (lact γ x) = x := by
-  funext τ
-  have h : ((γ⁻¹ : GL (Fin r) E) : Matrix (Fin r) (Fin r) E) * (γ : Matrix (Fin r) (Fin r) E) = 1 := by
-    simp
-  show ((γ⁻¹ : GL (Fin r) E) : Matrix (Fin r) (Fin r) E).map τ.1 *
-      ((γ : Matrix (Fin r) (Fin r) E).map τ.1 * Matrix.of (x τ)) = x τ
-  rw [← Matrix.mul_assoc, ← Matrix.map_mul, h, Matrix.map_one _ (map_zero τ.1) (map_one τ.1),
-    Matrix.one_mul]
-  rfl
-
 theorem Hg_lact_cpt (X : Data E r) {x0 : Frame X.Ψ r} (ho : IsOrth X x0) (FF : Set (V (nd X))) (bb : ℝ)
     {φ : Frame X.Ψ r → ℝ≥0∞} (hφΓ : ∀ γ ∈ X.Γ, ∀ x ∈ X.dom, φ (lact γ x) = φ x) {γ : GL (Fin r) E}
     (hγ : γ ∈ X.Γ) {z : V (nd X)} (hz : z ∈ OmF X x0) :
@@ -68,7 +57,7 @@ theorem cover (X : Data E r) {x0 : Frame X.Ψ r} {FF : Set (V (nd X))} (hFF : Is
   obtain ⟨-, -, -, h⟩ := hFF
   filter_upwards [h] with z hz
   obtain ⟨z', hz', γ, hγ, b, hb, he⟩ := hz
-  exact ⟨γ, hγ, ⟨(z', b), ⟨hz', hb⟩, by rw [he, lact_inv_lact_self]⟩⟩
+  exact ⟨γ, hγ, ⟨(z', b), ⟨hz', hb⟩, by rw [he, lact_lact, inv_mul_cancel, lact_one]⟩⟩
 
 theorem kaUnfold_of (hMI : MeasInvStatement (E := E)) (hSB : SumBoundStatement) :
     KaUnfoldStatement (E := E) := by

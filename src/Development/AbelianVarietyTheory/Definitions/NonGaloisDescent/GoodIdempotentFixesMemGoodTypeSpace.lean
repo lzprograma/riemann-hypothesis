@@ -75,8 +75,7 @@ open Polynomial in
 private lemma norm_le_one_of_monic_root_lemma {K : Type*} [NormedField K] [IsUltrametricDist K]
     {p : K[X]} (hp : p.Monic) (hc : ∀ i, ‖p.coeff i‖ ≤ 1) {x : K} (hx : p.eval x = 0) :
     ‖x‖ ≤ 1 := by
-  by_contra h
-  push_neg at h
+  by_contra! h
   rw [hp.as_sum] at hx
   simp only [eval_add, eval_pow, eval_X, Polynomial.eval_finsetSum, eval_mul, eval_C] at hx
   set n := p.natDegree
@@ -378,27 +377,10 @@ variable (X : NTw D.R D.host D.what₂ D.LL0 D.nd)
 def fracMap (i : X.Tw) : FractionRing (X.O0 i) →+* FractionRing (X.O i) :=
   IsFractionRing.map (A := X.O0 i) (B := X.O i) (K := FractionRing (X.O0 i)) (L := FractionRing (X.O i)) (X.O_inj i)
 
-def embO (i : X.Tw) (b : Bool) : ↥D.LL0 →+* FractionRing (X.O i) := (fracMap X i).comp (embSide X i b)
-
 theorem fracMap_algebraMap (i : X.Tw) (x : X.O0 i) :
     fracMap X i (algebraMap (X.O0 i) (FractionRing (X.O0 i)) x) =
       algebraMap (X.O i) (FractionRing (X.O i)) (algebraMap (X.O0 i) (X.O i) x) :=
   by simp [fracMap, IsFractionRing.map]
-
-structure CoefRead (i : X.Tw) (b : Bool) where
-
-  F : Type
-  [fld : Field F]
-
-  e : ↥D.LL0 →+* F
-
-  u : F →+* FractionRing (X.O i)
-
-  toC : F →+* ℂ
-  u_e : ∀ x, u (e x) = embO X i b x
-  toC_e : ∀ x, toC (e x) = embLL0 D x
-
-attribute [instance] CoefRead.fld
 
 variable {X} {i : X.Tw} {b : Bool}
 
@@ -427,16 +409,7 @@ def TeichAt {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (w : D.what₂.plac
   ∀ k, l ≠ D.host.g k → ∀ (v : D.nd.PlG k) x, x ≠ 0 → ∀ z : Zbar l,
     (z : Qbar l) = ι.symm (D.ntypes.teichC k x) → red z = D.ntypes.iota k v w x
 
-def ResAt {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (w : D.what₂.places.Pl) (red : Zbar l →+* FbAt D w) : Prop :=
-  IsoInduces ι w ∧ TeichAt ι w red ∧
-    ∀ σ π (r : GalE D →* GL (Fin D.R.r) (Qbar l)), D.nd.goodRow σ → OnW D σ → IsRowPar Rw σ π →
-      IsGaloisRepOf D π l ι r → IsResidual ι r σ w red
-
 end Res
-
-def ResTied (D : D7) (Rw : RowSide D) : Prop :=
-  ∀ w : D.what₂.places.Pl, D.what₂.muAt w ≠ D.what₂.mu0 → ∀ (l : ℕ) [Fact l.Prime], D.what₂.places.resChar w = l →
-    ∃ (ι : Qbar l ≃+* ℂ) (red : Zbar l →+* FbAt D w), ResAt Rw ι w red
 
 section Bridge
 
@@ -511,10 +484,6 @@ theorem exists_reading_of_induces {b' : Bool} (ρ : Reading X i b') {ι : Qbar (
   · exact (congrArg ι (hg x)).trans (ι.apply_symm_apply _)
 
 end Bridge
-
-namespace Model
-
-end Model
 
 end GlobalTheory.EigTie
 

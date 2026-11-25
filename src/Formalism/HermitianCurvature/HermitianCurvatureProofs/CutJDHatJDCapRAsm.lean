@@ -18,50 +18,7 @@ import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TorusInvariance.Transfe
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpMTop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpPConseq
@@ -131,12 +88,6 @@ theorem sign_Pt (t : ℕ) (ht : t < k + 1) :
 theorem rowsR_val (t : Fin (k + 1)) (j : Fin (r + k)) :
     (rowsR k r t j).val = if j.val < r + t.val then j.val else j.val + 1 := rfl
 
-theorem rowsR_strictMono (t : Fin (k + 1)) : StrictMono (rowsR k r t) := by
-  intro j₁ j₂ h
-  rw [Fin.lt_def, rowsR_val, rowsR_val]
-  rw [Fin.lt_def] at h
-  split_ifs <;> omega
-
 theorem residue_rows_injective {t t' : Fin (k + 1)} (h : rowsR k r t = rowsR k r t') : t = t' := by
   by_contra hne
   rcases lt_or_gt_of_ne (fun e => hne (Fin.ext e) : t.val ≠ t'.val) with hl | hl
@@ -150,7 +101,7 @@ theorem residue_rows_injective {t t' : Fin (k + 1)} (h : rowsR k r t = rowsR k r
 theorem rowsR_mem (t : Fin (k + 1)) : rowsR k r t ∈ jSetR k r := by
   classical
   simp only [jSetR, Finset.mem_filter, Finset.mem_univ, true_and]
-  convert rowsR_strictMono t
+  convert Formalism.FourierDecayAlt.P.CutMP.InvEig.rowsR_smono t
 
 section det
 
@@ -162,7 +113,7 @@ include h1
 theorem colR_lt (J : Fin (r + k) → Fin (2 * r + k + 1)) (q p : Fin (2 * r + k + 1)) (hq : q.val < r) :
     colR k r z x J q p = if p.val = r + k + 1 + q.val then v ⟨r - 1 - q.val, by omega⟩ else 0 := by
   unfold colR
-  rw [dif_pos hq, h1]
+  rw [dite_eq_left hq, h1]
   simp only [Pi.smul_apply, bvec, Pi.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero]
   congr 1
   simp only [esI, Fin.ext_iff]
@@ -173,7 +124,7 @@ omit h1 in
 theorem colR_eq (J : Fin (r + k) → Fin (2 * r + k + 1)) (q p : Fin (2 * r + k + 1)) (hq : q.val = r) :
     colR k r z x J q p = (ginvH k r x *ᵥ z) p := by
   unfold colR
-  rw [dite_eq_right (by omega), dif_pos hq]
+  rw [dite_eq_right (by omega), dite_eq_left hq]
 
 omit h1 in
 theorem colR_gt (J : Fin (r + k) → Fin (2 * r + k + 1)) (q p : Fin (2 * r + k + 1)) (hq : r < q.val) :
@@ -193,13 +144,13 @@ theorem claimA (J : Fin (r + k) → Fin (2 * r + k + 1)) (hJ : StrictMono J) (σ
     have := hne q
     rw [colR_lt z x v h1 J q _ hq] at this
     by_contra h
-    exact this (if_neg h)
+    exact this (ite_eq_right h)
   have hgt : ∀ (q : Fin (2 * r + k + 1)) (hq : r < q.val), σ q = J ⟨q.val - r - 1, by have := q.isLt; omega⟩ := by
     intro q hq
     have := hne q
     rw [colR_gt z x J q _ hq] at this
     by_contra h
-    exact this (if_neg h)
+    exact this (ite_eq_right h)
   have hr0 : r ≤ (σ ⟨r, by omega⟩).val := by
     by_contra h
     have := hne ⟨r, by omega⟩
@@ -252,22 +203,22 @@ theorem claimA (J : Fin (r + k) → Fin (2 * r + k + 1)) (hJ : StrictMono J) (σ
       have := j.isLt
       split_ifs <;> omega
   have hcard : S.card = r + k := by
-    rw [hSimg, Finset.card_image_of_injective _ (rowsR_strictMono t).injective, Finset.card_univ, Fintype.card_fin]
+    rw [hSimg, Finset.card_image_of_injective _ (Formalism.FourierDecayAlt.P.CutMP.InvEig.rowsR_smono t).injective, Finset.card_univ, Fintype.card_fin]
   have hJeq : J = rowsR k r t := by
     have e1 := Finset.orderEmbOfFin_unique hcard (f := J) (fun j => by
       simp only [S, Finset.mem_filter, Finset.mem_univ, true_and]; exact hJS j) hJ
     have e2 := Finset.orderEmbOfFin_unique hcard (f := rowsR k r t) (fun j => by
-      rw [hSimg]; exact Finset.mem_image_of_mem _ (Finset.mem_univ _)) (rowsR_strictMono t)
+      rw [hSimg]; exact Finset.mem_image_of_mem _ (Finset.mem_univ _)) (Formalism.FourierDecayAlt.P.CutMP.InvEig.rowsR_smono t)
     rw [e1, e2]
   refine ⟨t, hJeq, ?_⟩
   ext q
   rw [Pt_apply]
   simp only [ptv]
   rcases lt_trichotomy q.val r with hq | hq | hq
-  · rw [hlt q hq, if_pos hq]
+  · rw [hlt q hq, ite_eq_left hq]
   · have htv : t.val = (σ ⟨r, by omega⟩).val - r := by rw [ht]
     have e : q = ⟨r, by omega⟩ := Fin.ext hq
-    rw [if_neg (by omega), if_pos hq, e]
+    rw [ite_eq_right (by omega), ite_eq_left hq, e]
     omega
   · rw [hgt q hq, hJeq, rowsR_val]
     simp only
@@ -292,7 +243,7 @@ theorem prod_rev_v : (∏ i : Fin (2 * r + k + 1), (if h : i.val < r then v ⟨r
   rw [← Fin.prod_univ_eq_prod_range F r]
   rw [← Equiv.prod_comp Fin.revPerm v]
   refine Finset.prod_congr rfl fun a _ => ?_
-  simp only [F, dif_pos a.isLt, Fin.revPerm_apply]
+  simp only [F, dite_eq_left a.isLt, Fin.revPerm_apply]
   congr 1
   apply Fin.ext
   simp only [Fin.val_rev]
@@ -306,24 +257,24 @@ theorem claimB (t : Fin (k + 1)) :
         (if i = ⟨r, by omega⟩ then (ginvH k r x *ᵥ z) (wI k r t) else 1) := by
     intro i
     rcases lt_trichotomy i.val r with hi | hi | hi
-    · rw [colR_lt z x v h1 _ i _ hi, if_pos (by rw [Pt_apply]; simp only [ptv]; rw [if_pos hi]), dif_pos hi,
-        if_neg (fun e => by rw [e] at hi; simp at hi), mul_one]
+    · rw [colR_lt z x v h1 _ i _ hi, ite_eq_left (by rw [Pt_apply]; simp only [ptv]; rw [ite_eq_left hi]), dite_eq_left hi,
+        ite_eq_right (fun e => by rw [e] at hi; simp at hi), mul_one]
     · have e : i = ⟨r, by omega⟩ := Fin.ext hi
-      rw [colR_eq z x _ i _ hi, dite_eq_right (by omega), if_pos e, one_mul]
+      rw [colR_eq z x _ i _ hi, dite_eq_right (by omega), ite_eq_left e, one_mul]
       congr 1
       apply Fin.ext
       rw [Pt_apply]
       simp only [ptv, wI]
-      rw [if_neg (by omega), if_pos hi]
+      rw [ite_eq_right (by omega), ite_eq_left hi]
     · have hP : Pt k r t i = rowsR k r t ⟨i.val - r - 1, by have := i.isLt; omega⟩ := by
         apply Fin.ext
         rw [Pt_apply, rowsR_val]
         simp only [ptv, Fin.val_mk]
         split_ifs <;> omega
       have hne : i ≠ ⟨r, by omega⟩ := fun e => by rw [e] at hi; simp at hi
-      rw [colR_gt z x _ i _ hi, if_pos hP, dite_eq_right (by omega), if_neg hne, mul_one]
+      rw [colR_gt z x _ i _ hi, ite_eq_left hP, dite_eq_right (by omega), ite_eq_right hne, mul_one]
   rw [Finset.prod_congr rfl (fun i _ => hf i), Finset.prod_mul_distrib, prod_rev_v (k := k) v,
-    Finset.prod_eq_single (⟨r, by omega⟩ : Fin (2 * r + k + 1)) (fun b _ hb => if_neg hb) (by simp), if_pos rfl]
+    Finset.prod_eq_single (⟨r, by omega⟩ : Fin (2 * r + k + 1)) (fun b _ hb => ite_eq_right hb) (by simp), ite_eq_left rfl]
 
 include h1 h2 in
 theorem det_formula (J : Fin (r + k) → Fin (2 * r + k + 1)) (hJ : StrictMono J) :
@@ -334,15 +285,15 @@ theorem det_formula (J : Fin (r + k) → Fin (2 * r + k + 1)) (hJ : StrictMono J
   simp only [Matrix.of_apply]
   by_cases hex : ∃ t, J = rowsR k r t
   · obtain ⟨t₀, rfl⟩ := hex
-    rw [Finset.sum_eq_single t₀ (fun t _ ht => if_neg (fun e => ht (residue_rows_injective e).symm)) (by simp), if_pos rfl]
+    rw [Finset.sum_eq_single t₀ (fun t _ ht => ite_eq_right (fun e => ht (residue_rows_injective e).symm)) (by simp), ite_eq_left rfl]
     rw [Finset.sum_eq_single (Pt k r t₀) (fun σ _ hσ => ?_) (by simp)]
     · rw [claimB z x v h1 t₀, Units.smul_def, zsmul_eq_mul]
       ring
     · by_contra hne
       have hp : ∏ i, colR k r z x (rowsR k r t₀) i (σ i) ≠ 0 := fun h0 => hne (by rw [h0, smul_zero])
-      obtain ⟨t, ht, hσt⟩ := claimA z x v h1 h2 _ (rowsR_strictMono t₀) σ hp
+      obtain ⟨t, ht, hσt⟩ := claimA z x v h1 h2 _ (Formalism.FourierDecayAlt.P.CutMP.InvEig.rowsR_smono t₀) σ hp
       exact hσ (by rw [hσt, ← residue_rows_injective ht])
-  · rw [Finset.sum_eq_zero (fun t _ => if_neg (fun e => hex ⟨t, e⟩))]
+  · rw [Finset.sum_eq_zero (fun t _ => ite_eq_right (fun e => hex ⟨t, e⟩))]
     refine Finset.sum_eq_zero fun σ _ => ?_
     by_contra hne
     have hp : ∏ i, colR k r z x J i (σ i) ≠ 0 := fun h0 => hne (by rw [h0, smul_zero])
@@ -352,9 +303,6 @@ theorem det_formula (J : Fin (r + k) → Fin (2 * r + k + 1)) (hJ : StrictMono J
 end det2
 
 section pt
-
-theorem hpk_mulVec_eI (a : Fin r) (w : Fin (2 * r + k + 1) → ℂ) : (Hpk k r *ᵥ w) (eI k r a) = w (esI k r a) := by
-  apply Formalism.FourierDecayAlt.Q.TInvW.H_eI
 
 variable {c : Fin r → ℂ} {g : Q.Mx k r}
 
@@ -375,16 +323,16 @@ theorem x_esI (hg : g ∈ Q.Glev k r (Fin.last r)) (a : Fin r) :
   rw [← Matrix.mulVec_mulVec, (hg.2 a (by simp)).2, Formalism.FourierDecayAlt.P5.Rad.wCell_last_eq]
   funext i
   simp only [Matrix.mulVec, dotProduct, bvec, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true, Pi.smul_apply, smul_eq_mul]
+    Finset.mem_univ, ite_true, Pi.smul_apply, smul_eq_mul]
   unfold bigCell
   have ha := a.isLt
   rw [dite_eq_right (by simp [esI]; omega), dite_eq_right (by simp [esI]; omega)]
   by_cases hi : i = eI k r a
   · subst hi
-    rw [if_pos (by simp [eI, esI]; omega), if_pos rfl]
+    rw [ite_eq_left (by simp [eI, esI]; omega), ite_eq_left rfl]
     congr 2
     exact congrArg c (Fin.ext (by simp only [esI]; omega))
-  · rw [if_neg (fun e => hi (Fin.ext (by simp [eI, esI] at e ⊢; omega))), if_neg hi]
+  · rw [ite_eq_right (fun e => hi (Fin.ext (by simp [eI, esI] at e ⊢; omega))), ite_eq_right hi]
 
 theorem ginvH_wCell_last_mul_mulVec_bvec_eI (hc : c ∈ OmX r) (hg : g ∈ Q.Glev k r (Fin.last r)) (a : Fin r) :
     ginvH k r (Q.wCell k r (Fin.last r) c * g) *ᵥ bvec (eI k r a) = star (c a) • bvec (esI k r a) := by
@@ -399,7 +347,7 @@ theorem ginvH_wCell_mul_apply_eq_zero (z : Fin (2 * r + k + 1) → ℂ) (hz : in
   have ep : p = eI k r ⟨p.val, hp⟩ := Fin.ext rfl
   rw [ep]
   unfold ginvH
-  rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, hpk_mulVec_eI]
+  rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, Formalism.FourierDecayAlt.Q.TInvW.H_eI]
   simp only [Matrix.mulVec, dotProduct, Matrix.conjTranspose_apply]
   have hcol : ∀ j, (Q.wCell k r (Fin.last r) c * g) j (esI k r ⟨p.val, hp⟩) =
       ((star (c ⟨p.val, hp⟩))⁻¹ • bvec (eI k r ⟨p.val, hp⟩)) j := by
@@ -407,10 +355,10 @@ theorem ginvH_wCell_mul_apply_eq_zero (z : Fin (2 * r + k + 1) → ℂ) (hz : in
     rw [← x_esI hg]
     simp [Matrix.mulVec, dotProduct, bvec, Pi.single_apply]
   simp only [hcol, Pi.smul_apply, bvec, Pi.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero]
-  have := hpk_mulVec_eI (k := k) ⟨p.val, hp⟩ z
+  have := Formalism.FourierDecayAlt.Q.TInvW.H_eI (k := k) ⟨p.val, hp⟩ z
   simp only [Matrix.mulVec, dotProduct] at this
-  rw [Finset.sum_eq_single (eI k r ⟨p.val, hp⟩) (fun b _ hb => by rw [if_neg hb, star_zero, zero_mul]) (by simp),
-    if_pos rfl, this, hz (esI k r ⟨p.val, hp⟩) (Or.inr (by simp only [esI]; omega)), mul_zero]
+  rw [Finset.sum_eq_single (eI k r ⟨p.val, hp⟩) (fun b _ hb => by rw [ite_eq_right hb, star_zero, zero_mul]) (by simp),
+    ite_eq_left rfl, this, hz (esI k r ⟨p.val, hp⟩) (Or.inr (by simp only [esI]; omega)), mul_zero]
 
 end pt
 
@@ -458,7 +406,7 @@ theorem residue_beta_holds : JDRBeta := by
     simp only [Finset.mul_sum, Finset.sum_smul, mul_ite, mul_zero, ite_smul, zero_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun t _ => ?_
-    rw [Finset.sum_ite_eq' (jSetR k r) (rowsR k r t), if_pos (rowsR_mem t)]
+    rw [Finset.sum_ite_eq' (jSetR k r) (rowsR k r t), ite_eq_left (rowsR_mem t)]
   rw [Finset.sum_congr rfl fun i _ => hL i]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finset.smul_sum]

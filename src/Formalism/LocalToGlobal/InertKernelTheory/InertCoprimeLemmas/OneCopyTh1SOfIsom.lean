@@ -113,7 +113,7 @@ theorem translate_theta_coordinates (B : Base D cc δ) (s₁ v : D.what₂.Tau �
   have hT : B.tor.abelian₂ = Formalism.MainNotions.TaylorLogMetric.lamOf D cc δ := rfl
   simp only [U, Formalism.MainNotions.TaylorLogMetric.Hf, Base.thZero, tensPow, Formalism.L2.Th1.H.opU, Formalism.L2.Th1.H.matH, LinearMap.mk₂'ₛₗ_apply, hOne,
     Matrix.smul_apply, Matrix.one_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true, Finset.univ_unique, Finset.sum_singleton,
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true, Finset.univ_unique, Finset.sum_singleton,
     Finset.prod_singleton, hT, hA]
   congr 1
   have e1 : ∀ w : D.what₂.Tau → ℂ, ∑ x, w x * ((Formalism.L2.Th1.F.area B.L : ℝ) : ℂ)⁻¹ * (starRingEnd ℂ) (s₁ x) =
@@ -405,19 +405,6 @@ theorem sig_at (h5 : 5 ≤ p) (g2 g3 s2 ε : ℂ_[p]) :
 
 end Exp
 
-section EPart
-
-open Formalism.L2.Th1.B (fExp fExp_add constantCoeff_fExp)
-
-end EPart
-
-section Comparison₂
-
-open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker
-open Formalism.L2.Th1.CM (MaximalUnramifiedExtension)
-
-end Comparison₂
-
 end Formalism.L2.KerInert.MModel
 end -- clump:auto
 end -- clump:auto
@@ -462,7 +449,7 @@ theorem ePartS (h5 : 5 ≤ p) (g2 g3 ε s2 a : ℂ_[p]) (hε0 : ε ≠ 0) (ha0 :
   have hep0 : ep ≠ 0 := Units.ne_zero _
   set fl := Formalism.MainNotions.TaylorLogMetric.flog (C • Formalism.MainNotions.TaylorLogMetric.wModel lam Λ) wq with hfl
   have hfl0 : constantCoeff fl = 0 := by
-    rw [hfl, ← coeff_zero_eq_constantCoeff_apply, Formalism.MainNotions.TaylorLogMetric.flog, coeff_mk, if_pos rfl]
+    rw [hfl, ← coeff_zero_eq_constantCoeff_apply, Formalism.MainNotions.TaylorLogMetric.flog, coeff_mk, ite_eq_left rfl]
   set b : PowerSeries ℂ_[p] := PowerSeries.C ep * fl with hb
   have hb0 : constantCoeff b = 0 := by rw [hb, map_mul, hfl0, mul_zero]
   have hbS : HasSubst b := HasSubst.of_constantCoeff_zero' hb0
@@ -770,7 +757,7 @@ theorem change_of_parameters_const_scale : ReadChangeS := by
       rw [← subst_inv _ (MvPowerSeries.constantCoeff_X i) (ePhi1 lam Λ C wq), subst_single_var S hSs, hSi,
         ← PowerSeries.subst_comp_subst_apply hh (PowerSeries.HasSubst.X _), hexp]
     unfold ePh
-    rw [if_neg hp2, ← MvPowerSeries.coe_substAlgHom hSs, map_prod]
+    rw [ite_eq_right hp2, ← MvPowerSeries.coe_substAlgHom hSs, map_prod]
     simp only [MvPowerSeries.coe_substAlgHom, hfac]
     rw [Fintype.prod_equiv e.symm
       (fun i => PowerSeries.subst (MvPowerSeries.X (e.symm i) : MvPowerSeries D.what₂.Tau ℂ_[p])

@@ -135,7 +135,6 @@ theorem exists_induced {V P V' : Type} [AddCommGroup V] [Module ℝ V] [AddCommG
       ∀ (A : V →ₗ[ℝ] V) (AP : P →ₗ[ℝ] P) (A' : V' →ₗ[ℝ] V'), (∀ x, i (AP x) = A (i x)) → (∀ x, π (AP x) = A' (π x)) →
         J ∘ₗ A = A ∘ₗ J → J' ∘ₗ A' = A' ∘ₗ J' ∧ LinearMap.trace ℝ _ (J' ∘ₗ A') = LinearMap.trace ℝ _ (J ∘ₗ A) := by
   let U : Submodule ℝ V := (LinearMap.ker π).map i
-  have hU : ∀ u, u ∈ U ↔ ∃ x, π x = 0 ∧ i x = u := fun u => Iff.rfl
   have hiU : ∀ x, ∀ u ∈ U, B (i x) u = 0 := by
     rintro x _ ⟨y, hy, rfl⟩
     rw [← hBB, LinearMap.mem_ker.1 hy, map_zero]
@@ -558,7 +557,6 @@ theorem exists_datum (D : Datum H) (Z P L' : Type) [AddCommGroup Z] [Module (�
       rw [(mul_eq_zero.1 this).resolve_right him] at h1
       exact mul_self_eq_mul_self_iff.1 (by linarith)
     have hb' : (w : ℝ) ≤ m * Module.finrank ℚ E := by exact_mod_cast hb
-    have hw : (0 : ℝ) ≤ w := Nat.cast_nonneg w
     have hE' : (0 : ℝ) < Module.finrank ℚ E := by exact_mod_cast hE
     have rk' : (D.p : ℝ) + D.q = m + 2 * r := by exact_mod_cast rk
     push_cast at ht

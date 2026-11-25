@@ -79,7 +79,7 @@ theorem exists_matrix_lift {r : ℕ} {ι : Type} {𝓕 : Filter ι} (p : Fin r �
     · have e : (1 : Matrix (Fin r) (Fin r) ℂ) a j = ∑ k, A₀⁻¹ a k * A₀ k j := by
         rw [← Matrix.mul_apply, Matrix.nonsing_inv_mul _ (Ne.isUnit h0)]
       rw [e]
-      simp only [hDdef, Matrix.of_apply, h, if_false, Matrix.mul_apply]
+      simp only [hDdef, Matrix.of_apply, h, ite_false, Matrix.mul_apply]
       exact tendsto_finsetSum _ fun k _ => (hr a h k).mul (hQe k j)
   have hdet : Continuous fun M : Matrix (Fin r) (Fin r) ℂ => M.det := continuous_id.matrix_det
   have hDi : Tendsto (fun n => (D n)⁻¹) 𝓕 (𝓝 1) := by
@@ -166,7 +166,7 @@ theorem period_lift : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r 
         (by intros; simp [hermC, Data.emb, Finset.mul_sum, mul_left_comm])
         (by intros; simp [hermC, Data.emb, Finset.mul_sum, mul_left_comm])
         (by simp)
-        (fun v hv => by simpa only [ha, if_true] using h v hv τ a)
+        (fun v hv => by simpa only [ha, ite_true] using h v hv τ a)
         (fun b => cc (X.Gm⁻¹ b k))
       simpa only [hermC_emb_inv_col τ.1 X.Gm X.Gm_det, col] using this
     · intro a ha k
@@ -179,7 +179,7 @@ theorem period_lift : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r 
         (by intros; simp [Matrix.mulVec, dotProduct, Data.emb, Finset.mul_sum, mul_left_comm])
         (by intros; simp [Matrix.mulVec, dotProduct, Data.emb, Finset.mul_sum, mul_left_comm])
         (by simp)
-        (fun v hv => by simpa only [ha, if_false] using h v hv τ a)
+        (fun v hv => by simpa only [ha, ite_false] using h v hv τ a)
         (Pi.single k 1)
       simpa [Matrix.mulVec, dotProduct, Data.emb, Pi.single_apply, apply_ite τ.1] using this
   choose B hB hB' using key
@@ -191,7 +191,7 @@ theorem period_lift : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r 
   rw [hm]
   by_cases ha : (a : ℕ) < X.p0
   · have : col (B τ n) a = col (mat (x₁ n) τ) a := funext fun k => (hn' τ).1 a ha k
-    simp only [ha, if_true, this]
-  · simp only [ha, if_false, Matrix.mulVec, dotProduct, (hn' τ).2 a ha]
+    simp only [ha, ite_true, this]
+  · simp only [ha, ite_false, Matrix.mulVec, dotProduct, (hn' τ).2 a ha]
 
 end GlobalTheory.PeriodLift

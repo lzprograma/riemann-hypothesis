@@ -245,14 +245,6 @@ theorem KernelFiniteFlatSt.kTriv_of_generic (hK : KernelFiniteFlatSt) {V K : Typ
   obtain ⟨u, rfl⟩ := (hZ _ y).1 hy
   rw [hi, ← Category.assoc, comp_toUnit]
 
-namespace PolExtSt
-
-variable {V K : Type} [CommRing V] [IsDomain V] [IsDiscreteValuationRing V] [Field K] [Algebra V K] [IsFractionRing V K]
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
-
-end PolExtSt
-
 end Published
 
 end GlobalTheory

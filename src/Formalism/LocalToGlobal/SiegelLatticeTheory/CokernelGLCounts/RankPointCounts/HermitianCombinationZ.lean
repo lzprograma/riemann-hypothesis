@@ -17,6 +17,7 @@ open scoped ComplexConjugate
 namespace PI.SchurPlaces.LeviLA
 
 open Formalism.L2.SG.HidaSetting
+open Formalism.L2.SG.PoincareInHH.Cut (hJ_conj)
 
 variable {n : ℕ} (ε : Fin n → Bool)
 
@@ -42,12 +43,6 @@ theorem hJ_sum_left {ι : Type*} (s : Finset ι) (x : ι → Fin n → ℂ) (y :
 
 theorem hJ_zero_right (x : Fin n → ℂ) : hJ ε x 0 = 0 := by
   simp [hJ]
-
-private theorem hJ_conj_lemma (x y : Fin n → ℂ) : star (hJ ε x y) = hJ ε y x := by
-  unfold hJ Formalism.REAL.Jm
-  simp only [Matrix.mulVec_diagonal, dotProduct, star_sum, star_mul', star_star, Pi.star_apply]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  split_ifs <;> simp [mul_comm]
 
 theorem hJ_mulVec (A : Matrix (Fin n) (Fin n) ℂ) (x y : Fin n → ℂ) :
     hJ ε (A *ᵥ x) (A *ᵥ y) = star x ⬝ᵥ ((Aᴴ * Formalism.REAL.Jm ε * A) *ᵥ y) := by
@@ -119,22 +114,22 @@ theorem cmb_f (H : Frame ε e f z w) (α β : Fin r → ℂ) (γ : ℂ) (δ : Fi
     hJ ε (f c) (cmb e f z w α β γ δ) = α c := by
   rw [hJ_cmb]
   have h1 : ∀ a, hJ ε (f c) (e a) = if a = c then 1 else 0 := fun a => by
-    simpa [hJ_conj_lemma] using congrArg star (H.ef a c)
+    rw [hJ_conj, H.ef]; split_ifs <;> simp
   simp [h1, H.ff c, H.fz, H.fw]
 
 theorem hermitian_combination_z (H : Frame ε e f z w) (α β : Fin r → ℂ) (γ : ℂ) (δ : Fin k → ℂ) :
     hJ ε z (cmb e f z w α β γ δ) = γ * hJ ε z z := by
   rw [hJ_cmb]
-  have h1 : ∀ a, hJ ε z (e a) = 0 := fun a => by rw [← hJ_conj_lemma, H.ez, star_zero]
-  have h2 : ∀ a, hJ ε z (f a) = 0 := fun a => by rw [← hJ_conj_lemma, H.fz, star_zero]
+  have h1 : ∀ a, hJ ε z (e a) = 0 := fun a => by rw [hJ_conj, H.ez, map_zero]
+  have h2 : ∀ a, hJ ε z (f a) = 0 := fun a => by rw [hJ_conj, H.fz, map_zero]
   simp [h1, h2, H.zw]
 
 theorem cmb_w (H : Frame ε e f z w) (α β : Fin r → ℂ) (γ : ℂ) (δ : Fin k → ℂ) (c : Fin k) :
     hJ ε (w c) (cmb e f z w α β γ δ) = δ c := by
   rw [hJ_cmb]
-  have h1 : ∀ a, hJ ε (w c) (e a) = 0 := fun a => by rw [← hJ_conj_lemma, H.ew, star_zero]
-  have h2 : ∀ a, hJ ε (w c) (f a) = 0 := fun a => by rw [← hJ_conj_lemma, H.fw, star_zero]
-  have h3 : hJ ε (w c) z = 0 := by rw [← hJ_conj_lemma, H.zw, star_zero]
+  have h1 : ∀ a, hJ ε (w c) (e a) = 0 := fun a => by rw [hJ_conj, H.ew, map_zero]
+  have h2 : ∀ a, hJ ε (w c) (f a) = 0 := fun a => by rw [hJ_conj, H.fw, map_zero]
+  have h3 : hJ ε (w c) z = 0 := by rw [hJ_conj, H.zw, map_zero]
   simp [h1, h2, h3, H.ww]
 
 theorem frame_span (H : Frame ε e f z w) (y : Fin n → ℂ) :
@@ -290,7 +285,7 @@ theorem uu_on (H : Frame ε e f z w) (hU : (U : Matrix (Fin n) (Fin n) ℂ)ᴴ *
     hJ ε (uu (ε := ε) U w b) (uu (ε := ε) U w c) = if b = c then 1 else 0 := by
   have hX : ∀ b, (U : Matrix (Fin n) (Fin n) ℂ) *ᵥ w b - uu (ε := ε) U w b ∈ Xs e := Uw H hU hS
   have hwX : ∀ a {x}, x ∈ Xs e → hJ ε (w a) x = 0 := fun a x hx =>
-    hJ_X_right hx (fun c => by rw [← hJ_conj_lemma, H.ew, star_zero])
+    hJ_X_right hx (fun c => by rw [hJ_conj, H.ew, map_zero])
   have hXw : ∀ a {x}, x ∈ Xs e → hJ ε x (w a) = 0 := fun a x hx => hJ_X_left hx (fun c => H.ew c a)
   have huX : ∀ b {x}, x ∈ Xs e → hJ ε (uu (ε := ε) U w b) x = 0 := fun b x hx => by
     simp only [uu, hJ_sum_left, hJ_smul_left, hwX _ hx, mul_zero, Finset.sum_const_zero]
@@ -311,24 +306,11 @@ theorem uu_on (H : Frame ε e f z w) (hU : (U : Matrix (Fin n) (Fin n) ℂ)ᴴ *
 variable (U) in
 theorem Vm_mulVec (w : Fin k → Fin n → ℂ) (y : Fin n → ℂ) :
     Vm (ε := ε) U w *ᵥ y = y + ∑ b, hJ ε (w b) y • (uu (ε := ε) U w b - w b) := by
-  have hs : ∀ (s : Finset (Fin k)) (A : Fin k → Matrix (Fin n) (Fin n) ℂ),
-      (∑ b ∈ s, A b) *ᵥ y = ∑ b ∈ s, A b *ᵥ y := by
-    intro s A
-    classical
-    induction s using Finset.induction_on with
-    | empty => simp
-    | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, Matrix.add_mulVec, ih]
-  have hv : ∀ a b : Fin n → ℂ, vecMulVec a b *ᵥ y = (b ⬝ᵥ y) • a := by
-    intro a b
-    ext i
-    simp [Matrix.mulVec, dotProduct, Matrix.vecMulVec_apply, mul_comm]
-    rw [Finset.mul_sum]
-    exact Finset.sum_congr rfl fun _ _ => by ring
   unfold Vm
-  rw [Matrix.add_mulVec, Matrix.one_mulVec, hs]
+  rw [Matrix.add_mulVec, Matrix.one_mulVec, Matrix.sum_mulVec]
   congr 1
   refine Finset.sum_congr rfl fun b _ => ?_
-  rw [hv, ← Matrix.dotProduct_mulVec]
+  rw [Matrix.vecMulVec_mulVec, op_smul_eq_smul, ← Matrix.dotProduct_mulVec]
   rfl
 
 theorem Vm_fix (p : Fin n → ℂ) (hp : ∀ b, hJ ε (w b) p = 0) : Vm (ε := ε) U w *ᵥ p = p := by
@@ -353,7 +335,7 @@ theorem Vm_hJ (H : Frame ε e f z w) (hU : (U : Matrix (Fin n) (Fin n) ℂ)ᴴ *
     rw [_root_.Formalism.L2.SG.PoincareInHH.Cut.hJ_sub_right, hJ_sum_right]
     simp [hJ_smul_right, hww]
   have hperp' : ∀ v : Fin n → ℂ, ∀ c, hJ ε (v - ∑ b, hJ ε (w b) v • w b) (w c) = 0 := fun v c => by
-    rw [← hJ_conj_lemma, hperp, star_zero]
+    rw [hJ_conj, hperp, map_zero]
   have hpu : ∀ v : Fin n → ℂ, ∀ c, hJ ε (v - ∑ b, hJ ε (w b) v • w b) (uu (ε := ε) U w c) = 0 :=
     fun v c => by
       simp only [uu, hJ_sum_right, hJ_smul_right, hperp', mul_zero, Finset.sum_const_zero]
@@ -390,22 +372,17 @@ theorem levi_place (H : Frame ε e f z w) (U : (Matrix (Fin n) (Fin n) ℂ)ˣ)
       InN ε e z (((V⁻¹ : (Matrix (Fin n) (Fin n) ℂ)ˣ) : Matrix (Fin n) (Fin n) ℂ) * U) := by
   have hVJ : (Vm (ε := ε) U w)ᴴ * Formalism.REAL.Jm ε * Vm (ε := ε) U w = Formalism.REAL.Jm ε :=
     unitary_of_hJ ε _ (Vm_hJ H hU hS)
-  have hJJ : Formalism.REAL.Jm ε * Formalism.REAL.Jm ε = 1 := by
-    unfold Formalism.REAL.Jm
-    rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    funext a
-    split_ifs <;> norm_num
   have hleft : (Formalism.REAL.Jm ε * (Vm (ε := ε) U w)ᴴ * Formalism.REAL.Jm ε) * Vm (ε := ε) U w = 1 := by
-    rw [Matrix.mul_assoc, Matrix.mul_assoc, ← Matrix.mul_assoc (Vm (ε := ε) U w)ᴴ, hVJ, hJJ]
+    rw [Matrix.mul_assoc, Matrix.mul_assoc, ← Matrix.mul_assoc (Vm (ε := ε) U w)ᴴ, hVJ,
+      Formalism.REAL.Jm_mul_self]
   have hright : Vm (ε := ε) U w * (Formalism.REAL.Jm ε * (Vm (ε := ε) U w)ᴴ * Formalism.REAL.Jm ε) = 1 :=
     by first
       | exact mul_eq_one_comm.1 hleft
   have hfe : ∀ a, Vm (ε := ε) U w *ᵥ e a = e a := fun a =>
-    Vm_fix _ (fun b => by rw [← hJ_conj_lemma, H.ew, star_zero])
+    Vm_fix _ (fun b => by rw [hJ_conj, H.ew, map_zero])
   refine ⟨⟨Vm (ε := ε) U w, Formalism.REAL.Jm ε * (Vm (ε := ε) U w)ᴴ * Formalism.REAL.Jm ε, hright, hleft⟩,
-    hVJ, hfe, fun a => Vm_fix _ (fun b => by rw [← hJ_conj_lemma, H.fw, star_zero]),
-    Vm_fix _ (fun b => by rw [← hJ_conj_lemma, H.zw, star_zero]), ?_, ?_⟩
+    hVJ, hfe, fun a => Vm_fix _ (fun b => by rw [hJ_conj, H.fw, map_zero]),
+    Vm_fix _ (fun b => by rw [hJ_conj, H.zw, map_zero]), ?_, ?_⟩
   · intro a b
     show hJ ε (w a) (Vm (ε := ε) U w *ᵥ w b) = _
     rw [Vm_w H]
@@ -429,7 +406,7 @@ theorem levi_place (H : Frame ε e f z w) (U : (Matrix (Fin n) (Fin n) ℂ)ˣ)
       | add u v _ _ hu hv => rw [Matrix.mulVec_add, hu, hv]
       | smul c u _ hu => rw [Matrix.mulVec_smul, hu]
     have hz : (Formalism.REAL.Jm ε * (Vm (ε := ε) U w)ᴴ * Formalism.REAL.Jm ε) *ᵥ z = z :=
-      hinv z (Vm_fix _ (fun b => by rw [← hJ_conj_lemma, H.zw, star_zero]))
+      hinv z (Vm_fix _ (fun b => by rw [hJ_conj, H.zw, map_zero]))
     have huu : ∀ b, (Formalism.REAL.Jm ε * (Vm (ε := ε) U w)ᴴ * Formalism.REAL.Jm ε) *ᵥ uu (ε := ε) U w b = w b :=
       fun b => by rw [← Vm_w H b, Matrix.mulVec_mulVec, hleft, Matrix.one_mulVec]
     have hsub : ∀ v, ((Formalism.REAL.Jm ε * (Vm (ε := ε) U w)ᴴ * Formalism.REAL.Jm ε) *

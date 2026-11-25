@@ -117,36 +117,25 @@ theorem betaP_iso (β : (VS D).V ≃ₗ[D.host.E] (VS D).V)
   rw [h_sum_bc, h_sum_bc]
   simp only [brS, hiso]
 
-theorem betaP_lat (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (Λ : Submodule (𝓞 D.host.E) (VS D).V)
-    (hβ : ∀ v ∈ Λ, β v ∈ Λ) {x : Vp D p} (hx : x ∈ lattice₂ D Z.M p Λ) : betaP p β x ∈ lattice₂ D Z.M p Λ := by
+private theorem beta_lat_aux (f : Vp D p →ₗ[(D.s.atP p).Ep] Vp D p) (g : (VS D).V → (VS D).V)
+    (hf : ∀ v, f (baseChange₂ D p v) = baseChange₂ D p (g v))
+    (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hg : ∀ v ∈ Λ, g v ∈ Λ)
+    {x : Vp D p} (hx : x ∈ lattice₂ D Z.M p Λ) : f x ∈ lattice₂ D Z.M p Λ := by
   unfold lattice₂ at hx ⊢
-  induction hx using Submodule.span_induction with
-  | mem y hy =>
-    obtain ⟨v, hv, rfl⟩ := hy
-    rw [betaP_bc]
-    exact Submodule.subset_span ⟨β v, hβ v hv, rfl⟩
-  | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
-  | smul c y _ hy =>
-    have e : betaP p β (c • y) = c • betaP p β y := LinearMapClass.map_smul_of_tower _ c y
-    rw [e]
-    exact Submodule.smul_mem _ c hy
+  refine (Submodule.mem_comap (f := f.restrictScalars (Z.M p).L.O)).1
+    (Submodule.span_le.2 ?_ hx)
+  rintro _ ⟨v, hv, rfl⟩
+  rw [SetLike.mem_coe, Submodule.mem_comap, LinearMap.restrictScalars_apply, hf]
+  exact Submodule.subset_span ⟨g v, hg v hv, rfl⟩
+
+theorem betaP_lat (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (Λ : Submodule (𝓞 D.host.E) (VS D).V)
+    (hβ : ∀ v ∈ Λ, β v ∈ Λ) {x : Vp D p} (hx : x ∈ lattice₂ D Z.M p Λ) : betaP p β x ∈ lattice₂ D Z.M p Λ :=
+  beta_lat_aux Z p (betaP p β).toLinearMap β (betaP_bc p β) Λ hβ hx
 
 theorem betaP_symm_lat (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (Λ : Submodule (𝓞 D.host.E) (VS D).V)
     (hβ : ∀ v ∈ Λ, β.symm v ∈ Λ) {x : Vp D p} (hx : x ∈ lattice₂ D Z.M p Λ) :
-    (betaP p β).symm x ∈ lattice₂ D Z.M p Λ := by
-  unfold lattice₂ at hx ⊢
-  induction hx using Submodule.span_induction with
-  | mem y hy =>
-    obtain ⟨v, hv, rfl⟩ := hy
-    rw [betaP_symm_bc]
-    exact Submodule.subset_span ⟨β.symm v, hβ v hv, rfl⟩
-  | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
-  | smul c y _ hy =>
-    have e : (betaP p β).symm (c • y) = c • (betaP p β).symm y := LinearMapClass.map_smul_of_tower _ c y
-    rw [e]
-    exact Submodule.smul_mem _ c hy
+    (betaP p β).symm x ∈ lattice₂ D Z.M p Λ :=
+  beta_lat_aux Z p (betaP p β).symm.toLinearMap β.symm (betaP_symm_bc p β) Λ hβ hx
 
 theorem bcP_mem_X (u : Fin (D.R.rS + 1) → (VS D).V) (c : Fin (D.R.rS + 1) → (D.s.atP p).Ep)
     (hc : ∀ a, IsUnit (c a)) {x : (VS D).V}
@@ -167,45 +156,38 @@ theorem bcP_mem_X (u : Fin (D.R.rS + 1) → (VS D).V) (c : Fin (D.R.rS + 1) → 
   | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
   | smul e y _ hy => rw [baseChange_smul₂]; exact Submodule.smul_mem _ _ hy
 
+private theorem beta_mem_X_aux (f : Vp D p →ₗ[(D.s.atP p).Ep] Vp D p) (g : (VS D).V → (VS D).V)
+    (hf : ∀ v, f (baseChange₂ D p v) = baseChange₂ D p (g v))
+    (u v : Fin (D.R.rS + 1) → (VS D).V) (c : Fin (D.R.rS + 1) → (D.s.atP p).Ep)
+    (hc : ∀ a, IsUnit (c a))
+    (hmap : ∀ a : Fin D.R.rS, g (u a.castSucc) ∈
+      Submodule.span D.host.E (Set.range fun b : Fin D.R.rS => v b.castSucc))
+    {x : Vp D p} (hx : x ∈ (locH Z p).X (fun a => c a • baseChange₂ D p (u a))) :
+    f x ∈ (locH Z p).X (fun a => c a • baseChange₂ D p (v a)) := by
+  change f x ∈ Submodule.span (D.s.atP p).Ep
+    (Set.range fun a : Fin D.R.rS => c a.castSucc • baseChange₂ D p (v a.castSucc))
+  replace hx : x ∈ Submodule.span (D.s.atP p).Ep
+      (Set.range fun a : Fin D.R.rS => c a.castSucc • baseChange₂ D p (u a.castSucc)) := hx
+  refine (Submodule.mem_comap (f := f)).1 (Submodule.span_le.2 ?_ hx)
+  rintro _ ⟨a, rfl⟩
+  rw [SetLike.mem_coe, Submodule.mem_comap, map_smul, hf]
+  exact Submodule.smul_mem _ _ (bcP_mem_X Z p v c hc (hmap a))
+
 theorem betaP_mem_X (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (u v : Fin (D.R.rS + 1) → (VS D).V)
     (c : Fin (D.R.rS + 1) → (D.s.atP p).Ep) (hc : ∀ a, IsUnit (c a))
     (hmap : ∀ a : Fin D.R.rS, β (u a.castSucc) ∈
       Submodule.span D.host.E (Set.range fun b : Fin D.R.rS => v b.castSucc))
     {x : Vp D p} (hx : x ∈ (locH Z p).X (fun a => c a • baseChange₂ D p (u a))) :
-    betaP p β x ∈ (locH Z p).X (fun a => c a • baseChange₂ D p (v a)) := by
-  show betaP p β x ∈ Submodule.span (D.s.atP p).Ep
-    (Set.range fun a : Fin D.R.rS => c a.castSucc • baseChange₂ D p (v a.castSucc))
-  replace hx : x ∈ Submodule.span (D.s.atP p).Ep
-      (Set.range fun a : Fin D.R.rS => c a.castSucc • baseChange₂ D p (u a.castSucc)) := hx
-  induction hx using Submodule.span_induction with
-  | mem y hy =>
-    obtain ⟨a, rfl⟩ := hy
-    show betaP p β (c a.castSucc • baseChange₂ D p (u a.castSucc)) ∈ _
-    rw [map_smul, betaP_bc]
-    exact Submodule.smul_mem _ _ (bcP_mem_X Z p v c hc (hmap a))
-  | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
-  | smul e y _ hy => rw [map_smul]; exact Submodule.smul_mem _ _ hy
+    betaP p β x ∈ (locH Z p).X (fun a => c a • baseChange₂ D p (v a)) :=
+  beta_mem_X_aux Z p (betaP p β).toLinearMap β (betaP_bc p β) u v c hc hmap hx
 
 theorem betaP_symm_mem_X (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (u v : Fin (D.R.rS + 1) → (VS D).V)
     (c : Fin (D.R.rS + 1) → (D.s.atP p).Ep) (hc : ∀ a, IsUnit (c a))
     (hmap : ∀ a : Fin D.R.rS, β.symm (v a.castSucc) ∈
       Submodule.span D.host.E (Set.range fun b : Fin D.R.rS => u b.castSucc))
     {x : Vp D p} (hx : x ∈ (locH Z p).X (fun a => c a • baseChange₂ D p (v a))) :
-    (betaP p β).symm x ∈ (locH Z p).X (fun a => c a • baseChange₂ D p (u a)) := by
-  show (betaP p β).symm x ∈ Submodule.span (D.s.atP p).Ep
-    (Set.range fun a : Fin D.R.rS => c a.castSucc • baseChange₂ D p (u a.castSucc))
-  replace hx : x ∈ Submodule.span (D.s.atP p).Ep
-      (Set.range fun a : Fin D.R.rS => c a.castSucc • baseChange₂ D p (v a.castSucc)) := hx
-  induction hx using Submodule.span_induction with
-  | mem y hy =>
-    obtain ⟨a, rfl⟩ := hy
-    show (betaP p β).symm (c a.castSucc • baseChange₂ D p (v a.castSucc)) ∈ _
-    rw [map_smul, betaP_symm_bc]
-    exact Submodule.smul_mem _ _ (bcP_mem_X Z p u c hc (hmap a))
-  | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
-  | smul e y _ hy => rw [map_smul]; exact Submodule.smul_mem _ _ hy
+    (betaP p β).symm x ∈ (locH Z p).X (fun a => c a • baseChange₂ D p (u a)) :=
+  beta_mem_X_aux Z p (betaP p β).symm.toLinearMap β.symm (betaP_symm_bc p β) v u c hc hmap hx
 
 end Beta
 

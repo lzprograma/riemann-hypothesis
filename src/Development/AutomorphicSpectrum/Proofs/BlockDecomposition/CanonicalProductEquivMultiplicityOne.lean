@@ -9,50 +9,8 @@ public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.None
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleAppendEquiv
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleFiniteLength
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SegmentProductJacquetShuffleCount
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CanonicalShuffleCountProduct, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CanonicalProductEquivMultiplicityOne
@@ -87,8 +45,8 @@ theorem T_comp {ι : Type*} [Fintype ι] [DecidableEq ι] (σ : ι ≃ ι) (L : 
     have hiff : (∀ i, (E ∘ σ) i = []) ↔ ∀ i, E i = [] :=
       ⟨fun h i => by simpa using h (σ.symm i), fun h i => h (σ i)⟩
     by_cases hE : ∀ i, E i = []
-    · rw [if_pos hE, if_pos (hiff.2 hE)]
-    · rw [if_neg hE, if_neg (fun h' => hE (hiff.1 h'))]
+    · rw [ite_eq_left hE, ite_eq_left (hiff.2 hE)]
+    · rw [ite_eq_right hE, ite_eq_right (fun h' => hE (hiff.1 h'))]
   | cons a L ih =>
     rw [T_cons, T_cons]
     refine Fintype.sum_equiv σ _ _ fun i => ?_
@@ -111,8 +69,8 @@ theorem T_last {h : ℕ} (L : List α) (E : Fin (h + 1) → List α) (hE : E (Fi
         | last => exact hE
         | cast j => exact H j
     by_cases H : ∀ i : Fin h, E i.castSucc = []
-    · rw [if_pos (hiff.2 H), if_pos H]
-    · rw [if_neg (fun h' => H (hiff.1 h')), if_neg H]
+    · rw [ite_eq_left (hiff.2 H), ite_eq_left H]
+    · rw [ite_eq_right (fun h' => H (hiff.1 h')), ite_eq_right H]
   | cons a L ih =>
     rw [T_cons, T_cons, Fin.sum_univ_castSucc]
     have hlast : (if (E (Fin.last h)).head? = some a then
@@ -142,7 +100,7 @@ theorem T_block {ι : Type*} [Fintype ι] [DecidableEq ι] (R B : List α) (E : 
       rw [Function.update_of_ne hi]
       exact H i hi a (by simp [ha])
     rw [List.cons_append, T_cons, Finset.sum_eq_single g
-      (fun i _ hi => by rw [if_neg (H i hi b (by simp))])
+      (fun i _ hi => by rw [ite_eq_right (H i hi b (by simp))])
       (fun hg => absurd (Finset.mem_univ g) hg), ih _ H', Function.update_self, Function.update_idem]
     rcases hEg : E g with _ | ⟨x, xs⟩
     · simp
@@ -167,16 +125,16 @@ theorem step_iff {ι : Type*} [DecidableEq ι] (R E : ι → List α) (j : ι) (
   constructor
   · intro h
     have hj := h j
-    rw [if_pos rfl] at hj
+    rw [ite_eq_left rfl] at hj
     refine ⟨by rw [← hj, List.head?_cons], fun i => ?_⟩
     by_cases hij : i = j
     · rw [hij, Function.update_self, ← hj, List.tail_cons]
     · have hi := h i
-      rw [if_neg (Ne.symm hij)] at hi
+      rw [ite_eq_right (Ne.symm hij)] at hi
       rw [Function.update_of_ne hij, hi]
   · rintro ⟨hh, hR⟩ i
     by_cases hij : j = i
-    · rw [if_pos hij, hR i, ← hij, Function.update_self]
+    · rw [ite_eq_left hij, hR i, ← hij, Function.update_self]
       cases hE : E j with
       | nil =>
         rw [hE] at hh
@@ -185,7 +143,7 @@ theorem step_iff {ι : Type*} [DecidableEq ι] (R E : ι → List α) (j : ι) (
         rw [hE] at hh
         simp only [List.head?_cons, Option.some.injEq] at hh
         rw [hh, List.tail_cons]
-    · rw [if_neg hij, hR i, Function.update_of_ne (Ne.symm hij)]
+    · rw [ite_eq_right hij, hR i, Function.update_of_ne (Ne.symm hij)]
 
 theorem card_filter_reverse_map_eq_shuffle_count {ι : Type*} [Fintype ι] [DecidableEq ι] {n : ℕ} (w : Fin n → α) (E : ι → List α) :
     (Finset.univ.filter fun c : Fin n → ι =>
@@ -195,8 +153,8 @@ theorem card_filter_reverse_map_eq_shuffle_count {ι : Type*} [Fintype ι] [Deci
     rw [Finset.card_filter, Fintype.sum_unique, List.ofFn_zero, List.reverse_nil, T_nil]
     simp only [List.finRange_zero, List.filter_nil, List.map_nil, List.reverse_nil]
     by_cases hE : ∀ i, E i = []
-    · rw [if_pos hE, if_pos (fun i => (hE i).symm)]
-    · rw [if_neg hE, if_neg (fun h' => hE fun i => (h' i).symm)]
+    · rw [ite_eq_left hE, ite_eq_left (fun i => (hE i).symm)]
+    · rw [ite_eq_right hE, ite_eq_right (fun h' => hE fun i => (h' i).symm)]
   | succ n ih =>
     have hw : (List.ofFn w).reverse = w (Fin.last n) :: (List.ofFn fun i : Fin n => w i.castSucc).reverse := by
       rw [List.ofFn_succ', List.concat_eq_append, List.reverse_append, List.reverse_singleton,
@@ -226,15 +184,15 @@ theorem card_filter_reverse_map_eq_shuffle_count {ι : Type*} [Fintype ι] [Deci
       · simp [hij]
     rw [← ih (fun p => w p.castSucc) (Function.update E i (E i).tail), Finset.card_filter]
     by_cases hh : (E i).head? = some (w (Fin.last n))
-    · rw [if_pos hh]
+    · rw [ite_eq_left hh]
       refine Finset.sum_congr rfl fun c' _ => ?_
       by_cases hQ : ∀ j, (((List.finRange n).filter (fun p => c' p = j)).map (fun p => w p.castSucc)).reverse =
           Function.update E i (E i).tail j
-      · rw [if_pos ((key c').2 ⟨hh, hQ⟩), if_pos hQ]
-      · rw [if_neg (fun h' => hQ ((key c').1 h').2), if_neg hQ]
-    · rw [if_neg hh]
+      · rw [ite_eq_left ((key c').2 ⟨hh, hQ⟩), ite_eq_left hQ]
+      · rw [ite_eq_right (fun h' => hQ ((key c').1 h').2), ite_eq_right hQ]
+    · rw [ite_eq_right hh]
       refine Finset.sum_eq_zero fun c' _ => ?_
-      rw [if_neg (fun h' => hh ((key c').1 h').1)]
+      rw [ite_eq_right (fun h' => hh ((key c').1 h').1)]
 
 theorem shuffleCount_eq_T_reverse {h : ℕ} (W : List α) (D : Fin h → List α) :
     shuffleCount W D = T W.reverse fun i => (D i).reverse := by
@@ -298,7 +256,7 @@ theorem T_step {h : ℕ} (Γ : Fin (h + 1) → Segment k) (hc : IsCanon Γ) (R :
   obtain ⟨Bi, hBi, hleni, -⟩ := ofFn_term_cons (Γ i)
   rw [hBi, List.head?_cons, List.tail_cons, one_mul]
   by_cases hf : (Γ i).first = (Γ (Fin.last h)).first
-  · rw [if_pos (by rw [hf])]
+  · rw [ite_eq_left (by rw [hf])]
     have H : ∀ j, j ≠ i → ∀ a ∈ B', ((Function.update (fun i => List.ofFn (Γ i).term) i Bi) j).head? ≠ some a := by
       intro j hj a ha heq
       rw [Function.update_of_ne hj] at heq
@@ -315,16 +273,16 @@ theorem T_step {h : ℕ} (Γ : Fin (h + 1) → Segment k) (hc : IsCanon Γ) (R :
     · have hBB : Bi = B' := by
         rw [hΓ] at hBi
         exact (List.cons.inj (hBi.symm.trans hB')).2
-      rw [hBB, if_pos (show B' <+: B' from ⟨[], List.append_nil B'⟩), if_pos hΓ, List.drop_length]
+      rw [hBB, ite_eq_left (show B' <+: B' from ⟨[], List.append_nil B'⟩), ite_eq_left hΓ, List.drop_length]
       exact hempty i hΓ
-    · rw [if_neg hΓ, if_neg]
+    · rw [ite_eq_right hΓ, ite_eq_right]
       intro hp
       have hle := hp.length_le
       have hil : i ≠ Fin.last h := fun e => hΓ (by rw [e])
       have hle2 := (hc1 i (Fin.last h) (hlt i hil)).2 hf
       apply hΓ
       exact Segment.ext_first hf (by omega)
-  · rw [if_neg (fun e => hf (Option.some.inj e)), if_neg (fun e => hf (by rw [e]))]
+  · rw [ite_eq_right (fun e => hf (Option.some.inj e)), ite_eq_right (fun e => hf (by rw [e]))]
 
 theorem canon_castSucc {h : ℕ} {Γ : Fin (h + 1) → Segment k} (hc : IsCanon Γ) :
     IsCanon fun i : Fin h => Γ i.castSucc := by

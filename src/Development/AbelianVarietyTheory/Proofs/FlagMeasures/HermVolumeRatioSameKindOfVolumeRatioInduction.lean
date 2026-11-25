@@ -304,8 +304,8 @@ theorem eulerFac_comap (e : K ≃+* L) (he : ∀ x, e (star x) = star (e x)) (M 
   unfold Formalism.HermitianLatticesTheory.eulerFac
   rw [hN]
   by_cases h : Formalism.HermitianLatticesTheory.conjIdeal (K := L) P = P
-  · rw [if_pos h, if_pos (hc.2 h)]
-  · rw [if_neg h, if_neg (fun h' => h (hc.1 h'))]
+  · rw [ite_eq_left h, ite_eq_left (hc.2 h)]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h (hc.1 h'))]
 
 theorem lValEta_congr (e : K ≃+* L) (he : ∀ x, e (star x) = star (e x)) (M : ℕ) :
     Formalism.HermitianLatticesTheory.lValEta K M = Formalism.HermitianLatticesTheory.lValEta L M := by

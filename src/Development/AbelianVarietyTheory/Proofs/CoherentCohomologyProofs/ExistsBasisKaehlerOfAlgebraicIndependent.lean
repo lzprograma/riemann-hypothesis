@@ -106,12 +106,6 @@ theorem alternating_smul_add_mem (ω : M [⋀^ι]→ₗ[R] N) (P : Submodule R N
 
 end Alternating
 
-section TwoInIdeal
-
-variable (R : Type*) {A : Type*} [CommRing R] [CommRing A] [Algebra R A] {p : ℕ}
-
-end TwoInIdeal
-
 section RegForms
 
 variable (K V F : Type*) [CommRing K] [CommRing V] [CommRing F] [Algebra K V] [Algebra V F]
@@ -449,17 +443,5 @@ theorem trdeg_residueField_of_trdeg {n : ℕ} (hn : Algebra.trdeg K F = n) :
   rw [← rank_kaehler_eq_trdeg, ← finrank_eq_rank, ← h₂, Nat.add_sub_cancel]
 
 end Existence
-
-section Main
-
-end Main
-
-section Example
-
-open Polynomial
-
-variable (K : Type*) [Field K]
-
-end Example
 
 end GlobalTheory

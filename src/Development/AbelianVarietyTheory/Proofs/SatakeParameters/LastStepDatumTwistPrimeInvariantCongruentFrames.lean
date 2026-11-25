@@ -7,48 +7,12 @@ public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DatumPeri
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntAtFormOfMemStdAt
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastStepDatumLawK1DepthTwiceM
 public import Formalism.LocalToGlobal.Columns.ChainTwAn
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BlkDetEqDB
 
 @[expose] public section
 
 open NumberField IsDedekindDomain Matrix Formalism.BasicNotions Formalism.UG Formalism.L2.Col Formalism.L2.PairingIndexBounds.F Formalism.MainNotions.G.KAat Formalism.L2.Forms Formalism.L2.Ker Formalism.MainNotions Formalism.L2.DIV Formalism.MainNotions.G GlobalTheory.TwU GlobalTheory.TwV
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open GlobalTheory.TopStep GlobalTheory.TopLaw
 
@@ -138,14 +102,14 @@ theorem lam_of_topDat_ne (i : ℕ) (P : rowSG Pr sel mu) (hP : P.1 ∉ Pr.vGs)
   have hne := left_ne_zero_of_mul h
   have hne2 := right_ne_zero_of_mul h
   unfold PhiTopG at hne
-  rw [if_neg hP] at hne
+  rw [ite_eq_right hP] at hne
   have hint := twAn_phiQ_int _ _ (_root_.Formalism.L2.Col.twAn_k_le i) (k_le_N_pred i) _ hne
   unfold ftY at hne2
-  rw [if_neg hP] at hne2
+  rw [ite_eq_right hP] at hne2
   have hlast : ∀ i', IntAt P.1 ((qOf P.1 : X.E) ^ cst.M *
       (atNL X.E (R.N (i + 1)) (R.N (i + 1) - 1) ∘ₗ y) (Pi.single i' 1)) := by
     by_contra hc
-    exact hne2 (if_neg hc)
+    exact hne2 (ite_eq_right hc)
   intro j
   have hpre : ∀ l : Fin (R.N (i + 1)), l.1 + 1 < R.N (i + 1) → IntAt P.1 (y (Pi.single j 1) l) := by
     intro l hl
@@ -162,7 +126,7 @@ theorem lam_of_topDat_ne (i : ℕ) (P : rowSG Pr sel mu) (hP : P.1 ∉ Pr.vGs)
   · have hN : R.N (i + 1) - 1 < R.N (i + 1) := by omega
     have := hlast j
     have e : l = ⟨R.N (i + 1) - 1, hN⟩ := Fin.ext (by show l.1 = R.N (i + 1) - 1; omega)
-    simp only [LinearMap.comp_apply, atNL, dif_pos hN, LinearMap.proj_apply] at this
+    simp only [LinearMap.comp_apply, atNL, dite_eq_left hN, LinearMap.proj_apply] at this
     rw [e]
     exact this
 
@@ -222,7 +186,7 @@ theorem topDat_frames {m2 : ℕ} (hm : R.m = m2 + 2) (hc : cst.Ok) (P : rowSG Pr
   · unfold topDat
     congr 1
     · unfold PhiTopG
-      rw [if_neg hP]
+      rw [ite_eq_right hP]
       have hc0 : cOf R (m2 + 1) = 0 := cOf_topB hm
       have hw : ∀ w ∈ stdAt X.E (R.N (m2 + 1)) P.1, ∀ l : Fin (R.N (m2 + 1 + 1)), l.1 + 1 < R.N (m2 + 1 + 1) →
           IntAt P.1 ((κ'.symm (y (κ w)) - y w) l / (qOf P.1 : X.E)) := by

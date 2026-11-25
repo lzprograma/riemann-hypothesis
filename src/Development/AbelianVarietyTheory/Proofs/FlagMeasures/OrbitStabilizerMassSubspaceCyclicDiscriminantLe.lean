@@ -70,12 +70,6 @@ open scoped ENNReal Classical
 
 namespace GlobalTheory.Mass.Glue
 
-section
-
-variable {K V : Type} [Field K] [StarRing K] [AddCommGroup V] [Module K V]
-
-end
-
 open NumberField Matrix in
 open scoped ENNReal Classical in
 variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
@@ -380,9 +374,6 @@ omit [NumberField K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 theorem hRes_pd (h : V →ₗ⋆[K] V →ₗ[K] K) (hp : PD h) (U : Submodule K V) :
     PD (hRes h U) := fun τ x hx => hp τ (x : V) (fun e => hx (Subtype.ext e))
 
-omit [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
-alias pd_nondeg := _root_.GlobalTheory.Mass.PrimDisc.nondeg
-
 omit [NumberField K] in
 theorem star_int (r : 𝓞 K) : star (algebraMap (𝓞 K) K r) ∈ Set.range (algebraMap (𝓞 K) K) := by
   have : IsIntegral ℤ (star (algebraMap (𝓞 K) K r)) :=
@@ -393,7 +384,7 @@ theorem gens_rank [FiniteDimensional K V] (hK : IsCMUnram K) (h : V →ₗ⋆[K]
     (hs : h.IsSymm) (hp : PD h) (L : Submodule (𝓞 K) V) (hL : IsIntLat h L) :
     ∃ t : Finset V, t.card ≤ Module.finrank K V ∧
       dual h L = L ⊔ Submodule.span (𝓞 K) (t : Set V) := by
-  have hnd := pd_nondeg h hp
+  have hnd := GlobalTheory.Mass.PrimDisc.nondeg h hp
   have h0 := (_root_.GlobalTheory.Mass.DiscOrder.main K V h hK hs hnd L hL).1
   have hle : L ≤ dual h L := fun x hx => (isomAct_mem_dual h L x).2 fun y hy => hL.2 y hy x hx
   exact (_root_.GlobalTheory.Mass.LatticeGens.gens_and_count K V L (dual h L) hle h0).1
@@ -459,7 +450,7 @@ theorem orbMass_stabilizer_le : ∀ (K V : Type) [Field K] [NumberField K] [Star
     obtain ⟨k1, k2, k3, -⟩ := _root_.GlobalTheory.Mass.PrimDisc.main K V h hK hs hp L U 1 h1 h3
     refine ⟨⟨k1, h4⟩, (memB _).2 ⟨k2, ?_, ?_⟩⟩
     · exact Nat.one_le_iff_ne_zero.2
-        (_root_.GlobalTheory.Mass.DiscOrder.main K (perp h U) _ hK hs2 (pd_nondeg _ hp2) _ k2).1
+        (_root_.GlobalTheory.Mass.DiscOrder.main K (perp h U) _ hK hs2 (GlobalTheory.Mass.PrimDisc.nondeg _ hp2) _ k2).1
     · rw [h2, h4] at k3
       exact k3
   have fY : ∀ p ∈ A ×ˢ B, Finite (MulAction.stabilizer (MulAction.stabilizer (isom h) U) p) := by

@@ -105,7 +105,6 @@ open GlobalTheory.SqZeroPb in
 theorem GlobalTheory.SqZeroPb.isPullback_trivSqZeroExt : ∀ (K : Type) [Field K] (V W₁ W₂ : Type) [AddCommGroup V] [Module K V] [Module Kᵐᵒᵖ V] [IsCentralScalar K V] [AddCommGroup W₁] [Module K W₁] [Module Kᵐᵒᵖ W₁] [IsCentralScalar K W₁] [AddCommGroup W₂] [Module K W₂] [Module Kᵐᵒᵖ W₂] [IsCentralScalar K W₂] (p : V →ₗ[K] W₁) (q : V →ₗ[K] W₂), Function.Bijective (LinearMap.prod p q) → IsPullback (CommRingCat.ofHom (TrivSqZeroExt.map p).toRingHom) (CommRingCat.ofHom (TrivSqZeroExt.map q).toRingHom) (CommRingCat.ofHom (TrivSqZeroExt.fstHom K K W₁).toRingHom) (CommRingCat.ofHom (TrivSqZeroExt.fstHom K K W₂).toRingHom) := by
   intro K _ V W₁ W₂ _ _ _ _ _ _ _ _ _ _ _ _ p q hpq
   let e := LinearEquiv.ofBijective (LinearMap.prod p q) hpq
-  have he : ∀ v, e v = (p v, q v) := fun v => rfl
   have hw : CommRingCat.ofHom (TrivSqZeroExt.map p).toRingHom ≫
       CommRingCat.ofHom (TrivSqZeroExt.fstHom K K W₁).toRingHom =
       CommRingCat.ofHom (TrivSqZeroExt.map q).toRingHom ≫

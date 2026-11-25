@@ -63,21 +63,13 @@ theorem belowNat_lt (d : ℕ) : belowNat d < (d : WithBot ℕ∞) := by
 
 theorem le_belowNat_of_add_two_le {x : WithBot ℕ∞} {d : ℕ}
     (h : x + 1 + 1 ≤ ((d + 1 : ℕ) : WithBot ℕ∞)) : x ≤ belowNat d := by
-  induction x using WithBot.recBotCoe with
-  | bot => exact bot_le
-  | coe e =>
-    induction e using ENat.recTopCoe with
-    | top =>
-      exfalso
-      have h2 : ((⊤ : ℕ∞) : WithBot ℕ∞) ≤ (((d + 1 : ℕ) : ℕ∞) : WithBot ℕ∞) := by
-        rw [← WithBot.coe_one, ← WithBot.coe_add, top_add, ← WithBot.coe_add, top_add] at h
-        exact_mod_cast h
-      exact absurd (WithBot.coe_le_coe.1 h2) (by simp)
-    | coe k =>
-      have h2 : k + 1 + 1 ≤ d + 1 := by exact_mod_cast h
-      cases d with
-      | zero => omega
-      | succ e => show ((k : ℕ∞) : WithBot ℕ∞) ≤ ((e : ℕ) : WithBot ℕ∞); exact_mod_cast (by omega : k ≤ e)
+  have h1 := ENat.WithBot.add_le_add_one_right_iff.mp (h.trans_eq (Nat.cast_succ d))
+  cases d with
+  | zero =>
+    rw [Nat.cast_zero] at h1
+    exact (ENat.WithBot.add_one_le_zero_iff.mp h1).symm ▸ bot_le
+  | succ e =>
+    exact ENat.WithBot.add_le_add_one_right_iff.mp (h1.trans_eq (Nat.cast_succ e))
 
 theorem proof : NormalDoublePointsGeneric.Statement := by
   intro n d J u M hJ hdim hu

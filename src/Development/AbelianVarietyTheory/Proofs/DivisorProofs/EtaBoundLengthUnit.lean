@@ -3,38 +3,6 @@ module
 public import Development.AbelianVarietyTheory.Definitions.TorusSections.IsTorusOf
 public import Development.AbelianVarietyTheory.Definitions.Divisors.CovolXOfCovol
 public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.ArchimedeanBoundTotalConstantSize
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Definitions.Divisors.SemiposAtOfPositive
 
 @[expose] public section
@@ -43,7 +11,6 @@ open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions F
 
 noncomputable section
 namespace GlobalTheory.ThetaSizeBounds
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem archimedeanBoundTotalConstant_nonneg_le_bound : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r q m : ℕ) (L : ℝ), 2 ≤ L → 1 ≤ ReciprocityTheory.ChartRestriction.G.I2.PT.f E → 1 ≤ r → 1 ≤ m → m ≤ r → 1 ≤ q → 1 ≤ ReciprocityTheory.ChartRestriction.G.I2.PT.rd E → Real.log (ReciprocityTheory.ChartRestriction.G.I2.PT.rd E) ≤ 2 * L → Real.log (ReciprocityTheory.ChartRestriction.G.I2.PT.f E) ≤ 2 * L → Real.log r ≤ L → Real.log q ≤ 70 * L → 0 ≤ GlobalTheory.EtaAn.p16 E r q m 5 1 ∧ GlobalTheory.EtaAn.p16 E r q m 5 1 ≤ 200000 * ((ReciprocityTheory.ChartRestriction.G.I2.PT.f E : ℝ) * r * L) ^ 2 := by
   intro E _ _ _ r q m L hL hf hr hm hmr hq hρ lρ lF lR lq
@@ -83,7 +50,6 @@ theorem archimedeanBoundTotalConstant_nonneg_le_bound : ∀ (E : Type) [Field E]
       Real.log_nonneg (by nlinarith)
     have t1 := mul_nonneg (by positivity : (0 : ℝ) ≤ 2 * (ReciprocityTheory.ChartRestriction.G.I2.PT.f E : ℝ) * (r : ℝ) ^ 2) l5
     have t2 := mul_nonneg (by linarith : (0 : ℝ) ≤ ((5 : ℕ) : ℝ) ^ 4 * r * (ReciprocityTheory.ChartRestriction.G.I2.dstar (E := E) m : ℝ) / 2) a5
-    have t3 := mul_nonneg (by positivity : (0 : ℝ) ≤ 2 * ((5 : ℕ) : ℝ) ^ 4) p3nn
     have h5 : (0 : ℝ) ≤ 2 * ((5 : ℕ) : ℝ) ^ 4 := by positivity
     rw [l1, zero_add]
     exact add_nonneg (mul_nonneg h5 (add_nonneg p3nn t1)) t2
@@ -98,14 +64,12 @@ theorem size_inequality_real : ∀ (rd c t b f r DF g0 g1 : ℝ), 1 ≤ rd → r
   have hct : 1 ≤ c ^ 36 * t ^ 150 := one_le_mul_of_one_le_of_one_le (one_le_pow₀ hc1) (one_le_pow₀ ht1)
   have hs1 : 1 ≤ Real.sqrt b := hct.trans hC
   have hb0 : 0 ≤ b := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     rw [Real.sqrt_eq_zero'.2 h.le] at hs1
     linarith
   have hbs := Real.sq_sqrt hb0
   have hb1 : 1 ≤ b := by nlinarith
   have hsb : Real.sqrt b ≤ b := Real.sqrt_le_iff.2 ⟨by linarith, by nlinarith⟩
-  have hcb : c ^ 36 * t ^ 150 ≤ b := hC.trans hsb
   have ht7 : t ^ 7 ≤ b := by
     have e1 : t ^ 7 ≤ t ^ 150 := pow_le_pow_right₀ ht1 (by norm_num)
     have e2 : t ^ 150 ≤ c ^ 36 * t ^ 150 := le_mul_of_one_le_left (by positivity) (one_le_pow₀ hc1)
@@ -129,11 +93,9 @@ theorem size_inequality_real : ∀ (rd c t b f r DF g0 g1 : ℝ), 1 ≤ rd → r
     rw [← pow_add] at this
     exact this
   have e1 : (rd ^ 7) ^ 4 * (90 * (f * r + DF)) * DF * r ≤ b * (180 * b ^ 2) * b ^ 2 * b := by
-    have h0 : 0 ≤ (rd ^ 7) ^ 4 := by positivity
     have := mul_le_mul hR hY (by positivity) (by linarith)
     have := mul_le_mul this hDb (by linarith) (by positivity)
     exact mul_le_mul this hrb (by linarith) (by positivity)
-  have e2 : b * (180 * b ^ 2) * b ^ 2 * b = 180 * b ^ 6 := by ring
   have e3 : 180 * b ^ 6 ≤ b ^ 16 := by
     have : b ^ 16 = b ^ 10 * b ^ 6 := by ring
     have h10 : b ≤ b ^ 10 := le_self_pow₀ hb1 (by norm_num)
@@ -145,7 +107,6 @@ theorem sqrt_lt_th_real (q : ℕ) (M f R0 RR b s : ℝ) (hq : 1 ≤ q) (hb : 0 <
     (hf : 1 ≤ f) (hR : 1 ≤ R0 ^ 2) (hRR : 1 ≤ RR) (hs : M * s < b) :
     Real.sqrt s < Real.sqrt (f * R0 ^ 2 * RR ^ 3 / q) := by
   have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
-  have hM0 : 0 < M := lt_of_lt_of_le (by positivity) hM
   have hRR3 : 1 ≤ RR ^ 3 := one_le_pow₀ hRR
   have h1 : 1 ≤ f * R0 ^ 2 * RR ^ 3 := by
     have := mul_le_mul hf hR zero_le_one (by linarith)

@@ -1,45 +1,7 @@
 module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -56,30 +18,14 @@ private theorem clMapBasic_lemma {K K' K'' : Type} [Field K] [NumberField K] [Fi
   obtain ⟨I, rfl⟩ := ClassGroup.mk0_surjective c
   rw [class_map_mk0, class_map_mk0, class_map_mk0]
   congr 1
-  apply Subtype.ext
-  show Ideal.map _ _ = Ideal.map _ (Ideal.map _ _)
-  ext y
-  rw [clMapBasic_mem, clMapBasic_mem]
-  constructor
-  · rintro ⟨x, hx, rfl⟩
-    exact ⟨RingOfIntegers.mapRingEquiv τ x, (clMapBasic_mem τ _ _).mpr ⟨x, hx, rfl⟩, rfl⟩
-  · rintro ⟨z, hz, rfl⟩
-    obtain ⟨x, hx, rfl⟩ := (clMapBasic_mem τ _ _).mp hz
-    exact ⟨x, hx, rfl⟩
+  exact Subtype.ext (Ideal.map_map (I := I.1) (RingOfIntegers.mapRingEquiv τ).toRingHom
+    (RingOfIntegers.mapRingEquiv τ').toRingHom).symm
 private theorem clMap_refl_apply {K : Type} [Field K] [NumberField K] (c : ClassGroup (𝓞 K)) :
     clMap (RingEquiv.refl K) c = c := by
   obtain ⟨I, rfl⟩ := ClassGroup.mk0_surjective c
   rw [class_map_mk0]
   congr 1
-  apply Subtype.ext
-  show Ideal.map _ _ = _
-  ext y
-  rw [clMapBasic_mem]
-  constructor
-  · rintro ⟨x, hx, rfl⟩
-    exact hx
-  · intro hy
-    exact ⟨y, hy, rfl⟩
+  exact Subtype.ext (Ideal.map_id I.1)
 
 theorem UpperTheory.V.Kum.clMapBasic :
     ∀ (K K' K'' : Type) [Field K] [NumberField K] [Field K'] [NumberField K'] [Field K''] [NumberField K''] (τ : K ≃+* K') (τ' : K' ≃+* K''),

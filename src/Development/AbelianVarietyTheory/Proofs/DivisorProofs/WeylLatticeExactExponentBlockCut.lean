@@ -103,8 +103,7 @@ theorem adjBdd_holds : AdjBdd := by
       by_cases hx : x = 0
       · simp [hx]
       have h1 : μ b - μ a ≤ K := by
-        by_contra hlt
-        push_neg at hlt
+        by_contra! hlt
         apply hx
         apply hbdd b hb a ha (μ b - μ a) x _ hlt
         rw [hμ b hb, hμ a ha]
@@ -461,7 +460,7 @@ theorem substMem : SubstMem := by
           · simp [ψO, h2 x _ hx]
       · obtain ⟨c, hc⟩ := h3 x y hy
         have hyj : y ≠ τ j := fun h => hy ⟨j, h.symm⟩
-        rw [if_neg hyj, hc]
+        rw [ite_eq_right hyj, hc]
         simp [ψO, hc]
     have e1 := congrArg (fun φ => φ f) hA
     have e2 := congrArg (fun φ => φ f) hB
@@ -504,7 +503,7 @@ theorem eV_val {N : ℕ} (ν : Fin N → ℕ) (a b : ℕ) (ha : a < N) (hb : b <
     ((eV N ν a b x : dualWeyl ℚ N N ν) : MvPolynomial (Fin N × Fin N) ℚ) =
       Formalism.CohomologicalDescent.LR.der N N ⟨a, ha⟩ ⟨b, hb⟩ (x : MvPolynomial (Fin N × Fin N) ℚ) := by
   unfold eV
-  rw [dif_pos ⟨ha, hb⟩]
+  rw [dite_eq_left ⟨ha, hb⟩]
   rfl
 
 theorem eV_pow_val {N : ℕ} (ν : Fin N → ℕ) (a b : ℕ) (ha : a < N) (hb : b < N) (k : ℕ) (x : dualWeyl ℚ N N ν) :
@@ -536,14 +535,14 @@ theorem glRel_eV (N : ℕ) (ν : Fin N → ℕ) : GlRel N (eV N ν) := by
   rw [eV_val ν a b ha hb, eV_val ν c d hc hd, eV_val ν c d hc hd, eV_val ν a b ha hb, h]
   by_cases hbc : b = c <;> by_cases hda : d = a
   · subst hbc hda
-    simp only [if_true, eV_val ν d d ha hd, eV_val ν b b hc hb]
+    simp only [ite_true, eV_val ν d d ha hd, eV_val ν b b hc hb]
   · subst hbc
     have : (⟨d, hd⟩ : Fin N) ≠ ⟨a, ha⟩ := fun h => hda (Fin.mk.inj h)
-    simp only [if_true, this, if_false, hda, sub_zero, eV_val ν a d ha hd]
+    simp only [ite_true, this, ite_false, hda, sub_zero, eV_val ν a d ha hd]
     simp
   · subst hda
     have : (⟨b, hb⟩ : Fin N) ≠ ⟨c, hc⟩ := fun h => hbc (Fin.mk.inj h)
-    simp only [if_true, this, if_false, hbc, zero_sub, eV_val ν c b hc hb]
+    simp only [ite_true, this, ite_false, hbc, zero_sub, eV_val ν c b hc hb]
     simp
   · have h1 : (⟨b, hb⟩ : Fin N) ≠ ⟨c, hc⟩ := fun h => hbc (Fin.mk.inj h)
     have h2 : (⟨d, hd⟩ : Fin N) ≠ ⟨a, ha⟩ := fun h => hda (Fin.mk.inj h)
@@ -569,7 +568,7 @@ theorem wtSpan_eV (N : ℕ) (ν : Fin N → ℕ) : WtSpan N (eV N ν) := by
   refine ⟨fun c => if h : c < N then (μ ⟨c, h⟩ : ℤ) else 0, fun c hc => ?_⟩
   apply Subtype.ext
   rw [eV_val ν c c hc hc]
-  simp only [dif_pos hc]
+  simp only [dite_eq_left hc]
   have h := der_diag_eq_weight_smul_of_isWeightedHomogeneous _ μ
     (weightedHomogeneousComponent_isWeightedHomogeneous μ f) ⟨c, hc⟩
   rw [Submodule.coe_smul]
@@ -611,7 +610,7 @@ theorem dom_eV (N : ℕ) (ν : Fin N → ℕ) : Dom N (eV N ν) (wtZ ν) := by
     rw [← sum_range_dite N k hk]
     refine Finset.sum_congr rfl fun c hc => ?_
     have hcN : c < N := lt_of_lt_of_le (Finset.mem_range.mp hc) hk
-    rw [dif_pos hcN, hμ c hcN]
+    rw [dite_eq_left hcN, hμ c hcN]
   have hsν : ∀ k ≤ N, ∑ c ∈ Finset.range k, wtZ ν c = ((∑ a : Fin N with a.val < k, ν a : ℕ) : ℤ) := by
     intro k hk
     rw [← sum_range_dite N k hk]
@@ -722,7 +721,7 @@ theorem resT_der_left_X (p q : ℕ) (c d : Fin p) (v : Fin (p + q) × Fin (p + q
       · subst h; simp [resT, resVarT]
       · simp [resT, resVarT, h]
   | right b =>
-    rw [if_neg (natAdd_ne_castAdd' b d)]
+    rw [ite_eq_right (natAdd_ne_castAdd' b d)]
     induction v2 using Fin.addCases with
     | left s => simp [resT, resVarT]
     | right t => simp [resT, resVarT]
@@ -735,7 +734,7 @@ theorem resT_der_right_X (p q : ℕ) (c d : Fin q) (v : Fin (p + q) × Fin (p + 
   rw [Formalism.CohomologicalDescent.LR.der_X]
   induction v1 using Fin.addCases with
   | left a =>
-    rw [if_neg (castAdd_ne_natAdd' a d)]
+    rw [ite_eq_right (castAdd_ne_natAdd' a d)]
     induction v2 using Fin.addCases with
     | left s => simp [resT, resVarT]
     | right t => simp [resT, resVarT]
@@ -844,7 +843,7 @@ namespace GlobalTheory.LeviCut
 theorem eV_coe_fin (N : ℕ) (ν : Fin N → ℕ) (a b : Fin N) (x : dualWeyl ℚ N N ν) :
     ((eV N ν a b x : dualWeyl ℚ N N ν) : MvPolynomial (Fin N × Fin N) ℚ) =
       Formalism.CohomologicalDescent.LR.der N N a b (x : MvPolynomial (Fin N × Fin N) ℚ) := by
-  simp only [eV, dif_pos (And.intro a.isLt b.isLt)]
+  simp only [eV, dite_eq_left (And.intro a.isLt b.isLt)]
   rfl
 
 theorem nablaSchur : NablaSchur := by
@@ -1063,7 +1062,6 @@ theorem intOn_divAdj (L M : Submodule ℤ V) (e : Module.End ℚ V)
       exact_mod_cast hch
     have h2 : (t.factorial : ℚ) ≠ 0 := by positivity
     have h3 : ((k - t).factorial : ℚ) ≠ 0 := by positivity
-    have h4 : (k.factorial : ℚ) ≠ 0 := by positivity
     have h5 : ((k.choose t : ℕ) : ℚ) ≠ 0 := by exact_mod_cast (Nat.choose_pos ht').ne'
     rw [← h1]
     push_cast
@@ -1378,27 +1376,27 @@ theorem rankOne : RankOne := by
   have hXY : ∀ w, D o q (D q o w) = D q o (D o q w) + (D o o - D q q) w := by
     intro w
     have e := LinearMap.congr_fun (hG o q q o ho hq hq ho) w
-    rw [if_pos (rfl : q = q), if_pos (rfl : o = o)] at e
+    rw [ite_eq_left (rfl : q = q), ite_eq_left (rfl : o = o)] at e
     simp only [LinearMap.sub_apply, Module.End.mul_apply] at e
     rw [hH]
     exact sub_eq_iff_eq_add'.mp e
   have hHX : ∀ w, (D o o - D q q) (D o q w) = D o q ((D o o - D q q) w) + (2 : ℚ) • D o q w := by
     intro w
     have e1 := LinearMap.congr_fun (hG o o o q ho ho ho hq) w
-    rw [if_pos (rfl : o = o), if_neg hqo] at e1
+    rw [ite_eq_left (rfl : o = o), ite_eq_right hqo] at e1
     simp only [LinearMap.sub_apply, Module.End.mul_apply, sub_zero] at e1
     have e2 := LinearMap.congr_fun (hG q q o q hq hq ho hq) w
-    rw [if_neg hqo, if_pos (rfl : q = q)] at e2
+    rw [ite_eq_right hqo, ite_eq_left (rfl : q = q)] at e2
     simp only [LinearMap.sub_apply, Module.End.mul_apply, zero_sub, LinearMap.neg_apply] at e2
     rw [hH, hH, map_sub, sub_eq_iff_eq_add'.mp e1, sub_eq_iff_eq_add'.mp e2]
     module
   have hHY : ∀ w, (D o o - D q q) (D q o w) = D q o ((D o o - D q q) w) - (2 : ℚ) • D q o w := by
     intro w
     have e1 := LinearMap.congr_fun (hG o o q o ho ho hq ho) w
-    rw [if_neg hoq, if_pos (rfl : o = o)] at e1
+    rw [ite_eq_right hoq, ite_eq_left (rfl : o = o)] at e1
     simp only [LinearMap.sub_apply, Module.End.mul_apply, zero_sub, LinearMap.neg_apply] at e1
     have e2 := LinearMap.congr_fun (hG q q q o hq hq hq ho) w
-    rw [if_pos (rfl : q = q), if_neg hoq] at e2
+    rw [ite_eq_left (rfl : q = q), ite_eq_right hoq] at e2
     simp only [LinearMap.sub_apply, Module.End.mul_apply, sub_zero] at e2
     rw [hH, hH, map_sub, sub_eq_iff_eq_add'.mp e1, sub_eq_iff_eq_add'.mp e2]
     module

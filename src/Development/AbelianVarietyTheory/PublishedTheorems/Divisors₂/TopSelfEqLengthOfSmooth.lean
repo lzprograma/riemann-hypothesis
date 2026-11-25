@@ -53,8 +53,6 @@ import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrull
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace

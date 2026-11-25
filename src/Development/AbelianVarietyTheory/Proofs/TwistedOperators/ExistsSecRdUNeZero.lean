@@ -62,8 +62,6 @@ import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPinnedOfIsUnf
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.DictLevel
@@ -121,37 +119,8 @@ theorem exists_sec_rdU_ne_zero (U : Formalism.L2.PjFree.Unf Xo c σ r) (hσ : Go
     rw [fock, Pi.zero_apply, zero_add, zero_add]
     exact mul_ne_zero (Complex.exp_ne_zero _) (hq b)
   rw [map_one, map_one, thP, polyDeriv_one] at hval
-  exact fun h0 => h3 (hval.symm.trans ((dif_pos x.2).symm.trans h0))
+  exact fun h0 => h3 (hval.symm.trans ((dite_eq_left x.2).symm.trans h0))
 
 end NonZero
-
-section Scalar
-
-open NumberField AlgebraicGeometry CategoryTheory ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-  ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj GlobalTheory.LevelCusp GlobalTheory.GeoLevel GlobalTheory.IndefiniteRowSideFullHecke.GeneralDiagonalMatrix
-open GlobalTheory.Dict (castFr IsUnitFr)
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H}
-  {l : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H} {Xo : Moduli Dw l} {c : Coeff l} {σ : c.F →+* ℂ} {r : ℕ}
-
-end Scalar
-
-section Record
-
-open NumberField IsDedekindDomain CategoryTheory ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.BasicNotions Formalism.BasicNotions.TH
-  Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj GlobalTheory.IndefiniteRowSideFullHecke.LatticeBasisLifts GlobalTheory.IndefiniteRowSideFullHecke.GeneralDiagonalMatrix GlobalTheory.GeoLevel
-open GlobalTheory.Member (FinCong)
-open GlobalTheory.LevelCusp (IsMatch)
-open GlobalTheory.Dict (castFr)
-open scoped TensorProduct Matrix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-variable {D : D7}
-
-variable {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E} {V : HSp D} {La : Type} [AddCommGroup La] [Module (𝓞 D.host.E) La]
-  {ι : La →ₗ[𝓞 D.host.E] (Fin V.rank → D.host.E)}
-
-end Record
 
 end GlobalTheory.DictLevel

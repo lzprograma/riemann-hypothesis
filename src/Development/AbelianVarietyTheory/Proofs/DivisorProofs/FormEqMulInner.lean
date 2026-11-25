@@ -107,10 +107,6 @@ theorem form_eq_mul_inner {E I : Type} [NormedAddCommGroup E] [InnerProductSpace
     rw [Module.End.mem_eigenspace_iff] at hx
     rw [hA, hx, inner_smul_left]
 
-private lemma inner_self_eq_one_of_norm_eq_one' {F : Type} [NormedAddCommGroup F] [InnerProductSpace ℂ F] {u : F}
-    (hu : ‖u‖ = 1) : ⟪u, u⟫_ℂ = 1 := by
-  rw [inner_self_eq_norm_sq_to_K, hu]; simp
-
 variable {ι : Type} [Fintype ι] [DecidableEq ι] {E : ι → Type} [∀ i, NormedAddCommGroup (E i)]
   [∀ i, InnerProductSpace ℂ (E i)] {W : Type} [NormedAddCommGroup W] [InnerProductSpace ℂ W]
 
@@ -124,11 +120,11 @@ theorem exists_const (B : (∀ i, E i) → W → (∀ i, E i) → W → ℂ) (w�
       haveI := hall i
       exact exists_norm_eq (E i) zero_le_one
     choose e he using he
-    have hee : ∀ i, ⟪e i, e i⟫_ℂ = 1 := fun i => inner_self_eq_one_of_norm_eq_one' (he i)
+    have hee : ∀ i, ⟪e i, e i⟫_ℂ = 1 := fun i => inner_self_eq_one_of_norm_eq_one (he i)
     have hw : ∀ v v' w w', B v w v' w' = B v w₀ v' w₀ * ⟪w, w'⟫_ℂ := by
       intro v v' w w'
       obtain ⟨c, hc⟩ := h2 v v'
-      rw [hc, hc w₀ w₀, inner_self_eq_one_of_norm_eq_one' h₀, mul_one]
+      rw [hc, hc w₀ w₀, inner_self_eq_one_of_norm_eq_one (𝕜 := ℂ) h₀, mul_one]
     have hs : ∀ s : Finset ι, ∀ v v' : ∀ i, E i, (∀ i ∉ s, v i = e i) → (∀ i ∉ s, v' i = e i) →
         B v w₀ v' w₀ = B e w₀ e w₀ * ∏ i ∈ s, ⟪v i, v' i⟫_ℂ := by
       intro s
@@ -199,9 +195,11 @@ theorem exists_phase {Y : Type} [AddCommGroup Y] [Module ℂ Y] (b : Y →ₗ⋆
     {l : ℂ} (hl : ‖l‖ = 1) (hm : F v₀ w₀ = l • F' v₀' w₀') :
     ∃ κ : ℂ, ‖κ‖ = 1 ∧ ∀ v w, F' v w = κ • F v w := by
   have P1 : (∏ i, ⟪v₀ i, v₀ i⟫_ℂ) * ⟪w₀, w₀⟫_ℂ = 1 := by
-    rw [Finset.prod_eq_one (fun i _ => _root_.GlobalTheory.ConjLiftUnique.inner_self_eq_one_of_norm_eq_one' (n1 i)), _root_.GlobalTheory.ConjLiftUnique.inner_self_eq_one_of_norm_eq_one' n3, one_mul]
+    rw [Finset.prod_eq_one fun i _ => inner_self_eq_one_of_norm_eq_one (𝕜 := ℂ) (n1 i),
+      inner_self_eq_one_of_norm_eq_one (𝕜 := ℂ) n3, one_mul]
   have P2 : (∏ i, ⟪v₀' i, v₀' i⟫_ℂ) * ⟪w₀', w₀'⟫_ℂ = 1 := by
-    rw [Finset.prod_eq_one (fun i _ => _root_.GlobalTheory.ConjLiftUnique.inner_self_eq_one_of_norm_eq_one' (n2 i)), _root_.GlobalTheory.ConjLiftUnique.inner_self_eq_one_of_norm_eq_one' n4, one_mul]
+    rw [Finset.prod_eq_one fun i _ => inner_self_eq_one_of_norm_eq_one (𝕜 := ℂ) (n2 i),
+      inner_self_eq_one_of_norm_eq_one (𝕜 := ℂ) n4, one_mul]
   have hl1 : conj l * l = 1 := by
     rw [Complex.conj_mul', hl]
     simp

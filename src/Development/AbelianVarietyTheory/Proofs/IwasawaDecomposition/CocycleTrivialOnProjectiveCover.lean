@@ -1,41 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LineModel
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFrameCover
 import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueSpecializes
 
@@ -51,34 +17,6 @@ attribute [local instance] MvPolynomial.gradedAlgebra
 
 namespace GlobalTheory.TwistEmb
 
-private theorem valR_ne_zero_of_mem_basicOpen {A : Type} [CommRing A] {X : Scheme.{0}} (w : Sp A ⟶ X) (V : X.Opens)
-    (h : ⊤ ≤ w ⁻¹ᵁ V) (s : Γ(X, V)) (z : Sp A) (hs : w z ∈ X.basicOpen s) : valR w V s ≠ 0 := by
-  intro h0
-  unfold valR at h0
-  rw [dite_eq_left h] at h0
-  have h1 : (w.appLE V ⊤ h).hom s = 0 := by
-    have h3 := congrArg (Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom h0
-    rw [map_zero] at h3
-    rw [← h3]
-    first
-      | exact (Iso.hom_inv_id_apply (Scheme.ΓSpecIso (CommRingCat.of A)) _).symm
-  have h4 : z ∈ w ⁻¹ᵁ X.basicOpen s := hs
-  rw [Scheme.preimage_basicOpen] at h4
-  have e1 : (Sp A).basicOpen ((w.appLE V ⊤ h).hom s) = ⊤ ⊓ (Sp A).basicOpen ((w.app V).hom s) := by
-    show (Sp A).basicOpen ((Sp A).presheaf.map (homOfLE h).op ((w.app V).hom s)) = _
-    first
-      | exact Scheme.basicOpen_res _ _ _
-  have h2 : z ∈ (Sp A).basicOpen ((w.appLE V ⊤ h).hom s) := by
-    rw [e1, top_inf_eq]
-    exact h4
-  rw [h1, Scheme.basicOpen_zero] at h2
-  exact h2
-
-private theorem valR_sub_iwasawa_decomposition {A : Type} [CommRing A] {X : Scheme.{0}} (x : Sp A ⟶ X) (V : X.Opens)
-    (h : ⊤ ≤ x ⁻¹ᵁ V) (s t : Γ(X, V)) : valR x V (s - t) = valR x V s - valR x V t := by
-  unfold valR
-  rw [dite_eq_left h, dite_eq_left h, dite_eq_left h, map_sub, map_sub]
-
 theorem eq_of_valR {Y : Scheme.{0}} [IsReduced Y] {V : Y.Opens} {f g : Γ(Y, V)}
     (H : ∀ (k : Type) [Field k] (w : Sp k ⟶ Y), ⊤ ≤ w ⁻¹ᵁ V → valR w V f = valR w V g) : f = g := by
   rw [← sub_eq_zero]
@@ -92,11 +30,14 @@ theorem eq_of_valR {Y : Scheme.{0}} [IsReduced Y] {V : Y.Opens} {f g : Γ(Y, V)}
     rw [Scheme.fromSpecResidueField_apply]
     exact hyV
   have hfg := H (Y.residueField y) (Y.fromSpecResidueField y) hw
-  have hsub : valR (Y.fromSpecResidueField y) V (f - g) = 0 :=
-    (valR_sub_iwasawa_decomposition (Y.fromSpecResidueField y) V hw f g).trans (sub_eq_zero.mpr hfg)
-  have hz := Scheme.fromSpecResidueField_apply y (IsLocalRing.closedPoint (Y.residueField y))
-  rw [← hz] at hy
-  exact absurd hsub (valR_ne_zero_of_mem_basicOpen (Y.fromSpecResidueField y) V hw (f - g) _ hy)
+  have hsub : valR (Y.fromSpecResidueField y) V (f - g) = 0 := by
+    rw [valR_eq _ V hw, map_sub, ← valR_eq _ V hw, ← valR_eq _ V hw]
+    exact sub_eq_zero.2 hfg
+  have hyb : ⊤ ≤ Y.fromSpecResidueField y ⁻¹ᵁ Y.basicOpen (f - g) := fun z _ => by
+    show Y.fromSpecResidueField y z ∈ Y.basicOpen (f - g)
+    rw [Scheme.fromSpecResidueField_apply]
+    exact hy
+  exact ((le_preimage_basicOpen_iff _ hw (f - g)).1 hyb).ne_zero hsub
 
 theorem valR_frac_mul {A τ : Type} [CommRing A] [SetLike τ A] [AddSubgroupClass τ A] (𝒜 : ℕ → τ) [GradedRing 𝒜]
     {C : Type} [CommRing C] (y : Sp C ⟶ Proj 𝒜) {U₁ U₂ U₃ : (Proj 𝒜).Opens} {d : ℕ} {a b c : A}
@@ -188,13 +129,6 @@ theorem exists_forms {O : Type} [CommRing O] {N : ℕ} {X : Scheme.{0}} (e : X �
     rw [hbo, Equiv.symm_apply_apply]
     exact hxy
 
-private theorem valR_app_eq_valR_comp {A : Type} [CommRing A] {X Y : Scheme.{0}} (w : Sp A ⟶ X) (e : X ⟶ Y) (D : Y.Opens)
-    (h : ⊤ ≤ w ⁻¹ᵁ (e ⁻¹ᵁ D)) (r : Γ(Y, D)) : valR w (e ⁻¹ᵁ D) ((e.app D).hom r) = valR (w ≫ e) D r := by
-  have h' : ⊤ ≤ (w ≫ e) ⁻¹ᵁ D := h
-  unfold valR
-  rw [dite_eq_left h, dite_eq_left h']
-  congr 1
-
 theorem exists_cover {O : Type} [CommRing O] {X : Scheme.{0}} {s : X ⟶ Sp O} (hs : IsProjOver s)
     {J : Type} (U : J → X.Opens) (hU : ∀ x : X, ∃ j, x ∈ U j) :
     ∃ (m : ℕ) (V : Fin m → X.Opens) (σ : Fin m → J) (g : ∀ i i', Γ(X, V i ⊓ V i')ˣ) (t : ∀ i, Fin m → Γ(X, V i)),
@@ -228,39 +162,21 @@ theorem exists_cover {O : Type} [CommRing O] {X : Scheme.{0}} {s : X ⟶ Sp O} (
   · intro k _ w i i' i₀ hi hi'
     have hii' : ⊤ ≤ w ⁻¹ᵁ (e ⁻¹ᵁ (Proj.basicOpen (grading O N) (F i) ⊓ Proj.basicOpen (grading O N) (F i'))) :=
       _root_.GlobalTheory.Specialise.le_preimage_inf w hi hi'
-    have a1 := valR_app_eq_valR_comp w e (Proj.basicOpen (grading O N) (F i)) hi
-      (frac (grading O N) (Proj.basicOpen (grading O N) (F i)) (F i₀) (F i) (hF i₀) (hF i) le_rfl)
-    have a2 := valR_app_eq_valR_comp w e (Proj.basicOpen (grading O N) (F i) ⊓ Proj.basicOpen (grading O N) (F i')) hii'
-      (frac (grading O N) (Proj.basicOpen (grading O N) (F i) ⊓ Proj.basicOpen (grading O N) (F i')) (F i') (F i)
-        (hF i') (hF i) inf_le_left)
-    have a3 := valR_app_eq_valR_comp w e (Proj.basicOpen (grading O N) (F i')) hi'
-      (frac (grading O N) (Proj.basicOpen (grading O N) (F i')) (F i₀) (F i') (hF i₀) (hF i') le_rfl)
+    have a1 := (valR_comp w e (Proj.basicOpen (grading O N) (F i))
+      (frac (grading O N) (Proj.basicOpen (grading O N) (F i)) (F i₀) (F i)
+        (hF i₀) (hF i) le_rfl)).symm
+    have a2 := (valR_comp w e
+      (Proj.basicOpen (grading O N) (F i) ⊓ Proj.basicOpen (grading O N) (F i'))
+      (frac (grading O N)
+        (Proj.basicOpen (grading O N) (F i) ⊓ Proj.basicOpen (grading O N) (F i'))
+        (F i') (F i) (hF i') (hF i) inf_le_left)).symm
+    have a3 := (valR_comp w e (Proj.basicOpen (grading O N) (F i'))
+      (frac (grading O N) (Proj.basicOpen (grading O N) (F i')) (F i₀) (F i')
+        (hF i₀) (hF i') le_rfl)).symm
     have a4 := valR_frac_mul (grading O N) (w ≫ e) (U₁ := Proj.basicOpen (grading O N) (F i))
       (U₂ := Proj.basicOpen (grading O N) (F i) ⊓ Proj.basicOpen (grading O N) (F i'))
       (U₃ := Proj.basicOpen (grading O N) (F i')) (hF i₀) (hF i') (hF i) le_rfl inf_le_left le_rfl hi hii' hi'
     exact a1.trans (a4.trans (congrArg₂ (· * ·) a2.symm a3.symm))
-
-private theorem le_preimage_basicOpen_of_valR_ne_zero {k : Type} [Field k] {X : Scheme.{0}} (w : Sp k ⟶ X) (V : X.Opens)
-    (h : ⊤ ≤ w ⁻¹ᵁ V) (s : Γ(X, V)) (hs : valR w V s ≠ 0) : ⊤ ≤ w ⁻¹ᵁ X.basicOpen s := by
-  unfold valR at hs
-  rw [dite_eq_left h] at hs
-  have hu : IsUnit ((w.appLE V ⊤ h).hom s) := by
-    have h3 := (Ne.isUnit hs).map (Scheme.ΓSpecIso (CommRingCat.of k)).inv.hom
-    have e : (Scheme.ΓSpecIso (CommRingCat.of k)).inv.hom
-        ((Scheme.ΓSpecIso (CommRingCat.of k)).hom.hom ((w.appLE V ⊤ h).hom s)) = (w.appLE V ⊤ h).hom s := by
-      first
-        | exact Iso.hom_inv_id_apply (Scheme.ΓSpecIso (CommRingCat.of k)) _
-    rwa [e] at h3
-  have h5 : (Sp k).basicOpen ((w.appLE V ⊤ h).hom s) = ⊤ := by
-    first
-      | exact Scheme.basicOpen_of_isUnit _ hu
-  have e1 : (Sp k).basicOpen ((w.appLE V ⊤ h).hom s) = ⊤ ⊓ (Sp k).basicOpen ((w.app V).hom s) := by
-    show (Sp k).basicOpen ((Sp k).presheaf.map (homOfLE h).op ((w.app V).hom s)) = _
-    first
-      | exact Scheme.basicOpen_res _ _ _
-  rw [e1, top_inf_eq] at h5
-  have h6 : w ⁻¹ᵁ X.basicOpen s = (Sp k).basicOpen ((w.app V).hom s) := Scheme.preimage_basicOpen w s
-  exact (h6.trans h5).ge
 
 theorem exists_ext {X : Scheme.{0}} {V W : X.Opens} (hV : IsAffineOpen V) (t : Γ(X, V)) (hW : X.basicOpen t ≤ W)
     (f : Γ(X, W)) : ∃ N : ℕ, ∀ N', N < N' → ∃ a : Γ(X, V), ∀ (k : Type) [Field k] (w : Sp k ⟶ X), ⊤ ≤ w ⁻¹ᵁ V →
@@ -281,15 +197,9 @@ theorem exists_ext {X : Scheme.{0}} {V W : X.Opens} (hV : IsAffineOpen V) (t : �
     ring
   · have ht : valR w V t = 0 := by
       by_contra hne
-      exact hwD (le_preimage_basicOpen_of_valR_ne_zero w V hw t hne)
+      exact hwD ((le_preimage_basicOpen_iff w hw t).2 (Ne.isUnit hne))
     rw [_root_.GlobalTheory.Points.valR_mul w V hw, _root_.GlobalTheory.Points.valR_pow w V hw, ht]
     simp [pow_add, pow_succ]
-
-private theorem valF_eq_valR_iwasawa_decomposition {k : Type} [Field k] {X : Scheme.{0}} (w : Sp k ⟶ X) (V : X.Opens) (f : Γ(X, V)) :
-    valF w V f = valR w V f := by
-  unfold valF valR
-  first
-    | rfl
 
 private theorem valR_res_units_coe {A : Type} [CommRing A] {X : Scheme.{0}} (x : Sp A ⟶ X) {U V : X.Opens} (e : V ≤ U)
     (h : ⊤ ≤ x ⁻¹ᵁ V) (u : Γ(X, U)ˣ) : valR x V ((res e u : Γ(X, V)ˣ) : Γ(X, V)) = valR x U u :=
@@ -366,7 +276,7 @@ theorem exists_twist_embedding : ∀ (O : Type) [CommRing O] (X : Scheme.{0}) [I
     intro k _ w hw
     have hwU : ⊤ ≤ w ⁻¹ᵁ U (σ i) := hw.trans (fun z hz => hVU i hz)
     have e1 := congrArg (fun M => M b b') (hG1 k w (σ i) hwU)
-    simp only [Matrix.map_apply, valF_eq_valR_iwasawa_decomposition] at e1
+    simp only [Matrix.map_apply, valF_eq_valR] at e1
     rw [hx i b i b' k w hw, htt i, _root_.GlobalTheory.Points.valR_one w _ hw, one_pow, one_mul, e1, Matrix.one_apply, Matrix.one_apply]
     split_ifs
     · exact (_root_.GlobalTheory.Points.valR_one w _ hw).symm
@@ -379,7 +289,8 @@ theorem exists_twist_embedding : ∀ (O : Type) [CommRing O] (X : Scheme.{0}) [I
     have hUi : ⊤ ≤ w ⁻¹ᵁ U (σ i) := hi.trans (fun z hz => hVU i hz)
     have hUi' : ⊤ ≤ w ⁻¹ᵁ U (σ i') := hi'.trans (fun z hz => hVU i' hz)
     ext r b
-    simp only [Matrix.map_apply, Matrix.smul_apply, Matrix.mul_apply, smul_eq_mul, valF_eq_valR_iwasawa_decomposition, hA]
+    simp only [Matrix.map_apply, Matrix.smul_apply, Matrix.mul_apply, smul_eq_mul,
+      valF_eq_valR, hA]
     rw [Units.val_pow_eq_pow_val, _root_.GlobalTheory.Points.valR_pow w _ hii']
     cases ε.symm r with
     | none =>
@@ -394,7 +305,7 @@ theorem exists_twist_embedding : ∀ (O : Type) [CommRing O] (X : Scheme.{0}) [I
       · have hU1 : ⊤ ≤ w ⁻¹ᵁ U (σ i₁) := hw1.trans (fun z hz => hVU i₁ hz)
         have c1 := hcoc k w i i' i₁ hi hi'
         have eG := congrArg (fun M => M a b) (hG2 k w (σ i₁) (σ i') (σ i) hU1 hUi' hUi)
-        simp only [Matrix.mul_apply, Matrix.map_apply, valF_eq_valR_iwasawa_decomposition] at eG
+        simp only [Matrix.mul_apply, Matrix.map_apply, valF_eq_valR] at eG
         rw [c1, mul_pow, ← eG, Finset.mul_sum, Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro c _
@@ -403,7 +314,7 @@ theorem exists_twist_embedding : ∀ (O : Type) [CommRing O] (X : Scheme.{0}) [I
           intro j hj
           by_contra hne
           apply hw1
-          have h5 := le_preimage_basicOpen_of_valR_ne_zero w (V j) hj (t j i₁) hne
+          have h5 := (le_preimage_basicOpen_iff w hj (t j i₁)).2 (Ne.isUnit hne)
           rw [hbt] at h5
           exact fun z hz => (TopologicalSpace.Opens.mem_inf.mp (h5 hz)).2
         rw [h0 i hi, h0 i' hi']

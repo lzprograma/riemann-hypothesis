@@ -47,7 +47,7 @@ theorem star_sgn (i : Fin (2 * r + k + 1)) : star (sgnI k r i) = sgnI k r i := b
 
 theorem hpk_mulVec (v : Fin (2 * r + k + 1) → ℂ) (i : Fin (2 * r + k + 1)) :
     (Hpk k r *ᵥ v) i = sgnI k r i * v (sigI k r i) := by
-  simp only [mulVec, dotProduct, hpk_apply, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [mulVec, dotProduct, hpk_apply, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem hpk_invol (v : Fin (2 * r + k + 1) → ℂ) : Hpk k r *ᵥ (Hpk k r *ᵥ v) = v := by
   funext i; rw [hpk_mulVec, hpk_mulVec, sig_sig, sgn_sig, ← mul_assoc, sgn_mul_self, one_mul]
@@ -87,9 +87,9 @@ theorem fix_of_perp (c : Fin (r + 1) → EE k r) (hc : Orthonormal ℂ c)
     split_ifs <;> norm_num
   have hind : LinearIndependent ℂ d := by
     refine linearIndependent_of_ne_zero_of_inner_eq_zero (fun a h => ?_) (fun a b hab => ?_)
-    · have := hdd a a; rw [h, inner_zero_left, if_pos rfl] at this; norm_num at this
+    · have := hdd a a; rw [h, inner_zero_left, ite_eq_left rfl] at this; norm_num at this
     · show inner ℂ (d a) (d b) = 0
-      rw [hdd, if_neg hab]
+      rw [hdd, ite_eq_right hab]
   have hfin : Module.finrank ℂ Vm ≤ r + 1 := by
     let idx : Fin (r + 1) → Fin (2 * r + k + 1) := fun a =>
       ⟨if a.val < r then a.val else r + k, by split_ifs <;> omega⟩
@@ -128,7 +128,7 @@ theorem fix_of_perp (c : Fin (r + 1) → EE k r) (hc : Orthonormal ℂ c)
         have hs := hx i
         by_cases h3 : i.val < r + k
         · have e1 : sigI k r i = i := Fin.ext (by rw [sigI_val]; split_ifs <;> omega)
-          have e2 : sgnI k r i = 1 := by unfold sgnI; rw [if_neg h2]
+          have e2 : sgnI k r i = 1 := by unfold sgnI; rw [ite_eq_right h2]
           rw [e1, e2, one_mul] at hs
           have h4 : (2 : ℂ) * (v : EE k r).ofLp i = 0 := by linear_combination hs
           simpa using h4

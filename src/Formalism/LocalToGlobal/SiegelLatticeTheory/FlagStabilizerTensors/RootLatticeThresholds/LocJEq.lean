@@ -14,8 +14,6 @@ open scoped InnerProductSpace
 
 namespace Formalism.L2.SG.Pf.LocJEq
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : HidaSetting D} {θ : ℝ} (C : Choice X θ)
 
 theorem transp_mem (τ : D.what₂.Tau) {m : MatKR D.R.k D.R.rS} (hm : m ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS)) :

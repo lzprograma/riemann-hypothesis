@@ -67,13 +67,6 @@ open TensorProduct Module
 
 namespace GlobalTheory.GaloisDescent
 
-section Decomposition
-
-variable {ι M M' σ τ : Type*} [DecidableEq ι] [AddCommMonoid M] [AddCommMonoid M']
-  [SetLike σ M] [AddSubmonoidClass σ M] [SetLike τ M'] [AddSubmonoidClass τ M']
-
-end Decomposition
-
 section Ideals
 
 variable {K L A B G : Type*} [Field K] [Field L] [Algebra K L] [Ring A] [Ring B] [Algebra K A]
@@ -96,31 +89,7 @@ theorem ideal_map_comap_of_stable (hj : IsBaseChange L j.toLinearMap) (s : G →
     (I : Ideal B) (hI : ∀ g, ∀ x ∈ I, φ g x ∈ I) : (I.comap j).map j = I :=
   ideal_map_comap_of_span I _ (span_image_comap_eq hj s hs φ hφ (I.restrictScalars L) hI)
 
-section Graded
-
-variable {ι σ τ : Type*} [DecidableEq ι] [AddMonoid ι] [SetLike σ A] [AddSubmonoidClass σ A]
-  [SetLike τ B] [AddSubmonoidClass τ B] (𝒜 : ι → σ) (ℬ : ι → τ) [GradedRing 𝒜] [GradedRing ℬ]
-
-end Graded
-
 end Ideals
-
-section Tensor
-
-open Algebra.TensorProduct
-
-variable {K L A G : Type*} [Field K] [Field L] [Algebra K L] [Ring A] [Algebra K A]
-
-end Tensor
-
-section Polynomial
-
-open MvPolynomial
-
-variable {K L G σ : Type*} [Field K] [Field L] [Algebra K L]
-
-
-end Polynomial
 
 end GlobalTheory.GaloisDescent
 end -- clump:auto

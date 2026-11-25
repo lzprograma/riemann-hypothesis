@@ -3,58 +3,10 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
 public import Development.AbelianVarietyTheory.Definitions.Divisors.Pullback1MemHodgeFiltration
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ValAtLem
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -295,9 +247,6 @@ theorem pt_const {C : Type} [CommRing C] (σ : B →+* C) (e : C) (h : IsUnit e)
   rw [RingHom.comp_apply, IsScalarTower.algebraMap_apply B B[X] (Ring B), pt, IsLocalization.Away.lift_eq]
   simp
 
-theorem pt_coord {C : Type} [CommRing C] (σ : B →+* C) (e : C) (h : IsUnit e) : pt σ e h (coord B) = e :=
-  (IsLocalization.Away.lift_eq _ _ _).trans (eval₂_X _ _)
-
 theorem comp_pt {C C' : Type} [CommRing C] [CommRing C'] (φ : C →+* C') {σ : B →+* C} {e : C} (h : IsUnit e)
     {σ' : B →+* C'} {e' : C'} (h' : IsUnit e') (hσ : ∀ b, φ (σ b) = σ' b) (he : φ e = e') :
     φ.comp (pt σ e h) = pt σ' e' h' :=
@@ -353,25 +302,6 @@ def unif : Unif (fam I) (str B) σ where
 theorem isFor (K : Charts (fam I)) : (real σ K).IsFor (unif σ) := fun k p hp ↦
   (Cris.spMap_comp _ _).symm.trans (congrArg spMap (ev_comp_pt σ K k p hp))
 
-theorem based : (unif σ).Based := ⟨⊤, isAffineOpen_top _, fun _ _ ↦ le_top⟩
-
-theorem unif_ne (z : I → ℂ) : (unif σ).E (z, 0) ≠ (unif σ).E (z, fun _ ↦ Real.pi * Complex.I) := fun h ↦ by
-  have e := congrArg (fun φ ↦ φ.hom (coord B)) (Spec.map_injective h)
-  simp only [CommRingCat.hom_ofHom, expPt, pt_coord] at e
-  simp at e
-  norm_num at e
-
-theorem isPeriod_unique {c : FirstDeRham (str B)} {per per' : ℤ →+ Hol (fam I).V} (h : IsPeriod (unif σ) c per)
-    (h' : IsPeriod (unif σ) c per') : per = per' :=
-  perCl_injective _ ((h _ _ (isFor σ _)).symm.trans (h' _ _ (isFor σ _)))
-
 end MulGrp
-
-theorem isPeriod_zero_zero {s : X ⟶ Sp B} {σ : B →+* Hol F.V} (u : Unif F s σ) : IsPeriod u 0 0 := fun K r _ ↦ by
-  rw [map_zero]
-  refine (H1.mk_eq_zero.2 ⟨0, ?_⟩).symm
-  rw [map_zero]
-  funext T T' f
-  exact (@map_zero _ _ _ _ _ _ _ (@algebraMap _ T'.C _ _ T'.alg)).symm
 
 end GlobalTheory.AnPer

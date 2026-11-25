@@ -3,55 +3,6 @@ module
 public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.MorphismsSpreadOutToFgSubalgebra
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.AbelianSchemeQuotients.IsAbelianScheme
 public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.OActDescendOfGenerators
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
-import Mathlib.AlgebraicGeometry.Sites.Fpqc
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.CategoryTheory.ExtremalEpi
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.FieldTheory.PurelyInseparable.Exponent
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -70,14 +21,14 @@ theorem eta_pullback_fst {S S' : Scheme.{0}} (G : Over S) [GrpObj G] [IsCommMonO
 
 theorem eta_left_hom {S : Scheme.{0}} (G : Over S) [GrpObj G] :
     η[G].left ≫ G.hom = 𝟙 _ := by
-  simpa using Over.w η[G]
+  simp
 
 theorem nonempty_algHom_of_finiteType (k C : Type) [Field k] [IsAlgClosed k] [CommRing C] [Nontrivial C]
     [Algebra k C] [Algebra.FiniteType k C] : Nonempty (C →ₐ[k] k) := by
   obtain ⟨m, hm⟩ := Ideal.exists_maximal C
-  letI : Field (C ⧸ m) := Ideal.Quotient.field m
-  haveI : Algebra.FiniteType k (C ⧸ m) := Algebra.FiniteType.trans (S := C) inferInstance inferInstance
-  haveI : Module.Finite k (C ⧸ m) := finite_of_finite_type_of_isJacobsonRing k (C ⧸ m)
+  let : Field (C ⧸ m) := Ideal.Quotient.field m
+  have : Algebra.FiniteType k (C ⧸ m) := Algebra.FiniteType.trans (S := C) inferInstance inferInstance
+  have : Module.Finite k (C ⧸ m) := finite_of_finite_type_of_isJacobsonRing k (C ⧸ m)
   let e : k ≃ₐ[k] (C ⧸ m) := AlgEquiv.ofBijective (Algebra.ofId k (C ⧸ m))
     IsAlgClosed.algebraMap_bijective_of_isIntegral
   exact ⟨e.symm.toAlgHom.comp (Ideal.Quotient.mkₐ k m)⟩
@@ -95,12 +46,10 @@ private theorem pullback_mu_fst_eq {S S' : Scheme.{0}} (G : Over S) [GrpObj G] (
   rw [← Category.assoc]
   congr 1
   apply pullback.hom_ext
-  · rw [Category.assoc]
-    erw [Over.μ_pullback_left_fst_fst, pullback.lift_fst]
-    try rfl
-  · rw [Category.assoc]
-    erw [Over.μ_pullback_left_fst_snd, pullback.lift_snd]
-    try rfl
+  · rw [Category.assoc, pullback.lift_fst]
+    exact Over.μ_pullback_left_fst_fst _ _
+  · rw [Category.assoc, pullback.lift_snd]
+    exact Over.μ_pullback_left_fst_snd _ _
 
 private theorem bcMap_comp_pullback_map {k₀ K : Type} [Field k₀] [Field K] [Algebra k₀ K] (R : Subalgebra k₀ K)
     {X Y : Over (Sp k₀)} (u : X ⟶ Y) :
@@ -143,11 +92,11 @@ theorem exists_endo_spread_specialise : ∀ (k₀ K : Type) [Field k₀] [IsAlgC
   have hΨsnd : Ψl ≫ pullback.snd _ _ = pullback.snd _ _ := pullback.lift_snd _ _ _
   let Ψ : (Over.pullback (spMap (algebraMap k₀ R))).obj B ⟶ (Over.pullback (spMap (algebraMap k₀ R))).obj B :=
     Over.homMk Ψl hΨsnd
-  haveI : Algebra.FiniteType k₀ R := (Subalgebra.fg_iff_finiteType R).mp hRfg
+  have : Algebra.FiniteType k₀ R := (Subalgebra.fg_iff_finiteType R).mp hRfg
   obtain ⟨g⟩ := nonempty_algHom_of_finiteType k₀ R
   have hgc : spMap g.toRingHom ≫ spMap (algebraMap k₀ R) = 𝟙 _ := by
-    first
-    | (rw [spMap_algHom_comp, Algebra.algebraMap_self]; simp [spMap])
+    rw [spMap_algHom_comp, Algebra.algebraMap_self]
+    simp [spMap]
   let σ : B.left ⟶ pullback B.hom (spMap (algebraMap k₀ R)) :=
     pullback.lift (𝟙 _) (B.hom ≫ spMap g.toRingHom)
       (by rw [Category.id_comp, Category.assoc, hgc, Category.comp_id])
@@ -231,7 +180,7 @@ theorem exists_endo_spread_specialise : ∀ (k₀ K : Type) [Field k₀] [IsAlgC
     exact (Over.w (fst ((Over.pullback (spMap (algebraMap k₀ R))).obj B) ((Over.pullback (spMap (algebraMap k₀ R))).obj B))).trans (Over.w (snd ((Over.pullback (spMap (algebraMap k₀ R))).obj B) ((Over.pullback (spMap (algebraMap k₀ R))).obj B))).symm
   have hμψ : μ[((Over.pullback (spMap (algebraMap k₀ R))).obj B)].left ≫ ψ =
       pullback.lift ((fst ((Over.pullback (spMap (algebraMap k₀ R))).obj B) ((Over.pullback (spMap (algebraMap k₀ R))).obj B)).left ≫ ψ) ((snd ((Over.pullback (spMap (algebraMap k₀ R))).obj B) ((Over.pullback (spMap (algebraMap k₀ R))).obj B)).left ≫ ψ) hLc ≫ μ[B].left := by
-    haveI : IsIso (Functor.OplaxMonoidal.δ (Over.pullback (spMap (algebraMap k₀ R))) B B).left :=
+    have : IsIso (Functor.OplaxMonoidal.δ (Over.pullback (spMap (algebraMap k₀ R))) B B).left :=
       (inferInstance : IsIso ((Over.forget _).map (Functor.OplaxMonoidal.δ (Over.pullback (spMap (algebraMap k₀ R))) B B)))
     rw [← cancel_epi (Functor.OplaxMonoidal.δ (Over.pullback (spMap (algebraMap k₀ R))) B B).left, ← Category.assoc, hδμR]
     apply hom_ext_bcMap (B ⊗ B).hom R.val hinj B.hom
@@ -241,21 +190,16 @@ theorem exists_endo_spread_specialise : ∀ (k₀ K : Type) [Field k₀] [IsAlgC
       have e3 : (Functor.OplaxMonoidal.δ (Over.pullback (spMap (algebraMap k₀ R))) B B).left ≫
           (fst ((Over.pullback (spMap (algebraMap k₀ R))).obj B) ((Over.pullback (spMap (algebraMap k₀ R))).obj B)).left ≫ pullback.snd B.hom (spMap (algebraMap k₀ R)) = pullback.snd (B ⊗ B).hom (spMap (algebraMap k₀ R)) := by
         rw [← Category.assoc, hδfR]; exact Over.w _
-      rw [Category.assoc, hcond, ← Category.assoc, e1, Category.assoc, Category.assoc, e2]
-      erw [pullback.lift_fst_assoc]
-      rw [Category.assoc, hcond, ← Category.assoc, ← Category.assoc, Category.assoc _ _ (pullback.snd _ _), e3]
-    · try simp only [Category.assoc]
-      rw [reassoc_of% hbcμ, hψ2, ← hδμK]
-      try simp only [Category.assoc]
-      rw [reassoc_of% hfμ, pullback_mu_fst_eq]
-      try simp only [← Category.assoc]
-      congr 1
+      rw [Category.assoc, hcond, ← Category.assoc, e1, Category.assoc, Category.assoc, e2,
+        pullback.lift_fst_assoc, Category.assoc, hcond, ← Category.assoc, ← Category.assoc,
+        Category.assoc _ _ (pullback.snd _ _), e3]
+    · rw [reassoc_of% hbcμ, hψ2, ← hδμK, Category.assoc, reassoc_of% hfμ, pullback_mu_fst_eq]
+      simp only [← Category.assoc]
+      refine congrArg (· ≫ μ[B].left) ?_
       apply pullback.hom_ext
-      · try simp only [Category.assoc]
-        erw [pullback.lift_fst, pullback.lift_fst]
+      · simp only [Category.assoc, pullback.lift_fst]
         rw [reassoc_of% hffst, reassoc_of% hδfK, reassoc_of% hδfR, reassoc_of% hbcfst, hψ2]
-      · try simp only [Category.assoc]
-        erw [pullback.lift_snd, pullback.lift_snd]
+      · simp only [Category.assoc, pullback.lift_snd]
         rw [reassoc_of% hfsnd, reassoc_of% hδsK, reassoc_of% hδsR, reassoc_of% hbcsnd, hψ2]
   have hΨmul : μ[((Over.pullback (spMap (algebraMap k₀ R))).obj B)] ≫ Ψ = (Ψ ⊗ₘ Ψ) ≫ μ[((Over.pullback (spMap (algebraMap k₀ R))).obj B)] := by
     apply Over.OverMorphism.ext
@@ -264,12 +208,12 @@ theorem exists_endo_spread_specialise : ∀ (k₀ K : Type) [Field k₀] [IsAlgC
       rw [Category.assoc, hΨfst, hμψ, Category.assoc, pullback_mu_fst_eq, ← Category.assoc (Ψ ⊗ₘ Ψ).left]
       congr 1
       apply pullback.hom_ext
-      · erw [pullback.lift_fst, Category.assoc, pullback.lift_fst]
-        rw [← Category.assoc, ← Over.comp_left, tensorHom_fst, Over.comp_left, Category.assoc]
+      · rw [pullback.lift_fst, Category.assoc, pullback.lift_fst, ← Category.assoc, ← Over.comp_left,
+          tensorHom_fst, Over.comp_left, Category.assoc]
         show _ = _ ≫ Ψl ≫ _
         rw [hΨfst]
-      · erw [pullback.lift_snd, Category.assoc, pullback.lift_snd]
-        rw [← Category.assoc, ← Over.comp_left, tensorHom_snd, Over.comp_left, Category.assoc]
+      · rw [pullback.lift_snd, Category.assoc, pullback.lift_snd, ← Category.assoc, ← Over.comp_left,
+          tensorHom_snd, Over.comp_left, Category.assoc]
         show _ = _ ≫ Ψl ≫ _
         rw [hΨfst]
     · exact (Over.w (μ[((Over.pullback (spMap (algebraMap k₀ R))).obj B)] ≫ Ψ)).trans (Over.w ((Ψ ⊗ₘ Ψ) ≫ μ[((Over.pullback (spMap (algebraMap k₀ R))).obj B)])).symm
@@ -282,13 +226,13 @@ theorem exists_endo_spread_specialise : ∀ (k₀ K : Type) [Field k₀] [IsAlgC
   have hησ : η[B].left ≫ σ = spMap g.toRingHom ≫ η[((Over.pullback (spMap (algebraMap k₀ R))).obj B)].left := by
     apply pullback.hom_ext
     · rw [Category.assoc, hσfst, Category.comp_id, Category.assoc, hηR, ← Category.assoc, hgc]
-      first | exact (Category.id_comp _).symm
+      exact (Category.id_comp _).symm
     · rw [Category.assoc, hσsnd, ← Category.assoc, eta_left_hom, Category.id_comp, Category.assoc, hηRs,
         Category.comp_id]
   have hf0one : η[B] ≫ f₀ = η[B] := by
     apply Over.OverMorphism.ext
     rw [Over.comp_left, hf0l, ← Category.assoc, hησ, Category.assoc, hone, hηR, ← Category.assoc, hgc]
-    first | exact Category.id_comp _
+    exact Category.id_comp _
   have hτc : (pullback.fst B.hom B.hom ≫ σ) ≫ pullback.snd B.hom (spMap (algebraMap k₀ R)) =
       (pullback.snd B.hom B.hom ≫ σ) ≫ pullback.snd B.hom (spMap (algebraMap k₀ R)) := by
     rw [Category.assoc, Category.assoc, hσsnd, ← Category.assoc, ← Category.assoc, pullback.condition]
@@ -304,18 +248,14 @@ theorem exists_endo_spread_specialise : ∀ (k₀ K : Type) [Field k₀] [IsAlgC
           congr 1
           exact (Over.w (fst ((Over.pullback (spMap (algebraMap k₀ R))).obj B) ((Over.pullback (spMap (algebraMap k₀ R))).obj B))).trans (Over.w (snd ((Over.pullback (spMap (algebraMap k₀ R))).obj B) ((Over.pullback (spMap (algebraMap k₀ R))).obj B))).symm) = 𝟙 _ := by
     apply pullback.hom_ext
-    · rw [Category.assoc]
-      erw [pullback.lift_fst]
-      rw [← Category.assoc, hτ1, Category.assoc, hσfst, Category.comp_id]
-      first | exact (Category.id_comp _).symm
-    · rw [Category.assoc]
-      erw [pullback.lift_snd]
-      rw [← Category.assoc, hτ2, Category.assoc, hσfst, Category.comp_id]
-      first | exact (Category.id_comp _).symm
+    · rw [Category.assoc, pullback.lift_fst, ← Category.assoc, hτ1, Category.assoc, hσfst, Category.comp_id]
+      exact (Category.id_comp _).symm
+    · rw [Category.assoc, pullback.lift_snd, ← Category.assoc, hτ2, Category.assoc, hσfst, Category.comp_id]
+      exact (Category.id_comp _).symm
   have hμσ : μ[B].left ≫ σ = τ ≫ μ[((Over.pullback (spMap (algebraMap k₀ R))).obj B)].left := by
     apply pullback.hom_ext
     · rw [Category.assoc, hσfst, Category.comp_id, Category.assoc, pullback_mu_fst_eq, ← Category.assoc, hτl]
-      first | exact (Category.id_comp _).symm
+      exact (Category.id_comp _).symm
     · rw [Category.assoc, hσsnd, ← Category.assoc, e2, Category.assoc, Category.assoc τ, e4,
         ← Category.assoc τ, hτ1, Category.assoc (pullback.fst B.hom B.hom) σ, hσsnd]
   have hf0fst : (f₀ ⊗ₘ f₀).left ≫ (fst B B).left = (fst B B).left ≫ f₀.left := by
@@ -327,14 +267,10 @@ theorem exists_endo_spread_specialise : ∀ (k₀ K : Type) [Field k₀] [IsAlgC
     rw [Over.comp_left, Over.comp_left, hf0l, ← Category.assoc, hμσ, Category.assoc, hμψ, ← Category.assoc]
     congr 1
     apply pullback.hom_ext
-    · rw [Category.assoc]
-      erw [pullback.lift_fst, hf0fst]
-      rw [← Category.assoc, hτ1, Category.assoc, hf0l]
-      rfl
-    · rw [Category.assoc]
-      erw [pullback.lift_snd, hf0snd]
-      rw [← Category.assoc, hτ2, Category.assoc, hf0l]
-      rfl
+    · rw [Category.assoc, pullback.lift_fst, ← Category.assoc, hτ1, Category.assoc, ← hf0l]
+      exact hf0fst.symm
+    · rw [Category.assoc, pullback.lift_snd, ← Category.assoc, hτ2, Category.assoc, ← hf0l]
+      exact hf0snd.symm
   · exact ⟨hf0one, hf0mul⟩
   · show bcMap B.hom R.val ≫ Ψl ≫ _ = _
     rw [hΨfst, hψ2]

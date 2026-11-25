@@ -25,10 +25,6 @@ section Reps
 
 variable {V : Type} [AddCommGroup V]
 
-theorem relIdx_eq_card {Λ₁ Λ₂ : AddSubgroup V} {S : Finset V} (hS : IsReps Λ₁ Λ₂ S) :
-    relIdx Λ₁ Λ₂ = S.card := by
-  apply Formalism.L2.AlgTh.RepresentativeBijection.relIdx_eq_card <;> assumption
-
 theorem semiChar_congr [Module ℂ V] {H : Sesq V} {Λ : AddSubgroup V} {α α' : V → ℂ} (h : IsSemiChar H Λ α)
     (he : ∀ x ∈ Λ, α' x = α x) : IsSemiChar H Λ α' := by
   refine ⟨fun x hx => by rw [he x hx]; exact h.1 x hx, fun x hx y hy => ?_⟩
@@ -117,7 +113,7 @@ theorem inter_isom (H : Sesq V) (H' : Sesq W) (hH : IsHerm H) (hH' : IsHerm H') 
     exact hG _ (hmem A x hx) (g z)
   rw [Formalism.L2.Th1.H.interReps _ _ hH _ _ _ hαV _ hGV _ hS z,
     Formalism.L2.Th1.H.interReps _ _ hH' _ _ _ hα' _ hG _ hS' (g z),
-    relIdx_eq_card hS, relIdx_eq_card hS', Finset.card_image_of_injective _ g.injective]
+    Formalism.L2.AlgTh.RepresentativeBijection.relIdx_eq_card hS, Formalism.L2.AlgTh.RepresentativeBijection.relIdx_eq_card hS', Finset.card_image_of_injective _ g.injective]
   congr 1
   simp only [sumU]
   rw [Finset.sum_image (fun x _ y _ hxy => g.injective hxy)]
@@ -160,62 +156,18 @@ theorem representatives_fourth_power {Λ₁ Λ₂ : AddSubgroup (n → ℂ)} {S 
 theorem relative_index_fourth_power {Λ₁ Λ₂ : AddSubgroup (n → ℂ)} (h12 : relIdx Λ₁ Λ₂ ≠ 0) :
     relIdx (pow4 Λ₁) (pow4 Λ₂) = relIdx Λ₁ Λ₂ ^ 4 := by
   classical
-  have hfin : Finite (Λ₂ ⧸ Λ₁.addSubgroupOf Λ₂) := Nat.finite_of_card_ne_zero h12
-  letI := Fintype.ofFinite (Λ₂ ⧸ Λ₁.addSubgroupOf Λ₂)
-  let S : Finset (n → ℂ) := Finset.univ.image fun q : Λ₂ ⧸ Λ₁.addSubgroupOf Λ₂ => ((Quotient.out q : Λ₂) : n → ℂ)
-  have hS : IsReps Λ₁ Λ₂ S := by
-    refine ⟨?_, ?_, ?_⟩
-    · intro x hx
-      obtain ⟨q, -, rfl⟩ := Finset.mem_image.1 hx
-      exact (Quotient.out q).2
-    · intro x hx y hy hxy
-      obtain ⟨q, -, rfl⟩ := Finset.mem_image.1 hx
-      obtain ⟨q', -, rfl⟩ := Finset.mem_image.1 hy
-      have hq : q = q' := by
-        rw [← QuotientAddGroup.out_eq' q, ← QuotientAddGroup.out_eq' q']
-        apply (QuotientAddGroup.eq).2
-        rw [AddSubgroup.mem_addSubgroupOf]
-        have := Λ₁.neg_mem hxy
-        simpa [sub_eq_add_neg, add_comm] using this
-      rw [hq]
-    · intro y hy
-      let q : Λ₂ ⧸ Λ₁.addSubgroupOf Λ₂ := QuotientAddGroup.mk ⟨y, hy⟩
-      refine ⟨((Quotient.out q : Λ₂) : n → ℂ), Finset.mem_image_of_mem _ (Finset.mem_univ _), ?_⟩
-      have h1 : (QuotientAddGroup.mk (Quotient.out q) : Λ₂ ⧸ Λ₁.addSubgroupOf Λ₂) = QuotientAddGroup.mk ⟨y, hy⟩ :=
-        QuotientAddGroup.out_eq' q
-      have h2 := (QuotientAddGroup.eq).1 h1
-      rw [AddSubgroup.mem_addSubgroupOf] at h2
-      simpa [sub_eq_add_neg, add_comm] using h2
-  rw [relIdx_eq_card (representatives_fourth_power hS), relIdx_eq_card hS,
-    Finset.card_image_of_injective _ asm_injective, Fintype.card_piFinset, Finset.prod_const, Finset.card_univ,
-    Fintype.card_fin]
+  obtain ⟨S, hS⟩ := (Formalism.L2.Th1.H.repsExist _ Λ₁ Λ₂ h12).1
+  rw [Formalism.L2.AlgTh.RepresentativeBijection.relIdx_eq_card (representatives_fourth_power hS), Formalism.L2.AlgTh.RepresentativeBijection.relIdx_eq_card hS,
+    Finset.card_image_of_injective _ asm_injective, Fintype.card_piFinset, Finset.prod_const,
+    Finset.card_univ, Fintype.card_fin]
 
 theorem alternating_form_fourth_block (h : Matrix n n ℂ) (x y : Fin 4 × n → ℂ) :
     altE (matH (blk4 h)) x y = ∑ a, altE (matH h) (slice a x) (slice a y) := by
-  have key : matH (blk4 h) x y = ∑ a, matH h (slice a x) (slice a y) := by
-    simp only [matH, LinearMap.mk₂'ₛₗ_apply, blk4, slice]
-    rw [Fintype.sum_prod_type]
-    refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun i _ => ?_
-    rw [Fintype.sum_prod_type, Finset.sum_eq_single a]
-    · simp
-    · intro b _ hb
-      simp [Ne.symm hb]
-    · simp
-  simp only [altE, key, Complex.im_sum]
+  simp only [altE, (_root_.Formalism.L2.Th1.H.heisenbergFourfold n h).1 x y, Complex.im_sum]
 
 theorem hermitian_fourth_block (h : Matrix n n ℂ) (hH : IsHerm (matH h)) : IsHerm (matH (blk4 h)) := by
-  have key : ∀ x y : Fin 4 × n → ℂ, matH (blk4 h) x y = ∑ a, matH h (slice a x) (slice a y) := by
-    intro x y
-    simp only [matH, LinearMap.mk₂'ₛₗ_apply, blk4, slice]
-    rw [Fintype.sum_prod_type]
-    refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun i _ => ?_
-    rw [Fintype.sum_prod_type, Finset.sum_eq_single a]
-    · simp
-    · intro b _ hb
-      simp [Ne.symm hb]
-    · simp
   intro x y
-
+  have key := (_root_.Formalism.L2.Th1.H.heisenbergFourfold n h).1
   rw [key, key, map_sum]
   exact Finset.sum_congr rfl fun a _ => hH _ _
 

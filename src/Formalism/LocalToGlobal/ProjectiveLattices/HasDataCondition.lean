@@ -19,8 +19,6 @@ open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor R
 open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 structure Top (D : D7) : Type 1 extends Core D where
   G : In66 Q
   nab : ∀ j, NabV (Q.Xo j) Q.c

@@ -97,7 +97,7 @@ theorem coneTangent_eq_bot (h : HermNorm n) {J : Ideal (MvPolynomial (Fin n) ℂ
     · simp [pderiv_X_of_ne hj, hj]
       ring
   simp only [h3, Finset.sum_add_distrib, ← Finset.mul_sum, h1, mul_zero, zero_add,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true] at h2
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true] at h2
   exact (mul_eq_zero.1 h2).resolve_left hq0
 
 theorem starProjection_congr {U V : Submodule ℂ (EuclideanSpace ℂ (Fin n))} (e : U = V) :

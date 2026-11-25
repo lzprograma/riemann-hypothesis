@@ -81,7 +81,7 @@ theorem exists_domWeight_infOf (n : ℕ) (S : Multiset ℂ) (hc : Multiset.card 
   set c : ℂ := ((n : ℂ) - 1) / 2 with hcdef
   let g : ℂ → ℤ := fun x => if h : ∃ z : ℤ, x = (z : ℂ) + c then h.choose else 0
   have hg : ∀ x ∈ S, x = (g x : ℂ) + c := fun x hx => by
-    simp only [g, dif_pos (hm x hx)]; exact (hm x hx).choose_spec
+    simp only [g, dite_eq_left (hm x hx)]; exact (hm x hx).choose_spec
   let M : Multiset ℤ := S.map (fun x => -g x)
   have hMd : M.Nodup := hd.map_on (fun x hx y hy hxy => by
     rw [hg x hx, hg y hy]; simp only [neg_inj] at hxy; rw [hxy])
@@ -171,31 +171,31 @@ theorem nodup_qv (R : Ranks) (h : HCParam R) (j : Fin R.m) : (qv R h j).Nodup :=
     intro i hi
     have h1 := h.u_gt_v ⟨i, by omega⟩
     have h2 := h.v_gt_u ⟨i, by omega⟩
-    simp only [U, dif_pos hi, dif_pos (show i < R.k by omega)]
+    simp only [U, dite_eq_left hi, dite_eq_left (show i < R.k by omega)]
     exact lt_trans h2 h1
   have hV : ∀ i, i + 1 < R.k - 1 → V (i + 1) < V i := by
     intro i hi
     have h1 := h.u_gt_v ⟨i + 1, hi⟩
     have h2 := h.v_gt_u ⟨i, by omega⟩
-    simp only [V, dif_pos hi, dif_pos (show i < R.k - 1 by omega)]
+    simp only [V, dite_eq_left hi, dite_eq_left (show i < R.k - 1 by omega)]
     exact lt_trans h1 h2
   have hB : ∀ i, i + 1 < R.m → B (i + 1) < B i := by
     intro i hi
     have h1 := h.gap_be ⟨i, by omega⟩
     have h2 := h.gap_eb ⟨i, by omega⟩ hi
-    simp only [B, dif_pos hi, dif_pos (show i < R.m by omega)]
+    simp only [B, dite_eq_left hi, dite_eq_left (show i < R.m by omega)]
     linarith
   have bmono : ∀ i i' : Fin R.m, i.1 ≤ i'.1 → -h.b i' ≤ -h.b i := by
     intro i i' hii
     have := chain_le B R.m hB i.1 i'.1 hii i'.2
-    simpa only [B, dif_pos i.2, dif_pos i'.2] using this
+    simpa only [B, dite_eq_left i.2, dite_eq_left i'.2] using this
   have vgt : ∀ (i : Fin (R.k - 1)) (i' : Fin R.m), -h.b i' < h.v i := by
     intro i i'
     have a1 := h.v_gt_u i
     have a2 := chain_le U R.k hU (i.1 + 1) (R.k - 1) (by omega) (by omega)
     have a3 := h.u_last_gt (by omega) (by omega)
     have a4 := bmono ⟨0, by omega⟩ i' (Nat.zero_le _)
-    simp only [U, dif_pos (show R.k - 1 < R.k by omega), dif_pos (show i.1 + 1 < R.k by omega)] at a2
+    simp only [U, dite_eq_left (show R.k - 1 < R.k by omega), dite_eq_left (show i.1 + 1 < R.k by omega)] at a2
     linarith
   have top : ∀ c : ℕ, -h.e j + ((R.t : ℚ) - 1 - 2 * c) / 2 < -h.b j := by
     intro c
@@ -221,11 +221,11 @@ theorem nodup_qv (R : Ranks) (h : HCParam R) (j : Fin R.m) : (qv R h j).Nodup :=
   have vinj : Function.Injective h.v := by
     refine StrictAnti.injective fun a b hab => ?_
     have := chain_lt V (R.k - 1) hV a.1 b.1 hab b.2
-    simpa only [V, dif_pos a.2, dif_pos b.2] using this
+    simpa only [V, dite_eq_left a.2, dite_eq_left b.2] using this
   have binj : Function.Injective fun i : Fin R.m => -h.b i := by
     refine StrictAnti.injective fun a b hab => ?_
     have := chain_lt B R.m hB a.1 b.1 hab b.2
-    simpa only [B, dif_pos a.2, dif_pos b.2] using this
+    simpa only [B, dite_eq_left a.2, dite_eq_left b.2] using this
   have rinj : Function.Injective fun c : ℕ => -h.e j + ((R.t : ℚ) - 1 - 2 * c) / 2 := by
     intro c c' hcc
     have : (c : ℚ) = c' := by simp only at hcc; linarith

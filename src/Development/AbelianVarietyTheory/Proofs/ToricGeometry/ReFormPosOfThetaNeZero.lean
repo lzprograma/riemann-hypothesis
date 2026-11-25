@@ -224,8 +224,7 @@ theorem _root_.GlobalTheory.ThetaPositivity.re_form_pos_of_theta_ne_zero :
   haveI : IsZLattice ℝ Λ := ⟨hspan⟩
   have hpsd : ∀ w : Fin g → ℂ, 0 ≤ (w ⬝ᵥ Hm.mulVec (star w)).re := by
     intro w
-    by_contra hw
-    push_neg at hw
+    by_contra! hw
     obtain ⟨C, hC⟩ := _root_.GlobalTheory.ThetaPositivity.exists_norm_le Λ hH χ hχ hθ.continuous htr
     exact hθ0 (_root_.GlobalTheory.ThetaPositivity.eq_zero_of_neg hH hθ hC hw)
   refine lt_of_le_of_ne (hpsd z) (fun hz0 => hz ?_)

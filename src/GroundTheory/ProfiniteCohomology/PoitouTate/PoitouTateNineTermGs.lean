@@ -92,8 +92,6 @@ open CategoryTheory MonoidalCategory NumberField IsDedekindDomain GroundTheory.G
 
 local notation "ℚ̄" => AlgebraicClosure ℚ
 
-attribute [local instance 2000] Rep.hV2
-
 noncomputable section
 
 section Ord
@@ -239,8 +237,6 @@ variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1))) [Fintype 
   (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure (v.adicCompletion K.1)) (hv : v ∉ S) {n : ℕ} [NeZero n]
   (hodd : Odd n ∨ IsTotallyComplex K.1)
 
-
-
 theorem placeInv_gsLocalRes_of_bock (t : sInvariantSubgroup ℚ̄ S)
     (z : cocycles (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) 1)
     (χ : ContinuousMonoidHom (galUnramifiedOutside K.1 ℚ̄ S) (Multiplicative (ZMod n)))
@@ -333,8 +329,6 @@ theorem divChar_apply (χ : ContinuousMonoidHom (galUnramifiedOutside K.1 ℚ̄ 
 theorem nsmul_divChar (χ : ContinuousMonoidHom (galUnramifiedOutside K.1 ℚ̄ S) (Multiplicative (ZMod n)))
     (D : sDivisor S) : n • divChar S hodd χ D = 0 := by
   rw [divChar_apply, ← map_nsmul, nsmul_eq_mul, ZMod.natCast_self, zero_mul, map_zero]
-
-
 
 theorem sum_localInvU_eq_neg_divChar (t : sInvariantSubgroup ℚ̄ S)
     (z : cocycles (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) 1)
@@ -555,7 +549,6 @@ variable {k G : Type} [CommRing k] [Group G] [TopologicalSpace G] [IsTopological
   {ι : Type} {H : ι → Type} [∀ v, Group (H v)] [∀ v, TopologicalSpace (H v)] [∀ v, IsTopologicalGroup (H v)]
   (φ : ∀ v, H v →ₜ* G)
 
-
 omit [TopologicalSpace G] [IsTopologicalGroup G] in
 theorem cupCochain_const_left {A B : Rep.{0} k G} {q n : ℕ} (h : 0 + q = n) (m : A) (g : (Fin q → G) → B)
     (x : Fin n → G) :
@@ -587,7 +580,6 @@ theorem cochainOf_constCupSub (m : X) {s : ℕ} (e : (cochainsComplex B).X s) (z
   refine (congrArg μX.hom (cupCochain_const_left (show 0 + s = s by omega) m _ σ)).trans ?_
   congr 3
 
-
 include hj in
 theorem d_constCupSub (m : X) (x : (cochainsComplex U).X 1)
     (hx : ((cochainsMap j).f 1).hom x = ((cochainsComplex X).d 0 1).hom (constCochain X m))
@@ -609,7 +601,6 @@ theorem d_constCupSub (m : X) (x : (cochainsComplex U).X 1)
 variable (Ωᵥ : ∀ v, Rep.{0} k (H v)) [∀ v, IsDiscreteRep (Ωᵥ v)] (l : ∀ v, Rep.res (φ v).toMonoidHom X ⟶ Ωᵥ v)
   (μΩ : ∀ v, Ωᵥ v ⊗ Rep.res (φ v).toMonoidHom B ⟶ Ωᵥ v)
   (hl : ∀ v, (Rep.resFunctor (φ v).toMonoidHom).map μX ≫ l v = resTensorHom (φ v).toMonoidHom (l v) (𝟙 _) ≫ μΩ v)
-
 
 include hj hl in
 theorem exists_compactCup_const
@@ -708,8 +699,6 @@ section Concrete
 
 open IsDedekindDomain NumberField GroundTheory.Global
 
-attribute [local instance 2000] Rep.hV2
-
 local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
@@ -753,8 +742,6 @@ theorem gsPairingK_gsUnitsLocalMor (v : S) :
 
 variable [Fintype S] (n ℓ k : ℕ) [NeZero n] (hℓ : ℓ.Prime) (hnk : n = ℓ ^ k)
   (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
-
-
 
 omit [Fintype S] in
 include hℓ hnk hS in
@@ -836,8 +823,6 @@ namespace GroundTheory.ProfCoh
 
 open CategoryTheory MonoidalCategory IsDedekindDomain NumberField GroundTheory.Global GroundTheory.GroupCoh GroundTheory.Global.IdeleGroup
 
-attribute [local instance 2000] Rep.hV2
-
 noncomputable section
 
 local notation "ℚ̄" => AlgebraicClosure ℚ
@@ -851,8 +836,6 @@ theorem linearMap_apply_add_apply {R M N P : Type*} [CommRing R] [AddCommGroup M
     [Module R M] [Module R N] [Module R P] (f : M →ₗ[R] N →ₗ[R] P) (a b : M) (c : N) :
     f (a + b) c = f a c + f b c := by
   rw [map_add (f := _), LinearMap.add_apply]
-
-
 
 theorem gsRootsToUnitsCompact_comparison_cup (h : gsUnitsCompact S ιs 1)
     (x : cohomology (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) 1) :
@@ -880,8 +863,6 @@ theorem gsRootsToUnitsCompact_comparison_cup (h : gsUnitsCompact S ιs 1)
   exact (congrArg (gsRootsToUnitsCompact S ιs n 3).hom (ea.trans (congrArg (fun w =>
     compactCup (gsFinFamily S ιs) (gsZmodPairing S n) (gsZmodPairingᵥ S ιs n) (gsZmodPairing_hμ S ιs n)
       (show 2 + 1 = 3 from rfl) w x) ea'))).trans eb
-
-
 
 theorem gsRootsToUnitsCompact_cup_eq (ℓ k : ℕ) (hℓ : ℓ.Prime) (hnk : n = ℓ ^ k)
     (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
@@ -937,14 +918,11 @@ theorem prod_ofFinite_eq {M : Type*} [CommMonoid M] (f : S → M) :
   congr
   exact Subsingleton.elim _ _
 
-
 omit [NeZero n] in
 theorem sPresentation_fst (a : ∀ w : S, ((w : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)ˣ) :
     sPresentation S (a, 1) = ∏ w : S, SIdeleClassGroup.mk S (finiteEmbedding (w : HeightOneSpectrum (𝓞 K.1)) (a w)) := by
   rw [sPresentation_apply, toAdd_one, map_zero, toMul_zero, mul_one, placesIdele_apply, map_prod]
   exact prod_ofFinite_eq S _
-
-
 
 theorem zmodToQZ_charEquiv_gsUnitsClass
     (χ : ContinuousMonoidHom (galUnramifiedOutside K.1 ℚ̄ S) (Multiplicative (ZMod n))) (d : GsUnitsDatum S) :
@@ -995,8 +973,6 @@ namespace GroundTheory.ProfCoh
 
 open CategoryTheory MonoidalCategory IsDedekindDomain NumberField GroundTheory.Global GroundTheory.GroupCoh GroundTheory.Global.IdeleGroup
 
-attribute [local instance 2000] Rep.hV2
-
 noncomputable section
 
 local notation "ℚ̄" => AlgebraicClosure ℚ
@@ -1019,8 +995,6 @@ def gsLocalUnitsImage (ξ : ∀ v : S, cohomology (Rep.res (gsFinFamily S ιs v)
     cohomology (galUnits.{0, 0} ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1) (AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1))) 2 :=
   (cohomologyMap (gsRootsOmegaMor S ιs n v ≫ rootsOfUnityToUnits _ _ n) 2).hom (ξ v)
 
-
-
 theorem zmodToQZ_gsCompactInv_localToCompact_eq_localInvU (hodd : Odd n ∨ IsTotallyComplex K.1)
     (h3 : Subsingleton (cohomology (gsRoots S n) 3))
     (ξ : ∀ v : S, cohomology (Rep.res (gsFinFamily S ιs v).toMonoidHom (gsRoots S n)) 2) :
@@ -1030,7 +1004,6 @@ theorem zmodToQZ_gsCompactInv_localToCompact_eq_localInvU (hodd : Odd n ∨ IsTo
   (congrArg (zmodToQZ n) ((gsCompactInv_localToCompact S ιs n hodd h3 ξ).trans (gsSumInvRoots_apply S ιs n ξ))).trans
     ((map_sum (zmodToQZ n) _ _).trans
       (Finset.sum_congr rfl fun v _ => zmodToQZ_gsLocalInvRoots_eq_localInvU S ιs n v (ξ v)))
-
 
 omit [Fintype S] in
 
@@ -1083,8 +1056,6 @@ theorem nsmul_sum_map_sub {ι : Type*} (s : Finset ι) {M : ι → Type*} [∀ v
     (hb : ∀ v, n • F v (b v) = 0) : n • ∑ v ∈ s, F v (a v - b v) = 0 := by
   rw [Finset.smul_sum]
   exact Finset.sum_eq_zero fun v _ => by rw [map_sub, smul_sub, ha, hb, sub_zero]
-
-
 
 attribute [local irreducible] gsCompactInv compactCupRes
 
@@ -1157,8 +1128,6 @@ namespace GroundTheory.ProfCoh
 
 open CategoryTheory MonoidalCategory IsDedekindDomain NumberField GroundTheory.Global GroundTheory.GroupCoh
 
-attribute [local instance 2000] Rep.hV2
-
 noncomputable section
 
 local notation "ℚ̄" => AlgebraicClosure ℚ
@@ -1174,7 +1143,6 @@ theorem zmodCocycleHom_one (z : cocycles (zmodRep.{0} (galUnramifiedOutside K.1 
   rw [mul_one] at h
   exact (add_eq_left.1 h.symm)
 
-
 omit [Fintype S] in
 def gsCharOfCocycle (z : cocycles (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) 1) :
     ContinuousMonoidHom (galUnramifiedOutside K.1 ℚ̄ S) (Multiplicative (ZMod n)) where
@@ -1188,7 +1156,6 @@ theorem toAdd_gsCharOfCocycle (z : cocycles (zmodRep.{0} (galUnramifiedOutside K
     (g : galUnramifiedOutside K.1 ℚ̄ S) : Multiplicative.toAdd (gsCharOfCocycle S n z g) = zmodCocycleHom z g :=
   rfl
 
-
 omit [Fintype S] [NeZero n] in
 theorem eq_zero_of_gsCharOfCocycle_eq_one (z : cocycles (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) 1)
     (hz : gsCharOfCocycle S n z = 1) : z = 0 := by
@@ -1200,7 +1167,6 @@ theorem eq_zero_of_gsCharOfCocycle_eq_one (z : cocycles (zmodRep.{0} (galUnramif
   apply ULift.ext
   exact e.trans (congrArg (fun w => (cochainOf (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) w ![v 0]).down)
     (map_zero (cocycleι (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) 1))).symm
-
 
 omit [Fintype S] [NeZero n] in
 theorem exists_gsCharOfCocycle_eq
@@ -1227,13 +1193,6 @@ variable (ℓ k : ℕ) (hℓ : ℓ.Prime) (hnk : n = ℓ ^ k)
   (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
   (hodd : Odd n ∨ IsTotallyComplex K.1) (h3 : Subsingleton (cohomology (gsRoots S n) 3))
 
-omit [Fintype S] [NeZero n] in
-include hnk hS in
-theorem hnS_of_hS : ∀ v ∉ S, ((n : ℕ) : 𝓞 K.1) ∉ v.asIdeal := fun v hv => by
-  subst hnk
-  exact pow_notMem_asIdeal_of_forall S ℓ k hS v hv
-
-
 include hℓ hnk hS in
 theorem gsCompactInv_gsCupClass (hnS : ∀ v ∉ S, ((n : ℕ) : 𝓞 K.1) ∉ v.asIdeal) (d : GsUnitsDatum S)
     (z : cocycles (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) 1) :
@@ -1243,15 +1202,12 @@ theorem gsCompactInv_gsCupClass (hnS : ∀ v ∉ S, ((n : ℕ) : 𝓞 K.1) ∉ v
   zmodToQZ_injective (n := n) (zmodToQZ_gsCompactInv_gsCupClass S ιs n hnS ℓ k hℓ hnk hS hodd h3 d z
     (gsCharOfCocycle S n z) (fun _ => rfl))
 
-
 omit [Fintype S] [NeZero n] in
 theorem eq_zero_of_coprime_nsmul_zmod (hnk : n = ℓ ^ k) {m : ℕ} (hm : m.Coprime ℓ) {u : ZMod n}
     (h : m • u = 0) : u = 0 := by
   have hmn : m.Coprime n := hnk ▸ hm.pow_right k
   rw [nsmul_eq_mul] at h
   exact (ZMod.unitOfCoprime m hmn).isUnit.mul_right_eq_zero.1 h
-
-
 
 attribute [local irreducible] gsCompactInv compactCupRes
 
@@ -1261,7 +1217,7 @@ theorem gsCompactInv_ker_left (x : cohomology (zmodRep.{0} (galUnramifiedOutside
       gsCompactInv S ιs n hodd h3 (compactCupRes (gsFinFamily S ιs)
         (zmodMulPairingRight n (gsRoots S n) (nsmul_gsRoots S n)) (show 2 + 1 = 3 from rfl) y x) = 0) :
     x = 0 := by
-  have hnS := hnS_of_hS S n ℓ k hnk hS
+  have hnS := GroundTheory.ProfCoh.natCast_not_mem_of_not_mem S n ℓ k hnk hS
   have hz := cohomologyπ_surjective (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) 1 x
   by_contra hne
   have hχ : gsCharOfCocycle S n hz.choose ≠ 1 := fun h => hne (hz.choose_spec.symm.trans
@@ -1301,15 +1257,13 @@ theorem exists_nsmul_eq_of_forall_zmod {A : Type*} [AddCommGroup A] (a : A)
   obtain ⟨f, hf⟩ := zmod_exists_apply_ne_zero htors hq
   exact hf (h (f.comp (QuotientAddGroup.mk' N)))
 
-
-
 include hℓ hnk hS in
 theorem gsCompactInv_ker_right (y : compactCohomologyRes (gsFinFamily S ιs) (gsRoots S n) 2)
     (hy : ∀ x : cohomology (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) 1,
       gsCompactInv S ιs n hodd h3 (compactCupRes (gsFinFamily S ιs)
         (zmodMulPairingRight n (gsRoots S n) (nsmul_gsRoots S n)) (show 2 + 1 = 3 from rfl) y x) = 0) :
     y = 0 := by
-  have hnS := hnS_of_hS S n ℓ k hnk hS
+  have hnS := GroundTheory.ProfCoh.natCast_not_mem_of_not_mem S n ℓ k hnk hS
   by_cases hk : k = 0
   · have hn1 : n = 1 := by rw [hnk, hk, pow_zero]
     have e := nsmul_compactCohomologyRes_eq_zero (gsFinFamily S ιs) (nsmul_gsRoots S n) 2 y
@@ -1382,7 +1336,6 @@ variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1))) [Fintype 
   (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
   (hodd : Odd n ∨ IsTotallyComplex K.1) (h3 : Subsingleton (cohomology (gsRoots S n) 3))
 
-
 attribute [local irreducible] GsBaseBijective gsCompactInv compactCores compactCupRes
 
 include hℓ hnk hS in
@@ -1399,8 +1352,6 @@ theorem gsBaseBijective_of_fixing (hP : GsPairingInput n ℓ)
   have hbase := @gsBaseBijective_of_le K S ‹Fintype S› ιs n ℓ k ‹NeZero n›
     hℓ hnk hS hodd h3 hP hcores W₀ hW₀ L hKL hL hU
   assumption
-
-
 
 include hℓ hnk hS in
 theorem exists_compactDualityHypotheses_gs_of_pairing (hP : GsPairingInput n ℓ) :
@@ -1426,11 +1377,9 @@ theorem exists_compactDualityHypotheses_gs_of_pairing (hP : GsPairingInput n ℓ
     unfold GsBaseBijective at hbase
     with_reducible assumption
 
-
 include hℓ hnk in
 theorem gsPairingInput : GsPairingInput n ℓ := fun _ S' _ ιs' hS' _ hodd' h3' =>
   ⟨gsCompactInv_ker_left S' ιs' n ℓ k hℓ hnk hS' hodd' h3', gsCompactInv_ker_right S' ιs' n ℓ k hℓ hnk hS' hodd' h3'⟩
-
 
 include hℓ hnk hS in
 theorem exists_compactDualityHypotheses_gs :
@@ -1458,15 +1407,12 @@ namespace GroundTheory.ProfCoh
 
 open IsDedekindDomain NumberField CategoryTheory MonoidalCategory GroundTheory.Global
 
-attribute [local instance 2000] Rep.hV2
-
 local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1))) [Fintype S]
   (ιs : ∀ v : S, ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1))
   {N : ℕ} [NeZero N] (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((N : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
   (hK : Odd N ∨ IsTotallyComplex K.1)
-
 
 omit [NeZero N] in
 theorem gsBaseCase : ∀ p ∈ N.primeFactors, ∃ U₀ : OpenSubgroup (galUnramifiedOutside K.1 ℚ̄ S),
@@ -1480,12 +1426,10 @@ theorem gsBaseCase : ∀ p ∈ N.primeFactors, ∃ U₀ : OpenSubgroup (galUnram
 variable (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)) [IsDiscreteRep M] [Finite M]
   (hM : ∀ m : M, N • m = 0)
 
-
 include hM in
 theorem poitouTate_duality_gs {r s : ℕ} (h : r + s = 3) :
     Function.Bijective (compactDualityMap (gsFinFamily S ιs) (gsRoots S N) h (gsCompactInv S ιs N hK (subsingleton_cohomology_three_gsRoots S hS hK)) M) :=
   (gsPoitouTateDualityHypotheses S ιs hS hK (gsBaseCase S ιs hS hK)).bijective_compactDualityMap M hM h
-
 
 include hM in
 theorem poitouTate_sha_gs :
@@ -1493,7 +1437,6 @@ theorem poitouTate_sha_gs :
       Function.Bijective (ptShaPairing (gsFinFamily S ιs) (gsRoots S N) M (gsCompactInv S ιs N hK (subsingleton_cohomology_three_gsRoots S hS hK))) ∧
       Function.Bijective (ptShaPairing (gsFinFamily S ιs) (gsRoots S N) M (gsCompactInv S ιs N hK (subsingleton_cohomology_three_gsRoots S hS hK))).flip :=
   (gsPoitouTateDualityHypotheses S ιs hS hK (gsBaseCase S ιs hS hK)).sha M hM
-
 
 include hM in
 theorem poitouTate_nineTerm_gs :

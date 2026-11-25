@@ -48,7 +48,6 @@ open IsDedekindDomain NumberField Finset MeasureTheory
 open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTheory.RowTest
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 namespace GlobalTheory.SqTop
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 theorem triEx_holds_alt : GlobalTheory.Published.HoweDualityReal → _root_.GlobalTheory.FunPr.ThetaLocalInputs → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.ThetaIntegralsAgree →
     GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.LocalMatching → LNe → TriEx := by
   intro hH hP hK hM hL
@@ -77,11 +76,4 @@ theorem triEx_holds_alt : GlobalTheory.Published.HoweDualityReal → _root_.Glob
   exact ⟨A, A', WW, X, lam, hX, hF.isConst⟩
 end GlobalTheory.SqTop
 end
-end
-
-section
-open GlobalTheory.SqTop
-
-theorem _root_.GlobalTheory.T.triEx_of_howe_duality_real : GlobalTheory.Published.HoweDualityReal → _root_.GlobalTheory.FunPr.ThetaLocalInputs → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.ThetaIntegralsAgree → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.LocalMatching → LNe → TriEx := by
-  first | exact @_root_.GlobalTheory.SqTop.triEx_holds_alt
 end

@@ -35,48 +35,7 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberField
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.LayerGen
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.LayerUniq
 public import Formalism.GaloisCohomology.GaloisCohomologyProofs.LdataNonempty
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.LevelInertiaLeLevelDec
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
 import Mathlib.FieldTheory.Galois.Profinite
@@ -84,12 +43,6 @@ import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 import Mathlib.Tactic.Linter.Style
 import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Topology.Algebra.Group.Units
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.QzSep, Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.LenDual, Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.CokerDual, Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.ExistsGen, Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.GenGal, Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.IdealNormClassCongr, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.VanishCyc, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ExtCocycle, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ResInfOnto, Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.DinfTransport, Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.Imports, Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.DinfTors, Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.ShaDGen, Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.ExistsDescends
@@ -130,7 +83,7 @@ private theorem exists_qz_ne_zero_annihilators_of_ne_zero (l : ℕ) [Fact l.Prim
     · rw [hdec _ a a0] at ha ⊢
       have hle : r ≤ a.valuation := Nat.find_min' hex ha
       rw [← Nat.add_sub_cancel' hle, pow_add, mul_comm, mul_smul, hx, smul_zero]
-  · push_neg at hex
+  · push Not at hex
     obtain ⟨ι, hinj, hrange, hlin⟩ := zmodToQZ l 1
     haveI : Fact (1 < l ^ 1) := ⟨by rw [pow_one]; exact hl1⟩
     have hι0 : ι 0 = 0 := by simpa using hlin 0 0
@@ -347,7 +300,7 @@ theorem UpperTheory.V.Tower.existsGen :
         rw [Subgroup.map_le_iff_le_comap]
         intro x hx
         have hx' := h hx
-        simp only [gamU, levU, qExp, if_pos hl, Subgroup.mem_inf] at hx'
+        simp only [gamU, levU, qExp, ite_eq_left hl, Subgroup.mem_inf] at hx'
         exact hx'.2
     · exact Or.inl hl
   obtain ⟨γ', hγ', hle⟩ := UpperTheory.V.Kum.existsGen l (U.map (cycZ k Ω l)) hclosed hc
@@ -502,8 +455,7 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 
 private theorem exists_level_pow_dvd_of_not_finOrder (l : ℕ) [hl : Fact l.Prime] (u : ℤ_[l]ˣ) (hu : ¬ IsOfFinOrder u) (a : ℕ) :
     ∃ j : ℕ, ∀ m : ℤ, PadicInt.toZModPow j ((u ^ m : ℤ_[l]ˣ) : ℤ_[l]) = 1 → (l : ℤ) ^ (a + 1) ∣ m := by
-  by_contra h
-  push_neg at h
+  by_contra! h
   apply hu
   have hK : 0 < l ^ a * (l - 1) :=
     Nat.mul_pos (pow_pos hl.out.pos a) (Nat.sub_pos_of_lt hl.out.one_lt)
@@ -536,8 +488,7 @@ private theorem exists_level_pow_dvd_of_not_finOrder (l : ℕ) [hl : Fact l.Prim
       rw [← Nat.dvd_gcd_mul_iff_dvd_mul] at hcard
       obtain ⟨b, -, hb⟩ := (Nat.dvd_prime_pow hl.out).mp (Nat.gcd_dvd_right (orderOf w) (l ^ i))
       have hba : b ≤ a := by
-        by_contra hba
-        push_neg at hba
+        by_contra! hba
         apply hnd
         have h1 : (l : ℤ) ^ b ∣ m := by
           have : l ^ b ∣ orderOf w := hb ▸ Nat.gcd_dvd_left _ _
@@ -1070,6 +1021,24 @@ section -- clump:auto
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.Tower
 
+private theorem mem_conjCond_iff {F Ω R M : Type} [Field F] [Field Ω] [Algebra F Ω]
+    [CommRing R] [AddCommGroup M] [Module R M] (U : Subgroup (G F Ω)) [U.Normal]
+    (g : G F Ω) (T : M →ₗ[R] M) (f : U → M) :
+    f ∈ conjCond U g.toRingEquiv T ↔ ∀ u, f u = T (f (conjHom U g u)) := by
+  constructor
+  · intro hf u
+    exact hf _ u (fun x => by
+      change (u : G F Ω) (g x) = g ((g⁻¹ * (u : G F Ω) * g) x)
+      rw [AlgEquiv.mul_apply, AlgEquiv.mul_apply, AlgEquiv.aut_inv, AlgEquiv.apply_symm_apply])
+  · intro hf u u' huu
+    have hconj : conjHom U g u' = u := by
+      apply Subtype.ext
+      ext x
+      change g⁻¹ ((u' : G F Ω) (g x)) = (u : G F Ω) x
+      rw [show (u' : G F Ω) (g x) = g ((u : G F Ω) x) from huu x,
+        AlgEquiv.aut_inv, AlgEquiv.symm_apply_apply]
+    simpa only [hconj] using hf u'
+
 theorem UpperTheory.V.Tower.desc :
     ∀ (k L Ω : Type) [Field k] [NumberField k] [Field L] [NumberField L] [Field Ω] [Algebra k L] [Algebra k Ω] [Algebra L Ω] [IsScalarTower k L Ω] [IsAlgClosure k Ω] [IsAlgClosure L Ω] (l : ℕ) [Fact l.Prime] (D : LData L Ω l) (e : ℤ) (U : Subgroup (G k Ω)) [U.Normal], e ≠ 0 → Procyc L Ω l → cycU l U = cycU l (galOf k L Ω) →
         ∃ Φ : Sha D e ≃ₗ[ℤ_[l]] ShaD l l U (galOf k L Ω) e, IsDesc L D e U Φ.toLinearMap := by
@@ -1104,8 +1073,6 @@ theorem UpperTheory.V.Tower.desc :
         (((cycZ k Ω l ^ (-e)) g : ℤ_[l]ˣ) : ℤ_[l]) • (χ : cycU l U → QZ l) (conjHom (cycU l U) g w) := by
     intro g χ w
     rfl
-  have hq : ∀ (h : G L Ω) (m : QZ l),
-      qzG L Ω l e h m = (((cycZ L Ω l ^ (-e)) h : ℤ_[l]ˣ) : ℤ_[l]) • m := fun h m => rfl
   have hqE : ∀ (h : G L Ω) (m : QZ l),
       (((cycZ k Ω l ^ (-e)) (galEmb k L Ω h) : ℤ_[l]ˣ) : ℤ_[l]) • m = qzG L Ω l e h m := by
     intro h m
@@ -1121,61 +1088,42 @@ theorem UpperTheory.V.Tower.desc :
       exact w.2
     obtain ⟨u, hu, huw⟩ := hw
     exact ⟨⟨u, hu⟩, Subtype.ext huw⟩
+  have hconjE (h : G L Ω) (u : cycU l (⊤ : Subgroup (G L Ω))) :
+      conjHom (cycU l U) (galEmb k L Ω h) (E u) =
+        E (conjHom (cycU l (⊤ : Subgroup (G L Ω))) h u) := by
+    apply Subtype.ext
+    change (galEmb k L Ω h)⁻¹ * galEmb k L Ω u * galEmb k L Ω h =
+      galEmb k L Ω (h⁻¹ * (u : G L Ω) * h)
+    rw [map_mul, map_mul, map_inv]
   have key : ∀ χ : Dinf l l U, χ ∈ ShaD l l U (galOf k L Ω) e ↔
       ((Ψ χ : Dinf l l (⊤ : Subgroup (G L Ω))) : cycU l (⊤ : Subgroup (G L Ω)) → QZ l) ∈
         EqHom l (Uinf L Ω l) (qzG L Ω l e) := by
     intro χ
-    have hX : ((Ψ χ : Dinf l l (⊤ : Subgroup (G L Ω))) : cycU l (⊤ : Subgroup (G L Ω)) → QZ l) ∈
-        XDual l (Uinf L Ω l) ℤ_[l] (QZ l) := (Ψ χ).2
     have hΨE : ∀ u, ((Ψ χ : Dinf l l (⊤ : Subgroup (G L Ω))) :
         cycU l (⊤ : Subgroup (G L Ω)) → QZ l) u = (χ : cycU l U → QZ l) (E u) :=
       fun u => hΨ χ u (E u) rfl
     constructor
     · intro hinv
-      refine Submodule.mem_inf.2 ⟨hX, (Submodule.mem_iInf _).2 fun h => ?_⟩
-      intro u u' huu
-      rw [hΨE, hΨE]
+      refine Submodule.mem_inf.2 ⟨(Ψ χ).2, (Submodule.mem_iInf _).2 fun h => ?_⟩
+      rw [mem_conjCond_iff]
+      intro u
       have hg : galEmb k L Ω h ∈ galOf k L Ω := fun x => h.commutes x
       have hinvg := (Representation.mem_invariants _ _).1 hinv ⟨_, hg⟩
-      have h2 : ((dTw l l U e (galEmb k L Ω h) χ : Dinf l l U) : cycU l U → QZ l) (E u') =
-          (χ : cycU l U → QZ l) (E u') :=
-        congrArg (fun y : Dinf l l U => (y : cycU l U → QZ l) (E u')) hinvg
-      rw [hdTw] at h2
-      have hconj : conjHom (cycU l U) (galEmb k L Ω h) (E u') = E u := by
-        apply Subtype.ext
-        show (galEmb k L Ω h)⁻¹ * galEmb k L Ω u' * galEmb k L Ω h = galEmb k L Ω u
-        rw [← map_inv, ← map_mul, ← map_mul]
-        congr 1
-        ext x
-        show h⁻¹ ((u' : G L Ω) (h x)) = (u : G L Ω) x
-        rw [show (u' : G L Ω) (h x) = h ((u : G L Ω) x) from huu x, AlgEquiv.aut_inv,
-          AlgEquiv.symm_apply_apply]
-      rw [hconj, hqE] at h2
-      exact h2.symm
+      have h2 := congrArg (fun y : Dinf l l U => (y : cycU l U → QZ l) (E u)) hinvg
+      change ((dTw l l U e (galEmb k L Ω h) χ : Dinf l l U) : cycU l U → QZ l) (E u) = _ at h2
+      rw [hdTw, hconjE, hqE] at h2
+      simpa only [hΨE] using h2.symm
     · intro hE
-      obtain ⟨_, hC⟩ := Submodule.mem_inf.1 hE
-      rw [Submodule.mem_iInf] at hC
+      have hC := (Submodule.mem_iInf _).1 (Submodule.mem_inf.1 hE).2
       refine (Representation.mem_invariants _ _).2 fun g => ?_
       obtain ⟨h, hh⟩ := hlift g g.2
       apply Subtype.ext
       funext w
-      show ((dTw l l U e (g : G k Ω) χ : Dinf l l U) : cycU l U → QZ l) w = (χ : cycU l U → QZ l) w
-      rw [hdTw]
-      obtain ⟨u', rfl⟩ := hEsurj w
-      have hu : h⁻¹ * (u' : G L Ω) * h ∈ cycU l (⊤ : Subgroup (G L Ω)) := by
-        refine Subgroup.mem_inf.2 ⟨Subgroup.mem_top _, ?_⟩
-        rw [MonoidHom.mem_ker, map_mul, map_mul, map_inv,
-          MonoidHom.mem_ker.1 (Subgroup.mem_inf.1 u'.2).2, mul_one, inv_mul_cancel]
-      have hcond := hC h ⟨_, hu⟩ u' (fun x => by
-        show (u' : G L Ω) (h x) = h ((h⁻¹ * (u' : G L Ω) * h) x)
-        rw [AlgEquiv.mul_apply, AlgEquiv.mul_apply, AlgEquiv.aut_inv, AlgEquiv.apply_symm_apply])
-      rw [hΨE, hΨE] at hcond
-      have hconj : conjHom (cycU l U) (g : G k Ω) (E u') = E ⟨_, hu⟩ := by
-        apply Subtype.ext
-        show (g : G k Ω)⁻¹ * galEmb k L Ω u' * (g : G k Ω) = galEmb k L Ω (h⁻¹ * (u' : G L Ω) * h)
-        rw [← hh, map_mul, map_mul, map_inv]
-      rw [hconj, ← hh, hqE]
-      exact hcond.symm
+      obtain ⟨u, rfl⟩ := hEsurj w
+      change ((dTw l l U e (g : G k Ω) χ : Dinf l l U) : cycU l U → QZ l) (E u) = _
+      rw [← hh, hdTw, hconjE, hqE]
+      have hcond := (mem_conjCond_iff _ _ _ _).1 (hC h) u
+      simpa only [hΨE] using hcond.symm
   have hR : ∀ x : Sha D e, resInf D e (x : H1 (qzTw D e)) ∈ EqHom l (Uinf L Ω l) (qzG L Ω l e) := by
     intro x
     rw [← resInfOnto L Ω l D e he hpro]

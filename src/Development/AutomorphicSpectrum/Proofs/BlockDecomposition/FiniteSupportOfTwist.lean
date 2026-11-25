@@ -4,42 +4,6 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Integral
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.EulerFinOf
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -49,7 +13,6 @@ open NumberField IsDedekindDomain Matrix Polynomial Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host
 open GlobalTheory.BCT
 open scoped Classical TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.CompanionTheory.SuppFinTw
 
@@ -134,8 +97,8 @@ theorem glue {S : Set (Pl E)} (hS : IsSection S) (δ₁ : GL (Fin a) E) (δ₂ :
   obtain ⟨t, hz⟩ := exists_of_family (fun u => if u ∈ S then atH a b u t₀ else atH a b u g) (by
     filter_upwards [ae_mem t₀, ae_mem g] with u h1 h2
     split_ifs <;> assumption)
-  have hin : ∀ u ∈ S, atH a b u t = atH a b u t₀ := fun u hu => by rw [hz, if_pos hu]
-  have hout : ∀ u, u ∉ S → atH a b u t = atH a b u g := fun u hu => by rw [hz, if_neg hu]
+  have hin : ∀ u ∈ S, atH a b u t = atH a b u t₀ := fun u hu => by rw [hz, ite_eq_left hu]
+  have hout : ∀ u, u ∉ S → atH a b u t = atH a b u g := fun u hu => by rw [hz, ite_eq_right hu]
   refine ⟨t, ?_, hin⟩
   change t * δ = δ * thP E a b t
   refine ext_atH fun u => ?_
@@ -232,7 +195,7 @@ theorem factors_ne {S : Set (Pl E)} {φ₁ φ₂ : ∀ w : Pl E, GLw a w × GLw 
     exact ⟨hw, by rw [Function.mem_mulSupport, h0]; exact zero_ne_one⟩
   refine ⟨left_ne_zero_of_mul hne, fun hs => ?_⟩
   have := right_ne_zero_of_mul hne
-  rwa [if_pos hs] at this
+  rwa [ite_eq_left hs] at this
 
 theorem exists_cover (hU : GlobalTheory.BCT.Unr E) (LS : LocSupp) (UA : UnitAE) {S : Set (Pl E)} (hS : IsSection S)
     {φ₁ φ₂ : ∀ w : Pl E, GLw a w × GLw b w → ℂ} (h₁ : IsTestP φ₁) (h₂ : IsTestP φ₂)
@@ -252,9 +215,9 @@ theorem exists_cover (hU : GlobalTheory.BCT.Unr E) (LS : LocSupp) (UA : UnitAE) 
     if IsSplitAt w then tsupport (φ₁ w) * tsupport (φ₂ w) else tsupport (φ₁ w)
   have hC' : ∀ w, IsCompact (C' w) := fun w => by
     by_cases h : IsSplitAt w
-    · simp only [C', if_pos h]
+    · simp only [C', ite_eq_left h]
       exact ((test_parts h₁).1 w).isCompact.mul ((test_parts h₂).1 w).isCompact
-    · simp only [C', if_neg h]
+    · simp only [C', ite_eq_right h]
       exact ((test_parts h₁).1 w).isCompact
   choose B₀ hB₀c hB₀ using fun w : Pl E => cover_of_fin (thW a b w) (K2 a b w) (hKc w) (dW w δ₁ δ₂) (C' w)
     ((LS E hU a b w (dW w δ₁ δ₂) (sep₁ w) (sep₂ w)).1 (C' w) (hC' w))
@@ -282,19 +245,19 @@ theorem exists_cover (hU : GlobalTheory.BCT.Unr E) (LS : LocSupp) (UA : UnitAE) 
   let B' : ∀ w : Pl E, Set (GLw a w × GLw b w) := fun w => ({(atH a b w (dG δ₁ δ₂))⁻¹} * B w) * Cc w
   have hBc : ∀ w, IsCompact (B w) := fun w => by
     by_cases h : w ∈ R
-    · simp only [B, if_pos h]; exact hB₀c w
-    · simp only [B, if_neg h]; exact hKc w
+    · simp only [B, ite_eq_left h]; exact hB₀c w
+    · simp only [B, ite_eq_right h]; exact hKc w
   have hCc : ∀ w, IsCompact (Cc w) := fun w => by
     by_cases h : w ∈ R
-    · simp only [Cc, if_pos h]; exact ((test_parts h₁).1 w).isCompact
-    · simp only [Cc, if_neg h]; exact hKc w
+    · simp only [Cc, ite_eq_left h]; exact ((test_parts h₁).1 w).isCompact
+    · simp only [Cc, ite_eq_right h]; exact hKc w
   have hB'c : ∀ w, IsCompact (B' w) := fun w => (isCompact_singleton.mul (hBc w)).mul (hCc w)
-  have hK : ∀ w ∈ S, w ∉ R → B w ⊆ K2 (E := E) a b w := fun w _ h => by simp only [B, if_neg h]; exact subset_rfl
+  have hK : ∀ w ∈ S, w ∉ R → B w ⊆ K2 (E := E) a b w := fun w _ h => by simp only [B, ite_eq_right h]; exact subset_rfl
   have hK' : ∀ w ∈ S, w ∉ R → B' w ⊆ K2 (E := E) a b w := by
     rintro w hw hR _ ⟨_, ⟨_, rfl, p, hp, rfl⟩, c, hc, rfl⟩
     have hc' : c ∈ K2 (E := E) a b w := by
       have h : c ∈ Cc w := hc
-      simp only [Cc, if_neg hR] at h
+      simp only [Cc, ite_eq_right hR] at h
       exact h
     exact mul_mem (mul_mem (inv_mem (hG1 w hw hR).2.2) (hK w hw hR hp)) hc'
   obtain ⟨F, hF, hcov⟩ := finite_cover hS R hRS B B' (fun w _ => hBc w) (fun w _ => hB'c w) hK hK'
@@ -315,8 +278,8 @@ theorem exists_cover (hU : GlobalTheory.BCT.Unr E) (LS : LocSupp) (UA : UnitAE) 
     exact Set.indicator_of_notMem hn _
   have hyC : ∀ w ∈ S, atH a b w y ∈ Cc w := fun w hw => by
     by_cases hR : w ∈ R
-    · simp only [Cc, if_pos hR]; exact subset_tsupport _ (fac w hw).1
-    · simp only [Cc, if_neg hR]; exact hyK w hw hR
+    · simp only [Cc, ite_eq_left hR]; exact subset_tsupport _ (fac w hw).1
+    · simp only [Cc, ite_eq_right hR]; exact hyK w hw hR
   have hsplit : ∀ w, IsSplitAt w → (atH a b w x)⁻¹ * dW w δ₁ δ₂ * thW a b w (atH a b w x) =
       atH a b w y * atH a b w (thP E a b y) := fun w hs => by
     have e : y * thP E a b y = x⁻¹ * (δ * thP E a b δ) * x := by
@@ -329,16 +292,16 @@ theorem exists_cover (hU : GlobalTheory.BCT.Unr E) (LS : LocSupp) (UA : UnitAE) 
   have hloc : ∀ w ∈ S, ∃ t ∈ twCent (thW a b w) (dW w δ₁ δ₂), t⁻¹ * atH a b w x ∈ B w := by
     intro w hw
     by_cases hR : w ∈ R
-    · simp only [B, if_pos hR]
+    · simp only [B, ite_eq_left hR]
       refine hB₀ w _ ?_
       by_cases hs : IsSplitAt w
-      · simp only [C', if_pos hs]
+      · simp only [C', ite_eq_left hs]
         rw [hsplit w hs]
         exact Set.mul_mem_mul (subset_tsupport _ (fac w hw).1) (subset_tsupport _ ((fac w hw).2 hs))
-      · simp only [C', if_neg hs]
+      · simp only [C', ite_eq_right hs]
         rw [hinert w hs]
         exact subset_tsupport _ (fac w hw).1
-    · simp only [B, if_neg hR]
+    · simp only [B, ite_eq_right hR]
       refine hG2 w hw hR _ ?_
       by_cases hs : IsSplitAt w
       · rw [hsplit w hs]
@@ -350,17 +313,17 @@ theorem exists_cover (hU : GlobalTheory.BCT.Unr E) (LS : LocSupp) (UA : UnitAE) 
     filter_upwards [ae_mem x, R.finite_toSet.compl_mem_cofinite] with u hxu huR
     have huR' : u ∉ R := by simpa using huR
     by_cases hu : u ∈ S
-    · rw [if_pos hu]
+    · rw [ite_eq_left hu]
       have hb : (tw u)⁻¹ * atH a b u x ∈ K2 (E := E) a b u := by
         have h := htwB u hu
-        simp only [B, if_neg huR'] at h
+        simp only [B, ite_eq_right huR'] at h
         exact h
       have e : tw u = atH a b u x * ((tw u)⁻¹ * atH a b u x)⁻¹ := by group
       rw [e]
       exact mul_mem hxu (inv_mem hb)
-    · rw [if_neg hu]
+    · rw [ite_eq_right hu]
       exact one_mem _)
-  have ht₀S : ∀ w ∈ S, atH a b w t₀ = tw w := fun w hw => by rw [ht₀, if_pos hw]
+  have ht₀S : ∀ w ∈ S, atH a b w t₀ = tw w := fun w hw => by rw [ht₀, ite_eq_left hw]
   obtain ⟨t, htT, htS⟩ := glue hS δ₁ δ₂ t₀ (fun w hw => by rw [ht₀S w hw]; exact htw w hw)
   have ht' : t * δ = δ * thP E a b t := htT
   have hth : thP E a b (t⁻¹ * x) = δ⁻¹ * (t⁻¹ * x) * y := by

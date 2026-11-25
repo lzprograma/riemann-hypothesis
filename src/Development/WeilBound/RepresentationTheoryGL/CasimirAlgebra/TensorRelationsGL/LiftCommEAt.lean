@@ -1,45 +1,6 @@
 module
 
 public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.QdetFacts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -76,7 +37,7 @@ theorem Om_apply (E : Fin n → Fin n → Module.End ℂ M) (p : P) (f : TV n M 
   rw [Finset.sum_eq_single (I p)]
   · simp
   · intro b _ hb
-    rw [if_neg (Ne.symm hb), map_zero]
+    rw [ite_eq_right (Ne.symm hb), map_zero]
   · simp
 
 omit [Fintype P] [DecidableEq P] in
@@ -120,6 +81,54 @@ theorem actT_apply {ι Γ : Type} (lab : P → ι) (κ : ι → Γ → Matrix (F
 
 theorem curF_apply {m k : ℕ} (f : TV n M (Fin (m + k))) (J : Fin k → Fin n) (I : Fin m → Fin n) :
     curF n M m k f J I = f (Fin.append I J) := rfl
+
+section SharedAlg
+
+theorem liftA_apply {n : ℕ} {M P : Type} [AddCommGroup M] [Module ℂ M] (B : Module.End ℂ M) :
+    liftA n M P B = lift B := rfl
+
+theorem lift_alg {n : ℕ} {M P : Type} [AddCommGroup M] [Module ℂ M] (c : ℂ) :
+    (lift (algebraMap ℂ (Module.End ℂ M) c) : Module.End ℂ (TV n M P)) = algebraMap ℂ _ c :=
+  (liftA n M P).commutes c
+
+theorem qdet_map {A B : Type*} [Ring A] [Algebra ℂ A] [Ring B] [Algebra ℂ B] {m : ℕ} (φ : A →ₐ[ℂ] B)
+    (E : Fin m → Fin m → A) (u : ℂ) : φ (qdet E u) = qdet (fun a b => φ (E a b)) u := by
+  simp [qdet, qminor, Tm, map_list_prod, List.map_ofFn, Function.comp_def, apply_ite φ]
+
+theorem glRel_map {A B : Type*} [Ring A] [Algebra ℂ A] [Ring B] [Algebra ℂ B] {m : ℕ} (φ : A →ₐ[ℂ] B)
+    {E : Fin m → Fin m → A} (h : GlRel E) : GlRel fun a b => φ (E a b) := by
+  intro a b c d
+  have := congrArg φ (h a b c d)
+  simpa only [map_sub, map_mul, apply_ite φ, map_zero] using this
+
+theorem qdet_commute {A : Type*} [Ring A] [Algebra ℂ A] {m : ℕ} (E : Fin m → Fin m → A) (u : ℂ) (Z : A)
+    (h : ∀ a b, Commute (E a b) Z) : Commute (qdet E u) Z := by
+  unfold qdet qminor
+  refine Commute.sum_left _ _ _ fun σ _ =>
+    Commute.mul_left (Int.cast_commute _ _) (Commute.list_prod_left _ _ fun x hx => ?_)
+  obtain ⟨k, rfl⟩ := List.mem_ofFn.mp hx
+  unfold Tm
+  refine Commute.add_left ?_ (h _ _)
+  split_ifs
+  · exact Algebra.commute_algebraMap_left _ _
+  · exact Commute.zero_left _
+
+theorem pm_single {n : ℕ} {M P : Type} [AddCommGroup M] [Module ℂ M] [Fintype P] [DecidableEq P]
+    (σ : Equiv.Perm P) (I : P → Fin n) (v : M) :
+    pm σ (Pi.single I v : TV n M P) = Pi.single (I ∘ σ.symm) v := by
+  funext J
+  rw [pm_apply]
+  simp only [Pi.single_apply, Equiv.eq_comp_symm]
+
+theorem eAt_comm {n : ℕ} {M P : Type} [AddCommGroup M] [Module ℂ M] [DecidableEq P]
+    {p q : P} (h : p ≠ q) (a b c d : Fin n) :
+    Commute (eAt p a b : Module.End ℂ (TV n M P)) (eAt q c d) := by
+  refine LinearMap.ext fun f => funext fun I => ?_
+  simp only [mul_apply_eq_comp, eAt_apply, Function.update_of_ne h, Function.update_of_ne h.symm,
+    Function.update_comm h b d I]
+  split_ifs <;> rfl
+
+end SharedAlg
 
 end PositivityTheory.Rg.Cz
 

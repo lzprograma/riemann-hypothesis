@@ -139,7 +139,6 @@ theorem exists_theta_local {S : Scheme.{0}} (G : Over S) [GrpObj G] (hA : IsAbel
     | succ m ih =>
       obtain ⟨t, ht⟩ := ih
       obtain ⟨c, hc⟩ := cube (a ^ m) a y
-      have e₁ : a ^ m * a * y = a ^ (m + 1) * y := by rw [pow_succ]
       have e₂ : a ^ m * a = a ^ (m + 1) := by rw [pow_succ]
       obtain ⟨t', ht', -⟩ := Geo.Tor.exists_gen hL (K' := Fin 6)
         (φ' := ![(a ^ (m + 1) * y).left, (a ^ (m + 1)).left, (a * y).left, a.left, y.left,

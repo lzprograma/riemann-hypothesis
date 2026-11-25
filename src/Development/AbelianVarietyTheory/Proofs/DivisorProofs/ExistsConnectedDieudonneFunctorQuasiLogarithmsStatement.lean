@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SwapSubInOfCob2In
 public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
 public import Development.AbelianVarietyTheory.Definitions.Divisors.ToBaseChangePtsBijective
 public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqZeroOfCobOneEqZero
@@ -104,8 +105,6 @@ import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankRigidExtensi
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
 
 namespace GlobalTheory.Katz
@@ -145,7 +144,6 @@ section -- clump:auto
 
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory
 namespace Katz
@@ -256,8 +254,6 @@ section -- clump:auto
 @[expose] public section
 
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -444,68 +440,11 @@ namespace GlobalTheory.Katz
 
 variable {R S : Type} [CommRing R] [CommRing S] (σ : R →+* S) {d : ℕ} {τ : Type}
 
-theorem map_powerSeriesEvalTwoGroups (c : MvPowerSeries (Fin d ⊕ Fin d) R) {u v : Fin d → MvPowerSeries τ R}
-    (hu : ∀ i, constantCoeff (u i) = 0) (hv : ∀ i, constantCoeff (v i) = 0) :
-    MvPowerSeries.map σ (at2 c u v) =
-      at2 (MvPowerSeries.map σ c) (fun i => MvPowerSeries.map σ (u i))
-        (fun i => MvPowerSeries.map σ (v i)) := by
-  have hs : HasSubst (Sum.elim u v) :=
-    hasSubst_of_constantCoeff_zero (fun s => by cases s <;> simp [hu, hv])
-  unfold at2
-  rw [map_subst hs]
-  congr 1
-  funext s
-  cases s <;> rfl
-
-theorem constantCoeff_powerSeriesEvalTwoGroups_zero_of {c : MvPowerSeries (Fin d ⊕ Fin d) R}
-    (hc : constantCoeff c = 0) {u v : Fin d → MvPowerSeries τ R}
-    (hu : ∀ i, constantCoeff (u i) = 0) (hv : ∀ i, constantCoeff (v i) = 0) :
-    constantCoeff (at2 c u v) = 0 := by
-  have h0 : ∀ s, constantCoeff (Sum.elim u v s) = 0 := fun s => by cases s <;> simp [hu, hv]
-  exact constantCoeff_subst_eq_zero (hasSubst_of_constantCoeff_zero h0) h0 hc
-
-theorem map_op_of_const (μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R) {u v : Fin d → MvPowerSeries τ R}
-    (hu : ∀ i, constantCoeff (u i) = 0) (hv : ∀ i, constantCoeff (v i) = 0) :
-    (fun i => MvPowerSeries.map σ (op μ u v i)) =
-      op (fun i => MvPowerSeries.map σ (μ i)) (fun i => MvPowerSeries.map σ (u i))
-        (fun i => MvPowerSeries.map σ (v i)) := by
-  funext i
-  exact map_powerSeriesEvalTwoGroups σ (μ i) hu hv
-
 theorem isLaw_map (R S : Type) [CommRing R] [CommRing S] (σ : R →+* S) (d : ℕ)
     (μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R) (h : IsLaw μ) :
     IsLaw (fun i => MvPowerSeries.map σ (μ i)) := by
-  have hX : ∀ {κ : Type} (f : Fin d → κ), (fun i => MvPowerSeries.map σ
-      (X (f i) : MvPowerSeries κ R)) = fun i => (X (f i) : MvPowerSeries κ S) := by
-    intro κ f; funext i; exact map_X σ (f i)
-  have hcX : ∀ {κ : Type} (f : Fin d → κ) (i : Fin d),
-      constantCoeff (X (f i) : MvPowerSeries κ R) = 0 := fun f i => constantCoeff_X _
-  refine ⟨fun i => ?_, ?_, fun i => ?_, ?_⟩
-  · rw [constantCoeff_map, h.const i, map_zero]
-  · have h1 := congrArg (fun w : Fin d → MvPowerSeries (Fin d) R =>
-      fun i => MvPowerSeries.map σ (w i)) h.unit
-    rw [map_op_of_const σ μ (u := fun i => (X i : MvPowerSeries (Fin d) R)) (fun i => constantCoeff_X i)
-      (fun _ => map_zero _)] at h1
-    simpa only [map_X, map_zero] using h1
-  · have h1 := congrArg (MvPowerSeries.map σ) (h.comm i)
-    unfold swap at h1 ⊢
-    rw [map_powerSeriesEvalTwoGroups σ (μ i) (hcX Sum.inr) (hcX Sum.inl)] at h1
-    simpa only [map_X] using h1
-  · have hx1 : ∀ i, constantCoeff (x1 (R := R) (d := d) i) = 0 := fun i => constantCoeff_X _
-    have hx2 : ∀ i, constantCoeff (x2 (R := R) (d := d) i) = 0 := fun i => constantCoeff_X _
-    have hx3 : ∀ i, constantCoeff (x3 (R := R) (d := d) i) = 0 := fun i => constantCoeff_X _
-    have c12 : ∀ i, constantCoeff (op μ x1 x2 i) = 0 := fun i =>
-      constantCoeff_powerSeriesEvalTwoGroups_zero_of (h.const i) hx1 hx2
-    have c23 : ∀ i, constantCoeff (op μ x2 x3 i) = 0 := fun i =>
-      constantCoeff_powerSeriesEvalTwoGroups_zero_of (h.const i) hx2 hx3
-    have h1 := congrArg (fun w : Fin d → MvPowerSeries (Fin d ⊕ (Fin d ⊕ Fin d)) R =>
-      fun i => MvPowerSeries.map σ (w i)) h.assoc
-    rw [map_op_of_const σ μ c12 hx3, map_op_of_const σ μ hx1 c23,
-      map_op_of_const σ μ hx1 hx2, map_op_of_const σ μ hx2 hx3] at h1
-    have e1 : (fun i => MvPowerSeries.map σ (x1 (R := R) (d := d) i)) = x1 := hX _
-    have e2 : (fun i => MvPowerSeries.map σ (x2 (R := R) (d := d) i)) = x2 := hX _
-    have e3 : (fun i => MvPowerSeries.map σ (x3 (R := R) (d := d) i)) = x3 := hX _
-    rwa [e1, e2, e3] at h1
+  intros
+  apply _root_.GlobalTheory.LawUp.isLaw_map <;> assumption
 
 end GlobalTheory.Katz
 end -- clump:auto
@@ -516,8 +455,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCommFormalGroupLawOfIsLawOf", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqZeroOfCobOneEqZero\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartSquareCoordinatesPresentLevels\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConnectedChartEvalSquareVariablesSwapConstant\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConnectedPDivGroupChartCoboundaryTwoCoordStatement\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfEvalCubeLevels\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FunctionsEqSeriesInChart\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConnectedPDivGroupFormalLawCoordinates\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.NilpotentEvalCommutesSubstAndAlgebraMap\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowerSeriesEvalAtNilpotentXEqCoordinate\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -616,7 +553,6 @@ section -- clump:auto
 
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.Katz.ModHom
 
@@ -674,8 +610,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapFormalGroupLawQuasiLogarithms", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubstLiftXPowFrob\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -921,8 +855,6 @@ section -- clump:auto
 
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.Katz
@@ -1095,8 +1027,6 @@ section -- clump:auto
 @[expose] public section
 
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -1391,8 +1321,6 @@ theorem exists_base_isConn_katz : ∀ (p : ℕ) [Fact p.Prime],
         chartPull_red (c k G h) (c k' G' h') (hlaw k G h) (hlaw k' G' h') (hc k G h) (hc k' G' h') s _
           (hP k k' σ G G' _ _ (c k G h) (c k' G' h') _ _ (hlaw k G h) (hlaw k' G' h') (hc k G h) (hc k' G' h') s)
           (ρ k G h) (ρ k' G' h') (hρ k G h) (hρ k' G' h') (r k G h) (r k' G' h') (hr k G h) (hr k' G' h') m }
-  have hid : ∀ {k : Type} [Field k] (G : PDivGroup p k) (n : ℕ) (a : G.A n),
-      (SemiHom.ofHom (𝟙 G)).app n a = a := fun G n a => rfl
   refine ⟨B, @fun k _ _ _ G h d' cc μ' hμ' hcc =>
     { toFun := P k k (RingHom.id k) G G _ _ (c k G h) cc _ _ (hlaw k G h) hμ' (hc k G h) hcc
         (SemiHom.ofHom (𝟙 G))

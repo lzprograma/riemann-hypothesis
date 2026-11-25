@@ -25,52 +25,10 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmVecTra
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InverseUnipotentVolumeConjDiagonalUnitsGLMul
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalSupportFacts
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteLengthOfProducts
 import GroundTheory.LocalFields.PadicLogSeries
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FiniteDiscreteFamilies.PeakCone
-import Mathlib.Algebra.Module.StablyFree.Basic
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.FieldNOf
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfIsOpen
 
@@ -229,10 +187,7 @@ open PositivityTheory.Rg.BcN.F2
 variable (F : Type) [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
   (ι : Type) [Fintype ι] [DecidableEq ι]
 
-theorem hkAlg : HkAlg F ι := _root_.GlobalTheory.CompanionTheory.HeckeAlg.hk_alg F ι
 theorem prodFinLen : ProdFinLen F ι := _root_.GlobalTheory.CompanionTheory.ProdLen.prodFinLen F ι
-theorem subOfNonNil' : SubOfNonNil' F ι :=
-  GlobalTheory.T.subquotient_of_non_nilpotent_variant F ι
 
 end PositivityTheory.Rg.BcN.F2.Final
 end -- clump:auto
@@ -249,7 +204,6 @@ open NumberField IsDedekindDomain Matrix Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT PositivityTheory.Rg.BcB.One PositivityTheory.Rg.BcB.F.F5
 open PositivityTheory.Rg.BcB.E PositivityTheory.Rg.BcB.SpectralAccumulation PositivityTheory.Rg.BcB.G8 PositivityTheory.Rg.BcB.F.RS PositivityTheory.Rg.BcN.F2
 open scoped Classical TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.Rg.BcB.F.Tail.PSc
 
@@ -308,8 +262,7 @@ theorem nonnil_of_pow (ρ : Representation ℂ (GL ι F) V) (K : Subgroup (GL ι
   · refine ⟨u, hu, fun h0 => hne ?_⟩
     have : m = (m - r) + r := (Nat.sub_add_cancel hr).symm
     rw [this, Function.iterate_add_apply, h0, hk_iter_zero]
-  · by_contra hall
-    push_neg at hall
+  · by_contra! hall
     set T := hkEnd ρ K e he
     have hker : LinearMap.ker (T ^ r) = ⊤ := by
       rw [eq_top_iff]
@@ -345,7 +298,7 @@ theorem sub_of_pow {n : ℕ} (D : Pre E n) (w : Pl E) (K' : Subgroup (GLw n w)) 
     GlobalTheory.LeviFactor.finiteDimensional_fixed_of_hasFiniteLength
       (fun Y _ _ π hs hi => GlobalTheory.CompanionTheory.SmGLBridge.irreducibleAdmissible (w.adicCompletion E) (Fin n) Y π hs hi)
       hsm hfl K' he.1 he.2.1
-  refine PositivityTheory.Rg.BcN.F2.Final.subOfNonNil' (w.adicCompletion E) (Fin n) K' e he P.V P.ρ P.smooth P.irred _
+  refine GlobalTheory.T.subquotient_of_non_nilpotent_variant (w.adicCompletion E) (Fin n) K' e he P.V P.ρ P.smooth P.irred _
     (prodAt D w) hsm hfl ?_ ?_
   · intro W _ _ τ hs hi hsub hemp v hv
     exact hkill ⟨W, τ, hs, hi⟩ hsub hemp v hv
@@ -368,7 +321,6 @@ open NumberField IsDedekindDomain Matrix Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT PositivityTheory.Rg.BcB.One PositivityTheory.Rg.BcB.F.F5
 open PositivityTheory.Rg.BcB.E PositivityTheory.Rg.BcB.SpectralAccumulation PositivityTheory.Rg.BcB.G8 PositivityTheory.Rg.BcB.F.RS PositivityTheory.Rg.BcN.F2
 open scoped Classical TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.Rg.BcB.F.Tail.PSc
 
@@ -599,7 +551,6 @@ open NumberField IsDedekindDomain Matrix Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT PositivityTheory.Rg.BcB.One PositivityTheory.Rg.BcB.F.F5
 open PositivityTheory.Rg.BcB.E PositivityTheory.Rg.BcB.SpectralAccumulation PositivityTheory.Rg.BcB.G8 PositivityTheory.Rg.BcB.F.RS PositivityTheory.Rg.BcN.F2
 open scoped Classical TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.Rg.BcB.F.Tail.PSc
 
@@ -701,8 +652,6 @@ open NumberField IsDedekindDomain Matrix Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT PositivityTheory.Rg.BcB.One PositivityTheory.Rg.BcB.F.F5
 open PositivityTheory.Rg.BcB.E PositivityTheory.Rg.BcB.SpectralAccumulation PositivityTheory.Rg.BcB.G8 PositivityTheory.Rg.BcB.F.RS PositivityTheory.Rg.BcN.F2
 open scoped Classical TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 
 namespace PositivityTheory.Rg.BcB.F.Tail.PSc
 
@@ -899,7 +848,7 @@ theorem core {n a b : ℕ} (h : a + b = n) (w : Pl E) (μ : (w.adicCompletion E)
     intro y hy
     refine mem_fixed_iff'.2 fun g hg => ?_
     have hGy : G ⟨y, hy⟩ ∈ fixed (pairRt a b w) L := (hG ⟨y, hy⟩).2
-    simp only [v, dif_pos hy]
+    simp only [v, dite_eq_left hy]
     rw [hρτ, ← heq j g _ (hG ⟨y, hy⟩).1 ⟨L, hLo, hGy⟩, mem_fixed_iff'.1 hGy g (Subgroup.mem_inf.1 hg).1,
       MonoidHom.mem_ker.1 (Subgroup.mem_inf.1 hg).2, Units.val_one, one_smul]
   obtain ⟨u₁, hu₁, hu₁x⟩ := key_ind h w K' hK'o hK'le hnorm X hXK hX ρ e hHk (L ⊓ χμ.ker) (hLo.inter hχμo) v hv
@@ -922,7 +871,7 @@ theorem core {n a b : ℕ} (h : a + b = n) (w : Pl E) (μ : (w.adicCompletion E)
         Function.iterate_zero_apply, hu₁x x x.2 lw, ← Finset.sum_coe_sort X]
       congr 1
       refine Finset.sum_congr rfl fun y _ => ?_
-      simp only [v, dif_pos y.2]
+      simp only [v, dite_eq_left y.2]
     | succ i ih =>
       intro x
       refine eq_of_dual fun lw => ?_

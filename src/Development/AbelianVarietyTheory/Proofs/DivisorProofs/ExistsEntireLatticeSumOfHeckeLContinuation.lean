@@ -11,60 +11,11 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmRingClassO
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdelicRingClassLatticeOneEqOrder
 public import Mathlib.GroupTheory.FiniteAbelian.Duality
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IntegralFiniteAdeleCompleteSeparated
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedEqOneOfLe
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RayLSeriesEulerProduct
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.NumberTheory.EulerProduct.ExpLog
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
-import Mathlib.RingTheory.SimpleRing.Principal
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralResidueSystemFiniteAdelesMod, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniformiserIdeleMultiplicativeOnIdeals, Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralUnitCongruenceSubgroupRelIndexNeZero, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEntireLatticeSumOfHeckeLContinuation
@@ -196,7 +147,7 @@ theorem val_idl (w : HeightOneSpectrum (𝓞 E)) : ∀ I : Ideal (𝓞 E), I ≠
       rw [(unifAt_spec w).2, ← WithZero.exp_add, Multiset.count_singleton_self]
       congr 1; push_cast; ring
     · have : w.asIdeal ≠ v.asIdeal := fun h => hw (HeightOneSpectrum.ext h)
-      rw [(unifAt_spec v).1 w hw, map_one, one_mul, Multiset.count_singleton, if_neg this, zero_add]
+      rw [(unifAt_spec v).1 w hw, map_one, one_mul, Multiset.count_singleton, ite_eq_right this, zero_add]
 
 theorem idl_eq_one (w : HeightOneSpectrum (𝓞 E)) : ∀ I : Ideal (𝓞 E), I ≠ ⊥ →
     ¬ w.asIdeal ∣ I → (idl I : Af E) w = 1 := by
@@ -387,7 +338,7 @@ theorem box_euler (hu : IsUnitary χ) (hr : ∀ w, r w ≤ 1) (hχ : ∀ u ∈ c
   · have h1 : HasSum ((fun I => X I * ((Ideal.absNorm I : ℕ) : ℂ) ^ (-s)) ∘ ((↑) : {I | C I} → _)) _ :=
       (hasSum_subtype_iff_of_support_subset (fun I hI => by
         by_contra h
-        exact hI (by simp only [X]; rw [if_neg (show ¬ C I from h), zero_mul]))).2 hS.hasSum
+        exact hI (by simp only [X]; rw [ite_eq_right (show ¬ C I from h), zero_mul]))).2 hS.hasSum
     let f : {I | C I} → (Af E)ˣ ⧸ congr r := fun I => QuotientGroup.mk (t I)
     have hf : Function.Injective f := fun I J h => by
       refine Subtype.ext (tinj _ _ I.2.1 J.2.1 fun w => ?_)
@@ -406,7 +357,7 @@ theorem box_euler (hu : IsUnitary χ) (hr : ∀ w, r w ≤ 1) (hχ : ∀ u ∈ c
       show (box r).indicator (zterm χ s) (QuotientGroup.mk (t I) : _ ⧸ congr r).out = X I * _
       rw [out_mk (indicator_box_mul le_rfl hχ s), Set.indicator_of_mem hb, zterm, tmod I I.2.1]
       simp only [X]
-      rw [if_pos (show C I from I.2), Complex.ofReal_inv, Complex.ofReal_natCast, Complex.inv_cpow _ _ (by
+      rw [ite_eq_left (show C I from I.2), Complex.ofReal_inv, Complex.ofReal_natCast, Complex.inv_cpow _ _ (by
         rw [Complex.natCast_arg]; exact Real.pi_ne_zero.symm), Complex.cpow_neg]
     · intro q hq
       refine Set.indicator_of_notMem (fun hb => hq ?_) _
@@ -443,9 +394,9 @@ theorem box_euler (hu : IsUnitary χ) (hr : ∀ w, r w ≤ 1) (hχ : ∀ u ∈ c
     · have : C w.asIdeal := ⟨w.ne_bot, fun w' hw' h => hw' (by
         rw [HeightOneSpectrum.ext (w.isMaximal.eq_of_le w'.isPrime.ne_top (Ideal.le_of_dvd h)).symm, hw])⟩
       simp only [X]
-      rw [if_pos hw, if_pos this, tv, finPart_unifAt]
+      rw [ite_eq_left hw, ite_eq_left this, tv, finPart_unifAt]
     · simp only [X]
-      rw [if_neg hw, if_neg fun h => h.2 w hw dvd_rfl]
+      rw [ite_eq_right hw, ite_eq_right fun h => h.2 w hw dvd_rfl]
       simp
 
 theorem box_entire (hu : IsUnitary χ) {Λ : ℂ → ℂ} (hΛ : IsHeckeL χ Λ) (hr : ∀ w, r w ≤ 1) (hfin : {w | r w ≠ 1}.Finite)
@@ -457,7 +408,7 @@ theorem box_entire (hu : IsUnitary χ) {Λ : ℂ → ℂ} (hΛ : IsHeckeL χ Λ)
     · refine Differentiable.const_mul (hΛ.1.mul (Differentiable.fun_finsetProd fun w _ => ?_)) _
       unfold eulerFactor
       by_cases hw : χ.UnrAt w
-      · simp only [if_pos hw, inv_inv]
+      · simp only [ite_eq_left hw, inv_inv]
         refine Differentiable.const_sub (Differentiable.const_mul (Differentiable.const_cpow differentiable_neg
           (Or.inl ?_)) _) _
         exact_mod_cast (ObjModel.absNorm_pos w).ne'
@@ -467,8 +418,8 @@ theorem box_entire (hu : IsUnitary χ) {Λ : ℂ → ℂ} (hΛ : IsHeckeL χ Λ)
       have h1 : HasProd (fun w => if w ∈ hfin.toFinset then eulerFactor χ s w else 1)
           (∏ w ∈ hfin.toFinset, eulerFactor χ s w) := by
         have := hasProd_prod_of_ne_finset_one (L := SummationFilter.unconditional _) (s := hfin.toFinset)
-          (f := fun w => if w ∈ hfin.toFinset then eulerFactor χ s w else 1) fun w hw => if_neg hw
-        rwa [Finset.prod_congr rfl fun w hw => if_pos hw] at this
+          (f := fun w => if w ∈ hfin.toFinset then eulerFactor χ s w else 1) fun w hw => ite_eq_right hw
+        rwa [Finset.prod_congr rfl fun w hw => ite_eq_left hw] at this
       have h2 : Λ s = Z * ∏ w ∈ hfin.toFinset, eulerFactor χ s w := by
         refine (hΛ.2 s hs).unique ((hP.mul h1).congr_fun fun w => ?_)
         by_cases hw : r w = 1
@@ -528,7 +479,7 @@ theorem exists_box {N : ℕ} (hN : 0 < N) {a : Af E} (ha : ∀ w, Valued.v (a w)
   have hTu : IsUnit T := FiniteAdeleRing.isUnit_iff.2 ⟨fun w h => hT0 w (by rw [h, map_zero]), by
     rw [Filter.eventually_cofinite]
     refine hNf.subset fun w hw h => hw ?_
-    rw [hT, if_neg (by rw [h]; exact not_lt.2 (ha w))]
+    rw [hT, ite_eq_right (by rw [h]; exact not_lt.2 (ha w))]
     exact h⟩
   obtain ⟨t, ht⟩ := hTu
   refine ⟨t, fun w => radN E N w / Valued.v (T w), fun w => ?_, fun w => ?_, hNf.subset fun w hw h => hw ?_,
@@ -542,7 +493,7 @@ theorem exists_box {N : ℕ} (hN : 0 < N) {a : Af E} (ha : ∀ w, Valued.v (a w)
     split_ifs
     exacts [ha w, hN1 w]
   · beta_reduce
-    rw [hT, if_neg (by rw [h]; exact not_lt.2 (ha w))]
+    rw [hT, ite_eq_right (by rw [h]; exact not_lt.2 (ha w))]
     exact div_self (hN0 w)
   · have e : T w * ((t⁻¹ * z : (Af E)ˣ) : Af E) w = (z : Af E) w := by
       rw [← ht]
@@ -608,8 +559,8 @@ theorem order_entire (hu : IsUnitary χ) {Λ : ℂ → ℂ} (hΛ : IsHeckeL χ �
   · obtain ⟨a, ⟨ha, ha'⟩, hun⟩ := hR' _ (ObjModel.hatO_integral hq)
     have hao : a ∈ hatO c := mem_hatO_of_sub hN hNc hq fun w => by rw [Valuation.map_sub_swap]; exact ha' w
     rw [Set.indicator_of_mem (s := {z : (Af E)ˣ | (z : Af E) ∈ hatO c}) hq, Finset.sum_eq_single_of_mem a (Finset.mem_filter.2 ⟨ha, hao⟩)
-      fun b hb hne => if_neg fun h => hne (hun b ⟨(Finset.mem_filter.1 hb).1, h⟩), if_pos ha']
-  · rw [Set.indicator_of_notMem (s := {z : (Af E)ˣ | (z : Af E) ∈ hatO c}) hq, Finset.sum_eq_zero fun b hb => if_neg fun h =>
+      fun b hb hne => ite_eq_right fun h => hne (hun b ⟨(Finset.mem_filter.1 hb).1, h⟩), ite_eq_left ha']
+  · rw [Set.indicator_of_notMem (s := {z : (Af E)ˣ | (z : Af E) ∈ hatO c}) hq, Finset.sum_eq_zero fun b hb => ite_eq_right fun h =>
       hq (mem_hatO_of_sub hN hNc (Finset.mem_filter.1 hb).2 h)]
 
 theorem exists_hchar {c : Ideal (OF E)} (hc : c ≠ ⊥) [Finite (PicO c)] (θ : PicO c →* ℂˣ) :
@@ -735,7 +686,7 @@ theorem exists_isLatSum : (∀ (E : Type) [Field E] [NumberField E] [IsCMField E
     show _ = _ * F (QuotientGroup.mk (P (A q) * y⁻¹) : _ ⧸ hatOUnits c).out
     rw [out_mk hF]
     simp only [F]
-    rw [if_pos, Set.indicator_of_mem (s := {z : (Af E)ˣ | (z : Af E) ∈ hatO c}) (out_mem_lattice q).1, ← zterm_mul,
+    rw [ite_eq_left, Set.indicator_of_mem (s := {z : (Af E)ˣ | (z : Af E) ∈ hatO c}) (out_mem_lattice q).1, ← zterm_mul,
       mul_comm (P (A q)) y⁻¹, mul_inv_cancel_left]
     · exact (zterm_princ hφ hi σ (A q)).symm
     · rw [mul_comm, inv_mul_cancel_right]
@@ -743,10 +694,10 @@ theorem exists_isLatSum : (∀ (E : Type) [Field E] [NumberField E] [IsCMField E
   · intro q hq
     by_contra hne
     have h2 : (QuotientGroup.mk (y * q.out) : PicO c) = 1 := by
-      by_contra h; exact hne (if_neg h)
+      by_contra h; exact hne (ite_eq_right h)
     have h3 : ((q.out : (Af E)ˣ) : Af E) ∈ hatO c := by
       by_contra h
-      exact hne ((if_pos h2).trans (Set.indicator_of_notMem (s := {z : (Af E)ˣ | (z : Af E) ∈ hatO c}) h _))
+      exact hne ((ite_eq_left h2).trans (Set.indicator_of_notMem (s := {z : (Af E)ˣ | (z : Af E) ∈ hatO c}) h _))
     obtain ⟨_, ⟨a, rfl⟩, u, hu, hau⟩ := Subgroup.mem_sup.1 ((QuotientGroup.eq_one_iff _).1 h2)
     have h4 : P a * y⁻¹ = q.out * u⁻¹ := by
       rw [eq_mul_inv_iff_mul_eq, mul_right_comm, hau, mul_inv_cancel_comm]

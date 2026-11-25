@@ -30,7 +30,7 @@ theorem z_uc (hI : IsSplit P I) (k : Fin (dK (IR I))) (v : Vsp X.dim) :
     z (IR I) k (uc (IR I) v) = ((z (IR I) k v).im : ℂ) := by
   have hK := hK_of hI
   rw [uc, z_sum]
-  simp only [z_rsmul, z_e hK, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [z_rsmul, z_e hK, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem norm_uc_sq (hI : IsSplit P I) (v : Vsp X.dim) :
     ‖uc (IR I) v‖ ^ 2 = ∑ k, (z (IR I) k v).im ^ 2 := by

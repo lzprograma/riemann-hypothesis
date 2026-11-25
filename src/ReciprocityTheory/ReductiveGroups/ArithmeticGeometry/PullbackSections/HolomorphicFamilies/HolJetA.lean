@@ -11,8 +11,6 @@ import Mathlib.RingTheory.SimpleRing.Principal
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.PullbackSections
@@ -31,7 +29,6 @@ theorem germ_stalkClosedPointTo_eq {R : CommRingCat.{0}} [IsLocalRing R] (f : Sp
   | rfl
 
 
-set_option backward.isDefEq.respectTransparency false in
 theorem hom_ext_of_local {R : CommRingCat.{0}} [IsLocalRing R] {f₁ f₂ : Spec R ⟶ Y}
     (hpt : f₁ (IsLocalRing.closedPoint R) = f₂ (IsLocalRing.closedPoint R))
     (happ : ∀ (U : Y.Opens) (h₁ : ⊤ ≤ f₁ ⁻¹ᵁ U) (h₂ : ⊤ ≤ f₂ ⁻¹ᵁ U), f₁.appLE U ⊤ h₁ = f₂.appLE U ⊤ h₂) :
@@ -90,7 +87,6 @@ theorem isLocalHom_nbhdLift [IsLocalRing A] (ψ : ∀ U : Y.Opens, y₀ ∈ U �
   first
   | exact (Y.mem_basicOpen f y₀ hU).mp (hloc U hU f ha)
 
-set_option backward.isDefEq.respectTransparency false in
 theorem nbhdPt_closedPoint [IsLocalRing A] (ψ : ∀ U : Y.Opens, y₀ ∈ U → (Γ(Y, U) ⟶ A))
     (hψ : ∀ (U V : Y.Opens) (hU : y₀ ∈ U) (hV : y₀ ∈ V) (h : V ≤ U),
       Y.presheaf.map (homOfLE h).op ≫ ψ V hV = ψ U hU)
@@ -105,7 +101,6 @@ theorem nbhdPt_closedPoint [IsLocalRing A] (ψ : ∀ U : Y.Opens, y₀ ∈ U →
   rw [e, Scheme.fromSpecStalk_closedPoint]
 
 
-set_option backward.isDefEq.respectTransparency false in
 theorem nbhdPt_appLE [IsLocalRing A] (ψ : ∀ U : Y.Opens, y₀ ∈ U → (Γ(Y, U) ⟶ A))
     (hψ : ∀ (U V : Y.Opens) (hU : y₀ ∈ U) (hV : y₀ ∈ V) (h : V ≤ U),
       Y.presheaf.map (homOfLE h).op ≫ ψ V hV = ψ U hU)
@@ -149,7 +144,6 @@ theorem nbhdPt_congr {ψ ψ' : ∀ U : Y.Opens, y₀ ∈ U → (Γ(Y, U) ⟶ A)}
   rfl
 
 
-set_option backward.isDefEq.respectTransparency false in
 theorem nbhdPt_comp_appLE [IsLocalRing A] {Y' : Scheme.{0}} (φ : Y ⟶ Y')
     (ψ : ∀ U : Y.Opens, y₀ ∈ U → (Γ(Y, U) ⟶ A))
     (hψ : ∀ (U V : Y.Opens) (hU : y₀ ∈ U) (hV : y₀ ∈ V) (h : V ≤ U),
@@ -157,9 +151,7 @@ theorem nbhdPt_comp_appLE [IsLocalRing A] {Y' : Scheme.{0}} (φ : Y ⟶ Y')
     (hloc : ∀ (U : Y.Opens) (hU : y₀ ∈ U) (f : Γ(Y, U)), IsUnit (ψ U hU f) → y₀ ∈ Y.basicOpen f)
     (U' : Y'.Opens) (hU' : φ y₀ ∈ U') (h : ⊤ ≤ (nbhdPt ψ hψ ≫ φ) ⁻¹ᵁ U') :
     (nbhdPt ψ hψ ≫ φ).appLE U' ⊤ h = φ.app U' ≫ ψ (φ ⁻¹ᵁ U') hU' ≫ (Scheme.ΓSpecIso A).inv := by
-  rw [Scheme.Hom.comp_appLE]
-  first
-  | rw [nbhdPt_appLE ψ hψ hloc (φ ⁻¹ᵁ U') hU']
+  rw [Scheme.Hom.comp_appLE, nbhdPt_appLE ψ hψ hloc (φ ⁻¹ᵁ U') hU' h]
 
 end Lift
 

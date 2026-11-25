@@ -192,7 +192,7 @@ theorem subsingleton_coinvariants_jacquetRep {β γ : Fin n → ℕ}
         split_ifs
         · exact huP hij
         · rfl
-      · rw [leviProj_apply, if_pos (hβeq i j hij)]
+      · rw [leviProj_apply, ite_eq_left (hβeq i j hij)]
         exact hu1 i j hij
     have hn' := leviProj_inv_mul_mem p
     have hu : (u : GL (Fin n) F) = ((m : levi F n β) : GL (Fin n) F) *

@@ -145,52 +145,6 @@ theorem ratPts_eq : ratPts σ J = rat (HR (AF F) σ J) := by
   simp only [Matrix.map_mul]
   exact hg
 
-theorem exists_herm (h : IsCMExt F E σ) (hJ : EpsHerm σ J) : ∃ c : E, c ≠ 0 ∧ IsHermND σ (c • J.map σ) := by
-  have hσ := sigma_sigma h
-  have hd : ∀ c : E, c ≠ 0 → (c • J.map σ).det ≠ 0 := fun c hc => by
-    have e : (J.map σ).det = σ J.det := ((σ : E →+* E).map_det _).symm
-    rw [det_smul, e]
-    exact mul_ne_zero (pow_ne_zero _ hc) ((map_ne_zero σ).2 hJ.2)
-  rcases hJ.1 with h1 | h1
-  · exact ⟨1, one_ne_zero, fun i j => by simp [h1], hd 1 one_ne_zero⟩
-  · obtain ⟨x, hx⟩ : ∃ x, σ x ≠ x := by
-      by_contra! hx
-      obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance
-      have := h.2.1
-      refine IsTotallyComplex.complexEmbedding_not_isReal τ ?_
-      rw [ComplexEmbedding.isReal_iff]
-      ext z
-      have := h.2.2.2 τ z
-      rw [hx] at this
-      exact this.symm
-    refine ⟨σ x - x, sub_ne_zero.2 hx, fun i j => ?_, hd _ (sub_ne_zero.2 hx)⟩
-    simp only [Matrix.smul_apply, map_apply, smul_eq_mul, map_mul, map_sub, hσ, h1 j i]
-    ring
-
-omit [NumberField F] [NumberField E] in
-theorem gram (hσ : ∀ x, σ (σ x) = x) (c : E) (Z : Matrix (Fin n) (Fin r) E) (u : Fin n → E) (i : Fin r) :
-    ((cT (σ : E →+* E) Z * (c • J.map σ)) *ᵥ u) i = c * σ (form σ J (fun k => Z k i) u) := by
-
-  simp only [form, mulVec, dotProduct, Matrix.mul_apply, cT, transpose_apply, map_apply, Matrix.smul_apply, smul_eq_mul,
-  map_sum, map_mul, hσ, RingHom.coe_coe, Finset.mul_sum, Finset.sum_mul]
-  rw [Finset.sum_comm]
-  exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
-
-omit [NumberField F] [NumberField E] in
-theorem swap (hσ : ∀ x, σ (σ x) = x) (hJ : EpsHerm σ J) {x y : Fin n → E} (e : form σ J x y = 0) :
-    form σ J y x = 0 := by
-  have e2 := congrArg σ e
-
-  simp only [form, mulVec, dotProduct, map_sum, map_mul, hσ, map_zero, Finset.mul_sum] at e2 ⊢
-  rw [Finset.sum_comm]
-  rcases hJ.1 with h1 | h1
-  · rw [← e2]
-    exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by rw [h1]; ring
-  · rw [← neg_zero, ← e2, ← Finset.sum_neg_distrib]
-    refine Finset.sum_congr rfl fun _ _ => ?_
-    rw [← Finset.sum_neg_distrib]
-    exact Finset.sum_congr rfl fun _ _ => by rw [h1]; ring
-
 omit [NumberField F] [NumberField E] in
 theorem perp_span {S : Set (Fin n → E)} {z : Fin n → E} (h : ∀ u ∈ S, form σ J u z = 0) :
     ∀ u ∈ Submodule.span E S, form σ J u z = 0 := by
@@ -208,12 +162,12 @@ theorem perp_iff (hσ : ∀ x, σ (σ x) = x) (hJ : EpsHerm σ J) {c : E} (hc : 
   constructor
   · intro h
     funext i
-    have e : form σ J (fun k => C k i) z = 0 := swap hσ hJ (h (Cᵀ i) (Submodule.subset_span ⟨i, rfl⟩))
-    rw [gram hσ, e, map_zero, mul_zero]; rfl
+    have e : form σ J (fun k => C k i) z = 0 := PositivityTheory.ThKEst.Sieg.form_eq_zero_swap hσ hJ (h (Cᵀ i) (Submodule.subset_span ⟨i, rfl⟩))
+    rw [PositivityTheory.ThKEst.Sieg.gram_smul hσ, e, map_zero, mul_zero]; rfl
   · intro h u hu
-    refine swap hσ hJ (perp_span ?_ u hu)
+    refine PositivityTheory.ThKEst.Sieg.form_eq_zero_swap hσ hJ (perp_span ?_ u hu)
     rintro _ ⟨i, rfl⟩
-    have := (gram (J := J) hσ c C z i).symm.trans (congrFun h i)
+    have := (PositivityTheory.ThKEst.Sieg.gram_smul (J := J) hσ c C z i).symm.trans (congrFun h i)
     have e : form σ J (fun k => C k i) z = 0 := by simpa [hc] using this
     exact e
 
@@ -422,7 +376,7 @@ open CuspR in
 theorem cuspRapid_of (hS : GlobalTheory.Published.SiegelSetUnitary) (hU : UMGSmooth) : CuspRapid := by
   intro F E _ _ _ _ _ σ h τ d W hJ f h1 h2 h4 h5 N
   have hσ := sigma_sigma h
-  obtain ⟨c, hc, hJ'⟩ := exists_herm h hJ
+  obtain ⟨c, hc, hJ'⟩ := PositivityTheory.ThKEst.Sieg.exists_herm_smul h hJ
   obtain ⟨C, hC⟩ := core hS h hJ' τ (UG (cA σ) (incM F W.J)) (ug_eq_hr hσ hc) f h1 h2 (hU F E σ h τ d W hJ f h2) h4
     (fun r C hr hl hi => by
       have e : (fun z => (cT (σ : E →+* E) C * (c • W.J.map σ)) *ᵥ z = 0) =
@@ -940,12 +894,10 @@ theorem exp_map_star (A : Matrix (Fin d) (Fin d) ℂ) :
   have e : ∀ B : Matrix (Fin d) (Fin d) ℂ, B.map star = Bᴴᵀ := fun B => rfl
   rw [e, e, Matrix.exp_transpose, Matrix.exp_conjTranspose]
 
-set_option backward.isDefEq.respectTransparency false in
 theorem exp_semiconj {J A B : Matrix (Fin d) (Fin d) ℂ} (h : SemiconjBy J A B) :
     NormedSpace.exp (-B) * J * NormedSpace.exp A = J :=
   open scoped Matrix.Norms.Operator in h.exp_neg_mul_mul_exp_eq_self
 
-set_option backward.isDefEq.respectTransparency false in
 theorem continuous_exp_mat : Continuous (NormedSpace.exp : Matrix (Fin d) (Fin d) ℂ → Matrix (Fin d) (Fin d) ℂ) :=
   open scoped Matrix.Norms.Operator in NormedSpace.exp_continuous
 
@@ -1179,17 +1131,6 @@ theorem piInf_tmul' {w : InfinitePlace F} (τ : EmbOver E w) (a : AF F) (x : E) 
   rw [infEmb_tmul]
   rfl
 
-theorem continuous_piInf {w : InfinitePlace F} (τ : EmbOver E w) : Continuous (piInf τ) := by
-  refine IsModuleTopology.continuous_of_ringHom (R := AF F) (piInf τ) ?_
-  have h : ⇑((piInf τ).comp (algebraMap (AF F) (AE F E))) =
-      fun a : AF F => InfinitePlace.Completion.extensionEmbedding w (a.1 w) := by
-    funext a
-    change piInf τ (a ⊗ₜ[F] (1 : E)) = _
-    rw [piInf_tmul', map_one, mul_one]
-  rw [h]
-  exact (InfinitePlace.Completion.isometry_extensionEmbedding w).continuous.comp
-    ((continuous_apply w).comp continuous_fst)
-
 theorem piInf_cA (h : IsCMExt F E σ) {w : InfinitePlace F} (τ : EmbOver E w) (z : AE F E) :
     piInf τ (cA σ z) = star (piInf τ z) := by
   have hw : w.IsReal := h.1.isReal w
@@ -1220,7 +1161,7 @@ theorem lineGen_of : LineGen := by
     have hm : Continuous (mat : UA σ W.J → Matrix (Fin d) (Fin d) (AE F E)) :=
       Units.continuous_val.comp continuous_subtype_val
     have hc : Continuous g :=
-      ((hm.comp (hγ.1.comp continuous_ofAdd))).matrix_map (continuous_piInf (τ w))
+      ((hm.comp (hγ.1.comp continuous_ofAdd))).matrix_map (PositivityTheory.ThKEst.LatticeQuotientCompactness.continuous_piInf (τ w))
     have h0 : g 0 = 1 := by
       change (mat (γ 1)).map (piInf (τ w)) = 1
       rw [map_one]
@@ -1400,7 +1341,6 @@ theorem polData_sum (hp : IsPair B M χX χW om r s r' s') {Φ : Fn F n d} (hΦ 
   rw [h3 i, FiniteAdelicSupportCompactness.pure_eq]
   funext z
   simp [pureA, mul_assoc]
-
 
 variable (B W) in
 def Nice (f : UA σ W.J → ℂ) : Prop := LeftInv f ∧ UMG W f ∧ SmoothFin W B.emb f

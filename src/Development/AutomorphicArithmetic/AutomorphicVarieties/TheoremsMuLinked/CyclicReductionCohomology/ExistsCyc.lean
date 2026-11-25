@@ -169,26 +169,6 @@ section -- clump:auto
 
 open IsLocalRing Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.HV UpperTheory.V.Th GlobalTheory.GalOfCusp
 
-private theorem cols_zero {O : Type} [CommRing O] [IsDomain O] {n : ℕ} (A W : Matrix (Fin n) (Fin n) O) (al : Fin n → O)
-    (ha : Function.Injective al) (h : A * W = W * diagonal al) (h1 : W *ᵥ (fun _ => 1) = 0) : W = 0 := by
-  have hk : ∀ k : ℕ, W *ᵥ (fun j => al j ^ k) = 0 := by
-    intro k
-    induction k with
-    | zero => simpa using h1
-    | succ k ih =>
-      have e : (fun j => al j ^ (k + 1)) = diagonal al *ᵥ (fun j => al j ^ k) := by
-        funext j
-        rw [mulVec_diagonal, pow_succ']
-      rw [e, mulVec_mulVec, ← h, ← mulVec_mulVec, ih, mulVec_zero]
-  have hv : W * vandermonde al = 0 := by
-    ext i k
-    have := congrFun (hk k) i
-    simpa [Matrix.mul_apply, vandermonde_apply, mulVec, dotProduct] using this
-  have hd : (vandermonde al).det ≠ 0 := det_vandermonde_ne_zero_iff.mpr ha
-  have h2 : W * vandermonde al * adjugate (vandermonde al) = 0 := by rw [hv, Matrix.zero_mul]
-  rw [Matrix.mul_assoc, mul_adjugate, Matrix.mul_smul, Matrix.mul_one] at h2
-  exact (smul_eq_zero.mp h2).resolve_left hd
-
 private theorem red_mul' {O : Type} [CommRing O] [IsLocalRing O] {n : ℕ} (m : ℕ) (A B : Matrix (Fin n) (Fin n) O) :
     red m (A * B) = red m A * red m B := Matrix.map_mul
 
@@ -212,7 +192,7 @@ theorem UpperTheory.V.Th.h0qO :
         map_add' := fun a b => by simp [add_mulVec]
         map_smul' := fun c a => by simp [smul_mulVec] }
     have hf : Function.Injective f := by
-      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+      rw [injective_iff_map_eq_zero]
       intro Y e
       apply Subtype.ext
       refine hv Y.1 ?_ e

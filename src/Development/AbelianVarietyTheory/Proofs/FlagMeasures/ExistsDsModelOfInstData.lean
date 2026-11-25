@@ -47,7 +47,6 @@ import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
 
 open Formalism.MainNotions.ArithmeticCylinders IsDedekindDomain MeasureTheory Formalism.MainNotions.S Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Mult GlobalTheory.RowLev NumberField Matrix
 open scoped InnerProductSpace TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.RowLev
 
@@ -73,7 +72,7 @@ theorem isEnum_parA_zero (D : D7) {n : ℕ} (hn : n = D.R.r) (τ : D.what₂.Tau
       rw [decide_eq_decide, Nat.sub_zero, Nat.even_iff]
       omega
     ext x
-    simp only [parA, TPar.Dpar, tparRec, tparHC, hpar, Nat.not_odd_zero, if_false, add_zero,
+    simp only [parA, TPar.Dpar, tparRec, tparHC, hpar, Nat.not_odd_zero, ite_false, add_zero,
       Nat.not_lt_zero, Finset.filter_false, Finset.biUnion_empty, Finset.union_empty, Prod.mk.eta,
       Finset.image_id', Finset.mem_union, Finset.mem_image, Finset.mem_univ, true_and]
     constructor

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HkRelFrOfTransportIff
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.BcField
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
 
@@ -36,20 +37,7 @@ theorem gxLift_snd {Z : Scheme.{0}} (a : Z ⟶ Sp S) (b : Z ⟶ Xo.univ.t.G.left
 theorem gx_ext {Z : Scheme.{0}} (p q : Z ⟶ Gx x)
     (h1 : p ≫ (fst (Over.mk x) Xo.univ.t.G).left = q ≫ (fst (Over.mk x) Xo.univ.t.G).left)
     (h2 : p ≫ (snd (Over.mk x) Xo.univ.t.G).left = q ≫ (snd (Over.mk x) Xo.univ.t.G).left) : p = q := by
-  have e : (Over.mk x ⊗ Xo.univ.t.G).hom = (fst (Over.mk x) Xo.univ.t.G).left ≫ x :=
-    (Over.w (fst (Over.mk x) Xo.univ.t.G)).symm
-  have hw : q ≫ (Over.mk x ⊗ Xo.univ.t.G).hom = p ≫ (Over.mk x ⊗ Xo.univ.t.G).hom := by
-    rw [e, ← Category.assoc, ← h1, Category.assoc]
-  let P : Over.mk (p ≫ (Over.mk x ⊗ Xo.univ.t.G).hom) ⟶ Over.mk x ⊗ Xo.univ.t.G := Over.homMk p rfl
-  let Q : Over.mk (p ≫ (Over.mk x ⊗ Xo.univ.t.G).hom) ⟶ Over.mk x ⊗ Xo.univ.t.G := Over.homMk q hw
-  have hPQ : P = Q := by
-    apply CartesianMonoidalCategory.hom_ext
-    · ext
-      simpa [P, Q] using h1
-    · ext
-      simpa [P, Q] using h2
-  have := congrArg (fun f => f.left) hPQ
-  simpa [P, Q] using this
+  apply GlobalTheory.HeckeFrCompare.gx_ext <;> assumption
 
 theorem gx_w : (snd (Over.mk x) Xo.univ.t.G).left ≫ Xo.univ.t.G.hom = (fst (Over.mk x) Xo.univ.t.G).left ≫ x := by
   exact (Over.w (snd (Over.mk x) Xo.univ.t.G)).trans (Over.w (fst (Over.mk x) Xo.univ.t.G)).symm

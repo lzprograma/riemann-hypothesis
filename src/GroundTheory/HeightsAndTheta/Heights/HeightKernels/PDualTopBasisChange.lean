@@ -5,6 +5,7 @@ public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsIntCo
 public import Mathlib.RingTheory.SimpleRing.Principal
 public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.Assembly
 import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLineSemipositive
+import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PIntCoordChange
 
 @[expose] public section
 
@@ -19,38 +20,16 @@ noncomputable section
 namespace TopDualBasisChange
 
 theorem hermLine_ext {ι : Unit → Type} [∀ k, Fintype (ι k)] {A B : ReciprocityTheory.ChartRestriction.G.Geo.HermLine ι}
-    (ha : A.a = B.a) (hh : A.h = B.h) : A = B := by
-  cases A
-  cases B
-  cases ha
-  cases hh
-  rfl
+    (ha : A.a = B.a) (hh : A.h = B.h) : A = B :=
+  IntegralCoordinateChange.hermLine_ext ha hh
 
 variable {T T₂ : Type} [Fintype T] [DecidableEq T] [Fintype T₂] [DecidableEq T₂]
 
 
 omit [DecidableEq T₂] in
 theorem subst_subst {A : Matrix T T₂ ℤ} {B : Matrix T₂ T ℤ} (hAB : A * B = 1) (f : MRing (dualBlocks T)) :
-    intCoordSubst A (intCoordSubst B f) = f := by
-  induction f using MvPolynomial.induction_on with
-  | C a =>
-    show intCoordSubst A (intCoordSubst B (algebraMap ℤ _ a)) = algebraMap ℤ _ a
-    rw [AlgHom.commutes, AlgHom.commutes]
-  | add f g hf hg => rw [map_add (f := _), map_add (f := _), hf, hg]
-  | mul_X f p hf =>
-    rw [map_mul, map_mul, hf]
-    congr 1
-    obtain ⟨⟨⟩, t⟩ := p
-    have hC : ∀ a : ℤ, (C a : MRing (dualBlocks T)) = (a : MRing (dualBlocks T)) := fun a => map_intCast C a
-
-    simp only [intCoordSubst, aeval_X, map_sum, map_mul, eq_intCast, hC, map_intCast, Finset.mul_sum]
-    rw [Finset.sum_comm]
-    simp_rw [← mul_assoc, ← Int.cast_mul, ← Finset.sum_mul, ← Int.cast_sum]
-    have h1 : ∀ x : T, ∑ s, B s t * A x s = (A * B) x t := by
-      intro x
-      simp [Matrix.mul_apply, mul_comm]
-    simp_rw [h1, hAB, Matrix.one_apply]
-    simp
+    intCoordSubst A (intCoordSubst B f) = f :=
+  IntegralCoordinateChange.subst_subst hAB f
 
 variable {K : Type} [Field K] [NumberField K] {i : ℕ} {F : HermLattice K i}
 

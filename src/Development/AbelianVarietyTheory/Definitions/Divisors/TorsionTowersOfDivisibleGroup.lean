@@ -42,8 +42,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory
@@ -53,8 +51,6 @@ open ReciprocityTheory.ChartRestriction.G.Out (RingAct)
 open ReciprocityTheory.ChartRestriction.G.Semi (Gm)
 open GlobalTheory.DeRham (spOver spOver_comp GrpMor)
 open GlobalTheory.Cris (dp0)
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory
 
@@ -560,14 +556,6 @@ theorem lieCorr_zero : t.LieCorr 0 1 :=
     ⟨(1 : WithConv (G.A n →ₐ[O] DualNumber (ModPow p O n))).ofConv, (_root_.map_one (t.pts n _)).trans (MonObj.comp_one _).symm, fun w a _ => by
       rw [LinearMap.zero_apply, map_zero]; rfl⟩⟩
 
-theorem LieCorr.map [Fact p.Prime] (h : t.LieCorr x v) (f : A ⟶ A₁) [IsMonHom f] :
-    t₁.LieCorr (lieMap G H (t.map t₁ f) x) (v ≫ f) := by
-  refine ⟨GrpTangent.isTangent_comp h.1 f, fun n => ?_⟩
-  obtain ⟨ψ, h1, h2⟩ := h.2 n
-  refine ⟨ψ.comp ((t.map t₁ f).app n : H.A n →ₐ[O] G.A n), ?_, fun w a ha => ?_⟩
-  · rw [← spOver_comp, Category.assoc, map_y, ← Category.assoc, h1, Category.assoc]
-  · exact h2 _ _ (by rw [omegaMap_val, ← ha, cotMap_d]; rfl)
-
 theorem LieCorr.unique_left [IsHausdorff (Ideal.span {(p : O)}) O] (h : t.LieCorr x v)
     (h' : t.LieCorr x' v) : x = x' :=
   LinearMap.ext fun w => sub_eq_zero.1 <| IsHausdorff.haus' (I := Ideal.span {(p : O)}) _ fun n => by
@@ -632,12 +620,6 @@ theorem existsUnique_lieCorr [IsAdicComplete (Ideal.span {(p : O)}) O] (hv : IsT
 end Lie
 
 end TorsionTower
-
-section Values
-
-variable (p O) [Fact p.Prime]
-
-end Values
 
 end PDivGroup
 

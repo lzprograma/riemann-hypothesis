@@ -3,46 +3,7 @@ module
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HasStepCharts
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsClosedSectionBoundary
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LinearIndependentMulSelM
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -76,10 +37,10 @@ theorem SmMat.minor {M : E → Matrix (Fin N) (Fin N) ℂ} {w : E} (h : SmMat M 
     ContDiffAt ℝ ∞ (fun u => minorIJ (M u) I J) w := by
   unfold minorIJ
   by_cases e : I.card = J.card
-  · simp only [dif_pos e, Matrix.det_apply']
+  · simp only [dite_eq_left e, Matrix.det_apply']
     refine ContDiffAt.sum fun σ _ => contDiffAt_const.mul ?_
     exact contDiffAt_prod fun i _ => h _ _
-  · simp only [dif_neg e]
+  · simp only [dite_eq_right e]
     exact contDiffAt_const
 
 theorem contDiffAt_blockPot (j : ℕ) (i : Fin N) {G h : E → Matrix (Fin N) (Fin N) ℂ} {w : E}
@@ -92,11 +53,11 @@ theorem contDiffAt_blockPot (j : ℕ) (i : Fin N) {G h : E → Matrix (Fin N) (F
     unfold detFac
     refine ContDiffAt.mul ?_ ?_
     · by_cases c : j ≤ (i : ℕ) + 1
-      · simpa only [if_pos c] using hG.minor _ _
-      · simpa only [if_neg c] using contDiffAt_const
+      · simpa only [ite_eq_left c] using hG.minor _ _
+      · simpa only [ite_eq_right c] using contDiffAt_const
     · by_cases c : (i : ℕ) + 1 = N
-      · simpa only [if_pos c] using hG.minor _ _
-      · simpa only [if_neg c] using contDiffAt_const
+      · simpa only [ite_eq_left c] using hG.minor _ _
+      · simpa only [ite_eq_right c] using contDiffAt_const
   have hfac0 : 0 < detFac j i (G w) := by
     unfold detFac
     refine mul_pos ?_ ?_
@@ -109,12 +70,12 @@ theorem contDiffAt_blockPot (j : ℕ) (i : Fin N) {G h : E → Matrix (Fin N) (F
   unfold blockPot
   refine (contDiffAt_const.mul (hre hfac hfac0)).add ?_
   by_cases c : IsProperStep N j i
-  · simp only [if_pos c]
+  · simp only [ite_eq_left c]
     refine contDiffAt_const.mul (hre ((hh.conjTranspose.mul hG).mul hh |>.minor _ _) ?_)
     have hu : IsUnit (h w) := (Matrix.isUnit_iff_isUnit_det _).2 hdet.isUnit
     exact GramPot.minor_pos
       (hpos.conjTranspose_mul_mul_same (Matrix.mulVec_injective_of_isUnit hu)) _
-  · simp only [if_neg c]
+  · simp only [ite_eq_right c]
     exact contDiffAt_const
 
 end Calc

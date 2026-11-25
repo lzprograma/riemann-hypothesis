@@ -14,8 +14,6 @@ open Classical
 
 namespace Formalism.L2.SG.Pf.Cnt.R1
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section D7
 
 variable (D : Formalism.BasicNotions.D7)
@@ -104,8 +102,6 @@ namespace Formalism.L2.SG.Pf.Cnt
 
 open Formalism.L2.SG.Pf.Cnt.R1
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
 theorem ratPair_of (hD : TotPosAll) : RatPair := by
@@ -124,7 +120,7 @@ theorem ratPair_of (hD : TotPosAll) : RatPair := by
     intro a b
 
     simp only [hf', map_sum, map_smul, smul_eq_mul, hfp, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
   have hgr : ∀ b c, (VS D).hT (f' b) (f' c) = Gam D.host.E D.R.rS (D.mem u').A.T b c := by
     intro b c
     rw [hf', gram_comb' p Z b c]

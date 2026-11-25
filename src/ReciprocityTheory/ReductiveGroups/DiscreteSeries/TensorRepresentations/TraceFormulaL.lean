@@ -139,11 +139,11 @@ theorem tf_phi (dual : Bool) {lam : Fin n → ℝ} (hσ : IsURepOn (UJset ε) σ
       map_add' := fun f f' => Subtype.ext (vectorL2_ext fun c => by
         refine Eq.trans ?_ (toL2_add_smooth ε ((hce c f.1 f.2).1.2 []) ((hce c f'.1 f'.2).1.2 []))
         refine toL2_congr_of_eq_on_UJset fun g _ => ?_
-        simp [coefMap, tensGrp, sum_add_distrib])
+        simp [ReciprocityTheory.ChartRestriction.DS.occCoef, tensGrp, sum_add_distrib])
       map_smul' := fun a f => Subtype.ext (vectorL2_ext fun c => by
         refine Eq.trans ?_ (toL2_smul_smooth ε a _)
         refine toL2_congr_of_eq_on_UJset fun g _ => ?_
-        cases dual <;> simp [coefMap, tensGrp, ← smul_comm a, ← Finset.smul_sum, mul_sum]) }
+        cases dual <;> simp [ReciprocityTheory.ChartRestriction.DS.occCoef, tensGrp, ← smul_comm a, ← Finset.smul_sum, mul_sum]) }
   refine ⟨Φ, fun f => rfl, fun a b f => Subtype.ext (vectorL2_ext fun c => ?_)⟩
   refine (tfRdiag_smE (fun c => toL2_mem_smD_of_isSmoothL2 (hce c f.1 f.2).1) a b c).trans ?_
   refine (rightDerivative_toL2 (hce c f.1 f.2).1 a b).trans (toL2_congr_of_eq_on_UJset fun g hg => ?_)

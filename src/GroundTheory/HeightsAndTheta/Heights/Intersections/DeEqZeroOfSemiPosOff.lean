@@ -39,21 +39,17 @@ theorem De_eq_zero_of_semiPos_off (hAdd : DeSlotAdd.Statement) (hTw : SemiPosTwi
     obtain ⟨T, hT, hTp, hLTp⟩ := hTw K ι (L j) (hL j)
     have hadd := hAdd K ι P n L j (L j) T A A' s s' hP hL (hL j) hT hA hA' hs hs' hnc
     rw [Function.update_eq_self] at hadd
-    have hsm : ∀ X : HermLine ι, IsSmoothHerm X → ∀ i, IsSmoothHerm (Function.update L j X i) := by
-      intro X hX i
+    have hupd (P : HermLine ι → Prop) (Q : Fin n → Prop) {X : HermLine ι}
+        (hQ : ∀ i, Q i → i ≠ j → P (L i)) (hX : P X) (i : Fin n) (hi : Q i) :
+        P (Function.update L j X i) := by
       rcases eq_or_ne i j with rfl | hij
       · simpa using hX
-      · rw [Function.update_of_ne hij]
-        exact hL i
-    have hpos : ∀ X : HermLine ι, IsSemiPosHerm X → ∀ i, i ∉ S →
-        IsSemiPosHerm (Function.update L j X i) := by
-      intro X hX i hi
-      rcases eq_or_ne i j with rfl | hij
-      · simpa using hX
-      · rw [Function.update_of_ne hij]
-        exact hLp i (by simp [Finset.mem_insert, hij, hi])
-    rw [ih _ (hsm _ (isSmoothHerm_tensor (hL j) hT)) (hpos _ hLTp),
-      ih _ (hsm _ hT) (hpos _ hTp)] at hadd
+      · rw [Function.update_of_ne hij]; exact hQ i hi hij
+    rw [ih _ (fun i => hupd IsSmoothHerm (fun _ => True) (fun i _ _ => hL i)
+          (isSmoothHerm_tensor (hL j) hT) i trivial)
+        (hupd IsSemiPosHerm (· ∉ S) (fun i hi hij => hLp i (by simp [hij, hi])) hLTp),
+      ih _ (fun i => hupd IsSmoothHerm (fun _ => True) (fun i _ _ => hL i) hT i trivial)
+        (hupd IsSemiPosHerm (· ∉ S) (fun i hi hij => hLp i (by simp [hij, hi])) hTp)] at hadd
     linarith
 
 theorem ProjectiveLineTwo.proof (hAdd : DeSlotAdd.Statement) (hTw : SemiPosTwist.Statement)

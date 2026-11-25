@@ -1,9 +1,7 @@
 module
 
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StBoundedInverseCompact
-import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Matrix.PosDef
-import Mathlib.Tactic.TypeStar
 public import Mathlib.Topology.Algebra.Group.Units
 
 @[expose] public section
@@ -57,7 +55,6 @@ theorem posDef_exists_lower {P : Matrix ι ι ℂ} (hP : P.PosDef) :
       simp
     · exact absurd ⟨_, hunit y hy⟩ hne
 
-
 omit [Fintype ι] in
 theorem norm_mul_apply_le {m κ : Type*} [Fintype κ] (A : Matrix m κ ℂ) (B : Matrix κ ι ℂ)
     (i : m) (j : ι) : ‖(A * B) i j‖ ≤ ∑ k, ‖A i k‖ * ‖B k j‖ := by
@@ -70,7 +67,6 @@ end SlopeTestRemainingChoices
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
   [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
-
 
 omit [_root_.NumberField.IsTotallyComplex E] [Fintype ι] in
 theorem exists_rightInv (v : Basis ι E W) {n : ℕ} {e : Fin n → W}
@@ -101,7 +97,6 @@ open BoundedInverseCompact
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
   [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
-
 
 omit [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem BoundedInverseCompact.proof (h : HermitianForm F E W) (v : Basis ι E W) :

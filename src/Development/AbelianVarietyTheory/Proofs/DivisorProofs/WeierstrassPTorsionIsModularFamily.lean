@@ -57,16 +57,9 @@ private lemma mem_tauPair_lattice_iff (τ : ℍ) (z : ℂ) :
   simp [_root_.GlobalTheory.QFam.tauPair]
 
 open scoped UpperHalfPlane MatrixGroups Matrix ModularForm ComplexConjugate in
-private lemma modularGroup_denom_eq (γ : SL(2, ℤ)) (τ : ℍ) :
-    UpperHalfPlane.denom (Matrix.SpecialLinearGroup.toGL
-      ((Matrix.SpecialLinearGroup.map (Int.castRingHom ℝ)) γ)) ↑τ =
-      ((γ 1 0 : ℤ) : ℂ) * τ + ((γ 1 1 : ℤ) : ℂ) := by
-  simp [UpperHalfPlane.denom]
-
-open scoped UpperHalfPlane MatrixGroups Matrix ModularForm ComplexConjugate in
 private lemma modularGroup_denom_ne_zero (γ : SL(2, ℤ)) (τ : ℍ) :
     ((γ 1 0 : ℤ) : ℂ) * τ + ((γ 1 1 : ℤ) : ℂ) ≠ 0 := by
-  rw [← modularGroup_denom_eq]
+  rw [← ModularGroup.denom_apply]
   exact UpperHalfPlane.denom_ne_zero _ τ
 
 open scoped UpperHalfPlane MatrixGroups Matrix ModularForm ComplexConjugate in
@@ -162,7 +155,7 @@ theorem _root_.GlobalTheory.WpFam.isFam_wp_wpd : ∀ (N : ℕ) [NeZero N],
         (_root_.GlobalTheory.QFam.tauPair τ).weierstrassP
         ((((γ 1 0 : ℤ) : ℂ) * τ + ((γ 1 1 : ℤ) : ℂ)) * _root_.GlobalTheory.WpFam.tors N (γ • τ) x) :=
       (_root_.GlobalTheory.QFam.tauPair τ).weierstrassP_add_coe _ ⟨l, hl⟩
-    rw [ModularForm.SL_slash_apply, modularGroup_denom_eq]
+    rw [ModularForm.SL_slash_apply, ModularGroup.denom_apply]
     unfold _root_.GlobalTheory.WpFam.wp
     rw [hP, hper, hom.2.1, zpow_neg, zpow_ofNat]
     ring
@@ -175,7 +168,7 @@ theorem _root_.GlobalTheory.WpFam.isFam_wp_wpd : ∀ (N : ℕ) [NeZero N],
         (_root_.GlobalTheory.QFam.tauPair τ).derivWeierstrassP
         ((((γ 1 0 : ℤ) : ℂ) * τ + ((γ 1 1 : ℤ) : ℂ)) * _root_.GlobalTheory.WpFam.tors N (γ • τ) x) :=
       (_root_.GlobalTheory.QFam.tauPair τ).derivWeierstrassP_add_coe _ ⟨l, hl⟩
-    rw [ModularForm.SL_slash_apply, modularGroup_denom_eq]
+    rw [ModularForm.SL_slash_apply, ModularGroup.denom_apply]
     unfold _root_.GlobalTheory.WpFam.wpd
     rw [hP, hper, hom.2.2.1, zpow_neg, zpow_ofNat]
     ring

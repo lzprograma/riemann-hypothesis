@@ -237,13 +237,6 @@ section Concrete
 variable {l : ℕ} [Fact l.Prime] {P : LocPrime l} {AI : LocAinf l P} (H : LocHW l P) (F : LocFon l P AI H)
   {K : FinExt l} {s : ℕ} {LL : FinExt l} (h : Good K s LL)
 
-theorem levLaws : LevLaws (H.W K s LL h) := by
-  obtain ⟨_, -, h0, hu, -⟩ := GlobalTheory.Per.integers_completeDVR l LL
-  obtain ⟨c, hc⟩ := Ser.exists_padic_char (GamL H h)
-  refine levLaws_of_evLaw h0 hu _ (P.PD_p K) (fun g => (c g : ℤ_[l])) hc (Ser.dvd_of_le_v P) ?_
-  convert Ser.evLaw_integers P LL using 1
-  exact Algebra.algebra_ext _ _ fun r => PowerSeries.algebraMap_apply
-
 theorem ioLaws_tie : IoLaws (F.E K s LL h).tie := by
   set_option synthInstance.maxHeartbeats 100000 in
     exact ⟨GlobalTheory.HWL.Back.ioE_φ (O := ↥(OL LL)) Subtype.val_injective _,
@@ -254,10 +247,6 @@ theorem one_crys : IsCrys (P.PD K) (H.W K s LL h).one.ρ :=
   GlobalTheory.TrivCrys.isCrys_lat_of_trivial _ (H.W K s LL h).one_triv
 
 end Concrete
-
-theorem laws : ∀ {l : ℕ} [Fact l.Prime] {P : LocPrime l} {AI : LocAinf l P} (H : LocHW l P) (F : LocFon l P AI H)
-    {K : FinExt l} {s : ℕ} {LL : FinExt l} (h : Good K s LL), Laws H F h :=
-  fun H F _ _ _ h => ⟨levLaws H h, ioLaws_tie H F h, one_crys H h⟩
 
 end GlobalTheory.NL
 end -- clump:auto
@@ -385,7 +374,7 @@ theorem crystalline_extension_integral_cocycle_all_places : ∀ (D : Formalism.B
     · exact hjT τ i hτ a h1
     · rw [hjs.2 τ a h1]
       exact ⟨by simp, by simp⟩
-  have h5 := (_root_.GlobalTheory.NL.Heights.heights_from_jumps D HW F Cm l K s LL h Tp M hh hTp hjTp).1
+  have h5 := (_root_.GlobalTheory.NL.Heights.heights_from_jumps D.loc D.locA D.locT HW F Cm l K s LL h Tp M hh hTp hjTp).1
   have h2 := (GlobalTheory.NL.WachLatticeTrivialModUniformizer.wachLattice_galois_trivial_mod_uniformizer D HW F Cm l K s LL h Tp hTp).2.2
   exact core _ T Tp ι π M (fun y hy => (hexact y).1 hy) hsat h5 h2 e hφe hγe x hx c hc
 

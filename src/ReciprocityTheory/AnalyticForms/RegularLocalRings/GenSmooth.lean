@@ -22,41 +22,22 @@ theorem gs_exists_rows_det_ne_zero {K : Type*} [Field K] {t r : ℕ} (M : Matrix
     (hM : ∀ c : Fin r → K, M.mulVec c = 0 → c = 0) :
     ∃ a : Fin r → Fin t, (M.submatrix a id).det ≠ 0 := by
   classical
-
-  have hspan : Submodule.span K (Set.range fun i => M i) = ⊤ := by
-    by_contra hne
-    obtain ⟨f, hf0, hf⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.2 hne)
-    have hfx : ∀ x : Fin r → K, f x = ∑ k, x k * f (Pi.single k 1) := by
-      intro x
-      conv_lhs => rw [← (Pi.basisFun K (Fin r)).sum_repr x]
-
-      simp [map_sum, smul_eq_mul]
-    have hc : M.mulVec (fun k => f (Pi.single k 1)) = 0 := by
-      funext i
-      have hi : M i ∈ LinearMap.ker f := hf (Submodule.subset_span ⟨i, rfl⟩)
-      rw [LinearMap.mem_ker, hfx] at hi
-      exact hi
-    have hc0 := hM _ hc
-    apply hf0
-    apply (Pi.basisFun K (Fin r)).ext
-    intro k
-    have hk := congrFun hc0 k
-    simpa using hk
-
-  obtain ⟨κ, a, ha, hsp, hli⟩ := exists_linearIndependent' K (fun i => M i)
-  have hsp' : Submodule.span K (Set.range ((fun i => M i) ∘ a)) = ⊤ := hsp.trans hspan
-  haveI : Finite κ := Finite.of_injective a ha
-  haveI : Fintype κ := Fintype.ofFinite κ
-  let B := Module.Basis.mk hli hsp'.ge
-  have hcard : Fintype.card κ = r := by
-    have h := Module.finrank_eq_card_basis B
-    simpa using h.symm
-  let e : Fin r ≃ κ := (Fintype.equivFinOfCardEq hcard).symm
+  obtain ⟨κ, a, _, hsp, hli⟩ := exists_linearIndependent' K M.row
+  let b := Pi.basisFun K (Fin r)
+  let B := Module.Basis.mk hli (by
+    rw [hsp]
+    by_contra h
+    obtain ⟨f, hf, hker⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_of_le_not_ge le_top h)
+    apply hf (b.ext fun k => ?_)
+    suffices hc : (fun j => f (b j)) = 0 by simpa using congrFun hc k
+    refine hM _ (funext fun i => ?_)
+    calc
+      _ = f (M i) := by
+        simpa [b, Matrix.mulVec, dotProduct, smul_eq_mul] using congrArg f (b.sum_repr (M i))
+      _ = 0 := hker (Submodule.subset_span ⟨i, rfl⟩))
+  let e := b.indexEquiv B
   refine ⟨a ∘ e, ?_⟩
-  have hli2 : LinearIndependent K (Matrix.row (M.submatrix (a ∘ e) id)) :=
-    hli.comp e e.injective
-  rw [Matrix.linearIndependent_rows_iff_isUnit, Matrix.isUnit_iff_isUnit_det,
-    isUnit_iff_ne_zero] at hli2
-  exact hli2
+  rw [← isUnit_iff_ne_zero, ← Matrix.isUnit_iff_isUnit_det, ← Matrix.linearIndependent_row_iff_isUnit]
+  exact hli.comp e e.injective
 
 end ReciprocityTheory.AnForm.R

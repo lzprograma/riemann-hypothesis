@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.AdmCusp
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
 import Development.AbelianVarietyTheory.Definitions.Foundations.MeasurePreservingRmulQuotMeas
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.LevLaws
@@ -68,13 +69,7 @@ open scoped InnerProductSpace
 variable {K : Type} [Field K] [NumberField K] {n : ℕ} {μ : Measure (G1 K n)} [μ.IsHaarMeasure]
 
 private theorem rep_of {v : L2 μ} {φ : G1 K n → ℂ} (hc : Continuous φ) (hr : Reps μ v φ) : IsContRep μ v φ := by
-  refine ⟨hc, fun γ hγ => ?_, hr⟩
-  have h1 : (fun y => φ (γ * y)) =ᵐ[μ] φ := by
-    filter_upwards [hr, (measurePreserving_mul_left μ γ).quasiMeasurePreserving.ae hr] with y a b
-    rw [← a, ← b]
-    congr 1
-    exact Quotient.sound ⟨⟨γ, hγ⟩, rfl⟩
-  exact congrFun (((hc.comp (continuous_const_mul γ)).ae_eq_iff_eq μ hc).1 h1)
+  apply _root_.contRep_of_reps <;> assumption
 
 private theorem rep_inj {v w : L2 μ} {F : G1 K n → ℂ} (h : IsContRep μ v F) (h' : IsContRep μ w F) : v = w :=
   Lp.ext (h.ae_eq_quotFun.trans h'.ae_eq_quotFun.symm)
@@ -87,8 +82,6 @@ private theorem integ_of {Y E : Type*} [TopologicalSpace Y] [MeasurableSpace Y] 
   rwa [IntegrableOn, Measure.restrict_eq_self_of_ae_mem hs] at h
 
 variable (μ) in
-set_option maxHeartbeats 1000000 in
-set_option synthInstance.maxHeartbeats 200000 in
 private theorem avg_rep {Y : Type*} [TopologicalSpace Y] [T2Space Y] [SecondCountableTopology Y] [MeasurableSpace Y] [BorelSpace Y]
     (ν : Measure Y) [IsFiniteMeasure ν] {C : Set Y} (hC : IsCompact C) (hs : ∀ᵐ k ∂ν, k ∈ C)
     {j : Y → G1 K n} (hj : Continuous j) {c : Y → ℂ} (hc : Continuous c) {w : L2 μ} {F : G1 K n → ℂ}
@@ -326,8 +319,6 @@ private theorem fixed_of (D : TypeDat K n) {κ : Measure (archCompact K n)} {e :
   simp only [inner_smul_right]
   simpa using hfix
 
-set_option maxHeartbeats 1000000 in
-set_option synthInstance.maxHeartbeats 200000 in
 private theorem rep_in {τ : Submodule ℂ (L2 μ)} (hcl : IsClosed (τ : Set (L2 μ)))
     (hinv : ∀ g, ∀ v ∈ τ, rightRegularRep (Gam K n) μ g v ∈ τ) (D : TypeDat K n)
     (E : Submodule ℂ (G1 K n → ℂ)) [FiniteDimensional ℂ E] (hE : ∀ φ ∈ E, ∃ v : L2 μ, IsContRep μ v φ)

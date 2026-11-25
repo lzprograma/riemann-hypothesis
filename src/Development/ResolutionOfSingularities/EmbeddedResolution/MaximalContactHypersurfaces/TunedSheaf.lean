@@ -2,44 +2,6 @@ module
 
 public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheaf
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.ControlledTransform
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -71,11 +33,11 @@ def tuningExponent (m : ℕ) : ℕ := if m ≤ 1 then 1 else (m - 1) * lcmUpTo m
 
 theorem tuningExponent_of_le_one {m : ℕ} (h : m ≤ 1) : tuningExponent m = 1 := by
   unfold tuningExponent
-  exact if_pos h
+  exact ite_eq_left h
 
 theorem tuningExponent_of_two_le {m : ℕ} (h : 2 ≤ m) : tuningExponent m = (m - 1) * lcmUpTo m := by
   unfold tuningExponent
-  exact if_neg (by omega)
+  exact ite_eq_right (by omega)
 
 theorem tuningExponent_one : tuningExponent 1 = 1 := tuningExponent_of_le_one le_rfl
 
@@ -135,21 +97,6 @@ def IsMaxContactInvariantTunedSheaf : Prop :=
       derivIdealSheafIterate k p (s - 1) (tunedSheaf k p I m s) *
           derivIdealSheaf k p (tunedSheaf k p I m s) ≤ tunedSheaf k p I m s
 
-def TunedSheafMulEqAdd : Prop :=
-  ∀ (k : Type u) [Field k] [CharZero k] [IsNoetherianRing k] (X : Scheme.{u})
-    (p : X ⟶ Spec (CommRingCat.of k)) [AlgebraicGeometry.Smooth p] [LocallyOfFiniteType p]
-    (I : X.IdealSheafData) (m : ℕ), 1 ≤ m → MaxOrderEq I m →
-    ∀ r t : ℕ, (m - 1) * lcmUpTo m ≤ t →
-      tunedSheaf k p I m (r * lcmUpTo m) * tunedSheaf k p I m t =
-        tunedSheaf k p I m (r * lcmUpTo m + t)
-
-def TunedSheafPowEqMul : Prop :=
-  ∀ (k : Type u) [Field k] [CharZero k] [IsNoetherianRing k] (X : Scheme.{u})
-    (p : X ⟶ Spec (CommRingCat.of k)) [AlgebraicGeometry.Smooth p] [LocallyOfFiniteType p]
-    (I : X.IdealSheafData) (m : ℕ), 1 ≤ m → MaxOrderEq I m →
-    ∀ r : ℕ, m - 1 ≤ r → ∀ j : ℕ, 1 ≤ j →
-      tunedSheaf k p I m (r * lcmUpTo m) ^ j = tunedSheaf k p I m (j * (r * lcmUpTo m))
-
 def IsDerivBalancedTunedSheafMulLcm : Prop :=
   ∀ (k : Type u) [Field k] [CharZero k] [IsNoetherianRing k] (X : Scheme.{u})
     (p : X ⟶ Spec (CommRingCat.of k)) [AlgebraicGeometry.Smooth p] [LocallyOfFiniteType p]
@@ -199,15 +146,9 @@ def IsMarkedIffBalancedTunedSheaf : Prop :=
 
 structure TunedSheafProperties : Prop where
   isMarked_tuned_iff : IsMarkedIffBalancedTunedSheaf.{u}
-  tunedSheaf_succ_le : TunedSheafSuccLe.{u}
-  tunedSheaf_mul_le : TunedSheafMulLeAdd.{u}
-  derivIdealSheaf_tunedSheaf_succ : DerivIdealSheafTunedSheafSucc.{u}
   derivIdealSheafIter_pred_tunedSheaf : MaxContactIdealTunedSheafEq.{u}
   derivIdealSheafIter_mul_derivIdealSheaf_le_tunedSheaf : IsMaxContactInvariantTunedSheaf.{u}
-  tunedSheaf_mul_eq : TunedSheafMulEqAdd.{u}
-  tunedSheaf_pow : TunedSheafPowEqMul.{u}
   derivIdealSheafIter_tunedSheaf_pow_le : IsDerivBalancedTunedSheafMulLcm.{u}
   coSupport_tunedSheaf_eq_and_orderLE : CoSupportTunedSheafEqAndOrderLE.{u}
-  isMarked_iff_of_pow_le_of_le_tunedSheaf : IsMarkedIffOfPowLeOfLeTunedSheaf.{u}
 
 end FunctorialResolution.EmbeddedResolution

@@ -49,8 +49,6 @@ public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.Admissi
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open NumberField IsDedekindDomain GlobalTheory.AdLat GlobalTheory.UnRep ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -192,7 +190,7 @@ theorem idem_int (k : ℕ) (v : HeightOneSpectrum (𝓞 F)) : idem F k v ∈ v.a
 theorem exists_div_idem {k d : ℕ} (h : d.Coprime k) :
     ∃ a : FiniteAdeleRing (𝓞 F) F, (∀ v, a v ∈ v.adicCompletionIntegers F) ∧ d • a = idem F k := by
   refine exists_div d _ (idem_int k) fun v hv => ?_
-  rw [idem_apply, if_neg]
+  rw [idem_apply, ite_eq_right]
   intro hk
   obtain ⟨a, b, hab⟩ : IsCoprime (d : 𝓞 F) (k : 𝓞 F) := Nat.Coprime.cast h
   exact v.isPrime.ne_top ((Ideal.eq_top_iff_one _).2
@@ -204,7 +202,7 @@ theorem exists_div_one_sub_idem (k : ℕ) :
   · change 1 - idem F k v ∈ _
     exact sub_mem (one_mem _) (idem_int k v)
   · change 1 - idem F k v = 0
-    rw [idem_apply, if_pos hv, sub_self]
+    rw [idem_apply, ite_eq_left hv, sub_self]
 
 theorem glue_mem_hat {L₁ L₂ : Set (Fin n → E)} {k k' : ℕ} (hk : k'.Coprime k) {γ : Matrix (Fin n) (Fin n) E}
     (h₁ : ∀ x ∈ L₁, k' • γ *ᵥ x ∈ L₂) (h₂ : ∀ x ∈ L₁, k • x ∈ L₂) :

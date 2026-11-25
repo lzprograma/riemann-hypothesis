@@ -7,6 +7,7 @@ import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.LayerB
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.ExistsIrreducibleHighestWeightSubmodule
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.GeneratedSubmoduleStableUnderAction
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.CasValK
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.ProdShiftEqAevalProd
 
 @[expose] public section
 
@@ -22,16 +23,9 @@ variable {n : ℕ}
 
 theorem pi_submodule_finiteDimensional {M : Type*} [AddCommGroup M] [Module ℂ M] (S : Submodule ℂ M) [FiniteDimensional ℂ S] :
     FiniteDimensional ℂ (Submodule.pi Set.univ fun _ : Fin n => S) := by
-  let g : (Fin n → S) →ₗ[ℂ] (Fin n → M) := LinearMap.pi fun c => S.subtype ∘ₗ LinearMap.proj c
-  have : Submodule.pi Set.univ (fun _ : Fin n => S) = LinearMap.range g := by
-    ext f
-    constructor
-    · intro hf
-      exact ⟨fun c => ⟨f c, mem_pi_submodule_iff.1 hf c⟩, rfl⟩
-    · rintro ⟨w, rfl⟩
-      exact mem_pi_submodule_iff.2 fun c => by simp [g]
-  rw [this]
-  infer_instance
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.DS.Lap.LemK.finiteDimensional_pi_submodule
+    | apply _root_.ReciprocityTheory.ChartRestriction.DS.Lap.LemK.finiteDimensional_pi_submodule <;> first | assumption | rfl | infer_instance
 
 section HidaSetting
 

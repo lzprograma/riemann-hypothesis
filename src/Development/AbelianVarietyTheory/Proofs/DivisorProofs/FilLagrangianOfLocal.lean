@@ -54,8 +54,6 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -63,10 +61,7 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory.UPel.Sm GlobalTheory.Cris GlobalTheory.DeRham
 open scoped TensorProduct
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace GlobalTheory.HTLagr
-
 
 open GlobalTheory GlobalTheory.CatCoh GlobalTheory.PDiv GlobalTheory.PtExt in
 theorem mem_fil_of_orth_of_ker (R : Type) [CommRing R] [Nontrivial R] (A B : Over (Sp R)) [GrpObj A] [GrpObj B]
@@ -77,10 +72,10 @@ theorem mem_fil_of_orth_of_ker (R : Type) [CommRing R] [Nontrivial R] (A B : Ove
     (φ : HdR A →ₗ[R] HdR B →ₗ[R] R) (hφ : AbDual.IsCorrForm (dp0 R) (𝟙 _) A B P φ) (y : HdR B)
     (hy : ∀ x ∈ Fil A, φ x y = 0) : y ∈ Fil B := by
   have hHDR := GlobalTheory.AbCoh.abelianHodgeDeRham
-  obtain ⟨-, hHodge, -⟩ := GlobalTheory.T.abelianSchemeDeRham_free_hodgeSequence_baseChange hHDR
+  obtain ⟨-, hHodge, -⟩ := GlobalTheory.abelianDeRham_free_hodge_baseChange hHDR
   obtain ⟨v, hv⟩ := ((hHodge R B g hB hgB).1.1 y).exists
   obtain ⟨j, hj⟩ := GlobalTheory.T.exists_isChartChoiceForPoints_of_nontrivial R A B P hLB
-  have horth := GlobalTheory.T.hodgeFiltrations_orthogonal_lineBundlePairing_product hHDR R A B g hA hB hgA hgB P hLB φ hφ
+  have horth := GlobalTheory.PtExt.HodgeOrth.fil_orthogonal hHDR R A B g hA hB hgA hgB P hLB φ hφ
   obtain ⟨k, hk⟩ := GlobalTheory.T.cohomologous_neg_torsor_cocycle_of_orthogonal hHDR R A B g hA hB hgA hgB P hLB φ hφ horth y v hv 0
     (fun h hh ↦ by rw [hy h hh, map_zero]) 0 (by simp) j hj
   have hk' : IsCob (chartsA P) (tanCoc P j v) k := by
@@ -90,7 +85,7 @@ theorem mem_fil_of_orth_of_ker (R : Type) [CommRing R] [Nontrivial R] (A B : Ove
     rw [show ev (0 : Z1 (O (dp0 R) (A.hom ≫ 𝟙 _))) (trivMap ψ x) = 0 from rfl, zero_add] at e
     exact e
   obtain ⟨s, hs⟩ := GlobalTheory.T.exists_pointwiseLineBundleGenerator_of_trivial_pullback R (A ⊗ B) A P hLB (AbDual.inl A B) hz
-  obtain ⟨T, hT⟩ := GlobalTheory.T.exists_dualNumberGenerator_of_torsorCoboundary R A B P hLB v hv.1 j hj s hs k hk'
+  obtain ⟨T, hT⟩ := GlobalTheory.PtExt.exists_isEpsGen_of_isCob R A B P hLB v hv.1 j hj s hs k hk'
   obtain ⟨t, ht⟩ := GlobalTheory.T.exists_pointwiseGenerator_of_dualNumberLineBundleGenerator R A B P hLB v hv.1 T hT
   have htriv := GlobalTheory.T.cechLineBundle_pull_trivial_of_pointwiseGenerator R (A ⊗ B) (A ⊗ epsR R) P hLB _ t ht
   have hv1 : v ^ e = 1 := hker v htriv

@@ -1,56 +1,8 @@
 module
 
 public import GroundTheory.HeightsAndTheta.Heights.FactorialBounds.Statements
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
 import Mathlib.Order.Interval.Finset.Box
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -291,17 +243,17 @@ theorem proof : TorsionEquidistribution.Statement := by
   have hWwidth : ∀ i, ∀ u ∈ W i, ∀ v ∈ W i, |u - v| < m := by
     intro i u hu v hv
     by_cases hi : i = i₀
-    · simp only [hW, hi, if_true, Finset.mem_Icc] at hu hv
+    · simp only [hW, hi, ite_true, Finset.mem_Icc] at hu hv
       have h1 : ((b - a : ℤ) : ℝ) < m := by push_cast; linarith
       have h2 : b - a < m := by exact_mod_cast h1
       rw [abs_lt]; constructor <;> omega
-    · simp only [hW, hi, if_false, Finset.mem_Ico] at hu hv
+    · simp only [hW, hi, ite_false, Finset.mem_Ico] at hu hv
       rw [abs_lt]; constructor <;> omega
   have hGsub : gridPoint (k + 1) m '' (Fintype.piFinset W) ⊆ G := by
     rintro _ ⟨j, hj, rfl⟩
     refine ⟨gridPoint_mem hm j, ?_⟩
     have hj0 := Fintype.mem_piFinset.1 (Finset.mem_coe.1 hj) i₀
-    simp only [hW, if_true, Finset.mem_Icc] at hj0
+    simp only [hW, ite_true, Finset.mem_Icc] at hj0
     have hlo : (a : ℝ) ≤ j i₀ := by exact_mod_cast hj0.1
     have hhi : (j i₀ : ℝ) ≤ b := by exact_mod_cast hj0.2
     have e : gridPoint (k + 1) m j i₀ + (c : AddCircle (1 : ℝ)) =
@@ -316,9 +268,9 @@ theorem proof : TorsionEquidistribution.Statement := by
   have hGfin : G.Finite := hTfin.subset fun x hx => hx.1
   have hGcard : (b + 1 - a).toNat * m ^ k ≤ G.ncard := by
     calc (b + 1 - a).toNat * m ^ k = (Fintype.piFinset W).card := by
-          have hW0 : W 0 = Finset.Icc a b := if_pos (Fin.ext (by simp [hi₀]))
+          have hW0 : W 0 = Finset.Icc a b := ite_eq_left (Fin.ext (by simp [hi₀]))
           have hWs : ∀ i : Fin k, W i.succ = Finset.Ico (0 : ℤ) m := fun i =>
-            if_neg (fun h => by simp [hi₀, Fin.ext_iff] at h)
+            ite_eq_right (fun h => by simp [hi₀, Fin.ext_iff] at h)
           rw [Fintype.card_piFinset, Fin.prod_univ_succ, hW0]
           simp only [hWs, Int.card_Icc, Int.card_Ico, Finset.prod_const, Finset.card_univ,
             Fintype.card_fin, sub_zero, Int.toNat_natCast]

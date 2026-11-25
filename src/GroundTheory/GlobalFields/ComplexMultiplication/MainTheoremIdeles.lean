@@ -47,26 +47,7 @@ theorem ideleSymbol_apply_algEquiv (e : L ≃ₐ[K] L') (x : IdeleGroup K) (l : 
 
 end Transport
 
-section Bridge
-
-variable {K : FiniteSubfield} (E : FiniteSubfield) [hKE : Fact (K ≤ E)]
-
-variable [(E.1.fixingSubgroup.subgroupOf K.1.fixingSubgroup).Normal] [IsMulCommutative (E.1 ≃ₐ[K.1] E.1)]
-
-attribute [local instance] FiniteSubfield.isGalois_of_normal
-
-end Bridge
-
 variable {K : FiniteSubfield} (ι : LocalEmbeddings K)
-
-section Symbols
-
-variable (E : FiniteSubfield) [Fact (K ≤ E)]
-  [(E.1.fixingSubgroup.subgroupOf K.1.fixingSubgroup).Normal] [IsMulCommutative (E.1 ≃ₐ[K.1] E.1)]
-
-attribute [local instance] FiniteSubfield.isGalois_of_normal galCommGroup
-
-end Symbols
 
 end
 
@@ -119,7 +100,7 @@ theorem valued_natCast (m : ℕ) (hm : m ≠ 0) (v : HeightOneSpectrum (𝓞 K))
   have hfin : FiniteMultiplicity v.asIdeal (ofNat (K := K) m hm).ideal :=
     FiniteMultiplicity.of_not_isUnit (irreducible v).not_isUnit (ofNat m hm).ideal_ne_bot
   unfold exponent
-  rw [if_pos hfin, ofNat_ideal]
+  rw [ite_eq_left hfin, ofNat_ideal]
 
 end Modulus
 
@@ -248,7 +229,7 @@ theorem smulQuotient_inv_mk_of_eq (h𝔭 : (m : 𝓞 K) ∉ 𝔭.asIdeal)
           (huv.1 v).1
         have hπ1 : Valued.v (π : v.adicCompletion K) ≤ 1 := by
           have hord : ord v (finiteEmbedding v π) = 1 := by
-            rw [← count_toFractionalIdeal, hπ, count_primeIdealUnit, if_pos rfl]
+            rw [← count_toFractionalIdeal, hπ, count_primeIdealUnit, ite_eq_left rfl]
           have := valued_eq_exp_neg_ord v (finiteEmbedding v π)
           rw [hord, ← coe_finiteProj, finiteProj_finiteEmbedding] at this
           rw [this]

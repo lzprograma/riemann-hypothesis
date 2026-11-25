@@ -1034,15 +1034,6 @@ theorem fDeg_congr {K L : Type} [Field K] [NumberField K] [Field L] [NumberField
   · ext x
     simp
 
-theorem vInv_congr {K L : Type} [Field K] [NumberField K] [Field L] [NumberField L] (e : K ≃+* L) :
-    Formalism.HermitianLatticesTheory.vInv K = Formalism.HermitianLatticesTheory.vInv L := by
-  unfold Formalism.HermitianLatticesTheory.vInv
-  rw [fDeg_congr e, NumberField.discr_eq_discr_of_ringEquiv K e]
-
-theorem volU_nonneg (i : ℕ) : 0 ≤ volU i := by
-  unfold volU sphV
-  positivity
-
 theorem absoluteVolume_of_volumeStep : VolumeStep → AbsoluteVolume := by
   intro hstep I p q hsig hq hn X hX hrd hfrd c μf _ _ hc
   obtain ⟨hf, hv, -, -, -, hpq⟩ := _root_.GlobalTheory.FlagMeas.instance_numbers I
@@ -1063,14 +1054,14 @@ theorem absoluteVolume_of_volumeStep : VolumeStep → AbsoluteVolume := by
   obtain ⟨e, -⟩ := hsame
   obtain ⟨hf₀, -, -, -, -, -⟩ := _root_.GlobalTheory.FlagMeas.instance_numbers I₀
   rw [← hf₀, fDeg_congr e] at hD
-  rw [fDeg_congr e, vInv_congr e] at hV
+  rw [fDeg_congr e, GlobalTheory.FlagMeas.VolRatio.vInv_congr e] at hV
   have hA := _root_.GlobalTheory.VolArith.volume_bound_arith I.E I.cm.cmUnram I.n X hn hX (hv ▸ hrd) (by rw [hf, hv]; exact hfrd)
   have hv0 : 0 ≤ 2 * Formalism.HermitianLatticesTheory.vInv I.E := by
     unfold Formalism.HermitianLatticesTheory.vInv
     positivity
   have hv1 : 1 ≤ 2 * Formalism.HermitianLatticesTheory.vInv I.E := hv ▸ (_root_.GlobalTheory.FlagMeas.instance_numbers I).2.2.1
   have hlog : 0 ≤ Real.log (2 * Formalism.HermitianLatticesTheory.vInv I.E) := Real.log_nonneg hv1
-  have hU : 0 ≤ volU 2 ^ Formalism.HermitianLatticesTheory.fDeg I.E := pow_nonneg (volU_nonneg 2) _
+  have hU : 0 ≤ volU 2 ^ Formalism.HermitianLatticesTheory.fDeg I.E := pow_nonneg (GlobalTheory.FlagMeas.Bound.volU_nonneg 2) _
   rw [hE, hpq', ← hf]
   refine le_trans ?_ (ENNReal.ofReal_le_ofReal hA)
   rw [ENNReal.ofReal_mul (by positivity), ENNReal.ofReal_mul hU]
@@ -1483,8 +1474,7 @@ theorem lintegral_le_sum_types : ∀ (B : RowsAut) (p q : ℕ), SigIs B p q → 
     have hae : ∀ᵐ x ∂((B.I.muA B.μf).restrict Pᶜ), Φ x = 0 := by
       rw [ae_restrict_iff' hPm.compl]
       refine ae_of_all _ fun x hx => hΦ x ?_
-      by_contra hlt
-      push_neg at hlt
+      by_contra! hlt
       obtain ⟨J, hJ, c, τ, hτ⟩ := GlobalTheory.TypeDecomp.exists_type B p q hs hn x hlt
       apply hx
       simp only [hP, Set.mem_iUnion, Set.mem_setOf_eq]

@@ -47,7 +47,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Polynomial
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Hk3 (Core Good IsSF SchurAll TwoSided FixAll EEc Wcc eH IsLab HoweUnram)
 
 namespace GlobalTheory.InertEig
@@ -64,13 +63,13 @@ theorem coeff_cases {H : Type} [AddCommGroup H] [Module ℂ H] (n : ℕ) (ok : L
   classical
   by_cases h : ∃ s, ok s ∧ lab n s = d
   · right
-    have hf : coeff n ok lab b d = b h.choose := dif_pos h
+    have hf : coeff n ok lab b d = b h.choose := dite_eq_left h
     have h1 := hx _ h.choose_spec.1
     rw [h.choose_spec.2] at h1
     rw [hf]
     exact h1
   · left
-    exact ⟨fun hl => h (hL d hl), dif_neg h⟩
+    exact ⟨fun hl => h (hL d hl), dite_eq_right h⟩
 
 theorem eig_of_single {H Γ ι W : Type} [AddCommGroup H] [Module ℂ H] [AddCommGroup W] [Module ℂ W]
     (e : H →ₗ[ℂ] (Γ → W)) (he : Function.Injective e) (rep : List ℤ → Finset ι) (act : Γ → ι → Γ)
@@ -104,7 +103,7 @@ theorem veig : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A :
   have hrep : ∀ d, ¬ IsLab (Vc D j) P d → GlobalTheory.Hk3.rep (Vc D j) P d = ∅ := by
     intro d hd
     classical
-    exact dif_neg hd
+    exact dite_eq_right hd
   have key : ∀ x : (R.HV j t).H, (∀ s, Formalism.L2.Col.InertTypeOk (Vc D j).rank s →
       hV P (Finsupp.single (labIn (Vc D j).rank s) 1) x = b s • x) →
       hV P cV x = (cV.sum fun d z => z * coeff (Vc D j).rank (Formalism.L2.Col.InertTypeOk (Vc D j).rank) labIn b d) • x := by

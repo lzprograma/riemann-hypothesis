@@ -5,8 +5,6 @@ import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 open MvPolynomial Finset
@@ -43,7 +41,7 @@ theorem SchSchurHomogeneous.proof : SchSchurHomogeneous.Statement := by
         exact_mod_cast h1.trans h2
       rw [← hdeg]
       refine IsHomogeneous.prod _ _ _ fun i _ => ?_
-      simp only [Matrix.of_apply, completeSymmetric, if_pos (h i)]
+      simp only [Matrix.of_apply, completeSymmetric, ite_eq_left (h i)]
       exact hsymm_isHomogeneous σ _
     · push Not at h
       obtain ⟨i, hi⟩ := h

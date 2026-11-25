@@ -115,14 +115,14 @@ theorem supSum_restr (h : r ≤ n) (S : Finset ℕ) (A : Matrix (Fin n) (Fin n) 
     have hi' : ¬ i.val < r := fun hlt => hi ⟨⟨i.val, hlt⟩, by simp, Fin.ext rfl⟩
     apply Finset.sum_eq_zero
     intro j _
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2, -⟩
     omega
   · intro i _
     apply Finset.sum_of_injOn (Fin.castLE h) (fun x _ y _ hxy => Fin.castLE_injective h hxy) (by simp [Set.MapsTo])
     · intro j _ hj
       have hj' : ¬ j.val < r := fun hlt => hj ⟨⟨j.val, hlt⟩, by simp, Fin.ext rfl⟩
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨-, h2, -⟩
       exact hj' h2
     · intro j _
@@ -326,7 +326,7 @@ variable {κ K : Type} [CommRing κ] [Field K] {n r : ℕ}
 open Classical in
 def Lev.ev (l : Lev κ K n) (M : GL (Fin n) κ) : Kˣ := if h : M ∈ l.H then l.lam ⟨M, h⟩ else 1
 
-theorem Lev.ev_of_mem (l : Lev κ K n) {M : GL (Fin n) κ} (h : M ∈ l.H) : l.ev M = l.lam ⟨M, h⟩ := dif_pos h
+theorem Lev.ev_of_mem (l : Lev κ K n) {M : GL (Fin n) κ} (h : M ∈ l.H) : l.ev M = l.lam ⟨M, h⟩ := dite_eq_left h
 
 structure Lev.Split (e : GL (Fin r) κ →* GL (Fin n) κ) (lP lK : Lev κ K n) (l0 : Lev κ K r) : Prop where
   fac : ∀ M ∈ lP.H, ∃ a ∈ l0.H, ∃ k ∈ lK.H, M = e a * k ∧ lP.ev M = l0.ev a * lK.ev k
@@ -425,7 +425,7 @@ theorem Lev.inv_ev (l : Lev κ K n) (M : GL (Fin n) κ) : l.inv.ev M = (l.ev M)�
   · rw [Lev.ev_of_mem l h, Lev.ev_of_mem l.inv (show M ∈ l.inv.H from h)]
     rfl
   · unfold Lev.ev
-    rw [dif_neg h, dif_neg (show M ∉ l.inv.H from h), inv_one]
+    rw [dite_eq_right h, dite_eq_right (show M ∉ l.inv.H from h), inv_one]
 
 theorem Lev.Split.inv {e : GL (Fin r) κ →* GL (Fin n) κ} {lP lK : Lev κ K n} {l0 : Lev κ K r}
     (H : Lev.Split e lP lK l0) : Lev.Split e lP.inv lK.inv l0.inv := by
@@ -472,11 +472,11 @@ theorem prod_uSG {M : Type} [CommMonoid M] (f : SG0 → M) :
   · intro a b hab
     exact Subtype.ext (congrArg (fun w : uSG SG0 Q => w.1) hab)
   · intro w hw
-    rw [dif_neg]
+    rw [dite_eq_right]
     intro hm
     exact hw ⟨⟨w.1, hm⟩, rfl⟩
   · intro w
-    rw [dif_pos (show (inlSG (Q := Q) w).1 ∈ SG0 from w.2)]
+    rw [dite_eq_left (show (inlSG (Q := Q) w).1 ∈ SG0 from w.2)]
     rfl
 
 
@@ -496,10 +496,10 @@ theorem LevFam.glue_split (h : r ≤ n) (TP TK : LevFam X.E X.K n SG0) (P : LevF
       intro w _
       by_cases hw : w.1 ∈ SG0
       · show kk w ∈ (TK.glue B w).H
-        rw [LevFam.glue_of_mem TK B w hw, show kk w = k ⟨w.1, hw⟩ from dif_pos hw]
+        rw [LevFam.glue_of_mem TK B w hw, show kk w = k ⟨w.1, hw⟩ from dite_eq_left hw]
         exact hk _
       · show kk w ∈ (TK.glue B w).H
-        rw [LevFam.glue_of_not TK B w hw, show kk w = x.1 w from dif_neg hw]
+        rw [LevFam.glue_of_not TK B w hw, show kk w = x.1 w from dite_eq_right hw]
         have := (TP.glue B).mem_at x w
         rw [LevFam.glue_of_not TP B w hw] at this
         exact this
@@ -508,21 +508,21 @@ theorem LevFam.glue_split (h : r ≤ n) (TP TK : LevFam X.E X.K n SG0) (P : LevF
     · funext w
       by_cases hw : w.1 ∈ SG0
       · show x.1 w = extGLG Q (diagonalEmbeddingProduct SG0 h a) w * kk w
-        rw [extGLG_of_mem _ w hw, show kk w = k ⟨w.1, hw⟩ from dif_pos hw]
+        rw [extGLG_of_mem _ w hw, show kk w = k ⟨w.1, hw⟩ from dite_eq_left hw]
         exact e1 ⟨w.1, hw⟩
       · show x.1 w = extGLG Q (diagonalEmbeddingProduct SG0 h a) w * kk w
-        rw [extGLG_of_not _ w hw, show kk w = x.1 w from dif_neg hw, one_mul]
+        rw [extGLG_of_not _ w hw, show kk w = x.1 w from dite_eq_right hw, one_mul]
     · have E1 : (TP.glue B).chr x = ∏ w, (TP.glue B w).ev (x.1 w) := LevFam.chr_ev _ x
       have E2 : P.chr ⟨a, haa⟩ = ∏ w, (P w).ev (a w) := LevFam.chr_ev P ⟨a, haa⟩
       have E3 : (TK.glue B).chr ⟨kk, hkk⟩ = ∏ w, (TK.glue B w).ev (kk w) := LevFam.chr_ev _ ⟨kk, hkk⟩
       rw [E1, E2, E3, ← prod_uSG (Q := Q) fun w : SG0 => (P w).ev (a w), ← Finset.prod_mul_distrib]
       refine Finset.prod_congr rfl fun w _ => ?_
       by_cases hw : w.1 ∈ SG0
-      · have hkw : kk w = k ⟨w.1, hw⟩ := dif_pos hw
-        rw [hkw, dif_pos hw, LevFam.glue_of_mem TP B w hw, LevFam.glue_of_mem TK B w hw]
+      · have hkw : kk w = k ⟨w.1, hw⟩ := dite_eq_left hw
+        rw [hkw, dite_eq_left hw, LevFam.glue_of_mem TP B w hw, LevFam.glue_of_mem TK B w hw]
         exact e2 ⟨w.1, hw⟩
-      · have hkw : kk w = x.1 w := dif_neg hw
-        rw [hkw, dif_neg hw, LevFam.glue_of_not TP B w hw, LevFam.glue_of_not TK B w hw, one_mul]
+      · have hkw : kk w = x.1 w := dite_eq_right hw
+        rw [hkw, dite_eq_right hw, LevFam.glue_of_not TP B w hw, LevFam.glue_of_not TK B w hw, one_mul]
   · intro a
     have hm : ((extGLG Q).comp (diagonalEmbeddingProduct SG0 h)) a.1 ∈ (TP.glue B).grp := by
       intro w _
@@ -537,9 +537,9 @@ theorem LevFam.glue_split (h : r ≤ n) (TP TK : LevFam X.E X.K n SG0) (P : LevF
     rw [E1, LevFam.chr_ev P a, ← prod_uSG (Q := Q) fun w : SG0 => (P w).ev (a.1 w)]
     refine Finset.prod_congr rfl fun w _ => ?_
     by_cases hw : w.1 ∈ SG0
-    · rw [dif_pos hw, LevFam.glue_of_mem TP B w hw, extGLG_of_mem _ w hw]
+    · rw [dite_eq_left hw, LevFam.glue_of_mem TP B w hw, extGLG_of_mem _ w hw]
       exact ((H ⟨w.1, hw⟩).emb _ (P.mem_at a ⟨w.1, hw⟩)).2
-    · rw [dif_neg hw, extGLG_of_not _ w hw, Lev.ev_of_mem _ (Subgroup.one_mem _)]
+    · rw [dite_eq_right hw, extGLG_of_not _ w hw, Lev.ev_of_mem _ (Subgroup.one_mem _)]
       exact map_one _
   · intro k
     have hm : k.1 ∈ (TP.glue B).grp := by
@@ -639,13 +639,5 @@ theorem mem_MtildeV_iff (φ : DecoSet (E := X.E) (n := R.N R.m - 1) (ST := ∅) 
     exact this
 
 end LevelP
-
-section LevelPMt
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S)
-  (P : LevFam X.E X.K R.r Pr.vGs)
-
-end LevelPMt
 
 end Formalism.L2.Col

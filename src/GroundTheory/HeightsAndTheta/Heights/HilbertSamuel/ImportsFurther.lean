@@ -21,12 +21,6 @@ def ArithmeticVolumeBigDimensionOne.Statement : Prop :=
     IsConjInvariantH A →
     II K ι (mCoordIdeal y) 1 (fun _ => A) ≤ arVolP (IsSmallH (mCoordIdeal y) y A) (chartLat y A.a) 1 0
 
-namespace ArithmeticVolumeBigDimensionOne
-
-open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.HeightsSet
-
-end ArithmeticVolumeBigDimensionOne
-
 end
 
 end GroundTheory.Heights₂.Heights.HilbertSamuel

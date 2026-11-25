@@ -69,7 +69,7 @@ theorem coef_d {k : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε) (c d : Fin 
       intro i hi a ha
       have hia : IsPhys ε (i, a) := ⟨(Finset.mem_filter.mp hi).2, (Finset.mem_filter.mp ha).2⟩
       rw [conj_single_apply]
-      simp only [adMat, hx, hia, if_true]
+      simp only [adMat, hx, hia, ite_true]
       ring
     rw [Finset.sum_congr rfl fun i hi => Finset.sum_congr rfl fun a ha => hterm i hi a ha,
       ← Finset.sum_mul_sum, sum_plus_kk hk j d (Or.inl hj), sum_minus_kk hk c b (Or.inr hb)]
@@ -77,16 +77,16 @@ theorem coef_d {k : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε) (c d : Fin 
     · subst h1
       subst h2
       simp [hj, hb]
-    · rw [if_neg h2, mul_zero, if_neg]
+    · rw [ite_eq_right h2, mul_zero, ite_eq_right]
       rintro ⟨h, -⟩
       exact h2 (Prod.ext_iff.mp h).2.symm
-    · rw [if_neg h1, zero_mul, if_neg]
+    · rw [ite_eq_right h1, zero_mul, ite_eq_right]
       rintro ⟨h, -⟩
       exact h1 (Prod.ext_iff.mp h).1
-    · rw [if_neg h1, zero_mul, if_neg]
+    · rw [ite_eq_right h1, zero_mul, ite_eq_right]
       rintro ⟨h, -⟩
       exact h1 (Prod.ext_iff.mp h).1
-  · rw [if_neg]
+  · rw [ite_eq_right]
     · refine Finset.sum_eq_zero fun i hi => Finset.sum_eq_zero fun a ha => ?_
       have hia : IsPhys ε (i, a) := ⟨(Finset.mem_filter.mp hi).2, (Finset.mem_filter.mp ha).2⟩
       have hne : x ≠ (i, a) := fun h => hx (h ▸ hia)
@@ -107,7 +107,7 @@ theorem coef_d' {k : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε) (c d : Fin
       intro i hi a ha
       have hia : IsPhys ε (i, a) := ⟨(Finset.mem_filter.mp hi).2, (Finset.mem_filter.mp ha).2⟩
       rw [conj_single_apply]
-      simp only [adMat, hx, hia, if_true, star_mul', star_star]
+      simp only [adMat, hx, hia, ite_true, star_mul', star_star]
       ring
     rw [Finset.sum_congr rfl fun i hi => Finset.sum_congr rfl fun a ha => hterm i hi a ha,
       ← Finset.sum_mul_sum, sum_plus_kk hk c j (Or.inr hj), sum_minus_kk hk b d (Or.inl hb)]
@@ -115,16 +115,16 @@ theorem coef_d' {k : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε) (c d : Fin
     · subst h1
       subst h2
       simp [hj, hb]
-    · rw [if_neg h2, mul_zero, if_neg]
+    · rw [ite_eq_right h2, mul_zero, ite_eq_right]
       rintro ⟨h, -⟩
       exact h2 (Prod.ext_iff.mp h).2
-    · rw [if_neg h1, zero_mul, if_neg]
+    · rw [ite_eq_right h1, zero_mul, ite_eq_right]
       rintro ⟨h, -⟩
       exact h1 (Prod.ext_iff.mp h).1.symm
-    · rw [if_neg h1, zero_mul, if_neg]
+    · rw [ite_eq_right h1, zero_mul, ite_eq_right]
       rintro ⟨h, -⟩
       exact h1 (Prod.ext_iff.mp h).1.symm
-  · rw [if_neg]
+  · rw [ite_eq_right]
     · refine Finset.sum_eq_zero fun i hi => Finset.sum_eq_zero fun a ha => ?_
       have hia : IsPhys ε (i, a) := ⟨(Finset.mem_filter.mp hi).2, (Finset.mem_filter.mp ha).2⟩
       have hne : x ≠ (i, a) := fun h => hx (h ▸ hia)
@@ -225,7 +225,7 @@ theorem wK_dOp (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E) {k : 
     rw [← coef_d hk c d x, Finset.sum_smul]
     exact Finset.sum_congr rfl fun i _ => (Finset.sum_smul ..).symm
   simp only [hcoef]
-  simp only [ite_smul, one_smul, zero_smul, ite_and, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [ite_smul, one_smul, zero_smul, ite_and, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [Finset.sum_comm]
   simp only [plusIdx, minusIdx, Finset.sum_filter]
   refine Finset.sum_congr rfl fun d _ => ?_
@@ -264,7 +264,7 @@ theorem wK_dOp' (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E) {k :
     rw [← coef_d' hk c d x, Finset.sum_smul]
     exact Finset.sum_congr rfl fun i _ => (Finset.sum_smul ..).symm
   simp only [hcoef]
-  simp only [ite_smul, one_smul, zero_smul, ite_and, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [ite_smul, one_smul, zero_smul, ite_and, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   simp only [plusIdx, minusIdx, Finset.sum_filter]
   refine Finset.sum_congr rfl fun c _ => ?_
   by_cases hc : ε c = true <;> simp [hc]

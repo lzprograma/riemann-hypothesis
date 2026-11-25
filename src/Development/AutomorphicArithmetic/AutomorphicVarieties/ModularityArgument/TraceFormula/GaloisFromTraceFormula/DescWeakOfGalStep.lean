@@ -256,10 +256,10 @@ theorem UpperTheory.V.Z.Tf.GaloisFromTraceFormula.asmTh_of :
     have h1 := hid S hS' K' (famU Z T f e₁ e₂ k) (fun a' => if h : a' + (n - a') = n then Φ a' (n - a') h k else 0) hK
       (hUv T hT hTZ e₁ e₂ k).1 fun a' ha' => by
         have h := Nat.add_sub_cancel' ha'
-        simp only [dif_pos h]
+        simp only [dite_eq_left h]
         exact ⟨((ht _ _ h T hT hTZ e₁ e₂).2 k).1, fun w hw => (((ht _ _ h T hT hTZ e₁ e₂).2 k).2 w hw).1⟩
     rw [(hUv T hT hTZ e₁ e₂ k).2] at h1
-    simp only [dif_pos (hab _)] at h1
+    simp only [dite_eq_left (hab _)] at h1
     rw [← h1]
     refine Finset.sum_eq_zero fun i _ => ?_
     have := hv0 (.inl i)

@@ -4,53 +4,10 @@ public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.CyclicPower
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BallRing
 public import Mathlib.RingTheory.PowerSeries.Expand
 public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartB
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
 
 @[expose] public section
@@ -290,14 +247,14 @@ theorem norm_lamF_sub {K : Type} [NormedField K] [IsUltrametricDist K] {p : ℕ}
       have h' := coeff_lgF_pow K hp2 1
       rw [pow_one, h] at h'
       exact inv_ne_zero (pow_ne_zero 1 hpK) h'.symm
-    rw [h, if_neg h1, if_neg h2]
+    rw [h, ite_eq_right h1, ite_eq_right h2]
     simp
   · obtain ⟨j, rfl⟩ := coeff_lgF_ne_zero h
     rw [coeff_lgF_pow K hp2 j]
     rcases j with _ | _ | j
-    · rw [pow_zero, if_pos rfl, if_neg (Ne.symm hq1)]
+    · rw [pow_zero, ite_eq_left rfl, ite_eq_right (Ne.symm hq1)]
       simp
-    · rw [zero_add, pow_one, pow_one, hϖ, if_neg hq1, if_pos rfl, mul_inv_cancel₀ hpK]
+    · rw [zero_add, pow_one, pow_one, hϖ, ite_eq_right hq1, ite_eq_left rfl, mul_inv_cancel₀ hpK]
       simp
     · have h1 : (p ^ 2) ^ (j + 2) ≠ 1 := fun h' =>
         absurd (powq_inj hp2 (h'.trans (pow_zero _).symm)) (by omega)
@@ -306,7 +263,7 @@ theorem norm_lamF_sub {K : Type} [NormedField K] [IsUltrametricDist K] {p : ℕ}
       obtain ⟨g, hg, _, hj⟩ := geom_sum_mul_pred (q := p ^ 2) (by nlinarith) (j + 2)
       have hj' := hj (by omega)
       obtain ⟨t, rfl⟩ : ∃ t, g = (j + 2) + (t + 1) := ⟨g - (j + 2) - 1, by omega⟩
-      rw [if_neg h1, if_neg h2, sub_zero, sub_zero, hg, Nat.add_sub_cancel, pow_mul, hϖ, pow_add,
+      rw [ite_eq_right h1, ite_eq_right h2, sub_zero, sub_zero, hg, Nat.add_sub_cancel, pow_mul, hϖ, pow_add,
         mul_comm ((p : K) ^ (j + 2)), mul_assoc, mul_inv_cancel₀ (pow_ne_zero _ hpK), mul_one,
         norm_pow, hn, pow_succ]
       exact mul_le_of_le_one_left hpR.le (pow_le_one₀ hpR.le
@@ -337,7 +294,7 @@ theorem coeff_altR_of_not {R : Type} [CommRing R] {p n : ℕ} (h : ∀ l, n ≠ 
     PowerSeries.coeff n (altR R p) = 0 := by
   unfold altR
   rw [PowerSeries.coeff_mk]
-  exact Finset.sum_eq_zero fun l _ => if_neg (h l)
+  exact Finset.sum_eq_zero fun l _ => ite_eq_right (h l)
 
 theorem constantCoeff_altR (R : Type) [CommRing R] {p : ℕ} (hp : 2 ≤ p) :
     PowerSeries.constantCoeff (altR R p) = 0 := by
@@ -352,16 +309,16 @@ theorem altR_add_expand (R : Type) [CommRing R] {p : ℕ} (hp : 2 ≤ p) (hq : p
   by_cases h : ∃ l, n = (p ^ 2) ^ l
   · obtain ⟨l, rfl⟩ := h
     rcases l with _ | l
-    · rw [coeff_altR_pow R hp, pow_zero, pow_zero, if_pos rfl,
-        if_neg (fun hd => absurd (Nat.le_of_dvd one_pos hd) (by omega)), add_zero]
+    · rw [coeff_altR_pow R hp, pow_zero, pow_zero, ite_eq_left rfl,
+        ite_eq_right (fun hd => absurd (Nat.le_of_dvd one_pos hd) (by omega)), add_zero]
     · have h1 : (p ^ 2) ^ (l + 1) ≠ 1 := fun h' =>
         absurd (powq_inj hp (h'.trans (pow_zero _).symm)) (by omega)
-      rw [coeff_altR_pow R hp, if_pos (Dvd.intro_left _ (pow_succ _ _).symm), if_neg h1, pow_succ (p ^ 2),
+      rw [coeff_altR_pow R hp, ite_eq_left (Dvd.intro_left _ (pow_succ _ _).symm), ite_eq_right h1, pow_succ (p ^ 2),
         Nat.mul_div_cancel _ (by omega), coeff_altR_pow R hp]
       ring
   · have h' : ∀ l, n ≠ (p ^ 2) ^ l := fun l hl => h ⟨l, hl⟩
     have h1 : n ≠ 1 := by simpa using h' 0
-    rw [coeff_altR_of_not h', if_neg h1, zero_add]
+    rw [coeff_altR_of_not h', ite_eq_right h1, zero_add]
     split_ifs with hd
     · refine coeff_altR_of_not fun l hl => h' (l + 1) ?_
       rw [pow_succ, ← hl, Nat.div_mul_cancel hd]

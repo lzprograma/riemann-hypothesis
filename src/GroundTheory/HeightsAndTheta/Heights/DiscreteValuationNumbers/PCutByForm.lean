@@ -21,19 +21,11 @@ theorem weightedHomogeneousComponent_mem_span_of_isMultiHomog {R : Type*} [CommR
     [DecidableEq K] {ι : K → Type*} {s : MRing ι R} {c : K → ℕ} (hs : IsMultiHomog s c)
     {t : MRing ι R} (ht : t ∈ Ideal.span {s}) (b : K → ℕ) :
     weightedHomogeneousComponent (blockWeight ι) b t ∈ Ideal.span {s} := by
-  obtain ⟨a, rfl⟩ := Ideal.mem_span_singleton'.mp ht
-
-  rw [a.as_sum, Finset.sum_mul, map_sum]
-  refine Ideal.sum_mem _ fun d _ => ?_
-  have hd : IsWeightedHomogeneous (blockWeight ι) (monomial d (AddMonoidAlgebra.coeff a d) * s)
-      (Finsupp.weight (blockWeight ι) d + c) :=
-    (isWeightedHomogeneous_monomial _ d _ rfl).mul hs
-  by_cases hb : b = Finsupp.weight (blockWeight ι) d + c
-  · subst hb
-    rw [hd.weightedHomogeneousComponent_same]
-    exact Ideal.mul_mem_left _ _ (Ideal.subset_span rfl)
-  · rw [hd.weightedHomogeneousComponent_ne b hb]
-    exact Ideal.zero_mem _
+  classical
+  let := MvPolynomial.weightedGradedAlgebra R (blockWeight ι)
+  have h : (Ideal.span {s}).IsHomogeneous (weightedHomogeneousSubmodule R (blockWeight ι)) :=
+    Ideal.homogeneous_span _ _ (by rintro _ rfl; exact ⟨c, hs⟩)
+  exact MvPolynomial.weightedHomogeneousComponent_mem_of_mem R (blockWeight ι) h ht b
 
 theorem isMultiHomogIdeal_sup_span_of_form {R : Type*} [CommRing R] {K : Type*} [DecidableEq K]
     {ι : K → Type*} {I : Ideal (MRing ι R)} (hI : IsMultiHomogIdeal I) {s : MRing ι R}
@@ -46,21 +38,8 @@ theorem isMultiHomogIdeal_sup_span_of_form {R : Type*} [CommRing R] {K : Type*} 
 
 theorem withBot_lt_of_add_one_lt {d : WithBot ℕ∞} {N : ℕ}
     (h : d + 1 < ((N + 1 : ℕ) : WithBot ℕ∞)) : d < ((N : ℕ) : WithBot ℕ∞) := by
-  induction d using WithBot.recBotCoe with
-  | bot => exact WithBot.bot_lt_coe _
-  | coe x =>
-    induction x using ENat.recTopCoe with
-    | top =>
-      exfalso
-      have : ((⊤ : ℕ∞) : WithBot ℕ∞) + 1 = ((⊤ : ℕ∞) : WithBot ℕ∞) := rfl
-      rw [this] at h
-      exact absurd h (not_lt.mpr (WithBot.coe_le_coe.mpr le_top))
-    | coe k =>
-      have h' : ((k + 1 : ℕ) : WithBot ℕ∞) < ((N + 1 : ℕ) : WithBot ℕ∞) := by
-        exact_mod_cast h
-      have h'' : k + 1 < N + 1 := by exact_mod_cast h'
-      have : k < N := by omega
-      exact_mod_cast this
+  rw [Nat.cast_add, Nat.cast_one] at h
+  exact lt_of_add_lt_add_right h
 
 theorem CutByForm.proof (h1 : IntNumAssoc.Statement.{u}) (h2 : HilbFnCut.Statement.{u})
     (h3 : MixedDiffLinear.Statement) : CutByForm.Statement.{u} := by

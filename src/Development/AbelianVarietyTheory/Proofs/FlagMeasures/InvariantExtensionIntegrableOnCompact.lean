@@ -86,7 +86,7 @@ private lemma card_le_of_translates_mem_mul_inv_tsum_indicator {C : Set G} (S : 
           by_cases hm : (γ : G) * x ∈ C <;> simp [hm]
       _ = ((S.image (· * γ₀)).card : ℝ≥0∞) := by simp
       _ ≤ S.card := by exact_mod_cast Finset.card_image_le
-  · push_neg at h
+  · push Not at h
     simp [h]
 
 theorem lintegral_rep_le (hD : IsFundamentalDomain Γ D μ) (hDm : MeasurableSet D)

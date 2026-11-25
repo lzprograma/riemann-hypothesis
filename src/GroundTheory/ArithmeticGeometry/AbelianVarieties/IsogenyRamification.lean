@@ -8,57 +8,6 @@ public import GroundTheory.ArithmeticGeometry.AbelianVarieties.DualIsogenyExists
 import GroundTheory.ArithmeticGeometry.AbelianVarieties.DivisorsValuation
 import GroundTheory.ArithmeticGeometry.AbelianVarieties.KernelCard
 import GroundTheory.ArithmeticGeometry.AbelianVarieties.WeilTranslate
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.LocalProperties.Reduced
-import Mathlib.Tactic.Linter.HaveILetI
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenyValuation, GroundTheory.ArithmeticGeometry.AbelianVarieties.WeilPairing, GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenyRamification
@@ -245,8 +194,7 @@ omit [IsAlgClosed F] [DecidableEq F] in
 theorem valuation_le_one_of_isIntegral {K : Type*} [Field K] [Algebra F K]
     (M : IntermediateField F K) (v : Valuation K ℤᵐ⁰) (hM : ∀ m : M, v (m : K) ≤ 1) {z : K}
     (hz : IsIntegral M z) : v z ≤ 1 := by
-  by_contra hgt
-  push_neg at hgt
+  by_contra! hgt
   have hz0 : z ≠ 0 := by rintro rfl; simp at hgt
   have hvz : v z ≠ 0 := (Valuation.ne_zero_iff _).mpr hz0
   set k := log (v z)
@@ -290,8 +238,7 @@ theorem exists_point_valuation_comap (φ : Isogeny E E') :
     intro c hc
     rw [hw, AlgHom.commutes, valuationPoint_zero_eq, valuationInfty_algebraMap_const_eq_one E hc]
   have hnt : ∃ f, f ≠ 0 ∧ w f ≠ 1 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hM : ∀ m : φ.comap.fieldRange, valuationPoint E 0 (m : E.toAffine.FunctionField) ≤ 1 := by
       rintro ⟨m, f, rfl⟩
       by_cases hf : f = 0
@@ -616,15 +563,15 @@ theorem ramIdx_mulIsogeny_mul_card_ker (n : ℤ) (hn : n ≠ 0) :
     simp only [D, Finsupp.add_apply, Finsupp.finsetSum_apply, Finsupp.single_apply]
     by_cases hP : P = 0
     · subst hP
-      rw [Finset.sum_eq_zero (fun T hT => if_neg (Finset.ne_of_mem_erase hT)), if_pos rfl, zero_add,
+      rw [Finset.sum_eq_zero (fun T hT => ite_eq_right (Finset.ne_of_mem_erase hT)), ite_eq_left rfl, zero_add,
         ordPoint_zero_poly E hΨ0]
-    · rw [if_neg (Ne.symm hP), add_zero, Finset.sum_ite_eq']
+    · rw [ite_eq_right (Ne.symm hP), add_zero, Finset.sum_ite_eq']
       obtain ⟨h, hP'⟩ := eq_some_xOf_yOf E hP
       have hmem : P ∈ S.erase 0 ↔ n • P = 0 := by simp [S, hP]
       rw [hP', hA h, ← hP']
       by_cases hT : n • P = 0
-      · rw [if_pos hT, if_pos (hmem.mpr hT)]
-      · rw [if_neg hT, if_neg (fun h' => hT (hmem.mp h'))]
+      · rw [ite_eq_left hT, ite_eq_left (hmem.mpr hT)]
+      · rw [ite_eq_right hT, ite_eq_right (fun h' => hT (hmem.mp h'))]
   have hdeg := divisorDegree_divisorOf E ha
 
   rw [hD, map_add (f := _), map_sum, divisorDegree_single] at hdeg
@@ -673,11 +620,11 @@ theorem exists_ordPoint_eq_ite (S : Finset E.toAffine.Point) :
   have h1 : B + C ≠ T := fun h => hC2 (h ▸ hT)
   have h2 : B ≠ T := fun h => hB (h ▸ hT)
   have h3 : C ≠ T := fun h => hC1 (h ▸ hT)
-  simp only [D, Finsupp.sub_apply, Finsupp.add_apply, Finsupp.single_apply, if_neg h1, if_neg h2,
-    if_neg h3]
+  simp only [D, Finsupp.sub_apply, Finsupp.add_apply, Finsupp.single_apply, ite_eq_right h1, ite_eq_right h2,
+    ite_eq_right h3]
   by_cases h0 : T = 0
   · subst h0; simp
-  · rw [if_neg (Ne.symm h0), if_neg h0]; simp
+  · rw [ite_eq_right (Ne.symm h0), ite_eq_right h0]; simp
 
 theorem ramIdx_dvd_insepDeg (φ : Isogeny E E') : φ.ramIdx ∣ φ.insepDeg := by
   classical

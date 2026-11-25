@@ -45,8 +45,6 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace MvPolynomial
@@ -159,7 +157,7 @@ theorem exists_linear_of_multiadditive : ∀ (k : Type) [CommRing k] (X : Scheme
   have hφ : ∀ c, φ (expv c) = f c := by
     intro c
     have h : ∃ c' : Fin (d + 1) → ι, expv c' = expv c := ⟨c, rfl⟩
-    simp only [φ, dif_pos h]
+    simp only [φ, dite_eq_left h]
     obtain ⟨e, he⟩ := exists_perm_of_expv_eq h.choose_spec
     rw [← hf h.choose e]
     exact congrArg f (funext fun a => (he a).symm)
@@ -180,7 +178,7 @@ theorem exists_linear_of_multiadditive : ∀ (k : Type) [CommRing k] (X : Scheme
     refine Finset.sum_eq_zero fun s hs => ?_
     have hm : monomial s (AddMonoidAlgebra.coeff P s) = AddMonoidAlgebra.coeff P s • monomial s (1 : ℝ) := by rw [smul_monomial, smul_eq_mul, mul_one]
     rw [hm, map_smul, hΦ, smul_eq_mul]
-    refine mul_eq_zero_of_right _ (dif_neg ?_)
+    refine mul_eq_zero_of_right _ (dite_eq_right ?_)
     rintro ⟨c, rfl⟩
     have := hP (mem_support_iff.1 hs)
     rw [weight_expv] at this

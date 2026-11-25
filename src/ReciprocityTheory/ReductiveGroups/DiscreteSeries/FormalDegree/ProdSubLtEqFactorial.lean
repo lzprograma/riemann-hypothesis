@@ -20,7 +20,7 @@ variable {n : ℕ}
 
 theorem sCoef_lamT (lam : Fin n → ℝ) (t : ℕ) {i : ℕ} (hi : i + 1 < n) :
     sCoef (lamT lam t) i = sCoef lam i + t := by
-  simp only [sCoef, dif_pos hi, lamT, Dvec, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+  simp only [sCoef, dite_eq_left hi, lamT, Dvec, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
   push_cast
   ring
 
@@ -112,16 +112,16 @@ theorem ratioV_eq_vand {μ : Fin n → ℝ} (hμ : StrictAnti μ) (s : Fin n) :
     by_cases ha : a = s
     · subst ha
       have h1 : μ a - μ b ≠ 0 := hne a b hab'
-      rw [if_pos rfl, if_neg hab'.symm, mul_one]
+      rw [ite_eq_left rfl, ite_eq_right hab'.symm, mul_one]
       simp only [Pi.add_apply, Pi.single_eq_same, Pi.single_eq_of_ne hab'.symm, add_zero]
       field_simp
     · by_cases hb' : b = s
       · subst hb'
         have h2 : μ b - μ a ≠ 0 := hne b a hab'.symm
-        rw [if_neg ha, if_pos rfl, one_mul]
+        rw [ite_eq_right ha, ite_eq_left rfl, one_mul]
         simp only [Pi.add_apply, Pi.single_eq_same, Pi.single_eq_of_ne ha, add_zero]
         field_simp <;> ring
-      · rw [if_neg ha, if_neg hb', mul_one, mul_one]
+      · rw [ite_eq_right ha, ite_eq_right hb', mul_one, mul_one]
         simp only [Pi.add_apply, Pi.single_eq_of_ne ha, Pi.single_eq_of_ne hb', add_zero]
   rw [eq_div_iff hV]
   have hsplit : Vand (μ + Pi.single s 1) = Vand μ *
@@ -138,9 +138,9 @@ theorem ratioV_eq_vand {μ : Fin n → ℝ} (hμ : StrictAnti μ) (s : Fin n) :
           (if a = s then (μ s + 1 - μ b) / (μ s - μ b) else 1)) =
         ∏ b ∈ univ.filter (fun b : Fin n => s < b), (μ s + 1 - μ b) / (μ s - μ b) := by
     rw [Finset.prod_eq_single s]
-    · exact Finset.prod_congr rfl (fun b _ => if_pos rfl)
+    · exact Finset.prod_congr rfl (fun b _ => ite_eq_left rfl)
     · intro a _ ha
-      exact Finset.prod_eq_one (fun b _ => if_neg ha)
+      exact Finset.prod_eq_one (fun b _ => ite_eq_right ha)
     · intro h
       exact absurd (Finset.mem_univ s) h
   have hB : (∏ a : Fin n, ∏ b ∈ univ.filter (fun b : Fin n => a < b),

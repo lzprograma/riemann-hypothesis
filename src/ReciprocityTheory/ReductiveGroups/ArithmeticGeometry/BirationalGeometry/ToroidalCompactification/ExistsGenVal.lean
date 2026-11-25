@@ -39,13 +39,6 @@ theorem gm_cU {F : Type} [Field F] (u : F) (hu : u ≠ 0) (z : Sp F) : (gm (𝟙
   simp [gm, cU, toStk, pullU]
   rfl
 
-section Move
-
-variable {R R' : Type} [CommRing R] [IsDomain R] [CommRing R'] [IsDomain R'] {φ : R →+* R'} {D : DegPre R} {D' : DegPre R'}
-  {Φ : D'.P.A.left ⟶ D.P.A.left}
-
-end Move
-
 end ReciprocityTheory.ChartRestriction.G.Geo.Tor
 end -- clump:auto
 end -- clump:auto

@@ -41,8 +41,7 @@ theorem posDef_int_lower {N : ℕ} {A : Matrix (Fin N) (Fin N) ℝ} (hA : A.PosD
     exact zero_ne_one hy0
   refine ⟨q y0, hpos y0 hy0ne, fun x hx => ?_⟩
   obtain ⟨i, hi⟩ : ∃ i, x i ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hx (funext hc)
   have hs1 : 1 ≤ ‖(fun i => (x i : ℝ))‖ := by
     have h1 : (1 : ℝ) ≤ |(x i : ℝ)| := by exact_mod_cast Int.one_le_abs hi

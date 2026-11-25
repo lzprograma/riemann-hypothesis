@@ -13,8 +13,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.Pf.LoopBCovN
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def eN (D : D7) : ℝ := (D.R.rS : ℝ) ^ 2 + (D.R.rS : ℝ) / 2
 
 def CovNFormula : Prop :=

@@ -1,5 +1,6 @@
 module
 
+import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Stdform
 public import Formalism.LocalRingCardinality.DataSpaces
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
@@ -55,17 +56,7 @@ theorem sig_conj (hc : CMData F E) (τ : E →+* ℂ) : τ.comp (hc.sig : E →+
 
 theorem exists_above (hc : CMData F E) (ι : F →+* ℝ) :
     ∃ τ : E →+* ℂ, τ.comp (algebraMap F E) = (algebraMap ℝ ℂ).comp ι := by
-  letI : Algebra F ℂ := ((algebraMap ℝ ℂ).comp ι).toAlgebra
-  haveI : Module.Finite F E := Module.finite_of_finrank_pos (by rw [hc.deg2]; norm_num)
-  haveI : Algebra.IsAlgebraic F E := Algebra.IsAlgebraic.of_finite F E
-  let φ : E →ₐ[F] ℂ := (by
-    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
-    solve_by_elim* (maxDepth := 2) only [*,
-      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
-      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
-  refine ⟨φ.toRingHom, ?_⟩
-  ext a
-  exact φ.commutes a
+  apply _root_.Formalism.UG.P.stdform_ext <;> assumption
 
 private theorem star_dotProduct_Jpq_mulVec_eq_sub (p q : ℕ) (Z : Fin p ⊕ Fin q → ℂ) : star Z ⬝ᵥ (Jpq p q *ᵥ Z) =
     ∑ a, star (Z (Sum.inl a)) * Z (Sum.inl a) - ∑ b, star (Z (Sum.inr b)) * Z (Sum.inr b) := by

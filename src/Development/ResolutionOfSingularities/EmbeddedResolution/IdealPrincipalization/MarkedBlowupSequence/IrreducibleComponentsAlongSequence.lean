@@ -4,45 +4,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrin
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.ComapSubschemeIso
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.CartierDivisorComponents
 public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupIsoOffCenter
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -75,17 +37,6 @@ private theorem isPreirreducible_inter_of_isOpen {α : Type u} [TopologicalSpace
       ⟨a, haTU.1, haV, haTU.2⟩ ⟨b, hbTU.1, hbW, hbTU.2⟩
   exact ⟨x, ⟨hxT, hx1.2⟩, hx1.1, hx2.1⟩
 
-private theorem isPreirreducible_preimage_val {α : Type u} [TopologicalSpace α] {U V : Set α}
-    (hVU : V ⊆ U) (hV : IsPreirreducible V) :
-    IsPreirreducible ((Subtype.val : U → α) ⁻¹' V) := by
-  intro O₁ O₂ hO₁ hO₂ h₁ h₂
-  obtain ⟨G₁, hG₁, rfl⟩ := isOpen_induced_iff.mp hO₁
-  obtain ⟨G₂, hG₂, rfl⟩ := isOpen_induced_iff.mp hO₂
-  obtain ⟨a, ha⟩ := h₁
-  obtain ⟨b, hb⟩ := h₂
-  obtain ⟨x, hxV, hx1, hx2⟩ := hV G₁ G₂ hG₁ hG₂ ⟨a.1, ha.1, ha.2⟩ ⟨b.1, hb.1, hb.2⟩
-  exact ⟨⟨x, hVU hxV⟩, hxV, hx1, hx2⟩
-
 private theorem exists_irreducibleComponent_subset_of_section {α : Type u} {β : Type u}
     [TopologicalSpace α] [TopologicalSpace β]
     (f : α → β) (hf : Continuous f) (Uc : Set β) (hUc : IsOpen Uc)
@@ -106,7 +57,7 @@ private theorem exists_irreducibleComponent_subset_of_section {α : Type u} {β 
   have hSne : (T ∩ Uc).Nonempty := ⟨f x₀, hy₀T, hx₀U⟩
   have hSirr : IsIrreducible (T ∩ Uc) := ⟨hSne, isPreirreducible_inter_of_isOpen hTirr.2 hUc⟩
   have hpre : IsIrreducible ((Subtype.val : ↥Uc → β) ⁻¹' (T ∩ Uc)) :=
-    ⟨⟨⟨f x₀, hx₀U⟩, hy₀T, hx₀U⟩, isPreirreducible_preimage_val (fun y hy => hy.2) hSirr.2⟩
+    ⟨⟨⟨f x₀, hx₀U⟩, hy₀T, hx₀U⟩, hSirr.2.preimage hUc.isOpenEmbedding_subtypeVal⟩
   have hVeq : f ⁻¹' (T ∩ Uc) = g '' ((Subtype.val : ↥Uc → β) ⁻¹' (T ∩ Uc)) := by
     ext x
     constructor
@@ -146,23 +97,12 @@ private theorem exists_irreducibleComponent_subset_of_section {α : Type u} {β 
     subset_closure_inter_of_isPreirreducible_of_isOpen hTirr.2 hUc hSne
   exact hd.trans (closure_minimal hTUK hK)
 
-private theorem coe_support_comap_eq_preimage {X Y : Scheme.{u}} (f : X ⟶ Y) (I : Y.IdealSheafData) :
-    ((I.comap f).support : Set ↥X) = ⇑f.base ⁻¹' (I.support : Set ↥Y) := by
-  ext x
-  simp [Scheme.IdealSheafData.support_comap]
-
 private theorem exists_section_off_center {X X' : Scheme.{u}} (π : X' ⟶ X) (Z : X.IdealSheafData)
     (hπ : Blowup.IsBlowupAlongIdealSheaf π Z) :
     ∃ g : ↥(((Z.support : Set ↥X))ᶜ) → ↥X', Continuous g ∧
       (∀ y, ⇑π.base (g y) = (y : ↥X)) ∧
       (∀ x : ↥X', ⇑π.base x ∈ ((Z.support : Set ↥X))ᶜ → ∃ y, g y = x) := by
   have := Blowup.blowupIsIsoOffCenter X X' π Z hπ
-  have hinvhom : ∀ (A B : Scheme.{u}) (f : A ≅ B) (z : ↥B), f.hom.base (f.inv.base z) = z := by
-    intro A B f z
-    simp
-  have hhominv : ∀ (A B : Scheme.{u}) (f : A ≅ B) (z : ↥A), f.inv.base (f.hom.base z) = z := by
-    intro A B f z
-    simp
   let e := asIso (π ∣_ Z.support.compl)
   have hmem : ∀ y : ↥(((Z.support : Set ↥X))ᶜ), (y : ↥X) ∈ Z.support.compl := fun y => y.2
   have hcont : Continuous (⇑e.inv.base) := e.inv.continuous
@@ -171,7 +111,7 @@ private theorem exists_section_off_center {X X' : Scheme.{u}} (π : X' ⟶ X) (Z
       (hcont.comp (continuous_subtype_val.subtype_mk hmem))
   · intro y
     have h1 : e.hom.base (e.inv.base ⟨(y : ↥X), hmem y⟩) = ⟨(y : ↥X), hmem y⟩ :=
-      hinvhom _ _ e _
+      (Scheme.homeoOfIso e).apply_symm_apply _
     have h2 := morphismRestrict_base_coe π Z.support.compl (e.inv.base ⟨(y : ↥X), hmem y⟩)
     show ⇑π.base (e.inv.base ⟨(y : ↥X), hmem y⟩).1 = (y : ↥X)
     rw [← h2]
@@ -183,7 +123,7 @@ private theorem exists_section_off_center {X X' : Scheme.{u}} (π : X' ⟶ X) (Z
         = ⟨⇑π.base x, hmem ⟨⇑π.base x, hx⟩⟩ :=
       Subtype.ext (morphismRestrict_base_coe π Z.support.compl ⟨x, hx'⟩)
     have hc : e.inv.base (e.hom.base (⟨x, hx'⟩ : ↥(π ⁻¹ᵁ Z.support.compl).toScheme))
-        = ⟨x, hx'⟩ := hhominv _ _ e _
+        = ⟨x, hx'⟩ := (Scheme.homeoOfIso e).symm_apply_apply _
     rw [hb] at hc
     exact congrArg Subtype.val hc
 
@@ -208,11 +148,9 @@ theorem nonzeroOnComponents_of_pow_mul_eq_comap (hcart : EffectiveCartierSupport
   have hx₀U : ⇑π.base x₀ ∈ ((Z.support : Set ↥X))ᶜ := by
     intro hmem
     refine hx₀E ?_
-    rw [coe_support_comap_eq_preimage π Z]
-    exact hmem
+    simpa [Scheme.IdealSheafData.support_comap] using hmem
   have hCK : C ⊆ ⇑π.base ⁻¹' ((I.support : Set ↥X)) := by
-    rw [← coe_support_comap_eq_preimage π I]
-    exact hsub2
+    simpa [Scheme.IdealSheafData.support_comap] using hsub2
   obtain ⟨g, hgc, hgf, hgs⟩ := exists_section_off_center π Z hπ
   obtain ⟨T, hTcomp, hTK⟩ :=
     exists_irreducibleComponent_subset_of_section (⇑π.base) π.continuous (((Z.support : Set ↥X))ᶜ)

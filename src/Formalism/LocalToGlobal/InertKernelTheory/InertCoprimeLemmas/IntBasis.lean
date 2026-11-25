@@ -235,7 +235,7 @@ theorem orthChange_core : OrthChange := by
   have h := hYY_comb D b (fun i => A i j) (fun i => A i j') (fun i => hAK i j) (fun i => hAK i j')
   rw [← hb' j, ← hb' j', hb'O' j j'] at h
   simp only [hbO', apply_ite (fun x : D.host.K => (x : D.host.E)), IntermediateField.coe_one,
-    IntermediateField.coe_zero, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true] at h
+    IntermediateField.coe_zero, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true] at h
   first
   | exact h.symm
 

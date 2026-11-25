@@ -60,7 +60,6 @@ import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.Ha
 @[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel Matrix Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Published
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 
@@ -78,48 +77,8 @@ theorem continuous_localIdele' (E : Type) [Field E] [NumberField E] (v : HeightO
   apply GlobalTheory.CompanionTheory.InertOpen.continuous_localIdele'
 
 theorem isCompact_valOne (E : Type) [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) :
-    IsCompact {x : (w.adicCompletion E)ˣ | Valued.v (x : w.adicCompletion E) = 1} := by
-  rw [Units.isEmbedding_val₀.isInducing.isCompact_iff]
-  have e : (Units.val '' {x : (w.adicCompletion E)ˣ | Valued.v (x : w.adicCompletion E) = 1}) =
-      {y : w.adicCompletion E | Valued.v y = 1} := by
-    ext y
-    constructor
-    · rintro ⟨x, hx, rfl⟩
-      exact hx
-    · intro hy
-      have h0 : y ≠ 0 := by
-        rintro rfl
-        simp at hy
-      exact ⟨Units.mk0 y h0, hy, rfl⟩
-  rw [e]
-  have hK : IsCompact (w.adicCompletionIntegers E : Set (w.adicCompletion E)) :=
-    isCompact_iff_compactSpace.2 (GlobalTheory.AdelicUnitaryTop.compactSpace_adicCompletionIntegers E w)
-  refine hK.of_isClosed_subset ?_ ?_
-  · have h1 : IsClosed {y : w.adicCompletion E | Valued.v y ≤ 1} := by
-      have : {y : w.adicCompletion E | Valued.v y ≤ 1} = (w.adicCompletionIntegers E : Set (w.adicCompletion E)) := by
-        ext y
-        exact (HeightOneSpectrum.mem_adicCompletionIntegers (𝓞 E) E w).symm
-      rw [this]
-      exact hK.isClosed
-    have h2 : IsOpen {y : w.adicCompletion E | Valued.v y < 1} := by
-      rw [isOpen_iff_mem_nhds]
-      intro y hy
-      rw [Valued.mem_nhds]
-      refine ⟨1, fun z hz => ?_⟩
-      have hz' : Valued.v (z - y) < 1 := by simpa using hz
-      have : z = (z - y) + y := by ring
-      show Valued.v z < 1
-      rw [this]
-      exact Valuation.map_add_lt _ hz' hy
-    have e2 : {y : w.adicCompletion E | Valued.v y = 1} =
-        {y : w.adicCompletion E | Valued.v y ≤ 1} ∩ {y : w.adicCompletion E | Valued.v y < 1}ᶜ := by
-      ext y
-      simp only [Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_compl_iff, not_lt]
-      exact ⟨fun h => ⟨h.le, h.ge⟩, fun h => le_antisymm h.1 h.2⟩
-    rw [e2]
-    exact h1.inter h2.isClosed_compl
-  · intro y hy
-    exact (HeightOneSpectrum.mem_adicCompletionIntegers (𝓞 E) E w).2 (le_of_eq hy)
+    IsCompact {x : (w.adicCompletion E)ˣ | Valued.v (x : w.adicCompletion E) = 1} :=
+  GlobalTheory.CompanionTheory.InertOpen.isCompact_setOf_isUnitAt w
 
 theorem continuous_inv_on_ine : ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω) (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (art : Neutral.B1.Ideles E →* GlobalTheory.HeckeGal.Gab E Ω) (a : Weil h →* (w.adicCompletion E)ˣ), GlobalTheory.HeckeGal.IsGlobalArtin art → (∀ σ, ord (w.adicCompletion E) (a σ) = -deg σ) → (∀ σ : Weil h, art (Neutral.B1.localIdele E w (a σ)) = GlobalTheory.HeckeGal.toAb E Ω σ) → Continuous fun σ : Ine (F := E) A => a (ineIncl h σ) := by
   intro E Ω _ _ _ _ _ A w h art a ha hord hart

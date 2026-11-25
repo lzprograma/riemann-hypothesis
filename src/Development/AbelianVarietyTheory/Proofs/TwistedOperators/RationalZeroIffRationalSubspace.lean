@@ -60,8 +60,6 @@ open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.Inde
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.PositiveDimensionTuples
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section
 
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
@@ -171,8 +169,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open GlobalTheory.IndefiniteRowSideFullHecke.PositiveDimensionTuples
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Compare
 

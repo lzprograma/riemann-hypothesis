@@ -164,15 +164,15 @@ theorem tD_tH (k : K) (i₀ : ι k) (F : (∀ k, Finset (ι k)) → S) (hF : ∀
     (T : ∀ k, Finset (ι k)) (hT : ∀ l, (T l).Nonempty) :
     tD (tH k i₀ F) T + tH k i₀ (tD F) T = F T := by
   by_cases h0 : i₀ ∈ T k
-  · have hH : tH k i₀ (tD F) T = 0 := if_pos h0
+  · have hH : tH k i₀ (tD F) T = 0 := ite_eq_left h0
     rw [hH, add_zero, tD, Finset.sum_eq_single_of_mem (⟨k, i₀⟩ : Σ k, ι k) (by simp [h0])]
     · have hn : i₀ ∉ rem T k i₀ k := by simp [mem_rem_iff]
-      rw [tH, if_neg hn, ins_rem_self T k i₀ h0, smul_smul, faceSign_mul_self, one_smul]
+      rw [tH, ite_eq_right hn, ins_rem_self T k i₀ h0, smul_smul, faceSign_mul_self, one_smul]
     · rintro ⟨l, i⟩ - hne
       have hm : i₀ ∈ rem T l i k := (mem_rem_iff T k i₀ l i).mpr ⟨h0, hne⟩
-      rw [tH, if_pos hm, smul_zero]
+      rw [tH, ite_eq_left hm, smul_zero]
   · have hkne := hT k
-    have hH : tH k i₀ (tD F) T = KH.faceSign (ins k i₀ T) k i₀ • tD F (ins k i₀ T) := if_neg h0
+    have hH : tH k i₀ (tD F) T = KH.faceSign (ins k i₀ T) k i₀ • tD F (ins k i₀ T) := ite_eq_right h0
     have hD : tD F (ins k i₀ T) = ∑ p ∈ Finset.univ.sigma (ins k i₀ T),
         KH.faceSign (ins k i₀ T) p.1 p.2 • F (rem (ins k i₀ T) p.1 p.2) := rfl
     rw [hH, hD, sigma_ins,
@@ -184,7 +184,7 @@ theorem tD_tH (k : K) (i₀ : ι k) (F : (∀ k, Finset (ι k)) → S) (hF : ∀
       obtain ⟨l, i⟩ := p
       have hi : i ∈ T l := (Finset.mem_sigma.mp hp).2
       have hn : i₀ ∉ rem T l i k := fun hm => h0 ((mem_rem_iff T k i₀ l i).mp hm).1
-      rw [tH, if_neg hn, rem_ins_comm T k i₀ l i hi h0, smul_smul, smul_smul, ← add_smul]
+      rw [tH, ite_eq_right hn, rem_ins_comm T k i₀ l i hi h0, smul_smul, smul_smul, ← add_smul]
       by_cases hz : F (ins k i₀ (rem T l i)) = 0
       · rw [hz, smul_zero]
       have hne : ∀ l', (ins k i₀ (rem T l i) l').Nonempty := by
@@ -320,8 +320,8 @@ theorem tD_tH_succ (J : ∀ k, Finset (ι k)) (k : K) (i₀ : ι k) (hJ0 : i₀ 
     funext T
     rw [corr]
     by_cases hT : T k = ∅
-    · rw [if_pos hT, ext_of_empty J m _ T ⟨k, hT⟩, zero_add]
-    · rw [if_neg hT, add_zero, ext_hh J k i₀ hJ0 m φ T (Finset.nonempty_iff_ne_empty.mpr hT)]
+    · rw [ite_eq_left hT, ext_of_empty J m _ T ⟨k, hT⟩, zero_add]
+    · rw [ite_eq_right hT, add_zero, ext_hh J k i₀ hJ0 m φ T (Finset.nonempty_iff_ne_empty.mpr hT)]
   rw [this, tD_add, combD_apply]
 
 theorem cell_card_eq_one_of_degree_zero (I : KH.Cell K ι 0) (l : K) : (I.1 l).card = 1 := by
@@ -383,15 +383,15 @@ theorem corr_single (J : ∀ k, Finset (ι k)) (k : K) (i₀ : ι k) (d : ℕ) (
     have hk : k ∉ Finset.univ.filter (· < k) := by simp
     have hs : KH.faceSign I.1.1 k i * KH.faceSign (Function.update I.1.1 k {i₀}) k i₀ = 1 := by
       rw [faceSign_eq, faceSign_eq, hi, Function.update_self, sum_card_update_of_notMem _ _ _ _ hk,
-        Finset.filter_singleton, Finset.filter_singleton, if_neg (lt_irrefl i), if_neg (lt_irrefl i₀)]
+        Finset.filter_singleton, Finset.filter_singleton, ite_eq_right (lt_irrefl i), ite_eq_right (lt_irrefl i₀)]
       rw [Finset.card_empty, pow_zero, one_mul, ← mul_pow]
       norm_num
-    rw [hrem, corr, if_pos (Function.update_self _ _ _), tH, if_neg (by simp), hins, smul_smul, hs, one_smul, ext,
+    rw [hrem, corr, ite_eq_left (Function.update_self _ _ _), tH, ite_eq_right (by simp), hins, smul_smul, hs, one_smul, ext,
       dite_eq_left ⟨(repl J k i₀ d I hJk h1).1.2, (repl J k i₀ d I hJk h1).2⟩]
     rfl
   · rintro ⟨l, j⟩ hp hne
     have hj : j ∈ I.1.1 l := (Finset.mem_sigma.mp hp).2
-    rw [corr, if_neg, smul_zero]
+    rw [corr, ite_eq_right, smul_zero]
     by_cases hl : l = k
     · subst hl
       rw [hi, Finset.mem_singleton] at hj
@@ -422,7 +422,7 @@ theorem corr_zero (J : ∀ k, Finset (ι k)) (k : K) (i₀ : ι k) (hJ0 : i₀ �
     have := (I.1.2.1 l).card_pos
     omega
   have hJne : ¬ J l = ∅ := fun e => h ⟨e, h1⟩
-  rw [tH, if_neg (by rw [hT]; exact Finset.notMem_empty _), ext, dite_eq_right]
+  rw [tH, ite_eq_right (by rw [hT]; exact Finset.notMem_empty _), ext, dite_eq_right]
   · simp
   rintro ⟨-, hJ⟩
   have hsub := hJ l

@@ -127,8 +127,7 @@ theorem exists_delta (c : E ≃ₐ[F] E) (h2 : Module.finrank F E = 2) (hc : c �
     ∃ δ : E, δ ≠ 0 ∧ c δ = -δ ∧ ∀ x : E, ∃ p q : F, x = algebraMap F E p + algebraMap F E q * δ := by
   obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance
   obtain ⟨y, hy⟩ : ∃ y, c y ≠ y := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hc (AlgEquiv.ext h)
   have hcc : c (c y) = y := τ.injective (by rw [hτ, hτ, Complex.conj_conj])
   have hδ : y - c y ≠ 0 := sub_ne_zero.2 hy.symm

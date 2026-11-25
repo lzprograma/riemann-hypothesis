@@ -3,51 +3,9 @@ module
 public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsRegularFnIffOfIsAffineOpen
 public import Mathlib.Tactic.ENatToNat
 public import ReciprocityTheory.AnalyticForms.RegularLocalRings.DivSheafA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 public import ReciprocityTheory.AnalyticForms.RegularLocalRings.DivSheaf
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -101,24 +59,6 @@ theorem isRegularFn_spec {R : Type} [CommRing R] {r : R} (hr : r ∈ nonZeroDivi
   have := congrArg (Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom
     (mem_nonZeroDivisors_iff_right.1 hr _ e)
   rwa [Iso.hom_inv_id_apply, map_zero] at this
-
-def ofElement {R : Type} [CommRing R] (r : R) (hr : r ∈ nonZeroDivisors R) :
-    EffCartierData (Sp R) :=
-  principal _ (isRegularFn_spec hr)
-
-def principalTwist (a : Γ(X, ⊤)) (ha : IsRegularFn a) (u : Γ(X, ⊤)ˣ) : EffCartierData X where
-  ι := Bool
-  U _ := ⊤
-  f b := cond b (u * a) a
-  cover := iSup_const
-  regular b := by
-    cases b
-    exacts [ha, (IsRegularFn.of_isUnit u.isUnit).mul ha]
-  assoc b c := by
-    refine Associated.map _ ?_
-    cases b <;> cases c
-    exacts [Associated.refl _, associated_unit_mul_right _ _ u.isUnit,
-      associated_unit_mul_left _ _ u.isUnit, Associated.refl _]
 
 def zero (X : Scheme.{0}) : EffCartierData X := principal 1 (IsRegularFn.of_isUnit isUnit_one)
 
@@ -586,56 +526,7 @@ section Rational
 
 variable [IsIntegral X]
 
-def poleSecs (n : ℕ) (V : X.Opens) [Nonempty V] : Submodule Γ(X, V) X.functionField :=
-  ratSecs (D.nsmul n).canonical V
-
-theorem mem_poleSecs_iff_stalk (n : ℕ) (V : X.Opens) [Nonempty V] (h : X.functionField) :
-    h ∈ D.poleSecs n V ↔ ∀ (i : D.ι) (x : X) (_ : x ∈ V) (hx : x ∈ D.U i),
-      algebraMap (X.presheaf.stalk x) X.functionField ((X.presheaf.germ _ x hx).hom (D.f i)) ^ n *
-        h ∈ Set.range (algebraMap (X.presheaf.stalk x) X.functionField) := by
-  refine (mem_ratSecs_iff_stalk _ V h).trans (forall₄_congr fun i x _ hx => iff_of_eq
-    (congrArg (fun r => r * h ∈ Set.range (algebraMap (X.presheaf.stalk x) X.functionField)) ?_))
-  exact (congrArg _ (map_pow (X.presheaf.germ _ x hx).hom (D.f i) n)).trans (map_pow _ _ n)
-
-theorem mem_poleSecs_zero_iff (V : X.Opens) [Nonempty V] (h : X.functionField) :
-    h ∈ D.poleSecs 0 V ↔ ∃ a : Γ(X, V), (X.germToFunctionField V).hom a = h := by
-  rw [mem_poleSecs_iff_stalk]
-  constructor
-  · intro H
-    refine exists_germK_eq_of_stalk V h fun x hx => ?_
-    obtain ⟨i, hi⟩ := D.exists_mem x
-    simpa using H i x hx hi
-  · rintro ⟨a, rfl⟩ i x hx hi
-    rw [pow_zero, one_mul]
-    exact ⟨_, Scheme.algebraMap_germ_eq_germToFunctionField X hx a⟩
-
-theorem mem_poleSecs_principal_iff (a : Γ(X, ⊤)) (ha : IsRegularFn a) (n : ℕ) (V : X.Opens)
-    [Nonempty V] (h : X.functionField) :
-    h ∈ (principal a ha).poleSecs n V ↔ ∃ b : Γ(X, V), (X.germToFunctionField V).hom b =
-      (X.germToFunctionField V).hom (resG X le_top a) ^ n * h := by
-  have e : ∀ x (hx : x ∈ V), algebraMap (X.presheaf.stalk x) X.functionField
-      ((X.presheaf.germ ⊤ x trivial).hom a) = (X.germToFunctionField V).hom (resG X le_top a) :=
-    fun x hx => (congrArg _ (germ_resG le_top x hx a).symm).trans
-      (Scheme.algebraMap_germ_eq_germToFunctionField X hx _)
-  rw [mem_poleSecs_iff_stalk]
-  constructor
-  · intro H
-    refine exists_germK_eq_of_stalk V _ fun x hx => ?_
-    rw [← e x hx]
-    exact H ⟨⟩ x hx trivial
-  · rintro ⟨b, hb⟩ i x hx hi
-    refine ⟨_, (Scheme.algebraMap_germ_eq_germToFunctionField X hx b).trans (hb.trans ?_)⟩
-    rw [← e x hx]
-    rfl
-
 end Rational
-
-theorem mem_support_ofElement_iff {R : Type} [CommRing R] (r : R) (hr : r ∈ nonZeroDivisors R)
-    (p : PrimeSpectrum R) :
-    (p : Sp R) ∈ (ofElement r hr).idealSheaf.support ↔ r ∈ p.asIdeal := by
-  refine ((ofElement r hr).mem_support_iff ⟨⟩ (x := p) trivial).trans ?_
-  have e := basicOpen_eq_of_affine (R := CommRingCat.of R) r
-  exact (not_congr (iff_of_eq (congrArg (fun W => (p : Sp R) ∈ W) e))).trans not_not
 
 end EffCartierData
 

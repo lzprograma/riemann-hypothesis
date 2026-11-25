@@ -71,7 +71,7 @@ theorem weight_blockIncl (d : (Σ k, ι' (j k)) →₀ ℕ) :
     have h0 : (fun v => (blockWeight ι' ∘ blockIncl j ι') v k') = 0 := by
       funext v
       show (Pi.single (j v.1) 1 : K' → ℕ) k' = 0
-      rw [Pi.single_apply, if_neg (fun hv => h ⟨v.1, hv.symm⟩)]
+      rw [Pi.single_apply, ite_eq_right (fun hv => h ⟨v.1, hv.symm⟩)]
     rw [h0]
     simp [Finsupp.weight_apply]
 
@@ -101,8 +101,8 @@ theorem rename_component (a : MRing (fun k => ι' (j k)) F) (b : K → ℕ) :
       coeff_rename_mapDomain _ (blockIncl_injective j ι'), coeff_weightedHomogeneousComponent,
       weight_blockIncl]
     by_cases hw : Finsupp.weight (blockWeight (fun k => ι' (j k))) d = b
-    · rw [if_pos hw, if_pos (by rw [hw])]
-    · rw [if_neg hw, if_neg (fun h => hw ((extend_inj j).mp h))]
+    · rw [ite_eq_left hw, ite_eq_left (by rw [hw])]
+    · rw [ite_eq_right hw, ite_eq_right (fun h => hw ((extend_inj j).mp h))]
   · push Not at hd
     rw [coeff_rename_eq_zero _ _ d' (fun u hu => absurd hu (hd u)),
       coeff_rename_eq_zero _ a d' (fun u hu => absurd hu (hd u))]

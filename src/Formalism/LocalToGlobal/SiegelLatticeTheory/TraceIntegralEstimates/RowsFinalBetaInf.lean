@@ -33,10 +33,6 @@ namespace PI.BICNZ
 
 open Formalism.FourierDecayAlt.B Formalism.QuantumDeterminants Formalism.MainNotions.S.Pv.BetaCut
 
-theorem sf_of_haar {k r : ℕ} {U : Set (Mat k r)} {μ : Measure (Mt k r)} (h : IsHaarOn U μ) : SigmaFinite μ := by
-  haveI : IsFiniteMeasureOnCompacts μ := ⟨fun K hK => h.finite_compact K hK⟩
-  infer_instance
-
 theorem itD_const_mul (a : ℂ) (f : ℝ → ℂ) (n : ℕ) :
     iteratedDeriv n (fun y => a * f y) = fun y => a * iteratedDeriv n f y := by
   induction n with
@@ -121,9 +117,9 @@ theorem hasCompactSupport_right_profile {k r : ℕ} {Wp Wq H : Type} [NormedAddC
 theorem ae_inSS {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
     [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] (D : RealPlaceData k r Wp Wq) :
     ∀ᵐ p ∂((D.μW.prod D.μN).prod (D.μW'.prod D.μN)), D.inSS p := by
-  haveI := sf_of_haar D.haarW
-  haveI := sf_of_haar D.haarN
-  haveI := sf_of_haar D.haarW'
+  haveI := Formalism.FourierDecayAlt.P.B2x2.sfin D.haarW
+  haveI := Formalism.FourierDecayAlt.P.B2x2.sfin D.haarN
+  haveI := Formalism.FourierDecayAlt.P.B2x2.sfin D.haarW'
   have hW : ∀ᵐ x ∂D.μW, Matrix.of x ∈ UWset k r D.z := by
     rw [ae_iff]
     exact D.haarW.conc
@@ -153,9 +149,9 @@ theorem betaFactor_of (hP : PhiAt) (hL : LeftProfileContDiffTwo) (hR : RightProf
   intro k r Wp Wq _ _ _ _ _ _ D ε lm H _ _ _ σ hHC hDS
   obtain ⟨d, hd, hΦ⟩ := hP k r Wp Wq D ε lm H σ hHC hDS
   refine ⟨d, hd, fun v v' ξ ξ' hv hv' => ?_⟩
-  haveI := sf_of_haar D.haarW
-  haveI := sf_of_haar D.haarN
-  haveI := sf_of_haar D.haarW'
+  haveI := Formalism.FourierDecayAlt.P.B2x2.sfin D.haarW
+  haveI := Formalism.FourierDecayAlt.P.B2x2.sfin D.haarN
+  haveI := Formalism.FourierDecayAlt.P.B2x2.sfin D.haarW'
   have hpt : ∀ p : SS k r, D.inSS p →
       ((((1 + (1 : ℝ) ^ 2 * lam k r D.z (Matrix.of p.1.2) ^ 2)⁻¹ *
         (1 + (1 : ℝ) ^ 2 * lam k r D.z' (Matrix.of p.2.2) ^ 2)⁻¹ : ℝ) : ℂ) *
@@ -283,17 +279,6 @@ theorem rep_of_DS {ε : Fin (2 * r + k + 1) → Bool} {lm : Fin (2 * r + k + 1) 
     simp only [conj] at this
     exact this
 
-private theorem isUnit_det_of_mem_UH_Hpk' {a : Mat k r} (ha : a ∈ UH (Hpk k r)) : IsUnit a.det := by
-  have ha' : a.conjTranspose * Hpk k r * a = Hpk k r := ha
-  have h1 : (a.conjTranspose * Hpk k r * a).det = (Hpk k r).det := by rw [ha']
-  have h2 : (Hpk k r).det * (Hpk k r).det = 1 := by
-    rw [← Matrix.det_mul, Formalism.QuantumDeterminants.GBasic.Hpk_sq, Matrix.det_one]
-  rw [Matrix.det_mul, Matrix.det_mul] at h1
-  refine isUnit_iff_ne_zero.mpr fun h0 => ?_
-  rw [h0, mul_zero] at h1
-  rw [← h1, zero_mul] at h2
-  exact zero_ne_one h2
-
 theorem inner_inv_of_DS {ε : Fin (2 * r + k + 1) → Bool} {lm : Fin (2 * r + k + 1) → ℝ} {σ : Mat k r → (H →L[ℂ] H)}
     (h : PI.UpqRep.IsDSHpk k r ε lm σ) {a : Mat k r} (ha : a ∈ UH (Hpk k r)) (u w : H) :
     ⟪u, σ a⁻¹ w⟫_ℂ = ⟪σ a u, w⟫_ℂ := by
@@ -301,7 +286,7 @@ theorem inner_inv_of_DS {ε : Fin (2 * r + k + 1) → Bool} {lm : Fin (2 * r + k
   have hinvm : a⁻¹ ∈ UH (Hpk k r) := Formalism.QuantumDeterminants.WeylGroupFacts.uh_inv ha
   have hc : σ a (σ a⁻¹ w) = w := by
     have := hmul a ha a⁻¹ hinvm
-    rw [Matrix.mul_nonsing_inv a (isUnit_det_of_mem_UH_Hpk' ha), h1] at this
+    rw [Matrix.mul_nonsing_inv a (WeylGroupFacts.isUnit_of_uh ha), h1] at this
     rw [← ContinuousLinearMap.comp_apply, ← this]
     rfl
   let L : H →ₗᵢ[ℂ] H := { toLinearMap := (σ a : H →ₗ[ℂ] H), norm_map' := hiso a ha }
@@ -342,46 +327,6 @@ theorem hsInner_rank1 (T : Wq →L[ℂ] Wq) (U : Wp →L[ℂ] Wp) (α β : ℂ) 
 
 end hs
 
-private theorem mul_mem_UH_Hpk_archimedean_coefficient_nonzero {k r : ℕ} {a b : Mat k r} (ha : a ∈ UH (Hpk k r)) (hb : b ∈ UH (Hpk k r)) :
-    a * b ∈ UH (Hpk k r) := by
-  have ha' : a.conjTranspose * Hpk k r * a = Hpk k r := ha
-  have hb' : b.conjTranspose * Hpk k r * b = Hpk k r := hb
-  show (a * b).conjTranspose * Hpk k r * (a * b) = Hpk k r
-  rw [Matrix.conjTranspose_mul]
-  calc b.conjTranspose * a.conjTranspose * Hpk k r * (a * b) = b.conjTranspose * (a.conjTranspose * Hpk k r * a) * b := by simp only [Matrix.mul_assoc]
-    _ = Hpk k r := by rw [ha', hb']
-
-private theorem aDil_mem_gv {k r : ℕ} {t : ℝ} (ht : 0 < t) : aDil k r t ∈ UH (Hpk k r) := by
-  show (aDil k r t).conjTranspose * Hpk k r * aDil k r t = Hpk k r
-  have hs : ∀ x : ℝ, star (x : ℂ) = x := fun x => Complex.conj_ofReal x
-  ext i j
-  unfold aDil
-  rw [Matrix.diagonal_conjTranspose, Matrix.mul_diagonal, Matrix.diagonal_mul, Pi.star_apply]
-  unfold Formalism.QuantumDeterminants.Hpk
-  have hi := i.isLt
-  have hj := j.isLt
-  by_cases h1 : i.val < r ∧ i.val + j.val = 2 * r + k
-  · have e : j.val - (r + k) = r - i.val := by omega
-    have hj1 : ¬ j.val < r := by omega
-    have hj2 : ¬ j.val ≤ r + k := by omega
-    have hne : t ^ (r - i.val) ≠ 0 := pow_ne_zero _ ht.ne'
-    rw [if_pos h1, if_pos h1.1, if_neg hj1, if_neg hj2, hs, e, mul_one, ← Complex.ofReal_mul,
-      mul_inv_cancel₀ hne, Complex.ofReal_one]
-  · by_cases h2 : j.val < r ∧ i.val + j.val = 2 * r + k
-    · have e : i.val - (r + k) = r - j.val := by omega
-      have hi1 : ¬ i.val < r := by omega
-      have hi2 : ¬ i.val ≤ r + k := by omega
-      have hne : t ^ (r - j.val) ≠ 0 := pow_ne_zero _ ht.ne'
-      rw [if_neg h1, if_pos h2, if_pos h2.1, if_neg hi1, if_neg hi2, hs, e, mul_one,
-        ← Complex.ofReal_mul, inv_mul_cancel₀ hne, Complex.ofReal_one]
-    · by_cases h3 : r ≤ i.val ∧ i.val ≤ r + k ∧ i = j
-      · have hij : i = j := h3.2.2
-        subst hij
-        have hi1 : ¬ i.val < r := by omega
-        rw [if_neg h1, if_neg h2, if_pos h3, if_neg hi1, if_pos h3.2.1]
-        simp
-      · rw [if_neg h1, if_neg h2, if_neg h3, mul_zero, zero_mul]
-
 theorem phiAt_of (hS : Formalism.FourierDecayAlt.ThreeDimData.SchurH) : PhiAt := by
   intro k r Wp Wq _ _ _ _ _ _ D ε lm H _ _ _ σ hlm hDS
   have hG := D.haarG
@@ -393,12 +338,16 @@ theorem phiAt_of (hS : Formalism.FourierDecayAlt.ThreeDimData.SchurH) : PhiAt :=
   intro v v' ξ ξ' p hp t ht1 ht2
   obtain ⟨h11, h12, h21, h22⟩ := hp
   obtain ⟨-, hmul, -⟩ := rep_of_DS hDS
+  have hd1 := Formalism.FourierDecayAlt.P.dilation_mem_group k r t.1 ht1.ne'
+  have hd2 := Formalism.FourierDecayAlt.P.dilation_mem_group k r t.2 ht2.ne'
   have hq12 : Matrix.of (conjM (aDil k r t.1) p.1.2) ∈ UH (Hpk k r) :=
-    mul_mem_UH_Hpk_archimedean_coefficient_nonzero (mul_mem_UH_Hpk_archimedean_coefficient_nonzero (aDil_mem_gv ht1) h12.1) (Formalism.QuantumDeterminants.WeylGroupFacts.uh_inv (aDil_mem_gv ht1))
+    WeylGroupFacts.uh_mul (WeylGroupFacts.uh_mul hd1 h12.1) (WeylGroupFacts.uh_inv hd1)
   have hq22 : Matrix.of (conjM (aDil k r t.2) p.2.2) ∈ UH (Hpk k r) :=
-    mul_mem_UH_Hpk_archimedean_coefficient_nonzero (mul_mem_UH_Hpk_archimedean_coefficient_nonzero (aDil_mem_gv ht2) h22.1) (Formalism.QuantumDeterminants.WeylGroupFacts.uh_inv (aDil_mem_gv ht2))
-  have hB : (Matrix.of (conjM (aDil k r t.2) p.2.2) * Matrix.of p.2.1) ∈ UH (Hpk k r) := mul_mem_UH_Hpk_archimedean_coefficient_nonzero hq22 h21.1
-  have hC : (Matrix.of (conjM (aDil k r t.1) p.1.2) * Matrix.of p.1.1) ∈ UH (Hpk k r) := mul_mem_UH_Hpk_archimedean_coefficient_nonzero hq12 h11.1
+    WeylGroupFacts.uh_mul (WeylGroupFacts.uh_mul hd2 h22.1) (WeylGroupFacts.uh_inv hd2)
+  have hB : (Matrix.of (conjM (aDil k r t.2) p.2.2) * Matrix.of p.2.1) ∈ UH (Hpk k r) :=
+    WeylGroupFacts.uh_mul hq22 h21.1
+  have hC : (Matrix.of (conjM (aDil k r t.1) p.1.2) * Matrix.of p.1.1) ∈ UH (Hpk k r) :=
+    WeylGroupFacts.uh_mul hq12 h11.1
   have hCi := Formalism.QuantumDeterminants.WeylGroupFacts.uh_inv hC
   have hae : ∀ᵐ g ∂D.μG, Matrix.of g ∈ UH (Hpk k r) := ae_iff.mpr hG.conc
   have key : ∀ᵐ g ∂D.μG, hsInner (rho D (dilation₂ t p) (coefM σ v v' ξ ξ') (Matrix.of g))
@@ -412,7 +361,8 @@ theorem phiAt_of (hS : Formalism.FourierDecayAlt.ThreeDimData.SchurH) : PhiAt :=
       simp only [Matrix.mul_assoc]
     have hσ : σ ((Matrix.of (conjM (aDil k r t.1) p.1.2) * Matrix.of p.1.1)⁻¹ * Matrix.of g * (Matrix.of (conjM (aDil k r t.2) p.2.2) * Matrix.of p.2.1)) =
         (σ (Matrix.of (conjM (aDil k r t.1) p.1.2) * Matrix.of p.1.1)⁻¹).comp ((σ (Matrix.of g)).comp (σ (Matrix.of (conjM (aDil k r t.2) p.2.2) * Matrix.of p.2.1))) := by
-      rw [hmul _ (mul_mem_UH_Hpk_archimedean_coefficient_nonzero hCi hg) _ hB, hmul _ hCi _ hg, ContinuousLinearMap.comp_assoc]
+      rw [hmul _ (WeylGroupFacts.uh_mul hCi hg) _ hB, hmul _ hCi _ hg,
+        ContinuousLinearMap.comp_assoc]
     change hsInner ((D.π (Matrix.of p.1.1)).comp (((innerSL ℂ ξ').smulRight
         (⟪v, σ ((Matrix.of p.1.1)⁻¹ * (Matrix.of (conjM (aDil k r t.1) p.1.2))⁻¹ * Matrix.of g * Matrix.of (conjM (aDil k r t.2) p.2.2) * Matrix.of p.2.1) v'⟫_ℂ • ξ)).comp
         (D.π' (Matrix.of p.2.1)⁻¹))) ((innerSL ℂ ξ').smulRight (⟪v, σ (Matrix.of g) v'⟫_ℂ • ξ)) = _
@@ -810,11 +760,7 @@ variable {k r : ℕ}
 
 theorem lim_chi_zero {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
     [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] (D : RealPlaceData k r Wp Wq) {t : ℝ} (ht : t ≤ 0) : D.χ t = 0 := by
-  apply image_eq_zero_of_notMem_tsupport
-  intro hm
-  have := D.χ_supp hm
-  simp only [Set.mem_Ioo] at this
-  linarith [this.1]
+  apply _root_.PI.BICNZ.chi_eq_zero <;> assumption
 
 theorem lim_chi_hcs {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
     [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] (D : RealPlaceData k r Wp Wq) : HasCompactSupport D.χ :=

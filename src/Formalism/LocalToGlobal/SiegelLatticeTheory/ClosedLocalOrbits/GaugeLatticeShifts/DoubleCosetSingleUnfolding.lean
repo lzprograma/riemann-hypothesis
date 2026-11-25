@@ -279,8 +279,6 @@ end Tiling
 
 section SlabProps
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.TermOp.KExpCut
 
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u : D.what₂.Word}
@@ -295,8 +293,6 @@ def SlabCover (Ωs : cs.Cl → Set X.B.I.Ginf) : Prop :=
 end SlabProps
 
 section SlabClosed
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.TermOp.KExpCut Formalism.L2.SG.Full
 
@@ -322,8 +318,6 @@ def RegroupC : Prop :=
 end SlabClosed
 
 section SlabFDPf
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PoincareInHH.Cut Formalism.L2.SG.TermOp.KExpCut
 
@@ -369,8 +363,6 @@ theorem slabFD_of (hK : X.LevelSubgroupCharacter) (hKL : X.LevelSubgroupNormaliz
 end SlabFDPf
 
 section OOSum
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.TermOp.KExpCut
 
@@ -440,8 +432,6 @@ namespace Formalism.L2.SG.Pf
 open Formalism.L2.SG.FoldBound Formalism.L2.SG.PoincareSeriesSquareIntegrable NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermOp
   Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PoincareInHH.Cut Formalism.L2.SG.TermOp.KExpCut Formalism.L2.SG.Full
   Formalism.L2.SG.Pf.Slab
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def OOLintSumC : Prop :=
   ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (Y : Full X) (u u' : D.what₂.Word),
@@ -514,8 +504,6 @@ open Formalism.L2.SG.FoldBound Formalism.L2.SG.PoincareSeriesSquareIntegrable Nu
 
 section SlabE
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PoincareInHH.Cut Formalism.L2.SG.TermOp.KExpCut
 
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u : D.what₂.Word} {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
@@ -556,8 +544,6 @@ open Formalism.L2.SG.FoldBound Formalism.L2.SG.PoincareSeriesSquareIntegrable Nu
 
 section TermsLE
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PoincareInHH.Cut Formalism.L2.SG.TermOp.KExpCut Formalism.L2.SG.Full
 
 def TermsLE {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word)
@@ -596,8 +582,6 @@ namespace Formalism.L2.SG.Pf
 open Formalism.L2.SG.FoldBound Formalism.L2.SG.PoincareSeriesSquareIntegrable NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermOp
   Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PoincareInHH.Cut Formalism.L2.SG.TermOp.KExpCut Formalism.L2.SG.Full
   Formalism.L2.SG.Pf.Slab
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem Slab.ooLintSum_of {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} (Y : Full X) (u u' : D.what₂.Word)
     (hOK : Formalism.L2.SG.WuDecay.FoldOK X u Y.hK) (hOK' : Formalism.L2.SG.WuDecay.FoldOK X u' Y.hK)
@@ -734,7 +718,7 @@ theorem Slab.ooLintSum_of {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting 
     have e : ∀ t : GTerm X u u' (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u'),
         J t = ∑ Λ ∈ Y.what₂ u, if t.lam = Λ then J t else 0 := by
       intro t
-      rw [Finset.sum_eq_single_of_mem t.lam t.mem (fun b _ hb => if_neg (fun h => hb h.symm)), if_pos rfl]
+      rw [Finset.sum_eq_single_of_mem t.lam t.mem (fun b _ hb => ite_eq_right (fun h => hb h.symm)), ite_eq_left rfl]
     rw [tsum_congr e, Summable.tsum_finsetSum (fun _ _ => ENNReal.summable)]
     refine Finset.sum_congr rfl fun Λ _ => ?_
     have hs := tsum_subtype {t | t.lam = Λ} J
@@ -785,8 +769,6 @@ theorem tsum_lintegral_le {α ι : Type*} [MeasurableSpace α] {μ : Measure α}
     _ = ∫⁻ x, ∑ i ∈ s, f i x ∂μ := (lintegral_finsetSum' s (fun i _ => hf i)).symm
     _ ≤ _ := lintegral_mono fun x => ENNReal.sum_le_tsum s
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PoincareInHH.Cut Formalism.L2.SG.TermOp.KExpCut Formalism.L2.SG.Full
 
 def aB {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} (Y : Full X) (u : D.what₂.Word)
@@ -835,14 +817,12 @@ open Formalism.L2.SG.FoldBound Formalism.L2.SG.PoincareSeriesSquareIntegrable Nu
   Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PoincareInHH.Cut Formalism.L2.SG.TermOp.KExpCut Formalism.L2.SG.Full
   Formalism.L2.SG.Pf.Slab
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem Slab.isSFund_fundOf {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} (Y : Full X) (u u' : D.what₂.Word)
     (t : GTerm X u u' (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u')) :
     Formalism.L2.SG.HidaSetting.IsSFund X.B.I (ROinf t) (FundOf t) := by
   have h := fundExistsC_holds D X Y u u' t
   unfold FundOf
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem termsLEC_of (hMaj : MajPtC) (hInv : RInvC) (hCnt : CountC) : TermsLEC := by
@@ -886,7 +866,7 @@ theorem termsLEC_of (hMaj : MajPtC) (hInv : RInvC) (hCnt : CountC) : TermsLEC :=
   have hEt : ∀ t, t.lam = Λ → IsRightTransversal (NOlam X u Λ)
       (ROsub X (X.Fu u) (X.Fu u') t.lam t.lam' t.lin) (E t) := by
     intro t h
-    simp only [hE, dif_pos h]
+    simp only [hE, dite_eq_left h]
     exact Classical.choose_spec (PI.FoldDCUnfold.W.translation_exists X.B.I.Ginf (NOlam X u Λ)
       (ROsub X (X.Fu u) (X.Fu u') t.lam t.lam' t.lin) (hle t h))
   set a := aB Y u Λ with ha
@@ -982,8 +962,6 @@ namespace Formalism.L2.SG.Pf
 open Formalism.L2.SG.FoldBound Formalism.L2.SG.PoincareSeriesSquareIntegrable NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermOp
   Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PoincareInHH.Cut Formalism.L2.SG.TermOp.KExpCut Formalism.L2.SG.Full
   Formalism.L2.SG.Pf.Slab
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem Slab.mem_srat_of_nlam {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u : D.what₂.Word}
     {Λ : Submodule (𝓞 D.host.E) (VS D).V} {x : X.B.I.GA} {m : (VS D).V ≃ₗ[D.host.E] (VS D).V}

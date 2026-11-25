@@ -172,7 +172,7 @@ lemma dual_eq {H : HermSp M V} {r : ℕ} (A : LocNG.FrameD H r) (a : Fin (r + 1)
     H.h (A.f a) (A.es j) = if a = j.castSucc then 1 else 0 := by
   induction a using Fin.lastCases with
   | last =>
-    rw [if_neg (Fin.castSucc_lt_last j).ne', H.h_herm, A.h_sz, map_zero]
+    rw [ite_eq_right (Fin.castSucc_lt_last j).ne', H.h_herm, A.h_sz, map_zero]
   | cast i =>
     rw [A.h_es i j]
     simp only [Fin.castSucc_inj]

@@ -79,8 +79,8 @@ lemma sum_odd (hd : Even d) (σ : K →+* K) {c : K} (hc : σ^[d] c = c) :
   have hi := iter_sub_one (⇑σ) hc s
   by_cases h : s.val % 2 = 0
   · have h' : ¬ (s - 1).val % 2 = 0 := fun h'' => (hp.1 h'') h
-    rw [if_pos h, if_neg h', map_zero]
-  · rw [if_neg h, if_pos (hp.2 h)]
+    rw [ite_eq_left h, ite_eq_right h', map_zero]
+  · rw [ite_eq_right h, ite_eq_left (hp.2 h)]
     exact hi.symm
 
 variable {ι : Type}
@@ -257,7 +257,7 @@ lemma artin_hasse_log_eq_generic_log {τ : Type} [DecidableEq τ] {d : ℕ} (l :
     simp only [Finsupp.single_eq_same, Finsupp.degree_single, (Finsupp.single_injective x).eq_iff]
     rw [lgF, PowerSeries.coeff_mk]
   · symm
-    refine Finset.sum_eq_zero fun e _ => if_neg ?_
+    refine Finset.sum_eq_zero fun e _ => ite_eq_right ?_
     intro he
     apply h
     rw [he]
@@ -283,7 +283,7 @@ lemma isIdMod2_letLog [CharZero K] {l d : ℕ} [NeZero d] (hl : l.Prime) :
       if (0 : ZMod d →₀ ℕ) = Finsupp.single (j - 2 * (e : ZMod d)) ((l ^ 2) ^ e) then
         ((l : K) ^ e)⁻¹ else 0) = 0
     exact Finset.sum_eq_zero fun e _ =>
-      if_neg (Finsupp.single_ne_zero.2 (pow_ne_zero _ (pow_ne_zero _ hl.ne_zero))).symm
+      ite_eq_right (Finsupp.single_ne_zero.2 (pow_ne_zero _ (pow_ne_zero _ hl.ne_zero))).symm
   · rw [letLog_eq, coeff_one_gLog hl]
 
 lemma artin_hasse_log_frobenius_shift [CharZero K] {τ : Type} {l : ℕ} (hl : l.Prime) (ρ : K →+* K) (x : τ) :
@@ -299,7 +299,7 @@ lemma coeff_one_subst {R : Type} [CommRing R] {α τ : Type} [Fintype α] [Decid
     coeff (Finsupp.single x 1) (subst a (f j)) = coeff (Finsupp.single x 1) (a j) := by
   have haS : HasSubst a := hasSubst_of_constantCoeff_zero ha
   rw [coeff_subst haS, finsum_eq_single _ (Finsupp.single j 1)]
-  · rw [Finsupp.prod_single_index (by simp), hf.2 j j, if_pos rfl, one_smul, pow_one]
+  · rw [Finsupp.prod_single_index (by simp), hf.2 j j, ite_eq_left rfl, one_smul, pow_one]
   · intro e he
     rcases Nat.lt_or_ge e.degree 2 with hlt | hge
     · rcases Nat.lt_or_ge e.degree 1 with h0 | h1
@@ -308,7 +308,7 @@ lemma coeff_one_subst {R : Type} [CommRing R] {α τ : Type} [Fintype α] [Decid
         rw [coeff_zero_eq_constantCoeff_apply, hf.1 j, zero_smul]
       · obtain ⟨i, rfl⟩ := Formalism.FG.InjVAux.eq_single_of_degree_eq_one e (by omega)
         have hij : i ≠ j := fun hij => he (by rw [hij])
-        rw [hf.2 j i, if_neg hij, zero_smul]
+        rw [hf.2 j i, ite_eq_right hij, zero_smul]
     · rw [Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
       have hgood : ∀ i, Formalism.FG.InjVAux.Good 0 1 (a i) (a i) := fun i =>
         ⟨Formalism.FG.InjVAux.hasOrd_one_of_cc (ha i), Formalism.FG.InjVAux.hasOrd_one_of_cc (ha i), by
@@ -334,11 +334,11 @@ lemma coeff_keep {τ : Type} (P : τ → Prop) (f : MvPowerSeries τ K)
   split_ifs with h
   · rw [Finsupp.prod, Finset.prod_eq_one, one_mul]
     intro x hx
-    rw [if_pos (h x (Finsupp.mem_support_iff.1 hx)), one_pow]
-  · push_neg at h
+    rw [ite_eq_left (h x (Finsupp.mem_support_iff.1 hx)), one_pow]
+  · push Not at h
     obtain ⟨x, hx, hPx⟩ := h
     rw [Finsupp.prod, Finset.prod_eq_zero (Finsupp.mem_support_iff.2 hx), zero_mul]
-    rw [if_neg hPx, zero_pow hx]
+    rw [ite_eq_right hPx, zero_pow hx]
 
 
 open Classical in
@@ -370,15 +370,15 @@ lemma keep_letLog {l d : ℕ} [NeZero d] (hd : Even d) (j : ZMod d) :
   split_ifs with h
   · rfl
   · symm
-    push_neg at h
+    push Not at h
     obtain ⟨x, hx, hPx⟩ := h
     show (∑ e ∈ Finset.range (n.degree + 1),
       if n = Finsupp.single (j - 2 * (e : ZMod d)) ((l ^ 2) ^ e) then ((l : K) ^ e)⁻¹ else 0) = 0
-    refine Finset.sum_eq_zero fun e _ => if_neg ?_
+    refine Finset.sum_eq_zero fun e _ => ite_eq_right ?_
     rintro rfl
     have hx' : j - 2 * (e : ZMod d) = x := by
       by_contra hne
-      rw [Finsupp.single_apply, if_neg hne] at hx
+      rw [Finsupp.single_apply, ite_eq_right hne] at hx
       exact hx rfl
     have hp := parity_sub_two_mul hd j e
     rw [hx'] at hp
@@ -401,23 +401,23 @@ lemma keep_zXY {l d : ℕ} [NeZero d] {ι : Type} [Fintype ι] (σ : K →+* K) 
     split_ifs with hj
     · rw [map_sum]
       refine Finset.sum_eq_zero fun r _ => ?_
-      rw [MvPowerSeries.coeff_C_mul, Formalism.InvariantFactorPaths.G7.coeff_single_variable_series, if_neg, mul_zero]
+      rw [MvPowerSeries.coeff_C_mul, Formalism.InvariantFactorPaths.G7.coeff_single_variable_series, ite_eq_right, mul_zero]
       intro hn
       apply hPx
       have hxr : x = (false, r) := by
         by_contra hne
-        rw [hn, Finsupp.single_apply, if_neg (Ne.symm hne)] at hx
+        rw [hn, Finsupp.single_apply, ite_eq_right (Ne.symm hne)] at hx
         exact hx rfl
       subst hxr
       simp [hj]
     · rw [map_sum]
       refine Finset.sum_eq_zero fun r _ => ?_
-      rw [MvPowerSeries.coeff_C_mul, Formalism.InvariantFactorPaths.G7.coeff_single_variable_series, if_neg, mul_zero]
+      rw [MvPowerSeries.coeff_C_mul, Formalism.InvariantFactorPaths.G7.coeff_single_variable_series, ite_eq_right, mul_zero]
       intro hn
       apply hPx
       have hxr : x = (true, r) := by
         by_contra hne
-        rw [hn, Finsupp.single_apply, if_neg (Ne.symm hne)] at hx
+        rw [hn, Finsupp.single_apply, ite_eq_right (Ne.symm hne)] at hx
         exact hx rfl
       subst hxr
       simp [hj]
@@ -610,9 +610,9 @@ theorem BMinus1_of' (hE : ExpSpec) : BMinus1 := by
   · intro s x
 
     rw [← coeff_one_subst hid hTc0 s x, hTlog, zXY_eq, map_sum, Finset.sum_eq_single x]
-    · rw [coeff_C_mul, artin_hasse_log_eq_generic_log (d := 1) l x 0, coeff_one_gLog hl, if_pos rfl, mul_one]
+    · rw [coeff_C_mul, artin_hasse_log_eq_generic_log (d := 1) l x 0, coeff_one_gLog hl, ite_eq_left rfl, mul_one]
     · intro y _ hy
-      rw [coeff_C_mul, artin_hasse_log_eq_generic_log (d := 1) l y 0, coeff_one_gLog hl, if_neg (Ne.symm hy),
+      rw [coeff_C_mul, artin_hasse_log_eq_generic_log (d := 1) l y 0, coeff_one_gLog hl, ite_eq_right (Ne.symm hy),
         mul_zero]
     · intro h
       exact absurd (Finset.mem_univ x) h

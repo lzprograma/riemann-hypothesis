@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableSetImageBall
 public import Formalism.PeriodIntegrals.QuotInv
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.UpperOff
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ClosedMatrixSubgroupTheorem
@@ -68,13 +69,6 @@ open MeasureTheory Matrix Filter Topology Formalism.QuantumDeterminants Formalis
 open scoped InnerProductSpace ENNReal
 
 namespace GlobalTheory.AdDens
-
-theorem det_adjoint' {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [FiniteDimensional ℝ V]
-    (A : V →ₗ[ℝ] V) : LinearMap.det (LinearMap.adjoint A) = LinearMap.det A := by
-  classical
-  let b := stdOrthonormalBasis ℝ V
-  rw [← LinearMap.det_toMatrix b.toBasis A, ← LinearMap.det_toMatrix b.toBasis (LinearMap.adjoint A),
-    LinearMap.toMatrix_adjoint b b A, Matrix.det_conjTranspose, star_trivial]
 
 theorem volume_image_eq {V W : Type} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [FiniteDimensional ℝ V]
     [NormedAddCommGroup W] [InnerProductSpace ℝ W] [FiniteDimensional ℝ W]
@@ -154,29 +148,7 @@ theorem cj_mem {m : ℕ} {H H' A B : Matrix (Fin m) (Fin m) ℂ} (hAB : A * B = 
   exact hsub (Submodule.mem_map_of_mem hx)
 
 theorem isMatGroup_UH {N : ℕ} (H : Matrix (Fin N) (Fin N) ℂ) (hH : H * H = 1) : PI.IsMatGroup (UH H) := by
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · show IsClosed {g : Matrix (Fin N) (Fin N) ℂ | gᴴ * H * g = H}
-    exact isClosed_eq ((continuous_id.matrix_conjTranspose.matrix_mul continuous_const).matrix_mul continuous_id)
-      continuous_const
-  · show (1 : Matrix (Fin N) (Fin N) ℂ)ᴴ * H * 1 = H
-    rw [Matrix.conjTranspose_one, Matrix.one_mul, Matrix.mul_one]
-  · intro a ha b hb
-    change aᴴ * H * a = H at ha
-    change bᴴ * H * b = H at hb
-    show (a * b)ᴴ * H * (a * b) = H
-    calc (a * b)ᴴ * H * (a * b) = bᴴ * (aᴴ * H * a) * b := by simp only [Matrix.conjTranspose_mul, Matrix.mul_assoc]
-      _ = H := by rw [ha, hb]
-  · intro a ha
-    change aᴴ * H * a = H at ha
-    have hl : (H * aᴴ * H) * a = 1 := by
-      rw [show H * aᴴ * H * a = H * (aᴴ * H * a) by simp only [Matrix.mul_assoc], ha, hH]
-    have hu : IsUnit a.det := Matrix.isUnit_det_of_left_inverse hl
-    have hr : a * a⁻¹ = 1 := Matrix.mul_nonsing_inv a hu
-    refine ⟨?_, hr⟩
-    show (a⁻¹)ᴴ * H * a⁻¹ = H
-    calc (a⁻¹)ᴴ * H * a⁻¹ = (a⁻¹)ᴴ * (aᴴ * H * a) * a⁻¹ := by rw [ha]
-      _ = (a * a⁻¹)ᴴ * H * (a * a⁻¹) := by simp only [Matrix.conjTranspose_mul, Matrix.mul_assoc]
-      _ = H := by rw [hr, Matrix.conjTranspose_one, Matrix.one_mul, Matrix.mul_one]
+  first | exact _root_.GlobalTheory.GramExp.isMatGroup_UH | exact @_root_.GlobalTheory.GramExp.isMatGroup_UH | apply _root_.GlobalTheory.GramExp.isMatGroup_UH <;> assumption
 
 def cjM {m : ℕ} {A B : Matrix (Fin m) (Fin m) ℂ} (hAB : A * B = 1) : PI.MtM m ≃ₜ PI.MtM m where
   toFun x := Matrix.of.symm (A * Matrix.of x * B)

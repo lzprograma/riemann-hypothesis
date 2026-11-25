@@ -3,53 +3,7 @@ module
 public import GroundTheory.HeightsAndTheta.Heights.ChowForms.ImportsBis
 public import GroundTheory.HeightsAndTheta.Heights.ChowForms.Imports
 public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormSection
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -67,17 +21,8 @@ namespace ChartResidueDegree
 theorem aeval_mul_of_isHomogeneous {F : Type} [Field F] {n : ℕ} {A : Type*} [CommRing A] [Algebra F A]
     {g : MvPolynomial (Fin n) F} {d : ℕ} (hg : g.IsHomogeneous d) (a : A) (x : Fin n → A) :
     aeval (fun m => a * x m) g = a ^ d * aeval x g := by
-  conv_lhs => rw [g.as_sum]
-  conv_rhs => rw [g.as_sum]
-
-  rw [map_sum, map_sum, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun s hs => ?_
-  have hd := hg (mem_support_iff.mp hs)
-  simp only [aeval_monomial, mul_pow]
-  rw [Finsupp.prod_mul, Finsupp.prod_pow, Finsupp.prod_pow, Finset.prod_pow_eq_pow_sum, ← hd,
-    Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by simp)]
-  simp only [smul_eq_mul, Pi.one_apply, mul_one]
-  ring
+  rw [aeval_def, aeval_def, ← eval_map, ← eval_map]
+  exact (hg.map (algebraMap F A)).eval_smul a x
 
 theorem exists_chartHom {F : Type} [Field F] {n e : ℕ} {I W : Ideal (MvPolynomial (Fin n) F)} [W.IsPrime]
     (hWh : IsHomogIdeal W) (hIW : I ≤ W) {t : Fin n → F}
@@ -185,15 +130,23 @@ theorem length_quotient_eq_one {O R : Type*} [CommRing O] [CommRing R] [Algebra 
     Module.length_eq_one_iff, isSimpleModule_iff_isCoatom, ← Ideal.isMaximal_def, hkerf]
   exact hmax
 
-end ChartResidueDegree
-
-
-open ChartResidueDegree in
-theorem ChartResidueDegree.proof (h₁ : ChowFormBirational.Statement) (h₂ : ChartFinite.Statement)
-    (h₃ : ChartKernel.Statement) (h₄ : ConeDimOfChowForm.Statement) (h₅ : ConeDimComponent.Statement)
-    (h₆ : ChowFormExists.Statement) (h₇ : IncidenceGeneric.Statement) (h₈ : ChartLocalOrder.Statement) :
-    ChartResidueDegree.Statement := by
-  intro F _ _ n e I W f t u q p _ hI hf hu hq hp hqt hW hqW htW
+theorem length_eq_one {F : Type} [Field F] {n e : ℕ} {I W : Ideal (MvPolynomial (Fin n) F)}
+    {f : MvPolynomial (Fin (e + 1) × Fin n) F} {t u : Fin n → F}
+    {q : MvPolynomial (Fin e × Fin n) F} {p : Ideal (MvPolynomial (Fin e × Fin n) F)} [p.IsPrime]
+    (h₁ : ∀ (k : ℕ) (P : Ideal (MvPolynomial (Fin n) F)) (g : MvPolynomial (Fin (k + 1) × Fin n) F)
+      (c : Fin n → FractionRing (MvPolynomial (Fin n) F ⧸ P)),
+      IsProjPrime P → IsChowForm P (k + 1) g → ∑ j, c j * genPt P j = 1 →
+        ∃ t' : Fin n → F, (∑ l, C (t' l) * pderiv (0, l) g) ∉ incIdeal P (k + 1) ∧
+          ∀ m, aeval (genSubst (genPt P) c) (pderiv (0, m) g) *
+                C (∑ l, algebraMap F (FractionRing (MvPolynomial (Fin n) F ⧸ P)) (t' l) * genPt P l) =
+              aeval (genSubst (genPt P) c) (∑ l, C (t' l) * pderiv (0, l) g) * C (genPt P m))
+    (h₂ : ChartFinite.Statement) (h₃ : ChartKernel.Statement) (h₄ : ConeDimOfChowForm.Statement)
+    (h₅ : ConeDimComponent.Statement) (h₆ : ChowFormExists.Statement) (h₇ : IncidenceGeneric.Statement)
+    (h₈ : ChartLocalOrder.Statement)
+    (hI : IsProjPrime I) (hf : IsChowForm I (e + 1) f) (hu : linForm u ∉ I) (hq : Prime q)
+    (hp : p = Ideal.span {q}) (hqt : ¬ q ∣ specFirst f t)
+    (hW : W ∈ relComps (I ⊔ Ideal.span {linForm u})) (hqW : q ∈ incIdeal W e) (htW : linForm t ∉ W) :
+    Module.length (Localization.AtPrime p) (ChartLoc I t e p ⧸ chartIdeal I t e p W) = 1 := by
   obtain ⟨k, rfl⟩ : ∃ k, e = k + 1 := by
     cases e with
     | zero =>
@@ -314,7 +267,7 @@ theorem ChartResidueDegree.proof (h₁ : ChowFormBirational.Statement) (h₂ : C
     rw [Ideal.mem_comap, Ideal.mem_comap, RingHom.mem_ker, hψ, hΦIX, hdeh h hh, C_0, map_zero]
   have hker : RingHom.ker ψ = 𝔓 := (h𝔓max.eq_of_le (RingHom.ker_ne_top ψ) h𝔓ker).symm
 
-  obtain ⟨t', hD', hrel⟩ := h₁ F n k W g c hWp hg hc'
+  obtain ⟨t', hD', hrel⟩ := h₁ k W g c hWp hg hc'
   rw [← hξdef] at hrel
   set Dt : MvPolynomial (Fin (k + 1) × Fin n) F := ∑ l, C (t l) * pderiv (0, l) g with hDtdef
   have hωC : ∀ a : F, aeval (genSubst ξ c) (C a : MvPolynomial (Fin (k + 1) × Fin n) F) =
@@ -421,6 +374,16 @@ theorem ChartResidueDegree.proof (h₁ : ChowFormBirational.Statement) (h₂ : C
   refine length_quotient_eq_one 𝔓 hcomap fun x => ?_
   obtain ⟨o, ho⟩ := hgood x
   exact ⟨o, by rw [← hker, RingHom.mem_ker, map_sub, ho, sub_self]⟩
+
+end ChartResidueDegree
+
+
+theorem ChartResidueDegree.proof (h₁ : ChowFormBirational.Statement) (h₂ : ChartFinite.Statement)
+    (h₃ : ChartKernel.Statement) (h₄ : ConeDimOfChowForm.Statement) (h₅ : ConeDimComponent.Statement)
+    (h₆ : ChowFormExists.Statement) (h₇ : IncidenceGeneric.Statement) (h₈ : ChartLocalOrder.Statement) :
+    ChartResidueDegree.Statement :=
+  fun F _ _ n _ _ _ _ _ _ _ _ _ hI hf hu hq hp hqt hW hqW htW =>
+    ChartResidueDegree.length_eq_one (h₁ F n) h₂ h₃ h₄ h₅ h₆ h₇ h₈ hI hf hu hq hp hqt hW hqW htW
 
 end
 

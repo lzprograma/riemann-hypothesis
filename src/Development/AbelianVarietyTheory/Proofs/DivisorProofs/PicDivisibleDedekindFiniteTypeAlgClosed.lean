@@ -115,7 +115,7 @@ theorem classGroup_nthPower_of_codim_one_mod : ∀ (k A : Type) [Field k] [IsAlg
   have hI0 : (I : Ideal A) ≠ ⊥ := nonZeroDivisors.coe_ne_zero I
   by_cases hex : ∃ P₀ : Ideal A, P₀.IsMaximal ∧ P₀ ≠ ⊥
   swap
-  · push_neg at hex
+  · push Not at hex
     have htop : (I : Ideal A) = ⊤ := by
       by_contra h
       obtain ⟨M, hM, hIM⟩ := Ideal.exists_le_maximal _ h
@@ -136,8 +136,7 @@ theorem classGroup_nthPower_of_codim_one_mod : ∀ (k A : Type) [Field k] [IsAlg
     haveI : IsJacobsonRing A := isJacobsonRing_of_finiteType (A := k) (B := A)
     have hj : (⊥ : Ideal A).jacobson = ⊥ :=
       IsJacobsonRing.out' _ (Ideal.isPrime_bot).isRadical
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     apply hx
     have : x ∈ (⊥ : Ideal A).jacobson := by
       rw [Ideal.jacobson]
@@ -305,21 +304,6 @@ open Polynomial
 
 namespace GlobalTheory.CurveCompletionG
 
-alias residue_exists := _root_.GlobalTheory.CurveCompletion.residue_exists
-alias pow_le_span_sup := _root_.GlobalTheory.CurveCompletion.pow_le_span_sup
-alias pow_not_mem := _root_.GlobalTheory.CurveCompletion.pow_not_mem
-alias aeval_mem_of_dvd := _root_.GlobalTheory.CurveCompletion.aeval_mem_of_dvd
-alias dvd_of_aeval_mem := _root_.GlobalTheory.CurveCompletion.dvd_of_aeval_mem
-alias aeval_mem_iff := _root_.GlobalTheory.CurveCompletion.aeval_mem_iff
-alias coe_dvd_iff := _root_.GlobalTheory.CurveCompletion.coe_dvd_iff
-alias eq_of_forall_dvd := _root_.GlobalTheory.CurveCompletion.eq_of_forall_dvd
-noncomputable abbrev approx := @_root_.GlobalTheory.CurveCompletion.approx
-alias approx_spec := _root_.GlobalTheory.CurveCompletion.approx_spec
-noncomputable abbrev ser := @_root_.GlobalTheory.CurveCompletion.ser
-alias ser_sub_approx := _root_.GlobalTheory.CurveCompletion.ser_sub_approx
-alias mem_iff_dvd := _root_.GlobalTheory.CurveCompletion.mem_iff_dvd
-alias ser_eq := _root_.GlobalTheory.CurveCompletion.ser_eq
-noncomputable abbrev serHom := @_root_.GlobalTheory.CurveCompletion.serHom
 alias exists_completion_embedding := _root_.GlobalTheory.CurveCompletion.exists_completion_embedding
 
 end GlobalTheory.CurveCompletionG
@@ -786,10 +770,10 @@ theorem hasse_mul (l : ℕ) (φ ψ : PowerSeries R) :
   set g : R[X] := PowerSeries.trunc M ψ
   have hf : ∀ m < M, PowerSeries.coeff m φ = PowerSeries.coeff m (f : PowerSeries R) := by
     intro m hm
-    rw [Polynomial.coeff_coe, PowerSeries.coeff_trunc, if_pos hm]
+    rw [Polynomial.coeff_coe, PowerSeries.coeff_trunc, ite_eq_left hm]
   have hg : ∀ m < M, PowerSeries.coeff m ψ = PowerSeries.coeff m (g : PowerSeries R) := by
     intro m hm
-    rw [Polynomial.coeff_coe, PowerSeries.coeff_trunc, if_pos hm]
+    rw [Polynomial.coeff_coe, PowerSeries.coeff_trunc, ite_eq_left hm]
   have hpoly : hasse l ((f : PowerSeries R) * (g : PowerSeries R)) =
       ∑ p ∈ Finset.range (l + 1), hasse p (f : PowerSeries R) * hasse (l - p) (g : PowerSeries R) := by
     rw [← Polynomial.coe_mul, hasse_coe, hasseDeriv_mul,
@@ -1090,7 +1074,6 @@ theorem formal_deformation : ∀ (k A : Type) [Field k] [IsAlgClosed k] [CommRin
   intro k A _ _ _ _ _ _ N I _ V D P₀ Q f₀ hN hNk hP₀ hyp
   obtain ⟨hVfin, hVD, hQmax, hQinj, hQP, hDQ, hDP, hf₀V, hf₀, hspan, hsurj⟩ := hyp
   classical
-  have hne : Ideal.span {f₀} ≠ ⊥ := by simpa [Ideal.span_singleton_eq_bot] using hf₀
   have hf₀P : f₀ ∈ P₀ := by
     have : Ideal.span {f₀} ≤ P₀ := hspan ▸ le_trans Ideal.mul_le_left Ideal.mul_le_left
     exact this (Ideal.mem_span_singleton_self f₀)
@@ -1237,8 +1220,7 @@ theorem formal_deformation : ∀ (k A : Type) [Field k] [IsAlgClosed k] [CommRin
     rw [hΔ, hσπ, hX, ← PowerSeries.coe_substAlgHom (hsub i), map_one]
   · intro j; exact (b j).2
   · exact b.linearIndependent.map' V.subtype (Submodule.ker_subtype V)
-  · by_contra hcon
-    push_neg at hcon
+  · by_contra! hcon
     have hz : ∀ j, y₀ j = 0 := by
       intro j
       have := hcon j
@@ -1488,36 +1470,7 @@ namespace GlobalTheory.PicDiv
 theorem injective_of_finite_not_field (k B : Type) [Field k] [IsAlgClosed k] [CommRing B] [IsDomain B]
     [Algebra k B] (y : B) (hfin : (Polynomial.aeval (R := k) y).Finite) (hB : ¬ IsField B) :
     Function.Injective (Polynomial.aeval (R := k) y) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
-  intro p hp
-  by_contra hp0
-  have hint : IsIntegral k y := (isAlgebraic_iff_isIntegral).mp ⟨p, hp0, hp⟩
-  have hdeg : (minpoly k y).natDegree = 1 := by
-    have := IsAlgClosed.degree_eq_one_of_irreducible k (minpoly.irreducible hint)
-    exact Polynomial.natDegree_eq_of_degree_eq_some this
-  obtain ⟨r, hr⟩ := (minpoly.natDegree_eq_one_iff).mp hdeg
-  letI : Algebra k[X] B := (Polynomial.aeval y).toRingHom.toAlgebra
-  haveI : Module.Finite k[X] B := hfin
-  have hsmul : ∀ (q : k[X]) (b : B), q • b = (q.eval r) • b := by
-    intro q b
-    rw [Algebra.smul_def, Algebra.smul_def]
-    change Polynomial.aeval y q * b = _
-    rw [← hr, Polynomial.aeval_algebraMap_apply, Polynomial.aeval_def]
-    rfl
-  obtain ⟨s, hs⟩ := Module.Finite.fg_top (R := k[X]) (M := B)
-  have hk : Submodule.span k (s : Set B) = ⊤ := by
-    have key : ∀ b ∈ Submodule.span k[X] (s : Set B), b ∈ Submodule.span k (s : Set B) := by
-      intro b hb
-      induction hb using Submodule.span_induction with
-      | mem x hx => exact Submodule.subset_span hx
-      | zero => exact zero_mem _
-      | add x z _ _ hx hz => exact add_mem hx hz
-      | smul q x _ hx => rw [hsmul]; exact Submodule.smul_mem _ _ hx
-    rw [eq_top_iff]
-    intro b _
-    exact key b (by rw [hs]; trivial)
-  haveI : Module.Finite k B := ⟨⟨s, hk⟩⟩
-  exact hB ((Algebra.IsIntegral.isField_iff_isField (algebraMap k B).injective).mp (Field.toIsField k))
+  apply _root_.GlobalTheory.aeval_injective_of_finite_of_not_isField <;> assumption
 
 end GlobalTheory.PicDiv
 

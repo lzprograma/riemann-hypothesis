@@ -131,11 +131,9 @@ theorem powMonomial_isMultiHomog (e : K → ℕ) (i : ∀ k, ι k) :
   rw [key] at h
   exact h
 
-
 omit [Fintype K] [DecidableEq K] in
 theorem liftForm_C_eq {J : Type} (a : R) : liftForm (ι := ι) (J := J) (C a : MRing ι R) = C a := by
   simp [liftForm]
-
 
 omit [Fintype K] [DecidableEq K] in
 theorem cycEval_congr_on_support {n n' : Ideal (MRing ι R) → ℤ} (Z : Ideal (MRing ι R) → ℤ)
@@ -145,7 +143,6 @@ theorem cycEval_congr_on_support {n n' : Ideal (MRing ι R) → ℤ} (Z : Ideal 
   by_cases hW : Z W = 0
   · rw [hW, zero_mul, zero_mul]
   · rw [h W hW]
-
 
 open scoped Classical in
 omit [Fintype K] [DecidableEq K] in
@@ -160,7 +157,6 @@ theorem cycEval_ite (p : Ideal (MRing ι R) → Prop) (A B : Ideal (MRing ι R) 
   refine finsum_congr fun W => ?_
   dsimp only
   split_ifs <;> ring
-
 
 omit [Fintype K] [DecidableEq K] in
 theorem vecCons_liftMDeg {d : ℕ} (c : K → ℕ) (L : Fin d → K → ℤ) :
@@ -857,15 +853,6 @@ noncomputable section
 
 universe u
 
-private theorem lt_natCast_of_add_one_le' {x : WithBot ℕ∞} {n : ℕ} (h : x + 1 ≤ (n : WithBot ℕ∞)) :
-    x < (n : WithBot ℕ∞) := by
-  induction x with
-  | bot => exact WithBot.bot_lt_coe _
-  | coe e =>
-    have h' : e + 1 ≤ (n : ℕ∞) := by exact_mod_cast h
-    have h'' : e < (n : ℕ∞) := (ENat.add_one_le_iff' (ENat.natCast_ne_top n)).mp h'
-    exact_mod_cast h''
-
 theorem TautologicalCase.proof (h3 : IntNumAddFirst.Statement.{u}) (h5 : MinimalPrimeMultiHomog.Statement.{u})
     (h6 : SupSpanMultiHomog.Statement.{u}) (h7 : SpecialQuotDim.Statement.{u})
     (h8 : SpecialIdealCorresp.Statement.{u}) (h9 : SpecialIdealMultiHomog.Statement.{u})
@@ -910,7 +897,7 @@ theorem TautologicalCase.proof (h3 : IntNumAddFirst.Statement.{u}) (h5 : Minimal
     have hdim : ringKrullDim (MRing ι (IsLocalRing.ResidueField O) ⧸ specialIdeal W) <
         ((d + 2 + Fintype.card K : ℕ) : WithBot ℕ∞) := by
       rw [h7 O ϖ hϖ K ι W hϖW]
-      exact lt_natCast_of_add_one_le' hdrop
+      exact GroundTheory.Heights₂.Heights.NumbersDVR.withBotENat_lt_of_add_one_le hdrop
     have key := h3 (IsLocalRing.ResidueField O) K ι d (specialIdeal W)
       (h8 O ϖ hϖ K ι P W hWp hϖW).1 (h9 O K ι W hWm) hdim b (fun k => (cg k : ℤ)) L
     rw [show b + (fun k => (cg k : ℤ)) = fun k => (cf k : ℤ) by rw [← hb]; funext k; simp] at key
@@ -927,7 +914,7 @@ theorem TautologicalCase.proof (h3 : IntNumAddFirst.Statement.{u}) (h5 : Minimal
   by_cases hW : ratDiv P f g W = 0
   · simp [hW]
   · beta_reduce
-    rw [if_pos (hD.vertical W hW), hadd W hW]
+    rw [ite_eq_left (hD.vertical W hW), hadd W hW]
 
 end
 
@@ -1093,7 +1080,6 @@ theorem cycEval_single {K : Type} {ι : K → Type} {F : Type} [Field F]
 
 end FlagBundleCutProof
 
-
 open FlagBundleCutProof in
 theorem FlagBundleCut.proof (hDim : FlagBundleDim.Statement)
     (hForms : FlagBundleSectionForms.Statement) (hDiv : FlagBundleSectionDiv.Statement)
@@ -1227,7 +1213,6 @@ theorem replace_zeta {K : Type} [Fintype K] [DecidableEq K] {ι' : Option K → 
     rw [List.replicate_succ', List.append_assoc, List.singleton_append]
 
 end FlagBundleLineBaseProof
-
 
 open FlagBundleLineBaseProof in
 theorem FlagBundleLineBase.proof (hdim : FlagBundleDim.Statement)
@@ -1363,12 +1348,12 @@ theorem exists_form_pair_left {P H : Ideal (MRing ι R)} [hP : P.IsPrime]
   set u' := weightedHomogeneousComponent (blockWeight ι) e u with hu'
   have hc := hPm _ h (e + bf)
   rw [map_sub, weightedHomogeneousComponent_mul_form hf, weightedHomogeneousComponent_mul_form hg,
-    if_pos le_add_self, add_tsub_cancel_right, ← hu'] at hc
+    ite_eq_left le_add_self, add_tsub_cancel_right, ← hu'] at hc
   by_cases hle : bg ≤ e + bf
-  · rw [if_pos hle] at hc
+  · rw [ite_eq_left hle] at hc
     exact ⟨u', _, e, e + bf - bg, weightedHomogeneousComponent_isWeightedHomogeneous _ _,
       weightedHomogeneousComponent_isWeightedHomogeneous _ _, tsub_add_cancel_of_le hle, he, hc⟩
-  · rw [if_neg hle, sub_zero] at hc
+  · rw [ite_eq_right hle, sub_zero] at hc
     exact ((hP.mem_or_mem hc).elim (fun h' => he (hPH h')) hfP).elim
 
 end Helpers

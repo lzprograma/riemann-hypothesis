@@ -182,10 +182,10 @@ theorem eulerFactor_mul_normChar (χ : HChar K) (t : ℝ) (s : ℂ) :
   have hN := two_le_N v
   unfold eulerFactor
   by_cases h : χ.UnrAt v
-  · rw [if_pos h, if_pos (hiff.2 h), Formalism.L2.Host.HChar.val_mul, Units.val_mul, val_normChar, mul_assoc,
+  · rw [ite_eq_left h, ite_eq_left (hiff.2 h), Formalism.L2.Host.HChar.val_mul, Units.val_mul, val_normChar, mul_assoc,
       ← Complex.cpow_add _ _ (by exact_mod_cast (by omega : Ideal.absNorm v.asIdeal ≠ 0))]
     congr 4; ring
-  · rw [if_neg h, if_neg (mt hiff.1 h)]
+  · rw [ite_eq_right h, ite_eq_right (mt hiff.1 h)]
 
 theorem entire_of_not_normPow {χ : HChar K} (hu : χ.IsUnitary) (hχ : ¬ ∃ t : ℝ, IsNormPow χ t) :
     ∃ Λ : ℂ → ℂ, IsHeckeL χ Λ := by
@@ -213,7 +213,7 @@ theorem entire_of_not_normPow {χ : HChar K} (hu : χ.IsUnitary) (hχ : ¬ ∃ t
       rw [hφ5, inv_eq_one] at this
       exact Units.ext this) fun v hv => by
       have h2 := hXP v
-      rw [if_pos hv] at h2
+      rw [ite_eq_left hv] at h2
       refine Units.ext (h2.symm.trans (hcon _ v.ne_bot ?_))
       by_contra h3
       exact (χ₀.val v).ne_zero (h2.symm.trans (hXz _ h3))
@@ -256,7 +256,7 @@ theorem _root_.GlobalTheory.Published.HeckeLEntireAndNonzeroAtOne_holds : Global
       have hs1 : s + (t : ℂ) * Complex.I ≠ 1 := fun h => by rw [h] at hs'; simp at hs'
       rw [← one_mul (normChar K t), eulerFactor_mul_normChar]
       convert hasProd_exp (χ := 1) (fun _ => by simp) hs' using 1
-      have hc : ∀ P : HeightOneSpectrum (𝓞 K), cf 1 P = 1 := fun P => if_pos fun _ _ => rfl
+      have hc : ∀ P : HeightOneSpectrum (𝓞 K), cf 1 P = 1 := fun P => ite_eq_left fun _ _ => rfl
       simp only [hc]
       rw [hZ _ hs', mul_div_cancel_left₀ _ (sub_ne_zero.mpr hs1)]
   · obtain ⟨Λ, hΛ⟩ := entire_of_not_normPow hu hχ

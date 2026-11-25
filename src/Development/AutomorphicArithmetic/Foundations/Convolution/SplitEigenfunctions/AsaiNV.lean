@@ -144,8 +144,7 @@ private theorem card_heckeT1_cosets (w : HeightOneSpectrum (𝓞 E)) (ϖ : w.adi
   exact_mod_cast e
 
 private theorem sq_le_of_bound {t r : ℝ} (ht : 1 ≤ t) (hr : 0 < r) (h : t * (r + r⁻¹) ≤ t ^ 2 + 1) : r ^ 2 ≤ t ^ 2 := by
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have hrt : t < r := lt_of_pow_lt_pow_left₀ 2 hr.le hlt
   have h5 : t * r ^ 2 + t ≤ (t ^ 2 + 1) * r := by
     have := mul_le_mul_of_nonneg_right h hr.le
@@ -313,7 +312,7 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.satU_of :
     SatU := by
   intro E _ _ _ D P ω χ hc hu _ w α β hB
   obtain ⟨κ, hn, hκ⟩ := exists_norm (isUnitary_of_cenN hc hu)
-  have hD := (GlobalTheory.T.cuspForm_sqIntegrable_and_isDiscrete_splitCentre E 2).2 _ hn
+  have hD := (_root_.GlobalTheory.ResW.cuspForm_isSqInt_and_isDiscrete E 2).2 _ hn
   have hU : GlobalTheory.LGrp.IsUnitarisable ((P.twist κ).locRep w) := PositivityTheory.Rg.Rs.SatakeHermitian.isUnitarisable_locRepD hD w
   have hB' : GlobalTheory.LFun.HasSatGL w ((P.twist κ).locRep w) {α * κ.val w, β * κ.val w} := by
     simpa using CG.HasSat.twist (π := CG.mk P) hB (hκ w).1
@@ -369,7 +368,7 @@ private theorem exists_bad {S : Set (H.P ℚ)} (hS : S.Finite) : ∃ m : ℕ, 0 
     exact Ideal.absNorm_mem _
 
 private theorem quad_sq {E : Type} [Field E] [NumberField E] {η : HChar ℚ} (hq : IsQuadCharOf E η) : η ^ 2 = 1 := by
-  apply GlobalTheory.T.hecke_character_eq_of_cofinite ℚ (η ^ 2) 1
+  apply _root_.GlobalTheory.HeckeMultOne.main ℚ (η ^ 2) 1
   have hc : ∀ᶠ v : H.P ℚ in cofinite, ∃ w : H.P E, w.under (𝓞 ℚ) = v ∧
       η.UnrAt v ∧ η.val v = if normV w = normV v then 1 else -1 := by
     unfold IsQuadCharOf at hq
@@ -669,8 +668,8 @@ private theorem cont_em : Continuous (em E) := by
   exact Continuous.units_map _ hM
 
 private theorem sc_idele : SecondCountableTopology (IdeleGroup ℚ) := by
-  haveI : SecondCountableTopology (A ℚ) := GroundTheory.Automorphic.secondCountableTopology_adeleRing ℚ
-  haveI : SecondCountableTopology (A ℚ)ᵐᵒᵖ := MulOpposite.opHomeomorph.symm.isEmbedding.secondCountableTopology
+  have : SecondCountableTopology (A ℚ) := GroundTheory.Automorphic.secondCountableTopology_adeleRing ℚ
+  have : SecondCountableTopology (A ℚ)ᵐᵒᵖ := MulOpposite.opHomeomorph.symm.isEmbedding.secondCountableTopology
   exact Units.isEmbedding_embedProduct.secondCountableTopology
 
 private theorem cont_in {φ : GL (Fin 2) (A E) → ℂ} (hc : Continuous φ) (t : (A ℚ)ˣ) :
@@ -680,15 +679,15 @@ private theorem cont_in {φ : GL (Fin 2) (A E) → ℂ} (hc : Continuous φ) (t 
 private theorem inner_int (M : Meas ℚ) {φ : GL (Fin 2) (A E) → ℂ} (hc : Continuous φ) {B : ℝ}
     (hB : ∀ g, ‖φ g‖ ≤ B) (t : (A ℚ)ˣ) :
     IntegrableOn (fun g : G1 ℚ => φ (em E (gl g * dM t))) M.D M.μ := by
-  haveI : IsFiniteMeasure (M.μ.restrict M.D) := ⟨by simpa using UpperTheory.ConvolutionTheory.R2.M.volD ℚ M⟩
+  have : IsFiniteMeasure (M.μ.restrict M.D) := ⟨by simpa using UpperTheory.ConvolutionTheory.R2.M.volD ℚ M⟩
   exact Integrable.of_bound (cont_in hc t).aestronglyMeasurable B (ae_of_all _ fun g => hB _)
 
 private theorem outer_int (M : Meas ℚ) (U : UMeas) (χ : HChar ℚ) (hχ : ∀ a, ‖((χ.1 a : ℂˣ) : ℂ)‖ = 1)
     {φ : GL (Fin 2) (A E) → ℂ} (hc : Continuous φ) {B : ℝ} (hB : ∀ g, ‖φ g‖ ≤ B) :
     Integrable (fun t => ((χ.1 t : ℂˣ) : ℂ) * ∫ g in M.D, φ (em E (gl g * dM t)) ∂M.μ) U.υ := by
-  haveI := U.prob
-  haveI : IsFiniteMeasure (M.μ.restrict M.D) := ⟨by simpa using UpperTheory.ConvolutionTheory.R2.M.volD ℚ M⟩
-  haveI := sc_idele
+  have := U.prob
+  have : IsFiniteMeasure (M.μ.restrict M.D) := ⟨by simpa using UpperTheory.ConvolutionTheory.R2.M.volD ℚ M⟩
+  have := sc_idele
   have hF : Continuous fun t : IdeleGroup ℚ => ∫ g in M.D, φ (em E (gl g * dM t)) ∂M.μ := by
     refine continuous_of_dominated (bound := fun _ => B) ?_ ?_ (integrable_const B) ?_
     · exact fun t => (cont_in hc t).aestronglyMeasurable
@@ -957,7 +956,7 @@ private theorem arith (T : ℕ → PowerSeries ℂ) (h0 : ∀ p : ℕ, p.Prime �
     intro n hn
     have hprod : ((n.factorization.prod fun p k => p ^ k : ℕ) : ℝ) = n := by
       rw [Nat.prod_factorization_pow_eq_self hn]
-    simp only [a, if_neg hn, Finsupp.prod]
+    simp only [a, ite_eq_right hn, Finsupp.prod]
     rw [norm_prod, ← hprod, Finsupp.prod, Nat.cast_prod, ← Finset.prod_pow]
     refine Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun p hp => ?_
     have pp : p.Prime := Nat.prime_of_mem_primeFactors (by simpa using hp)
@@ -975,13 +974,13 @@ private theorem arith (T : ℕ → PowerSeries ℂ) (h0 : ∀ p : ℕ, p.Prime �
     rcases eq_or_ne n 0 with rfl | hn
     · have : m = 1 := by simpa using h
       subst this; simp [a1]
-    simp only [a, if_neg (mul_ne_zero hm hn), if_neg hm, if_neg hn]
+    simp only [a, ite_eq_right (mul_ne_zero hm hn), ite_eq_right hm, ite_eq_right hn]
     rw [Nat.factorization_mul_of_coprime h, Finsupp.prod_add_index_of_disjoint]
     simpa using h.disjoint_primeFactors
   · intro p k pp
     rcases Nat.eq_zero_or_pos k with rfl | hk
     · simp [a1, h0 p pp]
-    · simp only [a, if_neg (pow_ne_zero k pp.ne_zero), pp.factorization_pow]
+    · simp only [a, ite_eq_right (pow_ne_zero k pp.ne_zero), pp.factorization_pow]
       rw [Finsupp.prod_single_index (h0 p pp)]
   · intro s hs
     refine LSeriesSummable_of_le_const_mul_rpow (x := 4) hs ⟨1, fun n hn => ?_⟩
@@ -1014,8 +1013,8 @@ private theorem nv_split (hE : Module.finrank ℚ E = 2) {w w' : H.P E} (hne : w
     (h : w'.under (𝓞 ℚ) = w.under (𝓞 ℚ)) : normV w = normV (w.under (𝓞 ℚ)) := by
   have hww' : w'.asIdeal ≠ w.asIdeal := fun e => hne (HeightOneSpectrum.ext e).symm
   set p := w.under (𝓞 ℚ) with hp
-  haveI := w.isMaximal
-  haveI : w.asIdeal.LiesOver p.asIdeal := ⟨rfl⟩
+  have := w.isMaximal
+  have : w.asIdeal.LiesOver p.asIdeal := ⟨rfl⟩
   have hf := Ideal.absNorm_eq_pow_inertiaDeg'_of_liesOver w.asIdeal p.asIdeal p.isPrime p.ne_bot
   have hsub : ({w'.asIdeal, w.asIdeal} : Finset (Ideal (𝓞 E))) ⊆
       IsDedekindDomain.primesOverFinset p.asIdeal (𝓞 E) := by
@@ -1150,7 +1149,7 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.asEx_of :
   have tv1 : ∀ v Q, Den P χ v Q → Tv v * Q = 1 := by
     intro v Q hd
     have h : ∃ Q, Den P χ v Q := ⟨Q, hd⟩
-    simp only [Tv, dif_pos h]
+    simp only [Tv, dite_eq_left h]
     have := (Classical.choose_spec (den_inv hE hs (hc' v) h.choose_spec)).1
     rw [← den_unique hE h.choose_spec hd]
     exact this
@@ -1160,22 +1159,22 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.asEx_of :
       have : (1 : ℝ) ≤ normV v := by exact_mod_cast (nv_prime v).one_le
       linarith
     by_cases h : ∃ Q, Den P χ v Q
-    · simp only [Tv, dif_pos h]
+    · simp only [Tv, dite_eq_left h]
       exact (Classical.choose_spec (den_inv hE hs (hc' v) h.choose_spec)).2.1
-    · simp only [Tv, dif_neg h]
+    · simp only [Tv, dite_eq_right h]
       exact maj_one q1
   have tv0 : ∀ v, PowerSeries.coeff 0 (Tv v) = 1 := by
     intro v
     by_cases h : ∃ Q, Den P χ v Q
-    · simp only [Tv, dif_pos h]
+    · simp only [Tv, dite_eq_left h]
       exact (Classical.choose_spec (den_inv hE hs (hc' v) h.choose_spec)).2.2
-    · simp [Tv, dif_neg h]
+    · simp [Tv, dite_eq_right h]
   let T : ℕ → PowerSeries ℂ := fun p =>
     if p ∣ N then 1 else if h : ∃ v : H.P ℚ, normV v = p then Tv h.choose else 1
   have tEq : ∀ v : H.P ℚ, ¬ Bad N v → T (normV v) = Tv v := by
     intro v hb
     have h : ∃ v' : H.P ℚ, normV v' = normV v := ⟨v, rfl⟩
-    simp only [T, if_neg (fun hd => hb (MultiplicativeMajorants.bad_of_dvd v hd)), dif_pos h]
+    simp only [T, ite_eq_right (fun hd => hb (MultiplicativeMajorants.bad_of_dvd v hd)), dite_eq_left h]
     rw [nv_inj h.choose_spec]
   have h0 : ∀ p : ℕ, p.Prime → PowerSeries.coeff 0 (T p) = 1 := by
     intro p _
@@ -1596,7 +1595,7 @@ namespace UpperTheory.ConvolutionTheory.RankTwoDescent.SH
 variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 private theorem re_iy (y : ℝ) (hy : y ≠ 0) : re ((iy y : (A ℚ)ˣ) : A ℚ) = y := by
-  have h : iy y = TR.infId ℚ ⟨fun _ => y, fun _ => y⁻¹, funext fun _ => mul_inv_cancel₀ hy, funext fun _ => inv_mul_cancel₀ hy⟩ := dif_neg hy
+  have h : iy y = TR.infId ℚ ⟨fun _ => y, fun _ => y⁻¹, funext fun _ => mul_inv_cancel₀ hy, funext fun _ => inv_mul_cancel₀ hy⟩ := dite_eq_right hy
   have h2 : ∀ x, TR.pInf ℚ (TR.sInf ℚ x) = x := fun x => (TR.infEq ℚ).symm_apply_apply x
   rw [h, re]
   change TR.pInf ℚ (1 - TR.sInf ℚ 1 + TR.sInf ℚ (fun _ => y)) _ = y

@@ -21,43 +21,7 @@ import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbedding
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.TriangularFrameMovesPeriodBlockTriangular
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeHermitianFormExists
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
-import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalAtLocalRing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.OrthogonalFrameDomain
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.OrthonormalFlagTranslateHolds
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ProdCastLESucc
@@ -128,8 +92,8 @@ theorem letters (hσ : GoodEmb c σ) (hU : IsUnf U) (k : U.Comp) :
   obtain ⟨hbij, hrt, -, -⟩ := GlobalTheory.Relab.relab_good E H l c σ hσ
   obtain ⟨hp0, hty⟩ := hU.2.1 k
   obtain ⟨f, hf⟩ := FrameUnif.exists_letter_equiv (U.X k).Ψ (U.X k).cmType Dw.p Dw.q r hU.1 (relab c σ) hbij Dw.mult
-    (fun τ h => by unfold Datum.mult; rw [if_pos ((hrt τ).1 ((hty _).1 h))])
-    (fun τ h => by unfold Datum.mult; rw [if_neg (fun h' => h ((hty _).2 ((hrt τ).2 h')))])
+    (fun τ h => by unfold Datum.mult; rw [ite_eq_left ((hrt τ).1 ((hty _).1 h))])
+    (fun τ h => by unfold Datum.mult; rw [ite_eq_right (fun h' => h ((hty _).2 ((hrt τ).2 h')))])
   rw [← hp0] at hf
   refine ⟨f, hf, fun x v s => ?_⟩
   have h := hf s
@@ -138,10 +102,10 @@ theorem letters (hσ : GoodEmb c σ) (hU : IsUnf U) (k : U.Comp) :
   dsimp only at h ⊢
   unfold RiemMaj.pc
   rcases h with ⟨a, rfl, rfl⟩ | ⟨a, rfl, rfl, d⟩
-  · rw [if_neg (by simp)]
+  · rw [ite_eq_right (by simp)]
     unfold perFr
     rw [dite_eq_left a, dite_eq_left hn]
-  · rw [if_pos (by dsimp only; omega)]
+  · rw [ite_eq_left (by dsimp only; omega)]
     unfold perFr
     rw [dite_eq_right a, dite_eq_left (show conjEmb (relab c σ s.1) ∈ (U.X k).Ψ from hτ), dite_eq_left hn]
     rfl
@@ -197,13 +161,13 @@ theorem move (hσ : GoodEmb c σ) (hU : IsUnf U) {k : U.Comp} (x : (U.X k).dom) 
     have g1' := congrArg Subtype.val g1
     rcases hf (e j) with ⟨a1, a2, a3⟩ | ⟨a1, a2, a3, a4⟩ <;>
       rcases hf (e j') with ⟨b1, b2, b3⟩ | ⟨b1, b2, b3, b4⟩
-    · rw [if_neg (by omega)] at g2
+    · rw [ite_eq_right (by omega)] at g2
       exact ⟨hbij.1 (by rw [← a2, ← b2, g1']), by omega⟩
-    · rw [if_neg (by omega)] at g2
+    · rw [ite_eq_right (by omega)] at g2
       omega
-    · rw [if_pos (by omega)] at g2
+    · rw [ite_eq_left (by omega)] at g2
       omega
-    · rw [if_pos (by omega)] at g2
+    · rw [ite_eq_left (by omega)] at g2
       refine ⟨hbij.1 ((ComplexEmbedding.involutive_conjugate E).injective (by rw [← a2, ← b2, g1'])), by omega⟩
   obtain ⟨t, ht, hd⟩ := FrameNorm.frBor_of_triangular_period E H Dw l Xo c σ g e F (ik k) P P₀
     (PerBor.moveMat (U.X k).p0 (e.trans f) b) (U.un k x) (U.un k ⟨_, hy⟩) h2 k2
@@ -220,7 +184,7 @@ theorem move (hσ : GoodEmb c σ) (hU : IsUnf U) {k : U.Comp} (x : (U.X k).dom) 
   · intro e1 e2
     rcases hf s with ⟨a1, a2, a3⟩ | ⟨a1, -⟩
     · have : f s = (τ, a) := Prod.ext (Subtype.ext (a2.trans e1.symm)) (Fin.ext (a3.trans e2.symm))
-      rw [this, if_neg (by dsimp only; omega)] at hd'
+      rw [this, ite_eq_right (by dsimp only; omega)] at hd'
       rw [hd', norm_inv, inv_pow]
       exact (eq_inv_of_mul_eq_one_right hr.symm).symm
     · exact absurd (e1 ▸ τ.2) a1
@@ -230,7 +194,7 @@ theorem move (hσ : GoodEmb c σ) (hU : IsUnf U) {k : U.Comp} (x : (U.X k).dom) 
       exact absurd a1 (((U.X k).cmType _).1 τ.2)
     · have : f s = (τ, a) := Prod.ext (Subtype.ext (a2.trans (by
         rw [← e1]; exact ComplexEmbedding.involutive_conjugate E τ.1))) (Fin.ext (by dsimp only; omega))
-      rw [this, if_pos (by dsimp only; omega)] at hd'
+      rw [this, ite_eq_left (by dsimp only; omega)] at hd'
       rw [hd']
       exact eq_inv_of_mul_eq_one_left hr.symm
 
@@ -280,7 +244,7 @@ theorem gram (hσ : GoodEmb c σ) (hU : IsUnf U) (hpq : 1 ≤ Dw.p + Dw.q) {k : 
       · rw [Pi.single_eq_of_ne (fun hh => hab (eq_of_heq (Sigma.mk.inj (W.e.symm.injective hh)).2))]
         simp
     simp only [hf, Matrix.mul_smul, Matrix.mul_one, Matrix.smul_apply, Matrix.mul_apply,
-      Matrix.conjTranspose_apply, mul_ite, ite_mul, mul_zero, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true,
+      Matrix.conjTranspose_apply, mul_ite, ite_mul, mul_zero, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true,
       smul_eq_mul, Finset.mul_sum, hκ]
     refine Finset.sum_congr rfl fun j _ => ?_
     push_cast

@@ -5,55 +5,7 @@ public import Mathlib.RingTheory.Valuation.ValuationSubring
 public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushFibLinkA
 public import Mathlib.LinearAlgebra.Dual.Lemmas
 public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushDefs
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -137,21 +89,6 @@ private theorem sub_diag_smul_mem_flag_of_triangular (X Y : Fin r → V) (S : Ma
   · have hmj : m < j := lt_of_le_of_ne (not_lt.1 hjm) (Ne.symm (Finset.ne_of_mem_erase hj))
     rw [hS hmj, zero_smul]
     exact zero_mem _
-
-private theorem prod_Iic_eq_prod_castLE' {M : Type} [CommMonoid M] (m : Fin r) (f : Fin r → M) :
-    ∏ x ∈ Finset.Iic m, f x = ∏ b : Fin ((m : ℕ) + 1), f (Fin.castLE m.2 b) := by
-  have himg : Finset.Iic m = Finset.univ.image (Fin.castLE m.2) := by
-    ext x
-    simp only [Finset.mem_Iic, Finset.mem_image, Finset.mem_univ, true_and]
-    constructor
-    · intro hx
-      exact ⟨⟨x, by rw [Fin.le_def] at hx; omega⟩, Fin.ext rfl⟩
-    · rintro ⟨b, rfl⟩
-      rw [Fin.le_def, Fin.coe_castLE]
-      omega
-  rw [himg, Finset.prod_image]
-  intro a _ b _ hab
-  exact Fin.castLE_injective _ hab
 
 private theorem det_submatrix_mul_triangular_eq (u W : Matrix (Fin r) (Fin r) Ω) (hW : W.BlockTriangular id) (m : Fin r)
     (I : Fin ((m : ℕ) + 1) → Fin r) :
@@ -401,11 +338,13 @@ theorem flag_val (fn : Ω₀ →+* Ω) (i : Ω →+* Ω₃) (c b₀ : Fin r → 
     rw [this]
     rfl
   rw [hpull] at hsup
-  have e1 := prod_Iic_eq_prod_castLE' m (fun x => O.valuation (i (S x x)))
-  have e2 := prod_Iic_eq_prod_castLE' m (fun x => (T' x x)⁻¹)
-  simp only at e1 e2 ⊢
-  rw [e1, e2]
-  simp only [hWdiag, map_prod, map_mul, Finset.prod_mul_distrib, map_inv₀, Finset.prod_inv_distrib] at hsup ⊢
+  have himg : Finset.univ.map (Fin.castLEEmb m.2) = Finset.Iic m := by
+    rw [show (Finset.univ : Finset (Fin ((m : ℕ) + 1))) = Finset.Iic (Fin.last m) by
+      ext x; simp [Fin.le_last], Fin.map_castLEEmb_Iic]
+    exact congrArg Finset.Iic (Fin.ext rfl)
+  rw [← himg, Finset.prod_map, Finset.prod_map]
+  simp only [hWdiag, Fin.coe_castLEEmb, map_prod, map_mul, Finset.prod_mul_distrib,
+    map_inv₀, Finset.prod_inv_distrib] at hsup ⊢
   refine eq_inv_of_mul_eq_one_left ?_
   rw [← hsup]
   ac_rfl
@@ -435,13 +374,13 @@ theorem exists_root {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host
   rcases s with τ | τ
   · have hm : (m : ℕ) < D.p := m.2
     refine ⟨(τ, ⟨m, by omega⟩), ?_, ?_, fun K x => ?_⟩
-    · simp only [HodgeCpt.rootIdx, hm, dif_pos]
+    · simp only [HodgeCpt.rootIdx, hm, dite_eq_left]
     · simp [HodgeCpt.rootSgn, hm]
     · simp [HodgeCpt.rootSgn, hm, grDeg]
   · have hm : (m : ℕ) < D.q := m.2
     have h : ¬ D.p + D.q - 1 - m < D.p := by omega
     refine ⟨(τ, ⟨D.p + D.q - 1 - m, by omega⟩), ?_, ?_, fun K x => ?_⟩
-    · simp only [HodgeCpt.rootIdx, h, dif_neg, not_false_eq_true]
+    · simp only [HodgeCpt.rootIdx, h, dite_eq_right, not_false_eq_true]
       congr 1
       exact Fin.ext (by show D.p + D.q - 1 - (D.p + D.q - 1 - m) = m; omega)
     · simp [HodgeCpt.rootSgn, h]
@@ -528,7 +467,7 @@ theorem fibLink : ChartVal → Centre → CoordLat → FibLink := by
   have hpl : vdeg O (plPt fun s => (u s).map i) (plDeg ⟨s, m⟩) = (Finset.univ.sup fun I : Fin (m + 1) → Fin (labelRk D s) =>
       O.valuation (Matrix.of fun a b : Fin (m + 1) => (u s).map i (I a) (Fin.castLE m.2 b)).det)⁻¹ := by
     rw [vdeg, Finset.prod_eq_single (⟨s, m⟩ : Σ s, Fin (labelRk D s)) (fun z _ hz => by simp [plDeg, hz]) (by simp)]
-    simp only [plDeg, if_pos, zpow_neg, zpow_one]
+    simp only [plDeg, ite_eq_left, zpow_neg, zpow_one]
     rfl
   have h5 := hv m
   have h6 : O.valuation (i (∏ m' ∈ Finset.Iic m, β m')) ≠ 0 :=

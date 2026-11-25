@@ -170,7 +170,6 @@ lemma isLocallyFraction_locMap {f : A} {d : ℕ} (hf : f ∈ 𝒜 d) (hd : 0 < d
   (toSection hf hd k ⟨z, hz⟩).2
 
 
-set_option backward.isDefEq.respectTransparency.types false in
 open ProjectiveSpectrum in
 lemma exists_section_of_isLocallyFraction_zero {U : Opens (ProjectiveSpectrum.top 𝒜)}
     (t : ∀ x : U, Loc 𝒜 x.1) (ht : (isLocallyFraction 𝒜 0).pred t) :
@@ -423,7 +422,7 @@ lemma awayToLaurent_mk {p : ℕ} (i : Fin p → Fin (n + 1)) (a : MvPolynomial (
 
 lemma awayToLaurent_injective {p : ℕ} (i : Fin p → Fin (n + 1)) :
     Function.Injective ((awayToLaurent (n := n) i : Localization.Away (xprod (A := A) i) →+* Laurent A n)) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro z hz
   induction z using Localization.induction_on with
   | H x =>

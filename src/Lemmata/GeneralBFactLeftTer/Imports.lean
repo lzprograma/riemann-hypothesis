@@ -15,7 +15,7 @@ universe u_1
 namespace Bl.general_b_fact_left_ter
 
 theorem goal1 :
-  ∀ {F : Type u_1} [inst : NormedField.{u_1} F] [IsUltrametricDist.{u_1} F] {y : F} (p : Polynomial.{0} Int),
+  ∀ {F : Type u_1} [NormedField.{u_1} F] [IsUltrametricDist.{u_1} F] {y : F} (p : Polynomial.{0} Int),
   Polynomial.Monic.{0} p →
     Eq.{u_1 + 1} (Polynomial.eval₂.{0, u_1} (Int.castRingHom.{u_1} F) y p) 0 → LE.le.{0} (Norm.norm.{u_1} y) 1 := by
   intro F _ _ y p hp h

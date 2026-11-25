@@ -1,47 +1,9 @@
 module
 
+import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.NumericSettingWithGapSatisfiable
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaGeCOfNorm
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaNuTwoLeOne
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.Interval.Finset.Box
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -76,21 +38,13 @@ end Idx
 
 theorem ea_card_fin (N : ℕ) (P : ℕ → Prop) [DecidablePred P] :
     (univ.filter fun c : Fin N => P c.val).card = ((range N).filter P).card := by
-  rw [← Finset.card_map Fin.valEmbedding]
-  congr 1
-  ext x
-  simp only [mem_map, mem_filter, mem_univ, true_and, Fin.valEmbedding_apply, mem_range]
-  constructor
-  · rintro ⟨c, hc, rfl⟩
-    exact ⟨c.isLt, hc⟩
-  · rintro ⟨hx, hP⟩
-    exact ⟨⟨x, hx⟩, hP, rfl⟩
+  apply _root_.Formalism.MainNotions.S.Inh.obj_card_fin <;> assumption
 
 theorem ea_lg (p x : ℕ) : Formalism.InvariantFactorPaths.G7.lgN p x = lgp p (x : ℤ) := by
   unfold Formalism.InvariantFactorPaths.G7.lgN lgp
   rcases Nat.eq_zero_or_pos x with rfl | hx
   · simp
-  · rw [if_neg (by omega), if_neg (by omega)]
+  · rw [ite_eq_right (by omega), ite_eq_right (by omega)]
     simp
 
 section Num
@@ -119,12 +73,12 @@ theorem ea_alG (s : ZMod (2 * ν)) :
       al TT lam0 ((ea_eS hn).symm s) := by
   unfold Formalism.InvariantFactorPaths.G7.alG al
   by_cases hs : (ea_eS hn).symm s ∈ TT
-  · rw [if_pos ((ea_mem_tT hn s).2 hs), if_pos hs]
+  · rw [ite_eq_left ((ea_mem_tT hn s).2 hs), ite_eq_left hs]
     have e := ea_card_fin (ea_cN hn t lam0 w J s) (fun x => ea_colH t lam0 w J ((ea_eS hn).symm s) x = 1)
     unfold ea_hT
     rw [e]
     exact ea_card_one h hJ1 hJ _
-  · rw [if_neg (fun h' => hs ((ea_mem_tT hn s).1 h')), if_neg hs]
+  · rw [ite_eq_right (fun h' => hs ((ea_mem_tT hn s).1 h')), ite_eq_right hs]
     rfl
 
 theorem ea_cN_cast (s : ZMod (2 * ν)) :
@@ -137,7 +91,7 @@ theorem ea_al_eq (s : Fin n') (hs : s ∈ TT) : al TT lam0 s = nu t lam0 w J s 1
     have := h.r_pos
     omega
   unfold al
-  rw [if_pos hs, ea_nu_head J s le_rfl (by omega), ea_nu_head J s (by omega : 1 ≤ 2) hk]
+  rw [ite_eq_left hs, ea_nu_head J s le_rfl (by omega), ea_nu_head J s (by omega : 1 ≤ 2) hk]
   ring
 
 theorem ea_capG (s : ZMod (2 * ν)) :
@@ -147,7 +101,7 @@ theorem ea_capG (s : ZMod (2 * ν)) :
   have hC := ea_cN_cast hn h hJ1 hJ s
   unfold Formalism.InvariantFactorPaths.G7.capG cap
   by_cases hs : (ea_eS hn).symm s ∈ TT
-  · rw [if_pos hs]
+  · rw [ite_eq_left hs]
     have hal := ea_al_eq h hJ1 hJ _ hs
     have h2 := ea_nu_nonneg h hJ1 hJ ((ea_eS hn).symm s) 2
     have hle : Formalism.InvariantFactorPaths.G7.alG (ea_tT hn TT) (ea_cN hn t lam0 w J) (ea_hT hn t lam0 w J) s ≤
@@ -157,10 +111,10 @@ theorem ea_capG (s : ZMod (2 * ν)) :
       exact_mod_cast this
     rw [Nat.cast_sub hle, hA, hC, hal]
     ring
-  · rw [if_neg hs]
+  · rw [ite_eq_right hs]
     have h0 : Formalism.InvariantFactorPaths.G7.alG (ea_tT hn TT) (ea_cN hn t lam0 w J) (ea_hT hn t lam0 w J) s = 0 := by
       unfold Formalism.InvariantFactorPaths.G7.alG
-      rw [if_neg (mt (ea_mem_tT hn s).1 hs)]
+      rw [ite_eq_right (mt (ea_mem_tT hn s).1 hs)]
     rw [h0, Nat.sub_zero, hC]
 
 theorem ea_lsG (s : ZMod (2 * ν)) :

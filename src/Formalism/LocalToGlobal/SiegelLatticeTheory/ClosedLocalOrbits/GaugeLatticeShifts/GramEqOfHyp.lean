@@ -3,6 +3,7 @@ module
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.HidaSetting
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.HermitianZZEqNeg
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacobianCoordinates
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealXSig
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SurjOfIndep, Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.GramEqOfHyp
@@ -26,15 +27,7 @@ variable {n : ℕ} (ε : Fin n → Bool)
 abbrev dl (i : Fin n) : Fin n → ℂ := Pi.single i 1
 
 theorem hJ_dl (i j : Fin n) : hJ ε (dl i) (dl j) = if i = j then (if ε i then 1 else -1) else 0 := by
-  unfold hJ
-  simp only [dl, Formalism.REAL.Jm, mulVec_diagonal, dotProduct, Pi.star_apply, Pi.single_apply]
-  by_cases h : i = j
-  · subst h; simp
-  · rw [if_neg h]
-    refine Finset.sum_eq_zero fun l _ => ?_
-    by_cases hl : l = i
-    · subst hl; simp [h]
-    · simp [hl]
+  apply _root_.Formalism.L2.SG.Pf.NcReal.JX.hJ_bvec <;> assumption
 
 end Formalism.L2.SG.RealObj.InfCut.UnitaryIsometries.RI
 end -- clump:auto
@@ -73,7 +66,7 @@ theorem Hyp.fe {e f : Fin r → Fin n → ℂ} {z : Fin n → ℂ} {T : ℂ} (h 
     hJ ε (f a) (e b) = if a = b then 1 else 0 := by
   rw [hJ_conj, h.ef]; by_cases hab : b = a
   · subst hab; simp
-  · rw [if_neg hab, if_neg (Ne.symm hab), map_zero]
+  · rw [ite_eq_right hab, ite_eq_right (Ne.symm hab), map_zero]
 
 theorem Hyp.ze {e f : Fin r → Fin n → ℂ} {z : Fin n → ℂ} {T : ℂ} (h : Hyp ε e f z T) (a : Fin r) :
     hJ ε z (e a) = 0 := by rw [hJ_conj, h.ez, map_zero]
@@ -160,13 +153,13 @@ theorem complement {k : ℕ} (hdim : n = 2 * r + 1 + k)
   have pp : ∀ a b, hJ ε (dl (p a)) (dl (p b)) = if a = b then 1 else 0 := fun a b => by
     rw [hd]; by_cases hab : a = b
     · subst hab; simp [p, hPs]
-    · rw [if_neg (hp.ne hab), if_neg hab]
+    · rw [ite_eq_right (hp.ne hab), ite_eq_right hab]
   have qq : ∀ a b, hJ ε (dl (q a)) (dl (q b)) = if a = b then -1 else 0 := fun a b => by
     rw [hd]; by_cases hab : a = b
     · subst hab; simp [q, hNs]
-    · rw [if_neg (hq.ne hab), if_neg hab]
-  have pq : ∀ a b, hJ ε (dl (p a)) (dl (q b)) = 0 := fun a b => by rw [hd, if_neg (hNP _ _).symm]
-  have qp : ∀ a b, hJ ε (dl (q a)) (dl (p b)) = 0 := fun a b => by rw [hd, if_neg (hNP _ _)]
+    · rw [ite_eq_right (hq.ne hab), ite_eq_right hab]
+  have pq : ∀ a b, hJ ε (dl (p a)) (dl (q b)) = 0 := fun a b => by rw [hd, ite_eq_right (hNP _ _).symm]
+  have qp : ∀ a b, hJ ε (dl (q a)) (dl (p b)) = 0 := fun a b => by rw [hd, ite_eq_right (hNP _ _)]
   have h0 : Hyp ε e0 f0 z0 (T : ℂ) := by
     refine ⟨fun a b => ?_, fun a b => ?_, fun a b => ?_, fun a => ?_, fun a => ?_, ?_⟩
     · simp only [e0, hJ_smul_left, hJ_smul_right, hJ_add_left, hJ_add_right, pp, qq, pq, qp, hsqc]
@@ -178,16 +171,16 @@ theorem complement {k : ℕ} (hdim : n = 2 * r + 1 + k)
     · simp only [f0, hJ_smul_left, hJ_smul_right, hJ_sub_left, hJ_sub_right, pp, qq, pq, qp, hsqc]
       split_ifs <;> ring
     · have h1 : p a ≠ qz := (hNP _ _).symm
-      simp only [e0, z0, hJ_smul_left, hJ_smul_right, hJ_add_left, hd, if_neg h1, if_neg (hqz a)]
+      simp only [e0, z0, hJ_smul_left, hJ_smul_right, hJ_add_left, hd, ite_eq_right h1, ite_eq_right (hqz a)]
       ring
     · have h1 : p a ≠ qz := (hNP _ _).symm
-      simp only [f0, z0, hJ_smul_left, hJ_smul_right, hJ_sub_left, hd, if_neg h1, if_neg (hqz a)]
+      simp only [f0, z0, hJ_smul_left, hJ_smul_right, hJ_sub_left, hd, ite_eq_right h1, ite_eq_right (hqz a)]
       ring
     · have hs : ((Real.sqrt T : ℝ) : ℂ) * ((Real.sqrt T : ℝ) : ℂ) = (T : ℂ) := by
         rw [← Complex.ofReal_mul, Real.mul_self_sqrt hT.le]
       have hq0 : ε qz = false := hNs _
-      simp only [z0, hJ_smul_left, hJ_smul_right, hd, if_true, Complex.conj_ofReal, hq0, Bool.false_eq_true,
-        if_false]
+      simp only [z0, hJ_smul_left, hJ_smul_right, hd, ite_true, Complex.conj_ofReal, hq0, Bool.false_eq_true,
+        ite_false]
       linear_combination (-1 : ℂ) * hs
   obtain ⟨g, hg⟩ := witt_of_gram' ε (frm3 e0 f0 z0) (frm3 e f z) (gram_eq_of_hyp ε h0 h)
     (gram_nd_of_hyp ε (by exact_mod_cast hT.ne') h0)
@@ -198,10 +191,10 @@ theorem complement {k : ℕ} (hdim : n = 2 * r + 1 + k)
   have ww : ∀ a b, hJ ε (w0 a) (w0 b) = if a = b then 1 else 0 := fun a b => by
     simp only [w0]; rw [hd]; by_cases hab : a = b
     · subst hab; simp [wi, hPs]
-    · rw [if_neg (hwi.ne hab), if_neg hab]
-  have pw : ∀ c j, hJ ε (dl (p c)) (w0 j) = 0 := fun c j => by simp only [w0]; rw [hd, if_neg (hpw c j)]
-  have qw : ∀ c j, hJ ε (dl (q c)) (w0 j) = 0 := fun c j => by simp only [w0]; rw [hd, if_neg (hNP _ _)]
-  have zw : ∀ j, hJ ε (dl qz) (w0 j) = 0 := fun j => by simp only [w0]; rw [hd, if_neg (hNP _ _)]
+    · rw [ite_eq_right (hwi.ne hab), ite_eq_right hab]
+  have pw : ∀ c j, hJ ε (dl (p c)) (w0 j) = 0 := fun c j => by simp only [w0]; rw [hd, ite_eq_right (hpw c j)]
+  have qw : ∀ c j, hJ ε (dl (q c)) (w0 j) = 0 := fun c j => by simp only [w0]; rw [hd, ite_eq_right (hNP _ _)]
+  have zw : ∀ j, hJ ε (dl qz) (w0 j) = 0 := fun j => by simp only [w0]; rw [hd, ite_eq_right (hNP _ _)]
   refine ⟨fun j => Formalism.MainNotions.S.uMat g *ᵥ w0 j, fun a b => by rw [hiso, ww], fun c a => ?_, fun c a => ?_, fun a => ?_⟩
   · rw [← he, hiso]; simp only [e0, hJ_smul_left, hJ_add_left, pw, qw]; ring
   · rw [← hf, hiso]; simp only [f0, hJ_smul_left, hJ_sub_left, pw, qw]; ring

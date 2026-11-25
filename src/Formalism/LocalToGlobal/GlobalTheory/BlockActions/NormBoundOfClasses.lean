@@ -31,14 +31,8 @@ theorem gramN_posDef_at {Ch : ℕ → Type} {u : D.what₂.Word} {chOf : ∀ i, 
   set A : Matrix (Fin (D.R.N D.R.m)) (Fin (D.R.N D.R.m)) ℂ := C.1.map ι with hA
   have hG : (gramN D D.R.m le_rfl).map ι = Aᴴ * A := by
     rw [← hC', Matrix.map_mul, map_cT_at, hA]
-  have hinj : Function.Injective A.mulVec := by
-    intro x y hxy
-    have hCi : IsUnit C.1.det := (Matrix.isUnit_iff_isUnit_det _).mp C.isUnit
-    have h1 : (C.1⁻¹ * C.1).map ι = 1 := by
-      rw [Matrix.nonsing_inv_mul _ hCi, Matrix.map_one _ (map_zero _) (map_one _)]
-    have h2 := congrArg (fun v => ((C.1⁻¹).map ι) *ᵥ v) hxy
-    simp only [Matrix.mulVec_mulVec, hA, ← Matrix.map_mul, h1, Matrix.one_mulVec] at h2
-    exact h2
+  have hinj : Function.Injective A.mulVec :=
+    Matrix.mulVec_injective_of_isUnit (C.isUnit.map ι.mapMatrix)
   rw [hG]
   exact Matrix.PosDef.conjTranspose_mul_self A hinj
 

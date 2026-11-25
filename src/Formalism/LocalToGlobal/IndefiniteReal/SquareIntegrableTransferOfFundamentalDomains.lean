@@ -12,8 +12,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH MeasureTheory Formalism.L2
 
 namespace Formalism.IndefR.AutomorphicEvaluation
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem lintegral_comp_symm_mul_eq_ofReal_mul_setLIntegral (μ : Measure (GA D (D.sp.Y 0))) (𝓕 : Set (GA D (D.sp.Y 0)))

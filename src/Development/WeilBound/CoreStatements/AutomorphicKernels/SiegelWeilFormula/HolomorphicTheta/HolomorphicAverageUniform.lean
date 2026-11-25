@@ -15,56 +15,8 @@ public import Mathlib.Analysis.Calculus.Deriv.Comp
 public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.Calculus.Deriv.Slope
 public import Mathlib.Analysis.Calculus.ParametricIntegral
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
+import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocVacB
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HolomorphicTheta.ContinuousWeightFactor, Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HolomorphicTheta.IntHol, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.HolomorphicTranslationLevi, Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HolomorphicTheta.HolomorphicAverageUniform
@@ -114,7 +66,7 @@ theorem bmap_local (q : ℕ) (W₀ : Fin n → Fin n → ℂ) (hW₀ : W₀ ∈ 
     obtain ⟨y, hy, hyW⟩ := hcov W hW
     refine ⟨y, hy, ?_⟩
     unfold bmap
-    rw [if_pos hq]
+    rw [ite_eq_left hq]
     exact hyW
   · obtain ⟨r, hr, hsub, S, hS, hcov⟩ := zOf_surj_bdd' (negConj W₀) (negConj_mem hW₀)
     have key : ∀ W ∈ closedBall W₀ r, negConj W ∈ closedBall (negConj W₀) r := by
@@ -127,7 +79,7 @@ theorem bmap_local (q : ℕ) (W₀ : Fin n → Fin n → ℂ) (hW₀ : W₀ ∈ 
     · obtain ⟨y, hy, hyW⟩ := hcov (negConj W) (key W hW)
       refine ⟨y, hy, ?_⟩
       unfold bmap
-      rw [if_neg hq, hyW]
+      rw [ite_eq_right hq, hyW]
       funext i j
       show -star (negConj W j i) = W i j
       simp [negConj]
@@ -137,12 +89,12 @@ theorem bmap_surj (q : ℕ) {W : Fin n → Fin n → ℂ} (hW : W ∈ Dom n) : �
   · obtain ⟨y, hy⟩ := zOf_surj' hW
     refine ⟨y, ?_⟩
     unfold bmap
-    rw [if_pos hq]
+    rw [ite_eq_left hq]
     exact hy
   · obtain ⟨y, hy⟩ := zOf_surj' (negConj_mem hW)
     refine ⟨y, ?_⟩
     unfold bmap
-    rw [if_neg hq, hy]
+    rw [ite_eq_right hq, hy]
     funext i j
     show -star (negConj W j i) = W i j
     simp [negConj]
@@ -157,26 +109,12 @@ theorem continuous_toBlocks₂₂ : Continuous fun M : M2 n => M.toBlocks₂₂ 
   continuous_pi fun i => continuous_pi fun j => (continuous_apply (Sum.inr j)).comp (continuous_apply (Sum.inr i))
 
 theorem zpow_cond {a : ℂ} {k : ℤ} (h : a ^ k ≠ 0) : a ≠ 0 ∨ 0 ≤ k := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   obtain ⟨rfl, hk⟩ := hc
   exact h (zero_zpow k (ne_of_lt hk))
 
-theorem continuous_weight_factor (p q : ℕ) (e : ℤ) : Continuous (F0 p q e : GR n → ℂ) := by
-  have hd : Continuous fun y : GR n => (mR y).det := continuous_mR.matrix_det
-  have hb1 : Continuous fun y : GR n => toBlocks₂₁ (mR y) := continuous_toBlocks₂₁.comp continuous_mR
-  have hb2 : Continuous fun y : GR n => toBlocks₂₂ (mR y) := continuous_toBlocks₂₂.comp continuous_mR
-  have h1 : Continuous fun y : GR n => (u1 (mR y)).det := by
-    unfold u1
-    exact (((continuous_const (y := Complex.I)).smul hb1).add hb2).matrix_det
-  have h2 : Continuous fun y : GR n => (u2 (mR y)).det := by
-    unfold u2
-    exact ((((continuous_const (y := Complex.I)).smul hb1).neg).add hb2).matrix_det
-  have hne := spherical_section_ne_zero_group (n := n) p q e
-  simp only [F0, f0] at hne ⊢
-  exact (hd.zpow₀ e fun y => zpow_cond (left_ne_zero_of_mul (hne y))).mul
-    ((h1.zpow₀ _ fun y => zpow_cond (left_ne_zero_of_mul (right_ne_zero_of_mul (hne y)))).mul
-      (h2.zpow₀ _ fun y => zpow_cond (right_ne_zero_of_mul (right_ne_zero_of_mul (hne y)))))
+theorem continuous_weight_factor (p q : ℕ) (e : ℤ) : Continuous (F0 p q e : GR n → ℂ) :=
+  _root_.PositivityTheory.Rg.Sw.Glob.Vac.continuous_vacuum_section p q e
 
 end PositivityTheory.SiegelWeilFormula.Holtb
 end -- clump:auto
@@ -337,13 +275,6 @@ theorem split_re_im (v : EE n) :
   field_simp
   ring
 
-private theorem herm_Hpk_smul_left (k : EE n) (hk : (Matrix.of k).IsHermitian) (t : ℝ) :
-    (Matrix.of ((t : ℂ) • k)).IsHermitian := by
-  ext i j
-  have h2 := congrFun (congrFun hk i) j
-  simp only [Matrix.conjTranspose_apply, Matrix.of_apply] at h2 ⊢
-  simp [h2]
-
 theorem const_of_transl (G : EE n → ℂ) (hG : DifferentiableOn ℂ G (Dom n))
     (hT : ∀ W ∈ Dom n, ∀ k : EE n, (Matrix.of k).IsHermitian → G (W + k) = G W) :
     ∀ W ∈ Dom n, ∀ W' ∈ Dom n, G W = G W' := by
@@ -359,7 +290,8 @@ theorem const_of_transl (G : EE n → ℂ) (hG : DifferentiableOn ℂ G (Dom n))
       have hcomp := (hGd.restrictScalars ℝ).comp_hasDerivAt_of_eq (0 : ℝ) hc (by simp)
       have hfun : (G ∘ fun t : ℝ => W + (t : ℂ) • k) = fun _ => G W := by
         funext t
-        exact hT W hW _ (herm_Hpk_smul_left k hk t)
+        exact hT W hW _
+          (hk.smul ((Complex.im_eq_zero_iff_isSelfAdjoint _).1 (Complex.ofReal_im t)))
       rw [hfun] at hcomp
       simpa using hcomp.unique (hasDerivAt_const _ _)
     refine ContinuousLinearMap.ext fun v => ?_
@@ -389,8 +321,7 @@ private theorem exp_trace_mul_H_const_on_dom (H : EE n → ℂ) (hH : Differenti
     fun_prop
   · intro W hW k hk
     have hof : Matrix.of (c • k) = c • Matrix.of k := rfl
-    have hh : (Matrix.of (c • k)).IsHermitian := by
-      rw [hof, Matrix.IsHermitian, Matrix.conjTranspose_smul, hcs, hk.eq]
+    have hh : (Matrix.of (c • k)).IsHermitian := hk.smul hcs
     have hWk : W + k = W + c • (c • k) := by
       ext i j
       simp [smul_smul, hc]

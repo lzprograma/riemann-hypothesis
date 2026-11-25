@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagGapPullbackThird
 public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.Weights
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.VerticalFactorSmoothHermitianMetric
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PositionPot
@@ -23,69 +24,18 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularizedWei
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.VerticalHodgeMetricLogFormula
 public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.GoodOrigin
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FubiniStudyMetricSmooth
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ExistsIntSmulIsAdicIntegralInTensorBasis
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
-import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.CategoryTheory.Monoidal.Cartesian.Basic
-import Mathlib.CategoryTheory.Monoidal.Category
-import Mathlib.CategoryTheory.Monoidal.Mon
-import Mathlib.Topology.Sheaves.Presheaf
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularizedWeightUniformOnCompact
-import Mathlib.NumberTheory.Height.NumberField
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.PermFinTwoUniv
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.CompRightEqZero
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodD
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalHolomorphicSectionOfPotential
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsContinuousMetricRatio, Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularizedHodgeHeightLimit, Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularizedWeightTendstoUniformly, Development.AutomorphicSpectrum.Proofs.MetricProofs.SmoothOnAtlasContinuous, Development.AutomorphicSpectrum.Proofs.MetricProofs.HeightComparisonBetweenModels, Development.AutomorphicSpectrum.Proofs.MetricProofs.HeightComparisonBetweenModelsStatement
@@ -110,16 +60,7 @@ variable {K : Type} [Fintype K] {J : K → Type} [∀ k, Fintype (J k)]
 
 theorem holoOn_continuousOn {e : ℕ} {X : Type} [TopologicalSpace X] {A : FinHolAtlas e X} {U : Set X}
     {f : X → ℂ} (hU : IsOpen U) (h : A.HoloOn U f) : ContinuousOn f U := by
-  intro t ht
-  obtain ⟨j, hj⟩ := A.cover t
-  have h1 : AnalyticAt ℂ (f ∘ (A.chart j).symm) (A.chart j t) :=
-    h j _ ⟨(A.chart j).map_source hj, by simpa [(A.chart j).left_inv hj] using ht⟩
-  have h2 : ContinuousAt ((f ∘ (A.chart j).symm) ∘ A.chart j) t :=
-    ContinuousAt.comp h1.continuousAt ((A.chart j).continuousAt hj)
-  have h3 : ((f ∘ (A.chart j).symm) ∘ A.chart j) =ᶠ[𝓝 t] f := by
-    filter_upwards [(A.chart j).open_source.mem_nhds hj] with u hu
-    simp [(A.chart j).left_inv hu]
-  exact (h2.congr h3).continuousWithinAt
+  apply _root_.GlobalTheory.CompanionTheory.Ar.PB.StepW.ChartEx.holo_continuousOn <;> assumption
 
 theorem exists_continuous_descent {P : Ideal (MRing J)} {d : ℕ} (M : CxModel P d)
     (F : ((Σ k, J k) → ℂ) → ℝ) (hF : ContinuousOn F {z | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0})
@@ -356,7 +297,7 @@ theorem ptsIntegral_word_eq_mInt : ∀ (K : Type) [Fintype K] (J : K → Type) [
     by_cases hj : (j : ℕ) < i
     · rw [positionPot_lt _ _ _ hj, add_ofFun_U] at hy
       rw [positionPot_lt _ _ _ hj, add_ofFun_U]
-      simp only [if_pos hj, _root_.one_mul, add_ofFun_φ]
+      simp only [ite_eq_left hj, _root_.one_mul, add_ofFun_φ]
       obtain ⟨hyU, hyY⟩ := hy
       obtain ⟨U, hUo, hyU', hUs, s, hs, hh, G, hG, hre⟩ := S.th_ref x y₀ hyU.1
       obtain ⟨U₂, hU₂o, hy₂, hU₂s, G₂, hG₂, hre₂⟩ := sum_log_vertFactor_local D M (D.SB B)
@@ -380,7 +321,7 @@ theorem ptsIntegral_word_eq_mInt : ∀ (K : Type) [Fintype K] (J : K → Type) [
         linarith
     · rw [positionPot_ge _ _ _ hj, add_ofFun_U] at hy
       rw [positionPot_ge _ _ _ hj, add_ofFun_U]
-      simp only [if_neg hj, _root_.one_mul, add_ofFun_φ, add_zero]
+      simp only [ite_eq_right hj, _root_.one_mul, add_ofFun_φ, add_zero]
       obtain ⟨hyU, hyY⟩ := hy
       obtain ⟨U, hUo, hyU', hUs, s, hs, hh, G, hG, hre⟩ := hPn x y₀ hyU
       exact ⟨U ∩ S.R.Yo, hUo.inter hYo, ⟨hyU', hyY⟩, fun y hy => ⟨hUs hy.1, hy.2⟩, s,
@@ -535,13 +476,13 @@ theorem tendsto_arLimFun (hLoc : ReciprocityTheory.ChartRestriction.G.AI.I2.Metr
     · intro j
       by_cases h : (j : ℕ) < i
       · simpa [h] using hph
-      · simp only [h, if_false]
+      · simp only [h, ite_false]
         intro j'
         exact contDiffOn_const
     · have h1 := hpsh 1 one_pos
       filter_upwards [hbd, h1] with t ht ht1 j
       by_cases h : (j : ℕ) < i
-      · simp only [h, if_true]
+      · simp only [h, ite_true]
         refine ⟨ht.1, ?_, fun x hx => ?_⟩
         · have : Θ.rsmul 1 = Θ := by
             cases Θ
@@ -553,7 +494,7 @@ theorem tendsto_arLimFun (hLoc : ReciprocityTheory.ChartRestriction.G.AI.I2.Metr
             mul_le_mul_of_nonneg_right (by rw [hCc]; linarith [abs_nonneg C₁, abs_nonneg Bκ]) hL
           have h5 : |C₁| ≤ Cc := by rw [hCc]; linarith [abs_nonneg S.R.Clog, abs_nonneg Bκ]
           exact ⟨by linarith, by linarith⟩
-      · simp only [h, if_false]
+      · simp only [h, ite_false]
         refine ⟨fun j' => contDiffOn_const, hΘN, fun x hx => ?_⟩
         have hL := hlogr x hx
         have := mul_nonneg hCc0 hL
@@ -561,9 +502,9 @@ theorem tendsto_arLimFun (hLoc : ReciprocityTheory.ChartRestriction.G.AI.I2.Metr
         exact ⟨by linarith, hCc0⟩
     · intro j k K' hK' hK'c
       by_cases h : (j : ℕ) < i
-      · simp only [h, if_true]
+      · simp only [h, ite_true]
         exact _root_.GlobalTheory.CompanionTheory.Ar.Giv.regWeight_tendsto_C2_of_tied K J (mCoordIdeal D.y) D.n M D.Xo (muLine Hd) S hS k K' hK' hK'c
-      · simp only [h, if_false]
+      · simp only [h, ite_false]
         exact ⟨tuo_const _ _ _, tuo_const _ _ _, tuo_const _ _ _⟩
     · filter_upwards [hbd] with t ht
       refine ⟨?_, fun x hx => ?_⟩
@@ -641,7 +582,7 @@ theorem tendsto_arLimFun (hLoc : ReciprocityTheory.ChartRestriction.G.AI.I2.Metr
     have hint : ∀ᶠ t in 𝓝[>] (0 : ℝ), ∀ i ∈ Finset.range (D.n + 1),
         MIntegrable M.atlas (positionPot S.R.th Pn (S.regWeight t) i) (GT t) :=
       (Filter.eventually_all_finset _).2 fun i _ => (hconv i).2.1
-    filter_upwards [GlobalTheory.T.regularized_hodge_metric_smooth K J II Ψ Ω W D Hd M S B hS, hbd, hint] with t hsp hb hi
+    filter_upwards [GlobalTheory.CompanionTheory.Ar.Cusp.muReg_smooth_log K J II Ψ Ω W D Hd M S B hS, hbd, hint] with t hsp hb hi
     obtain ⟨hsm, hdeg, hlog⟩ := hsp
     have hT := _root_.GlobalTheory.CompanionTheory.Ar.Tele.telescope hLoc K J II (mCoordIdeal D.y) D.n Nb (muReg Hd S B t) hII D.arith hNb hsm
       (hdeg.trans hNa.symm)

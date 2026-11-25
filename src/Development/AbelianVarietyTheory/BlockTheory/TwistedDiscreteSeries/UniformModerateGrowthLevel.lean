@@ -47,8 +47,6 @@ open scoped TensorProduct ContDiff
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.HolomorphicParabolicSmoothFunctions
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {W : HSp D} {S : D.what₂.Tau → SPar}
 
 def pMinus (M : DSModel W S) (τ : D.what₂.Tau) : Set (Matrix (Fin W.rank) (Fin W.rank) ℂ) :=

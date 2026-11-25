@@ -245,7 +245,7 @@ theorem conj_integral_iff {ϖ : kˣ} (hϖ : IsUnif ϖ) (t : ι) (z : Matrix ι �
   constructor
   · intro h r hr
     have h1 := h r t
-    simp only [Pi.mulSingle_apply, hr, if_false, if_true, Units.val_one, one_mul] at h1
+    simp only [Pi.mulSingle_apply, hr, ite_false, ite_true, Units.val_one, one_mul] at h1
     have h2 : valuation k (z r t * ((ϖ⁻¹ : kˣ) : k)) ≤ 1 := h1
     rw [map_mul, Units.val_inv_eq_inv_val, map_inv₀] at h2
     have h3 : valuation k (z r t) ≤ valuation k (ϖ : k) := by
@@ -258,10 +258,10 @@ theorem conj_integral_iff {ϖ : kˣ} (hϖ : IsUnif ϖ) (t : ι) (z : Matrix ι �
       simp only [Pi.mulSingle_eq_same]
       rw [mul_comm (ϖ : k), mul_assoc, Units.mul_inv, mul_one]; exact hz _ _
     · subst hr
-      simp only [Pi.mulSingle_eq_same, Pi.mulSingle_apply, hs, if_false, inv_one, Units.val_one, mul_one]
+      simp only [Pi.mulSingle_eq_same, Pi.mulSingle_apply, hs, ite_false, inv_one, Units.val_one, mul_one]
       exact mul_mem hϖ.mem (hz _ _)
     · subst hs
-      simp only [Pi.mulSingle_eq_same, Pi.mulSingle_apply, hr, if_false, Units.val_one, one_mul]
+      simp only [Pi.mulSingle_eq_same, Pi.mulSingle_apply, hr, ite_false, Units.val_one, one_mul]
       show valuation k _ ≤ 1
       rw [map_mul, Units.val_inv_eq_inv_val, map_inv₀]
       have h3 : valuation k (z r s) ≤ valuation k (ϖ : k) := by
@@ -269,7 +269,7 @@ theorem conj_integral_iff {ϖ : kˣ} (hϖ : IsUnif ϖ) (t : ι) (z : Matrix ι �
       calc valuation k (z r s) * (valuation k (ϖ : k))⁻¹ ≤ valuation k (ϖ : k) * (valuation k (ϖ : k))⁻¹ :=
             mul_le_mul_of_nonneg_right h3 zero_le'
         _ = 1 := mul_inv_cancel₀ hv
-    · simp only [Pi.mulSingle_apply, hr, hs, if_false, inv_one, Units.val_one, one_mul, mul_one]
+    · simp only [Pi.mulSingle_apply, hr, hs, ite_false, inv_one, Units.val_one, one_mul, mul_one]
       exact hz _ _
 
 theorem mem_conj_iff {ϖ : kˣ} (hϖ : IsUnif ϖ) (t : ι) {z : GL ι k} (hz : z ∈ KO k ι) :
@@ -356,8 +356,8 @@ theorem relIndex_conj_col : ∀ {k : Type} [Field k] [ValuativeRel k] [Topologic
       let y : ι → k := fun r => if h : r ∈ S then (u ⟨r, h⟩ : k) else 0
       obtain ⟨x, hxH, hx⟩ := hel y (fun r => by
           by_cases h : r ∈ S
-          · simp only [y, h, dif_pos]; exact (u _).2
-          · simp only [y, h, dif_neg, not_false_eq_true]; exact zero_mem _)
+          · simp only [y, h, dite_eq_left]; exact (u _).2
+          · simp only [y, h, dite_eq_right, not_false_eq_true]; exact zero_mem _)
         (fun r hr => by simp [y, hr])
       refine ⟨QuotientGroup.mk ⟨x, hxH⟩, ?_⟩
       funext r
@@ -464,10 +464,10 @@ theorem conj_int_iff {ϖ : kˣ} (hϖ : IsUnif ϖ) (t : ι) (z : GL ι k) (hz : �
     · subst hr
       by_cases hs : s = r
       · subst hs
-        simp only [if_true]
+        simp only [ite_true]
         rw [mul_comm, ← mul_assoc, mul_inv_cancel₀ ϖ.ne_zero, one_mul]; exact hz _ _
       · simpa [hs] using h s hs
-    · simp only [hr, if_false, one_mul]
+    · simp only [hr, ite_false, one_mul]
       split_ifs
       · exact Subring.mul_mem _ (hz r s) hϖ.mem
       · simpa using hz r s
@@ -560,8 +560,8 @@ theorem relIndex_rowCong : ∀ {k : Type} [Field k] [ValuativeRel k] [Topologica
     let y : ι → k := fun s => if h : s ∈ S then ((lift ⟨s, h⟩ : 𝒪[k]) : k) else 0
     obtain ⟨z, hzH, hz⟩ := hel y (fun s => by
         by_cases h : s ∈ S
-        · simp only [y, h, dif_pos]; exact (lift ⟨s, h⟩).2
-        · simp only [y, h, dif_neg, not_false_eq_true]; exact Subring.zero_mem _)
+        · simp only [y, h, dite_eq_left]; exact (lift ⟨s, h⟩).2
+        · simp only [y, h, dite_eq_right, not_false_eq_true]; exact Subring.zero_mem _)
       (fun s hs => by simp [y, hs])
     refine ⟨(⟨z, hzH⟩ : H)⁻¹, ?_⟩
     funext s

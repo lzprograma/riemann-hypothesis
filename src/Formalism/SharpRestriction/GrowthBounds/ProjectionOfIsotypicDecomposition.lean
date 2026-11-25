@@ -1,56 +1,12 @@
 module
 
+import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightComponentsMemInvariant
+import Formalism.SharpRestriction.GrowthBounds.RootWeights.V2repExistsHwv
+import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationNonnegIffIntegral
 public import Formalism.SharpRestriction.GrowthBounds.Lemma5aAt
 public import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
 public import Mathlib.RingTheory.Derivation.Lie
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.LocalProperties.Reduced
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Bool
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -88,7 +44,7 @@ theorem ordW_eq (x : KK O) (a b : O) (ha : a ≠ 0) (hb : b ≠ 0)
     rw [zero_mul] at h
     exact ha ((map_eq_zero_iff _ (IsFractionRing.injective O (KK O))).1 h.symm)
   unfold ordW
-  rw [if_neg hx]
+  rw [ite_eq_right hx]
   have h1 := Classical.choose_spec (IsLocalization.surj (nonZeroDivisors O) x)
   set ab := Classical.choose (IsLocalization.surj (nonZeroDivisors O) x) with hab
   have hb2 : (ab.2 : O) ≠ 0 := nonZeroDivisors.coe_ne_zero _
@@ -106,19 +62,7 @@ theorem ordW_eq (x : KK O) (a b : O) (ha : a ≠ 0) (hb : b ≠ 0)
   omega
 
 theorem ramE_ne_zero {p : ℕ} (S : UniformizedDVR p O) : ramE p O ≠ 0 := by
-  have h1 : IsDiscreteValuationRing.addVal O (p : O) ≠ 0 := by
-    intro h0
-    have : IsUnit (p : O) := by
-      rcases IsDiscreteValuationRing.exists_irreducible O with ⟨w, hw⟩
-      obtain ⟨n, u, hu⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible S.p_ne hw
-      rw [hu, IsDiscreteValuationRing.addVal_def' u hw n] at h0
-      have hn : n = 0 := by exact_mod_cast h0
-      rw [hu, hn]; simp
-    exact (IsLocalRing.mem_maximalIdeal _).1 S.p_mem this
-  have h2 : IsDiscreteValuationRing.addVal O (p : O) ≠ ⊤ := by
-    simpa [IsDiscreteValuationRing.addVal_eq_top_iff] using S.p_ne
-  unfold ramE
-  simp [ENat.toNat_eq_zero, h1, h2]
+  apply _root_.Formalism.MainNotions.G.GLWeightTheory.ramification_index_ne_zero <;> assumption
 
 theorem vK_zero (p : ℕ) : vK p (0 : KK O) = ⊤ := by
   simp [vK, ordW]
@@ -178,18 +122,7 @@ theorem geQ_vK_pow_mul {p : ℕ} (S : UniformizedDVR p O) (c : ℕ) (o : O) :
 
 theorem isUnit_natCast_of_not_dvd {p : ℕ} (hp : p.Prime) (S : UniformizedDVR p O) (n : ℕ) (hn : ¬ p ∣ n) :
     IsUnit (n : O) := by
-  by_contra hu
-  have hm : (n : O) ∈ IsLocalRing.maximalIdeal O := (IsLocalRing.mem_maximalIdeal _).2 hu
-  have hco : Nat.Coprime p n := (Nat.Prime.coprime_iff_not_dvd hp).2 hn
-  have hb := Nat.gcd_eq_gcd_ab p n
-  rw [hco] at hb
-  have h1 : (1 : O) = (p : O) * ((Nat.gcdA p n : ℤ) : O) + (n : O) * ((Nat.gcdB p n : ℤ) : O) := by
-    have := congrArg (fun z : ℤ => (z : O)) hb
-    simpa using this
-  have : (1 : O) ∈ IsLocalRing.maximalIdeal O := by
-    rw [h1]
-    exact Ideal.add_mem _ (Ideal.mul_mem_right _ _ S.p_mem) (Ideal.mul_mem_right _ _ hm)
-  exact (Ideal.ne_top_iff_one _).1 (IsLocalRing.maximalIdeal.isMaximal O).ne_top this
+  apply _root_.Formalism.MainNotions.G.GLWeightTheory.natCast_isUnit_of_coprime <;> assumption
 
 theorem rat_padicGe_cast {p : ℕ} (hp : p.Prime) (S : UniformizedDVR p O) [CharZero O] (x : ℚ) (c : ℕ)
     (h : Formalism.MainNotions.CovariantDegrees.PadicGe p x c) :
@@ -409,12 +342,12 @@ theorem divDer_monoL {K : Type*} [Field K] {r : ℕ} (M e : Fin r → ℕ) :
   classical
   rw [monoL_eq, monoL_eq]
   unfold divDer
-  rw [support_monomial, if_neg one_ne_zero, Finset.sum_singleton, coeff_monomial, if_pos rfl, one_mul]
+  rw [support_monomial, ite_eq_right one_ne_zero, Finset.sum_singleton, coeff_monomial, ite_eq_left rfl, one_mul]
   by_cases h : atLetter () M ≤ atLetter () e
-  · rw [if_pos h, atLetter_prod, atLetter_sub, C_mul_monomial, mul_one]
+  · rw [ite_eq_left h, atLetter_prod, atLetter_sub, C_mul_monomial, mul_one]
     push_cast
     rfl
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     rw [Finsupp.le_def] at h
     push Not at h
     obtain ⟨⟨⟨⟩, a⟩, ha⟩ := h
@@ -510,7 +443,6 @@ namespace Formalism.MainNotions.G.Joints
 
 theorem strip_lt {n : ℕ} {nu mu : Fin n → ℤ} {b : ℕ} (hs : HStrip nu mu b) (hd : Dominant mu) {a a' : Fin n}
     (h : a < a') : mu a' ≤ nu a := by
-  have h0 : a.1 < a'.1 := h
   have h1 : a.1 + 1 < n := by have := a'.2; omega
   have h2 : (⟨a.1 + 1, h1⟩ : Fin n) ≤ a' := by
     show a.1 + 1 ≤ a'.1
@@ -612,9 +544,9 @@ theorem path_step {N r : ℕ} {LL : Letters (Fin N)} {d : Fin N → ℕ} (P : PP
       ∀ c, IsUsed P.mu c i ↔ ∃ a, P.mu i1 a < c ∧ c ≤ P.mu i2 a := by
   have hstep := P.step i
   by_cases hv : LL.vec i = true
-  · rw [if_pos hv] at hstep
+  · rw [ite_eq_left hv] at hstep
     exact ⟨_, _, hstep, fun c => colH_ne_iff hstep.1 c⟩
-  · rw [if_neg hv] at hstep
+  · rw [ite_eq_right hv] at hstep
     refine ⟨_, _, hstep, fun c => ?_⟩
     rw [← colH_ne_iff hstep.1 c]
     exact ne_comm
@@ -719,7 +651,7 @@ theorem Kcol_hom (R : Type*) [CommRing R] {N n : ℕ} (mu : Fin (N + 1) → Fin 
       unfold extOne at hm'
       split_ifs at hm' with h
       · apply (MvPolynomial.mem_support_iff.1 hm')
-        rw [MvPolynomial.coeff_one, if_neg (Ne.symm hne)]
+        rw [MvPolynomial.coeff_one, ite_eq_right (Ne.symm hne)]
       · simp at hm'
     subst hm0
     simp [multideg]
@@ -805,7 +737,7 @@ theorem column_height_le_used_count {N r : ℕ} {LL : Letters (Fin N)} {d : Fin 
     rw [e2]
     rw [e1] at ih'
     by_cases hv : LL.vec ⟨k, hlt⟩ = true
-    · rw [if_pos hv] at hstep
+    · rw [ite_eq_left hv] at hstep
       have h1 := colH_strip hstep.1 c
       have h2 := strip_le_one hstep (P.dom _) c
       by_cases hu : IsUsed P.mu c ⟨k, hlt⟩
@@ -814,7 +746,7 @@ theorem column_height_le_used_count {N r : ℕ} {LL : Letters (Fin N)} {d : Fin 
         omega
       · have h3 : colH (P.mu (⟨k, hlt⟩ : Fin N).castSucc) c = colH (P.mu (⟨k, hlt⟩ : Fin N).succ) c := not_not.1 hu
         omega
-    · rw [if_neg hv] at hstep
+    · rw [ite_eq_right hv] at hstep
       have h1 := colH_strip hstep.1 c
       omega
 
@@ -845,7 +777,7 @@ theorem column_height_eq_rank_nonpos {N r : ℕ} {LL : Letters (Fin N)} {d : Fin
     rw [e1] at ih'
     by_cases hu : IsUsed P.mu c ⟨k, hlt⟩
     · have hstep := P.step ⟨k, hlt⟩
-      rw [if_pos (hcov _ hu)] at hstep
+      rw [ite_eq_left (hcov _ hu)] at hstep
       have h1 := colH_strip hstep.1 c
       have h2 : colH (P.mu (⟨k, hlt⟩ : Fin N).succ) c ≤ r := by
         unfold colH
@@ -870,7 +802,7 @@ theorem col_clause5 (R : Type*) [CommRing R] {N r : ℕ} {LL : Letters (Fin N)} 
       have e2 : colH (P.mu (⟨j, hlt⟩ : Fin N).succ) c = r := hA (j + 1) (by omega)
       rw [e1, e2, colStep_same]
   have hcard := hI.2.1 c
-  rw [if_neg (by omega)] at hcard
+  rw [ite_eq_right (by omega)] at hcard
   have e3 : colH (pEnd P.mu) c = r := hA N (by omega)
   rw [e3, Nat.sub_self, Finset.card_eq_zero] at hcard
   rw [hB N le_rfl, hcard]
@@ -922,14 +854,14 @@ theorem LGe_C (a : B) : LGe 0 (LaurentPolynomial.C a) := by
   have h : (LaurentPolynomial.C a).coeff e ≠ 0 := Finsupp.mem_support_iff.1 he
   rw [LaurentPolynomial.C_apply] at h
   by_contra hc
-  apply h; rw [if_neg]; rintro rfl; exact hc le_rfl
+  apply h; rw [ite_eq_right]; rintro rfl; exact hc le_rfl
 
 theorem laurent_order_ge_T (k : ℤ) : LGe k (LaurentPolynomial.T k : LaurentPolynomial B) := by
   intro e he
   have h : (LaurentPolynomial.T k : LaurentPolynomial B).coeff e ≠ 0 := Finsupp.mem_support_iff.1 he
   rw [LaurentPolynomial.T_apply] at h
   by_contra hc
-  apply h; rw [if_neg]; rintro rfl; exact hc le_rfl
+  apply h; rw [ite_eq_right]; rintro rfl; exact hc le_rfl
 
 theorem LGe_mono {j k : ℤ} {f : LaurentPolynomial B} (h : j ≤ k) (hf : LGe k f) : LGe j f :=
   fun e he => h.trans (hf e he)
@@ -1038,7 +970,7 @@ theorem genericMatrix_mul_inverse_eq_one (R : Type*) [CommRing R] (n : ℕ) : gL
   rw [Matrix.smul_apply, Matrix.map_apply, Matrix.smul_apply]
   simp only [Matrix.one_apply]
   by_cases hab : a = b
-  · simp only [hab, if_true, smul_eq_mul, mul_one]
+  · simp only [hab, ite_true, smul_eq_mul, mul_one]
     show LaurentPolynomial.C _ * LaurentPolynomial.C (algebraMap _ (GLCoord R n) (genMat R n).det) = 1
     rw [← map_mul, mul_comm, IsLocalization.Away.mul_invSelf, map_one]
   · simp [hab]
@@ -1057,7 +989,7 @@ theorem twistMat_neg_mul (R : Type*) [CommRing R] (n : ℕ) (j : Fin n) :
       (if a = j then LaurentPolynomial.T 1 else 1)) = fun _ => 1 := by
     funext a
     by_cases h : a = j
-    · simp only [h, if_true]; rw [← LaurentPolynomial.T_add]; simp
+    · simp only [h, ite_true]; rw [← LaurentPolynomial.T_add]; simp
     · simp [h]
   rw [hd, Matrix.diagonal_one, Matrix.mul_one, genericMatrix_mul_inverse_eq_one]
 
@@ -1087,9 +1019,9 @@ theorem valS_le_union {R : Type*} [CommRing R] {ι : Type*} {n : ℕ} [NeZero n]
     have hg : ∀ v, PGe 0 (g v) := by
       intro v
       by_cases h : v.1 ∈ V ∧ v.1 ∉ S
-      · simp only [g, if_pos h]
+      · simp only [g, ite_eq_left h]
         exact PGe_sum _ _ _ fun b _ => laurent_order_nonneg_mul (PGe_C (LGe_twistMat R n _ 1 0 (by norm_num) le_rfl _ _)) (PGe_X _)
-      · simp only [g, if_neg h]
+      · simp only [g, ite_eq_right h]
         exact PGe_X _
     have hcomp : twistSub LL (S ∪ V) (lastIdx n) =
         (aeval g : MvPolynomial (ι × Fin n) (GLLaurent R n) →ₐ[GLLaurent R n]
@@ -1149,11 +1081,11 @@ theorem valS_le_diff {R : Type*} [CommRing R] {ι : Type*} [Fintype ι] {n : ℕ
   have hg : ∀ v, PGe 0 (g v) := by
     intro v
     by_cases h : v.1 ∈ V
-    · simp only [g, if_pos h]
+    · simp only [g, ite_eq_left h]
       refine PGe_sum _ _ _ fun b _ => laurent_order_nonneg_mul (PGe_C ?_) (PGe_X _)
       have := LGe_mul (laurent_order_ge_T (B := GLCoord R n) 1) (LGe_twistMat R n (lastIdx n) (-1) (-1) le_rfl (by norm_num) b v.2)
       simpa using this
-    · simp only [g, if_neg h]
+    · simp only [g, ite_eq_right h]
       exact PGe_X _
   let φ : MvPolynomial (ι × Fin n) R →+* MvPolynomial (ι × Fin n) (GLLaurent R n) :=
     (aeval g : MvPolynomial (ι × Fin n) (GLLaurent R n) →ₐ[GLLaurent R n]
@@ -1185,7 +1117,7 @@ theorem valS_le_diff {R : Type*} [CommRing R] {ι : Type*} [Fintype ι] {n : ℕ
               rw [Finset.sum_comm]
               exact Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun b _ => by ring
           _ = C (LaurentPolynomial.T 1) ^ (if v.1 ∈ V then 1 else 0) * X v := by
-              simp only [hmul, Matrix.one_apply, if_pos hVv, pow_one]
+              simp only [hmul, Matrix.one_apply, ite_eq_left hVv, pow_one]
               rw [Finset.sum_eq_single v.2]
               · simp
               · intro c _ hc; simp [hc]
@@ -1400,15 +1332,15 @@ theorem multideg_single (l : ι) (c : Fin r) (i : ι) :
   unfold multideg
   by_cases h : l = i
   · subst h
-    rw [if_pos rfl, Finset.sum_eq_single c]
+    rw [ite_eq_left rfl, Finset.sum_eq_single c]
     · simp
     · intro b _ hb
-      rw [Finsupp.single_apply, if_neg]
+      rw [Finsupp.single_apply, ite_eq_right]
       intro hh; exact hb (Prod.mk.inj hh).2.symm
     · intro hc; exact absurd (Finset.mem_univ c) hc
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     refine Finset.sum_eq_zero fun b _ => ?_
-    rw [Finsupp.single_apply, if_neg]
+    rw [Finsupp.single_apply, ite_eq_right]
     intro hh; exact h (Prod.mk.inj hh).1
 
 def polProj (K : Type*) [Field K] {ι : Type*} {r : ℕ} (d : ι → ℕ) : Module.End K (MvPolynomial (ι × Fin r) K) :=
@@ -1453,7 +1385,7 @@ theorem polProj_of_mem (d : ι → ℕ) (F : MvPolynomial (ι × Fin r) K) (hF :
 
         rw [map_sum]
         refine Finset.sum_congr rfl fun m hm => ?_
-        rw [polProj_monomial, if_pos (show ∀ i, multideg m i = d i from hF hm)]
+        rw [polProj_monomial, ite_eq_left (show ∀ i, multideg m i = d i from hF hm)]
     _ = F := support_sum_monomial_coeff F
 
 theorem polProj_step (d : ι → ℕ) (l : ι) (a b : Fin r) (m : ι × Fin r →₀ ℕ) (c : K) :
@@ -1491,17 +1423,17 @@ theorem polProj_glAct [Fintype ι] (d : ι → ℕ) (LL : Letters ι) (S : Set �
 
     rw [hg, map_sum]
     by_cases h : ∀ i, multideg m i = d i
-    · rw [if_pos h, hg]
+    · rw [ite_eq_left h, hg]
       refine Finset.sum_congr rfl fun l _ => ?_
       split_ifs
-      · rw [polProj_step, if_pos h]
-      · rw [map_neg, polProj_step, if_pos h]
+      · rw [polProj_step, ite_eq_left h]
+      · rw [map_neg, polProj_step, ite_eq_left h]
       · rw [map_zero]
-    · rw [if_neg h, map_zero]
+    · rw [ite_eq_right h, map_zero]
       refine Finset.sum_eq_zero fun l _ => ?_
       split_ifs
-      · rw [polProj_step, if_neg h]
-      · rw [map_neg, polProj_step, if_neg h, neg_zero]
+      · rw [polProj_step, ite_eq_right h]
+      · rw [map_neg, polProj_step, ite_eq_right h, neg_zero]
       · rw [map_zero]
   | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
 
@@ -1561,9 +1493,9 @@ theorem fock_monomial_right (F : MvPolynomial σ K) (m : σ →₀ ℕ) :
     fock F (monomial m 1) = F.coeff m * (expFact m : K) := by
   rw [fock_eq_sum F _ (insert m F.support) (Finset.subset_insert _ _),
     Finset.sum_eq_single_of_mem m (Finset.mem_insert_self _ _)]
-  · rw [coeff_monomial, if_pos rfl, mul_one]
+  · rw [coeff_monomial, ite_eq_left rfl, mul_one]
   · intro m' _ hne
-    rw [coeff_monomial, if_neg (Ne.symm hne), mul_zero, zero_mul]
+    rw [coeff_monomial, ite_eq_right (Ne.symm hne), mul_zero, zero_mul]
 
 theorem expFact_ne_zero (m : σ →₀ ℕ) : expFact m ≠ 0 := by
   unfold expFact
@@ -1832,7 +1764,7 @@ theorem isoW_htW_root (mu : Fin n → ℤ) (a b : Fin n) :
     htW (mu + rootW a b) = htW mu + ((b.val : ℤ) - (a.val : ℤ)) := by
   unfold htW rootW
   simp only [Pi.add_apply, Pi.sub_apply, mul_add, mul_sub, Finset.sum_add_distrib, Finset.sum_sub_distrib,
-    Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   ring
 
 theorem htW_root_lt (mu : Fin n → ℤ) (a b : Fin n) (hab : a < b) : htW mu < htW (mu + rootW a b) := by
@@ -1864,53 +1796,12 @@ variable {n : ℕ} {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
 theorem wt_comp_mem (E : GLOps n K V) [CharZero K] (W : Submodule K V) (hW : ∀ a, ∀ x ∈ W, E a a x ∈ W) :
     ∀ (T : Finset (Fin n → ℤ)) (f : (Fin n → ℤ) → V), (∀ mu ∈ T, f mu ∈ weightSp E mu) →
       ∑ mu ∈ T, f mu ∈ W → ∀ mu ∈ T, f mu ∈ W := by
-  classical
-  intro T
-  induction T using Finset.strongInduction with
-  | H T ih =>
-    intro f hf hs mu hmu
-    by_cases hT : ∃ nu ∈ T, nu ≠ mu
-    · obtain ⟨nu, hnu, hne⟩ := hT
-      obtain ⟨a, ha⟩ : ∃ a, nu a ≠ mu a := by
-        by_contra h
-        push Not at h
-        exact hne (funext h)
-      have hy : ∑ k ∈ T.erase nu, ((k a : K) - (nu a : K)) • f k ∈ W := by
-        have h1 : E a a (∑ k ∈ T, f k) - (nu a : K) • ∑ k ∈ T, f k ∈ W :=
-          W.sub_mem (hW a _ hs) (W.smul_mem _ hs)
-        have h2 : E a a (∑ k ∈ T, f k) - (nu a : K) • ∑ k ∈ T, f k = ∑ k ∈ T, ((k a : K) - (nu a : K)) • f k := by
-
-          rw [map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib]
-          refine Finset.sum_congr rfl fun k hk => ?_
-          rw [(isoW_mem_weightSp E k (f k)).1 (hf k hk) a, sub_smul]
-        rw [h2, ← Finset.add_sum_erase T _ hnu, sub_self, zero_smul, zero_add] at h1
-        exact h1
-      have h3 := ih (T.erase nu) (Finset.erase_ssubset hnu) (fun k => ((k a : K) - (nu a : K)) • f k)
-        (fun k hk => Submodule.smul_mem _ _ (hf k (Finset.mem_of_mem_erase hk))) hy mu
-        (Finset.mem_erase.2 ⟨Ne.symm hne, hmu⟩)
-      have hc : ((mu a : K) - (nu a : K)) ≠ 0 := by
-        rw [sub_ne_zero]
-        exact_mod_cast (Ne.symm ha)
-      have h4 := W.smul_mem ((mu a : K) - (nu a : K))⁻¹ h3
-      rwa [smul_smul, inv_mul_cancel₀ hc, one_smul] at h4
-    · push Not at hT
-      have h5 : T = {mu} := Finset.eq_singleton_iff_unique_mem.2 ⟨hmu, hT⟩
-      rw [h5, Finset.sum_singleton] at hs
-      exact hs
+  intros
+  apply _root_.Formalism.MainNotions.G.GLWeightTheory.v2rep_comp_mem <;> assumption
 
 theorem weightSp_indep (E : GLOps n K V) [CharZero K] : iSupIndep (weightSp E) := by
-  classical
-  apply iSupIndep_of_dfinsupp_lsum_injective
-  rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
-  intro v hv
-  rw [DFinsupp.lsum_apply_apply, DFinsupp.sumAddHom_apply] at hv
-  ext mu
-  by_cases hmu : mu ∈ v.support
-  · have h1 := wt_comp_mem E ⊥ (fun a x hx => by
-      rw [(Submodule.mem_bot K).1 hx, map_zero]; exact Submodule.zero_mem _) v.support (fun i => (v i : V))
-      (fun i _ => (v i).2) (by rw [Submodule.mem_bot]; exact hv) mu hmu
-    simpa using h1
-  · simpa using hmu
+  intros
+  apply _root_.Formalism.MainNotions.G.GLWeightTheory.weightSpace_independent <;> assumption
 
 theorem stab_wt_decomp (E : GLOps n K V) [CharZero K] (hwt : (⨆ mu : Fin n → ℤ, weightSp E mu) = ⊤)
     (W : Submodule K V) (hW : ∀ a, ∀ x ∈ W, E a a x ∈ W) (x : V) (hx : x ∈ W) :
@@ -2294,7 +2185,7 @@ theorem isoPol_pderiv_X (l l' : ι) (b c : Fin r) :
   by_cases h : l' = l ∧ c = b
   · obtain ⟨rfl, rfl⟩ := h
     simp
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     apply pderiv_X_of_ne
     intro hh
     exact h ⟨(Prod.mk.inj hh).1.symm, (Prod.mk.inj hh).2⟩
@@ -2307,7 +2198,7 @@ theorem isoPolDer_X (LL : Letters ι) (S : Set ι) (a b : Fin r) (l : ι) (c : F
   · simp only [isoPol_pderiv_X, true_and]
     split_ifs <;> simp
   · intro l' _ hne
-    simp only [isoPol_pderiv_X, hne, false_and, if_false, mul_zero, neg_zero, ite_self]
+    simp only [isoPol_pderiv_X, hne, false_and, ite_false, mul_zero, neg_zero, ite_self]
   · intro h; exact absurd (Finset.mem_univ l) h
 
 theorem isoPol_rel_der (LL : Letters ι) (S : Set ι) (a b c d : Fin r) :
@@ -2323,10 +2214,10 @@ theorem isoPol_rel_der (LL : Letters ι) (S : Set ι) (a b c d : Fin r) :
   rw [e1, e2]
   by_cases hl : l ∈ S
   · by_cases hv : LL.vec l = true
-    · simp only [isoPolDer_X, hl, hv, if_true, eq_comm (a := b) (b := c), eq_comm (a := d) (b := a)]
+    · simp only [isoPolDer_X, hl, hv, ite_true, eq_comm (a := b) (b := c), eq_comm (a := d) (b := a)]
       by_cases h1 : x = d <;> by_cases h2 : x = b <;> by_cases h3 : c = b <;> by_cases h4 : a = d <;>
         simp_all [isoPolDer_X]
-    · simp only [isoPolDer_X, hl, hv, if_true, if_false, Bool.false_eq_true]
+    · simp only [isoPolDer_X, hl, hv, ite_true, ite_false, Bool.false_eq_true]
       by_cases h1 : x = c <;> by_cases h2 : x = a <;> by_cases h3 : b = c <;> by_cases h4 : d = a <;>
         simp_all [isoPolDer_X]
   · simp [isoPolDer_X, hl]

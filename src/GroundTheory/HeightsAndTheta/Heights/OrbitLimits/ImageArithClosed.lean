@@ -44,7 +44,7 @@ theorem ImageArith.of_found (hBT : BlockTrdeg.Statement) : ReciprocityTheory.Cha
   set A' := MRing ι' ⧸ P'
   set L := FractionRing A'
   have hinj : Function.Injective (algebraMap ℤ A') := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro a ha
     rw [← Ideal.Quotient.mk_algebraMap, MvPolynomial.algebraMap_eq, Ideal.Quotient.eq_zero_iff_mem] at ha
     have h' : a ∈ (P').comap (C : ℤ →+* MRing ι') := ha
@@ -203,7 +203,7 @@ theorem isWeightedHomogeneous_rename (κ : K → K') {v : (Σ k, ι k) → (Σ k
     have h0 : forgetWeight κ (v q) = 0 := by
       funext k
       simp only [forgetWeight, Pi.zero_apply]
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       exact k.2 (h ▸ hv q)
     have := hp.mul (isWeightedHomogeneous_X ℤ (forgetWeight κ) (v q))
@@ -226,7 +226,7 @@ theorem isWeightedHomogeneous_forgetMonomial (κ : K → K') (i : ∀ k : Forgot
   rw [Finset.sum_apply, Finset.sum_eq_single j]
   · simp [forgetWeight]
   · intro b _ hb
-    rw [Pi.smul_apply, forgetWeight, if_neg (fun h ↦ hb (Subtype.ext h)), smul_zero]
+    rw [Pi.smul_apply, forgetWeight, ite_eq_right (fun h ↦ hb (Subtype.ext h)), smul_zero]
   · simp
 
 end Grading

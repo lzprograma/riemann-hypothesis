@@ -14,8 +14,6 @@ namespace Formalism.L2.SG.Pf.Carrier.EnergyMS
 
 open Formalism.L2.SG.LocVol Formalism.L2.SG.Pf.Carrier.EnergyConst Formalism.L2.SG.Pf.Carrier.EnergyConst2 Formalism.L2.SG.TypedSets Function
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Defs
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
@@ -65,16 +63,16 @@ theorem lemmaMSStd_of (hO : MSOrd) (hT : MSTyp) (hD : DiffProd) (hR : DiscRd) (h
     intro v
     by_cases hv : TypAt X v
     · rw [hT D X u u' ψ hψ hstd v hv (hZpos v)]
-      simp only [nT, if_pos hv]
+      simp only [nT, ite_eq_left hv]
     · rw [hO D X u u' ψ hψ hstd v hv]
-      simp only [nT, if_neg hv, mul_one]
+      simp only [nT, ite_eq_right hv, mul_one]
   obtain ⟨hDf, hDp⟩ := hD D X
 
   set s : Set (PlX X) := ↑(Formalism.L2.SG.TypedSets.typSet X.B.I.F (D.host.g 0) (D.host.g 1)) with hs
   have hnTs : Function.mulSupport (nT X) ⊆ s := by
     intro v hv
     by_contra h
-    exact hv (by unfold nT; exact if_neg (show ¬ TypAt X v from h))
+    exact hv (by unfold nT; exact ite_eq_right (show ¬ TypAt X v from h))
   have hnTf : HasFiniteMulSupport (nT X) := (Finset.finite_toSet _).subset hnTs
   have hAf : HasFiniteMulSupport (fun v => dN X v ^ e1 D * nT X v) := (hDf.pow _).mul hnTf
 
@@ -99,7 +97,7 @@ theorem lemmaMSStd_of (hO : MSOrd) (hT : MSTyp) (hD : DiffProd) (hR : DiscRd) (h
     rw [← Finset.prod_coe_sort]
     refine Finset.prod_congr rfl fun p _ => ?_
     unfold nT
-    exact if_pos (show TypAt X p.1 from p.2)
+    exact ite_eq_left (show TypAt X p.1 from p.2)
   unfold LemmaMS
   show (∏' v : OrdX X, localVolumeUnit X ψ v.1) * ∏ p : TypX X, localVolumeUnit X ψ p.1 = _ * (∏' v : PlX X, ZZX X u u' ψ v)
   rw [h1, h2, h3]

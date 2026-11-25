@@ -50,7 +50,7 @@ theorem ht_eq_zero {ε : Fin n → Bool} {i : Fin n} : ht ε i = 0 ↔ ε i.rev 
   unfold ht
   by_cases h : ε i.rev = ε i
   · simp [h]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     exact ⟨fun e => absurd e (ht_ne h), fun e => absurd e h⟩
 
 theorem lt_of_sign {ε : Fin n → Bool} (hε : Monotone ε) {i j : Fin n} (hi : ε i = false) (hj : ε j = true) :
@@ -104,12 +104,12 @@ theorem adapted {ε : Fin n → Bool} (hε : Monotone ε) : Adapted (pr ε) (ht 
   · intro i h
     have h' := ht_eq_zero.mp h
     unfold pr
-    rw [if_pos h']
+    rw [ite_eq_left h']
   · intro i j hi hij
     have hi' : ¬ε i.rev = ε i := fun e => hi (ht_eq_zero.mpr e)
     have hj' : ¬ε j.rev = ε j := fun e => hi (hij.trans (ht_eq_zero.mpr e))
     unfold ht at hij
-    rw [if_neg hi', if_neg hj'] at hij
+    rw [ite_eq_right hi', ite_eq_right hj'] at hij
     ext
     omega
   · intro i
@@ -140,13 +140,13 @@ theorem adapted {ε : Fin n → Bool} (hε : Monotone ε) : Adapted (pr ε) (ht 
       · exact (key j i hj' hi' h2 h1).elim
       · rfl
     unfold wt sg
-    rw [if_pos hi', if_pos hj', he]
+    rw [ite_eq_left hi', ite_eq_left hj', he]
 
 theorem pr_eq_iff {ε : Fin n → Bool} {i : Fin n} : pr ε i = i ↔ ε i.rev = ε i := by
   unfold pr
   by_cases h : ε i.rev = ε i
   · simp [h]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     exact ⟨fun e => (h (by rw [e])).elim, fun e => (h e).elim⟩
 
 theorem dec_of_monotone {ε : Fin n → Bool} (hε : Monotone ε) : Dec (Jm ε) := by
@@ -163,7 +163,7 @@ theorem dec_of_monotone {ε : Fin n → Bool} (hε : Monotone ε) : Dec (Jm ε) 
   have hnf : ∀ i, ¬ε i.rev = ε i →
       pr ε i = i.rev ∧ ¬ε (pr ε i).rev = ε (pr ε i) ∧ sg ε (pr ε i) = -sg ε i := by
     intro i h
-    have hpi : pr ε i = i.rev := by unfold pr; rw [if_neg h]
+    have hpi : pr ε i = i.rev := by unfold pr; rw [ite_eq_right h]
     refine ⟨hpi, ?_, ?_⟩
     · rw [hpi, Fin.rev_rev]
       exact fun e => h e.symm

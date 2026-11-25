@@ -180,7 +180,7 @@ private theorem index_val {K : Type} [Field K] [CharZero K] [ValuativeRel K] [To
         ring
       commutes' := by intro r; simp }
   have hφ : Function.Injective φ := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro z hz
     have hz' : algebraMap K L z.re + algebraMap K L z.im * β = 0 := hz
     have him : z.im = 0 := by
@@ -232,7 +232,7 @@ private theorem hs_mul {K : Type} [Field K] [CharZero K] [ValuativeRel K] [Topol
     have all : ∀ z : K, hs (r * r) z = 1 := by
       intro z
       unfold hs
-      rw [if_pos]
+      rw [ite_eq_left]
       refine ⟨(z + 1) / 2, (z - 1) / (2 * r), ?_⟩
       field_simp
       ring
@@ -267,7 +267,7 @@ section -- clump:auto
 open NumberField Filter Topology UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Glob GlobalTheory.QuadSymbol
 
 private theorem hs_sq {A : Type} [Field A] [CharZero A] {s : A} (hs0 : s ≠ 0) (x : A) : Loc.hs (s * s) x = 1 := by
-  refine if_pos ⟨(x + 1) / 2, (x - 1) / (2 * s), ?_⟩
+  refine ite_eq_left ⟨(x + 1) / 2, (x - 1) / (2 * s), ?_⟩
   field_simp
   ring
 
@@ -340,12 +340,12 @@ private theorem hs_eta {F A : Type} [Field F] [Field A] [Algebra F A] (d : F) [F
   unfold Loc.hs eta
   by_cases hx : x ∈ normGroup F (QuadraticAlgebra F d 0) A
   · obtain ⟨a, b, hab⟩ := (Model.mem_normGroup_sqrt d).mp hx
-    rw [if_pos hx, if_pos ⟨a, b, hab.symm⟩]
+    rw [ite_eq_left hx, ite_eq_left ⟨a, b, hab.symm⟩]
     simp
   · have hn : ¬ ∃ a b : A, a ^ 2 - algebraMap F A d * b ^ 2 = (x : A) := by
       rintro ⟨a, b, hab⟩
       exact hx ((Model.mem_normGroup_sqrt d).mpr ⟨a, b, hab.symm⟩)
-    rw [if_neg hx, if_neg hn]
+    rw [ite_eq_right hx, ite_eq_right hn]
     simp
 
 private theorem real_sign {F : Type} [Field F] [NumberField F] (d : F) [Fact (∀ r : F, r ^ 2 ≠ d + 0 * r)] (t : Fˣ)
@@ -375,8 +375,7 @@ private theorem real_sign {F : Type} [Field F] [NumberField F] (d : F) [Fact (�
   have hv : ρ ((infDiag F t (InfinitePlace.mk φ) : (InfinitePlace.mk φ).Completionˣ) :
       (InfinitePlace.mk φ).Completion) = σ t := key t
   rw [hab, map_sub, map_mul, map_pow, map_pow, key] at hv
-  by_contra hd
-  push_neg at hd
+  by_contra! hd
   nlinarith [sq_nonneg (ρ a), mul_nonneg (neg_nonneg.mpr hd) (sq_nonneg (ρ b))]
 
 theorem UpperTheory.V.Z.Sym.Glob.symbolEx :
@@ -485,7 +484,7 @@ private theorem abs_sum {I G : Type} (Sg : Finset I) (P : G → Prop) (S : G →
     · intro hvS
       by_cases hs : v ∈ S g
       · exact Finset.mem_union_right _ hs
-      · rw [if_neg hs] at hv
+      · rw [ite_eq_right hs] at hv
         refine Finset.mem_union_left _ ?_
         by_contra hvT
         exact hv (hout v hvS hvT).1
@@ -499,7 +498,7 @@ private theorem abs_sum {I G : Type} (Sg : Finset I) (P : G → Prop) (S : G →
     rw [hPi g]
     obtain ⟨v, hvS, hvT⟩ := Finset.not_subset.mp hsub
     apply Finset.prod_eq_zero (Finset.mem_union_right _ hvS)
-    rw [if_pos hvS]
+    rw [ite_eq_left hvS]
     exact (hout v (hSg g v hvS) hvT).2
   have hPi_w : ∀ g, S g ⊆ T →
       (∏ᶠ (v : I) (_ : v ∉ Sg), if v ∈ S g then b v else a v) =
@@ -511,8 +510,8 @@ private theorem abs_sum {I G : Type} (Sg : Finset I) (P : G → Prop) (S : G →
     intro s hs
     rw [← Finset.prod_sdiff hs, mul_comm]
     congr 1
-    · exact Finset.prod_congr rfl fun v hv => if_pos hv
-    · exact Finset.prod_congr rfl fun v hv => if_neg (Finset.mem_sdiff.mp hv).2
+    · exact Finset.prod_congr rfl fun v hv => ite_eq_left hv
+    · exact Finset.prod_congr rfl fun v hv => ite_eq_right (Finset.mem_sdiff.mp hv).2
   have hw0 : ∀ s ⊆ T, (∃ v ∈ s, ¬ E v) → (∏ v ∈ T, if v ∈ s then b v else a v) = 0 := by
     rintro s hs ⟨v, hv, hE⟩
     rw [hw s hs, Finset.prod_eq_zero hv (hb v hE), zero_mul]
@@ -598,13 +597,13 @@ private theorem abs_sum {I G : Type} (Sg : Finset I) (P : G → Prop) (S : G →
   by_cases hev : Even t.card
   · rw [hev.neg_one_pow]
     by_cases hE : ∀ v ∈ t, E v
-    · rw [if_pos ⟨hev, hE⟩]
+    · rw [ite_eq_left ⟨hev, hE⟩]
       ring
-    · rw [if_neg (fun h => hE h.2)]
-      push_neg at hE
+    · rw [ite_eq_right (fun h => hE h.2)]
+      push Not at hE
       rw [hw0 t ht hE]
       ring
-  · rw [if_neg (fun h => hev h.1), (Nat.not_even_iff_odd.mp hev).neg_one_pow]
+  · rw [ite_eq_right (fun h => hev h.1), (Nat.not_even_iff_odd.mp hev).neg_one_pow]
     ring
 
 open Classical in
@@ -640,11 +639,11 @@ private theorem two_cls {Γ : Type} [Group Γ] (N : Subgroup Γ) (h : Γ → ℂ
           rw [QuotientGroup.eq, hN, hm, hinv, hy']
           norm_num
         simp [hqy]
-    rw [finsum_eq_sum_of_support_subset _ hsub, Finset.sum_pair (Ne.symm hyq), if_pos rfl, if_neg hyq]
-  · push_neg at hy
+    rw [finsum_eq_sum_of_support_subset _ hsub, Finset.sum_pair (Ne.symm hyq), ite_eq_left rfl, ite_eq_right hyq]
+  · push Not at hy
     rw [add_zero]
     have hall : ∀ q : Γ ⧸ N, q = ((1 : Γ) : Γ ⧸ N) := fun q => (key q).mp (hy _)
-    rw [finsum_eq_single _ ((1 : Γ) : Γ ⧸ N) (fun q hq => absurd (hall q) hq), if_pos rfl]
+    rw [finsum_eq_single _ ((1 : Γ) : Γ ⧸ N) (fun q hq => absurd (hall q) hq), ite_eq_left rfl]
 
 open Loc
 
@@ -777,9 +776,9 @@ private theorem finprod_sign {I : Type} (u : I → ℂ) (s : Finset I) (h : ∀ 
     intro v hv
     by_contra hvs
     have hvs' : v ∉ s := fun h' => hvs (Finset.mem_coe.mpr h')
-    exact hv (by rw [h v, if_neg hvs'])
+    exact hv (by rw [h v, ite_eq_right hvs'])
   rw [finprod_eq_prod_of_mulSupport_subset u hs,
-    Finset.prod_congr rfl (g := fun _ => (-1 : ℂ)) (fun v hv => by rw [h v, if_pos hv]), Finset.prod_const]
+    Finset.prod_congr rfl (g := fun _ => (-1 : ℂ)) (fun v hv => by rw [h v, ite_eq_left hv]), Finset.prod_const]
 
 open Classical in
 theorem sumT : SumT := by
@@ -827,7 +826,7 @@ theorem sumT : SumT := by
       simp [one]
     · rw [hbdef]
       split_ifs with hex
-      · rw [hfdef, hv, one, if_neg]
+      · rw [hfdef, hv, one, ite_eq_right]
         rw [mem_NE]
         exact hex.choose_spec
       · rfl
@@ -887,9 +886,9 @@ theorem sumT : SumT := by
     have hsgn := finprod_sign (fun v => hs (cv v (τ ^ 2 - 4)) (cv v ((g.out : Fˣ) : F))) (S g) (by
       intro v
       by_cases hv : v ∈ S g
-      · rw [if_pos hv]
+      · rw [ite_eq_left hv]
         exact (hs_cases _ _).resolve_left ((hS g v).mp hv)
-      · rw [if_neg hv]
+      · rw [ite_eq_right hv]
         by_contra h
         exact hv ((hS g v).mpr h))
     rw [hsgn, hreal] at hr
@@ -903,18 +902,18 @@ theorem sumT : SumT := by
       refine ⟨fun v => if h : v ∈ s then (hE v h).choose else 1, fun v => ?_⟩
       beta_reduce
       by_cases hv : v ∈ s
-      · rw [if_pos hv, dite_eq_left hv]
+      · rw [ite_eq_left hv, dite_eq_left hv]
         have hc := (hE v hv).choose_spec
         rw [hDv]
         exact (hs_cases _ _).resolve_left hc
-      · rw [if_neg hv, dite_eq_right hv, Units.val_one, hs_iff]
+      · rw [ite_eq_right hv, dite_eq_right hv, Units.val_one, hs_iff]
         exact ⟨1, 0, by ring⟩
     have hfin : {v | hs (cv v (τ ^ 2 - 4)) ((y v : (Kv v)ˣ) : Kv v) ≠ 1}.Finite := by
       apply s.finite_toSet.subset
       intro v hv
       by_contra hvs
       apply hv
-      rw [hy, if_neg (fun h => hvs (Finset.mem_coe.mpr h))]
+      rw [hy, ite_eq_right (fun h => hvs (Finset.mem_coe.mpr h))]
     have hprod : ∏ᶠ v, hs (cv v (τ ^ 2 - 4)) ((y v : (Kv v)ˣ) : Kv v) = 1 := by
       rw [finprod_sign _ s hy]
       exact hs2.neg_one_pow
@@ -931,9 +930,9 @@ theorem sumT : SumT := by
     · ext v
       rw [hS, hgo, hmulF, hs_map (cv v) hnF, mul_one, hux, hxloc v, hy]
       by_cases hv : v ∈ s
-      · rw [if_pos hv]
+      · rw [ite_eq_left hv]
         exact ⟨fun _ => hv, fun _ => by norm_num⟩
-      · rw [if_neg hv]
+      · rw [ite_eq_right hv]
         exact ⟨fun h => absurd rfl h, fun h => absurd h hv⟩
   have hb0 : ∀ v, ¬ (∃ y : (Kv v)ˣ, hs (cv v τ ^ 2 - 4) (y : Kv v) ≠ 1) → b v = 0 :=
     fun v h => by rw [hbdef, dite_eq_right h]
@@ -955,8 +954,8 @@ theorem sumT : SumT := by
     rw [hc] at e
     rw [elmap_smul, e, ← hDv]
     by_cases h1 : hs (cv v (τ ^ 2 - 4)) (cv v ((g.out : Fˣ) : F)) = 1
-    · rw [if_pos h1, if_neg (fun hm => (hS g v).mp hm h1)]
-    · rw [if_neg h1, if_pos ((hS g v).mpr h1)]
+    · rw [ite_eq_left h1, ite_eq_right (fun hm => (hS g v).mp hm h1)]
+    · rw [ite_eq_right h1, ite_eq_left ((hS g v).mpr h1)]
   have R1 : (∏ᶠ (v : Pl F) (_ : v ∉ D.Sg), stabSum (Ov v) (cv v c) (elmap (cv v) d) (elmap (cv v) m)) =
       ∏ᶠ (v : Pl F) (_ : v ∉ D.Sg), (f v 1 + b v) :=
     finprod_congr fun v => finprod_congr fun hv => (loc v hv).2.1
@@ -1245,7 +1244,7 @@ theorem UpperTheory.V.Z.Sym.Loc.stable : UpperTheory.V.Z.Sym.Loc.Stable := by
     have h1 : hs (τ ^ 2 - 4) ((1 : Kˣ) : K) = 1 := by
       rw [Units.val_one]
       unfold hs
-      rw [if_pos ⟨1, 0, by ring⟩]
+      rw [ite_eq_left ⟨1, 0, by ring⟩]
     exact ((sumShift O K Δ τ hL hreg f hf 1).2.2 _ _ hG ⟨1, h1⟩).1
 end -- clump:auto
 end -- clump:auto
@@ -1352,7 +1351,7 @@ theorem sg_ev (hD : D.Ok) {τ c : F} {d m : EL Δ τ} (h : IsDat c d m) (hn : D.
     have := hv 1
     rw [Units.val_one, one_smul] at this
     rw [this]
-    exact if_pos (one_mem _)
+    exact ite_eq_left (one_mem _)
   have := (vanish (Ov w) (Kv w) (cv w Δ) (cv w τ) (hD.off w hw) _ _ _ (modelMap F (Kv w) (cv w) Δ τ c d m h).1 hl).2
   rw [map_mul, map_sub, map_ofNat]
   exact this
@@ -1390,20 +1389,20 @@ theorem sg_inner (hD : D.Ok) {τ : F} {e : ℝ} {d m : EL Δ τ} (hτ : IsCM τ)
     have h3 := left_ne_zero_of_mul h2
     simp only [Set.mem_iUnion]
     refine ⟨c, ?_, u, ⟨?_, right_ne_zero_of_mul h2⟩, rfl⟩
-    · by_contra hn; exact h1 (if_neg hn)
-    · by_contra hn; exact h3 (if_neg hn)
+    · by_contra hn; exact h1 (ite_eq_right hn)
+    · by_contra hn; exact h3 (ite_eq_right hn)
   refine ⟨hf, ?_⟩
   rw [finsum_curry _ hf, ← hcard]
   have e1 : ∀ c : Fˣ ⧸ (powMonoidHom 2 : Fˣ →* Fˣ).range, (∑ᶠ u : Fˣ ⧸ NE τ,
       one (c ∈ D.Sel (2 - τ)) * (one (TPos (u.out : F)) * D.nL (c.out : F) d ((u.out : F) • m))) =
       ∑ᶠ (_ : c ∈ D.Sel (2 - τ)), (1 / 2 * (D.nS τ + e * D.nK τ)) := fun c => by
     by_cases hc : c ∈ D.Sel (2 - τ)
-    · have : one (c ∈ D.Sel (2 - τ)) = 1 := if_pos hc
+    · have : one (c ∈ D.Sel (2 - τ)) = 1 := ite_eq_left hc
       simp only [this, one_mul]
-      rw [(hT c.out).2, sg_stab D hD (hd _) hc.2, hk _ hc.1 hc.2, finsum_eq_if, if_pos hc]
-    · have : one (c ∈ D.Sel (2 - τ)) = 0 := if_neg hc
+      rw [(hT c.out).2, sg_stab D hD (hd _) hc.2, hk _ hc.1 hc.2, finsum_eq_if, ite_eq_left hc]
+    · have : one (c ∈ D.Sel (2 - τ)) = 0 := ite_eq_right hc
       simp only [this, zero_mul, finsum_zero]
-      rw [finsum_eq_if, if_neg hc]
+      rw [finsum_eq_if, ite_eq_right hc]
   rw [finsum_congr e1, finsum_mem_eq_finite_toFinset_sum _ hfin, Finset.sum_const, Set.ncard_eq_toFinset_card _ hfin, nsmul_eq_mul]
 
 theorem sg_sigma {T : Type} [Finite T] {β : T → Type} (g : (Σ i, β i) → ℂ)

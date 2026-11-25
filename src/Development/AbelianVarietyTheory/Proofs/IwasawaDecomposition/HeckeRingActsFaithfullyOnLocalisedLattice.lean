@@ -263,7 +263,7 @@ theorem evA_gen (i : LocT B) {v : HeightOneSpectrum (𝓞 H.E)} {k : ℕ}
     (hvk : GenAt0 H (lOf B i) (B.Qw (wOf B i)) v k) :
     evA i ⟨B.hK (jOf B i) (wOf B i) v k, Algebra.subset_adjoin ⟨v, k, hvk, rfl⟩⟩ = hTfun B i v k := by
   funext x
-  simp [evA, hTfun, dif_pos hvk]
+  simp [evA, hTfun, dite_eq_left hvk]
 
 theorem evA_mem (i : LocT B) (t : hAlg B i) : evA i t ∈ TOf B i := by
   have hle : (Algebra.adjoin (OOf B i) (((↑) : hAlg B i → Module.End (FractionRing (OOf B i)) (B.V (jOf B i) (wOf B i))) ⁻¹'
@@ -351,7 +351,7 @@ theorem actEx_of : ∀ {R : Ranks} {H : Host R} {what₂ : Rows.Data R} (B : Loc
       apply Subtype.ext
       rw [show ((evT i ⟨B.hK (jOf B i) (wOf B i) v k, Algebra.subset_adjoin ⟨v, k, hvk, rfl⟩⟩ : TOf B i) : XOf B i → OOf B i) =
         hTfun B i v k from evA_gen i hvk]
-      simp [hTOf, dif_pos hvk]
+      simp [hTOf, dite_eq_left hvk]
     rw [e, actA_evT]
     rfl
 

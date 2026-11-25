@@ -65,7 +65,6 @@ section -- clump:auto
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory AlgebraicGeometry DirectSum TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory GlobalTheory.AbLaw
 
 theorem _root_.GlobalTheory.T.exists_section_lift_fibre_noFirstCohomology : ∀ (R : Type) [CommRing R] [IsNoetherianRing R] (Y : Scheme.{0}) (f : Y ⟶ Spec (CommRingCat.of R)) (M : LB Y), Flat f → IsProjBy f → M.IsLB → ∀ (K : Type) [Field K] (g : R →+* K), (∀ y : K, ∃ a b : R, g b ≠ 0 ∧ y * g b = g a) → ∀ (Y₀ : Scheme.{0}) (π : Y₀ ⟶ Y) (f₀ : Y₀ ⟶ Spec (CommRingCat.of K)) (h : IsPullback π f₀ f (Spec.map (CommRingCat.ofHom g))), FirstCohomologyVanishes (M.pull π) → ∀ x₀ : SecOnR f₀ (M.pull π) ⊤, ∃ (c : R) (x : SecOnR f M ⊤), g c ≠ 0 ∧ SecOnR.pull M h.w ⊤ ⊤ le_top x = g c • x₀ := by
@@ -81,7 +80,6 @@ section -- clump:auto
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory AlgebraicGeometry DirectSum TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory GlobalTheory.AbLaw TopologicalSpace
 
 namespace GlobalTheory.AmpleNear
@@ -198,49 +196,14 @@ theorem pw_pw (H : LB X) (a b : ℤ) : AbLaw.pw (AbLaw.pw H a) b = AbLaw.pw H (a
     (funext fun i => funext fun j => (zpow_mul (H.g i j) a b).symm)
 
 theorem pw_pull (H : LB X) (f : Y ⟶ X) (a : ℤ) :
-    (AbLaw.pw H a).pull f = AbLaw.pw (H.pull f) a := by
-  have : ((AbLaw.pw H a).pull f).g = (AbLaw.pw (H.pull f) a).g := by
-    funext j j'
-    change (∏ k : PUnit, (res _ (pullU f _ (H.g (j k) (j' k) ^ a))) ^ (1 : ℤ)) =
-      (∏ k : PUnit, (res _ (pullU f _ (H.g (j k) (j' k)))) ^ (1 : ℤ)) ^ a
-    simp only [Fintype.prod_unique, zpow_one, map_zpow]
-  exact congrArg (fun g => (⟨(H.pull f).ι, (H.pull f).U, g⟩ : LB Y)) this
-
-theorem cocycle_on {H : LB X} (hH : H.IsLB) (i j k : H.ι) {W : X.Opens} (hi : W ≤ H.U i)
-    (hj : W ≤ H.U j) (hk : W ≤ H.U k) :
-    res (le_inf hi hj) (H.g i j) * res (le_inf hj hk) (H.g j k) = res (le_inf hi hk) (H.g i k) := by
-  have h := congrArg (res (le_inf (le_inf hi hj) hk : W ≤ H.U i ⊓ H.U j ⊓ H.U k)) (hH.cocycle i j k)
-  simpa only [map_mul, res_res] using h
-
-theorem rel_on {H : LB X} (hH : H.IsLB) (i k i' k' : H.ι) {W : X.Opens} (hi : W ≤ H.U i)
-    (hk : W ≤ H.U k) (hi' : W ≤ H.U i') (hk' : W ≤ H.U k') :
-    res (le_inf hi hk) (H.g i k) = res (le_inf hi hi') (H.g i i') * (res (le_inf hk hk') (H.g k k'))⁻¹ *
-      res (le_inf hi' hk') (H.g i' k') := by
-  rw [mul_right_comm, eq_mul_inv_iff_mul_eq, cocycle_on hH i k k' hi hk hk',
-    cocycle_on hH i i' k' hi hi' hk']
-
-theorem lbIso_tw {H : LB X} (hH : H.IsLB) (t : ℤ) : LBIso (AbLaw.pw H (t + 1)) (tw H H t) := by
-  apply _root_.GlobalTheory.Algebraise.lbIso_tw <;> assumption
+    (AbLaw.pw H a).pull f = AbLaw.pw (H.pull f) a :=
+  _root_.GlobalTheory.Algebraise.pw_pull H f a
 
 theorem exists_pw_h1Zero (R : Type) [CommRing R] [IsNoetherianRing R]
     (B : Over (Spec (CommRingCat.of R))) (L : LB B.left) (hL : L.IsLB) (h : RelAmple B L) :
     ∃ d : ℕ, 1 ≤ d ∧ FirstCohomologyVanishes (AbLaw.pw L d) ∧
-      ∃ (n : ℕ) (s : Fin (n + 1) → LB.Sec (AbLaw.pw L d)), VeryAmpleBy B.hom (AbLaw.pw L d) s := by
-  obtain ⟨d₀, hd₀, n₀, s₀, hs₀⟩ := (Unif.relAmple_iff_veryAmpleBy R B L hL).1 h
-  have hH := isLB_pw hL (d₀ : ℤ)
-  obtain ⟨t₀, ht₀⟩ := exists_h1Zero_tw_of_veryAmpleBy R B.left B.hom _ n₀ s₀ _ hH hH hs₀
-  have h1 := ht₀ (t₀.toNat : ℤ) (Int.self_le_toNat t₀)
-  obtain ⟨w, hw⟩ := lbIso_tw hH (t₀.toNat : ℤ)
-  have h2 := H1Iso.firstCohomologyVanishes_of_iso_of_isGen (isLB_tw hH hH _).cover (isLB_pw hH _) w hw h1
-  have h3 := veryAmpleBy_pw R B.left B.hom _ n₀ s₀ hH hs₀ (t₀.toNat + 1) (Nat.le_add_left _ _)
-  have e : AbLaw.pw (AbLaw.pw L (d₀ : ℤ)) ((t₀.toNat + 1 : ℕ) : ℤ) =
-      AbLaw.pw L ((d₀ * (t₀.toNat + 1) : ℕ) : ℤ) := by
-    rw [pw_pw, Nat.cast_mul]
-  refine ⟨d₀ * (t₀.toNat + 1), Nat.mul_pos hd₀ (Nat.succ_pos _), ?_, ?_⟩
-  · rw [← e, Nat.cast_add, Nat.cast_one]
-    exact h2
-  · rw [← e]
-    exact h3
+      ∃ (n : ℕ) (s : Fin (n + 1) → LB.Sec (AbLaw.pw L d)), VeryAmpleBy B.hom (AbLaw.pw L d) s :=
+  _root_.GlobalTheory.Algebraise.exists_veryAmple_h1Zero R B L hL h
 
 end Powers
 

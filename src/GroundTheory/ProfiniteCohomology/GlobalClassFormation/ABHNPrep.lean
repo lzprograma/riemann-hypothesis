@@ -221,8 +221,8 @@ theorem exists_sub_unitsToIdeles_iChar_inl_eq_zero (y : cohomology (limitRep K) 
     simp only [decide_eq_true_eq] at hs
     rcases placeInv_inl_eq_zero_or_eq_half v (idelesLimitCohomologyEquiv ι (by norm_num : 1 ≤ 2) y (.inl v))
       with h | h
-    · rw [if_neg (fun hneg => (hs.1 hneg) h), h]
-    · rw [if_pos (hs.2 (by rw [h]; exact QZ.mk_half_ne_zero)), h]
+    · rw [ite_eq_right (fun hneg => (hs.1 hneg) h), h]
+    · rw [ite_eq_left (hs.2 (by rw [h]; exact QZ.mk_half_ne_zero)), h]
   · have := subsingleton_cohomology_two_of_isComplex v (InfinitePlace.not_isReal_iff_isComplex.1 hv)
     exact Subsingleton.elim (α := cohomology (galUnitsZ v.Completion (AlgebraicClosure v.Completion)) 2) _ _
 

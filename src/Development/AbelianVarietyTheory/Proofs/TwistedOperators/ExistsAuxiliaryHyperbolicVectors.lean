@@ -66,8 +66,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.DetNorm
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Local
 
 open Formalism.BasicNotions.Examples₂
@@ -381,7 +379,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.StandardGramVectors
 
@@ -497,17 +494,17 @@ theorem exists_auxiliaryHyperbolicVectors : ∀ (D : D7) (j : ℕ), j < D.R.m �
     if h : 0 < (D.R.m - 1 - j) % 2 then w (.inr ⟨0, h⟩) else 0, ?_⟩
   unfold GlobalTheory.IndefiniteRowSideFullHecke.ChainMatrices.IsAuxiliaryHeckeCharacter GlobalTheory.IndefiniteRowSideFullHecke.ChainMatrices.nAux HSpace.hD
   refine ⟨fun i hi l hl => ?_, fun i hi x => ?_, fun he => ?_⟩
-  · simp only [dif_pos hi, dif_pos hl, hw]
+  · simp only [dite_eq_left hi, dite_eq_left hl, hw]
     simp [stdGram, Matrix.one_apply, Fin.ext_iff, eq_comm]
-  · simp only [dif_pos hi, h0, and_self]
+  · simp only [dite_eq_left hi, h0, and_self]
   · have h : 0 < (D.R.m - 1 - j) % 2 := by
       obtain ⟨a, ha⟩ := D.R.m_even
       obtain ⟨b, hb⟩ := he
       omega
     refine ⟨?_, fun x => ?_, fun i hi => ?_⟩
-    · simp only [dif_pos h, hw]; simp [stdGram]
-    · simp only [dif_pos h, h0]
-    · simp only [dif_pos h, dif_pos hi, hw]; simp [stdGram]
+    · simp only [dite_eq_left h, hw]; simp [stdGram]
+    · simp only [dite_eq_left h, h0]
+    · simp only [dite_eq_left h, dite_eq_left hi, hw]; simp [stdGram]
 
 end GlobalTheory.StandardGramVectors
 end -- clump:auto

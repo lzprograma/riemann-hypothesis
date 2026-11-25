@@ -1,51 +1,7 @@
 module
 
 public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.QdetFacts
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
+import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
 public import Mathlib.LinearAlgebra.Dual.Lemmas
 
 @[expose] public section
@@ -207,25 +163,6 @@ theorem piJ_one (E : Fin n → Fin n → Module.End ℂ M) (u : ℂ) :
     PiJ 1 E u = algebraMap ℂ _ u + Om E (0 : Fin 1) := by
   simp [PiJ, xJ]
 
-theorem lift_alg {P : Type} (c : ℂ) :
-    (lift (algebraMap ℂ (Module.End ℂ M) c) : Module.End ℂ (TV n M P)) = algebraMap ℂ _ c := by
-  ext f I
-  simp [lift, Module.algebraMap_end_apply]
-
-theorem qdet_comm {A : Type*} [Ring A] [Algebra ℂ A] (T : A) (E : Fin n → Fin n → A)
-    (h : ∀ a b, Commute T (E a b)) (u : ℂ) : Commute T (qdet E u) := by
-  simp only [qdet, qminor]
-  refine Commute.sum_right _ _ _ fun σ _ => ?_
-  refine Commute.mul_right Commute.intCast_right (Commute.list_prod_right _ _ ?_)
-  intro x hx
-  rw [List.mem_ofFn] at hx
-  obtain ⟨k, rfl⟩ := hx
-  unfold Tm
-  refine Commute.add_right ?_ (h _ _)
-  split_ifs
-  · exact comm_alg _ _
-  · exact Commute.zero_right _
-
 theorem part1 (hT : TensorGl) (hS : StepFormula) (hQ : QdetFacts) (E : Fin n → Fin n → Module.End ℂ M)
     (hE : GlRel E) (l : Fin n → ℂ) (hl : HasChar E l) :
     (List.ofFn fun k => Om E (0 : Fin 1) - algebraMap ℂ _ (l k)).prod = 0 := by
@@ -233,7 +170,7 @@ theorem part1 (hT : TensorGl) (hS : StepFormula) (hQ : QdetFacts) (E : Fin n →
   have hG := hT n M (Fin 1) E hE Finset.univ
   obtain ⟨c, hc⟩ := (hQ n (TV n M (Fin 1)) (tE Finset.univ E) hG.1).2.1
   have hcomm : ∀ u, Commute (Om E (0 : Fin 1)) (qdet (tE Finset.univ E) u) := fun u =>
-    qdet_comm _ _ (fun a b => hG.2.1 0 (Finset.mem_univ _) a b) u
+    (qdet_commute _ u _ (fun a b => (hG.2.1 0 (Finset.mem_univ _) a b).symm)).symm
   have hid : ∀ u : ℂ, qdet (tE Finset.univ E) u * (algebraMap ℂ (Module.End ℂ (TV n M (Fin 1))) u + Om E 0) =
       algebraMap ℂ _ (∏ k, (u + l k)) * (algebraMap ℂ _ u + (1 + Om E 0)) := by
     intro u

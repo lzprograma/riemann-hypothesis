@@ -80,12 +80,12 @@ private theorem lv_ind {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V] (�
       apply hq
       rw [← QuotientGroup.out_eq' q]
       exact (QuotientGroup.eq.2 (by simpa using hm))
-    rw [hf, if_neg hn, zero_smul]
+    rw [hf, ite_eq_right hn, zero_smul]
   have hfix : ρ ((1 : G) : G ⧸ K).out y = y := by
     have := hy ⟨_, hout⟩
     simpa using this
   unfold Lv levOp
-  rw [Subgroup.relIndex_self, finsum_eq_single _ _ hz, hf, if_pos hout]
+  rw [Subgroup.relIndex_self, finsum_eq_single _ _ hz, hf, ite_eq_left hout]
   simp [hfix]
 
 section
@@ -215,7 +215,7 @@ private theorem tm_other {S : Set (Pl E)} (N : ∀ w : Pl E, Subgroup (GLw n w))
   by_cases hsp : IsSplitAt w
   · have h1 := hq true ⟨hw, fun _ => hsp⟩
     simp only [tm, hr, h0, h1]
-  · simp only [tm, hr, h0, hsp, if_false]
+  · simp only [tm, hr, h0, hsp, ite_false]
 
 private theorem tm_self {S : Set (Pl E)} (N : ∀ w : Pl E, Subgroup (GLw n w))
     (F : ∀ w : Pl E, Bool → GLw n w → ℂ)
@@ -244,13 +244,13 @@ private theorem tm_self {S : Set (Pl E)} (N : ∀ w : Pl E, Subgroup (GLw n w))
     by_cases hsp : IsSplitAt w
     · have h1 := hoth ⟨hi.1, fun _ => hsp⟩
       simp only [Bool.not_false] at h1 hr
-      simp only [tm, hind1, hsp, if_true, h1, hr, one_mul]
-    · simp only [tm, hind1, hsp, if_false, one_mul]
+      simp only [tm, hind1, hsp, ite_true, h1, hr, one_mul]
+    · simp only [tm, hind1, hsp, ite_false, one_mul]
   | true =>
     have hsp : IsSplitAt w := hi.2 rfl
     have h1 := hoth ⟨hi.1, by simp⟩
     simp only [Bool.not_true] at h1 hr
-    simp only [tm, hind1, hsp, if_true, h1, hr, mul_one]
+    simp only [tm, hind1, hsp, ite_true, h1, hr, mul_one]
     exact mul_comm _ _
 
 private theorem pf_step {S : Set (Pl E)} (N : ∀ w : Pl E, Subgroup (GLw n w))
@@ -288,13 +288,12 @@ private theorem prod_list (hS : SlotBasic) (hT : LevTop) (hA : AbsStep) (hH : Pf
     refine lv_ind _ _ _ (fun g => ?_) y hy
     obtain ⟨P, hP⟩ := exP hb hG hF g
     by_cases hg : g ∈ Lev S N
-    · rw [if_pos hg, pf_eq P hP]
+    · rw [ite_eq_left hg, pf_eq P hP]
       refine Finset.prod_eq_one fun w hw => ?_
       exact tm_unit hF g w (Finset.mem_filter.1 hw).2 (by simp) fun b hs => mem_lev.1 hg (w, b) hs
-    · rw [if_neg hg]
+    · rw [ite_eq_right hg]
       obtain ⟨i, hi, hn⟩ : ∃ i, Sl S i ∧ qw n i.1 i.2 g ∉ N i.1 := by
-        by_contra hc
-        push_neg at hc
+        by_contra! hc
         exact hg (mem_lev.2 hc)
       refine pf_zero hP hi ?_
       rw [hF.2 i hi (by simp)]

@@ -92,16 +92,12 @@ theorem forms_equiv (S S' : GStep E K n) (hS : S.Free) (hS' : S'.Free) (hF : (S.
     rfl
 end Gen
 
-attribute [local instance] GlobalTheory.Mem.Col2.starE
-
-
-
 theorem law0 : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → ∀ l : I.Laws, I.Law0 l := by
   intro B X I hI l u a
   obtain ⟨e, he1, he2⟩ := forms_equiv B.fields.emb B.embLL (lamT (B.hcW u) 0) (I.stp u I.mu0 0) (I.stp u a 0)
     (l.lev u I.mu0).free0 (l.lev u a).free0 ((l.fmL u I.mu0).fam 0) ((l.fmL u a).fam 0) (I.eCls0 l u a)
     (fun c => by
-      have h := (GlobalTheory.T.cl0_bijective_and_deco_eq I hI u a (l.idx0 a).some).2 c
+      have h := (GlobalTheory.Mem.Col2.ClsZero.stepZero_classes_bijective_same_deco I hI u a (l.idx0 a).some).2 c
       show ((I.stp u a 0).rep (I.cl0 u a (l.idx0 a).some c)).1.1.deco.1.Lsh = ((I.stp u I.mu0 0).rep c).1.1.deco.1.Lsh
       rw [h])
   exact ⟨e, he1, fun x => he2 x⟩

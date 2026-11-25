@@ -10,13 +10,9 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRin
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace ReciprocityTheory.ChartRestriction.G.DVR
 
@@ -275,13 +271,6 @@ theorem exists_pullGen (hL : D.toPre.P.L.IsLB) (oa : D.toPre.OAct O) (w0 : O)
   have c5 := corr_mulGen_one r
   exact corr_trans hL c1 (corr_trans hL c2 (corr_trans hL c3 c5))
 
-private lemma res_res_lemma {Y : Scheme.{0}} {U W Z : Y.Opens} (h₁ : W ≤ U) (h₂ : Z ≤ W) (x : Γ(Y, U)ˣ) :
-    res h₂ (res h₁ x) = res (h₂.trans h₁) x := by
-  ext
-  simp only [res, Units.coe_map, MonoidHom.coe_coe]
-  rw [← RingHom.comp_apply, ← CommRingCat.hom_comp, ← Functor.map_comp]
-  rfl
-
 
 section PullFam
 
@@ -405,12 +394,12 @@ theorem exists_pullAl (hL : D.toPre.P.L.IsLB) (oa : D.toPre.OAct O) (w0 : O)
       (uPull_spec D F hL oa w0 uΨ huΨ a N hN hN1 k χ).2, ?_⟩
     have hex : ∃ χ₀, star a • χ₀ = star a • χ := ⟨χ, rfl⟩
     show GeneratorPullback.SecRel _ _ _ (pullSecs D F hL oa w0 uΨ huΨ a N hN hN1 k s (star a • χ)) _ _ _ _ _ _ _
-    simp only [pullSecs, dif_pos hex]
+    simp only [pullSecs, dite_eq_left hex]
     exact secRel_pullSecs hL oa w0 uΨ huΨ a N hN hN1 k s χ hex.choose hex.choose_spec
       (smul_star_inj a N hN hN1 hex.choose_spec)
   · have : ¬ ∃ χ, star a • χ = β := fun ⟨χ, h⟩ => hβ χ h.symm
     show (pullSecs D F hL oa w0 uΨ huΨ a N hN hN1 k s β).f j = 0
-    simp only [pullSecs, dif_neg this]
+    simp only [pullSecs, dite_eq_right this]
     rfl
 
 theorem exists_XB (hL : D.toPre.P.L.IsLB) (oa : D.toPre.OAct O) (w0 : O)

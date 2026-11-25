@@ -3,65 +3,11 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Divisors.PointHeight
 public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.WeightedHomogeneousComponentMemElimIdeal
 public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.AevalEqZeroOfHomogeneousComponent
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
 public import Mathlib.Algebra.Polynomial.SpecificDegree
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-import Mathlib.RingTheory.Nullstellensatz
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -271,12 +217,12 @@ theorem eq_of_components (h : IsChowFormCycle Z e dl f)
   let a' : Ideal (MvPolynomial (Fin N) k) → k := fun P => if hP : P ∈ Z.support then a P hP else 1
   refine ⟨c * ∏ P ∈ Z.support, a' P ^ Z P, mul_ne_zero hc
     (Finset.prod_ne_zero_iff.2 fun P hP => pow_ne_zero _ ?_), ?_⟩
-  · simp only [a', dif_pos hP]; exact ha P hP
+  · simp only [a', dite_eq_left hP]; exact ha P hP
   · rw [MvPolynomial.C_mul, mul_assoc, map_prod, Finsupp.prod, Finsupp.prod,
       ← Finset.prod_mul_distrib]
     congr 1
     refine Finset.prod_congr rfl fun P hP => ?_
-    simp only [a', dif_pos hP]
+    simp only [a', dite_eq_left hP]
     rw [hag P hP, mul_pow, map_pow]
 
 theorem unique (h : IsChowFormCycle Z e dl f) (h' : IsChowFormCycle Z e dl' f') :
@@ -322,77 +268,5 @@ theorem zero_iff_of_isAlgClosed (h : IsChowFormCycle Z e dl f)
   exact (hg P hP).2.2.zero_iff_of_isAlgClosed (hg P hP).2.1 u
 
 end IsChowFormCycle
-
-theorem isChowFormCycle_single_iff {P : Ideal (MvPolynomial (Fin N) k)} {e dl : ℕ}
-    {f : MvPolynomial (Fin (e + 1) × Fin N) k} :
-    IsChowFormCycle (Finsupp.single P 1) e dl f ↔
-      P.IsPrime ∧ P.IsHomogeneous (homogeneousSubmodule (Fin N) k) ∧ IsChowFormInt P e dl f := by
-  refine ⟨fun h => ?_, fun h => h.2.2.single h.1 h.2.1⟩
-  obtain ⟨h1, h2, d, g, h3⟩ := h.component (P := P) (by simp)
-  obtain ⟨rfl, c, hc, rfl⟩ := (h3.single h1 h2).unique h
-  exact ⟨h1, h2, h3.C_mul hc⟩
-
-theorem irreducible_sq_add_sq :
-    Irreducible (X 0 ^ 2 + X 1 ^ 2 : MvPolynomial (Fin 2) ℚ) := by
-  rw [← MulEquiv.irreducible_iff (finSuccEquiv ℚ 1)]
-  have h1 : finSuccEquiv ℚ 1 (X 0 ^ 2 + X 1 ^ 2 : MvPolynomial (Fin 2) ℚ) =
-      Polynomial.X ^ 2 + Polynomial.C (X 0 ^ 2) := by
-    have := finSuccEquiv_X_succ (R := ℚ) (n := 1) (j := 0)
-    rw [map_add (f := _), map_pow, map_pow, finSuccEquiv_X_zero, map_pow, ← this]
-    rfl
-  have hm : (Polynomial.X ^ 2 + Polynomial.C (X 0 ^ 2 : MvPolynomial (Fin 1) ℚ)).Monic :=
-    Polynomial.monic_X_pow_add_C _ two_ne_zero
-  have hd : (Polynomial.X ^ 2 + Polynomial.C (X 0 ^ 2 : MvPolynomial (Fin 1) ℚ)).natDegree = 2 :=
-    Polynomial.natDegree_X_pow_add_C
-  rw [h1, hm.irreducible_iff_roots_eq_zero_of_degree_le_three (by omega) (by omega),
-    Multiset.eq_zero_iff_forall_notMem]
-  intro r hr
-  have h2 := congrArg (MvPolynomial.eval fun _ => (1 : ℚ)) (Polynomial.isRoot_of_mem_roots hr).eq_zero
-  simp at h2
-  nlinarith [sq_nonneg (MvPolynomial.eval (fun _ => (1 : ℚ)) r)]
-
-theorem isChowFormInt_sq_add_sq :
-    IsChowFormInt (Ideal.span {(X 0 ^ 2 + X 1 ^ 2 : MvPolynomial (Fin 2) ℚ)}) 0 2
-      (X (0, 0) ^ 2 + X (0, 1) ^ 2) := by
-  refine ⟨?_, ?_, fun u => ?_⟩
-  · rw [isMultiHomogeneous_iff_block]
-    have hX : ∀ j : Fin 2, IsWeightedHomogeneous GlobalTheory.Chow.blockWeight
-        (X (0, j) ^ 2 : MvPolynomial (Fin (0 + 1) × Fin 2) ℚ) (fun _ => 2) := by
-      intro j
-      convert (isWeightedHomogeneous_X ℚ GlobalTheory.Chow.blockWeight ((0 : Fin (0 + 1)), j)).pow 2 using 1
-      funext b
-      fin_cases b
-      simp [GlobalTheory.Chow.blockWeight]
-    exact (hX 0).add (hX 1)
-  · have := (MulEquiv.irreducible_iff
-      (renameEquiv ℚ (Equiv.uniqueProd (Fin 2) (Fin 1)).symm)).2 irreducible_sq_add_sq
-    simpa using this
-  · simp only [map_add (f := _), map_pow, aeval_X]
-    constructor
-    · intro h
-      by_cases hu : u (0, 0) = 0
-      · have h1 : u (0, 1) = 0 := by simpa [hu] using h
-        obtain ⟨z, hz⟩ := IsAlgClosed.exists_pow_nat_eq (-1 : AlgebraicClosure ℚ) two_pos
-        refine ⟨![1, z], by simp, fun g hg => ?_, fun i => ?_⟩
-        · obtain ⟨a, rfl⟩ := Ideal.mem_span_singleton'.1 hg
-          simp [hz]
-        · fin_cases i
-          simp [Fin.sum_univ_two, hu, h1]
-      · refine ⟨![u (0, 1), -u (0, 0)], by simp [hu], fun g hg => ?_, fun i => ?_⟩
-        · obtain ⟨a, rfl⟩ := Ideal.mem_span_singleton'.1 hg
-          rw [add_comm] at h
-          simp [h]
-        · fin_cases i
-          simp [Fin.sum_univ_two, mul_comm]
-    · rintro ⟨y, hy, hI, hu⟩
-      have h1 : y 0 ^ 2 + y 1 ^ 2 = 0 := by simpa using hI _ (Ideal.subset_span rfl)
-      have h0 : y 0 ≠ 0 := by
-        intro h0
-        have : y 1 = 0 := by simpa [h0] using h1
-        exact hy (funext fun j => by fin_cases j <;> simp [h0, this])
-      have h2 := hu 0
-      rw [Fin.sum_univ_two] at h2
-      refine (mul_eq_zero.1 ?_).resolve_right (pow_ne_zero 2 h0)
-      linear_combination u (0, 1) ^ 2 * h1 + (u (0, 0) * y 0 - u (0, 1) * y 1) * h2
 
 end GlobalTheory.ChowHt

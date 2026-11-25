@@ -134,7 +134,7 @@ theorem torus_factor : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicat
     have := hU.2.2.2.2.2.1
     exact_mod_cast (by omega : q ≠ 0)
   have hs : simpleU k = Equiv.swap (lo k) (lo k).rev := by
-    rw [simpleU, if_neg hk]
+    rw [simpleU, ite_eq_right hk]
   set a : Fin n := lo k with ha
   have hkv : k.val = n / 2 - 1 := by have := k.2; omega
   have hodd : n % 2 = 1 := by
@@ -168,7 +168,7 @@ theorem torus_factor : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicat
     exact conj_diag_apply _ Y Yi T hinv hYw hYi ht i j
   have hB : IsBorelU b := by
     intro i j hij
-    rw [hb, if_neg (ne_of_gt hij)]
+    rw [hb, ite_eq_right (ne_of_gt hij)]
   have hsph := hφ b (y⁻¹ * w * x) 1 hB (one_mem _)
   have hprod : y⁻¹ * t * w * x = b * (y⁻¹ * w * x) * 1 := by
     rw [hbd]; group
@@ -226,8 +226,8 @@ theorem torus_factor : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicat
         · intro h; have := congrArg Fin.val h; rw [hrv] at this
           have h3 : (lo i : Fin n).val = i.val := rfl
           have := i.2; omega
-      rw [hb, if_pos rfl, hfix, hact, if_neg hik]
-    rw [hrest, hb, if_pos rfl, ← ha, Equiv.swap_apply_left, hTa.2, hact, if_pos rfl]
+      rw [hb, ite_eq_left rfl, hfix, hact, ite_eq_right hik]
+    rw [hrest, hb, ite_eq_left rfl, ← ha, Equiv.swap_apply_left, hTa.2, hact, ite_eq_left rfl]
     have hE : ((n : ℤ) - 1 - 2 * (k.val : ℤ)) = 2 := by omega
     rw [hE]
     set o := ordL (T a a)

@@ -17,22 +17,6 @@ namespace ReciprocityTheory.PGsh
 def stdJ (D : Type*) [CommRing D] (g : ℕ) : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) D :=
   Matrix.fromBlocks 0 (-1) 1 0
 
-def ExistsPointLeviLogNormSqPos : Prop :=
-  ∀ (D : Type) [CommRing D] [IsDomain D] (g : ℕ)
-    (E Φ : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) D) (c : D),
-    Eᵀ = -E → (∀ i, E i i = 0) → IsUnit E.det → c ≠ 0 →
-    Φᵀ * stdJ D g * Φ = c • E →
-    let Ht : Matrix (Fin g) (Fin g ⊕ Fin g) D := Φ.submatrix Sum.inl id
-    let Bt : Matrix (Fin g) (Fin g ⊕ Fin g) D := Φ.submatrix Sum.inr id
-    let hb : Matrix (Fin g ⊕ Fin g) (Fin g) D := (Eᵀ)⁻¹ * Htᵀ
-    let ι := algebraMap D (FractionRing D)
-    (∀ f : Fin g → D, ∃ t : Fin g ⊕ Fin g → D, Ht *ᵥ t = c • f) ∧
-    Ht * hb = 0 ∧ Bt * hb = c • (1 : Matrix (Fin g) (Fin g) D) ∧ hbᵀ * E * hb = 0 ∧
-    (∀ t : Fin g ⊕ Fin g → FractionRing D, Ht.map ι *ᵥ t = 0 →
-      ∃ x : Fin g → FractionRing D, hb.map ι *ᵥ x = t) ∧
-    (∀ x : Fin g → FractionRing D, (∃ w : Fin g ⊕ Fin g → D, hb.map ι *ᵥ x = ι ∘ w) →
-      ∃ y : Fin g → D, c • x = ι ∘ y)
-
 abbrev extModR (R K V : Type*) [CommRing R] [Field K] [Algebra R K] [AddCommGroup V]
     [Module K V] : Module R (ExteriorAlgebra K V) :=
   Module.compHom _ (algebraMap R K)

@@ -9,6 +9,7 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.I
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeH
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRed
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+import GroundTheory.HeightsAndTheta.Heights.SemipositiveHeights.PtsIntegrable
 
 @[expose] public section
 
@@ -34,63 +35,11 @@ theorem integrable_absPushSum [CompactSpace X] [T2Space X] (A : FinHolAtlas e X)
         LinearMap.det (fderiv ℂ (q ∘ (A.chart j).symm) (A.chart j x) :
           (Fin e → ℂ) →ₗ[ℂ] (Fin e → ℂ)) ≠ 0)
     (hfin : ∀ y, (q ⁻¹' {y} \ S).Finite) (g : X → ℝ) (hg : MIntegrable A Φ g) :
-    Integrable (fun y => ∑ᶠ x ∈ q ⁻¹' {y} \ S, |g x * pushDens A Φ q x|) := by
-  classical
-  have hne : Nonempty (ChartPartition A) := existsPartition A
-  set Pt := hne.some with hPt
-  set hj : Fin A.n → (Fin e → ℂ) → ℝ := fun j u =>
-    |Pt.χ j ((A.chart j).symm u) * g ((A.chart j).symm u) * locDens A Φ j u| with hhj
-  set Qj : Fin A.n → (Fin e → ℂ) → (Fin e → ℂ) := fun j => q ∘ (A.chart j).symm with hQj
-  set N : Fin A.n → Set (Fin e → ℂ) :=
-    fun j => Qj j '' (goodT A q j ∩ (A.chart j).symm ⁻¹' S) with hNdef
-  have hN : ∀ j, volume (N j) = 0 := by
-    intro j
-    refine addHaar_image_eq_zero_of_differentiableOn_of_addHaar_eq_zero volume ?_ ?_
-    · intro u hu
-      exact (hu.1.2.1.differentiableAt.restrictScalars ℝ).differentiableWithinAt
-    · exact measure_mono_null (inter_subset_inter_left _ fun u (hu : u ∈ goodT A q j) => hu.1) (hS j)
-  have hfib : ∀ j, ∀ y ∉ N j, goodT A q j ∩ Qj j ⁻¹' {y} =
-      (A.chart j) '' ((A.chart j).source ∩ (q ⁻¹' {y} \ S)) :=
-    fun j y hy => goodT_fibre_eq A q S hq j hy
-  have hfinj : ∀ j, ∀ᵐ y, (goodT A q j ∩ Qj j ⁻¹' {y}).Finite := by
-    intro j
-    filter_upwards [measure_eq_zero_iff_ae_notMem.mp (hN j)] with y hy
-    rw [hfib j y hy]
-    exact ((hfin y).subset inter_subset_right).image _
-  have hint : ∀ j, Integrable (fibSum (goodT A q j) (Qj j) (hj j)) := fun j =>
-    (area_open (isOpen_goodT A q j) (fun u hu => hu.2)
-      ((show IntegrableOn (hj j) (A.chart j).target volume from
-        (integrableOn_chart A Pt Φ g hg j).abs).mono_set fun u hu => hu.1) (hfinj j)).1
-  refine (integrable_finsetSum Finset.univ fun j _ => hint j).congr ?_
-  have hNall : ∀ᵐ y, ∀ j, y ∉ N j :=
-    ae_all_iff.mpr fun j => measure_eq_zero_iff_ae_notMem.mp (hN j)
-  filter_upwards [hNall] with y hy
-  have hterm : ∀ j, fibSum (goodT A q j) (Qj j) (hj j) y =
-      ∑ᶠ x ∈ q ⁻¹' {y} \ S, Pt.χ j x * |g x * pushDens A Φ q x| := by
-    intro j
-    unfold fibSum
-    rw [hfib j y (hy j), finsum_mem_image ((A.chart j).injOn.mono inter_subset_left)]
-    refine (finsum_mem_congr (g := fun x => Pt.χ j x * |g x * pushDens A Φ q x|) rfl
-      fun x hx => ?_).trans ?_
-    · have hJ : 0 ≤ jacN (Qj j) (A.chart j x) := by unfold jacN; positivity
-      calc hj j (A.chart j x) / jacN (Qj j) (A.chart j x)
-          = |Pt.χ j ((A.chart j).symm (A.chart j x)) * g ((A.chart j).symm (A.chart j x)) *
-              locDens A Φ j (A.chart j x) / jacN (Qj j) (A.chart j x)| := by
-            rw [abs_div, abs_of_nonneg hJ]
-        _ = |Pt.χ j x * (g x * pushDens A Φ q x)| := by
-            rw [fib_term A Φ hΦ q S hq Pt g j hx.1 hx.2.2]
-        _ = Pt.χ j x * |g x * pushDens A Φ q x| := by
-            rw [abs_mul, abs_of_nonneg (Pt.nonneg j x)]
-    · refine finsum_mem_inter_support_eq' _ _ _ fun x hx => ?_
-      have hχ : Pt.χ j x ≠ 0 := left_ne_zero_of_mul hx
-      have hxs : x ∈ (A.chart j).source := Pt.tsupport_subset j (subset_tsupport _ hχ)
-      exact ⟨fun h => h.2, fun h => ⟨hxs, h⟩⟩
-  simp_rw [hterm]
-  rw [finsum_mem_eq_finite_toFinset_sum _ (hfin y)]
-  simp_rw [finsum_mem_eq_finite_toFinset_sum _ (hfin y)]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun x _ => ?_
-  rw [← Finset.sum_mul, Pt.sum_eq_one x, one_mul]
+    Integrable (fun y => ∑ᶠ x ∈ q ⁻¹' {y} \ S, |g x * pushDens A Φ q x|) :=
+  GroundTheory.Heights₂.Heights.ForSecondHalf.pushForward_integrable_comp A Φ hΦ q S hS hq hfin g hg abs
+    (fun a b hb => by rw [abs_div, abs_of_nonneg hb])
+    (fun c r hc => by rw [abs_mul, abs_of_nonneg hc])
+    (fun hf => hf.abs)
 
 end PushForward
 

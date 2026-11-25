@@ -214,10 +214,10 @@ theorem tfe_of_isSum : ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocalRing R],
     refine Finset.sum_congr rfl fun i _ => ?_
     by_cases hi : w i = β
     · have hi' : w (σ mu i) = β' := by rw [hw, hi, hβ']
-      rw [if_pos hi, if_pos hi']
+      rw [ite_eq_left hi, ite_eq_left hi']
       exact key _ _ _ _ hi hi' (hrel mu i) _ _ z J hJ
     · have hi' : ¬ w (σ mu i) = β' := fun h2 => hi (add_right_cancel ((hw mu i).symm.trans (h2.trans hβ'.symm)))
-      rw [if_neg hi, if_neg hi', zero_mul, mul_zero, mul_zero]
+      rw [ite_eq_right hi, ite_eq_right hi', zero_mul, mul_zero, mul_zero]
   intro Z x z J hJ
   obtain ⟨hunit, hmul⟩ := scal_generic R D.toPre Z x z r.1
   refine (hunit (nonZeroDivisors.ne_zero r.2)).mul_left_cancel ?_
@@ -242,8 +242,6 @@ open scoped CategoryTheory.Obj
 attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.Mum GlobalTheory.TwFam
 
-theorem _root_.GlobalTheory.T.twistedFunctionalEquation_of_adicSum_termwise : ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocalRing R], AdmBase R (maximalIdeal R) → ∀ (D : DegData R (maximalIdeal R)), ∀ (a a' : D.toPre.P.A ⟶ D.toPre.P.A) (h h' : D.toPre.X →+ D.toPre.X), EndData D.toPre a a' h h' → ∀ (n j : ℤ) (Ix : Type) (w : Ix → D.toPre.X) (s : ∀ i, SecT D.toPre a n j (w i)) (F : ∀ β, SecT D.toPre a n j β) (σ : D.toPre.X → Ix ≃ Ix), Small (maximalIdeal R) s → IsSum (maximalIdeal R) s F → (∀ mu i, w (σ mu i) = w i + shift h h' n j mu) → (∀ mu i, TRel h mu (s i) (s (σ mu i))) → TFE h h' F := by
-  first | exact @GlobalTheory.TwFam.SumFE.tfe_of_isSum
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedFunctionalEquationOfAdicSumTermwiseStatement =====

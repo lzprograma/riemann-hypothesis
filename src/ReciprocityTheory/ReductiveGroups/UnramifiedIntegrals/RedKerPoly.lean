@@ -97,13 +97,13 @@ theorem homS_eq_zero (hU : PowerSeries.constantCoeff U = 1) (m : ℕ) (P : K[X])
     unfold homS
 
     rw [map_sum, Finset.sum_eq_single P.natDegree]
-    · rw [PowerSeries.coeff_mul_X_pow', if_pos le_rfl, Nat.sub_self, PowerSeries.coeff_zero_eq_constantCoeff_apply,
+    · rw [PowerSeries.coeff_mul_X_pow', ite_eq_left le_rfl, Nat.sub_self, PowerSeries.coeff_zero_eq_constantCoeff_apply,
         map_mul, map_pow, hU]
       simp
     · intro b hb hne
       have hb' : b ≤ m := Nat.lt_succ_iff.1 (Finset.mem_range.1 hb)
       rcases lt_or_gt_of_ne hne with hlt | hgt
-      · rw [PowerSeries.coeff_mul_X_pow', if_neg (by omega)]
+      · rw [PowerSeries.coeff_mul_X_pow', ite_eq_right (by omega)]
       · rw [coeff_eq_zero_of_natDegree_lt hgt]
         simp
     · intro hh
@@ -157,7 +157,7 @@ theorem coeff_polMap (ψ : E →+ E) (m : ℕ) (Q : E[X]) (i : ℕ) :
 theorem natDegree_polMap_le (ψ : E →+ E) (m : ℕ) (Q : E[X]) : (polMap ψ m Q).natDegree ≤ m := by
   rw [natDegree_le_iff_coeff_eq_zero]
   intro i hi
-  rw [coeff_polMap, if_neg (by omega)]
+  rw [coeff_polMap, ite_eq_right (by omega)]
 
 variable (k : Subfield E)
 
@@ -214,7 +214,7 @@ theorem serMap_homS (ψ : E →+ E) (hψ : ∀ c ∈ k, ∀ x, ψ (c * x) = c * 
   have hi' : i ≤ m := Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)
   have hW : ∀ n, PowerSeries.coeff n (U ^ i * PowerSeries.X ^ (2 * (m - i))) ∈ k :=
     coeff_mem_mul k (coeff_mem_pow k hU i) (coeff_mem_pow k (coeff_mem_X k) _)
-  rw [coeff_polMap, if_pos hi', mul_assoc, mul_assoc, mul_comm (PowerSeries.C (Q.coeff i)),
+  rw [coeff_polMap, ite_eq_left hi', mul_assoc, mul_assoc, mul_comm (PowerSeries.C (Q.coeff i)),
     serMap_mul ψ hψ hW, serMap_C, mul_comm]
 
 theorem exists_proj (k : Subfield E) : ∃ ψ : E →+ E, (∀ c ∈ k, ∀ x, ψ (c * x) = c * ψ x) ∧
@@ -249,7 +249,7 @@ theorem proj_trick {E : Type} [Field E] (k : Subfield E) (U V : PowerSeries E)
   have h' : V * homS U N B' = homS U (N + 1) A' := by
     rw [hA', hB', ← serMap_homS ψ hψ hU, ← serMap_homS ψ hψ hU, ← serMap_mul ψ hψ hV, h]
   have hBN : B'.coeff N = 1 := by
-    rw [hB', coeff_polMap, if_pos le_rfl, ← hBd, hB.coeff_natDegree, hψ1]
+    rw [hB', coeff_polMap, ite_eq_left le_rfl, ← hBd, hB.coeff_natDegree, hψ1]
   have hB'deg : B'.natDegree = N := by
     refine le_antisymm hB'd (le_natDegree_of_ne_zero ?_)
     rw [hBN]; exact one_ne_zero
@@ -519,7 +519,7 @@ theorem sqrt_poly {E : Type} [Field E] [CharZero E] (k : Subfield E) (h : E[X]) 
             intro he
             have := (Prod.mk.injEq _ _ _ _ ▸ he : a = h.natDegree ∧ h.natDegree = a).1
             omega
-          rw [if_pos rfl, if_neg hne, hm.coeff_natDegree]
+          rw [ite_eq_left rfl, ite_eq_right hne, hm.coeff_natDegree]
           simp [k.zero_mem]
         by_cases ha' : a = n
         · have hb : b = i := by omega
@@ -529,11 +529,11 @@ theorem sqrt_poly {E : Type} [Field E] [CharZero E] (k : Subfield E) (h : E[X]) 
             intro he
             have := (Prod.mk.injEq _ _ _ _ ▸ he : n = b ∧ b = n).1
             omega
-          rw [if_neg hne, if_pos rfl, hn, hm.coeff_natDegree]
+          rw [ite_eq_right hne, ite_eq_left rfl, hn, hm.coeff_natDegree]
           simp [k.zero_mem]
         have hne1 : ¬ ((a, b) = (i, n)) := fun he => ha (congrArg Prod.fst he)
         have hne2 : ¬ ((a, b) = (n, i)) := fun he => ha' (congrArg Prod.fst he)
-        rw [if_neg hne1, if_neg hne2, sub_zero, sub_zero]
+        rw [ite_eq_right hne1, ite_eq_right hne2, sub_zero, sub_zero]
         rcases lt_or_gt_of_ne ha with h1 | h1
         · have : n < b := by omega
           show h.coeff a * h.coeff b ∈ k
@@ -545,8 +545,8 @@ theorem sqrt_poly {E : Type} [Field E] [CharZero E] (k : Subfield E) (h : E[X]) 
       have hsum := k.sum_mem hmem
       rw [Finset.sum_sub_distrib, Finset.sum_sub_distrib, ← coeff_mul, ← pow_two,
         Finset.sum_ite_eq', Finset.sum_ite_eq',
-        if_pos (by simp),
-        if_pos (by simp [add_comm])] at hsum
+        ite_eq_left (by simp),
+        ite_eq_left (by simp [add_comm])] at hsum
       have h2 : (2 : E) * h.coeff i ∈ k := by
         have := k.sub_mem (hk (i + n)) hsum
         have e : (h ^ 2).coeff (i + n) - ((h ^ 2).coeff (i + n) - h.coeff i - h.coeff i)

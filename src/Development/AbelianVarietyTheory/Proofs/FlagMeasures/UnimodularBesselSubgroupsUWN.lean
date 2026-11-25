@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ClosedSubgroupBesselHaarFiniteCompactPosOpen
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
 public import Formalism.PeriodIntegrals.QuotInv
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselSubgroupsClosedUnitaryWCompact
@@ -56,19 +57,7 @@ namespace GlobalTheory.SgInf
 variable {k r : ℕ}
 
 theorem IsClosedSub.isMatGroup_of_unitary {S : Set (Mat k r)} (hS : IsClosedSub k r S) : PI.IsMatGroup S := by
-  obtain ⟨hG, hcl, h1, hmul, hinv⟩ := hS
-  refine ⟨hcl, h1, hmul, fun a ha => ⟨hinv a ha, ?_⟩⟩
-
-  have e : aᴴ * Hpk k r * a = Hpk k r := hG ha
-  have hH := Formalism.FourierDecayAlt.P.B2x2.hpk_unit k r
-  have hd := congrArg Matrix.det e
-  rw [Matrix.det_mul, Matrix.det_mul] at hd
-  have hdet : IsUnit a.det := by
-    rw [isUnit_iff_ne_zero]
-    intro h0
-    rw [h0, mul_zero] at hd
-    exact hH.ne_zero hd.symm
-  exact Matrix.mul_nonsing_inv a hdet
+  first | exact _root_.GlobalTheory.SgInf.IsClosedSub.isMatGroup | exact @_root_.GlobalTheory.SgInf.IsClosedSub.isMatGroup | apply _root_.GlobalTheory.SgInf.IsClosedSub.isMatGroup <;> assumption
 
 theorem map_invM_eq {S : Set (Mat k r)} (hS : PI.IsMatGroup S) {μ : Measure (Mt k r)}
     (hμ : IsHaarOn S μ) (hR : ∀ s ∈ S, μ.map (rmulM s) = μ) : μ.map invM = μ := by

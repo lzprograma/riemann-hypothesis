@@ -177,8 +177,8 @@ private theorem comax (h : IsFinCover ℂ L x)
   have hval : ∀ e : fib ℂ L x, e.1 (∑ e0, c e0 * b e0) = 1 := by
     intro e
 
-    rw [map_sum, Finset.sum_eq_single e (fun e0 _ hne => by rw [map_mul, hc, if_neg (Ne.symm hne), zero_mul])
-    (fun hn => (hn (Finset.mem_univ e)).elim), map_mul, hc, if_pos rfl]
+    rw [map_sum, Finset.sum_eq_single e (fun e0 _ hne => by rw [map_mul, hc, ite_eq_right (Ne.symm hne), zero_mul])
+    (fun hn => (hn (Finset.mem_univ e)).elim), map_mul, hc, ite_eq_left rfl]
     exact inv_mul_cancel₀ (hb0 e)
   have h1 := hsep (1 - ∑ e0, c e0 * b e0) (fun e => by rw [map_sub, map_one, hval, sub_self])
   rw [Ideal.eq_top_iff_one]

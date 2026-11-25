@@ -4,6 +4,7 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolum
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Tactic.TypeStar
+import ReciprocityTheory.AnalyticForms.LeviForms.HomDens
 
 @[expose] public section
 
@@ -23,17 +24,9 @@ theorem chosenFrame_isOrthogonal (X : Data E r) : IsOrth X (x0F X) := fun τ => 
 
 private theorem sum_castLE_lemma {p0 : ℕ} (hp : p0 ≤ r) (f : Fin r → ℝ) :
     ∑ a : Fin p0, f (Fin.castLE hp a) = ∑ k : Fin r, if (k : ℕ) < p0 then f k else 0 := by
-  rw [← Finset.sum_filter]
-  refine Finset.sum_bij (fun a _ => Fin.castLE hp a) ?_ ?_ ?_ ?_
-  · intro a _
-    simp [a.2]
-  · intro a _ b _ h
-    exact Fin.castLE_injective hp h
-  · intro k hk
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hk
-    exact ⟨⟨k, hk⟩, Finset.mem_univ _, Fin.ext rfl⟩
-  · intro a _
-    rfl
+  first
+    | exact _root_.ReciprocityTheory.AnForm.P.sum_castLE
+    | apply _root_.ReciprocityTheory.AnForm.P.sum_castLE <;> first | assumption | rfl | infer_instance
 
 theorem Ms_id (X : Data E r) (τ : X.Ψ) (v : Fin r → ℂ) :
     Ms X.p0 X.p0_le (Nid r) v = ∑ k, ‖v k‖ ^ 2 := by

@@ -146,7 +146,7 @@ theorem UpperTheory.V.Z.Kato.Nb.sSpec :
   obtain ⟨π, hπ⟩ : IsUnit (p : ℤ_[l]) := by
     rw [PadicInt.isUnit_iff, PadicInt.norm_natCast_eq_one_iff]; exact hcop
   have hq : IsUnit (p : ZMod (l ^ r)) := (ZMod.isUnit_iff_coprime _ _).2 (hcop.symm.pow_right r)
-  have hinv : inv1 (l ^ r) p = hq.unit⁻¹ := dif_pos hq
+  have hinv : inv1 (l ^ r) p = hq.unit⁻¹ := dite_eq_left hq
   have hπ' : algebraMap ℤ_[l] (Qbar l) π = p := by rw [hπ, map_natCast]
   have hrq : ((rd hq.unit : (ZMod l)ˣ) : ZMod l) = 1 := by
     rw [← hp1]; exact map_natCast (ZMod.castHom (dvd_pow_self l hr) (ZMod l)) p

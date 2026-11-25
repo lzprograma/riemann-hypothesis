@@ -1,7 +1,6 @@
 module
 
 public import Mathlib.MeasureTheory.Function.LpSeminorm.Defs
-import Mathlib.NumberTheory.Height.NumberField
 import Mathlib.Tactic.TypeStar
 public import Mathlib.Basic.Real.ConjExponents
 public import Mathlib.MeasureTheory.Function.LpSpace.Basic
@@ -11,7 +10,7 @@ public import Mathlib.MeasureTheory.Function.LpSpace.Basic
 namespace GroundTheory.Automorphic.L2Kernel
 
 open MeasureTheory
-open scoped ENNReal InnerProductSpace ComplexConjugate
+open scoped ENNReal
 
 noncomputable section
 
@@ -32,26 +31,13 @@ theorem lintegral_mul_sq_le {α : Type*} [MeasurableSpace α] (μ : Measure α) 
 
 theorem eLpNorm_two_sq {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E] (μ : Measure α)
     (g : α → E) : eLpNorm' g 2 μ ^ 2 = ∫⁻ a, ‖g a‖ₑ ^ 2 ∂μ := by
-  rw [eLpNorm'_eq_lintegral_eNorm, ← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]
-  norm_num [ENNReal.rpow_two]
+  simpa only [ENNReal.rpow_two] using
+    (lintegral_rpow_eNorm_eq_rpow_eLpNorm' (f := g) (μ := μ) zero_lt_two).symm
 
 theorem lt_top_of_sq_lt_top {a : ℝ≥0∞} (h : a ^ 2 < ∞) : a < ∞ := by
-  by_contra hc
-  rw [not_lt, top_le_iff] at hc
-  rw [hc, ENNReal.top_pow two_ne_zero] at h
-  exact lt_irrefl _ h
+  simpa only [ENNReal.pow_lt_top_iff, OfNat.ofNat_ne_zero, or_false] using h
 
 end SlopeTestRemainingChoices
-
-variable {𝕜 : Type*} [RCLike 𝕜]
-  {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y] {μ : Measure X} {ν : Measure Y}
-  [SFinite μ] [SFinite ν]
-
-section Kernel
-
-variable (k : Lp 𝕜 2 (μ.prod ν))
-
-end Kernel
 
 end
 

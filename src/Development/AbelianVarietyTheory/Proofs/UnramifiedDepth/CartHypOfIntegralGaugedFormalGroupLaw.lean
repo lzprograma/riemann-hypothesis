@@ -61,7 +61,7 @@ import Formalism.LocalToGlobal.ProjectiveLattices.SubConstMemOrig
 import Mathlib.Data.Nat.Choose.Multinomial
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IntegralGaugeBilinearTermOfTypeNe, Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ShiftedSumMemTypicalCurveSet, Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ShiftedSumMemTypicalCurveSetStatement, Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CartHypOfIntegralGaugedFormalGroupLaw
+-- Members: Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IntegralGaugeBilinearTermOfTypeNe, Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CartHypOfIntegralGaugedFormalGroupLaw
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IntegralGaugeBilinearTermOfTypeNe =====
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IntegralGaugeBilinearTermOfTypeNe", "h": "module\n\nimport Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsPureTypicalCurveWithIntegralTangent\npublic import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich\npublic import Formalism.LocalToGlobal.CharacterGerms.ConstMemTypeSetOfNonneg\npublic import Formalism.LocalToGlobal.CharacterGerms.ValNonnegLeadingCoeffOfMemTySet\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.Order.CompletePartialOrder\nimport Mathlib.RingTheory.Henselian\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
@@ -113,13 +113,13 @@ theorem coeff_single_subst {σ τ : Type} [Fintype σ] {a : σ → MvPowerSeries
       rw [coeff_zero_eq_constantCoeff_apply, hf]
       symm
       refine Finset.sum_eq_zero fun s _ => ?_
-      rw [if_neg, mul_zero]
+      rw [ite_eq_right, mul_zero]
       exact (Finsupp.single_ne_zero.2 one_ne_zero).symm
     · obtain ⟨i, rfl⟩ := finsupp_deg_one e (by omega)
       rw [Finset.sum_eq_single i]
       · simp
       · intro s _ hsi
-        rw [if_neg, mul_zero]
+        rw [ite_eq_right, mul_zero]
         exact fun h => hsi (Finsupp.single_left_injective one_ne_zero h).symm
       · simp
   have hz : coeff (Finsupp.single t 1) (subst a (f - L)) = 0 :=
@@ -191,12 +191,12 @@ theorem hAt_order (Y : RawChart C d I κ)
         rw [Finset.sum_eq_single (x, y)]
         · simp
         · intro p _ hp
-          rw [if_neg, mul_zero]
+          rw [ite_eq_right, mul_zero]
           intro h
           exact hp (Prod.ext (bexp_inj h).1.symm (bexp_inj h).2.symm)
         · simp
       · push Not at h
-        rw [Finset.sum_eq_zero fun p _ => by rw [if_neg (h _ _), mul_zero]]
+        rw [Finset.sum_eq_zero fun p _ => by rw [ite_eq_right (h _ _), mul_zero]]
         by_cases h0 : ∀ s ∈ e.support, s.1 ≠ 0
         · exact hax 0 e h0
         by_cases h1 : ∀ s ∈ e.support, s.1 ≠ 1
@@ -206,7 +206,7 @@ theorem hAt_order (Y : RawChart C d I κ)
         obtain ⟨⟨g', y⟩, hy, rfl⟩ := h1
         exact absurd (eq_bexp e he hx hy) (h x y))
   rw [subst_sub hs, subst_sum_smul hs] at key
-  simpa only [subst_mul hs, subst_X hs, hAt, if_true, one_ne_zero, if_false] using key
+  simpa only [subst_mul hs, subst_X hs, hAt, ite_true, one_ne_zero, ite_false] using key
 
 theorem coeff_mvExp_two {τ : Type} {F : MvPowerSeries τ C} (hF : ((2 : ℕ) : ℕ∞) ≤ F.order) (m : τ →₀ ℕ)
     (hm : m.degree = 2) : coeff m (mvExp F) = coeff m F := by
@@ -221,9 +221,6 @@ theorem coeff_mvExp_two {τ : Type} {F : MvPowerSeries τ C} (hF : ((2 : ℕ) : 
   rw [hm]
   simp [Finset.sum_range_succ, h2, coeff_one, hm0]
 
-theorem ge_zero_of_pow_eq_one (V : VF C) {N : ℕ} (hN : N ≠ 0) {a : C} (ha : a ^ N = 1) : V.Ge 0 a := by
-  apply GlobalTheory.RowLaw.PureTypical.ge_of_pow_eq_one <;> assumption
-
 theorem ge_zero_of_sub_mul (V : VF C) {N : ℕ} (hN : V.v (N : C) = 0) {a b z : C} (ha : a ^ N = 1)
     (hb : b ^ N = 1) (hab : a ≠ b) (hz : V.Ge 0 ((a - b) * z)) : V.Ge 0 z := by
   have hN0 : N ≠ 0 := by
@@ -231,7 +228,7 @@ theorem ge_zero_of_sub_mul (V : VF C) {N : ℕ} (hN : V.v (N : C) = 0) {a b z : 
     rw [Nat.cast_zero, V.v.map_zero] at hN
     exact WithTop.top_ne_zero hN
   obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hN0
-  have hbi := ge_zero_of_pow_eq_one V hN0 hb
+  have hbi := GlobalTheory.RowLaw.PureTypical.ge_of_pow_eq_one V hN0 hb
   set η := a * b ^ n with hη
   have hηN : η ^ (n + 1) = 1 := by
     rw [hη, mul_pow, ← pow_mul, mul_comm n, pow_mul]
@@ -246,7 +243,7 @@ theorem ge_zero_of_sub_mul (V : VF C) {N : ℕ} (hN : V.v (N : C) = 0) {a b z : 
     have := geom_sum_mul η (n + 1)
     rw [hηN, sub_self] at this
     exact (mul_eq_zero.1 this).resolve_right hne
-  have hηi := ge_zero_of_pow_eq_one V (Nat.succ_ne_zero n) hηN
+  have hηi := GlobalTheory.RowLaw.PureTypical.ge_of_pow_eq_one V (Nat.succ_ne_zero n) hηN
   have hS : V.Ge 0 (∑ i ∈ Finset.range (n + 1), ∑ j ∈ Finset.range i, η ^ j) :=
     VF.Ge.sum fun i _ => VF.Ge.sum fun j _ => hηi.pow j
   have hE : (∑ i ∈ Finset.range (n + 1), ∑ j ∈ Finset.range i, η ^ j) * (η - 1) = -((n + 1 : ℕ) : C) := by
@@ -278,7 +275,7 @@ theorem RLaw.coeff_single_ex (h : RLaw Y V) (i s : κ) :
     coeff (Finsupp.single s 1) (Y.ex i) = if s = i then 1 else 0 := by
   have := coeff_single_subst h.exc (h.constantCoeff_lg i) s
   rw [h.lgex, coeff_X] at this
-  simp only [h.coeff_single_lg, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true,
+  simp only [h.coeff_single_lg, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true,
     (Finsupp.single_left_injective one_ne_zero).eq_iff] at this
   exact this.symm
 
@@ -298,20 +295,20 @@ theorem RLaw.coeff_single_endP (h : RLaw Y V) (M : Matrix κ κ C) {τ : Type} {
     coeff (Finsupp.single t 1) (endP Y M a x) = ∑ y, M x y * coeff (Finsupp.single t 1) (a y) := by
   unfold endP
   rw [coeff_single_subst (h.constantCoeff_lin M ha) (h.exc x)]
-  simp only [h.coeff_single_ex, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [h.coeff_single_ex, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
   rw [map_sum]
   refine Finset.sum_congr rfl fun y _ => ?_
   rw [coeff_smul, coeff_single_subst ha (h.constantCoeff_lg y)]
-  simp only [h.coeff_single_lg, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [h.coeff_single_lg, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem coeff_bexp_mul_X (f : MvPowerSeries (Fin 2 × κ) C) (s t y : κ) :
     coeff (bexp s t) (f * X (1, y)) = if y = t then coeff (Finsupp.single (0, s) 1) f else 0 := by
   rw [X_def, coeff_mul_monomial]
   by_cases hy : y = t
   · subst hy
-    rw [bexp, if_pos (le_add_self), if_pos rfl, mul_one, add_tsub_cancel_right]
-  · rw [if_neg hy, if_neg]
+    rw [bexp, ite_eq_left (le_add_self), ite_eq_left rfl, mul_one, add_tsub_cancel_right]
+  · rw [ite_eq_right hy, ite_eq_right]
     rw [Finsupp.single_le_iff]
     simp [bexp, Ne.symm hy]
 
@@ -320,8 +317,8 @@ theorem coeff_bexp_X_mul (f : MvPowerSeries (Fin 2 × κ) C) (s t x : κ) :
   rw [X_def, coeff_monomial_mul]
   by_cases hy : x = s
   · subst hy
-    rw [bexp, if_pos (le_self_add), if_pos rfl, one_mul, add_tsub_cancel_left]
-  · rw [if_neg hy, if_neg]
+    rw [bexp, ite_eq_left (le_self_add), ite_eq_left rfl, one_mul, add_tsub_cancel_left]
+  · rw [ite_eq_right hy, ite_eq_right]
     rw [Finsupp.single_le_iff]
     simp [bexp, Ne.symm hy]
 
@@ -436,129 +433,6 @@ end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IntegralGaugeBilinearTermOfTypeNe =====
 
--- ===== clump member: Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ShiftedSumMemTypicalCurveSet =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ShiftedSumMemTypicalCurveSet", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich\npublic import Formalism.LocalToGlobal.CharacterGerms.NegMem\npublic import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.AddCurveStableOfIntegralGaugedFormalGroupLaw\npublic import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.GaugedCurveLogarithmsClosedUnderTadicLimitsStatement\nimport Formalism.LocalToGlobal.CharacterGerms.ConstMemTypeSetOfNonneg\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Formalism.LocalToGlobal.ProjectiveLattices.SubConstMemOrig\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open scoped BigOperators
-open NumberField Formalism.IncomingBounds Formalism.L2.FormalSeriesBounds Formalism.L2.Pj GlobalTheory.RowLaw ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
-
-namespace GlobalTheory.RowLaw.ShiftSum
-
-variable {C : Type} [Field C]
-
-theorem coeff_tyS_congr (l m : ℕ) {a b : ℕ → C} (h : ∀ s ≤ m, a s = b s) :
-    PowerSeries.coeff m (tyS l a) = PowerSeries.coeff m (tyS l b) := by
-  unfold tyS
-  rw [PowerSeries.coeff_mk, PowerSeries.coeff_mk]
-  refine Finset.sum_congr rfl fun s hs => ?_
-  rw [h s (Nat.lt_succ_iff.1 (Finset.mem_range.1 hs))]
-
-theorem vpow_succ {N : Type} (s : ℕ) (x : ℕ → N → C) : Vpow (s + 1) x = Vpow 1 (Vpow s x) := by
-  funext i n
-  simp only [Vpow]
-  by_cases h1 : i < 1
-  · rw [if_pos h1, if_pos (by omega)]
-  · rw [if_neg h1]
-    by_cases h2 : i < s + 1
-    · rw [if_pos h2, if_pos (by omega)]
-    · rw [if_neg h2, if_neg (by omega)]
-      congr 1
-      omega
-
-theorem partial_eq {N : Type} (y : ℕ → ℕ → N → C) (i M : ℕ) (hM : i < M) (n : N) :
-    (∑ s ∈ Finset.range M, Vpow s (y s)) i n = sumV y i n := by
-  simp only [sumV, Finset.sum_apply, Vpow]
-  symm
-  rw [← Finset.sum_subset (s₁ := Finset.range (i + 1)) (s₂ := Finset.range M)
-    (Finset.range_subset_range.2 (by omega))]
-  · refine Finset.sum_congr rfl fun s hs => ?_
-    rw [if_neg (by have := Finset.mem_range.1 hs; omega)]
-  · intro s _ hs
-    rw [if_pos (by rw [Finset.mem_range] at hs; omega)]
-
-variable {d : ℕ} {I : Fin 2 → Type} [∀ g, Fintype (I g)] {κ : Type} [Fintype κ]
-
-theorem vpow_mem (X : RawChart C d I κ) (V : VF C) (g : Fin 2) (x : ℕ → I g ⊕ JJ I g → C)
-    (hx : x ∈ X.TySet V g) (s : ℕ) : Vpow s x ∈ X.TySet V g := by
-  induction s with
-  | zero =>
-    have : Vpow 0 x = x := by
-      funext i n
-      simp [Vpow]
-    rwa [this]
-  | succ s ih =>
-    rw [vpow_succ]
-    exact X.V_mem V g _ ih
-
-noncomputable def logOf (X : RawChart C d I κ) (V : VF C) (g : Fin 2) (x : ℕ → I g ⊕ JJ I g → C) :
-    (κ → PowerSeries C) × (JJ I g → PowerSeries C) :=
-  (fun i => ∑ c : I g, X.u g c i • tyS V.l (fun s => x s (Sum.inl c)),
-   fun q => tyS V.l (fun s => x s (Sum.inr q)) -
-        ∑ c : I g, if X.ty g c = X.ty (1 - g) q then
-          X.sg1 (X.u g c) (X.u (1 - g) q) • tyS V.l (fun s => x s (Sum.inl c)) else 0)
-
-theorem mem_tySet_iff (X : RawChart C d I κ) (V : VF C) (g : Fin 2) (x : ℕ → I g ⊕ JJ I g → C) :
-    x ∈ X.TySet V g ↔ logOf X V g x ∈ Cv X V g := by
-  constructor
-  · rintro ⟨γ, lam, hγ, hlam, h1, h2⟩
-    exact ⟨γ, lam, hγ, hlam, h1, fun q => sub_eq_iff_eq_add.2 (h2 q)⟩
-  · rintro ⟨γ, lam, hγ, hlam, h1, h2⟩
-    exact ⟨γ, lam, hγ, hlam, h1, fun q => sub_eq_iff_eq_add.1 (h2 q)⟩
-
-theorem coeff_logOf_congr (X : RawChart C d I κ) (V : VF C) (g : Fin 2) {x x' : ℕ → I g ⊕ JJ I g → C} (m : ℕ)
-    (h : ∀ s ≤ m, ∀ n, x s n = x' s n) :
-    (∀ i, PowerSeries.coeff m ((logOf X V g x).1 i) = PowerSeries.coeff m ((logOf X V g x').1 i)) ∧
-      ∀ q, PowerSeries.coeff m ((logOf X V g x).2 q) = PowerSeries.coeff m ((logOf X V g x').2 q) := by
-  have key : ∀ n, PowerSeries.coeff m (tyS V.l (fun s => x s n)) = PowerSeries.coeff m (tyS V.l (fun s => x' s n)) :=
-    fun n => coeff_tyS_congr V.l m fun s hs => h s hs n
-  constructor
-  · intro i
-
-    simp only [logOf, map_sum, PowerSeries.coeff_smul, key]
-  · intro q
-
-    simp only [logOf, map_sub, map_sum, key]
-    congr 1
-    refine Finset.sum_congr rfl fun c _ => ?_
-    split_ifs
-    · simp only [PowerSeries.coeff_smul, key]
-    · rfl
-
-theorem sumV_mem_tySet : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) [NeZero d] (I : Fin 2 → Type) [∀ g, Fintype (I g)] (κ : Type) [Fintype κ] (X : RawChart C d I κ), RLaw X V → ∀ g (y : ℕ → ℕ → I g ⊕ JJ I g → C), (∀ s, y s ∈ X.TySet V g) → sumV y ∈ X.TySet V g := by
-  intro C _ V d _ I _ κ _ X hX g y hy
-  have hlg0 : ∀ i, MvPowerSeries.constantCoeff (X.lg i) = 0 := fun i => by
-    rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hX.lin i 0 (by simp),
-      MvPowerSeries.coeff_zero_eq_constantCoeff_apply, MvPowerSeries.constantCoeff_X]
-  have h0 := X.zero_mem hlg0 (hX.axes 0) V g
-  have hA := _root_.GlobalTheory.RowLaw.addCvSt_of_rlaw C V d I κ X hX
-  have hP : ∀ M, ∑ s ∈ Finset.range M, Vpow s (y s) ∈ X.TySet V g := fun M =>
-    X.sum_mem V g h0 (X.add_mem V g hA hX.uint) _ _ fun s _ => vpow_mem X V g _ (hy s) s
-  rw [mem_tySet_iff]
-  refine GlobalTheory.T.gaugedCurveLogarithms_closed_under_tadicLimits C V d I κ X hX g (fun M => logOf X V g (∑ s ∈ Finset.range M, Vpow s (y s))) _
-    (fun M => (mem_tySet_iff X V g _).1 (hP M)) fun m => ⟨m + 1, fun M hM => ?_⟩
-  exact coeff_logOf_congr X V g m fun s hs n => partial_eq y s M (by omega) n
-
-end GlobalTheory.RowLaw.ShiftSum
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ShiftedSumMemTypicalCurveSet =====
-
--- ===== clump member: Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ShiftedSumMemTypicalCurveSetStatement =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ShiftedSumMemTypicalCurveSetStatement", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich\npublic import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ShiftedSumMemTypicalCurveSet\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Formalism.LocalToGlobal.ProjectiveLattices.SubConstMemOrig\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open scoped BigOperators
-open NumberField Formalism.IncomingBounds Formalism.L2.FormalSeriesBounds Formalism.L2.Pj GlobalTheory.RowLaw ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
-
-theorem _root_.GlobalTheory.T.shiftedSum_mem_typicalCurveSet : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) [NeZero d] (I : Fin 2 → Type) [∀ g, Fintype (I g)] (κ : Type) [Fintype κ] (X : RawChart C d I κ), RLaw X V → ∀ g (y : ℕ → ℕ → I g ⊕ JJ I g → C), (∀ s, y s ∈ X.TySet V g) → sumV y ∈ X.TySet V g := by
-  first | exact @GlobalTheory.RowLaw.ShiftSum.sumV_mem_tySet
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ShiftedSumMemTypicalCurveSetStatement =====
-
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CartHypOfIntegralGaugedFormalGroupLaw =====
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CartHypOfIntegralGaugedFormalGroupLaw", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich\npublic import Formalism.LocalToGlobal.CharacterGerms.NegMem\npublic import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.AddCurveStableOfIntegralGaugedFormalGroupLaw\npublic import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsPureTypicalCurveWithIntegralTangent\npublic import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FrobeniusMemTypicalCurveSet\npublic import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IntegralGaugeBilinearTermOfTypeNe\npublic import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ShiftedSumMemTypicalCurveSetStatement\nimport Formalism.LocalToGlobal.CharacterGerms.ConstMemTypeSetOfNonneg\nimport Formalism.LocalToGlobal.CharacterGerms.ValNonnegLeadingCoeffOfMemTySet\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Formalism.LocalToGlobal.ProjectiveLattices.SubConstMemOrig\n\n"}
 section -- clump:auto
@@ -582,7 +456,6 @@ theorem cartHyp_of_rlaw : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) [NeZero 
       teich := X.teich_mem V g
       Vm := X.V_mem V g
       Fm := _root_.GlobalTheory.RowLaw.FrobCurve.frob_mem_tySet C V d I κ X hL g
-      sumV := GlobalTheory.T.shiftedSum_mem_typicalCurveSet C V d I κ X hL g
       t2 := X.val_nonneg_leading_coeff_of_mem_tySet V g hL.lin hh ?_ (_root_.GlobalTheory.RowLaw.ge_zero_sg1_of_ty_ne C V d I κ X hL g (hT g))
       t3 := X.const_mem_type_set_of_nonneg hlg0 hh V g
       t4 := _root_.GlobalTheory.RowLaw.exists_pure_typical C V d I κ X hL hP g (hT g) }

@@ -61,8 +61,6 @@ noncomputable section
 
 namespace GlobalTheory.UnitSplit
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem mt_mul (S : HSp D) (g g' : GA D S) : mt S (g * g') = mt S g * mt S g' := by

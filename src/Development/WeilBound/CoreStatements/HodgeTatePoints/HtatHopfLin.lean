@@ -72,28 +72,6 @@ namespace PositivityTheory.HtPt.Htat.SeparatedTensorPullback
 
 variable {R : Type} [CommRing R] [IsDomain R]
 
-theorem tensor_sep {K B₁ B₂ I J : Type} [Field K] [Algebra R K] [IsFractionRing R K]
-    [CommRing B₁] [CommRing B₂] [Algebra R B₁] [Algebra R B₂] [Module.Flat R B₁]
-    [Finite I] [Finite J] (e : I → B₁ →ₐ[R] K) (f : J → B₂ →ₐ[R] K)
-    (he : ∀ b, (∀ i, e i b = 0) → b = 0) (hf : ∀ b, (∀ j, f j b = 0) → b = 0)
-    (x : B₁ ⊗[R] B₂) (h : ∀ i j, Algebra.TensorProduct.productMap (e i) (f j) x = 0) : x = 0 := by
-  exact GlobalTheory.CompanionTheory.Ar.BT.CharMul.tensor_sep e f he hf x h
-
-theorem pullback_sep {K B₁ B₂ I J : Type} [Field K] [Algebra R K] [IsFractionRing R K]
-    [CommRing B₁] [CommRing B₂] [Algebra R B₁] [Algebra R B₂] [Module.Flat R B₁]
-    [Finite I] [Finite J] (e : I → B₁ →ₐ[R] K) (f : J → B₂ →ₐ[R] K)
-    (he : ∀ b, (∀ i, e i b = 0) → b = 0) (hf : ∀ b, (∀ j, f j b = 0) → b = 0)
-    (a₁ : Spec (CommRingCat.of B₁) ⟶ Spec (CommRingCat.of R))
-    (a₂ : Spec (CommRingCat.of B₂) ⟶ Spec (CommRingCat.of R))
-    (h₁ : a₁ = Spec.map (CommRingCat.ofHom (algebraMap R B₁)))
-    (h₂ : a₂ = Spec.map (CommRingCat.ofHom (algebraMap R B₂)))
-    (u : Γ(pullback a₁ a₂, ⊤))
-    (hz : ∀ i j (w : Spec (CommRingCat.of K) ⟶ pullback a₁ a₂),
-      w ≫ pullback.fst a₁ a₂ = Spec.map (CommRingCat.ofHom (e i).toRingHom) →
-      w ≫ pullback.snd a₁ a₂ = Spec.map (CommRingCat.ofHom (f j).toRingHom) → w.appTop u = 0) :
-    u = 0 := by
-  exact GlobalTheory.CompanionTheory.Ar.BT.CharMul.pullback_sep e f he hf a₁ a₂ h₁ h₂ u hz
-
 variable {T : Type} [CommGroup T]
 
 theorem chart_sep [Finite T] (Γ : QFGroup R T) (B : Type) [CommRing B] [Algebra R B]
@@ -138,29 +116,6 @@ theorem chart_sep [Finite T] (Γ : QFGroup R T) (B : Type) [CommRing B] [Algebra
   have h1 := congr((c.appIso ⊤).hom $hs)
   have h2 := congr((Scheme.ΓSpecIso (CommRingCat.of B)).hom $h1)
   simpa using h2
-
-theorem chart_pair [Finite T] (Γ : QFGroup R T) (A₁ A₂ : Type) [CommRing A₁] [CommRing A₂]
-    (c₁ : Spec (CommRingCat.of A₁) ⟶ Γ.G.left) (c₂ : Spec (CommRingCat.of A₂) ⟶ Γ.G.left)
-    (o₁ : IsOpenImmersion c₁) (o₂ : IsOpenImmersion c₂) (u : Γ(pullback (c₁ ≫ Γ.G.hom) (c₂ ≫ Γ.G.hom), ⊤))
-    (hu : ∀ (a b : T) (w : Spec (CommRingCat.of (FractionRing R)) ⟶ pullback (c₁ ≫ Γ.G.hom) (c₂ ≫ Γ.G.hom)),
-      w ≫ pullback.fst _ _ ≫ c₁ = (Γ.pt a).left → w ≫ pullback.snd _ _ ≫ c₂ = (Γ.pt b).left → w.appTop u = 0) :
-    u = 0 := by
-  letI : Algebra R A₁ := (Spec.preimage (c₁ ≫ Γ.G.hom)).hom.toAlgebra
-  letI : Algebra R A₂ := (Spec.preimage (c₂ ≫ Γ.G.hom)).hom.toAlgebra
-  have h₁ : c₁ ≫ Γ.G.hom = Spec.map (CommRingCat.ofHom (algebraMap R A₁)) :=
-    (Spec.map_preimage (c₁ ≫ Γ.G.hom)).symm
-  have h₂ : c₂ ≫ Γ.G.hom = Spec.map (CommRingCat.ofHom (algebraMap R A₂)) :=
-    (Spec.map_preimage (c₂ ≫ Γ.G.hom)).symm
-  haveI : Flat Γ.G.hom := Γ.flat
-  haveI : Module.Flat R A₁ := by
-    have : Flat (Spec.map (CommRingCat.ofHom (algebraMap R A₁))) := h₁ ▸ inferInstance
-    rw [Flat.SpecMap_iff] at this
-    exact (RingHom.flat_algebraMap_iff).1 this
-  obtain ⟨I, _, τ, e, he, hi⟩ := chart_sep Γ A₁ c₁ h₁
-  obtain ⟨J, _, τ', f, hf, hj⟩ := chart_sep Γ A₂ c₂ h₂
-  refine pullback_sep e f hi hj _ _ h₁ h₂ u fun i j w hw₁ hw₂ => hu (τ i) (τ' j) w ?_ ?_
-  · rw [← Category.assoc, hw₁, he]
-  · rw [← Category.assoc, hw₂, hf]
 
 theorem sec_prod_zero [Finite T] (Γ : QFGroup R T) (u : Γ((Γ.G ⊗ Γ.G).left, ⊤))
     (hu : ∀ a b, (lift (Γ.pt a) (Γ.pt b)).left.appTop u = 0) : u = 0 := by

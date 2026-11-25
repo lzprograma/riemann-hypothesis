@@ -198,7 +198,7 @@ theorem _root_.GlobalTheory.CongruenceIndex.exists_finset_cosets (hΛ : Λ.FG) {
   refine ⟨Finset.univ.image rep, fun γ hγ =>
     ⟨rep (Φ ⟨γ, hγ⟩), Finset.mem_image_of_mem _ (Finset.mem_univ _), ?_⟩⟩
   have hex : ∃ δ : St, Φ δ = Φ ⟨γ, hγ⟩ := ⟨_, rfl⟩
-  have hrep : rep (Φ ⟨γ, hγ⟩) = hex.choose.1 := dif_pos hex
+  have hrep : rep (Φ ⟨γ, hγ⟩) = hex.choose.1 := dite_eq_left hex
   rw [hrep]
   refine inv_mul_mem_congruenceSubgroup_of_agree_mod hT hex.choose.2 hγ (fun t ht => ?_)
   have hq := congrFun hex.choose_spec ⟨t, ht⟩

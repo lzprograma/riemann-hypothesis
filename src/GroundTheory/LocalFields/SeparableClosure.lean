@@ -348,11 +348,4 @@ theorem continuous_algEquiv_of_isAlgebraic (σ : Ω ≃ₐ[K] Ω) : Continuous �
 
 end Finite
 
-section Check
-
-variable (K : Type*) [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
-  (L : IntermediateField K (SeparableClosure K)) [FiniteDimensional K L]
-
-end Check
-
 end GroundTheory.LocalField

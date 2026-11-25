@@ -166,10 +166,6 @@ open scoped InnerProductSpace Matrix
 
 alias jm_sq := _root_.Formalism.REAL.Jm_mul_self
 
-theorem jm_jm_mul {n : ℕ} (ε : Fin n → Bool) (M : Matrix (Fin n) (Fin n) ℂ) :
-    Formalism.REAL.Jm ε * (Formalism.REAL.Jm ε * M) = M := by
-  rw [← Matrix.mul_assoc, jm_sq, Matrix.one_mul]
-
 theorem jm_inv {n : ℕ} (ε : Fin n → Bool) : (Formalism.REAL.Jm ε)⁻¹ = Formalism.REAL.Jm ε := Matrix.inv_eq_left_inv (jm_sq ε)
 
 theorem jm_isUnit {n : ℕ} (ε : Fin n → Bool) : IsUnit (Formalism.REAL.Jm ε) := ⟨⟨Formalism.REAL.Jm ε, Formalism.REAL.Jm ε, jm_sq ε, jm_sq ε⟩, rfl⟩
@@ -196,7 +192,7 @@ theorem exp_mem_UJ {n : ℕ} {ε : Fin n → Bool} {X : Matrix (Fin n) (Fin n) �
   rw [← Matrix.exp_conjTranspose, hA, Matrix.exp_conj _ _ (jm_isUnit ε), jm_inv]
   calc Formalism.REAL.Jm ε * NormedSpace.exp (-A) * Formalism.REAL.Jm ε * Formalism.REAL.Jm ε * NormedSpace.exp A
       = Formalism.REAL.Jm ε * (NormedSpace.exp (-A) * NormedSpace.exp A) := by
-        simp only [Matrix.mul_assoc, jm_jm_mul]
+        simp only [Matrix.mul_assoc, Formalism.REAL.f1alg_JJ_left]
     _ = Formalism.REAL.Jm ε := by rw [hcomm, Matrix.mul_one]
 
 end PI.UnitaryGroupMassFormula.DSIC
@@ -220,10 +216,6 @@ open ReciprocityTheory.ChartRestriction.DS
 
 variable {n : ℕ} {ε : Fin n → Bool}
 
-theorem jm_sq : Jm ε * Jm ε = 1 := by
-  unfold Jm; rw [Matrix.diagonal_mul_diagonal]
-  convert Matrix.diagonal_one; split_ifs <;> simp
-
 section Transp
 
 variable {P Q : Matrix (Fin n) (Fin n) ℂ}
@@ -232,7 +224,7 @@ theorem hinv (hQP : Q * P = 1) (hPQ : P * Q = 1) : (Pᴴ * Jm ε * P)⁻¹ = Q *
   apply Matrix.inv_eq_left_inv
   have h1 : Qᴴ * Pᴴ = 1 := by rw [← Matrix.conjTranspose_mul, hPQ, Matrix.conjTranspose_one]
   calc Q * Jm ε * Qᴴ * (Pᴴ * Jm ε * P) = Q * (Jm ε * ((Qᴴ * Pᴴ) * (Jm ε * P))) := by simp only [Matrix.mul_assoc]
-    _ = 1 := by rw [h1, Matrix.one_mul, ← Matrix.mul_assoc (Jm ε), jm_sq, Matrix.one_mul, hQP]
+    _ = 1 := by rw [h1, Matrix.one_mul, ← Matrix.mul_assoc (Jm ε), ReciprocityTheory.ChartRestriction.DS.PolarDecomposition.polar_Jm_mul_self, Matrix.one_mul, hQP]
 
 theorem conj_star (hQP : Q * P = 1) (hPQ : P * Q = 1) (Z : Matrix (Fin n) (Fin n) ℂ) :
     P * ((Pᴴ * Jm ε * P)⁻¹ * Zᴴ * (Pᴴ * Jm ε * P)) * Q = Jm ε * (P * Z * Q)ᴴ * Jm ε := by
@@ -376,11 +368,11 @@ theorem top_cf (hσ : IsURepOn (UJset ε) σ) (hQP : Q * P = 1) (hPQ : P * Q = 1
   unfold Formalism.QuantumDeterminants.Top Formalism.REAL.Tm
   rw [eabH_cf hσ hQP hPQ a T x f hf c d hg, hf g hg]
   by_cases hcd : c = d
-  · rw [if_pos hcd, if_pos hcd, LinearMap.add_apply, Submodule.coe_add, map_add (f := _), inner_add_right, add_smul,
+  · rw [ite_eq_left hcd, ite_eq_left hcd, LinearMap.add_apply, Submodule.coe_add, map_add (f := _), inner_add_right, add_smul,
       Algebra.algebraMap_eq_smul_one, LinearMap.smul_apply, Module.End.one_apply, Submodule.coe_smul, map_smul,
       inner_smul_right, smul_smul]
     rfl
-  · rw [if_neg hcd, if_neg hcd, zero_add, zero_add]
+  · rw [ite_eq_right hcd, ite_eq_right hcd, zero_add, zero_add]
     rfl
 
 theorem foldr_cf (hσ : IsURepOn (UJset ε) σ) (hQP : Q * P = 1) (hPQ : P * Q = 1) (a : H) (T : E) :

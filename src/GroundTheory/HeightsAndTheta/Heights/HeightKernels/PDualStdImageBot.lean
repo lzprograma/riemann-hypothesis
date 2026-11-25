@@ -60,7 +60,6 @@ theorem evalQ_graphMap (b : Module.Basis T ℤ (dualLattice (HermLattice.standar
   induction f using MvPolynomial.induction_on with
   | C a => simp [graphMap, evalQ]
   | add p q hp hq =>
-    set_option synthInstance.maxHeartbeats 200000 in
       simp only [map_add, hp, hq]
   | mul_X p q hp =>
     rw [map_mul, map_mul, map_mul, hp, map_mul, aeval_X, rename_X, ← aeval_linForm b q]

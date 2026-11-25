@@ -310,7 +310,7 @@ theorem coeff_teich (c : L) (n : ℕ) : T.coeff (T.teich c) n = if n = 0 then c 
 theorem coeff_π_pow_mul_teich (k : ℕ) (c : L) (n : ℕ) :
     T.coeff (T.π ^ k * T.teich c) n = if n = k then c else 0 := by
   rcases lt_or_ge n k with h | h
-  · rw [T.coeff_π_pow_mul_of_lt _ h, if_neg (by omega)]
+  · rw [T.coeff_π_pow_mul_of_lt _ h, ite_eq_right (by omega)]
   · obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le' h
     rw [T.coeff_π_pow_mul_add, coeff_teich]
     split_ifs <;> first | rfl | omega
@@ -520,8 +520,7 @@ theorem exists_prefix_small {a : ℤ → L} {ρ : ℝ} (hρ0 : 0 < ρ) (hρ1 : �
   obtain ⟨N0, hN0⟩ : ∃ N0 : ℤ, ∀ m, N0 ≤ m → ‖a m‖ * ρ ^ m ≤ ε := by
     obtain ⟨B, hB⟩ := (h.finite_le hε).bddAbove
     refine ⟨B + 1, fun m hm => ?_⟩
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have := hB (show m ∈ {n | ε ≤ ‖a n‖ * ρ ^ n} from hc.le)
     omega
   have hG := gaussNorm_nonneg (a := a) hρ0
@@ -551,12 +550,10 @@ theorem convergesAt_of_eventually {a : ℤ → L} {ρ : ℝ} (hρ0 : 0 < ρ) (hn
   have hw : 0 ≤ ‖a n‖ * ρ ^ n := mul_nonneg (norm_nonneg _) (zpow_pos hρ0 n).le
   rw [Set.mem_setOf_eq, dist_zero_right, Real.norm_eq_abs, abs_of_nonneg hw, not_lt] at hn
   refine ⟨?_, ?_⟩
-  · by_contra hc
-    push_neg at hc
+  · by_contra! hc
     rw [hN1 n hc, norm_zero, zero_mul] at hn
     linarith
-  · by_contra hc
-    push_neg at hc
+  · by_contra! hc
     have := hN2 n hc
     linarith
 
@@ -584,15 +581,15 @@ theorem coeff_tail_iterate (x : Γ) (k m : ℕ) : T.coeff (T.tail^[k] x) m = T.c
 theorem finSum_ite_eq (a : ℕ → L) {N n : ℕ} (h : N ≤ n) :
     T.finSum (fun j => if j < N then a j else 0) n = T.finSum a N := by
   induction n, h using Nat.le_induction with
-  | base => exact T.finSum_congr fun i hi => if_pos hi
-  | succ n hNn ih => rw [finSum_succ, ih, if_neg (by omega), T.teich_zero, mul_zero, add_zero]
+  | base => exact T.finSum_congr fun i hi => ite_eq_left hi
+  | succ n hNn ih => rw [finSum_succ, ih, ite_eq_right (by omega), T.teich_zero, mul_zero, add_zero]
 
 theorem coeff_finSum (a : ℕ → L) (N i : ℕ) :
     T.coeff (T.finSum a N) i = if i < N then a i else 0 := by
   refine T.coeff_eq_of_mem (a := fun j => if j < N then a j else 0) ?_ i le_rfl
   rcases le_total (i + 1) N with h | h
   · have e : T.finSum (fun j => if j < N then a j else 0) (i + 1) = T.finSum a (i + 1) :=
-      T.finSum_congr fun j hj => if_pos (by omega)
+      T.finSum_congr fun j hj => ite_eq_left (by omega)
     rw [e]; exact T.finSum_sub_finSum_mem a h
   · rw [T.finSum_ite_eq a h, sub_self]; exact zero_mem _
 
@@ -781,12 +778,10 @@ theorem gaussNorm_lowIndex_zcoeff_mul {x y : Γ} (hρ0 : 0 < ρ) (hρ1 : ρ < 1)
   have hi0 := lowIndex_mem hρ0 hx hx0'
   have hl0 := lowIndex_mem hρ0 hy hy0'
   have hi0nn : 0 ≤ lowIndex (T.zcoeff x) ρ := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact ne_zero_of_mem_domSet hρ0 hx hx0' hi0 (T.zcoeff_of_neg x h)
   have hl0nn : 0 ≤ lowIndex (T.zcoeff y) ρ := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact ne_zero_of_mem_domSet hρ0 hy hy0' hl0 (T.zcoeff_of_neg y h)
   obtain ⟨k0, hk0⟩ : ∃ k0 : ℕ, lowIndex (T.zcoeff x) ρ = k0 :=
     ⟨_, (Int.toNat_of_nonneg hi0nn).symm⟩
@@ -862,8 +857,7 @@ theorem gaussNorm_lowIndex_zcoeff_mul {x y : Γ} (hρ0 : 0 < ρ) (hρ1 : ρ < 1)
     have := hE m m le_rfl
     rwa [le_div_iff₀ (zpow_pos hρ0 _)] at this
   have hn : gx * gy ≤ ‖T.coeff (x * y) n‖ * ρ ^ (n : ℤ) := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hβ' : max β (‖T.coeff (x * y) n‖ * ρ ^ (n : ℤ)) < gx * gy := max_lt hβ hcon
     have h1 : T.PrefixLe (x * y) n (max β (‖T.coeff (x * y) n‖ * ρ ^ (n : ℤ)) / ρ ^ (n : ℤ)) :=
       fun m hm => by
@@ -898,8 +892,7 @@ theorem gaussNorm_lowIndex_zcoeff_mul {x y : Γ} (hρ0 : 0 < ρ) (hρ1 : ρ < 1)
   rw [hk0, hl0']
   refine le_antisymm ?_ ?_
   · have := lowIndex_le hρ0 hc hxyn hmem; rw [hndef] at this; exact_mod_cast this
-  · by_contra hcon
-    push_neg at hcon
+  · by_contra! hcon
     have hj := lowIndex_mem hρ0 hc hxyn
     set j := lowIndex (T.zcoeff (x * y)) ρ
     simp only [domSet, Set.mem_setOf_eq] at hj
@@ -975,7 +968,7 @@ theorem zcoeff_π_pow_mul (M : ℕ) (z : Γ) (j : ℤ) : T.zcoeff (T.π ^ M * z)
 theorem zcoeff_one : T.zcoeff 1 = Pi.single 0 1 := by
   funext n
   rcases lt_or_ge n 0 with hn | hn
-  · rw [T.zcoeff_of_neg _ hn, Pi.single_apply, if_neg hn.ne]
+  · rw [T.zcoeff_of_neg _ hn, Pi.single_apply, ite_eq_right hn.ne]
   · lift n to ℕ using hn
     rw [zcoeff_natCast, ← T.teich_one, coeff_teich, Pi.single_apply]
     simp
@@ -1013,7 +1006,7 @@ theorem convergesAt_pi_single (n₀ : ℤ) (c : L) (ρ : ℝ) : ConvergesAt (Pi.
 theorem zcoeff_π_pow_mul_teich (N : ℕ) (c : L) : T.zcoeff (T.π ^ N * T.teich c) = Pi.single (N : ℤ) c := by
   funext n
   rcases lt_or_ge n 0 with hn | hn
-  · rw [T.zcoeff_of_neg _ hn, Pi.single_apply, if_neg (by omega)]
+  · rw [T.zcoeff_of_neg _ hn, Pi.single_apply, ite_eq_right (by omega)]
   · lift n to ℕ using hn
     rw [zcoeff_natCast, coeff_π_pow_mul_teich, Pi.single_apply]
     simp
@@ -1244,7 +1237,7 @@ theorem toB_algebraMap (x : AInf K p) :
   IsLocalization.lift_eq _ x
 
 theorem toB_injective : Function.Injective (toB K p) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro z hz
   obtain ⟨⟨y, s⟩, hs⟩ := IsLocalization.surj (Submonoid.powers (p : AInf K p)) z
   simp only at hs
@@ -1483,14 +1476,14 @@ theorem gn_dpow_le (hp0 : ‖(p : K)‖ ≤ ρ) (hρ0 : 0 < ρ) (hρ1 : ρ < 1) 
     pow_le_pow_left₀ (gn_nonneg hρ0 _) (gn_ker_le hp0 hρ0 hρ1 hx) n
   have h2 : ρ ^ n ≤ ρ ^ (n.factorial.factorization p) := pow_le_pow_of_le_one hρ0.le hρ1.le hv
   have hpos : 0 < ρ ^ (n.factorial.factorization p) := pow_pos hρ0 _
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   have := mul_lt_mul_of_pos_left hc hpos
   linarith
 
 theorem gn_acrisZero_le_one (hp0 : ‖(p : K)‖ ≤ ρ) (hρ0 : 0 < ρ) (hρ1 : ρ < 1) {z : 𝔸}
     (hz : z ∈ ACris.ACrisZero K p) : gn K p ρ z ≤ 1 := by
-  have hz' : z ∈ Algebra.adjoin (AInf K p) {y | ∃ n : ℕ, ∃ x ∈ RingHom.ker θ, ACris.dpow n x = y} := hz
+  have hz' : z ∈ Algebra.adjoin (AInf K p) {y | ∃ n : ℕ, ∃ x ∈ RingHom.ker θ, ACris.dpow n x = y} :=
+    ACris.acrisZero_eq_adjoin_dpow (K := K) (p := p) ▸ hz
   clear hz
   induction hz' using Algebra.adjoin_induction with
   | mem x hx =>
@@ -1535,8 +1528,7 @@ theorem norm_theta_le (x : AInf K p) :
       exact this
     · rw [norm_mul, norm_pow]
       exact mul_le_of_le_one_right (by positivity) (mem_normInteger.1 (θ d).2)
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   obtain ⟨n, hn⟩ := exists_pow_lt_of_lt_one (lt_of_le_of_lt (gn_nonneg hr0 _) hlt) hr1
   have h2 : r₀ ^ (n + 1) < ‖((θ x : 𝒪) : K)‖ :=
     (pow_le_pow_of_le_one hr0.le hr1.le (Nat.le_succ n)).trans_lt hn

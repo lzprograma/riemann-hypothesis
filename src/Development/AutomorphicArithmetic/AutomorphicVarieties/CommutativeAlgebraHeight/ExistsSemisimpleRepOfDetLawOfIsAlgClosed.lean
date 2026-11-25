@@ -663,23 +663,6 @@ private theorem det_bd {α : Type*} [Fintype α] [DecidableEq α] {m : α → Ty
     simp [Matrix.toSquareBlock_def, Equiv.sigmaSubtype]
   rw [this, Matrix.det_submatrix_equiv_self]
 
-private theorem pull_pull {n : ℕ} {A E E' E'' : Type} [CommRing A] [Ring E] [Algebra A E] [Ring E'] [Algebra A E']
-    [Ring E''] [Algebra A E''] (D : Det n A E) (f : E' →ₐ[A] E) (g : E'' →ₐ[A] E') :
-    (D.pull f).pull g = D.pull (f.comp g) := by
-  refine Det.ext' fun S _ _ x => ?_
-  change D.D S (Algebra.TensorProduct.map (AlgHom.id S S) f (Algebra.TensorProduct.map (AlgHom.id S S) g x)) =
-    D.D S (Algebra.TensorProduct.map (AlgHom.id S S) (f.comp g) x)
-  congr 1
-  induction x with
-  | tmul s y => simp
-  | add a b ha hb => simp only [map_add (f := _), ha, hb]
-
-private theorem pull_id {n : ℕ} {A E : Type} [CommRing A] [Ring E] [Algebra A E] (D : Det n A E) :
-    D.pull (AlgHom.id A E) = D := by
-  refine Det.ext' fun S _ _ x => ?_
-  change D.D S (Algebra.TensorProduct.map (AlgHom.id S S) (AlgHom.id A E) x) = D.D S x
-  simp
-
 private theorem ofRep_comp {n : ℕ} {A E E' ι : Type} [CommRing A] [Ring E] [Algebra A E] [Ring E'] [Algebra A E']
     [Fintype ι] [DecidableEq ι] (h : Fintype.card ι = n) (r : E →ₐ[A] Matrix ι ι A) (g : E' →ₐ[A] E) :
     Det.ofRep h (r.comp g) = (Det.ofRep h r).pull g := by
@@ -778,10 +761,13 @@ theorem UpperTheory.V.CA.exists_semisimple_rep_of_detLaw_of_isAlgClosed :
     rw [hrange]
     exact RingHom.isSemisimpleRing_of_surjective (r.comp e.toAlgHom).rangeRestrict.toRingHom
       (AlgHom.rangeRestrict_surjective _)
-  · rw [ofRep_comp, ofRep_comp, hr, pull_pull D']
-    have : e.symm.toAlgHom.comp e.toAlgHom = AlgHom.id k _ := by
-      ext x; simp
-    rw [this, pull_id, hD']
+  · rw [ofRep_comp, ofRep_comp, hr]
+    refine Eq.trans (congrArg (Det.pull · f) ?_) hD'
+    refine Det.ext' fun S _ _ x => ?_
+    change D'.D S (Algebra.TensorProduct.map (AlgHom.id S S) e.symm.toAlgHom
+      (Algebra.TensorProduct.map (AlgHom.id S S) e.toAlgHom x)) = D'.D S x
+    rw [← AlgHom.comp_apply, ← Algebra.TensorProduct.map_id_comp]
+    simp [AlgEquiv.symm_comp]
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.ExistsSemisimpleRepOfDetLawOfIsAlgClosed =====

@@ -6,52 +6,6 @@ public import Mathlib.RingTheory.Etale.Kaehler
 public import Mathlib.RingTheory.TensorProduct.Free
 public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
 public import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.SpanSingletonProduct
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -95,86 +49,18 @@ theorem linearIndependent_one_tmul_D_X :
   exact (Algebra.TensorProduct.basis S
     (KaehlerDifferential.mvPolynomialBasis k ι)).linearIndependent
 
-private theorem D_mem_span_range_D_X (K : Type*) [CommRing K] (σ : Type*)
-    (f : MvPolynomial σ K) :
-    KaehlerDifferential.D K (MvPolynomial σ K) f ∈
-      Submodule.span (MvPolynomial σ K)
-        (Set.range fun i : σ =>
-          KaehlerDifferential.D K (MvPolynomial σ K) (MvPolynomial.X i)) := by
-  induction f using MvPolynomial.induction_on
-  · rename_i a
-    rw [← MvPolynomial.algebraMap_eq, Derivation.map_algebraMap]
-    exact Submodule.zero_mem _
-  · rename_i p q hp hq
-    rw [map_add (f := _)]
-    exact Submodule.add_mem _ hp hq
-  · rename_i p i hp
-    rw [Derivation.leibniz]
-    exact Submodule.add_mem _
-      (Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩))
-      (Submodule.smul_mem _ _ hp)
-
-private theorem span_range_D_X_eq_top (K : Type*) [CommRing K] (σ : Type*) :
-    Submodule.span (MvPolynomial σ K)
-        (Set.range fun i : σ =>
-          KaehlerDifferential.D K (MvPolynomial σ K) (MvPolynomial.X i)) = ⊤ := by
-  refine eq_top_iff.mpr ?_
-  rw [← KaehlerDifferential.span_range_derivation, Submodule.span_le]
-  rintro _ ⟨f, rfl⟩
-  exact D_mem_span_range_D_X K σ f
-
-private theorem smul_one_tmul
-    (R : Type*) [CommRing R] (A : Type*) [CommRing A] [Algebra R A]
-    (M : Type*) [AddCommGroup M] [Module R M] (a : A) (m : M) :
-    a • ((1 : A) ⊗ₜ[R] m) = a ⊗ₜ[R] m := by
-  have h2 : a • (1 : A) = a := by rw [smul_eq_mul, mul_one]
-  have h1 : ((a • (1 : A)) ⊗ₜ[R] m : A ⊗[R] M) = a • ((1 : A) ⊗ₜ[R] m) := by
-    rw [TensorProduct.smul_tmul']
-  rw [h2] at h1
-  exact h1.symm
-
-private theorem top_le_span_range_one_tmul
-    (R : Type*) [CommRing R] (A : Type*) [CommRing A] [Algebra R A]
-    (M : Type*) [AddCommGroup M] [Module R M]
-    (τ : Type*) (g : τ → M)
-    (hs : Submodule.span R (Set.range g) = ⊤) :
-    ⊤ ≤ Submodule.span A (Set.range fun i : τ => (1 : A) ⊗ₜ[R] g i) := by
-  have key : ∀ m : M, ∀ a : A,
-      a ⊗ₜ[R] m ∈ Submodule.span A (Set.range fun i : τ => (1 : A) ⊗ₜ[R] g i) := by
-    intro m
-    have hm : m ∈ Submodule.span R (Set.range g) := by
-      rw [hs]; exact Submodule.mem_top
-    refine Submodule.span_induction ?_ ?_ ?_ ?_ hm
-    · rintro x ⟨i, rfl⟩ a
-      rw [← smul_one_tmul R A M a (g i)]
-      exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
-    · intro a
-      rw [TensorProduct.tmul_zero]
-      exact Submodule.zero_mem _
-    · intro x y _ _ hx hy a
-      rw [TensorProduct.tmul_add]
-      exact Submodule.add_mem _ (hx a) (hy a)
-    · intro r x _ hx a
-      have e : a ⊗ₜ[R] (r • x) = (r • a) ⊗ₜ[R] x := by
-        rw [TensorProduct.smul_tmul]
-      rw [e]
-      exact hx (r • a)
-  intro w _
-  refine TensorProduct.induction_on w ?_ ?_ ?_
-  · exact Submodule.zero_mem _
-  · intro a m
-    exact key m a
-  · intro u v hu hv
-    exact Submodule.add_mem _ hu hv
-
 omit [Algebra k S] [IsScalarTower k (MvPolynomial ι k) S] in
 theorem top_le_span_one_tmul_D_X :
     ⊤ ≤ Submodule.span S (Set.range fun i : ι =>
         (1 : S) ⊗ₜ[MvPolynomial ι k]
-          (KaehlerDifferential.D k (MvPolynomial ι k) (MvPolynomial.X i))) :=
-  top_le_span_range_one_tmul (MvPolynomial ι k) S (KaehlerDifferential k (MvPolynomial ι k)) ι
-    (fun i : ι => KaehlerDifferential.D k (MvPolynomial ι k) (MvPolynomial.X i))
-    (span_range_D_X_eq_top k ι)
+          (KaehlerDifferential.D k (MvPolynomial ι k) (MvPolynomial.X i))) := by
+  have hfun : (fun i : ι => (1 : S) ⊗ₜ[MvPolynomial ι k]
+        (KaehlerDifferential.D k (MvPolynomial ι k) (MvPolynomial.X i))) =
+      ⇑(Algebra.TensorProduct.basis S (KaehlerDifferential.mvPolynomialBasis k ι)) := by
+    funext i
+    rw [Algebra.TensorProduct.basis_apply, KaehlerDifferential.mvPolynomialBasis_apply]
+  rw [hfun]
+  exact (Algebra.TensorProduct.basis S (KaehlerDifferential.mvPolynomialBasis k ι)).span_eq.ge
 
 noncomputable def tensorKaehlerBasis :
     Module.Basis ι S (S ⊗[MvPolynomial ι k] KaehlerDifferential k (MvPolynomial ι k)) :=
@@ -335,8 +221,11 @@ theorem top_le_span_kaehlerMap_basis (b : Module.Basis ι S (KaehlerDifferential
     intro x
     obtain ⟨y, hy⟩ := (hexact x).mp (Subsingleton.elim _ _)
     exact ⟨y, hy⟩
-  have hspan : ⊤ ≤ Submodule.span S' (Set.range fun i : ι => (1 : S') ⊗ₜ[S] b i) :=
-    top_le_span_range_one_tmul S S' (KaehlerDifferential k S) ι (⇑b) b.span_eq
+  have hfun : (fun i : ι => (1 : S') ⊗ₜ[S] b i) = ⇑(Algebra.TensorProduct.basis S' b) :=
+    funext fun i => (Algebra.TensorProduct.basis_apply (A := S') b i).symm
+  have hspan : ⊤ ≤ Submodule.span S' (Set.range fun i : ι => (1 : S') ⊗ₜ[S] b i) := by
+    rw [hfun]
+    exact (Algebra.TensorProduct.basis S' b).span_eq.ge
   have hle : Submodule.span S' (Set.range fun i : ι => (1 : S') ⊗ₜ[S] b i) ≤
       Submodule.comap (KaehlerDifferential.mapBaseChange k S S')
         (Submodule.span S'

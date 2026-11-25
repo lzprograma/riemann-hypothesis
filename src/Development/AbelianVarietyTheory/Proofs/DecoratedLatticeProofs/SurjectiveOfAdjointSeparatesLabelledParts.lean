@@ -92,7 +92,7 @@ theorem exists_sum_pairwise_unrelated {A I : Type} [AddCommGroup A] [Module ℂ 
           simp only [Function.update_self]
           rw [Finset.sum_congr rfl (fun j hj => Function.update_of_ne (Finset.ne_of_mem_erase hj) _ _)]
           abel
-    · push_neg at hex
+    · push Not at hex
       have hBs : B ∉ s := fun hB => hex B hB (hRA.refl B)
       refine ⟨insert B s, Function.update v B w, ?_, ?_, ?_⟩
       · intro j hj

@@ -19,8 +19,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 open Classical ValuativeRel
 open Formalism.L2.SG.Pf.AtPt Formalism.L2.SG.TermLoc
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section BlockList
 
 variable {K : Type*} [Zero K]
@@ -58,9 +56,9 @@ theorem pSt_same (bs : List (K × ℕ)) (hbs : ∀ b ∈ bs, 1 ≤ b.2) (i j : �
     simp only [List.map_cons, List.sum_cons] at hi hj
     by_cases hi' : i < s <;> by_cases hj' : j < s
     · simp [pSz, pTau, hi', hj']
-    · simp only [pSt, hi', hj', if_true, if_false] at h; omega
-    · simp only [pSt, hi', hj', if_true, if_false] at h; omega
-    · simp only [pSt, hi', hj', if_false] at h
+    · simp only [pSt, hi', hj', ite_true, ite_false] at h; omega
+    · simp only [pSt, hi', hj', ite_true, ite_false] at h; omega
+    · simp only [pSt, hi', hj', ite_false] at h
       obtain ⟨e1, e2⟩ := ih (fun b hb => hbs b (List.mem_cons_of_mem _ hb)) (i - s) (j - s) (by omega) (by omega)
         (by omega)
       simp [pSz, pTau, hi', hj', e1, e2]
@@ -92,9 +90,9 @@ theorem sameBlock_iff {E' : Type} [CommRing E'] (bs : List (E'ˣ × ℕ+)) (cs :
       rw [hs]
       by_cases ha' : a < s' <;> by_cases hb' : b < s'
       · simp [ha', hb']
-      · simp only [ha', hb', if_true, if_false]; simp; omega
-      · simp only [ha', hb', if_true, if_false]; simp; omega
-      · simp only [ha', hb', if_false]
+      · simp only [ha', hb', ite_true, ite_false]; simp; omega
+      · simp only [ha', hb', ite_true, ite_false]; simp; omega
+      · simp only [ha', hb', ite_false]
         have hx := ih cs hrest (a - s') (b - s') (by omega) (by omega)
         simp only [not_lt.1 ha', not_lt.1 hb', and_self, decide_true, Bool.true_and, decide_false, Bool.false_or]
         rw [hx]
@@ -114,16 +112,16 @@ theorem bdM_mul {N : ℕ} {R : Type*} [CommRing R] (blk : Fin N → ℕ) (A X : 
   ext a b
   simp only [bdM, Matrix.of_apply, Matrix.mul_apply]
   by_cases hab : blk a = blk b
-  · rw [if_pos hab]
+  · rw [ite_eq_left hab]
     refine Finset.sum_congr rfl fun c _ => ?_
     by_cases hc : blk a = blk c
-    · rw [if_pos (hc.symm.trans hab)]
+    · rw [ite_eq_left (hc.symm.trans hab)]
     · rw [hA a c hc, zero_mul, zero_mul]
-  · rw [if_neg hab]
+  · rw [ite_eq_right hab]
     symm
     refine Finset.sum_eq_zero fun c _ => ?_
     by_cases hc : blk a = blk c
-    · rw [if_neg (fun h => hab (hc.trans h)), mul_zero]
+    · rw [ite_eq_right (fun h => hab (hc.trans h)), mul_zero]
     · rw [hA a c hc, zero_mul]
 
 theorem bdM_one {N : ℕ} {R : Type*} [CommRing R] (blk : Fin N → ℕ) : bdM blk (1 : Matrix (Fin N) (Fin N) R) = 1 := by
@@ -166,7 +164,7 @@ theorem inOrbP_of_orb {δ : ∀ p : PlF D, (D.s.atP p).Fp} {T T' : ℕ} {p : PlF
   set β' : MatP D p := Matrix.of fun a b => β (σ a) (σ b)
   have hβU : IsUp β := by
     refine ⟨fun a => ?_, fun a b hab => ?_⟩
-    · simp only [β, bdM, Matrix.of_apply, if_true, hU.1]
+    · simp only [β, bdM, Matrix.of_apply, ite_true, hU.1]
     · simp only [β, bdM, Matrix.of_apply]; split_ifs <;> simp [hU.2 a b hab]
   have hβ'L : IsLo β' := by
     refine ⟨fun a => ?_, fun a b hab => ?_⟩
@@ -180,7 +178,7 @@ theorem inOrbP_of_orb {δ : ∀ p : PlF D, (D.s.atP p).Fp} {T T' : ℕ} {p : PlF
     ext a b
     simp only [Matrix.mul_apply]
     rw [Finset.sum_eq_single (σ a), Finset.sum_eq_single (σ b)]
-    · rw [hW a (σ a), if_pos rfl, hW (σ b) b, if_pos (hσσ b).symm]
+    · rw [hW a (σ a), ite_eq_left rfl, hW (σ b) b, ite_eq_left (hσσ b).symm]
       simp only [β', Matrix.of_apply, hσσ, β, bdM]
       split_ifs with hb
       · have hab : blk a = blk (σ b) := (hσblk a).symm.trans (hb.trans (hσblk b).symm)
@@ -188,9 +186,9 @@ theorem inOrbP_of_orb {δ : ∀ p : PlF D, (D.s.atP p).Fp} {T T' : ℕ} {p : PlF
         have e0 : pSt w.1 a.val = pSt w.1 (σ b).val := hab
         rw [e0, e1, e2]; ring
       · rw [mul_zero, zero_mul]
-    · intro c _ hc; rw [hW c b, if_neg (fun h => hc (by rw [h, hσσ])), mul_zero]
+    · intro c _ hc; rw [hW c b, ite_eq_right (fun h => hc (by rw [h, hσσ])), mul_zero]
     · intro h; exact absurd (Finset.mem_univ _) h
-    · intro c _ hc; rw [hW a c, if_neg hc, zero_mul]
+    · intro c _ hc; rw [hW a c, ite_eq_right hc, zero_mul]
     · intro h; exact absurd (Finset.mem_univ _) h
   have hβdet : IsUnit β.det := by rw [det_up' hβU]; exact isUnit_one
   have hβblk : ∀ a c, blk a ≠ blk c → β a c = 0 := fun a c h => by simp [β, bdM, h]
@@ -228,8 +226,8 @@ theorem inOrbP_of_orb {δ : ∀ p : PlF D, (D.s.atP p).Fp} {T T' : ℕ} {p : PlF
   · ext a b
     simp only [Loc.uLow]
     by_cases hab : a = b
-    · subst hab; rw [if_pos rfl, hLβ.1]
-    · rw [if_neg hab]
+    · subst hab; rw [ite_eq_left rfl, hLβ.1]
+    · rw [ite_eq_right hab]
       by_cases hlt : b < a
       · rw [dite_eq_left hlt]
       · rw [dite_eq_right hlt]
@@ -237,10 +235,10 @@ theorem inOrbP_of_orb {δ : ∀ p : PlF D, (D.s.atP p).Fp} {T T' : ℕ} {p : PlF
   · ext a b
     simp only [Loc.uUp]
     by_cases hab : a = b
-    · subst hab; rw [if_pos rfl]
+    · subst hab; rw [ite_eq_left rfl]
       have := congrFun (congrFun hn1 a) a
       simpa [bdM] using this
-    · rw [if_neg hab]
+    · rw [ite_eq_right hab]
       by_cases hc : a < b ∧ Loc.sameBlock w₀.blocks a b = false
       · rw [dite_eq_left hc]
       · rw [dite_eq_right hc]
@@ -251,7 +249,7 @@ theorem inOrbP_of_orb {δ : ∀ p : PlF D, (D.s.atP p).Fp} {T T' : ℕ} {p : PlF
             (by rw [hsum]; exact b.2)).1 hsb
           have := congrFun (congrFun hn1 a) b
           simp only [bdM, Matrix.of_apply] at this
-          rw [if_pos hb', Matrix.one_apply_ne hab] at this
+          rw [ite_eq_left hb', Matrix.one_apply_ne hab] at this
           exact this
         · exact hnU.2 b a (lt_of_le_of_ne (not_lt.1 hlt) (Ne.symm hab))
 
@@ -298,10 +296,10 @@ theorem modBlocks_full {δ : ∀ p : PlF D, (D.s.atP p).Fp} (T T' : ℕ) (p : Pl
       · have hx : ∃ n : Fin 3, IsUnit (blkMod δ T T' p a s t + (((n : Fin 3) : ℕ) : (D.s.atP p).Ep)) := by
           refine exists_shift_gen p _ fun hs => ?_
           unfold blkMod
-          rw [if_pos hnt, LMK.tauZero_of_not_split hs, sub_zero, LMK.tMod_eq]
+          rw [ite_eq_left hnt, LMK.tauZero_of_not_split hs, sub_zero, LMK.tMod_eq]
           exact (LMK.isUnit_ιE p h1.1).mul (LMK.isUnit_hF p hδ _ _)
         unfold blkTop
-        rw [if_pos hnt]
+        rw [ite_eq_left hnt]
         exact LMK.nSh_unit hx
       · rw [LMK.blkTop_nonTop δ T T' p hnt]
         exact (LMK.isUnit_ιE p h1.1).mul (LMK.isUnit_hF p hδ _ _)

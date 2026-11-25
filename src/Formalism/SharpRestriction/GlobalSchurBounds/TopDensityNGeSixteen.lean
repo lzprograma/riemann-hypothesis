@@ -20,53 +20,12 @@ public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClas
 public import Formalism.SizeWindowBrackets.ChainSlopeWindows.WeightedSlopeExcessDecomposition
 public import Lemmata.GeneralBFactLeftBisAlt.Imports
 public import Mathlib.NumberTheory.LSeries.PrimesInAP
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.PrimitiveCosets.ToEBij
 import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DualPl
 import Formalism.SizeWindowBrackets.ChainSlopeWindows.GaloisMapComplexConjugation
 import Formalism.SizeWindowBrackets.ChainSlopeWindows.JointDModelAppliesUnitLattice
-import Mathlib.NumberTheory.NumberField.Discriminant.Different
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Formalism.SizeWindowBrackets.SecondKindBucket
 import Formalism.SizeWindowBrackets.WindowSettingSatisfiable
 
@@ -283,7 +242,7 @@ theorem frob_spec (p : ℕ) (hp : p.Prime) :
     ⟨σ0, P, hP, hL, ((fieldFacts D p hp P hP hL σ0).2).2 (by
       rw [hσ0, Equiv.apply_symm_apply, sub_self]; exact AddSubgroup.zero_mem _)⟩
   unfold frob
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨P', hP', hL', hF⟩ := hex.choose_spec
   exact ((fieldFacts D p hp P' hP' hL' _).2).1 hF
 
@@ -364,7 +323,7 @@ theorem reads0 (ψ : Chr D) : Reads D ψ (chiP D ψ) := by
 
 theorem prim_spec (ψ : Chr D) : Reads D ψ (prim D ψ) := by
   unfold prim
-  rw [dif_pos (_root_.Formalism.MainNotions.ZetaZeroFreeRegion.primitive_reading_holds D ψ)]
+  rw [dite_eq_left (_root_.Formalism.MainNotions.ZetaZeroFreeRegion.primitive_reading_holds D ψ)]
   exact (_root_.Formalism.MainNotions.ZetaZeroFreeRegion.primitive_reading_holds D ψ).choose_spec
 
 theorem primitiveCharacter_chi0_eq_one_iff (ψ : Chr D) : (chi0 D ψ).primitiveCharacter = 1 ↔ ψ = 1 := by
@@ -412,9 +371,9 @@ theorem GPsi_eq (φ : AddChar (MM D) ℂ) (y : ℝ) :
   unfold characterSumData.GPsi Gc gChi
   by_cases h : φ = 0
   · have h1 : (prim D (cOf D φ)).2 = 1 := (prim_one_iff D _).2 ((cOf_eq_one_iff D φ).2 h)
-    rw [if_pos h, if_pos h1, G_eq_Gz]
+    rw [ite_eq_left h, ite_eq_left h1, G_eq_Gz]
   · have h1 : (prim D (cOf D φ)).2 ≠ 1 := fun h' => h ((cOf_eq_one_iff D φ).1 ((prim_one_iff D _).1 h'))
-    rw [if_neg h, if_neg h1]
+    rw [ite_eq_right h, ite_eq_right h1]
     unfold sumLamChi ell Lp
     congr 1
     refine Finset.sum_congr rfl (fun n hn => ?_)
@@ -439,8 +398,8 @@ theorem cOf_chC : cOf D characterSumData.chC = chC D := by
   have h2 : ((chC D g : ℂˣ) : ℂ) = (((g.1.2 : ℤˣ) : ℤ) : ℂ) := rfl
   rw [h2]
   by_cases hg : g ∈ D.R.Psi
-  · rw [if_pos (show (tE D g).1.1 = 0 from (inPhi_iff D g).2 hg), (Formalism.HC.Frame.mem_Psi_iff g).1 hg]; simp
-  · rw [if_neg (show ¬ (tE D g).1.1 = 0 from fun h => hg ((inPhi_iff D g).1 h))]
+  · rw [ite_eq_left (show (tE D g).1.1 = 0 from (inPhi_iff D g).2 hg), (Formalism.HC.Frame.mem_Psi_iff g).1 hg]; simp
+  · rw [ite_eq_right (show ¬ (tE D g).1.1 = 0 from fun h => hg ((inPhi_iff D g).1 h))]
     have : g.1.2 = -1 := (Int.units_eq_one_or g.1.2).resolve_left hg
     rw [this]; simp
 
@@ -456,8 +415,8 @@ theorem cOf_psC : cOf D ThickSetMeanBounds.psC = psC D := by
   rw [h2]
   have h3 : (tE D g).1.2 = 0 ↔ g.1.1 = 1 := LHost.sgn2_toAdd_eq_zero_iff g.1.1
   by_cases hg : g.1.1 = 1
-  · rw [if_pos (h3.2 hg), hg]; simp
-  · rw [if_neg (fun h => hg (h3.1 h))]
+  · rw [ite_eq_left (h3.2 hg), hg]; simp
+  · rw [ite_eq_right (fun h => hg (h3.1 h))]
     have : g.1.1 = -1 := (Int.units_eq_one_or g.1.1).resolve_left hg
     rw [this]; simp
 
@@ -1193,8 +1152,8 @@ theorem rows_orthonormal (D : D7) (V : D.what₂.EE ≃ₗᵢ[ℂ] D.what₂.EE)
   intro k k'
   rw [sEE_inner, V.inner_map_map, orthonormal_iff_ite.mp (oE D).orthonormal k' k]
   by_cases h : k = k'
-  · rw [if_pos h, if_pos h.symm]
-  · rw [if_neg h, if_neg (fun h' => h h'.symm)]
+  · rw [ite_eq_left h, ite_eq_left h.symm]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h h'.symm)]
 
 theorem Drows_le (D : D7) : D.what₂.Drows ≤ D.what₂.Dall := by
   have h := (rows_orthonormal D (LinearIsometryEquiv.refl ℂ _)).linearIndependent.fintype_card_le_finrank
@@ -1219,8 +1178,8 @@ theorem exists_rowBasis (D : D7) (V : D.what₂.EE ≃ₗᵢ[ℂ] D.what₂.EE) 
     show inner ℂ (D.sEE (V (oE D k))) (D.sEE (V (oE D k'))) = _
     rw [h0 k k']
     by_cases h : k = k'
-    · subst h; rw [if_pos rfl, if_pos rfl]
-    · rw [if_neg h, if_neg (fun h' => h (Sum.inl_injective (congrArg Subtype.val h')))]
+    · subst h; rw [ite_eq_left rfl, ite_eq_left rfl]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h (Sum.inl_injective (congrArg Subtype.val h')))]
   obtain ⟨f, hf⟩ := hv.exists_orthonormalBasis_extension_of_card_eq hcard
   exact ⟨f, fun k => by rw [hf (Sum.inl k) ⟨k, rfl⟩]; rfl⟩
 
@@ -1362,7 +1321,7 @@ theorem hs_neg_id (D : D7) (u : D.what₂.Word) :
       ((0 - ContinuousLinearMap.id ℂ (D.s.Cu u)) (stdOrthonormalBasis ℂ (D.s.Cu u) l)) = (1 : ℂ) := by
     intro l
     simp only [zero_sub, ContinuousLinearMap.neg_apply, ContinuousLinearMap.id_apply, inner_neg_neg]
-    rw [orthonormal_iff_ite.mp (stdOrthonormalBasis ℂ (D.s.Cu u)).orthonormal l l, if_pos rfl]
+    rw [orthonormal_iff_ite.mp (stdOrthonormalBasis ℂ (D.s.Cu u)).orthonormal l l, ite_eq_left rfl]
   simp only [h]
   rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, finrank_Cu]
   simp

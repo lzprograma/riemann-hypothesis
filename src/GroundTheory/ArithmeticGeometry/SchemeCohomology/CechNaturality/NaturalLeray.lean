@@ -203,16 +203,6 @@ theorem cechHLinearEquivH_naturality {F G : X.Modules} [F.IsQuasicoherent] [G.Is
 
 end Scheme
 
-section NatIso
-
-variable {X : Scheme.{u}} {ι : Type w}
-  [HasExt.{max w u} (Sheaf (Opens.grothendieckTopology X.toTopCat) AddCommGrpCat.{u})]
-  (U : ι → X.Opens) (hU : iSup U = ⊤)
-  (hUaff : ∀ (n : ℕ) (i : Fin (n + 1) → ι), IsAffineOpen (⨅ a, U (i a)))
-  (A : Type*) [CommRing A] [Algebra A Γ(X, ⊤)]
-
-end NatIso
-
 end
 
 end GroundTheory.Arith.SchemeCoh

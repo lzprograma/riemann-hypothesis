@@ -153,7 +153,7 @@ theorem rad_eq {p : Mat k r} (hp : p ∈ Nset k r) (he : ∀ a i, p i (eI k r a)
   have hsw : ∀ (a : Fin r) (j : Fin (k + 1)), p (esI k r a) (wI k r j) = 0 := by
     intro a j
     rw [hmid _ _ (by rw [wI_val_flag_measures]; omega) (by rw [wI_val_flag_measures]; have := j.2; omega)
-      (by rw [esI_val_flag_measures]; have := a.2; omega), if_neg (Rad.esI_ne_wI _ _)]
+      (by rw [esI_val_flag_measures]; have := a.2; omega), ite_eq_right (Rad.esI_ne_wI _ _)]
   have hss : ∀ a b : Fin r, p (esI k r a) (esI k r b) = if a = b then 1 else 0 := by
     intro a b
     have h := herm_col hU' (eI k r a) (esI k r b)
@@ -169,7 +169,7 @@ theorem rad_eq {p : Mat k r} (hp : p ∈ Nset k r) (he : ∀ a i, p i (eI k r a)
     have h := herm_col hU' (wI k r j) (esI k r b)
     rw [herm_three, Rad.H_ws, hmidw, ← _root_.GlobalTheory.Amp.Rad.herm_star, Rad.herm_bvec] at h
     simp only [hss, hsw, star_zero, zero_mul, Finset.sum_const_zero, add_zero, mul_ite, mul_one,
-      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
+      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
     have h2 := congrArg star h
     simp only [star_add, star_mul', star_star, Rad.star_sg, star_zero] at h2
     simp only [Bof]
@@ -180,7 +180,7 @@ theorem rad_eq {p : Mat k r} (hp : p ∈ Nset k r) (he : ∀ a i, p i (eI k r a)
     have h := herm_col hU' (esI k r a) (esI k r b)
     rw [herm_three, Rad.H_ss] at h
     simp only [hss, hst01, mul_ite, ite_mul, mul_one, one_mul, mul_zero, zero_mul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
     exact h
   refine ⟨?_, ?_⟩
   · ext a b
@@ -196,10 +196,10 @@ theorem rad_eq {p : Mat k r} (hp : p ∈ Nset k r) (he : ∀ a i, p i (eI k r a)
     · rw [he, Rad.pEl_ee]; simp only [Rad.eI_inj]
     · rw [hew, Rad.pEl_ew]
     · rw [Rad.pEl_es]; simp only [Sof]; ring
-    · rw [he, Rad.pEl_we, if_neg (Rad.wI_ne_eI _ _)]
+    · rw [he, Rad.pEl_we, ite_eq_right (Rad.wI_ne_eI _ _)]
     · rw [hw, Rad.pEl_ww]
     · rw [Rad.pEl_ws]; rfl
-    · rw [he, Rad.pEl_se, if_neg (Rad.esI_ne_eI _ _)]
+    · rw [he, Rad.pEl_se, ite_eq_right (Rad.esI_ne_eI _ _)]
     · rw [hsw, Rad.pEl_sw]
     · rw [hss, Rad.pEl_ss]
 
@@ -215,7 +215,7 @@ theorem qOf_pOf (q : PPar k r) : qOf (pOf k r q) = q := by
   · funext x
     show Sof (pEl k r B (skewM s t)) x.1.1 x.1.2 = s x
     rw [Sof_pEl]
-    simp only [skewM, dif_pos x.2]
+    simp only [skewM, dite_eq_left x.2]
   · funext a
     show (Sof (pEl k r B (skewM s t)) a a).im = t a
     rw [Sof_pEl]
@@ -224,7 +224,7 @@ theorem qOf_pOf (q : PPar k r) : qOf (pOf k r q) = q := by
 private theorem upper_blockTriangular (x : UT r → ℂ) : (upper x).BlockTriangular id := by
   intro a b hab
   have hab' : b < a := hab
-  simp only [upper, dif_neg (not_lt.mpr hab'.le), if_neg (ne_of_gt hab')]
+  simp only [upper, dite_eq_right (not_lt.mpr hab'.le), ite_eq_right (ne_of_gt hab')]
 
 private theorem exists_upper_eq_inv_upper (x : UT r → ℂ) : ∃ y : UT r → ℂ, (upper x)⁻¹ = upper y := by
   have hU : IsUnit (upper x).det := by rw [_root_.GlobalTheory.Amp.UEmb.det_upper]; exact isUnit_one
@@ -263,16 +263,16 @@ private theorem pEl_apply_eI (B : Fin r → Fin (k + 1) → ℂ) (S : Matrix (Fi
     (c : Fin (2 * r + k + 1)) : pEl k r B S c (eI k r b) = if c = eI k r b then 1 else 0 := by
   rcases idx_cases c with ⟨a, rfl⟩ | ⟨a, rfl⟩ | ⟨a, rfl⟩
   · simp only [Rad.pEl_ee, Rad.eI_inj]
-  · rw [Rad.pEl_we, if_neg (Rad.wI_ne_eI _ _)]
-  · rw [Rad.pEl_se, if_neg (Rad.esI_ne_eI _ _)]
+  · rw [Rad.pEl_we, ite_eq_right (Rad.wI_ne_eI _ _)]
+  · rw [Rad.pEl_se, ite_eq_right (Rad.esI_ne_eI _ _)]
 
 theorem cOf_coord (q : (UT r → ℂ) × PPar k r) : cOf (uEmb k r (upper q.1) * pOf k r q.2) = q := by
   obtain ⟨s, p⟩ := q
   have hx : xOf (uEmb k r (upper s) * pOf k r p) = s := by
     funext x
     simp only [xOf, pOf, Matrix.mul_apply, pEl_apply_eI, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true, _root_.GlobalTheory.Amp.UEmb.u_ee]
-    simp only [upper, dif_pos x.2]
+      Finset.mem_univ, ite_true, _root_.GlobalTheory.Amp.UEmb.u_ee]
+    simp only [upper, dite_eq_left x.2]
   simp only [cOf]
   rw [hx, ← Matrix.mul_assoc, (uEmb_inv_mul s).1, Matrix.one_mul, qOf_pOf]
 
@@ -282,7 +282,7 @@ private theorem uEmb_apply_eI_eq_zero_of_le (u : Matrix (Fin r) (Fin r) ℂ) (b 
   have h1 : ¬ (i.val < r ∧ (eI k r b).val < r) := by rw [eI_val_flag_measures]; omega
   have h2 : ¬ (r + k < i.val ∧ r + k < (eI k r b).val) := by rw [eI_val_flag_measures]; omega
   have h3 : i ≠ eI k r b := by intro h; rw [h, eI_val_flag_measures] at hi; omega
-  simp only [uEmb, dif_neg h1, dif_neg h2, if_neg h3]
+  simp only [uEmb, dite_eq_right h1, dite_eq_right h2, ite_eq_right h3]
 
 theorem col_e {n : Mat k r} (hn : n ∈ Nset k r) (b : Fin r) :
     n *ᵥ bvec (eI k r b) = uEmb k r (upper (xOf n)) *ᵥ bvec (eI k r b) := by
@@ -292,13 +292,13 @@ theorem col_e {n : Mat k r} (hn : n ∈ Nset k r) (b : Fin r) :
   rcases idx_cases i with ⟨a, rfl⟩ | ⟨a, rfl⟩ | ⟨a, rfl⟩
   · rw [_root_.GlobalTheory.Amp.UEmb.u_ee]
     by_cases hab : a < b
-    · simp only [upper, dif_pos hab, xOf]
+    · simp only [upper, dite_eq_left hab, xOf]
     · have hba : b.val ≤ a.val := Fin.not_lt.mp hab
       rw [h1 b (eI k r a) (by rw [eI_val_flag_measures]; exact hba)]
-      simp only [upper, dif_neg hab, Rad.eI_inj]
-  · rw [h1 b _ (by rw [wI_val_flag_measures]; have := b.2; omega), if_neg (Rad.wI_ne_eI _ _),
+      simp only [upper, dite_eq_right hab, Rad.eI_inj]
+  · rw [h1 b _ (by rw [wI_val_flag_measures]; have := b.2; omega), ite_eq_right (Rad.wI_ne_eI _ _),
       uEmb_apply_eI_eq_zero_of_le _ _ _ (by rw [wI_val_flag_measures]; omega)]
-  · rw [h1 b _ (by rw [esI_val_flag_measures]; have := b.2; have := a.2; omega), if_neg (Rad.esI_ne_eI _ _),
+  · rw [h1 b _ (by rw [esI_val_flag_measures]; have := b.2; have := a.2; omega), ite_eq_right (Rad.esI_ne_eI _ _),
       uEmb_apply_eI_eq_zero_of_le _ _ _ (by rw [esI_val_flag_measures]; have := a.2; omega)]
 
 private theorem mul_mem_Nset {a b : Mat k r} (ha : a ∈ Nset k r) (hb : b ∈ Nset k r) :
@@ -314,29 +314,29 @@ private theorem mul_mem_Nset {a b : Mat k r} (ha : a ∈ Nset k r) (hb : b ∈ N
       _ = Hpk k r := by rw [ha0', hb0']
   · intro c i hci
     rw [Matrix.mul_apply, Finset.sum_eq_single (eI k r c)]
-    · rw [hb1 c _ (by rw [eI_val_flag_measures]), if_pos rfl, mul_one]
+    · rw [hb1 c _ (by rw [eI_val_flag_measures]), ite_eq_left rfl, mul_one]
       exact ha1 c i hci
     · intro l _ hl
       by_cases hlc : c.val ≤ l.val
-      · rw [hb1 c l hlc, if_neg hl, mul_zero]
+      · rw [hb1 c l hlc, ite_eq_right hl, mul_zero]
       · have hlr : l.val < r := by have := c.2; omega
         have hle : eI k r ⟨l.val, hlr⟩ = l := Fin.ext (eI_val_flag_measures _)
         have hx := ha1 ⟨l.val, hlr⟩ i (by show l.val ≤ i.val; omega)
         rw [hle] at hx
-        rw [hx, if_neg (by intro h; rw [h] at hci; omega), zero_mul]
+        rw [hx, ite_eq_right (by intro h; rw [h] at hci; omega), zero_mul]
     · simp
   · intro i j hj1 hj2 hi
     rw [Matrix.mul_apply, Finset.sum_eq_single j]
-    · rw [hb2 j j hj1 hj2 hj1, if_pos rfl, mul_one]
+    · rw [hb2 j j hj1 hj2 hj1, ite_eq_left rfl, mul_one]
       exact ha2 i j hj1 hj2 hi
     · intro l _ hl
       by_cases hlr : r ≤ l.val
-      · rw [hb2 l j hj1 hj2 hlr, if_neg hl, mul_zero]
+      · rw [hb2 l j hj1 hj2 hlr, ite_eq_right hl, mul_zero]
       · have hlr' : l.val < r := by omega
         have hle : eI k r ⟨l.val, hlr'⟩ = l := Fin.ext (eI_val_flag_measures _)
         have hx := ha1 ⟨l.val, hlr'⟩ i (by show l.val ≤ i.val; omega)
         rw [hle] at hx
-        rw [hx, if_neg (by intro h; rw [h] at hi; omega), zero_mul]
+        rw [hx, ite_eq_right (by intro h; rw [h] at hi; omega), zero_mul]
     · simp
 
 theorem exists_coord {n : Mat k r} (hn : n ∈ Nset k r) :
@@ -361,9 +361,9 @@ theorem exists_coord {n : Mat k r} (hn : n ∈ Nset k r) :
 theorem cont_upper (r : ℕ) : Continuous (upper : (UT r → ℂ) → Matrix (Fin r) (Fin r) ℂ) := by
   refine continuous_matrix fun a b => ?_
   by_cases h : a < b
-  · simp only [upper, dif_pos h]
+  · simp only [upper, dite_eq_left h]
     exact continuous_apply _
-  · simp only [upper, dif_neg h]
+  · simp only [upper, dite_eq_right h]
     exact continuous_const
 
 alias det_upper := _root_.GlobalTheory.Amp.UEmb.det_upper
@@ -379,12 +379,12 @@ private theorem continuous_uEmb_of_continuous_inv {X : Type*} [TopologicalSpace 
     (hf : Continuous f) (hf' : Continuous fun x => (f x)⁻¹) : Continuous fun x => uEmb k r (f x) := by
   refine continuous_matrix fun i j => ?_
   by_cases h1 : i.val < r ∧ j.val < r
-  · simp only [uEmb, dif_pos h1]
+  · simp only [uEmb, dite_eq_left h1]
     exact hf.matrix_elem _ _
   by_cases h2 : r + k < i.val ∧ r + k < j.val
-  · simp only [uEmb, dif_neg h1, dif_pos h2]
+  · simp only [uEmb, dite_eq_right h1, dite_eq_left h2]
     exact (hf'.matrix_elem _ _).star
-  · simp only [uEmb, dif_neg h1, dif_neg h2]
+  · simp only [uEmb, dite_eq_right h1, dite_eq_right h2]
     exact continuous_const
 
 theorem cont_uEmb (k r : ℕ) : Continuous fun x : UT r → ℂ => uEmb k r (upper x) := by
@@ -401,12 +401,12 @@ theorem cont_uEmb_inv (k r : ℕ) : Continuous fun x : UT r → ℂ => uEmb k r 
 private theorem continuous_skewM_apply {X : Type*} [TopologicalSpace X] {s : X → UT r → ℂ} {t : X → Fin r → ℝ}
     (hs : Continuous s) (ht : Continuous t) (a b : Fin r) : Continuous fun x => skewM (s x) (t x) a b := by
   by_cases h1 : a < b
-  · simp only [skewM, dif_pos h1]
+  · simp only [skewM, dite_eq_left h1]
     exact (continuous_apply _).comp hs
   by_cases h2 : b < a
-  · simp only [skewM, dif_neg h1, dif_pos h2]
+  · simp only [skewM, dite_eq_right h1, dite_eq_left h2]
     exact ((continuous_apply _).comp hs).star.neg
-  · simp only [skewM, dif_neg h1, dif_neg h2]
+  · simp only [skewM, dite_eq_right h1, dite_eq_right h2]
     exact (Complex.continuous_ofReal.comp ((continuous_apply a).comp ht)).mul continuous_const
 
 private theorem continuous_herm_Hb {X : Type*} [TopologicalSpace X] {f g : X → Fin (k + 1) → ℂ}

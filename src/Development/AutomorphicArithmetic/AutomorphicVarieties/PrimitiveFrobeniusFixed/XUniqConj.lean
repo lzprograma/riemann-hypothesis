@@ -1,46 +1,8 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.XMulConjIMul
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.IsAdmissiblePrimeListNil
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -49,38 +11,7 @@ open scoped nonZeroDivisors Pointwise
 
 private theorem UpperTheory.V.ML.xUniq_conj (M : ℕ) [NeZero M] (K : Type) [Field K] [NumberField K]
     [IsCyclotomicExtension {M} ℚ K] (φ : K →+* ℂ) (x : K) : φ (sg M K (-1) x) = starRingEnd ℂ (φ x) := by
-  have hζ := IsCyclotomicExtension.zeta_spec M ℚ K
-  set ζ := IsCyclotomicExtension.zeta M ℚ K
-  have hz : (φ ζ) ^ M = 1 := by rw [← map_pow, hζ.pow_eq_one, map_one]
-  have key : φ (sg M K (-1) ζ) = starRingEnd ℂ (φ ζ) := by
-    rw [sg_apply M K (-1) hζ.pow_eq_one, map_pow]
-    have hM : M ∣ ((-1 : (ZMod M)ˣ) : ZMod M).val + 1 := by
-      rw [← ZMod.natCast_eq_zero_iff]
-      push_cast
-      simp
-    have hnorm : ‖φ ζ‖ = 1 := by
-      have h1 := congrArg norm hz
-      rw [norm_pow, norm_one] at h1
-      exact (pow_eq_one_iff_of_nonneg (norm_nonneg _) (NeZero.ne M)).mp h1
-    have hinv : starRingEnd ℂ (φ ζ) = (φ ζ)⁻¹ := by
-      rw [Complex.inv_def, Complex.normSq_eq_norm_sq, hnorm]
-      simp
-    rw [hinv]
-    apply eq_inv_of_mul_eq_one_left
-    rw [← pow_succ]
-    obtain ⟨k, hk⟩ := hM
-    rw [hk, pow_mul, hz, one_pow]
-  have hext := AlgHom.ext_of_adjoin_eq_top (R := ℚ)
-    (IsCyclotomicExtension.adjoin_primitive_root_eq_top hζ)
-    (φ₁ := (φ.comp (sg M K (-1)).toAlgHom.toRingHom).toRatAlgHom)
-    (φ₂ := ((starRingEnd ℂ).comp φ).toRatAlgHom)
-    (by
-      intro y hy
-      rw [Set.mem_singleton_iff] at hy
-      subst hy
-      exact key)
-  have h2 := DFunLike.congr_fun hext x
-  simpa using h2
+  apply _root_.xMul_conj <;> assumption
 
 theorem UpperTheory.V.ML.xUniq :
     ∀ (M : ℕ) [NeZero M] (K : Type) [Field K] [NumberField K] [IsCyclotomicExtension {M} ℚ K] (b : ℕ) (𝔞 : Ideal (𝓞 K)) (X X' : K), 𝔞 ≠ ⊥ → IsX M K b 𝔞 X → IsX M K b 𝔞 X' → ∃ ζ : K, ζ ^ (2 * M) = 1 ∧ X' = ζ * X := by

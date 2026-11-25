@@ -46,7 +46,6 @@ noncomputable section
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.GtTorsionPoints
 
@@ -73,20 +72,5 @@ theorem corr_of_val_pull (hL : L.IsLB) (ρ : Z ⟶ Y) (hinj : ∀ U, Function.In
   exact congrArg Units.val ((gm_res ρ z _ hz' _).trans (this.trans (gm_res ρ z _ hz' _).symm))
 
 end Values
-
-section Valuation
-
-variable {S F : Type} [CommRing S] [IsDomain S] [ValuationRing S] [Field F] [Algebra S F] [IsFractionRing S F]
-
-end Valuation
-
-section Main
-
-variable {R : Type} [CommRing R] [IsDomain R] (D : DegPre R) {F : Type} [Field F] [Algebra (FractionRing R) F]
-  {T : Over (Spec (CommRingCat.of R))} (ρ : TF (R := R) F ⟶ T)
-
-variable {z : (TF (R := R) F).left} {J : ((TF (R := R) F).left ⟶ D.P.A.left) → D.P.L.ι}
-
-end Main
 
 end GlobalTheory.GtTorsionPoints

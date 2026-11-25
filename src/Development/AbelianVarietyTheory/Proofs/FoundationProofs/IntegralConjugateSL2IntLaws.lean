@@ -54,10 +54,6 @@ import Mathlib.Topology.Sheaves.Init
 open GlobalTheory.KZ GlobalTheory.KZ.H3 Matrix
 open scoped MatrixGroups TensorProduct
 
-namespace GlobalTheory.KZ.CjLaws
-
-end GlobalTheory.KZ.CjLaws
-
 open Matrix in
 open scoped MatrixGroups TensorProduct in
 private lemma mul_eq_cj_mul_of_exists {m : Matrix (Fin 2) (Fin 2) ℤ} {δ : SL(2, ℤ)}

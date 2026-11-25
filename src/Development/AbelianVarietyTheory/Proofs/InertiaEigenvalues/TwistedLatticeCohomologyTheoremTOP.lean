@@ -603,7 +603,6 @@ theorem tw_crysWith (hC : S.CrysCalc) :
   have h1 := (hC.2.1 S.Γ.T₀ S.D.U S.Γ.χ₁ S.D.w hρ hχ).2
   exact (hC.2.1 S.Γ.T₀ S.D.U S.Γ.χ₁⁻¹ _ hρ h1).1
 
-set_option synthInstance.maxHeartbeats 100000 in
 theorem tw_finrank_h0V (hC : S.CrysCalc) (hV : S.Vanish) : finrank ↥S.LL.1 ↥(H0V (tw S hC).ρ) = 0 := by
   obtain ⟨⟨-, -, -, -, -, hlam⟩, -⟩ := S.hyp
   exact finrank_h0V_tw (GlobalTheory.LocalIntegers.good_integers l S.LL).1 S.Γ (cont_inv S hC) hlam hV.1
@@ -632,7 +631,6 @@ theorem fSummand_of_finrank (hC : S.CrysCalc) (hH : S.FreeH)
     (hd : finrank ↥S.LL.1 (FiniteCohomology (P.PD S.K) (tw S hC).ρ) = S.D.dsum) : S.FSummand :=
   ⟨exists_isCompl S hC hH, (finrank_hf S hC).trans hd⟩
 
-set_option synthInstance.maxHeartbeats 100000 in
 theorem fSummand_of_dim (hC : S.CrysCalc) (hV : S.Vanish) (hH : S.FreeH)
     (hd : (finrank ↥S.LL.1 (FiniteCohomology (P.PD S.K) (tw S hC).ρ) : ℤ) = (finrank ↥S.LL.1 ↥(H0V (tw S hC).ρ) : ℤ) +
       ∑ i, (Multiset.card (((S.D.U i).map (· + -S.D.w i)).filter (· < 0)) : ℤ)) : S.FSummand := by
@@ -911,6 +909,7 @@ theorem zero_mem {O N : Type} [CommRing O] [AddCommGroup N] [Module O N] {s : Se
   obtain ⟨A, rfl⟩ := h
   exact A.zero_mem
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem cls_eq_zero_of_flat {l : ℕ} [Fact l.Prime] {P : LocPrime l} (S : TopSit P) {M : Type} [AddCommGroup M]
     [Module S.O M] [Module.Flat S.O M] (W : Representation S.O S.G M) (hL : S.Lem0 W) (hR : S.ResBound W 0)
     (hlc : ∀ (X : Type) [AddCommGroup X] [Module S.O X] [Finite X] (m : M ⊗[S.O] X),
@@ -1043,7 +1042,7 @@ theorem indep_cons [IsLocalRing O] {lam : O} (hl : Ideal.span {lam} = IsLocalRin
     simp only [map_add (f := _), map_smul, map_sum, hF, LinearMap.rTensor_tmul, map_zero] at h1
     simp only [Submodule.projectionOnto_apply_left, lid_tmul, smul_zero, zero_add, Module.Basis.coord_apply,
       Module.Basis.repr_self, Finsupp.single_apply, ite_smul, one_smul, zero_smul, smul_ite, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true] at h1
+      Finset.mem_univ, ite_true] at h1
     rw [← Ideal.mem_span_singleton, ← Ideal.Quotient.eq_zero_iff_mem, ← h1, Algebra.smul_def, mul_one]
     rfl
 
@@ -1543,8 +1542,8 @@ theorem twistedLatticeCohomology_theoremTOP : ∀ (D : D7) (HW : HWOf D.loc) (F 
     tableLineDegreeTwo.Stmt D HW F Cm := by
   intro D HW F Cm hA l _ K LL hK lam hlam
   have htied : Nonempty (LocTied l (D.loc l) (D.locA l)) := ⟨D.locT l⟩
-  have h18 := hA.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
-  have h19 := hA.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have h18 := hA.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have h19 := hA.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
   have hreal : ∀ S : TopSit (D.loc l), S.Real := fun S =>
     GlobalTheory.BasePairs.real_of_presented (D.locA l) (HW l) (F l) S
       (GlobalTheory.RedFun.realD (D.locA l) (HW l) (F l) S)

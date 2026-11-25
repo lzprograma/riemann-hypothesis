@@ -7,47 +7,7 @@ public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Labe
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardDoubleCosetMulCardInter
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraInductionRestrictionIsClassFunction
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraRestrictionTwoBlockCuspidalEqZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
 import Mathlib.Tactic.Linter.Style
@@ -78,7 +38,7 @@ theorem inPar_iff (a : ℕ) (M : Mt g n) :
   · intro h i j hj hi
     apply h
     dsimp only
-    rw [if_pos hj, if_neg (by omega)]
+    rw [ite_eq_left hj, ite_eq_right (by omega)]
     exact Nat.zero_lt_one
 
 theorem inPar_mul {a : ℕ} {x y : Gn g n} (hx : InPar a (x : Mt g n)) (hy : InPar a (y : Mt g n)) :
@@ -117,7 +77,7 @@ theorem inPar_pU {a : ℕ} {τ : Equiv.Perm (Fin n)} (h : ∀ j, (τ j : ℕ) < 
     rintro rfl
     have := (h j).2 hj
     omega
-  exact if_neg this
+  exact ite_eq_right this
 
 noncomputable def rk (a c : ℕ) (M : Mt g n) : ℕ :=
   (Matrix.diagonal (fun i : Fin n => if c ≤ (i : ℕ) then (1 : ZMod g) else 0) * M *
@@ -391,12 +351,12 @@ theorem coe_conj (a c i n : ℕ) (ha : i ≤ a) (hc : i ≤ c) (hn : a + c ≤ n
     intro M
     ext u v
     simp only [Matrix.mul_apply, Matrix.transpose_apply, hW, ite_mul, mul_ite, one_mul, mul_one, zero_mul,
-      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     exact (entN_fin M (f u) (f v)).symm
   have h1 : W.transpose * W = 1 := by
     ext u v
     simp only [Matrix.mul_apply, Matrix.transpose_apply, hW, ite_mul, one_mul, zero_mul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true, Matrix.one_apply, hf.eq_iff]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true, Matrix.one_apply, hf.eq_iff]
   have hu : IsUnit W := IsUnit.of_mul_eq_one_right _ h1
   have e : ((wI g a c i n : Gn g n) : Mt g n) = W := coe_toG hu
   have e' : (((wI g a c i n)⁻¹ : Gn g n) : Mt g n) = W.transpose := by
@@ -468,11 +428,11 @@ theorem bM_spec {p q r s : ℕ} {z : Mt g (p + q)} {z' : Mt g (r + s)} {t : Mt g
     intro j hj; simp only [sigI]; split_ifs <;> omega
   refine ⟨⟨(inPar_iff _).2 ?_, mt_ext ?_, mt_ext ?_⟩, ⟨(inPar_iff _).2 ?_, mt_ext ?_, mt_ext ?_⟩, ?_⟩
   · intro u v hv hu hn
-    rw [entN_bM _ _ _ _ _ hn (by omega), bld, if_neg (by omega), if_pos hv]
+    rw [entN_bM _ _ _ _ _ hn (by omega), bld, ite_eq_right (by omega), ite_eq_left hv]
   · intro u v hu hv
-    rw [entN_tl _ hu hv, entN_bM _ _ _ _ _ (by omega) (by omega), bld, if_pos hu, if_pos hv]
+    rw [entN_tl _ hu hv, entN_bM _ _ _ _ _ (by omega) (by omega), bld, ite_eq_left hu, ite_eq_left hv]
   · intro u v hu hv
-    rw [entN_br _ hu hv, entN_bM _ _ _ _ _ (by omega) (by omega), bld, if_neg (by omega), if_neg (by omega)]
+    rw [entN_br _ hu hv, entN_bM _ _ _ _ _ (by omega) (by omega), bld, ite_eq_right (by omega), ite_eq_right (by omega)]
     congr 1 <;> omega
   · intro u v hv hu hn
     rw [entN_cj _ _ _ _ hn (by omega), entN_bM _ _ _ _ _ (hs _ hn) (hs _ (by omega))]
@@ -497,8 +457,8 @@ theorem bM_spec {p q r s : ℕ} {z : Mt g (p + q)} {z' : Mt g (r + s)} {t : Mt g
   · funext u v
     have := u.2
     have := v.2
-    rw [cor, entN_bM _ _ _ _ _ (by omega) (by omega), bld, if_pos (by omega), if_neg (by omega), if_pos u.2,
-      if_neg (by omega)]
+    rw [cor, entN_bM _ _ _ _ _ (by omega) (by omega), bld, ite_eq_left (by omega), ite_eq_right (by omega), ite_eq_left u.2,
+      ite_eq_right (by omega)]
     simp [entR]
 
 theorem blocks_spec {p q r s : ℕ} {M : Mt g (p + q + (r + s))} (h : InPar (p + q) M)
@@ -782,10 +742,10 @@ theorem mean_res (g : ℕ) [Fact g.Prime] (c d n : ℕ) (hn : n = c + d) (χ : G
     intro x
     by_cases hx : InPar c (x : Mt g n)
     · obtain ⟨h1, h2⟩ := hu x hx
-      rw [if_pos hx, Finset.sum_eq_single (toG (tl c (x : Mt g n)), toG (br c d (x : Mt g n)))]
-      · rw [if_pos ⟨hx, (coe_toG h1).symm, (coe_toG h2).symm⟩]
+      rw [ite_eq_left hx, Finset.sum_eq_single (toG (tl c (x : Mt g n)), toG (br c d (x : Mt g n)))]
+      · rw [ite_eq_left ⟨hx, (coe_toG h1).symm, (coe_toG h2).symm⟩]
       · intro p _ hp
-        rw [if_neg, mul_zero]
+        rw [ite_eq_right, mul_zero]
         rintro ⟨-, e1, e2⟩
         apply hp
         rw [e1, e2, toG_coe, toG_coe]
@@ -1067,7 +1027,7 @@ alias toG_coe := _root_.GlobalTheory.GLm.Cell.toG_coe
 
 theorem br_zero_eq {a : ℕ} (M : Mt g a) : br 0 a M = M := by
   funext i j
-  simp only [br, entN, zero_add, i.isLt, j.isLt, and_self, dif_pos]
+  simp only [br, entN, zero_add, i.isLt, j.isLt, and_self, dite_eq_left]
 
 theorem inPar_zero' {n : ℕ} (M : Mt g n) : InPar 0 M := fun _ _ hj _ => absurd hj (Nat.not_lt_zero _)
 
@@ -1113,7 +1073,7 @@ theorem res_left_zero (i n : ℕ) (hi : i = 0) (χ : Gn g n → ℂ) (y₁ : Gn 
     intro x
     rw [br_zero_eq, Units.val_inj]
     exact ⟨fun h => h.2.2, fun h => ⟨inPar_zero' _, Subsingleton.elim _ _, h⟩⟩
-  simp only [hy, zero_mul, pow_zero, inv_one, one_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [hy, zero_mul, pow_zero, inv_one, one_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem res_right_zero (n b : ℕ) (hb : b = 0) (χ : Gn g n → ℂ) (y₁ : Gn g n) (y₂ : Gn g b) :
     res n b χ y₁ y₂ = χ y₁ := by
@@ -1124,7 +1084,7 @@ theorem res_right_zero (n b : ℕ) (hb : b = 0) (χ : Gn g n → ℂ) (y₁ : Gn
     intro x
     rw [_root_.GlobalTheory.GLq.Model.tl_self, Units.val_inj]
     exact ⟨fun h => h.2.1, fun h => ⟨inPar_self' _, h, Subsingleton.elim _ _⟩⟩
-  simp only [hy, mul_zero, pow_zero, inv_one, one_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [hy, mul_zero, pow_zero, inv_one, one_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem res_mul_const (a b : ℕ) {n : ℕ} (χ : Gn g n → ℂ) (c : ℂ) (y₁ : Gn g a) (y₂ : Gn g b) :
     res a b (fun x => χ x * c) y₁ y₂ = res a b χ y₁ y₂ * c := by
@@ -1164,7 +1124,7 @@ theorem hcT_left_zero (i a : ℕ) (hi : i = 0) (ψ : Gn g a → ℂ) (hψ : IsCl
     hcT i a (fun (_ : Gn g i) v => ψ v) a x = ψ x := by
   subst hi
   unfold hcT
-  simp only [inPar_zero', if_true, br_zero_eq, toG_coe]
+  simp only [inPar_zero', ite_true, br_zero_eq, toG_coe]
   rw [Finset.filter_true_of_mem (fun _ _ => trivial), Finset.card_univ]
   exact mean_of_isClass hψ x
 
@@ -1317,7 +1277,7 @@ theorem main : ∀ (g : ℕ) [Fact g.Prime] (L : List (Pc g)) (a b : ℕ), degL 
       omega
     congr 1
     · by_cases h0 : a ≤ degL L
-      · rw [if_pos (by simp only [hS, Finset.mem_filter, Finset.mem_range]; omega), Finset.sum_singleton]
+      · rw [ite_eq_left (by simp only [hS, Finset.mem_filter, Finset.mem_range]; omega), Finset.sum_singleton]
         have ih' := ih (a - 0) (degL L - (a - 0)) (by omega) hL
         rw [show a - 0 + (degL L - (a - 0)) = degL L by omega] at ih'
         simp only [ih']
@@ -1330,19 +1290,19 @@ theorem main : ∀ (g : ℕ) [Fact g.Prime] (L : List (Pc g)) (a b : ℕ), degL 
         refine Finset.sum_congr rfl fun J _ => ?_
         simp only [Finset.sum_map, hget]
         by_cases hJ : ∑ j ∈ J, (L.get j).1 = a
-        · rw [if_pos (by omega), if_pos hJ]
+        · rw [ite_eq_left (by omega), ite_eq_left hJ]
           erw [sort_map_succ, compl_map_succ, sort_insert_map_succ]
           rw [hcL_cons, degL_sort_map, hcompl, hJ]
           rfl
-        · rw [if_neg (by omega), if_neg hJ]
-      · rw [if_neg (by simp only [hS, Finset.mem_filter, Finset.mem_range]; omega), Finset.sum_empty]
+        · rw [ite_eq_right (by omega), ite_eq_right hJ]
+      · rw [ite_eq_right (by simp only [hS, Finset.mem_filter, Finset.mem_range]; omega), Finset.sum_empty]
         refine (Finset.sum_eq_zero fun J _ => ?_).symm
         simp only [Finset.sum_map, hget]
-        rw [if_neg]
+        rw [ite_eq_right]
         have := hsum J
         omega
     · by_cases he : e ≤ a
-      · rw [if_pos (by simp only [hS, Finset.mem_filter, Finset.mem_range]; omega), Finset.sum_singleton]
+      · rw [ite_eq_left (by simp only [hS, Finset.mem_filter, Finset.mem_range]; omega), Finset.sum_singleton]
         have ih' := ih (a - e) (degL L - (a - e)) (by omega) hL
         rw [show a - e + (degL L - (a - e)) = degL L by omega] at ih'
         simp only [ih']
@@ -1356,18 +1316,18 @@ theorem main : ∀ (g : ℕ) [Fact g.Prime] (L : List (Pc g)) (a b : ℕ), degL 
         rw [Finset.sum_insert (by simp [Fin.succ_ne_zero])]
         simp only [Finset.sum_map, hget]
         by_cases hJ : ∑ j ∈ J, (L.get j).1 = a - e
-        · rw [if_pos hJ, if_pos (by
+        · rw [ite_eq_left hJ, ite_eq_left (by
             show e + ∑ j ∈ J, (L.get j).1 = a
             omega)]
           erw [sort_insert_map_succ, compl_insert_map_succ, sort_map_succ]
           rw [hcL_cons, degL_sort_map, hJ]
-        · rw [if_neg hJ, if_neg (by
+        · rw [ite_eq_right hJ, ite_eq_right (by
             show ¬ e + ∑ j ∈ J, (L.get j).1 = a
             omega)]
-      · rw [if_neg (by simp only [hS, Finset.mem_filter, Finset.mem_range]; omega), Finset.sum_empty]
+      · rw [ite_eq_right (by simp only [hS, Finset.mem_filter, Finset.mem_range]; omega), Finset.sum_empty]
         refine (Finset.sum_eq_zero fun J _ => ?_).symm
         rw [Finset.sum_insert (by simp [Fin.succ_ne_zero])]
-        rw [if_neg]
+        rw [ite_eq_right]
         show ¬ e + _ = a
         omega
 

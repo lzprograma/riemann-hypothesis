@@ -47,11 +47,9 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry TensorProduct Matrix
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.ChF
 
@@ -172,9 +170,9 @@ private theorem psJet_eq_nv {R : Type} [CommRing R] {n d : ℕ} (m : ℕ) (f : P
     have he0 : (Finsupp.equivFunOnFinite.symm fun i => ((⟨e i, hle i⟩ : Fin (m + 1)) : ℕ)) = e := by
       ext i; rfl
     rw [MvPolynomial.coeff_sum, Finset.sum_eq_single (fun i => (⟨e i, hle i⟩ : Fin (m + 1)))]
-    · rw [he0, MvPolynomial.coeff_monomial, if_pos rfl]
+    · rw [he0, MvPolynomial.coeff_monomial, ite_eq_left rfl]
     · intro e' _ hne
-      rw [MvPolynomial.coeff_monomial, if_neg]
+      rw [MvPolynomial.coeff_monomial, ite_eq_right]
       intro h
       apply hne
       funext i
@@ -233,7 +231,7 @@ theorem nilChart_of_isChartJ : ∀ (R : Type) [CommRing R] [IsLocalRing R] (G : 
     intro S _ _ a m ψ hψ
     have h : ∃ (m : ℕ) (ψ : Chart.JetR R (Fin 1 × Fin d) m →ₐ[R] S), ∀ q, ψ (Chart.zR m q) = a q.2 :=
       ⟨m, ψ, hψ⟩
-    exact (dif_pos h).trans
+    exact (dite_eq_left h).trans
       (jetPt_indep x ht _ ψ fun q => (h.choose_spec.choose_spec q).trans (hψ q).symm)
   refine ⟨X, ⟨fun S _ _ => ?_, fun S _ _ S' _ _ φ a ha => ?_, fun S _ _ a b ha hb e => ?_,
     fun S _ _ S' _ _ ρ σ hρ hn z hz => ?_, fun S _ _ a b ha hb => ?_⟩,

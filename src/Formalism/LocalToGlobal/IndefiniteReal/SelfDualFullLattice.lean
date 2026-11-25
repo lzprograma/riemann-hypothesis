@@ -5,7 +5,6 @@ public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
 public section
 
 open NumberField Formalism.BasicNotions Formalism.BasicNotions.TH
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace Formalism.IndefR.Datum
 

@@ -189,7 +189,7 @@ def inclHat : (∀ v : HeightOneSpectrum (𝓞 F), v.adicCompletionIntegers F) �
 
 def ratHat : 𝓞 E →+* intHat F E :=
   ((Algebra.TensorProduct.includeRight : E →ₐ[F] RA F E).toRingHom.comp (algebraMap (𝓞 E) E)).codRestrict
-    (intHat F E) (fun x => tmul_mem F E 1 (fun v => one_mem _) x)
+    (intHat F E) (fun x => tmul_mem F E 1 (fun _ => one_mem _) x)
 
 theorem inclHat_integral : (inclHat F E).IsIntegral := by
   letI := (inclHat F E).toAlgebra

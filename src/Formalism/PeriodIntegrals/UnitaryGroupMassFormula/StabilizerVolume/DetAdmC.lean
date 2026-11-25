@@ -4,43 +4,6 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.PosNear
 public import Mathlib.Topology.ContinuousMap.CompactlySupported
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -146,15 +109,15 @@ theorem locBox_eq_latV {D : Fin a × Fin M × Fin d → ∀ v : HeightOneSpectru
 theorem finprod_ite {α : Type} (P : α → Prop) [DecidablePred P] [Decidable (∀ v, P v)] (h : ∀ᶠ v in cofinite, P v) :
     ∏ᶠ v, (if P v then (1 : ℂ) else 0) = if ∀ v, P v then 1 else 0 := by
   by_cases hall : ∀ v, P v
-  · rw [if_pos hall]
-    exact finprod_eq_one_of_forall_eq_one fun v => if_pos (hall v)
-  · rw [if_neg hall]
+  · rw [ite_eq_left hall]
+    exact finprod_eq_one_of_forall_eq_one fun v => ite_eq_left (hall v)
+  · rw [ite_eq_right hall]
     push Not at hall
     obtain ⟨v0, hv0⟩ := hall
-    refine finprod_eq_zero _ v0 (if_neg hv0) ?_
+    refine finprod_eq_zero _ v0 (ite_eq_right hv0) ?_
     refine (eventually_cofinite.1 h).subset fun v hv => ?_
     intro hP
-    exact hv (if_pos hP)
+    exact hv (ite_eq_left hP)
 
 theorem finprod_locBox {D : Fin a × Fin M × Fin d → ∀ v : HeightOneSpectrum (𝓞 F), Set (Fv F v)}
     (hD : IsBoxD D) (W : Fin a → Fin M → Af F ⊗[F] E) :
@@ -172,9 +135,9 @@ theorem finprod_locBox {D : Fin a × Fin M × Fin d → ∀ v : HeightOneSpectru
   rw [finprod_congr hv, finprod_ite _ ?_]
   · rw [Set.indicator_apply]
     by_cases hq : q ∈ boxS D
-    · rw [if_pos hq, if_pos (fun v c => hq c v)]
+    · rw [ite_eq_left hq, ite_eq_left (fun v c => hq c v)]
       rfl
-    · rw [if_neg hq, if_neg (fun h' => hq (fun c v => h' v c))]
+    · rw [ite_eq_right hq, ite_eq_right (fun h' => hq (fun c v => h' v c))]
   · filter_upwards [hD.2, eventually_all.2 fun c => (q c).eventually] with v h1 h2 c
     rw [h1 c]
     exact h2 c

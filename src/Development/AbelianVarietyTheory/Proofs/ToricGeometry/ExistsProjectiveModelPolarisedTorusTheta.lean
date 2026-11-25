@@ -535,7 +535,7 @@ private theorem valAt'_presheaf_map_of_le_of_whole_le_preimage' {Y : Over (Sp �
   have hU : ⊤ ≤ x.left ⁻¹ᵁ U := fun y hy => hVU (h hy)
   have hm : Y.left.presheaf.map (homOfLE hVU).op ≫ x.left.appLE V ⊤ h = x.left.appLE U ⊤ hU :=
     Scheme.Hom.map_appLE x.left h (homOfLE hVU).op
-  simp only [valAt', valAt, dif_pos h, dif_pos hU, resG]
+  simp only [valAt', valAt, dite_eq_left h, dite_eq_left hU, resG]
   exact congrArg (fun φ => (Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom (φ.hom s)) hm
 
 private theorem preimage_basicOpen_whole_iff_valAt'_ne_zero {Y : Over (Sp ℂ)} (x : 𝟙_ (Over (Sp ℂ)) ⟶ Y) {U : Y.left.Opens}
@@ -817,8 +817,7 @@ theorem exists_projModel_torus : (∀ (X : Over (Sp ℂ)) (U : X.left.Opens), Is
     intro z
     obtain ⟨f, hfq, hfz⟩ := hNZ g τ hτ N hN2 z
     have hf := hSpan g τ hτ N hN1 f hfq
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     have h0 := hspan_rel z z 0 (fun c => by simp [hall c]) f hf
     simp only [zero_mul] at h0
     exact hfz h0

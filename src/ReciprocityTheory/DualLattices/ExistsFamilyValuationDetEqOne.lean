@@ -106,14 +106,6 @@ private theorem valuation_sub_eq_one_of_eq_one_of_lt_one {a b : C} (ha : v a = 1
     exact hb
   rw [sub_eq_add_neg, v.map_add_eq_of_lt_left h, ha]
 
-private theorem nnreal_pow_lt_one_of_lt_one_of_ne_zero {a : NNReal} (hlt : a < 1) {m : ℕ} (hm : m ≠ 0) :
-    a ^ m < 1 := by
-  have h0 : (0 : NNReal) ≤ a := by positivity
-  obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hm
-  rw [pow_succ]
-  refine lt_of_le_of_lt (mul_le_of_le_one_left h0 ?_) hlt
-  exact pow_le_one₀ h0 hlt.le
-
 theorem exists_family_valuation_det_eq_one (hv : v.Integers R) (AA : HopfOrder (C := C) R N) (K : AddSubgroup N)
     [DecidablePred (· ∈ K)] (β : Matrix K K C) (hβ : IsUnit β.det)
     (hAK : AA.carrier.map (resK (R := R) K) = Submodule.span R (Set.range fun j k => β k j)) :
@@ -176,7 +168,7 @@ theorem exists_family_valuation_det_eq_one (hv : v.Integers R) (AA : HopfOrder (
       rw [hvn, hS z hz, one_pow]
     have hnx : v (n x) < 1 := by
       rw [hvn]
-      exact nnreal_pow_lt_one_of_lt_one_of_ne_zero (lt_of_le_of_ne (hDle x) hGx) hcard
+      exact pow_lt_one₀ (by positivity) (lt_of_le_of_ne (hDle x) hGx) hcard
     obtain ⟨a, ha_def⟩ : ∃ a : N → C, a = fun y => n x - n y := ⟨_, rfl⟩
     obtain ⟨b, hb_def⟩ : ∃ b : N → C, b = fun y => ∏ w ∈ S, (n w - n y) := ⟨_, rfl⟩
     obtain ⟨g, hg_def⟩ : ∃ g : K → N → C, g = fun j y => f0 j (y + -x) := ⟨_, rfl⟩

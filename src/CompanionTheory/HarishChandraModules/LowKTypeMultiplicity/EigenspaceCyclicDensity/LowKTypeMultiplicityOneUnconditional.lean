@@ -35,7 +35,6 @@ theorem hKModExists : KModExists :=
   GlobalTheory.CompanionTheory.KModExists.kModExists DSIC.hSmMod CompanionTheory.D.gk.admitted.kFin_mem_smoothVecs _root_.UpperTheory.Reformulated.B.Gc1.kFinStab DSIC.hStabLink DSIC.hHWofType
     DSIC.hTypeOfHW
 
-theorem hOrthCyc : OrthCyc := GlobalTheory.CompanionTheory.LowKType.orthCyc
 
 theorem low_K_type_multiplicity_one_unconditional : LowKMultOneP := lowKMultOneP_of hMultAlg hKModExists cyclic_vectors_dense _root_.GlobalTheory.CompanionTheory.LowKType.orthCyc
 

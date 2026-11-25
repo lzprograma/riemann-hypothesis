@@ -11,53 +11,9 @@ public import Formalism.SharpRestriction.GrowthBounds.Joints
 public import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeMapFractionField
 public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.PlaneGramTheoremOfLemmas
 public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.BrData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.BitVec
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Data.Finset.Slice
 import Mathlib.Tactic.Linter.HaveILetI
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -102,7 +58,7 @@ theorem br_ddiv_monomial (M α : Fin r →₀ ℕ) :
     ddiv M (monomial α (1 : K)) = monomial (α - M) (∏ a, (((α a).choose (M a) : ℕ) : K)) := by
   classical
   unfold ddiv
-  rw [support_monomial, if_neg one_ne_zero, Finset.sum_singleton, coeff_monomial, if_pos rfl, one_mul]
+  rw [support_monomial, ite_eq_right one_ne_zero, Finset.sum_singleton, coeff_monomial, ite_eq_left rfl, one_mul]
   split_ifs with h
   · congr 1
     rw [Finsupp.prod]
@@ -114,8 +70,7 @@ theorem br_ddiv_monomial (M α : Fin r →₀ ℕ) :
       omega
     simp [h0, hM]
   · obtain ⟨a, ha⟩ : ∃ a, α a < M a := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact h (Finsupp.le_def.2 hc)
     rw [Finset.prod_eq_zero (Finset.mem_univ a) (by simp [Nat.choose_eq_zero_of_lt ha]), monomial_zero]
 
@@ -312,10 +267,10 @@ theorem brDIG [CharZero (G.KK O)] (D : Formalism.BasicNotions.D7) (S : G.Uniform
           have h := hρ k.1 k.2
           rw [h0, pow_zero] at h
           omega
-        have e1 : ze β k = 0 := by simp only [hze, if_pos h0]
+        have e1 : ze β k = 0 := by simp only [hze, ite_eq_left h0]
         have e2 : rh k = 0 := hr0
         rw [e1, e2, unit_at_zero, h0, pow_zero, hr0, unit_level_one]
-      · have e1 : ze β k = β k := by simp only [hze, if_neg h0]
+      · have e1 : ze β k = β k := by simp only [hze, ite_eq_right h0]
         rw [e1, hlev k h0]
     have hprod : ∀ β : τ × Fin r → ℕ,
         (∏ k, G.cUnit (p ^ (tt k + 1)) (ze β k) * G.dUnit (p ^ (tt k + 1)) (ze β k) (rh k)) =
@@ -333,12 +288,12 @@ theorem brDIG [CharZero (G.KK O)] (D : Formalism.BasicNotions.D7) (S : G.Uniform
       · congr 1
         refine Finset.prod_congr rfl fun k _ => ?_
         by_cases h0 : g k.1 = 0
-        · simp only [hze, if_pos h0, hjz k h0, Nat.choose_zero_right]
-        · simp only [hze, if_neg h0]
+        · simp only [hze, ite_eq_left h0, hjz k h0, Nat.choose_zero_right]
+        · simp only [hze, ite_eq_right h0]
       · push Not at hjz
         obtain ⟨k, h0, hne⟩ := hjz
         rw [Finset.prod_eq_zero (Finset.mem_univ k), mul_zero]
-        simp only [hze, if_pos h0]
+        simp only [hze, ite_eq_left h0]
         rw [Nat.choose_eq_zero_of_lt (Nat.pos_of_ne_zero hne), Nat.cast_zero]
     refine ⟨T.filter (fun m => ∀ k : τ × Fin r, g k.1 = 0 → m k = 0), fun m => ((q m : ℚ) : G.KK O), ?_, ?_⟩
     · intro m hm
@@ -408,10 +363,10 @@ theorem colH_oneMu {n N : ℕ} (h : Fin (N + 1) → ℕ) (e : ℤ) (i : Fin (N +
     constructor
     · intro h3
       by_contra h4
-      rw [if_neg h4] at h3
+      rw [ite_eq_right h4] at h3
       omega
     · intro h3
-      rw [if_pos h3]; omega
+      rw [ite_eq_left h3]; omega
   · rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff]
     intro m _; split_ifs <;> omega
 
@@ -448,7 +403,7 @@ def onePath {n N : ℕ} {LL : Letters (Fin N)} {d : Fin N → ℕ} (P : PPath n 
     intro i
     have hstep := P.step i
     by_cases hv : LL.vec i = true
-    · rw [if_pos hv] at hstep ⊢
+    · rw [ite_eq_left hv] at hstep ⊢
       have h1 := colH_strip hstep.1 c
       have h2 := strip_le_one hstep (P.dom _) c
       have h3 := hstrip_one (n := n) (colH (P.mu i.castSucc) c) (colH (P.mu i.succ) c) (if 1 ≤ c then 0 else 1)
@@ -457,7 +412,7 @@ def onePath {n N : ℕ} {LL : Letters (Fin N)} {d : Fin N → ℕ} (P : PPath n 
         unfold IsUsed
         split_ifs with h <;> omega
       rw [h4]; exact h3
-    · rw [if_neg hv] at hstep ⊢
+    · rw [ite_eq_right hv] at hstep ⊢
       have h1 := colH_strip hstep.1 c
       have h2 := strip_le_one hstep (P.dom _) c
       have h3 := hstrip_one (n := n) (colH (P.mu i.succ) c) (colH (P.mu i.castSucc) c) (if 1 ≤ c then 0 else 1)
@@ -477,8 +432,8 @@ theorem colStep_congr {n : ℕ} {P : Type*} [CommRing P] {c c' : ℤ} (hc : 1 �
     (x : Fin n → P) (K : Finset (Fin n) → P) : colStep c a b x K = colStep c' a b x K := by
   unfold colStep
   by_cases h : 1 ≤ c
-  · simp only [if_pos h, if_pos (hc.1 h)]
-  · simp only [if_neg h, if_neg (fun x => h (hc.2 x))]
+  · simp only [ite_eq_left h, ite_eq_left (hc.1 h)]
+  · simp only [ite_eq_right h, ite_eq_right (fun x => h (hc.2 x))]
 
 theorem Kcol_ge (R : Type*) [CommRing R] {N n : ℕ} (mu : Fin (N + 1) → Fin n → ℤ) (c : ℤ) (j : ℕ) (h : ¬ j < N) :
     Kcol R mu c (j + 1) = Kcol R mu c j := by
@@ -546,8 +501,8 @@ theorem col_est (h3b : Formalism.MainNotions.PlaneGramData.PathSpanAtRing O) {N 
         (if c ≤ 0 ∧ colH (P.mu i.succ) c < r then 1 else 0) : ℤ) = 0 := by
       rw [hc]
       by_cases h1 : c ≤ 0
-      · rw [if_pos h1, if_neg (by omega), if_neg (by omega)]; rfl
-      · rw [if_neg h1, if_neg (by omega), if_neg (by omega)]; rfl
+      · rw [ite_eq_left h1, ite_eq_right (by omega), ite_eq_right (by omega)]; rfl
+      · rw [ite_eq_right h1, ite_eq_right (by omega), ite_eq_right (by omega)]; rfl
     rw [h0, Kcol_unused _ _ _ hun]
     unfold extOne
     split_ifs
@@ -558,56 +513,56 @@ theorem col_est (h3b : Formalism.MainNotions.PlaneGramData.PathSpanAtRing O) {N 
     obtain ⟨e, he⟩ : ∃ e : ℤ, e = if 1 ≤ c then 0 else 1 := ⟨_, rfl⟩
     have he' : (e = 0 ∧ 1 ≤ c) ∨ (e = 1 ∧ c ≤ 0) := by
       by_cases h : 1 ≤ c
-      · left; rw [he, if_pos h]; exact ⟨rfl, h⟩
-      · right; rw [he, if_neg h]; exact ⟨rfl, by omega⟩
+      · left; rw [he, ite_eq_left h]; exact ⟨rfl, h⟩
+      · right; rw [he, ite_eq_right h]; exact ⟨rfl, by omega⟩
     obtain ⟨c0, hc0⟩ : ∃ c0 : ℤ, c0 = 1 - e := ⟨_, rfl⟩
     have hH : ∀ (i : Fin (N + 1)) (c' : ℤ), colH ((onePath P c).mu i) c' =
         if c' + e ≤ 0 then r else if c' + e = 1 then colH (P.mu i) c else 0 := by
       intro i c'; rw [he]; exact colH_onePath P c i c'
     have hH0 : ∀ i, colH ((onePath P c).mu i) c0 = colH (P.mu i) c := by
       intro i
-      rw [hH, if_neg (by omega), if_pos (by omega)]
+      rw [hH, ite_eq_right (by omega), ite_eq_left (by omega)]
     have hused : IsUsed (onePath P c).mu c0 i0 := by
       unfold IsUsed; rw [hH0, hH0]; exact hi0
     have hmem := col_clause3 (onePath P c) c0 i0 hused
     have hun' : ∀ c', c' ≠ c0 → ∀ i : Fin N, ¬ IsUsed (onePath P c).mu c' i := by
       intro c' hc' i
       unfold IsUsed
-      rw [hH, hH, if_neg (by omega : ¬ c' + e = 1), if_neg (by omega : ¬ c' + e = 1)]
+      rw [hH, hH, ite_eq_right (by omega : ¬ c' + e = 1), ite_eq_right (by omega : ¬ c' + e = 1)]
       exact not_not.2 rfl
     have hc1 : 1 ≤ c ↔ 1 ≤ c0 := by omega
     set I' : ℤ → Finset (Fin r) := fun c' => if c' = c0 then J else ∅ with hI'
     have hSt : IsSt (onePath P c).mu I' := by
       refine ⟨fun c' hc' => ?_, fun c' => ?_, fun c' t => ?_⟩
       · show (if c' = c0 then J else ∅) = ∅
-        rw [if_neg]; rintro rfl; exact hc' hmem
+        rw [ite_eq_right]; rintro rfl; exact hc' hmem
       · show (if c' = c0 then J else ∅).card = _
         have hE : pEnd (onePath P c).mu = (onePath P c).mu (Fin.last N) := rfl
         rw [hE, hH]
         by_cases h : c' = c0
-        · rw [if_pos h, hJ, h, if_neg (by omega : ¬ c0 + e ≤ 0), if_pos (by omega : c0 + e = 1)]
+        · rw [ite_eq_left h, hJ, h, ite_eq_right (by omega : ¬ c0 + e ≤ 0), ite_eq_left (by omega : c0 + e = 1)]
           by_cases hc : 1 ≤ c
-          · rw [if_pos hc, if_pos (hc1.1 hc)]; rfl
-          · rw [if_neg hc, if_neg (fun x => hc (hc1.2 x))]; rfl
-        · rw [if_neg h, Finset.card_empty]
+          · rw [ite_eq_left hc, ite_eq_left (hc1.1 hc)]; rfl
+          · rw [ite_eq_right hc, ite_eq_right (fun x => hc (hc1.2 x))]; rfl
+        · rw [ite_eq_right h, Finset.card_empty]
           split_ifs <;> omega
       · refine Finset.card_le_card (Finset.filter_subset_filter _ ?_)
         by_cases h1 : 1 ≤ c'
         · have : tabCol I' (c' + 1) = ∅ := by
-            unfold tabCol; rw [if_pos (by omega)]; exact if_neg (by omega)
+            unfold tabCol; rw [ite_eq_left (by omega)]; exact ite_eq_right (by omega)
           rw [this]; exact Finset.empty_subset _
         · by_cases h2 : c' = c0
           · have : tabCol I' (c' + 1) = ∅ := by
-              unfold tabCol; rw [if_pos (by omega)]; exact if_neg (by omega)
+              unfold tabCol; rw [ite_eq_left (by omega)]; exact ite_eq_right (by omega)
             rw [this]; exact Finset.empty_subset _
           · have : tabCol I' c' = univ := by
-              unfold tabCol; rw [if_neg h1]
+              unfold tabCol; rw [ite_eq_right h1]
               show univ \ (if c' = c0 then J else ∅) = univ
-              rw [if_neg h2]; simp
+              rw [ite_eq_right h2]; simp
             rw [this]; exact Finset.subset_univ _
     have key := (h3b N r LL _).2 (onePath P c) I' hSt i
-    rw [Psi_one O (onePath P c).mu c0 hmem hun' I' (fun c' h => if_neg h)] at key
-    have hJ' : I' c0 = J := if_pos rfl
+    rw [Psi_one O (onePath P c).mu c0 hmem hun' I' (fun c' h => ite_eq_right h)] at key
+    have hJ' : I' c0 = J := ite_eq_left rfl
     rw [hJ', ← Kcol_congr O P.mu (onePath P c).mu c c0 hc1 (fun i => (hH0 i).symm) N] at key
     rw [← StandardMonomialSpace.lift_Kcol_map (algebraMap O (KK O)) P.mu c N J,
       StandardMonomialSpace.valS_map _ (IsFractionRing.injective O (KK O))]
@@ -701,7 +656,7 @@ theorem valS_empty_le {R : Type} [Field R] {ι : Type} {n : ℕ} [NeZero n] (LL 
   show (LaurentPolynomial.C (((algebraMap (MvPolynomial (Fin n × Fin n) R) (GLCoord R n)).comp MvPolynomial.C)
     (F.coeff m))).coeff 0 ≠ 0
   rw [LaurentPolynomial.C_apply]
-  simp only [if_true]
+  simp only [ite_true]
   exact (map_ne_zero _).2 hm
 
 section Lift

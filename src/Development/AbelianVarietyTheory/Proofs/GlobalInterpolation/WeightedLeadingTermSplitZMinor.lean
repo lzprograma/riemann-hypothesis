@@ -67,7 +67,7 @@ theorem TopTerm.C (c : A) : TopTerm w (C c : MvPolynomial σ A) 0 c := by
   classical
   refine ⟨by simp, fun m hm => Or.inl ?_⟩
   by_contra h
-  rw [mem_support_iff, coeff_C, if_neg (Ne.symm h)] at hm
+  rw [mem_support_iff, coeff_C, ite_eq_right (Ne.symm h)] at hm
   exact hm rfl
 
 theorem TopTerm.mul {f g : MvPolynomial σ A} {d e : σ →₀ ℕ} {c c' : A} (hf : TopTerm w f d c) (hg : TopTerm w g e c') :
@@ -116,9 +116,9 @@ theorem TopTerm.linear {k : ℕ} (v : Fin (k + 1) → σ) (c : Fin (k + 1) → A
     rw [mul_comm, C_mul_X_eq_monomial]
   simp only [e]
   constructor
-  · rw [coeff_sum, Fin.sum_univ_castSucc, Finset.sum_eq_zero, zero_add, coeff_monomial, if_pos rfl]
+  · rw [coeff_sum, Fin.sum_univ_castSucc, Finset.sum_eq_zero, zero_add, coeff_monomial, ite_eq_left rfl]
     intro q _
-    rw [coeff_monomial, if_neg]
+    rw [coeff_monomial, ite_eq_right]
     intro h
     have h1 := Finsupp.single_left_injective one_ne_zero h
     have := hv q
@@ -141,7 +141,7 @@ def lp (n k : ℕ) : Pol K Unit n :=
 
 theorem lp_eq {k : ℕ} (h : k ≤ n) :
     lp K n k = (Matrix.of fun p q : Fin k => (X ((), Fin.castLE h p, Fin.castLE h q) : Pol K Unit n)).det := by
-  rw [lp, dif_pos h, Formalism.GradedWeylDivisibility.lpMinor, AlgHom.map_det]
+  rw [lp, dite_eq_left h, Formalism.GradedWeylDivisibility.lpMinor, AlgHom.map_det]
   congr 1
   ext p q
   simp
@@ -172,12 +172,12 @@ theorem weightedLeadingTerm_split_zMinor (i : Fin n) :
     refine Finset.sum_congr rfl fun q _ => ?_
     rw [map_mul, RingHom.map_det, map_pow, map_neg, map_one, mul_left_comm, ← mul_assoc]
     congr 2
-    · simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, rename_X, Fin.val_last, lt_irrefl, dif_neg,
+    · simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, rename_X, Fin.val_last, lt_irrefl, dite_eq_right,
         not_false_eq_true]
       exact splitLast_X_lastRow K Unit hN () (Fin.castLE hi q)
     · ext1 p r
       simp only [AlgHom.mapMatrix_apply, RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, rename_X,
-        Matrix.submatrix_apply, Fin.succAbove_last, Fin.val_castSucc, p.2, dif_pos]
+        Matrix.submatrix_apply, Fin.succAbove_last, Fin.val_castSucc, p.2, dite_eq_left]
       exact splitLast_X_up K Unit hN () (Fin.castLE hi' p) (Fin.castLE hi (q.succAbove r))
   · rfl
   · rw [lp_eq K hi', Fin.val_last, ← two_mul, pow_mul]
@@ -199,8 +199,8 @@ theorem exp_eq (lam : DomWeight N) (sg : DomWeight n) (hI : Br.Interlace hN lam 
   subst hN
   have hn : 0 < n := i.pos
   have h1 := (hI i).1
-  have e1 : sg.detShift = sg.w ⟨n - 1, by omega⟩ := dif_pos hn
-  have e2 : lam.detShift = lam.w ⟨n, by omega⟩ := dif_pos (Nat.succ_pos n)
+  have e1 : sg.detShift = sg.w ⟨n - 1, by omega⟩ := dite_eq_left hn
+  have e2 : lam.detShift = lam.w ⟨n, by omega⟩ := dite_eq_left (Nat.succ_pos n)
   unfold Br.SameShift at hS
   unfold Formalism.GradedWeylDivisibility.nuNext
   split_ifs with h
@@ -232,6 +232,6 @@ theorem coefLast_xi : ∀ (K : Type) [Field K] (N n : ℕ) (hN : N = n + 1) (lam
   · rw [Finset.prod_mul_distrib, prod_shift (lp K n) (lp_zero K) fun s => (Br.bBr hN lam sg s).toNat,
       ← Finset.prod_mul_distrib, extremal, Formalism.GradedWeylDivisibility.hw, map_prod]
     refine Finset.prod_congr rfl fun i _ => ?_
-    rw [← pow_add, exp_eq hN lam sg hI hS, map_pow, lp, dif_pos (show i.val + 1 ≤ n from i.2)]
+    rw [← pow_add, exp_eq hN lam sg hI hS, map_pow, lp, dite_eq_left (show i.val + 1 ≤ n from i.2)]
 
 end GlobalTheory.XiTopCoef

@@ -99,9 +99,3 @@ variable {L U R : Type} [Field L] [AddCommGroup U] [Module L U] [Ring R] {m : �
 variable {A : Type} [Ring A] (α : A →+* Module.End L U)
 
 end GlobalTheory.UPel.HT.MatUnit
-
-section Main
-
-open NumberField Matrix
-
-end Main

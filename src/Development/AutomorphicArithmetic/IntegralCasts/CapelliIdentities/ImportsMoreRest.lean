@@ -52,7 +52,7 @@ public import Mathlib.RingTheory.Ideal.GoingUp
 @[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qi28.exists_extend.{u_1, u_2} :
-    ∀ {R : Type u_1} {A : Type u_2} [inst : CommRing R] [inst_1 : CommRing A] [inst_2 : Algebra R A]
+    ∀ {R : Type u_1} {A : Type u_2} [CommRing R] [CommRing A] [Algebra R A]
     [Algebra.IsIntegral R A] (ev : R →+* ℂ),
     RingHom.ker (Algebra.algebraMap R A) ≤ RingHom.ker ev → ∃ (χ : A →+* ℂ), χ.comp (Algebra.algebraMap R A) = ev := by
   intro R A _ _ _ _ ev h

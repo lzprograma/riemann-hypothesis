@@ -67,11 +67,11 @@ theorem sum_step_telescope (L : ℕ → ℝ) (m : ℝ) {p r : ℕ} (hp : p ≤ r
   have h1 : ∑ k ∈ Finset.range p, (if p ≤ k then m else -m) * (L (k + 1) - L k) = -m * (L p - L 0) := by
     rw [← Finset.sum_range_sub L p, Finset.mul_sum]
     refine Finset.sum_congr rfl fun k hk => ?_
-    rw [if_neg (by have := Finset.mem_range.mp hk; omega)]
+    rw [ite_eq_right (by have := Finset.mem_range.mp hk; omega)]
   have h2 : ∑ k ∈ Finset.Ico p r, (if p ≤ k then m else -m) * (L (k + 1) - L k) = m * (L r - L p) := by
     rw [← Finset.sum_Ico_sub L hp, Finset.mul_sum]
     refine Finset.sum_congr rfl fun k hk => ?_
-    rw [if_pos (Finset.mem_Ico.mp hk).1]
+    rw [ite_eq_left (Finset.mem_Ico.mp hk).1]
   rw [h1, h2]; ring
 
 theorem nfac_parallel_flowV {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : Data E r)

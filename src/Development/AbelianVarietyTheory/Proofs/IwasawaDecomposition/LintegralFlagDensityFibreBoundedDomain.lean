@@ -59,8 +59,6 @@ theorem shear_neg_J {p q : ℕ} (Z : Matrix (Fin p) (Fin q) ℂ) :
     shear (-Jpq p q) Z = fromBlocks (-1) (-Z) (-Zᴴ) (hQ Z) := by
   simp [shear, Jpq, hQ, fromBlocks_neg, fromBlocks_conjTranspose, fromBlocks_multiply, sub_eq_neg_add]
 
-alias flagConst_pos := _root_.GlobalTheory.TrueCx.flagConst_pos
-
 theorem lintegral_dens_glue : ∀ (r p q : ℕ) (e : Fin r ≃ Fin p ⊕ Fin q), IsBlockSL2Embedding e → ∀ (A : Matrix (Fin r) (Fin r) ℂ), reindex e e A = -Jpq p q → ∀ v : Fin p × Fin q → ℂ, toMat v ∈ hcDom p q → ∫⁻ b : (Low q → ℂ) × (Low p → ℂ), ENNReal.ofReal (dens A (glue e (v, b))) = ENNReal.ofReal ((hQ (toMat v)).det.re ^ (-((p + q : ℕ) : ℤ)) / (flagConst p * flagConst q)) := by
   intro r p q e he A hA v hv
   set Z := toMat v with hZ
@@ -96,8 +94,8 @@ theorem lintegral_dens_glue : ∀ (r p q : ℕ) (e : Fin r ≃ Fin p ⊕ Fin q),
     ((measurable_dens _).ennreal_ofReal.const_mul _).aemeasurable (measurable_dens _).ennreal_ofReal.aemeasurable,
     lintegral_const_mul _ (measurable_dens _).ennreal_ofReal, _root_.GlobalTheory.FlagFibre.FlagInt.lintegral_dens _ _ hH, _root_.GlobalTheory.FlagFibre.FlagInt.lintegral_dens _ _ hBp, hdet, hdd,
     ← Complex.ofReal_inv, Complex.ofReal_re, Complex.ofReal_re]
-  have hp := flagConst_pos p
-  have hq := flagConst_pos q
+  have hp := GlobalTheory.TrueCx.flagConst_pos p
+  have hq := GlobalTheory.TrueCx.flagConst_pos q
   rw [← ENNReal.ofReal_mul (by positivity), ← ENNReal.ofReal_mul (by positivity)]
   congr 1
   rw [_root_.inv_zpow', ← mul_div_assoc _ _ (flagConst q), div_mul_div_comm, ← zpow_add₀ hd0.ne', ← zpow_add₀ hd0.ne', mul_comm (flagConst q)]

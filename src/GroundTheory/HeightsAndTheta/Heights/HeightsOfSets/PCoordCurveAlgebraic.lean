@@ -22,6 +22,21 @@ namespace CoordCurveDegree
 
 set_option linter.unusedSectionVars false
 
+theorem algebraicIndependent_C_mul_X {K Ω : Type} [Field Ω] (a : K → Ω) (ha : ∀ k, a k ≠ 0) :
+    AlgebraicIndependent Ω (fun k ↦ (C (a k) * X k : MvPolynomial K Ω)) := by
+  let φ : MvPolynomial K Ω →ₐ[Ω] MvPolynomial K Ω := aeval fun k ↦ C (a k) * X k
+  let ψ : MvPolynomial K Ω →ₐ[Ω] MvPolynomial K Ω := aeval fun k ↦ C (a k)⁻¹ * X k
+  have hψφ : ψ.comp φ = AlgHom.id _ _ := by
+    refine MvPolynomial.algHom_ext fun k ↦ ?_
+    simp only [φ, ψ, AlgHom.comp_apply, aeval_X, map_mul, aeval_C, MvPolynomial.algebraMap_eq,
+      AlgHom.id_apply]
+    rw [← mul_assoc, ← C_mul, mul_inv_cancel₀ (ha k), C_1, one_mul]
+  have hφ : Function.Injective φ := Function.LeftInverse.injective (g := ψ) fun p ↦ by
+    rw [← AlgHom.comp_apply, hψφ, AlgHom.id_apply]
+  convert (MvPolynomial.algebraicIndependent_X K Ω).map' hφ using 1
+  funext k
+  simp [φ]
+
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω] [CharZero Ω]
 
 def coneMapQ (y : (Σ k, ι k) → Ω) : MvPolynomial (Σ k, ι k) ℚ →ₐ[ℚ] MvPolynomial K Ω :=
@@ -46,16 +61,23 @@ theorem int_eq_zero {y : (Σ k, ι k) → Ω} (hP : IsArithVar (mCoordIdeal y) 1
   have h : m ∈ (mCoordIdeal y).comap (C : ℤ →+* MRing ι) := hm
   rwa [show (mCoordIdeal y).comap (C : ℤ →+* MRing ι) = ⊥ from hP.2.2.1, Ideal.mem_bot] at h
 
-theorem ker_coneMapQ {y : (Σ k, ι k) → Ω} (hP : IsArithVar (mCoordIdeal y) 1) :
+theorem ker_coneMapQ_of_isHorizontal {y : (Σ k, ι k) → Ω} (hPrime : (mCoordIdeal y).IsPrime)
+    (hHoriz : IsHorizontal (mCoordIdeal y)) :
     RingHom.ker (coneMapQ y) = ReciprocityTheory.AnForm.R.extQ (mCoordIdeal y) := by
-  have := hP.2.1.1
-  obtain ⟨-, hc, -⟩ := ReciprocityTheory.AnForm.R.extQ_spec (mCoordIdeal y) (int_eq_zero hP)
+  have hz : ∀ m : ℤ, (C m : MRing ι) ∈ mCoordIdeal y → m = 0 := fun m hm ↦ by
+    have h : m ∈ (mCoordIdeal y).comap (C : ℤ →+* MRing ι) := hm
+    rwa [show (mCoordIdeal y).comap (C : ℤ →+* MRing ι) = ⊥ from hHoriz, Ideal.mem_bot] at h
+  obtain ⟨-, hc, -⟩ := ReciprocityTheory.AnForm.R.extQ_spec (mCoordIdeal y) hz
   have hle : ReciprocityTheory.AnForm.R.extQ (mCoordIdeal y) ≤ RingHom.ker (coneMapQ y) :=
     Ideal.map_le_iff_le_comap.mpr (comap_ker_coneMapQ y).ge
   refine (eq_of_le_of_not_lt hle fun hlt ↦ ?_).symm
   have h := ReciprocityTheory.AnForm.R.IntegerToRational.comap_strictMono hlt
   simp only [hc, comap_ker_coneMapQ] at h
   exact lt_irrefl _ h
+
+theorem ker_coneMapQ {y : (Σ k, ι k) → Ω} (hP : IsArithVar (mCoordIdeal y) 1) :
+    RingHom.ker (coneMapQ y) = ReciprocityTheory.AnForm.R.extQ (mCoordIdeal y) :=
+  ker_coneMapQ_of_isHorizontal hP.2.1.1 hP.2.2.1
 
 theorem trdeg_range {y : (Σ k, ι k) → Ω} (hP : IsArithVar (mCoordIdeal y) 1) :
     (trdeg ℚ (coneMapQ y).range).toENat = Fintype.card K := by
@@ -73,21 +95,6 @@ theorem trdeg_range {y : (Σ k, ι k) → Ω} (hP : IsArithVar (mCoordIdeal y) 1
     rw [e] at hd
     exact_mod_cast hd
   exact (ENat.add_left_injective_of_ne_top ENat.one_ne_top) h2
-
-theorem algebraicIndependent_C_mul_X (a : K → Ω) (ha : ∀ k, a k ≠ 0) :
-    AlgebraicIndependent Ω (fun k ↦ (C (a k) * X k : MvPolynomial K Ω)) := by
-  let φ : MvPolynomial K Ω →ₐ[Ω] MvPolynomial K Ω := aeval fun k ↦ C (a k) * X k
-  let ψ : MvPolynomial K Ω →ₐ[Ω] MvPolynomial K Ω := aeval fun k ↦ C (a k)⁻¹ * X k
-  have hψφ : ψ.comp φ = AlgHom.id _ _ := by
-    refine MvPolynomial.algHom_ext fun k ↦ ?_
-    simp only [φ, ψ, AlgHom.comp_apply, aeval_X, map_mul, aeval_C, MvPolynomial.algebraMap_eq,
-      AlgHom.id_apply]
-    rw [← mul_assoc, ← C_mul, mul_inv_cancel₀ (ha k), C_1, one_mul]
-  have hφ : Function.Injective φ := Function.LeftInverse.injective (g := ψ) fun p ↦ by
-    rw [← AlgHom.comp_apply, hψφ, AlgHom.id_apply]
-  convert (MvPolynomial.algebraicIndependent_X K Ω).map' hφ using 1
-  funext k
-  simp [φ]
 
 theorem injective_subst (k₀ : K) :
     Function.Injective (aeval (Sum.elim (fun k ↦ X (Sum.inl k)) fun _ : Unit ↦

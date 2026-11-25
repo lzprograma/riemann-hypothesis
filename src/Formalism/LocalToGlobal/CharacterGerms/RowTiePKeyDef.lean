@@ -1,7 +1,8 @@
 module
 
 public import Formalism.LocalToGlobal.CharacterGerms.Interface
-public import Lemmata.PowMulVecEigen.PowMulVecEig
+public import Mathlib.LinearAlgebra.Eigenspace.Minpoly
+public import Mathlib.LinearAlgebra.Matrix.ToLin
 import Formalism.LocalToGlobal.CharacterGerms.CoeffSubstEqSum
 import Formalism.LocalToGlobal.CharacterGerms.RowTiePGerm
 import Formalism.LocalToGlobal.CharacterGerms.RowTiePLSmallCv
@@ -59,7 +60,7 @@ variable {C : Type} [Field C] {V : VF C}
 theorem eig_int {n : ℕ} (A : Matrix (Fin n) (Fin n) C) (hA : ∀ i j, V.Ge 0 (A i j)) (w : Fin n → C) (hw : w ≠ 0)
     (lam : C) (h : Matrix.mulVec A w = lam • w) : V.Ge 0 lam := by
   obtain ⟨i0, hi0⟩ : ∃ i, w i ≠ 0 := by
-    by_contra hc; push_neg at hc; exact hw (funext hc)
+    by_contra hc; push Not at hc; exact hw (funext hc)
 
   obtain ⟨i, -, hi⟩ := Finset.exists_min_image Finset.univ (fun i => V.v (w i)) ⟨i0, Finset.mem_univ _⟩
   have hwi : w i ≠ 0 := by
@@ -85,8 +86,7 @@ theorem eig_int {n : ℕ} (A : Matrix (Fin n) (Fin n) C) (hA : ∀ i j, V.Ge 0 (
   have hne : V.v (w i) ≠ ⊤ := (AddValuation.ne_top_iff V.v).mpr hwi
   obtain ⟨r, hr⟩ := WithTop.ne_top_iff_exists.mp hne
   rw [← hr] at hge
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have h2 : V.v lam + (r : WithTop ℝ) < 0 + (r : WithTop ℝ) := by
     exact WithTop.add_lt_add_right (WithTop.coe_ne_top) hlt
   rw [zero_add] at h2

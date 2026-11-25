@@ -1,57 +1,14 @@
 module
 
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdicNeighbourhood
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdicNeighbourhood
 public import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
 open Formalism.FourierDecayAlt.A6 Formalism.FourierDecayAlt.A5 Formalism.DoubleCosetMeasures Filter Topology
+open Formalism.FourierDecayAlt.P.AdicNeighbourhood
 open scoped ComplexConjugate
 
 namespace Formalism.FourierDecayAlt.P.A6x8
@@ -82,23 +39,16 @@ theorem kpHerm : KpHerm := by
   have hc := iso_card R (orbZ w (rep R q1)) (orbZ w' (rep R q2))
   unfold pairTerm
   by_cases h1 : IsInt R (orbZ w (rep R q1)) ∧ IsInt R (orbZ w' (rep R q2))
-  · rw [if_pos h1, if_pos h1.symm, hc]; simp; ring
-  · rw [if_neg h1, if_neg (fun h => h1 h.symm)]; simp
+  · rw [ite_eq_left h1, ite_eq_left h1.symm, hc]; simp; ring
+  · rw [ite_eq_right h1, ite_eq_right (fun h => h1 h.symm)]; simp
+
+end Formalism.FourierDecayAlt.P.A6x8
+
+namespace Formalism.FourierDecayAlt.P.AdicNeighbourhood
 
 section Top
 
 variable {K : Type} [CommRing K] [TopologicalSpace K] [IsTopologicalRing K]
-
-theorem small_mul {C : Set K} (hC : IsCompact C) {W : Set K} (hW : W ∈ 𝓝 (0 : K)) :
-    ∃ U ∈ 𝓝 (0 : K), ∀ u ∈ U, ∀ c ∈ C, u * c ∈ W := by
-  obtain ⟨W', hW'W, hW'o, h0⟩ := mem_nhds_iff.1 hW
-  have hn : IsOpen ((fun p : K × K => p.1 * p.2) ⁻¹' W') := hW'o.preimage continuous_mul
-  obtain ⟨u, v, hu, -, hsu, htv, huv⟩ :=
-    generalized_tube_lemma (isCompact_singleton (x := (0 : K))) hC hn (by
-      rintro ⟨a, b⟩ ⟨ha, -⟩
-      have ha' : a = 0 := ha
-      simp [ha', h0])
-  exact ⟨u, hu.mem_nhds (hsu rfl), fun a ha c hc => hW'W (huv (Set.mk_mem_prod ha (htv hc)))⟩
 
 theorem small_add {Om : Set K} (hC : IsCompact Om) (hO : IsOpen Om) :
     ∃ W ∈ 𝓝 (0 : K), ∀ z ∈ Om, ∀ w ∈ W, z + w ∈ Om := by
@@ -119,153 +69,7 @@ theorem small_scale {Om : Set K} (hC : IsCompact Om) (hO : IsOpen Om) :
   have e : z + (κ - 1) * z = κ * z := by ring
   rwa [e] at this
 
-def I (R : Subring K) (a : K) : Set K := {x | ∃ r ∈ R, x = a * r}
-
-theorem I_compact {R : Subring K} (hc : IsCompact (R : Set K)) (a : K) : IsCompact (I R a) := by
-  have : I R a = (fun r => a * r) '' (R : Set K) := by
-    ext x; constructor
-    · rintro ⟨r, hr, rfl⟩; exact ⟨r, hr, rfl⟩
-    · rintro ⟨r, hr, rfl⟩; exact ⟨r, hr, rfl⟩
-  rw [this]
-  exact hc.image (continuous_const.mul continuous_id)
-
-theorem I_nhds {R : Subring K} (ho : IsOpen (R : Set K)) (a : Kˣ) : I R (a : K) ∈ 𝓝 (0 : K) := by
-  apply Formalism.FourierDecayAlt.P.AdicNeighbourhood.I_nhds <;> assumption
-
-theorem inter_zero {R : Subring K} [T2Space K] [IsReduced K] (hc : IsCompact (R : Set K))
-    (hn : ∀ n : ℕ, n ≠ 0 → IsUnit (n : K)) (ϖ : K) (hu : ∀ x : K, ∃ m : ℕ, ϖ ^ m * x ∈ R)
-    (x : K) (hx : ∀ n, x ∈ I R (ϖ ^ n)) : x = 0 := by
-  apply Formalism.FourierDecayAlt.P.AdicNeighbourhood.inter_zero <;> assumption
-
-structure Adic (R : Subring K) (ϖ : Kˣ) : Prop where
-  t2 : T2Space K
-  isOpen : IsOpen (R : Set K)
-  isCompact : IsCompact (R : Set K)
-  mem : (ϖ : K) ∈ R
-  absorb : ∀ x : K, ∃ m : ℕ, (ϖ : K) ^ m * x ∈ R
-  basis : ∀ W ∈ 𝓝 (0 : K), ∃ n : ℕ, ∀ r ∈ R, (ϖ : K) ^ n * r ∈ W
-
-theorem adic_of_datum {R : Subring K} {ψ : AddChar K ℂ} (hD : LocalDatum K R ψ)
-    (hn : ∀ n : ℕ, n ≠ 0 → IsUnit (n : K)) : ∃ ϖ : Kˣ, Adic R ϖ := by
-  obtain ⟨ϖ, hϖ, hu⟩ := hD.unif
-  have := hD.t2
-  have := hD.red
-  refine ⟨ϖ, hD.t2, hD.isOpen, hD.isCompact, hϖ, hu, fun W hW => ?_⟩
-  obtain ⟨W', hW'W, hW'o, h0⟩ := mem_nhds_iff.1 hW
-  have hs : IsCompact ((R : Set K) ∩ W'ᶜ) := hD.isCompact.inter_right hW'o.isClosed_compl
-  have hanti : Antitone fun n : ℕ => I R ((ϖ : K) ^ n) := by
-    intro n m hnm x hx
-    obtain ⟨r, hr, rfl⟩ := hx
-    obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hnm
-    exact ⟨(ϖ : K) ^ d * r, R.mul_mem (R.pow_mem hϖ d) hr, by ring⟩
-  obtain ⟨n, hn'⟩ := (hs.elim_directed_family_closed (fun n : ℕ => I R ((ϖ : K) ^ n))
-    (fun n => (I_compact hD.isCompact _).isClosed) (by
-      rw [Set.disjoint_iff_inter_eq_empty, Set.eq_empty_iff_forall_notMem]
-      rintro x ⟨⟨-, hxW⟩, hx⟩
-      have := inter_zero hD.isCompact hn (ϖ : K) hu x (fun n => Set.mem_iInter.1 hx n)
-      exact hxW (this ▸ h0)) hanti.directed_ge).imp (fun _ => Disjoint.inter_eq)
-  refine ⟨n, fun r hr => hW'W ?_⟩
-  by_contra hc
-  have : (ϖ : K) ^ n * r ∈ ((R : Set K) ∩ W'ᶜ) ∩ I R ((ϖ : K) ^ n) :=
-    ⟨⟨R.mul_mem (R.pow_mem hϖ n) hr, hc⟩, r, hr, rfl⟩
-  rw [hn'] at this
-  exact this
-
 variable {R : Subring K} {ϖ : Kˣ}
-
-theorem Adic.approx (h : Adic R ϖ) (f : K → K) (hf : Continuous f) (b : K)
-    (ha : ∀ n : ℕ, ∃ r ∈ R, ∃ e ∈ R, f r = b + (ϖ : K) ^ n * e) : ∃ r ∈ R, f r = b := by
-  have := h.t2
-  have hcl : IsClosed (f '' (R : Set K)) := (h.isCompact.image hf).isClosed
-  have hb : b ∈ closure (f '' (R : Set K)) := by
-    rw [mem_closure_iff_nhds]
-    intro N hN
-    have hW : {y | b + y ∈ N} ∈ 𝓝 (0 : K) := by
-      have : ContinuousAt (fun y : K => b + y) 0 := (continuous_const.add continuous_id).continuousAt
-      exact this.preimage_mem_nhds (by simpa using hN)
-    obtain ⟨n, hn⟩ := h.basis _ hW
-    obtain ⟨r, hr, e, he, hre⟩ := ha n
-    exact ⟨f r, by rw [hre]; exact hn e he, r, hr, rfl⟩
-  rw [hcl.closure_eq] at hb
-  obtain ⟨r, hr, e⟩ := hb
-  exact ⟨r, hr, e⟩
-
-theorem Adic.unit_one (h : Adic R ϖ) (j : K) (hj : j ∈ I R (ϖ : K)) : ∃ v ∈ R, (1 + j) * v = 1 := by
-  obtain ⟨r, hr, rfl⟩ := hj
-  refine h.approx (fun v => (1 + (ϖ : K) * r) * v) (continuous_const.mul continuous_id) 1 fun n => ?_
-  have hjR : -((ϖ : K) * r) ∈ R := R.neg_mem (R.mul_mem h.mem hr)
-  refine ⟨∑ i ∈ Finset.range n, (-((ϖ : K) * r)) ^ i, R.sum_mem fun i _ => R.pow_mem hjR i,
-    -(-r) ^ n, R.neg_mem (R.pow_mem (R.neg_mem hr) n), ?_⟩
-  have := mul_neg_geom_sum (-((ϖ : K) * r)) n
-  have e : (-((ϖ : K) * r)) ^ n = (ϖ : K) ^ n * (-r) ^ n := by rw [← mul_pow]; ring
-  show (1 + (ϖ : K) * r) * _ = _
-  rw [e] at this
-  linear_combination this
-
-def Near (R : Subring K) (a x : K) : Prop := ∃ r ∈ R, x = 1 + a * r
-
-theorem near_one (a : K) : Near R a 1 := ⟨0, R.zero_mem, by simp⟩
-
-theorem Near.mul {a x y : K} (ha : a ∈ R) (hx : Near R a x) (hy : Near R a y) : Near R a (x * y) := by
-  obtain ⟨r, hr, rfl⟩ := hx
-  obtain ⟨q, hq, rfl⟩ := hy
-  exact ⟨r + q + a * r * q, R.add_mem (R.add_mem hr hq) (R.mul_mem (R.mul_mem ha hr) hq), by ring⟩
-
-theorem Near.pow {a x : K} (ha : a ∈ R) (hx : Near R a x) (n : ℕ) : Near R a (x ^ n) := by
-  induction n with
-  | zero => simpa using near_one a
-  | succ n ih => rw [pow_succ]; exact ih.mul ha hx
-
-theorem Adic.near_inv (h : Adic R ϖ) {a x : K} (ha : a ∈ I R (ϖ : K)) (hx : Near R a x) :
-    ∃ v, x * v = 1 ∧ Near R a v ∧ v ∈ R := by
-  obtain ⟨r, hr, rfl⟩ := hx
-  obtain ⟨a', ha', rfl⟩ := ha
-  obtain ⟨v, hv, e⟩ := h.unit_one ((ϖ : K) * a' * r) ⟨a' * r, R.mul_mem ha' hr, by ring⟩
-  exact ⟨v, e, ⟨-(r * v), R.neg_mem (R.mul_mem hr hv), by linear_combination e⟩, hv⟩
-
-theorem near_sum {a : K} (n : ℕ) (f : ℕ → K) (hf : ∀ i, Near R a (f i)) :
-    ∃ q ∈ R, ∑ i ∈ Finset.range n, f i = (n : K) + a * q := by
-  induction n with
-  | zero => exact ⟨0, R.zero_mem, by simp⟩
-  | succ n ih =>
-    obtain ⟨q, hq, e⟩ := ih
-    obtain ⟨r, hr, e'⟩ := hf n
-    exact ⟨q + r, R.add_mem hq hr, by rw [Finset.sum_range_succ, e, e']; push_cast; ring⟩
-
-theorem pow_diff {c : K} (hc : c ∈ R) (s : ℕ) {x y : K} (hx : Near R ((s : K) * c) x)
-    (hy : Near R ((s : K) * c) y) : ∃ q ∈ R, x ^ s - y ^ s = (s : K) * (x - y) * (1 + c * q) := by
-  have ha : (s : K) * c ∈ R := R.mul_mem (natCast_mem R s) hc
-  obtain ⟨q, hq, e⟩ := near_sum (R := R) s (fun i => x ^ i * y ^ (s - 1 - i))
-    (fun i => (hx.pow ha i).mul ha (hy.pow ha _))
-  refine ⟨q, hq, ?_⟩
-  rw [← geom_sum₂_mul, e]; ring
-
-theorem Adic.root (h : Adic R ϖ) (s : ℕ) {c : K} (hc : c ∈ I R (ϖ : K)) {b : K}
-    (hb : Near R ((s : K) ^ 2 * c) b) : ∃ κ, Near R ((s : K) * c) κ ∧ κ ^ s = b := by
-  obtain ⟨c', hc', hcc⟩ := hc
-  have hcR : c ∈ R := by rw [hcc]; exact R.mul_mem h.mem hc'
-  have key : ∀ k : ℕ, ∃ r ∈ R, ∃ e ∈ R, (1 + (s : K) * c * r) ^ s = b + (s : K) ^ 2 * c ^ (k + 1) * e := by
-    intro k
-    induction k with
-    | zero =>
-      obtain ⟨r0, hr0, e0⟩ := hb
-      exact ⟨0, R.zero_mem, -r0, R.neg_mem hr0, by rw [e0]; simp⟩
-    | succ k ih =>
-      obtain ⟨r, hr, e, he, hre⟩ := ih
-      have hr' : r - c ^ k * e ∈ R := R.sub_mem hr (R.mul_mem (R.pow_mem hcR k) he)
-      obtain ⟨q, hq, hd⟩ := pow_diff (R := R) hcR s (x := 1 + (s : K) * c * (r - c ^ k * e))
-        (y := 1 + (s : K) * c * r) ⟨_, hr', rfl⟩ ⟨_, hr, rfl⟩
-      refine ⟨_, hr', -(e * q), R.neg_mem (R.mul_mem he hq), ?_⟩
-      linear_combination hd + hre
-  obtain ⟨r, hr, e⟩ := h.approx (fun r => (1 + (s : K) * c * r) ^ s)
-    ((continuous_const.add (continuous_const.mul continuous_id)).pow s) b (fun n => by
-      obtain ⟨r, hr, e, he, hre⟩ := key n
-      refine ⟨r, hr, (s : K) ^ 2 * ((ϖ : K) * c' ^ (n + 1)) * e,
-        R.mul_mem (R.mul_mem (R.pow_mem (natCast_mem R s) 2)
-          (R.mul_mem h.mem (R.pow_mem hc' _))) he, ?_⟩
-      show (1 + (s : K) * c * r) ^ s = _
-      rw [hre, hcc]; ring)
-  exact ⟨_, ⟨r, hr, rfl⟩, e⟩
 
 theorem Adic.shift_small (h : Adic R ϖ) (Sg : Finset K) (a : Kˣ) :
     ∃ V ∈ 𝓝 (0 : K), ∀ t ∈ V, ∀ σ ∈ Sg, σ * t ∈ I R (a : K) := by
@@ -334,6 +138,10 @@ theorem Adic.inv_bounded (h : Adic R ϖ) {Om : Set K} (hC : IsCompact Om) (hU : 
       exact R.mul_mem hM hv
 
 end Top
+
+end Formalism.FourierDecayAlt.P.AdicNeighbourhood
+
+namespace Formalism.FourierDecayAlt.P.A6x8
 
 theorem shiftUnit : ShiftUnit := by
   intro K _ _ _ R ψ hD hn Sg

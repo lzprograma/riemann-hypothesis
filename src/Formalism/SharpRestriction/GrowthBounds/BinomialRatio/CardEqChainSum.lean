@@ -5,47 +5,9 @@ public import Formalism.SharpRestriction.GrowthBounds.PolBridge
 public import Formalism.SharpRestriction.GrowthBounds.RootWeights.GlOperatorPreservesMultidegree
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.IntegralEnvelopingPreservesStable
 import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeMapFractionField
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Sheaves.Presheaf
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -74,18 +36,10 @@ theorem strip_iff {nu mu : Fin r → ℤ} {g : ℕ} : Strip nu mu g ↔ HStrip m
       rw [hj]; exact h2 i h
     · rw [← Finset.sum_sub_distrib]; exact h3
 
-theorem anti_of_step {f : Fin r → ℤ} (h : ∀ (a : Fin r) (ha : a.1 + 1 < r), f ⟨a.1 + 1, ha⟩ ≤ f a) : Antitone f := by
-  have H : ∀ (d a : ℕ) (ha : a < r) (hb : a + d < r), f ⟨a + d, hb⟩ ≤ f ⟨a, ha⟩ := by
-    intro d
-    induction d with
-    | zero => intro a ha hb; exact le_rfl
-    | succ d ih =>
-      intro a ha hb
-      exact le_trans (h ⟨a + d, by omega⟩ hb) (ih a ha (by omega))
-  intro a b hab
-  have hb : b = ⟨a.1 + (b.1 - a.1), by have := b.2; omega⟩ := Fin.ext (by simp; omega)
-  rw [hb]
-  exact H _ a.1 a.2 _
+theorem anti_of_step {f : Fin r → ℤ} (h : ∀ (a : Fin r) (ha : a.1 + 1 < r), f ⟨a.1 + 1, ha⟩ ≤ f a) : Antitone f :=
+  match r, f, h with
+  | 0, _, _ => fun i => Fin.elim0 i
+  | _ + 1, _, h => Fin.antitone_iff_succ_le.mpr fun i => h i.castSucc i.succ.isLt
 
 theorem hstrip_anti {nu mu : Fin r → ℤ} {b : ℕ} (h : HStrip nu mu b) : Antitone nu ∧ Antitone mu :=
   ⟨anti_of_step fun a ha => le_trans (h.1 _) (h.2.1 a ha), anti_of_step fun a ha => le_trans (h.2.1 a ha) (h.1 a)⟩
@@ -100,24 +54,24 @@ def pathOf (LL : ChainLetters N) (ka : Fin (N + 1) → Fin r → ℤ) (h : IsCha
     | succ i =>
       have h2 := h.2 i
       by_cases hv : LL.vec i = true
-      · rw [if_pos hv] at h2; exact (hstrip_anti (strip_iff.1 h2)).2
-      · rw [if_neg hv] at h2; exact (hstrip_anti (strip_iff.1 h2)).1
+      · rw [ite_eq_left hv] at h2; exact (hstrip_anti (strip_iff.1 h2)).2
+      · rw [ite_eq_right hv] at h2; exact (hstrip_anti (strip_iff.1 h2)).1
   step := fun i => by
     have h2 := h.2 i
     by_cases hv : LL.vec i = true
-    · rw [if_pos hv] at h2
-      rw [if_pos (show (⟨LL.vec⟩ : Letters (Fin N)).vec i = true from hv)]; exact strip_iff.1 h2
-    · rw [if_neg hv] at h2
-      rw [if_neg (show ¬ (⟨LL.vec⟩ : Letters (Fin N)).vec i = true from hv)]; exact strip_iff.1 h2
+    · rw [ite_eq_left hv] at h2
+      rw [ite_eq_left (show (⟨LL.vec⟩ : Letters (Fin N)).vec i = true from hv)]; exact strip_iff.1 h2
+    · rw [ite_eq_right hv] at h2
+      rw [ite_eq_right (show ¬ (⟨LL.vec⟩ : Letters (Fin N)).vec i = true from hv)]; exact strip_iff.1 h2
 
 theorem chain_of_path (LL : ChainLetters N) (P : PPath r N (⟨LL.vec⟩ : Letters (Fin N)) LL.deg) : IsChain LL P.mu := by
   refine ⟨P.zero, fun i => ?_⟩
   have h2 := P.step i
   by_cases hv : LL.vec i = true
-  · rw [if_pos (show (⟨LL.vec⟩ : Letters (Fin N)).vec i = true from hv)] at h2
-    rw [if_pos hv]; exact strip_iff.2 h2
-  · rw [if_neg (show ¬ (⟨LL.vec⟩ : Letters (Fin N)).vec i = true from hv)] at h2
-    rw [if_neg hv]; exact strip_iff.2 h2
+  · rw [ite_eq_left (show (⟨LL.vec⟩ : Letters (Fin N)).vec i = true from hv)] at h2
+    rw [ite_eq_left hv]; exact strip_iff.2 h2
+  · rw [ite_eq_right (show ¬ (⟨LL.vec⟩ : Letters (Fin N)).vec i = true from hv)] at h2
+    rw [ite_eq_right hv]; exact strip_iff.2 h2
 
 theorem ppath_ext {Lt : Letters (Fin N)} {B : Fin N → ℕ} {P P' : PPath r N Lt B} (h : P.mu = P'.mu) : P = P' := by
   cases P; cases P'; simp only at h; subst h; rfl
@@ -432,7 +386,7 @@ theorem card_eq_chainSum (hSt : StWeylAt) (LL : ChainLetters N) {q : ℕ} (J : F
     intro ka hka
     rw [Function.mem_support] at hka
     by_cases hC : IsChain LL ka ∧ ChainOK J M ka
-    · rw [if_pos hC] at hka
+    · rw [ite_eq_left hC] at hka
       have hcard : (Nat.card {I : ℤ → Finset (Fin r) // IsSt ka I} : ℚ) = wdim (ka (Fin.last N)) :=
         hSt r N _ LL.deg (pathOf LL ka hC.1)
       have hne : Nat.card {I : ℤ → Finset (Fin r) // IsSt ka I} ≠ 0 := by
@@ -442,14 +396,14 @@ theorem card_eq_chainSum (hSt : StWeylAt) (LL : ChainLetters N) {q : ℕ} (J : F
       obtain ⟨⟨I, hI⟩⟩ := (Nat.card_ne_zero.1 hne).1
       rw [Finset.coe_image, Finset.coe_univ, Set.image_univ]
       exact ⟨⟨⟨(pathOf LL ka hC.1, I), hI⟩, hC.2⟩, rfl⟩
-    · rw [if_neg hC] at hka; exact absurd rfl hka
+    · rw [ite_eq_right hC] at hka; exact absurd rfl hka
   rw [finsum_eq_sum_of_support_subset _ hsupp, Nat.card_eq_fintype_card, ← Finset.card_univ,
     Finset.card_eq_sum_card_image π Finset.univ]
   push_cast
   refine Finset.sum_congr rfl fun ka hka => ?_
   obtain ⟨x0, -, rfl⟩ := Finset.mem_image.1 hka
   have hC : IsChain LL (π x0) ∧ ChainOK J M (π x0) := ⟨chain_of_path LL x0.1.1.1, x0.2⟩
-  rw [if_pos hC]
+  rw [ite_eq_left hC]
   have hcard : (Nat.card {I : ℤ → Finset (Fin r) // IsSt (π x0) I} : ℚ) = wdim (π x0 (Fin.last N)) :=
     hSt r N _ LL.deg x0.1.1.1
   rw [← hcard]

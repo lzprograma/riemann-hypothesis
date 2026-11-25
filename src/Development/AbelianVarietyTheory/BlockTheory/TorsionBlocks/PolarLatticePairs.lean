@@ -169,9 +169,6 @@ def minorProd (D : D7) {a d : ℕ} {n : D.what₂.Tau → ℕ} (T : Tup D a d n)
 def nabla (D : D7) (a d : ℕ) (n : D.what₂.Tau → ℕ) : Submodule ℤ (MvPolynomial (GL3Theta.Idx D a d) ℂ) :=
   Submodule.span ℤ (Set.range (minorProd D (a := a) (d := d) (n := n)))
 
-def gNormSq (D : D7) {a d : ℕ} {n : D.what₂.Tau → ℕ} (l : Tup D a d n → ℂ) : ℝ :=
-  ∑ T, ‖l T‖ ^ 2
-
 def coefLat (D : D7) (cc : Ideal (𝓞 D.host.K)) : Submodule (𝓞 D.host.E) D.host.E :=
   Submodule.span (𝓞 D.host.E) {t | ∃ c ∈ cc, ∃ m ∈ (D.host.AA0 : Submodule (𝓞 D.host.E) D.host.E),
     t = ((c : D.host.K) : D.host.E) * m}

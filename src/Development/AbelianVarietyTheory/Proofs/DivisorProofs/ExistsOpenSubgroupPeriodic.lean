@@ -77,7 +77,7 @@ theorem SB.exists_periodic {X : Type} [AddCommGroup X] [TopologicalSpace X] [IsT
     rw [show Y0 + (Y - Y0) = Y by abel] at e1
     rw [show Y0 + (Y - Y0 + C) = Y + C by abel] at e2
     rw [e1, e2]
-  · push_neg at h
+  · push Not at h
     have hn : ∀ Z, Z ∈ tsupport f → ∃ Y0 ∈ t, Z - Y0 ∈ L (g Y0) := fun Z hZ => by
       have := ht hZ
       simp only [Set.mem_iUnion, Set.mem_setOf_eq] at this

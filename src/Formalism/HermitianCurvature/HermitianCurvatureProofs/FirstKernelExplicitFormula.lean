@@ -7,53 +7,8 @@ public import Formalism.DoubleCosetMeasures.LatticeCoset
 import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.LowUniMulVecELast
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AddedBlockKernelSupport
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelQuotientFinite
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -279,19 +234,19 @@ theorem sec_pt (h : Point K) (c : Kˣ) :
     simp only [pt, eN_inl, eN_inr]
     change (if h.1.sum = revIn (h.1 ++ [1]) x then
       ((Function.update h.2 h.1.length c (blk (h.1 ++ [1]) x) : Kˣ) : K) else 0) = _
-    rw [A5x7.revIn_app_lt 1 _ _ x.2, if_neg (ne_of_gt (Formalism.DoubleCosetMeasures.P.Phase.revIn_lt _ _ x.2))]
+    rw [A5x7.revIn_app_lt 1 _ _ x.2, ite_eq_right (ne_of_gt (Formalism.DoubleCosetMeasures.P.Phase.revIn_lt _ _ x.2))]
     rfl
   · rw [blkM_rl]
     simp only [pt, eN_inl, eN_inr]
     change (if (y : ℕ) = revIn (h.1 ++ [1]) h.1.sum then
       ((Function.update h.2 h.1.length c (blk (h.1 ++ [1]) h.1.sum) : Kˣ) : K) else 0) = _
-    rw [A5x7.revIn_app _ 1 le_rfl, if_neg (by have := y.2; omega)]
+    rw [A5x7.revIn_app _ 1 le_rfl, ite_eq_right (by have := y.2; omega)]
     rfl
   · rw [blkM_rr]
     simp only [pt, eN_inr]
     change (if h.1.sum = revIn (h.1 ++ [1]) h.1.sum then
       ((Function.update h.2 h.1.length c (blk (h.1 ++ [1]) h.1.sum) : Kˣ) : K) else 0) = _
-    rw [A5x7.revIn_app _ 1 le_rfl, A5x7.blk_app _ 1 le_rfl, if_pos (by omega), Function.update_self]
+    rw [A5x7.revIn_app _ 1 le_rfl, A5x7.blk_app _ 1 le_rfl, ite_eq_left (by omega), Function.update_self]
 
 theorem sec_sLow (hN : N = m + 1) (A : Matrix (Fin m) (Fin m) K) (b a : Fin m → K) (d : K) :
     sLow (blkM hN A b a d) = sLow A + lastE a := by
@@ -313,12 +268,12 @@ theorem sec_sLow (hN : N = m + 1) (A : Matrix (Fin m) (Fin m) K) (b a : Fin m �
   · have e : (⟨((eN hN (Sum.inl i) : Fin N) : ℕ) + 1, hlt⟩ : Fin N) = eN hN (Sum.inl ⟨i.val + 1, h⟩) := by
       ext
       simp [eN_inl]
-    rw [e, blkM_ll, dite_eq_left h, if_neg (by omega), add_zero]
+    rw [e, blkM_ll, dite_eq_left h, ite_eq_right (by omega), add_zero]
   · have e : (⟨((eN hN (Sum.inl i) : Fin N) : ℕ) + 1, hlt⟩ : Fin N) = eN hN (Sum.inr ()) := by
       ext
       simp only [eN_inl, eN_inr]
       omega
-    rw [e, blkM_rl, dite_eq_right h, if_pos (by omega), zero_add]
+    rw [e, blkM_rl, dite_eq_right h, ite_eq_left (by omega), zero_add]
 
 theorem sec_sUp (hN : N = m + 1) (A : Matrix (Fin m) (Fin m) K) (b a : Fin m → K) (d : K) :
     sUp (blkM hN A b a d) = sUp A + lastE b := by
@@ -910,8 +865,8 @@ theorem Gterm_inv (ψ : AddChar K ℂ) (hψ : ∀ r ∈ R, ψ r = 1) (w w' : Poi
   have e1 := Formalism.FourierDecayAlt.P.A5x4.isInt_orbZ_inv R w a ha b hb x y
   have e2 := Formalism.FourierDecayAlt.P.A5x4.isInt_orbZ_inv R w' a' ha' b' hb' x' y'
   by_cases hc : IsInt R (orbZ w (x, y)) ∧ IsInt R (orbZ w' (x', y'))
-  · rw [if_pos hc, if_pos ⟨e1.2 hc.1, e2.2 hc.2⟩]
-  · rw [if_neg hc, if_neg (fun h => hc ⟨e1.1 h.1, e2.1 h.2⟩)]
+  · rw [ite_eq_left hc, ite_eq_left ⟨e1.2 hc.1, e2.2 hc.2⟩]
+  · rw [ite_eq_right hc, ite_eq_right (fun h => hc ⟨e1.1 h.1, e2.1 h.2⟩)]
 
 theorem inv_toCos_rep {w : Point K} (q : Cos R w) : toCos R (rep R q) = q := by
   unfold toCos rep
@@ -1299,14 +1254,14 @@ theorem iso_eLast : (eLast R : Fin N → R) = iso_vec hN 0 1 := by
   · intro i
     rw [iso_vec_inl]
     simp only [eLast]
-    rw [if_neg]
+    rw [ite_eq_right]
     · rfl
     · rw [eN_inl]
       have := i.isLt
       omega
   · rw [iso_vec_inr]
     simp only [eLast]
-    rw [if_pos]
+    rw [ite_eq_left]
     rw [eN_inr]
     omega
 
@@ -1761,7 +1716,7 @@ theorem tTerm_supp (R : Subring K) (ψ : AddChar K ℂ) {m m' N N' : ℕ} (hN : 
     exact ⟨((a, b), (a', b')), rfl⟩
   · exfalso
     apply hy
-    rw [tTerm_mk, if_neg hI]
+    rw [tTerm_mk, ite_eq_right hI]
     simp
 
 open Classical in
@@ -1788,12 +1743,12 @@ theorem tTerm_iota (R : Subring K) (ψ : AddChar K ℂ) (hψ : ∀ r ∈ R, ψ r
       a' b' = -(Submodule.Quotient.mk (c : K) : KR R)
   · have hI1 := (bigZ_int_iff R hN Z₁ h₁ d₁ a b (c : K)).2 hI.1
     have hI2 := (bigZ_int_iff R hN' Z₂ h₂ d₂ a' b' (c : K)).2 hI.2
-    rw [if_pos hI, if_pos ⟨hI1, hI2⟩]
+    rw [ite_eq_left hI, ite_eq_left ⟨hI1, hI2⟩]
     obtain ⟨v, hv, hb⟩ := iC_spec R Z₁ h₁ d₁ b
     obtain ⟨v', hv', hb'⟩ := iC_spec R Z₂ h₂ d₂ b'
     rw [card_iso_big R hN hN' Z₁ Z₂ d₁ d₂ _ _ _ _ c hI1 hI2 a a' (iA_spec R Z₁ a)
       (iA_spec R Z₂ a') v v' hv hv', hb, hb']
-  · rw [if_neg hI, if_neg]
+  · rw [ite_eq_right hI, ite_eq_right]
     rintro ⟨hI1, hI2⟩
     exact hI ⟨(bigZ_int_iff R hN Z₁ h₁ d₁ a b (c : K)).1 hI1,
       (bigZ_int_iff R hN' Z₂ h₂ d₂ a' b' (c : K)).1 hI2⟩
@@ -1871,12 +1826,12 @@ theorem inner_sum (R : Subring K) (ψ : AddChar K ℂ) (hD : LocalDatum K R ψ) 
     rw [finsum_eq_sum_of_fintype]
     refine Finset.sum_congr rfl fun b _ => ?_
     by_cases hab : a b = -(Submodule.Quotient.mk (c : K) : KR R)
-    · rw [if_pos hab, if_pos hab, psiKR_conj R ψ hD, ← A5x6.psiKR_add R ψ hψ,
+    · rw [ite_eq_left hab, ite_eq_left hab, psiKR_conj R ψ hD, ← A5x6.psiKR_add R ψ hψ,
         A5x6.lamLin_out R Z₁ d₁, A5x6.lamLin_out R Z₂ d₂]
       congr 1
       simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, map_sub]
       abel
-    · rw [if_neg hab, if_neg hab]
+    · rw [ite_eq_right hab, ite_eq_right hab]
 
 end InnerSum
 
@@ -1889,7 +1844,7 @@ theorem tTerm_zero (R : Subring K) (ψ : AddChar K ℂ) {m m' N N' : ℕ}
     (y : ((Fin m → KR R) × (Fin m → KR R)) × ((Fin m' → KR R) × (Fin m' → KR R))) :
     tTerm R ψ hN hN' Z₁ Z₂ c y = 0 := by
   unfold tTerm
-  rw [if_neg]
+  rw [ite_eq_right]
   · simp
   · rintro ⟨h1, h2⟩
     unfold bigZ at h1 h2
@@ -1955,9 +1910,9 @@ theorem first_kernel_formula_proof : SingleBlockFormula := by
   simp only [F]
   rw [← finsum_mul]
   by_cases hq : IsInt R (orbZ h (rep R q.1)) ∧ IsInt R (orbZ h' (rep R q.2))
-  · rw [if_pos hq, inner_sum R ψ hD _ _ _ _ c hq.1 hq.2 (orbZ_unit _ _) (orbZ_unit _ _)]
+  · rw [ite_eq_left hq, inner_sum R ψ hD _ _ _ _ c hq.1 hq.2 (orbZ_unit _ _) (orbZ_unit _ _)]
     ring
-  · rw [if_neg hq, finsum_congr (tTerm_zero R ψ _ _ _ _ _ hq)]
+  · rw [ite_eq_right hq, finsum_congr (tTerm_zero R ψ _ _ _ _ _ hq)]
     simp
 
 end Final
@@ -1965,7 +1920,5 @@ end Final
 end Formalism.FourierDecayAlt.P.A5x8
 
 namespace Formalism.FourierDecayAlt.P
-
-theorem first_kernel_explicit_formula : Formalism.FourierDecayAlt.A5.SingleBlockFormula := A5x8.first_kernel_formula_proof
 
 end Formalism.FourierDecayAlt.P

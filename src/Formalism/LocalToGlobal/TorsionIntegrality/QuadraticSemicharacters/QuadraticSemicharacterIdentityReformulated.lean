@@ -18,19 +18,7 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalS
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepSingleSat
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepKeyRam
 public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharactersFactAltForm
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.SelfDualStd
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.TypeStar
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.GroupTheory.Nilpotent
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepBasic
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepHSelfInt
 
@@ -1137,8 +1125,7 @@ theorem unitVecRam : UnitVecRam := by
   obtain ⟨y, hy, n, c₂, hny, hdn⟩ : ∃ y ∈ Λ, ∃ n c₂ : ℤ,
       stdH (cmL a b d ha hd lam hlam) m (s • xh) y = repKappa a b d ha hd lam hlam * ((n : ℂ) - c₂ * conj (cmTheta b d)) ∧
       ¬ (d : ℤ) ∣ 2 * n - c₂ * b := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hnot
     refine ⟨s, hs, ?_⟩
     rw [smul_comm, ← hΛ]

@@ -48,8 +48,6 @@ open scoped Classical ENNReal
 
 namespace UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi
 
-attribute [local instance] borelH
-
 section Defs
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} {ι : Type} [Fintype ι]

@@ -7,8 +7,6 @@ import Mathlib.Basic.NNReal.Defs
 
 @[expose] public section
 
-set_option autoImplicit false
-
 universe u
 
 noncomputable section

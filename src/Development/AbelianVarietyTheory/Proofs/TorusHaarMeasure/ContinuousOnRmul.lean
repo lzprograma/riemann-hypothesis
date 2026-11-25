@@ -196,13 +196,6 @@ open NumberField MeasureTheory Topology in
 open scoped ContDiff ENNReal Matrix in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} in
 variable (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r) in
-private theorem continuous_frame_mat (τ : X.Ψ) : Continuous fun x : _root_.ReciprocityTheory.ChartRestriction.G.FD.Frame X.Ψ r => _root_.ReciprocityTheory.ChartRestriction.G.FD.mat x τ :=
-  continuous_apply τ
-
-open NumberField MeasureTheory Topology in
-open scoped ContDiff ENNReal Matrix in
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} in
-variable (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r) in
 private theorem oneF_rmul (b : _root_.ReciprocityTheory.ChartRestriction.G.FD.Frame X.Ψ r) : _root_.ReciprocityTheory.ChartRestriction.G.FD.rmul (_root_.ReciprocityTheory.ChartRestriction.G.AR.Up.ExtFPf.oneF X) b = b := by
   have h := _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.ExtFPf.rmul_oneF X b
   funext τ

@@ -49,11 +49,6 @@ theorem uw_fix {z : Fin (2 * r + k + 1) → ℂ} {h : Matrix (Fin (2 * r + k + 1
     simp only [← Matrix.mulVecLin_apply, map_sum, map_smul]]
   rw [Finset.sum_congr rfl (fun i _ => key i), ← hw']
 
-private theorem mulVec_single_one_apply_gauge_lattice_shifts {n : ℕ} (m : Matrix (Fin n) (Fin n) ℂ) (j i : Fin n) :
-    (m *ᵥ Pi.single j (1:ℂ)) i = m i j := by
-  first
-  | simp [Matrix.mulVec, dotProduct, Pi.single_apply]
-
 theorem sset_col {z : Fin (2 * r + k + 1) → ℂ} {M : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
     (hM : M ∈ Sset k r z) (a : Fin r) (i : Fin (2 * r + k + 1)) (hi : a.val ≤ i.val) :
     ((M - 1) *ᵥ bvec (eI k r a)) i = 0 := by
@@ -72,10 +67,10 @@ theorem sset_col {z : Fin (2 * r + k + 1) → ℂ} {M : Matrix (Fin (2 * r + k +
       change j.val = a.val at this
       omega
     have := hm1 a j (by omega)
-    rw [show bvec (eI k r a) = Pi.single (eI k r a) (1:ℂ) from rfl, mulVec_single_one_apply_gauge_lattice_shifts, this]
+    rw [show bvec (eI k r a) = Pi.single (eI k r a) (1:ℂ) from rfl, Matrix.mulVec_single_one, Matrix.col_apply, this]
     simp [hne]
   rw [Matrix.sub_mulVec, Matrix.one_mulVec, ← Matrix.mulVec_mulVec, hfix]
-  rw [show bvec (eI k r a) = Pi.single (eI k r a) (1:ℂ) from rfl, Pi.sub_apply, mulVec_single_one_apply_gauge_lattice_shifts, hm1 a i hi]
+  rw [show bvec (eI k r a) = Pi.single (eI k r a) (1:ℂ) from rfl, Pi.sub_apply, Matrix.mulVec_single_one, Matrix.col_apply, hm1 a i hi]
   simp [Pi.single_apply]
 
 theorem sub_one_mulVec_apply_eq_zero_of_mem_Sset {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z)
@@ -196,7 +191,7 @@ theorem bvec_supSub (a : ℕ) (b : Fin D.R.rS) (hb : b.val < a) :
     change i.val = b.val at this
     omega
   show (Pi.single (eI D.R.k D.R.rS b) (1:ℂ) : Fin (2 * D.R.rS + D.R.k + 1) → ℂ) i = 0
-  simp only [Pi.single_apply, hne, if_false]
+  simp only [Pi.single_apply, hne, ite_false]
 
 theorem qics_span (C : Choice X θ) (τ : D.what₂.Tau) (a : ℕ) (w : Fin X.B.I.n → ℂ)
     (hw : w ∈ spanLt (fun b => rv X.B.I (vOf X τ) (X.eR b)) a) :

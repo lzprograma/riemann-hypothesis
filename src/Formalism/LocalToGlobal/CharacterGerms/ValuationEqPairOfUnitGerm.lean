@@ -29,8 +29,7 @@ theorem subst_zeroPt {σ τ : Type} [Finite σ] (f : MvPowerSeries σ C) :
   · by_cases he : e = 0 <;> simp [he, MvPowerSeries.coeff_C, MvPowerSeries.coeff_one]
   · intro d hd
     obtain ⟨s, hs'⟩ : ∃ s, d s ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hd (Finsupp.ext h)
     have h0 : (d.prod fun _ n => (0 : MvPowerSeries τ C) ^ n) = 0 :=
       Finset.prod_eq_zero (Finsupp.mem_support_iff.mpr hs') (zero_pow hs')
@@ -142,7 +141,7 @@ theorem pderiv_l_zero (m i : Fin dd) :
   rw [Finsupp.mapDomain_single, Y.lg_lin m _ (by simp), MvPowerSeries.coeff_X]
   by_cases hmi : m = i
   · subst hmi; simp
-  · rw [if_neg hmi, if_neg]
+  · rw [ite_eq_right hmi, ite_eq_right]
     intro h
     have := Finsupp.single_left_injective (one_ne_zero) h
     exact hmi (congrArg Prod.snd this).symm
@@ -206,8 +205,8 @@ theorem eqK (n k : Fin dd) :
   refine h.trans ?_
   by_cases hnk : n = k
   · subst hnk
-    rw [MvPowerSeries.pderiv_X_self, if_pos rfl, ← MvPowerSeries.coe_substAlgHom hsE, map_one]
-  · rw [MvPowerSeries.pderiv_X_of_ne hnk, if_neg hnk, ← MvPowerSeries.coe_substAlgHom hsE, map_zero]
+    rw [MvPowerSeries.pderiv_X_self, ite_eq_left rfl, ← MvPowerSeries.coe_substAlgHom hsE, map_one]
+  · rw [MvPowerSeries.pderiv_X_of_ne hnk, ite_eq_right hnk, ← MvPowerSeries.coe_substAlgHom hsE, map_zero]
 
 end VP
 

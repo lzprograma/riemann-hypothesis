@@ -15,53 +15,7 @@ public import Mathlib.Analysis.Complex.ExponentialBounds
 public import Mathlib.Algebra.Order.Field.GeomSum
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 public import Mathlib.Algebra.BigOperators.Field
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Formalism.SubspaceCounting.Statement
-import Mathlib.Tactic.Lemma
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -121,15 +75,23 @@ section -- clump:auto
 open Finset UpperTheory.BernoulliSumsFrobeniusOrbits Formalism.G0
 open GlobalTheory.RandomTops (tile tile_disjoint marked_congr)
 
+private theorem ind_pos' {q : Prop} (h : q) : ind q = 1 := by simp [ind, h]
+
 private theorem ind_neg' {q : Prop} (h : ¬ q) : ind q = 0 := by simp [ind, h]
 
+private theorem ind_nonneg' (q : Prop) : 0 ≤ ind q := by
+  unfold ind
+  split_ifs <;> norm_num
+
 private theorem ind_le_one' (q : Prop) : ind q ≤ 1 := by
-  by_cases h : q <;> simp [ind, h]
+  unfold ind
+  split_ifs <;> norm_num
 
 private theorem ind_le' {q : Prop} {x : ℝ} (h0 : 0 ≤ x) (h1 : q → 1 ≤ x) : ind q ≤ x := by
-  by_cases h : q
-  · simpa [ind, h] using h1 h
-  · simpa [ind, h] using h0
+  unfold ind
+  split_ifs with hq
+  · exact h1 hq
+  · exact h0
 
 private theorem bernoulliExpectation_one_sub (p : ℕ → ℝ) (S : Finset ℕ) (f : Finset ℕ → ℝ) :
     exP p S (fun T => 1 - f T) = 1 - exP p S f := by
@@ -229,18 +191,6 @@ section -- clump:auto
 
 open Finset UpperTheory.BernoulliSumsFrobeniusOrbits Formalism.G0
 
-private theorem ngl_ind_pos {q : Prop} (h : q) : ind q = 1 := by
-  unfold ind
-  exact if_pos h
-private theorem ngl_ind_nonneg (q : Prop) : 0 ≤ ind q := by
-  unfold ind
-  split_ifs <;> norm_num
-private theorem ngl_ind_le {q : Prop} {x : ℝ} (h0 : 0 ≤ x) (h1 : q → 1 ≤ x) : ind q ≤ x := by
-  unfold ind
-  split_ifs with hq
-  · exact h1 hq
-  · exact h0
-
 private theorem ngl_windows_le (p : ℕ → ℝ) (hp : ∀ a, 0 ≤ p a ∧ p a ≤ 1) (n i₀ L K K' : ℕ)
     (hK : K' ≤ K) (b : ℝ)
     (hb : ∀ A : Finset ℕ, A.card ≤ L → exP p A (fun T => ind (K' ≤ T.card)) ≤ b) :
@@ -253,9 +203,9 @@ private theorem ngl_windows_le (p : ℕ → ℝ) (hp : ∀ a, 0 ≤ p a ∧ p a 
           ind (K' ≤ (U ∩ (window n i L ∩ (Finset.range n).erase i₀)).card)) := by
         apply h_mono _ _ _ (fun a _ => hp a)
         intro U hU
-        apply ngl_ind_le (Finset.sum_nonneg (fun i _ => ngl_ind_nonneg _))
+        apply ind_le' (Finset.sum_nonneg (fun i _ => ind_nonneg' _))
         intro hq
-        push_neg at hq
+        push Not at hq
         obtain ⟨i, hi, hc⟩ := hq
         have hsub : U ∩ (window n i L ∩ (Finset.range n).erase i₀) = U ∩ window n i L := by
           ext x
@@ -278,12 +228,12 @@ private theorem ngl_windows_le (p : ℕ → ℝ) (hp : ∀ a, 0 ≤ p a ∧ p a 
           rw [hsub]
           omega
         calc (1 : ℝ) = ind (K' ≤ (U ∩ (window n i L ∩ (Finset.range n).erase i₀)).card) :=
-              (ngl_ind_pos hK'').symm
+              (ind_pos' hK'').symm
           _ ≤ ∑ j ∈ Finset.range n,
                 ind (K' ≤ (U ∩ (window n j L ∩ (Finset.range n).erase i₀)).card) :=
               Finset.single_le_sum (f := fun j =>
                 ind (K' ≤ (U ∩ (window n j L ∩ (Finset.range n).erase i₀)).card))
-                (fun j _ => ngl_ind_nonneg _) (Finset.mem_range.2 hi)
+                (fun j _ => ind_nonneg' _) (Finset.mem_range.2 hi)
     _ = ∑ i ∈ Finset.range n, exP p ((Finset.range n).erase i₀)
           (fun U => ind (K' ≤ (U ∩ (window n i L ∩ (Finset.range n).erase i₀)).card)) :=
         h_sum _ _ (fun i U => ind (K' ≤ (U ∩ (window n i L ∩ (Finset.range n).erase i₀)).card))
@@ -331,20 +281,20 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.not_good_le :
           + ind (¬ CondIntervals n (insert i₀ U) G' N₁)) := by
     apply h_mono _ _ _ (fun a _ => hp1 a)
     intro U _
-    have e1 := ngl_ind_nonneg (¬ CondA n (insert i₀ U) L₂ K)
-    have e2 := ngl_ind_nonneg (¬ CondTiles n (insert i₀ U) r u M₀)
-    have e3 := ngl_ind_nonneg (¬ CondIntervals n (insert i₀ U) G' N₁)
-    apply ngl_ind_le (by linarith)
+    have e1 := ind_nonneg' (¬ CondA n (insert i₀ U) L₂ K)
+    have e2 := ind_nonneg' (¬ CondTiles n (insert i₀ U) r u M₀)
+    have e3 := ind_nonneg' (¬ CondIntervals n (insert i₀ U) G' N₁)
+    apply ind_le' (by linarith)
     intro hq
     unfold GoodOrbitIntervalTileCondition at hq
     by_cases ha : CondA n (insert i₀ U) L₂ K
     · by_cases hb : CondTiles n (insert i₀ U) r u M₀
       · have hc : ¬ CondIntervals n (insert i₀ U) G' N₁ := fun hc => hq ⟨ha, hb, hc⟩
-        rw [ngl_ind_pos hc]
+        rw [ind_pos' hc]
         linarith
-      · rw [ngl_ind_pos hb]
+      · rw [ind_pos' hb]
         linarith
-    · rw [ngl_ind_pos ha]
+    · rw [ind_pos' ha]
       linarith
   have hsum : exP p ((range n).erase i₀) (fun U => (ind (¬ CondA n (insert i₀ U) L₂ K)
           + ind (¬ CondTiles n (insert i₀ U) r u M₀))
@@ -394,58 +344,45 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.shares_of_counts :
     rw [← h1]
     push_cast
     ring
-  have hcardA0 : (Finset.univ.filter fun x : A => x ∈ A0).card = n := by
-    rw [hn_def, Nat.card_eq_fintype_card, Fintype.card_subtype]
-  have hsumN : ∑ γ : A, (T.filter fun t => t - γ ∈ A0).card = T.card * n := by
-    simp_rw [Finset.card_filter]
-    rw [Finset.sum_comm]
-    have inner : ∀ t : A, (∑ γ : A, if t - γ ∈ A0 then 1 else 0) = n := by
-      intro t
-      have h2 := Equiv.sum_comp (Equiv.subLeft t) (fun x => if x ∈ A0 then (1:ℕ) else 0)
-      simp only [Equiv.subLeft_apply] at h2
-      rw [h2, ← Finset.card_filter]
-      exact hcardA0
-    rw [Finset.sum_congr rfl (fun t _ => inner t), Finset.sum_const, smul_eq_mul]
-  have hsum : (∑ γ : A, ((T.filter fun t => t - γ ∈ A0).card : ℝ)) = n * T.card := by
-    have h3 := congrArg (Nat.cast : ℕ → ℝ) hsumN
-    push_cast at h3
-    rw [h3]
+  let q : A → A ⧸ A0 := fun a => (a : A ⧸ A0)
+  let observed (c : A ⧸ A0) : ℝ := (T.filter fun t => q t = c).card
+  let expected (c : A ⧸ A0) : ℝ := 3 / 4 * δ * n + if c = 0 then δ * n / 4 else 0
+  have hIndex : Fintype.card (A ⧸ A0) = m := Nat.card_eq_fintype_card.symm
+  have hObserved : ∑ c, observed c = (T.card : ℝ) := by
+    simpa only [observed, Nat.cast_sum] using congrArg (Nat.cast : ℕ → ℝ)
+      (Finset.card_eq_sum_card_fiberwise (f := q) (s := T) (t := univ)
+        (fun _ _ => Finset.mem_univ _)).symm
+  have hExpected : ∑ c, expected c = (3 * m + 1) / 4 * δ * n := by
+    simp [expected, Finset.sum_add_distrib, hIndex, nsmul_eq_mul]
     ring
-  have hf : (∑ γ : A, (if γ ∈ A0 then δ else 3 / 4 * δ) * (n:ℝ)) = (3 * m + 1) / 4 * δ * n * n := by
-    have hpt : ∀ γ : A, (if γ ∈ A0 then δ else 3 / 4 * δ) * (n:ℝ)
-        = 3 / 4 * δ * n + (if γ ∈ A0 then δ / 4 * n else 0) := by
-      intro γ
-      split_ifs <;> ring
-    rw [Finset.sum_congr rfl (fun γ _ => hpt γ), Finset.sum_add_distrib, ← Finset.sum_filter,
-      Finset.sum_const, Finset.sum_const, hcardA0, Finset.card_univ, nsmul_eq_mul, nsmul_eq_mul, hA]
-    ring
-  have hdiff : |(n:ℝ) * T.card - (3 * m + 1) / 4 * δ * n * n| ≤ m * n * D := by
-    rw [← hsum, ← hf, ← Finset.sum_sub_distrib]
-    calc _ ≤ ∑ γ : A, |((T.filter fun t => t - γ ∈ A0).card : ℝ) - (if γ ∈ A0 then δ else 3 / 4 * δ) * n| :=
-          Finset.abs_sum_le_sum_abs _ _
-      _ ≤ ∑ γ : A, D := Finset.sum_le_sum fun γ _ => hc γ
-      _ = m * n * D := by rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, hA]
-  have hn0 : (0:ℝ) < n := by linarith
+  have hClass (c : A ⧸ A0) : |observed c - expected c| ≤ D := by
+    obtain ⟨a, rfl⟩ := QuotientAddGroup.mk_surjective c
+    dsimp only [observed, expected, q]
+    simp only [QuotientAddGroup.eq_iff_sub_mem, QuotientAddGroup.eq_zero_iff]
+    split_ifs with ha
+    · simpa [ha, show 3 / 4 * δ * n + δ * n / 4 = δ * n by ring] using hc a
+    · simpa [ha] using hc a
   have hT : |(T.card : ℝ) - (3 * m + 1) / 4 * δ * n| ≤ m * D := by
-    have he : (n:ℝ) * T.card - (3 * m + 1) / 4 * δ * n * n = n * ((T.card : ℝ) - (3 * m + 1) / 4 * δ * n) := by ring
-    rw [he, abs_mul, abs_of_pos hn0] at hdiff
-    have h4 : (n:ℝ) * |(T.card : ℝ) - (3 * m + 1) / 4 * δ * n| ≤ n * (m * D) := by linarith
-    exact le_of_mul_le_mul_left h4 hn0
+    rw [← hObserved, ← hExpected, ← Finset.sum_sub_distrib]
+    calc _ ≤ ∑ c, |observed c - expected c| := Finset.abs_sum_le_sum_abs _ _
+      _ ≤ ∑ _ : A ⧸ A0, D := Finset.sum_le_sum fun c _ => hClass c
+      _ = _ := by simp [hIndex, nsmul_eq_mul]
+  have hn0 : (0 : ℝ) < n := by linarith
   have hδn : 0 < δ * n := mul_pos hδ hn0
   have hηδ : η * (δ * n) ≤ δ * n := mul_le_of_le_one_left (le_of_lt hδn) hη
   have hmD : 0 ≤ (m:ℝ) * D := mul_nonneg (by linarith) hD
   have hmδn : 0 ≤ (m:ℝ) * (δ * n) := mul_nonneg (by linarith) (le_of_lt hδn)
   have hm1δn : 0 ≤ ((m:ℝ) - 1) * (δ * n) := mul_nonneg (by linarith) (le_of_lt hδn)
   rw [abs_le] at hT
-  have hX1 : 3 * m * δ * n / 4 ≤ (T.card : ℝ) := by nlinarith
+  have hX1 : 3 * m * δ * n / 4 ≤ (T.card : ℝ) := by linarith
   have hη0 : 0 ≤ η := by
     by_contra hneg
-    push_neg at hneg
+    push Not at hneg
     have h5 : η * (δ * n) < 0 := mul_neg_of_neg_of_pos hneg hδn
     linarith
   have hηX : 3 * D ≤ η * T.card := by
-    have hmm : 0 ≤ D * ((m:ℝ) * m - 1) := mul_nonneg hD (by nlinarith)
-    calc 3 * D ≤ 3 * m * m * D := by nlinarith
+    have hmm : 0 ≤ D * ((m : ℝ) * m - 1) := mul_nonneg hD (by nlinarith only [hm])
+    calc 3 * D ≤ 3 * m * m * D := by linarith
       _ = (3 * m / 4) * (4 * m * D) := by ring
       _ ≤ (3 * m / 4) * (η * (δ * n)) := mul_le_mul_of_nonneg_left hDη (by positivity)
       _ = η * (3 * m * δ * n / 4) := by ring
@@ -463,20 +400,20 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.shares_of_counts :
       have habs : |(T.card : ℝ) - (3 * m + 1) / 4 * δ * n| ≤ m * D := abs_le.mpr hT
       calc w * |(T.card : ℝ) - (3 * m + 1) / 4 * δ * n| ≤ 4 * (m * D) :=
             mul_le_mul hw4 habs (abs_nonneg _) (by norm_num)
-        _ ≤ 2 * D * (3 * m + 1) := by nlinarith
+        _ ≤ 2 * D * (3 * m + 1) := by linarith
     rw [hE]
     rw [abs_le] at hcw h1 ⊢
     constructor <;> linarith [hcw.1, hcw.2, h1.1, h1.2]
   refine ⟨?_, ?_, ?_⟩
-  · rw [hA]; nlinarith
-  · rw [hA]; nlinarith
+  · rw [hA]; linarith
+  · rw [hA]; linarith
   · intro γ
     have hcγ := hc γ
     by_cases hγ : γ ∈ A0
-    · simp only [if_pos hγ] at hcγ ⊢
+    · simp only [hγ, ite_true] at hcγ ⊢
       have e : (4:ℝ) * δ * n / 4 = δ * n := by ring
       exact key 4 _ (by norm_num) le_rfl (by rw [e]; exact hcγ)
-    · simp only [if_neg hγ] at hcγ ⊢
+    · simp only [hγ, ite_false] at hcγ ⊢
       have e : (3:ℝ) * δ * n / 4 = 3 / 4 * δ * n := by ring
       exact key 3 _ (by norm_num) (by norm_num) (by rw [e]; exact hcγ)
 end -- clump:auto
@@ -513,7 +450,7 @@ private lemma fibre_sum {α β : Type} [Fintype α] [Fintype β] [DecidableEq α
     · intro a _ ha
       have ha1 : a ∉ (univ \ S).image f := fun h' => ha (image_subset_image (subset_univ _) h')
       have ha2 : a ∉ S.image f := fun h' => ha (image_subset_image (subset_univ _) h')
-      simp only [hg, hh, if_neg ha1, if_neg ha2]
+      simp only [hg, hh, ha1, ha2, ite_false]
       ring
   rw [← h2, h1]
   refine sum_congr rfl fun T _ => ?_
@@ -525,14 +462,14 @@ private lemma fibre_sum {α β : Type} [Fintype α] [Fintype β] [DecidableEq α
         intro h'
         obtain ⟨i, hi, rfl⟩ := mem_image.mp h'
         exact (mem_sdiff.mp hi).2 (hT ▸ mem_filter.mpr ⟨mem_univ _, ha⟩)
-      simp only [hg, if_neg this]
+      simp only [hg, this, ite_false]
     · refine prod_congr rfl fun a ha => ?_
       have : a ∉ S.image f := by
         intro h'
         obtain ⟨i, hi, rfl⟩ := mem_image.mp h'
         rw [← hT] at hi
         exact (mem_sdiff.mp ha).2 (mem_filter.mp hi).2
-      simp only [hh, if_neg this]
+      simp only [hh, this, ite_false]
   · have : ∃ i, ¬ (f i ∈ T ↔ i ∈ S) := by
       by_contra hc
       push Not at hc
@@ -541,12 +478,12 @@ private lemma fibre_sum {α β : Type} [Fintype α] [Fintype β] [DecidableEq α
     by_cases hiS : i ∈ S
     · have hT' : f i ∉ T := fun h' => hi ⟨fun _ => hiS, fun _ => h'⟩
       rw [prod_eq_zero (s := univ \ T) (i := f i) (by simp [hT']), mul_zero]
-      simp only [hh, if_pos (mem_image_of_mem f hiS)]
+      simp only [hh, mem_image_of_mem f hiS, ite_true]
     · have hT' : f i ∈ T := by
         by_contra h'
         exact hi ⟨fun h'' => absurd h'' h', fun h'' => absurd h'' hiS⟩
       rw [prod_eq_zero (s := T) (i := f i) hT', zero_mul]
-      simp only [hg, if_pos (mem_image_of_mem f (mem_sdiff.mpr ⟨mem_univ i, hiS⟩))]
+      simp only [hg, mem_image_of_mem f (mem_sdiff.mpr ⟨mem_univ i, hiS⟩), ite_true]
 
 private lemma marginal {α β : Type} [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
     (p : α → ℝ) (f : β → α) (hf : Function.Injective f) (F : Finset β → ℝ) :
@@ -567,36 +504,24 @@ private lemma marginal {α β : Type} [Fintype α] [Fintype β] [DecidableEq α]
 private lemma fin_sum_eq (n : ℕ) (q : ℕ → ℝ) (F : Finset ℕ → ℝ) :
     (∑ S : Finset (Fin n), pw (fun i : Fin n => q i) S * F (S.map Fin.valEmbedding)) =
       exP q (range n) F := by
+  let e := (Finset.mapEmbedding (Fin.valEmbedding : Fin n ↪ ℕ)).toEmbedding
+  have hrange : (univ : Finset (Fin n)).map Fin.valEmbedding = range n := by
+    rw [Fin.map_valEmbedding_univ, Nat.Iio_eq_range]
+  have hpow : (range n).powerset = (univ : Finset (Finset (Fin n))).map e := by
+    ext T
+    rw [mem_powerset, mem_map, ← hrange, subset_map_iff]
+    change (∃ u ⊆ (univ : Finset (Fin n)), T = u.map Fin.valEmbedding) ↔
+      ∃ u ∈ (univ : Finset (Finset (Fin n))), u.map Fin.valEmbedding = T
+    simp only [subset_univ, mem_univ, true_and, eq_comm (a := T)]
   unfold exP
-  refine Finset.sum_bij (fun S _ => S.map Fin.valEmbedding) ?_ ?_ ?_ ?_
-  · intro S _
-    rw [mem_powerset]
-    intro x hx
-    obtain ⟨i, _, rfl⟩ := mem_map.mp hx
-    simp
-  · intro S _ S' _ h
-    exact Finset.map_injective _ h
-  · intro T hT
-    refine ⟨univ.filter (fun i : Fin n => (i : ℕ) ∈ T), mem_univ _, ?_⟩
-    ext x
-    simp only [mem_map, mem_filter, mem_univ, true_and, Fin.valEmbedding_apply]
-    constructor
-    · rintro ⟨i, hi, rfl⟩; exact hi
-    · intro hx
-      exact ⟨⟨x, mem_range.mp (mem_powerset.mp hT hx)⟩, hx, rfl⟩
-  · intro S _
-    have e : range n \ S.map Fin.valEmbedding = (univ \ S).map Fin.valEmbedding := by
-      ext x
-      simp only [mem_sdiff, mem_range, mem_map, mem_univ, true_and, Fin.valEmbedding_apply]
-      constructor
-      · rintro ⟨hx, hx'⟩
-        exact ⟨⟨x, hx⟩, fun h => hx' ⟨_, h, rfl⟩, rfl⟩
-      · rintro ⟨i, hi, rfl⟩
-        refine ⟨i.2, ?_⟩
-        rintro ⟨j, hj, hji⟩
-        exact hi (Fin.ext hji ▸ hj)
-    rw [e, prod_map, prod_map]
-    rfl
+  rw [hpow, Finset.sum_map]
+  refine Finset.sum_congr rfl fun S _ => ?_
+  have hdiff : range n \ S.map Fin.valEmbedding = (univ \ S).map Fin.valEmbedding := by
+    rw [Finset.map_sdiff, hrange]
+  change _ = ((∏ a ∈ S.map Fin.valEmbedding, q a) *
+    ∏ a ∈ range n \ S.map Fin.valEmbedding, (1 - q a)) * F (S.map Fin.valEmbedding)
+  rw [hdiff, prod_map, prod_map]
+  rfl
 
 private lemma bernoulliExpectation_mem_and (q : ℕ → ℝ) {S : Finset ℕ} {i₀ : ℕ} (hm : i₀ ∈ S) (A : Finset ℕ → Prop) :
     exP q S (fun T => ind (i₀ ∈ T ∧ A T)) =
@@ -682,7 +607,7 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.markedLow_bounds :
     rw [← Real.log_pow, Real.exp_log (pow_pos h1δ u)]
   have hq : (u : ℝ) * δ / (1 - δ) ≤ 103 / 100 := by
     rw [div_le_iff₀ h1δ]
-    nlinarith
+    linarith
   have hA : 3 / 10 ≤ (1 - δ) ^ u := by
     rw [hexp]
     have step : -(103 / 100 : ℝ) ≤ u * Real.log (1 - δ) := by
@@ -699,9 +624,8 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.markedLow_bounds :
         linarith
       have h5 := Real.exp_one_lt_d9
       have h6 : 0 ≤ Real.exp (3 / 100) := (Real.exp_pos _).le
-      have h7 : 0 ≤ Real.exp 1 := (Real.exp_pos _).le
       rw [e3]
-      nlinarith
+      nlinarith only [h4, h5, h6]
     have hmono : Real.exp (-(103 / 100)) ≤ Real.exp (u * Real.log (1 - δ)) := Real.exp_le_exp.mpr step
     rw [Real.exp_neg] at hmono
     have hpos := Real.exp_pos (103 / 100 : ℝ)
@@ -722,8 +646,8 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.markedLow_bounds :
   have hP1 : (1 - δ) ^ (u - 1) ≤ 1 := pow_le_one₀ h1δ.le (by linarith)
   have hP0 : 0 ≤ (1 - δ) ^ (u - 1) := pow_nonneg h1δ.le _
   have hq0 : (0 : ℝ) ≤ ((u / 2 : ℕ) : ℝ) * δ := mul_nonneg (Nat.cast_nonneg _) hδ.le
-  have hqδ : 99 / 200 ≤ ((u / 2 : ℕ) : ℝ) * δ := by nlinarith
-  have hqδ2 : ((u / 2 : ℕ) : ℝ) * δ ≤ 1 := by nlinarith
+  have hqδ : 99 / 200 ≤ ((u / 2 : ℕ) : ℝ) * δ := by nlinarith only [hqge, huδ1, hδ, hδ1]
+  have hqδ2 : ((u / 2 : ℕ) : ℝ) * δ ≤ 1 := by nlinarith only [hqle, huδ2, hδ, hδ1]
   have eB : ((u / 2 : ℕ) : ℝ) * (3 / 4 * δ) * (1 - δ) ^ (u - 1) =
       3 / 4 * ((((u / 2 : ℕ) : ℝ) * δ) * (1 - δ) ^ (u - 1)) := by ring
   have hB : 1 / 10 ≤ ((u / 2 : ℕ) : ℝ) * (3 / 4 * δ) * (1 - δ) ^ (u - 1) := by
@@ -744,8 +668,8 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.markedLow_bounds :
       _ ≤ ((1 - δ) ^ u) ^ (3 * r + 1) * (((u / 2 : ℕ) : ℝ) * (3 / 4 * δ) * (1 - δ) ^ (u - 1)) ^ (3 * r) :=
           mul_le_mul (pow_le_pow_left₀ (by norm_num) (by linarith) _) (pow_le_pow_left₀ (by norm_num) hB _)
             (by positivity) (pow_nonneg hA0 _)
-  · exact mul_le_one₀ (pow_le_one₀ hA0 (pow_le_one₀ h1δ.le (by linarith))) (pow_nonneg hB0 _)
-      (pow_le_one₀ hB0 hB1)
+  · exact (mul_le_of_le_one_left (pow_nonneg hB0 _)
+      (pow_le_one₀ hA0 (pow_le_one₀ h1δ.le (by linarith)))).trans (pow_le_one₀ hB0 hB1)
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.ThickFrames.MarkedLowBounds =====
@@ -803,7 +727,7 @@ private theorem ot_binUpper_le (G N : ℕ) (δ : ℝ) (h0 : 0 ≤ δ) (h1 : δ �
             field_simp
         _ ≤ (G * δ / j) ^ j * Real.exp j := mul_le_mul_of_nonneg_left hf (by positivity)
         _ = (Real.exp 1 * G * δ / j) ^ j := by
-            rw [show Real.exp j = Real.exp 1 ^ j by rw [← Real.exp_nat_mul, mul_one], ← mul_pow]
+            rw [show Real.exp j = Real.exp 1 ^ j by rw [← Real.exp_natCast_mul, mul_one], ← mul_pow]
             congr 1
             ring
         _ ≤ (1 / 6) ^ j := pow_le_pow_left₀ hq0 hq j
@@ -816,7 +740,7 @@ private theorem ot_binUpper_le (G N : ℕ) (δ : ℝ) (h0 : 0 ≤ δ) (h1 : δ �
             rw [Real.exp_neg, ← one_div, div_le_div_iff₀ (by norm_num) hepos]
             linarith
           have hexp : Real.exp (-(N : ℝ)) = Real.exp (-1) ^ N := by
-            rw [← Real.exp_nat_mul]
+            rw [← Real.exp_natCast_mul]
             congr 1
             ring
           rw [hexp]
@@ -908,7 +832,7 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.orbit_terms :
     intro t ht
     rw [Real.rpow_def_of_pos hx0]
     apply Real.exp_le_exp.mpr
-    nlinarith
+    linarith
   have hM0ge : (h + 3) * Real.log x * P ≤ (Formalism.MainNotions.G.orbitSmallMultiplicity r h x : ℝ) := by
     rw [hM0eq]
     exact Nat.le_ceil _
@@ -928,7 +852,7 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.orbit_terms :
       ring
     have hMle : (Formalism.MainNotions.G.orbitSmallMultiplicity r h x : ℝ) + 1 ≤ C1 * (Real.log x + 1) := by
       rw [hC1]
-      nlinarith
+      linarith
     have hy := hy₀ x hxy
     have hxe : 0 ≤ x ^ (eps / 8) := Real.rpow_nonneg hx0.le _
     have key : ((Formalism.MainNotions.G.orbitSmallMultiplicity r h x : ℝ) + 1) * ((6 * (r : ℝ) + 1) * (Formalism.MainNotions.G.goodU δ : ℝ)) ≤ n := by
@@ -956,7 +880,7 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.orbit_terms :
       have hcB : (L₂.choose K : ℝ) ≤ B := le_trans hc (pow_le_pow_left₀ (Nat.cast_nonneg _) hLb K)
       have hδK : δ ^ K ≤ x ^ (-(h + 2)) := by
         rw [hδv, ← Real.rpow_mul_natCast hx0.le]
-        exact Real.rpow_le_rpow_of_exponent_le hx1 (by nlinarith)
+        exact Real.rpow_le_rpow_of_exponent_le hx1 (by linarith)
       exact mul_le_mul hcB hδK (pow_nonneg hδpos.le _) (by linarith)
     have hu := markedLow_bounds δ r hδpos hδ100
     have hT2 : (1 - markedLow δ r (Formalism.MainNotions.G.goodU δ)) ^ Formalism.MainNotions.G.orbitSmallMultiplicity r h x ≤ x ^ (-(h + 3)) := by
@@ -974,7 +898,7 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.orbit_terms :
         _ ≤ Real.exp (-(1 / 10 : ℝ) ^ (6 * r + 1)) ^ Formalism.MainNotions.G.orbitSmallMultiplicity r h x :=
             pow_le_pow_left₀ (by linarith) (by linarith [Real.add_one_le_exp (-(1 / 10 : ℝ) ^ (6 * r + 1))]) _
         _ = Real.exp (-((Formalism.MainNotions.G.orbitSmallMultiplicity r h x : ℝ) * (1 / 10 : ℝ) ^ (6 * r + 1))) := by
-            rw [← Real.exp_nat_mul]
+            rw [← Real.exp_natCast_mul]
             congr 1
             ring
         _ ≤ x ^ (-(h + 3)) := hexpb _ (by linarith)
@@ -987,8 +911,7 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.orbit_terms :
       apply hexpb
       have hl2 : Real.log x ≤ Real.logb 2 x := by
         rw [Real.logb, le_div_iff₀ (Real.log_pos one_lt_two)]
-        have := Real.log_two_lt_d9
-        nlinarith
+        exact mul_le_of_le_one_right hlogx (by linarith [Real.log_two_lt_d9])
       calc (h + 3) * Real.log x ≤ (h + 3) * Real.logb 2 x := mul_le_mul_of_nonneg_left hl2 (by linarith)
         _ ≤ max (6 * Real.exp 1 * (Formalism.MainNotions.G.goodG' r δ h x : ℝ) * δ) ((h + 3) * Real.logb 2 x) :=
             le_max_right _ _
@@ -1011,7 +934,7 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.orbit_terms :
         _ ≤ (A * x ^ h) * x ^ (-(h + 3)) := mul_le_mul_of_nonneg_right hnA hx3
         _ = A * (x ^ h * x ^ (-(h + 3))) := by ring
         _ ≤ A * x ^ (-2 : ℝ) := mul_le_mul_of_nonneg_left hd3 hApos.le
-    nlinarith
+    linarith
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.ThickFrames.orbitTerms =====
@@ -1130,14 +1053,14 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.select :
     rw [h, e2, neg_add_cancel, zero_pow two_ne_zero, zero_add]
     refine Finset.sum_le_sum fun a _ => ?_
     split_ifs
-    · nlinarith [(hp a).1, (hp a).2, sq_nonneg (p a)]
+    · nlinarith only [(hp a).2, sq_nonneg (p a)]
     · simp
   have hEX : ∑ T, pw p T * ∑ c, Y c T ^ 2 ≤ D ^ 2 / 2 := by
     simp only [Finset.mul_sum]
     rw [Finset.sum_comm]
     refine (Finset.sum_le_sum fun c _ => hEY c).trans ?_
     rw [Finset.sum_comm]
-    simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true, Finset.sum_const, Finset.card_univ,
+    simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true, Finset.sum_const, Finset.card_univ,
       nsmul_eq_mul]
     linarith
   have hEB : ∑ T, pw p T * B T ≤ m := by
@@ -1221,7 +1144,7 @@ private theorem tg_num (x eps Co δ N o n0 : ℝ) (he : 0 < eps) (hx : 1 ≤ x) 
     have a1 := mul_le_mul_of_nonneg_left hN hδ.le
     have a2 : x ^ 2 * (64 * o ^ 4) ≤ x ^ 2 * x ^ eps :=
       mul_le_mul_of_nonneg_left (by linarith) (by positivity)
-    nlinarith
+    linarith
   have h4 : Real.sqrt (2 * δ * N) ≤ δ * N / (4 * o ^ 2 * x) := by
     refine Real.sqrt_le_iff.2 ⟨by positivity, ?_⟩
     rw [div_pow, le_div_iff₀ (by positivity)]

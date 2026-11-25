@@ -58,6 +58,8 @@ import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFrameFixingIsometrySplitRowLatticeStatement
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUpUniMul
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FlagMeasures.CongruenceStabUFromIntegralUnipotentIsometry, Development.AbelianVarietyTheory.Proofs.FlagMeasures.CongruenceStabUFromIntegralUnipotentIsometryStatement, Development.AbelianVarietyTheory.Proofs.FlagMeasures.CovolumeIntegralUnipotentStabilizerOfTerm
@@ -76,12 +78,8 @@ section Mat
 
 variable {K : Type} [Field K] {r : ℕ}
 
-theorem lo_det {N : ℕ} {L : Matrix (Fin N) (Fin N) K} (h : IsLoUni L) : L.det = 1 := by
-  rw [Matrix.det_of_isLowerTriangular L (fun i j hij => (h i j).1 hij)]
-  exact Finset.prod_eq_one fun i _ => (h i i).2 rfl
-
 theorem lo_inv {N : ℕ} {x : Matrix (Fin N) (Fin N) K} (h : IsLoUni x) : IsLoUni x⁻¹ := by
-  have hu : IsUnit x.det := by rw [lo_det h]; exact isUnit_one
+  have hu : IsUnit x.det := by rw [GlobalTheory.LoopV.Cov.det_loUni h]; exact isUnit_one
   letI := x.invertibleOfIsUnitDet hu
   have hlow : x.BlockTriangular OrderDual.toDual := fun i j hij => (h i j).1 hij
   have hinv := Matrix.blockTriangular_inv_of_blockTriangular hlow
@@ -286,16 +284,7 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E}
 
 theorem mem_unimod {Λ : Submodule (𝓞 E) S.V} (hΛ : Formalism.HermitianLatticesTheory.IsUnimodular S.hT Λ) (x : S.V) :
     x ∈ Λ ↔ ∀ y ∈ Λ, IsIntegral ℤ (S.hT y x) := by
-  have hΛ' : Formalism.HermitianLatticesTheory.dual S.hT Λ = Λ := hΛ
-  have key : ∀ x, x ∈ Formalism.HermitianLatticesTheory.dual S.hT Λ ↔ ∀ y ∈ Λ, IsIntegral ℤ (S.hT y x) := by
-    intro x
-    simp only [Formalism.HermitianLatticesTheory.dual, Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap,
-      LinearMap.restrictScalars_apply, Submodule.mem_one]
-    refine forall₂_congr fun y _ => ⟨?_, fun h => ⟨⟨_, h⟩, rfl⟩⟩
-    rintro ⟨o, ho⟩
-    rw [← ho]
-    exact o.isIntegral_coe
-  rw [← key, hΛ']
+  apply _root_.GlobalTheory.LoopC.RowSplit.mem_unimod <;> assumption
 
 theorem int_smul_mem {Λ : Submodule (𝓞 E) S.V} {c : E} (hc : IsIntegral ℤ c) {x : S.V} (hx : x ∈ Λ) :
     c • x ∈ Λ := by
@@ -356,9 +345,9 @@ theorem flag_step (F : LFlag S r T) (n : S.V ≃ₗ[E] S.V) {a : Matrix (Fin (r 
       show k'.1 < j
       have : k'.1 < i.1 := hki
       omega
-    · rw [if_pos hk, hk, (ha _ _).2 rfl, sub_self, zero_smul]
+    · rw [ite_eq_left hk, hk, (ha _ _).2 rfl, sub_self, zero_smul]
       exact Submodule.zero_mem _
-    · rw [if_neg (ne_of_gt hk), (ha _ _).1 hk, sub_self, zero_smul]
+    · rw [ite_eq_right (ne_of_gt hk), (ha _ _).1 hk, sub_self, zero_smul]
       exact Submodule.zero_mem _
   have hle : Xflag F (j + 1) ≤ (Xflag F j).comap ((n : S.V →ₗ[E] S.V) - LinearMap.id) := by
     show Submodule.span E (F.fl.e '' {i | i.1 < j + 1}) ≤ _
@@ -417,7 +406,7 @@ theorem gramM_det (F : LFlag S r T) (F' : LFlag S r T') : (gramM F F').det = (-1
 
 theorem diag_cast (t : E) (c : Fin (r + 1) → E) (i : Fin r) :
     ((diagonal fun a : Fin (r + 1) => if a = Fin.last r then t else 0) *ᵥ c) i.castSucc = 0 := by
-  rw [Matrix.mulVec_diagonal, if_neg (Fin.castSucc_ne_last i), zero_mul]
+  rw [Matrix.mulVec_diagonal, ite_eq_right (Fin.castSucc_ne_last i), zero_mul]
 
 private lemma cancel_lemma {N : Type} [Fintype N] [DecidableEq N] {Mx : Matrix N N E} (hM : Mx.det ≠ 0)
     {w w' : N → E} (h : Mx *ᵥ w = Mx *ᵥ w') : w = w' := by
@@ -440,7 +429,7 @@ theorem main_gen {Λ : Submodule (𝓞 E) S.V} (hΛ : Formalism.HermitianLattice
   obtain ⟨Lm, hLm⟩ : ∃ L, L = Z * a * Z⁻¹ := ⟨_, rfl⟩
   have hL : IsLoUni Lm := hLm ▸ ha.2
   have hLZ : Lm * Z = Z * a := by rw [hLm]; exact Matrix.nonsing_inv_mul_cancel_right _ _ hZU
-  have hLU : IsUnit Lm.det := by rw [lo_det hL]; exact isUnit_one
+  have hLU : IsUnit Lm.det := by rw [GlobalTheory.LoopV.Cov.det_loUni hL]; exact isUnit_one
   obtain ⟨b, hb⟩ : ∃ b, b = (Lm⁻¹)ᴴ := ⟨_, rfl⟩
   have hbU : IsUpUni b := hb ▸ lo_conjT (lo_inv hL)
   have hbZa : bᴴ * Z * a = Z := by
@@ -449,7 +438,7 @@ theorem main_gen {Λ : Submodule (𝓞 E) S.V} (hΛ : Formalism.HermitianLattice
     have h1 := congrArg Matrix.conjTranspose hbZa
     simpa [Matrix.conjTranspose_mul, Matrix.mul_assoc] using h1
   have ha_det : a.det = 1 := by
-    have h1 := lo_det (up_conjT haU)
+    have h1 := GlobalTheory.LoopV.Cov.det_loUni (up_conjT haU)
     rw [Matrix.det_conjTranspose] at h1
     simpa using congrArg star h1
   have haU' : IsUnit a.det := by rw [ha_det]; exact isUnit_one
@@ -615,7 +604,7 @@ theorem main_gen {Λ : Submodule (𝓞 E) S.V} (hΛ : Formalism.HermitianLattice
       exact hx _ (hXe' j)
     have hbu : (b - 1) *ᵥ (u ∘ Sum.inl) = 0 := by
       have hZH : (Zᴴ).det ≠ 0 := by rw [Matrix.det_conjTranspose]; exact star_ne_zero.mpr hZdet
-      have haH : (aᴴ).det ≠ 0 := by rw [lo_det (up_conjT haU)]; exact one_ne_zero
+      have haH : (aᴴ).det ≠ 0 := by rw [GlobalTheory.LoopV.Cov.det_loUni (up_conjT haU)]; exact one_ne_zero
       have h2 : aᴴ *ᵥ (Zᴴ *ᵥ (b *ᵥ (u ∘ Sum.inl))) = aᴴ *ᵥ (Zᴴ *ᵥ (u ∘ Sum.inl)) := by
         rw [lo_mulVec (up_conjT haU) _ hy, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, hAZb]
       rw [Matrix.sub_mulVec, Matrix.one_mulVec, cancel_lemma hZH (cancel_lemma haH h2), sub_self]
@@ -708,7 +697,7 @@ theorem Dr1_ne_zero {T' : ℕ} (F : LFlag S r T) (F' : LFlag S r (T' : E)) (τ :
       rw [show S.hT y y = S.hT (∑ b, w b • frame F' b) y by rw [← hy], e]
       simp only [dotProduct, Pi.star_apply, h1]
       rw [Finset.sum_eq_single (Fin.last r)]
-      · rw [if_pos rfl]; ring
+      · rw [ite_eq_left rfl]; ring
       · intro c _ hc; simp [hc]
       · simp
     rw [hyy, map_mul, map_mul, hτ, map_neg, map_natCast] at hp
@@ -723,8 +712,6 @@ theorem Dr1_ne_zero {T' : ℕ} (F : LFlag S r T) (F' : LFlag S r (T' : E)) (τ :
     linarith
 
 end Det
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem frame_mem_of_XS (D : D7) (Λ : LatV D) {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (hz : F.fl.z ∈ Λ)
     (hX : XLam Λ F = XS D F.fl) (b : Fin (D.R.rS + 1)) : frame F b ∈ Λ := by
@@ -844,10 +831,7 @@ section -- clump:auto
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-theorem _root_.GlobalTheory.T.congruence_stabU_from_integral_unipotent_isometry : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D), Stand D u u' → IsBase D u F0 → IsRowLat D F0 Λ → ∀ F' : FlagU D u', IsTermF D Λ (lf D F0) F' → ∃ I : Ideal (𝓞 D.host.E), I ≠ ⊥ ∧ (Ideal.absNorm I : ℝ) ≤ (∏ τ, ‖embS D τ (Gval (lf D F0) F')‖) ^ 4 * ∏ τ, ‖embS D τ (Dr1 (lf D F0) F')‖ ^ 2 ∧ ∀ a ∈ GlobalTheory.LoopV.stabU (ZhatL (lf D F0) F'), GlobalTheory.LoopV.EntIn I (a - 1) → ∃ n ∈ NLam Λ (lf D F0) ∩ NLam Λ F', ∀ c, n (frame F' c) = ∑ i, a i c • frame F' i := by
-  first | exact @GlobalTheory.LoopV.Cong.congruence_mem
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.FlagMeasures.CongruenceStabUFromIntegralUnipotentIsometryStatement =====
@@ -859,7 +843,6 @@ section -- clump:auto
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LoopC.CovTerm
 
@@ -891,7 +874,7 @@ theorem lm_cons (t : K) (s : ℕ) (bs : List (K × ℕ)) (l : ℕ) :
       have hj := j.2
       simp only [Matrix.submatrix_apply, finSumFinEquiv_apply_left, Matrix.of_apply, Fin.val_castAdd,
         ptEntry.eq_2, Matrix.fromBlocks_apply₁₁, id, Matrix.diagonal_apply, Fin.revPerm_apply,
-        Fin.ext_iff, Fin.val_rev, hi, hj, and_self, if_true]
+        Fin.ext_iff, Fin.val_rev, hi, hj, and_self, ite_true]
       exact if_congr (by omega) rfl rfl
     · have hi := i.2
       simp [ptEntry.eq_2]
@@ -916,7 +899,7 @@ theorem prodMaxOneNorm_cons (t : K) (s : ℕ) (bs : List (K × ℕ)) (n : ℕ) :
     intro i hi
     have hi' := Finset.mem_range.1 hi
     rw [Finset.prod_eq_single (s - 1 - i)]
-    · rw [ptEntry.eq_2, if_pos (by omega), if_pos (by omega)]
+    · rw [ptEntry.eq_2, ite_eq_left (by omega), ite_eq_left (by omega)]
     · intro j _ hj
       rw [ptEntry.eq_2]
       split_ifs with h1 h2 h3
@@ -932,7 +915,7 @@ theorem prodMaxOneNorm_cons (t : K) (s : ℕ) (bs : List (K × ℕ)) (n : ℕ) :
       simp [ptEntry.eq_2]
     · intro j hj
       have hj' := Finset.mem_range.1 hj
-      rw [ptEntry.eq_2, if_neg (by omega), if_neg (by omega)]
+      rw [ptEntry.eq_2, ite_eq_right (by omega), ite_eq_right (by omega)]
       simp
 
 noncomputable def gg2 (x : ℝ) : ℝ := max 1 x * max 1 x⁻¹
@@ -1002,11 +985,11 @@ theorem minor_pt_le {N : ℕ} (p : Point K N) (t : ℕ) (I J : Fin t → Fin N) 
     refine Finset.prod_congr rfl fun i _ => ?_
     rw [Finset.prod_range, Finset.prod_eq_single (σ i)]
     · have := hw i (σ i)
-      rw [if_pos rfl] at this
+      rw [ite_eq_left rfl] at this
       rw [← this]; rfl
     · intro j _ hj
       have := hw i j
-      rw [if_neg hj] at this
+      rw [ite_eq_right hj] at this
       have h0 : ptEntry p.1 i j = 0 := this
       simp [h0]
     · simp
@@ -1071,15 +1054,7 @@ theorem leadMinor_cell {L U w : Matrix (Fin N) (Fin N) K} (hL : IsLoUni L) (hU :
 omit [NumberField K] in
 theorem upUni_mul {U B : Matrix (Fin N) (Fin N) K} (hU : IsUpUni U) (hB : IsUpUni B) :
     IsUpUni (U * B) := by
-  intro i j
-  refine ⟨fun h => (up_tri hU).mul (up_tri hB) h, fun h => ?_⟩
-  subst h
-  rw [Matrix.mul_apply, Finset.sum_eq_single i, (hU i i).2 rfl, (hB i i).2 rfl, one_mul]
-  · intro k _ hk
-    rcases lt_or_gt_of_ne hk with h | h
-    · rw [(hU i k).1 h, zero_mul]
-    · rw [(hB k i).1 h, mul_zero]
-  · simp
+  apply _root_.GlobalTheory.UpperUnipotentMul.isUpUni_mul <;> assumption
 
 variable {ι : Type} [Fintype ι] (τ : ι → (K →+* ℂ))
 
@@ -1417,7 +1392,7 @@ theorem covolume_term : ∀ Cg cb Cu cT CT C0 A : ℝ, ∃ C : ℝ, 1 ≤ C ∧ 
   obtain ⟨hc, hfE, -, hm, hrd1, hs, hnorm, -, -, hw⟩ := GlobalTheory.real_places_facts D
   obtain ⟨⟨hS0, -⟩, hSt, -⟩ := hH
   obtain ⟨-, -, hmf, -, hlf, -, -, -, -, -, hlrd, -, -, -, -, -, -, -, -, -, -, -, hT, -⟩ := hS0
-  obtain ⟨I, hI, hNI, hcong⟩ := GlobalTheory.T.congruence_stabU_from_integral_unipotent_isometry D u u' F0 Λ hSt hF0 hΛ F' hF'
+  obtain ⟨I, hI, hNI, hcong⟩ := GlobalTheory.LoopV.Cong.congruence_mem D u u' F0 Λ hSt hF0 hΛ F' hF'
   have hr : 1 ≤ D.R.rS := hSt.1
   have hL1 : 1 ≤ large₂.sc.L := Real.one_le_rpow large₂.sc.one_lt_alt.le large₂.sc.eps_pos.le
   have hbe : Real.exp 1 ≤ large₂.sc.b := Real.exp_le_exp.2 hL1

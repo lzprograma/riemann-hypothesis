@@ -3,45 +3,6 @@ module
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.InhTate
 public import Mathlib.RingTheory.TotallySplit
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -70,14 +31,6 @@ theorem gv_inj {V : Y.Opens} (hV : V = ⊤) {a b : Γ(Y, ⊤)ˣ} (h : gv a V = g
   unfold gv at h
   rwa [res_self, res_self] at h
 
-private theorem res_res_lemma {Y : Scheme.{0}} {U V W : Y.Opens} (h1 : V ≤ U) (h2 : W ≤ V) (x : Γ(Y, U)ˣ) :
-    res h2 (res h1 x) = res (h2.trans h1) x := by
-  ext
-  change (Y.presheaf.map (homOfLE h2).op).hom ((Y.presheaf.map (homOfLE h1).op).hom (x : Γ(Y, U))) =
-    (Y.presheaf.map (homOfLE (h2.trans h1)).op).hom x
-  rw [← CommRingCat.comp_apply, ← Functor.map_comp]
-  rfl
-
 private theorem linComb_trivLB_U_eq_univ (φ : J → (Y ⟶ Z)) (ε : J → ℤ) (j : ((Inh.trivLB Z).LinComb φ ε).ι) :
     ((Inh.trivLB Z).LinComb φ ε).U j = ⊤ :=
   wchart_triv φ j
@@ -87,7 +40,7 @@ theorem exists_isConst {φ : J → (Y ⟶ Z)} {ε : J → ℤ} (t : LB.Gen (LB.L
   obtain ⟨j0, -⟩ : ∃ j : ((Inh.trivLB Z).LinComb φ ε).ι, True := ⟨fun _ => PUnit.unit, trivial⟩
   refine ⟨res (linComb_trivLB_U_eq_univ φ ε j0).ge (t.s j0), fun j => ?_⟩
   obtain rfl : j = j0 := funext fun _ => rfl
-  exact ((res_res_lemma _ _ _).trans (res_self _ _)).symm
+  exact ((res_res _ _ _).trans (res_self _ _)).symm
 
 theorem isConst_unique {φ : J → (Y ⟶ Z)} {ε : J → ℤ} {t : LB.Gen (LB.LinComb (Inh.trivLB Z) φ ε)}
     {a b : Γ(Y, ⊤)ˣ} (ha : IsConst t a) (hb : IsConst t b) : a = b := by
@@ -111,7 +64,7 @@ theorem eq_of_corr {φ : J → (Y ⟶ Z)} {ε : J → ℤ} {φ' : J' → (Y ⟶ 
   have e := h j0 j1 (fun _ _ _ => rfl) (fun _ _ _ => rfl) (fun _ _ _ => rfl)
   rw [ha j0, hb j1] at e
   unfold gv at e
-  refine gv_inj ?_ ((res_res_lemma _ _ a).symm.trans (e.trans (res_res_lemma _ _ b)))
+  refine gv_inj ?_ ((res_res _ _ a).symm.trans (e.trans (res_res _ _ b)))
   simp
   exact ⟨wchart_triv φ j0, wchart_triv φ' j1⟩
 
@@ -389,19 +342,6 @@ theorem psiIn_iff (y : X) (J : Ideal K) :
   exact ((Scheme.ΓSpecIso (CommRingCat.of (FractionRing K))).symm.commRingCatIsoToRingEquiv.injective e2).symm
 
 section Examples
-
-theorem polar_zpow_sq (u : (FractionRing K)ˣ) (a b : ℤ) :
-    polar (fun n : ℤ => u ^ (n ^ 2)) a b = u ^ (2 * a * b) := by
-  simp only [polar]
-  rw [← zpow_neg, ← zpow_neg, ← zpow_add, ← zpow_add]
-  congr 1
-  ring
-
-theorem toricPre_tate : toricPre InhTate.R ℤ (fun n => piK ^ (n ^ 2)) = tatePre := by
-  unfold toricPre tatePre P0 pi0
-  congr 1
-  funext n
-  exact congrArg (cg _ _) (unitOn_zpow _ _)
 
 end Examples
 

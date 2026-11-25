@@ -9,8 +9,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH MeasureTheory Formalism.L2.Theta
 open scoped Classical TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace Formalism.L2.Pj
 
 variable {D : D7}

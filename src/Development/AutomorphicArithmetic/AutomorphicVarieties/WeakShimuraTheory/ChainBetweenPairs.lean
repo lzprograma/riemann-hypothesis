@@ -4,46 +4,8 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimura
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CompactIntegralFields.ChainMap
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.FlagsAndDiagonals.WMConjDiagonal
 import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.SpaceMap
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
 import Mathlib.FieldTheory.Galois.Profinite
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -139,32 +101,6 @@ theorem qM (h : Supp qQ P.r) : Supp nM P.r :=
 theorem samePs_symm (h : P.SamePs P') : P'.SamePs P := ⟨fun g => (h.1 g).symm, fun v => (h.2 v).symm⟩
 
 end In
-
-section Map
-
-variable {O Γ R R' : Type} [CommRing O] [Group Γ] [CommRing R] [CommRing R'] {Φ : Fr O Γ} {a : O →+* R}
-
-theorem pair_map {P : PD Φ.ι Γ R} (h : Φ.IsPair a P) (f : R →+* R') : Φ.IsPair (f.comp a) (P.map f) := by
-  have cj : ∀ n X : M4 R, adj (n.map f) * X.map f * n.map f = (adj n * X * n).map f := fun n X => by
-    rw [Matrix.map_mul, Matrix.map_mul, adj_map]
-  refine ⟨fun g => gsp_map f (h.mult g), fun g hg => ?_, fun i j hij => ?_, fun v => ⟨?_, fun i => ?_, fun i j hij => ?_⟩,
-    fun v s hs i j hij => ?_, fun v s hs i => ?_⟩
-  · show (P.r g).map f = 1
-    rw [h.kill g hg, Matrix.map_one _ (map_zero f) (map_one f)]
-  · show f (P.r Φ.g0 i j) = 0
-    rw [h.nrm hij, map_zero]
-  · exact map_one f ▸ gsp_map f (h.low v).1
-  · show f (P.n v i i) = 1
-    rw [(h.low v).2.1, map_one]
-  · show f (P.n v i j) = 0
-    rw [(h.low v).2.2 i j hij, map_zero]
-  · show (adj ((P.n v).map f) * (P.r s).map f * (P.n v).map f : M4 R') i j = 0
-    rw [cj, Matrix.map_apply, h.flag v s hs i j hij, map_zero]
-  · show (adj ((P.n v).map f) * (P.r s).map f * (P.n v).map f : M4 R') i i = 1
-    rw [cj, Matrix.map_apply]
-    exact (congrArg f (h.mu v s hs i)).trans (map_one f)
-
-end Map
 
 section Gal
 

@@ -4,8 +4,6 @@ public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsCoin
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 open MvPolynomial Finset Coinv
@@ -26,8 +24,7 @@ theorem CoinvIdealComponent.proof (h1 : CoinvIdealRepresentation.Statement)
     split_ifs
     · exact homogeneousComponent_isHomogeneous _ _
     · exact isHomogeneous_zero _ _ _
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [map_sum]
+  · rw [map_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
 
     rw [map_sum]

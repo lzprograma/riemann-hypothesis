@@ -7,46 +7,6 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Algebra.Group.Subgroup.Defs
 public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicTowerTraceAlmostSurjective
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormPrimitiveRootPrimePowSubOnePadicComplex
@@ -58,7 +18,6 @@ import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.WittVector.DiscreteValuationRing
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.TypeStar
@@ -172,15 +131,13 @@ theorem exists_reps {G : Type*} [Group G] (H U : Subgroup G) [U.FiniteIndex] :
     obtain ⟨q, -, rfl⟩ := Finset.mem_image.1 hs
     rw [(key q).1 hs']
 
-alias sum_shift := _root_.GlobalTheory.TranslateSum.sum_translate_eq
-
 alias norm_pow_sub_pow_le := _root_.GlobalTheory.PowerDifferenceNormInertiaEigenvalues.norm_pow_sub_pow_le
 
 variable {l : ℕ} [Fact l.Prime]
 
 theorem rel_trace (hn : ∀ (g : GQ l) (x : Om l), ‖g x‖ = ‖x‖) (K : FinExt l)
     (L : IntermediateField ℚ_[l] (Om l)) (S : Finset (GQ l)) (hKL : Kinf K ≤ L)
-    (hst : ∀ h ∈ Hinf K, ∀ x ∈ L, h x ∈ L) (hS : ∀ s ∈ S, s ∈ Hinf K)
+    (hS : ∀ s ∈ S, s ∈ Hinf K)
     (hS' : ∀ h ∈ Hinf K, ∃! s, s ∈ S ∧ s⁻¹ * h ∈ L.fixingSubgroup)
     (a : Om l) (ha : a ∈ Kinf K) (ha1 : ‖a‖ < 1) (β : Om l) :
     ∃ (T : Finset (GQ l)) (e : Om l), (∀ t ∈ T, t ∈ L.fixingSubgroup) ∧ ‖e‖ ≤ 1 ∧
@@ -203,18 +160,6 @@ theorem rel_trace (hn : ∀ (g : GQ l) (x : Om l), ‖g x‖ = ‖x‖) (K : Fin
   have hsup : (L ⊔ E).fixingSubgroup = L.fixingSubgroup ⊓ E.fixingSubgroup :=
     IntermediateField.fixingSubgroup_sup
   obtain ⟨T, hT, hT'⟩ := exists_reps L.fixingSubgroup E.fixingSubgroup
-  have hst' : ∀ h ∈ Hinf K, ∀ x ∈ L ⊔ E, h x ∈ L ⊔ E := by
-    intro h hh
-    have : L ⊔ E ≤ (L ⊔ E).comap (h : Om l →ₐ[ℚ_[l]] Om l) := by
-      refine sup_le (fun x hx => ?_) (fun x hx => ?_)
-      · exact (le_sup_left : L ≤ L ⊔ E) (hst h hh x hx)
-      · change h x ∈ L ⊔ E
-        have h1 := AlgEquiv.restrictNormal_commutes h E ⟨x, hx⟩
-        have h2 : h x ∈ E := by
-          have : h x = (h.restrictNormal E ⟨x, hx⟩ : E) := h1.symm
-          rw [this]; exact Subtype.property _
-        exact (le_sup_right : E ≤ L ⊔ E) h2
-    exact fun x hx => this hx
   have huniq : ∀ h ∈ Hinf K, ∃! p : GQ l × GQ l, p ∈ S ×ˢ T ∧
       (p.1 * p.2)⁻¹ * h ∈ (L ⊔ E).fixingSubgroup := by
     intro h hh
@@ -239,7 +184,7 @@ theorem rel_trace (hn : ∀ (g : GQ l) (x : Om l), ‖g x‖ = ‖x‖) (K : Fin
     have he' : p.1 * p.2 = q.1 * q.2 := he
     rw [he']; simp
   obtain ⟨e, heL, he1, he⟩ := _root_.GlobalTheory.Cyc.trace_almost_onto l K (L ⊔ E)
-    ((S ×ˢ T).image fun p => p.1 * p.2) (hKL.trans le_sup_left) hst'
+    ((S ×ˢ T).image fun p => p.1 * p.2) (hKL.trans le_sup_left)
     (by
       intro s hs
       obtain ⟨p, hp, rfl⟩ := Finset.mem_image.1 hs
@@ -257,7 +202,7 @@ theorem rel_trace (hn : ∀ (g : GQ l) (x : Om l), ‖g x‖ = ‖x‖) (K : Fin
     intro y hy n hnL
 
     rw [map_sum]
-    refine sum_shift L.fixingSubgroup E.fixingSubgroup T hT hT' (fun g => g y) ?_ n hnL
+    refine GlobalTheory.TranslateSum.sum_translate_eq L.fixingSubgroup E.fixingSubgroup T hT hT' (fun g => g y) ?_ n hnL
     intro g v hv hv'
     have : v ∈ (L ⊔ E).fixingSubgroup := by rw [hsup]; exact ⟨hv, hv'⟩
     change g (v y) = g y
@@ -314,7 +259,7 @@ theorem exists_near_one (K : FinExt l) (r : ℝ) (hr0 : 0 ≤ r) (hr : r < 1) :
 
 theorem approx_root (hn : ∀ (g : GQ l) (x : Om l), ‖g x‖ = ‖x‖) (K : FinExt l)
     (L : IntermediateField ℚ_[l] (Om l)) (S : Finset (GQ l)) (hKL : Kinf K ≤ L)
-    (hst : ∀ h ∈ Hinf K, ∀ x ∈ L, h x ∈ L) (hS : ∀ s ∈ S, s ∈ Hinf K)
+    (hS : ∀ s ∈ S, s ∈ Hinf K)
     (hS' : ∀ h ∈ Hinf K, ∃! s, s ∈ S ∧ s⁻¹ * h ∈ L.fixingSubgroup) :
     ∃ r : ℝ, 0 ≤ r ∧ r < 1 ∧ ∀ b : Om l, ‖b‖ ≤ 1 → (∀ n ∈ L.fixingSubgroup, n b = b) →
       ∃ c : Om l, (‖c‖ ≤ 1 ∧ ∀ n ∈ L.fixingSubgroup, n c = c) ∧ ‖c ^ l - b‖ ≤ r := by
@@ -340,7 +285,7 @@ theorem approx_root (hn : ∀ (g : GQ l) (x : Om l), ‖g x‖ = ‖x‖) (K : F
     have e : n β - β = (n β / β - 1) * β := by field_simp
     rw [e, norm_mul]
     exact (mul_le_of_le_one_right (norm_nonneg _) hβ1).trans h2
-  obtain ⟨T, e, hT, he1, hf1, hf2, hle⟩ := rel_trace hn K L S hKL hst hS hS' a ha ha1 β
+  obtain ⟨T, e, hT, he1, hf1, hf2, hle⟩ := rel_trace hn K L S hKL hS hS' a ha ha1 β
   have hu0 : 0 < ‖∑ t ∈ T, t e‖ := ha0.trans_le hle
   have hu : (∑ t ∈ T, t e) ≠ 0 := norm_pos_iff.1 hu0
   have hd : ‖(∑ t ∈ T, t (e * β)) / (∑ t ∈ T, t e) - β‖ ≤ ‖ζ - 1‖ / ‖a‖ := by
@@ -469,17 +414,17 @@ theorem exists_tilt {P : LocPrime l} (AI : LocAinf l P) (N : Subgroup (GQ l)) (S
     rw [AI.actC_norm]
     exact h4 k
 
-theorem main : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) (K : FinExt l) (L : IntermediateField ℚ_[l] (Om l)) (S : Finset (GQ l)), Kinf K ≤ L → (∀ h ∈ Hinf K, ∀ x ∈ L, h x ∈ L) → (∀ s ∈ S, s ∈ Hinf K) → (∀ h ∈ Hinf K, ∃! s, s ∈ S ∧ s⁻¹ * h ∈ L.fixingSubgroup) → ∃ b : WCb l, (∀ n ∈ L.fixingSubgroup, AI.actWCb n b = b) ∧ ∑ s ∈ S, AI.actWCb s b = 1 := by
-  intro l _ P AI K L S hKL hst hS hS'
+theorem main : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) (K : FinExt l) (L : IntermediateField ℚ_[l] (Om l)) (S : Finset (GQ l)), Kinf K ≤ L → (∀ s ∈ S, s ∈ Hinf K) → (∀ h ∈ Hinf K, ∃! s, s ∈ S ∧ s⁻¹ * h ∈ L.fixingSubgroup) → ∃ b : WCb l, (∀ n ∈ L.fixingSubgroup, AI.actWCb n b = b) ∧ ∑ s ∈ S, AI.actWCb s b = 1 := by
+  intro l _ P AI K L S hKL hS hS'
   have hp : l.Prime := Fact.out
   have hl : (1 : ℝ) < l := by exact_mod_cast hp.one_lt
   have hNH : L.fixingSubgroup ≤ Hinf K := fun g hg x => hg ⟨x.1, hKL x.2⟩
   have hn : ∀ (g : GQ l) (x : Om l), ‖g x‖ = ‖x‖ := fun g x => by
     rw [← PadicComplex.norm_extends l, ← AI.actC_ext, AI.actC_norm, PadicComplex.norm_extends]
-  obtain ⟨r, hr0, hr1, hroot⟩ := approx_root hn K L S hKL hst hS hS'
+  obtain ⟨r, hr0, hr1, hroot⟩ := approx_root hn K L S hKL hS hS'
   obtain ⟨a, ha, hra, ha1⟩ := exists_near_one K (max r (l : ℝ)⁻¹) (le_max_of_le_left hr0)
     (max_lt hr1 (inv_lt_one_of_one_lt₀ hl))
-  obtain ⟨b0, hb0L, hb01, hb0⟩ := _root_.GlobalTheory.Cyc.trace_almost_onto l K L S hKL hst hS hS' a ha ha1
+  obtain ⟨b0, hb0L, hb01, hb0⟩ := _root_.GlobalTheory.Cyc.trace_almost_onto l K L S hKL hS hS' a ha ha1
   let X := {c : Om l // ‖c‖ ≤ 1 ∧ ∀ n ∈ L.fixingSubgroup, n c = c}
   have hstep : ∀ b : X, ∃ c : X, ‖c.1 ^ l - b.1‖ ≤ r := fun b => by
     obtain ⟨c, hc, hc'⟩ := hroot b.1 b.2.1 b.2.2
@@ -526,7 +471,7 @@ theorem main : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) 
 
     rw [map_sum]
     simp only [hF]
-    exact sum_shift (Hinf K) L.fixingSubgroup S hS hS' F (fun g v _ hv => hFv g v hv) h hh
+    exact GlobalTheory.TranslateSum.sum_translate_eq (Hinf K) L.fixingSubgroup S hS hS' F (fun g v _ hv => hFv g v hv) h hh
   have hu : IsUnit (∑ s ∈ S, F s) := by
     apply WittVector.isUnit_of_coeff_zero_ne_zero
 

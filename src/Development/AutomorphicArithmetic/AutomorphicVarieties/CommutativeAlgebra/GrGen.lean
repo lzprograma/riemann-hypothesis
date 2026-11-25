@@ -76,7 +76,7 @@ private theorem exists_decomp {O σ X : Type} [CommRing O] [Fintype σ] [AddComm
     exact hn (hf n h)
   refine ⟨T, g, ?_, ?_⟩
   · intro m hmT k hk
-    rw [hg, if_neg]
+    rw [hg, ite_eq_right]
     rintro ⟨h1, h2⟩
     apply hk
     have hm : Finsupp.weight wt m = j := hwt m (hTP m hmT)
@@ -89,34 +89,21 @@ private theorem exists_decomp {O σ X : Type} [CommRing O] [Fintype σ] [AddComm
     (g := fun m => if c n = m then (if coeff n f ≠ 0 then coeff n f else 0) else 0),
     Finset.sum_ite_eq]
     · by_cases hn : coeff n f ≠ 0
-      · rw [if_pos (hcT n hn), if_pos hn]
-      · push_neg at hn
+      · rw [ite_eq_left (hcT n hn), ite_eq_left hn]
+      · push Not at hn
         rw [hn]
         simp
     · intro m _
       rw [MvPowerSeries.coeff_monomial_mul, one_mul]
       by_cases hmn : m ≤ n
-      · rw [if_pos hmn, hg, tsub_add_cancel_of_le hmn]
+      · rw [ite_eq_left hmn, hg, tsub_add_cancel_of_le hmn]
         by_cases h1 : coeff n f ≠ 0 <;> by_cases h2 : c n = m <;> simp [h1, h2]
-      · rw [if_neg hmn]
+      · rw [ite_eq_right hmn]
         by_cases h1 : coeff n f ≠ 0
         · have h3 : c n ≠ m := fun h => hmn (h ▸ hcle n h1)
           simp [h3]
-        · push_neg at h1
+        · push Not at h1
           simp [h1]
-
-private theorem monomial_eq_prod {O σ : Type} [CommRing O] [Fintype σ] (m : σ →₀ ℕ) :
-    (monomial m (1 : O) : MvPowerSeries σ O) = ∏ i, (MvPowerSeries.X i) ^ (m i) := by
-  classical
-  have key : ∀ s : Finset σ, ∏ i ∈ s, (MvPowerSeries.X i : MvPowerSeries σ O) ^ (m i) =
-      monomial (∑ i ∈ s, Finsupp.single i (m i)) 1 := by
-    intro s
-    induction s using Finset.induction_on with
-    | empty => simp [MvPowerSeries.monomial_zero_one]
-    | insert a s ha ih =>
-      rw [Finset.prod_insert ha, Finset.sum_insert ha, ih, MvPowerSeries.X_pow_eq,
-        MvPowerSeries.monomial_mul_monomial, one_mul]
-  rw [key, Finsupp.univ_sum_single]
 
 theorem UpperTheory.V.Alg.gr_gen :
     ∀ (O R : Type) [CommRing O] [CommRing R] [Algebra O R] (X : Type) [AddCommGroup X] [Module.Free ℤ X] [Module.Finite ℤ X] (W : WPres O X R), Algebra.adjoin O ((W.gr 0 : Set W.A) ∪ Set.range W.zA) = ⊤ := by
@@ -152,7 +139,9 @@ theorem UpperTheory.V.Alg.gr_gen :
 
     rw [AlgHom.toLinearMap_apply, hfe, map_sum]
     refine Finset.sum_congr rfl fun m hm => ?_
-    rw [if_pos hm, map_mul, monomial_eq_prod, map_prod]
+    rw [ite_eq_left hm, map_mul, MvPowerSeries.monomial_one_eq,
+      Finsupp.prod_of_support_subset _ (Finset.subset_univ _) _ (fun _ _ => pow_zero _),
+      map_prod]
     simp only [map_pow]
   · exact Subalgebra.zero_mem _
   · intro x y _ _ ihx ihy

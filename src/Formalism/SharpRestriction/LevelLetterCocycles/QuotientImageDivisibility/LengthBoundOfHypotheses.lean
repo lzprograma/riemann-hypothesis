@@ -20,52 +20,11 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisi
 public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ContentBoundLevel
 public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.LemmaDN0
 public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkFilLevEq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
 import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.MemOfExp, Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.InIZero, Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.NDlCoords, Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.PchainDN, Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.MemPreG, Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.LengthBoundOfHypotheses
@@ -594,99 +553,6 @@ theorem linLift (K : Submodule O M) (R : A → M → Prop) (hex : ∀ a, ∃ x, 
 
 end Lin
 
-section bigCellDetWeightedEnergyIntegral
-
-open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
-
-variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
-    [Algebra Qp K₀] [Algebra Qp K] [Algebra K₀ K] [IsScalarTower Qp K₀ K]
-    {B BdR : Type} [CommRing B] [CommRing BdR] [Algebra Qp B] [Algebra K₀ B] [IsScalarTower Qp K₀ B]
-    [Algebra Qp BdR] [Algebra K₀ BdR] [Algebra K BdR] [IsScalarTower Qp K BdR]
-    [IsScalarTower K₀ K BdR] [IsScalarTower Qp K₀ BdR]
-    {PD : PeriodData G Qp K₀ K B BdR} {LL O : Type} [Field LL] [Algebra Qp LL] [TopologicalSpace LL]
-    [CommRing O] [Algebra O LL] {v : AddValuation LL (WithTop ℚ)} {n : ℕ}
-
-variable (W : LocWach PD LL O v n) (T : LocLat G Qp LL O)
-
-theorem pchain_DN' (i : ZMod n) (k : ℕ) {m : ℕ} {cc : ℝ} {FF : Type} [AddCommGroup FF]
-    [Module O FF] (K : Submodule O ↥(Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i)) (s : Finset (W.DD T))
-    (hs : s.card ≤ m) (hsN : (↑s : Set (W.DD T)) ⊆ Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i) (L kO : ℕ)
-    (hL : Module.length O (↥(Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i) ⧸
-      (Xd W T i k ⊔ Submodule.span O (↑s : Set (W.DD T))).comap
-        (Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i).subtype) ≤ (L : ℕ∞))
-    (hkO : lenOl PD (O := O) = kO) (hLc : (L : ℝ) ≤ cc * kO) (A : Submodule O FF)
-    (ψ : ↥A →ₗ[O] ↥(Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i) ⧸ K) :
-    Formalism.MainNotions.RamifiedCoefficientChains.S9.PChain (lenOl PD (O := O)) m cc A
-      (kerSub A ψ (((Xd W T i k).comap (Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i).subtype).map K.mkQ)) 1 1 := by
-  set X := (Xd W T i k).comap (Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i).subtype with hXdef
-  set Y := (Xd W T i k ⊔ Submodule.span O (↑s : Set (W.DD T))).comap
-    (Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i).subtype with hYdef
-  have hXY : X ≤ Y := Submodule.comap_mono le_sup_left
-  have hlen : Module.length O ((↥(Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i) ⧸ K) ⧸ Y.map K.mkQ) ≤ (L : ℕ∞) := by
-    rw [(Submodule.quotientQuotientEquivQuotientSup K Y).length_eq]
-    refine le_trans ?_ hL
-    exact Module.length_le_of_surjective (Submodule.mapQ Y (K ⊔ Y) LinearMap.id
-      (fun y hy => Submodule.mem_sup_right (by simpa using hy)))
-      (fun z => by
-        obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ z
-        exact ⟨Submodule.Quotient.mk x, rfl⟩)
-  have h1 := pstep_len (m := m) (c := cc) A ψ (Y.map K.mkQ) L kO hlen hkO hLc
-  set A₁ := kerSub A ψ (Y.map K.mkQ) with hA₁def
-  have hA₁ : A₁ ≤ A := kerSub_le A ψ _
-  set ψ₁ : ↥A₁ →ₗ[O] ↥(Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i) ⧸ K := ψ.comp (Submodule.inclusion hA₁)
-  set sN : Finset ↥(Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i) := s.subtype (· ∈ Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i)
-  set s' := sN.image K.mkQ
-  have hcard : s'.card ≤ m := by
-    refine Finset.card_image_le.trans (le_trans ?_ hs)
-    rw [Finset.card_subtype]
-    exact Finset.card_filter_le _ _
-  have hspan : Submodule.span O (↑s : Set (W.DD T)) =
-      (Submodule.span O (↑sN : Set ↥(Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i))).map
-        (Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i).subtype := by
-    rw [Submodule.map_span]
-    congr 1
-    ext y
-    constructor
-    · intro hy
-      exact ⟨⟨y, hsN hy⟩, Finset.mem_subtype.2 hy, rfl⟩
-    · rintro ⟨z, hz, rfl⟩
-      exact Finset.mem_subtype.1 hz
-  have hY : Y ≤ X ⊔ Submodule.span O (↑sN : Set ↥(Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i)) := by
-    intro z hz
-    have hz' : (z : W.DD T) ∈ Xd W T i k ⊔ Submodule.span O (↑s : Set (W.DD T)) := hz
-    obtain ⟨x, hx, t, ht, hxt⟩ := Submodule.mem_sup.1 hz'
-    rw [hspan] at ht
-    obtain ⟨t', ht', rfl⟩ := Submodule.mem_map.1 ht
-    have hxN : x ∈ Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i := by
-      have e : x = (z : W.DD T) - (t' : W.DD T) := by rw [← hxt]; simp
-      rw [e]; exact (Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i).sub_mem z.2 t'.2
-    refine Submodule.mem_sup.2 ⟨⟨x, hxN⟩, hx, t', ht', Subtype.ext ?_⟩
-    simpa using hxt
-  have hgen : ∀ a, ψ₁ a ∈ X.map K.mkQ ⊔ Submodule.span O (↑s' : Set _) := by
-    intro a
-    have ha : ψ ⟨(a : FF), hA₁ a.2⟩ ∈ Y.map K.mkQ := (mem_kerSub_coe A ψ _ ⟨a, hA₁ a.2⟩).1 a.2
-    have hle : Y.map K.mkQ ≤ X.map K.mkQ ⊔ Submodule.span O (↑s' : Set _) := by
-      calc Y.map K.mkQ ≤ (X ⊔ Submodule.span O (↑sN : Set _)).map K.mkQ := Submodule.map_mono hY
-        _ = X.map K.mkQ ⊔ (Submodule.span O (↑sN : Set _)).map K.mkQ := Submodule.map_sup _ _ _
-        _ = X.map K.mkQ ⊔ Submodule.span O (↑s' : Set _) := by
-          rw [Submodule.map_span, Finset.coe_image]
-    exact hle ha
-  have h2 := pstep_gen (lenO := lenOl PD (O := O)) (m := m) (c := cc) A₁ ψ₁ (X.map K.mkQ) s' hcard hgen
-  have heq : kerSub A₁ ψ₁ (X.map K.mkQ) = kerSub A ψ (X.map K.mkQ) := by
-    ext x
-    constructor
-    · intro hx
-      obtain ⟨hx1, hx2⟩ := (mem_kerSub A₁ ψ₁ _ x).1 hx
-      exact (mem_kerSub A ψ _ x).2 ⟨hA₁ hx1, hx2⟩
-    · intro hx
-      obtain ⟨hx1, hx2⟩ := (mem_kerSub A ψ _ x).1 hx
-      have hx1' : x ∈ A₁ := (mem_kerSub A ψ _ x).2 ⟨hx1, Submodule.map_mono hXY hx2⟩
-      exact (mem_kerSub A₁ ψ₁ _ x).2 ⟨hx1', hx2⟩
-  rw [heq] at h2
-  exact (pchain_of_len h1).trans (pchain_of_gen h2)
-
-end bigCellDetWeightedEnergyIntegral
-
 end Formalism.MainNotions.N.Pv.LocalLengthBound
 end -- clump:auto
 end -- clump:auto
@@ -808,7 +674,7 @@ theorem pass3 [IsDomain O] [IsPrincipalIdealRing O] [IsFractionRing O LL]
     rwa [smul_smul, inv_mul_cancel₀ (zpow_ne_zero _ hp), one_smul] at h'
   obtain ⟨ψ3, hψ3⟩ := linLift K3 R hex' hadd hsm huniq
   obtain ⟨s₂, hs₂, hs₂N, L, kO, hL, hkO, hLc⟩ := hDN
-  have ch1 := pchain_DN' W T (c - 1 - 1) hh K3 s₂ hs₂ hs₂N L kO hL hkO hLc A ψ3
+  have ch1 := pchain_DN W T (c - 1 - 1) hh K3 s₂ hs₂ hs₂N L kO hL hkO hLc A ψ3
   set F3b := kerSub A ψ3 (((Xd W T (c - 1 - 1) hh).comap
     (Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T (c - 1 - 1)).subtype).map K3.mkQ) with hF3bdef
   have hF3b : F3b ≤ A := kerSub_le _ _ _
@@ -1138,8 +1004,8 @@ theorem length_bound_of_hypotheses [NeZero n] (h3 : Formalism.MainNotions.DeltaI
     rw [sub_add_cancel] at this
     omega
   have hc2m : c - 1 - 1 ∈ Formalism.MainNotions.RamifiedCoefficientChains.S9.evens n d := Finset.mem_filter.2 ⟨Finset.mem_univ _, hc2⟩
-  have hMc : boxM d b S η c = b c + S := if_pos hcD
-  have hMc2 : boxM d b S η (c - 1 - 1) = b (c - 1 - 1) + S := if_pos hc2
+  have hMc : boxM d b S η c = b c + S := ite_eq_left hcD
+  have hMc2 : boxM d b S η (c - 1 - 1) = b (c - 1 - 1) + S := ite_eq_left hc2
   have hM₂ : ∀ z ∈ W.Nl T₂ (c - 1), W.Q ^ (b c + S) • W.φD T₂ z ∈ W.N T₂ := by
     rw [← hMc]; exact h5₂.1 c
   have hM₂' : ∀ z ∈ W.Nl T₂ (c - 1 - 1 - 1), W.Q ^ (b (c - 1 - 1) + S) • W.φD T₂ z ∈ W.N T₂ := by

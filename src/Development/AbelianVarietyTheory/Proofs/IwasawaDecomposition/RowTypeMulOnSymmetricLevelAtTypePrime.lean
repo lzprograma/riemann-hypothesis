@@ -4,49 +4,7 @@ public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalFormAtPrime
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LambdaCharSymMulInvEqOne
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfPowPred
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnipotentCharacterArgumentMulStabilizer
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsAdmissibleIntegralBasisChangeOne
 
@@ -79,7 +37,7 @@ theorem superdiag {n k₀ rS r : ℕ} (hr : k₀ + rS < r) (hn : r ≤ n) (A B :
   · rintro l hl ⟨h1, h2⟩
     rw [Finset.mem_range] at hl
     by_cases h : bd5 k₀ rS (symIdx k₀ rS (p + 1)) ≤ symIdx k₀ rS l
-    · rw [hB l (p + 1) hl hp h, if_neg h2, mul_zero]
+    · rw [hB l (p + 1) hl hp h, ite_eq_right h2, mul_zero]
     · have h3 : l < r ∧ bd5 k₀ rS (symIdx k₀ rS l) ≤ symIdx k₀ rS p := by
         have e1 := symIdx_cases k₀ rS l
         have e2 := symIdx_cases k₀ rS p
@@ -87,7 +45,7 @@ theorem superdiag {n k₀ rS r : ℕ} (hr : k₀ + rS < r) (hn : r ≤ n) (A B :
         have e4 := symmetricBlockBoundary_cases k₀ rS (symIdx k₀ rS l)
         have e5 := symmetricBlockBoundary_cases k₀ rS (symIdx k₀ rS (p + 1))
         constructor <;> omega
-      rw [hA p l (by omega) h3.1 h3.2, if_neg (Ne.symm h1), zero_mul]
+      rw [hA p l (by omega) h3.1 h3.2, ite_eq_right (Ne.symm h1), zero_mul]
 
 theorem block {n a t : ℕ} (hn : a + t ≤ n) (A B C : ℕ → ℕ → κ)
     (hA : ∀ l l', l < n → l' < a → a ≤ l → A l l' = 0)
@@ -135,7 +93,7 @@ theorem unitV_mul {K : Type} [Field K] (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) 
   unfold unitV
   by_cases hc : IsUnit (redP P c)
   · have hab := IsUnit.mul_iff.1 (h ▸ hc)
-    rw [dif_pos hc, dif_pos hab.1, dif_pos hab.2, ← Units.val_mul, ← map_mul]
+    rw [dite_eq_left hc, dite_eq_left hab.1, dite_eq_left hab.2, ← Units.val_mul, ← map_mul]
     congr 2
     exact Units.ext (by simpa using h)
   · rw [dite_eq_right hc]
@@ -162,7 +120,7 @@ theorem co_bvec (hq : q ≠ 0) {k₀ n c p p' : ℕ} (hk : k₀ ≤ n) (hp : p <
     co q k₀ n c (bvecG E q k₀ n c p') p = if p = p' then 1 else 0 := by
   have hq' : (q : E) ≠ 0 := Nat.cast_ne_zero.2 hq
   unfold co bvecG atN eN
-  rw [dif_pos (fPos_fIdx hk hp).1]
+  rw [dite_eq_left (fPos_fIdx hk hp).1]
   simp only [Pi.smul_apply, smul_eq_mul, fIdx_inj hk hp hp']
   split_ifs with h
   · subst h
@@ -196,14 +154,14 @@ theorem eq_sum_co (hq : q ≠ 0) {k₀ n c : ℕ} (hk : k₀ ≤ n) (v : Sp E (n
   obtain ⟨h1, h2⟩ := GlobalTheory.LastSteps.fIdx_fPos hk i.2
   rw [Finset.sum_apply, Finset.sum_eq_single (fPos k₀ c n i.1)]
   · unfold co bvecG atN eN
-    simp only [h2, dif_pos i.2, Pi.smul_apply, smul_eq_mul, if_true, Fin.eta]
+    simp only [h2, dite_eq_left i.2, Pi.smul_apply, smul_eq_mul, ite_true, Fin.eta]
     have := zpow_ne_zero (scE n (fun i => i + 1) i.1) hq'
     field_simp
   · intro l hl hne
     rw [Finset.mem_range] at hl
     unfold bvecG eN
     simp only [Pi.smul_apply, smul_eq_mul]
-    rw [if_neg, mul_zero, mul_zero]
+    rw [ite_eq_right, mul_zero, mul_zero]
     intro h
     exact hne (by rw [h, (fPos_fIdx hk hl).2])
   · intro h
@@ -230,10 +188,10 @@ theorem co_of_mem_flagS (hq : q ≠ 0) (hP : (q : 𝓞 E) ∈ P.asIdeal) {k₀ r
   rw [SymLevelInv.mem_sclLat] at hv
   have h3 := hv ⟨_, h1⟩
   simp only [] at h3
-  rw [h2, if_pos h, zpow_add_one₀ hq', mul_inv] at h3
+  rw [h2, ite_eq_left h, zpow_add_one₀ hq', mul_inv] at h3
   refine of_inv_mul P hq hP ?_
   unfold co atN
-  rw [dif_pos h1]
+  rw [dite_eq_left h1]
   convert h3 using 1
   ring
 
@@ -246,9 +204,9 @@ theorem bvec_mem_flagS (hq : q ≠ 0) {k₀ rS n c s p : ℕ} (hk : k₀ ≤ n) 
   unfold bvecG eN
   simp only [Pi.smul_apply, smul_eq_mul]
   by_cases hx : x.1 = fIdx k₀ c n p
-  · rw [if_pos hx, hx, (fPos_fIdx hk hp).2, if_neg h, add_zero, mul_one, inv_mul_cancel₀ (zpow_ne_zero _ hq')]
+  · rw [ite_eq_left hx, hx, (fPos_fIdx hk hp).2, ite_eq_right h, add_zero, mul_one, inv_mul_cancel₀ (zpow_ne_zero _ hq')]
     exact SymLevelInv.intAt_one P
-  · rw [if_neg hx, mul_zero, mul_zero]
+  · rw [ite_eq_right hx, mul_zero, mul_zero]
     exact SymLevelInv.intAt_zero P
 
 theorem entB_col (hq : q ≠ 0) (hP : (q : 𝓞 E) ∈ P.asIdeal) {k₀ rS r t n c : ℕ} (hk : k₀ ≤ n) (hr : k₀ + rS < r)
@@ -353,9 +311,9 @@ end Main
 theorem lamRow_mul : ∀ {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m) {S : Set ℕ} (mu : Tup X.F X.E X.K S) (j : ℕ) (P : HeightOneSpectrum (𝓞 X.E)), j < R.m → P ∈ Pr.vGs → ∀ g ∈ Jat (Pr := Pr) (R := R) true j P, ∀ g' ∈ Jat (Pr := Pr) (R := R) true j P, lamRow Ch mu true j P (g * g').toLinearMap = lamRow Ch mu true j P g.toLinearMap * lamRow Ch mu true j P g'.toLinearMap := by
   intro X Pr R Ch S mu j P hj hP g hg g' hg'
   unfold Jat at hg hg'
-  rw [if_pos hP, if_pos rfl] at hg hg'
+  rw [ite_eq_left hP, ite_eq_left rfl] at hg hg'
   unfold lamRow
-  simp only [if_pos hP, if_true]
+  simp only [ite_eq_left hP, ite_true]
   have h2 := R.two_le_m
   refine lamGBS_mul _ _ ?_ ?_ ?_ hg hg'
   · exact Nat.le_add_right _ _

@@ -93,6 +93,16 @@ theorem ringKrullDim_le_of_mem_minimalPrimes_sup_span {F : Type} [Field F] {τ :
       calc ringKrullDim (MvPolynomial τ F ⧸ V) ≤ ringKrullDim (MvPolynomial τ F ⧸ W) + 1 + (s.card : WithBot ℕ∞) := h1
         _ = ringKrullDim (MvPolynomial τ F ⧸ W) + ((s.card : WithBot ℕ∞) + 1) := by rw [add_assoc, add_comm 1]
 
+theorem extC_map_rat {K : Type} {ι : K → Type} (P : Ideal (MRing ι)) :
+    ReciprocityTheory.AnForm.R.extC (P.map (MvPolynomial.map (Int.castRingHom ℚ))) =
+      P.map (MvPolynomial.map (Int.castRingHom ℂ)) := by
+  rw [ReciprocityTheory.AnForm.R.extC, Ideal.map_map]
+  congr 1
+  refine MvPolynomial.ringHom_ext (fun c => ?_) (fun q => ?_)
+  · simp only [RingHom.comp_apply, MvPolynomial.map_C]
+    congr 1
+  · simp
+
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
 
@@ -143,6 +153,17 @@ theorem mem_mcPts_iff {P : Ideal (MRing ι)} (z : (Σ k, ι k) → ℂ) :
     exact h g hg
   exact hle hf
 
+theorem ringKrullDim_minimalPrimes_map_C {P : Ideal (MRing ι)} {e : ℕ} (hP : IsArithVar P (e + 1)) :
+    ∀ Q ∈ (P.map (MvPolynomial.map (Int.castRingHom ℂ))).minimalPrimes,
+      ringKrullDim (MvPolynomial (Σ k, ι k) ℂ ⧸ Q) = ((e + Fintype.card K : ℕ) : WithBot ℕ∞) := by
+  classical
+  have hvar := GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Inter.isProjVarQ_of_isArithVar hP
+  have : (P.map (MvPolynomial.map (Int.castRingHom ℚ))).IsPrime := hvar.1.isPrime
+  intro Q hQ
+  rw [← extC_map_rat P] at hQ
+  rw [ReciprocityTheory.AnForm.R.ringKrullDim_of_mem_minimalPrimes_extC _ Q hQ]
+  exact hvar.2
+
 end SegreChartDim
 
 open SegreChartDim
@@ -151,23 +172,8 @@ theorem SegreChartDim.proof : SegreChartDim.Statement := by
   classical
   intro K _ ι _ P e m σ i hP J hJ
 
-  set PQ : Ideal (MvPolynomial (Σ k, ι k) ℚ) := P.map (MvPolynomial.map (Int.castRingHom ℚ)) with hPQ
-  have hvar := GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Inter.isProjVarQ_of_isArithVar hP
-  have : PQ.IsPrime := hvar.1.isPrime
   set PC : Ideal (MvPolynomial (Σ k, ι k) ℂ) := P.map (MvPolynomial.map (Int.castRingHom ℂ)) with hPC
-  have hext : ReciprocityTheory.AnForm.R.extC PQ = PC := by
-    rw [ReciprocityTheory.AnForm.R.extC, hPQ, hPC, Ideal.map_map]
-    congr 1
-    refine MvPolynomial.ringHom_ext (fun c => ?_) (fun q => ?_)
-    · simp only [RingHom.comp_apply, MvPolynomial.map_C]
-      congr 1
-    · simp
-  have hdim : ∀ Q ∈ PC.minimalPrimes,
-      ringKrullDim (MvPolynomial (Σ k, ι k) ℂ ⧸ Q) = ((e + Fintype.card K : ℕ) : WithBot ℕ∞) := by
-    intro Q hQ
-    rw [← hext] at hQ
-    rw [ReciprocityTheory.AnForm.R.ringKrullDim_of_mem_minimalPrimes_extC PQ Q hQ]
-    exact hvar.2
+  have hdim := ringKrullDim_minimalPrimes_map_C hP
   have hPCh : ReciprocityTheory.AnForm.R.IsMultiHomogIdeal PC := by
     obtain ⟨S, hS, hPS⟩ := hP.2.1.2.1
     refine ⟨MvPolynomial.map (Int.castRingHom ℂ) '' S, ?_, by rw [hPC, hPS, Ideal.map_span]⟩

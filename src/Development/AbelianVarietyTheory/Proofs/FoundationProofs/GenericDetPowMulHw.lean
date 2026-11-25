@@ -86,10 +86,10 @@ theorem genericDet_pow_mul_hw (R : Type) [CommRing R] (n c : ℕ) (ν : Fin n �
     · refine Finset.prod_congr rfl fun s _ => ?_
       congr 1
       have hs : (Fin.castSucc s).val + 1 < m + 1 := by simp
-      simp only [nuNext, dif_pos hs]
+      simp only [nuNext, dite_eq_left hs]
       omega
     · have hs : ¬ (Fin.last m).val + 1 < m + 1 := by simp
-      simp only [nuNext, dif_neg hs, Nat.sub_zero]
+      simp only [nuNext, dite_eq_right hs, Nat.sub_zero]
       rw [pow_add, mul_comm]
       rfl
 

@@ -34,57 +34,9 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPInte
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentBlockMeasure
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselScaling
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Lemma
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CorollaryAOfPropositionA
-import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChebyshevToThreshold
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
@@ -131,25 +83,7 @@ variable {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace �
 def scaleG (D : RealPlaceData k r Wp Wq) (c : ℝ≥0) (hc : 0 < c) : RealPlaceData k r Wp Wq :=
   { D with μG := c • D.μG, haarG := haar_smul D.haarG c hc }
 
-theorem iteratedDeriv_two_const_mul (c : ℂ) (f : ℝ → ℂ) :
-    iteratedDeriv 2 (fun x => c * f x) = fun x => c * iteratedDeriv 2 f x := by
-  have h2 : ∀ g : ℝ → ℂ, iteratedDeriv 2 g = deriv (deriv g) := by
-    intro g
-    rw [iteratedDeriv_succ, iteratedDeriv_one]
-  rw [h2, h2, deriv_const_mul_field', deriv_const_mul_field']
-
-theorem oneMinusDD_const_mul (c : ℂ) (h : ℝ → ℝ → ℂ) (t₁ t₂ : ℝ) :
-    oneMinusDD (fun a b => c * h a b) t₁ t₂ = c * oneMinusDD h t₁ t₂ := by
-  simp only [oneMinusDD, iteratedDeriv_two_const_mul, ← mul_sub]
-
 variable [FiniteDimensional ℂ Wq]
-
-theorem ph_scale (D : RealPlaceData k r Wp Wq) (c : ℝ≥0) (hc : 0 < c) (F F' : Mat k r → (Wq →L[ℂ] Wp)) (p : SS k r) :
-    Ph (scaleG D c hc) F F' p = ((c : ℝ) : ℂ) * Ph D F F' p := by
-  have hμ : (scaleG D c hc).μG = c • D.μG := rfl
-  unfold Ph
-  rw [hμ, integral_smul_nnreal_measure, NNReal.smul_def, Complex.real_smul]
-  rfl
 
 theorem betaInf_scale (D : RealPlaceData k r Wp Wq) (c : ℝ≥0) (hc : 0 < c) (F F' : Mat k r → (Wq →L[ℂ] Wp)) :
     betaInf (scaleG D c hc) F F' = ((c : ℝ) : ℂ) * betaInf D F F' := by
@@ -184,11 +118,6 @@ theorem lemma_b_any_measure_from_normalised : Formalism.FourierDecayAlt.B2.Lemma
 
 end Formalism.FourierDecayAlt.P
 
-namespace Formalism.FourierDecayAlt.P.HaarScaling
-
-open Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2
-
-end Formalism.FourierDecayAlt.P.HaarScaling
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -1281,7 +1210,7 @@ theorem interlacing : Formalism.FourierDecayAlt.Sz.Interlacing := by
     · have h1 : i + 1 ≠ 1 := by omega
       by_cases hlast : i + 1 = c.k
       · have : c.u de (i + 1) = c.ulast := by
-          unfold Cfg.u; rw [if_neg h1, if_pos hlast]
+          unfold Cfg.u; rw [ite_eq_right h1, ite_eq_left hlast]
         rw [this]
         have hiR : (i : ℝ) + 1 = c.k := by exact_mod_cast hlast
         have hvi : c.v i = c.vlast := by unfold Cfg.v; rw [← hiR]; ring
@@ -1290,7 +1219,7 @@ theorem interlacing : Formalism.FourierDecayAlt.Sz.Interlacing := by
         · have := htop ht; simp [ht]; linarith [this.1]
         · simp [ht]
       · have : c.u de (i + 1) = c.v i - 1 / 2 - de i * c.Del := by
-          unfold Cfg.u; rw [if_neg h1, if_neg hlast]; simp
+          unfold Cfg.u; rw [ite_eq_right h1, ite_eq_right hlast]; simp
         rw [this]
         rcases hw.1 i with h | h <;> rw [h] <;> linarith [hDel]
   · have hl : c.lam c.k = -c.b 1 := by simp [Cfg.lam]
@@ -1333,21 +1262,10 @@ namespace Formalism.FourierDecayAlt.P.Sz3
 
 open Finset Formalism.FourierDecayAlt.Sz
 
-end Formalism.FourierDecayAlt.P.Sz3
-
-namespace Formalism.FourierDecayAlt.P.Sz3
-
-open Finset Formalism.FourierDecayAlt.Sz
-
 noncomputable def hs (n : ℕ) : ℝ := ∑ d ∈ Ioc 0 n, 1 / (d : ℝ)
 
 end Formalism.FourierDecayAlt.P.Sz3
 
-namespace Formalism.FourierDecayAlt.P
-
-open Finset Formalism.FourierDecayAlt.Sz Sz3
-
-end Formalism.FourierDecayAlt.P
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Formalism.HermitianCurvature.HermitianCurvatureProofs.VandermondeRatioHarmonic =====

@@ -41,16 +41,4 @@ lemma det_sq_eq (E Φ : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) D) (c : D)
 
 end Mat
 
-section Span
-
-variable {R₀ : Type} [CommRing R₀]
-
-end Span
-
-section Val
-
-variable {C : Type} [Field C] {v : Valuation C NNReal} {O : Type} [CommRing O] [Algebra O C]
-
-end Val
-
 end ReciprocityTheory.PGsh

@@ -1,5 +1,6 @@
 module
 
+import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PWallAlgA
 public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.DetYtMatNeZero
 public import Formalism.GradedWeylDivisibility.FinalC
 import Mathlib.Algebra.Order.Star.Int
@@ -52,15 +53,15 @@ theorem det_catM_smul_one {n : ℕ} (l : ℕ) (hl : l ≤ n) (c : R) (z : Fin n 
         (Matrix.of fun r i : Fin l => z ⟨n - l + r.val, by have := r.isLt; omega⟩ i.val) := by
     ext a t
     rcases a with a | a <;> rcases t with t | t
-    · simp only [Matrix.submatrix_apply, catM, Matrix.fromBlocks_apply₁₁, e1, t.isLt, if_true, Matrix.smul_apply,
+    · simp only [Matrix.submatrix_apply, catM, Matrix.fromBlocks_apply₁₁, e1, t.isLt, ite_true, Matrix.smul_apply,
         Matrix.one_apply, EmbeddingLike.apply_eq_iff_eq, Sum.inl.injEq]
     · have h : ¬ (n - l + t.val < n - l) := by omega
-      simp only [Matrix.submatrix_apply, catM, Matrix.fromBlocks_apply₁₂, e2, h, if_false, Nat.add_sub_cancel_left,
+      simp only [Matrix.submatrix_apply, catM, Matrix.fromBlocks_apply₁₂, e2, h, ite_false, Nat.add_sub_cancel_left,
         Matrix.of_apply]
-    · simp only [Matrix.submatrix_apply, catM, Matrix.fromBlocks_apply₂₁, e1, t.isLt, if_true, Matrix.smul_apply,
-        Matrix.one_apply, EmbeddingLike.apply_eq_iff_eq, reduceCtorEq, if_false, smul_zero, Matrix.zero_apply]
+    · simp only [Matrix.submatrix_apply, catM, Matrix.fromBlocks_apply₂₁, e1, t.isLt, ite_true, Matrix.smul_apply,
+        Matrix.one_apply, EmbeddingLike.apply_eq_iff_eq, reduceCtorEq, ite_false, smul_zero, Matrix.zero_apply]
     · have h : ¬ (n - l + t.val < n - l) := by omega
-      simp only [Matrix.submatrix_apply, catM, Matrix.fromBlocks_apply₂₂, e2, h, if_false, Nat.add_sub_cancel_left,
+      simp only [Matrix.submatrix_apply, catM, Matrix.fromBlocks_apply₂₂, e2, h, ite_false, Nat.add_sub_cancel_left,
         Matrix.of_apply]
       rw [show e (Sum.inr a) = ⟨n - l + a.val, by have := a.isLt; omega⟩ from Fin.ext (e2 a)]
   rw [hb, Matrix.det_fromBlocks_zero₂₁, Matrix.det_smul, Matrix.det_one, mul_one, Fintype.card_fin]
@@ -258,9 +259,9 @@ theorem polDel_hv (j : ℕ) (x : ∀ v : X.Pl, Fin (X.G.P.n' v) → Fin (NN X.G.
   intro v s
   unfold numB denB
   by_cases ho : IsOddPos s
-  · rw [if_pos ho, if_pos ho, if_pos ho, if_pos ho, subD_hvOdd X Kc j v s ho]
+  · rw [ite_eq_left ho, ite_eq_left ho, ite_eq_left ho, ite_eq_left ho, subD_hvOdd X Kc j v s ho]
     exact odd_block X Kc j v s _ (c v s) (h v s) (hh v s ho) (hc v s ho) (hs v s ho)
-  · rw [if_neg ho, if_neg ho, if_neg ho, if_neg ho, one_mul]
+  · rw [ite_eq_right ho, ite_eq_right ho, ite_eq_right ho, ite_eq_right ho, one_mul]
 
 end Hv
 
@@ -299,7 +300,7 @@ theorem nuv_nonneg (v : X.Pl) (j : ℕ) (s : Fin (X.G.P.n' v)) (i : ℕ) : 0 ≤
   unfold Sys.nuv nu
   split_ifs with h1 h2
   · unfold lamI
-    rw [dif_pos h1]
+    rw [dite_eq_left h1]
     have a := X.G.P.dom v s (Fin.le_last (⟨i - 1, by omega⟩ : Fin (X.G.P.m + 1)))
     have b := neg_last_le_w X v s (Nat.succ_le_succ (Nat.zero_le j) : 1 ≤ j + 1)
     show 0 ≤ X.G.P.lam0 v s ⟨i - 1, _⟩ + X.Fl.w v (j + 1) s
@@ -313,9 +314,9 @@ theorem nuv_nonneg (v : X.Pl) (j : ℕ) (s : Fin (X.G.P.n' v)) (i : ℕ) : 0 ≤
 theorem nuv_le_first (v : X.Pl) (j : ℕ) (s : Fin (X.G.P.n' v)) (i : ℕ) : X.nuv v (j + 1) s i ≤ X.nuv v (j + 1) s 1 := by
   have h11 : X.nuv v (j + 1) s 1 = X.G.P.lam0 v s 0 + X.Fl.w v (j + 1) s := by
     unfold Sys.nuv nu
-    rw [if_pos ⟨le_rfl, by omega⟩]
+    rw [ite_eq_left ⟨le_rfl, by omega⟩]
     unfold lamI
-    rw [dif_pos ⟨le_rfl, by omega⟩]
+    rw [dite_eq_left ⟨le_rfl, by omega⟩]
     rfl
   have hl : X.G.P.lam0 v s (Fin.last X.G.P.m) ≤ X.G.P.lam0 v s 0 := X.G.P.dom v s (Fin.zero_le _)
   have h0 := nuv_nonneg X v j s 1
@@ -323,7 +324,7 @@ theorem nuv_le_first (v : X.Pl) (j : ℕ) (s : Fin (X.G.P.n' v)) (i : ℕ) : X.n
   unfold Sys.nuv nu
   split_ifs with h1 h2
   · unfold lamI
-    rw [dif_pos h1]
+    rw [dite_eq_left h1]
     have a := X.G.P.dom v s (Fin.zero_le (⟨i - 1, by omega⟩ : Fin (X.G.P.m + 1)))
     show X.G.P.lam0 v s ⟨i - 1, _⟩ + X.Fl.w v (j + 1) s ≤ _
     linarith
@@ -336,7 +337,7 @@ theorem nuv_zero (v : X.Pl) (j : ℕ) (s : Fin (X.G.P.n' v)) (i : ℕ) (h0 : NN 
     X.nuv v (j + 1) s i = 0 := by
   unfold Sys.nuv nu
   have hk : X.G.P.m + 1 < i := by unfold NN at h0; omega
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
   split_ifs with h2
   · rw [blk_eq X.G.P.m X.t j i h0 h2.2]
     show -X.Fl.w v (j + 1) s + X.Fl.w v (j + 1) s = 0
@@ -403,7 +404,7 @@ theorem det_unit_cols {n m : ℕ} (hm : m ≤ n) (W : Matrix (Fin n) (Fin n) R)
     ext a t
     rcases a with a | a <;> rcases t with t | t
     · simp only [Matrix.submatrix_apply, Matrix.fromBlocks_apply₁₁, e1, Matrix.of_apply]
-    · rw [Matrix.submatrix_apply, Matrix.fromBlocks_apply₁₂, hW _ _ (by rw [e2]; omega), if_neg (by simp)]
+    · rw [Matrix.submatrix_apply, Matrix.fromBlocks_apply₁₂, hW _ _ (by rw [e2]; omega), ite_eq_right (by simp)]
       rfl
     · simp only [Matrix.submatrix_apply, Matrix.fromBlocks_apply₂₁, e1, Matrix.of_apply]
     · rw [Matrix.submatrix_apply, Matrix.fromBlocks_apply₂₂, hW _ _ (by rw [e2]; omega), Matrix.one_apply]
@@ -434,11 +435,11 @@ theorem initMinor_cat {n m : ℕ} (hm : m ≤ n) (I : Fin m → Fin n) :
     · congr 1
       ext p q
       have : (Fin.castLE hm q).val < n - (n - m) := by have := q.isLt; simp only [Fin.val_castLE]; omega
-      simp only [Matrix.of_apply, Matrix.submatrix_apply, id, catM, this, if_true, hπ]
+      simp only [Matrix.of_apply, Matrix.submatrix_apply, id, catM, this, ite_true, hπ]
     · intro a t ht
       have h1 : ¬ t.val < n - (n - m) := by omega
       have h2 : m + (t.val - (n - (n - m))) < n := by have := t.isLt; omega
-      simp only [Matrix.submatrix_apply, id, catM, h1, if_false, dif_pos h2, EmbeddingLike.apply_eq_iff_eq]
+      simp only [Matrix.submatrix_apply, id, catM, h1, ite_false, dite_eq_left h2, EmbeddingLike.apply_eq_iff_eq]
       congr 1
       apply propext
       constructor
@@ -471,7 +472,7 @@ variable {p : ℕ} [Fact p.Prime] (X : Sys p) (Kc : Type) [Field Kc] [Algebra X.
 theorem catM_full {R : Type*} [CommRing R] {n : ℕ} (A : Matrix (Fin n) (Fin n) R) :
     catM n A (fun a i => if a.val = i then (1 : R) else 0) = 1 := by
   ext a t
-  simp only [catM, Nat.sub_self, Nat.not_lt_zero, if_false, Nat.sub_zero, Matrix.one_apply, Fin.ext_iff]
+  simp only [catM, Nat.sub_self, Nat.not_lt_zero, ite_false, Nat.sub_zero, Matrix.one_apply, Fin.ext_iff]
 
 theorem odd_bidet (j : ℕ) (v : X.Pl) (s : Fin (X.G.P.n' v)) (K : ℕ) (sz : Fin K → ℕ)
     (hsz : ∀ k, sz k ≤ NN X.G.P.m X.t j) (I : ∀ k, Fin (sz k) → Fin (NN X.G.P.m X.t j))
@@ -553,12 +554,7 @@ open MvPolynomial Formalism.GradedWeylDivisibility
 variable {p : ℕ} [Fact p.Prime] (X : Sys p) (Kc : Type) [Field Kc] [Algebra X.G.Kf Kc]
 
 theorem card_filter_val_lt {n a : ℕ} (ha : a ≤ n) : (Finset.univ.filter fun t : Fin n => t.val < a).card = a := by
-  rw [Finset.card_filter, Fin.sum_univ_eq_sum_range (fun t => if t < a then 1 else 0) n, ← Finset.card_filter]
-  have : (Finset.range n).filter (fun t => t < a) = Finset.range a := by
-    ext k
-    simp only [Finset.mem_filter, Finset.mem_range]
-    omega
-  rw [this, Finset.card_range]
+  apply _root_.PositivityTheory.Rg.Cz.WallAlgP.card_lowS <;> assumption
 
 theorem sum_shapeDeg {n K : ℕ} (sz : Fin K → ℕ) (hsz : ∀ k, sz k ≤ n) : ∑ t : Fin n, shapeDeg sz t = ∑ k, sz k := by
   unfold shapeDeg
@@ -580,7 +576,7 @@ theorem kap_eq (v : X.Pl) (s : Fin (X.G.P.n' v)) (ho : IsOddPos s) (t : Fin (m�
   have h1 : cMu X j v s = lam v s 0 + X.Fl.w v (j + 1) s := hlam v s 0
   have h2 := nuv_le_first X v j s (t.rev.val + 1)
   unfold nuOf lamAt
-  rw [if_neg hne, Int.toNat_of_nonneg]
+  rw [ite_eq_right hne, Int.toNat_of_nonneg]
   · rw [h1, hlam, Fin.rev_last]
     ring
   · rw [Fin.rev_last]
@@ -621,7 +617,7 @@ theorem block_good (v : X.Pl) (s : Fin (X.G.P.n' v)) (F : MvPolynomial (Fin (m�
   by_cases ho : IsOddPos s
   swap
   · unfold denB
-    rw [if_neg ho]
+    rw [ite_eq_right ho]
     exact one_dvd _
   rw [standardMonomialSpanDomain X.G.Kf (m₀ + 1) (m₀ + 1) (nuOf (lamAt (lam v) s))] at hF
   induction hF using Submodule.span_induction with
@@ -631,7 +627,7 @@ theorem block_good (v : X.Pl) (s : Fin (X.G.P.n' v)) (F : MvPolynomial (Fin (m�
   | mem F hF =>
     obtain ⟨K, sz, hsz, I, hshape, rfl⟩ := hF
     unfold denB numB
-    rw [if_pos ho, if_pos ho]
+    rw [ite_eq_left ho, ite_eq_left ho]
     have hsz' : ∀ k, sz k ≤ NN X.G.P.m X.t j := fun k => hm ▸ hsz k
     have himg : φ (rename (fun x => (⟨v, (s, x)⟩ :
         Σ v : X.Pl, Fin (X.G.P.n' v) × (Fin (m₀ + 1) × Fin (m₀ + 1)))) (bideterminant X.G.Kf sz hsz I)) =
@@ -710,16 +706,16 @@ theorem vtG_good (G : MvPolynomial (Σ v : X.Pl, Fin (X.G.P.n' v) × (Fin (m₀ 
 theorem nuv_low (j : ℕ) (v : X.Pl) (s : Fin (X.G.P.n' v)) (i : ℕ) (h : i < X.G.P.m + 1) :
     X.nuv v (j + 1) s (i + 1) = X.G.P.lam0 v s ⟨i, h⟩ + X.Fl.w v (j + 1) s := by
   unfold Sys.nuv nu
-  rw [if_pos ⟨by omega, by omega⟩]
+  rw [ite_eq_left ⟨by omega, by omega⟩]
   unfold lamI
-  rw [dif_pos ⟨by omega, by omega⟩]
+  rw [dite_eq_left ⟨by omega, by omega⟩]
   rfl
 
 theorem nuv_high (j : ℕ) (v : X.Pl) (s : Fin (X.G.P.n' v)) (i : ℕ) (h : ¬ i < X.G.P.m + 1)
     (h2 : i + 1 ≤ NN X.G.P.m X.t (j + 1)) :
     X.nuv v (j + 1) s (i + 1) = -X.Fl.w v ((i - (X.G.P.m + 1)) / (X.Fl.t + 1) + 1) s + X.Fl.w v (j + 1) s := by
   unfold Sys.nuv nu
-  rw [if_neg (by omega), if_pos ⟨by omega, h2⟩]
+  rw [ite_eq_right (by omega), ite_eq_left ⟨by omega, h2⟩]
   have : i + 1 - (X.G.P.m + 2) = i - (X.G.P.m + 1) := by omega
   rw [this]
 
@@ -789,7 +785,7 @@ theorem vtG_deg (v : X.Pl) (s : Fin (X.G.P.n' v))
     · simp
     · intro b _ hb
       have : ¬ ((⟨b.1, b.2⟩ : Σ v : X.Pl, Fin (X.G.P.n' v)) = ⟨v, s⟩) := hb
-      rw [if_neg this, zero_mul]
+      rw [ite_eq_right this, zero_mul]
     · intro h
       exact absurd (by simp) h
   rw [hd, ← mem_weightedHomogeneousSubmodule]

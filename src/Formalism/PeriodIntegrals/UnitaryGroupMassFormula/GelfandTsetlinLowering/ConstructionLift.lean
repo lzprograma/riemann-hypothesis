@@ -15,57 +15,9 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLo
 public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowdivLemmas
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ZScalarVanish
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftAsm
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalRingCardinality.Params
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftDecomp, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftEqvDiv, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftEqvWt, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftFock, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftTupleF, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftTupleB, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftTuple, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.NablaSqLeOfGen, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ConstructionLift
@@ -185,9 +137,9 @@ def tvU {r : ℕ} (a b : Fin r) (hab : a ≠ b) (t : ℂ) : GL (Fin r) ℂ where
   val := Formalism.UG.P.wlocal_E a b t
   inv := Formalism.UG.P.wlocal_E a b (-t)
   val_inv := by
-    rw [Formalism.UG.P.wlocal_E_mul_E, if_neg hab, add_neg_cancel, add_zero, Formalism.UG.P.wlocal_E_zero]
+    rw [Formalism.UG.P.wlocal_E_mul_E, ite_eq_right hab, add_neg_cancel, add_zero, Formalism.UG.P.wlocal_E_zero]
   inv_val := by
-    rw [Formalism.UG.P.wlocal_E_mul_E, if_neg hab, neg_add_cancel, add_zero, Formalism.UG.P.wlocal_E_zero]
+    rw [Formalism.UG.P.wlocal_E_mul_E, ite_eq_right hab, neg_add_cancel, add_zero, Formalism.UG.P.wlocal_E_zero]
 
 lemma wlocal_E_eq_tv {r : ℕ} (a b : Fin r) (t : ℂ) :
     Formalism.UG.P.wlocal_E a b t = Matrix.transvection a b t := by
@@ -224,7 +176,7 @@ lemma sqAct_tv {r : ℕ} (ν : DomWeight r) (a b : Fin r) (hab : a ≠ b) (t : �
     by_cases hi : i = b
     · subst hi
       simp [Formalism.UG.P.wlocal_E, add_mul, Finset.sum_add_distrib]
-      rw [Finset.sum_eq_single a (fun x _ hx => by simp [hx]) (by simp), if_pos rfl, mul_comm]
+      rw [Finset.sum_eq_single a (fun x _ hx => by simp [hx]) (by simp), ite_eq_left rfl, mul_comm]
     · simp [Formalism.UG.P.wlocal_E, hi]
 
 lemma embGL_tv {n N : ℕ} (h : n + 1 = N) (a b : Fin n) (hab : a ≠ b) (t : ℂ) :
@@ -276,7 +228,7 @@ private theorem coeff_eq_of_eval_lemma {σ τ : Type*}
       simpa [mul_comm] using e
     have e2 := congrArg (fun r : Polynomial ℂ => r.coeff k) hpq
     simpa only [p, q, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial_apply,
-      Finset.sum_ite_eq', Finset.mem_range, hk, if_true] using e2
+      Finset.sum_ite_eq', Finset.mem_range, hk, ite_true] using e2
   · have h1 : P.coeff k = 0 := Polynomial.coeff_eq_zero_of_natDegree_lt (by omega)
     have h2 : Q.coeff k = 0 := Polynomial.coeff_eq_zero_of_natDegree_lt (by omega)
     rw [h1, h2, map_zero]
@@ -400,7 +352,7 @@ theorem sum_natW {r : ℕ} (lam : DomWeight r) :
     have hj := j.isLt
     have hle : lam.detShift ≤ lam.w j := by
       unfold DomWeight.detShift
-      rw [dif_pos (by omega : 0 < r)]
+      rw [dite_eq_left (by omega : 0 < r)]
       exact lam.anti (Fin.le_iff_val_le_val.mpr (by show j.1 ≤ r - 1; omega))
     unfold DomWeight.natW
     omega
@@ -432,7 +384,7 @@ theorem coeff_eq_of_eqv {n : ℕ} (lam : DomWeight (n + 1)) (mu : DomWeight n)
   rw [hκ, map_smul, embGL_diagGL] at h1
   have h2 := congrArg (AddMonoidAlgebra.coeff · m) h1
   rw [MvPolynomial.coeff_smul, coeff_sqAct_diag, smul_eq_mul, Fin.prod_univ_castSucc, Fin.prod_univ_castSucc] at h2
-  simp only [Fin.coe_castSucc, Fin.is_lt, dif_pos, Fin.eta, Fin.val_last, lt_self_iff_false,
+  simp only [Fin.coe_castSucc, Fin.is_lt, dite_eq_left, Fin.eta, Fin.val_last, lt_self_iff_false,
     dite_false, Units.val_one, one_pow, mul_one] at h2
   exact mul_right_cancel₀ hm (by linear_combination (-1 : ℂ) * h2)
 
@@ -527,10 +479,10 @@ theorem equivariant_partial_weight : EqvRowWt := by
     have hle : lam.detShift ≤ mu.detShift := by
       have h2 := (hI ⟨n - 1, by omega⟩).2
       unfold DomWeight.detShift
-      rw [dif_pos (by omega : 0 < n + 1), dif_pos (by omega : 0 < n)]
+      rw [dite_eq_left (by omega : 0 < n + 1), dite_eq_left (by omega : 0 < n)]
       exact (le_of_eq (congrArg lam.w (Fin.ext (by show n + 1 - 1 = n - 1 + 1; omega)))).trans h2
     unfold liftWt
-    rw [dif_pos (by simp)]
+    rw [dite_eq_left (by simp)]
     simp only [Fin.coe_castSucc, Fin.eta]
     omega
 
@@ -657,28 +609,28 @@ private theorem isWeightedHomogeneous_coeff_rowGen_X {r n : ℕ} (a b c : Fin r)
   unfold rowGen
   rw [aeval_X]
   by_cases hv : v.1 = b
-  · rw [if_pos hv]
+  · rw [ite_eq_left hv]
     have hr : ∀ u : Fin r × Fin n, rw1 c u = if u.1 = c then 1 else 0 := fun u => by
       unfold rw1 wa
       split_ifs <;> simp
     rcases j with _ | _ | k
     · rw [Polynomial.coeff_add, Polynomial.coeff_C_zero, Polynomial.coeff_X_mul_zero, add_zero]
       exact hdeg _ _ _ (by simp) (hX v)
-    · rw [Polynomial.coeff_add, Polynomial.coeff_C, if_neg (by omega), zero_add, Polynomial.coeff_X_mul,
+    · rw [Polynomial.coeff_add, Polynomial.coeff_C, ite_eq_right (by omega), zero_add, Polynomial.coeff_X_mul,
         Polynomial.coeff_C_zero]
       refine hdeg _ _ _ ?_ (hX (a, v.2))
       rw [hr, hr, hv]
       dsimp only
       split_ifs <;> norm_num
-    · rw [Polynomial.coeff_add, Polynomial.coeff_C, if_neg (by omega), zero_add, Polynomial.coeff_X_mul,
-        Polynomial.coeff_C, if_neg (by omega)]
+    · rw [Polynomial.coeff_add, Polynomial.coeff_C, ite_eq_right (by omega), zero_add, Polynomial.coeff_X_mul,
+        Polynomial.coeff_C, ite_eq_right (by omega)]
       exact isWeightedHomogeneous_zero ℂ _ _
-  · rw [if_neg hv, add_zero, Polynomial.coeff_C]
+  · rw [ite_eq_right hv, add_zero, Polynomial.coeff_C]
     by_cases hj : j = 0
-    · rw [if_pos hj]
+    · rw [ite_eq_left hj]
       subst hj
       exact hdeg _ _ _ (by simp) (hX v)
-    · rw [if_neg hj]
+    · rw [ite_eq_right hj]
       exact isWeightedHomogeneous_zero ℂ _ _
 
 private theorem isWeightedHomogeneous_coeff_pow_rw1 {r n : ℕ} (c : Fin r) (s D : ℤ) (P : Polynomial (MvPolynomial (Fin r × Fin n) ℂ))
@@ -797,11 +749,6 @@ theorem offDiag_transpose {r : ℕ} {w : List (Fin r × Fin r × ℕ)} (hw : Off
   obtain ⟨y, hy, rfl⟩ := hx
   exact fun h => hw y hy h.symm
 
-theorem natW_anti {n : ℕ} (sg : DomWeight n) : Antitone sg.natW := by
-  intro i j hij
-  unfold DomWeight.natW
-  exact Int.toNat_le_toNat (by linarith [sg.anti hij])
-
 theorem eqv_word (hD : EqvDiv) {n N : ℕ} (h : n + 1 = N) (mu : DomWeight n) (lam : DomWeight N)
     (φ : MvPolynomial (Fin n × Fin n) ℂ →ₗ[ℂ] MvPolynomial (Fin N × Fin N) ℂ) (hφ : IsEqv h mu lam φ)
     (w : List (Fin n × Fin n × ℕ)) (hw : OffDiag w) (s : MvPolynomial (Fin n × Fin n) ℂ)
@@ -824,11 +771,11 @@ open Fock6 in
 theorem fockDetect_of (h3 : PI.HwIrred) (hD : EqvDiv) : FockDetect := by
   intro n N h lam sg _ io0 hEqv hext u hu hort
   set E : MvPolynomial (Fin n × Fin n) ℂ := extremal ℂ n sg with hE
-  have hEmem : E ∈ nablaSq ℂ n sg := hwMem ℂ n n le_rfl sg.natW (natW_anti sg)
+  have hEmem : E ∈ nablaSq ℂ n sg := hwMem ℂ n n le_rfl sg.natW (PI.WGL.lm_natW_anti sg)
   have hErow : ∀ c : Fin n, ∃ H : ℤ, IsWeightedHomogeneous (rw1 c) E H := by
     intro c
     refine ⟨((rowNu (r := n) sg.natW c : ℕ) : ℤ), fun m hm => ?_⟩
-    have := hwRowWeight ℂ n n le_rfl sg.natW (natW_anti sg) hm
+    have := hwRowWeight ℂ n n le_rfl sg.natW (PI.WGL.lm_natW_anti sg) hm
     rw [weight_indicator_eq_degree]
     exact congrArg (fun v : Fin n → ℕ => ((v c : ℕ) : ℤ)) this
 
@@ -1008,11 +955,11 @@ theorem constant_weight_apply {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (s
     simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     congr 1
     · by_cases hi : i.1 + 1 = n
-      · rw [if_pos hi, if_pos (by omega)]
+      · rw [ite_eq_left hi, ite_eq_left (by omega)]
         simp only [initW, hi]
-      · rw [if_neg hi, if_neg (by omega), zero_mul]
+      · rw [ite_eq_right hi, ite_eq_right (by omega), zero_mul]
     · by_cases hi : i.1 = 0
-      · rw [if_pos hi, if_pos hi]
+      · rw [ite_eq_left hi, ite_eq_left hi]
         congr 1
         rw [Finset.sum_apply]
         have e : ∀ p : Fin (i.1 + 1), (Pi.single (rowsZ h i p) 1 : Fin N → ℕ) ⟨av, hav⟩ =
@@ -1021,14 +968,14 @@ theorem constant_weight_apply {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (s
           have hp := p.2
           have hr : rowsZ h i p = ⟨N - 1, by omega⟩ := by
             simp only [rowsZ]
-            rw [if_pos (by omega)]
+            rw [ite_eq_left (by omega)]
           rw [hr, Pi.single_apply]
           by_cases hav' : av = n
-          · rw [if_pos (Fin.ext (by simp only; omega)), if_pos hav']
-          · rw [if_neg (fun he => hav' (by have := congrArg Fin.val he; simp only at this; omega)), if_neg hav']
+          · rw [ite_eq_left (Fin.ext (by simp only; omega)), ite_eq_left hav']
+          · rw [ite_eq_right (fun he => hav' (by have := congrArg Fin.val he; simp only at this; omega)), ite_eq_right hav']
         rw [Finset.sum_congr rfl (fun p _ => e p), Finset.sum_const, Finset.card_univ, Fintype.card_fin, hi,
           smul_eq_mul, zero_add, one_mul]
-      · rw [if_neg hi, if_neg hi, zero_mul]
+      · rw [ite_eq_right hi, ite_eq_right hi, zero_mul]
   rw [Finset.sum_apply, Finset.sum_congr rfl (fun i _ => key i), Finset.sum_add_distrib, sum_ite_val,
     sum_ite_val]
 
@@ -1090,7 +1037,7 @@ theorem initMinor_not_inj {R : Type*} [CommRing R] {r m s : ℕ} (I : Fin s → 
     (hI : ¬ Function.Injective I) : initMinor R (n := m) I hs = 0 := by
   unfold initMinor
   unfold Function.Injective at hI
-  push_neg at hI
+  push Not at hI
   obtain ⟨i, j, hij, hne⟩ := hI
   exact Matrix.det_zero_of_row_eq hne (by ext q; simp [hij])
 
@@ -1300,20 +1247,20 @@ theorem bidet_std {n K : ℕ} (sz : Fin K → ℕ) (hsz : ∀ k, sz k ≤ n) (ν
   let F : ℕ → MvPolynomial (Fin n × Fin n) ℤ := fun y => if hy : y ≤ n then lpMinor ℤ y hy hy else 1
   have h1 : ∀ k, initMinor ℤ (stdT sz hsz k) (hsz k) = F (sz k) := by
     intro k
-    have e : F (sz k) = lpMinor ℤ (sz k) (hsz k) (hsz k) := dif_pos (hsz k)
+    have e : F (sz k) = lpMinor ℤ (sz k) (hsz k) (hsz k) := dite_eq_left (hsz k)
     rw [e]
     exact initMinor_std (hsz k) (hsz k)
   simp only [h1]
   rw [prod_sz sz Finset.univ (n + 1) (fun k _ => Nat.lt_succ_of_le (hsz k)) F, Finset.prod_range_succ']
   have h0 : F 0 = 1 := by
-    have e : F 0 = lpMinor ℤ 0 (Nat.zero_le n) (Nat.zero_le n) := dif_pos (Nat.zero_le n)
+    have e : F 0 = lpMinor ℤ 0 (Nat.zero_le n) (Nat.zero_le n) := dite_eq_left (Nat.zero_le n)
     rw [e]
     simp [lpMinor]
   rw [h0, one_pow, mul_one, ← Fin.prod_univ_eq_prod_range]
   refine Finset.prod_congr rfl (fun s _ => ?_)
   rw [count_succ sz hsz s]
   have e : F (s.1 + 1) = lpMinor ℤ (s.1 + 1) (by have := s.2; omega) (by have := s.2; omega) :=
-    dif_pos (by have := s.2; omega)
+    dite_eq_left (by have := s.2; omega)
   rw [e]
 
 theorem prod_zsmul' {R : Type*} [CommRing R] {K : ℕ} (a : Fin K → ℤ) (x : Fin K → R) :
@@ -1327,7 +1274,7 @@ theorem natW_add {n : ℕ} (sg : DomWeight n) (i : Fin n) : ((sg.natW i : ℕ) :
   have hn : 0 < n := lt_of_le_of_lt (Nat.zero_le _) i.2
   have hle : sg.detShift ≤ sg.w i := by
     unfold Formalism.BasicNotions.DomWeight.detShift
-    rw [dif_pos hn]
+    rw [dite_eq_left hn]
     exact sg.anti (Fin.le_iff_val_le_val.mpr (by show i.1 ≤ n - 1; have := i.2; omega))
   simp only [Formalism.BasicNotions.DomWeight.natW]
   rw [Int.toNat_of_nonneg (sub_nonneg.mpr hle)]
@@ -1395,11 +1342,11 @@ private theorem card_filter_not_mem_sz_eq_succ {n N : ℕ} (h : n + 1 = N) (lam 
     omega
   · have hs' : s.1 + 1 < n := by omega
     have hL1 : s.1 + 1 < N := by omega
-    rw [dif_pos hs'] at hc
+    rw [dite_eq_left hs'] at hc
     have hb : (Finset.univ.filter fun k => k ∈ L ∧ sz k = s.1 + 1).card =
         (lam.w ⟨s.1 + 1, hL1⟩ - sg.w ⟨s.1 + 1, hs'⟩).toNat := by
       have := hL.2 ⟨s.1 + 1, hs'⟩
-      rw [if_neg (show ¬ (((⟨s.1 + 1, hs'⟩ : Fin n) : ℕ) = 0) by simp)] at this
+      rw [ite_eq_right (show ¬ (((⟨s.1 + 1, hs'⟩ : Fin n) : ℕ) = 0) by simp)] at this
       exact this
     have hI1 : lam.w ⟨s.1 + 1, hL1⟩ ≤ sg.w s := (hI s).2
     have hI2 : sg.w ⟨s.1 + 1, hs'⟩ ≤ lam.w ⟨s.1 + 1, hL1⟩ := (hI ⟨s.1 + 1, hs'⟩).1
@@ -1427,14 +1374,14 @@ theorem mlift_std {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWeigh
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hk
     have hk' : sz k < n := sz_lt sg sz hsz hsh k (hL'.1 k hk)
     rw [lif_std h sz hsz k hk' (hN k)]
-    have e : A (sz k) = initMinor ℤ (n := N) (rowsZ h ⟨sz k, hk'⟩) (hN k) := dif_pos hk'
+    have e : A (sz k) = initMinor ℤ (n := N) (rowsZ h ⟨sz k, hk'⟩) (hN k) := dite_eq_left hk'
     rw [e]
   have hB : ∀ k ∈ Finset.univ.filter (fun k => ¬ k ∈ L),
       unl h (stdT sz hsz k) (by have := hsz k; omega) = B (sz k) := by
     intro k _
     have hk' : sz k ≤ N := by have := hsz k; omega
     rw [unl_std h sz hsz k hk']
-    have e : B (sz k) = lpMinor ℤ (r := N) (n := N) (sz k) hk' hk' := dif_pos hk'
+    have e : B (sz k) = lpMinor ℤ (r := N) (n := N) (sz k) hk' hk' := dite_eq_left hk'
     rw [e]
   rw [Finset.prod_congr rfl hA, Finset.prod_congr rfl hB]
   rw [prod_sz sz (Finset.univ.filter fun k => k ∈ L) n
@@ -1442,7 +1389,7 @@ theorem mlift_std {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWeigh
   rw [prod_sz sz (Finset.univ.filter fun k => ¬ k ∈ L) (n + 1) (fun k _ => Nat.lt_succ_of_le (hsz k)) B,
     Finset.prod_range_succ']
   have hB0 : B 0 = 1 := by
-    have e : B 0 = lpMinor ℤ (r := N) (n := N) 0 (Nat.zero_le N) (Nat.zero_le N) := dif_pos (Nat.zero_le N)
+    have e : B 0 = lpMinor ℤ (r := N) (n := N) 0 (Nat.zero_le N) (Nat.zero_le N) := dite_eq_left (Nat.zero_le N)
     rw [e]
     simp [lpMinor]
   rw [hB0, one_pow, mul_one, ← Fin.prod_univ_eq_prod_range, ← Fin.prod_univ_eq_prod_range]
@@ -1458,8 +1405,8 @@ theorem mlift_std {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWeigh
       if i.1 + 1 = n then 0 else (aa h lam sg i).toNat := by
     rw [Finset.filter_filter]
     exact card_filter_not_mem_sz_eq_succ h lam sg hI sz hsz hsh L hL i
-  have eA : A i.1 = initMinor ℤ (n := N) (rowsZ h i) (by omega) := dif_pos hi
-  have eB : B (i.1 + 1) = lpMinor ℤ (r := N) (n := N) (i.1 + 1) (by omega) (by omega) := dif_pos (by omega)
+  have eA : A i.1 = initMinor ℤ (n := N) (rowsZ h i) (by omega) := dite_eq_left hi
+  have eB : B (i.1 + 1) = lpMinor ℤ (r := N) (n := N) (i.1 + 1) (by omega) (by omega) := dite_eq_left (by omega)
   rw [cL, cN, eA, eB]
   split_ifs <;> ring
 
@@ -1542,7 +1489,7 @@ theorem Mlift_rowW {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWeig
     Finset.sum_add_distrib, liftWt]
   by_cases ha : av < n
   · have hn : 0 < n := by omega
-    rw [dite_eq_left ha, dite_eq_left (by omega), dite_eq_left hn, if_pos ha, if_neg (by omega)]
+    rw [dite_eq_left ha, dite_eq_left (by omega), dite_eq_left hn, ite_eq_left ha, ite_eq_right (by omega)]
     have hS2 : (∑ k : Fin K, if k ∈ L then (if (⟨av, hav⟩ : Fin N) = ⟨N - 1, by omega⟩ then 1 else 0) else 0) = 0 := by
       apply Finset.sum_eq_zero
       intro k _
@@ -1558,19 +1505,19 @@ theorem Mlift_rowW {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWeig
       have : ((⟨av, hav⟩ : Fin N) = eRow h (I k q)) ↔ (I k q = ⟨av, ha⟩) := by
         simp only [eRow, Fin.ext_iff]; exact eq_comm
       by_cases hq : I k q = ⟨av, ha⟩
-      · rw [if_pos (this.2 hq), if_pos hq]
-      · rw [if_neg (fun e => hq (this.1 e)), if_neg hq]
+      · rw [ite_eq_left (this.2 hq), ite_eq_left hq]
+      · rw [ite_eq_right (fun e => hq (this.1 e)), ite_eq_right hq]
     rw [hS1, hS2]
     have e3 := aLast_val h lam sg hI hn
     have e4 := sg_detShift sg hn
     have e5 := lam_detShift h lam
     omega
   · have hav' : av = n := by omega
-    simp only [dif_neg ha, if_neg ha, if_pos hav', mul_zero, mul_one]
+    simp only [dite_eq_right ha, ite_eq_right ha, ite_eq_left hav', mul_zero, mul_one]
     have hS1 : (∑ k : Fin K, ∑ q : Fin (sz k), if (⟨av, hav⟩ : Fin N) = eRow h (I k q) then 1 else 0) = 0 := by
       apply Finset.sum_eq_zero; intro k _
       apply Finset.sum_eq_zero; intro q _
-      rw [if_neg]
+      rw [ite_eq_right]
       intro e
       simp only [eRow, Fin.ext_iff] at e
       have := (I k q).2
@@ -1580,7 +1527,7 @@ theorem Mlift_rowW {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWeig
       rw [Finset.sum_congr rfl (g := fun k => if k ∈ L then 1 else 0)]
       · rw [← Finset.card_filter]; congr 1; ext k; simp
       · intro k _
-        rw [if_pos (Fin.ext (by simp; omega))]
+        rw [ite_eq_left (Fin.ext (by simp; omega))]
     rw [hS1, hS2, cardL h lam sg sz hsz hshape L hL]
     have hsplit : (∑ i : Fin n, (bb h lam sg i).toNat) =
         (∑ i : Fin n, if i.1 = 0 then (bb h lam sg i).toNat else 0) +

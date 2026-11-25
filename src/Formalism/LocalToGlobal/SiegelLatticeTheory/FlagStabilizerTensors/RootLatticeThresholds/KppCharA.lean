@@ -182,7 +182,7 @@ theorem exists_eps (kv : Σ k : Fin 2, D.nd.PlG k) :
   · have := hε ⟨wK X kv, hmem _ (g_mem_of_gk X (gk_mem X kv))⟩
     simpa using this
   · have := hε ⟨P, hmem P hP⟩
-    simp only [if_neg hne, sub_zero] at this
+    simp only [ite_eq_right hne, sub_zero] at this
     exact this
 
 theorem eps_other (kv : Σ k : Fin 2, D.nd.PlG k) {ε : 𝓞 X.B.I.E}

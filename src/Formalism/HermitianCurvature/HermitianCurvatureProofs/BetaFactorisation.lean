@@ -1,50 +1,7 @@
 module
 
 public import Formalism.HermitianCurvature.StatementSz
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -53,15 +10,6 @@ namespace Formalism.FourierDecayAlt.P
 open Formalism.FourierDecayAlt.Sz Finset
 
 namespace Sz6
-
-theorem sqrt_prod_nonneg {α : Type} (s : Finset α) (f : α → ℝ) (h : ∀ i ∈ s, 0 ≤ f i) :
-    Real.sqrt (∏ i ∈ s, f i) = ∏ i ∈ s, Real.sqrt (f i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | insert a s ha ih =>
-    rw [prod_insert ha, prod_insert ha, Real.sqrt_mul (h a (mem_insert_self a s)),
-      ih (fun i hi => h i (mem_insert_of_mem hi))]
 
 theorem Icc_one_eq (n : ℕ) : Icc 1 n = Ico 1 (n + 1) := by
   ext x; simp only [mem_Icc, mem_Ico]; omega
@@ -78,7 +26,7 @@ theorem prob_and_eq_mul_of_disjoint (c : Cfg) (hk : 1 ≤ c.k) (Y : ℝ) :
   · apply prod_congr rfl
     intro i hi
     rw [mem_Ico] at hi
-    simp only [Cfg.lam, if_pos hi.2]
+    simp only [Cfg.lam, ite_eq_left hi.2]
   · rw [prod_Ico_eq_prod_range, prod_Ico_eq_prod_range]
     have a1 : c.k + c.m - c.k = c.m := by omega
     have a2 : c.m + 1 - 1 = c.m := by omega
@@ -87,7 +35,7 @@ theorem prob_and_eq_mul_of_disjoint (c : Cfg) (hk : 1 ≤ c.k) (Y : ℝ) :
     intro i _
     have n1 : ¬ (c.k + i < c.k) := by omega
     have n2 : c.k + i + 1 - c.k = 1 + i := by omega
-    simp only [Cfg.lam, if_neg n1, n2]
+    simp only [Cfg.lam, ite_eq_right n1, n2]
     ring
 
 theorem prod_split_first (k : ℕ) (hk : 1 ≤ k) (F : ℕ → ℝ) :
@@ -107,14 +55,14 @@ theorem u_succ (c : Cfg) (de : ℕ → ℝ) (hw : IsWord c.k de) (i : ℕ) (hi :
       have : ((i + 1 : ℕ) : ℝ) = (c.k : ℝ) := by rw [hk]
       push_cast at this; linarith
     have hd : de i = 0 := by rw [hik]; exact hw.2
-    simp only [Cfg.u, if_neg n1, if_pos hk, Cfg.ulast, if_neg ht, Cfg.v, hiR, hd]
+    simp only [Cfg.u, ite_eq_right n1, ite_eq_left hk, Cfg.ulast, ite_eq_right ht, Cfg.v, hiR, hd]
     ring
-  · simp only [Cfg.u, if_neg n1, if_neg hk, Nat.add_sub_cancel]
+  · simp only [Cfg.u, ite_eq_right n1, ite_eq_right hk, Nat.add_sub_cancel]
 
 theorem u_top (c : Cfg) (de : ℕ → ℝ) (i : ℕ) (hi : 1 ≤ i) (ht : c.top = true)
     (hk : i + 1 = c.k) : c.u de (i + 1) = -c.bp := by
   have n1 : ¬ (i + 1 = 1) := by omega
-  simp only [Cfg.u, if_neg n1, if_pos hk, Cfg.ulast, if_pos ht]
+  simp only [Cfg.u, ite_eq_right n1, ite_eq_left hk, Cfg.ulast, ite_eq_left ht]
 
 end Sz6
 
@@ -203,14 +151,14 @@ theorem betaFactorisation : Factorisation := by
         ring
       refine ⟨by rw [eB]; positivity, ?_⟩
       rw [eB, abs_of_nonneg (sq_nonneg (c.bp + -Y - 1 / 2)), Real.sqrt_sq p.le, hAdef]
-      simp only [Cfg.rho, if_pos hc]
+      simp only [Cfg.rho, ite_eq_left hc]
     · have eB : B i = (c.v i - de i * c.Del - -Y) * (c.v i - de' i * c.Del - -Y) := by
         rw [hBdef]
         simp only [Sz6.u_succ c de hw i hi.1 hc, Sz6.u_succ c de' hw' i hi.1 hc]
         ring
       refine ⟨by rw [eB]; exact mul_ne_zero (hW de hw i) (hW de' hw' i), ?_⟩
       rw [eB, hAdef]
-      simp only [Cfg.rho, if_neg hc]
+      simp only [Cfg.rho, ite_eq_right hc]
   have hN : ∀ j ∈ Icc 1 c.m, 0 < Nn j := by
     intro j hj
     rw [mem_Icc] at hj
@@ -221,7 +169,7 @@ theorem betaFactorisation : Factorisation := by
       -(T * T') * ((Y + 1 / 2 + c.a) ^ 2 * ∏ i ∈ Icc 1 (c.k - 1), B i) := by
     unfold Cfg.q
     rw [Sz6.prod_split_first c.k hk1, hBdef]
-    have u1 : ∀ e : ℕ → ℝ, c.u e 1 = c.a := by intro e; simp only [Cfg.u, if_true]
+    have u1 : ∀ e : ℕ → ℝ, c.u e 1 = c.a := by intro e; simp only [Cfg.u, ite_true]
     rw [u1, u1]
     ring
   have hPP : c.P Y * c.P (Y + 1) = (∏ j ∈ Icc 1 c.m, Nn j) * ∏ i ∈ Icc 1 (c.k - 1), A i := by
@@ -268,9 +216,9 @@ theorem betaFactorisation : Factorisation := by
     rw [habs, hrho, hNd, hU,
       Real.sqrt_div (mul_nonneg hNpos (prod_nonneg (fun i _ => abs_nonneg _))),
       Real.sqrt_mul hNpos, Real.sqrt_mul hTT.le, Real.sqrt_mul (sq_nonneg (Y + 1 / 2 + c.a)),
-      Real.sqrt_sq ha.le, Sz6.sqrt_prod_nonneg _ _ (fun j hj => (hN j hj).le),
-      Sz6.sqrt_prod_nonneg _ _ (fun i _ => abs_nonneg _),
-      Sz6.sqrt_prod_nonneg _ _ (fun i _ => abs_nonneg _)]
+      Real.sqrt_sq ha.le, Real.sqrt_prod _ (fun j hj => (hN j hj).le),
+      Real.sqrt_prod _ (fun i _ => abs_nonneg _),
+      Real.sqrt_prod _ (fun i _ => abs_nonneg _)]
     generalize Y + 1 / 2 + c.a = W
     ring
 
@@ -359,7 +307,7 @@ theorem positionBefore : PositionBefore := by
   rw [← hd] at hY1 hY2
   obtain ⟨X, hX⟩ : ∃ X : ℝ, X = 4 * c.Del * p + d := ⟨_, rfl⟩
   have hXv : c.v i + Y = X := by rw [hX, hd, hp]; simp only [Cfg.v]; ring
-  simp only [Cfg.rho, if_neg hnt]
+  simp only [Cfg.rho, ite_eq_right hnt]
   rw [← hp]
   have e1 : (c.v i - -Y) * (c.v i + 1 - -Y) = X * (X + 1) := by rw [← hXv]; ring
   have e2 : (c.v i - de i * c.Del - -Y) * (c.v i - de' i * c.Del - -Y) =
@@ -400,7 +348,7 @@ theorem positionAfter : PositionAfter := by
     have : 4 * c.Del * 1 ≤ 4 * c.Del * ((i:ℝ) - l) :=
       mul_le_mul_of_nonneg_left (by linarith) (by linarith)
     rw [hX, e]; linarith
-  simp only [Cfg.rho, if_neg hnt]
+  simp only [Cfg.rho, ite_eq_right hnt]
   have e1 : (c.v i - -Y) * (c.v i + 1 - -Y) = X * (X - 1) := by rw [hX]; ring
   have e2 : (c.v i - de i * c.Del - -Y) * (c.v i - de' i * c.Del - -Y) =
       (X + de i * c.Del) * (X + de' i * c.Del) := by rw [hX]; ring
@@ -438,7 +386,7 @@ theorem slotAt_true : PositionAt := by
       rw [this, abs_neg, abs_of_pos (mul_pos hd0 hDd)]
     · exact absurd (a.trans b.symm) hne
   have hrho : c.rho de de' (-Y) l = Real.sqrt ((d + 1) / (c.Del - d)) := by
-    simp only [Cfg.rho, if_neg hnt, hden, e1, e2]
+    simp only [Cfg.rho, ite_eq_right hnt, hden, e1, e2]
     rw [abs_of_pos (by positivity), ← Real.sqrt_div (by positivity)]
     congr 1
     field_simp
@@ -453,7 +401,7 @@ theorem positionTop : PositionTop := by
   obtain ⟨hY1, hY2⟩ := hY
   have hk := h.hk
   have hc : c.top = true ∧ c.k - 1 + 1 = c.k := ⟨ht, by omega⟩
-  simp only [Cfg.rho, if_pos hc]
+  simp only [Cfg.rho, ite_eq_left hc]
   obtain ⟨hb1, hb2⟩ := h.htop ht
   have hbp : 0 < c.bp := by have := h.hb1; linarith
   have hkc : ((c.k - 1 : ℕ) : ℝ) = (c.k:ℝ) - 1 := by
@@ -520,7 +468,7 @@ theorem Sz6.positionsBefore_of (H1 : PositionBefore) (H2 : ProdOneAddTwoDivLeSqr
     · intro i hi
       rw [mem_Ico] at hi
       have hnt : ¬ (c.top = true ∧ i + 1 = c.k) := by rintro ⟨_, h2⟩; omega
-      simp only [Cfg.rho, if_neg hnt]; positivity
+      simp only [Cfg.rho, ite_eq_right hnt]; positivity
     · intro i hi
       rw [mem_Ico] at hi
       have := H1 c de de' Y l i h hw hw' hi.1 hi.2 hlk hY

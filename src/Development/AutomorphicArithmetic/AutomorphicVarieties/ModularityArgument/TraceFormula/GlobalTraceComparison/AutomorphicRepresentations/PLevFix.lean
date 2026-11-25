@@ -204,18 +204,18 @@ theorem levFix_pf :
   choose M hMo hMle hMn using hcore
   refine ⟨fun w => if w ∈ Z then M w else KGL w (n := n), fun w => ?_, ψ, hψ, hψ0, fun k hk => ?_⟩
   · by_cases hw : w ∈ Z
-    · simp only [if_pos hw]
+    · simp only [ite_eq_left hw]
       exact ⟨hMo w, fun x hx => (hMle w hx).1.1, hMn w, fun h => absurd hw h⟩
-    · simp only [if_neg hw]
+    · simp only [ite_eq_right hw]
       exact ⟨(GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w n).1, le_rfl,
         fun k hk x hx => (KGL w (n := n)).mul_mem ((KGL w (n := n)).mul_mem hk hx) ((KGL w (n := n)).inv_mem hk), fun _ => trivial⟩
   have hkN := (mem _ k).1 hk
   have hkK : k ∈ Kf E n := (hK k).1 ((mem _ k).2 fun i hi => by
     have := hkN i hi
     by_cases hz : i.1 ∈ Z
-    · simp only [if_pos hz] at this
+    · simp only [ite_eq_left hz] at this
       exact (hMle _ this).1.1
-    · simpa only [if_neg hz] using this)
+    · simpa only [ite_eq_right hz] using this)
   have hkv := (memK k).1 hkK
   have hlocal : ∀ v : Pl E, jw n v false (qw n v false k) ∈ Kf E n ∧
       qw n v false (jw n v false (qw n v false k)) = qw n v false k ∧
@@ -235,7 +235,7 @@ theorem levFix_pf :
     (fun k' hk' h' => hψU k' ((memU k').2 ⟨hk', h'⟩)) Y k hkK (fun v hv h => absurd hv h) (fun v hv => ?_)
   by_cases hvZ : v ∈ Z
   · have h0 := hkN (v, false) ⟨(hZ v hvZ).1, by simp⟩
-    simp only [if_pos hvZ] at h0
+    simp only [ite_eq_left hvZ] at h0
     exact ⟨_, (hMle v h0).1.2, hlocal v⟩
   by_cases hvZ2 : v ∈ Z2
   · obtain ⟨w, hw, rfl⟩ : ∃ w ∈ Z, cPl w = v := by
@@ -244,7 +244,7 @@ theorem levFix_pf :
       · exact Finset.mem_image.1 h
     have hsp := (hZ w hw).2
     have h0 := hkN (w, true) ⟨(hZ w hw).1, fun _ => hsp⟩
-    simp only [if_pos hw] at h0
+    simp only [ite_eq_left hw] at h0
     set b := qw n w true k with hb
     set e := jw n w true b with he
     have heH : e ∈ stb n ψ := (hMle w h0).2

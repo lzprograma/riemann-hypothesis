@@ -78,8 +78,8 @@ private lemma core {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V] [Finit
     _ = 1 := finrank_span_singleton hw0
 
 theorem goal1 :
-  ∀ {G : Type} [inst : Group.{0} G] [inst_1 : Fintype.{0} G] {V : Type} [inst_2 : AddCommGroup.{0} V]
-  [inst_3 : Module.{0, 0} Complex V] [FiniteDimensional.{0, 0} Complex V] (ρ : Representation.{0, 0, 0} Complex G V)
+  ∀ {G : Type} [Group.{0} G] [Fintype.{0} G] {V : Type} [AddCommGroup.{0} V]
+  [Module.{0, 0} Complex V] [FiniteDimensional.{0, 0} Complex V] (ρ : Representation.{0, 0, 0} Complex G V)
   (J : Subgroup.{0} G) (χ : MonoidHom.{0, 0} (Subtype.{1} fun (x : G) ↦ Membership.mem.{0, 0} J x) (Units.{0} Complex)),
   (∀ (g g' : G),
       Eq.{1}

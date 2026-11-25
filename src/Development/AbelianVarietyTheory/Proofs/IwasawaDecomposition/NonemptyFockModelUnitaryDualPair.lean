@@ -27,56 +27,8 @@ public import Mathlib.Analysis.Complex.Order
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsUnitDetOneSubConjTransposeMulContractions
 public import Formalism.LocalRingCardinality.DataTheta
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.TotallySplit
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
 import Development.AbelianVarietyTheory.Proofs.HeightProofs.FiniteDimKStableSubspaceKFiniteLie
 import Development.AbelianVarietyTheory.Proofs.HeightProofs.NotTrivialAndTwist
 
@@ -173,7 +125,7 @@ theorem factorial_mul_coeff_expPS {σ : Type} [Fintype σ] (x : σ → ℂ) (α 
   have hdeg : (α.sum fun _ e => e) = α.degree := by
     rw [Finsupp.degree_apply]; rfl
   rw [MvPowerSeries.coeff_apply, expPS, Finset.sum_eq_single α.degree]
-  · rw [coeff_linearCombination_X_pow_of_fintype, if_pos hdeg]
+  · rw [coeff_linearCombination_X_pow_of_fintype, ite_eq_left hdeg]
     have hs : (α.prod fun _ k => k.factorial) * α.multinomial = α.degree.factorial := by
       rw [Finsupp.multinomial_eq, Finsupp.degree_apply, ← Nat.multinomial_spec]; rfl
     have hs' : α.prod (fun _ k => (k.factorial : ℂ)) * (α.multinomial : ℂ) = (α.degree.factorial : ℂ) := by
@@ -181,7 +133,7 @@ theorem factorial_mul_coeff_expPS {σ : Type} [Fintype σ] (x : σ → ℂ) (α 
     have h0 : (α.degree.factorial : ℂ) ≠ 0 := by exact_mod_cast Nat.factorial_ne_zero _
     rw [← mul_div_assoc, ← mul_assoc, hs', mul_div_cancel_left₀ _ h0]
   · intro k _ hk
-    rw [coeff_linearCombination_X_pow_of_fintype, if_neg (by rw [hdeg]; exact Ne.symm hk), zero_div]
+    rw [coeff_linearCombination_X_pow_of_fintype, ite_eq_right (by rw [hdeg]; exact Ne.symm hk), zero_div]
   · intro h
     exact absurd (Finset.self_mem_range_succ _) h
 
@@ -373,7 +325,7 @@ theorem re_sum_inner_le {n H : Type} [Fintype n] [DecidableEq n] [NormedAddCommG
     (∑ k, ∑ l, M k l * inner ℂ (u k) (u l)).re ≤ r * ∑ k, ‖u k‖ ^ 2 := by
   have h := re_sum_inner_nonneg hM u
   simp only [Matrix.sub_apply, Matrix.smul_apply, Matrix.one_apply, sub_mul, Finset.sum_sub_distrib, smul_eq_mul,
-    mul_ite, mul_one, mul_zero, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true, Complex.sub_re,
+    mul_ite, mul_one, mul_zero, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true, Complex.sub_re,
     sub_nonneg] at h
   refine h.trans_eq ?_
   rw [Complex.re_sum, Finset.mul_sum]
@@ -514,7 +466,7 @@ theorem inner_X_X (a b : σ) (f g : MvPolynomial σ ℂ) :
 theorem norm_X_mul_le [Fintype σ] {k : ℕ} {f : MvPolynomial σ ℂ} (h : DegLt k f) (l : σ) :
     ‖F.ι (X l * f)‖ ≤ √(k + 1) * ‖F.ι f‖ := by
   have h1 : ‖F.ι (X l * f)‖ ^ 2 = ‖F.ι (pderiv l f)‖ ^ 2 + ‖F.ι f‖ ^ 2 := by
-    simp only [← inner_self_eq_norm_sq (𝕜 := ℂ), inner_X_X, if_true, map_add (f := _)]
+    simp only [← inner_self_eq_norm_sq (𝕜 := ℂ), inner_X_X, ite_true, map_add (f := _)]
   have h2 : ‖F.ι (pderiv l f)‖ ^ 2 ≤ k * ‖F.ι f‖ ^ 2 :=
     (Finset.single_le_sum (f := fun l => ‖F.ι (pderiv l f)‖ ^ 2) (fun _ _ => sq_nonneg _)
       (Finset.mem_univ l)).trans (sum_sq_pderiv_le F h)
@@ -560,7 +512,7 @@ theorem inner_quadMul_self (f : MvPolynomial (Ix P Q) ℂ) :
       ((∑ i, ∑ j, Complex.normSq (A i j) : ℝ) : ℂ) * inner ℂ (F.ι f) (F.ι f) := by
 
   simp only [quadMul, quadDer, map_sum, map_smul, sum_inner, inner_sum, inner_smul_left, inner_smul_right,
-  inner_XX_XX, mul_add, Finset.sum_add_distrib, Finset.mul_sum, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true, Finset.sum_ite_irrel, Finset.sum_const_zero, Matrix.mul_apply,
+  inner_XX_XX, mul_add, Finset.sum_add_distrib, Finset.mul_sum, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Finset.sum_ite_irrel, Finset.sum_const_zero, Matrix.mul_apply,
   Matrix.transpose_apply, Matrix.conjTranspose_apply, Finset.sum_mul, Complex.ofReal_sum, Complex.conj_conj,
   RCLike.star_def]
   refine congrArg₂ (· + ·) (congrArg₂ (· + ·) (congrArg₂ (· + ·) ?_ ?_) ?_) ?_
@@ -628,7 +580,7 @@ theorem degLt_pow (n : ℕ) : DegLt (2 * n + 1) (gaussPoly A x ^ n) := by
   induction n with
   | zero =>
     intro α hα
-    rw [pow_zero, coeff_one, if_neg]
+    rw [pow_zero, coeff_one, ite_eq_right]
     rintro rfl
     simp at hα
   | succ n ih =>
@@ -879,9 +831,9 @@ theorem hasDerivAt_inv_det_and_inv (n : ℕ) (M : ℝ → Matrix (Fin n) (Fin n)
         (M'.updateRow j 0) 0 (by
           intro a b
           by_cases h : a = j
-          · simp only [updateRow_apply, h, if_true]
+          · simp only [updateRow_apply, h, ite_true]
             exact hasDerivAt_const _ _
-          · simp only [updateRow_apply, h, if_false]
+          · simp only [updateRow_apply, h, ite_false]
             exact hM a b)
       simpa only [adjugate_apply] using this.differentiableAt
     have := hinv.differentiableAt.mul hadj
@@ -1053,9 +1005,9 @@ theorem derForm_X_inl (A' : Matrix (Fin P) (Fin Q) ℂ) (x' : Ix P Q → ℂ)
     derForm A' x' T (X (Sum.inl i) * f) = derForm A' x' (fun g => T (X (Sum.inl i) * g)) f +
       (x' (Sum.inl i) * T f + ∑ j, A' i j * T (pderiv (Sum.inr j) f)) := by
   simp only [derForm, pderiv_X_mul, map_add (f := _), apply_ite T, map_zero, mul_add, Finset.sum_add_distrib, mul_ite,
-    mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true, reduceCtorEq, if_false, add_zero, Sum.inl.injEq]
+    mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true, reduceCtorEq, ite_false, add_zero, Sum.inl.injEq]
   rw [Finset.sum_comm (f := fun i' j => if i' = i then A' i' j * T (pderiv (Sum.inr j) f) else 0)]
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   ring
 
 theorem derForm_X_inr (A' : Matrix (Fin P) (Fin Q) ℂ) (x' : Ix P Q → ℂ)
@@ -1064,7 +1016,7 @@ theorem derForm_X_inr (A' : Matrix (Fin P) (Fin Q) ℂ) (x' : Ix P Q → ℂ)
       (x' (Sum.inr j) * T f + ∑ i, A' i j * T (pderiv (Sum.inl i) f)) := by
   simp only [derForm, pderiv_X_mul, map_add (f := _), apply_ite T, apply_ite (pderiv _), map_zero, mul_add,
     Finset.sum_add_distrib, mul_ite,
-    mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true, reduceCtorEq, if_false, add_zero, Sum.inr.injEq]
+    mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true, reduceCtorEq, ite_false, add_zero, Sum.inr.injEq]
   ring
 
 def pair (F : Fock (Ix P Q)) (v : F.H) : MvPolynomial (Ix P Q) ℂ →+ ℂ where
@@ -1312,7 +1264,7 @@ theorem inner_omAct0_adjZ : ∀ (P Q : ℕ) (F : Fock (Ix P Q)) (A : Matrix (Fin
       pderiv (Sum.inl i) (pderiv (Sum.inr j) f) := fun j i => pderiv_pderiv_comm _ _ _
   rw [add_add_add_comm]
   simp only [hc, mul_add (A _ _), Finset.sum_add_distrib, mul_ite, mul_zero, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
   congr 2 <;> refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => ?_ <;> ring
 
 end GlobalTheory.OscGauss

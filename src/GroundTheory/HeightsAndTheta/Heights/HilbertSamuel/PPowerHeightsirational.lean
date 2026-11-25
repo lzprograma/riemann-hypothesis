@@ -6,6 +6,7 @@ public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGener
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
+import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
 
 @[expose] public section
 
@@ -100,34 +101,22 @@ section Forms
 
 variable {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω]
 
-theorem homog_zero (a : K → ℕ) : IsMultiHomog (0 : MRing ι) a := by
-  intro m hm
-  simp at hm
+theorem homog_zero (a : K → ℕ) : IsMultiHomog (0 : MRing ι) a :=
+  GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_zero a
 
-theorem homog_one : IsMultiHomog (1 : MRing ι) 0 := by
-  intro m hm k
-  rw [MvPolynomial.support_one, Finset.mem_singleton] at hm
-  subst hm
-  simp
+theorem homog_one : IsMultiHomog (1 : MRing ι) 0 :=
+  GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_one
 
 theorem homog_add {f g : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) (hg : IsMultiHomog g a) :
-    IsMultiHomog (f + g) a := by
-  classical
-  intro m hm k
-  rcases Finset.mem_union.mp (MvPolynomial.support_add hm) with h | h
-  exacts [hf m h k, hg m h k]
+    IsMultiHomog (f + g) a :=
+  GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_add hf hg
 
-theorem homog_neg {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) : IsMultiHomog (-f) a := by
-  intro m hm
-  rw [MvPolynomial.support_neg] at hm
-  exact hf m hm
+theorem homog_neg {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) : IsMultiHomog (-f) a :=
+  GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_neg hf
 
 theorem homog_mul {f g : MRing ι} {a b : K → ℕ} (hf : IsMultiHomog f a) (hg : IsMultiHomog g b) :
-    IsMultiHomog (f * g) (a + b) := by
-  classical
-  intro m hm k
-  obtain ⟨m1, hm1, m2, hm2, rfl⟩ := Finset.mem_add.mp (MvPolynomial.support_mul f g hm)
-  simp only [Finsupp.add_apply, Finset.sum_add_distrib, hf m1 hm1 k, hg m2 hm2 k, Pi.add_apply]
+    IsMultiHomog (f * g) (a + b) :=
+  GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_mul hf hg
 
 theorem blockDeg_zero (k₀ : K) : blockDeg k₀ 0 = 0 := by
   funext k
@@ -146,25 +135,7 @@ theorem homog_one_block (k₀ : K) : IsMultiHomog (1 : MRing ι) (blockDeg k₀ 
   (blockDeg_zero k₀).symm ▸ homog_one
 
 theorem homog_X_block (k₀ : K) (i₀ : ι k₀) : IsMultiHomog (X ⟨k₀, i₀⟩ : MRing ι) (blockDeg k₀ 1) := by
-  classical
-  intro m hm k
-  rw [support_X, Finset.mem_singleton] at hm
-  subst hm
-  by_cases hk : k = k₀
-  · subst hk
-    simp only [blockDeg, ite_true]
-    rw [Finset.sum_eq_single i₀]
-    · simp
-    · intro b _ hb
-      rw [Finsupp.single_apply, ite_eq_right]
-      intro h
-      exact hb (eq_of_heq (Sigma.mk.inj_iff.mp h).2).symm
-    · simp
-  · rw [blockDeg, ite_eq_right hk]
-    refine Finset.sum_eq_zero fun i _ => ?_
-    rw [Finsupp.single_apply, ite_eq_right]
-    intro h
-    exact hk (Sigma.mk.inj_iff.mp h).1.symm
+  classical exact GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_X_ite ⟨k₀, i₀⟩
 
 def blockFrac (Y : (Σ k, ι k) → Ω) (k₀ : K) : Subfield Ω where
   carrier := {s | ∃ (t : ℕ) (g h : MRing ι), IsMultiHomog g (blockDeg k₀ t) ∧ IsMultiHomog h (blockDeg k₀ t) ∧

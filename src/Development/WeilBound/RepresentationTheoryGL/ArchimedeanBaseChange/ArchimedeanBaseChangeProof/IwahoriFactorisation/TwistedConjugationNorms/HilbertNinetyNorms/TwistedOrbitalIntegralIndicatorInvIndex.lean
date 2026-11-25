@@ -3,46 +3,7 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwistedTraceFormulaStable
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralEqSumSmallerLevel
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.OneCoset
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.RelIndexNeZeroOfCompactOpen, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.HilbertNinetyNorms.TwistedOrbitalIntegralIndicatorInvIndex
@@ -190,20 +151,6 @@ theorem twOrb_indicator_eq_inv_index [TopologicalSpace G] [IsTopologicalGroup G]
       exact hne (hq q h)
     rw [h0, mul_zero]
 
-theorem twConj_equivalence (θ : G →* G) : Equivalence (fun x y : G => ∃ g, y = g⁻¹ * x * θ g) := by
-  refine ⟨fun x => ⟨1, by simp⟩, ?_, ?_⟩
-  · rintro x y ⟨g, rfl⟩
-    exact ⟨g⁻¹, by simp only [inv_inv, map_inv]; group⟩
-  · rintro x y z ⟨g, rfl⟩ ⟨h, rfl⟩
-    exact ⟨g * h, by simp only [map_mul]; group⟩
-
-theorem rep_mk_eq (θ : G →* G) (x : G) :
-    ∃ g : G, TwCl.rep (Quot.mk (fun x y : G => ∃ g, y = g⁻¹ * x * θ g) x : TwCl θ) = g⁻¹ * x * θ g := by
-  have e : Quot.mk (fun x y : G => ∃ g, y = g⁻¹ * x * θ g)
-      (Quot.out (Quot.mk (fun x y : G => ∃ g, y = g⁻¹ * x * θ g) x)) =
-      Quot.mk (fun x y : G => ∃ g, y = g⁻¹ * x * θ g) x := Quot.out_eq _
-  exact (twConj_equivalence θ).symm ((twConj_equivalence θ).eqvGen_iff.1 (Quot.eqvGen_exact e))
-
 theorem clSum_eq_single (θ : G →* G) [TopologicalSpace G] (K : Subgroup G) (S : Set G) (wt f : G → ℂ) (δ0 : G)
     (hS0 : ∀ g : G, g⁻¹ * δ0 * θ g ∈ S)
     (hinv : ∀ g : G, wt (g⁻¹ * δ0 * θ g) * twOrb θ K (g⁻¹ * δ0 * θ g) f = wt δ0 * twOrb θ K δ0 f)
@@ -222,8 +169,8 @@ theorem clSum_eq_single (θ : G →* G) [TopologicalSpace G] (K : Subgroup G) (S
       rw [hg]
       exact (Quot.sound ⟨g, rfl⟩).symm
     · exact hne rfl
-  · obtain ⟨g, hg⟩ := rep_mk_eq θ δ0
-    rw [hg, if_pos (hS0 g), hinv g]
+  · obtain ⟨g, hg⟩ := GlobalTheory.BCT.ClSumParam.rep_mk θ δ0
+    rw [hg, ite_eq_left (hS0 g), hinv g]
 
 end Gen
 
@@ -248,11 +195,6 @@ variable {G : Type} [Group G] [TopologicalSpace G]
 
 theorem finsum_const_mul_eq {α : Type*} (c : ℂ) (g : α → ℂ) : ∑ᶠ i, c * g i = c * ∑ᶠ i, g i :=
   (mul_finsum g c).symm
-
-theorem avg_eq_of_rStab {H : Type} [Group H] (u : H → ℂ) (S : Subgroup H) (hS : rStab u = S) :
-    avg u = ((S.index : ℕ) : ℂ)⁻¹ * ∑ᶠ q : H ⧸ S, u q.out := by
-  subst hS
-  rfl
 
 theorem twisted_orbital_integral_proportional (θ : G →* G) (K : Subgroup G) (δ : G) (f₁ f₂ : G → ℂ) (c : ℂ)
     (h : ∀ p : G, f₁ (p⁻¹ * δ * θ p) = c * f₂ (p⁻¹ * δ * θ p)) : twOrb θ K δ f₁ = c * twOrb θ K δ f₂ := by

@@ -16,46 +16,7 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RingOfIntege
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MultiprojectivePointsNonempty
 public import Development.WeilBound.CoreStatements.VolumeEquality.RootBr
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.SetTheory.ZFC.PSet
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -271,7 +232,7 @@ theorem exists_sheets (h1 : HolNull) (h2 : ChartMeets) (h3 : RootBranches) (h4 :
   have : Nonempty (Fin B.np) := ⟨k₀⟩
   have : Nonempty (Fin Or.deg) := ⟨i₀⟩
   obtain ⟨e⟩ : Nonempty (ℕ ≃ Fin B.np × ℕ × Fin Or.deg) := nonempty_equiv_of_countable
-  have hT : ∀ {k t}, t ∈ T k → nSheets Or B U k = Or.deg := fun ht => if_pos ⟨_, ht.1, ht.2⟩
+  have hT : ∀ {k t}, t ∈ T k → nSheets Or B U k = Or.deg := fun ht => ite_eq_left ⟨_, ht.1, ht.2⟩
   refine ⟨⟨⟨k₀, (hT (hWs k₀ m₀ (disjointed_subset _ _ ht₀.2))).symm ▸ Or.cover.1⟩, fun m => (e m).1, fun m => Wk (e m).1 (e m).2.1,
     fun m => FF (e m).1 ∩ disjointed (Wk (e m).1) (e m).2.1, fun m t => w (e m).1 t (θ (e m).1 (e m).2.1 (e m).2.2 t),
     fun m => z (e m).1 (e m).2.1 (e m).2.2, ⟨fun m => hWo _ _, fun m => ?_, fun m t ht => ?_, fun m t ht t' ht' h => ?_,
@@ -320,7 +281,7 @@ theorem exists_sheets (h1 : HolNull) (h2 : ChartMeets) (h3 : RootBranches) (h4 :
       rw [this, Function.Injective.encard_image (fun i i' h => by simpa using h), hT e2]
       simp
     · refine ae_of_all _ fun t _ => ?_
-      rw [nSheets, if_neg hk, Nat.cast_zero, Set.encard_eq_zero]
+      rw [nSheets, ite_eq_right hk, Nat.cast_zero, Set.encard_eq_zero]
       refine Set.eq_empty_of_forall_notMem ?_
       rintro m ⟨rfl, h⟩
       exact hk ⟨t, hWs _ _ (disjointed_subset _ _ h.2)⟩

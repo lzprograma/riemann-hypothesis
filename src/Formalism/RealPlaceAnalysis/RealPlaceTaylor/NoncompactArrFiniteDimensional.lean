@@ -2,52 +2,9 @@ module
 
 public import Formalism.RealPlaceAnalysis.StatementU
 public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -97,9 +54,9 @@ theorem noncompact_arr_one_values {ε : Fin n → Bool} {E : Fin n → Fin n →
   have h := (mem_noncompact_arr_iff_general F).mp hF (fun _ => (a, b))
   constructor
   · intro hne
-    rwa [if_pos (fun _ => hne)] at h
+    rwa [ite_eq_left (fun _ => hne)] at h
   · intro he
-    rw [if_neg (fun h' => h' 0 he), Submodule.mem_bot] at h
+    rw [ite_eq_right (fun h' => h' 0 he), Submodule.mem_bot] at h
     exact h
 
 theorem mem_noncompact_arr_one {ε : Fin n → Bool} {E : Fin n → Fin n → Module.End ℂ V} {u : V} {F : Arr V n 1}
@@ -109,8 +66,8 @@ theorem mem_noncompact_arr_one {ε : Fin n → Bool} {E : Fin n → Fin n → Mo
   intro α
   rw [fin_one_fun_eq_const_apply_zero α]
   by_cases h : ε (α 0).1 = ε (α 0).2
-  · rw [if_neg (fun h' => h' 0 h), Submodule.mem_bot]; exact h2 _ _ h
-  · rw [if_pos (fun _ => h)]; exact h1 _ _ h
+  · rw [ite_eq_right (fun h' => h' 0 h), Submodule.mem_bot]; exact h2 _ _ h
+  · rw [ite_eq_left (fun _ => h)]; exact h1 _ _ h
 
 theorem compact_highest_weight_unique (hl : KLow) (hw : KWtOrth) {ε : Fin n → Bool}
     {E : Fin n → Fin n → Module.End ℂ V} {Λ ν : Fin n → ℝ} {u y : V}
@@ -174,7 +131,7 @@ theorem hVCoeff_of (hl : KLow) (hw : KWtOrth) (ha : ArrModule) : HVCoeff := by
     by_cases hac : a = c
     · subst hac
       have hbc : b ≠ a := Ne.symm hab
-      simp only [if_true, if_neg hbc, sub_zero] at h1
+      simp only [ite_true, ite_eq_right hbc, sub_zero] at h1
       have : ((μ - root a b) a : ℝ) = μ a - 1 := by
         simp [root, hbc]
       rw [this]
@@ -183,14 +140,14 @@ theorem hVCoeff_of (hl : KLow) (hw : KWtOrth) (ha : ArrModule) : HVCoeff := by
       simp [hf]
     · by_cases hbc : b = c
       · subst hbc
-        simp only [if_neg hac, if_true, zero_sub] at h1
+        simp only [ite_eq_right hac, ite_true, zero_sub] at h1
         have : ((μ - root a b) b : ℝ) = μ b + 1 := by
           simp [root, hab]
         rw [this]
         push_cast
         rw [add_smul, one_smul, ← h1]
         simp [hf]
-      · simp only [if_neg hac, if_neg hbc, sub_zero, zero_add] at h1
+      · simp only [ite_eq_right hac, ite_eq_right hbc, sub_zero, zero_add] at h1
         have : ((μ - root a b) c : ℝ) = μ c := by
           simp [root, Ne.symm hac, Ne.symm hbc]
         rw [this]
@@ -265,15 +222,15 @@ theorem root_injective_of_ne {a b a' b' : Fin n} (hab : a ≠ b) (h : root a b =
   have hba : b ≠ a := Ne.symm hab
   have h1 := congrFun h a
   have h2 := congrFun h b
-  simp only [root, Pi.sub_apply, Pi.single_apply, if_neg hab, if_neg hba] at h1 h2
+  simp only [root, Pi.sub_apply, Pi.single_apply, ite_eq_right hab, ite_eq_right hba] at h1 h2
   have e1 : a = a' := by
     by_contra e1
-    rw [if_neg e1] at h1
+    rw [ite_eq_right e1] at h1
     split_ifs at h1 <;> norm_num at h1
   subst e1
   refine ⟨rfl, ?_⟩
   by_contra e4
-  rw [if_neg hba, if_neg e4] at h2
+  rw [ite_eq_right hba, ite_eq_right e4] at h2
   norm_num at h2
 
 theorem noncompact_arr_one_compact_stable {ε : Fin n → Bool} {E : Fin n → Fin n → Module.End ℂ V} {u : V} :
@@ -417,7 +374,7 @@ theorem compact_casimir_positions_one {ε : Fin n → Bool} (F : Arr V n 1)
       intro c d
       have hab' : a ≠ b := fun h => hab (h ▸ rfl)
       by_cases hcd : ε c = ε d
-      · rw [if_pos hcd]
+      · rw [ite_eq_left hcd]
         simp only [positions_one_apply]
         by_cases h1 : c = a
         · subst h1
@@ -427,7 +384,7 @@ theorem compact_casimir_positions_one {ε : Fin n → Bool} (F : Arr V n 1)
           · subst h2
             simp [h1, Ne.symm h1, hab', hcd]
           · simp [h1, Ne.symm h1, h2, Ne.symm h2]
-      · rw [if_neg hcd]
+      · rw [ite_eq_right hcd]
         have e1 : (if c = a then (if ε d = ε a then F (fun _ => (a, b)) else 0) else 0) = 0 := by
           split_ifs with h1 h2
           · subst h1; exact absurd h2.symm hcd
@@ -440,14 +397,14 @@ theorem compact_casimir_positions_one {ε : Fin n → Bool} (F : Arr V n 1)
           · rfl
         rw [e1, e2, add_zero]
     simp only [key, Finset.sum_add_distrib, Finset.sum_ite_irrel, Finset.sum_const_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [← Finset.sum_add_distrib]
     have : ∀ d : Fin n, ((if ε d = ε a then F (fun _ => (a, b)) else 0) +
         (if ε d = ε b then F (fun _ => (a, b)) else 0)) = F (fun _ => (a, b)) := by
       intro d
       rcases bool_trichotomy_of_ne (ε a) (ε b) (ε d) hab with ⟨h1, h2⟩ | ⟨h1, h2⟩
-      · rw [if_pos h1, if_neg h2, add_zero]
-      · rw [if_neg h2, if_pos h1, zero_add]
+      · rw [ite_eq_left h1, ite_eq_right h2, add_zero]
+      · rw [ite_eq_right h2, ite_eq_left h1, zero_add]
     simp only [this, Finset.sum_const, Finset.card_univ, Fintype.card_fin]
     rw [Nat.cast_smul_eq_nsmul]
 

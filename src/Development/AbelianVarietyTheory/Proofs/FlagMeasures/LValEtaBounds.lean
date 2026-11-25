@@ -78,8 +78,7 @@ theorem zeta_le_two (M : ℕ) (hM : 2 ≤ M) : ∑' m : ℕ, 1 / ((m : ℝ) + 1)
 
 theorem multipliable_pos_abs_log_le (K : Type) [Field K] [NumberField K] [StarRing K]
     (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (M : ℕ) (hM : 2 ≤ M) :
-    Multipliable (fun P : {P : Ideal (𝓞 K) // P.IsMaximal} => Formalism.HermitianLatticesTheory.eulerFac K M P.1) ∧
-      0 < Formalism.HermitianLatticesTheory.lValEta K M ∧
+    0 < Formalism.HermitianLatticesTheory.lValEta K M ∧
       |Real.log (Formalism.HermitianLatticesTheory.lValEta K M)| ≤ (Formalism.HermitianLatticesTheory.fDeg K : ℝ) * Real.log 2 := by
   classical
   let PrimeIdeal := {P : Ideal (𝓞 K) // P.IsMaximal}
@@ -272,7 +271,7 @@ theorem multipliable_pos_abs_log_le (K : Type) [Field K] [NumberField K] [StarRi
   have hprod : Real.exp (∑' P : {P : Ideal (𝓞 K) // P.IsMaximal},
       Real.log (Formalism.HermitianLatticesTheory.eulerFac K M P.1)) = Formalism.HermitianLatticesTheory.lValEta K M :=
     Real.rexp_tsum_eq_tprod hpos hsum
-  refine ⟨Real.multipliable_of_summable_log hpos hsum, ?_, ?_⟩
+  refine ⟨?_, ?_⟩
   · rw [← hprod]; exact Real.exp_pos _
   · rw [← hprod, Real.log_exp]
     have hz : 0 < ∑' m : ℕ, 1 / ((m : ℝ) + 1) ^ M :=
@@ -287,7 +286,7 @@ theorem multipliable_pos_abs_log_le (K : Type) [Field K] [NumberField K] [StarRi
 
 theorem lValEta_bounds : ∀ (K : Type) [Field K] [NumberField K] [StarRing K], Formalism.HermitianLatticesTheory.IsCMUnram K → ∀ i : ℕ, 2 ≤ i → ((2 : ℝ) ^ (Formalism.HermitianLatticesTheory.fDeg K))⁻¹ ≤ Formalism.HermitianLatticesTheory.lValEta K i ∧ Formalism.HermitianLatticesTheory.lValEta K i ≤ 2 ^ (Formalism.HermitianLatticesTheory.fDeg K) := by
   intro K _ _ _ hK i hi
-  obtain ⟨-, h0, h1⟩ := multipliable_pos_abs_log_le K hK i hi
+  obtain ⟨h0, h1⟩ := multipliable_pos_abs_log_le K hK i hi
   rw [abs_le] at h1
   have h2 : (0 : ℝ) < 2 ^ Formalism.HermitianLatticesTheory.fDeg K := by positivity
   constructor

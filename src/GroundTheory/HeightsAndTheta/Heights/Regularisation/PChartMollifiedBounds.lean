@@ -70,7 +70,7 @@ theorem trunc_ge_of_bdd {D : ℕ} {X : Type*} [TopologicalSpace X] {A : Reciproc
       filter_upwards [mem_nhdsWithin_of_mem_nhds (hVo.mem_nhds hy), self_mem_nhdsWithin]
         with y' hy'V hy'
       have h := hb y' hy'V
-      simp only [RegChartData.trunc, limsupExt, if_neg hy'.2] at h
+      simp only [RegChartData.trunc, limsupExt, ite_eq_right hy'.2] at h
       exact h
     refine le_limsup_of_le hbdd (fun b hb' => ?_)
     obtain ⟨y', hy'⟩ := hb'.exists
@@ -145,7 +145,7 @@ theorem ChartMollifiedBounds.proof (h : TruncPsh.Statement) : ChartMollifiedBoun
   ·
     have hA : R.chart j x ∉ coordDiv (R.S j) := (R.mem_Yo j x hxs).1 hY
     have htr : R.trunc K j (R.chart j x) = max (R.u j (R.chart j x)) (-K) := by
-      simp only [RegChartData.trunc, limsupExt, if_neg hA]
+      simp only [RegChartData.trunc, limsupExt, ite_eq_right hA]
     have hu : R.u j (R.chart j x) = R.q j (R.chart j x) + R.ph x := by
       simp only [RegChartData.u, PotentialCharts.chartFun, (R.chart j).left_inv hxs]
     have hle := ReciprocityTheory.AnForm.A.le_molli ρ (hVo j) hpsh ht (z := R.chart j x) hball

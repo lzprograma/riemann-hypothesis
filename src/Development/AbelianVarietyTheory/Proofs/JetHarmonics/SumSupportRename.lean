@@ -2,8 +2,7 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
-public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.EqCOfPderivZero
-public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.InvariantDerivationsCommuteFormalConnection
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.DofComm
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -46,8 +45,6 @@ import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -132,7 +129,7 @@ theorem inCol_C (b : Fin n) (r : k) : inCol b (C r : PS k 1 d) = C r := by
 theorem pderiv_inCol (b c : Fin n) (j : Fin d) (f : PS k 1 d) :
     pderiv (c, j) (inCol b f) = if b = c then inCol b (pderiv ((0 : Fin 1), j) f) else 0 := by
   unfold inCol ev
-  rw [FormalLog.pderiv_subst (a := fun p : Fin 1 × Fin d => (![pt k d b] : Fin 1 → Pt k n d) p.1 p.2)
+  rw [LogPf.pderiv_subst (a := fun p : Fin 1 × Fin d => (![pt k d b] : Fin 1 → Pt k n d) p.1 p.2)
     (fun p => gp b p.1 p.2)]
   have e : ∀ p : Fin 1 × Fin d, (![pt k d b] : Fin 1 → Pt k n d) p.1 p.2 = X (b, p.2) := by
     rintro ⟨a, i⟩
@@ -166,7 +163,7 @@ theorem dofN_inCol (F : Fin d → PS k 2 d) (b : Fin n) (u : Fin d → k) (f : P
   rw [← inColHom_apply b (∑ _, _), map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
 
-  rw [map_mul, map_sum, pderiv_inCol, if_pos rfl, inColHom_apply]
+  rw [map_mul, map_sum, pderiv_inCol, ite_eq_left rfl, inColHom_apply]
   congr 1
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, inColHom_apply, inColHom_apply, inCol_C, ev_axis]
@@ -177,7 +174,7 @@ theorem pderiv_prod_out (b : Fin n) (j : Fin d) (g : Fin n → PS k 1 d) (s : Fi
   | empty => simp
   | insert c s hc ih =>
     rw [Finset.mem_insert, not_or] at hs
-    rw [Finset.prod_insert hc, Derivation.leibniz, ih hs.2, pderiv_inCol, if_neg (Ne.symm hs.1)]
+    rw [Finset.prod_insert hc, Derivation.leibniz, ih hs.2, pderiv_inCol, ite_eq_right (Ne.symm hs.1)]
     simp
 
 theorem dofN_mul_out (F : Fin d → PS k 2 d) (b : Fin n) (u : Fin d → k) (f G : PS k n d)
@@ -198,7 +195,7 @@ theorem dofN_prod (F : Fin d → PS k 2 d) (c : Fin n) (u : Fin d → k) (g : Fi
   congr 1
   · simp [colD]
   · refine Finset.prod_congr rfl fun b hb => ?_
-    rw [colD, if_neg (Finset.ne_of_mem_erase hb).symm]
+    rw [colD, ite_eq_right (Finset.ne_of_mem_erase hb).symm]
     rfl
 
 theorem iter_prod (F : Fin d → PS k 2 d) (c : Fin n) (u : Fin d → k) (r : ℕ) (g : Fin n → PS k 1 d) :
@@ -323,7 +320,7 @@ theorem nabValN_boxSer : NabColSt := by
   congr 1
   rw [dmonN_prod, map_prod]
   refine Finset.prod_congr rfl fun b _ => ?_
-  rw [cc_inCol, fo_col (B.FK k) (fun v w g => FormalConnection.invariantDerivations_commute_formal_connection R d O k B v w g) e cp u u' hcp hu]
+  rw [cc_inCol, fo_col (B.FK k) (fun v w g => Nab.invariantDerivations_commute_formal_connection R d O k B v w g) e cp u u' hcp hu]
   unfold FB.nabVal DpolyOf
 
   simp only [map_sum, map_mul, constantCoeff_C]

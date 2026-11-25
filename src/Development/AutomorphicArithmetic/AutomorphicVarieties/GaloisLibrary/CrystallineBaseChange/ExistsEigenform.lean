@@ -3,7 +3,6 @@ module
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.RnStmt
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.FinDim
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.HeckeEx
-import Development.WeilBound.SimpleEigenvalues.SimpleEigenvalueExtension.SimEig
 import Formalism.PadicSubsetSums.StableGradedCounts.ZBrauerNesbittAlg
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -45,7 +44,10 @@ import Mathlib.Tactic.NormNum.Parity
 import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
-public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SimultaneousEigenvectors.SimEig
+public import Mathlib.FieldTheory.IsAlgClosed.Basic
+public import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
+public import Mathlib.LinearAlgebra.Eigenspace.Basic
+public import Development.WeilBound.SimpleEigenvalues.SimpleEigenvalueExtension.SimEig
 
 @[expose] public section
 
@@ -97,16 +99,16 @@ private theorem fT_comm {K : Type} [Field K] {p q : ℕ} (hp : p.Prime) (hq : q.
   · obtain ⟨m, rfl⟩ : p * q ∣ n := hc.mul_dvd_of_dvd_of_dvd a b
     have e1 : p * q * m / p = q * m := by rw [mul_assoc, Nat.mul_div_cancel_left _ hp.pos]
     have e2 : p * q * m / q = p * m := by rw [mul_comm p q, mul_assoc, Nat.mul_div_cancel_left _ hq.pos]
-    simp only [h1, h2, a, b, if_true, e1, e2, dvd_mul_right, Nat.mul_div_cancel_left _ hp.pos,
+    simp only [h1, h2, a, b, ite_true, e1, e2, dvd_mul_right, Nat.mul_div_cancel_left _ hp.pos,
       Nat.mul_div_cancel_left _ hq.pos, Nat.mul_div_assoc _ a, Nat.mul_div_assoc _ b, mul_left_comm q p]
     ring
   · have b' : ¬ q ∣ n / p := fun h => b (h.trans (Nat.div_dvd_of_dvd a))
-    simp only [h1, h2, a, b, b', if_true, if_false, Nat.mul_div_assoc _ a, mul_left_comm q p]
+    simp only [h1, h2, a, b, b', ite_true, ite_false, Nat.mul_div_assoc _ a, mul_left_comm q p]
     ring
   · have a' : ¬ p ∣ n / q := fun h => a (h.trans (Nat.div_dvd_of_dvd b))
-    simp only [h1, h2, a, b, a', if_true, if_false, Nat.mul_div_assoc _ b, mul_left_comm q p]
+    simp only [h1, h2, a, b, a', ite_true, ite_false, Nat.mul_div_assoc _ b, mul_left_comm q p]
     ring
-  · simp only [h1, h2, a, b, if_false, mul_left_comm q p]
+  · simp only [h1, h2, a, b, ite_false, mul_left_comm q p]
     ring
 
 private theorem eq_zero_of_eig {K : Type} [Field K] (e b : Nat.Primes → K) (c : ℕ → K) (h0 : c 0 = 0) (h1 : c 1 = 0)
@@ -141,20 +143,14 @@ private def chSub (N k : ℕ) (χ : DirichletCharacter ℂ N) : Submodule ℂ (C
     rw [show ((c • f : CuspForm (Gamma1 N) (k : ℤ)) : ℍ → ℂ) = c • (f : ℍ → ℂ) from rfl, ModularForm.SL_smul_slash,
       hf γ hγ, smul_comm]
 
-section
-open Module
-variable {K M : Type} [Field K] [IsAlgClosed K] [AddCommGroup M] [Module K M] [FiniteDimensional K M]
-
-end
-
 private def Phi (N : ℕ) (k : ℤ) : CuspForm (Gamma1 N) k →ₗ[ℂ] (ℕ → ℂ) where
   toFun g n := if n = 0 then 0 else coef g n
   map_add' f g := by
     funext n
-    by_cases h : n = 0 <;> simp only [h, if_true, if_false, coef_add, Pi.add_apply, add_zero]
+    by_cases h : n = 0 <;> simp only [h, ite_true, ite_false, coef_add, Pi.add_apply, add_zero]
   map_smul' a f := by
     funext n
-    by_cases h : n = 0 <;> simp only [h, if_true, if_false, coef_smul, Pi.smul_apply, smul_eq_mul, mul_zero]
+    by_cases h : n = 0 <;> simp only [h, ite_true, ite_false, coef_smul, Pi.smul_apply, smul_eq_mul, mul_zero]
     rfl
 
 private theorem Phi_apply (N : ℕ) (k : ℤ) (g : CuspForm (Gamma1 N) k) (n : ℕ) :
@@ -164,23 +160,23 @@ private theorem fT_Phi (N : ℕ) (k : ℤ) (g : CuspForm (Gamma1 N) k)
     {p : ℕ} (hp : p.Prime) (e : ℂ) {n : ℕ} (hn : 1 ≤ n) :
     fT p e (Phi N k g) n = coef g (p * n) + e * (if p ∣ n then coef g (n / p) else 0) := by
   have h1 : p * n ≠ 0 := mul_ne_zero hp.ne_zero (by omega)
-  rw [fT_apply, Phi_apply, if_neg h1]
+  rw [fT_apply, Phi_apply, ite_eq_right h1]
   by_cases h : p ∣ n
   · have : n / p ≠ 0 := (Nat.div_pos (Nat.le_of_dvd hn h) hp.pos).ne'
-    rw [if_pos h, if_pos h, Phi_apply, if_neg this]
-  · rw [if_neg h, if_neg h]
+    rw [ite_eq_left h, ite_eq_left h, Phi_apply, ite_eq_right this]
+  · rw [ite_eq_right h, ite_eq_right h]
 
 private theorem eig_iff (N k : ℕ) (χ : DirichletCharacter ℂ N) (g : CuspForm (Gamma1 N) (k : ℤ)) {p : ℕ} (hp : p.Prime) (c : ℂ) :
     fT p (χ (p : ZMod N) * (p : ℂ) ^ (k - 1)) (Phi N k g) = c • Phi N k g ↔ IsEigAt k χ g p c := by
   constructor
   · intro h n hn
     have := congrFun h n
-    rwa [fT_Phi N k g hp _ hn, Pi.smul_apply, Phi_apply, if_neg (show ¬ n = 0 by omega), smul_eq_mul] at this
+    rwa [fT_Phi N k g hp _ hn, Pi.smul_apply, Phi_apply, ite_eq_right (show ¬ n = 0 by omega), smul_eq_mul] at this
   · intro h
     funext n
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · simp [fT_apply, Phi_apply]
-    · rw [fT_Phi N k g hp _ hn, Pi.smul_apply, Phi_apply, if_neg hn.ne', smul_eq_mul]
+    · rw [fT_Phi N k g hp _ hn, Pi.smul_apply, Phi_apply, ite_eq_right hn.ne', smul_eq_mul]
       exact h n hn
 
 private theorem exists_eigenform (N k : ℕ) [NeZero N] (hk : 1 ≤ k) (χ : DirichletCharacter ℂ N)
@@ -196,7 +192,7 @@ private theorem exists_eigenform (N k : ℕ) [NeZero N] (hk : 1 ≤ k) (χ : Dir
     funext n
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · simp [fT_apply, Phi_apply]
-    · rw [fT_Phi N k g p.2 _ hn, Phi_apply, if_neg hn.ne', hc n hn]
+    · rw [fT_Phi N k g p.2 _ hn, Phi_apply, ite_eq_right hn.ne', hc n hn]
   let T : Nat.Primes → Module.End ℂ V := fun p => (fT p.1 (e p)).restrict (hmem p)
   have hT : ∀ p (v : V), (T p v).1 = fT p.1 (e p) v.1 := fun _ _ => rfl
   have hc : ∀ p q, T p * T q = T q * T p := by
@@ -215,7 +211,7 @@ private theorem exists_eigenform (N k : ℕ) [NeZero N] (hk : 1 ≤ k) (χ : Dir
       (hU _).2 fun p hp => Subtype.ext ((eig_iff N k χ f p.2 _).2 hp), fun h0 => hf0 ((finDim N k).2 f fun n hn => by
         have := congrFun (congrArg Subtype.val h0) n
         change Phi N k f n = 0 at this
-        rwa [Phi_apply, if_neg (by omega)] at this)⟩)
+        rwa [Phi_apply, ite_eq_right (by omega)] at this)⟩)
     (by
       intro q x hx
       rw [hU] at hx ⊢
@@ -237,7 +233,7 @@ private theorem exists_eigenform (N k : ℕ) [NeZero N] (hk : 1 ≤ k) (χ : Dir
   have hp : ∀ p : Nat.Primes, coef ((coef g 1)⁻¹ • g : CuspForm (Gamma1 N) (k : ℤ)) p.1 = b p := by
     intro p
     have := hE p 1 le_rfl
-    rw [if_neg p.2.not_dvd_one, mul_zero, add_zero, mul_one] at this
+    rw [ite_eq_right p.2.not_dvd_one, mul_zero, add_zero, mul_one] at this
     rw [coef_smul, this]
     field_simp
   refine ⟨⟨(coef g 1)⁻¹ • g, (chSub N k χ).smul_mem _ hg, ?_, ?_⟩, ?_⟩
@@ -247,9 +243,9 @@ private theorem exists_eigenform (N k : ℕ) [NeZero N] (hk : 1 ≤ k) (χ : Dir
     have := hE ⟨p, hpp⟩ n hn
     simp only [coef_smul]
     split_ifs with hd
-    · rw [if_pos hd] at this
+    · rw [ite_eq_left hd] at this
       linear_combination (coef g 1)⁻¹ * this
-    · rw [if_neg hd] at this
+    · rw [ite_eq_right hd] at this
       linear_combination (coef g 1)⁻¹ * this
   · intro p hpp h
     exact (hp ⟨p, hpp⟩).trans (hab ⟨p, hpp⟩ h)

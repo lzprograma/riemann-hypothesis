@@ -176,12 +176,12 @@ theorem LiftBirationalAmple.proof (h : GeneratedNonzeroSection.Statement) : Lift
       by_cases hk : k = p.1
       · rw [hk] at hs1 ⊢
         rw [Pi.add_apply, Pi.add_apply, hs1]
-        simp only [Pi.smul_apply, Pi.sub_apply, Pi.single_eq_same, E, if_true]
+        simp only [Pi.smul_apply, Pi.sub_apply, Pi.single_eq_same, E, ite_true]
         simp only [nsmul_eq_mul]
         push_cast [Nat.cast_sub hm]
         ring
       · rw [Pi.add_apply, Pi.add_apply, hs1]
-        simp only [Pi.smul_apply, Pi.sub_apply, Pi.single_eq_of_ne hk, E, if_neg hk]
+        simp only [Pi.smul_apply, Pi.sub_apply, Pi.single_eq_of_ne hk, E, ite_eq_right hk]
         simp only [nsmul_eq_mul]
         push_cast
         ring

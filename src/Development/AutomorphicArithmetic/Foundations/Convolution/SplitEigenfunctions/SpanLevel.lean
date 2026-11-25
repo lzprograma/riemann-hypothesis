@@ -34,58 +34,11 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGrou
 public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.PlaceAe
 public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.Cap
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalSatakeAlmostAll
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.CycCOfCyclic
 import GroundTheory.AutomorphicForms.ReductionMeasure
 import GroundTheory.GlobalFields.Adele.Topology
 import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Dynamics.Ergodic.Action.Regular
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Algebra.ProperAction.Basic
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Archimedean
 import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.AdFormOf
@@ -98,7 +51,6 @@ import GroundTheory.LocalFields.LocalFourierHaar
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
 import Development.AbelianVarietyTheory.Definitions.Foundations.NormEulerPolySubOneLe
 import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.Smooth
-import Mathlib.Algebra.Order.Star.Int
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.InfPair, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ElementarySubgroupInvariance, Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CoefZero, Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.DerCurve, Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.PairEx, Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.SatPair, Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.SplitEigAlt, Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.SpanLevel
@@ -139,8 +91,7 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.infPair :
     InfPair := by
   intro E _ _ _ V Q B hB hne τ m m' hc hm hm'
   obtain ⟨x, y, hxy⟩ : ∃ x y, B x y ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hne (LinearMap.ext fun x => LinearMap.ext fun y => hcon x y)
   let S := GlobalTheory.CapPair.adjPairs V Q.V B
   have h1 : ∀ i j z, (GlobalTheory.CuspRep.lieS E 2 i j (GlobalTheory.CuspRep.atEmb τ z),
@@ -585,8 +536,7 @@ private theorem coef_zero (D : Dat ℚ E) {Φ : GL (Fin 2) (A E) → ℂ} (hL : 
   obtain ⟨a, ha⟩ : ∃ a : ℚ, 2 * a = -ξ 0 := ⟨-ξ 0 / 2, by ring⟩
   obtain ⟨b, hb⟩ : ∃ b : ℚ, 2 * (D.δ * b) = -ξ 1 := ⟨-ξ 1 / (2 * D.δ), by field_simp⟩
   have hab : a ≠ 0 ∨ b ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     obtain ⟨h1, h2⟩ := hc
     refine hξ (funext fun i => ?_)
     fin_cases i
@@ -714,7 +664,7 @@ private theorem inner_der (N : MeasE E) {Ψ Q : GL (Fin 2) (A E) → ℂ} (hΨ :
     HasDerivAt (fun u => mean N fun x => Ψ (x * (y * g u))) (mean N fun x => Q (x * (y * g s))) s := by
   obtain ⟨B, hB⟩ := hQ.bdd ((fun u => y * g u) '' Metric.closedBall s 1)
     ((isCompact_closedBall s 1).image (continuous_const.mul hg))
-  haveI : IsFiniteMeasure (N.μ.restrict N.D) := ⟨by simpa using vol_lt N⟩
+  have : IsFiniteMeasure (N.μ.restrict N.D) := ⟨by simpa using vol_lt N⟩
   have hm : ∀ {P : GL (Fin 2) (A E) → ℂ}, Continuous P → ∀ k,
       AEStronglyMeasurable (fun h : G1 E => P (gl h * k)) (N.μ.restrict N.D) := fun hP k =>
     (hP.comp (Matrix.SpecialLinearGroup.continuous_toGL.mul continuous_const)).aestronglyMeasurable
@@ -763,7 +713,7 @@ private theorem outer_der (N : MeasE E) {Ψ Q : GL (Fin 2) (A E) → ℂ} (hΨ :
     calc _ ≤ b z := h1
       _ ≤ ‖(b z : ℂ)‖ := by rw [Complex.norm_real]; exact le_abs_self _
       _ ≤ B := hB _ hab
-  haveI : IsFiniteMeasure ((normOneMeasure E).restrict (normOneFundamentalDomain E)) :=
+  have : IsFiniteMeasure ((normOneMeasure E).restrict (normOneFundamentalDomain E)) :=
     ⟨by simpa using normOneMeasure_normOneFundamentalDomain_lt_top E⟩
   have hint : ∀ (M : GL (Fin 2) (A E) → ℂ), Continuous M → (∀ γ y, M (ratGL E 2 γ * y) = M y) → ∀ k,
       IntegrableOn (fun z : IdeleGroup.normOneSubgroup E => M (aE (z : IdeleGroup E) * k))
@@ -965,14 +915,14 @@ private theorem exists_fixed_pair [TopologicalSpace G] [IsTopologicalGroup G] (h
     (hK : IsCompact (K : Set G)) (l : W →ₗ[ℂ] ℂ) (hl : ∀ k ∈ K, ∀ v, l (ρ k v) = l v) (y : W) :
     ∃ y' ∈ fixed ρ K, l y' = l y := by
   classical
-  haveI : CompactSpace K := isCompact_iff_compactSpace.1 hK
+  have : CompactSpace K := isCompact_iff_compactSpace.1 hK
   have hfi : (GlobalTheory.OrbitAvg.stab ρ K y).FiniteIndex := by
     have ho : IsOpen (GlobalTheory.OrbitAvg.stab ρ K y : Set K) := (hρ y).preimage continuous_subtype_val
-    haveI := (GlobalTheory.OrbitAvg.stab ρ K y).quotient_finite_of_isOpen ho
+    have := (GlobalTheory.OrbitAvg.stab ρ K y).quotient_finite_of_isOpen ho
     exact Subgroup.finiteIndex_of_finite_quotient
   refine ⟨GlobalTheory.OrbitAvg.avg ρ K y,
     GlobalTheory.LGrp.mem_fixed.2 fun u hu => GlobalTheory.OrbitAvg.avg_invariant ρ K hfi ⟨u, hu⟩, ?_⟩
-  haveI := Fintype.ofFinite (K ⧸ GlobalTheory.OrbitAvg.stab ρ K y)
+  have := Fintype.ofFinite (K ⧸ GlobalTheory.OrbitAvg.stab ρ K y)
   have hc : ((GlobalTheory.OrbitAvg.stab ρ K y).index : ℂ) ≠ 0 := by exact_mod_cast hfi.index_ne_zero
   have h1 : ∀ q : K ⧸ GlobalTheory.OrbitAvg.stab ρ K y, l (ρ (q.out : K) y) = l y := fun q => hl _ q.out.2 y
 
@@ -1016,7 +966,7 @@ private theorem sat_eq_of_eig {E : Type} [Field E] [NumberField E] {n : ℕ} {w 
       obtain ⟨a, ha, b, hb, e⟩ : ∃ a ∈ GLint (Fin n) (Ov E w), ∃ b ∈ GLint (Fin n) (Ov E w),
           g = a * dGL n ϖ j * b := by
         by_contra hn
-        exact hg (if_neg hn)
+        exact hg (ite_eq_right hn)
       exact ⟨a, ha, b, hb, _, invT_dGL c ϖ j, e⟩)
   rw [hE' _ hp j hj, hY.2.2.2 _ hp j hj, map_smul, smul_eq_mul] at key
   exact mul_right_cancel₀ hne key
@@ -1084,8 +1034,7 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.satPair :
   have hβ : ∀ x y, β x (TC.toDual Q y) = B x y := fun x y => by simp [β]
   have hβ' : ∀ x, β x Y = B x ((TC.toDual Q).symm Y) := fun _ => rfl
   obtain ⟨x₀, hx₀⟩ : ∃ x₀, β x₀ Y ≠ 0 := by
-    by_contra hn
-    push_neg at hn
+    by_contra! hn
     refine hY.1 ?_
     have h0 := hker0 ((TC.toDual Q).symm Y) hn
     have h1 := congrArg (TC.toDual Q) h0
@@ -1267,7 +1216,7 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.splitEig :
     refine integral_congr_ae (Filter.Eventually.of_forall fun z => ?_)
     beta_reduce
     rw [map_mul, map_mul, ← mul_assoc g, ← mul_assoc _ _ (lc w (gm k.1)), hFix _ _ hk]
-  haveI : CompactSpace (GlobalTheory.LFun.KGL v (n := 2)) :=
+  have : CompactSpace (GlobalTheory.LFun.KGL v (n := 2)) :=
     isCompact_iff_compactSpace.mp (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL v 2).2
   have hsm : ∀ f, ∀ᶠ h in 𝓝 (1 : GlobalTheory.LFun.KGL v (n := 2)), π.locRep v ((GlobalTheory.LFun.KGL v (n := 2)).subtype h) f = f := fun f =>
     (continuous_subtype_val.tendsto (1 : GlobalTheory.LFun.KGL v (n := 2))).eventually

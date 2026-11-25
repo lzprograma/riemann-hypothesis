@@ -3,7 +3,6 @@ module
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsVecFixGroup
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsComplementForm
 import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
-import Mathlib.Tactic.TypeStar
 import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Examples
 
 @[expose] public section
@@ -61,12 +60,10 @@ theorem mem_unipRadical {h : HermitianForm F E W} {v : Basis ι E W} {x₀ : W}
           ∃ c : ℂ, ((g : InfinitePlace E → GL ι ℂ) w : Matrix ι ι ℂ) *ᵥ z = z + c • vecAt v x₀ w :=
   Iff.rfl
 
-
 omit [NumberField E] in
 theorem unipRadical_le_vecFixGroup (h : HermitianForm F E W) (v : Basis ι E W) (x₀ : W) :
     unipRadical h v x₀ ≤ vecFixGroup h v x₀ :=
   fun _ hg w => (hg w).1
-
 
 omit [NumberField E] in
 theorem isClosed_unipRadical (h : HermitianForm F E W) (v : Basis ι E W) (x₀ : W) :

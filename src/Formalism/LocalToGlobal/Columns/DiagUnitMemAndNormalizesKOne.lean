@@ -31,7 +31,7 @@ theorem twLamQB_red_one (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {kj n' N : ℕ}
       funext l
       simp [Loc.eN, Pi.single_apply, Fin.ext_iff]
     rw [he]
-    simp only [Loc.atN, dif_pos (hlt s)]
+    simp only [Loc.atN, dite_eq_left (hlt s)]
     rfl
   have hent' := fun s t : Fin (n' - kj) =>
     hent ⟨kj + s.1, hlt s⟩ ⟨kj + t.1, hlt t⟩ (by simp) (hlt' s) (by simp) (hlt' t)

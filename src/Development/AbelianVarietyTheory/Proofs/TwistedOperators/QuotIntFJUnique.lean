@@ -171,11 +171,7 @@ theorem colE_mem (p : ℕ) (β : n → k) :
     rw [inv_eq_of_mul_eq_one_right (QuotStep.colE_neg p β)]; exact colE_tri p _)
 
 theorem colE_add (p : ℕ) (u w : n → k) : colE c p (u + w) = colE c p u * colE c p w := by
-  apply Units.ext
-  simp only [colE, upU, Units.val_mul, fromBlocks_multiply]
-  congr 1 <;> simp
-  ext r i
-  by_cases h : i.val + 1 = p <;> simp [h, add_comm]
+  exact (GlobalTheory.RootEx.FourierJacobiGroup.colE_add p u w).symm
 
 end Alg
 
@@ -368,8 +364,8 @@ theorem _root_.GlobalTheory.QuotIntFJ.quotIntFJ_unique : ∀ (k : Type) [Field k
         emb x * (emb g * ↑u * col β) = emb (x * g) * ↑u * col β := by
       intro g u β; simp only [map_mul, mul_assoc]
     simp only [e]
-    exact integral_mul_left_eq_self (μ := μX)
-      (fun g ↦ ∫ (u : U), ∫ (β : n → k), φ (emb g * ↑u * col β) ∂Measure.pi fun _ ↦ ν ∂μU) x
+    exact (integral_mul_left_eq_self (μ := μX)
+      (fun g ↦ ∫ (u : U), ∫ (β : n → k), φ (emb g * ↑u * col β) ∂Measure.pi fun _ ↦ ν ∂μU) x :)
   have hUH : ∀ v ∈ U, v ∈ H := by
     intro v hv φ
     simp only [hΛ]
@@ -380,8 +376,8 @@ theorem _root_.GlobalTheory.QuotIntFJ.quotIntFJ_unique : ∀ (k : Type) [Field k
         emb g * ↑((⟨_, hw⟩ : U) * u) * col β := by
       intro u β; simp only [Subgroup.coe_mul]; group
     simp only [e]
-    exact integral_mul_left_eq_self (μ := μU)
-      (fun u : U ↦ ∫ (β : n → k), φ (emb g * ↑u * col β) ∂Measure.pi fun _ ↦ ν) (⟨_, hw⟩ : U)
+    exact (integral_mul_left_eq_self (μ := μU)
+      (fun u : U ↦ ∫ (β : n → k), φ (emb g * ↑u * col β) ∂Measure.pi fun _ ↦ ν) (⟨_, hw⟩ : U) :)
   have hcolH : ∀ γ : n → k, col γ ∈ H := by
     intro γ φ
     simp only [hΛ]

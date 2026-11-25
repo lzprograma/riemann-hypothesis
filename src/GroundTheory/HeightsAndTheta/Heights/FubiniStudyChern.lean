@@ -484,13 +484,13 @@ theorem chernCoeff_apply (i : Fin (N + 1)) (z : Fin N → ℂ) (j k : Fin N) :
   rw [hconj, Matrix.one_apply]
   by_cases h : j = k
   · subst h
-    simp only [Pi.single_eq_same, if_true]
+    simp only [Pi.single_eq_same, ite_true]
     push_cast
     field_simp
     ring_nf
     all_goals (try simp only [Complex.I_sq])
     all_goals ring
-  · simp only [Pi.single_apply, if_neg (Ne.symm h), if_neg h]
+  · simp only [Pi.single_apply, ite_eq_right (Ne.symm h), ite_eq_right h]
     push_cast
     field_simp
     ring_nf

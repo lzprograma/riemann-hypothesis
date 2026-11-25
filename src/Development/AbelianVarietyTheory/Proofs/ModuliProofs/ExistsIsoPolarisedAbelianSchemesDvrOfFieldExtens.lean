@@ -63,7 +63,6 @@ import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchem
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory GlobalTheory.Ex
 
 set_option backward.isDefEq.respectTransparency false
@@ -75,13 +74,6 @@ theorem eSec_pullback_fst {S S' : Scheme.{0}} (p : S' ⟶ S) (G : Over S) [GrpOb
   rw [eSec, eSec, Functor.obj.η_def, Over.comp_left, Over.ε_pullback_left, Category.assoc, IsIso.inv_comp_eq]
   erw [ExtUnique.pullback_map_left_fst, ← Category.assoc, ← pullback.condition]
   simp
-
-theorem isAbelianScheme_pullback {S S' : Scheme.{0}} (f : S' ⟶ S) (A : Over S) [GrpObj A]
-    (hA : IsAbelianScheme A) : IsAbelianScheme ((Over.pullback f).obj A) :=
-  { comm := by have := hA.comm; infer_instance
-    smooth := by have := hA.smooth; show Smooth (pullback.snd _ _); infer_instance
-    proper := by have := hA.proper; show IsProper (pullback.snd _ _); infer_instance
-    geomConnected := by have := hA.geomConnected; show GeometricallyConnected (pullback.snd _ _); infer_instance }
 
 variable {U' U S : Scheme.{0}} (k : U' ⟶ U) (j : U ⟶ S)
 
@@ -186,7 +178,7 @@ theorem exists_iso_over_dvr : Laws → Laws2 → ∀ (V : Type) [CommRing V] [Is
     have := h.proper
     refine ⟨h.comm, h.smooth, inferInstance, inferInstance, h.geomConnected, ?_⟩
     intro Ω _ _ p
-    have hab := isAbelianScheme_pullback p B h
+    have hab := ReciprocityTheory.ChartRestriction.G.Out.TLinPf.isAb_pullback p B h
     refine ⟨{ X := PUnit, B := _, isAbelian := hab, q := 𝟙 _, q_hom := inferInstance
               q_flat := ?_, q_surjective := ?_, q_quasiCompact := ?_
               i := toUnit _ ≫ η, i_hom := ?_, isKernel := ?_ }⟩

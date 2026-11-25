@@ -209,7 +209,7 @@ theorem logAbsLocInt' (D : ℕ) (U : Set (Fin D → ℂ)) (f : (Fin D → ℂ) �
       rw [mem_ball] at hx hz0 ⊢
       calc dist x z ≤ dist x z0 + dist z0 z := dist_triangle _ _ _
         _ < r := by linarith
-  · push_neg at h
+  · push Not at h
     refine ⟨ball z (r / 5), mem_nhdsWithin_of_mem_nhds (ball_mem_nhds z (by positivity)), ?_⟩
     exact IntegrableOn.congr_fun integrableOn_zero (fun x hx => by simp [h x hx]) measurableSet_ball
 

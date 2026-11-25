@@ -30,45 +30,8 @@ import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMul
 import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ShortThetaValueComplexPointEqClassicalThetaStatement
 import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointReducedFromTestRing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CoordLetterEquivApplyConjugate
 import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
-import Mathlib.Algebra.Order.Star.Int
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
 import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
@@ -90,7 +53,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level
 open GlobalTheory.SW hiding Level
 open Formalism.L2.Pj Formalism.L2.PjFree
 open scoped ComplexConjugate Classical
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.Dict
 
 namespace GlobalTheory.RawThetaSup
@@ -245,7 +207,7 @@ theorem two_mul_card_psi (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host 
 theorem sum_mult : ∑ τ, Dw.mult τ = Fintype.card (Psi H) * (Dw.p + Dw.q) := by
   rw [sum_emb_eq H, ← Finset.card_univ, ← smul_eq_mul, ← Finset.sum_const]
   refine Finset.sum_congr rfl fun τ _ => ?_
-  rw [Datum.mult, if_pos τ.2, Datum.mult, if_neg (AllWt.conj_not_mem τ)]
+  rw [Datum.mult, ite_eq_left τ.2, Datum.mult, ite_eq_right (AllWt.conj_not_mem τ)]
 
 theorem sizeK_eq (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) :
     sizeK Dw a n = (Formalism.L2.Pj.DF Dw a : ℕ) + ((n / 2 : ℕ) : ℝ) * (Fintype.card (Psi H) * (Dw.p + Dw.q) : ℕ) := by
@@ -259,15 +221,15 @@ theorem sizeK_eq (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) :
     · exact Finset.sum_congr rfl fun τ _ => mul_comm _ _
   rw [h1, sum_emb_eq H, sizeK]
   refine Finset.sum_congr rfl fun τ _ => ?_
-  rw [Datum.mult, if_pos τ.2, Datum.mult, if_neg (AllWt.conj_not_mem τ), Fin.sum_univ_add,
+  rw [Datum.mult, ite_eq_left τ.2, Datum.mult, ite_eq_right (AllWt.conj_not_mem τ), Fin.sum_univ_add,
     ← Finset.sum_range_reflect _ Dw.q, ← Fin.sum_univ_eq_sum_range (fun i => (a (τ.1, i) : ℝ) + ((n / 2 : ℕ) : ℝ)),
     ← Fin.sum_univ_eq_sum_range (fun i => (a (conjEmb τ.1, Dw.q - 1 - i) : ℝ) + ((n / 2 : ℕ) : ℝ))]
   congr 1
   · refine Finset.sum_congr rfl fun i _ => ?_
-    simp only [laOf, AllWt.weightOf, Fin.val_castAdd, i.2, if_true]
+    simp only [laOf, AllWt.weightOf, Fin.val_castAdd, i.2, ite_true]
     rw [Int.cast_add, Int.cast_natCast, Int.cast_natCast, abs_of_nonneg (by positivity)]
   · refine Finset.sum_congr rfl fun i _ => ?_
-    simp only [laOf, AllWt.weightOf, Fin.val_natAdd, Nat.not_lt.2 (Nat.le_add_right _ _), if_false,
+    simp only [laOf, AllWt.weightOf, Fin.val_natAdd, Nat.not_lt.2 (Nat.le_add_right _ _), ite_false,
       Nat.add_sub_cancel_left]
     rw [Int.cast_sub, Int.cast_neg, Int.cast_natCast, Int.cast_natCast, ← neg_add', abs_neg,
       abs_of_nonneg (by positivity)]
@@ -402,7 +364,7 @@ theorem norm_phiHat_indPhi {E : Type} [Field E] [NumberField E] [IsCMField E] {H
     Complex.norm_eq_one_of_pow_eq_one (by rw [← map_pow, hz, map_one]) hM
   unfold phiHat indPhi
   rw [finsum_eq_single _ x0 (fun x hx => by simp [hx])]
-  rw [if_pos rfl, one_mul, map_zpow₀, norm_zpow, zetaM, map_pow, norm_pow, h1, one_pow, one_zpow]
+  rw [ite_eq_left rfl, one_mul, map_zpow₀, norm_zpow, zetaM, map_pow, norm_pow, h1, one_pow, one_zpow]
 
 
 
@@ -427,7 +389,6 @@ theorem homN_raw_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ (D : D7) (T : CoreJ D) (j : �
   have hsize := sizeK_eq (T.Q.Dw j) a n
   rw [hcard, ← hpq] at hsize
   have hn2 : (n : ℝ) = 2 * ((n / 2 : ℕ) : ℝ) := by exact_mod_cast (Nat.two_mul_div_two_of_even hev).symm
-  have hd0 : (0 : ℝ) ≤ (Formalism.L2.Pj.DF (T.Q.Dw j) a : ℕ) := Nat.cast_nonneg _
   have hh0 : (0 : ℝ) ≤ ((n / 2 : ℕ) : ℝ) * (D.R.f * D.R.r : ℕ) := by positivity
   have hdκ : ((Formalism.L2.Pj.DF (T.Q.Dw j) a : ℕ) : ℝ) ≤ sizeK (T.Q.Dw j) a n := by linarith
   have hnκ : (D.R.f : ℝ) * D.R.r * n ≤ 2 * sizeK (T.Q.Dw j) a n := by
@@ -478,7 +439,6 @@ theorem homN_raw_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ (D : D7) (T : CoreJ D) (j : �
       push_cast
       linarith
     · rw [hfd]
-      have h1 : (1 : ℝ) ≤ D.R.f := by exact_mod_cast hf1
       have h2 : (1 : ℝ) ≤ D.R.r := by exact_mod_cast hr1
       have := hpow (D.R.f * D.R.r) 1 (by positivity) (by simpa using hfr)
       rw [pow_one] at this
@@ -502,7 +462,7 @@ theorem homN_raw_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ (D : D7) (T : CoreJ D) (j : �
     (fun k τ => congrArg (2 * ·) (hLw.xiAbs σ' hσ k τ.1)) a n hDom nab hnab La N _
     (fun q => (norm_phiHat_indPhi Y.d.c₂ hLw.levA x0 σ' q).le) P y.1 hU hT hO hP hsec hy k xf hort _ (by positivity) hlam
   rw [hfd] at hv
-  have hrdv : rdU (Y.U σ') y.1 k xf.1 = Formalism.L2.PjFree.toC (evR Y.d.Xo₂ Y.d.c₂ y.1 ((Y.U σ').un k xf)) := dif_pos xf.2
+  have hrdv : rdU (Y.U σ') y.1 k xf.1 = Formalism.L2.PjFree.toC (evR Y.d.Xo₂ Y.d.c₂ y.1 ((Y.U σ').un k xf)) := dite_eq_left xf.2
   rw [hrdv] at hhalf
   have hlie : AllWt.lieFacZ (T.Q.Dw j) (xiR D) (wtZ a n) =
       Real.exp (-(((Formalism.L2.Pj.DF (T.Q.Dw j) a : ℕ) : ℝ) / 2) * Real.log (Real.pi * (2 * xiR D))) := by

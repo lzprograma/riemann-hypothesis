@@ -5,55 +5,15 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.LabRange
 public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NormVal
 import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDegenerationEndomorphismOfAdmissibleBase
-public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagEndIsMonHom
 import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap
 import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsProjBySmoothIsProperGeometricallyIntegral
 import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaLevelPullbackIdCompCancel
 import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
 import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SelfTorusExtensionCoordValuesEqOne
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PsiCoordExistsUniqueUpToUnitLocal
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.PUnit
-import Mathlib.Algebra.Ring.BooleanRing
-import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.TangentLinearity.ConstPullback
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
@@ -65,8 +25,6 @@ open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM
 open scoped CategoryTheory.Obj
 open GlobalTheory.UT ReciprocityTheory.ChartRestriction.G.DVR
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace GlobalTheory.Poinc
 
 namespace Sep
@@ -76,29 +34,6 @@ variable {g n : ℕ} {F : SFam g n (zetaAway n)} {W : Matrix (Fin 8) (Fin 8) ℤ
 
 def IsAct (X₁ : Setup F W i) (act : Matrix (Fin 8) (Fin 8) ℤ → (X₁.ρ.P.A ⟶ X₁.ρ.P.A)) : Prop :=
   IsDiagEnd F W X₁.ρ.P X₁.u act
-
-theorem IsAct.isMonHom {X₁ : Setup F W i} {act : Matrix (Fin 8) (Fin 8) ℤ → (X₁.ρ.P.A ⟶ X₁.ρ.P.A)} (h : IsAct X₁ act)
-    (E : Matrix (Fin 8) (Fin 8) ℤ) : IsMonHom (act E) := by
-  obtain ⟨c, -, pr, hpr, huniq, -, hε⟩ := h
-  have key : ∀ (T' : Over (Sp X₁.S.R)) (x : T' ⟶ X₁.ρ.P.A) (a : Fin 8),
-      (x ≫ act E) ≫ pr a = ((List.finRange 8).map fun b => (x ≫ pr b) ^ E a b).prod := by
-    intro T' x a
-    rw [Category.assoc, hε]
-    change diagPrecomp (M := c.A) x _ = _
-    rw [map_list_prod, List.map_map]
-    congr 1
-    exact List.map_congr_left fun b _ => map_zpow (diagPrecomp (M := c.A) x) (pr b) (E a b)
-  refine isMonHom_of_mul _ fun T' x z => (huniq T' fun a => (x ≫ act E * z ≫ act E) ≫ pr a).unique (fun a => ?_) fun _ => rfl
-  have hm : ∀ (b : Fin 8) (x z : T' ⟶ X₁.ρ.P.A), (x * z) ≫ pr b = (x ≫ pr b) * (z ≫ pr b) := fun b x z =>
-    map_mul (IsMonHom.monoidHom (pr b) T') x z
-  rw [key, hm, key, key, ← List.prod_map_mul]
-  congr 1
-  refine List.map_congr_left fun b _ => ?_
-  rw [hm, mul_zpow]
-
-theorem nonempty_isAct (X₁ : Setup F W i) : Nonempty {act // IsAct X₁ act} :=
-  let ⟨ε, h, _⟩ := exists_diagEnd_isMonHom g n F W _ X₁.ρ.P X₁.u X₁.sharp
-  ⟨⟨ε, h⟩⟩
 
 structure UMem (X₁ : Setup F W i) (z₁ : X₁.M.Z) (act : Matrix (Fin 8) (Fin 8) ℤ → (X₁.ρ.P.A ⟶ X₁.ρ.P.A))
     (V : Type) [CommRing V] [IsDomain V] [IsLocalRing V] (ev : X₁.M.Z.presheaf.stalk z₁ →+* V)
@@ -195,153 +130,6 @@ theorem UMem.mono_mem {mu : Fin 8 → X} (h : mu ≠ 0) : mono W t δ mu ∈ max
   exact (Ideal.unit_mul_mem_iff_mem _ u.isUnit).1 this
 
 end
-
-theorem exists_unif_good {V : Type} [CommRing V] [IsDomain V] [IsLocalRing V] (hV : IsCN V) (P : PolAV (Sp V)) :
-    letI := P.isAb.comm
-    ∃ (D : DegData V (maximalIdeal V)) (A : PolAV (Sp (FractionRing V))) (U : Unif (maximalIdeal V) D A P.A)
-      (ψ : A.A.left ⟶ P.A.left), Subsingleton D.toPre.X ∧ IsGrpPullback A.A P.A (jK V) ψ ∧ LBIso A.L (P.L.pull ψ) ∧
-      ∀ a : P.A ⟶ P.A, IsMonHom a → ∃ E : EndU U.toUnifPre, E.aA.left ≫ ψ = ψ ≫ a.left := by
-  have hN := hV.1
-  have hC := hV.2.2.1
-  obtain ⟨D, rfl, hX⟩ := SelfUnif.exists_degData firstFiveLaws.1.cube (maximalIdeal V) P
-  have semi_of_ab {S : Scheme.{0}} (B : Over S) [GrpObj B] (h : IsAbelianScheme B) : IsSemiAbelian B := by
-    have := h.proper
-    refine ⟨h.comm, h.smooth, inferInstance, inferInstance, h.geomConnected, ?_⟩
-    intro Ω _ _ p
-    have hab := TLinPf.isAb_pullback p B h
-    refine ⟨{ X := PUnit, B := _, isAbelian := hab, q := 𝟙 _, q_hom := inferInstance
-              q_flat := ?_, q_surjective := ?_, q_quasiCompact := ?_
-              i := toUnit _ ≫ η, i_hom := ?_, isKernel := ?_ }⟩
-    · rw [Over.id_left]; infer_instance
-    · rw [Over.id_left]; infer_instance
-    · rw [Over.id_left]; infer_instance
-    · have := hab.comm; infer_instance
-    · have hident : 𝟙 (splitTorus (Spec (CommRingCat.of Ω)) PUnit) = 1 := by
-        rw [← Diag.diagMap_id, ← Diag.diagMap_zero]
-        congr 1
-      have : IsIso (toUnit (splitTorus (Spec (CommRingCat.of Ω)) PUnit)) := ⟨η, hident.symm, toUnit_unique _ _⟩
-      exact IsPullback.of_vert_isIso ⟨Category.comp_id _⟩
-  let polPull {S S' : Scheme.{0}} (P : PolAV S) (f : S' ⟶ S) : PolAV S' := by
-    exact {
-      A := (Over.pullback f).obj P.A,
-      isAb := TLinPf.isAb_pullback f P.A P.isAb,
-      g := P.g,
-      smoothDim := (smoothOfRelativeDimension_isStableUnderBaseChange _).of_isPullback
-        (isGrpPullback_pullback P.A f).1 P.smoothDim,
-      L := P.L.pull (pullback.fst P.A.hom f),
-      isLB := LB.isLB_pull P.isLB _,
-      rigid := PolBaseChange.rigidified_pull (isGrpPullback_pullback P.A f) P.rigid,
-      sym := PolBaseChange.sym_pull (isGrpPullback_pullback P.A f) P.sym,
-      ample := by
-        haveI := P.isAb.proper
-        exact AmpleBaseChange.relAmple_of_isPullback P.isLB P.ample (IsPullback.of_hasPullback P.A.hom f)
-      ktriv := by
-        obtain ⟨w, hw⟩ := PolBaseChange.lbIso_refl (LB.isLB_pull P.isLB (pullback.fst P.A.hom f))
-        exact kTriv_pull (isGrpPullback_pullback P.A f) P.isLB (LB.isLB_pull P.isLB _) ((isGen_iff w).1 hw) P.ktriv } 
-  let A := polPull D.toPre.P (jK V)
-  have r : LBIso A.L (D.toPre.P.L.pull (pullback.fst D.toPre.P.A.hom (jK V))) := PolBaseChange.lbIso_refl A.isLB
-  have hm : IsMonHom (Iso.refl A.A).hom := inferInstanceAs (IsMonHom (𝟙 A.A))
-  have hw : LBIso (A.L.pull (Iso.refl A.A).hom.left) (D.toPre.P.L.pull (pullback.fst D.toPre.P.A.hom (jK V))) := by
-    have := lbIso_pull_comp r (𝟙 A.A.left)
-    exact Eq.mp (congrArg (fun f => LBIso _ (D.toPre.P.L.pull f)) (Category.id_comp _)) this
-  let U : Unif (maximalIdeal V) D A D.toPre.P.A := ⟨SelfUnif.selfPre D A (Iso.refl _) hm hw, fun k _ =>
-    SelfUnif.expBij D A (Iso.refl _) hm hw firstFiveLaws.1.globalFns (IsAdicComplete.le_jacobson_bot _) k⟩
-  refine ⟨D, A, U, _, hX, isGrpPullback_pullback _ _, r, fun a ha => ?_⟩
-  obtain ⟨E, -, hE⟩ := exists_degenerationEndomorphism_of_admissibleBase V _ ⟨hN, inferInstance, hV.2.1, hC⟩ D A _
-    (semi_of_ab _ D.toPre.P.isAb) U a ((Over.pullback (jK V)).map a) ha
-    (inferInstanceAs (IsMonHom ((Over.pullback (jK V)).map a))) ((Category.comp_id _).trans (Category.id_comp _).symm)
-  exact ⟨E, hE ▸ pullback.lift_fst _ _ _⟩
-
-theorem UMem.nonempty_of_regular {X₁ : Setup F W i} {z₁ : X₁.M.Z} {act : Matrix (Fin 8) (Fin 8) ℤ → (X₁.ρ.P.A ⟶ X₁.ρ.P.A)}
-    (hact : IsAct X₁ act) (hz : X₁.S.R ≤ X₁.M.O z₁) {V : Type} [CommRing V] [IsDomain V] [IsLocalRing V] (hV : IsCN V)
-    (ev : X₁.M.Z.presheaf.stalk z₁ →+* V) (hev : IsLocalHom ev) (X : Type) [AddCommGroup X] [Subsingleton X] {m : ℕ}
-    (t : Fin m → V) (δ : Fin m → LinearMap.BilinForm ℤ X) : Nonempty (UMem X₁ z₁ act V ev X t δ) := by
-  have sp : ∀ w, X₁.M.Z.fromSpecStalk z₁ w ⤳ z₁ := fun w => by
-    have : X₁.M.Z.fromSpecStalk z₁ w ∈ Set.range (X₁.M.Z.fromSpecStalk z₁) := ⟨w, rfl⟩
-    rwa [Scheme.range_fromSpecStalk] at this
-  let yV : X₁.S.R →+* V := (RatModel.valLoc (spMap ev ≫ X₁.M.Z.fromSpecStalk z₁) z₁ (sp _)).comp
-    (Subalgebra.inclusion hz).toRingHom
-  have semi_of_ab {S : Scheme.{0}} (B : Over S) [GrpObj B] (h : IsAbelianScheme B) : IsSemiAbelian B := by
-    have := h.proper
-    refine ⟨h.comm, h.smooth, inferInstance, inferInstance, h.geomConnected, ?_⟩
-    intro Ω _ _ p
-    have hab := TLinPf.isAb_pullback p B h
-    refine ⟨{ X := PUnit, B := _, isAbelian := hab, q := 𝟙 _, q_hom := inferInstance
-              q_flat := ?_, q_surjective := ?_, q_quasiCompact := ?_
-              i := toUnit _ ≫ η, i_hom := ?_, isKernel := ?_ }⟩
-    · rw [Over.id_left]; infer_instance
-    · rw [Over.id_left]; infer_instance
-    · rw [Over.id_left]; infer_instance
-    · have := hab.comm; infer_instance
-    · have hident : 𝟙 (splitTorus (Spec (CommRingCat.of Ω)) PUnit) = 1 := by
-        rw [← Diag.diagMap_id, ← Diag.diagMap_zero]
-        congr 1
-      have : IsIso (toUnit (splitTorus (Spec (CommRingCat.of Ω)) PUnit)) := ⟨η, hident.symm, toUnit_unique _ _⟩
-      exact IsPullback.of_vert_isIso ⟨Category.comp_id _⟩
-  let polPull {S S' : Scheme.{0}} (P : PolAV S) (f : S' ⟶ S) : PolAV S' := by
-    exact {
-      A := (Over.pullback f).obj P.A,
-      isAb := TLinPf.isAb_pullback f P.A P.isAb,
-      g := P.g,
-      smoothDim := (smoothOfRelativeDimension_isStableUnderBaseChange _).of_isPullback
-        (isGrpPullback_pullback P.A f).1 P.smoothDim,
-      L := P.L.pull (pullback.fst P.A.hom f),
-      isLB := LB.isLB_pull P.isLB _,
-      rigid := PolBaseChange.rigidified_pull (isGrpPullback_pullback P.A f) P.rigid,
-      sym := PolBaseChange.sym_pull (isGrpPullback_pullback P.A f) P.sym,
-      ample := by
-        haveI := P.isAb.proper
-        exact AmpleBaseChange.relAmple_of_isPullback P.isLB P.ample (IsPullback.of_hasPullback P.A.hom f)
-      ktriv := by
-        obtain ⟨w, hw⟩ := PolBaseChange.lbIso_refl (LB.isLB_pull P.isLB (pullback.fst P.A.hom f))
-        exact kTriv_pull (isGrpPullback_pullback P.A f) P.isLB (LB.isLB_pull P.isLB _) ((isGen_iff w).1 hw) P.ktriv } 
-  let P := polPull X₁.ρ.P (spMap yV)
-  letI := P.isAb.comm
-  obtain ⟨D, A, U, ψ, hX, hψ, hL, hE⟩ := exists_unif_good hV P
-  have r : LBIso P.L (X₁.ρ.P.L.pull (pullback.fst X₁.ρ.P.A.hom (spMap yV))) := PolBaseChange.lbIso_refl P.isLB
-  obtain ⟨wl, hwl⟩ := LBIso.trans A.isLB (LB.isLB_pull P.isLB _) (LB.isLB_pull X₁.ρ.P.isLB _) hL (lbIso_pull_comp r ψ)
-  haveI := hV.2.2.2
-  obtain ⟨r₀, hr₀, -, -, hu⟩ := (PsiCoordLocal.main V D hV.2.1 0).1
-  refine ⟨{
-    cn := hV
-    loc := hev
-    reg := fun a ha => RatModel.O_le_of_specializes (sp _) (hz ha)
-    yK := (algebraMap V (FractionRing V)).comp yV
-    yK_eq := fun a => (RatModel.val_spMap_comp (M := X₁.M) (algebraMap V (FractionRing V)) _ (sp _) ⟨a.1, hz a.2⟩).symm
-    D := D
-    e₈ := ⟨⟨fun _ => 0, fun _ => 0, fun _ => Subsingleton.elim _ _, fun _ => Subsingleton.elim _ _⟩,
-      fun _ _ => Subsingleton.elim _ _⟩
-    G := P.A
-    semi := semi_of_ab _ P.isAb
-    A := A
-    U := U
-    φ := ψ ≫ pullback.fst X₁.ρ.P.A.hom (spMap yV)
-    cart := (hψ.comp (isGrpPullback_pullback X₁.ρ.P.A (spMap yV))).congr
-      (Spec.map_comp (CommRingCat.ofHom yV) (CommRingCat.ofHom (algebraMap V (FractionRing V)))).symm rfl
-    wl := wl
-    wl_gen := hwl
-    equiv := fun a a' _ => ?_
-    psi := fun mu => ⟨(hu rfl).unit, ?_⟩ }⟩
-  · have := hact.isMonHom a
-    obtain ⟨E, h⟩ := hE ((Over.pullback (spMap yV)).map (act a))
-      (inferInstanceAs (IsMonHom ((Over.pullback (spMap yV)).map (act a))))
-    refine ⟨E, ?_, fun _ => Subsingleton.elim _ _⟩
-    exact (Category.assoc _ _ _).symm.trans ((congrArg (· ≫ _) h).trans ((Category.assoc _ _ _).trans
-      ((congrArg (ψ ≫ ·) (pullback.lift_fst _ _ _)).trans (Category.assoc _ _ _).symm)))
-  · have : mono W t δ mu = 1 := by
-      rw [Subsingleton.elim mu 0]
-      simp [mono, qW]
-    rw [this, _root_.mul_one]
-    exact hr₀
-
-theorem exists_uMem (X₁ : Setup F W i) : ∃ act, IsAct X₁ act ∧ ∃ (z₁ : X₁.M.Z) (ev : X₁.M.Z.presheaf.stalk z₁ →+* X₁.Ω₁),
-    Nonempty (UMem X₁ z₁ act X₁.Ω₁ ev PUnit (m := 0) Fin.elim0 Fin.elim0) := by
-  obtain ⟨act, h⟩ := nonempty_isAct X₁
-  refine ⟨act, h, _, (Scheme.stalkClosedPointTo (R := CommRingCat.of X₁.Ω₁) X₁.M.pt).hom,
-    UMem.nonempty_of_regular h ?_ ⟨inferInstance, inferInstance, ?_, X₁.ar.char⟩ _ inferInstance _ _ _⟩
-  · exact le_top.trans ((congrArg X₁.M.O (X₁.M.pt_apply _)).trans X₁.M.O_genericPoint).ge
-  · rw [IsLocalRing.maximalIdeal_eq_bot]
-    infer_instance
 
 end Sep
 

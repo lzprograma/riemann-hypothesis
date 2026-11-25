@@ -26,52 +26,12 @@ public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.
 public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.Sequence
 public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.InfDefs
 public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.IsScalarTowerFiniteSubfieldAlgebraicClosure
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib
+import Mathlib.MeasureTheory.Integral.CompactlySupported
 import Mathlib.Tactic.TypeStar
 import GroundTheory.GlobalFields.TateThesis.DegreeOneDensity
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Linter.HaveILetI
 import GroundTheory.GlobalFields.CompletionAtPlace.Integers
 import GroundTheory.ProfiniteCohomology.FilteredHomology
 import GroundTheory.ProfiniteCohomology.InflationRestriction.DegreeOne
@@ -864,7 +824,7 @@ theorem placeProj_idelesCohomologySum (n : ℕ) (ξ : ⨁ v : Place K, cohomolog
       rw [placeEmbed_comp_placeProj, cohomologyMap_id, DirectSum.of_eq_same]
       rfl
     · rw [placeEmbed_comp_placeProj_of_ne h, cohomologyMap_zero]
-      simp only [DirectSum.of_apply, dif_neg h]
+      simp only [DirectSum.of_apply, dite_eq_right h]
       rfl
   | add ξ η hξ hη => rw [map_add (f := _), map_add (f := _), hξ, hη, DirectSum.add_apply]
 
@@ -1209,10 +1169,10 @@ theorem limitCohomologyHom_surjective : Function.Surjective (limitCohomologyHom 
   rw [levelSum_apply, ← idelesCohomologyEquiv_symm_apply hn, AddEquiv.symm_apply_apply]
   by_cases hv : v ∈ ζ.support
   · have : ξ v = (D.e v r).symm (D.lt v (hpr v hv) (z v)) := by
-      simp only [ξ, DFinsupp.mk_apply, dif_pos hv]
+      simp only [ξ, DFinsupp.mk_apply, dite_eq_left hv]
     rw [this, AddEquiv.apply_symm_apply, T.infl_compat, hz]
   · have : ξ v = 0 := by
-      simp only [ξ, DFinsupp.mk_apply, dif_neg hv]
+      simp only [ξ, DFinsupp.mk_apply, dite_eq_right hv]
     rw [this, map_zero, map_zero, DFinsupp.notMem_support_iff.1 hv]
 
 def limitCohomologyEquiv : cohomology (limitRep K) n ≃+ ⨁ v : Place K.1, T.T v :=

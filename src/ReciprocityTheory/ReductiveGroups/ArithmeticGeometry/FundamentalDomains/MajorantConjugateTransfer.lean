@@ -126,8 +126,7 @@ theorem cs {x : Frame X.Ψ r} (hx : x ∈ X.dom) (τ : X.Ψ) (u v : Fin r → �
   have e' := Complex.ofReal_injective e
   rw [e'] at hn
   have hle : Complex.normSq H ≤ X.maj x τ v * X.maj x τ u := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have : X.maj x τ v * (X.maj x τ v * X.maj x τ u - Complex.normSq H) < 0 :=
       mul_neg_of_pos_of_neg hm (by linarith)
     linarith

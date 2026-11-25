@@ -2,6 +2,8 @@ module
 
 public import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.LetterB
 import Mathlib.Algebra.AffineMonoid.UniqueSums
+import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SPtrueHom
+import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeMapFractionField
 
 @[expose] public section
 
@@ -101,7 +103,7 @@ theorem map_Nv {R R' : Type} [CommRing R] [CommRing R'] (f : R →+* R') (m : �
     map f (Nv R m vec c) = Nv R' m vec c := by
   simp only [Nv]
   cases vec
-  · simp only [Bool.false_eq_true, if_false]
+  · simp only [Bool.false_eq_true, ite_false]
     have h1 : (MvPolynomial.map f).mapMatrix (genM R m) = genM R' m := by
       ext i j
       simp [genM]
@@ -190,26 +192,12 @@ theorem Pol_one (R : Type) [CommRing R] (k : ℕ) : (1 : MvPolynomial (S × Fin 
 
 theorem Pol_mul {R : Type} [CommRing R] {k : ℕ} {a b : S → ℕ} {P Q : MvPolynomial (S × Fin k) R}
     (hP : P ∈ Pol R k a) (hQ : Q ∈ Pol R k b) : P * Q ∈ Pol R k (a + b) := by
-  rw [mem_Pol] at hP hQ ⊢
-  intro μ hμ i
-  classical
-  obtain ⟨a', ha, b', hb, rfl⟩ := Finset.mem_add.mp (MvPolynomial.support_mul P Q hμ)
-  have e1 := hP a' ha i
-  have e2 := hQ b' hb i
-  simp only [multideg] at e1 e2 ⊢
-  simp only [Finsupp.add_apply, Finset.sum_add_distrib, Pi.add_apply, e1, e2]
+  apply _root_.Formalism.MainNotions.G.Joints.StandardMonomialSpace.hom_Pol_mul <;> assumption
 
 theorem Pol_prod {R : Type} [CommRing R] {k : ℕ} {J : Type} (s : Finset J) (δ : J → S → ℕ)
     (q : J → MvPolynomial (S × Fin k) R) (h : ∀ i ∈ s, q i ∈ Pol R k (δ i)) :
     ∏ i ∈ s, q i ∈ Pol R k (∑ i ∈ s, δ i) := by
-  classical
-  revert h
-  refine Finset.induction_on s ?_ ?_
-  · intro _
-    simpa using (Pol_one (S := S) R k)
-  · intro j s hj ih h
-    rw [Finset.prod_insert hj, Finset.sum_insert hj]
-    exact Pol_mul (h j (Finset.mem_insert_self j s)) (ih fun i hi => h i (Finset.mem_insert_of_mem hi))
+  apply _root_.Formalism.MainNotions.Pf14.pol_prod <;> assumption
 
 theorem emb_Pol {R : Type} [CommRing R] {k a : ℕ} (s : S) (P : MvPolynomial (Fin k) R) (hP : P ∈ Hd R k a) :
     embS R s P ∈ Pol R k (Pi.single s a : S → ℕ) := by

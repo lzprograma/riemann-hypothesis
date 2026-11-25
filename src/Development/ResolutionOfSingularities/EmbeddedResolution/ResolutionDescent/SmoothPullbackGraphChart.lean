@@ -10,52 +10,7 @@ public import Mathlib.RingTheory.Smooth.StandardSmooth
 public import Mathlib.Combinatorics.Quiver.ReflQuiver
 public import Mathlib.AlgebraicGeometry.Morphisms.ClosedImmersion
 public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.PolynomialRingOverGlobalSections
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.GraphAlgebraSpecSmooth, Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.GraphChartSmooth, Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.StandardSmoothLift, Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.StandardSmoothLiftRelativeDimension, Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.SmoothAffineLiftRelativeDimension, Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.SmoothAffinePullbackPresentation, Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.SumCoordinatePartialDerivatives, Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.SmoothPullbackGraphChart
@@ -90,7 +45,6 @@ theorem isOpenImmersion_specMap_algebraMap_graphAlgebraAway
     (f : τ → MvPolynomial σ R) (v : τ → σ) :
     IsOpenImmersion
       (Spec.map (CommRingCat.ofHom (algebraMap (GraphAlgebra f) (GraphAlgebraAway f v)))) := by
-  have : IsLocalization.Away (graphJacobianMinorDet f v) (GraphAlgebraAway f v) := inferInstance
   exact IsOpenImmersion.of_isLocalization (graphJacobianMinorDet f v) ..
 
 instance instIsOpenImmersionSpecMapGraphAway
@@ -360,26 +314,23 @@ instance instIsOpenImmersionGraphChartHom (k : Type u) [Field k] (M n q : ℕ)
     IsOpenImmersion (basicOpenToSpecGraphAlgebra k M n q F s) :=
   isOpenImmersion_basicOpenToSpecGraphAlgebra k M n q F s
 
-private theorem base_comp_apply {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) (x : ↥X) :
-    ⇑(f ≫ g).base x = ⇑g.base (⇑f.base x) := rfl
-
 private theorem range_base_comp {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) :
     Set.range ⇑(f ≫ g).base = ⇑g.base '' Set.range ⇑f.base := by
   ext z
   constructor
   · rintro ⟨x, rfl⟩
-    exact ⟨⇑f.base x, ⟨x, rfl⟩, (base_comp_apply f g x).symm⟩
+    exact ⟨⇑f.base x, ⟨x, rfl⟩, (Scheme.Hom.comp_apply f g x).symm⟩
   · rintro ⟨y, ⟨x, rfl⟩, rfl⟩
-    exact ⟨x, base_comp_apply f g x⟩
+    exact ⟨x, Scheme.Hom.comp_apply f g x⟩
 
 private theorem image_base_comp {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) (S : Set ↥X) :
     ⇑(f ≫ g).base '' S = ⇑g.base '' (⇑f.base '' S) := by
   ext z
   constructor
   · rintro ⟨x, hx, rfl⟩
-    exact ⟨⇑f.base x, ⟨x, hx, rfl⟩, (base_comp_apply f g x).symm⟩
+    exact ⟨⇑f.base x, ⟨x, hx, rfl⟩, (Scheme.Hom.comp_apply f g x).symm⟩
   · rintro ⟨y, ⟨x, hx, rfl⟩, rfl⟩
-    exact ⟨x, hx, base_comp_apply f g x⟩
+    exact ⟨x, hx, Scheme.Hom.comp_apply f g x⟩
 
 private theorem image_hom_preimage_eq {X Y : Scheme.{u}} (e : X ≅ Y) (U : Y.Opens) :
     ⇑e.hom.base '' ((e.hom ⁻¹ᵁ U : X.Opens) : Set ↥X) = (U : Set ↥Y) := by

@@ -5,46 +5,6 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.De
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.StepW
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.IsTopRingTens
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.ColumnAdditionFixesTranspose
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -104,8 +64,8 @@ theorem weil_gen {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E
   have hs : ∀ Y, (∃ g : HA (Fv F v) σ J, g • X0r = Y) → s Y • X0r = Y := by
     intro Y hY
     by_cases hA : Y ∈ A
-    · simp only [s, dif_pos hA]; exact hA.choose_spec.2
-    · simp only [s, dif_neg hA, dif_pos hY]; exact hY.choose_spec
+    · simp only [s, dite_eq_left hA]; exact hA.choose_spec.2
+    · simp only [s, dite_eq_right hA, dite_eq_left hY]; exact hY.choose_spec
   have hf : Measurable (C.indicator (1 : HA (Fv F v) σ J → ENNReal)) := measurable_one.indicator hCm
   have key := hc.2 _ hf s hs
   have hL : ∫⁻ g, C.indicator (1 : HA (Fv F v) σ J → ENNReal) g ∂μG = μG C := lintegral_indicator_one hCm
@@ -116,7 +76,7 @@ theorem weil_gen {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E
     by_cases hA : Y ∈ A
     · rw [Set.indicator_of_mem hA]
       have hk : hA.choose ∈ C := hA.choose_spec.1
-      have hsY : s Y = hA.choose := by simp only [s, dif_pos hA]
+      have hsY : s Y = hA.choose := by simp only [s, dite_eq_left hA]
       rw [← lintegral_indicator_one hDm]
       congr 1
       funext h'

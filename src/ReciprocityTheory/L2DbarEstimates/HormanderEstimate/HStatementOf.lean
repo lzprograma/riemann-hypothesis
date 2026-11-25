@@ -765,7 +765,7 @@ private theorem wdb_sum_mul_conj_eq_coord (n : ℕ) (k : Fin n) (p : V n) :
   rw [hF.fderiv]
   simp [bas, PiLp.single_apply]
   simp only [apply_ite (starRingEnd ℂ), map_zero, mul_ite, mul_zero, Complex.conj_I,
-    Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   linear_combination ((starRingEnd ℂ (p.ofLp k) - p.ofLp k) / 2) * Complex.I_sq
 
 theorem leviNormSq (n : ℕ) (M : Type*) [TopologicalSpace M] [T2Space M]
@@ -1676,14 +1676,14 @@ theorem shell (n : ℕ) (M : Type*) [TopologicalSpace M] [T2Space M]
         simp only [hg]
         gcongr
         linarith [hχ0 (e x)]
-      · push_neg at hx
+      · push Not at hx
         have hxS : x ∈ S ⌈e x - a - 2⌉₊ := shell_mem a (e x) hx
         refine le_trans ?_ (le_add_left (ENNReal.le_tsum ⌈e x - a - 2⌉₊))
         rw [Set.indicator_of_mem hxS, ← ENNReal.ofReal_mul (Real.exp_pos _).le]
         apply ENNReal.ofReal_le_ofReal
         have hRx : Real.log (1 + C ⌈e x - a - 2⌉₊) + ⌈e x - a - 2⌉₊ ≤ χ (e x) := by
           have := hχR (e x) hx.le
-          simp only [hR, if_pos hx] at this
+          simp only [hR, ite_eq_left hx] at this
           exact this
         simp only [hg]
         rw [show -(ph x + χ (e x) - ψ x) = -(χ (e x)) + (-ph x + ψ x) by ring, Real.exp_add]
@@ -1756,8 +1756,7 @@ theorem ti_hasCompactSupport {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M �
   have hsub : Function.support f ⊆ ⋃ j, Function.support (fun x => f x j) := by
     intro x hx
     rw [Set.mem_iUnion]
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     apply hx
     ext j
     simpa [Function.mem_support] using hne j
@@ -1766,34 +1765,6 @@ theorem ti_hasCompactSupport {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M �
     rw [← closure_iUnion_of_finite]
     exact closure_mono hsub
   exact IsCompact.of_isClosed_subset (isCompact_iUnion fun j => h j) (isClosed_tsupport f) hts
-
-private theorem db_eq_wdb_comp_symm_of_isChart {M : Type*} [TopologicalSpace M] {n : ℕ} {z : M → V n}
-    (j : Fin n) (f : M → ℂ) (e : OpenPartialHomeomorph M (V n)) (he : IsChart n z e) {x : M}
-    (hx : x ∈ e.source) : db n z j f x = wdb n j (f ∘ e.symm) (z x) := by
-  have hex : ∃ c : OpenPartialHomeomorph M (V n), IsChart n z c ∧ x ∈ c.source := ⟨e, he, hx⟩
-  rw [db, dite_eq_left hex]
-  obtain ⟨hc, hxc⟩ := Classical.choose_spec hex
-  apply wdb_congr
-  have hzx : z x = e x := he hx
-  have hzc : z x = (Classical.choose hex) x := hc hxc
-  have h1 : ∀ᶠ y in 𝓝 (z x), y ∈ e.target := by
-    rw [hzx]
-    exact e.open_target.mem_nhds (e.map_source hx)
-  have h2 : ∀ᶠ y in 𝓝 (z x), y ∈ (Classical.choose hex).target := by
-    rw [hzc]
-    exact (Classical.choose hex).open_target.mem_nhds ((Classical.choose hex).map_source hxc)
-  have h3 : ∀ᶠ y in 𝓝 (z x), e.symm y ∈ (Classical.choose hex).source := by
-    have hca : ContinuousAt e.symm (z x) := by
-      rw [hzx]
-      exact e.continuousAt_symm (e.map_source hx)
-    apply hca.preimage_mem_nhds
-    rw [hzx, e.left_inv hx]
-    exact (Classical.choose hex).open_source.mem_nhds hxc
-  filter_upwards [h1, h2, h3] with y hy1 hy2 hy3
-  show f ((Classical.choose hex).symm y) = f (e.symm y)
-  congr 1
-  apply (Classical.choose hex).injOn ((Classical.choose hex).map_target hy2) hy3
-  rw [(Classical.choose hex).right_inv hy2, ← hc hy3, he (e.map_target hy1), e.right_inv hy1]
 
 private theorem ck_one_db_of_smooth {M : Type*} [TopologicalSpace M] {n : ℕ} {z : M → V n} {F : M → ℂ}
     (hF : Smooth n z F) (j : Fin n) : Ck n z 1 (fun x => db n z j F x) := by
@@ -1808,7 +1779,7 @@ private theorem ck_one_db_of_smooth {M : Type*} [TopologicalSpace M] {n : ℕ} {
       (contDiffOn_const.mul (hD.clm_apply contDiffOn_const))).div_const _
   refine hW.congr fun y hy => ?_
   show db n z j F (e.symm y) = wdb n j (F ∘ e.symm) y
-  rw [db_eq_wdb_comp_symm_of_isChart j F e he (e.map_target hy), he (e.map_target hy), e.right_inv hy]
+  rw [db_eq_wdb n z e he j F _ (e.map_target hy), he (e.map_target hy), e.right_inv hy]
 
 private theorem smoothR_sub_const_mul {M : Type*} [TopologicalSpace M] {n : ℕ} {z : M → V n}
     {a b : M → ℝ} (ha : SmoothR n z a) (hb : SmoothR n z b) (c : ℝ) :

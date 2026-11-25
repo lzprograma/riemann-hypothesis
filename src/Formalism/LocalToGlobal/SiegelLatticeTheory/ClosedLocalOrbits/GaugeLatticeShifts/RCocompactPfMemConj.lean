@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RCocompactPfApprox
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RCocompactPfMemSteps
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RCocompactPfConj
 
@@ -18,43 +19,11 @@ variable {D : D7} (X : HidaSetting D)
 
 theorem mc_gr_mul_inv (M : GL (Fin X.B.I.n) X.B.I.E) :
     Gr X (M : Matrix _ _ _) * Gr X (↑M⁻¹ : Matrix _ _ _) = 1 := by
-  unfold Gr
-  have h1 := Bm_mul_Bm' X
-  have h2 : Bm' X * Bm X = 1 := Bm'_mul_Bm X
-  simp only [Matrix.mul_assoc]
-  rw [← Matrix.mul_assoc (Bm X) (Bm' X), h1, Matrix.one_mul]
-  have h3 : (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) *
-      (((M⁻¹ : GL (Fin X.B.I.n) X.B.I.E) : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) * Bm X) = Bm X := by
-    rw [← Matrix.mul_assoc, Units.mul_inv, Matrix.one_mul]
-  rw [h3, h2]
+  exact Formalism.L2.SG.TermOp.Vanish.gr_mul X M
 
 theorem mc_gr_unitary (M : GL (Fin X.B.I.n) X.B.I.E) (hM : M ∈ Formalism.UG.UJ (starRingEnd X.B.I.E) X.B.I.J) :
     (Gr X (M : Matrix _ _ _))ᴴ * JB X * Gr X (M : Matrix _ _ _) = JB X := by
-  have hc : Formalism.UG.cT (starRingEnd X.B.I.E) (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) =
-      (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E)ᴴ := by
-    ext i j
-    unfold Formalism.UG.cT
-    simp [Matrix.conjTranspose_apply, starRingEnd_apply]
-  have hMJ : (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E)ᴴ * X.B.I.J *
-      (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) = X.B.I.J := by
-    rw [← hc]
-    exact hM
-  have hJB : JB X = (Bm X)ᴴ * X.B.I.J * Bm X := by
-    ext k k'
-    unfold JB hE Formalism.UG.hform Bm
-    simp only [Matrix.of_apply, Matrix.mul_apply, Matrix.conjTranspose_apply, Finset.sum_mul, starRingEnd_apply]
-    rw [Finset.sum_comm]
-  have h1 := Bm_mul_Bm' X
-  have h5 : ∀ Z : Matrix (Fin X.B.I.n) (Kap X) X.B.I.E, (Bm' X)ᴴ * ((Bm X)ᴴ * Z) = Z := fun Z => by
-    rw [← Matrix.mul_assoc, ← Matrix.conjTranspose_mul, h1, Matrix.conjTranspose_one, Matrix.one_mul]
-  rw [hJB]
-  unfold Gr
-  simp only [Matrix.conjTranspose_mul, Matrix.mul_assoc]
-  rw [← Matrix.mul_assoc (Bm X) (Bm' X), h1, Matrix.one_mul, h5]
-  have h4 : (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E)ᴴ * (X.B.I.J *
-      ((M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) * Bm X)) = X.B.I.J * Bm X := by
-    rw [← Matrix.mul_assoc, ← Matrix.mul_assoc, hMJ]
-  rw [h4]
+  apply +allowSynthFailures _root_.Formalism.L2.SG.TermOp.Vanish.gr_unitary <;> assumption
 
 theorem memConjOf_holds : MemConjOf := by
   intro D X M hM

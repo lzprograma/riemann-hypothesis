@@ -8,52 +8,9 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeInnerPr
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalRingPointsExistsUnique
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCompDescentFourth
 
 @[expose] public section
 
@@ -78,9 +35,6 @@ theorem valAt_mul {a b : Ω} {r r' : R} (h : ValAt ξ z a r) (h' : ValAt ξ z b 
   obtain ⟨h2, s', rfl, rfl⟩ := h'
   exact ⟨h1, s * s', map_mul _ _ _, map_mul _ _ _⟩
 
-theorem valAt_one (h : genPt ξ ⤳ centre z) : ValAt ξ z (1 : Ω) (1 : R) :=
-  ⟨h, 1, map_one _, map_one _⟩
-
 theorem valAt_of_mem {a : Ω} (h : genPt ξ ⤳ centre z) (ha : a ∈ regAt ξ ⟨centre z, h⟩) :
     ∃ r : R, ValAt ξ z a r := by
   obtain ⟨s, rfl⟩ := ha
@@ -102,7 +56,7 @@ theorem valAt_zpow {a : Ω} {r : ℂ} (h : ValAt ξ z a r) (hr : r ≠ 0) (hz : 
   have hn : ∀ {b : Ω} {q : ℂ}, ValAt ξ z b q → ∀ m : ℕ, ValAt ξ z (b ^ m) (q ^ m) := by
     intro b q hb m
     induction m with
-    | zero => simpa using valAt_one hz
+    | zero => simpa using GlobalTheory.CompanionTheory.Ar.RootHt.ArchB.val_one hz
     | succ m ih => simpa [pow_succ] using valAt_mul ih hb
   cases n with
   | ofNat m => simpa using hn h m
@@ -117,7 +71,7 @@ theorem exists_valAt_of_unit {a : Ω} (h : genPt ξ ⤳ centre z) (ha : unitAt �
   rintro rfl
   have := valAt_mul hr hr'
   rw [mul_inv_cancel₀ h0, zero_mul] at this
-  exact zero_ne_one (_root_.GlobalTheory.CompanionTheory.Ar.TiePoints.valAt_unique hg this (valAt_one h))
+  exact zero_ne_one (_root_.GlobalTheory.CompanionTheory.Ar.TiePoints.valAt_unique hg this (GlobalTheory.CompanionTheory.Ar.RootHt.ArchB.val_one h))
 
 abbrev cj (z : Spec (CommRingCat.of ℂ) ⟶ X) : Spec (CommRingCat.of ℂ) ⟶ X := spMap (starRingEnd ℂ) ≫ z
 
@@ -284,7 +238,7 @@ theorem valAt_prod (hz : genPt ξ ⤳ centre z) {f : K → Ω} {r : K → ℂ} (
   have : ∀ s : Finset K, ValAt ξ z (∏ k ∈ s, f k) (∏ k ∈ s, r k) := by
     intro s
     induction s using Finset.induction_on with
-    | empty => simpa using valAt_one hz
+    | empty => simpa using GlobalTheory.CompanionTheory.Ar.RootHt.ArchB.val_one hz
     | insert k s hk ih =>
       rw [Finset.prod_insert hk, Finset.prod_insert hk]
       exact valAt_mul (h k) ih
@@ -323,16 +277,7 @@ theorem exists_gen {Λ : Lat ξ Ω} {σ : ℤ} {g : Ω} (hg : g ≠ 0)
     rw [h]
     exact Submodule.mem_span_singleton_self g
   have hne : ∃ t₀, Λ.IsGenAt p t₀ := by
-    by_contra hn
-    have he : {t | ∃ s : Unit → Ω, (∀ i, Λ.IsGenAt p (s i)) ∧ t = ∏ i, s i ^ σ} = ∅ := by
-      ext t
-      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
-      rintro ⟨s, hs, -⟩
-      exact hn ⟨_, hs ()⟩
-    have hm2 : g ∈ Submodule.span (regAt ξ p) {t | ∃ s : Unit → Ω, (∀ i, Λ.IsGenAt p (s i)) ∧ t = ∏ i, s i ^ σ} :=
-      hmem
-    rw [he, Submodule.span_empty, Submodule.mem_bot] at hm2
-    exact hg hm2
+    apply _root_.GlobalTheory.CompanionTheory.Ar.ChgUnit.exists_gen_of_tens <;> assumption
   obtain ⟨t₀, ht₀⟩ := hne
   have ht₀σ : t₀ ^ σ ≠ 0 := zpow_ne_zero _ ht₀.1
   have hle : Lat.tens (fun _ : Unit => Λ) (fun _ => σ) p ≤ Submodule.span (regAt ξ p) {t₀ ^ σ} := by
@@ -415,7 +360,7 @@ theorem exists_metric (hβ : Function.Injective β) (Fl : 𝔐.Flag) {xdeg : CMT
   have hνσ : 0 < ν₀ ^ rootSgn D r := zpow_pos hν₀ _
   have hu₀' : 0 < ‖u₀‖ := norm_pos_iff.2 hu₀
   refine ⟨(∏ k, ‖w ⟨k, c₀ k⟩‖ ^ xdeg r k) / (‖u₀‖ * ν₀ ^ rootSgn D r), ⟨hw, hi, by positivity, ?_⟩, t₀, ν₀, hν₀,
-    (hI t₀ ν₀).2 ⟨1, one_ne_zero, by rw [div_self ht₀]; exact valAt_one hall, by simp⟩⟩
+    (hI t₀ ν₀).2 ⟨1, one_ne_zero, by rw [div_self ht₀]; exact GlobalTheory.CompanionTheory.Ar.RootHt.ArchB.val_one hall, by simp⟩⟩
   intro t ν hgr c hc
   obtain ⟨u₁, hu₁, hv₁, rfl⟩ := (hI t ν).1 hgr
   obtain ⟨m, hm, hvm, hnm⟩ := valAt_ratio (a := xdeg r) hall hw c c₀ hc hn₀

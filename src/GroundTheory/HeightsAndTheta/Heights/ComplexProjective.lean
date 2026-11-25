@@ -46,16 +46,7 @@ abbrev evalAt (ρ : A →+* ℂ) (w : Fin (N + 1) → ℂ) (f : MvPolynomial (Fi
 lemma evalAt_smul (ρ : A →+* ℂ) {f : MvPolynomial (Fin (N + 1)) A} {d : ℕ}
     (hf : f.IsHomogeneous d) (c : ℂ) (w : Fin (N + 1) → ℂ) :
     evalAt ρ (c • w) f = c ^ d * evalAt ρ w f := by
-  rw [evalAt, evalAt, eval₂_eq', eval₂_eq', Finset.mul_sum]
-  refine Finset.sum_congr rfl fun m hm => ?_
-  have hd : ∑ k, m k = d := by
-    have := hf (mem_support_iff.mp hm)
-    simpa [Finsupp.weight_apply, Finsupp.sum_fintype] using this
-  simp only [Pi.smul_apply, smul_eq_mul, mul_pow, Finset.prod_mul_distrib,
-    Finset.prod_pow_eq_pow_sum, hd]
-  ring
-
-attribute [local instance] MvPolynomial.gradedAlgebra
+  simpa [evalAt, eval_map] using (hf.map ρ).eval_smul c w
 
 end
 

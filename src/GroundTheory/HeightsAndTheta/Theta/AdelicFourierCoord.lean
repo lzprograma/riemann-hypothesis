@@ -180,13 +180,7 @@ theorem measurePreserving_mulVec_fin {n : ℕ} (M N : Matrix (Fin n) (Fin n) K) 
 theorem measurePreserving_mulVec (hNM : N * M = 1) (hMN : M * N = 1) :
     MeasurePreserving (fun x : ι → 𝔸[K] ↦ M.map (algebraMap K 𝔸[K]) *ᵥ x)
       (adeleMeasurePi K) (adeleMeasurePi K) := by
-  have hcard : Fintype.card κ = Fintype.card ι := by
-    let e : (ι → K) ≃ₗ[K] (κ → K) := LinearEquiv.ofLinearMap (Matrix.toLin' M) (Matrix.toLin' N)
-      (by rw [← Matrix.toLin'_mul, hMN, Matrix.toLin'_one])
-      (by rw [← Matrix.toLin'_mul, hNM, Matrix.toLin'_one])
-    have h := e.finrank_eq
-    rw [Module.finrank_fintype_fun_eq_card, Module.finrank_fintype_fun_eq_card] at h
-    exact h.symm
+  have hcard : Fintype.card κ = Fintype.card ι := Matrix.square_of_invertible M N hMN hNM
   set τ : ι ≃ Fin (Fintype.card ι) := Fintype.equivFin ι
   set ρ : κ ≃ Fin (Fintype.card ι) := (Fintype.equivFin κ).trans (finCongr hcard)
   set P : Matrix (Fin (Fintype.card ι)) (Fin (Fintype.card ι)) K := M.submatrix ρ.symm τ.symm

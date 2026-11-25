@@ -33,13 +33,6 @@ infinitesimal generators instead of the Gaussian.
   it is `GlobalTheory.WeilM.schr eChar` (`coe_rho`).
 * `act g (p, q)` applies a matrix `g` indexed by `ι ⊕ ι` to the vector `(p, q)`.
 * `holPart g` is the complex matrix `((A + D) + i (C - B)) / 2` for `g = fromBlocks A B C D`.
-
-`MetaplecticRepresentation` is proved in `GlobalTheory.metaplecticRepresentation_holds`.
-
-## References
-
-* [G. B. Folland, *Harmonic analysis in phase space* (Chapter 4)][folland1989]
-* [A. Weil, *Sur certains groupes d'opérateurs unitaires*][weil1964]
 -/
 
 @[expose] public section
@@ -130,10 +123,7 @@ linear operators on `L²(ℝⁿ)` and `ω` to those on Schwartz functions, and a
 * if `pr g` is orthogonal, then `ω g φ₀ = c • φ₀` for some `c` with
   `c ^ 2 * det (holPart (pr g)) = 1`.
 
-This is the Segal–Shale–Weil representation; see
-[G. B. Folland, *Harmonic analysis in phase space* (Chapter 4)][folland1989] and
-[A. Weil, *Sur certains groupes d'opérateurs unitaires*][weil1964]. It is proved in
-`GlobalTheory.metaplecticRepresentation_holds`. -/
+This is the Segal–Shale–Weil representation. -/
 def MetaplecticRepresentation : Prop :=
   ∀ (ι : Type) [Fintype ι] [DecidableEq ι],
     ∃ (G : Type) (_ : Group G) (_ : TopologicalSpace G) (_ : IsTopologicalGroup G)

@@ -135,7 +135,6 @@ namespace GroundTheory.Heights₂.Heights.FieldNumbers
 universe u
 
 
-set_option maxHeartbeats 800000 in
 set_option synthInstance.maxHeartbeats 200000 in
 theorem finite_integralClosure_mvPolynomial_of_charP (k : Type u) [Field k] (p : ℕ) [Fact p.Prime]
     [CharP k p] (s : ℕ) (L : Type u) [Field L] [Algebra (FractionRing (MvPolynomial (Fin s) k)) L]

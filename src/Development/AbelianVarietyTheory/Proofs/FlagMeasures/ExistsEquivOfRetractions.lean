@@ -287,8 +287,7 @@ private theorem isField_or_exists_swap_ringEquiv {F : Type} [Field F] [Valuative
   · exact Or.inl hfield
   right
   obtain ⟨u, hu0, hu⟩ : ∃ u : E, u ≠ 0 ∧ ∀ w, u * w ≠ 1 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hfield ⟨exists_pair_ne E, mul_comm, fun ha => hcon _ ha⟩
   obtain ⟨t, ht⟩ := (L.cj_fix (u + L.cj u)).1 (by rw [map_add (f := _), L.cj_cj, add_comm])
   obtain ⟨s, hs⟩ := (L.cj_fix (u * L.cj u)).1 (by rw [map_mul, L.cj_cj, mul_comm])
@@ -338,7 +337,7 @@ private theorem isField_or_exists_swap_ringEquiv {F : Type} [Field F] [Valuative
     intro a b
     simp [φ, _root_.GlobalTheory.SgLoc.idemPairHom, Algebra.smul_def]
   have hinj : Function.Injective φ := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     rintro ⟨a, b⟩ hab
     rw [hφ] at hab
     have ha : algebraMap F E a * p = 0 := by

@@ -134,7 +134,7 @@ theorem gg_one_and_isClass : ∀ (g : ℕ) [Fact g.Prime] (ψ : AddChar (ZMod g)
       · exact Matrix.one_apply_ne (by simp)
       · rfl
     unfold gg
-    simp only [mul_one, inv_mul_cancel, Units.val_one, h1, if_true, h2, Finset.sum_const_zero,
+    simp only [mul_one, inv_mul_cancel, Units.val_one, h1, ite_true, h2, Finset.sum_const_zero,
       AddChar.map_zero_eq_one, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
     rw [card_uniUp, card_Gn]
     push_cast

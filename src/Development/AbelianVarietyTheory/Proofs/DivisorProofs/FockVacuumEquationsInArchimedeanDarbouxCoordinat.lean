@@ -4,6 +4,7 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrPairApply
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfAtOfPiInf
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAtEvIPiInfEq
+import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilModelArchimedeanExponent
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -284,129 +285,31 @@ theorem exists_bridge : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
     have hCt : (IC w)ᵀ * (C w)ᵀ = 1 := by rw [← Matrix.transpose_mul, (hIC w).2, Matrix.transpose_one]
     calc _ = (A w * IA w) * X * ((IC w)ᵀ * (C w)ᵀ) := by simp only [Matrix.mul_assoc]
       _ = X := by rw [(hIA w).2, hCt, Matrix.one_mul, Matrix.mul_one]
-  have hfwd : ∀ w (c : Matrix (Ix P Q) (Ix R S) ℂ), IA w * (A w * c * (C w)ᵀ) * (IC w)ᵀ = c := by
-    intro w c
-    have hCt : (C w)ᵀ * (IC w)ᵀ = 1 := by rw [← Matrix.transpose_mul, (hIC w).1, Matrix.transpose_one]
-    calc _ = (IA w * A w) * c * ((C w)ᵀ * (IC w)ᵀ) := by simp only [Matrix.mul_assoc]
-      _ = c := by rw [(hIA w).1, hCt, Matrix.one_mul, Matrix.mul_one]
-
-  let Ψl : ((κ → mixedEmbedding.mixedSpace F) × (κ → mixedEmbedding.mixedSpace F)) →ₗ[ℝ]
-      (InfinitePlace F → Matrix (Ix P Q) (Ix R S) ℂ) :=
-    { toFun := fun y w => IA w * (mkD d y).map (piInf (τ w)) * (IC w)ᵀ
-      map_add' := fun y y' => by
-        funext w
-        simp only [mkD_add, Pi.add_apply]
-        rw [Matrix.map_add _ (map_add _), Matrix.mul_add, Matrix.add_mul]
-      map_smul' := fun r y => by
-        funext w
-        simp only [mkD_smul_real, map_smul_piInf, ext_realAd, RingHom.id_apply, Pi.smul_apply]
-        rw [Matrix.mul_smul, Matrix.smul_mul]
-        ext i j
-        simp [Complex.real_smul] }
-  have hΨl : ∀ y w, A w * Ψl y w * (C w)ᵀ = (mkD d y).map (piInf (τ w)) := fun y w => hback w _
-  have hinj : Function.Injective Ψl := by
-    intro y y' h
-    have hu : mkD d y = mkD d y' := eq_of_at_map σ hcm τ (at_mkD d y) (at_mkD d y') fun w => by
-      rw [← hΨl, ← hΨl, h]
-    rw [← coord_mkD d y, ← coord_mkD d y', hu]
-  have hsurj : Function.Surjective Ψl := by
-    intro c
-    obtain ⟨u, hu, hM⟩ := exists_at_map σ hcm τ (fun w => A w * c w * (C w)ᵀ)
-    refine ⟨coord d u, funext fun w => ?_⟩
-    show IA w * (mkD d (coord d u)).map (piInf (τ w)) * (IC w)ᵀ = c w
-    rw [mkD_coord d hu, hM w, hfwd]
-  let Ψ := LinearEquiv.ofBijective Ψl ⟨hinj, hsurj⟩
-
-  let L : (InfinitePlace F → Matrix (Ix P Q) (Ix R S) ℂ) →ₗ[ℝ] (InfinitePlace F → Matrix (Ix P Q) (Ix R S) ℂ) :=
-    { toFun := fun c w => Complex.I • (Jm P Q * c w * Jm R S)
-      map_add' := fun c c' => by
-        funext w
-        simp only [Pi.add_apply, Matrix.mul_add, Matrix.add_mul, smul_add]
-      map_smul' := fun r c => by
-        funext w
-        simp only [Pi.smul_apply, RingHom.id_apply, Matrix.mul_smul, Matrix.smul_mul]
-        exact smul_comm _ _ _ }
-
-  let Pm : (InfinitePlace F → Matrix (Ix P Q) (Ix R S) ℂ) →ₗ[ℝ] (InfinitePlace F → Matrix (Ix P Q) (Ix R S) ℂ) :=
-    { toFun := fun c w => (if ε w = -1 then (1 : ℂ) else 0) • c w
-      map_add' := fun c c' => by
-        funext w
-        simp only [Pi.add_apply, smul_add]
-      map_smul' := fun r c => by
-        funext w
-        simp only [Pi.smul_apply, RingHom.id_apply]
-        exact smul_comm _ _ _ }
-  have hLL : ∀ c, L (L c) = -c := by
-    intro c
-    funext w
-    show Complex.I • (Jm P Q * (Complex.I • (Jm P Q * c w * Jm R S)) * Jm R S) = -c w
-    have key : Jm P Q * (Jm P Q * c w * Jm R S) * Jm R S = c w := by
-      calc _ = (Jm P Q * Jm P Q) * c w * (Jm R S * Jm R S) := by simp only [Matrix.mul_assoc]
-        _ = c w := by rw [jm_mul_self, jm_mul_self, Matrix.one_mul, Matrix.mul_one]
-    rw [Matrix.mul_smul, Matrix.smul_mul, smul_smul, key, Complex.I_mul_I, neg_one_smul]
-  have hLP : ∀ c, L (Pm c) = Pm (L c) := by
-    intro c
-    funext w
-    show Complex.I • (Jm P Q * ((if ε w = -1 then (1 : ℂ) else 0) • c w) * Jm R S) =
-      (if ε w = -1 then (1 : ℂ) else 0) • (Complex.I • (Jm P Q * c w * Jm R S))
-    rw [Matrix.mul_smul, Matrix.smul_mul, smul_comm]
-
-  let tm : AF F := ((fun w => if ε w = -1 then 1 else 0 : InfiniteAdeleRing F), 0)
-  have htm : tm * tm = tm := by
-    refine Prod.ext (funext fun w => ?_) ?_
-    · show (if ε w = -1 then (1 : w.Completion) else 0) * (if ε w = -1 then 1 else 0) = if ε w = -1 then 1 else 0
-      split_ifs <;> simp
-    · show (0 : IsDedekindDomain.FiniteAdeleRing (𝓞 F) F) * 0 = 0
-      exact mul_zero _
-  have htt : evI F tm * evI F tm = evI F tm := by rw [← evI_mul, htm]
-  have hext : ∀ w, InfinitePlace.Completion.extensionEmbedding w (tm.1 w) = if ε w = -1 then 1 else 0 := by
-    intro w
-    show InfinitePlace.Completion.extensionEmbedding w (if ε w = -1 then (1 : w.Completion) else 0) = _
-    split_ifs <;> simp
-  have hΨe : ∀ y, Ψl (mulP (evI F tm) y) = Pm (Ψl y) := by
-    intro y
-    funext w
-    show IA w * (mkD d (mulP (evI F tm) y)).map (piInf (τ w)) * (IC w)ᵀ =
-      (if ε w = -1 then (1 : ℂ) else 0) • (IA w * (mkD d y).map (piInf (τ w)) * (IC w)ᵀ)
-    rw [mkD_mulP, map_smul_piInf, hext, Matrix.mul_smul, Matrix.smul_mul]
-  let J : ((κ → mixedEmbedding.mixedSpace F) × (κ → mixedEmbedding.mixedSpace F)) →ₗ[ℝ]
-      ((κ → mixedEmbedding.mixedSpace F) × (κ → mixedEmbedding.mixedSpace F)) :=
-    (Ψ.symm : (InfinitePlace F → Matrix (Ix P Q) (Ix R S) ℂ) →ₗ[ℝ] _).comp (L.comp Ψl)
-  have hΨJ : ∀ y, Ψl (J y) = L (Ψl y) := fun y => Ψ.apply_symm_apply _
-  refine ⟨J, mulP (evI F tm), mulC (evI F tm), ?_, ?_, ?_, fun y => rfl, ?_, ?_⟩
-  · intro y
-    apply hinj
-    rw [hΨJ, hΨJ, hLL, map_neg]
-  · intro y
-    refine Prod.ext (funext fun i => ?_) (funext fun i => ?_)
-    · show evI F tm * (evI F tm * y.1 i) = evI F tm * y.1 i
-      rw [← mul_assoc, htt]
-    · show evI F tm * (evI F tm * y.2 i) = evI F tm * y.2 i
-      rw [← mul_assoc, htt]
-  · intro y
-    apply hinj
-    rw [hΨJ, hΨe, hΨe, hΨJ, hLP]
-  · intro y x
-    simp only [trPair_apply]
-    congr 1
-    refine Finset.sum_congr rfl fun i _ => ?_
-    show x i * (evI F tm * y.2 i) = (evI F tm * x i) * y.2 i
-    ring
-  · intro y
-    refine ⟨mkD d y, mkD d (J (y - (2 : ℝ) • mulP (evI F tm) y)), mkD d (J y), Ψl y, at_mkD d _, at_mkD d _,
-      at_mkD d _, fun w => (hΨl y w).symm, fun w => ?_, fun w => ?_, coord_mkD d _, coord_mkD d _, coord_mkD d _⟩
-    · rw [← hΨl, hΨJ, map_sub, map_smul, hΨe]
-      show A w * (Complex.I • (Jm P Q * (Ψl y w - (2 : ℝ) • ((if ε w = -1 then (1 : ℂ) else 0) • Ψl y w)) * Jm R S)) *
-          (C w)ᵀ = A w * ((((ε w : ℤ) : ℂ) * Complex.I) • (Jm P Q * Ψl y w * Jm R S)) * (C w)ᵀ
-      congr 2
-      generalize Ψl y w = X
-      rcases Int.units_eq_one_or (ε w) with h1 | h1
-      · rw [h1, if_neg (by decide)]
-        simp
-      · rw [h1, if_pos rfl, one_smul, two_smul, sub_add_cancel_left]
-        simp [Matrix.mul_neg, Matrix.neg_mul]
-    · rw [← hΨl, hΨJ]
-      rfl
+  let θA : InfinitePlace F → Matrix α α ℂ := fun w => A w * Jm P Q * IA w
+  let θB : InfinitePlace F → Matrix β β ℂ := fun w => C w * Jm R S * IC w
+  have hθA : ∀ w, θA w * θA w = 1 := fun w => by
+    calc A w * Jm P Q * IA w * (A w * Jm P Q * IA w)
+        = A w * Jm P Q * (IA w * A w) * Jm P Q * IA w := by simp only [Matrix.mul_assoc]
+      _ = A w * (Jm P Q * Jm P Q) * IA w := by rw [(hIA w).1, Matrix.mul_one]; simp only [Matrix.mul_assoc]
+      _ = 1 := by rw [jm_mul_self, Matrix.mul_one, (hIA w).2]
+  have hθB : ∀ w, θB w * θB w = 1 := fun w => by
+    calc C w * Jm R S * IC w * (C w * Jm R S * IC w)
+        = C w * Jm R S * (IC w * C w) * Jm R S * IC w := by simp only [Matrix.mul_assoc]
+      _ = C w * (Jm R S * Jm R S) * IC w := by rw [(hIC w).1, Matrix.mul_one]; simp only [Matrix.mul_assoc]
+      _ = 1 := by rw [jm_mul_self, Matrix.mul_one, (hIC w).2]
+  have hJmT : (Jm R S)ᵀ = Jm R S := by
+    simp [Jm, Formalism.UG.Jpq, Matrix.fromBlocks_transpose]
+  have hθconj : ∀ w (X : Matrix α β ℂ),
+      θA w * X * (θB w)ᵀ = A w * (Jm P Q * (IA w * X * (IC w)ᵀ) * Jm R S) * (C w)ᵀ := fun w X => by
+    simp only [θA, θB, Matrix.transpose_mul, hJmT, Matrix.mul_assoc]
+  obtain ⟨J, e, e', hJ, he, hJe, he1, he2, hy⟩ :=
+    _root_.GlobalTheory.SignInvolDarboux.exists_bridge F E σ α β κ τ JA JB d θA θB (fun _ => 1) ε hcm hθA hθB
+  refine ⟨J, e, e', hJ, he, hJe, he1, he2, fun y => ?_⟩
+  obtain ⟨u, u', u₁, hu, hu', hu₁, hmu', hmu₁, hc, hc', hc₁⟩ := hy y
+  refine ⟨u, u', u₁, fun w => IA w * u.map (piInf (τ w)) * (IC w)ᵀ, hu, hu', hu₁, fun w => (hback w _).symm,
+    fun w => ?_, fun w => ?_, hc, hc', hc₁⟩
+  · rw [hmu' w, hθconj w, Matrix.mul_smul, Matrix.smul_mul]
+  · rw [hmu₁ w, hθconj w, Units.val_one, Int.cast_one, one_mul, Matrix.mul_smul, Matrix.smul_mul]
 
 end Main
 

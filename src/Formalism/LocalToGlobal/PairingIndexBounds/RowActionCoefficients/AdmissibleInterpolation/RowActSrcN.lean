@@ -72,13 +72,13 @@ theorem hQX (hS : XShape) (j : ℕ) (b : BX X) :
   have key : weyl X.G.O (NJ X j) (NJ X j) le_rfl (nuS X j b) ≤
       Submodule.span X.G.O (Set.range fun m => AddMonoidAlgebra.coeff (HgX X X.G.O j b) m) := by
     by_cases ho : IsOddPos b.2
-    · have hn : nuS X j b = fun t => cX X j b - muX X j (NJ X j) b t.rev := if_pos ho
+    · have hn : nuS X j b = fun t => cX X j b - muX X j (NJ X j) b t.rev := ite_eq_left ho
       unfold HgX
-      rw [if_pos ho, hn]
+      rw [ite_eq_left ho, hn]
       exact weyl_complement_det_coeff_span X.G.O (NJ X j) _ (hanti _) _ (hle _)
-    · have hn : nuS X j b = fun t => muX X j (NJ X j) b t - eX X j b := if_neg ho
+    · have hn : nuS X j b = fun t => muX X j (NJ X j) b t - eX X j b := ite_eq_right ho
       unfold HgX
-      rw [if_neg ho]
+      rw [ite_eq_right ho]
       refine weyl_lattice_det_coeff_span X.G.O (NJ X j) (nuS X j b) ?_ _ _ ?_
       · rw [hn]
         exact fun a c hac => Nat.sub_le_sub_right (hanti _ hac) _

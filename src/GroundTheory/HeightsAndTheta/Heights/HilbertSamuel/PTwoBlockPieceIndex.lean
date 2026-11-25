@@ -10,6 +10,7 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeome
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.NatCardEqPowLength
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.SectionModuleEqSpanPow
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ExistsPrimeFiltrationOfIsMultiHomogIdeal
+import GroundTheory.HeightsAndTheta.Heights.BlockScaling
 
 @[expose] public section
 
@@ -34,25 +35,8 @@ theorem prod_X_pow_eq (d : K → ℕ) :
 
 theorem mConeMap_of_homog (y : (Σ k, ι k) → Ω) {g : MRing ι} {d : K → ℕ} (hg : IsMultiHomog g d) :
     mConeMap y g = MvPolynomial.C (aeval y g) * monomial (Finsupp.equivFunOnFinite.symm d) 1 := by
-  classical
   rw [← prod_X_pow_eq]
-  conv_lhs => rw [g.as_sum]
-  conv_rhs => rw [g.as_sum]
-
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun m hm => ?_
-  have hdeg := hg m hm
-  simp only [mConeMap, aeval_monomial, map_mul]
-  rw [Finsupp.prod_fintype _ _ (fun _ => pow_zero _), Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
-  simp only [mul_pow, Finset.prod_mul_distrib, map_prod, map_pow]
-  have hX : (∏ p : Σ k, ι k, (MvPolynomial.X p.1 : MvPolynomial K Ω) ^ m p) =
-      ∏ k, (MvPolynomial.X k : MvPolynomial K Ω) ^ d k := by
-    rw [Fintype.prod_sigma]
-    refine Finset.prod_congr rfl fun k _ => ?_
-    show ∏ i, (MvPolynomial.X k : MvPolynomial K Ω) ^ m ⟨k, i⟩ = _
-    rw [Finset.prod_pow_eq_pow_sum, hdeg k]
-  rw [hX, MvPolynomial.algebraMap_apply]
-  ring
+  exact BlockScaling.aeval_cone_block y hg
 
 theorem aeval_i2comp (y : (Σ k, ι k) → Ω) (m : K → ℕ) (q : MRing ι) :
     aeval y (i2comp m q) = AddMonoidAlgebra.coeff (mConeMap y q) (Finsupp.equivFunOnFinite.symm m) := by
@@ -62,8 +46,8 @@ theorem aeval_i2comp (y : (Σ k, ι k) → Ω) (m : K → ℕ) (q : MRing ι) :
     rw [mConeMap_of_homog y (isMultiHomog_monomial μ c), i2comp_of_homog (isMultiHomog_monomial μ c),
       coeff_C_mul, coeff_monomial]
     by_cases h : (fun k => ∑ i, μ ⟨k, i⟩) = m
-    · rw [if_pos h, if_pos (by rw [h]), mul_one]
-    · rw [if_neg h, if_neg (fun h' => h (Finsupp.equivFunOnFinite.symm.injective h')), mul_zero, map_zero]
+    · rw [ite_eq_left h, ite_eq_left (by rw [h]), mul_one]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h (Finsupp.equivFunOnFinite.symm.injective h')), mul_zero, map_zero]
   | add p q hp hq => rw [i2comp_add, map_add (f := _), hp, hq, map_add (f := _), MvPolynomial.coeff_add]
 
 theorem aeval_i2comp_of_mem (y : (Σ k, ι k) → Ω) {p : MRing ι} (hp : p ∈ mCoordIdeal y) (m : K → ℕ) :
@@ -119,7 +103,7 @@ theorem map_piece [DecidableEq K] (y : (Σ k, ι k) → Ω) {g : MRing ι} {e : 
       rw [show i2comp (m + (e + Pi.single k 1)) (∑ j, c j * (g * X ⟨k, j⟩)) =
         ∑ j, i2comp (m + (e + Pi.single k 1)) (c j * (g * X ⟨k, j⟩)) from map_sum (i2compHom _) _ _]
       refine Finset.sum_congr rfl fun j _ => ?_
-      rw [i2comp_mul_right (hgX j), if_pos le_add_self, add_tsub_cancel_right]
+      rw [i2comp_mul_right (hgX j), ite_eq_left le_add_self, add_tsub_cancel_right]
 
     rw [AlgHom.toLinearMap_apply, ← i2comp_self hf, e1, map_add (f := _), aeval_i2comp_of_mem y hp, zero_add, map_sum]
     refine Submodule.sum_mem _ fun j _ => ?_

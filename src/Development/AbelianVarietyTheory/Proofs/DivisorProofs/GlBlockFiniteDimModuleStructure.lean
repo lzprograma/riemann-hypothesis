@@ -2,50 +2,7 @@ module
 
 public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HighestWeightTensor
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -169,7 +126,7 @@ lemma raise_lower (hL : IsKLieAct act) {a b : Ix p q} (hab : posC a b) {κ : Ix 
     act (Eab a b) (act (Eab b a) y) =
       act (Eab b a) (act (Eab a b) y) + (((κ a : ℚ) : ℂ) - ((κ b : ℚ) : ℂ)) • y := by
   rw [lie_apply hL (isKC_Eab (same_of_pos hab)) (isKC_Eab (same_of_pos' hab)), Eab_mul, Eab_mul,
-    if_pos rfl, if_pos rfl, map_sub, LinearMap.sub_apply, mem_wt.1 hy, mem_wt.1 hy, sub_smul]
+    ite_eq_left rfl, ite_eq_left rfl, map_sub, LinearMap.sub_apply, mem_wt.1 hy, mem_wt.1 hy, sub_smul]
 
 def pair (l μ : Ix p q → ℚ) : ℚ := ∑ x, l x * μ x
 
@@ -204,7 +161,7 @@ lemma casVal_eq (μ : Ix p q → ℚ) : casVal μ = pair μ μ + pair (rho p q) 
   have h : ∀ a b : Ix p q, (if posC a b then μ a - μ b else 0) =
       (if posC a b then 1 else 0) * μ a - (if posC a b then 1 else 0) * μ b := by
     intro a b; split_ifs <;> simp
-  simp only [casVal, pair, rho, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true,
+  simp only [casVal, pair, rho, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, ite_true,
     Finset.sum_mul, sub_mul, Finset.sum_sub_distrib]
   congr 1
   rw [Finset.sum_comm (f := fun x c => (if posC c x then (1 : ℚ) else 0) * μ x),
@@ -220,8 +177,6 @@ lemma casVal_lt {μ ν : Ix p q → ℚ} (hμ : ∀ a b, posC a b → ∃ k : �
     obtain ⟨k, hk⟩ := hμ a b hab
     obtain ⟨l, hl⟩ := hν a b hab
     have := rho_lt hab
-    have h1 : (0 : ℚ) ≤ k := Nat.cast_nonneg k
-    have h2 : (0 : ℚ) ≤ l := Nat.cast_nonneg l
     simp only [Pi.add_apply]
     linarith
   rw [casVal_eq, casVal_eq]
@@ -310,31 +265,31 @@ lemma unitK_comm (hL : IsKLieAct act) {a b : Ix p q} (hab : sameBlock a b) (c d 
     act (Eab a b) * unitK act c d - unitK act c d * act (Eab a b) =
       (if b = c then unitK act a d else 0) - (if d = a then unitK act c b else 0) := by
   by_cases hcd : sameBlock c d
-  · rw [unitK, if_pos hcd, ← hL _ _ (isKC_Eab hab) (isKC_Eab hcd), Eab_mul, Eab_mul, map_sub]
+  · rw [unitK, ite_eq_left hcd, ← hL _ _ (isKC_Eab hab) (isKC_Eab hcd), Eab_mul, Eab_mul, map_sub]
     congr 1
     · split_ifs with h
       · subst h
-        rw [unitK, if_pos]
+        rw [unitK, ite_eq_left]
         cases a <;> cases b <;> cases d <;> simp_all [sameBlock]
       · simp
     · split_ifs with h
       · subst h
-        rw [unitK, if_pos]
+        rw [unitK, ite_eq_left]
         cases c <;> cases b <;> cases d <;> simp_all [sameBlock]
       · simp
   · have h1 : (if b = c then unitK act a d else 0) = 0 := by
       split_ifs with h
       · subst h
-        rw [unitK, if_neg]
+        rw [unitK, ite_eq_right]
         cases a <;> cases b <;> cases d <;> simp_all [sameBlock]
       · rfl
     have h2 : (if d = a then unitK act c b else 0) = 0 := by
       split_ifs with h
       · subst h
-        rw [unitK, if_neg]
+        rw [unitK, ite_eq_right]
         cases c <;> cases b <;> cases d <;> simp_all [sameBlock]
       · rfl
-    rw [h1, h2, unitK, if_neg hcd]
+    rw [h1, h2, unitK, ite_eq_right hcd]
     simp
 
 lemma casK_comm (hL : IsKLieAct act) {a b : Ix p q} (hab : sameBlock a b) :
@@ -356,7 +311,7 @@ lemma casK_comm (hL : IsKLieAct act) {a b : Ix p q} (hab : sameBlock a b) :
   rw [Commute, SemiconjBy, ← sub_eq_zero, casK, Finset.mul_sum, Finset.sum_mul, ← Finset.sum_sub_distrib]
   simp only [Finset.mul_sum, Finset.sum_mul, ← Finset.sum_sub_distrib, h]
   simp only [Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true, Finset.sum_ite_irrel, Finset.sum_const_zero]
+    Finset.mem_univ, ite_true, Finset.sum_ite_irrel, Finset.sum_const_zero]
   abel
 
 lemma unitK_mem {S : Submodule ℂ V} (hS : KStable act S) (a b : Ix p q) {x : V} (hx : x ∈ S) :
@@ -386,11 +341,11 @@ lemma casK_mod (hL : IsKLieAct act) {S : Submodule ℂ V} (hS : KStable act S) {
   · rcases same_tri hab with rfl | h | h
     · have h1 : ¬ posC a a := fun h => posC_ne h rfl
       simp [unitK, hab, h1, mem_wt.1 hx a, mul_smul]
-    · rw [unitK, unitK, if_pos hab, if_pos (same_of_pos' h), raise_lower hL h hx, if_neg (posC_ne h),
-        if_pos h]
+    · rw [unitK, unitK, ite_eq_left hab, ite_eq_left (same_of_pos' h), raise_lower hL h hx, ite_eq_right (posC_ne h),
+        ite_eq_left h]
       simpa using hS _ (isKC_Eab (same_of_pos' h)) _ (he a b h)
-    · rw [unitK, unitK, if_pos hab, if_pos (same_of_pos h), if_neg (posC_ne h).symm,
-        if_neg (posC_asymm h)]
+    · rw [unitK, unitK, ite_eq_left hab, ite_eq_left (same_of_pos h), ite_eq_right (posC_ne h).symm,
+        ite_eq_right (posC_asymm h)]
       simpa using hS _ (isKC_Eab hab) _ (he b a h)
   · have h1 : a ≠ b := by rintro rfl; exact hab (same_refl a)
     have h2 : ¬ posC a b := fun h => hab (same_of_pos h)

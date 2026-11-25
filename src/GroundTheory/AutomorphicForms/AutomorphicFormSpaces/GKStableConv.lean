@@ -74,7 +74,7 @@ theorem exists_kernel_eq_conv_of_aeval_laplacian [MeasurableSpace G] [BorelSpace
       Metric.ball_subset_ball (min_le_right _ _)
     have hm1 : 1 ≤ 2 * Q.natDegree := by rw [hQd]; nlinarith
     have hnm : d < 2 * (2 * Q.natDegree) := by rw [hQd]; nlinarith
-    obtain ⟨E, β, -, -, hEs, -, hβs, -, hβU, hid⟩ := exists_parametrix hd hm1 hnm Metric.isOpen_ball
+    obtain ⟨E, β, hEs, hβs, hβU, hid⟩ := exists_parametrix hd hm1 hnm
       hA (fun α hα => (ha α hα).contDiffOn Metric.isOpen_ball.uniqueDiffOn) hell Metric.isOpen_ball
       (Metric.mem_ball_self hρ) hρδ
     obtain ⟨κ, hκs, hκc, hκU, hκ⟩ := hdens β hβs (hβU.trans hρε)

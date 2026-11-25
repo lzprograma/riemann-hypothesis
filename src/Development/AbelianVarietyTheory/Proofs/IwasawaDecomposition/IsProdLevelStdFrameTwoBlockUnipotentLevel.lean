@@ -50,7 +50,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain NumberField Formalism.L2 Formalism.L2.Host Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev GlobalTheory.Mem GlobalTheory.Mem.R3 GlobalTheory.MtIn
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.MtInProd
 
@@ -129,7 +128,6 @@ theorem idemF_mul (v : HeightOneSpectrum (𝓞 (maximalRealSubfield L))) : idemF
   show (if w = v then (1 : w.adicCompletion (maximalRealSubfield L)) else 0) * (if w = v then 1 else 0) = (if w = v then 1 else 0)
   split_ifs <;> simp
 
-
 variable (L) in
 def eA (v : HeightOneSpectrum (𝓞 (maximalRealSubfield L))) : AL L := (1 : L) ⊗ₜ[maximalRealSubfield L] idemF v
 
@@ -200,18 +198,18 @@ theorem conj_one_sub_eA (v : HeightOneSpectrum (𝓞 (maximalRealSubfield L))) :
 theorem triv_cut_eA (v : HeightOneSpectrum (𝓞 (maximalRealSubfield L))) (g : GA L n) :
     TrivOutside {v} (cutGA (eA_mul v) (conj_eA v) g) := by
   intro w hw
-  rw [cut_map_compAt, compAt_eA, if_neg (fun h => hw (Set.mem_singleton_iff.2 h)), cutMat_zero_left]
+  rw [cut_map_compAt, compAt_eA, ite_eq_right (fun h => hw (Set.mem_singleton_iff.2 h)), cutMat_zero_left]
 
 theorem triv_cut_one_sub_eA (v : HeightOneSpectrum (𝓞 (maximalRealSubfield L))) (g : GA L n) :
     TrivOutside {v}ᶜ (cutGA (one_sub_eA_mul v) (conj_one_sub_eA v) g) := by
   intro w hw
   have hwv : w = v := by simpa using hw
-  rw [cut_map_compAt, map_sub, map_one, compAt_eA, if_pos hwv, sub_self, cutMat_zero_left]
+  rw [cut_map_compAt, map_sub, map_one, compAt_eA, ite_eq_left hwv, sub_self, cutMat_zero_left]
 
 theorem cut_eA_at (v : HeightOneSpectrum (𝓞 (maximalRealSubfield L))) (g : GA L n) :
     ((cutGA (eA_mul v) (conj_eA v) g).1 : Matrix (Fin n) (Fin n) (AL L)).map (compAt L v) =
       (g.1 : Matrix (Fin n) (Fin n) (AL L)).map (compAt L v) := by
-  rw [cut_map_compAt, compAt_eA, if_pos rfl, cutMat_one_left]
+  rw [cut_map_compAt, compAt_eA, ite_eq_left rfl, cutMat_one_left]
 
 theorem cut_mul_cut (v : HeightOneSpectrum (𝓞 (maximalRealSubfield L))) (g : GA L n) :
     cutGA (eA_mul v) (conj_eA v) g * cutGA (one_sub_eA_mul v) (conj_one_sub_eA v) g = g :=
@@ -222,7 +220,7 @@ end Adelic2
 theorem main : ∀ (D : D7) (n : ℕ) (hr : D.R.r ≤ n) (Pg Q : Finset (Pl D.host.E)) (ψ : ∀ PP : Pl D.host.E, AddChar (kP PP) ℂ)
     (chi xi : ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ), NG.IsProdLevel (stdJ (datV D n hr Pg Q (P0 Pg D.R.r ψ) chi xi)) := by
   intro D n hr Pg Q ψ chi xi κ hκ v
-  obtain ⟨hUA, hSt, hred, -⟩ := GlobalTheory.T.stdMaximalCompact_reduction_properties D n
+  obtain ⟨hUA, hSt, hred, -⟩ := GlobalTheory.MtRed.km_reduction D n
   set κ1 := cutGA (eA_mul v) (conj_eA v) κ with hκ1
   set κ2 := cutGA (one_sub_eA_mul v) (conj_one_sub_eA v) κ with hκ2
   have hκ' := Subgroup.mem_comap.1 hκ

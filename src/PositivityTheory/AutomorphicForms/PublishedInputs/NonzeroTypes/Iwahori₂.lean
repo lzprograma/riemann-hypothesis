@@ -1,6 +1,8 @@
 module
 
 public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroLeviEigenvectorExists
+import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.PJone
+import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.P_Jmul
 
 @[expose] public section
 
@@ -17,35 +19,6 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 variable {n : ℕ} (G : Grp k n)
 
 namespace Iwahori₂
-
-theorem inPow_mono {a b : ℕ} (hab : a ≤ b) {x : k} (hx : InPow b x) : InPow a x := by
-  obtain ⟨y, hy, rfl⟩ := hx
-  exact ⟨y, Ideal.pow_le_pow_right hab hy, rfl⟩
-
-theorem inPow_mul {a b : ℕ} {x y : k} (hx : InPow a x) (hy : InPow b y) : InPow (a + b) (x * y) := by
-  obtain ⟨x', hx', rfl⟩ := hx
-  obtain ⟨y', hy', rfl⟩ := hy
-  exact ⟨x' * y', by rw [pow_add]; exact Ideal.mul_mem_mul hx' hy', map_mul _ _ _⟩
-
-theorem inPow_add {a : ℕ} {x y : k} (hx : InPow a x) (hy : InPow a y) : InPow a (x + y) := by
-  obtain ⟨x', hx', rfl⟩ := hx
-  obtain ⟨y', hy', rfl⟩ := hy
-  exact ⟨x' + y', add_mem hx' hy', map_add _ _ _⟩
-
-theorem inPow_zero (a : ℕ) : InPow a (0 : k) := ⟨0, zero_mem _, map_zero _⟩
-
-theorem inPow_sum {a : ℕ} {ι : Type} (s : Finset ι) (f : ι → k) (h : ∀ i ∈ s, InPow a (f i)) :
-    InPow a (∑ i ∈ s, f i) := by
-  induction s using Finset.cons_induction with
-  | empty => simpa using inPow_zero (k := k) a
-  | cons i s hi ih =>
-    rw [Finset.sum_cons]
-    exact inPow_add (h i (by simp)) (ih fun j hj => h j (by simp [hj]))
-
-theorem inPow_zero_of_KO {g : GL (Fin n) k} (hg : g ∈ KO k (Fin n)) (i j : Fin n) :
-    InPow 0 ((g : Matrix (Fin n) (Fin n) k) i j) := by
-  obtain ⟨g', rfl⟩ := hg
-  exact ⟨(g' : Matrix (Fin n) (Fin n) 𝒪[k]) i j, by simp, rfl⟩
 
 theorem mem_uRL {R : Type} [CommRing R] (X : GL (Fin n) R) :
     X ∈ unipRadLower R G.e ↔ ∀ i j, (G.bl i < G.bl j → (X : Matrix (Fin n) (Fin n) R) i j = 0) ∧
@@ -197,14 +170,14 @@ theorem iwahori_of (hΔ : ∀ g ∈ G.JSet, ∀ a, ∃ u : 𝒪[k]ˣ, G.Δ a g =
     refine ⟨hvK, fun i j hij => ?_⟩
     have hv' : v = φ A * p⁻¹ := by rw [hgvp, mul_inv_cancel_right]
     rw [hv', Units.val_mul, Matrix.mul_apply]
-    refine inPow_sum _ _ fun l _ => ?_
+    refine P_Jmul.inPow_sum _ _ fun l _ => ?_
     rcases le_or_gt (G.bl l) (G.bl j) with hl | hl
     · have h1 := hg.2 i l (lt_of_le_of_lt hl hij)
-      have h3 := inPow_mul h1 (inPow_zero_of_KO (inv_mem hpK) l j)
+      have h3 := P_Jmul.inPow_mul h1 (P_Jmul.inPow_zero_of_KO (inv_mem hpK) l j)
       rw [add_zero] at h3
-      exact inPow_mono (G.ball _ _ _ _ hl hij le_rfl) h3
+      exact P_Jmul.inPow_mono (G.ball _ _ _ _ hl hij le_rfl) h3
     · rw [mem_parab.1 (inv_mem hpP) l j hl, mul_zero]
-      exact inPow_zero _
+      exact P_Jone.inPow_zero _
   let pp : parab k G.e := ⟨p, hpP⟩
   have hm : leviProj k G.e pp ∈ leviK k (m := fun a : Fin G.s => Fin (G.d a)) :=
     (Subgroup.mem_pi _).2 fun a _ => leviProj_mem_KO G.d G.hd pp hpK a

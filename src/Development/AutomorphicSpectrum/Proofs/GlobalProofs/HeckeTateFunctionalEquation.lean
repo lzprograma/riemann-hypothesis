@@ -22,53 +22,7 @@ public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsC
 public import GroundTheory.GlobalFields.TateThesis.HeckeTheorem
 public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
 import GroundTheory.GlobalFields.TateThesis.ArchCharsUnitary
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
 import GroundTheory.LocalFields.FilteredSurj
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
@@ -76,8 +30,6 @@ import Mathlib.Tactic.Linter.HaveILetI
 import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HCFFromRecipA
 import Aesop.Main
 import GroundTheory.GlobalFields.CompletionAtPlace.Integers
-import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
-import Mathlib.Tactic.TypeStar
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -173,7 +125,7 @@ theorem params (χ : HChar E) (hu : IsUnitary χ) {I : Type} [Fintype I] {φ : I
       ((‖(z : ℂ)‖ : ℝ) : ℂ) ^ ((((T.infiniteWeight w, 2 * T.infiniteTau w).2 : ℝ) : ℂ) * Complex.I) := fun z => by
     have hpos : 0 < ‖(z : ℂ)‖ := norm_pos_iff.2 z.ne_zero
     show ((T.infiniteComponent w (unitsContinuousHom e.symm hec z) : Circle) : ℂ) = _
-    rw [HeckeCharacter.infiniteComponent_eq, hι, hnorm, InfinitePlace.mult, if_neg hnr,
+    rw [HeckeCharacter.infiniteComponent_eq, hι, hnorm, InfinitePlace.mult, ite_eq_right hnr,
       ofReal_pow_cpow hpos]
     congr 2
     push_cast
@@ -451,9 +403,6 @@ open Formalism.L2.Host (unif atFin unif_spec)
 noncomputable section
 
 namespace GlobalTheory.CompanionTheory.HeckeBridge
-
-theorem finEps_shift : ∀ (E : Type) [Field E] [NumberField E] (χ : HChar E) (a : HeightOneSpectrum (𝓞 E) →₀ ℕ) (s : ℂ), finEps χ a s = finEps χ a (1 / 2) * (((discr E).natAbs * a.prod fun v k => Ideal.absNorm v.asIdeal ^ k : ℕ) : ℂ) ^ (1 / 2 - s) :=
-  fun _ _ _ χ a s => GlobalTheory.HeckeEpsAbs.finEps_eq χ a s
 
 end GlobalTheory.CompanionTheory.HeckeBridge
 end -- clump:auto
@@ -901,8 +850,8 @@ theorem hasProd_eulerFactor_toHecke : ∀ (E : Type) [Field E] [NumberField E] (
     funext v
     unfold eulerFactor
     by_cases hv : χ.UnrAt v
-    · rw [if_pos hv, coeff_eq_val χ hu ((unrAt_iff_not_dvd_conductor χ hu v).1 hv)]
-    · rw [if_neg hv, HeckeCharacter.coeff_asIdeal_of_dvd _
+    · rw [ite_eq_left hv, coeff_eq_val χ hu ((unrAt_iff_not_dvd_conductor χ hu v).1 hv)]
+    · rw [ite_eq_right hv, HeckeCharacter.coeff_asIdeal_of_dvd _
         (not_not.1 (mt (unrAt_iff_not_dvd_conductor χ hu v).2 hv))]
       simp
   rw [h]
@@ -1248,10 +1197,6 @@ theorem L_notPow {I : Type} [Fintype I] (φ : I → E →+* ℂ) (hφ : IsCMType
 theorem L_euler (χ : HChar E) (hu : IsUnitary χ) {s : ℂ} (hs : 1 < s.re) :
     HasProd (eulerFactor χ s) ((toHecke χ hu).LFunction s) := _root_.GlobalTheory.CompanionTheory.HeckeBridge.hasProd_eulerFactor_toHecke E χ hu s hs
 
-theorem L_shift (χ : HChar E) (a : HeightOneSpectrum (𝓞 E) →₀ ℕ) (s : ℂ) :
-    finEps χ a s = finEps χ a (1 / 2) *
-      (((discr E).natAbs * a.prod fun v k => Ideal.absNorm v.asIdeal ^ k : ℕ) : ℂ) ^ (1 / 2 - s) := _root_.GlobalTheory.CompanionTheory.HeckeBridge.finEps_shift E χ a s
-
 theorem ord_unif (v : HeightOneSpectrum (𝓞 E)) (k : ℕ) :
     ord ((atFin v (unif v ^ k) : (v.adicCompletion E)ˣ) : v.adicCompletion E) = k := by
   have h := valued_eq_exp_neg_ord (v := v) (Units.ne_zero (atFin v (unif v ^ k)))
@@ -1299,7 +1244,7 @@ theorem L_locUnr (χ : HChar E) (hu : IsUnitary χ) (v : HeightOneSpectrum (𝓞
     rw [Nat.cast_ne_zero, Ne, Ideal.absNorm_eq_zero_iff]
     exact v.ne_bot
   rw [(toHecke χ hu).localEpsilon_half_of_not_dvd v hv (atFin v (unif v ^ (0 + diffExp v)))
-    (by rw [ord_unif, differentExp_eq, zero_add]), coe_localComponent, locEps, if_pos rfl, mul_one, mul_assoc,
+    (by rw [ord_unif, differentExp_eq, zero_add]), coe_localComponent, locEps, ite_eq_left rfl, mul_one, mul_assoc,
     ← Complex.cpow_add _ _ hN]
   have : -(1 / 2 : ℂ) * ((0 + diffExp v : ℕ) : ℂ) + (diffExp v : ℂ) / 2 = 0 := by
     push_cast
@@ -1318,7 +1263,7 @@ theorem L_locRam (χ : HChar E) (hu : IsUnitary χ) (v : HeightOneSpectrum (𝓞
     exact v.ne_bot
   rw [(toHecke χ hu).localEpsilon_half_of_dvd v hv (atFin v (unif v ^ (m + diffExp v)))
     (by rw [ord_unif, differentExp_eq, HeckeCharacter.condExp_eq, hc]; push_cast; rfl),
-    L_ramInt χ hu v hm h, coe_localComponent, locEps, if_neg hm, hc]
+    L_ramInt χ hu v hm h, coe_localComponent, locEps, ite_eq_right hm, hc]
   set c : ℂ := ((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ^ ((m : ℂ) / 2) with hcdef
   have hc0 : c ≠ 0 := by
     rw [hcdef, Ne, Complex.cpow_eq_zero_iff]
@@ -1358,7 +1303,7 @@ theorem gammaFactor_toHecke (hφ : IsCMType φ) (hu : IsUnitary χ) (hi : Formal
   have e : (((n i).natAbs : ℕ) : ℂ) = ((|n i| : ℤ) : ℂ) := by
     rw [← Int.cast_natCast, Int.natCast_natAbs]
   show (toHecke χ hu).infiniteGamma (InfinitePlace.mk (φ i)) s = _
-  rw [HeckeCharacter.infiniteGamma, if_neg hc, h1, h2, e, Complex.Gammaℂ_def]
+  rw [HeckeCharacter.infiniteGamma, ite_eq_right hc, h1, h2, e, Complex.Gammaℂ_def]
   simp
 
 theorem prod_weight_toHecke (hφ : IsCMType φ) (hu : IsUnitary χ) (hi : Formalism.L2.Host.HChar.HasInf χ φ n) :

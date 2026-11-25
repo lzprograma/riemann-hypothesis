@@ -90,7 +90,7 @@ theorem left_tens {ε : Fin n → Bool} (X : GMod n) {ι : Type}
     exact sum_congr rfl fun t _ => sum_congr rfl fun k _ => by ring
   have eB : g j a * c p (u b) g = ∑ s, ∑ t, M s t * (if s = j then ∑ k, g t k * c p (u k) g else 0) := by
     rw [Finset.sum_eq_single j (fun s _ hs => by simp [hs]) (by simp)]
-    simp only [if_true]
+    simp only [ite_true]
     have : ∑ t, M j t * ∑ k, g t k * c p (u k) g = ∑ k, (M * g) j k * c p (u k) g := by
       simp only [mul_sum, Matrix.mul_apply, sum_mul]
       rw [sum_comm]

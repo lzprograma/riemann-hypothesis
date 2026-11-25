@@ -50,7 +50,6 @@ import Mathlib.RingTheory.PicardGroup
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.UnitaryClasses
 open scoped Classical TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 namespace GlobalTheory.UnitaryClasses.BaseChangeSign
@@ -92,11 +91,9 @@ theorem gram_det_change (J : Matrix (Fin n) (Fin n) L) (V : Submodule L (Fin n �
   rw [this, Matrix.det_mul, Matrix.det_mul, hdet]
 
 theorem toMatrix_det_ne {V : Submodule L (Fin n → L)} {ι : Type} [Fintype ι] [DecidableEq ι]
-    (c b : Module.Basis ι L V) : (c.toMatrix b).det ≠ 0 := by
-  intro h
-  have := congrArg Matrix.det (c.toMatrix_mul_toMatrix_flip b)
-  rw [Matrix.det_mul, h, zero_mul, Matrix.det_one] at this
-  exact zero_ne_one this
+    (c b : Module.Basis ι L V) : (c.toMatrix b).det ≠ 0 :=
+  letI := c.invertibleToMatrix b
+  (Matrix.isUnit_det_of_invertible _).ne_zero
 
 end Gen
 

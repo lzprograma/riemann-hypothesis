@@ -61,7 +61,6 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 open GlobalTheory.Chain GlobalTheory.ChainFr GlobalTheory.PairLift GlobalTheory.Chain.RealIt
 open scoped TensorProduct InnerProductSpace ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -172,7 +171,7 @@ theorem exists_cov {p q n : ℕ} (T : GrpData p q) {fr G : Mn n} {ε : Fin n →
   obtain ⟨x, hx, -⟩ := T.bij gZ hmem (Units.mk0 w h0) hw
   refine ⟨x, ?_⟩
   have hc : ((T.cov x : GL (Ix p q) ℂ) : Mat p q) = Z := by rw [hx.1]; rfl
-  rw [hc, phiFr, phi, if_pos rfl]
+  rw [hc, phiFr, phi, ite_eq_left rfl]
   have hb : barMat e Z = h := by
     ext a b; simp [barMat, hZ, hY]
   rw [hb, hh, ← Matrix.mul_assoc, ← Matrix.mul_assoc, e2, Matrix.one_mul, Matrix.mul_assoc, e2, Matrix.mul_one]

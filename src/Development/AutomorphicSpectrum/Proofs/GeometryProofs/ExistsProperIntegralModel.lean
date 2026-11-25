@@ -3,52 +3,12 @@ module
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.AlgebraicGeometry.ProjectiveSpectrum.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.AlgebraicGeometry.ProjectiveSpectrum.Proper
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 
@@ -142,7 +102,7 @@ lemma bijective_coeAddMonoidHom :
     Function.Bijective (DirectSum.coeAddMonoidHom (grading o x)) := by
   classical
   constructor
-  · set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  · rw [injective_iff_map_eq_zero]
     intro y hy
     refine DFinsupp.ext fun n => ?_
     refine Subtype.ext (Subtype.ext ?_)
@@ -163,7 +123,7 @@ instance gradedRing : GradedRing (grading o x) where
   one_mem := by
     intro i hi
     change (1 : (Polynomial Ω)).coeff i = 0
-    rw [Polynomial.coeff_one, if_neg hi]
+    rw [Polynomial.coeff_one, ite_eq_right hi]
   mul_mem := by
     intro i j a b ha hb k hk
     change ((a : (Polynomial Ω)) * (b : (Polynomial Ω))).coeff k = 0
@@ -242,7 +202,7 @@ lemma chartVal_mk {g : rees o x} (hu : IsUnit (ev g)) {d : ℕ} (hg : g ∈ grad
 
 lemma chartVal_injective {g : rees o x} (hu : IsUnit (ev g)) {d : ℕ} (hg : g ∈ grading o x d) :
     Function.Injective (chartVal g hu) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro z hz
   obtain ⟨n, a, ha, rfl⟩ := Away.mk_surjective (grading o x) hg z
   have h1 := chartVal_mk hu hg n a ha
@@ -316,7 +276,7 @@ lemma unit_coord {c : κ} (hc : x c ≠ 0) : IsUnit (ev (coord (o := o) (x := x)
 lemma algebraMap_mem_grading (r : o) : algebraMap o (rees o x) r ∈ grading o x 0 := by
   intro i hi
   change (algebraMap o (Polynomial Ω) r).coeff i = 0
-  rw [Polynomial.algebraMap_apply, Polynomial.coeff_C, if_neg hi]
+  rw [Polynomial.algebraMap_apply, Polynomial.coeff_C, ite_eq_right hi]
 
 lemma ev_algebraMap (r : o) : ev (algebraMap o (rees o x) r) = algebraMap o Ω r := by
   rw [ev_apply]
@@ -572,7 +532,7 @@ theorem tie_of_charts (o : Type) [CommRing o] [Algebra o Ω] {κ : Type} (x : κ
     rintro ⟨q, hq⟩
     obtain ⟨c, p, rfl⟩ := hcover q
     obtain ⟨φ, h1, h2, h3⟩ := chart_stalk (θ c) (j c) ξ (hξ c) p hq
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro t ht
     obtain ⟨u, s, hs, hts⟩ := h3 t
     have h4 := congrArg (genMap ξ ⟨j c p, hq⟩) hts

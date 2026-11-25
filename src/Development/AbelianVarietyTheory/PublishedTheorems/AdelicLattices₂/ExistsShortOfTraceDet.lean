@@ -177,32 +177,29 @@ theorem det_ne_zero_and_abs_le {ι : Type} [Fintype ι] [DecidableEq ι] (T : Ma
   rw [← abs_pow, ← hdet, abs_mul]
   exact le_mul_of_one_le_left (abs_nonneg _) h1
 
-theorem exists_short_of_trace_det {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
-    {V : Type} [AddCommGroup V] [Module F V] [FiniteDimensional F V]
-    (q : LinearMap.BilinForm F V) (hq : LinearMap.IsSymm q) {κ : Type} [Fintype κ] [DecidableEq κ]
-    (b : κ → V) (hκ : Fintype.card κ = finrank ℚ F * finrank F V) {t : ℝ} (ht : 0 < t)
+theorem exists_short_coord {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
+    {V : Type} [AddCommGroup V] [Module F V] {ι : Type} [Fintype ι] (e : Basis ι F V)
+    (q : LinearMap.BilinForm F V) (he : ∀ k l, l ≠ k → q (e l) (e k) = 0) {κ : Type} [Fintype κ] [DecidableEq κ]
+    (b : κ → V) (hκ : Fintype.card κ = finrank ℚ F * Fintype.card ι) {t : ℝ} (ht : 0 < t)
     (h0 : (Matrix.of fun i j => Algebra.trace ℚ F (q (b i) (b j))).det ≠ 0)
     (h1 : |(((Matrix.of fun i j => Algebra.trace ℚ F (q (b i) (b j))).det : ℚ) : ℝ)| <
       (t ^ Fintype.card κ) ^ 2) :
     ∃ z : κ → ℤ, z ≠ 0 ∧ ∀ φ : F →+* ℂ,
-      ‖φ (q (∑ i, z i • b i) (∑ i, z i • b i))‖ ≤ finrank F V * t ^ 2 := by
+      ‖φ (q (∑ i, z i • b i) (∑ i, z i • b i))‖ ≤ Fintype.card ι * t ^ 2 ∧
+      ∀ k, ‖φ (e.repr (∑ i, z i • b i) k)‖ ^ 2 * ‖φ (q (e k) (e k))‖ ≤ t ^ 2 := by
   classical
-  haveI : Invertible (2 : F) := invertibleOfNonzero two_ne_zero
-  obtain ⟨e, he⟩ := LinearMap.BilinForm.exists_orthogonal_basis hq
   set ρ : (F →+* ℂ) → (F →+* ℝ) := fun φ => (IsTotallyReal.complexEmbedding_isReal φ).embedding
     with hρ
   have hρc : ∀ φ x, ((ρ φ x : ℝ) : ℂ) = φ x := fun φ x => by simp [hρ]
   have hqe : ∀ x y, q x y = ∑ k, e.repr x k * e.repr y k * q (e k) (e k) := by
     intro x y
     conv_lhs => rw [← e.sum_repr x, ← e.sum_repr y]
-
     simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Finset.sum_eq_single k]
     · ring
     · intro l _ hl
-      have : q (e l) (e k) = 0 := he hl
-      rw [this, mul_zero]
+      rw [he k l hl, mul_zero]
     · simp
   have htr : ∀ x : F, ((Algebra.trace ℚ F x : ℚ) : ℝ) = ∑ φ : F →+* ℂ, ρ φ x := by
     intro x
@@ -211,8 +208,8 @@ theorem exists_short_of_trace_det {F : Type} [Field F] [NumberField F] [IsTotall
     apply Complex.ofReal_injective
     simp only [Complex.ofReal_sum, hρc, ← h]
     simp
-  let ε : κ ≃ (F →+* ℂ) × Fin (finrank F V) := Fintype.equivOfCardEq (by
-    rw [hκ, Fintype.card_prod, Embeddings.card, Fintype.card_fin])
+  let ε : κ ≃ (F →+* ℂ) × ι := Fintype.equivOfCardEq (by
+    rw [hκ, Fintype.card_prod, Embeddings.card])
   let a : κ → ℝ := fun j => ρ (ε j).1 (q (e (ε j).2) (e (ε j).2))
   let B : Matrix κ κ ℝ := Matrix.of fun i j => ρ (ε j).1 (e.repr (b i) (ε j).2)
   set T : Matrix κ κ ℚ := Matrix.of fun i j => Algebra.trace ℚ F (q (b i) (b j)) with hT
@@ -224,7 +221,6 @@ theorem exists_short_of_trace_det {F : Type} [Field F] [NumberField F] [IsTotall
     rw [Fintype.sum_equiv ε _ (fun p => ρ p.1 (e.repr (b i) p.2) * ρ p.1 (q (e p.2) (e p.2)) *
       ρ p.1 (e.repr (b i') p.2)) (fun _ => rfl), Fintype.sum_prod_type]
     refine Finset.sum_congr rfl fun φ _ => ?_
-
     rw [hqe, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     simp only [map_mul]; ring
@@ -249,20 +245,15 @@ theorem exists_short_of_trace_det {F : Type} [Field F] [NumberField F] [IsTotall
   obtain ⟨z, hz0, hz⟩ := exists_int_vecMul_lt A hA0 ht hA1
   refine ⟨z, hz0, fun φ => ?_⟩
   set v := ∑ i, z i • b i with hv
-
-  rw [← hρc, Complex.norm_real, hqe, map_sum]
-  refine (norm_sum_le _ _).trans ?_
-  have : ∀ k, ‖ρ φ (e.repr v k * e.repr v k * q (e k) (e k))‖ ≤ t ^ 2 := by
+  have key : ∀ k, ‖ρ φ (e.repr v k * e.repr v k * q (e k) (e k))‖ ≤ t ^ 2 := by
     intro k
     have h2 := hz (ε.symm (φ, k))
     have h3 : ∑ i, (z i : ℝ) * A i (ε.symm (φ, k)) =
         ρ φ (e.repr v k) * Real.sqrt |ρ φ (q (e k) (e k))| := by
       have hc : e.repr v k = ∑ i, (z i : F) * e.repr (b i) k := by
-
         rw [← e.coord_apply, hv, map_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [map_zsmul, zsmul_eq_mul, e.coord_apply]
-
       rw [hc, map_sum, Finset.sum_mul]
       refine Finset.sum_congr rfl fun i _ => ?_
       simp only [A, Matrix.mul_diagonal, B, a, Matrix.of_apply, Equiv.apply_symm_apply,
@@ -272,8 +263,14 @@ theorem exists_short_of_trace_det {F : Type} [Field F] [NumberField F] [IsTotall
     rw [mul_pow, Real.sq_sqrt (abs_nonneg _)] at h4
     rw [map_mul, map_mul, Real.norm_eq_abs, abs_mul, abs_mul_self]
     rwa [sq] at h4
-  calc _ ≤ ∑ _k : Fin (finrank F V), t ^ 2 := Finset.sum_le_sum fun k _ => this k
-    _ = _ := by simp
+  refine ⟨?_, fun k => ?_⟩
+  · rw [← hρc, Complex.norm_real, hqe, map_sum]
+    refine (norm_sum_le _ _).trans ?_
+    calc _ ≤ ∑ _k : ι, t ^ 2 := Finset.sum_le_sum fun k _ => key k
+      _ = _ := by simp
+  · have := key k
+    rw [← Complex.norm_real, hρc, map_mul, map_mul, norm_mul, norm_mul, ← sq] at this
+    exact this
 
 end GlobalTheory.HermClass
 end -- clump:auto

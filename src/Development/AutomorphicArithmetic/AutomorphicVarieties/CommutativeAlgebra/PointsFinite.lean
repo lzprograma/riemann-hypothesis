@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.TactVanish
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
@@ -158,7 +159,7 @@ private theorem pf_unit {O X σ : Type} [CommRing O] [AddCommGroup X] (wt : σ �
   · rw [← hG, coeff_mul, coeff_mul]
     refine Finset.sum_congr rfl fun q hq => ?_
     by_cases h1 : Finsupp.weight wt q.1 = 0
-    · rw [coeff_wcomp, if_pos]
+    · rw [coeff_wcomp, ite_eq_left]
       rwa [← Finset.HasAntidiagonal.mem_antidiagonal.1 hq, map_add, h1, zero_add] at hn
     · rw [hU _ h1, zero_mul, zero_mul]
   · rw [one_mem_wtPart O wt n hn]
@@ -173,32 +174,12 @@ private theorem pf_prod {X σ S : Type} [AddCommGroup X] [CommRing S] (wt : σ �
     (t : Multiplicative X →* Sˣ) (x : σ → S) (d : σ →₀ ℕ) :
     (d.prod fun i k => ((t (Multiplicative.ofAdd (wt i)) : S) * x i) ^ k) =
       (t (Multiplicative.ofAdd (Finsupp.weight wt d)) : S) * d.prod fun i k => x i ^ k := by
-  induction d using Finsupp.induction_linear with
-  | zero => simp
-  | add f g hf hg =>
-    rw [Finsupp.prod_add_index' (by simp) (fun _ _ _ => pow_add _ _ _),
-      Finsupp.prod_add_index' (by simp) (fun _ _ _ => pow_add _ _ _), hf, hg, map_add (f := _), ofAdd_add,
-      map_mul, Units.val_mul]
-    ring
-  | single i k =>
-    rw [Finsupp.prod_single_index (by simp), Finsupp.prod_single_index (by simp),
-      Finsupp.weight_single, ofAdd_nsmul, map_pow, Units.val_pow_eq_pow_val, mul_pow]
+  apply _root_.tact_prod <;> assumption
 
 private theorem pf_approx {O X σ : Type} [CommRing O] [AddCommGroup X] [Finite σ] (wt : σ → X)
     (F : MvPowerSeries σ O) (n : ℕ) :
     ∃ s : Finset X, (n : ℕ∞) ≤ (F - ∑ j ∈ s, wcomp O wt j F).order := by
-  classical
-  refine ⟨(truncTotal n F).support.image (Finsupp.weight wt), nat_le_order fun d hd => ?_⟩
-
-  rw [map_sub, map_sum]
-  simp only [coeff_wcomp]
-  rw [Finset.sum_ite_eq]
-  split_ifs with h
-  · exact sub_self _
-  · rw [sub_zero]
-    by_contra h0
-    refine h (Finset.mem_image_of_mem _ (MvPolynomial.mem_support_iff.2 ?_))
-    rwa [coeff_truncTotal _ hd]
+  apply _root_.tact_approx <;> assumption
 
 private theorem pf_vanish {O X σ S : Type} [CommRing O] [AddCommGroup X] [Finite σ] [CommRing S]
     [Algebra O S] (wt : σ → X) (J : Ideal S) [IsHausdorff J S] (φ : MvPowerSeries σ O →ₐ[O] S)
@@ -212,14 +193,15 @@ private theorem pf_vanish {O X σ S : Type} [CommRing O] [AddCommGroup X] [Finit
 section Core
 
 variable {O X R K : Type} [CommRing O] [AddCommGroup X] [CommRing R] [Algebra O R] (W : WPres O X R)
-  [Field K] [Algebra O K] (ξ : W.A →ₐ[O] K)
+  [CommRing K] [Algebra O K] (ξ : W.A →ₐ[O] K)
 
 private theorem pf_zprod (m : W.σ →₀ ℕ) :
     ((m.prod fun s k => W.zA s ^ k : W.A) : R) = W.π (monomial m 1) := by
   rw [pf_monomial]
   exact map_finsuppProd W.A.val _ _
 
-private theorem pf_nonint (n : W.σ →₀ ℕ) (hn : n ≠ 0) (h0 : Finsupp.weight W.wt n = 0)
+private theorem pf_nonint {K : Type} [Field K] [Algebra O K] (ξ : W.A →ₐ[O] K)
+    (n : W.σ →₀ ℕ) (hn : n ≠ 0) (h0 : Finsupp.weight W.wt n = 0)
     (ha : (n.prod fun s k => ξ (W.zA s) ^ k) ≠ 0) :
     ¬ IsIntegral O (n.prod fun s k => ξ (W.zA s) ^ k)⁻¹ := by
   classical
@@ -233,7 +215,7 @@ private theorem pf_nonint (n : W.σ →₀ ℕ) (hn : n ≠ 0) (h0 : Finsupp.wei
     have := (Polynomial.eval₂_reverse_eq_zero_iff (algebraMap O K) (ξ u)⁻¹ p).2 hpa
     rwa [invOf_eq_inv, inv_inv] at this
   have hU : (monomial n 1 : MvPowerSeries W.σ O) ∈ wtPart O W.wt 0 := fun d hd => by
-    rw [coeff_monomial, if_neg]
+    rw [coeff_monomial, ite_eq_right]
     rintro rfl
     exact hd h0
   have hU' : Polynomial.aeval (monomial n 1 : MvPowerSeries W.σ O) p.reverse ∈ wtPart O W.wt 0 := by
@@ -244,7 +226,7 @@ private theorem pf_nonint (n : W.σ →₀ ℕ) (hn : n ≠ 0) (h0 : Finsupp.wei
     rw [isUnit_iff_constantCoeff, Polynomial.map_aeval_eq_aeval_map (φ := RingHom.id O) (ψ := constantCoeff)
       (by ext a; simp [MvPowerSeries.algebraMap_apply])]
     have : constantCoeff (monomial n 1 : MvPowerSeries W.σ O) = 0 := by
-      rw [← coeff_zero_eq_constantCoeff_apply, coeff_monomial, if_neg hn.symm]
+      rw [← coeff_zero_eq_constantCoeff_apply, coeff_monomial, ite_eq_right hn.symm]
     rw [this, Polynomial.map_id, ← Polynomial.coeff_zero_eq_aeval_zero, Polynomial.coeff_zero_reverse, hp.leadingCoeff]
     exact isUnit_one
   obtain ⟨G, hG, hG1⟩ := pf_unit W.wt hU' hunit
@@ -311,7 +293,7 @@ private theorem pf_agree (hι : Function.Injective ι)
       obtain ⟨c, hc, hc'⟩ := pf_step W ξ ι t g hg (J ^ N) J {n | Finsupp.weight W.wt n = 0 ∧ n ≠ 0} 0
         (fun n hn => hn.1) (fun n hn => by
           have := GlobalTheory.algHom_sub_constantCoeff_mem g hJ (monomial n 1)
-          rwa [← coeff_zero_eq_constantCoeff_apply, coeff_monomial, if_neg hn.2.symm, map_zero,
+          rwa [← coeff_zero_eq_constantCoeff_apply, coeff_monomial, ite_eq_right hn.2.symm, map_zero,
             sub_zero] at this) ih
         (b - algebraMap O _ (constantCoeff b)) (fun n hn => by
           rw [map_sub, MvPowerSeries.algebraMap_apply, coeff_C]
@@ -337,7 +319,7 @@ private theorem pf_agree (hι : Function.Injective ι)
   rw [Ideal.bot_mul, Ideal.mem_bot, sub_eq_zero] at hc'
   rw [hc', hc]
 
-private theorem pf_factor [DecidableEq X] (hι : Function.Injective ι)
+theorem UpperTheory.V.Alg.wpres_factor_of_adic [DecidableEq X] (hι : Function.Injective ι)
     (hg : ∀ s, ι (g (MvPowerSeries.X s)) = t (Multiplicative.ofAdd (W.wt s)) * ξ (W.zA s))
     (J : Ideal B) [IsHausdorff J B] (hJ : ∀ s, g (MvPowerSeries.X s) ∈ J)
     (h0 : ∀ x ∈ W.gr 0, ∃ c, ι c = ξ x) :
@@ -368,6 +350,13 @@ private theorem pf_factor [DecidableEq X] (hι : Function.Injective ι)
     have hFx' : (x : R) = W.π F := hFx.symm
     rw [← key j F hF x hFx', ← hf, ← hFx']
     rfl
+
+theorem UpperTheory.V.Alg.wpres_act_one [DecidableEq X] : act W.gr 1 ξ = ξ := by
+  refine AlgHom.ext fun x => ?_
+  induction x using DirectSum.Decomposition.inductionOn W.gr with
+  | zero => rw [map_zero, map_zero]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
+  | @homogeneous j x => rw [act_of_mem W.gr 1 ξ x.2]; simp
 
 end Core
 
@@ -433,7 +422,7 @@ theorem UpperTheory.V.Alg.points_finite :
       Subtype.ext (mul_div_cancel₀ _ hp0).symm
     rw [this]
     exact Ideal.mul_mem_right _ _ (Ideal.mem_map_of_mem _ hp.not_isUnit)
-  obtain ⟨f, hf⟩ := pf_factor W ξ B.val t (GlobalTheory.mvEvalAdic O J yB hyB) Subtype.val_injective
+  obtain ⟨f, hf⟩ := wpres_factor_of_adic W ξ B.val t (GlobalTheory.mvEvalAdic O J yB hyB) Subtype.val_injective
     (fun s => by rw [GlobalTheory.mvEvalAdic_X]; rfl) J (fun s => by rw [GlobalTheory.mvEvalAdic_X]; exact hyB s)
     (fun x hx => by
       have h1 : ξ x ∈ Submodule.span O (T : Set K) := hT ▸ Submodule.mem_map_of_mem hx

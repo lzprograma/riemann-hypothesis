@@ -185,13 +185,13 @@ theorem sum_ord_mul_deg_le {x : K} (hx : Transcendental k x) (S : Finset (Place 
   have hP1 : ∀ i : ι, ∀ w ∈ S, w ≠ i.1.1 → w.valuation (Y i) ≤ w.valuation x := by
     intro i w hw hne
     have := hy i.1.1 i.2.1 i.2.2 w hw
-    rw [if_neg hne, sub_zero] at this
+    rw [ite_eq_right hne, sub_zero] at this
     rw [hxv]; exact this
   have hP2 : ∀ i : ι, i.1.1.valuation (Y i - π i.1.1 ^ (i.2.1 : ℕ) * s i.1.1 i.2.2) ≤
       i.1.1.valuation x := by
     intro i
     have := hy i.1.1 i.2.1 i.2.2 i.1.1 i.1.2
-    rw [if_pos rfl] at this
+    rw [ite_eq_left rfl] at this
     rw [hxv]; exact this
   have hP3 : ∀ i : ι, ∀ w ∈ S, w.valuation (Y i) ≤ 1 := by
     intro i w hw
@@ -247,7 +247,7 @@ theorem sum_ord_mul_deg_le {x : K} (hx : Transcendental k x) (S : Finset (Place 
         rcases hmij.lt_or_eq with hlt | heq'
         · have hdi : d i = 0 := by
             simp only [d, ne_eq, hgi, not_false_eq_true, true_and]
-            rw [if_neg (by omega)]
+            rw [ite_eq_right (by omega)]
           obtain ⟨n, hn⟩ : ∃ n : ℕ, m i - m j = n + 1 := ⟨(m i - m j - 1).toNat, by omega⟩
           have hpow : x ^ (-m j) * (x ^ m i * W) = x ^ (n + 1) * W := by
             rw [← mul_assoc, ← zpow_add₀ hx0, show -m j + m i = ((n + 1 : ℕ) : ℤ) by push_cast; omega,
@@ -257,14 +257,14 @@ theorem sum_ord_mul_deg_le {x : K} (hx : Transcendental k x) (S : Finset (Place 
           exact mul_le_of_le_one_left' (pow_le_one' (hx1 w hw).le _)
         · have hdi : d i = c i := by
             simp only [d, ne_eq, hgi, not_false_eq_true, true_and]
-            rw [if_pos heq'.symm]
+            rw [ite_eq_left heq'.symm]
           have hpow : x ^ (-m j) * (x ^ m i * W) = W := by
             rw [← mul_assoc, ← zpow_add₀ hx0, ← heq', neg_add_cancel, zpow_zero, one_mul]
           rw [hdi, hpow, hW, sub_add_cancel_left, Valuation.map_neg]
           exact w.valuation_mul_aeval_div_le (hx1 w hw) _ (ht i)
     obtain ⟨⟨v, hvS⟩, a₀, α₀⟩ := j
     have hcj : d ⟨⟨v, hvS⟩, a₀, α₀⟩ ≠ 0 := by
-      simp only [d, ne_eq, hgj, not_false_eq_true, and_self, if_true]
+      simp only [d, ne_eq, hgj, not_false_eq_true, and_self, ite_true]
       exact hc _ hgj
     let v₀ : S := ⟨v, hvS⟩
     let B : ι → K := fun i => if i.1 = v₀ then π i.1.1 ^ (i.2.1 : ℕ) * s i.1.1 i.2.2 else 0
@@ -288,9 +288,9 @@ theorem sum_ord_mul_deg_le {x : K} (hx : Transcendental k x) (S : Finset (Place 
       · obtain ⟨⟨w, hw⟩, a, α⟩ := i
         by_cases hwv : w = v
         · subst hwv
-          have hB : B ⟨⟨w, hw⟩, a, α⟩ = π w ^ (a : ℕ) * s w α := if_pos rfl
+          have hB : B ⟨⟨w, hw⟩, a, α⟩ = π w ^ (a : ℕ) * s w α := ite_eq_left rfl
           rw [hB]; exact hP2 ⟨⟨w, hw⟩, a, α⟩
-        · have hB : B ⟨⟨w, hw⟩, a, α⟩ = 0 := if_neg (fun h => hwv (congrArg Subtype.val h))
+        · have hB : B ⟨⟨w, hw⟩, a, α⟩ = 0 := ite_eq_right (fun h => hwv (congrArg Subtype.val h))
           rw [hB, sub_zero]
           exact hP1 _ v hvS (fun h => hwv h.symm)
     have hmain : v.valuation (∑ a : Fin (v.ord x).toNat, ∑ α : Fin v.deg,

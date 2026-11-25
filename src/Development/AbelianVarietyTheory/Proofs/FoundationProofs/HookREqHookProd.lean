@@ -104,7 +104,7 @@ theorem row_hook (ν : ℕ → ℕ) (r k : ℕ) (hν : ∀ x y, x ≤ y → y < 
           ν r - c - 1 + (k + 1) + 1 := by
       intro c hc
       rw [Finset.mem_range] at hc
-      rw [Finset.filter_insert, if_pos hc, Finset.card_insert_of_notMem (by simp),
+      rw [Finset.filter_insert, ite_eq_left hc, Finset.card_insert_of_notMem (by simp),
         Finset.filter_true_of_mem (fun l hl => ?_), hcardIoo]
       rw [Finset.mem_Ioo] at hl
       exact lt_of_lt_of_le hc (hν l m hl.2.le (by omega))
@@ -121,7 +121,7 @@ theorem row_hook (ν : ℕ → ℕ) (r k : ℕ) (hν : ∀ x y, x ≤ y → y < 
           ν r - c - 1 + ((Finset.Ioo r m).filter (fun r' => c < ν r')).card + 1 := by
       intro c hc
       rw [Finset.mem_Ico] at hc
-      rw [Finset.filter_insert, if_neg (by omega)]
+      rw [Finset.filter_insert, ite_eq_right (by omega)]
     rw [Finset.prod_congr rfl hlow, Finset.prod_congr rfl hhigh]
     rw [Finset.prod_congr rfl hlow'] at IH
     have hT := telescope (ν r) k (ν m) hba

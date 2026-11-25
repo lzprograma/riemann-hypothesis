@@ -3,45 +3,6 @@ module
 public import Formalism.WachLatticeTwists.HodgeTateChains.Statement
 public import Mathlib.Algebra.Category.ModuleCat.Basic
 public import Mathlib.Algebra.Module.Torsion.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -98,12 +59,6 @@ def Inputs (w : ℤ_[ℓ]ˣ) (U : Finset ℤ) (i : ℤ) : Prop :=
   P.Sandwich ∧ P.InfRes ∧ P.T4 ∧ P.T3 ∧ P.HodgeTate w U i
 
 end Piece
-
-def StatPiece : Prop :=
-  ∀ (ℓ : ℕ) [Fact ℓ.Prime] (w : ℤ_[ℓ]ˣ) (m : ℕ), 1 ≤ m → (ℓ = 2 → 2 ≤ m) →
-    PadicInt.valuation ((w : ℤ_[ℓ]) - 1) = m →
-    ∀ (U : Finset ℤ) (i : ℤ) (A : Md ℓ) (P : Piece ℓ A), P.Inputs w U i →
-      TorsKilled ℓ A (2 + max 1 (rI ℓ m U i))
 
 structure LLData (ℓ : ℕ) [Fact ℓ.Prime] (n : ℕ) where
 
@@ -168,13 +123,6 @@ def Inv : Prop :=
   ∀ x, D.piece.gm (D.jm x) = D.jm x ∧ D.piece.gX (D.jX x) = D.jX x
 
 end InvariantsCohomologyData
-
-def InvariantsKilledByPower : Prop :=
-  ∀ (ℓ : ℕ) [Fact ℓ.Prime] (w : ℤ_[ℓ]ˣ) (m : ℕ), 1 ≤ m → (ℓ = 2 → 2 ≤ m) →
-    PadicInt.valuation ((w : ℤ_[ℓ]) - 1) = m →
-    ∀ (U : Finset ℤ), 0 ∉ U → U.Nonempty → ∀ D : InvariantsCohomologyData ℓ,
-    D.piece.Inputs w U 0 → D.Union → D.Flat → D.LES → D.Inv →
-      ∀ x : D.M, ((ℓ : ℤ_[ℓ]) ^ c0 ℓ m U) • x = 0
 
 structure TBData (ℓ : ℕ) [Fact ℓ.Prime] where
 

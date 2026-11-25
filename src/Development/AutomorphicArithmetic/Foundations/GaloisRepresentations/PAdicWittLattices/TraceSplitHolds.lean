@@ -96,28 +96,18 @@ namespace UpperTheory.Gal.G3.BaseChangeTowers
 
 private noncomputable def cmp {X A B C : Scheme.{0}} (p : X ⟶ A) (a : B ⟶ A) (ab : C ⟶ A) (b : C ⟶ B) (h : b ≫ a = ab) :
     pullback p ab ⟶ pullback p a :=
-  pullback.lift (pullback.fst p ab) (pullback.snd p ab ≫ b)
-    (by rw [pullback.condition, Category.assoc, h])
-
-private theorem cmp_fst {X A B C : Scheme.{0}} (p : X ⟶ A) (a : B ⟶ A) (ab : C ⟶ A) (b : C ⟶ B) (h : b ≫ a = ab) :
-    cmp p a ab b h ≫ pullback.fst p a = pullback.fst p ab := pullback.lift_fst _ _ _
-
-private theorem cmp_snd {X A B C : Scheme.{0}} (p : X ⟶ A) (a : B ⟶ A) (ab : C ⟶ A) (b : C ⟶ B) (h : b ≫ a = ab) :
-    cmp p a ab b h ≫ pullback.snd p a = pullback.snd p ab ≫ b := pullback.lift_snd _ _ _
+  pullback.map p ab p a (𝟙 _) b (𝟙 _) (by simp) (by simpa using h.symm)
 
 private theorem cmp_isPullback {X A B C : Scheme.{0}} (p : X ⟶ A) (a : B ⟶ A) (ab : C ⟶ A) (b : C ⟶ B) (h : b ≫ a = ab) :
     IsPullback (cmp p a ab b h) (pullback.snd p ab) (pullback.snd p a) b := by
-  refine IsPullback.of_right (h₁₂ := pullback.fst p a) (h₂₂ := a) (v₁₃ := p) ?_ (cmp_snd p a ab b h)
+  refine IsPullback.of_right (h₁₂ := pullback.fst p a) (h₂₂ := a) (v₁₃ := p) ?_ (by simp [cmp])
     (IsPullback.of_hasPullback p a)
-  rw [cmp_fst, h]
-  exact IsPullback.of_hasPullback p ab
+  simpa [cmp, h] using IsPullback.of_hasPullback p ab
 
 private theorem cmp_bcMap {X Y A B C : Scheme.{0}} (p : X ⟶ A) (q : Y ⟶ A) (f : Y ⟶ X) (hf : f ≫ p = q)
     (a : B ⟶ A) (ab : C ⟶ A) (b : C ⟶ B) (h : b ≫ a = ab) :
     cmp q a ab b h ≫ bcMap a f hf = bcMap ab f hf ≫ cmp p a ab b h := by
-  apply pullback.hom_ext
-  · rw [Category.assoc, Category.assoc, bcMap_fst, cmp_fst, bcMap_fst, ← Category.assoc, cmp_fst]
-  · rw [Category.assoc, Category.assoc, bcMap_snd, cmp_snd, cmp_snd, ← Category.assoc, bcMap_snd]
+  apply pullback.hom_ext <;> simp [cmp, bcMap, Category.assoc]
 
 private theorem cmp_bcMap_isPullback {X Y A B C : Scheme.{0}} (p : X ⟶ A) (q : Y ⟶ A) (f : Y ⟶ X) (hf : f ≫ p = q)
     (a : B ⟶ A) (ab : C ⟶ A) (b : C ⟶ B) (h : b ≫ a = ab) :
@@ -194,8 +184,8 @@ universe u v
 theorem UpperTheory.Gal.G3.jConjBridge :
     PositivityTheory.AutomorphicGaloisHodgeTate.G8.ConjBridge := by
   intro E Ω _ _ _ _ _ l _ Gw O iR iA iT Bw τ LL' τ' hτ
-  haveI := Bw.Kw.2
-  haveI := LL'.2
+  have := Bw.Kw.2
+  have := LL'.2
   let τo : ↥Bw.Kw.1 →ₐ[ℚ_[l]] Om l := LL'.1.val.comp τ'
   let g : GQ l := AlgEquiv.ofBijective (τo.liftNormal (Om l)) (Algebra.IsAlgebraic.algHom_bijective _)
   have hg : ∀ x : ↥Bw.Kw.1, g (x : Om l) = ((τ' x : ↥LL'.1) : Om l) :=
@@ -348,7 +338,7 @@ private theorem coverCore (hE : EtnGood) (hS : BcSplits) (hG : BcGal) (hU : Corr
   refine ⟨Tm, ?_, key, fun m => ?_⟩
   · have hh : hop l H Ω g = hEx.choose := by
       unfold hop
-      exact dif_pos hEx
+      exact dite_eq_left hEx
     rw [hh]
     exact hU l Ω (pullback.snd H.q g₀) _ _ _ _ hEx.choose_spec hA
   · exact (hGood m).inj _ _ (bcMap g₀ c rfl) (bcMap_snd _ _ _) G _ hgal'
@@ -486,8 +476,8 @@ namespace UpperTheory.Gal.G3
 
 theorem jHCover : PositivityTheory.AutomorphicGaloisHodgeTate.G8.HBC.P_cover := by
   intro k _ X s _
-  haveI : X.IsSeparated := ⟨by rw [← Limits.terminal.comp_from s]; infer_instance⟩
-  haveI : CompactSpace X := QuasiCompact.compactSpace_of_compactSpace s
+  have : X.IsSeparated := ⟨by rw [← Limits.terminal.comp_from s]; infer_instance⟩
+  have : CompactSpace X := QuasiCompact.compactSpace_of_compactSpace s
   let C := X.affineCover.finiteSubcover
   let e := Fintype.equivFin C.I₀
   refine ⟨Fintype.card C.I₀, fun i => (C.f (e.symm i)).opensRange, ?_, ?_⟩
@@ -681,8 +671,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.HodgeCoh GlobalTheory.CechDR PositivityTheory.AutomorphicGaloisHodgeTate.G8.HBC UpperTheory.Gal.G3.HN
@@ -732,11 +720,11 @@ private theorem isBaseChange_map (k k' B B' : Type) [CommRing k] [CommRing k'] [
 
 theorem jHForms : P_forms := by
   intro k k' _ _ _ J e B B' _ _ _ _ α hα hB j
-  letI : Algebra B B' := α.toAlgebra
-  letI : Algebra k B' := ((algebraMap k' B').comp (algebraMap k k')).toAlgebra
-  haveI : IsScalarTower k k' B' := .of_algebraMap_eq fun _ ↦ rfl
-  haveI : IsScalarTower k B B' := .of_algebraMap_eq fun r ↦ (hα.map_algebraMap r).symm
-  haveI : Algebra.IsPushout k k' B B' := ⟨(isBC_iff e (semiSl hα) _ fun _ ↦ rfl).1 hB⟩
+  let : Algebra B B' := α.toAlgebra
+  let : Algebra k B' := ((algebraMap k' B').comp (algebraMap k k')).toAlgebra
+  have : IsScalarTower k k' B' := .of_algebraMap_eq fun _ ↦ rfl
+  have : IsScalarTower k B B' := .of_algebraMap_eq fun r ↦ (hα.map_algebraMap r).symm
+  have : Algebra.IsPushout k k' B B' := ⟨(isBC_iff e (semiSl hα) _ fun _ ↦ rfl).1 hB⟩
   have hone (ω : Ω[B⁄k]) : hα.m1 ω = KaehlerDifferential.map k k' B B' ω := by
     induction ω using ind1 with
     | h b c => rw [hα.oneFormMap_smul_semilinear, hα.m1_D, map_smul, map_D]; rfl
@@ -783,25 +771,25 @@ theorem UpperTheory.Gal.G3.jHFun :
   have hP := (isIso_pushoutSection_iff H (US := U) (UT := g ⁻¹ᵁ U) (UX := f ⁻¹ᵁ U)
     le_rfl le_rfl hUY).mp (isIso_pushoutSection_of_isAffineOpen H le_rfl le_rfl hUY hU hU' hfU)
   rw [Scheme.Hom.appLE_eq_app, Scheme.Hom.appLE_eq_app, Scheme.Hom.appLE_eq_app] at hP
-  letI iBC : Algebra (Sec s U) (Sec s' (g ⁻¹ᵁ U)) := (appSecS s s' g U).toAlgebra
-  letI iBB : Algebra (Sec s U) (Sec r (f ⁻¹ᵁ U)) := secAlg s r f U
-  letI iCC : Algebra (Sec s' (g ⁻¹ᵁ U)) (Sec r' (f' ⁻¹ᵁ (g ⁻¹ᵁ U))) := secAlg s' r' f' (g ⁻¹ᵁ U)
-  letI iBC' : Algebra (Sec r (f ⁻¹ᵁ U)) (Sec r' (f' ⁻¹ᵁ (g ⁻¹ᵁ U))) :=
+  let iBC : Algebra (Sec s U) (Sec s' (g ⁻¹ᵁ U)) := (appSecS s s' g U).toAlgebra
+  let iBB : Algebra (Sec s U) (Sec r (f ⁻¹ᵁ U)) := secAlg s r f U
+  let iCC : Algebra (Sec s' (g ⁻¹ᵁ U)) (Sec r' (f' ⁻¹ᵁ (g ⁻¹ᵁ U))) := secAlg s' r' f' (g ⁻¹ᵁ U)
+  let iBC' : Algebra (Sec r (f ⁻¹ᵁ U)) (Sec r' (f' ⁻¹ᵁ (g ⁻¹ᵁ U))) :=
     ((Sec.res r' hle).toRingHom.comp (appSecS r r' e (f ⁻¹ᵁ U))).toAlgebra
-  letI iBX : Algebra (Sec s U) (Sec r' (f' ⁻¹ᵁ (g ⁻¹ᵁ U))) :=
+  let iBX : Algebra (Sec s U) (Sec r' (f' ⁻¹ᵁ (g ⁻¹ᵁ U))) :=
     ((algebraMap (Sec s' (g ⁻¹ᵁ U)) (Sec r' (f' ⁻¹ᵁ (g ⁻¹ᵁ U)))).comp
       (algebraMap (Sec s U) (Sec s' (g ⁻¹ᵁ U)))).toAlgebra
-  haveI t1 : IsScalarTower (Sec s U) (Sec s' (g ⁻¹ᵁ U)) (Sec r' (f' ⁻¹ᵁ (g ⁻¹ᵁ U))) :=
+  have t1 : IsScalarTower (Sec s U) (Sec s' (g ⁻¹ᵁ U)) (Sec r' (f' ⁻¹ᵁ (g ⁻¹ᵁ U))) :=
     IsScalarTower.of_algebraMap_eq (fun _ => rfl)
-  haveI t2 : IsScalarTower (Sec s U) (Sec r (f ⁻¹ᵁ U)) (Sec r' (f' ⁻¹ᵁ (g ⁻¹ᵁ U))) :=
+  have t2 : IsScalarTower (Sec s U) (Sec r (f ⁻¹ᵁ U)) (Sec r' (f' ⁻¹ᵁ (g ⁻¹ᵁ U))) :=
     IsScalarTower.of_algebraMap_eq (fun x => (congrArg (fun φ => CommRingCat.Hom.hom φ x) hP.w).symm)
-  haveI := sec_finite (s := s) (s' := r) (f := f) hU
-  haveI := sec_etale (s := s) (s' := r) (f := f) hU
-  haveI := projective_of_etale (Sec s U) (Sec r (f ⁻¹ᵁ U))
-  haveI := sec_finite (s := s') (s' := r') (f := f') hU'
-  haveI := sec_etale (s := s') (s' := r') (f := f') hU'
-  haveI := projective_of_etale (Sec s' (g ⁻¹ᵁ U)) (Sec r' (f' ⁻¹ᵁ (g ⁻¹ᵁ U)))
-  haveI hPo : Algebra.IsPushout (Sec s U) (Sec s' (g ⁻¹ᵁ U)) (Sec r (f ⁻¹ᵁ U))
+  have := sec_finite (s := s) (s' := r) (f := f) hU
+  have := sec_etale (s := s) (s' := r) (f := f) hU
+  have := projective_of_etale (Sec s U) (Sec r (f ⁻¹ᵁ U))
+  have := sec_finite (s := s') (s' := r') (f := f') hU'
+  have := sec_etale (s := s') (s' := r') (f := f') hU'
+  have := projective_of_etale (Sec s' (g ⁻¹ᵁ U)) (Sec r' (f' ⁻¹ᵁ (g ⁻¹ᵁ U)))
+  have hPo : Algebra.IsPushout (Sec s U) (Sec s' (g ⁻¹ᵁ U)) (Sec r (f ⁻¹ᵁ U))
       (Sec r' (f' ⁻¹ᵁ (g ⁻¹ᵁ U))) :=
     CommRingCat.isPushout_iff_isPushout.mp hP.flip
   exact (algTrace_of_isPushout (B := Sec s U) (B' := Sec r (f ⁻¹ᵁ U)) (C := Sec s' (g ⁻¹ᵁ U))
@@ -814,8 +802,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.AlgebraMapSecEq", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SurjectiveOfLocallySurjective\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -834,7 +820,7 @@ theorem algebraMap_sec_eq (s : X ⟶ Sp k) (U : X.Opens) (r : k) :
 theorem toOm_smul_k (s : X ⟶ Sp k) (q : ℕ) (U : X.Opens) (r : k) (x : OmU s U q) :
     letI := algΓ s
     toOm s q U (r • x) = restrictGlobal X U (algebraMap k Γ(X, ⊤) r) • toOm s q U x := by
-  letI := algΓ s
+  let := algΓ s
   rw [algebra_compatible_smul (Sec s U) r x, map_smul, algebraMap_sec_eq]
   rfl
 
@@ -876,9 +862,9 @@ open CategoryTheory Limits AlgebraicGeometry Opposite ReciprocityTheory.ChartRes
 theorem UpperTheory.Gal.G3.jHOmega :
     PositivityTheory.AutomorphicGaloisHodgeTate.G8.HBC.P_equiv → PositivityTheory.AutomorphicGaloisHodgeTate.G8.HBC.P_forms → PositivityTheory.AutomorphicGaloisHodgeTate.G8.HBC.P_sections → PositivityTheory.AutomorphicGaloisHodgeTate.G8.HBC.P_affine → PositivityTheory.AutomorphicGaloisHodgeTate.G8.HBC.P_omega := by
   intro hE hF hS hA k k' _ _ _ J e X X' s s' g h a V hV
-  letI := algΓ s
-  letI := algΓ s'
-  haveI : IsAffineHom g := hA k k' (algebraMap k k') X X' s s' g h
+  let := algΓ s
+  let := algΓ s'
+  have : IsAffineHom g := hA k k' (algebraMap k k') X X' s s' g h
   have hV' : IsAffineOpen (g ⁻¹ᵁ V) := hV.preimage g
   have hForms : IsBC e (formPullS h.w V a) :=
     hF k k' J e _ _ _ (semiHom_appSecS h.w V) (hS k k' J e X X' s s' g h V hV) a
@@ -895,8 +881,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.JHSections", "h": "module\n\npublic import Development.WeilBound.CoreStatements.PadicHodgeComparison.GoodCoverEigenspaces.CubeCechEquivalences.CechCubeBaseChange.BcSumSingle\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.AlgebraicGeometry.Morphisms.Flat\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -930,10 +914,10 @@ private theorem isBC_semiSl_of_pushout {k k' : Type} [CommRing k] [CommRing k'] 
     (H : IsPushout (CommRingCat.ofHom (algebraMap k B)) (CommRingCat.ofHom (algebraMap k k'))
       (CommRingCat.ofHom α) (CommRingCat.ofHom (algebraMap k' B'))) : IsBC e (semiSl hα) := by
   classical
-  letI : Algebra B B' := α.toAlgebra
-  letI : Algebra k B' := ((algebraMap k' B').comp (algebraMap k k')).toAlgebra
-  haveI : IsScalarTower k k' B' := IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
-  haveI : IsScalarTower k B B' := IsScalarTower.of_algebraMap_eq fun r ↦
+  let : Algebra B B' := α.toAlgebra
+  let : Algebra k B' := ((algebraMap k' B').comp (algebraMap k k')).toAlgebra
+  have : IsScalarTower k k' B' := IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
+  have : IsScalarTower k B B' := IsScalarTower.of_algebraMap_eq fun r ↦
     (congrArg (fun q ↦ q.hom r) H.w).symm
   have P : Algebra.IsPushout k k' B B' := CommRingCat.isPushout_iff_isPushout.1 H.flip
   have key : (bcSum e (semiSl hα) : (J →₀ B) → B') =
@@ -978,7 +962,7 @@ private theorem hodgeTrace_pull_congr {F : Type} [Field F] {Y Z : Scheme.{0}} (s
 theorem UpperTheory.Gal.G3.jHodgeOpBc :
     BcSplits → HodgeTr → TrBc.{0} → HodgeOpBc := by
   intro hBc hTr hTrBc k F _ _ φ H g _ _ a b
-  letI : Algebra k F := φ.toAlgebra
+  let : Algebra k F := φ.toAlgebra
   obtain ⟨hF, hE, -⟩ := hBc (Spec.map (CommRingCat.ofHom φ)) H.q (H.s g ≫ H.q) (H.s g ≫ H.q) (H.s g) rfl
     (H.s g) rfl PEmpty (fun e => e.elim) (fun e => e.elim)
   refine ⟨hF, hE, hodgeTrace (bcMap_snd _ (H.s g) rfl) a b, ?_, ?_⟩
@@ -1038,8 +1022,8 @@ theorem UpperTheory.Gal.G3.jHopLies :
   intro hEt hBc hF hHop hLies l _ k L O _ _ _ _ hl H θ C D hN Ω _ _ g
   have hT : (etG l k Ω).Good := hBc _ _ (hEt l (sp Ω) (unit_l l hl))
   obtain ⟨d, hd⟩ := hN.2.2 g
-  haveI : IsFinite (H.s g) := hd.1
-  haveI : Etale (H.s g) := hd.2.1
+  have : IsFinite (H.s g) := hd.1
+  have : Etale (H.s g) := hd.2.1
   obtain ⟨trg, htrg⟩ := hT.tr H.q (H.s g ≫ H.q) (H.s g) rfl
   have hfet := low_fet hF D g
   obtain ⟨tr, htr⟩ := @Th.Good.tr _ _ _ _ hT _ _ (pullback.snd C.p (gen O k))
@@ -1170,8 +1154,8 @@ private theorem galPart (hSp : BcSplits) (hGal : BcGal) {B k K Y T W₀ : Scheme
     exact hGal g₂ (pullback.snd p g₁) (pullback.snd (c₀ ≫ p) g₁) (bcMap g₁ c₀ rfl) (bcMap_snd _ _ _) G _
       (fun x => bcMap_snd _ _ _) hG1
   · obtain ⟨hF, hE, hsp⟩ := hSp g₁ p (s ≫ p) (c₀ ≫ p) s rfl c₀ rfl (Fin n) σ₀ hσ
-    haveI := hF
-    haveI := hE
+    have := hF
+    have := hE
     exact (hSp g₂ (pullback.snd p g₁) _ (pullback.snd (c₀ ≫ p) g₁) (bcMap g₁ s rfl) rfl (bcMap g₁ c₀ rfl)
       (bcMap_snd _ _ _) (Fin n) _ hσ₁).2.2 (hsp hS)
 
@@ -1198,13 +1182,13 @@ theorem UpperTheory.Gal.G3.jLowCov :
   refine ⟨⟨_, pullback.snd C.p (Spec.map (CommRingCat.ofHom φ))⟩, eZ,
     ⟨hMZ.1, ⟨d₀, hMZ.2⟩, eZ, hZ1⟩, hZ1, fun g => ?_⟩
   have hfet := D.fet g
-  haveI := hfet.1
-  haveI := hfet.2.1
+  have := hfet.1
+  have := hfet.2.1
   obtain ⟨W₀, c₀, G, _, _, a₀, σ₀, hG, hS⟩ := hGC (D.s g) (D.d g) (D.fet g)
   obtain ⟨ha, hσ, hσ₁, hGal', hSpl⟩ := galPart hSp hGal C.p (gen (Ow w) E)
     (Spec.map (CommRingCat.ofHom τK)) (D.s g) c₀ G a₀ (D.d g) σ₀ hG hS
-  haveI := hG.1
-  haveI := hG.2.1
+  have := hG.1
+  have := hG.2.1
   have hMW := hM l K φ C.p d₀ hd₀ C.proj c₀
   obtain ⟨eW, hW1, hW2⟩ := hGI φ τK hφ (c₀ ≫ C.p)
   have hu : ∀ i, (σ₀ i ≫ D.t g) ≫ C.p = c₀ ≫ C.p := fun i => by
@@ -1274,8 +1258,8 @@ theorem UpperTheory.Gal.G3.jLowHodge :
       T'.IsTr H.q (H.s g ≫ H.q) (H.s g) trg ∧ trg (T'.pull (H.t g) (H.comm g) x) = ψ (θ g) • x := by
     intro g
     obtain ⟨d, hd⟩ := hN.2.2 g
-    haveI : IsFinite (H.s g) := hd.1
-    haveI : Etale (H.s g) := hd.2.1
+    have : IsFinite (H.s g) := hd.1
+    have : Etale (H.s g) := hd.2.1
     obtain ⟨i1, i2, tr, htr, heq⟩ := hOB k F φ H g a b
     obtain ⟨j1, j2, hg⟩ := he g
     exact ⟨tr, htr, (heq j1 j2 x).symm.trans hg⟩
@@ -1289,8 +1273,8 @@ theorem UpperTheory.Gal.G3.jLowHodge :
   unfold IsHEig
   intro g
   have hfet : FEt ((low D).s g) (D.d g) := hFB.1 _ _ _ _ _ (low_square D g) (D.fet g)
-  haveI : IsFinite ((low D).s g) := hfet.1
-  haveI : Etale ((low D).s g) := hfet.2.1
+  have : IsFinite ((low D).s g) := hfet.1
+  have : Etale ((low D).s g) := hfet.2.1
   obtain ⟨i1, i2, trL, htrL, heqL⟩ := hOB k F φ (low D) g a b
   refine ⟨i1, i2, ?_⟩
   rw [heqL i1 i2 z]
@@ -1337,7 +1321,7 @@ private theorem sq_bc {T Y S B : Scheme.{0}} (s : T ⟶ Y) (p : Y ⟶ S) (c : B 
 theorem UpperTheory.Gal.G3.jLowNice :
     FEtBasic → PositivityTheory.AutomorphicGaloisHodgeTate.G8.LowNice := by
   intro hb k L _ _ H θ O _ _ C D
-  haveI : Smooth C.p := C.smooth
+  have : Smooth C.p := C.smooth
   refine ⟨?_, ?_, ?_⟩
   · show Smooth (pullback.snd C.p (UpperTheory.Gal.Int.Geo.gen O k))
     infer_instance
@@ -1468,8 +1452,8 @@ universe u v
 theorem UpperTheory.Gal.G3.jModBc :
     UpperTheory.Gal.Seam.GoodOf → ModBc := by
   intro hG l _ K O _ _ φ Y W p d hs hp c _ _
-  haveI : SmoothOfRelativeDimension d p := hs
-  haveI : SmoothOfRelativeDimension 0 c := (Etale.iff_smoothOfRelativeDimension_zero c).1 inferInstance
+  have : SmoothOfRelativeDimension d p := hs
+  have : SmoothOfRelativeDimension 0 c := (Etale.iff_smoothOfRelativeDimension_zero c).1 inferInstance
   have hcs : SmoothOfRelativeDimension d (c ≫ p) := by
     have h : SmoothOfRelativeDimension (0 + d) (c ≫ p) := inferInstance
     rwa [Nat.zero_add] at h
@@ -1477,12 +1461,12 @@ theorem UpperTheory.Gal.G3.jModBc :
     (smoothOfRelativeDimension_isStableUnderBaseChange _).of_isPullback (IsPullback.of_hasPullback _ _) hcs
   have hcq : ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsQProjOver (c ≫ p) :=
     GlobalTheory.isQProjOver_comp_of_isFinite_general c (GlobalTheory.SchemeWords.isQProjOver_of_isProjOver hp)
-  haveI : IsProper p := GlobalTheory.SchemeWords.isProper_of_isProjOver hp
+  have : IsProper p := GlobalTheory.SchemeWords.isProper_of_isProjOver hp
   have hcp : ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsProjOver (c ≫ p) :=
     GlobalTheory.UPel.isProjOver_of_isQProjOver_of_isProper O W (c ≫ p) hcq inferInstance
   have hqp : ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsProjOver (pullback.snd (c ≫ p) (Spec.map (CommRingCat.ofHom φ))) :=
     GlobalTheory.ProjSpace.isProjOver_pullback_snd φ hcp
-  haveI : FiniteDimensional ℚ_[l] K.1 := K.2
+  have : FiniteDimensional ℚ_[l] K.1 := K.2
   have hsm : Smooth (pullback.snd (c ≫ p) (Spec.map (CommRingCat.ofHom φ))) :=
     SmoothOfRelativeDimension.smooth d _
   exact ⟨⟨hG l K.1 ⟨_, _⟩ hsm hqp, hsm⟩, hqs⟩
@@ -1528,10 +1512,10 @@ private theorem pull_isBC (pE : P_equiv) (pC : P_cube) (pA : P_affine) (pV : P_c
     (e : Module.Basis J k k') {X X' : Scheme.{0}} (s : X ⟶ Sp k) (s' : X' ⟶ Sp k') (g : X' ⟶ X)
     (h : IsPullback g s' s (spMap (algebraMap k k'))) [IsProper s] (a b : ℕ) :
     IsBC e (hodgePullS h.w a b) := by
-  letI := algΓ s
-  letI := algΓ s'
+  let := algΓ s
+  let := algΓ s'
   obtain ⟨n, U, hc, hU⟩ := pV k X s
-  haveI : IsAffineHom g := pA k k' (algebraMap k k') X X' s s' g h
+  have : IsAffineHom g := pA k k' (algebraMap k k') X X' s s' g h
   have hc' : ⨆ i, g ⁻¹ᵁ U i = ⊤ := by
     rw [← Scheme.Hom.preimage_iSup, hc, Scheme.Hom.preimage_top]
   have hU' : ∀ S : Finset (Fin n), S.Nonempty → IsAffineOpen (⨅ i ∈ S, g ⁻¹ᵁ U i) := by
@@ -1563,7 +1547,7 @@ theorem UpperTheory.Gal.G3.jHBC :
   intro pB pE pC pA pV pO pH pT k k' _ _ φ
   refine ⟨fun s s' g h a b ↦ hodgePullS h.w a b, ?_, ?_⟩
   · intro X X' s s' g h _ a b I c
-    letI : Algebra k k' := φ.toAlgebra
+    let : Algebra k k' := φ.toAlgebra
     have h₀ : IsPullback g s' s (spMap (algebraMap k k')) := h
     exact pB k k' _ (Module.Basis.ofVectorSpace k k') _ _ (hodgePullS h₀.w a b)
       (pull_isBC pE pC pA pV pO pH _ s s' g h₀ a b) I c
@@ -1622,28 +1606,28 @@ theorem OccMove_holds : OccMove := by
       exact absurd (hmax q (Finset.mem_filter.2 ⟨Finset.mem_univ _, h0⟩)) (not_le.2 hq)
     refine ⟨S, fun q => if c q = c q₀ then z q else 0, fun h0 => ?_, fun σ hσ => ?_⟩
     · have h1 : (if c q₀ = c q₀ then z q₀ else 0) = 0 := congrFun h0 q₀
-      rw [if_pos rfl] at h1
+      rw [ite_eq_left rfl] at h1
       exact (Finset.mem_filter.1 hq₀).2 h1
     obtain ⟨hB, hρ⟩ := hc σ
     have hE := congrFun (h σ hσ)
     funext p
     simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, Pi.smul_apply] at hE ⊢
     by_cases hp : c p = c q₀
-    · rw [if_pos hp, ← hE p]
+    · rw [ite_eq_left hp, ← hE p]
       refine Finset.sum_congr rfl fun q _ => ?_
       rw [hρ]
       by_cases hq : c q = c q₀
-      · rw [if_pos hq, if_pos (hp.trans hq.symm)]
-      · rw [if_neg hq, map_zero, mul_zero]
+      · rw [ite_eq_left hq, ite_eq_left (hp.trans hq.symm)]
+      · rw [ite_eq_right hq, map_zero, mul_zero]
         rcases lt_or_gt_of_ne hq with hlt | hgt'
         · rw [hB (lt_of_lt_of_eq hlt hp.symm), map_zero, zero_mul]
         · rw [hgt q hgt', map_zero, mul_zero]
-    · rw [if_neg hp, smul_zero]
+    · rw [ite_eq_right hp, smul_zero]
       refine Finset.sum_eq_zero fun q _ => ?_
       rw [hρ]
       by_cases hq : c q = c q₀
-      · rw [if_neg (fun e => hp (e.trans hq)), map_zero, zero_mul]
-      · rw [if_neg hq, map_zero, mul_zero]
+      · rw [ite_eq_right (fun e => hp (e.trans hq)), map_zero, zero_mul]
+      · rw [ite_eq_right hq, map_zero, mul_zero]
 
 end PositivityTheory.AutomorphicGaloisHodgeTate.G8
 
@@ -1732,7 +1716,7 @@ open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibl
 
 namespace PositivityTheory.AutomorphicGaloisHodgeTate.G8
 
-theorem jumpsEx_holds : JumpsEx := set_option synthInstance.maxHeartbeats 200000 in by
+theorem jumpsEx_holds : JumpsEx := by
   intro E Ω _ _ _ _ _ l _ P AI hT Gw O _ _ _ Bw d r hc τ LL' τ' hτ
   obtain ⟨T⟩ := hT
   obtain ⟨L, r₁, hm, hcr⟩ := hc

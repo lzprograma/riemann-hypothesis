@@ -1,5 +1,8 @@
 module
 
+
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockEstimatesSumForm
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.JointInstanceTheoremA
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Analysis.Complex.Exponential
 public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
@@ -11,57 +14,10 @@ public import Mathlib.Data.Set.Finite.List
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OneLevelCoefficients
 public import Formalism.HermitianCurvature.StatementTC
 public import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
 import Mathlib.Data.Finset.Functor
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Lemma
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.Style
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.Statement, Formalism.HermitianCurvature.HermitianCurvatureProofs.RecText, Formalism.HermitianCurvature.HermitianCurvatureProofs.AntidiagMulDiagonal, Formalism.HermitianCurvature.HermitianCurvatureProofs.FinitePointSets, Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockStartPoints, Formalism.HermitianCurvature.HermitianCurvatureProofs.FormDomination, Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveSemidefinitePullback, Formalism.HermitianCurvature.HermitianCurvatureProofs.OneLevelInequalitySplitBySize, Formalism.HermitianCurvature.HermitianCurvatureProofs.RecursionWithDensities
 
@@ -489,17 +445,7 @@ variable {E W : Type} [Field E]
 
 lemma psd_sum_nonneg {α : Type} (Y : Finset α) (k g : α → α → ℂ) (hk : PSDOn Y k)
     (hg : PSDOn Y g) : 0 ≤ (∑ p ∈ Y, ∑ q ∈ Y, k p q * g p q).re := by
-  have h := (Matrix.PosSemidef.hadamard hk hg).dotProduct_mulVec_nonneg (fun _ => (1 : ℂ))
-  have e : star (fun _ : Y => (1 : ℂ)) ⬝ᵥ (Matrix.mulVec (Matrix.hadamard
-      (Matrix.of fun x y : Y => k x y) (Matrix.of fun x y : Y => g x y)) (fun _ => (1 : ℂ))) =
-      ∑ p ∈ Y, ∑ q ∈ Y, k p q * g p q := by
-    simp only [dotProduct, Matrix.mulVec, Matrix.hadamard_apply, Matrix.of_apply, Pi.star_apply,
-      star_one, one_mul, mul_one]
-    rw [← Finset.sum_coe_sort Y]
-    refine Finset.sum_congr rfl fun p _ => ?_
-    rw [← Finset.sum_coe_sort Y]
-  rw [e] at h
-  exact (Complex.le_def.1 h).1
+  apply _root_.Formalism.FourierDecayAlt.P.BaseGramNonnegativity.sum_re_nonneg <;> assumption
 
 lemma psd_comp {α β : Type} (Y : Finset α) (Z : Finset β) (φ : α → β) (hφ : ∀ a ∈ Y, φ a ∈ Z)
     (k : β → β → ℂ) (hk : PSDOn Z k) : PSDOn Y (fun a b => k (φ a) (φ b)) :=
@@ -688,14 +634,14 @@ theorem schurRecursion_true : Formalism.FourierDecayAlt.TB.SchurStep := by
     refine Finset.sum_le_sum fun t ht => ?_
     have e : (D.Nst ε i s w Y (blk (D.Kr i) s t t) t t).re =
         ∑ t' ∈ S, if t' = t then (D.Nst ε i s w Y (blk (D.Kr i) s t' t') t' t').re else 0 := by
-      rw [Finset.sum_ite_eq' S t, if_pos ht]
+      rw [Finset.sum_ite_eq' S t, ite_eq_left ht]
     rw [e, ← Finset.sum_add_distrib]
     refine Finset.sum_le_sum fun t' ht' => ?_
     by_cases htt : t' = t
     · subst htt
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       linarith [hB0 t']
-    · rw [if_neg htt, zero_add]
+    · rw [ite_eq_right htt, zero_add]
       exact hB t ht t' ht' (Ne.symm htt)
   by_cases htop : i = D.r + 1 ∧ s = 1
   · have h1 := split (fun _ _ => 0)
@@ -715,8 +661,8 @@ theorem schurRecursion_true : Formalism.FourierDecayAlt.TB.SchurStep := by
   have hm0 : ∀ t t', 0 ≤ m t t' := by
     intro t t'
     by_cases hP : P t t'
-    · simp only [m, if_pos hP]; exact hP.2.2
-    · simp only [m, if_neg hP]; exact le_rfl
+    · simp only [m, ite_eq_left hP]; exact hP.2.2
+    · simp only [m, ite_eq_right hP]; exact le_rfl
   have row : ∀ t ∈ S, ∑ t' ∈ S, m t t' ≤ ep := by
     intro t _
     have h1 := hLS.2 i s hs hsi hi htop ((S.filter fun t' => P t t').image fun t' => t⁻¹ - t'⁻¹)
@@ -765,7 +711,7 @@ theorem schurRecursion_true : Formalism.FourierDecayAlt.TB.SchurStep := by
             (fun π _ => hX0 π t t') (Finset.mem_univ π)
         by_cases hmj : 0 ≤ D.maj ρ (t⁻¹ - t'⁻¹)
         · have hP : P t t' := ⟨hne, hL, hmj⟩
-          simp only [m, if_pos hP]
+          simp only [m, ite_eq_left hP]
           exact le_trans h2 (mul_le_mul_of_nonneg_left h3 hmj)
         · have h4 : D.maj ρ (t⁻¹ - t'⁻¹) * ∑ x ∈ WW, θ π x * ((a x.1 t + a x.2 t') / 2) ≤ 0 :=
             mul_nonpos_of_nonpos_of_nonneg (not_le.1 hmj).le (hX0 π t t')
@@ -819,17 +765,7 @@ open scoped ComplexOrder
 
 theorem form_nonneg {α : Type} (Y : Finset α) (k g : α → α → ℂ) (hk : PSDOn Y k)
     (hg : PSDOn Y g) : 0 ≤ (∑ a ∈ Y, ∑ b ∈ Y, k a b * g a b).re := by
-  have H := (Matrix.PosSemidef.hadamard hk hg).dotProduct_mulVec_nonneg (fun _ => (1 : ℂ))
-  have e : star (fun _ : Y => (1 : ℂ)) ⬝ᵥ
-      ((Matrix.hadamard (Matrix.of fun x y : Y => k x y) (Matrix.of fun x y : Y => g x y)).mulVec
-        (fun _ => (1 : ℂ))) = ∑ a ∈ Y, ∑ b ∈ Y, k a b * g a b := by
-    simp only [dotProduct, Matrix.mulVec, Matrix.hadamard_apply, Matrix.of_apply, Pi.star_apply,
-      star_one, one_mul, mul_one]
-    rw [← Finset.sum_coe_sort Y]
-    refine Finset.sum_congr rfl fun a _ => ?_
-    rw [← Finset.sum_coe_sort Y]
-  rw [e] at H
-  exact (Complex.le_def.1 H).1
+  apply _root_.Formalism.FourierDecayAlt.P.BlockStartPoints.psd_sum_nonneg <;> assumption
 
 theorem form_dom {α ι : Type} (Y : Finset α) (R : Finset ι) (c : ℝ) (k g : α → α → ℂ)
     (Th : ι → α → α → ℂ)
@@ -1164,7 +1100,7 @@ theorem diagStep : Formalism.FourierDecayAlt.TB.DiagStep := by
       split_ifs
       · exact hnn x t
       · exact le_refl 0) ht₀
-  simpa only [if_pos hmem] using h2
+  simpa only [ite_eq_left hmem] using h2
 
 end Formalism.FourierDecayAlt.P
 end -- clump:auto
@@ -1257,31 +1193,14 @@ open Classical
 
 theorem psd_congr {α : Type} {Y : Finset α} {k k' : α → α → ℂ}
     (h : ∀ x ∈ Y, ∀ y ∈ Y, k x y = k' x y) (hk : PSDOn Y k) : PSDOn Y k' := by
-  unfold TB.PSDOn at hk ⊢
-  have e : (Matrix.of fun x y : Y => k' x y) = Matrix.of fun x y : Y => k x y := by
-    ext x y
-    simp only [Matrix.of_apply]
-    exact (h x x.2 y y.2).symm
-  rw [e]
-  exact hk
+  apply _root_.Formalism.FourierDecayAlt.P.Jx7.psd_congr <;> assumption
 
 theorem psd_zero {α : Type} (Y : Finset α) : PSDOn Y (fun _ _ => (0 : ℂ)) := by
-  unfold TB.PSDOn
-  have e : (Matrix.of fun x y : Y => (0 : ℂ)) = 0 := by
-    ext x y
-    simp
-  rw [e]
-  exact Matrix.PosSemidef.zero
+  apply _root_.Formalism.FourierDecayAlt.P.Jx7.psd_zero <;> assumption
 
 theorem psd_add {α : Type} {Y : Finset α} {k k' : α → α → ℂ} (h : PSDOn Y k) (h' : PSDOn Y k') :
     PSDOn Y (fun x y => k x y + k' x y) := by
-  unfold TB.PSDOn at h h' ⊢
-  have e : (Matrix.of fun x y : Y => k x y + k' x y) =
-      (Matrix.of fun x y : Y => k x y) + Matrix.of fun x y : Y => k' x y := by
-    ext x y
-    simp
-  rw [e]
-  exact h.add h'
+  apply _root_.Formalism.FourierDecayAlt.P.Jx7.psd_add <;> assumption
 
 private theorem sum_attach_ite_eq {α : Type} (X : Finset α) (a : α) (F : α → ℂ) :
     (∑ j ∈ X.attach, if (j : α) = a then F j else 0) = if a ∈ X then F a else 0 := by
@@ -1340,8 +1259,8 @@ theorem psd_restrict' {α : Type} {X : Finset α} (Y : Finset α) {k k' : α →
   refine psd_congr (fun x _ y _ => ?_) (psd_restrict Y hk)
   show (if x ∈ X ∧ y ∈ X then k x y else 0) = k' x y
   by_cases h : x ∈ X ∧ y ∈ X
-  · rw [if_pos h, h1 x y h]
-  · rw [if_neg h, h0 x y h]
+  · rw [ite_eq_left h, h1 x y h]
+  · rw [ite_eq_right h, h0 x y h]
 
 theorem mk_eq_iff (L : AddSubgroup E) (a b : E) : ((a : E ⧸ L) = (b : E ⧸ L)) ↔ a - b ∈ L := by
   exact QuotientAddGroup.eq_iff_sub_mem
@@ -1353,13 +1272,13 @@ noncomputable def sel (L : AddSubgroup E) (S : Finset E) (c : E ⧸ L) : E :=
 
 theorem sel_mem {L : AddSubgroup E} {S : Finset E} {c : E ⧸ L} (h : good L S c) : sel L S c ∈ S := by
   unfold sel
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec.1
 
 theorem sel_mk {L : AddSubgroup E} {S : Finset E} {c : E ⧸ L} (h : good L S c) :
     ((sel L S c : E) : E ⧸ L) = c := by
   unfold sel
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec.2
 
 noncomputable def KrR (D : Data E W) (T : Tower E) : ℕ → Pt E → Pt E → ℂ :=
@@ -1439,11 +1358,11 @@ theorem ThR_psd (D : Data E W) (T : Tower E) (Th : ℕ → ℕ → E → Pt E �
   · obtain ⟨⟨hs, hsi, hi⟩, hg⟩ := id hc
     refine psd_congr (fun x _ y _ => ?_)
       (psd_restrict Y (majorantPSD E W D T Th hK hD i s hs hsi hi _ (sel_mem hg)))
-    simp only [if_pos hc]
+    simp only [ite_eq_left hc]
     first
     | (split_ifs <;> rfl)
   · refine psd_congr (fun x _ y _ => ?_) (psd_zero Y)
-    simp only [if_neg hc]
+    simp only [ite_eq_right hc]
 
 theorem thetaDomination_dp_of_krPSD_of_domMin (D : Data E W) (T : Tower E) (Th : ℕ → ℕ → E → Pt E → Pt E → ℂ) (hK : KrPSD D)
     (hE : EBounds D) (hD : DomMin D T Th) : (Dp D T Th).ThetaDomination := by
@@ -1457,11 +1376,11 @@ theorem thetaDomination_dp_of_krPSD_of_domMin (D : Data E W) (T : Tower E) (Th :
     · have hg : good (D.La (i - s + 1) s) (T.Sg (i - s + 1) s) (t : E ⧸ D.La (i - s + 1) s) :=
         ⟨t, ht, rfl⟩
       refine psd_restrict' Y (h1 t ht) (fun x y hxy => ?_) (fun x y hxy => ?_)
-      · simp only [ThR, if_pos (And.intro hr hg), blk, KrR, join_mem T hs hsi ht, if_pos hxy]
+      · simp only [ThR, ite_eq_left (And.intro hr hg), blk, KrR, join_mem T hs hsi ht, ite_eq_left hxy]
         rw [h2 _ (sel_mem hg) t ht ((mk_eq_iff _ _ _).1 (sel_mk hg)) x hxy.1 y hxy.2]
-      · simp only [ThR, blk, KrR, join_mem T hs hsi ht, if_neg hxy, ite_self, sub_zero]
+      · simp only [ThR, blk, KrR, join_mem T hs hsi ht, ite_eq_right hxy, ite_self, sub_zero]
     · refine psd_congr (fun x _ y _ => ?_) (ThR_psd D T Th hK hD i s t Y)
-      simp only [blk, KrR, join_not_mem T ht, false_and, if_false, sub_zero]
+      simp only [blk, KrR, join_not_mem T ht, false_and, ite_false, sub_zero]
   · intro t t' htt
     show ThR D T Th i s t = ThR D T Th i s t'
     have e : (t : E ⧸ D.La (i - s + 1) s) = t' := (mk_eq_iff _ _ _).2 htt
@@ -1497,18 +1416,18 @@ theorem thetaDomination_dp_of_krPSD_of_domMin (D : Data E W) (T : Tower E) (Th :
         rw [hS', Finset.sum_image (f := fun t₁ => Th i s t₁ x y) hinj, Finset.sum_filter]
         refine Finset.sum_congr rfl fun t _ => ?_
         by_cases hg : good L G (t : E ⧸ L)
-        · simp only [ThR, if_pos hg, if_pos hxy]
-          exact if_pos (And.intro hr hg)
+        · simp only [ThR, ite_eq_left hg, ite_eq_left hxy]
+          exact ite_eq_left (And.intro hr hg)
         · have : ¬ ((1 ≤ s ∧ s ≤ i ∧ i ≤ D.r + 1) ∧ good L G (t : E ⧸ L)) := fun h => hg h.2
-          simp only [ThR, if_neg hg]
-          exact if_neg this
+          simp only [ThR, ite_eq_right hg]
+          exact ite_eq_right this
       rw [hsum]
-      simp only [KrR, if_pos hxy]
+      simp only [KrR, ite_eq_left hxy]
     · have : ∀ t ∈ S, ThR D T Th i s t x y = 0 := by
         intro t _
-        simp only [ThR, if_neg hxy, ite_self]
+        simp only [ThR, ite_eq_right hxy, ite_self]
       rw [Finset.sum_eq_zero this]
-      simp only [if_neg hxy, KrR, mul_zero, sub_zero]
+      simp only [ite_eq_right hxy, KrR, mul_zero, sub_zero]
 
 theorem Dp_Q (D : Data E W) (T : Tower E) (Th : ℕ → ℕ → E → Pt E → Pt E → ℂ) (ε : ℝ) (k : ℕ)
     (w : W) : (Dp D T Th).Q T ε k w = D.Q T ε k w := by
@@ -1518,7 +1437,7 @@ theorem Dp_Q (D : Data E W) (T : Tower E) (Th : ℕ → ℕ → E → Pt E → P
     refine Finset.sum_congr rfl fun p hp => Finset.sum_congr rfl fun q hq => ?_
     show KrR D T k p q * _ = _
     unfold KrR
-    rw [if_pos ⟨hp, hq⟩]
+    rw [ite_eq_left ⟨hp, hq⟩]
     try rfl
   rw [e]
   try rfl
@@ -1536,8 +1455,8 @@ theorem oneLevelAfterOfOld : OneLevelAfterOfOld := by
     simp only [KrR, h0, ite_self]
   have hKP : (Dp D T Th).KernelPSD :=
     ⟨fun i Y => psd_restrict' Y (hK i (T.X i))
-      (fun x y hxy => by show KrR D T i x y = _; simp only [KrR, if_pos hxy])
-      (fun x y hxy => by show KrR D T i x y = _; simp only [KrR, if_neg hxy]), fun i s t Y => ThR_psd D T Th hK hD i s t Y⟩
+      (fun x y hxy => by show KrR D T i x y = _; simp only [KrR, ite_eq_left hxy])
+      (fun x y hxy => by show KrR D T i x y = _; simp only [KrR, ite_eq_right hxy]), fun i s t Y => ThR_psd D T Th hK hD i s t Y⟩
   have h := hOL E W (Dp D T Th) ep C₄ hG hKP hW hA2' (thetaDomination_dp_of_krPSD_of_domMin D T Th hK hE hD) hWv hP hLi hB hLa
     hep hC hv hv1 T ε hε σ i hi1 hi
     (fun k hk => ⟨(hσ k hk).1, fun w hw => by rw [Dp_Q]; exact (hσ k hk).2 w hw⟩) w hw
@@ -1599,7 +1518,7 @@ theorem theoremAAfterOfSteps : TC.TheoremAAfterOfSteps := by
   have hprod : ∏ i ∈ Icc 1 (D.r + 1), (1 + e' i) = ∏ i ∈ Icc 1 (D.r + 1), (1 + D.e i) := by
     apply Finset.prod_congr rfl
     intro i hi; rw [Finset.mem_Icc] at hi
-    simp only [he', if_pos hi]
+    simp only [he', ite_eq_left hi]
   have hprod0 : 0 ≤ ∏ i ∈ Icc 1 (D.r + 1), (1 + D.e i) := by
     apply Finset.prod_nonneg
     intro i hi; rw [Finset.mem_Icc] at hi
@@ -1658,7 +1577,7 @@ theorem theoremAAfterOfSteps : TC.TheoremAAfterOfSteps := by
       σ i ≤ (1 + (C₀ * Θ ^ (-((D.K : ℝ) - 5 / 2))) ^ D.f) * √(1 + e' i) * σ (i - 1) +
         ∑ t ∈ Icc 2 i, ((C₀ / Θ) ^ D.f) ^ (t - 1) * σ (i - t) := by
     intro i hi1 hi
-    have hei : e' i = D.e i := by simp only [he', if_pos (And.intro hi1 hi)]
+    have hei : e' i = D.e i := by simp only [he', ite_eq_left (And.intro hi1 hi)]
     rw [hei]
     apply hσle i
     · apply add_nonneg

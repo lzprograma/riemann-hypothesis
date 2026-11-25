@@ -87,54 +87,13 @@ public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentation
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.NiceBc
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.CorrUniqHolds
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.JLocTower
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.TypeStar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
 import Development.EtaleCohomology.TateTwists.PpEvBasicPf
 import Development.EtaleCohomology.TateTwists.EtaleChainCochainEvalDifferentialFormulaHolds
 import Development.EtaleCohomology.TateTwists.PpEvMkPf
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Development.EtaleCohomology.KummerTheory.AdicLimPfKer
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -245,10 +204,10 @@ private def eqEquiv : (Fin d → F) ≃ₗ[F] (∀ v : ↥(Set.range c), ↥(eqS
     funext i
     rw [prEq_apply]
     by_cases h : c i = v.1
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       have : (⟨c i, i, rfl⟩ : ↥(Set.range c)) = v := Subtype.ext h
       exact congrArg (fun w : ↥(Set.range c) => (y w : Fin d → F) i) this
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       exact ((y v).2 i h).symm
 
 end Block
@@ -262,7 +221,6 @@ private theorem isCrys_gr (P : LocPrime l) (AI : LocAinf l P) (T : LocTied l P A
     (A : ↥(GK K) → Matrix (Fin d) (Fin d) ↥L.1) (h₀ : ∀ g x, ρ₀ g x = (A g).mulVec x)
     (h₁ : ∀ g x i, ρ g x i = ∑ j, (if c i = c j then A g i j else 0) * x j)
     (hb : ∀ g, (A g).BlockTriangular c) (hc : IsCrys (P.PD K) ρ₀) : IsCrys (P.PD K) ρ := by
-  set_option synthInstance.maxHeartbeats 200000 in
     have hW : ∀ (v : ℕ) g, lowSub c v ≤ (lowSub (F := ↥L.1) c v).comap (ρ₀ g) := by
       intro v g x hx i hi
       show (ρ₀ g x) i = 0
@@ -279,7 +237,7 @@ private theorem isCrys_gr (P : LocPrime l) (AI : LocAinf l P) (T : LocTied l P A
       refine Finset.sum_eq_zero fun j _ => ?_
       by_cases hj : c i = c j
       · rw [hx j (hj ▸ hi), mul_zero]
-      · rw [if_neg hj, zero_mul]
+      · rw [ite_eq_right hj, zero_mul]
     have hblock : ∀ v, IsCrys (P.PD K) (ρ.subrepresentation (eqSub c v) (hU v)) := by
       intro v
       have c1 := (GlobalTheory.Per.CrysSubQuot.crys_sub_quot l P AI T K L ↥(lowSub c v)
@@ -294,22 +252,22 @@ private theorem isCrys_gr (P : LocPrime l) (AI : LocAinf l P) (T : LocTied l P A
         show (prEq c v (ρ₀ g x.1) : Fin d → ↥L.1) i = ρ g (prEq c v x.1 : Fin d → ↥L.1) i
         rw [prEq_apply, h₁]
         by_cases hi : c i = v
-        · rw [if_pos hi, h₀]
+        · rw [ite_eq_left hi, h₀]
           change ∑ j, A g i j * x.1 j = _
           refine Finset.sum_congr rfl fun j _ => ?_
           rw [prEq_apply]
           by_cases hj : c j = v
-          · rw [if_pos (hi.trans hj.symm), if_pos hj]
-          · rw [if_neg hj, mul_zero]
+          · rw [ite_eq_left (hi.trans hj.symm), ite_eq_left hj]
+          · rw [ite_eq_right hj, mul_zero]
             by_cases hl : v < c j
             · rw [x.2 j hl, mul_zero]
             · rw [hb g (lt_of_le_of_ne (not_lt.1 hl) hj |>.trans_eq hi.symm), zero_mul]
-        · rw [if_neg hi]
+        · rw [ite_eq_right hi]
           refine (Finset.sum_eq_zero fun j _ => ?_).symm
           rw [prEq_apply]
           by_cases hj : c j = v
-          · rw [if_neg fun h => hi (h.trans hj), zero_mul]
-          · rw [if_neg hj, mul_zero]
+          · rw [ite_eq_right fun h => hi (h.trans hj), zero_mul]
+          · rw [ite_eq_right hj, mul_zero]
       · intro y
         refine ⟨⟨y.1, fun i hi => y.2 i (ne_of_gt hi)⟩, ?_⟩
         apply Subtype.ext
@@ -317,8 +275,8 @@ private theorem isCrys_gr (P : LocPrime l) (AI : LocAinf l P) (T : LocTied l P A
         show (prEq c v y.1 : Fin d → ↥L.1) i = y.1 i
         rw [prEq_apply]
         by_cases hi : c i = v
-        · rw [if_pos hi]
-        · rw [if_neg hi, y.2 i hi]
+        · rw [ite_eq_left hi]
+        · rw [ite_eq_right hi, y.2 i hi]
     refine GlobalTheory.BlockSum.isCrys_sum (P.PD K) (ι := ↥(Set.range c)) (V := fun v => ↥(eqSub (F := ↥L.1) c v.1))
       (ρ := fun v => ρ.subrepresentation (eqSub c v.1) (hU v.1)) (ρ' := ρ) (E := eqEquiv c) ?_ fun v => hblock v.1
     intro g x v
@@ -327,18 +285,18 @@ private theorem isCrys_gr (P : LocPrime l) (AI : LocAinf l P) (T : LocTied l P A
     show (prEq c v.1 (ρ g x) : Fin d → ↥L.1) i = ρ g (prEq c v.1 x : Fin d → ↥L.1) i
     rw [prEq_apply, h₁, h₁]
     by_cases hi : c i = v.1
-    · rw [if_pos hi]
+    · rw [ite_eq_left hi]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [prEq_apply]
       by_cases hj : c i = c j
-      · rw [if_pos hj, if_pos (hj.symm.trans hi)]
-      · rw [if_neg hj, zero_mul, zero_mul]
-    · rw [if_neg hi]
+      · rw [ite_eq_left hj, ite_eq_left (hj.symm.trans hi)]
+      · rw [ite_eq_right hj, zero_mul, zero_mul]
+    · rw [ite_eq_right hi]
       refine (Finset.sum_eq_zero fun j _ => ?_).symm
       rw [prEq_apply]
       by_cases hj : c i = c j
-      · rw [if_neg fun h => hi (hj.trans h), mul_zero]
-      · rw [if_neg hj, zero_mul]
+      · rw [ite_eq_right fun h => hi (hj.trans h), mul_zero]
+      · rw [ite_eq_right hj, zero_mul]
 
 end Crys
 
@@ -404,7 +362,7 @@ private theorem hopSpec : UpperTheory.Gal.G3.HopSpec :=
     (UpperTheory.Gal.G3.pEtGood (UpperTheory.Gal.G3.pEtnGood (UpperTheory.Gal.G3.pFEtBasic UpperTheory.Gal.G3.pPtsOfSplits) UpperTheory.Gal.G3.pEtTr))
     (UpperTheory.Gal.G3.pBcGood bcSplits (UpperTheory.Gal.G3.pBcGal bcSplits))
     (UpperTheory.Gal.G3.pGalClos (UpperTheory.Gal.G3.pGalClosD (UpperTheory.Gal.G3.pSplitsPts UpperTheory.Gal.G3.pIsoPts)
-      (UpperTheory.Gal.G3.pOrdEx UpperTheory.Gal.G3.pOrdStep)))
+      (UpperTheory.Gal.G3.pOrdEx)))
     (UpperTheory.Gal.G3.pOpEx UpperTheory.Gal.G3.pOpTr) UpperTheory.Gal.G3.pOpTr UpperTheory.Gal.G3.pOpEt
     (UpperTheory.Gal.G3.pOpBc bcSplits (UpperTheory.Gal.G3.pBcGal bcSplits)) bcSplits
 
@@ -963,12 +921,6 @@ theorem comp (hA : A11) {l : ℕ} [Fact l.Prime] {E : Spc} {n i : ℤ} (y : Hl l
       (pow_dvd_pow l (by omega)) n i (y.1 _)]
     rw [show red (l ^ (m + (d + 1))) (l ^ (m + d)) E n i (y.1 (m + (d + 1))) = y.1 (m + d) from y.2 (m + d)]
     exact ih
-
-theorem smul_pow {l : ℕ} [Fact l.Prime] {E : Spc} {n i : ℤ} (m b : ℕ) (v : HtL l m E n i) :
-    ((l : ℤ_[l]) ^ b) • v = (show Ht (l ^ m) E n i from (l ^ b : ℕ) • v) := by
-  change PadicInt.toZModPow m ((l : ℤ_[l]) ^ b) • (show Ht (l ^ m) E n i from v) = _
-  rw [map_pow, map_natCast, ← Nat.cast_pow, Nat.cast_smul_eq_nsmul]
-  rfl
 
 end LateralTheory.EWeil.AdicKerPf
 end -- clump:auto

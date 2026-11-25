@@ -91,14 +91,14 @@ theorem exists_addValuation (π : PadicAlgCl p) (h0 : 0 < ‖π‖) (h1 : ‖π�
   let r : PadicAlgCl p → ℚ := fun x => if hx : x = 0 then 0 else Classical.choose (hex x hx)
   have hr : ∀ x, x ≠ 0 → Real.log ‖x‖ = r x * Real.log ‖π‖ := by
     intro x hx
-    simp only [r, dif_neg hx]
+    simp only [r, dite_eq_right hx]
     exact Classical.choose_spec (hex x hx)
   have hr' : ∀ x, x ≠ 0 → (r x : ℝ) = Real.log ‖x‖ / Real.log ‖π‖ := by
     intro x hx
     rw [hr x hx, mul_div_cancel_right₀ _ hL.ne]
   let f : PadicAlgCl p → WithTop ℚ := fun x => if x = 0 then ⊤ else (r x : WithTop ℚ)
-  have f_ne : ∀ x, x ≠ 0 → f x = (r x : WithTop ℚ) := fun x hx => if_neg hx
-  have f_zero : f 0 = ⊤ := if_pos rfl
+  have f_ne : ∀ x, x ≠ 0 → f x = (r x : WithTop ℚ) := fun x hx => ite_eq_right hx
+  have f_zero : f 0 = ⊤ := ite_eq_left rfl
   refine ⟨AddValuation.of f f_zero ?_ ?_ ?_, ?_⟩
   · have h : (r 1 : ℝ) = 0 := by
       rw [hr' 1 one_ne_zero, norm_one, Real.log_one, zero_div]

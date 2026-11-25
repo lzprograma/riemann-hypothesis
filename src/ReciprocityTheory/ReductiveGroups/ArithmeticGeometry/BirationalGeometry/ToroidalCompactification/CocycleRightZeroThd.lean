@@ -5,8 +5,6 @@ import Mathlib.Tactic.Lemma
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries
@@ -55,7 +53,7 @@ def DpolyOf (F : Fin d → PS R 2 d) {ι : Type} [Fintype ι] (u : ι → Fin d 
   | (unfold ev MvPowerSeries.subst MvPowerSeries.eval₂;
       rw [dif_pos H, hc];
       exact MvPolynomial.eval₂_one _ _)
-  | (simp only [ev, MvPowerSeries.subst, MvPowerSeries.eval₂, dif_pos H, hc, MvPolynomial.eval₂_one])
+  | (simp only [ev, MvPowerSeries.subst, MvPowerSeries.eval₂, dite_eq_left H, hc, MvPolynomial.eval₂_one])
 
 structure FGLaw (R : Type) [CommRing R] (d : ℕ) where
   F : Fin d → PS R 2 d

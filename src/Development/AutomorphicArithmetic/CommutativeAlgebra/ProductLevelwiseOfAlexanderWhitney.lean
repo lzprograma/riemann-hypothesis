@@ -10,47 +10,6 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCochain
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSpaceSimplicesOverSubCompositeStatement
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZeroChains
 public import Development.AutomorphicArithmetic.CommutativeAlgebra.SupportDoubleComplexTotalRepresentsVanishingCoch
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.Style
 
@@ -351,14 +310,14 @@ private theorem split (C : DC) (rd : ∀ p s, C.A (p + 1) s →+ C.A p s)
         rcases Nat.even_or_odd p with hp | hp
         · have hp1 : Odd (p + 1) := hp.add_one
           have hp0 : ¬ Odd p := Nat.not_odd_iff_even.mpr hp
-          simp only [hp1, hp0, if_true, if_false, map_zero, smul_zero, add_zero]
+          simp only [hp1, hp0, ite_true, ite_false, map_zero, smul_zero, add_zero]
           rw [unit_map, h3]
           have hx' : C.d (p + 2) (t - 1) t (x (p + 2) (t - 1)) = m.negOnePow • C.δ (p + 1) t (x (p + 1) t) := by
             rw [Int.negOnePow_succ] at hx
             rw [eq_neg_of_add_eq_zero_left hx, Units.neg_smul, neg_neg]
           rw [hx', unit_map, h2 _ _ hp1, key]
         · have hp1 : ¬ Odd (p + 1) := by rw [Nat.odd_add_one]; exact not_not.mpr hp
-          simp only [hp1, hp, if_true, if_false, map_zero, zero_add]
+          simp only [hp1, hp, ite_true, ite_false, map_zero, zero_add]
           rw [unit_map, h1 _ _ hp, key]
 
 private theorem alt {G : Type*} [AddCommGroup G] (b : G) (n : ℕ) :
@@ -399,21 +358,21 @@ private theorem fam_split (Z : Sub (sch.obj X)) (hZ : ∀ (p q : ℕ) (W : Schem
     funext W (t : W ⟶ X)
     have e := delta_apply Z p (K.X (s + 0)) a W t
     have : Even (p + 2) := by rw [Nat.even_add]; simp [hp]
-    rw [if_pos this] at e
+    rw [ite_eq_left this] at e
     exact e
   · intro p s hp (a : Fam Z (p + 1) (K.X (s + 0)))
     apply Subtype.ext
     funext W (t : W ⟶ X)
     have e := delta_apply Z p (K.X (s + 0)) (rdF Z hZ p (K.X (s + 0)) a) W t
     have : ¬ Even (p + 2) := by rw [Nat.even_add]; simp [Nat.not_even_iff_odd.mpr hp]
-    rw [if_neg this] at e
+    rw [ite_eq_right this] at e
     exact e
   · intro p s hp (a : Fam Z p (K.X (s + 0)))
     apply Subtype.ext
     funext W (t : W ⟶ X)
     have e := delta_apply Z p (K.X (s + 0)) a W t
     have : ¬ Even (p + 2) := by rw [Nat.even_add]; simp [Nat.not_even_iff_odd.mpr hp]
-    rw [if_neg this] at e
+    rw [ite_eq_right this] at e
     exact e
   · intro p s t a
     rfl
@@ -939,15 +898,15 @@ private theorem sum_neg_one_pow_face_face_eq_zero {A : Type*} [AddCommGroup A] {
     rintro ⟨j, i⟩
     by_cases h : (j : ℕ) ≤ i
     · have h1 : ¬ ((i.succ : Fin (p+3)) : ℕ) ≤ (j.castLT (by omega) : Fin (p+2)) := by simp; omega
-      simp only [g, dif_pos h, dif_neg h1]
+      simp only [g, dite_eq_left h, dite_eq_right h1]
       ext <;> simp
     · have h1 : ((i.castSucc : Fin (p+3)) : ℕ) ≤ (j.pred (by intro h0; simp [h0] at h) : Fin (p+2)) := by simp; omega
-      simp only [g, dif_neg h, dif_pos h1]
+      simp only [g, dite_eq_right h, dite_eq_left h1]
       ext <;> simp
   refine Finset.sum_involution (fun ji _ => g ji) ?_ ?_ (fun _ _ => Finset.mem_univ _) (fun ji _ => gg ji)
   · rintro ⟨j, i⟩ _
     by_cases h : (j : ℕ) ≤ i
-    · simp only [g, dif_pos h]
+    · simp only [g, dite_eq_left h]
       have hj : j = (j.castLT (by omega) : Fin (p+2)).castSucc := by ext; simp
       have hle : j.castLT (by omega) ≤ i := by rw [Fin.le_def]; simpa using h
       rw [ff hle, ← hj]
@@ -955,7 +914,7 @@ private theorem sum_neg_one_pow_face_face_eq_zero {A : Type*} [AddCommGroup A] {
       rw [← add_smul]
       convert zero_smul ℤ _
       rw [show (i : ℕ) + 1 + j = (j + i) + 1 by ring, pow_succ]; ring
-    · simp only [g, dif_neg h]
+    · simp only [g, dite_eq_right h]
       have hj0 : j ≠ 0 := by intro h0; simp [h0] at h
       have hle : i ≤ j.pred hj0 := by rw [Fin.le_def]; simp; omega
       have key : (y.face j).face i = (y.face i.castSucc).face (j.pred hj0) := by
@@ -969,9 +928,9 @@ private theorem sum_neg_one_pow_face_face_eq_zero {A : Type*} [AddCommGroup A] {
       rw [this, show (j : ℕ) - 1 + 1 - 1 = (j:ℕ) - 1 by omega, show (j:ℕ) - 1 + 1 + i = (i + (j - 1)) + 1 by ring, pow_succ]; ring
   · rintro ⟨j, i⟩ _ _ heq
     by_cases h : (j : ℕ) ≤ i
-    · simp only [g, dif_pos h, Prod.mk.injEq] at heq
+    · simp only [g, dite_eq_left h, Prod.mk.injEq] at heq
       have := congrArg Fin.val heq.1; simp at this; omega
-    · simp only [g, dif_neg h, Prod.mk.injEq] at heq
+    · simp only [g, dite_eq_right h, Prod.mk.injEq] at heq
       have := congrArg Fin.val heq.1; simp at this; omega
 
 theorem UpperTheory.supportDoubleComplex_isAdmissible :

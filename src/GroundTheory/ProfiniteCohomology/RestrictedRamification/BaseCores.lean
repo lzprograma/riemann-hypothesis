@@ -20,8 +20,6 @@ universe u
 
 noncomputable section
 
-attribute [local instance 2000] Rep.hV2
-
 section Trace
 
 variable {k G : Type u} [CommRing k] [Group G] (U : Subgroup G) [U.FiniteIndex] (A : Rep.{u} k G)
@@ -35,26 +33,26 @@ def coindTracePreimage (a : A) : Rep.coind U.subtype (Rep.res U.subtype A) :=
     beta_reduce
     by_cases hg : g ∈ U
     · have hug : U.subtype u * g ∈ U := U.mul_mem u.2 hg
-      rw [if_pos hug, if_pos hg, map_mul, Module.End.mul_apply]
+      rw [ite_eq_left hug, ite_eq_left hg, map_mul, Module.End.mul_apply]
       rfl
     · have hug : U.subtype u * g ∉ U := fun h => hg (by
         have := U.mul_mem (U.inv_mem u.2) h
         rwa [Subgroup.coe_subtype, ← mul_assoc, inv_mul_cancel, one_mul] at this)
-      rw [if_neg hug, if_neg hg, map_zero]⟩
+      rw [ite_eq_right hug, ite_eq_right hg, map_zero]⟩
 
 theorem coindTrace_coindTracePreimage (a : A) : (coindTrace U A).hom (coindTracePreimage U A a) = a := by
   classical
   rw [coindTrace_hom_apply, Finset.sum_eq_single ((1 : G) : G ⧸ U)]
   · rw [coindTraceTerm_apply, inv_one]
     change A.ρ 1 (if (1 : G) ∈ U then A.ρ 1 a else 0) = a
-    rw [if_pos U.one_mem, map_one, Module.End.one_apply, Module.End.one_apply]
+    rw [ite_eq_left U.one_mem, map_one, Module.End.one_apply, Module.End.one_apply]
   · intro c _ hc
     induction c using QuotientGroup.induction_on with
     | H x =>
       rw [coindTraceTerm_apply]
       have hx : x⁻¹ ∉ U := fun h => hc (QuotientGroup.eq.2 (by simpa using h))
       change A.ρ x (if x⁻¹ ∈ U then A.ρ x⁻¹ a else 0) = 0
-      rw [if_neg hx, map_zero]
+      rw [ite_eq_right hx, map_zero]
   · intro h
     exact absurd (Finset.mem_univ _) h
 

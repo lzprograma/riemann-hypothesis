@@ -1,48 +1,6 @@
 module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -66,8 +24,8 @@ private theorem cut_conj {F : Type} [Field F] {n : ℕ} (p q : Fin n → Prop) [
   by_cases h1 : p i ↔ p k
   · by_cases h2 : q m ↔ q j
     · by_cases h : p i ∧ q j
-      · rw [if_pos h, if_pos ⟨h1.1 h.1, h2.2 h.2⟩]
-      · rw [if_neg h, if_neg (fun h' => h ⟨h1.2 h'.1, h2.1 h'.2⟩)]; simp
+      · rw [ite_eq_left h, ite_eq_left ⟨h1.1 h.1, h2.2 h.2⟩]
+      · rw [ite_eq_right h, ite_eq_right (fun h' => h ⟨h1.2 h'.1, h2.1 h'.2⟩)]; simp
     · simp [hB m j h2]
   · simp [hA i k h1]
 
@@ -104,10 +62,10 @@ theorem UpperTheory.V.Pa.Det.cornerCoc :
     rw [(cV_lin _ _ _ _).2.2, (cV_conj (D.ev _) (D.ev _) _).2]
   · intro i j
     refine ⟨fun e => ?_, fun _ => Submodule.mem_top⟩
-    rw [Submodule.mem_bot, cV, Matrix.of_apply, if_neg (fun h => h.2 (e.1 h.1))]
+    rw [Submodule.mem_bot, cV, Matrix.of_apply, ite_eq_right (fun h => h.2 (e.1 h.1))]
   · intro i j
     refine ⟨fun e => ?_, fun _ => Submodule.mem_top⟩
-    rw [Submodule.mem_bot, cV', Matrix.of_apply, if_neg (fun h => h.1 (e.2 h.2))]
+    rw [Submodule.mem_bot, cV', Matrix.of_apply, ite_eq_right (fun h => h.1 (e.2 h.2))]
   · ext i j
     simp only [cV, cV', Matrix.of_apply, Matrix.transpose_apply, and_comm]
   · ext i j
@@ -115,6 +73,6 @@ theorem UpperTheory.V.Pa.Det.cornerCoc :
     simp only [cV, cV', Matrix.of_apply, Matrix.add_apply]
     by_cases hi : (i : ℕ) < D.a <;> by_cases hj : (j : ℕ) < D.a
     · simp [hi, hj, h0 (iff_of_true hi hj)]
-    · rw [if_pos ⟨hi, hj⟩, if_neg (fun h => h.1 hi), add_zero]
-    · rw [if_neg (fun h => hi h.1), if_pos ⟨hi, hj⟩, zero_add]
-    · rw [if_neg (fun h => hi h.1), if_neg (fun h => hj h.2), add_zero, h0 (iff_of_false hi hj)]
+    · rw [ite_eq_left ⟨hi, hj⟩, ite_eq_right (fun h => h.1 hi), add_zero]
+    · rw [ite_eq_right (fun h => hi h.1), ite_eq_left ⟨hi, hj⟩, zero_add]
+    · rw [ite_eq_right (fun h => hi h.1), ite_eq_right (fun h => hj h.2), add_zero, h0 (iff_of_false hi hj)]

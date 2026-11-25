@@ -9,63 +9,9 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsS
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIntegralPi
 public import Mathlib.Analysis.Normed.Unbundled.SpectralNorm
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelfDualMeasureExistsUniqueFourierInversion
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.Valuation.Integral
-import Mathlib.RingTheory.SimpleRing.Principal
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
-import Mathlib.Analysis.Normed.Field.ProperSpace
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Topology.Compactness.Paracompact
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -656,15 +602,15 @@ theorem height_sq_lintegral_lt_top : ∀ (F E : Type) [NontriviallyNormedField F
       calc f j * (σ * q) = (f j * σ) * q := by ring
         _ = _ := by rw [hfσ]; ring
     have hfs0 : ∀ j, n j = 0 → f j * ((σU * q : A.Kˣ) : A.K) = f j := fun j hj => by
-      rw [hfs, ha, if_pos hj, hj]; simp
+      rw [hfs, ha, ite_eq_left hj, hj]; simp
     have hfsz : ∀ j, f j * (((σU * q : A.Kˣ) : A.K) * z) = if n j = 0 then f j * z else f j := by
       intro j
       rw [← mul_assoc, hfs]
       split_ifs with hj
-      · rw [ha, if_pos hj, hj]; simp
+      · rw [ha, ite_eq_left hj, hj]; simp
       · have h1 := hwf j hj
         rw [hsmul] at h1
-        rw [ha, if_neg hj]; linear_combination h1
+        rw [ha, ite_eq_right hj]; linear_combination h1
     refine ⟨σU * q, ⟨?_, ?_, ?_⟩, ?_⟩
     · rw [hOR, hsval]; exact R.mul_mem hσR hqR
     · rw [hOR, hrep (((σU * q : A.Kˣ) : A.K) * z)]
@@ -687,7 +633,7 @@ theorem height_sq_lintegral_lt_top : ∀ (F E : Type) [NontriviallyNormedField F
         rw [e1, mul_sum_eq hid hor, mul_sum_eq hid hor]
         split_ifs with hj
         · rw [mul_one, mul_zero, zero_mul, add_zero, hfs0 j hj]
-        · rw [mul_zero, zero_mul, zero_add, mul_one, hfsz, if_neg hj]
+        · rw [mul_zero, zero_mul, zero_add, mul_one, hfsz, ite_eq_right hj]
     · rw [map_mul, map_prod]; simp only [map_pow]
       exact mul_le_of_le_one_left zero_le (hle1 σU hσR)
 
@@ -836,7 +782,7 @@ theorem bdd_of_loc_const (K : Type) [CommRing K] [TopologicalSpace K] [IsTopolog
       have := hkM i j
       exact this)
     simpa using this
-  have hg : g M = ‖Ψ k₀‖ := by simp only [g, dif_pos hdet]; rfl
+  have hg : g M = ‖Ψ k₀‖ := by simp only [g, dite_eq_left hdet]; rfl
   rw [he, ← hg]
   exact Finset.single_le_sum (f := g) (fun M _ => by simp only [g]; split_ifs <;> positivity) hMt
 

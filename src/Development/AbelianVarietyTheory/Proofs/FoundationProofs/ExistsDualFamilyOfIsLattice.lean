@@ -437,8 +437,6 @@ theorem isSelfDualAt_frameLat_of_cm {F E : Type} [Field F] [NumberField F] [Fiel
   obtain ⟨x, rfl⟩ := V.frame.equivFun.symm.surjective x
   exact h x hx
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem isSelfDualAt_frameLat (D : D7) (V : HSp D) (v : HeightOneSpectrum (𝓞 D.host.F)) :
     IsSelfDualAt D.sp.cm.sig V.gram (frameLat V) v := isSelfDualAt_frameLat_of_cm D.sp.cm V v
 

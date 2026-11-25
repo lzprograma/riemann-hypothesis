@@ -117,7 +117,6 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.secStr :
         (∀ φ ∈ E₁, Rd (μ₂ := μ₂) τ₁ φ) ∧ (∀ φ ∈ E₂, Rd (μ₂ := μ₂) τ₂ φ) ∧
         ∀ f : G1 K (2 + 2) → ℂ, Continuous f → D.Fix f → Slices τ₁ τ₂ f → ∀ k ∈ KG K (2 + 2),
           (∀ m₂, (fun m₁ => f (lv m₁ m₂ 0 * k)) ∈ E₁) ∧ ∀ m₁, (fun m₂ => f (lv m₁ m₂ 0 * k)) ∈ E₂ := by
-  set_option synthInstance.maxHeartbeats 200000 in
     intro K _ _ _ μ₂ _ τ₁ τ₂ D h₁ h₂
     obtain ⟨-, hmul, -, hcont, -, -, -, -, -, -, hK, hcpt⟩ := @blkLaws K _ _
     obtain ⟨ι₁, d₁⟩ : ∃ ι : G1 K 2 →* G1 K (2 + 2), ∀ m, ι m = lv m 1 0 :=

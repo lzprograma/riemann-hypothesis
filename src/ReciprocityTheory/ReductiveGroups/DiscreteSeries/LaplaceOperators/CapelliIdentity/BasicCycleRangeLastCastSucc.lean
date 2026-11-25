@@ -76,8 +76,7 @@ theorem basic_eq_zero_of_eq_neg {𝒰 : Type*} [AddCommGroup 𝒰] [Module ℂ �
 theorem basic_swap_of_not_inj {α : Type*} {p : ℕ} (R : Fin p → α) (h : ¬ Function.Injective R) :
     ∃ i j : Fin p, i ≠ j ∧ R ∘ Equiv.swap i j = R := by
   have hex : ∃ i j, R i = R j ∧ i ≠ j := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact h fun a b hab => hc a b hab
   obtain ⟨i, j, hij, hne⟩ := hex
   refine ⟨i, j, hne, funext fun k => ?_⟩

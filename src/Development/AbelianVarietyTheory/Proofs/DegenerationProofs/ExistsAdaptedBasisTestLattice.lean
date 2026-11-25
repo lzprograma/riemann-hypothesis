@@ -181,7 +181,7 @@ theorem exists_adapted_basis_testLattice : ∀ (o Ω : Type) [CommRing o] [Field
     funext j
     have h1 := congrArg (fun a => y₀ (algebraMap o S.R a)) (congrFun (congrFun (hmul (κ i) (κ i)) j) (col i))
 
-    simp only [if_true, Matrix.mul_apply, map_sum, map_mul] at h1
+    simp only [ite_true, Matrix.mul_apply, map_sum, map_mul] at h1
     exact h1
   · refine le_antisymm (Submodule.span_le.2 ?_) (Submodule.span_mono ?_)
     · rintro _ ⟨α, l, i, hα, hl, rfl⟩

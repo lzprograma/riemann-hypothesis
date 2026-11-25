@@ -14,8 +14,6 @@ open Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism
 
 namespace Formalism.L2.SG.Pf.VanishNConj
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : HidaSetting D)
 
 theorem chiN_mul {x y : X.B.I.Gf} (hx : x ∈ X.K2) (hy : y ∈ X.K2) :

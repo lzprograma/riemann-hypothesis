@@ -15,8 +15,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions Form
 
 namespace Formalism.L2.SG.Pf.FibreCounting
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Flag
 
 variable {D : D7} {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T)

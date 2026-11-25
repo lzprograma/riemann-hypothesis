@@ -48,13 +48,8 @@ open GlobalTheory.CuspRep GlobalTheory.HeckeGal GlobalTheory.GalOfCusp GlobalThe
 open UpperTheory.V.W (Plc Lp)
 namespace UpperTheory.V.Z.Sym
 structure AdInAlt {L Ω : Type} [Field L] [NumberField L] [IsCMField L] [Field Ω] [Algebra L Ω] [IsAlgClosure L Ω] {l : ℕ} [Fact l.Prime]
-    (ι : Qbar l ≃+* ℂ) (M m : ℕ) (r : G L Ω →* GL (Fin 2) (Qbar l)) : Prop where
-  cont : Continuous r
-  aut : _root_.UpperTheory.V.Z.Win.IsAutCsdA ι r
-  irr : IrrOpen r
+    (_ι : Qbar l ≃+* ℂ) (_M m : ℕ) (r : G L Ω →* GL (Fin 2) (Qbar l)) : Prop where
   gap : 2 ≤ m
-  unr : ∀ A : ValuationSubring Ω, ¬ A.valuation (M : Ω) < 1 → ∀ s ∈ Ine (F := L) A, r s = 1
-  away : ∃ τ : Fin 2 → G L Ω →* (Qbar l)ˣ, (∀ i, Continuous (τ i)) ∧ TypeAway r τ
   above : ∀ A : ValuationSubring Ω, A.valuation (l : Ω) < 1 →
     ∃ (b : ℤ) (k : ℕ) (κ : Fin 2 → ↥(Dec (F := L) A) →* (Qbar l)ˣ), 0 < k ∧ IsFlagOn r (Dec (F := L) A) κ ∧
       ∀ s : ↥(Dec (F := L) A), (s : G L Ω) ∈ Ine (F := L) A →

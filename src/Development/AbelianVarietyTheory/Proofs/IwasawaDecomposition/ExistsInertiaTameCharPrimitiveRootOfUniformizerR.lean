@@ -68,11 +68,11 @@ theorem irreducible_X_pow_sub_C {E : Type} [Field E] [NumberField E]
     · rw [hmon.leadingCoeff]; exact fun h => P.isPrime.ne_top ((Ideal.eq_top_iff_one _).2 h)
     · intro m hm
       rw [hdeg] at hm
-      rw [coeff_sub, coeff_X_pow, coeff_C, if_neg hm.ne]
+      rw [coeff_sub, coeff_X_pow, coeff_C, ite_eq_right hm.ne]
       by_cases h0 : m = 0
       · subst h0; simpa using P.asIdeal.neg_mem_iff.2 hmem
       · simp [h0]
-    · rw [coeff_sub, coeff_X_pow, coeff_C, if_neg hL.ne, if_pos rfl, zero_sub]
+    · rw [coeff_sub, coeff_X_pow, coeff_C, ite_eq_right hL.ne, ite_eq_left rfl, zero_sub]
       rwa [Ideal.neg_mem_iff]
   have hirr : Irreducible (X ^ L - C ϖ : (𝓞 E)[X]) :=
     hEis.irreducible P.isPrime hmon.isPrimitive (by rw [hdeg]; exact hL)

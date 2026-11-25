@@ -11,57 +11,9 @@ public import Formalism.SharpRestriction.GlobalSchurBounds.MainIn
 public import Formalism.SharpRestriction.GlobalSchurBounds.TopDensityNGeSixteen
 public import Formalism.GL3MeanSquares.HookFormulaTorsion.OneAddInvPowLeExpOne
 public import Formalism.SharpRestriction.GlobalSchurBounds.JointsL
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LandauZeroFreeBounds.SiegelWalfiszAPOfSiegelLower
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.NumberTheory.Harmonic.Bounds
-import Mathlib.NumberTheory.LSeries.Nonvanishing
-import Mathlib.NumberTheory.MulChar.Duality
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -520,10 +472,10 @@ lemma core_integrable {a : ℕ → ℂ} {m : ℂ} (h : RemBound a m) :
 def aChi {N : ℕ} (χ : DirichletCharacter ℂ N) (n : ℕ) : ℂ := (abelian₂ n : ℂ) * χ (n : ZMod N)
 
 lemma psi_zero_nontrivial_character {N : ℕ} {χ : DirichletCharacter ℂ N} (h : χ ≠ 1) (t : ℝ) : psi0 χ t = rem (aChi χ) 0 t := by
-  unfold psi0 rem aChi; rw [if_neg h]; simp
+  unfold psi0 rem aChi; rw [ite_eq_right h]; simp
 
 lemma psi_zero_trivial_character {N : ℕ} {χ : DirichletCharacter ℂ N} (h : χ = 1) (t : ℝ) : psi0 χ t = rem (aChi χ) 1 t := by
-  unfold psi0 rem aChi; rw [if_pos h]; simp
+  unfold psi0 rem aChi; rw [ite_eq_left h]; simp
 
 lemma psi0_bound {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) :
     ∃ K x₁ : ℝ, 1 < x₁ ∧ ∀ t : ℝ, x₁ ≤ t → ‖psi0 χ t‖ ≤ K * t / Real.log t ^ 2 := by
@@ -570,7 +522,7 @@ lemma psi_zero_div_sq_integrable {N : ℕ} [NeZero N] (χ : DirichletCharacter �
 lemma gChi_ne {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (h : χ ≠ 1) (y : ℝ) :
     gChi χ y = Fc (aChi χ) (logDerivativeAtOne χ) y := by
   unfold gChi sumLamChi Fc
-  rw [if_neg h, truncC (aChi χ) y _ le_rfl]
+  rw [ite_eq_right h, truncC (aChi χ) y _ le_rfl]
   rfl
 
 lemma Fc_eq_Gchi (c : ℕ → ℂ) (ell : ℂ) (y : ℝ) : Fc c ell y = Formalism.HermitianLattices.GL2PrimeSums.Gchi c (-ell) y := by
@@ -578,7 +530,7 @@ lemma Fc_eq_Gchi (c : ℕ → ℂ) (ell : ℂ) (y : ℝ) : Fc c ell y = Formalis
 
 lemma gChi_one {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (h : χ = 1) (y : ℝ) :
     gChi χ y = ((GlobalTheoryTheory.G y : ℝ) : ℂ) := by
-  unfold gChi; rw [if_pos h]
+  unfold gChi; rw [ite_eq_left h]
 
 lemma G_eq_Gone (y : ℝ) : GlobalTheoryTheory.G y = Formalism.HermitianLattices.GL2PrimeSums.Gone (fun n => Λ n) y := by
   rw [G_eq_Gfun]; unfold Formalism.BasicNotions.Gfun Formalism.HermitianLattices.GL2PrimeSums.Gone; ring
@@ -617,7 +569,7 @@ theorem l21a {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (hp : χ.IsPri
     have hf : ∀ u : ℝ, psi0 χ u / (u : ℂ) ^ 2 = (((Formalism.HermitianLattices.GL2PrimeSums.psumR (fun n => Λ n) u - u) / u ^ 2 : ℝ) : ℂ) := by
       intro u
       unfold psi0 Formalism.HermitianLattices.GL2PrimeSums.psumR
-      rw [if_pos hχ]
+      rw [ite_eq_left hχ]
       simp only [one_apply_of_primitive hp hχ, mul_one]
       push_cast
       rfl
@@ -716,52 +668,6 @@ theorem fam_eps {eps : ℝ} (Fm : FamP eps) : 0 < eps ∧ eps < 1 := by
   have q := (Fm.L 0 i).sc.eps_lt
   rw [e] at p q
   exact ⟨p, by linarith⟩
-
-end Formalism.MainNotions.ShortIntervalPrimes
-
-end
-
-noncomputable section
-
-namespace Formalism.MainNotions.ShortIntervalPrimes
-
-open Finset Filter Topology ArithmeticFunction MeasureTheory Formalism.MainNotions.GlobalTheoryTheory
-open Br
-
-section ShortIntervalLowerBound
-
-variable (K0 : Type) [Field K0] [NumberField K0]
-
-variable {K0}
-
-end ShortIntervalLowerBound
-
-end Formalism.MainNotions.ShortIntervalPrimes
-
-end
-
-noncomputable section
-
-namespace Formalism.MainNotions.ShortIntervalPrimes
-
-open Finset Filter Topology ArithmeticFunction MeasureTheory Formalism.MainNotions.GlobalTheoryTheory
-open Br
-
-end Formalism.MainNotions.ShortIntervalPrimes
-
-end
-
-noncomputable section
-
-namespace Formalism.MainNotions.ShortIntervalPrimes
-
-open NumberField
-
-section Deg2
-
-variable {K0 : Type} [Field K0] [NumberField K0]
-
-end Deg2
 
 end Formalism.MainNotions.ShortIntervalPrimes
 
@@ -1100,7 +1006,7 @@ theorem zero_sum_core {C7 C lam ka : ℝ} (hC : 0 < C) (hlam : 1 ≤ lam) (hka :
             have : (i : ℝ) ≤ 2 := hile.trans h2
             exact_mod_cast this
           have h4 : lam / ka ≤ a i := by
-            simp only [ha, if_pos hi2]
+            simp only [ha, ite_eq_left hi2]
             have : 0 ≤ 2 * (1 / ((i : ℝ) + 1)) := by positivity
             linarith
           calc (1 : ℝ) = lam / ka * (ka / lam) := by field_simp
@@ -1590,27 +1496,6 @@ end Formalism.MainNotions.ShortIntervalPrimes
 
 end
 
-noncomputable section
-
-namespace Formalism.MainNotions.ShortIntervalPrimes
-
-open Finset Filter Topology ArithmeticFunction MeasureTheory Formalism.MainNotions.GlobalTheoryTheory
-open Br
-
-end Formalism.MainNotions.ShortIntervalPrimes
-
-end
-
-noncomputable section
-
-namespace Formalism.MainNotions.ShortIntervalPrimes
-
-open Finset Filter Topology ArithmeticFunction MeasureTheory Formalism.MainNotions.GlobalTheoryTheory
-open Br
-
-end Formalism.MainNotions.ShortIntervalPrimes
-
-end
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Formalism.SharpRestriction.GlobalSchurBounds.FirstClaimLemmaTwoFourOfLemmaTwoThree =====

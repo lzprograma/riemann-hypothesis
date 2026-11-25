@@ -103,8 +103,7 @@ private theorem ann_of_flat {A R : Type} [CommRing A] [CommRing R] [IsLocalRing 
     exact ha
   obtain ⟨k, c, y, hy, hc⟩ := Module.Flat.isTrivialRelation_of_sum_smul_eq_zero
     (R := A) (M := R) (f := fun _ : Fin 1 => a) (x := fun _ : Fin 1 => (1 : R)) h0
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   have h1 : (1 : R) = ∑ j, c 0 j • y j := hy 0
   have hone : (1 : R) ∈ maximalIdeal R := by
     rw [h1]
@@ -355,7 +354,7 @@ private theorem UpperTheory.V.CA.exists_part {R σ : Type} [CommRing R] [Finite 
   · have hm : m ∈ Finset.Iic D := by
       refine Finset.mem_Iic.mpr (Finsupp.le_def.mpr fun i => (Finsupp.le_degree i m).trans (h.trans ?_))
       simp [hD]
-    rw [if_pos hm]
+    rw [ite_eq_left hm]
   · simp [h]
 
 theorem UpperTheory.V.CA.g_hommem :
@@ -395,8 +394,8 @@ theorem UpperTheory.V.CA.g_hommem :
         ext m
         rw [hsumco]
         by_cases hm : m.degree ≤ d
-        · rw [if_pos hm]
-        · rw [if_neg hm, hg, if_neg hm]
+        · rw [ite_eq_left hm]
+        · rw [ite_eq_right hm, hg, ite_eq_right hm]
       rw [hgeq]
       refine Ideal.sum_mem _ fun k hk => h k _ fun m => ?_
       have hk' : k ≤ d := Nat.lt_succ_iff.mp (Finset.mem_range.mp hk)
@@ -445,12 +444,12 @@ theorem UpperTheory.V.CA.g_hommem :
         ext m
         rw [hsumco, hg, smul_eq_mul]
         by_cases hm : m.degree ≤ d
-        · rw [if_pos hm, if_pos hm, MvPowerSeries.coeff_mul, MvPolynomial.coeff_mul]
+        · rw [ite_eq_left hm, ite_eq_left hm, MvPowerSeries.coeff_mul, MvPolynomial.coeff_mul]
           refine Finset.sum_congr rfl fun p hp => ?_
           have hpm : p.1 + p.2 = m := Finset.HasAntidiagonal.mem_antidiagonal.mp hp
           have hdeg : p.1.degree + p.2.degree = m.degree := by rw [← map_add (f := _), hpm]
-          rw [hTa, hTx, if_pos (by omega), if_pos (by omega)]
-        · rw [if_neg hm, if_neg hm]
+          rw [hTa, hTx, ite_eq_left (by omega), ite_eq_left (by omega)]
+        · rw [ite_eq_right hm, ite_eq_right hm]
       rw [hgeq]
       exact Ideal.sum_mem _ fun k _ => hP _ (P.mul_mem_left Ta hTxP) k
   · intro hQ
@@ -487,8 +486,8 @@ theorem UpperTheory.V.CA.g_hommem :
     have hcoefF : ∀ m : σ →₀ ℕ,
         AddMonoidAlgebra.coeff (∑ i, c m.degree i • h i) m = MvPowerSeries.coeff m F := by
       intro m
-      rw [hc, MvPolynomial.coeff_homogeneousComponent, if_pos rfl,
-        Classical.choose_spec (htr F m.degree) m, if_pos le_rfl]
+      rw [hc, MvPolynomial.coeff_homogeneousComponent, ite_eq_left rfl,
+        Classical.choose_spec (htr F m.degree) m, ite_eq_left le_rfl]
     let C : ↥s × Fin (D + 1) → MvPowerSeries σ R := fun i p =>
       AddMonoidAlgebra.coeff (c (p.degree + i.2.val) i) p
     have hFeq : F = ∑ i, C i * MvPolynomial.coeToMvPowerSeries.ringHom (σ := σ) (R := R) (h i) := by
@@ -507,7 +506,7 @@ theorem UpperTheory.V.CA.g_hommem :
       · rw [← h2, hdeg]
       · have h0 : AddMonoidAlgebra.coeff (h i) p.2 = 0 := by
           show AddMonoidAlgebra.coeff (MvPolynomial.homogeneousComponent i.2.val i.1.val) p.2 = 0
-          rw [MvPolynomial.coeff_homogeneousComponent, if_neg h2]
+          rw [MvPolynomial.coeff_homogeneousComponent, ite_eq_right h2]
         rw [h0, mul_zero, mul_zero]
     rw [hFeq]
     exact Ideal.sum_mem _ fun i _ => Ideal.mul_mem_left _ _ (Ideal.mem_map_of_mem _ (hhP i))
@@ -620,11 +619,10 @@ theorem UpperTheory.V.CA.g_homprime :
     apply hP.ne_top
     rw [← hcomap, htop, Ideal.comap_top]
   · intro F G hFG
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     obtain ⟨hF, hG⟩ := hne
     rw [key] at hF hG hFG
-    push_neg at hF hG
+    push Not at hF hG
     have ha : p F (Nat.find hF) ∉ P := Nat.find_spec hF
     have hb : p G (Nat.find hG) ∉ P := Nat.find_spec hG
     have ha' : ∀ i < Nat.find hF, p F i ∈ P := fun i hi => by
@@ -990,33 +988,33 @@ theorem UpperTheory.V.Fr.oddm :
         rw [Finsupp.single_le_iff]
         omega
       rw [Finset.sum_eq_single (S.min' hS)]
-      · rw [if_pos (hle _ hj0), if_pos, tsub_add_cancel_of_le (hle _ hj0)]
+      · rw [ite_eq_left (hle _ hj0), ite_eq_left, tsub_add_cancel_of_le (hle _ hj0)]
         intro k hk
         by_contra hne
         have := hmin k (by simpa [Finsupp.tsub_apply, Finsupp.single_apply, ne_of_gt hk] using hne)
         exact absurd hk (not_lt.mpr this)
       · intro j _ hj
         by_cases hjl : Finsupp.single (Sum.inr j : Fin a ⊕ Fin g) 1 ≤ n
-        · rw [if_pos hjl]
+        · rw [ite_eq_left hjl]
           have hnj : n (Sum.inr j) ≠ 0 := by
             have := hjl (Sum.inr j)
             simp at this
             omega
           have hlt : S.min' hS < j := lt_of_le_of_ne (hmin j hnj) (Ne.symm hj)
-          rw [if_neg]
+          rw [ite_eq_right]
           intro hall
           have := hall _ hlt
           simp [Finsupp.tsub_apply, Ne.symm (ne_of_lt hlt)] at this
           exact hj0 this
-        · rw [if_neg hjl]
+        · rw [ite_eq_right hjl]
       · intro h
         exact absurd (Finset.mem_univ _) h
-    · push_neg at hex
+    · push Not at hex
       have hz : ∀ j : Fin g, ¬ Finsupp.single (Sum.inr j : Fin a ⊕ Fin g) 1 ≤ n := by
         intro j hj
         have := hj (Sum.inr j)
         simp [hex j] at this
-      simp only [hz, if_false, Finset.sum_const_zero]
+      simp only [hz, ite_false, Finset.sum_const_zero]
       apply hG
       rw [Finsupp.weight_apply, Finsupp.sum, Finset.sum_eq_zero]
       · decide
@@ -1070,7 +1068,7 @@ theorem UpperTheory.Reformulated.B.SpanOfVariable.span_X :
     have hd : MvPowerSeries.X a ∣ f - g := by
       rw [MvPowerSeries.X_dvd_iff]
       intro n hn
-      rw [map_sub, hg, if_pos hn, sub_self]
+      rw [map_sub, hg, ite_eq_left hn, sub_self]
     have hfg : f - g ∈ I := I.mem_of_dvd hd (hX a (Finset.mem_insert_self a s))
     have := I.add_mem hfg hgI
     rwa [sub_add_cancel] at this
@@ -1106,8 +1104,6 @@ private theorem ev_mul {a b : Matrix (Fin 3) (Fin 3) R} (ha : Ev π D a) (hb : E
   refine ⟨by simp [Ev, Matrix.mul_apply, Fin.sum_univ_three, *], ?_⟩
   ext i j
   fin_cases i <;> fin_cases j <;> simp [th, Matrix.mul_apply, Fin.sum_univ_three, *] <;> ring
-
-private theorem D_one : D 1 = 0 := by simpa using hD 1 1
 
 private theorem th_one : th π D 1 = 1 := by
   ext i j
@@ -1339,11 +1335,7 @@ open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 private theorem dim_comap {A R : Type} [CommRing A] [CommRing R] (p : A →+* R) (hp : Function.Surjective p)
     (P : Ideal R) : ringKrullDim (A ⧸ P.comap p) = ringKrullDim (R ⧸ P) := by
-  have h : RingHom.ker ((Ideal.Quotient.mk P).comp p) = P.comap p := by
-    ext a; simp [RingHom.mem_ker, Ideal.Quotient.eq_zero_iff_mem]
-  rw [← h]
-  exact ringKrullDim_eq_of_ringEquiv
-    (RingHom.quotientKerEquivOfSurjective (Ideal.Quotient.mk_surjective.comp hp))
+  apply _root_.UpperTheory.V.Fr.detsec_dim <;> assumption
 
 private theorem chained_of_comap {A R : Type} [CommRing A] [CommRing R] (p : A →+* R) (hp : Function.Surjective p)
     (I : Ideal R) (D : ℕ) (h : Chained (I.comap p) D) : Chained I D := by

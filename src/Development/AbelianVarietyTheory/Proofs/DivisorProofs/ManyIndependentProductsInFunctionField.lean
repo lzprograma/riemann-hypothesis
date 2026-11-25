@@ -36,62 +36,13 @@ public import Mathlib.LinearAlgebra.LinearIndependent.Defs
 public import Mathlib.RingTheory.MvPowerSeries.LexOrder
 public import Mathlib.LinearAlgebra.Dimension.Finite
 public import Mathlib.RingTheory.AlgebraicIndependent.AlgebraicClosure
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.RingTheory.MvPowerSeries.Equiv
 import Mathlib.Tactic.Linter.Style
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.RingTheory.MvPowerSeries.NoZeroDivisors
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.FieldTheory.PurelyInseparable.Exponent
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdjoinRootMapComplexLinearIndependent, Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.Imports, Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemPowOfCoeffMem, Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NoethLocalHausdorff, Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CoeffMemOfMemMaxPow, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLiftsOfSeparable, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFormalBranchesOfSeparableReduction, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsTerRest, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPrimitiveMonicSeparableSpecialization, Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankLeCardValues, Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearIndependentOfDistinctValuationLike, Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankMulPowLeFinrankOfPowerSeries, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ManyIndependentProductsInFunctionField
@@ -293,16 +244,16 @@ theorem mem_pow_of_coeff_mem (a n : ℕ) :
         have : ∀ i, ¬ P i 0 := fun i h => h.1 rfl
         simp [this, coeff_zero_eq_constantCoeff_apply]
       · obtain ⟨i, hi⟩ := hexists d hd
-        rw [if_neg hd, zero_add, Finset.sum_eq_single i (fun j _ hj => by
-          rw [if_neg (fun h => hj (huniq _ _ _ h hi))]) (fun h => absurd (Finset.mem_univ i) h),
-          if_pos hi]
+        rw [ite_eq_right hd, zero_add, Finset.sum_eq_single i (fun j _ hj => by
+          rw [ite_eq_right (fun h => hj (huniq _ _ _ h hi))]) (fun h => absurd (Finset.mem_univ i) h),
+          ite_eq_left hi]
     rw [hdecomp]
     refine add_mem (C_mem_pow _ _ ?_) (Ideal.sum_mem _ fun i _ => ?_)
     · simpa [coeff_zero_eq_constantCoeff_apply] using hf 0
     · have hdvd : (X i : MvPowerSeries (Fin a) O) ∣ fi i := by
         rw [X_dvd_iff]
         intro m hm
-        rw [hfi, if_neg (fun h => h.1 hm)]
+        rw [hfi, ite_eq_right (fun h => h.1 hm)]
       obtain ⟨g, hg⟩ := hdvd
       rw [hg, pow_succ']
       refine Ideal.mul_mem_mul (X_mem_max i) (ih g fun d => ?_)
@@ -378,32 +329,6 @@ noncomputable section
 open MvPowerSeries IsLocalRing Formalism.BasicNotions.V1
 
 namespace GlobalTheory.PsCNL
-
-theorem psCNL : ∀ (O : Type) [CommRing O] [IsLocalRing O] (C : TR O) (n : ℕ),
-    ∃ (_ : IsLocalRing (MvPowerSeries (Fin n) C.C)), IsCNL O (MvPowerSeries (Fin n) C.C) ∧
-      ∀ x : MvPowerSeries (Fin n) C.C, x ∈ maximalIdeal (MvPowerSeries (Fin n) C.C) ↔
-        MvPowerSeries.constantCoeff x ∈ maximalIdeal C.C := by
-  intro O _ _ A n
-  refine ⟨inferInstance, ?_, fun x => _root_.GlobalTheory.MaximalIdealMembership.mem_maximalIdeal_iff x⟩
-  exact
-    { noeth := inferInstance
-      complete :=
-        { toIsHausdorff := _root_.GlobalTheory.NoetherianLocalHausdorff.noeth_local_hausdorff _
-          toIsPrecomplete := _root_.GlobalTheory.PowerSeriesIdealPowers.main n }
-      localHom := ⟨fun a ha => by
-        rw [MvPowerSeries.algebraMap_apply, isUnit_iff_constantCoeff, constantCoeff_C] at ha
-        exact isUnit_of_map_unit _ _ ha⟩
-      resSurj := by
-        intro y
-        obtain ⟨f, rfl⟩ := residue_surjective y
-        obtain ⟨a, ha⟩ := IsCNL.resSurj (O := O) (A := A.C) (residue A.C (constantCoeff f))
-        have ha' : residue A.C (algebraMap O A.C a) = residue A.C (constantCoeff f) := ha
-        refine ⟨a, ?_⟩
-        show residue _ (algebraMap O (MvPowerSeries (Fin n) A.C) a) = residue _ f
-        rw [← sub_eq_zero, ← map_sub, residue_eq_zero_iff, mem_maximalIdeal, mem_nonunits_iff,
-          isUnit_iff_constantCoeff, map_sub, MvPowerSeries.algebraMap_apply, constantCoeff_C]
-        show algebraMap O A.C a - constantCoeff f ∈ maximalIdeal A.C
-        rw [← residue_eq_zero_iff, map_sub, ha', sub_self] }
 
 end GlobalTheory.PsCNL
 end -- clump:auto
@@ -595,8 +520,6 @@ theorem main {R F K : Type} [CommRing R] [IsDomain R] [Field F] [Algebra R F] [I
     rw [AddMonoidAlgebra.coeff_smul_apply, coeff_C_mul, Algebra.smul_def]
   rw [← aeval_map_algebraMap F, hmap, map_mul, aeval_C, ← IsScalarTower.algebraMap_apply]
 
-alias target := _root_.GlobalTheory.TargetInequalityLemmas.main
-
 end GlobalTheory.TargetInequalityLemmas
 end -- clump:auto
 end -- clump:auto
@@ -634,8 +557,7 @@ theorem exists_separable_specialization {D : ℕ} (P : (MvPolynomial (Fin D) ℚ
     linear_combination (C (algebraMap R F da) * C (algebraMap R F db)) * hab
   have hδ : da * db ≠ 0 := mul_ne_zero (nonZeroDivisors.ne_zero hda) (nonZeroDivisors.ne_zero hdb)
   obtain ⟨c, hc⟩ : ∃ c : Fin D → ℚ, MvPolynomial.eval c (da * db) ≠ 0 := by
-    by_contra hno
-    push_neg at hno
+    by_contra! hno
     exact hδ (MvPolynomial.funext fun c => by simpa using hno c)
   refine ⟨c, ?_⟩
   have key' := congrArg (Polynomial.map (MvPolynomial.eval c)) key
@@ -930,7 +852,7 @@ theorem lexOrder_monomial_one' (a : Fin D →₀ ℕ) :
   · apply lexOrder_le_of_coeff_ne_zero; simp
   · rw [le_lexOrder_iff]
     intro d hd
-    rw [coeff_monomial, if_neg]
+    rw [coeff_monomial, ite_eq_right]
     rintro rfl
     exact lt_irrefl _ (WithTop.coe_lt_coe.mp hd)
 
@@ -975,8 +897,8 @@ variable {D n : ℕ} {A : Type} [CommRing A] [Algebra ℂ A]
 noncomputable def evalAt (k : ℕ) (u : A) : MvPowerSeries (Fin D) ℂ :=
   if h : k < n then φ ⟨k, h⟩ u else 0
 
-theorem evalAt_of_lt {k : ℕ} (h : k < n) (u : A) : evalAt φ k u = φ ⟨k, h⟩ u := dif_pos h
-theorem evalAt_of_not_lt {k : ℕ} (h : ¬ k < n) (u : A) : evalAt φ k u = 0 := dif_neg h
+theorem evalAt_of_lt {k : ℕ} (h : k < n) (u : A) : evalAt φ k u = φ ⟨k, h⟩ u := dite_eq_left h
+theorem evalAt_of_not_lt {k : ℕ} (h : ¬ k < n) (u : A) : evalAt φ k u = 0 := dite_eq_right h
 
 theorem evalAt_zero (k : ℕ) : evalAt φ k (0 : A) = 0 := by
   unfold evalAt; split_ifs <;> simp
@@ -1004,7 +926,7 @@ theorem firstIdx_spec {u : A} (h : ∃ k, evalAt φ k u ≠ 0) :
     evalAt φ (firstIdx φ u) u ≠ 0 ∧ ∀ i < firstIdx φ u, evalAt φ i u = 0 := by
   classical
   unfold firstIdx
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact ⟨Nat.find_spec h, fun i hi => not_not.mp (Nat.find_min h hi)⟩
 
 theorem firstIdx_eq {u : A} {k : ℕ} (hk : evalAt φ k u ≠ 0) (hlt : ∀ i < k, evalAt φ i u = 0) :
@@ -1012,7 +934,7 @@ theorem firstIdx_eq {u : A} {k : ℕ} (hk : evalAt φ k u ≠ 0) (hlt : ∀ i < 
   classical
   have h : ∃ k, evalAt φ k u ≠ 0 := ⟨k, hk⟩
   unfold firstIdx
-  rw [dif_pos h, Nat.find_eq_iff]
+  rw [dite_eq_left h, Nat.find_eq_iff]
   exact ⟨hk, fun i hi => not_not.mpr (hlt i hi)⟩
 
 theorem val_eq {u : A} {k : ℕ} (hk : evalAt φ k u ≠ 0) (hlt : ∀ i < k, evalAt φ i u = 0) :
@@ -1023,8 +945,7 @@ variable {φ}
 
 theorem exists_evalAt_ne_zero (hinj : ∀ u : A, (∀ j, φ j u = 0) → u = 0) {u : A} (hu : u ≠ 0) :
     ∃ k, evalAt φ k u ≠ 0 := by
-  by_contra h
-  push_neg at h
+  by_contra! h
   exact hu (hinj u fun j => by simpa [evalAt_of_lt φ j.2] using h j)
 
 theorem val_smul (c : ℂ) (u : A) (hc : c ≠ 0) : val φ (c • u) = val φ u := by
@@ -1033,12 +954,12 @@ theorem val_smul (c : ℂ) (u : A) (hc : c ≠ 0) : val φ (c • u) = val φ u 
     rw [val_eq φ (k := firstIdx φ u) (by rw [evalAt_smul]; exact smul_ne_zero hc h1)
       (fun i hi => by rw [evalAt_smul, h2 i hi, smul_zero]), evalAt_smul, lexOrder_smul' hc]
     rfl
-  · push_neg at h
+  · push Not at h
     have : ∀ k, evalAt φ k (c • u) = evalAt φ k u := fun k => by rw [evalAt_smul, h, smul_zero]
     have h' : ¬ ∃ k, evalAt φ k (c • u) ≠ 0 := by simpa [this] using h
     have h'' : ¬ ∃ k, evalAt φ k u ≠ 0 := by simpa using h
     unfold val firstIdx
-    rw [dif_neg h', dif_neg h'', this]
+    rw [dite_eq_right h', dite_eq_right h'', this]
 
 theorem val_add (hinj : ∀ u : A, (∀ j, φ j u = 0) → u = 0) (u v : A) (hu : u ≠ 0) (hv : v ≠ 0)
     (hlt : val φ u < val φ v) : u + v ≠ 0 ∧ val φ (u + v) = val φ u := by
@@ -1087,7 +1008,7 @@ theorem val_sub (hinj : ∀ u : A, (∀ j, φ j u = 0) → u = 0) (u v : A) (hu 
     rw [evalAt_sub, evalAt_smul]
   obtain ⟨hw1, hw2⟩ := firstIdx_spec φ (exists_evalAt_ne_zero hinj hw)
   have hge : k ≤ firstIdx φ (u - c • v) := by
-    by_contra hlt; push_neg at hlt
+    by_contra hlt; push Not at hlt
     exact hw1 (e2 _ hlt)
   by_cases hz : evalAt φ k (u - c • v) = 0
   · have hlt : k < firstIdx φ (u - c • v) := lt_of_le_of_ne hge (fun h => hw1 (h ▸ hz))

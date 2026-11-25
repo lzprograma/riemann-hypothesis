@@ -58,16 +58,3 @@ theorem polAt_generic_pull {S T : Type} [CommRing S] [IsDomain S] [CommRing T] [
   exact IsLocalization.map_comp _
 
 end GlobalTheory.PolNormal
-
-namespace GlobalTheory.PolNormal
-
-end GlobalTheory.PolNormal
-
-namespace GlobalTheory.PolNormal
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
-
-end GlobalTheory.PolNormal
-
-namespace GlobalTheory.PolNormal
-
-end GlobalTheory.PolNormal

@@ -2,50 +2,6 @@ module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.JointMultOfSteps
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.ExistGen
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -66,12 +22,12 @@ theorem tele (g : ℕ → ℕ) (hg : ∀ t, g (t + 1) ≤ g t) (i₀ : ℕ) (n :
     have h1 := hg n
     by_cases h : i₀ < n
     · have h2 : g n ≤ g i₀ := anti h.le
-      rw [if_pos h, if_pos (by omega : i₀ ≤ n), if_pos (by omega : i₀ < n + 1)]
+      rw [ite_eq_left h, ite_eq_left (by omega : i₀ ≤ n), ite_eq_left (by omega : i₀ < n + 1)]
       omega
     · by_cases h' : i₀ = n
       · subst h'
         simp
-      · rw [if_neg h, if_neg (by omega : ¬ i₀ ≤ n), if_neg (by omega : ¬ i₀ < n + 1)]
+      · rw [ite_eq_right h, ite_eq_right (by omega : ¬ i₀ ≤ n), ite_eq_right (by omega : ¬ i₀ < n + 1)]
 
 theorem getD_succ_le (α : List ℕ) (hα : α.Pairwise (· ≥ ·)) (t : ℕ) :
     α.getD (t + 1) 0 ≤ α.getD t 0 := by
@@ -93,8 +49,8 @@ theorem shape_sum (α : List ℕ) (hα : α.Pairwise (· ≥ ·)) (i₀ : ℕ) :
       if i₀ ≤ t then (α.getD t 0 - α.getD (t + 1) 0) else 0 := by
     intro t
     by_cases h : i₀ ≤ t
-    · rw [if_pos (by omega), if_pos h]; simp
-    · rw [if_neg (by omega), if_neg h]; simp
+    · rw [ite_eq_left (by omega), ite_eq_left h]; simp
+    · rw [ite_eq_right (by omega), ite_eq_right h]; simp
   simp only [e]
   rw [tele (fun t => α.getD t 0) (getD_succ_le α hα), getD_length]
   split_ifs with h
@@ -117,7 +73,7 @@ theorem leadT_hom_row (ρ : Fin m → Ix p q) (κ : Fin k → Ix r s) (w : Ln p 
       rw [Finset.sum_eq_single ⟨i₀.val, hlt⟩]
       · simp
       · intro i _ hi
-        rw [if_neg]
+        rw [ite_eq_right]
         intro e
         apply hi
         ext
@@ -131,7 +87,7 @@ theorem leadT_hom_row (ρ : Fin m → Ix p q) (κ : Fin k → Ix r s) (w : Ln p 
       simp only [Finset.sum_const_zero, add_zero]
       apply Finset.sum_eq_zero
       intro i _
-      rw [if_neg]
+      rw [ite_eq_right]
       intro e
       apply hlt
       rw [← e]
@@ -154,7 +110,7 @@ theorem leadT_hom_col (ρ : Fin m → Ix p q) (κ : Fin k → Ix r s) (w : Ln p 
       rw [Finset.sum_eq_single ⟨j₀.val, hlt⟩]
       · simp
       · intro j _ hj
-        rw [if_neg]
+        rw [ite_eq_right]
         intro e
         apply hj
         ext
@@ -168,7 +124,7 @@ theorem leadT_hom_col (ρ : Fin m → Ix p q) (κ : Fin k → Ix r s) (w : Ln p 
       simp only [Finset.sum_const_zero, zero_add]
       apply Finset.sum_eq_zero
       intro j _
-      rw [if_neg]
+      rw [ite_eq_right]
       intro e
       apply hlt
       rw [← e]

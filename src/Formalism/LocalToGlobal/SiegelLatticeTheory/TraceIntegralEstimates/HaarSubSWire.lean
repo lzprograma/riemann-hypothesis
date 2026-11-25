@@ -386,8 +386,7 @@ theorem finite_bi {H : Set G} (hHm : MeasurableSet H) (hinvH : ∀ h ∈ H, h⁻
     by_contra hinf
     rw [not_lt, top_le_iff] at hinf
     obtain ⟨i, hi⟩ : ∃ i, μ (spanningSets μ i) ≠ 0 := by
-      by_contra hall
-      push_neg at hall
+      by_contra! hall
       have h0 : μ Set.univ = 0 := by
         rw [← iUnion_spanningSets μ]
         exact measure_iUnion_null hall
@@ -431,8 +430,6 @@ theorem finite_bi {H : Set G} (hHm : MeasurableSet H) (hinvH : ∀ h ∈ H, h⁻
 end Abs
 
 section Glob
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def HuSub (hD : SDecomp) {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u : D.what₂.Word) :
     Subgroup X.B.I.Ginf where
@@ -512,8 +509,6 @@ theorem isFolner_Sinf_gen {n r k : ℕ} (hn : n = 2 * r + k + 1) {ι : Type} [Fi
   subst hn
   exact Formalism.L2.S.Pv.FolnerJ.isFolner_Sinf ev fv wv zv T hT
     (fun v => ⟨hee v, hff v, hef v, hez v, hfz v, hzz v, hww v, hew v, hfw v, hzw v⟩) μS hμ
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem hermitian_scaled_right {n : ℕ} (ε : Fin n → Bool) (T : ℝ) (x z : Fin n → ℂ) :
     hJ ε x (z0v T z) = (((Real.sqrt T)⁻¹ : ℝ) : ℂ) * hJ ε x z := by
@@ -650,7 +645,7 @@ theorem span_facts (k : ℕ) {v : Fin n → ℂ} (hv : v ∈ spanLt e k) :
   | mem x hx =>
     obtain ⟨d, hd, rfl⟩ := hx
     refine ⟨fun b hb => ?_, fun b => hG.ee b d, Pw_e hG d⟩
-    rw [fe hG, if_neg]
+    rw [fe hG, ite_eq_right]
     rintro rfl
     exact (not_lt.2 hb) hd
   | zero => exact ⟨fun b _ => hJ_zero ε _, fun b => hJ_zero ε _, Pw_zero⟩
@@ -1118,8 +1113,6 @@ noncomputable section
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting
 open scoped InnerProductSpace TensorProduct Classical ENNReal
 open Matrix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace Formalism.L2.S.Pv.HaarSubS
 

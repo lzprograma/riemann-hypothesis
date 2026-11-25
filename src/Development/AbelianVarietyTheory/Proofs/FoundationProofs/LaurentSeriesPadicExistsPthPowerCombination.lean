@@ -82,7 +82,7 @@ theorem powerSeries_eq_sum_X_pow_mul_pow (p : ℕ) [hp : Fact p.Prime] (F : Powe
   rw [Finset.sum_eq_single (⟨n % p, Nat.mod_lt n hp0⟩ : Fin p)]
   · have h1 : n % p ≤ n := Nat.mod_le n p
     have h2 : p ∣ n - n % p := Nat.dvd_sub_mod n
-    simp only [h1, h2, if_true, PowerSeries.coeff_mk]
+    simp only [h1, h2, ite_true, PowerSeries.coeff_mk]
     congr 1
     rw [Nat.mul_div_cancel' h2, Nat.sub_add_cancel h1]
   · intro j _ hj

@@ -8,15 +8,11 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSecti
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.PullbackSections.Pf.EigD
 
 open MvPolynomial CategoryTheory Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {V : Type} [CommRing V] {d : ℕ}
 
@@ -56,7 +52,7 @@ theorem snd_lin (φ : Jet V (Fin 1 × Fin d) 1 →ₐ[V] DualNumber V) (hφ : �
       fun c => (Finsupp.single_ne_zero.2 one_ne_zero).symm
     symm
     refine Finset.sum_eq_zero fun c _ => ?_
-    rw [jetTan_mk, aeval_tan, snd_tan_lemma, MvPolynomial.coeff_C, if_neg (hne c), mul_zero]
+    rw [jetTan_mk, aeval_tan, snd_tan_lemma, MvPolynomial.coeff_C, ite_eq_right (hne c), mul_zero]
   next p q hp hq =>
     simp only [map_add (f := _), TrivSqZeroExt.snd_add, hp, hq, mul_add, Finset.sum_add_distrib]
   next p n _ =>
@@ -78,7 +74,7 @@ theorem snd_lin (φ : Jet V (Fin 1 × Fin d) 1 →ₐ[V] DualNumber V) (hφ : �
     have hm : (Ideal.Quotient.mk _ (p * X ((0 : Fin 1), b)) : Jet V (Fin 1 × Fin d) 1) =
         Ideal.Quotient.mk _ p * zk b := map_mul _ _ _
     rw [hm, map_mul, TrivSqZeroExt.snd_mul, hp, hz, ← hm]
-    simp only [hT, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [hT, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     simp [smul_eq_mul, mul_comm]
 
 theorem substTan_fst (f : Fin d → MvPowerSeries (Fin 1 × Fin d) V) (j : Fin d) (w : Jet V (Fin 1 × Fin d) 1) :

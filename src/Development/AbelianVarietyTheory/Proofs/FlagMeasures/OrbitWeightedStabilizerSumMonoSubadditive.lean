@@ -67,10 +67,10 @@ theorem main : ∀ (G α : Type) [Group G] [MulAction G α] , (∀ (X Y : Set α
     simp only [orbSum_eq]
     refine ENNReal.tsum_le_tsum fun q => ?_
     by_cases hq : Quotient.out q ∈ X
-    · rw [if_pos hq, if_pos (hXY hq)]
+    · rw [ite_eq_left hq, ite_eq_left (hXY hq)]
       gcongr
       exact hN _ hq
-    · rw [if_neg hq]
+    · rw [ite_eq_right hq]
       exact zero_le
   · intro X B
     simp only [orbMass, orbSum]
@@ -84,7 +84,7 @@ theorem main : ∀ (G α : Type) [Group G] [MulAction G α] , (∀ (X Y : Set α
     · obtain ⟨i, hi, hqi⟩ := Set.mem_iUnion₂.1 (hX hq)
       refine le_trans ?_ (Finset.single_le_sum (fun j _ => zero_le) hi)
       simp [hq, hqi]
-    · rw [if_neg hq]
+    · rw [ite_eq_right hq]
       exact zero_le
   · intro X s hs
     have key : ∀ q : {q : MulAction.orbitRel.Quotient G α // Quotient.out q ∈ X},

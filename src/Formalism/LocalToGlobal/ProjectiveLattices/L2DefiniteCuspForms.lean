@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.ProjectiveLattices.NormsFree
 public import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
 public import Formalism.LocalToGlobal.ProjectiveLattices.VAddIntNonneg
 public import Formalism.LocalToGlobal.ProjectiveLattices.RulInst
@@ -18,21 +19,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} {Comp : Ty
   (X : Comp → Data E r) (la : ∀ c, ReciprocityTheory.ChartRestriction.G.FD.Wt (X c).Ψ r)
 
 theorem supE_add_le (P Q : FDSec X) : supE X la (P + Q) ≤ supE X la P + supE X la Q := by
-  unfold supE
-  refine iSup_le fun p => ?_
-  have h1 : (X p.1).pnorm (la p.1) ((P + Q) p.1) p.2 ≤
-      (X p.1).pnorm (la p.1) (P p.1) p.2 + (X p.1).pnorm (la p.1) (Q p.1) p.2 := by
-    unfold ReciprocityTheory.ChartRestriction.G.FD.Data.pnorm
-    rw [← add_mul]
-    exact mul_le_mul_of_nonneg_right (norm_add_le _ _) (by positivity)
-  calc ENNReal.ofReal ((X p.1).pnorm (la p.1) ((P + Q) p.1) p.2)
-      ≤ ENNReal.ofReal ((X p.1).pnorm (la p.1) (P p.1) p.2) +
-          ENNReal.ofReal ((X p.1).pnorm (la p.1) (Q p.1) p.2) :=
-        (ENNReal.ofReal_le_ofReal h1).trans ENNReal.ofReal_add_le
-    _ ≤ (⨆ p : FPt X, ENNReal.ofReal ((X p.1).pnorm (la p.1) (P p.1) p.2)) +
-          ⨆ p : FPt X, ENNReal.ofReal ((X p.1).pnorm (la p.1) (Q p.1) p.2) :=
-        add_le_add (le_iSup (fun p : FPt X => ENNReal.ofReal ((X p.1).pnorm (la p.1) (P p.1) p.2)) p)
-          (le_iSup (fun p : FPt X => ENNReal.ofReal ((X p.1).pnorm (la p.1) (Q p.1) p.2)) p)
+  apply _root_.Formalism.L2.PjFree.supE_add_le <;> assumption
 
 theorem supE_smul (a : ℂ) (P : FDSec X) : supE X la (a • P) = ENNReal.ofReal ‖a‖ * supE X la P := by
   unfold supE
@@ -46,24 +33,7 @@ theorem supE_smul (a : ℂ) (P : FDSec X) : supE X la (a • P) = ENNReal.ofReal
   ring
 
 theorem supE_ne_top [Fintype Comp] {P : FDSec X} (h : P ∈ holSub X la) : supE X la P ≠ ⊤ := by
-  unfold holSub at h
-  induction h using Submodule.span_induction with
-  | mem P hP =>
-    have hb : ∀ c, ∃ C : ℝ, ∀ x ∈ (X c).dom, (X c).pnorm (la c) (P c) x ≤ C := fun c => (hP c).1.2
-    choose C hC using hb
-    refine ne_top_of_le_ne_top (ENNReal.ofReal_ne_top (r := ∑ c, |C c|))
-      (iSup_le fun p => ENNReal.ofReal_le_ofReal ?_)
-    calc (X p.1).pnorm (la p.1) (P p.1) p.2 ≤ C p.1 := hC p.1 p.2 p.2.2
-      _ ≤ |C p.1| := le_abs_self _
-      _ ≤ ∑ c, |C c| := Finset.single_le_sum (fun c _ => abs_nonneg (C c)) (Finset.mem_univ _)
-  | zero =>
-    refine ne_top_of_le_ne_top ENNReal.zero_ne_top (iSup_le fun p => ?_)
-    simp [ReciprocityTheory.ChartRestriction.G.FD.Data.pnorm]
-  | add P Q _ _ hP hQ =>
-    exact ne_top_of_le_ne_top (ENNReal.add_ne_top.mpr ⟨hP, hQ⟩) (supE_add_le X la P Q)
-  | smul a P _ hP =>
-    rw [supE_smul]
-    exact ENNReal.mul_ne_top ENNReal.ofReal_ne_top hP
+  apply _root_.Formalism.L2.PjFree.supE_ne_top <;> assumption
 
 end Sup
 
@@ -79,33 +49,7 @@ theorem norm_goodOf (σ : c.F →+* ℂ) (x : c.F) : ‖goodOf c σ x‖ = ‖σ
   split_ifs <;> simp
 
 theorem goodEmb_goodOf (σ : c.F →+* ℂ) : GoodEmb c (goodOf c σ) := by
-  unfold goodOf
-  split_ifs with h
-  · exact h
-  · unfold GoodEmb at h ⊢
-    set β := (σ.comp (IntermediateField.inclusion c.le).toRingHom) (baseKA l).ρ with hβ
-    have hβsq : β ^ 2 = H.rt0 ^ 2 := by
-      rw [H.sqrt_neg_disc_sq, hβ, ← map_pow, (baseKA l).ρ_sq, map_neg, map_natCast]
-    have hneg : β = -H.rt0 := by
-      have hm : (β - H.rt0) * (β + H.rt0) = 0 := by
-        rw [show (β - H.rt0) * (β + H.rt0) = β ^ 2 - H.rt0 ^ 2 by ring, hβsq, sub_self]
-      rcases mul_eq_zero.mp hm with h1 | h1
-      · exact absurd (sub_eq_zero.mp h1) h
-      · exact eq_neg_of_add_eq_zero_left h1
-    have hd : (2 : ℝ) ≤ H.d := by exact_mod_cast H.d_prime.two_le
-    have h2 := congrArg Complex.re H.sqrt_neg_disc_sq
-    have h3 := congrArg Complex.im H.sqrt_neg_disc_sq
-    simp only [sq, Complex.mul_re, Complex.mul_im, Complex.neg_re, Complex.neg_im, Complex.natCast_re,
-      Complex.natCast_im, neg_zero] at h2 h3
-    have hre : H.rt0.re = 0 := by
-      rcases mul_eq_zero.mp (show H.rt0.re * H.rt0.im = 0 by nlinarith) with h4 | h4
-      · exact h4
-      · rw [h4] at h2
-        exfalso
-        nlinarith [mul_self_nonneg H.rt0.re]
-    show starRingEnd ℂ β = H.rt0
-    rw [hneg, map_neg]
-    apply Complex.ext <;> simp [hre]
+  apply _root_.Formalism.L2.PjFree.goodEmb_goodOf <;> assumption
 
 theorem IsNormOn.of_goodOf {C : Submodule c.F (Rul Xo c)} {σ : c.F →+* ℂ} {N : Rul Xo c → ℝ}
     (h : IsNormOn C (goodOf c σ) N) : IsNormOn C σ N := by
@@ -172,23 +116,6 @@ def L2DefiniteCuspForms (h : CuspL2 U σ V dict mu) : Prop :=
   ∀ a n (hd : Dom a n), L2Definite V σ (rdC U σ a n) dict mu (h a n hd)
 
 variable {U σ V dict mu}
-
-theorem isNormOn_l2C (x₀ : ℝ) {h : CuspL2 U σ V dict mu} (h1 : L2DefiniteCuspForms U σ V dict mu h) {a n} (hd : Dom a n) :
-    IsNormOn (cusp Xo c U a n) σ (l2C U σ V dict mu x₀ a n (h a n hd)) := by
-  constructor
-  · intro f hf
-    rw [l2C, dite_eq_left hf]; exact mul_nonneg (lieFac_pos _ _ _).le (l2Norm_nonneg_bis _ _ _ _ _ _ _)
-  · intro f hf h0
-    rw [l2C, dite_eq_left hf] at h0
-    exact congrArg Subtype.val (h1 a n hd ⟨f, hf⟩ ((mul_eq_zero.mp h0).resolve_left (lieFac_pos _ _ _).ne'))
-  · intro x f hf
-    rw [l2C, l2C, dite_eq_left hf, dite_eq_left (Submodule.smul_mem _ x hf)]
-    have := l2Norm_smul_alt V σ (rdC U σ a n) dict mu (h a n hd) x ⟨f, hf⟩
-    exact (congrArg (lieFac Dw x₀ a * ·) this).trans (by ring)
-  · intro f hf g hg
-    rw [l2C, l2C, l2C, dite_eq_left hf, dite_eq_left hg, dite_eq_left (Submodule.add_mem _ hf hg), ← mul_add]
-    exact mul_le_mul_of_nonneg_left (L2Norm_add_le V σ (rdC U σ a n) dict mu (h a n hd) ⟨f, hf⟩ ⟨g, hg⟩)
-      (lieFac_pos _ _ _).le
 
 theorem l2C_le_supC (x : ℝ) (hσ : GoodEmb c σ) {a n} (h : JMemL2 V σ (rdC U σ a n) dict mu)
     (hd : ∀ g, (dict g).2 ∈ ((U σ).X (dict g).1).dom) (hm : MuUnit V dict mu) :

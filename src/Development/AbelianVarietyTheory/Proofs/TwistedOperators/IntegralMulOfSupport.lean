@@ -224,12 +224,12 @@ theorem mem_N_of_val {g : GL (n ⊕ Fin c) k} {β : n → k} {t : k} (hg : g.val
   · simp [Matrix.one_apply]
   · simp only [lev, Sum.elim_inl, Sum.elim_inr] at hrs
     simp only [Matrix.fromBlocks_apply₁₂, ExchangeSupport.colM, Matrix.of_apply]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
     simp
   · simp
   · simp only [lev, Sum.elim_inr] at hrs
     simp only [Matrix.fromBlocks_apply₂₂, Matrix.add_apply, zM, Matrix.of_apply]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
     simp [Matrix.one_apply]
 
 private theorem eMat_mem_N_succ (u : n → k) : rowE c p u ∈ N k n c (p + 1) := by
@@ -242,7 +242,7 @@ private theorem eMat_mem_N_succ (u : n → k) : rowE c p u ∈ N k n c (p + 1) :
   · simp
   · simp only [lev, Sum.elim_inl, Sum.elim_inr] at hrs
     simp only [Matrix.fromBlocks_apply₂₁, ExchangeSupport.rowM, Matrix.of_apply]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
     simp
   · simp [Matrix.one_apply]
 
@@ -290,8 +290,6 @@ section -- clump:auto
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.IndefiniteRowSideFullHecke.FourierJacobiAverage
 
-theorem _root_.GlobalTheory.T.isUnimodular_blockUpperTriangular_symmetricLevels : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] (n : Type) [Fintype n] [DecidableEq n] (c l : ℕ) (L : Fin c → ℕ) (_ : ∀ i, L (Fin.rev i) + L i = 2 * l) (S : Subgroup (GL (n ⊕ Fin c) k)) (_ : ∀ g : GL (n ⊕ Fin c) k, g ∈ S ↔ ∀ r s : n ⊕ Fin c, (r.isRight ∨ s.isRight) → Sum.elim (fun _ => l) L s ≤ Sum.elim (fun _ => l) L r → g.val r s = (1 : Matrix (n ⊕ Fin c) (n ⊕ Fin c) k) r s) (m : Measure S), m.IsHaarMeasure → m.IsMulRightInvariant := by
-  first | exact @GlobalTheory.LevelUnimod.unimodular
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsUnimodularBlockUpperTriangularSymmetricLevelsStatement =====
@@ -389,7 +387,7 @@ theorem exists_isQuotInt_unfolding : ∀ (k : Type) [Field k] [ValuativeRel k] [
       simpa using this
     rw [hf _ _ hkey, hf h ⟨_, hmemΨ h⟩ rfl, map_smul, hθΨ, map_smul, LinearMap.smul_apply, map_mul,
       map_mul, Module.End.mul_apply, Module.End.mul_apply, hb.2 x, hb.1 _ u hu, smul_eq_mul]
-    have hN : 0 < nabs k (Matrix.GeneralLinearGroup.det x) := GlobalTheory.RootEx.OpELevi.nabs_pos _
+    have hN : 0 < nabs k (Matrix.GeneralLinearGroup.det x) := GlobalTheory.SplitWeil.nabs_pos' _
     have hpow : (nabs k (Matrix.GeneralLinearGroup.det x) ^ ((c : ℝ) + 1 - 2 * p) : ℝ) =
         nabs k (Matrix.GeneralLinearGroup.det x) ^ (((c : ℝ) + 1) / 2 - p) *
           nabs k (Matrix.GeneralLinearGroup.det x) ^ (((c : ℝ) + 1) / 2 - p) := by
@@ -730,7 +728,7 @@ theorem localSign : LocalSign k := by
   intro n n' _ _ _ _ c ρ h1 hc
   have h2 : ρ < c := by omega
   refine ⟨(_root_.GlobalTheory.RootEx.FourierJacobiGroup.mem_RFJ_iff k n c ρ h1 h2).1,
-    GlobalTheory.T.isUnimodular_blockUpperTriangular_symmetricLevels k n c _ _ (fun i => ?_) _ ((_root_.GlobalTheory.RootEx.ParabolicEntries.mem_R_iff_and_mem_RFJ_iff k n c ρ).2 h1 h2),
+    GlobalTheory.LevelUnimod.unimodular k n c _ _ (fun i => ?_) _ ((_root_.GlobalTheory.RootEx.ParabolicEntries.mem_R_iff_and_mem_RFJ_iff k n c ρ).2 h1 h2),
     (_root_.GlobalTheory.RootEx.HeisenbergSign.sign k n n' c ρ h1 h2).1, fun ψ ν hψ _ hν => ?_⟩
   · have := i.2
     simp only [Fin.val_rev]
@@ -853,7 +851,7 @@ theorem source : Source k := by
       have := hϑ (rowE (c + 1) ρ u) 1 F Φ (omR μ (rowE (c + 1) ρ u, 1) Φ) rfl
       rw [map_one, Module.End.one_apply] at this
       simp only [T, LinearMap.comp_apply, map_smul, smul_eq_mul, this]
-  refine ⟨GlobalTheory.T.isUnimodular_blockUpperTriangular_symmetricLevels k n c _ _ (fun i => ?_) _ (_root_.GlobalTheory.RootEx.ParabolicEntries.mem_R_iff_and_mem_RFJ_iff k n c ρ).1, fun Φ Φ₀ => ?_, fun H Φ => ?_,
+  refine ⟨GlobalTheory.LevelUnimod.unimodular k n c _ _ (fun i => ?_) _ (_root_.GlobalTheory.RootEx.ParabolicEntries.mem_R_iff_and_mem_RFJ_iff k n c ρ).1, fun Φ Φ₀ => ?_, fun H Φ => ?_,
     fun H Φ Φ₀ => ?_⟩
   · have := i.2
     simp only [Fin.val_rev]

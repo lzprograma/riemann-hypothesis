@@ -20,62 +20,10 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SectionBoundar
 public import Mathlib.Geometry.Manifold.IsManifold.Basic
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SingularPotentialLogGrowthPsh
 public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.InnerProductSpace.OfNorm
-import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Topology.Sheaves.Presheaf
-import Mathlib.MeasureTheory.Measure.RegularityCompacts
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.UniformSpace.Uniformizable
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncBoundaryCoordinateChart
 import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+import ReciprocityTheory.AnalyticForms.LeviForms.TailCutA
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.MetricProofs.LeviFlatSeparatelyHarmonic, Development.AutomorphicSpectrum.Proofs.MetricProofs.LeviZeroInCompatibleChart, Development.AutomorphicSpectrum.Proofs.MetricProofs.HarmonicAnnulusMaximumPrinciple, Development.AutomorphicSpectrum.Proofs.MetricProofs.PoissonIntegralPuncturedDisc, Development.AutomorphicSpectrum.Proofs.MetricProofs.PolydiscPoissonReproducesHarmonic, Development.AutomorphicSpectrum.Proofs.MetricProofs.PolydiscPoissonSmooth, Development.AutomorphicSpectrum.Proofs.MetricProofs.SmoothInCompatibleChart, Development.AutomorphicSpectrum.Proofs.MetricProofs.SmoothOnOfChartComposition, Development.AutomorphicSpectrum.Proofs.MetricProofs.BoundedPshCorrectionLocallySmooth, Development.AutomorphicSpectrum.Proofs.MetricProofs.PshExtensionAcrossClosedDense, Development.AutomorphicSpectrum.Proofs.MetricProofs.SmoothExtensionAcrossClosedDense, Development.AutomorphicSpectrum.Proofs.MetricProofs.FlatWeightExtends
@@ -422,7 +370,7 @@ theorem poisson_formula_punctured (f : ℂ → ℝ) (ρ R M : ℝ) (hρ : 0 < ρ
     have hev : Φ =ᶠ[𝓝 z] ReciprocityTheory.AnForm.A.poissonInt f ρ := by
       filter_upwards [Metric.isOpen_ball.mem_nhds hzb] with y hy
       have : ‖y‖ < ρ := by simpa using hy
-      simp only [Φ, if_pos this]
+      simp only [Φ, ite_eq_left this]
     exact (InnerProductSpace.harmonicAt_congr_nhds hev).mpr
       (ReciprocityTheory.AnForm.A.poissonInt_harmonicAt hρ hfc hzb)
   have hΦcont : ContinuousOn Φ (Metric.closedBall 0 ρ) := by
@@ -432,22 +380,22 @@ theorem poisson_formula_punctured (f : ℂ → ℝ) (ρ R M : ℝ) (hρ : 0 < ρ
     · have hzle : ‖z‖ ≤ ρ := by simpa using hz
       have hzeq : ‖z‖ = ρ := le_antisymm hzle (not_lt.mp hzl)
       have hzs : z ∈ Metric.sphere (0 : ℂ) ρ := by simpa using hzeq
-      have hΦz : Φ z = f z := by simp only [Φ, if_neg hzl]
+      have hΦz : Φ z = f z := by simp only [Φ, ite_eq_right hzl]
       rw [← Metric.ball_union_sphere]
       apply ContinuousWithinAt.union
       · rw [ContinuousWithinAt, hΦz]
         refine Filter.Tendsto.congr' ?_ (ReciprocityTheory.AnForm.A.poissonInt_tendsto hρ hfc hzs)
         filter_upwards [self_mem_nhdsWithin] with y hy
         have : ‖y‖ < ρ := by simpa using hy
-        simp only [Φ, if_pos this]
+        simp only [Φ, ite_eq_left this]
       · rw [ContinuousWithinAt, hΦz]
         refine Filter.Tendsto.congr' ?_ (hfc z hzs)
         filter_upwards [self_mem_nhdsWithin] with y hy
         have hy' : ‖y‖ = ρ := by simpa using hy
-        simp only [Φ, if_neg (not_lt.mpr hy'.ge)]
+        simp only [Φ, ite_eq_right (not_lt.mpr hy'.ge)]
   have hΦb : ∀ z : ℂ, ‖z‖ = ρ → Φ z = f z := by
     intro z hz
-    simp only [Φ, if_neg (not_lt.mpr hz.ge)]
+    simp only [Φ, ite_eq_right (not_lt.mpr hz.ge)]
   have hS : {z : ℂ | 0 < ‖z‖ ∧ ‖z‖ ≤ ρ} ⊆ Metric.closedBall 0 ρ := fun z hz => by
     simpa using hz.2
   have hfS : ContinuousOn f {z : ℂ | 0 < ‖z‖ ∧ ‖z‖ ≤ ρ} := fun z hz =>
@@ -455,9 +403,9 @@ theorem poisson_formula_punctured (f : ℂ → ℝ) (ρ R M : ℝ) (hρ : 0 < ρ
   have hΦbd : ∀ z : ℂ, 0 < ‖z‖ → ‖z‖ ≤ ρ → |Φ z| ≤ M := by
     intro z hz0 hzρ
     by_cases hzl : ‖z‖ < ρ
-    · simp only [Φ, if_pos hzl]
+    · simp only [Φ, ite_eq_left hzl]
       exact hPbd z hzl
-    · simp only [Φ, if_neg hzl]
+    · simp only [Φ, ite_eq_right hzl]
       exact hB z (norm_pos_iff.mp hz0) (lt_of_le_of_lt hzρ hρR)
   have hA := le_zero_of_bddAbove_punctured (fun z => f z - Φ z) ρ (2 * M) hρ
     (hfS.sub (hΦcont.mono hS))
@@ -477,7 +425,7 @@ theorem poisson_formula_punctured (f : ℂ → ℝ) (ρ R M : ℝ) (hρ : 0 < ρ
       have h2 := abs_le.mp (hΦbd z hz0 hzρ)
       linarith [h1.1, h1.2, h2.1, h2.2])
     w (norm_pos_iff.mpr hw0) hwρ
-  have hΦw : Φ w = ReciprocityTheory.AnForm.A.poissonInt f ρ w := by simp only [Φ, if_pos hwρ]
+  have hΦw : Φ w = ReciprocityTheory.AnForm.A.poissonInt f ρ w := by simp only [Φ, ite_eq_left hwρ]
   have hfw : f w = ReciprocityTheory.AnForm.A.poissonInt f ρ w := by linarith
   rw [hfw]
   have hint := GlobalTheory.CompanionTheory.Ar.PB.Flat.integral_angMeas (fun z => poissonKernel 0 w z * f z) ρ
@@ -898,9 +846,6 @@ theorem smoothOn_comp_compatChart (e : ℕ) (X : Type) [TopologicalSpace X] (A :
     hG.contDiffAt (hO.mem_nhds hyO)
   exact (hGat.comp y hτ).contDiffWithinAt
 
-theorem smoothOn_comp_compatChart' : ∀ (e : ℕ) (X : Type) [TopologicalSpace X] (A : FinHolAtlas e X) (ψ : OpenPartialHomeomorph X (Fin e → ℂ)) (O : Set (Fin e → ℂ)) (G : (Fin e → ℂ) → ℝ), IsCompatChart A ψ → IsOpen O → O ⊆ ψ.target → ContDiffOn ℝ ∞ G O → A.SmoothOn (ψ.source ∩ ψ ⁻¹' O) (G ∘ ψ) :=
-  fun e X _ A ψ O G h1 h2 h3 h4 => smoothOn_comp_compatChart e X A ψ O G h1 h2 h3 h4
-
 end GlobalTheory.CompanionTheory.Metric
 end -- clump:auto
 end -- clump:auto
@@ -1079,7 +1024,7 @@ theorem locExt : ∀ (e : ℕ) (X : Type) [TopologicalSpace X] (A : FinHolAtlas 
   refine ⟨ψ.source ∩ ψ ⁻¹' Metric.ball (ψ x) (r / 2), fun y => (G ∘ ψ) y - th.φ x y,
     ψ.isOpen_inter_preimage Metric.isOpen_ball, ⟨hxψ, Metric.mem_ball_self (half_pos hr)⟩, ?_, ?_⟩
   · intro j
-    have h1 := _root_.GlobalTheory.CompanionTheory.Metric.smoothOn_comp_compatChart' e X A ψ (Metric.ball (ψ x) (r / 2)) G hψ Metric.isOpen_ball
+    have h1 := _root_.GlobalTheory.CompanionTheory.Metric.smoothOn_comp_compatChart e X A ψ (Metric.ball (ψ x) (r / 2)) G hψ Metric.isOpen_ball
       (fun z hz => (hball (hhalf hz)).1.1) hGs
     exact (h1 j).sub ((hth.1 x j).mono fun y hy => ⟨hy.1, hNU hy.2⟩)
   · intro y hy hyb
@@ -1160,21 +1105,7 @@ namespace GlobalTheory.CompanionTheory.SmoothGlue
 theorem continuousAt_of_smoothOn {e : ℕ} {X : Type} [TopologicalSpace X] (A : FinHolAtlas e X)
     {N : Set X} {E : X → ℝ} (hN : IsOpen N) (hS : A.SmoothOn N E) {p : X} (hp : p ∈ N) :
     ContinuousAt E p := by
-  obtain ⟨j, hj⟩ := A.cover p
-  have hopen : IsOpen ((A.chart j).target ∩ (A.chart j).symm ⁻¹' N) :=
-    (A.chart j).isOpen_inter_preimage_symm hN
-  have hz : A.chart j p ∈ (A.chart j).target ∩ (A.chart j).symm ⁻¹' N := by
-    refine ⟨(A.chart j).map_source hj, ?_⟩
-    simpa [Set.mem_preimage, (A.chart j).left_inv hj] using hp
-  have h1 : ContinuousAt (E ∘ (A.chart j).symm) (A.chart j p) :=
-    ((hS j).continuousOn).continuousAt (hopen.mem_nhds hz)
-  have h2 : ContinuousAt (A.chart j) p := (A.chart j).continuousAt hj
-  have h1' : ContinuousAt (E ∘ (A.chart j).symm) ((A.chart j) p) := h1
-  have h3 : ContinuousAt ((E ∘ (A.chart j).symm) ∘ (A.chart j)) p :=
-    ContinuousAt.comp h1' h2
-  refine h3.congr ?_
-  filter_upwards [(A.chart j).open_source.mem_nhds hj] with y hy
-  simp [Function.comp, (A.chart j).left_inv hy]
+  apply _root_.ReciprocityTheory.AnForm.P.LeviFormBoundaryTopology.continuousAt_of_smoothOn <;> assumption
 
 theorem eq_of_dense_compl {X : Type} [TopologicalSpace X] {B W : Set X} {f g : X → ℝ}
     (hD : Dense Bᶜ) (hW : IsOpen W) (hf : ∀ p ∈ W, ContinuousAt f p)
@@ -1202,9 +1133,9 @@ theorem glue : ∀ (e : ℕ) (X : Type) [TopologicalSpace X] (A : FinHolAtlas e 
   · have hu' : ∀ x, ∀ y ∈ N x, (if y ∈ B then E y y else u y) = E x y := by
       intro x y hy
       by_cases hB : y ∈ B
-      · rw [if_pos hB]
+      · rw [ite_eq_left hB]
         exact hagree y x y ⟨hx y, hy⟩
-      · rw [if_neg hB]
+      · rw [ite_eq_right hB]
         exact (hE x y hy hB).symm
     intro j z hz
     have hzt : z ∈ (A.chart j).target := hz.1

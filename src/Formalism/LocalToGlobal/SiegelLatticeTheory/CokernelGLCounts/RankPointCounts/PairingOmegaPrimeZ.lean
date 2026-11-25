@@ -26,7 +26,6 @@ theorem brS_smul_left (c : E) (x y : S.V) : brS S (c • x) y = c * brS S x y :=
 
 theorem brS_sum_left {ι : Type*} (s : Finset ι) (c : ι → E) (x : ι → S.V) (y : S.V) :
     brS S (∑ i ∈ s, c i • x i) y = ∑ i ∈ s, c i * brS S (x i) y := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [brS, map_sum]
 
 theorem brS_add_right (x y y' : S.V) : brS S x (y + y') = brS S x y + brS S x y' := by
@@ -37,7 +36,6 @@ theorem brS_smul_right (c : E) (x y : S.V) : brS S x (c • y) = star c * brS S 
 
 theorem brS_sum_right {ι : Type*} (s : Finset ι) (c : ι → E) (x : S.V) (y : ι → S.V) :
     brS S x (∑ i ∈ s, c i • y i) = ∑ i ∈ s, star (c i) * brS S x (y i) := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [brS, map_sum, starRingEnd_apply]
 
 theorem brS_swap (x y : S.V) : brS S y x = star (brS S x y) := by
@@ -82,7 +80,7 @@ theorem det_eq_Dl : (Zhat F F').det = Dl F F' (r + 1) := by
   congr 1
 
 theorem pairing_omegaPrime_z : brS S (omp F F') F.z = Dl F F' (r + 1) := by
-  rw [show F.z = F.fvec (Fin.last r) by simp [FlagG.fvec], brS_omp_fvec, if_pos rfl, det_eq_Dl]
+  rw [show F.z = F.fvec (Fin.last r) by simp [FlagG.fvec], brS_omp_fvec, ite_eq_left rfl, det_eq_Dl]
 
 theorem adj_last_eq_Dl : (Zhat F F').adjugate (Fin.last r) (Fin.last r) = Dl F F' r := by
   rw [Matrix.adjugate_fin_succ_eq_det_submatrix]

@@ -203,8 +203,6 @@ open Formalism.IndefR.Datum Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 
 namespace GlobalTheory.CompanionTheory.LeafFixedPointPlaceNorm
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem mem_localization_of_smul_mem₂ {K : Type} [Field K] [NumberField K] [StarRing K] {n : ℕ} (w : HeightOneSpectrum (𝓞 K))
     (M : Submodule (𝓞 K) (Fin n → K)) (y : Fin n → K) (s : K) (hs : s ≠ 0) (δ : ℤ) (hv : vw w s ≤ δ) (h : s • y ∈ M) :
     y ∈ Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (Formalism.HermitianLatticesTheory.idealSmul
@@ -276,7 +274,6 @@ theorem sum_clause {p : PtAt ex Csz} {CF C : ℝ} (d : FunIn p CF) (hC0 : 0 ≤ 
     (Tf : Finset (GlobalTheory.SumSize.PlL D)) (dF : GlobalTheory.SumSize.PlL D → ℤ) (hF : ∀ w, dF w = ⌊dl w⌋) :
     2 * ∑ w ∈ Tf, lw w * (dF w : ℝ) ≤ (d.data (fun _ => 1) Tf dF).bFP C p.Z.b := by
   have hb : 1 ≤ p.Z.b := _root_.Formalism.MainNotions.Lnk.one_le_b L.sc
-  have hb0 : 0 ≤ p.Z.b := by linarith
   have hL : 0 ≤ Real.log p.Z.b := Real.log_nonneg hb
   have h1 : ∑ w ∈ Tf, lw w * (dF w : ℝ) ≤ ∑ w ∈ Tf, lw w * dl w := by
     refine Finset.sum_le_sum fun w _ => mul_le_mul_of_nonneg_left ?_ (_root_.Formalism.DivisionValues.lw_nonneg' w)

@@ -21,8 +21,6 @@ namespace Formalism.L2.SG.TermLoc
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef
   Formalism.L2.SG.Saturated ValuativeRel
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7)
 
 abbrev nV : ℕ := (VS D).rank

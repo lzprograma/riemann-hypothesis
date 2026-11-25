@@ -253,9 +253,9 @@ theorem eJ_selfadj (ψ : AddChar (ZMod g) ℂ) : conjA (eJ g N kk s ψ) = eJ g N
   have hs : ∀ x : ZMod g, star (ψ x) = (ψ x)⁻¹ := fun x => by
     rw [← AddChar.map_neg_eq_inv, AddChar.map_neg_eq_conj, starRingEnd_apply]
   by_cases hw : PJ kk s (w : Matrix (Fin N) (Fin N) (ZMod g))
-  · rw [if_pos (hiff.2 hw), if_pos hw, phiJ_inv w hw, AddChar.map_neg_eq_inv, inv_inv, star_div₀, hs,
+  · rw [ite_eq_left (hiff.2 hw), ite_eq_left hw, phiJ_inv w hw, AddChar.map_neg_eq_inv, inv_inv, star_div₀, hs,
       star_natCast]
-  · rw [if_neg (mt hiff.1 hw), if_neg hw, star_zero]
+  · rw [ite_eq_right (mt hiff.1 hw), ite_eq_right hw, star_zero]
 
 theorem exists_shift (ψ ψ' : AddChar (ZMod g) ℂ) (h : ψ ≠ 1) (h' : ψ' ≠ 1) :
     ∃ c : ZMod g, c ≠ 0 ∧ ψ' = ψ.mulShift c := by

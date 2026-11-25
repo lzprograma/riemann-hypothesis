@@ -11,8 +11,6 @@ import Mathlib.RingTheory.TotallySplit
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD

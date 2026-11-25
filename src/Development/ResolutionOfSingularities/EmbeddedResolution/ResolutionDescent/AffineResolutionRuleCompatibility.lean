@@ -160,7 +160,6 @@ private theorem ker_eq_ofIdealTop_ker_appTop {X Y : Scheme.{u}} [IsAffine X] [Is
     Scheme.Hom.ker f =
       Scheme.IdealSheafData.ofIdealTop
         (RingHom.ker (CommRingCat.Hom.hom (Scheme.Hom.appTop f))) := by
-  have : IsIso (Scheme.Hom.toImage f) := inferInstance
   have hc : Scheme.Hom.toImage f ≫ (Scheme.Hom.ker f).subschemeι = f :=
     Scheme.Hom.toImage_imageι f
   have h2 : ∀ z, (CommRingCat.Hom.hom (Scheme.Hom.appTop (inv (Scheme.Hom.toImage f))))
@@ -428,9 +427,6 @@ theorem smoothPullbackHasLocalAmbientEmbedding_of_hasGraphChart (hsm : AffineSpa
       (affineSpaceIsoOfEquiv (uliftFinSumEquiv.{u} M n) (Spec (CommRingCat.of k)))
       (affineSpaceIndexedByToSpec k (ULift.{u, 0} (Fin (M + n))))
       (affineSpaceIsoOfEquiv_hom_comp_toSpec k (uliftFinSumEquiv.{u} M n))
-  have : IsClosedImmersion
-      (σ ≫ (affineSpaceIsoOfEquiv (uliftFinSumEquiv.{u} M n) (Spec (CommRingCat.of k))).hom) :=
-    inferInstance
   have hpad := HasSmoothCoordCodim.comp_affineSpaceInl_affineSpaceIsoOfEquiv hsm k
       (σ ≫ (affineSpaceIsoOfEquiv (uliftFinSumEquiv.{u} M n) (Spec (CommRingCat.of k))).hom) p hcc1
   refine ⟨(σ ≫ (affineSpaceIsoOfEquiv (uliftFinSumEquiv.{u} M n) (Spec (CommRingCat.of k))).hom) ≫
@@ -607,7 +603,6 @@ theorem comap_detachedIdeal (P : ChartPushforward S S') [AlgebraicGeometry.IsRed
     S'.isReduced_strictTransform i hi.le
   have hr : AlgebraicGeometry.IsReduced (S.strictTransform i) :=
     S.isReduced_strictTransform i (P.le_length hi.le)
-  have hfl : AlgebraicGeometry.Flat (P.strictTransformIso i hi.le).hom := inferInstance
   have hS : S'.detachedComponents i ⊆ irreducibleComponents ↥(S'.strictTransform i) :=
     fun C hC => ((S'.mem_detachedComponents i C).mp hC).1
   have hZ : (↑(S'.detachedClosure i) : Set ↥(S'.strictTransform i)) = ⋃₀ (S'.detachedComponents i) :=
@@ -721,7 +716,6 @@ theorem comap_centerOffDetached (P : ChartPushforward S S') (i : ℕ) (hi : i < 
     Blowup.noetherianSpace_toScheme (S'.strictTransform i) (S'.detachedClosureCompl i)
   have hqc : AlgebraicGeometry.QuasiCompact (S'.detachedClosureCompl i).ι :=
     ⟨fun _ _ _ => TopologicalSpace.NoetherianSpace.isCompact _⟩
-  have hfl : AlgebraicGeometry.Flat (P.strictTransformIso i hi.le).hom := inferInstance
   obtain ⟨ψ, hψ, hψc⟩ := exists_isIso_of_preimage_opens_eq (P.strictTransformIso i hi.le) (S.detachedClosureCompl i)
     (S'.detachedClosureCompl i) (P.preimage_detachedClosureCompl i hi)
   have := hψ
@@ -1171,7 +1165,6 @@ private theorem irreducibleSpace_affineSpaceIndexedBy (k : Type u) [Field k] (N 
 private theorem flat_of_isIso {X Y : Scheme.{u}} (f : X ⟶ Y) (hf : CategoryTheory.IsIso f) :
     AlgebraicGeometry.Flat f := by
   have := hf
-  have : AlgebraicGeometry.IsOpenImmersion f := inferInstance
   infer_instance
 
 private theorem principalizationAlgorithm_toSequenceOfBlowups_congr (Alg : PrincipalizationAlgorithm.{u}) (k : Type u) [Field k]
@@ -1212,11 +1205,8 @@ theorem isomorphic_embeddedResolutionRuleOfPrincipalization_of_iso (Alg : Princi
     (Φ : D.ambient ≅ D'.ambient) (hΦ : Φ.hom ≫ D'.ambientStruct = D.ambientStruct)
     (hemb : D.emb ≫ Φ.hom = D'.emb) :
     (embeddedResolutionRuleOfPrincipalization Alg hw k Y p D).Isomorphic (embeddedResolutionRuleOfPrincipalization Alg hw k Y p D') := by
-  have : AlgebraicGeometry.QuasiCompact D.emb := inferInstance
-  have : AlgebraicGeometry.QuasiCompact D'.emb := inferInstance
   have hiso : CategoryTheory.IsIso Φ.inv := ⟨Φ.hom, Φ.inv_hom_id, Φ.hom_inv_id⟩
   have : AlgebraicGeometry.Flat Φ.inv := flat_of_isIso Φ.inv hiso
-  have : AlgebraicGeometry.Smooth Φ.inv := inferInstance
   have hsq : D'.emb ≫ Φ.inv = D.emb := by
     rw [← hemb, Category.assoc, Φ.hom_inv_id, Category.comp_id]
   have hpbk : IsPullback (𝟙 Y) D'.emb D.emb Φ.inv :=
@@ -1297,8 +1287,6 @@ theorem isomorphic_embeddedResolutionRuleOfPrincipalization (Alg : Principalizat
     isClosedImmersion_affineSpaceInl k P.dim P'.dim
   have hciR : AlgebraicGeometry.IsClosedImmersion (affineSpaceInrEmbedding k P.dim P'.dim) :=
     isClosedImmersion_affineSpaceInrEmbedding k P.dim P'.dim
-  have : AlgebraicGeometry.IsClosedImmersion (D.emb ≫ P.toAffine) := inferInstance
-  have : AlgebraicGeometry.IsClosedImmersion (D'.emb ≫ P'.toAffine) := inferInstance
   have hker1 : NonzeroOnComponents (Scheme.Hom.ker (D.emb ≫ P.toAffine)) :=
     nonzeroOnComponents_ker_comp D.emb P.toAffine D.nonzeroOnComponents_ker
   have hker1' : NonzeroOnComponents (Scheme.Hom.ker (D'.emb ≫ P'.toAffine)) :=

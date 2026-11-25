@@ -129,8 +129,7 @@ theorem UpperTheory.V.Z.Gam.secDiff :
       exact hne (by rw [hr.eq_zero, mul_zero]))
     simp [hd, r1, r2]
   have hdz : ∀ z, d z = 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     obtain ⟨z1, hz1⟩ := hne
     set S := (P * P').roots.toFinset.filter (fun z => d z ≠ 0) with hS
     have hSne : S.Nonempty := ⟨z1, Finset.mem_filter.mpr ⟨supp z1 hz1, hz1⟩⟩

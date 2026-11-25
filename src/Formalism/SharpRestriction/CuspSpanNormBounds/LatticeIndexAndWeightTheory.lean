@@ -1,42 +1,6 @@
 module
 
 public import Formalism.SharpRestriction.CuspSpanNormBounds.CntPartners
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
 public import Formalism.SharpRestriction.FamCore
 public import Formalism.SharpRestriction.ParConsts
@@ -53,14 +17,6 @@ namespace Formalism.MainNotions.LatticeIndexAndWeightTheory
 export Formalism.MainNotions.S.UnitaryVolumeMass (KTwoParameterConditions Kpp)
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-section Hyps
-
-variable (D : D7) (large₂ : SizeData₂ D)
-
-end Hyps
 
 def IsInertiaCyclotomicGeneratorElement {D : D7} {u u' : D.what₂.Word} (t : D.s.Term u u') : Prop :=
   D.s.relevant t ∧ D.s.Gterm t = 0 ∧ ¬ D.s.isId t
@@ -143,42 +99,6 @@ def TieOK (u : D.what₂.Word) : Prop :=
   (∀ t : D.s.Term u u, FrameHyp X t) ∧ TermInj X u ∧ NormOK X u ∧ AmpOK X
 
 end Datum
-
-section Terms
-
-variable (D : D7) (large₂ : SizeData₂ D) (X : TermTie D)
-
-end Terms
-
-section Size
-
-variable (D : D7) (large₂ : SizeData₂ D)
-
-end Size
-
-section Mass
-
-variable (D : D7) (large₂ : SizeData₂ D)
-
-end Mass
-
-section Targets
-
-variable (D : D7) (large₂ : SizeData₂ D) (X : TermTie D)
-
-end Targets
-
-section Packet
-
-variable (D : D7) (large₂ : SizeData₂ D) (X : TermTie D) (G : GlobalTheoryTheory.GenusMassVolumes.GaugeFam D.host.F D.host.E D.sp.cm.sig)
-
-end Packet
-
-section Family
-
-variable {eps : ℝ} (Fm : FamP eps) (At : ∀ x, Fm.x1 < x → ∀ i : Fm.Ix x, TermTie (Fm.D x i))
-
-end Family
 
 end Formalism.MainNotions.LatticeIndexAndWeightTheory
 

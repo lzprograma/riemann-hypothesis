@@ -104,7 +104,7 @@ theorem ZCombExpand.proof : ZCombExpand.Statement := by
         simpa [e] using h
     have key := ZCombLimit.eq_famExt_of_position (J := I) (P := P) IsSmoothHerm e Z ![(q : ℝ), (p : ℝ)] he hZ
       hposition Finset.univ (fun _ => 0)
-    simp only [Finset.mem_univ, if_true] at key
+    simp only [Finset.mem_univ, ite_true] at key
     rw [key, ZCombExpand.famExt_expand e (famExt_symm hI hP e he)]
     rfl
   · intro hd
@@ -139,7 +139,7 @@ theorem ZCombExpand.proof : ZCombExpand.Statement := by
       simpa [e] using h
     have key := ZCombLimit.eq_famExt_of_position (J := J) (P := P) IsSmoothHerm e Z ![(q : ℝ), (p : ℝ)] he hZ
       hposition Finset.univ (fun _ => 0)
-    simp only [Finset.mem_univ, if_true] at key
+    simp only [Finset.mem_univ, ite_true] at key
     have hl : (fun j : Fin (n + 1) => if (j : ℕ) = 0 then M else Z) =
         Fin.cons (α := fun _ => HermLine ι) M (fun _ : Fin n => Z) := by
       funext j
@@ -157,7 +157,7 @@ theorem ZCombExpand.proof : ZCombExpand.Statement := by
       funext j
       refine Fin.cases ?_ (fun j => ?_) j
       · simp only [Fin.cons_zero]
-        exact (if_pos (show ((0 : Fin (n + 1)) : ℕ) < n + 1 - i by simp; omega)).symm
+        exact (ite_eq_left (show ((0 : Fin (n + 1)) : ℕ) < n + 1 - i by simp; omega)).symm
       · simp only [Fin.cons_succ, Fin.val_succ]
         split_ifs with h1 h2 h2
         · rfl

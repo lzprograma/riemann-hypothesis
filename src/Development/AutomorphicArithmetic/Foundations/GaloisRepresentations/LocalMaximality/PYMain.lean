@@ -1,61 +1,13 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 GlobalTheory.W1.Lef UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
-
-set_option autoImplicit false
 
 namespace UpperTheory.Gal.productCup_of_system
 
@@ -78,15 +30,15 @@ private theorem locCoch_mem_Z (x : Fin (d + 1) → Fˣ) (h : L) (hh : h ∈ rB �
     intro s _
     by_cases hs : s = Finset.univ
     · subst hs
-      rw [if_pos ⟨Finset.univ_nonempty, by simp⟩]
+      rw [ite_eq_left ⟨Finset.univ_nonempty, by simp⟩]
       have hv : locCoch ℂ L (xv x) h Finset.univ = (h * ∏ j : Fin d, (algebraMap F L ((x j.succ : F) / x 0))⁻¹) •
           ExteriorAlgebra.ιMulti L d fun j => D ℂ L (algebraMap F L ((x j.succ : F) / x 0)) := by
-        rw [locCoch, if_pos rfl, vol0, mul_smul]
+        rw [locCoch, ite_eq_left rfl, vol0, mul_smul]
         congr 1
         exact (ExteriorAlgebra.ιMulti L d).toMultilinearMap.map_smul_univ _ _
       rw [hv]
       exact Submodule.subset_span ⟨_, mul_mem hh (prod_mem fun j _ => hti j), _, ht, rfl⟩
-    · have : locCoch ℂ L (xv x) h s = 0 := if_neg hs
+    · have : locCoch ℂ L (xv x) h s = 0 := ite_eq_right hs
       rw [this]
       exact zero_mem _
   · refine LinearMap.mem_ker.2 ?_
@@ -94,7 +46,7 @@ private theorem locCoch_mem_Z (x : Fin (d + 1) → Fˣ) (h : L) (hh : h ∈ rB �
     show GlobalTheory.DI.delta _ t = 0
     unfold GlobalTheory.DI.delta
     refine Finset.sum_eq_zero fun i hi => ?_
-    have : locCoch ℂ L (xv x) h (t.erase i) = 0 := if_neg fun h' => by
+    have : locCoch ℂ L (xv x) h (t.erase i) = 0 := ite_eq_right fun h' => by
       have := Finset.mem_univ i
       rw [← h'] at this
       exact Finset.notMem_erase i t this
@@ -166,8 +118,8 @@ theorem yMain_of :
   classical
   obtain ⟨-, hcrt⟩ := hCRT F K' d x hY.covY
   obtain ⟨h, hh⟩ := hcrt fun e => if e ∈ Fx then locTerm (A e) a else 0
-  have hoff : ∀ e : fib ℂ K' (xv x), e ∉ Fx → e.1 h = 0 := fun e he => by rw [hh, if_neg he]
-  have hon : ∀ e ∈ Fx, e.1 h = locTerm (A e) a := fun e he => by rw [hh, if_pos he]
+  have hoff : ∀ e : fib ℂ K' (xv x), e ∉ Fx → e.1 h = 0 := fun e he => by rw [hh, ite_eq_right he]
+  have hon : ∀ e ∈ Fx, e.1 h = locTerm (A e) a := fun e he => by rw [hh, ite_eq_left he]
   have hsum : ∑ᶠ e : fib ℂ K' (xv x), e.1 h = ∑ e ∈ Fx, locTerm (A e) a := by
     rw [finsum_eq_sum_of_support_subset (s := Fx) _ fun e he => ?_]
     · exact Finset.sum_congr rfl hon
@@ -190,12 +142,12 @@ theorem yMain_of :
   set c0 := c (uni (uni {0} {0}) L0) with hc0
 
   have hcol := ((hSB d _ _ (sysZ K x a) (Mi d ⊕ₗ κ) (app n11 n) (app (sysZ K x a).mu z) ((d : ℤ) + 2)).2.1 c).1 hc.1 {0} {0}
-  rw [if_pos ⟨Finset.singleton_nonempty _, Finset.singleton_nonempty _⟩] at hcol
+  rw [ite_eq_left ⟨Finset.singleton_nonempty _, Finset.singleton_nonempty _⟩] at hcol
   have h3 : c0 ∈ ((sysZ K x a).M {0} {0}).map ((sysZ K x a).act
       ((∏ l ∈ L0, (sysZ K x a).u (app n11 n) (pk {0}) (pk {0}) l : (K ⊗[ℂ] K)ˣ) : K ⊗[ℂ] K)) := by
     have := hcol L0 (Set.mem_univ _)
     dsimp only at this
-    rw [SetLike.mem_coe, if_pos (by rw [hcard0]; simp; ring)] at this
+    rw [SetLike.mem_coe, ite_eq_left (by rw [hcard0]; simp; ring)] at this
     exact this
   rw [pk_single, hL0, prod_u, hcardI] at h3
   obtain ⟨m', hm', hm'eq⟩ := h3

@@ -21,62 +21,13 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingMod
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.OdCount
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.Transl
 import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PairedDualFirstOrderDualMatrixSpace
 import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
 import ReciprocityTheory.GaloisValuations.GlobalA
 import Mathlib.GroupTheory.Nilpotent
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Aesop.Main
 
@@ -523,7 +474,7 @@ private theorem od_dec {K : Type} [Field K] {X : Type} [CommRing X] [Algebra (Po
   simp only [odOf, Submodule.coe_add, Submodule.coe_smul, Matrix.add_apply, Matrix.smul_apply, Matrix.of_apply]
   by_cases hij : ((i : ℕ) < a ↔ (j : ℕ) < a)
   · simp [hij, (od_iff _).1 Y.2 i j hij]
-  · simp only [hij, if_false]
+  · simp only [hij, ite_false]
     rw [← hb i j, hcd i j, map_add (f := _), Algebra.smul_def, map_mul]
 
 end SlopeTestRemainingChoices
@@ -853,8 +804,7 @@ theorem UpperTheory.V.Pa.B2.genTrick :
       congr 1
       omega
     rw [hp, mul_smul, hm, smul_zero]
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   set e := C + 1 with he
   have hem : e ≤ m := by omega
   let φ : (Fin (g + 1) → A) →ₗ[A] H := Fintype.linearCombination A ξ
@@ -873,7 +823,7 @@ theorem UpperTheory.V.Pa.B2.genTrick :
       · intro i
         obtain ⟨w, hw⟩ := hall i
         exact ⟨w, by rw [hd' i, hw, pow_succ, mul_assoc]⟩
-      · push_neg at hall
+      · push Not at hall
         obtain ⟨i0, hi0⟩ := hall
         exfalso
         have hdd : d = t ^ k • d' := funext fun i => by simp [hd' i]
@@ -1059,8 +1009,7 @@ private theorem low_ann {l : ℕ} [Fact l.Prime] {F : GFrame l} {n : ℕ} (x : N
   classical
   have hne : ∀ (v : F.Vl) (i j : Fin n), i ≠ j → ∃ g : F.Gv v, x.ψ v i g ≠ x.ψ v j g := by
     intro v i j hij
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact (x.N1 v).1 i j hij (MonoidHom.ext hc)
   let fac : F.Vl → Fin n → Fin n → PowerSeries x.K := fun v i j =>
     if h : i = j then 1 else
@@ -1128,7 +1077,7 @@ private theorem low_ann {l : ℕ} [Fact l.Prime] {F : GFrame l} {n : ℕ} (x : N
     · rw [hdg g i, hdg g⁻¹ j, ← map_mul, ← map_one (algebraMap x.A X), ← map_sub]
       apply map_dvd
       have hf : fac v i j = (x.ψ v i g : PowerSeries x.K) * (x.ψ v j g⁻¹ : PowerSeries x.K) - 1 := by
-        simp only [fac, dif_neg hij']
+        simp only [fac, dite_eq_right hij']
         rfl
       rw [← hf]
       exact (Finset.dvd_prod_of_mem (fun j => fac v i j) (Finset.mem_univ j)).trans
@@ -1186,7 +1135,7 @@ theorem UpperTheory.V.Pa.B2.H0_local_card_bounded_of_cls_ker_le_ker :
     rw [← hch q1, ← hch q2, ← sub_eq_zero, ← map_sub, hker, hZsub]
     intro i j hij
     have h3 := congrArg (fun f => ((f i j : S) : x.Am e)) hq
-    simp only [φ, dif_pos hij] at h3
+    simp only [φ, dite_eq_left hij] at h3
     rw [Matrix.sub_apply, h3, sub_self]
   have hK : 1 < Nat.card x.K := Finite.one_lt_card
   calc Nat.card (ReciprocityTheory.Gal.H0 (D.Q (inV G v)).ρ) ≤ Nat.card (Fin n → Fin n → S) :=
@@ -1339,18 +1288,8 @@ section -- clump:auto
 open Matrix Filter ReciprocityTheory.Gal UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.Pa.B2
 
 private theorem map_algebraMap_mul_mul_map_linearMap {l : ℕ} [Fact l.Prime] {F : GFrame l} {n : ℕ} (x : NP F n) {Y Z : Type} [CommRing Y] [Algebra x.A Y] [CommRing Z] [Algebra x.A Z] (u : Y →ₗ[x.A] Z) (P Q : Matrix (Fin n) (Fin n) x.A) (N : Matrix (Fin n) (Fin n) Y) :
-    (P.map (algebraMap x.A Y) * N * Q.map (algebraMap x.A Y)).map u = P.map (algebraMap x.A Z) * N.map u * Q.map (algebraMap x.A Z) := by
-  have key : ∀ (p q : x.A) (y : Y), u (algebraMap x.A Y p * y * algebraMap x.A Y q) = algebraMap x.A Z p * u y * algebraMap x.A Z q := by
-    intro p q y
-    have h1 : algebraMap x.A Y p * y * algebraMap x.A Y q = (p * q) • y := by
-      rw [Algebra.smul_def, map_mul]; ring
-    have h2 : algebraMap x.A Z p * u y * algebraMap x.A Z q = (p * q) • u y := by
-      rw [Algebra.smul_def, map_mul]; ring
-    rw [h1, h2, map_smul]
-  ext i j
-
-  simp only [Matrix.map_apply, Matrix.mul_apply, Finset.sum_mul, map_sum]
-  exact Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun m _ => key _ _ _
+    (P.map (algebraMap x.A Y) * N * Q.map (algebraMap x.A Y)).map u = P.map (algebraMap x.A Z) * N.map u * Q.map (algebraMap x.A Z) :=
+  map_conj u P Q N
 
 private theorem exists_matrix_map_eq_of_zero_on_of_mem_range {n : ℕ} {R Y Z : Type} [CommRing R] [AddCommGroup Y] [Module R Y] [AddCommGroup Z] [Module R Z] (w : Y →ₗ[R] Z) (S : Fin n → Fin n → Prop) (N : Matrix (Fin n) (Fin n) Z) (h0 : ∀ i j, S i j → N i j = 0) (hr : ∀ i j, ¬ S i j → N i j ∈ Set.range w) :
     ∃ N' : Matrix (Fin n) (Fin n) Y, (∀ i j, S i j → N' i j = 0) ∧ N'.map w = N := by
@@ -1362,14 +1301,6 @@ private theorem exists_matrix_map_eq_of_zero_on_of_mem_range {n : ℕ} {R Y Z : 
     by_cases hij : S i j
     · simp [hij, h0 i j hij]
     · simp [hij, (hr i j hij).choose_spec]
-
-private theorem mem_od_iff_entry_eq_zero_of_same_block {A R : Type} [CommRing A] [CommRing R] [Algebra A R] {n a : ℕ} (N : Matrix (Fin n) (Fin n) R) :
-    N ∈ Od A R n a ↔ ∀ i j : Fin n, ((i : ℕ) < a ↔ (j : ℕ) < a) → N i j = 0 := by
-  constructor
-  · intro hN i j hij
-    exact (Submodule.mem_bot _).1 ((hN i j).1 hij)
-  · intro hN i j
-    exact ⟨fun hij => (Submodule.mem_bot _).2 (hN i j hij), fun _ => Submodule.mem_top⟩
 
 private theorem inv_w_entry_eq_zero_of_ty_ne_lt_a {l : ℕ} [Fact l.Prime] {F : GFrame l} {n : ℕ} (x : NP F n) (v : F.Vl) (j k : Fin n) (hjk : x.ty v j ≠ decide ((k : ℕ) < x.a)) :
     (((x.w v)⁻¹ : GL (Fin n) (PowerSeries x.K)) : Matrix (Fin n) (Fin n) (PowerSeries x.K)) j k = 0 := by
@@ -1454,9 +1385,9 @@ theorem UpperTheory.V.Pa.B2.odSES :
       have h0 : (↑(o.e m) : Matrix (Fin n) (Fin n) X).map v = 0 := by
         rw [← hg m, hgm]; simp
       obtain ⟨N', hN'0, hN'⟩ := exists_matrix_map_eq_of_zero_on_of_mem_range u (fun i j : Fin n => ((i : ℕ) < x.a ↔ (j : ℕ) < x.a)) (↑(o.e m))
-        (fun i j hij => (mem_od_iff_entry_eq_zero_of_same_block _).1 (o.e m).2 i j hij)
+        (fun i j hij => (od_iff _).1 (o.e m).2 i j hij)
         (fun i j _ => (hex _).1 (by simpa using congrArg (fun M : Matrix (Fin n) (Fin n) X'' => M i j) h0))
-      refine ⟨o'.e.symm ⟨N', (mem_od_iff_entry_eq_zero_of_same_block _).2 hN'0⟩, ?_⟩
+      refine ⟨o'.e.symm ⟨N', (od_iff _).2 hN'0⟩, ?_⟩
       apply o.e.injective
       apply Subtype.ext
       rw [hf, LinearEquiv.apply_symm_apply]
@@ -1470,8 +1401,8 @@ theorem UpperTheory.V.Pa.B2.odSES :
   have surj : Function.Surjective g.f := by
     intro m''
     obtain ⟨N, hN0, hN⟩ := exists_matrix_map_eq_of_zero_on_of_mem_range v (fun i j : Fin n => ((i : ℕ) < x.a ↔ (j : ℕ) < x.a)) (↑(o''.e m''))
-      (fun i j hij => (mem_od_iff_entry_eq_zero_of_same_block _).1 (o''.e m'').2 i j hij) (fun i j _ => hv _)
-    refine ⟨o.e.symm ⟨N, (mem_od_iff_entry_eq_zero_of_same_block _).2 hN0⟩, ?_⟩
+      (fun i j hij => (od_iff _).1 (o''.e m'').2 i j hij) (fun i j _ => hv _)
+    refine ⟨o.e.symm ⟨N, (od_iff _).2 hN0⟩, ?_⟩
     apply o''.e.injective
     apply Subtype.ext
     rw [hg, LinearEquiv.apply_symm_apply]
@@ -1500,10 +1431,10 @@ theorem UpperTheory.V.Pa.B2.odSES :
       · have hlow := (o''.kerV w (g.f m)).1 hq
         obtain ⟨P, hP0, hP⟩ := exists_matrix_map_eq_of_zero_on_of_mem_range v (fun i j : Fin n => j < i ∨ x.ty w i = x.ty w j)
           (x.wiX X'' w * (↑(o''.e (g.f m)) : Matrix (Fin n) (Fin n) X'') * x.wX X'' w)
-          (fun i j hij => hij.elim (hlow i j) (wiX_mul_mul_wX_eq_zero_of_ty_eq x w _ ((mem_od_iff_entry_eq_zero_of_same_block _).1 (o''.e (g.f m)).2) i j))
+          (fun i j hij => hij.elim (hlow i j) (wiX_mul_mul_wX_eq_zero_of_ty_eq x w _ ((od_iff _).1 (o''.e (g.f m)).2) i j))
           (fun i j _ => hv _)
         have hN : x.wX X w * P * x.wiX X w ∈ Od x.A X n x.a :=
-          (mem_od_iff_entry_eq_zero_of_same_block _).2 (fun i j hij => wX_mul_mul_wiX_eq_zero_of_same_block x w P (fun k l hkl => hP0 k l (Or.inr hkl)) i j hij)
+          (od_iff _).2 (fun i j hij => wX_mul_mul_wiX_eq_zero_of_same_block x w P (fun k l hkl => hP0 k l (Or.inr hkl)) i j hij)
         obtain ⟨h1, h2⟩ := wiX_mul_wX_eq_one_and_wX_mul_wiX_eq_one x w (Y := X)
         obtain ⟨h1'', h2''⟩ := wiX_mul_wX_eq_one_and_wX_mul_wiX_eq_one x w (Y := X'')
         have hconj : x.wiX X w * (↑(o.e (o.e.symm ⟨_, hN⟩)) : Matrix (Fin n) (Fin n) X) * x.wX X w = P := by
@@ -1578,29 +1509,6 @@ private theorem smul_H2_local_eq_zero_of_smul_eq_zero {A Γ : Type} [CommRing A]
       exact hq w _
   rw [hz, Submodule.Quotient.mk_zero]
 
-private theorem finAm (K : Type) [Field K] [Finite K] (m : ℕ) :
-    Finite (PowerSeries K ⧸ Ideal.span {(PowerSeries.X : PowerSeries K) ^ m}) := by
-  classical
-  let g : (Fin m → K) → PowerSeries K ⧸ Ideal.span {(PowerSeries.X : PowerSeries K) ^ m} :=
-    fun c => Ideal.Quotient.mk _ (∑ i : Fin m, c i • (PowerSeries.X : PowerSeries K) ^ (i : ℕ))
-  refine Finite.of_surjective g ?_
-  intro q
-  obtain ⟨f, rfl⟩ := Ideal.Quotient.mk_surjective q
-  refine ⟨fun i => PowerSeries.coeff (i : ℕ) f, ?_⟩
-  apply Ideal.Quotient.eq.mpr
-  rw [Ideal.mem_span_singleton, PowerSeries.X_pow_dvd_iff]
-  intro n hn
-
-  rw [map_sub, map_sum]
-  simp only [PowerSeries.coeff_smul, PowerSeries.coeff_X_pow, smul_eq_mul, mul_ite, mul_one, mul_zero]
-  rw [Finset.sum_eq_single ⟨n, hn⟩]
-  · simp
-  · intro b _ hb
-    rw [if_neg]
-    intro e
-    exact hb (Fin.ext e.symm)
-  · simp
-
 section
 variable {l : ℕ} [Fact l.Prime] {L : Loc} {G G0 : Glob l L} {h : G.Hom G0} {n : ℕ} {x : NP G0.frame n}
 
@@ -1610,7 +1518,6 @@ private theorem smul_eq_zero_of_algebraMap_eq_zero_of_isOd {X : Type} [CommRing 
   rw [map_smul, map_zero]
   apply Subtype.ext
   rw [Submodule.coe_smul, Submodule.coe_zero, ← algebraMap_smul X a, ha, zero_smul]
-
 
 private theorem step {X X' X'' : Type} [CommRing X] [Algebra x.A X] [CommRing X'] [Algebra x.A X'] [CommRing X'']
     [Algebra x.A X''] {D D' D'' : Dat x.A (plOf G)} (o : IsOd h x X D) (o' : IsOd h x X' D') (o'' : IsOd h x X'' D'')
@@ -1667,7 +1574,6 @@ private theorem step {X X' X'' : Type} [CommRing X] [Algebra x.A X] [CommRing X'
 
 end
 
-
 theorem obstructionBound_of_duality : ObstructionBoundFromDuality := by
   intro l _ L G0 T n x k al d hl h0 hN hH hE
   obtain ⟨dv0, hA0⟩ := h0
@@ -1680,7 +1586,7 @@ theorem obstructionBound_of_duality : ObstructionBoundFromDuality := by
   haveI : Finite (ResidueField x.A) := Finite.of_equiv _ PowerSeries.residueFieldOfPowerSeries.toEquiv.symm
   have hzero : ∀ e, algebraMap x.A (x.Am e) (x.t ^ e) = 0 := fun e =>
     Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.mem_span_singleton_self _)
-  haveI : ∀ e, Finite (x.Am e) := fun e => finAm x.K e
+  haveI : ∀ e, Finite (x.Am e) := fun e => fin_quot x.K e
   refine ⟨C0 + Cn + Ch * Fintype.card L.Vl + 2 * Cd, fun m => ?_⟩
   filter_upwards [hCn m] with N hNm
   intro z hz

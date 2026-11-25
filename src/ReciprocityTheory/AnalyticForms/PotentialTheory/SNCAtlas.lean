@@ -69,7 +69,7 @@ def sliceChart {e : ℕ} (ψ : OpenPartialHomeomorph X (Fin (e + 1) → ℂ)) (i
   map_target' := by
     intro z hz
     simp only [mem_ofPred_eq] at hz
-    simp only [mem_preimage, dif_pos hz]
+    simp only [mem_preimage, dite_eq_left hz]
     exact ψ.map_target hz
   left_inv' := by
     intro w hw
@@ -78,14 +78,14 @@ def sliceChart {e : ℕ} (ψ : OpenPartialHomeomorph X (Fin (e + 1) → ℂ)) (i
       rw [Fin.insertNth_removeNth, Function.update_eq_self_iff, h1]
     have hmem : Fin.insertNth (α := fun _ => ℂ) i 0 (i.removeNth (ψ w)) ∈ ψ.target :=
       by rw [h2]; exact ψ.map_source hw
-    simp only [dif_pos hmem]
+    simp only [dite_eq_left hmem]
     apply Subtype.ext
     simp only [h2]
     exact ψ.left_inv hw
   right_inv' := by
     intro z hz
     simp only [mem_ofPred_eq] at hz
-    simp only [dif_pos hz, ψ.right_inv hz, Fin.removeNth_insertNth]
+    simp only [dite_eq_left hz, ψ.right_inv hz, Fin.removeNth_insertNth]
   open_source := ψ.open_source.preimage continuous_subtype_val
   open_target := ψ.open_target.preimage (continuous_const.finInsertNth i continuous_id)
   continuousOn_toFun := by
@@ -100,7 +100,7 @@ def sliceChart {e : ℕ} (ψ : OpenPartialHomeomorph X (Fin (e + 1) → ℂ)) (i
     refine (ψ.continuousOn_symm.comp hI.continuousOn (fun z hz => hz)).congr ?_
     intro z hz
     have hz' : Fin.insertNth (α := fun _ => ℂ) i 0 z ∈ ψ.target := hz
-    simp only [Function.comp_apply, dif_pos hz']
+    simp only [Function.comp_apply, dite_eq_left hz']
 
 open Classical in
 theorem sliceChart_symm_val {e : ℕ} (ψ : OpenPartialHomeomorph X (Fin (e + 1) → ℂ))

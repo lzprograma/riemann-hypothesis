@@ -61,7 +61,6 @@ open MeasureTheory Measure GroundTheory GroundTheory.Automorphic GroundTheory.Au
 open GroundTheory.Automorphic.GodementJacquet
 open scoped NNReal ENNReal Classical ValuativeRel
 
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
 
 namespace UpperTheory.V.Z.Gam
 

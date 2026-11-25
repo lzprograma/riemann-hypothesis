@@ -15,8 +15,6 @@ namespace PI.SchurPlaces
 
 open Formalism.L2.SG.KappaOffDiagonal
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem hJ_add_r {n : ℕ} (ε : Fin n → Bool) (a y z : Fin n → ℂ) : hJ ε a (y + z) = hJ ε a y + hJ ε a z := by
   unfold hJ
   rw [Matrix.mulVec_add, dotProduct_add]

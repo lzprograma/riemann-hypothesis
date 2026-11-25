@@ -1,23 +1,5 @@
 module
 
-public import Mathlib.Analysis.CStarAlgebra.Classes
-public import Mathlib.Analysis.Calculus.FDeriv.Defs
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-public import Mathlib.Analysis.Analytic.Basic
-public import Mathlib.Analysis.Analytic.Uniqueness
-public import Mathlib.Analysis.Calculus.FDeriv.Add
-public import Mathlib.Analysis.Calculus.FDeriv.Mul
 public import Mathlib.Analysis.Complex.CauchyIntegral
 
 @[expose] public section
@@ -26,15 +8,13 @@ universe u_1
 
 namespace Bl.FirstBlockLemmaJ
 
-theorem goal1 :
-  ∀ {V : Type u_1} [inst : NormedAddCommGroup.{u_1} V] [inst_1 : NormedSpace.{0, u_1} Complex V] {g : V → Complex} {x : V}
-  {ε : Real},
-  DifferentiableOn.{0, u_1, 0} Complex g (Metric.ball.{u_1} x ε) →
-    ∀ {z : V},
-      Membership.mem.{u_1, u_1} (Metric.ball.{u_1} x ε) z →
-        Filter.EventuallyEq.{u_1, 0} (nhds.{u_1} z) g 0 →
-          ∀ (y : V), Membership.mem.{u_1, u_1} (Metric.ball.{u_1} x ε) y → Eq.{1} (g y) 0 := by
-  intro V _ _ g x ε hg z hz hz0 y hy
+theorem goal1 {V : Type} [NormedAddCommGroup V] [NormedSpace Complex V]
+             {g : V → ℂ} {x : V} {ε : Real} :
+  DifferentiableOn ℂ g (Metric.ball x ε) →
+    ∀ {z : V}, z ∈ (Metric.ball x ε) →
+      Filter.EventuallyEq (nhds z) g 0 →
+        ∀ (y : V), y ∈ (Metric.ball x ε) → (g y) = 0 := by
+  intro hg z hz hz0 y hy
   let ψ : ℂ →ₗ[ℂ] V := (LinearMap.id : ℂ →ₗ[ℂ] ℂ).smulRight (y - z)
   let φ : ℂ →ᵃ[ℝ] V := AffineMap.const ℝ ℂ z + (ψ.restrictScalars ℝ).toAffineMap
   have hφ (t : ℂ) : φ t = z + t • (y - z) := rfl

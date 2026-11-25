@@ -8,76 +8,16 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticG
 import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LocVanP
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.XvanExt
+import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.TriComb
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CompactIntegralFields.PtPair
 import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
-
-private theorem tri_comb (P : Fin 4 → Fin 4 → Prop) (h1 : ∀ i, P i i)
-    (h2 : ∀ i j k, P i j → P j k → P i k) (h3 : ∀ i j, P i j → P j.rev i.rev)
-    (h4 : ∀ i j, lamW i ≠ lamW j → P i j → P j i → ∃ k, k ≠ i ∧ k ≠ j ∧ P i k ∧ P k i) :
-    (∀ i j, P i j) ∨ (∀ i j, i ≠ j → P i j → ¬ P j i) ∨
-      (P 0 2 ∧ P 2 0 ∧ ((∀ i j, lamW i < lamW j → ¬ P i j) ∨ ∀ i j, lamW j < lamW i → ¬ P i j)) := by
-  have r01 : P 0 1 ↔ P 2 3 := ⟨h3 0 1, h3 2 3⟩
-  have r10 : P 1 0 ↔ P 3 2 := ⟨h3 1 0, h3 3 2⟩
-  have r02 : P 0 2 ↔ P 1 3 := ⟨h3 0 2, h3 1 3⟩
-  have r20 : P 2 0 ↔ P 3 1 := ⟨h3 2 0, h3 3 1⟩
-  have a01 := h4 0 1 (by decide)
-  have a03 := h4 0 3 (by decide)
-  have a21 := h4 2 1 (by decide)
-  have a23 := h4 2 3 (by decide)
-  have e0 := h1 0
-  have e1 := h1 1
-  have e2 := h1 2
-  have e3 := h1 3
-  simp only [Fin.exists_fin_succ, Fin.forall_fin_succ, lamW] at *
-  simp at *
-  grind (splits := 200)
 
 private theorem cob_of_coord {H k₀ k : Type} [Field k₀] [Field k] [Algebra k₀ k] (a : H → k₀) (z : H → k)
     (h : ∀ φ : k →ₗ[k₀] k₀, ∃ m, ∀ g, φ (z g) = a g * m - m) :
@@ -97,114 +37,6 @@ private theorem cob_of_coord {H k₀ k : Type} [Field k₀] [Field k] [Algebra k
     simp only [map_sub, map_smul, hm, smul_eq_mul]
     field_simp
     ring
-
-private theorem lattice {O : Type} [CommRing O] [IsDomain O] [IsLocalRing O] {H : Type} [Group H]
-    (r : H → M4 O) (h1 : r 1 = 1) (s u : Fin 4) (hsu : s ≠ u) (t : Finset H) (a : H → O)
-    (hE : ∀ h, ∑ g ∈ t, a g • r (g * h) = Matrix.single s s (1 : O) * r h) (g1 : H) (c : H → O) (hb : r g1 s u ≠ 0)
-    (hc : ∀ g, r g s u = r g1 s u * c g) :
-    ∀ m, ¬ ∀ g, residue O (c g) = m * (residue O (r g s s) - residue O (r g u u)) := by
-  intro m hm
-  have key : ∀ h, residue O (c h) = m * residue O (r h s s) := by
-    intro h
-    have e1 := congrFun (congrFun (hE h) s) u
-    have e2 := congrFun (congrFun (hE h) s) s
-    have e3 := congrFun (congrFun (hE h) u) u
-    simp only [Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul, Matrix.single_mul_apply_same, one_mul] at e1 e2 e3
-    rw [Matrix.single_mul_apply_of_ne (h := hsu.symm)] at e3
-    have e4 : ∑ g ∈ t, a g * c (g * h) = c h := by
-      apply mul_left_cancel₀ hb
-      rw [← hc, ← e1, Finset.mul_sum]
-      refine Finset.sum_congr rfl fun g _ => ?_
-      rw [hc (g * h)]; ring
-    have e5 : residue O (r h s s) = residue O (r h s s) - residue O 0 := by simp
-    rw [← e4, e5, ← e3]
-    conv_rhs => rw [← e2]
-
-    simp only [map_sum, map_mul, hm, ← Finset.sum_sub_distrib, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun g _ => ?_
-    ring
-  have c1 : c 1 = 0 := by
-    have := hc 1
-    rw [h1, Matrix.one_apply_ne hsu] at this
-    exact (mul_eq_zero.1 this.symm).resolve_left hb
-  have hm0 : m = 0 := by
-    have := key 1
-    rw [c1, h1] at this
-    simpa using this.symm
-  have cg : c g1 = 1 := by
-    apply mul_left_cancel₀ hb
-    rw [← hc, mul_one]
-  have := key g1
-  rw [cg, hm0] at this
-  simp at this
-
-private theorem line {H K : Type} [Field K] (r : H → M4 K) (u : (M4 K)ˣ)
-    (tri : ∀ g i j, j < i → ((u : M4 K) * r g * (u⁻¹ : (M4 K)ˣ)) i j = 0) (P : Fin 4 → Prop) (i j : Fin 4) (hij : i ≠ j)
-    (hi : P i) (hP : ∀ g a b, P b → ¬ P a → r g a b = 0) (hz : ∀ g k, P k → k ≠ i → k ≠ j → r g i k = 0 ∧ r g j k = 0) :
-    ∃ (x y : K) (φ : H → K), (x ≠ 0 ∨ y ≠ 0) ∧ ∀ g, r g i i * x + r g i j * y = φ g * x ∧ r g j i * x + r g j j * y = φ g * y := by
-  classical
-  let Q : ℕ → Prop := fun n => ∃ x : Fin 4 → K, (∀ k, ¬ P k → x k = 0) ∧ (∀ b : Fin 4, n ≤ b → (u : M4 K).mulVec x b = 0) ∧
-    (x i ≠ 0 ∨ x j ≠ 0)
-  have hQ : ∃ n, Q n := ⟨4, Pi.single i 1, fun k hk => Pi.single_eq_of_ne (fun h : k = i => hk (h ▸ hi)) _,
-    fun b hb => absurd b.2 (not_lt.2 hb), Or.inl (by simp)⟩
-  have h4 : Nat.find hQ ≤ 4 := Nat.find_min' hQ ⟨Pi.single i 1, fun k hk => Pi.single_eq_of_ne (fun h : k = i => hk (h ▸ hi)) _,
-    fun b hb => absurd b.2 (not_lt.2 hb), Or.inl (by simp)⟩
-  obtain ⟨x, hx1, hx2, hx3⟩ := Nat.find_spec hQ
-  have hinv : ∀ z : Fin 4 → K, ((u⁻¹ : (M4 K)ˣ) : M4 K).mulVec ((u : M4 K).mulVec z) = z := fun z => by
-    rw [Matrix.mulVec_mulVec, Units.inv_mul, Matrix.one_mulVec]
-  have h0 : Nat.find hQ ≠ 0 := by
-    intro h
-    have : (u : M4 K).mulVec x = 0 := funext fun b => hx2 b (by omega)
-    have hx := hinv x
-    rw [this, Matrix.mulVec_zero] at hx
-    rw [← hx] at hx3
-    simp at hx3
-  let a : Fin 4 := ⟨Nat.find hQ - 1, by omega⟩
-  have hmin := Nat.find_min hQ (m := a) (by simp only [a]; omega)
-  refine ⟨x i, x j, fun g => ((u : M4 K) * r g * (u⁻¹ : (M4 K)ˣ)) a a, hx3, fun g => ?_⟩
-  set T : M4 K := (u : M4 K) * r g * (u⁻¹ : (M4 K)ˣ) with hT
-  have hy : ¬ (((r g).mulVec x - T a a • x) i ≠ 0 ∨ ((r g).mulVec x - T a a • x) j ≠ 0) := by
-    intro hy
-    refine hmin ⟨_, fun k hk => ?_, fun b hb => ?_, hy⟩
-    · rw [Pi.sub_apply, Pi.smul_apply, hx1 k hk, smul_zero, sub_zero, Matrix.mulVec, dotProduct]
-      refine Finset.sum_eq_zero fun b _ => ?_
-      by_cases hb : P b
-      · rw [hP g k b hb hk, zero_mul]
-      · rw [hx1 b hb, mul_zero]
-    · have e : (u : M4 K).mulVec ((r g).mulVec x) = T.mulVec ((u : M4 K).mulVec x) := by
-        rw [hT, ← Matrix.mulVec_mulVec, hinv, Matrix.mulVec_mulVec]
-      rw [Matrix.mulVec_sub, Matrix.mulVec_smul, e, Pi.sub_apply, Pi.smul_apply, smul_eq_mul, sub_eq_zero]
-      have hba : a ≤ b := hb
-      rw [show T.mulVec ((u : M4 K).mulVec x) b = ∑ d, T b d * (u : M4 K).mulVec x d from rfl]
-      rw [Finset.sum_eq_single a]
-      · rcases hba.eq_or_lt with h | h
-        · rw [h]
-        · rw [show T b a = 0 from tri g b a h, zero_mul, hx2 b (by have : (a : ℕ) < b := h; simp only [a] at this; omega), mul_zero]
-      · intro d _ hd
-        rcases lt_or_gt_of_ne hd with h | h
-        · rw [show T b d = 0 from tri g b d (h.trans_le hba), zero_mul]
-        · rw [hx2 d (by have : (a : ℕ) < d := h; simp only [a] at this; omega), mul_zero]
-      · simp
-  rw [not_or, not_not, not_not] at hy
-  have hs : ∀ w, (∀ k, P k → k ≠ i → k ≠ j → r g w k = 0) → (r g).mulVec x w = r g w i * x i + r g w j * x j := by
-    intro w hw
-    rw [Matrix.mulVec, dotProduct, ← Finset.sum_pair (f := fun k => r g w k * x k) hij]
-    symm
-    refine Finset.sum_subset (Finset.subset_univ _) fun k _ hk => ?_
-    simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hk
-    by_cases hb : P k
-    · rw [hw k hb hk.1 hk.2, zero_mul]
-    · rw [hx1 k hb, mul_zero]
-  rw [Pi.sub_apply, Pi.sub_apply, hs i fun k a b c => (hz g k a b c).1, hs j fun k a b c => (hz g k a b c).2] at hy
-  exact ⟨sub_eq_zero.1 hy.1, sub_eq_zero.1 hy.2⟩
-
-private theorem root_mem {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l} (D : Raw Ω c)
-    (s u : Fin 4) (h : lamW s ≠ lamW u) : D.ps s * (D.ps u)⁻¹ ∈ [D.al, D.be, D.th, D.al⁻¹, D.be⁻¹, D.th⁻¹] := by
-  have e1 : D.th * D.Psi⁻¹ = D.al := by rw [Raw.th, mul_inv_cancel_right]
-  have e2 : D.Psi * D.th⁻¹ = D.al⁻¹ := by rw [← e1, mul_inv_rev, inv_inv]
-  have e3 : D.Psi * D.al⁻¹ = D.be := rfl
-  have e4 : D.al * D.Psi⁻¹ = D.be⁻¹ := by rw [← e3, mul_inv_rev, inv_inv]
-  fin_cases s <;> fin_cases u <;> simp [lamW] at h <;> simp [Raw.ps, e1, e2, e3, e4]
 
 private theorem gen {Γ A V : Type} [TopologicalSpace Γ] [CommRing A] [IsDomain A] [IsDiscreteValuationRing A] [CommRing V]
     [IsLocalRing V] (f : A →+* V) [IsLocalHom f] (x : Γ → A) (hx : AdicCont (maximalIdeal A) x) (hne : ∃ g, x g ≠ 0) :
@@ -262,7 +94,7 @@ private theorem core {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] 
     exact ⟨g, fun h => hg (by rw [← hfr, h, map_zero])⟩)
   simp only [hfr] at hc
   replace hb : r g1 s u ≠ 0 := fun h => hb (hf.inj (by rw [hfr, h, map_zero]))
-  have hns := lattice r (map_one r) s u hne a.support a (fun h => by
+  have hns := TriHelpers.lattice_of_min r (map_one r) s u hne a.support a (fun h => by
     rw [← hE, Finsupp.sum, Finset.sum_mul]
     simp only [map_mul, smul_mul_assoc]) g1 cc hb hc
   generalize r g1 s u = b at hb hc
@@ -303,7 +135,7 @@ private theorem core {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] 
     have := hU h
     field_simp
     ring
-  obtain ⟨m, hm⟩ := xvanExt D hD _ red hred0 _ (root_mem D s u hsu) z hzl hcoc (by
+  obtain ⟨m, hm⟩ := xvanExt D hD _ red hred0 _ (TriHelpers.root_mem D s u hsu) z hzl hcoc (by
       intro A hA g hg h1
       have e := hc g
       rw [hr.unr A hA g hg h1, Matrix.one_apply_ne hne] at e
@@ -331,7 +163,7 @@ private theorem core {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] 
         have := hU g
         field_simp
         linear_combination e
-      · obtain ⟨m, hm⟩ := locVan D hD hL _ red hred0 _ (root_mem D s u hsu) p hp (fun g => z g)
+      · obtain ⟨m, hm⟩ := locVan D hD hL _ red hred0 _ (TriHelpers.root_mem D s u hsu) p hp (fun g => z g)
           (hzl.comp_continuous continuous_subtype_val) (fun g h => hcoc g h)
         exact ⟨m, fun g hg => hm ⟨g, hg⟩⟩)
   refine hns m fun g => ?_
@@ -380,7 +212,7 @@ theorem UpperTheory.V.Ws.triV :
   obtain ⟨-, grefl, gtr, h3, h5, -⟩ := geAlg 𝔞.K (mapRep 𝔞.toK r) _ (fun g => hgsp _ _ (hu.mult g)) fun i => push _ r i (hE i)
   simp only [hge] at grefl gtr h3 h5
   rw [h5]
-  refine tri_comb (Ge r) grefl gtr h3 fun i j hij gij gji => ?_
+  refine TriHelpers.tri_comb (Ge r) grefl gtr h3 fun i j hij gij gji => ?_
   by_contra hno
   have hne : i ≠ j := fun h => hij (h ▸ rfl)
   have hk : ∀ k, k ≠ i → k ≠ j → Ge r i k → Ge r k i → False := fun k a b x y => hno ⟨k, a, b, x, y⟩
@@ -396,7 +228,7 @@ theorem UpperTheory.V.Ws.triV :
   have hu1 : adj u * u = 1 := by simpa [IsGSp] using hu.sp
   let U : (M4 𝔞.K)ˣ := Units.map 𝔞.toK.mapMatrix.toMonoidHom ⟨adj u, u, hu1, mul_eq_one_comm.1 hu1⟩
   have z0 : ∀ x : 𝔞.V, x = 0 → 𝔞.toK x = 0 := fun x h => by rw [h, map_zero]
-  obtain ⟨x, y, φ, hxy, hφ⟩ := line (fun g : D.Gp l => 𝔞.toK.mapMatrix (r g)) U
+  obtain ⟨x, y, φ, hxy, hφ⟩ := TriHelpers.line (fun g : D.Gp l => 𝔞.toK.mapMatrix (r g)) U
     (fun g a b h => by
       show (𝔞.toK.mapMatrix (adj u) * 𝔞.toK.mapMatrix (r g) * 𝔞.toK.mapMatrix u) a b = 0
       rw [← map_mul, ← map_mul]

@@ -2,46 +2,7 @@ module
 
 public import Development.EtaleCohomology.KummerTheory.DictPf
 public import Development.EtaleCohomology.KummerTheory.DictPfEv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -120,7 +81,7 @@ theorem DictNormal_of (hM : NrmMk) (hD : NrmDelta) : DictNormal := by
     ·
       have hp1 : Odd (p + 1) := hp.add_one
       have hp0 : ¬ Odd p := Nat.not_odd_iff_even.mpr hp
-      simp only [hp1, hp0, if_true, if_false, smul_zero, Finset.sum_const_zero, add_zero]
+      simp only [hp1, hp0, ite_true, ite_false, smul_zero, Finset.sum_const_zero, add_zero]
       have hc := hD R (n := n) (m := n + 1) rfl α.1 U (p + 1) (s - 1) s (by push_cast at h ⊢; omega)
         (by push_cast at h ⊢; omega) (up y)
       rw [hα, ev_zero'] at hc
@@ -128,7 +89,7 @@ theorem DictNormal_of (hM : NrmMk) (hD : NrmDelta) : DictNormal := by
       rw [← Finset.sum_smul, altsum] at hc
       have he : ¬ Even (p + 1 + 2) := by
         rw [Nat.not_even_iff_odd]; exact hp1.add_even even_two
-      simp only [he, if_false, one_smul] at hc
+      simp only [he, ite_false, one_smul] at hc
       rw [Int.negOnePow_succ, Units.neg_smul] at hc
       have key := add_neg_eq_zero.1 hc.symm
       rw [Units.smul_def]
@@ -138,11 +99,11 @@ theorem DictNormal_of (hM : NrmMk) (hD : NrmDelta) : DictNormal := by
       rw [← Units.smul_def, smul_smul, Int.units_mul_self, one_smul]
       rfl
     · have hp1 : ¬ Odd (p + 1) := Nat.not_odd_iff_even.mpr hp.add_one
-      simp only [hp1, hp, if_true, if_false, map_zero, zero_add]
+      simp only [hp1, hp, ite_true, ite_false, map_zero, zero_add]
       rw [← Finset.sum_smul, altsum]
       have he : ¬ Even (p + 2) := by
         rw [Nat.not_even_iff_odd]; exact hp.add_even even_two
-      simp only [he, if_false, one_smul, smul_smul, Int.units_mul_self]
+      simp only [he, ite_false, one_smul, smul_smul, Int.units_mul_self]
       rfl
 
 end LateralTheory.KummerTheory

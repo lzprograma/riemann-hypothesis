@@ -1,5 +1,7 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousTorepK
+import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.NilpotentOfPowerTraces
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsStatement
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.OneParam
 public import Mathlib.Analysis.Normed.Algebra.MatrixExponential
@@ -32,26 +34,8 @@ variable {n : ℕ}
 lemma ktint_exp_apply_of_eig {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (A : E →L[ℂ] E) (c : ℂ) (v : E) (h : A v = c • v) :
     NormedSpace.exp A v = NormedSpace.exp c • v := by
-  have hpow : ∀ k : ℕ, (A ^ k) v = c ^ k • v := by
-    intro k
-    induction k with
-    | zero => simp
-    | succ k ih =>
-      rw [pow_succ]
-      show (A ^ k) (A v) = _
-      rw [h, map_smul, ih, smul_smul, pow_succ, mul_comm]
-  have hA := NormedSpace.expSeries_summable' (𝕂 := ℂ) A
-  have hc := NormedSpace.expSeries_summable' (𝕂 := ℂ) c
-  have e1 : NormedSpace.exp A = ∑' k : ℕ, ((k.factorial : ℂ)⁻¹) • A ^ k :=
-    congr_fun (NormedSpace.exp_eq_tsum ℂ) A
-  have e2 : NormedSpace.exp c = ∑' k : ℕ, ((k.factorial : ℂ)⁻¹) • c ^ k :=
-    congr_fun (NormedSpace.exp_eq_tsum ℂ) c
-  rw [e1, e2]
-  have e3 := ContinuousLinearMap.map_tsum (ContinuousLinearMap.apply ℂ E v) hA
-  simp only [ContinuousLinearMap.apply_apply] at e3
-  rw [e3]
-  simp only [_root_.smul_apply, hpow, smul_smul]
-  exact Summable.tsum_smul_const hc v
+  intros
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.HW.torep_exp_eigen <;> assumption
 
 lemma ktint_inK (ε : Fin n → Bool) (a : Fin n) :
     inK ε (Complex.I • Matrix.single a a (1 : ℂ)) := by
@@ -73,26 +57,7 @@ lemma ktint_inK (ε : Fin n → Bool) (a : Fin n) :
 lemma ktint_exp_two_pi (a : Fin n) :
     NormedSpace.exp (((2 * Real.pi : ℝ) : ℂ) • (Complex.I • Matrix.single a a (1 : ℂ))) =
       (1 : Matrix (Fin n) (Fin n) ℂ) := by
-  have hd : ((2 * Real.pi : ℝ) : ℂ) • (Complex.I • Matrix.single a a (1 : ℂ)) =
-      Matrix.diagonal (fun i => if i = a then 2 * (Real.pi : ℂ) * Complex.I else 0) := by
-    ext i j
-    simp only [Matrix.smul_apply, Matrix.single_apply, Matrix.diagonal_apply, smul_eq_mul]
-    by_cases h : a = i ∧ a = j
-    · obtain ⟨rfl, rfl⟩ := h
-      push_cast
-      simp only [and_self, if_true, mul_one]
-    · rw [if_neg h]
-      by_cases hij : i = j
-      · subst hij
-        have hia : i ≠ a := fun e => h ⟨e.symm, e.symm⟩
-        simp [hia]
-      · simp [hij]
-  rw [hd, Matrix.exp_diagonal, Pi.exp_def, ← Matrix.diagonal_one]
-  congr 1
-  funext i
-  by_cases hi : i = a
-  · simp only [hi, if_true, ← Complex.exp_eq_exp_ℂ, Complex.exp_two_pi_mul_I]
-  · simp only [hi, if_false, NormedSpace.exp_zero]
+  apply CompanionTheory.D.gk.HC.exp_two_pi_A <;> assumption
 
 theorem kType_int {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) : ∀ a, ∃ m : ℤ, Λ a = m := by
   intro a
@@ -165,7 +130,7 @@ theorem inner_lower_self {V : Type*} [NormedAddCommGroup V] [InnerProductSpace �
     ⟪A b a w, A b a w⟫_ℂ = (((Λ a - Λ b : ℝ)) : ℂ) * ⟪w, w⟫_ℂ := by
   have hba : b ≠ a := ne_of_gt hab
   have hc := hR a b b a he he.symm
-  simp only [if_true] at hc
+  simp only [ite_true] at hc
   have hx := congrArg (fun F : Module.End ℂ V => F w) hc
   simp only [LinearMap.sub_apply, Module.End.mul_apply, hw.2 a b hab he, map_zero, sub_zero] at hx
   have h1 := hU b a he.symm w (A b a w)

@@ -160,7 +160,7 @@ theorem contr : Contr S.Ps := by
       funext x
       have h1 : dl (C := C) x A = 0 := by
         unfold dl
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h
         rw [h, Finsupp.degree_single] at hA0
         omega

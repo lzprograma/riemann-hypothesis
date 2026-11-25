@@ -12,7 +12,7 @@ universe u_1
 namespace Bl.general_b_fact_right_variant
 
 theorem goal1 :
-  ∀ {R : Type u_1} [inst : CommRing.{u_1} R] (P : Ideal.{u_1} R) [hP : Ideal.IsPrime.{u_1} P] (n : Nat),
+  ∀ {R : Type u_1} [CommRing.{u_1} R] (P : Ideal.{u_1} R) [Ideal.IsPrime.{u_1} P] (n : Nat),
   Ne.{1} n 0 →
     Membership.mem.{u_1, u_1} P (Nat.cast.{u_1} n) →
       Exists.{1} fun (p : Nat) ↦

@@ -24,12 +24,8 @@ theorem span_pres {n r : ℕ} (e : Fin r → Fin n → ℂ) (g : Matrix (Fin n) 
     have e1 : g *ᵥ e a = e a + (g - 1) *ᵥ e a := by rw [Matrix.sub_mulVec, Matrix.one_mulVec]; abel
     rw [e1]
     exact Submodule.add_mem _ (Submodule.subset_span ⟨a, a.2, rfl⟩) (hmono a (hg a))
-  unfold spanLt at hy
-  induction hy using Submodule.span_induction with
-  | mem w hw => obtain ⟨b, -, rfl⟩ := hw; exact hgen b
-  | zero => rw [Matrix.mulVec_zero]; exact zero_mem _
-  | add a b _ _ ha hb => rw [Matrix.mulVec_add]; exact add_mem ha hb
-  | smul c a _ ha => rw [Matrix.mulVec_smul]; exact Submodule.smul_mem _ _ ha
+  exact (Submodule.span_le (p := (spanLt e r).comap g.mulVecLin)).2
+    (by rintro _ ⟨b, -, rfl⟩; exact hgen b) hy
 
 theorem inN_inv {n r : ℕ} (ε : Fin n → Bool) (e : Fin r → Fin n → ℂ) (z : Fin n → ℂ) (g gi : Matrix (Fin n) (Fin n) ℂ)
     (h1 : gi * g = 1) (hg : InN ε e z g) : InN ε e z gi := by

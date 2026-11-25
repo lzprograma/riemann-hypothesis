@@ -102,7 +102,7 @@ theorem exists_chart_with_parameters :
   let φ : (Fin m → ℂ) → (Γ(X, V) →+* ℂ) := fun b =>
     if h : ⊤ ≤ y b ⁻¹ᵁ V then evalPt (y b) V h else evalPt (y b₀) V hy₀
   have hφ : ∀ b, ⊤ ≤ y b ⁻¹ᵁ V → ∀ a, φ b a = valAt' (y b) V a := fun b h a => by
-    simp only [φ, dif_pos h, valAt'_eq_evalPt _ _ h]
+    simp only [φ, dite_eq_left h, valAt'_eq_evalPt _ _ h]
   have hover : ∀ b (x : Sp ℂ ⟶ Z) (hx : ⊤ ≤ x ⁻¹ᵁ U), x ≫ p = y b →
       ∀ a, evalPt x U hx (ψ (MvPolynomial.C a)) = φ b a := fun b x hx hxb a => by
     rw [hφ b (hxb ▸ top_le_comp x p hle hx), hC, ← valAt'_eq_evalPt, valAt'_appLE _ _ _ _ _ _ hx, hxb]

@@ -16,8 +16,6 @@ namespace Formalism.L2.SG.RealObj.RealFramesCharacters
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.HidaSetting
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 theorem fam_rv (u : D.what₂.Word) (v : InfinitePlace X.B.I.F) (a : Fin (D.R.rS + 1)) :

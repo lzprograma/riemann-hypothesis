@@ -55,10 +55,6 @@ theorem bijective_of_injective_sesq [FiniteDimensional E V]
   rw [key]
   exact congrFun hc j
 
-namespace HermitianForm
-
-end HermitianForm
-
 end GroundTheory.Automorphic
 
 end
@@ -76,19 +72,6 @@ noncomputable section
 namespace GroundTheory.Automorphic
 
 open Module Matrix
-
-section Transport
-
-variable {A B : Type*} [CommRing A] [CommRing B] {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-
-end Transport
-
-section Split
-
-variable {F : Type*} [Field F] {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-end Split
 
 section OfGram
 
@@ -118,7 +101,7 @@ def HermitianForm.ofGram (H : Matrix ι ι A) (hH : IsHermitianFor (conjHom F A)
     ring⟩
   nonsingular := by
     refine bijective_of_injective_sesq _ ?_
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     have hv : Matrix.vecMul (fun i => conj F A (x i)) H = 0 := by
       funext j
@@ -146,20 +129,6 @@ theorem gram_ofGram (H : Matrix ι ι A) (hH : IsHermitianFor (conjHom F A) H)
   simp [Pi.single_apply]
 
 end OfGram
-
-section LocalField
-
-variable {F A : Type*} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
-  [Field A] [Algebra F A] [Algebra.IsQuadraticExtension F A] [Algebra.IsSeparable F A]
-variable {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-end LocalField
-
-section Diagonal
-
-variable {F A : Type*} [Field F] [Field A] [Algebra F A] [Algebra.IsQuadraticExtension F A]
-
-end Diagonal
 
 end GroundTheory.Automorphic
 end -- clump:auto

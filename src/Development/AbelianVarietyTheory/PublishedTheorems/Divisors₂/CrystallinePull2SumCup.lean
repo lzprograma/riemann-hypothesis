@@ -49,8 +49,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj DividedPowers
@@ -244,10 +242,10 @@ theorem IsCorrForm.adjoint {A₁ B₁ : Over S} [GrpObj A₁] [GrpObj B₁] (C :
     (H : IsCorrForm κ t A B P φ) (H₁ : IsCorrForm κ t A₁ B₁ P₁ φ₁) (u : A ⟶ A₁) (v : B₁ ⟶ B) [IsMonHom u]
     [IsMonHom v] (e : LBIso (ev P (fst A B₁) (snd A B₁ ≫ v)) (ev P₁ (fst A B₁ ≫ u) (snd A B₁)))
     (x : Crys κ t A) (y : Crys κ t B₁) : φ x (push κ t v y) = φ₁ (push κ t u x) y := by
-  obtain ⟨χ, hχ, k⟩ := H.pull hP (homMor κ t (𝟙 A)) (homMor κ t v) (by simp only [← Over.comp_left, lift_fst, lift_snd, Category.comp_id])
-    (by simp only [← Over.comp_left, lift_fst, lift_snd, Category.comp_id]) (LB.isLB_pull hP₁ _) e
+  obtain ⟨χ, hχ, k⟩ := H.pull hP (homMor κ t (𝟙 A)) (homMor κ t v) (by simp only [← Over.comp_left, lift_fst, Category.comp_id])
+    (by simp only [← Over.comp_left, lift_snd]) (LB.isLB_pull hP₁ _) e
   obtain ⟨χ₁, hχ₁, k₁⟩ := H₁.pull hP₁ (homMor κ t u) (homMor κ t (𝟙 B₁))
-    (h := (lift (fst A B₁ ≫ u) (snd A B₁)).left) (by simp only [← Over.comp_left, lift_fst, lift_snd, Category.comp_id]) (by simp only [← Over.comp_left, lift_fst, lift_snd, Category.comp_id])
+    (h := (lift (fst A B₁ ≫ u) (snd A B₁)).left) (by simp only [← Over.comp_left, lift_fst]) (by simp only [← Over.comp_left, lift_snd, Category.comp_id])
     (LB.isLB_pull hP₁ _) (ChernExists.lbIso_refl (LB.isLB_pull hP₁ _))
   obtain rfl := hχ.unique C (LB.isLB_pull hP₁ _) hχ₁
   have e₁ := k (push κ t (𝟙 A) x) x (push κ t v y) y (fun _ ↦ rfl) fun _ ↦ rfl

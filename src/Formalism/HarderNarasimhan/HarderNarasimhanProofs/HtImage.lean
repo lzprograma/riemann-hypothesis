@@ -10,57 +10,11 @@ public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.PlaceSplit
 import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
 import Formalism.LatticeSlopes.LatticeSlopesProofs.DegQuot
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -93,19 +47,8 @@ theorem place_part_orthogonal {P ι : Type*} [Fintype P] [Fintype ι] {v w : P} 
 theorem exists_decomp_of_mem_iSup {P E : Type*} [Fintype P] [AddCommGroup E] [Module ℝ E]
     (p : P → Submodule ℝ E) {x : E} (hx : x ∈ ⨆ v, p v) :
     ∃ f : P → E, (∀ v, f v ∈ p v) ∧ ∑ v, f v = x := by
-  classical
-  induction hx using Submodule.iSup_induction' with
-  | mem i y hy =>
-    refine ⟨Pi.single i y, fun v => ?_, by simp⟩
-    by_cases h : v = i
-    · subst h
-      simpa using hy
-    · simp [h]
-  | zero => exact ⟨0, fun v => zero_mem _, by simp⟩
-  | add y z _ _ ihy ihz =>
-    obtain ⟨f, hf, rfl⟩ := ihy
-    obtain ⟨g, hg, rfl⟩ := ihz
-    exact ⟨f + g, fun v => add_mem (hf v) (hg v), by simp [Finset.sum_add_distrib]⟩
+  obtain ⟨f, hf, rfl⟩ := (Submodule.mem_iSup_iff_exists_finsupp p x).1 hx
+  exact ⟨f, hf, (Finsupp.sum_fintype f (fun _ xi => xi) fun _ => rfl).symm⟩
 
 theorem inner_zero_of_orthogonal_parts {P E : Type*} [Fintype P] [NormedAddCommGroup E]
     [InnerProductSpace ℝ E]
@@ -384,10 +327,8 @@ theorem htImage_of (h1 : PlLat) (h2 : PlaceSplit) (h3 : GramBlock) : HtImage := 
   set Q := Formalism.F.quot L N with hQ
   haveI := hQd
 
-  have hπU : ∀ y ∈ U, Uᗮ.starProjection y = 0 := by
-    intro y hy
-    rw [Submodule.starProjection_orthogonal_val, (Submodule.starProjection_eq_self_iff).2 hy,
-      sub_self]
+  have hπU : ∀ y ∈ U, Uᗮ.starProjection y = 0 := fun _ hy =>
+    Submodule.starProjection_orthogonal_apply_eq_zero hy
   have hπ : ∀ z, Φ (Uᗮ.starProjection z) = Φ z := by
     intro z
     rw [Submodule.starProjection_orthogonal_val, map_sub]

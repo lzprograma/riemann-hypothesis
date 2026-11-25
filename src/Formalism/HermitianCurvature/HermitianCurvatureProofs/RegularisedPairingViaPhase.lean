@@ -1,5 +1,7 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.Expand
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ChainRuleSecondOrder.HasDerivAtDOf
 public import Formalism.HermitianCurvature.StatementB
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
@@ -72,7 +74,7 @@ namespace Formalism.FourierDecayAlt.P.B5
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section basics
 
@@ -120,25 +122,25 @@ private theorem star_aDil_entry_mul_aDil_entry_eq_one {k r : ℕ} (t : ℝ) (ht 
   · have e1 : ¬ j.val < r := by omega
     have e2 : ¬ j.val ≤ r + k := by omega
     have e3 : j.val - (r + k) = r - i.val := by omega
-    rw [if_pos hA.1, if_neg e1, if_neg e2, e3]
+    rw [ite_eq_left hA.1, ite_eq_right e1, ite_eq_right e2, e3]
     rw [show star ((t ^ (r - i.val) : ℝ) : ℂ) = ((t ^ (r - i.val) : ℝ) : ℂ) from Complex.conj_ofReal _]
     rw [← Complex.ofReal_mul, mul_inv_cancel₀ (pow_ne_zero _ ht), Complex.ofReal_one]
   by_cases hB : j.val < r ∧ i.val + j.val = 2 * r + k
   · have e1 : ¬ i.val < r := by omega
     have e2 : ¬ i.val ≤ r + k := by omega
     have e3 : i.val - (r + k) = r - j.val := by omega
-    rw [if_neg e1, if_neg e2, if_pos hB.1, e3]
+    rw [ite_eq_right e1, ite_eq_right e2, ite_eq_left hB.1, e3]
     rw [show star (((t ^ (r - j.val))⁻¹ : ℝ) : ℂ) = (((t ^ (r - j.val))⁻¹ : ℝ) : ℂ) from
       Complex.conj_ofReal _]
     rw [← Complex.ofReal_mul, inv_mul_cancel₀ (pow_ne_zero _ ht), Complex.ofReal_one]
   by_cases hC : r ≤ i.val ∧ i.val ≤ r + k ∧ i = j
   · obtain ⟨hC1, hC2, rfl⟩ := hC
-    rw [if_neg (not_lt.2 hC1), if_pos hC2]
+    rw [ite_eq_right (not_lt.2 hC1), ite_eq_left hC2]
     simp
   · exfalso
     apply h
     unfold Hpk
-    rw [if_neg hA, if_neg hB, if_neg hC]
+    rw [ite_eq_right hA, ite_eq_right hB, ite_eq_right hC]
 
 private theorem aDil_mem_gv {k r : ℕ} (t : ℝ) (ht : t ≠ 0) : aDil k r t ∈ GV k r := by
   show (aDil k r t)ᴴ * Hpk k r * aDil k r t = Hpk k r
@@ -211,25 +213,7 @@ variable {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace �
   [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq]
 
 theorem ae_inSS (D : RealPlaceData k r Wp Wq) : ∀ᵐ p ∂D.μSS, D.inSS p := by
-  haveI := haar_sigmaFinite D.haarW
-  haveI := haar_sigmaFinite D.haarN
-  haveI := haar_sigmaFinite D.haarW'
-  have h1 := haar_ae D.haarW
-  have h2 := haar_ae D.haarN
-  have h3 := haar_ae D.haarW'
-  have a1 : ∀ᵐ q : Mt k r × Mt k r ∂(D.μW.prod D.μN),
-      Matrix.of q.1 ∈ UWset k r D.z ∧ Matrix.of q.2 ∈ QuantumDeterminants.Nset k r :=
-    (Measure.quasiMeasurePreserving_fst.ae h1).and (Measure.quasiMeasurePreserving_snd.ae h2)
-  have a2 : ∀ᵐ q : Mt k r × Mt k r ∂(D.μW'.prod D.μN),
-      Matrix.of q.1 ∈ UWset k r D.z' ∧ Matrix.of q.2 ∈ QuantumDeterminants.Nset k r :=
-    (Measure.quasiMeasurePreserving_fst.ae h3).and (Measure.quasiMeasurePreserving_snd.ae h2)
-  have a3 := (Measure.quasiMeasurePreserving_fst (μ := D.μW.prod D.μN) (ν := D.μW'.prod D.μN)).ae a1
-  have a4 := (Measure.quasiMeasurePreserving_snd (μ := D.μW.prod D.μN) (ν := D.μW'.prod D.μN)).ae a2
-  have a5 := a3.and a4
-  unfold RealPlaceData.μSS
-  filter_upwards [a5] with p hp
-  unfold RealPlaceData.inSS
-  exact ⟨hp.1.1, hp.1.2, hp.2.1, hp.2.2⟩
+  apply _root_.Formalism.FourierDecayAlt.P.B7.ae_inSS <;> assumption
 
 theorem dil_inSS (D : RealPlaceData k r Wp Wq) {p : SS k r} (hp : D.inSS p) {t₁ t₂ : ℝ} (h1 : t₁ ≠ 0) (h2 : t₂ ≠ 0) :
     D.inSS (dilation₂ (t₁, t₂) p) := by
@@ -363,16 +347,7 @@ theorem inSS_right (D : RealPlaceData k r Wp Wq) {p : SS k r} (hp : D.inSS p) :
 
 theorem rho_norm_le (D : RealPlaceData k r Wp Wq) {p : SS k r} (hp : D.inSS p) (F : Mat k r → (Wq →L[ℂ] Wp))
     (g : Mat k r) : ‖rho D p F g‖ ≤ ‖F (sgs p g)‖ := by
-  unfold RealPlaceData.inSS at hp
-  have h1 := hp.1
-  have h3 := Formalism.QuantumDeterminants.WeylGroupFacts.uw_inv hp.2.2.1
-  unfold rho
-  apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg _)
-  intro v
-  rw [ContinuousLinearMap.comp_apply, D.π_unitary _ h1, ContinuousLinearMap.comp_apply]
-  calc ‖F (sgs p g) (D.π' (Matrix.of p.2.1)⁻¹ v)‖ ≤ ‖F (sgs p g)‖ * ‖D.π' (Matrix.of p.2.1)⁻¹ v‖ :=
-        (F (sgs p g)).le_opNorm _
-    _ = ‖F (sgs p g)‖ * ‖v‖ := by rw [D.π'_unitary _ h3]
+  apply _root_.Formalism.FourierDecayAlt.P.B7.norm_rho_le <;> assumption
 
 end phbound
 
@@ -459,40 +434,6 @@ section calculus
 
 variable {k r : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
-private theorem hpk_apply_of_mid_index {k r : ℕ} (i b : Fin (2 * r + k + 1)) (hi : r ≤ i.val ∧ i.val ≤ r + k) :
-    Hpk k r i b = if b = i then (if i.val = r + k then -1 else 1) else 0 := by
-  have e1 : ¬ (i.val < r ∧ i.val + b.val = 2 * r + k) := by omega
-  have e2 : ¬ (b.val < r ∧ i.val + b.val = 2 * r + k) := by omega
-  simp only [Hpk, if_neg e1, if_neg e2]
-  by_cases hb : b = i
-  · subst hb
-    simp [hi.1, hi.2]
-  · have e3 : ¬ (r ≤ i.val ∧ i.val ≤ r + k ∧ i = b) := fun h => hb h.2.2.symm
-    rw [if_neg e3, if_neg hb]
-
-private theorem hpk_apply_of_not_mid_index {k r : ℕ} (i b : Fin (2 * r + k + 1)) (hi : ¬(r ≤ i.val ∧ i.val ≤ r + k)) :
-    Hpk k r i b = if b.val = 2 * r + k - i.val then 1 else 0 := by
-  have hi1 := i.isLt
-  have hb1 := b.isLt
-  have e3 : ¬ (r ≤ i.val ∧ i.val ≤ r + k ∧ i = b) := fun h => hi ⟨h.1, h.2.1⟩
-  by_cases hb : b.val = 2 * r + k - i.val
-  · rw [if_pos hb]
-    by_cases h1 : i.val < r
-    · have e1 : i.val < r ∧ i.val + b.val = 2 * r + k := ⟨h1, by omega⟩
-      simp only [Hpk, if_pos e1]
-    · have e1 : ¬ (i.val < r ∧ i.val + b.val = 2 * r + k) := fun h => h1 h.1
-      have e2 : b.val < r ∧ i.val + b.val = 2 * r + k := by omega
-      simp only [Hpk, if_neg e1, if_pos e2]
-  · rw [if_neg hb]
-    have e1 : ¬ (i.val < r ∧ i.val + b.val = 2 * r + k) := by omega
-    have e2 : ¬ (b.val < r ∧ i.val + b.val = 2 * r + k) := by omega
-    simp only [Hpk, if_neg e1, if_neg e2, if_neg e3]
-
-private theorem hpk_mul_self' {k r : ℕ} : Hpk k r * Hpk k r = 1 := by
-  first
-  | exact _root_.Formalism.SharedLemmas.upq_hpk_mul_self
-  | (apply _root_.Formalism.SharedLemmas.upq_hpk_mul_self <;> assumption)
-
 theorem exp_mem {X : Mat k r} (hX : inLie k r X) (t : ℝ) : NormedSpace.exp ((t : ℂ) • X) ∈ GV k r := by
   apply PI.ComplexConjugateDerivative.exp_mem_GV <;> assumption
 
@@ -575,17 +516,8 @@ theorem ckOn_RdV {m : ℕ∞} {f : Mat k r → E} {X : Mat k r} (hX : inLie k r 
 
 theorem ckOn_Rw {f : Mat k r → E} {N : ℕ} (h : CkOn (N : ℕ∞) (GV k r) f) (w : List (Mat k r))
     (hw : ∀ X ∈ w, inLie k r X) (m : ℕ) (hle : m + w.length ≤ N) : CkOn (m : ℕ∞) (GV k r) (Rw w f) := by
-  induction w generalizing m with
-  | nil =>
-    have hmN : m ≤ N := by simpa using hle
-    exact ckOn_mono (by exact_mod_cast hmN) h
-  | cons X w ih =>
-    have hX : inLie k r X := hw X (by simp)
-    have hw' : ∀ Y ∈ w, inLie k r Y := fun Y hY => hw Y (by simp [hY])
-    have hle' : m + 1 + w.length ≤ N := by simp at hle; omega
-    have h1 : CkOn ((m + 1 : ℕ) : ℕ∞) (GV k r) (Rw w f) := ih hw' (m + 1) hle'
-    push_cast at h1
-    exact ckOn_RdV hX h1
+  intros
+  apply _root_.PI.UnitaryGroupMassFormula.UsCompose.ck_Rw <;> assumption
 
 theorem ckOn_curve {f : Mat k r → E} (h : CkOn 1 (GV k r) f) {g X : Mat k r} (hg : g ∈ GV k r)
     (hX : inLie k r X) : ContDiff ℝ 1 (fun t : ℝ => f (g * NormedSpace.exp ((t : ℂ) • X))) := by

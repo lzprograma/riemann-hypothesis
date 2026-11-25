@@ -54,8 +54,6 @@ open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions F
 
 namespace GlobalTheory.Mem.DfGen
 
-attribute [local instance] GlobalTheory.Mem.Col2.starE
-
 def RamSp {B : Base} (C : Cols B) (u : B.Word) : Type := (C.mem u).A.Mram
 
 instance {B : Base} (C : Cols B) (u : B.Word) : AddCommGroup (RamSp C u) :=
@@ -185,8 +183,8 @@ def rowsStd (B : Base) (C : Cols B) (hC : SpectralModel.ColsPos C) (n : C.Tup �
     ft0 := fun i => i.elim0
     Amb := fun a => EuclideanSpace ℂ (Fin (n a))
     Mult := fun a j => EuclideanSpace ℂ (Fin (if j = B.R.m then n a else 0))
-    multZero := fun _ => stdCongr (if_neg (by have := B.R.two_le_m; omega))
-    multTop := fun _ => stdCongr (if_pos rfl)
+    multZero := fun _ => stdCongr (ite_eq_right (by have := B.R.two_le_m; omega))
+    multTop := fun _ => stdCongr (ite_eq_left rfl)
     io := fun _ _ => 0
     Mtilde := L
     eOp := fun _ => LinearMap.id
@@ -230,11 +228,11 @@ def rowsStd (B : Base) (C : Cols B) (hC : SpectralModel.ColsPos C) (n : C.Tup �
     shaLen_nonneg := GaloisStage.shaTrue_nonneg B.host
     eMu := ramEq C
     eMt0 := e0
-    perCol_base_eq_PtilCol := fun u φ F => dif_pos rfl
+    perCol_base_eq_PtilCol := fun u φ F => dite_eq_left rfl
     Bu_linL := fun _ _ => ⟨fun _ _ => by simp, fun _ _ => by simp⟩
     Bu_linR := fun _ _ => ⟨fun _ _ => by simp, fun _ _ => by simp⟩
     eMtTw := eT
-    perCol_tie := fun u a h φ F => dif_neg h
+    perCol_tie := fun u a h φ F => dite_eq_right h
     eMu_isom := fun _ _ _ => rfl }
 
 theorem standIn_rowsStd (B : Base) (C : Cols B) (hC : SpectralModel.ColsPos C) (n : C.Tup → ℕ)
@@ -245,25 +243,10 @@ theorem standIn_rowsStd (B : Base) (C : Cols B) (hC : SpectralModel.ColsPos C) (
     StandIn (rowsStd B C hC n e0 eT L mt hmt) := by
   exact
     { drows := rfl
-      d0 := rfl
       dall := rfl
-      delp := rfl
-      ft := ⟨fun x => nomatch x⟩
-      mult := fun a j hj => subsingleton_std (if_neg hj)
-      io := fun _ _ => rfl
-      mj := fun _ => subsingleton_std rfl
       mt := fun _ _ => subsingleton_std rfl
-      eMt := fun _ _ => rfl
-      bu := fun _ _ _ => rfl
-      ij := fun _ _ _ => ⟨rfl, rfl⟩
       eta := fun _ _ => rfl
-      sha := shaOK_shaTrue B.toPre
-      kap := fun V S N G j _ _ τ =>
-        ⟨fun i => (aPlusB_int B j τ i).choose_spec.symm,
-         fun c => by
-           show ((-(aMinusB_int B j τ c).choose : ℤ) : ℚ) = -aMinusB B j τ c
-           push_cast
-           rw [← (aMinusB_int B j τ c).choose_spec]⟩ }
+      sha := shaOK_shaTrue B.toPre }
 
 theorem exists_rowsRest_std : ∀ (B : Base) (C : Cols B) (n : C.Tup → ℕ) (e0 : ∀ u, (C.mem u).P.Mt ≃ₗ[ℂ] EuclideanSpace ℂ (Fin (n C.mu0))) (eT : ∀ u a, (C.PTw u a).Mt ≃ₗ[ℂ] EuclideanSpace ℂ (Fin (n a))) (L : ∀ a, Rows.OLat B.O (B.embLL.comp B.OtoLL) (EuclideanSpace ℂ (Fin (n a)))) (mt : B.places.Pl → C.Tup), (∀ w, mt (B.places.conj w) = mt w) → SpectralModel.ColsPos C → ∃ (W : RowsRest B C) (g : ∀ a, EuclideanSpace ℂ (Fin (n a)) ≃ₗᵢ[ℂ] W.Amb a), StandIn W ∧ (∀ w, W.muAt w = C.mu0) ∧ (∀ w, W.muTw w = mt w) ∧ (∀ u F, W.eMt0 u F = g C.mu0 (e0 u F)) ∧ (∀ u a F, W.eMtTw u a F = g a (eT u a F)) ∧ (∀ a y, g a y ∈ (W.Mtilde a).carrier ↔ y ∈ (L a).carrier) ∧ (∀ a y, g a y ∈ (W.Mtilde a).gen ↔ y ∈ (L a).gen) ∧ (∀ a, W.eOp a = LinearMap.id) ∧ ∀ u a, W.ze u a = 1 := by
   intro B C n e0 eT L mt hmt hC

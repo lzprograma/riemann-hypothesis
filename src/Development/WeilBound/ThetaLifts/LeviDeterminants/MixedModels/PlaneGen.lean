@@ -140,12 +140,7 @@ def lev (c : R →+* R) (J : Matrix (Fin n) (Fin n) R) (ε : R) (x y : Fin n →
 
 omit h in
 theorem lev_apply (t s : R) (v) : lev c J ε x y t s *ᵥ v = v + ((t - 1) * bf c J v y) • x + ((s - 1) * ε * bf c J v x) • y := by
-  have vm : ∀ p q w : Fin n → R, vecMulVec p q *ᵥ w = (q ⬝ᵥ w) • p := by
-    intro p q w
-    ext i
-    simp only [vecMulVec, mulVec, dotProduct, of_apply, Pi.smul_apply, smul_eq_mul, Finset.sum_mul]
-    exact Finset.sum_congr rfl fun j _ => by ring
-  simp only [lev, add_mulVec, one_mulVec, smul_mulVec, vm, smul_smul]
+  simp only [lev, add_mulVec, one_mulVec, smul_mulVec, vecMulVec_mulVec, op_smul_eq_smul, smul_smul]
   rw [dotProduct_comm (J *ᵥ fun i => c (y i)) v, dotProduct_comm (J *ᵥ fun i => c (x i)) v]
   rfl
 

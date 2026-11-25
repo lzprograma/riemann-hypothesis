@@ -16,6 +16,7 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulMemCuspFo
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrdConjDifferentEqZero
 public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
 public import Development.AbelianVarietyTheory.Definitions.Divisors.UnitaryWeightExponentVectorSignatureWeightMuZero
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroSectionWeightBound
 import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.LawsFieldsSeparately
 import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsOfCmTriplePullback
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyTwistedSectionComponent
@@ -83,8 +84,6 @@ import Formalism.LocalToGlobal.ProjectiveLattices.HeightF1OfData
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.KeyValZero
@@ -98,60 +97,6 @@ open GlobalTheory.KeyIntegralVal GlobalTheory.ShFam
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H}
   {l : Level H} {Xo : Moduli Dw l} {c : Coeff l}
 
-theorem exists_lift_ringHom {O : Type} [CommRing O] (T : CDVR) (f : O →+* T.Fr)
-    (hf : ∀ a, f a ∈ (algebraMap T.V T.Fr).range) : ∃ b : O →+* T.V, (algebraMap T.V T.Fr).comp b = f := by
-  have inj := IsFractionRing.injective T.V T.Fr
-  choose b hb using hf
-  refine ⟨⟨⟨⟨b, inj ?_⟩, fun x y => inj ?_⟩, inj ?_, fun x y => inj ?_⟩, RingHom.ext hb⟩ <;> simp [hb]
-
-theorem key_unit_eqChar {κ : KeyRule} (hκ : IsKeyRule κ) (hpq : 1 ≤ Dw.p + Dw.q) (hg : ∀ p : ℕ, p.Prime → l.GoodAt p)
-    {T : CDVR} {io : c.F →+* T.Fr} (ho : ∀ a, io a ∈ (algebraMap T.V T.Fr).range)
-    {x : Sp T.Fr ⟶ Xo.X} (hxs : x ≫ Xo.s = spMap (io.comp (IntermediateField.inclusion c.le).toRingHom))
-    {G : SAB H (Sp T.V)} {t' : SAB H (Sp T.Fr)} (m1 : SABMap t' Xo.univ.t x)
-    (m2 : SABMap t' G (spMap (algebraMap T.V T.Fr))) {n : ℕ} {w : Fin n → (epsR T.V ⟶ G.G)} (hw : IsLieBasis w)
-    {θ : G.PP.L.Sec} (hθ : Generates (X := G.G) θ) (k : KeyIn T.Fr)
-    (hk : IsFibreOf k G.G G.PP.L G.PP.rig θ w (algebraMap T.V T.Fr)) :
-    ∃ u : T.Vˣ, (κ T.Fr k : T.Fr) = algebraMap T.V T.Fr u := by
-  obtain ⟨m, hm⟩ := Ideal.exists_maximal (𝓞 c.F)
-  let la : HeightOneSpectrum (𝓞 c.F) := ⟨m, hm.isPrime, Ring.ne_bot_of_isMaximal_of_not_isField hm (RingOfIntegers.not_isField _)⟩
-  obtain ⟨W, p, Y, -, hp, h2, h3, h4, h5⟩ := exists_model Xo c hpq hg la
-  obtain ⟨b, hb⟩ := exists_lift_ringHom T (io.comp (c.V W).subtype) fun a => ho _
-  have hcond : x ≫ Xo.s = spMap io ≫ spMap (IntermediateField.inclusion c.le).toRingHom := by
-    rw [hxs, GlobalTheory.EtaVal.spMap_comp_spMap]
-  let z : Sp T.Fr ⟶ Xo.XF c := pullback.lift x (spMap io) hcond
-  have hzs : z ≫ pullback.snd _ _ = spMap io := pullback.lift_snd _ _ _
-  have hzf : z ≫ pullback.fst _ _ = x := pullback.lift_fst _ _ _
-  have hx : z ≫ Y.j ≫ Y.s = Out.jK T.V ≫ spMap b := by
-    show z ≫ (Y.jQ ≫ pullback.fst _ _) ≫ Y.s = _
-    rw [Category.assoc, pullback.condition, ← Category.assoc Y.jQ, Y.jQ_over, ← Category.assoc, hzs]
-    show Spec.map _ ≫ Spec.map _ = Spec.map _ ≫ Spec.map _
-    rw [← Spec.map_comp, ← Spec.map_comp, ← CommRingCat.ofHom_comp, ← CommRingCat.ofHom_comp, hb]
-  obtain ⟨yt, h1, -⟩ := extPt Y T b z hx
-  obtain ⟨tP, ⟨mP'⟩⟩ : ∃ t : SAB H (Sp T.V), Nonempty (SABMap t Y.t yt) := by
-    obtain ⟨_, _, _, _, _, m, -⟩ := sabPull Out.CubePf.cubePull yt Y.t
-    exact ⟨_, ⟨m⟩⟩
-  obtain ⟨mF, -⟩ := sabCancel pullCubCancel E H _ _ _ Xo.univ.t Y.oF.t t' (pullback.fst _ _) z Y.m0.toSABMap
-    (PullbackSections.sabMapCast m1 hzf.symm)
-  obtain ⟨mJ, -⟩ := sabComp pullCubComp E H _ _ _ Y.t Y.oF.t t' (Y.jQ ≫ pullback.fst _ _) z Y.m mF
-  have hj : z ≫ Y.jQ ≫ pullback.fst _ _ = Out.jK T.V ≫ yt := h1.symm
-  obtain ⟨mK, -⟩ := sabCancel pullCubCancel E H _ _ _ Y.t tP t' yt (Out.jK T.V) mP' (PullbackSections.sabMapCast mJ hj)
-  have hprop : IsProper t'.G.hom :=
-    MorphismProperty.of_isPullback (P := @IsProper) m1.cart.1 Xo.univ.proper
-  obtain ⟨ψ, -⟩ := _root_.GlobalTheory.ModelUniqueChecks.extV_holds E H T.V inferInstance G tP t' hprop m2 mK
-  obtain ⟨n', -⟩ := sabComp pullCubComp E H _ _ _ Y.t tP G yt (𝟙 _) mP' ψ
-  exact (((_root_.GlobalTheory.KeyUnitModels.keyUnitOnModels κ hκ E H Dw l Xo c _ _ Y p hpq (isBaseRing_local c W) hp h2 h3 h4 h5).1 T.V T.Fr z yt h1 G
-    (PullbackSections.sabMapCast n' (Category.id_comp yt)) n w hw θ k hk).1 hθ).1
-
-theorem mem_range_iff (T : CDVR) (x : T.Fr) : x ∈ (algebraMap T.V T.Fr).range ↔ 0 ≤ vV T.V x := by
-  by_cases h : x = 0
-  · subst h; simp [vV]
-  have e : 0 ≤ vV T.V x ↔ valV T.V x ≤ 1 := by
-    rw [← WithZero.log_le_log (valV_ne_zero (V := T.V) h) one_ne_zero, WithZero.log_one, vV]
-    omega
-  rw [e]
-  exact ⟨fun ⟨a, ha⟩ => ha ▸ IsDedekindDomain.HeightOneSpectrum.valuation_le_one _ a,
-    fun h => IsDiscreteValuationRing.exists_lift_of_le_one h⟩
-
 theorem exists_tied_unit {κ : KeyRule} (hκ : IsKeyRule κ) (hpq : 1 ≤ Dw.p + Dw.q) (hg : ∀ p : ℕ, p.Prime → l.GoodAt p)
     {g : ℕ} (e : Fin g ≃ Σ τ : E →+* ℂ, Fin (Dw.mult τ))
     {T : CDVR} {io : c.F →+* T.Fr} (ho : ∀ a, io a ∈ (algebraMap T.V T.Fr).range)
@@ -160,7 +105,7 @@ theorem exists_tied_unit {κ : KeyRule} (hκ : IsKeyRule κ) (hpq : 1 ≤ Dw.p +
     ∃ (Φ : FibKey Xo T.Fr y.x), Tied e y.s y.u Φ ∧ vV T.V (κ T.Fr Φ.key : T.Fr) = 0 := by
   classical
   letI := io.toAlgebra
-  choose τ' hτ using fun τ : E →+* ℂ => exists_lift_ringHom T (io.comp (embK c τ)) fun a => ho _
+  choose τ' hτ using fun τ : E →+* ℂ => GlobalTheory.ThetaSteep.exists_lift_ringHom T (io.comp (embK c τ)) fun a => ho _
   replace hτ : ∀ τ a, algebraMap T.V T.Fr (τ' τ a) = io (embK c τ a) := fun τ a => DFunLike.congr_fun (hτ τ) a
   obtain ⟨G, t', m1, m2, ⟨ub, u1, u2, u3, u4⟩, θ, hθ, w1, w2, σ, s1, θ2, r1, r2, i1, i2, hp, hs⟩ := hy
   obtain ⟨U₀, hU₀, hg₀⟩ := GlobalTheory.CM.exists_pat_of_obj E H Dw l _ _ _ _ Xo.univ
@@ -195,7 +140,7 @@ theorem exists_tied_unit {κ : KeyRule} (hκ : IsKeyRule κ) (hpq : 1 ≤ Dw.p +
     (fun τ x hx he => (u3 τ x ((isTan_iff_isTangent _).2 hx) fun a z hz => by
       rw [inj (hz.trans (hτ τ a).symm)]
       exact he a).exists)
-  obtain ⟨u, hu⟩ := key_unit_eqChar hκ hpq hg ho y.x_over m1 m2 hw hθ _
+  obtain ⟨u, hu⟩ := GlobalTheory.ThetaSteep.key_unit_eqChar hκ hpq hg ho y.x_over m1 m2 hw hθ _
     (isFibreOf_of_sabMap _ P m2 hgp hne r2 i2 hp hw' hww)
   refine ⟨⟨P, m1, hgp, σ, hne, v, hv⟩, ⟨ht, rfl, fun j => hu₁ _ _⟩, ?_⟩
   have hinj : Function.Injective τ' := fun τ₁ τ₂ h =>
@@ -231,8 +176,8 @@ theorem val_inv_root {T : CDVR} {io : c.F →+* T.Fr} (y : IntFr Xo c T io)
   have hu : ∀ u : (Rul Xo c)ˣ, ev u ≠ 0 := fun u => (u.isUnit.map ev).ne_zero
   have ha' : io a ≠ 0 := (map_ne_zero io).2 ha
   have hio : vV T.V (io a) = 0 := by
-    have h1 := (mem_range_iff T _).1 (ho a)
-    have h2 := (mem_range_iff T _).1 (ho a⁻¹)
+    have h1 := (GlobalTheory.ThetaSteep.mem_range_iff T _).1 (ho a)
+    have h2 := (GlobalTheory.ThetaSteep.mem_range_iff T _).1 (ho a⁻¹)
     have h3 := vV_mul (V := T.V) ha' ((map_ne_zero io).2 (inv_ne_zero ha))
     rw [← map_mul, mul_inv_cancel₀ ha, map_one, show vV T.V (1 : T.Fr) = 0 by simp [vV]] at h3
     omega

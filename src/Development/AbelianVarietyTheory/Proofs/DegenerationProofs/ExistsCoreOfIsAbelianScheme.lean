@@ -109,20 +109,6 @@ theorem isGt_splitExtOfAbelian {S : Scheme.{0}} (B : Over S) [GrpObj B] (h : IsA
   · intro χ a y _
     exact (congrArg₂ (· * ·) (map_one _) (map_one _)).trans (_root_.mul_one _)
 
-section
-
-variable {T V Z G H : Scheme.{0}} {f : H ⟶ G} {s : H ⟶ V} {t : G ⟶ Z} {y₀ : V ⟶ Z}
-
-end
-
-section
-
-variable (Z : Scheme.{0}) [IsIntegral Z] (π : Z ⟶ Sp ℤ) [Flat π] [LocallyOfFiniteType π] [QuasiCompact π]
-    [IsSeparated π] (hZ : ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsNormalScheme Z) (A : Over Z) [GrpObj A] (g : ℕ) (hA : IsAbelianScheme A)
-    (hg : SmoothOfRelativeDimension g A.hom)
-
-end
-
 end GlobalTheory.ZJ
 
 end

@@ -1,5 +1,7 @@
 module
 
+
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedMeasureSplitting.ContinuousMeasureSplitting
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MeasCore
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MeasInfCut
@@ -13,7 +15,6 @@ import Mathlib.Topology.Algebra.Group.Units
 import Mathlib.Topology.Baire.LocallyCompactRegular
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MExistsCut, Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MultiplicityGExists
 
@@ -27,8 +28,6 @@ noncomputable section
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.SplitPrimeNormLemmas
 
 namespace Formalism.L2.SG.MExistsCut
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
@@ -262,7 +261,6 @@ end Grp
 end Formalism.L2.SG.Pf.Meas
 
 open MeasureTheory NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Topology
-open scoped TensorProduct
 
 namespace Formalism.L2.SG.Pf.Meas
 
@@ -297,26 +295,12 @@ variable (σ : E →ₐ[F] E) {M : ℕ} (J : Matrix (Fin M) (Fin M) E)
 theorem haMap_cont {R R' : Type} [CommRing R] [Algebra F R] [TopologicalSpace R]
     [CommRing R'] [Algebra F R'] [TopologicalSpace R'] (φ : R →ₐ[F] R') (hf : Continuous (tensMap (E := E) φ)) :
     Continuous (haMap σ J φ) := by
-  have hs : Continuous (fun g : ↥(HR R σ J) => (g : GL (Fin M) (R ⊗[F] E))) := continuous_subtype_val
-  have hv : Continuous (fun g : ↥(HR R σ J) =>
-      ((g : GL (Fin M) (R ⊗[F] E)) : Matrix (Fin M) (Fin M) (R ⊗[F] E))) :=
-    Units.continuous_val.comp hs
-  have hi : Continuous (fun g : ↥(HR R σ J) =>
-      (((g : GL (Fin M) (R ⊗[F] E))⁻¹ : GL (Fin M) (R ⊗[F] E)) : Matrix (Fin M) (Fin M) (R ⊗[F] E))) :=
-    Units.continuous_coe_inv.comp hs
-  have hb : Continuous (fun g : ↥(HR R σ J) => Formalism.UG.bc (tensMap (E := E) φ) (g : GL (Fin M) (R ⊗[F] E))) := by
-    rw [Units.continuous_iff]
-    exact ⟨hv.matrix_map hf, hi.matrix_map hf⟩
-  show Continuous (fun g : ↥(HR R σ J) =>
-    (⟨Formalism.UG.bc (tensMap (E := E) φ) (g : GL (Fin M) (R ⊗[F] E)), (haMap σ J φ g).2⟩ : ↥(HR R' σ J)))
-  exact hb.subtype_mk _
+  apply _root_.PI.UnitaryGroupMassFormula.MeasWCore.continuous_haMap <;> assumption
 
 end Top
 
 end Formalism.L2.SG.Pf.Meas
 
-open MeasureTheory NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Topology
-open scoped TensorProduct
 
 namespace Formalism.L2.SG.Pf.Meas
 
@@ -363,8 +347,6 @@ end Iso
 
 end Formalism.L2.SG.Pf.Meas
 
-open MeasureTheory NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Topology
-open scoped TensorProduct
 
 namespace Formalism.L2.SG.Pf.Meas
 
@@ -448,8 +430,6 @@ theorem cross_inf (x : I.Gf) : (splitA I.cm.sig I.J (toHA I hb (1, x))).1 = 1 :=
 
 end Formalism.L2.SG.Pf.Meas
 
-open MeasureTheory NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Topology
-open scoped TensorProduct
 
 namespace Formalism.L2.SG.Pf.Meas
 
@@ -532,8 +512,6 @@ theorem Phi_eq : (Phi I hb : I.GA → _) = Prod.map (eInf I hb) (eFin I hb) := b
 
 end Formalism.L2.SG.Pf.Meas
 
-open MeasureTheory NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Topology
-open scoped TensorProduct
 
 namespace Formalism.L2.SG.Pf.Meas
 
@@ -606,8 +584,6 @@ end Loc
 
 end Formalism.L2.SG.Pf.Meas
 
-open MeasureTheory NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Topology
-open scoped TensorProduct
 
 namespace Formalism.L2.SG.Pf.Meas
 
@@ -686,8 +662,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.Pf.Meas
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem cmExt (I : AutInst) : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.IsCMExt I.F I.E I.cm.sig :=
   ⟨I.cm.totReal, I.cm.cmUnram.1, I.cm.deg2, fun τ x => I.cm.cmUnram.2.1 τ x⟩
 
@@ -741,8 +715,6 @@ theorem frame_std (A : UnitaryGroupInstance D) (L : UnitaryLatticeData D) (u : D
 end Formalism.L2.SG.Pf.Meas
 
 namespace Formalism.L2.SG.Pf
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def MWExistsStd : Prop :=
   ∀ (I : AutInst) (hb : Formalism.L2.SG.AdBridge.AdBridgeIso I) (r : ℕ) (e f : Fin r → Fin I.n → I.E) (z : Fin I.n → I.E)

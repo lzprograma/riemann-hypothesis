@@ -67,9 +67,8 @@ theorem pairA_add (x x' : Ainf F) (y y' : Af F) :
     pairA F (x + x') (y + y') = pairA F x y + pairA F x' y' := rfl
 
 theorem algebraMap_eq_pairA (x : F) :
-    algebraMap F (AF F) x = pairA F (algebraMap F _ x) 0 + pairA F 0 (algebraMap F _ x) := by
-  rw [← pairA_add, add_zero, zero_add]
-  rfl
+    algebraMap F (AF F) x = pairA F (algebraMap F _ x) 0 + pairA F 0 (algebraMap F _ x) :=
+  _root_.GlobalTheory.CompanionTheory.AdeleCharLocal.algebraMap_eq_pairA x
 
 theorem denseRange_fin : DenseRange (algebraMap F (Af F)) := by
   apply GlobalTheory.CompanionTheory.AdeleCharLocal.denseRange_fin
@@ -82,75 +81,21 @@ theorem ext_of_inf {ψ ψ' : AF F → ℂ} (hc : Continuous ψ) (hc' : Continuou
   apply GlobalTheory.CompanionTheory.AdeleCharLocal.ext_of_inf <;> assumption
 
 theorem exists_nsmul_inf {ψ : AddChar (AF F) ℂ} (hψ : IsCharAF F ψ) :
-    ∃ N : ℕ, 0 < N ∧ ∀ r : 𝓞 F, ψ (pairA F (algebraMap F _ ((N : F) * r)) 0) = 1 := by
-  obtain ⟨N, hN, h⟩ := _root_.GlobalTheory.LocalNormBound.main F _ (GlobalTheory.FinTranslate.ker_mem_nhds hψ.1 hψ.2.1)
-  refine ⟨N, hN, fun r => ?_⟩
-  have h1 : ψ (pairA F 0 (N • algebraMap F (Af F) r)) = 1 :=
-    h _ fun v => HeightOneSpectrum.coe_mem_adicCompletionIntegers v r
-  have h2 := hψ.2.2.1 ((N : F) * r)
-  rw [nsmul_eq_mul, ← map_natCast (algebraMap F (Af F)), ← map_mul] at h1
-  rwa [algebraMap_eq_pairA, AddChar.map_add_eq_mul, h1, mul_one] at h2
+    ∃ N : ℕ, 0 < N ∧ ∀ r : 𝓞 F, ψ (pairA F (algebraMap F _ ((N : F) * r)) 0) = 1 :=
+  _root_.GlobalTheory.CompanionTheory.AdeleCharLocal.exists_nsmul_inf hψ
 
-theorem exists_realHom [IsTotallyReal F] : ∃ ρ : ℝ →+* Ainf F, Continuous ρ := by
-  let e : ∀ w : InfinitePlace F, w.Completion ≃+* ℝ := fun w =>
-    InfinitePlace.Completion.ringEquivRealOfIsReal (IsTotallyReal.isReal w)
-  exact ⟨Pi.ringHom fun w => (e w).symm.toRingHom, continuous_pi fun w =>
-    (InfinitePlace.Completion.isometryEquivRealOfIsReal (IsTotallyReal.isReal w)).symm.continuous⟩
+theorem exists_realHom [IsTotallyReal F] : ∃ ρ : ℝ →+* Ainf F, Continuous ρ :=
+  _root_.GlobalTheory.CompanionTheory.AdeleCharLocal.exists_realHom
 
 theorem exists_trace [IsTotallyReal F] {ψ : AddChar (AF F) ℂ} (hψ : IsCharAF F ψ) :
     ∃ a : F, ∀ x : F, ψ (pairA F (algebraMap F _ x) 0) =
       Complex.exp (2 * Real.pi * Complex.I * ((Algebra.trace ℚ F (a * x) : ℚ) : ℂ)) := by
-  classical
-  obtain ⟨N, hN, hNr⟩ := exists_nsmul_inf hψ
-  obtain ⟨ρ, hρ⟩ := exists_realHom (F := F)
-  have hρq : ∀ q : ℚ, ρ (q : ℝ) = algebraMap F (Ainf F) (q : F) := fun q =>
-    RingHom.congr_fun (RingHom.ext_rat (ρ.comp (Rat.castHom ℝ)) ((algebraMap F (Ainf F)).comp (Rat.castHom F))) q
-  have hadd : ∀ x y : Ainf F, ψ (pairA F (x + y) 0) = ψ (pairA F x 0) * ψ (pairA F y 0) := fun x y => by
-    rw [← AddChar.map_add_eq_mul, ← pairA_add, add_zero]
-  have h0 : ψ (pairA F 0 0) = 1 := ψ.map_zero_eq_one
-  have key : ∀ r : 𝓞 F, ∃ c : ℚ, ∀ q : ℚ, ψ (pairA F (algebraMap F _ (q • (r : F))) 0) =
-      Complex.exp (2 * Real.pi * Complex.I * ((q * c : ℚ) : ℂ)) := fun r => by
-    obtain ⟨c, hc⟩ := exists_eq_exp (fun t => ψ (pairA F (ρ t * algebraMap F _ (r : F)) 0))
-      (hψ.1.comp ((hρ.mul continuous_const).prodMk continuous_const)) (fun t => hψ.2.1 _)
-      (by simp only [map_zero, zero_mul, h0]) (fun s t => by simp only [map_add (f := _), add_mul, hadd])
-    have hq : ∀ q : ℚ, ψ (pairA F (algebraMap F _ ((q : F) * (r : F))) 0) =
-        Complex.exp (2 * Real.pi * Complex.I * ((c * q : ℝ) : ℂ)) := fun q => by
-      rw [← hc, hρq, map_mul]
-    have h1 := hq N
-    rw [Rat.cast_natCast, hNr, eq_comm, Complex.exp_eq_one_iff] at h1
-    obtain ⟨n, hn⟩ := h1
-    rw [mul_comm (n : ℂ), mul_right_inj' Complex.two_pi_I_ne_zero] at hn
-    have hN' : (N : ℂ) ≠ 0 := Nat.cast_ne_zero.2 hN.ne'
-    refine ⟨n / N, fun q => ?_⟩
-    rw [Rat.smul_def, hq]
-    congr 2
-    push_cast at hn ⊢
-    rw [← hn]
-    field_simp
-  choose c hc using key
-  let b := integralBasis F
-  let φ : F →ₗ[ℚ] ℚ := b.constr ℚ fun i => c (RingOfIntegers.basis F i)
-  obtain ⟨a, ha⟩ := ((Algebra.traceForm ℚ F).toDual (traceForm_nondegenerate ℚ F)).surjective φ
-  have ha' : ∀ x, Algebra.trace ℚ F (a * x) = φ x := fun x => by
-    rw [← ha]; rfl
-  refine ⟨a, fun x => ?_⟩
-  rw [ha', ← b.sum_repr x]
-  refine Finset.sum_induction _ (fun y : F => ψ (pairA F (algebraMap F _ y) 0) =
-    Complex.exp (2 * Real.pi * Complex.I * ((φ y : ℚ) : ℂ))) (fun y z hy hz => ?_) ?_ fun i _ => ?_
-  · rw [map_add (f := _), hadd, hy, hz, map_add (f := _), ← Complex.exp_add]
-    congr 1
-    push_cast
-    ring
-  · simp only [map_zero, h0, Rat.cast_zero, mul_zero, Complex.exp_zero]
-  · rw [map_smul φ, Module.Basis.constr_basis, smul_eq_mul, ← hc, integralBasis_apply]
+  first | exact _root_.GlobalTheory.CompanionTheory.AdeleCharLocal.exists_trace | exact @_root_.GlobalTheory.CompanionTheory.AdeleCharLocal.exists_trace | apply _root_.GlobalTheory.CompanionTheory.AdeleCharLocal.exists_trace <;> assumption
 
 theorem trace_mul_ne_zero {ψ : AddChar (AF F) ℂ} (hψ : IsCharAF F ψ) {a : F}
     (h : ∀ x : F, ψ (pairA F (algebraMap F _ x) 0) =
-      Complex.exp (2 * Real.pi * Complex.I * ((Algebra.trace ℚ F (a * x) : ℚ) : ℂ))) : a ≠ 0 := by
-  rintro rfl
-  obtain ⟨x, hx⟩ := hψ.2.2.2
-  refine hx (ext_of_inf (ψ' := fun _ => 1) hψ.1 continuous_const ψ.map_add_eq_mul (fun _ _ => by simp)
-    hψ.2.2.1 (fun _ => rfl) (fun y => by simp [h]) x)
+      Complex.exp (2 * Real.pi * Complex.I * ((Algebra.trace ℚ F (a * x) : ℚ) : ℂ))) : a ≠ 0 :=
+  _root_.GlobalTheory.CompanionTheory.AdeleCharLocal.trace_mul_ne_zero hψ h
 
 theorem exists_mul_eq : ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (ψ ψ' : AddChar (AF F) ℂ), IsCharAF F ψ → IsCharAF F ψ' → ∃ a : F, a ≠ 0 ∧ ∀ x, ψ' x = ψ (algebraMap F (AF F) a * x) := by
   intro F _ _ _ ψ ψ' hψ hψ'

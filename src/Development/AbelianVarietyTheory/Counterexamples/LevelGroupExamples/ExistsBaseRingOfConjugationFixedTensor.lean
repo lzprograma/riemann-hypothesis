@@ -47,8 +47,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.DetRootRows
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem exists_baseRing_of_conjugation_fixed_tensor {F E R : Type} [Field F] [CharZero F] [Field E] [Algebra F E] [CommRing R] [Algebra F R]

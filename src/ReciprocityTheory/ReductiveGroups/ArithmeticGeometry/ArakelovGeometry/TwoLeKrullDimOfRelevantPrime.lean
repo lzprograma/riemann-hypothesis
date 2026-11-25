@@ -28,10 +28,4 @@ theorem krullDim_quotient_add_one_le {p q : Ideal R} [p.IsPrime] [q.IsPrime]
 
 end Dim
 
-section Kill
-
-variable {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} [∀ k, Fintype (ι k)]
-
-end Kill
-
 end ReciprocityTheory.ChartRestriction.G.ArakelovGeometry

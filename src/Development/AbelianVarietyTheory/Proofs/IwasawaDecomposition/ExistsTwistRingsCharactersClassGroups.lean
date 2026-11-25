@@ -306,7 +306,7 @@ theorem exists_low : ∀ (D : D7), ∃ c0 : Big D, ∀ (l : ℕ) [Fact l.Prime] 
       have hmem : w ∈ (placesOver_finite' D.host.E l (Fact.out : l.Prime).ne_zero).toFinset := by simpa using hw
       exact le_iSup₂ (f := fun w (_ : w ∈ (placesOver_finite' D.host.E l (Fact.out : l.Prime).ne_zero).toFinset) =>
         (bridgeLow D l w).1) w hmem
-    have e : bridgeLow D l w = (Classical.choose_spec hex).choose := dif_pos hw
+    have e : bridgeLow D l w = (Classical.choose_spec hex).choose := dite_eq_left hw
     have hL' : (Classical.choose_spec hex).choose.1 ≤ K0.1 := e ▸ hL
     obtain ⟨Bw, hBj, -⟩ := hspec.2 K0 hL'
     exact ⟨Bw, fun x => by rw [hBj]; exact hspec.1 x⟩
@@ -368,8 +368,6 @@ section -- clump:auto
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2.Host Formalism.L2.NT Formalism.L2.TwC GlobalTheory.HeightCounting NumberField IsDedekindDomain Polynomial GlobalTheory.GalChar Neutral.B1 ReciprocityTheory.Neutral.Bridge.HCFR GlobalTheory.HeckeGal
-
-set_option autoImplicit false
 
 namespace GlobalTheory.AlgClosedIsoOverNumberField
 
@@ -694,7 +692,7 @@ theorem exists_ringSpec (hA : GlobalTheory.Published.GlobalArtinReciprocity) : �
   let C : GlobalTheory.Mem.Chr.HFrame D.host (fun j => eExp D j) :=
     ⟨cf.P, cf.W, cf.mu0, cf.eta, cf.chiPsi, cf.del, cf.del', cf.isMu0, cf.isEta, cf.isChi, cf.isDel, cf.isDel'⟩
   have hGal := galois_characters_of_artin D.R D.host D.nd.Om cc hcc (fun j => eExp D j) hE C D.nd.g_split art ha
-  have hTw := hGal.1
+  have hTw := hGal
 
   let φ : ∀ w, FractionRing ↥(Loc.OL (K0 w)) ≃ₐ[↥(Loc.OL (K0 w))] ↥(K0 w).1 := fun w =>
     IsLocalization.algEquiv (nonZeroDivisors ↥(Loc.OL (K0 w))) (FractionRing ↥(Loc.OL (K0 w))) ↥(K0 w).1
@@ -955,7 +953,7 @@ theorem exists_ringSpec (hA : GlobalTheory.Published.GlobalArtinReciprocity) : �
         intro x
         cases b
         · rw [sideIso_false]
-          simp only [Bool.false_eq_true, if_false]
+          simp only [Bool.false_eq_true, ite_false]
           rw [hf', Complex.conj_conj]
         · exact hf s x
       ringSpec_sidedEmbedding_fixedField := fun s b x y h => by

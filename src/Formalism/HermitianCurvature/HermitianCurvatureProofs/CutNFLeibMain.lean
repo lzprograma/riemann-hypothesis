@@ -9,52 +9,8 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopDomP
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFLeibAsm
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFLeibExp
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Linter.Style
 import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
@@ -76,8 +32,6 @@ noncomputable section
 namespace Formalism.FourierDecayAlt.P.CutBP
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 section bd
 
@@ -238,14 +192,8 @@ theorem nfLeibOps_hsInner_smul_left (c : ℂ) (A B' : Wq →L[ℂ] Wp) : B.hsInn
   unfold B.hsInner
   rw [nfLeibOps_hsVec_smul, inner_smul_right]
 
-theorem nfLeibOps_hsInner_smul_right (c : ℂ) (A B' : Wq →L[ℂ] Wp) :
-    B.hsInner A (c • B') = conj c * B.hsInner A B' := by
-  unfold B.hsInner
-  rw [nfLeibOps_hsVec_smul, inner_smul_left]
-
 def nfLeibOps_sc (Bs : B.RealPlaceData k r Wp Wq) (t : ℕ × (B.Mat k r → ℂ) × ℕ × List (B.Mat k r)) (g : B.Mat k r) : ℂ :=
   t.2.1 g * ((Gf k r Bs.z Bs.z' g : ℝ) : ℂ)⁻¹ ^ t.2.2.1
-
 
 open Classical in
 def nfLeibOps_mk (Bs : B.RealPlaceData k r Wp Wq) (T : B.DTerm k r Wp Wq)
@@ -259,7 +207,7 @@ def nfLeibOps_mk (Bs : B.RealPlaceData k r Wp Wq) (T : B.DTerm k r Wp Wq)
     · simp
   adj_id x A B' := by
     simp only [ContinuousLinearMap.smul_apply]
-    rw [nfLeibOps_hsInner_smul_left, nfLeibOps_hsInner_smul_right, T.adj_id, Complex.conj_conj]
+    rw [nfLeibOps_hsInner_smul_left, Formalism.FourierDecayAlt.P.B5.hs_smul_right, T.adj_id, Complex.conj_conj]
 
 theorem nfLeibOps_ckOn_smul {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {UU : Set (B.Mat k r)}
     {c : B.Mat k r → ℂ} {f : B.Mat k r → E} (hc : B.CkOn ⊤ UU c) (hf : B.CkOn ⊤ UU f) :
@@ -360,7 +308,7 @@ theorem nfLeibOps_of (hE : NFLeibExp) : NFLeibOps := by
     refine ⟨T, hT, t.2.1, t.2.2.1, hP, ?_, fun g _ => rfl⟩
     have hlie : ∀ X ∈ t.2.2.2, B.inLie k r X := fun X hX => T.word_lie X (hsub.subset hX)
     simp only [nfLeibOps_mk]
-    rw [if_pos hlie]
+    rw [ite_eq_left hlie]
     exact hsub
   ·
     intro Ψ hΨ F hF x hx
@@ -385,7 +333,7 @@ theorem nfLeibOps_of (hE : NFLeibExp) : NFLeibOps := by
       refine congrArg List.sum (List.map_congr_left fun t ht => ?_)
       have htm : t ∈ terms T := (List.mem_filter.1 ht).1
       have hlie : ∀ X ∈ t.2.2.2, B.inLie k r X := fun X hX => T.word_lie X (((hspec T).1 t htm).2.2.subset hX)
-      simp only [Function.comp_apply, nfLeibOps_mk, if_pos hlie, ContinuousLinearMap.smul_apply]
+      simp only [Function.comp_apply, nfLeibOps_mk, ite_eq_left hlie, ContinuousLinearMap.smul_apply]
     have hall : ∀ D' : B.DiffOp k r Wp Wq, (∀ T ∈ D', T ∈ Dop) →
         B.opApply D' (fun y => ((Ψ 0 (Gf k r Bs.z Bs.z' y) : ℝ) : ℂ) • F y) x =
           ∑ q : Fin (Q + 1), ((Ψ q (Gf k r Bs.z Bs.z' x) : ℝ) : ℂ) • B.opApply (D'.flatMap fun T => LT T q) F x := by
@@ -438,9 +386,9 @@ theorem vector_linearity_holds : NFVLin := by
   intro k r Wp Wq _ _ _ _ _ _ Bs ν' m₀ Q c H Hq A hA hcont hdec hH pt hpt hGPoint
   unfold D.vecV
   have h : D.IsLocPt pt (r + 1) ∧ 0 < D.ptG (Tz k r Bs.z * Tz k r Bs.z') r pt := ⟨hpt, hGPoint⟩
-  simp only [dif_pos h]
+  simp only [dite_eq_left h]
   by_cases h' : ∃ γ ∈ B.GV k r, Zhat k r Bs.z Bs.z' γ = D.ptMatN pt (r + 1) ∧ D.IsDFrame Bs ν' m₀ γ
-  · simp only [dif_pos h']
+  · simp only [dite_eq_left h']
     have hγ := h'.choose_spec.1
     have hZ := h'.choose_spec.2.1
     have hGq := Formalism.FourierDecayAlt.P.ptG_spec k r Bs.z Bs.z' pt h'.choose h.1 hZ
@@ -466,7 +414,7 @@ theorem vector_linearity_holds : NFVLin := by
       have hex : ∃ θ', D.IsNormCut Bs h'.choose (D.muR Bs h'.choose (h.1.2 ▸ D.ptPerm pt)) θ' ∧
           Integrable (fun p => θ' p • D.orbIntegrand Bs h'.choose G p) Bs.μSS := ⟨θ, hθ, hi⟩
       unfold D.orbJ
-      rw [dif_pos hex]
+      rw [dite_eq_left hex]
       exact Formalism.FourierDecayAlt.P.orbital_integral_indep_choice k r Wp Wq Bs h'.choose _ hrel hR G _ θ hex.choose_spec.1 hθ
         hex.choose_spec.2 hi
 
@@ -497,7 +445,7 @@ theorem vector_linearity_holds : NFVLin := by
     rw [hEq H hiH, integral_congr_ae hae, integral_finsetSum Finset.univ hint, hGeq]
     refine Finset.sum_congr rfl fun q _ => ?_
     rw [integral_smul, hEq (Hq q) (hiq q)]
-  · simp only [dif_neg h', smul_zero, Finset.sum_const_zero]
+  · simp only [dite_eq_right h', smul_zero, Finset.sum_const_zero]
 
 end
 

@@ -97,41 +97,10 @@ variable {K L}
 
 theorem adjoin_eq_top_of_integer_adjoin_eq_top {x : 𝒪[L]} (hx : Algebra.adjoin 𝒪[K] {x} = ⊤) :
     Algebra.adjoin K {algebraMap 𝒪[L] L x} = ⊤ := by
-  have hle : ∀ z : 𝒪[L], (z : L) ∈ Algebra.adjoin K {algebraMap 𝒪[L] L x} := by
-    intro z
-    have hz : z ∈ Algebra.adjoin 𝒪[K] {x} := by rw [hx]; trivial
-    induction hz using Algebra.adjoin_induction with
-    | mem y hy =>
-      rw [Set.mem_singleton_iff.mp hy]
-      exact Algebra.subset_adjoin rfl
-    | algebraMap r =>
-      rw [coe_algebraMap_integer]
-      exact Subalgebra.algebraMap_mem _ _
-    | add y z _ _ hy hz =>
-      rw [Subring.coe_add]
-      exact add_mem hy hz
-    | mul y z _ _ hy hz =>
-      rw [Subring.coe_mul]
-      exact mul_mem hy hz
   have := isLocalization_integer K L
-  rw [eq_top_iff]
-  intro y _
-  obtain ⟨⟨z, s⟩, hzs⟩ := IsLocalization.surj (Algebra.algebraMapSubmonoid 𝒪[L]
-    (nonZeroDivisors 𝒪[K])) y
-  obtain ⟨c, hc, hcs⟩ := s.2
-  have hc0 : (c : K) ≠ 0 := by
-    have : c ≠ 0 := nonZeroDivisors.ne_zero hc
-    exact_mod_cast this
-  have hy : y = (c : K)⁻¹ • (z : L) := by
-    have h2 : ((s : 𝒪[L]) : L) = algebraMap K L c := by
-      rw [← hcs]
-      rfl
-    simp only at hzs
-    rw [Algebra.smul_def, map_inv₀, ← h2, eq_inv_mul_iff_mul_eq₀]
-    · rw [mul_comm]; exact hzs
-    · rw [h2]; exact (_root_.map_ne_zero _).mpr hc0
-  rw [hy]
-  exact Subalgebra.smul_mem _ (hle z) _
+  rw [← Algebra.toSubmodule_eq_top, Algebra.adjoin_eq_span] at hx ⊢
+  simpa only [← Submonoid.coe_map, MonoidHom.map_mclosure, Set.image_singleton] using
+    span_eq_top_localization_localization K (nonZeroDivisors 𝒪[K]) L hx
 
 section Separable
 

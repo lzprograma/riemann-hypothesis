@@ -49,63 +49,33 @@ open scoped Classical
 
 namespace UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.two_block_test_function_reduce
 
-private def dcs {H : Type} [Group H] (N : Subgroup H) (q : H) : Set H := {x | ∃ a ∈ N, ∃ b ∈ N, x = a * q * b}
-
-private theorem dcs_self {H : Type} [Group H] (N : Subgroup H) (q : H) : q ∈ dcs N q :=
-  ⟨1, N.one_mem, 1, N.one_mem, by simp⟩
-
-private theorem dcs_left {H : Type} [Group H] {N : Subgroup H} {q k x : H} (hk : k ∈ N) :
-    k * x ∈ dcs N q ↔ x ∈ dcs N q := by
-  constructor
-  · rintro ⟨a, ha, b, hb, e⟩
-    exact ⟨k⁻¹ * a, N.mul_mem (N.inv_mem hk) ha, b, hb, by
-      have h1 : x = k⁻¹ * (k * x) := by simp
-      rw [h1, e]; simp [mul_assoc]⟩
-  · rintro ⟨a, ha, b, hb, rfl⟩
-    exact ⟨k * a, N.mul_mem hk ha, b, hb, by simp [mul_assoc]⟩
-
-private theorem dcs_right {H : Type} [Group H] {N : Subgroup H} {q k x : H} (hk : k ∈ N) :
-    x * k ∈ dcs N q ↔ x ∈ dcs N q := by
-  constructor
-  · rintro ⟨a, ha, b, hb, e⟩
-    exact ⟨a, ha, b * k⁻¹, N.mul_mem hb (N.inv_mem hk), by rw [← mul_assoc, ← e]; simp⟩
-  · rintro ⟨a, ha, b, hb, rfl⟩
-    exact ⟨a, ha, b * k, N.mul_mem hb hk, by simp [mul_assoc]⟩
+open DoubleCoset (doubleCoset)
 
 private theorem dcs_eq_of_mem {H : Type} [Group H] {N : Subgroup H} {q : H} (hq : q ∈ N) :
-    dcs N q = (N : Set H) := by
+    doubleCoset q (N : Set H) N = (N : Set H) := by
   ext x
-  constructor
-  · rintro ⟨a, ha, b, hb, rfl⟩
-    exact N.mul_mem (N.mul_mem ha hq) hb
-  · intro hx
-    exact ⟨x * q⁻¹, N.mul_mem hx (N.inv_mem hq), 1, N.one_mem, by simp⟩
+  rw [DoubleCoset.mem_doubleCoset]
+  exact ⟨fun ⟨a, ha, b, hb, e⟩ => e ▸ N.mul_mem (N.mul_mem ha hq) hb,
+    fun hx => ⟨x * q⁻¹, N.mul_mem hx (N.inv_mem hq), 1, N.one_mem, by simp⟩⟩
 
 private theorem ind_inv {H : Type} [Group H] {N : Subgroup H} (q : H) {k : H} (hk : k ∈ N) (x : H) :
-    (dcs N q).indicator (1 : H → ℂ) (k * x) = (dcs N q).indicator 1 x ∧
-      (dcs N q).indicator (1 : H → ℂ) (x * k) = (dcs N q).indicator 1 x := by
-  constructor
-  · by_cases h : x ∈ dcs N q
-    · rw [Set.indicator_of_mem h, Set.indicator_of_mem ((dcs_left hk).2 h)]; rfl
-    · rw [Set.indicator_of_notMem h, Set.indicator_of_notMem (fun h' => h ((dcs_left hk).1 h'))]
-  · by_cases h : x ∈ dcs N q
-    · rw [Set.indicator_of_mem h, Set.indicator_of_mem ((dcs_right hk).2 h)]; rfl
-    · rw [Set.indicator_of_notMem h, Set.indicator_of_notMem (fun h' => h ((dcs_right hk).1 h'))]
+    (doubleCoset q (N : Set H) N).indicator (1 : H → ℂ) (k * x) =
+      (doubleCoset q (N : Set H) N).indicator 1 x ∧
+    (doubleCoset q (N : Set H) N).indicator (1 : H → ℂ) (x * k) =
+      (doubleCoset q (N : Set H) N).indicator 1 x := by
+  have hm : ∀ y, y ∈ doubleCoset q (N : Set H) N ↔ DoubleCoset.mk N N q = DoubleCoset.mk N N y :=
+    fun _ => DoubleCoset.mem_doubleCoset.trans DoubleCoset.eq.symm
+  have hl : k * x ∈ doubleCoset q (N : Set H) N ↔ x ∈ doubleCoset q (N : Set H) N := by
+    rw [hm, hm, DoubleCoset.mk_mem_mul ⟨k, hk⟩ x]
+  have hr : x * k ∈ doubleCoset q (N : Set H) N ↔ x ∈ doubleCoset q (N : Set H) N := by
+    rw [hm, hm, DoubleCoset.mk_mul_mem ⟨k, hk⟩ x]
+  simp [Set.indicator, hl, hr]
 
-private theorem dcs_hecke {H : Type} [Group H] [TopologicalSpace H] [IsTopologicalGroup H] {N : Subgroup H}
-    (hc : IsCompact (N : Set H)) (q : H) : IsHecke N ((dcs N q).indicator (1 : H → ℂ)) := by
-  refine ⟨?_, fun k hk x => ind_inv q hk x⟩
-  have hcomp : IsCompact (dcs N q) := by
-    have : dcs N q = (fun p : H × H => p.1 * q * p.2) '' ((N : Set H) ×ˢ (N : Set H)) := by
-      ext x
-      constructor
-      · rintro ⟨a, ha, b, hb, rfl⟩
-        exact ⟨(a, b), ⟨ha, hb⟩, rfl⟩
-      · rintro ⟨⟨a, b⟩, ⟨ha, hb⟩, rfl⟩
-        exact ⟨a, ha, b, hb, rfl⟩
-    rw [this]
-    exact (hc.prod hc).image (by fun_prop)
-  exact HasCompactSupport.intro hcomp fun x hx => Set.indicator_of_notMem hx _
+private theorem dcs_hecke {H : Type} [Group H] [TopologicalSpace H] [IsTopologicalGroup H]
+    {N : Subgroup H} (hc : IsCompact (N : Set H)) (q : H) :
+    IsHecke N ((doubleCoset q (N : Set H) N).indicator (1 : H → ℂ)) :=
+  ⟨HasCompactSupport.intro (by rw [doubleCoset]; exact (hc.mul isCompact_singleton).mul hc)
+    fun x hx => Set.indicator_of_notMem hx _, fun k hk x => ind_inv q hk x⟩
 
 section Abs
 
@@ -143,8 +113,8 @@ section Gen
 variable {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ G V) (K : Subgroup G)
 
 private theorem gen_ind [TopologicalSpace G] [IsTopologicalGroup G] (hK : IsOpen (K : Set G)) (Wm : Submodule ℂ V)
-    (Hg : ∀ g, IsHecke K ((dcs K g).indicator (1 : G → ℂ)) ∧
-      ∀ y ∈ Wm, Lv ρ K ((dcs K g).indicator (1 : G → ℂ)) y ∈ Wm) :
+    (Hg : ∀ g, IsHecke K ((doubleCoset g (K : Set G) K).indicator (1 : G → ℂ)) ∧
+      ∀ y ∈ Wm, Lv ρ K ((doubleCoset g (K : Set G) K).indicator (1 : G → ℂ)) y ∈ Wm) :
     ∀ m : ℕ, ∀ h : G → ℂ, (∀ k ∈ K, ∀ x, h (k * x) = h x ∧ h (x * k) = h x) → (cs K h).Finite →
       (cs K h).ncard = m → ∀ y ∈ Wm, Lv ρ K h y ∈ Wm := by
   intro m
@@ -165,12 +135,15 @@ private theorem gen_ind [TopologicalSpace G] [IsTopologicalGroup G] (hK : IsOpen
   · obtain ⟨q, hq⟩ := Set.nonempty_iff_ne_empty.2 hemp
     obtain ⟨g, hg⟩ : ∃ g, g = q.out := ⟨_, rfl⟩
     obtain ⟨c, hc⟩ : ∃ c, c = h g := ⟨_, rfl⟩
-    obtain ⟨e, he⟩ : ∃ e, e = (dcs K g).indicator (1 : G → ℂ) := ⟨_, rfl⟩
-    have hconst : ∀ x ∈ dcs K g, h x = c := by
-      rintro x ⟨a, ha, b, hb, rfl⟩
+    obtain ⟨e, he⟩ : ∃ e, e = (doubleCoset g (K : Set G) K).indicator (1 : G → ℂ) := ⟨_, rfl⟩
+    have hconst : ∀ x ∈ doubleCoset g (K : Set G) K, h x = c := by
+      intro x hx
+      obtain ⟨a, ha, b, hb, rfl⟩ := DoubleCoset.mem_doubleCoset.1 hx
       rw [(hinv b hb _).2, (hinv a ha _).1, hc]
-    have he1 : ∀ x ∈ dcs K g, e x = 1 := fun x hx => by rw [he, Set.indicator_of_mem hx]; rfl
-    have he0 : ∀ x, x ∉ dcs K g → e x = 0 := fun x hx => by rw [he, Set.indicator_of_notMem hx]
+    have he1 : ∀ x ∈ doubleCoset g (K : Set G) K, e x = 1 := fun x hx => by
+      rw [he, Set.indicator_of_mem hx]; rfl
+    have he0 : ∀ x, x ∉ doubleCoset g (K : Set G) K → e x = 0 := fun x hx => by
+      rw [he, Set.indicator_of_notMem hx]
     have hcs : (cs K e).Finite := by
       rw [he]
       exact cs_finite K hK (Hg g).1.1
@@ -178,7 +151,7 @@ private theorem gen_ind [TopologicalSpace G] [IsTopologicalGroup G] (hK : IsOpen
     have hsub : cs K h' ⊆ cs K h := by
       intro q' hq' h0
       refine hq' ?_
-      have hn : q'.out ∉ dcs K g := fun hx => by
+      have hn : q'.out ∉ doubleCoset g (K : Set G) K := fun hx => by
         have := hconst _ hx
         have hc0 : c ≠ 0 := by rw [hc, hg]; exact hq
         exact hc0 (this.symm.trans h0)
@@ -188,7 +161,7 @@ private theorem gen_ind [TopologicalSpace G] [IsTopologicalGroup G] (hK : IsOpen
       refine h0 ?_
       rw [← hg]
       simp only [h']
-      rw [he1 g (dcs_self K g), ← hc]
+      rw [he1 g (DoubleCoset.mem_doubleCoset_self K K g), ← hc]
       ring
     have hfin' : (cs K h').Finite := hfin.subset hsub
     have hlt : (cs K h').ncard < m := by
@@ -210,8 +183,9 @@ private theorem gen_ind [TopologicalSpace G] [IsTopologicalGroup G] (hK : IsOpen
     exact (Hg g).2 y hy
 
 private theorem gen_abs [TopologicalSpace G] [IsTopologicalGroup G] (hK : IsOpen (K : Set G)) (Wm : Submodule ℂ V)
-    (Hg : ∀ g, IsHecke K ((dcs K g).indicator (1 : G → ℂ)) ∧
-      ∀ y ∈ Wm, Lv ρ K ((dcs K g).indicator (1 : G → ℂ)) y ∈ Wm) {h : G → ℂ} (hh : IsHecke K h) :
+    (Hg : ∀ g, IsHecke K ((doubleCoset g (K : Set G) K).indicator (1 : G → ℂ)) ∧
+      ∀ y ∈ Wm, Lv ρ K ((doubleCoset g (K : Set G) K).indicator (1 : G → ℂ)) y ∈ Wm)
+    {h : G → ℂ} (hh : IsHecke K h) :
     ∀ y ∈ Wm, Lv ρ K h y ∈ Wm :=
   gen_ind ρ K hK Wm Hg _ h hh.2 (cs_finite K hK hh.1) rfl
 
@@ -246,14 +220,16 @@ private theorem exists_elt {S : Set (Pl E)}
 private theorem mem_dcs_of_positions {S : Set (Pl E)} {N : ∀ w : Pl E, Subgroup (GLw n w)}
     (hqj : ∀ (w : Pl E) b a, qw n w b (jw n w b a) = a)
     (hsep : ∀ i k, Sl S i → Sl S k → i ≠ k → ∀ a, qw n k.1 k.2 (jw n i.1 i.2 a) = 1)
-    (g x : GF E n) (hx : ∀ i : Pl E × Bool, Sl S i → qw n i.1 i.2 x ∈ dcs (N i.1) (qw n i.1 i.2 g))
+    (g x : GF E n)
+    (hx : ∀ i : Pl E × Bool, Sl S i →
+      qw n i.1 i.2 x ∈ doubleCoset (qw n i.1 i.2 g) (N i.1 : Set _) (N i.1))
     (hfin : {i : Pl E × Bool | Sl S i ∧ (qw n i.1 i.2 x ∉ N i.1 ∨ qw n i.1 i.2 g ∉ N i.1)}.Finite) :
-    x ∈ dcs (Lev S N) g := by
+    x ∈ doubleCoset g (Lev S N : Set _) (Lev S N) := by
   have hch : ∀ i : Pl E × Bool, ∃ a b : GLw n i.1, Sl S i → a ∈ N i.1 ∧ b ∈ N i.1 ∧
       qw n i.1 i.2 x = a * qw n i.1 i.2 g * b := by
     intro i
     by_cases hi : Sl S i
-    · obtain ⟨a, ha, b, hb, e⟩ := hx i hi
+    · obtain ⟨a, ha, b, hb, e⟩ := DoubleCoset.mem_doubleCoset.1 (hx i hi)
       exact ⟨a, b, fun _ => ⟨ha, hb, e⟩⟩
     · exact ⟨1, 1, fun h => absurd h hi⟩
   choose A B hAB using hch
@@ -274,14 +250,15 @@ private theorem mem_dcs_of_positions {S : Set (Pl E)} {N : ∀ w : Pl E, Subgrou
     simp only [map_mul, map_inv]
     rw [hc i hi, hd i hi]
     by_cases hiJ : i ∈ hfin.toFinset
-    · rw [if_pos hiJ, if_pos hiJ, (hAB i hi).2.2]
+    · rw [ite_eq_left hiJ, ite_eq_left hiJ, (hAB i hi).2.2]
       simp [mul_assoc, (N i.1).one_mem]
-    · rw [if_neg hiJ, if_neg hiJ]
+    · rw [ite_eq_right hiJ, ite_eq_right hiJ]
       have hn : ¬ (qw n i.1 i.2 x ∉ N i.1 ∨ qw n i.1 i.2 g ∉ N i.1) := fun h =>
         hiJ ((hfin.mem_toFinset).2 ⟨hi, h⟩)
-      push_neg at hn
+      push Not at hn
       simpa using (N i.1).mul_mem ((N i.1).inv_mem hn.2) hn.1
-  exact ⟨c, hcL, (g⁻¹ * c⁻¹ * x * d⁻¹) * d, (Lev S N).mul_mem hkL hdL, by simp [mul_assoc]⟩
+  exact DoubleCoset.mem_doubleCoset.2
+    ⟨c, hcL, (g⁻¹ * c⁻¹ * x * d⁻¹) * d, (Lev S N).mul_mem hkL hdL, by simp [mul_assoc]⟩
 
 private theorem bad_finite {Z : Finset (Pl E)} {S : Set (Pl E)} {N : ∀ w : Pl E, Subgroup (GLw n w)} (hG : Good Z N)
     (hbad : ∀ g : GF E n, {i : Pl E × Bool | qw n i.1 i.2 g ∉ KGL i.1 (n := n)}.Finite) (x g : GF E n) :
@@ -297,14 +274,16 @@ private theorem pf_eq {Z : Finset (Pl E)} {S : Set (Pl E)} {N : ∀ w : Pl E, Su
     (hqj : ∀ (w : Pl E) b a, qw n w b (jw n w b a) = a)
     (hsep : ∀ i k, Sl S i → Sl S k → i ≠ k → ∀ a, qw n k.1 k.2 (jw n i.1 i.2 a) = 1)
     (hbad : ∀ g : GF E n, {i : Pl E × Bool | qw n i.1 i.2 g ∉ KGL i.1 (n := n)}.Finite) (g : GF E n) :
-    pf S (fun w b => (dcs (N w) (qw n w b g)).indicator (1 : GLw n w → ℂ)) =
-      (dcs (Lev S N) g).indicator (1 : GF E n → ℂ) := by
+    pf S (fun w b => (doubleCoset (qw n w b g) (N w : Set _) (N w)).indicator (1 : GLw n w → ℂ)) =
+      (doubleCoset g (Lev S N : Set _) (Lev S N)).indicator (1 : GF E n → ℂ) := by
   funext x
-  by_cases hx : x ∈ dcs (Lev S N) g
+  by_cases hx : x ∈ doubleCoset g (Lev S N : Set _) (Lev S N)
   · rw [Set.indicator_of_mem hx]
-    obtain ⟨a, ha, b, hb, rfl⟩ := hx
-    have hs : ∀ i : Pl E × Bool, Sl S i → qw n i.1 i.2 (a * g * b) ∈ dcs (N i.1) (qw n i.1 i.2 g) :=
-      fun i hi => ⟨_, mem_Lev.1 ha i hi, _, mem_Lev.1 hb i hi, by simp⟩
+    obtain ⟨a, ha, b, hb, rfl⟩ := DoubleCoset.mem_doubleCoset.1 hx
+    have hs : ∀ i : Pl E × Bool, Sl S i →
+        qw n i.1 i.2 (a * g * b) ∈ doubleCoset (qw n i.1 i.2 g) (N i.1 : Set _) (N i.1) :=
+      fun i hi => DoubleCoset.mem_doubleCoset.2
+        ⟨_, mem_Lev.1 ha i hi, _, mem_Lev.1 hb i hi, by simp⟩
     unfold pf
     refine finprod_mem_of_eqOn_one fun w hw => ?_
     have h1 := hs (w, false) ⟨hw, by simp⟩
@@ -315,9 +294,9 @@ private theorem pf_eq {Z : Finset (Pl E)} {S : Set (Pl E)} {N : ∀ w : Pl E, Su
       simp
     · simp
   · rw [Set.indicator_of_notMem hx]
-    obtain ⟨i, hi, hix⟩ : ∃ i : Pl E × Bool, Sl S i ∧ qw n i.1 i.2 x ∉ dcs (N i.1) (qw n i.1 i.2 g) := by
-      by_contra hn
-      push_neg at hn
+    obtain ⟨i, hi, hix⟩ : ∃ i : Pl E × Bool, Sl S i ∧
+        qw n i.1 i.2 x ∉ doubleCoset (qw n i.1 i.2 g) (N i.1 : Set _) (N i.1) := by
+      by_contra! hn
       exact hx (mem_dcs_of_positions hqj hsep g x hn (bad_finite hG hbad x g))
     unfold pf
     rw [finprod_mem_def]
@@ -333,7 +312,7 @@ private theorem pf_eq {Z : Finset (Pl E)} {S : Set (Pl E)} {N : ∀ w : Pl E, Su
         have hsp : GlobalTheory.UnitaryBC.IsSplitAt w := hi.2 rfl
         simp only at hix
         simp only
-        rw [if_pos hsp, Set.indicator_of_notMem hix, mul_zero]
+        rw [ite_eq_left hsp, Set.indicator_of_notMem hix, mul_zero]
     · refine ((Z.finite_toSet).union
         (((hbad x).union (hbad g)).image fun i : Pl E × Bool => i.1)).subset ?_
       intro w hw
@@ -350,7 +329,8 @@ private theorem pf_eq {Z : Finset (Pl E)} {S : Set (Pl E)} {N : ∀ w : Pl E, Su
           exact hT (Or.inr ⟨(w, b), Or.inr h, rfl⟩)
       by_cases hwS : w ∈ S
       · rw [Set.mulIndicator_of_mem hwS]
-        have hv : ∀ b, (dcs (N w) (qw n w b g)).indicator (1 : GLw n w → ℂ) (qw n w b x) = 1 := by
+        have hv : ∀ b, (doubleCoset (qw n w b g) (N w : Set _) (N w)).indicator
+            (1 : GLw n w → ℂ) (qw n w b x) = 1 := by
           intro b
           rw [dcs_eq_of_mem (hK b).2, Set.indicator_of_mem (hK b).1]
           rfl
@@ -398,7 +378,8 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.genLoc_pf :
   refine gen_abs (finRep E n) (Lev S N) hop W (fun g => ?_) hh y hy
   have hfin : {i : Pl E × Bool | Sl S i ∧ qw n i.1 i.2 g ∉ N i.1}.Finite :=
     (bad_finite hG hbad g g).subset fun i hi => ⟨hi.1, Or.inl hi.2⟩
-  have hFam : Fam S N hfin.toFinset (fun w b => (dcs (N w) (qw n w b g)).indicator (1 : GLw n w → ℂ)) := by
+  have hFam : Fam S N hfin.toFinset (fun w b =>
+      (DoubleCoset.doubleCoset (qw n w b g) (N w : Set _) (N w)).indicator (1 : GLw n w → ℂ)) := by
     refine ⟨fun i hi => ?_, fun i hi hnI => ?_⟩
     · have hi' := ((hfin.mem_toFinset).1 hi).1
       exact ⟨hi', dcs_hecke (hNc i hi') _⟩

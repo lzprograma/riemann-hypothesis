@@ -61,9 +61,9 @@ theorem ES_split (S : Set (Tup2 D)) : ES S = ∑ t ∈ (labT (D := D)).filter (�
     refine Finset.sum_congr rfl fun a _ => ?_
     by_cases h1 : tupOf a ∈ S
     · by_cases h2 : tupOf a ∈ labT (D := D)
-      · rw [if_pos h1, if_pos ⟨h1, h2⟩]
-      · rw [if_pos h1, if_neg (fun h => h2 h.2), Ea_zero a h2]
-    · rw [if_neg h1, if_neg (fun h => h1 h.1)]
+      · rw [ite_eq_left h1, ite_eq_left ⟨h1, h2⟩]
+      · rw [ite_eq_left h1, ite_eq_right (fun h => h2 h.2), Ea_zero a h2]
+    · rw [ite_eq_right h1, ite_eq_right (fun h => h1 h.1)]
   rw [e1, ← Finset.sum_fiberwise_of_maps_to (g := tupOf) (t := (labT (D := D)).filter (· ∈ S)) (fun a ha => by
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha ⊢
     exact ⟨ha.2, ha.1⟩)]
@@ -219,7 +219,7 @@ theorem finrank_map_sum {ι : Type} [DecidableEq ι] (Q : ι → V →ₗ[ℂ] V
       have := congrArg (fun L : V →ₗ[ℂ] V => L x)
         (hQ t (Finset.mem_insert_self t F) i (Finset.mem_insert_of_mem hi))
       simp only [LinearMap.comp_apply] at this
-      rw [this, if_neg (fun (h : t = i) => ht (h ▸ hi))]
+      rw [this, ite_eq_right (fun (h : t = i) => ht (h ▸ hi))]
       rfl
     have hFt : ∀ x, QF (Q t x) = 0 := fun x => by
       rw [hQF, LinearMap.sum_apply]
@@ -227,7 +227,7 @@ theorem finrank_map_sum {ι : Type} [DecidableEq ι] (Q : ι → V →ₗ[ℂ] V
       have := congrArg (fun L : V →ₗ[ℂ] V => L x)
         (hQ i (Finset.mem_insert_of_mem hi) t (Finset.mem_insert_self t F))
       simp only [LinearMap.comp_apply] at this
-      rw [this, if_neg (fun (h : i = t) => ht (h ▸ hi))]
+      rw [this, ite_eq_right (fun (h : i = t) => ht (h ▸ hi))]
       rfl
     have hFF : ∀ x, QF (QF x) = QF x := fun x => by
       rw [hQF]
@@ -240,7 +240,7 @@ theorem finrank_map_sum {ι : Type} [DecidableEq ι] (Q : ι → V →ₗ[ℂ] V
       · intro j hj hji
         have := congrArg (fun L : V →ₗ[ℂ] V => L x) (hQ' j hj i hi)
         simp only [LinearMap.comp_apply] at this
-        rw [this, if_neg hji]; rfl
+        rw [this, ite_eq_right hji]; rfl
       · intro h; exact absurd hi h
     have hWF : ∀ x ∈ W, QF x ∈ W := fun x hx => by
       rw [hQF, LinearMap.sum_apply]; exact Submodule.sum_mem _ fun i hi => hW' i hi x hx

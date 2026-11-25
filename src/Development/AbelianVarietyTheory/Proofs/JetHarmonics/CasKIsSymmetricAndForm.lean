@@ -57,8 +57,8 @@ theorem inner_casK_eq_sum {M : Type} [NormedAddCommGroup M] [InnerProductSpace �
   simp only [LinearMap.sum_apply, inner_sum]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   by_cases hab : ε a = ε b
-  · rw [if_pos hab.symm, if_pos hab, Module.End.mul_apply, h a b hab]
-  · rw [if_neg (fun e => hab e.symm), if_neg hab]
+  · rw [ite_eq_left hab.symm, ite_eq_left hab, Module.End.mul_apply, h a b hab]
+  · rw [ite_eq_right (fun e => hab e.symm), ite_eq_right hab]
     simp
 
 theorem casK_isSymmetric_and_form :

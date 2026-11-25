@@ -1,6 +1,7 @@
 module
 
 public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.IsDiscriminantTwelfthRootOfIdealLattice
+import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThIndep
 import Mathlib.NumberTheory.NumberField.ClassNumber
 public import Mathlib.RingTheory.ClassGroup.Basic
 
@@ -40,28 +41,22 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Fo
 
 variable (D : D7)
 
-theorem star_conj (x : D.host.E) : (letI := D.host.cmStar; star x) = D.host.conj x := by
-  have := D.host.isCMField_hostE
-  apply D.host.φ₀.injective
-  change D.host.φ₀ (NumberField.IsCMField.complexConj D.host.E x) = D.host.φ₀ (D.host.conj x)
-  rw [NumberField.IsCMField.complexEmbedding_complexConj]
-  exact (D.host.conjE_apply D.host.φ₀ x).symm
+theorem star_conj (x : D.host.E) : (letI := D.host.cmStar; star x) = D.host.conj x :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.CU.star_conj (Formalism.L2.Ker.Car.ofRec D) x
 
 theorem emb_conj (φ : D.host.E →+* ℂ) (x : D.host.E) :
     φ (D.host.conj x) = starRingEnd ℂ (φ x) :=
-  D.host.conjE_apply φ x
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.CU.emb_conj (Formalism.L2.Ker.Car.ofRec D) φ x
 
-theorem conj_conj (x : D.host.E) : D.host.conj (D.host.conj x) = x := by
-  apply D.host.φ₀.injective
-  rw [emb_conj, emb_conj, Complex.conj_conj]
+theorem conj_conj (x : D.host.E) : D.host.conj (D.host.conj x) = x :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.CU.conj_conj (Formalism.L2.Ker.Car.ofRec D) x
 
 def conjO (r : 𝓞 D.host.E) : 𝓞 D.host.E :=
   ⟨D.host.conj r, r.isIntegral_coe.map (D.host.conj : D.host.E →+* D.host.E).toIntAlgHom⟩
 
 theorem conj_smul (r : 𝓞 D.host.E) (x : D.host.E) :
-    D.host.conj (r • x) = conjO D r • D.host.conj x := by
-  rw [Algebra.smul_def, Algebra.smul_def, map_mul]
-  rfl
+    D.host.conj (r • x) = conjO D r • D.host.conj x :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.CU.conj_smul (Formalism.L2.Ker.Car.ofRec D) r x
 
 def cS (𝔞 : IdE D) : IdE D where
   carrier := {x | D.host.conj x ∈ 𝔞}
@@ -74,25 +69,8 @@ def cS (𝔞 : IdE D) : IdE D where
 
 theorem mem_cS (𝔞 : IdE D) (x : D.host.E) : x ∈ cS D 𝔞 ↔ D.host.conj x ∈ 𝔞 := Iff.rfl
 
-theorem cS_mul (𝔞 𝔟 : IdE D) : cS D (𝔞 * 𝔟) = cS D 𝔞 * cS D 𝔟 := by
-  apply le_antisymm
-  · intro x hx
-    have key : ∀ w ∈ 𝔞 * 𝔟, D.host.conj w ∈ cS D 𝔞 * cS D 𝔟 := by
-      intro w hw
-      refine Submodule.mul_induction_on hw ?_ ?_
-      · intro a ha b hb
-        rw [map_mul]
-        exact Submodule.mul_mem_mul (by rw [mem_cS, conj_conj]; exact ha)
-          (by rw [mem_cS, conj_conj]; exact hb)
-      · intro u v hu hv; rw [map_add]; exact add_mem hu hv
-    have := key _ hx
-    rwa [conj_conj] at this
-  · intro x hx
-    refine Submodule.mul_induction_on hx ?_ ?_
-    · intro a ha b hb
-      show D.host.conj (a * b) ∈ 𝔞 * 𝔟
-      rw [map_mul]; exact Submodule.mul_mem_mul ha hb
-    · intro u v hu hv; exact add_mem hu hv
+theorem cS_mul (𝔞 𝔟 : IdE D) : cS D (𝔞 * 𝔟) = cS D 𝔞 * cS D 𝔟 :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.CU.cS_mul (Formalism.L2.Ker.Car.ofRec D) 𝔞 𝔟
 
 theorem cS_one : cS D 1 = 1 := by
   ext x
@@ -113,28 +91,16 @@ theorem cS_pow (𝔞 : IdE D) (k : ℕ) : cS D (𝔞 ^ k) = cS D 𝔞 ^ k := by
   | succ k ih => rw [pow_succ, pow_succ, cS_mul, ih]
 
 theorem cS_span (β : D.host.E) :
-    cS D (Submodule.span (𝓞 D.host.E) {β}) = Submodule.span (𝓞 D.host.E) {D.host.conj β} := by
-  ext x
-  rw [mem_cS, Submodule.mem_span_singleton, Submodule.mem_span_singleton]
-  constructor
-  · rintro ⟨r, hr⟩
-    refine ⟨conjO D r, ?_⟩
-    rw [← conj_smul, hr, conj_conj]
-  · rintro ⟨r, hr⟩
-    refine ⟨conjO D r, ?_⟩
-    rw [← hr, conj_smul, conj_conj]
+    cS D (Submodule.span (𝓞 D.host.E) {β}) = Submodule.span (𝓞 D.host.E) {D.host.conj β} :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.CU.cS_span (Formalism.L2.Ker.Car.ofRec D) β
 
 theorem span_singleton_mul_span_singleton_host (a b : D.host.E) :
     Submodule.span (𝓞 D.host.E) {a} * Submodule.span (𝓞 D.host.E) {b} =
       Submodule.span (𝓞 D.host.E) {a * b} := by
   rw [Submodule.span_mul_span, Set.singleton_mul_singleton]
 
-theorem normOne_ideal_iff_mul_conj (𝔞 : IdE D) : N1 D 𝔞 ↔ 𝔞 * cS D 𝔞 = 1 := by
-  constructor
-  · rintro ⟨𝔟, h𝔟, hmul⟩
-    have : 𝔟 = cS D 𝔞 := by ext x; exact h𝔟 x
-    rwa [← this]
-  · intro h; exact ⟨cS D 𝔞, fun _ => Iff.rfl, h⟩
+theorem normOne_ideal_iff_mul_conj (𝔞 : IdE D) : N1 D 𝔞 ↔ 𝔞 * cS D 𝔞 = 1 :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.CU.normOne_ideal_iff_mul_conj (Formalism.L2.Ker.Car.ofRec D) 𝔞
 
 theorem normOne_ideal_mul {𝔞 𝔟 : IdE D} (ha : N1 D 𝔞) (hb : N1 D 𝔟) : N1 D (𝔞 * 𝔟) := by
   rw [normOne_ideal_iff_mul_conj] at *

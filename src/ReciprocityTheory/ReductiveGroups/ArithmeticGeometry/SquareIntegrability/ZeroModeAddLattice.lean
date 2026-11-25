@@ -22,31 +22,9 @@ variable [IsCMField E] {X : PT E} {DF : ℕ} {P : Par X DF} {I : Submodule ℤ (
 
 private theorem Hf_im_eq_zero_of_mem_IR_of_isSplit (hI : IsSplit P I) {x y : Vsp X.dim} (hx : x ∈ IR I) (hy : y ∈ IR I) :
     (Hf x y).im = 0 := by
-  have hadd : ∀ a b c : Vsp X.dim, (Hf (a + b) c).im = (Hf a c).im + (Hf b c).im := by
-    intro a b c
-    simp [Hf, add_mul, Finset.sum_add_distrib]
-  have hsmul : ∀ (r : ℝ) (a c : Vsp X.dim), (Hf (r • a) c).im = r * (Hf a c).im := by
-    intro r a c
-    simp [Hf, Finset.mul_sum, mul_assoc]
-  have hzero : ∀ c : Vsp X.dim, (Hf 0 c).im = 0 := by
-    intro c
-    simp [Hf]
-  have step1 : ∀ w ∈ I, ∀ v ∈ IR I, (Hf v w).im = 0 := by
-    intro w hw v hv
-    change v ∈ Submodule.span ℝ (I : Set (Vsp X.dim)) at hv
-    induction hv using Submodule.span_induction with
-    | mem a ha => exact hI.iso a ha w hw
-    | zero => exact hzero w
-    | add a b _ _ ha hb => rw [hadd, ha, hb, add_zero]
-    | smul r a _ ha => rw [hsmul, ha, mul_zero]
-  have step2 : (Hf y x).im = 0 := by
-    change y ∈ Submodule.span ℝ (I : Set (Vsp X.dim)) at hy
-    induction hy using Submodule.span_induction with
-    | mem a ha => rw [Hf_conj, Complex.conj_im, step1 a ha x hx, neg_zero]
-    | zero => exact hzero x
-    | add a b _ _ ha hb => rw [hadd, ha, hb, add_zero]
-    | smul r a _ ha => rw [hsmul, ha, mul_zero]
-  rw [Hf_conj, Complex.conj_im, step2, neg_zero]
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.G.I2.Col.hK_of
+    | apply _root_.ReciprocityTheory.ChartRestriction.G.I2.Col.hK_of <;> first | assumption | rfl | infer_instance
 
 private theorem Hf_real_combination_left_im {κ : Type} [Fintype κ] (γ : Vsp X.dim) (r : κ → ℝ) (w : κ → Vsp X.dim) :
     (Hf (∑ k, r k • w k) γ).im = ∑ k, r k * (Hf (w k) γ).im := by

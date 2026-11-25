@@ -4,44 +4,7 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisi
 import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfMembership
 public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsInIInPNPowSmulSubMap
 import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.FrobeniusUniformizerPowDvd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -141,7 +104,7 @@ theorem frobenius_sq_bound_at (hs : W.s = 1) (hR : Formalism.MainNotions.UnusedS
   set ψ5 : ↥Fs →ₗ[O] ↥(Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T₂ c) ⧸ K5 :=
     K5.mkQ ∘ₗ LinearMap.codRestrict (Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T₂ c) w hw with hψ5
   obtain ⟨s5, hs5, hs5N, L5, kO5, hL5, hkO5, hLc5⟩ := hDc
-  have ch5 := pchain_DN W T₂ c kB K5 hK5 s5 hs5 hs5N L5 kO5 hL5 hkO5 hLc5 Fs ψ5
+  have ch5 := pchain_DN W T₂ c kB K5 s5 hs5 hs5N L5 kO5 hL5 hkO5 hLc5 Fs ψ5
   set F5 := kerSub Fs ψ5 (((Xd W T₂ c kB).comap (Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T₂ c).subtype).map K5.mkQ)
   have hF5 : F5 ≤ Fs := kerSub_le _ _ _
   have mem5 : ∀ f : ↥F5, w ⟨f, hF5 f.2⟩ ∈ Xd W T₂ c kB := by
@@ -207,7 +170,7 @@ theorem frobenius_sq_bound_at (hs : W.s = 1) (hR : Formalism.MainNotions.UnusedS
           rw [← algebraMap_smul (LetA O n)]; exact (W.N T₂).smul_mem _ (hy2N f)
         rw [cmpD_sub W T₂ (hy2N _) hoN, cmpD_osmul W T₂ o (hy2N f), smul2, sub_self] }
   obtain ⟨s6, hs6, hs6N, L6, kO6, hL6, hkO6, hLc6⟩ := hDc2
-  have ch6 := pchain_DN W T₂ (c - 1 - 1) hh K6 hK6 s6 hs6 hs6N L6 kO6 hL6 hkO6 hLc6 F5 ψ6
+  have ch6 := pchain_DN W T₂ (c - 1 - 1) hh K6 s6 hs6 hs6N L6 kO6 hL6 hkO6 hLc6 F5 ψ6
   set F6 := kerSub F5 ψ6
     (((Xd W T₂ (c - 1 - 1) hh).comap (Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T₂ (c - 1 - 1)).subtype).map K6.mkQ)
   have hF6 : F6 ≤ F5 := kerSub_le _ _ _

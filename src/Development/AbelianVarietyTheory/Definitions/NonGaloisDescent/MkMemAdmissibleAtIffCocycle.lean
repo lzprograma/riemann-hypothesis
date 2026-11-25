@@ -3,52 +3,6 @@ module
 public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
 public import ReciprocityTheory.BasicDefinitions.AdRep
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesOneAddConstMulXMulInv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.Padics.LocalField
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Algebra.Group.Units
-import Mathlib.Topology.Order.Hom.Esakia
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import ReciprocityTheory.BasicDefinitions.ExistsUnique
 
@@ -678,40 +632,6 @@ def finiteSelmer : Submodule O (H1 (twCoef (latRep L) χ X) ⊤) :=
     (toAmb (twCoef (latRep L) χ X))
 
 end Tens
-
-section Shortcut
-
-instance (priority := high) modTens {O M X : Type} [CommRing O] [AddCommGroup M] [Module O M] [AddCommGroup X]
-    [Module O X] : Module O (M ⊗[O] X) :=
-  TensorProduct.instModule
-
-instance (priority := high) modProd {O M N : Type} [CommRing O] [AddCommGroup M] [Module O M] [AddCommGroup N]
-    [Module O N] : Module O (M × N) :=
-  Prod.instModule
-
-instance (priority := high) modFun {O M ι : Type} [CommRing O] [AddCommGroup M] [Module O M] :
-    Module O (ι → M) :=
-  Pi.Function.module ι O M
-
-instance (priority := high) modQuot {O M : Type} [CommRing O] [AddCommGroup M] [Module O M] (S : Submodule O M) :
-    Module O (M ⧸ S) :=
-  Submodule.Quotient.module S
-
-variable {G : Type} [Group G] [TopologicalSpace G] {LL O : Type} [Field LL] [CommRing O] [Algebra O LL]
-    {V : Type} [AddCommGroup V] [Module LL V] [Module O V] [IsScalarTower O LL V] {ρ : Representation LL G V}
-    [TopologicalSpace V] [ContinuousAdd V] [ContinuousConstSMul LL V]
-
-instance (priority := high) twistedModuleH1 (L : Lattice (O := O) ρ) : Module O (LatticeCohomology L) :=
-  Submodule.Quotient.module _
-
-instance (priority := high) twistedSubmoduleH1 (L : Lattice (O := O) ρ) (S : Submodule O (LatticeCohomology L)) : Module O ↥S :=
-  Submodule.module S
-
-instance (priority := high) moduleH1Alt {M : Type} [AddCommGroup M] [Module O M] (π : Representation O G M) :
-    Module O (H1 π ⊤) :=
-  Submodule.Quotient.module _
-
-end Shortcut
 
 def Standing {l : ℕ} [Fact l.Prime] (P : LocPrime l) (K LL : Loc.FinExt l) {n : ℕ}
     (emb : ZMod n → (↥(Loc.K0 K) →ₐ[ℚ_[l]] ↥LL.1)) (lam : ↥(Loc.OL LL)) : Prop :=

@@ -8,62 +8,9 @@ public import Mathlib.RingTheory.MvPolynomial.Homogeneous
 public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PSchSchurHomogeneous
 public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.JacobiTrudi
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PSpanE
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.Lemma
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.Basify
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.AffineMonoid.UniqueSums
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.FibreSum, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PDenseCoset, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PDenseOff, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PDenseSub, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PESpan, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PExpand, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PExtract, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PFibre, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PFibreOff, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AevalMulOfIsHomogeneous, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PHomog, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PInterp, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PInterpNF, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PMixDet, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.POffPow, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.POffRed, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PPairCount, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PPairSplit, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PSpanProd, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PSpanTop, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PVdmSplit, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.SchurDetOf, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.SchurYClrOf, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.SchurYOf, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.SchurYOffOf, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.Vdm, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.WeylTieOf, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.SchurYOffClrHolds
@@ -428,7 +375,7 @@ private lemma prod_scaleOff {R : Type} [CommRing R] {n : ℕ} (y : R) (i : Fin n
     Finset.prod_congr rfl (fun k hk => by simp [scaleOff, (mem_erase.1 hk).1])
   rw [h, prod_mul_distrib, prod_const, card_erase_of_mem (mem_univ i), card_univ,
     Fintype.card_fin]
-  simp only [scaleOff, if_true]
+  simp only [scaleOff, ite_true]
   ring
 
 theorem fibre_of : SchurY → SchurHomog → SchurDet → Fibre := by
@@ -450,7 +397,7 @@ theorem fibre_of : SchurY → SchurHomog → SchurDet → Fibre := by
     intro t ht
     have ht1 : t ≠ t₁ := (mem_erase.mp ht).1
     have ht0 : t ≠ t₀ := (mem_erase.mp (mem_erase.mp ht).2).1
-    simp only [twist, if_neg ht0, if_neg ht1]
+    simp only [twist, ite_eq_right ht0, ite_eq_right ht1]
     rw [hH R n (lam t) (g t) (y ^ ε t), ← pow_mul]
   have hi : ∀ i, ∏ t, sch (lam t) (twist t₀ t₁ ε y i g t) =
       sch (lam t₀) (scaleAt y i (g t₀)) *
@@ -522,7 +469,7 @@ theorem UpperTheory.Gal.Schur.fibreOff_of :
       intro t ht
       have ht1 : t ≠ t₁ := ne_of_mem_erase ht
       have ht0 : t ≠ t₀ := ne_of_mem_erase (mem_of_mem_erase ht)
-      simp only [twist, if_neg ht0, if_neg ht1]
+      simp only [twist, ite_eq_right ht0, ite_eq_right ht1]
       rw [hH, ← pow_mul]
     rw [Finset.prod_congr rfl hc, Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum]
   have tw0 : ∀ i, twist t₀ t₁ ε y i g t₀ = scaleAt y i (g t₀) := by
@@ -778,10 +725,10 @@ open Finset MvPolynomial UpperTheory.Gal.Schur
 
 private theorem prod_ite_eq_mul_prod_erase {R : Type} [CommRing R] {n : ℕ} (d d' : Fin n → R) (a : Fin n) :
     ∏ b, (if b = a then d b else d' b) = d a * ∏ b ∈ univ.erase a, d' b := by
-  rw [← Finset.mul_prod_erase univ _ (mem_univ a), if_pos rfl]
+  rw [← Finset.mul_prod_erase univ _ (mem_univ a), ite_eq_left rfl]
   congr 1
   refine Finset.prod_congr rfl fun b hb => ?_
-  rw [if_neg (Finset.ne_of_mem_erase hb)]
+  rw [ite_eq_right (Finset.ne_of_mem_erase hb)]
 
 theorem UpperTheory.Gal.Schur.mixDet :
     MixDet := by
@@ -867,10 +814,6 @@ section -- clump:auto
 @[expose] public section
 
 open Finset MvPolynomial UpperTheory.Gal.Schur
-
-namespace UpperTheory.Gal.Schur
-
-end UpperTheory.Gal.Schur
 
 theorem UpperTheory.Gal.Schur.offClrRed_of :
     OffClrPow → OffClrRed := by

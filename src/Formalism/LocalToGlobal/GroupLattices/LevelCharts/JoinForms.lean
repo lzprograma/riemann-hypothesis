@@ -27,18 +27,18 @@ theorem sum_sup (han : a ≤ n) (skip : ℕ) (Sd : Finset ℕ) (hSd : ∀ x, x +
     · have hxn : (x : ℕ) + 1 < n := by omega
       rw [Finset.sum_eq_single (⟨(x : ℕ) + 1, hxn⟩ : Fin n)]
       · have hE : entN M x ((x : ℕ) + 1) = M x ⟨(x : ℕ) + 1, hxn⟩ := by
-          unfold entN; exact dif_pos ⟨x.2, hxn⟩
+          unfold entN; exact dite_eq_left ⟨x.2, hxn⟩
         rw [hE]
         simp [hx]
       · intro y _ hy
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨h1, -, -⟩
         exact hy (Fin.ext h1.symm)
       · intro h; exact absurd (Finset.mem_univ _) h
     · have hn : ¬((x : ℕ) + 1 < a ∧ (x : ℕ) + 1 ≠ skip) := fun h => hx h.1
-      rw [if_neg hn]
+      rw [ite_eq_right hn]
       refine Finset.sum_eq_zero fun y _ => ?_
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨h1, h2, -⟩
       omega
   simp only [key]
@@ -75,7 +75,7 @@ theorem redM_bc (v : HeightOneSpectrum (𝓞 F)) (g : GL (Fin n) (v.adicCompleti
       Matrix (Fin n) (Fin n) (v.adicCompletion F)) a b ∈ v.adicCompletionIntegers F :=
     ((g : Matrix (Fin n) (Fin n) (v.adicCompletionIntegers F)) a b).2
   unfold Formalism.L2.Forms.redM
-  exact dif_pos h
+  exact dite_eq_left h
 
 end Lev
 

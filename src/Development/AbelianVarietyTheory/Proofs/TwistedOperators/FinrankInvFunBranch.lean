@@ -700,7 +700,7 @@ namespace GlobalTheory.OneFunctional
 
 private lemma detShift_eq_add_of_weight_shift (n : ℕ) (c : ℤ) (lam lam' : DomWeight n) (h : ∀ i, lam'.w i = lam.w i + c)
     (hn : 0 < n) : lam'.detShift = lam.detShift + c := by
-  simp only [DomWeight.detShift, dif_pos hn, h]
+  simp only [DomWeight.detShift, dite_eq_left hn, h]
 
 private lemma natW_eq_of_weight_shift (n : ℕ) (c : ℤ) (lam lam' : DomWeight n) (h : ∀ i, lam'.w i = lam.w i + c) :
     lam'.natW = lam.natW := by

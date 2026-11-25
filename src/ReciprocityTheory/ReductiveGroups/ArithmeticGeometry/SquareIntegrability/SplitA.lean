@@ -36,9 +36,6 @@ theorem Hf_im_eq (v w : EuclideanSpace ℂ ι) : (Hf v w).im = ⟪Complex.I • 
   rw [real_inner_eq_re_inner', inner_smul_left, Hf_eq_inner_swap_complex]
   simp
 
-theorem Hf_im_eq' (v w : EuclideanSpace ℂ ι) : (Hf v w).im = ⟪-(Complex.I • v), w⟫_ℝ := by
-  rw [Hf_conj w v, Complex.conj_im, Hf_im_eq w v, inner_neg_left]
-
 theorem Hf_im_antisymm (v w : EuclideanSpace ℂ ι) : (Hf v w).im = -(Hf w v).im := by
   rw [Hf_conj w v, Complex.conj_im]
 

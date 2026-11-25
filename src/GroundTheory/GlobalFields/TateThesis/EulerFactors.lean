@@ -30,9 +30,9 @@ theorem prod_infiniteConst [NumberField K] :
     ∏ w : InfinitePlace K, infiniteConst w = (π : ℂ) ^ nrComplexPlaces K := by
   rw [prod_eq_prod_mul_prod]
   have h1 : ∀ w : {w : InfinitePlace K // IsReal w}, infiniteConst w.1 = 1 := fun w ↦ by
-    rw [infiniteConst, if_pos w.2]
+    rw [infiniteConst, ite_eq_left w.2]
   have h2 : ∀ w : {w : InfinitePlace K // IsComplex w}, infiniteConst w.1 = π := fun w ↦ by
-    rw [infiniteConst, if_neg (not_isReal_iff_isComplex.2 w.2)]
+    rw [infiniteConst, ite_eq_right (not_isReal_iff_isComplex.2 w.2)]
   simp only [h1, h2, Finset.prod_const_one, one_mul, Finset.prod_const, Finset.card_univ]
 
 def testFunction : 𝔸[K] → ℂ := schwartzBruhatTensor χ.infiniteSchwartz χ.finiteTestFun

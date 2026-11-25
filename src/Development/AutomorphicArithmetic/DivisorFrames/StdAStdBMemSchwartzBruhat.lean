@@ -6,46 +6,8 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocPart
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardPairMembersMemSchwartzBruhat
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsContinuousPadic
 import Formalism.LocalRingCardinality.DataHost
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
 import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.MatchingAdjoints
 import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
@@ -63,64 +25,25 @@ open scoped TensorProduct ComplexConjugate GlobalTheory.IndefiniteRowSideFullHec
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model piW chrW unifAt latAtV At SInf)
 open GlobalTheory.TripleRead (thO ptO)
 open GlobalTheory.AdelicU (evFin splitPrime)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 section SlopeTestRemainingChoices
-open Filter Topology ValuativeRel GlobalTheory.StdPairSB GlobalTheory.StdPairCone
+open ValuativeRel GlobalTheory.StdPairSB GlobalTheory.StdPairCone
 
 private theorem gfun_lc {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] {ν : kˣ →* ℂˣ} {ϖ : kˣ} {n : ℕ} (hϖ : GlobalTheory.SplitFlip.IsUnif ϖ)
     (hν : GlobalTheory.SplitFlip.CondLE ϖ n ν) (c m r : ℕ) :
     IsLocallyConstant
       (fun q : Matrix (Fin m) (Fin m) k × Matrix (Fin m) (Fin r) k => gfun ν ϖ c q.1 q.2) := by
-  have h0 : ∀ e : ℕ, ∀ i j, (0 : Matrix (Fin m) (Fin r) k) i j ∈ GlobalTheory.SplitWeil.cball (ϖ ^ e) := by
-    intro e i j
-    rw [GlobalTheory.SplitWeil.cball, Set.mem_setOf_eq]
-    simp
-  have hfac : ∀ (A : Matrix (Fin m) (Fin m) k) (B : Matrix (Fin m) (Fin r) k),
-      gfun ν ϖ c A B = if (∀ i j, B i j ∈ GlobalTheory.SplitWeil.cball (ϖ ^ c)) then
-        gfun ν ϖ n A (0 : Matrix (Fin m) (Fin r) k) else 0 := by
-    intro A B
-    by_cases hB : ∀ i j, B i j ∈ GlobalTheory.SplitWeil.cball (ϖ ^ c)
-    · rw [if_pos hB]
-      unfold gfun
-      by_cases hA : A.det ≠ 0 ∧ IsGLO A
-      · rw [dite_eq_left ⟨hA.1, hA.2, hB⟩, dite_eq_left ⟨hA.1, hA.2, h0 n⟩]
-      · rw [dite_eq_right fun h => hA ⟨h.1, h.2.1⟩, dite_eq_right fun h => hA ⟨h.1, h.2.1⟩]
-    · rw [if_neg hB]
-      unfold gfun
-      rw [dite_eq_right fun h => hB h.2.2]
-  have h1 : IsLocallyConstant
-      (fun q : Matrix (Fin m) (Fin m) k × Matrix (Fin m) (Fin r) k =>
-        gfun ν ϖ n q.1 (0 : Matrix (Fin m) (Fin r) k)) :=
-    (isLocallyConstant_gfun hϖ hν m r).comp_continuous
-      (f := fun q : Matrix (Fin m) (Fin m) k × Matrix (Fin m) (Fin r) k =>
-        (q.1, (0 : Matrix (Fin m) (Fin r) k))) (continuous_fst.prodMk continuous_const)
-  rw [IsLocallyConstant.iff_eventually_eq] at h1 ⊢
-  rintro ⟨A, B⟩
-  have hnh : ∀ x : k, ∀ᶠ y in 𝓝 x, valuation k (y - x) ≤ valuation k ((ϖ ^ c : kˣ) : k) := by
-    intro x
-    have ht : Tendsto (fun y : k => y - x) (𝓝 x) (𝓝 0) := by
-      simpa using (tendsto_id.sub_const x : Tendsto (fun y : k => y - x) (𝓝 x) (𝓝 (x - x)))
-    exact ht (GlobalTheory.SplitWeil.cball_mem_nhds (ϖ ^ c))
-  have hev : ∀ᶠ q in 𝓝 (A, B),
-      ∀ i j, valuation k ((q : Matrix (Fin m) (Fin m) k × Matrix (Fin m) (Fin r) k).2 i j - B i j) ≤
-        valuation k ((ϖ ^ c : kˣ) : k) := by
-    refine Filter.eventually_all.2 fun i => Filter.eventually_all.2 fun j => ?_
-    exact ((continuous_snd.matrix_elem i j).tendsto (A, B)).eventually (hnh (B i j))
-  filter_upwards [hev, h1 (A, B)] with q hq hq1
-  have hiff : (∀ i j, q.2 i j ∈ GlobalTheory.SplitWeil.cball (ϖ ^ c)) ↔
-      ∀ i j, B i j ∈ GlobalTheory.SplitWeil.cball (ϖ ^ c) := by
-    constructor
-    · intro h i j
-      rw [GlobalTheory.SplitWeil.cball, Set.mem_setOf_eq, ← sub_sub_cancel (q.2 i j) (B i j)]
-      exact Valuation.map_sub_le _ (h i j) (hq i j)
-    · intro h i j
-      rw [GlobalTheory.SplitWeil.cball, Set.mem_setOf_eq, ← sub_add_cancel (q.2 i j) (B i j)]
-      exact Valuation.map_add_le _ (hq i j) (h i j)
-  show gfun ν ϖ c q.1 q.2 = gfun ν ϖ c A B
-  rw [hfac, hfac]
-  exact if_congr hiff hq1 rfl
+  have key : ∀ x : k, x ∈ GlobalTheory.SplitWeil.cball (ϖ ^ c) ↔
+      (ϖ ^ n * (ϖ ^ c)⁻¹) • x ∈ GlobalTheory.SplitWeil.cball (ϖ ^ n) := fun x => by
+    rw [GlobalTheory.SplitWeil.cball_eq_smul, GlobalTheory.SplitWeil.cball_eq_smul,
+      Set.mem_smul_set_iff_inv_smul_mem, Set.mem_smul_set_iff_inv_smul_mem, smul_smul, inv_mul_cancel_left]
+  have : (fun q : Matrix (Fin m) (Fin m) k × Matrix (Fin m) (Fin r) k => gfun ν ϖ c q.1 q.2) =
+      (fun q => gfun ν ϖ n q.1 q.2) ∘ fun q => (q.1, (ϖ ^ n * (ϖ ^ c)⁻¹) • q.2) := by
+    ext q
+    simp only [Function.comp_apply, gfun, Matrix.smul_apply, key]
+  rw [this]
+  exact (isLocallyConstant_gfun hϖ hν m r).comp_continuous (continuous_fst.prodMk (continuous_snd.const_smul _))
 
 private theorem finiteRing_sq_sub_mul_sq_eq_of_card {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] (ν : kˣ →* ℂˣ) (ϖ : kˣ) {n : ℕ} (hϖ : GlobalTheory.SplitFlip.IsUnif ϖ)

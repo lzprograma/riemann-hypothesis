@@ -47,8 +47,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Fo
   Formalism.L2.SG.EvalTOntoRep MeasureTheory
 open scoped InnerProductSpace
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.ConjRowMult
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)

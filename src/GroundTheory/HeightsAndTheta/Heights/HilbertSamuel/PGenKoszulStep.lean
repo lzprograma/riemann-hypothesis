@@ -60,11 +60,11 @@ theorem gather {V : Ideal (MRingOver S ι)} {α : K → ℤ} (h : KH.GeneratedV 
     exact hv (e.symm j)
   · rw [Equiv.sum_comp e.symm (fun σ => v I σ * zz σ.1 σ.2 I), Fintype.sum_sigma,
       Finset.sum_eq_single I]
-    · simp only [v, dif_pos rfl]
+    · simp only [v, dite_eq_left rfl]
       exact hs I
     · intro I' _ hI'
       refine Finset.sum_eq_zero fun i _ => ?_
-      simp only [v, dif_neg hI']
+      simp only [v, dite_eq_right hI']
       exact zero_mul (zz I' i I)
     · simp
 

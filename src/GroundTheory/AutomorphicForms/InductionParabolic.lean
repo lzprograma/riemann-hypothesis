@@ -144,7 +144,7 @@ def frobeniusInv (hπ : IsSmooth π) (φ : Representation.IntertwiningMap (π.co
   map_add' v w := Subtype.ext (funext fun g => by simp)
   map_smul' c v := Subtype.ext (funext fun g => by simp)
   isIntertwining' g := LinearMap.ext fun v => Subtype.ext (funext fun x => by
-    simp [map_mul, Module.End.mul_apply])
+    simp [map_mul])
 
 @[simp]
 theorem frobeniusInv_apply (hπ : IsSmooth π)

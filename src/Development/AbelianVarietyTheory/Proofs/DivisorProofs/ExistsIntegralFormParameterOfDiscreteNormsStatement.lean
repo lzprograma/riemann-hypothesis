@@ -63,7 +63,6 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
 open GlobalTheory GlobalTheory.LieHt GlobalTheory.Cartier GlobalTheory.ThetaOnto GlobalTheory.KeyCl GlobalTheory.Ex GlobalTheory.MBLow GlobalTheory.SecJet
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.MBLow
 
@@ -106,8 +105,7 @@ theorem exists_form_of_discrete_norms : ∀ (C : Type) [NormedField C] [IsAlgClo
     intro x y; simp only [hBf, add_comm x y]; ring
   have hpos : ∀ y, y ≠ 0 → 0 < q y := by
     intro y hy
-    by_contra hn
-    push_neg at hn
+    by_contra! hn
     have hfin : {α | ¬ (0 < q α)}.Finite :=
       Filter.eventually_cofinite.1 (hI.pos.eventually (Filter.eventually_gt_atTop 0))
     have hinf : (Set.range fun c : ℤ => c • y).Infinite :=
@@ -158,8 +156,7 @@ theorem exists_form_of_discrete_norms : ∀ (C : Type) [NormedField C] [IsAlgClo
   have hπn : ‖π‖ ^ (2 * m ^ 2) = ‖t‖ := by rw [← norm_pow, hπ]
   have hπpos : 0 < ‖π‖ := norm_pos_iff.2 hπ0
   have hπ1 : ‖π‖ < 1 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have := one_le_pow₀ (n := 2 * m ^ 2) h
     rw [hπn] at this
     linarith
@@ -182,9 +179,6 @@ theorem exists_form_of_discrete_norms : ∀ (C : Type) [NormedField C] [IsAlgClo
       exact_mod_cast this
     rw [hβ, ← Real.exp_log hπpos, ← Real.exp_nat_mul, hc, hq]
     congr 1
-    have hm2 : (0 : ℝ) < (m : ℝ) ^ 2 := by
-      have : (0 : ℝ) < m := by exact_mod_cast hm
-      positivity
     have e : Real.log ‖π‖ = -L / (2 * (m : ℝ) ^ 2) := by
       rw [eq_div_iff (by positivity)]; exact hlp
     rw [e]
@@ -206,8 +200,6 @@ open GlobalTheory GlobalTheory.LieHt GlobalTheory.Cartier GlobalTheory.ThetaOnto
 open scoped CategoryTheory.Obj
 attribute [local instance] Over.cartesianMonoidalCategory
 
-theorem _root_.GlobalTheory.T.exists_integralForm_parameter_of_discreteNorms : ∀ (C : Type) [NormedField C] [IsAlgClosed C] (N : NumD C) (q : QuadraticMap ℤ N.X ℝ) (t : C), N.Int q → t ≠ 0 → ‖t‖ < 1 → (∀ χ, ∃ n : ℤ, ‖(N.ψ χ : C)‖ = ‖t‖ ^ n) → ∀ m : ℕ, 1 ≤ m → ∃ (β : N.Form (m ^ 2)) (π : C), π ≠ 0 ∧ ‖π‖ < 1 ∧ (∀ n : ℕ, {α | (β.be α α / (2 * m ^ 2)).toNat = n}.Finite) ∧ ∀ α, Real.exp (-(q α / (m : ℝ) ^ 2)) = ‖π‖ ^ (β.be α α / (2 * m ^ 2)).toNat := by
-  first | exact @GlobalTheory.MBLow.exists_form_of_discrete_norms
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralFormParameterOfDiscreteNormsStatement =====

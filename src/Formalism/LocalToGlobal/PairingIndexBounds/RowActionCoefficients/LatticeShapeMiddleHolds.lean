@@ -21,57 +21,12 @@ public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.Fo
 public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.FockRSmulLeft
 public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.CoefficientProductHolds
 public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceIffAdditiveMapsExist
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Topology.Sheaves.Init
 import Formalism.GradedWeylDivisibility.FinalC
 import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.InterpolationHolds
 import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.YVMapRowAct
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Order.Star.Int
 import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.TransposeWordsProofs.ProdBlockEmbMonomial
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Lemma
 import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSp
 import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.ProdItePow
 
@@ -139,12 +94,11 @@ theorem delta_zero_eq_twisted_delta (hinj : Function.Injective (algebraMap O Kf)
   have hg' := la_tw_det (P.ι v) (P.σ v) s.val g hg
   refine le_antisymm (lowest_invariant_le_delta _ _ hd _ hg') ?_
   unfold Dl0
-  rw [if_pos hd]
+  rw [ite_eq_left hd]
   refine le_iInf₂ fun h hh => ?_
   exact dl_indep O Kf hinj _ _ _ h hg' hh.2
 
 variable (g : ∀ v, Matrix (Fin (P.m + 1)) (Fin (P.m + 1)) (P.Qq v)) (hg : ∀ v, IsUnit (g v).det)
-
 
 include hg in
 theorem htupW_le (hinj : Function.Injective (algebraMap O Kf)) (T : Submodule O P.Xsp)
@@ -171,13 +125,13 @@ theorem htupW_le (hinj : Function.Injective (algebraMap O Kf)) (T : Submodule O 
           have h3 := ih (Function.update f a y) (fun i hi => ?_) (fun i hi => ?_)
           · rwa [Finset.prod_update_of_mem (Finset.mem_univ a)] at h3
           · have hia : i ≠ a := by rintro rfl; exact ha hi
-            simp only [Function.update_apply, hia, if_false]
+            simp only [Function.update_apply, hia, ite_false]
             exact h1 i (Finset.mem_insert_of_mem hi)
           · by_cases hia : i = a
             · subst hia
-              simp only [Function.update_apply, if_true]
+              simp only [Function.update_apply, ite_true]
               exact hy
-            · simp only [Function.update_apply, hia, if_false]
+            · simp only [Function.update_apply, hia, ite_false]
               exact h2 i (by simp [hia, hi])
         | zero => rw [zero_mul]; exact T.zero_mem
         | add x y _ _ hx hy => rw [add_mul]; exact T.add_mem hx hy
@@ -218,7 +172,6 @@ theorem htupW_le (hinj : Function.Injective (algebraMap O Kf)) (T : Submodule O 
     rw [← hHG v s]
   rw [e]
   exact hT (fun b => H b.1 b.2) (fun b => hH b.1 b.2)
-
 
 include hg in
 theorem mem_htupW (hinj : Function.Injective (algebraMap O Kf)) (F : GlobalTheory P → MvPolynomial (Fin (P.m + 1) × Fin (P.m + 1)) Kf)
@@ -357,13 +310,13 @@ theorem mF_dgQ (j : ℕ) (b : BX X) (i0 : X.Pl → ℕ) :
   simp only [Matrix.submatrix_apply, Matrix.map_apply, Matrix.diagonal_apply]
   by_cases hac : a = c
   · subst hac
-    rw [if_pos rfl, if_pos rfl]
+    rw [ite_eq_left rfl, ite_eq_left rfl]
     have : ((finCongr (rank_eq X (j + 1)).symm) a).val = a.val := rfl
     rw [this]
     split_ifs
     · rw [map_inv₀, map_inv₀, map_natCast, map_natCast]
     · rw [map_one, map_one]
-  · rw [if_neg hac, if_neg (fun h => hac ((finCongr (rank_eq X (j + 1)).symm).injective h)), map_zero, map_zero]
+  · rw [ite_eq_right hac, ite_eq_right (fun h => hac ((finCongr (rank_eq X (j + 1)).symm).injective h)), map_zero, map_zero]
 
 theorem frame_edge_identity_holds : XEdge := by
   intro p _ X j L' L'' i0 h2 h4
@@ -429,10 +382,6 @@ section Rule
 
 variable {p : ℕ} [Fact p.Prime] (X : Sys p) (Kc : Type) [Field Kc] [Algebra X.G.Kf Kc] (j : ℕ)
 
-theorem NJ_pos : 0 < NJ X j := by
-  unfold NJ NN
-  omega
-
 theorem hvE_congr {A : Type*} [CommRing A] {n : ℕ} (x : Fin n → ℕ → A) (y : Matrix (Fin n) (Fin n) A) (c : ℕ) (h h' : Fin c → ℕ)
     (hh : ∀ k, h k ≤ n) (hh' : ∀ k, h' k ≤ n) (e : h = h') : hvE x y c h hh = hvE x y c h' hh' := by
   subst e
@@ -466,7 +415,7 @@ theorem subD_rename_hvE (b : BX X) (ho : ¬ IsOddPos b.2) (x : Fin (NJ X j) → 
     exact (subD X Kc j).commutes (x a i)
   · have := subD_yL X Kc j b.1 b.2
     unfold ySub at this
-    rw [if_neg ho] at this
+    rw [ite_eq_right ho] at this
     exact this
 
 theorem hvE_dy (b : BX X) (x : Fin (NJ X j) → ℕ → X.G.Kf) (c : ℕ) (h : Fin c → ℕ) (hh : ∀ k, h k ≤ NJ X j)
@@ -501,7 +450,7 @@ theorem xA_of (hS : XShape) : XA := by
     refine Finset.prod_congr rfl fun v _ => Finset.prod_congr rfl fun s _ => ?_
     split_ifs with ho
     · unfold srcN
-      rw [if_pos ho]
+      rw [ite_eq_left ho]
       exact XAAux.rename_hvO X j ⟨v, s⟩ _ _ _
     · rfl
   rw [h1, key]
@@ -514,8 +463,8 @@ theorem xA_of (hS : XShape) : XA := by
     beta_reduce
     rw [hc1, hc2]
   · have hf := highest_vector_full_holds (DA X Kc j) (NJ X j) (muX X j (NJ X j) ⟨v, s⟩) (hanti _) (cX X j ⟨v, s⟩) (eX X j ⟨v, s⟩)
-      (hle _) he1 he2 (XAAux.NJ_pos X j) (fun a i => algebraMap X.G.Kf (DA X Kc j) (x ⟨v, s⟩ a i)) (dyMat X Kc j v s)
-    have hnu : nuS X j ⟨v, s⟩ = fun t => muX X j (NJ X j) ⟨v, s⟩ t - eX X j ⟨v, s⟩ := if_neg ho
+      (hle _) he1 he2 (Formalism.L2.PairingIndexBounds.Ent.MiddleFrameLemmas.NJ_pos X j) (fun a i => algebraMap X.G.Kf (DA X Kc j) (x ⟨v, s⟩ a i)) (dyMat X Kc j v s)
+    have hnu : nuS X j ⟨v, s⟩ = fun t => muX X j (NJ X j) ⟨v, s⟩ t - eX X j ⟨v, s⟩ := ite_eq_right ho
     have hdet : (Matrix.of fun a i : Fin (NJ X j) => algebraMap X.G.Kf (DA X Kc j) (x ⟨v, s⟩ a i.val)).det =
         algebraMap X.G.Kf (DA X Kc j) (Matrix.of fun a i : Fin (NJ X j) => x ⟨v, s⟩ a i.val).det := by
       rw [RingHom.map_det]
@@ -530,7 +479,7 @@ theorem xA_of (hS : XShape) : XA := by
         (fun k => colH (muX X j (NJ X (j + 1)) ⟨v, s⟩) k.val) (fun k => colH_le _ k.val)
     rw [h2, hf, hdet]
     unfold srcN
-    rw [if_neg ho, map_mul, map_mul, rename_C, XAAux.subD_rename_hvE X Kc j ⟨v, s⟩ ho,
+    rw [ite_eq_right ho, map_mul, map_mul, rename_C, XAAux.subD_rename_hvE X Kc j ⟨v, s⟩ ho,
       show subD X Kc j (C ((Matrix.of fun a i : Fin (NJ X j) => x ⟨v, s⟩ a i.val).det ^ eX X j ⟨v, s⟩)) =
         algebraMap X.G.Kf (DA X Kc j) ((Matrix.of fun a i : Fin (NJ X j) => x ⟨v, s⟩ a i.val).det ^ eX X j ⟨v, s⟩) from
         (subD X Kc j).commutes _, map_pow, mul_pow,
@@ -717,10 +666,10 @@ theorem place_arith {n' : ℕ} (P : Fin n' → Prop) [DecidablePred P] (w e0 e1 
     intro s
     by_cases h : P s
     · obtain ⟨h1, h2⟩ := hO s h
-      simp only [h, not_true_eq_false, if_true, if_false]
+      simp only [h, not_true_eq_false, ite_true, ite_false]
       rw [h1, h2]; ring
     · obtain ⟨h1, h2, h3⟩ := hE s h
-      simp only [h, not_false_eq_true, if_true, if_false]
+      simp only [h, not_false_eq_true, ite_true, ite_false]
       rw [h1, h2, h3]; ring
   rw [← Finset.sum_eq_zero (fun s (_ : s ∈ Finset.univ) => key s)]
   simp only [Finset.sum_filter, Finset.sum_add_distrib, Finset.sum_neg_distrib, Finset.mul_sum]
@@ -772,7 +721,7 @@ theorem len_eq (v : X.Pl) (j : ℕ) (L : (X.Pj j).Tup) (g : GL (Fin ((X.Pj j).m 
 theorem nuv_lam (j : ℕ) (v : X.Pl) (s : Fin (X.G.P.n' v)) (t : ℕ) (ht : t < X.G.P.m + 1) :
     X.nuv v (j + 1) s (t + 1) = lamI (X.G.P.lam0 v) s (t + 1) + X.w v (j + 1) s := by
   unfold Sys.nuv nu
-  rw [if_pos ⟨by omega, by omega⟩]
+  rw [ite_eq_left ⟨by omega, by omega⟩]
 
 theorem boxes (hS : XShape) (j : ℕ) (b : BX X) (i : ℕ) (hi : i ≤ X.G.P.m + 1) :
     ((∑ k : Fin (cX X j b), min (X.colHt b.1 (j + 1) b.2 k.val) i : ℕ) : ℤ) =
@@ -829,7 +778,6 @@ theorem sim_mF (hO : ∀ o : X.G.O, algebraMap X.G.Kf Kc (algebraMap X.G.O X.G.K
 end Blocks
 
 end FrameUnitLemmas
-
 
 open FrameUnitLemmas in
 theorem xUnit_of (hS : XShape) : XUnit := by
@@ -1117,7 +1065,7 @@ theorem c9 (j : ℕ) (b : BX X) (h : ¬ IsOddPos b.2) :
         liftWt X.Fl.t X.G.P.m (X.G.P.lam0 b.1 b.2) (fun i => X.Fl.w b.1 i b.2) (j + 1) (Fin.last _) := by
       show lamAt _ b.2 _ = _
       unfold lamAt
-      rw [if_pos (even_of_not_odd h)]
+      rw [ite_eq_left (even_of_not_odd h)]
       rfl
     rw [h5]
     have h6 : X.w b.1 (j + 1) b.2 = X.Fl.w b.1 (j + 1) b.2 := rfl
@@ -1174,12 +1122,12 @@ theorem shape_szT (hS : XShape) (j : ℕ) (b : BX X) : shapeDeg (szT X j b) = nu
   obtain ⟨-, -, hanti, hle, -⟩ := hS p X j b
   by_cases ho : IsOddPos b.2
   · have h1 : szT X j b = fun k => NJ X (j + 1) - colH (muX X j (NJ X (j + 1)) b) k.val := by
-      funext k; exact if_pos ho
-    rw [h1, show nuT X j b = _ from if_pos ho]
+      funext k; exact ite_eq_left ho
+    rw [h1, show nuT X j b = _ from ite_eq_left ho]
     exact _root_.Formalism.L2.PairingIndexBounds.Ent.BidetPairing.shape_odd_holds _ _ (hanti _) _ (hle _)
   · have h1 : szT X j b = fun k => colH (muX X j (NJ X (j + 1)) b) k.val := by
-      funext k; exact if_neg ho
-    rw [h1, show nuT X j b = _ from if_neg ho]
+      funext k; exact ite_eq_right ho
+    rw [h1, show nuT X j b = _ from ite_eq_right ho]
     exact shape_even_holds _ _ (hanti _) _ (hle _)
 
 theorem xPair (hS : XShape) (hBrS : XBrS) (hInj : XInj) (hMid : XMid) (hU : XUnit)
@@ -1416,7 +1364,6 @@ theorem toK_bidet {r n K' : ℕ} (sz : Fin K' → ℕ) (hsz : ∀ k, sz k ≤ n)
   congr 1
   ext a b
   simp
-
 
 include hem hν hh hM in
 theorem tgt_bidet (hDB : DualBases) (hFP : FockProd) (hRe : Reorder) (c : B → ℕ) (sz : ∀ b, Fin (c b) → ℕ)

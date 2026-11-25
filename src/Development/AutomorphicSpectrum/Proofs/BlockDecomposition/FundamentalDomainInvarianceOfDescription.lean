@@ -7,49 +7,8 @@ import GroundTheory.AutomorphicForms.Reduction
 import GroundTheory.AutomorphicForms.ReductionFinite
 import GroundTheory.AutomorphicForms.ReductionLocalVolume
 import GroundTheory.GlobalFields.Adele.Topology
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Dynamics.Ergodic.Action.Regular
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -147,30 +106,14 @@ theorem measure_inter_band_lt_top (μ : Measure Ad3.R.G2) [μ.IsHaarMeasure] {�
       set_option synthInstance.maxHeartbeats 200000 in
         exact (hF.measure_eq_tsum E).symm
 
-theorem exists_probability_haar :
-    ∃ m : Measure Ad3.R.KA, m.IsHaarMeasure ∧ IsProbabilityMeasure m := by
-  haveI : CompactSpace Ad3.R.KA := isCompact_iff_compactSpace.1 isCompact_maxCompact
-  haveI : WeaklyLocallyCompactSpace Ad3.R.KA := by
-    set_option synthInstance.maxHeartbeats 200000 in
-      exact inferInstance
-  let K₀ : TopologicalSpace.PositiveCompacts Ad3.R.KA := ⊤
-  set_option synthInstance.maxHeartbeats 200000 in
-    refine ⟨Measure.haarMeasure K₀, inferInstance, ⟨?_⟩⟩
-  have h := by
-    set_option synthInstance.maxHeartbeats 200000 in
-      exact Measure.haarMeasure_self (K₀ := K₀)
-  simpa [K₀] using h
-
-theorem setup_of_ideleDomain : Ad3.R.D0 → Ad3.R.G0 := by
-  rintro ⟨𝓓, h1, h2, h3⟩
+theorem setup_of_ideleDomain : Ad3.R.G0 := by
   obtain ⟨μ, hμ, hr⟩ := exists_isHaarMeasure_isMulRightInvariant (K := ℚ) (n := 2) (by norm_num)
-  obtain ⟨mK, hK, hP⟩ := exists_probability_haar
   haveI : DiscreteTopology (AdelicGLn.rationalGL ℚ 2) := AdelicGLn.discreteTopology_rationalGL ℚ 2
   have hF : IsFundamentalDomain (AdelicGLn.diagonal ℚ 2).range
       (RightCosetSpace.fundamentalDomain (AdelicGLn.rationalGL ℚ 2)) μ :=
     RightCosetSpace.isFundamentalDomain_fundamentalDomain (AdelicGLn.rationalGL ℚ 2) μ
-  exact ⟨μ, _, mK, 𝓓, ⟨hμ, hr, hF, RightCosetSpace.measurableSet_fundamentalDomain _,
-    measure_inter_band_lt_top μ hF, hK, hP, h1, h2, h3⟩⟩
+  exact ⟨μ, _, ⟨hμ, hr, hF, RightCosetSpace.measurableSet_fundamentalDomain _,
+    measure_inter_band_lt_top μ hF⟩⟩
 
 end GlobalTheory.CompanionTheory.RSGlobal
 

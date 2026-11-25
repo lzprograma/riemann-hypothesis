@@ -49,7 +49,6 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.HTLat GlobalTheory.Published.AbVarRed GlobalTheory.CechPic GlobalTheory.AV GlobalTheory.AV.AbVar
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.AV.AbVar
 
@@ -90,13 +89,13 @@ theorem isIsogeny_bcMap_iff_and_deg_bcMap : ∀ (K : Type) [Field K] (L : Type) 
       (MorphismProperty.iff_of_isPullback (P := @Surjective) sq.flip hQ)
   refine ⟨hiso, ?_⟩
   by_cases h : IsIsogeny f
-  · obtain ⟨-, hfl, -, hrk⟩ := GlobalTheory.T.dim_eq_flat_finrank_eq_deg_of_isIsogeny K A B f h
+  · obtain ⟨-, hfl, -, hrk⟩ := GlobalTheory.AV.AbVar.isogeny_flat_finrank K A B f h
     have : IsFinite f.hom.left := h.1
-    have e : deg (bcMap L f) = (bcMap L f).hom.left.finrank (baseChange L B).origin := if_pos (hiso.2 h)
+    have e : deg (bcMap L f) = (bcMap L f).hom.left.finrank (baseChange L B).origin := ite_eq_left (hiso.2 h)
     rw [e]
     exact (Scheme.Hom.finrank_of_isPullback _ _ _ _ sq (baseChange L B).origin).trans (hrk _)
-  · have e1 : deg (bcMap L f) = 0 := if_neg (fun h' => h (hiso.1 h'))
-    have e2 : deg f = 0 := if_neg h
+  · have e1 : deg (bcMap L f) = 0 := ite_eq_right (fun h' => h (hiso.1 h'))
+    have e2 : deg f = 0 := ite_eq_right h
     rw [e1, e2]
 
 end GlobalTheory.AV.AbVar

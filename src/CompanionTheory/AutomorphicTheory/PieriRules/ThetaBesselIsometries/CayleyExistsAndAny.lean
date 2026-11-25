@@ -152,7 +152,7 @@ lemma card_even (r : ℕ) : ((range (2 * r + 2)).filter fun m => m % 2 = 0).card
   | zero => decide
   | succ r ih =>
     rw [show 2 * (r + 1) + 2 = 2 * r + 2 + 1 + 1 by ring, range_add_one, range_add_one, filter_insert,
-      filter_insert, if_neg (by omega), if_pos (by omega), card_insert_of_notMem (by simp), ih]
+      filter_insert, ite_eq_right (by omega), ite_eq_left (by omega), card_insert_of_notMem (by simp), ih]
 
 lemma card_signs (k r : ℕ) (hk : 1 ≤ k) :
     (univ.filter fun i => PI.BesselPeriodGGP.eps48 k r i = true).card = k + r := by
@@ -166,7 +166,7 @@ lemma card_signs (k r : ℕ) (hk : 1 ≤ k) :
   rw [Fin.sum_univ_eq_sum_range (fun m : ℕ => if m < j ∨ (m - j) % 2 = 0 then 1 else 0),
     show 2 * r + (j + 1) + 1 = j + (2 * r + 2) by ring, sum_range_add]
   have a : ∑ m ∈ range j, (if m < j ∨ (m - j) % 2 = 0 then 1 else 0) = j := by
-    rw [sum_congr rfl (g := fun _ => 1) (fun m hm => if_pos (Or.inl (mem_range.1 hm)))]; simp
+    rw [sum_congr rfl (g := fun _ => 1) (fun m hm => ite_eq_left (Or.inl (mem_range.1 hm)))]; simp
   have b : ∑ m ∈ range (2 * r + 2), (if j + m < j ∨ (j + m - j) % 2 = 0 then 1 else 0) = r + 1 := by
     rw [← card_even r, card_filter]
     refine sum_congr rfl fun m _ => ?_

@@ -71,30 +71,11 @@ theorem ipL_comm (X Y : Matrix (Fin n) (Fin n) ℂ) : ipL Y X = ipL X Y := by
     rw [conjTranspose_mul, conjTranspose_conjTranspose]
   rw [hswap, trace_conjTranspose, Complex.star_def, Complex.conj_re]
 
-private theorem Jm_sq_lemma : Jm ε * Jm ε = 1 := by
-  rw [Jm, diagonal_mul_diagonal, ← diagonal_one]
-  congr 1
-  funext a
-  by_cases ha : ε a <;> simp [ha]
-
-private theorem Jm_conjTransposeFlagMeasures' : (Jm ε)ᴴ = Jm ε := by
-  rw [Jm, diagonal_conjTranspose]
-  congr 1
-  funext a
-  by_cases ha : ε a <;> simp [ha]
-
-private theorem Jm_mul_Jm_mulFlagMeasures (M : Matrix (Fin n) (Fin n) ℂ) : Jm ε * (Jm ε * M) = M := by
-  rw [← Matrix.mul_assoc, Jm_sq_lemma, Matrix.one_mul]
-
-theorem inv_eq_neg_of_inG {Y : Matrix (Fin n) (Fin n) ℂ} (h : inG ε Y) : Jm ε * Yᴴ * Jm ε = -Y := by
-  have h0 : Yᴴ * Jm ε + Jm ε * Y = 0 := h
-  have h1 : Yᴴ * Jm ε = -(Jm ε * Y) := eq_neg_of_add_eq_zero_left h0
-  rw [Matrix.mul_assoc, h1, Matrix.mul_neg, Jm_mul_Jm_mulFlagMeasures]
-
 theorem inG_sub_inv (X : Matrix (Fin n) (Fin n) ℂ) : inG ε (X - Jm ε * Xᴴ * Jm ε) := by
   show (X - Jm ε * Xᴴ * Jm ε)ᴴ * Jm ε + Jm ε * (X - Jm ε * Xᴴ * Jm ε) = 0
-  simp only [conjTranspose_sub, conjTranspose_mul, conjTranspose_conjTranspose, Jm_conjTransposeFlagMeasures',
-    Matrix.sub_mul, Matrix.mul_sub, Matrix.mul_assoc, Jm_sq_lemma, Jm_mul_Jm_mulFlagMeasures, Matrix.mul_one]
+  simp only [conjTranspose_sub, conjTranspose_mul, conjTranspose_conjTranspose, Jm_conjTranspose,
+    Matrix.sub_mul, Matrix.mul_sub, Matrix.mul_assoc, Jm_mul_self, Matrix.mul_one]
+  rw [← Matrix.mul_assoc (Jm ε) (Jm ε), Jm_mul_self, Matrix.one_mul]
   abel
 
 theorem ipL_inv {Y : Matrix (Fin n) (Fin n) ℂ} (h : inG ε Y) (X : Matrix (Fin n) (Fin n) ℂ) :
@@ -103,9 +84,9 @@ theorem ipL_inv {Y : Matrix (Fin n) (Fin n) ℂ} (h : inG ε Y) (X : Matrix (Fin
   have h1 : Jm ε * Y = -(Yᴴ * Jm ε) := eq_neg_of_add_eq_zero_right h0
 
   have hY : Jm ε * Y * Jm ε = -Yᴴ := by
-    rw [h1, Matrix.neg_mul, Matrix.mul_assoc, Jm_sq_lemma, Matrix.mul_one]
+    rw [h1, Matrix.neg_mul, Matrix.mul_assoc, Jm_mul_self, Matrix.mul_one]
   have hstar : (Jm ε * Xᴴ * Jm ε)ᴴ = Jm ε * X * Jm ε := by
-    simp only [conjTranspose_mul, conjTranspose_conjTranspose, Jm_conjTransposeFlagMeasures', Matrix.mul_assoc]
+    simp only [conjTranspose_mul, conjTranspose_conjTranspose, Jm_conjTranspose, Matrix.mul_assoc]
   have htr : (Y * (Jm ε * X * Jm ε)).trace = -(X * Yᴴ).trace :=
     calc (Y * (Jm ε * X * Jm ε)).trace = ((Y * (Jm ε * X)) * Jm ε).trace := by
           simp only [Matrix.mul_assoc]
@@ -127,9 +108,10 @@ theorem add_inv_eq (g : UJ ε) :
   have key : Jm ε * (uMat g)ᴴ * Jm ε * uMat g = 1 := by
     calc Jm ε * (uMat g)ᴴ * Jm ε * uMat g = Jm ε * ((uMat g)ᴴ * Jm ε * uMat g) := by
           simp only [Matrix.mul_assoc]
-      _ = 1 := by rw [hg, Jm_sq_lemma]
+      _ = 1 := by rw [hg, Jm_mul_self]
   have e : Jm ε * (uMat g - 1)ᴴ * Jm ε = Jm ε * (uMat g)ᴴ * Jm ε - 1 := by
-    rw [conjTranspose_sub, conjTranspose_one, Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_one, Jm_sq_lemma]
+    rw [conjTranspose_sub, conjTranspose_one, Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_one,
+      Jm_mul_self]
   rw [e, Matrix.sub_mul, Matrix.mul_sub, key, Matrix.mul_one, Matrix.one_mul]
   abel
 

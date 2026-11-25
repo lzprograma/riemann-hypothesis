@@ -89,15 +89,10 @@ theorem mixedTraceL_trace_conjTranspose_mul_self_pos {A : Matrix (Fin n) (Fin n)
     push Not at hc
     exact hA (Matrix.ext hc)
   refine lt_of_lt_of_le (mixedTraceL_star_mul_self_pos hji) ?_
-  calc mixedTraceL K (star (A j i) * A j i)
-      = ∑ j' ∈ {j}, mixedTraceL K (star (A j' i) * A j' i) := by simp
-    _ ≤ ∑ j', mixedTraceL K (star (A j' i) * A j' i) :=
-        Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _) fun _ _ _ =>
-          mixedTraceL_star_mul_self_nonneg _
-    _ = ∑ i' ∈ {i}, ∑ j', mixedTraceL K (star (A j' i') * A j' i') := by simp
-    _ ≤ ∑ i', ∑ j', mixedTraceL K (star (A j' i') * A j' i') :=
-        Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _) fun _ _ _ =>
-          Finset.sum_nonneg fun _ _ => mixedTraceL_star_mul_self_nonneg _
+  exact (Finset.single_le_sum (f := fun j' => mixedTraceL K (star (A j' i) * A j' i))
+      (fun _ _ => mixedTraceL_star_mul_self_nonneg _) (Finset.mem_univ j)).trans
+    (Finset.single_le_sum (f := fun i' => ∑ j', mixedTraceL K (star (A j' i') * A j' i'))
+      (fun _ _ => Finset.sum_nonneg fun _ _ => mixedTraceL_star_mul_self_nonneg _) (Finset.mem_univ i))
 
 def mat (X : ArchMatrix K n) : Matrix (Fin n) (Fin n) (mixedSpace K) := X
 

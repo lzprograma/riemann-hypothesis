@@ -79,14 +79,14 @@ theorem exists_multiplicative_ideal_extension :
   have hd : ∀ P : HeightOneSpectrum (𝓞 K), ¬ m ≤ P.asIdeal → d P.asIdeal = c P := by
     intro P hP
     simp only [d]
-    rw [dite_eq_left ⟨P.isPrime, P.ne_bot⟩, if_neg hP]
+    rw [dite_eq_left ⟨P.isPrime, P.ne_bot⟩, ite_eq_right hP]
   have hd0 : ∀ Q, m ≤ Q → d Q = 0 := by
     intro Q hQ
     simp only [d]
     split_ifs <;> rfl
   refine ⟨fun I => if I = ⊥ then 0 else ((normalizedFactors I).map d).prod, by simp, ?_, ?_, ?_, ?_, ?_⟩
   · have : (⊤ : Ideal (𝓞 K)) ≠ ⊥ := top_ne_bot
-    simp only [if_neg this]
+    simp only [ite_eq_right this]
     rw [← Ideal.one_eq_top, normalizedFactors_one]
     simp
   · intro I J
@@ -95,10 +95,10 @@ theorem exists_multiplicative_ideal_extension :
     by_cases hJ : J = ⊥
     · simp [hJ]
     have hIJ : I * J ≠ ⊥ := mul_ne_zero hI hJ
-    simp only [if_neg hI, if_neg hJ, if_neg hIJ]
+    simp only [ite_eq_right hI, ite_eq_right hJ, ite_eq_right hIJ]
     rw [normalizedFactors_mul hI hJ, Multiset.map_add (f := _), Multiset.prod_add]
   · intro I hI hm
-    simp only [if_neg hI]
+    simp only [ite_eq_right hI]
     refine Multiset.prod_induction (fun z : ℂ => ‖z‖ = 1) _ ?_ (by simp) ?_
     · intro a b ha hb
       simp [ha, hb]
@@ -115,13 +115,13 @@ theorem exists_multiplicative_ideal_extension :
   · intro I hm
     by_cases hI : I = ⊥
     · simp [hI]
-    simp only [if_neg hI]
+    simp only [ite_eq_right hI]
     obtain ⟨Q, hQ, hle⟩ := Ideal.exists_le_maximal _ hm
     apply Multiset.prod_eq_zero
     refine Multiset.mem_map.2 ⟨Q, ?_, hd0 Q (le_sup_right.trans hle)⟩
     exact (Ideal.mem_normalizedFactors_iff hI).2 ⟨hQ.isPrime, le_sup_left.trans hle⟩
   · intro P hP
-    simp only [if_neg P.ne_bot]
+    simp only [ite_eq_right P.ne_bot]
     rw [normalizedFactors_irreducible P.irreducible, normalize_eq]
     simp [hd P hP]
 

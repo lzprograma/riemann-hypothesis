@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.LowVanishFockOfLowVanish
 public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
 public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.BarMatrix
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSignatureBlocksOfVectorAndFrame
@@ -45,37 +46,12 @@ import Std.Tactic.BVDecide.Normalize.BitVec
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FrameExists
 
 theorem exists_signFrame {n : ℕ} {H : Matrix (Fin n) (Fin n) ℂ} (hH : H.IsHermitian) (hd : IsUnit H.det) :
     ∃ (ε : Fin n → Bool) (P : Matrix (Fin n) (Fin n) ℂ), IsUnit P ∧ Pᴴ * Formalism.REAL.Jm ε * P = H := by
-  let U : Matrix (Fin n) (Fin n) ℂ := hH.eigenvectorUnitary
-  let l := hH.eigenvalues
-  let S : Matrix (Fin n) (Fin n) ℂ := diagonal fun a => ((Real.sqrt |l a| : ℝ) : ℂ)
-  have hs : H = U * diagonal (fun a => ((l a : ℝ) : ℂ)) * Uᴴ := by
-    have := hH.spectral_theorem
-    rw [Unitary.conjStarAlgAut_apply] at this
-    exact this
-  have hS : Sᴴ * Formalism.REAL.Jm (fun a => decide (0 < l a)) * S = diagonal (fun a => ((l a : ℝ) : ℂ)) := by
-    simp only [S, Formalism.REAL.Jm, diagonal_conjTranspose, diagonal_mul_diagonal]
-    congr 1
-    funext a
-    have h1 : ((Real.sqrt |l a| : ℝ) : ℂ) * ((Real.sqrt |l a| : ℝ) : ℂ) = ((|l a| : ℝ) : ℂ) := by
-      rw [← Complex.ofReal_mul, Real.mul_self_sqrt (abs_nonneg _)]
-    simp only [Pi.star_apply, Complex.star_def, Complex.conj_ofReal]
-    rw [mul_right_comm, h1]
-    by_cases h : 0 < l a
-    · simp [h, abs_of_pos h]
-    · simp [h, abs_of_nonpos (not_lt.1 h)]
-  have key : (S * Uᴴ)ᴴ * Formalism.REAL.Jm (fun a => decide (0 < l a)) * (S * Uᴴ) = H := by
-    rw [hs, ← hS, conjTranspose_mul, conjTranspose_conjTranspose]
-    simp only [Matrix.mul_assoc]
-  refine ⟨_, S * Uᴴ, ?_, key⟩
-  rw [Matrix.isUnit_iff_isUnit_det]
-  rw [← key, det_mul] at hd
-  exact isUnit_of_mul_isUnit_right hd
+  first | exact _root_.GlobalTheory.ChainFr.Model.exists_sign_frame | exact @_root_.GlobalTheory.ChainFr.Model.exists_sign_frame | apply _root_.GlobalTheory.ChainFr.Model.exists_sign_frame <;> assumption
 
 theorem exists_perm_of_card {n : ℕ} {ε η : Fin n → Bool}
     (h : Nat.card {a // ε a = true} = Nat.card {a // η a = true}) :

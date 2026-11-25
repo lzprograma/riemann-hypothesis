@@ -54,8 +54,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
-set_option autoImplicit false
-
 private lemma int_range {L A : Type} [Field L] [Algebra ℂ L] [CommRing A] [Algebra ℂ A] [Algebra A L]
     [IsScalarTower ℂ A L] (hA : ∀ a : A, a ∈ (algebraMap ℂ A).range) {y : L} (h : IsIntegral A y) :
     y ∈ (algebraMap ℂ L).range := by
@@ -65,13 +63,6 @@ private lemma int_range {L A : Type} [Field L] [Algebra ℂ L] [CommRing A] [Alg
   have hy : IsIntegral ℂ y := isIntegral_trans y h
   exact minpoly.mem_range_of_degree_eq_one ℂ y
     (IsAlgClosed.degree_eq_one_of_irreducible ℂ (minpoly.irreducible hy))
-
-private lemma int_mono {E L : Type} [CommRing E] [Algebra ℂ E] [CommRing L] [Algebra E L]
-    {A B : Subalgebra ℂ E} (h : A ≤ B) {y : L} (hy : IsIntegral A y) : IsIntegral B y := by
-  obtain ⟨p, hp, he⟩ := hy
-  refine ⟨p.map (Subalgebra.inclusion h).toRingHom, hp.map _, ?_⟩
-  rw [Polynomial.eval₂_map]
-  exact he
 
 private lemma int_scale {L : Type} [Field L] [Algebra ℂ L] (A A' : Subalgebra ℂ L) (s : L) (hs : s ∈ A)
     (hc : ∀ c ∈ A', ∃ N : ℕ, s ^ N * c ∈ A) {y : L} (hy : IsIntegral A' y) :
@@ -151,14 +142,16 @@ section
 variable {F K K' : Type} [Field F] [Field K] [Field K'] [Algebra ℂ F] [Algebra ℂ K] [Algebra ℂ K'] [Algebra F K]
   [IsScalarTower ℂ F K] {d : ℕ} (x : Fin (d + 1) → F) (j2 : K →ₐ[ℂ] K')
 
-private lemma rA_mono' {I I' : Finset (Fin (d + 1))} (h : I ⊆ I') : rA ℂ x I ≤ rA ℂ x I' :=
-  Algebra.adjoin_mono fun _ ⟨i, hi, j, e⟩ => ⟨i, h hi, j, e⟩
-
 private lemma rB_mono' {I I' : Finset (Fin (d + 1))} (h : I ⊆ I') : rB ℂ K x I ≤ rB ℂ K x I' :=
-  fun _ hy => int_mono (rA_mono' x h) hy
+  fun _ (hy : IsIntegral _ _) =>
+    IsIntegral.map_of_comp_eq (Subalgebra.inclusion (rA_mono ℂ x h)).toRingHom
+      (RingHom.id K) (by ext; rfl) hy
 
-private lemma integralClosure_mono_subset {J J' : Finset (Fin (d + 1))} (h : J ⊆ J') : R2 x j2 J ≤ R2 x j2 J' :=
-  fun _ hy => int_mono (Subalgebra.map_mono (rB_mono' x h)) hy
+private lemma integralClosure_mono_subset {J J' : Finset (Fin (d + 1))} (h : J ⊆ J') :
+    R2 x j2 J ≤ R2 x j2 J' :=
+  fun _ (hy : IsIntegral _ _) =>
+    IsIntegral.map_of_comp_eq (Subalgebra.inclusion (Subalgebra.map_mono (rB_mono' x h))).toRingHom
+      (RingHom.id K') (by ext; rfl) hy
 
 private lemma ratio_mem {I : Finset (Fin (d + 1))} {i : Fin (d + 1)} (hi : i ∈ I) (a : Fin (d + 1)) :
     x a / x i ∈ rA ℂ x I :=

@@ -69,7 +69,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 noncomputable section
 
 namespace GlobalTheory.PlaceChain
@@ -379,31 +378,31 @@ theorem points : Big fun {D} _ _ _ _ {T} _ _ _ _ _ _ ch => ∀ (s : ℤˣ) (t : 
       dsimp only
       by_cases hj0 : j = 0
       · subst hj0
-        rw [if_pos rfl, if_neg h0i, map_one, map_one]
+        rw [ite_eq_left rfl, ite_eq_right h0i, map_one, map_one]
         exact ⟨suppAt_one_twisted_operators, rfl⟩
-      · rw [if_neg hj0]
+      · rw [ite_eq_right hj0]
         by_cases hji : j ∈ idx D
         · obtain ⟨-, -, e, -, -, hloc⟩ := (hX j).1 hji
-          rw [if_pos hji, inBasis_cut (hL w), hloc hj w]
+          rw [ite_eq_left hji, inBasis_cut (hL w), hloc hj w]
           exact ⟨suppAt_cutPart hw1 hw2 _ _, rfl⟩
-        · rw [if_neg hji, (hX j).2 hji, cut_one hfw, map_one, map_one]
+        · rw [ite_eq_right hji, (hX j).2 hji, cut_one hfw, map_one, map_one]
           exact ⟨suppAt_one_twisted_operators, rfl⟩
     · intro j hj
       dsimp only
       by_cases hj0 : j = 0
       · subst hj0
-        rw [if_pos rfl, if_pos rfl, inBasis_cut (hL w), hl₀ w]
+        rw [ite_eq_left rfl, ite_eq_left rfl, inBasis_cut (hL w), hl₀ w]
         exact ⟨suppAt_cutPart hw1 hw2 _ _, rfl⟩
-      · rw [if_neg hj0, if_neg hj0, map_one, map_one]
+      · rw [ite_eq_right hj0, ite_eq_right hj0, map_one, map_one]
         exact ⟨suppAt_one_twisted_operators, rfl⟩
     · intro j _
       dsimp only
       by_cases hj0 : j = 0
       · subst hj0
         refine ⟨1, isTilt_one ch.G h0i, ?_⟩
-        rw [if_pos rfl, inv_one, one_mul]
+        rw [ite_eq_left rfl, inv_one, one_mul]
         exact mul_mem (real_mem_grpOff _ _ (hp.1 0)) (cutS_mem he₀ hL (Finset.notMem_erase w Sᶜ) _)
-      · rw [if_neg hj0]
+      · rw [ite_eq_right hj0]
         by_cases hji : j ∈ idx D
         · obtain ⟨δ, hδ, hb₀f, a, ha, rfl⟩ := hbI j hji
           refine ⟨a * b₀ j, hδ, ?_⟩
@@ -447,7 +446,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
 theorem _root_.GlobalTheory.T.rowTest_doubleCosetPoints_chain_place_by_place : Big fun {D} _ _ _ _ {T} _ _ _ _ _ _ ch => ∀ (s : ℤˣ) (t : T) (β : CosFam ch.G t) (b b₀ : Pts ch.G), IsRep t ch.S.B s β b → IsBase t ch.S.B b₀ → ∀ (eL : locPl ch.G t → AE D), (∀ w, IsIdemSum (eL w) {w.1}) → ∀ p : Pts ch.G, IsRealPt p → ∃ q : Finset (locPl ch.G t) → Pts ch.G, q ∅ = p * b₀ ∧ q Finset.univ = p * b ∧ ∀ (S : Finset (locPl ch.G t)) (w : locPl ch.G t), w ∉ S → ∃ r r₀ h : Pts ch.G, OneLoc t w.1 (eL w) r (fun j => if j ∈ idx D then sgnAt ch.G t s w.1 j * (repsAt ch.G t w.1).elt (β w) (D.R.m, j) else 1) ∧ OneLoc t w.1 (eL w) r₀ (fun j => if j = 0 then (stair (locGrid ch.G t w.1) (unifAt w.1) (cosExp ch.G w.1) j)⁻¹ else 1) ∧ (∀ j, j ≤ D.R.m → ∃ δ, IsTilt ch.G j δ ∧ δ⁻¹ * h j ∈ GlobalTheory.FinPl.grpOff _ (· = w.1.under (𝓞 D.host.F))) ∧ h * r = q (insert w S) ∧ h * r₀ = q S := by
   first | exact @GlobalTheory.PlaceChain.points

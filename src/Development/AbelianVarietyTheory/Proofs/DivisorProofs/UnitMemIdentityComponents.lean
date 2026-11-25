@@ -300,7 +300,6 @@ namespace GlobalTheory.IdCompOpen
 theorem isOpen_snd_image : ∀ (S : Scheme.{0}) (G : Over S) [GrpObj G], Smooth G.hom → ∀ U : G.left.Opens,
     IsOpen {y : G.left | ∃ w : (G ⊗ G).left, (fst G G).left w ∈ U ∧ (μ[G]).left w ∈ U ∧ (snd G G).left w = y} := by
   intro S G _ hG U
-  have hs : Smooth (pullback.snd G.hom G.hom) := inferInstance
   have ho : UniversallyOpen (pullback.snd G.hom G.hom) := UniversallyOpen.of_flat _
   have hmap : IsOpenMap (snd G G).left := (pullback.snd G.hom G.hom).isOpenMap
   have hW : IsOpen ((fst G G).left ⁻¹' (U : Set G.left) ∩ (μ[G]).left ⁻¹' (U : Set G.left)) :=

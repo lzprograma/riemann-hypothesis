@@ -60,7 +60,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Polynomial
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Hk3 (Core Good IsSF SchurAll TwoSided FixAll EEc Wcc eH IsLab HoweUnram)
 
 namespace GlobalTheory
@@ -91,14 +90,14 @@ theorem exists_separating_extension_of_rel : ∀ {α β L : Type} [Infinite L] (
     intro c
     by_cases h : ∃ f, ∃ e ∈ S, e ∘ r = c ∧ Rel e f
     · left
-      have : g c = h.choose := dif_pos h
+      have : g c = h.choose := dite_eq_left h
       rw [this]
       exact h.choose_spec
-    · exact Or.inr (dif_neg h)
+    · exact Or.inr (dite_eq_right h)
   refine ⟨fun e => Function.extend r (g (e ∘ r)) e, ?_, ?_⟩
   · intro e he f hf k
     have h : ∃ f, ∃ e' ∈ S, e' ∘ r = e ∘ r ∧ Rel e' f := ⟨f, e, he, rfl, hf⟩
-    have h1 : g (e ∘ r) = h.choose := dif_pos h
+    have h1 : g (e ∘ r) = h.choose := dite_eq_left h
     obtain ⟨e', he', h2, h3⟩ := h.choose_spec
     have h4 := (H e' he' e he _ _ h3 hf).1 h2
     show f k = Function.extend r (g (e ∘ r)) e (r k)

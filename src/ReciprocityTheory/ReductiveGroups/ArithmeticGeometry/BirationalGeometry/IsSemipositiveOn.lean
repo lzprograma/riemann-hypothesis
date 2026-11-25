@@ -105,10 +105,6 @@ open NumberField
 
 variable {e n : ℕ}
 
-def IsMultihomog {K : Type*} [CommSemiring K] (P : MvPolynomial (Fin (e + 1) × Fin n) K) (δ : ℕ) :
-    Prop :=
-  ∀ m ∈ P.support, ∀ k, ∑ j, m (k, j) = δ
-
 end Chow
 
 section MetrisedHeight

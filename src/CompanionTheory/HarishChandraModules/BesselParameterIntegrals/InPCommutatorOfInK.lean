@@ -12,12 +12,6 @@ namespace CompanionTheory.D.Upq
 open Matrix NormedSpace PI.UpqRep
 open scoped Matrix.Norms.L2Operator Manifold
 
-section General
-
-variable {m : Type*} [Fintype m] [DecidableEq m] {J : Matrix m m ℂ}
-
-end General
-
 section UJ
 
 variable {n : ℕ} (ε : Fin n → Bool)

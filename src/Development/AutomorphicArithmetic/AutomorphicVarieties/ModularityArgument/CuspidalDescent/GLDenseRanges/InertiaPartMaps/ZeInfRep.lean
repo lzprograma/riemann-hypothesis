@@ -64,10 +64,6 @@ open UpperTheory.V.Hi UpperTheory.V.Hi.CaseU
 open UpperTheory.V.Z.J.D
 open scoped Matrix TensorProduct
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
-
-
 section Abstract
 
 variable {M : Type} [AddCommGroup M] [Module ℂ M] {J : Type} [Fintype J]
@@ -89,7 +85,7 @@ private theorem zd_dec (D : J → Submodule ℂ M) {F : M} (h : F ∈ ⨆ i, D i
   classical
   induction h using Submodule.iSup_induction' with
   | mem i y hy =>
-    refine ⟨Pi.single i y, fun j => ?_, by rw [Finset.sum_pi_single', if_pos (Finset.mem_univ i)]⟩
+    refine ⟨Pi.single i y, fun j => ?_, by rw [Finset.sum_pi_single', ite_eq_left (Finset.mem_univ i)]⟩
     by_cases hj : j = i
     · subst hj
       rw [Pi.single_eq_same]; exact hy
@@ -417,76 +413,16 @@ open UpperTheory.V.Z.J.D
 open UpperTheory.V.Z.Desc.V0
 open scoped Matrix TensorProduct
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
-
-
 section Abstract
 
 variable {M : Type} [AddCommGroup M] [Module ℂ M] {J : Type} [Fintype J]
-
-private theorem ze_zero (Y : J → Submodule ℂ M) (hY : iSupIndep Y) (x : J → M) (hx : ∀ i, x i ∈ Y i)
-    (h : ∑ i, x i = 0) (i : J) : x i = 0 := by
-  classical
-  have h1 : x i = - ∑ j ∈ Finset.univ.erase i, x j := by
-    rw [eq_neg_iff_add_eq_zero, Finset.add_sum_erase _ _ (Finset.mem_univ i)]
-    exact h
-  have h2 : x i ∈ ⨆ (j) (_ : j ≠ i), Y j := by
-    rw [h1]
-    refine neg_mem (sum_mem fun j hj => ?_)
-    exact Submodule.mem_iSup_of_mem j (Submodule.mem_iSup_of_mem (Finset.ne_of_mem_erase hj) (hx j))
-  exact Submodule.disjoint_def.1 (hY i) _ (hx i) h2
-
-private theorem ze_dec (D : J → Submodule ℂ M) {F : M} (h : F ∈ ⨆ i, D i) :
-    ∃ x : J → M, (∀ i, x i ∈ D i) ∧ ∑ i, x i = F := by
-  classical
-  induction h using Submodule.iSup_induction' with
-  | mem i y hy =>
-    refine ⟨Pi.single i y, fun j => ?_, ?_⟩
-    · by_cases hj : j = i
-      · subst hj
-        rw [Pi.single_eq_same]
-        exact hy
-      · rw [Pi.single_eq_of_ne hj]
-        exact zero_mem _
-    · rw [Finset.sum_eq_single i (fun j _ hj => Pi.single_eq_of_ne hj _) (fun h => absurd (Finset.mem_univ i) h),
-        Pi.single_eq_same]
-  | zero => exact ⟨0, fun _ => zero_mem _, Finset.sum_const_zero⟩
-  | add y z _ _ hy hz =>
-    obtain ⟨a, ha, rfl⟩ := hy
-    obtain ⟨b, hb, rfl⟩ := hz
-    exact ⟨a + b, fun i => add_mem (ha i) (hb i), Finset.sum_add_distrib⟩
-
-private theorem ze_rank (E : J → Submodule ℂ M) (hE : iSupIndep E) (Z : Submodule ℂ M) [FiniteDimensional ℂ Z]
-    (hZ : ∀ i, E i ≤ Z) : Module.finrank ℂ ↥(⨆ i, E i) = ∑ i, Module.finrank ℂ ↥(E i) := by
-  classical
-  have key : ∀ s : Finset J, Module.finrank ℂ ↥(⨆ i ∈ s, E i) = ∑ i ∈ s, Module.finrank ℂ ↥(E i) := by
-    intro s
-    induction s using Finset.induction_on with
-    | empty =>
-      have h0 : (⨆ i ∈ (∅ : Finset J), E i) = ⊥ :=
-        le_bot_iff.1 (iSup₂_le fun i hi => absurd hi (Finset.notMem_empty i))
-      rw [h0, finrank_bot, Finset.sum_empty]
-    | insert a s ha ih =>
-      have hs : (⨆ i ∈ s, E i) ≤ Z := iSup₂_le fun i _ => hZ i
-      haveI : FiniteDimensional ℂ ↥(E a) := Submodule.finiteDimensional_of_le (hZ a)
-      haveI : FiniteDimensional ℂ ↥(⨆ i ∈ s, E i) := Submodule.finiteDimensional_of_le hs
-      have hd : Disjoint (E a) (⨆ i ∈ s, E i) :=
-        hE.disjoint_biSup (y := (s : Set J)) fun h => ha (Finset.mem_coe.1 h)
-      have h := Submodule.finrank_sup_add_finrank_inf_eq (E a) (⨆ i ∈ s, E i)
-      rw [hd.eq_bot, finrank_bot, add_zero, ih] at h
-      rw [Finset.iSup_insert, Finset.sum_insert ha]
-      exact h
-  have h1 : (⨆ i ∈ (Finset.univ : Finset J), E i) = ⨆ i, E i := iSup_congr fun i => iSup_pos (Finset.mem_univ i)
-  rw [← h1]
-  exact key Finset.univ
 
 private theorem ze_main (Y : J → Submodule ℂ M) (hY : iSupIndep Y) (Z : Submodule ℂ M) [FiniteDimensional ℂ Z]
     (hZ : Module.finrank ℂ Z = ∑ i, Module.finrank ℂ ↥(Y i ⊓ Z)) (P : Module.End ℂ M)
     (hP : ∀ i, ∀ y ∈ Y i, P y ∈ Y i) :
     Module.finrank ℂ ↥(Z ⊓ LinearMap.ker P) = ∑ i, Module.finrank ℂ ↥(Y i ⊓ Z ⊓ LinearMap.ker P) := by
   have hE : iSupIndep fun i => Y i ⊓ Z := hY.mono fun _ => inf_le_left
-  have h1 := ze_rank (fun i => Y i ⊓ Z) hE Z fun _ => inf_le_right
+  have h1 := zd_rank (fun i => Y i ⊓ Z) hE Z fun _ => inf_le_right
   have hs : (⨆ i, Y i ⊓ Z) = Z :=
     Submodule.eq_of_le_of_finrank_eq (iSup_le fun _ => inf_le_right) (by rw [h1, hZ])
   have hB : Z ⊓ LinearMap.ker P ≤ ⨆ i, Y i ⊓ (Z ⊓ LinearMap.ker P) := by
@@ -494,18 +430,18 @@ private theorem ze_main (Y : J → Submodule ℂ M) (hY : iSupIndep Y) (Z : Subm
     have hF1 : F ∈ ⨆ i, Y i ⊓ Z := by
       rw [hs]
       exact hF.1
-    obtain ⟨x, hx, rfl⟩ := ze_dec (fun i => Y i ⊓ Z) hF1
+    obtain ⟨x, hx, rfl⟩ := zd_dec (fun i => Y i ⊓ Z) hF1
     refine Submodule.sum_mem _ fun i _ => Submodule.mem_iSup_of_mem i ⟨(hx i).1, (hx i).2, ?_⟩
     have h0 : ∑ i, P (x i) = 0 := by
 
       rw [← map_sum]
       exact hF.2
-    exact ze_zero Y hY (fun i => P (x i)) (fun i => hP i _ (hx i).1) h0 i
+    exact zd_zero Y hY (fun i => P (x i)) (fun i => hP i _ (hx i).1) h0 i
   have hE' : iSupIndep fun i => Y i ⊓ (Z ⊓ LinearMap.ker P) := hY.mono fun _ => inf_le_left
   haveI : FiniteDimensional ℂ ↥(Z ⊓ LinearMap.ker P) := Submodule.finiteDimensional_of_le inf_le_left
   have hs' : (⨆ i, Y i ⊓ (Z ⊓ LinearMap.ker P)) = Z ⊓ LinearMap.ker P :=
     le_antisymm (iSup_le fun _ => inf_le_right) hB
-  have h := ze_rank (fun i => Y i ⊓ (Z ⊓ LinearMap.ker P)) hE' (Z ⊓ LinearMap.ker P) fun _ => inf_le_right
+  have h := zd_rank (fun i => Y i ⊓ (Z ⊓ LinearMap.ker P)) hE' (Z ⊓ LinearMap.ker P) fun _ => inf_le_right
   rw [hs'] at h
   rw [h]
   exact Finset.sum_congr rfl fun i _ => by rw [inf_assoc]

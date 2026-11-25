@@ -231,7 +231,7 @@ theorem frame_la {r : ℕ} {T T' : E} (F : FlagG S r T) (f₁ : Fin (r + 1) → 
     rw [Finset.sum_eq_single j]
     · simp only [ite_true, star_star]
       exact inv_mul_cancel₀ hj
-    · intro i _ hi; simp [if_neg hi]
+    · intro i _ hi; simp [ite_eq_right hi]
     · intro h; exact absurd (Finset.mem_univ _) h
   set M := solM H k ℓ with hM
   have hMH : M + Mᴴ = H := solM_add H hHh k ℓ

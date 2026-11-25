@@ -1,12 +1,11 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FormalGroupLawCompMulNZero
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcAdd
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ExpLaw
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -92,16 +91,7 @@ theorem hom_at {d : ℕ} {O : Type} [CommRing O] (G : FGLaw k d) (A : OAct O G) 
       exact (ev_X _ huv 1 l').symm
 
 theorem dLin_pt {d : ℕ} : dLin (pt k (n := 1) d 0) = 1 := by
-  ext i j
-  simp only [dLin, pt, Matrix.one_apply, MvPowerSeries.coeff_X]
-  by_cases h : i = j
-  · subst h
-    simp
-  · rw [if_neg, if_neg h]
-    intro h2
-    apply h
-    have h3 := (Finsupp.single_left_inj (one_ne_zero : (1 : ℕ) ≠ 0)).mp h2
-    exact (Prod.mk.inj h3).2.symm
+  apply _root_.GlobalTheory.FormalMulN.dLin_pt <;> assumption
 
 open Formalism.FG.SolveVAux in
 theorem action_linear : ActLinSt := by
@@ -180,7 +170,7 @@ theorem action_linear : ActLinSt := by
     rw [h1, Finset.sum_eq_single j0]
     · simp
     · intro j _ hj
-      rw [if_neg, mul_zero]
+      rw [ite_eq_right, mul_zero]
       intro h
       apply hj
       have h2 := (Finsupp.single_left_inj (one_ne_zero : (1 : ℕ) ≠ 0)).mp h
@@ -191,7 +181,7 @@ theorem action_linear : ActLinSt := by
     symm
     apply Finset.sum_eq_zero
     intro j _
-    rw [if_neg, mul_zero]
+    rw [ite_eq_right, mul_zero]
     rintro rfl
     exact hn (Finsupp.degree_single _ _)
 

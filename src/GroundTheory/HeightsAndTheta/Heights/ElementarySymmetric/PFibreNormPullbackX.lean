@@ -72,7 +72,7 @@ theorem norm_last_le {n : ℕ} (a : ℕ → ℂ) (ha : a 0 = 1) {B : ℝ} (hB : 
     · simp [ha]
     · intro i hi hi0
       rw [Finset.mem_range] at hi
-      rw [if_neg]
+      rw [ite_eq_right]
       omega
     · intro h; exact absurd (Finset.mem_range.mpr (Nat.succ_pos n)) h
   have hmon : p.Monic := Polynomial.monic_of_degree_le n (Polynomial.degree_le_of_natDegree_le hdeg) hlead
@@ -83,7 +83,7 @@ theorem norm_last_le {n : ℕ} (a : ℕ → ℂ) (ha : a 0 = 1) {B : ℝ} (hB : 
     · simp
     · intro i hi hin
       rw [Finset.mem_range] at hi
-      rw [if_neg]
+      rw [ite_eq_right]
       omega
     · intro h; exact absurd (Finset.mem_range.mpr (Nat.lt_succ_self n)) h
   have hsplit : p.Splits := IsAlgClosed.splits p

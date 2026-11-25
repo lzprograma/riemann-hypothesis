@@ -1,7 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticChartsRealizationCompPointEq
-public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -41,16 +41,12 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open TopologicalSpace Filter Topology
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
-open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.CatCoh GlobalTheory.PeriodFamily
-
-attribute [local instance] Over.cartesianMonoidalCategory
+open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.CatCoh
 
 namespace GlobalTheory.AnPer
 
@@ -135,34 +131,5 @@ def PSpan : Prop :=
   ∀ (A : Over (Sp ℂ)) [GrpObj A] (g : ℕ), IsAbelianScheme A → SmoothOfRelativeDimension g A.hom →
     ∀ (L : LB A.left) (u : HolUnif A L g) (P : u.Λ →+ HdR A), IsPeriodHom u P →
     Submodule.span ℂ (Set.range P) = ⊤ ∧ Module.finrank ℂ (HdR A) = 2 * g
-
-def PFix : Prop :=
-  ∀ (I : Type) [Fintype I] (g : ℕ) (Λ : Type) [AddCommGroup Λ] (F : Fam I g Λ) (B : Type) [CommRing B]
-    (𝒜 : Over (Sp B)) [GrpObj 𝒜], IsAbelianScheme 𝒜 → ∀ (σ : B →+* Hol F.V) (e : Unif F (𝒜.hom ≫ 𝟙 _) σ)
-    (z : I → ℂ), z ∈ F.V → ∀ (y : B →+* ℂ), (∀ b, y b = (σ b).fn z) →
-    ∀ (A : Over (Sp ℂ)) [GrpObj A], IsAbelianScheme A → ∀ (φ : A.left ⟶ 𝒜.left)
-      (m : GrpMor (dp0 B) (𝟙 _) 𝒜 (dp0 ℂ) (𝟙 _) A y (spMap y) φ) (L : LB A.left) (u : HolUnif A L g),
-      (∀ w, e.E (z, w) = (u.ex w).left ≫ φ) → ∀ τ : Λ →+ u.Λ, (∀ l, (τ l : Fin g → ℂ) = F.τ l z) →
-    ∀ (P : u.Λ →+ HdR A), IsPeriodHom u P → ∀ (c : primDR 𝒜) (per : Λ →+ Hol F.V), IsPeriod e c.1 per →
-      ∀ l, P (τ l) (m.pull c) = (per l).fn z
-
-def PTaylor : Prop :=
-  ∀ (I : Type) [Fintype I] [DecidableEq I] (g : ℕ) (B : Type) [CommRing B] [Algebra ℂ B]
-    (𝒜 : Over (Sp B)) [GrpObj 𝒜], IsAbelianScheme 𝒜 → SmoothOfRelativeDimension g 𝒜.hom →
-    ∀ (y₀ : B →ₐ[ℂ] ℂ) (A₀ : Over (Sp ℂ)) [GrpObj A₀] (φ₀ : A₀.left ⟶ 𝒜.left),
-      IsGrpPullback A₀ 𝒜 (spMap (y₀ : B →+* ℂ)) φ₀ → ∀ (L₀ : LB A₀.left) (u₀ : HolUnif A₀ L₀ g)
-      (F : Fam I g u₀.Λ) (σ : B →ₐ[ℂ] Hol F.V) (e : Unif F (𝒜.hom ≫ 𝟙 _) (σ : B →+* Hol F.V)), 0 ∈ F.V →
-      (∀ b, y₀ b = (σ b).fn 0) → (∀ w, e.E (0, w) = (u₀.ex w).left ≫ φ₀) → (∀ x, F.τ x 0 = x) →
-    ∀ (P₀ : u₀.Λ →+ HdR A₀), IsPeriodHom u₀ P₀ →
-    ∀ (D : Type) [CommRing D] [Algebra ℂ D] (π : D →+* ℂ) (κ : DividedPowers (RingHom.ker π)), IsNilDP κ →
-      (∀ a : ℂ, π (algebraMap ℂ D a) = a) →
-      ∀ (N : ℕ) (t : I → D), (∀ i, π (t i) = 0) → (∀ s : Fin (N + 1) → I, ∏ a, t (s a) = 0) →
-      ∀ (j : B →ₐ[ℂ] D), (∀ b, j b = taylor N t (σ b).fn) →
-      ∀ (A' : Over (Sp D)) [GrpObj A'] (φ' : A'.left ⟶ 𝒜.left), IsGrpPullback A' 𝒜 (spMap (j : B →+* D)) φ' →
-      ∀ (m' : GrpMor (dp0 B) (𝟙 _) 𝒜 (dp0 D) (𝟙 _) A' (j : B →+* D) (spMap (j : B →+* D)) φ')
-        (i : A₀.left ⟶ A'.left) (h : IsGrpPullback A₀ A' (spMap π) i), i ≫ φ' = φ₀ →
-      ∀ (k : GrpMor (dp0 ℂ) (𝟙 _) A₀ κ (spMap π) A₀ (algebraMap ℂ D) (𝟙 _) (Over.Hom.left (𝟙 A₀)))
-        (x : u₀.Λ) (d : Crys κ (spMap π) A₀), k.Corr (P₀ x) d → ∀ (c : primDR 𝒜) (per : u₀.Λ →+ Hol F.V),
-        IsPeriod e c.1 per → crysToDR κ h d (m'.pull c) = taylor N t (per x).fn
 
 end GlobalTheory.AnPer

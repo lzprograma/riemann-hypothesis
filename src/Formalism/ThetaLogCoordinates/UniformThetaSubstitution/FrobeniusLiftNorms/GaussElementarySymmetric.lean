@@ -261,8 +261,8 @@ theorem iterate_statement : Iterate := by
   | zero =>
     intro _ i
     simp only [Kc, LinearMap.comp_id, LinearMap.id_comp]
-    rw [Finset.sum_eq_single 0 (fun l _ hl => by rw [eF_isEmpty, if_neg hl, zero_smul])
-      (by simp), eF_isEmpty, if_pos rfl, one_smul, Nat.sub_zero]
+    rw [Finset.sum_eq_single 0 (fun l _ hl => by rw [eF_isEmpty, ite_eq_right hl, zero_smul])
+      (by simp), eF_isEmpty, ite_eq_left rfl, one_smul, Nat.sub_zero]
   | succ j ih =>
     intro hj i
     have ih' := ih (by omega)

@@ -334,7 +334,7 @@ private theorem exists_type (ι : Qbar l ≃+* ℂ) (a : HeightOneSpectrum (𝓞
   obtain ⟨j', hj', e⟩ := h.choose_spec
   have h1 : v = h.choose := place_eq_of_contEmb_comp_eq E l v _ j.1 j' j.2 hj'
     (RingHom.ext fun b => ι.injective (DFunLike.congr_fun e b))
-  simp only [dif_pos h, zpow_one, ← h1]
+  simp only [dite_eq_left h, zpow_one, ← h1]
 private theorem alg_of_open {art : Ideles E →* Gab E Ω} [IsAlgClosure E Ω] (ha : IsGlobalArtin art) (ι : Qbar l ≃+* ℂ)
     (κ : G E Ω →* (Qbar l)ˣ) (hκ : Continuous κ) (n : (E →+* ℂ) → ℤ)
     (h : ∀ v : HeightOneSpectrum (𝓞 E), ((l : ℕ) : 𝓞 E) ∈ v.asIdeal → ∀ x : (v.adicCompletion E)ˣ, IsUnitAt v x →

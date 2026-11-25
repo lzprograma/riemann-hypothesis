@@ -15,8 +15,6 @@ namespace Formalism.L2.SG.Pf.Cnt
 
 open Formalism.HermitianLattices.Ext.L3
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section DefsR
 
 variable (D : Formalism.BasicNotions.D7)

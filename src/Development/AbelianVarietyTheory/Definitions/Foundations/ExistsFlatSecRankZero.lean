@@ -9,50 +9,8 @@ public import Development.AbelianVarietyTheory.Proofs.HeightProofs.BeSumStatemen
 public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.FinitePlaceArcs.BeSumPf
 import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
 public import Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfD
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.NumberField.Discriminant.Different
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -333,7 +291,7 @@ theorem pnorm_horizGen (X : Data E r) (τ : X.Ψ) {y : Frame X.Ψ r} (hy : y ∈
     rw [Finset.prod_div_distrib, h1, mul_div_cancel_left₀ _ (Finset.prod_ne_zero_iff.2 fun i _ => hd _)]
   have hx : ‖(mat y τ).det‖ ≠ 0 := norm_ne_zero_iff.2 (hy τ).1
   rw [Data.pnorm, Finset.prod_eq_single τ (fun τ' _ h => by simp [modelFlat, h]) (by simp)]
-  simp only [modelFlat, if_true, Int.cast_neg, Int.cast_one]
+  simp only [modelFlat, ite_true, Int.cast_neg, Int.cast_one]
   rw [Real.finsetProd_rpow _ _ (fun _ _ => norm_nonneg _) _, ← norm_prod, ht, det_gram, horizGen, norm_inv]
   rw [show (-(-1 : ℝ) / 2) = 1 / 2 by norm_num, ← Real.sqrt_eq_rpow, Real.sqrt_mul (norm_nonneg _),
     Real.sqrt_sq (norm_nonneg _)]
@@ -359,16 +317,16 @@ theorem modelWt_flatWt {σ : c.F →+* ℂ} (U : Unf Xo c σ r) (hσ : GoodEmb c
   · refine (modelWt_wtOf_small U _ 0 k hp0 ⟨ρ', hρΨ⟩ hρ j h hj).trans ?_
     simp only [flatWt, parWt, modelFlat]
     by_cases h1 : (⟨ρ', hρΨ⟩ : Psi H) = τ
-    · rw [if_pos h1, if_pos (e.1 h1)]
-    · rw [if_neg h1, if_neg (mt e.2 h1)]
+    · rw [ite_eq_left h1, ite_eq_left (e.1 h1)]
+    · rw [ite_eq_right h1, ite_eq_right (mt e.2 h1)]
   · have := modelWt_wtOf_big U (flatWt Dw τ) 0 k hp0 ⟨ρ', hρΨ⟩ hρ (j - Dw.q) (by omega) (by omega)
     have ej : j = ⟨Dw.q + (j - Dw.q), by omega⟩ := Fin.ext (by simp only; omega)
     rw [ej]
     refine this.trans ?_
     simp only [flatWt, parWt, modelFlat]
     by_cases h1 : (⟨ρ', hρΨ⟩ : Psi H) = τ
-    · rw [if_pos h1, if_pos (e.1 h1)]
-    · rw [if_neg h1, if_neg (mt e.2 h1)]
+    · rw [ite_eq_left h1, ite_eq_left (e.1 h1)]
+    · rw [ite_eq_right h1, ite_eq_right (mt e.2 h1)]
 
 def IsHorizontal {σ : c.F →+* ℂ} (U : Unf Xo c σ r) (Z : Comp Xo c) (τ : Psi H) (f : Rul Xo c) : Prop :=
   ∀ k, ∃ (hτ : relab c σ τ.1 ∈ (U.X k).Ψ) (a : ℂ), ∀ y, (⟨k, y⟩ : Σ k, Frame (U.X k).Ψ r) ∈ framesOn U Z →
@@ -403,14 +361,14 @@ theorem tested_of_homN_ne {G : WTZ E} {f : Rul Xo c} {z : Σ k, Frame (U.X k).Ψ
   by_contra ht
   apply h
   have : rdU U f z.1 z.2 = 0 := by
-    simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, hz, dif_pos]
+    simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, hz, dite_eq_left]
     exact cspB_evR_zero _ ht f
   simp [homN, ptN, Data.pnorm, this]
 
 theorem homN_idem {Z : Comp Xo c} {z : Σ k, Frame (U.X k).Ψ r} (hz : z.2 ∈ (U.X z.1).dom)
     (h : LiesOn Z (U.un z.1 ⟨z.2, hz⟩)) (ht : Tested (U.un z.1 ⟨z.2, hz⟩)) : homN U x 0 (idem Z) z = 1 := by
   have : rdU U (idem Z) z.1 z.2 = 1 := by
-    simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, hz, dif_pos]
+    simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, hz, dite_eq_left]
     exact evR_idem (S := CAt σ) h ht
   rw [homN_zero, this, norm_one]
 
@@ -739,7 +697,7 @@ variable {U x}
 
 theorem FlatExistsAt.degFlat_eq {a : ℝ} (h : FlatExistsAt U x a) (Z : Comp Xo c) (τ : Psi H) :
     degFlat U x Z τ = -a := by
-  rw [degFlat, dif_pos (h Z τ).1, (h Z τ).2]
+  rw [degFlat, dite_eq_left (h Z τ).1, (h Z τ).2]
 
 theorem FlatExistsAt.c1_eq {a : ℝ} (h : FlatExistsAt U x a) (hne : CompNe Xo c) (τ : Psi H) : c1 U x τ = a := by
   haveI := CompFin.finite_comp Xo c

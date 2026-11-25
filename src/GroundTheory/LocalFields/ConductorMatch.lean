@@ -55,9 +55,4 @@ theorem upperRamificationGroup_natCast_eq_bot_iff (n : ℕ) :
 
 end Conductor
 
-section Ab
-
-
-end Ab
-
 end GroundTheory.LocalField

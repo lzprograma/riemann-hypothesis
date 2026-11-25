@@ -100,68 +100,12 @@ public import Development.EtaleCohomology.EtaleSheaves.PointEvaluationWitness
 public import Development.EtaleCohomology.EtaleSheaves.ResZeroOfRange
 public import Development.EtaleCohomology.EtaleSheaves.StrictHenselianLocalization
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleDescentPicardGroupStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.TypeStar
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.RingTheory.KrullDimension.Polynomial
-import Mathlib.RingTheory.Unramified.LocalStructure
-import Mathlib.RingTheory.TotallySplit
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.AlgebraicGeometry.SpreadingOut
-import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.AlgebraicGeometry.Artinian
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Aesop.Frontend.Tactic
 import Aesop.Main
-import Mathlib.RingTheory.KrullDimension.Field
 import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
-import Mathlib.AlgebraicGeometry.QuasiAffine
 import Development.EtaleCohomology.EtaleSheaves.PropertyDescent.BaseChange
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -359,16 +303,9 @@ theorem dim_le_of_stdSmooth1 (R S : Type) [CommRing R] [CommRing S] [Algebra R S
   rw [MvPolynomial.ringKrullDim_of_isNoetherianRing] at h1
   simpa using h1
 
-theorem dim_affineOpen {X : Scheme.{0}} {V : X.Opens} (hV : IsAffineOpen V) :
-    topologicalKrullDim (V : Set X) = ringKrullDim Γ(X, V) := by
-  have h1 : topologicalKrullDim (V : Set X) = topologicalKrullDim (Spec Γ(X, V)) :=
-    (Scheme.homeoOfIso hV.isoSpec).isHomeomorph.topologicalKrullDim_eq
-  rw [h1]
-  exact PrimeSpectrum.topologicalKrullDim_eq_ringKrullDim _
-
 theorem dim_affineOpen_Spec_le (A : CommRingCat.{0}) {U : (Spec A).Opens} (hU : IsAffineOpen U) :
     ringKrullDim Γ(Spec A, U) ≤ ringKrullDim A := by
-  rw [← dim_affineOpen hU, ← PrimeSpectrum.topologicalKrullDim_eq_ringKrullDim (R := A)]
+  rw [← GlobalTheory.AmpleBig.topologicalKrullDim_affineOpen hU, ← PrimeSpectrum.topologicalKrullDim_eq_ringKrullDim (R := A)]
   exact topologicalKrullDim_subspace_le _ _
 
 theorem LeafDimBound_of : LateralTheory.E.LeafDescendVCut.LeafDimBound := by
@@ -381,7 +318,7 @@ theorem LeafDimBound_of : LateralTheory.E.LeafDescendVCut.LeafDimBound := by
   let _ : Algebra Γ(Sp R, U) Γ(D0, V) := (q.appLE U V e).hom.toAlgebra
   have : Algebra.IsStandardSmoothOfRelativeDimension 1 Γ(Sp R, U) Γ(D0, V) := hs
   refine ⟨(V : Set D0), V.isOpen, hx, ?_⟩
-  rw [dim_affineOpen hV]
+  rw [GlobalTheory.AmpleBig.topologicalKrullDim_affineOpen hV]
   calc ringKrullDim Γ(D0, V) ≤ ringKrullDim Γ(Sp R, U) + 1 := dim_le_of_stdSmooth1 _ _
     _ ≤ ringKrullDim R + 1 := by
       gcongr
@@ -401,10 +338,6 @@ section -- clump:auto
 open AlgebraicGeometry CategoryTheory LateralTheory.E.E4 Topology
 
 namespace LateralTheory.E.LeafDimOpenPf
-
-theorem dim_mono {X : Type*} [TopologicalSpace X] {S T : Set X} (h : S ⊆ T) :
-    topologicalKrullDim S ≤ topologicalKrullDim T :=
-  (IsEmbedding.inclusion h).isInducing.topologicalKrullDim_le
 
 theorem dim_basicOpen (k A : Type) [Field k] [CommRing A] [IsDomain A] [Algebra k A]
     [Algebra.FiniteType k A] (g : A) (hg : g ≠ 0) {n : ℕ} (hn : Algebra.trdeg k A = n) :
@@ -450,7 +383,7 @@ theorem LeafDimOpen_of : LateralTheory.E.LeafCloseBCut.LeafDimOpen := by
       (GlobalTheory.topologicalKrullDim_eq_of_isEmbedding
         (j0.isOpenEmbedding.isEmbedding.comp IsEmbedding.subtypeVal)
         (by rw [Set.range_comp]; exact congrArg _ Subtype.range_coe)).symm
-    _ ≤ topologicalKrullDim U := dim_mono (by rintro _ ⟨q, hq, rfl⟩; exact hsub hq)
+    _ ≤ topologicalKrullDim U := GlobalTheory.QCoh.topologicalKrullDim_mono (by rintro _ ⟨q, hq, rfl⟩; exact hsub hq)
 
 end LateralTheory.E.LeafDimOpenPf
 end -- clump:auto
@@ -1050,7 +983,6 @@ open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 namespace LateralTheory.E.StrictHenselianPoint
 open LateralTheory.E.E4 LateralTheory.E.LeafDegCut LateralTheory.E.LeafSHPtPf
 
-set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
 theorem leafSHTop : LeafSHTop := by
   intro B U x J _ _ D c V a e t ht hcof
@@ -1200,10 +1132,6 @@ open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4 Lateral
 
 namespace LateralTheory.E.LocallyQuasiFiniteGraphSpreadingOut
 
-theorem toR_sk {k Ω : Type} [Field k] [Field Ω] [Algebra k Ω] (R : Subalgebra k Ω) :
-    toR R ≫ Spec.map (CommRingCat.ofHom (algebraMap k R)) = Spec.map (CommRingCat.ofHom (algebraMap k Ω)) := by
-  rw [← Spec.map_comp]; rfl
-
 abbrev cmp {A B K X : Scheme.{0}} (p : X ⟶ K) (a : A ⟶ B) (b : B ⟶ K) (c : A ⟶ K) (h : a ≫ b = c) :
     pullback c p ⟶ pullback b p :=
   pullback.lift (pullback.fst c p ≫ a) (pullback.snd _ _)
@@ -1224,8 +1152,8 @@ theorem LeafSpreadLQFGraph_of (hM : LateralTheory.E.SpreadingOutQuasiFiniteness.
   obtain ⟨S, hRS, hSfg, hS⟩ := hM k Ω R hRfg
     (pullback.fst (Spec.map (CommRingCat.ofHom (algebraMap k Ω))) p) (pullback.lift c0 e he.symm)
     (pullback.fst (Spec.map (CommRingCat.ofHom (algebraMap k R))) p) (pullback.lift q f hf.symm) v0
-    (cmp p (toR R) _ _ (toR_sk R))
-    ⟨hLFT, inferInstance, inferInstance⟩ (by rw [pullback.lift_fst]; exact hq) (paste p _ _ _ (toR_sk R))
+    (cmp p (toR R) _ _ (LateralTheory.E.LeafDescendMapPf.toR_base R))
+    ⟨hLFT, inferInstance, inferInstance⟩ (by rw [pullback.lift_fst]; exact hq) (paste p _ _ _ (LateralTheory.E.LeafDescendMapPf.toR_base R))
     (by rw [pullback.lift_fst, pullback.lift_fst]; exact hpb) (by
       apply pullback.hom_ext
       · simp only [Category.assoc, pullback.lift_fst, pullback.lift_fst_assoc]; exact hpb.w.symm
@@ -1251,7 +1179,6 @@ section -- clump:auto
 @[expose] public section
 
 namespace LateralTheory.E.LeafSpreadLQFMap_vtuPfG
-
 
 open LateralTheory.E.SpreadingOutLocallyQuasiFinite in
 theorem LeafSpreadLQFMap_of (hD : LeafQFAtDescend) (hO : LeafOpenSpread) :
@@ -1708,13 +1635,9 @@ open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4 Lateral
 
 namespace LateralTheory.E.SpreadingOutQuasiFinitenessBaseChange
 
-theorem toR_incl {k Ω : Type} [Field k] [Field Ω] [Algebra k Ω] {R R' : Subalgebra k Ω} (hR : R ≤ R') :
-    toR R' ≫ incl hR = toR R := by
-  rw [← Spec.map_comp]; rfl
-
 theorem sq {k Ω : Type} [Field k] [Field Ω] [Algebra k Ω] {R R' : Subalgebra k Ω} (hR : R ≤ R')
     {C D : Scheme.{0}} {c : C ⟶ Sp Ω} {q : D ⟶ Sp R} {v : C ⟶ D} (hv : IsPullback v c q (toR R)) :
-    IsPullback (pullback.lift v (c ≫ toR R') (by rw [Category.assoc, toR_incl]; exact hv.w)) c
+    IsPullback (pullback.lift v (c ≫ toR R') (by rw [Category.assoc, LateralTheory.E.LeafPairFPPf.toR_incl]; exact hv.w)) c
       (pullback.snd q (incl hR)) (toR R') := by
   refine IsPullback.of_right ?_ (pullback.lift_snd _ _ _) (IsPullback.of_hasPullback q (incl hR))
   rw [pullback.lift_fst, _root_.LateralTheory.E.LeafPropsDescendPf.BaseChange.toR_incl]; exact hv

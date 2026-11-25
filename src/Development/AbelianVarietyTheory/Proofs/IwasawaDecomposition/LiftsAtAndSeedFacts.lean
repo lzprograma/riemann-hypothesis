@@ -53,8 +53,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.HeckeCharacterRestriction
 
 variable {D : D7}
@@ -116,10 +114,10 @@ theorem step_facts (hL : L.Is μ0) (t : T) (j : Fin D.R.m) {a b : ℕ} (ha : Eve
       ResEta D (Lift.chrStep (L.mu t) L.eta ((j : ℕ) + 1)).1 a ∧ ResEta D (Lift.chrStep (L.mu t) L.eta ((j : ℕ) + 1)).2 b := by
   unfold Lift.chrStep
   by_cases h : Even (j : ℕ)
-  · rw [if_pos h.add_one]
+  · rw [ite_eq_left h.add_one]
     exact ⟨isHecke_quot hL t j, isHecke_mu hL t j,
       resEta_quot hL t j (Nat.not_even_iff_odd.1 fun e => ha.1 e h), resEta_even hL t j (hb.2 h)⟩
-  · rw [if_neg (fun e => h (by simpa [Nat.odd_add_one] using e))]
+  · rw [ite_eq_right (fun e => h (by simpa [Nat.odd_add_one] using e))]
     exact ⟨isHecke_mu hL t j, isHecke_quot hL t j, resEta_even hL t j (ha.2 h),
       resEta_quot hL t j (Nat.not_even_iff_odd.1 fun e => h (hb.1 e))⟩
 

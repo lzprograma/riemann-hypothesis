@@ -366,8 +366,7 @@ theorem bk_orth : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l 
   by_cases hV : ∃ v : A.V, v ≠ 0
   · obtain ⟨v, hv⟩ := hV
     obtain ⟨v', hv'⟩ : ∃ v', m v v' ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hv (hD.2.1 v h)
     have hm : Continuous fun p : A.V × A'.V => m p.1 p.2 :=
       IsModuleTopology.continuous_bilinear_of_finite_left m
@@ -379,7 +378,7 @@ theorem bk_orth : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l 
       rw [e]
       exact (hm.comp ((A.cont v).prodMk (A'.cont v'))).mul continuous_const
     exact cob_of_cont l P AI hT K LL O hO A A' m hdR hD hχ a ha b hb
-  · push_neg at hV
+  · push Not at hV
     refine ⟨0, continuous_const, funext fun x => ?_⟩
     simp [cupL, hV (a x.1), ReciprocityTheory.Def.d1]
 

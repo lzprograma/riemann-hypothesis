@@ -68,7 +68,6 @@ def cv {n a : ℕ} (f : ⦋n⦌ ⟶ ⦋a⦌) : ⦋n + 1⦌ ⟶ ⦋a⦌ :=
   SimplexCategory.mkHom ⟨fun j => if h : (j : ℕ) = 0 then 0 else
       f.toOrderHom ⟨(j : ℕ) - 1, by have := j.2; change _ < n + 1; omega⟩, by
     intro i j hij
-    have hij' : (i : ℕ) ≤ j := hij
     dsimp only
     split_ifs with hi hj hj
     · exact le_refl _

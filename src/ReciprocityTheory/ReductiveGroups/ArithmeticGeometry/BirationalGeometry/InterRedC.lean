@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
 import Mathlib.Tactic.TypeStar
 
@@ -17,24 +18,7 @@ theorem eval_smul_of_isMultiHomog {s : MRing ι} {a : K → ℕ} (hs : IsMultiHo
     (c : K → ℂ) (z : (Σ k, ι k) → ℂ) :
     eval (fun p => c p.1 * z p) (map (Int.castRingHom ℂ) s) =
       (∏ k, c k ^ a k) * eval z (map (Int.castRingHom ℂ) s) := by
-  rw [MvPolynomial.eval_eq, MvPolynomial.eval_eq, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun m hm => ?_
-  have hms : m ∈ s.support := by
-    rw [MvPolynomial.mem_support_iff] at hm ⊢
-    intro h0
-    exact hm (by rw [MvPolynomial.coeff_map, h0, map_zero])
-  have hsub : ∀ f : (Σ k, ι k) → ℂ, ∏ i ∈ m.support, f i ^ m i = ∏ i, f i ^ m i := fun f =>
-    Finset.prod_subset (Finset.subset_univ _) fun i _ hi => by
-      rw [Finsupp.notMem_support_iff.mp hi, pow_zero]
-  rw [hsub, hsub, mul_left_comm]
-  congr 1
-  simp_rw [mul_pow]
-  rw [Finset.prod_mul_distrib]
-  congr 1
-  rw [← Finset.univ_sigma_univ, Finset.prod_sigma]
-  refine Finset.prod_congr rfl fun k _ => ?_
-  rw [show (∏ s, c (⟨k, s⟩ : Σ k, ι k).fst ^ m ⟨k, s⟩) = ∏ s, c k ^ m ⟨k, s⟩ from rfl,
-    Finset.prod_pow_eq_pow_sum, hs m hms k]
+  apply ReciprocityTheory.ChartRestriction.G.Geo.eval_smul_homog <;> assumption
 
 theorem analyticAt_eval_comp {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {F : E → (Σ k, ι k) → ℂ} {y : E} (hF : ∀ p, AnalyticAt ℂ (fun y => F y p) y) (f : MRing ι) :

@@ -52,7 +52,6 @@ section -- clump:auto
 
 open NumberField IsDedekindDomain Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.DIV Formalism.L2.SG.InstExistsPf GlobalTheory.FlagBasis
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 namespace GlobalTheory.ConjResidueSurj
@@ -80,13 +79,13 @@ theorem exists_res_and_conj (D : D7) (Pg : Finset (Pl D.host.E))
   refine ⟨oToS D.host.F D.host.E y, fun PP hPP => ⟨?_, ?_⟩⟩
   · have h1 := hy PP (Finset.mem_union_left _ hPP)
     rw [pow_one] at h1
-    have h2 : x PP = a PP := if_pos hPP
+    have h2 : x PP = a PP := ite_eq_left hPP
     rw [resS_oToS, ← ha PP, ← h2]
     exact Ideal.Quotient.eq.2 h1
   · have h1 := hy (cP PP) (Finset.mem_union_right _ (Finset.mem_image_of_mem _ hPP))
     rw [pow_one] at h1
     have h2 : x (cP PP) = cO D (a' PP) := by
-      have : x (cP PP) = cO D (a' (cP (cP PP))) := if_neg (hout PP hPP)
+      have : x (cP PP) = cO D (a' (cP (cP PP))) := ite_eq_right (hout PP hPP)
       rw [this, GlobalTheory.StdFrames.cP_cP]
     have h3 : y - cO D (a' PP) ∈ (cP PP).asIdeal := h2 ▸ h1
     rw [mem_cP, map_sub, cO_cO] at h3
@@ -106,7 +105,6 @@ section -- clump:auto
 
 open NumberField IsDedekindDomain Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.DIV Formalism.L2.SG.InstExistsPf GlobalTheory.FlagBasis
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 end -- clump:auto
 end -- clump:auto

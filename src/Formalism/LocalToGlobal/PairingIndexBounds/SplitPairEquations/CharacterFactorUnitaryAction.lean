@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VacuumUnderAdelicPairModulusOne
 public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.NormOneUnitIdealAlt
 public import Formalism.LocalToGlobal.GlobalTheory.GL3.DeterminantNormOneOfUnitDisc
 
@@ -13,21 +14,7 @@ namespace Formalism.L2.PairingIndexBounds.Eq
 open Formalism.MainNotions Formalism.L2.Th1.H
 
 theorem iopSelf (D : D7) : IopSelf D := by
-  intro T N N' La' G hG
-  funext z
-  unfold TaylorLogMetric.Iop
-  have hidx : (La'.addSubgroupOf La').index = 1 := by
-    rw [AddSubgroup.addSubgroupOf_self, AddSubgroup.index_top]
-  have hq : ∀ q : La' ⧸ La'.addSubgroupOf La',
-      TaylorLogMetric.al D T ((Quotient.out q : La') : TaylorLogMetric.VC D N N') * TaylorLogMetric.U D T ((Quotient.out q : La') : TaylorLogMetric.VC D N N') G z
-        = G z := fun q => hG.2 _ (Quotient.out q).2 z
-  simp_rw [hq]
-  have h0 : ∀ q : La' ⧸ La'.addSubgroupOf La', q = 0 := by
-    intro q
-    induction q using QuotientAddGroup.induction_on with
-    | H x => exact (QuotientAddGroup.eq_zero_iff _).mpr (by simp)
-  rw [finsum_eq_single (fun _ => G z) (0 : La' ⧸ La'.addSubgroupOf La') (fun q hq => absurd (h0 q) hq), hidx]
-  simp
+  apply _root_.GlobalTheory.NormSum.VacMove.iop_self <;> assumption
 
 section Chi
 

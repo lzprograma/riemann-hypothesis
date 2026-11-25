@@ -140,10 +140,6 @@ end General
 
 variable (𝓕 : LFam) (χ : AddChar 𝓕.G ℂ)
 
-theorem res_eq : 𝓕.res χ = ∑ g, χ g * (𝓕.κ : ℂ) := by
-  rw [← Finset.sum_mul, AddChar.sum_eq_ite, LFam.res, AddChar.one_eq_zero]
-  split_ifs <;> simp [mul_comm]
-
 theorem norm_rem_le (x : ℝ) (hx : 1 ≤ x) :
     ‖(∑ n ∈ Finset.Icc 1 ⌊x⌋₊, 𝓕.aChi χ n) - 𝓕.res χ * x‖ ≤ 10 * 𝓕.B * Real.sqrt x := by
   apply GlobalTheory.Hk.LFam.norm_sum_aChi_sub_le <;> assumption
@@ -162,8 +158,7 @@ theorem norm_mel_le {s : ℂ} (hs : 1 / 2 < s.re) : ‖𝓕.mel χ s‖ ≤ 10 *
 theorem sum_norm_isBigO :
     (fun n : ℕ => ∑ k ∈ Finset.Icc 1 n, ‖𝓕.aChi χ k‖) =O[atTop] fun n => (n : ℝ) ^ (1 : ℝ) := by
   refine IsBigO.of_bound (Fintype.card 𝓕.G * 14) ?_
-  filter_upwards [eventually_ge_atTop 1] with n hn
-  have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast hn
+  refine Eventually.of_forall fun n => ?_
   rw [Real.rpow_one, Real.norm_of_nonneg (Finset.sum_nonneg fun _ _ => norm_nonneg _),
     Real.norm_of_nonneg (Nat.cast_nonneg _)]
   have h1 : ∀ k, ‖𝓕.aChi χ k‖ ≤ ∑ g, 𝓕.a g k := fun k => by
@@ -171,14 +166,9 @@ theorem sum_norm_isBigO :
     rw [norm_mul, AddChar.norm_apply, one_mul, norm_real, Real.norm_of_nonneg (𝓕.a_nonneg g k)]
   refine (Finset.sum_le_sum fun k _ => h1 k).trans ?_
   rw [Finset.sum_comm]
-  refine (Finset.sum_le_sum (g := fun _ => 14 * (n : ℝ)) fun g _ => ?_).trans (le_of_eq ?_)
-  · have h := (abs_le.1 (𝓕.count g n hn1)).2
-    rw [Nat.floor_natCast] at h
-    have h2 : Real.sqrt n ≤ n := Real.sqrt_le_iff.2 ⟨by positivity, by nlinarith⟩
-    have h3 : 𝓕.κ * n ≤ 4 * n := mul_le_mul_of_nonneg_right 𝓕.κ_le (by positivity)
-    linarith
-  · simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-    ring
+  refine (Finset.sum_le_sum fun g _ => 𝓕.sum_a_le_mul g n).trans (le_of_eq ?_)
+  simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+  ring
 
 theorem LSeries_eq {s : ℂ} (hs : 1 < s.re) :
     LSeries (𝓕.aChi χ) s = s * (𝓕.mel χ s + 𝓕.res χ / (s - 1)) := by

@@ -15,7 +15,6 @@ public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsPri
 public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniformisationDictionaryCharacterLaws
 public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.NonemptyFrPtComplex
 import Formalism.LocalRingCardinality.ConjSqrtMinusD
-import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.NormNum.LegendreSymbol
 import Mathlib.Tactic.NormNum.Prime
 
@@ -28,8 +27,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestric
 open scoped TensorProduct
 
 namespace GlobalTheory.CovTop
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 

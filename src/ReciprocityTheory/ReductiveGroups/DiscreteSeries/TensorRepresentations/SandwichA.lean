@@ -21,6 +21,7 @@ import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CcARatioZero
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Weighted
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DatumEmbeddingMemHlam
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.ConsumerA
 
 @[expose] public section
 
@@ -107,36 +108,9 @@ theorem swB_haar_eq {ε : Fin n → Bool} (ν : Measure (Formalism.REAL.UJ ε)) 
 
 theorem swC_gap_shift {ε : Fin n → Bool} {μ : Fin n → ℝ} {h : ℝ} (hμ : GapAtLeast ε μ h) (dual : Bool)
     (s : Fin n) : GapAtLeast ε (shiftF dual μ s) (h - 1) := by
-  have key : ∀ c : Fin n → ℝ, (∀ a b : Fin n, a ≠ b → |c a - c b| ≤ 1) → GapAtLeast ε (μ + c) (h - 1) := by
-    intro c hc a b hab
-    have hne : a ≠ b := fun e => hab (e ▸ rfl)
-    have h1 := hμ a b hab
-    have h2 := hc a b hne
-    have h3 : |μ a - μ b| ≤ |(μ + c) a - (μ + c) b| + |c a - c b| := by
-      have : μ a - μ b = ((μ + c) a - (μ + c) b) - (c a - c b) := by simp only [Pi.add_apply]; ring
-      rw [this]
-      exact abs_sub _ _
-    linarith
-  have hsingle : ∀ t : ℝ, |t| ≤ 1 → ∀ a b : Fin n, a ≠ b → |Pi.single (M := fun _ => ℝ) s t a - Pi.single (M := fun _ => ℝ) s t b| ≤ 1 := by
-    intro t ht a b hab
-    by_cases ha : a = s
-    · subst ha
-      rw [Pi.single_eq_same, Pi.single_eq_of_ne (Ne.symm hab), sub_zero]
-      exact ht
-    · by_cases hb : b = s
-      · subst hb
-        rw [Pi.single_eq_same, Pi.single_eq_of_ne ha, zero_sub, abs_neg]
-        exact ht
-      · rw [Pi.single_eq_of_ne ha, Pi.single_eq_of_ne hb]
-        simp
-  cases dual
-  · exact key _ (hsingle 1 (by simp))
-  · have : shiftF true μ s = μ + Pi.single s (-1) := by
-      delta shiftF
-      simp only [Bool.cond_true]
-      rw [sub_eq_add_neg, Pi.single_neg]
-    rw [this]
-    exact key _ (hsingle (-1) (by simp))
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.DS.cns_shift_gap
+    | apply _root_.ReciprocityTheory.ChartRestriction.DS.cns_shift_gap <;> first | assumption | rfl | infer_instance
 
 theorem swC_hc_shift {μ : Fin n → ℝ} (hμ : S7.IsHCParam μ) (dual : Bool) (s : Fin n)
     (hs : StrictAnti (shiftF dual μ s)) : S7.IsHCParam (shiftF dual μ s) := by

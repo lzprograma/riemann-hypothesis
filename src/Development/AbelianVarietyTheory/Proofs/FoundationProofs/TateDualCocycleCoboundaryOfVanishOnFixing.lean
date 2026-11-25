@@ -310,8 +310,7 @@ theorem exists_mem_span_sub_one_eq_id_on :
     rw [hf₀def, LinearMap.sub_apply, Submodule.coe_sub, hr, Submodule.coe_zero, sub_eq_zero] at h'
     exact h'
   obtain ⟨ψ, hψ⟩ : ∃ ψ : Module.Dual K P, ψ (f₀ w₀) ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hfw ((Module.forall_dual_apply_eq_zero_iff K _).1 hc)
   let b := Module.finBasis K P
   have hid : (1 : Module.End K P) ∈ J' := by
@@ -354,23 +353,18 @@ def Stable (S : Γ →* Matrix (Fin m) (Fin m) K) (P : Submodule K (Fin m → K)
 
 theorem mul_mem_augSpan (S : Γ →* Matrix (Fin m) (Fin m) K) {A C : Matrix (Fin m) (Fin m) K}
     (hA : A ∈ augSpan S) (hC : C ∈ augSpan S) : A * C ∈ augSpan S := by
-  induction hA using Submodule.span_induction with
-  | mem x hx =>
-    obtain ⟨g, rfl⟩ := hx
-    induction hC using Submodule.span_induction with
-    | mem y hy =>
-      obtain ⟨h, rfl⟩ := hy
-      have e : (S g - 1) * (S h - 1) = (S (g * h) - 1) - (S g - 1) - (S h - 1) := by
-        rw [map_mul]; noncomm_ring
-      rw [e]
-      exact Submodule.sub_mem _ (Submodule.sub_mem _ (Submodule.subset_span ⟨_, rfl⟩)
-        (Submodule.subset_span ⟨_, rfl⟩)) (Submodule.subset_span ⟨_, rfl⟩)
-    | zero => simp
-    | add x y _ _ hx hy => rw [mul_add]; exact Submodule.add_mem _ hx hy
-    | smul a y _ hy => rw [Matrix.mul_smul]; exact Submodule.smul_mem _ a hy
-  | zero => simp
-  | add x y _ _ hx hy => rw [add_mul]; exact Submodule.add_mem _ hx hy
-  | smul a x _ hx => rw [Matrix.smul_mul]; exact Submodule.smul_mem _ a hx
+  let mul := LinearMap.mul K (Matrix (Fin m) (Fin m) K)
+  refine (show _ ≤ augSpan S from ?_) (Submodule.apply_mem_map₂ mul hA hC)
+  unfold augSpan
+  rw [Submodule.map₂_span_span, Submodule.span_le, Set.image2_subset_iff]
+  rintro _ ⟨g, rfl⟩ _ ⟨h, rfl⟩
+  change (S g - 1) * (S h - 1) ∈ _
+  have e : (S g - 1) * (S h - 1) = (S (g * h) - 1) - (S g - 1) - (S h - 1) := by
+    rw [map_mul]
+    noncomm_ring
+  rw [e]
+  exact Submodule.sub_mem _ (Submodule.sub_mem _ (Submodule.subset_span ⟨_, rfl⟩)
+    (Submodule.subset_span ⟨_, rfl⟩)) (Submodule.subset_span ⟨_, rfl⟩)
 
 theorem augSpan_preserves (S : Γ →* Matrix (Fin m) (Fin m) K) {P : Submodule K (Fin m → K)}
     (hP : Stable S P) {T : Matrix (Fin m) (Fin m) K} (hT : T ∈ augSpan S) :
@@ -486,14 +480,13 @@ theorem good_of_stable (S : Γ →* Matrix (Fin 3) (Fin 3) K) [IsAlgClosed K]
   · by_cases hbot : P = ⊥
     · rw [hbot]; exact good_bot S
     · have hnt : ∃ g, ∃ v ∈ P, S g *ᵥ v ≠ v := by
-        by_contra hc
-        push_neg at hc
+        by_contra! hc
         apply hbot
         rw [Submodule.eq_bot_iff]
         intro v hv
         exact hfix v (fun g => hc g v hv)
       exact _root_.GlobalTheory.AugSpan.exists_mem_span_sub_one_eq_id_on S P hP hirr hnt
-  · push_neg at hirr
+  · push Not at hirr
     obtain ⟨Q, hQP, hQs, hQ0, hQne⟩ := hirr
     have hQo : Stable S (B.orthogonal Q) := stable_orthogonal S B hinv hQs
     set R := P ⊓ B.orthogonal Q with hR
@@ -568,8 +561,7 @@ theorem exists_nat_det_ne_zero_affine {K : Type} [Field K] [CharZero K] {m : ℕ
     apply h
     rw [← det_affine_eval]
     simp [p, h0]
-  by_contra hall
-  push_neg at hall
+  by_contra! hall
   have hsub : Set.range (fun k : ℕ => (k : K)) ⊆ (p.roots.toFinset : Set K) := by
     rintro _ ⟨k, rfl⟩
     simp only [Finset.mem_coe, Multiset.mem_toFinset]
@@ -1259,8 +1251,7 @@ theorem GlobalTheory.lam_small_of_deep_congruence : ∀ (l : ℕ) [Fact l.Prime]
     simp [Padic.norm_p]
   have hl1 : ‖((l:ℕ) : Qbar l)‖ < 1 := by
     rw [hl]; exact inv_lt_one_of_one_lt₀ (by exact_mod_cast (Fact.out : l.Prime).one_lt)
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   set F : ℕ → Set Γ := fun N => {g | ∀ i j, ‖((r g : Matrix (Fin 2) (Fin 2) (Qbar l)) - 1) i j‖ ≤ ‖((l : ℕ) : Qbar l) ^ N‖} ∩ {g | ε ≤ ‖(lam g).toAdd‖} with hF
   have hcm : Continuous fun g => ((r g : Matrix (Fin 2) (Fin 2) (Qbar l)) - 1) := (Units.continuous_val.comp hr).sub continuous_const
   have hclosed : ∀ N, IsClosed (F N) := by
@@ -1554,7 +1545,7 @@ theorem hom_padicInt_trivial : ∀ (l : ℕ) [Fact l.Prime] (c : Coef l) (Γ : T
   have hρZ : ‖((l : ℕ) : ℤ_[l])‖ = ρ := by rw [PadicInt.norm_p, hρeq]
   by_contra hne
   obtain ⟨g, hg⟩ : ∃ g, lam g ≠ 1 := by
-    by_contra h; push_neg at h; exact hne (MonoidHom.ext fun x => by simpa using h x)
+    by_contra h; push Not at h; exact hne (MonoidHom.ext fun x => by simpa using h x)
   obtain ⟨k, hk0, hkdet, hksm⟩ := noab_congr_pow l c Γ r hr hint hdet g
   set h0 := g ^ k with hh0
   set v0 : ℤ_[l] := Multiplicative.toAdd (lam h0) with hv0def
@@ -1881,8 +1872,7 @@ open GlobalTheory.Ord2.ImZ in
 theorem exists_ker_eps_ne_one : ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (e : ℕ)
     (S : Finset Pl) (A : ValuationSubring Ω) (W : R2 Ω l), Nf e S A W → ∃ z ∈ W.ker, eps l z ≠ 1 := by
   intro l _ Ω _ _ _ e S A W h
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   obtain ⟨c, hc⟩ := h.int
   let lam : G ℚ Ω →* Multiplicative ℤ_[l] := logHom.comp (cycZ ℚ Ω l)
   have hlamc : Continuous lam := continuous_logHom.comp (continuous_cycZ ℚ Ω l)

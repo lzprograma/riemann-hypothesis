@@ -80,11 +80,4 @@ theorem exists_compl_inf (L : Submodule (𝓞 K) V) (hL : L.FG) (W₀ : Submodul
 
 end ExtensionInterSubspace
 
-section Transport
-
-variable {R : Type*} [Ring R] {V : Type*} [AddCommGroup V] [Module R V]
-  {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
-
-end Transport
-
 end Formalism.L2.Geo.ExtensionFiltration.ExtInvS7cd

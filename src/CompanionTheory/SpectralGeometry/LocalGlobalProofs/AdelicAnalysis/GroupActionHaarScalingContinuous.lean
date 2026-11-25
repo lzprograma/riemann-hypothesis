@@ -1,17 +1,6 @@
 module
 
 public import Mathlib.MeasureTheory.Group.Measure
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Topology.Compactness.Paracompact
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.MeasureTheory.Function.StronglyMeasurable.AEStronglyMeasurable
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
@@ -19,8 +8,8 @@ public import Mathlib.MeasureTheory.Measure.Haar.Unique
 
 @[expose] public section
 
-open NumberField IsDedekindDomain MeasureTheory Topology
-open scoped TensorProduct ENNReal NNReal Matrix
+open MeasureTheory Topology
+open scoped ENNReal NNReal
 
 namespace GlobalTheory.CompanionTheory.Adelic.ModulusAction
 
@@ -61,13 +50,13 @@ theorem exists_continuous_modulus :
       map_add_left_eq_self]
   have hscale : ∀ t, ∃ c : ℝ≥0, μ.map (a t) = c • μ := by
     intro t
-    haveI := hfin t
-    haveI := hinvar t
+    have := hfin t
+    have := hinvar t
     exact ⟨_, Measure.isAddLeftInvariant_eq_smul _ μ⟩
   choose c hc using hscale
   obtain ⟨f, hfc, hf0, hfx⟩ := exists_continuous_nonneg_pos (0 : V)
   have hI : 0 < ∫ y, f y ∂μ :=
-    f.continuous.integral_pos_of_hasCompactSupport_nonneg_nonzero hfc hf0 hfx
+    f.continuous.integral_pos_of_hasCompactSupport_nonneg_ne_zero hfc hf0 hfx
   have hint : ∀ t (g : V → ℝ), Continuous g →
       ∫ y, g (a t y) ∂μ = (c t : ℝ) * ∫ y, g y ∂μ := by
     intro t g hg

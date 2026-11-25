@@ -5,48 +5,9 @@ public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeil
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.CayleyInverseConjTransposeMulApply
 public import Mathlib.Analysis.Matrix.Spectrum
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.HermRealSmul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Matrix.PosDef
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.ArvOSobPfK
 
 @[expose] public section
 
@@ -163,41 +124,7 @@ theorem re_form_smul (Y : Matrix (Fin n) (Fin n) ℂ) (v : Fin n → ℂ) (c : �
 
 theorem posdef_margin {Y : Matrix (Fin n) (Fin n) ℂ} (hY : Y.PosDef) :
     ∃ m > 0, ∀ v : Fin n → ℂ, m * ‖v‖ ^ 2 ≤ (star v ⬝ᵥ (Y *ᵥ v)).re := by
-  rcases isEmpty_or_nonempty (Fin n) with hn | hn
-  · refine ⟨1, one_pos, fun v => ?_⟩
-    have : v = 0 := Subsingleton.elim _ _
-    subst this
-    simp
-  · have hcpt : IsCompact (Metric.sphere (0 : Fin n → ℂ) 1) := isCompact_sphere 0 1
-    obtain ⟨i₀⟩ := hn
-    have hne : (Metric.sphere (0 : Fin n → ℂ) 1).Nonempty := by
-      refine ⟨Pi.single i₀ 1, ?_⟩
-      rw [mem_sphere_zero_iff_norm]
-      apply le_antisymm
-      · refine (pi_norm_le_iff_of_nonneg zero_le_one).2 fun i => ?_
-        by_cases h : i = i₀ <;> simp [h]
-      · simpa using norm_le_pi_norm (Pi.single i₀ (1 : ℂ) : Fin n → ℂ) i₀
-    have hcont : Continuous fun v : Fin n → ℂ => (star v ⬝ᵥ (Y *ᵥ v)).re :=
-      Complex.continuous_re.comp ((continuous_id.star).dotProduct (continuous_const.matrix_mulVec continuous_id))
-    obtain ⟨v₀, hv₀, hmin⟩ := hcpt.exists_isMinOn hne hcont.continuousOn
-    have hv₀ne : v₀ ≠ 0 := by
-      rintro rfl
-      simp at hv₀
-    have hpos : 0 < (star v₀ ⬝ᵥ (Y *ᵥ v₀)).re := (Complex.lt_def.mp (hY.dotProduct_mulVec_pos hv₀ne)).1
-    refine ⟨_, hpos, fun v => ?_⟩
-    rcases eq_or_ne v 0 with rfl | hv
-    · simp
-    · have hc0 : 0 < ‖v‖ := norm_pos_iff.mpr hv
-      have hu : ((‖v‖⁻¹ : ℝ) : ℂ) • v ∈ Metric.sphere (0 : Fin n → ℂ) 1 := by
-        rw [mem_sphere_zero_iff_norm, norm_smul, Complex.norm_real, Real.norm_eq_abs, abs_inv, abs_norm,
-          inv_mul_cancel₀ hc0.ne']
-      have h1 : (star v₀ ⬝ᵥ (Y *ᵥ v₀)).re ≤ (star (((‖v‖⁻¹ : ℝ) : ℂ) • v) ⬝ᵥ (Y *ᵥ (((‖v‖⁻¹ : ℝ) : ℂ) • v))).re :=
-        hmin hu
-      rw [re_form_smul] at h1
-      have h2 : ‖v‖⁻¹ ^ 2 * ‖v‖ ^ 2 = 1 := by field_simp
-      calc (star v₀ ⬝ᵥ (Y *ᵥ v₀)).re * ‖v‖ ^ 2 ≤ (‖v‖⁻¹ ^ 2 * (star v ⬝ᵥ (Y *ᵥ v)).re) * ‖v‖ ^ 2 :=
-            mul_le_mul_of_nonneg_right h1 (by positivity)
-        _ = (star v ⬝ᵥ (Y *ᵥ v)).re := by rw [mul_comm, ← mul_assoc, mul_comm (‖v‖ ^ 2), h2, one_mul]
+  apply _root_.Formalism.IndefR.Tow.SobPf.posDef_lower <;> assumption
 
 def toP (Y : Matrix (Fin n) (Fin n) ℂ) : Fin n → Fin n → ℂ := fun i j => Y i j
 

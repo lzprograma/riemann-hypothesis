@@ -64,7 +64,7 @@ theorem chart_matrix_lower (x : CI k r → ℂ) {a b : Fin r} (h : b ≤ a) : (c
   rw [Matrix.sub_apply, Matrix.one_apply]; unfold cA; rw [dite_eq_right (not_lt.2 h)]; split_ifs <;> simp
 
 theorem chart_matrix_upper (x : CI k r → ℂ) {a b : Fin r} (h : a < b) : (cA x - 1) a b = x (Sum.inl ⟨(a, b), h⟩) := by
-  rw [Matrix.sub_apply, Matrix.one_apply, if_neg (ne_of_lt h)]; unfold cA; rw [dite_eq_left h, sub_zero]
+  rw [Matrix.sub_apply, Matrix.one_apply, ite_eq_right (ne_of_lt h)]; unfold cA; rw [dite_eq_left h, sub_zero]
 
 theorem cK_skew (x : CI k r → ℂ) (s : Fin r → ℝ) (a b : Fin r) : cK x s a b + star (cK x s b a) = 0 := by
   unfold cK

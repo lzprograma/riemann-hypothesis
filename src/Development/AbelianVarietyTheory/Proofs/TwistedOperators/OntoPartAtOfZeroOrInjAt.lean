@@ -63,24 +63,9 @@ open scoped TensorProduct
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.ParameterTransferTypes
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 section Satake
-
-def SpanAt (V : HSp D) (e : AE D) (M : Matrix (Fin V.rank) (Fin V.rank) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F ⊗[D.host.F] D.host.E))
-    (γ : GA D V) : Prop :=
-  (∀ y ∈ Formalism.L2.NTheta.LamHat V, ∃ z, IntVec z ∧
-    (fun a => finPart D e * (finMat D.sp.cm.sig V.gram γ).mulVec y a) = fun a => finPart D e * M.mulVec z a) ∧
-  (∀ z, IntVec z → ∃ y ∈ Formalism.L2.NTheta.LamHat V,
-    (fun a => finPart D e * (finMat D.sp.cm.sig V.gram γ).mulVec y a) = fun a => finPart D e * M.mulVec z a)
-
-
-open Classical in
-def sphVal {n : ℕ} (inert : Prop) (q : ℕ) (α : Fin n → ℂ) (a : Fin n → ℤ) : ℂ :=
-  ∏ i : Fin n, if inert → 2 * (i : ℕ) + 1 < n then
-    (α i * (((q : ℝ) ^ (-(((n : ℝ) - 1 - 2 * (i : ℕ)) / 2)) : ℝ) : ℂ)) ^ a i else 1
 
 def str (x : ℂ) (q t : ℕ) : Multiset ℂ :=
   (Multiset.range t).map fun k => x * (((q : ℝ) ^ (((t : ℝ) - 1) / 2 - (k : ℝ)) : ℝ) : ℂ)
@@ -121,8 +106,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links
 open GlobalTheory.IndefiniteRowSideFullHecke.ParameterTransferTypes GlobalTheory.Hk3 GlobalTheory.SplitHeckeAdj
 
 namespace GlobalTheory.LiftOntoCompare
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
@@ -208,22 +191,6 @@ theorem exists_opsV (hL : R.toLevCh.Is A.μ0) (hM : R.IsModels) (i : Fin D.R.m) 
       fun s hs _ x => (hs x).trans (GlobalTheory.DefiniteOps.hkF_eq _ _ _ _).symm
   choose h hh using key
   exact ⟨h, fun w hw c x => hh w c hw x⟩
-
-section Levels
-
-variable (i : Fin D.R.m) (t : T) (P : LevelP R.Pg D.R.r ℂ)
-
-end Levels
-
-section Compare
-
-variable (R) (F : Face D A)
-
-variable {R}
-
-variable (R)
-
-end Compare
 
 end GlobalTheory.LiftOntoCompare
 

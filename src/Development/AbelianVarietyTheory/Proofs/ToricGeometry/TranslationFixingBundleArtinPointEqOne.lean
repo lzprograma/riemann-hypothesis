@@ -554,7 +554,7 @@ theorem first_order_transl (ρ : R →ₐ[ℂ] ℂ) (x : spO R ⟶ A) (κ : R �
       rw [valAt'_eq_evalPt _ _ hm, valAt'_eq_evalPt _ _ hm']
       exact evalPt_appLE _ T _ hy W _ le_rfl hm hm' f
     · have hm' : ¬ ⊤ ≤ (u.ex (y + z)).left ⁻¹ᵁ W := by rw [← hy]; exact hm
-      simp only [valAt', dif_neg hm, dif_neg hm']
+      simp only [valAt', dite_eq_right hm, dite_eq_right hm']
   have hsh := fderiv_comp_add_right (𝕜 := ℂ) (f := fun v => valAt' (u.ex v).left W f) (x := 0) z
   simp only [zero_add] at hsh
   obtain ⟨h1, h2⟩ := hκ (T ⁻¹ᵁ W) h' f'

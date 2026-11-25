@@ -4,55 +4,9 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJfSSymDef
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJfSmoothCut
 import Formalism.FormalDegreeBessel.FinalG
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LinearChangeOfVariablesBis
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DensityLemma.PFibreBoundV
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.HermitianXiOrthogonal
@@ -71,8 +25,6 @@ lemma expS_summable {n : ℕ} (X : Matrix (Fin n) (Fin n) ℂ) :
   letI : NormedRing (Matrix (Fin n) (Fin n) ℂ) := Matrix.linftyOpNormedRing
   letI : NormedAlgebra ℂ (Matrix (Fin n) (Fin n) ℂ) := Matrix.linftyOpNormedAlgebra
   exact NormedSpace.expSeries_summable' X
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 def mvL {n : ℕ} (y : Fin n → ℂ) : Matrix (Fin n) (Fin n) ℂ →L[ℂ] (Fin n → ℂ) :=
   LinearMap.toContinuousLinearMap
@@ -119,7 +71,7 @@ lemma hpk_symm (i j : Fin (2 * r + k + 1)) : Hpk k r i j = Hpk k r j i := by
     rfl
   · have hji : ¬ j = i := fun h => hij h.symm
     unfold Hpk
-    simp only [hij, hji, and_false, if_false]
+    simp only [hij, hji, and_false, ite_false]
     split_ifs <;> first | rfl | (exfalso; omega)
 
 lemma star_hpk_dot (v y : Fin (2 * r + k + 1) → ℂ) : star (Hpk k r *ᵥ v) ⬝ᵥ y = herm (Hpk k r) y v := by
@@ -151,10 +103,6 @@ lemma mat_eq_mulVec_bvec {n : ℕ} (M : Matrix (Fin n) (Fin n) ℂ) (i j : Fin n
 lemma herm_bvec_left (p : Fin (2 * r + k + 1)) (w : Fin (2 * r + k + 1) → ℂ) :
     herm (Hpk k r) (bvec p) w = ∑ i, star (w i) * Hpk k r i p := by
   simp [herm, bvec, dotProduct, Matrix.mulVec_single]
-
-lemma herm_bvec_bvec (p q : Fin (2 * r + k + 1)) : herm (Hpk k r) (bvec p) (bvec q) = Hpk k r q p := by
-  rw [herm_bvec_left]
-  simp [bvec, Pi.single_apply]
 
 lemma hpk_col_eI (c : Fin r) (i : Fin (2 * r + k + 1)) :
     Hpk k r i (eI k r c) = if i = esI k r c then 1 else 0 := by
@@ -194,16 +142,16 @@ theorem xuv_lieN (z : Fin (2 * r + k + 1) → ℂ) (a : Fin r) (v : Fin (2 * r +
   intro t
   set X := Xuv k r (bvec (eI k r a)) v with hX
   have hXa : X *ᵥ bvec (eI k r a) = 0 := by
-    rw [hX, xuv_mulVec, herm_eI_left, hv a le_rfl, herm_bvec_bvec, _root_.PI.UnitaryGroupMassFormula.DLm.NBk.Hpk_ee]
+    rw [hX, xuv_mulVec, herm_eI_left, hv a le_rfl, Formalism.QuantumDeterminants.GBasic.herm_bvec, _root_.PI.UnitaryGroupMassFormula.DLm.NBk.Hpk_ee]
     simp
   have hXc : ∀ c : Fin r, X *ᵥ bvec (eI k r c) = star (v (esI k r c)) • bvec (eI k r a) := by
     intro c
-    rw [hX, xuv_mulVec, herm_eI_left, herm_bvec_bvec, _root_.PI.UnitaryGroupMassFormula.DLm.NBk.Hpk_ee]
+    rw [hX, xuv_mulVec, herm_eI_left, Formalism.QuantumDeterminants.GBasic.herm_bvec, _root_.PI.UnitaryGroupMassFormula.DLm.NBk.Hpk_ee]
     simp
   have hXj : ∀ j : Fin (2 * r + k + 1), r ≤ j.val → j.val ≤ r + k →
       X *ᵥ bvec j = herm (Hpk k r) (bvec j) v • bvec (eI k r a) := by
     intro j hj hj'
-    rw [hX, xuv_mulVec, herm_bvec_bvec, hpk_eI_row_block a j hj hj']
+    rw [hX, xuv_mulVec, Formalism.QuantumDeterminants.GBasic.herm_bvec, hpk_eI_row_block a j hj hj']
     simp
   refine ⟨1, _root_.Formalism.FourierDecayAlt.P.C2x7.one_mem_UW z, NormedSpace.exp ((t : ℂ) • X), ⟨Formalism.FourierDecayAlt.P.B5.exp_mem (xuv_inLie _ _) t, ?_, ?_⟩,
     (Matrix.one_mul _).symm⟩

@@ -87,7 +87,7 @@ theorem standardAltForm_apply [Fintype ι] [DecidableEq ι] (d : ι → R) (x y 
     Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁,
     Matrix.fromBlocks_apply₂₂, Matrix.diagonal_apply, Matrix.neg_apply, Matrix.zero_apply]
   simp only [mul_zero, zero_mul, Finset.sum_const_zero, zero_add, add_zero, mul_neg, neg_mul,
-    mul_ite, ite_mul, Finset.sum_neg_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    mul_ite, ite_mul, Finset.sum_neg_distrib, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   rw [← Finset.sum_neg_distrib, ← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl fun i _ => by ring
 

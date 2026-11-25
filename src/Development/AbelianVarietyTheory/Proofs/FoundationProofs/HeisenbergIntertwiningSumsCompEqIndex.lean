@@ -99,9 +99,9 @@ theorem _root_.GlobalTheory.FinWeil.sumOp_sumOp_eq_idx_smul : ∀ {R X M : Type}
           conv_rhs => rw [← QuotientAddGroup.out_eq' p]
           rw [QuotientAddGroup.eq_zero_iff, AddSubgroup.mem_addSubgroupOf]
         by_cases hp : p = 0
-        · rw [if_pos (hmem.2 hp), if_pos hp, hv _ (hmem.2 hp)]
+        · rw [ite_eq_left (hmem.2 hp), ite_eq_left hp, hv _ (hmem.2 hp)]
           exact congrArg (fun n : ℕ => (n : ℂ) • v) hidx
-        · rw [if_neg (mt hmem.1 hp), if_neg hp, zero_smul]
+        · rw [ite_eq_right (mt hmem.1 hp), ite_eq_right hp, zero_smul]
     _ = (_root_.GlobalTheory.FinWeil.idx A B : ℂ) • v := by
         rw [Finset.sum_ite_eq']
         simp

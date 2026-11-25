@@ -2,7 +2,6 @@ module
 
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Objects
 public import Mathlib.Algebra.Module.ZLattice.Covolume
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 

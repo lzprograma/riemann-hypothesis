@@ -13,8 +13,6 @@ import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped Matrix

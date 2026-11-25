@@ -70,8 +70,6 @@ open GlobalTheory.FlagTan (dimFlag)
 open GlobalTheory.HSApp
 open scoped LaurentSeries
 
-set_option autoImplicit false
-
 namespace GlobalTheory.CompHS
 
 theorem exists_generisation_of_mem_closure {T : Type} [TopologicalSpace T] [NoetherianSpace T] [QuasiSober T]
@@ -129,8 +127,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits NumberField
@@ -155,16 +151,6 @@ theorem FrameBC.at (hbc : FrameBC Z) {R R' : Type} [CommRing R] [IsLocalRing R] 
     (hx : x' = spMap ψ ≫ x) : ∃ g : EigFrame Z (ψ.comp φ) x', ∀ τ i, g.v τ i = spMap (dualMap ψ) ≫ f.v τ i := by
   subst hx
   exact hbc R R' φ x f ψ
-
-section Cpt
-
-variable {C : FlagCpt Z e}
-
-end Cpt
-
-section Core
-
-end Core
 
 end GlobalTheory.CuspFrom.Vanish
 

@@ -36,7 +36,7 @@ theorem exists_sys_isT {I J : Type} [Fintype I] [Fintype J] (X : Cart V d I J) :
       · exact VF.Ge.zero 0)
     (by
       intro c x h
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro rfl
       exact h rfl)
     (by

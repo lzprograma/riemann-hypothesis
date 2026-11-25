@@ -778,7 +778,7 @@ theorem isSchwartzBruhat_indGL {S : Set (GL (Fin m) F)} (hSc : IsCompact S) (hSo
         rw [this]; exact isOpen_empty
   · refine HasCompactSupport.intro hcpt fun X hX => ?_
     simp only [indGL, Set.indicator_apply]
-    rw [if_neg hX]
+    rw [ite_eq_right hX]
 
 theorem indGL_support {S : Set (GL (Fin m) F)} (hSc : IsCompact S) :
     ∃ K : Set (GL (Fin m) F), IsCompact K ∧
@@ -789,7 +789,7 @@ theorem indGL_support {S : Set (GL (Fin m) F)} (hSc : IsCompact S) :
   push Not at h
   apply hX
   simp only [indGL, Set.indicator_apply]
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro ⟨g, hg, rfl⟩
   exact h g hg rfl
 

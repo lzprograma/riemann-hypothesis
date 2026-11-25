@@ -627,8 +627,8 @@ theorem truncated_explicit_formula : ∃ C : ℝ, 0 < C ∧ ∀ (N : ℕ) [NeZer
       (if N = 1 then (u : ℂ) else 0) := by
     unfold psi0
     by_cases h : N = 1
-    · rw [if_pos h, if_pos (hiff.mpr h)]
-    · rw [if_neg h, if_neg (fun h' => h (hiff.mp h'))]
+    · rw [ite_eq_left h, ite_eq_left (hiff.mpr h)]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h (hiff.mp h'))]
   rw [hpsi]
   have hZ : 0 ≤ ∑ᶠ ρ ∈ {ρ : ℂ | 0 < ρ.re ∧ ρ.re < 1 ∧ |ρ.im| < 1 ∧ LFunction χ ρ = 0},
       ((analyticOrderNatAt (LFunction χ) ρ : ℕ) : ℝ) / ‖ρ‖ :=

@@ -44,7 +44,6 @@ import Mathlib.Topology.Sheaves.Init
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.LocMod
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LocSympl
 
@@ -54,10 +53,8 @@ alias conj_conj := _root_.Formalism.L2.Theta.cA_cA
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-alias e_mul_ι := _root_.GlobalTheory.LocMod.Witness.e_ι
-
 theorem conj_ι_mul_ι (p : Place D k) (u v : k) : cA D (p.ι u) * p.ι v = 0 := by
-  calc cA D (p.ι u) * p.ι v = cA D (p.e * p.ι u) * (p.e * p.ι v) := by rw [e_mul_ι, e_mul_ι]
+  calc cA D (p.ι u) * p.ι v = cA D (p.e * p.ι u) * (p.e * p.ι v) := by rw [GlobalTheory.LocMod.Witness.e_ι, GlobalTheory.LocMod.Witness.e_ι]
     _ = (p.e * cA D p.e) * (cA D (p.ι u) * p.ι v) := by rw [map_mul]; ring
     _ = 0 := by rw [p.split.2.1, zero_mul]
 
@@ -69,7 +66,7 @@ variable {D : D7} {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [Is
 variable {Y Y' : Type} [Fintype Y] [DecidableEq Y] [Fintype Y'] [DecidableEq Y']
 
 theorem up_half (p : Place D k) {S T : HSp D} (FS : Frame k S.rank Y') (FT : Frame k T.rank Y) (x : Matrix Y Y' k) :
-    IsHalf p.e (p.up FS FT x) := fun i j => e_mul_ι p _
+    IsHalf p.e (p.up FS FT x) := fun i j => GlobalTheory.LocMod.Witness.e_ι p _
 
 theorem down_up (p : Place D k) {S T : HSp D} (FS : Frame k S.rank Y') (FT : Frame k T.rank Y) (x : Matrix Y Y' k) :
     p.down FS FT (p.up FS FT x) = x := by
@@ -102,7 +99,7 @@ theorem e_mul_hO_up (p : Place D k) {S T : HSp D} (FS : Frame k S.rank Y') (FT :
     (y : WO S T) : p.e * hO S T (p.up FS FT t) y = hO S T (p.up FS FT t) y := by
   have key : ∀ (A B C : AE D) (u : k), p.e * (A * B * C * p.ι u) = A * B * C * p.ι u := fun A B C u => by
     calc p.e * (A * B * C * p.ι u) = A * B * C * (p.e * p.ι u) := by ring
-      _ = _ := by rw [e_mul_ι]
+      _ = _ := by rw [GlobalTheory.LocMod.Witness.e_ι]
   unfold hO
   simp only [Finset.mul_sum]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun c _ =>
@@ -151,7 +148,7 @@ theorem exists_pairing (p : Place D k) {S T : HSp D} (FS : Frame k S.rank Y') (F
   set N : Matrix (Fin S.rank) (Fin T.rank) k := S.gram.map f * FS.β * b.transpose * FT.γ * (T.gram⁻¹).map f
   refine ⟨N.transpose.map fun a => cA D (p.ι a), fun i j => ?_, fun t => ?_⟩
   · show cA D p.e * cA D (p.ι _) = cA D (p.ι _)
-    rw [← map_mul, e_mul_ι]
+    rw [← map_mul, GlobalTheory.LocMod.Witness.e_ι]
   · rw [pi_hO_up]
     have hA : (S.gram⁻¹).map f * S.gram.map f = 1 := by
       rw [← Matrix.map_mul, Matrix.nonsing_inv_mul _ (GlobalTheory.LatVac.gram_det_isUnit S), Matrix.map_one _ (map_zero f) (map_one f)]

@@ -5,44 +5,6 @@ public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVo
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.IsTopRingTens
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.SelfDualMeasureSFinite
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -72,27 +34,7 @@ theorem inclR_mem (a : 𝓞 E) : inclR (F := F) (Fv F v) (a : E) ∈ OEv (E := E
 theorem exists_gens : ∃ (m : ℕ) (w : Fin m → Fv F v ⊗[F] E), (∀ k, w k ∈ OEv (E := E) v) ∧
     ∀ x ∈ OEv (E := E) v, ∃ c : Fin m → Fv F v, (∀ k, c k ∈ v.adicCompletionIntegers F) ∧
       x = ∑ k, c k • w k := by
-  classical
-  let b := (NumberField.RingOfIntegers.basis E).reindex (Fintype.equivFin _)
-  refine ⟨_, fun k => inclR (F := F) (Fv F v) ((b k : 𝓞 E) : E), fun k => inclR_mem v (b k), ?_⟩
-  intro x hx
-  have hle : OEv (E := E) v ⊆ (Submodule.span (v.adicCompletionIntegers F)
-      (Set.range fun k => inclR (F := F) (Fv F v) ((b k : 𝓞 E) : E)) : Set (Fv F v ⊗[F] E)) := by
-    unfold OEv
-    apply Submodule.span_le.2
-    rintro _ ⟨a, -, rfl⟩
-    have ha : (a : E) = ∑ k, ((b.repr a k : ℤ) : E) * ((b k : 𝓞 E) : E) := by
-      conv_lhs => rw [← b.sum_repr a]
-      push_cast
-      simp [zsmul_eq_mul]
-    beta_reduce
-
-    rw [SetLike.mem_coe, ha, map_sum]
-    refine Submodule.sum_mem _ fun k _ => ?_
-    rw [map_mul, map_intCast, ← zsmul_eq_mul]
-    exact zsmul_mem (Submodule.subset_span (Set.mem_range_self k)) _
-  obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun _).1 (hle hx)
-  exact ⟨fun k => (c k : Fv F v), fun k => (c k).2, by rw [← hc]; rfl⟩
+  apply _root_.PI.UnitaryGroupMassFormula.LocJacTyp.Sd.exists_gens <;> assumption
 
 theorem isCompact_oev : IsCompact (OEv (E := E) v) := by
   apply PI.UnitaryGroupMassFormula.LocJacTyp.Sd.isCompact_oev

@@ -49,7 +49,6 @@ public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomolog
 
 section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.WeilDeligne GlobalTheory.GalOfCusp GlobalTheory.HeckeGal GlobalTheory.LocLanglands GlobalTheory.Published UpperTheory.V.W UpperTheory.V.Hi
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 private theorem dr_of_above (H : HeckeLAdicCharacterAbove) : HeckeLAdicCharacterDeRham := by
   intro E Ω _ _ _ _ _ l _ P AI ht ι art ha χ n μ h1 h2 h3 w A hA O _ _ _ Bw hB
   have := H E Ω l P AI ht ι art ha χ n μ h1 h2 h3 w A hA O Bw hB

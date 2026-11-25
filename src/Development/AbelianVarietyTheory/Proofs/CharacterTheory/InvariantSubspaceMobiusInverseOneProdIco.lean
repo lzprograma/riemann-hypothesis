@@ -240,7 +240,7 @@ theorem psi_one_eq_oneValue (F : Type) [Field F] [Finite F] (s : F[X] → ℂ)
 theorem psi_one (F : Type) [Field F] [Finite F] (V : Type) [AddCommGroup V] [Module F V] [FiniteDimensional F V]
     (s : F[X] → ℂ) (hs : ∀ j : ℕ, s ((X - C 1) ^ j) = j) (h : 0 < Module.finrank F V) :
     psi s V 1 = ∏ i ∈ Finset.Ico 1 (Module.finrank F V), (1 - (Nat.card F : ℂ) ^ i) := by
-  rw [psi_one_eq_oneValue F s hs _ V rfl, oneValue, if_neg h.ne']
+  rw [psi_one_eq_oneValue F s hs _ V rfl, oneValue, ite_eq_right h.ne']
 
 end GlobalTheory.CuspGL
 end -- clump:auto

@@ -238,7 +238,7 @@ theorem exists_embedding_conj (hc : ∀ t, σ (σ t) = t)
       have : (τ θ).re * (τ θ).im = 0 := by linarith
       exact (mul_eq_zero.1 this).resolve_left hne
     rw [this] at h2
-    nlinarith [mul_self_nonneg (τ θ).re]
+    linarith only [hρ, h2, mul_self_nonneg (τ θ).re]
   have h5 : conj (τ θ) = -τ θ := by
     apply Complex.ext <;> simp [h4]
   refine ⟨τ, fun x => ?_, hτ⟩
@@ -279,8 +279,8 @@ theorem exists_represent (hc : ∀ t, σ (σ t) = t)
     · let i : Fin r := ⟨0, by omega⟩
       have e : ρ (a (some (Sum.inr i))) = -(ρ d * ρ (γ i)) := by simp [a]
       rcases lt_or_gt_of_ne ((map_ne_zero ρ).mpr (hγ i)) with h | h
-      · exact ⟨some (Sum.inl i), some (Sum.inr i), h, by rw [e]; nlinarith⟩
-      · exact ⟨some (Sum.inr i), some (Sum.inl i), by rw [e]; nlinarith, h⟩)
+      · exact ⟨some (Sum.inl i), some (Sum.inr i), h, by rw [e]; nlinarith only [hρ, h]⟩
+      · exact ⟨some (Sum.inr i), some (Sum.inl i), by rw [e]; nlinarith only [hρ, h], h⟩)
   obtain ⟨w, hw, hw0⟩ := exists_zero_coord_ne_zero ha hx hx0 none
   rw [Fintype.sum_option, Fintype.sum_sum_type] at hw0
   have hw1 := congrArg (algebraMap F E) hw0

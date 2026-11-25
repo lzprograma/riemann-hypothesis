@@ -212,12 +212,12 @@ theorem cleared_low [CharZero K] {g2 g3 : K} {r : K⟦X⟧} (h : Cleared g2 g3 r
     ring
   have r0 : coeff 0 r = 0 := by
     have e := congrArg (coeff 0) E
-    rw [lhs, coeff_X_pow_mul', if_neg (by norm_num : ¬ (2 ≤ 0))] at e
+    rw [lhs, coeff_X_pow_mul', ite_eq_right (by norm_num : ¬ (2 ≤ 0))] at e
     have h12 : (4 * ((0 : ℕ) : K) + 12) ≠ 0 := by norm_num
     exact (mul_eq_zero.mp e).resolve_left h12
   have r1 : coeff 1 r = 0 := by
     have e := congrArg (coeff 1) E
-    rw [lhs, coeff_X_pow_mul', if_neg (by norm_num : ¬ (2 ≤ 1))] at e
+    rw [lhs, coeff_X_pow_mul', ite_eq_right (by norm_num : ¬ (2 ≤ 1))] at e
     have h16 : (4 * ((1 : ℕ) : K) + 12) ≠ 0 := by norm_num
     exact (mul_eq_zero.mp e).resolve_left h16
   obtain ⟨t, rfl⟩ : X ^ 2 ∣ r := by
@@ -235,15 +235,15 @@ theorem cleared_low [CharZero K] {g2 g3 : K} {r : K⟦X⟧} (h : Cleared g2 g3 r
     rw [map_add (f := _), coeff_ofNat_mul, coeff_ofNat_mul, coeff_X_mul_derivative]
     ring
   have f0 := congrArg (coeff 0) E2
-  rw [lt, map_add (f := _), coeff_C, if_pos rfl, coeff_X_pow_mul', if_neg (by norm_num : ¬ (2 ≤ 0))] at f0
+  rw [lt, map_add (f := _), coeff_C, ite_eq_left rfl, coeff_X_pow_mul', ite_eq_right (by norm_num : ¬ (2 ≤ 0))] at f0
   have f2 := congrArg (coeff 2) E2
-  rw [lt, map_add (f := _), coeff_C, if_neg (by norm_num : (2 : ℕ) ≠ 0), coeff_X_pow_mul', if_pos (le_refl 2),
-    Nat.sub_self, map_add, coeff_C, if_pos rfl, coeff_X_pow_mul', if_neg (by norm_num : ¬ (2 ≤ 0))] at f2
+  rw [lt, map_add (f := _), coeff_C, ite_eq_right (by norm_num : (2 : ℕ) ≠ 0), coeff_X_pow_mul', ite_eq_left (le_refl 2),
+    Nat.sub_self, map_add, coeff_C, ite_eq_left rfl, coeff_X_pow_mul', ite_eq_right (by norm_num : ¬ (2 ≤ 0))] at f2
   push_cast at f0 f2
   refine ⟨r0, r1, ?_, ?_⟩
-  · rw [coeff_X_pow_mul', if_pos (le_refl 2), Nat.sub_self, eq_div_iff (by norm_num)]
+  · rw [coeff_X_pow_mul', ite_eq_left (le_refl 2), Nat.sub_self, eq_div_iff (by norm_num)]
     linear_combination f0
-  · rw [coeff_X_pow_mul', if_pos (by norm_num : 2 ≤ 4), show 4 - 2 = 2 from rfl, eq_div_iff (by norm_num)]
+  · rw [coeff_X_pow_mul', ite_eq_left (by norm_num : 2 ≤ 4), show 4 - 2 = 2 from rfl, eq_div_iff (by norm_num)]
     linear_combination f2
 
 theorem cleared_neg {g2 g3 : K} {r : K⟦X⟧} (h : Cleared g2 g3 r) :
@@ -316,8 +316,8 @@ theorem recursion_of [CharZero K] {c : K} {r : K⟦X⟧}
   have h3 : 2 * q + 2 - 2 = 2 * q := by omega
   have h4 : 2 * q ≠ 0 := by omega
   have e := congrArg (coeff (2 * q + 2)) h
-  simp only [map_sub, map_add (f := _), coeff_X_pow_mul', if_pos h2, h3, coeff_derivative,
-    coeff_C, if_neg h4, sub_zero] at e
+  simp only [map_sub, map_add (f := _), coeff_X_pow_mul', ite_eq_left h2, h3, coeff_derivative,
+    coeff_C, ite_eq_right h4, sub_zero] at e
   rw [show 2 * q + 1 + 1 = 2 * q + 2 by omega] at e
   have hs := sum_even (fun n => coeff n r) h0 hodd q
   rw [coeff_ofNat_mul, coeff_ofNat_mul, coeff_mul, hs] at e

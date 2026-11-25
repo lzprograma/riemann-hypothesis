@@ -17,8 +17,6 @@ open scoped ENNReal
 
 namespace Formalism.L2.SG.Pf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def RelCharC : Prop :=
   ∀ (D : D7) (X : HidaSetting D) (Y : Formalism.L2.SG.Full.Full X) (u u' : D.what₂.Word)
     (t : GTerm X u u' (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u')), t.relevant →
@@ -47,6 +45,66 @@ theorem sinf_conj_iff (u : D.what₂.Word) {a : X.B.I.Ginf} (ha : a ∈ X.SinfU 
     have h2 := sinf_conj X u ha' h
     simpa [mul_assoc] using h2
   · exact fun hn => sinf_conj X u ha hn
+
+/-- Transport Haar measure by conjugation and the associated quotient measure by
+left multiplication. The target set is the image of the source set under conjugation. -/
+theorem map_haar_quotient (g : X.B.I.Ginf) (S R : Set X.B.I.Ginf)
+    (μ ν : Measure X.B.I.Ginf) (hRset : ∀ z, g * z * g⁻¹ ∈ R ↔ z ∈ S)
+    (hμH : IsHaarOnSet X.B.I S μ) (hμQ : IsQuotMeasS X.B.I μ ν) :
+    IsHaarOnSet X.B.I R (μ.map (fun y => g * y * g⁻¹)) ∧
+      IsQuotMeasS X.B.I (μ.map (fun y => g * y * g⁻¹)) (ν.map (fun x => g * x)) := by
+  set cj : X.B.I.Ginf → X.B.I.Ginf := fun y => g * y * g⁻¹ with hcj
+  have hcjm : Measurable cj := (measurable_const_mul g).mul_const g⁻¹
+  set μR := μ.map cj with hμR
+  set νR := ν.map (fun x => g * x) with hνR
+
+  have hHaar : IsHaarOnSet X.B.I R μR := by
+    obtain ⟨h1, h2, h3, h4⟩ := hμH
+    let e : MeasurableEquiv X.B.I.Ginf X.B.I.Ginf :=
+      (MeasurableEquiv.mulLeft g).trans (MeasurableEquiv.mulRight g⁻¹)
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · have : SigmaFinite μ := h1
+      exact e.sigmaFinite_map
+    · intro h0
+      apply h2
+      have := congrArg (fun m : Measure X.B.I.Ginf => m univ) h0
+      simp only [hμR, Measure.map_apply hcjm MeasurableSet.univ, preimage_univ, Measure.coe_zero,
+        Pi.zero_apply] at this
+      exact Measure.measure_univ_eq_zero.1 this
+    · have hcje : ⇑e = cj := rfl
+      rw [hμR, ← hcje, MeasurableEquiv.map_apply]
+      refine measure_mono_null (fun z hz => ?_) h3
+      intro hzS; exact hz ((hRset z).2 hzS)
+    · intro r hr
+      set z := g⁻¹ * r * g with hz
+      have hcz : cj z = r := by simp only [hcj, hz]; group
+      have hzS : z ∈ S := by
+        apply (hRset z).1
+        change cj z ∈ R
+        simpa only [hcz] using hr
+      have hcomp : (fun y => r * y) ∘ cj = cj ∘ (fun y => z * y) := by
+        funext y; simp only [Function.comp, hcj, hz]; group
+      rw [hμR, Measure.map_map (measurable_const_mul r) hcjm, hcomp,
+        ← Measure.map_map hcjm (measurable_const_mul z), h4 z hzS]
+
+  have hmulm : Measurable (fun p : X.B.I.Ginf × X.B.I.Ginf => p.1 * p.2) := measurable_mul
+  refine ⟨hHaar, ?_⟩
+  intro f hf
+  have hσ : SigmaFinite μ := hμH.1
+  have hσR : SigmaFinite μR := hHaar.1
+  have hF : Measurable fun x => ∫⁻ s, f (s * x) ∂μR := (hf.comp hmulm).lintegral_prod_left'
+  rw [hνR, lintegral_map hF (measurable_const_mul g)]
+  have e1 : ∀ x0, ∫⁻ s, f (s * (g * x0)) ∂μR = ∫⁻ z, (fun y => f (g * y)) (z * x0) ∂μ := by
+    intro x0
+    rw [hμR, lintegral_map (f := fun s => f (s * (g * x0))) (hf.comp (measurable_mul_const _)) hcjm]
+    refine lintegral_congr fun z => ?_
+    simp only [hcj]
+    congr 1
+    group
+  simp only [e1]
+  rw [← hμQ (fun y => f (g * y)) (hf.comp (measurable_const_mul g))]
+  exact (lintegral_mul_left_eq_self f g).symm
+
 
 end FormTranspose
 
@@ -80,69 +138,23 @@ theorem formTransp_any (hP : Formalism.L2.SG.RealObj.NuQPin X u u' νq) (hRC : R
   haveI := FiniteDimensional.complete ℂ (X.Vpi u)
   set w := Formalism.L2.SG.PairVal.ptOf t.toTerm with hw
   set γw := Formalism.L2.SG.RealObj.gamW X u u' w with hγw
-  have hγwP : Formalism.L2.SG.RealObj.IsPtRep X u u' w γw := by
-    simp only [hγw, Formalism.L2.SG.RealObj.gamW, dif_pos hreal]; exact hreal.choose_spec
-  obtain ⟨μw, hμwH, hμwQ, hμwS⟩ := hP.2 w hreal
+  obtain ⟨μw, hμwH, hμwQ, -⟩ := hP.2 w hreal
 
-  set cj : X.B.I.Ginf → X.B.I.Ginf := fun y => g * y * g⁻¹ with hcj
-  have hcjm : Measurable cj := (measurable_const_mul g).mul_const g⁻¹
-  set μR := μw.map cj with hμR
-  set ν := (νq γw).map (fun x => g * x) with hν
+  let μR := μw.map (fun y => g * y * g⁻¹)
+  let ν := (νq γw).map (fun x => g * x)
 
-  have hRset : ∀ z, cj z ∈ Rset t ↔ z ∈ Formalism.L2.SG.RealObj.StInf X u u' γw := by
+  have hRset : ∀ z, g * z * g⁻¹ ∈ Rset t ↔ z ∈ Formalism.L2.SG.RealObj.StInf X u u' γw := by
     intro z
     have e2 : t.pt.1⁻¹ * (g * z * g⁻¹) * t.pt.1 = g' * (γw⁻¹ * z * γw) * g'⁻¹ := by
       rw [show t.pt.1 = g * γw * g'⁻¹ from hdec]; group
     show (g * z * g⁻¹ ∈ X.NinfU u ∧ t.pt.1⁻¹ * (g * z * g⁻¹) * t.pt.1 ∈ X.NinfU u') ↔
       (z ∈ X.NinfU u ∧ γw⁻¹ * z * γw ∈ X.NinfU u')
     rw [e2, sinf_conj_iff X u hg, sinf_conj_iff X u' hg']
-  have hHaar : IsHaarOnSet X.B.I (Rset t) μR := by
-    obtain ⟨h1, h2, h3, h4⟩ := hμwH
-    have hcje : MeasurableEquiv X.B.I.Ginf X.B.I.Ginf :=
-      (MeasurableEquiv.mulLeft g).trans (MeasurableEquiv.mulRight g⁻¹)
-    refine ⟨?_, ?_, ?_, ?_⟩
-    · have : SigmaFinite μw := h1
-      exact ((MeasurableEquiv.mulLeft g).trans (MeasurableEquiv.mulRight g⁻¹)).sigmaFinite_map
-    · intro h0
-      apply h2
-      have := congrArg (fun m : Measure X.B.I.Ginf => m univ) h0
-      simp only [hμR, Measure.map_apply hcjm MeasurableSet.univ, preimage_univ, Measure.coe_zero,
-        Pi.zero_apply] at this
-      exact Measure.measure_univ_eq_zero.1 this
-    · have hcje : ⇑((MeasurableEquiv.mulLeft g).trans (MeasurableEquiv.mulRight g⁻¹)) = cj := rfl
-      rw [hμR, ← hcje, MeasurableEquiv.map_apply]
-      refine measure_mono_null (fun z hz => ?_) h3
-      intro hzS; exact hz ((hRset z).2 hzS)
-    · intro r hr
-      set z := g⁻¹ * r * g with hz
-      have hcz : cj z = r := by simp only [hcj, hz]; group
-      have hzS : z ∈ Formalism.L2.SG.RealObj.StInf X u u' γw := (hRset z).1 (hcz ▸ hr)
-      have hcomp : (fun y => r * y) ∘ cj = cj ∘ (fun y => z * y) := by
-        funext y; simp only [Function.comp, hcj, hz]; group
-      rw [hμR, Measure.map_map (measurable_const_mul r) hcjm, hcomp,
-        ← Measure.map_map hcjm (measurable_const_mul z), h4 z hzS]
-
-  have hmulm : Measurable (fun p : X.B.I.Ginf × X.B.I.Ginf => p.1 * p.2) := measurable_mul
-  have hQ' : IsQuotMeasS X.B.I μR ν := by
-    intro f hf
-    have hσ : SigmaFinite μw := hμwH.1
-    have hσR : SigmaFinite μR := hHaar.1
-    have hF : Measurable fun x => ∫⁻ s, f (s * x) ∂μR := (hf.comp hmulm).lintegral_prod_left'
-    rw [hν, lintegral_map hF (measurable_const_mul g)]
-    have e1 : ∀ x0, ∫⁻ s, f (s * (g * x0)) ∂μR = ∫⁻ z, (fun y => f (g * y)) (z * x0) ∂μw := by
-      intro x0
-      rw [hμR, lintegral_map (f := fun s => f (s * (g * x0))) (hf.comp (measurable_mul_const _)) hcjm]
-      refine lintegral_congr fun z => ?_
-      simp only [hcj]
-      congr 1
-      group
-    simp only [e1]
-    rw [← hμwQ (fun y => f (g * y)) (hf.comp (measurable_const_mul g))]
-    exact (lintegral_mul_left_eq_self f g).symm
+  obtain ⟨hHaar, hQ'⟩ := map_haar_quotient X g _ _ μw (νq γw) hRset hμwH hμwQ
 
   have hFE : ∃ Ω, IsSFund X.B.I (ROinf t) Ω := fundExistsC_holds D X Y u u' t
   have hFO : IsSFund X.B.I (ROinf t) (FundOf t) := by
-    unfold FundOf; rw [dif_pos hFE]; exact hFE.choose_spec
+    unfold FundOf; rw [dite_eq_left hFE]; exact hFE.choose_spec
   set Γ0 := ROsub X (X.Fu u) (X.Fu u') t.lam t.lam' t.lin with hΓ0
   have hKu : ∀ r ∈ Rset t, ∃! s, s ∈ ROinf t ∧ s * r ∈ FundOf t := by
     intro r _
@@ -173,68 +185,24 @@ theorem formula_transport_term (hP : Formalism.L2.SG.RealObj.NuQPin X u u' νq) 
   set w := Formalism.L2.SG.PairVal.ptOf t.toTerm with hw
   set γw := Formalism.L2.SG.RealObj.gamW X u u' w with hγw
   have hγwP : Formalism.L2.SG.RealObj.IsPtRep X u u' w γw := by
-    simp only [hγw, Formalism.L2.SG.RealObj.gamW, dif_pos hreal]; exact hreal.choose_spec
+    simp only [hγw, Formalism.L2.SG.RealObj.gamW, dite_eq_left hreal]; exact hreal.choose_spec
   obtain ⟨μw, hμwH, hμwQ, hμwS⟩ := hP.2 w hreal
 
-  set cj : X.B.I.Ginf → X.B.I.Ginf := fun y => g * y * g⁻¹ with hcj
-  have hcjm : Measurable cj := (measurable_const_mul g).mul_const g⁻¹
-  set μR := μw.map cj with hμR
-  set ν := (νq γw).map (fun x => g * x) with hν
+  let μR := μw.map (fun y => g * y * g⁻¹)
+  let ν := (νq γw).map (fun x => g * x)
 
-  have hRset : ∀ z, cj z ∈ Rset t ↔ z ∈ Formalism.L2.SG.RealObj.StInf X u u' γw := by
+  have hRset : ∀ z, g * z * g⁻¹ ∈ Rset t ↔ z ∈ Formalism.L2.SG.RealObj.StInf X u u' γw := by
     intro z
     have e2 : t.pt.1⁻¹ * (g * z * g⁻¹) * t.pt.1 = g' * (γw⁻¹ * z * γw) * g'⁻¹ := by
       rw [show t.pt.1 = g * γw * g'⁻¹ from hdec]; group
     show (g * z * g⁻¹ ∈ X.NinfU u ∧ t.pt.1⁻¹ * (g * z * g⁻¹) * t.pt.1 ∈ X.NinfU u') ↔
       (z ∈ X.NinfU u ∧ γw⁻¹ * z * γw ∈ X.NinfU u')
     rw [e2, sinf_conj_iff X u hg, sinf_conj_iff X u' hg']
-  have hHaar : IsHaarOnSet X.B.I (Rset t) μR := by
-    obtain ⟨h1, h2, h3, h4⟩ := hμwH
-    have hcje : MeasurableEquiv X.B.I.Ginf X.B.I.Ginf :=
-      (MeasurableEquiv.mulLeft g).trans (MeasurableEquiv.mulRight g⁻¹)
-    refine ⟨?_, ?_, ?_, ?_⟩
-    · have : SigmaFinite μw := h1
-      exact ((MeasurableEquiv.mulLeft g).trans (MeasurableEquiv.mulRight g⁻¹)).sigmaFinite_map
-    · intro h0
-      apply h2
-      have := congrArg (fun m : Measure X.B.I.Ginf => m univ) h0
-      simp only [hμR, Measure.map_apply hcjm MeasurableSet.univ, preimage_univ, Measure.coe_zero,
-        Pi.zero_apply] at this
-      exact Measure.measure_univ_eq_zero.1 this
-    · have hcje : ⇑((MeasurableEquiv.mulLeft g).trans (MeasurableEquiv.mulRight g⁻¹)) = cj := rfl
-      rw [hμR, ← hcje, MeasurableEquiv.map_apply]
-      refine measure_mono_null (fun z hz => ?_) h3
-      intro hzS; exact hz ((hRset z).2 hzS)
-    · intro r hr
-      set z := g⁻¹ * r * g with hz
-      have hcz : cj z = r := by simp only [hcj, hz]; group
-      have hzS : z ∈ Formalism.L2.SG.RealObj.StInf X u u' γw := (hRset z).1 (hcz ▸ hr)
-      have hcomp : (fun y => r * y) ∘ cj = cj ∘ (fun y => z * y) := by
-        funext y; simp only [Function.comp, hcj, hz]; group
-      rw [hμR, Measure.map_map (measurable_const_mul r) hcjm, hcomp,
-        ← Measure.map_map hcjm (measurable_const_mul z), h4 z hzS]
-
-  have hmulm : Measurable (fun p : X.B.I.Ginf × X.B.I.Ginf => p.1 * p.2) := measurable_mul
-  have hQ' : IsQuotMeasS X.B.I μR ν := by
-    intro f hf
-    have hσ : SigmaFinite μw := hμwH.1
-    have hσR : SigmaFinite μR := hHaar.1
-    have hF : Measurable fun x => ∫⁻ s, f (s * x) ∂μR := (hf.comp hmulm).lintegral_prod_left'
-    rw [hν, lintegral_map hF (measurable_const_mul g)]
-    have e1 : ∀ x0, ∫⁻ s, f (s * (g * x0)) ∂μR = ∫⁻ z, (fun y => f (g * y)) (z * x0) ∂μw := by
-      intro x0
-      rw [hμR, lintegral_map (f := fun s => f (s * (g * x0))) (hf.comp (measurable_mul_const _)) hcjm]
-      refine lintegral_congr fun z => ?_
-      simp only [hcj]
-      congr 1
-      group
-    simp only [e1]
-    rw [← hμwQ (fun y => f (g * y)) (hf.comp (measurable_const_mul g))]
-    exact (lintegral_mul_left_eq_self f g).symm
+  obtain ⟨hHaar, hQ'⟩ := map_haar_quotient X g _ _ μw (νq γw) hRset hμwH hμwQ
 
   have hFE : ∃ Ω, IsSFund X.B.I (ROinf t) Ω := fundExistsC_holds D X Y u u' t
   have hFO : IsSFund X.B.I (ROinf t) (FundOf t) := by
-    unfold FundOf; rw [dif_pos hFE]; exact hFE.choose_spec
+    unfold FundOf; rw [dite_eq_left hFE]; exact hFE.choose_spec
   set Γ0 := ROsub X (X.Fu u) (X.Fu u') t.lam t.lam' t.lin with hΓ0
   have hKu : ∀ r ∈ Rset t, ∃! s, s ∈ ROinf t ∧ s * r ∈ FundOf t := by
     intro r _
@@ -276,7 +244,7 @@ theorem formula_transport_of_condition (hP : Formalism.L2.SG.RealObj.NuQPin X u 
     intro h0
     apply h1
     show Gt s.1 = 0
-    unfold Gt; rw [if_pos h0]
+    unfold Gt; rw [ite_eq_left h0]
   exact formula_transport_term X Y u u' νq hP hV hg3 hPH hRC hNR hCPU
     (fun t w' F' L U hN hG => normRep_atPt X Y u u' t w' F' L U hN hG) s.1 hrel s.2.2.1 hG hat (hLD R ρ s hrel).1
     g hg g' hg' hdec

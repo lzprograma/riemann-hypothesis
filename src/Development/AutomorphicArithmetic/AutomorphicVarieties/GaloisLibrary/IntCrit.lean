@@ -155,30 +155,4 @@ theorem isIntegral_of_norm_le (x : ℂ) (h : ∀ (l : ℕ) [Fact l.Prime] (ι : 
   exact ⟨f, hfm, by rw [← aeval_def, ← aeval_map_algebraMap ℚ, hf, minpoly.aeval]⟩
 
 
-open scoped Matrix in
-theorem norm_root_eq_one {Γ k : Type} [Group Γ] [TopologicalSpace Γ] [CompactSpace Γ] [NormedField k] {n : ℕ}
-    (r : Γ →* GL (Fin n) k) (hr : Continuous r) (g : Γ) (b : k)
-    (hb : (r g : Matrix (Fin n) (Fin n) k).charpoly.IsRoot b) : ‖b‖ = 1 := by
-  rw [IsRoot, Matrix.eval_charpoly, ← Matrix.exists_mulVec_eq_zero_iff] at hb
-  obtain ⟨v, hv, e⟩ := hb
-  have e1 : (r g : Matrix (Fin n) (Fin n) k) *ᵥ v = b • v := by
-    rw [Matrix.sub_mulVec, sub_eq_zero] at e
-    rw [← e]; ext i; simp [Matrix.scalar_apply, Matrix.mulVec_diagonal]
-  let f : Γ → ℝ := fun s => ‖(r s : Matrix (Fin n) (Fin n) k) *ᵥ v‖
-  have hf : Continuous f := ((Units.continuous_val.comp hr).matrix_mulVec continuous_const).norm
-  have hpos : ∀ s, 0 < f s := fun s => norm_pos_iff.2 fun h0 => hv (by
-    have := congrArg (fun y => (r s⁻¹ : Matrix (Fin n) (Fin n) k) *ᵥ y) h0
-    simpa only [Matrix.mulVec_mulVec, ← Units.val_mul, ← map_mul, inv_mul_cancel, map_one, Units.val_one, Matrix.one_mulVec,
-      Matrix.mulVec_zero] using this)
-  have hm : ∀ s, f (s * g) = ‖b‖ * f s := fun s => by
-    simp only [f, map_mul, Units.val_mul, ← Matrix.mulVec_mulVec, e1, Matrix.mulVec_smul, norm_smul]
-  obtain ⟨s, -, hs⟩ := isCompact_univ.exists_isMaxOn ⟨1, trivial⟩ hf.continuousOn
-  obtain ⟨t, -, ht⟩ := isCompact_univ.exists_isMinOn ⟨1, trivial⟩ hf.continuousOn
-  have h1 : f (s * g) ≤ f s := hs trivial
-  have h2 : f t ≤ f (t * g) := ht trivial
-  rw [hm] at h1 h2
-  have := hpos s
-  have := hpos t
-  apply le_antisymm <;> nlinarith
-
 end UpperTheory.V.Lib

@@ -27,21 +27,6 @@ namespace ReciprocityTheory.ChartRestriction.G.FreeQuotientRank
 
 open IsDedekindDomain QuotShiftPfH
 
-private theorem ordAt_mul_rationality {R F : Type} [CommRing R] [IsDedekindDomain R] [Field F]
-    [Algebra R F] [IsFractionRing R F] (v : HeightOneSpectrum R) {x y : F} (hx : x ≠ 0)
-    (hy : y ≠ 0) : ordAt v (x * y) = ordAt v x + ordAt v y := by
-  unfold ordAt
-  rw [map_mul, WithZero.log_mul ((v.valuation F).ne_zero_iff.mpr hx)
-    ((v.valuation F).ne_zero_iff.mpr hy)]
-  ring
-
-private theorem ordAt_zpow {R F : Type} [CommRing R] [IsDedekindDomain R] [Field F]
-    [Algebra R F] [IsFractionRing R F] (v : HeightOneSpectrum R) (x : F) (k : ℤ) :
-    ordAt v (x ^ k) = k * ordAt v x := by
-  unfold ordAt
-  rw [map_zpow₀, WithZero.log_zpow, smul_eq_mul]
-  ring
-
 private theorem ordAt_prod_rationality {R F : Type} [CommRing R] [IsDedekindDomain R] [Field F]
     [Algebra R F] [IsFractionRing R F] (v : HeightOneSpectrum R) {ι : Type} (S : Finset ι)
     (f : ι → F) (hf : ∀ i, f i ≠ 0) : ordAt v (∏ i ∈ S, f i) = ∑ i ∈ S, ordAt v (f i) := by
@@ -54,7 +39,7 @@ private theorem ordAt_prod_rationality {R F : Type} [CommRing R] [IsDedekindDoma
     rfl
   | insert a S ha ih =>
     rw [Finset.prod_insert ha, Finset.sum_insert ha,
-      ordAt_mul_rationality v (hf a) (Finset.prod_ne_zero_iff.mpr fun i _ => hf i), ih]
+      ordAt_mul' v (hf a) (Finset.prod_ne_zero_iff.mpr fun i _ => hf i), ih]
 
 theorem exists_length_quotient_span_le (hL : QuotLocalStatement) {R F : Type} [CommRing R] [IsDedekindDomain R]
     [Field F] [Algebra R F] [IsFractionRing R F] (v : HeightOneSpectrum R) (Q : Type)
@@ -77,8 +62,7 @@ theorem exists_length_quotient_span_le (hL : QuotLocalStatement) {R F : Type} [C
 
   have hne : ∀ i, ∃ q, c i q ≠ 0 := by
     intro i
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hdet (Matrix.det_eq_zero_of_row_eq_zero i fun j => by simp [h])
 
   have hex : ∀ i, ∃ μ : ℤ, (∃ q, c i q ≠ 0 ∧ ordAt v (c i q) = μ) ∧
@@ -106,7 +90,7 @@ theorem exists_length_quotient_span_le (hL : QuotLocalStatement) {R F : Type} [C
     by_cases hq : c i q = 0
     · rw [hq, mul_zero]; exact (Rv F v).zero_mem
     · refine (mem_Rv_iff_ord v (mul_ne_zero (zpow_ne_zero _ hπ0) hq)).mpr ?_
-      rw [ordAt_mul_rationality v (zpow_ne_zero _ hπ0) hq, ordAt_zpow, hπ1]
+      rw [ordAt_mul' v (zpow_ne_zero _ hπ0) hq, ordAt_zpow', hπ1]
       have := hμ2 i q hq
       linarith
   let c' : Fin ρ → (Q →ₗ[Rv F v] Rv F v) := fun i =>
@@ -137,10 +121,10 @@ theorem exists_length_quotient_span_le (hL : QuotLocalStatement) {R F : Type} [C
   rw [addVal_eq_ord v _ hdF0] at hlen
   have hord : ordAt v (((Matrix.of fun i j => c' i (th j)).det : Rv F v) : F) =
       ∑ i, -μ i + ordAt v (Matrix.of fun i j => c i (th j)).det := by
-    rw [hdetF, ordAt_mul_rationality v hP0 hdet, ordAt_prod_rationality v _ _ fun i => zpow_ne_zero _ hπ0]
+    rw [hdetF, ordAt_mul' v hP0 hdet, ordAt_prod_rationality v _ _ fun i => zpow_ne_zero _ hπ0]
     congr 1
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [ordAt_zpow, hπ1, mul_one]
+    rw [ordAt_zpow', hπ1, mul_one]
   have hnn := ord_nonneg v _ hdF0
   have htop : Module.length (Rv F v) (Q ⧸ Submodule.span (Rv F v) (Set.range th)) ≠ ⊤ :=
     ne_top_of_le_ne_top (ENat.coe_ne_top _) hlen

@@ -47,7 +47,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim GlobalTheory.FlipRun
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
 noncomputable section
 namespace GlobalTheory.FlipStart.Col
@@ -141,12 +140,12 @@ theorem stepY {ch : Choice R} (hW : ch.W.Over R) (hch : R.IsChain) (hmod : R.IsM
     unfold Vol.IsAt at hAt
     rcases Nat.lt_or_ge (j + 1 + 1) D.R.m with h | h
     · have hc := hmod.νY t (j + 1) h
-      rw [if_neg (show ¬ (Node.grid 0 (j + 1)).neg D.R.m = 0 by simp only [Node.neg]; omega)] at hAt
+      rw [ite_eq_right (show ¬ (Node.grid 0 (j + 1)).neg D.R.m = 0 by simp only [Node.neg]; omega)] at hAt
       exact ⟨measFD_heq hT hK hAt hc, hc.1.1, hc.2⟩
     · have e : j + 1 = D.R.m - 1 := by omega
       have hc := hmod.νY' t
       rw [← e] at hc
-      rw [if_pos (show (Node.grid 0 (j + 1)).neg D.R.m = 0 by simp only [Node.neg]; omega)] at hAt
+      rw [ite_eq_left (show (Node.grid 0 (j + 1)).neg D.R.m = 0 by simp only [Node.neg]; omega)] at hAt
       exact ⟨measDef_heq hT hK hAt hc, hc.1.1, hc.2⟩
   have hker := (GlobalTheory.thetaKO_rat_left_and_eigen_right _ _ _ _ _ (R.ωY t j) (hch.ωY t j hj) _ (hch.ptY t j hj P₀)).1
   exact step_heq hS hT (hW.omY t j hj) hs key.1 key.2.1 hfund.2 key.2.2 hF (fun h γ hγ g => by
@@ -185,7 +184,7 @@ theorem stepX {ch : Choice R} (hW : ch.W.Over R) (hch : R.IsChain) (hmod : R.IsM
   have hK : HEq (levJ ch.G t (.grid 0 (j + 1))) (lev D.sp.cm D.sp.X'.gram R.βX (R.datXt t)) :=
     levCol_top R.toLevCh t (by omega)
   unfold Vol.IsAt at hAt
-  rw [if_pos (show (Node.grid 0 (j + 1)).neg D.R.m = 0 by simp only [Node.neg]; omega)] at hAt
+  rw [ite_eq_left (show (Node.grid 0 (j + 1)).neg D.R.m = 0 by simp only [Node.neg]; omega)] at hAt
   have hc := hmod.νX t
   have hker := (GlobalTheory.thetaKO_rat_left_and_eigen_right _ _ _ _ _ (R.ωX t) (hch.ωX t) _ (hch.ptX t P₀)).1
   exact step_heq hS hT (hW.omX t j hj) hs (measDef_heq hT hK hAt hc) hc.1.1 hfund.2 hc.2 hF (fun h γ hγ g => by

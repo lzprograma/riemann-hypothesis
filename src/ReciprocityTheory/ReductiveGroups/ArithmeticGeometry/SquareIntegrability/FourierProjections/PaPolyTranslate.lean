@@ -41,8 +41,7 @@ theorem paMono_rot (α : ι →₀ ℕ) (j : ι) (u : Circle) (z : EuclideanSpac
 
 theorem gaussianInner_monomial_orthogonal (q : ℕ) {α β : ι →₀ ℕ} (h : α ≠ β) : paIP q (paMono α) (paMono β) = 0 := by
   obtain ⟨j, hj⟩ : ∃ j, α j ≠ β j := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact h (Finsupp.ext hc)
   have hab : ((α j : ℝ) - β j) ≠ 0 := sub_ne_zero.mpr (by exact_mod_cast hj)
   obtain ⟨θ, hθ⟩ : ∃ θ : ℝ, ((α j : ℝ) - β j) * θ = Real.pi :=

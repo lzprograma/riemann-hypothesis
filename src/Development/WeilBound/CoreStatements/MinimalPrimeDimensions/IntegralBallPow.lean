@@ -12,60 +12,11 @@ public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PAreaFormula
 public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChartGramMA
 public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeMapArea
 public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeMapAreaOne
-import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Calculus.ContDiff.WithLp
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Matrix.PosDef
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.MeasureTheory.Constructions.HaarToSphere
-import Mathlib.MeasureTheory.Measure.Lebesgue.VolumeOfBalls
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
 public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.CmpbHessAtAddConst
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -107,15 +58,11 @@ theorem integral_ball_pow (e : ℕ) {R : ℝ} (hR : 0 ≤ R) :
   field_simp
   ring
 
-theorem gram_nonneg {e n : ℕ} (v : (Fin e → ℂ) → (Fin n → ℂ)) (y : Fin e → ℂ) :
-    0 ≤ gramVol v y := by
-  apply _root_.GroundTheory.Heights₂.Heights.gramVol_nonneg
-
 def fsDens {e n : ℕ} (v : (Fin e → ℂ) → (Fin n → ℂ)) (x : Fin e → ℂ) : ℝ :=
   (e.factorial : ℝ) / Real.pi ^ e * gramVol v x / ‖WithLp.toLp 2 (v x)‖ ^ (2 * (e + 1))
 
 theorem fsDens_nonneg {e n : ℕ} (v : (Fin e → ℂ) → (Fin n → ℂ)) (x : Fin e → ℂ) : 0 ≤ fsDens v x :=
-  div_nonneg (mul_nonneg (by positivity) (gram_nonneg v x)) (by positivity)
+  div_nonneg (mul_nonneg (by positivity) (GroundTheory.Heights₂.Heights.gramVol_nonneg v x)) (by positivity)
 
 theorem cHess_two_mul {D : ℕ} {ψ : (Fin D → ℂ) → ℝ} {v : V D} (hψ : ContDiffAt ℝ 2 ψ v.ofLp) :
     cHess D (fun w => ((2 * ψ w.ofLp : ℝ) : ℂ)) v = (2 : ℂ) • cxHessian ψ v.ofLp := by
@@ -240,7 +187,7 @@ theorem area_ball {n e : ℕ} {ι : Type} [Countable ι] {U D : ι → Set (Fin 
         ∫⁻ x in D i, F (WithLp.toLp 2 (v i x)) * ENNReal.ofReal (fsDens (v i) x) := by
     rw [← lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]
     exact setLIntegral_congr_fun (hUD i).2.1 fun x hx =>
-      lintegral_line hF (by simpa using h0 i x hx) (gram_nonneg _ _)
+      lintegral_line hF (by simpa using h0 i x hx) (GroundTheory.Heights₂.Heights.gramVol_nonneg _ _)
   simp only [e1] at hA
   rw [ENNReal.tsum_mul_left, mul_left_comm, ENNReal.mul_right_inj hc0 ENNReal.ofReal_ne_top,
     lintegral_indicator measurableSet_ball, Measure.restrict_restrict measurableSet_ball] at hA

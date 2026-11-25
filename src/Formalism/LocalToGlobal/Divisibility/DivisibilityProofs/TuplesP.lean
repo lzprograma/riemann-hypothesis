@@ -17,12 +17,6 @@ open scoped nonZeroDivisors
 
 namespace Formalism.L2.DIV
 
-section Gen
-
-variable {F E : Type} [Field F] [Field E] [Algebra F E]
-
-end Gen
-
 theorem unitary_det_norm_one {A : Type} [CommRing A] {n : ℕ} (σ : A →+* A) (J : Matrix (Fin n) (Fin n) A) (hJ : IsUnit J.det)
     (g : GL (Fin n) A) (hg : g ∈ UJ σ J) : σ (g : Matrix (Fin n) (Fin n) A).det * (g : Matrix (Fin n) (Fin n) A).det = 1 := by
   have h : cT σ (g : Matrix (Fin n) (Fin n) A) * J * (g : Matrix (Fin n) (Fin n) A) = J := hg
@@ -55,12 +49,6 @@ theorem det_in_unitary_one : DetInUnitaryOne := by
   apply Units.ext
   rw [Units.val_mul, conjugation_units_val, Units.val_one, Matrix.GeneralLinearGroup.val_det_apply, mul_comm]
   exact h
-
-section A2
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-
-end A2
 
 section C
 
@@ -195,8 +183,8 @@ theorem b_off_inv (v : HeightOneSpectrum (𝓞 F)) (r : 𝓞 F)
       (if w = v then (0 : w.adicCompletion F) else (algebraMap (𝓞 F) (w.adicCompletion F) r)⁻¹) = _
     by_cases h : w = v
     · subst h
-      rw [if_pos rfl, afsplitI_self, mul_zero, sub_self]
-    · rw [if_neg h, afsplitI_ne v w h, sub_zero]
+      rw [ite_eq_left rfl, afsplitI_self, mul_zero, sub_self]
+    · rw [ite_eq_right h, afsplitI_ne v w h, sub_zero]
       exact mul_inv_cancel₀ (b_alg_ne_zero w r (hr w h))
 
 theorem b_pi (v : HeightOneSpectrum (𝓞 F)) :
@@ -450,12 +438,12 @@ theorem tpExU_proof' (P : HeightOneSpectrum (𝓞 E)) (v : HeightOneSpectrum (�
     (fun Q => if (Q : HeightOneSpectrum (𝓞 E)) = P then b0 else 1)
   have hbP : b' - b0 ∈ P.asIdeal := by
     have := hb' P (hmemT P hPv)
-    rwa [if_pos rfl, pow_one] at this
+    rwa [ite_eq_left rfl, pow_one] at this
   have hbP' : ∀ P' : HeightOneSpectrum (𝓞 E), P' ≠ P → P'.asIdeal.under (𝓞 F) = v.asIdeal →
       b' - 1 ∈ P'.asIdeal := by
     intro P' hne hP'
     have := hb' P' (hmemT P' hP')
-    rwa [if_neg hne, pow_one] at this
+    rwa [ite_eq_right hne, pow_one] at this
   have hnot : ∀ Q : HeightOneSpectrum (𝓞 E), Q.asIdeal.under (𝓞 F) = v.asIdeal → b' ∉ Q.asIdeal := by
     intro Q hQ hmem
     by_cases h : Q = P
@@ -610,12 +598,6 @@ theorem b_other_of_split (v : HeightOneSpectrum (𝓞 F)) (P P' Q : HeightOneSpe
   · exact hQ' (hs_eq_lemma_2 (P'.isMaximal.eq_of_le Q.isPrime.ne_top h1).symm)
 
 end B4
-
-section D1
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-
-end D1
 
 section D2
 

@@ -39,7 +39,7 @@ theorem exists_prime_to_le (P : HeightOneSpectrum R) (d : R) (hd : d ≠ 0) :
   · by_cases hvd : v.asIdeal ∣ Ideal.span {d}
     · have hvS : v ∈ S := Finset.mem_union_left _ ((Set.Finite.mem_toFinset _).2 hvd)
       have h1 := hy v hvS
-      simp only [if_neg hv, sub_zero] at h1
+      simp only [ite_eq_right hv, sub_zero] at h1
       rw [v.intValuation_if_neg hd]
       exact (v.intValuation_le_pow_iff_mem y (n v)).2 h1
     · have h3 : v.intValuation d = 1 := by

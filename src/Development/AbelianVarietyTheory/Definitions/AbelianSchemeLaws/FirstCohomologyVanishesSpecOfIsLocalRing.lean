@@ -2,53 +2,13 @@ module
 
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LinCombTrivG
 public import Aesop.BuiltinRules
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
 
 @[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
-attribute [local instance] Over.cartesianMonoidalCategory
 noncomputable section
 namespace GlobalTheory.AbLaw
 variable {X X' : Scheme.{0}} {R : Type} [CommRing R]
@@ -167,23 +127,6 @@ theorem tw_g (M H : LB X) (t : ℤ) (p q : M.ι × H.ι) :
   rw [map_zpow, zpow_neg, inv_inv]
   rfl
 
-theorem firstCohomologyVanishes_of_every_cover_trivial (M : LB X)
-    (hX : ∀ (I : Type) (V : I → X.Opens), ⨆ a, V a = ⊤ → ∃ a, V a = ⊤) : FirstCohomologyVanishes M := by
-  intro I V c hV hc φ hφ
-  obtain ⟨d, hd⟩ := hX I V hc
-  have hle : ∀ U : X.Opens, U ≤ V d := fun U => hd ▸ le_top
-  refine ⟨fun a => rs X (le_inf le_rfl (hle _) : V a ≤ V a ⊓ V d) (φ a d), fun a b => ?_⟩
-  have h := congrArg (rs X (le_inf le_rfl (hle _) : V a ⊓ V b ≤ V a ⊓ V b ⊓ V d)) (hφ a b d)
-  simp only [map_add (f := _), map_mul, rs_rs, rs_self] at h
-  simp only [rs_rs]
-  exact eq_sub_of_add_eq h
-
-theorem firstCohomologyVanishes_spec_of_isLocalRing [IsLocalRing R] (M : LB (Spec (CommRingCat.of R))) : FirstCohomologyVanishes M := by
-  refine firstCohomologyVanishes_of_every_cover_trivial M fun I V hc => ?_
-  have hx : IsLocalRing.closedPoint R ∈ (⨆ a, V a) := by rw [hc]; trivial
-  obtain ⟨a, ha⟩ := TopologicalSpace.Opens.mem_iSup.1 hx
-  exact ⟨a, (IsLocalRing.closedPoint_mem_iff (V a)).1 ha⟩
-
 theorem cst_bijective (f : X ⟶ Spec (CommRingCat.of R)) [IsIso f] {W : X.Opens} (hW : W = ⊤) :
     Function.Bijective (cst f W) := by
   subst hW
@@ -231,50 +174,5 @@ theorem isProjBy_of_isIso (f : X ⟶ Spec (CommRingCat.of R)) [IsIso f] : IsProj
 
 theorem isProjBy_id (R : Type) [CommRing R] : IsProjBy (𝟙 (Spec (CommRingCat.of R))) :=
   isProjBy_of_isIso _
-
-theorem pull_trivLB_U (π : X' ⟶ X) (j : ((Inh.trivLB X).pull π).ι) :
-    ((Inh.trivLB X).pull π).U j = ⊤ :=
-  top_unique fun _ _ => Set.mem_iInter.2 fun _ => trivial
-
-def cstSec (π : X' ⟶ X) (f' : X' ⟶ Spec (CommRingCat.of R)) (r : R) :
-    LB.Sec ((Inh.trivLB X).pull π) where
-  f := fun j => cst f' _ r
-  compat := fun i j => by
-    rw [Inh.linComb_triv_g, Units.val_one, _root_.one_mul]
-    exact (rs_cst f' _ r).trans (rs_cst f' _ r).symm
-
-theorem cstSec_bijective (π : X' ⟶ X) (f' : X' ⟶ Spec (CommRingCat.of R)) [IsIso f'] :
-    Function.Bijective (cstSec π f') := by
-  let j₀ : ((Inh.trivLB X).pull π).ι := fun _ => PUnit.unit
-  have hb := cst_bijective f' (pull_trivLB_U π j₀)
-  refine ⟨fun r r' h => hb.1 (congrArg (fun s => s.f j₀) h), fun s => ?_⟩
-  obtain ⟨r, hr⟩ := hb.2 (s.f j₀)
-  refine ⟨r, ?_⟩
-  obtain ⟨sf, hs⟩ := s
-  have : (fun j => cst f' (((Inh.trivLB X).pull π).U j) r) = sf := funext fun _ => hr
-  subst this
-  rfl
-
-def perfTriv (f : X ⟶ Spec (CommRingCat.of R)) [IsIso f] : Perf f (Inh.trivLB X) where
-  a := 1
-  b := 0
-  c := 0
-  D₀ := 0
-  D₁ := 0
-  comp := Subsingleton.elim _ _
-  I := PUnit
-  W := fun _ => ⊤
-  ch := fun _ => PUnit.unit
-  le := fun _ => le_rfl
-  cover := iSup_const
-  u := fun _ _ => 1
-  sec := fun R' _ g X' π f' h => by
-    haveI : IsIso f' := h.isIso_snd_of_isIso
-    refine ⟨((Equiv.subtypeUnivEquiv fun _ => Subsingleton.elim _ _).trans
-      (Equiv.funUnique (Fin 1) R')).trans (Equiv.ofBijective _ (cstSec_bijective π f')), ?_⟩
-    intro v i
-    rw [Fin.sum_univ_one, map_one, _root_.mul_one]
-    exact rs_cst f' _ _
-  exact := fun R' _ g X' π f' _ _ w _ => ⟨0, Subsingleton.elim _ _⟩
 
 end GlobalTheory.AbLaw

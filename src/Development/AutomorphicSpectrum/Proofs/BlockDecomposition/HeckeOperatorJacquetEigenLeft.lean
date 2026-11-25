@@ -5,55 +5,7 @@ public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.
 import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeOperatorsCommuteOnFixed
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Algebra.Group.Matrix
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -94,11 +46,6 @@ theorem mem_Km_of_entries {N : ℕ} (m : ℕ) (g : GL (Fin N) k)
   rw [key]
   by_cases h : i = j <;> simp [Matrix.one_apply, h]
 
-theorem unif_pow_ne_zero (m : ℕ) : (((Zls.unif k ^ m : 𝒪[k])) : k) ≠ 0 := by
-  have h : Zls.unif k ≠ 0 := Zls.irreducible_unif.ne_zero
-  have := pow_ne_zero m h
-  simpa using this
-
 theorem isOpen_Km (N m : ℕ) : IsOpen (Zls.Km k N m : Set (GL (Fin N) k)) := by
   apply GlobalTheory.CompanionTheory.KmTop.isOpen_Km
 
@@ -117,8 +64,7 @@ theorem eq_zero_of_forms {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
     rwa [Ne, Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
   obtain ⟨f, hf⟩ : ∃ f : Module.Dual ℂ (V ⧸ twKer π (Zls.Km k N m) 1),
       f ((twKer π (Zls.Km k N m) 1).mkQ w) ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hq ((Module.forall_dual_apply_eq_zero_iff ℂ _).1 hc)
   refine hf (h (f ∘ₗ (twKer π (Zls.Km k N m) 1).mkQ) fun x hx => LinearMap.ext fun u => ?_)
   show f ((twKer π (Zls.Km k N m) 1).mkQ (π x u)) = f ((twKer π (Zls.Km k N m) 1).mkQ u)
@@ -281,12 +227,12 @@ theorem conj_entries {m r : ℕ} (hmr : m ≤ r) (x : GL (Fin N) k)
     simp
   rw [conj_apply, nsmul_omegaVec_apply, nsmul_omegaVec_apply]
   by_cases h1 : (i : ℕ) < d 0 <;> by_cases h2 : (j : ℕ) < d 0
-  · rw [if_pos h1, if_pos h2, unipRad_same d hd x hx i j (by simp [h1, h2])]
+  · rw [ite_eq_left h1, ite_eq_left h2, unipRad_same d hd x hx i j (by simp [h1, h2])]
     refine ⟨0, zero_mem _, ?_⟩
     rw [mul_right_comm, hcancel]
     simp
   · have hne : i ≠ j := fun h => h2 (h ▸ h1)
-    rw [if_pos h1, if_neg h2, Matrix.one_apply_ne hne]
+    rw [ite_eq_left h1, ite_eq_right h2, Matrix.one_apply_ne hne]
     refine ⟨_, hi i j, ?_⟩
     have hu : ((Zls.unifU k ^ (r : ℤ) : kˣ) : k) = ((Zls.unif k : 𝒪[k]) : k) ^ r := by
       rw [zpow_natCast, Units.val_pow_eq_pow_val]
@@ -296,9 +242,9 @@ theorem conj_entries {m r : ℕ} (hmr : m ≤ r) (x : GL (Fin N) k)
     simp only [zpow_zero, mul_one, sub_zero]
     rw [mul_assoc, ← pow_add, Nat.sub_add_cancel hmr, mul_comm]
   · have hne : i ≠ j := fun h => h1 (h ▸ h2)
-    rw [if_neg h1, if_pos h2, Matrix.one_apply_ne hne, unipRad_lower d hd x hx i j (by omega) h2]
+    rw [ite_eq_right h1, ite_eq_left h2, Matrix.one_apply_ne hne, unipRad_lower d hd x hx i j (by omega) h2]
     exact ⟨0, zero_mem _, by simp⟩
-  · rw [if_neg h1, if_neg h2, unipRad_same d hd x hx i j (by simp [h1, h2])]
+  · rw [ite_eq_right h1, ite_eq_right h2, unipRad_same d hd x hx i j (by simp [h1, h2])]
     exact ⟨0, zero_mem _, by simp⟩
 
 theorem conj_mem_Km {m r : ℕ} (hmr : m ≤ r) (x : GL (Fin N) k)

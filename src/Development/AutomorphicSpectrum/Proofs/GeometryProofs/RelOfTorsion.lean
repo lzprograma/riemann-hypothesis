@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeVectorBundleOfSmooth
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DerRingInjective
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HasValues
@@ -10,52 +11,10 @@ public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderEmbeddingOpenImmersion
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderValueEval
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualLatticePointUniversal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueBtOrderEmbedding
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieModel
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteBaseChange
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
 import Mathlib.Tactic.Linter.HaveILetI
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -257,21 +216,7 @@ theorem unit_j (hj : Γ.IsEmb (Γ.btOrder ⊤) j) :
 
 theorem zsec_surj : Function.Surjective (Spec.map (CommRingCat.ofHom
     (TrivSqZeroExt.fstHom R R V).toRingHom)) := by
-  intro p
-  let q : PrimeSpectrum R := PrimeSpectrum.comap (algebraMap R (TrivSqZeroExt R V)) p
-  refine ⟨q, PrimeSpectrum.ext (Ideal.ext fun a => ?_)⟩
-  change algebraMap R (TrivSqZeroExt R V) a.fst ∈ p.asIdeal ↔ a ∈ p.asIdeal
-  set b := algebraMap R (TrivSqZeroExt R V) a.fst with hb
-  have h0 : (b - a).fst = 0 := by simp [hb, TrivSqZeroExt.algebraMap_eq_inl]
-  have hm : b - a ∈ p.asIdeal := by
-    refine p.isPrime.mem_of_pow_mem 2 ?_
-    have : (b - a) ^ 2 = 0 := by
-      rw [pow_two]
-      refine TrivSqZeroExt.ext ?_ ?_ <;> simp [h0]
-    rw [this]; exact zero_mem _
-  constructor
-  · intro h; simpa using p.asIdeal.sub_mem h hm
-  · intro h; simpa using p.asIdeal.add_mem hm h
+  apply _root_.GlobalTheory.CompanionTheory.Ar.LieVB.surj_fst <;> assumption
 
 theorem spec_fst_comp (ψ : omega (Γ.btOrder ⊤) →ₗ[R] V) :
     Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom R R V).toRingHom) ≫
@@ -295,20 +240,54 @@ theorem spec_alg_comp (ψ : omega (Γ.btOrder ⊤) →ₗ[R] V) :
   intro r
   exact (derRing (ev1 Γ) ψ).commutes r
 
-theorem rel_exists (ht : Γ.IsTorsionAlong G x N i) (hj : Γ.IsEmb (Γ.btOrder ⊤) j) [IsOpenImmersion j]
+theorem fst_comp_eq_unit (ht : Γ.IsTorsionAlong G x N i) {y : Spec (CommRingCat.of (TrivSqZeroExt R V)) ⟶ Γ.G.left}
+    (y1 : y ≫ Γ.G.hom = Spec.map (CommRingCat.ofHom (algebraMap R (TrivSqZeroExt R V))))
+    {v : ob x V ⟶ G} (y3 : y ≫ i = v.left) (h1 : zsec x ≫ v = 1) :
+    Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom R R V).toRingHom) ≫ y = η[Γ.G].left := by
+  let a := Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom R R V).toRingHom)
+  have ha : a ≫ Spec.map (CommRingCat.ofHom (algebraMap R (TrivSqZeroExt R V))) = 𝟙 _ := by
+    rw [← Spec.map_comp, ← Spec.map_id]
+    congr 1
+  have := ht.inj (Over.mk (𝟙 _)) (Over.homMk (a ≫ y) (by
+      change (a ≫ y) ≫ Γ.G.hom = 𝟙 _
+      rw [Category.assoc, y1, ha])) 1 (by
+    rw [one_left_eq]
+    simp only [Over.homMk_left, Over.mk_hom, Category.id_comp, Category.assoc]
+    rw [unit_i' Γ ht, y3]
+    have := congrArg Over.Hom.left h1
+    rw [one_left_eq, Over.comp_left] at this
+    exact this)
+  have h := congrArg Over.Hom.left this
+  rw [one_left_eq] at h
+  simpa [a] using h
+
+theorem mem_of_fst_comp (U : Γ.G.left.Opens) {y : Spec (CommRingCat.of (TrivSqZeroExt R V)) ⟶ Γ.G.left}
+    (e : Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom R R V).toRingHom) ≫ y = η[Γ.G].left)
+    (hU : ∀ z, η[Γ.G].left z ∈ U) (z) : y z ∈ U := by
+  obtain ⟨z', rfl⟩ := zsec_surj (R := R) (V := V) z
+  have e2 : y (Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom R R V).toRingHom) z') = η[Γ.G].left z' :=
+    congrArg (fun k : Spec (CommRingCat.of R) ⟶ _ => k z') e
+  rw [e2]
+  exact hU z'
+
+theorem rel_exists_open (U : Γ.G.left.Opens) (ht : Γ.IsTorsionAlong G x N i) (hj : Γ.IsEmb (Γ.btOrder ⊤) j)
+    (hU : ∀ z, η[Γ.G].left z ∈ U) [IsOpenImmersion (U.ι ≫ j)]
     (ψ : omega (Γ.btOrder ⊤) →ₗ[R] V) :
     ∃ v : ob x V ⟶ G, zsec x ≫ v = 1 ∧ v ^ N = 1 ∧ TanRel Γ i j ψ v := by
   set f₀ := Spec.map (CommRingCat.ofHom (derRing (ev1 Γ) ψ).toRingHom) with hf₀
-  have hr : Set.range f₀ ⊆ Set.range j := by
+  have hr : Set.range f₀ ⊆ Set.range (U.ι ≫ j) := by
     rintro _ ⟨z, rfl⟩
     obtain ⟨z', rfl⟩ := zsec_surj (R := R) (V := V) z
     have e := spec_fst_comp Γ ψ
     rw [← unit_j Γ hj] at e
     have e2 : f₀ (Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom R R V).toRingHom) z') = j (η[Γ.G].left z') := by
       exact congrArg (fun k : Spec (CommRingCat.of R) ⟶ _ => k z') e
-    exact ⟨_, e2.symm⟩
-  let y := IsOpenImmersion.lift j f₀ hr
-  have yj : y ≫ j = f₀ := IsOpenImmersion.lift_fac j f₀ hr
+    refine ⟨⟨_, hU z'⟩, ?_⟩
+    exact e2.symm
+  let y' := IsOpenImmersion.lift (U.ι ≫ j) f₀ hr
+  have y'j : y' ≫ U.ι ≫ j = f₀ := IsOpenImmersion.lift_fac (U.ι ≫ j) f₀ hr
+  let y := y' ≫ U.ι
+  have yj : y ≫ j = f₀ := by simpa [y] using y'j
   have y1 : y ≫ Γ.G.hom = Spec.map (CommRingCat.ofHom (algebraMap R (TrivSqZeroExt R V))) := by
     rw [← hj.isOver, ← Category.assoc, yj]
     exact spec_alg_comp Γ ψ
@@ -316,15 +295,30 @@ theorem rel_exists (ht : Γ.IsTorsionAlong G x N i) (hj : Γ.IsEmb (Γ.btOrder �
     change (y ≫ i) ≫ G.hom = _ ≫ x
     rw [Category.assoc, ht.isOver, ← Category.assoc, y1])
   refine ⟨v, ?_, ?_, y, y1, yj, rfl⟩
-  · have e1 : (zsec x : Over.mk x ⟶ ob x V).left ≫ y = η[Γ.G].left := by
-      rw [← cancel_mono j, Category.assoc, yj, unit_j Γ hj]
+  · have rη : Set.range η[Γ.G].left ⊆ Set.range U.ι := by
+      rintro _ ⟨z, rfl⟩
+      rw [Scheme.Opens.range_ι]
+      exact hU z
+    have hl := IsOpenImmersion.lift_fac U.ι η[Γ.G].left rη
+    have e0 : Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom R R V).toRingHom) ≫ y' =
+        IsOpenImmersion.lift U.ι η[Γ.G].left rη := by
+      rw [← cancel_mono (U.ι ≫ j), Category.assoc, y'j, ← Category.assoc (IsOpenImmersion.lift U.ι η[Γ.G].left rη), hl,
+        unit_j Γ hj]
       exact spec_fst_comp Γ ψ
+    have e1 : (zsec x : Over.mk x ⟶ ob x V).left ≫ y = η[Γ.G].left := by
+      change Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom R R V).toRingHom) ≫ y' ≫ U.ι = _
+      rw [← Category.assoc, e0, hl]
     apply Over.OverMorphism.ext
     rw [one_left_eq, Over.comp_left]
     change (zsec x : Over.mk x ⟶ ob x V).left ≫ y ≫ i = x ≫ _
     rw [← Category.assoc, e1, unit_i' Γ ht]
   · exact (ht.kernel (Over.mk (Spec.map (CommRingCat.ofHom (algebraMap R (TrivSqZeroExt R V))))) v).2
       ⟨Over.homMk y y1, rfl⟩
+
+theorem rel_exists (ht : Γ.IsTorsionAlong G x N i) (hj : Γ.IsEmb (Γ.btOrder ⊤) j) [IsOpenImmersion j]
+    (ψ : omega (Γ.btOrder ⊤) →ₗ[R] V) :
+    ∃ v : ob x V ⟶ G, zsec x ≫ v = 1 ∧ v ^ N = 1 ∧ TanRel Γ i j ψ v :=
+  rel_exists_open Γ ⊤ ht hj (fun _ => trivial) ψ
 
 theorem rel_of_torsion (ht : Γ.IsTorsionAlong G x N i) (hj : Γ.IsEmb (Γ.btOrder ⊤) j)
     (v : ob x V ⟶ G) (h1 : zsec x ≫ v = 1) (hN : v ^ N = 1) :
@@ -342,23 +336,7 @@ theorem rel_of_torsion (ht : Γ.IsTorsionAlong G x N i) (hj : Γ.IsEmb (Γ.btOrd
   let ρ : (Γ.btOrder ⊤) →ₐ[R] TrivSqZeroExt R V :=
     { ρ₀.hom with
       commutes' := fun r => congrArg (fun g => g.hom r) hc }
-  let a := Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom R R V).toRingHom)
-  have ha : a ≫ Spec.map (CommRingCat.ofHom (algebraMap R (TrivSqZeroExt R V))) = 𝟙 _ := by
-    rw [← Spec.map_comp, ← Spec.map_id]
-    congr 1
-  have e1 : a ≫ y = η[Γ.G].left := by
-    have := ht.inj (Over.mk (𝟙 _)) (Over.homMk (a ≫ y) (by
-        change (a ≫ y) ≫ Γ.G.hom = 𝟙 _
-        rw [Category.assoc, y1, ha])) 1 (by
-      rw [one_left_eq]
-      simp only [Over.homMk_left, Over.mk_hom, Category.id_comp, Category.assoc]
-      rw [unit_i' Γ ht, y3]
-      have := congrArg Over.Hom.left h1
-      rw [one_left_eq, Over.comp_left] at this
-      exact this)
-    have h := congrArg Over.Hom.left this
-    rw [one_left_eq] at h
-    simpa using h
+  have e1 := fst_comp_eq_unit Γ ht y1 y3 h1
   have hfst : ∀ f, (ρ f).fst = ev1 Γ f := by
     have h2 : Spec.map (ρ₀ ≫ CommRingCat.ofHom (TrivSqZeroExt.fstHom R R V).toRingHom) =
         Spec.map (CommRingCat.ofHom (ev1 Γ).toRingHom) := by
@@ -384,6 +362,28 @@ theorem rel_unique (ht : Γ.IsTorsionAlong G x N i) {ψ ψ' : omega (Γ.btOrder 
   apply AlgHom.ext
   intro f
   exact (congrArg (fun g => g.hom f) h3).symm
+
+theorem rel_eq_open (U : Γ.G.left.Opens) (ht : Γ.IsTorsionAlong G x N i) (hU : ∀ z, η[Γ.G].left z ∈ U)
+    [IsOpenImmersion (U.ι ≫ j)] {ψ : omega (Γ.btOrder ⊤) →ₗ[R] V} {v v' : ob x V ⟶ G}
+    (h : TanRel Γ i j ψ v) (h' : TanRel Γ i j ψ v') (h1 : zsec x ≫ v = 1) (h1' : zsec x ≫ v' = 1) : v = v' := by
+  obtain ⟨y, a, b, c⟩ := h
+  obtain ⟨y', a', b', c'⟩ := h'
+  have m := mem_of_fst_comp Γ U (fst_comp_eq_unit Γ ht a c h1) hU
+  have m' := mem_of_fst_comp Γ U (fst_comp_eq_unit Γ ht a' c' h1') hU
+  have r : Set.range y ⊆ Set.range U.ι := by
+    rintro _ ⟨z, rfl⟩
+    rw [Scheme.Opens.range_ι]
+    exact m z
+  have r' : Set.range y' ⊆ Set.range U.ι := by
+    rintro _ ⟨z, rfl⟩
+    rw [Scheme.Opens.range_ι]
+    exact m' z
+  have hl := IsOpenImmersion.lift_fac U.ι y r
+  have hl' := IsOpenImmersion.lift_fac U.ι y' r'
+  have e : IsOpenImmersion.lift U.ι y r = IsOpenImmersion.lift U.ι y' r' := by
+    rw [← cancel_mono (U.ι ≫ j), ← Category.assoc, ← Category.assoc, hl, hl', b, b']
+  apply Over.OverMorphism.ext
+  rw [← c, ← c', ← hl, ← hl', e]
 
 theorem rel_eq [IsOpenImmersion j] {ψ : omega (Γ.btOrder ⊤) →ₗ[R] V} {v v' : ob x V ⟶ G}
     (h : TanRel Γ i j ψ v) (h' : TanRel Γ i j ψ v') : v = v' := by
@@ -474,7 +474,8 @@ theorem hom_zero_comp (u : ob x P ⟶ G) (hu : zsec x ≫ u = 1) {V : Type} [Add
     [IsCentralScalar R V] : hom x (0 : P →ₗ[R] V) ≫ u = 1 := by
   rw [hom_zero, Category.assoc, hu, MonObj.comp_one]
 
-theorem exists_theta (ht : Γ.IsTorsionAlong G x N i) (hj : Γ.IsEmb (Γ.btOrder ⊤) j) [IsOpenImmersion j]
+theorem exists_theta_open (U : Γ.G.left.Opens) (ht : Γ.IsTorsionAlong G x N i) (hj : Γ.IsEmb (Γ.btOrder ⊤) j)
+    (hU : ∀ z, η[Γ.G].left z ∈ U) [IsOpenImmersion (U.ι ≫ j)]
     (u : ob x P ⟶ G) (hu : zsec x ≫ u = 1)
     (huniv : ∀ (V : Type) [AddCommGroup V] [Module R V] [Module Rᵐᵒᵖ V] [IsCentralScalar R V] (v : ob x V ⟶ G),
       zsec x ≫ v = 1 → ∃! φ : P →ₗ[R] V, hom x φ ≫ u = v) :
@@ -483,7 +484,7 @@ theorem exists_theta (ht : Γ.IsTorsionAlong G x N i) (hj : Γ.IsEmb (Γ.btOrder
         ∃ ψ : omega (Γ.btOrder ⊤) →ₗ[R] V, ψ ∘ₗ θ = φ ∧ TanRel Γ i j ψ (hom x φ ≫ u) := by
   letI : Module Rᵐᵒᵖ (omega (Γ.btOrder ⊤)) := opMod R _
   haveI : IsCentralScalar R (omega (Γ.btOrder ⊤)) := opCentral R _
-  obtain ⟨v₀, hv₀, hvN, hrel⟩ := rel_exists Γ ht hj (LinearMap.id : omega (Γ.btOrder ⊤) →ₗ[R] omega (Γ.btOrder ⊤))
+  obtain ⟨v₀, hv₀, hvN, hrel⟩ := rel_exists_open Γ U ht hj hU (LinearMap.id : omega (Γ.btOrder ⊤) →ₗ[R] omega (Γ.btOrder ⊤))
   obtain ⟨θ, hθ, -⟩ := huniv _ v₀ hv₀
   have nat : ∀ (V : Type) [AddCommGroup V] [Module R V] [Module Rᵐᵒᵖ V] [IsCentralScalar R V]
       (ψ : omega (Γ.btOrder ⊤) →ₗ[R] V), TanRel Γ i j ψ (hom x (ψ ∘ₗ θ) ≫ u) := by
@@ -514,21 +515,28 @@ theorem exists_theta (ht : Γ.IsTorsionAlong G x N i) (hj : Γ.IsEmb (Γ.btOrder
     have h1 : zsec x ≫ hom x φ ≫ u = 1 := by rw [← Category.assoc, zsec_hom, hu]
     have h2 : (hom x φ ≫ u) ^ N = 1 := by rw [← hom_nsmul u hu, hφ, hom_zero_comp u hu]
     obtain ⟨ψ, hψ⟩ := rel_of_torsion Γ ht hj _ h1 h2
-    have h3 := rel_eq Γ hψ (nat V ψ)
+    have h3 := rel_eq_open Γ U ht hU hψ (nat V ψ) h1 (by rw [← Category.assoc, zsec_hom, hu])
     refine ⟨ψ, (huniv V _ h1).unique h3.symm rfl, hψ⟩
+
+theorem exists_theta (ht : Γ.IsTorsionAlong G x N i) (hj : Γ.IsEmb (Γ.btOrder ⊤) j) [IsOpenImmersion j]
+    (u : ob x P ⟶ G) (hu : zsec x ≫ u = 1)
+    (huniv : ∀ (V : Type) [AddCommGroup V] [Module R V] [Module Rᵐᵒᵖ V] [IsCentralScalar R V] (v : ob x V ⟶ G),
+      zsec x ≫ v = 1 → ∃! φ : P →ₗ[R] V, hom x φ ≫ u = v) :
+    ∃ θ : P →ₗ[R] omega (Γ.btOrder ⊤), Function.Surjective θ ∧ N • θ = 0 ∧
+      ∀ (V : Type) [AddCommGroup V] [Module R V] [Module Rᵐᵒᵖ V] [IsCentralScalar R V] (φ : P →ₗ[R] V), N • φ = 0 →
+        ∃ ψ : omega (Γ.btOrder ⊤) →ₗ[R] V, ψ ∘ₗ θ = φ ∧ TanRel Γ i j ψ (hom x φ ≫ u) :=
+  exists_theta_open Γ ⊤ ht hj (fun _ => trivial) u hu huniv
 
 end Core
 
-theorem omega_canon : ∀ (R : Type) [CommRing R] [IsDomain R] [IsIntegrallyClosed R] [IsNoetherianRing R] (T : Type) [CommGroup T] [Finite T] (Γ : QFGroup R T) (S : Scheme.{0}) (G : Over S) [GrpObj G] [IsCommMonObj G] (x : Spec (CommRingCat.of R) ⟶ S) (N : ℕ) (i : Γ.G.left ⟶ G.left), Γ.IsTorsionAlong G x N i → Smooth G.hom → ∀ (L : Type) [AddCommGroup L] [Module R L] (M : LieModel G x L), ∃ θ : Module.Dual R L →ₗ[R] omega (Γ.btOrder ⊤), Function.Surjective θ ∧ (∀ w, θ w = 0 ↔ ∃ u, w = N • u) ∧ ∀ (f : augIdeal (Γ.btOrder ⊤)) (w : Module.Dual R L) (s : Γ(Γ.G.left, ⊤)), Γ.HasValues s (f.1.1 : T → R) → (θ w = (augIdeal (Γ.btOrder ⊤)).toCotangent f ↔ ∀ (e : L) (v : Spec (CommRingCat.of (DualNumber (R ⧸ Ideal.span {(N : R)}))) ⟶ Γ.G.left), v ≫ Γ.G.hom = Spec.map (CommRingCat.ofHom ((algebraMap (R ⧸ Ideal.span {(N : R)}) (DualNumber (R ⧸ Ideal.span {(N : R)}))).comp (Ideal.Quotient.mk _))) → v ≫ i = Spec.map (CommRingCat.ofHom (dualMap (Ideal.Quotient.mk (Ideal.span {(N : R)})))) ≫ (M.pt e).left → valAt v ⊤ le_top s = TrivSqZeroExt.inr (Ideal.Quotient.mk (Ideal.span {(N : R)}) (w e))) := by
-  intro R _ _ _ _ T _ _ Γ S G _ _ x N i ht hsm L _ _ M
-  haveI := hsm
-  obtain ⟨j, hj, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.BT.exists_unique_emb_btOrder_top R T Γ
-  obtain ⟨hop, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.BT.isOpenImmersion_emb_and_translatesCover R T Γ j hj
-  haveI := hop
-  obtain ⟨-, hproj, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.LieProj.lie_finite_projective_baseChange S G R x L M
-  haveI := hproj
+theorem omega_open {R : Type} [CommRing R] [IsDomain R] {T : Type} [CommGroup T] [Finite T] (Γ : QFGroup R T)
+    {S : Scheme.{0}} {G : Over S} [GrpObj G] [IsCommMonObj G] [Smooth G.hom] {x : Spec (CommRingCat.of R) ⟶ S} {N : ℕ}
+    {i : Γ.G.left ⟶ G.left} (ht : Γ.IsTorsionAlong G x N i) {L : Type} [AddCommGroup L] [Module R L]
+    [Module.Projective R L] (M : LieModel G x L) {j : Γ.G.left ⟶ Spec (CommRingCat.of (Γ.btOrder ⊤))}
+    (hj : Γ.IsEmb (Γ.btOrder ⊤) j) (U : Γ.G.left.Opens) (hU : ∀ z, η[Γ.G].left z ∈ U) [IsOpenImmersion (U.ι ≫ j)] :
+    ∃ θ : Module.Dual R L →ₗ[R] omega (Γ.btOrder ⊤), Function.Surjective θ ∧ (∀ w, θ w = 0 ↔ ∃ u, w = N • u) ∧ ∀ (f : augIdeal (Γ.btOrder ⊤)) (w : Module.Dual R L) (s : Γ(Γ.G.left, ⊤)), Γ.HasValues s (f.1.1 : T → R) → (θ w = (augIdeal (Γ.btOrder ⊤)).toCotangent f ↔ ∀ (e : L) (v : Spec (CommRingCat.of (DualNumber (R ⧸ Ideal.span {(N : R)}))) ⟶ Γ.G.left), v ≫ Γ.G.hom = Spec.map (CommRingCat.ofHom ((algebraMap (R ⧸ Ideal.span {(N : R)}) (DualNumber (R ⧸ Ideal.span {(N : R)}))).comp (Ideal.Quotient.mk _))) → v ≫ i = Spec.map (CommRingCat.ofHom (dualMap (Ideal.Quotient.mk (Ideal.span {(N : R)})))) ≫ (M.pt e).left → valAt v ⊤ le_top s = TrivSqZeroExt.inr (Ideal.Quotient.mk (Ideal.span {(N : R)}) (w e))) := by
   obtain ⟨u, hu, hupin, huniv⟩ := _root_.GlobalTheory.CompanionTheory.Ar.BT.Tan.Univ.tangent_universal S G R x L M
-  obtain ⟨θ, hsurj, hNθ, hlift⟩ := exists_theta Γ ht hj u hu huniv
+  obtain ⟨θ, hsurj, hNθ, hlift⟩ := exists_theta_open Γ U ht hj hU u hu huniv
   have hθN : ∀ w', θ (N • w') = 0 := fun w' => by
     have := LinearMap.congr_fun hNθ w'
     simpa using this
@@ -627,6 +635,16 @@ theorem omega_canon : ∀ (R : Type) [CommRing R] [IsDomain R] [IsIntegrallyClos
     have : θ (w - w₀) = 0 := (hker _).2 ⟨u', hu'⟩
     rw [map_sub, sub_eq_zero] at this
     rw [this, hw₀]
+
+theorem omega_canon : ∀ (R : Type) [CommRing R] [IsDomain R] [IsIntegrallyClosed R] [IsNoetherianRing R] (T : Type) [CommGroup T] [Finite T] (Γ : QFGroup R T) (S : Scheme.{0}) (G : Over S) [GrpObj G] [IsCommMonObj G] (x : Spec (CommRingCat.of R) ⟶ S) (N : ℕ) (i : Γ.G.left ⟶ G.left), Γ.IsTorsionAlong G x N i → Smooth G.hom → ∀ (L : Type) [AddCommGroup L] [Module R L] (M : LieModel G x L), ∃ θ : Module.Dual R L →ₗ[R] omega (Γ.btOrder ⊤), Function.Surjective θ ∧ (∀ w, θ w = 0 ↔ ∃ u, w = N • u) ∧ ∀ (f : augIdeal (Γ.btOrder ⊤)) (w : Module.Dual R L) (s : Γ(Γ.G.left, ⊤)), Γ.HasValues s (f.1.1 : T → R) → (θ w = (augIdeal (Γ.btOrder ⊤)).toCotangent f ↔ ∀ (e : L) (v : Spec (CommRingCat.of (DualNumber (R ⧸ Ideal.span {(N : R)}))) ⟶ Γ.G.left), v ≫ Γ.G.hom = Spec.map (CommRingCat.ofHom ((algebraMap (R ⧸ Ideal.span {(N : R)}) (DualNumber (R ⧸ Ideal.span {(N : R)}))).comp (Ideal.Quotient.mk _))) → v ≫ i = Spec.map (CommRingCat.ofHom (dualMap (Ideal.Quotient.mk (Ideal.span {(N : R)})))) ≫ (M.pt e).left → valAt v ⊤ le_top s = TrivSqZeroExt.inr (Ideal.Quotient.mk (Ideal.span {(N : R)}) (w e))) := by
+  intro R _ _ _ _ T _ _ Γ S G _ _ x N i ht hsm L _ _ M
+  haveI := hsm
+  obtain ⟨j, hj, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.BT.exists_unique_emb_btOrder_top R T Γ
+  obtain ⟨hop, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.BT.isOpenImmersion_emb_and_translatesCover R T Γ j hj
+  haveI := hop
+  obtain ⟨-, hproj, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.LieProj.lie_finite_projective_baseChange S G R x L M
+  haveI := hproj
+  exact omega_open Γ ht M hj ⊤ (fun _ => trivial)
 
 end GlobalTheory.CompanionTheory.Ar.BT.Tan
 end -- clump:auto

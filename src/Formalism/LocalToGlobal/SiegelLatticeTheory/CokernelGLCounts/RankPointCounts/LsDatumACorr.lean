@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarLprPfC
 public import Formalism.SharpRestriction.CuspSpanNormBounds.ThinScalesBound
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumAGram
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalGluing.MemOfProjEqZero
@@ -38,15 +39,7 @@ private theorem h_zero_right_rank_point_counts (x : V) : H.h x 0 = 0 := by
 
 theorem mem_perpX_of {f : Fin (r + 1) → V} {v : V} (h : ∀ j : Fin r, H.h v (f j.castSucc) = 0) :
     v ∈ H.perp (H.X f) := by
-  show ∀ x ∈ H.X f, H.h v x = 0
-  intro x hx
-  induction hx using Submodule.span_induction with
-  | mem y hy =>
-    obtain ⟨j, rfl⟩ := hy
-    exact h j
-  | zero => exact h_zero_right_rank_point_counts H v
-  | add y z _ _ hy hz => rw [_root_.PI.LocHerm.Glue.h_add_right, hy, hz, add_zero]
-  | smul a y _ hy => rw [h_smul_right_eq_cj_mul, hy, mul_zero]
+  apply _root_.Formalism.MainNotions.S.Loc.HermSp.LprU.mem_perp_X <;> assumption
 
 theorem z_mem_perpX {f : Fin (r + 1) → V} {T : F} (hF : Formalism.MainNotions.ThinScalesBound.FrameK H f T) :
     f (Fin.last r) ∈ H.perp (H.X f) :=
@@ -102,7 +95,7 @@ theorem decomp_U_perpX {f f' : Fin (r + 1) → V} {T : F} (hF : Formalism.MainNo
     have h2 := congrFun h1 b
     rw [hZp] at h2
     simp only [Matrix.mulVec, dotProduct, Pi.single_apply, mul_ite, mul_zero, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true, Pi.smul_apply, smul_eq_mul] at h2
+      Finset.mem_univ, ite_true, Pi.smul_apply, smul_eq_mul] at h2
     rw [← hd] at h2
     calc p b = ↑d⁻¹ * (↑d * p b) := by rw [← mul_assoc, Units.inv_mul, one_mul]
       _ = _ := by

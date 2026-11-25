@@ -157,33 +157,6 @@ theorem eigC_eq (i : (cut D c).nd.Loc) (x : (cut D c).nd.X i) :
   unfold eigC
   rw [e]; rfl
 
-theorem res_eq {O X : Type} [CommRing O] [IsLocalRing O] (T : Subalgebra O (X → O)) [IsLocalRing T] (f : T) (x y : X) :
-    IsLocalRing.residue O ((f : X → O) x) = IsLocalRing.residue O ((f : X → O) y) := by
-  let g : T := f - algebraMap O T ((f : X → O) x)
-  have hx : (g : X → O) x = 0 := by simp [g]
-  have hg : ¬ IsUnit g := fun h => by
-    have := h.map ((Pi.evalRingHom (fun _ : X => O) x).comp T.val.toRingHom)
-    have e : ((Pi.evalRingHom (fun _ : X => O) x).comp T.val.toRingHom) g = 0 := hx
-    rw [e] at this
-    exact not_isUnit_zero this
-  have hy : ¬ IsUnit ((g : X → O) y) := fun h => by
-    obtain ⟨u, hu⟩ := h
-    let k : T := 1 - algebraMap O T (↑u⁻¹ : O) * g
-    have hk : IsUnit k := by
-      rcases IsLocalRing.isUnit_or_isUnit_one_sub_self (algebraMap O T (↑u⁻¹ : O) * g) with h | h
-      · exact absurd (isUnit_of_mul_isUnit_right h) hg
-      · exact h
-    have := hk.map ((Pi.evalRingHom (fun _ : X => O) y).comp T.val.toRingHom)
-    have e : ((Pi.evalRingHom (fun _ : X => O) y).comp T.val.toRingHom) k = 0 := by
-      show (1 : O) - (↑u⁻¹ : O) * (g : X → O) y = 0
-      rw [← hu, Units.inv_mul, sub_self]
-    rw [e] at this
-    exact not_isUnit_zero this
-  have e : (g : X → O) y = (f : X → O) y - (f : X → O) x := by simp [g]
-  rw [e] at hy
-  rw [eq_comm, ← sub_eq_zero, ← map_sub, IsLocalRing.residue_eq_zero_iff]
-  exact hy
-
 theorem atM_iff (i : (cut D c).nd.Loc) (σ : D.what₂.FT) : AtM (cut D c).nd (cut D c).naut i σ ↔ AtM D.nd D.naut i.1 σ := by
   refine exists_congr fun Sig => and_congr Iff.rfl ⟨fun ⟨x, h⟩ => ⟨x.1, h⟩, fun ⟨x, h⟩ => ?_⟩
   obtain ⟨y⟩ := (cut D c).nd.neX i
@@ -221,8 +194,7 @@ theorem rowsB_cut (h : RowsB D) : RowsB (cut D c) :=
   { rowSize := fun i => h.rowSize i.1, a3 := fun i => h.a3 i.1, a4 := fourthAdmissible_restrictToPoints h.a4, thetaOne := fun i => h.thetaOne i.1 }
 
 theorem rowsC_cut (hc : c.Good) (h : RowsC D) : RowsC (cut D c) :=
-  { c4b := fun σ k v h1 h2 i => h.c4b σ k v h1 h2 i.1
-    rho := fun i x hx Sig hS => h.rho i.1 x.1 ((zg_iff i x).1 hx) Sig ((par_iff i x Sig).1 hS)
+  { rho := fun i x hx Sig hS => h.rho i.1 x.1 ((zg_iff i x).1 hx) Sig ((par_iff i x Sig).1 hS)
     dz := fun i x hx Sig hS => h.dz i.1 x.1 ((zg_iff i x).1 hx) Sig ((par_iff i x Sig).1 hS)
     parUp := fun i x hx Sig hS => by
       rw [eigC_eq]; exact h.parUp i.1 x.1 ((zg_iff i x).1 hx) Sig ((par_iff i x Sig).1 hS)
@@ -250,12 +222,12 @@ theorem pointsAdmissible_restrictToPoints (hc : c.Good) (h : SumRepresentations.
   · have e : dM (cut D c).nd (cut D c).naut i = dM D.nd D.naut i.1 := by unfold dM; rw [goodPart_eq]; rfl
     rw [e, ← d]
     refine Finset.sum_of_injOn (fun x => x.1) (fun x _ y _ k => Subtype.ext k) (fun _ _ => Finset.mem_univ _)
-      (fun x _ hx => if_neg fun hz => hx ⟨⟨x, hc.good i.1 x ((D.Zgood_tie i.1 x).2 hz)⟩, Finset.mem_coe.2 (Finset.mem_univ _), rfl⟩)
+      (fun x _ hx => ite_eq_right fun hz => hx ⟨⟨x, hc.good i.1 x ((D.Zgood_tie i.1 x).2 hz)⟩, Finset.mem_coe.2 (Finset.mem_univ _), rfl⟩)
       fun x _ => ?_
     have m : (cut D c).nd.mult i x = D.nd.mult i.1 x.1 := Alg.mult_eq _ _ _ (D.nd.T_sep i.1) x
     by_cases hz : x.1 ∈ ZgoodN D.nd D.naut i.1
-    · rw [if_pos hz, if_pos ((zg_iff i x).2 hz), m]
-    · rw [if_neg hz, if_neg fun k => hz ((zg_iff i x).1 k)]
+    · rw [ite_eq_left hz, ite_eq_left ((zg_iff i x).2 hz), m]
+    · rw [ite_eq_right hz, ite_eq_right fun k => hz ((zg_iff i x).1 k)]
 
 theorem jointCondition_restrictToPoints (h : KillingConditions.LocalisationUniqueness D) : KillingConditions.LocalisationUniqueness (cut D c) :=
   fun i i' h1 h2 h3 σ hσ a b => Subtype.ext (h i.1 i'.1 h1 h2 h3 σ hσ ((atM_iff i σ).1 a) ((atM_iff i' σ).1 b))

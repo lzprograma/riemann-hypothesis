@@ -37,56 +37,15 @@ public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmiss
 public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.StdOK
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EqAndAlg
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnitPeriodTranslatesMomentsFinite
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Ideal.Norm.RelNorm
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.KernelLattices.XiIndCClass
 import Formalism.SharpRestriction.CuspSpanNormBounds.Point
 import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PerLatticeFacts
 import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.WeylHeisenbergOperatorCalculusRational
 import Formalism.LocalToGlobal.Columns.BaseLemmas
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelIndexPerDvd
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
 import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AbsNormSpanInvol
@@ -435,7 +394,7 @@ variable {p : ℕ} [Fact p.Prime] (lam : TaylorLogMetric.Qbar →+* ℂ_[p])
 
 theorem lamC_mul {x y : ℂ} (hx : x ∈ TaylorLogMetric.Qbar) (hy : y ∈ TaylorLogMetric.Qbar) :
     TaylorLogMetric.lamC lam (x * y) = TaylorLogMetric.lamC lam x * TaylorLogMetric.lamC lam y := by
-  simp only [TaylorLogMetric.lamC, dif_pos hx, dif_pos hy, dif_pos (mul_mem hx hy)]
+  simp only [TaylorLogMetric.lamC, dite_eq_left hx, dite_eq_left hy, dite_eq_left (mul_mem hx hy)]
   exact map_mul lam ⟨x, hx⟩ ⟨y, hy⟩
 
 theorem lamC_sum {κ : Type} (s : Finset κ) (f : κ → ℂ) (h : ∀ k ∈ s, f k ∈ TaylorLogMetric.Qbar) :
@@ -443,14 +402,14 @@ theorem lamC_sum {κ : Type} (s : Finset κ) (f : κ → ℂ) (h : ∀ k ∈ s, 
   classical
   induction s using Finset.induction_on with
   | empty =>
-    have : TaylorLogMetric.lamC lam 0 = lam 0 := dif_pos (zero_mem _)
+    have : TaylorLogMetric.lamC lam 0 = lam 0 := dite_eq_left (zero_mem _)
     simp only [Finset.sum_empty, this, map_zero]
   | insert k s hk ih =>
     have h1 := h k (Finset.mem_insert_self _ _)
     have h2 : ∀ j ∈ s, f j ∈ TaylorLogMetric.Qbar := fun j hj => h j (Finset.mem_insert_of_mem hj)
     have h3 := sum_mem h2
     rw [Finset.sum_insert hk, Finset.sum_insert hk, ← ih h2]
-    simp only [TaylorLogMetric.lamC, dif_pos h1, dif_pos h3, dif_pos (add_mem h1 h3)]
+    simp only [TaylorLogMetric.lamC, dite_eq_left h1, dite_eq_left h3, dite_eq_left (add_mem h1 h3)]
     exact map_add lam ⟨_, h1⟩ ⟨_, h3⟩
 
 theorem lamC_zero' : TaylorLogMetric.lamC lam 0 = 0 := by simpa using lamC_sum lam (∅ : Finset Unit) (fun _ => 0) (by simp)
@@ -459,7 +418,7 @@ theorem norm_lamC_ratio {n k c : ℕ} (hn : n ≠ 0) (hc : ¬ p ∣ c) (h : n �
     ‖TaylorLogMetric.lamC lam ((n : ℂ)⁻¹ * k)‖ ≤ 1 := by
   have hm : (n : ℂ)⁻¹ * k ∈ TaylorLogMetric.Qbar := mul_mem (inv_mem (natCast_mem _ n)) (natCast_mem _ k)
   have e : TaylorLogMetric.lamC lam ((n : ℂ)⁻¹ * k) = (n : ℂ_[p])⁻¹ * k := by
-    simp only [TaylorLogMetric.lamC, dif_pos hm]
+    simp only [TaylorLogMetric.lamC, dite_eq_left hm]
     have : (⟨_, hm⟩ : TaylorLogMetric.Qbar) = (n : TaylorLogMetric.Qbar)⁻¹ * k := Subtype.ext (by simp)
     rw [this]; simp
   obtain ⟨d, hd⟩ := h
@@ -480,28 +439,16 @@ section Ops
 
 variable {X : Fields} (A : Amb X) {a b : ℕ}
 
-theorem exp_int (n : ℤ) : Complex.exp (-(2 * (Real.pi : ℂ)) * Complex.I * ((n : ℝ) : ℂ)) = 1 := by
-  rw [← Complex.exp_int_mul_two_pi_mul_I (-n)]
-  congr 1
-  push_cast
-  ring
-
 theorem Wx_mul (x : HomE X.E a b) (c : ℂ) (F : VCx X.Tau a b → ℂ) :
     Wx A x (fun z => c * F z) = fun z => c * Wx A x F z := by
   funext z
   simp only [Wx, opU]
   ring
 
-theorem Wx_Wx_of_int {x y : HomE X.E a b} (h : ∃ n : ℤ, coc A x y = n) (F : VCx X.Tau a b → ℂ) :
-    Wx A x (Wx A y F) = Wx A (x + y) F := by
-  obtain ⟨n, hn⟩ := h
-  rw [(_root_.GlobalTheory.MomT.Heis.calculus X A a b).1, hn, exp_int]
-  simp
-
 theorem Wx_neg_add {y₁ y₂ : HomE X.E a b} (t : HomE X.E a b) (h : ∃ n : ℤ, coc A y₁ y₂ = n) (F : VCx X.Tau a b → ℂ) :
     Wx A (-t) (Wx A (y₁ + y₂) F) = fun z =>
       Complex.exp (-(2 * (Real.pi : ℂ)) * Complex.I * (coc A (-t) y₂ : ℂ)) * brkE A y₁ (-t) * Wx A y₁ (Wx A (y₂ - t) F) z := by
-  rw [← Wx_Wx_of_int A h, (_root_.GlobalTheory.MomT.Heis.calculus X A a b).2.1, (_root_.GlobalTheory.MomT.Heis.calculus X A a b).1 (-t), Wx_mul, neg_add_eq_sub]
+  rw [← GlobalTheory.MomT.ThShape.Wx_mul A h, (_root_.GlobalTheory.MomT.Heis.calculus X A a b).2.1, (_root_.GlobalTheory.MomT.Heis.calculus X A a b).1 (-t), Wx_mul, neg_add_eq_sub]
   funext z
   ring
 
@@ -815,7 +762,7 @@ section abelian₂
 
 variable {p : ℕ} [Fact p.Prime] (lam : TaylorLogMetric.Qbar →+* ℂ_[p])
 
-theorem lamC_of_mem {x : ℂ} (h : x ∈ TaylorLogMetric.Qbar) : TaylorLogMetric.lamC lam x = lam ⟨x, h⟩ := dif_pos h
+theorem lamC_of_mem {x : ℂ} (h : x ∈ TaylorLogMetric.Qbar) : TaylorLogMetric.lamC lam x = lam ⟨x, h⟩ := dite_eq_left h
 
 theorem lamC_zpow {x : ℂ} (hx : x ∈ TaylorLogMetric.Qbar) (n : ℤ) : TaylorLogMetric.lamC lam (x ^ n) = TaylorLogMetric.lamC lam x ^ n := by
   rw [lamC_of_mem lam hx, lamC_of_mem lam (zpow_mem hx n), ← map_zpow₀]; rfl
@@ -883,7 +830,7 @@ theorem assemble {p : ℕ} [Fact p.Prime] (lam : TaylorLogMetric.Qbar →+* ℂ_
     subset_rfl (Set.subset_univ _) fun m hm => ?_
   · by_cases h : Ξ x = 0
     · simpa [h] using clo_zero Sup tab Set.univ
-    · simp only [if_neg h]
+    · simp only [ite_eq_right h]
       refine clo_mul (h3 x (hR x hx) h) _ ?_
       rw [norm_mul, hinv, norm_inv, hχ1, inv_one, mul_one]
       exact h2 x (hR x hx)
@@ -900,7 +847,7 @@ theorem assemble {p : ℕ} [Fact p.Prime] (lam : TaylorLogMetric.Qbar →+* ℂ_
       intro j hj'
       have := hm (x + j) (add_mem (hR x hx) (hC (hJ.1 j hj'))) (by rw [hj j hj']; exact h)
       unfold Amb.jetK desc
-      rw [dif_pos this]
+      rw [dite_eq_left this]
       exact this.choose_spec
     have e : A.σ₀ (∑ j ∈ J, A.jetK S N N' c (x + j) m) =
         (A.chiF a b N N')⁻¹ * ∑ j ∈ J, jetC A.cD (A.thInd S N N' c (x + j)) m := by
@@ -935,8 +882,8 @@ theorem phiT_add (K : Type) [Field K] {d : Deco E a ST SG} {d' : Deco E b ST SG'
     simpa using this
   unfold phiT
   by_cases hx : x ∈ suppBar d d'
-  · exact (if_pos (h.2 hx)).trans (if_pos hx).symm
-  · exact (if_neg fun h' => hx (h.1 h')).trans (if_neg hx).symm
+  · exact (ite_eq_left (h.2 hx)).trans (ite_eq_left hx).symm
+  · exact (ite_eq_right fun h' => hx (h.1 h')).trans (ite_eq_right hx).symm
 
 theorem ker_of_mulLat {d : Deco E a ST SG} {d' : Deco E b ST SG'} (hd' : d'.Ok) {S : Finset (HeightOneSpectrum (𝓞 E))}
     (hS : ST ⊆ S) {c : ℕ} (hc : ∀ P ∈ ST, (c : 𝓞 E) ∈ P.asIdeal) {y : HomE E a b} (hy : y ∈ mulLat c (homAt S d.N d'.N)) :
@@ -1285,11 +1232,6 @@ theorem neg_one_zpow_round (q : ℝ)
   have hq' : q = n := by exact_mod_cast hq
   rw [hq, hq', round_intCast, mul_comm, Complex.exp_int_mul, Complex.exp_pi_mul_I]
 
-theorem isHerm_HV {ι : Type} [Fintype ι] {a b : ℕ} (sc : ℝ) : IsHerm (HV (ι := ι) (a := a) (b := b) sc) := by
-  intro x y
-
-  simp [Formalism.L2.Ker.HV, map_sum, mul_comm]
-
 theorem embH_inj {E : Type} [Field E] [NumberField E] [StarRing E] {ι : Type} [Fintype ι] [Nonempty ι] {a b : ℕ}
     (emb : ι → E →+* ℂ) {δ : ℂ} (hδ : δ ≠ 0) : Function.Injective (embH (a := a) (b := b) emb δ) := by
   intro x y h
@@ -1351,7 +1293,7 @@ theorem move : ∀ (D : D7) (X : Fields) (s : Seam D X) (cc : Ideal (𝓞 D.host
         (fun τ => z (s.iT.symm τ))) (by
       intro x hx l hl hl'
       rw [hW _ (add_mem hx hl), hW _ hx]
-      exact op_add _ (isHerm_HV _) _ _ (hL N N'' hN hN'').2.1 (hL N N'' hN hN'').2.2 _ _ _ ((t1 N N'' x).1 hx)
+      exact op_add _ (Formalism.L2.Ker.herm_HV _) _ _ (hL N N'' hN hN'').2.1 (hL N N'' hN hN'').2.2 _ _ _ ((t1 N N'' x).1 hx)
         ((t1 N N'' l).1 hl) ((hL N N' hN hN').1 _ ((t1 N N' l).1 hl')) z)
   unfold TaylorLogMetric.Iop
   refine congrArg₂ (· * ·) ?_ (e2.trans (Finset.sum_congr rfl fun y hy => ?_))
@@ -1816,7 +1758,7 @@ theorem latticeFactsAll : GlobalTheory.MomT.LatticeFactsAll := by
       (fun x hx => by
         obtain ⟨m, hm⟩ := hq a b _ _ (hadm N N' h h') (reidx s a b x) ((hlam a b N N' x).1 hx)
         exact alV_eq s B x hm)
-      (isHerm_formV _ _ _ _) (hL.1 a b _ _ (hadm N N' h h')).1 (hL.1 a b _ _ (hadm N N' h h')).2).1
+      (GlobalTheory.ThetaMove.Moved.isHerm_formV _ _ _ _) (hL.1 a b _ _ (hadm N N' h h')).1 (hL.1 a b _ _ (hadm N N' h h')).2).1
     exact ⟨h3 (B.eNat χ a b (s.lat N) (s.lat N')) (hVm a b _ _ (hadm N N' h h')).1.2, h1, h2⟩
   · have hd : ContDiff ℂ (k : WithTop ℕ∞) (B.eNat χ a b (s.lat N) (s.lat N')) :=
       GlobalTheory.SCV.contDiff_of_differentiable (hVm a b _ _ (hadm N N' h h')).1.1 _

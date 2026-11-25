@@ -7,45 +7,7 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsAutRepU
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NontrivialOfNeBot
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothAdmissibleUnitaryMemSupIsotypicParts
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsFiniteClass
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsNotCongPow
 import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LocalPrimeGaloisActionPeriodT
@@ -58,7 +20,6 @@ import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.Tr
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open GlobalTheory.GalCut GlobalTheory.UnitaryBC GlobalTheory.Cong GlobalTheory.DefU GlobalTheory.CuspRep GlobalTheory.PRep
 
 noncomputable section
@@ -79,7 +40,7 @@ theorem values_mem_sSup (W : Wt E n) [Nontrivial W.Sp] (f : W.Sp →ₗ[ℂ] (UA
   let B2 : (W.Sp →ₗ[ℂ] (UA E n → ℂ)) → (W.Sp →ₗ[ℂ] (UA E n → ℂ)) → ℂ :=
     fun x y => if h : x ∈ C ∧ y ∈ C then Bf ⟨x, h.1⟩ ⟨y, h.2⟩ else 0
   have hB2 : ∀ x (hx : x ∈ C) y (hy : y ∈ C), B2 x y = Bf ⟨x, hx⟩ ⟨y, hy⟩ :=
-    fun x hx y hy => dif_pos ⟨hx, hy⟩
+    fun x hx y hy => dite_eq_left ⟨hx, hy⟩
   have h1 : ∀ x ∈ C, ∀ y ∈ C, ∀ z ∈ C, ∀ c : ℂ, B2 x (y + c • z) = B2 x y + c * B2 x z := by
     intro x hx y hy z hz c
     rw [hB2 x hx _ (C.add_mem hy (C.smul_mem c hz)), hB2 x hx y hy, hB2 x hx z hz]
@@ -284,14 +245,14 @@ theorem eigen_decomp : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n
   let c : W.Sp → Submodule ℂ (UA E n → ℂ) → (UA E n → ℂ) := fun v U => if U ∈ t then (μ v U : UA E n → ℂ) else 0
   have hcm : ∀ v U, c v U ∈ U := fun v U => by
     by_cases hU : U ∈ t
-    · simp only [c, if_pos hU]
+    · simp only [c, ite_eq_left hU]
       exact (μ v U).2
-    · simp only [c, if_neg hU]
+    · simp only [c, ite_eq_right hU]
       exact U.zero_mem
-  have hc0 : ∀ v U, U ∉ t → c v U = 0 := fun v U hU => if_neg hU
+  have hc0 : ∀ v U, U ∉ t → c v U = 0 := fun v U hU => ite_eq_right hU
   have hcs : ∀ v, ∑ U ∈ t, c v U = f.1 v := fun v => by
     rw [← hμ v]
-    exact Finset.sum_congr rfl fun U hU => if_pos hU
+    exact Finset.sum_congr rfl fun U hU => ite_eq_left hU
 
   have huniq : ∀ a a' : Submodule ℂ (UA E n → ℂ) → (UA E n → ℂ), (∀ U, a U ∈ U) → (∀ U, a' U ∈ U) →
       (∀ U, U ∉ t → a U = 0) → (∀ U, U ∉ t → a' U = 0) → ∑ U ∈ t, a U = ∑ U ∈ t, a' U → a = a' := by
@@ -355,9 +316,9 @@ theorem eigen_decomp : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n
   have hFv : ∀ π v, (F π).1 v = c v π.V := by
     intro π v
     by_cases h : π.V ∈ t
-    · simp only [F, dif_pos h]
+    · simp only [F, dite_eq_left h]
       rfl
-    · simp only [F, dif_neg h]
+    · simp only [F, dite_eq_right h]
       exact (hc0 v π.V h).symm
   refine ⟨Finset.univ.image P, F, fun π _ => AutSub.mem_finPart.2 fun v => by rw [hFv]; exact hcm v π.V,
     fun π _ c0 v g => ?_, ?_⟩

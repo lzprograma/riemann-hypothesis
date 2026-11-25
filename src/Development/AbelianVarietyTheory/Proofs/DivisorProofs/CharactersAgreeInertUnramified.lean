@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComparisonCharacterDetEqOneInertPlace
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinPartIdemMulMemIff
 public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceTensorProductFiniteExtension
@@ -63,36 +64,9 @@ theorem eq_mul_of_at {v : Pl (F := F)} {y : _root_.GlobalTheory.IndefiniteRowSid
   rw [Algebra.smul_def, map_sub, map_one, sub_mul, one_mul, sub_eq_zero] at h1
   exact h1
 
-private lemma tensorProduct_map_eq_zero_of_at_of_atPlace_eq_zero {R : Type} [CommRing R] [Algebra F R] {v : Pl (F := F)} (φ : AF F →ₐ[F] R)
-    (hφ : φ (GlobalTheory.EmbChart.atPlace v 1) = 0) {y : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)} (hy : At (evFin F v) y) :
-    Algebra.TensorProduct.map φ (AlgHom.id F E) y = 0 := by
-  rw [eq_mul_of_at hy, map_mul, Algebra.TensorProduct.algebraMap_apply, Algebra.TensorProduct.map_tmul,
-    Algebra.algebraMap_self_apply, hφ, TensorProduct.zero_tmul, zero_mul]
-
 theorem eq_ideleAt_of_at {v : Pl (F := F)} (z : (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))ˣ) (hz : At (evFin F v) ((z : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) - 1)) :
     z = GlobalTheory.Doubling.ideleAt F E v (GlobalTheory.Doubling.unitFin F E v z) := by
-  have hev : ∀ {R : Type} [CommRing R] [Algebra F R] (φ : AF F →ₐ[F] R), φ (GlobalTheory.EmbChart.atPlace v 1) = 0 →
-      Algebra.TensorProduct.map φ (AlgHom.id F E) (z : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) = 1 := by
-    intro R _ _ φ hφ
-    have h := tensorProduct_map_eq_zero_of_at_of_atPlace_eq_zero φ hφ hz
-    rwa [map_sub, map_one, sub_eq_zero] at h
-  apply GlobalTheory.Doubling.idele_ext
-  · intro w
-    rw [GlobalTheory.Doubling.unitInf_ideleAt]
-    ext
-    refine hev (evInf F w) ?_
-    rw [GlobalTheory.EmbChart.atPlace_apply]
-    show GlobalTheory.AutFunCompare.evW w (fstA F (pairA F 0 (singleFin v 1))) = 0
-    exact map_zero _
-  · intro u
-    by_cases huv : u = v
-    · subst huv
-      rw [GlobalTheory.Doubling.unitFin_ideleAt_self]
-    · rw [GlobalTheory.Doubling.unitFin_ideleAt_ne huv]
-      ext
-      refine hev (evFin F u) ?_
-      rw [GlobalTheory.EmbChart.atPlace_apply]
-      exact evalV_singleFin_ne huv 1
+  apply _root_.GlobalTheory.InertDetChr.eq_ideleAt <;> assumption
 
 end GlobalTheory.InertChars
 

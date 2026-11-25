@@ -55,8 +55,6 @@ noncomputable section
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.F
 open GlobalTheory.DiscSpec
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace GlobalTheory.CompanionTheory.OneExDatum
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}

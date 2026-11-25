@@ -47,7 +47,6 @@ import Mathlib.Topology.Sheaves.Init
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.LocMod
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 namespace GlobalTheory.LocGrp
@@ -404,7 +403,7 @@ theorem mem_jacGrp (J : JacLev D ρ) (s hh : k) (F₀ : Frame k J.W₀.rank n) (
       · rfl
       · simp [l, wlev]
       · simp only [l, wlev, Sum.map_inr, Sum.elim_inr]
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
         omega
   obtain ⟨g₁, h₁⟩ := Witness.exists_isLoc p F (colE (2 * ρ) (ρ + 1) β)
   obtain ⟨g₂, h₂⟩ := Witness.exists_isLoc p F q
@@ -414,7 +413,7 @@ theorem mem_jacGrp (J : JacLev D ρ) (s hh : k) (F₀ : Frame k J.W₀.rank n) (
     · simp [colE, upU, Matrix.one_apply]
     · have : j.val ≠ ρ := by
         rintro h
-        simp only [l, Sum.elim_inl, Sum.elim_inr, h, lt_irrefl, if_false] at hrs
+        simp only [l, Sum.elim_inl, Sum.elim_inr, h, lt_irrefl, ite_false] at hrs
         omega
       simp [colE, upU, this]
     · simp [colE, upU]

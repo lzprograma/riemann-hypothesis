@@ -61,8 +61,6 @@ noncomputable section
 
 namespace GlobalTheory.ArcLieCoord
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 open MonoidalCategory CartesianMonoidalCategory MonObj Filter GlobalTheory.ArcLie
 
 section Group

@@ -52,9 +52,7 @@ public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.Twisting
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-attribute [local instance] Over.cartesianMonoidalCategory
 open ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.ZH Classical
-attribute [local instance] SplitExt.free SplitExt.finite MvPolynomial.gradedAlgebra
 
 noncomputable section
 namespace GlobalTheory.ZH.RatModel
@@ -134,14 +132,8 @@ private theorem mem_span_range_iff_vecMul_inv_mem {o Ω : Type} [CommRing o] [Fi
       obtain ⟨r, rfl⟩ := hx
       intro k
       have hrow : Matrix.vecMul (b r) b⁻¹ = Pi.single r 1 := by
-        funext j
-        have h1 := congrFun (congrFun (Matrix.mul_nonsing_inv b hu) r) j
-        rw [Matrix.mul_apply] at h1
-        simp only [Matrix.vecMul, dotProduct]
-        rw [h1, Matrix.one_apply]
-        by_cases hrj : r = j
-        · subst hrj; simp
-        · simp [hrj, Ne.symm hrj]
+        rw [← Matrix.mul_apply_eq_vecMul, Matrix.mul_nonsing_inv b hu]
+        exact funext fun j => Matrix.one_eq_pi_single
       rw [hrow]
       by_cases hkr : k = r
       · subst hkr; simp [R.one_mem]

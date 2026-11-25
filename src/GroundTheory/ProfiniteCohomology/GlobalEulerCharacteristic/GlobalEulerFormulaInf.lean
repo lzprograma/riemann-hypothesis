@@ -21,10 +21,6 @@ section Places
 
 variable (ι : ∀ v : InfinitePlace K.1, ℚ̄ →ₐ[K.1] AlgebraicClosure v.Completion)
 
-def gsInfFamily (v : InfinitePlace K.1) :
-    Gal(AlgebraicClosure v.Completion / v.Completion) →ₜ* galUnramifiedOutside K.1 ℚ̄ S :=
-  ⟨decompHomS v.Completion S (ι v), continuous_decompHomS (Kv := v.Completion) S (ι v)⟩
-
 end Places
 
 section Factor
@@ -44,11 +40,6 @@ def gsEulerRatio
     ∏ v : {v : InfinitePlace K.1 // v.IsReal}, (gsRealH0Card S M ιr v : ℚ)
 
 end Factor
-
-section Statement
-
-
-end Statement
 
 end
 

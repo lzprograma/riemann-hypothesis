@@ -153,8 +153,7 @@ lemma key0 {n : Type} [Fintype n] (Y Z B : Matrix n n (WittVector p C))
     simp only [map_add (f := _), map_sum, map_mul, WittVector.constantCoeff_apply,
     coeff_frobenius_charP] at this
     exact this
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   obtain ⟨i0, j0, hij⟩ := hne
   obtain ⟨⟨i1, j1⟩, -, hmax⟩ := Finset.exists_max_image (Finset.univ : Finset (n × n))
     (fun q => A.valuation ((Z q.1 q.2).coeff 0)) ⟨(i0, j0), Finset.mem_univ _⟩

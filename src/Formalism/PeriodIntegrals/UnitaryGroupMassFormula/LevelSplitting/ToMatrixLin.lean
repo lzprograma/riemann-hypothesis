@@ -2,52 +2,10 @@ module
 
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.ProjHA
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.SemiAlg
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.LocLevi
 
 @[expose] public section
 
@@ -121,19 +79,7 @@ theorem N_le_S' (hP : P.IsStd σ J T) : Nsub R σ J P ≤ Ssub R σ J P := by
     exact ⟨Fin.castSucc a, Fin.castSucc_lt_castSucc_iff.mpr ha, by simp⟩
 
 theorem H_le_S : Hsub R σ J P ≤ Ssub R σ J P := by
-  intro g hg
-  unfold Hsub stabT tupH at hg
-  rw [MulAction.mem_stabilizer_iff] at hg
-  unfold Ssub uniFlag F0 UniC
-  intro b
-  have := congrFun hg (Fin.castAdd r b)
-  unfold ratTup at this
-  change lin R σ J g (ratV (F := F) R (Fin.append (F0 P) P.f (Fin.castAdd r b))) =
-    ratV (F := F) R (Fin.append (F0 P) P.f (Fin.castAdd r b)) at this
-  rw [Fin.append_left] at this
-  show lin R σ J g (ratV (F := F) R (F0 P b)) - ratV (F := F) R (F0 P b) ∈ _
-  rw [this, sub_self]
-  exact Submodule.zero_mem _
+  apply _root_.MassDataLevelSSteps.Hsub_le_Ssub <;> assumption
 
 theorem norm_N {h n : HA R σ J} (hh : h ∈ Hsub R σ J P) (hn : n ∈ Nsub R σ J P) :
     h * n * h⁻¹ ∈ Nsub R σ J P := by
@@ -182,41 +128,13 @@ private theorem spanR_of_last_not_mem (s : Set (Fin (r + 1))) (hs : Fin.last r �
   | last => exact absurd hb hs
   | cast b' => exact ⟨b', by simp [F0, datR]⟩
 
-private theorem mapX_lin_of_mem_Ssub {g : HA R σ J} (hg : g ∈ Ssub R σ J P) :
-    (datR R σ J P T).MapX (lin R σ J g) := by
-  intro a
-  have key := (show UniC R σ J (F0 P) g from hg) (Fin.castSucc a)
-  have hle := spanR_of_last_not_mem (R := R) (σ := σ) (J := J) (P := P) (T := T) hσσ hJ hP {b | b < Fin.castSucc a}
-    (fun h => lt_asymm h (Fin.castSucc_lt_last a))
-  have h2 := Submodule.add_mem _ (hle key)
-    (Submodule.subset_span (⟨a, rfl⟩ : (datR R σ J P T).e a ∈ Set.range (datR R σ J P T).e))
-  have hF : ratV (F := F) R (F0 P (Fin.castSucc a)) = (datR R σ J P T).e a := by
-    simp [F0, datR]
-  rw [hF, sub_add_cancel] at h2
-  exact h2
-
-private theorem mapW_lin_of_mem_Ssub {g : HA R σ J} (hg : g ∈ Ssub R σ J P) :
-    (datR R σ J P T).MapW (lin R σ J g) := by
-  have hgi : g⁻¹ ∈ Ssub R σ J P := (Ssub R σ J P).inv_mem hg
-  refine SemiG.Dat.mapW_of_inv (D := datR R σ J P T) (Si := lin R σ J g⁻¹)
-    (fun v => by rw [lin_lin_inv]) (fun x y => by
-      show hR R σ J (lin R σ J g x) (lin R σ J g y) = hR R σ J x y
-      rw [hR_lin]) (mapX_lin_of_mem_Ssub hσσ hJ hP hgi) ?_
-  have key := (show UniC R σ J (F0 P) g⁻¹ from hgi) (Fin.last r)
-  have hle := spanR_of_last_not_mem (R := R) (σ := σ) (J := J) (P := P) (T := T) hσσ hJ hP {b | b < Fin.last r}
-    (fun h => lt_irrefl (Fin.last r) h)
-  have hF : ratV (F := F) R (F0 P (Fin.last r)) = (datR R σ J P T).z := by
-    simp [F0, datR]
-  rw [hF] at key
-  exact hle key
-
 theorem Pi_lin_mul {g g' : HA R σ J} (hg : g ∈ Ssub R σ J P) (hg' : g' ∈ Ssub R σ J P) :
     (datR R σ J P T).Pi (lin R σ J (g * g')) =
       (datR R σ J P T).Pi (lin R σ J g) ∘ₗ (datR R σ J P T).Pi (lin R σ J g') := by
   apply LinearMap.ext
   intro v
   rw [LinearMap.comp_apply, SemiG.Dat.Pi_comp (D := datR R σ J P T) (datR_hyp hσσ hJ hP)
-    (mapX_lin_of_mem_Ssub hσσ hJ hP hg) (mapW_lin_of_mem_Ssub hσσ hJ hP hg')]
+    (mapX_S hg) (mapW_S hg')]
   have hl : lin R σ J (g * g') = lin R σ J g ∘ₗ lin R σ J g' :=
     LinearMap.ext fun x => by rw [lin_mul]; rfl
   rw [hl]
@@ -259,7 +177,7 @@ theorem Pi_lin_one : (datR R σ J P T).Pi (lin R σ J 1) = LinearMap.id := by
     by_cases h : b = a
     · subst h
       simp
-    · rw [if_neg (Ne.symm h), if_neg h]
+    · rw [ite_eq_right (Ne.symm h), ite_eq_right h]
       simp
   have hez : ∀ b, (datR R σ J P T).hL ((datR R σ J P T).e b) (datR R σ J P T).z = 0 := by
     intro b
@@ -338,14 +256,9 @@ def piU (g : HA R σ J) (hg : g ∈ Ssub R σ J P) : GL (Fin M) (R ⊗[F] E) whe
       ← Pi_lin_mul hσσ hJ hP ((Ssub R σ J P).inv_mem hg) hg, inv_mul_cancel,
       Pi_lin_one hσσ hJ hP, LinearMap.toMatrix'_id]
 
-private theorem uni_lin' (g : HA R σ J) : (datR R σ J P T).Uni (lin R σ J g) := by
-  intro x y
-  show hR R σ J (lin R σ J g x) (lin R σ J g y) = hR R σ J x y
-  rw [hR_lin]
-
 theorem piU_mem (g : HA R σ J) (hg : g ∈ Ssub R σ J P) : piU hσσ hJ hP g hg ∈ HR R σ J := by
   have hU := SemiG.Dat.Pi_uni (D := datR R σ J P T) (datR_hyp hσσ hJ hP)
-    (mapW_lin_of_mem_Ssub hσσ hJ hP hg) (uni_lin' hσσ hJ hP g)
+    (mapW_S hg) (uni_lin g)
   exact uj_of_uni (sigR R σ) (JR R J) (piMat (P := P) (T := T) g) (fun x y => by
     rw [piMat_mulVec, piMat_mulVec]
     exact hU x y)

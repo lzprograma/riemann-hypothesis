@@ -19,50 +19,8 @@ public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Complex.UpperHalfPlane.FunctionsBoundedAtInfty
 public import Mathlib.Topology.Instances.Matrix
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ReducesOfDetEvMEqZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Parity
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.Analysis.Complex.UpperHalfPlane.Metric
@@ -175,9 +133,9 @@ theorem dualEntry_slash_of_eq {Γ : Subgroup SL(2, ℤ)} (hΓ : (-1 : SL(2, ℤ)
   have hc : ∀ l j, F j ∣[w j] (s l * y) = c l • F j ∣[w j] s (π l) := by
     intro l j
     by_cases hp : s l * y = g l * s (π l)
-    · simp only [c, if_pos hp]
+    · simp only [c, ite_eq_left hp]
       rw [hp, (hF j).2.slash_mul (hg l), one_smul]
-    · simp only [c, if_neg hp]
+    · simp only [c, ite_eq_right hp]
       rw [(hdec l).resolve_left hp, slash_neg_of_odd (hF j).1, (hF j).2.slash_mul (hg l), neg_one_smul]
   have hπi : π i = i' := by
     apply hs.2 (π i) i' ((g i)⁻¹ * γ) (Γ.mul_mem (Γ.inv_mem (hg i)) hγ)
@@ -194,7 +152,7 @@ theorem dualEntry_slash_of_eq {Γ : Subgroup SL(2, ℤ)} (hΓ : (-1 : SL(2, ℤ)
     rw [h3]
     exact Γ.mul_mem hγ (Γ.inv_mem (hg i))
   rw [dualEntry_slash hcc hc hA, hπi]
-  simp only [c, if_pos hp, one_smul]
+  simp only [c, ite_eq_left hp, one_smul]
 
 theorem mdiff_dualEntry (hF : ∀ j, MDiff (F j)) (hA : ∀ τ, (evM s w F τ).det ≠ 0) (i j : Fin r) :
     MDiff (dualEntry s w F i j) := by
@@ -205,9 +163,9 @@ theorem mdiff_dualEntry (hF : ∀ j, MDiff (F j)) (hA : ∀ τ, (evM s w F τ).d
   rw [e]
   refine CuspForm.discriminant.holo'.mul (((mdiff_det_evM s w hF).inv hA).mul (mdiff_det fun a b => ?_))
   by_cases h : a = i
-  · simp only [Matrix.updateRow_apply, if_pos h]
+  · simp only [Matrix.updateRow_apply, ite_eq_left h]
     exact mdifferentiable_const
-  · simp only [Matrix.updateRow_apply, if_neg h]
+  · simp only [Matrix.updateRow_apply, ite_eq_right h]
     exact mdiff_slash (hF b) _ _
 
 theorem exists_dual_cuspForms (Γ : Subgroup SL(2, ℤ)) (r : ℕ) (s : Fin r → SL(2, ℤ)) (w : Fin r → ℤ)
@@ -310,9 +268,9 @@ theorem norm_le (v : Fin 2 → ℤ) (n : ℕ) : ‖eisSummand 3 v (pt n)‖ ≤ 
 theorem tendsto_term (v : Fin 2 → ℤ) : Tendsto (fun n => eisSummand 3 v (pt n)) atTop (𝓝 (lim0 v)) := by
   by_cases h : v 0 = 0
   · have : ∀ n, eisSummand 3 v (pt n) = (v 1 : ℂ) ^ (-3 : ℤ) := fun n => by simp [eisSummand, h]
-    simp only [this, lim0, h, if_true]
+    simp only [this, lim0, h, ite_true]
     exact tendsto_const_nhds
-  · simp only [lim0, h, if_false]
+  · simp only [lim0, h, ite_false]
     refine squeeze_zero_norm (a := fun n : ℕ => 1 / ((n : ℝ) + 1)) (fun n => ?_)
       tendsto_one_div_add_atTop_nhds_zero_nat
     obtain ⟨_, him⟩ := re_im_summand v n
@@ -435,8 +393,7 @@ namespace GlobalTheory.OddFrame
 theorem weights_nonneg_of_det {Γ : Subgroup SL(2, ℤ)} [Γ.FiniteIndex] {r : ℕ} {s : Fin r → SL(2, ℤ)}
     {w : Fin r → ℤ} {F : Fin r → ℍ → ℂ} (hF : ∀ j, IsMF Γ (w j) (F j))
     (hdet : ∃ τ, (evM s w F τ).det ≠ 0) (j : Fin r) : 0 ≤ w j := by
-  by_contra hneg
-  push_neg at hneg
+  by_contra! hneg
   have h0 : F j = 0 := (hF j).eq_zero_of_neg hneg
   obtain ⟨τ, hτ⟩ := hdet
   apply hτ
@@ -489,10 +446,9 @@ theorem oddFrame_descent_of_weight_sum (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteInde
     have hmd : MDiff (fun τ => (evM s w F τ).det) := mdiff_det_evM s w (fun j => (hF j).2.2.1)
     have hprod : e j₀ * (fun τ => (evM s w F τ).det) ≠ 0 := by
       rw [Ne, UpperHalfPlane.mul_eq_zero_iff (he j₀) hmd]
-      push_neg; exact ⟨hne, hd0⟩
+      push Not; exact ⟨hne, hd0⟩
     obtain ⟨τ, hτ⟩ : ∃ τ, e j₀ τ * (evM s w F τ).det ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hprod (funext fun τ => by simpa using h τ)
     refine ⟨τ, fun h0 => hτ ?_⟩
     rw [← mul_det_evM_update s w F j₀ w₀ G E e hrel τ]
@@ -1004,7 +960,7 @@ theorem sum_mul_co_eq {M : ℕ} {Γ : Subgroup SL(2, ℤ)} {r : ℕ} {s : Fin r 
     simp only [fun j => (H j).2.2 (hF j).1, mul_neg, Finset.sum_neg_distrib]
     split_ifs <;> ring
   · intro i
-    rw [Finset.sum_sub_distrib, Finset.sum_ite_eq' (Finset.range M) a, if_pos (Finset.mem_range.2 ha),
+    rw [Finset.sum_sub_distrib, Finset.sum_ite_eq' (Finset.range M) a, ite_eq_left (Finset.mem_range.2 ha),
       ← hc i, Finset.sum_comm, sub_eq_zero]
     simp only [Matrix.mulVec, dotProduct, leadM, Matrix.of_apply]
     exact Finset.sum_congr rfl fun j _ => by rw [← Finset.mul_sum, mul_comm]
@@ -1050,7 +1006,7 @@ theorem exists_tendsto_evM_mul (M : ℕ) (Γ : Subgroup SL(2, ℤ)) (r : ℕ) (s
         split_ifs with h
         · rw [h]
         · simp
-      rw [Finset.sum_congr rfl this, Finset.sum_ite_eq' (Finset.range M) a, if_pos ha]
+      rw [Finset.sum_congr rfl this, Finset.sum_ite_eq' (Finset.range M) a, ite_eq_left ha]
     have hta : t τ ^ a ≠ 0 := pow_ne_zero _ (ht0 τ)
     have e : co M (w l) (F l) (s i) a =
         ∑ j, (t τ ^ a)⁻¹ * (c l a j * ∑ n ∈ Finset.range M, co M (w j) (F j) (s i) n * t τ ^ n) := by
@@ -1112,39 +1068,6 @@ theorem bigO_qParam_pow {F : Type*} [FunLike F ℍ ℂ] {Γ : Subgroup (GL (Fin 
   rw [SlashInvariantFormClass.eq_cuspFunction f τ hΓ hh.ne'] at hτ
   rw [hτ]; simp
 
-theorem coeff_eq_zero_of_bigO {F : Type*} [FunLike F ℍ ℂ] {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ}
-    [ModularFormClass F Γ k] (hΓ : (1 : ℝ) ∈ Γ.strictPeriods) (f : F) (m : ℕ)
-    (h : (f : ℍ → ℂ) =O[atImInfty] fun τ : ℍ => Periodic.qParam 1 τ ^ m) :
-    ∀ n < m, (qExpansion 1 f).coeff n = 0 := by
-  have ha := ModularFormClass.analyticAt_cuspFunction_zero f one_pos hΓ
-  have h1 : (m : ℕ∞) ≤ analyticOrderAt (cuspFunction 1 f) 0 := by
-    by_contra hlt
-    push_neg at hlt
-    obtain ⟨j, hj⟩ := ENat.ne_top_iff_exists.mp hlt.ne_top
-    rw [← hj] at hlt
-    have hjm : j < m := by exact_mod_cast hlt
-    obtain ⟨g, hg, hg0, hfg⟩ := ha.analyticOrderAt_eq_natCast.mp hj.symm
-    have ht := qParam_tendsto_atImInfty (h := 1) one_pos
-    have h2 : (fun τ : ℍ => g (Periodic.qParam 1 τ)) =O[atImInfty]
-        fun τ : ℍ => Periodic.qParam 1 τ ^ (m - j) := by
-      have h3 := (isBigO_refl (fun τ : ℍ => (Periodic.qParam 1 τ ^ j)⁻¹) atImInfty).mul h
-      refine h3.congr' ?_ ?_
-      · filter_upwards [ht.eventually hfg] with τ hτ
-        rw [SlashInvariantFormClass.eq_cuspFunction f τ hΓ one_ne_zero] at hτ
-        have hq : Periodic.qParam 1 τ ≠ 0 := Periodic.qParam_ne_zero _
-        rw [hτ, sub_zero, smul_eq_mul, inv_mul_cancel_left₀ (pow_ne_zero _ hq)]
-      · refine Eventually.of_forall fun τ => ?_
-        have hq : Periodic.qParam 1 τ ≠ 0 := Periodic.qParam_ne_zero _
-        simp only
-        rw [pow_sub₀ _ hq hjm.le, mul_comm]
-    have h4 : Tendsto (fun τ : ℍ => Periodic.qParam 1 τ ^ (m - j)) atImInfty (𝓝 0) := by
-      have := ht.pow (m - j)
-      rwa [zero_pow (by omega)] at this
-    exact hg0 (tendsto_nhds_unique (hg.continuousAt.tendsto.comp ht) (h2.trans_tendsto h4))
-  rw [natCast_le_analyticOrderAt_iff_iteratedDeriv_eq_zero ha] at h1
-  intro n hn
-  rw [qExpansion_coeff, h1 n hn, mul_zero]
-
 theorem qParam_pow_bigO {h : ℝ} (hh : 0 < h) {m M : ℕ} (hm : (M : ℝ) * h ≤ m) :
     (fun τ : ℍ => Periodic.qParam h τ ^ m) =O[atImInfty] fun τ : ℍ => Periodic.qParam 1 τ ^ M := by
   refine IsBigO.of_bound 1 (Eventually.of_forall fun τ => ?_)
@@ -1158,17 +1081,13 @@ theorem qParam_pow_bigO {h : ℝ} (hh : 0 < h) {m M : ℕ} (hm : (M : ℝ) * h �
   rw [e1, e2]
   nlinarith [Real.pi_pos]
 
-theorem norm_bigO {F : Type*} [FunLike F ℍ ℂ] {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [ModularFormClass F Γ k]
-    [Γ.IsArithmetic] (f : F) : (ModularForm.norm 𝒮ℒ f : ℍ → ℂ) =O[atImInfty] (f : ℍ → ℂ) := by
-  apply GlobalTheory.EisM.modularFormNorm_isBigO_self_atImInfty
-
 theorem sturm {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic] {h : ℝ} (hh : 0 < h)
     (hΓ : h ∈ Γ.strictPeriods) (k : ℤ) :
     ∃ m : ℕ, ∀ f : ModularForm Γ k, (∀ n < m, (qExpansion h f).coeff n = 0) → f = 0 := by
   set M := (k * Nat.card (𝒮ℒ ⧸ (Γ.subgroupOf 𝒮ℒ))).toNat / 12 + 1
   refine ⟨⌈(M : ℝ) * h⌉₊, fun f hf => ?_⟩
-  have h1 := coeff_eq_zero_of_bigO one_mem_strictPeriods_SL (ModularForm.norm 𝒮ℒ f) M
-    ((norm_bigO f).trans ((bigO_qParam_pow hh hΓ f _ hf).trans (qParam_pow_bigO hh (Nat.le_ceil _))))
+  have h1 := GlobalTheory.EisM.qExpansion_coeff_zero_of_isBigO_qParam_pow one_mem_strictPeriods_SL (ModularForm.norm 𝒮ℒ f) M
+    ((GlobalTheory.EisM.modularFormNorm_isBigO_self_atImInfty f).trans ((bigO_qParam_pow hh hΓ f _ hf).trans (qParam_pow_bigO hh (Nat.le_ceil _))))
   have h2 : ModularForm.norm 𝒮ℒ f = 0 := by
     apply ModularForm.sturm_bound_levelOne
     refine lt_of_lt_of_le ?_ (PowerSeries.nat_le_order _ _ h1)
@@ -1710,9 +1629,9 @@ theorem re_μ_zpow {w : ℤ} (hw : Odd w) :
   obtain ⟨m, hm⟩ := hw
   have hc : -w = 6 * (-w / 6) + 1 ∨ -w = 6 * (-w / 6) + 3 ∨ -w = 6 * (-w / 6) + 5 := by omega
   rcases hc with h | h | h
-  · rw [if_neg (by omega), h, key, zpow_one, hre]
-  · rw [if_pos (by omega), h, key, zpow_ofNat, h3]; simp
-  · rw [if_neg (by omega), h, key, zpow_ofNat, h5, Complex.sub_re, hre]; norm_num
+  · rw [ite_eq_right (by omega), h, key, zpow_one, hre]
+  · rw [ite_eq_left (by omega), h, key, zpow_ofNat, h3]; simp
+  · rw [ite_eq_right (by omega), h, key, zpow_ofNat, h5, Complex.sub_re, hre]; norm_num
 
 theorem not_fixed {N : ℕ} (hN : 5 ≤ N) {γ x : SL(2, ℤ)} (hγ : γ ∈ CongruenceSubgroup.Gamma1 N) :
     ¬ (x * uEl = γ * x ∨ x * uEl = -(γ * x)) := by

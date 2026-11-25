@@ -86,7 +86,7 @@ namespace GlobalTheory.StdRescale
 theorem exists_isStd_mulShift : ∀ (F : Type) [Field F] [NumberField F], IsTotallyReal F → ∀ ψ : AddChar (AF F) ℂ, IsCharAF F ψ →
     ∃ a : F, a ≠ 0 ∧ IsStd (ψ.mulShift (algebraMap F (AF F) a)) := by
   intro F _ _ hF ψ h
-  haveI := hF
+  have := hF
   obtain ⟨a₀, ha₀, hinf⟩ := GlobalTheory.AdeleCharConductor.exists_scaling h
   have him : ∀ (w : InfinitePlace F) (x : F), (w.embedding x).im = 0 := fun w x => by
     have := congrArg Complex.im (GlobalTheory.AdeleCharConductor.embedding_re w x)
@@ -178,8 +178,8 @@ theorem UpperTheory.Gal.TP.Skew.conjAut :
   classical
   intro F E _ _ _ _ _ σ hσ
   obtain ⟨_, hE, h2, hconj⟩ := hσ
-  haveI hfin : FiniteDimensional F E := Module.finite_of_finrank_eq_succ h2
-  haveI : Algebra.IsQuadraticExtension F E := ⟨h2⟩
+  have hfin : FiniteDimensional F E := Module.finite_of_finrank_eq_succ h2
+  have : Algebra.IsQuadraticExtension F E := ⟨h2⟩
   have hgal : IsGalois F E := inferInstance
   obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance
   have hsq : ∀ x, σ (σ x) = x := fun x => τ.injective (by rw [hconj, hconj, star_star])
@@ -187,8 +187,7 @@ theorem UpperTheory.Gal.TP.Skew.conjAut :
   let s : Gal(E/F) := AlgEquiv.ofBijective σ ⟨σ.toRingHom.injective, hsurj⟩
   have hs : ∀ x, s x = σ x := fun x => rfl
   have hne : ∃ x, σ x ≠ x := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     apply IsTotallyComplex.complexEmbedding_not_isReal τ
     show star τ = τ
     ext x
@@ -203,8 +202,7 @@ theorem UpperTheory.Gal.TP.Skew.conjAut :
   · ext y
     simp [hs, hsq]
   · intro g
-    by_contra hg
-    push_neg at hg
+    by_contra! hg
     have hle : ({1, s, g} : Finset Gal(E/F)).card ≤ Fintype.card Gal(E/F) := Finset.card_le_univ _
     rw [Finset.card_insert_of_notMem (by simp [hs1.symm, hg.1.symm]),
       Finset.card_pair hg.2.symm, hcard] at hle
@@ -228,8 +226,8 @@ theorem UpperTheory.Gal.TP.Skew.ideleStep :
     UpperTheory.Gal.TP.Skew.ConjAut → UpperTheory.Gal.TP.Skew.IdeleStep := by
   intro hconj F E _ _ _ _ _ σ hcm a
   obtain ⟨hgal, s, -, -, hss, hall, -⟩ := hconj F E σ hcm
-  haveI := hgal
-  haveI hcomm : IsMulCommutative Gal(E/F) := ⟨⟨fun g h => by
+  have := hgal
+  have hcomm : IsMulCommutative Gal(E/F) := ⟨⟨fun g h => by
     rcases hall g with rfl | rfl <;> rcases hall h with rfl | rfl <;> simp⟩⟩
   obtain ⟨hFr, hEc, -, -⟩ := hcm
   let v : InfinitePlace F := Classical.arbitrary _
@@ -242,8 +240,7 @@ theorem UpperTheory.Gal.TP.Skew.ideleStep :
     rw [hw']
     exact hFr.isReal v
   obtain ⟨c, hc⟩ : ∃ c, infiniteLocalSymbol E v c ≠ 1 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hram (MonoidHom.ext h)
   have hc' : infiniteLocalSymbol E v c = s := (hall _).resolve_left hc
   have key : ∀ a' : IdeleGroup F, ideleSymbol F E a' = 1 →
@@ -405,7 +402,7 @@ theorem lineSkew : LineSkew := by
     exact absurd v.2 (by simp [hP])
   case lat =>
     have hfg := Submodule.fg_pi (ι := Fin d) (p := fun _ => 𝔞) (fun _ => hl.lat.fg)
-    haveI : Submodule.IsLattice E (skewSpc F δ 𝔞 d).L := Submodule.IsLattice.of_fg E hfg
+    have : Submodule.IsLattice E (skewSpc F δ 𝔞 d).L := Submodule.IsLattice.of_fg E hfg
     have ha : ∃ a : E, a ∈ 𝔞 ∧ a ≠ 0 := by
       by_contra h
       have hz : ∀ x ∈ 𝔞, x = 0 := by
@@ -581,8 +578,7 @@ private theorem mem_iff {E : Type} [Field E] [NumberField E] (I : FractionalIdea
 
 private theorem attained {E : Type} [Field E] [NumberField E] (I : FractionalIdeal (𝓞 E)⁰ E) (hI : I ≠ 0)
     (w : HeightOneSpectrum (𝓞 E)) : ∃ x ∈ I, x ≠ 0 ∧ ordE w x = FractionalIdeal.count E w I := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hP : ((w.asIdeal : Ideal (𝓞 E)) : FractionalIdeal (𝓞 E)⁰ E) ≠ 0 := by
     rw [Ne, FractionalIdeal.coeIdeal_eq_zero]
     exact w.ne_bot
@@ -624,15 +620,6 @@ section -- clump:auto
 
 open scoped nonZeroDivisors Matrix Pointwise
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GroundTheory.Global GroundTheory.Global.IdeleGroup UpperTheory.Gal.TP.Skew
-
-namespace UpperTheory.Gal.TP.Skew
-
-section
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-
-end
-
-end UpperTheory.Gal.TP.Skew
 
 private theorem count_le_count_galois_smul {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E]
     [Algebra F E] (g : Gal(E/F)) (P : HeightOneSpectrum (𝓞 E)) (J : Ideal (𝓞 E)) (hJ : J ≠ 0) :
@@ -894,7 +881,7 @@ theorem stdHerm : StdHerm := by
       · have e' : ¬ j = i := fun h => e h.symm
         simp [e, e']
     all_goals first | exact i.elim0 | exact j.elim0
-  · haveI : (stdSpc F E n).L.IsLattice E := by
+  · have : (stdSpc F E n).L.IsLattice E := by
       refine ⟨Submodule.fg_pi fun _ => ?_, ?_⟩
       · rw [Submodule.one_eq_span]
         exact Submodule.fg_span_singleton 1
@@ -980,7 +967,7 @@ theorem wtId_holds : WtId := by
       congr 1
       funext k
       have h1 := hL (Fin.castAdd t k)
-      simp only [Fin.coe_castAdd, k.2, dif_pos, Fin.eta] at h1
+      simp only [Fin.coe_castAdd, k.2, dite_eq_left, Fin.eta] at h1
       simp only [Function.comp_apply, Fin.coe_castAdd]
       omega
     · rw [multiset_map_fin_rev_eq (fun i : Fin t => -p i)]
@@ -1001,7 +988,7 @@ theorem wtId_holds : WtId := by
       congr 1
       funext k
       have h1 := hL (Fin.castAdd t k)
-      simp only [Fin.coe_castAdd, k.2, dif_pos, Fin.eta] at h1
+      simp only [Fin.coe_castAdd, k.2, dite_eq_left, Fin.eta] at h1
       simp only [Function.comp_apply, Fin.coe_castAdd]
       have hk := k.2
       omega
@@ -1037,7 +1024,7 @@ open UpperTheory.Gal.TP.Sub
 private theorem unram_of_forall {E : Type} [Field E] [NumberField E] [IsCMField E]
     (hE : ∀ w : HeightOneSpectrum (𝓞 E), Algebra.IsUnramifiedAt (𝓞 (maximalRealSubfield E)) w.asIdeal) :
     Algebra.Unramified (𝓞 (maximalRealSubfield E)) (𝓞 E) := by
-  haveI : Algebra.FormallyUnramified (𝓞 (maximalRealSubfield E)) (𝓞 E) := by
+  have : Algebra.FormallyUnramified (𝓞 (maximalRealSubfield E)) (𝓞 E) := by
     rw [Algebra.formallyUnramified_iff_forall]
     intro q
     obtain ⟨Q, hQ, hqQ⟩ := Ideal.exists_le_maximal q.1 q.2.ne_top
@@ -1048,22 +1035,12 @@ private theorem unram_of_forall {E : Type} [Field E] [NumberField E] [IsCMField 
       ((PrimeSpectrum.le_iff_specializes q ⟨Q, hQ.isPrime⟩).mp hqQ) hU
   exact ⟨inferInstance, inferInstance⟩
 
-private theorem under_eq_of_inert {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    {v : HeightOneSpectrum (𝓞 F)} {w : HeightOneSpectrum (𝓞 E)} (h : Formalism.UG.IsInertAt F E v w) :
-    w.under (𝓞 F) = v := by
-  apply HeightOneSpectrum.ext
-  have hle : v.asIdeal ≤ (w.under (𝓞 F)).asIdeal := by
-    show v.asIdeal ≤ w.asIdeal.comap (algebraMap (𝓞 F) (𝓞 E))
-    rw [← Ideal.map_le_iff_le_comap]
-    exact h.le
-  exact (v.isMaximal.eq_of_le (w.under (𝓞 F)).isPrime.ne_top hle).symm
-
 private theorem not_split_of_inert {E : Type} [Field E] [NumberField E] [IsCMField E]
     {v : HeightOneSpectrum (𝓞 (maximalRealSubfield E))} {w : HeightOneSpectrum (𝓞 E)}
     (h : Formalism.UG.IsInertAt (maximalRealSubfield E) E v w) : ¬ GlobalTheory.UnitaryBC.IsSplitAt w := by
   rintro ⟨u, hne, hu⟩
   apply hne
-  have hv : u.under (𝓞 (maximalRealSubfield E)) = v := hu.trans (under_eq_of_inert h)
+  have hv : u.under (𝓞 (maximalRealSubfield E)) = v := hu.trans (GlobalTheory.LFun.under_eq_of_isInertAt h)
   have hle : w.asIdeal ≤ u.asIdeal := by
     rw [← show Ideal.map (algebraMap (𝓞 (maximalRealSubfield E)) (𝓞 E)) v.asIdeal = w.asIdeal from h, Ideal.map_le_iff_le_comap, ← hv]
     exact le_rfl
@@ -1084,7 +1061,7 @@ theorem UpperTheory.Gal.TP.Sub.baseNG_holds :
       std := hstd
       inert := fun v w h => by
         obtain ⟨a, b, c⟩ := hI w (not_split_of_inert h)
-        rw [under_eq_of_inert h] at a b c
+        rw [GlobalTheory.LFun.under_eq_of_isInertAt h] at a b c
         exact ⟨a, b, PositivityTheory.Mix.psiUnr_of_not_le hstd v c⟩
       psiP := fun v hv => absurd hv (by simp [hP]) }
 end -- clump:auto
@@ -1232,8 +1209,8 @@ theorem UpperTheory.Gal.TP.Sub.upOf_holds :
       ∃ w, τ = ComplexEmbedding.conjugate (Bs.emb w).1 ∧ lam' τ = (l' w).dual := by
     intro τ
     rcases hw₀ τ with h | h
-    · exact Or.inl ⟨w₀ τ, h, if_pos h⟩
-    · exact Or.inr ⟨w₀ τ, h, if_neg fun h' => hne (w₀ τ) (w₀ τ) (h'.symm.trans h)⟩
+    · exact Or.inl ⟨w₀ τ, h, ite_eq_left h⟩
+    · exact Or.inr ⟨w₀ τ, h, ite_eq_right fun h' => hne (w₀ τ) (w₀ τ) (h'.symm.trans h)⟩
   refine ⟨lam', hL.aut, fun τ => ?_, hD.alg, fun τ => ?_, ?_⟩
   · rcases key τ with ⟨w, rfl, h⟩ | ⟨w, rfl, h⟩
     · rw [h]

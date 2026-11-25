@@ -141,7 +141,7 @@ theorem scalar_core (n : ℕ) (hn : 2 ≤ n) (ρ μ a : Fin n → ℂ) (b : Fin 
   have c2 : ∀ p : ℂ[X], (X * p).coeff 2 = p.coeff 1 := fun p => coeff_X_mul p 1
   rw [c1] at k1
   rw [c2] at k2
-  simp only [Polynomial.finsetSum_coeff, coeff_C_mul, (rev_coeff _ _).1, (rev_coeff _ _).2.1, le_refl, if_true,
+  simp only [Polynomial.finsetSum_coeff, coeff_C_mul, (rev_coeff _ _).1, (rev_coeff _ _).2.1, le_refl, ite_true,
     Nat.sub_self, mul_one] at k1 k2
   norm_num at k1 k2
   constructor
@@ -164,7 +164,7 @@ theorem sum_sq_split {A : Type} [AddCommGroup A] {n : ℕ} (F : Fin n → Fin n 
     · simp [h]
     · simp [h, h.ne', h.not_gt]
   rw [sum_congr rfl fun i _ => sum_congr rfl fun j _ => h1 i j]
-  simp only [sum_add_distrib, sum_filter, sum_ite_eq, mem_univ, if_true]
+  simp only [sum_add_distrib, sum_filter, sum_ite_eq, mem_univ, ite_true]
   rw [add_assoc, sum_comm (f := fun i j => if j < i then F i j else 0)]
 
 theorem sum_diff {A : Type} [AddCommGroup A] [Module ℂ A] {n : ℕ} (x : Fin n → A) :
@@ -196,7 +196,7 @@ theorem sq_sub_cas {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fin n → 
   have hij : i ≠ j := (mem_filter.1 hj).2.ne
   have h1 := hE i j j i
   have h2 := hE i i j j
-  simp only [if_true, hij, hij.symm, if_false, sub_zero] at h1 h2
+  simp only [ite_true, hij, hij.symm, ite_false, sub_zero] at h1 h2
   rw [two_smul, ← h1, ← sub_eq_zero.1 h2]
   abel
 

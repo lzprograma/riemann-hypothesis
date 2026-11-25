@@ -46,7 +46,7 @@ theorem support_subset_physicalModes {ε : Fin n → Bool} {z : TensorProduct �
     have : LinearMap.lTensor W (cmFock x.1 x.2) z = 0 := h0
     rw [this, map_zero]
   have h2 := congrArg (tcoef ((fockBasis n).coord s)) h1
-  rw [tcoef_lTensor, gc_coord_num x s, if_pos hm, one_smul, map_zero] at h2
+  rw [tcoef_lTensor, gc_coord_num x s, ite_eq_left hm, one_smul, map_zero] at h2
   exact hs h2
 
 theorem signedAction_tensor (ε : Fin n → Bool) (a b : Fin n) :

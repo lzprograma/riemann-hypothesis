@@ -17,8 +17,6 @@ namespace Formalism.L2.SG.Pf.Carrier.JointQuot
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.Carrier.JointPf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def OkPt (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) : Prop :=
@@ -108,12 +106,6 @@ private theorem norm_tensU_eq_prod_norm (X : Formalism.L2.SG.HidaSetting.HidaSet
   have h3 : ‖X.tensU u x‖ ^ 2 = (∏ v, ‖x v‖) ^ 2 := by exact_mod_cast h2
   exact (pow_left_inj₀ (norm_nonneg _) (Finset.prod_nonneg fun v _ => norm_nonneg _) two_ne_zero).1 h3
 
-private theorem norm_rk1_eq_mul_norm {V V' : Type*} [NormedAddCommGroup V] [InnerProductSpace ℂ V]
-    [NormedAddCommGroup V'] [InnerProductSpace ℂ V'] (a : V) (b : V') :
-    ‖TermOp.rk1 a b‖ = ‖b‖ * ‖a‖ := by
-  unfold TermOp.rk1
-  rw [ContinuousLinearMap.norm_smulRight_apply, innerSL_apply_norm]
-
 private theorem eq_of_inner_tensU_eq (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u : D.what₂.Word)
     (a b : X.Vpi u) (hab : ∀ z, inner ℂ (X.tensU u z) a = inner ℂ (X.tensU u z) b) : a = b := by
   have hsub : ∀ c ∈ Submodule.span ℂ (Set.range (X.tensU u)), inner ℂ c (a - b) = 0 := by
@@ -173,8 +165,8 @@ theorem oo_eq_tens (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.wha
   have hnormf : ∀ x : X.B.I.Ginf, ‖TermOp.rk1 (X.Wu u x) (X.Wu u' (γ⁻¹ * x))‖ =
       ∏ v, ‖TermOp.rk1 (X.Wloc u v (x v)) (X.Wloc u' v ((γ v)⁻¹ * x v))‖ := by
     intro x
-    simp only [norm_rk1_eq_mul_norm, X.Wu_tens, norm_tensU_eq_prod_norm, Pi.mul_apply, Pi.inv_apply,
-      Finset.prod_mul_distrib]
+    simp only [TermOp.rk1, ContinuousLinearMap.norm_smulRight_apply, innerSL_apply_norm,
+      X.Wu_tens, norm_tensU_eq_prod_norm, Pi.mul_apply, Pi.inv_apply, Finset.prod_mul_distrib]
   have hmeasf : AEStronglyMeasurable (fun x : X.B.I.Ginf => TermOp.rk1 (X.Wu u x) (X.Wu u' (γ⁻¹ * x)))
       (Measure.pi ν) := hcont.aestronglyMeasurable
   apply eq_of_inner_tensU_eq X u

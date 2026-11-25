@@ -22,10 +22,6 @@ def ChartKernel.Statement : Prop :=
     IsProjPrime I → linForm t ∉ I →
       RingHom.ker (algebraMap (MvPolynomial (Fin e × Fin n) F) (ChartInc I t e)) = incIdeal I e
 
-section Inhabitants
-
-end Inhabitants
-
 end
 
 end GroundTheory.Heights₂.Heights

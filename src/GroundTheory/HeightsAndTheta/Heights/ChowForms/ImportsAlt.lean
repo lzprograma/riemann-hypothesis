@@ -19,10 +19,6 @@ def AffineChartTrdeg.Statement : Prop :=
       Algebra.trdeg F (Algebra.adjoin F (Set.range fun m => genPt P m * (genPt P j)⁻¹)) =
         ((d : ℕ) : Cardinal)
 
-section Inhabitants
-
-end Inhabitants
-
 end
 
 end GroundTheory.Heights₂.Heights

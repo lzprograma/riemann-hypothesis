@@ -6,6 +6,7 @@ public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankP
 import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
 import Formalism.SharpRestriction.CuspSpanNormBounds.OscillatoryIntegralBounds
 import Mathlib.Algebra.Ring.IsFormallyReal
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.MemInvCoeIdeal
 
 @[expose] public section
 
@@ -14,8 +15,6 @@ noncomputable section
 namespace Formalism.L2.SG.WConst
 
 open Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.RealObj Formalism.MainNotions.S.LocalSplitGroups
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Blocks
 
@@ -209,14 +208,7 @@ theorem isPtL_of_ptOfList {p : Formalism.FourierDecayAlt.TB.Pt D.host.E} {w : Po
   · exact absurd hp (by simp)
 
 theorem ne_zero_of_totPos {x : D.host.E} (h : TotPos x) : x ≠ 0 := by
-  intro hx
-  have hne : Nonempty D.what₂.Tau := by
-    rw [← Fintype.card_pos_iff, D.what₂.card_Tau]
-    exact Formalism.MainNotions.InterlacingSignCuts.f_pos D
-  obtain ⟨τ⟩ := hne
-  have h1 := h τ
-  rw [hx, map_zero] at h1
-  simp at h1
+  apply _root_.Formalism.L2.SG.Pf.Cnt.R3.totPos_ne <;> assumption
 
 theorem weightConstC_of {sc : ℝ} {i0 i0' : ∀ _ : InfinitePlace X.B.I.F, Fin D.R.k} (c : ℝ)
     (hPR : PtRepExists X u u' sc i0 i0') (hE : EligTotPos X Y u u') :

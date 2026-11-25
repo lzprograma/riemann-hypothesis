@@ -4,52 +4,8 @@ import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.O
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FundamentalEquivalence.LevelIntersectParabolic
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Measures
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.IsCompactSpanRange
 
 @[expose] public section
 
@@ -77,61 +33,13 @@ section Lat
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   [FiniteDimensional F E] (v : HeightOneSpectrum (𝓞 F)) {n : ℕ}
 
-def ratAdd : (Fin n → E) →+ (Fin n → Fv F v ⊗[F] E) :=
-  AddMonoidHom.compLeft (inclR (F := F) (Fv F v) : E →+* Fv F v ⊗[F] E).toAddMonoidHom (Fin n)
-
 theorem smul_mem_latLoc (Λ : Set (Fin n → E)) {c : Fv F v} (hc : c ∈ v.adicCompletionIntegers F)
     {y : Fin n → Fv F v ⊗[F] E} (hy : y ∈ latLoc (E := E) v Λ) : c • y ∈ latLoc (E := E) v Λ :=
   (latLoc (E := E) v Λ).smul_mem (⟨c, hc⟩ : v.adicCompletionIntegers F) hy
 
 theorem isCompact_latLoc (L : Submodule (𝓞 E) (Fin n → E)) (hfg : L.FG) :
-    IsCompact (latLoc (E := E) v (L : Set (Fin n → E)) : Set (Fin n → Fv F v ⊗[F] E)) := by
-  classical
-  have : CompactSpace (v.adicCompletionIntegers F) :=
-    isCompact_iff_compactSpace.mp (isCompact_adicCompletionIntegers F v)
-  have : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.mpr hfg
-  have : Module.Finite ℤ L := Module.Finite.trans (𝓞 E) L
-  obtain ⟨s, hs⟩ := Module.Finite.fg_top (R := ℤ) (M := L)
-  let g : s → (Fin n → Fv F v ⊗[F] E) := fun i => ratV (F := F) (Fv F v) ((i.1 : L) : Fin n → E)
-  let f : (s → v.adicCompletionIntegers F) → (Fin n → Fv F v ⊗[F] E) :=
-    fun c => ∑ i, ((c i : v.adicCompletionIntegers F) : Fv F v) • g i
-  have hf : Continuous f := by
-    refine continuous_finsetSum _ fun i _ => ?_
-    have hi : Continuous fun c : (s → v.adicCompletionIntegers F) =>
-        ((c i : v.adicCompletionIntegers F) : Fv F v) := (continuous_apply i).subtype_val
-    exact hi.smul (continuous_const : Continuous fun _ : (s → v.adicCompletionIntegers F) => g i)
-  have hle : latLoc (E := E) v (L : Set (Fin n → E)) ≤
-      Submodule.span (v.adicCompletionIntegers F) (Set.range g) := by
-    apply Submodule.span_le.mpr
-    rintro _ ⟨l, hl, rfl⟩
-    have key : ∀ x : L, x ∈ Submodule.span ℤ (s : Set L) →
-        ratAdd v (x : Fin n → E) ∈ Submodule.span (v.adicCompletionIntegers F) (Set.range g) := by
-      intro x hx
-      induction hx using Submodule.span_induction with
-      | mem x hx => exact Submodule.subset_span ⟨⟨x, hx⟩, rfl⟩
-      | zero =>
-        show ratAdd v ((0 : L) : Fin n → E) ∈ _
-        simp
-      | add x y _ _ hx hy =>
-        show ratAdd v ((x + y : L) : Fin n → E) ∈ _
-        rw [Submodule.coe_add, map_add (f := _)]
-        exact Submodule.add_mem _ hx hy
-      | smul k x _ hx =>
-        show ratAdd v ((k • x : L) : Fin n → E) ∈ _
-        rw [Submodule.coe_smul_of_tower, map_zsmul]
-        exact zsmul_mem hx k
-    exact key ⟨l, hl⟩ (hs ▸ Submodule.mem_top)
-  have e : (latLoc (E := E) v (L : Set (Fin n → E)) : Set (Fin n → Fv F v ⊗[F] E)) = Set.range f := by
-    ext y
-    constructor
-    · intro hy
-      obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun _).mp (hle hy)
-      exact ⟨c, hc⟩
-    · rintro ⟨c, rfl⟩
-      refine Submodule.sum_mem _ fun i _ => smul_mem_latLoc v _ (c i).2 ?_
-      exact Submodule.subset_span ⟨_, (i.1 : L).2, rfl⟩
-  rw [e]
-  exact isCompact_range hf
+    IsCompact (latLoc (E := E) v (L : Set (Fin n → E)) : Set (Fin n → Fv F v ⊗[F] E)) :=
+  PI.OmLocU.isCompact_latLoc v _ ⟨L, Submodule.IsLattice.of_fg E hfg, rfl⟩
 
 theorem one_tmul_intCast_mul (N : ℤ) (e : E) :
     (1 : Fv F v) ⊗ₜ[F] ((N : E) * e) = (N : Fv F v) ⊗ₜ[F] e := by

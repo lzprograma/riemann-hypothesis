@@ -20,17 +20,9 @@ open Filter Topology
 namespace InjectiveHolomorphicInverse
 
 theorem analyticAt_of_differentiableOn {k : ℕ} {U : Set (Fin k → ℂ)} {f : (Fin k → ℂ) → Fin k → ℂ}
-    (hU : IsOpen U) (hf : DifferentiableOn ℂ f U) {x : Fin k → ℂ} (hx : x ∈ U) : AnalyticAt ℂ f x := by
-  refine AnalyticAt.pi fun i => ?_
-  refine analyticOnNhd_of_continuousOn_of_separately hU
-    ((continuous_apply i).comp_continuousOn hf.continuousOn) (fun z hz j => ?_) x hx
-  have hfz : DifferentiableAt ℂ (fun w => f w i) z :=
-    differentiableAt_pi.mp (hf.differentiableAt (hU.mem_nhds hz)) i
-  have hu : DifferentiableAt ℂ (Function.update z j) (z j) :=
-    (hasFDerivAt_update z (z j)).differentiableAt
-  have hfz' : DifferentiableAt ℂ (fun w => f w i) (Function.update z j (z j)) := by
-    rwa [Function.update_eq_self]
-  exact hfz'.comp (z j) hu
+    (hU : IsOpen U) (hf : DifferentiableOn ℂ f U) {x : Fin k → ℂ} (hx : x ∈ U) : AnalyticAt ℂ f x :=
+  AnalyticAt.pi fun i =>
+    ReciprocityTheory.AnForm.Osgood.osgood k U (fun w => f w i) hU (differentiableOn_pi.1 hf i) x hx
 
 theorem exists_equiv (hJ : InjectiveHolomorphicJacobianNeZero.Statement) {k : ℕ} {U : Set (Fin k → ℂ)}
     {f : (Fin k → ℂ) → Fin k → ℂ} (hU : IsOpen U) (hf : DifferentiableOn ℂ f U) (hinj : Set.InjOn f U)

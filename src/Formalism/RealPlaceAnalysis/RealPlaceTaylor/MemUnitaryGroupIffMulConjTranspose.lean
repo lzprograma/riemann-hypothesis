@@ -1,48 +1,9 @@
 module
 
 public import Formalism.RealPlaceAnalysis.Complexify
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Analysis.CStarAlgebra.Matrix
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 public import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -52,30 +13,15 @@ noncomputable section
 
 namespace Formalism.REAL
 
-private lemma Jm_mul_self_eq_oneRealPlaceTaylor {n : ℕ} (ε : Fin n → Bool) : Jm ε * Jm ε = 1 := by
-  unfold Jm
-  rw [diagonal_mul_diagonal, ← diagonal_one]
-  congr 1
-  funext a
-  split_ifs <;> norm_num
-
-private lemma Jm_conjTranspose_eq {n : ℕ} (ε : Fin n → Bool) : (Jm ε)ᴴ = Jm ε := by
-  unfold Jm
-  rw [diagonal_conjTranspose]
-  congr 1
-  funext a
-  rw [Pi.star_apply]
-  split_ifs <;> simp
-
 lemma f1alg_isUnit_J {n : ℕ} (ε : Fin n → Bool) : IsUnit (Jm ε) :=
-  ⟨⟨Jm ε, Jm ε, Jm_mul_self_eq_oneRealPlaceTaylor ε, Jm_mul_self_eq_oneRealPlaceTaylor ε⟩, rfl⟩
+  ⟨⟨Jm ε, Jm ε, Jm_mul_self ε, Jm_mul_self ε⟩, rfl⟩
 
 lemma f1alg_inv_J {n : ℕ} (ε : Fin n → Bool) : (Jm ε)⁻¹ = Jm ε :=
-  Matrix.inv_eq_left_inv (Jm_mul_self_eq_oneRealPlaceTaylor ε)
+  Matrix.inv_eq_left_inv (Jm_mul_self ε)
 
 lemma f1alg_JJ_left {n : ℕ} (ε : Fin n → Bool) (A : Matrix (Fin n) (Fin n) ℂ) :
     Jm ε * (Jm ε * A) = A := by
-  rw [← Matrix.mul_assoc, Jm_mul_self_eq_oneRealPlaceTaylor, Matrix.one_mul]
+  rw [← Matrix.mul_assoc, Jm_mul_self, Matrix.one_mul]
 
 lemma f1alg_comm_iff {n : ℕ} (ε : Fin n → Bool) (A : Matrix (Fin n) (Fin n) ℂ) :
     A * Jm ε = Jm ε * A ↔ Jm ε * A * Jm ε = A := by
@@ -84,7 +30,7 @@ lemma f1alg_comm_iff {n : ℕ} (ε : Fin n → Bool) (A : Matrix (Fin n) (Fin n)
     rw [Matrix.mul_assoc, h, f1alg_JJ_left]
   · intro h
     calc A * Jm ε = (Jm ε * A * Jm ε) * Jm ε := by rw [h]
-      _ = Jm ε * A := by rw [Matrix.mul_assoc, Jm_mul_self_eq_oneRealPlaceTaylor, Matrix.mul_one]
+      _ = Jm ε * A := by rw [Matrix.mul_assoc, Jm_mul_self, Matrix.mul_one]
 
 lemma f1alg_anti_iff {n : ℕ} (ε : Fin n → Bool) (A : Matrix (Fin n) (Fin n) ℂ) :
     A * Jm ε = -(Jm ε * A) ↔ Jm ε * A * Jm ε = -A := by
@@ -93,7 +39,7 @@ lemma f1alg_anti_iff {n : ℕ} (ε : Fin n → Bool) (A : Matrix (Fin n) (Fin n)
     rw [Matrix.mul_assoc, h, Matrix.mul_neg, f1alg_JJ_left]
   · intro h
     calc A * Jm ε = -(Jm ε * A * Jm ε) * Jm ε := by rw [h, neg_neg]
-      _ = -(Jm ε * A) := by rw [Matrix.neg_mul, Matrix.mul_assoc, Jm_mul_self_eq_oneRealPlaceTaylor, Matrix.mul_one]
+      _ = -(Jm ε * A) := by rw [Matrix.neg_mul, Matrix.mul_assoc, Jm_mul_self, Matrix.mul_one]
 
 lemma f1alg_inG_iff {n : ℕ} (ε : Fin n → Bool) (X : Matrix (Fin n) (Fin n) ℂ) :
     inG ε X ↔ Xᴴ = -(Jm ε * X * Jm ε) := by
@@ -101,10 +47,10 @@ lemma f1alg_inG_iff {n : ℕ} (ε : Fin n → Bool) (X : Matrix (Fin n) (Fin n) 
   constructor
   · intro h
     have h' : Xᴴ * Jm ε = -(Jm ε * X) := eq_neg_of_add_eq_zero_left h
-    calc Xᴴ = Xᴴ * Jm ε * Jm ε := by rw [Matrix.mul_assoc, Jm_mul_self_eq_oneRealPlaceTaylor, Matrix.mul_one]
+    calc Xᴴ = Xᴴ * Jm ε * Jm ε := by rw [Matrix.mul_assoc, Jm_mul_self, Matrix.mul_one]
       _ = -(Jm ε * X * Jm ε) := by rw [h', Matrix.neg_mul]
   · intro h
-    rw [h, Matrix.neg_mul, Matrix.mul_assoc, Matrix.mul_assoc, Jm_mul_self_eq_oneRealPlaceTaylor, Matrix.mul_one, neg_add_cancel]
+    rw [h, Matrix.neg_mul, Matrix.mul_assoc, Matrix.mul_assoc, Jm_mul_self, Matrix.mul_one, neg_add_cancel]
 
 lemma f1alg_inK_iff {n : ℕ} (ε : Fin n → Bool) (X : Matrix (Fin n) (Fin n) ℂ) :
     inK ε X ↔ Xᴴ = -X ∧ X * Jm ε = Jm ε * X := by
@@ -131,7 +77,7 @@ lemma f1alg_exp_inUJ {n : ℕ} (ε : Fin n → Bool) (Y : Matrix (Fin n) (Fin n)
   unfold inUJ
   have hY' : Yᴴ = Jm ε * (-Y) * Jm ε := by
     rw [(f1alg_inG_iff ε Y).mp hY, Matrix.mul_neg, Matrix.neg_mul]
-  let U : (Matrix (Fin n) (Fin n) ℂ)ˣ := ⟨Jm ε, Jm ε, Jm_mul_self_eq_oneRealPlaceTaylor ε, Jm_mul_self_eq_oneRealPlaceTaylor ε⟩
+  let U : (Matrix (Fin n) (Fin n) ℂ)ˣ := ⟨Jm ε, Jm ε, Jm_mul_self ε, Jm_mul_self ε⟩
   have hconj : NormedSpace.exp (Jm ε * (-Y) * Jm ε) = Jm ε * NormedSpace.exp (-Y) * Jm ε :=
     Matrix.exp_units_conj U (-Y)
   have hinv : NormedSpace.exp (-Y) * NormedSpace.exp Y = 1 := by
@@ -157,7 +103,7 @@ theorem exp_indefinite_unitary_holds : ExpUJ := by
 theorem indefinite_unitary_inv_closed : UJInv := by
   intro n ε g h
   have h2 : (Jm ε * gᴴ * Jm ε) * g = 1 := by
-    rw [Matrix.mul_assoc, Matrix.mul_assoc, ← Matrix.mul_assoc gᴴ, h, Jm_mul_self_eq_oneRealPlaceTaylor]
+    rw [Matrix.mul_assoc, Matrix.mul_assoc, ← Matrix.mul_assoc gᴴ, h, Jm_mul_self]
   exact ⟨mul_eq_one_comm.mp h2, h2⟩
 
 theorem one_parameter_subgroup_holds : OneParam := by
@@ -213,7 +159,7 @@ theorem maximal_compact_facts : KFacts := by
     exact IsCompact.of_isClosed_subset
       (isCompact_univ_pi fun _ => isCompact_univ_pi fun _ => isCompact_closedBall _ _) hcl hsub
   · refine ⟨?_, rfl⟩
-    rw [f1alg_unit_iff, Jm_conjTranspose_eq, Jm_mul_self_eq_oneRealPlaceTaylor]
+    rw [f1alg_unit_iff, Jm_conjTranspose, Jm_mul_self]
   · rintro X ⟨hG, hc⟩
     have hX : Xᴴ = -X := ((f1alg_inK_iff ε X).mp ⟨hG, hc⟩).1
     refine ⟨?_, ?_⟩

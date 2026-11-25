@@ -15,7 +15,6 @@ namespace Formalism.IndefR.Mi
 
 
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 attribute [-instance] CStarMatrix.instHMulOfFintypeOfMulOfAddCommMonoid
 
 variable {D : D7} {A T : HSp D} {ι : A.V →ₗ[D.host.E] T.V} {s : GA D A →* GA D T}

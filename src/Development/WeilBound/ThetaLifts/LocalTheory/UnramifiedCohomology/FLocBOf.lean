@@ -20,56 +20,11 @@ public import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedDeterminedB
 public import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
 public import Development.WeilBound.ThetaLifts.LeviDeterminants.ActsEx
 public import Development.WeilBound.ThetaLifts.LocalTheory.AdmissiblePureTensorSchwartz
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.Foundations.MeasurePreservingRmulQuotMeas
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
 import Development.WeilBound.ThetaLifts.TowerModels.LeviAd
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
 import Development.WeilBound.ThetaLifts.CartanFactorisation.TensOfEval
@@ -315,7 +270,6 @@ namespace US
 
 variable {n : ℕ} {X : Spc F E n}
 
-
 variable (σ X) in
 def uSub (v : Pl F) : Subgroup (UA σ X.J) where
   carrier := UAt σ X (evFin F v)
@@ -331,19 +285,6 @@ def uSub (v : Pl F) : Subgroup (UA σ X.J) where
 
 theorem kAt_eq (K : Subgroup (UA σ X.J)) (v : Pl F) : kAt K (evFin F v) = K ⊓ uSub σ X v :=
   congrArg (K ⊓ ·) (Subgroup.closure_eq (uSub σ X v))
-
-theorem kAt_mem {K : Subgroup (UA σ X.J)} {v : Pl F} (k : kAt K (evFin F v)) : k.1 ∈ UAt σ X (evFin F v) :=
-  ((kAt_eq K v).le k.2).2
-
-theorem kAt_compact {K : Subgroup (UA σ X.J)} (hK : IsCompact (K : Set (UA σ X.J))) (v : Pl F) : CompactSpace (kAt K (evFin F v)) := by
-  refine isCompact_iff_compactSpace.1 ?_
-  rw [kAt_eq, Subgroup.coe_inf]
-  refine hK.inter_right ?_
-  have : (uSub σ X v : Set (UA σ X.J)) = ⋂ u : AF F, ⋂ _ : evFin F v u = 0, {g | u • (mat g - 1) = 0} := by
-    ext g; simp only [Set.mem_iInter]; rfl
-  rw [this]
-  exact isClosed_iInter fun u => isClosed_iInter fun _ =>
-    isClosed_eq (((PositivityTheory.ThK.kc_cont_mat X.J).sub continuous_const).const_smul u) continuous_const
 
 end US
 
@@ -499,7 +440,6 @@ theorem part_comm {v : Pl F} {g : UA σ Y.J} (hg : g ∈ UAt σ Y (evFin F v)) (
     noncomm_ring)
   rw [← hc, mul_assoc, c4, hc]; group
 
-
 theorem kInv (hB : B.IsGood σ) (hY : Y.IsHerm σ B r s) (hH : H.IsAdapted σ B Y Y₁ i₀ i₁) {K : Subgroup (UA σ Y.J)}
     (hK : IsStab B K) (hI : Iwa H K) (v : Pl F) (μ : Measure (kAt K (evFin F v))) [μ.IsHaarMeasure] {f : UA σ Y.J → ℂ}
     (hf : ContinuousOn f (UAt σ Y (evFin F v)))
@@ -533,7 +473,7 @@ theorem kInv (hB : B.IsGood σ) (hY : Y.IsHerm σ B r s) (hH : H.IsAdapted σ B 
   haveI : BorelSpace (UA σ Y.J) := ⟨rfl⟩
   haveI : BorelSpace (UA σ Y₁.J) := ⟨rfl⟩
   haveI : BorelSpace (AE F E)ˣ := ⟨rfl⟩
-  haveI := US.kAt_compact hI.1 v
+  haveI := PositivityTheory.ThKG.Loc.Cone.Fin.kAt_compact hI.1 v
   obtain ⟨hG, act, ht, htc, ht1, htK, htP⟩ := htEx hB hY hH hI hpar.emb hu hL
   have ht0 : ∀ t : (AE F E)ˣ, absE F E t ≠ 0 := fun t => ((Group.isUnit t).map (absE F E)).ne_zero
   have ha := idem_mul_self v
@@ -545,7 +485,7 @@ theorem kInv (hB : B.IsGood σ) (hY : Y.IsHerm σ B r s) (hH : H.IsAdapted σ B 
   let π : K →* kAt K (evFin F v) := MonoidHom.mk' (fun k => ⟨partU ha k.1, partU_mem_kAt hK k.2 v⟩)
     fun a b => Subtype.ext (part_mul ha _ _)
   have πc : Continuous π := ((cont_part ha).comp continuous_subtype_val).subtype_mk _
-  have πs : Function.Surjective π := fun k => ⟨⟨k.1, k.2.1⟩, Subtype.ext (part_at (US.kAt_mem k))⟩
+  have πs : Function.Surjective π := fun k => ⟨⟨k.1, k.2.1⟩, Subtype.ext (part_at (PositivityTheory.ThKG.Loc.Cone.Fin.kAt_mem k))⟩
   obtain ⟨μK, _, c, hc⟩ := push hI.1 π πc πs μ
   have main := KInv.int ν μH Measure.haar hpar hR hI.1 μK hG hf' (fun p u t x => by
     have hl := part_levi ha (hL t u)
@@ -574,7 +514,7 @@ theorem kInv (hB : B.IsGood σ) (hY : Y.IsHerm σ B r s) (hH : H.IsAdapted σ B 
     exact mul_div_cancel_right₀ _ (htne _)
   have tr : ∀ g ∈ UAt σ Y (evFin F v), ∫ k, f (k.1 * g) ∂μ = c • ∫ k : K, f' (k.1 * g) ∂μK := fun g hg => by
     rw [hc (fun k => f (k.1 * g)) (hf.comp_continuous (continuous_subtype_val.mul continuous_const)
-      fun k => (US.uSub σ Y v).mul_mem (US.kAt_mem k) hg)]
+      fun k => (US.uSub σ Y v).mul_mem (PositivityTheory.ThKG.Loc.Cone.Fin.kAt_mem k) hg)]
     simp only [val g hg]
   have t1 := tr 1 (US.uSub σ Y v).one_mem
   simp only [mul_one] at t1
@@ -678,7 +618,7 @@ theorem tate' (hI : IdeleFub) (hJ : IdealId0) (hS : StabEx) {B : Base F E} {M : 
       ((cont_wt hν z).comp continuous_subtype_val).aestronglyMeasurable
       (ae_restrict_of_forall_mem (hG.isClosed_fiber 0).measurableSet.compl fun l hl => ?_)
     have := (hin v (l₀ * l).1).1 (e3 l ▸ hk _ hl)
-    rw [if_pos this, one_mul, norm_wt, norm_wt, Subgroup.coe_mul, map_mul, NNReal.coe_mul, mul_pow,
+    rw [ite_eq_left this, one_mul, norm_wt, norm_wt, Subgroup.coe_mul, map_mul, NNReal.coe_mul, mul_pow,
       inv_mul_cancel_left₀ (pow_pos h0 z).ne']
 
 theorem int_lin {α Y : Type} [MeasurableSpace α] (μ : Measure α) (G : α → Y → ℂ) (w : α → ℂ) (hf : (Set.range G).Finite)

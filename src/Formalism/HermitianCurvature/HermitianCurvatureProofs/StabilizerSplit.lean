@@ -8,55 +8,8 @@ public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GroupFactorizationH
 public import Mathlib.Algebra.Star.Basic
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerFlagSplitting.MulVecColOfMul
 public import Formalism.HermitianCurvature.FiniteOrderIntersectionInSmooth
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.TypeStar
 import Mathlib.Analysis.CStarAlgebra.CStarMatrix
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -83,11 +36,11 @@ private lemma mem_flagSpan_of_eq_zero_of_le {k r : ℕ} (z : Fin (2 * r + k + 1)
   refine Submodule.sum_mem _ (fun i _ => ?_)
   by_cases hi : a.val ≤ i.val
   · simp [hw i hi]
-  · push_neg at hi
+  · push Not at hi
     have hr : i.val < r := by omega
     refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨⟨⟨i.val, by omega⟩, Fin.lt_def.mpr hi⟩, ?_⟩)
     have hr' : (⟨i.val, by omega⟩ : Fin (r + 1)).val < r := hr
-    simp only [fvec, dif_pos hr']
+    simp only [fvec, dite_eq_left hr']
     congr 1
 
 private lemma mulVec_mem_flagSpan_of_fixes_fvec {k r : ℕ} (z : Fin (2 * r + k + 1) → ℂ) (a : Fin (r + 1))
@@ -132,7 +85,7 @@ theorem stabilizer_subgroup_flag : SubFlag := by
       unfold fvec
       split_ifs with ha
       · simp only [Matrix.mulVec, dotProduct, bvec, Pi.single_apply, mul_ite, mul_one, mul_zero,
-          Finset.sum_ite_eq', Finset.mem_univ, if_true]
+          Finset.sum_ite_eq', Finset.mem_univ, ite_true]
         exact hmc ⟨a.val, ha⟩ i hi
       · have hri : r ≤ i.val := by omega
         simp only [Matrix.mulVec, dotProduct]
@@ -142,7 +95,7 @@ theorem stabilizer_subgroup_flag : SubFlag := by
           · have hik : i.val ≤ r + k := by
               by_contra hc
               exact hzi (hz i (Or.inr (by omega)))
-            rw [hmd i i hri hik hri, if_pos rfl, one_mul]
+            rw [hmd i i hri hik hri, ite_eq_left rfl, one_mul]
         · intro j _ hji
           by_cases hzj : z j = 0
           · simp [hzj]
@@ -152,7 +105,7 @@ theorem stabilizer_subgroup_flag : SubFlag := by
             have h2 : j.val ≤ r + k := by
               by_contra hc
               exact hzj (hz j (Or.inr (by omega)))
-            rw [hmd i j h1 h2 hri, if_neg (Ne.symm hji), zero_mul]
+            rw [hmd i j h1 h2 hri, ite_eq_right (Ne.symm hji), zero_mul]
         · intro hi'
           exact absurd (Finset.mem_univ i) hi'
     have heq : (h * m) *ᵥ fvec k r z a - fvec k r z a =
@@ -186,23 +139,23 @@ def uOf (k r : ℕ) (g : B.Mat k r) : B.Mat k r :=
 lemma uOf_out_col {k r : ℕ} (g : B.Mat k r) (i j : Fin (2 * r + k + 1))
     (hj : j.val < r ∨ r + k < j.val) : uOf k r g i j = if i = j then 1 else 0 := by
   simp only [uOf, of_apply]
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 lemma uOf_out_row {k r : ℕ} (g : B.Mat k r) (i j : Fin (2 * r + k + 1))
     (hi : i.val < r ∨ r + k < i.val) : uOf k r g i j = if i = j then 1 else 0 := by
   simp only [uOf, of_apply]
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 lemma uOf_in {k r : ℕ} (g : B.Mat k r) (i j : Fin (2 * r + k + 1))
     (hi1 : r ≤ i.val) (hi2 : i.val ≤ r + k) (hj1 : r ≤ j.val) (hj2 : j.val ≤ r + k) :
     uOf k r g i j = g i j := by
   simp only [uOf, of_apply]
-  rw [if_pos ⟨⟨hi1, hi2⟩, hj1, hj2⟩]
+  rw [ite_eq_left ⟨⟨hi1, hi2⟩, hj1, hj2⟩]
 
 lemma uOf_W_out {k r : ℕ} (g : B.Mat k r) (i j : Fin (2 * r + k + 1))
     (hi1 : r ≤ i.val) (hi2 : i.val ≤ r + k) (hj : j.val < r ∨ r + k < j.val) :
     uOf k r g i j = 0 := by
-  rw [uOf_out_col g i j hj, if_neg]
+  rw [uOf_out_col g i j hj, ite_eq_right]
   intro h; subst h; omega
 
 lemma herm_entry {k r : ℕ} (A C : B.Mat k r) (i j : Fin (2 * r + k + 1)) :
@@ -222,7 +175,7 @@ lemma fix_col {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} {g : B.Mat k r} (hg 
     g i j = if i = j then 1 else 0 := by
   have h := congrFun (hg.2 ⟨j.val, by omega⟩) i
   have e : eI k r ⟨j.val, hj⟩ = j := Fin.ext rfl
-  simp only [fvec, dif_pos hj, e, mulVec_bvec] at h
+  simp only [fvec, dite_eq_left hj, e, mulVec_bvec] at h
   rw [h]; simp [bvec, Pi.single_apply]
 
 lemma isometry_fix_flagAnisotropicVector_of_fix_frame {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} {g : B.Mat k r} (hg : g ∈ FixSet k r z) :
@@ -237,14 +190,14 @@ lemma fix_zero {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} {g : B.Mat k r} (hg
   have har : a.val < r := by rw [ha, sig_hi k r i hi]; have := i.isLt; omega
   have e := congrFun (congrFun hU a) j
   rw [herm_entry, Finset.sum_eq_single a] at e
-  · rw [fix_col hg a har a, if_pos rfl, ha, sig_sig] at e
+  · rw [fix_col hg a har a, ite_eq_left rfl, ha, sig_sig] at e
     have hs : sgn k r (sig k r i) = 1 := by
-      unfold sgn; rw [if_neg]; rw [sig_hi k r i hi]; have := i.isLt; omega
-    rw [hs, star_one, one_mul, one_mul, Hpk_eq, if_neg] at e
+      unfold sgn; rw [ite_eq_right]; rw [sig_hi k r i hi]; have := i.isLt; omega
+    rw [hs, star_one, one_mul, one_mul, Hpk_eq, ite_eq_right] at e
     · exact e
     · rw [← ha, sig_sig]; intro h; subst h; omega
   · intro p _ hp
-    rw [fix_col hg a har p, if_neg hp, star_zero, zero_mul, zero_mul]
+    rw [fix_col hg a har p, ite_eq_right hp, star_zero, zero_mul, zero_mul]
   · intro h; exact absurd (Finset.mem_univ _) h
 
 lemma uOf_mem {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} {g : B.Mat k r} (hg : g ∈ FixSet k r z) :
@@ -259,31 +212,31 @@ lemma uOf_mem {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} {g : B.Mat k r} (hg 
       refine Finset.sum_congr rfl (fun p _ => ?_)
       by_cases hp : r ≤ p.val ∧ p.val ≤ r + k
       · rw [sig_mid k r p hp.1 hp.2, uOf_in g p i hp.1 hp.2 hi.1 hi.2, uOf_in g p j hp.1 hp.2 hj.1 hj.2]
-      · rw [uOf_out_row g p i (by omega), if_neg (by intro h; subst h; omega), star_zero, zero_mul,
+      · rw [uOf_out_row g p i (by omega), ite_eq_right (by intro h; subst h; omega), star_zero, zero_mul,
           zero_mul]
         rcases (show p.val < r ∨ r + k < p.val by omega) with hp' | hp'
         · rw [fix_zero hg (sig k r p) j (by rw [sig_lo k r p hp']; omega) hj.2, mul_zero]
         · rw [fix_zero hg p i hp' hi.2, star_zero, zero_mul, zero_mul]
     · rw [Finset.sum_eq_single (sig k r j)]
-      · rw [sig_sig, uOf_out_col g j j (by omega), if_pos rfl, mul_one]
+      · rw [sig_sig, uOf_out_col g j j (by omega), ite_eq_left rfl, mul_one]
         have hsj : (sig k r j).val < r ∨ r + k < (sig k r j).val := by
           have := j.isLt; rw [sig_val]; split_ifs <;> omega
-        rw [uOf_out_row g (sig k r j) i hsj, if_neg (by intro h; rw [← h] at hi; omega), star_zero,
-          zero_mul, Hpk_eq, if_neg]
+        rw [uOf_out_row g (sig k r j) i hsj, ite_eq_right (by intro h; rw [← h] at hi; omega), star_zero,
+          zero_mul, Hpk_eq, ite_eq_right]
         rw [sig_mid k r i hi.1 hi.2]; intro h; subst h; omega
       · intro p _ hp
-        rw [uOf_out_col g _ j (by omega), if_neg (by intro h; apply hp; rw [← h, sig_sig]), mul_zero]
+        rw [uOf_out_col g _ j (by omega), ite_eq_right (by intro h; apply hp; rw [← h, sig_sig]), mul_zero]
       · intro h; exact absurd (Finset.mem_univ _) h
   · rw [Finset.sum_eq_single i]
-    · rw [uOf_out_col g i i (by omega), if_pos rfl, star_one, one_mul]
+    · rw [uOf_out_col g i i (by omega), ite_eq_left rfl, star_one, one_mul]
       have hsi : (sig k r i).val < r ∨ r + k < (sig k r i).val := by
         have := i.isLt; rw [sig_val]; split_ifs <;> omega
       rw [uOf_out_row g (sig k r i) j hsi, Hpk_eq]
       by_cases h : sig k r i = j
-      · rw [if_pos h, if_pos h.symm, mul_one]
-      · rw [if_neg h, if_neg (Ne.symm h), mul_zero]
+      · rw [ite_eq_left h, ite_eq_left h.symm, mul_one]
+      · rw [ite_eq_right h, ite_eq_right (Ne.symm h), mul_zero]
     · intro p _ hp
-      rw [uOf_out_col g p i (by omega), if_neg hp, star_zero, zero_mul, zero_mul]
+      rw [uOf_out_col g p i (by omega), ite_eq_right hp, star_zero, zero_mul, zero_mul]
     · intro h; exact absurd (Finset.mem_univ _) h
 
 lemma uOf_fix_out {k r : ℕ} (g : B.Mat k r) (c : Fin (2 * r + k + 1))
@@ -304,9 +257,9 @@ lemma unipotent_part_fixes_vector {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} 
     · rw [hz l (by omega), mul_zero, mul_zero]
   · simp only [mulVec, dotProduct]
     rw [Finset.sum_eq_single i]
-    · rw [uOf_out_row g i i (by omega), if_pos rfl, one_mul]
+    · rw [uOf_out_row g i i (by omega), ite_eq_left rfl, one_mul]
     · intro l _ hl
-      rw [uOf_out_row g i l (by omega), if_neg (Ne.symm hl), zero_mul]
+      rw [uOf_out_row g i l (by omega), ite_eq_right (Ne.symm hl), zero_mul]
     · intro h; exact absurd (Finset.mem_univ _) h
 
 lemma uOf_UW {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) {g : B.Mat k r}
@@ -328,29 +281,29 @@ lemma uOf_yv {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} {g : B.Mat k r} (hg :
       intro l
       by_cases hl : r ≤ l.val ∧ l.val ≤ r + k
       · rw [uOf_in g i l hi.1 hi.2 hl.1 hl.2]
-        simp only [yv, if_neg (show ¬ l.val < r by omega)]
+        simp only [yv, ite_eq_right (show ¬ l.val < r by omega)]
         by_cases hlj : l = j
-        · subst hlj; rw [if_pos rfl, if_pos rfl, if_pos hl.1, mul_one]
-        · rw [if_neg hlj, if_neg hlj, mul_zero]
+        · subst hlj; rw [ite_eq_left rfl, ite_eq_left rfl, ite_eq_left hl.1, mul_one]
+        · rw [ite_eq_right hlj, ite_eq_right hlj, mul_zero]
       · rw [uOf_W_out g i l hi.1 hi.2 (by omega), zero_mul]
         by_cases hlj : l = j
-        · subst hlj; rw [if_pos rfl, if_neg (by omega)]
-        · rw [if_neg hlj]
-    rw [Finset.sum_congr rfl (fun l _ => key l), Finset.sum_ite_eq' Finset.univ j, if_pos (Finset.mem_univ _)]
+        · subst hlj; rw [ite_eq_left rfl, ite_eq_right (by omega)]
+        · rw [ite_eq_right hlj]
+    rw [Finset.sum_congr rfl (fun l _ => key l), Finset.sum_ite_eq' Finset.univ j, ite_eq_left (Finset.mem_univ _)]
     by_cases hjr : r ≤ j.val
-    · rw [if_pos hjr]
-    · rw [if_neg hjr, fix_col hg j (by omega) i, if_neg]; intro h; subst h; omega
+    · rw [ite_eq_left hjr]
+    · rw [ite_eq_right hjr, fix_col hg j (by omega) i, ite_eq_right]; intro h; subst h; omega
   · rw [Finset.sum_eq_single i]
-    · rw [uOf_out_row g i i (by omega), if_pos rfl, one_mul]
+    · rw [uOf_out_row g i i (by omega), ite_eq_left rfl, one_mul]
       simp only [yv]
       by_cases hir : i.val < r
-      · rw [if_pos hir]
-      · rw [if_neg hir, if_neg (by intro h; subst h; omega)]
+      · rw [ite_eq_left hir]
+      · rw [ite_eq_right hir, ite_eq_right (by intro h; subst h; omega)]
         by_cases hjr : j.val < r
-        · rw [fix_col hg j hjr i, if_neg (by intro h; subst h; omega)]
+        · rw [fix_col hg j hjr i, ite_eq_right (by intro h; subst h; omega)]
         · rw [fix_zero hg i j (by omega) hj]
     · intro l _ hl
-      rw [uOf_out_row g i l (by omega), if_neg (Ne.symm hl), zero_mul]
+      rw [uOf_out_row g i l (by omega), ite_eq_right (Ne.symm hl), zero_mul]
     · intro h; exact absurd (Finset.mem_univ _) h
 
 theorem fixed_point_subgroup : FixSub := by
@@ -378,12 +331,12 @@ theorem fixed_point_subgroup : FixSub := by
           nonsing_inv_mul _ hdet, one_mulVec]
       rw [hc]; simp only [yv]
       by_cases hir : i.val < r
-      · rw [if_pos hir, fix_col hg _ e i]
-      · rw [if_neg hir]
+      · rw [ite_eq_left hir, fix_col hg _ e i]
+      · rw [ite_eq_right hir]
     · have hc : ((uOf k r g)⁻¹ * g) i j = yv k r g j i := by
         rw [← congrFun (mulVec_bvec ((uOf k r g)⁻¹ * g) j) i, ← mulVec_mulVec,
           mulVec_bvec g, ← uOf_yv hg j h2, mulVec_mulVec, nonsing_inv_mul _ hdet, one_mulVec]
-      rw [hc]; simp only [yv, if_neg (show ¬ i.val < r by omega)]
+      rw [hc]; simp only [yv, ite_eq_right (show ¬ i.val < r by omega)]
   · rw [← Matrix.mul_assoc, mul_nonsing_inv _ hdet, Matrix.one_mul]
 
 end PI.StabSplit.FixW
@@ -422,7 +375,7 @@ lemma mulVec_bvec {m : ℕ} (A : Matrix (Fin m) (Fin m) ℂ) (j : Fin m) :
 
 lemma sig_gt {k r : ℕ} (i : Fin (2 * r + k + 1)) (h : i.val < r) : r + k < (sig k r i).val := by
   unfold sig
-  rw [if_pos (Or.inl h)]
+  rw [ite_eq_left (Or.inl h)]
   show r + k < 2 * r + k - i.val
   omega
 
@@ -431,35 +384,8 @@ lemma sig_ge {k r : ℕ} (i : Fin (2 * r + k + 1)) (h : i.val ≤ r + k) : r ≤
   split_ifs with h'
   · show r ≤ 2 * r + k - i.val
     omega
-  · push_neg at h'
+  · push Not at h'
     exact h'.1
-
-private lemma hpk_apply_of_outer_index (k r : ℕ) (i j : Fin (2 * r + k + 1)) :
-    Hpk k r i j = if j = sig k r i then sgn k r i else 0 := by
-  by_cases hi : i.val < r ∨ r + k < i.val
-  · have hsig : sig k r i = ⟨2 * r + k - i.val, by omega⟩ := by
-      unfold sig
-      rw [if_pos hi]
-    rw [hsig]
-    have hj : (j = (⟨2 * r + k - i.val, by omega⟩ : Fin (2 * r + k + 1))) ↔ i.val + j.val = 2 * r + k := by
-      rw [Fin.ext_iff]
-      simp only
-      omega
-    simp only [Hpk, sgn, hj]
-    split_ifs <;> first | rfl | (exfalso; omega)
-  · have hsig : sig k r i = i := by
-      unfold sig
-      rw [if_neg hi]
-    rw [hsig]
-    push_neg at hi
-    simp only [Hpk, sgn]
-    by_cases hij : j = i
-    · subst hij
-      simp only [if_true, and_true]
-      split_ifs <;> first | rfl | (exfalso; omega)
-    · have hij' : ¬ i = j := fun h => hij h.symm
-      simp only [hij, hij', if_false, and_false]
-      split_ifs <;> first | rfl | (exfalso; omega)
 
 lemma herm_coord {k r : ℕ} (v w : Fin (2 * r + k + 1) → ℂ) :
     herm (Hpk k r) v w = ∑ i, star (w i) * (sgn k r i * v (sig k r i)) := by
@@ -467,8 +393,8 @@ lemma herm_coord {k r : ℕ} (v w : Fin (2 * r + k + 1) → ℂ) :
   simp only [dotProduct, Pi.star_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   congr 1
-  simp only [Matrix.mulVec, dotProduct, hpk_apply_of_outer_index, ite_mul, zero_mul, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true]
+  simp only [Matrix.mulVec, dotProduct, _root_.Formalism.QuantumDeterminants.GBasic.Hpk_eq, ite_mul, zero_mul, Finset.sum_ite_eq',
+    Finset.mem_univ, ite_true]
 
 lemma star_dotProduct_Hpk_mulVec_eq_sum_sub {k r : ℕ} {v w : Fin (2 * r + k + 1) → ℂ} (hv : perpX k r v) (hw : perpX k r w) :
     herm (Hpk k r) v w =
@@ -478,7 +404,7 @@ lemma star_dotProduct_Hpk_mulVec_eq_sum_sub {k r : ℕ} {v w : Fin (2 * r + k + 
   split_ifs with h
   · have hs : sig k r i = i := by
       unfold sig
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
     rw [hs]
   · by_cases hi : i.val < r
     · rw [hv _ (sig_gt i hi)]
@@ -529,7 +455,7 @@ lemma herm_self_re {k r : ℕ} {w : Fin (2 * r + k + 1) → ℂ} (hw : perpX k r
     · have e : i = Lk k r := Fin.ext hi
       rw [e, hL]
       simp
-    · simp only [sgn, if_neg hi, one_mul]
+    · simp only [sgn, ite_eq_right hi, one_mul]
       rw [mul_comm, Complex.star_def, Complex.mul_conj, Complex.ofReal_re]
   · simp
 
@@ -595,7 +521,7 @@ lemma definite {k r : ℕ} {y z : Fin (2 * r + k + 1) → ℂ} (hy : perpX k r y
   · exact hy i hik
   · have hall := (Finset.sum_eq_zero_iff_of_nonneg (fun j _ => by
       split_ifs <;> [exact Complex.normSq_nonneg _; exact le_refl _])).mp hsum.symm i (Finset.mem_univ _)
-    rw [if_pos ⟨hi, by omega⟩] at hall
+    rw [ite_eq_left ⟨hi, by omega⟩] at hall
     exact Complex.normSq_eq_zero.mp hall
 
 lemma key {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0 < Tz k r z)
@@ -642,10 +568,10 @@ lemma m_perp {k r : ℕ} {m : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1))
   simp only [Pi.sub_apply, Matrix.mulVec, dotProduct]
   rw [Finset.sum_eq_single i (fun j _ hji => ?_) (fun h => absurd (Finset.mem_univ i) h), sub_eq_zero]
   · by_cases hik : i.val ≤ r + k
-    · rw [hm i i hik (Or.inr hi), if_pos rfl, one_mul]
+    · rw [hm i i hik (Or.inr hi), ite_eq_left rfl, one_mul]
     · rw [hv i (by omega), mul_zero]
   · by_cases hjk : j.val ≤ r + k
-    · rw [hm i j hjk (Or.inr hi), if_neg (Ne.symm hji), zero_mul]
+    · rw [hm i j hjk (Or.inr hi), ite_eq_right (Ne.symm hji), zero_mul]
     · rw [hv j (by omega), mul_zero]
 
 lemma inX_mem {k r : ℕ} {x : Fin (2 * r + k + 1) → ℂ} (hx : inX k r x) : x ∈ Xsp k r := by
@@ -656,9 +582,9 @@ lemma inX_mem {k r : ℕ} {x : Fin (2 * r + k + 1) → ℂ} (hx : inX k r x) : x
     by_cases hi : i.val < r
     · rw [Finset.sum_eq_single ⟨i.val, hi⟩]
       · have e : i = eI k r ⟨i.val, hi⟩ := Fin.ext rfl
-        rw [if_pos e, ← e]
+        rw [ite_eq_left e, ← e]
       · intro a _ ha
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h
         apply ha
         ext
@@ -672,7 +598,7 @@ lemma inX_mem {k r : ℕ} {x : Fin (2 * r + k + 1) → ℂ} (hx : inX k r x) : x
       symm
       apply Finset.sum_eq_zero
       intro a _
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       apply hi
       rw [h]
@@ -705,7 +631,7 @@ theorem nilpotent_orthogonal_complement : NPerp := by
         have hc : (eI k r ⟨2 * r + k - i.val, hir⟩).val < r ∨
             r + k < (eI k r ⟨2 * r + k - i.val, hir⟩).val := Or.inl hir
         unfold sig
-        rw [if_pos hc]
+        rw [ite_eq_left hc]
         apply Fin.ext
         show 2 * r + k - (2 * r + k - i.val) = i.val
         omega
@@ -714,7 +640,7 @@ theorem nilpotent_orthogonal_complement : NPerp := by
           show ¬ 2 * r + k - i.val = r + k
           omega
         unfold sgn
-        rw [if_neg hc]
+        rw [ite_eq_right hc]
       rw [hs, hsg] at h4
       simpa [bvec] using h4
     · intro j _ hj
@@ -738,8 +664,8 @@ theorem unipotent_nilpotent_radical : UnipN := by
   have row_out : ∀ i j, (i.val < r ∨ r + k < i.val) → (u * m) i j = m i j := by
     intro i j hi
     rw [Matrix.mul_apply, Finset.sum_eq_single i]
-    · rw [hb.2 i i hi, if_pos rfl, one_mul]
-    · intro l _ hl; rw [hb.2 i l hi, if_neg (Ne.symm hl), zero_mul]
+    · rw [hb.2 i i hi, ite_eq_left rfl, one_mul]
+    · intro l _ hl; rw [hb.2 i l hi, ite_eq_right (Ne.symm hl), zero_mul]
     · intro h; exact absurd (Finset.mem_univ _) h
   have xcol : ∀ i j : Fin (2 * r + k + 1), j.val < r → j.val ≤ i.val →
       (u * m) i j = if i = j then 1 else 0 := by
@@ -747,22 +673,22 @@ theorem unipotent_nilpotent_radical : UnipN := by
     by_cases hi : i.val < r ∨ r + k < i.val
     · rw [row_out i j hi]; exact hmc i j (by omega) (Or.inl hij)
     · have hne : i ≠ j := by intro h; subst h; omega
-      rw [if_neg hne, Matrix.mul_apply]
+      rw [ite_eq_right hne, Matrix.mul_apply]
       refine Finset.sum_eq_zero (fun l _ => ?_)
       by_cases hl : l.val < r ∨ r + k < l.val
-      · rw [hb.1 i l hl, if_neg (by intro h; subst h; omega), zero_mul]
-      · rw [hmc l j (by omega) (Or.inr (by omega)), if_neg (by intro h; subst h; omega), mul_zero]
+      · rw [hb.1 i l hl, ite_eq_right (by intro h; subst h; omega), zero_mul]
+      · rw [hmc l j (by omega) (Or.inr (by omega)), ite_eq_right (by intro h; subst h; omega), mul_zero]
   have u_fix : ∀ x, inX k r x → u *ᵥ x = x := by
     intro x hx
     ext i
     simp only [mulVec, dotProduct]
     rw [Finset.sum_eq_single i]
     · by_cases hi : i.val < r
-      · rw [hb.1 i i (Or.inl hi), if_pos rfl, one_mul]
+      · rw [hb.1 i i (Or.inl hi), ite_eq_left rfl, one_mul]
       · rw [hx i (by omega), mul_zero]
     · intro l _ hl
       by_cases hlr : l.val < r
-      · rw [hb.1 i l (Or.inl hlr), if_neg (Ne.symm hl), zero_mul]
+      · rw [hb.1 i l (Or.inl hlr), ite_eq_right (Ne.symm hl), zero_mul]
       · rw [hx l (by omega), mul_zero]
     · intro h; exact absurd (Finset.mem_univ _) h
   have hperp : ∀ v, perpX k r v → perpX k r ((u * m) *ᵥ v) := by
@@ -789,7 +715,7 @@ theorem unipotent_nilpotent_radical : UnipN := by
     have hbp : perpX k r (bvec j) := by
       intro l hl
       simp only [bvec, Pi.single_apply]
-      rw [if_neg]; intro h; subst h; omega
+      rw [ite_eq_right]; intro h; subst h; omega
     have h := hkey (bvec j) hbp (by rw [hp, zero_mulVec]) i hir
     rw [Pi.sub_apply, sub_eq_zero, mulVec_bvec] at h
     have h' : (u * m) i j = bvec j i := h

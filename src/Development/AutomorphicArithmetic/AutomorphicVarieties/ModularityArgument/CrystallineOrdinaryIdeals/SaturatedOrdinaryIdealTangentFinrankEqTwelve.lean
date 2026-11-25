@@ -110,13 +110,13 @@ private theorem sum_dim {E G : Type} [Field E] (S : Submodule E (G → Matrix (F
       · rw [(x j).2.2 g trivial a b hj, (y j).2.2 g trivial a b hj]
     · intro γ
       refine ⟨fun j => ⟨_, h (((j : ℕ) : ℤ) - 2) γ γ.2, fun g _ a b hab => ?_⟩, ?_⟩
-      · simp only [Matrix.of_apply, if_neg hab]
+      · simp only [Matrix.of_apply, ite_eq_right hab]
       · apply Subtype.ext
         funext g
         ext a b
         obtain ⟨j, hj⟩ := wt_cases a b
         rw [hval _ g a b j hj]
-        simp only [Matrix.of_apply, if_pos hj]
+        simp only [Matrix.of_apply, ite_eq_left hj]
   rw [← (LinearEquiv.ofBijective f hb).finrank_eq, Module.finrank_pi_fintype]
 
 theorem UpperTheory.finrank_local_cocycles_adjoint_unitaryThree_eq_twelve :
@@ -403,7 +403,7 @@ private theorem tangent (T : Submodule E (U.R →ₗ[O] E))
     rw [isLCr_iff r' h1', isLCr_iff (D.rz E) h1, ← crOn_top, ← crOn_top, hdeform,
       z1fDesc (MonoidHom.id _) (adRep (D.rz E)) D.HL γ hγ, had, MonoidHom.id_comp]
   have hinj : Function.Injective ((cochain D U E).domRestrict T) := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     rintro ⟨δ, hδ⟩ h0
     have h1 : ∀ g, (U.r.hom g).mat.map δ = 0 := fun g => by
       rw [← cochain_mul, show cochain D U E δ = 0 from h0, Pi.zero_apply, Matrix.zero_mul]

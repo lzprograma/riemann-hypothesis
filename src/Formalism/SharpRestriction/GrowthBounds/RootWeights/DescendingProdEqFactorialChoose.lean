@@ -1,52 +1,9 @@
 module
 
+import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.DividedPowerZeroOfGlActionZero
 public import Formalism.SharpRestriction.GrowthBounds.RootWeights.PolarizationDividedPowerSumSucc
 public import Formalism.SharpRestriction.GrowthBounds.RootWeights.StableSubspaceCompleteReducibility
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
 
 @[expose] public section
@@ -69,75 +26,9 @@ def polarizationTarget (LL : Letters ι) (a b : Fin n) (l : ι) : ι × Fin n :=
 
 def polarizationLetterSign (R : Type*) [CommRing R] (LL : Letters ι) (l : ι) : R := if LL.vec l then 1 else -1
 
-theorem polarizationSource_injective (LL : Letters ι) (a b : Fin n) : Function.Injective (polarizationSource LL a b) := by
-  intro l l' h
-  have h1 : ∀ l₀, (polarizationSource LL a b l₀).1 = l₀ := fun l₀ => by
-    unfold polarizationSource; split_ifs <;> rfl
-  rw [← h1 l, h, h1 l']
-
-theorem polarizationTarget_ne_source (LL : Letters ι) (a b : Fin n) (hab : a ≠ b) (l l' : ι) :
-    polarizationTarget LL a b l' ≠ polarizationSource LL a b l := by
-  intro h
-  have e1 : (polarizationTarget LL a b l').1 = l' := by unfold polarizationTarget; split_ifs <;> rfl
-  have e2 : (polarizationSource LL a b l).1 = l := by unfold polarizationSource; split_ifs <;> rfl
-  have hl : l' = l := by rw [← e1, h, e2]
-  subst hl
-  unfold polarizationTarget polarizationSource at h
-  split_ifs at h <;> simp only [Prod.mk.injEq] at h
-  · exact hab h.2
-  · exact hab h.2.symm
-
-open Classical in
-theorem glAct_eq_sum_polarizations (LL : Letters ι) (S : Set ι) (a b : Fin n) :
-    glAct R LL S a b = ∑ l ∈ Finset.univ.filter (· ∈ S),
-      polarizationDerivation (polarizationLetterSign R LL) (polarizationSource LL a b) (polarizationTarget LL a b) l := by
-  rw [glAct, Finset.sum_filter]
-  refine Finset.sum_congr rfl fun l _ => ?_
-  split_ifs <;> simp_all [polarizationDerivation, polarizationLetterSign, polarizationSource, polarizationTarget]
-
-open Classical in
-theorem divPowMono_eq_monomialSum (LL : Letters ι) (S : Set ι) (a b : Fin n) (k : ℕ) (m : ι × Fin n →₀ ℕ) :
-    divPowMono R LL S a b k m =
-      dividedPowerMonomialSum (polarizationLetterSign R LL) (polarizationSource LL a b) (polarizationTarget LL a b) (Finset.univ.filter (· ∈ S)) k m := by
-  unfold divPowMono dividedPowerMonomialSum
-  refine Finset.sum_congr rfl fun f hf => ?_
-  have hsub : f.support ⊆ Finset.univ.filter (· ∈ S) := (Finset.mem_finsuppAntidiag.1 hf).2
-  unfold dividedPowerMonomialTerm dividedPowerExponent dividedPowerCoefficient
-  congr 1
-  rw [← Finset.prod_subset hsub (f := fun l => polarizationLetterSign R LL l ^ f l *
-    ((m (polarizationSource LL a b l)).choose (f l) : R)) ?_]
-  · refine Finset.prod_congr rfl fun l _ => ?_
-    by_cases hv : LL.vec l <;> simp [polarizationLetterSign, polarizationSource, hv]
-  · intro l _ hl
-    rw [Finsupp.notMem_support_iff.1 hl]
-    simp
-
-theorem glAct_comp_divPow (LL : Letters ι) (S : Set ι) (a b : Fin n) (hab : a ≠ b) (k : ℕ) :
-    glAct R LL S a b ∘ₗ divPow R LL S a b k = (k + 1) • divPow R LL S a b (k + 1) := by
-  classical
-  refine (MvPolynomial.basisMonomials (ι × Fin n) R).ext fun m => ?_
-  rw [LinearMap.comp_apply, LinearMap.smul_apply]
-  simp only [divPow, Module.Basis.constr_basis]
-  rw [divPowMono_eq_monomialSum, divPowMono_eq_monomialSum, glAct_eq_sum_polarizations]
-  exact polarization_dividedPowerSum_succ _ _ _ (polarizationSource_injective LL a b) (polarizationTarget_ne_source LL a b hab) _ m k
-
-theorem divPow_zero' (LL : Letters ι) (S : Set ι) (a b : Fin n) : divPow R LL S a b 0 = LinearMap.id := by
-  classical
-  refine (MvPolynomial.basisMonomials (ι × Fin n) R).ext fun m => ?_
-  rw [LinearMap.id_apply]
-  simp only [divPow, Module.Basis.constr_basis]
-  rw [divPowMono_eq_monomialSum, dividedPowerMonomialSum_zero, MvPolynomial.coe_basisMonomials]
-
 theorem glAct_pow_eq_factorial_divPow (LL : Letters ι) (S : Set ι) (a b : Fin n) (hab : a ≠ b) (k : ℕ) :
     (glAct R LL S a b : Module.End R (MvPolynomial (ι × Fin n) R)) ^ k = k.factorial • divPow R LL S a b k := by
-  induction k with
-  | zero => rw [pow_zero, divPow_zero', Nat.factorial_zero, one_smul]; rfl
-  | succ k ih =>
-    rw [pow_succ', ih, Module.End.mul_eq_comp, LinearMap.comp_smul, glAct_comp_divPow LL S a b hab k,
-      smul_smul]
-    congr 1
-    rw [Nat.factorial_succ]
-    ring
+  apply _root_.Formalism.MainNotions.LemmaBAlt.gl_action_pow_eq_factorial_smul <;> assumption
 
 theorem X_mul_pderiv_monomial' {σ : Type*} (v : σ) (m : σ →₀ ℕ) (c : R) :
     X v * pderiv v (monomial m c) = ((m v : ℕ) : R) • monomial m c := by

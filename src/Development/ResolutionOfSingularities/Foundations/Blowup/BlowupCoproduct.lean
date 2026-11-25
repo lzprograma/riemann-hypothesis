@@ -6,47 +6,7 @@ public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBas
 public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupOpenCover
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
 public import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeCoproduct
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -219,9 +179,6 @@ theorem idealSheafData_ext_coprod {X Y : Scheme.{u}} (I J : (X ⨿ Y).IdealSheaf
     · exact ideal_image_eq_of_comap_eq (coprod.inl : X ⟶ X ⨿ Y) hl V
     · exact ideal_image_eq_of_comap_eq (coprod.inr : Y ⟶ X ⨿ Y) hr V
 
-private theorem base_comp_apply {U V W : Scheme.{u}} (f : U ⟶ V) (g : V ⟶ W) (x : U) :
-    (f ≫ g).base x = g.base (f.base x) := by simp
-
 private theorem range_fst_subset_range_inl {A B A' B' : Scheme.{u}} (p : A' ⟶ A) (q : B' ⟶ B)
     (s : PullbackCone (coprod.map p q) (coprod.inl : A ⟶ A ⨿ B)) :
     Set.range ⇑(PullbackCone.fst s).base ⊆ Set.range ⇑(coprod.inl : A' ⟶ A' ⨿ B').base := by
@@ -239,7 +196,7 @@ private theorem range_fst_subset_range_inl {A B A' B' : Scheme.{u}} (p : A' ⟶ 
       = q ≫ (coprod.inr : B ⟶ A ⨿ B) := by simp
   have e2 : (coprod.map p q).base ((coprod.inr : B' ⟶ A' ⨿ B').base b)
       = (coprod.inr : B ⟶ A ⨿ B).base (q.base b) := by
-    rw [← base_comp_apply, hmapr, base_comp_apply]
+    rw [← Scheme.Hom.comp_apply, hmapr, Scheme.Hom.comp_apply]
   have key : (coprod.map p q).base ((PullbackCone.fst s).base t)
       = (coprod.map p q).base ((coprod.inr : B' ⟶ A' ⨿ B').base b) := by rw [hb]
   have hfin : (coprod.inl : A ⟶ A ⨿ B).base ((PullbackCone.snd s).base t)
@@ -264,7 +221,7 @@ private theorem range_fst_subset_range_inr {A B A' B' : Scheme.{u}} (p : A' ⟶ 
       = p ≫ (coprod.inl : A ⟶ A ⨿ B) := by simp
   have e2 : (coprod.map p q).base ((coprod.inl : A' ⟶ A' ⨿ B').base a)
       = (coprod.inl : A ⟶ A ⨿ B).base (p.base a) := by
-    rw [← base_comp_apply, hmapl, base_comp_apply]
+    rw [← Scheme.Hom.comp_apply, hmapl, Scheme.Hom.comp_apply]
   have key : (coprod.map p q).base ((PullbackCone.fst s).base t)
       = (coprod.map p q).base ((coprod.inl : A' ⟶ A' ⨿ B').base a) := by rw [ha]
   have hfin : (coprod.inr : B ⟶ A ⨿ B).base ((PullbackCone.snd s).base t)
@@ -410,7 +367,7 @@ private theorem range_fst_subset_range_inl_of_isCompl {X A F : Scheme.{u}} (f : 
     have hc := congrArg (fun m : s.pt ⟶ X => m.base t) s.condition
     simpa using hc
   have e2 : (coprod.desc f g).base ((coprod.inr : F ⟶ A ⨿ F).base b) = g.base b := by
-    rw [← base_comp_apply, coprod.inr_desc]
+    rw [← Scheme.Hom.comp_apply, coprod.inr_desc]
   have hfin : U.ι.base ((PullbackCone.snd s).base t) = g.base b := by
     rw [← e1, ← hb]
     exact e2
@@ -472,10 +429,6 @@ theorem exists_iso_pullback_coprod_desc_left {X A F : Scheme.{u}} (f : A ⟶ X) 
   · rw [Iso.symm_inv]
     exact hpb.isoPullback_hom_fst
 
-private theorem range_opens_ι {X : Scheme.{u}} (U : X.Opens) :
-    Set.range ⇑U.ι.base = (U : Set ↥X) := by
-  simp
-
 private theorem notMem_of_isCompl {X : Scheme.{u}} {U V : X.Opens} (h : IsCompl U V)
     (x : ↥X) (hU : x ∈ (U : Set ↥X)) (hV : x ∈ (V : Set ↥X)) : False := by
   have h1 : U ⊓ V = ⊥ := h.inf_eq_bot
@@ -497,17 +450,17 @@ private theorem range_fst_subset_range_inr_of_isCompl {X A F : Scheme.{u}} (f : 
   have hc := congrArg (fun m : s.pt ⟶ X => m.base t) s.condition
   have e1 : (coprod.desc f g).base ((PullbackCone.fst s).base t)
       = V.ι.base ((PullbackCone.snd s).base t) := by
-    rw [← base_comp_apply, ← base_comp_apply]
+    rw [← Scheme.Hom.comp_apply, ← Scheme.Hom.comp_apply]
     exact hc
   have hd : (coprod.inl : A ⟶ A ⨿ F) ≫ coprod.desc f g = f := coprod.inl_desc f g
   have e2 : (coprod.desc f g).base ((coprod.inl : A ⟶ A ⨿ F).base a) = f.base a := by
-    rw [← base_comp_apply, hd]
+    rw [← Scheme.Hom.comp_apply, hd]
   have hfa : f.base a = V.ι.base ((PullbackCone.snd s).base t) := by
     rw [← e2, ha, e1]
   refine notMem_of_isCompl h (f.base a) ?_ ?_
-  · rw [← range_opens_ι U]
+  · rw [← AlgebraicGeometry.Scheme.Opens.range_ι U]
     exact hf (Set.mem_range_self a)
-  · rw [hfa, ← range_opens_ι V]
+  · rw [hfa, ← AlgebraicGeometry.Scheme.Opens.range_ι V]
     exact Set.mem_range_self _
 
 private theorem isPullback_inr_coprod_desc {X A F : Scheme.{u}} (f : A ⟶ X) (g : F ⟶ X)

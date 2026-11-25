@@ -47,7 +47,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf GlobalTheory.Unf.FB
 
 namespace GlobalTheory.Unf.FB.UniRad
@@ -92,27 +91,27 @@ theorem upSum_succ (U : Mx D (σ + 1) (σ + 1)) :
       ell D σ ⬝ᵥ (fun i => U (Fin.castSucc i) (Fin.last σ)) := by
   have h1 : ∀ j : Fin σ, ¬ (j.1 = σ + 1) := fun j => by omega
   have h2 : ¬ (σ = σ + 1) := by omega
-  simp only [upSum, ell, dotProduct, Fin.sum_univ_castSucc, Fin.coe_castSucc, Fin.val_last, h1, h2, if_false,
+  simp only [upSum, ell, dotProduct, Fin.sum_univ_castSucc, Fin.coe_castSucc, Fin.val_last, h1, h2, ite_false,
     Finset.sum_const_zero, add_zero, Finset.sum_add_distrib, ite_mul, one_mul, zero_mul]
   congr 1
   refine Finset.sum_congr rfl fun i _ => ?_
   by_cases h : σ = i.1 + 1
-  · rw [if_pos h, if_pos h.symm]
-  · rw [if_neg h, if_neg (Ne.symm h)]
+  · rw [ite_eq_left h, ite_eq_left h.symm]
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
 
 theorem besselFlagProjection_mul_fourierBesselBasePoint_apply (i : Fin σ) (k : Fin (σ + 1)) : (B.d.pX * x0 B) i k = if k = Fin.castSucc i then 1 else 0 := by
   refine Fin.lastCases ?_ (fun j => ?_) k
-  · rw [mul_fourierBesselBasePoint_last_column, Matrix.mulVec_mulVec, B.d.pX_j0, Matrix.zero_mulVec, if_neg (Fin.castSucc_lt_last i).ne']
+  · rw [mul_fourierBesselBasePoint_last_column, Matrix.mulVec_mulVec, B.d.pX_j0, Matrix.zero_mulVec, ite_eq_right (Fin.castSucc_lt_last i).ne']
     rfl
   · rw [mul_fourierBesselBasePoint_castSucc_column, B.d.pX_jX, Matrix.one_apply]
     by_cases h : i = j
     · subst h; simp
-    · rw [if_neg h, if_neg (fun e => h (Fin.castSucc_injective _ e).symm)]
+    · rw [ite_eq_right h, ite_eq_right (fun e => h (Fin.castSucc_injective _ e).symm)]
 
 theorem besselFlagProjection_mul_basePoint_mul_apply (U : Mx D (σ + 1) (σ + 1)) (i : Fin σ) (k : Fin (σ + 1)) :
     (B.d.pX * (x0 B * U)) i k = U (Fin.castSucc i) k := by
   rw [← Matrix.mul_assoc, Matrix.mul_apply]
-  simp only [besselFlagProjection_mul_fourierBesselBasePoint_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [besselFlagProjection_mul_fourierBesselBasePoint_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem simpleSum_eq_upSum {n : GA D B.V} {U : Mx D (σ + 1) (σ + 1)} (e : mt B.V n * x0 B = x0 B * U) :
     simpleSum B.d (vecB B.o B.ζ) n = upSum U := by
@@ -149,8 +148,7 @@ theorem vecB_ne : vecB B.o B.ζ ≠ 0 := by
 
 theorem exists_form : ∃ r₀ : Fin B.V₀.rank → D.host.E, ratV r₀ ⬝ᵥ ratV (vecB B.o B.ζ) = 1 := by
   obtain ⟨k, hk⟩ : ∃ k, vecB B.o B.ζ k ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact vecB_ne B (funext hc)
   refine ⟨Pi.single k (vecB B.o B.ζ k)⁻¹, ?_⟩
   rw [dotProduct, Finset.sum_eq_single k]

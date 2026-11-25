@@ -6,56 +6,8 @@ public import Formalism.FormalDegreeBessel.FinalG
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.ReverseCauchySchwarzHolds
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormBasics
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MajorantEstimate
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LinearChangeOfVariablesBis
 
@@ -85,7 +37,7 @@ lemma Hpk_fix_of_phi (y : Fin (2 * r + k + 1) → ℂ) (hy : phiL k r y = 0) : H
   have hsw : ∀ a : Fin r, y (eI k r a) = y (esI k r a) := by
     intro a
     have h := congrFun hy ⟨a.val, by omega⟩
-    simp only [phiL, LinearMap.coe_mk, AddHom.coe_mk, Pi.zero_apply, a.isLt, dif_pos] at h
+    simp only [phiL, LinearMap.coe_mk, AddHom.coe_mk, Pi.zero_apply, a.isLt, dite_eq_left] at h
     exact sub_eq_zero.1 h
   have hw : y ⟨r + k, by omega⟩ = 0 := by
     have h := congrFun hy ⟨r, by omega⟩
@@ -96,7 +48,7 @@ lemma Hpk_fix_of_phi (y : Fin (2 * r + k + 1) → ℂ) (hy : phiL k r y = 0) : H
   · rw [Finset.sum_eq_single (⟨2 * r + k - i.val, by omega⟩ : Fin (2 * r + k + 1))]
     · have e : Hpk k r i ⟨2 * r + k - i.val, by omega⟩ = 1 := by
         simp only [Hpk]
-        rw [if_pos ⟨hi, by show (i : ℕ) + (2 * r + k - i) = 2 * r + k; omega⟩]
+        rw [ite_eq_left ⟨hi, by show (i : ℕ) + (2 * r + k - i) = 2 * r + k; omega⟩]
       rw [e, one_mul]
       have := hsw ⟨i.val, hi⟩
       simp only [eI, esI] at this
@@ -110,7 +62,7 @@ lemma Hpk_fix_of_phi (y : Fin (2 * r + k + 1) → ℂ) (hy : phiL k r y = 0) : H
   · rw [Finset.sum_eq_single i]
     · have e : Hpk k r i i = 1 := by
         simp only [Hpk]
-        rw [if_neg (by omega), if_neg (by omega), if_pos ⟨hi, by omega, trivial⟩, if_neg (by omega)]
+        rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left ⟨hi, by omega, trivial⟩, ite_eq_right (by omega)]
       rw [e, one_mul]
     · intro b _ hb
       simp only [Hpk]
@@ -129,7 +81,7 @@ lemma Hpk_fix_of_phi (y : Fin (2 * r + k + 1) → ℂ) (hy : phiL k r y = 0) : H
     rw [Finset.sum_eq_single (⟨2 * r + k - i.val, by omega⟩ : Fin (2 * r + k + 1))]
     · have e : Hpk k r i ⟨2 * r + k - i.val, by omega⟩ = 1 := by
         simp only [Hpk]
-        rw [if_neg (by omega), if_pos ⟨hlt, by show (i : ℕ) + (2 * r + k - i) = 2 * r + k; omega⟩]
+        rw [ite_eq_right (by omega), ite_eq_left ⟨hlt, by show (i : ℕ) + (2 * r + k - i) = 2 * r + k; omega⟩]
       rw [e, one_mul]
       have := hsw ⟨2 * r + k - i.val, hlt⟩
       simp only [eI, esI] at this
@@ -228,8 +180,8 @@ theorem gram_independent_signature' : C2.GramIndependentSignature := by
       apply Finset.sum_congr rfl
       intro a _
       rw [Finset.sum_eq_single a]
-      · simp only [if_true]; congr 1; split_ifs <;> simp
-      · intro b _ hb; rw [if_neg (Ne.symm hb), zero_mul]
+      · simp only [ite_true]; congr 1; split_ifs <;> simp
+      · intro b _ hb; rw [ite_eq_right (Ne.symm hb), zero_mul]
       · simp
     rw [e, Complex.re_sum]
     apply Finset.sum_nonpos

@@ -40,17 +40,9 @@ theorem eulerCharQuot_self {E : Type v} [AddCommGroup E] [Module Ω E] [Module k
     infer_instance
   simp [Module.finrank_zero_of_subsingleton]
 
-theorem subSystem_ext {E : Type v} [AddCommGroup E] [Module Ω E] [Module k E] [IsScalarTower k Ω E]
-    {F G : SubSystem k x E} (h : ∀ I, F.sub I = G.sub I) : F = G := by
-  obtain ⟨sF, mF⟩ := F
-  obtain ⟨sG, mG⟩ := G
-  have : sF = sG := funext h
-  subst this
-  rfl
-
 theorem twist_idealSys_of_irrelevant (pp : Ideal (Poly k N)) (hpp : ∀ i, (X i : Poly k N) ∈ pp) (a : ℤ) :
     (twistSys k x a).twist (idealSys x pp) = twistSys k x a := by
-  refine subSystem_ext fun I => ?_
+  refine SubSystem.ext_sub fun I => ?_
   obtain ⟨i, hi⟩ := I.2.1
   have hxi : x i ≠ 0 := (mem_support x).mp (I.2.2 hi)
   have h1 : (1 : Ω) ∈ (idealSys x pp).sub I :=

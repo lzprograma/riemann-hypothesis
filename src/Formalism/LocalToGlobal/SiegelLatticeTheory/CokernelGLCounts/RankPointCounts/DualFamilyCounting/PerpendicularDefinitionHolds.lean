@@ -17,8 +17,6 @@ noncomputable section
 
 namespace Formalism.L2.SG.Pf.Cnt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace PairSpanDimension
 
 variable {D : Formalism.BasicNotions.D7}

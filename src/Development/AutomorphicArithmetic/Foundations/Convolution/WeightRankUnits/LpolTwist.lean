@@ -128,11 +128,11 @@ theorem UpperTheory.ConvolutionTheory.G3.cptInt :
     have ht' : t * locEl n w δ = locEl n w δ * thL n w t := ht
     generalize locEl n w δ = y at ht' ⊢
     by_cases hsp : IsSplitAt w
-    · have hθ1 : thL n w = MonoidHom.id _ := by unfold thL; rw [if_pos hsp]
-      have hn1 : nrmL n w y = y := by unfold nrmL; rw [if_pos hsp]
+    · have hθ1 : thL n w = MonoidHom.id _ := by unfold thL; rw [ite_eq_left hsp]
+      have hn1 : nrmL n w y = y := by unfold nrmL; rw [ite_eq_left hsp]
       rw [hn1]; rw [hθ1] at ht'; simpa using ht'
     · have hn1 : nrmL n w y = y * thL n w y := by
-        unfold nrmL; rw [if_neg hsp]; unfold thL; rw [if_neg hsp]
+        unfold nrmL; rw [ite_eq_right hsp]; unfold thL; rw [ite_eq_right hsp]
       rw [hn1]
       calc t * (y * thL n w y) = y * thL n w t * thL n w y := by rw [← mul_assoc, ht']
         _ = y * thL n w (t * y) := by simp only [map_mul, mul_assoc]
@@ -169,14 +169,14 @@ private theorem phi_mul_transpose {R : Type} [CommRing R] (a : ℕ) :
   simp only [Matrix.mul_apply, Matrix.transpose_apply, GlobalTheory.Tw.Phi, Matrix.of_apply, Matrix.one_apply]
   rw [Finset.sum_eq_single i.rev]
   · have h1 : (i : ℕ) + (i.rev : ℕ) + 1 = a := by rw [Fin.val_rev]; omega
-    rw [if_pos h1]
+    rw [ite_eq_left h1]
     by_cases h : i = k
     · subst h
-      rw [if_pos h1, if_pos rfl, ← mul_pow]
+      rw [ite_eq_left h1, ite_eq_left rfl, ← mul_pow]
       simp
-    · rw [if_neg (fun h2 => h (Fin.ext (by rw [Fin.val_rev] at h2; omega))), if_neg h, mul_zero]
+    · rw [ite_eq_right (fun h2 => h (Fin.ext (by rw [Fin.val_rev] at h2; omega))), ite_eq_right h, mul_zero]
   · intro j _ hj
-    rw [if_neg (fun h => hj (Fin.ext (by rw [Fin.val_rev]; omega))), zero_mul]
+    rw [ite_eq_right (fun h => hj (Fin.ext (by rw [Fin.val_rev]; omega))), zero_mul]
   · simp
 
 private theorem exists_scalar (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) :
@@ -184,8 +184,7 @@ private theorem exists_scalar (E : Type) [Field E] [NumberField E] [IsCMField E]
   rcases Nat.even_or_odd (n - 1) with h | h
   · exact ⟨1, one_ne_zero, by simp [h.neg_one_pow]⟩
   · have hx : ∃ x : E, IsCMField.complexConj E x ≠ x := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact IsCMField.complexConj_ne_one E (AlgEquiv.ext hc)
     obtain ⟨x, hx⟩ := hx
     refine ⟨x - IsCMField.complexConj E x, sub_ne_zero.mpr hx.symm, ?_⟩
@@ -239,7 +238,7 @@ theorem UpperTheory.ConvolutionTheory.G3.transl :
     rw [hL, hs, Matrix.transpose_smul, hm, Matrix.smul_mul, Matrix.mul_smul, hΦΦ, smul_smul, smul_smul,
       Units.val_one, mul_comm z, hc, one_smul]
   · intro w hw g
-    have ht : thL n w = thetaGL n (cj w) := by rw [thL, if_neg hw]
+    have ht : thL n w = thetaGL n (cj w) := by rw [thL, ite_eq_right hw]
     have hf : algebraMap E (w.adicCompletion E) z ≠ 0 := (_root_.map_ne_zero _).mpr hz0
     have h1 : (uMat n z hz0).val.map (algebraMap E (w.adicCompletion E)) =
         algebraMap E (w.adicCompletion E) z • GlobalTheory.Tw.Phi n (w.adicCompletion E) := by
@@ -279,26 +278,8 @@ private lemma val_le_one_ae (E : Type) [Field E] [NumberField E] (e : E) :
 private lemma mem_GLint {n : ℕ} {L : Type} [Field L] (O : Subring L) (g : GL (Fin n) L)
     (h₁ : ∀ i j, (g : Matrix (Fin n) (Fin n) L) i j ∈ O)
     (h₂ : ∀ i j, ((g⁻¹ : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) i j ∈ O) :
-    g ∈ GLint (Fin n) O := by
-  let A : Matrix (Fin n) (Fin n) O := fun i j => ⟨_, h₁ i j⟩
-  let B : Matrix (Fin n) (Fin n) O := fun i j => ⟨_, h₂ i j⟩
-  have hA : A.map O.subtype = (g : Matrix (Fin n) (Fin n) L) := by
-    ext i j; rfl
-  have hB : B.map O.subtype = ((g⁻¹ : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) := by
-    ext i j; rfl
-  have hinj : Function.Injective (fun M : Matrix (Fin n) (Fin n) O => M.map O.subtype) :=
-    Matrix.map_injective Subtype.val_injective
-  have hAB : A * B = 1 := hinj (by
-    show (A * B).map O.subtype = (1 : Matrix (Fin n) (Fin n) O).map O.subtype
-    rw [Matrix.map_mul, hA, hB, Matrix.map_one _ (map_zero _) (map_one _), ← Units.val_mul,
-      mul_inv_cancel, Units.val_one])
-  have hBA : B * A = 1 := hinj (by
-    show (B * A).map O.subtype = (1 : Matrix (Fin n) (Fin n) O).map O.subtype
-    rw [Matrix.map_mul, hA, hB, Matrix.map_one _ (map_zero _) (map_one _), ← Units.val_mul,
-      inv_mul_cancel, Units.val_one])
-  refine ⟨⟨A, B, hAB, hBA⟩, ?_⟩
-  refine Units.ext (Matrix.ext fun i j => ?_)
-  rfl
+    g ∈ GLint (Fin n) O :=
+  P.satake_mem_glint O g h₁ h₂
 
 theorem UpperTheory.eventually_map_mem_maximalCompactGL :
     ∀ (E : Type) [Field E] [NumberField E] (n : ℕ) (δ : GL (Fin n) E), ∀ᶠ w : Pl E in cofinite,
@@ -404,7 +385,7 @@ private theorem isGal_cE (c : O →+* O) (hc : ∀ x, c (c x) = x) (ω u : O) (h
     rw [pow_two, AlgEquiv.mul_apply, cE_apply, cE_apply, hc, AlgEquiv.one_apply]
   · refine ⟨2, ![-(c ω) * u, u], ![1, ω], fun j hj => ?_⟩
     interval_cases j
-    · simp only [Fin.sum_univ_two, pow_zero, AlgEquiv.one_apply, Matrix.cons_val_zero, Matrix.cons_val_one, if_true]
+    · simp only [Fin.sum_univ_two, pow_zero, AlgEquiv.one_apply, Matrix.cons_val_zero, Matrix.cons_val_one, ite_true]
       linear_combination hu
     · simp only [Fin.sum_univ_two, pow_one, cE_apply, Matrix.cons_val_zero, Matrix.cons_val_one, map_one]
       simp
@@ -1486,13 +1467,13 @@ theorem UpperTheory.unitary_involution_stabilizes_integral_at_nonsplit :
     intro a
     have e : nrmL n w (ι a) = ι a * thL n w (ι a) := by
       unfold nrmL thL
-      rw [if_neg hw, if_neg hw]
+      rw [ite_eq_right hw, ite_eq_right hw]
     rw [e, hthL, UpperTheory.G3.InertCase.th_mul, hu1]
     simp only [map_mul, map_inv, mul_assoc]
   have hloc : locEl n w δ = ι δ₀ := by
     rw [hδ₀]
     unfold locEl
-    rw [if_neg hw]
+    rw [ite_eq_right hw]
   have hcpmap : ∀ a : GL (Fin n) (Ov E w),
       (UpperTheory.ConvolutionTheory.D.cp (a * u₀ * UpperTheory.ConvolutionTheory.D.th c (a * u₀))).map (Ov E w).subtype =
         (nrmL n w (ι a)).val.charpoly := by
@@ -1758,7 +1739,7 @@ theorem _root_.UpperTheory.ConvolutionTheory.G3.unitAe : UnitAe := by
       (thL a w).prodMap (thL b w) k ∈ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)) :=
     fun k hk => Subgroup.mem_prod.2 ⟨hK₁ _ (Subgroup.mem_prod.1 hk).1, hK₂ _ (Subgroup.mem_prod.1 hk).2⟩
   by_cases ht : Tw (thL a w) (locEl a w δ₁) y₁ ∧ Tw (thL b w) (locEl b w δ₂) y₂
-  · rw [if_pos ht]
+  · rw [ite_eq_left ht]
     obtain ⟨⟨g₁, rfl⟩, ⟨g₂, rfl⟩⟩ := ht
     have e : ((g₁⁻¹ * locEl a w δ₁ * thL a w g₁, g₂⁻¹ * locEl b w δ₂ * thL b w g₂) : GLw a w × GLw b w) =
         (g₁, g₂)⁻¹ * (locEl a w δ₁, locEl b w δ₂) * (thL a w).prodMap (thL b w) (g₁, g₂) := rfl
@@ -1772,7 +1753,7 @@ theorem _root_.UpperTheory.ConvolutionTheory.G3.unitAe : UnitAe := by
       obtain ⟨k₂, hk₂, f₂⟩ := unit_uniq hU b w δ₂ i₂.2 z₂ hz'.2 ⟨x₂, e₂⟩
       exact ⟨(k₁, k₂), Subgroup.mem_prod.2 ⟨hk₁, hk₂⟩, Prod.ext f₁ f₂⟩
     · rw [OrbProd.twCent_prod, KapMul.cptPart_prod, c₁, c₂, OrbProd.prod_inf_prod]
-  · rw [if_neg ht]
+  · rw [ite_eq_right ht]
     refine orbZero _ _ _ _ _ fun z hz => ?_
     refine Set.indicator_of_notMem (fun hzK => ht ?_) _
     have hz' := Subgroup.mem_prod.1 hzK
@@ -1797,7 +1778,6 @@ section -- clump:auto
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 private theorem UpperTheory.ConvolutionTheory.G2.sum_one {G : Type} [Group G] (θ : G →* G) (S : Set G) (T : G → ℂ) (x₀ : G)
     (hS : ∀ g, g⁻¹ * x₀ * θ g ∈ S)
@@ -1816,16 +1796,16 @@ private theorem UpperTheory.ConvolutionTheory.G2.sum_one {G : Type} [Group G] (�
   rw [finsum_eq_single _ c₀]
   · obtain ⟨g, hg⟩ := hex _ _ ((hrep c₀).trans hc₀).symm
     have hm : c₀.rep ∈ S := hg ▸ hS g
-    rw [if_pos hm, hT _ hm, if_pos ⟨g, hg⟩]
+    rw [ite_eq_left hm, hT _ hm, ite_eq_left ⟨g, hg⟩]
     simp
   · intro c hc
     by_cases hm : c.rep ∈ S
-    · rw [if_pos hm, hT _ hm, if_neg, mul_zero]
+    · rw [ite_eq_left hm, hT _ hm, ite_eq_right, mul_zero]
       rintro ⟨g, hg⟩
       apply hc
       rw [← hrep c, hc₀]
       exact (Quot.sound ⟨g, hg⟩).symm
-    · rw [if_neg hm]
+    · rw [ite_eq_right hm]
 
 private theorem UpperTheory.ConvolutionTheory.G2.lpol_twist {E : Type} [Field E] [NumberField E] [IsCMField E] (hU : Unr E) (n : ℕ)
     (w : Pl E) (g y : GLw n w) :

@@ -193,8 +193,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
@@ -243,7 +241,7 @@ theorem sc_of (hN1 : ConnectionIntegrality) (hN2 : ConnectionCommutator) (hN3 : 
     by_contra hc
     apply hne
     unfold kapW
-    rw [if_pos ⟨hs, hs'⟩, h21 l l' (fun hh => hc hh.1), mul_zero]
+    rw [ite_eq_left ⟨hs, hs'⟩, h21 l l' (fun hh => hc hh.1), mul_zero]
   have hκJ : ∀ i j, kapE s (kapW m s ξh (fun l => (0, ψ l))) i j ∈ J := by
     intro i j
     unfold kapE kapW
@@ -303,7 +301,7 @@ theorem sc_of (hN1 : ConnectionIntegrality) (hN2 : ConnectionCommutator) (hN3 : 
       (fun i j => by
         rw [nablaL_bracket hN2 B h m]
         unfold kapE kapW
-        rw [if_pos ⟨side_inl s i, side_inr s j⟩])
+        rw [ite_eq_left ⟨side_inl s i, side_inr s j⟩])
       (fun i => by
         rw [Module.End.smul_def, opL, hb0]
         exact hN3 R d O k B h m _ f)

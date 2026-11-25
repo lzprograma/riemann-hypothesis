@@ -2,50 +2,15 @@ module
 
 public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.RightBilinearApply
 public import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.ExistsDecayBoundTwo
 public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.FiniteSupportOfHyp
 public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SigmaFinitePosRealMeasure
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
 import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
+import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.InvMulVecScalarMul
+import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.FinalH
 
 @[expose] public section
 
@@ -256,7 +221,7 @@ theorem hint1 {χ : HChar F} {c : HeightOneSpectrum (𝓞 F) → ℕ} (H : Hyp �
       _ ≤ ‖w1 g ((t, u), ⟨ξ, hξ⟩)‖ * K := norm_vecMul_le' _ _
       _ = K * ‖w1 g ((t, u), ⟨ξ, hξ⟩)‖ := mul_comm _ _
   have hkap : ‖kap1 χ c g ((t, u), ⟨ξ, hξ⟩)‖ ≤ (t : ℝ) := by
-    simp only [kap1, norm_mul, norm_inv, norm_hchar_of_finOrder H.fin, inv_one, mul_one, Complex.norm_real,
+    simp only [kap1, norm_mul, norm_inv, Esk.HyperbolicKernelContinuity.norm_omega H.fin, inv_one, mul_one, Complex.norm_real,
       Real.norm_of_nonneg t.2.le]
     exact mul_le_of_le_one_left t.2.le (norm_finRow_le c _)
   have hw' := inv_pow_le_of_le (norm_nonneg P) (norm_nonneg _) hK hPw k
@@ -279,7 +244,7 @@ theorem hint2 {χ : HChar F} {c : HeightOneSpectrum (𝓞 F) → ℕ} (H : Hyp �
   set C2 : Set (Ideles F) := (fun u : normOneSubgroup F => ((u : Ideles F))⁻¹) '' closure E with hC2def
   have hC2 : IsCompact C2 :=
     (isCompact_closure_normOneFundamentalDomain (K := F)).image continuous_subtype_val.inv
-  obtain ⟨d, hd0, hd⟩ := exists_den_col c (finite_support_of_hyp H) g hC
+  obtain ⟨d, hd0, hd⟩ := exists_den_col c (EisensteinIntegrability.finite_c H) g hC
   obtain ⟨k, U, hU, hdec⟩ := exists_decay_bound_two F hC2 d hd0 2
   set G := (g : Matrix (Fin 2) (Fin 2) (Ad F)).map (UpperTheory.V.TR.pInf F) with hG
   set G' := ((g⁻¹ : GA F 2) : Matrix (Fin 2) (Fin 2) (Ad F)).map (UpperTheory.V.TR.pInf F) with hG'
@@ -351,7 +316,7 @@ theorem hint2 {χ : HChar F} {c : HeightOneSpectrum (𝓞 F) → ℕ} (H : Hyp �
     calc ‖P‖ = ‖G *ᵥ w2 g ((t, u), ⟨ξ, hξ⟩)‖ := by rw [← e]
       _ ≤ K * ‖w2 g ((t, u), ⟨ξ, hξ⟩)‖ := norm_mulVec_le' _ _
   have hkap : ‖kap2 χ c g ((t, u), ⟨ξ, hξ⟩)‖ ≤ (t : ℝ)⁻¹ := by
-    simp only [kap2, norm_mul, norm_inv, norm_hchar_of_finOrder H.fin, inv_one, mul_one, Complex.norm_real,
+    simp only [kap2, norm_mul, norm_inv, Esk.HyperbolicKernelContinuity.norm_omega H.fin, inv_one, mul_one, Complex.norm_real,
       Real.norm_of_nonneg t.2.le]
     exact mul_le_of_le_one_left (inv_nonneg.2 t.2.le) (norm_finCol_le c _)
   have hw' := inv_pow_le_of_le (norm_nonneg P) (norm_nonneg _) hK hPw k

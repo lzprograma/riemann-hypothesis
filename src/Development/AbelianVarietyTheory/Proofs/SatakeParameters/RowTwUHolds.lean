@@ -29,50 +29,8 @@ public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PrimeOfLi
 public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.HasPartAnd
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CapLeWidth
 public import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.LocalBoundElevenComparison
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.MvPolynomial
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.RingTheory.PiTensorProduct
 import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.AllPlacesOfRestrictions
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HasSubstCoordZA
 import Std.Tactic.BVDecide.Normalize.BitVec
@@ -433,7 +391,7 @@ theorem map_applyD_psi {σ τ : Type} (zi : Lt × Fin N0 × Fin N1 → σ) (fi :
   | monomial μ c =>
     rw [psi_monomial, applyD_eq_sum _ f _ MvPolynomial.support_monomial_subset,
       applyAt0_eq_sum Th _ _ MvPolynomial.support_monomial_subset, Finset.sum_singleton, Finset.sum_singleton,
-      MvPolynomial.coeff_monomial, if_pos rfl, MvPolynomial.coeff_monomial, if_pos rfl, MvPolynomial.map_monomial,
+      MvPolynomial.coeff_monomial, ite_eq_left rfl, MvPolynomial.coeff_monomial, ite_eq_left rfl, MvPolynomial.map_monomial,
       MvPolynomial.smul_monomial, MvPolynomial.map_monomial, MvPolynomial.rename_monomial]
     congr 1
     have hP : k0ToC p (∏ x ∈ (Finsupp.mapDomain zi (Finsupp.sumFinsuppEquivProdFinsupp μ).2).support,
@@ -457,14 +415,13 @@ theorem nuv_eq_zero (s : Fin (X.G.P.n' v)) {i : ℕ} (hi : NN X.G.P.m X.t (j + 1
     unfold NN
     omega
   unfold Sys.nuv nu
-  rw [if_neg (by omega), if_neg (by omega)]
+  rw [ite_eq_right (by omega), ite_eq_right (by omega)]
 
 theorem colHt_eq (nD : YoungDiagram) (s : Fin (X.G.P.n' v))
     (hnu : ∀ r, (((nD.rowLen r : ℕ) : ℤ)) = X.nuv v (j + 1) s (r + 1)) (c : ℕ) :
     X.colHt v (j + 1) s c = nD.colLen c := by
   have hle : nD.colLen c ≤ NN X.G.P.m X.t (j + 1) := by
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have h2 : c < nD.rowLen (NN X.G.P.m X.t (j + 1)) :=
       YoungDiagram.mem_iff_lt_rowLen.1 (YoungDiagram.mem_iff_lt_colLen.2 hlt)
     have h3 := hnu (NN X.G.P.m X.t (j + 1))
@@ -577,7 +534,7 @@ theorem coeff_applyD_PIv_of_KvalGe : ∀ (p : ℕ) [Fact p.Prime] (X : Sys p) (j
       exact Finset.prod_eq_zero (Finset.mem_univ s) (Finset.prod_eq_zero (Finset.mem_univ c) h0)
     rw [h1, applyD_zero]
     exact ⟨0, by simp⟩
-  · push_neg at hz
+  · push Not at hz
     have hch := fun (s : ZMod (X.G.P.n' v)) (c : Fin ((nu s).rowLen 0)) =>
       (colDet_alt X j v s ((nu s).colLen c) (I v (toFin s) c)).resolve_left (hz s c)
     choose e u he using hch
@@ -839,16 +796,10 @@ theorem ThZA_map (X : Sys p) (K : Type) [Field K] [Algebra (K0 p) K] (j : ℕ)
   funext s
   exact (map_coordZA X K j s).symm
 
-theorem p_ne_zero (K : Type) [Field K] [Algebra (K0 p) K] : (p : K) ≠ 0 := by
-  have h : (p : WW p) ≠ 0 := WittVector.p_nonzero p (kb p)
-  have h2 := (map_ne_zero_iff _ (IsFractionRing.injective (WW p) (K0 p))).mpr h
-  have h3 := (map_ne_zero (algebraMap (K0 p) K)).mpr h2
-  simpa using h3
-
 theorem geC_of_mem {X : Sys p} (Y : Pend X) (g : ℝ) (y : Y.Kc) (hy : y ∈ Y.Oc) :
     Y.geC ((p : Y.Kc) ^ ⌈g⌉ * y) g := by
   intro a b hb hab
-  have hp := p_ne_zero (p := p) Y.Kc
+  have hp := Formalism.MainNotions.FormalGroupSystem.Pf.pK'_ne (p := p) Y.Kc
   have h1 : a ≤ ⌈g⌉ * b := by
     have : (a : ℝ) ≤ (⌈g⌉ : ℝ) * b := hab.trans (mul_le_mul_of_nonneg_right (Int.le_ceil g) (Nat.cast_nonneg b))
     exact_mod_cast this
@@ -936,7 +887,7 @@ theorem fock_rows_of_fills : ∀ (D : D7) (u : D.what₂.Word) (w : D.what₂.pl
   unfold FormalGroupSystem.nu FormalGroupSystem.NN
   rw [ht]
   by_cases h1 : r < D.R.k
-  · rw [if_pos (by omega), if_pos (show r < D.R.N i by simp [Ranks.N]; omega)]
+  · rw [ite_eq_left (by omega), ite_eq_left (show r < D.R.N i by simp [Ranks.N]; omega)]
     unfold FormalGroupSystem.lamI
     rw [dite_eq_left (by omega)]
     unfold DV.nuRow DV.srcPar
@@ -952,7 +903,7 @@ theorem fock_rows_of_fills : ∀ (D : D7) (u : D.what₂.Word) (w : D.what₂.pl
     simp only [kaJ, Ranks.N]
     push_cast
     ring
-  · rw [if_neg (by omega)]
+  · rw [ite_eq_right (by omega)]
     obtain ⟨q, rfl⟩ : ∃ q, r = D.R.k + q := ⟨r - D.R.k, by omega⟩
     have hrk : D.R.k + q + 1 - ((D.gat u w hg).P.m + 2) = q := by omega
     rw [hrk]
@@ -962,7 +913,7 @@ theorem fock_rows_of_fills : ∀ (D : D7) (u : D.what₂.Word) (w : D.what₂.pl
     by_cases h2 : q < i * (D.R.t + 1)
     · have hb : q / (D.R.t + 1) < i := by
         rw [Nat.div_lt_iff_lt_mul ht1]; exact h2
-      rw [if_pos (by omega), if_pos (by omega)]
+      rw [ite_eq_left (by omega), ite_eq_left (by omega)]
       unfold DV.nuRow DV.srcPar
       rw [dite_eq_right h1]
       simp only [Nat.add_sub_cancel_left]
@@ -977,15 +928,15 @@ theorem fock_rows_of_fills : ∀ (D : D7) (u : D.what₂.Word) (w : D.what₂.pl
       push_cast
       rw [hrR]
       ring
-    · rw [if_neg (show ¬ D.R.k + q < D.R.N i by omega)]
+    · rw [ite_eq_right (show ¬ D.R.k + q < D.R.N i by omega)]
       by_cases h3 : q < i * (D.R.t + 1) + (D.R.t + 1)
       · have hb : q / (D.R.t + 1) = i := by
           apply le_antisymm
           · rw [← Nat.lt_succ_iff, Nat.div_lt_iff_lt_mul ht1, Nat.succ_mul]; omega
           · rw [Nat.le_div_iff_mul_le ht1]; omega
-        rw [if_pos (by omega), hb]
+        rw [ite_eq_left (by omega), hb]
         simp
-      · rw [if_neg (by omega)]
+      · rw [ite_eq_right (by omega)]
         simp
 
 end GlobalTheory
@@ -1206,7 +1157,7 @@ theorem sum_betaI (X : Inst D L) (K : Consts) (ce : ErrC) (j p : ℕ) (hs : ¬ I
     obtain ⟨t', -, h⟩ := Finset.mem_image.1 h2
     simp at h
   unfold OrbitPlaces.repsPl
-  rw [if_neg hs, Finset.sum_union hd, Finset.sum_image (fun a _ b _ h => by simpa using h),
+  rw [ite_eq_right hs, Finset.sum_union hd, Finset.sum_image (fun a _ b _ h => by simpa using h),
     Finset.sum_image (fun a _ b _ h => by simpa using h)]
   congr 1
   · refine Finset.sum_congr rfl fun t _ => ?_
@@ -1261,18 +1212,18 @@ theorem lowS_le : ∀ (D : D7) (u : D.what₂.Word) (w : D.what₂.places.Pl)
     intro j hj
     rw [hF j hj w]
     unfold Fval FvalP WeilJacquetShalikaLaw.ES Eval WeilJacquetShalikaLaw.vDG
-    simp only [if_neg (hne 0), if_neg (hne 1), if_neg (WeilJacquetShalikaLaw.residue_char_ne_level hg), if_neg h2, if_neg h4]
+    simp only [ite_eq_right (hne 0), ite_eq_right (hne 1), ite_eq_right (WeilJacquetShalikaLaw.residue_char_ne_level hg), ite_eq_right h2, ite_eq_right h4]
     by_cases hX : (D.what₂.places.resChar w : ℝ) ≤ L.sc.X'' D.R.n
     · have hA : (IsResidueClassZero D (D.what₂.places.resChar w) ∨ IsSg D (D.what₂.places.resChar w)) ∧
           (D.what₂.places.resChar w : ℝ) ≤ L.sc.X'' D.R.n := ⟨Or.inl hc, hX⟩
       have hB : ¬ (IsResidueClassZero D (D.what₂.places.resChar w) ∧ hP D (D.what₂.places.resChar w) = 0) := fun h => hh h.2
-      simp only [if_pos hA, if_neg hB, if_pos hX]
+      simp only [ite_eq_left hA, ite_eq_right hB, ite_eq_left hX]
       unfold FInert
-      rw [if_neg hB]
+      rw [ite_eq_right hB]
       ring
     · have hA : ¬ ((IsResidueClassZero D (D.what₂.places.resChar w) ∨ IsSg D (D.what₂.places.resChar w)) ∧
           (D.what₂.places.resChar w : ℝ) ≤ L.sc.X'' D.R.n) := fun h => hX h.2
-      simp only [if_neg hA, if_neg hX]
+      simp only [ite_eq_right hA, ite_eq_right hX]
       ring
   have hsum : WeilJacquetShalikaLaw.lowS L Xe K ce 1 u w = (∑ j ∈ Finset.Icc 1 D.R.m,
       if (D.what₂.places.resChar w : ℝ) ≤ L.sc.X'' D.R.n then
@@ -1291,7 +1242,7 @@ theorem lowS_le : ∀ (D : D7) (u : D.what₂.Word) (w : D.what₂.places.Pl)
           FOrb D j (D.what₂.places.resChar w) (true, t) - OrbitPlaces.errF L K ce j (D.what₂.places.resChar w) (true, t) else 0 := by
     refine Finset.sum_le_sum fun j hj => ?_
     by_cases hX : (D.what₂.places.resChar w : ℝ) ≤ L.sc.X'' D.R.n
-    · simp only [if_pos hX]
+    · simp only [ite_eq_left hX]
       exact FInert_sub_EatI X K ce hg.1 hc hev hs hj
     · simp [hX]
   have hv : ((D.R.m : ℝ) - 1) * (padicValNat (D.what₂.places.resChar w) (D.mem u).C.DGam : ℝ) =
@@ -1430,8 +1381,8 @@ theorem places_off_first_orbits : ∀ (D : D7) (u : D.what₂.Word) (w : D.what�
   have hs : ¬ IsSg D (D.what₂.places.resChar w) := fun hs => by
     have := hg.2.2.1.symm.trans hs
     cases this
-  have hstepP : stepP D (D.what₂.places.resChar w) = hP D (D.what₂.places.resChar w) := if_neg hs
-  have hnP : nP D (D.what₂.places.resChar w) = addOrderOf (hP D (D.what₂.places.resChar w)) := if_neg hs
+  have hstepP : stepP D (D.what₂.places.resChar w) = hP D (D.what₂.places.resChar w) := ite_eq_right hs
+  have hnP : nP D (D.what₂.places.resChar w) = addOrderOf (hP D (D.what₂.places.resChar w)) := ite_eq_right hs
   have hpos : ∀ (z : Bool × HH D) (e : ℕ), posPl D (D.what₂.places.resChar w) z e =
       (z.1, z.2 + e • hP D (D.what₂.places.resChar w)) := fun z e => by
     simp [posPl, partner, hs]
@@ -1497,13 +1448,6 @@ theorem errF_posPl {L : SizeData₂ D} (K : Consts) (ce : ErrC) (j p : ℕ) (r :
 theorem posPl_true_one {p : ℕ} (hs : ¬ IsSg D p) (t : HH D) : posPl D p (true, t) 1 = (true, t + hP D p) := by
   simp [posPl, partner, hs]
 
-theorem notSg {T p : ℕ} (hg : GIdx D.host T p) : ¬ IsSg D p := by
-  intro h
-  have h1 : D.host.cls p = PrimeClass.inertClass := hg.2.2.1
-  unfold IsSg at h
-  rw [h1] at h
-  exact absurd h (by decide)
-
 theorem sysTw_sites : ∀ (D : D7) (L : SizeData₂ D) (hT : GatTies D) (X : Inst D L) (Y : LatInst D) (K : Consts) (Dx : DivX D) (lev : LevelData D) (Xe : ErrX D) (ce : ErrC) (E : OrbitPlaces.Ent D) (LC : D.what₂.Tup → ∀ u (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)), Σ Lv : Levels (Y.Fl u w hg), Chain Lv), LatTied hT X Y → FillsAll hT Y → L.FDef → OrbitPlaces.OrbitLetterBoundsAll 11 1 → OrbitPlaces.Shape D L X E → OrbitPlaces.CLarge 11 1 K ce → (∀ μ, DV.Used D μ → ∀ u (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)), D.what₂.places.resChar w ∉ Dx.Qp μ → SiteAdm D u w hg (Y.Fl u w hg) (LC μ u w hg).1 (LC μ u w hg).2) → SysTw D L X K Dx (reW Y LC) lev Xe ce 1 := by
   intro D L hT X Y K Dx lev Xe ce E LC hty hfa hF hadm hSh hCL hS hE μ hμ hT' hty' u w hg hQ
   obtain ⟨i, std, vp, unif, eO, eO_spec, dG, dG_spec, om, Y5, hA, h0, hj⟩ := hS μ hμ u w hg hQ
@@ -1515,17 +1459,17 @@ theorem sysTw_sites : ∀ (D : D7) (L : SizeData₂ D) (hT : GatTies D) (X : Ins
   · intro v hv j hjm
     obtain ⟨-, -, -, a2c, -, -, -, -, -, -, -, -, a11⟩ := hA
     by_cases hp : ((D.what₂.places.resChar w : ℕ) : ℝ) ≤ L.sc.X'' D.R.n
-    · simp only [if_pos hp]
+    · simp only [ite_eq_left hp]
       exact _root_.GlobalTheory.TwU.LowF.lowAt_F D u w hg L hT X Y K ce E hty hfa hadm hSh hCL hp _ _ std vp unif eO eO_spec dG dG_spec om Y5 a2c v (r v)
         (hr1 v hv).1 (hr1 v hv).2.2 j hjm
-    · simp only [if_neg hp]
+    · simp only [ite_eq_right hp]
       exact a11 v j (lt_of_lt_of_eq hjm (hty u w hg).1.symm)
   · refine (_root_.GlobalTheory.TwU.LowTerm.lowS_le D u w hg L X K ce Xe dG hF h0 hj).trans (sub_le_sub_right (le_of_eq ?_) _)
     refine Finset.sum_congr rfl fun j _ => ?_
     refine (hr2 (fun t => if ((D.what₂.places.resChar w : ℕ) : ℝ) ≤ L.sc.X'' D.R.n then
       FOrb D j (D.what₂.places.resChar w) (true, t) - OrbitPlaces.errF L K ce j (D.what₂.places.resChar w) (true, t) else 0) ?_).symm
     intro t
-    have h1 := posPl_true_one (notSg hg) t
+    have h1 := posPl_true_one (Formalism.MainNotions.FormalGroupSystem.Pf.nc_notSg hg) t
     have h2 := FOrb_step D j (D.what₂.places.resChar w) (true, t) 1
     have h3 := errF_posPl (L := L) K ce j (D.what₂.places.resChar w) (true, t) 1
     rw [h1] at h2 h3

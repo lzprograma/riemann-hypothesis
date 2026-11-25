@@ -33,51 +33,11 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Fontain
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsUnitOfStableLine
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.KerPEqSpanBeta
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BcrisFrobeniusFixedFilZeroEqQp
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.FieldTheory.Galois.Profinite
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -85,7 +45,6 @@ import Mathlib.Algebra.AffineMonoid.UniqueSums
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
 import Formalism.SharpRestriction.CuspSpanNormBounds.Point
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinExt
@@ -375,8 +334,7 @@ theorem clos_eq_zero_of_mul_mem {R : Type} [CommRing R] [IsDomain R] (p : ℕ) (
   by_contra ha0
   classical
   have hex : ∃ n : ℕ, ¬ π ^ n ∣ a := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact ha0 (hsep a h)
   have hn0 : Nat.find hex ≠ 0 := by
     intro h0
@@ -696,22 +654,22 @@ theorem log_trunc_pow : ∀ (l : ℕ) [Fact l.Prime] (ϖ : Per.Fl l), Per.kerP l
     · have h2 : ¬ k = n - 1 := by omega
       have hk1 : k + 1 = M := by omega
       have hda : d (k + 1) = 0 := by simp [d, hk1]
-      rw [if_pos h1, if_neg h2]
+      rw [ite_eq_left h1, ite_eq_right h2]
       simp only [a, hda, map_zero, mul_zero, zero_mul, add_zero, zero_add]
       rw [← hq, hk1, hM, Nat.cast_pow]
       ring
     · by_cases h2 : k = n - 1
       · have hk1 : k + 1 = n := by omega
         have hda : d (k + 1) = 0 := by simp [d, hk1]
-        rw [if_neg h1, if_pos h2]
+        rw [ite_eq_right h1, ite_eq_left h2]
         simp only [a, hda, map_zero, mul_zero, zero_mul, add_zero, zero_add]
         ring
       · have hne : ¬ (k + 1 = M ∨ k + 1 = n) := by omega
-        have hda : d (k + 1) = c (k + 1) := by simp only [d, hne, if_false]
+        have hda : d (k + 1) = c (k + 1) := by simp only [d, hne, ite_false]
         have hck := hc (k + 1) ⟨by omega, by omega, by omega⟩
         have hck' := congrArg (Per.zP l) hck
         rw [map_mul, map_natCast, map_pow, map_natCast] at hck'
-        rw [if_neg h1, if_neg h2]
+        rw [ite_eq_right h1, ite_eq_right h2]
         simp only [a, hda, add_zero]
         rw [← hq]
         linear_combination -(-1) ^ k * ((n.factorial / (k + 1) : ℕ) : Per.AinfP l) * β ^ (k + 1) *
@@ -723,7 +681,7 @@ theorem log_trunc_pow : ∀ (l : ℕ) [Fact l.Prime] (ϖ : Per.Fl l), Per.kerP l
       Finset.sum_ite_eq', Finset.sum_ite_eq', ← Finset.mul_sum]
     have hm1 : M - 1 ∈ Finset.range n := Finset.mem_range.2 (by omega)
     have hn1 : n - 1 ∈ Finset.range n := Finset.mem_range.2 (by omega)
-    rw [if_pos hm1, if_pos hn1, Nat.sub_add_cancel (by omega : 1 ≤ M)]
+    rw [ite_eq_left hm1, ite_eq_left hn1, Nat.sub_add_cancel (by omega : 1 ≤ M)]
     simp only [S, e0, T]
     ring
   have hβI : β ∈ Per.kerP l := by rw [hker]; exact Ideal.mem_span_singleton_self _

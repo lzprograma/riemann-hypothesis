@@ -54,7 +54,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocGL GlobalTheory.LocLanglands GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.Zero.LLC
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 namespace UpperTheory.V.Z.Desc.W.SatakeFrobeniusEigenvalues
 open Polynomial GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil
 open scoped commutatorElement

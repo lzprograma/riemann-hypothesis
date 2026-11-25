@@ -270,13 +270,8 @@ section Blocks
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
-theorem isOpen_noZeroBlock : IsOpen {z : (Σ k, ι k) → ℂ | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0} := by
-  have h : {z : (Σ k, ι k) → ℂ | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0} = ⋂ k, ⋃ i, {z | z ⟨k, i⟩ ≠ 0} := by
-    ext z
-    simp
-  rw [h]
-  exact isOpen_iInter_of_finite fun k => isOpen_iUnion fun i =>
-    isOpen_ne_fun (continuous_apply _) continuous_const
+theorem isOpen_noZeroBlock : IsOpen {z : (Σ k, ι k) → ℂ | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0} :=
+  SemipositiveTwist.isOpen_noZeroBlock
 
 def blk (k : K) : ((Σ k, ι k) → ℂ) →L[ℂ] (ι k → ℂ) :=
   ContinuousLinearMap.pi fun i =>
@@ -290,24 +285,12 @@ theorem rho_pos {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 
   (fsMetric (ι := ι k)).pos _ (GroundTheory.Heights₂.Heights.Inter.SemipositiveTwist.blk_ne hz k)
 
 theorem contDiffAt_F {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) (k : K) :
-    ContDiffAt ℝ 2 (F k) z := by
-  have hρ : ContDiffAt ℝ 2 (fsMetric (ι := ι k)).ρ (blk (ι := ι) k z) :=
-    ((GroundTheory.Heights₂.Heights.HilbertSamuel.ProjLine.isSmoothMetric_fs (J := ι k)).contDiffAt
-      (isOpen_ne.mem_nhds (GroundTheory.Heights₂.Heights.Inter.SemipositiveTwist.blk_ne hz k))).of_le (WithTop.coe_le_coe.2 le_top)
-  have hφ := hρ.log (rho_pos hz k).ne'
-  have hFk : F k = (fun u => Real.log ((fsMetric (ι := ι k)).ρ u)) ∘ blk (ι := ι) k := rfl
-  rw [hFk]
-  exact hφ.comp z ((blk (ι := ι) k).restrictScalars ℝ).contDiff.contDiffAt
+    ContDiffAt ℝ 2 (F k) z :=
+  SemipositiveTwist.contDiffAt_F hz k
 
 theorem levi_F_nonneg {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) (k : K)
-    (w : (Σ k, ι k) → ℂ) : 0 ≤ ReciprocityTheory.AnForm.levi (F k) z w := by
-  have hρ : ContDiffAt ℝ 2 (fsMetric (ι := ι k)).ρ (blk (ι := ι) k z) :=
-    ((GroundTheory.Heights₂.Heights.HilbertSamuel.ProjLine.isSmoothMetric_fs (J := ι k)).contDiffAt
-      (isOpen_ne.mem_nhds (GroundTheory.Heights₂.Heights.Inter.SemipositiveTwist.blk_ne hz k))).of_le (WithTop.coe_le_coe.2 le_top)
-  have hφ := hρ.log (rho_pos hz k).ne'
-  have hFk : F k = (fun u => Real.log ((fsMetric (ι := ι k)).ρ u)) ∘ blk (ι := ι) k := rfl
-  rw [hFk, ReciprocityTheory.AnForm.levi_comp w ((blk (ι := ι) k).analyticAt z) hφ]
-  exact GroundTheory.Heights₂.Heights.HilbertSamuel.ProjLine.leviForm_log_fs_nonneg (GroundTheory.Heights₂.Heights.Inter.SemipositiveTwist.blk_ne hz k) _
+    (w : (Σ k, ι k) → ℂ) : 0 ≤ ReciprocityTheory.AnForm.levi (F k) z w :=
+  SemipositiveTwist.levi_F_nonneg hz k w
 
 end Blocks
 

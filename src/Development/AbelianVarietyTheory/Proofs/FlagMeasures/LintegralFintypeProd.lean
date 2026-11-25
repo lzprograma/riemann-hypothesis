@@ -101,7 +101,7 @@ theorem _root_.GlobalTheory.SnMass.Push.lintegral_fintype_prod {ι : Type} [Fint
   by_cases hne : ∀ i, Nonempty (X i)
   · rw [lintegral_eq_lmarginal_univ (fun i => (hne i).some), lmarginal_prod_eq_prod_lintegral_mul_prod f hf]
     simp
-  · push_neg at hne
+  · push Not at hne
     obtain ⟨i, hi⟩ := hne
     haveI : IsEmpty ((i : ι) → X i) := ⟨fun x => hi.elim (x i)⟩
     rw [Finset.prod_eq_zero (Finset.mem_univ i) (by simp [Measure.eq_zero_of_isEmpty (μ i)])]

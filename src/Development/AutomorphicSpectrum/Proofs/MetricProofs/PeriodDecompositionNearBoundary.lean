@@ -18,57 +18,12 @@ public import Mathlib.Basic.Complex.Basic
 public import Mathlib.LinearAlgebra.Matrix.Hermitian
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicSublatticeCovolumePositive
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MemChartWOfContinuousPeriod
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogPeriodLimit
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.FubiniLevi
 import GroundTheory.HeightsAndTheta.Heights.Regularisation.StPuncturedExpOrder
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Lemma
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SymplecticUnipotentShape
 import GroundTheory.HeightsAndTheta.Heights.Regularisation.PosSemidefOfIntQuadNonneg
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.MetricProofs.EigenComponentAppendIndependentSpan, Development.AutomorphicSpectrum.Proofs.MetricProofs.EigenComponentSpanRelIndexCriterion, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsContinuousChangeOfFrame, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsFamilyInIdealOfIsOFamily, Development.AutomorphicSpectrum.Proofs.MetricProofs.GramDetImEqZero, Development.AutomorphicSpectrum.Proofs.MetricProofs.GramDetMulNormSqDet, Development.AutomorphicSpectrum.Proofs.MetricProofs.GramDetPosOfSemidefiniteTransversal, Development.AutomorphicSpectrum.Proofs.MetricProofs.PeriodDecompositionNearBoundary
@@ -410,56 +365,6 @@ private lemma solve_eq {g m : ℕ} (A : Matrix (Fin g) (Fin m) ℂ) (C : Matrix 
   rw [Matrix.mul_assoc, ← Matrix.mul_assoc Aᴴ, ← Matrix.mul_assoc, Matrix.nonsing_inv_mul _ hu,
     Matrix.one_mul]
 
-open scoped ComplexOrder in
-private lemma gram_det_ne {g m : ℕ} (M : Fin m → Fin g → ℂ) (h : LinearIndependent ℂ M) :
-    ((colMat M)ᴴ * colMat M).det ≠ 0 := by
-  have hinj : Function.Injective (colMat M).mulVec := by
-    intro x y hxy
-    have hz : ∑ i, (x - y) i • M i = 0 := by
-      funext a
-      have h1 : (colMat M *ᵥ (x - y)) a = 0 := by
-        rw [Matrix.mulVec_sub, hxy, sub_self]; rfl
-      simpa [Matrix.mulVec, dotProduct, colMat, mul_comm, Finset.sum_apply] using h1
-    funext i
-    exact sub_eq_zero.1 (Fintype.linearIndependent_iff.1 h _ hz i)
-  have hinj2 : Function.Injective ((colMat M)ᴴ * colMat M).mulVec := by
-    intro x y hxy
-    apply hinj
-    have h0 : ((colMat M)ᴴ * colMat M) *ᵥ (x - y) = 0 := by
-      rw [Matrix.mulVec_sub, hxy, sub_self]
-    have h1 := (Matrix.conjTranspose_mul_self_mulVec_eq_zero _ _).1 h0
-    rw [Matrix.mulVec_sub] at h1
-    exact sub_eq_zero.1 h1
-  have := (Matrix.mulVec_injective_iff_isUnit).1 hinj2
-  exact ((Matrix.isUnit_iff_isUnit_det _).1 this).ne_zero
-
-private lemma cat_mul {X : Type} [TopologicalSpace X] {x : X} {l k r : ℕ}
-    {A : X → Matrix (Fin l) (Fin k) ℂ} {B : X → Matrix (Fin k) (Fin r) ℂ}
-    (hA : ContinuousAt A x) (hB : ContinuousAt B x) : ContinuousAt (fun z => A z * B z) x := by
-  have c : Continuous (fun p : Matrix (Fin l) (Fin k) ℂ × Matrix (Fin k) (Fin r) ℂ => p.1 * p.2) :=
-    continuous_fst.matrix_mul continuous_snd
-  exact c.continuousAt.comp (hA.prodMk hB)
-
-private lemma cat_conj {X : Type} [TopologicalSpace X] {x : X} {l k : ℕ}
-    {A : X → Matrix (Fin l) (Fin k) ℂ} (hA : ContinuousAt A x) :
-    ContinuousAt (fun z => (A z)ᴴ) x := by
-  have c : Continuous (fun N : Matrix (Fin l) (Fin k) ℂ => Nᴴ) :=
-    continuous_id.matrix_conjTranspose
-  exact c.continuousAt.comp hA
-
-private lemma cat_det {X : Type} [TopologicalSpace X] {x : X} {k : ℕ}
-    {A : X → Matrix (Fin k) (Fin k) ℂ} (hA : ContinuousAt A x) :
-    ContinuousAt (fun z => (A z).det) x := by
-  have c : Continuous (fun N : Matrix (Fin k) (Fin k) ℂ => N.det) := continuous_id.matrix_det
-  exact c.continuousAt.comp hA
-
-private lemma cat_adj {X : Type} [TopologicalSpace X] {x : X} {k : ℕ}
-    {A : X → Matrix (Fin k) (Fin k) ℂ} (hA : ContinuousAt A x) :
-    ContinuousAt (fun z => (A z).adjugate) x := by
-  have c : Continuous (fun N : Matrix (Fin k) (Fin k) ℂ => N.adjugate) :=
-    continuous_id.matrix_adjugate
-  exact c.continuousAt.comp hA
-
 private lemma colMat_continuousAt {n g m : ℕ} (M : (Fin n → ℂ) → Fin m → Fin g → ℂ)
     (h : ∀ i, ContinuousAt (fun z => M z i) 0) : ContinuousAt (fun z => colMat (M z)) 0 := by
   refine continuousAt_pi.2 fun a => continuousAt_pi.2 fun i => ?_
@@ -473,16 +378,24 @@ theorem coeff_continuous (n g m : ℕ) (M f : (Fin n → ℂ) → Fin m → Fin 
     ∃ T : (Fin n → ℂ) → Matrix (Fin m) (Fin m) ℂ, ContinuousAt T 0 ∧ T 0 = T₀ ∧
       ∀ᶠ z in 𝓝 (0 : Fin n → ℂ), ∀ i, f z i = ∑ j, T z j i • M z j := by
   have hA : ContinuousAt (fun z => colMat (M z)) 0 := colMat_continuousAt M hM
-  have hF : ContinuousAt (fun z => colMat (f z)) 0 := colMat_continuousAt f hf
+  have hAc : ContinuousAt (fun z => (colMat (M z))ᴴ) 0 :=
+    continuous_id.matrix_conjTranspose.continuousAt.comp hA
   have hG : ContinuousAt (fun z => (colMat (M z))ᴴ * colMat (M z)) 0 :=
-    cat_mul (cat_conj hA) hA
-  have hdet : ContinuousAt (fun z => ((colMat (M z))ᴴ * colMat (M z)).det) 0 := cat_det hG
-  have hd0 := gram_det_ne (M 0) hli
+    (continuous_fst.matrix_mul continuous_snd).continuousAt.comp (hAc.prodMk hA)
+  have hdet : ContinuousAt (fun z => ((colMat (M z))ᴴ * colMat (M z)).det) 0 :=
+    continuous_id.matrix_det.continuousAt.comp hG
+  open scoped ComplexOrder in
+  have hd0 : ((colMat (M 0))ᴴ * colMat (M 0)).det ≠ 0 :=
+    ((Matrix.isUnit_iff_isUnit_det _).1
+      (Matrix.PosDef.conjTranspose_mul_self (colMat (M 0))
+        ((Matrix.mulVec_injective_iff (M := colMat (M 0))).2 hli)).isUnit).ne_zero
   have hinv : ContinuousAt (fun z => ((colMat (M z))ᴴ * colMat (M z))⁻¹) 0 := by
     simp only [Matrix.inv_def, Ring.inverse_eq_inv']
-    exact (hdet.inv₀ hd0).smul (cat_adj hG)
+    exact (hdet.inv₀ hd0).smul (continuous_id.matrix_adjugate.continuousAt.comp hG)
   refine ⟨fun z => ((colMat (M z))ᴴ * colMat (M z))⁻¹ * (colMat (M z))ᴴ * colMat (f z),
-    cat_mul (cat_mul hinv (cat_conj hA)) hF, ?_, ?_⟩
+    (continuous_fst.matrix_mul continuous_snd).continuousAt.comp
+      (((continuous_fst.matrix_mul continuous_snd).continuousAt.comp
+        (hinv.prodMk hAc)).prodMk (colMat_continuousAt f hf)), ?_, ?_⟩
   · show ((colMat (M 0))ᴴ * colMat (M 0))⁻¹ * (colMat (M 0))ᴴ * colMat (f 0) = T₀
     rw [colMat_eq_mul (M 0) (f 0) T₀ h0]
     exact solve_eq _ _ hd0
@@ -965,7 +878,7 @@ theorem limit_of_data : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
           exact congrArg Subtype.val hdx
         exact hx0 ((smul_eq_zero.1 hzx).resolve_left (by exact_mod_cast hd.ne'))
       have hyfam : IsNzFamily I r (fun a' => (y a' : Λ)) := ⟨hr, hyI, hyli, hidx0⟩
-      obtain ⟨heq, hpos, _⟩ := (GlobalTheory.CompanionTheory.Relay.isotropic_sublattice_covolume_positive
+      obtain ⟨heq, hpos, _⟩ := (_root_.LevelTowerAlt.isotropic_submodule_nonzero_family
         E g Λ Ψ R σ I hσ hiso hbot).2 r _ hyfam
       exact ⟨heq, hpos⟩
   obtain ⟨hnz, hnzpos⟩ := hnz_data
@@ -992,7 +905,7 @@ theorem limit_of_data : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
   rw [hmain]
   exact h4
 
-theorem limit_at_centre : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n a g : ℕ) (Λ : Type) [AddCommGroup Λ] [Module (𝓞 E) Λ] (Ψ : Type) [Fintype Ψ] (L : ActPeriods E n a g Λ) (σ : Ψ → (𝓞 E →+* ℂ)) (m : ℕ) (b : Ψ → Fin m → (Fin n → ℂ) → Fin g → ℂ), IsCMFam σ → IsEigFrames (Metric.ball 0 1) L.B σ b → ∃ (W : Submodule (𝓞 E) Λ) (I : Submodule (𝓞 E) Λ) (per : W →+ (Fin g → ℂ)) (s : W → (Fin n → ℂ) → Fin g → ℂ) (Hb : Matrix (Fin g) (Fin g) ℂ), (∀ x, x ∈ I ↔ x ∈ W ∧ ∀ y ∈ W, L.toLogPeriods.E x y = 0) ∧ IsSaturated I ∧ Function.Injective per ∧ (∀ x : W, ContinuousAt (s x) 0 ∧ s x 0 = per x ∧ ∀ w ∈ logCover L.a_le, s x (expCover a w) = L.P w x) ∧ (∀ (ws : ℕ → Fin n → ℂ) (x : ℕ → Λ) (p : Fin g → ℂ), (∀ k, ws k ∈ logCover L.a_le) → Tendsto (fun k => expCover a (ws k)) atTop (𝓝 0) → Tendsto (fun k => L.P (ws k) (x k)) atTop (𝓝 p) → ∃ x₀ : W, p = per x₀) ∧ Submodule.span ℂ (Set.range per) = ⊤ ∧ Hb.IsHermitian ∧ (∀ x x' : W, (per x ⬝ᵥ Hb *ᵥ star (per x')).im = L.toLogPeriods.E x x') ∧ (∀ x : W, (x : Λ) ∈ I → Hb *ᵥ star (per x) = 0) ∧ ∀ ν : ℝ, PhiNormSq (L.B 0) (fun x y => y ⬝ᵥ Hb *ᵥ star x) (AddSubgroup.closure {p | ∃ x : W, (x : Λ) ∈ I ∧ p = per x}) 1 σ (fun τ i => b τ i 0) ν → 0 < ν ∧ ∀ ε > (0 : ℝ), ∃ δ > (0 : ℝ), ∀ w (hw : w ∈ logCover L.a_le), ‖expCover a w‖ < δ → |(L.riem w hw).logDet (fun τ i => b τ i (expCover a w)) - Real.log ((L.riem w hw).nz σ I) - Real.log ν| < ε := by
+theorem limit_at_centre_strong : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n a g : ℕ) (Λ : Type) [AddCommGroup Λ] [Module (𝓞 E) Λ] (Ψ : Type) [Fintype Ψ] (L : ActPeriods E n a g Λ) (σ : Ψ → (𝓞 E →+* ℂ)) (m : ℕ) (b : Ψ → Fin m → (Fin n → ℂ) → Fin g → ℂ), IsCMFam σ → IsEigFrames (Metric.ball 0 1) L.B σ b → ∃ (W : Submodule (𝓞 E) Λ) (I : Submodule (𝓞 E) Λ) (per : W →+ (Fin g → ℂ)) (s : W → (Fin n → ℂ) → Fin g → ℂ) (Hb M : Matrix (Fin g) (Fin g) ℂ) (u : Λ →ₗ[ℤ] (Fin g → ℤ)), (∀ x, x ∈ I ↔ x ∈ W ∧ ∀ y ∈ W, L.toLogPeriods.E x y = 0) ∧ IsSaturated I ∧ Function.Injective per ∧ (∀ (c : 𝓞 E) (x : W), per (c • x) = L.B 0 c (per x)) ∧ M.det ≠ 0 ∧ (∀ x : W, (x : Λ) ∈ I → per x = M *ᵥ cst (u x)) ∧ (∀ x : W, ContinuousAt (s x) 0 ∧ s x 0 = per x ∧ ∀ w ∈ logCover L.a_le, s x (expCover a w) = L.P w x) ∧ (∀ (ws : ℕ → Fin n → ℂ) (x : ℕ → Λ) (p : Fin g → ℂ), (∀ k, ws k ∈ logCover L.a_le) → Tendsto (fun k => expCover a (ws k)) atTop (𝓝 0) → Tendsto (fun k => L.P (ws k) (x k)) atTop (𝓝 p) → ∃ x₀ : W, p = per x₀) ∧ Submodule.span ℂ (Set.range per) = ⊤ ∧ Hb.IsHermitian ∧ (∀ x x' : W, (per x ⬝ᵥ Hb *ᵥ star (per x')).im = L.toLogPeriods.E x x') ∧ (∀ x : W, (x : Λ) ∈ I → Hb *ᵥ star (per x) = 0) ∧ ∀ ν : ℝ, PhiNormSq (L.B 0) (fun x y => y ⬝ᵥ Hb *ᵥ star x) (AddSubgroup.closure {p | ∃ x : W, (x : Λ) ∈ I ∧ p = per x}) 1 σ (fun τ i => b τ i 0) ν → 0 < ν ∧ ∀ ε > (0 : ℝ), ∃ δ > (0 : ℝ), ∀ w (hw : w ∈ logCover L.a_le), ‖expCover a w‖ < δ → |(L.riem w hw).logDet (fun τ i => b τ i (expCover a w)) - Real.log ((L.riem w hw).nz σ I) - Real.log ν| < ε := by
   intro E _ _ _ n a g Λ _ _ Ψ _ L σ m b hσ hb
   classical
   obtain ⟨bas, A, T0, B, c, ρ, h⟩ := exists_isChart L.toLogPeriods
@@ -1075,13 +988,31 @@ theorem limit_at_centre : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
       exact ⟨⟨x.1, x.2⟩, (hrad x).1 hx, rfl⟩
     · rintro ⟨x, hx, rfl⟩
       exact ⟨⟨x.1, x.2⟩, (hrad ⟨x.1, x.2⟩).2 hx, rfl⟩
-  refine ⟨W, I, per, s, chartQ Pr A T0 0, hI, ?_, hinj', hs', ?_, ?_, hHerm, ?_, ?_, ?_⟩
+  refine ⟨W, I, per, s, chartQ Pr A T0 0, (A 0)ᵀ, uCo bas, hI, ?_, hinj', hact, by rw [det_transpose]; exact h.A_det, ?_, hs', ?_, ?_, hHerm, ?_, ?_, ?_⟩
   · intro x k hk hx
     have h2 : x ∈ chartW bas B := hsat x k hk hx.1
     refine ⟨h2, fun y hy => ?_⟩
     have h3 := hx.2 y hy
     rw [map_zsmul, LinearMap.smul_apply, smul_eq_mul] at h3
     exact (mul_eq_zero.1 h3).resolve_left hk
+  · intro x hx
+    have hv : vCo bas (x : Λ) = 0 := by
+      funext i
+      have hv0 : vCo bas (bas (.inl i)) = 0 := by
+        funext j
+        simp [vCo]
+      have hu0 : uCo bas (bas (.inl i)) = Pi.single i 1 := by
+        funext j
+        by_cases hj : j = i
+        · subst hj; simp [uCo]
+        · simp [uCo, hj]
+      have h1 := hx.2 (bas (.inl i)) (by simp [chartW, hv0])
+      rw [form_coords bas _ h.form L.alt, hv0, hu0] at h1
+      simpa using h1
+    rw [hper, chartS, hv]
+    congr 1
+    funext k
+    simp [cst, mulVec, dotProduct]
   · intro ws x p h1 h2 h3
     obtain ⟨x₀, hx₀⟩ := hlim ws x p h1 h2 h3
     exact ⟨⟨x₀.1, x₀.2⟩, hx₀⟩
@@ -1103,6 +1034,12 @@ theorem limit_at_centre : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
         rintro _ ⟨x, hx, rfl⟩
         exact ⟨x, (hrad x).1 hx, rfl⟩
       · exact h2 ⟨x, hx.1⟩ ((hrad ⟨x, hx.1⟩).2 hx)
+
+theorem limit_at_centre : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n a g : ℕ) (Λ : Type) [AddCommGroup Λ] [Module (𝓞 E) Λ] (Ψ : Type) [Fintype Ψ] (L : ActPeriods E n a g Λ) (σ : Ψ → (𝓞 E →+* ℂ)) (m : ℕ) (b : Ψ → Fin m → (Fin n → ℂ) → Fin g → ℂ), IsCMFam σ → IsEigFrames (Metric.ball 0 1) L.B σ b → ∃ (W : Submodule (𝓞 E) Λ) (I : Submodule (𝓞 E) Λ) (per : W →+ (Fin g → ℂ)) (s : W → (Fin n → ℂ) → Fin g → ℂ) (Hb : Matrix (Fin g) (Fin g) ℂ), (∀ x, x ∈ I ↔ x ∈ W ∧ ∀ y ∈ W, L.toLogPeriods.E x y = 0) ∧ IsSaturated I ∧ Function.Injective per ∧ (∀ x : W, ContinuousAt (s x) 0 ∧ s x 0 = per x ∧ ∀ w ∈ logCover L.a_le, s x (expCover a w) = L.P w x) ∧ (∀ (ws : ℕ → Fin n → ℂ) (x : ℕ → Λ) (p : Fin g → ℂ), (∀ k, ws k ∈ logCover L.a_le) → Tendsto (fun k => expCover a (ws k)) atTop (𝓝 0) → Tendsto (fun k => L.P (ws k) (x k)) atTop (𝓝 p) → ∃ x₀ : W, p = per x₀) ∧ Submodule.span ℂ (Set.range per) = ⊤ ∧ Hb.IsHermitian ∧ (∀ x x' : W, (per x ⬝ᵥ Hb *ᵥ star (per x')).im = L.toLogPeriods.E x x') ∧ (∀ x : W, (x : Λ) ∈ I → Hb *ᵥ star (per x) = 0) ∧ ∀ ν : ℝ, PhiNormSq (L.B 0) (fun x y => y ⬝ᵥ Hb *ᵥ star x) (AddSubgroup.closure {p | ∃ x : W, (x : Λ) ∈ I ∧ p = per x}) 1 σ (fun τ i => b τ i 0) ν → 0 < ν ∧ ∀ ε > (0 : ℝ), ∃ δ > (0 : ℝ), ∀ w (hw : w ∈ logCover L.a_le), ‖expCover a w‖ < δ → |(L.riem w hw).logDet (fun τ i => b τ i (expCover a w)) - Real.log ((L.riem w hw).nz σ I) - Real.log ν| < ε :=
+  fun E _ _ _ n a g Λ _ _ Ψ _ L σ m b hσ hb =>
+    let ⟨W, I, per, s, Hb, _, _, hI, hsat, hinj, _, _, _, hs, hlim, hspan, hHerm, hIm, hKill, hΦ⟩ :=
+      limit_at_centre_strong E n a g Λ Ψ L σ m b hσ hb
+    ⟨W, I, per, s, Hb, hI, hsat, hinj, hs, hlim, hspan, hHerm, hIm, hKill, hΦ⟩
 
 end GlobalTheory.CompanionTheory.Ar.Cusp.BoundaryLimit
 end -- clump:auto

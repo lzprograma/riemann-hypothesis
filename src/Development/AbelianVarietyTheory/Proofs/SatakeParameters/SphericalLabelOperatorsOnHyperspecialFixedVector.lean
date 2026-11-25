@@ -19,46 +19,8 @@ public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.Involutio
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CompletedLatticeEqAdelicCompletionAndGram
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Cartan
 import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -68,7 +30,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 open GlobalTheory.Hk3
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.SphLabelOps
 
@@ -185,7 +146,7 @@ theorem idem_mul_loc_mem (h : Comparison₂ P e) {t : Formalism.MainNotions.Glob
     by_contra hn
     exact hs ((h s hs0).2 hn)
   have h2 : (t ⊗ₜ[D.host.F] (a : D.host.E)) ∈ intAE D := AddSubgroup.subset_closure ⟨t, ht, a, rfl⟩
-  have h3 := mul_mem_int D h1 h2
+  have h3 := GlobalTheory.HostAdeleIso.intAE_mul_mem D h1 h2
   have h4 : finPart D (incA D ((s : D.host.E)⁻¹)) =
     (1 : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F) ⊗ₜ[D.host.F] ((s : D.host.E)⁻¹) := rfl
   rw [RingHom.map_mul, h4, mul_assoc, Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_comm _ (a : D.host.E)] at h3
@@ -530,7 +491,7 @@ theorem label_operators : ∀ {D : D7} (V : HSp D) (P : Pl D.host.E), (∀ d R, 
     · obtain ⟨g, r1, -⟩ := exists_reps hK (sphOp_rep hd)
       rw [← r1.sum_eq r1 (k := k) (by rwa [hK] at hk) (fun x => π x u) (fix M π u hu)]
       simp only [map_mul, Module.End.mul_apply]
-    · simp only [Hk3.rep, dif_neg hd, Finset.sum_empty]
+    · simp only [Hk3.rep, dite_eq_right hd, Finset.sum_empty]
   · obtain ⟨e, f, h⟩ := (supported_group_and_prime_idempotents V).2.1 P
     have hD := divAt_one V (GlobalTheory.HeckeDual.idem_of_isPrimeIdem h).1 (tie_of_isPrimeIdem h) (ϖ : D.host.E)
     have hg : SuppF V f 1 := (one_mem (suppGroup V f) :)
@@ -550,7 +511,7 @@ theorem label_operators : ∀ {D : D7} (V : HSp D) (P : Pl D.host.E), (∀ d R, 
     by_cases hd : IsLab V P d
     · obtain ⟨R', r1, r2⟩ := exists_dual (sphOp_rep hd)
       rw [← (c1 _ _ r1).1, r2]
-    · rw [Hk3.rep, Hk3.rep, dif_neg hd, dif_neg (_root_.mt hi.2 hd)]
+    · rw [Hk3.rep, Hk3.rep, dite_eq_right hd, dite_eq_right (_root_.mt hi.2 hd)]
   · have he := (GlobalTheory.HeckeDual.idem_of_isPrimeIdem h).1
     obtain ⟨d, hd, hD⟩ := exists_divAt V he (tie_of_isPrimeIdem h) h1 h2 g
     have hl := isLab_of_divAt h h1 h2 hd hg hD

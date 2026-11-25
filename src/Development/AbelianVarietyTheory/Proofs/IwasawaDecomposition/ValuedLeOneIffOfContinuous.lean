@@ -63,8 +63,7 @@ variable {K K' : Type} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarc
 
 theorem map_le_one (i : K →+* K') (hi : Continuous i) {y : K} (h : valuation K y ≤ 1) :
     valuation K' (i y) ≤ 1 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   have hy : y ≠ 0 := fun h0 => by simp [h0] at hc
   obtain ⟨x, hx0, hx1⟩ := Valuation.IsNontrivial.exists_lt_one (v := valuation K)
   have hx : x ≠ 0 := fun h0 => hx0 (by simp [h0])
@@ -87,8 +86,6 @@ theorem map_le_one (i : K →+* K') (hi : Continuous i) {y : K} (h : valuation K
   exact absurd h2 (not_lt.2 this.le)
 
 end Val
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 theorem valued_le_one_iff_of_continuous : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E]
     (v : HeightOneSpectrum (𝓞 F)) (w : HeightOneSpectrum (𝓞 E)) (i : v.adicCompletion F ≃+* w.adicCompletion E),

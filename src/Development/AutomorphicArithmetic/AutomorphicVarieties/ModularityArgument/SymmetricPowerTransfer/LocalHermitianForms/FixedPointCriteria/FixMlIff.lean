@@ -438,7 +438,7 @@ theorem gs_count (L : IsLoc O Δ) (hτ : τ ^ 2 - 4 ≠ 0) {π : O} {n : ℕ} {e
       if EvenVal O ((t : K) * algebraMap O K (π ^ (n + m))) then (Hu O (yy π m x)).relIndex (Gu O τ) else 0 := by
     intro m hm
     by_cases hev : EvenVal O ((t : K) * algebraMap O K (π ^ (n + m)))
-    · rw [if_pos hev]
+    · rw [ite_eq_left hev]
       obtain ⟨r, w, hrw⟩ := (evenVal_mul_pi_pow_iff_exists_sq_unit L hπ (t : K) n m).1 hev
       rw [← ncard_unit_translates_order_eq_relIndex O K τ (PS.sc τ r) (yy π m x)]
       congr 1
@@ -453,7 +453,7 @@ theorem gs_count (L : IsLoc O Δ) (hτ : τ ^ 2 - 4 ≠ 0) {π : O} {n : ℕ} {e
         rw [hS, ← mul_assoc, ← map_mul, mul_div_cancel]
       · rintro ⟨u, hu, hS⟩
         exact ⟨hS ▸ ml_sc_mul_mem_gs_of_val_eq L hτ C t r hu m hm ⟨w, hrw⟩, _, hS⟩
-    · rw [if_neg hev]
+    · rw [ite_eq_right hev]
       have hfinite : {S | S ∈ PS.Gs O τ (t : K) 1 ∧ ∃ w : (Etau K τ)ˣ, S = PS.ml w (Ord O (yy π m x))}.Finite :=
         hfin.subset (fun S hS => hS.1)
       rw [Set.ncard_eq_zero hfinite]

@@ -159,10 +159,10 @@ theorem valAt_free (hord : ∀ (P : HeightOneSpectrum (𝓞 L)) (k : Fˣ), ordF 
       WithZero.exp (-m (P.under (𝓞 F))) := by
   classical
   rw [freeHom_apply, map_prod, Finset.prod_eq_single (P.under (𝓞 F))]
-  · rw [map_zpow, valAt_locF hord, if_pos rfl, ordF_unif_self, ← WithZero.exp_zsmul]
+  · rw [map_zpow, valAt_locF hord, ite_eq_left rfl, ordF_unif_self, ← WithZero.exp_zsmul]
     simp
   · intro v _ hv
-    rw [map_zpow, valAt_locF hord, if_neg hv.symm]
+    rw [map_zpow, valAt_locF hord, ite_eq_right hv.symm]
     simp
   · intro h
     have : m (P.under (𝓞 F)) = 0 := by simpa using h
@@ -499,14 +499,14 @@ theorem frob_eq
       have h5 : N * 2 ≤ N * N := Nat.mul_le_mul_left _ (by omega)
       rw [sq] at this
       omega
-    rw [if_neg hne]
+    rw [ite_eq_right hne]
     simpa using hg' x
   · have hst : IsCMField.complexConj K • P = P := hg.mem_stabilizer
     have h1 : (Ideal.primesOver (P.under (𝓞 K⁺)) (𝓞 K)).ncard = 1 := by
       rcases Eta.split_or_inert K hunr (P.under (𝓞 K⁺)) h𝔭 with h | ⟨h, -⟩
       · exact absurd hst ((Eta.ncard_eq_two_iff K hunr P hP0).mp h)
       · exact h
-    rw [if_pos h1]
+    rw [ite_eq_left h1]
     exact hg' x
 
 end CM
@@ -576,12 +576,12 @@ theorem eta_eq_jacobiSym : ∀ (R : Ranks) (H : Formalism.BasicNotions.Host R) (
     rw [hunder] at he
     have h2 : (Ideal.primesOver v.asIdeal (𝓞 H.E)).ncard = 2 := by
       by_contra hc
-      rw [if_neg hc] at he
+      rw [ite_eq_right hc] at he
       exact absurd he (by decide)
     have hj : jacobiSym (p : ℤ) H.d = 1 := by
       rw [hp2, Nat.cast_ofNat, jacobiSym.at_two (Nat.odd_iff.mpr (by omega)),
-        ZMod.χ₈_nat_eq_if_mod_eight, if_neg (by omega), if_pos (by omega)]
-    rw [h2, hj, if_neg (by decide), one_pow]
+        ZMod.χ₈_nat_eq_if_mod_eight, ite_eq_right (by omega), ite_eq_left (by omega)]
+    rw [h2, hj, ite_eq_right (by decide), one_pow]
   · have hunr : ∀ P : Ideal (𝓞 H.E), P.IsPrime → P ≠ ⊥ →
         ¬ ∀ x : 𝓞 H.E, IsCMField.complexConj H.E • x - x ∈ P :=
       fun P hP hP0 hx => H.der.unramEF P hP hP0 (fun x => hsm x ▸ hx x)
@@ -1128,7 +1128,7 @@ theorem etaAll_norm (b : Kˣ) (a : (K⁺)ˣ)
   · intro w _
     have h := ComplexEmbedding.lift_algebraMap_apply K w.embedding (a : K⁺)
     rw [ha, map_mul, IsCMField.complexEmbedding_complexConj, Complex.mul_conj] at h
-    rw [etaInf, ← h, Complex.ofReal_re, if_neg (not_lt.mpr (Complex.normSq_nonneg _))]
+    rw [etaInf, ← h, Complex.ofReal_re, ite_eq_right (not_lt.mpr (Complex.normSq_nonneg _))]
   · intro v
     unfold etaFin
     split_ifs with hc
@@ -1176,7 +1176,7 @@ theorem exists_norm_val_eq {m : 𝓞 K⁺} (hm : m ≠ 0)
     rw [hs v hv, Finset.card_singleton] at this
     omega
   rw [val_under K (s v) v (hs' v) (hu v), ha, map_mul, h2, hb _ (hT _ (hs' v)), hb _ (hT _ h1),
-    hs', h1, if_pos rfl, if_neg hne, HeightOneSpectrum.valuation_of_algebraMap,
+    hs', h1, ite_eq_left rfl, ite_eq_right hne, HeightOneSpectrum.valuation_of_algebraMap,
     HeightOneSpectrum.intValuation_if_neg _ hy]
   simp [n]
 
@@ -1239,7 +1239,7 @@ theorem eta_product_formula : ∀ (R : Ranks) (H : Formalism.BasicNotions.Host R
   change (if (Ideal.primesOver (P.under (𝓞 H.F)) (𝓞 H.E)).ncard = 2 then (1 : ℤ) else -1) = 1 at he
   rw [hunder] at he
   by_contra hc
-  rw [if_neg hc] at he
+  rw [ite_eq_right hc] at he
   exact absurd he (by decide)
 
 end GlobalTheory.EtaProduct
@@ -1470,7 +1470,7 @@ private theorem card_above_of_prime {R : Ranks} (H : Formalism.BasicNotions.Host
   change (if (Ideal.primesOver (P.under (𝓞 H.F)).asIdeal (𝓞 H.E)).ncard = 2 then (1 : ℤ) else -1) = 1 at he
   rw [card_above]
   by_contra hc
-  rw [if_neg hc] at he
+  rw [ite_eq_right hc] at he
   exact absurd he (by decide)
 
 private theorem exists_prime_mem {A : Type} [CommRing A] (P : Ideal A) (hP : P.IsPrime) (N : ℕ) (hN : N ≠ 0)

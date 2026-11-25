@@ -12,45 +12,8 @@ import Development.AutomorphicArithmetic.PrimitiveCosets.ToEBij
 import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
 import Formalism.SizeWindowBrackets.ChainSlopeWindows.GaloisMapComplexConjugation
 import Formalism.SizeWindowBrackets.ChainSlopeWindows.StronglyIrreducible
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
 
@@ -235,13 +198,13 @@ theorem gD_spec (i : ℕ) :
     rw [Formalism.HC.Frame.mem_Psi_iff]; show (sgc0).2 ≠ 1; decide
   unfold gD
   by_cases hm : frob D D.host.d ^ i ∈ D.R.Psi
-  · rw [if_neg (by tauto)]
+  · rw [ite_eq_right (by tauto)]
     constructor
     · rw [tE_mul, tE_iner, add_sub_right_comm]
       exact AddSubgroup.add_mem _ h0 hs
     · rw [inPhi_iff, Subgroup.mul_mem_cancel_left _ hm]
       exact hin
-  · rw [if_pos hm]
+  · rw [ite_eq_left hm]
     exact ⟨h0, by rw [inPhi_iff]; exact hm⟩
 
 section vonMangoldtClassSum
@@ -260,18 +223,18 @@ theorem primePowerSum_eq_local {p : ℕ} (hp : InertK D p) :
     have e1 : i • (AD D).frob p = tE D (frob D p ^ i) := by rw [tE_pow, hfr]
     rw [e1, wM_partner]
     by_cases hm : frob D p ^ i ∈ D.R.Psi
-    · rw [if_neg (by tauto), if_neg (by rw [inPhi_iff]; tauto)]
-    · rw [if_pos ⟨hi1, hm⟩, if_pos (by rw [inPhi_iff]; exact hm)]
+    · rw [ite_eq_right (by tauto), ite_eq_right (by rw [inPhi_iff]; tauto)]
+    · rw [ite_eq_left ⟨hi1, hm⟩, ite_eq_left (by rw [inPhi_iff]; exact hm)]
   · intro i hi
     by_cases hc : 1 ≤ i ∧ frob D p ^ i ∉ D.R.Psi
-    · rw [if_pos hc]
+    · rw [ite_eq_left hc]
       have hiN : N < i := by
         by_contra hcon
         exact hi (Finset.mem_Icc.2 ⟨hc.1, by omega⟩)
       have hpi : N < p ^ i := hiN.trans (Nat.lt_pow_self hp.1.one_lt)
       have := term_zero (a := a) (hw _ (rho_mem D t hc.2)) (hN _ (rho_mem D t hc.2)) hpi
       rwa [Nat.cast_pow] at this
-    · rw [if_neg hc]
+    · rw [ite_eq_right hc]
 
 theorem primePowerSum_eq_zero_of_cutoff_lt {p : ℕ} (hpN : N < p) :
     characterSumData.askP (AD D) N a (tH D t) (wM D w) p = 0 := by
@@ -291,7 +254,7 @@ theorem askD_eq :
   rw [tsum_eq_sum (s := Icc 1 N)]
   · refine Finset.sum_congr rfl (fun i hi => ?_)
     have hi1 := (Finset.mem_Icc.1 hi).1
-    rw [if_pos hi1]
+    rw [ite_eq_left hi1]
     obtain ⟨g0, -, huniq⟩ := (UpperTheory.GL.inertia_d D.host.toHostAx).2.2 i
     have hg := gD_spec D i
     rw [Finset.sum_eq_single_of_mem (tE D (gD D i)) (by simp only [mem_filter, mem_univ, true_and]; exact hg)]
@@ -301,7 +264,7 @@ theorem askD_eq :
       exact absurd ((huniq b hb).trans (huniq _ hg).symm) hne
   · intro i hi
     by_cases hc : 1 ≤ i
-    · rw [if_pos hc]
+    · rw [ite_eq_left hc]
       have hiN : N < i := by
         by_contra hcon
         exact hi (Finset.mem_Icc.2 ⟨hc, by omega⟩)
@@ -309,7 +272,7 @@ theorem askD_eq :
       have hg : gD D i ∉ D.R.Psi := fun h => (gD_spec D i).2 ((inPhi_iff D _).2 h)
       have := term_zero (a := a) (hw _ (rho_mem D t hg)) (hN _ (rho_mem D t hg)) hpi
       rwa [Nat.cast_pow] at this
-    · rw [if_neg hc]
+    · rw [ite_eq_right hc]
 
 theorem ASK_eq :
     ASKjt D a w (D.R.tau1 t) = characterSumData.ASK (AD D) N a (tH D t) (wM D w) := by
@@ -319,13 +282,13 @@ theorem ASK_eq :
   rw [tsum_eq_sum (s := range (N + 1)), Finset.sum_filter]
   · refine Finset.sum_congr rfl (fun p _ => ?_)
     by_cases hp : InertK D p
-    · rw [if_pos hp, if_pos ((isInert_iff D p).2 hp), primePowerSum_eq_local D a w hw N hN t hp]
-    · rw [if_neg hp, if_neg (fun h => hp ((isInert_iff D p).1 h))]
+    · rw [ite_eq_left hp, ite_eq_left ((isInert_iff D p).2 hp), primePowerSum_eq_local D a w hw N hN t hp]
+    · rw [ite_eq_right hp, ite_eq_right (fun h => hp ((isInert_iff D p).1 h))]
   · intro p hp
     by_cases hI : InertK D p
-    · rw [if_pos hI, primePowerSum_eq_local D a w hw N hN t hI, primePowerSum_eq_zero_of_cutoff_lt D a w hw N hN t (by
+    · rw [ite_eq_left hI, primePowerSum_eq_local D a w hw N hN t hI, primePowerSum_eq_zero_of_cutoff_lt D a w hw N hN t (by
         simpa using hp), mul_zero]
-    · rw [if_neg hI]
+    · rw [ite_eq_right hI]
 
 end vonMangoldtClassSum
 
@@ -695,7 +658,7 @@ theorem plGG_partner {p : ℕ} (h : ZetaZeroFreeRegion.InertK D p) (t : G.HH D) 
   unfold G.plGG G.partner rho
   rcases h.2 with hs | hc
   · have hdec : decide (G.IsSg D p ∧ Odd i) = true := decide_eq_true ⟨hs, hi⟩
-    simp only [hdec, if_true]
+    simp only [hdec, ite_true]
     refine Prod.ext ?_ hH
     show ((-1, 1) : G0) = c0 * (frob D p ^ i).1 * 1
     rw [Prod.pow_fst, sign_group_pow_odd _ hi, f1 hs]
@@ -703,7 +666,7 @@ theorem plGG_partner {p : ℕ} (h : ZetaZeroFreeRegion.InertK D p) (t : G.HH D) 
   · have hns : ¬ G.IsSg D p := by
       intro hs; rw [G.IsSg, hc] at hs; exact absurd hs (by decide)
     have hdec : decide (G.IsSg D p ∧ Odd i) = false := decide_eq_false (fun hh => hns hh.1)
-    simp only [hdec, Bool.false_eq_true, if_false]
+    simp only [hdec, Bool.false_eq_true, ite_false]
     refine Prod.ext ?_ hH
     show ((1, 1) : G0) = c0 * (frob D p ^ i).1 * 1
     rw [Prod.pow_fst, sign_group_pow_odd _ hi, f2 hc]
@@ -799,11 +762,11 @@ theorem right₃ {X : G.Inst D L} {K : G.Consts} (hF : ∀ w, G.ParametersFill X
   rw [tsum_eq_sum (s := Finset.range (Nat.log p (L.aT t).toNat + 2))]
   · refine Finset.sum_congr rfl (fun i _ => ?_)
     by_cases hi : Odd i
-    · rw [if_pos ⟨hi.pos, (frob_pow_mem D h i).2 hi⟩, if_pos hi, wPart_eq hF h hj t hi, max_comm]
-    · rw [if_neg (fun hc => hi ((frob_pow_mem D h i).1 hc.2)), if_neg hi]
+    · rw [ite_eq_left ⟨hi.pos, (frob_pow_mem D h i).2 hi⟩, ite_eq_left hi, wPart_eq hF h hj t hi, max_comm]
+    · rw [ite_eq_right (fun hc => hi ((frob_pow_mem D h i).1 hc.2)), ite_eq_right hi]
   · intro i hi
     by_cases hc : 1 ≤ i ∧ frob D p ^ i ∉ D.R.Psi
-    · rw [if_pos hc]
+    · rw [ite_eq_left hc]
       have hi' : Nat.log p (L.aT t).toNat + 2 ≤ i := by
         by_contra hcon
         exact hi (Finset.mem_range.mpr (by omega))
@@ -812,7 +775,7 @@ theorem right₃ {X : G.Inst D L} {K : G.Consts} (hF : ∀ w, G.ParametersFill X
           (Nat.pow_le_pow_right h.1.pos (by omega))
       have := term0 L t (one_le_wAt L hN j hj'.1 hj'.2 _ (rho_mem D (t : D.R.A) hc.2)) hlt
       rwa [Nat.cast_pow] at this
-    · rw [if_neg hc]
+    · rw [ite_eq_right hc]
 
 theorem primePowerSum_eq_zero_of_lt (hN : NumN_at L) {p : ℕ} {j : ℕ} (hj : j ∈ SizeData₂.lifts D) (t : D.host.TT)
     (hp : (L.aT t).toNat < p) :
@@ -822,11 +785,11 @@ theorem primePowerSum_eq_zero_of_lt (hN : NumN_at L) {p : ℕ} {j : ℕ} (hj : j
   rw [tsum_eq_sum (s := (∅ : Finset ℕ)), Finset.sum_empty]
   intro i _
   by_cases hc : 1 ≤ i ∧ frob D p ^ i ∉ D.R.Psi
-  · rw [if_pos hc]
+  · rw [ite_eq_left hc]
     have hlt : (L.aT t).toNat < p ^ i := lt_of_lt_of_le hp (Nat.le_self_pow (by omega) p)
     have := term0 L t (one_le_wAt L hN j hj'.1 hj'.2 _ (rho_mem D (t : D.R.A) hc.2)) hlt
     rwa [Nat.cast_pow] at this
-  · rw [if_neg hc]
+  · rw [ite_eq_right hc]
 
 theorem inert_sum {X : G.Inst D L} {K : G.Consts} (P : ℕ → Prop) [DecidablePred P] [DecidablePred (ZetaZeroFreeRegion.InertK D)]
     (hP : ∀ p, P p ↔ (D.host.cls p = PrimeClass.signal ∨ D.host.cls p = PrimeClass.inertClass))
@@ -838,16 +801,16 @@ theorem inert_sum {X : G.Inst D L} {K : G.Consts} (P : ℕ → Prop) [DecidableP
   · refine Finset.sum_congr rfl (fun p hp => ?_)
     obtain ⟨hp1, hp2⟩ := Finset.mem_filter.mp hp
     have hI : ZetaZeroFreeRegion.InertK D p := ⟨(Finset.mem_filter.mp hp1).2, (hP p).1 hp2⟩
-    rw [if_pos hI, right₃ hF hN hI hj t]
+    rw [ite_eq_left hI, right₃ hF hN hI hj t]
   · intro p hp
     by_cases hI : ZetaZeroFreeRegion.InertK D p
-    · rw [if_pos hI]
+    · rw [ite_eq_left hI]
       have hlt : (L.aT t).toNat < p := by
         by_contra hcon
         exact hp (Finset.mem_filter.mpr ⟨Finset.mem_filter.mpr ⟨Finset.mem_range.mpr (by omega), hI.1⟩,
           (hP p).2 hI.2⟩)
       rw [primePowerSum_eq_zero_of_lt hN hj t hlt, mul_zero]
-    · rw [if_neg hI]
+    · rw [ite_eq_right hI]
 
 theorem askRec_at {X : G.Inst D L} {K : G.Consts} (hF : ∀ w, G.ParametersFill X K w) (hN : NumN_at L) :
     AskRec_at L := by

@@ -128,6 +128,4 @@ theorem finrank_add_finrank_perp (A : Submodule E V.V) : finrank E A + finrank E
 
 end Lin
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 end GlobalTheory.Cusp.WittIdx

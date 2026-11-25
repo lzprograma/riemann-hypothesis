@@ -3,53 +3,9 @@ module
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Normed.Algebra.Exponential
 public import Mathlib.Topology.Instances.Matrix
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.Matrix.Normed
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -106,10 +62,6 @@ variable {R : Type} [Ring R]
 
 def up (p r q Z : R) : R := p * Z * r + p * Z * q + r * Z * q
 
-def low (p r q Z : R) : R := r * Z * p + q * Z * p + q * Z * r
-
-def mid (p r q Z : R) : R := p * Z * p + r * Z * r + q * Z * q
-
 structure Grading (p r q θ : R) : Prop where
   pp : p * p = p
   qq : q * q = q
@@ -125,49 +77,10 @@ variable {p r q θ : R} (h : Grading p r q θ)
 include h
 
 theorem pr : p * r = 0 := by rw [h.sum, mul_sub, mul_sub, mul_one, h.pp, h.pq, sub_self, sub_zero]
-theorem rp : r * p = 0 := by rw [h.sum, sub_mul, sub_mul, one_mul, h.pp, h.qp, sub_self, sub_zero]
 theorem qr : q * r = 0 := by rw [h.sum, mul_sub, mul_sub, mul_one, h.qq, h.qp, sub_zero, sub_self]
-theorem rq : r * q = 0 := by rw [h.sum, sub_mul, sub_mul, one_mul, h.qq, h.pq, sub_zero, sub_self]
 theorem rr : r * r = r := by
   conv_lhs => enter [1]; rw [h.sum]
   rw [sub_mul, sub_mul, one_mul, h.pr, h.qr, sub_zero, sub_zero]
-theorem θq : θ * q = p * θ := by
-  calc θ * q = θ * (q * θ) * θ := by rw [mul_assoc, mul_assoc, h.θθ, mul_one]
-    _ = p * θ := by rw [← h.θp, ← mul_assoc, h.θθ, one_mul]
-theorem θr : θ * r = r * θ := by
-  rw [h.sum, mul_sub, mul_sub, sub_mul, sub_mul, h.θp, h.θq, mul_one, one_mul]; abel
-
-theorem conj_low (Z : R) : θ * low p r q Z * θ = up p r q (θ * Z * θ) := by
-  have a : ∀ u v u' v' : R, θ * u = u' * θ → θ * v' = v * θ → θ * (u * Z * v) * θ = u' * (θ * Z * θ) * v' := by
-    intro u v u' v' h1 h2
-    calc θ * (u * Z * v) * θ = (θ * u) * Z * (v * θ) := by simp only [mul_assoc]
-      _ = _ := by rw [h1, ← h2]; simp only [mul_assoc]
-  rw [low, up, mul_add, mul_add, add_mul, add_mul, a r p r q h.θr h.θq, a q p p q h.θq h.θq, a q r p r h.θq h.θr]
-  abel
-
-theorem dec (Z : R) : Z = up p r q (Z - θ * Z * θ) + mid p r q Z + (low p r q Z + θ * low p r q Z * θ) := by
-  rw [h.conj_low]
-  have e : p + r + q = 1 := by rw [h.sum]; abel
-  calc Z = (p + r + q) * Z * (p + r + q) := by rw [e, one_mul, mul_one]
-    _ = _ := by simp only [up, mid, low]; noncomm_ring
-
-theorem comm_cpt (Z : R) : Commute (low p r q Z + θ * low p r q Z * θ) θ := by
-  change _ * _ = _ * _
-  rw [add_mul, mul_add, mul_assoc _ θ θ, h.θθ, mul_one, ← mul_assoc θ, ← mul_assoc θ, h.θθ, one_mul, add_comm]
-
-theorem up_p (Z : R) : up p r q Z * p = 0 := by
-  simp only [up, add_mul, mul_assoc, h.rp, h.qp, mul_zero, add_zero]
-
-theorem up_r (Z : R) : up p r q Z * r = p * Z * r := by
-  simp only [up, add_mul, mul_assoc, h.rr, h.qr, mul_zero, add_zero]
-
-theorem mid_p (Z : R) : mid p r q Z * p = p * mid p r q Z := by
-  simp only [mid, add_mul, mul_add, mul_assoc, h.pp, h.rp, h.qp, mul_zero, add_zero]
-  simp only [← mul_assoc, h.pp, h.pr, h.pq, zero_mul, add_zero]
-
-theorem mid_q (Z : R) : mid p r q Z * q = q * mid p r q Z := by
-  simp only [mid, add_mul, mul_add, mul_assoc, h.qq, h.rq, h.pq, mul_zero, zero_add]
-  simp only [← mul_assoc, h.qq, h.qr, h.qp, zero_mul, zero_add]
 
 end Grading
 
@@ -261,12 +174,6 @@ theorem prX_mulVec (v : m → A) : prX c J x y *ᵥ v = (v ⬝ᵥ J *ᵥ (c ∘ 
 theorem prY_mulVec (v : m → A) : prY c J x y *ᵥ v = -(v ⬝ᵥ J *ᵥ (c ∘ x)) • y := by
   rw [prY, Matrix.neg_mulVec, Matrix.vecMulVec_mulVec, dotProduct_comm, neg_smul, op_smul_eq_smul]
 
-theorem c_mulVec (cc : ∀ a, c (c a) = a) (skew : J.map c = -Jᵀ) (v : m → A) : c ∘ (J *ᵥ (c ∘ v)) = -(v ᵥ* J) := by
-  rw [map_mulVec' (c' := c) c (fun _ => rfl), skew, Matrix.neg_mulVec, Matrix.mulVec_transpose]
-  congr 2
-  funext i
-  exact cc _
-
 namespace Hyp
 
 variable (h : Hyp c J x y ι ι')
@@ -276,8 +183,6 @@ theorem px : prX c J x y *ᵥ x = x := by rw [prX_mulVec, h.xy, one_smul]
 theorem py : prX c J x y *ᵥ y = 0 := by rw [prX_mulVec, h.yy, zero_smul]
 theorem qx : prY c J x y *ᵥ x = 0 := by rw [prY_mulVec, h.xx, neg_zero, zero_smul]
 theorem qy : prY c J x y *ᵥ y = y := by rw [prY_mulVec, h.yx, neg_neg, one_smul]
-theorem pι : prX c J x y * ι = 0 := by rw [prX, Matrix.vecMulVec_mul, h.ιy]; ext; simp [Matrix.vecMulVec_apply]
-theorem qι : prY c J x y * ι = 0 := by rw [prY, Matrix.neg_mul, Matrix.vecMulVec_mul, h.ιx, neg_eq_zero]; ext; simp [Matrix.vecMulVec_apply]
 
 omit h in
 theorem mul_p (g : Matrix m m A) : g * prX c J x y = Matrix.vecMulVec (g *ᵥ x) (J *ᵥ (c ∘ y)) := by
@@ -296,66 +201,6 @@ theorem ext' {g g' : Matrix m m A} (hx : g *ᵥ x = g' *ᵥ x) (hy : g *ᵥ y = 
   have e : (1 : Matrix m m A) = ι * ι' + prX c J x y + prY c J x y := by rw [h.right]; abel
   rw [← Matrix.mul_one g, ← Matrix.mul_one g', e]
   simp only [Matrix.mul_add, mul_p, mul_q, ← Matrix.mul_assoc, hx, hy, hι]
-
-theorem adj_pq : (prX c J x y)ᵀ * J = J * (prY c J x y).map c := by
-  have e : (prY c J x y).map c = Matrix.vecMulVec (c ∘ y) (x ᵥ* J) := by
-    ext i j
-    have := congrFun (c_mulVec h.cc h.skew x) j
-    simp only [Function.comp_apply, Pi.neg_apply] at this
-    simp [prY, Matrix.vecMulVec_apply, this]
-  rw [e, prX, Matrix.transpose_vecMulVec, Matrix.vecMulVec_mul, Matrix.mul_vecMulVec]
-
-theorem adj_qp : (prY c J x y)ᵀ * J = J * (prX c J x y).map c := by
-  have e : (prX c J x y).map c = -Matrix.vecMulVec (c ∘ x) (y ᵥ* J) := by
-    ext i j
-    have := congrFun (c_mulVec h.cc h.skew y) j
-    simp only [Function.comp_apply, Pi.neg_apply] at this
-    simp [prX, Matrix.vecMulVec_apply, this]
-  rw [e, prY, Matrix.transpose_neg, Matrix.transpose_vecMulVec, Matrix.neg_mul, Matrix.vecMulVec_mul, Matrix.mul_neg,
-    Matrix.mul_vecMulVec]
-
-theorem rι : (1 - prX c J x y - prY c J x y) * ι = ι := by
-  rw [Matrix.sub_mul, Matrix.sub_mul, Matrix.one_mul, h.pι, h.qι, sub_zero, sub_zero]
-
-theorem mulVec_eq_self_of_mul_prX_eq_prX {g : Matrix m m A} (hg : g * prX c J x y = prX c J x y) : g *ᵥ x = x := by
-  rw [← h.px, Matrix.mulVec_mulVec, hg]
-
-theorem unip_ι {g : Matrix m m A}
-    (hg : (1 - prX c J x y) * g * (1 - prX c J x y - prY c J x y) = 1 - prX c J x y - prY c J x y) (z : n → A) :
-    ∃ a : A, g *ᵥ (ι *ᵥ z) = ι *ᵥ z + a • x := by
-  have e : g * ι = ι + prX c J x y * (g * ι) := by
-    have := congrArg (· * ι) hg
-    simp only [Matrix.mul_assoc, h.rι] at this
-    rw [Matrix.sub_mul, Matrix.one_mul] at this
-    exact sub_eq_iff_eq_add.1 this
-  refine ⟨((g * ι) *ᵥ z) ⬝ᵥ J *ᵥ (c ∘ y), ?_⟩
-  rw [← prX_mulVec (x := x), Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, ← Matrix.add_mulVec, ← e]
-
-theorem mulVec_eq_smul_of_commute_prX {g : Matrix m m A} (hg : g * prX c J x y = prX c J x y * g) :
-    g *ᵥ x = ((g *ᵥ x) ⬝ᵥ J *ᵥ (c ∘ y)) • x := by
-  rw [← prX_mulVec (x := x), Matrix.mulVec_mulVec, ← hg, ← Matrix.mulVec_mulVec, h.px]
-
-theorem levi_y {g : Matrix m m A} (hq : g * prY c J x y = prY c J x y * g)
-    (hu : gᵀ * J * g.map c = J) {t : Aˣ} (ht : (t : A) = (g *ᵥ x) ⬝ᵥ J *ᵥ (c ∘ y)) : g *ᵥ y = c (t⁻¹).1 • y := by
-  have e : g *ᵥ y = -((g *ᵥ y) ⬝ᵥ J *ᵥ (c ∘ x)) • y := by
-    rw [← prY_mulVec (y := y), Matrix.mulVec_mulVec, ← hq, ← Matrix.mulVec_mulVec, h.qy]
-  set μ := -((g *ᵥ y) ⬝ᵥ J *ᵥ (c ∘ x))
-  have e1 : (g *ᵥ x) ⬝ᵥ J *ᵥ (c ∘ (g *ᵥ y)) = 1 := by
-    have : c ∘ (g *ᵥ y) = g.map c *ᵥ (c ∘ y) := by
-      funext i; exact RingHom.map_mulVec c g y i
-    rw [this, Matrix.mulVec_mulVec, ← Matrix.vecMul_transpose, ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec,
-      ← Matrix.mul_assoc, hu, h.xy]
-  have e2 : c ∘ (μ • y) = c μ • (c ∘ y) := by
-    funext i; simp
-  rw [e, e2, Matrix.mulVec_smul, dotProduct_smul, ← ht, smul_eq_mul, mul_comm] at e1
-  rw [Units.inv_eq_of_mul_eq_one_right e1, h.cc]
-  exact e
-
-theorem levi_ι {g : Matrix m m A} (hp : g * prX c J x y = prX c J x y * g) (hq : g * prY c J x y = prY c J x y * g) :
-    g * ι = ι * (ι' * g * ι) := by
-  rw [← Matrix.mul_assoc, ← Matrix.mul_assoc, h.right, Matrix.sub_mul _ _ g, Matrix.sub_mul _ _ g, ← hp, ← hq,
-    Matrix.one_mul, Matrix.sub_mul, Matrix.sub_mul, Matrix.mul_assoc g, Matrix.mul_assoc g, h.pι, h.qι]
-  simp
 
 end Hyp
 

@@ -38,7 +38,11 @@ import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsWeight
 import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BlockCharacterApproximation.PolyApproxCut
+public import Mathlib.Algebra.MvPolynomial.Eval
+public import Mathlib.Analysis.Normed.Field.Basic
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Data.ZMod.Defs
+public import Mathlib.Topology.MetricSpace.Ultra.Basic
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IwahoriTypeSupport.HasTypeVecIff
 
 @[expose] public section
@@ -47,23 +51,9 @@ noncomputable section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open GlobalTheory.GalCut GlobalTheory.UnitaryBC GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil ValuativeRel UpperTheory.Gal.TypesAndIwahori GlobalTheory.Cong
-open UpperTheory.Gal.CharacterCongruences (Ch PolyApproxAt)
 
 namespace UpperTheory.Gal.NearKilling
-
-section Abstract
-
-variable {Γ I : Type} [Group Γ] [Group I] {a c : ℕ}
-
-end Abstract
-
-section Global
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {a : ℕ}
-
-end Global
 
 def DenseFrob : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [IsCMField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]

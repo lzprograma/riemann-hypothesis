@@ -12,8 +12,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.Herm
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 structure HermCols (D : D7) where
 
   lev0 : LevelData D

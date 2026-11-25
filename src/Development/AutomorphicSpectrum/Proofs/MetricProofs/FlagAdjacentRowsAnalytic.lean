@@ -1,51 +1,14 @@
 module
 
+import Development.WeilBound.CoreStatements.PluriharmonicCharts.PullDegSome
+import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsMultiHomogIdealMap
+
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PullbackPullback
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GenericBlockMatrixIsBlockDiag
 public import Mathlib.FieldTheory.RatFunc.AsPolynomial
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.GenericFibreKerTarget
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagAdjacentSwapVarietiesArithmetic
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionFunctorialHolomorphic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -60,23 +23,7 @@ namespace GlobalTheory.CompanionTheory.Ar.PB.WSq.Pr
 theorem holoMap_comp' {e₁ e₂ e₃ : ℕ} {X Y Z : Type} [TopologicalSpace X] [TopologicalSpace Y]
     [TopologicalSpace Z] {C : FinHolAtlas e₁ Z} {B : FinHolAtlas e₂ Y} {A : FinHolAtlas e₃ X}
     {g : Z → Y} {f : Y → X} (hg : HoloMap C B g) (hf : HoloMap B A f) : HoloMap C A (f ∘ g) := by
-  refine ⟨hf.1.comp hg.1, fun j k t ht => ?_⟩
-  obtain ⟨ht1, ht2⟩ := ht
-  obtain ⟨m, hm⟩ := B.cover (g ((C.chart j).symm t))
-  have h1 : AnalyticAt ℂ (B.chart m ∘ g ∘ (C.chart j).symm) t := hg.2 j m t ⟨ht1, hm⟩
-  have hu : (B.chart m).symm ((B.chart m ∘ g ∘ (C.chart j).symm) t) = g ((C.chart j).symm t) :=
-    (B.chart m).left_inv hm
-  have h2 : AnalyticAt ℂ (A.chart k ∘ f ∘ (B.chart m).symm)
-      ((B.chart m ∘ g ∘ (C.chart j).symm) t) :=
-    hf.2 m k _ ⟨(B.chart m).map_source hm, by
-      rw [Set.mem_preimage, hu]; exact ht2⟩
-  refine (h2.comp h1).congr ?_
-  have hc : ContinuousAt (g ∘ (C.chart j).symm) t :=
-    hg.1.continuousAt.comp ((C.chart j).continuousAt_symm ht1)
-  filter_upwards [hc ((B.chart m).open_source.mem_nhds hm)] with t' ht'
-  have ht'' : g ((C.chart j).symm t') ∈ (B.chart m).source := ht'
-  simp only [Function.comp]
-  rw [(B.chart m).left_inv ht'']
+  apply _root_.GlobalTheory.CompanionTheory.Ar.PB.CovMap.holoMap_comp <;> assumption
 
 theorem injective_of_degree_one {e : ℕ} {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     {A : FinHolAtlas e X} {B : FinHolAtlas e Y} {π : Y → X} (hd : IsDegreeOff A B π 1 ∅) :
@@ -112,48 +59,7 @@ theorem isBlockMap_v₀ (k₀ : K) :
 def κ₁ (k₀ k : K) : Option K := if k = k₀ then none else some k
 
 theorem isBlockMap_v₁ (k₀ : K) : IsBlockMap (κ₁ k₀) (v₁ (ι := ι) k₀) := by
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · intro u w h
-    by_cases hu : u = k₀ <;> by_cases hw : w = k₀ <;> simp_all [κ₁]
-  · rintro ⟨k, m⟩ ⟨k', m'⟩ h
-    by_cases hk : k = k₀
-    · subst hk
-      by_cases hk' : k' = k
-      · subst hk'
-        rw [v₁_self, v₁_self] at h
-        have h2 : m = m' := eq_of_heq (Sigma.mk.inj h).2
-        rw [h2]
-      · rw [v₁_self, v₁_ne (p := ⟨k', m'⟩) hk'] at h
-        exact absurd (congrArg Sigma.fst h) (by simp)
-    · by_cases hk' : k' = k₀
-      · subst hk'
-        rw [v₁_self, v₁_ne (p := ⟨k, m⟩) hk] at h
-        exact absurd (congrArg Sigma.fst h) (by simp)
-      · rw [v₁_ne (p := ⟨k, m⟩) hk, v₁_ne (p := ⟨k', m'⟩) hk'] at h
-        have h1 : k = k' := Option.some.inj (congrArg Sigma.fst h)
-        subst h1
-        have h2 : m = m' := eq_of_heq (Sigma.mk.inj h).2
-        rw [h2]
-  · rintro ⟨k, m⟩
-    by_cases hk : k = k₀
-    · subst hk
-      rw [v₁_self]
-      simp [κ₁]
-    · rw [v₁_ne (p := ⟨k, m⟩) hk]
-      simp [κ₁, hk]
-  · rintro ⟨o, m⟩ ⟨k, hk⟩
-    by_cases e : k = k₀
-    · subst e
-      have ho : o = none := by
-        have hk' : κ₁ k k = o := hk
-        rw [← hk']; simp [κ₁]
-      subst ho
-      exact ⟨⟨k, m⟩, v₁_self k m⟩
-    · have ho : o = some k := by
-        have hk' : κ₁ k₀ k = o := hk
-        rw [← hk']; simp [κ₁, e]
-      subst ho
-      exact ⟨⟨k, m⟩, v₁_ne (p := ⟨k, m⟩) e⟩
+  apply _root_.PositivityTheory.Xgp.c_algsq.isBlockMap_v₁ <;> assumption
 
 theorem basePart_orbit {σ : Type} (blk : σ → Option K) {z z' : (Σ k, ι k) → ℂ}
     (h : SameOrbit z z') : SameOrbit (basePart blk z) (basePart blk z') := by
@@ -189,7 +95,7 @@ theorem orbit_of_two {k₀ : K} {z z' : (Σ o : Option K, ι (o.getD k₀)) → 
 
 theorem two_projections : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (Φ : Type) [Field Φ] (y : (Σ k, ι k) → Φ) (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N j : ℕ) (M : FlagModel y Ψ N j) (n d : ℕ) (BM : BaseMetric M n) (FA : FlagAn BM d) (τ : Ψ) (a b : Fin N) (k₀ : K) (ca cb : Fin N), (b : ℕ) = a + 1 → ((b : ℕ) < j ∨ j ≤ (a : ℕ)) → M.blk (τ, a) = some k₀ → (ca : ℕ) = lastCol N j a → (cb : ℕ) = ca + 1 → IsArithVar (mCoordIdeal y) (d + 2) → ∀ (RW : AnLogRes (mCoordIdeal (M.wCo (τ, a) k₀ ca cb RatFunc.X)) ⊤ (d + 2)) (pr : RW.X → BM.Rb.X), HoloMap RW.A BM.Rb.A pr → (∀ x, SameOrbit (BM.Rb.lift (pr x) (pr x)) (basePart M.blk (fstPt k₀ (RW.lift x x)))) → ∃ q : Fin 2 → RW.X → FA.S.X, (∀ i, HoloMap RW.A FA.S.A (q i)) ∧ (∀ i, FA.pr ∘ q i = pr) ∧ (∀ x x₀, FA.Re.π x₀ = q 0 x → SameOrbit (FA.Re.R.lift x₀ x₀) (fstPt k₀ (RW.lift x x))) ∧ (∀ x x₀, FA.Re.π x₀ = q 1 x → SameOrbit (FA.Re.R.lift x₀ x₀) (sndPt k₀ (RW.lift x x))) ∧ (Function.Injective fun w => (q 0 w, q 1 w)) ∧ ∀ p, p ≠ (τ, a) → FA.S.ph (some p) ∘ q 0 = FA.S.ph (some p) ∘ q 1 ∧ ∀ t, FA.S.phT (some p) t ∘ q 0 = FA.S.phT (some p) t ∘ q 1 := by
   intro K _ ι _ Φ _ y Ψ _ _ N j M n d BM FA τ a b k₀ ca cb hb hab hk ha hcb hy RW pr hpr hbase
-  obtain ⟨-, -, -, hi₀, hi₁⟩ := _root_.GlobalTheory.CompanionTheory.Relay.flag_adjacent_swap_varieties_arithmetic K ι Φ y Ψ N j M d τ a b k₀ ca cb hb hab hk ha hcb hy
+  obtain ⟨-, -, -, hi₀, hi₁⟩ := _root_.PositivityTheory.Xgp.t_c_w_arith K ι Φ y Ψ N j M d τ a b k₀ ca cb hb hab hk ha hcb hy
   have hi₁' := hi₁ (v₁ k₀) (fun p hp => v₁_ne hp) (fun m => v₁_self k₀ m)
   obtain ⟨h₀, hh₀, ho₀⟩ := exists_holo_of_centre some (v₀ k₀) FA.J_top FA.Re.R RW
     (isBlockMap_v₀ k₀) hi₀.ge

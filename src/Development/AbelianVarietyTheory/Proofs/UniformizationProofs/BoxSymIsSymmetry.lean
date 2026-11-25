@@ -52,28 +52,12 @@ noncomputable section
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.BoxSymmetry
 
 section Generators
 
 variable {X X' Y Z : Scheme.{0}} (L : LB X) {J K : Type} [Fintype J] [Fintype K]
-
-private theorem gm_res_eq_gm {X Z : Scheme.{0}} (r : Z ⟶ X) (z : Z) {U V : X.Opens} (hUV : U ≤ V)
-    (hz : r z ∈ U) (x : Γ(X, V)ˣ) : gm r z U (res hUV x) = gm r z V x := by
-  have key : X.presheaf.map (homOfLE hUV).op ≫ r.app U ≫ Z.presheaf.germ (r ⁻¹ᵁ U) z hz =
-      r.app V ≫ Z.presheaf.germ (r ⁻¹ᵁ V) z (hUV hz) := by
-    rw [Scheme.Hom.naturality_assoc]
-    congr 1
-    exact TopCat.Presheaf.germ_res _ _ _ _
-  unfold gm res
-  rw [dite_eq_left hz, dite_eq_left (hUV hz)]
-  unfold pullU
-  ext
-  simp only [MonoidHom.comp_apply, Units.coe_map, MonoidHom.coe_coe]
-  have e := congrArg (fun f => CommRingCat.Hom.hom f (x : Γ(X, V))) key
-  simpa using e
 
 theorem gm_boxGen (F : J → (X' ⟶ X)) (φ : K → (Y ⟶ X')) (ε : K → ℤ)
     (t : ∀ i, LB.Gen (LB.LinComb (L.pull (F i)) φ ε)) (r : Z ⟶ Y) (z : Z)
@@ -84,7 +68,7 @@ theorem gm_boxGen (F : J → (X' ⟶ X)) (φ : K → (Y ⟶ X')) (ε : K → ℤ
   unfold GeneratorPullback.boxGen
   dsimp only
   refine (map_prod (gm r z _) _ _).trans (Finset.prod_congr rfl fun i _ => ?_)
-  exact gm_res_eq_gm r z _ h _
+  exact gm_res r z _ h _
 
 private theorem gm_lin_lemma_2 {X X' Z : Scheme.{0}} (L : LB X) {J : Type} [Fintype J]
     (F : J → (X' ⟶ X)) (y : Z ⟶ X') (z : Z) (j j' : J → L.ι) (e : ℤ)
@@ -99,7 +83,7 @@ private theorem gm_lin_lemma_2 {X X' Z : Scheme.{0}} (L : LB X) {J : Type} [Fint
   dsimp only at *
   refine (map_prod _ _ _).trans (Finset.prod_congr rfl fun i _ => ?_)
   rw [zpow_one, Fintype.prod_unique, zpow_one]
-  refine (gm_res_eq_gm y z _ hy _).trans (gm_res_eq_gm y z _ ?_ _).symm
+  refine (gm_res y z _ hy _).trans (gm_res y z _ ?_ _).symm
   unfold LB.wchart at hy ⊢
   exact ⟨Set.mem_iInter.2 fun _ => Set.mem_iInter.1 hy.1 i, Set.mem_iInter.2 fun _ => Set.mem_iInter.1 hy.2 i⟩
 
@@ -116,40 +100,6 @@ theorem trF_box (F : J → (X' ⟶ X)) (φ : K → (Y ⟶ X')) (ε : K → ℤ) 
     unfold LB.wchart at h h'
     exact ⟨Set.mem_iInter.1 h k, Set.mem_iInter.1 h' k⟩
   exact gm_lin_lemma_2 L F (r ≫ φ k) z (jj k) (jj' k) (ε k) hk
-
-private theorem gm_pullU_eq_gm_comp' {X Y Z : Scheme.{0}} (f : Y ⟶ X) (r : Z ⟶ Y) (z : Z) (V : X.Opens)
-    (hz : r z ∈ f ⁻¹ᵁ V) (a : Γ(X, V)ˣ) : gm r z (f ⁻¹ᵁ V) (pullU f V a) = gm (r ≫ f) z V a := by
-  have hz' : (r ≫ f) z ∈ V := by simpa using hz
-  unfold gm
-  rw [dite_eq_left hz, dite_eq_left hz']
-  unfold pullU
-  ext
-  simp
-  rfl
-
-private theorem units_ext_of_gm_id_eq_on_open {Y : Scheme.{0}} {W : Y.Opens} (s s' : Γ(Y, W)ˣ)
-    (h : ∀ y : Y, y ∈ W → gm (𝟙 Y) y W s = gm (𝟙 Y) y W s') : s = s' := by
-  apply Units.ext
-  apply TopCat.Presheaf.section_ext Y.sheaf W
-  intro y hy
-  have e := congrArg Units.val (h y hy)
-  unfold gm pullU at e
-  rw [dite_eq_left (by simpa using hy)] at e
-  exact e
-
-private theorem gm_linComb_transition_eq {X' Y Z : Scheme.{0}} (M : LB X') {K : Type} [Fintype K] (φ : K → (Y ⟶ X'))
-    (ε : K → ℤ) (r : Z ⟶ Y) (z : Z) (a b : K → M.ι)
-    (hz : r z ∈ (M.LinComb φ ε).U a ⊓ (M.LinComb φ ε).U b) :
-    gm r z ((M.LinComb φ ε).U a ⊓ (M.LinComb φ ε).U b) ((M.LinComb φ ε).g a b) = trF (L := M) φ ε r z a b := by
-  unfold trF
-  unfold LB.LinComb at *
-  dsimp only at *
-  refine (map_prod _ _ _).trans (Finset.prod_congr rfl fun k _ => ?_)
-  rw [map_zpow]
-  congr 1
-  refine (gm_res_eq_gm r z _ hz _).trans (gm_pullU_eq_gm_comp' (φ k) r z (M.U (a k) ⊓ M.U (b k)) ?_ (M.g (a k) (b k)))
-  unfold LB.wchart at hz
-  exact ⟨Set.mem_iInter.1 hz.1 k, Set.mem_iInter.1 hz.2 k⟩
 
 private theorem mem_pull_wchart_of_mem_linComb_wchart {X X' Y : Scheme.{0}} (L : LB X) {J K : Type} [Fintype J] [Fintype K]
     (F : J → (X' ⟶ X)) (φ : K → (Y ⟶ X')) (y : Y) (jj : K → J → L.ι) (i : J)
@@ -168,7 +118,7 @@ private theorem gm_pullAlong_section_eq_gm_comp {X X' Y Y' Z : Scheme.{0}} (L : 
       gm (r ≫ h) z (L.wchart φ fun k => a k PUnit.unit) (t.s fun k => a k PUnit.unit) := by
   unfold GeneratorPullback.pullAlong
   dsimp only
-  refine (gm_res_eq_gm r z _ hz _).trans (gm_pullU_eq_gm_comp' h r z _ ?_ _)
+  refine (gm_res r z _ hz _).trans (gm_pull r h z _ ?_ _)
   unfold LB.wchart at hz ⊢
   refine Set.mem_iInter.2 fun k => ?_
   have h1 := Set.mem_iInter.1 hz k

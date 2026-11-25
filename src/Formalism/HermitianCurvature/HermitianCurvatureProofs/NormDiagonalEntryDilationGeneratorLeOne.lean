@@ -1,5 +1,7 @@
 module
 
+import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.SumNonneg
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
 public import Formalism.HermitianCurvature.StatementB
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.BesselUnitaryEquivHolds
@@ -8,60 +10,9 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointnessP
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DilationUnipotentWeylMeasure
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralZeroFrequencyInvariant
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.MeasureTheory.Order.Group.Lattice
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.UniformSpace.Uniformizable
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Analysis.Calculus.ParametricIntegral
 public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
@@ -77,7 +28,7 @@ namespace Formalism.FourierDecayAlt.P.B6
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 def X0 (k r : ℕ) : Mat k r := Matrix.diagonal fun i =>
   if i.val < r then ((((r - i.val : ℕ) : ℝ) / ((r : ℝ) + 1) : ℝ) : ℂ)
@@ -166,14 +117,14 @@ theorem hermitian_entry_zero_or_weights_cancel (k r : ℕ) (i j : Fin (2 * r + k
     have h1 : ¬ j.val < r := by omega
     have h2 : ¬ j.val ≤ r + k := by omega
     have h3 : j.val - (r + k) = r - i.val := by omega
-    simp only [dilationGeneratorDiagonal, c1.1, h1, h2, if_true, if_false, h3]
+    simp only [dilationGeneratorDiagonal, c1.1, h1, h2, ite_true, ite_false, h3]
     push_cast; ring
   · by_cases c2 : j.val < r ∧ i.val + j.val = 2 * r + k
     · right
       have h1 : ¬ i.val < r := by omega
       have h2 : ¬ i.val ≤ r + k := by omega
       have h3 : i.val - (r + k) = r - j.val := by omega
-      simp only [dilationGeneratorDiagonal, c2.1, h1, h2, if_true, if_false, h3]
+      simp only [dilationGeneratorDiagonal, c2.1, h1, h2, ite_true, ite_false, h3]
       push_cast; ring
     · by_cases c3 : r ≤ i.val ∧ i.val ≤ r + k ∧ i = j
       · right
@@ -345,19 +296,8 @@ theorem gN_mul_le (a b : Mat k r) : gN (a * b) ≤ gN a * gN b := by
   exact Real.sqrt_le_sqrt (sum_normSq_entries_mul_le a b)
 
 theorem gN_pos {g : Mat k r} (hg : g ∈ GV k r) : 0 < gN g := by
-  apply Real.sqrt_pos.2
-  by_contra hcon
-  have h0 : hilbertSchmidtNormSq g = 0 := le_antisymm (not_lt.1 hcon) (sum_normSq_entries_nonneg g)
-  have hz : g = 0 := by
-    ext i j
-    have h1 := (Finset.sum_eq_zero_iff_of_nonneg
-      (fun i _ => Finset.sum_nonneg fun j _ => Complex.normSq_nonneg (g i j))).1 h0 i (Finset.mem_univ _)
-    have h2 := (Finset.sum_eq_zero_iff_of_nonneg
-      (fun j _ => Complex.normSq_nonneg (g i j))).1 h1 j (Finset.mem_univ _)
-    simpa using Complex.normSq_eq_zero.1 h2
-  have hu := WeylGroupFacts.isUnit_of_uh hg
-  rw [hz, Matrix.det_zero] at hu
-  exact not_isUnit_zero hu
+  intros
+  apply _root_.Gp91.GlobalTheory.BesselDecay.gN_pos' <;> assumption
 
 theorem gN_continuous : Continuous (gN : Mat k r → ℝ) := by
   unfold gN
@@ -446,9 +386,9 @@ theorem lam_continuous (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) : Continuou
   refine Complex.continuous_re.comp (continuous_const.mul ?_)
   refine continuous_finsetSum _ fun a _ => ?_
   by_cases h : a.val + 1 < r
-  · simp only [h, dif_pos]
+  · simp only [h, dite_eq_left]
     exact continuous_id.matrix_elem _ _
-  · simp only [h, dif_neg, not_false_iff]
+  · simp only [h, dite_eq_right, not_false_iff]
     have h2 : Continuous fun n : Mat k r => n *ᵥ z := continuous_id.matrix_mulVec continuous_const
     exact (continuous_apply (eI k r a)).comp h2
 
@@ -534,19 +474,7 @@ theorem sigmaFinite_μSS (D : RealPlaceData k r Wp Wq) : SigmaFinite D.μSS := b
   infer_instance
 
 theorem ae_inSS (D : RealPlaceData k r Wp Wq) : ∀ᵐ p ∂D.μSS, D.inSS p := by
-  have := haar_sigmaFinite D.haarW
-  have := haar_sigmaFinite D.haarN
-  have := haar_sigmaFinite D.haarW'
-  have h1 : ∀ᵐ p ∂D.μSS, (Matrix.of p.1.1 : Mat k r) ∈ UWset k r D.z :=
-    (Measure.quasiMeasurePreserving_fst.comp Measure.quasiMeasurePreserving_fst).ae (haar_ae D.haarW)
-  have h2 : ∀ᵐ p ∂D.μSS, (Matrix.of p.1.2 : Mat k r) ∈ Nset k r :=
-    (Measure.quasiMeasurePreserving_snd.comp Measure.quasiMeasurePreserving_fst).ae (haar_ae D.haarN)
-  have h3 : ∀ᵐ p ∂D.μSS, (Matrix.of p.2.1 : Mat k r) ∈ UWset k r D.z' :=
-    (Measure.quasiMeasurePreserving_fst.comp Measure.quasiMeasurePreserving_snd).ae (haar_ae D.haarW')
-  have h4 : ∀ᵐ p ∂D.μSS, (Matrix.of p.2.2 : Mat k r) ∈ Nset k r :=
-    (Measure.quasiMeasurePreserving_snd.comp Measure.quasiMeasurePreserving_snd).ae (haar_ae D.haarN)
-  filter_upwards [h1, h2, h3, h4] with p a b c d
-  exact ⟨a, b, c, d⟩
+  apply _root_.Formalism.FourierDecayAlt.P.B7.ae_inSS <;> assumption
 
 theorem setting_support_closed (D : RealPlaceData k r Wp Wq) : IsClosed {p : SS k r | D.inSS p} := by
   have c1 : IsClosed {x : Mt k r | (Matrix.of x : Mat k r) ∈ UWset k r D.z} := isClosed_UWset k r D.z
@@ -1030,7 +958,7 @@ def rightMulMeasurableEquiv (a : Mat k r) (ha : IsUnit a.det) : Mt k r ≃ᵐ Mt
   measurable_toFun := (continuous_right_multiplication_map a).measurable
   measurable_invFun := (continuous_right_multiplication_map a⁻¹).measurable
 
-theorem ph_dil (H : Hyp D Ξ α) (A B : Mat k r → (Wq →L[ℂ] Wp)) {p : SS k r} (hp : D.inSS p) {x y : ℝ}
+theorem ph_dil_of_changeOfVariables (hDil : DilUW) (A B : Mat k r → (Wq →L[ℂ] Wp)) {p : SS k r} (hp : D.inSS p) {x y : ℝ}
     (hx : 0 < x) (hy : 0 < y) :
     Ph D A B (dilation₂ (x, y) p) =
       Ph D (fun g => A (aDil k r x * g * (aDil k r y)⁻¹)) (fun g => B (aDil k r x * g * (aDil k r y)⁻¹)) p := by
@@ -1053,7 +981,13 @@ theorem ph_dil (H : Hyp D Ξ α) (A B : Mat k r → (Wq →L[ℂ] Wp)) {p : SS k
       (B (Matrix.of ((rmulF (aDil k r y)⁻¹ ∘ lmulM (aDil k r x)) g))) =
     hsInner (rho D p (fun g => A (aDil k r x * g * (aDil k r y)⁻¹)) (Matrix.of g))
       (B (aDil k r x * Matrix.of g * (aDil k r y)⁻¹))
-  rw [e, rho_eq, rho_eq, sgs_dil H.dilUW D hp hx hy, Sd_dil]
+  rw [e, rho_eq, rho_eq, sgs_dil hDil D hp hx hy, Sd_dil]
+
+theorem ph_dil (H : Hyp D Ξ α) (A B : Mat k r → (Wq →L[ℂ] Wp)) {p : SS k r} (hp : D.inSS p) {x y : ℝ}
+    (hx : 0 < x) (hy : 0 < y) :
+    Ph D A B (dilation₂ (x, y) p) =
+      Ph D (fun g => A (aDil k r x * g * (aDil k r y)⁻¹)) (fun g => B (aDil k r x * g * (aDil k r y)⁻¹)) p :=
+  ph_dil_of_changeOfVariables H.dilUW A B hp hx hy
 
 theorem phdil_bound (H : Hyp D Ξ α) : ∃ K : ℝ, 0 ≤ K ∧ ∀ (A B : Mat k r → (Wq →L[ℂ] Wp)) (cA cB : ℝ),
     admitted α cA A → admitted α cB B → ∀ p, D.inSS p → ∀ x ∈ Set.Icc (1 / 2 : ℝ) 2, ∀ y ∈ Set.Icc (1 / 2 : ℝ) 2,
@@ -1276,7 +1210,13 @@ theorem product_bound_monotone_factors_le {e c P M' K c₀ M m : ℝ} (he0 : 0 �
 
 variable {D : RealPlaceData k r Wp Wq} {Ξ : Mat k r → NNReal} {α : ℝ}
 
-theorem pairing_derivative_locally_dominated (H : Hyp D Ξ α) {A B A1 B1 : Mat k r → (Wq →L[ℂ] Wp)} {cA cB : ℝ}
+theorem pairing_derivative_of_integrable
+    (hα : 0 ≤ α)
+    (hI : Integrable (fun g : Mt k r =>
+      gN (Matrix.of g : Mat k r) ^ (-α) * gN (Matrix.of g : Mat k r) ^ (-α)) D.μG)
+    (hPair : ∀ {F G : Mat k r → (Wq →L[ℂ] Wp)} {cF cG : ℝ},
+      admitted α cF F → admitted α cG G → ∀ {p : SS k r}, D.inSS p →
+      Integrable (fun g : Mt k r => hsInner (rho D p F (Matrix.of g)) (G (Matrix.of g))) D.μG) {A B A1 B1 : Mat k r → (Wq →L[ℂ] Wp)} {cA cB : ℝ}
     (hA : admitted α cA A) (hA1 : admitted α cA A1) (hB : admitted α cB B) (hB1 : admitted α cB B1)
     {p : SS k r} (hp : D.inSS p) {a b : ℝ → Mat k r} {κ : ℝ → ℝ} {t₀ : ℝ} {s : Set ℝ} (hs : s ∈ 𝓝 t₀)
     {K : ℝ} (ha : ∀ t ∈ s, a t ∈ GV k r) (hb : ∀ t ∈ s, b t ∈ GV k r)
@@ -1286,7 +1226,6 @@ theorem pairing_derivative_locally_dominated (H : Hyp D Ξ α) {A B A1 B1 : Mat 
     HasDerivAt (fun t => Ph D (fun g => A (a t * g * b t)) (fun g => B (a t * g * b t)) p)
       ((κ t₀ : ℂ) * (Ph D (fun g => A1 (a t₀ * g * b t₀)) (fun g => B (a t₀ * g * b t₀)) p +
         Ph D (fun g => A (a t₀ * g * b t₀)) (fun g => B1 (a t₀ * g * b t₀)) p)) t₀ := by
-  have hα := H.α_nonneg
   have ht₀ : t₀ ∈ s := mem_of_mem_nhds hs
   obtain ⟨hS1, hS2⟩ := inSS_mem D hp
   have hS1i := WeylGroupFacts.uh_inv hS1
@@ -1333,7 +1272,7 @@ theorem pairing_derivative_locally_dominated (H : Hyp D Ξ α) {A B A1 B1 : Mat 
     (u' := fun t g => κ t • A1 (a t * sgs p (Matrix.of g) * b t))
     (v' := fun t g => κ t • B1 (a t * Matrix.of g * b t))
     hs (m := fun g => gN (Matrix.of g : Mat k r) ^ (-α)) (C := (1 + K) * (cA + cB) * P * (1 + M))
-    (model_integrable H) (ms2 hA) (ms1 hB) (fun t ht => (ms2 hA1 t ht).const_smul (κ t))
+    hI (ms2 hA) (ms1 hB) (fun t ht => (ms2 hA1 t ht).const_smul (κ t))
     (fun t ht => (ms1 hB1 t ht).const_smul (κ t))
     (by
       filter_upwards [hG] with g hg t ht
@@ -1369,9 +1308,9 @@ theorem pairing_derivative_locally_dominated (H : Hyp D Ξ α) {A B A1 B1 : Mat 
         (by have := hκ t ht; linarith) hcB (by linarith) hP0 zero_le_one (by linarith) (hm0 g)
       rw [norm_smul, Real.norm_eq_abs]
       exact le_trans (mul_le_mul_of_nonneg_left h (abs_nonneg _)) h2)
-  have i1 := ph_integrable H (admissible_two_sided_translate hα hA1 (ha t₀ ht₀) (hb t₀ ht₀))
+  have i1 := hPair (admissible_two_sided_translate hα hA1 (ha t₀ ht₀) (hb t₀ ht₀))
     (admissible_two_sided_translate hα hB (ha t₀ ht₀) (hb t₀ ht₀)) hp
-  have i2 := ph_integrable H (admissible_two_sided_translate hα hA (ha t₀ ht₀) (hb t₀ ht₀))
+  have i2 := hPair (admissible_two_sided_translate hα hA (ha t₀ ht₀) (hb t₀ ht₀))
     (admissible_two_sided_translate hα hB1 (ha t₀ ht₀) (hb t₀ ht₀)) hp
   have e1 : (∫ g : Mt k r, (hsInner (Sd D p (κ t₀ • A1 (a t₀ * sgs p (Matrix.of g) * b t₀)))
         (B (a t₀ * Matrix.of g * b t₀)) +
@@ -1395,7 +1334,28 @@ theorem pairing_derivative_locally_dominated (H : Hyp D Ξ α) {A B A1 B1 : Mat 
   rw [e2]
   exact key
 
-theorem ph_hasDerivAt_y (H : Hyp D Ξ α) {A B : Mat k r → (Wq →L[ℂ] Wp)} {cA cB : ℝ} (hA : admitted α cA A)
+theorem pairing_derivative_locally_dominated (H : Hyp D Ξ α) {A B A1 B1 : Mat k r → (Wq →L[ℂ] Wp)} {cA cB : ℝ}
+    (hA : admitted α cA A) (hA1 : admitted α cA A1) (hB : admitted α cB B) (hB1 : admitted α cB B1)
+    {p : SS k r} (hp : D.inSS p) {a b : ℝ → Mat k r} {κ : ℝ → ℝ} {t₀ : ℝ} {s : Set ℝ} (hs : s ∈ 𝓝 t₀)
+    {K : ℝ} (ha : ∀ t ∈ s, a t ∈ GV k r) (hb : ∀ t ∈ s, b t ∈ GV k r)
+    (hKa : ∀ t ∈ s, gN (a t)⁻¹ ≤ K) (hKb : ∀ t ∈ s, gN (b t)⁻¹ ≤ K) (hκ : ∀ t ∈ s, |κ t| ≤ K)
+    (dA : ∀ z ∈ GV k r, ∀ t ∈ s, HasDerivAt (fun t => A (a t * z * b t)) (κ t • A1 (a t * z * b t)) t)
+    (dB : ∀ z ∈ GV k r, ∀ t ∈ s, HasDerivAt (fun t => B (a t * z * b t)) (κ t • B1 (a t * z * b t)) t) :
+    HasDerivAt (fun t => Ph D (fun g => A (a t * g * b t)) (fun g => B (a t * g * b t)) p)
+      ((κ t₀ : ℂ) * (Ph D (fun g => A1 (a t₀ * g * b t₀)) (fun g => B (a t₀ * g * b t₀)) p +
+        Ph D (fun g => A (a t₀ * g * b t₀)) (fun g => B1 (a t₀ * g * b t₀)) p)) t₀ :=
+  pairing_derivative_of_integrable H.α_nonneg (model_integrable H) (ph_integrable H)
+    hA hA1 hB hB1 hp hs ha hb hKa hKb hκ dA dB
+
+structure PairingDomination (D : RealPlaceData k r Wp Wq) (α : ℝ) : Prop where
+  α_nonneg : 0 ≤ α
+  integrable_model : Integrable (fun g : Mt k r =>
+      gN (Matrix.of g : Mat k r) ^ (-α) * gN (Matrix.of g : Mat k r) ^ (-α)) D.μG
+  integrable_pairing : ∀ {F G : Mat k r → (Wq →L[ℂ] Wp)} {cF cG : ℝ},
+      admitted α cF F → admitted α cG G → ∀ {p : SS k r}, D.inSS p →
+      Integrable (fun g : Mt k r => hsInner (rho D p F (Matrix.of g)) (G (Matrix.of g))) D.μG
+
+theorem ph_hasDerivAt_y_of_domination (hD : PairingDomination D α) (hDil : DilUW) {A B : Mat k r → (Wq →L[ℂ] Wp)} {cA cB : ℝ} (hA : admitted α cA A)
     (hA' : admitted α cA (Rr A)) (hB : admitted α cB B) (hB' : admitted α cB (Rr B)) (dA : DR A) (dB : DR B)
     {p : SS k r} (hp : D.inSS p) {x y : ℝ} (hx : 0 < x) (hy : 0 < y) :
     HasDerivAt (fun y' : ℝ => Ph D A B (dilation₂ (x, y') p))
@@ -1410,7 +1370,7 @@ theorem ph_hasDerivAt_y (H : Hyp D Ξ α) {A B : Mat k r → (Wq →L[ℂ] Wp)} 
     intro f df z hz t ht
     exact curveR f (aDil k r x * z) (hpos t ht)
       (df _ (WeylGroupFacts.uh_mul (WeylGroupFacts.uh_mul (aDil_mem k r hx) hz) (aDil_inv_mem k r (hpos t ht))))
-  have key := pairing_derivative_locally_dominated H hA hA' hB hB' hp (a := fun _ => aDil k r x) (b := fun t => (aDil k r t)⁻¹)
+  have key := pairing_derivative_of_integrable hD.α_nonneg hD.integrable_model hD.integrable_pairing hA hA' hB hB' hp (a := fun _ => aDil k r x) (b := fun t => (aDil k r t)⁻¹)
     (κ := fun t => -(rr r / t)) hs (K := K1 + gN (aDil k r x)⁻¹ + 2 * rr r / y)
     (fun t _ => aDil_mem k r hx) (fun t ht => aDil_inv_mem k r (hpos t ht))
     (fun t _ => by
@@ -1430,12 +1390,20 @@ theorem ph_hasDerivAt_y (H : Hyp D Ξ α) {A B : Mat k r → (Wq →L[ℂ] Wp)} 
         nlinarith
       linarith)
     (hd dA) (hd dB)
-  rw [ph_dil H (Rr A) B hp hx hy, ph_dil H A (Rr B) hp hx hy]
+  rw [ph_dil_of_changeOfVariables hDil (Rr A) B hp hx hy, ph_dil_of_changeOfVariables hDil A (Rr B) hp hx hy]
   refine key.congr_of_eventuallyEq ?_
   filter_upwards [hs] with t ht
-  exact ph_dil H A B hp hx (hpos t ht)
+  exact ph_dil_of_changeOfVariables hDil A B hp hx (hpos t ht)
 
-theorem phase_dilation_deriv_x (H : Hyp D Ξ α) {A B : Mat k r → (Wq →L[ℂ] Wp)} {cA cB : ℝ} (hA : admitted α cA A)
+theorem ph_hasDerivAt_y (H : Hyp D Ξ α) {A B : Mat k r → (Wq →L[ℂ] Wp)} {cA cB : ℝ} (hA : admitted α cA A)
+    (hA' : admitted α cA (Rr A)) (hB : admitted α cB B) (hB' : admitted α cB (Rr B)) (dA : DR A) (dB : DR B)
+    {p : SS k r} (hp : D.inSS p) {x y : ℝ} (hx : 0 < x) (hy : 0 < y) :
+    HasDerivAt (fun y' : ℝ => Ph D A B (dilation₂ (x, y') p))
+      (((-(rr r / y) : ℝ) : ℂ) * (Ph D (Rr A) B (dilation₂ (x, y) p) + Ph D A (Rr B) (dilation₂ (x, y) p))) y :=
+  ph_hasDerivAt_y_of_domination ⟨H.α_nonneg, model_integrable H, ph_integrable H⟩ H.dilUW
+    hA hA' hB hB' dA dB hp hx hy
+
+theorem phase_dilation_deriv_x_of_domination (hD : PairingDomination D α) (hDil : DilUW) {A B : Mat k r → (Wq →L[ℂ] Wp)} {cA cB : ℝ} (hA : admitted α cA A)
     (hA' : admitted α cA (Ll A)) (hB : admitted α cB B) (hB' : admitted α cB (Ll B)) (dA : DL A) (dB : DL B)
     {p : SS k r} (hp : D.inSS p) {x y : ℝ} (hx : 0 < x) (hy : 0 < y) :
     HasDerivAt (fun x' : ℝ => Ph D A B (dilation₂ (x', y) p))
@@ -1451,7 +1419,7 @@ theorem phase_dilation_deriv_x (H : Hyp D Ξ α) {A B : Mat k r → (Wq →L[ℂ
     have h := curveL f (z * (aDil k r y)⁻¹) (hpos t ht)
       (df _ (WeylGroupFacts.uh_mul (aDil_mem k r (hpos t ht)) (WeylGroupFacts.uh_mul hz (aDil_inv_mem k r hy))))
     simpa only [Matrix.mul_assoc] using h
-  have key := pairing_derivative_locally_dominated H hA hA' hB hB' hp (a := fun t => aDil k r t) (b := fun _ => (aDil k r y)⁻¹)
+  have key := pairing_derivative_of_integrable hD.α_nonneg hD.integrable_model hD.integrable_pairing hA hA' hB hB' hp (a := fun t => aDil k r t) (b := fun _ => (aDil k r y)⁻¹)
     (κ := fun t => -(rr r / t)) hs (K := K1 + gN ((aDil k r y)⁻¹)⁻¹ + 2 * rr r / x)
     (fun t ht => aDil_mem k r (hpos t ht)) (fun t _ => aDil_inv_mem k r hy)
     (fun t ht => by
@@ -1470,10 +1438,18 @@ theorem phase_dilation_deriv_x (H : Hyp D Ξ α) {A B : Mat k r → (Wq →L[ℂ
         nlinarith
       linarith)
     (hd dA) (hd dB)
-  rw [ph_dil H (Ll A) B hp hx hy, ph_dil H A (Ll B) hp hx hy]
+  rw [ph_dil_of_changeOfVariables hDil (Ll A) B hp hx hy, ph_dil_of_changeOfVariables hDil A (Ll B) hp hx hy]
   refine key.congr_of_eventuallyEq ?_
   filter_upwards [hs] with t ht
-  exact ph_dil H A B hp (hpos t ht) hy
+  exact ph_dil_of_changeOfVariables hDil A B hp (hpos t ht) hy
+
+theorem phase_dilation_deriv_x (H : Hyp D Ξ α) {A B : Mat k r → (Wq →L[ℂ] Wp)} {cA cB : ℝ} (hA : admitted α cA A)
+    (hA' : admitted α cA (Ll A)) (hB : admitted α cB B) (hB' : admitted α cB (Ll B)) (dA : DL A) (dB : DL B)
+    {p : SS k r} (hp : D.inSS p) {x y : ℝ} (hx : 0 < x) (hy : 0 < y) :
+    HasDerivAt (fun x' : ℝ => Ph D A B (dilation₂ (x', y) p))
+      (((-(rr r / x) : ℝ) : ℂ) * (Ph D (Ll A) B (dilation₂ (x, y) p) + Ph D A (Ll B) (dilation₂ (x, y) p))) x :=
+  phase_dilation_deriv_x_of_domination ⟨H.α_nonneg, model_integrable H, ph_integrable H⟩ H.dilUW
+    hA hA' hB hB' dA dB hp hx hy
 
 end phd
 

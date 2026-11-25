@@ -32,14 +32,14 @@ section Mx
 
 variable {W : Type*} [AddCommGroup W] [Module ℂ W] (T : Fin n → Fin n → Module.End ℂ W)
 
-theorem mx_add (X X' : Matrix (Fin n) (Fin n) ℂ) : mx T (X + X') = mx T X + mx T X' := by
-  simp [mx, add_smul, Finset.sum_add_distrib]
+theorem mx_add (X X' : Matrix (Fin n) (Fin n) ℂ) : ReciprocityTheory.ChartRestriction.DS.actM T (X + X') = ReciprocityTheory.ChartRestriction.DS.actM T X + ReciprocityTheory.ChartRestriction.DS.actM T X' := by
+  simp [ReciprocityTheory.ChartRestriction.DS.actM, add_smul, Finset.sum_add_distrib]
 
-theorem mx_smul (c : ℂ) (X : Matrix (Fin n) (Fin n) ℂ) : mx T (c • X) = c • mx T X := by
-  simp [mx, smul_smul, Finset.smul_sum]
+theorem mx_smul (c : ℂ) (X : Matrix (Fin n) (Fin n) ℂ) : ReciprocityTheory.ChartRestriction.DS.actM T (c • X) = c • ReciprocityTheory.ChartRestriction.DS.actM T X := by
+  simp [ReciprocityTheory.ChartRestriction.DS.actM, smul_smul, Finset.smul_sum]
 
-theorem mx_single (a b : Fin n) : mx T (Matrix.single a b 1) = T a b := by
-  simp [mx, Matrix.single_apply, ite_smul, ite_and, Finset.sum_ite_eq]
+theorem mx_single (a b : Fin n) : ReciprocityTheory.ChartRestriction.DS.actM T (Matrix.single a b 1) = T a b := by
+  simp [ReciprocityTheory.ChartRestriction.DS.actM, Matrix.single_apply, ite_smul, ite_and, Finset.sum_ite_eq]
 
 theorem mat_decomp (Y Z : Matrix (Fin n) (Fin n) ℂ) :
     Y = (1 / 2 : ℂ) • (Y - Z) + (-(Complex.I / 2)) • (Complex.I • (Y + Z)) := by
@@ -123,7 +123,7 @@ theorem genSub_le_perpPerp (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε �
     exact this
   · have hE : E a b = (1 / 2 : ℂ) • actM E (Matrix.single a b 1 - Jm ε * (Matrix.single a b 1)ᴴ * Jm ε) +
         (-(Complex.I / 2)) • actM E (Complex.I • (Matrix.single a b 1 + Jm ε * (Matrix.single a b 1)ᴴ * Jm ε)) := by
-      have h1 : actM E = mx E := rfl
+      have h1 : actM E = ReciprocityTheory.ChartRestriction.DS.actM E := rfl
       rw [h1, ← mx_smul, ← mx_smul, ← mx_add, ← mat_decomp, mx_single]
     rw [hE, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.smul_apply]
     exact add_mem (Submodule.smul_mem _ _ (actM_mem_perpPerp hσ hD V (inG_sub _) hv))

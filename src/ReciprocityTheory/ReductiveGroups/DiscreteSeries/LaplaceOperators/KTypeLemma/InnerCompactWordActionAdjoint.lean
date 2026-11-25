@@ -64,10 +64,10 @@ theorem kl_adL_symm (a b : Fin n) (p q : Fin n × Fin n) :
   congr 1
   · by_cases h : b = p1 ∧ q1 = a ∧ q2 = p2
     · obtain ⟨rfl, rfl, rfl⟩ := h; simp
-    · rw [if_neg h, if_neg]; rintro ⟨rfl, rfl, rfl⟩; exact h ⟨rfl, rfl, rfl⟩
+    · rw [ite_eq_right h, ite_eq_right]; rintro ⟨rfl, rfl, rfl⟩; exact h ⟨rfl, rfl, rfl⟩
   · by_cases h : p2 = a ∧ q1 = p1 ∧ q2 = b
     · obtain ⟨rfl, rfl, rfl⟩ := h; simp
-    · rw [if_neg h, if_neg]; rintro ⟨rfl, rfl, rfl⟩; exact h ⟨rfl, rfl, rfl⟩
+    · rw [ite_eq_right h, ite_eq_right]; rintro ⟨rfl, rfl, rfl⟩; exact h ⟨rfl, rfl, rfl⟩
 
 theorem klw_symm (a b : Fin n) (w w' : List (Fin n × Fin n)) :
     starRingEnd ℂ (adLW a b w w') = adLW b a w' w := by
@@ -136,7 +136,7 @@ theorem compactWordAction_single_apply (hV : IsKStableSub ε E V) {a b : Fin n} 
   congr 1
   simp only [Finsupp.smul_apply, Finsupp.single_apply, Prod.ext_iff]
   by_cases h : p.2 = q.2
-  · simp only [h, and_true, if_true]
+  · simp only [h, and_true, ite_true]
     rw [sum_eq_single q.1 (fun w _ hw => by simp [hw]) (fun hq => by
       simp [Finsupp.notMem_support_iff.mp hq])]
     simp
@@ -157,11 +157,11 @@ theorem inner_compactWordAction_adjoint (hV : IsKStableSub ε E V) (hU : IsKUnit
         inner_conj_symm, inner_add_left, inner_add_right]
       congr 1
       · by_cases h : p.2 = q.2
-        · rw [if_pos h, if_pos h.symm, inner_smul_left, inner_smul_right, klw_symm]
-        · rw [if_neg h, if_neg (Ne.symm h), inner_zero_left, inner_zero_right]
+        · rw [ite_eq_left h, ite_eq_left h.symm, inner_smul_left, inner_smul_right, klw_symm]
+        · rw [ite_eq_right h, ite_eq_right (Ne.symm h), inner_zero_left, inner_zero_right]
       · by_cases h : p = q
-        · rw [if_pos h, if_pos h.symm]; exact hU a b hab v u
-        · rw [if_neg h, if_neg (Ne.symm h), inner_zero_left, inner_zero_right]
+        · rw [ite_eq_left h, ite_eq_left h.symm]; exact hU a b hab v u
+        · rw [ite_eq_right h, ite_eq_right (Ne.symm h), inner_zero_left, inner_zero_right]
 
 theorem lift0 (hV : IsKStableSub ε E V) [FiniteDimensional ℂ V] (hE : IsGlRep E) (hU : IsKUnitary ε E)
     {μ : Fin n → ℝ} {f : Fin n → M} (hf : ∀ c, f c ∈ genSub E V) (hμ : ∀ c, IsKHWVec ε E μ (f c)) :

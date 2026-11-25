@@ -130,7 +130,7 @@ theorem main : ∀ {k A : Type} [inst : Field k] [inst_1 : CommRing A] [inst_2 :
   have hq : N.mkQ x ≠ 0 := by
     rw [Ne, Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]; exact hxN
   obtain ⟨f, hf⟩ : ∃ f : Module.Dual k (A ⧸ N), f (N.mkQ x) ≠ 0 := by
-    by_contra h; push_neg at h
+    by_contra h; push Not at h
     exact hq ((Module.forall_dual_apply_eq_zero_iff k _).mp h)
   let g : A →ₗ[k] k := f.comp N.mkQ
   have hgN : ∀ a ∈ RingHom.ker aug ^ 2 ⊔ I, g a = 0 := by
@@ -425,8 +425,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
@@ -468,7 +466,7 @@ theorem eq_top_of_monomials {S A : Type} [CommRing S] [CommRing A] (f : S →+* 
     | mem y hy =>
       obtain ⟨e, he, rfl⟩ := hy
       refine Submodule.subset_span ⟨e + Pi.single j 1, ?_, ?_⟩
-      · simp only [Pi.add_apply, Finset.sum_add_distrib, Finset.sum_pi_single', Finset.mem_univ, if_true]
+      · simp only [Pi.add_apply, Finset.sum_add_distrib, Finset.sum_pi_single', Finset.mem_univ, ite_true]
         omega
       · simp only [Pi.add_apply, pow_add, Finset.prod_mul_distrib]
         congr 1

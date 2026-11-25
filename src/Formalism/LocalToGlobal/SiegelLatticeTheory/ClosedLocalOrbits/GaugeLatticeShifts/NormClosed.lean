@@ -33,8 +33,6 @@ namespace Formalism.L2.SG.NormCut
 
 section Links
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} (TR : TypedRed X) {u u' : D.what₂.Word}
   {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)} {F0' : FlagG (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)}
   {what₂ rows' : Finset (Submodule (𝓞 D.host.E) (VS D).V)} (cs : ColSys X u what₂) (cs' : ColSys X u' rows')
@@ -76,8 +74,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.NormCut
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def NormExpSatC' : Prop :=
   ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word),
     OOIntAll X u u' (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u') →
@@ -95,8 +91,6 @@ def SatGramC' : Prop :=
         (Aset Y.TR (Y.cs u)) (Aset Y.TR (Y.cs u')) ∧
       SatGram (X.Fu u) (X.Fu u') Y.TR (Y.cs u) (Y.cs u') (Y.FN u) (Y.FN u') (Y.tO u u').ngSet
         (Aset Y.TR (Y.cs u)) (Aset Y.TR (Y.cs u'))
-
-def ChiNBiC : Prop := ∀ (D : D7) (X : HidaSetting D), ChiNBi X
 
 def NeatC : Prop :=
   ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u : D.what₂.Word), Formalism.L2.SG.PoincareInHH.Cut.NeatKu X u Y.hK

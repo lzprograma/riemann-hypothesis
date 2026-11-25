@@ -47,7 +47,7 @@ theorem MixedKleimanLow.proof (hI : IntegralAgainstPositive.Statement)
   have hsnoc : (fun i : Fin (n + 1) => if (i : ℕ) < j then M else A) = Fin.snoc L A := by
     funext i
     refine Fin.lastCases ?_ (fun i => ?_) i
-    · rw [Fin.snoc_last, if_neg (by simp; omega)]
+    · rw [Fin.snoc_last, ite_eq_right (by simp; omega)]
     · rw [Fin.snoc_castSucc]; rfl
   have hLs : ∀ i, IsSemipositiveRel P0 P (L i) := fun i => by
     simp only [L]; split_ifs <;> assumption

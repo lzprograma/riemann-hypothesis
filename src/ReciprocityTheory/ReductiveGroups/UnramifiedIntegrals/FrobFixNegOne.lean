@@ -54,19 +54,8 @@ theorem frobFix_mul {x y : R} (hx : FrobFix p x) (hy : FrobFix p y) : FrobFix p 
 
 private theorem frobFix_add_lemma (hp : p.Prime) (x y : R) (n : ℕ) :
     (p : R) ∣ (x + y) ^ (p ^ n) - (x ^ (p ^ n) + y ^ (p ^ n)) := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    have hA : (p : R) ∣ ((x + y) ^ (p ^ n)) ^ p - (x ^ (p ^ n) + y ^ (p ^ n)) ^ p :=
-      dvd_trans ih (sub_dvd_pow_sub_pow _ _ _)
-    have hB : (p : R) ∣ (x ^ (p ^ n) + y ^ (p ^ n)) ^ p - ((x ^ (p ^ n)) ^ p + (y ^ (p ^ n)) ^ p) := by
-      rw [add_pow_prime_eq hp, add_sub_cancel_left]
-      exact dvd_mul_of_dvd_left (dvd_mul_of_dvd_left (dvd_mul_right _ _) _) _
-    have e : ∀ a : R, a ^ (p ^ (n + 1)) = (a ^ (p ^ n)) ^ p := fun a => by
-      rw [pow_succ, pow_mul]
-    rw [e, e, e]
-    have h := dvd_add hA hB
-    rwa [sub_add_sub_cancel] at h
+  rw [add_pow_prime_pow_eq' hp x y n, add_sub_cancel_left]
+  exact dvd_mul_right _ _
 
 theorem frobFix_add (hp : p.Prime) {x y : R} (hx : FrobFix p x) (hy : FrobFix p y) :
     FrobFix p (x + y) := by

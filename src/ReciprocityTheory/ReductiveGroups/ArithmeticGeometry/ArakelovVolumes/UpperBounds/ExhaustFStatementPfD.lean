@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfB
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustFStatementPfC
 import Mathlib.Analysis.Calculus.ContDiff.WithLp
 public import Mathlib.Analysis.InnerProductSpace.Calculus
@@ -27,10 +28,10 @@ theorem cd_nM (τ : X.Ψ) (a b : Fin r) : ContDiff ℂ ∞ fun z : V (nd X) => n
   show ContDiff ℂ ∞ fun z : V (nd X) => nmat X z τ a b
   unfold nmat
   by_cases h : b < a
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     first
       | fun_prop
-  · simp only [dif_neg h]
+  · simp only [dite_eq_right h]
     exact contDiff_const
 
 theorem unipotentFrame_inv_eq_adjugate (z : V (nd X)) (τ : X.Ψ) : (n1 X z τ)⁻¹ = (n1 X z τ).adjugate := by
@@ -50,9 +51,9 @@ private lemma cd_adj_lemma_2 {𝕜 : Type*} [NontriviallyNormedField 𝕜] [Norm
   simp only [Matrix.adjugate_apply]
   refine _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.ExhD.contDiff_det_of fun a b => ?_
   by_cases hab : a = j
-  · simp only [Matrix.updateRow_apply, hab, if_true]
+  · simp only [Matrix.updateRow_apply, hab, ite_true]
     exact contDiff_const
-  · simp only [Matrix.updateRow_apply, hab, if_false]
+  · simp only [Matrix.updateRow_apply, hab, ite_false]
     exact h a b
 
 theorem cd_Zt (τ : X.Ψ) (a : Fin X.p0) (m : Fin (r - X.p0)) :
@@ -86,15 +87,7 @@ theorem cd_detAm (τ : X.Ψ) : ContDiff ℝ ∞ fun z : V (nd X) => (Am X z τ).
   exact _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.ExhD.contDiff_det_of (M := fun z : V (nd X) => Am X z τ) fun a c => cd_Am_entry X τ a c
 
 theorem rhF_contDiffAt (x0 : Frame X.Ψ r) (ho : IsOrth X x0) {z : V (nd X)} (hz : z ∈ OmF X x0) : ContDiffAt ℝ ∞ (rhF X x0) z := by
-  have hfun : rhF X x0 = fun w => -∑ τ, Real.log ‖(Am X w τ).det‖ := funext (rhF_eq_sum X x0 ho)
-  have hpd := (mem_OmF_iff X x0 ho z).1 hz
-  rw [hfun]
-  refine (ContDiffAt.sum fun τ _ => ?_).neg
-  have hne : (Am X z τ).det ≠ 0 := (hpd τ).det_pos.ne'
-  have h1 : ContDiffAt ℝ ∞ (fun w : V (nd X) => (Am X w τ).det) z := (cd_detAm X τ).contDiffAt
-  have h2 : ContDiffAt ℝ ∞ (fun w : V (nd X) => ‖(Am X w τ).det‖) z :=
-    (contDiffAt_norm ℂ hne).comp z h1
-  exact h2.log (norm_ne_zero_iff.2 hne)
+  apply _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.OntoB.rhF_contDiffAt <;> assumption
 
 theorem T_cd {n : ℕ} : ContDiff ℝ ∞ fun z : V n => Real.log (1 + ‖z‖ ^ 2) := by
   exact (contDiff_const.add (contDiff_norm_sq ℂ)).log fun z => by positivity
@@ -103,35 +96,7 @@ theorem eF_contDiffAt (x0 : Frame X.Ψ r) (ho : IsOrth X x0) {z : V (nd X)} (hz 
   exact (rhF_contDiffAt X x0 ho hz).add (T_cd (n := nd X)).contDiffAt
 
 theorem isOpen_OmF (x0 : Frame X.Ψ r) : IsOpen (OmF X x0) := by
-  have hc : Continuous fun z : V (nd X) => cpt X x0 z := by
-    refine continuous_pi fun τ => continuous_pi fun a => continuous_pi fun b => ?_
-    have hfun : (fun z : V (nd X) => cpt X x0 z τ a b) = fun z => ∑ k, x0 τ a k * nM X z τ k b := by
-      funext z
-      have h := congrFun (congrFun (mat_cpt X x0 z τ) a) b
-      simpa [mat, Matrix.mul_apply] using h
-    rw [hfun]
-    exact continuous_finsetSum _ fun k _ => continuous_const.mul (cd_nM X τ k b).continuous
-  have hmat : ∀ τ : X.Ψ, Continuous fun x : Frame X.Ψ r => mat x τ := fun τ =>
-    continuous_pi fun a => continuous_pi fun b =>
-      (continuous_apply b).comp ((continuous_apply a).comp (continuous_apply τ))
-  have hdet : ∀ τ : X.Ψ, Continuous fun x : Frame X.Ψ r => (mat x τ).det :=
-    fun τ => (hmat τ).matrix_det
-  have hdmin : ∀ τ i, Continuous fun x : Frame X.Ψ r => dmin X.Gm x τ i := by
-    intro τ i
-    unfold dmin lminor
-    refine Continuous.matrix_det ?_
-    refine continuous_pi fun a => continuous_pi fun b => ?_
-    simp only [Matrix.submatrix_apply, FD.gram, Matrix.of_apply, FD.hermC, FD.col, mat]
-    fun_prop
-  have hset : OmF X x0 = ⋂ τ : X.Ψ, ({z | (mat (cpt X x0 z) τ).det ≠ 0} ∩
-      ⋂ i : Fin (r + 1), {z | 0 < psgn X.p0 i * (dmin X.Gm (cpt X x0 z) τ i).re}) := by
-    ext z
-    simp only [OmF, Set.mem_setOf_eq, X.mem_dom_iff, Set.mem_iInter, Set.mem_inter_iff]
-  rw [hset]
-  refine isOpen_iInter_of_finite fun τ => IsOpen.inter ?_ (isOpen_iInter_of_finite fun i => ?_)
-  · exact isOpen_ne_fun ((hdet τ).comp hc) continuous_const
-  · exact isOpen_lt continuous_const
-      (continuous_const.mul (Complex.continuous_re.comp ((hdmin τ i).comp hc)))
+  apply ReciprocityTheory.ChartRestriction.G.AR.Up.OntoB.isOpen_OmF <;> assumption
 
 end
 

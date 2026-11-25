@@ -120,10 +120,4 @@ theorem lpDim_isoLoc (Sig : List (Part D.naut.CG)) (w : PlE D.host) :
     simp only [List.foldr_cons, List.map_cons, List.sum_cons]
     rw [D.naut.lpDim_sum, lpDim_spehLoc, ih]
 
-section Deg
-
-variable {G : Type} [Group G] {g : ℕ} (f₀ : (ZMod g)[X])
-
-end Deg
-
 end Formalism.L2

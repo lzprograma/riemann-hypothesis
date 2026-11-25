@@ -264,14 +264,14 @@ theorem adelicFourierPi_tensor_cosetIndicator_algebraMap (φ : 𝓢(ι → mixed
   by_cases hη : ∀ i, η i ∈ (traceDualIdeal K J : FractionalIdeal (𝓞 K)⁰ K)
   · have hmem : η ∈ cosetPi K (fun _ ↦ traceDualIdeal K J) 0 := fun i ↦ by simpa using hη i
     rw [Set.indicator_of_mem hmem]
-    simp only [if_pos (hη _)]
+    simp only [ite_eq_left (hη _)]
     simp only [mixedPairingPi, embPi]
     rw [addChar_sum Real.fourierChar Finset.univ]
     ring
   · have hmem : η ∉ cosetPi K (fun _ ↦ traceDualIdeal K J) 0 := fun h ↦ hη fun i ↦ by
       simpa using h i
     obtain ⟨i, hi⟩ := not_forall.mp hη
-    rw [Set.indicator_of_notMem hmem, Finset.prod_eq_zero (Finset.mem_univ i) (if_neg hi)]
+    rw [Set.indicator_of_notMem hmem, Finset.prod_eq_zero (Finset.mem_univ i) (ite_eq_right hi)]
     ring
 
 theorem finiteAdeleMeasure_idealFiniteAdeles_pow (J : (FractionalIdeal (𝓞 K)⁰ K)ˣ) :

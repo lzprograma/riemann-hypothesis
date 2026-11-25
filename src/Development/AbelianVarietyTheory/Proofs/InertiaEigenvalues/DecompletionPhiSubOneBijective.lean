@@ -13,50 +13,7 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Frobeni
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GaloisFixedSubringTensorWittSaturatedComplete
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GaloisFixedTensorWittCompletePiAdicModEll
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MatrixFrobeniusSubOneBijectiveModSubring
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBasisDD
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.WittVector.DiscreteValuationRing
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DecWOfMatrix, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtaleRingImageAddEllPiAdicClosed, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtaleRingImageSaturatedAdicClosed, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TeichmullerEpsilonRootsMemFrobeniusPerfectionMod, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GaloisFixedTensorWittApproxFrobeniusPerfection, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DecompletionPhiSubOneBijective
@@ -74,18 +31,6 @@ noncomputable section
 namespace GlobalTheory.DecomplRed
 
 open GlobalTheory.WachTensor
-
-private theorem tensorProduct_map_algHom_smul {O A M N : Type} [CommRing O] [CommRing A] [Algebra O A]
-    [AddCommGroup M] [Module O M] [AddCommGroup N] [Module O N]
-    (f : A →ₐ[O] A) (g : M →ₗ[O] N) (r : A) (x : A ⊗[O] M) :
-    TensorProduct.map f.toLinearMap g (r • x) = f r • TensorProduct.map f.toLinearMap g x := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a m =>
-    rw [TensorProduct.smul_tmul', TensorProduct.map_tmul, TensorProduct.map_tmul,
-      TensorProduct.smul_tmul', AlgHom.toLinearMap_apply, AlgHom.toLinearMap_apply, smul_eq_mul,
-      smul_eq_mul, map_mul]
-  | add x y hx hy => rw [smul_add, map_add (f := _), hx, hy, map_add (f := _), smul_add]
 
 private theorem coeffs_eq_of_sum_smul_eq_of_span_eq {R M : Type} [CommRing R] [AddCommGroup M] [Module R M] {n : ℕ}
     (B : Module.Basis (Fin n) R M) (c : Fin n → M) (hc : Submodule.span R (Set.range c) = ⊤)
@@ -159,9 +104,9 @@ theorem decW_of_matrix (S : Sit) (E : S.Comparison₂)
 
   have actS : ∀ g (r : S.RW) (x : TW S.RW T),
       TWact (S.gR g) T g (r • x) = S.gR g r • TWact (S.gR g) T g x :=
-    fun g r x => tensorProduct_map_algHom_smul (S.gR g) (T.actT g) r x
+    fun g r x => map_smul_alg S.RW (S.gR g) (T.actT g) r x
   have mapS : ∀ (r : S.RW) (x : TW S.RW T), TWmap S.φR T (r • x) = S.φR r • TWmap S.φR T x :=
-    fun r x => tensorProduct_map_algHom_smul S.φR LinearMap.id r x
+    fun r x => map_smul_alg S.RW S.φR LinearMap.id r x
   have hfix : ∀ g ∈ Hker S, ∀ x, TWact (S.gR g) T g (E.jD T x) = E.jD T x := by
     intro g hg x
     rw [← E.jD_act, hH g hg, S.W.γD_one]
@@ -259,7 +204,7 @@ theorem powerSeries_exists_sum {O : Type} [CommRing O] (a : ℕ → PowerSeries 
       | zero => rfl
       | succ d ih =>
         rw [show n + 1 + (d + 1) = n + 1 + d + 1 by omega, Finset.sum_range_succ, map_add (f := _), ih,
-          PowerSeries.coeff_X_pow_mul', if_neg (by omega), add_zero]
+          PowerSeries.coeff_X_pow_mul', ite_eq_right (by omega), add_zero]
     have := key (m - (n + 1))
     rw [show n + 1 + (m - (n + 1)) = m by omega] at this
     exact this.symm
@@ -684,19 +629,6 @@ theorem exists_inPerf_near {A : Type} [CommRing A] {j : A →+* R} {t : R}
   rw [key, har]
   linear_combination (t ^ m * j a) * hc
 
-private theorem sum_crd_lemma {Z O W : Type} [CommRing Z] [CommRing O] [Algebra Z O] [CommRing W]
-    [Algebra Z W] {n : ℕ} (b : Module.Basis (Fin n) Z O) (z : O ⊗[Z] W) :
-    ∑ i, b i ⊗ₜ[Z] crd b i z = z := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | tmul o w =>
-    simp only [crd, TensorProduct.lift.tmul, LinearMap.coe_comp, Function.comp_apply,
-      LinearMap.lsmul_apply]
-    simp_rw [TensorProduct.tmul_smul, TensorProduct.smul_tmul', ← TensorProduct.sum_tmul]
-    congr 1
-    simpa [Module.Basis.coord_apply] using b.sum_repr o
-  | add x y hx hy => simp only [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib, hx, hy]
-
 private theorem eq_l_mul_lemma_2 {l : ℕ} [Fact l.Prime] (a : WittVector l (Cb l)) (ha : a.coeff 0 = 0) :
     ∃ r : WittVector l (Cb l), a = (l : WittVector l (Cb l)) * r := by
   by_cases h0 : a = 0
@@ -746,7 +678,7 @@ private theorem nearPi_sum_lemma_5 {l : ℕ} [Fact l.Prime] {P : LocPrime l} (AI
     rw [← nsmul_eq_mul, ← nsmul_eq_mul, TensorProduct.tmul_smul]
   have e1 : inclR LL ((1 : ↥(OL LL)) ⊗ₜ[ℤ_[l]] piW AI s) ^ N * y =
       ∑ i, basisO LL i ⊗ₜ[ℤ_[l]] (inclW l (piW AI s) ^ N * crd (basisO LL) i y) := by
-    conv_lhs => rw [← sum_crd_lemma (basisO LL) y]
+    conv_lhs => rw [← sum_crd (basisO LL) y]
     rw [hR, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Algebra.TensorProduct.tmul_pow, Algebra.TensorProduct.tmul_mul_tmul]
@@ -796,18 +728,6 @@ theorem tmul_eq_algebraMap_mul {Z O W : Type} [CommRing Z] [CommRing O] [Algebra
   rw [Algebra.TensorProduct.algebraMap_apply, Algebra.TensorProduct.tmul_mul_tmul]
   simp
 
-private theorem crd_map_lemma_6 {Z O W : Type} [CommRing Z] [CommRing O] [Algebra Z O] [CommRing W]
-    [Algebra Z W] {n : ℕ} (b : Module.Basis (Fin n) Z O) (f : W →ₐ[Z] W) (i : Fin n) (z : O ⊗[Z] W) :
-    crd b i (Algebra.TensorProduct.map (AlgHom.id O O) f z) = f (crd b i z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | tmul o w =>
-    simp only [Algebra.TensorProduct.map_tmul, AlgHom.coe_id, id_eq, crd, TensorProduct.lift.tmul,
-      LinearMap.coe_comp, Function.comp_apply, LinearMap.lsmul_apply, map_smul]
-  | add x y hx hy => simp only [map_add (f := _), hx, hy]
-
-
-
 theorem fixSub_approx_perfection (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P)
     (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL) (W : Wach P K LL)
     (E : EtSit P AI K s LL h W) :
@@ -828,7 +748,7 @@ theorem fixSub_approx_perfection (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI :
     intro i g hg
     have hc := congrArg (fun z => (crd (basisO LL) i z).coeff 0) (hfix g hg)
     simp only [LocAinf.gRW, LocAinf.actWCbHom, MonoidHom.coe_mk, OneHom.coe_mk] at hc
-    rw [crd_map_lemma_6] at hc
+    rw [crd_map] at hc
     conv_rhs => rw [← hc]
     rfl
   have hφ' : ∀ e, ∃ e', (φRW LL : RW LL →+* RW LL) ((E.tie.ioE : W.EE →+* RW LL) e) =

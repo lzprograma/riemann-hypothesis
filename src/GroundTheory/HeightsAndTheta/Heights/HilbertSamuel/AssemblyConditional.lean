@@ -86,53 +86,7 @@ public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBlockRealGramC
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBlockResolutionSupBound
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PTwoBlockChainSum
 public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PtsIntegrable
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.TypeStar
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Algebra.Order.Star.Real
 import ReciprocityTheory.GeometryOfNumbers.SphericalMonomials.ChiPSt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ProjDefs
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.LengthLocQuotEqZero
@@ -251,16 +205,16 @@ theorem blockTeleFam_succAbove (A A' : HermLine ι) (D i : ℕ) (hi : i < D + 1)
   · have h' : Fin.castSucc j < (⟨i, hi⟩ : Fin (D + 1)) := by
       rw [Fin.lt_def]
       exact h
-    rw [Fin.succAbove_of_castSucc_lt _ _ h', if_pos (show (Fin.castSucc j).val < k by
+    rw [Fin.succAbove_of_castSucc_lt _ _ h', ite_eq_left (show (Fin.castSucc j).val < k by
       show j.val < k
-      omega), if_pos h]
+      omega), ite_eq_left h]
   · have h' : (⟨i, hi⟩ : Fin (D + 1)) ≤ Fin.castSucc j := by
       rw [Fin.le_def]
       show i ≤ j.val
       omega
-    rw [Fin.succAbove_of_le_castSucc _ _ h', if_neg (show ¬ (Fin.succ j).val < k by
+    rw [Fin.succAbove_of_le_castSucc _ _ h', ite_eq_right (show ¬ (Fin.succ j).val < k by
       show ¬ j.val + 1 < k
-      omega), if_neg h]
+      omega), ite_eq_right h]
 
 theorem blockTeleFam_smooth {A A' : HermLine ι} (hA : IsSmoothHerm A) (hA' : IsSmoothHerm A') (N i : ℕ)
     (j : Fin N) : IsSmoothHerm (blockTeleFam A A' N i j) := by
@@ -555,16 +509,7 @@ theorem pair_smul (m : ConeMetric ℂ (Ix κ)) {z : Ix κ → ℂ} (hz : z ≠ 0
   linear_combination (eval z (map (algebraMap ℚ ℂ) b) * conj (eval z (map (algebraMap ℚ ℂ) b')) *
     ((m.ρ z : ℝ) : ℂ) ^ (2 * n)) * hcc
 
-theorem continuous_diff {X : Type} [TopologicalSpace X] {A : FinHolAtlas D X} {L : HolLineBundle A}
-    (W₁ W₀ : Weight L) : Continuous (Weight.diff W₁ W₀) := by
-  apply GroundTheory.Heights₂.Heights.HilbertSamuel.BlockComplexGramMetricChange.continuous_diff
-
-theorem eventually_pow_le (C ε : ℝ) (hε : 0 < ε) (hD : 1 ≤ D) :
-    ∀ᶠ n : ℕ in atTop, C * ((n : ℝ) + 1) ^ (D - 1) ≤ ε * (n : ℝ) ^ D := by
-  apply GroundTheory.Heights₂.Heights.HilbertSamuel.BlockComplexGramMetricChange.eventually_pow_le <;> assumption
-
 end ComplexGramMetricChange
-
 
 open ComplexGramMetricChange in
 theorem ComplexGramMetricChange.proof (hMC : MetricChange.Statement) (hPB : ProjectionBounds.Statement)
@@ -660,7 +605,7 @@ theorem ComplexGramMetricChange.proof (hMC : MetricChange.Statement) (hPB : Proj
       (∫ y, bergmanDens (W₀.lerp W₁ t) dV y ∂dV.μ - ε) * (n : ℝ) ^ D ≤ Module.finrank ℂ (V n) := by
     intro t ht ε hε
     rw [hInt t ht]
-    filter_upwards [eventually_pow_le C ε hε d.one_le] with n hn
+    filter_upwards [GroundTheory.Heights₂.Heights.HilbertSamuel.BlockComplexGramMetricChange.eventually_pow_le C ε hε d.one_le] with n hn
     rw [hrank n, (hp' n).card_eq]
     have h := (abs_le.1 (hr' n)).1
     have e1 : ((projDeg d.x e : ℝ) / (D.factorial : ℝ) - ε) * (n : ℝ) ^ D =
@@ -684,7 +629,7 @@ theorem ComplexGramMetricChange.proof (hMC : MetricChange.Statement) (hPB : Proj
       rw [hdiff]
       ring
     rw [h]
-    exact (continuous_diff W₁ W₀).div_const 2
+    exact (GroundTheory.Heights₂.Heights.HilbertSamuel.BlockComplexGramMetricChange.continuous_diff W₁ W₀).div_const 2
   have hK : ∫ t in (0 : ℝ)..1, ∫ y, Weight.diff W₁ W₀ y * bergmanDens (W₀.lerp W₁ t) dV y ∂dV.μ =
       2 / (D.factorial : ℝ) * resMetricInt d m₁ := by
     rw [resMetricInt, ← intervalIntegral.integral_const_mul]
@@ -818,11 +763,6 @@ section Matrices
 
 variable {Ω : Type} [Field Ω] [CharZero Ω] {J : Type} [Fintype J]
 
-theorem matAct_matAct (A A' : Matrix J J ℚ) (x : J → Ω) : matAct A (matAct A' x) = matAct (A * A') x := by
-  funext i
-  simp only [matAct, Matrix.mul_apply, Rat.cast_sum, Rat.cast_mul, Finset.mul_sum, Finset.sum_mul, mul_assoc]
-  exact Finset.sum_comm
-
 theorem isInvMat_mul {A A' : Matrix J J ℚ} (hA : IsInvMat A) (hA' : IsInvMat A') : IsInvMat (A * A') := by
   obtain ⟨C, hC⟩ := hA
   obtain ⟨C', hC'⟩ := hA'
@@ -830,11 +770,9 @@ theorem isInvMat_mul {A A' : Matrix J J ℚ} (hA : IsInvMat A) (hA' : IsInvMat A
   · rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, (hC' (C.mulVec v)).1, (hC v).1]
   · rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, (hC (A'.mulVec v)).2, (hC' v).2]
 
-
 open Classical in
 def scaleMat {D : ℕ} (e : Fin (D + 1) → J) (m : ℕ) : Matrix J J ℚ :=
   Matrix.diagonal fun i => if i ∈ Set.range e then 1 else (m : ℚ)
-
 
 open Classical in
 theorem matAct_scaleMat {D : ℕ} (e : Fin (D + 1) → J) (m : ℕ) (y : J → Ω) :
@@ -842,10 +780,9 @@ theorem matAct_scaleMat {D : ℕ} (e : Fin (D + 1) → J) (m : ℕ) (y : J → �
   funext i
   simp only [matAct, scaleMat, Matrix.diagonal_apply]
   rw [Finset.sum_eq_single i (fun j _ hj => by simp [Ne.symm hj]) (by simp)]
-  rw [if_pos rfl]
+  rw [ite_eq_left rfl]
   unfold scaleOff
   split_ifs <;> simp
-
 
 open Classical in
 theorem isInvMat_scaleMat {D : ℕ} (e : Fin (D + 1) → J) {m : ℕ} (hm : 0 < m) : IsInvMat (scaleMat e m) := by
@@ -871,7 +808,7 @@ theorem proof (hN : RatNoetherFrame.Statement) (hT : HSMTransport.Statement) (hI
   have hB : IsInvMat (scaleMat e m * B₀) := isInvMat_mul (isInvMat_scaleMat e hm) hB₀
   obtain ⟨d', hx', hm', hG⟩ := hT D Ω κ d _ hB
   have hx'' : d'.x = scaleOff e m (matAct B₀ d.x) := by
-    rw [hx', ← matAct_matAct, matAct_scaleMat]
+    rw [hx', ← GroundTheory.Heights₂.Heights.HilbertSamuel.ChangeOfLattice.matAct_mul, matAct_scaleMat]
   refine ⟨_, d', e, hB, hx', hm', by rw [hx'']; exact hfr', ?_⟩
   have h0 := hI D Ω κ d d' _ hB hx' hG
   have hz : (fun n => resChi d' n - resChi d n - latLogIndex d.x d'.x n) = fun _ => (0 : ℝ) :=
@@ -1218,12 +1155,6 @@ theorem linApply_projMat (e : Fin (D + 1) → Ix κ) (z : Ix κ → ℂ) (k : Fi
     simp [Ne.symm hi]
   · simp
 
-theorem isSmoothHerm_ofCone {m : ConeMetric ℂ (Ix κ)} (hm : IsSmoothMetric m) :
-    IsSmoothHerm (HermLine.ofCone m) := by
-  refine hm.mono fun z hz => ?_
-  obtain ⟨i, hi⟩ := hz ()
-  exact fun h0 => hi (congrFun h0 _)
-
 theorem fs_linApply (e : Fin (D + 1) → Ix κ) (z : Ix κ → ℂ) :
     (HermLine.ofCone (fsMetric (ι := Ix (Fin (D + 1))))).h
         (linApply (ι := GlobalTheory κ) (ι₂ := GlobalTheory (Fin (D + 1))) (projMat e) z) =
@@ -1236,7 +1167,6 @@ theorem fs_linApply (e : Fin (D + 1) → Ix κ) (z : Ix κ → ℂ) :
 
 end TopPullFS
 
-
 open TopPullFS in
 theorem TopPullFS.proof (hCM : ChangeOfModelStatement) (hBP : ProjFrameBasePtFree.Statement)
     (hIm : ProjFrameImage.Statement) (hDeg : ProjFrameGraphDeg.Statement) : TopPullFS.Statement := by
@@ -1244,7 +1174,7 @@ theorem TopPullFS.proof (hCM : ChangeOfModelStatement) (hBP : ProjFrameBasePtFre
   obtain ⟨G, J, hJ, hJe⟩ := hDeg D Ω κ x e hP hfr
   have himg := hIm D Ω κ x e hfr
   have hSmoothFS : IsSmoothHerm (HermLine.ofCone (fsMetric (ι := Ix (Fin (D + 1))))) := by
-    apply isSmoothHerm_ofCone
+    apply GroundTheory.Heights₂.Heights.HilbertSamuel.BlockImageTop.isSmoothHerm_ofCone
     intro z hz
     change ContDiffWithinAt ℝ _ (fun w : Ix (Fin (D + 1)) → ℂ => ‖WithLp.toLp 2 w‖) _ z
     have hL : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞)
@@ -1255,7 +1185,7 @@ theorem TopPullFS.proof (hCM : ChangeOfModelStatement) (hBP : ProjFrameBasePtFre
   have key := hCM I hI Unit (GlobalTheory κ) (GlobalTheory (Fin (D + 1))) (coordIdeal ℤ x) (D + 1) (projMat e) G J
     (fun _ => HermLine.ofCone (fsMetric (ι := Ix (Fin (D + 1))))) (fun _ => HermLine.ofCone m) hP
     (hBP D Ω κ x e hfr) (by rw [himg]; exact IndefiniteRowSideFullHecke.Inter.isArithVar_bot D) hJ
-    (fun _ => hSmoothFS) (fun _ => isSmoothHerm_ofCone hm) (fun _ => rfl)
+    (fun _ => hSmoothFS) (fun _ => GroundTheory.Heights₂.Heights.HilbertSamuel.BlockImageTop.isSmoothHerm_ofCone hm) (fun _ => rfl)
     (fun _ z hz => by
       rw [fs_linApply]
       exact hFS z ⟨fun h0 => by obtain ⟨i, hi⟩ := hz.1 (); exact hi (congrFun h0 _), hz.2⟩)
@@ -1349,7 +1279,6 @@ theorem choose_div_factorial {D i : ℕ} (hi : i ≤ D) (u : ℝ) :
 
 end TwoBlockStepLocal
 
-
 open TwoBlockStepLocal in
 theorem TwoBlockStepLocal.proof (hA : TwoBlockPieceCycle.Statement) (hM : TwoBlockCycleExpand.Statement)
     (hR : TwoBlockCoeffCycle.Statement) : TwoBlockStepLocal.Statement := by
@@ -1422,7 +1351,6 @@ theorem pair_comp_blkV_one {Ω : Type} [Field Ω] (x x' : Ix κ → Ω) : pair x
   simp [pair, blkV]
 
 end TwoBlockTop
-
 
 open TwoBlockTop in
 theorem TwoBlockTop.proof (hPF : PFCoordStatement) (hIm : ImageCoordStatement) (hA : CoordArithOfFnField.Statement)
@@ -1728,7 +1656,6 @@ theorem tensor_self {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι
   exact hn
 
 end VeroneseTop
-
 
 open VeroneseTop in
 theorem VeroneseTop.proof (hCM : GraphChangeOfModel.Statement) (hA : VeroneseArith.Statement)

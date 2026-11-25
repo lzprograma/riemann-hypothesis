@@ -14,7 +14,7 @@ noncomputable section
 
 namespace GlobalTheory.CompanionTheory.BmuRootVec
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 theorem mul_single_mul_entry {n : ℕ} (A B : Mat n) (a b i l : Fin n) (c : ℂ) :
     (A * single a b c * B) i l = A i a * c * B b l := by
@@ -43,7 +43,7 @@ variable {k r : ℕ}
 
 theorem Hq_row {i i' : Fin (2 * r + k + 1)} (hi : outer k r i) (h : i.val + i'.val = 2 * r + k)
     (l : Fin (2 * r + k + 1)) : Hq k r i l = if l = i' then 1 else 0 := by
-  simp only [Hq, hi, if_true, Fin.ext_iff]
+  simp only [Hq, hi, ite_true, Fin.ext_iff]
   congr 1
   apply propext; omega
 
@@ -165,7 +165,7 @@ theorem frame_row {Γ : Mat (2 * r + k + 1)} (hΓ : Γᴴ * Hpk k r * Γ = Hq k 
     (hf : Γ *ᵥ bvec i = bvec i) (l : Fin (2 * r + k + 1)) : Γ i' l = if l = i' then 1 else 0 := by
   have h1 := congrFun (congrFun hΓ i) l
   rw [Hq_row (i' := i') (by simp only [outer]; omega) h, Matrix.mul_assoc, Matrix.mul_apply,
-    Finset.sum_eq_single i, conjTranspose_apply, col_of_mulVec hf, if_pos rfl, star_one, one_mul,
+    Finset.sum_eq_single i, conjTranspose_apply, col_of_mulVec hf, ite_eq_left rfl, star_one, one_mul,
     Matrix.mul_apply, Finset.sum_eq_single i'] at h1
   · rw [← h1]
     have : Hpk k r i i' = 1 := by
@@ -180,14 +180,14 @@ theorem frame_row {Γ : Mat (2 * r + k + 1)} (hΓ : Γᴴ * Hpk k r * Γ = Hq k 
     rw [this, zero_mul]
   · simp
   · intro b _ hb
-    rw [conjTranspose_apply, col_of_mulVec hf, if_neg hb, star_zero, zero_mul]
+    rw [conjTranspose_apply, col_of_mulVec hf, ite_eq_right hb, star_zero, zero_mul]
   · simp
 
 theorem inv_row {n : ℕ} {Γ : Mat n} (hu : IsUnit Γ.det) {i : Fin n}
     (h : ∀ l, Γ i l = if l = i then 1 else 0) (l : Fin n) : Γ⁻¹ i l = if l = i then 1 else 0 := by
   have h1 := congrFun (congrFun (Matrix.mul_nonsing_inv Γ hu) i) l
   rw [Matrix.mul_apply] at h1
-  simp only [h, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h1
+  simp only [h, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h1
   rw [h1, Matrix.one_apply]
   simp only [eq_comm]
 
@@ -269,15 +269,15 @@ theorem rootVec : RootVec := by
   refine ⟨⟨hmem, fun b i hbi => ?_, fun i j h1 h2 h3 => ?_⟩, ?_⟩
   · have hb := b.isLt
     have : M i (eI k r b) = 0 := by
-      rw [hent, colI, if_neg (c := eI k r b = esI k r a) (by simp only [eI, esI, Fin.ext_iff]; omega)]
+      rw [hent, colI, ite_eq_right (c := eI k r b = esI k r a) (by simp only [eI, esI, Fin.ext_iff]; omega)]
       split_ifs with p q
       · exfalso; simp only [eI, nxt, Fin.ext_iff] at p q; omega
       · simp
       · simp
     simp [this, Matrix.one_apply]
   · have : M i j = 0 := by
-      rw [hent, if_neg (by simp only [eI, Fin.ext_iff]; omega),
-        if_neg (by simp only [esI, Fin.ext_iff]; omega), sub_zero]
+      rw [hent, ite_eq_right (by simp only [eI, Fin.ext_iff]; omega),
+        ite_eq_right (by simp only [esI, Fin.ext_iff]; omega), sub_zero]
     simp [this, Matrix.one_apply]
   · have hzr : ∀ i : Fin (2 * r + k + 1), (i.val < r ∨ r + k < i.val) →
         (∀ l, Γ i l = if l = i then 1 else 0) → z i = 0 := by
@@ -295,19 +295,19 @@ theorem rootVec : RootVec := by
       unfold PI.BesselMapUniq.ellA
       by_cases h : b.val + 1 < r
       · rw [dite_eq_left h, Matrix.add_apply, Matrix.smul_apply, hent, colI,
-          if_neg (c := _ = esI k r a) (by simp only [eI, esI, Fin.ext_iff]; omega),
+          ite_eq_right (c := _ = esI k r a) (by simp only [eI, esI, Fin.ext_iff]; omega),
           Matrix.one_apply_ne (by simp only [eI, Ne, Fin.ext_iff]; omega)]
         by_cases e : b = a
         · subst e
           have hn : nxt k r b = eI k r ⟨b.val + 1, h⟩ := rfl
           have := hc b
-          simp only [if_true, κ, if_pos h, if_pos hn, smul_eq_mul]
+          simp only [ite_true, κ, ite_eq_left h, ite_eq_left hn, smul_eq_mul]
           field_simp
           simp
         · simp [hba, e]
       · have hM : (M *ᵥ z) (eI k r b) = if b = a then κ a * (Γ⁻¹ *ᵥ z) (nxt k r a) else 0 := by
           simp only [mulVec, dotProduct, hent, sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul,
-            Finset.sum_ite_eq', Finset.mem_univ, if_true, hzS, mul_zero, sub_zero, hba]
+            Finset.sum_ite_eq', Finset.mem_univ, ite_true, hzS, mul_zero, sub_zero, hba]
           split_ifs
           · rw [Finset.mul_sum]; simp only [mul_assoc]
           · simp
@@ -323,11 +323,11 @@ theorem rootVec : RootVec := by
             simp [bvec, n2]
           have := hc b
           have hρ' : (ρ : ℂ) ≠ 0 := by exact_mod_cast hρ.ne'
-          simp only [if_true, κ, if_neg h, hv, smul_eq_mul]
+          simp only [ite_true, κ, ite_eq_right h, hv, smul_eq_mul]
           field_simp
           simp
         · simp [e]
     unfold PI.BesselMapUniq.psiGen
-    simp only [hell, Finset.sum_ite_eq', Finset.mem_univ, if_true, Complex.ofReal_re]
+    simp only [hell, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Complex.ofReal_re]
 
 end GlobalTheory.CompanionTheory.BmuRootVec

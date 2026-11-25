@@ -55,7 +55,7 @@ theorem gauss_pair {n : ℕ} (hn : 0 < n) (c : EuclideanSpace ℂ (Fin n)) (hc :
     have hij : i = j :=
       Subtype.ext (by rw [Set.mem_singleton_iff.mp i.2, Set.mem_singleton_iff.mp j.2])
     subst hij
-    simp only [if_true]
+    simp only [ite_true]
     rw [inner_self_eq_norm_sq_to_K]
     show ((‖u0‖ : ℝ) : ℂ) ^ 2 = 1
     rw [hu0n]; simp
@@ -83,7 +83,7 @@ theorem gauss_pair {n : ℕ} (hn : 0 < n) (c : EuclideanSpace ℂ (Fin n)) (hc :
       ∏ i, f i (y i) = log (‖c‖ * ‖y 0‖) * ∏ i, exp (-‖y i‖ ^ 2) := by
     intro y
     rw [Fin.prod_univ_succ, Fin.prod_univ_succ (fun i => exp (-‖y i‖ ^ 2))]
-    simp only [f, if_pos rfl, Fin.succ_ne_zero, if_false]
+    simp only [f, ite_eq_left rfl, Fin.succ_ne_zero, ite_false]
     ring
   have hF1 : ∀ x : EuclideanSpace ℂ (Fin (m + 1)),
       log ‖∑ i, WithLp.ofLp c i * WithLp.ofLp x i‖ * exp (-‖x‖ ^ 2) = ∏ i, f i (M x i) := by
@@ -113,7 +113,7 @@ theorem gauss_pair {n : ℕ} (hn : 0 < n) (c : EuclideanSpace ℂ (Fin n)) (hc :
     exact Me.measurableEmbedding.integrable_map_iff.mp h1
   have hP1 : ∫ y : Fin (m + 1) → ℂ, ∏ i, f i (y i) = gaussLogC ‖c‖ * gaussOneC ^ m := by
     rw [volume_pi, integral_fintype_prod_eq_prod (f := f), Fin.prod_univ_succ]
-    simp only [f, if_pos rfl, Fin.succ_ne_zero, if_false, Finset.prod_const, Finset.card_univ,
+    simp only [f, ite_eq_left rfl, Fin.succ_ne_zero, ite_false, Finset.prod_const, Finset.card_univ,
       Fintype.card_fin, gaussLogC, gaussOneC]
   have hP2 : ∫ y : Fin (m + 1) → ℂ, ∏ i, g i (y i) = gaussOneC ^ (m + 1) := by
     rw [volume_pi, integral_fintype_prod_eq_prod (f := g)]

@@ -6,12 +6,12 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsRe
 import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.BrData
 import Mathlib.RingTheory.Ideal.Norm.RelNorm
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValSubLtIff
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MinpolyAndNormOfPowEqUniformizer
 
 @[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published UpperTheory.V.Af.Bc GlobalTheory.RealGal
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.AttResTower
 
@@ -19,13 +19,8 @@ theorem normV_under_pow {K K' : Type} [Field K] [NumberField K] [Field K'] [Numb
     (w : HeightOneSpectrum (𝓞 K')) : normV w = normV (w.under (𝓞 K)) ^ w.asIdeal.inertiaDeg (𝓞 K) := by
   apply _root_.GlobalTheory.DelEps.WeilRes.normV_eq_pow
 
-theorem two_le_normV {K : Type} [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K)) : 2 ≤ normV v := by
-  simp only [normV, ← Submodule.cardQuot_apply, ← Ideal.absNorm_apply]
-  have h0 : Ideal.absNorm v.asIdeal ≠ 0 := by
-    rw [Ne, Ideal.absNorm_eq_zero_iff]; exact v.ne_bot
-  have h1 : Ideal.absNorm v.asIdeal ≠ 1 := by
-    rw [Ne, Ideal.absNorm_eq_one_iff]; exact v.isPrime.ne_top
-  omega
+theorem two_le_normV {K : Type} [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K)) : 2 ≤ normV v :=
+  @TameEis.two_le_normV K _ _ v
 
 theorem under_under {F K M : Type} [Field F] [NumberField F] [Field K] [NumberField K] [Field M] [NumberField M]
     [Algebra F K] [Algebra F M] [Algebra K M] [IsScalarTower F K M] (w : HeightOneSpectrum (𝓞 M)) :

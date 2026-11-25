@@ -55,7 +55,6 @@ open GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm GroundThe
 open GroundTheory.Automorphic.GLnLocal
 open scoped SchwartzMap Classical
 
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
 
 namespace UpperTheory.V.Z.Inf
 

@@ -1,5 +1,6 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRInvFinal
 public import Formalism.HermitianCurvature.FiniteOrderIntersectionInSmooth
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeisenbergLeviConjugationMeasure
@@ -49,17 +50,7 @@ theorem herm_sum_right (H : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) �
 
 theorem herm_UH {ρ : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hρ : ρ ∈ UH (Hpk k r))
     (x y : Fin (2 * r + k + 1) → ℂ) : herm (Hpk k r) (ρ *ᵥ x) y = herm (Hpk k r) x (ρ⁻¹ *ᵥ y) := by
-  have hρ' : ρᴴ * Hpk k r * ρ = Hpk k r := hρ
-  have hdet := _root_.Formalism.MainNotions.BigCellDensity.det_unit_of_UH hρ
-  have hinv : (ρ⁻¹)ᴴ * ρᴴ = 1 := by
-    rw [← Matrix.conjTranspose_mul, Matrix.mul_nonsing_inv _ hdet, Matrix.conjTranspose_one]
-  have hkey : (ρ⁻¹)ᴴ * Hpk k r = Hpk k r * ρ := by
-    calc (ρ⁻¹)ᴴ * Hpk k r = (ρ⁻¹)ᴴ * (ρᴴ * Hpk k r * ρ) := by rw [hρ']
-      _ = ((ρ⁻¹)ᴴ * ρᴴ) * Hpk k r * ρ := by simp only [Matrix.mul_assoc]
-      _ = Hpk k r * ρ := by rw [hinv, Matrix.one_mul]
-  unfold herm
-  rw [← star_dot_conjT' (ρ⁻¹) y (Hpk k r *ᵥ x)]
-  simp only [Matrix.mulVec_mulVec, hkey]
+  apply _root_.Formalism.FourierDecayAlt.P.CutMP.RInvCB.herm_uh <;> assumption
 
 private lemma mulVec_fvec_eq_sum_uMap_smul_of_mem_Nset {z : Fin (2 * r + k + 1) → ℂ} (hz : Formalism.FourierDecayAlt.C2.StdZ k r z)
     {m : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hm : m ∈ Nset k r) (b : Fin (r + 1)) :

@@ -145,14 +145,14 @@ theorem sec_eq_iff {V : Type} [CommRing V] (p : X ⟶ Sp V) (s t : LB.Sec L) (a 
       gs (𝟙 X) y W f = (X.presheaf.germ W y hy).hom f := by
     intro W y hy f
     unfold gs
-    rw [dif_pos (show (𝟙 X : X ⟶ X) y ∈ W from hy)]
+    rw [dite_eq_left (show (𝟙 X : X ⟶ X) y ∈ W from hy)]
     first
     | rfl
   have G2 : ∀ i (y : X) (hy : y ∈ L.U i),
       cst p y a = (X.presheaf.germ (L.U i) y hy).hom (constFn p (L.U i) a) := by
     intro i y hy
     unfold cst gs constFn
-    rw [dif_pos (by trivial)]
+    rw [dite_eq_left (by trivial)]
     unfold Scheme.Hom.appLE
     simp only [CommRingCat.hom_comp, RingHom.comp_apply]
     have e := congrArg (fun φ => CommRingCat.Hom.hom φ ((CommRingCat.Hom.hom (p.app ⊤))
@@ -177,7 +177,7 @@ theorem gs_of_id {Z : Scheme.{0}} {U : X.Opens} {f g : Γ(X, U)} {V : Type} [Com
       gs (r ≫ p') z W t = (r.stalkMap z).hom (gs p' (r z) W t) := by
     intro Y p' W t hw
     unfold gs
-    rw [dif_pos (show (r ≫ p') z ∈ W from hw), dif_pos hw]
+    rw [dite_eq_left (show (r ≫ p') z ∈ W from hw), dite_eq_left hw]
     have e := congrArg (fun φ => CommRingCat.Hom.hom φ ((CommRingCat.Hom.hom (p'.app W)) t))
       (Scheme.Hom.germ_stalkMap r (p' ⁻¹ᵁ W) z hw)
     simp only [CommRingCat.hom_comp, RingHom.comp_apply] at e
@@ -209,7 +209,7 @@ theorem gen_of_iso {Y : Scheme.{0}} {F : X ⟶ X} {w : LB.Iso L (L.pull F)} (hw 
 theorem cst_comp {A C : Type} [CommRing A] [CommRing C] {Z : Scheme.{0}} (q : Z ⟶ Sp C) (φ : A →+* C) (z : Z) (a : A) :
     cst (q ≫ spMap φ) z a = cst q z (φ a) := by
   unfold cst gs spMap
-  rw [dif_pos (by trivial), dif_pos (by trivial)]
+  rw [dite_eq_left (by trivial), dite_eq_left (by trivial)]
   have key := congrArg (fun g => (CommRingCat.Hom.hom g) a)
     (Scheme.ΓSpecIso_inv_naturality (CommRingCat.ofHom φ))
   simp only [CommRingCat.hom_comp, RingHom.comp_apply, CommRingCat.hom_ofHom] at key
@@ -223,7 +223,7 @@ theorem cst_not_isUnit {V : Type} [CommRing V] [IsLocalRing V] (p : X ⟶ Sp V) 
   have e : cst p x r = (p.stalkMap x).hom (((Sp V).presheaf.germ ⊤ (p x) trivial).hom
       ((Scheme.ΓSpecIso (CommRingCat.of V)).inv.hom r)) := by
     unfold cst gs
-    rw [dif_pos (by trivial)]
+    rw [dite_eq_left (by trivial)]
     have e' := congrArg (fun φ => CommRingCat.Hom.hom φ ((Scheme.ΓSpecIso (CommRingCat.of V)).inv.hom r))
       (Scheme.Hom.germ_stalkMap p ⊤ x trivial)
     simp only [CommRingCat.hom_comp, RingHom.comp_apply] at e'
@@ -446,5 +446,18 @@ theorem thetaCore (hT : SecTwistSt) (hA : AmplePtSt) : ThetaCoreSt := by
     exact un.ne_zero (cst_regular G.G.hom g (sub_ne_zero.2 hne) e)
   · rw [gs_appLE m2.φ _ _ h₁ (𝟙 _) y hy, hσ' _ (𝟙 _) y j k (h₁ hy) (h₂ hy).2, gs_mul _ y _ hy, gs_res _ y _ hy]
     exact congrArg₂ (· * ·) ((gs_res (𝟙 _) y h₂ hy _).trans (gs_unit (𝟙 _) y _ (h₂ hy) _)).symm rfl
+
+/-- Over the base ring itself, `IsTan` and `IsTangent` are the same condition. -/
+theorem isTan_iff_isTangent {V : Type} [CommRing V] {G : Over (Sp V)} [GrpObj G] (w : epsR V ⟶ G) :
+    IsTan (V := V) (R := V) (G := G) w ↔ IsTangent w := by
+  /- The two sides have types `(ptOver V V).left ⟶ _` and `(𝟙_ (Over (Sp V))).left ⟶ _`. Stating
+  the equation in `Sp V ⟶ G.left` keeps the kernel from comparing `spMap (algebraMap V V)` with
+  `𝟙 (Sp V)` to see that these agree, which is slow. -/
+  have : @Eq (Sp V ⟶ G.left) (1 : ptOver V V ⟶ G).left η[G].left := by
+    show spMap (algebraMap V V) ≫ _ = _
+    rw [show spMap (algebraMap V V) = 𝟙 _ from Spec.map_id _]
+    exact Category.id_comp _
+  unfold IsTan IsTangent
+  rw [this]
 
 end ReciprocityTheory.ChartRestriction.G.Geo.Tor

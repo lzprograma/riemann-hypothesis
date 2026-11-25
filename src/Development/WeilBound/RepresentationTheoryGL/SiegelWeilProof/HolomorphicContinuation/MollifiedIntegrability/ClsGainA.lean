@@ -1,56 +1,11 @@
 module
 
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsGainSt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
 public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Analysis.Calculus.FDeriv.CompCLM
 public import Mathlib.Analysis.Calculus.FDeriv.RestrictScalars
+import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsBoundA
 
 @[expose] public section
 
@@ -91,32 +46,7 @@ theorem smul_mulVec' (c : ℂ) (M : Matrix (Fin n) (Fin n) ℂ) (v : Fin n → �
   simp [mulVec, dotProduct, Finset.mul_sum, mul_assoc]
 
 theorem det_X_ne (s : ℂ) (hs : s = 1 ∨ s = -1) (y : E n) : (1 - (Complex.I * s) • herm y).det ≠ 0 := by
-  intro h0
-  obtain ⟨v, hv, hXv⟩ := (Matrix.exists_mulVec_eq_zero_iff).2 h0
-  set q : ℂ := star v ⬝ᵥ (herm y *ᵥ v) with hq
-  have hqr : star q = q := by
-    rw [hq]
-    simp only [dotProduct, mulVec, Pi.star_apply, star_sum, star_mul', star_star, herm_star, Finset.mul_sum]
-    rw [Finset.sum_comm]
-    exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-  have hqim : q.im = 0 := Complex.conj_eq_iff_im.1 hqr
-  have hv2 : v = (Complex.I * s) • (herm y *ᵥ v) := by
-    rw [sub_mulVec, one_mulVec, smul_mulVec'] at hXv
-    exact sub_eq_zero.1 hXv
-  have key : star v ⬝ᵥ v = (Complex.I * s) * q := by
-    rw [hq, ← smul_eq_mul, ← dotProduct_smul, ← hv2]
-  have hre : (star v ⬝ᵥ v).re = ∑ i, Complex.normSq (v i) := by
-    simp only [dotProduct, Pi.star_apply, Complex.re_sum, Complex.mul_re, Complex.star_def, Complex.conj_re,
-      Complex.conj_im, Complex.normSq_apply]
-    exact Finset.sum_congr rfl fun i _ => by ring
-  have hpos : 0 < (star v ⬝ᵥ v).re := by
-    rw [hre]
-    obtain ⟨i, hi⟩ := Function.ne_iff.1 hv
-    exact Finset.sum_pos' (fun j _ => Complex.normSq_nonneg _) ⟨i, Finset.mem_univ _, Complex.normSq_pos.2 hi⟩
-  have h0' : (star v ⬝ᵥ v).re = 0 := by
-    rw [key]
-    rcases hs with rfl | rfl <;> simp [Complex.mul_re, hqim]
-  linarith
+  apply _root_.PositivityTheory.Rg.Sw.WR.B.det_Am_ne <;> assumption
 
 theorem det_Y_ne (s : ℂ) (hs : s = 1 ∨ s = -1) (y : E n) : (1 + (Complex.I * s) • herm y).det ≠ 0 := by
   rw [← conjT_X s hs y, det_conjTranspose]
@@ -125,18 +55,6 @@ theorem det_Y_ne (s : ℂ) (hs : s = 1 ∨ s = -1) (y : E n) : (1 + (Complex.I *
 theorem det_one_add_sq (s : ℂ) (hs : s = 1 ∨ s = -1) (y : E n) :
     (1 + herm y * herm y).det = ((Complex.normSq (1 - (Complex.I * s) • herm y).det : ℝ) : ℂ) := by
   rw [← sq_smul s hs, det_mul, ← conjT_X s hs y, det_conjTranspose, Complex.star_def, Complex.mul_conj]
-
-theorem dP_eq (y : E n) : (1 + herm y * herm y).det = ((dP y : ℝ) : ℂ) := by
-  unfold dP
-  rw [det_one_add_sq 1 (Or.inl rfl) y, Complex.ofReal_re]
-
-theorem dP_pos (y : E n) : 0 < dP y := by
-  have h := dP_eq y
-  rw [det_one_add_sq 1 (Or.inl rfl) y] at h
-  have h2 := congrArg Complex.re h
-  simp only [Complex.ofReal_re] at h2
-  rw [← h2]
-  exact Complex.normSq_pos.2 (det_X_ne 1 (Or.inl rfl) y)
 
 theorem continuous_of' : Continuous fun B : MC n => Matrix.of B :=
   continuous_matrix fun i j => continuous_apply_apply i j
@@ -165,8 +83,8 @@ theorem isOpen_OmS (s : ℂ) : IsOpen (OmS (n := n) s) := by
 theorem herm_mem_OmS (s : ℂ) (hs : s = 1 ∨ s = -1) (y : E n) : (herm y : MC n) ∈ OmS s := by
   refine ⟨det_X_ne s hs y, det_Y_ne s hs y, ?_⟩
   show (1 + herm y * herm y).det ∈ Complex.slitPlane
-  rw [dP_eq]
-  exact Complex.ofReal_mem_slitPlane.2 (dP_pos y)
+  rw [WR.B.det_one_add_eq]
+  exact Complex.ofReal_mem_slitPlane.2 (WR.B.dP_pos y)
 
 def EntAn (M : MC n → Matrix (Fin n) (Fin n) ℂ) (B₀ : MC n) : Prop := ∀ i j, AnalyticAt ℂ (fun B => M B i j) B₀
 
@@ -199,9 +117,9 @@ theorem entAn_inv {M : MC n → Matrix (Fin n) (Fin n) ℂ} {B₀ : MC n} (h : E
   refine ((an_det h).inv h0).mul (an_det fun a b => ?_)
   simp only [updateRow_apply]
   by_cases hab : a = j
-  · simp only [hab, if_true]
+  · simp only [hab, ite_true]
     exact analyticAt_const
-  · simp only [hab, if_false]
+  · simp only [hab, ite_false]
     exact h a b
 
 theorem entAn_X (c : ℂ) (B₀ : MC n) : EntAn (fun B : MC n => 1 - c • Matrix.of B) B₀ := fun i j => by
@@ -244,9 +162,9 @@ theorem an_clsC (s z : ℂ) (p q : ℕ) (R : MvPolynomial (Bool × Fin n × Fin 
   have hf : ∀ k : Bool × Fin n × Fin n, AnalyticAt ℂ (fun B : MC n => if k.1 then (1 + (Complex.I * s) • Matrix.of B)⁻¹ k.2.1 k.2.2
       else (1 - (Complex.I * s) • Matrix.of B)⁻¹ k.2.1 k.2.2) B₀ := by
     rintro ⟨_ | _, a, b⟩
-    · simp only [Bool.false_eq_true, if_false]
+    · simp only [Bool.false_eq_true, ite_false]
       exact hu a b
-    · simp only [if_true]
+    · simp only [ite_true]
       exact hv a b
   have hev := an_eval (fun k B => if k.1 then (1 + (Complex.I * s) • Matrix.of B)⁻¹ k.2.1 k.2.2
       else (1 - (Complex.I * s) • Matrix.of B)⁻¹ k.2.1 k.2.2) B₀ hf R
@@ -256,8 +174,8 @@ theorem an_clsC (s z : ℂ) (p q : ℕ) (R : MvPolynomial (Bool × Fin n × Fin 
 theorem clsC_herm (s z : ℂ) (p q : ℕ) (R : MvPolynomial (Bool × Fin n × Fin n) ℂ) (y : E n) :
     clsC s z p q R (herm y) = cls s z p q R y := by
   unfold clsC cls uM vM evUV
-  have e : (1 + Matrix.of (herm y : MC n) * Matrix.of (herm y : MC n)).det = ((dP y : ℝ) : ℂ) := dP_eq y
-  rw [e, Complex.cpow_def_of_ne_zero (by exact_mod_cast (dP_pos y).ne'), mul_comm (Complex.log _) (-z)]
+  have e : (1 + Matrix.of (herm y : MC n) * Matrix.of (herm y : MC n)).det = ((dP y : ℝ) : ℂ) := WR.B.det_one_add_eq y
+  rw [e, Complex.cpow_def_of_ne_zero (by exact_mod_cast (WR.B.dP_pos y).ne'), mul_comm (Complex.log _) (-z)]
   rfl
 
 theorem ext : Ext := by

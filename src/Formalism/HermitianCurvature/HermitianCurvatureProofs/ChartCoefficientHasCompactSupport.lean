@@ -4,51 +4,7 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContDiffAtSe
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateSizesOfHypotheses
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenDetBottomLeftNeZero, Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartCoefficientHasCompactSupport
@@ -450,7 +406,7 @@ theorem chartCoefficient_apply (b b' : RC k j ρ → ℝ) (Φ : (Fin j → Fin j
     (hμ : Matrix.of q.2.2 ∈ B.GV k ρ) :
     chartCoefficient b b' Φ (psiC q) = ((b q.1.1 * b' q.1.2 : ℝ) : ℂ) • Φ q.2.1 q.2.2 := by
   unfold chartCoefficient
-  rw [if_pos (by rw [djU_psiC]; exact hZ), chart_psiC hZ hμ]
+  rw [ite_eq_left (by rw [djU_psiC]; exact hZ), chart_psiC hZ hμ]
 
 end mk
 
@@ -480,9 +436,9 @@ theorem ms_skewOf {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {x : E}
     simp only [Matrix.diagonal_apply]
     by_cases h : a = b
     · subst h
-      simp only [if_true]
+      simp only [ite_true]
       exact contDiffAt_const.mul (Complex.ofRealCLM.contDiff.contDiffAt.comp x (contDiffAt_pi.1 hf.snd a))
-    · simp only [h, if_false]
+    · simp only [h, ite_false]
       exact contDiffAt_const
   unfold skewOf
   exact ms_add (ms_sub hU (ms_conjT hU)) hD
@@ -544,7 +500,7 @@ theorem continuous_gN' : Continuous (fun g : B.Mat k (j + ρ) => B.gN g) := by
 
 theorem chartCoefficient_hasCompactSupport (Bs : B.RealPlaceData k (j + ρ) Wp Wq) (b b' : RC k j ρ → ℝ) (hb : ContDiff ℝ ∞ b)
     (hbc : HasCompactSupport b) (hb' : ContDiff ℝ ∞ b') (hb'c : HasCompactSupport b')
-    (Φ : (Fin j → Fin j → ℂ) → Mt k ρ → (Wq →L[ℂ] Wp)) (V : Set ((Fin j → Fin j → ℂ) × Mt k ρ)) (hV : IsOpen V)
+    (Φ : (Fin j → Fin j → ℂ) → Mt k ρ → (Wq →L[ℂ] Wp)) (V : Set ((Fin j → Fin j → ℂ) × Mt k ρ))
     (hΦ : ∀ q₀ ∈ V, Matrix.of q₀.2 ∈ B.GV k ρ → ∃ (U : Set ((Fin j → Fin j → ℂ) × Mt k ρ))
       (F : (Fin j → Fin j → ℂ) × Mt k ρ → (Wq →L[ℂ] Wp)), IsOpen U ∧ q₀ ∈ U ∧ ContDiffOn ℝ ∞ F U ∧
         ∀ q ∈ U, Matrix.of q.2 ∈ B.GV k ρ → Φ q.1 q.2 = F q)
@@ -563,10 +519,10 @@ theorem chartCoefficient_hasCompactSupport (Bs : B.RealPlaceData k (j + ρ) Wp W
   have hsub : ∀ g ∈ B.GV k (j + ρ), chartCoefficient b b' Φ g ≠ 0 → g ∈ C := by
     intro g hg hne
     have hD : DjU k j ρ g ≠ 0 := by
-      intro h0; apply hne; unfold chartCoefficient; rw [if_neg (not_not.2 h0)]
+      intro h0; apply hne; unfold chartCoefficient; rw [ite_eq_right (not_not.2 h0)]
     obtain ⟨hZ, hμ, heq⟩ := chart_spec g hg hD
     unfold chartCoefficient at hne
-    rw [if_pos hD] at hne
+    rw [ite_eq_left hD] at hne
     have hμ' : Matrix.of (chart (Matrix.of.symm g)).2.2 ∈ B.GV k ρ := by
       simpa only [chart, Equiv.apply_symm_apply] using hμ
     obtain ⟨hc, hΦne⟩ := smul_ne_zero_iff.1 hne
@@ -614,7 +570,7 @@ theorem chartCoefficient_hasCompactSupport (Bs : B.RealPlaceData k (j + ρ) Wp W
         obtain ⟨-, hμ, -⟩ := chart_spec g hgG hD
         have hμ' : Matrix.of (chart (Matrix.of.symm g)).2.2 ∈ B.GV k ρ := by simpa only [chart, Equiv.apply_symm_apply] using hμ
         unfold chartCoefficient
-        rw [if_pos hD, hΦF _ hgU.2 hμ']
+        rw [ite_eq_left hD, hΦF _ hgU.2 hμ']
     · refine ⟨Cᶜ, fun _ => 0, hCc.isClosed.isOpen_compl, hC, contDiffOn_const, fun g hgU hgG => ?_⟩
       by_contra hne
       exact hgU (hsub g hgG hne)

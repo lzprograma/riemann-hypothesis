@@ -194,11 +194,11 @@ private theorem permDet_twist {X : Type} [Fintype X] [DecidableEq X] (π : Equiv
       · have e := hc i
         rw [← h1] at e
         have hz : ζ = 1 := mul_right_cancel₀ (hc0 i) (e.symm.trans (one_mul _).symm)
-        rw [if_pos h1, if_pos rfl, if_pos rfl, hz]
+        rw [ite_eq_left h1, ite_eq_left rfl, ite_eq_left rfl, hz]
         ring
-      · rw [if_neg h1, if_pos rfl, if_pos rfl]
+      · rw [ite_eq_right h1, ite_eq_left rfl, ite_eq_left rfl]
         ring
-    · rw [if_neg h2, if_neg h2]
+    · rw [ite_eq_right h2, ite_eq_right h2]
       split_ifs with h1
       · subst h1
         ring
@@ -352,13 +352,13 @@ private noncomputable def extS (F : Type) [Field F] [NumberField F] :
   map_add' y z := by
     ext w
     by_cases h : w = w₀
-    · simp only [h, dif_pos, Pi.add_apply, Finset.sum_add_distrib]; ring
-    · simp only [h, dif_neg, not_false_eq_true, Pi.add_apply]; ring
+    · simp only [h, dite_eq_left, Pi.add_apply, Finset.sum_add_distrib]; ring
+    · simp only [h, dite_eq_right, not_false_eq_true, Pi.add_apply]; ring
   map_smul' c y := by
     ext w
     by_cases h : w = w₀
-    · simp only [h, dif_pos, Pi.smul_apply, smul_eq_mul, RingHom.id_apply, ← Finset.mul_sum]; ring
-    · simp only [h, dif_neg, not_false_eq_true, Pi.smul_apply, smul_eq_mul, RingHom.id_apply]; ring
+    · simp only [h, dite_eq_left, Pi.smul_apply, smul_eq_mul, RingHom.id_apply, ← Finset.mul_sum]; ring
+    · simp only [h, dite_eq_right, not_false_eq_true, Pi.smul_apply, smul_eq_mul, RingHom.id_apply]; ring
 
 private theorem mult_two {F : Type} [Field F] [_root_.NumberField.IsTotallyComplex F] (w : InfinitePlace F) :
     (mult w : ℝ) = 2 := by
@@ -378,7 +378,7 @@ private theorem extS_log {F : Type} [Field F] [NumberField F] [_root_.NumberFiel
     rw [Fintype.sum_eq_add_sum_subtype_ne _ w₀] at hs
     rw [← Finset.mul_sum] at hs ⊢
     linarith
-  · simp only [extS, LinearMap.coe_mk, AddHom.coe_mk, dif_neg h, logEmbedding_component, mult_two]
+  · simp only [extS, LinearMap.coe_mk, AddHom.coe_mk, dite_eq_right h, logEmbedding_component, mult_two]
     ring
 
 private theorem sum_log {F : Type} [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F] (u : (𝓞 F)ˣ) :

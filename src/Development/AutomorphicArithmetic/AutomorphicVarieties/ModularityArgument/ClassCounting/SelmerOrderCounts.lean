@@ -822,30 +822,12 @@ private theorem ordP_actU_inv_eq_ordP_actP {L F : Type} [Field L] [Field F] [Num
   rfl
 
 private theorem actP_mul_selmer_order_counts {L F : Type} [Field L] [Field F] [NumberField F] [Algebra L F]
-    (σ τ : Gal(F/L)) (P : HeightOneSpectrum (𝓞 F)) : actP (σ * τ) P = actP σ (actP τ P) := by
-  apply HeightOneSpectrum.ext
-  ext x
-  change (RingOfIntegers.mapRingEquiv (σ * τ).toRingEquiv).symm x ∈ P.asIdeal ↔
-    (RingOfIntegers.mapRingEquiv τ.toRingEquiv).symm
-      ((RingOfIntegers.mapRingEquiv σ.toRingEquiv).symm x) ∈ P.asIdeal
-  have : (RingOfIntegers.mapRingEquiv (σ * τ).toRingEquiv).symm x =
-      (RingOfIntegers.mapRingEquiv τ.toRingEquiv).symm
-        ((RingOfIntegers.mapRingEquiv σ.toRingEquiv).symm x) := by
-    apply RingOfIntegers.ext
-    simp
-    rw [← AlgEquiv.aut_inv, ← AlgEquiv.aut_inv, ← AlgEquiv.aut_inv, mul_inv_rev, AlgEquiv.mul_apply]
-  rw [this]
+    (σ τ : Gal(F/L)) (P : HeightOneSpectrum (𝓞 F)) : actP (σ * τ) P = actP σ (actP τ P) :=
+  rfl
 
 private theorem actP_one_selmer_order_counts {L F : Type} [Field L] [Field F] [NumberField F] [Algebra L F]
-    (P : HeightOneSpectrum (𝓞 F)) : actP (1 : Gal(F/L)) P = P := by
-  apply HeightOneSpectrum.ext
-  ext x
-  change (RingOfIntegers.mapRingEquiv (1 : Gal(F/L)).toRingEquiv).symm x ∈ P.asIdeal ↔ x ∈ P.asIdeal
-  have : (RingOfIntegers.mapRingEquiv (1 : Gal(F/L)).toRingEquiv).symm x = x := by
-    apply RingOfIntegers.ext
-    simp
-    rw [← AlgEquiv.aut_inv, inv_one, AlgEquiv.one_apply]
-  rw [this]
+    (P : HeightOneSpectrum (𝓞 F)) : actP (1 : Gal(F/L)) P = P :=
+  rfl
 
 private theorem actU_mul' {L F : Type} [Field L] [Field F] [Algebra L F]
     (σ τ : Gal(F/L)) (α : Fˣ) : actU (σ * τ) α = actU σ (actU τ α) := by
@@ -1205,36 +1187,18 @@ open scoped nonZeroDivisors
 
 private theorem ord_eq_count {L : Type} [Field L] [NumberField L] (p : HeightOneSpectrum (𝓞 L)) (y : Lˣ) :
     ordP p y = FractionalIdeal.count L p (FractionalIdeal.spanSingleton (𝓞 L)⁰ (y : L)) := by
-  obtain ⟨a, b, hab⟩ := IsLocalization.exists_mk'_eq (𝓞 L)⁰ (y : L)
-  have ha : a ≠ 0 := by
-    rintro rfl
-    exact y.ne_zero (by rw [← hab, IsLocalization.mk'_zero])
-  have hb : (b : 𝓞 L) ≠ 0 := nonZeroDivisors.coe_ne_zero b
-  have hI : FractionalIdeal.spanSingleton (𝓞 L)⁰ (y : L) ≠ 0 :=
-    FractionalIdeal.spanSingleton_ne_zero_iff.mpr y.ne_zero
-  have h : FractionalIdeal.spanSingleton (𝓞 L)⁰ (y : L) =
-      FractionalIdeal.spanSingleton (𝓞 L)⁰ ((algebraMap (𝓞 L) L) b)⁻¹ * ((Ideal.span {a} : Ideal (𝓞 L)) : FractionalIdeal (𝓞 L)⁰ L) := by
-    rw [FractionalIdeal.coeIdeal_span_singleton, FractionalIdeal.spanSingleton_mul_spanSingleton, ← hab,
-      IsFractionRing.mk'_eq_div, div_eq_inv_mul]
-  rw [FractionalIdeal.count_well_defined L p hI h, ordP, ← hab, HeightOneSpectrum.valuation_of_mk',
-    p.intValuation_if_neg ha, p.intValuation_if_neg hb, ← WithZero.exp_sub, WithZero.log_exp]
-  ring
-
-private theorem ord_mul {L : Type} [Field L] [NumberField L] (p : HeightOneSpectrum (𝓞 L)) (x y : Lˣ) :
-    ordP p (x * y) = ordP p x + ordP p y := by
-  rw [ord_eq_count, ord_eq_count, ord_eq_count, Units.val_mul, ← FractionalIdeal.spanSingleton_mul_spanSingleton,
-    FractionalIdeal.count_mul L p (FractionalIdeal.spanSingleton_ne_zero_iff.mpr x.ne_zero)
-      (FractionalIdeal.spanSingleton_ne_zero_iff.mpr y.ne_zero)]
+  intros
+  refine (@_root_.fractionalIdeal_count_spanSingleton_eq_ordP ?_ ?_ ?_ ?_ ?_).symm <;> first | assumption | infer_instance
 
 private theorem ord_one {L : Type} [Field L] [NumberField L] (p : HeightOneSpectrum (𝓞 L)) :
     ordP p (1 : Lˣ) = 0 := by
-  have := ord_mul p (1 : Lˣ) 1
+  have := ordP_mul' p (1 : Lˣ) 1
   rw [mul_one] at this
   omega
 
 private theorem ord_inv {L : Type} [Field L] [NumberField L] (p : HeightOneSpectrum (𝓞 L)) (x : Lˣ) :
     ordP p x⁻¹ = -ordP p x := by
-  have := ord_mul p x x⁻¹
+  have := ordP_mul' p x x⁻¹
   rw [mul_inv_cancel, ord_one] at this
   omega
 
@@ -1345,7 +1309,7 @@ theorem UpperTheory.V.ZK.Ct.selLCard :
   let H : Subgroup Lˣ :=
     { carrier := {y | ∀ p : HeightOneSpectrum (𝓞 L), (l : 𝓞 L) ∉ p.asIdeal → (l : ℤ) ∣ ordP p y}
       one_mem' := fun p _ => by rw [ord_one]; exact dvd_zero _
-      mul_mem' := fun ha hb p hp => by rw [ord_mul]; exact dvd_add (ha p hp) (hb p hp)
+      mul_mem' := fun ha hb p hp => by rw [ordP_mul']; exact dvd_add (ha p hp) (hb p hp)
       inv_mem' := fun ha p hp => by rw [ord_inv]; exact (ha p hp).neg_right }
   have hqk : q.ker = P := QuotientGroup.ker_mk' P
   have hql : ∀ z : Lˣ, q (z ^ l) = 1 := fun z => (QuotientGroup.eq_one_iff _).mpr ⟨z, rfl⟩
@@ -1419,7 +1383,7 @@ theorem UpperTheory.V.ZK.Ct.selLCard :
       rw [← ofAdd_add]
       congr 1
       funext p
-      rw [Subgroup.coe_mul, ord_mul, Int.cast_add, Pi.add_apply]
+      rw [Subgroup.coe_mul, ordP_mul', Int.cast_add, Pi.add_apply]
   have hφ : φ.ker ≤ H0.subgroupOf H := by
     intro y hy
     refine root_exists (y : Lˣ) fun p => ?_
@@ -1820,7 +1784,7 @@ theorem UpperTheory.V.ZK.Ct.selInvLe :
     intro x hx
     obtain ⟨t, htT, hxt⟩ := hty x hx
     have hex : ∃ x ∈ D.SelInv l, Ty x t := ⟨x, hx, hxt⟩
-    have hrep : rep t = hex.choose := dif_pos hex
+    have hrep : rep t = hex.choose := dite_eq_left hex
     obtain ⟨_, hx't⟩ := hex.choose_spec
     obtain ⟨α, v, hxα, hord, hact, hN⟩ := hxt
     obtain ⟨α', v', hxα', hord', hact', hN'⟩ := hx't

@@ -59,10 +59,10 @@ lemma cube_orth {n : ℕ} (m : Fin n → ℤ) :
   simp_rw [ioc_orth]
   by_cases hm : m = 0
   · subst hm; simp
-  · rw [if_neg hm]
+  · rw [ite_eq_right hm]
     obtain ⟨j, hj⟩ : ∃ j, m j ≠ 0 := by
       by_contra h; push Not at h; exact hm (funext h)
-    exact Finset.prod_eq_zero (Finset.mem_univ j) (if_neg hj)
+    exact Finset.prod_eq_zero (Finset.mem_univ j) (ite_eq_right hj)
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
@@ -128,7 +128,7 @@ theorem subCoeff {r : ℕ} (X : Data E r) (la : Wt X.Ψ r) (P : Frame X.Ψ r →
       apply hν'
       choose k0 hk0 using fun j => hfreq (β j) (hβp j)
       exact ⟨k0, (eq_νk β ν' k0 hk0).symm⟩
-    rw [Data.fj, if_neg hnf, zero_mul]
+    rw [Data.fj, ite_eq_right hnf, zero_mul]
 
   set F : (Fin (Fintype.card X.Ψ) → ℤ) → (Fin (Fintype.card X.Ψ) → ℝ) → ℂ := fun k' t =>
     a k' * cexp (2 * Real.pi * I * ∑ j, ((mZ k' j - k j : ℤ) : ℂ) * (t j : ℂ)) with hF
@@ -232,15 +232,15 @@ theorem subCoeff {r : ℕ} (X : Data E r) (la : Wt X.Ψ r) (P : Frame X.Ψ r →
       have h2 : mZ k0 j = k j := by exact_mod_cast h1
       simp only [Pi.zero_apply]
       omega
-    rw [tsum_eq_single k0 (fun k' hk' => by rw [if_neg (fun h => hk' (huniq k' h)), mul_zero]),
-      if_pos hk0z, mul_one, ha]
+    rw [tsum_eq_single k0 (fun k' hk' => by rw [ite_eq_right (fun h => hk' (huniq k' h)), mul_zero]),
+      ite_eq_left hk0z, mul_one, ha]
     show X.fj la ξ (νk β k0) P x = _
     rw [← hν0]
-  · have hz : X.fj la ξ ν P x = 0 := by rw [Data.fj, if_neg hfreq]
+  · have hz : X.fj la ξ ν P x = 0 := by rw [Data.fj, ite_eq_right hfreq]
     rw [hz]
     have hterm : ∀ k', a k' * (if (fun j => mZ k' j - k j) = 0 then (1 : ℂ) else 0) = 0 := by
       intro k'
-      rw [if_neg, mul_zero]
+      rw [ite_eq_right, mul_zero]
       intro h
       apply hfreq
       rw [← hsame k' h]

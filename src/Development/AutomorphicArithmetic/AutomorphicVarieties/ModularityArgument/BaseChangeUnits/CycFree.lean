@@ -5,7 +5,7 @@ public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForm
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.CycCOfCyclic
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.StrongMultOneReal
 public import Development.AutomorphicArithmetic.Foundations.Convolution.Cbcc
-import Development.WeilBound.CoreStatements.PublishedTheorems.FiniteGLInvariants.AffineLieInvariants.Imports
+import Development.WeilBound.RepresentationTheoryGL.ConstantTermFiniteness.LieInvariants.InvariantOfLieOneLEqZero
 import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.JacquetShalikaRigidity
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -134,6 +134,6 @@ theorem cycC_of_fin_js (hF : GlobalTheory.Published.AutomorphicFormsFiniteGL) (h
     exact ⟨hu, B, hB, SIsoSat_holds K n _ _ hi v _ (ht B hB)⟩
 
 theorem cycC_holds : CycC :=
-  cycC_of_fin_js CuspFormAutomorphicBounds.automorphicFormsFiniteGL PositivityTheory.AdelicQuotientData.jacquetShalikaRigidity (cbcr_of_cbcc UpperTheory.ConvolutionTheory.cbcc)
+  cycC_of_fin_js PositivityTheory.Rg.HF.GL.automorphicFormsFiniteGL PositivityTheory.AdelicQuotientData.jacquetShalikaRigidity (cbcr_of_cbcc UpperTheory.ConvolutionTheory.cbcc)
 
 end UpperTheory.V.Z.Bc

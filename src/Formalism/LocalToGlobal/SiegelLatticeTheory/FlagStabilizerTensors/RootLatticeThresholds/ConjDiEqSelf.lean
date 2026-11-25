@@ -31,10 +31,10 @@ private lemma Hpk_apply_sig_ne_zero {n : ℕ} {h H : Matrix (Fin n) (Fin n) ℂ}
   have e1 : ∀ m, (hᴴ * H) p m = H p m := by
     intro m
     simp only [Matrix.mul_apply, Matrix.conjTranspose_apply, hcolS, ite_mul, one_mul, zero_mul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have e : (hᴴ * H * h) p j = H p j := by rw [hU]
   rw [Matrix.mul_apply] at e
-  simp only [e1, hrow, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true] at e
+  simp only [e1, hrow, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at e
   rw [e]
   by_cases hq : q = j
   · subst hq; simp
@@ -69,13 +69,13 @@ theorem fix_gen (d : Fin (2 * r + k + 1) → ℂ) (d0 : ℂ) (hmid : ∀ i : Fin
   · rw [(out i hi).1 j] at hne
     by_cases hij : i = j
     · rw [hij]
-    · exact absurd (if_neg hij) hne
+    · exact absurd (ite_eq_right hij) hne
   · by_cases hj : j.val < r ∨ r + k < j.val
     · rw [(out j hj).2 i] at hne
       by_cases hij : i = j
       · rw [hij]
-      · exact absurd (if_neg hij) hne
-    · push_neg at hi hj
+      · exact absurd (ite_eq_right hij) hne
+    · push Not at hi hj
       rw [hmid i hi.1 hi.2, hmid j hj.1 hj.2]
 
 variable {δ : ℝ}

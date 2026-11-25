@@ -72,8 +72,7 @@ theorem _root_.GlobalTheory.entire_eq_zero_of_mul_continuous_eq_zero {E : Type*}
     [NormedSpace ℂ E] {f t : E → ℂ} (hf : Differentiable ℂ f) (ht : Continuous t) (ht0 : t ≠ 0)
     (h : ∀ z, f z * t z = 0) (z : E) : f z = 0 := by
   obtain ⟨w, hw⟩ : ∃ w, t w ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     exact ht0 (funext hne)
   have hU : ∀ᶠ y in 𝓝 w, f y = 0 := by
     filter_upwards [ht.continuousAt.eventually_ne hw] with y hy
@@ -159,12 +158,6 @@ theorem _root_.GlobalTheory.two_dvd_of_entire_sign_periodic {g : ℕ} {τ : Matr
     (by rw [show ((N m m' : ℤ) : ℂ) / ((2 : ℕ) : ℂ) = (N m m' : ℂ) / 2 by norm_num, he]
         simp [_root_.ReciprocityTheory.PTheta.eC_zero])
   exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ 2).mp (by simpa using hz)
-
-section Transform
-
-variable {g : ℕ} {γ : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) ℤ} {τ : Matrix (Fin g) (Fin g) ℂ}
-
-end Transform
 
 open Complex Matrix NumberField Filter Topology in
 private theorem symplectic_block_combination_eq {g : ℕ} (A B C D τ : Matrix (Fin g) (Fin g) ℂ)

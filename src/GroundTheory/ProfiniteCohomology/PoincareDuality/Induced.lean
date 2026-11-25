@@ -131,9 +131,9 @@ theorem sum_ite_mul_out_mem {M : Type*} [AddCommMonoid M] (F : Γ → M)
       rw [hw, ← mul_assoc, mul_inv_cancel, one_mul]
       exact w.2
     change (if h * (((h⁻¹ : Γ) : Γ ⧸ W).out) ∈ W then F (((h⁻¹ : Γ) : Γ ⧸ W).out) else 0) = _
-    rw [if_pos hmem, hw, hF]
+    rw [ite_eq_left hmem, hw, hF]
   · intro c _ hc
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hmem
     apply hc
     rw [← QuotientGroup.out_eq' c]
@@ -221,10 +221,10 @@ theorem coindDualHom_comp_coindDualInv :
   change D.ρ h (D.ρ c.out ((μ.1 c.out⁻¹ : V →ₗ[k] D)
     ((W : Set Γ).indicator (fun _ => a) (c.out⁻¹ * h⁻¹)))) = _
   by_cases hc : h * c.out ∈ W
-  · rw [if_pos hc, Set.indicator_of_mem]
+  · rw [ite_eq_left hc, Set.indicator_of_mem]
     rw [← mul_inv_rev]
     exact W.inv_mem hc
-  · rw [if_neg hc, Set.indicator_of_notMem, map_zero, map_zero, map_zero]
+  · rw [ite_eq_right hc, Set.indicator_of_notMem, map_zero, map_zero, map_zero]
     intro hmem
     apply hc
     have := W.inv_mem hmem
@@ -256,12 +256,6 @@ open CategoryTheory MonoidalCategory groupCohomology GroundTheory.GroupCoh
 universe u
 
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-
-section Associativity
-
-variable {A B C : Rep.{u} k G} [IsDiscreteRep A] [IsDiscreteRep B] [IsDiscreteRep C]
-
-end Associativity
 
 section Unit
 
@@ -335,8 +329,6 @@ namespace GroundTheory.ProfCoh
 open CategoryTheory MonoidalCategory
 
 universe u
-
-attribute [local instance 2000] Rep.hV2
 
 section Finite
 

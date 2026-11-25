@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicTraceSupportedAtSplitPlace
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
 import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtA
@@ -66,17 +67,7 @@ theorem liftV_mul (v : Pl (F := F)) (a b : Fv F v) :
 
 theorem liftV_one_mul (v : Pl (F := F)) (a : AF F) :
     GlobalTheory.LatVac.liftV v 1 * a = GlobalTheory.LatVac.liftV v (evFin F v a) := by
-  refine Prod.ext ?_ ?_
-  · change (0 : Ainf F) * a.1 = 0
-    rw [zero_mul]
-  · change GlobalTheory.AdelicU.singleFin v 1 * a.2 = GlobalTheory.AdelicU.singleFin v (evalV F v a.2)
-    apply GlobalTheory.AdelicU.af_ext
-    intro u
-    rw [map_mul]
-    by_cases hu : u = v
-    · subst hu
-      rw [GlobalTheory.AdelicU.evalV_singleFin_self, GlobalTheory.AdelicU.evalV_singleFin_self, one_mul]
-    · rw [GlobalTheory.AdelicU.evalV_singleFin_ne hu, GlobalTheory.AdelicU.evalV_singleFin_ne hu, zero_mul]
+  apply _root_.GlobalTheory.SplitAdeleTrace.liftV_one_mul_comp <;> assumption
 
 theorem evFin_one_sub (v : Pl (F := F)) : evFin F v (1 - GlobalTheory.LatVac.liftV v 1) = 0 := by
   rw [map_sub, map_one, GlobalTheory.LatVac.evFin_liftV, sub_self]
@@ -318,8 +309,7 @@ theorem field_data : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numbe
       rw [map_inv₀, inv_le_one₀ (zero_lt_iff.2 hne)] at h1
       exact absurd hlt (not_lt.2 h1)
     obtain ⟨y, hyO, hyψ⟩ : ∃ y ∈ v.adicCompletionIntegers F, psiLoc B.ψ v (ϖv⁻¹ * y) ≠ 1 := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       exact hnot ((hψ _).1 hcon)
     refine ⟨complMap h y, complMap_mem h hyO, ?_, ?_⟩
     · rw [← hsymm (complMap h y), hcompl, hc]

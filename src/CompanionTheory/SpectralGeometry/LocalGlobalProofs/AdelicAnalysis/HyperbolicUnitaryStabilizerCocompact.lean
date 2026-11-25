@@ -13,60 +13,6 @@ public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicUnitaryGroupLocallyCompact
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramOrbitCompactRepresentative
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HyperbolicAndBlockOneNondegenerate
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
-import Mathlib.RingTheory.PiTensorProduct
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ArchimedeanPrimitiveVectorCompactRescale, CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LocalPrimitiveVectorCompactRescale, CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.PrimitiveVectorLatticeRescaleAlmostAll, CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicPrimitiveVectorCompactRescale, CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HyperbolicUnitaryStabilizerCocompact
@@ -111,8 +57,7 @@ theorem reduce_of_equiv {K : Type} [CommRing K] [TopologicalSpace K] {W : Type} 
   have hmax : ∀ w, ∃ i, (∀ j, ‖Φ (y 0 j) w‖ ≤ ‖Φ (y 0 i) w‖) ∧ Φ (y 0 i) w ≠ 0 := by
     intro w
     obtain ⟨i₀, hi₀⟩ : ∃ i, Φ (y 0 i) w ≠ 0 := by
-      by_contra hall
-      push_neg at hall
+      by_contra! hall
       have := hsum w
       simp [hall] at this
     haveI : Nonempty (Fin M) := ⟨i₀⟩
@@ -163,7 +108,7 @@ theorem reduce_of_equiv {K : Type} [CommRing K] [TopologicalSpace K] {W : Type} 
 
     simp only [dotProduct, map_sum, Finset.sum_apply, map_mul, Pi.mul_apply, map_one, Pi.one_apply]
     rw [Finset.sum_congr rfl fun i _ => h1 i]
-    simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     exact inv_mul_cancel₀ (hu w)
 
 section
@@ -177,8 +122,7 @@ theorem exists_delta (σ : E →ₐ[F] E) (h : IsCMExt F E σ) : ∃ δ : E, σ 
     InfinitePlace.not_isReal_iff_isComplex.mpr (hC.isComplex (InfinitePlace.mk τ₀))
       (InfinitePlace.isReal_mk_iff.mpr hr)
   obtain ⟨x, hx⟩ : ∃ x, σ x ≠ x := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     apply hnr
     rw [ComplexEmbedding.isReal_iff]
     ext x
@@ -388,8 +332,7 @@ theorem primitiveCompact_of_multiplicative {K : Type*} [CommRing K] [Nontrivial 
   refine ⟨Set.pi Set.univ fun _ => {x | ν x ≤ 1}, isCompact_univ_pi fun _ => hc, ?_⟩
   rintro y ⟨z, hz⟩
   have hex : ∃ j, y j ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hy0 : y = 0 := funext hcon
     rw [hy0, dotProduct_zero] at hz
     exact zero_ne_one hz
@@ -567,7 +510,7 @@ theorem compact_Nf {D : L} (hD : ∀ s, s * s ≠ D) : IsCompact {p : L × L | �
   have h6 : 0 < 1 / ‖Nf D q0‖ := by positivity
   by_cases h7 : ‖p‖ ≤ 1
   · linarith
-  · push_neg at h7
+  · push Not at h7
     nlinarith
 
 variable [CommRing K] [Algebra L K] [TopologicalSpace K] (bs : Module.Basis (Fin 2) L K)
@@ -692,8 +635,7 @@ theorem exists_delta [CharZero F] (h2 : Module.finrank F E = 2) :
     ∃ (b : Module.Basis (Fin 2) F E) (Δ : F), b 0 = 1 ∧ b 1 * b 1 = algebraMap F E Δ ∧ Δ ≠ 0 := by
   haveI : FiniteDimensional F E := Module.finite_of_finrank_pos (by omega)
   obtain ⟨x, hx⟩ : ∃ x : E, x ∉ (algebraMap F E).range := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have : (⊥ : Subalgebra F E) = ⊤ := by
       ext y
       simpa [Algebra.mem_bot] using hcon y
@@ -758,7 +700,7 @@ theorem exists_compact_unimodular_vectors_mod_units : ∀ (F E : Type) [Field F]
         rintro rfl
         exact hD0 (by rw [← hs, mul_zero])
       exact primitiveCompact_split bs h0 hd hs0 hs two_ne_zero hg M
-    · push_neg at hsq
+    · push Not at hsq
       exact primitiveCompact_nonsplit bs h0 hd hsq hg M
   obtain ⟨Ω, hc, hp⟩ := hU
   have hcw : Continuous (fun (w : Fin M → Fv F v ⊗[F] E) (_ : Fin 1) => w) :=
@@ -1120,7 +1062,7 @@ theorem split_case (h0 : B 0 = 1) (h1 : B 1 * B 1 = algebraMap L K Δ)
     simp only [Pi.add_apply, map_add (f := _), Finsupp.add_apply]
     exact (w.map_add _ _).trans (max_le (h1' e i he_int) (h1' f j hf_int))
   · simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib, Pi.single_apply,
-      ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, huy]
+      ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, huy]
     have a1 : e * (((p i)⁻¹ * p i) • e + ((q j)⁻¹ * q i) • f) = e := by
       rw [inv_mul_cancel₀ hpi', one_smul, mul_add, hee, mul_smul_comm, hef, smul_zero, add_zero]
     have a2 : f * (((p i)⁻¹ * p j) • e + ((q j)⁻¹ * q j) • f) = f := by
@@ -1309,7 +1251,7 @@ theorem unimodular_compact_mod_units : ∀ (F E : Type) [Field F] [NumberField F
   classical
   obtain ⟨Cv, hCg, hCb⟩ : ∃ Cv : ∀ v : HeightOneSpectrum (𝓞 F), Set (Fin 1 → Fin M → Fv F v ⊗[F] E),
       (∀ v, good v → Cv v = latV b v) ∧ (∀ v, ¬ good v → Cv v = Ωv v) :=
-    ⟨fun v => if good v then latV b v else Ωv v, fun v h => if_pos h, fun v h => if_neg h⟩
+    ⟨fun v => if good v then latV b v else Ωv v, fun v h => ite_eq_left h, fun v h => ite_eq_right h⟩
   have hCcpt : ∀ v, IsCompact (Cv v) := by
     intro v
     by_cases h : good v

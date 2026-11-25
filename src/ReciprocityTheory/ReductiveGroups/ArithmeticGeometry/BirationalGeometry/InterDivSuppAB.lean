@@ -12,51 +12,11 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodA
 public import Mathlib.Algebra.Algebra.ZMod
 public import Mathlib.RingTheory.KrullDimension.PID
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsRegularOfSupportDimQuotientAddLengthLe
 import Mathlib.RingTheory.RegularLocalRing.Polynomial
 import Mathlib.RingTheory.TotallySplit
 import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
@@ -152,13 +112,9 @@ theorem finiteRingKrullDim_quot {B : Type*} [CommRing B] [FiniteRingKrullDim B] 
     (lt_of_lt_of_le (WithBot.bot_lt_coe (0 : ℕ∞)) ringKrullDim_nonneg_of_nontrivial).ne'
   exact ⟨hne, ne_top_of_le_ne_top htop hle⟩
 
-private theorem ideal_height_eq_order_height_primeSpectrum {R : Type*} [CommRing R] (N : Ideal R) [hN : N.IsPrime] :
-    N.height = Order.height (⟨N, hN⟩ : PrimeSpectrum R) := by
-  exact PrimeSpectrum.height_eq_orderHeight (⟨N, hN⟩ : PrimeSpectrum R)
-
 theorem height_int_of_isMaximal (M : Ideal ℤ) (hM : M.IsMaximal) : M.height = 1 := by
   haveI := hM.isPrime
-  rw [ideal_height_eq_order_height_primeSpectrum M]
+  rw [PrimeSpectrum.height_eq_orderHeight (⟨M, hM.isPrime⟩ : PrimeSpectrum ℤ)]
   have hMbot : M ≠ ⊥ := by
     intro h
     subst h
@@ -206,50 +162,14 @@ theorem height_mvPolynomial_int_fin_of_isMaximal :
     push_cast
     ring
 
-private theorem order_height_comap_ringEquiv_symm {A B : Type*} [CommRing A] [CommRing B] (e : A ≃+* B)
-    (x : PrimeSpectrum A) :
-    Order.height (PrimeSpectrum.comap (e.symm : B →+* A) x) = Order.height x := by
-  have sm1 : StrictMono (PrimeSpectrum.comap (e.symm : B →+* A)) := by
-    intro p q hpq
-    refine lt_of_le_of_ne (Ideal.comap_mono hpq.le) ?_
-    intro h
-    apply hpq.ne
-    apply PrimeSpectrum.ext
-    exact Ideal.comap_injective_of_surjective _ e.symm.surjective (congrArg PrimeSpectrum.asIdeal h)
-  have sm2 : StrictMono (PrimeSpectrum.comap (e : A →+* B)) := by
-    intro p q hpq
-    refine lt_of_le_of_ne (Ideal.comap_mono hpq.le) ?_
-    intro h
-    apply hpq.ne
-    apply PrimeSpectrum.ext
-    exact Ideal.comap_injective_of_surjective _ e.surjective (congrArg PrimeSpectrum.asIdeal h)
-  have hcomp : PrimeSpectrum.comap (e : A →+* B) (PrimeSpectrum.comap (e.symm : B →+* A) x) = x := by
-    apply PrimeSpectrum.ext
-    ext a
-    simp
-  apply le_antisymm
-  · calc Order.height (PrimeSpectrum.comap (e.symm : B →+* A) x)
-        ≤ Order.height (PrimeSpectrum.comap (e : A →+* B) (PrimeSpectrum.comap (e.symm : B →+* A) x)) :=
-          Order.height_le_height_apply_of_strictMono _ sm2 _
-      _ = Order.height x := by rw [hcomp]
-  · exact Order.height_le_height_apply_of_strictMono _ sm1 x
-
 theorem height_eq_of_isMaximal_mvPolynomial_int {σ : Type*} [Finite σ]
     (M N : Ideal (MvPolynomial σ ℤ)) (hM : M.IsMaximal) (hN : N.IsMaximal) :
     M.height = N.height := by
   obtain ⟨n, ⟨eσ⟩⟩ := Finite.exists_equiv_fin σ
   let e : MvPolynomial σ ℤ ≃+* MvPolynomial (Fin n) ℤ := (MvPolynomial.renameEquiv ℤ eσ).toRingEquiv
-  have key : ∀ I : Ideal (MvPolynomial σ ℤ), I.IsMaximal → I.height = n + 1 := by
-    intro I hI
-    haveI := hI
-    haveI := hI.isPrime
-    have hJ : (Ideal.comap (e.symm : MvPolynomial (Fin n) ℤ →+* MvPolynomial σ ℤ) I).IsMaximal :=
-      Ideal.comap_isMaximal_of_surjective _ e.symm.surjective
-    haveI := hJ.isPrime
-    have h1 := height_mvPolynomial_int_fin_of_isMaximal n _ hJ
-    rw [ideal_height_eq_order_height_primeSpectrum] at h1 ⊢
-    rw [← h1]
-    exact (order_height_comap_ringEquiv_symm e _).symm
+  have key : ∀ I : Ideal (MvPolynomial σ ℤ), I.IsMaximal → I.height = n + 1 := fun I hI => by
+    have hJ : (I.map e).IsMaximal := Ideal.map_isMaximal_of_equiv e
+    rw [← e.height_map I, height_mvPolynomial_int_fin_of_isMaximal n _ hJ]
   rw [key M hM, key N hN]
 
 theorem height_eq_height_add_of_isRegularRing {R : Type*} [CommRing R] [IsRegularRing R]

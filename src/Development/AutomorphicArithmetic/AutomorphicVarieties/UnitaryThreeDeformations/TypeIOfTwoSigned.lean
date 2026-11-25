@@ -6,58 +6,9 @@ public import Mathlib.NumberTheory.Padics.PadicIntegers
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdRepBaseLiftApply
 import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ConjTor
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsCoordOfNotMatIrr
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
 
@@ -272,7 +223,7 @@ private theorem coc_rel [IsDomain A] (hr : Red η Ψ r) (h21 : ∀ g, (r g).mat 
   have E := congrArg (fun M => M 2 0) (mat_mul_eq_ite_of_hasMult hm g h)
   simp only [Matrix.mul_apply, Fin.sum_univ_three, h21 g, zero_mul, add_zero] at E
   rcases Int.units_eq_one_or (η g) with he | he
-  · simp only [he, if_true] at E
+  · simp only [he, ite_true] at E
     rw [hb, hb, hb] at E
     have E2 : b (g * h) = b g * (r h).mat 0 0 + (r g).mat 2 2 * b h :=
       mul_left_cancel₀ hx (by rw [E]; ring)
@@ -281,7 +232,7 @@ private theorem coc_rel [IsDomain A] (hr : Red η Ψ r) (h21 : ∀ g, (r g).mat 
   · have hne : η g ≠ 1 := by
       rw [he]
       decide
-    simp only [hne, if_false, jmat_mul_mul_jmat_apply] at E
+    simp only [hne, ite_false, jmat_mul_mul_jmat_apply] at E
     have E' : (r (g * h)).mat 2 0 = (r g).mat 2 0 * ((r h).mat)⁻¹ 2 2 + (r g).mat 2 2 * ((r h).mat)⁻¹ 2 0 := by
       rw [E]
       rfl
@@ -412,7 +363,7 @@ private theorem lc_div {A D : Type} [CommRing A] [IsDomain A] [IsDiscreteValuati
   have hφ : (fun g => residue A (b g)) = φ ∘ f := by
     funext g
     have hq : ∃ g', f g' = f g := ⟨g, rfl⟩
-    simp only [Function.comp, φ, dif_pos hq]
+    simp only [Function.comp, φ, dite_eq_left hq]
     exact key _ _ hq.choose_spec.symm
   rw [hφ]
   exact (hc (k + 1)).comp φ
@@ -433,7 +384,7 @@ private theorem ent_zero {O A : Type} [CommRing O] [IsLocalRing O] [CommRing A] 
         rw [map_mul, he, hF.ηc]
         decide
       have e := mat_mul_eq_ite_of_hasMult hm (g * F.c) F.c
-      rw [if_pos hgc, atc, Matrix.mul_one, mul_assoc, hF.csq, mul_one] at e
+      rw [ite_eq_left hgc, atc, Matrix.mul_one, mul_assoc, hF.csq, mul_one] at e
       rw [e]
       exact h21 _ hgc
   by_contra hne
@@ -582,7 +533,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.typeI_of_twoSigned :
   have hred := hpt.toCondN.toCond.toRed
   have hzeta' : IsUnit (zeta F.c g₁ r') := by
     rw [← IsLocalRing.residue_ne_zero_iff_isUnit]
-    simp only [zeta, zmat, Matrix.sub_apply, map_sub, ent_ofSL_eq_coe hred, if_true]
+    simp only [zeta, zmat, Matrix.sub_apply, map_sub, ent_ofSL_eq_coe hred, ite_true]
     have hgs : F.Ψ (gstar F.c g₁) = (F.Ψ g₁)⁻¹ := by
       simp [gstar, hF.Ψc]
     have w0 : wt1 0 = 1 := by decide

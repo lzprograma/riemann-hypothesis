@@ -70,22 +70,10 @@ def evP {m n : ℕ} (b : Fin m → Pt R n d) (a : Pt R m d) : Pt R n d := fun i 
 theorem ev_zero {m n : ℕ} {a : Fin m → Pt R n d} (ha : ZZ a) : ev a (0 : PS R m d) = 0 :=
   ReciprocityTheory.ChartRestriction.G.TB.ChartChgPfTP.ev_zero' ha
 
-private theorem ev_sub_lemma {m n : ℕ} {a : Fin m → Pt R n d} (ha : ZZ a) :
-    MvPowerSeries.HasSubst (fun p : Fin m × Fin d => a p.1 p.2) :=
-  MvPowerSeries.hasSubst_of_constantCoeff_zero (fun p => ha p.1 p.2)
-
-private theorem ev_sub_lemma_2 {σ : Type} (g : MvPowerSeries σ R) (hg : constantCoeff g = 0) :
-    (1 : ℕ∞) ≤ g.order := by
-  refine le_order fun e he => ?_
-  have h0 : e.degree = 0 := by
-    norm_cast at he
-    omega
-  rw [(Finsupp.degree_eq_zero_iff e).mp h0, coeff_zero_eq_constantCoeff_apply, hg]
-
 theorem cc_ev {m n : ℕ} {a : Fin m → Pt R n d} (ha : ZZ a) (f : PS R m d) :
     constantCoeff (ev a f) = constantCoeff f := by
   have h0 : constantCoeff (ev a (f - C (constantCoeff f))) = 0 :=
-    constantCoeff_subst_eq_zero (ev_sub_lemma ha) (fun p => ha p.1 p.2) (by simp)
+    constantCoeff_subst_eq_zero (hasSubst_ev a ha) (fun p => ha p.1 p.2) (by simp)
   have e : ev a f = ev a (C (constantCoeff f)) + ev a (f - C (constantCoeff f)) := by
     rw [← ev_add a ha, add_sub_cancel]
   rw [e, map_add (f := _), h0, ev_C, constantCoeff_C, add_zero]
@@ -146,8 +134,9 @@ theorem germCompOne_assoc_of_constantCoeff_zero {n : ℕ} (φ : Pt R 1 d) {ψ : 
 
 theorem germComp1_zero_of_noConstantCoeff {n : ℕ} {φ : Pt R 1 d} (hφ : Z φ) : comp1 φ (0 : Pt R n d) = 0 := by
   funext i
-  have hs := ev_sub_lemma (cechDeRhamTotalCocyclesOne (Z_zero (R := R) (n := n) (d := d)))
-  have h1 : (1 : ℕ∞) ≤ (φ i).order := ev_sub_lemma_2 _ (hφ i)
+  have hs := hasSubst_ev ![(0 : Pt R n d)]
+    (cechDeRhamTotalCocyclesOne (Z_zero (R := R) (n := n) (d := d)))
+  have h1 : (1 : ℕ∞) ≤ (φ i).order := one_le_order_iff_constCoeff_eq_zero.mpr (hφ i)
   have h2 : (⊤ : ℕ∞) ≤ (ev ![(0 : Pt R n d)] (φ i)).order := by
     refine le_trans ?_ (le_order_subst hs (φ i))
     have ht : (⨅ p : Fin 1 × Fin d, (![(0 : Pt R n d)] p.1 p.2).order) = ⊤ := by
@@ -159,12 +148,8 @@ theorem coeff_single_one {σ : Type} (s : σ) (f : MvPowerSeries σ R) :
     coeff (Finsupp.single s 1) f = constantCoeff (pderiv s f) := by
   rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv]; simp
 
-theorem coeff_add_single {σ : Type} (D : σ →₀ ℕ) (t : σ) (h : D t = 0) (f : MvPowerSeries σ R) :
-    coeff (D + Finsupp.single t 1) f = coeff D (pderiv t f) := by
-  rw [coeff_pderiv, h]; simp
-
 private theorem cc_d_ev_lemma {m n : ℕ} {a : Fin m → Pt R n d} (ha : ZZ a) (g : PS R m d) :
-    ev a g = substAlgHom (ev_sub_lemma ha) g := by
+    ev a g = substAlgHom (hasSubst_ev a ha) g := by
   rw [substAlgHom_apply]
   rfl
 
@@ -192,12 +177,12 @@ private theorem cc_d_ev_lemma_3 {m n : ℕ} {a : Fin m → Pt R n d} (ha : ZZ a)
   intro e he
   apply coeff_of_lt_order
   have h1 : (1 : ℕ∞) ≤ ⨅ p : Fin m × Fin d, (a p.1 p.2).order :=
-    le_iInf fun p => ev_sub_lemma_2 _ (ha p.1 p.2)
+    le_iInf fun p => one_le_order_iff_constCoeff_eq_zero.mpr (ha p.1 p.2)
   have h2 : (K : ℕ∞) ≤ g.order := le_order fun x hx => hg x (by exact_mod_cast hx)
   calc (e.degree : ℕ∞) < K := by exact_mod_cast he
     _ = 1 * K := (one_mul _).symm
     _ ≤ (⨅ p : Fin m × Fin d, (a p.1 p.2).order) * g.order := mul_le_mul' h1 h2
-    _ ≤ (ev a g).order := le_order_subst (ev_sub_lemma ha) g
+    _ ≤ (ev a g).order := le_order_subst (hasSubst_ev a ha) g
 
 private theorem cc_d_ev_lemma_4 {m n : ℕ} {a : Fin m → Pt R n d} (ha : ZZ a) (t : Fin n × Fin d)
     (f : PS R m d) :
@@ -257,16 +242,6 @@ theorem cc_dd_ev {m n : ℕ} {a : Fin m → Pt R n d} (ha : ZZ a) (s t : Fin n �
 
 theorem lin_one (φ : Pt R 1 d) (i j : Fin d) : lin φ 1 i j = constantCoeff (pderiv ((0 : Fin 1), j) (φ i)) :=
   coeff_single_one _ _
-
-theorem cc_d_comp1_pt {n : ℕ} (φ : Pt R 1 d) (j k : Fin n) (i l : Fin d) :
-    constantCoeff (pderiv (k, l) (comp1 φ (pt R d j) i)) = if j = k then lin φ 1 i l else 0 := by
-  classical
-  show constantCoeff (pderiv (k, l) (ev ![pt R d j] (φ i))) = _
-  rw [cc_d_ev (cechDeRhamTotalCocyclesOne (Z_pt j)), lin_one, Fintype.sum_prod_type, Fin.sum_univ_one]
-  by_cases h : j = k
-  · subst h
-    simp [pt, pderiv_X, Pi.single_apply]
-  · simp [pt, h]
 
 theorem lin_comp1 (φ : Pt R 1 d) {ψ : Pt R 1 d} (hψ : Z ψ) : lin (comp1 φ ψ) 1 = lin φ 1 * lin ψ 1 := by
   ext i j

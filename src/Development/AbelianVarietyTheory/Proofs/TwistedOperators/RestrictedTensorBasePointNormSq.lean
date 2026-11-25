@@ -48,8 +48,6 @@ open scoped TensorProduct ComplexOrder
 
 namespace GlobalTheory.PlaceTensor
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def VacAt (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (S T : HSp D)

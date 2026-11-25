@@ -81,7 +81,7 @@ theorem exists_biorth {E : Type} [Field E] {n m : ℕ} {r : ℕ → ℕ}
   have hemp : ∀ b, ¬ b < m → IsEmpty (Fin (r b)) := fun b hb => by
     rw [hr b (by omega)]; infer_instance
   have hT' : ∀ (b : Fin m) y, T' b *ᵥ y = e.symm y b := fun b y => by
-    simp only [T', dif_pos b.2]
+    simp only [T', dite_eq_left b.2]
     rw [← Matrix.toLin'_apply, Matrix.toLin'_toMatrix']
     rfl
   have H1 : ∀ (u : ∀ b, Fin (r b) → E) b, T' b *ᵥ (∑ c ∈ Finset.range m, T c *ᵥ u c) = u b := by
@@ -193,7 +193,7 @@ theorem exists_biorth_of_saturated_flag : ∀ (E : Type) [Field E] [NumberField 
       · refine Finset.sum_eq_zero fun c hc => ?_
         rw [hB.2.1 b c (by have := Finset.mem_range.1 hc; omega), Matrix.zero_mulVec]
     rw [h1]
-    refine ⟨?_, fun h => if_neg (by omega)⟩
+    refine ⟨?_, fun h => ite_eq_right (by omega)⟩
     split_ifs
     · exact hu b
     · exact zero_mem _

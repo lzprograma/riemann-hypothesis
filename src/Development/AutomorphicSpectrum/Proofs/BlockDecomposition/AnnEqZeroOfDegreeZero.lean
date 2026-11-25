@@ -4,49 +4,8 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Injectiv
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairStructureOnLine
 public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.CreApply
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SgMulSelf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
+import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.FinsetCAR
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Bool
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -73,7 +32,7 @@ theorem keyL_inj {i j : Lt n} (h : keyL i = keyL j) : i = j := by
   have hq := GlobalTheory.CompanionTheory.RealMult.BdSqProof.key_lt q
   have hk : key p = key q → p = q := fun e => CompanionTheory.D.LK.Car.key_inj e
   have hn : n * n < (n + 1) * (n + 1) := by nlinarith
-  cases s <;> cases t <;> simp only [keyL, Bool.false_eq_true, if_false, if_true] at h
+  cases s <;> cases t <;> simp only [keyL, Bool.false_eq_true, ite_false, ite_true] at h
   · rw [hk (by omega)]
   · omega
   · omega
@@ -96,96 +55,37 @@ section Car
 
 def tw (i j : Lt n) : ℂ := if keyL j < keyL i then -1 else 1
 
-theorem tw_self (i : Lt n) : tw i i = 1 := by simp [tw]
+theorem tw_self (i : Lt n) : tw i i = 1 :=
+  _root_.CompanionTheory.FinsetCAR.tw_self keyL i
 
-theorem tw_mul_self (i j : Lt n) : tw i j * tw i j = 1 := by
-  unfold tw; split_ifs <;> simp
+theorem tw_mul_self (i j : Lt n) : tw i j * tw i j = 1 :=
+  _root_.CompanionTheory.FinsetCAR.tw_mul_self keyL i j
 
-theorem tw_swap {i j : Lt n} (h : i ≠ j) : tw j i = -tw i j := by
-  have hk : keyL i ≠ keyL j := fun e => h (keyL_inj e)
-  unfold tw
-  rcases lt_or_gt_of_ne hk with h1 | h1
-  · simp [h1, h1.not_gt]
-  · simp [h1, h1.not_gt]
+theorem tw_swap {i j : Lt n} (h : i ≠ j) : tw j i = -tw i j :=
+  _root_.CompanionTheory.FinsetCAR.tw_swap keyL (fun _ _ e => keyL_inj e) h
 
-theorem sg_mul_self (i : Lt n) (A : Finset (Lt n)) : sgL i A * sgL i A = 1 := by
-  unfold sgL
-  rw [← mul_pow]; simp
+theorem sg_mul_self (i : Lt n) (A : Finset (Lt n)) : sgL i A * sgL i A = 1 :=
+  _root_.CompanionTheory.FinsetCAR.sg_mul_self keyL i A
 
 theorem sg_insert (i : Lt n) {j : Lt n} {A : Finset (Lt n)} (h : j ∉ A) :
-    sgL i (insert j A) = tw i j * sgL i A := by
-  unfold sgL tw
-  rw [Finset.filter_insert]
-  split_ifs with hk
-  · rw [Finset.card_insert_of_notMem (fun hm => h (Finset.mem_filter.1 hm).1), pow_succ]; ring
-  · simp
+    sgL i (insert j A) = tw i j * sgL i A :=
+  _root_.CompanionTheory.FinsetCAR.sg_insert keyL i h
 
 theorem sg_erase (i : Lt n) {j : Lt n} {A : Finset (Lt n)} (h : j ∈ A) :
-    sgL i (A.erase j) = tw i j * sgL i A := by
-  have h1 := sg_insert i (Finset.notMem_erase j A)
-  rw [Finset.insert_erase h] at h1
-  rw [h1, ← mul_assoc, tw_mul_self, one_mul]
+    sgL i (A.erase j) = tw i j * sgL i A :=
+  _root_.CompanionTheory.FinsetCAR.sg_erase keyL i h
 
 variable {V : Type} [AddCommGroup V] [Module ℂ V]
 
-theorem ann_ann (i j : Lt n) : (annq i * annq j + annq j * annq i : Module.End ℂ (Cq n V)) = 0 := by
-  refine LinearMap.ext fun x => funext fun A => ?_
-  simp only [LinearMap.add_apply, Module.End.mul_apply, Pi.add_apply, LinearMap.zero_apply, Pi.zero_apply,
-    ann_apply]
-  by_cases hij : i = j
-  · subst hij
-    simp
-  have hji : j ≠ i := fun e => hij e.symm
-  by_cases hi : i ∈ A
-  · simp [hi]
-  by_cases hj : j ∈ A
-  · simp [hj]
-  simp only [hi, hj, Finset.mem_insert, hij, hji, or_self, if_false]
-  rw [sg_insert j hi, sg_insert i hj, tw_swap hij, Finset.insert_comm j i, smul_smul, smul_smul, ← add_smul]
-  have : sgL i A * (-tw i j * sgL j A) + sgL j A * (tw i j * sgL i A) = 0 := by ring
-  rw [this, zero_smul]
+theorem ann_ann (i j : Lt n) : (annq i * annq j + annq j * annq i : Module.End ℂ (Cq n V)) = 0 :=
+  _root_.CompanionTheory.FinsetCAR.ann_ann keyL (fun _ _ e => keyL_inj e) i j
 
-theorem cre_cre (i j : Lt n) : (creq i * creq j + creq j * creq i : Module.End ℂ (Cq n V)) = 0 := by
-  refine LinearMap.ext fun x => funext fun A => ?_
-  simp only [LinearMap.add_apply, Module.End.mul_apply, Pi.add_apply, LinearMap.zero_apply, Pi.zero_apply,
-    cre_apply]
-  by_cases hij : i = j
-  · subst hij
-    simp
-  have hji : j ≠ i := fun e => hij e.symm
-  by_cases hi : i ∈ A
-  swap
-  · simp [hi]
-  by_cases hj : j ∈ A
-  swap
-  · simp [hj]
-  simp only [hi, hj, Finset.mem_erase, ne_eq, hij, hji, not_false_eq_true, and_self, if_true]
-  rw [sg_erase j hi, sg_erase i hj, tw_swap hij, Finset.erase_right_comm (a := j) (b := i), smul_smul, smul_smul,
-    ← add_smul]
-  have : sgL i A * (-tw i j * sgL j A) + sgL j A * (tw i j * sgL i A) = 0 := by ring
-  rw [this, zero_smul]
+theorem cre_cre (i j : Lt n) : (creq i * creq j + creq j * creq i : Module.End ℂ (Cq n V)) = 0 :=
+  _root_.CompanionTheory.FinsetCAR.cre_cre keyL (fun _ _ e => keyL_inj e) i j
 
 theorem ann_cre (i j : Lt n) :
-    (annq i * creq j + creq j * annq i : Module.End ℂ (Cq n V)) = if i = j then 1 else 0 := by
-  refine LinearMap.ext fun x => funext fun A => ?_
-  simp only [LinearMap.add_apply, Module.End.mul_apply, Pi.add_apply, ann_apply, cre_apply]
-  by_cases hij : i = j
-  · subst hij
-    by_cases hi : i ∈ A
-    · simp [hi, sg_erase i hi, tw_self, smul_smul, sg_mul_self, Finset.insert_erase hi]
-    · simp [hi, sg_insert i hi, tw_self, smul_smul, sg_mul_self, Finset.erase_insert hi]
-  have hji : j ≠ i := fun e => hij e.symm
-  rw [if_neg hij, LinearMap.zero_apply, Pi.zero_apply]
-  by_cases hi : i ∈ A
-  · simp [hi, hij]
-  by_cases hj : j ∈ A
-  swap
-  · simp [hj, hji]
-  simp only [hi, hj, Finset.mem_insert, Finset.mem_erase, or_true, and_false, if_true, if_false]
-  rw [sg_insert j hi, sg_erase i hj, tw_swap hij, Finset.erase_insert_of_ne hij, smul_smul, smul_smul,
-    ← add_smul]
-  have : sgL i A * (-tw i j * sgL j A) + sgL j A * (tw i j * sgL i A) = 0 := by ring
-  rw [this, zero_smul]
+    (annq i * creq j + creq j * annq i : Module.End ℂ (Cq n V)) = if i = j then 1 else 0 :=
+  _root_.CompanionTheory.FinsetCAR.ann_cre keyL (fun _ _ e => keyL_inj e) i j
 
 theorem lift_ann (T : Module.End ℂ V) (i : Lt n) :
     Commute (liftq n T : Module.End ℂ (Cq n V)) (annq i) := by
@@ -236,7 +136,7 @@ theorem cq_closed {lev : Fin n → ℕ} {S : Lt n → Prop} (h : IsSubL lev S) (
   obtain ⟨u, r⟩ := k
   have hu : u = (s == t) := by
     by_contra hne
-    exact hc (if_neg hne)
+    exact hc (ite_eq_right hne)
   subst hu
   have hcp : cp p q r ≠ 0 := by
     intro h0
@@ -287,7 +187,7 @@ theorem Ts_comm {E1 E2 : Fin n → Fin n → Module.End ℂ V} (h : PairRel E1 E
   have b2 : (true == false) = false := rfl
   have b3 : (false == false) = true := rfl
   have b4 : (true == true) = true := rfl
-  cases s <;> cases t <;> simp only [Ts, Bool.false_eq_true, if_false, if_true, e1, e2, e3, e4, h1, h2, b1, b2, b3, b4] <;>
+  cases s <;> cases t <;> simp only [Ts, Bool.false_eq_true, ite_false, ite_true, e1, e2, e3, e4, h1, h2, b1, b2, b3, b4] <;>
     split_ifs <;> first | abel
 
 theorem Tl_comm {E1 E2 : Fin n → Fin n → Module.End ℂ V} (h : PairRel E1 E2) (i j : Lt n) :
@@ -331,9 +231,9 @@ theorem bracket_eq :
     rw [Finset.sum_eq_single (s == i) (fun u _ hu => Finset.sum_eq_zero fun y _ => by simp [tq, hu]) (by simp)]
     refine Finset.sum_congr rfl fun k _ => ?_
     by_cases h : t.1.2 = j.1.1 ∧ k.1.1 = t.1.1 ∧ k.1.2 = j.1.2
-    · rw [if_pos h, tq, if_pos ⟨rfl, h.1, Prod.ext h.2.1 h.2.2⟩, one_smul]
-    · refine (if_neg h).trans ?_
-      rw [tq, if_neg, zero_smul]
+    · rw [ite_eq_left h, tq, ite_eq_left ⟨rfl, h.1, Prod.ext h.2.1 h.2.2⟩, one_smul]
+    · refine (ite_eq_right h).trans ?_
+      rw [tq, ite_eq_right, zero_smul]
       intro h'
       have h2 : k.1 = (t.1.1, j.1.2) := h'.2.2
       exact h ⟨h'.2.1, by rw [h2], by rw [h2]⟩
@@ -413,16 +313,16 @@ theorem lift_mem {P : Finset (Lt n) → Prop} (T : V →ₗ[ℂ] W) {x : Cq n V}
 theorem ann_ne {i : Lt n} {x : Cq n V} {A : Finset (Lt n)} (h : annq i x A ≠ 0) :
     i ∉ A ∧ x (insert i A) ≠ 0 := by
   by_cases hi : i ∈ A
-  · exact absurd (by rw [ann_apply, if_pos hi]) h
+  · exact absurd (by rw [ann_apply, ite_eq_left hi]) h
   · refine ⟨hi, fun h0 => h ?_⟩
-    rw [ann_apply, if_neg hi, h0, smul_zero]
+    rw [ann_apply, ite_eq_right hi, h0, smul_zero]
 
 theorem cre_ne {i : Lt n} {x : Cq n V} {A : Finset (Lt n)} (h : creq i x A ≠ 0) :
     i ∈ A ∧ x (A.erase i) ≠ 0 := by
   by_cases hi : i ∈ A
   · refine ⟨hi, fun h0 => h ?_⟩
-    rw [cre_apply, if_pos hi, h0, smul_zero]
-  · exact absurd (by rw [cre_apply, if_neg hi]) h
+    rw [cre_apply, ite_eq_left hi, h0, smul_zero]
+  · exact absurd (by rw [cre_apply, ite_eq_right hi]) h
 
 theorem ann_deg {m : ℕ} (i : Lt n) {x : Cq n V} (hx : DegQ (m + 1) x) : DegQ m (annq i x) := by
   intro A hA

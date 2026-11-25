@@ -82,15 +82,4 @@ theorem isFractionRing_chart {h : GenFrEx Xo c} (C : FChart h) : IsFractionRing 
     change x = a / b
     rw [eq_div_iff hb0, e]⟩
 
-section Pin
-
-variable {r : ℕ} {U : ∀ σ : c.F →+* ℂ, Formalism.L2.PjFree.Unf Xo c σ r}
-  (hU : ∀ σ, Formalism.L2.PjFree.GoodEmb c σ → Formalism.L2.PjFree.IsUnf (U σ)) {xR : ℝ}
-  {fn : ∀ σ : c.F →+* ℂ, FrPt Xo c (CAt σ) → Ix Dw → ℝ} (hx : 0 < xR) (hfn : FnPin U xR fn)
-  {a : (E →+* ℂ) × ℕ → ℕ} {n : ℕ} {g : Rul Xo c}
-
-include hU hx hfn
-
-end Pin
-
 end GlobalTheory.SupGeneric

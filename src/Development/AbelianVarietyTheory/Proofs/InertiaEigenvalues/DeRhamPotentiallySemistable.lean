@@ -200,8 +200,7 @@ theorem linIndep_of_eigen_weights : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l
   intro a hcard hrel
   by_contra hne
   obtain ⟨j0, hj0⟩ : ∃ j0, a j0 ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hne (funext h)
   set b : ι → ℂ_[l] := fun j => (a j0)⁻¹ * a j with hb
   have hbrel : ∑ j, b j • v j = 0 := by
@@ -684,15 +683,6 @@ section -- clump:auto
 noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.Pst
-
-namespace GlobalTheory.LTChar
-
-variable {l : ℕ} [Fact l.Prime]
-
-theorem orbit_cont (y : ℂ_[l]) : Continuous fun g : GQ l => Formalism.Per.σC g y := by
-  apply GlobalTheory.PMon.FrameChange.cont_σC
-
-end GlobalTheory.LTChar
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -749,7 +739,7 @@ theorem char_cont : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf 
   refine Continuous.div_const (Continuous.mul ?_ ?_) _
   · exact (continuous_algebraMap ℚ_[l] ℂ_[l]).comp
       ((GlobalTheory.Cyc.IsCyc.continuous P.χQ_cyc).comp continuous_subtype_val)
-  · exact (orbit_cont (θ u)).comp continuous_subtype_val
+  · exact (GlobalTheory.PMon.FrameChange.cont_σC (θ u)).comp continuous_subtype_val
 
 end GlobalTheory.LTChar
 end -- clump:auto
@@ -1095,11 +1085,11 @@ theorem framed_twist : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAi
         apply hx2
         refine (hshift 2 (-1) (P.ιB x)).2 ?_
         rwa [show (2 : ℤ) + -1 = 1 by norm_num]
-      · rw [if_pos hm, map_mul, GlobalTheory.PMon.Model.act_tz, hgal g]
+      · rw [ite_eq_left hm, map_mul, GlobalTheory.PMon.Model.act_tz, hgal g]
         ring
     · have hj := hev m (Nat.pos_of_ne_zero hm) m.2
       refine ⟨ev P m x, hj.1, hj.2, fun g => ?_⟩
-      rw [if_neg hm, hgal g, neg_zero, zpow_zero, Units.val_one, map_one, mul_one]
+      rw [ite_eq_right hm, hgal g, neg_zero, zpow_zero, Units.val_one, map_one, mul_one]
   obtain ⟨y, hy0, hey⟩ := hunit e he0 he1
   let u : P.R.BdRˣ := ⟨e, y, hey, by rw [mul_comm]; exact hey⟩
   have hu0 : (u : P.R.BdR) ∈ Fil P 0 := he0
@@ -1230,7 +1220,7 @@ theorem sum_weights (r N : ℕ) (hr : 0 < r) (w : Fin r → n → ℤ) (hN : Fin
     Finset.sum_ite_eq' (Finset.range _) 0]
   rcases Nat.eq_zero_or_pos (Fintype.card n) with h0 | h0
   · simp [h0]
-  · rw [if_pos (Finset.mem_range.mpr (Nat.mul_pos hr h0))]
+  · rw [ite_eq_left (Finset.mem_range.mpr (Nat.mul_pos hr h0))]
     ring
 
 end GlobalTheory.PMon.Twist

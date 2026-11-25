@@ -43,21 +43,15 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory
   CartesianMonoidalCategory MonObj
 open scoped CategoryTheory.Obj
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace GlobalTheory.IndefiniteRowSideFullHecke.TorusPointForms
 
 open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out
-
-attribute [local instance] SplitExt.free SplitExt.finite
 
 variable {R : Type} [CommRing R] [IsDomain R] (D : DegPre R)
 
@@ -67,12 +61,7 @@ def oφ {T : Over (Spec (CommRingCat.of R))} (b : T ⟶ D.P.A) (χ : D.X) :
     Fin 4 → (T.left ⟶ D.P.A.left) :=
   ![(padd D.P.A b (cPt D T χ)).left, (cPt D T χ).left, b.left, (pzero D.P.A T).left]
 
-def oε : Fin 4 → ℤ := ![1, -1, -1, 1]
-
 def oεInv : Fin 4 → ℤ := ![-1, 1, 1, -1]
-
-abbrev oLB {T : Over (Spec (CommRingCat.of R))} (b : T ⟶ D.P.A) (χ : D.X) : LB T.left :=
-  LB.LinComb D.P.L (oφ D b χ) oε
 
 abbrev oInvLB {T : Over (Spec (CommRingCat.of R))} (b : T ⟶ D.P.A) (χ : D.X) : LB T.left :=
   LB.LinComb D.P.L (oφ D b χ) oεInv
@@ -131,59 +120,6 @@ variable {D F} {k : ℕ}
 
 def mk (p : QPair D F k) : Qk D F k := Quot.mk _ p
 
-def IsAdd (a b c : Qk D F k) : Prop :=
-  ∃ p p' p'' : QPair D F k, mk p = a ∧ mk p' = b ∧ mk p'' = c ∧
-    p''.1.1 = p.1.1 + p'.1.1 ∧ GtPt.IsAdd p.1.2 p'.1.2 p''.1.2
-
-def IsZero (a : Qk D F k) : Prop :=
-  ∃ p : QPair D F k, mk p = a ∧ p.1.1 = 0 ∧ p.1.2.IsZero
-
 end Qk
-
-abbrev baseF : Over (Spec (CommRingCat.of F)) :=
-  (Over.pullback (jFK (R := R) F ≫ jK R)).obj D.P.A
-
-def toB {B' : Over (Spec (CommRingCat.of F))} (β : B' ≅ baseF D F) :
-    Over.mk (B'.hom ≫ jFK (R := R) F ≫ jK R) ⟶ D.P.A :=
-  Over.homMk (β.hom.left ≫ pullback.fst D.P.A.hom (jFK (R := R) F ≫ jK R)) (by
-    have h : β.hom.left ≫ pullback.snd D.P.A.hom (jFK (R := R) F ≫ jK R) = B'.hom := Over.w β.hom
-    simp only [Over.mk_hom, Category.assoc]
-    erw [pullback.condition]
-    exact (Category.assoc _ _ _).symm.trans (congrArg (· ≫ jFK (R := R) F ≫ jK R) h))
-
-def IsDatumIso (E : SplitExt (Spec (CommRingCat.of F))) (β : E.B ≅ baseF D F)
-    (ξ : E.X ≃+ D.X) : Prop :=
-  IsMonHom β.hom ∧
-    ∀ χ : E.X, ∃ t : LB.Iso (E.O χ).L (oLB D (toB D F β) (ξ χ)), t.IsGen
-
-def IsPointCorr {E : SplitExt (Spec (CommRingCat.of F))} (β : E.B ≅ baseF D F)
-    {G : Over (Spec (CommRingCat.of F))} [GrpObj G] (q : G ⟶ E.B)
-    (e : (𝟙_ (Over (Spec (CommRingCat.of F))) ⟶ G) ≃ GtPt D F) : Prop :=
-  (∀ x x', (e x).IsAdd (e x') (e (padd G x x'))) ∧
-    (e η[G]).IsZero ∧
-    ∀ x, (e x).base.left = (x ≫ q).left ≫ (toB D F β).left
-
-def PointsOfGtSt : Prop :=
-  ∀ (E : SplitExt (Spec (CommRingCat.of F))) (β : E.B ≅ baseF D F) (ξ : E.X ≃+ D.X),
-    IsDatumIso D F E β ξ →
-    ∀ (G : Over (Spec (CommRingCat.of F))) [GrpObj G] (d : E.GtDatum G),
-      ∃ e : (𝟙_ (Over (Spec (CommRingCat.of F))) ⟶ G) ≃ GtPt D F, IsPointCorr D F β d.q e
-
-def PointsOfGtCoordSt : Prop :=
-  ∀ (E : SplitExt (Spec (CommRingCat.of F))) (β : E.B ≅ baseF D F) (ξ : E.X ≃+ D.X),
-    IsDatumIso D F E β ξ →
-    ∀ (G : Over (Spec (CommRingCat.of F))) [GrpObj G] (d : E.GtDatum G),
-      ∃ (e : (𝟙_ (Over (Spec (CommRingCat.of F))) ⟶ G) ≃ GtPt D F)
-        (t : ∀ k, LB.Iso (E.O (E.basis k)).L (oLB D (toB D F β) (ξ (E.basis k)))),
-        IsPointCorr D F β d.q e ∧ (∀ k, (t k).IsGen) ∧
-        ∀ (x : 𝟙_ (Over (Spec (CommRingCat.of F))) ⟶ G) (j : E.ChartIdx) (j' : Fin 4 → D.P.L.ι)
-          (k : Module.Free.ChooseBasisIndex ℤ E.X) (W : (Spec (CommRingCat.of F)).Opens)
-          (h₁ : W ≤ (oInvLB D (e x).base (ξ (E.basis k))).U j')
-          (h₂ : W ≤ (x ≫ d.q).left ⁻¹ᵁ
-            (LB.div (oLB D (toB D F β) (ξ (E.basis k))) (E.O (E.basis k)).L).U (j', j k))
-          (h₃ : W ≤ x.left ⁻¹ᵁ (d.q.left ⁻¹ᵁ E.chart j)),
-          res (X := Spec (CommRingCat.of F)) h₁ (((e x).form (ξ (E.basis k))).s j') *
-              res (X := Spec (CommRingCat.of F)) h₂ (pullU (x ≫ d.q).left _ ((t k).s (j', j k))) =
-            res (X := Spec (CommRingCat.of F)) h₃ (pullU x.left _ (d.u j k))
 
 end GlobalTheory.IndefiniteRowSideFullHecke.TorusPointForms

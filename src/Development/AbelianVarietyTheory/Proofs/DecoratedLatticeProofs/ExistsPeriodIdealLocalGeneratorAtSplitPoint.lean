@@ -56,14 +56,8 @@ theorem half_diff_ne_bot (D : D7) : D.host.𝔟 ≠ ⊥ := by
   rw [h, Ideal.bot_mul] at h1
   exact differentIdeal_ne_bot h1
 
-theorem AA_ne_zero (D : D7) : D.host.AA ≠ 0 := by
-  have hb0 : ((D.host.𝔟 : Ideal (𝓞 D.host.E)) : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E) ≠ 0 :=
-    FractionalIdeal.coeIdeal_ne_zero.2 (half_diff_ne_bot D)
-  have hc0 : ((D.host.ccE : Ideal (𝓞 D.host.E)) : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E) ≠ 0 := by
-    refine FractionalIdeal.coeIdeal_ne_zero.2 ?_
-    rw [Host.ccE, Ne, Ideal.map_eq_bot_iff_of_injective (FaithfulSMul.algebraMap_injective _ _)]
-    exact D.host.ccK_ne_bot
-  exact mul_ne_zero hc0 (inv_ne_zero hb0)
+theorem AA_ne_zero (D : D7) : D.host.AA ≠ 0 :=
+  _root_.GlobalTheory.LatVacFull.AA_ne_zero D
 
 variable {D : D7} {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 

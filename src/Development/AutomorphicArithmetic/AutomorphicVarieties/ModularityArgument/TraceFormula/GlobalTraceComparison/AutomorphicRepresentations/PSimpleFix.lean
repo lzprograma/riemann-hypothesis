@@ -60,27 +60,6 @@ private def Mg (N : Subgroup G) (g : G) : Subgroup G := N ⊓ N.comap (MulAut.co
 private theorem mem_Mg (N : Subgroup G) (g m : G) : m ∈ Mg N g ↔ m ∈ N ∧ g⁻¹ * m * g ∈ N := by
   simp [Mg, Subgroup.mem_comap]
 
-private def dc (N : Subgroup G) (g : G) : Set G := {y | ∃ a ∈ N, ∃ b ∈ N, y = a * g * b}
-
-private theorem dc_left (N : Subgroup G) (g : G) {k : G} (hk : k ∈ N) (x : G) : k * x ∈ dc N g ↔ x ∈ dc N g := by
-  constructor
-  · rintro ⟨a, ha, b, hb, e⟩
-    refine ⟨k⁻¹ * a, N.mul_mem (N.inv_mem hk) ha, b, hb, ?_⟩
-    simp only [mul_assoc] at e ⊢
-    rw [eq_inv_mul_iff_mul_eq]
-    exact e
-  · rintro ⟨a, ha, b, hb, rfl⟩
-    exact ⟨k * a, N.mul_mem hk ha, b, hb, by simp only [mul_assoc]⟩
-
-private theorem dc_right (N : Subgroup G) (g : G) {k : G} (hk : k ∈ N) (x : G) : x * k ∈ dc N g ↔ x ∈ dc N g := by
-  constructor
-  · rintro ⟨a, ha, b, hb, e⟩
-    refine ⟨a, ha, b * k⁻¹, N.mul_mem hb (N.inv_mem hk), ?_⟩
-    rw [← mul_assoc, ← e]
-    simp
-  · rintro ⟨a, ha, b, hb, rfl⟩
-    exact ⟨a, ha, b * k, N.mul_mem hb hk, by simp only [mul_assoc]⟩
-
 variable [TopologicalSpace G] [IsTopologicalGroup G]
 
 private theorem isOpen_Mg (N : Subgroup G) (hNo : IsOpen (N : Set G)) (g : G) : IsOpen (Mg N g : Set G) := by
@@ -90,30 +69,25 @@ private theorem isOpen_Mg (N : Subgroup G) (hNo : IsOpen (N : Set G)) (g : G) : 
   rw [e]
   exact hNo.inter (hNo.preimage (by fun_prop))
 
+open scoped Pointwise in
 private theorem hecke_dc (N : Subgroup G) (hNc : IsCompact (N : Set G)) (g : G) :
-    IsHecke N ((dc N g).indicator 1) := by
-  refine ⟨?_, ?_⟩
-  · have hc : IsCompact (dc N g) := by
-      have e : dc N g = (fun p : G × G => p.1 * g * p.2) '' ((N : Set G) ×ˢ (N : Set G)) := by
-        ext y
-        constructor
-        · rintro ⟨a, ha, b, hb, rfl⟩
-          exact ⟨(a, b), ⟨ha, hb⟩, rfl⟩
-        · rintro ⟨⟨a, b⟩, ⟨ha, hb⟩, rfl⟩
-          exact ⟨a, ha, b, hb, rfl⟩
-      rw [e]
-      exact (hNc.prod hNc).image (by fun_prop)
-    exact hc.closure_of_subset Set.support_indicator_subset
-  · intro k hk x
-    constructor
-    · by_cases h : x ∈ dc N g
-      · rw [Set.indicator_of_mem h, Set.indicator_of_mem ((dc_left N g hk x).2 h)]
-        rfl
-      · rw [Set.indicator_of_notMem h, Set.indicator_of_notMem fun h' => h ((dc_left N g hk x).1 h')]
-    · by_cases h : x ∈ dc N g
-      · rw [Set.indicator_of_mem h, Set.indicator_of_mem ((dc_right N g hk x).2 h)]
-        rfl
-      · rw [Set.indicator_of_notMem h, Set.indicator_of_notMem fun h' => h ((dc_right N g hk x).1 h')]
+    IsHecke N ((DoubleCoset.doubleCoset g (N : Set G) N).indicator 1) := by
+  have hmem : ∀ x, x ∈ DoubleCoset.doubleCoset g (N : Set G) N ↔
+      DoubleCoset.mk N N g = DoubleCoset.mk N N x :=
+    fun _ => DoubleCoset.mem_doubleCoset.trans DoubleCoset.eq.symm
+  refine ⟨((hNc.mul (isCompact_singleton : IsCompact ({g} : Set G))).mul hNc).closure_of_subset
+    Set.support_indicator_subset, fun k hk x => ?_⟩
+  have hL : DoubleCoset.mk N N (k * x) = DoubleCoset.mk N N x := DoubleCoset.mk_mem_mul ⟨k, hk⟩ x
+  have hR : DoubleCoset.mk N N (x * k) = DoubleCoset.mk N N x := DoubleCoset.mk_mul_mem ⟨k, hk⟩ x
+  have eL : k * x ∈ DoubleCoset.doubleCoset g (N : Set G) N ↔
+      x ∈ DoubleCoset.doubleCoset g (N : Set G) N := by rw [hmem, hmem, hL]
+  have eR : x * k ∈ DoubleCoset.doubleCoset g (N : Set G) N ↔
+      x ∈ DoubleCoset.doubleCoset g (N : Set G) N := by rw [hmem, hmem, hR]
+  by_cases hx : x ∈ DoubleCoset.doubleCoset g (N : Set G) N
+  · exact ⟨by rw [Set.indicator_of_mem hx, Set.indicator_of_mem (eL.2 hx)]; rfl,
+      by rw [Set.indicator_of_mem hx, Set.indicator_of_mem (eR.2 hx)]; rfl⟩
+  · exact ⟨by rw [Set.indicator_of_notMem hx, Set.indicator_of_notMem (mt eL.1 hx)],
+      by rw [Set.indicator_of_notMem hx, Set.indicator_of_notMem (mt eR.1 hx)]⟩
 
 variable {V : Type} [AddCommGroup V] [Module ℂ V]
 
@@ -127,14 +101,14 @@ private theorem fixed_Mg (ρ : Representation ℂ G V) (N : Subgroup G) (g : G) 
 
 private theorem lv_dc (ρ : Representation ℂ G V) (N : Subgroup G) (hNo : IsOpen (N : Set G))
     (hNc : IsCompact (N : Set G)) (g : G) (x : V) (hx : x ∈ fixed ρ N) :
-    levOp ρ N N ((dc N g).indicator 1) LinearMap.id x =
+    levOp ρ N N ((DoubleCoset.doubleCoset g (N : Set G) N).indicator 1) LinearMap.id x =
       ∑ᶠ j : N ⧸ (Mg N g).subgroupOf N, ρ (j.out : G) (ρ g x) := by
   have hH := hecke_dc N hNc g
   have hs := finite_supp N hNo _ hH.1
   have hx' := (mem_fixed_iff ρ N x).1 hx
   rw [levOp_apply ρ N N _ _ x hs, Subgroup.relIndex_self]
   simp only [Nat.cast_one, inv_one, one_smul, LinearMap.id_apply]
-  set f : G → ℂ := (dc N g).indicator 1 with hf
+  set f : G → ℂ := (DoubleCoset.doubleCoset g (N : Set G) N).indicator 1 with hf
   set F : G → V := fun y => f y • ρ y x with hF
   have hFr : ∀ y, ∀ h ∈ N, F (y * h) = F y := by
     intro y h hh
@@ -155,10 +129,10 @@ private theorem lv_dc (ρ : Representation ℂ G V) (N : Subgroup G) (hNo : IsOp
     have hne : f q.out ≠ 0 := by
       intro h0
       exact hq (by simp [hF, h0])
-    have hmem : q.out ∈ dc N g := by
+    have hmem : q.out ∈ DoubleCoset.doubleCoset g (N : Set G) N := by
       by_contra hn
       exact hne (Set.indicator_of_notMem hn _)
-    obtain ⟨a, ha, b, hb, e⟩ := hmem
+    obtain ⟨a, ha, b, hb, e⟩ := DoubleCoset.mem_doubleCoset.1 hmem
     obtain ⟨m, hm⟩ := QuotientGroup.mk_out_eq_mul ((Mg N g).subgroupOf N) (⟨a, ha⟩ : N)
     refine ⟨QuotientGroup.mk ⟨a, ha⟩, ?_⟩
     have hm' := (mem_Mg N g _).1 (Subgroup.mem_subgroupOf.1 m.2)
@@ -178,13 +152,14 @@ private theorem lv_dc (ρ : Representation ℂ G V) (N : Subgroup G) (hNo : IsOp
   refine finsum_congr fun j => ?_
   have h1 : F (Φ j).out = F ((j.out : G) * g) := out_eq_of_inv N F (fun y h hh => hFr y h hh) _
   rw [h1]
-  have hmem : (j.out : G) * g ∈ dc N g := ⟨j.out, (j.out).2, 1, N.one_mem, by simp⟩
+  have hmem : (j.out : G) * g ∈ DoubleCoset.doubleCoset g (N : Set G) N :=
+    DoubleCoset.mem_doubleCoset.2 ⟨j.out, (j.out).2, 1, N.one_mem, by simp⟩
   simp [hF, hf, Set.indicator_of_mem hmem, map_mul]
 
 private theorem avg_dc (ρ : Representation ℂ G V) (N : Subgroup G) (hNo : IsOpen (N : Set G))
     (hNc : IsCompact (N : Set G)) (g : G) (x : V) (hx : x ∈ fixed ρ N) [Finite (N ⧸ (Mg N g).subgroupOf N)] :
-    avgOp ρ N (Mg N g) (ρ g x) =
-      (((Mg N g).relIndex N : ℕ) : ℂ)⁻¹ • levOp ρ N N ((dc N g).indicator 1) LinearMap.id x := by
+    avgOp ρ N (Mg N g) (ρ g x) = (((Mg N g).relIndex N : ℕ) : ℂ)⁻¹ •
+      levOp ρ N N ((DoubleCoset.doubleCoset g (N : Set G) N).indicator 1) LinearMap.id x := by
   rw [avgOp_apply, lv_dc ρ N hNo hNc g x hx]
 
 private theorem avg_level (ρ : Representation ℂ G V) (N M M' : Subgroup G) (hNo : IsOpen (N : Set G))
@@ -195,7 +170,8 @@ private theorem avg_level (ρ : Representation ℂ G V) (N M M' : Subgroup G) (h
   haveI h3 := finite_quot N M M' hNc hMo hM'o hMN
   haveI h4 := finite_quot N N (Mg N 1) hNc hNo (isOpen_Mg N hNo 1) le_rfl
   have hH := hecke_dc N hNc 1
-  have hHM : IsHecke M ((dc N 1).indicator 1) := ⟨hH.1, fun k hk y => hH.2 k (hMN hk) y⟩
+  have hHM : IsHecke M ((DoubleCoset.doubleCoset 1 (N : Set G) N).indicator 1) :=
+    ⟨hH.1, fun k hk y => hH.2 k (hMN hk) y⟩
   have hvM' : v ∈ fixed ρ M' := by
     rw [mem_fixed_iff] at hv ⊢
     exact fun h hh => hv h (hle hh)
@@ -204,7 +180,7 @@ private theorem avg_level (ρ : Representation ℂ G V) (N M M' : Subgroup G) (h
   rw [avgOp_fix ρ M M' v hv] at e2
   have e3 := levOp_le ρ N N M hMN le_rfl hNo hMo _ hH v hv
   have back : ∀ y ∈ fixed ρ N, y = (((Mg N 1).relIndex N : ℕ) : ℂ)⁻¹ •
-      levOp ρ N N ((dc N 1).indicator 1) LinearMap.id y := by
+      levOp ρ N N ((DoubleCoset.doubleCoset 1 (N : Set G) N).indicator 1) LinearMap.id y := by
     intro y hy
     rw [← avg_dc ρ N hNo hNc 1 y hy, map_one, Module.End.one_apply, avgOp_fix ρ N _ y hy]
   rw [back _ (avgOp_mem ρ N M' v hvM'), back _ (avgOp_mem ρ N M v hv), ← e1, e2, e3]

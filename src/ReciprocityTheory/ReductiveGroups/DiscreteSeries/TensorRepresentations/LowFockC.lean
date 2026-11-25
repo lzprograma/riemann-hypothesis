@@ -43,9 +43,9 @@ theorem lowerWedge_weight (ε : Fin n → Bool) (c : Fin n) :
         (if c = b then (if ε i = true ∧ ε b = false ∧ b < i then (1 : ℝ) else 0) else 0) := by
       intro i b
       by_cases h : ε i = true ∧ ε b = false ∧ b < i
-      · simp only [if_pos h]
-        simp only [modeWt, if_pos (And.intro h.1 h.2.1), root, Pi.sub_apply, Pi.single_apply]
-      · simp only [if_neg h]
+      · simp only [ite_eq_left h]
+        simp only [modeWt, ite_eq_left (And.intro h.1 h.2.1), root, Pi.sub_apply, Pi.single_apply]
+      · simp only [ite_eq_right h]
         simp
     rw [Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun b _ => key i b]
     simp only [Finset.sum_sub_distrib]

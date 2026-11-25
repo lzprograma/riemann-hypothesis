@@ -1,45 +1,7 @@
 module
 
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.HidaSetting
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
 
 @[expose] public section
@@ -52,8 +14,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.
 namespace Formalism.L2.SG.NormCut
 
 section Dual
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
@@ -70,17 +30,11 @@ theorem Z_smul_mL {c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F} {u : VA X.B.I} (hc : ZMo
   rfl
 
 theorem reference_repr_add (v w : VA X.B.I) : repr0 X (v + w) = repr0 X v + repr0 X w := by
-  have hadd : ∀ x, hA X.B.I x (v + w) = hA X.B.I x v + hA X.B.I x w := fun x => by
-    simp only [hA, Formalism.UG.hform, Pi.add_apply, mul_add, Finset.sum_add_distrib]
-  simp only [repr0, hadd, add_smul, Finset.sum_add_distrib]
+  simp only [repr0, hA_add_right, add_smul, Finset.sum_add_distrib]
   abel
 
 theorem reference_repr_smul (c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) (v : VA X.B.I) : repr0 X (c • v) = c • repr0 X v := by
-  have hsm : ∀ x, hA X.B.I x (c • v) = c * hA X.B.I x v := fun x => by
-    simp only [hA, Formalism.UG.hform, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-    ring
-  simp only [repr0, hsm, mul_smul, smul_add, smul_sub, Finset.smul_sum]
+  simp only [repr0, hA_smul_right, mul_smul, smul_add, smul_sub, Finset.smul_sum]
 
 theorem frame_Lf : (∀ a, X.e0 a ∈ X.B.I.Lf) ∧ (∀ a, X.f0 a ∈ X.B.I.Lf) ∧ X.z0 ∈ X.B.I.Lf ∧
     (∀ l, X.bw l ∈ X.B.I.Lf) ∧ (∀ l, X.bwd l ∈ X.B.I.Lf) := by
@@ -88,78 +42,9 @@ theorem frame_Lf : (∀ a, X.e0 a ∈ X.B.I.Lf) ∧ (∀ a, X.f0 a ∈ X.B.I.Lf)
     fun l => (X.vectorsInLattice.2.2 l).2⟩
 
 theorem reference_repr_mem_lattice {v : VA X.B.I} (hv : v ∈ X.B.I.Lf) : repr0 X v ∈ X.B.I.Lf := by
-  have hincl : ∀ e : X.B.I.E, sigA X.B.I (Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F) e) =
-      Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F) (star e) := by
-    intro e
-    first
-      | rfl
-  have hInt : ∀ s ∈ IntAf X.B.I.F X.B.I.E, sigA X.B.I s ∈ IntAf X.B.I.F X.B.I.E := by
-    have hle : IntAf X.B.I.F X.B.I.E ≤ (IntAf X.B.I.F X.B.I.E).comap (sigA X.B.I) := by
-      show Subring.closure _ ≤ _
-      rw [Subring.closure_le]
-      rintro _ (⟨⟨x, a, rfl⟩, rfl⟩ | ⟨⟨y, hy⟩, rfl⟩)
-      · rw [SetLike.mem_coe, Subring.mem_comap]
-        refine Subring.subset_closure (Or.inl ⟨⟨_, RingOfIntegers.mapRingEquiv (starRingAut : RingAut X.B.I.E) a, rfl⟩, ?_⟩)
-        first
-          | rfl
-      · rw [SetLike.mem_coe, Subring.mem_comap]
-        refine Subring.subset_closure (Or.inr ⟨⟨y, hy⟩, ?_⟩)
-        simp [sigA, Formalism.UG.sigR]
-    exact fun s hs => hle hs
-  have hzl : ∀ v : VA X.B.I, hA X.B.I 0 v = 0 := fun v => by simp [hA, Formalism.UG.hform]
-  have hzr : ∀ x : VA X.B.I, hA X.B.I x 0 = 0 := fun x => by simp [hA, Formalism.UG.hform]
-  have hal : ∀ x x' v : VA X.B.I, hA X.B.I (x + x') v = hA X.B.I x v + hA X.B.I x' v := fun x x' v => by
-    simp only [hA, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
-  have har : ∀ x v v' : VA X.B.I, hA X.B.I x (v + v') = hA X.B.I x v + hA X.B.I x v' := fun x v v' => by
-    simp only [hA, Formalism.UG.hform, Pi.add_apply, mul_add, Finset.sum_add_distrib]
-  have hsl : ∀ (s : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) (x y : VA X.B.I),
-      hA X.B.I (s • x) y = sigA X.B.I s * hA X.B.I x y := by
-    intro s x y
-    simp only [hA, sigA, Formalism.UG.hform, Pi.smul_apply, smul_eq_mul, map_mul, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-    ring
-  have hsr : ∀ (s : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) (x y : VA X.B.I),
-      hA X.B.I x (s • y) = s * hA X.B.I x y := by
-    intro s x y
-    simp only [hA, Formalism.UG.hform, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-    ring
-  have hsl' : ∀ (r : IntAf X.B.I.F X.B.I.E) (x y : VA X.B.I),
-      hA X.B.I (r • x) y = sigA X.B.I r * hA X.B.I x y := fun r x y => hsl r x y
-  have hsr' : ∀ (r : IntAf X.B.I.F X.B.I.E) (x y : VA X.B.I),
-      hA X.B.I x (r • y) = r * hA X.B.I x y := fun r x y => hsr r x y
-  have hgen : ∀ y ∈ X.B.I.L, ∀ y' ∈ X.B.I.L,
-      hA X.B.I (fun i => Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F) (y i))
-        (fun i => Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F) (y' i)) ∈ IntAf X.B.I.F X.B.I.E := by
-    intro y hy y' hy'
-    obtain ⟨b, hb⟩ := (X.B.I.L_dual y').1 hy' y hy
-    have e : hA X.B.I (fun i => Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F) (y i))
-        (fun i => Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F) (y' i)) =
-        Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F) (Formalism.UG.hform (starRingEnd _) X.B.I.J y y') := by
-
-      simp only [hA, Formalism.UG.hform, map_sum, map_mul, Matrix.map_apply, hincl, starRingEnd_apply]
-    rw [e, ← hb]
-    show _ ∈ Subring.closure _
-    exact Subring.subset_closure (Or.inl ⟨⟨_, b, rfl⟩, rfl⟩)
-  have hpair : ∀ x ∈ X.B.I.Lf, ∀ w ∈ X.B.I.Lf, hA X.B.I x w ∈ IntAf X.B.I.F X.B.I.E := by
-    intro x hx w hw
-    unfold AutInst.Lf lamAf at hx hw
-    induction hx using Submodule.span_induction with
-    | mem z hz =>
-      obtain ⟨⟨y, hy⟩, rfl⟩ := hz
-      induction hw using Submodule.span_induction with
-      | mem z' hz' =>
-        obtain ⟨⟨y', hy'⟩, rfl⟩ := hz'
-        exact hgen y hy y' hy'
-      | zero => rw [hzr]; exact zero_mem _
-      | add a b _ _ ha hb => rw [har]; exact add_mem ha hb
-      | smul r a _ ha => rw [hsr']; exact mul_mem r.2 ha
-    | zero => rw [hzl]; exact zero_mem _
-    | add a b _ _ ha hb => rw [hal]; exact add_mem ha hb
-    | smul r a _ ha => rw [hsl']; exact mul_mem (hInt _ r.2) ha
   obtain ⟨he, hf, hz, hb, hbd⟩ := frame_Lf X
   have hterm : ∀ x ∈ X.B.I.Lf, ∀ u ∈ X.B.I.Lf, hA X.B.I x v • u ∈ X.B.I.Lf := fun x hx u hu =>
-    Submodule.smul_mem _ (⟨_, hpair x hx v hv⟩ : IntAf X.B.I.F X.B.I.E) hu
+    Submodule.smul_mem _ (⟨_, hA_int X.B.I hx hv⟩ : IntAf X.B.I.F X.B.I.E) hu
   unfold repr0
   refine add_mem (add_mem (sub_mem (add_mem ?_ ?_) (hterm _ hz _ hz)) ?_) ?_
   · exact Submodule.sum_mem _ fun a _ => hterm _ (hf a) _ (he a)

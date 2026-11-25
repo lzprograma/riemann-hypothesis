@@ -24,15 +24,6 @@ section Norm
 
 variable {K : Type} [NormedField K] [IsUltrametricDist K]
 
-lemma nsum {α : Type} (s : Finset α) (f : α → K) (h : ∀ i ∈ s, ‖f i‖ ≤ 1) : ‖∑ i ∈ s, f i‖ ≤ 1 := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha]
-    exact (IsUltrametricDist.norm_add_le_max _ _).trans
-      (max_le (h a (Finset.mem_insert_self a s)) (ih fun i hi => h i (Finset.mem_insert_of_mem hi)))
-
 omit [IsUltrametricDist K] in
 lemma nmul {x y : K} (hx : ‖x‖ ≤ 1) (hy : ‖y‖ ≤ 1) : ‖x * y‖ ≤ 1 := by
   rw [norm_mul]
@@ -46,13 +37,9 @@ lemma nneg {x : K} (hx : ‖x‖ ≤ 1) : ‖-x‖ ≤ 1 := by
   rw [norm_neg]
   exact hx
 
-lemma nsub {x y : K} (hx : ‖x‖ ≤ 1) (hy : ‖y‖ ≤ 1) : ‖x - y‖ ≤ 1 := by
-  rw [sub_eq_add_neg]
-  exact nadd hx (nneg hy)
-
 lemma nbil {J : Type} [Fintype J] {q : J → J → K} {X Y : J → K} (hq : ∀ j k, ‖q j k‖ ≤ 1) (hX : ∀ j, ‖X j‖ ≤ 1)
     (hY : ∀ j, ‖Y j‖ ≤ 1) : ‖∑ j, ∑ k, X j * q j k * Y k‖ ≤ 1 := by
-  exact nsum _ _ fun j _ => nsum _ _ fun k _ => nmul (nmul (hX j) (hq j k)) (hY k)
+  exact Formalism.L2.Th1.E.Ser.norm_sum_le_one _ _ fun j _ => Formalism.L2.Th1.E.Ser.norm_sum_le_one _ _ fun k _ => nmul (nmul (hX j) (hq j k)) (hY k)
 
 end Norm
 
@@ -163,8 +150,8 @@ theorem GramBasic_of (hG : GramTransfer) (hI : IotaOK) : GramBasic := by
   have hbb := fun B1 B2 => bb_eq W q0 D (ι (Complex.I * ((Real.sqrt d : ℝ) : ℂ))) hQ (ext B1) (ext B2)
   have hPn : ∀ B1 B2 : J → ℂ_[p], (∀ j, ‖B1 j‖ ≤ 1) → (∀ j, ‖B2 j‖ ≤ 1) →
       ‖∑ w, (∑ x, ext B1 x * D w x) * (∑ y, ext B2 y * D w y)‖ ≤ 1 := fun B1 B2 h1 h2 =>
-    nsum _ _ fun w _ => nmul (nsum _ _ fun x _ => nmul (hext B1 h1 x) (hD w x))
-      (nsum _ _ fun y _ => nmul (hext B2 h2 y) (hD w y))
+    Formalism.L2.Th1.E.Ser.norm_sum_le_one _ _ fun w _ => nmul (Formalism.L2.Th1.E.Ser.norm_sum_le_one _ _ fun x _ => nmul (hext B1 h1 x) (hD w x))
+      (Formalism.L2.Th1.E.Ser.norm_sum_le_one _ _ fun y _ => nmul (hext B2 h2 y) (hD w y))
   have hu : ∀ B0 : J → ℂ_[p], (∀ i, ∑ k, B0 k * ι (v k i) = 0) → ∀ w, ∑ y, ext B0 y * D w y = 0 := by
     intro B0 h0 w
     refine gamma_inj ι g (fun w => ∑ y, ext B0 y * D w y) (fun w' => ?_) w
@@ -185,11 +172,11 @@ theorem GramBasic_of (hG : GramTransfer) (hI : IotaOK) : GramBasic := by
           · simp
   refine ⟨?_, ?_, ?_, ?_⟩
   · rw [← hS B' B, hbb]
-    exact nsub (hPn B' B hB' hB) (nmul hθ (nbil hq0 (hext B' hB') (hext B hB)))
+    exact Formalism.InvariantFactorPaths.G7.LemTwo.norm_sub_le_one (hPn B' B hB' hB) (nmul hθ (nbil hq0 (hext B' hB') (hext B hB)))
   · have hP : ∑ w, (∑ x, ext B' x * D w x) * (∑ y, ext B y * D w y) =
         ∑ w, (∑ x, ext B x * D w x) * (∑ y, ext B' y * D w y) :=
       Finset.sum_congr rfl fun w _ => mul_comm _ _
-    refine ⟨_, nsub (nbil hq0 (hext B hB) (hext B' hB')) (nbil hq0 (hext B' hB') (hext B hB)), ?_⟩
+    refine ⟨_, Formalism.InvariantFactorPaths.G7.LemTwo.norm_sub_le_one (nbil hq0 (hext B hB) (hext B' hB')) (nbil hq0 (hext B' hB') (hext B hB)), ?_⟩
     rw [← hS B' B, ← hS B B', hbb, hbb]
     linear_combination hP
   · intro h0

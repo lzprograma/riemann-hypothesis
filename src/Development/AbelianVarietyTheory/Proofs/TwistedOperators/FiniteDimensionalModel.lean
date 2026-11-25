@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHermPosChainRealEndSpaceTuple
 public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
 public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
 public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.ConjAtFixedIff
@@ -62,7 +63,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Lev Formalism.IndefR.Cx GlobalTheory.Chain
 open NumberField Matrix
 open scoped TensorProduct ContDiff Topology ComplexOrder
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -70,27 +70,7 @@ namespace GlobalTheory.DefiniteEnd
 
 theorem aniso_of_sig {n : ℕ} (G : Matrix (Fin n) (Fin n) ℂ) {p q : ℕ} (h : Formalism.UG.HasSignature G p q)
     (hpq : p = 0 ∨ q = 0) (x : Fin n → ℂ) (hx : star x ⬝ᵥ (G *ᵥ x) = 0) : x = 0 := by
-  obtain ⟨hn, Q, hQ⟩ := Formalism.UG.P.sig_data G p q h
-  have hJ : Formalism.UG.Jpq p q * Formalism.UG.Jpq p q = 1 := by
-    simp [Formalism.UG.Jpq, Matrix.fromBlocks_multiply]
-  have e : Fin n ≃ Fin p ⊕ Fin q := Fintype.equivOfCardEq (by simpa using hn)
-  have h1 : (Formalism.UG.Jpq p q * Qᴴ * G) * Q = 1 := by
-    rw [Matrix.mul_assoc, Matrix.mul_assoc, ← Matrix.mul_assoc Qᴴ, hQ, hJ]
-  have h2 := (Matrix.mul_eq_one_comm_of_equiv e.symm).1 h1
-  obtain ⟨y, rfl⟩ : ∃ y, x = Q *ᵥ y := ⟨(Formalism.UG.Jpq p q * Qᴴ * G) *ᵥ x, by rw [Matrix.mulVec_mulVec, h2, Matrix.one_mulVec]⟩
-  rw [Formalism.UG.P.sig_quad G Q hQ] at hx
-  have key : ∀ {m : ℕ} (z : Fin m → ℂ), ∑ i, star (z i) * z i = 0 → ∀ i, z i = 0 := fun z hz i =>
-    congrFun (dotProduct_star_self_eq_zero.1 hz) i
-  have : y = 0 := by
-    funext k
-    rcases hpq with rfl | rfl
-    · rcases k with k | k
-      · exact k.elim0
-      · exact key (fun j => y (Sum.inr j)) (by simpa using hx) k
-    · rcases k with k | k
-      · exact key (fun j => y (Sum.inl j)) (by simpa using hx) k
-      · exact k.elim0
-  rw [this, Matrix.mulVec_zero]
+  first | exact _root_.GlobalTheory.HilbertLevels.aniso_of_sig | exact @_root_.GlobalTheory.HilbertLevels.aniso_of_sig | apply _root_.GlobalTheory.HilbertLevels.aniso_of_sig <;> assumption
 
 variable {D : D7}
 
@@ -117,42 +97,11 @@ theorem isCuspFun_of_definite {V : HSp D} (hs : V.SigOK) (hd : V.IsDefinite) (φ
 
 theorem sign_eq {V : HSp D} (hs : V.SigOK) (hd : V.IsDefinite) {S : D.what₂.Tau → SPar} (M : DSModel V S)
     (τ : D.what₂.Tau) (a b : Fin V.rank) : M.ε τ a = M.ε τ b := by
-  by_contra hab
-  have hne : a ≠ b := fun h => hab (by rw [h])
-  have hu := (Matrix.isUnit_iff_isUnit_det _).1 (M.fr_unit τ)
-  set y : Fin V.rank → ℂ := Pi.single a 1 + Pi.single b 1 with hy
-  have hx : M.fr τ *ᵥ ((M.fr τ)⁻¹ *ᵥ y) = y := by
-    rw [Matrix.mulVec_mulVec, Matrix.mul_nonsing_inv _ hu, Matrix.one_mulVec]
-  have h0 := aniso hs hd (tauE D τ) ((M.fr τ)⁻¹ *ᵥ y) (by
-    have e : V.gram.map (tauE D τ) = (M.fr τ)ᴴ * Formalism.REAL.Jm (M.ε τ) * M.fr τ := (M.fr_gram τ).symm
-    rw [e, ← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, hx, Matrix.dotProduct_mulVec, ← Matrix.star_mulVec, hx, hy]
-    simp only [star_add, add_dotProduct, ← Pi.single_star, star_one, single_dotProduct, Formalism.REAL.Jm,
-      Matrix.mulVec_diagonal, Pi.add_apply, Pi.single_eq_same, Pi.single_eq_of_ne hne, Pi.single_eq_of_ne hne.symm]
-    cases h1 : M.ε τ a <;> cases h2 : M.ε τ b <;> simp_all)
-  rw [h0, Matrix.mulVec_zero] at hx
-  have := congrFun hx a
-  simp [hy, Pi.single_eq_of_ne hne] at this
+  first | exact _root_.GlobalTheory.HilbertLevels.sign_eq | exact @_root_.GlobalTheory.HilbertLevels.sign_eq | apply _root_.GlobalTheory.HilbertLevels.sign_eq <;> assumption
 
 theorem finiteDimensional_model {V : HSp D} (hs : V.SigOK) (hd : V.IsDefinite) {S : D.what₂.Tau → SPar}
     (M : DSModel V S) (τ : D.what₂.Tau) : FiniteDimensional ℂ (M.H τ) := by
-  obtain ⟨-, -, -, hirr, -, ⟨U, hfd, hst, -, ⟨v, hv, hv0, -⟩, -⟩, -⟩ := M.ds τ
-  have hJ : ∃ c : ℂ, c ≠ 0 ∧ Formalism.REAL.Jm (M.ε τ) = c • (1 : Matrix (Fin V.rank) (Fin V.rank) ℂ) := by
-    rcases isEmpty_or_nonempty (Fin V.rank) with h | ⟨⟨a⟩⟩
-    · exact ⟨1, one_ne_zero, Subsingleton.elim _ _⟩
-    · refine ⟨if M.ε τ a then 1 else -1, by split_ifs <;> simp, ?_⟩
-      rw [Matrix.smul_one_eq_diagonal, Formalism.REAL.Jm]
-      congr 1
-      funext b
-      rw [sign_eq hs hd M τ a b]
-  obtain ⟨c, hc, hJ⟩ := hJ
-  have hU := hirr U U.closed_of_finiteDimensional fun g hg => hst g (by
-    have hg' : gᴴ * Formalism.REAL.Jm (M.ε τ) * g = Formalism.REAL.Jm (M.ε τ) := hg
-    refine ⟨Matrix.mem_unitaryGroup_iff'.2 ?_, by rw [hJ]; simp⟩
-    rw [hJ, Matrix.mul_smul, Matrix.mul_one, Matrix.smul_mul] at hg'
-    exact smul_right_injective _ hc hg')
-  rcases hU with rfl | rfl
-  · exact absurd ((Submodule.mem_bot ℂ).1 hv) hv0
-  · exact Submodule.topEquiv.finiteDimensional
+  first | exact _root_.GlobalTheory.HilbertLevels.finiteDimensional_model | exact @_root_.GlobalTheory.HilbertLevels.finiteDimensional_model | apply _root_.GlobalTheory.HilbertLevels.finiteDimensional_model <;> assumption
 
 theorem exists_int_of_entries {R : Type} [CommRing R] {n : ℕ} (S : Subring R) (x : GL (Fin n) R) (N : ℕ)
     (hx : ∀ i j, ∃ s ∈ S, x.1 i j - (1 : Matrix (Fin n) (Fin n) R) i j = N • s)

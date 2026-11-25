@@ -106,8 +106,7 @@ variable {ρ κ : ℕ} {X Y : Matrix (Fin n) (Fin n) k}
 theorem step_up (hYX : Y * X = 1)
     (hP : ∀ p q : Fin n, Prec ρ κ p q → ∀ i j : Fin n, ¬ Prec ρ κ i j → X i p * Y q j = 0)
     {i p q : Fin n} (hip : X i p ≠ 0) (hpq : Prec ρ κ p q) : ∃ j : Fin n, Prec ρ κ i j ∧ X j q ≠ 0 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   have h0 : (Y * X) q q = 0 := by
     rw [Matrix.mul_apply]
     refine Finset.sum_eq_zero fun j _ => ?_
@@ -120,8 +119,7 @@ theorem step_up (hYX : Y * X = 1)
 theorem step_down (hXY : X * Y = 1)
     (hP' : ∀ p q : Fin n, Prec ρ κ p q → ∀ i j : Fin n, ¬ Prec ρ κ i j → Y i p * X q j = 0)
     {i a c : Fin n} (hia : X i a ≠ 0) (hci : Prec ρ κ c i) : ∃ j : Fin n, Prec ρ κ j a ∧ X c j ≠ 0 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   have h0 : (X * Y) c c = 0 := by
     rw [Matrix.mul_apply]
     refine Finset.sum_eq_zero fun j _ => ?_
@@ -177,11 +175,11 @@ theorem mul_single_mul' (X Y : Matrix (Fin n) (Fin n) k) (p q i j : Fin n) (s : 
     rw [Matrix.mul_apply, Matrix.of_apply]
     by_cases hx : x = q
     · subst hx
-      rw [if_pos rfl, Finset.sum_eq_single p]
+      rw [ite_eq_left rfl, Finset.sum_eq_single p]
       · simp
       · intro y _ hy; simp [Ne.symm hy]
       · simp
-    · rw [if_neg hx]
+    · rw [ite_eq_right hx]
       exact Finset.sum_eq_zero fun y _ => by simp [Ne.symm hx]
   rw [h1, Matrix.mul_apply, Finset.sum_eq_single q]
   · simp [mul_assoc]
@@ -202,11 +200,11 @@ theorem elemU_mem {ρ κ : ℕ} {p q : Fin n} (h : Prec ρ κ p q) (hpq : p ≠ 
     elemU p q hpq s ∈ unipSym k n ρ κ := by
   refine ⟨⟨fun i j hij => ?_, fun i => ?_⟩, fun i j h0 h1 h2 => ?_⟩
   · have hij' : j.val < i.val := hij
-    rw [elemU_apply, one_apply_ne (fun e => by rw [e] at hij'; omega), single_apply, if_neg, zero_add]
+    rw [elemU_apply, one_apply_ne (fun e => by rw [e] at hij'; omega), single_apply, ite_eq_right, zero_add]
     rintro ⟨rfl, rfl⟩; unfold Prec at h; omega
-  · rw [elemU_apply, one_apply_eq, single_apply, if_neg, add_zero]
+  · rw [elemU_apply, one_apply_eq, single_apply, ite_eq_right, add_zero]
     rintro ⟨rfl, rfl⟩; exact hpq rfl
-  · rw [elemU_apply, one_apply_ne (fun e => by rw [e] at h1; omega), single_apply, if_neg, zero_add]
+  · rw [elemU_apply, one_apply_ne (fun e => by rw [e] at h1; omega), single_apply, ite_eq_right, zero_add]
     rintro ⟨rfl, rfl⟩; unfold Prec at h; omega
 
 theorem conj_elemU_apply (M : GL (Fin n) k) (p q : Fin n) (hpq : p ≠ q) (s : k) (i j : Fin n) :
@@ -362,7 +360,7 @@ theorem normaliser_unipSym_char : ∀ (k : Type) [Field k] (n ρ κ : ℕ), n = 
       have e2 := patY tpF j (right_ne_zero_of_mul hne)
       unfold symEdge at he; unfold Prec at e1 e2
       exact ⟨Fin.ext (by omega), Fin.ext (by omega)⟩),
-      if_pos (by unfold symEdge; omega), if_neg (by unfold symEdge; omega)] at h
+      ite_eq_left (by unfold symEdge; omega), ite_eq_right (by unfold symEdge; omega)] at h
     rcases mul_eq_zero.1 h with h | h
     · exact absurd h (ha _ _ (by unfold symEdge; omega))
     · exact (mul_eq_zero.1 h).resolve_right (hY0 tpF)
@@ -374,7 +372,7 @@ theorem normaliser_unipSym_char : ∀ (k : Type) [Field k] (n ρ κ : ℕ), n = 
       have e2 := patY rF j (right_ne_zero_of_mul hne)
       unfold symEdge at he; unfold Prec at e1 e2
       exact ⟨Fin.ext (by omega), Fin.ext (by omega)⟩),
-      if_pos (by unfold symEdge; omega), if_neg (by unfold symEdge; omega)] at h
+      ite_eq_left (by unfold symEdge; omega), ite_eq_right (by unfold symEdge; omega)] at h
     rcases mul_eq_zero.1 h with h | h
     · exact absurd h (ha _ _ (by unfold symEdge; omega))
     · exact (mul_eq_zero.1 h).resolve_left (hX0 rmF)
@@ -441,7 +439,7 @@ theorem normaliser_unipSym_char : ∀ (k : Type) [Field k] (n ρ κ : ℕ), n = 
       have e1 := patX' i p (left_ne_zero_of_mul hne)
       have e2 := patY' q j (right_ne_zero_of_mul hne)
       unfold symEdge at he he'; unfold Prec at e1 e2 hpq
-      exact ⟨Fin.ext (by omega), Fin.ext (by omega)⟩), if_pos he, if_pos he] at h
+      exact ⟨Fin.ext (by omega), Fin.ext (by omega)⟩), ite_eq_left he, ite_eq_left he] at h
     have h1 : X p p * Y q q = 1 := mul_left_cancel₀ (ha p q he) (by rw [mul_one]; exact h)
     exact mul_right_cancel₀ (hY0 q) (by rw [h1, diag q])
   let D : ℕ → k := fun m => if h : m < n then X ⟨m, h⟩ ⟨m, h⟩ else 0

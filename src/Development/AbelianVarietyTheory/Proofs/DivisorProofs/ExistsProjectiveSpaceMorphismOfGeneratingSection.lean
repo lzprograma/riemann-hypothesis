@@ -77,7 +77,6 @@ open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
 open ReciprocityTheory.ChartRestriction.G.DVR.FlatBC (algX)
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.CechPic GlobalTheory.CxPts GlobalTheory.ChowHt GlobalTheory.CompHt
 open scoped Classical
-attribute [local instance] MvPolynomial.gradedAlgebra
 
 namespace GlobalTheory.HermLB
 
@@ -138,7 +137,6 @@ open CategoryTheory AlgebraicGeometry TopologicalSpace Filter Topology MeasureTh
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.ArInt GlobalTheory.CxPts GlobalTheory.Cartier GlobalTheory.VolBr GlobalTheory.HSAmp
 
-set_option autoImplicit false
 noncomputable section
 
 namespace GlobalTheory.HSAmp.GenMap
@@ -266,7 +264,7 @@ theorem toProj_gens : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) [IsIntegral X
     change (((P.L.φ σ).addFn (u.u σ)).zpow (e : ℤ)).φ i y = _
     refine (Weight.zpow_φ _ _ _ _).trans ?_
     simp only [Matrix.one_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
     change ((e : ℤ) : ℝ) * ((P.L.φ σ).φ (i PUnit.unit) y + u.u σ y) =
       Real.log (∑ l, ‖valR y.1 ((P.L.pow e).B.U i) ((s l).f i)‖ ^ 2)
     simp only [hA, ← hS]
@@ -503,7 +501,7 @@ theorem isArithVar_charZero_functionField_and_injective :
   have := h.isDomain
   have := h.finite
   have hint : Algebra.IsIntegral ℤ k := inferInstance
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro a ha
   have hker : RingHom.ker (GlobalTheory.toFunctionField p) = ⊥ := by
     apply Ideal.eq_bot_of_comap_eq_bot (R := ℤ)

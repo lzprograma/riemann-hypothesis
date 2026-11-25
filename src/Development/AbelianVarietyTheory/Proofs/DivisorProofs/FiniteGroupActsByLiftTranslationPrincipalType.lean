@@ -54,8 +54,6 @@ namespace GlobalTheory.PhaseRational
 open Formalism Formalism.IndefR Formalism.IndefR.FWT Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links
   Formalism.IndefR.Mult Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem eq_of_out {V : HSp D} {F F' : GA D V → ℂ} (hF : ∀ γ ∈ GQ V, ∀ g, F (γ * g) = F g)
@@ -108,7 +106,7 @@ theorem finiteGroup_acts_by_lift_translation_principalType {Ks : Type} [Field Ks
     simp [Lev.flagL, Lev.withP, LevCh.datWp, Lev.datY]
   show Lev.actG0 (Wc D i) (R.βW i) (R.datWp i R.triv) (R.eG g) F h = _
   unfold Lev.actG0
-  rw [dif_pos hg]
+  rw [dite_eq_left hg]
   simp only [h1, inv_one, one_mul]
 
 theorem rdU_of_isBC {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E} {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c c' : Coeff l}
@@ -120,14 +118,14 @@ theorem rdU_of_isBC {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.hos
   by_cases hx : x ∈ ((U (σ'.comp (incF c c' hle))).X k).dom
   · let _ : Algebra c.F (CAt σ') := (σ'.comp (incF c c' hle)).toAlgebra
     have h1 := h (CAt σ') (fun _ => rfl) ((unfBC hle U σ').un k ⟨x, hx⟩)
-    have e1 : rdU (unfBC hle U σ') f' k x = toC (evR Xo c' f' ((unfBC hle U σ').un k ⟨x, hx⟩)) := dif_pos hx
+    have e1 : rdU (unfBC hle U σ') f' k x = toC (evR Xo c' f' ((unfBC hle U σ').un k ⟨x, hx⟩)) := dite_eq_left hx
     have e2 : ∀ i, rdU (U (σ'.comp (incF c c' hle))) (fs i) k x =
-      toC (evR Xo c (fs i) ((U (σ'.comp (incF c c' hle))).un k ⟨x, hx⟩)) := fun i => dif_pos hx
+      toC (evR Xo c (fs i) ((U (σ'.comp (incF c c' hle))).un k ⟨x, hx⟩)) := fun i => dite_eq_left hx
     simp only [e2]
     rw [e1]
     exact h1
-  · have e1 : rdU (unfBC hle U σ') f' k x = 0 := dif_neg hx
-    have e2 : ∀ i, rdU (U (σ'.comp (incF c c' hle))) (fs i) k x = 0 := fun i => dif_neg hx
+  · have e1 : rdU (unfBC hle U σ') f' k x = 0 := dite_eq_right hx
+    have e2 : ∀ i, rdU (U (σ'.comp (incF c c' hle))) (fs i) k x = 0 := fun i => dite_eq_right hx
     simp only [e2, e1, mul_zero, Finset.sum_const_zero]
 
 theorem row_baseChange {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E} {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c c' : Coeff l}
@@ -273,14 +271,5 @@ theorem phRat_of_identity (v₀ : (R.MW i (sg0 D A)).Vec) (cc : (C.U ((i : ℕ) 
   exact congrArg (fun S : MMap (R.MW i (sg0 D A)) => S v₀ g) (hG i A.μ0 (jVx R i A.μ0 x))
 
 end Main
-
-section Class
-
-variable (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (R : RealDat D A T.Q.c.F)
-  (κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1))
-  (v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec)
-  (O : ∀ i, OMDat T.toCore R i Unit (fun _ => A.μ0)) (i : Fin D.R.m)
-
-end Class
 
 end GlobalTheory.PhaseRational

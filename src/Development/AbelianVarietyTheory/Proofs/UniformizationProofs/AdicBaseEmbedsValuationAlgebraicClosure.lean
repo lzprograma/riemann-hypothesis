@@ -52,7 +52,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.T
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.UT
 
 namespace GlobalTheory
@@ -78,7 +77,7 @@ theorem exists_ratAddValuation_of_pow_eq_zpow {F : Type*} [Field F] (w : Valuati
   classical
   choose! n m hn hnm using h
   let f : F → WithTop ℚ := fun x => if x = 0 then ⊤ else (((m x : ℚ) / n x : ℚ) : WithTop ℚ)
-  have f0 : f 0 = ⊤ := if_pos rfl
+  have f0 : f 0 = ⊤ := ite_eq_left rfl
   have key : ∀ (x : F) (a : ℕ) (b : ℤ), 0 < a → w x ^ a = t ^ b →
       f x = (((b : ℚ) / a : ℚ) : WithTop ℚ) := by
     intro x a b ha hab
@@ -86,7 +85,7 @@ theorem exists_ratAddValuation_of_pow_eq_zpow {F : Type*} [Field F] (w : Valuati
       rintro rfl
       rw [map_zero, zero_pow ha.ne'] at hab
       exact (zpow_pos h0 b).ne hab
-    simp only [f, if_neg hx, WithTop.coe_inj]
+    simp only [f, ite_eq_right hx, WithTop.coe_inj]
     exact le_antisymm ((le_iff_of_pow_eq_zpow h0 h1 (hn x hx) ha (hnm x hx) hab).1 le_rfl)
       ((le_iff_of_pow_eq_zpow h0 h1 ha (hn x hx) hab (hnm x hx)).1 le_rfl)
   have mono : ∀ x y : F, w y ≤ w x → f x ≤ f y := by
@@ -97,7 +96,7 @@ theorem exists_ratAddValuation_of_pow_eq_zpow {F : Type*} [Field F] (w : Valuati
       rintro rfl
       rw [map_zero, le_zero_iff, Valuation.zero_iff] at hxy
       exact hy hxy
-    simp only [f, if_neg hx, if_neg hy, WithTop.coe_le_coe]
+    simp only [f, ite_eq_right hx, ite_eq_right hy, WithTop.coe_le_coe]
     exact (le_iff_of_pow_eq_zpow h0 h1 (hn x hx) (hn y hy) (hnm x hx) (hnm y hy)).1 hxy
   refine ⟨AddValuation.of f f0 ?_ ?_ ?_, fun x b hb => ?_⟩
   · rw [key 1 1 0 one_pos (by simp)]
@@ -116,7 +115,7 @@ theorem exists_ratAddValuation_of_pow_eq_zpow {F : Type*} [Field F] (w : Valuati
     rw [key (x * y) (n x * n y) (m x * n y + m y * n x) (Nat.mul_pos hx' hy') (by
       rw [map_mul, mul_pow, pow_mul, mul_comm (n x), pow_mul, hnm x hx, hnm y hy,
         zpow_add₀ h0.ne', zpow_mul, zpow_mul, zpow_natCast, zpow_natCast])]
-    simp only [f, if_neg hx, if_neg hy, ← WithTop.coe_add, WithTop.coe_inj]
+    simp only [f, ite_eq_right hx, ite_eq_right hy, ← WithTop.coe_add, WithTop.coe_inj]
     have : (n x : ℚ) ≠ 0 := by exact_mod_cast hx'.ne'
     have : (n y : ℚ) ≠ 0 := by exact_mod_cast hy'.ne'
     push_cast

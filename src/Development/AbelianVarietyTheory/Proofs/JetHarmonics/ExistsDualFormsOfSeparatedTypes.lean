@@ -89,7 +89,7 @@ theorem exists_dual_forms_of_separated_types :
     rw [hP1 t' ⟨t', i'⟩ rfl]
     have := hlam t' i i'
     simpa [dotProduct] using this
-  · rw [hP2 t ⟨t', i'⟩ (by simpa using h), dotProduct_zero, if_neg]
+  · rw [hP2 t ⟨t', i'⟩ (by simpa using h), dotProduct_zero, ite_eq_right]
     intro h'
     exact h (congrArg Sigma.fst h').symm
 

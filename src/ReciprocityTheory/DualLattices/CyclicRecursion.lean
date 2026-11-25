@@ -24,24 +24,12 @@ private lemma ghost_one {R : Type*} [CommRing R] (x : WittVector p R) :
   rw [WittVector.ghostComponent_apply, wittPolynomial_eq_sum_C_mul_X_pow]
   simp [Finset.sum_range_succ]
 
-private lemma coeff_zero_sum {R ι : Type*} [CommRing R] (s : Finset ι) (f : ι → WittVector p R) :
-    (∑ i ∈ s, f i).coeff 0 = ∑ i ∈ s, (f i).coeff 0 := by
-  classical
-  refine Finset.induction_on s ?_ ?_
-  · simp
-  · intro a t ha ih
-    rw [Finset.sum_insert ha, Finset.sum_insert ha, WittVector.add_coeff_zero, ih]
-
-private lemma ringHom_aeval {K ι : Type*} [CommRing K] (σ : K →+* K) (g : ι → K)
-    (S : MvPolynomial ι ℤ) : σ (aeval g S) = aeval (σ ∘ g) S := by
-  induction S using MvPolynomial.induction_on <;> simp_all
-
 private lemma univ_coeff {ι : Type} (s : Finset ι) :
     (∑ i ∈ s, teichmuller p (X i : MvPolynomial ι ℤ)).coeff 0 = ∑ i ∈ s, X i ∧
     (p : MvPolynomial ι ℤ) * (∑ i ∈ s, teichmuller p (X i : MvPolynomial ι ℤ)).coeff 1 =
       ∑ i ∈ s, X i ^ p - (∑ i ∈ s, X i) ^ p := by
   have h0 : (∑ i ∈ s, teichmuller p (X i : MvPolynomial ι ℤ)).coeff 0 = ∑ i ∈ s, X i := by
-    rw [coeff_zero_sum]
+    rw [← WittVector.constantCoeff_apply, map_sum]
     simp
   refine ⟨h0, ?_⟩
   have hg : ghostComponent 1 (∑ i ∈ s, teichmuller p (X i : MvPolynomial ι ℤ)) =
@@ -54,23 +42,17 @@ private lemma univ_coeff {ι : Type} (s : Finset ι) :
   rw [ghost_one, h0] at hg
   linear_combination hg
 
-private lemma verschiebung_eq_map_frobenius_symm_mul_p {K : Type} [CommRing K] [CharP K p] [PerfectRing K p]
-    (y : WittVector p K) :
-    WittVector.verschiebung y = WittVector.map ((frobeniusEquiv K p).symm : K →+* K) y * p := by
-  have hF : WittVector.frobenius (WittVector.map ((frobeniusEquiv K p).symm : K →+* K) y) = y := by
-    ext n
-    rw [WittVector.coeff_frobenius_charP, WittVector.map_coeff]
-    simp [frobeniusEquiv_symm_pow_p]
-  calc WittVector.verschiebung y = WittVector.verschiebung
-        (WittVector.frobenius (WittVector.map ((frobeniusEquiv K p).symm : K →+* K) y)) := by
-        rw [hF]
-    _ = _ := WittVector.verschiebung_frobenius _
-
 private lemma exists_witt_eq_teich_add_p_teich_frob_symm_add_p_sq_mul {K : Type} [CommRing K] [CharP K p] [PerfectRing K p]
     (x : WittVector p K) :
     ∃ w : WittVector p K, x = teichmuller p (x.coeff 0) +
       (p : WittVector p K) * teichmuller p ((frobeniusEquiv K p).symm (x.coeff 1)) +
       (p : WittVector p K) ^ 2 * w := by
+  have hV (y : WittVector p K) :
+      WittVector.verschiebung y = WittVector.map ((frobeniusEquiv K p).symm : K →+* K) y * p := by
+    have hF : WittVector.frobenius ((WittVector.frobeniusEquiv p K).symm y) = y :=
+      (WittVector.frobeniusEquiv p K).apply_symm_apply y
+    conv_lhs => rw [← hF]
+    exact WittVector.verschiebung_frobenius _
   have h1 : ∀ z : WittVector p K, ∃ u : WittVector p K,
       z = teichmuller p (z.coeff 0) + WittVector.verschiebung u ∧ u.coeff 0 = z.coeff 1 := by
     intro z
@@ -87,9 +69,9 @@ private lemma exists_witt_eq_teich_add_p_teich_frob_symm_add_p_sq_mul {K : Type}
       · left
         simp [WittVector.teichmuller_coeff_pos]
   obtain ⟨u, hu, hu0⟩ := h1 x
-  rw [verschiebung_eq_map_frobenius_symm_mul_p] at hu
+  rw [hV] at hu
   obtain ⟨v, hv, -⟩ := h1 (WittVector.map ((frobeniusEquiv K p).symm : K →+* K) u)
-  rw [verschiebung_eq_map_frobenius_symm_mul_p] at hv
+  rw [hV] at hv
   have hc : (WittVector.map ((frobeniusEquiv K p).symm : K →+* K) u).coeff 0 =
       (frobeniusEquiv K p).symm (x.coeff 1) := by
     rw [WittVector.map_coeff, hu0]
@@ -109,7 +91,7 @@ theorem teichSum (p : ℕ) [Fact p.Prime] : TeichSumStatement p := by
   refine ⟨?_, ?_⟩
   · obtain ⟨w, hw⟩ := exists_witt_eq_teich_add_p_teich_frob_symm_add_p_sq_mul (∑ i ∈ s, teichmuller p (X i))
     have h0 : (∑ i ∈ s, teichmuller p (X i)).coeff 0 = ∑ i ∈ s, X i := by
-      rw [coeff_zero_sum]
+      rw [← WittVector.constantCoeff_apply, map_sum]
       simp
     have hmap : WittVector.map (MvPolynomial.aeval X).toRingHom
         (∑ i ∈ s, teichmuller p (MvPolynomial.X i : MvPolynomial ι ℤ)) =
@@ -128,7 +110,7 @@ theorem teichSum (p : ℕ) [Fact p.Prime] : TeichSumStatement p := by
       try rfl
     have hfr : (frobeniusEquiv K p).symm (MvPolynomial.aeval X S) =
         MvPolynomial.aeval (fun i => (frobeniusEquiv K p).symm (X i)) S :=
-      ringHom_aeval ((frobeniusEquiv K p).symm : K →+* K) X S
+      MvPolynomial.comp_aeval_apply X (((frobeniusEquiv K p).symm : K →+* K).toIntAlgHom) S
     refine ⟨w, ?_⟩
     rw [h0, h1, hfr] at hw
     exact hw
@@ -142,9 +124,5 @@ theorem teichSum (p : ℕ) [Fact p.Prime] : TeichSumStatement p := by
     linear_combination hw
 
 end TeichSum
-
-section Cyclic
-
-end Cyclic
 
 end ReciprocityTheory.PGsh

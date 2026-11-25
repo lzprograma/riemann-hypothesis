@@ -2,63 +2,11 @@ module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.LocIdem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.RingTheory.LocalRing.Module
 
 @[expose] public section
 
 open IsLocalRing UpperTheory.V.Hi
-
-private theorem pres_pow {A M : Type} [CommRing A] [AddCommGroup M] [Module A M] (N : Submodule A M)
-    (T : Module.End A M) (h : ∀ y ∈ N, T y ∈ N) (n : ℕ) : ∀ y ∈ N, (T ^ n) y ∈ N := by
-  induction n with
-  | zero => intro y hy; simpa using hy
-  | succ n ih => intro y hy; rw [pow_succ', mul_apply_eq_comp]; exact h _ (ih y hy)
-
-private theorem pres_smul {A M : Type} [CommRing A] [AddCommGroup M] [Module A M] (N : Submodule A M)
-    (I : Ideal A) (T : Module.End A M) (h : ∀ y ∈ N, T y ∈ N) : ∀ y ∈ I • N, T y ∈ I • N := by
-  intro y hy
-  refine Submodule.smul_induction_on hy (fun r hr n hn => ?_) (fun x y hx hy => ?_)
-  · rw [map_smul]; exact Submodule.smul_mem_smul hr (h n hn)
-  · rw [map_add]; exact add_mem hx hy
 
 private theorem pres_sub {A M : Type} [CommRing A] [AddCommGroup M] [Module A M] (N : Submodule A M)
     (T : Module.End A M) (c : A) (h : ∀ y ∈ N, T y ∈ N) :
@@ -98,13 +46,14 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.locFree :
     Module.Finite.of_surjective E fun x => ⟨_, LinearMap.congr_fun hE x⟩
   have hkey : ∀ (I : Ideal A), ∀ w ∈ locPart Y op a, w ∈ I • Y → w ∈ I • locPart Y op a := by
     intro I w hw hw'
-    have h0 : ∀ y ∈ I • (⊤ : Submodule A Y), (e y : M) ∈ I • locPart Y op a := by
-      intro y hy
-      refine Submodule.smul_induction_on hy (fun r hr n _ => ?_) (fun x y hx hy => ?_)
-      · rw [map_smul]; exact Submodule.smul_mem_smul hr (heL n)
-      · rw [map_add]; exact add_mem hx hy
-    have h1 := h0 ⟨w, hLY hw⟩ ((Submodule.mem_smul_top_iff I Y _).2 hw')
-    rwa [(hmem ⟨w, hLY hw⟩).1 hw] at h1
+    have hle : (⊤ : Submodule A Y).map (Y.subtype ∘ₗ e) ≤ locPart Y op a :=
+      Submodule.map_le_iff_le_comap.2 fun y _ => heL y
+    have h1 : (Y.subtype ∘ₗ e) ⟨w, hLY hw⟩ ∈ I • locPart Y op a :=
+      Submodule.smul_mono le_rfl hle
+        (by
+          rw [← Submodule.map_smul'']
+          exact Submodule.mem_map_of_mem ((Submodule.mem_smul_top_iff I Y _).2 hw'))
+    simpa [(hmem ⟨w, hLY hw⟩).1 hw] using h1
   refine ⟨⟨hst, fun i j y hy => h.2 i j y (hLY hy)⟩, ?_, hfin, ?_, fun hP => ?_⟩
   · refine le_antisymm inf_le_left fun x hx => ⟨hx, ?_⟩
     have hx2 := hx.2
@@ -115,10 +64,15 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.locFree :
       refine monotone_nat_of_le_succ fun n y hy => ?_
       rw [Submodule.mem_comap] at hy ⊢
       rw [pow_succ', mul_apply_eq_comp]
-      exact pres_smul Y _ _ (pres_sub Y _ _ (h.1 i)) _ hy
+      have hle : Y.map (op i - algebraMap A (Module.End A M) (a i)) ≤ Y :=
+        Submodule.map_le_iff_le_comap.2 (pres_sub Y _ _ (h.1 i))
+      exact Submodule.smul_mono le_rfl hle
+        (by rw [← Submodule.map_smul'']; exact Submodule.mem_map_of_mem hy)
     obtain ⟨n, hn⟩ := (Submodule.mem_iSup_of_directed _ hmono.directed_le).1 (hx2 i k)
     refine Submodule.mem_iSup_of_mem n ?_
-    exact hkey _ _ (pres_pow _ _ (pres_sub _ _ _ (hst i)) n x hx) hn
+    exact hkey _ _ (by
+      rw [pow_apply_eq_iterate]
+      exact Set.MapsTo.iterate (pres_sub _ _ _ (hst i)) n hx) hn
   · refine ⟨(LinearMap.ker e).map Y.subtype, ?_, ?_, ?_⟩
     · rw [Submodule.disjoint_def]
       rintro x hx ⟨y, hy, rfl⟩

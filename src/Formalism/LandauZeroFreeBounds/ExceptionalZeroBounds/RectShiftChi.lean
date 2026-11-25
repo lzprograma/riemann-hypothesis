@@ -4,48 +4,8 @@ import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LogDerivEqOrd
 import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
 public import Formalism.LandauZeroFreeBounds.LogDerivRegionChiOf
 public import Formalism.LFunctionBounds.LFunctionBoundsProofs.RectResidue
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
 public import Mathlib.NumberTheory.LSeries.Nonvanishing
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.LFunctionBounds.ExpSumLowerBound
 
 @[expose] public section
@@ -206,9 +166,9 @@ theorem rectangle_contour_shift_character : RectShiftChi := by
         filter_upwards [eventually_nhdsWithin_iff.1 hev2] with z hz
         by_cases hzw : z = w
         · rw [hzw]
-          simp only [hG, if_pos hwP, hlim]
+          simp only [hG, ite_eq_left hwP, hlim]
         · obtain ⟨hzP, hzG⟩ := hz hzw
-          simp only [hG, if_neg hzP]
+          simp only [hG, ite_eq_right hzP]
           exact hzG
       exact hRd.congr_of_eventuallyEq hEq
     · obtain ⟨hLw, hw0, hw1⟩ := hUgood w hw hwP
@@ -216,7 +176,7 @@ theorem rectangle_contour_shift_character : RectShiftChi := by
         (perron_integrand_differentiableAt hχ hy hw0 hw1 hLw).sub (hsumd P w hwP)
       have hEq : G =ᶠ[𝓝 w] G0 := by
         filter_upwards [hPc.isOpen_compl.mem_nhds hwP] with z hz
-        simp only [hG, if_neg (show z ∉ P from hz)]
+        simp only [hG, ite_eq_right (show z ∉ P from hz)]
       exact hG0d.congr_of_eventuallyEq hEq
   have hPin : ∀ p ∈ P, σ₁ < p.re ∧ p.re < σ₀ ∧ -T < p.im ∧ p.im < T := by
     intro p hp
@@ -226,7 +186,7 @@ theorem rectangle_contour_shift_character : RectShiftChi := by
       refine ⟨?_, ?_, ?_, ?_⟩ <;> simp <;> linarith [(hB β hβ).1, (hB β hβ).2.1]
   have hdec : ∀ w : ℂ, w ∉ P → Fchi χ y w = G w + ∑ p ∈ P, b p / (w - p) := by
     intro w hw
-    simp only [hG, if_neg hw, hG0]
+    simp only [hG, ite_eq_right hw, hG0]
     ring
   have hres := Formalism.FX.rectangle_residue (Fchi χ y) G P b σ₁ σ₀ (-T) T (by linarith) (by linarith)
     hPin ⟨U, hUo, hrect, hGd⟩ hdec
@@ -239,7 +199,7 @@ theorem rectangle_contour_shift_character : RectShiftChi := by
     congr 1
     apply Finset.sum_congr rfl
     intro β hβ
-    rw [if_neg (hB1 β hβ)]
+    rw [ite_eq_right (hB1 β hβ)]
   unfold Formalism.ZF.rectInt
   unfold Formalism.FX.rectInt at hres
   rw [hres, hsum]

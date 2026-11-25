@@ -179,11 +179,11 @@ theorem columns_iff (sp : A ≃+* K × K) (I : Subring A) (Λ : Submodule I (Fin
       simp only [Matrix.mulVec, dotProduct]
       refine Finset.sum_congr rfl fun b _ => ?_
       by_cases hb : b < i
-      · rw [if_pos hb, if_pos hb]
+      · rw [ite_eq_left hb, ite_eq_left hb]
         show φ ((sp.symm (M b i, 0) : A) * c b a) = _
         rw [map_mul, hφa, RingEquiv.apply_symm_apply, hfr0, mul_comm]
         rfl
-      · rw [if_neg hb, if_neg hb, mul_zero]
+      · rw [ite_eq_right hb, ite_eq_right hb, mul_zero]
     have hs2 : ∀ a, ψ (s a) = 0 := by
       intro a
 
@@ -235,7 +235,7 @@ theorem inJ_red_iff (F : Type) [Field F] [NumberField F] (v : HeightOneSpectrum 
       X a b - (if a = b then 1 else 0) = (g : v.adicCompletion F) * w) ↔
       redM F v X a b = if a = b then 1 else 0 := by
     intro a b
-    have hred : redM F v X a b = IsLocalRing.residue _ ⟨X a b, hX a b⟩ := dif_pos (hX a b)
+    have hred : redM F v X a b = IsLocalRing.residue _ ⟨X a b, hX a b⟩ := dite_eq_left (hX a b)
     obtain ⟨d, hd1, hd2⟩ : ∃ d : v.adicCompletionIntegers F,
         IsLocalRing.residue (v.adicCompletionIntegers F) d = (if a = b then 1 else 0) ∧
         (d : v.adicCompletion F) = if a = b then 1 else 0 := by
@@ -255,15 +255,15 @@ theorem inJ_red_iff (F : Type) [Field F] [NumberField F] (v : HeightOneSpectrum 
       have h := congrArg Subtype.val e
       have h' : (w : v.adicCompletion F) * (g : v.adicCompletion F) = X a b - d := h
       rw [← h', mul_comm]
-  have hblk : ∀ x : Fin n, blkOf n t x = x := fun x => if_pos x.2
+  have hblk : ∀ x : Fin n, blkOf n t x = x := fun x => ite_eq_left x.2
   constructor
   · rintro ⟨h1, h2, -, -⟩ a b hba
     rw [hiff]
     rcases eq_or_lt_of_le hba with e | e
     · subst e
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact h2 b b.2
-    · rw [if_neg e.ne']
+    · rw [ite_eq_right e.ne']
       exact h1 a b (by rw [hblk, hblk]; exact e)
   · intro h
     refine ⟨fun x y hxy => ?_, fun x _ => ?_, fun x y hy => absurd y.2 (by omega), fun h' => by cases h'⟩
@@ -271,9 +271,9 @@ theorem inJ_red_iff (F : Type) [Field F] [NumberField F] (v : HeightOneSpectrum 
         rw [hblk, hblk] at hxy
         exact hxy
       have h3 := (hiff x y).1 (h x y hlt.le)
-      rwa [if_neg hlt.ne'] at h3
+      rwa [ite_eq_right hlt.ne'] at h3
     · have h3 := (hiff x x).1 (h x x le_rfl)
-      rwa [if_pos rfl] at h3
+      rwa [ite_eq_left rfl] at h3
 
 end Residue
 

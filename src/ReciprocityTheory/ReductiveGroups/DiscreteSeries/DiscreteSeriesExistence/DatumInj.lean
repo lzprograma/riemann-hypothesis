@@ -14,13 +14,8 @@ namespace ReciprocityTheory.ChartRestriction.DS
 variable {n : ℕ} {ε : Fin n → Bool} {lam : Fin n → ℝ} {T : S7.KType ε (lowK ε lam)}
   {Ψ : Matrix (Fin n) (Fin n) ℂ → (T.V →L[ℂ] T.V)}
 
-def dinj_jLin (hP : IsPsiFor ε lam T Ψ) (v₀ : T.V) : T.V →ₗ[ℂ] L2 ε where
-  toFun := uniformisationL2 ε Ψ v₀
-  map_add' := datumEmbedding_add hP v₀
-  map_smul' := datumEmbedding_smul hP v₀
-
 section
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 theorem dinj_continuousOn_of_smoothOnGV {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {f : Matrix (Fin n) (Fin n) ℂ → E} (hf : S7.SmoothOnGV ε f) : ContinuousOn f (UJset ε) := by
@@ -59,7 +54,7 @@ theorem uniformisationL2_injective (hP : IsPsiFor ε lam T Ψ) {v₀ : T.V} (hv�
     have hm := hML v
     have e1 : uniformisationL2 ε Ψ v₀ v = hm.toLp _ := by
       unfold uniformisationL2 toL2
-      exact dif_pos hm
+      exact dite_eq_left hm
     rw [e1, Lp.eq_zero_iff_ae_eq_zero]
     constructor
     · intro h g
@@ -88,14 +83,14 @@ theorem uniformisationL2_injective (hP : IsPsiFor ε lam T Ψ) {v₀ : T.V} (hv�
     have h6 : jfun Ψ v₀ v₀ 1 = 0 := (hz v₀).1 h0 1
     simp only [jfun, hP.2.1, ContinuousLinearMap.one_apply] at h6
     exact hv₀ (inner_self_eq_zero.mp h6)
-  have hker : ∀ v, v ∈ LinearMap.ker (dinj_jLin hP v₀) ↔
+  have hker : ∀ v, v ∈ LinearMap.ker (ReciprocityTheory.ChartRestriction.DS.datumEmbeddingToL2 hP v₀) ↔
       ∀ g : Formalism.REAL.UJ ε, jfun Ψ v₀ v (Formalism.MainNotions.S.umat g) = 0 :=
     fun v => LinearMap.mem_ker.trans (hz v)
-  rcases T.irred (LinearMap.ker (dinj_jLin hP v₀))
+  rcases T.irred (LinearMap.ker (ReciprocityTheory.ChartRestriction.DS.datumEmbeddingToL2 hP v₀))
       (fun k v hv => (hker _).2 (hstab k v ((hker v).1 hv))) with h | h
   · exact LinearMap.ker_eq_bot.1 h
   · exfalso
-    have hv : v₀ ∈ LinearMap.ker (dinj_jLin hP v₀) := by
+    have hv : v₀ ∈ LinearMap.ker (ReciprocityTheory.ChartRestriction.DS.datumEmbeddingToL2 hP v₀) := by
       rw [h]
       exact Submodule.mem_top
     exact hne (LinearMap.mem_ker.1 hv)

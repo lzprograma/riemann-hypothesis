@@ -1,5 +1,7 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverBasePointRegular
+
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSncModel
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
@@ -19,50 +21,8 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 public import Development.AutomorphicSpectrum.Statements.GeometryStatements.CmpSt
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsomorphicLinesPotentialDifference
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.CoreStatements.HomogeneousNonvanishing.CmpBuild, Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TopCmp, Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComparisonOfInputsAvoidance
@@ -143,20 +103,7 @@ theorem sum_mapDomain {κ : K → K'} {v : (Σ k, ι k) → Σ k, ι' k} (hv : �
 
 theorem isMultiHomog_rename {κ : K → K'} {v : (Σ k, ι k) → Σ k, ι' k} (hb : IsBlockMap κ v) {f : MRing ι}
     {b : K → ℕ} (hf : IsMultiHomog f b) : IsMultiHomog (rename v f) (Function.extend κ b 0) := by
-  classical
-  intro m hm k'
-  rw [support_rename_of_injective hb.2.1, Finset.mem_image] at hm
-  obtain ⟨m₀, hm₀, rfl⟩ := hm
-  rw [sum_mapDomain hb.2.2.1, Fintype.sum_sigma]
-  by_cases hk : ∃ k, κ k = k'
-  · obtain ⟨k, rfl⟩ := hk
-    rw [hb.1.extend_apply, Finset.sum_eq_single k]
-    · simpa using hf m₀ hm₀ k
-    · intro k₂ _ hne
-      exact Finset.sum_eq_zero fun i _ => if_neg (hb.1.ne hne)
-    · simp
-  · rw [Function.extend_apply' _ _ _ hk]
-    exact Finset.sum_eq_zero fun k _ => Finset.sum_eq_zero fun i _ => if_neg fun h => hk ⟨k, h⟩
+  apply _root_.GlobalTheory.CompanionTheory.Ar.PB.CovGraph.RegPhi.isMultiHomog_rename_block <;> assumption
 
 end Forms
 
@@ -194,8 +141,8 @@ theorem evC_bdry {κ₁ : K₁ → K} {v₁ : (Σ k, ι₁ k) → Σ k, ι k} (h
     (hz : ∀ x, Re.π x ∈ bdry S.s → evC (Re.R.lift x x) γ = 0) (x : R.X) (hx : π x ∈ bdry S.s) :
     evC (R.lift x x) (rename v₁ γ) = 0 := by
   have hmem : (fun p => R.lift x x (v₁ p)) ∈ mcPts P₁ :=
-    e ▸ (_root_.GlobalTheory.CompanionTheory.Ar.Cmp.hermLine_pull_blockMap K₁ ι₁ K ι κ₁ v₁ hb).2.2.1 P _ (R.mem x x (R.mem_U x))
-  obtain ⟨x₁, hx₁⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Cmp.resolution_onto_complex_points K₁ ι₁ P₁ _ D Re.R Re.arith _ hmem
+    e ▸ (_root_.PositivityTheory.UnitarySelfGeneration.j_pull K₁ ι₁ K ι κ₁ v₁ hb).2.2.1 P _ (R.mem x x (R.mem_U x))
+  obtain ⟨x₁, hx₁⟩ := _root_.PositivityTheory.UnitarySelfGeneration.r_onto K₁ ι₁ P₁ _ D Re.R Re.arith _ hmem
   rw [evC_rename, ← evC_eq_zero_iff_of_sameOrbit hγ hx₁]
   exact hz x₁ (hπ x x₁ hx₁ ▸ hx)
 
@@ -293,8 +240,8 @@ theorem assemble (hPB : PullbackStatement) {κ₁ : K₁ → K} {v₁ : (Σ k, �
       c2 := by
         rintro (a | a)
         exacts [(hm₁ a).2.2, (hm₂ a).2.2] }
-  have hp₁ := _root_.GlobalTheory.CompanionTheory.Ar.Cmp.hermLine_pull_blockMap K₁ ι₁ K' ι' (κ ∘ κ₁) (v ∘ v₁) hc₁
-  have hp₂ := _root_.GlobalTheory.CompanionTheory.Ar.Cmp.hermLine_pull_blockMap K₂ ι₂ K' ι' (κ ∘ κ₂) (v ∘ v₂) hc₂
+  have hp₁ := _root_.PositivityTheory.UnitarySelfGeneration.j_pull K₁ ι₁ K' ι' (κ ∘ κ₁) (v ∘ v₁) hc₁
+  have hp₂ := _root_.PositivityTheory.UnitarySelfGeneration.j_pull K₂ ι₂ K' ι' (κ ∘ κ₂) (v ∘ v₂) hc₂
   choose r₁ hr₁ using fun a => (hp₁.1 (Re₁.ref a)).exists
   choose r₂ hr₂ using fun a => (hp₂.1 (Re₂.ref a)).exists
   choose n₁ hn₁ using fun a t => (hp₁.1 (Re₁.line a t)).exists
@@ -337,14 +284,14 @@ theorem assemble (hPB : PullbackStatement) {κ₁ : K₁ → K} {v₁ : (Σ k, �
     intro a
     rw [(hr₁ a).1, (hr₂ a).1, (hjb.2.2 K₁ ι₁ K ι K' ι' κ₁ v₁ κ v hb₁ hb).2,
       (hjb.2.2 K₂ ι₂ K ι K' ι' κ₂ v₂ κ v hb₂ hb).2]
-    exact (_root_.GlobalTheory.CompanionTheory.Ar.Cmp.lineIso_algebra K ι _ har.2.1).2.2.2.2 K' ι' κ v _ hb e₀ _ _ _ _ (hfg a).1
-  choose w hw hinv hsm using fun a => _root_.GlobalTheory.CompanionTheory.Ar.Cmp.defect_exists_smooth K' ι' _ J D R (r₁ a) (r₂ a) (rename v (f₀ a))
+    exact (_root_.PositivityTheory.UnitarySelfGeneration.i_algebra K ι _ har.2.1).2.2.2.2 K' ι' κ v _ hb e₀ _ _ _ _ (hfg a).1
+  choose w hw hinv hsm using fun a => _root_.PositivityTheory.UnitarySelfGeneration.i_defect K' ι' _ J D R (r₁ a) (r₂ a) (rename v (f₀ a))
     (rename v (g₀ a)) har'.2.1 (hiso a) (sm₁ a) (sm₂ a)
   have hmain : ∀ a x, x ∉ bdry s → S₁.ph a (π₁ x) = S₂.ph a (π₂ x) + w a (R.lift x x) := by
     intro a x hx
     have hzP : R.lift x x ∈ mcPts (mCoordIdeal y') := R.mem x x (R.mem_U x)
     have hz : (fun p => R.lift x x (v p)) ∈ mcPts (mCoordIdeal y) :=
-      e₀ ▸ (_root_.GlobalTheory.CompanionTheory.Ar.Cmp.hermLine_pull_blockMap K ι K' ι' κ v hb).2.2.1 _ _ hzP
+      e₀ ▸ (_root_.PositivityTheory.UnitarySelfGeneration.j_pull K ι K' ι' κ v hb).2.2.1 _ _ hzP
     have hne : evC (R.lift x x) (rename v B) ≠ 0 := fun h => hx ((hbd x).2 h)
     have hβ' : evC (fun p => R.lift x x (v p)) β ≠ 0 := fun h => hne (by rw [hB0, h]; simp)
     have hx₁ : π₁ x ∉ bdry S₁.s := fun h => hne (hbd₁ x h)
@@ -353,8 +300,8 @@ theorem assemble (hPB : PullbackStatement) {κ₁ : K₁ → K} {v₁ : (Σ k, �
       e₁ ▸ hp₁.2.2.1 _ _ hzP
     have hm2 : (fun p => R.lift x x ((v ∘ v₂) p)) ∈ mcPts (mCoordIdeal (y ∘ v₂)) :=
       e₂ ▸ hp₂.2.2.1 _ _ hzP
-    obtain ⟨y₁, hy₁⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Cmp.resolution_onto_complex_points K₁ ι₁ _ _ D Re₁.R Re₁.arith _ hm1
-    obtain ⟨y₂, hy₂⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Cmp.resolution_onto_complex_points K₂ ι₂ _ _ D Re₂.R Re₂.arith _ hm2
+    obtain ⟨y₁, hy₁⟩ := _root_.PositivityTheory.UnitarySelfGeneration.r_onto K₁ ι₁ _ _ D Re₁.R Re₁.arith _ hm1
+    obtain ⟨y₂, hy₂⟩ := _root_.PositivityTheory.UnitarySelfGeneration.r_onto K₂ ι₂ _ _ D Re₂.R Re₂.arith _ hm2
     have ε₁ : π₁ x = Re₁.π y₁ := l₁ x y₁ hy₁
     have ε₂ : π₂ x = Re₂.π y₂ := l₂ x y₂ hy₂
     obtain ⟨u, t, hut, hu⟩ := exists_pair (hfg a).1.2 hz
@@ -401,10 +348,6 @@ theorem joint_system : Inputs → ReciprocityTheory.ChartRestriction.G.Geo.ResK.
   exact ⟨K', _, ι', _, κ, v, y', S, Re, f, g, d, hb, hy, hfield, h⟩
 
 end GlobalTheory.CompanionTheory.Ar.Cmp.BuildK
-
-namespace PositivityTheory.UnitarySelfGeneration
-
-end PositivityTheory.UnitarySelfGeneration
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -456,13 +399,6 @@ theorem side_eq (II : IntersectionSystem) (hPF : HasPFCoord II)
   exact key.symm
 
 end GlobalTheory.CompanionTheory.Ar.Cmp.CoordK
-
-namespace PositivityTheory.UnitarySelfGeneration
-
-open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P GlobalTheory.CompanionTheory.Ar.Cmp GlobalTheory.CompanionTheory.Ar.PB Filter Topology
-open ReciprocityTheory.ChartRestriction.G.AI.I1 (IsBlockMap pullDeg)
-
-end PositivityTheory.UnitarySelfGeneration
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto

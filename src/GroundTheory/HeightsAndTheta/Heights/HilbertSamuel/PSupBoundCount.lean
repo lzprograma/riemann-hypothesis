@@ -61,8 +61,7 @@ theorem main {D : ℕ} {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} 
     have hF := isMultiHomog_zsum f m hf
     have h1 := blockL2Norm_le_one_of_sup_bound d n hF ((isSmallH_iff d n hF).1 hm)
     rw [blockL2Norm_sum_eq_sqrt_gram d n f hf m] at h1
-    by_contra h
-    push_neg at h
+    by_contra! h
     have := Real.sqrt_lt_sqrt zero_le_one h
     rw [Real.sqrt_one] at this
     linarith

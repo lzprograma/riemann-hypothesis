@@ -39,11 +39,11 @@ theorem ptsPosDens_split {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fint
     · have hz : hs.choose y ∈ mcPts P := hs.choose_spec.2.self_of_nhds.2.1
       obtain ⟨k₀, hk₀⟩ := hcov w hw' hs _ hz hs.choose_spec.1
       rw [tsum_eq_single k₀]
-      · simp only [sheetDensity, dif_pos hs, Set.indicator_of_mem hk₀]
+      · simp only [sheetDensity, dite_eq_left hs, Set.indicator_of_mem hk₀]
       · intro k hk
         have hxk : hs.choose y ∉ E k := fun hxk => Set.disjoint_left.mp (hE hk) hxk hk₀
-        simp [sheetDensity, dif_pos hs, Set.indicator_of_notMem hxk]
-    · simp [sheetDensity, dif_neg hs]
+        simp [sheetDensity, dite_eq_left hs, Set.indicator_of_notMem hxk]
+    · simp [sheetDensity, dite_eq_right hs]
   rw [ENNReal.ofReal_sum_of_nonneg (fun w _ => hT0 g w), Finset.sum_congr rfl hpt,
     ← Summable.tsum_finsetSum (fun _ _ => ENNReal.summable)]
   exact tsum_congr fun k => (ENNReal.ofReal_sum_of_nonneg (fun w _ => hT0 _ w)).symm

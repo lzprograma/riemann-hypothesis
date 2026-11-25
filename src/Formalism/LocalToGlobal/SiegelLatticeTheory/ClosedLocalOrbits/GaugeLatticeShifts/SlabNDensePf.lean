@@ -330,13 +330,13 @@ theorem cg_approx_mat {ι : Type} [Fintype ι] (lv : ι → ℕ) (Z : Matrix ι 
     ∃ W : Matrix ι ι E, InPat lv 1 W ∧ cg_C (IntAf F E) k (W.map (Formalism.UG.inclE (F := F) (Af F)) - Z) := by
   choose a t ht e using fun i j => cg_approx (F := F) k hk (Z i j)
   refine ⟨Matrix.of fun i j => if lv j < lv i + 1 then 0 else a i j, fun i j h => ?_, fun i j => ?_⟩
-  · simp only [Matrix.of_apply, if_pos h]
+  · simp only [Matrix.of_apply, ite_eq_left h]
   · by_cases h : lv j < lv i + 1
     · refine ⟨0, zero_mem _, ?_⟩
-      simp only [Matrix.sub_apply, Matrix.map_apply, Matrix.of_apply, if_pos h, map_zero, hZ i j h,
+      simp only [Matrix.sub_apply, Matrix.map_apply, Matrix.of_apply, ite_eq_left h, map_zero, hZ i j h,
         sub_zero, mul_zero]
     · refine ⟨t i j, ht i j, ?_⟩
-      simp only [Matrix.sub_apply, Matrix.map_apply, Matrix.of_apply, if_neg h]
+      simp only [Matrix.sub_apply, Matrix.map_apply, Matrix.of_apply, ite_eq_right h]
       exact e i j
 
 end Approx
@@ -449,11 +449,11 @@ open Formalism.L2.SG Formalism.L2.SG.PoincareInHH Formalism.L2.SG.Pf.Unip Formal
 
 theorem mf_gA {D : D7} (X : HidaSetting D) {Y : Matrix (Kap X) (Kap X) X.B.I.E} (hY : InPat (lvk X) 1 Y)
     (hYs : Yᴴ * JB X = -(JB X * Y)) : Mf X (gA X le_rfl hY hYs).2 = cay (2 * D.R.rS + 2) (Y.map (ic X)) := by
-  have hf : X.B.I.fmat (gA X le_rfl hY hYs).2 = (gE X Y).map (ic X) := rfl
+  have hf : X.B.I.fmat (gA X le_rfl hY hYs).2 = (UnipB.gE X Y).map (ic X) := rfl
   have h1 : (Bm' X).map (ic X) * (Bm X).map (ic X) = 1 := by
     rw [← Matrix.map_mul, Bm'_mul_Bm, Matrix.map_one _ (map_zero _) (map_one _)]
   unfold Mf Bf Bf'
-  rw [hf, gE, Matrix.map_mul, Matrix.map_mul, cay_map]
+  rw [hf, UnipB.gE, Matrix.map_mul, Matrix.map_mul, cay_map]
   simp only [← Matrix.mul_assoc]
   rw [h1, Matrix.one_mul, Matrix.mul_assoc, h1, Matrix.mul_one]
 

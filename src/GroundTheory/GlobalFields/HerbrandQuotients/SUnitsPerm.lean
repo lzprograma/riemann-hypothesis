@@ -181,7 +181,7 @@ theorem ker_normHom_le_range_cycSub_ofMulAction (hσ : ∀ g, g ∈ Subgroup.zpo
     obtain ⟨x, _, hx⟩ := Finset.exists_ne_zero_of_sum_ne_zero hy
     have hxy : orbitPoint G x = y := by
       by_contra h
-      exact hx (if_neg h)
+      exact hx (ite_eq_right h)
     rw [← hxy, orbitPoint_orbitPoint]
   have hu : u = 0 := by
     ext p
@@ -266,13 +266,13 @@ theorem natCard_kerModRange_cycSub_ofMulAction [Fintype (orbitRel.Quotient G X)]
       have hH : ∀ y, H y ≠ 0 → orbitPoint G y = y := by
         intro y hy
         by_contra h
-        exact hy (if_neg h)
+        exact hy (ite_eq_right h)
       refine ⟨permOfFun H, ?_⟩
       ext p
       rw [coeff_normHom_ofMulAction]
       simp only [coeff_permOfFun]
       rw [sum_smul_eq_of_support H hH p]
-      simp only [H, orbitPoint_orbitPoint, if_true]
+      simp only [H, orbitPoint_orbitPoint, ite_true]
       obtain ⟨g, hg⟩ := orbitPoint_mem (G := G) p
       have hgp : g • p = orbitPoint G p := hg
       rw [card_stabilizer_eq_of_mem (orbitPoint_mem p), ← hgp, hinv, Int.mul_ediv_cancel' (hdiv p)]
@@ -297,12 +297,6 @@ theorem cyclicHerbrand_ofMulAction [Fintype (orbitRel.Quotient G X)]
     natCard_kerModRange_normHom_ofMulAction hσ, Nat.cast_one, div_one, Nat.cast_prod]
 
 end Cohomology
-
-section Quotient
-
-variable {G : Type*} [Group G] [Fintype G]
-
-end Quotient
 
 end GroundTheory.Global
 end -- clump:auto

@@ -112,7 +112,7 @@ theorem hasSum_parseval_unit (a b : ℕ → ℂ) (ha : Summable fun n => ‖a n�
   rw [← intervalIntegral.integral_of_le zero_le_one] at h
   have hinj : Function.Injective fun n : ℕ => (n, n) := fun _ _ h => (Prod.ext_iff.1 h).1
   have := (hinj.hasSum_iff (f := fun p : ℕ × ℕ => conj (b p.1) * a p.2 * if p.1 = p.2 then 1 else 0) (fun p hp => by
-    rw [if_neg, mul_zero]
+    rw [ite_eq_right, mul_zero]
     intro h
     exact hp ⟨p.1, Prod.ext rfl h⟩)).2 h
   refine cast (congrArg (HasSum · _) (funext fun n => ?_)) this

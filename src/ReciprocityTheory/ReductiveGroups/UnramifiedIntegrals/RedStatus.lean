@@ -8,50 +8,11 @@ public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedValA
 public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedValB
 public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EllipticOnePole
 public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.Interface
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
 import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Analysis.CStarAlgebra.Classes
 import Mathlib.Tactic.Linter.Style
 import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.SemiChar
@@ -327,27 +288,8 @@ section Norms
 
 variable (l : ℕ) [Fact l.Prime]
 
-theorem norm_twentySeven_eq_one_of_five_le (h5 : 5 ≤ l) : ‖(27 : ℂ_[l])‖ = 1 := by
-  have h : ¬ l ∣ 27 := by
-    intro h
-    have h3 : l ∣ 3 := (Fact.out : l.Prime).dvd_of_dvd_pow (show l ∣ 3 ^ 3 by simpa using h)
-    have := Nat.le_of_dvd (by norm_num) h3
-    omega
-  simpa using _root_.ReciprocityTheory.ChartRestriction.L1.norm_natCast_Cl_of_not_dvd l h
-
-theorem norm_1728_eq_one_of_five_le' (h5 : 5 ≤ l) : ‖(1728 : ℂ_[l])‖ = 1 := by
-  have h : ¬ l ∣ 1728 := by
-    intro h
-    have h' : l ∣ 2 ^ 6 * 3 ^ 3 := by simpa using h
-    rcases (Fact.out : l.Prime).dvd_mul.1 h' with h2 | h3
-    · have := Nat.le_of_dvd (by norm_num) ((Fact.out : l.Prime).dvd_of_dvd_pow h2)
-      omega
-    · have := Nat.le_of_dvd (by norm_num) ((Fact.out : l.Prime).dvd_of_dvd_pow h3)
-      omega
-  simpa using _root_.ReciprocityTheory.ChartRestriction.L1.norm_natCast_Cl_of_not_dvd l h
-
 theorem norm_sub_1728_eq_one_of_norm_lt_one (h5 : 5 ≤ l) {J : ℂ_[l]} (hJ : ‖J‖ < 1) : ‖J - 1728‖ = 1 := by
-  have h := norm_1728_eq_one_of_five_le' l h5
+  have h := ReciprocityTheory.ChartRestriction.L1.norm_1728_eq_one_of_five_le l h5
   have hne : ‖J‖ ≠ ‖-(1728 : ℂ_[l])‖ := by rw [norm_neg, h]; exact hJ.ne
   rw [sub_eq_add_neg, IsUltrametricDist.norm_add_eq_max_of_norm_ne_norm hne, norm_neg, h]
   exact max_eq_right hJ.le
@@ -356,8 +298,8 @@ theorem norm_weierstrass_coeff_small_j (h5 : 5 ≤ l) {J : ℂ_[l]} (hJ : ‖J�
     ‖27 * J / (J - 1728)‖ = ‖J‖ ∧
       ‖(27 * J / (J - 1728)) ^ 3 - 27 * (27 * J / (J - 1728)) ^ 2‖ = ‖J‖ ^ 2 := by
   have h1 := norm_sub_1728_eq_one_of_norm_lt_one l h5 hJ
-  have h27 := norm_twentySeven_eq_one_of_five_le l h5
-  have h1728 := norm_1728_eq_one_of_five_le' l h5
+  have h27 := ReciprocityTheory.ChartRestriction.L1.valDiv2_norm_27 l h5
+  have h1728 := ReciprocityTheory.ChartRestriction.L1.norm_1728_eq_one_of_five_le l h5
   have hne : J - 1728 ≠ 0 := by
     intro h
     rw [h, norm_zero] at h1
@@ -519,26 +461,13 @@ theorem model_generic (h5 : 5 ≤ l) (a b J : ℂ_[l]) (ha : a ≠ 0) (hb : b �
       ∃ lam : ℂ_[l], lam ≠ 0 ∧ g2 = lam ^ 4 * a ∧ g3 = lam ^ 6 * b := by
   have hp : l.Prime := Fact.out
   have hx : (0 : ℝ) < (l : ℝ) := by exact_mod_cast hp.pos
-  have hl0 : (l : ℂ_[l]) ≠ 0 := by
-    intro h
-    have := _root_.ReciprocityTheory.ChartRestriction.L1.norm_l_Cl l
-    rw [h, norm_zero] at this
-    exact (inv_ne_zero hx.ne') this.symm
-  have h27 : (27 : ℂ_[l]) ≠ 0 := by
-    intro h
-    have := norm_twentySeven_padicComplex_eq_one l h5
-    rw [h, norm_zero] at this
-    exact zero_ne_one this
-  have h1728 : (1728 : ℂ_[l]) ≠ 0 := by
-    intro h
-    have := norm_1728_eq_one l h5
-    rw [h, norm_zero] at this
-    exact zero_ne_one this
+  have hl0 : (l : ℂ_[l]) ≠ 0 := Nat.cast_ne_zero.2 hp.ne_zero
   have hJs : J - 1728 = 1728 * 27 * b ^ 2 / (a ^ 3 - 27 * b ^ 2) := by
     rw [hJe]; field_simp; ring
   have hJs0 : J - 1728 ≠ 0 := by
     rw [hJs]
-    exact div_ne_zero (mul_ne_zero (mul_ne_zero h1728 h27) (pow_ne_zero _ hb)) hD
+    exact div_ne_zero
+      (mul_ne_zero (mul_ne_zero (by norm_num) (by norm_num)) (pow_ne_zero _ hb)) hD
   set c : ℂ_[l] := 27 * J / (J - 1728) with hc
   have hcab : c = a ^ 3 / b ^ 2 := by
     rw [hc, hJs, hJe]; field_simp
@@ -613,11 +542,6 @@ theorem model_of_valDiv (L : PeriodPair) (l : ℕ) [Fact l.Prime] (h5 : 5 ≤ l)
     have e27 : ι 27 = 27 := map_ofNat ι 27
     have e1728 : ι 1728 = 1728 := map_ofNat ι 1728
     simp [jInv, e27, e1728]
-  have h1728 : (1728 : ℂ_[l]) ≠ 0 := by
-    intro h
-    have := norm_1728_eq_one l h5
-    rw [h, norm_zero] at this
-    exact zero_ne_one this
   by_cases ha : ι L.g₂ = 0
   · have hb : ι L.g₃ ≠ 0 := by
       intro hb
@@ -644,18 +568,13 @@ theorem model_of_valDiv (L : PeriodPair) (l : ℕ) [Fact l.Prime] (h5 : 5 ≤ l)
     · rw [hlam, inv_mul_cancel₀ ha]
   have hJ0 : ι (jInv L) ≠ 0 := by
     rw [hJe]
-    exact div_ne_zero (mul_ne_zero h1728 (pow_ne_zero _ ha)) hD
+    exact div_ne_zero (mul_ne_zero (by norm_num) (pow_ne_zero _ ha)) hD
   have hJ1728 : ι (jInv L) ≠ 1728 := by
     rw [hJe]
     intro h
     rw [div_eq_iff hD] at h
     have h' : (1728 : ℂ_[l]) * (27 * (ι L.g₃) ^ 2) = 0 := by linear_combination h
-    have h27 : (27 : ℂ_[l]) ≠ 0 := by
-      intro h
-      have := norm_twentySeven_padicComplex_eq_one l h5
-      rw [h, norm_zero] at this
-      exact zero_ne_one this
-    exact mul_ne_zero h1728 (mul_ne_zero h27 (pow_ne_zero _ hb)) h'
+    exact mul_ne_zero (by norm_num) (mul_ne_zero (by norm_num) (pow_ne_zero _ hb)) h'
   obtain ⟨m, hm⟩ := h3 hJ0
   obtain ⟨n, hn⟩ := h2 hJ1728
   exact model_generic l h5 _ _ _ ha hb hD hJe hJ hJ1 m n hm hn

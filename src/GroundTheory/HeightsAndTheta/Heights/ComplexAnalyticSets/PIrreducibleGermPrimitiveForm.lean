@@ -13,6 +13,7 @@ import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.SimpleRing.Principal
 public import Mathlib.Algebra.MvPolynomial.Funext
 public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
+import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PGermMinimalPolynomialDivides
 
 @[expose] public section
 
@@ -103,99 +104,12 @@ theorem primitive_with_resultant_denominator (hG : GroundTheory.Heights₂.Heigh
     have hf' : aeval ℓ' f = _ := hf
     rw [hf', map_smul, hVx, ← map_smul, Algebra.smul_def]
 
-def germsAlong {σ : Type} [Fintype σ] (X : Set (σ → ℂ)) (x : σ → ℂ) : Subring (Germ (𝓝[X] x) ℂ) where
-  carrier := {φ | ∃ f : (σ → ℂ) → ℂ, AnalyticAt ℂ f x ∧ (f : Germ (𝓝[X] x) ℂ) = φ}
-  mul_mem' := by
-    rintro _ _ ⟨f, hf, rfl⟩ ⟨g, hg, rfl⟩
-    exact ⟨f * g, hf.mul hg, rfl⟩
-  one_mem' := ⟨fun _ => 1, analyticAt_const, rfl⟩
-  add_mem' := by
-    rintro _ _ ⟨f, hf, rfl⟩ ⟨g, hg, rfl⟩
-    exact ⟨f + g, hf.add hg, rfl⟩
-  zero_mem' := ⟨fun _ => 0, analyticAt_const, rfl⟩
-  neg_mem' := by
-    rintro _ ⟨f, hf, rfl⟩
-    exact ⟨-f, hf.neg, rfl⟩
+open GermMinimalPolynomialDivides
 
-def analyticAtRing {ι : Type} [Fintype ι] (w : ι → ℂ) : Subring ((ι → ℂ) → ℂ) where
-  carrier := {f | AnalyticAt ℂ f w}
-  mul_mem' := fun hf hg => hf.mul hg
-  one_mem' := (analyticAt_const : AnalyticAt ℂ (fun _ : ι → ℂ => (1 : ℂ)) w)
-  add_mem' := fun hf hg => hf.add hg
-  zero_mem' := (analyticAt_const : AnalyticAt ℂ (fun _ : ι → ℂ => (0 : ℂ)) w)
-  neg_mem' := fun hf => hf.neg
-
-def germOf {ι : Type} [Fintype ι] (w : ι → ℂ) : analyticAtRing w →+* holGerms w :=
-  ((Germ.coeRingHom (𝓝 w)).comp (analyticAtRing w).subtype).codRestrict (holGerms w)
-    fun f => ⟨f.1, f.2, rfl⟩
-
-theorem germOf_surjective {ι : Type} [Fintype ι] (w : ι → ℂ) : Function.Surjective (germOf w) := by
-  intro φ
-  obtain ⟨f, hf, hφ⟩ := φ.2
-  exact ⟨⟨f, hf⟩, Subtype.ext hφ⟩
-
-def germRep {ι : Type} [Fintype ι] (w : ι → ℂ) : holGerms w → analyticAtRing w :=
-  Function.surjInv (germOf_surjective w)
-
-theorem germOf_germRep {ι : Type} [Fintype ι] (w : ι → ℂ) (φ : holGerms w) : germOf w (germRep w φ) = φ :=
-  Function.surjInv_eq (germOf_surjective w) φ
-
-theorem germOf_eq_zero {ι : Type} [Fintype ι] (w : ι → ℂ) (f : analyticAtRing w) :
-    germOf w f = 0 ↔ ∀ᶠ y in 𝓝 w, f.1 y = 0 := by
-  rw [← Subtype.coe_inj]
-  exact Germ.coe_eq
-
-def alongOf {σ : Type} [Fintype σ] (X : Set (σ → ℂ)) (x : σ → ℂ) : analyticAtRing x →+* germsAlong X x :=
-  ((Germ.coeRingHom (𝓝[X] x)).comp (analyticAtRing x).subtype).codRestrict (germsAlong X x)
-    fun f => ⟨f.1, f.2, rfl⟩
-
-def germCompHom {α β : Type} {l : Filter β} {l' : Filter α} (g : α → β) (hg : Tendsto g l' l) :
-    Germ l ℂ →+* Germ l' ℂ where
-  toFun φ := φ.compTendsto g hg
-  map_one' := rfl
-  map_mul' φ ψ := Germ.inductionOn₂ φ ψ fun _ _ => rfl
-  map_zero' := rfl
-  map_add' φ ψ := Germ.inductionOn₂ φ ψ fun _ _ => rfl
-
-theorem tendsto_nhdsWithin_linear {σ : Type} [Fintype σ] {d : ℕ} (A : (σ → ℂ) →L[ℂ] (Fin d → ℂ))
-    (X : Set (σ → ℂ)) (x : σ → ℂ) : Tendsto A (𝓝[X] x) (𝓝 (A x)) :=
-  (A.continuous.tendsto x).mono_left nhdsWithin_le_nhds
-
-def alongPull {σ : Type} [Fintype σ] (X : Set (σ → ℂ)) (x : σ → ℂ) {d : ℕ} (A : (σ → ℂ) →L[ℂ] (Fin d → ℂ)) :
-    holGerms (A x) →+* germsAlong X x :=
-  ((germCompHom A (tendsto_nhdsWithin_linear A X x)).comp (holGerms (A x)).subtype).codRestrict _ fun φ => by
-    obtain ⟨f, hf, hφ⟩ := φ.2
-    refine ⟨f ∘ A, hf.comp (A.analyticAt x), ?_⟩
-    change _ = (φ.1 : Germ (𝓝 (A x)) ℂ).compTendsto A (tendsto_nhdsWithin_linear A X x)
-    rw [← hφ]
-    rfl
-
-def preLinear {σ : Type} [Fintype σ] (x : σ → ℂ) {d : ℕ} (A : (σ → ℂ) →L[ℂ] (Fin d → ℂ)) :
-    analyticAtRing (A x) →+* ((σ → ℂ) → ℂ) :=
-  (RingHom.pi fun z => Pi.evalRingHom (fun _ : Fin d → ℂ => ℂ) (A z)).comp (analyticAtRing (A x)).subtype
-
-theorem eventually_of_germ_eq {σ : Type} [Fintype σ] {X : Set (σ → ℂ)} {x : σ → ℂ} {f g : (σ → ℂ) → ℂ}
-    (h : (f : Germ (𝓝[X] x) ℂ) = g) : ∀ᶠ z in 𝓝 x, z ∈ X → f z = g z :=
-  eventually_nhdsWithin_iff.1 (Germ.coe_eq.1 h)
-
-theorem coe_eval₂_map {σ : Type} [Fintype σ] (X : Set (σ → ℂ)) (x : σ → ℂ) {d : ℕ}
-    (A : (σ → ℂ) →L[ℂ] (Fin d → ℂ)) (P : (analyticAtRing (A x))[X]) (v : analyticAtRing x) :
-    ((eval₂ (alongPull X x A) (alongOf X x v) (P.map (germOf (A x))) : germsAlong X x) : Germ (𝓝[X] x) ℂ) =
-      ((eval₂ (preLinear x A) v.1 P : (σ → ℂ) → ℂ) : Germ (𝓝[X] x) ℂ) := by
-  change (germsAlong X x).subtype _ = Germ.coeRingHom _ _
-  rw [eval₂_map, hom_eval₂, hom_eval₂]
-  rfl
-
-def constAn {ι : Type} [Fintype ι] (w : ι → ℂ) : ℂ →+* analyticAtRing w :=
+private def constAn {ι : Type} [Fintype ι] (w : ι → ℂ) : ℂ →+* analyticAtRing w :=
   (Pi.constRingHom (ι → ℂ) ℂ).codRestrict _ fun c => (analyticAt_const : AnalyticAt ℂ (fun _ : ι → ℂ => c) w)
 
-theorem eval₂_monic_apply {σ : Type} [Fintype σ] (x : σ → ℂ) {d : ℕ} (A : (σ → ℂ) →L[ℂ] (Fin d → ℂ))
-    (g : (σ → ℂ) → ℂ) {M : ℕ} (b : Fin M → analyticAtRing (A x)) (z : σ → ℂ) :
-    eval₂ (preLinear x A) g (X ^ M + ∑ j, C (b j) * X ^ (j : ℕ)) z =
-      g z ^ M + ∑ j, (b j).1 (A z) * g z ^ (j : ℕ) := by
-  simp [eval₂_finsetSum, Finset.sum_apply, preLinear]
-
-theorem eval₂_sum_apply {σ : Type} [Fintype σ] (x : σ → ℂ) {d : ℕ} (A : (σ → ℂ) →L[ℂ] (Fin d → ℂ))
+private theorem eval₂_sum_apply {σ : Type} [Fintype σ] (x : σ → ℂ) {d : ℕ} (A : (σ → ℂ) →L[ℂ] (Fin d → ℂ))
     (g : (σ → ℂ) → ℂ) {M : ℕ} (b : Fin M → analyticAtRing (A x)) (z : σ → ℂ) :
     eval₂ (preLinear x A) g (∑ j, C (b j) * X ^ (j : ℕ)) z = ∑ j, (b j).1 (A z) * g z ^ (j : ℕ) := by
   simp [eval₂_finsetSum, Finset.sum_apply, preLinear]
@@ -241,7 +155,7 @@ theorem IrreducibleGermPrimitiveForm.proof (hF : FiniteFibreGermIntegral.Stateme
 
   let _ : Algebra (holGerms (A x)) (germsAlong X x) := (alongPull X x A).toAlgebra
   have hα : Function.Injective (algebraMap (holGerms (A x)) (germsAlong X x)) := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro φ hφ
     obtain ⟨h, hh, hφh⟩ := φ.2
     have h1 : ((h ∘ A : (σ → ℂ) → ℂ) : Germ (𝓝[X] x) ℂ) = ((0 : (σ → ℂ) → ℂ) : Germ (𝓝[X] x) ℂ) := by

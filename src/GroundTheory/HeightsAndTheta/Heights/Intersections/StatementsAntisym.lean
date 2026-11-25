@@ -91,12 +91,6 @@ abbrev WIdx : T.WBlk → Type := T.wwIdx S.ι S.ν S.κ
 
 end ProjectiveLineBundle
 
-section Diag
-
-variable {ι ν κ : Type} [Fintype ι] [Fintype ν] [Fintype κ]
-
-end Diag
-
 section Powers
 
 variable {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fintype (ι k)]
@@ -112,12 +106,6 @@ def hermZpow (A : HermLine ι) (m : ℤ) : HermLine ι where
     rw [Pi.smul_apply, smul_eq_mul, ← _root_.zpow_mul, mul_comm]
 
 end Powers
-
-section Statements
-
-open ReciprocityTheory.ChartRestriction.G.AI
-
-end Statements
 
 section Inhabit
 

@@ -148,7 +148,7 @@ theorem definite_datum_form_pos :
     have key : ∀ τ, Nat.card {i // (e i).1 = τ} = n τ := fun τ => by
       rw [Nat.card_congr ((e.subtypeEquiv (q := fun s => s.1 = τ) fun _ => Iff.rfl).trans (Equiv.sigmaSubtype τ))]
       simp
-    exact ⟨_, fun i => (e i).1, fun τ => ⟨fun h => (key τ).trans (if_pos h), fun h => (key τ).trans (if_neg h)⟩⟩
+    exact ⟨_, fun i => (e i).1, fun τ => ⟨fun h => (key τ).trans (ite_eq_left h), fun h => (key τ).trans (ite_eq_right h)⟩⟩
   obtain ⟨Pe, hP⟩ := _root_.GlobalTheory.PeriodNonempty.exists_isPeriod E H D g ty hty
   have hcard : ∀ i, Nat.card {j // ty j = ty i} ≠ 0 := fun i =>
     haveI : Nonempty {j // ty j = ty i} := ⟨⟨i, rfl⟩⟩
@@ -507,7 +507,7 @@ theorem exists_isExp (T : PAT H (Sp ℂ)) (D : Datum H) (u : HolUnif T.t.G T.t.P
 set_option synthInstance.maxHeartbeats 200000 in
 set_option maxHeartbeats 400000 in
 theorem exists_isExp_of_isTen : ThetaUnifAV → Out.Laws → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (ω : ℂ) (C : Ell H ℂ ω) (u₀ : HolUnif C.P.A C.P.L C.P.g) (c : ℂ) (D : Datum H) (ε : ℤˣ) (h : D.La → D.La → OK H) (T : PAT H (Sp ℂ)) (t : IsTen C D h T), c ≠ 0 → PureType.IsQuadLattice u₀.Λ H.d c → 0 < ((ε : ℤ) : ℝ) * ω.im → IsKForm D ε h → (D.q = 0 ∧ 2 * ω - 1 = H.rt0) ∨ (D.p = 0 ∧ 2 * ω - 1 = -H.rt0) →
-  ∃ (g : ℕ) (ty : Fin g → (E →+* ℂ)) (Pe : D.La →+ (Fin g → ℂ)) (e : (Fin g → ℂ) → (Over.mk (spMap (RingHom.id ℂ)) ⟶ T.t.G)), IsTypeFn H D.p D.q ty ∧ IsExp T (RingHom.id ℂ) D ty Pe e ∧ (∀ a (z : ℂ), (e (z • Pe a)).left = (u₀.ex (fun _ => c * z) ≫ t.ten.tmul a).left) ∧
+  ∃ (g : ℕ) (ty : Fin g → (E →+* ℂ)) (Pe : D.La →+ (Fin g → ℂ)) (e : (Fin g → ℂ) → (Over.mk (spMap (RingHom.id ℂ)) ⟶ T.t.G)), IsTypeFn H D.p D.q ty ∧ IsExp T (RingHom.id ℂ) D ty Pe e ∧ (∀ a (z : ℂ), @Eq (Sp ℂ ⟶ T.t.G.left) (e (z • Pe a)).left (u₀.ex (fun _ => c * z) ≫ t.ten.tmul a).left) ∧
     ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (f : D.La →+ V), (∀ a, f (H.w0 • a) = ω • f a) → ∃ F : (Fin g → ℂ) →ₗ[ℂ] V, ∀ a, F (Pe a) = f a := by
   intro hT hL E _ _ _ H ω C u₀ c D ε h T t hc hΛ hε hh hsig
   obtain ⟨τ₀, hτ, hτv⟩ := LieChar.ell_char E H ℂ ω C

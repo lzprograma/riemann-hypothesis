@@ -32,48 +32,8 @@ public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.Theta
 public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.VcStHolds
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.PGrowth
 public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.BadFinite
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
-import Mathlib.RingTheory.PiTensorProduct
 import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.CmbTest
 import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.KgFacts
 import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.SeenFam
@@ -125,7 +85,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {a b : ℕ}
 private theorem position_sph (Z T : Finset (Pl E)) (L : Lv a b Z) (e : Pl E → Ex (Fin (a + 1) × Fin (b + 1)))
     (w : Pl E) (hw : w ∉ Z) : IsHecke (K2 a b w) (intersection_update_fsHerm_neg_one Z T L.ln e w) := by
   unfold intersection_update_fsHerm_neg_one
-  rw [if_neg hw]
+  rw [ite_eq_right hw]
   split_ifs
   · exact UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.exHecke2 E a b w (e w)
   · exact UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.exHecke2 E a b w .one
@@ -133,7 +93,7 @@ private theorem position_sph (Z T : Finset (Pl E)) (L : Lv a b Z) (e : Pl E → 
 private theorem position_Z (Z T : Finset (Pl E)) (L : Lv a b Z) (e : Pl E → Ex (Fin (a + 1) × Fin (b + 1)))
     (w : Pl E) (hw : w ∈ Z) : intersection_update_fsHerm_neg_one Z T L.ln e w = L.ln w := by
   unfold intersection_update_fsHerm_neg_one
-  rw [if_pos hw]
+  rw [ite_eq_left hw]
 
 private theorem position_comm (Z T T' : Finset (Pl E)) (L : Lv a b Z) (e e' : Pl E → Ex (Fin (a + 1) × Fin (b + 1))) (w : Pl E) :
     PositivityTheory.Rg.BcN.F2.mconv (intersection_update_fsHerm_neg_one Z T L.ln e w) (intersection_update_fsHerm_neg_one Z T' L.ln e' w) =
@@ -268,8 +228,6 @@ open scoped Classical
 
 
 namespace UpperTheory.Zero.ConvolutionTheory.EB
-
-attribute [local instance] borelG borelF borelA borelH
 
 section AlgExPf
 
@@ -522,8 +480,7 @@ private theorem core (a₀ : A) (x : B) {ρ : ℝ} (ha : p a₀ = 1) (hρ : 0 < 
   have hKc : IsCompact {χ : X | ρ' ≤ ‖Φ x χ‖} :=
     (isClosed_le continuous_const (continuous_norm.comp (map_continuous _))).isCompact
   obtain ⟨c, hc, δ, hδ, hcK⟩ := exists_sep Φ A p hKc (fun χ hχ => by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     exact absurd (hg χ hne) (not_lt.2 hχ))
   obtain ⟨b, hbdef⟩ : ∃ b : A, b = a₀ - 1 := ⟨_, rfl⟩
   have hb : p b = 0 := by rw [hbdef, map_sub, map_one, ha, sub_self]
@@ -601,18 +558,16 @@ private theorem core (a₀ : A) (x : B) {ρ : ℝ} (ha : p a₀ = 1) (hρ : 0 < 
           rw [hLdef]
           nlinarith
       _ < ρ := hn'
-  · push_neg at hcase
+  · push Not at hcase
     have hc0 := (hc.2 χ).2
     have hdt := hdχ χ
     have hxl : ‖Φ x χ‖ < ρ' := by
-      by_contra hx
-      push_neg at hx
+      by_contra! hx
       have := hcK χ hx
       have := sq_nonneg ‖Φ (b : B) χ‖
       linarith
     have hbl : ‖Φ (b : B) χ‖ ≤ ε := by
-      by_contra hbe
-      push_neg at hbe
+      by_contra! hbe
       have : ε ^ 2 < ‖Φ (b : B) χ‖ ^ 2 := by
         have := hε.le
         gcongr
@@ -668,8 +623,6 @@ open scoped Classical
 
 
 namespace UpperTheory.Zero.ConvolutionTheory.EB
-
-attribute [local instance] borelG borelF borelA borelH
 
 private lemma wdVal_map {B C Γ : Type} [CommRing B] [StarRing B] [Algebra ℂ B] [Ring C] [StarRing C] [Algebra ℂ C]
     (f : B →⋆ₐ[ℂ] C) (gen : Γ → B) (w : List (Γ × Bool)) :
@@ -970,8 +923,6 @@ open scoped Classical
 
 namespace UpperTheory.Zero.ConvolutionTheory.EB
 
-attribute [local instance] borelG borelF borelA borelH
-
 theorem peakRun : PeakRun := by
   intro E _ _ _ B Q _ χa χb Γ _ t arch a₀ x g ρ hG hK hT hHa hHb ha hv hψ hmul hadj hρ hs
   have hkeep : ∀ y, ∀ f ∈ Q, (t y).op f ∈ Q ∧ star (t y).op f ∈ Q := by
@@ -1137,8 +1088,6 @@ open UpperTheory.V.Z.Tf.GlobalTraceComparison
 open UpperTheory.V.Af.Bc (cPl)
 open scoped Classical
 
-set_option synthInstance.maxHeartbeats 200000
-
 namespace UpperTheory.Zero.ConvolutionTheory.EB
 
 attribute [local instance] borelG borelF borelA borelH
@@ -1176,27 +1125,34 @@ private theorem lef_zero (lam : Fin 0 → ℤ) (μ : Measure (G 0)) [μ.IsHaarMe
   rw [e, integral_const] at h2
   simpa [weylChar] using h2
 
-private theorem real_univ_ne (μ : Measure (G 0)) [μ.IsHaarMeasure] : (μ.real Set.univ : ℂ) ≠ 0 := by
+theorem real_univ_ne (μ : Measure (G 0)) [μ.IsHaarMeasure] : (μ.real Set.univ : ℂ) ≠ 0 := by
   have h1 : μ Set.univ ≠ 0 := (isOpen_univ.measure_pos μ Set.univ_nonempty).ne'
   have h2 : μ Set.univ ≠ ⊤ := (Set.subsingleton_of_subsingleton.isCompact.measure_lt_top).ne
   exact_mod_cast (ENNReal.toReal_ne_zero.2 ⟨h1, h2⟩)
 
-theorem cmbPi : PiTerm → TwTrSum → CmbPi := by
-  intro hPi hSum E _ _ _ hU n hn π hreg hdual
-  obtain ⟨l, hl, hP⟩ := hPi E hU n hn π hreg hdual
-  refine ⟨l, hl, ?_⟩
-  intro l₂ D A S hS Z hZ B τ hB hτ u₁ u₂ hu₁
-  haveI := A.ha
-  haveI := A.hb
-  have hμ : D.μ.IsHaarMeasure := by
-    obtain ⟨h1, -, h3, h4⟩ := D.haar
-    exact { }
-  obtain ⟨c₀, hc₀, hc⟩ := hP S hS Z hZ B τ hB hτ u₁ hu₁ A.μa D.μ A.ha hμ
-  have hvol : A.blk.vol ≠ 0 := (ffAlg E n 0 l l₂ D A S hS).1
-  have hm := real_univ_ne A.μb
-  generalize hmdef : (A.μb.real Set.univ : ℂ) = m at hm
-  refine ⟨c₀ * A.blk.vol⁻¹ * (m⁻¹) ^ Fintype.card (InfinitePlace E),
-    mul_ne_zero (mul_ne_zero hc₀ (inv_ne_zero hvol)) (pow_ne_zero _ (inv_ne_zero hm)), ?_⟩
+theorem cmbPi_core (hSum : TwTrSum) (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ)
+    (l : InfinitePlace E → DomWeight n) (l₂ : InfinitePlace E → DomWeight 0) (D : Dom E n 0) (A : Ar l l₂ D)
+    (u₁ : GL (Fin n) E) (u₂ : GL (Fin 0) E) (π : CuspSub E n)
+    (S : Set (Pl E)) (Z : Finset (Pl E)) (hZ : SplitIn S Z) (B : Pl E → Multiset ℂˣ)
+    (τ : ∀ w : Pl E, SmIrr (GLw n w)) (c₀ : ℂ) (m : ℂ) (hm : m ≠ 0)
+    (hmdef : (A.μb.real Set.univ : ℂ) = m)
+    (hc : ∀ (φ ψ : ∀ w : Pl E, LF n 0 w), (∀ w ∈ Z, Lc (K2 n 0 w) (φ w) ∧ Lc (K2 n 0 w) (ψ w)) →
+      ∀ (T : Finset (Pl E)), Disjoint T Z →
+      ∀ (e₁ e₂ : Pl E → Ex (Fin (n + 1) × Fin (0 + 1)))
+        (ka : ∀ v : InfinitePlace E, Mat n → ((lefE n (l v).w).V →L[ℂ] (lefE n (l v).w).V))
+        (va : InfinitePlace E → Inf n → ℂ) (T' : ℝ),
+        TEv S T e₂ → (∀ v, IsMult A.μa (lefE n (l v).w) (ka v) (va v) T') →
+        IsTwTr D.μ π
+          (phiProd (fun v => (l v).w) ka
+            (finU S u₁ (intersection_update_fsHerm_neg_one Z T φ e₁) (intersection_update_fsHerm_neg_one Z T ψ e₂)))
+          (c₀ * (∏ v, va v (infOf (l v).w)) * (∏ w ∈ Z, trc (τ w).ρ (KGL w (n := n)) fun g => seen φ ψ w (g, 1)) *
+            val T e₁ e₂ B 0)) :
+    ∀ (L : Lv n 0 Z) φ T (e₁ e₂ : Pl E → Ex (Fin (n + 1) × Fin (0 + 1))) (C : Cmb A.blk) (R : ℝ),
+      L.Fix φ → TEv S T e₂ → Disjoint T Z → C.Ok (rt u₁ u₂ (A.fx S L T φ e₁ e₂)) R →
+      IsTwTr D.μ π (trM C.Φ A.tw)
+        (c₀ * A.blk.vol⁻¹ * (m⁻¹) ^ Fintype.card (InfinitePlace E) * C.val (chi l) (chi l₂) *
+          (∏ w ∈ Z, trc (τ w).ρ (KGL w (n := n)) fun g => φ w (g, 1)) * val T e₁ e₂ B 0) := by
+  have := A.hb
   intro L φ T e₁ e₂ C R hφ hTE hTZ hC
   have hLc : ∀ w ∈ Z, Lc (K2 n 0 w) (φ w) ∧ Lc (K2 n 0 w) (L.ln w) := by
     intro w hw
@@ -1206,7 +1162,7 @@ theorem cmbPi : PiTerm → TwTrSum → CmbPi := by
     intro w hw
     have h := ((locAlg E n 0 Z L w).2.2.2.1 (φ w) (hφ w hw)).1
     funext g
-    simp only [seen, if_pos (hZ w hw).2]
+    simp only [seen, ite_eq_left (hZ w hw).2]
     exact congrFun h (g, 1)
   have hX : (∏ w ∈ Z, trc (τ w).ρ (KGL w (n := n)) fun g => seen φ L.ln w (g, 1)) =
       ∏ w ∈ Z, trc (τ w).ρ (KGL w (n := n)) fun g => φ w (g, 1) :=
@@ -1288,6 +1244,24 @@ theorem cmbPi : PiTerm → TwTrSum → CmbPi := by
     exact Finset.sum_congr rfl fun j _ => by ring
   rw [e1, e2]
   exact hS'
+
+theorem cmbPi : PiTerm → TwTrSum → CmbPi := by
+  intro hPi hSum E _ _ _ hU n hn π hreg hdual
+  obtain ⟨l, hl, hP⟩ := hPi E hU n hn π hreg hdual
+  refine ⟨l, hl, ?_⟩
+  intro l₂ D A S hS Z hZ B τ hB hτ u₁ u₂ hu₁
+  haveI := A.ha
+  haveI := A.hb
+  have hμ : D.μ.IsHaarMeasure := by
+    obtain ⟨h1, -, h3, h4⟩ := D.haar
+    exact { }
+  obtain ⟨c₀, hc₀, hc⟩ := hP S hS Z hZ B τ hB hτ u₁ hu₁ A.μa D.μ A.ha hμ
+  have hvol : A.blk.vol ≠ 0 := (ffAlg E n 0 l l₂ D A S hS).1
+  have hm := real_univ_ne A.μb
+  generalize hmdef : (A.μb.real Set.univ : ℂ) = m at hm
+  refine ⟨c₀ * A.blk.vol⁻¹ * (m⁻¹) ^ Fintype.card (InfinitePlace E),
+    mul_ne_zero (mul_ne_zero hc₀ (inv_ne_zero hvol)) (pow_ne_zero _ (inv_ne_zero hm)), ?_⟩
+  exact cmbPi_core hSum E n l l₂ D A u₁ u₂ π S Z hZ B τ c₀ m hm hmdef hc
 
 end UpperTheory.Zero.ConvolutionTheory.EB
 end -- clump:auto

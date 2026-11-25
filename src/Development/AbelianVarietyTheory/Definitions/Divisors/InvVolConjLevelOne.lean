@@ -54,8 +54,6 @@ namespace GlobalTheory.FunObj
 
 open GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StepData GlobalTheory.StdFrames Formalism.L2.Host Formalism.L2.DIV ValuativeRel
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
-
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts}
 
 def finG (V : HSp D) : GfC V →* GL (Fin V.rank) (Lev.EAf D) := (Lev.finE V).comp (GfC V).subtype
@@ -333,8 +331,8 @@ theorem vCore_smul (a b : ℂ) (Ψ F) : S.vCore t Φ (a • Ψ) (b • F) = a * 
   rw [mul_finsum]
   refine finsum_congr fun β => ?_
   by_cases hβ : β ∈ S.supp t Φ
-  · rw [finsum_eq_if, finsum_eq_if, if_pos hβ, if_pos hβ, h]; ring
-  · rw [finsum_eq_if, finsum_eq_if, if_neg hβ, if_neg hβ, mul_zero]
+  · rw [finsum_eq_if, finsum_eq_if, ite_eq_left hβ, ite_eq_left hβ, h]; ring
+  · rw [finsum_eq_if, finsum_eq_if, ite_eq_right hβ, ite_eq_right hβ, mul_zero]
 
 variable {S t Φ}
 
@@ -376,8 +374,6 @@ end GlobalTheory.FunObj
 namespace GlobalTheory.FunObj
 
 open GlobalTheory.ChiGrid Formalism.L2.DIV
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 T : Type} {A : FamIn D.what₂.LL Γ Pl0 T D.R.m}
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat D A Ks} {sc : Consts}

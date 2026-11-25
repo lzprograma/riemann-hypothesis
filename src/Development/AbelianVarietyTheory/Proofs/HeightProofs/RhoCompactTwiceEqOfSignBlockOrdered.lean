@@ -13,46 +13,7 @@ public import Development.AbelianVarietyTheory.Proofs.HeightProofs.HighestWeight
 public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsKStableOnOfLieStableFiniteDim
 public import Development.AbelianVarietyTheory.Proofs.HeightProofs.TorusWeightVectorIffCartanWeightVector
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -170,20 +131,6 @@ theorem isDS_const_iff (s : Bool) (lam : Fin n → ℝ) (σ : Matrix (Fin n) (Fi
       rw [cdom_antisymm (h4.2.2.2.2 μ v hv hv0 hw) (hS.2.2.2.2 _ v' hv' hv0' hw')]
 
 end Iso
-
-section Adelic
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-variable {D : D7}
-
-end Adelic
-
-section Degree
-
-variable {D : D7}
-
-end Degree
 
 section Low
 
@@ -334,7 +281,7 @@ theorem isHW_of_isKTypeOf (h : BlockOrd e ε) (hσ : Factors R.U e σ) (μ : Ix 
   have h2 := hS.2.2.2.2 _ _ hm (fun h0 => hu (R.ι_inj (by rw [h0, map_zero]))) h1
   have h3 : CDom ε (fun i => (μ (e.symm i) : ℝ)) ((fun i => (μ (e.symm i) : ℝ)) + Formalism.REAL.root (e a) (e b)) := by
     refine ⟨fun i j => if i = e a ∧ j = e b then 1 else 0, fun i j hij => ?_, ?_⟩
-    · have : i = e a ∧ j = e b := by by_contra hn; exact hij (if_neg hn)
+    · have : i = e a ∧ j = e b := by by_contra hn; exact hij (ite_eq_right hn)
       rw [this.1, this.2]; exact hab'
     · simp [ite_and]
   have h4 := congrFun (cdom_antisymm h2 h3) (e a)
@@ -456,7 +403,7 @@ theorem weight_int {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     simpa using this.symm
   obtain ⟨m, hm⟩ := Complex.exp_eq_one_iff.1 e2
   refine ⟨m, ?_⟩
-  simp only [Pi.single_apply, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at hm
+  simp only [Pi.single_apply, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at hm
   have h3 : ((μ i : ℝ) : ℂ) = m := by
     refine mul_right_cancel₀ Complex.two_pi_I_ne_zero ?_
     rw [← hm]; push_cast; ring

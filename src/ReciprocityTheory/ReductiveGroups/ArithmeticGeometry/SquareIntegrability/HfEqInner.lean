@@ -90,12 +90,12 @@ theorem mulc_mem {dim : (E →+* ℂ) → ℕ} (I : Submodule ℤ (Vsp dim))
     ext j
     simp only [prj, mulc, PiLp.toLp_apply]
     by_cases hj : j.1 = σ
-    · rw [if_pos hj, hj, Finset.prod_eq_one, one_mul]
+    · rw [ite_eq_left hj, hj, Finset.prod_eq_one, one_mul]
       intro τ hτ
       have hne := hα τ (Finset.ne_of_mem_erase hτ)
       simp only [c]
       exact mul_inv_cancel₀ (sub_ne_zero.2 hne)
-    · rw [if_neg hj, Finset.prod_eq_zero (i := j.1) (Finset.mem_erase.2 ⟨hj, Finset.mem_univ _⟩), zero_mul]
+    · rw [ite_eq_right hj, Finset.prod_eq_zero (i := j.1) (Finset.mem_erase.2 ⟨hj, Finset.mem_univ _⟩), zero_mul]
       simp [c]
   rw [this]
   exact hprod _ v hv
@@ -106,8 +106,8 @@ theorem Hf_prj {dim : (E →+* ℂ) → ℕ} {σ : E →+* ℂ} {ξ : Vsp dim} (
   refine Finset.sum_congr rfl fun j _ => ?_
   simp only [prj, PiLp.toLp_apply]
   by_cases hj : j.1 = σ
-  · rw [if_pos hj]
-  · rw [if_neg hj, hξ j hj]; simp
+  · rw [ite_eq_left hj]
+  · rw [ite_eq_right hj, hξ j hj]; simp
 
 theorem prj_inpart {dim : (E →+* ℂ) → ℕ} (σ : E →+* ℂ) (a : Vsp dim) : InPart σ (prj σ a) := by
   intro j hj; simp [prj, hj]
@@ -156,7 +156,7 @@ theorem onb_data (X : PT E) (I : Submodule ℤ (Vsp X.dim)) (σ : E →+* ℂ) (
     have hk0 : k.val < ρ := hk
     have hk0' : k'.val < ρ := hk'
     show inner ℂ (vv k) (vv k') = if (⟨k, hk⟩ : {k : Fin N | k.val < ρ}) = ⟨k', hk'⟩ then 1 else 0
-    simp only [vv, dif_pos hk0, dif_pos hk0', Submodule.coe_inner, hw_inner]
+    simp only [vv, dite_eq_left hk0, dite_eq_left hk0', Submodule.coe_inner, hw_inner]
     simp [Fin.ext_iff, Subtype.ext_iff]
   obtain ⟨bb, hbb⟩ := Orthonormal.exists_orthonormalBasis_extension_of_card_eq (𝕜 := ℂ)
     (E := VP (dim := X.dim) σ) (ι := Fin N) (by simp [hN]) hon'

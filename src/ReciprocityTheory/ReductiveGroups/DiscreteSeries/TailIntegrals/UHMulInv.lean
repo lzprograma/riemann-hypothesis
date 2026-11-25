@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.HermitianFormBaseVectorRight
 public import Formalism.HermitianCurvature.StatementB
 import Mathlib.Tactic.TypeStar
 import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
@@ -70,30 +71,17 @@ theorem Hpk_mid {i : Fin (2 * r + k + 1)} (h : ¬(i.val < r ∨ r + k < i.val)) 
 theorem Hpk_mulVec (v : Fin (2 * r + k + 1) → ℂ) (i : Fin (2 * r + k + 1)) :
     (Hpk k r *ᵥ v) i = if i.val < r ∨ r + k < i.val then v ⟨2 * r + k - i.val, by omega⟩
       else if i.val = r + k then -v i else v i := by
-  simp only [mulVec, dotProduct]
-  by_cases h1 : i.val < r ∨ r + k < i.val
-  · rw [if_pos h1]
-    simp only [Hpk_out k r h1]
-    rw [Finset.sum_eq_single ⟨2 * r + k - i.val, by omega⟩]
-    · simp
-    · intro b _ hb; rw [if_neg (fun h => hb (Fin.ext h))]; simp
-    · simp
-  · rw [if_neg h1]
-    simp only [Hpk_mid k r h1]
-    rw [Finset.sum_eq_single i]
-    · split_ifs <;> first | (exfalso; omega) | simp
-    · intro b _ hb; rw [if_neg (fun h => hb (Fin.ext h))]; simp
-    · simp
+  apply ReciprocityTheory.ChartRestriction.DS.Xi.RankOneLeviIdentities.hpk_mulVec' <;> assumption
 
 theorem Hpk_mulVec_mulVec (v : Fin (2 * r + k + 1) → ℂ) : Hpk k r *ᵥ (Hpk k r *ᵥ v) = v := by
   ext i
   rw [Hpk_mulVec]
   by_cases h1 : i.val < r ∨ r + k < i.val
-  · rw [if_pos h1, Hpk_mulVec]
+  · rw [ite_eq_left h1, Hpk_mulVec]
     have e1 : ((⟨2 * r + k - i.val, by omega⟩ : Fin (2 * r + k + 1)).val) = 2 * r + k - i.val := rfl
-    rw [if_pos (by rw [e1]; omega)]
+    rw [ite_eq_left (by rw [e1]; omega)]
     congr 1; ext; simp; omega
-  · rw [if_neg h1, Hpk_mulVec, if_neg h1]
+  · rw [ite_eq_right h1, Hpk_mulVec, ite_eq_right h1]
     split_ifs <;> simp
 
 theorem Hpk_sq : Hpk k r * Hpk k r = 1 :=

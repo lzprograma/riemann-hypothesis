@@ -147,7 +147,6 @@ theorem _root_.GlobalTheory.ExtLatMatrix.extLat_matrix_integral : ∀ (K : Type)
       intro k
       have e : ((((B⁻¹ : GL (Fin a) K) : Matrix (Fin a) (Fin a) K).map σ) *ᵥ (fun i => σ (m i))) k =
           σ ((((B⁻¹ : GL (Fin a) K) : Matrix (Fin a) (Fin a) K) *ᵥ m) k) := by
-        set_option synthInstance.maxHeartbeats 100000 in
           simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
       rw [e, hBm, Pi.smul_apply, smul_eq_mul, map_mul, map_mul]
       refine mul_le_one' (hunit t ht) ((h _).2 ?_)

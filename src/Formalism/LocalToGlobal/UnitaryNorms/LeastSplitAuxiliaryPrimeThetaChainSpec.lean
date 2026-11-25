@@ -90,24 +90,6 @@ theorem split_prime_mod_divisor_eq_one {m : ℕ} (hm : m ∣ AbsolutelyIrreducib
 theorem q0_mod_eq_one_of_dvd_condE {m : ℕ} (hm : m ∣ LevelStarExponents.condE D) (h2 : 2 ≤ m) : AbsolutelyIrreducibleSpan.q0 D % m = 1 := by
   exact split_prime_mod_divisor_eq_one D (Dvd.dvd.mul_left hm _) h2
 
-theorem leastSplitAuxiliaryPrime_ne_typePrimes : AbsolutelyIrreducibleSpan.q0 D ≠ D.host.pde ∧ AbsolutelyIrreducibleSpan.q0 D ≠ D.host.pde' := by
-  have h1 := (AbsolutelyIrreducibleSpan.auxiliary_prime_mem (D := D)).2.1
-  have hr := (AbsolutelyIrreducibleSpan.rPr_mem (D := D)).2
-  have hd : AbsolutelyIrreducibleSpan.rPr D ∣ AbsolutelyIrreducibleSpan.q0 D - 1 := by
-    have h := Nat.div_add_mod (AbsolutelyIrreducibleSpan.q0 D) (AbsolutelyIrreducibleSpan.rPr D * LevelStarExponents.condE D)
-    rw [h1] at h
-    have e : AbsolutelyIrreducibleSpan.q0 D - 1 = AbsolutelyIrreducibleSpan.rPr D * LevelStarExponents.condE D * (AbsolutelyIrreducibleSpan.q0 D / (AbsolutelyIrreducibleSpan.rPr D * LevelStarExponents.condE D)) := by
-      omega
-    rw [e, mul_assoc]
-    exact dvd_mul_right _ _
-  constructor
-  · intro he
-    rw [he] at hd
-    exact hr (dvd_mul_of_dvd_left (dvd_mul_of_dvd_left (dvd_mul_of_dvd_right hd _) _) _)
-  · intro he
-    rw [he] at hd
-    exact hr (dvd_mul_of_dvd_left (dvd_mul_of_dvd_right hd _) _)
-
 theorem q0_ne_two_and_ne_q_and_ne_d : AbsolutelyIrreducibleSpan.q0 D ≠ 2 ∧ AbsolutelyIrreducibleSpan.q0 D ≠ D.host.q ∧ AbsolutelyIrreducibleSpan.q0 D ≠ D.host.d := by
   have hb := D.host.qd_big
   have hq : D.host.q ∣ LevelStarExponents.condE D := by

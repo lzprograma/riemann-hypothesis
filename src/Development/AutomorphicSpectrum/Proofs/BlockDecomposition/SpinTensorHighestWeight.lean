@@ -15,59 +15,8 @@ public import Mathlib.Order.Interval.Finset.Fin
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.IsCoreMod
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SpinGlRelationsAdjoint
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.Lemma
-import Mathlib.Algebra.Order.Star.Int
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.Style
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SchwartzBilinear.EigenvectorsSumZeroEqZero, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AnnihilatorSpannedByWeightVectors, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CasimirEqOfSingularWeightVector, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CasimirEqOfSingularWeightVectorStatement, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CasimirElement, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfLowExponentCasimir, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LowSpanInfIdealLeSquareSpan, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NatOfSimpleLoweringNilpotent, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SimpleLoweringPowMemIdeal, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WeightVectorMemLowSpanSupVerma, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LoweringWordsSpan, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SpinTensorHighestWeight
@@ -95,7 +44,7 @@ theorem eigenvectors_sum_zero_eq_zero {ι κ A : Type} [DecidableEq ι] [AddComm
         exact absurd (hall b hb) hba
       rw [← h1]
       exact hsum
-    · push_neg at hall
+    · push Not at hall
       obtain ⟨b, hb, hba⟩ := hall
       have hfb : f b ≠ f a := fun h => hba (hf h)
       obtain ⟨k, hk⟩ : ∃ k, f b k ≠ f a k := Function.ne_iff.mp hfb
@@ -242,7 +191,7 @@ theorem cas_mul_sub_mem_Jp (y : U n) (τ : Fin n → ℂ)
       have hval : e (a, b) * e (b, a) * y -
           ((if a = b then τ a ^ 2 else 0) + (if a < b then τ a - τ b else 0)) • y =
           e (b, a) * (e (a, b) * y) + (e (a, a) * y - τ a • y) - (e (b, b) * y - τ b • y) := by
-        rw [if_neg h.ne, if_pos h, hcomm, zero_add, sub_smul]
+        rw [ite_eq_right h.ne, ite_eq_left h, hcomm, zero_add, sub_smul]
         simp only [add_mul, sub_mul, mul_assoc]
         abel
       rw [hval]
@@ -251,7 +200,7 @@ theorem cas_mul_sub_mem_Jp (y : U n) (τ : Fin n → ℂ)
       have hval : e (a, a) * e (a, a) * y -
           ((if a = a then τ a ^ 2 else 0) + (if a < a then τ a - τ a else 0)) • y =
           e (a, a) * (e (a, a) * y - τ a • y) + τ a • (e (a, a) * y - τ a • y) := by
-        simp only [if_true, lt_irrefl, if_false, add_zero, mul_sub, mul_smul_comm, smul_sub,
+        simp only [ite_true, lt_irrefl, ite_false, add_zero, mul_sub, mul_smul_comm, smul_sub,
           smul_smul, mul_assoc, pow_two]
         abel
       rw [hval]
@@ -259,13 +208,13 @@ theorem cas_mul_sub_mem_Jp (y : U n) (τ : Fin n → ℂ)
     · have hval : e (a, b) * e (b, a) * y -
           ((if a = b then τ a ^ 2 else 0) + (if a < b then τ a - τ b else 0)) • y =
           e (a, b) * (e (b, a) * y) := by
-        rw [if_neg h.ne', if_neg h.not_gt]
+        rw [ite_eq_right h.ne', ite_eq_right h.not_gt]
         simp [mul_assoc]
       rw [hval]
       exact mul_mem_Jp _ (hu _ h)
   have hsum : casC τ = ∑ a, ∑ b : Fin n,
       ((if a = b then τ a ^ 2 else 0) + (if a < b then τ a - τ b else 0)) := by
-    simp only [casC, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [casC, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   have hval : Formalism.REAL.Cas (fun a b : Fin n => e (a, b)) * y - casC τ • y =
       ∑ a, ∑ b : Fin n, (e (a, b) * e (b, a) * y -
         ((if a = b then τ a ^ 2 else 0) + (if a < b then τ a - τ b else 0)) • y) := by
@@ -407,7 +356,7 @@ theorem sum_wt_mul (m : Fin n × Fin n →₀ ℕ) (f : Fin n → ℤ) :
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => ?_
   simp only [rootAt, mul_sub, sub_mul, mul_ite, ite_mul, mul_one, mul_zero, zero_mul,
-    Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem lt_of_step {f : Fin n → ℤ} (h : ∀ i j : Fin n, (j : ℕ) = i + 1 → f j < f i) :
     ∀ (d : ℕ) (i j : Fin n), (j : ℕ) = i + d + 1 → f j < f i := by
@@ -631,7 +580,7 @@ theorem e_upper_mul_pow_succ_eq {i j : Fin n} (hij : (j : ℕ) = i + 1) (m : ℕ
   have hne : i ≠ j := fun h => by rw [h] at hij; omega
   have hxy : e (i, j) * e (j, i) = e (j, i) * e (i, j) + (e (i, i) - e (j, j)) := by
     have := e_mul_sub_mul (i, j) (j, i)
-    simp only [if_true] at this
+    simp only [ite_true] at this
     rw [← this]; abel
   have hh : ∀ p : ℕ, (e (i, i) - e (j, j)) * e (j, i) ^ p =
       e (j, i) ^ p * (e (i, i) - e (j, j)) - (2 * (p : ℂ)) • e (j, i) ^ p := by
@@ -969,8 +918,6 @@ open PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.R
 open GroundTheory.Automorphic.HarishChandra
 
 namespace GlobalTheory.CompanionTheory.PresRho
-
-attribute [local instance 100] LieRing.ofAssociativeRing
 
 variable {n : ℕ}
 
@@ -1361,7 +1308,7 @@ theorem exists_spin_map : ∀ {n : ℕ} {ι : Type} [Fintype ι] [DecidableEq ι
     intro d hd
     rw [LinearMap.mem_ker] at hd ⊢
     let coef : List (Fin n × Fin n) → ℂ := fun l => if h : ∀ p ∈ l, p.2 < p.1 then d ⟨l, h⟩ else 0
-    have hcoef : ∀ t : Lw n, coef t.1 = d t := fun t => dif_pos t.2
+    have hcoef : ∀ t : Lw n, coef t.1 = d t := fun t => dite_eq_left t.2
     have key := _root_.GlobalTheory.CompanionTheory.PresRho.pres_rho (tw S) (tw E) hwS hwE q hq0
       (fun a => by
         simp only [tw, LinearMap.neg_apply, hSapp, hqd a]

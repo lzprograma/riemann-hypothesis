@@ -97,8 +97,7 @@ private theorem cc_lemma_3 {σ τ : Type} [Finite σ] {f : MvPowerSeries σ C}
   by_cases he : e = 0
   · rw [he, coeff_zero_eq_constantCoeff_apply, hf, zero_smul]
   · obtain ⟨s, hs⟩ : ∃ s, e s ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact he (Finsupp.ext fun s => by simpa using h s)
     have hp : constantCoeff (e.prod fun s n => a s ^ n) = 0 := by
       rw [Finsupp.prod, map_prod]
@@ -148,8 +147,7 @@ theorem lgCurve_zero (G : LogFGL v d) (a : Fin d) : G.lgCurve 0 a = 0 := by
   by_cases hn : n = 0
   · rw [hn, coeff_zero_eq_constantCoeff_apply, G.lg_const a, zero_smul]
   · obtain ⟨s, hs⟩ : ∃ s, n s ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hn (Finsupp.ext fun s => by simpa using h s)
     have hp : (n.prod fun s k => (0 : Fin d → PowerSeries C) s ^ k) = 0 := by
       rw [Finsupp.prod]
@@ -233,7 +231,7 @@ theorem degree_eq_one {σ : Type} {e : σ →₀ ℕ} (he : e.degree = 1) :
   ext i
   by_cases hi : i = b
   · rw [hi, heb, Finsupp.single_eq_same]
-  · rw [Finsupp.single_apply, if_neg (Ne.symm hi)]
+  · rw [Finsupp.single_apply, ite_eq_right (Ne.symm hi)]
     by_cases his : i ∈ e.support
     · exact (Finset.sum_eq_zero_iff.mp hrest) i (Finset.mem_erase.mpr ⟨hi, his⟩)
     · by_contra hc
@@ -254,8 +252,8 @@ theorem order_lg_sub_X (G : LogFGL v d) (a : Fin d) : ((2 : ℕ) : ℕ∞) ≤ (
   · obtain ⟨b, rfl⟩ := degree_eq_one h1
     rw [G.lg_lin, coeff_X]
     by_cases hab : a = b
-    · rw [hab, if_pos rfl, if_pos rfl, sub_self]
-    · rw [if_neg hab, if_neg (fun h => hab ((Finsupp.single_left_injective one_ne_zero h).symm)),
+    · rw [hab, ite_eq_left rfl, ite_eq_left rfl, sub_self]
+    · rw [ite_eq_right hab, ite_eq_right (fun h => hab ((Finsupp.single_left_injective one_ne_zero h).symm)),
         sub_zero]
 
 theorem coeff_lgCurve_low (G : LogFGL v d) {ga : Fin d → PowerSeries C} {k : ℕ} (hk1 : 1 ≤ k)

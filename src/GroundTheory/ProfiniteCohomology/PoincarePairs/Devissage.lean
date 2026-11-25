@@ -19,8 +19,6 @@ open CategoryTheory MonoidalCategory Limits
 
 universe u
 
-attribute [local instance 2000] Rep.hV2
-
 section Sequence
 
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
@@ -192,13 +190,38 @@ variable {φ} {n : ℕ} [NeZero n] {D : Rep.{u} (ULift.{u} ℤ) G} [IsDiscreteRe
   {t : compactCohomologyRes φ D 3 →+ ZMod n} {U₀ : OpenSubgroup G}
   (H : CompactGroupDualityHypotheses φ n D t U₀)
 
+def toDevissageData : DualityDevissageData 3 n D (fun _ => True) (fun s => -(-1 : ℤ) ^ s) where
+  H M _ k := compactCohomologyRes φ M k
+  Hmap f k := compactCohomologyResMap φ f k
+  Hδ hS k := compactδRes φ hS k
+  duality h M _ _ := compactDualityMap φ D h t M
+  nonempty_addEquiv := H.nonempty_addEquiv
+  hσ s := by rcases neg_one_pow_eq_or ℤ s with h | h <;> rw [h] <;> simp
+  subsingleton_top := H.subsingleton_four
+  exists_embed := by
+    intro M _ _ hM
+    obtain ⟨W, hW, J, _, i, hi⟩ := exists_injective_biproduct_coind_le (n := n) U₀ M hM
+    exact ⟨W, J, inferInstance, i, hi, fun h _ =>
+      bijective_compactDualityMap_biproduct φ D h t _ fun _ => H.bijective_coind W hW h⟩
+  Hmap_comp := by intro A B C _ _ _ f g k; exact compactCohomologyResMap_comp φ f g k
+  Hmap_zero := by intro A B _ _ k; exact compactCohomologyResMap_zero φ k
+  exact₃ := by intro S _ _ _ hS k; exact (ShortComplex.moduleCat_exact_iff _).1 (compactRes_exact₃ φ hS k)
+  exact₁ := by intro S _ _ _ hS k; exact (ShortComplex.moduleCat_exact_iff _).1 (compactRes_exact₁ φ hS k)
+  nsmul_H := by intro M _ hM k; exact nsmul_compactCohomologyRes_eq_zero φ hM k
+  duality_cohomologyMap := by
+    intro r s h M N _ _ _ _ f x y
+    exact compactDualityMap_cohomologyMap φ D h t f x y
+  duality_δ := by
+    intro S _ _ _ _ _ _ hS hT r s h₁ h₀ _ q y
+    exact compactDualityMap_δ φ D t hS hT h₁ h₀ q y
+
 include H in
 theorem finite_D : Finite D :=
-  finite_of_nonempty_addEquiv H.nonempty_addEquiv
+  H.toDevissageData.finite_D
 
 include H in
 theorem nsmul_D (d : D) : n • d = 0 :=
-  nsmul_eq_zero_of_nonempty_addEquiv H.nonempty_addEquiv d
+  H.toDevissageData.nsmul_D d
 
 
 include H in
@@ -208,31 +231,9 @@ theorem exists_devissage (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Fini
       (_ : Finite Q) (i : M ⟶ I) (p : I ⟶ Q) (w : i ≫ p = 0),
       (ShortComplex.mk i p w).ShortExact ∧ (∀ x : I, n • x = 0) ∧ (∀ x : Q, n • x = 0) ∧
       ∀ {r s : ℕ} (h : r + s = 3), Function.Bijective (compactDualityMap φ D h t I) := by
-  obtain ⟨W, hW, J, _, i, hi⟩ := exists_injective_biproduct_coind_le (n := n) U₀ M hM
-  have hφ : ∀ {r s : ℕ} (h : r + s = 3), Function.Bijective (compactDualityMap φ D h t
-      (⨁ fun _ : J => Rep.coind (W : Subgroup G).subtype (zmodRep.{u} (W : Subgroup G) n) :
-        Rep.{u} (ULift.{u} ℤ) G)) :=
-    fun h => bijective_compactDualityMap_biproduct φ D h t _ fun _ => H.bijective_coind W hW h
-  have hnI : ∀ x : ((⨁ fun _ : J => Rep.coind (W : Subgroup G).subtype
-      (zmodRep.{u} (W : Subgroup G) n) : Rep.{u} (ULift.{u} ℤ) G) : Type u), n • x = 0 := by
-    intro x
-    rw [biproduct_eq_sum _ x, Finset.smul_sum]
-    refine Finset.sum_eq_zero fun j _ => ?_
-    rw [← map_nsmul, nsmul_coind_zmodRep_eq_zero W, map_zero]
-  have hmono : Mono i := (Rep.mono_iff_injective i).2 hi
-  let S := ShortComplex.mk i (cokernel.π i) (cokernel.condition i)
-  have hS : S.ShortExact :=
-    ShortComplex.ShortExact.mk' (S.exact_of_g_is_cokernel (cokernelIsCokernel i)) hmono
-      (inferInstance : Epi (cokernel.π i))
-  have hQd : IsDiscreteRep (cokernel i) := isDiscreteRep_X₃_of_shortExact hS
-  have hsurj : Function.Surjective (cokernel.π i).hom :=
-    (Rep.epi_iff_surjective _).1 inferInstance
-  have hQf : Finite ((cokernel i : Rep.{u} (ULift.{u} ℤ) G) : Type u) :=
-    Finite.of_surjective _ hsurj
-  refine ⟨_, cokernel i, inferInstance, hQd, inferInstance, hQf, i, cokernel.π i,
-    cokernel.condition i, hS, hnI, fun x => ?_, hφ⟩
-  obtain ⟨y, rfl⟩ := hsurj x
-  rw [← map_nsmul, hnI, map_zero]
+  obtain ⟨I, Q, _, _, _, _, i, p, w, hS, hnI, hnQ, hI⟩ := H.toDevissageData.exists_devissage M hM
+  exact ⟨I, Q, inferInstance, inferInstance, inferInstance, inferInstance, i, p, w, hS, hnI, hnQ,
+    fun h => hI h trivial⟩
 
 end CompactGroupDualityHypotheses
 
@@ -254,62 +255,21 @@ variable (H : CompactGroupDualityHypotheses φ n D t U₀)
 include H in
 theorem injective_zero (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M]
     (hM : ∀ m : M, n • m = 0) :
-    Function.Injective (compactDualityMap φ D (rfl : 0 + 3 = 3) t M) := by
-  have := H.finite_D
-  obtain ⟨I, Q, _, _, _, _, i, p, w, hS, hnI, hnQ, hI⟩ := H.exists_devissage M hM
-  have hi : Function.Injective i.hom := (Rep.mono_iff_injective i).1 hS.mono_f
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
-  intro x hx
-  have h1 : compactDualityMap φ D (rfl : 0 + 3 = 3) t I ((cohomologyMap i 0).hom x) = 0 := by
-    ext y
-    rw [compactDualityMap_cohomologyMap φ D (rfl : 0 + 3 = 3) t i x y, hx]
-    rfl
-  have h2 : (cohomologyMap i 0).hom x = 0 :=
-    (injective_iff_map_eq_zero _).1 (hI (rfl : 0 + 3 = 3)).1 _ h1
-  exact (injective_iff_map_eq_zero _).1 (injective_cohomologyMap_zero i hi) x h2
+    Function.Injective (compactDualityMap φ D (rfl : 0 + 3 = 3) t M) :=
+  H.toDevissageData.injective_zero trivial M hM
 
 
 include H in
 theorem surjective_zero (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M]
     (hM : ∀ m : M, n • m = 0) :
-    Function.Surjective (compactDualityMap φ D (rfl : 0 + 3 = 3) t M) := by
-  have := H.finite_D
-  obtain ⟨I, Q, _, _, _, _, i, p, w, hS, hnI, hnQ, hI⟩ := H.exists_devissage M hM
-  let S := ShortComplex.mk i p w
-  have hT : (dualShortComplex D S).ShortExact :=
-    dualShortComplex_shortExact H.nonempty_addEquiv hS hnI
-  have hsurj : Function.Surjective (compactCohomologyResMap φ (dualMap D i) 3).hom := by
-    intro y
-    have : Subsingleton (compactCohomologyRes φ (dualRep D Q) 4) :=
-      H.subsingleton_four (dualRep D Q) (nsmul_dualRep_eq_zero H.nsmul_D)
-    exact (ShortComplex.moduleCat_exact_iff _).1 (compactRes_exact₃ φ hT 3) y
-      (Subsingleton.elim _ _)
-  intro l
-  obtain ⟨v, hv⟩ := (hI (rfl : 0 + 3 = 3)).2
-    (l.comp (compactCohomologyResMap φ (dualMap D i) 3).hom.toAddMonoidHom)
-  have hpv : (cohomologyMap p 0).hom v = 0 := by
-    apply (injective_iff_map_eq_zero _).1 (H.injective_zero Q hnQ)
-    ext y
-    rw [compactDualityMap_cohomologyMap φ D (rfl : 0 + 3 = 3) t p v y, hv]
-    change l ((compactCohomologyResMap φ (dualMap D p) 3 ≫
-      compactCohomologyResMap φ (dualMap D i) 3).hom y) = 0
-    rw [← compactCohomologyResMap_comp, ← dualMap_comp, w, dualMap_zero,
-      compactCohomologyResMap_zero]
-    exact map_zero l
-  obtain ⟨m, hm⟩ := (ShortComplex.moduleCat_exact_iff _).1 (cohomology_exact₂ hS 0) v hpv
-  refine ⟨m, ?_⟩
-  ext y
-  obtain ⟨z, rfl⟩ := hsurj y
-  rw [← compactDualityMap_cohomologyMap φ D (rfl : 0 + 3 = 3) t i m z]
-  change compactDualityMap φ D (rfl : 0 + 3 = 3) t I ((cohomologyMap S.f 0).hom m) z = _
-  rw [hm, hv]
-  rfl
+    Function.Surjective (compactDualityMap φ D (rfl : 0 + 3 = 3) t M) :=
+  H.toDevissageData.surjective_zero trivial M hM
 
 include H in
 theorem bijective_zero (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M]
     (hM : ∀ m : M, n • m = 0) :
     Function.Bijective (compactDualityMap φ D (rfl : 0 + 3 = 3) t M) :=
-  ⟨H.injective_zero M hM, H.surjective_zero M hM⟩
+  H.toDevissageData.bijective_zero trivial M hM
 
 variable {r s : ℕ} (h₁ : r + 1 + s = 3) (h₀ : r + (s + 1) = 3)
 
@@ -319,41 +279,8 @@ theorem injective_succ
     (ih : ∀ (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M], (∀ m : M, n • m = 0) →
       Function.Bijective (compactDualityMap φ D h₀ t M))
     (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M] (hM : ∀ m : M, n • m = 0) :
-    Function.Injective (compactDualityMap φ D h₁ t M) := by
-  have := H.finite_D
-  obtain ⟨I, Q, _, _, _, _, i, p, w, hS, hnI, hnQ, hI⟩ := H.exists_devissage M hM
-  let S := ShortComplex.mk i p w
-  have hT : (dualShortComplex D S).ShortExact :=
-    dualShortComplex_shortExact H.nonempty_addEquiv hS hnI
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
-  intro x hx
-  have h1 : compactDualityMap φ D h₁ t I ((cohomologyMap i (r + 1)).hom x) = 0 := by
-    ext y
-    rw [compactDualityMap_cohomologyMap φ D h₁ t i x y, hx]
-    rfl
-  have hix : (cohomologyMap i (r + 1)).hom x = 0 :=
-    (injective_iff_map_eq_zero _).1 (hI h₁).1 _ h1
-  obtain ⟨q, hq⟩ :=
-    (ShortComplex.moduleCat_exact_iff _).1 (cohomology_exact₁ hS r (r + 1) rfl) x hix
-  have hker : ((compactCohomologyResMap φ (dualMap D p) (s + 1)).hom.toAddMonoidHom).ker ≤
-      (compactDualityMap φ D h₀ t Q q).ker := by
-    intro z hz
-    obtain ⟨y, hy⟩ := (ShortComplex.moduleCat_exact_iff _).1 (compactRes_exact₁ φ hT s) z hz
-    rw [AddMonoidHom.mem_ker, ← hy]
-    have e := compactDualityMap_δ φ D t hS hT h₁ h₀ q y
-    change compactDualityMap φ D h₁ t M ((δ hS r (r + 1) rfl).hom q) y = _ at e
-    rw [hq, hx, AddMonoidHom.zero_apply] at e
-    exact eq_zero_of_neg_neg_one_pow_zsmul s e.symm
-  obtain ⟨ψ, hψ⟩ := zmod_exists_comp_eq_of_ker_le
-    (nsmul_compactCohomologyRes_eq_zero φ (nsmul_dualRep_eq_zero H.nsmul_D) (s + 1)) _ _ hker
-  obtain ⟨v, hv⟩ := (ih I hnI).2 ψ
-  have hpv : (cohomologyMap p r).hom v = q := by
-    apply (ih Q hnQ).1
-    ext z
-    rw [compactDualityMap_cohomologyMap φ D h₀ t p v z, hv, ← hψ]
-    rfl
-  rw [← hq, ← hpv]
-  exact congrArg (fun F => F.hom v) (comp_δ hS r (r + 1) rfl)
+    Function.Injective (compactDualityMap φ D h₁ t M) :=
+  H.toDevissageData.injective_succ h₁ h₀ trivial ih M hM
 
 
 include H in
@@ -361,47 +288,8 @@ theorem surjective_succ
     (ih : ∀ (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M], (∀ m : M, n • m = 0) →
       Function.Bijective (compactDualityMap φ D h₀ t M))
     (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M] (hM : ∀ m : M, n • m = 0) :
-    Function.Surjective (compactDualityMap φ D h₁ t M) := by
-  have := H.finite_D
-  obtain ⟨I, Q, _, _, _, _, i, p, w, hS, hnI, hnQ, hI⟩ := H.exists_devissage M hM
-  let S := ShortComplex.mk i p w
-  have hT : (dualShortComplex D S).ShortExact :=
-    dualShortComplex_shortExact H.nonempty_addEquiv hS hnI
-  intro l
-  obtain ⟨v, hv⟩ := (hI h₁).2 (l.comp (compactCohomologyResMap φ (dualMap D i) s).hom.toAddMonoidHom)
-  have hpv : (cohomologyMap p (r + 1)).hom v = 0 := by
-    apply (injective_iff_map_eq_zero _).1 (H.injective_succ h₁ h₀ ih Q hnQ)
-    ext y
-    rw [compactDualityMap_cohomologyMap φ D h₁ t p v y, hv]
-    change l ((compactCohomologyResMap φ (dualMap D p) s ≫
-      compactCohomologyResMap φ (dualMap D i) s).hom y) = 0
-    rw [← compactCohomologyResMap_comp, ← dualMap_comp, w, dualMap_zero,
-      compactCohomologyResMap_zero]
-    exact map_zero l
-  obtain ⟨x', hx'⟩ := (ShortComplex.moduleCat_exact_iff _).1 (cohomology_exact₂ hS (r + 1)) v hpv
-  set ν := l - compactDualityMap φ D h₁ t M x' with hν
-  have hker : ((compactδRes φ hT s).hom.toAddMonoidHom).ker ≤ ν.ker := by
-    intro y hy
-    obtain ⟨z, hz⟩ := (ShortComplex.moduleCat_exact_iff _).1 (compactRes_exact₃ φ hT s) y hy
-    rw [AddMonoidHom.mem_ker, ← hz, hν, AddMonoidHom.sub_apply, sub_eq_zero]
-    change l ((compactCohomologyResMap φ (dualMap D i) s).hom z) =
-      compactDualityMap φ D h₁ t M x' ((compactCohomologyResMap φ (dualMap D i) s).hom z)
-    rw [← compactDualityMap_cohomologyMap φ D h₁ t i x' z]
-    change _ = compactDualityMap φ D h₁ t I ((cohomologyMap S.f (r + 1)).hom x') z
-    rw [hx', hv]
-    rfl
-  obtain ⟨ψ, hψ⟩ := zmod_exists_comp_eq_of_ker_le
-    (nsmul_compactCohomologyRes_eq_zero φ (nsmul_dualRep_eq_zero H.nsmul_D) (s + 1)) _ _ hker
-  obtain ⟨q, hq⟩ := (ih Q hnQ).2 ψ
-  refine ⟨x' + (-(-1 : ℤ) ^ s) • (δ hS r (r + 1) rfl).hom q, ?_⟩
-  ext y
-  have e := compactDualityMap_δ φ D t hS hT h₁ h₀ q y
-  change compactDualityMap φ D h₁ t M ((δ hS r (r + 1) rfl).hom q) y = _ at e
-  have hψy : ψ ((compactδRes φ hT s).hom y) = ν y := congrArg (fun f => f y) hψ
-  rw [map_add (f := _), map_zsmul, AddMonoidHom.add_apply, AddMonoidHom.smul_apply, e, hq,
-    neg_neg_one_pow_zsmul_zsmul]
-  change _ + ψ ((compactδRes φ hT s).hom y) = l y
-  rw [hψy, hν, AddMonoidHom.sub_apply, add_sub_cancel]
+    Function.Surjective (compactDualityMap φ D h₁ t M) :=
+  H.toDevissageData.surjective_succ h₁ h₀ trivial ih M hM
 
 include H in
 theorem bijective_succ
@@ -409,7 +297,7 @@ theorem bijective_succ
       Function.Bijective (compactDualityMap φ D h₀ t M))
     (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M] (hM : ∀ m : M, n • m = 0) :
     Function.Bijective (compactDualityMap φ D h₁ t M) :=
-  ⟨H.injective_succ h₁ h₀ ih M hM, H.surjective_succ h₁ h₀ ih M hM⟩
+  H.toDevissageData.bijective_succ h₁ h₀ trivial ih M hM
 
 end CompactGroupDualityHypotheses
 

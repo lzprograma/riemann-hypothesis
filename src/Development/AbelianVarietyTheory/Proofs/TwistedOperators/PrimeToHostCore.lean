@@ -58,8 +58,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues GlobalTheory.Ade
 
 namespace GlobalTheory.LiftScalarL
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 variable {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
@@ -106,14 +104,14 @@ theorem isConjChars_core {F : Face D A} (h : GlobalTheory.Hk3.Core R F) (i : Fin
             have h3 : (c' : D.host.E) = (q : D.host.E) := by simpa using hc2
             exact h3
           exact not_both (D.host.g_prime l) hq1 (hq4 l) hl (this ▸ hc1)
-      simp only [if_pos hg]
+      simp only [ite_eq_left hg]
       rw [locK_eq_one hun a k hk ha, mul_one]
       exact h.lev.chi i PP hg a k u hk hu
     · have hq : PP ∈ R.Q t := hPP.resolve_left hg
       obtain ⟨⟨q, hq1, hq2, -, hq4⟩, -⟩ := h.lev.Q_pl t PP hq
       have hun : (R.C.mu0 i).UnrAt PP := (R.C.isMu0 i).unr PP fun l hl =>
         not_both (D.host.g_prime l) hq1 (hq4 l) hl (q_mem hq2)
-      simp only [if_neg hg]
+      simp only [ite_eq_right hg]
       rw [locK_eq_one hun a k hk ha, one_mul]
       exact h.lev.xiR t PP hq a k u hk hu
 
@@ -136,7 +134,7 @@ theorem isLevelVec_core {F : Face D A} (h : GlobalTheory.Hk3.Core R F) (i : Fin 
         obtain ⟨l, hl⟩ := g_mem_core R h hg
         obtain ⟨⟨q, hq1, hq2, -, hq4⟩, -⟩ := h.lev.Q_pl t PP.1 PP.2
         exact not_both (D.host.g_prime l) hq1 (hq4 l) hl (q_mem hq2)
-      simp only [if_neg hn]
+      simp only [ite_eq_right hn]
     · rfl
   simp only [omegaG_triv, hQ]
   exact h1
@@ -151,13 +149,13 @@ theorem chr_core {F : Face D A} (h : GlobalTheory.Hk3.Core R F) (i : Fin D.R.m) 
     (fun _ PP => if PP ∈ R.Pg then (R.chi ((i : ℕ) + 1) PP)⁻¹ else R.xiR t PP) (fun _ PP => (R.chi ((i : ℕ) + 1) PP)⁻¹)
     (fun PP => if PP ∈ R.Pg then (R.chi ((i : ℕ) + 1) PP)⁻¹ else R.xiR t PP) (R.xiR t) ?_ ?_ _
   · intro c PP hP
-    simp only [if_pos hP]
+    simp only [ite_eq_left hP]
   · intro PP hP
     have hn : PP ∉ R.Pg := fun hg => by
       obtain ⟨l, hl⟩ := g_mem_core R h hg
       obtain ⟨⟨q, hq1, hq2, -, hq4⟩, -⟩ := h.lev.Q_pl t PP hP
       exact not_both (D.host.g_prime l) hq1 (hq4 l) hl (q_mem hq2)
-    simp only [if_neg hn]
+    simp only [ite_eq_right hn]
 
 theorem exists_lift_core {F : Face D A} (h : GlobalTheory.Hk3.Core R F) (i : Fin D.R.m) (t : T) :
     ∃ th : (R.HV i t).H →ₗ[ℂ] (R.HW i (sg0 D A)).H, ∀ x, (R.HW i (sg0 D A)).e (th x) = R.thF i t x :=

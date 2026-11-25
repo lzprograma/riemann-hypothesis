@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ConjugateConjugate
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.TraceIntegralBasis
 import Mathlib.RingTheory.SimpleRing.Principal
 
@@ -86,24 +87,7 @@ theorem card_qb {ι : Type} [Fintype ι] (g : Basis ι ℤ X.Λ) :
   simp
 
 theorem two_card_Psi : 2 * Fintype.card X.Ψ = finrank ℚ E := by
-  classical
-  rw [← NumberField.Embeddings.card E ℂ]
-  have h1 : (X.Ψᶜ).card = X.Ψ.card := by
-    refine Finset.card_bij (fun τ _ => ComplexEmbedding.conjugate τ) ?_ ?_ ?_
-    · intro τ hτ
-      rw [Finset.mem_compl] at hτ
-      exact (X.cmType _).mpr (by rw [TraceIntegralBasis.conj_conj]; exact hτ)
-    · intro a _ b _ h
-      have := congrArg ComplexEmbedding.conjugate h
-      rwa [TraceIntegralBasis.conj_conj, TraceIntegralBasis.conj_conj] at this
-    · intro τ hτ
-      refine ⟨ComplexEmbedding.conjugate τ, ?_, TraceIntegralBasis.conj_conj τ⟩
-      rw [Finset.mem_compl]
-      intro h
-      exact ((X.cmType _).mp h) (by rw [TraceIntegralBasis.conj_conj]; exact hτ)
-  have h2 := Finset.card_add_card_compl X.Ψ
-  rw [Fintype.card_coe]
-  omega
+  apply ReciprocityTheory.ChartRestriction.G.FD.Data.card_Psi <;> assumption
 
 noncomputable def plc (τ : X.Ψ) : TraceIntegralBasis.CP E :=
   ⟨InfinitePlace.mk τ.1, IsTotallyComplex.isComplex _⟩

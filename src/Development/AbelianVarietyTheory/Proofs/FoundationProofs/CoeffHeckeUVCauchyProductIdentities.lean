@@ -1,46 +1,6 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Foundations.PetIPSmulRight
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Newform
 
 @[expose] public section
@@ -138,21 +98,21 @@ theorem to_vo (l k q : ℕ) (c : R) (a : ℕ → R) (hq : q.Coprime l) (hq0 : 0 
     rcases Nat.eq_zero_or_pos l with hl | hl
     · subst hl; simp
     have h1 : l ∣ q * (l * m) := ⟨q * m, by ring⟩
-    rw [if_pos h1, if_pos (dvd_mul_right _ _), Nat.mul_div_cancel_left _ hl,
+    rw [ite_eq_left h1, ite_eq_left (dvd_mul_right _ _), Nat.mul_div_cancel_left _ hl,
       show q * (l * m) = l * (q * m) by ring, Nat.mul_div_cancel_left _ hl]
     congr 1
     by_cases hqm : q ∣ m
     · obtain ⟨t, rfl⟩ := hqm
-      rw [if_pos ⟨l * t, by ring⟩, if_pos (dvd_mul_right _ _),
+      rw [ite_eq_left ⟨l * t, by ring⟩, ite_eq_left (dvd_mul_right _ _),
         show l * (q * t) = q * (l * t) by ring, Nat.mul_div_cancel_left _ hq0, Nat.mul_div_cancel_left _ hq0,
-        if_pos (dvd_mul_right _ _), Nat.mul_div_cancel_left _ hl]
-    · rw [if_neg hqm, if_neg]
+        ite_eq_left (dvd_mul_right _ _), Nat.mul_div_cancel_left _ hl]
+    · rw [ite_eq_right hqm, ite_eq_right]
       intro h
       exact hqm ((Nat.Coprime.dvd_of_dvd_mul_left hq h))
   · have h1 : ¬ l ∣ q * n := fun h => hn (Nat.Coprime.dvd_of_dvd_mul_left hq.symm h)
-    rw [if_neg h1, if_neg hn]
+    rw [ite_eq_right h1, ite_eq_right hn]
     by_cases hqn : q ∣ n
-    · rw [if_pos hqn, if_neg]
+    · rw [ite_eq_left hqn, ite_eq_right]
       · simp
       · intro h
         obtain ⟨t, ht⟩ := hqn

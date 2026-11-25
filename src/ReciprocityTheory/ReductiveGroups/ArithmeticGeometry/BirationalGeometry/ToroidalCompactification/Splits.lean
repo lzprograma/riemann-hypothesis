@@ -54,13 +54,6 @@ theorem transL {B Y Z : Scheme.{0}} (a : Z ⟶ Y) (q : Y ⟶ B) (U U' : B.Opens)
   rw [map_mul, pullU_res₂, pullU_res₂] at this
   exact this
 
-private theorem pullU_comp_lemma {X Y Z : Scheme.{0}} (b : Z ⟶ Y) (a : Y ⟶ X) (W : X.Opens) (u : Γ(X, W)ˣ) :
-    pullU b (a ⁻¹ᵁ W) (pullU a W u) = pullU (b ≫ a) W u := by
-  apply Units.ext
-  first
-    | (simp [pullU]; done)
-    | (simp [pullU]; rfl)
-
 private theorem res_pullU_eq_mul_of_eq_of_eq {T Y P : Scheme.{0}} (W : Y.Opens) (u : Γ(Y, W)ˣ) (c : Γ(T, ⊤)ˣ) (F : P ⟶ T)
     (A S A' S' : P ⟶ Y) (hA : A = A') (hS : S = S')
     (le : S ⁻¹ᵁ W ≤ A ⁻¹ᵁ W) (t : S ⁻¹ᵁ W ≤ F ⁻¹ᵁ ⊤)

@@ -98,7 +98,7 @@ theorem good_conj (σ : c.F →+* ℂ) (h : ¬ Formalism.L2.PjFree.GoodEmb c σ)
     Formalism.L2.PjFree.GoodEmb c ((starRingEnd ℂ).comp σ) := by
   have := Formalism.L2.PjFree.goodEmb_goodOf c σ
   unfold Formalism.L2.PjFree.goodOf at this
-  rwa [if_neg h] at this
+  rwa [ite_eq_right h] at this
 
 theorem cabs_mul {K : Type} [Field K] {σ : K →+* ℂ} (a b : CAt σ) : cabs (a * b) = cabs a * cabs b :=
   norm_mul (show ℂ from a) (show ℂ from b)
@@ -167,26 +167,26 @@ theorem exists_pinned : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
     GlobalTheory.Frames.FramedBaseChange.exists_frMap GlobalTheory.lawsFieldsSeparately.2.1 E H Dw l Xo c _ _ (conjAlg σ) y
   refine ⟨fun σ y => if h : Formalism.L2.PjFree.GoodEmb c σ then G σ h y else G _ (good_conj σ h) (bc σ y), ⟨?_, ?_⟩, ?_⟩
   · intro σ hσ k z hz t y hy i
-    simp only [dif_pos hσ]
+    simp only [dite_eq_left hσ]
     rw [abs_of_pos (hpos σ hσ y i)]
     exact hpin σ hσ k z hz t y hy i
   · intro σ y y' hy i
     by_cases hσ : Formalism.L2.PjFree.GoodEmb c σ
     · have hn := not_good_conj σ hσ
-      simp only [dif_pos hσ, dif_neg hn]
+      simp only [dite_eq_left hσ, dite_eq_right hn]
       have hm : FrMap ((conjAlg ((starRingEnd ℂ).comp σ)).comp (conjAlg σ)) y (bc _ y') :=
         frMap_trans (Xo := Xo) (c := c) _ _ _ _ _ y y' _ hy (hbc _ y')
       have e : (starRingEnd ℂ).comp ((starRingEnd ℂ).comp σ) = σ :=
         RingHom.ext fun a => Complex.conj_conj (σ a)
       rw [transport G e hσ (good_conj _ hn) _ (fun z => Complex.conj_conj (show ℂ from z)) y _ hm]
     · have hg := good_conj σ hσ
-      simp only [dif_pos hg, dif_neg hσ]
+      simp only [dite_eq_left hg, dite_eq_right hσ]
       rw [(GlobalTheory.Frames.frMap_unique_refl_iff E H Dw l Xo c _ _ (conjAlg σ) y).1 _ _ hy (hbc σ y)]
   · intro σ y i
     by_cases hσ : Formalism.L2.PjFree.GoodEmb c σ
-    · simp only [dif_pos hσ]
+    · simp only [dite_eq_left hσ]
       exact (hpos σ hσ y i).ne'
-    · simp only [dif_neg hσ]
+    · simp only [dite_eq_right hσ]
       exact (hpos _ _ _ i).ne'
 
 end GlobalTheory.FrameNorm.Existence

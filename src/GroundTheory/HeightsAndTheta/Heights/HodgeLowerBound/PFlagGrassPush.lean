@@ -87,7 +87,7 @@ theorem linDeg_muForm_apply (τ : Ψ) (i : Fin (N - 1)) :
   rw [Fintype.sum_prod_type, Fintype.sum_eq_single τ (fun τ' hτ' => by
     refine Finset.sum_eq_zero fun a _ => ?_
     simp [xDeg, Ne.symm hτ'])]
-  simp only [xDeg, if_true, mul_sub]
+  simp only [xDeg, ite_true, mul_sub]
   rw [Finset.sum_sub_distrib]
   have h1 : ∑ a : Fin N, muForm Ψ N j (τ, a) * (if (i : ℕ) = a then 1 else 0) =
       if (i : ℕ) < j then 0 else 1 := by
@@ -116,8 +116,8 @@ theorem linDeg_muForm (hj : 1 ≤ j) (hjN : j ≤ N - 1) :
   · have hq : (τ, i) = grFlKappa Ψ N j hj hjN (Fintype.equivFin Ψ τ) := by
       simp only [grFlKappa, Equiv.symm_apply_apply, Prod.mk.injEq, true_and]
       exact Fin.ext (by simp; omega)
-    rw [if_pos h, hq, hκ.extend_apply]
-  · rw [if_neg h, Function.extend_apply']
+    rw [ite_eq_left h, hq, hκ.extend_apply]
+  · rw [ite_eq_right h, Function.extend_apply']
     · rfl
     · rintro ⟨t, ht⟩
       apply h
@@ -135,9 +135,9 @@ theorem isPullHerm_mu (hj : 1 ≤ j) (hjN : j ≤ N - 1) :
   refine (Equiv.prod_comp (Fintype.equivFin Ψ).symm _).symm.trans (Finset.prod_congr rfl fun t _ => ?_)
   have hlt : j - 1 < N - 1 := by omega
   rw [Fintype.prod_eq_single ⟨j - 1, hlt⟩ (fun i hi => by
-    rw [linDeg_muForm_apply, if_neg (fun h => hi (Fin.ext (by simp; omega)))]
+    rw [linDeg_muForm_apply, ite_eq_right (fun h => hi (Fin.ext (by simp; omega)))]
     simp)]
-  rw [linDeg_muForm_apply, if_pos (by simp; omega)]
+  rw [linDeg_muForm_apply, ite_eq_left (by simp; omega)]
   congr 1
   exact (Equiv.sum_comp (plIncrEquiv (m := N - j) (N := N) (s := j - 1 + 1) (by omega) (by omega))
     (fun A => ‖z ⟨((Fintype.equivFin Ψ).symm t, ⟨j - 1, hlt⟩), A⟩‖ ^ 2)).symm
@@ -158,7 +158,7 @@ theorem linForm_muForm : linForm Ψ N (muForm Ψ N j) = muPoly Ψ N j := by
 theorem linForm_vandForm (t : VandPair Ψ N j) :
     linForm Ψ N (vandForm Ψ N j t) = X (t.1.1, t.1.2.1) - X (t.1.1, t.1.2.2) := by
   simp only [linForm, vandForm, Int.cast_sub, Int.cast_ite, Int.cast_one, Int.cast_zero, sub_smul,
-    Finset.sum_sub_distrib, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_sub_distrib, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 def vandPairEquiv :
     Ψ × {ab : Fin N × Fin N // ab.1 < ab.2 ∧ ((ab.1 : ℕ) < j ↔ (ab.2 : ℕ) < j)} ≃ VandPair Ψ N j where

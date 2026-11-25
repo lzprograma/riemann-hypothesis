@@ -12,50 +12,8 @@ import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrimeChartExistsUniquePoint
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalization
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIsLocalRingIsFractionRingStalk
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
 import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Cartier
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -902,94 +860,6 @@ end GlobalTheory.CompanionTheory.Ar.Num.LatFlag
 
 namespace GlobalTheory.CompanionTheory.Ar.Num.LatFlag
 
-theorem flag_sections (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Spec (CommRingCat.of Ω) ⟶ X) (K : Type) [Fintype K]
-    (J : K → Type) (y : (Σ k, J k) → Ω) (O : Type) [CommRing O] [Algebra O Ω] (E : Type) [AddCommGroup E]
-    [Module Ω E] (r : ℕ) (w : Module.Basis (Fin r) Ω E) (e : Fin r → Ωˣ) (x : Fin r → K → ℤ)
-    (B : ChartBundle O (segreVec y) r E) (L : Lat ξ E) (c : (k : K) → J k) (hc : segreVec y c ≠ 0)
-    (good : Cpt ξ → Prop) (f : Ω) (hf : f ∈ chartRing O (segreVec y) c)
-    (hflag : IsFlagFrame y B (w.unitsSMul e) x) (hB : ∀ z ∈ B.lat c, ∀ q, good q → z ∈ L q)
-    (hfr : ∀ q, good q → f ∈ regAt ξ q)
-    (hgr : ∀ q, good q → ∀ i, (L.gr w i) q = Submodule.span (regAt ξ q) {(∏ k, y ⟨k, c k⟩ ^ x i k) * (e i : Ω)})
-    (hpow : ∀ a : Ω, (∀ q, good q → a ∈ regAt ξ q) → ∃ n : ℕ, f ^ n * a ∈ chartRing O (segreVec y) c)
-    (z : E) (hz : ∀ q, good q → z ∈ L q) : ∃ n : ℕ, f ^ n • z ∈ B.lat c := by
-  have hyc : ∀ k, y ⟨k, c k⟩ ≠ 0 := fun k => Finset.prod_ne_zero_iff.1 hc k (Finset.mem_univ k)
-  have H : ∀ i : ℕ, i ≤ r → ∀ z : E, (∀ j : Fin r, i ≤ (j : ℕ) → (w.unitsSMul e).repr z j = 0) →
-      (∀ q, good q → z ∈ L q) → ∃ n : ℕ, f ^ n • z ∈ B.lat c := by
-    intro i
-    induction i with
-    | zero =>
-      intro _ z h0 _
-      have hz0 : z = 0 := by
-        apply (w.unitsSMul e).repr.map_eq_zero_iff.1
-        ext j
-        simpa using h0 j (Nat.zero_le _)
-      exact ⟨0, by simp [hz0, zero_mem]⟩
-    | succ i ih =>
-      intro hi z h0 hzL
-      set v := w.unitsSMul e with hv
-      let ii : Fin r := ⟨i, hi⟩
-      obtain ⟨Y, hY⟩ : ∃ Y : Ω, Y = ∏ k, y ⟨k, c k⟩ ^ x ii k := ⟨_, rfl⟩
-      have hY0 : Y ≠ 0 := by
-        rw [hY]; exact Finset.prod_ne_zero_iff.2 fun k _ => zpow_ne_zero _ (hyc k)
-      obtain ⟨s, hs⟩ : ∃ s : Ω, s = v.repr z ii := ⟨_, rfl⟩
-      have hreg : ∀ q, good q → s / Y ∈ regAt ξ q := by
-        intro q hq
-        have hflagm : z - (s * (e ii : Ω)) • w ii ∈ flagStep Ω (⇑w) ii := by
-          have hsum : z = ∑ j, v.repr z j • v j := (v.sum_repr z).symm
-          have hz2 : z - (s * (e ii : Ω)) • w ii =
-              ∑ j ∈ Finset.univ.erase ii, v.repr z j • v j := by
-            conv_lhs => rw [hsum]
-            rw [← Finset.add_sum_erase _ _ (Finset.mem_univ ii), ← hs, hv, Module.Basis.unitsSMul_apply]
-            rw [Units.smul_def, smul_smul]
-            abel
-          rw [hz2]
-          refine Submodule.sum_mem _ fun j hj => ?_
-          by_cases hji : (i : ℕ) ≤ j
-          · have hne : (j : ℕ) ≠ i := fun h => (Finset.ne_of_mem_erase hj) (Fin.ext h)
-            rw [h0 j (by omega), zero_smul]
-            exact zero_mem _
-          · rw [hv, Module.Basis.unitsSMul_apply, Units.smul_def, smul_smul]
-            exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, (not_le.1 hji : (j : ℕ) < i), rfl⟩)
-        have hmem : s * (e ii : Ω) ∈ (L.gr w ii) q :=
-          Submodule.subset_span ⟨z, hzL q hq, hflagm⟩
-        rw [hgr q hq ii, ← hY] at hmem
-        obtain ⟨ρ, hρ⟩ := Submodule.mem_span_singleton.1 hmem
-        have hρ' : (ρ : Ω) * (Y * (e ii : Ω)) = s * (e ii : Ω) := hρ
-        have : s / Y = ρ := by
-          have he := (e ii).ne_zero
-          rw [div_eq_iff hY0]
-          exact (mul_right_cancel₀ he (by rw [← hρ']; ring))
-        rw [this]
-        exact ρ.2
-      obtain ⟨n, hn⟩ := hpow (s / Y) hreg
-      have hdeg : f ^ n * s ∈ GroundTheory.Heights₂.Heights.NumbersDVR.degLat O y (x ii) c := by
-        refine ⟨_, hn, ?_⟩
-        rw [← hY]
-        field_simp
-      rw [← hflag.graded c hc ii] at hdeg
-      obtain ⟨u, hu, hu0, hus⟩ := hdeg
-      obtain ⟨n', hn'⟩ := ih (by omega) (f ^ n • z - u) (fun j hj => by
-        rw [map_sub, map_smul, Finsupp.sub_apply, Finsupp.smul_apply]
-        by_cases hji : (j : ℕ) = i
-        · have : j = ii := Fin.ext hji
-          rw [this, hus, hs, smul_eq_mul, sub_self]
-        · have hlt : ii < j := by
-            show i < (j : ℕ)
-            omega
-          rw [h0 j (by omega), hu0 j hlt, smul_zero, sub_zero]) (fun q hq => by
-        refine sub_mem ?_ (hB u hu q hq)
-        exact (L q).smul_mem (⟨f ^ n, pow_mem (hfr q hq) n⟩ : regAt ξ q) (hzL q hq))
-      refine ⟨n' + n, ?_⟩
-      have e1 : f ^ (n' + n) • z = f ^ n' • (f ^ n • z - u) + f ^ n' • u := by
-        rw [smul_sub, sub_add_cancel, smul_smul, pow_add]
-      rw [e1]
-      exact add_mem hn' (B.stable c _ (pow_mem hf n') u hu)
-  exact H r le_rfl z (fun j hj => absurd j.2 (not_lt.2 hj)) hz
-
-end GlobalTheory.CompanionTheory.Ar.Num.LatFlag
-
-namespace GlobalTheory.CompanionTheory.Ar.Num.LatFlag
-
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointConeMap blockWeight IsRelevant IsVerticalDivisor)
 
 section Cone
@@ -1241,37 +1111,6 @@ end GlobalTheory.CompanionTheory.Ar.Num.LatFlag
 
 namespace GlobalTheory.CompanionTheory.Ar.Num.LatFlag
 
-theorem exists_pow_mul_mem (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Spec (CommRingCat.of Ω) ⟶ X) (κ : Type)
-    (x : κ → Ω) (A : Type) [CommRing A] [Algebra A Ω] (m : Ideal A) [m.IsPrime] (O : Type) [CommRing O] [Algebra A O]
-    [IsLocalization.AtPrime O m] [Algebra O Ω] [IsScalarTower A O Ω] (hT : CoordTie ℤ ξ x) (c : κ) (hc : x c ≠ 0)
-    (hA : ∀ a : A, algebraMap A Ω a ∈ chartRing ℤ x c) (f : Ω) (hf : f ∈ chartRing O x c) (a : Ω)
-    (ha : ∀ q : Cpt ξ, InChart ξ x c q → (∀ o : O, algebraMap O Ω o ∈ regAt ξ q) → unitAt ξ q f → a ∈ regAt ξ q) :
-    ∃ n : ℕ, f ^ n * a ∈ chartRing O x c := by
-  classical
-  let I : Ideal (chartRing O x c) :=
-    { carrier := {s | (s : Ω) * a ∈ chartRing O x c}
-      add_mem' := fun {s t} hs ht => by
-        show ((s + t : chartRing O x c) : Ω) * a ∈ chartRing O x c
-        have := add_mem (show (s : Ω) * a ∈ chartRing O x c from hs) (show (t : Ω) * a ∈ chartRing O x c from ht)
-        simpa [add_mul] using this
-      zero_mem' := by
-        show ((0 : chartRing O x c) : Ω) * a ∈ chartRing O x c
-        simp
-      smul_mem' := fun b s hs => by
-        show ((b * s : chartRing O x c) : Ω) * a ∈ chartRing O x c
-        have := mul_mem b.2 (show (s : Ω) * a ∈ chartRing O x c from hs)
-        simpa [_root_.mul_assoc] using this }
-  have hmem : (⟨f, hf⟩ : chartRing O x c) ∈ I.radical := by
-    rw [Ideal.radical_eq_sInf, Ideal.mem_sInf]
-    rintro P ⟨hIP, hP⟩
-    by_contra hfP
-    obtain ⟨q, hq, hO, hu, hfr⟩ := chart_point X Ω ξ κ x A m O hT c hc hA P hP
-    obtain ⟨s, hs, hsa⟩ := hfr a (ha q hq hO (hu _ hfP))
-    exact hs (hIP hsa)
-  obtain ⟨n, hn⟩ := hmem
-  have hn' : (((⟨f, hf⟩ : chartRing O x c) ^ n : chartRing O x c) : Ω) * a ∈ chartRing O x c := hn
-  exact ⟨n, by simpa using hn'⟩
-
 theorem isMultiHomog_map {K : Type} [DecidableEq K] {J : K → Type} {R S : Type} [CommRing R] [CommRing S]
     (φ : R →+* S) {f : MvPolynomial (Σ k, J k) R} {b : K → ℕ}
     (h : GroundTheory.Heights₂.Heights.NumbersDVR.IsMultiHomog f b) :
@@ -1282,7 +1121,7 @@ theorem isMultiHomog_map {K : Type} [DecidableEq K] {J : K → Type} {R S : Type
   apply hd
   rw [coeff_map, h0, map_zero]
 
-theorem flag_pair_of_lat : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Spec (CommRingCat.of Ω) ⟶ X) (K : Type) [Fintype K] [DecidableEq K] (J : K → Type) [∀ k, Fintype (J k)] (y : (Σ k, J k) → Ω), CoordTie ℤ ξ (fun c' : (k : K) → J k => ∏ k, y ⟨k, c' k⟩) → ∀ d : ℕ, IsArithVar (mCoordIdeal y) (d + 1) → ∀ (A : Type) [CommRing A] [Algebra A Ω] [IsDedekindDomain A] [Module.Finite ℤ A], Function.Injective (algebraMap A Ω) → HasConstants ℤ A y → ∀ (p : ℕ), p.Prime → ∀ (m : Ideal A) [m.IsPrime], (p : A) ∈ m → ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Algebra A O] [IsLocalization.AtPrime O m] [Algebra O Ω] [IsScalarTower A O Ω] (ϖ : O), Irreducible ϖ → ∀ (E : Type) [AddCommGroup E] [Module Ω E] (r : ℕ) (w : Module.Basis (Fin r) Ω E) (L L' : Lat ξ E) (Q : LocPair J ℤ (Fin r)), IsLatFlagPair y (overPrime ξ p) L L' w Q → (∀ q : Cpt ξ, q ∈ overPrime ξ p → ¬ InFibre ξ p q → L q = L' q) → ∃ (B B' : ChartBundle O (segreVec y) r E) (v v' : Module.Basis (Fin r) Ω E), (∀ c, segreVec y c ≠ 0 → ∀ z, (z ∈ B.lat c ↔ ∀ q : Cpt ξ, InChart ξ (segreVec y) c q → (∀ o : O, algebraMap O Ω o ∈ regAt ξ q) → z ∈ L q) ∧ (z ∈ B'.lat c ↔ ∀ q : Cpt ξ, InChart ξ (segreVec y) c q → (∀ o : O, algebraMap O Ω o ∈ regAt ξ q) → z ∈ L' q)) ∧ IsModelOver (pointIdeal O y) d ∧ SameGenericFibre ϖ B B' ∧ IsFlagPair ϖ y B B' v v' Q.x Q.x' (Q.map (Int.castRingHom O)).f (Q.map (Int.castRingHom O)).g := by
+theorem flag_pair_of_lat : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Spec (CommRingCat.of Ω) ⟶ X) (K : Type) [Fintype K] [DecidableEq K] (J : K → Type) [∀ k, Fintype (J k)] (y : (Σ k, J k) → Ω), CoordTie ℤ ξ (fun c' : (k : K) → J k => ∏ k, y ⟨k, c' k⟩) → ∀ d : ℕ, IsArithVar (mCoordIdeal y) (d + 1) → ∀ (A : Type) [CommRing A] [Algebra A Ω] [IsDedekindDomain A] [Module.Finite ℤ A], Function.Injective (algebraMap A Ω) → HasConstants ℤ A y → ∀ (p : ℕ), p.Prime → ∀ (m : Ideal A) [m.IsPrime], (p : A) ∈ m → ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Algebra A O] [IsLocalization.AtPrime O m] [Algebra O Ω] [IsScalarTower A O Ω] (ϖ : O), Irreducible ϖ → ∀ (E : Type) [AddCommGroup E] [Module Ω E] (r : ℕ) (w : Module.Basis (Fin r) Ω E) (L L' : Lat ξ E) (Q : LocPair J ℤ (Fin r)), IsLatFlagPair y (overPrime ξ p) L L' w Q → (∀ q : Cpt ξ, q ∈ overPrime ξ p → ¬ InFibre ξ p q → L q = L' q) → ∃ (B B' : ChartBundle O (segreVec y) r E) (v v' : Module.Basis (Fin r) Ω E), (∀ c, segreVec y c ≠ 0 → ∀ z, (z ∈ B.lat c ↔ ∀ q : Cpt ξ, InChart ξ (segreVec y) c q → (∀ o : O, algebraMap O Ω o ∈ regAt ξ q) → z ∈ L q) ∧ (z ∈ B'.lat c ↔ ∀ q : Cpt ξ, InChart ξ (segreVec y) c q → (∀ o : O, algebraMap O Ω o ∈ regAt ξ q) → z ∈ L' q)) ∧ IsFlagPair ϖ y B B' v v' Q.x Q.x' (Q.map (Int.castRingHom O)).f (Q.map (Int.castRingHom O)).g := by
   intro X Ω _ ξ K _ _ J _ y hT d hd A _ _ _ _ hAinj hconst p hp m _ hpm O _ _ _ _ _ _ _ ϖ hϖ E _ _ r w L L' Q hQ hoff
   obtain ⟨hvb, hvb', hi⟩ := hQ
   choose e e' he he' hdeg hg0 hfg using hi
@@ -1292,7 +1131,6 @@ theorem flag_pair_of_lat : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Spe
   obtain ⟨B', hBl', hBf'⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Num.LatChart.exists_chartBundle_of_isFlagVBOn X Ω ξ K J y hT d hd A hAinj hconst p hp m hpm O E r w L' hvb'
   have hfr := hBf Q.x e he0 he
   have hfr' := hBf' Q.x' e' he0' he'
-  obtain ⟨-, hmod, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Num.pl_model K J Ω y A hAinj hconst d hd m O
   have hT' : CoordTie ℤ ξ (segreVec y) := hT
   have hinj : Function.Injective (algebraMap A O) := by
     intro a b hab
@@ -1315,30 +1153,6 @@ theorem flag_pair_of_lat : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Spe
     fun q hO hu => hoff q (hover q hO) (hnf q hO hu)
   let ue : Fin r → Ωˣ := fun i => Units.mk0 (e i) (he0 i)
   let ue' : Fin r → Ωˣ := fun i => Units.mk0 (e' i) (he0' i)
-  let good : ((k : K) → J k) → Cpt ξ → Prop := fun c q => InChart ξ (segreVec y) c q ∧
-    (∀ o : O, algebraMap O Ω o ∈ regAt ξ q) ∧ unitAt ξ q (algebraMap O Ω ϖ)
-  have hpow : ∀ c, segreVec y c ≠ 0 → ∀ a : Ω, (∀ q, good c q → a ∈ regAt ξ q) →
-      ∃ n : ℕ, algebraMap O Ω ϖ ^ n * a ∈ chartRing O (segreVec y) c := fun c hc a ha =>
-    exists_pow_mul_mem X Ω ξ _ (segreVec y) A m O hT' c hc (hconst c hc) _ (Subalgebra.algebraMap_mem _ ϖ) a
-      fun q hq hO hu => ha q ⟨hq, hO, hu⟩
-  have hsame : SameGenericFibre ϖ B B' := by
-    intro c hc
-    have hϖc : algebraMap O Ω ϖ ∈ chartRing O (segreVec y) c := Subalgebra.algebraMap_mem _ ϖ
-    constructor
-    · intro z hz
-      exact flag_sections X Ω ξ K J y O E r w ue' Q.x' B' L' c hc (good c) (algebraMap O Ω ϖ) hϖc hfr'
-        (fun z hz q hq => (hBl' c hc z).1 hz q hq.1 hq.2.1)
-        (fun q hq => hq.2.2.2.1) (fun q hq i => by simpa [ue'] using (he' i).2 q (hover q hq.2.1) c hq.1)
-        (hpow c hc) z (fun q hq => by
-          rw [← hLL q hq.2.1 hq.2.2]
-          exact (hBl c hc z).1 hz q hq.1 hq.2.1)
-    · intro z hz
-      exact flag_sections X Ω ξ K J y O E r w ue Q.x B L c hc (good c) (algebraMap O Ω ϖ) hϖc hfr
-        (fun z hz q hq => (hBl c hc z).1 hz q hq.1 hq.2.1)
-        (fun q hq => hq.2.2.2.1) (fun q hq i => by simpa [ue] using (he i).2 q (hover q hq.2.1) c hq.1)
-        (hpow c hc) z (fun q hq => by
-          rw [hLL q hq.2.1 hq.2.2]
-          exact (hBl' c hc z).1 hz q hq.1 hq.2.1)
   have hcoef : ∀ i j, (w.unitsSMul ue).repr ((w.unitsSMul ue') i) j =
       if i = j then e' i / e i else 0 := by
     intro i j
@@ -1350,9 +1164,9 @@ theorem flag_pair_of_lat : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Spe
   have hev : ∀ (f : MvPolynomial (Σ k, J k) ℤ), aeval y (MvPolynomial.map (Int.castRingHom O) f) = aeval y f := by
     intro f
     rw [← algebraMap_int_eq, MvPolynomial.aeval_map_algebraMap]
-  refine ⟨B, B', w.unitsSMul ue, w.unitsSMul ue', fun c hc z => ⟨hBl c hc z, hBl' c hc z⟩, hmod, hsame, ?_⟩
+  refine ⟨B, B', w.unitsSMul ue, w.unitsSMul ue', fun c hc z => ⟨hBl c hc z, hBl' c hc z⟩, ?_⟩
   refine ⟨hfr, hfr', fun i j hij => ?_, fun i => ?_, fun i => ?_⟩
-  · rw [hcoef, if_neg hij.ne]
+  · rw [hcoef, ite_eq_right hij.ne]
   · obtain ⟨bf, bg, hbf, hbg, hb⟩ := hdeg i
     have hf0 : aeval y (Q.f i) ≠ 0 := by
       rw [hfg i]
@@ -1420,7 +1234,7 @@ theorem flag_pair_of_lat : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Spe
       have hei := he0 i
       rw [hYg']
       field_simp
-  · simp only [hcoef, if_true]
+  · simp only [hcoef, ite_true]
     show aeval y (MvPolynomial.map (Int.castRingHom O) (Q.f i)) = _ * aeval y (MvPolynomial.map (Int.castRingHom O) (Q.g i))
     rw [hev, hev, hfg i]
 
@@ -1555,7 +1369,7 @@ theorem flagPair_coord : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Spec 
     intro q h1 h2
     show (L q).comap _ = (L' q).comap _
     rw [hoff q h1 h2]
-  obtain ⟨B, B', v, v', hlat, -, -, hfp⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Num.LatFlag.flag_pair_of_lat X Ω ξ K J y hT d hd A hA hC p hp m hm O ϖ hϖ
+  obtain ⟨B, B', v, v', hlat, hfp⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Num.LatFlag.flag_pair_of_lat X Ω ξ K J y hT d hd A hA hC p hp m hm O ϖ hϖ
     (Fin r → Ω) r (Pi.basisFun Ω (Fin r)) (L.comap (Fintype.linearCombination Ω b))
     (L'.comap (Fintype.linearCombination Ω b)) Q hpair hoff'
   refine ⟨B, B', v, v', fun c hc => ⟨AddSubgroup.ext fun z => ?_, AddSubgroup.ext fun z => ?_⟩, hfp⟩

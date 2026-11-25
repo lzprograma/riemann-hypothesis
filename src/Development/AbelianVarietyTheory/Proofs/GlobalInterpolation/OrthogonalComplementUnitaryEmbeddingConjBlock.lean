@@ -74,7 +74,7 @@ theorem herm_swap (x y : Sp P Q) : herm y x = star (herm x y) := by
 theorem gram_apply (u : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ) (i l : Fin P ⊕ Fin Q) :
     (uᴴ * Formalism.UG.Jpq P Q * u) i l = herm (fun a => u a l) (fun a => u a i) := by
   simp only [Matrix.mul_apply, jpq_apply, herm_eq_sum, conjTranspose_apply, mul_ite, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   exact Finset.sum_congr rfl fun a _ => by ring
 
 theorem herm_single (a b : Fin P ⊕ Fin Q) :
@@ -104,9 +104,9 @@ theorem perp_conj : ∀ (P Q P' Q' : ℕ) (e : Option (Fin P' ⊕ Fin Q') ≃ (F
     obtain ⟨l, rfl⟩ := e.surjective l
     rw [gram_apply, jpq_apply]
     rcases i with _ | i <;> rcases l with _ | l
-    · rw [cn, herm_self, hx, if_pos rfl]
-    · rw [cn, cs, (h2 _).2 ⟨_, rfl⟩, if_neg (by simp)]
-    · rw [cn, cs, herm_swap, (h2 _).2 ⟨_, rfl⟩, if_neg (by simp), star_zero]
+    · rw [cn, herm_self, hx, ite_eq_left rfl]
+    · rw [cn, cs, (h2 _).2 ⟨_, rfl⟩, ite_eq_right (by simp)]
+    · rw [cn, cs, herm_swap, (h2 _).2 ⟨_, rfl⟩, ite_eq_right (by simp), star_zero]
     · rw [cs, cs, h1, herm_single, he i]
       simp
   obtain ⟨g₀, hg₀⟩ := hu

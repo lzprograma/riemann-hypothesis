@@ -2,9 +2,7 @@ module
 
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StComplementLattice
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLinePairOrbitsFinite
-import Mathlib.Algebra.Module.StablyFree.Basic
 public import Mathlib.GroupTheory.IndexNSmul
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -35,7 +33,6 @@ section Complement
 variable {F E : Type*} [Field F] [Field E] [NumberField E] [Algebra F E]
   [Algebra.IsQuadraticExtension F E]
 variable {W : Type*} [AddCommGroup W] [Module E W]
-
 
 omit [NumberField E] in
 theorem factorial_nsmul_mem_of_mem_dual {h : HermitianForm F E W} {D : ℕ} {La : AddSubgroup W}

@@ -6,51 +6,8 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Cycloto
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.DyadicCharacterPowerNeOne
 import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ConjTor
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SingleMemSubmodule
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.FieldTheory.Galois.Profinite
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.TrivialOnInertiaOfUnr
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicCases.AutomorphyClauseStatement
 import Mathlib.Algebra.Azumaya.Basic
@@ -280,7 +237,10 @@ private theorem diagonalise (T : Matrix (Fin 3) (Fin 3) K) (hT : T.BlockTriangul
       · linear_combination -hr
     rw [Matrix.mul_assoc, this, ← Matrix.mul_assoc, e, Matrix.one_mul]
 
-private theorem core' (H U : Subgroup G) (hUH : U ≤ H) [U.Normal] (a : G → Matrix (Fin 3) (Fin 3) K)
+/-- Under the triangularity hypotheses, reducibility on `U` gives one `g ∈ H`
+for which `a (g * x ^ n)` has trace zero for every `n`. -/
+theorem UpperTheory.V.U3.exists_trace_mul_pow_eq_zero_of_reducible_restriction
+    (H U : Subgroup G) (hUH : U ≤ H) [U.Normal] (a : G → Matrix (Fin 3) (Fin 3) K)
     (hm : ∀ g ∈ H, ∀ h ∈ H, a (g * h) = a g * a h) (h1 : a 1 = 1) {M M' : Matrix (Fin 3) (Fin 3) K}
     (h : M * M' = 1) (h' : M' * M = 1) {u : G} (hu : u ∈ U) (hut : (M' * a u * M).BlockTriangular id)
     (hd : Function.Injective (M' * a u * M).diag) (hH : MatIrr H a) (hU : ¬MatIrr U a)
@@ -361,7 +321,8 @@ private theorem frame {O K G Γ ι : Type} [CommRing O] [IsLocalRing O] [Field K
     have h1 : y ≠ 1 := fun h => hu' (by rw [h, one_pow])
     have h2 : y ≠ y⁻¹ := fun h => hu' (by rw [sq, ← eq_inv_iff_mul_eq_one]; exact h)
     fin_cases i <;> fin_cases j <;> simp [wt1, h1, h2, h1.symm, h2.symm] at e ⊢
-  obtain ⟨g, hg, hz⟩ := core' (F.η.comp F.π).ker U hU (fun s => (r (F.π s)).mat) (fun a ha b _ => by
+  obtain ⟨g, hg, hz⟩ := exists_trace_mul_pow_eq_zero_of_reducible_restriction
+    (F.η.comp F.π).ker U hU (fun s => (r (F.π s)).mat) (fun a ha b _ => by
       have : (r (F.π a)).right = 1 := (hm _).trans ha
       simp [GG.mat, this]) (by simp [GG.mat]) P.inv_mul P.mul_inv huU (tri u hu1) hinj
     (fun W hW => hI W fun g hg v hv => by

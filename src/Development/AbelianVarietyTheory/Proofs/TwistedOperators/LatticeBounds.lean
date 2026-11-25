@@ -128,8 +128,8 @@ theorem bounds (hϖ : valuation k (ϖ : k) = uniformizer k) (hψ : HasConductor 
     have := hs _ hy _ (col_mem_nf i.castSucc ((zpow_mem_pow hϖ).2 le_rfl))
     rw [← zpow_mem_pow hϖ, ← ha]
     refine ⟨_, this, fun l hl => ?_, ?_⟩
-    · rw [aff_row, aff_diag _ _ _ _ hl.le, if_neg hl.ne', zero_mul]
-    · rw [aff_row, aff_diag _ _ _ _ le_rfl, if_pos rfl, one_mul]
+    · rw [aff_row, aff_diag _ _ _ _ hl.le, ite_eq_right hl.ne', zero_mul]
+    · rw [aff_row, aff_diag _ _ _ _ le_rfl, ite_eq_left rfl, one_mul]
 
 omit [BorelSpace k] in
 theorem first_mem (hϖ : valuation k (ϖ : k) = uniformizer k)

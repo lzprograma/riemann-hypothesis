@@ -146,12 +146,6 @@ variable (F Ω) (l : ℕ) [Fact l.Prime] (r : ℕ)
 abbrev muRep : Representation (ZMod (l ^ r)) (G F Ω) (ZMod (l ^ r)) := charRep (cycMod F Ω l r)
 
 
-variable {F Ω l r} in
-abbrev tateDual {M : Type*} [AddCommGroup M] [Module (ZMod (l ^ r)) M]
-    (rho : Representation (ZMod (l ^ r)) (G F Ω) M) :
-    Representation (ZMod (l ^ r)) (G F Ω) (TDual (ZMod (l ^ r)) M) :=
-  twDual (cycMod F Ω l r) rho
-
 end Field
 
 end ReciprocityTheory.Gal

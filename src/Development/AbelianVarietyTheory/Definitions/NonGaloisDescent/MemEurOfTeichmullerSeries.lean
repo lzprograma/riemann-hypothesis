@@ -1,48 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CyclotomicFrobeniusPowerSeriesXEqMulQuotient
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.DiscreteValuationRing
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -116,9 +75,6 @@ instance (n : ℕ) : Algebra (Localization.Away (letπ : LetA O n)) (EE l O n) :
     (AdicCompletion (Ideal.span {((l : ℕ) : Localization.Away (letπ : LetA O n))})
       (Localization.Away (letπ : LetA O n))))
 
-def toEE (n : ℕ) : LetA O n →+* EE l O n :=
-  (algebraMap (Localization.Away (letπ : LetA O n)) (EE l O n)).comp (algebraMap (LetA O n) _)
-
 namespace Completion
 
 open Series
@@ -162,12 +118,6 @@ def clAlg (S : Subalgebra ℤ_[l] (WCb l)) : Subalgebra ℤ_[l] (WCb l) where
     exact ⟨x * y, S.mul_mem hx hy, by convert (h.mul_right b).add (h'.mul_left x) using 1; ring⟩
   algebraMap_mem' z := mem_clW.2 fun _ => ⟨_, S.algebraMap_mem z, by simp⟩
 
-theorem mem_clAlg {S : Subalgebra ℤ_[l] (WCb l)} {x : WCb l} :
-    x ∈ clAlg S ↔ ∀ k : ℕ, ∃ y ∈ S, (l : WCb l) ^ k ∣ x - y := mem_clW
-
-theorem le_clAlg (S : Subalgebra ℤ_[l] (WCb l)) : S ≤ clAlg S :=
-  fun x hx => mem_clAlg.2 fun _ => ⟨x, hx, by simp⟩
-
 def IsIo (e : OCb l) (io : PowerSeries ℤ_[l] →ₐ[ℤ_[l]] Ainf l) : Prop :=
   io PowerSeries.X = WittVector.teichmuller l e - 1
 
@@ -184,12 +134,6 @@ theorem εroot_sub_one_not_unit {P : LocPrime l} (AI : LocAinf l P) (s : ℕ) : 
   rw [sub_pow_char_pow, εroot_pow, one_pow, map_sub, AI.ε_coeff, AI.ζ_zero, map_one, map_one, sub_self] at h1
   haveI : Nontrivial (ModP (OC l) l) := CharP.nontrivial_of_char_ne_one (Fact.out : l.Prime).ne_one
   exact not_isUnit_zero h1
-
-private theorem coeff_mem {A : Type} [CommRing A] [Algebra ℤ_[l] A] (S : Subalgebra ℤ_[l] A) {a : A}
-    (ha : a ∈ S) (m k i : ℕ) :
-    (Polynomial.X ^ m - Polynomial.C a * Polynomial.X ^ k : Polynomial A).coeff i ∈ S := by
-  rw [Polynomial.coeff_sub, Polynomial.coeff_X_pow, Polynomial.coeff_C_mul_X_pow]
-  refine S.sub_mem ?_ ?_ <;> split_ifs <;> first | exact one_mem _ | exact zero_mem _ | exact ha
 
 section Rings
 
@@ -212,35 +156,9 @@ def E0loc : Subalgebra ℤ_[l] (WCb l) where
 
 def E0 : Subalgebra ℤ_[l] (WCb l) := clAlg (E0loc io)
 
-def simpleRoots : Set (WCb l) :=
-  {y | ∃ f : Polynomial (WCb l), f.Monic ∧ (∀ i, f.coeff i ∈ E0 io) ∧ f.eval y = 0 ∧
-    IsUnit (f.derivative.eval y)}
-
-def EurAlg : Subalgebra ℤ_[l] (WCb l) := Algebra.adjoin ℤ_[l] (simpleRoots io)
-
-def Eur : Subalgebra ℤ_[l] (WCb l) := clAlg (EurAlg io)
-
-theorem simpleRoots_subset_Eur : simpleRoots io ⊆ Eur io :=
-  fun _ hy => le_clAlg _ (Algebra.subset_adjoin hy)
-
 variable {io}
 
 variable (io)
-
-theorem teichmuller_mem_Eur {a : Cb l} {d : ℕ} (hd : 0 < d) (ha : a ^ l ^ d = a) :
-    WittVector.teichmuller l a ∈ Eur io := by
-  have h1 : 1 < l ^ d := Nat.one_lt_pow hd.ne' (Fact.out : l.Prime).one_lt
-  refine simpleRoots_subset_Eur io ⟨Polynomial.X ^ l ^ d - Polynomial.X,
-    Polynomial.monic_X_pow_sub (by rw [Polynomial.degree_X]; exact_mod_cast h1), fun i => ?_, ?_, ?_⟩
-  · have h := coeff_mem (E0 io) (E0 io).one_mem (l ^ d) 1 i
-    rwa [pow_one, map_one, one_mul] at h
-  · rw [Polynomial.eval_sub, Polynomial.eval_pow, Polynomial.eval_X, ← map_pow, ha, sub_self]
-  · apply WittVector.isUnit_of_coeff_zero_ne_zero
-    rw [← WittVector.constantCoeff_apply, Polynomial.derivative_sub, Polynomial.derivative_X_pow,
-      Polynomial.derivative_X, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_C,
-      Polynomial.eval_one, map_sub, map_mul, map_natCast, map_one, Nat.cast_pow, CharP.cast_eq_zero,
-      zero_pow hd.ne', zero_mul, zero_sub]
-    exact neg_ne_zero.2 one_ne_zero
 
 end Rings
 
@@ -257,28 +175,8 @@ variable {G : Type} [Group G] [TopologicalSpace G]
 scoped instance smulTW (LL : FinExt l) (T : LocLat G ℚ_[l] ↥LL.1 ↥(OL LL)) : SMul (RW LL) (TW (RW LL) T) :=
   leftSMulGen _ _ _
 
-def EurT (LL : FinExt l) (io : PowerSeries ℤ_[l] →ₐ[ℤ_[l]] Ainf l) (T : LocLat G ℚ_[l] ↥LL.1 ↥(OL LL)) :
-    Submodule ↥(OL LL) (TW (RW LL) T) :=
-  Submodule.span ↥(OL LL) {z | ∃ w ∈ Eur io, ∃ t : ↥T.L.T,
-    z = ((1 : ↥(OL LL)) ⊗ₜ[ℤ_[l]] w) ⊗ₜ[↥(OL LL)] t}
-
 variable {LL : FinExt l} {io : PowerSeries ℤ_[l] →ₐ[ℤ_[l]] Ainf l} {T : LocLat G ℚ_[l] ↥LL.1 ↥(OL LL)}
 
 end Module
-
-def FonD {P : LocPrime l} (AI : LocAinf l P) (K LL : FinExt l)
-    (io : PowerSeries ℤ_[l] →ₐ[ℤ_[l]] Ainf l) (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)) :
-    Submodule ↥(OL LL) (TW (RW LL) T) :=
-  EurT LL io T ⊓ ⨅ g : {g : ↥(GK K) // P.χQ (g : GQ l) = 1},
-    LinearMap.eqLocus (TWact (AI.gRW LL (g.1 : GQ l)) T g.1)
-      (LinearMap.id : TW (RW LL) T →ₗ[↥(OL LL)] TW (RW LL) T)
-
-section Fon
-
-variable {P : LocPrime l} {AI : LocAinf l P} {K LL : FinExt l}
-  {io : PowerSeries ℤ_[l] →ₐ[ℤ_[l]] Ainf l} {T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)}
-
-
-end Fon
 
 end GlobalTheory.Cyc

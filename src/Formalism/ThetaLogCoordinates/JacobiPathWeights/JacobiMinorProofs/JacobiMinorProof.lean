@@ -11,56 +11,10 @@ public import Mathlib.RingTheory.Henselian
 public import Mathlib.RingTheory.RegularLocalRing.Defs
 public import Mathlib.RingTheory.SimpleRing.Principal
 public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.LeIffLtColHeight
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.RingTheory.LocalProperties.Reduced
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.LinearIndependentOfLead, Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.JacobiMinorProof
@@ -183,7 +137,7 @@ variable {κ}
 theorem Lead_one : Lead κ (1 : MvPolynomial σ R) 0 := by
   classical
   refine ⟨by simp, fun e he hne => ?_⟩
-  rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_one, if_neg (Ne.symm hne)] at he
+  rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_one, ite_eq_right (Ne.symm hne)] at he
   exact absurd rfl he
 
 theorem Lead_mul (hκ : Function.Injective κ) {f g : MvPolynomial σ R} {d d' : σ →₀ ℕ}
@@ -319,7 +273,7 @@ theorem mon_LL {m : ℕ} {r c : Fin m → Fin n} (hr : StrictMono r) (hc : Stric
     have h0 : (∑ i, if (r i = (r a, c a).1 ∧ c (π i) = (r a, c a).2) then 1 else 0) = 0 := by
       apply Finset.sum_eq_zero
       intro i _
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨h1, h2⟩
       have := hr.injective h1
       subst this
@@ -328,7 +282,7 @@ theorem mon_LL {m : ℕ} {r c : Fin m → Fin n} (hr : StrictMono r) (hc : Stric
     have h1 := Finset.single_le_sum
       (f := fun i => if (r i = (r a, c a).1 ∧ c ((1 : Equiv.Perm (Fin m)) i) = (r a, c a).2) then 1 else 0)
       (fun _ _ => Nat.zero_le _) (Finset.mem_univ a)
-    simp only [Equiv.Perm.coe_one, id_eq, and_self, if_true] at h1
+    simp only [Equiv.Perm.coe_one, id_eq, and_self, ite_true] at h1
     simp only [Equiv.Perm.coe_one, id_eq]
     omega
   · intro y hy
@@ -381,7 +335,7 @@ theorem Lead_det (k : Type*) [CommRing k] {m : ℕ} (r c : Fin m → Fin n) (hr 
   · rw [hcoeff, Finset.sum_eq_single 1]
     · simp
     · intro π _ hπ
-      rw [if_neg, mul_zero]
+      rw [ite_eq_right, mul_zero]
       intro h
       have := mon_LL hr hc π hπ
       rw [h] at this
@@ -393,7 +347,7 @@ theorem Lead_det (k : Type*) [CommRing k] {m : ℕ} (r c : Fin m → Fin n) (hr 
     obtain ⟨π, -, hπ⟩ := Finset.exists_ne_zero_of_sum_ne_zero he
     have hπe : mon r c π = e := by
       by_contra h
-      exact hπ (by rw [if_neg h, mul_zero])
+      exact hπ (by rw [ite_eq_right h, mul_zero])
     subst hπe
     apply mon_LL hr hc π
     rintro rfl
@@ -469,9 +423,9 @@ theorem colDiag_eq (J : Finset (Fin n)) {k : ℕ} (h : J.card = k) (r : Fin k �
   rw [sum_emb J h]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [_root_.Bl.general_b_fact_right_further.goal1, Finset.sum_eq_single (r i)]
-  · rw [if_pos (hr i), Equiv.Perm.one_apply]
+  · rw [ite_eq_left (hr i), Equiv.Perm.one_apply]
   · intro a _ ha
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hc
     exact ha (Fin.ext (by rw [hc, hr i]))
   · intro hc
@@ -482,10 +436,10 @@ theorem colDiag_apply (J : Finset (Fin n)) (a b : Fin n) :
   have hle : J.card ≤ n := by simpa using Finset.card_le_univ J
   rw [colDiag_eq J rfl (fun i => (⟨i.val, lt_of_lt_of_le i.2 hle⟩ : Fin n)) (fun _ => rfl), mon_apply]
   by_cases hab : nthElt J a.val = b.val
-  · rw [if_pos hab]
+  · rw [ite_eq_left hab]
     have ha : a.val < J.card := lt_card_of_nthElt (by rw [hab]; exact b.2)
     rw [Finset.sum_eq_single ⟨a.val, ha⟩]
-    · rw [if_pos]
+    · rw [ite_eq_left]
       refine ⟨Fin.ext rfl, ?_⟩
       apply Fin.ext
       rw [Equiv.Perm.one_apply]
@@ -493,16 +447,16 @@ theorem colDiag_apply (J : Finset (Fin n)) (a b : Fin n) :
       rw [← hab]
       exact (nthElt_emb rfl ⟨a.val, ha⟩).symm
     · intro i _ hi
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨h1, _⟩
       have h3 := congrArg Fin.val h1
       exact hi (Fin.ext h3)
     · intro hc
       exact absurd (Finset.mem_univ _) hc
-  · rw [if_neg hab]
+  · rw [ite_eq_right hab]
     apply Finset.sum_eq_zero
     intro i _
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2⟩
     apply hab
     have h3 : a.val = i.val := (congrArg Fin.val h1).symm
@@ -816,8 +770,8 @@ lemma idx_out {μ : Fin n → ℤ} {lo hi : ℤ} (hlo : lo ≤ 0) (hhi : 0 ≤ h
   rw [← Finset.card_eq_zero, hI c]
   rw [Finset.mem_Ioc, not_and_or, not_lt, not_le] at hc
   rcases hc with hc | hc
-  · rw [if_neg (by omega), colHeight_lo (fun m => (hb m).1) hc]; simp
-  · rw [if_pos (by omega), colHeight_hi (fun m => (hb m).2) hc]
+  · rw [ite_eq_right (by omega), colHeight_lo (fun m => (hb m).1) hc]; simp
+  · rw [ite_eq_left (by omega), colHeight_hi (fun m => (hb m).2) hc]
 
 lemma canIdx_isIndex (μ : Fin n → ℤ) : IsIndex μ (canIdx μ) := by
   intro c
@@ -834,7 +788,7 @@ lemma canIdx_isIndex (μ : Fin n → ℤ) : IsIndex μ (canIdx μ) := by
 
 lemma canIdx_compl (μ : Fin n → ℤ) {c : ℤ} (hc : ¬ 1 ≤ c) : (canIdx μ c)ᶜ = initSeg n (colHeight μ c) := by
   unfold canIdx initSeg
-  rw [if_neg hc]
+  rw [ite_eq_right hc]
   ext m
   simp
 
@@ -852,10 +806,10 @@ lemma factor (μ : Fin n → ℤ) {I : ℤ → Finset (Fin n)} (hI : IsIndex μ 
           (minorF (genX k n) (initSeg n (hatIdx I c).card) (hatIdx I c)) := by
   have hIc := hI c
   by_cases hc : 1 ≤ c
-  · simp only [if_pos hc, sgnU, hatIdx] at hIc ⊢
+  · simp only [ite_eq_left hc, sgnU, hatIdx] at hIc ⊢
     rw [minorF_genMat, hIc]
     simp [canIdx, initSeg, hc]
-  · simp only [if_neg hc, sgnU, hatIdx] at hIc ⊢
+  · simp only [ite_eq_right hc, sgnU, hatIdx] at hIc ⊢
     have hle := Paths.colHeight_le μ c
     have hcard : (I c)ᶜ.card = colHeight μ c := by
       rw [Finset.card_compl, hIc, Fintype.card_fin]; omega

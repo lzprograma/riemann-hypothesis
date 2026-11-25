@@ -30,44 +30,6 @@ import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.Hos
 import Formalism.SubspaceCounting.ChoiceOfTopsRefined
 import Formalism.SubspaceCounting.SubspaceCountingProofs.SubspaceCount
 public import Lemmata.GeneralBFactUpperBis.Imports
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -171,15 +133,15 @@ theorem lo_le_loG (K : Consts) (L : SizeData₂ D) (hK : 0 ≤ K.La) (hLa : La K
          C' * (L.sc.b' / L.sc.x + L.etaSz + L.Sc + (L.sc.w'' D.R.n + D.R.t) * Real.log L.sc.x / L.sc.delta1) + bo
        else 0) else 0) := by
     by_cases hc : D.host.cls p = PrimeClass.inertClass
-    · rw [if_pos hc, if_pos hc]
+    · rw [ite_eq_left hc, ite_eq_left hc]
       by_cases h0 : (p : ℝ) < L.sc.p0 D.R.k
-      · rw [if_pos h0, if_pos h0, ← rG_eq]
+      · rw [ite_eq_left h0, ite_eq_left h0, ← rG_eq]
         have h1 : 0 ≤ (rG L.sc : ℝ) * L.sc.b' * Real.log L.sc.x :=
           mul_nonneg (mul_nonneg (Nat.cast_nonneg _) hb') hlx
         linarith [mul_nonneg (sub_nonneg.2 hCC') h1]
-      · rw [if_neg h0, if_neg h0]
+      · rw [ite_eq_right h0, ite_eq_right h0]
         by_cases h1 : (p : ℝ) < L.sc.X'
-        · rw [if_pos h1, if_pos h1]
+        · rw [ite_eq_left h1, ite_eq_left h1]
           have e1 : 0 ≤ L.sc.b' / L.sc.x := div_nonneg hb' hx.le
           have e2 : 0 ≤ L.sc.w'' D.R.n * Real.log L.sc.x / L.sc.delta1 := div_nonneg (mul_nonneg hw hlx) hd.le
           have e3 : 0 ≤ (D.R.t : ℝ) * Real.log L.sc.x / L.sc.delta1 := div_nonneg (mul_nonneg ht hlx) hd.le
@@ -191,8 +153,8 @@ theorem lo_le_loG (K : Consts) (L : SizeData₂ D) (hK : 0 ≤ K.La) (hLa : La K
           rw [e4, e5]
           linarith [mul_nonneg (sub_nonneg.2 hCC') e2, mul_nonneg (sub_nonneg.2 hC'1) e1,
             mul_nonneg (sub_nonneg.2 hC'1) hη.le, mul_nonneg hC'0 hSc.le, mul_nonneg hC'0 e3]
-        · rw [if_neg h1, if_neg h1]
-    · rw [if_neg hc, if_neg hc]
+        · rw [ite_eq_right h1, ite_eq_right h1]
+    · rw [ite_eq_right hc, ite_eq_right hc]
 
   have hor : (if IsResidueClassZero D p ∧ (p : ℝ) < L.sc.X' then
       C * Real.log L.sc.x * (La K L.sc * L.sc.a / ((p : ℝ) * D.R.k) +
@@ -203,7 +165,7 @@ theorem lo_le_loG (K : Consts) (L : SizeData₂ D) (hK : 0 ≤ K.La) (hLa : La K
         (if (p : ℝ) < L.sc.p0 D.R.k then L.sc.a * (p : ℝ) ^ (-(leastPowerExponent L p : ℝ)) else L.sc.a / (p : ℝ) ^ 2))
       else 0) := by
     by_cases hc : D.host.cls p = PrimeClass.inertClass ∧ (p : ℝ) < L.sc.X'
-    · rw [if_pos hc, if_pos hc, hLa]
+    · rw [ite_eq_left hc, ite_eq_left hc, hLa]
       have e1 : 0 ≤ L.LaG * L.sc.a / ((p : ℝ) * D.R.k) :=
         div_nonneg (mul_nonneg hLaG (by linarith)) (mul_nonneg hp0.le hk)
       have key : ∀ Z Z' : ℝ, 0 ≤ Z → Z ≤ Z' →
@@ -213,7 +175,7 @@ theorem lo_le_loG (K : Consts) (L : SizeData₂ D) (hK : 0 ≤ K.La) (hLa : La K
         exact mul_le_mul (mul_le_mul_of_nonneg_right hCC' hlx) (by linarith) (by linarith)
           (mul_nonneg hC'0 hlx)
       by_cases h0 : (p : ℝ) < L.sc.p0 D.R.k
-      · rw [if_pos h0, if_pos h0]
+      · rw [ite_eq_left h0, ite_eq_left h0]
         apply key
         · exact mul_nonneg (by linarith) (Real.rpow_nonneg hp0.le _)
         · apply mul_le_mul_of_nonneg_left _ (by linarith)
@@ -221,9 +183,9 @@ theorem lo_le_loG (K : Consts) (L : SizeData₂ D) (hK : 0 ≤ K.La) (hLa : La K
           have := exponent_ge_least_exponent L p hp h0
           have h2 : (leastPowerExponent L p : ℝ) ≤ (L1 D L.sc p : ℝ) := by exact_mod_cast this
           linarith
-      · rw [if_neg h0, if_neg h0]
+      · rw [ite_eq_right h0, ite_eq_right h0]
         exact key _ _ (div_nonneg (by linarith) (by positivity)) le_rfl
-    · rw [if_neg hc, if_neg hc]
+    · rw [ite_eq_right hc, ite_eq_right hc]
   unfold lo loG
   exact add_le_add (add_le_add hcp hpr) hor
 
@@ -254,7 +216,7 @@ theorem ask_eq_askP (X : Inst D L) (p : ℕ) (hp : p.Prime)
   · intro i hi
     rw [Finset.mem_range, not_lt] at hi
     by_cases ho : Odd i
-    · rw [if_pos ho, aL_top, ← hw]
+    · rw [ite_eq_left ho, aL_top, ← hw]
       apply max_eq_left
       have h1 : (L.aT t).toNat < p ^ i :=
         lt_of_lt_of_le (Nat.lt_pow_succ_log_self hp.one_lt _) (Nat.pow_le_pow_right hp.pos (by omega))
@@ -264,7 +226,7 @@ theorem ask_eq_askP (X : Inst D L) (p : ℕ) (hp : p.Prime)
       have h5 : (L.aT t : ℝ) / (p : ℝ) ^ i < 1 := by rw [div_lt_one h4]; linarith
       have := L.wPart_ge j t p i
       linarith
-    · rw [if_neg ho]
+    · rw [ite_eq_right ho]
 
 theorem vUnit_pos {p : ℕ} (G : GAtP p) (v : Fin G.P.nV) : 0 < vUnit G := by
   have S := G.P.setting v
@@ -423,7 +385,7 @@ theorem svBound_of (X : Inst D L) (K : Consts) (hK : K.Nonneg) (P : ParameterCho
         have hs' := hTT s (Finset.mem_filter.1 hs).1
         have h1 : fill X (bL L) j (false, s) = (bL L s : ℝ) + X.off j (false, s) := by
           unfold fill
-          rw [if_pos ⟨rfl, hs'⟩]
+          rw [ite_eq_left ⟨rfl, hs'⟩]
         have h2 := (X.off_top j (false, s) ⟨rfl, hs'⟩).1
         have h3 := _root_.Formalism.MainNotions.G.TopChoiceBounds.kappa_le_Sc P j hj
         unfold fillG
@@ -450,7 +412,6 @@ theorem svBound_of (X : Inst D L) (K : Consts) (hK : K.Nonneg) (P : ParameterCho
     exact Finset.sum_le_card_nsmul _ _ _ (fun s hs => (hal s hs).2)
   set q : ℝ := L.sc.a / p with hq
   have hq0 : L.sc.b' ≤ q := by
-    have hX : 0 < L.sc.X' := by unfold Scale.X'; exact Real.exp_pos _
     rw [hq]
     unfold Scale.b'
     exact div_le_div_of_nonneg_left (by linarith) hp0 hpX.le
@@ -518,7 +479,7 @@ theorem cmp_expand (hs : ∀ a x, cmp (a • x) = φ a • cmp x) (x : V) :
 
 theorem cmp_inj (hs : ∀ a x, cmp (a • x) = φ a • cmp x) (hli : LinearIndependent Kf (fun a => cmp (b a))) :
     Function.Injective cmp := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   rw [cmp_expand b φ cmp hs x] at hx
   have h := Fintype.linearIndependent_iff.1 hli _ hx
@@ -641,7 +602,7 @@ theorem linkG_at_core (X : Inst D L) (Y : LatInst D) (K : Consts) (hK : K.Nonneg
   · intro u w hw
     obtain ⟨_, _, _, _, htau, hio, _⟩ := hfill w
     by_cases hV : VV X K (aL L) (bL L) (D.what₂.places.resChar w) = ∅
-    · have ht0 : L.tau w = 0 := by rw [htau]; unfold tauP; rw [if_pos hV]
+    · have ht0 : L.tau w = 0 := by rw [htau]; unfold tauP; rw [ite_eq_left hV]
       have hi0 : L.io w = 0 := by
         rw [hio]; unfold ioP
         rw [dite_eq_right (by rw [hV]; exact Finset.not_nonempty_empty)]
@@ -858,7 +819,6 @@ def FirstTheoremAtFamily {eps : ℝ} (Fm : FamP eps) : Prop :=
 
 section Tools
 
-open Formalism.BasicNotions
 
 structure ExtremalProjectorTools : Prop where
 
@@ -873,7 +833,6 @@ end Tools
 
 section TheoremII
 
-open Formalism.BasicNotions
 
 def SecondTheoremReduced (D : D7) : Prop :=
   ∀ CLa Ck Crk Cdeg : ℝ, tableLineDegreeFive.admitted D CLa Ck Crk Cdeg →
@@ -998,7 +957,6 @@ end TheoremII
 
 section TheoremI
 
-open Formalism.BasicNotions
 
 structure Loc8All : Prop where
 
@@ -1198,7 +1156,6 @@ end TheoremI
 
 section Sizes
 
-open Formalism.BasicNotions
 
 theorem log_cube_le (M δ : ℝ) (hδ : 0 < δ) : ∃ x0 : ℝ, ∀ x ≥ x0, M * Real.log x ^ 3 ≤ x ^ δ := by
   have h := (isLittleO_log_rpow_rpow_atTop (3 : ℝ) hδ).def (c := 1 / (|M| + 1)) (by positivity)
@@ -1519,7 +1476,6 @@ theorem rG_lt_k {eps : ℝ} (Fm : FamP eps) : Ev Fm fun x i => rG (Fm.L x i).sc 
   have h3 : (Fm.L x i).sc.x ≤ (Fm.L x i).sc.x ^ (9 / 2 + 10 * (Fm.L x i).sc.eps - szTh (Fm.L x i)) := by
     calc (Fm.L x i).sc.x = (Fm.L x i).sc.x ^ (1 : ℝ) := (Real.rpow_one _).symm
       _ ≤ _ := Real.rpow_le_rpow_of_exponent_le hx1' hexp
-  have hge' : 32 / eps + 66 ≤ (Fm.L x i).sc.x := by rw [hxx]; exact hge
   have h4 : (rG (Fm.L x i).sc : ℝ) < ((Fm.D x i).R.k : ℝ) := by linarith
   exact_mod_cast h4
 
@@ -1528,7 +1484,7 @@ theorem numCmpF_fixed {eps : ℝ} (Fm : FamP eps) : NumCmpF Fm := by
   exact ⟨x0, fun x hx i => FormalGroupSystem.Pf.numeric_comparison_of_constants _ _ _ _ Fm.GK Fm.fixed.2.1.ge Fm.fixed.2.2.1.ge Fm.fixed.1.ge
     (hx0 x hx i).1.2 (by rw [Fm.L_x x i (hx0 x hx i).1.1]; exact (hx0 x hx i).2) (Fm.sizes x (hx0 x hx i).1.1 i)⟩
 
-theorem num_closed (𝒞 : FamClass) (_hN : FormalGroupSystem.NumericalComparisonUniform) : Closed 𝒞 fun Fm _ => NumCmpF Fm :=
+theorem num_closed (𝒞 : FamClass) : Closed 𝒞 fun Fm _ => NumCmpF Fm :=
   ⟨1, one_pos, fun _ _ _ => ⟨⟨0, fun _ => 0, fun _ => 0, fun _ => 0⟩, fun Fm _ _ _ => numCmpF_fixed Fm⟩⟩
 
 theorem cb_closed (𝒞 : FamClass) : Closed 𝒞 fun Fm _ => Ev Fm fun x i => CbLarge Fm.GK (Fm.L x i).sc := by

@@ -253,9 +253,9 @@ theorem exists_periods_tendsto_span : ∀ (E : Type) [Field E] [NumberField E] [
     · rw [Equiv.apply_symm_apply]
       exact ⟨rfl, rfl⟩
   choose sp hsp hsp' using fun τ : (U.X k).Ψ => hidx τ.1 (N - (U.X k).p0) (by
-    rw [if_pos (((hX k).2 _).1 τ.2), (hX k).1, hN, Nat.add_sub_cancel])
+    rw [ite_eq_left (((hX k).2 _).1 τ.2), (hX k).1, hN, Nat.add_sub_cancel])
   choose sm hsm hsm' using fun τ : (U.X k).Ψ => hidx (conjEmb τ.1) (U.X k).p0 (by
-    rw [if_neg fun h => ((U.X k).cmType τ.1).1 τ.2 (((hX k).2 (conjEmb τ.1)).2 h), (hX k).1])
+    rw [ite_eq_right fun h => ((U.X k).cmType τ.1).1 τ.2 (((hX k).2 (conjEmb τ.1)).2 h), (hX k).1])
   refine ⟨n, fun j => φL k (a b₀ j), fun j τ i => lam j 0 (sp τ i), fun j τ i => lam j 0 (sm τ i), fun j τ i => ?_,
     fun j τ i => ?_, fun τ => ⟨span_proj _ hspan _ (hsp τ), span_proj _ hspan _ (hsm τ)⟩⟩
   · have := hlim j (sp τ i)

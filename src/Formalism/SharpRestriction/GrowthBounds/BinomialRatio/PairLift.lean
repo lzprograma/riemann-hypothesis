@@ -1,43 +1,7 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ExtendedStatementOfParts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.ContravariantIsotypicOrthogonal
 
 @[expose] public section
@@ -95,7 +59,7 @@ private theorem vO_eq_addVal_div_ramE_of_ne_zero' {O : Type*} [CommRing O] [IsDo
     intro h
     exact hz ((IsFractionRing.to_map_eq_zero_iff).mp h)
   have hspec := Classical.choose_spec (IsLocalization.surj (nonZeroDivisors O) (algebraMap O (KK O) z))
-  simp only [vO, vK, ordW, if_neg hz']
+  simp only [vO, vK, ordW, ite_eq_right hz']
   generalize Classical.choose (IsLocalization.surj (nonZeroDivisors O) (algebraMap O (KK O) z)) = ab at hspec ⊢
   rw [← map_mul] at hspec
   have hmul : z * (ab.2 : O) = ab.1 := IsFractionRing.injective O (KK O) hspec
@@ -186,10 +150,10 @@ theorem liftVecAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cm Ct Cc H : ℝ}
     by_cases hIJ : I = J
     · subst hIJ
       simp
-    · rw [if_neg hIJ]
+    · rw [ite_eq_right hIJ]
       obtain ⟨j0, hj0⟩ := Function.ne_iff.mp hIJ
       have h0 : (∏ j, if I j = J j then z j (I j) else 0) = 0 :=
-        Finset.prod_eq_zero (Finset.mem_univ j0) (if_neg hj0)
+        Finset.prod_eq_zero (Finset.mem_univ j0) (ite_eq_right hj0)
       rw [h0, mul_zero]
       simp
 

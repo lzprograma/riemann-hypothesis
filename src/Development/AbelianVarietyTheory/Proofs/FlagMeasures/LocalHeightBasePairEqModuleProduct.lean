@@ -223,8 +223,6 @@ open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S
 
 namespace GlobalTheory.HTPlaceLeaf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem two_sum_range (r : ℕ) : ∀ q, q ≤ r + 1 → 2 * ∑ n ∈ Finset.range q, (r - n) = q * (2 * r + 1 - q) := by
   intro q
   induction q with
@@ -301,8 +299,7 @@ theorem point_ends {K : Type} [Field K] {r : ℕ} (w : Point K (r + 1)) :
   simp only [Finset.mem_filter, Finset.mem_range, Finset.mem_image, Finset.mem_univ, true_and]
   constructor
   · rintro ⟨hl, h1, hE⟩
-    by_contra hno
-    push_neg at hno
+    by_contra! hno
     apply hE
     rw [Formalism.MainNotions.BesselShellMomentBounds.ptMat_eq]
     refine _root_.Formalism.HermitianLatticeCounting.P.leading_minor_vanishes_off_block_ends K (r + 1) _ _ l (by omega) fun p hp => ?_
@@ -400,7 +397,7 @@ theorem place_eq (D : D7) (Z : LocDat D) (p : PlF D) (P : Formalism.MainNotions.
     intro l hl
     have e1 : P.Dm l = leadingPrincipalMinor ((locH Z p).Zhat P.A.f P.B.f) l := by
       rw [← Formalism.MainNotions.BesselShellMomentBounds.leadMinorK_eq _ l hl]
-      simp only [Formalism.MainNotions.S.LocNG.FPair.Dm, Loc.HermSp.Dl, dif_pos hl]
+      simp only [Formalism.MainNotions.S.LocNG.FPair.Dm, Loc.HermSp.Dl, dite_eq_left hl]
       rfl
     rw [e1, hzl, lead_scale_pow D.R.rS x _ _ l hl, Formalism.L2.SG.NGCut.LeadingMinorIntegrality.leadingMinor_map, map_mul, sgnL, map_prod]
   refine ⟨fun l hl => by rw [hDm l hl, hx, map_pow], ?_⟩

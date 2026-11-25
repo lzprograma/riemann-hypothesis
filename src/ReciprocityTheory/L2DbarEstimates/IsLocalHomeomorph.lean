@@ -122,11 +122,6 @@ def wint {M : Type*} [MeasurableSpace M] (n : ℕ) (z : M → V n) (f : M → �
 def jac {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (g : Fin n → M → ℂ) (x : M) : ℂ :=
   (Matrix.of fun i k => d n z k (g i) x).det
 
-def VanishesBeyond {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (u : M → ℂ) (x : M)
-    (m : ℕ) : Prop :=
-  ∀ e : OpenPartialHomeomorph M (V n), IsChart n z e → x ∈ e.source →
-    ∀ k ≤ m, iteratedFDeriv ℂ k (u ∘ e.symm) (z x) = 0
-
 def IsBergmanProj {M : Type*} [TopologicalSpace M] [MeasurableSpace M] (n : ℕ) (z : M → V n)
     (ps : M → ℝ) (F0 F : M → ℂ) : Prop :=
   Holo n z F ∧ wint n z F ps < ⊤ ∧

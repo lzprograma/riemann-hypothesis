@@ -26,15 +26,6 @@ theorem vle_algEquiv_apply_iff {L L' : Type*} [Field L] [Field L'] [Algebra K L]
 
 end Valuation
 
-section Conjugation
-
-variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
-  {Ω : Type*} [Field Ω] [ValuativeRel Ω] [TopologicalSpace Ω] [IsValuativeTopology Ω]
-  [Algebra K Ω] [ValuativeExtension K Ω] [IsSepClosure K Ω]
-  (E : IntermediateField K Ω) [FiniteDimensional K E] (σ : Ω ≃ₐ[K] Ω)
-
-end Conjugation
-
 section Finite
 
 variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]

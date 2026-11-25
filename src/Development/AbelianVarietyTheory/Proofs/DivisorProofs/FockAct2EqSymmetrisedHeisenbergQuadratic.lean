@@ -200,10 +200,10 @@ theorem fockAct2_eq_heisOp_quad : ∀ (P Q R S : ℕ) (Y : Mat R S), Y ∈ upq R
   rw [omE, GlobalTheory.FockCasimir.lowB_mul_raiB (a, b) (a, b')]
   by_cases h : b' = b
   · subst h
-    simp only [if_true]
+    simp only [ite_true]
     module
   · have h1 : ((a, b') : Ln P Q R S) ≠ (a, b) := by simp [h]
-    simp only [h1, Ne.symm h1, if_false, add_zero]
+    simp only [h1, Ne.symm h1, ite_false, add_zero]
     module
 
 end GlobalTheory.FockHeisQuad

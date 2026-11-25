@@ -3,45 +3,7 @@ module
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HasComplementOfBasis
 public import Development.AbelianVarietyTheory.Definitions.Divisors.CmHostImaginaryGeneratorNeZero
 public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsGLSubmatrix
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
 
@@ -54,8 +16,6 @@ open IsDedekindDomain NumberField Matrix
 open scoped TensorProduct nonZeroDivisors Pointwise
 
 namespace GlobalTheory.SignatureAddition
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Generic
 
@@ -94,23 +54,23 @@ theorem middleSymmetricBasisVectors_gram_antiDiagonal (c : ℕ) (neg : Bool) (p 
   by_cases h1 : a = b <;> by_cases h2 : a + b + 1 = c
   · subst h1
     have h : 2 * a + 1 = c := by omega
-    simp only [if_pos h.le, if_pos h, if_neg (show ¬ 2 * a + 1 < c by omega), hm h, if_pos h2]
+    simp only [ite_eq_left h.le, ite_eq_left h, ite_eq_right (show ¬ 2 * a + 1 < c by omega), hm h, ite_eq_left h2]
     cases neg <;> simp
   · subst h1
     rcases (show 2 * a + 1 < c ∨ c < 2 * a + 1 by omega) with h | h
-    · simp only [if_pos h.le, if_pos h, if_neg (show ¬ P ≤ a by omega), if_pos (show P ≤ c - (a + 1) by omega), if_neg h2]
+    · simp only [ite_eq_left h.le, ite_eq_left h, ite_eq_right (show ¬ P ≤ a by omega), ite_eq_left (show P ≤ c - (a + 1) by omega), ite_eq_right h2]
       simp
-    · simp only [if_neg h.not_ge, if_neg h.not_gt, if_neg h.ne', if_pos (show P ≤ a by omega),
-        if_neg (show ¬ P ≤ c - (a + 1) by omega), if_neg h2]
+    · simp only [ite_eq_right h.not_ge, ite_eq_right h.not_gt, ite_eq_right h.ne', ite_eq_left (show P ≤ a by omega),
+        ite_eq_right (show ¬ P ≤ c - (a + 1) by omega), ite_eq_right h2]
       norm_num
   · rcases (show (2 * a + 1 < c ∧ c < 2 * b + 1) ∨ (2 * b + 1 < c ∧ c < 2 * a + 1) by omega) with ⟨h, h'⟩ | ⟨h', h⟩
-    · simp only [if_pos h.le, if_pos h, if_neg (show ¬ P ≤ a by omega), if_pos (show P ≤ c - (a + 1) by omega),
-        if_neg h'.not_ge, if_neg h'.not_gt, if_neg h'.ne', if_neg h1, if_pos h2]
+    · simp only [ite_eq_left h.le, ite_eq_left h, ite_eq_right (show ¬ P ≤ a by omega), ite_eq_left (show P ≤ c - (a + 1) by omega),
+        ite_eq_right h'.not_ge, ite_eq_right h'.not_gt, ite_eq_right h'.ne', ite_eq_right h1, ite_eq_left h2]
       norm_num
-    · simp only [if_neg h.not_ge, if_neg h.not_gt, if_neg h.ne', if_pos (show P ≤ a by omega),
-        if_neg (show ¬ P ≤ c - (a + 1) by omega), if_pos h'.le, if_pos h', if_neg h1, if_pos h2]
+    · simp only [ite_eq_right h.not_ge, ite_eq_right h.not_gt, ite_eq_right h.ne', ite_eq_left (show P ≤ a by omega),
+        ite_eq_right (show ¬ P ≤ c - (a + 1) by omega), ite_eq_left h'.le, ite_eq_left h', ite_eq_right h1, ite_eq_left h2]
       norm_num
-  · simp only [if_neg h1, if_neg h2, add_zero, mul_zero]
+  · simp only [ite_eq_right h1, ite_eq_right h2, add_zero, mul_zero]
 
 end Generic
 

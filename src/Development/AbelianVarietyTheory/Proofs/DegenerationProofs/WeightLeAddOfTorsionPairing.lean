@@ -639,8 +639,7 @@ theorem finrank_le_of_card (l : ℕ) [hl : Fact l.Prime] {T M : Type} [AddCommGr
       ext; omega
     have := Nat.card_le_card_of_injective F hF
     simpa using this
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   set n := C * l ^ (e * k) with hn
   have h1 := key n
   have h2 : l ^ n * l ^ (n * k) ≤ (l ^ n) ^ u := by

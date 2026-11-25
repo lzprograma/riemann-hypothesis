@@ -5,55 +5,8 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIf
 public import Development.WeilBound.CoreStatements.LocalThetaKernels.EvlLoc
 public import Mathlib.MeasureTheory.Integral.Pi
 public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Mathlib.Topology.Compactness.Paracompact
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -110,7 +63,7 @@ theorem lc_prod {X ι : Type} [TopologicalSpace X] (s : Finset ι) {f : ι → X
     exact (h a (Finset.mem_insert_self _ _)).mul (ih fun i hi => h i (Finset.mem_insert_of_mem hi))
 
 theorem ind_ne {c x : k} (h : ind c x ≠ 0) : valuation k x ≤ valuation k c := by
-  by_contra h'; exact h (if_neg h')
+  by_contra h'; exact h (ite_eq_right h')
 
 theorem one_mem_SB : one κ ∈ GlobalTheory.WeilM.SB (κ → k) := by
   refine ⟨lc_prod _ fun p _ => (lc_ind one_ne_zero).comp_continuous (continuous_apply p), ?_⟩
@@ -122,8 +75,8 @@ theorem one_mem_SB : one κ ∈ GlobalTheory.WeilM.SB (κ → k) := by
 theorem lc_wt (P : Finset κ) : IsLocallyConstant (wt (k := k) P) :=
   lc_prod _ fun p _ => by
     by_cases h : p ∈ P
-    · simp only [h, if_true]; exact IsLocallyConstant.const _
-    · simp only [h, if_false]; exact (lc_ind one_ne_zero).comp_continuous (continuous_apply p)
+    · simp only [h, ite_true]; exact IsLocallyConstant.const _
+    · simp only [h, ite_false]; exact (lc_ind one_ne_zero).comp_continuous (continuous_apply p)
 
 theorem continuous_cut (P : Finset κ) : Continuous (cut (k := k) P) :=
   continuous_pi fun p => by
@@ -143,10 +96,10 @@ theorem cut_mem {P : Finset κ} {Φ : (κ → k) → ℂ} (hΦ : Φ ∈ GlobalTh
     obtain ⟨h1, h2⟩ := mul_ne_zero_iff.1 h
     refine hx fun p _ => ?_
     by_cases hp : p ∈ P
-    · simp only [if_pos hp]; exact ⟨cut P x, subset_tsupport _ h1, by simp [cut, hp]⟩
-    · simp only [if_neg hp]
+    · simp only [ite_eq_left hp]; exact ⟨cut P x, subset_tsupport _ h1, by simp [cut, hp]⟩
+    · simp only [ite_eq_right hp]
       have := Finset.prod_ne_zero_iff.1 h2 p (Finset.mem_univ _)
-      rw [if_neg hp] at this
+      rw [ite_eq_right hp] at this
       exact ind_ne this
 
 variable [SecondCountableTopology k] [MeasurableSpace k] [BorelSpace k]
@@ -248,7 +201,7 @@ theorem evInt [Invertible (2 : k)] {m : Measure k} (hm : IsVol m) {ψ : AddChar 
     congr 1
     funext Y
     beta_reduce
-    rw [dot0 (cut P Y) Z' (fun p hp => if_neg hp) b, AddChar.map_zero_eq_one, one_mul]
+    rw [dot0 (cut P Y) Z' (fun p hp => ite_eq_right hp) b, AddChar.map_zero_eq_one, one_mul]
     congr 1
     · congr 1
       funext p
@@ -262,9 +215,9 @@ theorem evInt [Invertible (2 : k)] {m : Measure k} (hm : IsVol m) {ψ : AddChar 
   · intro w
     let b1 : κ → k := fun p => if p ∈ P then 0 else w.1 p
     let b2 : κ → k := cut P w.2
-    refine ⟨(cut P w.1, fun p => if p ∈ P then 0 else w.2 p), ⟨fun p hp => if_neg hp, fun p hp => if_pos hp⟩, (b1, b2), ?_, ?_⟩
+    refine ⟨(cut P w.1, fun p => if p ∈ P then 0 else w.2 p), ⟨fun p hp => ite_eq_right hp, fun p hp => ite_eq_left hp⟩, (b1, b2), ?_, ?_⟩
     · refine Prod.ext (funext fun p => ?_) (funext fun p => ?_) <;> by_cases hp : p ∈ P <;> simp [cut, b1, b2, hp]
-    have d12 : b1 ⬝ᵥ b2 = 0 := by rw [dotProduct_comm]; exact dot0 _ _ (fun p hp => if_neg hp) fun p hp => if_pos hp
+    have d12 : b1 ⬝ᵥ b2 = 0 := by rw [dotProduct_comm]; exact dot0 _ _ (fun p hp => ite_eq_right hp) fun p hp => ite_eq_left hp
     by_cases c1 : ∀ p, valuation k (b1 p) ≤ 1
     · by_cases c2 : ∀ p, valuation k (b2 p) ≤ 1
       · refine Or.inl ⟨1, funext fun x => ?_⟩
@@ -332,7 +285,7 @@ variable {ν : kˣ →* ℂˣ} {ϖ : kˣ} {c : ℕ}
 theorem dl_unit (u : kˣ) (hu : valuation k (u : k) = 1) : dl ν u = (((ν u)⁻¹ : ℂˣ) : ℂ) := by
   rw [dl, dite_eq_left ⟨u.ne_zero, hu⟩, Units.mk0_val]
 
-theorem dl_of_ne {x : k} (h : valuation k x ≠ 1) : dl ν x = 0 := dif_neg fun h' => h h'.2
+theorem dl_of_ne {x : k} (h : valuation k x ≠ 1) : dl ν x = 0 := dite_eq_right fun h' => h h'.2
 
 theorem exists_unit {x : k} (h : valuation k x = 1) : ∃ u : kˣ, (u : k) = x :=
   ⟨Units.mk0 x (by rintro rfl; simp at h), rfl⟩
@@ -492,16 +445,16 @@ theorem int_cosets (hm : IsVol m) (hϖ : IsUnif ϖ) (c : ℕ) (f : k → ℂ) (h
     by_cases hx : valuation k x ≤ 1
     · rw [Finset.sum_eq_single (Ideal.Quotient.mk _ (⟨x, hx⟩ : 𝒪[k]))]
       · have := (res_eq_iff hϖ c ⟨x, hx⟩ _).1 (Ideal.Quotient.mk_out _).symm
-        rw [ind, if_pos this, mul_one]
+        rw [ind, ite_eq_left this, mul_one]
         exact ((hf _ _ this).symm.trans (by rw [add_sub_cancel])).symm
       · intro y _ hy
-        rw [ind, if_neg, mul_zero]
+        rw [ind, ite_eq_right, mul_zero]
         intro h
         exact hy (((res_eq_iff hϖ c ⟨x, hx⟩ _).2 h).trans (Ideal.Quotient.mk_out _)).symm
       · simp
     · rw [h0 x hx]
       refine (Finset.sum_eq_zero fun y _ => ?_).symm
-      rw [ind, if_neg, mul_zero]
+      rw [ind, ite_eq_right, mul_zero]
       intro h
       have := Valuation.map_add_le _ (h.trans (val_pow_le hϖ c)) (Quotient.out y : 𝒪[k]).2
       rw [sub_add_cancel] at this
@@ -509,7 +462,7 @@ theorem int_cosets (hm : IsVol m) (hϖ : IsUnif ϖ) (c : ℕ) (f : k → ℂ) (h
   have hi : Integrable (ind ((ϖ : k) ^ c)) m :=
     (lc_ind (pow_ne_zero _ ϖ.ne_zero)).continuous.integrable_of_hasCompactSupport
       (HasCompactSupport.intro (IsNonarchimedeanLocalField.isCompact_closedBall k (valuation k ((ϖ : k) ^ c)))
-        fun x hx => by unfold ind; exact if_neg hx)
+        fun x hx => by unfold ind; exact ite_eq_right hx)
   conv_lhs => rw [e]
   rw [MeasureTheory.integral_finsetSum _ fun y _ => (hi.comp_sub_right _).const_mul _, finsum_eq_sum_of_fintype, Finset.mul_sum]
   refine Finset.sum_congr rfl fun y _ => ?_
@@ -554,7 +507,7 @@ theorem gI_gauss (hm : IsVol m) (hψ : IsPsi ψ) (hϖ : IsUnif ϖ) (hc : 1 ≤ c
   · intro u _
     have h1 := (hu u.1).1 u.isUnit
     have h2 : ((Quotient.out u.1 : 𝒪[k]) : k) ≠ 0 := by intro h; simp [h] at h1
-    rw [dif_neg h2, dl, dite_eq_left ⟨h2, h1⟩, div_eq_inv_mul]
+    rw [dite_eq_right h2, dl, dite_eq_left ⟨h2, h1⟩, div_eq_inv_mul]
 
 end PositivityTheory.ThKG.Std
 end -- clump:auto

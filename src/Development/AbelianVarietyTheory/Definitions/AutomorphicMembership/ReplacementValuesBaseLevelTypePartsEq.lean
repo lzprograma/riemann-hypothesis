@@ -67,8 +67,6 @@ local elab "exact_by_kernel " term:term : tactic =>
     | .ok false => throwError "expected{indentExpr target}\nbut the term has type{indentExpr actual}"
     | .error error => throwError (error.toMessageData (← getOptions))
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {B : Base} {C : Cols B} {a : Late B C} (c : Refill a) {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type}
 variable {Ks : Type} [Field Ks] [NumberField Ks] [iK : Algebra Ks a.D.what₂.LL]
 
@@ -77,22 +75,11 @@ section Generic
 variable {X : Type} [NormedAddCommGroup X] [InnerProductSpace ℂ X] {N : Type} [AddCommGroup N] [Module ℂ N] {P P' : Submodule ℂ N}
   {ip : N → N → ℂ} {j : X ≃ₗ[ℂ] P}
 
-theorem hilbTie_ofEq (e : P = P') (h : HilbTie P ip j) : HilbTie P' ip (j.trans (LinearEquiv.ofEq _ _ e)) := fun x y => h x y
-
-theorem projTie_ofEq {Y : Type} {f : Y → X} {g g' : Y → N} (e : P = P') (h : ProjTie P ip j f g) (hg : ∀ y, g' y = g y) :
-    ProjTie P' ip (j.trans (LinearEquiv.ofEq _ _ e)) f g' := fun x y => (h x y).trans (congrArg (ip (j x)) (hg y).symm)
-
 
 omit [NormedAddCommGroup X] [InnerProductSpace ℂ X] in
 theorem le_of_eqs {Q Q' : Submodule ℂ N} (e : P = P') (e' : Q = Q') (h : P ≤ Q) : P' ≤ Q' := e ▸ e' ▸ h
 
 theorem val_trans_ofEq (e : P = P') (x : X) : ((j.trans (LinearEquiv.ofEq _ _ e)) x).1 = (j x).1 := rfl
-
-theorem map_incl {Q Q' : Submodule ℂ N} {Z : Type} (e : P = P') (e' : Q = Q') (h : P ≤ Q) (j : X ≃ₗ[ℂ] P) {f : Q → Z} (f' : Q' → Z)
-    (hf : ∀ v, f' (LinearEquiv.ofEq _ _ e' v) = f v) (y : X) :
-    f' (Submodule.inclusion (le_of_eqs e e' h) ((j.trans (LinearEquiv.ofEq _ _ e)) y)) = f (Submodule.inclusion h (j y)) := by
-  subst e e'
-  exact hf (Submodule.inclusion h (j y))
 
 omit [NormedAddCommGroup X] [InnerProductSpace ℂ X] in
 private theorem mem_of_eq (e : P = P') {w : N} (h : w ∈ P') : w ∈ P := e.symm ▸ h
@@ -289,8 +276,6 @@ local elab "exact_by_kernel " term:term : tactic =>
     | .ok true => pure value
     | .ok false => throwError "expected{indentExpr target}\nbut the term has type{indentExpr actual}"
     | .error error => throwError (error.toMessageData (← getOptions))
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {B : Base} {C : Cols B} {a : Late B C} (c : Refill a) {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type}
 variable {Ks : Type} [Field Ks] [NumberField Ks] [iK : Algebra Ks a.D.what₂.LL]

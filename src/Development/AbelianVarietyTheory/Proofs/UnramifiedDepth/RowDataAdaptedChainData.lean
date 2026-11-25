@@ -99,7 +99,7 @@ theorem int_of_pow {x : C} {n : ℕ} (hn : n ≠ 0) (h : V.Ge 0 (x ^ n)) : V.Ge 
     have h'' : (0 : ℝ) ≤ n • t := by exact_mod_cast h'
     rw [nsmul_eq_mul] at h''
     have hn' : (0 : ℝ) < n := by exact_mod_cast Nat.pos_of_ne_zero hn
-    have : 0 ≤ t := by by_contra hc; push_neg at hc; nlinarith
+    have : 0 ≤ t := by by_contra hc; push Not at hc; nlinarith
     exact_mod_cast this
 
 def admitted (V : VF C) (Q : Finset I) (P : Matrix I I C) : Prop :=
@@ -118,7 +118,7 @@ theorem elim_one (Q : Finset I) (a : I → C) : ∃ (P : Matrix I I C) (Q' : Fin
   by_cases h0 : ∀ c ∈ Q, a c = 0
   · refine ⟨1, Q, isAdmissibleIntegralBasisChange_one Q, subset_rfl, by omega, fun c hc => ?_⟩
     simp [Matrix.one_apply, h0 c hc]
-  push_neg at h0
+  push Not at h0
   obtain ⟨c1, hc1, ha1⟩ := h0
   obtain ⟨c0, hc0, hmin⟩ := Q.exists_min_image (fun c => V.v (a c)) ⟨c1, hc1⟩
   have ha0 : a c0 ≠ 0 := by
@@ -157,7 +157,7 @@ theorem elim_one (Q : Finset I) (a : I → C) : ∃ (P : Matrix I I C) (Q' : Fin
     · simp [h, Matrix.one_apply, eq_comm]
   · intro c hc x hx
     have : x ≠ c0 := fun h => hx (h ▸ hc0)
-    rw [Matrix.updateCol_apply, if_neg this]
+    rw [Matrix.updateCol_apply, ite_eq_right this]
     exact Matrix.one_apply_ne (fun h => hx (h ▸ hc))
   · rw [Finset.card_erase_of_mem hc0]; omega
   · intro c hc
@@ -188,7 +188,7 @@ theorem admitted.mul {Q Q' : Finset I} (hQ : Q' ⊆ Q) {P P' : Matrix I I C} (h 
     · rw [h.2.2.2 y hy x hx, mul_zero]
     · by_cases hc' : c ∈ Q'
       · rw [h'.2.2.2 c hc' y (fun hh => hy (hQ hh)), zero_mul]
-      · rw [h'.2.2.1 c hc' y, if_neg (fun hh : y = c => hy (hh ▸ hc)), zero_mul]
+      · rw [h'.2.2.1 c hc' y, ite_eq_right (fun hh : y = c => hy (hh ▸ hc)), zero_mul]
 
 theorem elim {M : Type} (Q : Finset I) (a : I → M → C) (E : Finset M) :
     ∃ (P : Matrix I I C) (Q' : Finset I), admitted V Q P ∧ Q' ⊆ Q ∧
@@ -229,8 +229,7 @@ theorem exists_unit_minor {ι : Type} [Fintype ι] (U : ι → I → C) (w : I �
     (hU : ∀ c x, V.Ge 0 (U c x)) (hw : ∀ x c, V.Ge 0 (w x c))
     (h : ∀ c c', ∑ x, U c x * w x c' = if c = c' then 1 else 0) :
     ∃ f : ι → I, V.v (Matrix.of fun c' c => U c (f c')).det = 0 := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have h1 : (Matrix.of fun c' => ∑ x, w x c' • (fun c => U c x) : Matrix ι ι C) = 1 := by
     ext c' c
     simp only [Matrix.of_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Matrix.one_apply]
@@ -275,7 +274,7 @@ theorem change (S : Sys X) (b : ZMod d) (Q : Finset I) (hQ : ∀ c ∈ Q, X.ty (
     intro c x h
     by_cases hc : c ∈ Q
     · exact hP.2.2.2 c hc x (fun hx => h (by rw [hQ c hc, hQ x hx]))
-    · rw [hP.2.2.1 c hc x, if_neg (fun hh : x = c => h (by rw [hh]))]
+    · rw [hP.2.2.1 c hc x, ite_eq_right (fun hh : x = c => h (by rw [hh]))]
   have hval : ∀ c i n, (∑ x, teich V.l (P c x) (S.cur x)) i n = ∑ x, P c x ^ (V.l ^ i) * S.cur x i n := by
     intro c i n; simp [Finset.sum_apply, teich]
   refine ⟨⟨fun c k => (P * S.U) c k, fun c => ∑ x, teich V.l (P c x) (S.cur x), fun c => ⟨?_, ?_, ?_⟩, ?_⟩,
@@ -395,7 +394,7 @@ theorem stepB [IsAlgClosed C] (S : Sys X) (b : ZMod d) (Q : Finset I) (hQ : ∀ 
     refine Finset.sum_congr rfl fun x _ => ?_
     by_cases hx : x ∈ Q
     · have := S.co_spec (fun n => (V.l : C) * S.cur x 2 n) k
-      simp only [mul_assoc, ← Finset.mul_sum, hw, if_pos hx]
+      simp only [mul_assoc, ← Finset.mul_sum, hw, ite_eq_left hx]
       rw [show ∑ e, S.co (fun n => (V.l : C) * S.cur x 2 n) e * S.tan e k =
         (V.l : C) * S.cur x 2 (Sum.inl k) from this]
       ring
@@ -411,10 +410,10 @@ theorem stepB [IsAlgClosed C] (S : Sys X) (b : ZMod d) (Q : Finset I) (hQ : ∀ 
         rw [mul_comm]; exact (S.U_int e k).mul_int (h3 c hc e he)
       simpa using this.l_inv_mul
     · exact VF.Ge.zero 0
-  · by_contra hh; exact he (if_neg hh)
+  · by_contra hh; exact he (ite_eq_right hh)
   · dsimp only
     by_cases hk : X.ty (Sum.inl k) = b + 2
-    · rw [if_pos hk, mul_inv_cancel_left₀ VF.l_ne_zero, hmain, ← Finset.sum_ite_mem_eq E,
+    · rw [ite_eq_left hk, mul_inv_cancel_left₀ VF.l_ne_zero, hmain, ← Finset.sum_ite_mem_eq E,
         ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun e _ => ?_
       by_cases he : e ∈ E
@@ -422,7 +421,7 @@ theorem stepB [IsAlgClosed C] (S : Sys X) (b : ZMod d) (Q : Finset I) (hQ : ∀ 
       · by_cases he' : X.ty (Sum.inl e) = b + 2
         · simp [he, he']
         · simp [he, he', tan_pure S (c := e) (k := k) (by rw [hk]; exact Ne.symm he')]
-    · rw [if_neg hk, S1.pure c 2 _ (by rw [hQ c (h1 hc)]; simpa using hk), mul_zero, add_zero]
+    · rw [ite_eq_right hk, S1.pure c 2 _ (by rw [hQ c (h1 hc)]; simpa using hk), mul_zero, add_zero]
       symm
       refine Finset.sum_eq_zero fun e _ => ?_
       split_ifs with he
@@ -474,9 +473,9 @@ theorem chain [IsAlgClosed C] (j' : ℕ) (K : ℕ) : (∀ s, 0 < s → s < K →
     · rw [h31 c (fun hh => hc 0 (by omega) (by simpa using hQ c hh))]
       exact p1 c fun s hs => by rw [hsh]; exact hc (s + 1) (by omega)
     · by_cases h : c ∈ Q3
-      · simp only [if_pos h]
+      · simp only [ite_eq_left h]
         exact ⟨by simpa using hQ c (hQ3 c h), r5 c (r1 h)⟩
-      · simp only [if_neg h] at hc ⊢
+      · simp only [ite_eq_right h] at hc ⊢
         have hc' : lev c < K := by omega
         rw [h31 c (hnQ c hc'), ← hsh]
         exact p2 c hc'
@@ -492,7 +491,7 @@ theorem chain [IsAlgClosed C] (j' : ℕ) (K : ℕ) : (∀ s, 0 < s → s < K →
       beta_reduce
       omega
     · by_cases h : c ∈ Q3
-      · simp only [if_pos h] at hc ⊢
+      · simp only [ite_eq_left h] at hc ⊢
         obtain ⟨g, lam, g1, g2, g3, g4⟩ := r6 c h
         have hg : ∀ e, g e ≠ 0 → e ∉ Q ∧ lev e = 0 := by
           intro e he
@@ -504,14 +503,14 @@ theorem chain [IsAlgClosed C] (j' : ℕ) (K : ℕ) : (∀ s, 0 < s → s < K →
         · by_contra hh
           obtain ⟨t1, t2⟩ := hg e hh
           apply he
-          rw [if_neg (fun h3 => t1 (hQ3 e h3)), t2]
+          rw [ite_eq_right (fun h3 => t1 (hQ3 e h3)), t2]
         · rw [g4]
           congr 1
           refine Finset.sum_congr rfl fun e _ => ?_
           by_cases hh : g e = 0
           · simp [hh]
           · rw [tan_eq (r3 e fun h2 => (hg e hh).1 (q1 h2))]
-      · simp only [if_neg h] at hc ⊢
+      · simp only [ite_eq_right h] at hc ⊢
         obtain ⟨g, lam, g1, g2, g3, g4⟩ := p5 c (by omega)
         have hg : ∀ e, g e ≠ 0 → e ∉ Q ∧ lev e = lev c + 1 := by
           intro e he
@@ -522,7 +521,7 @@ theorem chain [IsAlgClosed C] (j' : ℕ) (K : ℕ) : (∀ s, 0 < s → s < K →
         · by_contra hh
           obtain ⟨t1, t2⟩ := hg e hh
           apply he
-          rw [if_neg (fun h3 => t1 (hQ3 e h3)), t2]
+          rw [ite_eq_right (fun h3 => t1 (hQ3 e h3)), t2]
         · rw [h31 c (hnQ c (by omega)), g4]
           congr 1
           refine Finset.sum_congr rfl fun e _ => ?_
@@ -583,7 +582,7 @@ theorem adapted (X : Cart V d I J) {ι : Type} [Fintype ι] (U : ι → I → C)
       by_cases hx : ∃ c, x = f c
       · obtain ⟨c, rfl⟩ := hx
         rw [hrow]; exact hU _ _
-      · push_neg at hx
+      · push Not at hx
         rw [hrow' x hx]
         split_ifs
         · exact VF.Ge.one
@@ -592,8 +591,8 @@ theorem adapted (X : Cart V d I J) {ι : Type} [Fintype ι] (U : ι → I → C)
       by_cases hx : ∃ c, x = f c
       · obtain ⟨c, rfl⟩ := hx
         rw [hrow]; exact ha _ _ (by rwa [hty] at hxy)
-      · push_neg at hx
-        rw [hrow' x hx, if_neg (fun hh : x = y => hxy (by rw [hh]))])
+      · push Not at hx
+        rw [hrow' x hx, ite_eq_right (fun hh : x = y => hxy (by rw [hh]))])
     (by rw [← hf, ← hdet]; rfl)
   refine ⟨S, Finset.univ.image f, fun c hc => ?_, ?_, fun c hc => ?_⟩
   · obtain ⟨b, -, rfl⟩ := Finset.mem_image.mp hc; exact hty b

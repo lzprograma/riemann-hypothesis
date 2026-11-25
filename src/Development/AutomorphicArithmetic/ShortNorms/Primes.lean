@@ -19,59 +19,8 @@ public import Development.AutomorphicArithmetic.ShortNorms.ShortNorm
 public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ZerosDisc
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PrimesAPIntervalOfPrimesRel
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PrimesInProgressionsRelativeError
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsBasisEmbedding
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Data.Finsupp.Pointwise
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.ExponentialBounds
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ConvRealChar, Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FiniteIdealsIn, Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SumLamIdealLe, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsImagQuadIntegers, Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsLFamRay, Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormPrimesImagQuadShortIntervalLowerBound, Development.AutomorphicArithmetic.ShortNorms.SmallOneOf, Development.AutomorphicArithmetic.ShortNorms.Primes
@@ -185,10 +134,10 @@ private lemma sum_range_neg_one_pow_eq_ite (n : ℕ) :
     rw [Finset.sum_range_succ, ih]
     by_cases h : Even n
     · have h' : ¬ Even (n + 1) := by rw [Nat.even_add_one]; exact not_not.2 h
-      rw [if_pos h, if_neg h', h.neg_one_pow]
+      rw [ite_eq_left h, ite_eq_right h', h.neg_one_pow]
       norm_num
     · have h' : Even (n + 1) := Nat.even_add_one.2 h
-      rw [if_neg h, if_pos h', (Nat.not_even_iff_odd.1 h).neg_one_pow]
+      rw [ite_eq_right h, ite_eq_left h', (Nat.not_even_iff_odd.1 h).neg_one_pow]
       norm_num
 
 lemma geom_bounds {x : ℝ} (hx : x = 0 ∨ x = 1 ∨ x = -1) (k : ℕ) :
@@ -203,7 +152,7 @@ lemma geom_bounds {x : ℝ} (hx : x = 0 ∨ x = 1 ∨ x = -1) (k : ℕ) :
     have h : ¬ Even (2 * k + 1) := by
       rw [Nat.even_add_one, not_not]
       exact even_two_mul k
-    rw [if_neg h]
+    rw [ite_eq_right h]
     refine ⟨?_, le_refl _⟩
     split_ifs <;> norm_num
 
@@ -377,11 +326,11 @@ lemma sum_aRay (ε : D.G → ℝ) (n : ℕ) : ∑ g, ε g * aRay D g n = ∑ I �
       then ε g else 0 := by
     intro I
     by_cases h : I ≠ ⊥ ∧ IsCoprime I (Ideal.span {(M : 𝓞 K)})
-    · rw [chi, if_pos h]
-      simp only [ite_and, if_pos h]
+    · rw [chi, ite_eq_left h]
+      simp only [ite_and, ite_eq_left h]
       simp
-    · rw [chi, if_neg h]
-      simp only [ite_and, if_neg h, Finset.sum_const_zero]
+    · rw [chi, ite_eq_right h]
+      simp only [ite_and, ite_eq_right h, Finset.sum_const_zero]
   rw [Finset.sum_congr rfl (fun I _ => hchi I), Finset.sum_comm]
   refine Finset.sum_congr rfl fun g _ => ?_
   rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul, hcard g, mul_comm]
@@ -393,17 +342,17 @@ lemma chi_mul (ε : D.G → ℝ) (hε : ∀ g h, ε (g * h) = ε g * ε h) (I J 
     · have hIJ : I * J ≠ ⊥ ∧ IsCoprime (I * J) (Ideal.span {(M : 𝓞 K)}) :=
         ⟨mul_ne_zero hI.1 hJ.1, hI.2.mul_left hJ.2⟩
       simp only [chi]
-      rw [if_pos hIJ, if_pos hI, if_pos hJ, D.cls_mul I J hI.2 hJ.2 hI.1 hJ.1, hε]
+      rw [ite_eq_left hIJ, ite_eq_left hI, ite_eq_left hJ, D.cls_mul I J hI.2 hJ.2 hI.1 hJ.1, hε]
     · have hIJ : ¬ (I * J ≠ ⊥ ∧ IsCoprime (I * J) (Ideal.span {(M : 𝓞 K)})) := by
         rintro ⟨h1, h2⟩
         exact hJ ⟨fun h => h1 (by rw [h, Ideal.mul_bot]), h2.of_mul_left_right⟩
       simp only [chi]
-      rw [if_pos hI, if_neg hJ, if_neg hIJ, mul_zero]
+      rw [ite_eq_left hI, ite_eq_right hJ, ite_eq_right hIJ, mul_zero]
   · have hIJ : ¬ (I * J ≠ ⊥ ∧ IsCoprime (I * J) (Ideal.span {(M : 𝓞 K)})) := by
       rintro ⟨h1, h2⟩
       exact hI ⟨fun h => h1 (by rw [h, Ideal.bot_mul]), h2.of_mul_left_left⟩
     simp only [chi]
-    rw [if_neg hI, if_neg hIJ, zero_mul]
+    rw [ite_eq_right hI, ite_eq_right hIJ, zero_mul]
 
 lemma chi_one (ε : D.G → ℝ) (h1 : ε 1 = 1) : chi D ε 1 = 1 := by
   have hc : IsCoprime (1 : Ideal (𝓞 K)) (Ideal.span {(M : 𝓞 K)}) := isCoprime_one_left
@@ -414,7 +363,7 @@ lemma chi_one (ε : D.G → ℝ) (h1 : ε 1 = 1) : chi D ε 1 = 1 := by
     have e := D.cls_mul 1 1 hc hc hb hb
     rw [one_mul] at e
     exact mul_left_cancel (by rw [mul_one]; exact e.symm : D.cls 1 * D.cls 1 = D.cls 1 * 1)
-  rw [chi, if_pos ⟨hb, hc⟩, hcls, h1]
+  rw [chi, ite_eq_left ⟨hb, hc⟩, hcls, h1]
 
 lemma conv_aRay (ε : D.G → ℝ) {n : ℕ} (hn : n ≠ 0) :
     ∑ p ∈ n.divisorsAntidiagonal, (∑ g, aRay D g p.1) * ∑ g, ε g * aRay D g p.2 =
@@ -478,9 +427,9 @@ theorem conv_real_char : ∀ (K : Type) [Field K] [NumberField K] (M : ℕ), 2 �
           by_cases h : I ≠ ⊥ ∧ IsCoprime I (Ideal.span {(M : 𝓞 K)})
           · have h2 : I ^ 2 ≠ ⊥ ∧ IsCoprime (I ^ 2) (Ideal.span {(M : 𝓞 K)}) :=
               ⟨pow_ne_zero 2 h.1, h.2.pow_left⟩
-            rw [h01, h01, if_pos h, if_pos h2, one_mul]
+            rw [h01, h01, ite_eq_left h, ite_eq_left h2, one_mul]
             exact (hr I h.1).2
-          · rw [h01 I, if_neg h]
+          · rw [h01 I, ite_eq_right h]
             exact hterm (I ^ 2)
       _ = ∑ C ∈ (normEq K n).image (· ^ 2), chi D (fun _ => 1) C * r (chi D ε) C := by
           rw [Finset.sum_image]
@@ -518,7 +467,7 @@ theorem lamIdeal_pow {P : Ideal (𝓞 K)} (hP : Prime P) (k : ℕ) :
     lamIdeal (P ^ (k + 1)) = Real.log (Ideal.absNorm P) := by
   have h1 : P.IsPrime := Ideal.isPrime_of_prime hP
   unfold lamIdeal
-  rw [if_pos ⟨P, k + 1, h1, hP.ne_zero, by omega, rfl⟩, Ideal.radical_pow _ (by omega), h1.radical]
+  rw [ite_eq_left ⟨P, k + 1, h1, hP.ne_zero, by omega, rfl⟩, Ideal.radical_pow _ (by omega), h1.radical]
 
 theorem finite_dvd {I : Ideal (𝓞 K)} (hI : I ≠ 0) : {J : Ideal (𝓞 K) | J ∣ I}.Finite := by
   refine (Ideal.finite_setOf_absNorm_le (S := 𝓞 K) (Ideal.absNorm I)).subset fun J hJ => ?_
@@ -535,7 +484,7 @@ theorem sum_lamIdeal (I : Ideal (𝓞 K)) : I ≠ 0 → ∀ T : Finset (Ideal (�
     rw [map_one, Nat.cast_one, Real.log_one]
     refine Finset.sum_eq_zero fun J hJ => ?_
     unfold lamIdeal
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨P, k, hP, hP0, hk, rfl⟩
     have := isUnit_of_dvd_one ((hT _).1 hJ)
     rw [isUnit_pow_iff (by omega), Ideal.isUnit_iff] at this
@@ -558,7 +507,7 @@ theorem sum_lamIdeal (I : Ideal (𝓞 K)) : I ≠ 0 → ∀ T : Finset (Ideal (�
     · intro J hJ hne
       rw [Finset.mem_sdiff, hT, hSm] at hJ
       unfold lamIdeal
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨Q, k, hQ, hQ0, hk, rfl⟩
       have hQp : Prime Q := Ideal.prime_of_isPrime hQ0 hQ
       by_cases hQP : Q = P
@@ -583,7 +532,6 @@ theorem finite_idealsIn (g : D.G) (n : ℕ) : (idealsIn D g n).Finite :=
 end GlobalTheory.Hk.RayConv
 
 namespace GlobalTheory.Hk
-
 
 open RayConv in
 theorem aRay_mul_log : ∀ (K : Type) [Field K] [NumberField K] (M : ℕ), 2 ≤ M → ∀ (D : RayData K M) (g : D.G) (n : ℕ), aRay D g n * Real.log n = ∑ h : D.G, ∑ p ∈ n.divisorsAntidiagonal, lamRay D h p.1 * aRay D (g / h) p.2 := by
@@ -721,11 +669,10 @@ theorem sum_lamIdeal_le (hK : Module.finrank ℚ K = 2) (n : ℕ) (S : Finset (I
   have hpos : ∀ I ∈ T, (0 : ℝ) < Ideal.absNorm I.radical := fun I hI =>
     Nat.cast_pos.2 (lt_trans one_pos (key I hI).2.2.2.2.1)
   push_cast at h3
-  rw [← Real.log_prod (fun I hI => (hpos I hI).ne'), vonMangoldt_apply, if_pos hn]
+  rw [← Real.log_prod (fun I hI => (hpos I hI).ne'), vonMangoldt_apply, ite_eq_left hn]
   have h4 := Real.log_le_log (Finset.prod_pos hpos) h3
   rw [Real.log_pow] at h4
   exact_mod_cast h4
-
 
 open QuadraticZeta in
 theorem exists_gen {d : ℕ} (hp : d.Prime) (hd : d % 4 = 3) {r : K} (hr : r ^ 2 = -(d : K))
@@ -776,14 +723,11 @@ theorem normOne_span {d M : ℕ} {ω : 𝓞 K} (hgen : ∀ z : 𝓞 K, ∃ a b :
   rw [Ideal.absNorm_span_singleton, Int.natAbs_of_nonneg h0]
   linarith
 
-theorem finite_idealsIn {M : ℕ} (D : RayData K M) (g : D.G) (n : ℕ) : (idealsIn D g n).Finite :=
-  (Ideal.finite_setOf_absNorm_eq (S := 𝓞 K) n).subset fun _ h => h.2.2.1
-
 theorem lamRay_props : ∀ (K : Type) [Field K] [NumberField K] (d M : ℕ) (x : K), d.Prime → d % 4 = 3 → 100 ≤ d → x ^ 2 = -(d : K) → Module.finrank ℚ K = 2 → 3 ≤ M → ∀ D : RayData K M, (∀ g n, 0 ≤ lamRay D g n) ∧ (∀ n : ℕ, ∑ g : D.G, lamRay D g n ≤ 2 * Λ n) ∧ ∀ p : ℕ, p.Prime → lamRay D 1 p ≠ 0 → GlobalTheory.Mem.An.NormOne d M p := by
   intro K _ _ d M x hp hd _ hx hK _ D
   refine ⟨fun g n => ?_, fun n => ?_, fun p _ h => ?_⟩
   · exact finsum_nonneg fun I => finsum_nonneg fun _ => lamIdeal_nonneg I
-  · have e : ∀ g, lamRay D g n = ∑ I ∈ (finite_idealsIn D g n).toFinset, lamIdeal I := fun g =>
+  · have e : ∀ g, lamRay D g n = ∑ I ∈ (GlobalTheory.Hk.RayConv.finite_idealsIn D g n).toFinset, lamIdeal I := fun g =>
       finsum_mem_eq_finite_toFinset_sum _ _
     simp only [e]
     rw [← Finset.sum_biUnion]
@@ -1015,12 +959,6 @@ theorem card_ray_le (hK : Module.finrank ℚ K = 2) (hM : M ≠ 0) :
 
 end
 
-theorem addChar_eq_one_or_neg_one {G : Type} [AddCommGroup G] (χ : AddChar G ℂ) (h : χ * χ = 1) (g : G) :
-    χ g = 1 ∨ χ g = -1 := by
-  have : χ g * χ g = 1 := by
-    rw [← AddChar.mul_apply, h, AddChar.one_apply]
-  exact mul_self_eq_one_iff.1 this
-
 theorem exists_lFam_ray : ∀ d M : ℕ, d.Prime → d % 4 = 3 → 100 ≤ d → 3 ≤ M → ∃ 𝓕 : LFam, 𝓕.B = (4 * (d : ℝ) * (M : ℝ) ^ 2) ∧
     ∀ p : ℕ, p.Prime → 𝓕.lam 0 p ≠ 0 → GlobalTheory.Mem.An.NormOne d M p := by
   intro d M hd hd4 hd100 hM
@@ -1074,9 +1012,9 @@ theorem exists_lFam_ray : ∀ d M : ℕ, d.Prime → d % 4 = 3 → 100 ≤ d →
     sq := fun χ hχ n => GlobalTheory.Hk.RaySq.conv_real_char K M (by omega) D (fun g => (χ (Additive.ofMul g)).re) (by simp) ?_ ?_ n }, rfl, hl.2.2⟩
   · intro g h
     rw [ofMul_mul, AddChar.map_add_eq_mul]
-    rcases addChar_eq_one_or_neg_one χ hχ (Additive.ofMul g) with h1 | h1 <;> simp [h1]
+    rcases GlobalTheory.Hk.LFamPos.pm_one χ hχ (Additive.ofMul g) with h1 | h1 <;> simp [h1]
   · intro g
-    rcases addChar_eq_one_or_neg_one χ hχ (Additive.ofMul g) with h1 | h1 <;> simp [h1]
+    rcases GlobalTheory.Hk.LFamPos.pm_one χ hχ (Additive.ofMul g) with h1 | h1 <;> simp [h1]
 
 end GlobalTheory.Hk
 end -- clump:auto

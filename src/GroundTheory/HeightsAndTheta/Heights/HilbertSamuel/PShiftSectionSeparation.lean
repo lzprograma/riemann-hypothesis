@@ -16,7 +16,6 @@ public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineSmooth
 public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCurveDivVertical
 public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PZhangLowerX
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.LineField
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.ImportsAlt, GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.Counterexample.Objects, GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.Counterexample, GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PShiftSectionSeparation
@@ -114,11 +113,6 @@ namespace Line
 
 end Line
 
-section FS
-
-
-end FS
-
 section Reg
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
@@ -133,28 +127,7 @@ structure WeightReg (ι : K → Type) [∀ k, Fintype (ι k)] where
     ∀ z : (Σ b, ι b) → ℂ, (∀ b, ∃ i, z ⟨b, i⟩ ≠ 0) → (reg t A').h z = k * (reg t A).h z
 
 
-open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.HeightsSet in
-def weightRegRef : WeightReg (PBlk 2) where
-  reg _ A := (HermLine.ofMetrics (fun k => fsMetric (ι := PBlk 2 k)) A.a).tensor
-    (constLine (A.h (fun _ => 1) / (HermLine.ofMetrics (fun k => fsMetric (ι := PBlk 2 k)) A.a).h (fun _ => 1))
-      (div_pos (A.pos _ fun _ => ⟨0, one_ne_zero⟩)
-        ((HermLine.ofMetrics (fun k => fsMetric (ι := PBlk 2 k)) A.a).pos _ fun _ => ⟨0, one_ne_zero⟩)))
-  deg _ A := by simp [HermLine.tensor, constLine, HermLine.ofMetrics]
-  smooth _ A _ := ReciprocityTheory.ChartRestriction.G.Geo.isSmoothHerm_tensor (Inter.isSmoothHerm_ofMetrics_fs _) (isSmoothHerm_constLine _ _)
-  shift _ A A' k hk ha hh z _ := by
-    have h1 := hh (fun _ => 1) fun _ => ⟨0, one_ne_zero⟩
-    simp only [HermLine.tensor, constLine, ha, h1]
-    ring
-
 end Reg
-
-section Heights
-
-variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
-  {II : IntersectionSystem} {Ψ : Type} [Fintype Ψ] {Ω : Type} [Field Ω] [Algebra ℚ Ω]
-  {E : Ψ → Type} [∀ τ, AddCommGroup (E τ)] [∀ τ, Module Ω (E τ)]
-
-end Heights
 
 end GroundTheory.Heights₂.Heights.LowerBoundFree
 end -- clump:auto
@@ -163,7 +136,7 @@ end -- clump:auto
 -- ===== end clump member: GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.Counterexample.Objects =====
 
 -- ===== clump member: GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.Counterexample =====
--- clump-header: {"m": "GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.Counterexample", "h": "module\n\npublic import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.Counterexample.Objects\npublic import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightObjects\npublic import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PPtsIntegralPoints\npublic import GroundTheory.HeightsAndTheta.Heights.Intersections.ConservationDegreeFormOfExistence\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\npublic import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightPtsIntegralPoints\nimport GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.LineField\n\n"}
+-- clump-header: {"m": "GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.Counterexample", "h": "module\n\npublic import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.Counterexample.Objects\npublic import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightObjects\npublic import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PPtsIntegralPoints\npublic import GroundTheory.HeightsAndTheta.Heights.Intersections.ConservationDegreeFormOfExistence\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\npublic import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightPtsIntegralPoints\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -207,21 +180,6 @@ theorem inter_constLine_eq [Nonempty K] (I : Ideal (MRing ι) → (n : ℕ) → 
   ring
 
 end Curve
-
-section Point
-
-def ptIdeal : Ideal (MRing (PBlk 2)) := orbitIdeal samplePoint
-
-end Point
-
-section Shift
-
-
-end Shift
-
-section Main
-
-end Main
 
 end GroundTheory.Heights₂.Heights.LowerBoundFree
 end -- clump:auto

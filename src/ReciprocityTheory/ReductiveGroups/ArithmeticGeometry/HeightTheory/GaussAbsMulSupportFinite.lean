@@ -30,15 +30,8 @@ theorem int_of_le_one (x : K) (h : ∀ w : FinitePlace K, w x ≤ 1) : ∃ y : �
     have h1 := h (FinitePlace.mk v)
     first
       | (rw [FinitePlace.mk_apply, FinitePlace.norm_def] at h1
-         have he : (1 : NNReal) < (Ideal.absNorm v.asIdeal : NNReal) := by
-           have h2 : Ideal.absNorm v.asIdeal ≠ 0 := by
-             rw [Ne, Ideal.absNorm_eq_zero_iff]
-             exact v.ne_bot
-           have h3 : Ideal.absNorm v.asIdeal ≠ 1 := by
-             rw [Ne, Ideal.absNorm_eq_one_iff]
-             exact v.isPrime.ne_top
-           have h4 : 1 < Ideal.absNorm v.asIdeal := by omega
-           exact_mod_cast h4
+         have he : (1 : NNReal) < (Ideal.absNorm v.asIdeal : NNReal) :=
+           NumberField.HeightOneSpectrum.one_lt_absNorm_nnreal v
          have h5 : Valued.v (FinitePlace.embedding v x) = v.valuation K x := by
            first
              | exact IsDedekindDomain.HeightOneSpectrum.valuedAdicCompletion_eq_valuation' v x
@@ -191,10 +184,6 @@ theorem contId_ne_bot {κ : Type*} (G₀ : MvPolynomial κ (𝓞 K)) (h : G₀ �
   obtain ⟨s, hs⟩ := MvPolynomial.ne_zero_iff.mp h
   exact hs (hb _ ⟨⟨s, MvPolynomial.mem_support_iff.mpr hs⟩, rfl⟩)
 
-private lemma place_nonneg_lemma_3 (w : FinitePlace K) (x : K) : 0 ≤ w x := by
-  first
-    | positivity
-
 theorem gaussAbs_eq_iSup {κ : Type*} (G₀ : MvPolynomial κ (𝓞 K)) (h : G₀ ≠ 0) (w : FinitePlace K) :
     ReciprocityTheory.MultiplicativeHeights.gaussAbs w (MvPolynomial.map (algebraMap (𝓞 K) K) G₀) =
       ⨆ i : G₀.support, w ((G₀.coeff i : 𝓞 K) : K) := by
@@ -211,14 +200,14 @@ theorem gaussAbs_eq_iSup {κ : Type*} (G₀ : MvPolynomial κ (𝓞 K)) (h : G�
   apply le_antisymm
   · obtain ⟨i, hi, heq⟩ := Finset.exists_mem_eq_sup G₀.support ⟨s0, hs0'⟩
       (fun s => (w (algebraMap (𝓞 K) K (G₀.coeff s))).toNNReal)
-    rw [heq, Real.coe_toNNReal _ (place_nonneg_lemma_3 w _)]
+    rw [heq, Real.coe_toNNReal _ (apply_nonneg w _)]
     exact le_ciSup hbdd ⟨i, hi⟩
   · haveI : Nonempty G₀.support := ⟨⟨s0, hs0'⟩⟩
     apply ciSup_le
     rintro ⟨i, hi⟩
     have hle := Finset.le_sup (f := fun s => (w (algebraMap (𝓞 K) K (G₀.coeff s))).toNNReal) hi
     calc w ((G₀.coeff i : 𝓞 K) : K) = ((w (algebraMap (𝓞 K) K (G₀.coeff i))).toNNReal : ℝ) :=
-          (Real.coe_toNNReal _ (place_nonneg_lemma_3 w _)).symm
+          (Real.coe_toNNReal _ (apply_nonneg w _)).symm
       _ ≤ _ := NNReal.coe_le_coe.mpr hle
 
 theorem absNorm_mul_gauss {κ : Type*} (G₀ : MvPolynomial κ (𝓞 K)) (h : G₀ ≠ 0) :

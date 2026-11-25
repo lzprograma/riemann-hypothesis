@@ -1,50 +1,8 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsUnitarisableOfCharIff
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -64,12 +22,6 @@ theorem mem_fixed_iff {α : Representation ℂ G X} {K : Subgroup G} {x : X} :
   simp only [MonoidHom.one_apply, Units.val_one, one_smul]
   exact ⟨fun h g hg => h ⟨g, hg⟩, fun h g => h g g.2⟩
 
-private theorem finiteDimensional_fixed_of_exact_lemma {α : Representation ℂ G X}
-    {β : Representation ℂ G Y} (i : α.IntertwiningMap β) (g : G) (x : X) :
-    i (α g x) = β g (i x) := by
-  have h := LinearMap.congr_fun (i.isIntertwining' g) x
-  simpa [LinearMap.comp_apply] using h
-
 theorem finiteDimensional_fixed_of_exact {α : Representation ℂ G X} {β : Representation ℂ G Y}
     {γ : Representation ℂ G Z} (i : α.IntertwiningMap β) (p : β.IntertwiningMap γ)
     (hi : Function.Injective i) (hker : ∀ y, p y = 0 → ∃ x, i x = y) (K : Subgroup G)
@@ -77,12 +29,12 @@ theorem finiteDimensional_fixed_of_exact {α : Representation ℂ G X} {β : Rep
     FiniteDimensional ℂ (fixed β K) := by
   let j : fixed α K →ₗ[ℂ] fixed β K :=
     { toFun := fun x => ⟨i x, mem_fixed_iff.2 fun g hg => by
-        rw [← finiteDimensional_fixed_of_exact_lemma i g x, mem_fixed_iff.1 x.2 g hg]⟩
+        simpa [i.isIntertwining] using congrArg i (mem_fixed_iff.1 x.2 g hg)⟩
       map_add' := fun x y => by ext; simp
       map_smul' := fun c x => by ext; simp }
   let q : fixed β K →ₗ[ℂ] fixed γ K :=
     { toFun := fun y => ⟨p y, mem_fixed_iff.2 fun g hg => by
-        rw [← finiteDimensional_fixed_of_exact_lemma p g y, mem_fixed_iff.1 y.2 g hg]⟩
+        simpa [p.isIntertwining] using congrArg p (mem_fixed_iff.1 y.2 g hg)⟩
       map_add' := fun x y => by ext; simp
       map_smul' := fun c x => by ext; simp }
   have hK : LinearMap.ker q ≤ LinearMap.range j := by
@@ -91,7 +43,7 @@ theorem finiteDimensional_fixed_of_exact {α : Representation ℂ G X} {β : Rep
     have hpy : p (y : Y) = 0 := congrArg Subtype.val hy
     obtain ⟨x, hx⟩ := hker _ hpy
     have hxfix : x ∈ fixed α K := mem_fixed_iff.2 fun g hg => hi (by
-      rw [finiteDimensional_fixed_of_exact_lemma i, hx, mem_fixed_iff.1 y.2 g hg])
+      rw [i.isIntertwining, hx, mem_fixed_iff.1 y.2 g hg])
     exact ⟨⟨x, hxfix⟩, Subtype.ext hx⟩
   refine ⟨?_⟩
   apply Submodule.fg_of_fg_map_of_fg_inf_ker (f := q)

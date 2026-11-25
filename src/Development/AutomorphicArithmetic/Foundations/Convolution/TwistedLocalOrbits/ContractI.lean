@@ -3,58 +3,9 @@ module
 public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.HoweSpace
 public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IwahoriDoubleCosets
 public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.ContractRow, Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.ContractI
@@ -228,19 +179,19 @@ theorem exists_row {n : ℕ} {σ : E ≃+* E} (hσ : Isom σ) (t : Fin n → Eˣ
     exact hcd i ▸ (hyc x hx i).2.2.trans_lt hr1
   obtain ⟨x, hx, hF⟩ := exists_fixed e r ρ hρ F (fun x hx j => by
       rcases lt_trichotomy j i with h | h | h
-      · simp only [F, if_pos h, he, one_apply_ne h.ne', sub_zero, hσ']
+      · simp only [F, ite_eq_left h, he, one_apply_ne h.ne', sub_zero, hσ']
         refine Valuation.map_sum_le _ fun l _ => ?_
         rw [map_mul]
         by_cases hl : l < i
         · refine (mul_le_of_le_one_right' (hb1 l j)).trans ?_
           have := hx l
           simp only [he, one_apply_ne hl.ne', sub_zero] at this
-          simp only [w, if_pos hl, map_mul, hμ x hx, mul_one]
+          simp only [w, ite_eq_left hl, map_mul, hμ x hx, mul_one]
           exact (mul_le_of_le_one_left' ((ht l i hl).trans hρ.le)).trans this
-        · simp only [w, if_neg hl]
+        · simp only [w, ite_eq_right hl]
           exact (mul_le_of_le_one_left' (hyc x hx l).1).trans (hbl l j (h.trans_le (not_lt.1 hl)))
       · simp [F, h, he]
-      · simp only [F, if_neg h.not_gt, if_pos h, he, one_apply_ne h.ne, sub_zero]
+      · simp only [F, ite_eq_right h.not_gt, ite_eq_left h, he, one_apply_ne h.ne, sub_zero]
         rw [← mul_assoc, map_mul, map_inv₀, hμ x hx, inv_one, mul_one, ← sub_add_cancel (y x j) (c i j), mul_add]
         refine Valuation.map_add_le _ ?_ (hcu i j h)
         rw [map_mul]
@@ -248,22 +199,22 @@ theorem exists_row {n : ℕ} {σ : E ≃+* E} (hσ : Isom σ) (t : Fin n → Eˣ
     (fun x x' γ hx hx' hd j => by
       have hN : ∀ l, Nr γ (x l) (x' l) := fun l => ⟨hx1 x hx l, hx1 x' hx' l, hd l⟩
       rcases lt_trichotomy j i with h | h | h
-      · simp only [F, if_pos h]
+      · simp only [F, ite_eq_left h]
         refine ((Nr.sum fun l => ?_).map hσ').2.2
         by_cases hl : l < i
-        · simp only [w, if_pos hl]
+        · simp only [w, ite_eq_left hl]
           exact (((hN l).mul (hy x x' γ hN i)).small (ht l i hl) hρ.le).mul (.const (hb1 l j))
-        · simp only [w, if_neg hl, mul_comm _ (b l j)]
+        · simp only [w, ite_eq_right hl, mul_comm _ (b l j)]
           exact (hy x x' γ hN l).small ((hbl l j (h.trans_le (not_lt.1 hl))).trans hr) hρ.le
       · simp [F, h]
-      · simp only [F, if_neg h.not_gt, if_pos h]
+      · simp only [F, ite_eq_right h.not_gt, ite_eq_left h]
         exact (((hy x x' γ hN j).mul ((hy x x' γ hN i).inv (hμ x hx) (hμ x' hx'))).small (ht i j h) hρ.le).2.2)
   have hμ0 : y x i ≠ 0 := fun h => by simpa [h] using hμ x hx
   have hw : ∀ l, w x l = y x l := fun l => by
     have := vecMul_bound b hb1 hbd (fun j l h => (hbl j l h).trans_lt hr1) i (fun l => w x l - y x l) 0
-      (fun l hl => by simp only [w, if_neg (not_lt.2 (show i ≤ l from hl)), sub_self]) (fun j hj => by
+      (fun l hl => by simp only [w, ite_eq_right (not_lt.2 (show i ≤ l from hl)), sub_self]) (fun j hj => by
         have h1 := congrFun hF j
-        simp only [F, if_pos (show j < i from hj), RingEquiv.symm_apply_eq] at h1
+        simp only [F, ite_eq_left (show j < i from hj), RingEquiv.symm_apply_eq] at h1
         have h2 : ∑ l, y x l * b l j = σ (x j) := by
           have : (fun l => σ (x l)) ᵥ* c ᵥ* b = fun l => σ (x l) := by rw [vecMul_vecMul, hcb, vecMul_one]
           exact congrFun this j
@@ -274,12 +225,12 @@ theorem exists_row {n : ℕ} {σ : E ≃+* E} (hσ : Isom σ) (t : Fin n → Eˣ
   have h1 := congrFun hF j
   rcases lt_trichotomy j i with h | h | h
   · rw [← hw j]
-    simp only [w, if_pos h]
+    simp only [w, ite_eq_left h]
     field_simp
   · subst h
-    simp only [F, lt_irrefl, if_false] at h1
+    simp only [F, lt_irrefl, ite_false] at h1
     rw [← h1, one_mul]
-  · simp only [F, if_neg h.not_gt, if_pos h] at h1
+  · simp only [F, ite_eq_right h.not_gt, ite_eq_left h] at h1
     rw [← h1]
     field_simp
 

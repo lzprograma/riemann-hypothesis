@@ -42,7 +42,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 section
 open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 theorem UpperTheory.V.Z.Sym.W.plain_of_statement :
     _root_.UpperTheory.V.Z.Sym.W.PlainOfAlt := by
   intro _ L _ _ n w τ ψ hψ hs hl

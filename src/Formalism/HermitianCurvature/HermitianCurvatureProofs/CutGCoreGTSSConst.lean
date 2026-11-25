@@ -7,52 +7,7 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGauge
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSTr
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGenTransferFn
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.EulerZetaGammaInvIdentity
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -76,8 +31,7 @@ theorem ann_preconn (P : M.Par) (hTT : 0 < P.TT) : IsPreconnected (Ann P) := by
       refine ⟨(‖ζ‖, Complex.arg ζ), ⟨?_, Set.mem_univ _⟩, Complex.norm_mul_exp_arg_mul_I ζ⟩
       show Real.sqrt P.TT < ‖ζ‖
       rw [Complex.normSq_eq_norm_sq] at h'
-      by_contra hle
-      push_neg at hle
+      by_contra! hle
       nlinarith [norm_nonneg ζ, mul_le_mul hle hle (norm_nonneg ζ) hs]
     · rintro ⟨⟨a, b⟩, ⟨ha, -⟩, rfl⟩
       have ha' : Real.sqrt P.TT < a := ha
@@ -134,7 +88,7 @@ theorem vl_sub (P : M.Par) (Bs : B.RealPlaceData P.k P.r Wp Wq) [FiniteDimension
   have hv : ∀ Φ : Q.RadSp P.k P.r Bs.z Bs.z' Bs.π Bs.π', vl P Bs e Φ ρ q =
       rawR P Bs.μsec e (Φ : Q.Fn P.k P.r (Wq →L[ℂ] Wp)) ρ q := by
     intro Φ
-    simp only [vl, GC.trR, MA.toSm, dif_pos (hsm Φ ρ)]
+    simp only [vl, GC.trR, MA.toSm, dite_eq_left (hsm Φ ρ)]
   rw [hv, hv, hv]
   simp only [rawR, Submodule.coe_sub, Pi.sub_apply, hsVec_sub, inner_sub_right]
   ring
@@ -345,7 +299,7 @@ theorem second_shift_constant : GTSSConst := by
       (hfn (d.L.GGi.1 ((d.SS l).1 U)) ρ' q).2.1, (hfn ((d.SS l).1 U) ρ' q).2.2, (hVd q).1, hVv] at V1
     rw [vl_sub P Bs hpl hk2 e he, (hnb ((d.SS l).1 U) ρ' q).2, (hss (d.L.nabs.1 U) ρ' q).1,
       (hfn (d.L.GGi.1 ((d.SS l).1 U)) ρ' q).1, (hfn ((d.SS l).1 U) ρ' q).2.2, (hVd q).2, hVv] at V2
-    simp only [hNU, hNsU, mul_ite, mul_zero, mul_one, Finset.sum_ite_eq', Finset.mem_univ, if_true] at V1 V2
+    simp only [hNU, hNsU, mul_ite, mul_zero, mul_one, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at V1 V2
     constructor
     · linear_combination V1 - (star q.1.2 * ((Complex.normSq q.1.2 : ℂ) - (P.TT : ℂ))⁻¹ * s l ρ' ρ0 q.1.2) * ha
     · linear_combination -V2 + (q.1.2 * ((Complex.normSq q.1.2 : ℂ) - (P.TT : ℂ))⁻¹ * s l ρ' ρ0 q.1.2) * ha
@@ -362,7 +316,7 @@ theorem second_shift_constant : GTSSConst := by
     rw [vl_sub P Bs hpl hk2 e he, (hss (d.L.nab.1 U) ρ' q).2, (hnb ((star (d.SS l)).1 U) ρ' q).1,
       (hss (d.L.GGi.1 (d.L.ζb.1 U)) ρ' q).2, (hWd q).1, hWv] at W2
     simp only [hNU, hNsU, hGZU, hGZbU, mul_ite, mul_zero, mul_one, Finset.sum_ite_eq', Finset.mem_univ,
-      if_true] at W1 W2
+      ite_true] at W1 W2
     constructor
     · linear_combination -W2 + (t l ρ' ρ0 q.1.2 * star q.1.2 * ((Complex.normSq q.1.2 : ℂ) - (P.TT : ℂ))⁻¹) * ha
     · linear_combination W1 - (t l ρ' ρ0 q.1.2 * q.1.2 * ((Complex.normSq q.1.2 : ℂ) - (P.TT : ℂ))⁻¹) * ha
@@ -381,7 +335,7 @@ theorem second_shift_constant : GTSSConst := by
     have h := congrArg (fun x : Q.Pr (Q.RadSp P.k P.r Bs.z Bs.z' Bs.π Bs.π') => vl P Bs e (x.1 U) ρ' q) h0
     simp only [pm, Module.End.mul_apply] at h
     rw [vl_kap P Bs d e hk, hVv, (hss _ ρ' q).1] at h
-    simp only [vl_kap P Bs d e hk, hUv, f, g, hup, if_false, zero_mul] at h
+    simp only [vl_kap P Bs d e hk, hUv, f, g, hup, ite_false, zero_mul] at h
     have hdd : ∀ x : M.Ty P, ((if x = ρ0 then (1 : ℂ) else 0) * if x = ρ0 then (1 : ℂ) else 0) =
         if x = ρ0 then 1 else 0 := by
       intro x; split_ifs <;> simp
@@ -406,8 +360,8 @@ theorem second_shift_constant : GTSSConst := by
     have h := congrArg (fun x : Q.Pr (Q.RadSp P.k P.r Bs.z Bs.z' Bs.π Bs.π') => vl P Bs e (x.1 U) ρ' q) h0
     simp only [pm, Module.End.mul_apply] at h
     rw [vl_kap P Bs d e hk, hWv, (hss _ ρ' q).2] at h
-    simp only [vl_kap P Bs d e hk, hUv, f, g, if_true] at h
-    simp only [mul_ite, mul_zero, mul_one, Finset.sum_ite_eq', Finset.mem_univ, if_true, one_mul] at h
+    simp only [vl_kap P Bs d e hk, hUv, f, g, ite_true] at h
+    simp only [mul_ite, mul_zero, mul_one, Finset.sum_ite_eq', Finset.mem_univ, ite_true, one_mul] at h
     exact h.symm.trans (by simp [hup])
 
   let qOf : ∀ ζ ∈ Ann P, MA.Qp P.r P.TT := fun ζ hζ => ⟨((fun _ => (1 : ℂ)), ζ), ⟨fun _ => one_ne_zero, hζ⟩⟩

@@ -54,8 +54,8 @@ theorem scaleEquiv_monomial [Fintype σ] (P : σ → Prop) [DecidablePred P] (u 
       C (if P v then (u : S) ^ (s v) else 1) * X v ^ (s v) := by
     intro v
     by_cases hv : P v
-    · rw [if_pos hv, if_pos hv, mul_pow, MvPolynomial.C_pow]
-    · rw [if_neg hv, if_neg hv, MvPolynomial.C_1, one_mul]
+    · rw [ite_eq_left hv, ite_eq_left hv, mul_pow, MvPolynomial.C_pow]
+    · rw [ite_eq_right hv, ite_eq_right hv, MvPolynomial.C_1, one_mul]
   have hc : C ((u : S) ^ (∑ v ∈ Finset.univ.filter P, s v)) =
       ∏ v, (C (if P v then (u : S) ^ (s v) else 1) : MvPolynomial σ S) := by
     rw [← Finset.prod_pow_eq_pow_sum, Finset.prod_filter, map_prod]
@@ -98,17 +98,6 @@ instance (b : Fin (D + 1)) : DecidablePred (InBlock (D := D) (N := N) b) := by
   intro v
   cases v <;> simp only [InBlock, Sum.elim_inl, Sum.elim_inr] <;> infer_instance
 
-private theorem prop_insertNth_of_forall {n : ℕ} {M : Type*} (Q : M → Prop) (j₀ : Fin (n + 1))
-    (a : M) (f : Fin n → M) (ha : Q a) (hf : ∀ k, Q (f k)) (j : Fin (n + 1)) :
-    Q (Fin.insertNth (α := fun _ => M) j₀ a f j) := by
-  by_cases hj : j = j₀
-  · subst hj
-    rw [Fin.insertNth_apply_same]
-    exact ha
-  · obtain ⟨k, rfl⟩ := Fin.exists_succAbove_eq hj
-    rw [Fin.insertNth_apply_succAbove]
-    exact hf k
-
 theorem scale_sImg_expr (b : Fin (D + 1)) (hb : b ≠ 0) (u : Ωˣ) (j₀ : Fin (N + 1))
     (x : Fin N → Ω) (p : TVar D N) :
     scaleEquiv (InBlock (D := D) (N := N) b) u
@@ -139,16 +128,16 @@ theorem scale_sImg_expr (b : Fin (D + 1)) (hb : b ≠ 0) (u : Ωˣ) (j₀ : Fin 
     by_cases h0 : i = 0
     · subst h0
       have hb' : ¬ ((0 : Fin (D + 1)) = b) := fun h => hb h.symm
-      rw [if_pos rfl, if_neg hb', one_mul, scaleEquiv_X]
+      rw [ite_eq_left rfl, ite_eq_right hb', one_mul, scaleEquiv_X]
       simp [InBlock]
     · set_option synthInstance.maxHeartbeats 100000 in
-        rw [if_neg h0, map_neg, map_sum, mul_neg, Finset.mul_sum]
+        rw [ite_eq_right h0, map_neg, map_sum, mul_neg, Finset.mul_sum]
       congr 1
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_mul, hX, scaleEquiv_C, mul_assoc]
-  exact prop_insertNth_of_forall
-    (fun m => scaleEquiv (InBlock (D := D) (N := N) b) u m = (if i = b then C (u : Ω) else 1) * m)
-    j₀ _ _ hA hX j
+  rcases j₀.eq_self_or_eq_succAbove j with rfl | ⟨k, rfl⟩
+  · simpa only [Fin.succAbove_cases_eq_insertNth, Fin.insertNth_apply_same] using hA
+  · simpa only [Fin.succAbove_cases_eq_insertNth, Fin.insertNth_apply_succAbove] using hX k
 
 end Blocks
 
@@ -219,13 +208,13 @@ theorem tauF_sHom (b : Fin (D + 1)) (hb : b ≠ 0) (u : Kˣ) (j₀ : Fin (N + 1)
       (sHom (K := K) (Ω := Ω) (D := D) (N := N) j₀ x).commutes (u : K)
     rw [e2, hs, sImg, tauF_algebraMap', scale_sImg_expr b hb _ j₀ x v]
     by_cases hv : v.1 = b
-    · rw [if_pos hv]
-      try rw [if_pos hv]
+    · rw [ite_eq_left hv]
+      try rw [ite_eq_left hv]
       simp only [map_mul]
       rw [hs, sImg, e3, algebraMap_K_OmS]
       rfl
-    · rw [if_neg hv]
-      try rw [if_neg hv]
+    · rw [ite_eq_right hv]
+      try rw [ite_eq_right hv]
       rw [one_mul, hs, sImg]
 
 end Norm

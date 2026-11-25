@@ -253,8 +253,7 @@ theorem UpperTheory.V.Keep.loc3 {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosu
   haveI := T.nF
   have hw : IsOmT c D.om := ⟨hD.om_pow, fun σ => Ideal.Quotient.eq.mp (hD.om_bar σ)⟩
   have key := ((omT Ω l c).2 D.om hw).2.2.2.2.2.2.1 A hA 2
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   have hcop : l.Coprime (l - 1) := by
     rw [Nat.Prime.coprime_iff_not_dvd hl.out]
     exact Nat.not_dvd_of_pos_of_lt (by omega) (by omega)

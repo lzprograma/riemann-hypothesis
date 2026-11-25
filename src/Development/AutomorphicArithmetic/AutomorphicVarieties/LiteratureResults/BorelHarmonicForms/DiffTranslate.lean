@@ -1,51 +1,12 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.ExpGen
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.ExpGenC
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.InfinitesimalCharacterPullback.HasInfCharPullSub
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
-import Mathlib.RingTheory.PicardGroup
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.ExpGenPi, Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.HolIdExp, Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DiffTranslate
@@ -58,119 +19,9 @@ section -- clump:auto
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible UpperTheory.V.Lit UpperTheory.V.Lit.Bor
 open scoped TensorProduct
 
-private theorem exp_map_coord {ι : Type} [Fintype ι] {a : ℕ} (X : Matrix (Fin a) (Fin a) (ι → ℂ)) (w : ι) :
-    (NormedSpace.exp X).map (fun x => x w) = NormedSpace.exp (X.map fun x => x w) := by
-  classical
-  have hc : Continuous fun M : Matrix (Fin a) (Fin a) (ι → ℂ) => M.map fun x => x w :=
-    continuous_id.matrix_map (continuous_apply w)
-  have key := open scoped Norms.Operator in
-    NormedSpace.map_exp ((Pi.evalRingHom (fun _ : ι => ℂ) w).mapMatrix :
-      Matrix (Fin a) (Fin a) (ι → ℂ) →+* Matrix (Fin a) (Fin a) ℂ) hc X
-  exact key
-
 private theorem gen_prod {ι : Type} [Fintype ι] {a : ℕ} (H : Submonoid (Matrix (Fin a) (Fin a) (ι → ℂ)))
     (hH : ∀ X, NormedSpace.exp X ∈ H) (y : Matrix (Fin a) (Fin a) (ι → ℂ)) (hy : IsUnit y) : y ∈ H := by
-  classical
-  obtain ⟨J, hJ⟩ : ∃ J : (ι → Matrix (Fin a) (Fin a) ℂ) → Matrix (Fin a) (Fin a) (ι → ℂ),
-      J = fun g => Matrix.of fun i j v => g v i j := ⟨_, rfl⟩
-  have Jmap : ∀ g v, (J g).map (fun x => x v) = g v := by
-    intro g v
-    subst hJ
-    ext i j
-    rfl
-  have Jmul : ∀ g h, J (g * h) = J g * J h := by
-    intro g h
-    subst hJ
-    ext i j v
-    simp [Matrix.mul_apply, Finset.sum_apply]
-  have Jone : J 1 = 1 := by
-    subst hJ
-    ext i j v
-    by_cases hij : i = j
-    · subst hij
-      simp
-    · simp [Matrix.one_apply, hij]
-  have Jext : ∀ M N : Matrix (Fin a) (Fin a) (ι → ℂ),
-      (∀ v, M.map (fun x => x v) = N.map (fun x => x v)) → M = N := by
-    intro M N h
-    ext i j v
-    exact congrFun (congrFun (h v) i) j
-  have single : ∀ (w : ι) (m : Matrix (Fin a) (Fin a) ℂ), m.det ≠ 0 →
-      J (Function.update 1 w m) ∈ H := by
-    intro w m hm
-    let K : Submonoid (Matrix (Fin a) (Fin a) ℂ) :=
-      { carrier := {p | J (Function.update 1 w p) ∈ H}
-        one_mem' := by
-          show J (Function.update 1 w 1) ∈ H
-          have : Function.update (1 : ι → Matrix (Fin a) (Fin a) ℂ) w 1 = 1 := by
-            funext v
-            by_cases hv : v = w
-            · subst hv
-              simp
-            · simp [hv]
-          rw [this, Jone]
-          exact H.one_mem
-        mul_mem' := by
-          intro p q hp hq
-          show J (Function.update 1 w (p * q)) ∈ H
-          have : Function.update (1 : ι → Matrix (Fin a) (Fin a) ℂ) w (p * q) =
-              Function.update (1 : ι → Matrix (Fin a) (Fin a) ℂ) w p *
-                Function.update (1 : ι → Matrix (Fin a) (Fin a) ℂ) w q := by
-            funext v
-            by_cases hv : v = w
-            · subst hv
-              simp
-            · simp [hv]
-          rw [this, Jmul]
-          exact H.mul_mem hp hq }
-    have hK : ∀ X, NormedSpace.exp X ∈ K := by
-      intro X
-      show J (Function.update 1 w (NormedSpace.exp X)) ∈ H
-      have : J (Function.update 1 w (NormedSpace.exp X)) =
-          NormedSpace.exp (J (Function.update 0 w X)) := by
-        apply Jext
-        intro v
-        rw [Jmap, exp_map_coord, Jmap]
-        by_cases hv : v = w
-        · subst hv
-          simp
-        · simp [hv, NormedSpace.exp_zero]
-      rw [this]
-      exact hH _
-    exact UpperTheory.V.AlgRepEndIrreducible.expGenC a K hK m hm
-  have hdet : ∀ v, (y.map fun x => x v).det ≠ 0 := by
-    intro v
-    have h1 := hy.map (Pi.evalRingHom (fun _ : ι => ℂ) v).mapMatrix
-    rw [Matrix.isUnit_iff_isUnit_det] at h1
-    exact h1.ne_zero
-  have all : ∀ s : Finset ι,
-      J (fun v => if v ∈ s then y.map (fun x => x v) else 1) ∈ H := by
-    intro s
-    induction s using Finset.induction_on with
-    | empty =>
-      have : (fun v => if v ∈ (∅ : Finset ι) then y.map (fun x => x v) else 1) = 1 := by
-        funext v
-        simp
-      rw [this, Jone]
-      exact H.one_mem
-    | insert b s hb ih =>
-      have : (fun v => if v ∈ insert b s then y.map (fun x => x v) else 1) =
-          Function.update (1 : ι → Matrix (Fin a) (Fin a) ℂ) b (y.map fun x => x b) *
-            (fun v => if v ∈ s then y.map (fun x => x v) else 1) := by
-        funext v
-        by_cases hv : v = b
-        · subst hv
-          simp [hb]
-        · simp [hv]
-      rw [this, Jmul]
-      exact H.mul_mem (single b _ (hdet b)) ih
-  have hy' : y = J (fun v => if v ∈ (Finset.univ : Finset ι) then y.map (fun x => x v) else 1) := by
-    apply Jext
-    intro v
-    rw [Jmap]
-    simp
-  rw [hy']
-  exact all _
+  apply _root_.gen_pi <;> assumption
 
 theorem UpperTheory.V.Lit.Bor.expGenPi :
     UpperTheory.V.Lit.Bor.ExpGenPi := by
@@ -229,7 +80,6 @@ private theorem exp_map_emb {E : Type} [Field E] [NumberField E] {a : ℕ} (Y : 
 open scoped Matrix.Norms.Operator in
 private theorem exp_diff {T : Type} [Fintype T] {a : ℕ} (P Q : Matrix (Fin a) (Fin a) (T → ℂ)) :
     Differentiable ℂ fun s : ℂ => (fun i j => NormedSpace.exp (P + s • Q) i j : Fin a → Fin a → T → ℂ) := by
-  set_option synthInstance.maxHeartbeats 200000 in
   have h : Differentiable ℂ fun s : ℂ => NormedSpace.exp (P + s • Q) := fun s =>
     (NormedSpace.exp_analytic (𝕂 := ℂ) (P + s • Q)).differentiableAt.comp s
       (f := fun s : ℂ => P + s • Q) ((differentiableAt_const P).add (differentiableAt_id.smul_const Q))

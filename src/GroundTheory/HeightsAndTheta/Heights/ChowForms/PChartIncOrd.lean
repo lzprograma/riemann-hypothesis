@@ -111,7 +111,6 @@ theorem chartIncIdeal_le_ker : chartIncIdeal I t e ≤ RingHom.ker (back₀ I t 
     have h1 := congrArg (C : ChartQ I t →+* MvPolynomial (Fin e × Fin n) (ChartQ I t)) (sum_tQ I t)
     set_option synthInstance.maxHeartbeats 100000 in
       simp only [map_sum, map_mul, map_one] at h1
-    set_option synthInstance.maxHeartbeats 100000 in
       simp only [map_sum, map_mul, back₀_inl, back₀_inr, genSubst]
     set S := ∑ l, X (i, l) * C (mkQ I t (X l))
     have : ∑ m, (X (i, m) - S * C (mkQ I t (C (t m)))) * C (mkQ I t (X m)) = S - S * 1 := by
@@ -156,8 +155,7 @@ theorem fwd_back (s : ChartInc I t e) : fwd I t e (back I t e s) = C s := by
     · simp only [RingHom.comp_apply, back_mk, back₀_C, fwd_C, toInc_mk, chartX_apply, rename_C]
     · rcases v with m | ⟨i, m⟩
       · simp only [RingHom.comp_apply, back_mk, back₀_inl, fwd_C, toInc_mk, chartX_apply, rename_X]
-      · set_option synthInstance.maxHeartbeats 100000 in
-        simp only [RingHom.comp_apply, back_mk, back₀_inr, genSubst, map_sub, map_mul, map_sum, fwd_X,
+      · simp only [RingHom.comp_apply, back_mk, back₀_inr, genSubst, map_sub, map_mul, map_sum, fwd_X,
           fwd_C, toInc_mk]
         linear_combination (-(C (chartX I t e (C (t m))))) * sum_fwd I t e i
   obtain ⟨a, rfl⟩ := mkS_surjective I t e s
@@ -165,10 +163,8 @@ theorem fwd_back (s : ChartInc I t e) : fwd I t e (back I t e s) = C s := by
 
 theorem fwd_bwd : (fwd I t e).comp (bwd I t e) = RingHom.id _ := by
   refine MvPolynomial.ringHom_ext (fun s => ?_) (fun i => ?_)
-  · set_option synthInstance.maxHeartbeats 100000 in
-    simp [bwd, fwd_back]
-  · set_option synthInstance.maxHeartbeats 100000 in
-    simp only [bwd, RingHom.comp_apply, eval₂Hom_X', map_sum, map_mul, fwd_X, fwd_C, toInc_mk,
+  · simp [bwd, fwd_back]
+  · simp only [bwd, RingHom.comp_apply, eval₂Hom_X', map_sum, map_mul, fwd_X, fwd_C, toInc_mk,
       RingHom.id_apply]
     exact sum_fwd I t e i
 

@@ -39,67 +39,11 @@ public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentation
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PSplitsBasic
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PSplitsPts
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PullIdentityMove
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.AlgebraicGeometry.QuasiAffine
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.Lemma
-import Mathlib.NumberTheory.Padics.ProperSpace
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 import GroundTheory.LocalFields.Examples
 import GroundTheory.LocalFields.PadicLogSeries
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.AlgebraicGeometry.Morphisms.SchemeTheoreticallyDominant
-import Mathlib.CategoryTheory.CofilteredSystem
-import Mathlib.CategoryTheory.Functor.OfSequence
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.DiagonalEtaleThreeOfFirst
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.ProjectiveBaseChange.PProjBC
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.ProjectiveBaseChange.PSumCl
@@ -148,7 +92,7 @@ theorem grSS_of :
       · simp
   have hblk : ∀ i, IsInv ρ (blk k c i) := by
     intro i g u hu j hj
-    rw [key g i u hu j, if_neg hj]
+    rw [key g i u hu j, ite_eq_right hj]
   have hsup : ⨆ i, blk k c i = ⊤ := by
     rw [eq_top_iff]
     intro v _
@@ -644,7 +588,7 @@ private theorem exists_linearIndep_levels_span_eq_of_monotone {k : Type} [Field 
     refine ⟨b, fun x => if x ∈ s then lev x else n, hb, ?_, ?_⟩
     · intro x hx
       by_cases h : x ∈ s
-      · simp only [h, if_true]
+      · simp only [h, ite_true]
         exact Nat.lt_succ_of_lt (hlev x h)
       · simp [h]
     · intro i hi
@@ -653,7 +597,7 @@ private theorem exists_linearIndep_levels_span_eq_of_monotone {k : Type} [Field 
           ext x
           by_cases h : x ∈ s
           · simp [h, hsb h]
-          · simp only [Set.mem_setOf_eq, h, if_false, false_and, iff_false]
+          · simp only [Set.mem_setOf_eq, h, ite_false, false_and, iff_false]
             rintro ⟨-, h'⟩
             omega
         rw [hset]
@@ -667,7 +611,7 @@ private theorem exists_linearIndep_levels_span_eq_of_monotone {k : Type} [Field 
           · intro hx
             refine ⟨hx, ?_⟩
             by_cases h : x ∈ s
-            · simp only [h, if_true]
+            · simp only [h, ite_true]
               exact Nat.lt_succ_of_lt (hlev x h)
             · simp [h]
         rw [hset]
@@ -933,8 +877,8 @@ theorem UpperTheory.Gal.Int.Geo.grHom_of :
     · apply Finset.sum_congr rfl
       intro l _
       by_cases h1 : c i = c l
-      · rw [if_pos h1, if_pos (h1 ▸ hij)]
-      · rw [if_neg h1, zero_mul]
+      · rw [ite_eq_left h1, ite_eq_left (h1 ▸ hij)]
+      · rw [ite_eq_right h1, zero_mul]
         rcases lt_or_gt_of_ne h1 with h | h
         · rw [hN (show c j < c l by omega), mul_zero]
         · rw [hM h, zero_mul]
@@ -1080,7 +1024,6 @@ private theorem pj_tr {L L' : IntermediateField k Ω} (h : L ≤ L') :
       ← CommRingCat.ofHom_comp, pj_snd]
     rfl
 
-
 variable (k Ω) in
 private def Gd : (FI k Ω)ᵒᵖ ⥤ Scheme.{0} where
   obj L := geom L.unop.1 p
@@ -1100,7 +1043,6 @@ private def Gd : (FI k Ω)ᵒᵖ ⥤ Scheme.{0} where
       rw [Category.assoc, tr_snd, ← Category.assoc, tr_snd, Category.assoc, ← Spec.map_comp,
         ← CommRingCat.ofHom_comp]
       rfl
-
 
 variable (k Ω) in
 private def cn : Cone (Gd k Ω p) where
@@ -1601,18 +1543,12 @@ private theorem invariant_inf {Γ k : Type} [Group Γ] [Field k] {d : ℕ} {ρ :
   intro g v hv
   exact ⟨hU g v hv.1, hV g v hv.2⟩
 
-private theorem invariant_bot_alt {Γ k : Type} [Group Γ] [Field k] {d : ℕ} (ρ : Γ →* GL (Fin d) k) :
-    IsInv ρ (⊥ : Submodule k (Fin d → k)) := by
-  intro g v hv
-  rw [(Submodule.mem_bot k).1 hv, Matrix.mulVec_zero]
-  exact Submodule.zero_mem _
-
 theorem UpperTheory.Gal.Int.Geo.sSOfSum_of :
     SSOfSum := by
   intro Γ k _ _ d ρ B hB hS hT W hW
   obtain ⟨W', ⟨hinv, hdis⟩, hmax⟩ :=
     (wellFounded_gt (α := Submodule k (Fin d → k))).has_min
-      {X | IsInv ρ X ∧ Disjoint W X} ⟨⊥, invariant_bot_alt ρ, disjoint_bot_right⟩
+      {X | IsInv ρ X ∧ Disjoint W X} ⟨⊥, inv_bot ρ, disjoint_bot_right⟩
   have key : ∀ i, B i ≤ W ⊔ W' := by
     intro i
     rcases hS i (B i ⊓ (W ⊔ W')) (invariant_inf (hB i) (invariant_sup_alt hW hinv)) inf_le_left with h | h
@@ -1907,7 +1843,7 @@ theorem bcSplits : G3.BcSplits := G3.pBcSplits (G3.pSplitsBasic (G3.pSplitsPts G
 
 theorem etGood : G3.EtGood := G3.pEtGood (G3.pEtnGood (G3.pFEtBasic G3.pPtsOfSplits) G3.pEtTr)
 
-theorem galClos : G3.GalClos := G3.pGalClos (G3.pGalClosD (G3.pSplitsPts G3.pIsoPts) (G3.pOrdEx G3.pOrdStep))
+theorem galClos : G3.GalClos := G3.pGalClos (G3.pGalClosD (G3.pSplitsPts G3.pIsoPts) (G3.pOrdEx))
 
 theorem hopSpec : G3.HopSpec := G3.pHopSpec etGood (G3.pBcGood bcSplits (G3.pBcGal bcSplits)) galClos (G3.pOpEx G3.pOpTr)
   G3.pOpTr G3.pOpEt (G3.pOpBc bcSplits (G3.pBcGal bcSplits)) bcSplits

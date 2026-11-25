@@ -3,51 +3,9 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Divisors.MemSubPtsCutBaseChangeIff
 public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.LocusEqTopOfDualPow
 public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsIsoGrCechMapPolyToGamma
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -60,25 +18,6 @@ open GlobalTheory.Points GlobalTheory.Twist GlobalTheory.ProjSpace
 
 attribute [local instance] MvPolynomial.gradedAlgebra
 
-theorem isStandardSmooth_mvPolynomial (R σ : Type) [CommRing R] [Finite σ] :
-    Algebra.IsStandardSmoothOfRelativeDimension (Nat.card σ) R (MvPolynomial σ R) := by
-  let P₀ : Algebra.Presentation R (MvPolynomial σ R) σ Empty :=
-    { __ := Algebra.Generators.mvPolynomial R σ
-      relation := Empty.elim
-      span_range_relation_eq_ker := by
-        rw [Algebra.Generators.ker_mvPolynomial]
-        simp }
-  let P₁ : Algebra.PreSubmersivePresentation R (MvPolynomial σ R) σ Empty :=
-    { __ := P₀
-      map := Empty.elim
-      map_inj := fun a => a.elim }
-  let P₂ : Algebra.SubmersivePresentation R (MvPolynomial σ R) σ Empty :=
-    { __ := P₁
-      jacobian_isUnit := by
-        rw [Algebra.PreSubmersivePresentation.jacobian_eq_jacobiMatrix_det]
-        simp }
-  exact P₂.isStandardSmoothOfRelativeDimension (by simp [Algebra.Presentation.dimension])
-
 theorem smoothOfRelativeDimension_pspace (R : Type) [CommRing R] (M : ℕ) :
     SmoothOfRelativeDimension M (PSpace.str R M) := by
   have := HasRingHomProperty.instIsZariskiLocalAtSource (P := @SmoothOfRelativeDimension.{0} M)
@@ -89,7 +28,7 @@ theorem smoothOfRelativeDimension_pspace (R : Type) [CommRing R] (M : ℕ) :
   rw [chartι_str]
   refine (HasRingHomProperty.Spec_iff (P := @SmoothOfRelativeDimension M)).2 ?_
   refine RingHom.locally_of RingHom.isStandardSmoothOfRelativeDimension_respectsIso _ ?_
-  have h := isStandardSmooth_mvPolynomial R {j : Fin (M + 1) // j ≠ i}
+  have h := Algebra.IsStandardSmoothOfRelativeDimension.mvPolynomial R {j : Fin (M + 1) // j ≠ i}
   rw [show Nat.card {j : Fin (M + 1) // j ≠ i} = M by simp] at h
   exact (RingHom.isStandardSmoothOfRelativeDimension_algebraMap M).2 h
 
@@ -125,14 +64,6 @@ theorem form_eq {d : ℕ} {g : MvPolynomial (Fin (M + 1)) k} (hg : g.IsHomogeneo
   rw [ProjCoh.formSec_eq]
   exact congrArg (fun a : Algebra k Γ(PSpace k M, ⊤) =>
     letI := a; Twist.formSec (coord k M) (mem_polyGrading_natCast.2 hg)) (algebraΓ_eq k M)
-
-theorem del_eq_one : (projSys k M).del = 1 := by
-  have h := interNum_const_of_polynomial k (structureModule (PSpace k M)) (O1_isLB k M) (d := M)
-    (Polynomial.preHilbertPoly ℚ M 0) (Polynomial.natDegree_preHilbertPoly ℚ M 0).le
-    (ProjCoh.chi_sheafO_eq_eval k M)
-  rw [Polynomial.coeff_preHilbertPoly_self, mul_inv_cancel₀ (Nat.cast_ne_zero.2 M.factorial_ne_zero)] at h
-  rw [LinSys.del, algebraΓ_eq]
-  exact_mod_cast h
 
 theorem eq_of_sameImage {y y' : PSpace k M} (h : (projSys k M).SameImage y y') : y = y' := by
   refine ProjectiveSpectrum.ext (HomogeneousIdeal.ext' fun d g hg => ?_)

@@ -67,7 +67,7 @@ theorem exists_sum (Z : Type) [TopologicalSpace Z] [T2Space Z] (V : Type) [AddCo
     refine ⟨hT.comp (fun u => if u = w then (1 : ℂ) else 0), ?_⟩
     refine HasCompactSupport.intro hK ?_
     intro y hy
-    rw [h0 y hy, if_neg (Ne.symm hw)]
+    rw [h0 y hy, ite_eq_right (Ne.symm hw)]
   refine ⟨S.card, fun i => (e i : V),
     fun i => ⟨_, hmem (e i) (Finset.ne_of_mem_erase (e i).2)⟩, fun y => ?_⟩
   have h1 : ∑ i, (if T y = (e i : V) then (1 : ℂ) else 0) • (e i : V)

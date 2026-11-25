@@ -1,54 +1,10 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.AddedBlockKernelSupport
 public import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
 public import Aesop.BuiltinRules
 public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.LowUniMulVecELast
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.Matrix.Permutation
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Basic.PEquiv
 public import Mathlib.Data.Matrix.PEquiv
 public import Mathlib.LinearAlgebra.Matrix.SchurComplement
@@ -880,20 +836,7 @@ theorem modK_det_pt (s : List ℕ) (t : ℕ → Kˣ) :
   rcases Int.units_eq_one_or ε with h | h <;> rw [h] <;> simp [modK_neg]
 
 theorem blk_lt : ∀ (s : List ℕ) (j : ℕ), j < s.sum → blk s j < s.length := by
-  intro s
-  induction s with
-  | nil =>
-    intro j h
-    simp at h
-  | cons a s ih =>
-    intro j h
-    rw [List.sum_cons] at h
-    simp only [blk, List.length_cons]
-    split_ifs with hj
-    · omega
-    · have hj' : j - a < s.sum := by omega
-      have hblk := ih (j - a) hj'
-      omega
+  apply _root_.Formalism.FourierDecayAlt.P.A5x7.blk_lt_length <;> assumption
 
 theorem blk_append_lt : ∀ (s : List ℕ) (k j : ℕ), j < s.sum → blk (s ++ [k]) j = blk s j
   | [], k, j, h => by simp at h
@@ -946,15 +889,14 @@ variable [TopologicalSpace K] [IsTopologicalRing K] {ψ : AddChar K ℂ}
 theorem kernel_nonzero_modulus_determinant_eq (hd : LocalDatum K R ψ) (w w' : Point K) (h : Kp R ψ w w' ≠ 0) :
     modK R (pt w.1 w.2).det = modK R (pt w'.1 w'.2).det := by
   obtain ⟨q, hq⟩ : ∃ q, pairTerm R ψ w w' q ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact h (finsum_eq_zero_of_forall_eq_zero hc)
   unfold pairTerm at hq
   by_cases hc : IsInt R (orbZ w (rep R q.1)) ∧ IsInt R (orbZ w' (rep R q.2))
   swap
-  · rw [if_neg hc, zero_mul, zero_mul] at hq
+  · rw [ite_eq_right hc, zero_mul, zero_mul] at hq
     exact absurd rfl hq
-  rw [if_pos hc] at hq
+  rw [ite_eq_left hc] at hq
   have hcard : Nat.card (isoZZ R (orbZ w (rep R q.1)) (orbZ w' (rep R q.2))) ≠ 0 := by
     intro h0
     apply hq

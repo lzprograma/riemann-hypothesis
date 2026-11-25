@@ -13,8 +13,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.SatGramRep
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Rel
 
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what₂.Word}

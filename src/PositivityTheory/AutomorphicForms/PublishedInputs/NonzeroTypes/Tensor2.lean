@@ -98,9 +98,3 @@ theorem exists_factor_vec {Γ : ι → Type} [∀ b, Group (Γ b)] (ρ : ∀ b, 
 end Contr
 
 end UpperTheory.TNZ.Grp.Tensor₂
-
-namespace UpperTheory.TNZ.Grp
-
-variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-
-end UpperTheory.TNZ.Grp

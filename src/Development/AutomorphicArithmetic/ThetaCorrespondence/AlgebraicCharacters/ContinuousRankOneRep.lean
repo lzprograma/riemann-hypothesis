@@ -37,65 +37,16 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeT
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
 import GroundTheory.AutomorphicForms.GLnLocal
 import GroundTheory.LocalFields.PadicLogSeries
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Connected.Separation
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
-import Mathlib.Algebra.CharP.Pi
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TripleAtt
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinrankLetterHomComp
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CommuteIsNilpotentOfUnipotent
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 import Formalism.LocalToGlobal.Columns.StdLatUnimodular
-import Mathlib.FieldTheory.Galois.Profinite
-import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.Valuation.LocalSubring
-import Mathlib.Topology.Algebra.ClopenNhdofOne
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalAdjoinRange
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdTransfer
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaGlob
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Topology.Algebra.Valued.WithZeroMulInt
 import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocC
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -347,8 +298,6 @@ section -- clump:auto
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.WeilDeligne
 open GlobalTheory.Pst GlobalTheory.TripleGal Module TensorProduct Polynomial Formalism.MainNotions.N
 open UpperTheory.Lit.CharWD GlobalTheory.Published
-set_option synthInstance.maxHeartbeats 400000
-set_option maxHeartbeats 800000
 
 private theorem letter_lift {L U D M : Type} [Field L] [Field U] [AddCommGroup D] [Module L D] (m : U →+* End L D)
     (F : Type) [Field F] [Algebra L F] (τ : U →+* F) [AddCommGroup M] [Module F M] (g : D →+ M)
@@ -394,7 +343,6 @@ private theorem dQ_inv {ρ₁ : Representation ↥L₁.1 ↥(GK K) V₁} {ρ₂ 
   | zero => simp
   | tmul v b => rw [tensQ_tmul, tensQ_tmul, e]
   | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
-
 
 open EnlargeCoeff in
 private theorem dQ_bij {ρ₁ : Representation ↥L₁.1 ↥(GK K) V₁} {ρ₂ : Representation ↥L₂.1 ↥(GK K) V₂}
@@ -453,7 +401,6 @@ private theorem exists_semi {K L₁ L₂ : FinExt l}
   refine ⟨fun y => Φ y, fun z y => ?_, hΦ⟩
   rw [← hθ]
   exact @LinearMap.map_smul _ _ _ _ _ _ _ (Module.compHom _ θ) Φ _ _
-
 
 open EnlargeCoeff in
 private theorem eig_conj {L₁ L₂ : FinExt l}
@@ -674,17 +621,11 @@ section -- clump:auto
 open UpperTheory.Lit.CharWD GlobalTheory.Published
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.WeilDeligne GlobalTheory.LocLanglands
 
-private theorem val_int_le {L Ω : Type} [Field L] [NumberField L] [Field Ω] [Algebra L Ω]
-    (A : ValuationSubring Ω) (x : 𝓞 L) : algebraMap L Ω x ∈ A := by
-  obtain ⟨y, hy⟩ := (IsIntegrallyClosed.isIntegral_iff (R := A) (K := Ω)).1
-    ((x.isIntegral_coe.algebraMap (B := Ω)).tower_top (A := A))
-  exact hy ▸ y.2
-
 private theorem place_above {F L Ω : Type} [Field F] [NumberField F] [Field L] [NumberField L] [Field Ω]
     [Algebra F L] [Algebra F Ω] [Algebra L Ω] [IsScalarTower F L Ω] {v : HeightOneSpectrum (𝓞 F)}
     {A : ValuationSubring Ω} (hA : IsPlaceOver A v) :
     ∃ w : HeightOneSpectrum (𝓞 L), IsPlaceOver A w ∧ normV v ≤ normV w := by
-  let φ : 𝓞 L →+* A := ((algebraMap L Ω).comp (algebraMap (𝓞 L) L)).codRestrict A.toSubring (val_int_le A)
+  let φ : 𝓞 L →+* A := ((algebraMap L Ω).comp (algebraMap (𝓞 L) L)).codRestrict A.toSubring (GlobalTheory.LocLanglands.TraceCompl.algebraMap_int_mem A)
   let P : Ideal (𝓞 L) := (IsLocalRing.maximalIdeal A).comap φ
   have hP : ∀ x : 𝓞 L, A.valuation (algebraMap L Ω (x : L)) < 1 ↔ x ∈ P :=
     fun x => (A.valuation_lt_one_iff (φ x)).symm
@@ -764,7 +705,7 @@ theorem UpperTheory.Lit.CharWD.exField :
   have hq : normV w' = normV w := by
     refine le_antisymm (norm_le_of_pow w' (one_lt_normV w) fun x => ?_) hle
     rw [← h']
-    have h3 := hact.2 _ ((A.valuation_le_one_iff _).2 (val_int_le A x))
+    have h3 := hact.2 _ ((A.valuation_le_one_iff _).2 (GlobalTheory.LocLanglands.TraceCompl.algebraMap_int_mem A x))
     rw [show (σ : G F Ω) (algebraMap F' Ω x) = algebraMap F' Ω x from hσF x] at h3
     simpa using h3
   refine ⟨F', nf, ac, w', h', ?_, fun s s' hd hs => ?_⟩
@@ -832,7 +773,6 @@ private theorem alpha_res {F F' Ω : Type} [Field F] [NumberField F] [Field F'] 
   rw [alpha, alpha, h1, h2, h3]
   push_cast
   ring
-
 
 private theorem eig_res {F F' Ω : Type} [Field F] [NumberField F] [Field F'] [NumberField F'] [Field Ω]
     [Algebra F Ω] [Algebra F' Ω] [IsAlgClosure F Ω] [IsAlgClosure F' Ω]
@@ -966,7 +906,6 @@ section -- clump:auto
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.WeilDeligne GlobalTheory.GalOfCusp GlobalTheory.HeckeGal
 open GlobalTheory.LocLanglands GlobalTheory.Published GlobalTheory.Pst GlobalTheory.TripleGal UpperTheory.V.W UpperTheory.V
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 
@@ -1021,12 +960,6 @@ private theorem ord_zero [Nonempty (Emb l w)] (u : (w.adicCompletion F)ˣ) (hu :
   exact GlobalTheory.SmGL.ord_eq_zero_iff.2 ((ValuativeRel.isEquiv (ValuativeRel.valuation (w.adicCompletion F))
       (Valued.v : Valuation (w.adicCompletion F) (WithZero (Multiplicative ℤ)))).eq_one_iff_eq_one.2
       (le_antisymm (not_lt.1 h2) (not_lt.1 h1)))
-
-private theorem continuous_rank_one_rep {Γ K : Type} [Group Γ] [TopologicalSpace Γ] [Field K] [TopologicalSpace K] (μ : Γ →* Kˣ)
-    (hμ : Continuous μ) : Continuous fun g => ((rk1 μ g : GL (Fin 1) K) : Matrix (Fin 1) (Fin 1) K) := by
-  refine continuous_matrix fun i j => ?_
-  fin_cases i; fin_cases j
-  simpa [rk1, Function.comp_def] using Units.continuous_val.comp hμ
 
 variable (ι : Qbar l ≃+* ℂ) (h : IsPlaceOver A w)
   {O : Type} [CommRing O] [Algebra ℤ_[l] O] [TopologicalSpace O] (Bw : LocBridge l F Ω (Dec (F := F) A) O)

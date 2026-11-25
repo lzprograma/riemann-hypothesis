@@ -124,7 +124,7 @@ theorem exists_shear (G : Matrix ι ι R) (p : ι) (τ : ι → R) (hτ : τ p =
   · simp only [Matrix.mul_apply, transpose_apply, map_apply, Matrix.add_apply, vecMulVec_apply,
       Matrix.one_apply, Pi.single_apply, map_add, apply_ite c, map_one, map_zero,
       add_mul, mul_add, ite_mul, mul_ite, one_mul, zero_mul, mul_one, mul_zero,
-      Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     ring
 
 
@@ -206,7 +206,7 @@ theorem exists_congr_insert (hc : ∀ x, c (c x) = x)
     refine ⟨P, hP, fun a ha b hb => ?_⟩
     rw [h]
     rcases Finset.mem_insert.1 ha with rfl | ha
-    · simp only [if_true, if_neg hb, map_neg, map_mul, hG]
+    · simp only [ite_true, ite_eq_right hb, map_neg, map_mul, hG]
       linear_combination (-G a b) * hv'
     · have hap : p ≠ a := fun h => hp (h ▸ ha)
       simp [hs a ha b hb, hs a ha p hap]

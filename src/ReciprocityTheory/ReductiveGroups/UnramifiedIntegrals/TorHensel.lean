@@ -96,8 +96,7 @@ theorem sqrt_mem (hl : l ≠ 2) (c y : ℂ_[l]) (hc : c ∈ MaximalUnramifiedExt
       have := IsUltrametricDist.norm_natCast_le_one ℂ_[l] 2
       exact_mod_cast this
     refine le_antisymm hle ?_
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have hcop : Nat.Coprime 2 l := (Nat.coprime_primes Nat.prime_two (Fact.out)).2 (Ne.symm hl)
     have hg : Int.gcd 2 (l : ℤ) = 1 := by
       have := Int.gcd_natCast_natCast 2 l

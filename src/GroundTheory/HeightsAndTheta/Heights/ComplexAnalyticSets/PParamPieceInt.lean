@@ -26,17 +26,9 @@ noncomputable section
 namespace ParamPieceInt
 
 theorem analyticAt_of_differentiableOn {d m : ℕ} {U : Set (Fin d → ℂ)} {f : (Fin d → ℂ) → Fin m → ℂ}
-    (hU : IsOpen U) (hf : DifferentiableOn ℂ f U) {x : Fin d → ℂ} (hx : x ∈ U) : AnalyticAt ℂ f x := by
-  refine AnalyticAt.pi fun i => ?_
-  refine IndefiniteRowSideFullHecke.ComplexSets.analyticOnNhd_of_continuousOn_of_separately hU
-    ((continuous_apply i).comp_continuousOn hf.continuousOn) (fun z hz j => ?_) x hx
-  have hfz : DifferentiableAt ℂ (fun w => f w i) z :=
-    differentiableAt_pi.mp (hf.differentiableAt (hU.mem_nhds hz)) i
-  have hu : DifferentiableAt ℂ (Function.update z j) (z j) :=
-    (hasFDerivAt_update z (z j)).differentiableAt
-  have hfz' : DifferentiableAt ℂ (fun w => f w i) (Function.update z j (z j)) := by
-    rwa [Function.update_eq_self]
-  exact hfz'.comp (z j) hu
+    (hU : IsOpen U) (hf : DifferentiableOn ℂ f U) {x : Fin d → ℂ} (hx : x ∈ U) : AnalyticAt ℂ f x :=
+  AnalyticAt.pi fun i =>
+    ReciprocityTheory.AnForm.Osgood.osgood d U (fun w => f w i) hU (differentiableOn_pi.1 hf i) x hx
 
 variable {n d : ℕ}
 
@@ -165,7 +157,7 @@ theorem ParamPieceInt.proof : ParamPieceInt.Statement := by
     have hsum : chartDens W A ((σ '' P).indicator f) φ (g w) =
         f (σ w) * ReciprocityTheory.AnForm.maDens (fun k => φ k ∘ s) (g w) := by
       unfold chartDens sheetSum
-      rw [finsum_eq_single _ (σ w), finsum_eq_if, if_pos hfib, dite_eq_left hex]
+      rw [finsum_eq_single _ (σ w), finsum_eq_if, ite_eq_left hfib, dite_eq_left hex]
       · beta_reduce
         rw [Set.indicator_of_mem (Set.mem_image_of_mem σ hw), IndefiniteRowSideFullHecke.ComplexSets.maDens_congr_of_eventuallyEq fun k =>
           (SheetSumMeasurable.sheet_eventuallyEq hs hex.choose_spec).fun_comp (φ k)]

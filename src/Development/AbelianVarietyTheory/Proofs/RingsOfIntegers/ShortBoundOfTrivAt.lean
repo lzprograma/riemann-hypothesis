@@ -52,13 +52,11 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ GlobalTheory.PtTie
 open ReciprocityTheory.ChartRestriction.G.TB (dAct dLin)
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.PlaceInt
 namespace GlobalTheory.PlaceInt.ShortTriv
 
@@ -193,7 +191,7 @@ theorem le_nval_sum {J : Type} (s : Finset J) (e : ℕ) (r : EReal) (f : J → T
       rw [hz, map_zero] at hsum
       exact hs0 (le_antisymm hsum zero_le)
     have h1 := hf j₀ hj₀
-    rw [if_neg hf0] at h1
+    rw [ite_eq_right hf0] at h1
     refine h1.trans (EReal.coe_le_coe_iff.2 (div_le_div_of_nonneg_right ?_ (Nat.cast_nonneg e)))
     have hv : vV T.V (f j₀) ≤ vV T.V (∑ j ∈ s, f j) := by
       unfold vV
@@ -214,7 +212,7 @@ theorem short_bound_of_trivAt : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
     by_cases hz : z = 0
     · rw [hz, mul_zero]
     · unfold nval
-      rw [if_neg (mul_ne_zero hu0 hz), if_neg hz, vV_mul hu0 hz hu]
+      rw [ite_eq_right (mul_ne_zero hu0 hz), ite_eq_right hz, vV_mul hu0 hz hu]
   have hNodd : Odd N := hL.1
   obtain ⟨J, J', iJ, iJ', a, a', σ, hinj, ha, ⟨m, hm, ha'⟩, hz', hcard⟩ :=
     GlobalTheory.T.isotropic_group_primary_decomposition E H Dw l Xo T.Fr (xOf y) n Λ N M ℓ hU hL hℓ z hz hgi

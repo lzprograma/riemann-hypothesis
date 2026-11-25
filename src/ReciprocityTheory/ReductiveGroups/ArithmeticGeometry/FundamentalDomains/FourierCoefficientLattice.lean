@@ -1,54 +1,6 @@
 module
 
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientMatrices
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.EmbeddingHermitianPairs
 
 @[expose] public section
@@ -189,21 +141,16 @@ lemma finite_small (hg : 0 < g) : {y | y ∈ Lc X g ∧ ‖y‖ < 1}.Finite := b
       first | exact hk τ 1 0
     have h11 : |(τ.1 (β 1 1)).re| < 1 := by
       first | exact hk τ 1 1
-    have e0 : τ.1 (β 0 0) = conj (τ.1 (β 0 0)) := hb τ 0 0
-    have e1 : τ.1 (β 1 1) = conj (τ.1 (β 1 1)) := hb τ 1 1
     have e2 : τ.1 (β 1 0) = conj (τ.1 (β 0 1)) := hb τ 0 1
-    have i0 : |(τ.1 (β 0 0)).im| < 1 := by
-      have h := congrArg Complex.im e0
+    have im_zero : ∀ k : Fin 2, τ.1 (β k k) = conj (τ.1 (β k k)) → |(τ.1 (β k k)).im| < 1 := by
+      intro k hk
+      have h := congrArg Complex.im hk
       rw [Complex.conj_im] at h
-      have h' : (τ.1 (β 0 0)).im = 0 := by linarith
+      have h' : (τ.1 (β k k)).im = 0 := by linarith
       rw [h']
       norm_num
-    have i1 : |(τ.1 (β 1 1)).im| < 1 := by
-      have h := congrArg Complex.im e1
-      rw [Complex.conj_im] at h
-      have h' : (τ.1 (β 1 1)).im = 0 := by linarith
-      rw [h']
-      norm_num
+    have i0 := im_zero 0 (hb τ 0 0)
+    have i1 := im_zero 1 (hb τ 1 1)
     have r2 : |(τ.1 (β 1 0)).re| < 1 := by rw [e2, Complex.conj_re]; exact h01
     have m2 : |(τ.1 (β 1 0)).im| < 1 := by rw [e2, Complex.conj_im, abs_neg]; exact h10
     refine Fin.forall_fin_two.mpr ⟨Fin.forall_fin_two.mpr ⟨?_, ?_⟩, Fin.forall_fin_two.mpr ⟨?_, ?_⟩⟩
@@ -317,20 +264,12 @@ lemma span_fixed_integral_real_parts : Submodule.span ℝ {p : X.Ψ → ℝ | �
     | exact star_star φ
   have hFinj : Function.Injective
       (Sum.elim (fun τ : X.Ψ => τ.1) (fun τ : X.Ψ => ComplexEmbedding.conjugate τ.1)) := by
+    have hconj : ∀ {a b : X.Ψ}, a.1 = ComplexEmbedding.conjugate b.1 → False := fun {a b} h =>
+      ((X.cmType b.1).mp b.2) (h ▸ a.2)
     rintro (τ | τ) (τ' | τ') h
     · exact congrArg Sum.inl (Subtype.ext h)
-    · exfalso
-      have h' : τ.1 = ComplexEmbedding.conjugate τ'.1 := h
-      have h1 : ComplexEmbedding.conjugate τ'.1 ∈ X.Ψ := by
-        rw [← h']
-        exact τ.2
-      exact ((X.cmType τ'.1).mp τ'.2) h1
-    · exfalso
-      have h' : ComplexEmbedding.conjugate τ.1 = τ'.1 := h
-      have h1 : ComplexEmbedding.conjugate τ.1 ∈ X.Ψ := by
-        rw [h']
-        exact τ'.2
-      exact ((X.cmType τ.1).mp τ.2) h1
+    · exact False.elim (hconj h)
+    · exact False.elim (hconj h.symm)
     · have h' : ComplexEmbedding.conjugate τ.1 = ComplexEmbedding.conjugate τ'.1 := h
       have h1 : τ.1 = τ'.1 := by
         have h2 := congrArg ComplexEmbedding.conjugate h'

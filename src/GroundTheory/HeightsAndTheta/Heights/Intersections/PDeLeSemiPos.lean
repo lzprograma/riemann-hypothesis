@@ -53,11 +53,7 @@ theorem log_h_eq_neg_logNorm_one (D : HermLine ι) :
 
 theorem isSectionOn_one {Q : Ideal (MRing ι)} {d : ℕ} (hQ : IsArithVar Q d) {D : HermLine ι}
     (hDa : D.a = 0) : IsSectionOn Q D 1 := by
-  refine ⟨0, fun k => by simp [hDa], fun m hm k => ?_,
-    fun h => hQ.2.1.1.ne_top ((Ideal.eq_top_iff_one Q).2 h)⟩
-  rw [MvPolynomial.support_one, Finset.mem_singleton] at hm
-  subst hm
-  simp
+  exact _root_.ReciprocityTheory.ChartRestriction.G.Geo.isSectionOn_one hQ.2.1.1 hDa
 
 theorem ptsIntegral_add_first_log (hAdd : PtsAddFirst.Statement) {Q : Ideal (MRing ι)} {e : ℕ}
     {L : Fin e → HermLine ι} {M N D : HermLine ι} (hQ : IsArithVar Q (e + 2))

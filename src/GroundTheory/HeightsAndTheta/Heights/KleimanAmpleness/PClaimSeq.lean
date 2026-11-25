@@ -26,15 +26,14 @@ variable {R : Type u} [CommRing R] {N : ℕ}
 theorem homogeneousComponent_mul_form (r g : Poly R N) {d : ℕ} (hg : g.IsHomogeneous d) (e : ℕ) :
     homogeneousComponent e (r * g) ∈ Submodule.span R
       {z | ∃ (h : Poly R N) (d' : ℕ), h.IsHomogeneous d' ∧ d' + d = e ∧ z = h * g} := by
-
-  rw [show r * g = ∑ i ∈ Finset.range (r.totalDegree + 1), homogeneousComponent i r * g by
-  rw [← Finset.sum_mul, sum_homogeneousComponent], map_sum]
-  refine Submodule.sum_mem _ fun i _ => ?_
-  have hm : homogeneousComponent i r * g ∈ homogeneousSubmodule (Fin (N + 1)) R (i + d) :=
-    (mem_homogeneousSubmodule _ _).mpr ((homogeneousComponent_isHomogeneous i r).mul hg)
-  rw [homogeneousComponent_of_mem hm]
-  split_ifs with h
-  · exact Submodule.subset_span ⟨_, i, homogeneousComponent_isHomogeneous i r, h.symm, rfl⟩
+  let _ := MvPolynomial.gradedAlgebra (σ := Fin (N + 1)) (R := R)
+  have h : homogeneousComponent e (r * g) = if d ≤ e then homogeneousComponent (e - d) r * g else 0 := by
+    simp_rw [← decomposition.decompose'_apply]
+    exact DirectSum.coe_decompose_mul_of_right_mem (homogeneousSubmodule (Fin (N + 1)) R) e
+      (a := r) ((mem_homogeneousSubmodule d g).mpr hg)
+  rw [h]
+  split_ifs with hde
+  · exact Submodule.subset_span ⟨_, e - d, homogeneousComponent_isHomogeneous _ _, Nat.sub_add_cancel hde, rfl⟩
   · exact Submodule.zero_mem _
 
 theorem mem_span_forms_of_mem_ideal {G : Set (Poly R N)} (deg : Poly R N → ℕ)

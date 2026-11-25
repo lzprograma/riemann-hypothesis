@@ -17,42 +17,7 @@ public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsGoo
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LieAlgebrasAtPlaceActFockVectorsByFockOperators
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TripleFrameBaseExists
 import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ExistsNatSmulSingle
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.MatchingAdjoints
 import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
 import Development.AutomorphicArithmetic.LocalEmbeddings.FinMatchDefs
@@ -80,7 +45,6 @@ open GlobalTheory.TripleRead (thO ptO)
 open GlobalTheory.AdelicU (evFin splitPrime IsSplitBasis)
 open GlobalTheory.BotMatch (evW)
 open GlobalTheory.StageGeo
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 theorem UpperTheory.exists_splitBasis_conj_lattice_of_selfDual_frame :
     ∀ (D : D7) (S : HSp D) (Λ L : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)) (β : GL (Fin S.rank) (EAf D)),
@@ -126,7 +90,6 @@ open GlobalTheory.TripleRead (thO ptO)
 open GlobalTheory.AdelicU (evFin splitPrime IsSplitBasis)
 open GlobalTheory.BotMatch (evW)
 open GlobalTheory.StageGeo
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 open GlobalTheory.AdelicU in
 private theorem splitLat_comp {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E] {n d : ℕ}
@@ -210,7 +173,6 @@ open GlobalTheory.TripleRead (thO ptO)
 open GlobalTheory.AdelicU (evFin splitPrime IsSplitBasis)
 open GlobalTheory.BotMatch (evW)
 open GlobalTheory.StageGeo
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace UpperTheory.HermitianSkewLattice
 
@@ -317,7 +279,7 @@ private theorem ext_bas {F E : Type} [Field F] [NumberField F] [Field E] [Number
     ∃ bas : ∀ v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F), GL (Fin n) (Fv F v), ∀ v : B.P, Q v (bas v) := by
   choose b hb using h
   refine ⟨fun v => if hv : v ∈ B.P then b ⟨v, hv⟩ else 1, fun v => ?_⟩
-  simp only [dif_pos v.2]
+  simp only [dite_eq_left v.2]
   exact hb v
 
 end UpperTheory.HermitianSkewLattice
@@ -376,8 +338,8 @@ theorem UpperTheory.exists_geo_of_signature_rank_bounds :
     ⟨hX.skew, hX.sig, hX.lat, hX.dual, hX.cartan, fun v => (hbX v).1⟩
   obtain ⟨hμ1, hd1⟩ := GlobalTheory.T.conjugateUnitaryAdelicIso_map_haar_fundamentalDomain D A 1 (J := V.J) rfl one_ne_zero X.m X.fd hm
   obtain ⟨hμ2, hd2⟩ := GlobalTheory.T.conjugateUnitaryAdelicIso_map_haar_fundamentalDomain D A' (-1) (J := V'.J) rfl (neg_ne_zero.2 one_ne_zero) X.m' X.fd' hm'
-  obtain ⟨M, hMμ, hMd, hM⟩ := GlobalTheory.T.exists_good_rational_schroedingerModel D Bs hBs V Ws _ _ _ _ gV gW _ _ hμ1 hd1
-  obtain ⟨M', hMμ', hMd', hM'⟩ := GlobalTheory.T.exists_good_rational_schroedingerModel D Bs hBs V' Ws _ _ _ _ gV' gW _ _ hμ2 hd2
+  obtain ⟨M, hMμ, hMd, hM⟩ := _root_.GlobalTheory.SquareAgree.exists_good_model D Bs hBs V Ws _ _ _ _ gV gW _ _ hμ1 hd1
+  obtain ⟨M', hMμ', hMd', hM'⟩ := _root_.GlobalTheory.SquareAgree.exists_good_model D Bs hBs V' Ws _ _ _ _ gV' gW _ _ hμ2 hd2
   refine ⟨⟨p, q, V, V', Ws, M, M'⟩, rfl, rfl, ⟨by omega, hev, hκ, ?_, h2, gV, gV', gW, hM, hM'⟩,
     ⟨⟨hBs, hψ, rfl, rfl, ⟨_, _, gV⟩, ⟨_, _, gW⟩, hM⟩, ⟨hBs, hψ, rfl, rfl, ⟨_, _, gV'⟩, ⟨_, _, gW⟩, hM'⟩,
       ⟨lV, lX⟩, ⟨lV', lX⟩, fun w => ⟨τf w, hemb w, (one_smul _ _).symm, rfl⟩,

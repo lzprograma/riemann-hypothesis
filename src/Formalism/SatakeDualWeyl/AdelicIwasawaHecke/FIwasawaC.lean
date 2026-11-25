@@ -1,49 +1,6 @@
 module
 
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawaB
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -67,10 +24,10 @@ private theorem mul_antiJ_apply' (N : Matrix (Fin n) (Fin n) L) (i j : Fin n) :
     (N * antiJ L n) i j = N i (Fin.rev j) := by
   have hj := j.isLt
   rw [Matrix.mul_apply, Finset.sum_eq_single (Fin.rev j)]
-  · rw [antiJ_apply_adelic_iwasawa_hecke, if_pos (by rw [Fin.val_rev]; omega), mul_one]
+  · rw [antiJ_apply_adelic_iwasawa_hecke, ite_eq_left (by rw [Fin.val_rev]; omega), mul_one]
   · intro k _ hk
     have hk' := k.isLt
-    rw [antiJ_apply_adelic_iwasawa_hecke, if_neg, mul_zero]
+    rw [antiJ_apply_adelic_iwasawa_hecke, ite_eq_right, mul_zero]
     intro h
     apply hk
     ext
@@ -130,10 +87,10 @@ theorem fIwasawa_gram_un (M : Matrix (Fin n) (Fin n) L) (hM : fIwasawaUn σ M) (
   have ha := a.isLt
   have hb := b.isLt
   by_cases hab : b = Fin.rev a
-  · rw [if_pos, if_pos hab]
+  · rw [ite_eq_left, ite_eq_left hab]
     rw [hab, Fin.val_rev]
     omega
-  · rw [if_neg, if_neg hab]
+  · rw [ite_eq_right, ite_eq_right hab]
     intro h'
     apply hab
     ext
@@ -175,10 +132,10 @@ private theorem sigma_diag_mul_rev_diag_and_rev_entries_zero (M : Matrix (Fin n)
       · intro h
         exact absurd (Finset.mem_univ _) h
     have h1 := key (Fin.rev s) le_rfl
-    rw [if_pos rfl] at h1
+    rw [ite_eq_left rfl] at h1
     refine ⟨h1, fun b hb => ?_⟩
     have h2 := key b hb.le
-    rw [if_neg (ne_of_lt hb)] at h2
+    rw [ite_eq_right (ne_of_lt hb)] at h2
     exact (mul_eq_zero.mp h2).resolve_left (left_ne_zero_of_mul_eq_one h1)
 
 theorem fIwasawa_rows (M : Matrix (Fin n) (Fin n) L) (hM : fIwasawaUn σ M) (r : ℕ)
@@ -202,7 +159,7 @@ theorem fIwasawa_col_zero (M : Matrix (Fin n) (Fin n) L) (hM : fIwasawaUn σ M) 
 
 theorem fIwasawa_iso (M : Matrix (Fin n) (Fin n) L) (hM : fIwasawaUn σ M) (ρ : Fin n)
     (hρ : ρ < Fin.rev ρ) : ∑ j, σ (M (Fin.rev j) ρ) * M j ρ = 0 := by
-  rw [fIwasawa_gram_un σ M hM ρ ρ, if_neg (ne_of_lt hρ)]
+  rw [fIwasawa_gram_un σ M hM ρ ρ, ite_eq_right (ne_of_lt hρ)]
 
 theorem fIwasawa_perm (ρ a : Fin n) (hρ : ρ < Fin.rev ρ) (ha1 : ρ ≤ a) (ha2 : a ≤ Fin.rev ρ)
     (haa : a ≠ Fin.rev a) :

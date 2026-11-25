@@ -105,7 +105,6 @@ theorem eq_of_perm_inv_invariant_of_multiset_eq :
     rcases mul_eq_zero.1 h5 with h6 | h6
     · exact Or.inl (sub_eq_zero.1 h6)
     · exact Or.inr (eq_inv_of_mul_eq_one_left (sub_eq_zero.1 h6))
-  have hβ : ∀ i, (α ∘ π) i ≠ 0 := fun i => hα _
   have key : ∀ s : Finset (Fin m),
       f (fun i => if i ∈ s then α' i else (α ∘ π) i) = f (α ∘ π) := by
     intro s
@@ -133,7 +132,7 @@ theorem eq_of_perm_inv_invariant_of_multiset_eq :
           simp [hj, h6]
         · simp [hij]
   have := key Finset.univ
-  simp only [Finset.mem_univ, if_true] at this
+  simp only [Finset.mem_univ, ite_true] at this
   rw [← (hf α hα).1 π, ← this]
 
 end GlobalTheory

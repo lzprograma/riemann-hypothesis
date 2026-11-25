@@ -147,7 +147,7 @@ private theorem exists_mem_KO_pivot_ne_zero_valuation_max {k : Type} [Field k] [
       · simp [Matrix.mul_apply, hj]
       · simp [Matrix.mul_apply, hj]
     have hsum : valuation k ((g * u).val i0 i0) = valuation k (g.val i0 j0) := by
-      rw [key, if_pos rfl]
+      rw [key, ite_eq_left rfl]
       exact (valuation k).map_add_eq_of_lt_right hcase
     refine ⟨?_, ?_⟩
     · intro hz
@@ -157,7 +157,7 @@ private theorem exists_mem_KO_pivot_ne_zero_valuation_max {k : Type} [Field k] [
       rw [hsum]
       by_cases hj : j = i0
       · rw [hj, hsum]
-      · rw [key, if_neg hj, add_zero]
+      · rw [key, ite_eq_right hj, add_zero]
         exact hj0 j
 
 private theorem exists_mem_KO_row_eq_zero_of_pivot_max {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {ι : Type} [Fintype ι] [DecidableEq ι] (g : GL ι k) (i0 : ι) (hc : g.val i0 i0 ≠ 0)
@@ -186,7 +186,7 @@ private theorem exists_mem_KO_row_eq_zero_of_pivot_max {k : Type} [Field k] [Val
   refine ⟨u, hu, fun j hj => ?_⟩
   rw [Units.val_mul, hval, mul_add, mul_one, Matrix.add_apply, Matrix.mul_apply]
   have hx : ∀ x, (x = i0 ∧ j ≠ i0) ↔ x = i0 := fun x => ⟨And.left, fun h => ⟨h, hj⟩⟩
-  simp only [Matrix.of_apply, hx, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Matrix.of_apply, hx, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   field_simp
   ring
 
@@ -294,7 +294,7 @@ private theorem exists_blockTriangular_mul_mem_KO_eq {k : Type} [Field k] [Valua
     have hj : j ≠ i0 := by
       rintro rfl
       exact absurd (hi0 i) (not_le.mpr hij)
-    rw [Units.val_mul, Matrix.mul_apply, Fintype.sum_eq_add_sum_subtype_ne _ i0, hV1 j, if_neg hj,
+    rw [Units.val_mul, Matrix.mul_apply, Fintype.sum_eq_add_sum_subtype_ne _ i0, hV1 j, ite_eq_right hj,
       mul_zero, zero_add]
     by_cases hi : i = i0
     · apply Finset.sum_eq_zero

@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SaturatedPf
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.Saturated
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.Development
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.FrameL
@@ -22,14 +23,7 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {r : �
 
 theorem orth_span (v : Fin r → S.V) {y : S.V} (h : ∀ a, S.hT (v a) y = 0) :
     ∀ x ∈ Submodule.span E (Set.range v), S.hT x y = 0 := by
-  intro x hx
-  induction hx using Submodule.span_induction with
-  | mem z hz =>
-    obtain ⟨a, rfl⟩ := hz
-    exact h a
-  | zero => simp
-  | add x x' _ _ hx hx' => simp [hx, hx']
-  | smul c x _ hx => simp [hx]
+  apply _root_.Formalism.L2.SG.Pf.hT_X_left <;> assumption
 
 theorem latSpan_le_span (aa : Fin r → FractionalIdeal (nonZeroDivisors (𝓞 E)) E) (v : Fin r → S.V) :
     latSpan aa v ≤ (Submodule.span E (Set.range v)).restrictScalars (𝓞 E) := by

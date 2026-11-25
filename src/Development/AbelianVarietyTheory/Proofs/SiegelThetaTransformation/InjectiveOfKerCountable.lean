@@ -14,44 +14,8 @@ public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CongrOfDv
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsHermCoordOfDatum
 public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsUnf
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbeddingsGoodBijectiveConjCompat
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain
 
 @[expose] public section
@@ -70,7 +34,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : D
 
 theorem injective_of_ker_countable {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
     (h : V →ₗ[ℂ] W) {S : Set V} (hS : S.Countable) (hk : ∀ v, h v = 0 → v ∈ S) : Function.Injective h := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro v hv
   by_contra hne
   have hi : Function.Injective fun t : ℂ => t • v := smul_left_injective ℂ hne
@@ -168,7 +132,7 @@ theorem exists_const {σ : c.F →+* ℂ} {r : ℕ} {U : Formalism.L2.PjFree.Unf
       y.x = W.F.u (W.ik k) P ∧ Formalism.L2.PjFree.toC (evR Xo c f y) = C k := by
   obtain ⟨-, -, honto, -, hsec, -⟩ := hU
   have hC : ∀ k, ∃ C : ℂ, ∀ x : (U.X k).dom, Formalism.L2.PjFree.toC (evR Xo c f (U.un k x)) = C := fun k => by
-    have hr : ∀ x : (U.X k).dom, Formalism.L2.PjFree.rdU U f k x = Formalism.L2.PjFree.toC (evR Xo c f (U.un k x)) := fun x => dif_pos x.2
+    have hr : ∀ x : (U.X k).dom, Formalism.L2.PjFree.rdU U f k x = Formalism.L2.PjFree.toC (evR Xo c f (U.un k x)) := fun x => dite_eq_left x.2
     obtain ⟨C, -, hC⟩ := const_of_norm_factor (FourierCoefficientDomain.isOpen_dom (U.X k))
       (GlobalTheory.frames_isConnected E r (U.X k)).isPreconnected (J := Unit) (fun _ => Formalism.L2.PjFree.rdU U f k) (fun _ _ => 1) 1 one_pos
       (fun _ => (hsec 0 0 ⟨fun _ => antitone_const, Even.zero⟩ f hf k).1) (fun _ => differentiableOn_const _)
@@ -182,7 +146,7 @@ theorem exists_const {σ : c.F →+* ℂ} {r : ℕ} {U : Formalism.L2.PjFree.Unf
   have hT : ∀ y : FrPt Xo c (CAt σ), FromTest (K := c.F) (fun S _ _ => FrPt Xo c S) (fun φ y z => FrMap φ y z) y :=
     fun y => by
       by_contra hn
-      have h0 : evR Xo c f y = 0 := dif_neg hn
+      have h0 : evR Xo c f y = 0 := dite_eq_right hn
       have := h1 y
       rw [h0] at this
       exact zero_ne_one ((norm_zero (E := ℂ)).symm.trans this)

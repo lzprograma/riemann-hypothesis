@@ -40,23 +40,6 @@ theorem basisMatrix_apply' (τ σ : K →+* ℂ) :
   simp [basisMatrix, canonicalEmbedding.latticeBasis_apply, integralBasis_apply,
     canonicalEmbedding.apply_at]
 
-section Gram
-
-variable {E : Type*} [AddCommGroup E] [Module (𝓞 K) E] [Module.Finite (𝓞 K) E]
-  [Module.Projective (𝓞 K) E] (h : HermitianMetric K E) {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-end Gram
-
-section RiemannRoch
-
-variable {E : Type*} [AddCommGroup E] [Module (𝓞 K) E] [Module.Finite (𝓞 K) E]
-  [Module.Projective (𝓞 K) E] (h : HermitianMetric K E) {ι : Type*} [Fintype ι] [DecidableEq ι]
-  {s : ι → E}
-
-
-
-end RiemannRoch
-
 namespace HermitianExtension
 
 variable {E' E E'' : HermitianBundle K} (X : HermitianExtension E' E E'')

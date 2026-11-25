@@ -80,7 +80,7 @@ theorem standard_gram_nondegenerate : Formalism.L2.SG.Pf.RescaleCore.GramStdND :
     have h := hrow (Fin.castAdd r (Fin.castSucc a))
     rw [hsum, tE] at h
     simp only [hee, zero_mul, Finset.sum_const_zero, zero_add, hez, hef, ite_mul, one_mul,
-      Finset.sum_ite_eq, Finset.mem_univ, if_true] at h
+      Finset.sum_ite_eq, Finset.mem_univ, ite_true] at h
     exact h
   have hze : ∀ b, hE σ J P.z (P.e b) = 0 := fun b => by rw [hE_swap σ J hσ hJ, hez, map_zero]
   have hzf : ∀ b, hE σ J P.z (P.f b) = 0 := fun b => by rw [hE_swap σ J hσ hJ, hfz, map_zero]
@@ -101,7 +101,7 @@ theorem standard_gram_nondegenerate : Formalism.L2.SG.Pf.RescaleCore.GramStdND :
     have h := hrow (Fin.natAdd (r + 1) a)
     rw [hsum, tF] at h
     simp only [hfe, hfz', hff, zero_mul, Finset.sum_const_zero, add_zero, ite_mul, one_mul, zero_mul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
     exact h
   apply hv0
   funext i
@@ -116,32 +116,6 @@ end Gram
 end Formalism.L2.SG.Pf.Rescale
 
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.SG.Sub
-
-namespace Formalism.L2.SG.Pf.Rescale
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-variable {D : D7}
-
-theorem hform_crdX (X : HidaSetting D) (v w : (VS D).V) :
-    X.ιE (Formalism.UG.hform (starRingEnd X.B.I.E) X.B.I.J (crdOf X.B.I X.ιE X.bas v) (crdOf X.B.I X.ιE X.bas w)) =
-      (VS D).hT v w := by
-  conv_rhs => rw [← X.bas.sum_repr v, ← X.bas.sum_repr w]
-
-  simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
-  Formalism.UG.hform, map_mul, crdOf, starRingEnd_apply, X.ιE_conj, RingEquiv.apply_symm_apply,
-  X.J_eq, Finset.mul_sum]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  simp only [← Formalism.BasicNotions.bridge_star_holds D.R D.host, RingHom.id_apply]
-  ring
-
-theorem hE_crdX (X : HidaSetting D) (v w : (VS D).V) :
-    hE X.B.I.cm.sig X.B.I.J (crdOf X.B.I X.ιE X.bas v) (crdOf X.B.I X.ιE X.bas w) = X.ιE.symm ((VS D).hT v w) := by
-  show Formalism.UG.hform (starRingEnd X.B.I.E) X.B.I.J _ _ = _
-  rw [← hform_crdX X v w, RingEquiv.symm_apply_apply]
-
-end Formalism.L2.SG.Pf.Rescale
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto

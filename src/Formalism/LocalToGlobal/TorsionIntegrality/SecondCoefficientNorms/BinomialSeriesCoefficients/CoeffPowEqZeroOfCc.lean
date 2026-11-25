@@ -229,8 +229,7 @@ private theorem eq_zero_of_mvExp_eq_one {h : MvPowerSeries σ K} (hh : MvPowerSe
   classical
   by_contra hne
   have hex : ∃ d : ℕ, ∃ m : σ →₀ ℕ, m.degree = d ∧ MvPowerSeries.coeff m h ≠ 0 := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     exact hne (MvPowerSeries.ext fun m => by simpa using hall _ m rfl)
   obtain ⟨m, hmd, hm⟩ := Nat.find_spec hex
   have hmin : ∀ m' : σ →₀ ℕ, m'.degree < Nat.find hex → MvPowerSeries.coeff m' h = 0 := by

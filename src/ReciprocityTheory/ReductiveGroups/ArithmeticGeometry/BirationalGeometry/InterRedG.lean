@@ -35,19 +35,12 @@ theorem secOf_eq (i : ∀ k, ι k) (b : K → ℕ) :
 theorem isMultiHomog_secOf (i : ∀ k, ι k) (b : K → ℕ) : IsMultiHomog (secOf i b) b := by
   classical
   intro m hm k
-  rw [secOf_eq, MvPolynomial.support_monomial, if_neg one_ne_zero, Finset.mem_singleton] at hm
+  rw [secOf_eq, MvPolynomial.support_monomial, ite_eq_right one_ne_zero, Finset.mem_singleton] at hm
   subst hm
   simp only [Finsupp.finsetSum_apply]
   rw [Finset.sum_comm]
   simp only [blockDeg_single]
   simp
-
-theorem secOf_not_mem {P : Ideal (MRing ι)} (hP : P.IsPrime) {i : ∀ k, ι k}
-    (hi : ∀ k, (X ⟨k, i k⟩ : MRing ι) ∉ P) (b : K → ℕ) : secOf i b ∉ P := by
-  rw [secOf]
-  intro h
-  obtain ⟨k, -, hk⟩ := (Ideal.IsPrime.prod_mem_iff (hp := hP)).1 h
-  exact hi k (hP.mem_of_pow_mem _ hk)
 
 end Alg
 

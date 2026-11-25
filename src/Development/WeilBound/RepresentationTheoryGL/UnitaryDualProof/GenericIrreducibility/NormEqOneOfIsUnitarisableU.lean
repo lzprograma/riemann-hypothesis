@@ -27,15 +27,6 @@ theorem norm_eq_one_of_unitCC {N : ℕ} {X : Type} [AddCommGroup X] [Module ℂ 
   obtain ⟨v, hv⟩ := exists_ne (0 : X)
   rw [smul_left_injective ℂ hv ((hc v).symm.trans (hω z v)), h1]
 
-theorem hasCentralChar_nu_u (x : IrrGL (k := k)) {ω : kˣ →* ℂˣ} (h : HasCentralChar x.rep ω) (s : ℂ) :
-    HasCentralChar (x.nu s).rep (ω * absPow k s ^ x.1) :=
-  hasCentralChar_nu x h s
-
-private theorem sum_range_mul_two_u (l : ℕ) : (∑ i ∈ Finset.range l, (i : ℝ)) * 2 = l * ((l : ℝ) - 1) := by
-  induction l with
-  | zero => simp
-  | succ n ih => rw [Finset.sum_range_succ, add_mul, ih]; push_cast; ring
-
 theorem log_norm_centralChar_u {δ : IrrGL (k := k)} {Δ : Segment k} (hL : IsLSeg Δ δ.rep) (hU : UnitCC δ.rep)
     {ω : kˣ →* ℂˣ} (hω : HasCentralChar Δ.first.rep ω) (z : kˣ) :
     Real.log ‖(ω z : ℂ)‖ = -((Δ.d : ℝ) * ((Δ.len : ℝ) - 1) / 2) * Real.log (nabs k z) := by
@@ -55,7 +46,7 @@ theorem log_norm_centralChar_u {δ : IrrGL (k := k)} {Δ : Segment k} (hL : IsLS
   rw [Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
     ← Finset.sum_mul, ← Finset.mul_sum, Fin.sum_univ_eq_sum_range (fun i => (i : ℝ)) Δ.len] at hc
   apply mul_left_cancel₀ (Nat.cast_ne_zero.2 Δ.len_pos.ne' : (Δ.len : ℝ) ≠ 0)
-  linear_combination hc - ((Δ.d : ℝ) * Real.log (nabs k z) / 2) * sum_range_mul_two_u Δ.len
+  linear_combination hc - ((Δ.d : ℝ) * Real.log (nabs k z) / 2) * GlobalTheory.LocGL.UnitaryOrder.sum_range_mul_two Δ.len
 
 theorem add_one_le_of_precedes_u (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] (δ δ' : IrrGL (k := k)) (Δ Δ' : Segment k) (hL : IsLSeg Δ δ.rep)

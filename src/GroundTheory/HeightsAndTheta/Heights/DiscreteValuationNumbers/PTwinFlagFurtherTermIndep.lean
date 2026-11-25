@@ -87,12 +87,12 @@ theorem term_head {N r : ℕ} (l : Fin r) (α : Fin N →₀ ℕ) (β : Fin r �
       (∏ j : Fin N, X (Sum.inr (Fin.castAdd r j)) ^ α j) *
         ∏ j ∈ Finset.univ.filter (fun j => j < l), X (Sum.inr (Fin.natAdd N j)) ^ β j := by
     rw [Finset.prod_filter, Finset.prod_filter, Fin.prod_univ_add]
-    simp only [hlt, if_true, hnn, hc, hn]
+    simp only [hlt, ite_true, hnn, hc, hn]
   have h3 : (∏ j ∈ Finset.univ.filter (fun j => Fin.natAdd N l < j),
       (X (Sum.inl j) : MvPolynomial (Fin (N + r) ⊕ Fin (N + r)) ℤ) ^ ν j) =
       ∏ j ∈ Finset.univ.filter (fun j => l < j), X (Sum.inl (Fin.natAdd N j)) ^ β j := by
     rw [Finset.prod_filter, Finset.prod_filter, Fin.prod_univ_add]
-    simp only [hgt, if_false, Finset.prod_const_one, one_mul, hnn, hn]
+    simp only [hgt, ite_false, Finset.prod_const_one, one_mul, hnn, hn]
   unfold term
   rw [h1, h3, hn l]
 
@@ -151,7 +151,7 @@ theorem rename_divDiff_natAdd_monomial {N r : ℕ} (l : Fin r) (α : Fin N →�
       omega
     rw [Finsupp.add_apply, hA, Finsupp.mapDomain_of_notMem_range _ _ hj,
       Finsupp.mapDomain_apply_of_injective (Fin.natAdd_injective _ _), zero_add]
-  rw [coeff_monomial_mul', if_pos le_self_add, add_tsub_cancel_left,
+  rw [coeff_monomial_mul', ite_eq_left le_self_add, add_tsub_cancel_left,
     coeff_rename_mapDomain _ (Fin.natAdd_injective _ _), term_head l α μ _ hc hn, C_mul]
   simp only [map_mul, rename_C]
   ring
@@ -178,16 +178,16 @@ theorem val_emb {N r : ℕ} (s : Fin (N + (r + r))) :
       if (s : ℕ) < N then s + N + r else if (s : ℕ) < N + r then s else s + N := by
   induction s using Fin.addCases with
   | left i =>
-    simp only [emb, Fin.append_left, Fin.val_natAdd, Fin.val_castAdd, i.isLt, if_true]
+    simp only [emb, Fin.append_left, Fin.val_natAdd, Fin.val_castAdd, i.isLt, ite_true]
     omega
   | right j =>
     induction j using Fin.addCases with
     | left j =>
       simp only [emb, Fin.append_right, Fin.append_left, Fin.val_natAdd, Fin.val_castAdd]
-      rw [if_neg (by omega), if_pos (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_left (by omega)]
     | right j =>
       simp only [emb, Fin.append_right, Fin.val_natAdd]
-      rw [if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega)]
       omega
 
 theorem emb_injective (N r : ℕ) : Function.Injective (emb N r) := by
@@ -261,8 +261,8 @@ theorem exists_equiv_of_perm {A : Type*} {l₁ l₂ : List A} (h : l₁.Perm l�
       induction i using Fin.cases with
       | zero => simp
       | succ i =>
-        rw [Equiv.swap_apply_def, if_neg (Fin.succ_ne_zero _),
-          if_neg (fun h => by have := congrArg Fin.val h; simp at this)]
+        rw [Equiv.swap_apply_def, ite_eq_right (Fin.succ_ne_zero _),
+          ite_eq_right (fun h => by have := congrArg Fin.val h; simp at this)]
         simp
   | trans _ _ ih₁ ih₂ =>
     obtain ⟨σ, hσ⟩ := ih₁

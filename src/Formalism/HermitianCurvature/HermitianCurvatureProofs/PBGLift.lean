@@ -4,45 +4,6 @@ public import Formalism.HermitianCurvature.StatementHeads
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGDegW
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGSlice
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -73,7 +34,7 @@ theorem poly_coeff_unique {V : Type} [AddCommGroup V] [Module ℂ V] (n : ℕ) (
     simp only [Finset.smul_sum, smul_smul]
     rw [Finset.sum_comm]
     simp only [← Finset.sum_smul]
-    simp only [vand_row τ hτ l, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [vand_row τ hτ l, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   funext l
   rw [key A l, key B l]
   apply Finset.sum_congr rfl
@@ -138,8 +99,8 @@ theorem reduceJ {k r : ℕ} (T : D.LevTower k r Wp Wq) (F : B.Mat k r → (Wq �
     · exact Formalism.FourierDecayAlt.P.JCx2.mn_nice_smul _ (hNn' a')
     · exact Formalism.FourierDecayAlt.P.JCx2.mn_nice_zero
   refine ⟨E, fun l => ⟨ε0, hEn l⟩, fun l hl => ?_, ?_, fun y a' g hg => ?_⟩
-  · simp only [hE]; rw [if_neg (by omega), if_neg (by omega)]
-  · simp only [hE]; rw [if_neg (by simp), if_pos (by simp)]
+  · simp only [hE]; rw [ite_eq_right (by omega), ite_eq_right (by omega)]
+  · simp only [hE]; rw [ite_eq_right (by simp), ite_eq_left (by simp)]
   ·
     have hsum : ∀ (y : ℝ) (V : Fin (j + 1) → Wd.Ix (Fin w'.length) → B.Mat k (r - j) → (Wq →L[ℂ] Wp)),
         (∀ l, JC.NiceCoef (T.bs j) ε0 (V l a')) →
@@ -170,15 +131,15 @@ theorem reduceJ {k r : ℕ} (T : D.LevTower k r Wp Wq) (F : B.Mat k r → (Wq �
     congr 1
     have hcl' := congrFun hcomp l
     by_cases h1 : (l : ℕ) < j - s
-    · simp only [hE, if_pos h1]
+    · simp only [hE, ite_eq_left h1]
     · rw [show B.JF (T.bs j) (C1 l a') g = _ from hcl']
       by_cases h2 : (l : ℕ) = j - s
-      · simp only [hE, if_neg h1, if_pos h2]
+      · simp only [hE, ite_eq_right h1, ite_eq_left h2]
         rw [dite_eq_left (by omega)]
         have e3 : (⟨(l : ℕ), by omega⟩ : Fin (j - s + 1)) = Fin.last (j - s) := Fin.ext (by simp [h2])
         rw [e3, hcl]
         exact (Formalism.FourierDecayAlt.P.JCx2.bc_JF_smul _ _ _).symm
-      · simp only [hE, if_neg h1, if_neg h2]
+      · simp only [hE, ite_eq_right h1, ite_eq_right h2]
         rw [dite_eq_right (by omega)]
         exact (Formalism.FourierDecayAlt.P.JCx2.bc_JF_zero g).symm
 

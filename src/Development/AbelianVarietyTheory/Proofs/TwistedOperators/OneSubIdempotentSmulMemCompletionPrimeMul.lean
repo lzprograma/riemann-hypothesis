@@ -48,7 +48,6 @@ import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.FWT Formalism.L2.Pj
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 noncomputable section
 open NumberField
 
@@ -125,9 +124,9 @@ theorem exists_comb {E : Type} [Field E] [NumberField E] (P : HeightOneSpectrum 
     · have hyQ := hy Q hQ hxQ
       have hy0 : (y : E) ≠ 0 := fun h =>
         hyQ (by rw [show y = 0 from by exact_mod_cast h]; exact Q.asIdeal.zero_mem)
-      simp only [bf, cf, if_neg hQ, if_pos hxQ, h0 Q hQ, sub_zero, zero_mul, zero_add]
+      simp only [bf, cf, ite_eq_right hQ, ite_eq_left hxQ, h0 Q hQ, sub_zero, zero_mul, zero_add]
       exact (adicCompletion_coe_inv_mul_coe Q hy0).symm
-    · simp only [bf, cf, if_neg hQ, if_neg hxQ, h0 Q hQ, sub_zero, zero_mul, add_zero]
+    · simp only [bf, cf, ite_eq_right hQ, ite_eq_right hxQ, h0 Q hQ, sub_zero, zero_mul, add_zero]
       exact (adicCompletion_coe_inv_mul_coe Q (hxQ' hxQ)).symm
 
 theorem mul_smul_mem_hat (D : D7) {n : ℕ} (I : Ideal (𝓞 D.host.E)) (L : Submodule (𝓞 D.host.E) (Fin n → D.host.E))

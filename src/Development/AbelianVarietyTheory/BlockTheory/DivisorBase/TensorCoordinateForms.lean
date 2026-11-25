@@ -64,10 +64,6 @@ def wordDeriv {κ V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] (v : κ �
 def IsSpelling {κ : Type} [DecidableEq κ] (w : (κ → ℕ) → List κ) : Prop :=
   ∀ e x, (w e).count x = e x
 
-def lineForm (a : ℝ) (D D' : ℂ) : ℂ := 2 * (a : ℂ) * (D * conj D')
-
-def omega (a : ℝ) (D : ℂ) : ℝ := 1 / (π * (lineForm a D D).re)
-
 section OnePlace
 
 variable {X X' : Type} [NormedAddCommGroup X] [InnerProductSpace ℂ X] [FiniteDimensional ℂ X]

@@ -6,53 +6,6 @@ public import GroundTheory.GlobalFields.TateThesis.IdeleMeasureNormOne
 import GroundTheory.GlobalFields.Adele.Discrete
 public import GroundTheory.GlobalFields.IdeleGroups.LocalConditionIndex
 public import GroundTheory.GlobalFields.IdeleGroups.NormOneCompact
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -334,16 +287,6 @@ theorem ideleModule_posIdele (ρ : ℝ) (hρ : 0 < ρ) :
   simp only [norm_posIdele_infinite, posIdele_finite, norm_one, finprod_one, mul_one]
   rw [Finset.prod_pow_eq_pow_sum, InfinitePlace.sum_mult_eq]
 
-private theorem finprod_le_finprod_of_nonneg' {ι : Type*} {f g : ι → ℝ} (hf : (Function.mulSupport f).Finite)
-    (hg : (Function.mulSupport g).Finite) (h0 : ∀ i, 0 ≤ f i) (hfg : ∀ i, f i ≤ g i) :
-    ∏ᶠ i, f i ≤ ∏ᶠ i, g i := by
-  classical
-  rw [finprod_eq_prod_of_mulSupport_subset f (s := hf.toFinset ∪ hg.toFinset)
-      (fun i hi => Finset.mem_coe.2 (Finset.mem_union_left _ (hf.mem_toFinset.2 hi))),
-    finprod_eq_prod_of_mulSupport_subset g (s := hf.toFinset ∪ hg.toFinset)
-      (fun i hi => Finset.mem_coe.2 (Finset.mem_union_right _ (hg.mem_toFinset.2 hi)))]
-  exact Finset.prod_le_prod₀ (fun i _ => h0 i) fun i _ => hfg i
-
 theorem euclidNorm_two_le {E : Type*} [NormedField E] (y : Fin 2 → E) :
     euclidNorm y ≤ ‖y 0‖ + ‖y 1‖ := by
   rw [euclidNorm, Fin.sum_univ_two]
@@ -537,8 +480,8 @@ theorem exists_adelicNorm_vecMul_le : ∃ C : ℝ, 0 < C ∧ ∀ (α δ : IdeleG
           _ = (A * s) ^ d := by rw [Finset.prod_pow_eq_pow_sum, InfinitePlace.sum_mult_eq]
       · calc ∏ᶠ v : HeightOneSpectrum (𝓞 K), ‖finComp v z‖
             ≤ ∏ᶠ v : HeightOneSpectrum (𝓞 K), max 1 ‖(σ : 𝔸[K]).2 v‖ :=
-              finprod_le_finprod_of_nonneg' hzc.finite_mulSupport (finite_mulSupport_max_one_norm σ)
-                (fun _ => norm_nonneg _) hfinv
+              finprod_le_finprod₀ hzc.finite_mulSupport (fun _ => norm_nonneg _)
+                (finite_mulSupport_max_one_norm σ) hfinv
           _ ≤ P := hP σ hμ
     have hsq : Real.sqrt (ideleModule K r : ℝ) = s ^ d := by
       rw [← hspow, show s ^ (2 * d) = (s ^ d) ^ 2 by ring, Real.sqrt_sq (by positivity)]

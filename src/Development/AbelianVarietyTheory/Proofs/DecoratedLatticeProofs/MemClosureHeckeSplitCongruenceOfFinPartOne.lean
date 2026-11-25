@@ -56,7 +56,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta IsDedekindDomain NumberField Topology Filter
 open Formalism.IndefR.Fin.U1 GlobalTheory.HeckeSplitAll.Approx
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.HeckeSplitAll
 
@@ -151,7 +150,7 @@ theorem exists_pair (v₀ : HeightOneSpectrum (𝓞 F)) (N : ℕ) (hN : N ≠ 0)
     by_cases hlt : ‖(N : v.adicCompletion F)‖ * ‖(Q : v.adicCompletion F)‖ < 1
     · exfalso
       have ha := norm_eq_one_of_sub_lt (h1.trans_lt hlt)
-      rw [if_pos ha, sub_zero] at h2
+      rw [ite_eq_left ha, sub_zero] at h2
       refine hg ⟨h1.trans hNQ, h2.trans (hNQP.trans hNQ), ?_⟩
       have hb : ‖algebraMap F (v.adicCompletion F) β‖ < 1 := (h2.trans hNQP).trans_lt hlt
       have hb0 := norm_nonneg (algebraMap F (v.adicCompletion F) β)
@@ -176,9 +175,9 @@ theorem exists_pair (v₀ : HeightOneSpectrum (𝓞 F)) (N : ℕ) (hN : N ≠ 0)
       have hb : ‖algebraMap F (v.adicCompletion F) β‖ ≤ 1 ∧
           (‖algebraMap F (v.adicCompletion F) α‖ = 1 ∨ ‖algebraMap F (v.adicCompletion F) β‖ = 1) := by
         by_cases hc : ‖algebraMap F (v.adicCompletion F) α‖ = 1
-        · rw [if_pos hc, sub_zero] at h2
+        · rw [ite_eq_left hc, sub_zero] at h2
           exact ⟨h2.trans (hNQP.trans (hNQ.trans hN1)), Or.inl hc⟩
-        · rw [if_neg hc] at h2
+        · rw [ite_eq_right hc] at h2
           have := norm_eq_one_of_sub_lt (h2.trans_lt
             ((mul_le_of_le_one_left hP0' (hNQ.trans hN1)).trans_lt (hP v hc)))
           exact ⟨this.le, Or.inr this⟩

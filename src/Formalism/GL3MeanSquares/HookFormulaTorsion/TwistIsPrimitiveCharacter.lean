@@ -1,45 +1,8 @@
 module
 
 public import Formalism.GL3MeanSquares.SecondEstimateOfIntervalHypothesis
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -62,12 +25,6 @@ private lemma qc_prim (q : ℕ) [Fact q.Prime] (h2 : q ≠ 2) : (Formalism.Hermi
   rcases (Nat.dvd_prime (Fact.out : q.Prime)).1 hd with h | h
   · exact absurd (eq_one_iff_conductor_eq_one.2 h) (qc_ne_one q h2)
   · exact h
-
-private lemma qc_sq (q : ℕ) [Fact q.Prime] : Formalism.HermitianLattices.ZeroFreeRegionGL2.qc q ^ 2 = 1 := by
-  refine MulChar.ext fun a => ?_
-  rw [MulChar.pow_apply_coe, MulChar.one_apply_coe]
-  simp only [Formalism.HermitianLattices.ZeroFreeRegionGL2.qc, MulChar.ringHomComp_apply, Int.coe_castRingHom]
-  rw [← Int.cast_pow, quadraticChar_sq_one a.ne_zero, Int.cast_one]
 
 private lemma prim_mul {N m n : ℕ} [NeZero N] (hm : m ∣ N) (hn : n ∣ N) (hco : m.Coprime n) (hN : N = m * n)
     (χ₁ : DirichletCharacter ℂ m) (χ₂ : DirichletCharacter ℂ n) (h1 : χ₁.IsPrimitive) (h2 : χ₂.IsPrimitive) :
@@ -92,21 +49,6 @@ private lemma prim_mul {N m n : ℕ} [NeZero N] (hm : m ∣ N) (hn : n ∣ N) (h
     rwa [← hN] at h
   exact Nat.dvd_antisymm (conductor_dvd_level _) e3
 
-private lemma chi_eight_sq : Formalism.HermitianLattices.ZeroFreeRegionGL2.chi8 ^ 2 = 1 := by
-  refine MulChar.ext fun a => ?_
-  rw [MulChar.pow_apply_coe, MulChar.one_apply_coe]
-  simp only [Formalism.HermitianLattices.ZeroFreeRegionGL2.chi8, MulChar.ringHomComp_apply, Int.coe_castRingHom]
-  have hu : IsUnit (ZMod.χ₈ (a : ZMod 8)) := by
-    rw [← MulChar.coe_toUnitHom]
-    exact Units.isUnit _
-  rcases ZMod.isQuadratic_χ₈ (a : ZMod 8) with h | h | h
-  · rw [h] at hu
-    exact absurd hu not_isUnit_zero
-  · rw [h]
-    norm_num
-  · rw [h]
-    norm_num
-
 private lemma chi_eight_primitive : Formalism.HermitianLattices.ZeroFreeRegionGL2.chi8.IsPrimitive := by
   rw [isPrimitive_def]
   by_contra hne
@@ -127,7 +69,7 @@ private lemma chi_eight_primitive : Formalism.HermitianLattices.ZeroFreeRegionGL
   norm_num at h5
 
 theorem twist_is_primitive_character : Formalism.HermitianLattices.ZeroFreeRegionGL2.TwPrimitive := by
-  refine ⟨⟨chi_eight_primitive, chi_eight_sq⟩, ?_⟩
+  refine ⟨⟨chi_eight_primitive, (ZMod.isQuadratic_χ₈.comp _).sq_eq_one⟩, ?_⟩
   intro t θ q _ hθ h2 hco
   have hq : q.Prime := Fact.out
   have ht : t ≠ 0 := by
@@ -144,6 +86,8 @@ theorem twist_is_primitive_character : Formalism.HermitianLattices.ZeroFreeRegio
     have h4 : 1 ≤ t := Nat.pos_of_ne_zero ht
     nlinarith
   · intro hs
-    rw [Formalism.HermitianLattices.ZeroFreeRegionGL2.tw, mul_pow, ← map_pow, ← map_pow, hs, qc_sq, map_one, map_one, one_mul]
+    rw [Formalism.HermitianLattices.ZeroFreeRegionGL2.tw,
+      Formalism.HermitianLattices.ZeroFreeRegionGL2.qc, mul_pow, ← map_pow, ← map_pow, hs,
+      ((quadraticChar_isQuadratic (ZMod q)).comp _).sq_eq_one, map_one, map_one, one_mul]
 
 end Formalism.HermitianLattices.ThinSetIntegral

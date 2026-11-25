@@ -30,59 +30,10 @@ public import Formalism.UnipotentAdelicQuotients.EllipticRegularity.BaseLevel
 public import Formalism.UnipotentAdelicQuotients.EllipticRegularity.ConvolutionBound
 public import Formalism.UnipotentAdelicQuotients.EllipticRegularity.StepCore
 public import Formalism.UnipotentAdelicQuotients.EllipticRegularity.WeakFourier
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Analysis.Fourier.Notation
-import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEllRegBridge, Formalism.UnipotentAdelicQuotients.EllipticRegularity.Decompose, Formalism.UnipotentAdelicQuotients.EllipticRegularity.KernGr, Formalism.UnipotentAdelicQuotients.EllipticRegularity.KernDer, Formalism.UnipotentAdelicQuotients.EllipticRegularity.KernDil, Formalism.UnipotentAdelicQuotients.EllipticRegularity.ExistsSmoothExt, Formalism.UnipotentAdelicQuotients.EllipticRegularity.IteratedPartialFourierChar, Formalism.UnipotentAdelicQuotients.EllipticRegularity.Moments, Formalism.UnipotentAdelicQuotients.EllipticRegularity.PairingFourier, Formalism.UnipotentAdelicQuotients.EllipticRegularity.PairingLocal, Formalism.UnipotentAdelicQuotients.EllipticRegularity.SmoothOfLocallySmooth, Formalism.UnipotentAdelicQuotients.EllipticRegularity.SymbLower, Formalism.UnipotentAdelicQuotients.EllipticRegularity.WeightDiff, Formalism.UnipotentAdelicQuotients.EllipticRegularity.WeightedNormFinite, Formalism.UnipotentAdelicQuotients.EllRegCheck, Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEllRegW
@@ -134,7 +85,7 @@ lemma brSys_tr {ι : Type} (P : ι → SOp d) (i : ι) (φ : (Fin d → ℝ) →
       (fun y' => (P i).a k w y' * φ y') ∘ brT d := by
     funext y
     simp only [brSys, Function.comp_apply]
-    rw [dif_pos (show (k : ℕ) < (P i).ord + 1 from k.isLt)]
+    rw [dite_eq_left (show (k : ℕ) < (P i).ord + 1 from k.isLt)]
     rfl
   rw [e, dw_comp_brT]
   rfl
@@ -143,7 +94,7 @@ lemma brSys_symb {ι : Type} (P : ι → SOp d) (i : ι) (x ξ : ZetaZeros.D.Ell
     (brSys P).symb i x ξ = (P i).symb (brT d x) (brT d ξ) := by
   unfold ZetaZeros.D.EllReg.Sys.symb SOp.symb
   refine Finset.sum_congr rfl fun w _ => ?_
-  simp only [brSys, dif_pos (Nat.lt_succ_self _)]
+  simp only [brSys, dite_eq_left (Nat.lt_succ_self _)]
   rw [mul_comm]
   rfl
 
@@ -217,11 +168,7 @@ namespace Dec
 variable {d : ℕ}
 
 lemma contDiff_dw {f : E d → ℂ} (hf : ContDiff ℝ ∞ f) (w : List (Fin d)) : ContDiff ℝ ∞ (dw w f) := by
-  induction w with
-  | nil => exact hf
-  | cons j w ih =>
-    show ContDiff ℝ ∞ (fun x => fderiv ℝ (dw w f) x (ev j))
-    exact (contDiff_infty_iff_fderiv.mp ih).2.clm_apply contDiff_const
+  apply _root_.ZetaZeros.D.EllReg.WF.contDiff_dw <;> assumption
 
 lemma dw_add {f g : E d → ℂ} (hf : ContDiff ℝ ∞ f) (hg : ContDiff ℝ ∞ g) (w : List (Fin d)) :
     dw w (fun y => f y + g y) = fun y => dw w f y + dw w g y := by
@@ -281,11 +228,6 @@ lemma continuous_trOp (m : ℕ) (b : (n : ℕ) → (Fin n → Fin d) → E d →
     (-1 : ℂ) ^ n * dw (List.ofFn w) (fun y => b n w y * φ y) x)
   refine continuous_finsetSum _ fun n _ => continuous_finsetSum _ fun w _ => continuous_const.mul ?_
   exact (contDiff_dw ((hb n w).mul hφ) _).continuous
-
-lemma contDiff_eF (ξ : E d) : ContDiff ℝ ∞ (eF ξ) := by
-  have h1 : ContDiff ℝ ∞ (fun y : E d => ((inner ℝ y ξ : ℝ) : ℂ)) :=
-    Complex.ofRealCLM.contDiff.comp (contDiff_id.inner ℝ contDiff_const)
-  exact Complex.contDiff_exp.comp ((contDiff_const.mul h1).neg)
 
 lemma contDiff_mul_of_tsupport {U : Set (E d)} (hU : IsOpen U) {g f : E d → ℂ} (hg : ContDiff ℝ ∞ g)
     (hgU : tsupport g ⊆ U) (hf : ContDiffOn ℝ ∞ f U) : ContDiff ℝ ∞ (fun x => g x * f x) := by
@@ -388,7 +330,7 @@ theorem frozenDecompositionOfParts : DecomposeOf := by
     ⟨Dec.contDiff_mul_of_tsupport hUo hψC hψU ((hA i n w).sub contDiffOn_const), hψH.mul_right⟩
   have hb2 : ∀ n w, ContDiff ℝ ∞ (b2 n w) := fun n w => contDiff_const
   refine ⟨lo, c, hlo, hc, fun ξ => ?_⟩
-  have hφ := Dec.contDiff_eF ξ
+  have hφ := ZetaZeros.D.EllReg.WF.contDiff_eF ξ
   have hterm : ∀ n (w : Fin n → Fin d), ∫ y, cut χ' u y * c n w y * dw (List.ofFn w) (eF ξ) y =
       (-1 : ℂ) ^ n * mono w ξ * conv (𝓕 (c n w)) (𝓕 (cut χ' u)) ξ := by
     intro n w
@@ -426,7 +368,7 @@ theorem frozenDecompositionOfParts : DecomposeOf := by
     simp only [trOp]
     rw [Finset.sum_range_succ, Finset.sum_eq_zero, zero_add, Finset.sum_mul]
     · refine Finset.sum_congr rfl fun w _ => ?_
-      simp only [b2, if_true]
+      simp only [b2, ite_true]
       rw [Dec.dw_const_mul hφ, hDw d ξ (List.ofFn w), Dec.prod_neg_eq]
       beta_reduce
       have hsq : ((-1 : ℂ) ^ m) * (-1) ^ m = 1 := by
@@ -436,7 +378,7 @@ theorem frozenDecompositionOfParts : DecomposeOf := by
     · intro n hn
       have hne : n ≠ m := (Finset.mem_range.mp hn).ne
       refine Finset.sum_eq_zero fun w _ => ?_
-      simp only [b2, if_neg hne, zero_mul]
+      simp only [b2, ite_eq_right hne, zero_mul]
       rw [Dec.dw_zero]
       simp
   have hint1 : Integrable (fun y => cut χ u y * trOp m lo (eF ξ) y) :=
@@ -469,7 +411,7 @@ theorem frozenDecompositionOfParts : DecomposeOf := by
       lo m w = fun x => ((ψ0 (r⁻¹ • (x - x0)) : ℝ) : ℂ) * (P.a i m w x - P.a i m w x0) := by
     intro w
     funext x
-    simp only [lo, if_true]
+    simp only [lo, ite_true]
   rw [← hR, key, Finset.sum_range_succ]
   simp only [hlom]
   ring
@@ -542,8 +484,6 @@ open MeasureTheory Metric Filter Topology
 open scoped ContDiff FourierTransform ENNReal
 
 noncomputable section
-
-
 
 lemma derivL1Norm_rescaled_difference_le {d : ℕ} (ψ : E d → ℂ) (hψ : ContDiff ℝ ∞ ψ) (hψc : HasCompactSupport ψ)
     (b : E d → ℂ) (hb : ContDiff ℝ ∞ b) (hbc : HasCompactSupport b) (x0 : E d) (r0 : ℝ) (n : ℕ) :
@@ -1087,8 +1027,6 @@ private theorem eF_eq_exp_comp_of_clm (ζ : E d) (L : E d →L[ℝ] ℂ)
     eF ζ = fun x => Complex.exp (L x) := by
   funext x; rw [hL]; rfl
 
-
-
 theorem pf_fourier_fderiv (k : E d → ℂ) (hk : ContDiff ℝ ∞ k) (hkc : HasCompactSupport k) (v ζ : E d) :
     𝓕 (fun x => fderiv ℝ k x v) ζ = (2 * Real.pi * Complex.I * ((inner ℝ ζ v : ℝ) : ℂ)) * 𝓕 k ζ := by
   obtain ⟨L, hL⟩ := exists_clm_eq_neg_two_pi_I_inner ζ
@@ -1164,11 +1102,6 @@ theorem pf_fourier_integrable (k : E d → ℂ) (hk : ContDiff ℝ ∞ k) (hkc :
   let S : SchwartzMap (E d) ℂ := ⟨k, hk, hdecay⟩
   exact (SchwartzMap.fourierTransformCLM ℂ S).integrable
 
-theorem pf_eF_smooth (ξ : E d) : ContDiff ℝ ∞ (eF ξ) := by
-  obtain ⟨L, hL⟩ := exists_clm_eq_neg_two_pi_I_inner ξ
-  rw [eF_eq_exp_comp_of_clm ξ L hL]
-  exact Complex.contDiff_exp.comp L.contDiff
-
 theorem pf_sign (n : ℕ) (w : Fin n → Fin d) (η : E d) :
     (-1 : ℂ) ^ n * ∏ l, (2 * Real.pi * Complex.I * (((-η) (w l) : ℝ) : ℂ)) = mono w η := by
   unfold mono
@@ -1187,7 +1120,7 @@ theorem adjointPairingFourier : PairingFourier := by
       ∫ y, g y * ((-1 : ℂ) ^ n * dw (List.ofFn w) (fun y => b n w y * eF ξ y) y) =
         conv (𝓕 (b n w)) (fun η => mono w η * 𝓕 g η) ξ := by
     intro n w
-    have hs : ContDiff ℝ ∞ (fun y => b n w y * eF ξ y) := (hb n w).1.mul (pf_eF_smooth ξ)
+    have hs : ContDiff ℝ ∞ (fun y => b n w y * eF ξ y) := (hb n w).1.mul (ZetaZeros.D.EllReg.WF.contDiff_eF ξ)
     have hc : HasCompactSupport (fun y => b n w y * eF ξ y) := (hb n w).2.mul_right
     obtain ⟨D1, D2⟩ := pf_dw_smooth (List.ofFn w) _ hs hc
     have hD := pf_parseval g _ hgi D1.continuous (D1.continuous.integrable_of_hasCompactSupport D2)
@@ -1211,7 +1144,7 @@ theorem adjointPairingFourier : PairingFourier := by
   have hint : ∀ n (w : Fin n → Fin d),
       Integrable (fun y => g y * ((-1 : ℂ) ^ n * dw (List.ofFn w) (fun y => b n w y * eF ξ y) y)) := by
     intro n w
-    obtain ⟨D1, D2⟩ := pf_dw_smooth (List.ofFn w) _ ((hb n w).1.mul (pf_eF_smooth ξ)) (hb n w).2.mul_right
+    obtain ⟨D1, D2⟩ := pf_dw_smooth (List.ofFn w) _ ((hb n w).1.mul (ZetaZeros.D.EllReg.WF.contDiff_eF ξ)) (hb n w).2.mul_right
     exact (hg.mul (continuous_const.mul D1.continuous)).integrable_of_hasCompactSupport hgc.mul_right
   calc ∫ y, g y * trOp m b (eF ξ) y
       = ∫ y, ∑ n ∈ Finset.range (m + 1), ∑ w : Fin n → Fin d,
@@ -1742,10 +1675,6 @@ theorem weightedNormLimit : EpsLimit := by
         obtain ⟨n, hn⟩ := hb.exists
         exact hn.trans (hB _ (hpos n) (hle1 n))
 
-private theorem rpow_le_rpow_of_le_of_exponent_nonpos {x y z : ℝ} (hx : 0 < x) (hxy : x ≤ y) (hz : z ≤ 0) :
-    y ^ z ≤ x ^ z := by
-  exact Real.rpow_le_rpow_of_nonpos hx hxy hz
-
 private theorem sq_one_add_rpow_mul_rpow_le_max_mul_rpow (s M ε t : ℝ) (hε : 0 < ε) (ht : 0 ≤ t) :
     ((1 + t) ^ (s / 2) * (1 + ε ^ 2 * t) ^ (-(M / 2))) ^ 2 ≤
       max ((min 1 (ε ^ 2)) ^ (-M)) ((max 1 (ε ^ 2)) ^ (-M)) * (1 + t) ^ (s - M) := by
@@ -1769,7 +1698,7 @@ private theorem sq_one_add_rpow_mul_rpow_le_max_mul_rpow (s M ε t : ℝ) (hε :
     · have hle : min 1 (ε ^ 2) * (1 + t) ≤ 1 + ε ^ 2 * t := by
         rw [mul_add, mul_one]; exact add_le_add (min_le_left _ _) (mul_le_mul_of_nonneg_right (min_le_right _ _) ht)
       calc (1 + ε ^ 2 * t) ^ (-M) ≤ (min 1 (ε ^ 2) * (1 + t)) ^ (-M) :=
-            rpow_le_rpow_of_le_of_exponent_nonpos (mul_pos ha hA) hle (by linarith)
+            Real.rpow_le_rpow_of_nonpos (mul_pos ha hA) hle (by linarith)
         _ = (min 1 (ε ^ 2)) ^ (-M) * (1 + t) ^ (-M) := Real.mul_rpow ha.le hA.le
         _ ≤ max ((min 1 (ε ^ 2)) ^ (-M)) ((max 1 (ε ^ 2)) ^ (-M)) * (1 + t) ^ (-M) :=
             mul_le_mul_of_nonneg_right (le_max_left _ _) hAp

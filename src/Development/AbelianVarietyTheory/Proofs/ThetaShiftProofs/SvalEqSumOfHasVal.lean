@@ -96,7 +96,7 @@ theorem sval_eq_zero {L : LB Z} {π : X ⟶ Z} {m : ℕ} (s : SecP L π m) (hs :
   refine (congrArg (valR q _) (hs fun _ => j)).trans ?_
   by_cases h : ⊤ ≤ q ⁻¹ᵁ LB.wchart L (fun _ : Fin 1 => π) (fun _ => j)
   · exact (HolHom.valR_eq q _ h 0).trans (map_zero _)
-  · exact dif_neg h
+  · exact dite_eq_right h
 
 end SecValue
 

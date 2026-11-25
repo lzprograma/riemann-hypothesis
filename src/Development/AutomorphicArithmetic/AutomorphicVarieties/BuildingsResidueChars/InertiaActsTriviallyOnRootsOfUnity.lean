@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.ThFacts
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.AdjointLowWeight.SymmetricCubeSymplecticSimilitude
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CyclotomicInertiaSpan.DecComm
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RootsOfUnityShapes.PowIne
@@ -52,23 +53,7 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 open GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V.Af UpperTheory.V.Ws UpperTheory.V.Sd UpperTheory.V.Sd.S3
 
 private theorem no_tors (l : ℕ) [hl : Fact l.Prime] (h2 : l ≠ 2) (u : ℤ_[l]) (hu : u ^ l = 1) : u = 1 := by
-  by_contra h1
-  have hm : PadicInt.toZMod (u - 1) = 0 := by
-    have := congrArg PadicInt.toZMod hu
-    rw [map_pow, ZMod.pow_card, map_one] at this
-    rw [map_sub, this, map_one, sub_self]
-  rw [← RingHom.mem_ker, PadicInt.ker_toZMod, PadicInt.maximalIdeal_eq_span_p, Ideal.mem_span_singleton] at hm
-  obtain ⟨b, hb⟩ := hm
-  have hu' : u = 1 + l * b := by rw [← hb]; ring
-  have hs : ∑ i ∈ Finset.range l, u ^ i = 0 := by
-    have := mul_geom_sum u l
-    rw [hu, sub_self] at this
-    exact (mul_eq_zero.1 this).resolve_left (sub_ne_zero.2 h1)
-  have hd := odd_sq_dvd_geom_sum₂_sub (1 : ℤ_[l]) b (hl.out.odd_of_ne_two h2)
-  simp only [one_pow, mul_one, ← hu', hs, zero_sub, dvd_neg] at hd
-  have hl0 : (l : ℤ_[l]) ≠ 0 := Nat.cast_ne_zero.2 hl.out.ne_zero
-  have hd' : (l : ℤ_[l]) * l ∣ l * 1 := by rwa [mul_one, ← sq]
-  exact PadicInt.irreducible_p.not_isUnit (isUnit_of_dvd_one ((mul_dvd_mul_iff_left hl0).1 hd'))
+  apply _root_.no_tors1 <;> assumption
 
 theorem UpperTheory.inertia_acts_trivially_on_roots_of_unity :
     UpperTheory.V.Sd.S3.MuIne := by

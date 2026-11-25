@@ -382,60 +382,11 @@ theorem pt_Gs {p : ℕ} (g : Fin p → ℂ) (w : ℂ) (c : ℝ) (hN : 0 < vsq g)
 variable {n : ℕ} {M : Type*} [TopologicalSpace M] [T2Space M] [SecondCountableTopology M]
   [MeasurableSpace M] [BorelSpace M]
 
-private theorem isLocalHomeomorph_fst_prod_fin (p : ℕ) : IsLocalHomeomorph (Prod.fst : M × Fin p → M) := by
-  intro q
-  have hso : IsOpen {r : M × Fin p | r.2 = q.2} :=
-    (isOpen_discrete ({q.2} : Set (Fin p))).preimage continuous_snd
-  refine ⟨OpenPartialHomeomorph.mk (PartialHomeomorph.mk
-    (PartialEquiv.mk Prod.fst (fun x => (x, q.2)) {r | r.2 = q.2} Set.univ
-      (fun _ _ => Set.mem_univ _) (fun _ _ => rfl) (fun r hr => Prod.ext rfl hr.symm)
-      (fun _ _ => rfl))
-    continuous_fst.continuousOn (Continuous.prodMk continuous_id continuous_const).continuousOn)
-    hso isOpen_univ, rfl, rfl⟩
-
-private theorem isLocalHomeomorph_comp_prod_fst (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) :
-    IsLocalHomeomorph (fun q : M × Fin p => z q.1) :=
-  hz.comp (isLocalHomeomorph_fst_prod_fin p)
-
-private theorem vol_prod_fin_prod_singleton (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) (B : Set M)
-    (hB : MeasurableSet B) (i : Fin p) :
-    vol n (fun q : M × Fin p => z q.1) (B ×ˢ {i}) = vol n z B := by
-  rw [vol_apply n _ (isLocalHomeomorph_comp_prod_fst z hz p) _ (hB.prod (measurableSet_singleton i)),
-    vol_apply n z hz B hB]
-  unfold volFun
-  congr 1
-  funext y
-  have e : (B ×ˢ {i}) ∩ (fun q : M × Fin p => z q.1) ⁻¹' {y} =
-      (fun x => (x, i)) '' (B ∩ z ⁻¹' {y}) := by
-    ext ⟨x, j⟩
-    simp only [Set.mem_inter_iff, Set.mem_prod, Set.mem_singleton_iff, Set.mem_preimage,
-      Set.mem_image, Prod.mk.injEq]
-    constructor
-    · rintro ⟨⟨hx, rfl⟩, hy⟩
-      exact ⟨x, ⟨hx, hy⟩, rfl, rfl⟩
-    · rintro ⟨a, ⟨ha, hy⟩, rfl, rfl⟩
-      exact ⟨⟨ha, rfl⟩, hy⟩
-  have hinj : Function.Injective (fun x : M => (x, i)) := fun a b h => congrArg Prod.fst h
-  rw [e, hinj.injOn.encard_image]
-
 private theorem vol_prod_fin_apply_eq_sum_preimage (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ)
     (A : Set (M × Fin p)) (hA : MeasurableSet A) :
     vol n (fun q : M × Fin p => z q.1) A = ∑ i, vol n z ((fun x => (x, i)) ⁻¹' A) := by
-  have hA' : A = ⋃ i : Fin p, ((fun x => (x, i)) ⁻¹' A) ×ˢ {i} := by
-    ext ⟨x, j⟩
-    simp
-  have hm : ∀ i : Fin p, MeasurableSet ((fun x : M => (x, i)) ⁻¹' A) := fun i =>
-    measurable_prodMk_right hA
-  conv_lhs => rw [hA']
-  rw [measure_iUnion (fun i j hij => Set.disjoint_prod.2 (Or.inr (Set.disjoint_singleton.2 hij)))
-    (fun i => (hm i).prod (measurableSet_singleton i)), tsum_fintype]
-  exact Finset.sum_congr rfl fun i _ => vol_prod_fin_prod_singleton z hz p _ (hm i) i
-
-private theorem vol_prod_fin_eq_sum_map_prodMk (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) :
-    vol n (fun q : M × Fin p => z q.1) = ∑ i : Fin p, (vol n z).map (fun x => (x, i)) := by
-  ext A hA
-  rw [vol_prod_fin_apply_eq_sum_preimage z hz p A hA, MeasureTheory.Measure.coe_finsetSum, Finset.sum_apply]
-  exact Finset.sum_congr rfl fun i _ => (Measure.map_apply measurable_prodMk_right hA).symm
+  rw [vol_prodFin_eq n z hz p, FunLike.coe_sum, Finset.sum_apply]
+  exact Finset.sum_congr rfl fun i _ => Measure.map_apply measurable_prodMk_right hA
 
 private theorem map_prodMk_right_vol_le_vol_prod_fin (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) (i : Fin p) :
     (vol n z).map (fun x => (x, i)) ≤ vol n (fun q : M × Fin p => z q.1) := by
@@ -472,8 +423,7 @@ theorem wint_G_le (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) (g : Fin 
     ∫⁻ q, ENNReal.ofReal (‖h q‖ ^ 2 * Real.exp (-φ q.1)) ∂vol n (fun q : M × Fin p => z q.1)
   have hFm : Measurable (fun q : M × Fin p => ENNReal.ofReal (‖h q‖ ^ 2 * Real.exp (-φ q.1))) :=
     ((hh.norm.pow_const 2).mul (hφ.comp measurable_fst).neg.exp).ennreal_ofReal
-  rw [vol_prod_fin_eq_sum_map_prodMk z hz p, MeasureTheory.lintegral_finsetSum_measure,
-    Finset.sum_congr rfl fun i _ => lintegral_map hFm measurable_prodMk_right,
+  rw [lintegral_vol_prodFin n z hz p _ hFm,
     ← MeasureTheory.lintegral_finsetSum (f := fun i a => ENNReal.ofReal (‖h (a, i)‖ ^ 2 *
       Real.exp (-φ (a, i).1))) _ fun i _ => hFm.comp measurable_prodMk_right]
   refine lintegral_mono fun x => ?_
@@ -506,8 +456,7 @@ theorem wint_Gs_eq (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) (g : Fin
     refine (((((hw.comp measurable_fst).mul (Complex.continuous_conj.measurable.comp hg2)).div
       (Complex.continuous_ofReal.measurable.comp (hvs.comp measurable_fst))).norm.pow_const 2).mul
       (hφ.comp measurable_fst).neg.exp).ennreal_ofReal
-  rw [vol_prod_fin_eq_sum_map_prodMk z hz p, MeasureTheory.lintegral_finsetSum_measure,
-    Finset.sum_congr rfl fun i _ => lintegral_map hFm measurable_prodMk_right,
+  rw [lintegral_vol_prodFin n z hz p _ hFm,
     ← MeasureTheory.lintegral_finsetSum (f := fun i a => ENNReal.ofReal
       (‖w (a, i).1 * (starRingEnd ℂ) (g (a, i).2 (a, i).1) / ((vsq (gv g (a, i).1) : ℝ) : ℂ)‖ ^ 2 *
         Real.exp (-φ (a, i).1))) _ fun i _ => hFm.comp measurable_prodMk_right]
@@ -643,8 +592,7 @@ theorem skodaOps (n : ℕ) (M : Type*) [TopologicalSpace M] [T2Space M]
   have hN : ∀ x, 0 < vsq (gv g x) := by
     intro x
     obtain ⟨i, hi⟩ : ∃ i, gv g x i ≠ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact hgv x (funext hc)
     have h1 : 0 < ‖gv g x i‖ ^ 2 := pow_pos (norm_pos_iff.mpr hi) 2
     have h2 : ‖gv g x i‖ ^ 2 ≤ ∑ j, ‖gv g x j‖ ^ 2 :=
@@ -798,78 +746,19 @@ section SlopeTestRemainingChoices
 variable {M : Type*} [TopologicalSpace M] [T2Space M] [SecondCountableTopology M]
   [MeasurableSpace M] [BorelSpace M]
 
-private theorem isLocalHomeomorph_fun_prod_fin_fst (n : ℕ) (z : M → V n) (hz : IsLocalHomeomorph z)
-    (p : ℕ) : IsLocalHomeomorph (fun q : M × Fin p => z q.1) := by
-  have hfst : IsLocalHomeomorph (Prod.fst : M × Fin p → M) := by
-    rw [isLocalHomeomorph_iff_isOpenEmbedding_restrict]
-    intro q
-    refine ⟨Prod.snd ⁻¹' {q.2}, ((isOpen_discrete _).preimage continuous_snd).mem_nhds (by simp), ?_⟩
-    let H : (Prod.snd ⁻¹' {q.2} : Set (M × Fin p)) ≃ₜ M :=
-      { toFun := fun u => u.1.1
-        invFun := fun x => ⟨(x, q.2), by simp⟩
-        left_inv := fun u => by
-          obtain ⟨⟨x, j⟩, hj⟩ := u
-          simp only [Set.mem_preimage, Set.mem_singleton_iff] at hj
-          subst hj
-          rfl
-        right_inv := fun x => rfl
-        continuous_toFun := continuous_fst.comp continuous_subtype_val
-        continuous_invFun := Continuous.subtype_mk (by fun_prop) fun x => by simp }
-    exact H.isOpenEmbedding
-  exact hz.comp hfst
-
 theorem vol_prodFin_apply (n : ℕ) (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ)
     (S : Set (M × Fin p)) (hS : MeasurableSet S) :
-    vol n (fun q : M × Fin p => z q.1) S = ∑ i, vol n z ((fun x => (x, i)) ⁻¹' S) := by
-  have hzq := isLocalHomeomorph_fun_prod_fin_fst n z hz p
-  have hcover : S = ⋃ i, S ∩ Prod.snd ⁻¹' {i} := by
-    ext q
-    simp
-  have hmeas : ∀ i : Fin p, MeasurableSet (S ∩ Prod.snd ⁻¹' {i}) := fun i =>
-    hS.inter (measurable_snd (measurableSet_singleton i))
-  have hdisj : Pairwise (Function.onFun Disjoint fun i : Fin p => S ∩ Prod.snd ⁻¹' {i}) := by
-    intro i j hij
-    refine Set.disjoint_left.2 ?_
-    rintro q ⟨_, hi⟩ ⟨_, hj⟩
-    exact hij ((Set.mem_singleton_iff.1 hi).symm.trans (Set.mem_singleton_iff.1 hj))
-  conv_lhs => rw [hcover]
-  rw [measure_iUnion hdisj hmeas, tsum_fintype]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [vol_apply n _ hzq _ (hmeas i),
-    vol_apply n z hz _ (hS.preimage (by fun_prop : Measurable fun x : M => (x, i)))]
-  unfold volFun
-  refine lintegral_congr fun y => ?_
-  have hset : (S ∩ Prod.snd ⁻¹' {i}) ∩ (fun q : M × Fin p => z q.1) ⁻¹' {y} =
-      (fun x : M => (x, i)) '' ((fun x : M => (x, i)) ⁻¹' S ∩ z ⁻¹' {y}) := by
-    ext ⟨x, j⟩
-    simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff, Set.mem_image,
-      Prod.mk.injEq]
-    constructor
-    · rintro ⟨⟨hxS, rfl⟩, hy⟩
-      exact ⟨x, ⟨hxS, hy⟩, rfl, rfl⟩
-    · rintro ⟨x', ⟨hxS, hy⟩, rfl, rfl⟩
-      exact ⟨⟨hxS, rfl⟩, hy⟩
-  rw [hset, Set.InjOn.encard_image (fun a _ b _ h => congrArg Prod.fst h)]
+    vol n (fun q : M × Fin p => z q.1) S = ∑ i, vol n z ((fun x => (x, i)) ⁻¹' S) :=
+  SkodaOperators.vol_prod_fin_apply_eq_sum_preimage z hz p S hS
 
 theorem ae_fst_prodFin (n : ℕ) (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) {P : M → Prop}
-    (h : ∀ᵐ x ∂vol n z, P x) : ∀ᵐ q ∂vol n (fun q : M × Fin p => z q.1), P q.1 := by
-  rw [ae_iff] at h ⊢
-  obtain ⟨T, hsub, hT, hT0⟩ := exists_measurable_superset_of_null h
-  have hsub' : {q : M × Fin p | ¬P q.1} ⊆ Prod.fst ⁻¹' T := fun q hq => hsub hq
-  refine measure_mono_null hsub' ?_
-  rw [vol_prodFin_apply n z hz p _ (hT.preimage measurable_fst)]
-  exact Finset.sum_eq_zero fun i _ => hT0
+    (h : ∀ᵐ x ∂vol n z, P x) : ∀ᵐ q ∂vol n (fun q : M × Fin p => z q.1), P q.1 :=
+  SkodaOperators.ae_lift_prodFin z hz p h
 
 theorem ae_slice_prodFin (n : ℕ) (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ)
     {P : M × Fin p → Prop} (h : ∀ᵐ q ∂vol n (fun q : M × Fin p => z q.1), P q) (i : Fin p) :
-    ∀ᵐ x ∂vol n z, P (x, i) := by
-  rw [ae_iff] at h ⊢
-  obtain ⟨T, hsub, hT, hT0⟩ := exists_measurable_superset_of_null h
-  have hsub' : {x : M | ¬P (x, i)} ⊆ (fun x : M => (x, i)) ⁻¹' T := fun x hx => hsub hx
-  refine measure_mono_null hsub' ?_
-  have hsum := vol_prodFin_apply n z hz p T hT
-  rw [hT0] at hsum
-  exact (Finset.sum_eq_zero_iff.1 hsum.symm) i (Finset.mem_univ i)
+    ∀ᵐ x ∂vol n z, P (x, i) :=
+  SkodaOperators.ae_slice_prodFin z hz p h i
 
 theorem holo_finsum (n : ℕ) (z : M → V n) {p : ℕ} (F : Fin p → M → ℂ) (hF : ∀ i, Holo n z (F i)) :
     Holo n z (fun x => ∑ i, F i x) := by

@@ -412,15 +412,15 @@ theorem lowMat_leftM {r : ℕ} {N : Matrix (Fin r) (Fin r) ℂ} (hN : LowU N) (u
     lowMat (leftM N *ᵥ u) = N * lowMat u := by
   ext a c
   by_cases h : c < a
-  · simp only [lowMat, Matrix.of_apply, dif_pos h]
+  · simp only [lowMat, Matrix.of_apply, dite_eq_left h]
     exact leftM_mulVec N u ⟨(a, c), h⟩
   · rw [Matrix.mul_apply]
-    simp only [lowMat, Matrix.of_apply, dif_neg h]
+    simp only [lowMat, Matrix.of_apply, dite_eq_right h]
     symm
     refine Finset.sum_eq_zero fun k _ => ?_
     by_cases hk : c < k
     · rw [hN.1 a k (lt_of_le_of_lt (not_lt.mp h) hk), zero_mul]
-    · rw [dif_neg hk, mul_zero]
+    · rw [dite_eq_right hk, mul_zero]
 
 theorem differentiableAt_det {r : ℕ} (A : ℂ → Matrix (Fin r) (Fin r) ℂ) (t : ℂ)
     (h : ∀ i j, DifferentiableAt ℂ (fun s => A s i j) t) :
@@ -510,10 +510,10 @@ theorem hasDerivAt_nmat {r : ℕ} (X : Data E r) {w : ℂ → V (nd X)} {w' : V 
     HasDerivAt (fun s => mat (nmat X (w s)) τ i j) (lowMat (crd X w' τ) i j) t := by
   simp only [mat, nmat, lowMat, Matrix.of_apply]
   by_cases h : j < i
-  · simp only [dif_pos h, crd]
+  · simp only [dite_eq_left h, crd]
     exact (EuclideanSpace.proj (𝕜 := ℂ)
       ((Fintype.equivFin (Ent X)) ⟨τ, ⟨(i, j), h⟩⟩)).hasFDerivAt.comp_hasDerivAt t hw
-  · simp only [dif_neg h]
+  · simp only [dite_eq_right h]
     exact hasDerivAt_const _ _
 
 theorem fderiv_rel {r : ℕ} (X : Data E r) (x0 x1 : Frame X.Ψ r) (γ : GL (Fin r) E) (U : Set (V (nd X)))
@@ -910,7 +910,7 @@ theorem frameSplit : (∀ (r : ℕ) (X : Data E r) (R : ℝ), ∃ K : ℝ≥0∞
   · intro z
     ext j
     have h := ((Fintype.equivFin (Ent X)).symm j).2.2
-    simp only [dif_pos h]
+    simp only [dite_eq_left h]
     exact congrArg (fun k => z k) ((Fintype.equivFin (Ent X)).apply_symm_apply j)
   · apply IsClosed.measurableSet
     simp only [Set.setOf_forall]

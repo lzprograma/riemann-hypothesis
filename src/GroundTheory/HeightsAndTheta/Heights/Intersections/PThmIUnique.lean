@@ -27,8 +27,8 @@ theorem recR_congr {I J : Ideal (MRing ι) → (n : ℕ) → (Fin n → HermLine
   congr 1
   refine finsum_mem_congr rfl fun W hW => ?_
   by_cases hh : IsHorizontal W
-  · rw [if_pos hh, if_pos hh, h W hW hh]
-  · rw [if_neg hh, if_neg hh]
+  · rw [ite_eq_left hh, ite_eq_left hh, h W hW hh]
+  · rw [ite_eq_right hh, ite_eq_right hh]
 
 theorem isMultiHomog_one' : IsMultiHomog (1 : MRing ι) 0 := by
   classical

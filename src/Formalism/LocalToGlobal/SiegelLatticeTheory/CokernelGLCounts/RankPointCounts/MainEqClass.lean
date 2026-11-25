@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowFormAllOf
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MainEqSteps
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
 public import Formalism.SharpRestriction.InertJacobiLevels.TwoPrimeFieldMemLevelOfCoprime
@@ -16,8 +17,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
   Formalism.L2.SG.Pf.MainEqSteps
 
 namespace Formalism.L2.SG.Pf.MainEqClass
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def PairOfRowC : Prop :=
   ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u : D.what₂.Word), ConcTie X Y →
@@ -58,18 +57,7 @@ theorem isPair_quot' {T T' : E} (Λ Λ' : Submodule (𝓞 E) S.V) (g : ℕ) (F :
     (hl₁ : Formalism.HermitianLatticesTheory.gmap γ₁ Λ' = Λ) (hl₂ : Formalism.HermitianLatticesTheory.gmap γ₂ Λ' = Λ)
     (hι : IotaCompat Λ F (mapLF γ₁ F') (mapLF γ₂ F') (γ₂ * γ₁⁻¹) g) :
     IsPair Λ F (mapLF γ₁ F') (mapLF γ₂ F') (γ₂ * γ₁⁻¹) g := by
-  unfold IsPair
-  refine ⟨?_, ?_, ?_, hι⟩
-  · unfold IsAutLam
-    refine ⟨(Formalism.HermitianLatticesTheory.isom S.hT).mul_mem h₂ ((Formalism.HermitianLatticesTheory.isom S.hT).inv_mem h₁), ?_⟩
-    rw [_root_.PI.DCRelEquiv.UnitaryGroupMassFormula.gmap_mul', _root_.Formalism.L2.SG.Pf.gmap_inv hl₁, hl₂]
-  · intro j
-    rw [xflag_mapLF' γ₁ h₁, xflag_mapLF' γ₂ h₂, ← Submodule.map_comp]
-    congr 1
-    ext x
-    simp
-  · rw [z_mapLF' γ₁ h₁, z_mapLF' γ₂ h₂]
-    simp
+  apply +allowSynthFailures _root_.Formalism.L2.SG.Pf.RowForm.ScalT.isPair_quot <;> assumption
 
 end Gen
 
@@ -83,7 +71,7 @@ theorem gval_ne (t : TauC Y u u) (ht : t ∈ (Y.tO u u).genSet) : Gval (lf D (X.
   have h : (Y.tO u u).G t ≠ 0 := ht.1
   change Formalism.L2.SG.TermOp.Gt t ≠ 0 at h
   unfold Formalism.L2.SG.TermOp.Gt at h
-  have hG : t.G ≠ 0 := fun h0 => h (if_pos h0)
+  have hG : t.G ≠ 0 := fun h0 => h (ite_eq_left h0)
   have hrow : IsRowLat D (X.Fu u) t.lam := (Y.rowsOK u).1 t.lam t.mem
   have hGF := (_root_.term_function_const D u u (X.Fu u) t.lam hrow).1
   have hmk := Formalism.L2.SG.TermDef.Gt_mk hGF ⟨t.frame, t.rep.2.2.2.2⟩
@@ -140,7 +128,7 @@ theorem stepClassG_of_pair_unram (hP : PairOfRowC) (hU : GUnramC) : StepClassG :
     obtain ⟨e1, e2⟩ := hBF (X.Fu u) t.lam hΛ (carr Y u t) (carr Y u t) hg hg β _ hp hp0
     show s0T t t = 1 ∧ scalT t t
     unfold s0T scalT
-    rw [if_pos ⟨rfl, rfl⟩]
+    rw [ite_eq_left ⟨rfl, rfl⟩]
     refine ⟨?_, ⟨rfl, rfl⟩, ?_, ?_⟩
     · exact e1.symm.trans hs
     · exact e1.symm.trans hs
@@ -162,7 +150,7 @@ theorem stepClassG_of_pair_unram (hP : PairOfRowC) (hU : GUnramC) : StepClassG :
     obtain ⟨e1, e2⟩ := hBF (X.Fu u) t.lam hΛ y (carr Y u t) hg' hg β _ hp hp0
     show s0T t' t = 1 ∧ scalT t' t
     unfold s0T scalT
-    rw [if_pos ⟨hl.symm, hl'.symm⟩, ← hl]
+    rw [ite_eq_left ⟨hl.symm, hl'.symm⟩, ← hl]
     refine ⟨?_, ⟨rfl, hl'.symm⟩, ?_, ?_⟩
     · exact e1.symm.trans hs2
     · exact e1.symm.trans hs2
@@ -192,7 +180,7 @@ theorem stepClassG_of_pair_unram (hP : PairOfRowC) (hU : GUnramC) : StepClassG :
     obtain ⟨e1, e2⟩ := hBF (X.Fu u) t.lam hΛ (carr Y u t) z hg hg'' β _ hp hp0
     show s0T t t'' = 1 ∧ scalT t t''
     unfold s0T scalT
-    rw [if_pos ⟨hl.trans hl2, hl'.trans hl2'⟩]
+    rw [ite_eq_left ⟨hl.trans hl2, hl'.trans hl2'⟩]
     refine ⟨?_, ⟨hl.trans hl2, hl'.trans hl2'⟩, ?_, ?_⟩
     · exact e1.symm.trans hs3
     · exact e1.symm.trans hs3

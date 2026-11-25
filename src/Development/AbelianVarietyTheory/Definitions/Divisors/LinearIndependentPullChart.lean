@@ -5,52 +5,9 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.LinearIndepe
 public import Development.AbelianVarietyTheory.Definitions.Divisors.NoCommonZeroCombVal
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndepBaseChange
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyHomologyEquiv
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.FieldTheory.PurelyInseparable.Exponent
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -260,16 +217,6 @@ variable (p B) in
 def polar (hP : P.IsLB) (hB : B.IsLB) (t : P.Sec) (ht : O ≤ nonzeroLocus t) : Submodule k (H0 p B O) :=
   LinearMap.range (polarMap (tensChart hP hB) t ht)
 
-theorem mem_polar {hP : P.IsLB} {hB : B.IsLB} {t : P.Sec} {ht : O ≤ nonzeroLocus t} {f : H0 p B O} :
-    f ∈ polar p B hP hB t ht ↔
-      ∃ g : H0 p (tens P B) ⊤, restr le_top g = (tensChart hP hB).mul (H0.ofSec p O t) f :=
-  exists_congr fun _ => LinearEquiv.symm_apply_eq _
-
-theorem range_restr_le_polar (hP : P.IsLB) (hB : B.IsLB) (t : P.Sec) (ht : O ≤ nonzeroLocus t) :
-    LinearMap.range (restr (le_top : O ≤ ⊤)) ≤ polar p B hP hB t ht := by
-  rintro _ ⟨f, rfl⟩
-  exact mem_polar.2 ⟨(tensChart hP hB).mul (H0.ofSec p ⊤ t) f, by rw [ProdChart.restr_mul, restr_ofSec]⟩
-
 variable (σ : k →+* ℂ)
 
 def cval : H0 p B O →ₛₗ[σ] (B.ι → CxPts p σ → ℂ) where
@@ -280,9 +227,6 @@ def cval : H0 p B O →ₛₗ[σ] (B.ι → CxPts p σ → ℂ) where
     by_cases h : y ∈ ptsIn p σ (O ⊓ B.U i)
     · exact congrArg (· * _) ((ev_res inf_le_left h _).trans (ev_algX (ptsIn_mono inf_le_left h) c))
     · simp only [Pi.smul_apply, ev_of_notMem h, mul_zero, smul_zero]
-
-theorem cval_eq_val (f : H0 p B O) (i : B.ι) (y : CxPts p σ) (hO : y ∈ ptsIn p σ O) (hi : y ∈ ptsIn p σ (B.U i)) :
-    cval σ f i y = val y.1 i hO hi f := ev_eq (mem_ptsIn_inf.2 ⟨hO, hi⟩) _
 
 theorem cval_ofSec (s : B.Sec) : cval σ (H0.ofSec p ⊤ s) = secVal p σ s := funext₂ fun i y => by
   by_cases h : y ∈ ptsIn p σ (B.U i)
@@ -296,105 +240,5 @@ theorem cval_mem (f : H0 p B ⊤) : cval σ f ∈ fibSec p σ B := by
 variable {σ}
 
 end General
-
-theorem sum_tmul_eq_zero {E Ω A ι : Type*} [Field E] [Field Ω] [IsAlgClosed Ω] [CommRing A] [Algebra E Ω]
-    [Algebra E A] [Algebra.FormallyUnramified E A] [Algebra.FiniteType E A] [Fintype ι] (c : ι → Ω) (a : ι → A)
-    (h : ∀ φ : A →ₐ[E] Ω, ∑ i, c i * φ (a i) = 0) : ∑ i, c i ⊗ₜ[E] a i = 0 := by
-  have := Algebra.FormallyUnramified.isReduced_of_field Ω (Ω ⊗[E] A)
-  have : IsJacobsonRing (Ω ⊗[E] A) := isJacobsonRing_of_finiteType (A := Ω)
-  refine (IsJacobsonRing.out this (Ideal.isRadical_bot (R := Ω ⊗[E] A))).le (Ideal.mem_sInf.2 fun m hm => ?_)
-  have := hm.2
-  letI := Ideal.Quotient.field m
-  have := finite_of_finite_type_of_isJacobsonRing Ω ((Ω ⊗[E] A) ⧸ m)
-  let e := AlgEquiv.ofBijective (Algebra.ofId Ω ((Ω ⊗[E] A) ⧸ m)) IsAlgClosed.algebraMap_bijective_of_isIntegral
-  let ψ := e.symm.toAlgHom.comp (Ideal.Quotient.mkₐ Ω m)
-  refine Ideal.Quotient.eq_zero_iff_mem.1 (e.symm.injective ((map_sum ψ _ _).trans ?_))
-  rw [map_zero, ← h ((ψ.restrictScalars E).comp Algebra.TensorProduct.includeRight)]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [← smul_eq_mul]
-  exact (congrArg ψ (by simp [smul_tmul'])).trans (ψ.toLinearMap.map_smul (c i) (1 ⊗ₜ a i))
-
-section Points
-
-variable {E : Type} [Field E] {S : Scheme.{0}} {q : S ⟶ Sp E} {B : LB S}
-
-theorem finite_cxPts (hq : IsFinite q) (τ : E →+* ℂ) : Finite (CxPts q τ) := by
-  have : IsAffine S := isAffine_of_isAffineHom q
-  letI := (algX q ⊤).toAlgebra
-  letI := τ.toAlgebra
-  have : Module.Finite E Γ(S, ⊤) := by
-    have := q.finite_appTop.comp (RingHom.Finite.of_surjective _
-      (Scheme.ΓSpecIso (.of E)).symm.commRingCatIsoToRingEquiv.surjective)
-    rwa [Scheme.Hom.appTop, Scheme.Hom.app_eq_appLE] at this
-  let e : CxPts q τ → (Γ(S, ⊤) →ₐ[E] ℂ) := fun z =>
-    { evHom (mem_ptsIn_top (y := z)) with
-      commutes' := fun a => (ev_eq _ _).symm.trans (ev_algX mem_ptsIn_top a) }
-  exact Finite.of_injective e fun z z' hz => Subtype.ext
-    (ext_of_valR (isAffineOpen_top _) mem_ptsIn_top mem_ptsIn_top fun f =>
-      (ev_eq _ f).trans ((congrArg (fun q : _ →ₐ[E] ℂ => q f) hz).trans (ev_eq _ f).symm))
-
-theorem linearIndependent_cval (hq : Etale q) (hB : B.IsLB) (τ : E →+* ℂ) {ι : Type*} [Fintype ι]
-    {g : ι → H0 q B ⊤} (hg : LinearIndependent E g) :
-    LinearIndependent ℂ fun i y => cval τ (g i) (pick hB y) y := by
-  letI := τ.toAlgebra
-  refine Fintype.linearIndependent_iff.2 fun u hu j => (Module.forall_dual_apply_eq_zero_iff E (u j)).1 fun l =>
-    Fintype.linearIndependent_iff.1 hg (fun i => l (u i)) (ext_germ fun y hy => ?_) j
-  obtain ⟨c, hc⟩ := exists_chart hB y
-  obtain ⟨⟨V, hV⟩, hyV, hle⟩ := exists_affine (memInf hy hc)
-  letI := (algX q V).toAlgebra
-  have : Algebra.Etale E Γ(S, V) := RingHom.Etale.respectsIso.2 _
-    (Scheme.ΓSpecIso (CommRingCat.of E)).symm.commRingCatIsoToRingEquiv
-    (HasRingHomProperty.appLE @Etale q hq ⟨⊤, isAffineOpen_top _⟩ ⟨V, hV⟩ le_top)
-  have e := sum_tmul_eq_zero (E := E) u (fun i => resG S hle ((g i).loc c)) fun φ => by
-    let z := ofHom hV φ.toRingHom φ.commutes
-    have hz : z ∈ ptsIn q τ V := ofHom_mem _ _ _
-    have e := congrArg (gv q τ B c (pick hB z) z * ·) (congrFun hu z)
-    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply, mul_zero, Finset.mul_sum] at e
-    refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_) e
-    rw [mul_left_comm, ← (cval_mem τ (g i)).1 c _ z (ptsIn_mono (hle.trans inf_le_right) hz) (mem_pick hB z)]
-    exact congrArg _ ((ev_ofHom hV φ.toRingHom φ.commutes _).symm.trans (ev_res hle hz _))
-  have e₂ := congrArg (fun x => ger y hyV (TensorProduct.lid E _ (l.rTensor _ x))) e
-  refine ⟨c, hc, ?_⟩
-
-  simp only [map_sum, LinearMap.rTensor_tmul, lid_tmul, Algebra.smul_def, map_mul, map_zero, ger_resG] at e₂
-
-  simp only [map_sum, germ_smul, map_zero]
-  refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_) e₂
-  exact congrArg (· * _) (ger_algX y hyV _).symm
-
-variable (hf : IsFinite q) (he : Etale q) (φ : ∀ τ, Weight q τ B)
-
-
-open Classical in
-def pointHerm : HermFam E (H0 q B ⊤) :=
-  letI : ∀ τ, Fintype (CxPts q τ) := fun τ => @Fintype.ofFinite _ (finite_cxPts hf τ)
-  ofCoords (P := CxPts q)
-    (fun τ => (LinearMap.pi fun y => LinearMap.proj y ∘ₗ LinearMap.proj (pick (φ τ).isLB y)).comp (cval τ))
-    (fun τ => Matrix.diagonal fun y => (Real.exp (-(φ τ).φ (pick (φ τ).isLB y) y) : ℝ))
-    (fun _ => Matrix.PosDef.diagonal fun _ => Complex.zero_lt_real.2 (Real.exp_pos _))
-    fun τ _ _ => linearIndependent_cval he (φ τ).isLB τ
-
-theorem form_pointHerm (τ : E →+* ℂ) [Fintype (CxPts q τ)] (g g' : H0 q B ⊤) :
-    (pointHerm hf he φ).form τ g g' = ∑ y, starRingEnd ℂ (cval τ g (pick (φ τ).isLB y) y) *
-      cval τ g' (pick (φ τ).isLB y) y * (Real.exp (-(φ τ).φ (pick (φ τ).isLB y) y) : ℝ) := by
-  classical
-  simp only [pointHerm, ofCoords, dotProduct, Matrix.mulVec_diagonal]
-  exact Finset.sum_congr (by congr; exact Subsingleton.elim _ _) fun y _ => by
-    rw [mul_comm (Complex.ofReal _), ← mul_assoc]; rfl
-
-theorem csq_pointHerm (τ : E →+* ℂ) {ι : Type*} [Fintype ι] (c : ι → ℂ) (g : ι → H0 q B ⊤) :
-    csq (pointHerm hf he φ) τ c g = ∑ᶠ y, (φ τ).nsq (∑ i, c i • cval τ (g i)) y := by
-  letI := @Fintype.ofFinite _ (finite_cxPts hf τ)
-  rw [finsum_eq_sum_of_fintype, csq, ← Complex.ofReal_re (∑ y, _)]
-
-  simp only [form_pointHerm, Finset.mul_sum, Weight.nsq, Complex.ofReal_sum, Complex.ofReal_mul,
-  Complex.ofReal_pow, ← Complex.conj_mul', Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul,
-  Finset.sum_mul]
-  refine congrArg _ ?_
-  simp only [← Fintype.sum_prod_type']
-  exact Fintype.sum_equiv ⟨fun t => (t.2.2, t.2.1, t.1), fun t => (t.2.2, t.2.1, t.1), fun _ => rfl, fun _ => rfl⟩
-    _ _ fun t => by simp only [Equiv.coe_fn_mk]; ring
-
-end Points
 
 end GlobalTheory.Vanishing

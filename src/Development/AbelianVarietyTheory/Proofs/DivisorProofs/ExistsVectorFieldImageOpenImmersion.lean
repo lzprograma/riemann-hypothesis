@@ -43,7 +43,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 open AlgebraicGeometry CategoryTheory Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.LogKS Formalism.L2.Pj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 

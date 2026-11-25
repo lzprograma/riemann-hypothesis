@@ -5,50 +5,9 @@ public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.DegSpli
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymbolVariableLowerLetter
 public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TgProdPlaces
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.WeightWLet
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
 import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Lemma44IdentityOfRawTail
 import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.TopOddNeEnd
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TopWeightFalseZeroEqOne, Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.IoDVariableLastEqTopEnd, Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TCGlue
@@ -250,8 +209,8 @@ theorem weight_tgWN (X : Loc) (m : MonH X) : Finsupp.weight (tgWN X) m = ndM X m
   refine Finset.sum_congr rfl fun v _ => ?_
   unfold tgWN
   by_cases h : ((hhLetters X.TT).vec v.1 = true ∧ 1 ≤ v.2.val) ∨ ((hhLetters X.TT).vec v.1 = false ∧ v.2.val < 1)
-  · rw [if_pos h, if_pos h, smul_eq_mul, mul_one]
-  · rw [if_neg h, if_neg h, smul_eq_mul, mul_zero]
+  · rw [ite_eq_left h, ite_eq_left h, smul_eq_mul, mul_one]
+  · rw [ite_eq_right h, ite_eq_right h, smul_eq_mul, mul_zero]
 
 theorem tgWN_true_zero_eq_zero (X : Loc) (t : X.TT) : tgWN X ((t, true), 0) = 0 := by simp [tgWN, hhLetters]
 theorem tgWN_ts (X : Loc) (t : X.TT) (c : Fin X.m) : tgWN X ((t, true), c.succ) = 1 := by simp [tgWN, hhLetters]
@@ -394,9 +353,9 @@ theorem tg_stdPoly_eq (h2 : 2 ≤ numSeg X.TT) (L : LvDat C0 CE1 CE2 mu X β) (j
       prod_pow_ite_zero_eq (fun c => (MvPolynomial.X ((topOdd X j i, true), c) : RHH O X)),
       prod_pow_ite_zero_eq (fun c => (MvPolynomial.X ((topOdd X j i, false), c) : RHH O X)), Finset.prod_mul_distrib]
     by_cases hi : (i : ℕ) < (X.seg C0 CE1 CE2 j).sigma
-    · rw [if_pos hi, if_pos hi, if_pos hi, if_neg (by omega)]
+    · rw [ite_eq_left hi, ite_eq_left hi, ite_eq_left hi, ite_eq_right (by omega)]
       ring
-    · rw [if_neg hi, if_neg hi, if_neg hi, if_pos (by omega), mul_zero, pow_zero, ← pow_mul]
+    · rw [ite_eq_right hi, ite_eq_right hi, ite_eq_right hi, ite_eq_left (by omega), mul_zero, pow_zero, ← pow_mul]
       ring
   rw [Finset.prod_congr rfl fun i _ => e3 i, Finset.prod_mul_distrib, Finset.prod_mul_distrib]
   unfold digitMon sTopMon
@@ -448,7 +407,7 @@ theorem tg_eval_odd (L : LvDat C0 CE1 CE2 mu X β) (ju : ∀ j, Fin (X.seg C0 CE
       wLet X (topOdd X j i0, b0) ((topOdd X j' i', b), c) = 0 := by
     intro j' hne i' b c
     unfold wLet
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     have h1 : topOdd X j' i' = topOdd X j i0 := congrArg Prod.fst h
     have h2 := tgTop_inj X (a₁ := ⟨j', some i'⟩) (a₂ := ⟨j, some i0⟩) h1
@@ -456,7 +415,7 @@ theorem tg_eval_odd (L : LvDat C0 CE1 CE2 mu X β) (ju : ∀ j, Fin (X.seg C0 CE
   have hend : ∀ j' (b : Bool) (c : Fin (X.m + 1)), wLet X (topOdd X j i0, b0) ((topEnd X j', b), c) = 0 := by
     intro j' b c
     unfold wLet
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact tg_odd_ne_end X j j' i0 (congrArg Prod.fst h).symm
   have hsame : ∀ (i : Fin (segS X.TT j)) (b : Bool) (c : Fin (X.m + 1)),
@@ -487,7 +446,7 @@ theorem tg_eval_end (L : LvDat C0 CE1 CE2 mu X β) (ju : ∀ j, Fin (X.seg C0 CE
       wLet X (topEnd X j, true) ((topOdd X j' i', b), c) = 0 := by
     intro j' i' b c
     unfold wLet
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact tg_odd_ne_end X j' j i' (congrArg Prod.fst h)
   have hend : ∀ j' (b : Bool) (c : Fin (X.m + 1)),
@@ -618,7 +577,7 @@ theorem tcoreAt_of_seg {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (h : SegCoreAt C0 
       have hb : hhDegs X.TT X.aT X.bT (topOdd X j i, true) = (X.seg C0 CE1 CE2 j).bTop i := by
         show hhDeg X.aT X.bT (segPos X.TT j i) true = X.bT (segPos X.TT j i)
         unfold hhDeg
-        rw [if_pos rfl, if_neg (pos_mem X.TT j i).2]
+        rw [ite_eq_left rfl, ite_eq_right (pos_mem X.TT j i).2]
       rw [hb] at a
       exact a
     · intro i
@@ -627,7 +586,7 @@ theorem tcoreAt_of_seg {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (h : SegCoreAt C0 
       have hb : hhDegs X.TT X.aT X.bT (topOdd X j i, false) = segATop X.TT X.aT j i := by
         show hhDeg X.aT X.bT (segPos X.TT j i) false = X.aT (segPos X.TT j i)
         unfold hhDeg
-        rw [if_neg (by simp), if_neg (pos_mem X.TT j i).2]
+        rw [ite_eq_right (by simp), ite_eq_right (pos_mem X.TT j i).2]
       rw [hb] at a
       exact a
     · have a := hdeg (topEnd X j, true)
@@ -635,7 +594,7 @@ theorem tcoreAt_of_seg {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (h : SegCoreAt C0 
       have hb : hhDegs X.TT X.aT X.bT (topEnd X j, true) = segAPlus X.TT X.aT j := by
         show hhDeg X.aT X.bT (segNext X.TT j) true = X.aT (segNext X.TT j)
         unfold hhDeg
-        rw [if_pos rfl, if_pos (next_mem X.TT j).2]
+        rw [ite_eq_left rfl, ite_eq_left (next_mem X.TT j).2]
       rw [hb] at a
       exact a
   choose β' hBL hord u hu hEq using key

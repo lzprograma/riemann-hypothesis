@@ -2,44 +2,9 @@ module
 
 import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.CardFinRange
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.LamImgApply
-import Mathlib.Algebra.Order.Floor.Extended
 public import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.Interval.Finset.Box
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -60,10 +25,6 @@ theorem lam_m_zero {a b m J : ℤ} (ha : 0 ≤ a) (ha' : a < J) (hb : 0 ≤ b) (
   · exact hm
   · have : J ≤ m * J := by nlinarith
     omega
-
-private theorem fr_le_fr_of_index_le {n' r : ℕ} [NeZero n'] (F : Frames n' r) {L₁ N₁ : ℕ} (hV : F.Valid L₁ N₁)
-    (j : ℤ) : ∀ k, k < r → ∀ i ≤ k, F.fr j i ≤ F.fr j k :=
-  fun k hk i hi => TE.fr_le hV j i k hi hk
 
 private theorem exists_index_eq_fr_of_between {n' r : ℕ} [NeZero n'] (F : Frames n' r) {L₁ N₁ : ℕ} (hV : F.Valid L₁ N₁)
     (j x : ℤ) (hx : posOf n' x ∈ F.TT) :
@@ -94,9 +55,9 @@ theorem lam_W_late {n' r : ℕ} [NeZero n'] [NeZero r] (X : Dat n' r) {L₁ N₁
   have hg := hV.2.2.2.1 (j - 1 - 1)
   have h1 : j - 1 - 1 + 1 = j - 1 := by ring
   rw [h1] at hg
-  have hm0 := fr_le_fr_of_index_le X.F hV (j - 1 - 1) (r - 1) (by omega) 0 (Nat.zero_le _)
-  have hmi := fr_le_fr_of_index_le X.F hV (j - 1) (r - 1) (by omega) i hi
-  have hm0i := fr_le_fr_of_index_le X.F hV (j - 1) i (by omega) 0 (Nat.zero_le _)
+  have hm0 := TE.fr_le hV (j - 1 - 1) 0 (r - 1) (Nat.zero_le _) (by omega)
+  have hmi := TE.fr_le hV (j - 1) i (r - 1) hi (by omega)
+  have hm0i := TE.fr_le hV (j - 1) 0 i (Nat.zero_le _) (by omega)
   unfold Dat.toLate
   simp only [Finset.mem_filter]
   refine ⟨?_, ?_⟩
@@ -106,14 +67,6 @@ theorem lam_W_late {n' r : ℕ} [NeZero n'] [NeZero r] (X : Dat n' r) {L₁ N₁
   · unfold Frames.IsW
     omega
 
-private theorem fr_last_lt_fr_last_succ {n' r : ℕ} [NeZero n'] [NeZero r] (F : Frames n' r) {L₁ N₁ : ℕ}
-    (hV : F.Valid L₁ N₁) (a : ℤ) : F.fr a (r - 1) < F.fr (a + 1) (r - 1) :=
-  eFr_strictMono hV (lt_add_one a)
-
-private theorem fr_last_monotone {n' r : ℕ} [NeZero n'] [NeZero r] (F : Frames n' r) {L₁ N₁ : ℕ}
-    (hV : F.Valid L₁ N₁) (a b : ℤ) (h : a ≤ b) : F.fr a (r - 1) ≤ F.fr b (r - 1) :=
-  (eFr_strictMono hV).monotone h
-
 private theorem eq_of_mod_eq_of_mem_Ioc_fr_last {n' r : ℕ} [NeZero n'] [NeZero r] (F : Frames n' r) {L₁ N₁ : ℕ}
     (hV : F.Valid L₁ N₁) (s a b x x' : ℤ) (hsa : s ≤ a) (haJ : a < s + F.J) (hsb : s ≤ b)
     (hbJ : b < s + F.J) (hx1 : F.fr (a - 1) (r - 1) < x) (hx2 : x ≤ F.fr a (r - 1))
@@ -122,10 +75,11 @@ private theorem eq_of_mod_eq_of_mem_Ioc_fr_last {n' r : ℕ} [NeZero n'] [NeZero
   have hn : (0 : ℤ) < n' := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne n')
   have hper := hV.2.1 (s - 1) (r - 1)
   rw [show s - 1 + (F.J : ℤ) = s + F.J - 1 by ring] at hper
-  have m1 := fr_last_monotone F hV (s - 1) (a - 1) (by omega)
-  have m2 := fr_last_monotone F hV a (s + F.J - 1) (by omega)
-  have m3 := fr_last_monotone F hV (s - 1) (b - 1) (by omega)
-  have m4 := fr_last_monotone F hV b (s + F.J - 1) (by omega)
+  have m1 := (eFr_strictMono hV).monotone (by omega : s - 1 ≤ a - 1)
+  have m2 := (eFr_strictMono hV).monotone (by omega : a ≤ s + F.J - 1)
+  have m3 := (eFr_strictMono hV).monotone (by omega : s - 1 ≤ b - 1)
+  have m4 := (eFr_strictMono hV).monotone (by omega : b ≤ s + F.J - 1)
+  dsimp only [eFr] at m1 m2 m3 m4
   have e1 : x % (n' : ℤ) + n' * (x / n') = x := by rw [Int.emod_def]; ring
   have e2 : x' % (n' : ℤ) + n' * (x' / n') = x' := by rw [Int.emod_def]; ring
   have hq := lam_m_zero (a := x - F.fr (s - 1) (r - 1) - 1) (b := x' - F.fr (s - 1) (r - 1) - 1)
@@ -138,10 +92,10 @@ private theorem eq_of_mod_eq_of_mem_Ioc_fr_last {n' r : ℕ} [NeZero n'] [NeZero
   refine ⟨?_, hxx⟩
   subst hxx
   rcases lt_trichotomy a b with h | h | h
-  · have := fr_last_monotone F hV a (b - 1) (by omega)
+  · have : F.fr a (r - 1) ≤ F.fr (b - 1) (r - 1) := (eFr_strictMono hV).monotone (by omega)
     omega
   · exact h
-  · have := fr_last_monotone F hV b (a - 1) (by omega)
+  · have : F.fr b (r - 1) ≤ F.fr (a - 1) (r - 1) := (eFr_strictMono hV).monotone (by omega)
     omega
 
 private theorem mem_Ioc_and_posOf_mem_of_mem_late {n' r : ℕ} [NeZero n'] (X : Dat n' r) (j x : ℤ) (h : x ∈ X.toLate j) :
@@ -160,7 +114,7 @@ private theorem mem_late_of_mem_Ioc_of_posOf_mem {n' r : ℕ} [NeZero n'] [NeZer
     (h3 : posOf n' x ∈ X.F.TT) : x ∈ X.toLate j := by
   classical
   have hr : 0 < r := Nat.pos_of_ne_zero (NeZero.ne r)
-  have h0 := fr_le_fr_of_index_le X.F hV (j - 1) (r - 1) (by omega) 0 (Nat.zero_le _)
+  have h0 := TE.fr_le hV (j - 1) 0 (r - 1) (Nat.zero_le _) (by omega)
   unfold Dat.toLate
   simp only [Finset.mem_filter]
   refine ⟨?_, ?_⟩
@@ -170,35 +124,11 @@ private theorem mem_late_of_mem_Ioc_of_posOf_mem {n' r : ℕ} [NeZero n'] [NeZer
   · unfold Frames.IsW
     omega
 
-private theorem emod_eq_of_posOf_eq' {n' : ℕ} [NeZero n'] {x x' : ℤ} (h : posOf n' x = posOf n' x') :
-    x % (n' : ℤ) = x' % (n' : ℤ) := by
-  have hn : (0 : ℤ) < n' := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne n')
-  unfold posOf at h
-  have h' := congrArg Fin.val h
-  simp only at h'
-  clear h
-  have a1 := Int.emod_nonneg x (ne_of_gt hn)
-  have a2 := Int.emod_lt_of_pos x hn
-  have b1 := Int.emod_nonneg x' (ne_of_gt hn)
-  have b2 := Int.emod_lt_of_pos x' hn
-  generalize x % (n' : ℤ) = u at *
-  generalize x' % (n' : ℤ) = v at *
-  rw [Nat.mod_eq_of_lt (by omega), Nat.mod_eq_of_lt (by omega)] at h'
-  omega
-
-private theorem nat_log_div_pow_eq_sub (p N : ℕ) : ∀ d : ℕ, Nat.log p (N / p ^ d) = Nat.log p N - d := by
-  intro d
-  induction d with
-  | zero => simp
-  | succ d ih =>
-    rw [pow_succ, ← Nat.div_div_eq_div_mul, Nat.log_div_base, ih]
-    omega
-
 private theorem Rj_eq_log_floor {n' r : ℕ} (X : Dat n' r) (p K : ℕ) (j : ℤ) :
     X.Rj p K j = Nat.log p ⌊X.a / (8 * X.Y * Dat.k (r := r) K ^ 2 * ↑X.Ns)⌋₊ - X.F.dist j (X.F.fr (j - 1) 0) := by
   unfold Dat.Rj
   rw [div_mul_eq_div_div, ← Nat.cast_pow, Nat.floor_div_natCast]
-  exact nat_log_div_pow_eq_sub p _ _
+  exact Nat.log_div_base_pow p _ _
 
 private theorem Pz_eq_Pz_mul_Qc {n' r : ℕ} (X : Dat n' r) (p K : ℕ) (j c x x' s : ℤ)
     (h1 : X.F.fr c (r - 1) = X.F.fr (j - 1) (r - 1) + s)
@@ -234,7 +164,7 @@ theorem restLamGeo (C₀ : ℝ) : RestLamGeo C₀ := by
     have hj := j.isLt
     have hj' := j'.isLt
     obtain ⟨e1, e2⟩ := eq_of_mod_eq_of_mem_Ioc_fr_last X.F hV 0 _ _ x x' (by omega) (by omega) (by omega) (by omega)
-      a1 a2 b1 b2 (emod_eq_of_posOf_eq' hp)
+      a1 a2 b1 b2 (by rw [← posOf_val, ← posOf_val, hp])
     exact ⟨Fin.ext (by omega), e2⟩
   · intro j j' x hx hW x' hx' hW' hp
     obtain ⟨hl, -⟩ := lam_W_late X hV _ x hx hW
@@ -244,7 +174,7 @@ theorem restLamGeo (C₀ : ℝ) : RestLamGeo C₀ := by
     have hj := j.isLt
     have hj' := j'.isLt
     obtain ⟨e1, e2⟩ := eq_of_mod_eq_of_mem_Ioc_fr_last X.F hV (-1) _ _ x x' (by omega) (by omega) (by omega) (by omega)
-      a1 a2 b1 b2 (emod_eq_of_posOf_eq' hp)
+      a1 a2 b1 b2 (by rw [← posOf_val, ← posOf_val, hp])
     exact ⟨Fin.ext (by omega), e2⟩
   · intro j j' x hx hW x' hx' hp
     obtain ⟨hl, i, hi, hxi⟩ := lam_W_late X hV _ x hx hW
@@ -252,11 +182,10 @@ theorem restLamGeo (C₀ : ℝ) : RestLamGeo C₀ := by
     obtain ⟨b1, b2, b3⟩ := mem_Ioc_and_posOf_mem_of_mem_late X _ x' hx'
     have hj := j.isLt
     have hj' := j'.isLt
-    have hTT : X.F.fr (((j : ℕ) : ℤ) - 1) (r - 1) < X.F.fr ((j : ℕ) : ℤ) (r - 1) := by
-      have h := fr_last_lt_fr_last_succ X.F hV (((j : ℕ) : ℤ) - 1)
-      rwa [sub_add_cancel] at h
-    have hf1 := fr_le_fr_of_index_le X.F hV (((j : ℕ) : ℤ) - 1) (r - 1) (by omega) 0 (Nat.zero_le _)
-    have hf2 := fr_le_fr_of_index_le X.F hV (((j : ℕ) : ℤ) - 1 - 1) (r - 1) (by omega) 0 (Nat.zero_le _)
+    have hTT : X.F.fr (((j : ℕ) : ℤ) - 1) (r - 1) < X.F.fr ((j : ℕ) : ℤ) (r - 1) :=
+      eFr_strictMono hV (by omega)
+    have hf1 := TE.fr_le hV (((j : ℕ) : ℤ) - 1) 0 (r - 1) (Nat.zero_le _) (by omega)
+    have hf2 := TE.fr_le hV (((j : ℕ) : ℤ) - 1 - 1) 0 (r - 1) (Nat.zero_le _) (by omega)
     have hg := hV.2.2.2.1 (((j : ℕ) : ℤ) - 1 - 1)
     rw [sub_add_cancel] at hg
     have hA : X.F.fr (((j : ℕ) : ℤ) - 1) 0 ≤ X.F.fr ((j : ℕ) : ℤ) (r - 1) := by omega
@@ -269,8 +198,7 @@ theorem restLamGeo (C₀ : ℝ) : RestLamGeo C₀ := by
         exact hV.2.1 _ _
       have q2 := hV.2.1 (((j : ℕ) : ℤ) - 1) (r - 1)
       have hpy : (x + n') % (n' : ℤ) = x' % (n' : ℤ) := by
-        rw [Int.add_emod_right]
-        exact emod_eq_of_posOf_eq' hp
+        rw [Int.add_emod_right, ← posOf_val, ← posOf_val, hp]
       obtain ⟨e1, e2⟩ := eq_of_mod_eq_of_mem_Ioc_fr_last X.F hV 0 (((j : ℕ) : ℤ) - 1 + X.F.J) ((j' : ℕ) : ℤ) (x + n') x'
         (by omega) (by omega) (by omega) (by omega) (by rw [q1]; omega) (by rw [q2]; omega) b1 b2 hpy
       refine ⟨⟨i, hi, ?_⟩, ?_⟩
@@ -285,7 +213,8 @@ theorem restLamGeo (C₀ : ℝ) : RestLamGeo C₀ := by
         · rw [show ((j : ℕ) : ℤ) - 1 + X.F.J + 1 - 1 = ((j : ℕ) : ℤ) - 1 + X.F.J by ring]
           exact hV.2.1 _ _
     · obtain ⟨e1, e2⟩ := eq_of_mod_eq_of_mem_Ioc_fr_last X.F hV 0 (((j : ℕ) : ℤ) - 1) ((j' : ℕ) : ℤ) x x'
-        (by omega) (by omega) (by omega) (by omega) a1 a2 b1 b2 (emod_eq_of_posOf_eq' hp)
+        (by omega) (by omega) (by omega) (by omega) a1 a2 b1 b2
+        (by rw [← posOf_val, ← posOf_val, hp])
       refine ⟨⟨i, hi, ?_⟩, ?_⟩
       · rw [← e1, ← e2]
         exact hxi
@@ -341,12 +270,12 @@ theorem restLamTau : RestLamTau := by
   have hi := i.isLt
   have hj := j.isLt
   have hle : X.F.fr ((j : ℕ) : ℤ) i ≤ X.F.fr ((j : ℕ) : ℤ) (r - 1) :=
-    fr_le_fr_of_index_le X.F hV _ (r - 1) (by omega) i (by omega)
+    TE.fr_le hV _ i (r - 1) (by omega) (by omega)
   have h0i : X.F.fr ((j : ℕ) : ℤ) 0 ≤ X.F.fr ((j : ℕ) : ℤ) i :=
-    fr_le_fr_of_index_le X.F hV _ i hi 0 (Nat.zero_le _)
+    TE.fr_le hV _ 0 i (Nat.zero_le _) hi
   have hg := hV.2.2.2.1 (((j : ℕ) : ℤ) - 1)
   rw [sub_add_cancel] at hg
-  have h00 := fr_le_fr_of_index_le X.F hV (((j : ℕ) : ℤ) - 1) (r - 1) (by omega) 0 (Nat.zero_le _)
+  have h00 := TE.fr_le hV (((j : ℕ) : ℤ) - 1) 0 (r - 1) (Nat.zero_le _) (by omega)
   have hT := (hV.2.2.2.2.1 ((j : ℕ) : ℤ) i hi).1
   have hmem : X.F.fr ((j : ℕ) : ℤ) i ∈ X.F.letters ((j : ℕ) : ℤ) := by
     unfold Frames.letters
@@ -356,9 +285,9 @@ theorem restLamTau : RestLamTau := by
     unfold Frames.IsW
     omega
   unfold Dat.bfam
-  rw [if_pos hmem, if_neg hnW, if_pos h0i]
+  rw [ite_eq_left hmem, ite_eq_right hnW, ite_eq_left h0i]
   rw [Finset.sum_eq_single i]
-  · rw [if_pos rfl]
+  · rw [ite_eq_left rfl]
     unfold Dat.eZ
     rw [dite_eq_left (by omega)]
     congr 1
@@ -367,17 +296,17 @@ theorem restLamTau : RestLamTau := by
     simp only [hm, Int.toNat_natCast]
     exact Nat.mod_eq_of_lt hj
   · intro b _ hb
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     apply hb
     have hbl := b.isLt
     rcases lt_trichotomy (b : ℕ) (i : ℕ) with hlt | heq | hgt
     · have h1 := hV.2.2.1 ((j : ℕ) : ℤ) b (by omega)
-      have h2 := fr_le_fr_of_index_le X.F hV ((j : ℕ) : ℤ) i hi ((b : ℕ) + 1) (by omega)
+      have h2 := TE.fr_le hV ((j : ℕ) : ℤ) ((b : ℕ) + 1) i (by omega) hi
       omega
     · exact Fin.ext heq
     · have h1 := hV.2.2.1 ((j : ℕ) : ℤ) i (by omega)
-      have h2 := fr_le_fr_of_index_le X.F hV ((j : ℕ) : ℤ) b hbl ((i : ℕ) + 1) (by omega)
+      have h2 := TE.fr_le hV ((j : ℕ) : ℤ) ((i : ℕ) + 1) b (by omega) hbl
       omega
   · intro h
     exact absurd (Finset.mem_univ i) h

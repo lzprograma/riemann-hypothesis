@@ -181,11 +181,4 @@ theorem norm_sq_scaled {Wp : Type} [NormedAddCommGroup Wp] [InnerProductSpace â„
 
 end prelim
 
-section main
-
-open BranchingSupport GlobalTheory.CellAmp GlobalTheory.Amp Formalism.BasicNotions Formalism.MainNotions.S Formalism.QuantumDeterminants Matrix MeasureTheory Finset
-open scoped InnerProductSpace ENNReal
-
-end main
-
 end GlobalTheory.MomOne

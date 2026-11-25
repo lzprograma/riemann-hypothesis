@@ -119,7 +119,7 @@ lemma abs_le_of_kθ_ne {x : ℝ} (h : kθ x ≠ 0) : |x| ≤ 1 / 2 := by
   rw [ContDiffBump.support_normed_eq, Metric.mem_ball, Real.dist_eq, sub_zero] at hx
   exact hx.le
 
-lemma kK_nonneg (h : ι → ℝ) : 0 ≤ kK h := Finset.prod_nonneg fun j _ => kθ_nonneg _
+lemma kK_nonneg (h : ι → ℝ) : 0 ≤ kK h := Finset.prod_nonneg fun _ _ => kθ_nonneg _
 lemma kK_neg (h : ι → ℝ) : kK (-h) = kK h := by
   simp only [kK, Pi.neg_apply, kθ_neg]
 lemma kK_contDiff : ContDiff ℝ ∞ (kK : (ι → ℝ) → ℝ) := by

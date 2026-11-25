@@ -53,7 +53,7 @@ lemma logDeriv_wFactor {l z : ℂ} (h : z ≠ l) :
       linear_combination -h0
     have h3 : l - z ≠ 0 := sub_ne_zero.mpr (Ne.symm h)
     have he := Complex.exp_ne_zero (z / l + z ^ 2 / (2 * l ^ 2))
-    rw [if_neg hl, wFactor, sub_zero, div_eq_iff (mul_ne_zero h2 he)]
+    rw [ite_eq_right hl, wFactor, sub_zero, div_eq_iff (mul_ne_zero h2 he)]
     field_simp
     ring
 

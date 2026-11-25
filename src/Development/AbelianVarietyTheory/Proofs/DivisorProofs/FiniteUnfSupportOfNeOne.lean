@@ -367,7 +367,7 @@ theorem exists_rowR_mul (hψ : ψ ≠ 1) {ϖ : kˣ} {e : ℕ} {T : G.Args → �
     exact fun r t => h1 t r
   have h1 : Bd γ (((frameGL hf1 (g (G.m, j + 1)))⁻¹).val * stepPt (c := G.m - 2 - j) (x j) (v ⟨j, hj1⟩)) := by
     have h2 := hint.mul hb2
-    rw [one_mul, Matrix.mul_assoc, Units.mul_inv, Matrix.mul_one, downMap, dif_pos hj1, mul_reindex hf1,
+    rw [one_mul, Matrix.mul_assoc, Units.mul_inv, Matrix.mul_one, downMap, dite_eq_left hj1, mul_reindex hf1,
       bd_reindex_iff, map_inv] at h2
     exact h2.mono g1
   obtain ⟨r, hr, w, hw1, hw2, hrw⟩ := exists_symR_mul (δ := valuation k ((ϖ ^ e * s⁻¹ : kˣ) : k)) (by omega) ψ g0
@@ -444,7 +444,7 @@ theorem finite_unfSupport_of_ne_one (hψ : ψ ≠ 1) {ϖ : kˣ} {e : ℕ} {T : G
     obtain ⟨r, hr, w, w1, w2, hw⟩ := hδ keep (ρ.elt β) x y i i.2 hy b1 b2
     refine ⟨w, ⟨w1, w2⟩, ?_⟩
     rw [Reps.elt, onColumn_apply] at hw
-    simp only [i.2, dif_pos] at hw
+    simp only [i.2, dite_eq_left] at hw
     refine Eq.trans ?_ (ρ.mk_rep i (β i))
     exact (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨r, hr, 1, one_mem _, by rw [mul_one]; exact hw⟩
   have col : ∀ j, j ≤ G.m - 2 → ((fun β => ρ.elt β (G.m, j)) '' unfSupport ψ ν keep ρ T).Finite := by
@@ -459,7 +459,7 @@ theorem finite_unfSupport_of_ne_one (hψ : ψ ≠ 1) {ϖ : kˣ} {e : ℕ} {T : G
       refine ((step ⟨j, hj⟩ (ih (by omega))).image (ρ.rep ⟨j, hj⟩)).subset ?_
       rintro _ ⟨β, hβ, rfl⟩
       refine ⟨_, ⟨β, hβ, rfl⟩, ?_⟩
-      simp only [Reps.elt, onColumn_apply, show j < G.m - 2 from hj, dif_pos]
+      simp only [Reps.elt, onColumn_apply, show j < G.m - 2 from hj, dite_eq_left]
   exact (Set.Finite.pi' fun i => step i (col i i.2.le)).subset fun β hβ i => ⟨β, hβ, rfl⟩
 
 end Main

@@ -145,8 +145,7 @@ private theorem eq_zero_of_forall_pderiv_eq_self {σ : Type} {u : MvPowerSeries 
   | succ N ih =>
     intro n hn
     obtain ⟨i, hi⟩ : ∃ i, n i ≠ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       have : n = 0 := by
         ext j
         exact hc j
@@ -290,7 +289,7 @@ theorem subst_fLog {κ : Type} [Finite ι] {φ : ι → MvPowerSeries κ K}
 theorem dz_prim (f : PowerSeries K) : dz (prim f) = f := by
   ext n
   rw [dz, PowerSeries.coeff_derivative]
-  simp only [prim, coeff_mk, Nat.add_one_ne_zero, if_false, Nat.add_sub_cancel]
+  simp only [prim, coeff_mk, Nat.add_one_ne_zero, ite_false, Nat.add_sub_cancel]
   have hne : ((n : K) + 1) ≠ 0 := by exact_mod_cast Nat.succ_ne_zero n
   push_cast
   field_simp

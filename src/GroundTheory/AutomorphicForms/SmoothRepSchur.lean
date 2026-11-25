@@ -95,12 +95,6 @@ theorem algebraMap_intertwiningMap_bijective_of_rank_le_aleph0 [ρ.IsIrreducible
         Function.Surjective (φ - algebraMap ℂ (Representation.IntertwiningMap ρ ρ) c) :=
       fun c => ((Representation.IsIrreducible.bijective_or_eq_zero _).resolve_right (hsub c)).2
     choose w hw using fun c => hsurj c v
-    have sum_apply : ∀ (s : Finset ℂ) (f : ℂ → Representation.IntertwiningMap ρ ρ) (x : V),
-        (∑ j ∈ s, f j) x = ∑ j ∈ s, f j x := by
-      intro s f x
-      have h1 := congrFun (map_sum (Representation.IntertwiningMap.coeFnAddMonoidHom ρ ρ) f s) x
-      rw [Finset.sum_apply] at h1
-      exact h1
     have hli : LinearIndependent ℂ w := by
       rw [linearIndependent_iff']
       intro s a hsum i hi
@@ -116,7 +110,7 @@ theorem algebraMap_intertwiningMap_bijective_of_rank_le_aleph0 [ρ.IsIrreducible
 
         rw [map_sum, map_zero] at h0
 
-        rw [hPdef, map_sum, sum_apply]
+        rw [hPdef, map_sum, Representation.IntertwiningMap.sum_apply]
         rw [← h0]
         refine Finset.sum_congr rfl fun j hj => ?_
         rw [map_smul, map_smul, key j hj]

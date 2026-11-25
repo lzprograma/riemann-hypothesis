@@ -13,49 +13,11 @@ public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.Mem
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilSchrodingerRealParameter
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.SplitB
 import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExtensionAdeleRealComponentsCmType
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.InfFam
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsInverseChart
+import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocRhoB
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.SplitA, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.ValZeroOfTens
@@ -72,8 +34,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace PositivityTheory.Rg.Sw.Glob
 
@@ -104,23 +64,8 @@ theorem comm_of_trivial {θ : InfFam D} (hθ : IsInfFam θ) {τ : D.what₂.Tau}
 
 theorem iota_mem_K {θ : InfFam D} (hθ : IsInfFam θ) {τ : D.what₂.Tau} {ι : GR n →* G D n} (hι : IsPlaceEmb θ τ ι)
     {y : GR n} (hy : InK (mR y)) : ι y ∈ K D n := by
-  obtain ⟨h1, h2, h3⟩ := hι.2 y
-  show ι y ∈ GlobalTheory.AdelicU.levelAll D.sp.cm.sig (Jst D n) (stdLattice D.host.E (n + n)) 1
-  rw [GlobalTheory.AdelicU.mem_levelAll]
-  refine ⟨fun v => ?_, fun w => ?_⟩
-  · have hinf : ι y ∈ GlobalTheory.AdelicU.infPts D.sp.cm.sig (Jst D n) := Units.ext h3
-    rw [GlobalTheory.AdelicU.mem_infPts_iff_forall.1 hinf v]; exact one_mem _
-  · obtain ⟨ρ, rfl⟩ := (GlobalTheory.AdelicU.placeOf_bijective D).2 w
-    rw [GlobalTheory.Doubling.mem_stabArch_iff_unitary (GlobalTheory.AdelicU.isCMExt_host D) (GlobalTheory.AdelicU.embOverOf D ρ) (Jst D n) 1 (ι y)]
-    rw [inv_one, Units.val_one, Matrix.map_one _ (map_zero _) (map_one _), Matrix.map_one _ (map_zero _) (map_one _)]
-    simp only [Matrix.one_mul, Matrix.mul_one]
-    have e1 : Formalism.MainNotions.StandardLattice.infMat D.sp.cm.sig (Jst D n) (GlobalTheory.AdelicU.infProj (GlobalTheory.AdelicU.embOverOf D ρ)) (ι y) =
-        compAt θ ρ (mat (ι y)) := by
-      rw [← GlobalTheory.AdelicU.eq_infProj hθ (GlobalTheory.AdelicU.embOverOf D ρ) rfl]; rfl
-    rw [e1]
-    by_cases hρ : ρ = τ
-    · subst hρ; rw [h1, ← reidx_ct, ← reidx_mul, hy.2, reidx_one]
-    · rw [h2 ρ hρ]; simp
+  intros
+  apply _root_.PositivityTheory.Rg.Sw.Glob.RhoH.iota_mem_K <;> assumption
 
 theorem K_split {θ : InfFam D} (hθ : IsInfFam θ) {τ : D.what₂.Tau} {ι : GR n →* G D n} (hι : IsPlaceEmb θ τ ι)
     {k : G D n} (hk : k ∈ K D n) : ∃ y : GR n, InK (mR y) ∧ (ι y)⁻¹ * k ∈ K D n ∧ compAt θ τ (mat ((ι y)⁻¹ * k)) = 1 := by
@@ -287,8 +232,6 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doublin
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace PositivityTheory.Rg.Sw.Glob
 
 variable {D : D7} {n : ℕ}
@@ -306,7 +249,7 @@ theorem compAt_sub' {θ : InfFam D} {τ : D.what₂.Tau} {m : ℕ} (a b : Mx D m
 
 theorem phiS_eq {m : ℕ} {θ : InfFam D} {τ : D.what₂.Tau} {fr : Matrix (Fin m) (Fin m) ℂ} {c : ℝ} {Ψ : Mx D m n → ℂ}
     {P : PX m n} (h : tens θ τ fr (fP c P) Ψ ∈ schwartzA θ m n) : phiS θ τ fr c Ψ P = ⟨_, h⟩ := by
-  simp only [phiS, dif_pos h]
+  simp only [phiS, dite_eq_left h]
 
 theorem val_zero_of_tens {m : ℕ} {θ : InfFam D} (hθ : IsInfFam θ) {τ : D.what₂.Tau} {fr : Matrix (Fin m) (Fin m) ℂ}
     {Ψ : Mx D m n → ℂ} (hΨ : IsAwayFn θ τ Ψ) {x₁ : Mx D m n} (hx₁ : Ψ x₁ ≠ 0) {f f' : (Fin m → Fin n → ℂ) → ℂ}
@@ -320,8 +263,8 @@ theorem val_zero_of_tens {m : ℕ} {θ : InfFam D} (hθ : IsInfFam θ) {τ : D.w
     rw [hc, GlobalTheory.SchwartzBruhatTensor.compAt_chartM hσ]
     split_ifs <;> rfl
   have hc2 : c.map (finPart D) = 0 := GlobalTheory.SchwartzBruhatTensor.finPart_chartM hσ _
-  have e0 : compAt θ τ (x₁ - c) = 0 := by rw [compAt_sub', hc1, if_pos rfl, sub_self]
-  have e1 : Ψ (x₁ - c) = Ψ x₁ := hΨ _ _ (fun τ' h' => by rw [compAt_sub', hc1, if_neg h', sub_zero])
+  have e0 : compAt θ τ (x₁ - c) = 0 := by rw [compAt_sub', hc1, ite_eq_left rfl, sub_self]
+  have e1 : Ψ (x₁ - c) = Ψ x₁ := hΨ _ _ (fun τ' h' => by rw [compAt_sub', hc1, ite_eq_right h', sub_zero])
     (by rw [Matrix.map_sub _ (fun a₁ a₂ => RingHom.map_sub (finPart D) a₁ a₂), hc2, sub_zero])
   have := congrFun h (x₁ - c)
   simp only [tens, e0, Matrix.mul_zero, e1] at this
@@ -379,7 +322,7 @@ theorem gSplit_of (hI : GIwasawa) (hAw : AwayAct) (hLF : LocFact) (hIn : AwayIn)
       have e : tens θ τ fr (fP (cLoc l τ) P) Ψ = 0 := by funext x; simp [tens, hΨ0]
       have : phiS θ τ fr (cLoc l τ) Ψ P = 0 := by rw [phiS_eq (hmem P)]; exact Subtype.ext e
       unfold secF; rw [this, map_zero, zero_mul]; rfl
-  · push_neg at hz
+  · push Not at hz
     obtain ⟨x₁, hx₁⟩ := hz
     have hconv : ∀ (y' : GR n) (P : PX V.rank n), L' y' (fP (cLoc l τ) P) 0 = L y' (fP (cLoc l τ) P) 0 := by
       intro y' P

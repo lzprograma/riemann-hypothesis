@@ -77,7 +77,6 @@ section -- clump:auto
 noncomputable section
 
 open Formalism.BasicNotions Formalism.L2.DIV Formalism.IndefR.Links NumberField
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.RealOneVector
 

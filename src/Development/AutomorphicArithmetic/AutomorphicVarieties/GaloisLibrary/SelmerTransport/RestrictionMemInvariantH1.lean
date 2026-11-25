@@ -3,48 +3,20 @@ module
 public import Mathlib.Order.CompletePartialOrder
 public import Mathlib.Topology.Sheaves.Presheaf
 public import ReciprocityTheory.GaloisValuations.SeparatedDvrSecondCohomologyMem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
+
+/-!
+# Restriction and conjugation on locally trivial first cohomology
+
+`UpperTheory.V.Base.LocSel` imposes vanishing of restriction to `U ⊓ D` for each
+`D` in a family of subgroups. `mem_locSel` and `mk_mem_locSel` express this condition
+on cohomology classes and cocycle representatives, respectively. `selRes` restricts
+classes from a subgroup to a smaller subgroup.
+
+The conjugation section additionally assumes a topological group and discrete
+coefficients. For a normal subgroup and a conjugation-stable family of local
+conditions it constructs `selRep` and the character subspaces `selEig`.
+-/
 
 @[expose] public section
 
@@ -117,6 +89,10 @@ theorem resU_resU (ρ : Representation R G M) {U'' U' U : Subgroup G} (h' : U'' 
   refine Subtype.ext (funext fun u => ?_)
   rw [f₂, f₁, f₃]
 
+/-- Classes in `H1U ρ U` whose restriction to every `U ⊓ D`, for `D ∈ 𝒟`, is zero.
+The local condition is vanishing in cohomology: a cocycle may restrict to a nonzero
+coboundary. Use `mem_locSel` for classes and `mk_mem_locSel` for representatives. -/
+
 def LocSel (ρ : Representation R G M) (U : Subgroup G) (𝒟 : Set (Subgroup G)) : Submodule R (H1U ρ U) :=
   ⨅ D ∈ 𝒟, LinearMap.ker (resU ρ (inf_le_left : U ⊓ D ≤ U))
 
@@ -144,6 +120,10 @@ theorem resU_mem_locSel {ρ : Representation R G M} {U' U : Subgroup G} (h : U' 
       = resU ρ ((inf_le_left : U' ⊓ D ≤ U').trans h) x := resU_resU ρ _ h x
     _ = resU ρ hle (resU ρ (inf_le_left : U ⊓ D ≤ U) x) := (resU_resU ρ hle inf_le_left x).symm
     _ = 0 := by rw [hx D hD, map_zero]
+
+/-- Restriction of locally trivial classes along `U' ≤ U`, keeping the same local
+family `𝒟`. The map goes from cohomology of `U` to cohomology of `U'`; it does not
+require normality or conjugation stability. -/
 
 def selRes (ρ : Representation R G M) {U' U : Subgroup G} (h : U' ≤ U) (𝒟 : Set (Subgroup G)) :
     LocSel ρ U 𝒟 →ₗ[R] LocSel ρ U' 𝒟 :=
@@ -257,6 +237,10 @@ theorem conjRep_mem_locSel (ρ : Representation R G M) (U : Subgroup G) [U.Norma
   congr 2
   simp [conjHom, mul_assoc]
 
+/-- Conjugation action on the locally trivial classes. Normality of `U` makes
+conjugation act on its cohomology, and `h𝒟` ensures that it preserves the local
+conditions. Elements of `U` act trivially by `selRep_of_mem`. -/
+
 def selRep (ρ : Representation R G M) (U : Subgroup G) [U.Normal] {𝒟 : Set (Subgroup G)} (h𝒟 : ConjStable 𝒟) :
     Representation R G (LocSel ρ U 𝒟) :=
   (conjRep ρ U).subrepresentation (LocSel ρ U 𝒟) fun g _ hx => conjRep_mem_locSel ρ U h𝒟 g hx
@@ -278,6 +262,10 @@ theorem selRes_selRep (ρ : Representation R G M) {U' U : Subgroup G} [U.Normal]
 
 abbrev invariantsUnderSubgroupH1 (ρ : Representation R G M) (U U' : Subgroup G) [U'.Normal] : Submodule R (H1U ρ U') :=
   Representation.invariants ((conjRep ρ U').comp U.subtype : Representation R U (H1U ρ U'))
+
+/-- The `ψ`-character subspace for the action of `W` on `LocSel ρ U 𝒟`.
+Membership means `selRep ρ U h𝒟 w x = (ψ w : R) • x` for every `w : W`.
+For `ψ = 1`, `eig_one` identifies this with the invariant submodule. -/
 
 abbrev selEig (ρ : Representation R G M) (U : Subgroup G) [U.Normal] {𝒟 : Set (Subgroup G)} (h𝒟 : ConjStable 𝒟)
     (W : Subgroup G) (ψ : W →* Rˣ) : Submodule R (LocSel ρ U 𝒟) :=

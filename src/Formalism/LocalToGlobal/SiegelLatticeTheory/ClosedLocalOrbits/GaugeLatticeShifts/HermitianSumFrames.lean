@@ -44,14 +44,14 @@ theorem RootCoordFrame_holds : RootCoordFrame := by
   unfold rootCoord
   rw [nxt_eq, hP, hJ_fintype_sum_smul_right]
   rw [Finset.sum_eq_single a.castSucc]
-  · rw [show fam e z a.castSucc = e a from by unfold fam; exact Fin.snoc_castSucc _ _ _, hfe, if_pos rfl, mul_one]
+  · rw [show fam e z a.castSucc = e a from by unfold fam; exact Fin.snoc_castSucc _ _ _, hfe, ite_eq_left rfl, mul_one]
   · intro c _ hc
     refine Fin.lastCases ?_ (fun b hb => ?_) c hc
     · intro _
       rw [show fam e z (Fin.last r) = z from by unfold fam; exact Fin.snoc_last _ _, hfz, mul_zero]
     · rw [show fam e z b.castSucc = e b from by unfold fam; exact Fin.snoc_castSucc _ _ _, hfe]
       have hab : a ≠ b := fun h => hb (by rw [h])
-      rw [if_neg hab, mul_zero]
+      rw [ite_eq_right hab, mul_zero]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -71,8 +71,6 @@ theorem ZhatNAct_holds : ZhatNAct := by
   refine Finset.sum_congr rfl fun d _ => Finset.sum_congr rfl fun c _ => ?_
   ring
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem FrameAtV_holds : FrameAtV := by
   intro D X u v
   have hc : ∀ p q : (VS D).V, hJ (X.B.I.ε v) (rv X.B.I v (X.crd p)) (rv X.B.I v (X.crd q)) =
@@ -91,7 +89,7 @@ theorem FrameAtV_holds : FrameAtV := by
     by_cases h : a = b
     · subst h
       simp
-    · rw [if_neg (Ne.symm h), if_neg h, map_zero, map_zero]
+    · rw [ite_eq_right (Ne.symm h), ite_eq_right h, map_zero, map_zero]
   · rw [X.zu_norm u, map_neg, map_natCast]
     simp [Tw]
   · unfold Tw

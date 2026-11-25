@@ -162,7 +162,7 @@ theorem one_coord₂ (B : SmRep G) (h : HasFiniteLength B.ρ) (T : Finset (IrrCl
       simp at this
     rw [h1, h2, ih R hR.lt fun c hc => (add_eq_zero.1 ((hm c).symm.trans (hS' c hc))).1]
     simp only [hm, add_mul, Finset.sum_add_distrib, ite_mul, one_mul, zero_mul,
-      Finset.sum_ite_eq', if_pos h3]
+      Finset.sum_ite_eq', ite_eq_left h3]
   have h4 := key ⊤ (by simpa only [jhMult_congr_right _ (topEquiv B.ρ)] using hT)
   rw [← congr_equiv φ h0 hadd (B := sub B ⊤) (B' := B) (topEquiv B.ρ), h4]
   simp only [jhMult_congr_right _ (topEquiv B.ρ)]
@@ -194,7 +194,7 @@ theorem additive_family_expand : ∀ (α : Type) [Fintype α] [DecidableEq α] (
         by_contra hn
         obtain ⟨i, hi⟩ := hT c hn
         exact one_ne_zero ((jhMult_self (c i).rep.irr).symm.trans hi)
-      simp only [hm, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', if_pos h3]
+      simp only [hm, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', ite_eq_left h3]
     | insert i s his ih =>
       intro A hA hl T hT
       let μ : ∀ j, IrrCl (Γ j) → SmRep (Γ j) → ℕ∞ := fun j c B => jhMult c.rep.ρ B.ρ
@@ -231,7 +231,7 @@ theorem additive_family_expand : ∀ (α : Type) [Fintype α] [DecidableEq α] (
           change μ j (t j) (Function.update A i (SmRep.ofIrr c.rep) j) = 0
           rcases eq_or_ne j i with rfl | hji
           · rw [Function.update_self]
-            refine (jhMult_rep_rep _ _).trans (if_neg ?_)
+            refine (jhMult_rep_rep _ _).trans (ite_eq_right ?_)
             rintro rfl
             exact (hC.mem_toFinset.1 hc) hj
           · rw [Function.update_of_ne hji]; exact hj
@@ -818,7 +818,7 @@ theorem GlobalTheory.SmGL.CellSemis.cellSemisimplification : GlobalTheory.Publis
   have hT' : ∀ t ∉ T', ∃ i, jhMult (t i).rep.ρ (A i).ρ = 0 := by
     intro t ht
     rw [Fintype.mem_piFinset] at ht
-    push_neg at ht
+    push Not at ht
     obtain ⟨i, hi⟩ := ht
     exact ⟨i, by simpa using hi⟩
   let P : ∀ i, (∀ j, IrrCl (GL (c i j) k)) → IrrRep (Levi k (c i)) := fun i s =>

@@ -26,7 +26,6 @@ noncomputable abbrev algOpKT (la : HeightOneSpectrum (𝓞 K)) : Algebra (Op D N
 theorem isFractionRing_OT :
     letI := algOTKT (K := K) D N
     IsFractionRing (OT K D N) (KTf K D N) := by
-  set_option synthInstance.maxHeartbeats 200000 in
   letI := algOTKT (K := K) D N
   have hinj : Function.Injective (algebraMap (OT K D N) (KTf K D N)) :=
     (IsFractionRing.injective (KTp K D N) (KTf K D N)).comp
@@ -61,7 +60,6 @@ theorem isFractionRing_OT :
 theorem isFractionRing_Op (la : HeightOneSpectrum (𝓞 K)) :
     letI := algOpKT (K := K) D N la
     IsFractionRing (Op D N la) (KTf K D N) := by
-  set_option synthInstance.maxHeartbeats 200000 in
   letI := algOTKT (K := K) D N
   letI := algOpKT (K := K) D N la
   haveI := isFractionRing_OT (K := K) D N
@@ -159,8 +157,7 @@ theorem exp_unique (la : HeightOneSpectrum (𝓞 K)) {m m' : ℤ} {u u' : Op D N
       (algebraMap K (KTf K D N) ((Data.unif la : 𝓞 K) : K)) ^ m * OpToKT D N la u =
         (algebraMap K (KTf K D N) ((Data.unif la : 𝓞 K) : K)) ^ m' * OpToKT D N la u' → m ≤ m' := by
     intro m m' u u' hu hu' h
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have hϖ0 : algebraMap K (KTf K D N) ((Data.unif la : 𝓞 K) : K) ≠ 0 := by
       rw [algK_unif]
       exact (map_ne_zero_iff _ (OpToKT_injective D N la)).mpr (unifOp_irreducible D N la).ne_zero

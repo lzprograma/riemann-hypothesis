@@ -157,12 +157,6 @@ namespace Cyclotomic
 
 open GroundTheory.LocalField.Abstract
 
-section Padic
-
-variable {ℓ : ℕ} [hℓ : Fact ℓ.Prime]
-
-end Padic
-
 section ProfiniteInteger
 
 def factorialPNat (n : ℕ) : ℕ+ := ⟨(n + 1).factorial, Nat.factorial_pos _⟩
@@ -227,7 +221,7 @@ theorem mem_of_forall_toPadicInt (H : AddSubgroup ℤ̂) (hH : IsClosed (H : Set
     intro q'
     refine tendsto_nhds_of_eventually_eq ?_
     filter_upwards [eventually_ge_atTop {q'}] with F hF
-    rw [toPadics_apply, hcomp, if_pos (Finset.singleton_subset_iff.1 hF), toPadics_apply]
+    rw [toPadics_apply, hcomp, ite_eq_left (Finset.singleton_subset_iff.1 hF), toPadics_apply]
   have ht' := (continuous_ofPadics.tendsto _).comp ht
   simp only [Function.comp_def, ofPadics_toPadics] at ht'
   exact hH.mem_of_tendsto ht' (Eventually.of_forall hs)
@@ -288,7 +282,7 @@ theorem exists_pnat_forall_dvd (t : ℤ̂) (ht : ∀ q : Nat.Primes, toPadicInt 
     simpa only [map_mul, map_intCast, nsmul_eq_mul, map_natCast, PNat.mk_coe] using this
   have hprod : ‖((∏ p ∈ g.primeFactors, c p : ℕ) : ℤ_[q])‖ ≤ ‖((p : ℕ) : ℤ_[q]) ^ s q‖ := by
     rw [← Finset.mul_prod_erase _ _ hpg, Nat.cast_mul, norm_mul]
-    have hc : c p = p ^ s q := dif_pos hp
+    have hc : c p = p ^ s q := dite_eq_left hp
     rw [hc, Nat.cast_pow]
     exact mul_le_of_le_one_right (norm_nonneg _) (PadicInt.norm_le_one _)
   have hgp : ‖((g : ℕ) : ℤ_[q])‖ ≤ ‖((p ^ j : ℕ) : ℤ_[q])‖ := by
@@ -363,8 +357,8 @@ theorem exists_mem_stabilizer_toPadicInt_ne_zero [P.IsPrime] (p : ℕ) [Fact p.P
     refine mem_of_forall_toPadicInt _ (isClosed_decompositionDegreeImageIn P L.1) fun q ↦ ?_
     rw [hf]
     by_cases h0 : toPadicInt q t₀ = 0
-    · exact ⟨e q, he q, by simp only [f, if_pos h0]⟩
-    · exact ⟨0, zero_mem _, by simp only [f, if_neg h0, map_zero]⟩
+    · exact ⟨e q, he q, by simp only [f, ite_eq_left h0]⟩
+    · exact ⟨0, zero_mem _, by simp only [f, ite_eq_right h0, map_zero]⟩
   obtain ⟨h, ⟨hP, hL⟩, hh⟩ := hy
   have hh : Multiplicative.toAdd (degree h) = ofPadics f := hh
   refine ⟨h, hP, hL, fun q ↦ ?_⟩
@@ -372,8 +366,8 @@ theorem exists_mem_stabilizer_toPadicInt_ne_zero [P.IsPrime] (p : ℕ) [Fact p.P
   change toPadicInt q t₀ + toPadicInt q (Multiplicative.toAdd (degree h)) ≠ 0
   rw [hh, hf]
   by_cases h0 : toPadicInt q t₀ = 0
-  · simp only [f, if_pos h0]; rw [h0, zero_add]; exact he0 q
-  · simp only [f, if_neg h0, add_zero]; exact h0
+  · simp only [f, ite_eq_left h0]; rw [h0, zero_add]; exact he0 q
+  · simp only [f, ite_eq_right h0, add_zero]; exact h0
 
 end Lift
 
@@ -1078,7 +1072,7 @@ theorem ideleSymbol_infiniteEmbedding_neg_one_ne_one
   have hram : w.IsRamified (fixedSubfield τ).1 :=
     isRamified_iff.2 ⟨isComplex_of_mul_self_eq_neg_one hi w, hu⟩
   rw [ideleSymbol_infiniteEmbedding, infiniteLocalSymbol_apply E.1 _ hu
-    ⟨w, (inferInstance : w.LiesOver (w.comap (algebraMap (fixedSubfield τ).1 E.1)))⟩, if_pos]
+    ⟨w, (inferInstance : w.LiesOver (w.comap (algebraMap (fixedSubfield τ).1 E.1)))⟩, ite_eq_left]
   · exact conjAt_ne_one hram
   · simp
 

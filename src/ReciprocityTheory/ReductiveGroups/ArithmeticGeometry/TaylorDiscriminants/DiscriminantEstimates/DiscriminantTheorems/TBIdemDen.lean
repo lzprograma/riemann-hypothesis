@@ -39,7 +39,7 @@ theorem dualDiff : DualDiffSt := by
 
     rw [hx, map_sum]
     simp only [map_smul, key, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true, eq_intCast]
+      Finset.mem_univ, ite_true, eq_intCast]
   have hd : (δ : E) ∈ (FractionalIdeal.dual ℤ ℚ (1 : FractionalIdeal (nonZeroDivisors (𝓞 E)) E))⁻¹ := by
     rw [← coeIdeal_differentIdeal (A := ℤ) (K := ℚ) (L := E) (B := 𝓞 E)]
     exact FractionalIdeal.mem_coeIdeal_of_mem (nonZeroDivisors (𝓞 E)) hδ
@@ -67,7 +67,6 @@ theorem idemEval : IdemEvalSt := by
   intro E _ _ C _ _ _ ι _ _ b τ σ
   classical
   have hev : evAt σ (idemOf b τ) = ∑ i, σ (trDual b i) * τ (b i) := by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp only [evAt, idemOf, map_sum, Algebra.TensorProduct.productMap_apply_tmul,
       AlgHom.id_apply, RingHom.toRatAlgHom_apply]
   rw [hev]
@@ -101,7 +100,7 @@ theorem idemEval : IdemEvalSt := by
     funext y
     simp only [Finset.sum_apply, Pi.smul_apply, Function.comp_apply, smul_eq_mul, Pi.zero_apply,
       MonoidHom.coe_coe, sub_mul, Finset.sum_sub_distrib, hc y, ite_mul, one_mul, zero_mul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true, sub_self])
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true, sub_self])
   have key := hz τ'
   rw [sub_eq_zero] at key
   have hiff : (τ' = σ') ↔ (σ = τ) := by

@@ -3,43 +3,7 @@ module
 public import Development.WeilBound.ThetaLifts.LocalTheory.AdmissiblePureTensorSchwartz
 import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
 import Development.WeilBound.ThetaLifts.LocalTheory.UatClosure
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -116,13 +80,13 @@ theorem fac_cone {T₀ : Finset (Pl F)} {u : Pl F → ℂ} {k : ℂ} (hk : k ≠
     hv (Finset.mem_insert_of_mem (Finset.mem_union_right _ ((Set.Finite.mem_toFinset _).2 hn)))
   have pne : (∏ v ∈ T \ T₀, u v) ≠ 0 := Finset.prod_ne_zero_iff.2 fun v hv => (hu v (Finset.mem_sdiff.1 hv).2).1
   refine ⟨(∏ v ∈ T \ T₀, u v)⁻¹ * k, fun v => if v ∈ T then Λ v (φ v) else M₁.vac v, mul_ne_zero (inv_ne_zero pne) hk,
-    ⟨fun v => ?_, T.eventually_cofinite_notMem.mono fun v hv => if_neg hv⟩, fun v => ?_, fun f x hx => ?_⟩
+    ⟨fun v => ?_, T.eventually_cofinite_notMem.mono fun v hv => ite_eq_right hv⟩, fun v => ?_, fun f x hx => ?_⟩
   · beta_reduce
     split_ifs with hT
     exacts [mapS v _ (a.1 v), hv v (off v hT ▸ a.1 v)]
   · by_cases hT : v ∈ T
-    · exact ⟨1, by beta_reduce; rw [if_pos hT, one_smul]⟩
-    · exact ⟨u v, by beta_reduce; rw [if_neg hT, off v hT, (hu v fun h => hT (sub h)).2]⟩
+    · exact ⟨1, by beta_reduce; rw [ite_eq_left hT, one_smul]⟩
+    · exact ⟨u v, by beta_reduce; rw [ite_eq_right hT, off v hT, (hu v fun h => hT (sub h)).2]⟩
   · have b := a.upd hx
     have := h T sub f _ (fun v => le v (b.1 v)) fun v hv => by
       rw [Function.update_of_ne (fun e : v = v₀ => hv (by rw [e]; exact Finset.mem_insert_self _ _)), off v hv]
@@ -130,7 +94,7 @@ theorem fac_cone {T₀ : Finset (Pl F)} {u : Pl F → ℂ} {k : ℂ} (hk : k ≠
     congr 3
     funext v
     by_cases e : v = v₀
-    · subst e; rw [Function.update_self, Function.update_self, if_pos (Finset.mem_insert_self _ _)]
+    · subst e; rw [Function.update_self, Function.update_self, ite_eq_left (Finset.mem_insert_self _ _)]
     · rw [Function.update_of_ne e, Function.update_of_ne e]
 
 theorem ev_pol {e : Fn F n d →ₗ[ℂ] Fn F n₁ d₁} (h : IsEvLoc M M₁ e L Λ) (g : M.IsGood B.ψ) (g₁ : M₁.IsGood B.ψ)
@@ -161,7 +125,7 @@ theorem pt_of (hi : ∃ f ∈ M.Pol B.ψ B.emb, pi₁ (L f) ≠ 0) (T : Finset (
     (h2 : ∀ v ∉ T, M.vac v ∈ S v ∧ p₁ v (Λ v (M.vac v)) ≠ 0) : Pt B M S pi₁ p₁ L Λ := by
   obtain ⟨f, hf, h0⟩ := hi
   choose x hx hx' using h1
-  refine ⟨f, hf, fun v => if h : v ∈ T then x v h else M.vac v, ⟨fun v => ?_, T.eventually_cofinite_notMem.mono fun v hv => dif_neg hv⟩,
+  refine ⟨f, hf, fun v => if h : v ∈ T then x v h else M.vac v, ⟨fun v => ?_, T.eventually_cofinite_notMem.mono fun v hv => dite_eq_right hv⟩,
     h0, fun v => ?_⟩ <;> dsimp only <;> split_ifs with h
   exacts [hx v h, (h2 v h).1, hx' v h, (h2 v h).2]
 
@@ -178,8 +142,7 @@ theorem bump_pt {χX χW : Chr F E} {r s r' s' : ℕ} (H : Hyp) (hp : IsPair B M
     obtain ⟨T, hT, -⟩ := H.op F E σ B _ _ _ _ M₁ _ _ om₁ _ _ _ _ hp g hg 1 uat_one
     rw [(s₁.uniq f f₁ (T f)).1 _ ac (hT.2 f), hl, hl, ← s₁.arch a hT,
       H.unim F E σ B _ _ _ _ M₁ _ _ om₁ _ _ _ _ hp _ (admissible_pure_tensor_schwartz hp.good f ⟨fun v => s₁.le v (a.1 v), a.2⟩)]
-  by_contra hn
-  push_neg at hn
+  by_contra! hn
   have : (l.comp L : _ → ℂ) = fun _ => 0 := (l.comp L).continuous.ext_on dn continuous_const fun g hg => by
     show l (L g) = 0
     rw [hl, s₁.kill _ (pol g hg) φ a (Or.inl (hn g hg))]; rfl
@@ -187,8 +150,7 @@ theorem bump_pt {χX χW : Chr F E} {r s r' s' : ℕ} (H : Hyp) (hp : IsPair B M
 
 theorem nz_pure (s₁ : Side B M₁ om₁ pi₁ p₁ S₁) (𝓖 : Set (Fn F n₁ d₁)) (h : ∀ Φ ∈ 𝓖, ∃ (f : SInf F _) (φ : _), admitted M₁ S₁ φ ∧ Φ = pure f φ)
     {Φ} (hΦ : Φ ∈ Submodule.span ℂ 𝓖) (h0 : M₁.I om₁ Φ ≠ 0) : ∃ (f : SInf F _) (φ : _), admitted M₁ S₁ φ ∧ M₁.I om₁ (pure f φ) ≠ 0 := by
-  by_contra hn
-  push_neg at hn
+  by_contra! hn
   obtain ⟨𝓒, h1, h2⟩ := s₁.cls
   have : Φ ∈ 𝓒 ∧ M₁.I om₁ Φ = 0 := by
     clear h0

@@ -110,14 +110,14 @@ theorem maj_imag_eq {z : Frame X.Ψ r} (hz : z ∈ X.dom) (ξ : Fin r → E) (b 
       ((σ - 1) : ℂ) * (2 * hermC τ.1 X.Gm (X.colP z τ a) e / m) * γ j, ?_⟩
     rw [← hcol, hi, hPsum, Data.mulVec_lin]
     simp only [add_smul, Finset.sum_add_distrib, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true, mul_smul, ← Finset.smul_sum]
+      Finset.mem_univ, ite_true, mul_smul, ← Finset.smul_sum]
   have H1 : ∀ c, ∃ K : Fin X.p0 → ℂ, Matrix.mulVec B (X.colP z τ c) = ∑ a, K a • X.colP (X.flow ξ (fun τ => I * (b τ : ℂ)) z) τ a := by
     intro c
     refine ⟨fun j => (if j = c then 1 else 0) -
       ((1 - σ⁻¹) : ℂ) * (2 * hermC τ.1 X.Gm (X.colP z τ c) e / m) * γ j, ?_⟩
     rw [hii, hPsum, Data.mulVec_lin]
     simp only [hcol, sub_smul, Finset.sum_sub_distrib, ite_smul, one_smul, zero_smul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true, mul_smul, ← Finset.smul_sum]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true, mul_smul, ← Finset.smul_sum]
   have hmt := maj_transfer X hz hy τ B B' (boost_comp X τ hm hee hff hef hfe hσ)
     (boost_isom X τ hm hee hff hef hfe hσ) H1 H2 w
   exact hmt

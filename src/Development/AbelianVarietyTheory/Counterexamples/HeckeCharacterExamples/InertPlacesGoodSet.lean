@@ -121,13 +121,13 @@ theorem setCS_of_wordsAT (h11 : 11 ≤ D.nd.l i) {Wd : WordDat (nLet i w hw)} {d
   unfold RamifiedCoefficientChains.JumpWinS
   by_cases e : (a.val + d) % 2 = 0
   · have hu : ¬ Wd.up a = true := fun h => ht.1 h e
-    rw [if_neg hu] at hz'
-    rw [if_pos e]
+    rw [ite_eq_right hu] at hz'
+    rw [ite_eq_left e]
     simp only [Set.mem_union, Set.mem_Icc] at hz' ⊢
     push_cast
     omega
-  · rw [if_pos (ht.2 e)] at hz'
-    rw [if_neg e]
+  · rw [ite_eq_left (ht.2 e)] at hz'
+    rw [ite_eq_right e]
     simp only [Set.mem_union, Set.mem_Icc] at hz' ⊢
     push_cast
     omega

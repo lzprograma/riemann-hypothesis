@@ -107,15 +107,6 @@ private lemma re_natCast_div_pow_zero_add_one (m : ℕ) (z : ℂ) :
 
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology in
 open scoped Classical in
-private lemma re_lt_one_of_mem_zerosDisc {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} {c w : ℂ}
-    {R : ℝ} (hw : w ∈ _root_.GlobalTheory.Lin.zerosDisc χ c R) : w.re < 1 := by
-  simp only [_root_.GlobalTheory.Lin.zerosDisc, Set.mem_setOf_eq] at hw
-  obtain ⟨-, h1, h0⟩ := hw
-  by_contra h
-  exact LFunction_ne_zero_of_one_le_re χ h1 (not_lt.mp h) h0
-
-open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology in
-open scoped Classical in
 private lemma inv_re_nonneg_of_re_nonneg {z : ℂ} (h : 0 ≤ z.re) : 0 ≤ (z⁻¹).re := by
   rw [Complex.inv_re]
   exact div_nonneg h (Complex.normSq_nonneg _)
@@ -131,7 +122,7 @@ private lemma summable_vonMangoldt_mul_rpow_neg {σ : ℝ} (hσ : 1 < σ) :
   rw [LSeries.norm_term_eq]
   rcases eq_or_ne n 0 with rfl | hn
   · simp
-  · rw [if_neg hn, Complex.ofReal_re, Complex.norm_real, Real.norm_of_nonneg vonMangoldt_nonneg,
+  · rw [ite_eq_right hn, Complex.ofReal_re, Complex.norm_real, Real.norm_of_nonneg vonMangoldt_nonneg,
       Real.rpow_neg (Nat.cast_nonneg n), div_eq_mul_inv]
 
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology in
@@ -175,7 +166,6 @@ private lemma inv_re_ge_of_norm_sub_le {t r : ℝ} {w : ℂ} (hr : 0 < r) (hw : 
     have := mul_le_mul_of_nonneg_right hzre'.le (by positivity : (0 : ℝ) ≤ 4 * r); linarith
   linarith
 
-
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology in
 open scoped Classical in
 theorem _root_.GlobalTheory.SmallDiscZeros.few_zeros : ∃ C : ℝ, 0 < C ∧ ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q) (t r : ℝ), (χ ≠ 1 ∨ 2 ≤ |t|) → 0 < r → r ≤ 1 / 2 → (_root_.GlobalTheory.Lin.zerosDisc χ (1 + t * I) r).Finite ∧ (∑ᶠ w ∈ _root_.GlobalTheory.Lin.zerosDisc χ (1 + t * I) r, (_root_.GlobalTheory.Lin.ord χ w : ℝ)) ≤ C * (1 + r * Real.log (q * (|t| + 2))) := by
@@ -200,7 +190,7 @@ theorem _root_.GlobalTheory.SmallDiscZeros.few_zeros : ∃ C : ℝ, 0 < C ∧ �
   refine ⟨hTfin, ?_⟩
   set G : ℝ := ∑' n : ℕ, vonMangoldt n * (n : ℝ) ^ (-(1 + r)) with hG
   have hG_le : G ≤ 1 / r + C := by
-    rw [derSeries_one_eq_tsum_vonMangoldt, if_pos rfl] at hbound₁
+    rw [derSeries_one_eq_tsum_vonMangoldt, ite_eq_left rfl] at hbound₁
     have hP : (1 : ℂ) / (((1 + r : ℝ) : ℂ) + (0 : ℝ) * I - 1) ^ (0 + 1) = ((1 / r : ℝ) : ℂ) := by
       push_cast; ring
     rw [hP] at hbound₁
@@ -210,7 +200,7 @@ theorem _root_.GlobalTheory.SmallDiscZeros.few_zeros : ∃ C : ℝ, 0 < C ∧ �
       rw [finsum_mem_eq_finite_toFinset_sum _ hfin₁, Complex.re_sum]
       refine Finset.sum_nonneg fun w hw ↦ ?_
       rw [re_natCast_div_pow_zero_add_one]
-      have hw' := re_lt_one_of_mem_zerosDisc ((Set.Finite.mem_toFinset hfin₁).mp hw)
+      have hw' := GlobalTheory.NearZeroDeriv.re_lt_one ((Set.Finite.mem_toFinset hfin₁).mp hw)
       refine mul_nonneg (Nat.cast_nonneg _) (inv_re_nonneg_of_re_nonneg ?_)
       simp
       linarith
@@ -261,12 +251,12 @@ theorem _root_.GlobalTheory.SmallDiscZeros.few_zeros : ∃ C : ℝ, 0 < C ∧ �
         fun w hw _ ↦ ?_)
     · rw [re_natCast_div_pow_zero_add_one]
       have hw' := (Set.Finite.mem_toFinset hTfin).mp hw
-      refine mul_le_mul_of_nonneg_left (inv_re_ge_of_norm_sub_le hr ?_ (re_lt_one_of_mem_zerosDisc hw'))
+      refine mul_le_mul_of_nonneg_left (inv_re_ge_of_norm_sub_le hr ?_ (GlobalTheory.NearZeroDeriv.re_lt_one hw'))
         (Nat.cast_nonneg _)
       simp only [_root_.GlobalTheory.Lin.zerosDisc, Set.mem_setOf_eq] at hw'
       exact hw'.1
     · rw [re_natCast_div_pow_zero_add_one]
-      have hw' := re_lt_one_of_mem_zerosDisc ((Set.Finite.mem_toFinset hfin).mp hw)
+      have hw' := GlobalTheory.NearZeroDeriv.re_lt_one ((Set.Finite.mem_toFinset hfin).mp hw)
       refine mul_nonneg (Nat.cast_nonneg _) (inv_re_nonneg_of_re_nonneg ?_)
       simp
       linarith
@@ -299,7 +289,6 @@ open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology
 open scoped Classical
 
 namespace GlobalTheory.Lin
-
 
 open ArithmeticFunction.vonMangoldt (residueClass LFunctionResidueClassAux LFunctionResidueClassAux_real
   eqOn_LFunctionResidueClassAux residueClass_apply_zero continuousOn_LFunctionResidueClassAux
@@ -399,7 +388,6 @@ private lemma integrableOn_norm_sum_primesIoc_pow_div (a : ℕ → ℂ) (x y : �
   rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
   exact div_le_div₀ (by positivity)
     (pow_le_pow_left₀ (norm_nonneg _) (norm_sum_primesIoc_le_sum_range a x y t ht.2) k) hx ht.1
-
 
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology in
 open scoped Classical in
@@ -591,7 +579,6 @@ open scoped Classical
 
 namespace GlobalTheory.Lin.NonPrimeVonMangoldt
 
-
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology in
 open scoped Classical in
 private lemma log_div_pow_add_two_rpow_three_quarters_le (P : ℝ) (hP : 2 ≤ P) (k : ℕ) :
@@ -616,7 +603,6 @@ private lemma log_div_pow_add_two_rpow_three_quarters_le (P : ℝ) (hP : 2 ≤ P
     field_simp
   rw [hsplit, hrhs]
   exact div_le_div₀ (by positivity) hlog (mul_pos hA hC) (mul_le_mul_of_nonneg_left hCB hA.le)
-
 
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology in
 open scoped Classical in
@@ -661,7 +647,7 @@ theorem _root_.GlobalTheory.Lin.NonPrimeVonMangoldt.summable_nonPrime_vonMangold
     · exact vonMangoldt_nonneg
   · obtain ⟨⟨p, hp⟩, k⟩ := pk
     have hnp : ¬ (p ^ (k + 2)).Prime := Nat.Prime.not_prime_pow (by omega)
-    simp only [Function.comp_apply, hF, hg_def, if_neg hnp]
+    simp only [Function.comp_apply, hF, hg_def, ite_eq_right hnp]
     rw [vonMangoldt_apply_pow (by omega), vonMangoldt_apply_prime hp, Nat.cast_pow]
     exact log_div_pow_add_two_rpow_three_quarters_le _ (by exact_mod_cast hp.two_le) k
 
@@ -795,7 +781,6 @@ lemma pointwise (c : ℕ → ℂ) (hc : ∀ n, ‖c n‖ ≤ 1) {r δ : ℝ} (hr
   · simp [primesIoc]
   have hn' : (0 : ℝ) < n := by exact_mod_cast hn
   have hl : 0 ≤ Real.log n := Real.log_natCast_nonneg n
-  have hΛ : 0 ≤ Λ n := vonMangoldt_nonneg
   have key : ∀ w : ℝ, 0 ≤ w → ‖((Λ n / n * w : ℝ) : ℂ) * c n‖ ≤ Λ n / n * w := by
     intro w hw
     rw [norm_mul, Complex.norm_real, Real.norm_of_nonneg (by positivity)]
@@ -809,7 +794,7 @@ lemma pointwise (c : ℕ → ℂ) (hc : ∀ n, ‖c n‖ ≤ 1) {r δ : ℝ} (hr
     calc _ ≤ Λ n / n * (δ ^ k * Real.exp (-(r * Real.log n / 2))) := by gcongr
       _ = _ := by ring_nf
   by_cases hp : n.Prime
-  · simp only [hp, if_true, zero_div, mul_zero, add_zero]
+  · simp only [hp, ite_true, zero_div, mul_zero, add_zero]
     split_ifs with hm
     · rw [primesIoc, Finset.mem_filter, Finset.mem_Ioc, Nat.le_floor_iff (Real.exp_pos _).le] at hm
       rw [Real.log_exp]
@@ -843,7 +828,7 @@ lemma pointwise (c : ℕ → ℂ) (hc : ∀ n, ‖c n‖ ≤ 1) {r δ : ℝ} (hr
         linarith
   · have hm : n ∉ primesIoc (Real.exp (δ / 3 * K / r)) (Real.exp (32 / δ * K / r)) := by
       rw [primesIoc, Finset.mem_filter]; exact fun h => hp h.2
-    simp only [hp, hm, if_false, sub_zero]
+    simp only [hp, hm, ite_false, sub_zero]
     refine (key _ hpw).trans (le_add_of_nonneg_of_le (by positivity) ?_)
     have e : (3 / 4 : ℝ) = 1 + (-1 / 4) := by norm_num
     rw [e, rpow_form n hn]
@@ -877,11 +862,11 @@ lemma series_le (c : ℕ → ℂ) (hc : ∀ n, ‖c n‖ ≤ 1) {r δ : ℝ} (hr
     (f := fun n : ℕ => if n ∈ primesIoc (Real.exp (δ / 3 * K / r)) (Real.exp (32 / δ * K / r)) then
         (Real.log n : ℂ) * c n / n *
           ((pw k (r * Real.log n) - pw k (r * Real.log (Real.exp (32 / δ * K / r))) : ℝ) : ℂ)
-        else 0) (fun n hn => if_neg hn)
+        else 0) (fun n hn => ite_eq_right hn)
   have h := norm_tsum_le_of_close hP.summable ((hs.mul_left (δ ^ k)).add (hq.mul_left ((4 * r) ^ k)))
     (pointwise c hc hr hδ K k h1 h2)
   rw [hP.tsum_eq, (hs.mul_left _).tsum_add (hq.mul_left _), tsum_mul_left, tsum_mul_left,
-    Finset.sum_congr rfl (fun n hn => if_pos hn)] at h
+    Finset.sum_congr rfl (fun n hn => ite_eq_left hn)] at h
   refine le_of_eq_of_le ?_ h
   simp_rw [← term_eq]
   rw [tsum_mul_left, norm_mul, norm_pow, Complex.norm_real, Real.norm_of_nonneg hr.le, derSeries]
@@ -923,7 +908,6 @@ theorem large_mean_of_large_derivative : ∀ A : ℝ, 1 ≤ A → ∃ a b C r₀
     have : 0 ≤ Λ n := vonMangoldt_nonneg
     positivity
   have hA0 : 0 < A := by linarith
-  have hC0 : 0 < C := by linarith
   set η : ℝ := 1 / (16 * C * A) with hη
   have hη0 : 0 < η := by positivity
   have hη1 : η ≤ 1 := by
@@ -999,7 +983,6 @@ theorem large_mean_of_large_derivative : ∀ A : ℝ, 1 ≤ A → ∃ a b C r₀
         gcongr
         have : 0 ≤ δ / 3 * K / r := by positivity
         linarith
-  have hK0 : (0 : ℝ) < K := by linarith
   have e6 : A ^ (2 * (m + 2)) * (4 * (32 / δ * K)) ≤
       Real.exp ((6 * Real.log A + 4 * (32 / δ)) * K) := by
     have h3 : A ^ (2 * (m + 2)) ≤ A ^ (6 * K) := pow_le_pow_right₀ hA (by omega)
@@ -1125,7 +1108,6 @@ namespace GlobalTheory.Lin.LogFree
 theorem principal_height : ∃ η : ℝ, 0 < η ∧ ∀ (q : ℕ) [NeZero q] (s : ℂ), 1 - η ≤ s.re → s.re < 1 →
     LFunction (1 : DirichletCharacter ℂ q) s = 0 → 3 ≤ |s.im| := by
   obtain ⟨c, hc, H⟩ := GlobalTheory.ZeroFreePrincipal.zero_free
-  have h5 : 0 < Real.log 5 := Real.log_pos (by norm_num)
   refine ⟨min (1 / 2) (c / Real.log 5), by positivity, fun q _ s h1 h2 h0 => ?_⟩
   have hs : s ≠ 1 := by rintro rfl; simp at h2
   have hre : 0 < s.re := by have := min_le_left (1 / 2 : ℝ) (c / Real.log 5); linarith
@@ -1417,7 +1399,6 @@ theorem count_param : ∃ a D C C' r₀ K₀ η : ℝ, 0 < a ∧ 0 < D ∧ 0 < C
   rw [hMdef, Real.log_exp] at hmean
   have h6 := hsum.trans (mul_le_mul_of_nonneg_left hmean (by positivity))
   generalize (∑ χ : DirichletCharacter ℂ q, ∑ᶠ ρ ∈ zerosBox χ σ T, (ord χ ρ : ℝ)) = S at h6 ⊢
-  have he := Real.exp_pos (C4 * K)
   have h7 := mul_le_mul_of_nonneg_left h6 (show 0 ≤ Real.exp (C4 * K) * r ^ 2 by positivity)
   rw [Real.exp_neg] at h7
   calc S = Real.exp (C4 * K) * r ^ 2 * ((Real.exp (C4 * K))⁻¹ / r ^ 3 * (2 * (r / 2)) * S) := by
@@ -1563,11 +1544,6 @@ theorem mem_disc_of_nonneg {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) 
   · rintro rfl
     simp at h2
 
-theorem mem_disc {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {T : ℝ} {ρ : ℂ}
-    (h : ρ ∈ zerosBox χ (1 / 2) T) :
-    ⌊ρ.im⌋ ∈ Finset.Icc (-⌈T⌉) ⌈T⌉ ∧ ρ ∈ zerosDisc χ (2 + ((⌊ρ.im⌋ : ℝ) : ℂ) * I) 3 :=
-  mem_disc_of_nonneg χ (by norm_num : (0 : ℝ) ≤ 1 / 2) h
-
 /-- The weighted zero count retains logarithmic dependence on the level,
 including zeros on the imaginary axis when `σ = 0`. -/
 theorem total_count_log : ∃ C : ℝ, 0 < C ∧ ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q) (T σ : ℝ),
@@ -1662,7 +1638,7 @@ theorem layers {ι : Type*} (s : Finset ι) (w δ : ι → ℝ) (hw : ∀ i, 0 �
         rw [Finset.mem_range, Nat.floor_lt h0]
         have := mul_le_mul_of_nonneg_left (by linarith : δ i - η ≤ e) hL.le; linarith
       have := Finset.single_le_sum hnn hm
-      rw [if_pos] at this
+      rw [ite_eq_left] at this
       · have h3 : Real.exp (-(L * δ i)) ≤ Real.exp (-(L * η) - ⌊L * (δ i - η)⌋₊) :=
           Real.exp_le_exp.2 (by linarith)
         have := mul_le_mul_of_nonneg_left h3 hwi; linarith

@@ -43,8 +43,4 @@ def FlagModelJoinLeftAlt.Statement : Prop :=
             (Fin.append φ.g fun l => rename (liftVar (Sum.elim F.ι' ι₂)) (g l))
             (rename (Fin.castAdd r) G * rename (Fin.natAdd N) Q)
 
-namespace FlagModelJoinLeftAlt
-
-end FlagModelJoinLeftAlt
-
 end GroundTheory.Heights₂.Heights.NumbersDVR

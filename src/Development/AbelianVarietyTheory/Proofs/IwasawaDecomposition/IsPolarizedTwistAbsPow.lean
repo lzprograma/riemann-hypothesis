@@ -141,8 +141,6 @@ section Local
 
 open GlobalTheory.CuspRep GlobalTheory.CuspRep.ParLaws GlobalTheory.WeilDeligne GlobalTheory.LocLanglands Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2.Host
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {a : ℕ}
 
@@ -383,11 +381,5 @@ theorem readsCusp : haveI := host_isCMField D.host; ReadsCusp D.naut fun a π =>
 end True
 
 end GlobalTheory.HeightCounting.Blocks
-
-namespace GlobalTheory.HeightCounting
-
-open Formalism.BasicNotions GlobalTheory.CuspRep Blocks
-
-end GlobalTheory.HeightCounting
 
 end

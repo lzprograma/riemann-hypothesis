@@ -7,50 +7,7 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeadingTermI
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LieDecompositionLocal
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightDerivativeRulePsi
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -64,7 +21,7 @@ namespace Formalism.FourierDecayAlt.P.PBG
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.P.CapelliWordSumExpansion Formalism.FourierDecayAlt.P.LieDecompositionLocal
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section poly
 
@@ -90,16 +47,16 @@ theorem polyRepN_mono {d d' : ℕ} (hdd : d ≤ d') {f : ℂ → E} {top : E} (h
   · beta_reduce
     by_cases e : d = d'
     · subst e; simp [hc]
-    · rw [if_neg (by omega), if_neg e]
+    · rw [ite_eq_right (by omega), ite_eq_right e]
   · beta_reduce
     rw [hf u]
     symm
     rw [← Finset.sum_subset (fun x hx => by simp at hx ⊢; omega : range (d + 1) ⊆ range (d' + 1))]
     · apply Finset.sum_congr rfl
       intro l hl
-      rw [if_pos (by simp at hl; omega)]
+      rw [ite_eq_left (by simp at hl; omega)]
     · intro l _ hl
-      rw [if_neg (by simp at hl; omega), smul_zero]
+      rw [ite_eq_right (by simp at hl; omega), smul_zero]
 
 theorem polyRepN_shift {d : ℕ} {f : ℂ → E} {top : E} (h : PolyRepN d f top) (a : ℂ) :
     PolyRepN d (fun Y => f (Y + a)) top := by
@@ -225,7 +182,7 @@ theorem top_agree (u : ℂ) (a b : Fin (2 * r + k + 1)) (h : Wsm (E := E) U₀) 
     · simp [Module.algebraMap_end_apply]
     · simp
   · show (if g ∈ U₀ ∧ g ∈ GV k r then _ else _) = _
-    rw [if_pos ⟨hg, hgG⟩]
+    rw [ite_eq_left ⟨hg, hgG⟩]
 
 include hU₀ in
 theorem top_congr' (u : ℂ) (a b : Fin (2 * r + k + 1)) {h₁ h₂ : Mat k r → E}
@@ -394,8 +351,8 @@ theorem vLet_poly {j : ℕ} (hj : j ≤ r) (z z' : Fin (2 * r + k + 1) → ℂ) 
   set Gw : Wsm (E := E) U := ⟨G, hW⟩ with hGw
   by_cases h10 : e = 1 ∧ j = 0
   · refine ⟨fun _ => 0, ?_, fun Y => ?_⟩
-    · rw [if_neg (by rw [h10.1]; decide)]
-    · simp [D.vLet, if_pos h10]
+    · rw [ite_eq_right (by rw [h10.1]; decide)]
+    · simp [D.vLet, ite_eq_left h10]
   have hej : (e : ℕ) ≤ j := by
     rcases Fin.exists_fin_two.1 ⟨e, rfl⟩ with h | h <;> subst h <;> simp <;> omega
   have htop : ∀ (x : E), (if j - (e : ℕ) = j then x else 0) = (if e = 0 then x else 0) := by
@@ -403,7 +360,7 @@ theorem vLet_poly {j : ℕ} (hj : j ≤ r) (z z' : Fin (2 * r + k + 1) → ℂ) 
     rcases Fin.exists_fin_two.1 ⟨e, rfl⟩ with h | h <;> subst h
     · simp
     · have : j ≠ 0 := fun h0 => h10 ⟨rfl, h0⟩
-      rw [if_neg (by simp; omega), if_neg (by decide)]
+      rw [ite_eq_right (by simp; omega), ite_eq_right (by decide)]
   cases b
   ·
     have P := polyRepN_mono (Nat.sub_le j e) (polyRepN_smul (polyRepN_shift
@@ -419,7 +376,7 @@ theorem vLet_poly {j : ℕ} (hj : j ≤ r) (z z' : Fin (2 * r + k + 1) → ℂ) 
         rw [det_lower_minor_eq_conj z z' g₀ hg₀, smul_smul, e2, inv_mul_cancel₀ ((map_ne_zero _).2 hD), one_smul]
       · rfl
     · simp only [D.vLet]
-      rw [if_neg h10, if_neg (by simp)]
+      rw [ite_eq_right h10, ite_eq_right (by simp)]
       have := hf (Y : ℂ)
       simp only at this
       rw [← sub_eq_add_neg] at this
@@ -438,7 +395,7 @@ theorem vLet_poly {j : ℕ} (hj : j ≤ r) (z z' : Fin (2 * r + k + 1) → ℂ) 
         rw [det_upper_minor_eq_minor z z' g₀, smul_smul, e2, inv_mul_cancel₀ hD, one_smul]
       · rfl
     · simp only [D.vLet]
-      rw [if_neg h10, if_pos (by simp)]
+      rw [ite_eq_right h10, ite_eq_left (by simp)]
       have := hf (Y : ℂ)
       simp only at this
       rw [this, Fin.sum_univ_eq_sum_range (fun l => ((Y : ℂ) ^ l) • c l)]
@@ -513,7 +470,7 @@ theorem vLet_mem (l : C.Letter) (e : Fin 2) (h : Wsm (E := E) (Sd z z' j hj)) :
   intro g₀ hg hgG
   have hU₀ := isOpen_Sd z z' j hj
   by_cases h10 : e = 1 ∧ j = 0
-  · have e0 : D.vLet k r z z' j hj l e h.1 = fun _ => 0 := by funext g; simp [D.vLet, if_pos h10]
+  · have e0 : D.vLet k r z z' j hj l e h.1 = fun _ => 0 := by funext g; simp [D.vLet, ite_eq_left h10]
     rw [e0]; exact loc_zero' g₀
   have hm : j - (e : ℕ) ≤ r := by omega
   rcases l with ⟨b, y⟩
@@ -536,23 +493,23 @@ theorem vLet_mem (l : C.Letter) (e : Fin 2) (h : Wsm (E := E) (Sd z z' j hj)) :
       apply loc_sum
       intro B _
       by_cases hB : StrictMono (fun l => C3.keyS k r (B l))
-      · simp only [if_pos hB]
+      · simp only [ite_eq_left hB]
         exact loc_smulFun _ (hψ B) ((Q B).2 g₀ hg hgG)
-      · simp only [if_neg hB]
+      · simp only [ite_eq_right hB]
         exact loc_zero' g₀
     have hT := loc_invsmul (fun g => starRingEnd ℂ (Dmin k r z z' g ⟨j, by omega⟩))
       ((contDiff_starC).comp (contDiff_Dmin z z' _)) ((map_ne_zero _).2 hg) hS
     refine loc_of_eq hT hU₀ hg (fun x hx hxG => ?_)
     show D.vLet k r z z' j hj (false, y) e h.1 x = _
     unfold D.vLet
-    rw [if_neg h10, if_neg Bool.false_ne_true]
+    rw [ite_eq_right h10, ite_eq_right Bool.false_ne_true]
     congr 1
     unfold C3.AAvop
     apply Finset.sum_congr rfl
     intro B _
     by_cases hB : StrictMono (fun l => C3.keyS k r (B l))
-    · rw [if_pos hB, if_pos hB, qminor_agree _ hU₀ _ _ _ h x hx hxG, inv_GV hxG]
-    · rw [if_neg hB, if_neg hB]
+    · rw [ite_eq_left hB, ite_eq_left hB, qminor_agree _ hU₀ _ _ _ h x hx hxG, inv_GV hxG]
+    · rw [ite_eq_right hB, ite_eq_right hB]
   · let Q : (Fin (j - (e : ℕ)) → Fin (2 * r + k + 1)) → Wsm (E := E) (Sd z z' j hj) := fun c =>
       (qminor (fun a b => EHt (E := E) (Sd z z' j hj) hU₀ a b) (C3.xR k r (j - (e : ℕ)) hm) c
         ((y : ℂ) + ((2 * r + k : ℕ) : ℂ) / 2)) h
@@ -571,23 +528,23 @@ theorem vLet_mem (l : C.Letter) (e : Fin 2) (h : Wsm (E := E) (Sd z z' j hj)) :
       apply loc_sum
       intro c _
       by_cases hc : StrictMono c
-      · simp only [if_pos hc]
+      · simp only [ite_eq_left hc]
         exact loc_smulFun _ (hψ c) ((Q c).2 g₀ hg hgG)
-      · simp only [if_neg hc]
+      · simp only [ite_eq_right hc]
         exact loc_zero' g₀
     have hg' : Dmin k r z z' g₀ ⟨j, by omega⟩ ≠ 0 := hg
     have hT := loc_invsmul (fun g => Dmin k r z z' g ⟨j, by omega⟩) (contDiff_Dmin z z' ⟨j, by omega⟩) hg' hS
     refine loc_of_eq hT hU₀ hg (fun x hx hxG => ?_)
     show D.vLet k r z z' j hj (true, y) e h.1 x = _
     unfold D.vLet
-    rw [if_neg h10, if_pos rfl]
+    rw [ite_eq_right h10, ite_eq_left rfl]
     congr 1
     unfold C3.AAop
     apply Finset.sum_congr rfl
     intro c _
     by_cases hc : StrictMono c
-    · rw [if_pos hc, if_pos hc, qminor_agree _ hU₀ _ _ _ h x hx hxG]
-    · rw [if_neg hc, if_neg hc]
+    · rw [ite_eq_left hc, ite_eq_left hc, qminor_agree _ hU₀ _ _ _ h x hx hxG]
+    · rw [ite_eq_right hc, ite_eq_right hc]
 
 theorem uwG_mem {F : B.Mat k r → E} (hF : B.CkOn ⊤ (B.GV k r) F) :
     ∀ (w : List C.Letter) (e : Wd.Ix (Fin w.length)),

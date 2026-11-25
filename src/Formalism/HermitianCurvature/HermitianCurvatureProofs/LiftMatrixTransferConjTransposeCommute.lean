@@ -4,52 +4,8 @@ public import Formalism.HermitianCurvature.StatementWd
 public import Mathlib.CategoryTheory.Category.Basic
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.EntryCommuteTransposedRMatrix
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ScalarCommuteTransposedRMatrixEntry
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -275,9 +231,9 @@ theorem io_comm_vlet (σ : Site A) (x : A) (h : ∀ y ∈ ops σ, Commute y x) (
   have hφ : ∀ (k : K) (r : A), Commute ((RingHom.id A) (algebraMap K A k)) r :=
     fun k r => Algebra.commutes k r
   by_cases hl : l.plus = true
-  · rw [if_pos hl]
+  · rw [ite_eq_left hl]
     exact (comm_Ts (RingHom.id A) hφ σ x h l.pt i j).symm
-  · rw [if_neg hl]
+  · rw [ite_eq_right hl]
     exact (comm_Ts_star (RingHom.id A) hφ σ x h l.pt i j).symm
 
 theorem io_comm_bT (σ : Site A) (x : A) (h : ∀ y ∈ ops σ, Commute y x) (w : List (Letter K S)) :
@@ -425,18 +381,8 @@ variable {K A S : Type} [Field K] [StarRing K] [Ring A] [StarRing A] [Algebra K 
 
 theorem eU_apply (a : S) (i j : Fin 2) (x y : Ix S) :
     (eU a i j : SlopeTestRemainingChoices S A) x y = if x a = i ∧ y = Function.update x a j then 1 else 0 := by
-  simp only [eU, Matrix.of_apply]
-  congr 1
-  apply propext
-  constructor
-  · rintro ⟨h1, h2, h3⟩
-    refine ⟨h1, funext fun b => ?_⟩
-    by_cases hb : b = a
-    · rw [hb]
-      simp [h2]
-    · simp [hb, h3 b hb]
-  · rintro ⟨h1, rfl⟩
-    exact ⟨h1, by simp, fun b hb => by simp [hb]⟩
+  intros
+  apply _root_.Formalism.FourierDecayAlt.P.Wd7.eU_apply <;> assumption
 
 theorem eU_mul_apply (a : S) (i j : Fin 2) (B : SlopeTestRemainingChoices S A) (x y : Ix S) :
     ((eU a i j : SlopeTestRemainingChoices S A) * B) x y = if x a = i then B (Function.update x a j) y else 0 := by
@@ -484,9 +430,9 @@ private theorem ent_comm_lemma (σ : Site A) (l : Letter K S) (x : A)
   have hφ : ∀ (k : K) (r : A), Commute ((RingHom.id A) (algebraMap K A k)) r :=
     fun k r => Algebra.commutes k r
   by_cases hl : l.plus = true
-  · rw [if_pos hl]
+  · rw [ite_eq_left hl]
     exact comm_Ts (RingHom.id A) hφ σ x h l.pt i j
-  · rw [if_neg hl]
+  · rw [ite_eq_right hl]
     exact comm_Ts_star (RingHom.id A) hφ σ x h l.pt i j
 
 private theorem vlet_comm_lemma {σ τ : Site A} (h : SitesCommute σ τ) (l' l : Letter K S)
@@ -571,7 +517,7 @@ theorem word_product_formula_general (sites : List (Site A)) (w : List (Letter K
         (w'.map fun l' => (sites.map (lm l')).prod (z l'.intersection_update_fsHerm_neg_one) 0).prod := fun j => by
       congr 1
       refine List.map_congr_left fun l' hl' => ?_
-      rw [Function.update_apply, if_neg (hne l' hl')]
+      rw [Function.update_apply, ite_eq_right (hne l' hl')]
     have hc1 : ¬ ∀ c, c ∉ w'.map Letter.intersection_update_fsHerm_neg_one → Function.update z l.intersection_update_fsHerm_neg_one 1 c = 0 := fun h => by
       have h1 := h l.intersection_update_fsHerm_neg_one hnd.1
       simp at h1
@@ -581,32 +527,32 @@ theorem word_product_formula_general (sites : List (Site A)) (w : List (Letter K
       · intro h c hc
         simp only [List.map_cons, List.mem_cons, not_or] at hc
         have h1 := h c hc.2
-        rwa [Function.update_apply, if_neg hc.1] at h1
+        rwa [Function.update_apply, ite_eq_right hc.1] at h1
       · intro h c hc
         rw [Function.update_apply]
         by_cases hca : c = l.intersection_update_fsHerm_neg_one
-        · rw [if_pos hca]
-        · rw [if_neg hca]
+        · rw [ite_eq_left hca]
+        · rw [ite_eq_right hca]
           exact h c (by simp only [List.map_cons, List.mem_cons, not_or]; exact ⟨hca, hc⟩)
-    rw [hexp, Fin.sum_univ_two, ih', ih', if_neg hc1, mul_zero, add_zero, hval]
+    rw [hexp, Fin.sum_univ_two, ih', ih', ite_eq_right hc1, mul_zero, add_zero, hval]
     by_cases hP : ∀ c, c ∉ (l :: w').map Letter.intersection_update_fsHerm_neg_one → z c = 0
-    · rw [if_pos (hc0.mpr hP), if_pos hP, List.map_cons, List.prod_cons]
-    · rw [if_neg (fun h => hP (hc0.mp h)), if_neg hP, mul_zero]
+    · rw [ite_eq_left (hc0.mpr hP), ite_eq_left hP, List.map_cons, List.prod_cons]
+    · rw [ite_eq_right (fun h => hP (hc0.mp h)), ite_eq_right hP, mul_zero]
 
 theorem uwProduct : UwProduct := by
   intro K A S _ _ _ _ _ _ _ _ QQ sites w hOK hw z
   rw [word_product_formula_general sites w hOK.2 hw.1 z]
   by_cases hc : ∀ c, c ∉ w.map Letter.intersection_update_fsHerm_neg_one → z c = 0
-  · rw [if_pos hc, if_pos hc]
+  · rw [ite_eq_left hc, ite_eq_left hc]
     congr 1
     refine List.map_congr_left fun l _ => ?_
     by_cases h : l.plus = true
-    · have e : lm l = fun σ : Site A => Ts σ l.pt := funext fun σ => if_pos h
-      rw [e, if_pos h]
+    · have e : lm l = fun σ : Site A => Ts σ l.pt := funext fun σ => ite_eq_left h
+      rw [e, ite_eq_left h]
       rfl
-    · have e : lm l = fun σ : Site A => (Ts σ l.pt).map star := funext fun σ => if_neg h
-      rw [e, if_neg h]
-  · rw [if_neg hc, if_neg hc]
+    · have e : lm l = fun σ : Site A => (Ts σ l.pt).map star := funext fun σ => ite_eq_right h
+      rw [e, ite_eq_right h]
+  · rw [ite_eq_right hc, ite_eq_right hc]
 
 end Product
 

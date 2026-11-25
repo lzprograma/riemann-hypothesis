@@ -4,52 +4,7 @@ public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.Digi
 public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.CgeZeroIffIntegral
 public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.SlopeOfBinomCombGen
 public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.AddMemSupportOfMemSupportCoefOut
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.DdivOnLetterMonomial, Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.SumOnLetterApplyInl
@@ -87,11 +42,10 @@ theorem ddiv_monomial' (M α : σ →₀ ℕ) (c : K) :
     ddiv M (monomial α c) = monomial (α - M) (c * bin M α) := by
   rw [ddiv_monomial]
   by_cases h : M ≤ α
-  · rw [if_pos h, finsupp_prod_choose_eq_bin_of_le M α h]
-  · rw [if_neg h]
+  · rw [ite_eq_left h, finsupp_prod_choose_eq_bin_of_le M α h]
+  · rw [ite_eq_right h]
     obtain ⟨x, hx⟩ : ∃ x, α x < M x := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       apply h
       exact Finsupp.le_def.2 hc
     have h0 : (bin M α : K) = 0 := by
@@ -142,9 +96,9 @@ theorem onLetter_apply (i : L) (β : Fin r →₀ ℕ) (j : L) (a : Fin r) :
   unfold onLetter
   by_cases h : j = i
   · subst h
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     exact Finsupp.mapDomain_apply_of_injective (fun x y hxy => by simpa using hxy) β a
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     have hne : (j, a) ∉ Set.range (fun b : Fin r => (i, b)) := by
       rintro ⟨b, hb⟩
       exact h (congrArg Prod.fst hb).symm
@@ -223,9 +177,9 @@ theorem der' (hDER : DER K v p) (hD : DVRHyp v p) (r g : ℕ) (M : Fin r →₀ 
     rw [Fintype.sum_sigma, Finset.sum_eq_single ρf]
     · refine Finset.sum_congr rfl fun t _ => ?_
       rw [hterm t]
-      exact if_pos (funext hρf)
+      exact ite_eq_left (funext hρf)
     · intro b _ hb
-      refine Finset.sum_eq_zero fun t _ => if_neg ?_
+      refine Finset.sum_eq_zero fun t _ => ite_eq_right ?_
       intro h
       apply hb
       funext a
@@ -258,10 +212,10 @@ theorem bin_onLetter (i : L) (M : Fin r →₀ ℕ) (α : L × Fin r →₀ ℕ)
   unfold bin
   rw [Fintype.prod_prod_type, Finset.prod_eq_single i]
   · refine Finset.prod_congr rfl fun a _ => ?_
-    rw [onLetter_apply, if_pos rfl, letE_apply]
+    rw [onLetter_apply, ite_eq_left rfl, letE_apply]
   · intro j _ hj
     refine Finset.prod_eq_one fun a _ => ?_
-    rw [onLetter_apply, if_neg hj]
+    rw [onLetter_apply, ite_eq_right hj]
     simp
   · intro h
     exact absurd (Finset.mem_univ _) h
@@ -324,8 +278,8 @@ theorem appMon_eq (i : L) (P : ℕ) (cls : I → Fin r → ℕ) (cf : I → K) (
   rw [map_sum, appMon]
   refine Finset.sum_congr rfl fun s _ => ?_
   by_cases h : cls s = (fun a => α (i, a) % P)
-  · rw [if_pos h, if_pos (show cls s = fun a => letE α i a % P from h), putL_monomial]
-  · rw [if_neg h, if_neg (show ¬ cls s = fun a => letE α i a % P from h), map_zero]
+  · rw [ite_eq_left h, ite_eq_left (show cls s = fun a => letE α i a % P from h), putL_monomial]
+  · rw [ite_eq_right h, ite_eq_right (show ¬ cls s = fun a => letE α i a % P from h), map_zero]
 
 theorem cge_appMon (v : AddValuation K (WithTop ℚ)) (i : L) (P : ℕ) (cls : I → Fin r → ℕ) (cf : I → K)
     (ρ' δ κ : I → (Fin r →₀ ℕ)) (hcf : ∀ s, 0 ≤ v (cf s)) (α : L × Fin r →₀ ℕ) :
@@ -334,12 +288,12 @@ theorem cge_appMon (v : AddValuation K (WithTop ℚ)) (i : L) (P : ℕ) (cls : I
   apply cge_sum v
   intro s _
   by_cases h : cls s = (fun a => α (i, a) % P)
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     refine cge_monomial v _ ?_
     have h2 := vge_mul v ((vge_zero_iff v (cf s)).2 (hcf s))
       (vge_bin v (κ s) (divE P (letE α i)))
     rwa [add_zero] at h2
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     exact cge_zero v 0
 
 end App
@@ -421,8 +375,8 @@ theorem digitPart_dg (ρ : D.Tau → Fin D.r → ℕ) (f : D.EA → K) (G : MvPo
   refine MvPolynomial.induction_on' G (fun α c => ?_) (fun F₁ F₂ h₁ h₂ => ?_)
   · rw [Formalism.MainNotions.PlaneGram.dg_monomial, digitPart_monomial, digitPart_monomial]
     by_cases h : D.InClass p ρ α
-    · rw [if_pos h, if_pos h, Formalism.MainNotions.PlaneGram.dg_monomial, D.emb_liftE p ρ α h]
-    · rw [if_neg h, if_neg h, map_zero]
+    · rw [ite_eq_left h, ite_eq_left h, Formalism.MainNotions.PlaneGram.dg_monomial, D.emb_liftE p ρ α h]
+    · rw [ite_eq_right h, ite_eq_right h, map_zero]
   · rw [map_add (f := _), digitPart_add, digitPart_add, map_add (f := _), h₁, h₂]
 
 theorem cge_digitPart (v : AddValuation K (WithTop ℚ)) (ρ : D.Tau → Fin D.r → ℕ) {a : ℝ}
@@ -431,9 +385,9 @@ theorem cge_digitPart (v : AddValuation K (WithTop ℚ)) (ρ : D.Tau → Fin D.r
   apply Formalism.MainNotions.PlaneGram.cge_sum v
   intro α _
   by_cases h : D.InClass p ρ α
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     exact Formalism.MainNotions.PlaneGram.cge_monomial v _ (hG α)
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     exact Formalism.MainNotions.PlaneGram.cge_zero v a
 
 variable (t : D.Tau)
@@ -455,18 +409,18 @@ theorem inClass_new (ρ'' : D.Tau → Fin D.r → ℕ) (α : D.EA) (ρ1 x : Fin 
   · intro h
     refine ⟨fun a => ?_, fun t' ht' a => ?_⟩
     · have h1 := h t a
-      rw [hval, if_pos rfl, Nat.add_mul_mod_self_left] at h1
+      rw [hval, ite_eq_left rfl, Nat.add_mul_mod_self_left] at h1
       exact h1
     · have h1 := h t' a
-      rw [hval, if_neg ht'] at h1
+      rw [hval, ite_eq_right ht'] at h1
       exact h1
   · rintro ⟨h1, h2⟩ t' a
     rw [hval]
     by_cases h : t' = t
     · subst h
-      rw [if_pos rfl, Nat.add_mul_mod_self_left]
+      rw [ite_eq_left rfl, Nat.add_mul_mod_self_left]
       exact h1 a
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       exact h2 t' h a
 
 theorem inClass_update (ρ'' : D.Tau → Fin D.r → ℕ) (α : D.EA) (cl : Fin D.r → ℕ) :
@@ -477,17 +431,17 @@ theorem inClass_update (ρ'' : D.Tau → Fin D.r → ℕ) (α : D.EA) (cl : Fin 
   · intro h
     refine ⟨funext fun a => ?_, fun t' ht' a => ?_⟩
     · have h1 := h t a
-      rw [Function.update_apply, if_pos rfl] at h1
+      rw [Function.update_apply, ite_eq_left rfl] at h1
       exact h1.symm
     · have h1 := h t' a
-      rw [Function.update_apply, if_neg ht'] at h1
+      rw [Function.update_apply, ite_eq_right ht'] at h1
       exact h1
   · rintro ⟨h1, h2⟩ t' a
     rw [Function.update_apply]
     by_cases h : t' = t
     · subst h
-      rw [if_pos rfl, h1]
-    · rw [if_neg h]
+      rw [ite_eq_left rfl, h1]
+    · rw [ite_eq_right h]
       exact h2 t' h a
 
 private theorem liftE_apply_eq_sum_elim (α : D.EA) (x : D.ML × Fin D.r) :
@@ -545,22 +499,22 @@ private theorem digitPart_approx_term_lemma_4 (hP : 0 < D.P p t) (ρ'' : D.Tau �
     rw [opS_apply, Formalism.MainNotions.PlaneGram.ddiv_monomial', Formalism.MainNotions.PlaneGram.bin_onLetter, monomial_mul, smul_monomial, smul_eq_mul,
       one_mul, mul_left_comm]
   by_cases h2 : (fun a => ρ0 a % D.P p t) = ρ'' t
-  · rw [if_pos h2]
+  · rw [ite_eq_left h2]
     by_cases h1 : cl = (fun a => α (Sum.inr t, a) % D.P p t)
-    · rw [if_pos h1, digitPart_monomial, digitPart_monomial]
+    · rw [ite_eq_left h1, digitPart_monomial, digitPart_monomial]
       by_cases hQ : ∀ t', t' ≠ t → ∀ a, α (Sum.inr t', a) % D.P p t' = ρ'' t' a
-      · rw [if_pos ((D.inClass_new p t ρ'' α ρ0 _).2 ⟨fun a => congrFun h2 a, hQ⟩),
-          if_pos ((D.inClass_update p t ρ'' α cl).2 ⟨h1, hQ⟩), smul_monomial, smul_eq_mul, hsh,
+      · rw [ite_eq_left ((D.inClass_new p t ρ'' α ρ0 _).2 ⟨fun a => congrFun h2 a, hQ⟩),
+          ite_eq_left ((D.inClass_update p t ρ'' α cl).2 ⟨h1, hQ⟩), smul_monomial, smul_eq_mul, hsh,
           D.liftE_new p t hP, letE_liftE_mw]
-      · rw [if_neg (fun h => hQ ((D.inClass_new p t ρ'' α ρ0 _).1 h).2),
-          if_neg (fun h => hQ ((D.inClass_update p t ρ'' α cl).1 h).2), smul_zero, map_zero]
-    · rw [if_neg h1, digitPart_zero, smul_zero, digitPart_monomial,
-        if_neg (fun h => h1 ((D.inClass_update p t ρ'' α cl).1 h).1), map_zero]
-  · rw [if_neg h2]
+      · rw [ite_eq_right (fun h => hQ ((D.inClass_new p t ρ'' α ρ0 _).1 h).2),
+          ite_eq_right (fun h => hQ ((D.inClass_update p t ρ'' α cl).1 h).2), smul_zero, map_zero]
+    · rw [ite_eq_right h1, digitPart_zero, smul_zero, digitPart_monomial,
+        ite_eq_right (fun h => h1 ((D.inClass_update p t ρ'' α cl).1 h).1), map_zero]
+  · rw [ite_eq_right h2]
     by_cases h1 : cl = (fun a => α (Sum.inr t, a) % D.P p t)
-    · rw [if_pos h1, digitPart_monomial,
-        if_neg (fun h => h2 (funext ((D.inClass_new p t ρ'' α ρ0 _).1 h).1)), smul_zero]
-    · rw [if_neg h1, digitPart_zero, smul_zero]
+    · rw [ite_eq_left h1, digitPart_monomial,
+        ite_eq_right (fun h => h2 (funext ((D.inClass_new p t ρ'' α ρ0 _).1 h).1)), smul_zero]
+    · rw [ite_eq_right h1, digitPart_zero, smul_zero]
 
 theorem digitPart_appL {I : Type} [Fintype I] (hP : 0 < D.P p t) (ρ'' : D.Tau → Fin D.r → ℕ)
     (cls : I → Fin D.r → ℕ) (cf : I → K) (ρ' δ κ : I → (Fin D.r →₀ ℕ))
@@ -576,8 +530,8 @@ theorem digitPart_appL {I : Type} [Fintype I] (hP : 0 < D.P p t) (ρ'' : D.Tau �
   · rw [map_add (f := _), digitPart_add, h₁, h₂, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun s _ => ?_
     by_cases h : (fun a => ρ' s a % D.P p t) = ρ'' t
-    · rw [if_pos h, if_pos h, if_pos h, digitPart_add, map_add (f := _)]
-    · rw [if_neg h, if_neg h, if_neg h, add_zero]
+    · rw [ite_eq_left h, ite_eq_left h, ite_eq_left h, digitPart_add, map_add (f := _)]
+    · rw [ite_eq_right h, ite_eq_right h, ite_eq_right h, add_zero]
 
 end TwistData
 
@@ -699,7 +653,7 @@ theorem vala_opS [NeZero D.r] (hV2 : V2 K) (t : D.Tau) (S : Finset D.ML) (μ κ1
   rw [this, onLetter_apply] at hne
   by_cases hi : i = D.mw t
   · rw [hi]; rfl
-  · rw [if_neg hi] at hne; exact absurd rfl hne
+  · rw [ite_eq_right hi] at hne; exact absurd rfl hne
 
 theorem vala_opS_out (t : D.Tau) (S : Finset D.ML) (hS : D.mw t ∉ S) (μ κ1 : Fin D.r →₀ ℕ) (c1 : K)
     {θ : ℝ} {Q : MvPolynomial (D.ML × Fin D.r) K} (hQ : vala D.msg S θ Q) :
@@ -773,18 +727,18 @@ theorem ChOK.ddiv [NeZero D.r] (hV2 : V2 K) (hDER : DER K v p) (hD : DVRHyp v p)
     show vala D.msg (D.chainSet j i)
       (θ j i - (if t.1 = D.aux₃ j then (absE M : ℝ) / (D.P p t : ℝ) + D.c else 0)) _
     by_cases hB : (fun a => ρ' s a % D.P p t) = ρ'' t
-    · rw [if_pos hB]
+    · rw [ite_eq_left hB]
       by_cases hj : t.1 = D.aux₃ j
-      · rw [if_pos hj]
+      · rw [ite_eq_left hj]
         refine vala_mono ?_ (vala_opS hV2 t _ _ (κ s) (cf s) (h4 (Function.update ρ'' t (cls s)) j i))
         have := hκ s
         have e : ((D.P p t : ℕ) : ℝ) = (p : ℝ) ^ D.g t := by unfold P; push_cast; rfl
         rw [e]
         linarith
-      · rw [if_neg hj, sub_zero]
+      · rw [ite_eq_right hj, sub_zero]
         exact vala_opS_out t _ (D.mw_not_mem_chainSet t j i hj) _ (κ s) (cf s)
           (h4 (Function.update ρ'' t (cls s)) j i)
-    · rw [if_neg hB]
+    · rw [ite_eq_right hB]
       exact vala_zero _
 
 theorem sum_onLetter_apply_inr (D : TwistData K) (M : D.EA) (s : Finset D.Tau) (t : D.Tau) (a : Fin D.r) :
@@ -800,7 +754,7 @@ theorem sum_onLetter_apply_inl (D : TwistData K) (M : D.EA) (s : Finset D.Tau) (
   classical
   rw [Finsupp.finsetSum_apply]
   refine Finset.sum_eq_zero fun t' _ => ?_
-  rw [onLetter_apply, if_neg (by simp)]
+  rw [onLetter_apply, ite_eq_right (by simp)]
 
 theorem ChOK.ddiv_finset [NeZero D.r] (hV2 : V2 K) (hDER : DER K v p) (hD : DVRHyp v p) (hc : 1 ≤ D.c)
     {θ : (j : Fin D.J) → Fin (D.nch j) → ℝ} {a : ℝ}
@@ -826,9 +780,9 @@ theorem ChOK.ddiv_finset [NeZero D.r] (hV2 : V2 K) (hDER : DER K v p) (hD : DVRH
       · right; exact D.sum_onLetter_apply_inl M s b a
       · by_cases htt : t' = t
         · right
-          rw [D.sum_onLetter_apply_inr M s t' a, if_neg (htt ▸ ht)]
+          rw [D.sum_onLetter_apply_inr M s t' a, ite_eq_right (htt ▸ ht)]
         · left
-          rw [onLetter_apply, if_neg (fun hh => htt (Sum.inr.inj hh))]
+          rw [onLetter_apply, ite_eq_right (fun hh => htt (Sum.inr.inj hh))]
 
 theorem ChOK.ddiv_all [NeZero D.r] (hV2 : V2 K) (hDER : DER K v p) (hD : DVRHyp v p) (hc : 1 ≤ D.c)
     {θ : (j : Fin D.J) → Fin (D.nch j) → ℝ} {a : ℝ}
@@ -842,7 +796,7 @@ theorem ChOK.ddiv_all [NeZero D.r] (hV2 : V2 K) (hDER : DER K v p) (hD : DVRHyp 
     ext ⟨i, a⟩
     rcases i with b | t
     · rw [D.sum_onLetter_apply_inl M _ b a, hM]
-    · rw [D.sum_onLetter_apply_inr M _ t a, if_pos (Finset.mem_univ _)]
+    · rw [D.sum_onLetter_apply_inr M _ t a, ite_eq_left (Finset.mem_univ _)]
   rwa [e] at h1
 
 theorem nxt_prv (D : TwistData K) (j : Fin D.J) : D.nxt (D.aux₃ j) = j := by
@@ -867,7 +821,6 @@ theorem sum_ldeg_div_add_le_sl (D : TwistData K) (p : ℕ) (hp : 0 < p) (hr : 0 
   classical
   have hr' : (0 : ℝ) < D.r := by exact_mod_cast hr
   have hr1 : (1 : ℝ) ≤ D.r := by exact_mod_cast hr
-  have hc0 : (0 : ℝ) ≤ D.c := Nat.cast_nonneg _
   have e1 : (∑ t : D.Tau, (if t.1 = D.aux₃ j then (ldeg M (Sum.inr t) : ℝ) / (D.P p t : ℝ) + D.c else 0)) =
       ∑ m : Fin D.r, ((ldeg M (Sum.inr (D.aux₃ j, m)) : ℝ) / (D.P p (D.aux₃ j, m) : ℝ) + D.c) := by
     rw [Fintype.sum_prod_type, Finset.sum_eq_single (D.aux₃ j)]

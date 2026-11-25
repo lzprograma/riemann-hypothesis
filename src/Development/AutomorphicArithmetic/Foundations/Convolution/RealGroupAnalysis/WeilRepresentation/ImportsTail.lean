@@ -36,45 +36,7 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.Automorphic
 public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.ImportsSide
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HeckeAdjoints.SatLocFree
 public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.PlaceAe
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Development.AbelianVarietyTheory.Definitions.Foundations.NormEulerPolySubOneLe
 import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.LcLaws
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FiniteCosetsInDoset
@@ -83,13 +45,12 @@ import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalys
 import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.One
 import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.UnitsCpt
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Algebra.Order.Star.Int
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivOfISupRange
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
 import GroundTheory.LocalFields.PadicLogSeries
-import Mathlib.Algebra.Module.StablyFree.Basic
+import PositivityTheory.AutomorphicForms.PublishedInputs.RealGaloisRepresentations.IwahoriSphericalTransfer.OrbitFiniteType
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.ConjStep, Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.CosetShift, Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.StdHat, Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.GenV, Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.StdOm, Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.CorePt, Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.ImportsAlt, Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.WfEig, Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.WfEig, Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.LiftRel, Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.WeLoc, Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.UnrInert, Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.UnrSplit, Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.ImportsTail
@@ -200,7 +161,7 @@ theorem UpperTheory.ConvolutionTheory.R2.H.stdAe :
       rw [cosetIndicator_apply] at hi
       have hm : (x i).2 - b i ∈ idealFiniteAdeles J := by
         by_contra hc
-        exact hi (if_neg hc)
+        exact hi (ite_eq_right hc)
       have hv := (mem_idealFiniteAdeles J).1 hm v
       rw [hJ, neg_zero, WithZero.exp_zero] at hv
       have e : (x i).2 v = ((x i).2 - b i) v + (b i) v := by
@@ -314,8 +275,7 @@ theorem UpperTheory.ConvolutionTheory.R2.H.stdHat :
       rw [mul_comm (sg v c), hmul, mul_comm] at h3
       exact h3
     · have ex : ∃ s, φ (Function.update x 1 s) ≠ 0 := by
-        by_contra h
-        push_neg at h
+        by_contra! h
         exact hx (by simp [hat, h])
       obtain ⟨s, hs⟩ := ex
       have := hφ.1 _ hs i
@@ -1158,12 +1118,10 @@ theorem UpperTheory.ConvolutionTheory.R2.H.unrInert :
   obtain ⟨hcont, hleft⟩ := spanCont F E D W M π y hsp
   obtain ⟨-, hwh⟩ := UpperTheory.ConvolutionTheory.R2.cusp F E D W M π hN y hsp
   obtain ⟨h₀, hh₀⟩ : ∃ h₀, WE D y.1 h₀ ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact h0 (hwh hc)
   obtain ⟨h₁, hh₁⟩ : ∃ h₁, y.1 h₁ ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact h0 (Subtype.ext (funext hc))
   have hδ : D.δ ≠ 0 := fun e => by
     have h1 : D.θ = 0 := pow_eq_zero_iff two_ne_zero |>.1 (by rw [D.sq, e, map_zero])
@@ -1179,7 +1137,7 @@ theorem UpperTheory.ConvolutionTheory.R2.H.unrInert :
     have h3 := hin.norm
     rw [e] at h3
     nlinarith
-  rw [if_neg hn] at hval
+  rw [ite_eq_right hn] at hval
   obtain ⟨α, β, rfl⟩ := Multiset.card_eq_two.1 (GlobalTheory.LFun.HasSatGL.card hB)
   obtain ⟨α', β', rfl⟩ := Multiset.card_eq_two.1 (GlobalTheory.LFun.HasSatGL.card hB')
   obtain ⟨p, hp⟩ : ∃ p, Formalism.UG.IsUnifV F v p := v.valuedAdicCompletion_surjective F _
@@ -1278,6 +1236,7 @@ open scoped Classical
 
 open GlobalTheory.CuspRep.LocEx GlobalTheory.LFun GlobalTheory.PRep
 
+open GlobalTheory.RealGal.LocCompRProof (orb orb_comm orb_act annPart exists_type_of_range) in
 theorem UpperTheory.ConvolutionTheory.R2.H.unrSplit :
     ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (D : Dat F E) (W : Weil D) (M : Meas F) (π : TR.CuspSub F 2), ThetaLiftTrivialOrbitTermsVanish W M π → ∀ Q : CuspSub E 2, Q.V ≤ span W M π →
       ∀ (v : P F) (w : P E), SplitAt v w → ∀ B, π.HasSat v B → (CG.mk Q).HasSat w B := by
@@ -1333,37 +1292,6 @@ theorem UpperTheory.ConvolutionTheory.R2.H.unrSplit :
     · exact (hφ.1 (eq_zero_of_mem_nullPart hSmooth hKc hφ.2.1 (hnull ▸ Submodule.mem_top))).elim
 
   have exists_comp : ∃ σ, π.IsLocComp v σ := by
-    let orb {K V : Type} [Group K] [AddCommGroup V] [Module ℂ V]
-        (κ : Representation ℂ K V) (x : V) : (K →₀ ℂ) →ₗ[ℂ] V :=
-      Finsupp.linearCombination ℂ fun k => κ k x
-
-    have orb_comm {K V : Type} [Group K] [AddCommGroup V] [Module ℂ V]
-        (κ : Representation ℂ K V) (T : Module.End ℂ V) (hT : ∀ k x, T (κ k x) = κ k (T x)) (x : V)
-        (c : K →₀ ℂ) : orb κ (T x) c = T (orb κ x c) := by
-
-      simp only [orb, Finsupp.linearCombination_apply, Finsupp.sum, map_sum, map_smul, hT]
-
-    have orb_act {K V : Type} [Group K] [AddCommGroup V] [Module ℂ V]
-        (κ : Representation ℂ K V) (x : V) (k : K) (c : K →₀ ℂ) :
-        orb κ x (c.mapDomain (k * ·)) = κ k (orb κ x c) := by
-      induction c using Finsupp.induction_linear with
-      | zero => simp
-      | add c c' h h' => rw [Finsupp.mapDomain_add, map_add (f := _), map_add (f := _), map_add (f := _), h, h']
-      | single a b => simp [orb]
-
-    let annPart {K V : Type} [Group K] [AddCommGroup V] [Module ℂ V]
-        (κ : Representation ℂ K V) (φ : V) : Submodule ℂ V := {
-      carrier := {x | ∀ c, orb κ φ c = 0 → orb κ x c = 0}
-      add_mem' := fun {x y} hx hy c hc => by
-        have : orb κ (x + y) c = orb κ x c + orb κ y c := by
-          simp only [orb, Finsupp.linearCombination_apply, Finsupp.sum, map_add (f := _), smul_add, Finset.sum_add_distrib]
-        rw [this, hx c hc, hy c hc, add_zero]
-      zero_mem' := fun c _ => by simp [orb, Finsupp.linearCombination_apply, Finsupp.sum]
-      smul_mem' := fun a x hx c hc => by
-        have := orb_comm κ (a • (1 : Module.End ℂ V)) (fun k x => by simp) x c
-        simpa [hx c hc] using this }
-
-    -- Vectors annihilated by the relations of φ are images of its compact type.
     have exists_type {K V : Type} [Group K] [AddCommGroup V] [Module ℂ V]
         (κ : Representation ℂ K V) (φ : V)
         (hφ : FiniteDimensional ℂ (Submodule.span ℂ (Set.range fun k => κ k φ))) :
@@ -1376,28 +1304,7 @@ theorem UpperTheory.ConvolutionTheory.R2.H.unrSplit :
         change FiniteDimensional ℂ (LinearMap.range (Finsupp.linearCombination ℂ fun k => κ k φ))
         rw [Finsupp.range_linearCombination]
         exact hφ
-      let b := Module.finBasis ℂ (LinearMap.range (orb κ φ))
-      obtain ⟨s, hs⟩ := (orb κ φ).rangeRestrict.exists_rightInverse_of_surjective (LinearMap.range_rangeRestrict _)
-      refine ⟨_, (LinearMap.toMatrixAlgEquiv b).toMonoidHom.comp (sub κ _ hO), fun x hx => ?_⟩
-      have key : ∀ c, orb κ x (s ((orb κ φ).rangeRestrict c)) = orb κ x c := fun c => by
-        rw [← sub_eq_zero, ← map_sub]
-        refine hx _ ?_
-        rw [map_sub, sub_eq_zero]
-        exact congrArg Subtype.val (LinearMap.congr_fun hs ((orb κ φ).rangeRestrict c))
-      refine ⟨orb κ x ∘ₗ s ∘ₗ b.equivFun.symm.toLinearMap, fun k v => ?_,
-        ⟨b.equivFun ((orb κ φ).rangeRestrict (Finsupp.single 1 1)), ?_⟩, fun v => ⟨_, rfl⟩⟩
-      · obtain ⟨y, rfl⟩ := b.equivFun.surjective v
-        obtain ⟨c, rfl⟩ := (orb κ φ).surjective_rangeRestrict y
-        have h1 : (LinearMap.toMatrixAlgEquiv b).toMonoidHom.comp (sub κ _ hO) k *ᵥ b.equivFun ((orb κ φ).rangeRestrict c) =
-            b.equivFun ((orb κ φ).rangeRestrict (c.mapDomain (k * ·))) := by
-          have h2 : (orb κ φ).rangeRestrict (c.mapDomain (k * ·)) = sub κ _ hO k ((orb κ φ).rangeRestrict c) :=
-            Subtype.ext (orb_act κ φ k c)
-          rw [h2]
-          exact LinearMap.toMatrix_mulVec_repr b b _ _
-        rw [h1]
-        simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, LinearEquiv.symm_apply_apply, key, orb_act]
-      · simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, LinearEquiv.symm_apply_apply, key]
-        simp [orb]
+      exact exists_type_of_range κ φ hO
 
     let cptPart : Representation ℂ (TR.Kinf F 2) π.V :=
       sub (TR.cptRep F 2) π.V fun k => π.stable (.cpt k)

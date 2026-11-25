@@ -3,40 +3,6 @@ module
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GoodChi
 public import Formalism.LocalToGlobal.Columns.ToHLat
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -45,8 +11,6 @@ noncomputable section
 namespace GlobalTheory.Mem.Df
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV GlobalTheory.Mem GlobalTheory.Mem.Col2
-
-attribute [local instance] GlobalTheory.Mem.Col2.starE
 
 variable {B : Base} {X : PreX B.toPre} (I : TC B X)
 
@@ -74,20 +38,10 @@ structure DefTrue (W : RowsRest B (I.cols l)) (e : ∀ a : (I.cols l).Tup, MtCx 
 
 structure StandIn {C : Cols B} (W : RowsRest B C) : Prop where
   drows : W.Drows = 0
-  d0 : W.D0 = 0
   dall : W.Dall = 0
-  delp : W.delp = 0
-  ft : IsEmpty W.FT
-  mult : ∀ a j, j ≠ B.R.m → Subsingleton (W.Mult a j)
-  io : ∀ a j, W.io a j = 0
-  mj : ∀ j, Subsingleton (W.Mj j)
   mt : ∀ a j, Subsingleton (W.Mt a j)
-  eMt : ∀ a j, W.eMt a j = LinearMap.id
-  bu : ∀ u φ F, W.Bu u φ F = 0
-  ij : ∀ a j w, W.Ij a j w = 0 ∧ W.jw a j w = 0
   eta : ∀ j w, W.etaJ j w = 0
   sha : GlobalTheory.MemN.ShaOK B.toPre W.shaLen
-  kap : ∀ V S N G, DV.KapDef (assemble B C W V S N G)
 
 structure RowsDef : Type 1 where
   W : RowsRest B (I.cols l)

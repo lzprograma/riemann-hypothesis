@@ -130,7 +130,7 @@ theorem eq_zero_of_finsum_mul_star_pow_eq_zero {K : Type} [Field K] (θ : K →*
     rw [mul_pow, star_pow]
     ring
   rw [h2, Finset.sum_congr rfl (fun α hα => by rw [key α hα])] at hsum
-  simp only [mul_ite, mul_zero, Finset.sum_ite_eq', (hmem β).2 hβ', if_true] at hsum
+  simp only [mul_ite, mul_zero, Finset.sum_ite_eq', (hmem β).2 hβ', ite_true] at hsum
   exact (mul_eq_zero.1 hsum).resolve_right (Nat.cast_ne_zero.2 hN.ne')
 
 theorem torus_fourier_injective : ∀ (F : Type) [Field F] [Finite F] (θ : AlgebraicClosure F →* ℂ), (∀ x y : AlgebraicClosure F, x ≠ 0 → y ≠ 0 → θ x = θ y → x = y) → ∀ n : ℕ, 0 < n → ∀ c : AlgebraicClosure F → ℂ, (∀ l : ℕ, ∑ᶠ α ∈ {α : AlgebraicClosure F | α ^ (Nat.card F ^ n - 1) = 1}, c α * star (θ α ^ l) = 0) → ∀ α ∈ {α : AlgebraicClosure F | α ^ (Nat.card F ^ n - 1) = 1}, c α = 0 := by
@@ -161,7 +161,7 @@ theorem finsum_mem_mul_sub_sum {G : Type} [Finite G] (S : Set G) (c : ℂ) (φ :
   rw [Finset.sum_sub_distrib, Finset.sum_comm]
   simp only [Finset.mul_sum]
 
-theorem card_filter_mul_pow_modEq (q n i l : ℕ) (hq : 1 < q) (hn : 0 < n) (hi : i ≤ n) :
+theorem card_filter_mul_pow_modEq (q n i l : ℕ) (hq : 1 < q) (hn : 0 < n) :
     ((Finset.range (q ^ n - 1)).filter (fun k => k * q ^ i ≡ l [MOD (q ^ n - 1)])).card = 1 := by
   set N := q ^ n - 1 with hN
   have hq1 : 1 ≤ q ^ n := Nat.one_le_pow _ _ (by omega)
@@ -203,7 +203,7 @@ theorem sum_mul_card_filter_modEq (q n l : ℕ) (hq : 1 < q) (hn : 0 < n) (A : �
     intro i hi
     rw [← Finset.sum_filter]
     obtain ⟨k, hk⟩ := Finset.card_eq_one.mp
-      (card_filter_mul_pow_modEq q n i l hq hn (Finset.mem_range.mp hi).le)
+      (card_filter_mul_pow_modEq q n i l hq hn)
     have hmem : k ∈ (Finset.range (q ^ n - 1)).filter (fun k => k * q ^ i ≡ l [MOD (q ^ n - 1)]) := by
       rw [hk]; exact Finset.mem_singleton_self k
     rw [hk, Finset.sum_singleton]

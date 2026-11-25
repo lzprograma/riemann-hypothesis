@@ -7,27 +7,12 @@ public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.Saturation
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace Formalism.L2.Indef.Tree.DepthTie
 
 open NumberField IsDedekindDomain
 open Formalism.DivisionValues Formalism.EigenvalueLevelCeiling Formalism.L2.Indef Formalism.L2.Indef.Tree Formalism.L2.DIV Formalism.BasicNotions Formalism.L2.Indef.Tree.DepthCond
-
-section Sat
-
-open Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {l : Level H}
-  {Dw : ℕ → Datum H} (Xo : ∀ j, Moduli (Dw j) l) (c : Coeff l) [StarRing (𝓞 E)] (Dd : DepData E)
-variable {K : Type} [Field K] [NumberField K] [StarRing K] [Algebra (𝓞 c.F) (𝓞 K)]
-  [Algebra.IsIntegral (𝓞 c.F) (𝓞 K)] [Algebra (𝓞 E) K]
-variable {Bs : DefBase K} {Df : DefSide Bs} {S : IndefData Df} {P : Type} [Group P] [Finite P] {oc : OnConst}
-  (O : OnObj S P oc) (ι : Bs.J → ℕ)
-
-end Sat
 
 section CoreSat
 
@@ -53,11 +38,5 @@ theorem leafDepthRam_core_sat (N : IndefNum Bs) (Nd : NumDatum) (hL : LawsPi T D
     (fun j => Formalism.L2.Pj.SaturatedCharts.saturation_charts_holds (T.Q.Xo (ι j)) T.Q.c) hPg hSz tF tP tK Dk C₀ iD iW iP iB
 
 end CoreSat
-
-section NuFin
-
-open Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.MainNotions
-
-end NuFin
 
 end Formalism.L2.Indef.Tree.DepthTie

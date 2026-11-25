@@ -43,8 +43,6 @@ noncomputable section
 open NumberField IsDedekindDomain Polynomial Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL
 open UpperTheory.Zero.LLC UpperTheory.V.Z.Gam GroundTheory.Global.SemiLocal
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter
 
 def PlainIff : Prop :=

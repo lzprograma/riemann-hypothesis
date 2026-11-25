@@ -18,10 +18,6 @@ open MvPolynomial TensorProduct
 
 variable {σ : Type} [Fintype σ]
 
-section Rad
-
-end Rad
-
 section GD
 
 attribute [local instance] MvPolynomial.algebraMvPolynomial

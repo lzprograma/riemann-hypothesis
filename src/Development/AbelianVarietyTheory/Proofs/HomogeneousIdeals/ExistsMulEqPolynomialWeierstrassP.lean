@@ -85,7 +85,7 @@ private lemma exists_polynomial_weierstrass (n : ℕ) : ∀ (g h : ℂ → ℂ),
           · filter_upwards [self_mem_nhdsWithin] with w hw using sub_ne_zero.mpr hw
         have h1 : ∀ᶠ w in 𝓝[≠] z, G w = h (w - z) := by
           filter_upwards [ht.eventually he, eventually_ne_notMem_periodLattice L z] with w hw hw'
-          simp only [G, if_neg hw']
+          simp only [G, ite_eq_right hw']
           rw [hw, ← hp (w - z) z hz, sub_add_cancel]
         have h2 : G =ᶠ[𝓝 z] h ∘ fun w => w - z := by
           rw [eventually_nhdsWithin_iff] at h1

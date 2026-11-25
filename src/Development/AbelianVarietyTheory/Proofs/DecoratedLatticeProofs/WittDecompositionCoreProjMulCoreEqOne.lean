@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSelfDualOrthAt
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LineLatAt
 import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
 import Mathlib.Algebra.Order.Floor.Extended
@@ -49,7 +50,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.LatPair GlobalTheory.SeeSaw GlobalTheory.FinPl ValuativeRel
 open scoped TensorProduct nonZeroDivisors
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.SeeSaw.SplitLat
 
@@ -82,7 +82,6 @@ theorem mem_splitL (d : HypDec S S₀ ρ) (L₀ : Lat S₀) (𝔟 : ℕ → FI D
 
 variable (d : HypDec S S₀ ρ)
 
-alias qX_e := _root_.GlobalTheory.MixPer.qX_e
 theorem qX_i₀ : d.qX * d.i₀ = 0 := by
   have h := congrArg Matrix.conjTranspose d.i₀e'
   simpa only [Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, gram_conjTranspose,
@@ -126,22 +125,13 @@ theorem rat_mulVec_gen {m n : ℕ} (M : Matrix (Fin m) (Fin n) D.host.E) (t : AF
 theorem rat_mulVec_mem_latV {S' : HSp D} (M : Matrix (Fin S'.rank) (Fin S.rank) D.host.E) {L : Lat S} {L' : Lat S'}
     (hM : ∀ x ∈ L, M *ᵥ x ∈ L') (P : Pl D → Prop) {y : Fin S.rank → AE D} (hy : y ∈ latV S L P) :
     rat M *ᵥ y ∈ latV S' L' P := by
-  induction hy using AddSubgroup.closure_induction with
-  | mem z hz =>
-    obtain ⟨β, hβi, hβ, c, hc, x, hx, rfl⟩ := hz
-    rw [Set.mem_singleton_iff] at hc
-    subst hc
-    rw [rat_mulVec_gen]
-    exact AddSubgroup.subset_closure ⟨β, hβi, hβ, 1, rfl, _, hM x hx, rfl⟩
-  | zero => rw [Matrix.mulVec_zero]; exact zero_mem _
-  | add z z' _ _ hz hz' => rw [Matrix.mulVec_add]; exact add_mem hz hz'
-  | neg z _ hz => rw [Matrix.mulVec_neg]; exact neg_mem hz
+  first | exact _root_.GlobalTheory.OrthSumLat.rat_mulVec_mem_latV | exact @_root_.GlobalTheory.OrthSumLat.rat_mulVec_mem_latV | apply _root_.GlobalTheory.OrthSumLat.rat_mulVec_mem_latV <;> assumption
 
 variable {d} {L₀ : Lat S₀} {𝔟 : ℕ → FI D}
 
 theorem e_mem {w : Fin ρ → D.host.E} (hw : ∀ i : Fin ρ, w i ∈ 𝔟 i) : d.e *ᵥ w ∈ splitL d L₀ 𝔟 := by
   refine (mem_splitL d L₀ 𝔟 _).2 ⟨fun i => ?_, ?_, fun i => ?_⟩
-  · rw [Matrix.mulVec_mulVec, qX_e, Matrix.one_mulVec]; exact hw i
+  · rw [Matrix.mulVec_mulVec, GlobalTheory.MixPer.qX_e, Matrix.one_mulVec]; exact hw i
   · rw [Matrix.mulVec_mulVec, wittDecomposition_coreProj_mul_e_eq_zero, Matrix.zero_mulVec]; exact zero_mem _
   · rw [Matrix.mulVec_mulVec, qY_e, Matrix.zero_mulVec]; exact zero_mem _
 
@@ -172,7 +162,7 @@ theorem colProj_mulVec {m : ℕ} (q : Matrix (Fin ρ) (Fin m) D.host.E) (f : Mat
     (x : Fin m → D.host.E) : colProj q f i *ᵥ x = f *ᵥ Pi.single i ((q *ᵥ x) i) := by
   funext k
   simp only [colProj, Matrix.mulVec, dotProduct, Matrix.of_apply, Pi.single_apply, mul_ite, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true, Finset.mul_sum, mul_assoc]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true, Finset.mul_sum, mul_assoc]
 
 theorem colMul_rat {m : ℕ} (q : Matrix (Fin ρ) (Fin m) D.host.E) (f : Matrix (Fin S.rank) (Fin ρ) D.host.E) (i : Fin ρ)
     (y : Fin m → AE D) : colMul (rat f) i ((rat q *ᵥ y) i) = rat (colProj q f i) *ᵥ y := by
@@ -185,7 +175,7 @@ theorem colMul_rat {m : ℕ} (q : Matrix (Fin ρ) (Fin m) D.host.E) (f : Matrix 
 theorem colMul_eq_mulVec {m n : ℕ} (x : Mx D m n) (i : Fin n) (a : AE D) : colMul x i a = x *ᵥ Pi.single i a := by
   funext k
   simp only [colMul, Matrix.mulVec, dotProduct, Pi.single_apply, mul_ite, mul_zero, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true, mul_comm]
+    Finset.mem_univ, ite_true, mul_comm]
 
 theorem mulVec_eq_sum_colMul {m n : ℕ} (x : Mx D m n) (w : Fin n → AE D) : x *ᵥ w = ∑ i, colMul x i (w i) := by
   funext k
@@ -244,7 +234,7 @@ theorem line_splitL (v : Pl D) (i : Fin ρ) (a : AE D) :
       | neg z _ hz => rw [Matrix.mulVec_neg]; exact neg_mem hz
     have h := key _ ha
     rwa [colMul_eq_mulVec, Matrix.mulVec_mulVec, (show d.pX * d.jX = 1 from by
-      have h := congrArg rat (qX_e d)
+      have h := congrArg rat (GlobalTheory.MixPer.qX_e d)
       simpa only [rat, Matrix.map_mul, Matrix.map_one _ (map_zero _) (map_one _), HypDec.pX, HypDec.jX] using h), Matrix.one_mulVec, Pi.single_eq_same] at h
   · intro ha
     rw [idV] at ha

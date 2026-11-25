@@ -18,7 +18,7 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {r : �
 
 theorem mapLF_fl {γ : S.V ≃ₗ[E] S.V} (h : γ ∈ Formalism.HermitianLatticesTheory.isom S.hT) (L : LFlag S r T') :
     (mapLF γ L).fl = mapFlag γ h L.fl := by
-  unfold mapLF; rw [dif_pos h]
+  unfold mapLF; rw [dite_eq_left h]
 
 theorem mapLF_fl_z {γ : S.V ≃ₗ[E] S.V} (h : γ ∈ Formalism.HermitianLatticesTheory.isom S.hT) (L : LFlag S r T') :
     (mapLF γ L).fl.z = γ L.fl.z := by
@@ -129,7 +129,7 @@ theorem line_pair' (k : ℕ) (hdim : finrank E S.V = k + 2 * r + 1) (Λ : Submod
     refine ⟨?_, ?_⟩
     · rw [mapLF_fl_z hδ]
       exact Submodule.mem_sup_right (Submodule.mem_span_singleton_self _)
-    · simp only [mapLF, dif_pos hδ]
+    · simp only [mapLF, dite_eq_left hδ]
       rw [hL.2]
       rfl
   have eF1 : (mapLF γ1 L0).fl = mapFlag γ1 hγ1 L0.fl := mapLF_fl hγ1 L0

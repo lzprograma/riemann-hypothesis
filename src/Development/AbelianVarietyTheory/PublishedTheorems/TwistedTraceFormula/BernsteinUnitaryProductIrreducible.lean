@@ -63,19 +63,6 @@ namespace BernsteinUnitaryProductIrreducible
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
 
-theorem detRep_hyp (t : ℕ) {χ : kˣ →* ℂˣ} (hs : IsSmoothChar χ) (hu : IsUnitaryChar χ) :
-    IsSmooth (detRep (Fin t) χ) ∧ (detRep (Fin t) χ).IsIrreducible ∧
-      IsUnitarisable (detRep (Fin t) χ) :=
-  ⟨(isSmooth_ofChar_iff _).2 hs.detChar, isIrreducible_ofChar _,
-    (isUnitarisable_ofChar_iff _).2 fun _ => hu _⟩
-
-theorem prod₂_detRep (H : BernsteinUnitaryProductIrreducible) {r : ℕ} (t : ℕ)
-    {π : Representation ℂ (GL (Fin r) k) V} (s : IsSmooth π) (i : π.IsIrreducible)
-    (u : IsUnitarisable π) {χ : kˣ →* ℂˣ} (hs : IsSmoothChar χ) (hu : IsUnitaryChar χ) :
-    (prod₂ π (detRep (Fin t) χ)).IsIrreducible :=
-  have h := detRep_hyp t hs hu
-  H k r t V ℂ π _ s i u h.1 h.2.1 h.2.2
-
 end BernsteinUnitaryProductIrreducible
 
 end GlobalTheory.Published

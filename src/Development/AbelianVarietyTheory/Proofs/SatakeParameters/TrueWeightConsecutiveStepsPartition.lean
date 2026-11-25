@@ -3,42 +3,7 @@ module
 public import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
 public import Formalism.LocalToGlobal.HermitianForms.TiedTwGen
 public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JetLL
 
 @[expose] public section
@@ -79,11 +44,11 @@ theorem lamTG_w (M : MemberForms D.what₂.LL D.what₂.embLL D.what₂.places D
       (if r.1 < D.R.k then lamZ D u τ r else -wJ D u τ ((r.1 - D.R.k) / (D.R.t + 1))) by
     rw [e, ← h2]; ring
   split_ifs with hk
-  · simp only [hcToWeightQ, rhoVec, lamZ, dif_pos hk]
+  · simp only [hcToWeightQ, rhoVec, lamZ, dite_eq_left hk]
     ring
-  · simp only [wJ, eJ, dif_pos (D.R.blk_lt hj r hk)]
+  · simp only [wJ, eJ, dite_eq_left (D.R.blk_lt hj r hk)]
 
-theorem detShift_eq {N : ℕ} (l : DomWeight N) (hN : 0 < N) : l.detShift = l.w ⟨N - 1, by omega⟩ := dif_pos hN
+theorem detShift_eq {N : ℕ} (l : DomWeight N) (hN : 0 < N) : l.detShift = l.w ⟨N - 1, by omega⟩ := dite_eq_left hN
 
 theorem trueWt_step : ∀ (D : D7) (u : D.what₂.Word) (C : ColumnChain D.R D.what₂.Tau (D.hcW u)) (A : ColumnsAtT D.R C) (Pm : PeriodMap D.R C)
     (M : MemberForms D.what₂.LL D.what₂.embLL D.what₂.places D.what₂.Tau (D.hcW u) C A Pm) (i : ℕ), i < D.R.m →
@@ -107,8 +72,8 @@ theorem trueWt_step : ∀ (D : D7) (u : D.what₂.Word) (C : ColumnChain D.R D.w
   have dq1 : ∀ τ, (((lamTG M (i + 1) τ).detShift : ℤ) : ℚ) = -sJ D u τ i := by
     intro τ
     rw [ds1, wi1]
-    simp only [lamTr, if_neg (show ¬ (D.R.N (i + 1) - 1 < D.R.N i) by omega),
-      if_pos (show D.R.N (i + 1) - 1 < D.R.N (i + 1) by omega)]
+    simp only [lamTr, ite_eq_right (show ¬ (D.R.N (i + 1) - 1 < D.R.N i) by omega),
+      ite_eq_left (show D.R.N (i + 1) - 1 < D.R.N (i + 1) by omega)]
   have hpos : ∀ τ, 0 < (lamTG M i τ).detShift + C.sSharp i τ := by
     intro τ
     have h := RowWeightLemmas.nuRow_last_pos D u i hi τ
@@ -138,13 +103,13 @@ theorem trueWt_step : ∀ (D : D7) (u : D.what₂.Word) (C : ColumnChain D.R D.w
   · intro τ r
     unfold DomWeight.natW extNu
     by_cases h : r.1 < D.R.N i
-    · rw [dif_pos h]
+    · rw [dite_eq_left h]
       have e : (lamTG M (i + 1) τ).w r - (lamTG M (i + 1) τ).detShift = (lamTG M i τ).w ⟨r.1, h⟩ + C.sSharp i τ := by
         have : (((lamTG M (i + 1) τ).w r - (lamTG M (i + 1) τ).detShift : ℤ) : ℚ) =
             (((lamTG M i τ).w ⟨r.1, h⟩ + C.sSharp i τ : ℤ) : ℚ) := by
           push_cast
           rw [wi1, dq1, wi, hS]
-          simp only [lamTr, if_pos h]
+          simp only [lamTr, ite_eq_left h]
           ring
         exact_mod_cast this
       rw [e]
@@ -158,7 +123,7 @@ theorem trueWt_step : ∀ (D : D7) (u : D.what₂.Word) (C : ColumnChain D.R D.w
         have : (((lamTG M (i + 1) τ).w r - (lamTG M (i + 1) τ).detShift : ℤ) : ℚ) = ((0 : ℤ) : ℚ) := by
           push_cast
           rw [wi1, dq1]
-          simp only [lamTr, if_neg h, if_pos r.2]
+          simp only [lamTr, ite_eq_right h, ite_eq_left r.2]
           ring
         exact_mod_cast this
       rw [e]

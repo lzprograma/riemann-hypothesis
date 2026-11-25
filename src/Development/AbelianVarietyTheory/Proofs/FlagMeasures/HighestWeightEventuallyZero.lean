@@ -316,7 +316,7 @@ lemma fderiv_Phi_single (lam : Fin n → ℝ) {z : Matrix (Fin n) (Fin n) ℂ} (
   have hev : (fun t : ℂ => Phi lam (z + t • (z * Matrix.single a b 1))) =ᶠ[nhds 0] fun _ => Phi lam z := by
     filter_upwards [hc] with t ht
     have hm := GlobalTheory.PhiEigenfun.Phi_mul_single lam hz hab.le ht
-    rw [if_neg hne, one_mul, Matrix.mul_add, Matrix.mul_one, Matrix.mul_smul] at hm
+    rw [ite_eq_right hne, one_mul, Matrix.mul_add, Matrix.mul_one, Matrix.mul_smul] at hm
     exact hm
   have h2 : HasDerivAt (fun t : ℂ => Phi lam (z + t • (z * Matrix.single a b 1))) 0 0 :=
     (hasDerivAt_const (0 : ℂ) (Phi lam z)).congr_of_eventuallyEq hev
@@ -333,7 +333,7 @@ lemma star_entry {ε : Fin n → Bool} {Y : Matrix (Fin n) (Fin n) ℂ} (h : inG
   unfold sgn
   rcases Bool.eq_false_or_eq_true (ε a) with ha | ha <;>
     rcases Bool.eq_false_or_eq_true (ε b) with hb | hb <;>
-    simp only [ha, hb, if_true, if_false, Bool.false_eq_true] at h1 ⊢ <;>
+    simp only [ha, hb, ite_true, ite_false, Bool.false_eq_true] at h1 ⊢ <;>
     first | linear_combination h1 | linear_combination -h1
 
 lemma inG_conj {ε : Fin n → Bool} {k X : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε) (hX : inG ε X) :
@@ -360,12 +360,12 @@ theorem exists_deriv_Phi_conj : ∀ (n : ℕ) (ε : Fin n → Bool) (lam : Fin n
   refine ⟨fun c d z => if d < c then 0 else
     -(sgn ε c * sgn ε d) * star (fderiv ℂ (Phi lam) z (z * Matrix.single d c 1)), ?_, ?_, ?_⟩
   · intro c d z hdc
-    simp only [hdc, if_true]
+    simp only [hdc, ite_true]
   · intro c d
     by_cases hdc : d < c
-    · simp only [hdc, if_true]
+    · simp only [hdc, ite_true]
       exact continuousOn_const
-    · simp only [hdc, if_false]
+    · simp only [hdc, ite_false]
       have hA : AnalyticOnNhd ℂ (Phi lam) (Omega n) := fun z hz => analyticAt_Phi lam hz
       have hF : ContinuousOn (fderiv ℂ (Phi lam)) (Omega n) := hA.fderiv.continuousOn
       have hv : ContinuousOn (fun z : Matrix (Fin n) (Fin n) ℂ => z * Matrix.single d c 1) (Omega n) :=

@@ -98,7 +98,7 @@ theorem genFun_diff_hasSum {𝕜 : Type} [NormedField 𝕜] (C d : ℕ → ℕ) 
   let h : ℕ → 𝕜 := fun j => if j = 0 then 0 else (C (j - 1) : 𝕜) * x ^ j
   have hsh : (fun n => h (n + 1)) = fun n => x * ((C n : 𝕜) * x ^ n) := by
     funext n
-    simp only [h, Nat.add_sub_cancel, if_neg (Nat.succ_ne_zero n)]
+    simp only [h, Nat.add_sub_cancel, ite_eq_right (Nat.succ_ne_zero n)]
     ring
   have h1 : HasSum (fun n => h (n + 1)) (x * S) := by rw [hsh]; exact hA.mul_left x
   have hh : HasSum h (x * S) := by
@@ -108,7 +108,7 @@ theorem genFun_diff_hasSum {𝕜 : Type} [NormedField 𝕜] (C d : ℕ → ℕ) 
     funext j
     rcases j with _ | j
     · simp [h, h0]
-    · simp only [h, if_neg (Nat.succ_ne_zero j), Nat.add_sub_cancel, hs j]
+    · simp only [h, ite_eq_right (Nat.succ_ne_zero j), Nat.add_sub_cancel, hs j]
       push_cast; ring
   rw [hd, show (1 - x) * S = S - x * S by ring]
   exact hA.sub hh
@@ -190,8 +190,6 @@ section -- clump:auto
 
 open GlobalTheory.InertZeta
 
-theorem _root_.GlobalTheory.T.length_count_generating_series_formula : GenFun := by
-  first | exact @GlobalTheory.InertZeta.genFun_holds
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.LengthCountGeneratingSeriesFormulaStatement =====

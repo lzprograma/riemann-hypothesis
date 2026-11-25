@@ -12,55 +12,10 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.WP
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.IsClosedCongruenceSubgroup
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.MemSecondProjectionIff
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SaturatedSplitLattice
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.TransitiveOverLocalRings
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SplitDecomp
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.WCoreG, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.CongruenceLiftOfBasis
@@ -186,14 +141,7 @@ theorem congruence_lift_of_basis {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin
     ((Q⁻¹ : GL (Fin n) (Fv F v ⊗[F] E)) : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) with hQi
   have hQQi : Qm * Qi = 1 := Q.mul_inv
   have hQiQ : Qi * Qm = 1 := Q.inv_mul
-  have memΛ : ∀ y, y ∈ latLoc (E := E) v Λ ↔ IntV v (Qi *ᵥ y) := by
-    intro y
-    rw [hQΛ]
-    constructor
-    · rintro ⟨x, hx, rfl⟩
-      rwa [mulVec_mulVec, hQiQ, one_mulVec]
-    · intro hy
-      exact ⟨Qi *ᵥ y, hy, by rw [mulVec_mulVec, hQQi, one_mulVec]⟩
+  have memΛ := mem_latLoc_iff_intV Q hQΛ
   set X0r := ratTup (F := F) (Fv F v) (F0 P) with hX0r
   set Y0 := locF v X0r with hY0
   have hloc (a : HA (Fv F v) σ J) : locF v (a • X0r) = a • locF v X0r := by
@@ -204,36 +152,15 @@ theorem congruence_lift_of_basis {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin
   have hPrk : IsPrim v Λ (k • Y0) := by
     refine ⟨fun a => kv_lat hkK (hPr.1 a), fun c hc => hPr.2 c ?_⟩
     have e : ∑ a, c a • (k • Y0) a = lin (Fv F v) σ J k (∑ a, c a • Y0 a) := by
-
       rw [map_sum]; simp only [map_smul, smul_tup]
     rw [e] at hc
     have := kv_lat (kv_inv hkK) hc
     rwa [lin_inv_lin] at this
 
-  have hunit : ∀ x y, hR (Fv F v) σ J ((HA.mat (Fv F v) σ J k : Matrix (Fin n) (Fin n) _) *ᵥ x)
-      ((HA.mat (Fv F v) σ J k : Matrix (Fin n) (Fin n) _) *ᵥ y) = hR (Fv F v) σ J x y := by
-    intro x y
-    have hmem := (show HR (Fv F v) σ J from k).2
-    show Formalism.UG.hform _ _ _ _ = Formalism.UG.hform _ _ _ _
-    rw [hform_mulVec]
-    congr 1
-  have primT : ∀ W : Fin (r + 1) → Fin n → Fv F v ⊗[F] E, IsPrim v Λ W →
-      ∀ c : Fin (r + 1) → Fv F v ⊗[F] E, IntV v (∑ a, c a • (Qi *ᵥ W a)) → ∀ a, c a ∈ OEv (E := E) v := by
-    intro W hW c hc
-    apply hW.2 c
-    rw [memΛ]
-    have : Qi *ᵥ (∑ a, c a • W a) = ∑ a, c a • (Qi *ᵥ W a) := by
-      show Matrix.mulVecLin Qi (∑ a, c a • W a) = _
-
-      rw [map_sum]
-      simp only [map_smul, Matrix.mulVecLin_apply]
-    rwa [this]
   set Z0 : Fin (r + 1) → Fin n → Fv F v ⊗[F] E := fun a => Qi *ᵥ Y0 a with hZ0def
   set Z : Fin (r + 1) → Fin n → Fv F v ⊗[F] E := fun a => Qi *ᵥ (k • Y0) a with hZdef
   have hZ0 : ∀ a, IntV v (Z0 a) := fun a => (memΛ _).1 (hPr.1 a)
   have hZ : ∀ a, IntV v (Z a) := fun a => (memΛ _).1 (hPrk.1 a)
-  have pZ0 := primT Y0 hPr
-  have pZ := primT (k • Y0) hPrk
 
   have hcong : ∀ a, ∃ y ∈ latLoc (E := E) v Λ, (k • Y0) a = Y0 a + sc (E := E) v (g : Fv F v) • y := by
     intro a
@@ -260,25 +187,8 @@ theorem congruence_lift_of_basis {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin
     Matrix.of fun i a => ⟨D.π₁ (Wv a i), ((D.hO _).1 (hW a i)).1⟩
   let B' : Matrix (Fin n) (Fin (r + 1)) (v.adicCompletionIntegers F) :=
     Matrix.of fun i a => ⟨D.π₂ (Wv a i), ((D.hO _).1 (hW a i)).2⟩
-  obtain ⟨L0, hL0⟩ := hSat v n (r + 1) A0 (fun t ht => D.sat₁ Z0 pZ0 t ht)
-  obtain ⟨M1, hM1⟩ := hSat v n (r + 1) B1 (fun t ht => D.sat₂ Z pZ t ht)
-  have hstd : ∀ a b, stdH σ (Z a) (Z b) = stdH σ (Z0 a) (Z0 b) := by
-    intro a b
-    have e1 : stdH σ (Z a) (Z b) = hR (Fv F v) σ J ((k • Y0) a) ((k • Y0) b) := by
-      rw [stdH, ← hQh, mulVec_mulVec, mulVec_mulVec, hQQi, one_mulVec, one_mulVec]
-    have e2 : stdH σ (Z0 a) (Z0 b) = hR (Fv F v) σ J (Y0 a) (Y0 b) := by
-      rw [stdH, ← hQh, mulVec_mulVec, mulVec_mulVec, hQQi, one_mulVec, one_mulVec]
-    rw [e1, e2]
-    exact hunit (Y0 a) (Y0 b)
-  have hgram : A0ᵀ * B0 = A1ᵀ * B1 := by
-    refine Matrix.ext fun a b => Subtype.ext ?_
-    have := congrArg D.π₂ (hstd a b)
-    rw [D.snd_proj_standard_hermitian_form, D.snd_proj_standard_hermitian_form] at this
-    simp only [Matrix.mul_apply, Matrix.transpose_apply]
-    push_cast
-    simp only [dotProduct] at this
-    exact this.symm
-  have hgc : ((g : v.adicCompletionIntegers F) : Fv F v) = (g : Fv F v) := by push_cast; rfl
+  obtain ⟨L0, hL0⟩ := hSat v n (r + 1) A0 (fun t ht => D.sat₁ Z0 (prim_mulVec_inv Q hQΛ hPr) t ht)
+  obtain ⟨M1, hM1⟩ := hSat v n (r + 1) B1 (fun t ht => D.sat₂ Z (prim_mulVec_inv Q hQΛ hPrk) t ht)
   have hA1 : A1 = A0 + (g : v.adicCompletionIntegers F) • A' := by
     refine Matrix.ext fun i a => Subtype.ext ?_
     simp only [A1, A0, A', Matrix.of_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul]
@@ -291,58 +201,12 @@ theorem congruence_lift_of_basis {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin
     rw [hZW a, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add (f := _), map_mul, (D.hsc _).2]
   obtain ⟨k1, K', hk1u, hk1A, hk1B, hk1e⟩ := wCoreG (v.adicCompletionIntegers F)
     (g : v.adicCompletionIntegers F) (natCast_mem_max v hgv) A0 A1 B0 B1 A' B' L0 M1 hL0 hM1
-    hgram hA1 hB1
+    (D.gram_eq_of_act Q hQh k Y0 hZ0 hZ) hA1 hB1
+  obtain ⟨kH, hkHK, hkHY, hkx⟩ := D.lift_unit_to_HA Q hQΛ hQh Y0 (k • Y0) hZ0 hZ k1 hk1u hk1A hk1B
   have hdet : IsUnit k1.det := (Matrix.isUnit_iff_isUnit_det k1).1 hk1u
-  have hki : k1 * k1⁻¹ = 1 := Matrix.mul_nonsing_inv k1 hdet
   have hik : k1⁻¹ * k1 = 1 := Matrix.nonsing_inv_mul k1 hdet
   set f := (v.adicCompletionIntegers F).subtype with hf
-  have mo : ∀ {M N : Matrix (Fin n) (Fin n) (v.adicCompletionIntegers F)}, M * N = 1 →
-      M.map f * N.map f = 1 := by
-    intro M N hMN
-    rw [← Matrix.map_mul, hMN, Matrix.map_one f (map_zero f) (map_one f)]
-  have e1 : (k1⁻¹)ᵀᵀ * k1 = 1 := by rw [transpose_transpose, hik]
-  have e2 : k1ᵀ * (k1⁻¹)ᵀ = 1 := by rw [← transpose_mul, hik, transpose_one]
-  have e3 : (k1⁻¹)ᵀ * k1ᵀ = 1 := by rw [← transpose_mul, hki, transpose_one]
-  have tm : ∀ M : Matrix (Fin n) (Fin n) (v.adicCompletionIntegers F), (M.map f)ᵀ = Mᵀ.map f :=
-    fun M => (Matrix.transpose_map).symm
   set kstd := D.kS (k1.map f) ((k1⁻¹)ᵀ.map f) with hkstd
-  set kstd' := D.kS (k1⁻¹.map f) (k1ᵀ.map f) with hkstd'
-  have hkk : kstd * kstd' = 1 := by
-    rw [hkstd, hkstd', SD.kS_mul, mo hki, mo e3, SD.kS_one]
-  have hk'k : kstd' * kstd = 1 := mul_eq_one_comm.mp hkk
-  have hkU : ∀ x y, stdH σ (kstd *ᵥ x) (kstd *ᵥ y) = stdH σ x y := by
-    intro x y
-    refine D.stdH_kS _ _ ?_ ?_ x y
-    · rw [tm, mo e1]
-    · rw [tm, mo e2]
-  have hkI : ∀ x, IntV v (kstd *ᵥ x) ↔ IntV v x := by
-    intro x
-    constructor
-    · intro hx
-      have := D.intV_kS (k1⁻¹) k1ᵀ hx
-      rwa [← hkstd', mulVec_mulVec, hk'k, one_mulVec] at this
-    · intro hx
-      exact D.intV_kS k1 (k1⁻¹)ᵀ hx
-  have hkZ : ∀ a, kstd *ᵥ Z0 a = Z a := by
-    intro a
-    apply D.extV
-    · intro i
-      rw [hkstd, SD.fst_proj_split_matrix_mulVec]
-      have := congrArg (fun M => f (M i a)) hk1A
-
-      simp only [Matrix.mul_apply, map_sum, map_mul] at this
-      simp only [mulVec, dotProduct, Matrix.map_apply]
-      exact this
-    · intro i
-      have hB : (k1⁻¹)ᵀ * B0 = B1 := by
-        rw [← hk1B, ← Matrix.mul_assoc, e3, Matrix.one_mul]
-      rw [hkstd, SD.snd_proj_split_matrix_mulVec]
-      have := congrArg (fun M => f (M i a)) hB
-
-      simp only [Matrix.mul_apply, map_sum, map_mul] at this
-      simp only [mulVec, dotProduct, Matrix.map_apply]
-      exact this
-
   set K'' : Matrix (Fin n) (Fin n) (v.adicCompletionIntegers F) := -(k1⁻¹ * K')ᵀ with hK''
   have hk1i : (k1⁻¹)ᵀ = 1 + (g : v.adicCompletionIntegers F) • K'' := by
     have h0 : k1⁻¹ = 1 - (g : v.adicCompletionIntegers F) • (k1⁻¹ * K') := by
@@ -372,46 +236,16 @@ theorem congruence_lift_of_basis {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin
         Finset.mul_sum, hf]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_natCast]; ring
-
-  set kM := Qm * kstd * Qi with hkM
-  set kMi := Qm * kstd' * Qi with hkMi
-  have hkMM : kM * kMi = 1 := by
-    rw [hkM, hkMi]
-    calc Qm * kstd * Qi * (Qm * kstd' * Qi) = Qm * (kstd * (Qi * Qm) * kstd') * Qi := by
-          simp only [Matrix.mul_assoc]
-      _ = 1 := by rw [hQiQ, Matrix.mul_one, hkk, Matrix.mul_one, hQQi]
-  have hkMM' : kMi * kM = 1 := mul_eq_one_comm.mp hkMM
-  let kG : GL (Fin n) (Fv F v ⊗[F] E) := ⟨kM, kMi, hkMM, hkMM'⟩
-  have hkx : ∀ x, kM *ᵥ x = Qm *ᵥ (kstd *ᵥ (Qi *ᵥ x)) := by
-    intro x; rw [hkM, mulVec_mulVec, mulVec_mulVec, Matrix.mul_assoc]
-  have hmem : kG ∈ HR (Fv F v) σ J := by
-    show Formalism.UG.cT (sigR (Fv F v) σ) kM * JR (Fv F v) J * kM = JR (Fv F v) J
-    apply hform_ext (sigR (Fv F v) σ)
-    intro x y
-    rw [← hform_mulVec]
-    show hR (Fv F v) σ J (kM *ᵥ x) (kM *ᵥ y) = hR (Fv F v) σ J x y
-    rw [hkx, hkx, hQh, ← stdH, hkU, stdH, ← hQh, mulVec_mulVec, mulVec_mulVec, hQQi, one_mulVec,
-      one_mulVec]
-  let kH : HA (Fv F v) σ J := (⟨kG, hmem⟩ : HR (Fv F v) σ J)
-  have hkHK : kH ∈ Formalism.L2.SG.TypedSets.Kv σ J Λ v := by
-    intro y
-    show y ∈ latLoc (E := E) v Λ ↔ kM *ᵥ y ∈ latLoc (E := E) v Λ
-    rw [memΛ, memΛ, hkx, mulVec_mulVec, hQiQ, one_mulVec, hkI]
   have hkHX : kH • X0r = k • X0r := by
     apply locF_injective v
     rw [hloc kH, hYdef]
-    funext a
-    show kM *ᵥ Y0 a = (k • Y0) a
-    rw [hkx]
-    have := hkZ a
-    simp only [hZ0def, hZdef] at this
-    rw [this, mulVec_mulVec, hQQi, one_mulVec]
+    exact funext hkHY
   have hkHg : kH ∈ Formalism.L2.SG.TypedSets.Kgv σ J Λ g v := by
     refine (kgv_iff kH).2 ⟨hkHK, fun w hw => ?_⟩
     refine ⟨Qm *ᵥ (U *ᵥ (Qi *ᵥ w)), ?_, ?_⟩
     · rw [memΛ, mulVec_mulVec, hQiQ, one_mulVec]
       exact D.intV_kS K' K'' ((memΛ w).1 hw)
-    · show kM *ᵥ w - w = _
+    · show (HA.mat (Fv F v) σ J kH : Matrix (Fin n) (Fin n) _) *ᵥ w - w = _
       have e : Qm *ᵥ (kstd *ᵥ (Qi *ᵥ w)) - w = Qm *ᵥ (kstd *ᵥ (Qi *ᵥ w) - Qi *ᵥ w) := by
         rw [mulVec_sub, show Qm *ᵥ (Qi *ᵥ w) = w by rw [mulVec_mulVec, hQQi, one_mulVec]]
       rw [hkx, e, hkmod, mulVec_smul]

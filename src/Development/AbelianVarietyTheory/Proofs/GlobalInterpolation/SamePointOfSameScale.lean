@@ -97,8 +97,8 @@ theorem off_lift {C : FC} {cD ch : ℝ} (p : Pt C) (hv : Val C cD ch p.L) (j : �
   unfold G.fill at hf
   by_cases ht : t ∈ p.D.host.TT
   · have h1 := htop τ ⟨t, ht⟩ hτe
-    rw [if_pos ⟨rfl, ht⟩, h1] at hf
-    rw [if_pos ht]
+    rw [ite_eq_left ⟨rfl, ht⟩, h1] at hf
+    rw [ite_eq_left ht]
     unfold G.bL at hf
     rw [dite_eq_left ht] at hf
     push_cast at hf ⊢
@@ -114,8 +114,8 @@ theorem off_lift {C : FC} {cD ch : ℝ} (p : Pt C) (hv : Val C cD ch p.L) (j : �
       · intro h
         obtain ⟨s, -, hst⟩ := Finset.mem_image.1 h
         exact hP.2 _ _ hst.symm)
-    rw [if_neg (fun h => ht h.2), h1] at hf
-    rw [if_neg ht]
+    rw [ite_eq_right (fun h => ht h.2), h1] at hf
+    rw [ite_eq_right ht]
     push_cast at hf ⊢
     linarith
 
@@ -145,12 +145,12 @@ theorem same_of_from : ∀ (C : FC) (cD ch : ℝ) (p p' : Pt C) (R : Ranks) (H :
     by_cases hj : j ∈ SizeData₂.lifts p.D
     · rw [off_lift p hv j hj t, off_lift p' hv' j (hl ▸ hj) t', hs, hn]
       by_cases ht : t ∈ p.D.host.TT
-      · rw [if_pos ht, if_pos (hm.1 ht)]
-      · rw [if_neg ht, if_neg (fun h => ht (hm.2 h))]
+      · rw [ite_eq_left ht, ite_eq_left (hm.1 ht)]
+      · rw [ite_eq_right ht, ite_eq_right (fun h => ht (hm.2 h))]
     · rw [hC.2 j hj t, hC'.2 j (hl ▸ hj) t', hs, hn]
       by_cases ht : t ∈ p.D.host.TT
-      · rw [if_pos ht, if_pos (hm.1 ht)]
-      · rw [if_neg ht, if_neg (fun h => ht (hm.2 h))]
+      · rw [ite_eq_left ht, ite_eq_left (hm.1 ht)]
+      · rw [ite_eq_right ht, ite_eq_right (fun h => ht (hm.2 h))]
   · funext l n' TT a' b'
     rw [p.xa.ex.kapI_def l n' TT a' b', p'.xa.ex.kapI_def l n' TT a' b', kapISet_congr p.L p'.L hRR hs hSc]
   · funext l

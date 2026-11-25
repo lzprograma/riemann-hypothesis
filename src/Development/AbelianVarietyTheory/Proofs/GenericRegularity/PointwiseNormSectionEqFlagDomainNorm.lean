@@ -107,7 +107,7 @@ theorem ptNorm_eq_pnorm : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
     · exact hgood σ hσ y i
     · have hσ' : Formalism.L2.PjFree.GoodEmb c ((starRingEnd ℂ).comp σ) := by
         have h := Formalism.L2.PjFree.goodEmb_goodOf c σ
-        rwa [Formalism.L2.PjFree.goodOf, if_neg hσ] at h
+        rwa [Formalism.L2.PjFree.goodOf, ite_eq_right hσ] at h
       obtain ⟨y', hy'⟩ := GlobalTheory.Frames.FramedBaseChange.exists_frMap hB E H Dw l Xo c _ _ (conjAlg σ) y
       rw [← abs_pos, ← hP.2 σ y y' hy' i, abs_pos]
       exact hgood _ hσ' y' i
@@ -118,7 +118,7 @@ theorem ptNorm_eq_pnorm : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
     rw [hpn _ _ ((hU σ hσ).2.2.2.2.1 a n hd f hf k)]
     have hrd : ‖Formalism.L2.PjFree.rdU (U σ) f k x'.1‖ = cabs (evR Xo c f ((U σ).un k x')) := by
       have e : Formalism.L2.PjFree.rdU (U σ) f k x'.1 = Formalism.L2.PjFree.toC (evR Xo c f ((U σ).un k x')) :=
-        dif_pos x'.2
+        dite_eq_left x'.2
       rw [e]; rfl
     rw [hrd, ← prod_baseNorm Dw hx a n]
     change cabs (evR Xo c f y) * _ = _

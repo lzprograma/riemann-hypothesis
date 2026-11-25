@@ -162,7 +162,7 @@ theorem UpperTheory.V.Z.Kato.Nb.sXiTw :
     rw [mul_assoc, inv_mul_cancel, mul_one]
   simp only [hdet, hP]
   by_cases h : Cnd l N g (m : Matrix (Fin 2) (Fin 2) (ZMod M)) ∧ P (Matrix.GeneralLinearGroup.det m)
-  · rw [if_pos h, if_pos ⟨hC.2 h.1, h.2⟩]
+  · rw [ite_eq_left h, ite_eq_left ⟨hC.2 h.1, h.2⟩]
     unfold tw
     rw [hgr x m, hgr y m]
     refine term X l n N hN s _ _ _ _ ?_
@@ -189,4 +189,4 @@ theorem UpperTheory.V.Z.Kato.Nb.sXiTw :
       linear_combination (φ ((m : Matrix (Fin 2) (Fin 2) (ZMod M)) 0 1) * PadicInt.toZModPow n (u 1)) * hdd
     rw [key]
     ring
-  · rw [if_neg h, if_neg (fun h' => h ⟨hC.1 h'.1, h'.2⟩), map_zero, sub_zero, map_zero]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h ⟨hC.1 h'.1, h'.2⟩), map_zero, sub_zero, map_zero]

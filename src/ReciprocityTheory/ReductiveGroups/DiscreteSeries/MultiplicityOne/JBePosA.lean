@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JBeConvA
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDefs
 import Mathlib.Tactic.TypeStar
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JPairsA
@@ -46,19 +47,7 @@ theorem bp_ae_prod_and {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
   (Measure.quasiMeasurePreserving_fst.ae hP).and (Measure.quasiMeasurePreserving_snd.ae hQ)
 
 theorem bp_meas_inv : Measurable (invM (k := k) (r := r)) := by
-  have hc : Continuous (fun g : Mt k r => (Matrix.of g : Mat k r)) := continuous_id
-  have h1 : Measurable (fun g : Mt k r => ((Matrix.of g : Mat k r).det)⁻¹) :=
-    (hc.matrix_det).measurable.inv
-  have h2 : Continuous (fun g : Mt k r => Matrix.of.symm (Matrix.of g : Mat k r).adjugate) :=
-    hc.matrix_adjugate
-  have h3 : Measurable (fun g : Mt k r =>
-      ((Matrix.of g : Mat k r).det)⁻¹ • Matrix.of.symm (Matrix.of g : Mat k r).adjugate) :=
-    h1.smul h2.measurable
-  convert h3 using 1
-  funext g
-  change (Matrix.of g : Mat k r)⁻¹ =
-    (Matrix.of g : Mat k r).det⁻¹ • (Matrix.of g : Mat k r).adjugate
-  rw [Matrix.inv_def, Ring.inverse_eq_inv']
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.Mult1.bc_measurable_invM <;> assumption
 
 theorem bp_cont_mul : Continuous (mulM (k := k) (r := r)) := by
   unfold mulM
@@ -246,9 +235,9 @@ theorem cont_ell (z : Fin (2 * r + k + 1) → ℂ) : Continuous (ell k r z) := b
   unfold ell
   refine continuous_finsetSum _ fun a _ => ?_
   by_cases h : a.val + 1 < r
-  · simp only [h, dif_pos]
+  · simp only [h, dite_eq_left]
     fun_prop
-  · simp only [h, dif_neg, not_false_eq_true, mulVec, dotProduct]
+  · simp only [h, dite_eq_right, not_false_eq_true, mulVec, dotProduct]
     fun_prop
 
 theorem cont_psiD : Continuous (psiD D) := by

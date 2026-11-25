@@ -320,7 +320,7 @@ def ofProjectivePoint (p : (W.baseChange k).toProjective.Point) :
   Quotient.hrecOn p.point (motive := fun c => (W.baseChange k).toProjective.NonsingularLift c →
       (Over.mk (Spec.map (CommRingCat.ofHom (algebraMap R k))) ⟶ schemeOver W))
     (fun P h => ptOver W P (.of_nonsingular h))
-    (fun P Q e => Function.hfunext
+    (fun _ _ e => Function.hfunext
       (propext (WeierstrassCurve.Projective.nonsingular_of_equiv e)) fun hP hQ _ =>
         heq_of_eq ((ptOver_eq_ptOver_iff W (.of_nonsingular hQ) (.of_nonsingular hP)).mpr
           (e.imp fun _ e => e.symm)).symm)

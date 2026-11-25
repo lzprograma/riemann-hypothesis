@@ -72,12 +72,6 @@ noncomputable section
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ}
 
-section Local
-
-variable {X : Data E r} {Xa : ArchInM X} (Fl : FlatM X Xa)
-
-end Local
-
 section Hyp
 
 variable {X : Data E r}
@@ -91,118 +85,6 @@ open MeasureTheory Topology Asymptotics Filter Metric in
 open scoped ENNReal in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} in
 variable {X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r} in
-private lemma norm_dmin_cpt_last_eq_one {x0 : _root_.ReciprocityTheory.ChartRestriction.G.FD.Frame X.Ψ r} (hx0 : _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.IsOrth X x0)
-    (w : _root_.ReciprocityTheory.L2DbarEstimates.V (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.nd X)) (τ : X.Ψ) :
-    ‖_root_.ReciprocityTheory.ChartRestriction.G.FD.dmin X.Gm (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.cpt X x0 w) τ (Fin.last r)‖ = 1 := by
-  rw [_root_.ReciprocityTheory.ChartRestriction.G.AR.Up.PoinPf.dmin_cpt_orth X hx0, _root_.ReciprocityTheory.ChartRestriction.G.FD.lminor_last]
-  have hN : (_root_.ReciprocityTheory.ChartRestriction.G.FD.mat (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.nmat X w) τ).det = 1 := by
-    rw [Matrix.det_of_lowerTriangular]
-    · refine Finset.prod_eq_one fun i _ => ?_
-      simp [_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.nmat, _root_.ReciprocityTheory.ChartRestriction.G.FD.mat]
-    · intro a b hab
-      have h' : a < b := hab
-      simp [_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.nmat, _root_.ReciprocityTheory.ChartRestriction.G.FD.mat, not_lt.2 h'.le, h'.ne]
-  have h0 := _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.PoinPf.norm_lminor_zero X τ (Fin.last r)
-  rw [_root_.ReciprocityTheory.ChartRestriction.G.FD.lminor_last, _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.PoinPf.Gw_zero] at h0
-  have hmap : ((_root_.ReciprocityTheory.ChartRestriction.G.FD.mat (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.nmat X w) τ).map (starRingEnd ℂ)).det = 1 := by
-    have h := RingHom.map_det (starRingEnd ℂ) (_root_.ReciprocityTheory.ChartRestriction.G.FD.mat (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.nmat X w) τ)
-    rw [hN, map_one] at h
-    exact h.symm
-  unfold _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.PoinPf.Gw
-  rw [Matrix.det_mul, Matrix.det_mul, Matrix.det_transpose, hN, hmap, one_mul, mul_one, h0]
-
-open NumberField in
-open MeasureTheory Topology Asymptotics Filter Metric in
-open scoped ENNReal in
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} in
-variable {X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r} in
-private lemma sum_range_odd_mul_sub_eq (L : ℕ → ℝ) (r : ℕ) :
-    ∑ i ∈ Finset.range r, (2 * (i : ℝ) + 1) * (L (i + 1) - L i) =
-      (2 * (r : ℝ) - 1) * L r + L 0 - 2 * ∑ i ∈ Finset.range r, L i := by
-  induction r with
-  | zero => simp
-  | succ k ih =>
-    rw [Finset.sum_range_succ, ih, Finset.sum_range_succ]
-    push_cast
-    ring
-
-open NumberField in
-open MeasureTheory Topology Asymptotics Filter Metric in
-open scoped ENNReal in
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} in
-variable {X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r} in
-private lemma sum_range_centered_mul_sub_eq (L : ℕ → ℝ) (r : ℕ) :
-    ∑ i ∈ Finset.range r, (2 * (i : ℝ) - ((r : ℝ) - 1)) * (L (i + 1) - L i) =
-      -2 * ∑ i ∈ Finset.range r, L i + ((r : ℝ) - 1) * L r + ((r : ℝ) + 1) * L 0 := by
-  have h1 := sum_range_odd_mul_sub_eq L r
-  have h2 : ∑ i ∈ Finset.range r, (L (i + 1) - L i) = L r - L 0 := Finset.sum_range_sub L r
-  have h3 : ∑ i ∈ Finset.range r, (2 * (i : ℝ) - ((r : ℝ) - 1)) * (L (i + 1) - L i) =
-      ∑ i ∈ Finset.range r, (2 * (i : ℝ) + 1) * (L (i + 1) - L i) -
-        (r : ℝ) * ∑ i ∈ Finset.range r, (L (i + 1) - L i) := by
-    rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
-    refine Finset.sum_congr rfl fun i _ => by ring
-  rw [h3, h1, h2]
-  ring
-
-open NumberField in
-open MeasureTheory Topology Asymptotics Filter Metric in
-open scoped ENNReal in
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} in
-variable {X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r} in
-private lemma phla_kapW_cpt_eq_log_densF {x0 : _root_.ReciprocityTheory.ChartRestriction.G.FD.Frame X.Ψ r}
-    (hx0 : _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.IsOrth X x0) {w : _root_.ReciprocityTheory.L2DbarEstimates.V (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.nd X)} (hw : _root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.cpt X x0 w ∈ X.dom) :
-    _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.phla X (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.kapW X) (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.cpt X x0 w) = Real.log (_root_.ReciprocityTheory.ChartRestriction.G.AR.Up.densF X x0 w) := by
-  have hne : ∀ τ i, _root_.ReciprocityTheory.ChartRestriction.G.FD.dmin X.Gm (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.cpt X x0 w) τ i ≠ 0 := fun τ i => _root_.ReciprocityTheory.ChartRestriction.G.FD.FlowCoefficientBounds.dmin_ne X hw τ i
-  have hpos : ∀ τ i, 0 < ‖_root_.ReciprocityTheory.ChartRestriction.G.FD.dmin X.Gm (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.cpt X x0 w) τ i‖ :=
-    fun τ i => norm_pos_iff.2 (hne τ i)
-  have hzero : ∀ τ, _root_.ReciprocityTheory.ChartRestriction.G.FD.dmin X.Gm (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.cpt X x0 w) τ 0 = 1 := fun τ => by
-    rw [_root_.ReciprocityTheory.ChartRestriction.G.FD.FrameDegreeData.dmin_prod X hw]
-    exact Finset.prod_eq_one fun j _ => absurd j.isLt (by simp)
-  let L : X.Ψ → ℕ → ℝ := fun τ k =>
-    if h : k < r + 1 then Real.log ‖_root_.ReciprocityTheory.ChartRestriction.G.FD.dmin X.Gm (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.cpt X x0 w) τ ⟨k, h⟩‖ else 0
-  have hL : ∀ τ (i : Fin (r + 1)), Real.log ‖_root_.ReciprocityTheory.ChartRestriction.G.FD.dmin X.Gm (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.cpt X x0 w) τ i‖ = L τ i := by
-    intro τ i
-    simp only [L, dif_pos i.isLt, Fin.eta]
-  have hL0 : ∀ τ, L τ 0 = 0 := fun τ => by
-    simp [L, hzero]
-  have hLr : ∀ τ, L τ r = 0 := fun τ => by
-    have := norm_dmin_cpt_last_eq_one hx0 w τ
-    simp only [L, lt_add_one, dite_true]
-    rw [show (⟨r, lt_add_one r⟩ : Fin (r + 1)) = Fin.last r from rfl, this, Real.log_one]
-  unfold _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.phla _root_.ReciprocityTheory.ChartRestriction.G.FD.Data.nfac _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.densF _root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.kapW
-  rw [Real.log_prod (fun τ _ => (Finset.prod_pos fun i _ => Real.rpow_pos_of_pos
-      (by rw [norm_div]; exact div_pos (hpos _ _) (hpos _ _)) _).ne'),
-    Real.log_prod (fun τ _ => (Finset.prod_pos fun i _ => zpow_pos (hpos _ _) _).ne')]
-  rw [Finset.mul_sum]
-  refine Finset.sum_congr rfl fun τ _ => ?_
-  rw [Real.log_prod (fun i _ => (Real.rpow_pos_of_pos
-      (by rw [norm_div]; exact div_pos (hpos _ _) (hpos _ _)) _).ne'),
-    Real.log_prod (fun i _ => (zpow_pos (hpos _ _) _).ne')]
-  simp only [Real.log_zpow, norm_div]
-  rw [Finset.mul_sum]
-  have hterm : ∀ i : Fin r, -2 * Real.log ((‖_root_.ReciprocityTheory.ChartRestriction.G.FD.dmin X.Gm (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.cpt X x0 w) τ i.succ‖ /
-      ‖_root_.ReciprocityTheory.ChartRestriction.G.FD.dmin X.Gm (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.cpt X x0 w) τ i.castSucc‖) ^
-        (-((2 * ((i : ℕ) : ℤ) - ((r : ℤ) - 1) : ℤ) : ℝ) / 2)) =
-      (2 * ((i : ℕ) : ℝ) - ((r : ℝ) - 1)) * (L τ ((i : ℕ) + 1) - L τ (i : ℕ)) := by
-    intro i
-    rw [Real.log_rpow (div_pos (hpos _ _) (hpos _ _)), Real.log_div (hpos _ _).ne' (hpos _ _).ne',
-      hL, hL]
-    simp only [Fin.val_succ, Fin.coe_castSucc]
-    push_cast
-    ring
-  rw [Finset.sum_congr rfl fun i _ => hterm i]
-  have hterm2 : ∀ i : Fin r,
-      ((-2 : ℤ) : ℝ) * Real.log ‖_root_.ReciprocityTheory.ChartRestriction.G.FD.dmin X.Gm (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.cpt X x0 w) τ i.castSucc‖ =
-        -2 * L τ (i : ℕ) := by
-    intro i
-    rw [hL]
-    simp
-  rw [Finset.sum_congr rfl fun i _ => hterm2 i]
-  rw [Fin.sum_univ_eq_sum_range (fun i => (2 * (i : ℝ) - ((r : ℝ) - 1)) * (L τ (i + 1) - L τ i)),
-    Fin.sum_univ_eq_sum_range (fun i => -2 * L τ i), sum_range_centered_mul_sub_eq, hL0, hLr,
-    ← Finset.mul_sum]
-  ring
-
 open NumberField in
 open MeasureTheory Topology Asymptotics Filter Metric in
 open scoped ENNReal in
@@ -222,7 +104,7 @@ private lemma leviWeight_sub_leviDensity_eq_lemma {x0 : _root_.ReciprocityTheory
     congr 1
     refine _root_.ReciprocityTheory.L2DbarEstimates.leviV_congr ?_ ξ
     filter_upwards [(_root_.ReciprocityTheory.ChartRestriction.G.AR.Up.OntoB.isOpen_OmF X x0).mem_nhds hz] with y hy
-    rw [phla_kapW_cpt_eq_log_densF hx0 hy]
+    rw [_root_.ReciprocityTheory.ChartRestriction.G.AR.Up.IW.phla_kapW_cpt X x0 hx0 hy]
   rw [h1, h2]
   push_cast
   ring
@@ -286,7 +168,7 @@ theorem _root_.GlobalTheory.DivisionVolume.margin_iff (h0 : 0 < X.p0) (h1 : X.p0
       simp only [_root_.ReciprocityTheory.ChartRestriction.G.FD.sgn, _root_.GlobalTheory.CurvMargin.blockWt, Pi.sub_apply] at h
       by_cases hi : (i : ℕ) < X.p0
       · have hj : (j : ℕ) < X.p0 := by omega
-        simp only [hi, hj, if_true] at h
+        simp only [hi, hj, ite_true] at h
         norm_num at h
         simp only [Pi.sub_apply]
         have h' : ((la τ j - _root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.kapW X τ j : ℤ) : ℝ) ≤ ((la τ i - _root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.kapW X τ i : ℤ) : ℝ) := by
@@ -294,7 +176,7 @@ theorem _root_.GlobalTheory.DivisionVolume.margin_iff (h0 : 0 < X.p0) (h1 : X.p0
           linarith
         exact_mod_cast h'
       · have hj : ¬ (j : ℕ) < X.p0 := by omega
-        simp only [hi, hj, if_false] at h
+        simp only [hi, hj, ite_false] at h
         norm_num at h
         simp only [Pi.sub_apply]
         have h' : ((la τ j - _root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.kapW X τ j : ℤ) : ℝ) ≤ ((la τ i - _root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.kapW X τ i : ℤ) : ℝ) := by
@@ -307,7 +189,7 @@ theorem _root_.GlobalTheory.DivisionVolume.margin_iff (h0 : 0 < X.p0) (h1 : X.p0
       simp only [_root_.ReciprocityTheory.ChartRestriction.G.FD.sgn, _root_.GlobalTheory.CurvMargin.blockWt, Pi.sub_apply] at h
       have hi0' : (i0 : ℕ) < X.p0 := by omega
       have hi1' : ¬ (i1 : ℕ) < X.p0 := by omega
-      simp only [hi0', hi1', if_true, if_false] at h
+      simp only [hi0', hi1', ite_true, ite_false] at h
       norm_num at h
       simp only [Pi.sub_apply, Int.cast_sub]
       linarith
@@ -322,12 +204,6 @@ theorem _root_.GlobalTheory.DivisionVolume.margin_iff (h0 : 0 < X.p0) (h1 : X.p0
       exact h
 
 end Hyp
-
-section Size
-
-variable {X : Data E r}
-
-end Size
 
 end
 

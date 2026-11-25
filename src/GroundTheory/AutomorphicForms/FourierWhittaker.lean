@@ -126,7 +126,7 @@ theorem exists_lastRow_eq {k : ℕ} {ξ : Fin k → K} (hξ : ξ ≠ 0) :
     have hrc' : r < c := hrc
     have hr : r ≠ last := by
       intro h; subst h; have := c.2; rw [Fin.lt_def] at hrc'; simp [last] at hrc'; omega
-    simp only [M, Matrix.of_apply, if_neg hr, if_neg (ne_of_lt hrc')]
+    simp only [M, Matrix.of_apply, ite_eq_right hr, ite_eq_right (ne_of_lt hrc')]
   have hdetM : M.det = ξ i0 := by
     rw [Matrix.det_of_isLowerTriangular _ hM, Finset.prod_eq_single last]
     · simp [M, σ]
@@ -216,8 +216,8 @@ theorem continuous_colGL_fin (k : ℕ) :
     intro a b
     simp only [uMat_apply, colX_apply]
     by_cases h1 : a = b
-    · simp only [h1, if_true]; exact continuous_const
-    · simp only [h1, if_false]
+    · simp only [h1, ite_true]; exact continuous_const
+    · simp only [h1, ite_false]
       by_cases h2 : a < b
       · simp only [h2, dite_true]
         by_cases h3 : b.val = k
@@ -357,19 +357,19 @@ theorem existsUnique_triangular {ι : Type*} [Fintype ι] (ord : ι → ℕ)
       set l' : ι → K := fun i => if ord i = N then l i - c i else l i
       have hagree : ∀ i j, ord j < ord i → ord i ≤ N → l' j = l j := by
         intro i j hj hi
-        simp only [l', if_neg (show ord j ≠ N by omega)]
+        simp only [l', ite_eq_right (show ord j ≠ N by omega)]
       refine ⟨l', fun i hi => ?_⟩
       have hsi : s i (A l' + y) = s i (A l + y) := hs i _ _ fun j hj => by
         simp only [A, Pi.add_apply, hagree i j hj (by omega)]
       rw [hS, hsi]
       by_cases hN : ord i = N
-      · simp only [A, Pi.add_apply, l', if_pos hN, map_sub]
+      · simp only [A, Pi.add_apply, l', ite_eq_left hN, map_sub]
         have := hc i
         rw [hS] at this
         convert this using 1
         simp only [A, Pi.add_apply]
         ring
-      · simp only [A, Pi.add_apply, l', if_neg hN]
+      · simp only [A, Pi.add_apply, l', ite_eq_right hN]
         have := hl i (by omega)
         rwa [hS] at this
   obtain ⟨N, hN⟩ : ∃ N, ∀ i, ord i < N :=
@@ -422,7 +422,7 @@ theorem blockEntry_eq_of_vanishing {X : Matrix (Fin n) (Fin n) 𝔸[K]}
 
 theorem uMat_extLow_apply_of_lt (i j : Fin n) (hj : (j : ℕ) < k) (hi : k ≤ (i : ℕ)) :
     uMat (extLow B) i j = 0 := by
-  rw [uMat_apply, if_neg (fun h => by subst h; omega), dite_eq_right (fun h => by rw [Fin.lt_def] at h; omega)]
+  rw [uMat_apply, ite_eq_right (fun h => by subst h; omega), dite_eq_right (fun h => by rw [Fin.lt_def] at h; omega)]
 
 theorem uMat_extLow_inv_apply_of_lt (i j : Fin n) (hj : (j : ℕ) < k) (hi : k ≤ (i : ℕ)) :
     (((uGL (extLow B))⁻¹ : GL (Fin n) 𝔸[K]) : Matrix (Fin n) (Fin n) 𝔸[K]) i j = 0 := by
@@ -430,15 +430,15 @@ theorem uMat_extLow_inv_apply_of_lt (i j : Fin n) (hj : (j : ℕ) < k) (hi : k �
   have hT : (uMat (extLow B)).BlockTriangular (fun c : Fin n => if (c : ℕ) < k then 0 else 1) := by
     intro a b hab
     by_cases ha : (a : ℕ) < k
-    · simp only [ha, if_true] at hab
+    · simp only [ha, ite_true] at hab
       split_ifs at hab <;> omega
     · by_cases hb : (b : ℕ) < k
       · exact uMat_extLow_apply_of_lt B a b hb (by omega)
-      · simp only [ha, hb, if_false] at hab
+      · simp only [ha, hb, ite_false] at hab
         omega
   have hTi := Matrix.blockTriangular_inv_of_blockTriangular hT
   rw [Matrix.coe_units_inv, coe_uGL]
-  exact hTi (by simp only; rw [if_pos hj, if_neg (by omega)]; norm_num)
+  exact hTi (by simp only; rw [ite_eq_left hj, ite_eq_right (by omega)]; norm_num)
 
 theorem blockEntry_mul_vanishing {M : Matrix (Fin n) (Fin n) 𝔸[K]}
     (hM : ∀ i j : Fin n, (j : ℕ) < k → k ≤ (i : ℕ) → M i j = 0) (A : UPos n k → 𝔸[K]) :
@@ -485,8 +485,8 @@ theorem unipMatrix_mul_uMat_extLow (A : UPos n k → 𝔸[K]) :
   rw [Matrix.add_apply, uMat_apply, uMat_apply]
   by_cases hij : i = j
   · subst hij
-    rw [if_pos rfl, if_pos rfl, hv (by omega), add_zero]
-  · rw [if_neg hij, if_neg hij]
+    rw [ite_eq_left rfl, ite_eq_left rfl, hv (by omega), add_zero]
+  · rw [ite_eq_right hij, ite_eq_right hij]
     by_cases hlt : i < j
     · rw [dite_eq_left hlt, dite_eq_left hlt, Pi.add_apply, extU]
       congr 1
@@ -531,7 +531,7 @@ theorem isAddFundamentalDomain_shear_symm :
     (fun z u => ?_) (fun u z z' hzz' => ?_) y
   · show (blockEntry z * uMat (extLow B)) u.1.1 u.1.2 = _
     rw [Matrix.mul_apply, ← Finset.add_sum_erase _ _ (Finset.mem_univ u.1.2), blockEntry_apply,
-      dite_eq_left u.2, uMat_apply, if_pos rfl, mul_one]
+      dite_eq_left u.2, uMat_apply, ite_eq_left rfl, mul_one]
   · refine Finset.sum_congr rfl fun c hc => ?_
     by_cases hcu : c < u.1.2
     · rw [blockEntry_apply, blockEntry_apply]
@@ -540,7 +540,7 @@ theorem isAddFundamentalDomain_shear_symm :
       · rfl
     · have hne : c ≠ u.1.2 := Finset.ne_of_mem_erase hc
       have : uMat (extLow B) c u.1.2 = 0 := by
-        rw [uMat_apply, if_neg hne, dite_eq_right (fun h => hcu (by
+        rw [uMat_apply, ite_eq_right hne, dite_eq_right (fun h => hcu (by
           rw [Fin.lt_def] at h ⊢; have := Fin.val_injective.ne hne; omega))]
       rw [this, mul_zero, mul_zero]
 

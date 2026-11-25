@@ -754,17 +754,17 @@ theorem UpperTheory.V.Z.Sym.Loc.caseM :
   · rintro z S S₀ ⟨h0, rfl⟩
     exact ⟨hPinv z S₀ h0, phi_act g s S₀ z⟩
   · rintro S S₀ ⟨h0, e⟩
-    rw [if_pos ((hFix S).2 ⟨S₀, h0, e⟩), if_pos h0]
+    rw [ite_eq_left ((hFix S).2 ⟨S₀, h0, e⟩), ite_eq_left h0]
   · intro S hS
     have hS' : IsFix O c (ν • ofE Δ u) (((t : K) • s • (ω : Lsq K Δ)) • ofE Δ (ω - star ω : Etau K τ)) S := by
       by_contra hn
-      rw [if_neg hn] at hS
+      rw [ite_eq_right hn] at hS
       exact hS rfl
     obtain ⟨S₀, h0, e⟩ := (hFix S).1 hS'
     exact ⟨S₀, ⟨h0, e⟩, fun S₁ ⟨h1, e1⟩ => phi_inj h1 h0 (e1.symm.trans e)⟩
   · intro S₀ hS
     have h0 : IsFixP O τ ((t : K) * (τ ^ 2 - 4)) S₀ := by
       by_contra hn
-      rw [if_neg hn] at hS
+      rw [ite_eq_right hn] at hS
       exact hS rfl
     exact ⟨Phi O Δ g s S₀, ⟨h0, rfl⟩, fun S ⟨_, e⟩ => e⟩

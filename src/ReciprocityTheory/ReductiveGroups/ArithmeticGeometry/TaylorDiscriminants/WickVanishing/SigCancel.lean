@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.DofDApply
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.DofComm
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.IntegralFamilyPointZero
 import Mathlib.RingTheory.PiTensorProduct
@@ -10,8 +11,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.IntegralFamilyFirstZeroSecond
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -30,17 +29,8 @@ theorem dof_expS (F : Fin d → PS k 2 d) (u : Fin d → k) {f : PS k 1 d} (hf :
 
 theorem dof_Cmul (F : Fin d → PS k 2 d) (u : Fin d → k) (a : k) (g : PS k 1 d) :
     Dof F u (C a * g) = C a * Dof F u g := by
-  have hD : ∀ j, pderiv (R := k) ((0 : Fin 1), j) (C a * g) = C a * pderiv (R := k) ((0 : Fin 1), j) g := by
-    intro j
-    rw [Derivation.leibniz]
-    have h0 : pderiv (R := k) ((0 : Fin 1), j) (C a : PS k 1 d) = 0 := by
-      rw [show (C a : PS k 1 d) = algebraMap k (PS k 1 d) a from rfl]
-      exact Derivation.map_algebraMap _ _
-    rw [h0, smul_zero, add_zero, smul_eq_mul]
-  simp only [Dof, hD]
-  rw [Finset.mul_sum]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  ring
+  intros
+  apply _root_.ReciprocityTheory.ChartRestriction.G.TB.GE.dof_C_mul <;> assumption
 
 theorem ig_dAct (B : FB R d O) (a : O) (i j : Fin d) : (C (dAct k B a i j) : PS k 1 d) ∈ Ig R k (Fin 1 × Fin d) := by
   unfold Ig
@@ -135,9 +125,9 @@ theorem sig_cancel (B : FB R d O) (h : PS k 2 d) (w0 : O) (hw : w0 + star w0 = 1
   have hu : ∀ c, ∑ b, C (u b) * (C (dAct k B w0 c b) + C (dAct k B (star w0) c b)) = (C (u c) : PS k 1 d) := by
     intro c
     rw [Finset.sum_eq_single c]
-    · rw [← map_add (f := _), dAct_sum B w0 hw c c, if_pos rfl, map_one, mul_one]
+    · rw [← map_add (f := _), dAct_sum B w0 hw c c, ite_eq_left rfl, map_one, mul_one]
     · intro b _ hb
-      rw [← map_add (f := _), dAct_sum B w0 hw c b, if_neg (Ne.symm hb), map_zero, mul_zero]
+      rw [← map_add (f := _), dAct_sum B w0 hw c b, ite_eq_right (Ne.symm hb), map_zero, mul_zero]
     · intro hc; exact absurd (Finset.mem_univ c) hc
   have L1 : ∑ b, C (u b) * ∑ c, sgOf k h c * C (dAct k B (star w0) c b) =
       ∑ c, ∑ b, sgOf k h c * (C (u b) * C (dAct k B (star w0) c b)) := by

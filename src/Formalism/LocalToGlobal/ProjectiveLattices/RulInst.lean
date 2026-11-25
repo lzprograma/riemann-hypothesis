@@ -18,13 +18,15 @@ section
 
 variable {K : Type} [Field K] (pts : ∀ (S : Type) [CommRing S] [Algebra K S], Type)
 
-instance (priority := high) rulesCommRing : CommRing (Rules pts) := inferInstance
-instance (priority := high) rulesAlgebra : Algebra K (Rules pts) := inferInstance
-instance (priority := high) rulesModule : Module K (Rules pts) := inferInstance
-instance (priority := high) rulesSMul : SMul K (Rules pts) := inferInstance
-instance (priority := high) rulesAlgebraInt : Algebra (𝓞 K) (Rules pts) := inferInstance
-instance (priority := high) rulesModuleInt : Module (𝓞 K) (Rules pts) := inferInstance
-instance (priority := high) rulesTower : IsScalarTower (𝓞 K) K (Rules pts) := inferInstance
+-- Scoped (`open Formalism.L2.Pj` activates them): `Rules pts` is a reducible Pi type, so as global `high`
+-- instances these shortcuts came first in every `CommRing ?R` search with `?R` unknown.
+scoped instance (priority := high) rulesCommRing : CommRing (Rules pts) := inferInstance
+scoped instance (priority := high) rulesAlgebra : Algebra K (Rules pts) := inferInstance
+scoped instance (priority := high) rulesModule : Module K (Rules pts) := inferInstance
+scoped instance (priority := high) rulesSMul : SMul K (Rules pts) := inferInstance
+scoped instance (priority := high) rulesAlgebraInt : Algebra (𝓞 K) (Rules pts) := inferInstance
+scoped instance (priority := high) rulesModuleInt : Module (𝓞 K) (Rules pts) := inferInstance
+scoped instance (priority := high) rulesTower : IsScalarTower (𝓞 K) K (Rules pts) := inferInstance
 
 end
 

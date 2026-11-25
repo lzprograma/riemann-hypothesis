@@ -25,17 +25,16 @@ namespace CompanionTheory.D.gk.FinalFormK
 open PI CompanionTheory.D.Upq.ModEx CompanionTheory.D.Upq.Sm CompanionTheory.D.gk.Poul CompanionTheory.Zuck BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData
 open PI.UpqRep (InLieHpk)
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {k r : ℕ}
-
 
 open Classical in
 def ent {X Y : Obj k r} (f : M X →ₗ[ℂ] M Y) (e : Y.1.ι) (c : X.1.ι) (v : X.2.R.H) : Y.2.R.H :=
   if hv : IsSm (GG k r) X.2.R.σ v then (f (Pi.single c ⟨v, hv⟩) e : Y.2.R.H) else 0
 
 theorem ent_coe {X Y : Obj k r} (f : M X →ₗ[ℂ] M Y) (e : Y.1.ι) (c : X.1.ι) (v : X.2.R.smSub) :
-    ent f e c v = (f (Pi.single c v) e : Y.2.R.H) := dif_pos v.2
+    ent f e c v = (f (Pi.single c v) e : Y.2.R.H) := dite_eq_left v.2
 
 theorem ent_lin {X Y : Obj k r} (f : M X →ₗ[ℂ] M Y) (e : Y.1.ι) (c : X.1.ι) : Lin (GG k r) X.2.R.σ (ent f e c) :=
   ⟨fun v w hv hw => by
@@ -115,7 +114,7 @@ theorem hasDerivAt_lin {X : Obj k r} (hX : X.1.OK) {H' : Type} [NormedAddCommGro
 
   rw [this, map_add (f := _), map_sum]
   simp only [ex_zero, hX.one, Matrix.one_apply, ite_smul, one_smul, zero_smul, Finset.sum_add_distrib,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true, X.2.repOn.map_one, map_smul]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true, X.2.repOn.map_one, map_smul]
   congr 1
   show T _ = T _
   rw [URep.dsig_coe _ hZ]

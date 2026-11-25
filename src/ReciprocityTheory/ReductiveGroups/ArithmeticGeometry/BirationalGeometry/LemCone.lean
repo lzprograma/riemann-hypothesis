@@ -36,7 +36,7 @@ private theorem coeff_coneMap_eq_aeval_homogeneousComponent (x : ι → Ω) (f :
   refine Finset.sum_congr rfl fun e _ => ?_
   rcases eq_or_ne e.degree d with h | h
   · simp [h]
-  · rw [if_neg (Ne.symm h), if_neg h]
+  · rw [ite_eq_right (Ne.symm h), ite_eq_right h]
 
 theorem coneMap_of_isHomogeneous (x : ι → Ω) {f : MvPolynomial ι o} {n : ℕ}
     (hf : f.IsHomogeneous n) :
@@ -46,7 +46,7 @@ theorem coneMap_of_isHomogeneous (x : ι → Ω) {f : MvPolynomial ι o} {n : �
     homogeneousComponent_of_mem ((mem_homogeneousSubmodule _ _).2 hf)]
   rcases eq_or_ne d n with rfl | h
   · simp
-  · rw [if_neg h, if_neg h, map_zero]
+  · rw [ite_eq_right h, ite_eq_right h, map_zero]
 
 theorem mem_coordIdeal_of_isHomogeneous (x : ι → Ω) {f : MvPolynomial ι o} {n : ℕ}
     (hf : f.IsHomogeneous n) (h : aeval x f = 0) : f ∈ coordIdeal o x := by

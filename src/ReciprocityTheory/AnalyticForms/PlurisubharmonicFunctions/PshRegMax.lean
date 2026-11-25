@@ -76,7 +76,7 @@ lemma fderiv_conv_eq {g : (ι → ℝ) → ℝ} (hg : Continuous g) :
 lemma tsupport_fderiv2_kK :
     tsupport (fderiv ℝ (fderiv ℝ (kK : (ι → ℝ) → ℝ))) ⊆ closedBall 0 (1 / 2) :=
   (tsupport_fderiv_subset ℝ).trans ((tsupport_fderiv_subset ℝ).trans
-    (closure_minimal (fun h hh => mem_closedBall_zero_iff.2 (norm_le_of_kK_ne hh))
+    (closure_minimal (fun _ hh => mem_closedBall_zero_iff.2 (norm_le_of_kK_ne hh))
       isClosed_closedBall))
 
 lemma norm_bilin_bound {E F G : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]

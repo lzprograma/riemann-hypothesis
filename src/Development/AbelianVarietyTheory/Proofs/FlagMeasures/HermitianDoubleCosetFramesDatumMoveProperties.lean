@@ -48,6 +48,7 @@ import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Init
+import Development.AbelianVarietyTheory.Definitions.Foundations.IsIntegralIff
 
 @[expose] public section
 
@@ -61,14 +62,7 @@ variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E]
 
 theorem conj_form {L : LocE F E} {n : ℕ} {Hm : Matrix (Fin n) (Fin n) E} (h : IsHerm L Hm)
     (x y : Fin n → E) : hf L Hm y x = L.cj (hf L Hm x y) := by
-  have h' : cT L Hm = Hm := h
-  have hH : ∀ i j, L.cj (Hm i j) = Hm j i := fun i j => congrFun (congrFun h' j) i
-  unfold hf
-
-  simp_rw [map_sum, map_mul, L.cj_cj, hH]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  ring
+  apply _root_.GlobalTheory.HL.Model.hf_symm <;> assumption
 
 theorem form_zero_of_span {L : LocE F E} {n : ℕ} {Hm : Matrix (Fin n) (Fin n) E} (h : IsHerm L Hm)
     (A : Set (Fin n → E)) (hA : ∀ a ∈ A, ∀ b ∈ A, hf L Hm a b = 0) :
@@ -100,7 +94,7 @@ theorem iso_spanTo (g : Fin (r + 1) → S.V) (c : E)
   rintro _ ⟨a, ha, rfl⟩ _ ⟨b, hb, rfl⟩
   have ha' : (a : ℕ) < r := ha
   have hne : a ≠ Fin.last r := fun e => by subst e; simp at ha'
-  rw [hg, if_neg (fun hc => hne hc.1)]
+  rw [hg, ite_eq_right (fun hc => hne hc.1)]
 
 theorem mem_span_frame (g : Fin (r + 1) → S.V) (n : S.GLV) (hn : n ∈ S.Nof g) (j : Fin r)
     (x : S.V) (hx : x ∈ S.spanTo g (j + 1)) :

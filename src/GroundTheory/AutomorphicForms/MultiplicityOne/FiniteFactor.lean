@@ -18,8 +18,6 @@ noncomputable section
 
 namespace MultiplicityOne
 
-set_option linter.unusedSectionVars false
-
 open Reduction AutomorphicForm RightCosetSpace CuspidalSpectrum
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}

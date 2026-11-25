@@ -51,7 +51,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf
 open scoped ComplexOrder ENNReal NNReal ContDiff
 
@@ -212,7 +211,7 @@ theorem maj_integrable : ∀ (D : D7) (θ : InfFam D), IsInfFam θ → ∀ (m n 
           simp only [compAt, Matrix.map_apply, Matrix.sub_apply, map_sub]
         rw [e, compAt_shift hθ]
         by_cases hP : P i j
-        · rw [if_pos hP]
+        · rw [ite_eq_left hP]
           refine le_trans ?_ (le_add_of_nonneg_left (norm_nonneg _))
           refine le_trans (Complex.norm_le_abs_re_add_abs_im _) ?_
           set c := compAt θ τ x i j
@@ -228,7 +227,7 @@ theorem maj_integrable : ∀ (D : D7) (θ : InfFam D), IsInfFam θ → ∀ (m n 
           rw [abs_of_nonneg (by linarith : (0 : ℝ) ≤ c.re - ⌊c.re⌋),
             abs_of_nonneg (by linarith : (0 : ℝ) ≤ c.im - ⌊c.im⌋)]
           linarith
-        · rw [if_neg hP, sub_zero]
+        · rw [ite_eq_right hP, sub_zero]
           have : compAt θ τ x i j = compAt θ τ a i j := by
             simp only [compAt, Matrix.map_apply, hx i j hP]
           rw [this]; linarith
@@ -262,13 +261,13 @@ theorem maj_integrable : ∀ (D : D7) (θ : InfFam D), IsInfFam θ → ∀ (m n 
       have hmem : InBox K x ∧ realSize θ x ≤ ((⌊realSize θ x⌋₊ + 1 : ℕ) : ℝ) :=
         ⟨hb, by push_cast; exact (Nat.lt_floor_add_one _).le⟩
       simp only [Set.indicator, Set.mem_setOf_eq]
-      rw [if_pos hmem]
-      unfold maj; rw [if_pos hb]
+      rw [ite_eq_left hmem]
+      unfold maj; rw [ite_eq_left hb]
       apply ENNReal.ofReal_le_ofReal
       apply inv_anti₀ (by positivity)
       apply pow_le_pow_left₀ (by positivity)
       linarith [Nat.floor_le hx0]
-    · unfold maj; rw [if_neg hb, ENNReal.ofReal_zero]; exact bot_le
+    · unfold maj; rw [ite_eq_right hb, ENNReal.ofReal_zero]; exact bot_le
   refine ⟨(hmeas _).aestronglyMeasurable, ?_⟩
   unfold HasFiniteIntegral
   have henorm : ∀ x, ‖maj θ K (2 * d + 2) x‖ₑ = ENNReal.ofReal (maj θ K (2 * d + 2) x) := fun x => by

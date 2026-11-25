@@ -20,69 +20,19 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibra
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.IneCard
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LengthEqAddEigen
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.ThetaFull
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.StickelbergerTheorem.StickelbergerAt
 import GroundTheory.GlobalFields.KummerTheory.Splitting
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import GroundTheory.GlobalFields.InfiniteNormIndex.LocalSymbol
 import Mathlib.NumberTheory.NumberField.Completion.Ramification
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
 import Formalism.ConjugateSelfDual.Statement
 import Formalism.GaloisCohomology.Statement
 import ReciprocityTheory.GaloisValuations.GlobalA
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Order.Star.Real
 import Mathlib.GroupTheory.Nilpotent
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
 import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
-import Mathlib.Algebra.Order.Star.Int
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.ClassGroupDivMemOfMulConjEq, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.LocFin, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.LocInf, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormEqMulCE, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.Mk0PrincipalEqOne, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.RealGen, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.HMinus, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.SgnAlg, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.SgnStab, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.SinSign, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.SgnUnit, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.UnitSurj, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.CycIne, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.UnrJPrime, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.SgnCyc
@@ -168,7 +118,7 @@ theorem UpperTheory.V.FW.classGroup_div_mem_of_mul_conj_eq :
       map_mul' := Ideal.map_mul (RingOfIntegers.mapRingEquiv τ) }
   let f : Ideal (𝓞 K) → ClassGroup (𝓞 K) := fun a =>
     if h : a ∈ (Ideal (𝓞 K))⁰ then ClassGroup.mk0 ⟨a, h⟩ else 1
-  have hfv : ∀ a (h : a ∈ (Ideal (𝓞 K))⁰), f a = ClassGroup.mk0 ⟨a, h⟩ := fun a h => dif_pos h
+  have hfv : ∀ a (h : a ∈ (Ideal (𝓞 K))⁰), f a = ClassGroup.mk0 ⟨a, h⟩ := fun a h => dite_eq_left h
   have hf : ∀ a b, a ≠ 0 → b ≠ 0 → f (a * b) = f a * f b := by
     intro a b ha hb
     have ha' := mem_nonZeroDivisors_of_ne_zero ha
@@ -400,10 +350,6 @@ section -- clump:auto
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.Stick UpperTheory.V.FW
 open scoped nonZeroDivisors
 
-private theorem norm_eq_mul_cE (K : Type) [Field K] [NumberField K] [IsCMField K] (y : K) :
-    algebraMap (maximalRealSubfield K) K (Algebra.norm (maximalRealSubfield K) y) = y * cE K y :=
-  _root_.UpperTheory.Reformulated.B.Qh29.norm_eq_mul_cE K y
-
 private def prI {K : Type} [Field K] [NumberField K] (b : 𝓞 K) (hb : b ≠ 0) : (Ideal (𝓞 K))⁰ :=
   ⟨Ideal.span {b}, mem_nonZeroDivisors_of_ne_zero (by simpa using hb)⟩
 
@@ -432,7 +378,7 @@ theorem UpperTheory.V.FW.hasse :
     (Algebra.IsQuadraticExtension.finrank_eq_two _ _) (Units.mk0 _ hx0)).2
     ⟨locFin K _ a I hU hax hI, locInf K _ fun φ => hax ▸ hpos φ⟩
   have hβ' : (β : K) * cE K β = a := by
-    rw [← norm_eq_mul_cE, hax, ← hβ]
+    erw [← _root_.UpperTheory.Reformulated.B.Qh29.norm_eq_mul_cE, hax, ← hβ]
     rfl
   obtain ⟨b, d, hd, hbd⟩ := IsFractionRing.div_surjective (A := 𝓞 K) (β : K)
   have hd0 : d ≠ 0 := nonZeroDivisors.ne_zero hd
@@ -465,9 +411,6 @@ section -- clump:auto
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.Stick UpperTheory.V.FW
 open scoped nonZeroDivisors
-
-private theorem real_eq_one_of_nonneg_of_mul_self_eq_one (x : ℝ) (h0 : 0 ≤ x) (h : x * x = 1) : x = 1 := by
-  nlinarith
 
 theorem UpperTheory.V.FW.realGen :
     ∀ (K : Type) [Field K] [NumberField K] [IsCMField K] (x : Cl K), Function.Surjective (IsCMField.unitsMulComplexConjInv K) → x ∈ minK (clMap (cE K)) → ∃ (I : (Ideal (𝓞 K))⁰) (a : 𝓞 K), ClassGroup.mk0 I = x ∧ a ≠ 0 ∧ cE K (a : K) = a ∧ (I * idMap (cE K) I).1 = Ideal.span {a} := by
@@ -523,7 +466,8 @@ theorem UpperTheory.V.FW.realGen :
       exact_mod_cast congrArg (fun y : 𝓞 K => (y : K)) hσt
     have hprod := congrArg w hK
     rw [map_mul, map_one, hw] at hprod
-    exact real_eq_one_of_nonneg_of_mul_self_eq_one _ (AbsoluteValue.nonneg _ _) hprod
+    have h0 : 0 ≤ w ((t : 𝓞 K) : K) := AbsoluteValue.nonneg _ _
+    exact (mul_self_eq_one_iff.1 hprod).resolve_right fun h1 => by linarith
   obtain ⟨v, hv⟩ := hsurj ⟨t⁻¹, htor⟩
   have hv2 : v * ((IsCMField.unitsComplexConj K) v)⁻¹ = t⁻¹ := by
     have hv1 := congrArg Subtype.val hv
@@ -579,13 +523,13 @@ private theorem hMinus_mul (e : ι → K →+* ℂ) {a b : K} (ha : cE K a = a) 
   have h1 := hMinus_re (e i) ha ha0
   have h2 := hMinus_re (e i) hb hb0
   rcases h1.lt_or_gt with p | p <;> rcases h2.lt_or_gt with q | q
-  · rw [if_neg (not_lt.mpr (mul_pos_of_neg_of_neg p q).le), if_pos p, if_pos q]
+  · rw [ite_eq_right (not_lt.mpr (mul_pos_of_neg_of_neg p q).le), ite_eq_left p, ite_eq_left q]
     decide
-  · rw [if_pos (mul_neg_of_neg_of_pos p q), if_pos p, if_neg (not_lt.mpr q.le)]
+  · rw [ite_eq_left (mul_neg_of_neg_of_pos p q), ite_eq_left p, ite_eq_right (not_lt.mpr q.le)]
     decide
-  · rw [if_pos (mul_neg_of_pos_of_neg p q), if_neg (not_lt.mpr p.le), if_pos q]
+  · rw [ite_eq_left (mul_neg_of_pos_of_neg p q), ite_eq_right (not_lt.mpr p.le), ite_eq_left q]
     decide
-  · rw [if_neg (not_lt.mpr (mul_pos p q).le), if_neg (not_lt.mpr p.le), if_neg (not_lt.mpr q.le)]
+  · rw [ite_eq_right (not_lt.mpr (mul_pos p q).le), ite_eq_right (not_lt.mpr p.le), ite_eq_right (not_lt.mpr q.le)]
     decide
 
 private theorem hMinus_neg (f : ι → ZMod 2) : -f = f := by
@@ -1141,7 +1085,7 @@ private theorem exists_finset_adjoin_laurent_preimage (M : ℕ) [NeZero M] (L : 
     apply Subgroup.eq_top_of_card_eq
     rw [Nat.card_zpowers, ← hgp.eq_orderOf]
     have ht := IsCyclotomicExtension.Rat.torsionOrder_eq (n := M) (K := L)
-    rw [if_pos ⟨2 * k, by omega⟩] at ht
+    rw [ite_eq_left ⟨2 * k, by omega⟩] at ht
     exact ht.symm
   intro y
   obtain ⟨j, hj⟩ := Subgroup.mem_zpowers_iff.mp (htop ▸ Subgroup.mem_top y)

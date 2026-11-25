@@ -28,13 +28,6 @@ def VeroneseGramMono.Statement : Prop :=
     Veronese.gram D n b = A.map (Int.cast : ℤ → ℝ) *
       Matrix.diagonal (fun l => monoNormSq (adtEnum D (2 * n) l)) * (A.map (Int.cast : ℤ → ℝ)).transpose
 
-theorem adtEnum_zero_eq (D : ℕ) (l : Fin (Finset.Nat.antidiagonalTuple (D + 1) 0).card) :
-    adtEnum D 0 l = 0 := by
-  have h := Finset.Nat.mem_antidiagonalTuple.mp
-    (((Finset.Nat.antidiagonalTuple (D + 1) 0).equivFin.symm l).2)
-  funext i
-  exact (Finset.sum_eq_zero_iff.mp h) i (Finset.mem_univ i)
-
 end
 
 end GroundTheory.Heights₂.Heights.HilbertSamuel

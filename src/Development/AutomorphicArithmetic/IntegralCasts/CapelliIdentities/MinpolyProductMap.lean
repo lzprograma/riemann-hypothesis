@@ -72,10 +72,10 @@ private theorem UpperTheory.Reformulated.B.MinpolyProductMap.field_case {K L : T
     exact minpoly.natDegree_le y
 
 theorem UpperTheory.Reformulated.B.MinpolyProductMap.map_minpoly_eq_prod.{u_1, u_2} :
-    ∀ {K : Type u_1} {L : Type u_2} [inst : Field K] [inst_1 : ValuativeRel K] [inst_2 : TopologicalSpace K]
-      [inst_3 : IsNonarchimedeanLocalField K] [inst_4 : Field L] [inst_5 : ValuativeRel L] [inst_6 : TopologicalSpace L]
-      [inst_7 : IsNonarchimedeanLocalField L] [inst_8 : Algebra K L] [inst_9 : ValuativeExtension K L]
-      [inst_10 : FiniteDimensional K L] [IsGalois K L] {x : ↥(ValuativeRel.valuation L).integer},
+    ∀ {K : Type u_1} {L : Type u_2} [Field K] [ValuativeRel K] [TopologicalSpace K]
+      [IsNonarchimedeanLocalField K] [Field L] [ValuativeRel L] [TopologicalSpace L]
+      [IsNonarchimedeanLocalField L] [Algebra K L] [ValuativeExtension K L]
+      [FiniteDimensional K L] [IsGalois K L] {x : ↥(ValuativeRel.valuation L).integer},
       (↥(ValuativeRel.valuation K).integer)[x] = ⊤ →
         Polynomial.map (Algebra.algebraMap ↥(ValuativeRel.valuation K).integer ↥(ValuativeRel.valuation L).integer)
             (minpoly (↥(ValuativeRel.valuation K).integer) x) =

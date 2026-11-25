@@ -11,8 +11,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.NormSteps
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace LeviOntoSPf
 
 variable {D : D7}
@@ -81,7 +79,7 @@ theorem kappaOnto_of (hF : DualFrame X u) (hE : LeviElt TR u) (hL : MatLift TR) 
   have hu : IsUnit (leviM TR κ v).det := by
     rw [hM]
     exact Matrix.isUnits_det_units (s v)
-  simp only [levi, dif_pos hu]
+  simp only [levi, dite_eq_left hu]
   exact Units.ext hM
 
 theorem LeviOntoS_xu_inv_fix (y : Fin X.B.I.n → X.B.I.E)

@@ -16,48 +16,8 @@ public import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.IntSpanLeRa
 public import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.DuCount
 public import Formalism.SharpRestriction.GlobalSchurBounds.LemmaBSecondBranchOfLength
 public import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.RatStab
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Presheaf
 import Formalism.LocalToGlobal.UnitaryNorms.UnramT
-import Mathlib.Tactic.Basify
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Polynomial.Basic
 import Formalism.LocalToGlobal.GlobalTheory.GL6.CoordMapInjective
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -401,30 +361,30 @@ theorem mixed_change (w : D.what₂.places.Pl) (hw : OverT D u w) (τ₀ : D.wha
   have hmul : ∀ τ, N τ * N' τ = 1 := by
     intro τ
     by_cases hτ : τ = τ₀
-    · simp only [N, N', if_pos hτ]
+    · simp only [N, N', ite_eq_left hτ]
       rw [← atInf_mul', show B'⁻¹ * B₁' * (B₁'⁻¹ * B') = 1 by group, atInf_one']
-    · simp only [N, N', if_neg hτ]
+    · simp only [N, N', ite_eq_right hτ]
       rw [← atInf_mul', show B⁻¹ * B₁ * (B₁⁻¹ * B) = 1 by group, atInf_one']
   have hN : ∀ τ a b, N τ a b ∈ bwA_Ow D w := by
     intro τ a b
     by_cases hτ : τ = τ₀
-    · simp only [N, if_pos hτ]
+    · simp only [N, ite_eq_left hτ]
       exact bwG_change_mem D u w hw τ hB₁' hB' a b
-    · simp only [N, if_neg hτ]
+    · simp only [N, ite_eq_right hτ]
       exact bwG_change_mem D u w hw τ hB₁ hB a b
   have hN' : ∀ τ a b, N' τ a b ∈ bwA_Ow D w := by
     intro τ a b
     by_cases hτ : τ = τ₀
-    · simp only [N', if_pos hτ]
+    · simp only [N', ite_eq_left hτ]
       exact bwG_change_mem D u w hw τ hB' hB₁' a b
-    · simp only [N', if_neg hτ]
+    · simp only [N', ite_eq_right hτ]
       exact bwG_change_mem D u w hw τ hB hB₁ a b
   have hfac : mixF τ₀ B B' = fun τ => N τ * mixF τ₀ B₁ B₁' τ := by
     funext τ
     by_cases hτ : τ = τ₀
-    · simp only [mixF, N, if_pos hτ]
+    · simp only [mixF, N, ite_eq_left hτ]
       rw [← atInf_mul', show B'⁻¹ * B₁' * B₁'⁻¹ = B'⁻¹ by group]
-    · simp only [mixF, N, if_neg hτ]
+    · simp only [mixF, N, ite_eq_right hτ]
       rw [← atInf_mul', show B⁻¹ * B₁ * B₁⁻¹ = B⁻¹ by group]
   refine ⟨MvPolynomial.C (∏ τ, (N τ).det ^ shiftOf (lamT u 0) τ) * subP N P,
     bwG_intSpan_allSubP D w _ N _
@@ -479,7 +439,7 @@ theorem onto_Bw (hRC : RatInC D u) (hRG : RatGL D u) (T : Forms0 D u) (hA : admS
   have ho : ∀ c τ, τ ≠ (D.fm u).tauOf w v → bwA_N D ((D.fm u).tauOf w v) (B c) (B' c) τ = 1 := by
     intro c τ h
     unfold bwA_N
-    rw [if_neg h]
+    rw [ite_eq_right h]
   have hprod : ∀ c, ∏ τ, (bwA_N D ((D.fm u).tauOf w v) (B c) (B' c) τ).det ^ shiftOf (lamT u 0) τ =
       (bwA_N D ((D.fm u).tauOf w v) (B c) (B' c) ((D.fm u).tauOf w v)).det ^
         ((D.fm u).lam 0 ((D.fm u).tauOf w v)).detShift := by

@@ -1,59 +1,17 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEOuterLeib
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSELeib
 import Aesop.Main
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasurableOfContinuousOnZero
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormDiagonalEntryDilationGeneratorLeOne
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Analysis.Calculus.FDeriv.Pi
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -146,14 +104,14 @@ variable {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {Wp Wq : Type} [Normed
 theorem dT_apply (X : ActualOps k r z z' π π') (l : Fin r) (Φ : RadSp k r z z' π π') {x : Fin r → ℂ}
     (hx : x ∈ OmX r) (g : Mx k r) :
     (dT X l Φ : Fn k r (Wq →L[ℂ] Wp)) x g = Formalism.QuantumDeterminants.wirt l (fun x' => (Φ : Fn k r (Wq →L[ℂ] Wp)) x' g) x := by
-  simp only [dT, Module.End.mul_apply, ActualOps.op_apply, crd, opL, ciOp, pOp, if_pos hx]
+  simp only [dT, Module.End.mul_apply, ActualOps.op_apply, crd, opL, ciOp, pOp, ite_eq_left hx]
   rw [smul_smul, inv_mul_cancel₀ (hx l), one_smul]
 
 theorem dTb_apply (X : ActualOps k r z z' π π') (l : Fin r) (Φ : RadSp k r z z' π π') {x : Fin r → ℂ}
     (hx : x ∈ OmX r) (g : Mx k r) :
     (dTb X l Φ : Fn k r (Wq →L[ℂ] Wp)) x g = Formalism.QuantumDeterminants.wirtBar l (fun x' => (Φ : Fn k r (Wq →L[ℂ] Wp)) x' g) x := by
   have hs : star (x l) ≠ 0 := by simpa using hx l
-  simp only [dTb, Module.End.mul_apply, ActualOps.op_apply, crd, opL, cbiOp, pbOp, if_pos hx]
+  simp only [dTb, Module.End.mul_apply, ActualOps.op_apply, crd, opL, cbiOp, pbOp, ite_eq_left hx]
   rw [smul_smul, inv_mul_cancel₀ hs, one_smul]
 
 theorem slice_hasFDerivAt (X : ActualOps k r z z' π π') (l : Fin r) (Φ : RadSp k r z z' π π') (y : Fin r → ℂ)
@@ -250,16 +208,7 @@ theorem hsInner_hasFDerivAt {φ ψ : ℂ → (Wq →L[ℂ] Wp)} {a1 b1 a2 b2 : W
   ring
 
 theorem norm_wl_le' (A B : ℂ) : ‖wl A B‖ ≤ ‖A‖ + ‖B‖ := by
-  unfold wl
-  refine (norm_add_le _ _).trans (add_le_add ?_ ?_)
-  · calc ‖A • ContinuousLinearMap.id ℝ ℂ‖ ≤ ‖A‖ * ‖ContinuousLinearMap.id ℝ ℂ‖ := norm_smul_le _ _
-      _ ≤ ‖A‖ * 1 := mul_le_mul_of_nonneg_left ContinuousLinearMap.norm_id_le (norm_nonneg _)
-      _ = ‖A‖ := mul_one _
-  · calc ‖B • Complex.conjCLE.toContinuousLinearMap‖
-        ≤ ‖B‖ * ‖(Complex.conjCLE.toContinuousLinearMap : ℂ →L[ℝ] ℂ)‖ := norm_smul_le _ _
-      _ ≤ ‖B‖ * 1 := mul_le_mul_of_nonneg_left
-          (ContinuousLinearMap.opNorm_le_bound _ zero_le_one fun x => by simp) (norm_nonneg _)
-      _ = ‖B‖ := mul_one _
+  apply _root_.Formalism.FourierDecayAlt.P.CutSE.norm_wl_le <;> assumption
 
 theorem pairAt_off (μ : Measure (Mt k r)) (Φ Ψ : RadSp k r z z' π π') (x : Fin r → ℂ) (hx : x ∉ OmX r) :
     pairAt μ Φ Ψ x = 0 := by

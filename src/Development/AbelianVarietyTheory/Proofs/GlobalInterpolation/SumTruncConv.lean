@@ -113,7 +113,7 @@ theorem _root_.GlobalTheory.ZeroDetect.sum_initial (f : ℕ → ℂ) (D : ℕ) (
       apply Finset.filter_true_of_mem
       intro d hd
       exact (Nat.divisor_le hd).trans (Finset.mem_Ioc.1 hn).2
-    rw [hfil, hsum, if_neg hn1]
+    rw [hfil, hsum, ite_eq_right hn1]
     simp
   · intro h
     exact absurd (Finset.mem_Ioc.2 ⟨zero_lt_one, hD⟩) h

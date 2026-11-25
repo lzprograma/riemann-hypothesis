@@ -2,52 +2,12 @@ module
 
 public import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.Valuation.LocalSubring
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -64,23 +24,8 @@ theorem norm_natCast_padicComplex (p : Nat.Primes) (n : ℕ) :
   have h := PadicComplex.norm_extends' (p : ℕ) (n : ℚ_[p])
   simpa using h
 
-def unitBall : ValuationSubring K where
-  carrier := {a | ‖j a‖ ≤ 1}
-  mul_mem' := fun {a b} ha hb => by
-    simp only [Set.mem_setOf_eq, map_mul, norm_mul] at *
-    exact mul_le_one₀ ha (norm_nonneg _) hb
-  one_mem' := by simp
-  add_mem' := fun {a b} ha hb => by
-    simp only [Set.mem_setOf_eq, map_add (f := _)] at *
-    exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha hb)
-  zero_mem' := by simp
-  neg_mem' := fun {a} ha => by
-    simpa using ha
-  mem_or_inv_mem' := fun a => by
-    simp only [Set.mem_setOf_eq, map_inv₀, norm_inv]
-    rcases le_total ‖j a‖ 1 with h | h
-    · exact Or.inl h
-    · exact Or.inr (inv_le_one_of_one_le₀ h)
+def unitBall : ValuationSubring K :=
+  (NormedField.valuation (K := ℂ_[p])).valuationSubring.comap j
 
 theorem mem_unitBall {a : K} : a ∈ unitBall j ↔ ‖j a‖ ≤ 1 := Iff.rfl
 
@@ -109,8 +54,7 @@ instance primeBelow_isPrime : (primeBelow j).IsPrime := by
   refine ⟨fun h => ?_, fun {a b} hab => ?_⟩
   · have : (1 : 𝓞 K) ∈ primeBelow j := h ▸ Submodule.mem_top
     simp [mem_primeBelow] at this
-  · by_contra hc
-    push_neg at hc
+  · by_contra! hc
     obtain ⟨ha, hb⟩ := hc
     have ha1 : ‖j (a : K)‖ = 1 := le_antisymm (norm_integer_le_one j a) (not_lt.1 ha)
     have hb1 : ‖j (b : K)‖ = 1 := le_antisymm (norm_integer_le_one j b) (not_lt.1 hb)

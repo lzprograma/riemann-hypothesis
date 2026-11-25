@@ -17,7 +17,7 @@ theorem weight_floor_inequalities (a aW Dm c1 c2 T T' : ℤ) (hT' : T' = T + Dm 
     (hc : c1 + c2 ≤ T) (ha : 2 * T ^ 2 ≤ a) (hW : aW = Int.fdiv (a - c1 - c2) T') :
     T' ≤ aW ∧ a + 1 ≤ (T + Dm + 4) * aW := by
   have hTp : 0 < T' := by omega
-  rw [Int.fdiv_eq_ediv, if_pos (Or.inl hTp.le), sub_zero] at hW
+  rw [Int.fdiv_eq_ediv, ite_eq_left (Or.inl hTp.le), sub_zero] at hW
   have h1 : (a - c1 - c2) % T' + T' * ((a - c1 - c2) / T') = a - c1 - c2 := by
     first
       | exact Int.emod_add_mul_ediv _ _
@@ -78,7 +78,7 @@ theorem lastPos_wtA {D : D7} {T : Top D} (h : LawsP T) {j : ℕ} (hj : InR D j) 
   have hmult : (T.Q.Dw j).mult (DV.tauEmb D t) = (D.R.sigW j).1 := by
     unfold Datum.mult
     have hτ' : (DV.tauEmb D t) (T.Q.H.rt : D.host.E) = T.Q.H.rt0 := hτ
-    rw [if_pos hτ']
+    rw [ite_eq_left hτ']
     exact (h.pins.2.2.2 j hj).1
   rw [hmult] at hm ⊢
   have h1 : 1 ≤ w.aP t ⟨(D.R.sigW j).1 - 1, by omega⟩ := hw t _ (by show (D.R.sigW j).1 - 1 + 1 = _; omega)
@@ -88,7 +88,7 @@ theorem lastPos_wtA {D : D7} {T : Top D} (h : LawsP T) {j : ℕ} (hj : InR D j) 
   unfold wtA
   classical
   refine lt_of_lt_of_le ?_ (Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ t))
-  simp only [if_true]
+  simp only [ite_true]
   omega
 
 theorem theta_weight_bounds : ReciprocityTheory.ChartRestriction.G.PullbackSections.ThetaWeightBounds := by
@@ -113,7 +113,7 @@ theorem theta_weight_bounds : ReciprocityTheory.ChartRestriction.G.PullbackSecti
     intro τ i hi
     have hn : ¬ i.1 + 1 < (D.R.sigW j).1 := by omega
     have h3 := hL.2.1 τ i
-    rw [if_neg hn] at h3
+    rw [ite_eq_right hn] at h3
     unfold gapZ at h3
     rw [dite_eq_right hn] at h3
     have hc : (2 * (Tn : ℝ) ^ 2) ≤ (ka.aP τ i : ℝ) := by have := h6 τ i hi; linarith

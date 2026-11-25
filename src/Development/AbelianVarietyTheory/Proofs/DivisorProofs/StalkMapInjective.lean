@@ -52,8 +52,6 @@ import Mathlib.Algebra.Azumaya.Basic
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
@@ -117,7 +115,3 @@ theorem isIntegral_X [IsIntegral Y] (M : Modif p U D) [Nonempty M.X] : IsIntegra
   exact isIntegral_of_irreducibleSpace_of_isReduced M.X
 
 end GlobalTheory.HSApp.ValCrit
-
-namespace GlobalTheory.HSApp
-
-end GlobalTheory.HSApp

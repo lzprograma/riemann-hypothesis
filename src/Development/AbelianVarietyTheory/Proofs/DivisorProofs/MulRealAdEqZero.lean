@@ -2,47 +2,7 @@ module
 
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPairingStdP
 public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
 
@@ -264,10 +224,6 @@ section Main
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
 variable {n d d₁ : ℕ} {X : Spc F E n} {W : Spc F E d} {W₁ : Spc F E d₁}
 
-theorem incM_one' : incM F (1 : Matrix (Fin n) (Fin n) E) = 1 := by
-  first
-    | exact Matrix.map_one _ (map_zero _) (map_one _)
-
 theorem vecMulVec_eq_mul (y : Fin n → AE F E) (x : Fin d → E) :
     Matrix.vecMulVec y (incV F x) = Matrix.replicateCol Unit y * (incM F (Matrix.replicateCol Unit x))ᵀ := by
   ext i j
@@ -282,64 +238,6 @@ theorem gram_xx (hA : H'.IsAdapted σ B W W₁ i₀ i₁) :
   rw [gram_apply, Matrix.zero_apply]
   exact hA.xx
 
-theorem span_plane (hS : W.IsSkew σ B r' s') (hA : H'.IsAdapted σ B W W₁ i₀ i₁) (z : Fin d → E) :
-    ∃ (s t : E) (u : Fin d₁ → E), z = s • H'.x + H'.ι *ᵥ u + t • H'.y := by
-  have htop : Submodule.span E (W.L : Set (Fin d → E)) = ⊤ := by
-    let _ := hS.lat
-    exact Submodule.IsFullLattice.span_eq_top (A := E) (M := W.L)
-  have hz : z ∈ Submodule.span E (W.L : Set (Fin d → E)) := by
-    rw [htop]
-    exact Submodule.mem_top
-  induction hz using Submodule.span_induction with
-  | mem w hw =>
-    obtain ⟨s, t, u, -, -, -, h⟩ := hA.split w hw
-    exact ⟨s, t, u, h⟩
-  | zero => exact ⟨0, 0, 0, by simp⟩
-  | add a b _ _ ha hb =>
-    obtain ⟨s, t, u, rfl⟩ := ha
-    obtain ⟨s', t', u', rfl⟩ := hb
-    exact ⟨s + s', t + t', u + u', by rw [Matrix.mulVec_add, add_smul, add_smul]; abel⟩
-  | smul c a _ ha =>
-    obtain ⟨s, t, u, rfl⟩ := ha
-    exact ⟨c * s, c * t, c • u, by rw [Matrix.mulVec_smul, smul_add, smul_add, smul_smul, smul_smul]⟩
-
 end Main
 
-section Final
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-variable {n d d₁ : ℕ} {X : Spc F E n} {W : Spc F E d} {W₁ : Spc F E d₁}
-variable {B : Base F E} {r' s' i₀ i₁ : ℕ} {H' : Plane E d d₁}
-
-theorem decomp (hS : W.IsSkew σ B r' s') (hA : H'.IsAdapted σ B W W₁ i₀ i₁) :
-    ∃ (Sc : Matrix (Fin d) Unit E) (Uc : Matrix (Fin d) (Fin d₁) E) (Tc : Matrix (Fin d) Unit E),
-      ∀ u : Matrix (Fin n) (Fin d) (AE F E), u = u * incM F Sc * (incM F (Matrix.replicateCol Unit H'.x))ᵀ +
-        u * incM F Uc * (incM F H'.ι)ᵀ + u * incM F Tc * (incM F (Matrix.replicateCol Unit H'.y))ᵀ := by
-  choose s t u hsu using fun i : Fin d => span_plane hS hA (Pi.single i 1)
-  have hone : (1 : Matrix (Fin d) (Fin d) E) =
-      Matrix.of (fun i (_ : Unit) => s i) * (Matrix.replicateCol Unit H'.x)ᵀ + Matrix.of (fun i k => u i k) * H'.ιᵀ +
-        Matrix.of (fun i (_ : Unit) => t i) * (Matrix.replicateCol Unit H'.y)ᵀ := by
-    ext i j
-    have h := congrFun (hsu i) j
-    simp only [Pi.single_apply, Pi.add_apply, Pi.smul_apply, smul_eq_mul, Matrix.mulVec, dotProduct] at h
-    simp only [Matrix.add_apply, Matrix.mul_apply, Matrix.of_apply, Matrix.transpose_apply, Matrix.replicateCol_apply,
-      Finset.univ_unique, Finset.sum_singleton, Matrix.one_apply]
-    have e1 : (if i = j then (1 : E) else 0) = if j = i then 1 else 0 := by
-      by_cases hij : i = j <;> simp [hij, eq_comm]
-    rw [e1, h]
-    first
-      | (congr 2; exact Finset.sum_congr rfl fun k _ => mul_comm _ _)
-  refine ⟨Matrix.of (fun i (_ : Unit) => s i), Matrix.of (fun i k => u i k), Matrix.of (fun i (_ : Unit) => t i), fun w => ?_⟩
-  have hinc : ∀ {p q r : Type} [Fintype q] (A : Matrix p q E) (B : Matrix q r E), incM F (A * B) = incM F A * incM F B :=
-    fun A B => Matrix.map_mul
-  have hincT : ∀ {p q : Type} (A : Matrix p q E), incM F Aᵀ = (incM F A)ᵀ := fun A => (Matrix.transpose_map).symm
-  have hincA : ∀ {p q : Type} (A B : Matrix p q E), incM F (A + B) = incM F A + incM F B := fun A B => Matrix.map_add _ (map_add _) A B
-  simp only [Matrix.mul_assoc, ← hincT, ← hinc, ← Matrix.mul_add, ← hincA, ← hone, incM_one', Matrix.mul_one]
-
-end Final
-
 end GlobalTheory.ArchUniq.Coord
-
-namespace GlobalTheory.ArchUniq
-
-end GlobalTheory.ArchUniq

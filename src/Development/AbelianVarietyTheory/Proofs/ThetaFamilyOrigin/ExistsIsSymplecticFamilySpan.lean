@@ -55,8 +55,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
-set_option autoImplicit false
-
 namespace GlobalTheory.LevelExist
 
 theorem exists_isSymplecticFamily_span {R V : Type*} [CommRing R] [AddCommGroup V] [Module R V] [IsArtinian R V]
@@ -290,7 +288,6 @@ end GlobalTheory.LevelExist
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory
 

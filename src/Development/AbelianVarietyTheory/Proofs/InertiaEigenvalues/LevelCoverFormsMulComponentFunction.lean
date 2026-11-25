@@ -20,50 +20,12 @@ public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.Geometric
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IntFormsSubset
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCoversOfHalves
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RationalPointsAdelicUnitaryEqUnitaryStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.Style
 import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLinearEquivLift
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointReducedFromTestRing
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenConnectedComponentOfNoetherianSpace
 import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
-import Mathlib.AlgebraicGeometry.AlgClosed.Basic
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLatticeEmbeddingLiftDatumHermitianSpace
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -337,7 +299,7 @@ theorem exists_indicator_test (hA : AllTest Xo c) (U : Set (Xo.XF c)) (hU : IsCl
     rw [basePt_congr y y' h.1] at this
     exact this.trans (hχ p y w).symm
   · have h := hA S y
-    have e : evR Xo c χ y = h.choose_spec.choose (χ h.choose h.choose_spec.choose_spec.choose) := dif_pos h
+    have e : evR Xo c χ y = h.choose_spec.choose (χ h.choose h.choose_spec.choose_spec.choose) := dite_eq_left h
     rw [e]
     exact ⟨(hi _ _).map _, hmap _ S _ _ y h.choose_spec.choose_spec.choose_spec.1⟩
 
@@ -459,10 +421,10 @@ theorem exists_idempotents_rdU : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
   · intro k k' x hx
     obtain ⟨Pm, -, hp, hu, -⟩ := hP k' ⟨x, hx⟩
     have hv := h4 (U.un k' ⟨x, hx⟩) (ik k) (ik k') Pm hp hu
-    have hr : rdU U (χ (ik k)) k' x = toC (evR Xo c (χ (ik k)) (U.un k' ⟨x, hx⟩)) := dif_pos hx
+    have hr : rdU U (χ (ik k)) k' x = toC (evR Xo c (χ (ik k)) (U.un k' ⟨x, hx⟩)) := dite_eq_left hx
     refine ⟨fun h => ?_, fun h => ?_⟩
-    · rw [hr, hv, if_pos (congrArg ik h)]
-    · rw [hr, hv, if_neg (fun h' => h (hb.1 h'))]
+    · rw [hr, hv, ite_eq_left (congrArg ik h)]
+    · rw [hr, hv, ite_eq_right (fun h' => h (hb.1 h'))]
 
 end GlobalTheory.CompRead
 end -- clump:auto
@@ -483,9 +445,9 @@ theorem rdU_mul_apply : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
   classical
   by_cases h : x ∈ (U.X k).dom
   · have e := evalAt_mul (K := c.F) (fun S _ _ => FrPt Xo c S) (fun φ y z => FrMap φ y z) f f' (U.un k ⟨x, h⟩)
-    simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, dif_pos h]
+    simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, dite_eq_left h]
     exact e
-  · simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, dif_neg h, mul_zero]
+  · simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk, dite_eq_right h, mul_zero]
 
 end GlobalTheory
 end -- clump:auto
@@ -516,7 +478,7 @@ theorem exists_sec_mul_adelic_fun : ∀ (D : D7) (H : ReciprocityTheory.ChartRes
   let v : U.Comp → c.F := fun k => if ∃ h : GA D V, (dict h).1 = k then v₀ k else 0
   have hv : ∀ h : GA D V, v (dict h).1 = w h := fun h => by
     simp only [v]
-    rw [if_pos ⟨h, rfl⟩, hv₀ h]
+    rw [ite_eq_left ⟨h, rfl⟩, hv₀ h]
   have he : (∑ k, v k • χ k) ∈ sec Xo c 0 0 :=
     Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (hχ k)
   have hval : ∀ k x, x ∈ (U.X k).dom → rdU U (∑ k, v k • χ k) k x = σ (v k) := by
@@ -547,7 +509,7 @@ theorem exists_sec_mul_adelic_fun : ∀ (D : D7) (H : ReciprocityTheory.ChartRes
         rw [hv h]
         exact hw h
       · simp only [v]
-        rw [if_neg hk, map_zero]
+        rw [ite_eq_right hk, map_zero]
         exact zero_le_one
     let ε := (Fintype.equivFin U.Comp).symm
     rw [← ε.sum_comp (fun k => v k • χ k)]

@@ -1,40 +1,6 @@
 module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.CasimirResolventProjection
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.ConjugateCuspidalReps.IsConjRepRefl
 
 @[expose] public section
@@ -85,19 +51,6 @@ theorem UpperTheory.V.Cj.H.orbSm :
     Subtype.ext (funext fun g => tsum_congr fun γ => by
       have h : u.1 (γ.1 * g * finGL E a k) = u.1 (γ.1 * g) := congrFun (congrArg Subtype.val hk) _
       rw [← h, mul_assoc])
-  let S : ∀ φ : Sm E a, Subgroup (GL (Fin a) (Af E)) := fun φ =>
-    { carrier := {k | act (.fin k) φ = φ}
-      one_mem' := Subtype.ext (funext fun g => by
-        change φ.1 (g * finGL E a 1) = φ.1 g
-        rw [map_one, mul_one])
-      mul_mem' := fun {k l} hk hl => Subtype.ext (funext fun g => by
-        have h1 : φ.1 (g * finGL E a k) = φ.1 g := congrFun (congrArg Subtype.val hk) _
-        have h2 : φ.1 (g * finGL E a k * finGL E a l) = φ.1 (g * finGL E a k) := congrFun (congrArg Subtype.val hl) _
-        change φ.1 (g * finGL E a (k * l)) = φ.1 g
-        rw [map_mul, ← mul_assoc, h2, h1])
-      inv_mem' := fun {k} hk => Subtype.ext (funext fun g => by
-        have h1 : φ.1 (g * finGL E a k⁻¹ * finGL E a k) = φ.1 (g * finGL E a k⁻¹) :=
-          congrFun (congrArg Subtype.val hk) _
-        change φ.1 (g * finGL E a k⁻¹) = φ.1 g
-        rw [← h1, mul_assoc, ← map_mul, inv_mul_cancel, map_one, mul_one]) }
-  exact Subgroup.isOpen_mono (H₁ := S u) (H₂ := S ⟨_, hm⟩) key hu.2
+  exact isOpen_stab_of_mem_nhds (finRep E a) ⟨_, hm⟩
+    (Filter.mem_of_superset (hu.2.mem_nhds (by show finRep E a 1 u = u; rw [map_one]; rfl))
+      fun k hk => key k hk)

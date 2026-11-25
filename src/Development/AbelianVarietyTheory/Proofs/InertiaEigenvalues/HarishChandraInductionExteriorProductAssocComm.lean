@@ -3,48 +3,7 @@ module
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BlockParabolicUnitriangularSubgroupsGLnPrimeFiel
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBilinCyclic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
 
@@ -127,7 +86,7 @@ private lemma conj_indicator_inPar_eq {a b : ℕ} (Φ : Gn g a → Gn g b → �
   · obtain ⟨u1, u2⟩ := (_root_.GlobalTheory.GLm.ParBasic.par_basic g a b (a + b) rfl).2.2.1 z hz
     obtain ⟨c1, c2, c3⟩ := conj_lemma_2 (h₁ : Mt g a) ((h₁⁻¹ : Gn g a) : Mt g a) (h₂ : Mt g b)
       ((h₂⁻¹ : Gn g b) : Mt g b) hz
-    rw [e, if_pos hz, if_pos c1, c2, c3, toG_mul (h₁⁻¹.isUnit.mul u1) h₁.isUnit, toG_mul h₁⁻¹.isUnit u1,
+    rw [e, ite_eq_left hz, ite_eq_left c1, c2, c3, toG_mul (h₁⁻¹.isUnit.mul u1) h₁.isUnit, toG_mul h₁⁻¹.isUnit u1,
       toG_mul (h₂⁻¹.isUnit.mul u2) h₂.isUnit, toG_mul h₂⁻¹.isUnit u2]
     simp only [toG_coe]
   · have hw : ¬ InPar a ((s⁻¹ * z * s : Gn g (a + b)) : Mt g (a + b)) := by
@@ -141,7 +100,7 @@ private lemma conj_indicator_inPar_eq {a b : ℕ} (Φ : Gn g a → Gn g b → �
         group
       rw [e2]
       exact (conj_lemma_2 _ _ _ _ hw).1
-    rw [if_neg hz, if_neg hw]
+    rw [ite_eq_right hz, ite_eq_right hw]
 
 theorem hcT_conj {a b n : ℕ} (hn : n = a + b) (Φ : Gn g a → Gn g b → ℂ) (h₁ : Gn g a) (h₂ : Gn g b) :
     hcT a b (fun u v => Φ (h₁⁻¹ * u * h₁) (h₂⁻¹ * v * h₂)) n = hcT a b Φ n := by
@@ -309,19 +268,19 @@ theorem blockParabolicProductExtendedByZero_assoc {a b c n : ℕ} (hn : n = a + 
   · rw [coe_toG (hu1 z hA).1, coe_toG (hu2 z hB).2]
     by_cases hX : InPar a (tl (a + b) (z : Mt g n))
     · have hY := (hpp.1 ⟨hA, hX⟩).2
-      rw [if_pos hA, if_pos hB, if_pos hX, if_pos hY, tl_tl_of_le (Nat.le_add_right a b),
+      rw [ite_eq_left hA, ite_eq_left hB, ite_eq_left hX, ite_eq_left hY, tl_tl_of_le (Nat.le_add_right a b),
         br_tl_eq_tl_br (le_refl (a + b)) (Nat.le_add_right b c), br_add_eq_br_br]
       ring
     · have hY : ¬ InPar b (br a (b + c) (z : Mt g n)) := fun hY => hX (hpp.2 ⟨hB, hY⟩).2
-      rw [if_pos hA, if_pos hB, if_neg hX, if_neg hY]
+      rw [ite_eq_left hA, ite_eq_left hB, ite_eq_right hX, ite_eq_right hY]
       ring
   · have hX : ¬ InPar a (tl (a + b) (z : Mt g n)) := fun hX => hB (hpp.1 ⟨hA, hX⟩).1
-    rw [coe_toG (hu1 z hA).1, if_pos hA, if_neg hB, if_neg hX]
+    rw [coe_toG (hu1 z hA).1, ite_eq_left hA, ite_eq_right hB, ite_eq_right hX]
     ring
   · have hY : ¬ InPar b (br a (b + c) (z : Mt g n)) := fun hY => hA (hpp.2 ⟨hB, hY⟩).1
-    rw [coe_toG (hu2 z hB).2, if_neg hA, if_pos hB, if_neg hY]
+    rw [coe_toG (hu2 z hB).2, ite_eq_right hA, ite_eq_left hB, ite_eq_right hY]
     ring
-  · rw [if_neg hA, if_neg hB]
+  · rw [ite_eq_right hA, ite_eq_right hB]
 
 theorem hc_assoc : ∀ (g : ℕ) [Fact g.Prime] (a b c n : ℕ) (α : Gn g a → ℂ) (β : Gn g b → ℂ) (γ : Gn g c → ℂ),
     IsClass α → IsClass β → IsClass γ → n = a + b + c →
@@ -592,11 +551,11 @@ variable {g : ℕ} [Fact g.Prime]
 
 theorem br_zero {a : ℕ} (M : Mt g a) : br 0 a M = M := by
   funext i j
-  simp only [br, entN, zero_add, i.isLt, j.isLt, and_self, dif_pos]
+  simp only [br, entN, zero_add, i.isLt, j.isLt, and_self, dite_eq_left]
 
 theorem tl_self {a : ℕ} (M : Mt g a) : tl a M = M := by
   funext i j
-  simp only [tl, entN, i.isLt, j.isLt, and_self, dif_pos]
+  simp only [tl, entN, i.isLt, j.isLt, and_self, dite_eq_left]
 
 theorem inPar_zero {n : ℕ} (M : Mt g n) : InPar 0 M := fun _ _ hj _ => absurd hj (Nat.not_lt_zero _)
 
@@ -615,7 +574,7 @@ theorem mean_class {G : Type} [Group G] [Fintype G] {χ : G → ℂ} (h : IsClas
 theorem hc_one_left (a : ℕ) (α : Gn g a → ℂ) (hα : IsClass α) : hc 0 a (fun _ => 1) α a = α := by
   funext x
   unfold hc hcT
-  simp only [inPar_zero, if_true, one_mul,
+  simp only [inPar_zero, ite_true, one_mul,
     br_zero, _root_.GlobalTheory.GLm.HcAssoc.toG_coe]
   rw [Finset.filter_true_of_mem (fun _ _ => trivial), Finset.card_univ]
   exact mean_class hα x
@@ -623,7 +582,7 @@ theorem hc_one_left (a : ℕ) (α : Gn g a → ℂ) (hα : IsClass α) : hc 0 a 
 theorem hc_one_right (a : ℕ) (α : Gn g a → ℂ) (hα : IsClass α) : hc a 0 α (fun _ => 1) a = α := by
   funext x
   unfold hc hcT
-  simp only [inPar_self, if_true, mul_one,
+  simp only [inPar_self, ite_true, mul_one,
     tl_self, _root_.GlobalTheory.GLm.HcAssoc.toG_coe]
   rw [Finset.filter_true_of_mem (fun _ _ => trivial), Finset.card_univ]
   exact mean_class hα x

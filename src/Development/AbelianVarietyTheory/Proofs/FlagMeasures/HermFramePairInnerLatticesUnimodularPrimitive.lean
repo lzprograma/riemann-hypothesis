@@ -220,25 +220,6 @@ theorem mem_line {A : Submodule (𝓞 K) K} {v x : V} : x ∈ line A v ↔ ∃ a
   simp [line]
 
 omit [StarRing K] in
-theorem line_le {A : Submodule (𝓞 K) K} {v : V} {S : Submodule K V} (hv : v ∈ S) : line A v ≤ rs (𝓞 K) S := by
-  intro x hx
-  obtain ⟨a, -, rfl⟩ := mem_line.1 hx
-  exact S.smul_mem a hv
-
-omit [StarRing K] in
-theorem mem_span_of_line {A : Submodule (𝓞 K) K} (hA : A ≠ ⊥) {v : V} {P : Submodule (𝓞 K) V}
-    (h : line A v ≤ P) : v ∈ Submodule.span K (P : Set V) := by
-  obtain ⟨a, ha, ha0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hA
-  rw [← Submodule.smul_mem_iff _ ha0]
-  exact Submodule.subset_span (h (mem_line.2 ⟨a, ha, rfl⟩))
-
-omit [StarRing K] in
-theorem ipow_ne_bot {𝔡 : Ideal (𝓞 K)} (h : 𝔡 ≠ ⊥) (n : ℤ) : ipow 𝔡 n ≠ ⊥ := by
-  unfold ipow
-  rw [Ne, FractionalIdeal.coeToSubmodule_eq_bot]
-  exact zpow_ne_zero n (FractionalIdeal.coeIdeal_ne_zero.2 h)
-
-omit [StarRing K] in
 theorem ipow_fg (𝔡 : Ideal (𝓞 K)) (n : ℤ) : (ipow 𝔡 n).FG := by
   unfold ipow
   exact FractionalIdeal.fg_of_isNoetherianRing le_rfl _

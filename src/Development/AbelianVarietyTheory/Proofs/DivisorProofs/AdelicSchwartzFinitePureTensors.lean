@@ -6,43 +6,8 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIn
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorPureTensorComponentAtPlace
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -64,8 +29,6 @@ def intA : AddSubgroup (FiniteAdeleRing (𝓞 F) F) where
   zero_mem' := fun v => zero_mem (v.adicCompletionIntegers F)
   add_mem' := fun ha hb v => add_mem (ha v) (hb v)
   neg_mem' := fun ha v => neg_mem (ha v)
-
-theorem evalV_eq (v : Pl (F := F)) (a : FiniteAdeleRing (𝓞 F) F) : evalV F v a = a v := rfl
 
 theorem intA_eq_range : ((intA F : AddSubgroup _) : Set (FiniteAdeleRing (𝓞 F) F)) =
     Set.range (RestrictedProduct.structureMap (fun v : Pl F => v.adicCompletion F)
@@ -229,8 +192,7 @@ theorem ind_eq_finprod {κ : Type} [Fintype κ] {N : ℕ} {c : FiniteAdeleRing (
   · rw [Set.indicator_of_notMem hy]
     have hex : ∃ v, (fun i => evFin F v (x i)) ∉
         {x' : κ → Fv F v | ∀ i, c v * (x' i - r i v) ∈ v.adicCompletionIntegers F} := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       refine hy ((AddSubgroup.mem_pi _).2 fun i _ => ?_)
       intro v
       exact hcon v i

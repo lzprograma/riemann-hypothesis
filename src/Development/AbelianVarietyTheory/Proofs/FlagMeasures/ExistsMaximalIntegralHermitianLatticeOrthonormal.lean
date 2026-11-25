@@ -130,6 +130,6 @@ theorem _root_.GlobalTheory.Mass.MaxExists.main : ∀ (K V : Type) [Field K] [Nu
       rw [hbad]
       exact finprod_mem_empty
   · intro M n hO
-    exact ⟨_root_.ReciprocityTheory.ChartRestriction.L3.isLattice_of_ortho hO, _root_.ReciprocityTheory.ChartRestriction.L3.isUnimodular_of_ortho hO, _root_.ReciprocityTheory.ChartRestriction.L3.finrank_of_ortho hO⟩
+    exact ⟨_root_.Formalism.HermitianLattices.Ext.L3.isLattice_of_ortho hO, _root_.Formalism.HermitianLattices.Ext.L3.isUnimodular_of_ortho hO, _root_.Formalism.HermitianLattices.Ext.L3.finrank_of_ortho hO⟩
 
 end GlobalTheory.Mass.MaxExists

@@ -45,8 +45,8 @@ theorem infiniteSchwartz_eq_prod (x : mixedSpace K) :
       (if 0 ≤ -χ.infiniteWeight w then x.2 w ^ (χ.infiniteWeight w).natAbs
         else conj (x.2 w) ^ (χ.infiniteWeight w).natAbs) := fun w ↦ by
     by_cases h : 0 < χ.infiniteWeight w
-    · rw [if_pos h, if_neg (by omega)]
-    · rw [if_neg h, if_pos (by omega)]
+    · rw [ite_eq_left h, ite_eq_right (by omega)]
+    · rw [ite_eq_right h, ite_eq_left (by omega)]
   simp only [hc]
   have hexp : ((Real.exp (-π * (∑ w, x.1 w ^ 2 + 2 * ∑ w, ‖x.2 w‖ ^ 2)) : ℝ) : ℂ) =
       (∏ w : {w // IsReal w}, ((Real.exp (-(π * x.1 w ^ 2)) : ℝ) : ℂ)) *

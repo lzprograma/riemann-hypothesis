@@ -91,7 +91,7 @@ variable {σ : Type} [DecidableEq σ] {H : Type} [NormedAddCommGroup H] [InnerPr
   {ι : MvPolynomial σ ℂ →ₗ[ℂ] H}
 
 theorem norm_mono (h : IsFockIP ι) (α : σ →₀ ℕ) : ‖ι (monomial α 1)‖ ^ 2 = mfact α := by
-  rw [← inner_self_eq_norm_sq (𝕜 := ℂ), h α α, if_pos rfl]
+  rw [← inner_self_eq_norm_sq (𝕜 := ℂ), h α α, ite_eq_left rfl]
   have : α.prod (fun _ k => (k.factorial : ℂ)) = ((mfact α : ℝ) : ℂ) := by
     simp [mfact, Finsupp.prod]
   rw [this]; simp
@@ -111,7 +111,7 @@ theorem norm_comb (h : IsFockIP ι) (s : Finset (σ →₀ ℕ)) (c : (σ →₀
     · simp [ha]
     by_cases hb : c b = 0
     · simp [hb]
-    rw [inner_smul_left, inner_smul_right, h, if_neg (hg a b hab ha hb)]; simp
+    rw [inner_smul_left, inner_smul_right, h, ite_eq_right (hg a b hab ha hb)]; simp
 
 theorem fock_norm_bounds (σ : Type) [DecidableEq σ] (H : Type) [NormedAddCommGroup H]
     [InnerProductSpace ℂ H] (ι : MvPolynomial σ ℂ →ₗ[ℂ] H) (h : IsFockIP ι) (i : σ) (d : ℕ)
@@ -223,7 +223,6 @@ theorem oneStep_pderiv (h : IsFockIP ι) (i : σ) : OneStep ι (pderiv i).toLine
   intro d P hP
   refine ⟨((totalDegree_pderiv_le_self i P).trans hP).trans (Nat.le_succ _), ?_⟩
   have := (_root_.GlobalTheory.FockNormBound.fock_norm_bounds σ H ι h i d P hP).2
-  have h2 := sq_nonneg ‖ι P‖
   change ‖ι (pderiv i P)‖ ^ 2 ≤ _
   nlinarith
 
@@ -239,11 +238,9 @@ theorem OneStep.comp {A B : Module.End ℂ (MvPolynomial σ ℂ)} (hA : OneStep 
   obtain ⟨h1, h2⟩ := hB d P hP
   obtain ⟨h3, h4⟩ := hA (d + 1) _ h1
   refine ⟨h3, ?_⟩
-  have hd : (0 : ℝ) ≤ d := Nat.cast_nonneg d
   refine (pow_le_pow_iff_left₀ (norm_nonneg _) (by positivity) two_ne_zero).1 ?_
   push_cast at h4
   have h5 := mul_le_mul_of_nonneg_left h2 (show (0 : ℝ) ≤ (d : ℝ) + 1 + 1 by positivity)
-  have h6 := sq_nonneg ‖ι P‖
   change ‖ι (A (B P))‖ ^ 2 ≤ _
   nlinarith
 end

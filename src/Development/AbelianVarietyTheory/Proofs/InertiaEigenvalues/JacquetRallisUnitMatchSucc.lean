@@ -178,8 +178,7 @@ theorem isTest_partialFourier {X F : Type} [TopologicalSpace X] [T2Space X] [Non
       simp [h0]
     · rw [mem_closedBall_zero_iff, not_le] at hu
       obtain ⟨i, hi⟩ : ∃ i, ‖a‖ / δ < ‖u i‖ := by
-        by_contra h
-        push_neg at h
+        by_contra! h
         exact (not_le.2 hu) ((pi_norm_le_iff_of_nonneg (by positivity)).2 h)
       have hui : u i ≠ 0 := by
         intro h
@@ -1009,7 +1008,6 @@ theorem weilSL2_hermitian : WeilEt → GammaOne → ∀ (F E : Type) [Nontrivial
   have hnorm : ∀ y : A.L, Algebra.trace F A.K (A.NL y) = Algebra.trace F E (star (j y) ⬝ᵥ j y) / 2 := by
     intro y
     have : star (j y) ⬝ᵥ j y = algebraMap F E (∑ i, e (A.NL y) i) := by
-      set_option synthInstance.maxHeartbeats 100000 in
         simp only [dotProduct, Pi.star_apply, map_sum, hNe y, mul_comm]
     rw [this, htr2, _root_.GlobalTheory.trace_eq_sum_coords_of_algEquiv r e]; field_simp
   have testj : ∀ φ : (Fin r → E) → ℂ, IsTest φ → IsTest (fun y : A.L => φ (j y)) := fun φ hφ =>

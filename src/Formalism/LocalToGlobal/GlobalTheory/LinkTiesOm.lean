@@ -12,12 +12,6 @@ namespace Formalism.L2.GlobalTheoryTheory
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory NumberField
 
-section General
-
-variable {M : Type*} [Field M] [NumberField M]
-
-end General
-
 def conjOf {D : D7} {M : IntermediateField ℚ ℂ} (e : D.what₂.LL ≃+* M) (s : D.what₂.LL →+* ℂ) : M →ₐ[ℚ] ℂ :=
   (s.comp (e.symm : M →+* D.what₂.LL)).toRatAlgHom
 

@@ -36,15 +36,7 @@ variable {n : ℕ}
 theorem frob_eq (g : Matrix (Fin n) (Fin n) ℂ) : frob g = Real.sqrt (Formalism.REAL.hs g) := rfl
 
 theorem frob_mul_le (A B : Matrix (Fin n) (Fin n) ℂ) : frob (A * B) ≤ frob A * frob B := by
-  let _ : NormedAddCommGroup (Matrix (Fin n) (Fin n) ℂ) := Matrix.frobeniusNormedAddCommGroup
-  have hf : ∀ A : Matrix (Fin n) (Fin n) ℂ, frob A = ‖A‖ := by
-    intro A
-    rw [Matrix.frobenius_norm_def, frob, Real.sqrt_eq_rpow]
-    congr 1
-    refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-    rw [Real.rpow_two]
-  rw [hf, hf, hf]
-  exact Matrix.frobenius_norm_mul A B
+  exact ReciprocityTheory.ChartRestriction.DS.Lap.S0.DecDeriv.frob_mul_le A B
 
 theorem entry_le_frob (g : Matrix (Fin n) (Fin n) ℂ) (i j : Fin n) : ‖g i j‖ ≤ frob g := by
   rw [frob]

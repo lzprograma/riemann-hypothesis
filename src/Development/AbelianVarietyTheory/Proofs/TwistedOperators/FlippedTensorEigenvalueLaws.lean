@@ -51,7 +51,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StepData
 open GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
 noncomputable section
 
@@ -121,19 +120,19 @@ theorem stepType_laws (hL : L.Is μ₀) (hw : w ∈ locPl G t) (j : ℕ) :
   by_cases hP : w ∈ L.Pg
   · have hQ : w ∉ L.Q t := fun h => (over_of_mem_Pg hL hP).elim fun i hi => not_over_of_mem_Q hL h i hi
     have h0 : w ∈ G.pl.W0 := (mem_locPl.1 hw).resolve_right hQ
-    refine ⟨fun i => by simp only [stepType, stepGroup, if_pos hP], ?_⟩
-    simp only [stepType, stepFn, if_pos hP]
+    refine ⟨fun i => by simp only [stepType, stepGroup, ite_eq_left hP], ?_⟩
+    simp only [stepType, stepFn, ite_eq_left hP]
     exact ⟨_, fun x hx => by simp [hmu, xi_unr hL h0 hQ x hx], TypeDatum.hasTypes_iterPhi _ _ _ j⟩
   by_cases hQ : w ∈ L.Q t
   · have hδ : IsTame ((L.xiH t).loc w)⁻¹ := fun x hx => by
       rw [MonoidHom.inv_apply, isTame_loc (hL.xi_tame t w) x hx, inv_one]
-    refine ⟨fun i => by simp only [stepType, stepGroup, if_neg hP, if_pos hQ, dif_pos (And.intro hQ hδ)]; rfl, ?_⟩
-    simp only [stepType, stepFn, if_neg hP, if_pos hQ, dif_pos (And.intro hQ hδ)]
+    refine ⟨fun i => by simp only [stepType, stepGroup, ite_eq_right hP, ite_eq_left hQ, dite_eq_left (And.intro hQ hδ)]; rfl, ?_⟩
+    simp only [stepType, stepFn, ite_eq_right hP, ite_eq_left hQ, dite_eq_left (And.intro hQ hδ)]
     exact ⟨_, fun x hx => by simp [hmu, muBase_unr hL hw hP _ x hx],
       hasTypes_parPhi hδ (ν := 1) fun _ _ => rfl⟩
   · have hn : ¬ (w ∈ L.Q t ∧ IsTame ((L.xiH t).loc w)⁻¹) := fun h => hQ h.1
-    refine ⟨fun i => by simp only [stepType, stepGroup, if_neg hP, if_neg hQ, dif_neg hn]; rfl, ?_⟩
-    simp only [stepType, stepFn, if_neg hP, if_neg hQ, dif_neg hn]
+    refine ⟨fun i => by simp only [stepType, stepGroup, ite_eq_right hP, ite_eq_right hQ, dite_eq_right hn]; rfl, ?_⟩
+    simp only [stepType, stepFn, ite_eq_right hP, ite_eq_right hQ, dite_eq_right hn]
     exact ⟨1, fun x hx => by
       simp [hmu, muBase_unr hL hw hP _ x hx, xi_unr hL ((mem_locPl.1 hw).resolve_right hQ) hQ x hx], hasTypes_vacuum⟩
 
@@ -186,7 +185,7 @@ theorem given_law_at (hL : L.Is μ₀) (B : Frames G) (Φ : G.Datum) (hw : w ∈
         ((x (.theta 0 n))ᵀ.submatrix (ixFin G t w (n + 1)) (ixFin G t w n))
       have hd : gdet ((reGL (ixFin G t w (n + 1))).symm κ) = gdet κ :=
         (det_reGL (ixFin G t w (n + 1)) _).symm.trans (by rw [MulEquiv.apply_symm_apply])
-      rw [edgeFactor_eq hKO, endLamAt, dif_pos hκ']
+      rw [edgeFactor_eq hKO, endLamAt, dite_eq_left hκ']
       simp only [Edge.src, Edge.tgt, Grid.blockChar, Pi.mulSingle_eq_same,
         Pi.mulSingle_eq_of_ne (show ((0 : ℕ), n) ≠ (0, n + 1) by simp)]
       have hv : valuation (Kw w) (gdet κ : Kw w) = 1 := valuation_gdet_of_mem_KO (by simpa using hKO (0, n + 1))

@@ -49,7 +49,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR GlobalTheory.VecInv
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.AdjDatumMove
 
@@ -71,7 +70,7 @@ theorem lowZero_mul {G : GL (Fin n) κ} (hG : G ∈ blockTri (blk2 r)) (K : Matr
   by_cases hm : r ≤ m.val
   · rw [hu m l hm l.2, mul_zero]
   · have hlt : blk2 r m < blk2 r i := by
-      simp only [blk2, if_pos (not_le.mp hm), if_neg (not_lt.mpr hi)]
+      simp only [blk2, ite_eq_left (not_le.mp hm), ite_eq_right (not_lt.mpr hi)]
       exact Nat.zero_lt_one
     rw [(mem_blockTri.mp hG) i m hlt, zero_mul]
 
@@ -110,7 +109,7 @@ theorem topL_mul (hr : r ≤ n) {G : GL (Fin n) κ} (hG : G ∈ blockTri (blk2 r
 
 theorem restrictedBlock_self_apply (H : GL (Fin r) κ) : upperLeftBlock le_rfl H = H := by
   have hH : H ∈ blockTri (blk2 r) := mem_blockTri.mpr fun i j hij => by
-    simp only [blk2, if_pos i.2, if_pos j.2] at hij
+    simp only [blk2, ite_eq_left i.2, ite_eq_left j.2] at hij
     exact absurd hij (lt_irrefl 0)
   apply Units.ext
   rw [upper_block_val_submatrix le_rfl hH]
@@ -359,7 +358,7 @@ theorem adjDatum_actO : ∀ (D : D7) (S T : HSp D) (βS : GL (Fin S.rank) (Lev.E
       exact ⟨isHalf_actO' g h h1, (red_actO S T βS βT hg hh h2).1⟩
   unfold adjDatum
   by_cases hx : IsHalf a x ∧ IsIntM (frMapAdj S T βS βT x)
-  · rw [if_pos hx, if_pos (hiff.mpr hx)]
+  · rw [ite_eq_left hx, ite_eq_left (hiff.mpr hx)]
     have e : (fun PP => redM PP (frMapAdj S T βS βT (actO S T g h x))) = fun PP =>
         (redFn βS PP (finE S g)).val * redM PP (frMapAdj S T βS βT x) * ((redFn βT PP (finE T h))⁻¹).val :=
       funext (red_actO S T βS βT hg hh hx.2).2
@@ -368,7 +367,7 @@ theorem adjDatum_actO : ∀ (D : D7) (S T : HSp D) (βS : GL (Fin S.rank) (Lev.E
       omegaQ_mul hS Q ξ (fun PP => redFn βS PP (finE S g)) (fun PP => redFn βT PP (finE T h))
       (fun PP hP => hblk PP (Or.inr hP)) _]
     ring
-  · rw [if_neg hx, if_neg (fun h' => hx (hiff.mp h')), mul_zero]
+  · rw [ite_eq_right hx, ite_eq_right (fun h' => hx (hiff.mp h')), mul_zero]
 
 end GlobalTheory.AdjDatumMove
 

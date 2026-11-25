@@ -47,7 +47,7 @@ theorem inAt_of (x0 : Frame X.Ψ r) (Fp : Wt X.Ψ r) (ψ : Frame X.Ψ r → ℝ)
   have hz' : cpt X x0 z ∈ X.dom := hz
   have hW : Wpsi X Fp ψ (cpt X x0 z) =
       ENNReal.ofReal (Real.exp (-(phla X Fp (cpt X x0 z) + ψ (cpt X x0 z)))) := by
-    unfold Wpsi; rw [if_pos hz']
+    unfold Wpsi; rw [ite_eq_left hz']
   have hk : 0 < kaF X x0 bb z := Real.exp_pos _
   rw [hW, ← ENNReal.ofReal_mul (by positivity), ← ENNReal.ofReal_mul hd,
     rhoF_split X x0 Fp ψ bb hz]

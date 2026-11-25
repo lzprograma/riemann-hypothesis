@@ -134,7 +134,7 @@ theorem wv_left (hw : w.IsGen) (hL' : L'.IsLB) {j j' : L.ι} {k : L'.ι} (hj : F
     have hz : f z ∈ U := ht (show z ∈ (⊤ : (Sp A).Opens) from trivial)
     have e1 : ∀ c, (Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom c) = c :=
       fun c => congrArg (fun g => CommRingCat.Hom.hom g c) (Iso.hom_inv_id (Scheme.ΓSpecIso (CommRingCat.of A)))
-    rw [valR, dif_pos ht, gm, dif_pos hz]
+    rw [valR, dite_eq_left ht, gm, dite_eq_left hz]
     show ((Sp A).presheaf.germ ⊤ z trivial).hom ((Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom
         ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom ((f.appLE U ⊤ ht).hom a.val))) =
       ((Sp A).presheaf.germ (f ⁻¹ᵁ U) z hz).hom ((f.app U).hom a.val)
@@ -154,7 +154,7 @@ theorem wv_right (hw : w.IsGen) (hL : L.IsLB) {j : L.ι} {k k' : L'.ι} (hj : F 
     have hz : f z ∈ U := ht (show z ∈ (⊤ : (Sp A).Opens) from trivial)
     have e1 : ∀ c, (Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom c) = c :=
       fun c => congrArg (fun g => CommRingCat.Hom.hom g c) (Iso.hom_inv_id (Scheme.ΓSpecIso (CommRingCat.of A)))
-    rw [valR, dif_pos ht, gm, dif_pos hz]
+    rw [valR, dite_eq_left ht, gm, dite_eq_left hz]
     show ((Sp A).presheaf.germ ⊤ z trivial).hom ((Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom
         ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom ((f.appLE U ⊤ ht).hom a.val))) =
       ((Sp A).presheaf.germ (f ⁻¹ᵁ U) z hz).hom ((f.app U).hom a.val)

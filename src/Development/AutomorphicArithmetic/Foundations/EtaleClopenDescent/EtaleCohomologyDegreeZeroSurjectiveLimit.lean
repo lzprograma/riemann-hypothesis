@@ -9,49 +9,6 @@ public import Development.EtaleCohomology.EtaleSheaves.RelativeCohomologyForgetI
 public import Development.EtaleCohomology.EtaleSheaves.SecondDegreeKilling.LeafKill2Of
 public import Mathlib.AlgebraicGeometry.AffineTransitionLimit
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.CategoryTheory.Limits.Preserves.Over
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.HaveILetI
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -278,13 +235,13 @@ private theorem cont_step (hA : A9) (hB : B1) (q : ℕ) (i : ℤ) {S X : Scheme.
       (pull _ (sch.map (pullback.fst (G.obj j0).hom r)) _ 0 y -
         pull _ (sch.map (pullback.snd (G.obj j0).hom r)) _ 0 w) = 0 := by
     change pull _ (sch.map (tm r (π.app j0))) _ 0 _ = 0
-    erw [map_sub, pp, pp, tm_fst, tm_snd, ← pp, hy']
+    rw [map_sub, pp, pp, tm_fst, tm_snd, ← pp, hy']
     exact sub_eq_zero.mpr hc
   obtain ⟨k, f, hk⟩ := cont_qc hA hB q i (G ⋙ TF r) _ hl2 hcomp haff hu2 j0 _ hδ
   refine ⟨G.obj k, (π.app k).left, pull _ (sch.map (G.map f).left) _ 0 y, ?_, (hG k).2, ?_⟩
   · simpa using Over.w (π.app k)
   · change pull _ (sch.map (tm r (G.map f))) _ 0 _ = 0 at hk
-    erw [map_sub, pp, pp, tm_fst, tm_snd, ← pp] at hk
+    rw [map_sub, pp, pp, tm_fst, tm_snd, ← pp] at hk
     exact sub_eq_zero.mp hk
 
 end UpperTheory.Cb.TensorPullbackSquares
@@ -314,13 +271,13 @@ private theorem locAbs (hA : A9) (hB : B1) (q : ℕ) (i : ℤ) {k : Type} [Field
     pullback.lift (pullback.snd s (toBY P U) ≫ pullback.fst P U.hom) (pullback.fst s (toBY P U))
       (by rw [Category.assoc, pullback.condition, ← Category.assoc, ← pullback.condition, Category.assoc])
   have hn1 : n ≫ pullback.fst P U.hom = pullback.fst P (s ≫ U.hom) := by
-    erw [pullback.lift_fst]
+    rw [pullback.lift_fst]
   have hn2 : n ≫ pullback.snd P U.hom = pullback.snd P (s ≫ U.hom) ≫ s := by
-    erw [pullback.lift_snd]
+    rw [pullback.lift_snd]
   have hm1 : m ≫ pullback.fst P (s ≫ U.hom) = pullback.snd s (toBY P U) ≫ pullback.fst P U.hom := by
-    erw [pullback.lift_fst]
+    rw [pullback.lift_fst]
   have hm2 : m ≫ pullback.snd P (s ≫ U.hom) = pullback.fst s (toBY P U) := by
-    erw [pullback.lift_snd]
+    rw [pullback.lift_snd]
   have hmn : m ≫ n = pullback.snd s (toBY P U) := by
     apply pullback.hom_ext
     · rw [Category.assoc, hn1, hm1]
@@ -342,7 +299,7 @@ private theorem locAbs (hA : A9) (hB : B1) (q : ℕ) (i : ℤ) {k : Type} [Field
     rw [← Scheme.Hom.comp_apply, hj, ← hsg, hv]
   · have hcomm : toBY P U' ≫ Z.hom = resY P a ≫ toBY P U := by
       simp only [resY, toBY]
-      erw [pullback.lift_snd]
+      rw [pullback.lift_snd]
       rfl
     let ψ : YU P U' ⟶ pullback Z.hom (toBY P U) := pullback.lift (toBY P U') (resY P a) hcomm
     have hψ1 : ψ ≫ pullback.fst Z.hom (toBY P U) = toBY P U' := pullback.lift_fst _ _ _

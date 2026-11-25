@@ -2,7 +2,6 @@ module
 
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsVectorOrbits
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -108,7 +107,6 @@ omit [NumberField E] in
 theorem conj_mem_integralClosure {z : E}
     (hz : z ∈ integralClosure ℤ E) : conj F E z ∈ integralClosure ℤ E :=
   IsIntegral.map ((conj F E : E ≃ₐ[F] E) : E →+* E).toIntAlgHom hz
-
 
 omit [NumberField E] in
 theorem scalingMap_mem (h : HermitianForm F E W) {La : AddSubgroup W} (hLa : IsLattice E La)

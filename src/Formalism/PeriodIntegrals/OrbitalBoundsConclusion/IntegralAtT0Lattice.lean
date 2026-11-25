@@ -18,58 +18,13 @@ public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocInd
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegralityAtPrimeLattices.IntegralityAtFormsOfIncrements
 public import Formalism.SharpRestriction.GlobalSchurBounds.IntegralityOfRationalityLocal
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.GlobalTheory.GL6.PRLocV
 import Formalism.LocalToGlobal.LatticeGeometry.GeometryDefinitions.PClassE
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsEquiv
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
 import Formalism.LocalToGlobal.GlobalTheory.GL6.PKerAtP
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegralityAtPrimeLattices.IntInvOfLoc
-import Mathlib.RingTheory.MvPolynomial
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegralityAtPrimeLattices.AwayLoc, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegralityAtPrimeLattices.AwayCore, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegralityAtPrimeLattices.DnLatKer, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegralityAtPrimeLattices.DnLatB, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegralityAtPrimeLattices.DownOperatorPreservesRationalForm, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegralityAtPrimeLattices.IntegralityAtFormsOfLattices, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegralityAtPrimeLattices.IntegralityAtFormsOfAwayUp, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegralityAtPrimeLattices.IntegralityAtFormsOfAway, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.IntegralAtT0Lattice
@@ -166,7 +121,7 @@ theorem locv_lower (v : HeightOneSpectrum (𝓞 F)) (Λ : Submodule (𝓞 E) (Fi
     · intro k _ hki
       show (_ : Formalism.L2.Geo.Def.PC.SV E v) •
         Formalism.UG.inclE (F := F) (v.adicCompletion F) ((Pi.single k (m : E) : Fin n → E) i) = 0
-      rw [Pi.single_apply, if_neg (Ne.symm hki), map_zero, smul_zero]
+      rw [Pi.single_apply, ite_eq_right (Ne.symm hki), map_zero, smul_zero]
     · exact fun h => absurd (Finset.mem_univ i) h
   rw [this]
   exact sum_mem fun k _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, hsingle k, rfl⟩)
@@ -473,7 +428,7 @@ theorem cls_tLd (K : ClsTied u i hi) (c : (D.mem u).C.cls i) (y : Fin (D.R.N i) 
     ext k
     simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, Matrix.smul_apply, Matrix.one_apply,
       smul_eq_mul, mul_one, mul_zero, apply_ite, map_zero, ite_mul, zero_mul,
-      Finset.sum_ite_eq, Finset.mem_univ, if_true, map_natCast, Pi.smul_apply, nsmul_eq_mul]
+      Finset.sum_ite_eq, Finset.mem_univ, ite_true, map_natCast, Pi.smul_apply, nsmul_eq_mul]
   rw [hv, hGm, Matrix.mulVec_smul]
 
 theorem lk_locP (A : AtTTied u) (K : ClsTied u i hi) (v : (D.mem u).A.vT) (c : (D.mem u).C.cls i) :
@@ -683,7 +638,7 @@ theorem ratSpan_allSubP (D : D7) {n : ℕ} (lam : D.what₂.Tau → DomWeight n)
     intro S
     induction S using Finset.induction_on with
     | empty =>
-      simp only [Finset.prod_empty, map_one, one_mul, Finset.notMem_empty, if_false]
+      simp only [Finset.prod_empty, map_one, one_mul, Finset.notMem_empty, ite_false]
       rw [substitution_one]
       exact hQ
     | insert τ0 S h0 ih =>
@@ -694,11 +649,11 @@ theorem ratSpan_allSubP (D : D7) {n : ℕ} (lam : D.what₂.Tau → DomWeight n)
         funext τ
         by_cases hτ : τ = τ0
         · subst hτ
-          rw [if_neg h0, if_pos (Finset.mem_insert_self _ _), one_mul, hUτ]
+          rw [ite_eq_right h0, ite_eq_left (Finset.mem_insert_self _ _), one_mul, hUτ]
         · rw [hU1 τ hτ, mul_one]
           by_cases hS : τ ∈ S
-          · rw [if_pos hS, if_pos (Finset.mem_insert_of_mem hS)]
-          · rw [if_neg hS, if_neg (by simp [hτ, hS])]
+          · rw [ite_eq_left hS, ite_eq_left (Finset.mem_insert_of_mem hS)]
+          · rw [ite_eq_right hS, ite_eq_right (by simp [hτ, hS])]
       have e : MvPolynomial.C (∏ τ ∈ insert τ0 S, (N τ).det ^ s τ) *
           subP (fun τ => if τ ∈ insert τ0 S then N τ else 1) Q =
           (N τ0).det ^ s τ0 • subP U (MvPolynomial.C (∏ τ ∈ S, (N τ).det ^ s τ) *
@@ -712,7 +667,7 @@ theorem ratSpan_allSubP (D : D7) {n : ℕ} (lam : D.what₂.Tau → DomWeight n)
       rw [hUτ]
       exact hB τ0 g hg
   have h := key Finset.univ
-  simp only [Finset.mem_univ, if_true] at h
+  simp only [Finset.mem_univ, ite_true] at h
   exact h
 
 variable {D : D7} {u : D.what₂.Word}
@@ -727,14 +682,6 @@ theorem ratC_sum (T : Forms0 D u) {ι : Type} (s : Finset ι) (h : ι → (D.mem
 
   rw [map_sum, Finset.sum_apply, Finset.sum_apply]
   exact Finset.sum_congr rfl fun i hi => hPe i hi z
-
-theorem fnOf_trR (s : D.what₂.Tau → ℤ) (M : D.what₂.Tau → Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) ℂ)
-    (P : MvPolynomial (D.what₂.Tau × Fin (D.R.N 0) × Fin (D.R.N 0)) ℂ) (g : GL (Fin (D.R.N 0)) D.host.E)
-    (hg : g ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _)))
-    (y : Frames (gramC (gramN D 0 (Nat.zero_le _)) (embT D))) :
-    fnOf _ s M P (frameTranslate (embT D) (fun τ x => embedding_conj_compat D τ x) g hg y) =
-      fnOf _ s (fun τ => M τ * atInf (embT D) (g : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) τ) P y := by
-  simp only [fnOf, LinearMap.coe_mk, AddHom.coe_mk, frameTranslate, Matrix.mul_assoc]
 
 theorem atInf_ratO (M : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (τ : D.what₂.Tau) (a b : Fin (D.R.N 0)) :
     atInf (embT D) M τ a b ∈ ratO D := by
@@ -761,7 +708,7 @@ theorem ratC_tr (T : Forms0 D u) (hC : LocalLatticeBases.ChiFin0 T)
       fnOf _ (shiftOf (lamT u 0)) (fun τ => N τ * (1 : D.what₂.Tau → Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) ℂ) τ) P
         (T.val0.eY z) := by
     intro z
-    rw [hPe, Equiv.apply_symm_apply, fnOf_trR]
+    rw [hPe, Equiv.apply_symm_apply, PI.UnitaryGroupMassFormula.IAT.fnOf_tr]
     simp only [hNdef, Pi.one_apply, one_mul, mul_one]
   have e2 : ((((T.cls0.lev.chi κ)⁻¹ : ℂˣ)) : ℂ) = D.what₂.embLL r⁻¹ := by
     rw [map_inv₀, Units.val_inv_eq_inv_val]

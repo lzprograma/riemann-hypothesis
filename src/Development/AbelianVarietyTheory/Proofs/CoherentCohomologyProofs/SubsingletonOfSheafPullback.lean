@@ -131,12 +131,6 @@ lemma toInter_app_comp_map_comp_inv (W : Opens X) {F G : X.Sheaf A} (f : F ⟶ G
 
 end Inter
 
-section Iso
-
-variable (A : Type u') [Category.{u} A]
-
-end Iso
-
 section Abelian
 
 instance (W : Opens X) : (interSheaf AddCommGrpCat.{u} W).Additive where

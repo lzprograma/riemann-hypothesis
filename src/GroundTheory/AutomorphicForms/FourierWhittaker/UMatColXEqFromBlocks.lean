@@ -1,51 +1,6 @@
 module
 
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Lean.Elab.MutualDef
 public import Mathlib.LinearAlgebra.Matrix.Block
 
@@ -84,7 +39,7 @@ theorem uMat_apply (X : Pos n → R) (a b : Fin n) :
   simp only [uMat, Matrix.add_apply, Matrix.one_apply, uN_apply]
   by_cases h1 : a = b
   · subst h1; simp
-  · rw [if_neg h1, if_neg h1, zero_add]
+  · rw [ite_eq_right h1, ite_eq_right h1, zero_add]
 
 theorem uMat_zero : uMat (0 : Pos n → R) = 1 := by simp [uMat, uN_zero]
 
@@ -92,10 +47,10 @@ theorem det_uMat (X : Pos n → R) : (uMat X).det = 1 := by
   have hT : (uMat X).IsUpperTriangular := by
     intro a b hab
     have hab' : b < a := hab
-    rw [uMat_apply, if_neg (ne_of_gt hab'), dite_eq_right (not_lt.2 hab'.le)]
+    rw [uMat_apply, ite_eq_right (ne_of_gt hab'), dite_eq_right (not_lt.2 hab'.le)]
   rw [Matrix.det_of_isUpperTriangular hT]
   refine Finset.prod_eq_one fun a _ => ?_
-  rw [uMat_apply, if_pos rfl]
+  rw [uMat_apply, ite_eq_left rfl]
 
 def uGL (X : Pos n → R) : GL (Fin n) R :=
   ((Matrix.isUnit_iff_isUnit_det (uMat X)).2 (by rw [det_uMat]; exact isUnit_one)).unit
@@ -218,7 +173,7 @@ theorem blockMat_apply (hj : j ≤ n) (h : Matrix (Fin j) (Fin j) R) (a b : Fin 
         Matrix.zero_apply]
   · rw [splitIdx_of_ge hj a (not_lt.1 ha), dite_eq_right ha]
     by_cases hb : b.val < j
-    · rw [splitIdx_of_lt hj b hb, Matrix.fromBlocks_apply₂₁, Matrix.zero_apply, if_neg]
+    · rw [splitIdx_of_lt hj b hb, Matrix.fromBlocks_apply₂₁, Matrix.zero_apply, ite_eq_right]
       intro hab; subst hab; exact ha hb
     · rw [splitIdx_of_ge hj b (not_lt.1 hb), Matrix.fromBlocks_apply₂₂, Matrix.one_apply]
       congr 1
@@ -243,12 +198,6 @@ def blockGL (hj : j ≤ n) : GL (Fin j) R →* GL (Fin n) R :=
 
 @[simp] theorem coe_blockGL (hj : j ≤ n) (h : GL (Fin j) R) :
     ((blockGL hj h : GL (Fin n) R) : Matrix (Fin n) (Fin n) R) = blockMat hj h := rfl
-
-theorem map_blockMat {S : Type*} [CommRing S] (f : R →+* S) (hj : j ≤ n)
-    (h : Matrix (Fin j) (Fin j) R) : (blockMat hj h).map f = blockMat hj (h.map f) := by
-  ext a b
-  simp only [Matrix.map_apply, blockMat_apply]
-  split_ifs <;> simp
 
 theorem blockMat_blockMat {k : ℕ} (hk : k ≤ j) (hj : j ≤ n) (γ : Matrix (Fin k) (Fin k) R) :
     blockMat hj (blockMat hk γ) = blockMat (hk.trans hj) γ := by

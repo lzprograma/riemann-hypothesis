@@ -3,50 +3,6 @@ module
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.CFCoreA
 public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothDefs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -117,7 +73,7 @@ theorem vNormSq_lowK_sub_root_lt {ε : Fin n → Bool} {lam : Fin n → ℝ} (hm
   have hsum : ∑ c, (root a b c * root a b c - 2 * (w c * root a b c)) = 2 - 2 * (w a - w b) := by
     rw [Fintype.sum_eq_add a b hab']
     · rw [hr a, hr b]
-      simp only [if_neg hab', if_neg hab'.symm, ↓reduceIte]
+      simp only [ite_eq_right hab', ite_eq_right hab'.symm, ↓reduceIte]
       ring
     · intro c hc
       rw [hr c]
@@ -152,7 +108,7 @@ theorem CDom_lowWt {ε : Fin n → Bool} (μ : Fin n → ℝ) :
     refine ⟨fun a b => c a b + if a = p.2 ∧ b = p.1 then 1 else 0, fun a b h => ?_, ?_⟩
     · by_cases h' : a = p.2 ∧ b = p.1
       · obtain ⟨rfl, rfl⟩ := h'; exact ⟨hp.1, hp.2.symm⟩
-      · dsimp only at h; rw [if_neg h', add_zero] at h; exact hc a b h
+      · dsimp only at h; rw [ite_eq_right h', add_zero] at h; exact hc a b h
     · have e : ∀ a b : Fin n, ((c a b + if a = p.2 ∧ b = p.1 then 1 else 0 : ℕ) : ℝ) • Formalism.REAL.root a b =
           (c a b : ℝ) • Formalism.REAL.root a b + if a = p.2 ∧ b = p.1 then Formalism.REAL.root a b else 0 := by
         intro a b; split_ifs <;> simp [add_smul]
@@ -202,7 +158,7 @@ theorem weights_le_of_irr_hw (hE : IsGlRep E) (hU : IsInfUnitary ε E) {μ : Fin
     obtain ⟨a, ha⟩ := Function.ne_iff.1 hne
     have h1 := hU a a (lowWord E w l) x
     rw [lowWord_wt hE hw.1 l a, hν a, inner_smul_left, inner_smul_right] at h1
-    simp only [adjSign, if_true, one_mul, Complex.conj_ofReal] at h1
+    simp only [adjSign, ite_true, one_mul, Complex.conj_ofReal] at h1
     have h2 : ((lowWt μ l a : ℂ) - (ν a : ℂ)) * inner ℂ (lowWord E w l) x = 0 := by
       rw [sub_mul, h1, sub_self]
     rcases mul_eq_zero.1 h2 with h | h
@@ -224,38 +180,11 @@ variable {n : ℕ}
 
 section Equiv
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {ε : Fin n → Bool}
   {H₁ : Type*} [NormedAddCommGroup H₁] [InnerProductSpace ℂ H₁] {σ₁ : Matrix (Fin n) (Fin n) ℂ → (H₁ →L[ℂ] H₁)}
   {H₂ : Type*} [NormedAddCommGroup H₂] [InnerProductSpace ℂ H₂] {σ₂ : Matrix (Fin n) (Fin n) ℂ → (H₂ →L[ℂ] H₂)}
-
-private theorem inUJ_exp_of_conjTranspose_Jm_add_Jm_mul_eq_zero {Y : Matrix (Fin n) (Fin n) ℂ} (hY : Yᴴ * Jm ε + Jm ε * Y = 0) :
-    inUJ ε (NormedSpace.exp Y) := by
-  have hJJ : Jm ε * Jm ε = 1 := by
-    unfold Jm
-    rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    funext a
-    by_cases h : ε a <;> simp [h]
-  have hYc : Yᴴ = Jm ε * (-Y) * Jm ε := by
-    have h1 : Yᴴ * Jm ε = -(Jm ε * Y) := eq_neg_of_add_eq_zero_left hY
-    calc Yᴴ = Yᴴ * Jm ε * Jm ε := by rw [mul_assoc, hJJ, mul_one]
-      _ = Jm ε * (-Y) * Jm ε := by rw [h1, mul_neg, neg_mul]
-  let u : (Matrix (Fin n) (Fin n) ℂ)ˣ := ⟨Jm ε, Jm ε, hJJ, hJJ⟩
-  have hexp : (NormedSpace.exp Y)ᴴ = Jm ε * NormedSpace.exp (-Y) * Jm ε := by
-    have e1 := Matrix.exp_conjTranspose Y
-    rw [hYc] at e1
-    exact e1.symm.trans (Matrix.exp_units_conj u (-Y))
-  have h2 : NormedSpace.exp (-Y) * NormedSpace.exp Y = 1 := by
-    have e3 := Matrix.exp_add_of_commute (-Y) Y (Commute.neg_left (Commute.refl Y))
-    rw [neg_add_cancel] at e3
-    have e4 : NormedSpace.exp (0 : Matrix (Fin n) (Fin n) ℂ) = 1 := NormedSpace.exp_zero
-    exact e3.symm.trans e4
-  unfold inUJ
-  rw [hexp]
-  simp only [mul_assoc]
-  rw [← mul_assoc (Jm ε) (Jm ε), hJJ, one_mul, h2, mul_one]
 
 private theorem deriv_linearIsometryEquiv_comp_zero {E F : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
     [NormedAddCommGroup F] [InnerProductSpace ℂ F] (U : E ≃ₗᵢ[ℂ] F) (f : ℝ → E) :
@@ -279,7 +208,7 @@ theorem dS_map_isometry (U : H₁ ≃ₗᵢ[ℂ] H₂) (hU : ∀ g ∈ UJset ε,
     have hs : star (t : ℂ) = (t : ℂ) := Complex.conj_ofReal t
     have hY : ((t : ℂ) • X)ᴴ * Jm ε + Jm ε * ((t : ℂ) • X) = 0 := by
       rw [Matrix.conjTranspose_smul, hs, Matrix.smul_mul, Matrix.mul_smul, ← smul_add, hX', smul_zero]
-    exact inUJ_exp_of_conjTranspose_Jm_add_Jm_mul_eq_zero hY
+    exact Formalism.REAL.f1alg_exp_inUJ ε ((t : ℂ) • X) hY
   show deriv (fun t : ℝ => σ₂ (NormedSpace.exp ((t : ℂ) • X)) (U x)) 0 =
     U (deriv (fun t : ℝ => σ₁ (NormedSpace.exp ((t : ℂ) • X)) x) 0)
   have hfun : (fun t : ℝ => σ₂ (NormedSpace.exp ((t : ℂ) • X)) (U x)) =

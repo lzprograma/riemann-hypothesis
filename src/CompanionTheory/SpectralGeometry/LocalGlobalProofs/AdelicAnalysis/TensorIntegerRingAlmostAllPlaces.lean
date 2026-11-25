@@ -21,8 +21,7 @@ namespace GlobalTheory.CompanionTheory.SW.GoodRing
 theorem exists_good_nat {k : Type} [Field k] (h2 : (2 : k) ≠ 0) (h3 : (3 : k) ≠ 0) (D A B C : k)
     (hne : A ≠ 0 ∨ B ≠ 0 ∨ C ≠ 0) :
     ∃ a : ℕ, 1 - D * (a : k) ^ 2 ≠ 0 ∧ A + B * (a : k) + C * (a : k) ^ 2 ≠ 0 := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hc : ∀ n : ℕ, 0 < n → n < 5 → (n : k) ≠ 0 := by
     intro n h0 h5
     interval_cases n
@@ -150,8 +149,7 @@ theorem exists_eps [IsLocalRing R] (hδ : δ * δ = ι D) (hτι : ∀ r, τ (ι
   have hbk := nz hb
   obtain ⟨a, ha1, ha2⟩ := exists_good_nat h2k h3k (φ D) ((φ b - φ s0) ^ 2 - φ D * φ s1 ^ 2)
     (4 * φ D * φ b * φ s1) (φ D ^ 2 * φ s1 ^ 2 - φ D * (φ b + φ s0) ^ 2) (by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       obtain ⟨hA, hB, hC⟩ := hcon
       have h4 : (4 : IsLocalRing.ResidueField R) ≠ 0 := by
         have : (4 : IsLocalRing.ResidueField R) = 2 * 2 := by norm_num
@@ -419,8 +417,7 @@ theorem good_ring : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Number
     apply τ.injective
     rw [h.2.2.2, h.2.2.2, star_star]
   have hne : ∃ x, σ x ≠ x := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     obtain ⟨w⟩ := (inferInstance : Nonempty (NumberField.InfinitePlace E))
     have hreal : w.IsReal := by
       rw [← NumberField.InfinitePlace.mk_embedding w, NumberField.InfinitePlace.isReal_mk_iff,

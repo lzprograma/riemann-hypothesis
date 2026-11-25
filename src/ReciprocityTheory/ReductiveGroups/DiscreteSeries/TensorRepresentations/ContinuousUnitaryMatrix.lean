@@ -17,7 +17,7 @@ open scoped ContDiff
 
 namespace ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ} {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] {ε : Fin n → Bool}
   {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} {D : Submodule ℂ H}
@@ -87,16 +87,6 @@ theorem norm_tensor_phi_le_sqrt_hs {g : Matrix (Fin n) (Fin n) ℂ} (hg : inUJ �
     rw [hb, hb, one_mul, mul_one]
     exact hent
 
-theorem smoothOnG_finset_sum {ι : Type*} (s : Finset ι) (F : ι → Matrix (Fin n) (Fin n) ℂ → ℂ)
-    (h : ∀ i ∈ s, Formalism.REAL.SmoothOnG ε (F i)) : Formalism.REAL.SmoothOnG ε (fun x => ∑ i ∈ s, F i x) := by
-  unfold Formalism.REAL.SmoothOnG at h ⊢
-  intro g₀ hg₀
-  choose! U F hU hgU hF hFU using fun i (hi : i ∈ s) => h i hi g₀ hg₀
-  refine ⟨⋂ i ∈ s, U i, fun x => ∑ i ∈ s, F i x, isOpen_biInter_finset fun i hi => hU i hi,
-    Set.mem_iInter₂.2 fun i hi => hgU i hi,
-    ContDiffOn.sum fun i hi => (hF i hi).mono (Set.biInter_subset_of_mem hi), fun g hg hgJ => ?_⟩
-  exact Finset.sum_congr rfl fun i hi => hFU i hi g (Set.mem_iInter₂.1 hg i hi) hgJ
-
 theorem smoothOnG_inner_rep (w : H) {v : H} (hv : IsSmoothVecU ε σ v) :
     Formalism.REAL.SmoothOnG ε (fun g => inner ℂ w (σ g v)) := by
   unfold IsSmoothVecU S7.SmoothOnGV at hv
@@ -134,8 +124,8 @@ theorem tensor_coef_smooth (dual : Bool) (η f : Fin n → H) (hf : ∀ d, IsSmo
     funext g
     simp only [tensGrp, inner_sum, inner_smul_right, oa1Phi]
   rw [heq]
-  exact smoothOnG_finset_sum univ (fun c g => ∑ d, oa1Phi dual g c d * inner ℂ (η c) (σ g (f d))) fun c _ =>
-    smoothOnG_finset_sum univ (fun d g => oa1Phi dual g c d * inner ℂ (η c) (σ g (f d))) fun d _ =>
+  exact Formalism.REAL.smooth_on_group_sum univ (fun c g => ∑ d, oa1Phi dual g c d * inner ℂ (η c) (σ g (f d))) fun c _ =>
+    Formalism.REAL.smooth_on_group_sum univ (fun d g => oa1Phi dual g c d * inner ℂ (η c) (σ g (f d))) fun d _ =>
       _root_.Formalism.REAL.smooth_on_group_mul (smoothOnG_tensor_phi dual c d) (smoothOnG_inner_rep (η c) (hf d))
 
 theorem continuous_umat' : Continuous (fun g : Formalism.REAL.UJ ε => Formalism.MainNotions.S.umat g) := Units.continuous_val.comp continuous_subtype_val

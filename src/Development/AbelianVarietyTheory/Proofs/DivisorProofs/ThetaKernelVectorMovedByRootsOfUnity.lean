@@ -59,15 +59,12 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.RealisedChainTorusE
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.DIV.Cons Formalism.L2.Pj Formalism.L2.Indef Formalism.L2.Indef.Tree
 open Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.FWT Formalism.IndefR.Datum Formalism.IndefR.Lev
 open GlobalTheory.FormTies GlobalTheory.OnTies GlobalTheory.TraceClassRank
 open scoped TensorProduct Matrix
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.OnCmp GlobalTheory.BigOn GlobalTheory.RealIndexBound
 
 namespace GlobalTheory.KerMove
@@ -133,26 +130,26 @@ theorem val_ker {T0 : Type} {L : LevCh D T0} {μ0 : T0} (hL : L.Is μ0) {ξ : Fo
   have e1 := GlobalTheory.T.tameHeckeChar_splitSupported_eq_prod_residue D _ _ P e (fun PP => if PP ∈ L.Pg then (L.chi ((j : ℕ) + 1) PP)⁻¹ else 1) (hL.mu0 j) he
     (fun PP h => ⟨(L.C.isMu0 j).tame PP, by
       by_cases hg : PP ∈ L.Pg
-      · rw [if_pos hg]; exact hL.chi j PP hg
-      · rw [if_neg hg]; exact GlobalTheory.VecInv.isRes_one (h2 PP (((hP _).1 h).resolve_left hg))⟩) x a a' u hx ha hu
+      · rw [ite_eq_left hg]; exact hL.chi j PP hg
+      · rw [ite_eq_right hg]; exact GlobalTheory.VecInv.isRes_one (h2 PP (((hP _).1 h).resolve_left hg))⟩) x a a' u hx ha hu
   have e2 := GlobalTheory.T.tameHeckeChar_splitSupported_eq_prod_residue D _ _ P e (fun PP => if PP ∈ Q then ξR PP else 1) hchr he
     (fun PP h => ⟨htame PP, by
       by_cases hg : PP ∈ Q
-      · rw [if_pos hg]; exact hres PP hg
-      · rw [if_neg hg]; exact GlobalTheory.VecInv.isRes_one (h3 PP (((hP _).1 h).resolve_right hg))⟩) x a a' u hx ha hu
+      · rw [ite_eq_left hg]; exact hres PP hg
+      · rw [ite_eq_right hg]; exact GlobalTheory.VecInv.isRes_one (h3 PP (((hP _).1 h).resolve_right hg))⟩) x a a' u hx ha hu
   have e3 := GlobalTheory.T.tameHeckeChar_splitSupported_eq_prod_residue D _ _ P e (fun _ => 1) hL.eta he
     (fun PP _ => ⟨GlobalTheory.VecInv.tameAt_of_unrAt (L.C.isEta.unr PP), GlobalTheory.VecInv.isRes_one (L.C.isEta.unr PP)⟩) x a a' u hx ha hu
   refine ⟨?_, ?_, Subtype.ext (e3.trans (Finset.prod_eq_one fun _ _ => rfl))⟩
   · rw [e1, Units.coe_prod]
     symm
     refine Finset.prod_subset_one_on_sdiff (fun PP h => (hP _).2 (Or.inl h)) (fun PP h => ?_) fun PP h => ?_
-    · rw [if_neg (Finset.mem_sdiff.1 h).2]; rfl
-    · rw [if_pos h]; rfl
+    · rw [ite_eq_right (Finset.mem_sdiff.1 h).2]; rfl
+    · rw [ite_eq_left h]; rfl
   · rw [e2, Units.coe_prod]
     symm
     refine Finset.prod_subset_one_on_sdiff (fun PP h => (hP _).2 (Or.inr h)) (fun PP h => ?_) fun PP h => ?_
-    · rw [if_neg (Finset.mem_sdiff.1 h).2]; rfl
-    · rw [if_pos h]
+    · rw [ite_eq_right (Finset.mem_sdiff.1 h).2]; rfl
+    · rw [ite_eq_left h]
 
 end GlobalTheory.KerMove
 

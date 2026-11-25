@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CmTypeExteriorLatticeComparison
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsConstMul
 public import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr
 public import Formalism.LocalToGlobal.ProjectiveLattices.PetersonNormSubspace
@@ -63,7 +64,11 @@ import Development.AbelianVarietyTheory.Proofs.GenericRegularity.SupCLeISupGener
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbeddingsGoodBijectiveConjCompat
 import Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfD
 import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
-import Formalism.LocalToGlobal.ProjectiveLattices.LocFrLoc
+import Development.AbelianVarietyTheory.Definitions.Divisors.IsLocalRingTrivSqZeroExt
+import Formalism.LocalToGlobal.ProjectiveLattices.GenSpecV
+import Formalism.LocalToGlobal.ProjectiveLattices.GenSpecLocFrM
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeB
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeC
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -130,7 +135,7 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 -- Members: Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsFamilyUniformisationStatement, Development.WeilBound.CoreStatements.PlurisubharmonicCones.ExistsCoordLattice, Development.WeilBound.CoreStatements.PlurisubharmonicCones.ExistsGram, Development.WeilBound.CoreStatements.PlurisubharmonicCones.ExistsSmulMemSpan, Development.WeilBound.CoreStatements.PlurisubharmonicCones.LogOmBound, Development.AutomorphicSpectrum.Proofs.GeometryProofs.PhiDegFibLatLeOfIsOFamilyOfIsAdapted
 
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsFamilyUniformisationStatement =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsFamilyUniformisationStatement", "h": "module\n\npublic import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsConstMul\npublic import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr\npublic import Formalism.LocalToGlobal.ProjectiveLattices.PetersonNormSubspace\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHold\nimport Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameBorelGroupoidProperties\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LinearDisjointAlgebraicClosure\nimport Development.AbelianVarietyTheory.Proofs.GenericRegularity.SupCLeISupGeneric\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivComp\npublic import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold\npublic import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedUniformisationComponentsPeriodSpacesBiject\nimport Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbeddingsGoodBijectiveConjCompat\nimport Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfD\nimport Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge\nimport Formalism.LocalToGlobal.ProjectiveLattices.LocFrLoc\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.FrMapComp\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart\npublic import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt\npublic import Development.AbelianVarietyTheory.Definitions.RegularCharts.Reframe\n\n"}
+-- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsFamilyUniformisationStatement", "h": "module\n\npublic import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsConstMul\npublic import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr\npublic import Formalism.LocalToGlobal.ProjectiveLattices.PetersonNormSubspace\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHold\nimport Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameBorelGroupoidProperties\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LinearDisjointAlgebraicClosure\nimport Development.AbelianVarietyTheory.Proofs.GenericRegularity.SupCLeISupGeneric\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivComp\npublic import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold\npublic import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedUniformisationComponentsPeriodSpacesBiject\nimport Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbeddingsGoodBijectiveConjCompat\nimport Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfD\nimport Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge\nimport Development.AbelianVarietyTheory.Definitions.Divisors.IsLocalRingTrivSqZeroExt\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.FrMapComp\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart\npublic import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt\npublic import Development.AbelianVarietyTheory.Definitions.RegularCharts.Reframe\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -208,8 +213,8 @@ theorem _root_.GlobalTheory.T.exists_family_uniformisation : ∀ (E : Type) [Fie
       show (y ≫ pullback.fst _ _) ≫ Xo.s = _
       rw [Category.assoc, pullback.condition, ← Category.assoc, hy, sOf, ← Spec.map_comp]
       rfl
-    obtain ⟨z, hz⟩ := Formalism.L2.Pj.exists_frPt_local (Xo := Xo) (c := c) (L := ℂ)
-      GlobalTheory.firstFiveLaws.2.1.secTwist (under y) hover
+    obtain ⟨z, hz⟩ := GlobalTheory.FlagTan.exists_frPt (Xo := Xo) (c := c) (S := ℂ)
+      (under y) hover
     obtain ⟨k', x, t, hb⟩ := hcov z
     refine ⟨k', x, t, z, hb, hz, ?_⟩
     apply pullback.hom_ext
@@ -263,13 +268,12 @@ theorem exists_max_det {n : ℕ} (E : Submodule (𝓞 L) (Fin n → 𝓞 L)) (hD
     j.injective.comp (IsFractionRing.injective (𝓞 L) L)
   obtain ⟨V, -, hV, hVO, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.ValRing.exists_dvr_of_padic_embedding L p j
   have hle1 : ∀ r : 𝓞 L, ‖(j.comp (algebraMap (𝓞 L) L)) r‖ ≤ 1 := fun r => (hV _).2 (hVO r)
-  obtain ⟨a, haI, ha0, hamax, hlog⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.exists_logIdeal_attained L p _ (detIdeal E) hj'inj hD
+  obtain ⟨a, haI, ha0, hamax, hlog⟩ := _root_.PositivityTheory.Xgf.padic_logIdeal_max_element L p _ (detIdeal E) hj'inj hD
   have hapos : 0 < ‖(j.comp (algebraMap (𝓞 L) L)) a‖ :=
     norm_pos_iff.2 (fun h => ha0 (hj'inj (by rw [h, map_zero])))
   obtain ⟨v, hvE, hv⟩ : ∃ v : Fin n → Fin n → 𝓞 L, (∀ i, v i ∈ E) ∧
       ‖(j.comp (algebraMap (𝓞 L) L)) a‖ ≤ ‖(j.comp (algebraMap (𝓞 L) L)) (Matrix.of v).det‖ := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hall : ∀ x ∈ detIdeal E, ‖(j.comp (algebraMap (𝓞 L) L)) x‖ < ‖(j.comp (algebraMap (𝓞 L) L)) a‖ := by
       intro x hx
       induction hx using Submodule.span_induction with
@@ -298,12 +302,12 @@ theorem exists_max_det {n : ℕ} (E : Submodule (𝓞 L) (Fin n → 𝓞 L)) (hD
     rintro rfl
     rw [Ideal.mul_bot] at hJ
     exact hspan0 hJ
-  obtain ⟨hmul, hsing, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.logIdeal_mul_span_map L p _ hj'inj
+  obtain ⟨hmul, hsing, -⟩ := _root_.PositivityTheory.Xgf.log_ideal_mul_span_map L p _ hj'inj
   have hJlog : logIdeal (j.comp (algebraMap (𝓞 L) L)) J = 0 := by
     have := hmul _ J hD hJ0
     rw [← hJ, hsing, hdeq, hlog] at this
     linarith
-  obtain ⟨u, huJ, hu0, -, hulog⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.exists_logIdeal_attained L p _ J hj'inj hJ0
+  obtain ⟨u, huJ, hu0, -, hulog⟩ := _root_.PositivityTheory.Xgf.padic_logIdeal_max_element L p _ J hj'inj hJ0
   have hu1 : ‖(j.comp (algebraMap (𝓞 L) L)) u‖ = 1 := by
     have hpos : 0 < ‖(j.comp (algebraMap (𝓞 L) L)) u‖ :=
       norm_pos_iff.2 (fun h => hu0 (hj'inj (by rw [h, map_zero])))
@@ -470,7 +474,7 @@ theorem exists_local_frame {M : Type} [AddCommGroup M] [Module (𝓞 L) M] [Modu
     · exact sub_eq_zero.1 h0
     · simp only [sub_smul, Finset.sum_sub_distrib, Matrix.mul_apply, Matrix.of_apply, Matrix.smul_apply,
         Matrix.one_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, ite_smul, zero_smul, Finset.sum_ite_eq,
-        Finset.mem_univ, if_true, Finset.sum_smul]
+        Finset.mem_univ, ite_true, Finset.sum_smul]
       rw [sub_eq_zero, Finset.sum_comm]
       calc ∑ k, ∑ l, (T i k * v k l) • x l = ∑ k, T0 i k • (c • y k) := by
             simp only [hy, Finset.smul_sum, smul_smul, hTdef, Matrix.of_apply]
@@ -490,7 +494,7 @@ theorem exists_local_frame {M : Type} [AddCommGroup M] [Module (𝓞 L) M] [Modu
   have hji : Function.Injective (j.comp (algebraMap (𝓞 L) L)) :=
     j.injective.comp (IsFractionRing.injective (𝓞 L) L)
   have hc' : logIdeal (j.comp (algebraMap (𝓞 L) L)) (Ideal.span {c ^ n}) = Real.log ‖j ((c : L))‖ * n := by
-    rw [(_root_.GlobalTheory.CompanionTheory.Ar.Fl.logIdeal_mul_span_map L p _ hji).2.1]
+    rw [(_root_.PositivityTheory.Xgf.log_ideal_mul_span_map L p _ hji).2.1]
     simp [map_pow, norm_pow, Real.log_pow, mul_comm]
   have hnorm : ‖j (T.det : L)‖ * ‖j ((Matrix.of v).det : L)‖ = ‖j (c : L)‖ ^ n := by
     have := congrArg (fun a : 𝓞 L => ‖j (a : L)‖) hdetT
@@ -601,15 +605,15 @@ theorem exists_logNorms {L : Type} [Field L] [NumberField L] (B : HermitianBundl
   have hd0 : Ideal.absNorm (detIdeal E) ≠ 0 := right_ne_zero_of_mul hprod
   have hfs : N.finSum = fun p : Nat.Primes => Real.log ‖((idx : ℚ) : ℂ_[p])‖ := by
     funext p
-    have e1 := _root_.GlobalTheory.CompanionTheory.Ar.Fl.sum_logIdeal_eq_log_norm_absNorm L _ hcn p
-    have e2 := _root_.GlobalTheory.CompanionTheory.Ar.Fl.sum_logIdeal_eq_log_norm_absNorm L _ hD p
+    have e1 := _root_.PositivityTheory.Xgf.sum_logIdeal_eq_log_absNorm L _ hcn p
+    have e2 := _root_.PositivityTheory.Xgf.sum_logIdeal_eq_log_absNorm L _ hD p
     have hne1 : ‖((idx : ℕ) : ℂ_[p])‖ ≠ 0 := norm_ne_zero_iff.2 (Nat.cast_ne_zero.2 hi0)
     have hne2 : ‖((Ideal.absNorm (detIdeal E) : ℕ) : ℂ_[p])‖ ≠ 0 := norm_ne_zero_iff.2 (Nat.cast_ne_zero.2 hd0)
     show ∑ j : L →+* ℂ_[p], (logIdeal (j.comp (algebraMap (𝓞 L) L)) (Ideal.span {c ^ n}) -
       logIdeal (j.comp (algebraMap (𝓞 L) L)) (detIdeal E)) = _
     rw [Finset.sum_sub_distrib, e1, e2, hidx, Nat.cast_mul, norm_mul, Real.log_mul hne1 hne2, Rat.cast_natCast]
     ring
-  have hpf := (_root_.GlobalTheory.CompanionTheory.Ar.Fl.rat_product_formula_complex (idx : ℚ) (Nat.cast_ne_zero.2 hi0)).2
+  have hpf := (_root_.PositivityTheory.Xgf.rat_product_formula (idx : ℚ) (Nat.cast_ne_zero.2 hi0)).2
   let s : Fin n → F := fun i => ⟨x i, hx i⟩
   have hsli : LinearIndependent (𝓞 L) s := LinearIndependent.of_comp F.subtype hli
   have hsub : (Submodule.span (𝓞 L) (Set.range s)).toAddSubgroup =
@@ -623,7 +627,7 @@ theorem exists_logNorms {L : Type} [Field L] [NumberField L] (B : HermitianBundl
     rfl
   have hdeg := HermitianBundle.degree_eq_of_linearIndependent B F hsli (by rw [Fintype.card_fin, hn])
   refine ⟨N, ?_, ?_, fun σ => rfl, fun p j => ?_⟩
-  · refine ((_root_.GlobalTheory.CompanionTheory.Ar.Fl.finite_logIdeal_ne_zero L _ hcn).union (_root_.GlobalTheory.CompanionTheory.Ar.Fl.finite_logIdeal_ne_zero L _ hD)).subset ?_
+  · refine ((_root_.PositivityTheory.Xgf.logIdeal_support_finite L _ hcn).union (_root_.PositivityTheory.Xgf.logIdeal_support_finite L _ hD)).subset ?_
     rintro p ⟨j, hj⟩
     by_contra hc'
     simp only [Set.mem_union, Set.mem_setOf_eq, not_or, not_exists, not_not] at hc'
@@ -655,9 +659,9 @@ theorem deg_eq_sub {k L L' : Type} [Field k] [NumberField k] [Field L] [NumberFi
     (hfin : ∀ (p : Nat.Primes) (j : L' →+* ℂ_[p]),
       N.fin p (j.comp β) = Real.log ‖j a‖ + N₁.fin p (j.comp e) - N₂.fin p (j.comp e)) :
     N.deg = N₁.deg - N₂.deg := by
-  obtain ⟨hd, _⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.logNorms_ext_deg_isAdelic k L' β N
-  obtain ⟨hd₁, ha₁⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.logNorms_ext_deg_isAdelic L L' e N₁
-  obtain ⟨hd₂, ha₂⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.logNorms_ext_deg_isAdelic L L' e N₂
+  obtain ⟨hd, _⟩ := _root_.PositivityTheory.Xgf.logNorms_ext_degree_adelic k L' β N
+  obtain ⟨hd₁, ha₁⟩ := _root_.PositivityTheory.Xgf.logNorms_ext_degree_adelic L L' e N₁
+  obtain ⟨hd₂, ha₂⟩ := _root_.PositivityTheory.Xgf.logNorms_ext_degree_adelic L L' e N₂
   obtain ⟨_, hpf⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.product_formula_embeddings L' a ha
   have f0 := finite_finSum (_root_.GlobalTheory.CompanionTheory.Ar.Fl.LogNorms.isAdelic_ofElt L' a ha)
   have f1 := finite_finSum (ha₁.2 h₁)
@@ -699,38 +703,10 @@ open MonoidalCategory CartesianMonoidalCategory MonObj
 namespace LevelTowerAlt.Gram
 
 theorem exists_gram : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (S : Scheme.{0}) (t : SAB H S), IsProper t.G.hom → Out.RelAmple t.G t.PP.L → Out.KTriv t.G t.PP.L → ∀ (x : Sp ℂ ⟶ S) (n : ℕ) (v : Fin n → (epsAt x ⟶ t.G)), (∀ i, IsTanAt t.G x (v i)) → ∃ Γ : Matrix (Fin n) (Fin n) ℂ, IsHodgeGram t.G t.PP.L x v Γ := by
-  intro E _ _ _ H S t hp hA hK x n v hv
-  obtain ⟨Q, ψ, -, hQ, hQL, -⟩ := GlobalTheory.exists_polAV_pullback_of_isLocalRing E H S t hp hA hK ℂ x
-  obtain ⟨rig, hrig⟩ := Q.rigid
-  obtain ⟨u, Hm, χ, -, hAH, -, d₁, -⟩ := GlobalTheory.thetaUnifAV_all Q rig hrig
-  have hl : ∀ a, ∃ t' : epsR ℂ ⟶ Q.A, t'.left ≫ ψ = (v a).left ∧ IsTangent t' := by
-    intro a
-    have sq : (v a).left ≫ t.G.hom = spMap (algebraMap ℂ (DualNumber ℂ)) ≫ x := Over.w (v a)
-    let t' : epsR ℂ ⟶ Q.A := Over.homMk (hQ.1.lift _ _ sq) (hQ.1.lift_snd _ _ _)
-    have h1 : t'.left ≫ ψ = (v a).left := hQ.1.lift_fst _ _ _
-    refine ⟨t', h1, (ReciprocityTheory.ChartRestriction.G.Chart.tan_push hQ t').2 ?_⟩
-    rw [h1]
-    exact hv a
-  choose t' h1 h2 using hl
-  choose W hW _ using fun a => d₁ (t' a) (h2 a)
-  exact ⟨Matrix.of fun a b => Real.pi * hermForm Hm (W a) (W b), Q, ψ, t', u, Hm, χ, W, hQ, hQL.symm, hAH,
-    fun a => ⟨h1 a, hW a⟩, fun _ _ => rfl⟩
+  apply _root_.GlobalTheory.CompanionTheory.Ar.Flat.HodgeFr.exists_gram <;> assumption
 
 theorem gram_eq : ∀ (S : Scheme.{0}) (G : Over S) [GrpObj G] (L : LB G.left) (x : Sp ℂ ⟶ S) (n : ℕ) (v : Fin n → (epsAt x ⟶ G)) (Γ Γ' : Matrix (Fin n) (Fin n) ℂ), L.IsLB → (∀ i, IsTanAt G x (v i)) → IsHodgeGram G L x v Γ → (∀ p q, HodgeIP G L x (v p) (v q) (Γ' p q)) → Γ' = Γ.transpose := by
-  intro S G _ L x n v Γ Γ' hL hv hG hIP
-  obtain ⟨Q, ψ, v', u, Hm, χ, W, hp, hiso, hAH, hvW, hΓ⟩ := hG
-  have hM := pull_isLB hL ψ
-  obtain ⟨w, hw⟩ := LBIso.symm hiso
-  obtain ⟨ht₁, ht₂, -⟩ := GlobalTheory.AnyUnif.tangent_and_unimodular GlobalTheory.thetaUnifAV_all Q u
-  have htan : ∀ a, IsTangent (v' a) := fun a =>
-    (ReciprocityTheory.ChartRestriction.G.Chart.tan_push hp (v' a)).2 (by rw [(hvW a).1]; exact hv a)
-  ext p q
-  obtain ⟨-, -, -, A, _, φ, g, u', Hm', χ', a', b', a, b, h1, h2, h3, h4, h5, h6, e⟩ :=
-    hodgeInnerProduct_iff_hodgeForm.1 (hIP p q)
-  have key := _root_.GlobalTheory.CompanionTheory.Ar.HodgeUniq.hermForm_eq_of_pullbacks S G L x Q.A A ψ φ Q.g g (GlobalTheory.TorsionTauCompare.transport Q.isLB hM hw u) u' Hm Hm' χ χ'
-    hL Q.isAb hp h1 ht₁ ht₂ (GlobalTheory.TorsionTauCompare.isAH_transport Q.isLB hM hw u hAH) h2 (v' q) (v' p) a' b' (W q) (W p) a b
-    (htan q) (htan p) (h3.trans (hvW q).1.symm) (h4.trans (hvW p).1.symm) (hvW q).2 (hvW p).2 h5 h6
-  rw [e, key, Matrix.transpose_apply, hΓ]
+  apply _root_.GlobalTheory.CompanionTheory.Ar.Flat.HodgeFr.gram_eq <;> assumption
 
 end LevelTowerAlt.Gram
 end -- clump:auto
@@ -1085,7 +1061,7 @@ theorem flat_point_of_principal_sign (hG : _root_.GlobalTheory.CompanionTheory.A
       (∀ (p : Nat.Primes) (κ : c.F →+* ℂ_[p]), HasFinNorm U τ φ p κ (N.fin p κ)) ∧ N.IsAdelic ∧
       N.deg = ((p' : ℝ) - q') / 2 * (GlobalTheory.CM.logOm E χ).re := by
   obtain ⟨⟨hP, hN, -, -⟩, -, -, -, hResK, -, -, hGaga, -⟩ := hG
-  obtain ⟨D, rfl, rfl, ⟨I⟩⟩ := _root_.GlobalTheory.CompanionTheory.Ar.SabModel.datum_tate E H L t ht σ p' q' fun τ => by
+  obtain ⟨D, rfl, rfl, ⟨I⟩⟩ := _root_.PositivityTheory.Xgn.shimura_datum_tate_isomorphism E H L t ht σ p' q' fun τ => by
     have := hs ℂ σ τ
     rwa [hσ] at this
   let Xo : ∀ l : Level H, Moduli D l := fun l => (hN E H D l h1).some
@@ -1204,8 +1180,6 @@ theorem flat_saturation_of_degree (hG : _root_.GlobalTheory.CompanionTheory.Ar.T
   exact mul_le_mul_of_nonneg_left hb (by positivity)
 
 end GlobalTheory.CompanionTheory.Ar.Cusp.U4
-
-
 
 theorem _root_.GlobalTheory.CompanionTheory.Relay.phiDeg_fibLat_le_of_isOFamily_of_isAdapted : _root_.GlobalTheory.CompanionTheory.Ar.Top.Given → Fl.FlatDegree → ∃ C : ℝ, 0 ≤ C ∧ ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] [IsAbelianGalois ℚ E] (H : Host E) (D : Datum H) (Xo : ∀ l : Tor.Level H, Moduli D l) (l : Tor.Level H) (c : Coeff l) (Y : Model (Xo l) c (algebraMap (𝓞 c.F) c.F)) (II : IntersectionSystem) (K : Type) [Fintype K] (J : K → Type) [∀ k, Fintype (J k)] (Ω : Type) [Field Ω] [Algebra ℚ Ω] (W : CMType H → Type) [∀ τ, AddCommGroup (W τ)] [∀ τ, Module Ω (W τ)] (Dc : ComponentData II (CMType H) K J Ω W) (Hd : HodgeData Dc) (S₀ : Finset ℕ) (Or : CptOrigin Y S₀ Dc Hd) (B₁ B : ℕ) (L : Type) [Field L] [NumberField L] (z : Sp (𝓞 L) ⟶ Or.𝔐.X) (P : AbPart Or.𝔐.t (spMap (algebraMap (𝓞 L) L) ≫ z)) (V : Type) [AddCommGroup V] [Module L V] [Module (𝓞 L) V] [IsScalarTower (𝓞 L) L V] (MV : LieModel P.tK.G (𝟙 (Sp L)) V) (A : LinPt E L (CMType H) V) (r k : ℕ) (v : Fin r → V) (q : CMType H → Fin k → A.Λ), admitted Xo l c Y Or B₁ → 4 * Dc.f * Dc.N ^ 2 ≤ B → Or.𝔐.IsLinPtOf z P MV A → Module.finrank (𝓞 L) A.Bq.carrier ≤ Fintype.card (CMType H) * (D.p + D.q) → r + k = Dc.j' → IsOFamily A.ρ A.I v → (∀ τ, A.IsAdapted (Or.sm τ) v (q τ) ∧ ∀ i, (q τ i : V) ∈ A.eig (Or.sm τ)) → A.phiDeg Or.sm (fun τ => Or.𝔐.FibLat (Or.𝔐.VS (S₀ ∪ Dc.SB B) (Or.sm τ)) z P MV) v q ≤ C * Dc.f * Dc.j' * abelian₂ B (hostRd E) (hostLval H) :=
   LevelTowerAlt.height_comparison_global_model GlobalTheory.CompanionTheory.Ar.Cusp.U4.flat_saturation_of_degree

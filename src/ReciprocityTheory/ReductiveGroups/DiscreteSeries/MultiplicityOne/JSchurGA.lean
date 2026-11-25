@@ -2,49 +2,6 @@ module
 
 public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
 public import Formalism.HermitianCurvature.StatementB
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Algebra.Group.Units
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -86,7 +43,7 @@ theorem PG_mul_apply (k r : ℕ) (M : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r +
     (PG k r * M) i j = dG k r i * M i j + cG k r i * M (Fin.rev i) j := by
   first
     | simp only [Matrix.mul_apply, PG, add_mul, Finset.sum_add_distrib, ite_mul, zero_mul,
-        Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+        Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem val_rev_eq_sub (k r : ℕ) (i : Fin (2 * r + k + 1)) : (Fin.rev i).val = 2 * r + k - i.val := by
   have := i.isLt
@@ -422,62 +379,14 @@ theorem nuG_eq_smul {μ : Measure (Mt k r)} (hμ : IsHaarOn (GV k r) μ) :
 private theorem nuG_isOpenPosMeasure {μ : Measure (Mt k r)} (hμ : IsHaarOn (GV k r) μ) :
     (nuG μ).IsOpenPosMeasure := by
   obtain ⟨c, hc, he⟩ := nuG_eq_smul hμ
-  haveI hHaar : (Formalism.REAL.muG (epsG k r)).IsHaarMeasure := by
-    first
-      | infer_instance
-  constructor
-  intro U hU hne
-  rw [he, Measure.smul_apply]
-  have h0 := hU.measure_ne_zero (Formalism.REAL.muG (epsG k r)) hne
-  first
-    | exact smul_ne_zero hc h0
+  rw [he, ← Measure.coe_nnreal_smul]
+  exact Measure.isOpenPosMeasure_smul _ (ENNReal.coe_ne_zero.2 hc)
 
-open scoped Pointwise in
 theorem nuG_inv {μ : Measure (Mt k r)} (hμ : IsHaarOn (GV k r) μ) : (nuG μ).IsInvInvariant := by
-  haveI := nuG_left hμ
-  haveI := nuG_finite hμ
-  haveI := nuG_isOpenPosMeasure hμ
-  haveI hH : (nuG μ).IsHaarMeasure :=
-    { toIsFiniteMeasureOnCompacts := inferInstance, toIsMulLeftInvariant := inferInstance,
-      toIsOpenPosMeasure := inferInstance }
-  haveI hR : (nuG μ).IsMulRightInvariant := by
-    constructor
-    intro u
-    refine nuG_map_eq_of_psiG_comm hμ _ (continuous_mul_const u).measurable (Formalism.FourierDecayAlt.B.rmulF (psiM k r u)) ?_
-      (fun x => ?_) (hμ.right _ (psiM_mem u))
-    · apply Continuous.measurable
-      unfold Formalism.FourierDecayAlt.B.rmulF
-      exact continuous_id.matrix_mul continuous_const
-    · rw [Formalism.FourierDecayAlt.B.rmulF, of_psiG, psiG, psiM_mul]
-      try rfl
-  haveI hFi : IsFiniteMeasureOnCompacts (nuG μ).inv := by
-    first
-      | infer_instance
-  haveI hLi : (nuG μ).inv.IsMulLeftInvariant := by infer_instance
-  obtain ⟨c, hc⟩ : ∃ c : ℝ≥0, (nuG μ).inv = c • nuG μ :=
-    ⟨_, Measure.isMulLeftInvariant_eq_smul _ _⟩
-  obtain ⟨K, hK, hK1⟩ := exists_compact_mem_nhds (1 : Formalism.REAL.UJ (epsG k r))
-  have hSc : IsCompact (K ∪ K⁻¹) := hK.union hK.inv
-  have hpos : 0 < nuG μ (K ∪ K⁻¹) := by
-    obtain ⟨t, htK, hto, h1t⟩ := mem_nhds_iff.1 hK1
-    exact lt_of_lt_of_le (pos_iff_ne_zero.2 (hto.measure_ne_zero (nuG μ) ⟨_, h1t⟩))
-      (measure_mono (htK.trans Set.subset_union_left))
-  have hfin : nuG μ (K ∪ K⁻¹) ≠ ∞ := hSc.measure_lt_top.ne
-  have hSinv : (K ∪ K⁻¹)⁻¹ = K ∪ K⁻¹ := by
-    rw [Set.union_inv, inv_inv, Set.union_comm]
-  have h2 : nuG μ (K ∪ K⁻¹) = (c : ℝ≥0∞) * nuG μ (K ∪ K⁻¹) := by
-    have h1 : (nuG μ).inv (K ∪ K⁻¹) = nuG μ (K ∪ K⁻¹) := by rw [Measure.inv_apply, hSinv]
-    rw [hc, Measure.smul_apply] at h1
-    first
-      | exact h1.symm
-  have hc1 : (c : ℝ≥0∞) = 1 := by
-    have h3 : (c : ℝ≥0∞) * nuG μ (K ∪ K⁻¹) = 1 * nuG μ (K ∪ K⁻¹) := by
-      rw [one_mul]
-      exact h2.symm
-    first
-      | exact (ENNReal.mul_left_inj hpos.ne' hfin).1 h3
-  constructor
-  rw [hc, ENNReal.coe_eq_one.1 hc1, one_smul]
+  obtain ⟨c, -, he⟩ := nuG_eq_smul hμ
+  exact ⟨by
+    rw [he, Measure.inv_def, Measure.map_smul _ continuous_inv.measurable.aemeasurable,
+      Measure.map_inv_eq_self]⟩
 
 alias nuG_openPos := _root_.ReciprocityTheory.ChartRestriction.DS.Mult1.nuG_isOpenPosMeasure
 

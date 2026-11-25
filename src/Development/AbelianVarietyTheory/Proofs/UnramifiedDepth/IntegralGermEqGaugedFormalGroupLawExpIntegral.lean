@@ -115,7 +115,7 @@ theorem coeff_subst_tyS {τ : Type} {l : ℕ} (hl : 2 ≤ l) (a : ℕ → C) {t 
         rw [coeff_tyS_pow hl, Finset.sum_eq_single s]
         · simp
         · intro s' _ hs'
-          rw [if_neg fun e => hs' (Nat.pow_right_injective hl e)]
+          rw [ite_eq_right fun e => hs' (Nat.pow_right_injective hl e)]
         · intro hs'
           exfalso
           apply hs'
@@ -124,7 +124,7 @@ theorem coeff_subst_tyS {τ : Type} {l : ℕ} (hl : 2 ≤ l) (a : ℕ → C) {t 
           omega
       · push Not at h
         rw [coeff_tyS_of_ne a n h, zero_smul]
-        exact (Finset.sum_eq_zero fun s _ => if_neg (h s)).symm
+        exact (Finset.sum_eq_zero fun s _ => ite_eq_right (h s)).symm
     rw [Finset.sum_congr rfl h1, Finset.sum_comm]
     refine Finset.sum_congr rfl fun s _ => ?_
     rw [Finset.sum_ite_eq]
@@ -162,11 +162,6 @@ theorem log_add_const (hY : RLaw Y V) {τ : Type} {a b : κ → MvPowerSeries τ
     (hb : ∀ i, constantCoeff (b i) = 0) (x : κ) : constantCoeff (subst a (Y.lg x) + subst b (Y.lg x)) = 0 := by
   rw [map_add (f := _), constantCoeff_subst_zero ha (lg_const hY x), constantCoeff_subst_zero hb (lg_const hY x), add_zero]
 
-theorem intS_addP (hY : RLaw Y V) {τ : Type} {a b : κ → MvPowerSeries τ C} (ha : ∀ i, constantCoeff (a i) = 0)
-    (hb : ∀ i, constantCoeff (b i) = 0) (ia : ∀ i, IntS V (a i)) (ib : ∀ i, IntS V (b i)) (i : κ) :
-    IntS V (addP Y a b i) := by
-  apply GlobalTheory.RowLaw.AddCurve.intS_addP <;> assumption
-
 theorem exists_sum_point (hY : RLaw Y V) {τ ι : Type} (s : Finset ι) (a : ι → κ → MvPowerSeries τ C)
     (ha : ∀ c i, constantCoeff (a c i) = 0) (ia : ∀ c i, IntS V (a c i)) :
     ∃ Φ : κ → MvPowerSeries τ C, (∀ i, constantCoeff (Φ i) = 0) ∧ (∀ i, IntS V (Φ i)) ∧
@@ -179,7 +174,7 @@ theorem exists_sum_point (hY : RLaw Y V) {τ ι : Type} (s : Finset ι) (a : ι 
   | insert c s hc ih =>
     obtain ⟨Φ, h0, hi, hl⟩ := ih
     refine ⟨addP Y (a c) Φ, fun i => constantCoeff_subst_zero (log_add_const hY (ha c) h0) (hY.exc i),
-      intS_addP hY (ha c) h0 (ia c) hi, fun i => ?_⟩
+      GlobalTheory.RowLaw.AddCurve.intS_addP hY (ha c) h0 (ia c) hi, fun i => ?_⟩
     rw [Finset.sum_insert hc, ← hl]
     exact lg_ex hY (log_add_const hY (ha c) h0) i
 
@@ -274,7 +269,7 @@ theorem one_group (hY : RLaw Y V) (g : Fin 2) (H : Y.CartHyp V g) (S : Sys (RawC
         rw [(S.curve j).2.1]; rfl
       have h2 : ¬ (1 = V.l) := by omega
       have h3 : coeff (Finsupp.single j 1) ((X j : MvPowerSeries (I g) C) ^ V.l) = 0 := by
-        rw [coeff_X_pow, if_neg]
+        rw [coeff_X_pow, ite_eq_right]
         intro e'
         have := DFunLike.congr_fun e' j
         simp only [Finsupp.single_eq_same] at this
@@ -284,7 +279,7 @@ theorem one_group (hY : RLaw Y V) (g : Fin 2) (H : Y.CartHyp V g) (S : Sys (RawC
     · intro c _ hcj
       rw [coeff_subst_tyS hl _ (constantCoeff_X c)]
       refine Finset.sum_eq_zero fun s _ => ?_
-      rw [coeff_X_pow, if_neg, mul_zero]
+      rw [coeff_X_pow, ite_eq_right, mul_zero]
       intro e'
       have := DFunLike.congr_fun e' j
       simp [hcj] at this

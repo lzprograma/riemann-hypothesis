@@ -14,52 +14,6 @@ public import Mathlib.NumberTheory.MulChar.Basic
 public import Mathlib.RingTheory.Valuation.Integers
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TeichmullerCharacterExists
 public import Development.WeilBound.CoreStatements.HodgeTatePoints.RbFund
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -159,8 +113,8 @@ end
 
 section
 
-variable (hex : type_of% @_root_.GlobalTheory.CompanionTheory.Ar.GR.fund_ex_relay) (hsq : type_of% @_root_.GlobalTheory.CompanionTheory.Ar.GR.subquoHopfOrder)
-  (hsplit : type_of% @_root_.PositivityTheory.HtPt.Rc.om_split) (hos : type_of% @_root_.GlobalTheory.CompanionTheory.Relay.stable_hopf_order_subgroup_characters)
+variable (hex : type_of% @_root_.GlobalTheory.CompanionTheory.Ar.GR.fund_ex_relay) (hsq : type_of% @_root_.PositivityTheory.HtPt.Rc.subquo)
+  (hsplit : type_of% @_root_.PositivityTheory.HtPt.Rc.om_split) (hos : type_of% @_root_.PositivityTheory.HtPt.Rc.om_step)
   (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C]
   (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C] (hv : v.Integers R)
   (hp : v (p : C) < 1) (F : Type) [Field F] [Fintype F] [DecidableEq F] [CharP F p] (f : ℕ)
@@ -280,33 +234,33 @@ theorem prod_ext_min {n : ℕ} (s : Fin n → NNReal) (j : ℕ) :
   refine Finset.prod_congr rfl (fun i _ => ?_)
   simp
 
-theorem flag_om_of (hex : type_of% @_root_.GlobalTheory.CompanionTheory.Ar.GR.fund_ex_relay) (hsq : type_of% @_root_.GlobalTheory.CompanionTheory.Ar.GR.subquoHopfOrder)
-    (hsplit : type_of% @_root_.PositivityTheory.HtPt.Rc.om_split) (hos : type_of% @_root_.GlobalTheory.CompanionTheory.Relay.stable_hopf_order_subgroup_characters) : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → ∀ (F : Type) [Field F] [Fintype F] [DecidableEq F] [CharP F p] (f : ℕ), Fintype.card F = p ^ f → ∀ (N : Type) [AddCommGroup N] [Module F N] [Fintype N] [DecidableEq N] (AA : HopfOrder (C := C) R N), FStable F AA.carrier → ∀ (n : ℕ) (b : Module.Basis (Fin n) F N), ∀ (χ : MulChar F R) (s : Fin n → NNReal) (r : NNReal), (∀ i : Fin n, HasLen v R (OmType (stepOrder AA.carrier (flagSub b i) (b i)) χ) (s i)) → HasLen v R (OmType AA.carrier χ) r → ∏ i, s i ≤ r := by
+theorem flag_om_of (hex : type_of% @_root_.GlobalTheory.CompanionTheory.Ar.GR.fund_ex_relay) (hsq : type_of% @_root_.PositivityTheory.HtPt.Rc.subquo)
+    (hsplit : type_of% @_root_.PositivityTheory.HtPt.Rc.om_split) (hos : type_of% @_root_.PositivityTheory.HtPt.Rc.om_step) : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → ∀ (F : Type) [Field F] [Fintype F] [DecidableEq F] [CharP F p] (f : ℕ), Fintype.card F = p ^ f → ∀ (N : Type) [AddCommGroup N] [Module F N] [Fintype N] [DecidableEq N] (AA : HopfOrder (C := C) R N), FStable F AA.carrier → ∀ (n : ℕ) (b : Module.Basis (Fin n) F N), ∀ (χ : MulChar F R) (s : Fin n → NNReal) (r : NNReal), (∀ i : Fin n, HasLen v R (OmType (stepOrder AA.carrier (flagSub b i) (b i)) χ) (s i)) → HasLen v R (OmType AA.carrier χ) r → ∏ i, s i ≤ r := by
   intro p _ C _ _ _ v R _ _ hR hp F _ _ _ _ f hcard N _ _ _ _ AA hst n b χ s r hs hr
   have key := chain_le hex hsq hsplit hos p C v R hR hp F f hcard χ n N AA hst (flagSub b)
     (fun i => if h : i < n then b ⟨i, h⟩ else 0) (isChain_flag b)
     (fun i => if h : i < n then s ⟨i, h⟩ else 1) r
     (by
       intro i hi
-      have e1 : (if h : i < n then b ⟨i, h⟩ else 0) = b ⟨i, hi⟩ := dif_pos hi
-      have e2 : (if h : i < n then s ⟨i, h⟩ else 1) = s ⟨i, hi⟩ := dif_pos hi
+      have e1 : (if h : i < n then b ⟨i, h⟩ else 0) = b ⟨i, hi⟩ := dite_eq_left hi
+      have e2 : (if h : i < n then s ⟨i, h⟩ else 1) = s ⟨i, hi⟩ := dite_eq_left hi
       show HasLen v R (OmType (stepOrder AA.carrier (flagSub b i)
         (if h : i < n then b ⟨i, h⟩ else 0)) χ) (if h : i < n then s ⟨i, h⟩ else 1)
       rw [e1, e2]
       exact hs ⟨i, hi⟩) hr
   rwa [prod_ext] at key
 
-theorem gr_partial_of (hex : type_of% @_root_.GlobalTheory.CompanionTheory.Ar.GR.fund_ex_relay) (hsq : type_of% @_root_.GlobalTheory.CompanionTheory.Ar.GR.subquoHopfOrder)
+theorem gr_partial_of (hex : type_of% @_root_.GlobalTheory.CompanionTheory.Ar.GR.fund_ex_relay) (hsq : type_of% @_root_.PositivityTheory.HtPt.Rc.subquo)
     (hstep : type_of% @_root_.PositivityTheory.HtPt.Rc.step) (hsplit : type_of% @_root_.PositivityTheory.HtPt.Rc.om_split)
-    (hos : type_of% @_root_.GlobalTheory.CompanionTheory.Relay.stable_hopf_order_subgroup_characters) : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → ∀ (F : Type) [Field F] [Fintype F] [DecidableEq F] [CharP F p] (f : ℕ), Fintype.card F = p ^ f → ∀ (N : Type) [AddCommGroup N] [Module F N] [Fintype N] [DecidableEq N] (AA : HopfOrder (C := C) R N), FStable F AA.carrier → ∀ (n : ℕ) (b : Module.Basis (Fin n) F N), ∀ (χ : MulChar F R) (s : Fin n → NNReal), (∀ i : Fin n, HasLen v R (OmType (stepOrder AA.carrier (flagSub b i) (b i)) χ) (s i)) → HasLen v R (OmType AA.carrier χ) (∏ i, s i) → ∀ j : ℕ, HasLen v R (OmType (AA.carrier.map (LinearMap.funLeft R C (Subtype.val : flagSub b j → N))) χ) (∏ i ∈ Finset.univ.filter (fun i : Fin n => (i : ℕ) < j), s i) := by
+    (hos : type_of% @_root_.PositivityTheory.HtPt.Rc.om_step) : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → ∀ (F : Type) [Field F] [Fintype F] [DecidableEq F] [CharP F p] (f : ℕ), Fintype.card F = p ^ f → ∀ (N : Type) [AddCommGroup N] [Module F N] [Fintype N] [DecidableEq N] (AA : HopfOrder (C := C) R N), FStable F AA.carrier → ∀ (n : ℕ) (b : Module.Basis (Fin n) F N), ∀ (χ : MulChar F R) (s : Fin n → NNReal), (∀ i : Fin n, HasLen v R (OmType (stepOrder AA.carrier (flagSub b i) (b i)) χ) (s i)) → HasLen v R (OmType AA.carrier χ) (∏ i, s i) → ∀ j : ℕ, HasLen v R (OmType (AA.carrier.map (LinearMap.funLeft R C (Subtype.val : flagSub b j → N))) χ) (∏ i ∈ Finset.univ.filter (fun i : Fin n => (i : ℕ) < j), s i) := by
   intro p _ C _ _ _ v R _ _ hR hp F _ _ _ _ f hcard N _ _ _ _ AA hst n b χ s hs hr j
   have key := chain_partial hex hsq hsplit hos p C v R hR hp F f hcard hstep χ n N AA hst (flagSub b)
     (fun i => if h : i < n then b ⟨i, h⟩ else 0) (isChain_flag b)
     (fun i => if h : i < n then s ⟨i, h⟩ else 1)
     (by
       intro i hi
-      have e1 : (if h : i < n then b ⟨i, h⟩ else 0) = b ⟨i, hi⟩ := dif_pos hi
-      have e2 : (if h : i < n then s ⟨i, h⟩ else 1) = s ⟨i, hi⟩ := dif_pos hi
+      have e1 : (if h : i < n then b ⟨i, h⟩ else 0) = b ⟨i, hi⟩ := dite_eq_left hi
+      have e2 : (if h : i < n then s ⟨i, h⟩ else 1) = s ⟨i, hi⟩ := dite_eq_left hi
       show HasLen v R (OmType (stepOrder AA.carrier (flagSub b i)
         (if h : i < n then b ⟨i, h⟩ else 0)) χ) (if h : i < n then s ⟨i, h⟩ else 1)
       rw [e1, e2]

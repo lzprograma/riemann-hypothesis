@@ -77,7 +77,7 @@ theorem pat_of_mul (ρ : ℕ) (u : GL (Fin κ ⊕ Fin l) F) (hu : InN (ρ + 1) u
   · rw [mul_fromBlocks_inl]
     have hu' : ∀ t, u.val (Sum.inl i) (Sum.inl t) = if i = t then 1 else 0 := fun t => by
       rw [hu (Sum.inl i) (Sum.inl t) le_rfl, Matrix.one_apply]; simp
-    simp only [hu', ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [hu', ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     rw [hγ i j (by exact_mod_cast hab)]
     simp [Matrix.one_apply]
   · rw [mul_fromBlocks_inr, hu (Sum.inl i) (Sum.inr j) (Nat.succ_le_succ hab)]

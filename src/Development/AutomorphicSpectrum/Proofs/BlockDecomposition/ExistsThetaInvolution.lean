@@ -49,7 +49,6 @@ open PositivityTheory.RgBcC.Real (IsLefK)
 open PositivityTheory.RgBcC.RealD (invA flipA trOn hwSp harmSet kF gelA barF IsPair IsDerivK)
 open PositivityTheory.RgTw (G Mat)
 open scoped ContDiff InnerProductSpace
-attribute [local instance] borelH Matrix.normedAddCommGroup Matrix.normedSpace
 
 noncomputable section
 
@@ -95,10 +94,10 @@ theorem thetaA_kAt (w : InfinitePlace E) (c : UU n) : thetaA E n (kAt w c) = kAt
   change star ((locInf w (Unitary.toUnits c)⁻¹ : GL (Fin n) (Cinf E)).val j i v) = _
   rw [locInf_apply, locInf_apply]
   by_cases hv : v = w
-  · simp only [hv, if_true]
+  · simp only [hv, ite_true]
     change star ((star c.1 : Matrix (Fin n) (Fin n) ℂ) j i) = c.1 i j
     simp [Matrix.star_apply]
-  · simp only [hv, if_false]
+  · simp only [hv, ite_false]
     by_cases hij : i = j
     · subst hij; simp
     · simp [Matrix.one_apply_ne hij, Matrix.one_apply_ne (Ne.symm hij)]
@@ -138,13 +137,13 @@ theorem atEmb_conjugate (w : InfinitePlace E) (z : ℂ) :
   have hne : w.embedding ≠ ComplexEmbedding.conjugate w.embedding := fun h =>
     (InfinitePlace.isComplex_iff.1 (IsTotallyComplex.isComplex w)) (ComplexEmbedding.isReal_iff.2 h.symm)
   unfold atEmb
-  rw [InfinitePlace.mk_conjugate_eq, InfinitePlace.mk_embedding, if_neg hne, if_pos rfl]
+  rw [InfinitePlace.mk_conjugate_eq, InfinitePlace.mk_embedding, ite_eq_right hne, ite_eq_left rfl]
 
 
 open ComplexConjugate in
 theorem star_atEmb (w : InfinitePlace E) (z : ℂ) : star (atEmb w.embedding z) = atEmb w.embedding (conj z) := by
   funext v
-  simp only [atEmb, InfinitePlace.mk_embedding, if_true, Pi.star_apply]
+  simp only [atEmb, InfinitePlace.mk_embedding, ite_true, Pi.star_apply]
   by_cases hv : v = w
   · subst hv; simp
   · classical
@@ -159,8 +158,8 @@ theorem adjH_sg (w : InfinitePlace E) (a b : Fin n) (z : ℂ) : adjH (sg w a b z
   change star (Matrix.single a b (atEmb w.embedding z) j i) = Matrix.single b a (atEmb w.embedding (conj z)) i j
   rw [Matrix.single_apply, Matrix.single_apply]
   by_cases h : a = j ∧ b = i
-  · rw [if_pos h, if_pos h.symm, star_atEmb]
-  · rw [if_neg h, if_neg fun h' => h h'.symm, star_zero]
+  · rw [ite_eq_left h, ite_eq_left h.symm, star_atEmb]
+  · rw [ite_eq_right h, ite_eq_right fun h' => h h'.symm, star_zero]
 
 theorem Eop_apply (τ : E →+* ℂ) (a b : Fin n) (φ : Sm E n) (g : GA E n) :
     (Eop τ a b φ).1 g = (1 / 2 : ℂ) * (lieD (toL (Matrix.single a b (atEmb τ 1))) φ.1 g -

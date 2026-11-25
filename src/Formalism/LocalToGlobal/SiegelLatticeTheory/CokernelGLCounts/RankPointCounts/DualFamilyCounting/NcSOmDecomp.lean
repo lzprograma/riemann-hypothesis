@@ -82,16 +82,16 @@ theorem finCpt_of_int (σ : E →ₐ[F] E) {M a : ℕ} (J : Matrix (Fin M) (Fin 
     fun v => if Kv v ⊆ latV b v then latV b v else C v
   have hCvo : ∀ v, IsClopen (Cv v) := fun v => by
     by_cases h : Kv v ⊆ latV b v
-    · rw [show Cv v = latV b v from if_pos h]; exact isClopen_latV b v a M
-    · rw [show Cv v = C v from if_neg h]; exact hCo v
+    · rw [show Cv v = latV b v from ite_eq_left h]; exact isClopen_latV b v a M
+    · rw [show Cv v = C v from ite_eq_right h]; exact hCo v
   have hCvc : ∀ v, IsCompact (Cv v) := fun v => by
     by_cases h : Kv v ⊆ latV b v
-    · rw [show Cv v = latV b v from if_pos h]; exact isCompact_latV b v a M
-    · rw [show Cv v = C v from if_neg h]; exact hCc v
+    · rw [show Cv v = latV b v from ite_eq_left h]; exact isCompact_latV b v a M
+    · rw [show Cv v = C v from ite_eq_right h]; exact hCc v
   have hKCv : ∀ v, Kv v ⊆ Cv v := fun v => by
     by_cases h : Kv v ⊆ latV b v
-    · rw [show Cv v = latV b v from if_pos h]; exact h
-    · rw [show Cv v = C v from if_neg h]; exact hKC v
+    · rw [show Cv v = latV b v from ite_eq_left h]; exact h
+    · rw [show Cv v = C v from ite_eq_right h]; exact hKC v
   let Φv : ∀ v : HeightOneSpectrum (𝓞 F), (Fin a → Fin M → Fv F v ⊗[F] E) → ℂ :=
     fun v => (Cv v).indicator 1
   let Φf : (Fin a → Fin M → Af F ⊗[F] E) → ℂ := fun Y => ∏ᶠ v, Φv v (projV v Y)
@@ -102,7 +102,7 @@ theorem finCpt_of_int (σ : E →ₐ[F] E) {M a : ℕ} (J : Matrix (Fin M) (Fin 
   have hpure : IsPureFin b Φf Φv := by
     refine ⟨hSB, ?_, fun _ => rfl⟩
     filter_upwards [hev] with v hv
-    simp only [Φv, Cv, hv, if_true]
+    simp only [Φv, Cv, hv, ite_true]
   have hint := key _ b Φ Φinf Φf Φv hΦic hΦis hpure (fun _ => rfl)
   have hone : ∀ X ∈ K, Φ X = 1 := by
     intro X hX

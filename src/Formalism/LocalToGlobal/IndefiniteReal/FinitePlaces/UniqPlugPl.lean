@@ -42,10 +42,6 @@ theorem norm_le_one_iff_int (v : HeightOneSpectrum (𝓞 F)) (x : v.adicCompleti
 
 theorem norm_nat_le_one (v : HeightOneSpectrum (𝓞 F)) (m : ℕ) : ‖(m : v.adicCompletion F)‖ ≤ 1 := (norm_le_one_iff_int v _).mpr (natCast_mem _ m)
 
-theorem nat_ne_zero_fin (v : HeightOneSpectrum (𝓞 F)) {m : ℕ} (hm : m ≠ 0) : (m : v.adicCompletion F) ≠ 0 := by
-  rw [← map_natCast (algebraMap F (v.adicCompletion F)) m]
-  exact (map_ne_zero _).mpr (Nat.cast_ne_zero.mpr hm)
-
 theorem natCast_apply' (N : ℕ) (v : HeightOneSpectrum (𝓞 F)) : (N : Af F) v = (N : v.adicCompletion F) := by
   first
   | rfl
@@ -54,20 +50,6 @@ theorem natCast_mul_apply' (N : ℕ) (z : Af F) (v : HeightOneSpectrum (𝓞 F))
     ((N : Af F) * z) v = (N : v.adicCompletion F) * z v := by
   rw [← natCast_apply' N v]
   rfl
-
-theorem norm_natCast_lt_one' (v : HeightOneSpectrum (𝓞 F)) (c : ℕ) (hc : Ideal.absNorm v.asIdeal ∣ c) :
-    ‖(c : v.adicCompletion F)‖ < 1 := by
-  have hmem : ((c : ℕ) : 𝓞 F) ∈ v.asIdeal := by
-    obtain ⟨k, hk⟩ := hc
-    rw [hk, Nat.cast_mul]
-    exact Ideal.mul_mem_right _ _ (Ideal.absNorm_mem v.asIdeal)
-  rw [Valued.toNormedField.norm_lt_one_iff]
-  have h1 : ((c : v.adicCompletion F)) = ((algebraMap (𝓞 F) F (c : 𝓞 F) : F) : v.adicCompletion F) := by
-    rw [map_natCast]
-    first
-    | exact (map_natCast (algebraMap F (v.adicCompletion F)) c).symm
-  rw [h1, HeightOneSpectrum.valuedAdicCompletion_eq_valuation', HeightOneSpectrum.valuation_of_algebraMap]
-  exact (v.intValuation_lt_one_iff_mem _).mpr hmem
 
 theorem finNhd (U : Set (Af F)) (hU : U ∈ 𝓝 (0 : Af F)) :
     ∃ N : ℕ, 1 ≤ N ∧ ∀ z : Af F, (∀ v, z v ∈ v.adicCompletionIntegers F) → (N : Af F) * z ∈ U := by
@@ -105,7 +87,7 @@ theorem finNhd (U : Set (Af F)) (hU : U ∈ 𝓝 (0 : Af F)) :
     intro v _
     exact (lt_trans zero_lt_one (HeightOneSpectrum.one_lt_absNorm v)).ne'
   have hcv : ∀ v ∈ I, ‖(c : v.adicCompletion F)‖ < 1 := fun v hv =>
-    norm_natCast_lt_one' v c (Finset.dvd_prod_of_mem _ (hI.mem_toFinset.2 hv))
+    GlobalTheory.HeckeSplitAll.Approx.norm_natCast_lt_one v c (Finset.dvd_prod_of_mem _ (hI.mem_toFinset.2 hv))
   have hev : ∀ v ∈ I, ∀ᶠ k in atTop, ‖(c : v.adicCompletion F)‖ ^ k < ε v := fun v hv =>
     (tendsto_pow_atTop_nhds_zero_of_lt_one (norm_nonneg _) (hcv v hv)).eventually
       (Iio_mem_nhds (hεpos v))
@@ -139,7 +121,7 @@ theorem int_of_le (y : Af F) (N M : ℕ) (hN : N ≠ 0)
   refine ⟨algebraMap F (Af F) ((N : F)⁻¹) * y, fun v => ?_, ?_⟩
   · rw [← norm_le_one_iff_int]
     show ‖algebraMap F (v.adicCompletion F) ((N : F)⁻¹) * y v‖ ≤ 1
-    have hN0 : 0 < ‖(N : v.adicCompletion F)‖ := norm_pos_iff.2 (nat_ne_zero_fin v hN)
+    have hN0 : 0 < ‖(N : v.adicCompletion F)‖ := norm_pos_iff.2 (GlobalTheory.HeckeSplitAll.Approx.nat_ne_zero_fin v hN)
     rw [map_inv₀, map_natCast, norm_mul, norm_inv, inv_mul_le_iff₀ hN0, mul_one]
     calc ‖y v‖ ≤ ‖(N : v.adicCompletion F)‖ * ‖(M : v.adicCompletion F)‖ := hy v
       _ ≤ ‖(N : v.adicCompletion F)‖ * 1 := mul_le_mul_of_nonneg_left (norm_nat_le_one v M) hN0.le
@@ -165,8 +147,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
   Topology Filter
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace Formalism.IndefR.Fin.U1
 
 section Places
@@ -183,8 +163,6 @@ section Main
 
 variable {D : D7} (δ : D.host.E) (hδ : D.sp.cm.sig δ = -δ) (hδ0 : δ ≠ 0) (Δ : D.host.F)
   (hΔ : algebraMap D.host.F D.host.E Δ = δ * δ)
-
-
 
 end Main
 
@@ -232,7 +210,6 @@ def piI (w : InfinitePlace F) : AF F →+* w.Completion where
   map_add' _ _ := rfl
 
 def jF (v : HeightOneSpectrum (𝓞 F)) (y : v.adicCompletion F) : AF F := pairA F 0 (single v y)
-
 
 open Classical in
 def jI (w : InfinitePlace F) (y : w.Completion) : AF F :=

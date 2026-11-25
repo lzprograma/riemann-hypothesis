@@ -46,8 +46,6 @@ import Mathlib
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -365,7 +363,7 @@ theorem pt_mem (h : IsLogChart k ch ex lam ρ) {s : Fin n → ℂ} (hs : s ∈ l
     logExp k s ∈ ch.target ∧ ch.symm (logExp k s) ∈ ch.source ∧ Inner (ch.symm (logExp k s)) := by
   have ht : logExp k s ∈ ch.target := h.1.1 ▸ logExp_mem hs
   refine ⟨ht, ch.map_target ht, (h.2.1 _ (ch.map_target ht)).2 fun j hj => ?_⟩
-  rw [ch.right_inv ht, logExp, if_pos hj]
+  rw [ch.right_inv ht, logExp, ite_eq_left hj]
   exact Complex.exp_ne_zero _
 
 theorem isHolTo_chart (h : IsLogChart k ch ex lam ρ) {B : Set (Fin n → ℂ)} (hB : IsOpen B) (hBD : B ⊆ logDom n k) :

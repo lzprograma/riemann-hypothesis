@@ -55,7 +55,7 @@ theorem bwG_intSpan_allSubP (w : D.what₂.places.Pl) {n : ℕ} (lam : D.what₂
     intro S
     induction S using Finset.induction_on with
     | empty =>
-      simp only [Finset.prod_empty, map_one, one_mul, Finset.notMem_empty, if_false]
+      simp only [Finset.prod_empty, map_one, one_mul, Finset.notMem_empty, ite_false]
       rw [substitution_one]
       exact hQ
     | insert τ0 S h0 ih =>
@@ -66,11 +66,11 @@ theorem bwG_intSpan_allSubP (w : D.what₂.places.Pl) {n : ℕ} (lam : D.what₂
         funext τ
         by_cases hτ : τ = τ0
         · subst hτ
-          rw [if_neg h0, if_pos (Finset.mem_insert_self _ _), one_mul, hUτ]
+          rw [ite_eq_right h0, ite_eq_left (Finset.mem_insert_self _ _), one_mul, hUτ]
         · rw [hU1 τ hτ, mul_one]
           by_cases hS : τ ∈ S
-          · rw [if_pos hS, if_pos (Finset.mem_insert_of_mem hS)]
-          · rw [if_neg hS, if_neg (by simp [hτ, hS])]
+          · rw [ite_eq_left hS, ite_eq_left (Finset.mem_insert_of_mem hS)]
+          · rw [ite_eq_right hS, ite_eq_right (by simp [hτ, hS])]
       have e : MvPolynomial.C (∏ τ ∈ insert τ0 S, (N τ).det ^ s τ) *
           subP (fun τ => if τ ∈ insert τ0 S then N τ else 1) Q =
           (N τ0).det ^ s τ0 • subP U (MvPolynomial.C (∏ τ ∈ S, (N τ).det ^ s τ) *
@@ -84,7 +84,7 @@ theorem bwG_intSpan_allSubP (w : D.what₂.places.Pl) {n : ℕ} (lam : D.what₂
       rw [hUτ]
       exact hB τ0 g hg
   have h := key Finset.univ
-  simp only [Finset.mem_univ, if_true] at h
+  simp only [Finset.mem_univ, ite_true] at h
   exact h
 
 theorem local_GL_stabilises_lattice (w : D.what₂.places.Pl) : BwGLStab D w := by

@@ -47,8 +47,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.ZH
 open scoped CategoryTheory.Obj
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace GlobalTheory.Poinc
 
 variable {o : Type} [CommRing o] {ζ : o} {g n : ℕ}
@@ -113,19 +111,4 @@ def IsNormBl {S Z : Scheme.{0}} (π : S ⟶ Z) (J : Z.IdealSheafData) : Prop :=
 def IsThetaCompact (F : SFam g n (zetaAway n)) {Z : Scheme.{0}} (z : Z ⟶ Sp (cycAway n)) (i : F.X ⟶ Z) : Prop :=
   IsProjOver z ∧ IsNormalScheme Z ∧ IsOpenImmersion i ∧ i ≫ z = F.s ∧ Dense (Set.range i) ∧
     ∃ W : Matrix (Fin 8) (Fin 8) ℤ, IsE8 W ∧ ThetaInt F W i
-
-def IdealSt : Prop :=
-  ∀ g : ℕ, 1 ≤ g → ∀ n : ℕ, 3 ≤ n → Odd n → ∀ (F : SFam g n (zetaAway n)) (Z : Scheme.{0}) (z : Z ⟶ Sp (cycAway n))
-    (i : F.X ⟶ Z), IsThetaCompact F z i → ∀ φ : InvFun ℤ, IsPolFan id g φ →
-      ∃ (d : ℕ) (J : Z.IdealSheafData), 1 ≤ d ∧ (∀ x ∈ J.support, x ∉ Set.range i) ∧ ValOn F i φ J d
-
-def PoinSt : Prop :=
-  ∀ g : ℕ, 1 ≤ g → ∀ n : ℕ, 3 ≤ n → Odd n → ∀ (F : SFam g n (zetaAway n)) (Z : Scheme.{0}) (z : Z ⟶ Sp (cycAway n))
-    (i : F.X ⟶ Z), IsThetaCompact F z i → ∀ OZ : LB Z, OZ.IsLB → IsAmpleLB OZ → ∀ φ : InvFun ℤ, IsPolFan id g φ →
-      ∃ (d : ℕ) (J : Z.IdealSheafData) (S : Scheme.{0}) (π : S ⟶ Z) (j : F.X ⟶ S) (BD : EffCartierData S),
-        1 ≤ d ∧ (∀ x ∈ J.support, x ∉ Set.range i) ∧ ValOn F i φ J d ∧ IsNormBl π J ∧ IsProjOver (π ≫ z) ∧
-        IsOpenImmersion j ∧ Dense (Set.range j) ∧ j ≫ π = i ∧ π ⁻¹' Set.range i = Set.range j ∧
-        BD.idealSheaf = J.comap π ∧ ValOn F j φ BD.idealSheaf d ∧
-        ∃ k₀ : ℕ, ∀ k, k₀ ≤ k → IsAmpleLB (CechPic.tens (lbPow (OZ.pull π) k) (CechPic.dual BD.lb))
-
 end GlobalTheory.Poinc

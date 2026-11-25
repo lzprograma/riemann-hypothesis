@@ -37,27 +37,9 @@ variable {II : IntersectionSystem} {Ψ : Type} [Fintype Ψ] {Ω : Type} [Field �
 structure CuspData (D : ComponentData II Ψ K ι Ω E) (O : Type) [CommRing O] (abelian₂ : Type)
     [AddCommGroup abelian₂] [Module O abelian₂] where
 
-  rank : ℕ
-  basis : Module.Basis (Fin rank) ℤ abelian₂
-
   form : abelian₂ →ₗ[ℤ] abelian₂ →ₗ[ℤ] ℤ
-  alt : ∀ v, form v v = 0
-  unimod : IsUnit (Matrix.of fun a b => form (basis a) (basis b)).det
-
-  emb : Ψ → O →+* ℂ
-
-  normSq : ((Σ k, ι k) → ℂ) → abelian₂ → ℝ
-  normSq_pos : ∀ z ∈ D.Xo, ∀ v, v ≠ 0 → 0 < normSq z v
-  form_le : ∀ z ∈ D.Xo, ∀ v w, ((form v w : ℤ) : ℝ) ^ 2 ≤ normSq z v * normSq z w
 
   lie : ((Σ k, ι k) → ℂ) → Ψ → abelian₂ → Fin (D.N - D.j) → ℂ
-  lie_add : ∀ z τ v w, lie z τ (v + w) = lie z τ v + lie z τ w
-  lie_smul : ∀ z τ (a : O) v, lie z τ (a • v) = emb τ a • lie z τ v
-  lie_le : ∀ z ∈ D.Xo, ∀ v, ∑ τ, ∑ c, ‖lie z τ v c‖ ^ 2 ≤ normSq z v
-  inj : ∀ z ∈ D.Xo, ∀ τ (I : Submodule O abelian₂), IsIsoSub form I → ∀ (ρ : ℕ) (v : Fin ρ → abelian₂),
-    (∀ a, v a ∈ I) → LinearIndependent O v → LinearIndependent ℂ fun a => lie z τ (v a)
-  torus : ∀ z ∈ D.Xo, ∀ c : K → ℂ, (∀ k, c k ≠ 0) →
-    normSq (torusSmul c z) = normSq z ∧ lie (torusSmul c z) = lie z
 
 namespace CuspData
 

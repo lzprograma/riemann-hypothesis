@@ -465,11 +465,15 @@ def IsInvGen (u : ∀ c, LB.Gen (twist L (t c))) (W : X.Opens) (e : ∀ i, Γ(X,
   ∀ c (Z : Scheme.{0}) (r : Z ⟶ X) (z : Z) i k, r z ∈ W → r z ∈ L.U i →
     (r ≫ t c) z ∈ L.U k → gm r z _ (e i) = uv (u c) r z i k * gm (r ≫ t c) z _ (e k)
 
-theorem exists_descent_of_invGen [Flat π] [Surjective π] [QuasiCompact π] (hL : L.IsLB)
+def Compat (u : ∀ c, LB.Gen (twist L (t c))) {M : LB Y} (w : LB.Iso L (M.pull π)) : Prop :=
+  ∀ c (Z : Scheme.{0}) (r : Z ⟶ X) (z : Z) y i k, π (r z) ∈ M.U y → r z ∈ L.U i →
+    (r ≫ t c) z ∈ L.U k → gw w (r ≫ t c) z y k = uv (u c) r z i k * gw w r z y i
+
+theorem exists_descent_compat_of_invGen [Flat π] [Surjective π] [QuasiCompact π] (hL : L.IsLB)
     (hπ : ∀ c, t c ≫ π = π) (h : LocTransitive t π) {u : ∀ c, LB.Gen (twist L (t c))}
     (V : Y → Y.Opens) (hV : ∀ y, y ∈ V y) (e : ∀ y i, Γ(X, π ⁻¹ᵁ V y ⊓ L.U i)ˣ)
     (he : ∀ y, IsInvGen u (π ⁻¹ᵁ V y) (e y)) :
-    ∃ M : LB Y, M.IsLB ∧ LBIso L (M.pull π) := by
+    ∃ M : LB Y, M.IsLB ∧ ∃ w : LB.Iso L (M.pull π), w.IsGen ∧ Compat u w := by
   have hmem : ∀ (U : Y.Opens) c {Z : Scheme.{0}} (r : Z ⟶ X) (z : Z), r z ∈ π ⁻¹ᵁ U →
       (r ≫ t c) z ∈ π ⁻¹ᵁ U := fun U c Z r z hz => by
     change ((r ≫ t c) ≫ π) z ∈ U
@@ -532,7 +536,11 @@ theorem exists_descent_of_invGen [Flat π] [Surjective π] [QuasiCompact π] (hL
         gw w r z y i = (gm r z _ (e y i))⁻¹ := fun Z r z y i h1 h2 =>
       (map_inv _ _).trans (congrArg _ (gm_res r z (l (fun _ => y, i))
         ⟨(mem_pull (L := M)).2 h1, h2⟩ _))
-    refine ⟨w, (isGen_iff w).2 fun Z r z y y' i i' h1 h2 h3 h4 => ?_⟩
+    refine ⟨w, (isGen_iff w).2 fun Z r z y y' i i' h1 h2 h3 h4 => ?_,
+      fun c Z r z y i k h1 h2 h3 => ?_⟩
+    swap
+    · rw [v Z r z y i h1 h2, v Z (r ≫ t c) z y k (hmem _ c r z h1) h3,
+        (he y).2 c Z r z i k h1 h2 h3, mul_inv, mul_inv_cancel_left]
     rw [v Z r z y i h1 h3, v Z r z y' i' h2 h4]
     refine Eq.trans ?_ (congrArg (· * _ * _) (hg y y' Z r z i' h1 h2 h4)).symm
     rw [(he y).1 Z r z i i' h1 h3 h4]
@@ -540,7 +548,15 @@ theorem exists_descent_of_invGen [Flat π] [Surjective π] [QuasiCompact π] (hL
     simp only [ofMul_mul, ofMul_inv]
     abel
 
-theorem exists_descent_of_galois [Group C] [Finite C] [IsFinite π] [Flat π] [Surjective π]
+theorem exists_descent_of_invGen [Flat π] [Surjective π] [QuasiCompact π] (hL : L.IsLB)
+    (hπ : ∀ c, t c ≫ π = π) (h : LocTransitive t π) {u : ∀ c, LB.Gen (twist L (t c))}
+    (V : Y → Y.Opens) (hV : ∀ y, y ∈ V y) (e : ∀ y i, Γ(X, π ⁻¹ᵁ V y ⊓ L.U i)ˣ)
+    (he : ∀ y, IsInvGen u (π ⁻¹ᵁ V y) (e y)) :
+    ∃ M : LB Y, M.IsLB ∧ LBIso L (M.pull π) :=
+  let ⟨M, hM, w, hw, _⟩ := exists_descent_compat_of_invGen hL hπ h V hV e he
+  ⟨M, hM, w, hw⟩
+
+theorem exists_descent_compat_of_galois [Group C] [Finite C] [IsFinite π] [Flat π] [Surjective π]
     (hL : L.IsLB) (ht1 : t 1 = 𝟙 X) (ht : ∀ c c', t c ≫ t c' = t (c * c'))
     (hπ : ∀ c, t c ≫ π = π) (h : LocTransitive t π)
     (hfree : ∀ (k : Type) [Field k] [IsAlgClosed k] (r : Sp k ⟶ X),
@@ -548,7 +564,7 @@ theorem exists_descent_of_galois [Group C] [Finite C] [IsFinite π] [Flat π] [S
     {u : ∀ c, LB.Gen (twist L (t c))} (hu : ∀ c, (u c).IsGen)
     (hc : ∀ c c', LB.Gen.Corr L _ _ _ _ (u (c * c'))
       (LB.mulGen L _ _ _ _ (u c) (LB.pullGen L _ _ (u c') (t c)))) :
-    ∃ M : LB Y, M.IsLB ∧ LBIso L (M.pull π) := by
+    ∃ M : LB Y, M.IsLB ∧ ∃ w : LB.Iso L (M.pull π), w.IsGen ∧ Compat u w := by
   have H : ∀ y : Y, ∃ V : Y.Opens, y ∈ V ∧ ∃ e, IsInvGen u (π ⁻¹ᵁ V) e := fun y => by
     obtain ⟨x, rfl⟩ := π.surjective y
     obtain ⟨_, ⟨V₀, hV₀, rfl⟩, hx, -⟩ := Y.isBasis_affineOpens.exists_subset_of_mem_open
@@ -590,7 +606,19 @@ theorem exists_descent_of_galois [Group C] [Finite C] [IsFinite π] [Flat π] [S
     · rw [Units.val_mul, v Z r z i a b, v Z (r ≫ t c) z k (hinv V c a) d]
       exact h2 c Z r z i k (hN' _ a) b d
   choose V hV e he using H
-  exact exists_descent_of_invGen hL hπ h V hV e he
+  exact exists_descent_compat_of_invGen hL hπ h V hV e he
+
+theorem exists_descent_of_galois [Group C] [Finite C] [IsFinite π] [Flat π] [Surjective π]
+    (hL : L.IsLB) (ht1 : t 1 = 𝟙 X) (ht : ∀ c c', t c ≫ t c' = t (c * c'))
+    (hπ : ∀ c, t c ≫ π = π) (h : LocTransitive t π)
+    (hfree : ∀ (k : Type) [Field k] [IsAlgClosed k] (r : Sp k ⟶ X),
+      Function.Injective fun c => r ≫ t c)
+    {u : ∀ c, LB.Gen (twist L (t c))} (hu : ∀ c, (u c).IsGen)
+    (hc : ∀ c c', LB.Gen.Corr L _ _ _ _ (u (c * c'))
+      (LB.mulGen L _ _ _ _ (u c) (LB.pullGen L _ _ (u c') (t c)))) :
+    ∃ M : LB Y, M.IsLB ∧ LBIso L (M.pull π) :=
+  let ⟨M, hM, w, hw, _⟩ := exists_descent_compat_of_galois hL ht1 ht hπ h hfree hu hc
+  ⟨M, hM, w, hw⟩
 
 end Desc
 

@@ -5,45 +5,7 @@ public import Mathlib.RingTheory.PowerSeries.Log
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormJetExpNegMulLe
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -106,7 +68,7 @@ theorem integral_of_mul_eq_one {E F : PowerSeries ℂ_[p]} (hE : IntegralMv E)
       simp [e]
     | succ n =>
       rw [coeff_mul, Finset.Nat.antidiagonal_succ, Finset.sum_cons, coeff_one,
-        if_neg (Nat.succ_ne_zero n)] at e
+        ite_eq_right (Nat.succ_ne_zero n)] at e
       simp only [coeff_zero_eq_constantCoeff, h0, one_mul] at e
       rw [eq_neg_of_add_eq_zero_left e, norm_neg]
       refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun x hx => ?_
@@ -202,15 +164,15 @@ theorem coeff_one_subst' {a : PowerSeries ℂ_[p]} (ha : constantCoeff a = 0) (f
 
 theorem lamC_mul (lam : Qbar →+* ℂ_[p]) {x y : ℂ} (hx : x ∈ Qbar) (hy : y ∈ Qbar) :
     lamC lam (x * y) = lamC lam x * lamC lam y := by
-  simp only [lamC, dif_pos hx, dif_pos hy, dif_pos (mul_mem hx hy)]
+  simp only [lamC, dite_eq_left hx, dite_eq_left hy, dite_eq_left (mul_mem hx hy)]
   rw [← map_mul]; rfl
 
 theorem lamC_one (lam : Qbar →+* ℂ_[p]) : lamC lam 1 = 1 := by
-  simp only [lamC, dif_pos (one_mem Qbar)]
+  simp only [lamC, dite_eq_left (one_mem Qbar)]
   exact map_one lam
 
 theorem lamC_zero (lam : Qbar →+* ℂ_[p]) : lamC lam 0 = 0 := by
-  simp only [lamC, dif_pos (zero_mem Qbar)]
+  simp only [lamC, dite_eq_left (zero_mem Qbar)]
   exact map_zero lam
 
 theorem root_mem {ζ : ℂ} {m : ℕ} (hm : 0 < m) (h : ζ ^ m = 1) : ζ ∈ Qbar := by
@@ -222,7 +184,7 @@ theorem norm_lamC_root (lam : Qbar →+* ℂ_[p]) {ζ : ℂ} {m : ℕ} (hm : 0 <
   have hζ := root_mem hm h
   have e : (⟨ζ, hζ⟩ : Qbar) ^ m = 1 := Subtype.ext (by simpa using h)
   have e2 : ‖lam ⟨ζ, hζ⟩‖ ^ m = 1 := by rw [← norm_pow, ← map_pow, e, map_one, norm_one]
-  simp only [lamC, dif_pos hζ]
+  simp only [lamC, dite_eq_left hζ]
   exact (pow_eq_one_iff_of_nonneg (norm_nonneg _) hm.ne').1 e2
 
 theorem norm_lamC_inv (lam : Qbar →+* ℂ_[p]) {c : ℂ} (hc : c ∈ Qbar) (h : ‖lamC lam c‖ = 1) :
@@ -240,7 +202,7 @@ theorem constantCoeff_arg (g : GL3Theta.G1 p) :
     constantCoeff (algebraMap ℂ_[p] (PowerSeries ℂ_[p]) (((g.C.u⁻¹ : ℂ_[p]ˣ) : ℂ_[p])) * g.l) = 0 := by
   rw [map_mul]
   have : constantCoeff g.l = 0 := by
-    rw [← coeff_zero_eq_constantCoeff_apply, GL3Theta.G1.l, flog, coeff_mk, if_pos rfl]
+    rw [← coeff_zero_eq_constantCoeff_apply, GL3Theta.G1.l, flog, coeff_mk, ite_eq_left rfl]
   rw [this, mul_zero]
 
 theorem constantCoeff_atU (g : GL3Theta.G1 p) (G : ℂ → ℂ) :
@@ -282,7 +244,7 @@ theorem constantCoeff_ePhi1 (g : GL3Theta.G1 p) (hw : IsWq g.W g.wq) (h1 : deriv
     have := congrArg constantCoeff hw
     simpa using this
   have hl : coeff 1 g.l = 1 := by
-    rw [GL3Theta.G1.l, flog, coeff_mk, if_neg one_ne_zero]
+    rw [GL3Theta.G1.l, flog, coeff_mk, ite_eq_right one_ne_zero]
     simp [omegaW, hw0, PowerSeries.constantCoeff_inv, map_ofNat]
   rw [← coeff_zero_eq_constantCoeff_apply, ePhi1, coeff_mk]
   have e := coeff_one_subst' (constantCoeff_arg g) (sgSer g.lam g.abelian₂)

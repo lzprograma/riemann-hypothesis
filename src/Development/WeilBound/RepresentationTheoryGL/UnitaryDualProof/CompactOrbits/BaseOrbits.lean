@@ -621,16 +621,14 @@ open PositivityTheory.RgUd.T PositivityTheory.RgUd.T.Nil ValuativeRel
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {n : ℕ}
 
-private theorem isOpen_ball' (γ : (ValueGroupWithZero k)ˣ) : IsOpen {x : k | valuation k x < γ} :=
-  isOpen_iff_mem_nhds.2 fun x hx => IsValuativeTopology.mem_nhds_iff'.2 ⟨γ, fun y hy => by
-    have h := (valuation k).map_add (y - x) x; rw [sub_add_cancel] at h; exact lt_of_le_of_lt h (max_lt hy hx)⟩
-
 private theorem isOpen_sm (γ : (ValueGroupWithZero k)ˣ) : IsOpen {A : Mat k n | sm γ A} := by
   rw [show {A : Mat k n | sm γ A} = ⋂ i, ⋂ j, (fun A : Mat k n => A i j) ⁻¹'
-      ({x | valuation k x < γ} ∩ {x | valuation k x < ((1 : (ValueGroupWithZero k)ˣ) : ValueGroupWithZero k)}) by
+      ({x | valuation k x < γ} ∩ {x | valuation k x < (1 : ValueGroupWithZero k)}) by
     ext; simp [sm]]
-  exact isOpen_iInter_of_finite fun i => isOpen_iInter_of_finite fun j =>
-    ((isOpen_ball' γ).inter (isOpen_ball' 1)).preimage (continuous_id.matrix_elem i j)
+  refine isOpen_iInter_of_finite fun i => isOpen_iInter_of_finite fun j =>
+    (IsOpen.inter ?_ ?_).preimage (continuous_id.matrix_elem i j)
+  · simpa using (valuation k).isOpen_ball (ValueGroupWithZero.orderMonoidIso (valuation k) γ)
+  · simpa using (valuation k).isOpen_ball 1
 
 private theorem nhds_one_ball {U : Set (Mat k n)} (hU : U ∈ 𝓝 (1 : Mat k n)) :
     ∃ γ : (ValueGroupWithZero k)ˣ, ∀ A : Mat k n, (∀ i j, valuation k ((A - 1) i j) < γ) → A ∈ U := by
@@ -663,10 +661,7 @@ private theorem orbit_nhds (Z : SubM k n) (hZ : CR Z) (h0 : dB0 Z = 0) (e : Mat 
         (by rw [hφw, add_mulVec, hφw, hφw, mulVec_add])
       map_smul' := fun c v => uniq _ _ (hφZ _) (Z.smul_mem (hφZ v) c) (hφe _) (by rw [smul_mul_assoc, hφe])
         (by rw [hφw, smul_mulVec, hφw, mulVec_smul]; rfl) }
-  have hψc : Continuous ψ := by
-    rw [show (ψ : (Fin n → k) → Mat k n) = fun v => ∑ i, v i • ψ (fun j => if i = j then 1 else 0) from
-      funext fun v => by conv_lhs => rw [pi_eq_sum_univ v]; rw [map_sum]; simp only [map_smul]]
-    exact continuous_finsetSum _ fun i _ => (continuous_apply i).smul continuous_const
+  have hψc : Continuous ψ := ψ.continuous_on_pi
   let Φ : Wt e → Mat k n := fun w' => 1 + ψ (w'.1 - w.1)
   have hΦ : Continuous Φ := continuous_const.add (hψc.comp (continuous_subtypeVal.sub continuous_const))
   have hU : {A : Mat k n | A.det ≠ 0} ∩ ({A : Mat k n | sm γ (A - 1)} ∩ {A | sm γ (A⁻¹ - 1)}) ∈ 𝓝 (Φ w) := by
@@ -790,12 +785,9 @@ theorem mainE (Z : SubM k n) (hZ : CR Z) (h0 : dB0 Z = 0) (e : Mat k n) (he : e 
       continuous_id : IsClosed {w : Fin n → k | e *ᵥ w = w}).isClosedEmbedding_subtypeVal.isCompact_preimage
       (isCompact_univ_pi fun _ : Fin n => IsNonarchimedeanLocalField.isCompact_closedBall k 1) using 1; ext; simp [L]
   have hLo : IsOpen L := by
-    have hcb : IsOpen {x : k | valuation k x ≤ 1} := isOpen_iff_mem_nhds.2 fun x hx =>
-      IsValuativeTopology.mem_nhds_iff'.2 ⟨1, fun y hy => by
-        have h := (valuation k).map_add (y - x) x; rw [sub_add_cancel] at h
-        exact le_trans h (max_le (by simpa using hy.le) hx)⟩
-    convert (isOpen_set_pi Set.finite_univ fun _ _ => hcb).preimage
-      (continuous_subtypeVal : Continuous (Subtype.val : Wt e → (Fin n → k))) using 1; ext; simp [L]
+    convert (isOpen_set_pi Set.finite_univ fun _ _ => (valuation k).isOpen_integer).preimage
+      (continuous_subtypeVal : Continuous (Subtype.val : Wt e → (Fin n → k))) using 1
+    ext; simp [L, Valuation.mem_integer_iff]
   have hne : ∃ w ∈ L, tG⁻¹ • w ∉ L := by
     obtain ⟨i0, hi0⟩ := Function.ne_iff.1 hv0; have : Nonempty (Fin n) := ⟨i0⟩
     obtain ⟨j, hj⟩ := Finite.exists_max fun i => valuation k (w0.1 i)

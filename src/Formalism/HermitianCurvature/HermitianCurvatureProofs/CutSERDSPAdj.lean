@@ -16,60 +16,9 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasurableOf
 public import Mathlib.Analysis.Calculus.FDeriv.Pi
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSCoordAdj
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSIpInt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.ZeroNotMemTsupportPsiL, Formalism.HermitianCurvature.HermitianCurvatureProofs.NormCDZPsiCLe, Formalism.HermitianCurvature.HermitianCurvatureProofs.HsRealSmulRight, Formalism.HermitianCurvature.HermitianCurvatureProofs.CsliceContDiffAt, Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPAdj
@@ -119,7 +68,7 @@ theorem psiL_one_near (n : ℕ) (c : ℂ) (hc : c ≠ 0) (h : |Real.log ‖c‖|
     ((Real.continuousAt_log (norm_ne_zero_iff.2 hc)).comp continuous_norm.continuousAt).abs
   have h1 : ∀ᶠ w in 𝓝 c, |Real.log ‖w‖| < (n:ℝ) + 1 := hcont.eventually_lt continuousAt_const h
   filter_upwards [isOpen_ne.mem_nhds hc, h1] with w hw hw1
-  simp only [psiL, if_neg hw]
+  simp only [psiL, ite_eq_right hw]
   apply bumpR.one_of_mem_closedBall
   have hpos : (0:ℝ) < (n:ℝ) + 1 := by positivity
   rw [Metric.mem_closedBall, Real.dist_eq, sub_zero, abs_div, abs_of_pos hpos, div_le_iff₀ hpos]
@@ -161,8 +110,7 @@ theorem tsupport_psiL (n : ℕ) : tsupport (psiL n) ⊆
     rintro rfl
     exact hc' (by simp [psiL])
   have hlog : |Real.log ‖c‖| < 2 * ((n:ℝ) + 1) := by
-    by_contra hle
-    push_neg at hle
+    by_contra! hle
     exact hc' (psiL_zero_of n c hle)
   have hpos := norm_pos_iff.2 h0
   rw [abs_lt] at hlog
@@ -601,13 +549,6 @@ variable {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {Wp Wq : Type} [Normed
   [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp]
   [FiniteDimensional ℂ Wq] {π : Mx k r → (Wp →L[ℂ] Wp)} {π' : Mx k r → (Wq →L[ℂ] Wq)}
 
-theorem update_mem_OmX {c : Fin r → ℂ} (hc : c ∈ OmX r) (l : Fin r) {t : ℂ} (ht : t ≠ 0) :
-    Function.update c l t ∈ OmX r := by
-  intro j
-  by_cases hj : j = l
-  · subst hj; simpa using ht
-  · rw [Function.update_of_ne hj]; exact hc j
-
 theorem cslice_contDiffAt (Φ : RadSp k r z z' π π') (g : Mx k r) {x : Fin r → ℂ} (hx : x ∈ OmX r) :
     ContDiffAt ℝ ∞ (fun c' => (Φ : Fn k r (Wq →L[ℂ] Wp)) c' g) x := by
   by_cases hg : g ∈ Glev k r (Fin.last r) ∧ 0 < GGl k r z z' g
@@ -667,26 +608,26 @@ theorem site_p_adj_g (X : ActualOps k r z z' π π') (Φ Ψ : RadSp k r z z' π 
       · subst hj; simp only [Function.update_self]; exact contDiff_id
       · simpa [Function.update_of_ne hj] using contDiff_const
   have hAc : ContDiffOn ℝ 1 A {t | t ≠ 0} := fun t ht =>
-    (((cslice_contDiffAt Φ g (update_mem_OmX hc l ht)).comp t hupd.contDiffAt).of_le (by simp)).contDiffWithinAt
+    (((cslice_contDiffAt Φ g (Formalism.FourierDecayAlt.P.Qx6.update_mem_Om hc l ht)).comp t hupd.contDiffAt).of_le (by simp)).contDiffWithinAt
   have hBc : ContDiffOn ℝ 1 Bf {t | t ≠ 0} := fun t ht =>
-    (((cslice_contDiffAt Ψ g (update_mem_OmX hc l ht)).comp t hupd.contDiffAt).of_le (by simp)).contDiffWithinAt
+    (((cslice_contDiffAt Ψ g (Formalism.FourierDecayAlt.P.Qx6.update_mem_Om hc l ht)).comp t hupd.contDiffAt).of_le (by simp)).contDiffWithinAt
   have hpΦ : ∀ t : ℂ, t ≠ 0 → (X.op l 0 Φ : Fn k r (Wq →L[ℂ] Wp)) (Function.update c l t) g = t • dZv A t := by
     intro t ht
     have hd := dZv_update (f := fΦ) c l t
-      ((cslice_contDiffAt Φ g (update_mem_OmX hc l ht)).differentiableAt (by simp))
+      ((cslice_contDiffAt Φ g (Formalism.FourierDecayAlt.P.Qx6.update_mem_Om hc l ht)).differentiableAt (by simp))
     rw [X.op_apply, hd.1]
     show pOp l fΦ (Function.update c l t) = _
     unfold pOp
-    rw [if_pos (update_mem_OmX hc l ht), Function.update_self]
+    rw [ite_eq_left (Formalism.FourierDecayAlt.P.Qx6.update_mem_Om hc l ht), Function.update_self]
   have hpΨ : ∀ t : ℂ, t ≠ 0 → (X.op l 3 Ψ : Fn k r (Wq →L[ℂ] Wp)) (Function.update c l t) g =
       conj t • dZbv Bf t := by
     intro t ht
     have hd := dZv_update (f := fΨ) c l t
-      ((cslice_contDiffAt Ψ g (update_mem_OmX hc l ht)).differentiableAt (by simp))
+      ((cslice_contDiffAt Ψ g (Formalism.FourierDecayAlt.P.Qx6.update_mem_Om hc l ht)).differentiableAt (by simp))
     rw [X.op_apply, hd.2]
     show pbOp l fΨ (Function.update c l t) = _
     unfold pbOp
-    rw [if_pos (update_mem_OmX hc l ht), Function.update_self]
+    rw [ite_eq_left (Formalism.FourierDecayAlt.P.Qx6.update_mem_Om hc l ht), Function.update_self]
     rfl
   have e1 : (fun t : ℂ => B.hsInner ((X.op l 0 Φ : Fn k r (Wq →L[ℂ] Wp)) (Function.update c l t) g)
       ((Ψ : Fn k r (Wq →L[ℂ] Wp)) (Function.update c l t) g) / ((‖t‖ ^ 2 : ℝ) : ℂ)) =
@@ -748,8 +689,6 @@ noncomputable section
 namespace Formalism.FourierDecayAlt.P.CutSE
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.P5
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 section Split
 

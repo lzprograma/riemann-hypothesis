@@ -65,7 +65,7 @@ theorem inner_eq_zero_of_ne {M : Type} [NormedAddCommGroup M] [InnerProductSpace
   obtain ⟨a, ha⟩ := Function.ne_iff.mp hne
   have h := hU a a x y
   rw [hx a, hy a, inner_smul_left, inner_smul_right] at h
-  simp only [Formalism.REAL.sgn, if_true, Complex.ofReal_one, one_mul, Complex.conj_ofReal] at h
+  simp only [Formalism.REAL.sgn, ite_true, Complex.ofReal_one, one_mul, Complex.conj_ofReal] at h
   have h2 : ((ω a : ℂ) - (ω' a : ℂ)) * ⟪x, y⟫_ℂ = 0 := by rw [sub_mul, h, sub_self]
   rcases mul_eq_zero.mp h2 with h3 | h3
   · exact absurd (Complex.ofReal_injective (sub_eq_zero.mp h3)) ha
@@ -85,7 +85,7 @@ theorem exists_decomp {M : Type} [NormedAddCommGroup M] [InnerProductSpace ℂ M
       rw [Finset.mem_singleton.mp h]; exact h1
     · intro ω'
       by_cases h : ω' = ω
-      · simp only [h, if_true]; exact h2
+      · simp only [h, ite_true]; exact h2
       · intro a; simp [h]
     · intro ω' h
       have : ω' ≠ ω := fun e => h (Finset.mem_singleton.mpr e)

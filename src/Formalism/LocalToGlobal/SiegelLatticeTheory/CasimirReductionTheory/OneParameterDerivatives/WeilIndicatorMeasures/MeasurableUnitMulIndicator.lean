@@ -51,7 +51,7 @@ lemma measure_coset_le (κ : Measure H) [κ.IsMulLeftInvariant] (y : G) (E : Set
           push_cast
           group
       _ = κ {h : H | (h : G) ∈ E⁻¹ * E} := measure_preimage_mul κ _ _
-  · push_neg at hne
+  · push Not at hne
     have h0 : κ {h : H | y * h ∈ E} = 0 :=
       measure_mono_null (fun h hh => (hne h hh).elim) measure_empty
     rw [h0]
@@ -152,16 +152,6 @@ lemma exists_fib_eq_one (hH : IsClosed (H : Set G)) (κ : Measure H) [SFinite κ
       hφ.comp ((measurable_const_mul x).comp measurable_subtype_coe)
     rw [lintegral_mul_const _ hφx]
     exact ENNReal.mul_inv_cancel (hpos x).ne' (hfin x).ne
-
-section Main
-
-variable (μ : Measure G) (ν : Measure H)
-
-variable [SFinite μ] [μ.IsMulRightInvariant] [SFinite ν] [ν.IsMulLeftInvariant]
-  {β : G → ℝ≥0∞} (hβ : Measurable β) (hβ1 : ∀ x, ∫⁻ h, β (x * (h : G)⁻¹) ∂ν = 1)
-include hβ hβ1
-
-end Main
 
 end QuotInt
 

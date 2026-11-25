@@ -75,8 +75,7 @@ theorem weighted_le_of_irrel {P : Ideal (MRingOver F ι)} {k : K}
   refine Ideal.sum_mem _ fun m hm => ?_
   have hw := hx (mem_support_iff.mp hm)
   obtain ⟨i, hi⟩ : ∃ i, m ⟨k, i⟩ ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have h0 : Finsupp.weight (mw (ι := ι)) m k = 0 := by
       rw [Finsupp.weight_apply, Finsupp.sum, Finset.sum_apply]
       refine Finset.sum_eq_zero fun p _ => ?_
@@ -98,11 +97,5 @@ theorem weighted_le_of_irrel {P : Ideal (MRingOver F ι)} {k : K}
   exact Ideal.mul_mem_left _ _ (hk i)
 
 end Lex
-
-section Len
-
-variable {R : Type*} [CommRing R]
-
-end Len
 
 end ReciprocityTheory.ChartRestriction.G.AI.I1

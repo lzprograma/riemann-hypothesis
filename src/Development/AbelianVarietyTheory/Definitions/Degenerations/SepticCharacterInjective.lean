@@ -1,47 +1,6 @@
 module
 
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -413,36 +372,6 @@ structure NumB.Tors {C : Type} [NormedField C] (B : NumB C) (n g : ℕ) : Prop w
 
 namespace NumB
 
-def regauge (B : NumB O) (h : B.A → Oˣ) (h₁ : h 1 = 1) : NumB O where
-  A := B.A
-  θ x y u := B.θ x y u * h (x * y) * h (x * u) * h (y * u) / (h (x * y * u) * h x * h y * h u)
-  cub :=
-    { face := fun x y => by
-        apply Additive.ofMul.injective
-        simp only [B.cub.face, one_mul, h₁, ofMul_mul, ofMul_div, ofMul_one]
-        abel
-      s01 := fun x y z => by
-        apply Additive.ofMul.injective
-        simp only [B.cub.s01 x y z, mul_comm y x, ofMul_mul, ofMul_div]
-        abel
-      s12 := fun x y z => by
-        apply Additive.ofMul.injective
-        simp only [B.cub.s12 x y z, mul_comm z y, mul_right_comm x z y, ofMul_mul, ofMul_div]
-        abel
-      coc := fun x x' x'' y => by
-        have a := congrArg Additive.ofMul (B.cub.coc x x' x'' y)
-        apply Additive.ofMul.injective
-        simp only [← mul_assoc x, ← mul_assoc (x * x'), ofMul_mul, ofMul_div] at a ⊢
-        linear_combination (norm := abel) a }
-  σ x := B.σ x * h x / h x⁻¹
-  σ_one := by rw [B.σ_one, inv_one, one_mul, div_self']
-  σ_mul x y := by
-    have a := congrArg Additive.ofMul (B.σ_mul x y)
-    apply Additive.ofMul.injective
-    simp only [mul_inv_cancel, one_mul, h₁, mul_inv, mul_comm y x, mul_comm y⁻¹ x, ofMul_mul, ofMul_div, ofMul_one] at a ⊢
-    linear_combination (norm := abel) a
-  th x := ((h x)⁻¹ : Oˣ) * B.th x
-
 def triv (A : Type) [CommGroup A] (f : A → O) : NumB O where
   A := A
   θ _ _ _ := 1
@@ -453,26 +382,6 @@ def triv (A : Type) [CommGroup A] (f : A → O) : NumB O where
   th := f
 end NumB
 namespace NumD
-
-def regauge (N : NumD O) (h : N.A → Oˣ) (h₁ : h 1 = 1) : NumD O where
-  toNumB := N.toNumB.regauge h h₁
-  X := N.X
-  c := N.c
-  c_add := N.c_add
-  ψ χ := N.ψ χ * h (N.c χ)
-  even χ := by
-    change N.ψ (-χ) * h (N.c (-χ)) * (N.σ (N.c χ) * h (N.c χ) / h (N.c χ)⁻¹) = N.ψ χ * h (N.c χ)
-    have a := congrArg Additive.ofMul (N.even χ)
-    apply Additive.ofMul.injective
-    simp only [N.c_neg, ofMul_mul, ofMul_div] at a ⊢
-    linear_combination (norm := abel) a
-  bimult a a' b := by
-    change _ * (N.θ (N.c a) (N.c a') (N.c b) * h (N.c a * N.c a') * h (N.c a * N.c b) * h (N.c a' * N.c b) /
-      (h (N.c a * N.c a' * N.c b) * h (N.c a) * h (N.c a') * h (N.c b))) = _
-    have e := congrArg Additive.ofMul (N.bimult a a' b)
-    apply Additive.ofMul.injective
-    simp only [N.c_add, ofMul_mul, ofMul_div] at e ⊢
-    linear_combination (norm := abel) e
 
 end NumD
 
@@ -490,26 +399,6 @@ def tate (q : Oˣ) : NumD O where
     simp only [mul_one, div_eq_mul_inv, ← zpow_neg, ← zpow_add]
     congr 1
     ring
-
-theorem tate_τ (q : Oˣ) (a b : ℤ) : (tate q).τ a b = q ^ (2 * a * b) := by
-  change q ^ (a + b) ^ 2 / q ^ a ^ 2 / q ^ b ^ 2 = _
-  simp only [div_eq_mul_inv, ← zpow_neg, ← zpow_add]
-  congr 1
-  ring
-
-def tateQ (r : Oˣ) (k : ℕ) (y : ℤ) : (tate (r ^ k)).QT k :=
-  ⟨(Multiplicative.ofAdd y, (tate (r ^ k)).tor (zpowersHom Oˣ (r ^ (2 * y)))), by
-    refine ((tate (r ^ k)).tor_pow _ k).symm.trans ?_
-    refine NumD.Gt.ext rfl (funext fun (χ : ℤ) => ?_)
-    refine Eq.trans ?_ (tate_τ (r ^ k) y χ).symm
-    change ((r ^ (2 * y)) ^ χ) ^ k = _
-    simp only [← zpow_natCast, ← zpow_mul]
-    congr 1
-    ring⟩
-
-namespace Level3
-
-end Level3
 
 end GlobalTheory.Ex
 end

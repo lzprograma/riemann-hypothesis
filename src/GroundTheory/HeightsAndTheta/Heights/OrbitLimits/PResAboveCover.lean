@@ -110,7 +110,7 @@ theorem ResAboveCover.exists_limit {P J : Ideal (MRing ι)} {e : ℕ} (R : AnLog
   obtain ⟨-, x₁, -⟩ := hex.exists
   let x : α → R.X := fun a => if h : ∃ x, SameOrbit (v a) (R.lift x x) then h.choose else x₁
   have hvx : ∀ᶠ a in l, SameOrbit (v a) (R.lift (x a) (x a)) :=
-    hex.mono fun a h => by simp only [x, dif_pos h]; exact h.choose_spec
+    hex.mono fun a h => by simp only [x, dite_eq_left h]; exact h.choose_spec
   let F := Ultrafilter.of l
   have hFl : (F : Filter α) ≤ l := Ultrafilter.of_le l
   obtain ⟨x₀, -, hx₀⟩ := isCompact_univ.ultrafilter_le_nhds (F.map x) (by simp)

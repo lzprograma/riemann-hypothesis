@@ -5,46 +5,9 @@ import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueI
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShortLatticeUnitarize.CompactBoxLattices.MemParahoricTimesPrincipalCongruenceIff
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Qminor
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Prod
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RChar2
 import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
@@ -107,12 +70,6 @@ private theorem lie_scalar {F : Type} [Field F] [NumberField F] [IsTotallyReal F
   rw [h2] at h1
   exact h1.unique (hasDerivAt_const _ _)
 
-private theorem casimir {V : Type} [AddCommGroup V] [Module ℂ V] (E : Fin 2 → Fin 2 → Module.End ℂ V)
-    (hE : Formalism.REAL.GlRel E) (k : ℂ) (φ : V) (h0 : E 0 0 φ + E 1 1 φ = 0)
-    (h1 : E 0 1 φ - E 1 0 φ = (Complex.I * k) • φ) (h2 : E 0 0 φ - E 1 1 φ = Complex.I • (E 0 1 φ + E 1 0 φ)) (u : ℂ) :
-    Formalism.REAL.qdet E (u + 1 / 2) φ = ((u + (k - 1) / 2) * (u - (k - 1) / 2)) • φ :=
-  _root_.UpperTheory.Reformulated.B.Qf10.casimir E hE k φ h0 h1 h2 u
-
 theorem zfinV {F : Type} [Field F] [NumberField F] [IsTotallyReal F] (k : InfinitePlace F → ℕ) (ω : HChar F)
     (hω : IsOfFinOrder ω) (φ : Sm F 2)
     (hc : ∀ (z : Ideles F) (g : GA F 2), φ.1 (GeneralLinearGroup.scalar (Fin 2) z * g) = ((ω.1 z : ℂˣ) : ℂ) * φ.1 g)
@@ -126,8 +83,11 @@ theorem zfinV {F : Type} [Field F] [NumberField F] [IsTotallyReal F] (k : Infini
       congr 2
       ext i j
       fin_cases i <;> fin_cases j <;> simp
-    have := casimir _ (TR.glRel_Eop v) (k v) φ h0 (hw v) (hl v) u
-    refine ⟨_, Eq.trans ?_ this⟩
+    have hq : Formalism.REAL.qdet (TR.Eop v) (u + 1 / 2) φ =
+        ((u + (k v - 1) / 2) * (u - (k v - 1) / 2)) • φ :=
+      _root_.UpperTheory.Reformulated.B.Qf10.casimir
+        _ (TR.glRel_Eop v) (k v) φ h0 (hw v) (hl v) u
+    refine ⟨_, Eq.trans ?_ hq⟩
     rw [TR.cap]
     norm_num
   refine Submodule.finiteDimensional_of_le (S₂ := Submodule.span ℂ {φ}) (Submodule.span_le.2 ?_)
@@ -244,13 +204,13 @@ theorem kfin (hB : B1b) (k : InfinitePlace F → ℕ) (f : X (InfinitePlace F) �
   have hy : ∀ v, gv v (eS S * x) • iP = iP := by
     intro v
     have h1 : (gv v x).val 0 0 ^ 2 + (gv v x).val 0 1 ^ 2 = 1 := by
-      have := hr v 0 0; simp only [if_true] at this; linear_combination this
+      have := hr v 0 0; simp only [ite_true] at this; linear_combination this
     have h2 : (gv v x).val 1 0 ^ 2 + (gv v x).val 1 1 ^ 2 = 1 := by
-      have := hr v 1 1; simp only [if_true] at this; linear_combination this
+      have := hr v 1 1; simp only [ite_true] at this; linear_combination this
     have h3 : (gv v x).val 0 0 * (gv v x).val 1 0 + (gv v x).val 0 1 * (gv v x).val 1 1 = 0 := by simpa using hr v 0 1
     obtain ⟨e00, e01, e10, e11⟩ := gv_eS_mul S x v
     by_cases hv : v ∈ S
-    · have hs : sg S v = -1 := if_pos hv
+    · have hs : sg S v = -1 := ite_eq_left hv
       have hcase : (gv v x).val 1 0 = (gv v x).val 0 1 ∧ (gv v x).val 1 1 = -(gv v x).val 0 0 :=
         (orth_cases h1 h2 h3).resolve_left hv
       refine rot_fix _ (-(gv v x).val 0 0) (-(gv v x).val 0 1) ?_ ?_ ?_ ?_
@@ -258,7 +218,7 @@ theorem kfin (hB : B1b) (k : InfinitePlace F → ℕ) (f : X (InfinitePlace F) �
       · rw [e01, hs]; ring
       · rw [e10, hcase.1]; ring
       · rw [e11, hcase.2]
-    · have hs : sg S v = 1 := if_neg hv
+    · have hs : sg S v = 1 := ite_eq_right hv
       have hcase : (gv v x).val 1 0 = -(gv v x).val 0 1 ∧ (gv v x).val 1 1 = (gv v x).val 0 0 := not_not.1 hv
       refine rot_fix _ ((gv v x).val 0 0) ((gv v x).val 0 1) ?_ ?_ ?_ ?_
       · rw [e00, hs]; ring

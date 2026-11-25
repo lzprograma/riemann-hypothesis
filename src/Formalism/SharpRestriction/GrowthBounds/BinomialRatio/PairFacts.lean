@@ -3,44 +3,7 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.PairCount
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreeRatioConsecutive
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.UpperCountOfTopRows
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
 
 @[expose] public section
@@ -110,7 +73,7 @@ theorem pf_prev_le [NeZero r] (h : IsChain (kLetters A Ai Ci) mu) : ∀ (n : ℕ
     intro _
     have e : (⟨2 * 0 + 1, by omega⟩ : Fin (2 * s + 1 + 1)) = 1 := rfl
     rw [e, chain_first_tail (N := 2 * s) h (by simp [kLetters])]
-    exact (Finset.sum_eq_zero fun x _ => if_neg (Nat.not_lt_zero _)).symm.le
+    exact (Finset.sum_eq_zero fun x _ => ite_eq_right (Nat.not_lt_zero _)).symm.le
   | succ n ih =>
     intro hn
     have h0 := ih (by omega)
@@ -160,28 +123,28 @@ theorem pf_d_le (h : IsPair A Ai Ci mu lam) (hr : s + 1 ≤ r) :
     rw [finPos_eq (2 * s + 1) (2 * s + 1) (by omega), ← Finset.sum_sub_distrib]
     rw [← Fin.sum_univ_eq_sum_range (fun t => L t - K t)]
     refine Finset.sum_congr rfl fun t _ => ?_
-    simp only [L, K, dif_pos t.2, hka, hlast]
+    simp only [L, K, dite_eq_left t.2, hka, hlast]
   have hmass := pf_mass hch s le_rfl
   have hmass' : pfMass ka ≤ ∑ i, (Ci i : ℤ) := by
-    have e : ∀ x : Fin s, (if x.val < s then (Ci x : ℤ) else 0) = Ci x := fun x => if_pos x.2
+    have e : ∀ x : Fin s, (if x.val < s then (Ci x : ℤ) else 0) = Ci x := fun x => ite_eq_left x.2
     rw [Finset.sum_congr rfl fun x _ => e x] at hmass
     exact hmass
   rw [hD, Finset.sum_range_add]
 
   have hup : ∑ t ∈ range (q + 1), (L t - K t) ≤ L 0 - K q := pf_tele L K q fun t ht => by
-    simp only [L, K, dif_pos (show t + 1 < q + 1 + s by omega), dif_pos (show t < q + 1 + s by omega), hka]
+    simp only [L, K, dite_eq_left (show t + 1 < q + 1 + s by omega), dite_eq_left (show t < q + 1 + s by omega), hka]
     have := (hint ⟨t + 1, by omega⟩).2
     have e : (⟨t + 1, by omega⟩ : Fin (q + 1 + s)).castSucc = (⟨t, by omega⟩ : Fin (q + 1 + s)).succ := Fin.ext rfl
     rw [e] at this
     exact this
   have hL0 : L 0 ≤ pairC mu s := by
-    simp only [L, dif_pos (show 0 < q + 1 + s by omega)]
+    simp only [L, dite_eq_left (show 0 < q + 1 + s by omega)]
     have := (hint ⟨0, by omega⟩).2
     unfold pairC
     rw [finPos_eq (2 * s + 1) (2 * s + 1) (by omega)]
     exact this
   have hKq : 0 ≤ K q := by
-    simp only [K, dif_pos (show q < q + 1 + s by omega), hka]
+    simp only [K, dite_eq_left (show q < q + 1 + s by omega), hka]
     have hM : ∀ i, Ai i ≤ ∑ i, Ai i + ∑ i, Ci i := fun i =>
       le_trans (Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ i)) (Nat.le_add_right _ _)
     have hM' : ∀ i, Ci i ≤ ∑ i, Ai i + ∑ i, Ci i := fun i =>
@@ -205,7 +168,7 @@ theorem pf_d_le (h : IsPair A Ai Ci mu lam) (hr : s + 1 ≤ r) :
       unfold pfMass
       rw [← Fin.sum_univ_eq_sum_range (fun t => max 0 (-(K t)))]
       refine Finset.sum_congr rfl fun t _ => ?_
-      simp only [K, dif_pos t.2]
+      simp only [K, dite_eq_left t.2]
     have h3 : ∑ x ∈ range s, max 0 (-(K (q + 1 + x))) ≤ ∑ t ∈ range (q + 1 + s), max 0 (-(K t)) := by
       rw [Finset.sum_range_add]
       have : 0 ≤ ∑ t ∈ range (q + 1), max 0 (-(K t)) := Finset.sum_nonneg fun _ _ => le_max_left _ _

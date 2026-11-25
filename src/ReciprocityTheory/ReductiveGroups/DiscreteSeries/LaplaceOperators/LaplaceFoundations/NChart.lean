@@ -794,11 +794,11 @@ theorem Hpk_herm : (Hpk k r)ᴴ = Hpk k r := by
   rw [conjTranspose_apply, Hpk_apply, Hpk_apply]
   by_cases h : j = flipB k r i
   · have h' : i = flipB k r j := by rw [h, flipB_flipB]
-    rw [if_pos h, if_pos h', h, sgnB_flip]
+    rw [ite_eq_left h, ite_eq_left h', h, sgnB_flip]
     unfold sgnB
     split_ifs <;> simp
   · have h' : ¬ i = flipB k r j := fun h' => h (by rw [h', flipB_flipB])
-    rw [if_neg h, if_neg h', star_zero]
+    rw [ite_eq_right h, ite_eq_right h', star_zero]
 
 private lemma levB_add_levB_flipB_eq_two_mul (a : Fin (2 * r + k + 1)) :
     levB k r a + levB k r (flipB k r a) = 2 * r := by
@@ -857,21 +857,21 @@ theorem Nset_eq : Nset k r = grpN (levF (levB k r)) (adjH (Hpk k r)) := by
         intro ha hja
         have h1 := congrFun (congrFun hU (eI k r ⟨a, ha⟩)) j
         rw [Matrix.mul_assoc, Matrix.mul_apply, Finset.sum_eq_single (eI k r ⟨a, ha⟩)] at h1
-        · rw [conjTranspose_apply, he ⟨a, ha⟩ _ le_rfl, if_pos rfl, Hpk_mul_apply, Hpk_apply] at h1
+        · rw [conjTranspose_apply, he ⟨a, ha⟩ _ le_rfl, ite_eq_left rfl, Hpk_mul_apply, Hpk_apply] at h1
           have e1 : flipB k r (eI k r ⟨a, ha⟩) = ⟨2 * r + k - a, by omega⟩ :=
             Fin.ext (by rw [flipB_val]; simp [eI, ha])
           have e2 : sgnB k r (eI k r ⟨a, ha⟩) = 1 := by
-            unfold sgnB; rw [if_neg]; simp only [eI]; omega
+            unfold sgnB; rw [ite_eq_right]; simp only [eI]; omega
           rw [e1, e2] at h1
           simpa [eq_comm] using h1
         · intro c _ hc
           rw [conjTranspose_apply]
           by_cases hca : c.val < a
           · have e1 : flipB k r c = ⟨2 * r + k - c.val, by omega⟩ :=
-              Fin.ext (by rw [flipB_val, if_pos (Or.inl (by omega))])
-            rw [Hpk_mul_apply, e1, ih c.val hca (by omega) (by omega), if_neg, mul_zero, mul_zero]
+              Fin.ext (by rw [flipB_val, ite_eq_left (Or.inl (by omega))])
+            rw [Hpk_mul_apply, e1, ih c.val hca (by omega) (by omega), ite_eq_right, mul_zero, mul_zero]
             intro h; have := congrArg Fin.val h; simp only at this; omega
-          · rw [he ⟨a, ha⟩ c (by simp only; omega), if_neg hc, star_zero, zero_mul]
+          · rw [he ⟨a, ha⟩ c (by simp only; omega), ite_eq_right hc, star_zero, zero_mul]
         · simp
     intro a b h
     have hal := a.isLt

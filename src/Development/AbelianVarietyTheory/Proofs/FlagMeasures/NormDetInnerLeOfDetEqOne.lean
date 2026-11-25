@@ -67,8 +67,7 @@ theorem det_inner_sum_smul {E : Type} [NormedAddCommGroup E] [InnerProductSpace 
   simp [Matrix.mul_apply, mul_comm]
 
 theorem norm_det_inner_le_of_det_eq_one (n b : ℕ) (v u : Fin b → EuclideanSpace ℂ (Fin n))
-    (t : Matrix (Fin b) (Fin b) ℂ) (ht : t.det = 1)
-    (_h : ∀ a a', a ≠ a' → ⟪∑ i, t i a • v i, ∑ i, t i a' • v i⟫_ℂ = 0) :
+    (t : Matrix (Fin b) (Fin b) ℂ) (ht : t.det = 1) :
     ‖(Matrix.of fun a a' => ⟪u a, v a'⟫_ℂ).det‖ ≤ (∏ a, ‖u a‖) * ∏ a, ‖∑ i, t i a • v i‖ := by
   have h := norm_det_inner_le u (fun a => ∑ i, t i a • v i)
   rwa [det_inner_sum_smul, ht, mul_one] at h

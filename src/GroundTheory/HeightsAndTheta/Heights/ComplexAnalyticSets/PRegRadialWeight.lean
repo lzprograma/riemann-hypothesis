@@ -36,8 +36,7 @@ theorem hessC_const {D : ℕ} (c : ℝ) (z : Fin D → ℂ) : hessC (fun _ => c)
 
 theorem maDens_congr {D : ℕ} {φ φ' : Fin D → (Fin D → ℂ) → ℝ} {z : Fin D → ℂ}
     (h : ∀ k, hessC (φ k) z = hessC (φ' k) z) : maDens φ z = maDens φ' z := by
-  unfold maDens
-  simp only [h]
+  exact ReciprocityTheory.AnForm.M.maDens_congr_hessC φ φ' z h
 
 theorem gradDens_congr {m : ℕ} {φ φ' : Fin m → (Fin (m + 1) → ℂ) → ℝ} (v w : (Fin (m + 1) → ℂ) → ℝ)
     {z : Fin (m + 1) → ℂ} (h : ∀ k, hessC (φ k) z = hessC (φ' k) z) :

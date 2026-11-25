@@ -27,8 +27,6 @@ namespace Formalism.L2.GlobalTheoryTheory
 
 open Formalism.UG Formalism.UG.CS Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Herm Formalism.L2.GlobalTheoryTheory.Comp
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def K0 (D : D7) : Coord D.sp.cm (D.sp.X 0) (Fin D.R.k) := ⟨D.sp.crd0, D.sp.gram0, D.sp.hermitianForm_base_coordinates⟩
 
 theorem dualSub_eq {E : Type} [Field E] [NumberField E] [StarRing E] (S : HSpace E) (L : Submodule (𝓞 E) S.V) :
@@ -132,8 +130,6 @@ open Matrix TensorProduct NumberField IsDedekindDomain
 namespace Formalism.L2.GlobalTheoryTheory.ColValS
 
 open Formalism.UG Formalism.UG.CS Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Herm Formalism.L2.GlobalTheoryTheory Formalism.L2.GlobalTheoryTheory.Comp
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem class_lattice_eq_global {D : D7} (Lv : LevelData D) (u : D.what₂.Word) (c : (D.mem u).C.cls 0) :
     (K0 D).lat (D.clsLat u 0 c) = globLat ((Lv u).y c).1 (Lv u).Lb :=

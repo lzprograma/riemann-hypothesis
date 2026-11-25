@@ -194,9 +194,9 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.pfHecke_pf :
     rw [h1]
     by_cases hs : IsSplitAt w
     · have h2 := (hposition (w, true) (htrue w hw hs) _ (hk' _ (htrue w hw hs)) (qw n w true x)).1
-      simp only [if_pos hs]
+      simp only [ite_eq_left hs]
       rw [h2]
-    · simp only [if_neg hs]
+    · simp only [ite_eq_right hs]
   have hinvR : ∀ k ∈ Lev S N, ∀ x, pf S F (x * k) = pf S F x := by
     intro k hk x
     refine finprod_congr fun w => finprod_congr fun hw => ?_
@@ -206,9 +206,9 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.pfHecke_pf :
     rw [h1]
     by_cases hs : IsSplitAt w
     · have h2 := (hposition (w, true) (htrue w hw hs) _ (hk' _ (htrue w hw hs)) (qw n w true x)).2
-      simp only [if_pos hs]
+      simp only [ite_eq_left hs]
       rw [h2]
-    · simp only [if_neg hs]
+    · simp only [ite_eq_right hs]
 
   have hfac : ∀ x : GF E n, pf S F x ≠ 0 → ∀ w ∈ S,
       (F w false (qw n w false x) * if IsSplitAt w then F w true (qw n w true x) else 1) ≠ 0 := by
@@ -241,9 +241,9 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.pfHecke_pf :
       simp only [hfacdef]
       rw [hone false (hfalse u hu)]
       by_cases hs : IsSplitAt u
-      · simp only [if_pos hs]
+      · simp only [ite_eq_left hs]
         rw [hone true (htrue u hu hs), one_mul]
-      · simp only [if_neg hs, one_mul]
+      · simp only [ite_eq_right hs, one_mul]
     have hwm : w ∈ hfin.toFinset := by
       rw [Set.Finite.mem_toFinset]
       refine ⟨hw, ?_⟩
@@ -262,7 +262,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.pfHecke_pf :
     | true =>
       have hs := hb rfl
       have h2 := right_ne_zero_of_mul h
-      rwa [if_pos hs] at h2
+      rwa [ite_eq_left hs] at h2
   refine ⟨?_, fun k hk x => ⟨hinvL k hk x, hinvR k hk x⟩⟩
   refine abs_support (ι := Pl E × Bool) (A := fun i => GLw n i.1)
     (fun i => jw n i.1 i.2) (fun i => qw n i.1 i.2) (fun i => (hloc i.1 i.2).1) (Sl S)

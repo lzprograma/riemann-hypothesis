@@ -5,6 +5,7 @@ import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLattic
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 import Mathlib.Topology.Separation.CompletelyRegular
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.MeasurePreservingPiProd
 
 @[expose] public section
 
@@ -42,16 +43,16 @@ def xN (c : Fin (r + 1) → ℂ) (i : ℕ) : ℝ := if h : i < r + 1 then ‖c �
 theorem norm_dl_diag (c : Fin (r + 1) → ℂ) (l : ℕ) (hl : l ≤ r + 1) :
     ‖Formalism.L2.SG.RealObj.Dl (Matrix.diagonal c) l‖ = ∏ i ∈ Finset.range l, xN c i := by
   unfold Formalism.L2.SG.RealObj.Dl
-  rw [dif_pos hl, Matrix.submatrix_diagonal _ _ (Fin.castLE_injective hl), Matrix.det_diagonal, norm_prod,
+  rw [dite_eq_left hl, Matrix.submatrix_diagonal _ _ (Fin.castLE_injective hl), Matrix.det_diagonal, norm_prod,
     ← Fin.prod_univ_eq_prod_range]
   refine Finset.prod_congr rfl fun i _ => ?_
   have hi : (i : ℕ) < r + 1 := lt_of_lt_of_le i.2 hl
-  simp only [xN, dif_pos hi, Function.comp_apply]
+  simp only [xN, dite_eq_left hi, Function.comp_apply]
   rfl
 
 theorem xN_last (c : Fin (r + 1) → ℂ) : xN c r = ‖c (Fin.last r)‖ := by
   unfold xN
-  rw [dif_pos (by omega)]
+  rw [dite_eq_left (by omega)]
   rfl
 
 theorem gv_diag (T T' : ℝ) (c : Fin (r + 1) → ℂ) :
@@ -78,7 +79,7 @@ theorem bc_prod (k : ℕ) (hk : 1 ≤ k) (lam : Fin r → ℝ) (hlam : ∀ a, 0 
         (((∏ i ∈ Finset.range r, xN c i) ^ 2) ^ (k - 1) * ∏ i ∈ Finset.range r, (xN c i ^ 4) ^ (r - i)) := by
   have h1 : ∀ a : Fin r, ‖(phiC lam c).1 a‖ = lam a * xN c a := fun a => by
     have ha : (a : ℕ) < r + 1 := by have := a.2; omega
-    simp only [phiC, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos (hlam a), xN, dif_pos ha]
+    simp only [phiC, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos (hlam a), xN, dite_eq_left ha]
   simp only [h1, mul_pow, Finset.prod_mul_distrib]
   congr 1
   show ∏ a : Fin r, (fun i : ℕ => xN c i ^ (2 * (2 * (r - i) + k + 1 - 2))) a = _
@@ -147,7 +148,7 @@ theorem ae_weight (k : ℕ) (hk : 1 ≤ k) (T T' : ℝ) (lam : Fin r → ℝ) (h
     refine Finset.prod_pos fun i hi => ?_
     rw [Finset.mem_range] at hi
     unfold xN
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
     exact norm_pos_iff.2 (hc0 _)
   have hP2 : 0 < (∏ i ∈ Finset.range r, xN c i) ^ 2 := by positivity
   have hns : Complex.normSq (phiC lam c).2 = ‖c (Fin.last r)‖ ^ 2 := by
@@ -164,7 +165,7 @@ theorem ae_weight (k : ℕ) (hk : 1 ≤ k) (T T' : ℝ) (lam : Fin r → ℝ) (h
     rw [gv_diag] at hG
     have hpos : 0 < ‖c (Fin.last r)‖ ^ 2 - T * T' := pos_of_mul_pos_right hG hP2.le
     unfold Formalism.QuantumDeterminants.bcWeight
-    rw [if_pos (by rw [hns]; linarith), bc_prod k hk lam hlam c, hns, gv_diag, jac_diag]
+    rw [ite_eq_left (by rw [hns]; linarith), bc_prod k hk lam hlam c, hns, gv_diag, jac_diag]
     congr 1
     rw [mul_pow]
     calc ((∏ i ∈ Finset.range r, xN c i) ^ 2) ^ (k - 1) * (‖c (Fin.last r)‖ ^ 2 - T * T') ^ (k - 1) *
@@ -181,7 +182,7 @@ theorem ae_weight (k : ℕ) (hk : 1 ≤ k) (T T' : ℝ) (lam : Fin r → ℝ) (h
       exact hng (mul_pos hP2 (lt_of_not_ge h))
     have hlt : ‖c (Fin.last r)‖ ^ 2 < T * T' := lt_of_le_of_ne (by linarith) hcT
     unfold Formalism.QuantumDeterminants.bcWeight
-    rw [if_neg (by rw [hns]; linarith)]
+    rw [ite_eq_right (by rw [hns]; linarith)]
     simp
 
 end AE
@@ -287,17 +288,7 @@ theorem const_eq (k : ℕ) (lam : Fin r → ℝ) (hlam : ∀ a, 0 < lam a) :
   ring
 
 theorem goodC_meas (T T' : ℝ) : MeasurableSet (GoodC (r := r) T T') := by
-  have h1 : MeasurableSet {cv : Fin (r + 1) → ℂ | ∀ l, cv l ≠ 0} := by
-    have : {cv : Fin (r + 1) → ℂ | ∀ l, cv l ≠ 0} = ⋂ l, {cv | cv l ≠ 0} := by ext; simp
-    rw [this]
-    exact MeasurableSet.iInter fun l => (measurableSet_singleton (0 : ℂ)).compl.preimage (measurable_pi_apply l)
-  have hc : Continuous (fun cv : Fin (r + 1) → ℂ => Gv T T' (Matrix.diagonal cv)) := by
-    have hd : Continuous (fun cv : Fin (r + 1) → ℂ => Matrix.diagonal cv) := continuous_id.matrix_diagonal
-    have hD : ∀ l, Continuous (fun cv : Fin (r + 1) → ℂ => Formalism.L2.SG.RealObj.Dl (Matrix.diagonal cv) l) :=
-      fun l => (Formalism.L2.SG.RealObj.InfCut.dl_cont l).comp hd
-    unfold Gv
-    exact ((hD _).norm.pow 2).sub (continuous_const.mul ((hD _).norm.pow 2))
-  exact h1.inter (measurableSet_lt measurable_const hc.measurable)
+  apply _root_.Formalism.L2.SG.RealObj.InfCut.ProductExactness.measurableSet_goodLoc <;> assumption
 
 end Map
 

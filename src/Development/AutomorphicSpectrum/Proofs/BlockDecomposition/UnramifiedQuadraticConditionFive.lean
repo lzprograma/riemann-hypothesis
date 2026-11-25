@@ -285,7 +285,7 @@ theorem delta_props {σ : E →ₐ[F] E} (hσ : IsCMExt F E σ) (bs : Module.Bas
     (bs 0 * σ (bs 1) - bs 1 * σ (bs 0)) * (bs 0 * σ (bs 1) - bs 1 * σ (bs 0)) =
       algebraMap F E (Algebra.discr F (⇑bs)) := by
   have hinv := sig_invol hσ
-  have tr := Formalism.L2.SG.Pf.NcVal.VolUTr.TrW.trace_eq_add σ hinv (sig_moves hσ) hσ.2.2.1
+  have tr := Formalism.L2.SG.Pf.NcVal.TrW.trace_eq_add σ hinv (sig_moves hσ) hσ.2.2.1
   refine ⟨by simp only [map_sub, map_mul, hinv]; ring, ?_⟩
   rw [Algebra.discr_def, Matrix.det_fin_two]
   simp only [Algebra.traceMatrix_apply, Algebra.traceForm_apply, map_sub, map_mul, tr]

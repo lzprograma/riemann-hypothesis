@@ -7,8 +7,6 @@ import Mathlib.RingTheory.PiTensorProduct
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open NumberField
@@ -51,7 +49,7 @@ theorem trace_dual_mul {ι : Type} [Fintype ι] [DecidableEq ι] (b : Module.Bas
   rw [← repr_trDual_lemma, Module.Basis.repr_self]
   by_cases hki : k = i
   · subst hki; simp
-  · rw [if_neg hki, Finsupp.single_apply, if_neg (Ne.symm hki)]
+  · rw [ite_eq_right hki, Finsupp.single_apply, ite_eq_right (Ne.symm hki)]
 
 theorem idem_data_basis {k V : Type} [Field k] [CommRing V] [Algebra V k] (ψ : E →+* k)
     (hint : ∀ x : 𝓞 E, ∃ v : V, algebraMap V k v = ψ (algebraMap (𝓞 E) E x)) (w : V)
@@ -106,7 +104,7 @@ theorem idem_data_basis {k V : Type} [Field k] [CommRing V] [Algebra V k] (ψ : 
     rw [repr_trDual_lemma, repr_trDual_lemma, key i j, mul_assoc, ← zsmul_eq_mul, map_zsmul, trace_dual_mul bQ i j]
     by_cases hij : i = j
     · subst hij; simp
-    · rw [if_neg hij, if_neg (Ne.symm hij), smul_zero]
+    · rw [ite_eq_right hij, ite_eq_right (Ne.symm hij), smul_zero]
   obtain ⟨ε, hε⟩ : ∃ ε : ℤ, ε * G.det = (((NumberField.discr E).natAbs : ℕ) : ℤ) := by
     rw [hD]
     rcases Int.natAbs_eq (NumberField.discr E) with h | h
@@ -120,8 +118,7 @@ theorem idem_data_basis {k V : Type} [Field k] [CommRing V] [Algebra V k] (ψ : 
       rw [map_mul, map_intCast, hz i, ← mul_assoc, ← Int.cast_mul, hε, Int.cast_natCast]
     rw [map_mul, hv i, e1, map_mul, map_natCast, ← mul_assoc, hw, one_mul]
   refine ⟨bZ, fun i => w * v i, ?_, ?_⟩
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [← map_one ψ, ← sum_dual_mul bQ, map_sum]
+  · rw [← map_one ψ, ← sum_dual_mul bQ, map_sum]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     rw [hc i, map_mul, hbQ_apply]
   · intro a

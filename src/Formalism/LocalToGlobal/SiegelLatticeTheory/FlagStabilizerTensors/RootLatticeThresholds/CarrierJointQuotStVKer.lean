@@ -21,8 +21,6 @@ open Formalism.L2.SG.RealObj
 
 variable {D : D7}
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem blkOf_ptPar {K : Type*} [Zero K] : ∀ (bs : List (K × ℕ)) (x : ℕ), x < (bs.map Prod.snd).sum →
     blkOf bs (ptPar bs x) = blkOf bs x
   | [], x, hx => by simp at hx
@@ -30,9 +28,9 @@ theorem blkOf_ptPar {K : Type*} [Zero K] : ∀ (bs : List (K × ℕ)) (x : ℕ),
     simp only [List.map_cons, List.sum_cons] at hx
     rw [ptPar_cons]
     by_cases hxs : x < s
-    · rw [if_pos hxs]; simp only [blkOf]; rw [if_pos (by omega), if_pos hxs]
-    · rw [if_neg hxs]; simp only [blkOf]
-      rw [if_neg (by omega), if_neg hxs, show s + ptPar bs (x - s) - s = ptPar bs (x - s) by omega,
+    · rw [ite_eq_left hxs]; simp only [blkOf]; rw [ite_eq_left (by omega), ite_eq_left hxs]
+    · rw [ite_eq_right hxs]; simp only [blkOf]
+      rw [ite_eq_right (by omega), ite_eq_right hxs, show s + ptPar bs (x - s) - s = ptPar bs (x - s) by omega,
         blkOf_ptPar bs (x - s) (by omega)]
 
 theorem ptPar_lt_of_blk {K : Type*} [Zero K] : ∀ (bs : List (K × ℕ)) (x y : ℕ), x < (bs.map Prod.snd).sum →
@@ -44,11 +42,11 @@ theorem ptPar_lt_of_blk {K : Type*} [Zero K] : ∀ (bs : List (K × ℕ)) (x y :
     rw [ptPar_cons, ptPar_cons]
     by_cases hxs : x < s
     · by_cases hys : y < s
-      · rw [if_pos hxs, if_pos hys] at h; omega
-      · rw [if_pos hxs, if_neg hys]; omega
+      · rw [ite_eq_left hxs, ite_eq_left hys] at h; omega
+      · rw [ite_eq_left hxs, ite_eq_right hys]; omega
     · by_cases hys : y < s
-      · rw [if_neg hxs, if_pos hys] at h; omega
-      · rw [if_neg hxs, if_neg hys] at h ⊢
+      · rw [ite_eq_right hxs, ite_eq_left hys] at h; omega
+      · rw [ite_eq_right hxs, ite_eq_right hys] at h ⊢
         have := ptPar_lt_of_blk bs (x - s) (y - s) (by omega) (by omega) (by omega)
         omega
 
@@ -95,7 +93,7 @@ private theorem flag_fix_lemma {n r : ℕ} (ε : Fin n → Bool) (e f : Fin r �
           Formalism.L2.SG.HidaSetting.hJ ε (f c') (T *ᵥ fam e z' b) * Zhat ε (fam e z) (fam e z') G (π c.castSucc) c'.castSucc else 0) =
           Formalism.L2.SG.HidaSetting.hJ ε (f c) (T *ᵥ fam e z' b) * Zhat ε (fam e z) (fam e z') G (π c.castSucc) c.castSucc := by
         rw [Finset.sum_eq_single c]
-        · rw [if_pos hcb]
+        · rw [ite_eq_left hcb]
         · intro c' _ hc'
           split_ifs
           · have hz : Zhat ε (fam e z) (fam e z') G (π c.castSucc) c'.castSucc = 0 := by
@@ -124,7 +122,7 @@ private theorem flag_fix_lemma {n r : ℕ} (ε : Fin n → Bool) (e f : Fin r �
         conj (Formalism.L2.SG.HidaSetting.hJ ε (f c') (Si *ᵥ fam e z a)) * Zhat ε (fam e z) (fam e z') G c'.castSucc (π c.castSucc) else 0) =
         conj (Formalism.L2.SG.HidaSetting.hJ ε (f c) (Si *ᵥ fam e z a)) * Zhat ε (fam e z) (fam e z') G c.castSucc (π c.castSucc) := by
       rw [Finset.sum_eq_single c]
-      · rw [if_pos hca]
+      · rw [ite_eq_left hca]
       · intro c' _ hc'
         split_ifs
         · have hz : Zhat ε (fam e z) (fam e z') G c'.castSucc (π c.castSucc) = 0 := by
@@ -208,11 +206,11 @@ theorem stVKer_of_fix (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.
     · intro hne
       by_contra hcb
       have hv : c.1 ≠ ptPar w.1 b.1 := fun h => hcb (Fin.ext h)
-      rw [if_neg hv, map_zero, map_zero] at h1
+      rw [ite_eq_right hv, map_zero, map_zero] at h1
       exact hne ((mul_eq_zero.1 h1).resolve_left hsgn)
     · intro hcb hz
       have hv : c.1 = ptPar w.1 b.1 := congrArg Fin.val hcb
-      rw [if_pos hv, hz, mul_zero] at h1
+      rw [ite_eq_left hv, hz, mul_zero] at h1
       exact ptSc_ne w.1 (fun x hx => w.2.1 x hx) b.1 (hlen b) (by simpa using h1.symm)
   have hfree : ∀ (c : Fin D.R.rS) (b : Fin (D.R.rS + 1)), c.castSucc < b →
       π c.castSucc < π b ∨ Formalism.L2.SG.HidaSetting.hJ (X.B.I.ε v) (Formalism.L2.SG.HidaSetting.rv X.B.I v (X.fR c))

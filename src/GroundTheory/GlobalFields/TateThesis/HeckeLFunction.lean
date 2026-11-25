@@ -4,55 +4,9 @@ public import GroundTheory.GlobalFields.TateThesis.HeckeChar
 public import Mathlib.NumberTheory.LSeries.Convergence
 public import Mathlib.NumberTheory.NumberField.DedekindZeta
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SummableAbsNormRpowInv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 public import Mathlib.Analysis.Normed.Group.Tannery
-import Mathlib.Analysis.SpecialFunctions.Bernstein
 public import Mathlib.Analysis.SpecialFunctions.Log.Summable
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
 public import Mathlib.NumberTheory.LSeries.Deriv
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.UniformSpace.Uniformizable
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -183,9 +137,9 @@ theorem hasSum_indicator_factoredIdeals (hsum : Summable fun I ↦ ‖g I‖)
     have h : ({⊤} : Set (Ideal R)).indicator g = fun I ↦ if I = ⊤ then 1 else 0 := by
       ext I
       by_cases h : I = ⊤
-      · rw [h, Set.indicator_of_mem (Set.mem_singleton _), if_pos rfl, ← Ideal.one_eq_top,
+      · rw [h, Set.indicator_of_mem (Set.mem_singleton _), ite_eq_left rfl, ← Ideal.one_eq_top,
           map_one]
-      · rw [Set.indicator_of_notMem (by simpa using h), if_neg h]
+      · rw [Set.indicator_of_notMem (by simpa using h), ite_eq_right h]
     rw [h]
     exact hasSum_ite_eq ⊤ 1
   | insert v S hv ih =>
@@ -304,11 +258,11 @@ def coeff (I : Ideal (𝓞 K)) : ℂ :=
 
 theorem coeff_of_mem {I : Ideal (𝓞 K)} (h : I ≠ ⊥ ∧ IsCoprime I χ.conductor) :
     χ.coeff I = χ.idealCharacter ⟨idealUnit I h.1, idealUnit_mem_idealsPrimeTo h.1 h.2⟩ :=
-  dif_pos h
+  dite_eq_left h
 
 theorem coeff_of_not {I : Ideal (𝓞 K)} (h : ¬ (I ≠ ⊥ ∧ IsCoprime I χ.conductor)) :
     χ.coeff I = 0 :=
-  dif_neg h
+  dite_eq_right h
 
 @[simp]
 theorem coeff_bot : χ.coeff ⊥ = 0 :=
@@ -324,7 +278,7 @@ theorem norm_coeff_le (I : Ideal (𝓞 K)) : ‖χ.coeff I‖ ≤ 1 := by
 theorem coeff_top : χ.coeff ⊤ = 1 := by
   have h : (⊤ : Ideal (𝓞 K)) ≠ ⊥ ∧ IsCoprime (⊤ : Ideal (𝓞 K)) χ.conductor :=
     ⟨top_ne_bot, by rw [← Ideal.one_eq_top]; exact isCoprime_one_left⟩
-  rw [coeff, dif_pos h]
+  rw [coeff, dite_eq_left h]
   have h1 : (⟨idealUnit ⊤ h.1, idealUnit_mem_idealsPrimeTo h.1 h.2⟩ : idealsPrimeTo χ.conductor) =
       1 :=
     Subtype.ext (Units.ext (by simp [idealUnit]))
@@ -335,7 +289,7 @@ theorem coeff_mul (I J : Ideal (𝓞 K)) : χ.coeff (I * J) = χ.coeff I * χ.co
   · by_cases hJ : J ≠ ⊥ ∧ IsCoprime J χ.conductor
     · have hIJ : I * J ≠ ⊥ ∧ IsCoprime (I * J) χ.conductor :=
         ⟨fun h ↦ (Ideal.mul_eq_bot.1 h).elim hI.1 hJ.1, hI.2.mul_left hJ.2⟩
-      rw [coeff, coeff, coeff, dif_pos hI, dif_pos hJ, dif_pos hIJ, ← Circle.coe_mul, ← map_mul]
+      rw [coeff, coeff, coeff, dite_eq_left hI, dite_eq_left hJ, dite_eq_left hIJ, ← Circle.coe_mul, ← map_mul]
       congr 2
       exact Subtype.ext (Units.ext (by simp [idealUnit, coeIdeal_mul]))
     · rw [χ.coeff_of_not hJ, mul_zero]
@@ -352,7 +306,7 @@ theorem coeff_asIdeal_of_dvd {v : HeightOneSpectrum (𝓞 K)} (hv : v.asIdeal �
 theorem coeff_asIdeal_of_not_dvd {v : HeightOneSpectrum (𝓞 K)} (hv : ¬ v.asIdeal ∣ χ.conductor) :
     χ.coeff v.asIdeal =
       χ.idealCharacter ⟨primeIdealUnit v, primeIdealUnit_mem_idealsPrimeTo hv⟩ := by
-  rw [coeff, dif_pos ⟨v.ne_bot, (isCoprime_asIdeal_iff v _).2 hv⟩]
+  rw [coeff, dite_eq_left ⟨v.ne_bot, (isCoprime_asIdeal_iff v _).2 hv⟩]
   rfl
 
 def coeffTerm (s : ℂ) : Ideal (𝓞 K) →* ℂ where
@@ -416,10 +370,6 @@ theorem LFunction_eq_tsum_coeffTerm {s : ℂ} (hs : 1 < s.re) :
     χ.LFunction s = ∑' I, χ.coeffTerm s I :=
   (χ.hasSum_term_LCoeff hs).tsum_eq
 
-theorem summable_norm_coeff_mul_cpow {s : ℂ} (hs : 1 < s.re) :
-    Summable fun I : Ideal (𝓞 K) ↦ ‖χ.coeff I * (absNorm I : ℂ) ^ (-s)‖ := by
-  simpa [coeffTerm_apply, Complex.cpow_neg, div_eq_mul_inv] using χ.summable_norm_coeffTerm hs
-
 theorem hasSum_LFunction {s : ℂ} (hs : 1 < s.re) :
     HasSum (fun I : Ideal (𝓞 K) ↦ χ.coeff I * (absNorm I : ℂ) ^ (-s)) (χ.LFunction s) := by
   have hfun : (fun I : Ideal (𝓞 K) ↦ χ.coeff I * (absNorm I : ℂ) ^ (-s)) = χ.coeffTerm s :=
@@ -480,7 +430,7 @@ theorem conductor_one : (1 : HeckeCharacter K).conductor = ⊤ := by
 theorem coeff_one {I : Ideal (𝓞 K)} (hI : I ≠ ⊥) : (1 : HeckeCharacter K).coeff I = 1 := by
   have h : I ≠ ⊥ ∧ IsCoprime I (1 : HeckeCharacter K).conductor :=
     ⟨hI, by rw [conductor_one, ← Ideal.one_eq_top]; exact isCoprime_one_right⟩
-  rw [coeff, dif_pos h]
+  rw [coeff, dite_eq_left h]
   exact congrArg ((↑) : Circle → ℂ) rfl |>.trans Circle.coe_one
 
 theorem LFunction_one (s : ℂ) : (1 : HeckeCharacter K).LFunction s = dedekindZeta K s := by

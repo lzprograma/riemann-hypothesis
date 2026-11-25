@@ -151,7 +151,7 @@ theorem coord_mod_pow : ∀ (l : ℕ) [Fact l.Prime] (c : Coef l) (m : ℕ), ∃
   let crd : Qbar l → Module.Free.ChooseBasisIndex ℤ_[l] c.O → ZMod (l ^ m) := fun x i =>
     if hx : x ∈ c.O then PadicInt.toZModPow m (b.repr ⟨x, hx⟩ i) else 0
   have hcrd : ∀ (x : Qbar l) (hx : x ∈ c.O) i, crd x i = PadicInt.toZModPow m (b.repr ⟨x, hx⟩ i) :=
-    fun x hx i => dif_pos hx
+    fun x hx i => dite_eq_left hx
   have hkill : ∀ x ∈ c.O, Cg m x 0 → crd x = 0 := by
     intro x hx h
     unfold Cg at h

@@ -177,7 +177,7 @@ theorem GlobalTheory.HL.MoveChar.chi_ne_one : ∀ {F : Type} [Field F] [Valuativ
     have e1 : v = ∑ i, c i • S.fr d Λ i := e
     have e2 : v' = ∑ i, c' i • S.fr' d Λ i := e'
     simp only [Pi.sub_apply, sub_smul, Finset.sum_sub_distrib, ← e1, ← e2, Pi.single_apply, ite_smul,
-      zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [sub_add_sub_comm, e0, ← hz, sub_sub_cancel]
   rw [Frames.levC, key, MoveChar.lev_le_iff S hl] at hla
   have := hla j.succ (by simp)

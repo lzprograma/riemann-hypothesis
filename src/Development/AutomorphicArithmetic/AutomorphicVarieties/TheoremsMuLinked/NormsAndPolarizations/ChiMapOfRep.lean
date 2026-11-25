@@ -1,5 +1,8 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.NiceIrr
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepApi
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.EveryPointSatisfiesFrameConditionAlt
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ArithmeticPointClassicality
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -56,27 +59,12 @@ open Polynomial
 private theorem chi_map_ofRep {n : ℕ} {A K G : Type} [CommRing A] [CommRing K] [Group G] (f : A →+* K)
     (ρ : G →* Matrix (Fin n) (Fin n) A) (g : G) :
     ((GDet.ofRep ρ).map f).chi (MonoidAlgebra.single g 1) = (ρ g).charpoly.map f := by
-  letI : Algebra A K[X] := ((algebraMap K K[X]).comp f).toAlgebra
-  rw [← Matrix.charpoly_map]
-  change (GDet.repAlg ρ K[X] _).det = (Matrix.charmatrix _).det
-  congr 1
-  ext i j : 1
-  have h : ∀ a, algebraMap A K[X] a = C (f a) := fun _ => rfl
-  by_cases hij : i = j
-  · subst hij
-    simp [GDet.repAlg, h]
-  · simp [GDet.repAlg, h, hij]
+  apply _root_.chi_map_ofRep <;> assumption
 
 private theorem chi_ofRep {n : ℕ} {A G : Type} [CommRing A] [Group G]
     (ρ : G →* Matrix (Fin n) (Fin n) A) (g : G) :
     (GDet.ofRep ρ).chi (MonoidAlgebra.single g 1) = (ρ g).charpoly := by
-  change (GDet.repAlg ρ A[X] _).det = (Matrix.charmatrix _).det
-  congr 1
-  ext i j : 1
-  by_cases hij : i = j
-  · subst hij
-    simp [GDet.repAlg]
-  · simp [GDet.repAlg, hij]
+  apply _root_.UpperTheory.V.AlgebraTools.Det.chi_single <;> assumption
 
 private theorem aeval_mapM {n : ℕ} {A K : Type} [CommRing A] [CommRing K] (f : A →+* K)
     (M : Matrix (Fin n) (Fin n) A) (q : A[X]) :
@@ -87,14 +75,7 @@ private theorem aeval_mapM {n : ℕ} {A K : Type} [CommRing A] [CommRing K] (f :
 
 private theorem aeval_inter {n : ℕ} {K : Type} [CommRing K] (M N Y : Matrix (Fin n) (Fin n) K)
     (h : N * Y = Y * M) (q : K[X]) : aeval N q * Y = Y * aeval M q := by
-  have hp : ∀ k : ℕ, N ^ k * Y = Y * M ^ k := by
-    intro k
-    induction k with
-    | zero => simp
-    | succ k ih => rw [pow_succ', mul_assoc, ih, ← mul_assoc, h, mul_assoc, ← pow_succ']
-  induction q using Polynomial.induction_on' with
-  | add p q hp hq => simp [add_mul, mul_add, hp, hq]
-  | monomial k a => simp [aeval_monomial, ← Algebra.smul_def, hp]
+  apply _root_.aeval_inter <;> assumption
 
 private theorem key {n : ℕ} {A K : Type} [CommRing A] [IsDomain A] [Field K] (f : A →+* K)
     (M : Matrix (Fin n) (Fin n) A) (x : A) (c : K) (hc : c ≠ 0) (hx : f x ≠ 1)

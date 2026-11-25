@@ -48,7 +48,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.FockCompare GlobalTheory.VacUnique
 
 namespace GlobalTheory.VacUnique.Ann
@@ -90,12 +89,12 @@ theorem lineAt_eq (h : Chart θ σ) (S T : HSp D) (τ : D.what₂.Tau) (z : Matr
   by_cases e : τ' = τ
   · subst e
     have e1 : (Pi.single τ' z : RW T S) τ' = z := Pi.single_eq_same _ _
-    rw [if_pos rfl, Pi.smul_apply, e1]
+    rw [ite_eq_left rfl, Pi.smul_apply, e1]
     funext i j
     show (t : ℂ) * z i j = t • z i j
     exact (Complex.real_smul).symm
   · have e1 : (Pi.single τ z : RW T S) τ' = 0 := Pi.single_eq_of_ne e _
-    rw [if_neg e, Pi.smul_apply, e1, smul_zero]
+    rw [ite_eq_right e, Pi.smul_apply, e1, smul_zero]
     rfl
 
 open Classical in

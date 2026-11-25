@@ -22,48 +22,12 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalSup
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RationalFinitePlaces
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.DcCount
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.PUnitAE
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
 namespace PositivityTheory.Rg.BcB.G8.Fin
 
-theorem kfOC_holds : PositivityTheory.Rg.BcB.G8.KfOC := _root_.GlobalTheory.CompanionTheory.IntegralPoints.kfOC
 
-theorem finLevel_holds : PositivityTheory.Rg.BcB.G8.FinLevel := _root_.GlobalTheory.CompanionTheory.FinLevelTw.finLevel
 
 theorem suppFin_holds : SuppFin := _root_.GlobalTheory.CompanionTheory.SuppFinTw.suppFinOf _root_.GlobalTheory.CompanionTheory.TwistOrbit.locSupp unitAE_holds _root_.GlobalTheory.CompanionTheory.RatFinG.ratFin _root_.GlobalTheory.CompanionTheory.LocGoodProof.locGood
 
@@ -71,6 +35,6 @@ theorem eulerFin_holds : EulerFin :=
   _root_.GlobalTheory.CompanionTheory.EulerAsm.eulerFinOf' _root_.GlobalTheory.CompanionTheory.CjEx.cjEx _root_.GlobalTheory.CompanionTheory.EulerV.main _root_.GlobalTheory.CompanionTheory.RegroupFin.regroup (_root_.GlobalTheory.CompanionTheory.LocCompareHalves.locCompareOf _root_.GlobalTheory.CompanionTheory.LocInert.locCompareInert _root_.GlobalTheory.CompanionTheory.LcSplit.locCompareSplit) _root_.GlobalTheory.CompanionTheory.LocHypProof.locHyp _root_.GlobalTheory.CompanionTheory.SecReindex.reindex
 
 theorem finHalf_holds : PositivityTheory.Rg.BcB.G8.FinHalf :=
-  _root_.GlobalTheory.CompanionTheory.FinHalfAsm.finHalfOf DcCount_pf _root_.GlobalTheory.CompanionTheory.MassProd.massProd _root_.GlobalTheory.CompanionTheory.RatFinG.ratFin suppFin_holds eulerFin_holds kfOC_holds finLevel_holds
+  _root_.GlobalTheory.CompanionTheory.FinHalfAsm.finHalfOf DcCount_pf _root_.GlobalTheory.CompanionTheory.MassProd.massProd _root_.GlobalTheory.CompanionTheory.RatFinG.ratFin suppFin_holds eulerFin_holds _root_.GlobalTheory.CompanionTheory.IntegralPoints.kfOC _root_.GlobalTheory.CompanionTheory.FinLevelTw.finLevel
 
 end PositivityTheory.Rg.BcB.G8.Fin

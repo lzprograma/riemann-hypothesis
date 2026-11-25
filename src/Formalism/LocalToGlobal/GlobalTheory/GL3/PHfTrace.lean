@@ -108,11 +108,6 @@ def HfArithRec : Prop :=
           starRingEnd ℂ (δ * D.host.φ₀ (((c' : D.host.K) : D.host.E))) *
           (D.host.φ₀ ((hYY D A B : D.host.K) : D.host.E) / (area (lamOf D cc δ) : ℂ)))
 
-theorem HfGenRec_of_arith (h : HfArithRec) : HfGenRec := by
-  intro D cc hcc δ hδ h0 N N' L L' hA c hc c' hc' A hA' B hB'
-  rw [FL.Hf_embV D (tor0 D cc δ) (fun _ _ => rfl) A B]
-  exact h D cc hcc δ hδ h0 N N' L L' hA c hc c' hc' A hA' B hB'
-
 end Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity
 
 end

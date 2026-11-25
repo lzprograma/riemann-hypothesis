@@ -41,17 +41,14 @@ import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.UniformLevelMult
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.GeoActCompare.TameConj
 
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj Formalism.IndefR.Lev GlobalTheory.IndefiniteRowSideFullHecke GlobalTheory.GeoActCompare
 open scoped TensorProduct Matrix
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-open GlobalTheory.IndefiniteRowSideFullHecke.LevelLiftConditions (idealHat CongMod)
+open GlobalTheory.IndefiniteRowSideFullHecke.LevelLiftConditions (idealHat)
 open GlobalTheory.IdemSupport (mem_intAE_iff parts_cA finPart_cA_mem)
 
 variable {D : D7}

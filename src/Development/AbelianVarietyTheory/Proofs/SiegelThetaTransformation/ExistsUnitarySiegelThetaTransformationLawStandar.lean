@@ -415,7 +415,7 @@ theorem sum_ech_rep : ∀ (κ ι : Type) [Fintype κ] [Fintype ι] [DecidableEq 
   · obtain ⟨k, hk⟩ := Function.ne_iff.1 hab
     obtain ⟨i, hi⟩ := Function.ne_iff.1 hk
     exact Finset.prod_eq_zero (Finset.mem_univ k)
-      (Finset.prod_eq_zero (Finset.mem_univ i) (if_neg hi))
+      (Finset.prod_eq_zero (Finset.mem_univ i) (ite_eq_right hi))
 
 variable {κ ι : Type} [Fintype κ] [Fintype ι]
 
@@ -569,7 +569,7 @@ theorem plancherel {R : ℕ} (hR : 0 < R) {φ ψ : Matrix κ ι ℚ → ℂ} (h 
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [Finset.sum_comm]
   simp only [← Finset.mul_sum, sum_ech_rep κ ι R hR, ← hV, mul_ite, mul_zero, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
   field_simp
 
 theorem thS_eq [DecidableEq ι] (φ : Matrix κ ι ℚ → ℂ) (τ : Matrix ι ι ℂ) (ζ : κ → ι → ℂ) :

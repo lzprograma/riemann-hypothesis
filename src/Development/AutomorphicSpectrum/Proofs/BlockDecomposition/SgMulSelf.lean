@@ -3,6 +3,7 @@ module
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairStructureOnLine
 public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.KoszulDifferentialAnticommutator
 import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.CreApply
+import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.FinsetCAR
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -111,7 +112,7 @@ theorem cross (h1 : ∀ i j, Commute (L i) (an j)) (h2 : ∀ i j, Commute (L i) 
       simp only [mul_assoc]
     rw [c1, c2, ← mul_add, ← add_mul, hac]
     split_ifs <;> simp
-  simp only [e, Finset.sum_ite_eq', mem_univ, if_true]
+  simp only [e, Finset.sum_ite_eq', mem_univ, ite_true]
   rw [eq_neg_of_add_eq_zero_left (haa j i)]
   simp
 
@@ -187,7 +188,7 @@ theorem b_sq (hanti : ∀ i j k, c i j k = -c j i k)
   have L' : ∑ p : ι × ι × ι, ∑ q : ι × ι × ι,
       (t p * t q) • (if p.1 = q.2.2 then cr p.2.2 * (an p.2.1 * (an q.2.1 * an q.1)) else 0) =
       ∑ p, ∑ q, ∑ r, ∑ k, (∑ i, c p q i * c i r k) • (cr k * (an r * an q * an p)) := by
-    simp only [Fintype.sum_prod_type, t, smul_ite, smul_zero, Finset.sum_ite_eq, mem_univ, if_true, Finset.sum_smul]
+    simp only [Fintype.sum_prod_type, t, smul_ite, smul_zero, Finset.sum_ite_eq, mem_univ, ite_true, Finset.sum_smul]
     symm
     calc _ = ∑ p, ∑ q, ∑ i, ∑ r, ∑ k, (c p q i * c i r k) • (cr k * (an r * an q * an p)) := by
           refine Finset.sum_congr rfl fun p _ => Finset.sum_congr rfl fun q _ => ?_
@@ -201,7 +202,7 @@ theorem b_sq (hanti : ∀ i j k, c i j k = -c j i k)
   have R' : ∑ p : ι × ι × ι, ∑ q : ι × ι × ι,
       (t p * t q) • (if p.2.1 = q.2.2 then cr p.2.2 * (an q.2.1 * an q.1 * an p.1) else 0) =
       ∑ p, ∑ q, ∑ r, ∑ k, (∑ j, c q r j * c p j k) • (cr k * (an r * an q * an p)) := by
-    simp only [Fintype.sum_prod_type, t, smul_ite, smul_zero, Finset.sum_ite_eq, mem_univ, if_true, Finset.sum_smul]
+    simp only [Fintype.sum_prod_type, t, smul_ite, smul_zero, Finset.sum_ite_eq, mem_univ, ite_true, Finset.sum_smul]
     refine Finset.sum_congr rfl fun p _ => ?_
     calc _ = ∑ x : ι × ι, ∑ y : ι × ι,
             (c p x.1 x.2 * c y.1 y.2 x.1) • (cr x.2 * (an y.2 * an y.1 * an p)) := by
@@ -288,7 +289,7 @@ theorem keyR_inj {i j : Ix n} (h : keyR i = keyR j) : i = j := by
   have hp := key_lt p
   have hq := key_lt q
   have hk : key p = key q → p = q := fun e => CompanionTheory.D.LK.Car.key_inj e
-  cases s <;> cases t <;> simp only [keyR, Bool.false_eq_true, if_false, if_true] at h
+  cases s <;> cases t <;> simp only [keyR, Bool.false_eq_true, ite_false, ite_true] at h
   · rw [hk (by omega)]
   · omega
   · omega
@@ -296,35 +297,25 @@ theorem keyR_inj {i j : Ix n} (h : keyR i = keyR j) : i = j := by
 
 def tw (i j : Ix n) : ℂ := if keyR j < keyR i then -1 else 1
 
-theorem tw_self (i : Ix n) : tw i i = 1 := by simp [tw]
+theorem tw_self (i : Ix n) : tw i i = 1 :=
+  _root_.CompanionTheory.FinsetCAR.tw_self keyR i
 
-theorem tw_mul_self (i j : Ix n) : tw i j * tw i j = 1 := by
-  unfold tw; split_ifs <;> simp
+theorem tw_mul_self (i j : Ix n) : tw i j * tw i j = 1 :=
+  _root_.CompanionTheory.FinsetCAR.tw_mul_self keyR i j
 
-theorem tw_swap {i j : Ix n} (h : i ≠ j) : tw j i = -tw i j := by
-  have hk : keyR i ≠ keyR j := fun e => h (keyR_inj e)
-  unfold tw
-  rcases lt_or_gt_of_ne hk with h1 | h1
-  · simp [h1, h1.not_gt]
-  · simp [h1, h1.not_gt]
+theorem tw_swap {i j : Ix n} (h : i ≠ j) : tw j i = -tw i j :=
+  _root_.CompanionTheory.FinsetCAR.tw_swap keyR (fun _ _ e => keyR_inj e) h
 
-theorem sg_mul_self (i : Ix n) (A : Finset (Ix n)) : sgR i A * sgR i A = 1 := by
-  unfold sgR
-  rw [← mul_pow]; simp
+theorem sg_mul_self (i : Ix n) (A : Finset (Ix n)) : sgR i A * sgR i A = 1 :=
+  _root_.CompanionTheory.FinsetCAR.sg_mul_self keyR i A
 
 theorem sg_insert (i : Ix n) {j : Ix n} {A : Finset (Ix n)} (h : j ∉ A) :
-    sgR i (insert j A) = tw i j * sgR i A := by
-  unfold sgR tw
-  rw [Finset.filter_insert]
-  split_ifs with hk
-  · rw [Finset.card_insert_of_notMem (fun hm => h (Finset.mem_filter.1 hm).1), pow_succ]; ring
-  · simp
+    sgR i (insert j A) = tw i j * sgR i A :=
+  _root_.CompanionTheory.FinsetCAR.sg_insert keyR i h
 
 theorem sg_erase (i : Ix n) {j : Ix n} {A : Finset (Ix n)} (h : j ∈ A) :
-    sgR i (A.erase j) = tw i j * sgR i A := by
-  have h1 := sg_insert i (Finset.notMem_erase j A)
-  rw [Finset.insert_erase h] at h1
-  rw [h1, ← mul_assoc, tw_mul_self, one_mul]
+    sgR i (A.erase j) = tw i j * sgR i A :=
+  _root_.CompanionTheory.FinsetCAR.sg_erase keyR i h
 
 variable {V : Type} [AddCommGroup V] [Module ℂ V]
 
@@ -334,64 +325,15 @@ theorem ann_apply (i : Ix n) (x : Cr n V) (A : Finset (Ix n)) :
 theorem cre_apply (i : Ix n) (x : Cr n V) (A : Finset (Ix n)) :
     creR i x A = if i ∈ A then sgR i A • x (A.erase i) else 0 := rfl
 
-theorem ann_ann (i j : Ix n) : (annR i * annR j + annR j * annR i : Module.End ℂ (Cr n V)) = 0 := by
-  refine LinearMap.ext fun x => funext fun A => ?_
-  simp only [LinearMap.add_apply, Module.End.mul_apply, Pi.add_apply, LinearMap.zero_apply, Pi.zero_apply,
-    ann_apply]
-  by_cases hij : i = j
-  · subst hij
-    simp
-  have hji : j ≠ i := fun e => hij e.symm
-  by_cases hi : i ∈ A
-  · simp [hi]
-  by_cases hj : j ∈ A
-  · simp [hj]
-  simp only [hi, hj, Finset.mem_insert, hij, hji, or_self, if_false]
-  rw [sg_insert j hi, sg_insert i hj, tw_swap hij, Finset.insert_comm j i, smul_smul, smul_smul, ← add_smul]
-  have : sgR i A * (-tw i j * sgR j A) + sgR j A * (tw i j * sgR i A) = 0 := by ring
-  rw [this, zero_smul]
+theorem ann_ann (i j : Ix n) : (annR i * annR j + annR j * annR i : Module.End ℂ (Cr n V)) = 0 :=
+  _root_.CompanionTheory.FinsetCAR.ann_ann keyR (fun _ _ e => keyR_inj e) i j
 
-theorem cre_cre (i j : Ix n) : (creR i * creR j + creR j * creR i : Module.End ℂ (Cr n V)) = 0 := by
-  refine LinearMap.ext fun x => funext fun A => ?_
-  simp only [LinearMap.add_apply, Module.End.mul_apply, Pi.add_apply, LinearMap.zero_apply, Pi.zero_apply,
-    cre_apply]
-  by_cases hij : i = j
-  · subst hij
-    simp
-  have hji : j ≠ i := fun e => hij e.symm
-  by_cases hi : i ∈ A
-  swap
-  · simp [hi]
-  by_cases hj : j ∈ A
-  swap
-  · simp [hj]
-  simp only [hi, hj, Finset.mem_erase, ne_eq, hij, hji, not_false_eq_true, and_self, if_true]
-  rw [sg_erase j hi, sg_erase i hj, tw_swap hij, Finset.erase_right_comm (a := j) (b := i), smul_smul, smul_smul,
-    ← add_smul]
-  have : sgR i A * (-tw i j * sgR j A) + sgR j A * (tw i j * sgR i A) = 0 := by ring
-  rw [this, zero_smul]
+theorem cre_cre (i j : Ix n) : (creR i * creR j + creR j * creR i : Module.End ℂ (Cr n V)) = 0 :=
+  _root_.CompanionTheory.FinsetCAR.cre_cre keyR (fun _ _ e => keyR_inj e) i j
 
 theorem ann_cre (i j : Ix n) :
-    (annR i * creR j + creR j * annR i : Module.End ℂ (Cr n V)) = if i = j then 1 else 0 := by
-  refine LinearMap.ext fun x => funext fun A => ?_
-  simp only [LinearMap.add_apply, Module.End.mul_apply, Pi.add_apply, ann_apply, cre_apply]
-  by_cases hij : i = j
-  · subst hij
-    by_cases hi : i ∈ A
-    · simp [hi, sg_erase i hi, tw_self, smul_smul, sg_mul_self, Finset.insert_erase hi]
-    · simp [hi, sg_insert i hi, tw_self, smul_smul, sg_mul_self, Finset.erase_insert hi]
-  have hji : j ≠ i := fun e => hij e.symm
-  rw [if_neg hij, LinearMap.zero_apply, Pi.zero_apply]
-  by_cases hi : i ∈ A
-  · simp [hi, hij]
-  by_cases hj : j ∈ A
-  swap
-  · simp [hj, hji]
-  simp only [hi, hj, Finset.mem_insert, Finset.mem_erase, or_true, and_false, if_true, if_false]
-  rw [sg_insert j hi, sg_erase i hj, tw_swap hij, Finset.erase_insert_of_ne hij, smul_smul, smul_smul,
-    ← add_smul]
-  have : sgR i A * (-tw i j * sgR j A) + sgR j A * (tw i j * sgR i A) = 0 := by ring
-  rw [this, zero_smul]
+    (annR i * creR j + creR j * annR i : Module.End ℂ (Cr n V)) = if i = j then 1 else 0 :=
+  _root_.CompanionTheory.FinsetCAR.ann_cre keyR (fun _ _ e => keyR_inj e) i j
 
 theorem lift_apply (T : V →ₗ[ℂ] V) (x : Cr n V) (A : Finset (Ix n)) : liftR n T x A = T (x A) := rfl
 
@@ -415,9 +357,9 @@ theorem sum_one {M : Type} [AddCommGroup M] [Module ℂ M] (G : Fin n → Fin n 
     rw [Finset.sum_eq_single (⟨(p.1.1, q.1.2), hlt⟩ : Pos n)]
     · simp [h]
     · intro r _ hr
-      rw [if_neg fun e => hr (Subtype.ext e.2), zero_smul]
+      rw [ite_eq_right fun e => hr (Subtype.ext e.2), zero_smul]
     · simp
-  · exact Finset.sum_eq_zero fun r _ => by rw [if_neg fun e => h e.1, zero_smul]
+  · exact Finset.sum_eq_zero fun r _ => by rw [ite_eq_right fun e => h e.1, zero_smul]
 
 theorem sum_cp {M : Type} [AddCommGroup M] [Module ℂ M] (G : Fin n → Fin n → M) (p q : Pos n) :
     ∑ r : Pos n, cp p q r • G r.1.1 r.1.2 =

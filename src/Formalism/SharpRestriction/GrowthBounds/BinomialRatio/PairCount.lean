@@ -5,45 +5,7 @@ import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreeAlterna
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ThresholdLowerBounds
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.TopDegreeLeTwoB
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -87,7 +49,6 @@ theorem pc_shape {s r : ℕ} {A : ℕ} {Ai Ci : Fin s → ℕ} {M : ℕ} (hA : �
     {mu : Fin (2 * s + 1 + 1) → Fin (r + 1) → ℤ} (h : IsChain (kLetters A Ai Ci) mu) (n : Fin (2 * s + 1 + 1)) :
     ∀ idx : Fin (r + 1), (pcU n.val ≤ idx.val → mu n idx ≤ 0) ∧ (idx.val + pcL n.val < r + 1 → 0 ≤ mu n idx) ∧
       |mu n idx| ≤ (if n.val = 0 then 0 else (A : ℤ)) + n.val * M := by
-  have hM0 : (0 : ℤ) ≤ M := Int.natCast_nonneg _
   have key : ∀ t : ℕ, ∀ ht : t < 2 * s + 1 + 1, ∀ idx : Fin (r + 1),
       (pcU t ≤ idx.val → mu ⟨t, ht⟩ idx ≤ 0) ∧ (idx.val + pcL t < r + 1 → 0 ≤ mu ⟨t, ht⟩ idx) ∧
       |mu ⟨t, ht⟩ idx| ≤ (if t = 0 then 0 else (A : ℤ)) + (t : ℤ) * M := by
@@ -117,12 +78,12 @@ theorem pc_shape {s r : ℕ} {A : ℕ} {Ai Ci : Fin s → ℕ} {M : ℕ} (hA : �
           (if t + 1 = 0 then 0 else (A : ℤ)) + ((t + 1 : ℕ) : ℤ) * M := by
         rcases Nat.eq_zero_or_pos t with rfl | htpos
         · norm_num <;> linarith
-        · rw [if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+        · rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
           push_cast
           exact le_of_eq (by ring)
       by_cases hv : t = 0 ∨ t % 2 = 1
       · have hvec : (kLetters A Ai Ci).vec ⟨t, by omega⟩ = true := by simp [kLetters, hv]
-        rw [if_pos hvec] at hlet
+        rw [ite_eq_left hvec] at hlet
         have hsl := pc_strip_le hlet idx
         obtain ⟨hle, hint, _⟩ := hlet
         refine ⟨fun hi => ?_, fun hi => ?_, ?_⟩
@@ -142,7 +103,7 @@ theorem pc_shape {s r : ℕ} {A : ℕ} {Ai Ci : Fin s → ℕ} {M : ℕ} (hA : �
       · have hvec : (kLetters A Ai Ci).vec ⟨t, by omega⟩ = false := by
           simp only [kLetters, decide_eq_false_iff_not]
           exact hv
-        rw [if_neg (by rw [hvec]; decide)] at hlet
+        rw [ite_eq_right (by rw [hvec]; decide)] at hlet
         have hsl := pc_strip_le hlet idx
         obtain ⟨hle, hint, _⟩ := hlet
         refine ⟨fun hi => ?_, fun hi => ?_, ?_⟩
@@ -182,7 +143,7 @@ theorem pcEnc_inj {K s : ℕ} {v v' : Fin K → ℤ} (hz : ∀ i : Fin K, s + 1 
       · exact ⟨⟨i.val, by omega⟩, by simp [pcPosition, hi]⟩
       · refine ⟨⟨2 * s + 1 - (K - i.val), by have := i.2; omega⟩, ?_⟩
         have h1 : ¬ (2 * s + 1 - (K - i.val) < s + 1) := by have := i.2; omega
-        simp only [pcPosition, h1, if_false]
+        simp only [pcPosition, h1, ite_false]
         have := i.2
         omega
     obtain ⟨q, hq⟩ := hq
@@ -207,7 +168,6 @@ theorem pc_count {s r : ℕ} {A : ℕ} {Ai Ci : Fin s → ℕ} {M : ℕ} (hA : �
     refine (pc_shape hA hC h n idx).2.2.trans ?_
     have hn : (n.val : ℤ) ≤ 2 * (s : ℤ) + 1 := by have := n.2; omega
     have hM : (0 : ℤ) ≤ (M : ℤ) := Int.natCast_nonneg _
-    have hA0 : (0 : ℤ) ≤ (A : ℤ) := Int.natCast_nonneg _
     have := mul_le_mul_of_nonneg_right hn hM
     split_ifs <;> linarith
   have hzero : ∀ {mu : Fin (2 * s + 1 + 1) → Fin (r + 1) → ℤ}, IsChain (kLetters A Ai Ci) mu → ∀ n (i : Fin (r + 1)),

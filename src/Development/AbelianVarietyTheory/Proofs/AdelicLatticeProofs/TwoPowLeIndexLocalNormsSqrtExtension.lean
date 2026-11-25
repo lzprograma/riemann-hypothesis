@@ -199,7 +199,7 @@ theorem two_pow_le_index_locNorm :
     · rintro ⟨a, b, hab⟩
       have h1 := hxσ σ.1
       have h2 : σ.1 δ < 0 := σ.2
-      simp only [if_true] at h1
+      simp only [ite_true] at h1
       have h3 : σ.1 x = a ^ 2 - σ.1 δ * b ^ 2 := hab
       nlinarith [sq_nonneg a, mul_nonneg (neg_nonneg.2 h2.le) (sq_nonneg b)]
     · rintro (w | τ) hj

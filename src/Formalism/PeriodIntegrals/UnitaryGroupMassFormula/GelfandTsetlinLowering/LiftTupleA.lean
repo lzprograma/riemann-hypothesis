@@ -2,47 +2,7 @@ module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftDefs
 public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowdivLemmas
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalRingCardinality.Params
 
 @[expose] public section
@@ -119,7 +79,7 @@ theorem rowGen_gmin {r c m : ℕ} (a b : Fin r) (ρ : Fin m → Fin r) (κ : Fin
     rw [hBS, hAS, ← hprod, Units.smul_def, Units.smul_def, map_zsmul, map_mul]
     simp only [zsmul_eq_mul]
     ring
-  · push_neg at hS
+  · push Not at hS
     obtain ⟨p, hp, hpb⟩ := hS
     refine Finset.sum_eq_zero fun σ _ => ?_
     rw [Finset.prod_eq_zero hp (by simp [hB, hpb]), zero_mul, smul_zero]
@@ -142,8 +102,8 @@ theorem exp_gmin {r c n m : ℕ} (e : Fin n → Fin r) (he : Function.Injective 
     simp only [upd, Function.comp_apply]
     split_ifs <;> rfl
   by_cases hc : ∀ p ∈ S, ρ p = b
-  · rw [if_pos hc, if_pos (h1.mpr hc), h2]
-  · rw [if_neg hc, if_neg (fun h => hc (h1.mp h))]
+  · rw [ite_eq_left hc, ite_eq_left (h1.mpr hc), h2]
+  · rw [ite_eq_right hc, ite_eq_right (fun h => hc (h1.mp h))]
 
 theorem sum_finset_castSucc {M : Type*} [AddCommMonoid M] {m : ℕ} (f : Finset (Fin (m + 1)) → M)
     (hf : ∀ S, Fin.last m ∈ S → f S = 0) :
@@ -207,11 +167,11 @@ theorem exp_lift {r c n m : ℕ} (e : Fin n → Fin r) (he : Function.Injective 
         simp only [upd, liftR_castSucc, hm]
         split_ifs <;> rfl
     by_cases hc : ∀ p ∈ S, ρ p = b
-    · rw [if_pos (h1.mpr hc), if_pos hc, h2, Finset.card_map]
-    · rw [if_neg (fun h => hc (h1.mp h)), if_neg hc]
+    · rw [ite_eq_left (h1.mpr hc), ite_eq_left hc, h2, Finset.card_map]
+    · rw [ite_eq_right (fun h => hc (h1.mp h)), ite_eq_right hc]
   · intro S hS
     beta_reduce
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hall
     exact hz b ((liftR_last e z ρ).symm.trans (hall _ hS)).symm
 
@@ -229,7 +189,7 @@ theorem rowDiv_prod {r c n K : ℕ} (e : Fin n → Fin r) (sz : Fin K → ℕ)
   refine Finset.sum_congr rfl fun F _ => ?_
   rw [Finset.prod_ite_zero]
   by_cases hA : ∀ k ∈ (Finset.univ : Finset (Fin K)), ∀ p ∈ F k, I k p = b
-  · rw [if_pos hA, Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum, ← map_prod Polynomial.C]
+  · rw [ite_eq_left hA, Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum, ← map_prod Polynomial.C]
     rw [show Polynomial.C C0 * (Polynomial.X ^ (∑ k, (F k).card) *
           Polynomial.C (∏ k, G k (upd (I k) (F k) a))) =
         Polynomial.monomial (∑ k, (F k).card) (C0 * ∏ k, G k (upd (I k) (F k) a)) by
@@ -238,9 +198,9 @@ theorem rowDiv_prod {r c n K : ℕ} (e : Fin n → Fin r) (sz : Fin K → ℕ)
     rw [Polynomial.coeff_monomial_apply]
     have hA' : ∀ k, ∀ p ∈ F k, I k p = b := fun k => hA k (Finset.mem_univ k)
     by_cases hs : ∑ k, (F k).card = t
-    · rw [if_pos hs, if_pos ⟨hA', hs⟩]
-    · rw [if_neg hs, if_neg (fun h => hs h.2)]
-  · rw [if_neg hA, mul_zero, Polynomial.coeff_zero, if_neg]
+    · rw [ite_eq_left hs, ite_eq_left ⟨hA', hs⟩]
+    · rw [ite_eq_right hs, ite_eq_right (fun h => hs h.2)]
+  · rw [ite_eq_right hA, mul_zero, Polynomial.coeff_zero, ite_eq_right]
     intro h
     exact hA (fun k _ => h.1 k)
 

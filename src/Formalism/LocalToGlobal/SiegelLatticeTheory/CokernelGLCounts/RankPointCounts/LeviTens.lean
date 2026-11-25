@@ -17,8 +17,6 @@ namespace PI.SchurPlaces
 
 open Formalism.L2.SG.KappaOffDiagonal PI.SchurPlaces.LeviLA
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem frameAt (X : HidaSetting D) (u : D.what₂.Word) (v : InfinitePlace X.B.I.F) :

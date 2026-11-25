@@ -51,12 +51,8 @@ theorem measurableEmbedding_leftMul_of_isUnit {g : Matrix (Fin (2 * r + k + 1)) 
   exact e.toMeasurableEquiv.measurableEmbedding
 
 theorem adjoint_comp_self_of_isometry (A : V →L[ℂ] V) (hA : ∀ v, ‖A v‖ = ‖v‖) :
-    (ContinuousLinearMap.adjoint A).comp A = 1 := by
-  let L : V →ₗᵢ[ℂ] V := { toLinearMap := (A : V →ₗ[ℂ] V), norm_map' := hA }
-  ext v
-  refine ext_inner_left ℂ fun y => ?_
-  rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.adjoint_inner_right]
-  exact L.inner_map_map y v
+    (ContinuousLinearMap.adjoint A).comp A = 1 :=
+  (ContinuousLinearMap.norm_map_iff_adjoint_comp_self A).mp hA
 
 theorem opNorm_le_one_of_isometry_alt (A : V →L[ℂ] V) (hA : ∀ v, ‖A v‖ = ‖v‖) : ‖A‖ ≤ 1 :=
   ContinuousLinearMap.opNorm_le_bound _ zero_le_one fun v => by rw [hA, one_mul]

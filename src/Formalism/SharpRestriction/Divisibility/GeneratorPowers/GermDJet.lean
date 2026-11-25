@@ -1,46 +1,9 @@
 module
 
+import all Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartDataPf
+import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeUniqB
 public import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
 public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -66,15 +29,12 @@ theorem jet_hom_ext {B : Type} [CommRing B] [Algebra R B] {f g : Jet R ι m →�
     (h : ∀ i, f (Ideal.Quotient.mk _ (X i)) = g (Ideal.Quotient.mk _ (X i))) : f = g :=
   Ideal.Quotient.algHom_ext R (MvPolynomial.algHom_ext fun i => h i)
 
-private theorem deg_sum_lemma {κ : Type} (e : κ →₀ ℕ) : e.degree = ∑ i ∈ e.support, e i := by
-  first
-  | rfl
-
 theorem monomial_mem_orig_pow (e : ι →₀ ℕ) (c : R) : monomial e c ∈ orig R ι ^ e.degree := by
   classical
   rw [MvPolynomial.monomial_eq, Finsupp.prod]
   refine Ideal.mul_mem_left _ _ ?_
-  rw [deg_sum_lemma e, ← Finset.prod_pow_eq_pow_sum]
+  change _ ∈ orig R ι ^ (∑ i ∈ e.support, e i)
+  rw [← Finset.prod_pow_eq_pow_sum]
   exact Ideal.prod_mem_prod fun i _ => Ideal.pow_mem_pow (X_mem_orig i) _
 
 theorem mem_orig_pow_of {n : ℕ} {p : MvPolynomial ι R} (h : ∀ e ∈ p.support, n ≤ e.degree) :
@@ -84,22 +44,7 @@ theorem mem_orig_pow_of {n : ℕ} {p : MvPolynomial ι R} (h : ∀ e ∈ p.suppo
 
 private theorem mem_degLE_lemma [Fintype ι] [DecidableEq ι] (k : ℕ) (e : ι →₀ ℕ) :
     e ∈ degLE k ↔ e.degree ≤ k := by
-  unfold degLE
-  rw [Finset.mem_filter, deg_sum_lemma]
-  constructor
-  · rintro ⟨-, h⟩
-    exact h
-  · intro h
-    refine ⟨Finset.mem_image.2 ⟨fun i => ⟨e i, ?_⟩, Finset.mem_univ _, ?_⟩, h⟩
-    · have hle : e i ≤ ∑ j ∈ e.support, e j := by
-        by_cases hi : i ∈ e.support
-        · exact Finset.single_le_sum (fun _ _ => Nat.zero_le _) hi
-        · have h0 : e i = 0 := by simpa [Finsupp.mem_support_iff] using hi
-          rw [h0]
-          exact Nat.zero_le _
-      omega
-    · ext i
-      simp
+  apply _root_.Formalism.MainNotions.ModuliIntegralCharts.H1.mem_degLE_lemma <;> assumption
 
 private theorem coeff_psTrunc_lemma_2 [Fintype ι] [DecidableEq ι] (k : ℕ) (g : MvPowerSeries ι R)
     (e : ι →₀ ℕ) :
@@ -109,8 +54,8 @@ private theorem coeff_psTrunc_lemma_2 [Fintype ι] [DecidableEq ι] (k : ℕ) (g
   simp only [MvPolynomial.coeff_monomial]
   rw [Finset.sum_ite_eq']
   by_cases h : e.degree ≤ k
-  · rw [if_pos ((mem_degLE_lemma k e).2 h), if_pos h]
-  · rw [if_neg (mt (mem_degLE_lemma k e).1 h), if_neg h]
+  · rw [ite_eq_left ((mem_degLE_lemma k e).2 h), ite_eq_left h]
+  · rw [ite_eq_right (mt (mem_degLE_lemma k e).1 h), ite_eq_right h]
 
 theorem psTrunc_succ_sub [Fintype ι] [DecidableEq ι] (g : MvPowerSeries ι R) :
     psTrunc (m + 1) g - psTrunc m g ∈ orig R ι ^ (m + 1) := by
@@ -119,43 +64,13 @@ theorem psTrunc_succ_sub [Fintype ι] [DecidableEq ι] (g : MvPowerSeries ι R) 
   rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_sub, coeff_psTrunc_lemma_2, coeff_psTrunc_lemma_2] at he
   by_contra hlt
   have h1 : e.degree ≤ m := by omega
-  rw [if_pos h1, if_pos (by omega : e.degree ≤ m + 1), sub_self] at he
+  rw [ite_eq_left h1, ite_eq_left (by omega : e.degree ≤ m + 1), sub_self] at he
   exact he rfl
 
 theorem exists_ps_of_jets [Fintype ι] [DecidableEq ι] (a : ∀ m, Jet R ι m)
     (ha : ∀ m, (jetTrunc : Jet R ι (m + 1) →ₐ[R] Jet R ι m) (a (m + 1)) = a m) :
     ∃ f : MvPowerSeries ι R, ∀ m, psJet m f = a m := by
-  choose p hp using fun k => Ideal.Quotient.mk_surjective (a k)
-  have hc : ∀ k l, k ≤ l → p l - p k ∈ orig R ι ^ (k + 1) := by
-    intro k l hkl
-    induction l, hkl using Nat.le_induction with
-    | base => simp
-    | succ l hkl ih =>
-      have h1 : p (l + 1) - p l ∈ orig R ι ^ (l + 1) := by
-        rw [← Ideal.Quotient.eq]
-        have h := ha l
-        rw [← hp (l + 1), ← hp l, jetTrunc_mk] at h
-        exact h
-      have h2 : orig R ι ^ (l + 1) ≤ orig R ι ^ (k + 1) := Ideal.pow_le_pow_right (by omega)
-      have h3 := Ideal.add_mem _ (h2 h1) ih
-      rwa [sub_add_sub_cancel] at h3
-  obtain ⟨f, hf⟩ : ∃ f : MvPowerSeries ι R, ∀ e, MvPowerSeries.coeff e f = AddMonoidAlgebra.coeff (p e.degree) e :=
-    ⟨fun e => AddMonoidAlgebra.coeff (p e.degree) e, fun e => rfl⟩
-  refine ⟨f, fun k => ?_⟩
-  rw [← hp k]
-  unfold psJet
-  rw [Ideal.Quotient.eq]
-  apply mem_orig_pow_of
-  intro e he
-  rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_sub, coeff_psTrunc_lemma_2] at he
-  by_contra hlt
-  have h1 : e.degree ≤ k := by omega
-  rw [if_pos h1] at he
-  apply he
-  have h3 := coeff_eq_zero_of_mem (hc e.degree k h1) (by omega : e.degree < e.degree + 1)
-  rw [MvPolynomial.coeff_sub, sub_eq_zero] at h3
-  rw [hf, sub_eq_zero]
-  exact h3.symm
+  apply _root_.Formalism.MainNotions.ModuliIntegralCharts.H1.GaugeR.exists_ps_of_compat <;> assumption
 
 end Alg
 
@@ -193,7 +108,7 @@ theorem sL_copy1 (m : ℕ) (g : Fin d → MvPowerSeries (Fin 1 × Fin d) R) :
 private theorem const_psTrunc_lemma_3 {κ : Type} [Fintype κ] [DecidableEq κ] (k : ℕ) (g : MvPowerSeries κ R) :
     MvPolynomial.constantCoeff (psTrunc k g) = MvPowerSeries.coeff 0 g := by
   rw [show MvPolynomial.constantCoeff (psTrunc k g) = AddMonoidAlgebra.coeff (psTrunc k g) 0 from rfl,
-    coeff_psTrunc_lemma_2, if_pos (by simp)]
+    coeff_psTrunc_lemma_2, ite_eq_left (by simp)]
 
 theorem sL_trunc (m : ℕ) (g : Fin d → MvPowerSeries (Fin 1 × Fin d) R) :
     (jetTrunc : Jet R (Fin 1 × Fin d) (m + 1) →ₐ[R] _).comp (sL (m + 1) g) =

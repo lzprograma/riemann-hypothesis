@@ -1,5 +1,7 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ScalarStabilizers.Trzero
+import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Qminor
 public import Mathlib.Algebra.Algebra.Basic
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.GroupTheory.Perm.Sign
@@ -64,10 +66,10 @@ namespace UpperTheory.Reformulated.B.QuantumMinorsCasimir
 noncomputable def GlRel.{u_1} : {A : Type u_1} → [Ring A] → {n : ℕ} → (Fin n → Fin n → A) → Prop := fun {A} [Ring A] {n} E =>
   ∀ (a b c d : Fin n), E a b * E c d - E c d * E a b = (if b = c then E a d else 0) - if d = a then E c b else 0
 
-noncomputable def Tm.{u_1} : {A : Type u_1} → [inst : Ring A] → [Algebra ℂ A] → {n : ℕ} → (Fin n → Fin n → A) → ℂ → Fin n → Fin n → A := fun {A} [Ring A] [Algebra ℂ A] {n} E u a b => (if a = b then (algebraMap ℂ A) u else 0) + E a b
+noncomputable def Tm.{u_1} : {A : Type u_1} → [inst : Ring A] → [Algebra ℂ A] → {n : ℕ} → (Fin n → Fin n → A) → ℂ → Fin n → Fin n → A := fun {A} [Ring A] [Algebra ℂ A] {_} E u a b => (if a = b then (algebraMap ℂ A) u else 0) + E a b
 
 noncomputable def qminor.{u_1} : {A : Type u_1} →
-  [inst : Ring A] → [Algebra ℂ A] → {n t : ℕ} → (Fin n → Fin n → A) → (Fin t → Fin n) → (Fin t → Fin n) → ℂ → A := fun {A} [Ring A] [Algebra ℂ A] {n t} E a b u =>
+  [inst : Ring A] → [Algebra ℂ A] → {n t : ℕ} → (Fin n → Fin n → A) → (Fin t → Fin n) → (Fin t → Fin n) → ℂ → A := fun {A} [Ring A] [Algebra ℂ A] {_ _} E a b u =>
   ∑ σ,
     ↑↑(Equiv.Perm.sign σ) *
       (List.ofFn fun k => Tm E (u - ↑↑k) (a (σ k)) (b k)).prod
@@ -86,35 +88,7 @@ theorem casimir : ∀ {V : Type} [inst : AddCommGroup V]
             ∀ (u : ℂ),
               (qdet E (u + 1 / 2)) φ =
                 ((u + (k - 1) / 2) * (u - (k - 1) / 2)) • φ := by
-  intro V _ _ E h k φ h1 h2 h3 u
-  have hq : ∀ v : ℂ, qdet E v φ =
-      (v * (v - 1)) • φ + v • E 1 1 φ + (v - 1) • E 0 0 φ + E 0 0 (E 1 1 φ) - E 1 0 (E 0 1 φ) := by
-    intro v
-    have hu : (Finset.univ : Finset (Equiv.Perm (Fin 2))) = {1, Equiv.swap 0 1} := by decide
-    have hne : (1 : Equiv.Perm (Fin 2)) ≠ Equiv.swap 0 1 := by decide
-    unfold qdet qminor Tm
-    rw [hu, Finset.sum_pair hne]
-    simp [List.ofFn_succ, Module.algebraMap_end_apply]
-    module
-  have c (a b c d : Fin 2) := congrArg (fun f : Module.End ℂ V => f φ) (h a b c d)
-  have cad := c 0 0 1 1
-  have cab := c 0 0 0 1
-  have cac := c 0 0 1 0
-  have cdb := c 1 1 0 1
-  have cdc := c 1 1 1 0
-  have cbc := c 0 1 1 0
-  simp only [LinearMap.sub_apply, Module.End.mul_apply, if_true, Fin.zero_eq_one_iff,
-    Fin.one_eq_zero_iff, OfNat.ofNat_ne_one, if_false, LinearMap.zero_apply] at cad cab cac cdb cdc cbc
-  have z (a b : Fin 2) := congrArg (E a b) h1
-  have w (a b : Fin 2) := congrArg (E a b) h2
-  have g (a b : Fin 2) := congrArg (E a b) h3
-  simp only [map_add (f := _), map_sub, map_smul, map_zero] at z w g
-  have hI : Complex.I * Complex.I = -1 := Complex.I_mul_I
-  rw [hq]
-  linear_combination (norm := skip) u • h1 + (1 / 4 : ℂ) • (z 0 0 + z 1 1 - (g 0 0 - g 1 1)
-    - Complex.I • (g 0 1 + g 1 0) - (2 * Complex.I) • h2 + (w 0 1 - w 1 0) + (Complex.I * k) • h2
-    + (2 : ℂ) • cad - Complex.I • (cab + cac - cdb - cdc) + (2 : ℂ) • cbc)
-  match_scalars <;> ring_nf <;> simp [Complex.I_sq]
+  apply _root_.UpperTheory.Reformulated.B.Qf10.casimir <;> assumption
 
 end UpperTheory.Reformulated.B.QuantumMinorsCasimir
 end -- clump:auto
@@ -130,57 +104,15 @@ open NumberField Neutral.B1 Formalism.L2.Host GlobalTheory.CuspRep UpperTheory.V
 
 private theorem infGL_scalar {F : Type} [Field F] [NumberField F] [IsTotallyReal F] (u : (Rinf F)ˣ) :
     infGL F 2 (GeneralLinearGroup.scalar (Fin 2) u) = GeneralLinearGroup.scalar (Fin 2) (infId F u) := by
-  have h : ∀ x, pInf F (sInf F x) = x := fun x => (infEq F).symm_apply_apply x
-  have h1 : pInf F (infId F u : Ideles F) = u := by
-    change pInf F (1 - sInf F 1 + sInf F _) = _
-    simp [h]
-  have h2 : pFin F (infId F u : Ideles F) = 1 := by
-    change (1 : Af F) - 0 + 0 = 1
-    simp
-  refine ga_ext ?_ ?_
-  · rw [TR.pInf_infGL]
-    ext i j
-    by_cases e : i = j <;> simp [e, h1]
-  · rw [TR.pFin_infGL]
-    ext i j
-    by_cases e : i = j <;> simp [e, h2]
+  apply _root_.infGL_scalar <;> assumption
 
 private theorem fin_expU {F : Type} [Field F] [NumberField F] [IsTotallyReal F] {ω : HChar F} (h : IsOfFinOrder ω)
     (z : Rinf F) : ω.1 (infId F (expU z)) = 1 := by
-  obtain ⟨n, hn, e⟩ := isOfFinOrder_iff_pow_eq_one.1 h
-  have e1 : expU z = expU ((n : ℝ)⁻¹ • z) ^ n := by
-    refine Units.ext (funext fun i => ?_)
-    have : (n : ℝ) ≠ 0 := by positivity
-    simp only [Units.val_pow_eq_pow_val, Pi.pow_apply, expU_val, ← Real.exp_nat_mul, Pi.smul_apply, smul_eq_mul]
-    congr 1
-    field_simp
-  rw [e1, map_pow, map_pow]
-  have e2 : ω.1 ^ n = 1 := congrArg Subtype.val e
-  exact DFunLike.congr_fun e2 _
+  apply _root_.fin_expU <;> assumption
 
 private theorem lie_scalar {F : Type} [Field F] [NumberField F] [IsTotallyReal F] {ω : HChar F} (h : IsOfFinOrder ω)
     {φ : Sm F 2} (hφ : ∀ (z : Ideles F) (g : GA F 2), φ.1 (GeneralLinearGroup.scalar (Fin 2) z * g) = ((ω.1 z : ℂˣ) : ℂ) * φ.1 g) (z : Rinf F) : lie F 2 (toL (Matrix.scalar (Fin 2) z)) φ = 0 := by
-  refine Subtype.ext (funext fun g => ?_)
-  have h1 := hasDerivAt_curve φ g (fun t => GeneralLinearGroup.scalar (Fin 2) (expU (t • z)))
-    (toL (Matrix.scalar (Fin 2) z)) (by simp [TR.expU_zero]) (by
-      refine hasDerivAt_pi.2 fun i => hasDerivAt_pi.2 fun j => hasDerivAt_pi.2 fun v => ?_
-      by_cases e : i = j
-      · subst e
-        have := ((hasDerivAt_id (0 : ℝ)).mul_const (z v)).exp
-        simpa using this
-      · simpa [Matrix.diagonal_apply, e] using hasDerivAt_const (0 : ℝ) (0 : ℝ))
-  have h2 : (fun t : ℝ => φ.1 (g * infGL F 2 (GeneralLinearGroup.scalar (Fin 2) (expU (t • z))))) = fun _ => φ.1 g := by
-    funext t
-    rw [infGL_scalar, ← GeneralLinearGroup.scalar_commute, hφ, fin_expU h]
-    simp
-  rw [h2] at h1
-  exact h1.unique (hasDerivAt_const _ _)
-
-private theorem qdet2 {A : Type} [Ring A] [Algebra ℂ A] (E : Fin 2 → Fin 2 → A) (u : ℂ) :
-    Formalism.REAL.qdet E u = (algebraMap ℂ A u + E 0 0) * (algebraMap ℂ A (u - 1) + E 1 1) - E 1 0 * E 0 1 := by
-  have h : (Finset.univ : Finset (Equiv.Perm (Fin 2))) = {1, Equiv.swap 0 1} := by decide
-  rw [Formalism.REAL.qdet, Formalism.REAL.qminor, h, Finset.sum_pair (by decide)]
-  simp [Formalism.REAL.Tm, List.ofFn_succ, sub_eq_add_neg]
+  apply _root_.lie_scalar <;> assumption
 
 private theorem casimir {V : Type} [AddCommGroup V] [Module ℂ V] (E : Fin 2 → Fin 2 → Module.End ℂ V)
     (hE : Formalism.REAL.GlRel E) (k : ℂ) (φ : V) (h0 : E 0 0 φ + E 1 1 φ = 0)

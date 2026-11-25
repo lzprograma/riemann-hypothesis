@@ -282,7 +282,7 @@ theorem proof : SerreGraded.Statement := by
       simp only [C_mul, C_pow]
       ring
     obtain ⟨z, hz, hz'⟩ := hE _ hm htors (n + k) (by omega)
-    rw [coeff_C_mul_X_pow, if_pos rfl] at hz'
+    rw [coeff_C_mul_X_pow, ite_eq_left rfl] at hz'
     have hcancel : w u * (s * w u ^ k) = w u * z := by rw [← hz']; ring
     rw [mul_left_cancel₀ hu hcancel]
     exact hz

@@ -95,13 +95,7 @@ theorem isSemisimpleRepresentation_of_finiteIndex_of_index_ne_zero
     intro g v hv
     show P (ρ g v) = 0
     rw [← hP, LinearMap.mem_ker.mp hv, map_zero]
-  have hCompl : IsCompl W (LinearMap.ker P) := by
-    refine ⟨Submodule.disjoint_def.mpr fun v hv hv' => ?_, codisjoint_iff.mpr (eq_top_iff.mpr fun v _ => ?_)⟩
-    · rw [← hPfix v hv]; exact hv'
-    · have : v = P v + (v - P v) := by abel
-      rw [this]
-      refine Submodule.add_mem_sup (hPW v) ?_
-      rw [LinearMap.mem_ker, map_sub, hPfix _ (hPW v), sub_self]
+  have hCompl : IsCompl W (LinearMap.ker P) := LinearMap.IsProj.isCompl ⟨hPW, hPfix⟩
   refine ⟨⟨LinearMap.ker P, hKer⟩, ?_⟩
   rw [isCompl_iff, disjoint_iff, codisjoint_iff,
     ← Subrepresentation.toSubmodule_injective.eq_iff, ← Subrepresentation.toSubmodule_injective.eq_iff]

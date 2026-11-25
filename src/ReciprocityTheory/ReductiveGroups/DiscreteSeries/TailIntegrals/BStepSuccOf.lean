@@ -9,57 +9,16 @@ public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.Ind
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.InvSqrtTwoMulSelf
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.HermitianFormLiftVecFirstVector
 import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.MatExtBvec
-import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Analysis.Matrix.MeasurableSpace
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -85,8 +44,8 @@ variable {p m : ℕ}
 theorem cont_ite {β : Type} [TopologicalSpace β] [Zero β] (c : Prop) [Decidable c] {f : Xp p m → β}
     (hf : Continuous f) : Continuous (fun x => if c then f x else 0) := by
   by_cases h : c
-  · simp only [h, if_true]; exact hf
-  · simp only [h, if_false]; exact continuous_const
+  · simp only [h, ite_true]; exact hf
+  · simp only [h, ite_false]; exact continuous_const
 
 theorem cont_Lsq (l : Fin (p + 1)) : Continuous (fun x : Xp p m => Lsq x l) := by
   unfold Lsq
@@ -216,13 +175,13 @@ private theorem Hpk_apply_wp_eq_ite (i : Fin (k - 1)) (j : Fin (2 * n + k + 1)) 
   have hij : wp k n i = j ↔ (wp k n i).val = j.val := Fin.ext_iff
   unfold Hpk
   by_cases h : (wp k n i).val = j.val
-  · rw [if_pos (hij.2 h), if_neg (by omega), if_neg (by omega), if_pos ⟨by omega, by omega, hij.2 h⟩,
-      if_neg (by omega)]
-  · rw [if_neg (fun he => h (hij.1 he)), if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+  · rw [ite_eq_left (hij.2 h), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left ⟨by omega, by omega, hij.2 h⟩,
+      ite_eq_right (by omega)]
+  · rw [ite_eq_right (fun he => h (hij.1 he)), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
 
 theorem hpk_mv_w (i : Fin (k - 1)) (y : Fin (2 * n + k + 1) → ℂ) : (Hpk k n *ᵥ y) (wp k n i) = y (wp k n i) := by
   simp only [mulVec, dotProduct, Hpk_apply_wp_eq_ite, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
 
 theorem hpk_bvec_w (i : Fin (k - 1)) : Hpk k n *ᵥ wv k n i = wv k n i := by
   funext p
@@ -231,11 +190,11 @@ theorem hpk_bvec_w (i : Fin (k - 1)) : Hpk k n *ᵥ wv k n i = wv k n i := by
     rw [Matrix.conjTranspose_apply] at this
     exact this.symm
   simp only [wv, bvec, mulVec, dotProduct, Pi.single_apply, mul_ite, mul_one, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [hc, Hpk_apply_wp_eq_ite]
   by_cases h : wp k n i = p
   · subst h; simp
-  · rw [if_neg h, if_neg (fun he => h he.symm), star_zero]
+  · rw [ite_eq_right h, ite_eq_right (fun he => h he.symm), star_zero]
 
 theorem phi_w (a : Fin (n + 1)) (i : Fin (k - 1)) : phiV k n a (wp k n i) = 0 := by
   have hi := i.isLt
@@ -244,13 +203,13 @@ theorem phi_w (a : Fin (n + 1)) (i : Fin (k - 1)) : phiV k n a (wp k n i) = 0 :=
   unfold phiV
   split_ifs with h
   · simp only [bvec]
-    rw [Pi.single_apply, if_neg]
+    rw [Pi.single_apply, ite_eq_right]
     intro he
     have := congrArg Fin.val he
     simp only [esI] at this
     omega
   · simp only [epsV, bvec, Pi.smul_apply, Pi.add_apply, Pi.single_apply]
-    rw [if_neg, if_neg]
+    rw [ite_eq_right, ite_eq_right]
     · simp
     · intro he
       have := congrArg Fin.val he
@@ -494,7 +453,7 @@ variable (τ : Matrix (Fin (r' + 1)) (Fin (r' + 1)) ℂ)
 
 theorem tt_su (a b : Fin (r' + 1)) : tt τ (su b) (su a) = τ b a := by
   unfold tt
-  rw [if_neg (by simp [su]), dite_eq_right (by simp [su])]
+  rw [ite_eq_right (by simp [su]), dite_eq_right (by simp [su])]
   congr 1
 
 theorem tt_00 : tt τ 0 0 = 1 := by
@@ -513,7 +472,7 @@ theorem tt_tri (hτ : τ.BlockTriangular id) : (tt τ).BlockTriangular id := by
   unfold tt
   by_cases hi : i.val = 0
   · omega
-  · rw [if_neg hi]
+  · rw [ite_eq_right hi]
     by_cases hj : j.val = 0
     · rw [dite_eq_left hj]
     · rw [dite_eq_right hj]
@@ -682,13 +641,13 @@ theorem cz0 {k : ℕ} (hk : 1 ≤ k) (z : Fin (2 * 0 + k + 1) → ℂ) (hT : 0 <
     herm (Hpk k 0) (epsV k 0) z ≠ 0 := by
   intro h
   have sgl : ∀ p : Fin (2 * 0 + k + 1), sg k 0 p.val = p.val := fun p => by
-    have := p.2; unfold sg; rw [if_neg (by omega)]
+    have := p.2; unfold sg; rw [ite_eq_right (by omega)]
   have hmv : ∀ (v : Fin (2 * 0 + k + 1) → ℂ) (p : Fin (2 * 0 + k + 1)),
       (Hpk k 0 *ᵥ v) p = (if p.val = 0 + k then -1 else 1) * v p := by
     intro v p; simp only [mulVec, dotProduct]
     rw [Finset.sum_eq_single p]
-    · rw [hpk_apply, sgl, if_pos rfl]
-    · intro q _ hq; rw [hpk_apply, sgl, if_neg (fun e => hq (Fin.ext e)), zero_mul]
+    · rw [hpk_apply, sgl, ite_eq_left rfl]
+    · intro q _ hq; rw [hpk_apply, sgl, ite_eq_right (fun e => hq (Fin.ext e)), zero_mul]
     · intro hp; exact absurd (Finset.mem_univ _) hp
   have hw0 : (wI k 0 0).val = 0 := by simp [wI]
   have hwk : (wI k 0 (Fin.last k)).val = k := by simp [wI]
@@ -721,13 +680,13 @@ theorem cz0 {k : ℕ} (hk : 1 ≤ k) (z : Fin (2 * 0 + k + 1) → ℂ) (hT : 0 <
   have key : 0 ≤ ∑ p, (if p.val = 0 + k then (-1 : ℝ) else 1) * Complex.normSq (z p) := by
     rw [← Finset.add_sum_erase _ _ (Finset.mem_univ (wI k 0 (Fin.last k))),
       ← Finset.add_sum_erase _ _ (Finset.mem_erase.2 ⟨hne, Finset.mem_univ (wI k 0 0)⟩)]
-    rw [if_pos (show (wI k 0 (Fin.last k)).val = 0 + k by omega), if_neg (show ¬ (wI k 0 0).val = 0 + k by omega),
+    rw [ite_eq_left (show (wI k 0 (Fin.last k)).val = 0 + k by omega), ite_eq_right (show ¬ (wI k 0 0).val = 0 + k by omega),
       hzz]
     have hrest : 0 ≤ ∑ p ∈ (Finset.univ.erase (wI k 0 (Fin.last k))).erase (wI k 0 0),
         (if p.val = 0 + k then (-1 : ℝ) else 1) * Complex.normSq (z p) := by
       refine Finset.sum_nonneg fun p hp => ?_
       have hpk : p ≠ wI k 0 (Fin.last k) := (Finset.mem_erase.1 (Finset.mem_erase.1 hp).2).1
-      rw [if_neg (show ¬ (p.val = 0 + k) from fun e => hpk (Fin.ext (by omega)))]
+      rw [ite_eq_right (show ¬ (p.val = 0 + k) from fun e => hpk (Fin.ext (by omega)))]
       exact mul_nonneg zero_le_one (Complex.normSq_nonneg _)
     linarith
   unfold Tz at hT
@@ -739,9 +698,9 @@ theorem cz_ne {k n : ℕ} (hk : 1 ≤ k) (z1 : Fin (2 * n + k + 1) → ℂ) (hT 
   by_cases hn : 0 < n
   · unfold phiV fvec
     rw [dite_eq_left hn, dite_eq_left hn, herm_bb, hpk_apply]
-    rw [if_pos (show (esI k n ⟨0, hn⟩).val = sg k n (eI k n ⟨0, hn⟩).val by
-        show 2 * n + k - 0 = sg k n 0; unfold sg; rw [if_pos (Or.inl hn)]),
-      if_neg (show ¬ (eI k n ⟨0, hn⟩).val = n + k by show ¬ 0 = n + k; omega)]
+    rw [ite_eq_left (show (esI k n ⟨0, hn⟩).val = sg k n (eI k n ⟨0, hn⟩).val by
+        show 2 * n + k - 0 = sg k n 0; unfold sg; rw [ite_eq_left (Or.inl hn)]),
+      ite_eq_right (show ¬ (eI k n ⟨0, hn⟩).val = n + k by show ¬ 0 = n + k; omega)]
     norm_num
   · have hn0 : n = 0 := by omega
     subst hn0
@@ -830,7 +789,7 @@ theorem inner_bound (hIW : IW) (hF : FormulaF) (hHC : HeisConjLev) (hHA : HeisAc
     rw [this, norm_div, htn]
   have hQ : xiR k r' (fun a => s (su a) - if a = 0 then γ else 0) m = A * Del k r' 0 m ^ γ := by
     unfold xiR; rw [hA, Fin.prod_univ_succ, Fin.prod_univ_succ]
-    simp only [if_true, Fin.succ_ne_zero, if_false, sub_zero]
+    simp only [ite_true, Fin.succ_ne_zero, ite_false, sub_zero]
     rw [show -(s (su 0) - γ) = -s (su 0) + γ by ring, Real.rpow_add hD0pos]; ring
   have hQ0 : 0 ≤ xiR k r' (fun a => s (su a) - if a = 0 then γ else 0) m :=
     Finset.prod_nonneg fun a _ => Real.rpow_nonneg (hDel _ _ _) _
@@ -930,8 +889,8 @@ theorem bStepSucc_of (hB2 : InductiveHeisenbergInputs) (hIW : IW) (hF : FormulaF
     have hs0a : s0 k r' a = s0 k (1 + r') (su a) := by
       unfold s0
       by_cases h : a.val < r'
-      · rw [if_pos h, if_pos (show (su a).val < 1 + r' by rw [su_val]; omega)]
-      · rw [if_neg h, if_neg (show ¬ (su a).val < 1 + r' by rw [su_val]; omega)]
+      · rw [ite_eq_left h, ite_eq_left (show (su a).val < 1 + r' by rw [su_val]; omega)]
+      · rw [ite_eq_right h, ite_eq_right (show ¬ (su a).val < 1 + r' by rw [su_val]; omega)]
     rw [hs0a]
     have h1 := he0 (su a); have h2 := heS' (su a)
     split_ifs <;> constructor <;> linarith

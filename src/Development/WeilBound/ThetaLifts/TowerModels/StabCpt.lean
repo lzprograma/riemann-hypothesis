@@ -4,50 +4,7 @@ import Development.WeilBound.ThetaLifts.LatticeBasics.IsCompactOfUnits
 public import Development.WeilBound.ThetaLifts.TowerModels.ExistsHaarOfIsCompact
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
 public import Development.WeilBound.ThetaLifts.TowerModels.LeviAd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
 
 @[expose] public section
@@ -107,45 +64,10 @@ theorem isCompact_latHat (X : Spc F E n) (hX : X.L.FG) : IsCompact (latHat X : S
 variable (F) in
 def eF : AF F := pairA F 0 1
 
-theorem vec_bound (X : Spc F E n) (hX : X.L.IsFullLattice E) (x : Fin n → E) :
-    ∃ C : Set (Fin n → AE F E), IsCompact C ∧ ∀ M : Matrix (Fin n) (Fin n) (AE F E),
-      (∀ y ∈ latHat X, M *ᵥ y ∈ latHat X) → M *ᵥ (eF F • incV F x) ∈ C := by
-  have hx : x ∈ Submodule.span E (X.L : Set (Fin n → E)) := by
-    rw [hX.span_eq_top]; trivial
-  induction hx using Submodule.span_induction with
-  | mem y hy => exact ⟨_, isCompact_latHat X hX.fg, fun M hM => hM _ (GlobalTheory.ThK.Dbl.St.mem_latHat X GlobalTheory.ThK.Dbl.St.eF_mem hy)⟩
-  | zero =>
-    refine ⟨{0}, isCompact_singleton, fun M _ => ?_⟩
-    have : incV F (0 : Fin n → E) = 0 := funext fun i => map_zero (inclR (F := F) (AF F))
-    rw [this, smul_zero, Matrix.mulVec_zero]; rfl
-  | add y z _ _ hy hz =>
-    obtain ⟨C, hC, h⟩ := hy
-    obtain ⟨C', hC', h'⟩ := hz
-    refine ⟨C + C', hC.add hC', fun M hM => ?_⟩
-    have : incV F (y + z) = incV F y + incV F z := funext fun i => map_add (inclR (F := F) (AF F)) _ _
-    rw [this, smul_add, Matrix.mulVec_add]
-    exact Set.add_mem_add (h M hM) (h' M hM)
-  | smul c y _ hy =>
-    obtain ⟨C, hC, h⟩ := hy
-    refine ⟨(fun z => inclR (F := F) (AF F) c • z) '' C, hC.image (continuous_const_smul _), fun M hM => ⟨_, h M hM, ?_⟩⟩
-    have : eF F • incV F (c • y) = inclR (F := F) (AF F) c • eF F • incV F y :=
-      funext fun i => by
-        change eF F • inclR (F := F) (AF F) (c * y i) = inclR (F := F) (AF F) c * (eF F • inclR (F := F) (AF F) (y i))
-        rw [map_mul, mul_smul_comm]
-    rw [this]
-    exact (Matrix.mulVec_smul _ _ _).symm
-
 theorem fin_bound (X : Spc F E n) (hX : X.L.IsFullLattice E) (i j : Fin n) :
     ∃ C : Set (AE F E), IsCompact C ∧ ∀ M : Matrix (Fin n) (Fin n) (AE F E),
-      (∀ y ∈ latHat X, M *ᵥ y ∈ latHat X) → eF F • M i j ∈ C := by
-  obtain ⟨C, hC, h⟩ := vec_bound X hX (Pi.single j 1)
-  refine ⟨(fun z => z i) '' C, hC.image (continuous_apply i), fun M hM => ⟨_, h M hM, ?_⟩⟩
-  have : incV F (Pi.single j 1 : Fin n → E) = Pi.single j 1 := funext fun k => by
-    by_cases hk : k = j
-    · subst hk; simp [incV]
-    · simp [incV, hk]
-  rw [this, Matrix.mulVec_smul, Matrix.mulVec_single_one]
-  rfl
+      (∀ y ∈ latHat X, M *ᵥ y ∈ latHat X) → eF F • M i j ∈ C :=
+  _root_.GlobalTheory.ThK.Dbl.St.fin_bound X hX i j
 
 theorem exists_section (h : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, EmbOver E w) :
     ∃ Φ : (InfinitePlace F → ℂ) → AE F E, Continuous Φ ∧ ∀ z, z = Φ (fun w => piInf (τ w) z) + eF F • z := by

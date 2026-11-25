@@ -134,7 +134,7 @@ theorem level_good_and_sign : ∀ (D : D7) (Q : Par D), Q.Pins → (∀ p : ℕ,
       rw [hφ]
       have hd : (0 : ℝ) < D.host.d := by exact_mod_cast d_pos D
       simpa using hd
-    rw [if_pos hpos, Int.cast_one, _root_.one_mul] at h1
+    rw [ite_eq_left hpos, Int.cast_one, _root_.one_mul] at h1
     rw [map_neg, Complex.neg_im]
     linarith
 

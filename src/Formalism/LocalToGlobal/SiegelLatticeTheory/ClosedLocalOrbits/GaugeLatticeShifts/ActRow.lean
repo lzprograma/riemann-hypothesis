@@ -16,8 +16,6 @@ namespace Formalism.L2.SG.Pf.Act
 
 section Row
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D}
 
 theorem isoG_one {u : D.what₂.Word} : isoG (1 : Gam X u) = 1 := by

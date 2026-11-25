@@ -3,54 +3,9 @@ module
 public import Formalism.BranchSandwichDivisors.StatementL
 public import Mathlib.CategoryTheory.Category.Basic
 public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.MapScale
+import Formalism.BranchSandwichDivisors.BranchIsometryProofs.Transfer
 import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HtGram
 import Formalism.HarderNarasimhan.ShiftInvariance
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -79,31 +34,19 @@ theorem deg_bot (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
   rw [sup_idem] at h
   linarith
 
-theorem rkK_bot : Formalism.HN.rkK (⊥ : Submodule (𝓞 K) V) = 0 := by
-  simp [Formalism.HN.rkK]
-
-theorem eq_bot_of_rkK (b : Basis ι K V) {L : Submodule (𝓞 K) V} (h : Formalism.HN.rkK L = 0) :
-    L = ⊥ := by
-  have : Module.Finite K V := Module.Finite.of_basis b
-  have h1 : Submodule.span K (L : Set V) = ⊥ := Submodule.finrank_eq_zero.1 h
-  rw [Submodule.span_eq_bot] at h1
-  exact (Submodule.eq_bot_iff _).2 fun x hx => h1 x hx
-
-theorem finrank_pos' : 0 < Module.finrank ℚ K := Module.finrank_pos
-
 theorem degD_eq (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
     (hX : ∀ v, IsUnit (X v).det) (L : Submodule (𝓞 K) V) (hL : L.FG) :
     degD b X L = 2 / (Module.finrank ℚ K : ℝ) * Formalism.HN.deg (Formalism.HermitianLatticesTheory.realize b X) L +
       (Formalism.HN.rkK L : ℝ) * (-Real.log 2 + Formalism.HN.logDisc K / (Module.finrank ℚ K : ℝ)) := by
   by_cases h0 : L = ⊥
   · subst h0
-    simp [degD, rkK_bot, deg_bot b X hX]
-  · have hr : Formalism.HN.rkK L ≠ 0 := fun h => h0 (eq_bot_of_rkK b h)
+    simp [degD, ms_rkK_bot, deg_bot b X hX]
+  · have hr : Formalism.HN.rkK L ≠ 0 := (ms_rkK_pos b h0).ne'
     have hrk := (Formalism.HN.plLat K V ι b X hX L hL).2.1
     have hs : Formalism.HN.slope (Formalism.HermitianLatticesTheory.realize b X) L =
         Formalism.HN.deg (Formalism.HermitianLatticesTheory.realize b X) L / (Formalism.HN.rk (Formalism.HermitianLatticesTheory.realize b X) L : ℝ) := rfl
     have hn : (Module.finrank ℚ K : ℝ) ≠ 0 := by
-      exact_mod_cast (finrank_pos' (K := K)).ne'
+      exact_mod_cast Module.finrank_pos.ne'
     have hr' : (Formalism.HN.rkK L : ℝ) ≠ 0 := by exact_mod_cast hr
     rw [degD, Formalism.HN.muDef, hs, hrk]
     push_cast
@@ -119,7 +62,9 @@ theorem orth_inner (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
 
 theorem main (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
     (hX : ∀ v, IsUnit (X v).det) {S : Type} (A : S → Submodule (𝓞 K) V) (hA : ∀ s, (A s).FG)
-    (horth : ∀ s t, s ≠ t → OrthAt b X (A s) (A t)) (s : Finset S) :
+    (hinner : ∀ i j, i ≠ j → ∀ x ∈ A i, ∀ y ∈ A j,
+      inner ℝ (Formalism.HermitianLatticesTheory.realize b X x) (Formalism.HermitianLatticesTheory.realize b X y) = 0)
+    (s : Finset S) :
     (⨆ i ∈ s, A i).FG ∧ Formalism.HN.rkK (⨆ i ∈ s, A i) = ∑ i ∈ s, Formalism.HN.rkK (A i) ∧
       Formalism.HN.deg (Formalism.HermitianLatticesTheory.realize b X) (⨆ i ∈ s, A i) =
         ∑ i ∈ s, Formalism.HN.deg (Formalism.HermitianLatticesTheory.realize b X) (A i) ∧
@@ -128,7 +73,7 @@ theorem main (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
   classical
   induction s using Finset.induction_on with
   | empty =>
-    simp [rkK_bot, deg_bot b X hX, Submodule.fg_bot]
+    simp [ms_rkK_bot, deg_bot b X hX, Submodule.fg_bot]
   | insert a s ha ih =>
     obtain ⟨ihfg, ihrk, ihdeg, ihmu⟩ := ih
     rw [Finset.iSup_insert]
@@ -140,7 +85,7 @@ theorem main (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
 
       rw [← hμ, map_sum, inner_sum]
       refine Finset.sum_eq_zero fun i hi => ?_
-      exact orth_inner b X (horth a i (fun h => ha (h ▸ hi))) x hx _ (μ i).2
+      exact hinner a i (fun h => ha (h ▸ hi)) x hx _ (μ i).2
     have hlA := (Formalism.HN.plLat K V ι b X hX (A a) (hA a)).1
     have hlB := (Formalism.HN.plLat K V ι b X hX B ihfg).1
     obtain ⟨hl, hdeg, hmu⟩ :=
@@ -155,9 +100,9 @@ theorem main (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
       le_sup_left le_sup_right).1
     rw [hinf, (Formalism.HN.plLat K V ι b X hX _ hfg).2.1, (Formalism.HN.plLat K V ι b X hX _ (hA a)).2.1,
       (Formalism.HN.plLat K V ι b X hX _ ihfg).2.1,
-      (Formalism.HN.plLat K V ι b X hX _ Submodule.fg_bot).2.1, rkK_bot, mul_zero, add_zero,
+      (Formalism.HN.plLat K V ι b X hX _ Submodule.fg_bot).2.1, ms_rkK_bot, mul_zero, add_zero,
       ← mul_add] at hrk
-    have hrk' := Nat.eq_of_mul_eq_mul_left (finrank_pos' (K := K)) hrk
+    have hrk' := Nat.eq_of_mul_eq_mul_left Module.finrank_pos hrk
     refine ⟨hfg, ?_, ?_, ?_⟩
     · rw [hrk', Finset.sum_insert ha, ihrk]
     · rw [hdeg, Finset.sum_insert ha, ihdeg]
@@ -178,7 +123,7 @@ end OrthogonalSumAlt
 open OrthogonalSumAlt in
 theorem orthogonal_sum_slope : OrthSum := by
   intro K V ι _ _ _ _ _ _ _ _ _ _ b X hX S _ A hA horth
-  obtain ⟨hfg, hrk, hdeg, hmu⟩ := main b X hX A hA horth Finset.univ
+  obtain ⟨hfg, hrk, hdeg, hmu⟩ := main b X hX A hA (fun s t h => orth_inner b X (horth s t h)) Finset.univ
   have hu : (⨆ i ∈ (Finset.univ : Finset S), A i) = ⨆ i, A i := by simp
   rw [hu] at hfg hrk hdeg hmu
   refine ⟨hrk, ?_, ?_⟩
@@ -201,14 +146,6 @@ variable {K V ι : Type} [Field K] [NumberField K] [StarRing K] [_root_.NumberFi
   [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Fintype ι]
   [DecidableEq ι]
 
-theorem blockInv (X : InfinitePlace K → Matrix ι ι ℂ) (hX : ∀ v, IsUnit (X v).det) (n : ℕ)
-    (v : InfinitePlace K) :
-    (Matrix.blockDiagonal' fun _ : Fin n => X v) * (Matrix.blockDiagonal' fun _ : Fin n => (X v)⁻¹)
-      = 1 := by
-  rw [← Matrix.blockDiagonal'_mul]
-  simp only [Matrix.mul_nonsing_inv _ (hX v)]
-  exact Matrix.blockDiagonal'_one
-
 theorem fcoord_pi (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
     (hX : ∀ v, IsUnit (X v).det) (n : ℕ) (v : InfinitePlace K) (x : Fin n → V) (j : Fin n)
     (a : ι) :
@@ -217,7 +154,7 @@ theorem fcoord_pi (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
         Formalism.HermitianLatticesTheory.fcoord b X v (x j) a := by
   have hinv : (Matrix.blockDiagonal' fun _ : Fin n => X v)⁻¹ =
       Matrix.blockDiagonal' fun _ : Fin n => (X v)⁻¹ :=
-    Matrix.inv_eq_right_inv (blockInv X hX n v)
+    PrismTransfer.blockDiag_inv (X v) (hX v)
   simp only [Formalism.HermitianLatticesTheory.fcoord, hinv, Matrix.mulVec, dotProduct, Fintype.sum_sigma,
     Matrix.blockDiagonal'_apply, Formalism.HermitianLatticesTheory.vecAt]
   rw [Finset.sum_eq_single j]
@@ -283,7 +220,7 @@ open OrthogonalSumAlt in
 theorem power_slope_mu : PowMu := by
   intro K V ι _ _ _ _ _ _ _ _ _ _ b X hX A n hA hA0 hn bn Xn An
   have hXn : ∀ v, IsUnit (Xn v).det := fun v =>
-    Matrix.isUnit_det_of_right_inverse (blockInv X hX n v)
+    PrismTransfer.blockDiag_det (X v) (hX v)
   let ψ : Fin n → V →ₗ[K] (Fin n → V) := fun i => LinearMap.single K (fun _ : Fin n => V) i
   have hψ : ∀ i, Function.Injective (ψ i) := fun i x y h =>
     Pi.single_injective (M := fun _ : Fin n => V) i h
@@ -296,8 +233,8 @@ theorem power_slope_mu : PowMu := by
   have hAi0 : ∀ i, Ai i ≠ ⊥ := by
     intro i h
     have h1 : Formalism.HN.rkK (Ai i) = Formalism.HN.rkK A := rkK_map (ψ i) (hψ i) A
-    rw [h, rkK_bot] at h1
-    exact hA0 (eq_bot_of_rkK b h1.symm)
+    rw [h, ms_rkK_bot] at h1
+    exact (ms_rkK_pos b hA0).ne h1
   have hre := fun i => Formalism.HN.rerealize K V ι (Fin n → V) (Σ _ : Fin n, ι) b X bn Xn (ψ i) hX hXn
     (hψ i) (fun v x => normAt_single b X hX n v i x) A hA
   have horth : ∀ s t, s ≠ t → OrthAt bn Xn (Ai s) (Ai t) := by
@@ -323,7 +260,7 @@ theorem power_slope_mu : PowMu := by
     rw [hrk]
     simp [hrkA]
   have hr0 : (Formalism.HN.rkK A : ℝ) ≠ 0 := by
-    exact_mod_cast fun h => hA0 (eq_bot_of_rkK b h)
+    exact_mod_cast (ms_rkK_pos b hA0).ne'
   have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
   have hAnfg : An.FG := by
     rw [← hAn]
@@ -349,17 +286,14 @@ theorem power_slope_mu : PowMu := by
 open OrthogonalSumAlt in
 theorem orthSandwich_of (hS : ScaleSandwich) : OrthSandwich := by
   intro K V ι _ _ _ _ _ _ _ _ _ _ b X hX S _ A A0 G hA0 hG horth hle hGA
-  have hnoeth : IsNoetherian (𝓞 K) A0 := isNoetherian_of_fg_of_noetherian A0 hA0
-  have hAfg : ∀ s, (A s).FG := fun s => by
-    have := (isNoetherian_submodule.1 hnoeth) (A s) (hle s)
-    exact this
+  have hAfg : ∀ s, (A s).FG := fun s => hA0.of_le (hle s)
   obtain ⟨hrk, hdeg, -⟩ := orthogonal_sum_slope K V ι b X hX S A hAfg horth
   have hB : (⨆ s, A s) ≤ A0 := iSup_le hle
   by_cases h0 : A0 = ⊥
   · have hB0 : (⨆ s, A s) = ⊥ := le_bot_iff.1 (h0 ▸ hB)
     rw [hB0] at hrk hdeg
     rw [← hrk, ← hdeg, h0]
-    simp [degD, rkK_bot]
+    simp [degD, ms_rkK_bot]
   · obtain ⟨h1, h2, h3, -, -⟩ := hS K V ι b X hX A0 (⨆ s, A s) G hA0 h0 hG hB hGA
     have hr : (0 : ℝ) ≤ (Formalism.HN.rkK A0 : ℝ) := Nat.cast_nonneg _
     refine ⟨by rw [← h1, hrk], ?_, ?_⟩

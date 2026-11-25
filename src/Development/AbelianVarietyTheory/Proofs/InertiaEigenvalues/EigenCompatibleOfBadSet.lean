@@ -80,7 +80,7 @@ open GlobalTheory.Hk3 (hyp SphOp)
 open GlobalTheory.HeckeScalarSph (locK)
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar Formalism.IndefR.principalLevelFrame.instCMHostI GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
+attribute [local instance] Formalism.IndefR.principalLevelFrame.instCMHostI
 
 variable {D : D7} {V : HSp D} {n : ℕ} {hF : D.host.F = maximalRealSubfield D.host.E} {Q : principalLevelFrame.RowPsi V n}
 
@@ -236,7 +236,7 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Form
   GlobalTheory.HeightCounting GlobalTheory.EigRows
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar Formalism.IndefR.principalLevelFrame.instCMHostI GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
+attribute [local instance] Formalism.IndefR.principalLevelFrame.instCMHostI
 
 
 
@@ -363,8 +363,7 @@ theorem exists_rat (Y : R3.Read (A3 := A3) R.toRealDat F.lv2 X0) (hlev : R.toLev
         Module.End ℂ (MMap (R.MW i (sg0 D A3.A)))) ∘ₗ (R.HW i (sg0 D A3.A)).e)
     (by
       rintro (_ | p | t) x
-      · set_option synthInstance.maxHeartbeats 100000 in
-        simp only [Sum.elim_inl, LinearMap.comp_apply, LinearMap.sub_apply, LinearMap.sum_apply, LinearMap.smul_apply,
+      · simp only [Sum.elim_inl, LinearMap.comp_apply, LinearMap.sub_apply, LinearMap.sum_apply, LinearMap.smul_apply,
           Module.End.one_apply, map_sub, map_sum]
         congr 1
         exact Finset.sum_congr rfl fun g _ => by rw [map_smulₛₗ, map_smul, hact']
@@ -457,13 +456,6 @@ theorem eigOcc (Y : R3.Read (A3 := A3) R.toRealDat F.lv2 X0) (hlev : R.toLevCh.I
   exact ⟨x, hx, hx0, fun k P _ => h k P⟩
 
 end Rows
-
-section AtRows
-
-open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.TypeRec.factG
-
-end AtRows
 
 end GlobalTheory.TwInputs.Eig
 

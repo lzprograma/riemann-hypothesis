@@ -201,9 +201,9 @@ theorem freq_to_beta (χ : X.Ψ → Fin 2 → Fin 2 → ℂ) (hχ : IsHermFam χ
       (fun γ i k => by split_ifs; exact γ.isIntegral_coe.add (hcc_int γ); exact isIntegral_zero)
       (fun γ i k => by
         by_cases h : i = j ∧ k = j
-        · rw [if_pos h, if_pos ⟨h.2, h.1⟩, show cc ((γ : E) + cc (γ : E)) = cc (γ : E) + cc (cc (γ : E)) from
+        · rw [ite_eq_left h, ite_eq_left ⟨h.2, h.1⟩, show cc ((γ : E) + cc (γ : E)) = cc (γ : E) + cc (cc (γ : E)) from
             map_add (IsCMField.complexConj E) _ _, cc_cc, add_comm]
-        · rw [if_neg h, if_neg (fun h' => h ⟨h'.2, h'.1⟩), cc_zero])
+        · rw [ite_eq_right h, ite_eq_right (fun h' => h ⟨h'.2, h'.1⟩), cc_zero])
       (fun γ => ?_)
     rw [Complex.re_sum, Complex.re_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun τ _ => ?_

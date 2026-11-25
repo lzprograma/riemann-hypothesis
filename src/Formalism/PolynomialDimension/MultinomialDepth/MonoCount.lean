@@ -3,56 +3,8 @@ module
 public import Formalism.MahlerMeasure.MahlerMeasureProofs.WeightSpaceDimensionMonotone
 public import Formalism.MahlerMeasure.MahlerMeasureProofs.FreezeBij
 public import Mathlib.CategoryTheory.Category.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -74,16 +26,16 @@ theorem cas_hw {μ : Fin r → ℤ} {x : V} (h : G.IsHW μ x) : G.Cas x = ((GlW.
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rcases lt_trichotomy a b with hab | hab | hab
   · have hc := G.comm a b b a x
-    simp only [if_true] at hc
+    simp only [ite_true] at hc
     rw [h.2 a b hab, map_zero, sub_zero] at hc
-    rw [hc, hd, hd, if_neg hab.ne, if_pos hab, ← sub_smul]
+    rw [hc, hd, hd, ite_eq_right hab.ne, ite_eq_left hab, ← sub_smul]
     push_cast
     rfl
   · subst hab
-    rw [hd, map_smul, hd, smul_smul, if_pos rfl]
+    rw [hd, map_smul, hd, smul_smul, ite_eq_left rfl]
     push_cast
     rfl
-  · rw [h.2 b a hab, map_zero, if_neg hab.ne', if_neg (not_lt.mpr hab.le)]
+  · rw [h.2 b a hab, map_zero, ite_eq_right hab.ne', ite_eq_right (not_lt.mpr hab.le)]
     simp
 
 theorem cprod_kill {x : V} {e : ℤ} (hx : G.Cas x = ((e : ℤ) : K) • x) (cs : List ℤ) (he : e ∈ cs) :
@@ -439,8 +391,8 @@ theorem comp_comm_of {W : Submodule K V} (hW : G.Graded W) (φ : V →ₗ[K] V)
   have hx' := G.sum_comp x (insert μ S) (fun ν hν => hS ν (fun h => hν (Finset.mem_insert_of_mem h)))
   conv_rhs => rw [← hx']
 
-  rw [map_sum, map_sum, Finset.sum_eq_single μ (fun ν _ hν => by rw [G.comp_of_isWt (hwt ν), if_neg (Ne.symm hν)])
-  (fun h => absurd (Finset.mem_insert_self μ S) h), G.comp_of_isWt (hwt μ), if_pos rfl]
+  rw [map_sum, map_sum, Finset.sum_eq_single μ (fun ν _ hν => by rw [G.comp_of_isWt (hwt ν), ite_eq_right (Ne.symm hν)])
+  (fun h => absurd (Finset.mem_insert_self μ S) h), G.comp_of_isWt (hwt μ), ite_eq_left rfl]
 
 end GlX
 
@@ -627,10 +579,10 @@ theorem sl_mul (m : σ →₀ ℕ) {g q : MvPolynomial σ K} (hg : IsF fs g) (hq
     · rfl
   rw [Finset.sum_congr rfl fun b hb => Finset.sum_congr rfl fun a ha => key a ha b hb, Finset.sum_comm]
   by_cases hm : m ∈ q.support
-  · simp only [Finset.sum_ite_eq', hm, if_true]
+  · simp only [Finset.sum_ite_eq', hm, ite_true]
     rw [← Finset.smul_sum, ← g.as_sum]
   · have h0 : AddMonoidAlgebra.coeff q m = 0 := by simpa using hm
-    simp only [Finset.sum_ite_eq', hm, if_false, Finset.sum_const_zero, h0, zero_smul]
+    simp only [Finset.sum_ite_eq', hm, ite_false, Finset.sum_const_zero, h0, zero_smul]
 
 theorem ext_eq_sum (φ : MvPolynomial σ K →ₗ[K] MvPolynomial σ K) (x : MvPolynomial σ K) (S : Finset (σ →₀ ℕ))
     (hS : ∀ m ∈ x.support, ltr fs m ∈ S) : ext fs φ x = ∑ m ∈ S, φ (slc fs m x) * monomial m 1 := by
@@ -639,8 +591,8 @@ theorem ext_eq_sum (φ : MvPolynomial σ K →ₗ[K] MvPolynomial σ K) (x : MvP
       ∑ m ∈ S, φ (slc fs m (monomial m' (AddMonoidAlgebra.coeff x m'))) * monomial m 1 := by
     intro m' hm'
     simp_rw [sl_monomial]
-    rw [Finset.sum_eq_single (ltr fs m') (fun b _ hb => by rw [if_neg (Ne.symm hb), map_zero, zero_mul])
-      (fun h => absurd (hS m' hm') h), if_pos rfl, ext_monomial, ← smul_mul_assoc, ← map_smul, smul_monomial,
+    rw [Finset.sum_eq_single (ltr fs m') (fun b _ hb => by rw [ite_eq_right (Ne.symm hb), map_zero, zero_mul])
+      (fun h => absurd (hS m' hm') h), ite_eq_left rfl, ext_monomial, ← smul_mul_assoc, ← map_smul, smul_monomial,
       smul_eq_mul, mul_one]
   conv_lhs => rw [x.as_sum]
 
@@ -657,7 +609,7 @@ theorem eq_sum_sl (x : MvPolynomial σ K) (S : Finset (σ →₀ ℕ)) (hS : ∀
   rw [Finset.sum_comm]
   conv_lhs => rw [x.as_sum]
   refine Finset.sum_congr rfl fun m' hm' => ?_
-  rw [Finset.sum_ite_eq, if_pos (hS m' hm'), MvPolynomial.monomial_mul, frst_add_ltr, mul_one]
+  rw [Finset.sum_ite_eq, ite_eq_left (hS m' hm'), MvPolynomial.monomial_mul, frst_add_ltr, mul_one]
 
 theorem isL_monomial_ltr (m : σ →₀ ℕ) (a : K) : IsL fs (monomial (ltr fs m) a) := by
   intro m' hm' v hv
@@ -842,7 +794,7 @@ theorem isF_of_polLz (L : Letters N) (j0 : ℕ) {y : MvPolynomial (Fin N × Fin 
   by_contra h
   have h1 := hmd v.1
   simp only [Lz, fsj] at h1 h
-  rw [if_neg h] at h1
+  rw [ite_eq_right h] at h1
   have := (Finset.sum_eq_zero_iff.mp h1) v.2 (Finset.mem_univ _)
   exact hv this
 
@@ -856,11 +808,11 @@ theorem mul_ltr_pol (L : Letters N) (j0 : ℕ) {g : MvPolynomial (Fin N × Fin r
   rw [Pi.add_apply, weight_wL]
   by_cases h : (i : ℕ) < j0
   · have e : ∑ c, ((ltr (fsj N r j0) m' (i, c) : ℕ) : ℤ) = 0 := Finset.sum_eq_zero fun c _ => by
-      rw [ltr, Finsupp.filter_apply, if_neg (by simp [fsj]; omega)]; simp
+      rw [ltr, Finsupp.filter_apply, ite_eq_right (by simp [fsj]; omega)]; simp
     rw [e, add_zero]; simp [Lz, h]
   · have e : ∑ c, ((ltr (fsj N r j0) m' (i, c) : ℕ) : ℤ) = L.deg i := by
       rw [← hm i]; push_cast
-      exact Finset.sum_congr rfl fun c _ => by rw [ltr, Finsupp.filter_apply, if_pos (by simp [fsj]; omega)]
+      exact Finset.sum_congr rfl fun c _ => by rw [ltr, Finsupp.filter_apply, ite_eq_left (by simp [fsj]; omega)]
     rw [e]; simp [Lz, h]
 
 theorem midAct_eq (L : Letters N) {j0 J : ℕ} (hJ : j0 ≤ J) (c d : Fin r) (x : MvPolynomial (Fin N × Fin r) ℚ_[p]) :
@@ -957,9 +909,9 @@ theorem slc_C [NeZero r] (L : Letters N) (j0 : ℕ) {q : ℕ} (J : Fin q → ℕ
   obtain ⟨hxP, hxY⟩ := Submodule.mem_inf.mp hx
   refine Submodule.mem_inf.mpr ⟨slc_pol L j0 m hxP, (Submodule.mem_iInf _).mpr fun k => ?_⟩
   by_cases hk : J k < j0
-  · rw [Mup, if_pos hk]
+  · rw [Mup, ite_eq_left hk]
     exact slc_ycond L (le_of_lt hk) (M k) m ((Submodule.mem_iInf _).mp hxY k)
-  · rw [Mup, if_neg hk, ycond_top]; exact Submodule.mem_top
+  · rw [Mup, ite_eq_right hk, ycond_top]; exact Submodule.mem_top
 
 theorem ext_Y [NeZero r] (L : Letters N) (j0 : ℕ) {q : ℕ} (J : Fin q → ℕ) (M : Fin q → WithTop ℤ)
     (φ : MvPolynomial (Fin N × Fin r) ℚ_[p] →ₗ[ℚ_[p]] MvPolynomial (Fin N × Fin r) ℚ_[p])
@@ -983,7 +935,7 @@ theorem ext_Y [NeZero r] (L : Letters N) (j0 : ℕ) {q : ℕ} (J : Fin q → ℕ
       refine Submodule.sum_mem _ fun m hm => ?_
       obtain ⟨m', hm', rfl⟩ := Finset.mem_image.mp hm
       have h1 := (Submodule.mem_iInf _).mp (Submodule.mem_inf.mp (hφC _ (slc_C L j0 J M hx (ltr (fsj N r j0) m')))).2 k
-      rw [Mup, if_pos hk] at h1
+      rw [Mup, ite_eq_left hk] at h1
       rw [mul_comm]
       exact ycond_mul_B L (le_of_lt hk) (M k) (killL_of_isL le_rfl (isL_monomial_ltr _ m' 1)) _ h1
     · have hJ : j0 ≤ J k := by omega
@@ -1000,7 +952,7 @@ theorem psi_mem (L : Letters N) (j0 : ℕ) (x : MvPolynomial (Fin N × Fin r) �
 theorem psi_id (L : Letters N) (j0 : ℕ) {x : MvPolynomial (Fin N × Fin r) ℚ_[p]} (hx : x ∈ Pol p r (Lz L j0)) :
     psi p L j0 x = x := by
   rw [pol_iff] at hx
-  rw [psi, weightedHomogeneousComponent_of_mem hx, if_pos rfl]
+  rw [psi, weightedHomogeneousComponent_of_mem hx, ite_eq_left rfl]
 
 theorem whc_comm {σ M : Type} [AddCommMonoid M] (w : σ → M) (A : MvPolynomial σ ℚ_[p] →ₗ[ℚ_[p]] MvPolynomial σ ℚ_[p])
     (hA : ∀ D x, x ∈ weightedHomogeneousSubmodule ℚ_[p] w D → A x ∈ weightedHomogeneousSubmodule ℚ_[p] w D)
@@ -1024,7 +976,7 @@ theorem whc_comm {σ M : Type} [AddCommMonoid M] (w : σ → M) (A : MvPolynomia
     rw [weightedHomogeneousComponent_of_mem (hA ν _ (weightedHomogeneousComponent_mem w x ν))]
     by_cases h : ν = D
     · subst h; simp
-    · rw [if_neg h, if_neg (Ne.symm h)]
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
   simp only [e, Finset.sum_ite_eq']
   split_ifs with h
   · rfl
@@ -1065,7 +1017,7 @@ theorem phi_props (L : Letters N) (j0 : ℕ)
     rw [psi_glAct, hπE _ (psi_mem L j0 x)]
   · have e : (GA p L j0).comp ν x = x := by
       show weightedHomogeneousComponent (wv L j0) ν x = x
-      rw [weightedHomogeneousComponent_of_mem hx, if_pos rfl]
+      rw [weightedHomogeneousComponent_of_mem hx, ite_eq_left rfl]
     simp only [LinearMap.comp_apply]
     rw [← e, psi_comp, hπc _ (psi_mem L j0 x)]
     exact weightedHomogeneousComponent_mem _ _ _
@@ -1085,9 +1037,9 @@ theorem C_stable [NeZero r] (L : Letters N) (j0 : ℕ) {q : ℕ} (J : Fin q → 
   refine Submodule.mem_inf.mpr ⟨pol_stable L (Lz L j0) j0 c d x hxP, (Submodule.mem_iInf _).mpr fun k => ?_⟩
   have h1 := (Submodule.mem_iInf _).mp hxY k
   by_cases hk : J k < j0
-  · rw [Mup, if_pos hk] at h1 ⊢
+  · rw [Mup, ite_eq_left hk] at h1 ⊢
     exact ycond_glAct_le L (le_of_lt hk) (M k) c d h1
-  · rw [Mup, if_neg hk, ycond_top]; exact Submodule.mem_top
+  · rw [Mup, ite_eq_right hk, ycond_top]; exact Submodule.mem_top
 
 theorem polynomial_finite_weights (L : Letters N) (j0 : ℕ) : (GA p L j0).FinW (Pol p r (Lz L j0)) :=
   pol_finW (Lz L j0) j0
@@ -1486,7 +1438,7 @@ theorem count_HW [NeZero r] (L : Letters N) (j0 : ℕ) {q : ℕ} (J : Fin q → 
         refine Finset.sum_eq_zero fun y _ => ?_
         rw [map_smul]
         show g ⟨μ, y⟩ • (GA p L j0).comp ν.1 y.1 = 0
-        rw [(GA p L j0).comp_of_isWt (hbHW μ.1 y.1 y.2).1, if_neg (fun hh => hμ (Subtype.ext hh.symm)), smul_zero]
+        rw [(GA p L j0).comp_of_isWt (hbHW μ.1 y.1 y.2).1, ite_eq_right (fun hh => hμ (Subtype.ext hh.symm)), smul_zero]
       · simp
     have h2 := (linearIndepOn_finset_iff.mp (hbli ν.1)) (fun y => if hy : y ∈ b ν.1 then g ⟨ν, ⟨y, hy⟩⟩ else 0) (by
       rw [← Finset.sum_attach, ← h1, Finset.univ_eq_attach]
@@ -1585,10 +1537,10 @@ theorem wt_ext (LL : Letters K) (n : ℕ) (ρ c : Fin r) (m' : Fin K × Fin r �
   unfold wt
   rw [Fin.sum_univ_castSucc]
   simp only [FB.ext_castSucc, FB.ext_last, FB.snoc_vec_castSucc, FB.snoc_vec_last, Fin.val_castSucc, Fin.val_last,
-    Nat.lt_succ_self, if_true, Bool.false_eq_true, if_false]
+    Nat.lt_succ_self, ite_true, Bool.false_eq_true, ite_false]
   have e : ∀ i : Fin K, ((i : ℕ) < K + 1) = True := fun i => by simp
   have e' : ∀ i : Fin K, ((i : ℕ) < K) = True := fun i => by simp
-  simp only [e, e', if_true]
+  simp only [e, e', ite_true]
   split_ifs <;> simp [sub_eq_add_neg]
 
 theorem small_onto [NeZero r] (LK : Letters K) (ρ : Fin r) (hρ : (ρ : ℕ) = r - 1) (n : ℕ) (hS : LK.total ≤ n)
@@ -1707,7 +1659,7 @@ theorem pol_comap (n : Fin T.t → ℕ) {v' : MvPolynomial (Fin (T.pos i + 1 + 1
   have : ((ιF N (T.pos i + 1) a : Fin N) : ℕ) < T.pos i + 1 + 1 := by rw [ιF_val hK]; exact a.isLt
   show (if ((ιF N (T.pos i + 1) a : Fin N) : ℕ) < T.pos i + 1 + 1 then
     (LL.setTies T n).deg (ιF N (T.pos i + 1) a) else 0) = _
-  rw [if_pos this]
+  rw [ite_eq_left this]
 
 theorem exists_small (n : Fin T.t → ℕ) {v : MvPolynomial (Fin N × Fin r) ℚ_[p]}
     (hv : v ∈ Pol p r (Lz (LL.setTies T n) (T.pos i + 1 + 1))) :
@@ -1752,7 +1704,7 @@ theorem tie_onto [NeZero r] (ρ : Fin r) (hρ : (ρ : ℕ) = r - 1) (n : Fin T.t
     intro k
     by_cases hk : T.J k ≤ T.pos i + 1
     · have h1 := (Submodule.mem_iInf _).mp hvY k
-      rw [Mup, if_pos (by omega)] at h1
+      rw [Mup, ite_eq_left (by omega)] at h1
       have e2 : T.thrUpTo i k = T.thr k := by simp [TieData.thrUpTo, hk]
       rw [min_eq_left hk, e2]
       exact ycond_comap _ LL (ιF N (T.pos i + 1)) (ιF_val hK) (fun a => vec_compat LL T hadm i n (n i) a) hinj
@@ -1795,9 +1747,9 @@ theorem tie_into [NeZero r] (ρ : Fin r) (hρ : (ρ : ℕ) = r - 1) (n : Fin T.t
   refine Submodule.mem_inf.mpr ⟨Ffull_hw LL T hadm i ρ hρ n w f hf hS, Submodule.mem_inf.mpr
     ⟨Ffull_pol LL T hadm i ρ n f hP hS, (Submodule.mem_iInf _).mpr fun k => ?_⟩⟩
   by_cases hk : T.J k < T.pos i + 1 + 1
-  · rw [Mup, if_pos hk]
+  · rw [Mup, ite_eq_left hk]
     exact Ffull_ycond LL T hadm i ρ n w f hf hS k (by omega)
-  · rw [Mup, if_neg hk, ycond_top]; exact Submodule.mem_top
+  · rw [Mup, ite_eq_right hk, ycond_top]; exact Submodule.mem_top
 
 end Comparison₂
 

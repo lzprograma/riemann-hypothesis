@@ -1,54 +1,11 @@
 module
 
+import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsLinearIndependentNormLeSuccMin
+import Mathlib.LinearAlgebra.Matrix.ToLinearEquiv
 public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinSt
 public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TransferenceMinima
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -73,181 +30,88 @@ theorem shortDual_holds : ShortDualStatement := by
     intro a
     rw [← real_inner_self_eq_norm_sq, hin]
   have hRR : R⁻¹ * R = 1 := Matrix.nonsing_inv_mul R hR
-  have hRR' : R * R⁻¹ = 1 := Matrix.mul_nonsing_inv R hR
-  have hcast : ∀ j : Fin d, (fun i => (((Pi.single j (1 : ℤ) : Fin d → ℤ) i : ℤ) : ℝ)) = Pi.single j (1 : ℝ) := by
-    intro j
-    funext i
-    by_cases hij : i = j
-    · subst hij
-      simp
-    · simp [hij]
-
-  obtain ⟨g, hg⟩ : ∃ g : (Fin d → ℤ) →ₗ[ℤ] EuclideanSpace ℝ (Fin d),
-      ∀ t, g t = e (R *ᵥ fun i => (t i : ℝ)) :=
-    ⟨(AddMonoidHom.mk' (fun t : Fin d → ℤ => e (R *ᵥ fun i => (t i : ℝ))) (by
-        intro a b
-        show e (R *ᵥ fun i => ((a + b) i : ℝ)) =
-          e (R *ᵥ fun i => (a i : ℝ)) + e (R *ᵥ fun i => (b i : ℝ))
-        have h1 : (fun i => ((a + b) i : ℝ)) = (fun i => (a i : ℝ)) + fun i => (b i : ℝ) := by
-          funext i
-          simp
-        rw [h1, Matrix.mulVec_add, map_add (f := _)])).toIntLinearMap, fun t => rfl⟩
-
-  obtain ⟨hZ, hh⟩ : ∃ hZ : (Fin d → ℤ) →ₗ[ℤ] EuclideanSpace ℝ (Fin d),
-      ∀ u, hZ u = e ((fun i => (u i : ℝ)) ᵥ* R⁻¹) :=
-    ⟨(AddMonoidHom.mk' (fun u : Fin d → ℤ => e ((fun i => (u i : ℝ)) ᵥ* R⁻¹)) (by
-        intro a b
-        show e ((fun i => ((a + b) i : ℝ)) ᵥ* R⁻¹) =
-          e ((fun i => (a i : ℝ)) ᵥ* R⁻¹) + e ((fun i => (b i : ℝ)) ᵥ* R⁻¹)
-        have h1 : (fun i => ((a + b) i : ℝ)) = (fun i => (a i : ℝ)) + fun i => (b i : ℝ) := by
-          funext i
-          simp
-        rw [h1, Matrix.add_vecMul, map_add (f := _)])).toIntLinearMap, fun u => rfl⟩
-  have hquad : ∀ t : Fin d → ℝ, ‖e (R *ᵥ t)‖ ^ 2 = t ⬝ᵥ (L *ᵥ t) := by
-    intro t
+  classical
+  let A : (Fin d → ℝ) ≃ₗ[ℝ] EuclideanSpace ℝ (Fin d) :=
+    (R.toLinearEquiv' (Matrix.invertibleOfIsUnitDet R hR)).trans e
+  have hA (x : Fin d → ℝ) : A x = e (R *ᵥ x) := rfl
+  let bR := Pi.basisFun ℝ (Fin d)
+  let bE := bR.map A
+  have hbE (i : Fin d) : bE i = e (R *ᵥ Pi.single i 1) := by
+    rw [Module.Basis.map_apply, hA, show bR i = Pi.single i 1 from Pi.basisFun_apply ℝ (Fin d) i]
+  let M : Submodule ℤ (EuclideanSpace ℝ (Fin d)) := Submodule.span ℤ (Set.range bE)
+  have hspan : Submodule.span ℝ (M : Set (EuclideanSpace ℝ (Fin d))) = ⊤ := by
+    rw [Submodule.span_span_of_tower, bE.span_eq]
+  have hdisc : DiscreteTopology M := inferInstance
+  have hsum (t : Fin d → ℤ) : (∑ i, t i • bE i) = e (R *ᵥ fun i => (t i : ℝ)) := by
+    calc
+      _ = A (∑ i, (t i : ℝ) • bR i) := by
+        simp only [bE, Module.Basis.map_apply, map_sum, Int.cast_smul_eq_zsmul, map_zsmul]
+      _ = _ := by
+        rw [← hA, ← bR.sum_repr (fun i => (t i : ℝ))]
+        rfl
+  have hquad (t : Fin d → ℝ) : ‖e (R *ᵥ t)‖ ^ 2 = t ⬝ᵥ (L *ᵥ t) := by
     rw [hnorm, hL, ← Matrix.mulVec_mulVec, Matrix.dotProduct_mulVec t, Matrix.vecMul_transpose]
-  have hlow : ∀ t : Fin d → ℤ, t ≠ 0 → μ ≤ ‖g t‖ := by
-    intro t ht
-    have h2 := hmin t ht
-    rw [← hquad (fun i => (t i : ℝ)), ← hg t] at h2
-    nlinarith [norm_nonneg (g t), hμ]
-
-  have hdisc : DiscreteTopology (LinearMap.range g) := by
-    apply DiscreteTopology.of_forall_le_dist hμ
-    rintro ⟨x, hx⟩ ⟨y, hy⟩ hxy
-    obtain ⟨s, rfl⟩ := LinearMap.mem_range.mp hx
-    obtain ⟨t, rfl⟩ := LinearMap.mem_range.mp hy
-    have hst : s - t ≠ 0 := by
-      intro h0
-      apply hxy
-      have h1 : s = t := sub_eq_zero.mp h0
-      subst h1
-      rfl
-    rw [Subtype.dist_eq, dist_eq_norm]
-    show μ ≤ ‖g s - g t‖
-    rw [← map_sub]
-    exact hlow _ hst
-
-  have hFsurj : ∀ x : EuclideanSpace ℝ (Fin d), ∃ w, e (R *ᵥ w) = x := by
-    intro x
-    refine ⟨R⁻¹ *ᵥ e.symm x, ?_⟩
-    rw [Matrix.mulVec_mulVec, hRR', Matrix.one_mulVec, LinearEquiv.apply_symm_apply]
-  have hspan : Submodule.span ℝ
-      ((LinearMap.range g : Submodule ℤ (EuclideanSpace ℝ (Fin d))) :
-        Set (EuclideanSpace ℝ (Fin d))) = ⊤ := by
-    rw [eq_top_iff]
-    rintro x -
-    obtain ⟨w, rfl⟩ := hFsurj x
-    have hw : w ∈ Submodule.span ℝ (Set.range (Pi.basisFun ℝ (Fin d))) := by
-      rw [(Pi.basisFun ℝ (Fin d)).span_eq]
-      exact Submodule.mem_top
-    have h1 := Submodule.mem_map_of_mem (f := e.toLinearMap ∘ₗ Matrix.mulVecLin R) hw
-    rw [← Submodule.span_image] at h1
-    have h2 : e (R *ᵥ w) = (e.toLinearMap ∘ₗ Matrix.mulVecLin R) w := rfl
-    rw [h2]
-    refine Submodule.span_mono ?_ h1
-    rintro _ ⟨_, ⟨j, rfl⟩, rfl⟩
-    refine LinearMap.mem_range.mpr ⟨Pi.single j 1, ?_⟩
-    rw [hg, hcast, Pi.basisFun_apply]
-    rfl
-
-  have hT := transference_successive_minima d (LinearMap.range g) hdisc hspan 1 le_rfl hd
-  rw [Nat.add_sub_cancel] at hT
-  obtain ⟨i0⟩ : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
-  have hne0 : (Pi.single i0 (1 : ℤ) : Fin d → ℤ) ≠ 0 := by
-    intro h
-    have := congr_fun h i0
-    simp at this
-  have hS1 : μ ≤ PI.succMin (LinearMap.range g) 1 := by
-    unfold PI.succMin
-    apply le_csInf
-    · refine ⟨‖g (Pi.single i0 1)‖, norm_nonneg _, fun _ => g (Pi.single i0 1),
-        fun _ => LinearMap.mem_range_self g _, ?_, fun _ => le_rfl⟩
-      rw [linearIndependent_unique_iff]
-      intro h0
-      have h1 := hlow (Pi.single i0 1) hne0
-      rw [show g (Pi.single i0 1) = 0 from h0, norm_zero] at h1
-      linarith
-    · rintro b ⟨hb0, v, hvM, hvli, hvb⟩
-      obtain ⟨t, ht⟩ := LinearMap.mem_range.mp (hvM 0)
-      have ht0 : t ≠ 0 := by
-        rintro rfl
-        exact hvli.ne_zero 0 (by rw [← ht, map_zero])
-      calc μ ≤ ‖g t‖ := hlow t ht0
-        _ = ‖v 0‖ := by rw [ht]
-        _ ≤ b := hvb 0
-
-  have hdual : ∀ u : Fin d → ℤ, hZ u ∈ PI.dualZ (LinearMap.range g) := by
-    intro u
-    show ∀ y ∈ LinearMap.range g, ∃ z : ℤ, inner ℝ (hZ u) y = (z : ℝ)
-    intro y hy
-    obtain ⟨t, rfl⟩ := LinearMap.mem_range.mp hy
-    refine ⟨u ⬝ᵥ t, ?_⟩
-    rw [hh, hg, hin, Matrix.dotProduct_mulVec, Matrix.vecMul_vecMul, hRR, Matrix.vecMul_one]
-    simp [dotProduct]
-  have hinj : Function.Injective (e.toLinearMap ∘ₗ Matrix.vecMulLinear R⁻¹) := by
-    intro a b hab
-    have h0 : e (a ᵥ* R⁻¹) = e (b ᵥ* R⁻¹) := hab
-    have h1 : a ᵥ* R⁻¹ = b ᵥ* R⁻¹ := e.injective h0
-    have h2 := congrArg (fun x => x ᵥ* R) h1
-    simpa only [Matrix.vecMul_vecMul, hRR, Matrix.vecMul_one] using h2
-  have hne2 : ∃ b : ℝ, 0 ≤ b ∧ ∃ v : Fin d → EuclideanSpace ℝ (Fin d),
-      (∀ j, v j ∈ PI.dualZ (LinearMap.range g)) ∧ LinearIndependent ℝ v ∧ ∀ j, ‖v j‖ ≤ b := by
-    refine ⟨∑ j, ‖hZ (Pi.single j 1)‖, Finset.sum_nonneg (fun j _ => norm_nonneg _),
-      fun j => hZ (Pi.single j 1), fun j => hdual _, ?_,
-      fun j => Finset.single_le_sum (f := fun j => ‖hZ (Pi.single j 1)‖)
-        (fun i _ => norm_nonneg _) (Finset.mem_univ j)⟩
-    have hli := (Pi.basisFun ℝ (Fin d)).linearIndependent.map'
-      (e.toLinearMap ∘ₗ Matrix.vecMulLinear R⁻¹) (LinearMap.ker_eq_bot.mpr hinj)
-    have hfun : (fun j => hZ (Pi.single j 1)) =
-        ⇑(e.toLinearMap ∘ₗ Matrix.vecMulLinear R⁻¹) ∘ ⇑(Pi.basisFun ℝ (Fin d)) := by
-      funext j
-      rw [hh, hcast]
-      show _ = e ((Pi.basisFun ℝ (Fin d) j) ᵥ* R⁻¹)
-      rw [Pi.basisFun_apply]
-    rw [hfun]
-    exact hli
-  have hs2nn : 0 ≤ PI.succMin (PI.dualZ (LinearMap.range g)) d := by
-    unfold PI.succMin
-    exact le_csInf (by exact hne2) (fun x hx => hx.1)
-  have hS2 : PI.succMin (PI.dualZ (LinearMap.range g)) d ≤ d / μ := by
+  have hlow : ∀ x ∈ M, x ≠ 0 → μ ≤ ‖x‖ := by
+    intro x hx hx0
+    obtain ⟨t, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ).mp hx
+    have ht : t ≠ 0 := fun h => hx0 (by simp [h])
+    rw [hsum]
+    have hb := hmin t ht
+    rw [← hquad] at hb
+    nlinarith [norm_nonneg (e (R *ᵥ fun i => (t i : ℝ)))]
+  have hMne : M ≠ ⊥ := (Submodule.ne_bot_iff _).mpr
+    ⟨bE ⟨0, hd⟩, Submodule.subset_span (Set.mem_range_self _), bE.ne_zero _⟩
+  have hminEq (P : Submodule ℤ (EuclideanSpace ℝ (Fin d))) (i : ℕ) :
+      PI.succMin P i = GlobalTheory.succMin P i := by
+    unfold PI.succMin GlobalTheory.succMin GlobalTheory.succMinOf
+    congr 1
+    ext t
+    rw [GlobalTheory.mem_succMinRadii_iff]
+    exact and_congr_right (fun _ => ⟨
+      fun ⟨v, hP, hli, hn⟩ => ⟨v, hli, fun j => ⟨hP j, hn j⟩⟩,
+      fun ⟨v, hli, h⟩ => ⟨v, fun j => (h j).1, hli, fun j => (h j).2⟩⟩)
+  have hdualEq : PI.dualZ M = GlobalTheory.dualLattice M := by
+    ext y
+    rw [GlobalTheory.mem_dualLattice]
+    exact ⟨fun h x hx => (h x hx).imp (fun _ hz => ((real_inner_comm y x).trans hz).symm),
+      fun h x hx => (h x hx).imp (fun _ hz => (real_inner_comm x y).trans hz.symm)⟩
+  have hT := transference_successive_minima d M hdisc hspan 1 le_rfl hd
+  rw [Nat.add_sub_cancel, hdualEq, hminEq, hminEq] at hT
+  have hS1 : μ ≤ GlobalTheory.succMin M 1 := GlobalTheory.le_minNorm hMne hlow
+  have hS2 : GlobalTheory.succMin (GlobalTheory.dualLattice M) d ≤ d / μ := by
     rw [le_div_iff₀ hμ]
-    nlinarith [hT, hS1, hs2nn]
-  have hlt : PI.succMin (PI.dualZ (LinearMap.range g)) d < d / μ + δ := by linarith
-  unfold PI.succMin at hlt
-  obtain ⟨b, ⟨hb0, v, hvD, hvli, hvb⟩, hb⟩ := exists_lt_of_csInf_lt (by exact hne2) hlt
-  have hvD' : ∀ j, ∀ y ∈ LinearMap.range g, ∃ z : ℤ, inner ℝ (v j) y = (z : ℝ) :=
-    fun j => hvD j
-  have hc : ∀ j k, ∃ z : ℤ, inner ℝ (v j) (g (Pi.single k 1)) = (z : ℝ) :=
-    fun j k => hvD' j _ (LinearMap.mem_range_self g _)
-  choose c hc using hc
-  have hv : ∀ j, v j = hZ (c j) := by
-    intro j
-    have hw : e.symm (v j) ᵥ* R = fun k => ((c j k : ℤ) : ℝ) := by
-      funext k
-      have h1 := hc j k
-      rw [hg (Pi.single k 1), hcast k, ← e.apply_symm_apply (v j), hin,
-        Matrix.dotProduct_mulVec, dotProduct_single, mul_one] at h1
-      exact h1
-    calc v j = e (e.symm (v j)) := (e.apply_symm_apply _).symm
-      _ = e ((e.symm (v j) ᵥ* R) ᵥ* R⁻¹) := by
-        rw [Matrix.vecMul_vecMul, hRR', Matrix.vecMul_one]
-      _ = hZ (c j) := by rw [hw, hh]
-  have hliZ : LinearIndependent ℤ v :=
-    hvli.restrict_scalars (fun a b hab => by simpa using hab)
-  have hcli : LinearIndependent ℤ c := by
-    apply LinearIndependent.of_comp hZ
-    have hcomp : (hZ ∘ c) = v := funext fun j => (hv j).symm
-    rw [hcomp]
-    exact hliZ
-  refine ⟨c, hcli, fun j => ?_⟩
-  have hT' : ∀ x : Fin d → ℝ, (R⁻¹)ᵀ *ᵥ x = x ᵥ* R⁻¹ := by
-    intro x
-    rw [← Matrix.vecMul_transpose, Matrix.transpose_transpose]
-  rw [hT', ← hnorm, ← hh (c j), ← hv j]
-  have h3 := hvb j
-  have h4 := norm_nonneg (v j)
-  have hdm : 0 ≤ (d : ℝ) / μ := div_nonneg (Nat.cast_nonneg d) hμ.le
-  nlinarith
+    simpa only [mul_comm μ] using (mul_le_mul_of_nonneg_right hS1 (GlobalTheory.succMin_nonneg _ _)).trans hT
+  let bD := GlobalTheory.innerDualBasis bE
+  have hD : GlobalTheory.dualLattice M = Submodule.span ℤ (Set.range bD) :=
+    GlobalTheory.dualLattice_span_basis bE
+  letI : DiscreteTopology (GlobalTheory.dualLattice M) := by
+    rw [hD]
+    infer_instance
+  have hdD : d ≤ Module.finrank ℝ (Submodule.span ℝ (GlobalTheory.dualLattice M : Set (EuclideanSpace ℝ (Fin d)))) := by
+    rw [hD, Submodule.span_span_of_tower, bD.span_eq, finrank_top]
+    simp
+  obtain ⟨v, hvli, hv⟩ := GlobalTheory.exists_linearIndependent_norm_le_succMin hdD
+  have hex (j : Fin d) : ∃ c : Fin d → ℤ, ∑ i, c i • bD i = v j :=
+    (Submodule.mem_span_range_iff_exists_fun ℤ).mp (hD ▸ (hv j).1)
+  choose c hc using hex
+  let g : (Fin d → ℤ) →ₗ[ℤ] EuclideanSpace ℝ (Fin d) :=
+    ∑ i, LinearMap.smulRight (LinearMap.proj i) (bD i)
+  have hg (t : Fin d → ℤ) : g t = ∑ i, t i • bD i := by
+    simp [g, LinearMap.sum_apply]
+  refine ⟨c, LinearIndependent.of_comp g ?_, fun j => ?_⟩
+  · have heq : g ∘ c = v := funext fun j => (hg (c j)).trans (hc j)
+    rw [heq]
+    exact hvli.restrict_scalars (fun a b hab => by simpa using hab)
+  · have hvj : v j = e ((fun i => (c j i : ℝ)) ᵥ* R⁻¹) := by
+      refine InnerProductSpace.ext_inner_right_basis bE fun i => ?_
+      rw [← hc j, sum_inner]
+      conv_rhs =>
+        rw [hbE i, hin, Matrix.dotProduct_mulVec, Matrix.vecMul_vecMul, hRR,
+          Matrix.vecMul_one, dotProduct_single, mul_one]
+      simp [bD, ← Int.cast_smul_eq_zsmul ℝ, real_inner_smul_left, GlobalTheory.inner_innerDualBasis]
+    rw [← Matrix.vecMul_transpose, Matrix.transpose_transpose, ← hnorm, ← hvj]
+    have hj := (hv j).2.trans hS2
+    nlinarith [norm_nonneg (v j), div_nonneg (Nat.cast_nonneg d) hμ.le]
+
 
 end Formalism.MainNotions.ModuliIntegralCharts.H1.PhiCMin

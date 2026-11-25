@@ -225,11 +225,6 @@ theorem Box.strictAnti {n : ℕ} {L : Fin (n + 1) → ℤ} {M : Fin n → ℤ} (
   intro j
   exact lt_of_lt_of_le (h j).1 (h j).2
 
-theorem prod_erase_eq {n : ℕ} (f : Fin (n + 1) → ℝ) (l : Fin (n + 1)) :
-    ∏ j ∈ univ.erase l, f j = ∏ j : Fin n, f (l.succAbove j) := by
-  rw [← Finset.compl_singleton, ← Fin.image_succAbove_univ,
-    Finset.prod_image (fun a _ b _ hab => Fin.succAbove_right_injective hab)]
-
 theorem factor_nonneg {n : ℕ} {L : Fin (n + 1) → ℤ} {M : Fin n → ℤ} (h : Box L M)
     (l : Fin (n + 1)) (j : Fin n) (e : ℤ) (he0 : 0 ≤ e) (he1 : e ≤ 1) :
     0 ≤ ((M j : ℝ) - e - L l) / ((L (l.succAbove j) : ℝ) - L l) := by
@@ -254,7 +249,7 @@ theorem factor_nonneg {n : ℕ} {L : Fin (n + 1) → ℤ} {M : Fin n → ℤ} (h
 theorem placeWeight_nonneg {n : ℕ} {L : Fin (n + 1) → ℤ} {M : Fin n → ℤ} (h : Box L M)
     (l : Fin (n + 1)) : 0 ≤ wP L M l := by
   unfold GlobalTheory.WigSh.wP
-  rw [prod_erase_eq, ← Finset.prod_div_distrib]
+  rw [GlobalTheory.WigSh.LowerBound.prod_erase_succAbove, ← Finset.prod_div_distrib]
   refine Finset.prod_nonneg fun j _ => ?_
   simpa using factor_nonneg h l j 1 zero_le_one le_rfl
 
@@ -348,7 +343,7 @@ theorem inv_sq_le_wP (n : ℕ) (L : Fin (n+1) → ℤ) (M : Fin n → ℤ) (l : 
     exact_mod_cast this
   rw [← abs_of_nonneg (Model.placeWeight_nonneg hM l)]
   unfold wP
-  rw [Model.prod_erase_eq, abs_div, Finset.abs_prod, Finset.abs_prod, hden, ← key]
+  rw [GlobalTheory.WigSh.LowerBound.prod_erase_succAbove, abs_div, Finset.abs_prod, Finset.abs_prod, hden, ← key]
   have hQ : 0 < ∏ j : Fin n, d (if j.castSucc < l then j.succ else j.castSucc) :=
     Finset.prod_pos fun j _ => hdpos _
   have hm : d 0 * d (Fin.last n) ≤ D ^ 2 := by
@@ -570,15 +565,6 @@ theorem coef_hasDerivAt {k r : ℕ} (X : Mx k r) (v w : Fin (2 * r + k + 1) → 
   simp only [Matrix.one_mul, Complex.ofReal_zero, zero_smul, NormedSpace.exp_zero] at h1
   exact ((coefL (Hpk k r) v w).restrictScalars ℝ).hasFDerivAt.comp_hasDerivAt (0 : ℝ) h1
 
-theorem hpart_sum {n : ℕ} (H Z : Matrix (Fin n) (Fin n) ℂ) :
-    hpart1 H Z + Complex.I • hpart2 H Z = Z := by
-  unfold hpart1 hpart2
-  rw [smul_smul]
-  have : Complex.I * (1 / (2 * Complex.I)) = 1 / 2 := by field_simp
-  rw [this, ← smul_add]
-  have : Z - H⁻¹ * Zᴴ * H + (Z + H⁻¹ * Zᴴ * H) = (2 : ℂ) • Z := by rw [two_smul]; abel
-  rw [this, smul_smul]; norm_num
-
 theorem dOp_tensor {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V] [FiniteDimensional ℂ V] {k r : ℕ}
     {z : Fin (2 * r + k + 1) → ℂ} {π : Mx k r → (V →L[ℂ] V)} {B : Fin k → (Fin (2 * r + k + 1) → ℂ)}
     {πt : Mx k r → ((PiLp 2 (fun _ : Fin k => V)) →L[ℂ] (PiLp 2 (fun _ : Fin k => V)))}
@@ -612,13 +598,13 @@ theorem EB_tensor_std : ∀ (V : Type) [NormedAddCommGroup V] [InnerProductSpace
       Complex.I * herm (Hpk k r) (hpart2 (Hpk k r) (unitB (Hpk k r) B a b) *ᵥ B d) (B c) =
       if d = b then (if c = a then 1 else 0) else 0 := by
     intro d
-    rw [← coefL_apply, ← coefL_apply, ← smul_eq_mul Complex.I, ← map_smul, ← map_add (f := _), hpart_sum, coefL_apply,
+    rw [← coefL_apply, ← coefL_apply, ← smul_eq_mul Complex.I, ← map_smul, ← map_add (f := _), QnYLeibnizW.hpart_sum, coefL_apply,
       Qx8.unitB_mulVec, hB.2.1]
     have := hB.2.1 a c
     by_cases hd : d = b
     · subst hd
       have e : herm (Hpk k r) ((1 : ℂ) • B a) (B c) = herm (Hpk k r) (B a) (B c) := by rw [one_smul]
-      rw [if_pos rfl, if_pos rfl, e, this]
+      rw [ite_eq_left rfl, ite_eq_left rfl, e, this]
       simp only [eq_comm]
     · simp [hd, herm]
   show dOp πt _ y c + Complex.I • dOp πt _ y c = (dOp π _ (y c) + Complex.I • dOp π _ (y c)) + _
@@ -675,7 +661,7 @@ theorem tenOp_norm (C : Fin k → Fin k → ℂ) (A : V →L[ℂ] V)
       refine Finset.sum_congr rfl fun c _ => ?_
       simp only [Complex.star_def]
       ring
-    simp only [hterm, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [hterm, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   rw [norm_eq_sqrt_re_inner (𝕜 := ℂ), norm_eq_sqrt_re_inner (𝕜 := ℂ), key]
 
 end GlobalTheory.TensorStd
@@ -965,7 +951,7 @@ theorem splitCasimir_eigenspace_irreducible_standard : ∀ (V : Type) [NormedAdd
     have hν := hwtV _ _ hc0 hcw
     have hcl : c = l := by
       have h1 := hν c
-      simp only [if_true] at h1
+      simp only [ite_true] at h1
       have h2 : (L c : ℂ) = L l := by linear_combination -h1 - hlam
       exact hyp.anti.injective (by exact_mod_cast h2)
     subst hcl
@@ -997,8 +983,7 @@ theorem splitCasimir_eigenspace_irreducible_standard : ∀ (V : Type) [NormedAdd
   have hirr : ∀ S' : Submodule ℂ (PiLp 2 (fun _ : Fin (n + 1) => V)), S' ≤ S → Stab Et S' →
       S' = ⊥ ∨ S' = S := by
     intro S' hle hst
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     obtain ⟨hb, hne⟩ := hcon
     have hst2 : Stab Et (S'ᗮ ⊓ S) := by
       intro a b v hv

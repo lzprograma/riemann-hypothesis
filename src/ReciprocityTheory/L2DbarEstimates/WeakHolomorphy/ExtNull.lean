@@ -63,20 +63,8 @@ theorem extNull : ExtNullStatement := by
       (differentiable_const _).add (differentiable_id.smul_const _)
     have hLc : Continuous L := hLd.continuous
     have hSo : IsOpen S := hΩ.preimage hLc
-    have hSconv : Convex ℝ S := by
-      intro t1 ht1 t2 ht2 a b ha hb hab
-      have hm := (convex_ball c R) ht1 ht2 ha hb hab
-      show z0 + (a • t1 + b • t2) • (z - z0) ∈ Ω
-      have e : z0 + (a • t1 + b • t2) • (z - z0) =
-          a • (z0 + t1 • (z - z0)) + b • (z0 + t2 • (z - z0)) := by
-        calc z0 + (a • t1 + b • t2) • (z - z0)
-            = (a + b) • z0 + (a • (t1 • (z - z0)) + b • (t2 • (z - z0))) := by
-              rw [hab, one_smul, add_smul, smul_assoc, smul_assoc]
-          _ = a • (z0 + t1 • (z - z0)) + b • (z0 + t2 • (z - z0)) := by
-              rw [add_smul, smul_add, smul_add]
-              abel
-      rw [e]
-      exact hm
+    have hSconv : Convex ℝ S := ((convex_ball c R).translate_preimage_right z0).linear_preimage
+      ((LinearMap.toSpanSingleton ℂ (V n) (z - z0)).restrictScalars ℝ)
     have hga : AnalyticOnNhd ℂ (U ∘ L) S :=
       (hU.comp hLd.differentiableOn fun t ht => ht).analyticOnNhd hSo
     have h0S : (0 : ℂ) ∈ S := by

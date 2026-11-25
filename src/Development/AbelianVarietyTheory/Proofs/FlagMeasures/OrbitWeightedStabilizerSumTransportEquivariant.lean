@@ -54,22 +54,6 @@ namespace GlobalTheory.Mass.OrbTransport
 open NumberField Matrix in
 open scoped ENNReal Classical in
 open MulAction in
-private lemma exists_smul_eq_orbit_out {G α : Type} [Group G] [MulAction G α] (y : α) :
-    ∃ g : G, g • y = (Quotient.mk (orbitRel G α) y).out := by
-  obtain ⟨g, hg⟩ := Quotient.mk_out (s := orbitRel G α) y
-  exact ⟨g, hg⟩
-
-open NumberField Matrix in
-open scoped ENNReal Classical in
-open MulAction in
-private lemma card_stabilizer_smul_eq' {G α : Type} [Group G] [MulAction G α] (g : G) (a : α) :
-    ENat.card (stabilizer G (g • a)) = ENat.card (stabilizer G a) :=
-  (ENat.card_congr (stabilizerEquivStabilizer (g := g) rfl).toEquiv).symm
-
-
-open NumberField Matrix in
-open scoped ENNReal Classical in
-open MulAction in
 theorem _root_.GlobalTheory.Mass.OrbTransport.main : ∀ (G G' α β : Type) [Group G] [Group G'] [MulAction G α] [MulAction G' β] (φ : G ≃* G') (f : α → β) (X : Set α) (Y : Set β) (N : β → ℝ≥0∞), _root_.GlobalTheory.Mass.Stable G X → _root_.GlobalTheory.Mass.Stable G' Y → Set.BijOn f X Y → (∀ (g : G), ∀ x ∈ X, f (g • x) = φ g • f x) → (∀ (g : G') y, N (g • y) = N y) → _root_.GlobalTheory.Mass.orbSum G X (fun x => N (f x)) = _root_.GlobalTheory.Mass.orbSum G' Y N := by
   intro G G' α β _ _ _ _ φ f X Y N hX hY hf hequiv hN
   have hcard : ∀ x ∈ X, ENat.card (stabilizer G' (f x)) = ENat.card (stabilizer G x) := by
@@ -81,7 +65,7 @@ theorem _root_.GlobalTheory.Mass.OrbTransport.main : ∀ (G G' α β : Type) [Gr
   have hout : ∀ q : {q : orbitRel.Quotient G α // q.out ∈ X},
       (Quotient.mk (orbitRel G' β) (f q.1.out)).out ∈ Y := by
     intro q
-    obtain ⟨g, hg⟩ := exists_smul_eq_orbit_out (G := G') (f q.1.out)
+    obtain ⟨g, hg⟩ := Quotient.mk_out (s := orbitRel G' β) (f q.1.out)
     rw [← hg]
     exact hY g _ (hf.mapsTo q.2)
   let F : {q : orbitRel.Quotient G α // q.out ∈ X} → {q : orbitRel.Quotient G' β // q.out ∈ Y} :=
@@ -100,7 +84,7 @@ theorem _root_.GlobalTheory.Mass.OrbTransport.main : ∀ (G G' α β : Type) [Gr
       exact hg'
     · rintro ⟨q', hq'⟩
       obtain ⟨x, hx, hfx⟩ := hf.surjOn hq'
-      obtain ⟨g, hg⟩ := exists_smul_eq_orbit_out (G := G) x
+      obtain ⟨g, hg⟩ := Quotient.mk_out (s := orbitRel G α) x
       have hmem : (Quotient.mk (orbitRel G α) x).out ∈ X := by rw [← hg]; exact hX g x hx
       refine ⟨⟨Quotient.mk _ x, hmem⟩, Subtype.ext ?_⟩
       show Quotient.mk _ (f (Quotient.mk (orbitRel G α) x).out) = q'
@@ -110,9 +94,10 @@ theorem _root_.GlobalTheory.Mass.OrbTransport.main : ∀ (G G' α β : Type) [Gr
   rw [← (Equiv.ofBijective F hF).tsum_eq]
   congr 1
   funext q
-  obtain ⟨g', hg'⟩ := exists_smul_eq_orbit_out (G := G') (f q.1.out)
+  obtain ⟨g', hg'⟩ := Quotient.mk_out (s := orbitRel G' β) (f q.1.out)
   show _ = (ENat.card (stabilizer G' (Quotient.mk (orbitRel G' β) (f q.1.out)).out) : ℝ≥0∞)⁻¹ *
     N (Quotient.mk (orbitRel G' β) (f q.1.out)).out
-  rw [← hg', card_stabilizer_smul_eq', hN, hcard _ q.2]
+  rw [← hg', ← ENat.card_congr (stabilizerEquivStabilizer (g := g') rfl).toEquiv,
+    hN, hcard _ q.2]
 
 end GlobalTheory.Mass.OrbTransport

@@ -58,7 +58,7 @@ theorem tele_one_homog {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fintyp
   intro m hm k
   have h0 : m = 0 := by
     by_contra hne
-    rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_one, if_neg (Ne.symm hne)] at hm
+    rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_one, ite_eq_right (Ne.symm hne)] at hm
     exact hm rfl
   subst h0
   simp

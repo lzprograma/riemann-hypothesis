@@ -9,44 +9,7 @@ public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.Exists
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FinTensMemLatO
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasDerivAtZeroAndIsTheta
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulMemLatO
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -54,7 +17,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct Topology
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FinWeilO
 
@@ -204,42 +166,11 @@ theorem mem_latF {LS : Set (Fin S.rank → D.host.E)} {LT : Set (Fin T.rank → 
 
 def thetaSub (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) : Submodule ℂ (WO S T → ℂ) where
   carrier := {f | IsThetaFunO ψ S T f}
-  add_mem' {f g} (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) := by
-    have h : IsThetaFunO ψ S T (f + g) := {
-      quasi γ w := by simp only [Pi.add_apply, hf.quasi, hg.quasi, mul_add]
-      level := by
-        obtain ⟨U, hU, hfix⟩ := hf.level
-        obtain ⟨V, hV, hfix'⟩ := hg.level
-        refine ⟨U ⊓ V, hU.inter hV, fun u hu hfin => ?_⟩
-        funext w
-        have ef := congrFun (hfix u hu.1 hfin) w
-        have eg := congrFun (hfix' u hu.2 hfin) w
-        unfold heisO at ef eg ⊢
-        rw [Pi.add_apply, Pi.add_apply, mul_add, ef, eg]
-      cont := hf.cont.add hg.cont
-      smooth k L hL hreal w := (hf.smooth k L hL hreal w).add (hg.smooth k L hL hreal w) }
-    exact h
-  zero_mem' := by
-    have h : IsThetaFunO ψ S T 0 := {
-      quasi γ w := by simp only [Pi.zero_apply, mul_zero]
-      level := ⟨⊤, isOpen_univ, fun u _ _ => by funext w; simp only [heisO, Pi.zero_apply, mul_zero]⟩
-      cont := continuous_const
-      smooth k L _ _ w := contDiff_const }
-    exact h
-  smul_mem' c f (hf : IsThetaFunO ψ S T f) := by
-    have h : IsThetaFunO ψ S T (c • f) := {
-      quasi γ w := by
-        rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
-      level := by
-        obtain ⟨U, hU, hfix⟩ := hf.level
-        refine ⟨U, hU, fun u hu hfin => ?_⟩
-        funext w
-        have ef := congrFun (hfix u hu hfin) w
-        unfold heisO at ef ⊢
-        rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, ef]
-      cont := hf.cont.const_smul c
-      smooth k L hL hreal w := contDiff_const.mul (hf.smooth k L hL hreal w) }
-    exact h
+  add_mem' {f g} (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) :=
+    (GlobalTheory.WeilVacMove.isTheta_add hf hg : IsThetaFunO ψ S T (f + g))
+  zero_mem' := (GlobalTheory.WeilVacMove.isTheta_zero : IsThetaFunO ψ S T 0)
+  smul_mem' c f (hf : IsThetaFunO ψ S T f) :=
+    (GlobalTheory.WeilVacMove.isTheta_smul c hf : IsThetaFunO ψ S T (c • f))
 
 variable {ψ : AddChar (AF D.host.F) ℂ}
 
@@ -262,30 +193,7 @@ def opF (hψ : IsCharAF D.host.F ψ) (S T : HSp D) (w : 𝓞 D.host.E) (x : XF S
   change IsThetaFunO ψ S T f at hf
   let a : WO S T := x
   have ha : a.map (infPart D) = 0 := x.fin
-  have h : IsThetaFunO ψ S T (heisO ψ S T a f) := {
-    quasi := GlobalTheory.WeilVacMove.heisO_quasi ψ S T a f hf.quasi
-    level := by
-      obtain ⟨U, hU, hfix⟩ := hf.level
-      refine ⟨U ⊓ GlobalTheory.FinTranslate.annSub ψ S T a,
-        hU.inter (GlobalTheory.FinTranslate.isOpen_annSub hψ ha), fun u hu hfin => ?_⟩
-      have hpair : ψ (symplOH S T u a) = 1 ∧ ψ (symplOH S T a u) = 1 := hu.2
-      conv_rhs => rw [← hfix u hu.1 hfin]
-      rw [GlobalTheory.WeilVacMove.heisO_heisO, GlobalTheory.WeilVacMove.heisO_heisO,
-        hpair.1, hpair.2, add_comm]
-    cont := by
-      have : IsTopologicalAddGroup (AE D) := IsTopologicalRing.isTopologicalAddGroup
-      have : IsTopologicalAddGroup (WO S T) := Pi.isTopologicalAddGroup
-      exact (hψ.1.comp (GlobalTheory.WeilVacMove.continuous_symplOH S T continuous_id continuous_const)).mul
-        (hf.cont.comp (continuous_id.add continuous_const))
-    smooth k L hL hreal u := by
-      have e : (fun t => heisO ψ S T a f (u + L t)) =
-          fun t => ψ (symplOH S T u a) * f (u + a + L t) := by
-        funext t
-        rw [heisO, symplOH_add_left,
-          (GlobalTheory.WeilVacMove.symplOH_fin_real S T a (L t) ha (hreal t)).2,
-          add_zero, add_right_comm]
-      rw [e]
-      exact contDiff_const.mul (hf.smooth k L hL hreal (u + a)) }
+  have h : IsThetaFunO ψ S T (heisO ψ S T a f) := GlobalTheory.FinTranslate.isTheta_heisO_fin hψ ha hf
   exact h
 
 theorem coe_opF (hψ : IsCharAF D.host.F ψ) (w : 𝓞 D.host.E) (x : XF S T) (f : thetaSub ψ S T) :

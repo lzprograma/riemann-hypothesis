@@ -261,7 +261,7 @@ theorem exists_sub_mul_mem (hp : p.Prime) (h0 : (p : S) ∈ maximalIdeal S)
     if h : b ∈ residue S '' L then π ⟨h.choose, mem_level_of_mem h.choose_spec.1⟩ else 0
   have hg : ∀ x (hx : x ∈ L), g (residue S x) = π ⟨x, mem_level_of_mem hx⟩ := fun x hx => by
     have h : residue S x ∈ residue S '' L := ⟨x, hx, rfl⟩
-    simp only [g, dif_pos h, hL h.choose_spec.1 hx h.choose_spec.2]
+    simp only [g, dite_eq_left h, hL h.choose_spec.1 hx h.choose_spec.2]
   obtain ⟨σ, h1, h2⟩ := exists_ringHom_pow hB n _ f g (by
     rintro _ ⟨x, hx, rfl⟩
     rw [hg x hx, ← hf]
@@ -615,8 +615,7 @@ private theorem exists_pow_dvd_of_mem_maximalIdeal_pow {S : Type} [CommRing S] [
       push_cast
       exact pow_ne_zero _ hπ0
     obtain ⟨M, hM⟩ : ∃ M, ((π ^ k : Λ) : S) ∉ maximalIdeal S ^ M := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hne (eq_zero_of_forall_mem_pow_of_isAdicComplete _ hc _ h)
     refine ⟨max N M, fun a ha => ?_⟩
     obtain ⟨u, rfl⟩ := hN a (Ideal.pow_le_pow_right (le_max_left _ _) ha)
@@ -646,8 +645,7 @@ theorem isDVR_of_closed_subring_principal :
     exact_mod_cast this
   have hirr : Irreducible π := by
     refine ⟨fun h => (hunit π).1 h hπm, fun ⦃a b⦄ hab => ?_⟩
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     obtain ⟨ha, hb⟩ := hne
     rw [hunit, not_not] at ha hb
     obtain ⟨x, rfl⟩ := hdiv a ha
@@ -659,8 +657,7 @@ theorem isDVR_of_closed_subring_principal :
   have hfac : ∀ {x : Λ}, x ≠ 0 → ∃ n : ℕ, Associated (π ^ n) x := by
     intro x hx
     have hex : ∃ n, ¬ π ^ n ∣ x := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hx (hsep x h)
     classical
     obtain ⟨k, hk, hk1⟩ : ∃ k, π ^ k ∣ x ∧ ¬ π ^ (k + 1) ∣ x := by

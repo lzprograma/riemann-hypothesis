@@ -59,8 +59,6 @@ open GlobalTheory.AdelicU (EmbOver htInf htFin compInf compFin infProj opNorm)
 open GlobalTheory.IndefiniteRowSideFullHecke.LieAlgebraExponentialFamilies (infHt infNorm)
 open GlobalTheory.SmoothForms
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 private theorem infEmb_tmul_one_eq_extensionEmbedding {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E]
     {w : InfinitePlace F} {τ : E →+* ℂ} (hτ : τ.comp (algebraMap F E) = w.embedding)
     {θ : Ainf F ⊗[F] E →+* ℂ} (hθ : IsInfEmb τ θ) (b : Ainf F) :

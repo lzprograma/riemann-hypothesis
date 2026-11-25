@@ -9,56 +9,12 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CartierSecti
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussAtHeightOneVerticalPointStatement
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EqZeroOfForallPowDvdGerm
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingStalkGeneric
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Ideal.KrullsHeightTheorem
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsNatDiagIffIsDiag
 import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HomExtNormalSt
 import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
 import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Tactic.Basify
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoheightLeOneOfFlat, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIndepDenom, Development.AbelianVarietyTheory.Proofs.DivisorProofs.FnOfPreimageMemSpanBy, Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussAtCompAlg, Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussPropertyCodimOneChartHeightOnePrime
@@ -73,8 +29,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef
 open scoped CategoryTheory.Obj
 open GlobalTheory.Desc
-
-set_option autoImplicit false
 
 namespace GlobalTheory.Desc.GaussPt
 
@@ -321,8 +275,7 @@ theorem descent {R₁ E : Type} [CommRing R₁] [CommRing E] [IsLocalRing E] (a 
       RingHom.algebraMap_toAlgebra]
     simp only [smul_eq_mul, _root_.mul_one]
   obtain ⟨l, hl⟩ : ∃ l, α (ev 0) l ∉ q := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     have : (1 : E) ∈ maximalIdeal E := by
       rw [← h1, hy]
       exact Ideal.sum_mem _ fun l _ => Ideal.mul_mem_right _ _ (hq _ (hall l))
@@ -559,8 +512,6 @@ open GlobalTheory GlobalTheory.Cartier GlobalTheory.Toroidal GlobalTheory.LocM G
 open scoped CategoryTheory.Obj
 open GlobalTheory.Desc
 
-set_option autoImplicit false
-
 namespace GlobalTheory.Desc.GaussComp
 
 theorem exists_indep {T M I : Type} [CommRing T] [IsDomain T] [IsPrincipalIdealRing T] [AddCommGroup M] [Module T M]
@@ -577,16 +528,6 @@ theorem exists_indep {T M I : Type} [CommRing T] [IsDomain T] [IsPrincipalIdealR
   · have h := congrArg Subtype.val (b.sum_repr ⟨z i, hz i⟩)
     rw [Submodule.coe_sum] at h
     simpa using h.symm
-
-theorem mem_spanBy_iff {R F : Type} [CommRing R] [CommRing F] [Algebra R F] (S : Set F) (v : F) :
-    v ∈ spanBy (algebraMap R F) S ↔ v ∈ Submodule.span R S := by
-  simp only [spanBy]
-  rw [Submodule.mem_span_set']
-  constructor
-  · rintro ⟨n, r, t, ht, rfl⟩
-    exact ⟨n, r, fun i => ⟨t i, ht i⟩, by simp [Algebra.smul_def]⟩
-  · rintro ⟨n, f, g, hg⟩
-    exact ⟨n, f, fun i => g i, fun i => (g i).2, by rw [← hg]; simp [Algebra.smul_def]⟩
 
 section
 
@@ -770,12 +711,12 @@ theorem gaussAt_comp_alg {T E F F' FE : Type} [CommRing T] [IsDomain T] [IsPrinc
   intro v hv
   obtain ⟨d, hd, hdv⟩ := hv
   have hdv' : algebraMap E FE d * v ∈ spanBy (algebraMap E FE) (Set.range θb) := by
-    rw [mem_spanBy_iff]
-    exact Submodule.span_mono (Set.range_comp_subset_range θ θb) ((mem_spanBy_iff _ _).mp hdv)
+    rw [GlobalTheory.VandermondeEmbeddingVanishing.mem_spanBy_iff]
+    exact Submodule.span_mono (Set.range_comp_subset_range θ θb) ((GlobalTheory.VandermondeEmbeddingVanishing.mem_spanBy_iff _ _).mp hdv)
   rw [G₂ v ⟨d, hd, hdv'⟩]
   constructor
   · rintro ⟨s, hs, hsv⟩
-    rw [mem_spanBy_iff, Submodule.mem_span_set'] at hsv
+    rw [GlobalTheory.VandermondeEmbeddingVanishing.mem_spanBy_iff, Submodule.mem_span_set'] at hsv
     obtain ⟨n, f, g, hfg⟩ := hsv
     have hg : ∀ i, ∃ x, x ∈ W' ∧ θb x = (g i : FE) := fun i => (g i).2
     choose w hw hwg using hg
@@ -786,7 +727,7 @@ theorem gaussAt_comp_alg {T E F F' FE : Type} [CommRing T] [IsDomain T] [IsPrinc
       rw [← hfg]
       simp_rw [← hwg]
       exact sum_smul_thetab_expand_in_basis θb hc f w A ε hA
-    rw [mem_spanBy_iff, Submodule.mem_span_set'] at hdv
+    rw [GlobalTheory.VandermondeEmbeddingVanishing.mem_spanBy_iff, Submodule.mem_span_set'] at hdv
     obtain ⟨n', r, g', hrg⟩ := hdv
     have hg'' : ∀ k, ∃ x, (θb.comp θ) x = (g' k : FE) := fun k => (g' k).2
     choose fk hfk using hg''
@@ -815,9 +756,9 @@ theorem gaussAt_comp_alg {T E F F' FE : Type} [CommRing T] [IsDomain T] [IsPrinc
         (fun k => s * r k) (fun k => θ (fk k)) (fun k => Submodule.subset_span ⟨fk k, rfl⟩) heq l
       have hpre : ∃ d' : T, d' ≠ 0 ∧
           algebraMap T F' d' * w' l ∈ spanBy (algebraMap T F') (Set.range θ) :=
-        ⟨t, ht, by rw [mem_spanBy_iff, ← Algebra.smul_def]; exact htm⟩
+        ⟨t, ht, by rw [GlobalTheory.VandermondeEmbeddingVanishing.mem_spanBy_iff, ← Algebra.smul_def]; exact htm⟩
       obtain ⟨σ, hσ, hσm⟩ := (G₁ (w' l) hpre).mp (hw'W l)
-      rw [mem_spanBy_iff, ← Algebra.smul_def] at hσm
+      rw [GlobalTheory.VandermondeEmbeddingVanishing.mem_spanBy_iff, ← Algebra.smul_def] at hσm
       exact ⟨σ, hσ, hσm⟩
     choose σ hσq hσm using hG
     have hτ : (∏ l, σ l) ∉ q := by
@@ -832,7 +773,7 @@ theorem gaussAt_comp_alg {T E F F' FE : Type} [CommRing T] [IsDomain T] [IsPrinc
       rcases (inferInstance : Q.IsPrime).mem_or_mem hmem with h | h
       · exact hq _ hτ h
       · exact hs h
-    · rw [mem_spanBy_iff]
+    · rw [GlobalTheory.VandermondeEmbeddingVanishing.mem_spanBy_iff]
       have e2 : algebraMap E FE (algebraMap T E (∏ l, σ l) * s) * v =
           ∑ l, ε l • θb ((∏ k, σ k) • w' l) := by
         rw [map_mul, _root_.mul_assoc, e1, Finset.mul_sum]
@@ -843,7 +784,7 @@ theorem gaussAt_comp_alg {T E F F' FE : Type} [CommRing T] [IsDomain T] [IsPrinc
       exact Submodule.sum_mem _ fun l _ => Submodule.smul_mem _ _ (himg _ (hτm l))
   · rintro ⟨s, hs, hsv⟩
     refine ⟨s, hs, ?_⟩
-    rw [mem_spanBy_iff] at hsv ⊢
+    rw [GlobalTheory.VandermondeEmbeddingVanishing.mem_spanBy_iff] at hsv ⊢
     refine Submodule.span_mono ?_ hsv
     rintro _ ⟨u, hu, rfl⟩
     exact ⟨θ u, hW u hu, rfl⟩
@@ -885,8 +826,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef
 open scoped CategoryTheory.Obj
 open GlobalTheory.Desc
-
-set_option autoImplicit false
 
 namespace GlobalTheory.Desc.GaussPt
 

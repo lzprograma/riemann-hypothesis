@@ -18,11 +18,6 @@ open PI.UpqRep (InLieHpk)
 
 variable {k r : ℕ}
 
-theorem hpk_herm (k r : ℕ) : (Formalism.QuantumDeterminants.Hpk k r)ᴴ = Formalism.QuantumDeterminants.Hpk k r := by
-  ext i j
-  simp only [Matrix.conjTranspose_apply, Formalism.QuantumDeterminants.Hpk, Fin.ext_iff]
-  split_ifs <;> first | omega | simp
-
 theorem hpk_row (k r : ℕ) (i : Fin (2 * r + k + 1)) :
     ∃ (j₀ : Fin (2 * r + k + 1)) (s : ℂ), s * s = 1 ∧ (∀ j, Formalism.QuantumDeterminants.Hpk k r i j = if j = j₀ then s else 0) ∧
       ∀ j, Formalism.QuantumDeterminants.Hpk k r j₀ j = if j = i then s else 0 := by
@@ -37,15 +32,6 @@ theorem hpk_row (k r : ℕ) (i : Fin (2 * r + k + 1)) :
       simp only [Formalism.QuantumDeterminants.Hpk, Fin.ext_iff]
       split_ifs <;> first | rfl | omega
 
-theorem hpk_sq (k r : ℕ) : Formalism.QuantumDeterminants.Hpk k r * Formalism.QuantumDeterminants.Hpk k r = 1 := by
-  ext i j
-  obtain ⟨j₀, s, hs, h1, h2⟩ := hpk_row k r i
-  simp only [Matrix.mul_apply, h1, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, h2,
-    Matrix.one_apply]
-  by_cases hij : i = j
-  · simp [hij, hs]
-  · simp [hij, Ne.symm hij]
-
 theorem flip_facts {n : ℕ} (Hm Y : Matrix (Fin n) (Fin n) ℂ) (h1 : Hmᴴ = Hm) (h2 : Hm * Hm = 1) :
     (Hm * Yᴴ * Hm)ᴴ * Hm = Hm * Y ∧ Hm * (Hm * Yᴴ * Hm) = Yᴴ * Hm := by
   constructor
@@ -54,7 +40,7 @@ theorem flip_facts {n : ℕ} (Hm Y : Matrix (Fin n) (Fin n) ℂ) (h1 : Hmᴴ = H
   · rw [← Matrix.mul_assoc, ← Matrix.mul_assoc, h2, Matrix.one_mul]
 
 theorem reH_lie (Y : Mx k r) : InLieHpk k r (reH k r Y) := by
-  obtain ⟨h3, h4⟩ := flip_facts _ Y (hpk_herm k r) (hpk_sq k r)
+  obtain ⟨h3, h4⟩ := flip_facts _ Y (Formalism.QuantumDeterminants.GBasic.Hpk_herm k r) (Formalism.QuantumDeterminants.GBasic.Hpk_sq k r)
   show (reH k r Y)ᴴ * Formalism.QuantumDeterminants.Hpk k r + Formalism.QuantumDeterminants.Hpk k r * reH k r Y = 0
   simp only [reH, Matrix.conjTranspose_smul, Matrix.conjTranspose_add, Matrix.conjTranspose_neg, Matrix.smul_mul,
     Matrix.mul_smul, Matrix.add_mul, Matrix.mul_add, Matrix.neg_mul, Matrix.mul_neg, h3, h4]
@@ -64,7 +50,7 @@ theorem reH_lie (Y : Mx k r) : InLieHpk k r (reH k r Y) := by
   simp
 
 theorem imH_lie (Y : Mx k r) : InLieHpk k r (imH k r Y) := by
-  obtain ⟨h3, h4⟩ := flip_facts _ Y (hpk_herm k r) (hpk_sq k r)
+  obtain ⟨h3, h4⟩ := flip_facts _ Y (Formalism.QuantumDeterminants.GBasic.Hpk_herm k r) (Formalism.QuantumDeterminants.GBasic.Hpk_sq k r)
   show (imH k r Y)ᴴ * Formalism.QuantumDeterminants.Hpk k r + Formalism.QuantumDeterminants.Hpk k r * imH k r Y = 0
   simp only [imH, sub_neg_eq_add, Matrix.conjTranspose_smul, Matrix.conjTranspose_add, Matrix.smul_mul,
     Matrix.mul_smul, Matrix.add_mul, Matrix.mul_add, h3, h4]

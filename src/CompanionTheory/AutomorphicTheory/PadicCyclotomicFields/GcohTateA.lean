@@ -19,8 +19,6 @@ open CategoryTheory MonoidalCategory GroundTheory.ProfCoh ReciprocityTheory.Gal 
 
 namespace CompanionTheory.LocalTateOrthogonality.Gcoh
 
-attribute [local instance 2000] Rep.hV2
-
 section Alg
 
 variable {n : ℕ}

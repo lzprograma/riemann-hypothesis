@@ -12,45 +12,6 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ResidueC
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SphericalEmbeddings.IsSmoothCharUnr
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SphericalEmbeddings.NoLinkRev
 import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.GenericUnitaryDualGLOfTwo
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NontrivialOfIsSubquotient
 
 @[expose] public section
@@ -83,36 +44,10 @@ private theorem prin_irr {n : ℕ} (χ : Fin n → kˣ →* ℂˣ) (hχ : ∀ i,
   let q := multiProdEquiv (stdBlocks (fun i => (x i).1) hd) fun i => equivRep (IrrRep.det (Fin 1) (χ i) (hχ i))
   have hM : (multiProd (Equiv.sigmaUnique (Fin n) fun _ => Fin 1) fun i => detRep (Fin 1) (χ i)).IsIrreducible :=
     GlobalTheory.Parabolic.isIrreducible_of_equiv (p.trans q).symm hP
-  have hMnt : Nontrivial (IndSp (Equiv.sigmaUnique (Fin n) fun _ => Fin 1)
-      (piTensor fun i => detRep (Fin 1) (χ i))) := nontrivial_of_irreducible hM
-  have hnt {G V W : Type} [Group G] [AddCommGroup V] [Module ℂ V] [AddCommGroup W]
-      [Module ℂ W] {σ : Representation ℂ G W} {ρ : Representation ℂ G V}
-      (h : IsSubquotient σ ρ) (hW : Nontrivial W) : Nontrivial V := by
-    letI := hW
-    obtain ⟨S, f, hf⟩ := h
-    have := hf.nontrivial
-    exact Subtype.val_injective.nontrivial (α := S.toSubmodule)
-  letI := hnt (GlobalTheory.PermPrin.isSubquotient_multiProd_prinSeries
-    (Equiv.sigmaUnique (Fin n) fun _ => Fin 1) χ) hMnt
-  have heq {G V W : Type} [Group G] [AddCommGroup V] [Module ℂ V] [AddCommGroup W]
-      [Module ℂ W] {σ : Representation ℂ G W} {ρ : Representation ℂ G V}
-      (h : IsSubquotient σ ρ) [Nontrivial W] (hρ : ρ.IsIrreducible) : Nonempty (ρ.Equiv σ) := by
-    obtain ⟨S, f, hf⟩ := h
-    obtain ⟨y, hy⟩ := exists_ne (0 : W)
-    obtain ⟨v, rfl⟩ := hf y
-    haveI : IsSimpleOrder (Subrepresentation ρ) := hρ
-    rcases eq_bot_or_eq_top S with rfl | rfl
-    · exact absurd (by rw [show v = 0 from Subtype.ext v.2, map_zero]) hy
-    let F : ρ.IntertwiningMap σ := f.comp (topEquiv ρ).symm.toIntertwiningMap
-    have hs : Function.Surjective F := hf.comp (topEquiv ρ).symm.toLinearEquiv.surjective
-    refine ⟨equivOfBijective F ⟨(injective_iff_map_eq_zero _).2 fun x hx => ?_, hs⟩⟩
-    rcases eq_bot_or_eq_top F.ker with h | h
-    · have : x ∈ F.ker := hx
-      rw [h] at this
-      exact this
-    · have : v.1 ∈ F.ker := by rw [h]; trivial
-      exact absurd this hy
-  obtain ⟨e⟩ := heq (GlobalTheory.PrinProd.isSubquotient_prinSeries_multiProd k n χ) hM
+  haveI := nontrivial_of_irreducible hM
+  haveI := nontrivial_of_isSubquotient (GlobalTheory.PermPrin.isSubquotient_multiProd_prinSeries
+    (Equiv.sigmaUnique (Fin n) fun _ => Fin 1) χ)
+  obtain ⟨e⟩ := equiv_of_isSubquotient (GlobalTheory.PrinProd.isSubquotient_prinSeries_multiProd k n χ) hM
   exact GlobalTheory.Parabolic.isIrreducible_of_equiv e hM
 
 private theorem unr_ne {a b : ℂˣ} (h : (a : ℂ) ≠ (resCard k : ℂ) * b) : unrChar k b ≠ unrChar k a * absPow k 1 := by
@@ -132,18 +67,6 @@ private theorem unr_ne {a b : ℂˣ} (h : (a : ℂ) ≠ (resCard k : ℂ) * b) :
   push_cast
   field_simp
 
-private theorem sph_of_equiv {n : ℕ} {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
-    {ρ : Representation ℂ (GL (Fin n) k) V} {π : Representation ℂ (GL (Fin n) k) W} (e : ρ.Equiv π)
-    (h : IsSpherical ρ) : IsSpherical π := by
-  unfold IsSpherical IsSphericalFor at *
-  obtain ⟨x, hx, h0⟩ := (Submodule.ne_bot_iff _).1 h
-  refine (Submodule.ne_bot_iff _).2 ⟨e.toLinearEquiv x, fun g => ?_, fun h1 =>
-    h0 (e.toLinearEquiv.injective (by rw [h1, map_zero]))⟩
-  have hint : e.toLinearEquiv (ρ (g : GL (Fin n) k) x) = π (g : GL (Fin n) k) (e.toLinearEquiv x) :=
-    LinearMap.congr_fun (e.isIntertwining' (g : GL (Fin n) k)) x
-  have hg := hx g
-  rw [← hint, hg, map_smul]
-
 end UpperTheory.ConvolutionTheory.Sph.UnramifiedSpherical
 
 theorem UpperTheory.ConvolutionTheory.Sph.unlSph :
@@ -156,4 +79,4 @@ theorem UpperTheory.ConvolutionTheory.Sph.unlSph :
     (fun i => PositivityTheory.Rg.BcB.N3.Pus.isSmoothChar_unr (α i))
     (fun i j => UnramifiedSpherical.unr_ne (by rw [hq]; exact h i j))
   obtain ⟨e⟩ := hs.nonempty_equiv τ.irred hI
-  exact UnramifiedSpherical.sph_of_equiv e (PositivityTheory.Rg.BcB.N3.Pse.iP_sph (k := v.adicCompletion K) α)
+  exact GlobalTheory.LocLanglands.fixed_ne_bot_of_equiv e (PositivityTheory.Rg.BcB.N3.Pse.iP_sph (k := v.adicCompletion K) α)

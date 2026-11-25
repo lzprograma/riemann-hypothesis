@@ -44,7 +44,6 @@ import Mathlib.Topology.Sheaves.Init
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.L2.DIV Formalism.IndefR.Links NumberField
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 

@@ -142,9 +142,9 @@ theorem exists_restrictData_isVeryAmpleBy (hsp : primeOf (S := k) x ≤ primeOf 
         · rfl
       · dsimp only
         by_cases hb : redAt k x y (b' kk) = 0
-        · rw [if_pos hb, dite_eq_left hb]
+        · rw [ite_eq_left hb, dite_eq_left hb]
           exact ⟨1, by rw [pow_one, zero_mul]; exact zero_mem_ampleChart⟩
-        · rw [if_neg hb, dite_eq_right hb]
+        · rw [ite_eq_right hb, dite_eq_right hb]
           obtain ⟨e, he⟩ := hbJ kk (liftChart hxy I)
           have hbl := (hloc hσr (hb' kk)).1
           have hJ := hsupp kk hb

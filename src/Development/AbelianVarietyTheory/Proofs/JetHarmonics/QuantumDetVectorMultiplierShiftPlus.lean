@@ -114,22 +114,22 @@ theorem qdet_mul_vector (A : Type) [Ring A] [Algebra ℂ A] (m : ℕ)
     qdet E u * x j = x j * qdet E u + ∑ a : Fin (m + 1), ((-1 : ℂ) ^ ((a : ℕ) + (j : ℕ))) •
       (x a * qminor E (Fin.succAbove a) (Fin.succAbove j) (u - 1)) := by
   have h1 := _root_.GlobalTheory.capelli_left_comatrix A m E hE u j j
-  rw [if_pos rfl] at h1
+  rw [ite_eq_left rfl] at h1
   have h2 : ∀ a : Fin (m + 1), qminor E (Fin.succAbove a) (Fin.succAbove j) (u - 1) * x j
       = x j * qminor E (Fin.succAbove a) (Fin.succAbove j) (u - 1) := by
     intro a
     refine _root_.GlobalTheory.qminor_comm_of_comm_columns A (m + 1) m E (x j) _ _ _ ?_
     intro c i
-    rw [hx, if_neg (Fin.succAbove_ne j i), add_zero]
+    rw [hx, ite_eq_right (Fin.succAbove_ne j i), add_zero]
   have h3 : ∀ a : Fin (m + 1), Tm E u a j * x j = x j * Tm E u a j + x a := by
     intro a
     have h := hx a j j
-    rw [if_pos rfl] at h
+    rw [ite_eq_left rfl] at h
     unfold Tm
     by_cases haj : a = j
-    · simp only [if_pos haj, add_mul, mul_add, h, Algebra.commutes]
+    · simp only [ite_eq_left haj, add_mul, mul_add, h, Algebra.commutes]
       abel
-    · simp only [if_neg haj, zero_add, h]
+    · simp only [ite_eq_right haj, zero_add, h]
   rw [← h1, Finset.sum_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [smul_mul_assoc, mul_smul_comm, ← smul_add, mul_assoc, h2, ← mul_assoc, h3, add_mul,
@@ -197,14 +197,14 @@ theorem aeval_neg_eq_zero_and_eigen_of_resolvent_identity :
     ∀ (N : Type) [AddCommGroup N] [Module ℂ N] (Ω : Module.End ℂ N) (X : ℂ → Module.End ℂ N) (d : ℕ) (c : ℕ → Module.End ℂ N) (p : Polynomial ℂ), (∀ u, X u = ∑ i ∈ Finset.range d, u ^ i • c i) → (∀ (u : ℂ) (w : N), u • X u w + Ω (X u w) = p.eval u • w) → Polynomial.aeval (-Ω) p = 0 ∧ ∀ (α : ℂ) (w : N), Ω w = α • w → ∀ (q : Polynomial ℂ), p = (Polynomial.X + Polynomial.C α) * q → ∀ u : ℂ, X u w = q.eval u • w := by
   intro N _ _ Ω X d c p hX h
   let a : N → ℕ → N := fun w i => if i < d then c i w else 0
-  have ha : ∀ w i, d ≤ i → a w i = 0 := fun w i hi => if_neg (by omega)
+  have ha : ∀ w i, d ≤ i → a w i = 0 := fun w i hi => ite_eq_right (by omega)
   have hXa : ∀ (M : ℕ), d ≤ M → ∀ (u : ℂ) (w : N),
       X u w = ∑ i ∈ Finset.range M, u ^ i • a w i := by
     intro M hM u w
     rw [hX u, LinearMap.sum_apply]
     rw [← Finset.sum_subset (Finset.range_subset_range.2 hM)]
     · refine Finset.sum_congr rfl fun i hi => ?_
-      simp only [a, if_pos (Finset.mem_range.1 hi), LinearMap.smul_apply]
+      simp only [a, ite_eq_left (Finset.mem_range.1 hi), LinearMap.smul_apply]
     · intro i _ hi
       rw [ha w i (by simpa using hi), smul_zero]
   have hco : ∀ w, Ω (a w 0) = p.coeff 0 • w ∧
@@ -350,7 +350,7 @@ theorem prod_add_ite_shift {n : ℕ} (ν : Fin n → ℂ) (s : Fin n) (u : ℂ) 
   have : ∏ t ∈ Finset.univ.erase s, (u + ν t + if t = s then 1 else 0) =
       ∏ t ∈ Finset.univ.erase s, (u + ν t) :=
     Finset.prod_congr rfl fun t ht => by simp [Finset.ne_of_mem_erase ht]
-  rw [this]; simp only [if_true]; ring
+  rw [this]; simp only [ite_true]; ring
 
 theorem qdet_vector_multiplier_shift_plus : ∀ (V W : Type) [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W] (n : ℕ) (E : Fin n → Fin n → Module.End ℂ V) (E' : Fin n → Fin n → Module.End ℂ W) (ι : W →ₗ[ℂ] V) (x : Fin n → Module.End ℂ V) (ν : Fin n → ℂ), GlRel E → GlRel E' → (∀ a b w, ι (E' a b w) = E a b (ι w)) → Function.Injective ν → (∀ (u : ℂ) (w : W), qdet E' u w = (∏ s, (u + ν s)) • w) → (∀ a b j, E a b * x j = x j * E a b + if b = j then x a else 0) → ∀ (j : Fin n) (w : W), ∃ v : Fin n → Fin n → W, x j (ι w) = ∑ s, ∑ a, x a (ι (v s a)) ∧ ∀ (s : Fin n) (u : ℂ), qdet E u (∑ a, x a (ι (v s a))) = (∏ t, (u + ν t + if t = s then 1 else 0)) • ∑ a, x a (ι (v s a)) := by
   intro V W _ _ _ _ n E E' ι x ν hE hE' hι hν hq hx j w

@@ -27,7 +27,7 @@ theorem blkMod_eq (δ : ∀ p, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF D) :
   intro a s t x y h1 h2 h3 h4 h5 h6 h7
   rw [← Formalism.L2.SG.Pf.blkTop_eq δ T T' p a s t x y h1 h2 h3 h4 h5 h6 h7]
   unfold blkTop
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro ⟨hs, rfl⟩
   omega
 
@@ -51,7 +51,7 @@ theorem modMat_last (δ : ∀ p, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF D) (w : P
   show ptEntry (mapBlocks (blkMod δ T T' p) 1 w.1) D.R.rS D.R.rS = _
   have hs' : ((mapBlocks (blkMod δ T T' p) 1 l0).map Prod.snd).sum = D.R.rS := by
     rw [Formalism.L2.SG.Pf.mapBlocks_snd, hs]
-  rw [hb, Formalism.L2.SG.Pf.mapBlocks_append, Formalism.L2.SG.Pf.ptEntry_append_ge _ _ _ _ hs'.le, if_pos hs'.le, hs',
+  rw [hb, Formalism.L2.SG.Pf.mapBlocks_append, Formalism.L2.SG.Pf.ptEntry_append_ge _ _ _ _ hs'.le, ite_eq_left hs'.le, hs',
     Nat.sub_self, hs, add_comm]
   simp [mapBlocks, ptEntry]
 
@@ -62,7 +62,7 @@ theorem corner_zero {B : Type} [Zero B] (f : ℕ → ℕ → D.host.E → B) (w 
   have hs' : ((mapBlocks f 1 l0).map Prod.snd).sum = (l0.map Prod.snd).sum := by
     rw [Formalism.L2.SG.Pf.mapBlocks_snd]
   have hle : ((mapBlocks f 1 l0).map Prod.snd).sum ≤ D.R.rS := by rw [hs']; omega
-  rw [hb, Formalism.L2.SG.Pf.mapBlocks_append, Formalism.L2.SG.Pf.ptEntry_append_ge _ _ _ _ hle, if_pos hle, hs']
+  rw [hb, Formalism.L2.SG.Pf.mapBlocks_append, Formalism.L2.SG.Pf.ptEntry_append_ge _ _ _ _ hle, ite_eq_left hle, hs']
   simp only [mapBlocks, ptEntry]
   split_ifs <;> first | rfl | omega
 
@@ -99,7 +99,7 @@ theorem modShift_holds (δ : ∀ p, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF D) (w 
     have hsh : shM δ T T' p w (Fin.last _) (Fin.last _) = cornerSh δ T T' p w := by simp [shM]
     rw [hsh]
     by_cases h0 : Dmin w D.R.rS = 0
-    · have hc0 : cornerSh δ T T' p w = 0 := by unfold cornerSh; rw [if_pos h0]
+    · have hc0 : cornerSh δ T T' p w = 0 := by unfold cornerSh; rw [ite_eq_left h0]
       rw [hc0, add_zero]
       obtain ⟨l0, t, s, hb, hs, h2⟩ := last_big w h0
       have e1 := corner_zero (blkTop δ T T' p) w l0 t s hb hs h2
@@ -109,11 +109,11 @@ theorem modShift_holds (δ : ∀ p, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF D) (w 
     · obtain ⟨l0, t, hb, hs⟩ := Formalism.L2.SG.Pf.last_one w h0
       rw [Formalism.L2.SG.Pf.amat_last δ T T' p w a ha l0 t hb hs, modMat_last δ T T' p w l0 t hb hs]
       unfold cornerSh
-      rw [if_neg h0, Formalism.L2.SG.Pf.zeta_snoc w h0 l0 t hb hs]
+      rw [ite_eq_right h0, Formalism.L2.SG.Pf.zeta_snoc w h0 l0 t hb hs]
       unfold blkTop
-      rw [if_pos ⟨by omega, rfl⟩]
+      rw [ite_eq_left ⟨by omega, rfl⟩]
   · rw [Formalism.L2.SG.Pf.amat_eq δ T T' p w a ha x y hc, modMat_off δ T T' p w x y hc]
-    have : shM δ T T' p w x y = 0 := by simp only [shM, Matrix.of_apply]; rw [if_neg hc]
+    have : shM δ T T' p w x y = 0 := by simp only [shM, Matrix.of_apply]; rw [ite_eq_right hc]
     rw [this, add_zero]
 
 end ShiftPf

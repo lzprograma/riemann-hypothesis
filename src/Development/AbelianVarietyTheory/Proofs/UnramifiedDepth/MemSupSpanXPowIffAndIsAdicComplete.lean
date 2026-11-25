@@ -169,15 +169,15 @@ theorem decomp [Fintype κ] [DecidableEq κ] (f : MvPowerSeries κ R) :
   by_cases hd : d = 0
   · subst hd
     simp
-  · rw [if_neg hd, zero_add]
+  · rw [ite_eq_right hd, zero_add]
     obtain ⟨k0, -⟩ := Finsupp.support_nonempty_iff.2 hd
     have hterm : ∀ k, (if single k 1 ≤ d then
         (if pick (d - single k 1 + single k 1) k = k then coeff (d - single k 1 + single k 1) f
           else 0) else 0) = if pick d k0 = k then coeff d f else 0 := by
       intro k
       by_cases hk : single k 1 ≤ d
-      · rw [if_pos hk, tsub_add_cancel_of_le hk, pick_eq d hd k k0]
-      · rw [if_neg hk, if_neg]
+      · rw [ite_eq_left hk, tsub_add_cancel_of_le hk, pick_eq d hd k k0]
+      · rw [ite_eq_right hk, ite_eq_right]
         rintro rfl
         apply hk
         rw [Finsupp.single_le_iff]

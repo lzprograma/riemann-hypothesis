@@ -92,7 +92,7 @@ theorem exists_highestWeight_general (ε : Fin n → Bool)
     simp only [LinearMap.sub_apply, Module.End.mul_apply] at h
     by_cases hac : a = c
     · subst hac; rfl
-    · simp only [if_neg hac, if_neg (Ne.symm hac), LinearMap.zero_apply, sub_zero, sub_eq_zero] at h
+    · simp only [ite_eq_right hac, ite_eq_right (Ne.symm hac), LinearMap.zero_apply, sub_zero, sub_eq_zero] at h
       exact h
   have hshift : ∀ {μ : Fin n → ℝ} {w : X}, (∀ c, A c c w = (μ c : ℂ) • w) → ∀ {a b : Fin n}, a ≠ b → ε a = ε b →
       ∀ c, A c c (A a b w) = ((μ c + (if c = a then 1 else 0) - (if c = b then 1 else 0) : ℝ) : ℂ) • A a b w := by

@@ -1,46 +1,7 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
@@ -322,8 +283,8 @@ private theorem wt_congr (hE : EigSame) (c : G.F[X] → ℂ → ℂ) (B : Global
   unfold wt
   refine finsum_congr fun y => ?_
   by_cases hy : Sees B S a y
-  · rw [if_pos hy, if_pos ((hEy y).1.1 hy), ((hEy y).2 hy).1, ((hEy y).2 hy).2]
-  · rw [if_neg hy, if_neg (fun h' => hy ((hEy y).1.2 h'))]
+  · rw [ite_eq_left hy, ite_eq_left ((hEy y).1.1 hy), ((hEy y).2 hy).1, ((hEy y).2 hy).2]
+  · rw [ite_eq_right hy, ite_eq_right (fun h' => hy ((hEy y).1.2 h'))]
 
 private theorem term_eq (c : G.F[X] → ℂ → ℂ) (K : Subgroup G.GAf) (S : Set G.GAf) (B : GlobalTheory.LKCx.Form G)
     (b : GlobalTheory.LKCx.Dat G v B.β) (hK : ∀ y, Sees B (K : Set G.GAf) b y → y = 1) :
@@ -343,18 +304,18 @@ private theorem term_eq (c : G.F[X] → ℂ → ℂ) (K : Subgroup G.GAf) (S : S
   unfold wt
   refine finsum_congr fun y => ?_
   by_cases h1 : GlobalTheory.LKCx.FixL G v B.β y b.2.1
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     by_cases h2 : b.1.1⁻¹ * B.toAf y * b.1.1 ∈ S
     · by_cases h3 : b.1.2⁻¹ * GlobalTheory.LKCx.toP1 G B.β y * b.1.2 ∈ KHT p G.m G.n 1 G.Fw
-      · rw [if_pos (show Sees B S b y from ⟨h1, h2, h3⟩), Set.indicator_of_mem h2,
+      · rw [ite_eq_left (show Sees B S b y from ⟨h1, h2, h3⟩), Set.indicator_of_mem h2,
           Set.indicator_of_mem (show _ ∈ ((KHT p G.m G.n 1 G.Fw) : Set (Gr G 1)) from h3)]
         simp
-      · rw [if_neg (fun h => h3 h.2.2),
+      · rw [ite_eq_right (fun h => h3 h.2.2),
           Set.indicator_of_notMem (show _ ∉ ((KHT p G.m G.n 1 G.Fw) : Set (Gr G 1)) from h3)]
         simp
-    · rw [if_neg (fun h => h2 h.2.1), Set.indicator_of_notMem h2]
+    · rw [ite_eq_right (fun h => h2 h.2.1), Set.indicator_of_notMem h2]
       simp
-  · rw [if_neg h1, if_neg (fun h => h1 h.1)]
+  · rw [ite_eq_right h1, ite_eq_right (fun h => h1 h.1)]
 
 private theorem sees_unique {B : GlobalTheory.LKCx.Form G} {K : Subgroup G.GAf} {h : G.GAf} (a : GlobalTheory.LKCx.Dat G v B.β)
     (hst : ∀ y, Sees B (K : Set G.GAf) a y → y = 1) {y y' : GlobalTheory.LKCx.grp G B.β}
@@ -402,10 +363,10 @@ private theorem point_sum {B : GlobalTheory.LKCx.Form G} {K K' : Subgroup G.GAf}
     intro y hy y' hy'
     have hs : Sees B {g | h * g ∈ K} (mv b ((u.out : K) : G.GAf)) y := by
       by_contra hn
-      exact hy (if_neg hn)
+      exact hy (ite_eq_right hn)
     have hs' : Sees B {g | h * g ∈ K} (mv b ((u.out : K) : G.GAf)) y' := by
       by_contra hn
-      exact hy' (if_neg hn)
+      exact hy' (ite_eq_right hn)
     exact sees_unique _ (hst _) hs hs'
 
 private theorem form_eq (hE : EigSame) (c : G.F[X] → ℂ → ℂ) {K K' : Subgroup G.GAf} {h : G.GAf}
@@ -444,7 +405,7 @@ private theorem form_eq (hE : EigSame) (c : G.F[X] → ℂ → ℂ) {K K' : Subg
     by_contra hn
     apply hq
     refine finsum_eq_zero_of_forall_eq_zero fun y => ?_
-    exact if_neg fun hy => hn ⟨y, hy⟩
+    exact ite_eq_right fun hy => hn ⟨y, hy⟩
   calc _ = ∑ᶠ q, F q := by
         unfold GlobalTheory.RootSumWeights.cxSumM GlobalTheory.RootSumWeights.cxSumAtM
         exact finsum_congr fun q => term_eq c K' _ B _ (hst' _)

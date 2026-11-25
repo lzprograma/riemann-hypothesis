@@ -450,7 +450,6 @@ end Base
 section Values
 
 open MonoidalCategory CartesianMonoidalCategory ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.LN TopologicalSpace
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem exists_up_sec {X X' Y : Scheme.{0}} {L : LB X} {L' : LB X'} {F : X' ⟶ X} {K : Type} [Fintype K]
     {w : LB.Iso L' (L.pull F)} (hw : PGen w) (hL : L.IsLB) (hL' : L'.IsLB) {φ' : K → (Y ⟶ X')} {φ : K → (Y ⟶ X)}

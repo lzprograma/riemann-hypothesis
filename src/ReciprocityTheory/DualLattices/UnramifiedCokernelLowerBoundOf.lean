@@ -161,7 +161,7 @@ theorem permutedCokernelLowerBound_of (hU6 : CokernelLengthComparisonStatement) 
   unfold PermutedCokernelLowerBoundStatement
   intro p _ g C _ _ _ v R _ _ _ O _ _ σ cp hS H m e π he hσ hP1 hP2 hL1 hL2 w hw d hd cw hcw
   have hidem : H.ρL (e (π w)) * H.ρL (e (π w)) = H.ρL (e (π w)) := by
-    rw [← map_mul, he, if_pos rfl]
+    rw [← map_mul, he, ite_eq_left rfl]
   obtain ⟨y, hy⟩ := hIG R g d (H.ρL (e (π w))) hidem hd
   obtain ⟨cwb, hcwb⟩ := hEx C v R hS.integers g H.Ht (H.ρL (e (π w)))
     ((H.ρ (e w)).map (algebraMap ℤ_[p] R))
@@ -257,7 +257,7 @@ theorem unramifiedCokernelLowerBound_of (hU7 : UnramifiedCokernelLengthStatement
   unfold UnramifiedCokernelLowerBoundStatement
   intro p _ g C _ _ _ v R _ _ _ O _ _ σ cp hp2 hS H U i V1 hV1
   have hidem : U.εL (U.cj i) * U.εL (U.cj i) = U.εL (U.cj i) := by
-    rw [U.εL_orth, if_pos rfl]
+    rw [U.εL_orth, ite_eq_left rfl]
   obtain ⟨y, hy⟩ := hIG R g (U.r (U.cj i)) (U.εL (U.cj i)) hidem (U.rank (U.cj i))
   obtain ⟨V2, hV2⟩ := hEx C v R hS.integers g H.Ht (U.εL (U.cj i)) (U.εT i)
   have hkill := up_kill hS H U i

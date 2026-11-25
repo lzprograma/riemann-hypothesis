@@ -5,47 +5,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursi
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -66,32 +25,32 @@ theorem subRel : SubRel := by
   · unfold IsCov
     intro a b c
     have h := hE a.castSucc b.castSucc c.castSucc (Fin.last n)
-    rw [if_neg (Fin.castSucc_lt_last a).ne', sub_zero] at h
+    rw [ite_eq_right (Fin.castSucc_lt_last a).ne', sub_zero] at h
     simp only [subA, etaK]
     rw [h]
     by_cases hbc : b = c
     · subst hbc; simp
-    · rw [if_neg (fun e => hbc (Fin.castSucc_injective _ e)), if_neg hbc]
+    · rw [ite_eq_right (fun e => hbc (Fin.castSucc_injective _ e)), ite_eq_right hbc]
   · unfold IsVec
     intro a b c
     have h := hE a.castSucc b.castSucc (Fin.last n) c.castSucc
-    rw [if_neg (Fin.castSucc_lt_last b).ne, zero_sub] at h
+    rw [ite_eq_right (Fin.castSucc_lt_last b).ne, zero_sub] at h
     simp only [subA, yK]
     rw [h]
     by_cases hac : a = c
     · subst hac; simp
-    · rw [if_neg (fun e => hac (Fin.castSucc_injective _ e).symm), if_neg hac, neg_zero]
+    · rw [ite_eq_right (fun e => hac (Fin.castSucc_injective _ e).symm), ite_eq_right hac, neg_zero]
   · intro a b
     have h := hE a.castSucc (Fin.last n) b.castSucc (Fin.last n)
-    rw [if_neg (Fin.castSucc_lt_last b).ne', if_neg (Fin.castSucc_lt_last a).ne', sub_zero] at h
+    rw [ite_eq_right (Fin.castSucc_lt_last b).ne', ite_eq_right (Fin.castSucc_lt_last a).ne', sub_zero] at h
     exact sub_eq_zero.mp h
   · intro a b
     have h := hE (Fin.last n) a.castSucc (Fin.last n) b.castSucc
-    rw [if_neg (Fin.castSucc_lt_last a).ne, if_neg (Fin.castSucc_lt_last b).ne, sub_zero] at h
+    rw [ite_eq_right (Fin.castSucc_lt_last a).ne, ite_eq_right (Fin.castSucc_lt_last b).ne, sub_zero] at h
     exact sub_eq_zero.mp h
   · intro a b
     have h := hE (Fin.last n) (Fin.last n) a.castSucc b.castSucc
-    rw [if_neg (Fin.castSucc_lt_last a).ne', if_neg (Fin.castSucc_lt_last b).ne, sub_zero] at h
+    rw [ite_eq_right (Fin.castSucc_lt_last a).ne', ite_eq_right (Fin.castSucc_lt_last b).ne, sub_zero] at h
     exact sub_eq_zero.mp h
 
 section alg
@@ -216,12 +175,12 @@ theorem comm_last {n : ℕ} (E : Fin (n + 1) → Fin (n + 1) → Module.End ℂ 
   have hc : ∀ a b : Fin n, Commute (E (Fin.last n) (Fin.last n)) (subA E a b) := by
     intro a b
     have h := hE (Fin.last n) (Fin.last n) a.castSucc b.castSucc
-    rw [if_neg (Fin.castSucc_lt_last a).ne', if_neg (Fin.castSucc_lt_last b).ne, sub_zero] at h
+    rw [ite_eq_right (Fin.castSucc_lt_last a).ne', ite_eq_right (Fin.castSucc_lt_last b).ne, sub_zero] at h
     exact sub_eq_zero.mp h
   have hT : ∀ w (a b : Fin n), Commute (Tm E c (Fin.last n) (Fin.last n)) (Tm (subA E) w a b) := by
     intro w a b
     unfold Tm
-    rw [if_pos (rfl : Fin.last n = Fin.last n)]
+    rw [ite_eq_left (rfl : Fin.last n = Fin.last n)]
     apply Commute.add_left
     · exact Algebra.commute_algebraMap_left _ _
     · apply Commute.add_right

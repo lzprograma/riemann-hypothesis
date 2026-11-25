@@ -87,9 +87,9 @@ theorem polyFn_tm {n : ℕ} (E : Fin n → Fin n → A) (c : ℂ) (a b : Fin n) 
     PolyFn (fun u : ℂ => Tm E (u - c) a b) := by
   unfold Tm
   by_cases h : a = b
-  · simp only [h, if_true, map_sub]
+  · simp only [h, ite_true, map_sub]
     exact (PolyFn.alg.sub (PolyFn.const _)).add (PolyFn.const _)
-  · simp only [h, if_false]
+  · simp only [h, ite_false]
     exact (PolyFn.const _).add (PolyFn.const _)
 
 theorem polyFn_qdet {n : ℕ} (E : Fin n → Fin n → A) : PolyFn (fun u : ℂ => qdet E u) := by

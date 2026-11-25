@@ -7,47 +7,6 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTra
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.CertificateOpenRestriction
 public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.SupportFlatPullback
 public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformIsolation.VanishingIdealGeometry
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.OpenRestriction, Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformIsolation.VanishingIdealOrderOne, Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformIsolation.VanishingIdealHypotheses
@@ -71,8 +30,6 @@ private theorem exists_subschemeMap_isOpenImmersion {V W : Scheme.{u}} (f : V �
     [IsOpenImmersion f] (D : W.IdealSheafData) :
     ∃ g : (D.comap f).subscheme ⟶ D.subscheme,
       IsOpenImmersion g ∧ g ≫ D.subschemeι = (D.comap f).subschemeι ≫ f := by
-  have h₁ : IsOpenImmersion (Limits.pullback.snd f D.subschemeι) := inferInstance
-  have h₂ : IsOpenImmersion (D.comapIso f).hom := inferInstance
   refine ⟨(D.comapIso f).hom ≫ Limits.pullback.snd f D.subschemeι, inferInstance, ?_⟩
   rw [Category.assoc, ← Limits.pullback.condition, ← Category.assoc,
     Scheme.IdealSheafData.comapIso_hom_fst]
@@ -82,7 +39,6 @@ theorem isOpenImmersion_subschemeMap {V W : Scheme.{u}} (f : V ⟶ W) [IsOpenImm
     (hg : g ≫ D.subschemeι = (D.comap f).subschemeι ≫ f) :
     IsOpenImmersion g := by
   obtain ⟨g', hg', hg'fac⟩ := exists_subschemeMap_isOpenImmersion f D
-  have : Mono D.subschemeι := inferInstance
   have heq : g = g' := by
     refine (cancel_mono D.subschemeι).mp ?_
     rw [hg, hg'fac]
@@ -96,7 +52,6 @@ theorem isSmoothDivisor_comap {V W : Scheme.{u}} {k : Type u} [Field k]
   obtain ⟨g, hg, hgfac⟩ := exists_subschemeMap_isOpenImmersion f D
   refine ⟨hD.1.comap_of_isOpenImmersion f, ?_⟩
   have : IsOpenImmersion g := hg
-  have : AlgebraicGeometry.Smooth g := inferInstance
   have hsm : AlgebraicGeometry.Smooth (D.subschemeι ≫ p) := hD.2
   have hcomp : (D.comap f).subschemeι ≫ f ≫ p = g ≫ D.subschemeι ≫ p := by
     rw [← Category.assoc, ← hgfac, Category.assoc]
@@ -247,7 +202,6 @@ theorem isLocallyNoetherian_subscheme_of_isSmoothDivisor
     IsLocallyNoetherian D.subscheme := by
   obtain ⟨_, hsm⟩ := hD
   have : AlgebraicGeometry.Smooth (D.subschemeι ≫ U.ι ≫ p) := hsm
-  have : LocallyOfFiniteType (D.subschemeι ≫ U.ι ≫ p) := inferInstance
   have : IsNoetherianRing (CommRingCat.of k) := inferInstanceAs (IsNoetherianRing k)
   exact AlgebraicGeometry.LocallyOfFiniteType.isLocallyNoetherian (D.subschemeι ≫ U.ι ≫ p)
 

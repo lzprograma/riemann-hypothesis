@@ -2,46 +2,6 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.MeanDefs
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.SgSegUnique
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -198,7 +158,7 @@ theorem segment_mean_kappa_bound (D : Formalism.BasicNotions.D7) (K : Cst) (hK :
     · intro s hs
       have hs' : s ∈ X.TT := hs
       have h1 := Finset.mem_Icc.1 (hB ⟨s, hs'⟩)
-      have h2 : ex B s = B ⟨s, hs'⟩ := dif_pos hs'
+      have h2 : ex B s = B ⟨s, hs'⟩ := dite_eq_left hs'
       show X.bl ≤ (ex B s : ℝ) ∧ (ex B s : ℝ) ≤ X.bu + 2 * X.J0 K
       rw [h2]
       refine ⟨?_, ?_⟩
@@ -235,8 +195,8 @@ theorem segment_sum_kappa_bound (D : Formalism.BasicNotions.D7) (K : Cst) (hK : 
     show kapSeg K X R jj B (segATop X.TT (ex A) jj) (segAPlus X.TT (ex A) jj) = _
     have e1 : segATop X.TT (ex A) jj = fun i => (A ∘ sgTop X.TT jj) (some i) := by
       funext i
-      exact dif_pos (sg_pos_spec X.TT jj i).1
-    have e2 : segAPlus X.TT (ex A) jj = (A ∘ sgTop X.TT jj) none := dif_pos (sg_next_mem X.TT jj).1
+      exact dite_eq_left (sg_pos_spec X.TT jj i).1
+    have e2 : segAPlus X.TT (ex A) jj = (A ∘ sgTop X.TT jj) none := dite_eq_left (sg_next_mem X.TT jj).1
     rw [e1, e2]
   have h3 := sum_pi_marginal_injective (sgTop X.TT jj) (sgTop_inj X.TT jj) (X.WaP K)
     (fun A' : Option (Fin (segS X.TT jj)) → ℕ => kapSeg K X R jj B (fun i => A' (some i)) (A' none))

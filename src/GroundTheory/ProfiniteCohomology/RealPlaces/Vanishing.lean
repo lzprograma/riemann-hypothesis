@@ -13,8 +13,6 @@ namespace GroundTheory.ProfCoh
 
 open CategoryTheory NumberField IsDedekindDomain GroundTheory.Global
 
-attribute [local instance 2000] Rep.hV2
-
 noncomputable section
 
 local notation "ℚ̄" => AlgebraicClosure ℚ
@@ -41,12 +39,11 @@ theorem subsingleton_gsTateCompactCohomology {n : ℕ} (hn : n ≠ 0)
     (gsTateCompactCohomology_eq_zero S ιr ιs hn hS M hM hr y).symm⟩
 
 
-set_option maxHeartbeats 32000000 in
 theorem injective_gsRealRes_of_four_le {n : ℕ} (hn : n ≠ 0)
     (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((n : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
     (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)) [IsDiscreteRep M] [Finite M]
     (hM : ∀ m : M, n • m = 0) {r : ℕ} (hr : 4 ≤ r) :
-    Function.Injective (gsRealRes S ιr M r).hom := set_option maxHeartbeats 16000000 in by
+    Function.Injective (gsRealRes S ιr M r).hom := by
   let ιs' := someFinEmbeddings S
   cases r with
   | zero => exact (Nat.not_succ_le_zero _ hr).elim
@@ -64,12 +61,11 @@ theorem injective_gsRealRes_of_four_le {n : ℕ} (hn : n ≠ 0)
         (gsTateCompactCohomology_eq_zero S ιr ιs' hn hS M hM hr))
 
 
-set_option maxHeartbeats 32000000 in
 theorem surjective_gsRealRes_of_three_le {n : ℕ} (hn : n ≠ 0)
     (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((n : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
     (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)) [IsDiscreteRep M] [Finite M]
     (hM : ∀ m : M, n • m = 0) {r : ℕ} (hr : 3 ≤ r) :
-    Function.Surjective (gsRealRes S ιr M r).hom := set_option maxHeartbeats 16000000 in by
+    Function.Surjective (gsRealRes S ιr M r).hom := by
   let ιs' := someFinEmbeddings S
   cases r with
   | zero => exact (Nat.not_succ_le_zero _ hr).elim

@@ -7,53 +7,7 @@ public import Mathlib.Algebra.Order.Chebyshev
 public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
 public import Mathlib.Analysis.Real.Pi.Bounds
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeMetricGramMatrixLocalHolomorphicImPart
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernCurvatureFormSelfEqDualNorm, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConnectionMatrixGramOperatorNormLe, Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeCurvatureDualMetricPointwiseBound, Development.AbelianVarietyTheory.Proofs.DivisorProofs.PeriodChartUniformConstantsHalfPolydisc, Development.AbelianVarietyTheory.Proofs.DivisorProofs.PoincareMetricPuncturedPolydiscBounds, Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeChartBoundsOfSchurLemW
@@ -126,7 +80,7 @@ theorem gnorm_one_eq (v : Fin g → ℂ) : gnorm 1 v = √(∑ a, ‖v a‖ ^ 2)
   rw [gnorm, form_eq_sum]
   congr 1
   simp only [Matrix.one_apply, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true, re_sum]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true, re_sum]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [Complex.mul_conj, Complex.normSq_eq_norm_sq, ofReal_re]
 
@@ -135,7 +89,6 @@ theorem opNorm_one_le_of_entry (M : Matrix (Fin g) (Fin g) ℂ) {E : ℝ} (hE : 
   refine opNorm_le_of_bound (by positivity) fun v => ?_
   rw [gnorm_one_eq, gnorm_one_eq]
   set S := ∑ a, ‖v a‖ ^ 2 with hS
-  have hS0 : 0 ≤ S := Finset.sum_nonneg fun _ _ => sq_nonneg _
   have hrw : (g : ℝ) * E * √S = √(((g : ℝ) * E) ^ 2 * S) := by
     rw [Real.sqrt_mul (sq_nonneg _), Real.sqrt_sq (by positivity)]
   rw [hrw]
@@ -183,7 +136,6 @@ theorem inv_entry_le (Y : Matrix (Fin g) (Fin g) ℝ) {c : ℝ} (hc : 0 < c)
   have h1 : c * N ≤ u k := by
     have := hY u
     rwa [hYu, dotProduct_single, mul_one] at this
-  have huk : 0 ≤ u k := le_trans (mul_nonneg hc.le hN0) h1
   have h2 : c ^ 2 * N ^ 2 ≤ N := by
     calc c ^ 2 * N ^ 2 = (c * N) ^ 2 := by ring
       _ ≤ u k ^ 2 := pow_le_pow_left₀ (mul_nonneg hc.le hN0) h1 2
@@ -501,11 +453,6 @@ theorem quad_abs_le {m : Type} [Fintype m] (A : Matrix m m ℝ) (E : ℝ)
         have h4 : 0 ≤ |A j k| := abs_nonneg _
         linarith [mul_le_mul h2 h3 (mul_nonneg (abs_nonneg (x j)) (abs_nonneg (x k))) (h4.trans h2)]
     _ = E * Fintype.card m * (x ⬝ᵥ x) := by
-        have h5 : ∀ j, ∑ k : m, (E / 2 * (x j) ^ 2 + E / 2 * (x k) ^ 2) =
-            Fintype.card m * (E / 2 * (x j) ^ 2) + E / 2 * ∑ k, (x k) ^ 2 := by
-          intro j
-          rw [Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, nsmul_eq_mul,
-            Finset.mul_sum]
         simp only [Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, nsmul_eq_mul,
           ← Finset.mul_sum, dotProduct, sq]
         ring
@@ -804,7 +751,7 @@ theorem gnorm_diag_sq {n : ℕ} (d : Fin n → ℝ) (hd : ∀ k, 0 ≤ d k) (ξ 
     rw [posSemidef_diagonal_iff]; intro k; exact_mod_cast hd k
   rw [gnorm_sq hP, form_eq_sum]
   simp only [diagonal_apply, mul_ite, mul_zero, ite_mul, zero_mul, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true, re_sum]
+    Finset.mem_univ, ite_true, re_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [mul_comm (ξ k), mul_assoc, mul_conj, ← ofReal_mul, ofReal_re, normSq_eq_norm_sq]
 
@@ -828,7 +775,6 @@ theorem half_le_pdiag {n a : ℕ} (ha : a ≤ n) {ρ : ℝ} (hρ : ρ ≤ 1) {z 
     obtain ⟨hp, hl⟩ := norm_mul_tlog_lt h0 (lt_of_lt_of_le (hz.1 k) hρ)
     have hs : ‖z k‖ ^ 2 * tlog (z k) ^ 2 = (‖z k‖ * tlog (z k)) ^ 2 := by ring
     rw [hs]
-    have h2 : 0 < (‖z k‖ * tlog (z k)) ^ 2 := by positivity
     have h3 : (‖z k‖ * tlog (z k)) ^ 2 < 1 := by simpa using pow_lt_pow_left₀ hl hp.le two_ne_zero
     rw [div_le_div_iff₀ (by norm_num) (by positivity)]
     linarith
@@ -851,7 +797,6 @@ theorem poincare_bounds : ∀ (n a : ℕ) (ha : a ≤ n) (ρ : ℝ), ρ ≤ 1 �
   · have h1 := pdiag_term_le a z ξ k
     have h2 := half_le_pdiag ha hρ hz k
     have hG := gnorm_nonneg (poincareGram a z) ξ
-    have hx := norm_nonneg (ξ k)
     have h3 : ‖ξ k‖ ^ 2 ≤ 2 * gnorm (poincareGram a z) ξ ^ 2 := by linarith [mul_le_mul_of_nonneg_right h2 (sq_nonneg ‖ξ k‖)]
     exact le_of_sq_le_sq (by linarith [sq_nonneg (gnorm (poincareGram a z) ξ)] : ‖ξ k‖ ^ 2 ≤ (2 * gnorm (poincareGram a z) ξ) ^ 2) (by linarith)
   · set k := Fin.castLE ha i with hkdef
@@ -860,7 +805,7 @@ theorem poincare_bounds : ∀ (n a : ℕ) (ha : a ≤ n) (ρ : ℝ), ρ ≤ 1 �
     obtain ⟨hp, -⟩ := norm_mul_tlog_lt h0 (lt_of_lt_of_le (hz.1 k) hρ)
     have h1 := pdiag_term_le a z ξ k
     have hd : pdiag a z k = 1 / (2 * (‖z k‖ * tlog (z k)) ^ 2) := by
-      unfold pdiag; rw [if_pos hk]; ring
+      unfold pdiag; rw [ite_eq_left hk]; ring
     rw [hd] at h1
     set s := ‖z k‖ * tlog (z k)
     set G := gnorm (poincareGram a z) ξ
@@ -974,7 +919,6 @@ theorem hodgeChartBounds_of_schur_lemW (hS : ∀ (k l : ℕ) (a bt : Matrix (Fin
     linarith [mul_nonneg hc₁.le h2]
 
   set K₁ : ℝ := 2 * g * M / c₁ + a with hK₁
-  have hK₁0 : 0 ≤ K₁ := by positivity
   set C : ℝ := max (max C₁ β) (max (g * (2 * g * M / c₁ + W' * a)) (2 * (1 / 4 * K₁ ^ 2))) with hC
   refine ⟨ρ, c₁, C, hρ0, hρ2, hc₁, ?_, ?_, ?_, ?_⟩
   ·
@@ -1057,7 +1001,6 @@ theorem hodgeChartBounds_of_schur_lemW (hS : ∀ (k l : ℕ) (a bt : Matrix (Fin
       refine (Finset.sum_le_sum fun i _ => hs i).trans ?_
       simp
     have hC3 : g * (2 * g * M / c₁ + W' * a) ≤ C := (le_max_left _ _).trans (le_max_right _ _)
-    have hW0 : 0 ≤ W' := le_max_right _ _
     calc (g : ℝ) * (g * (M * ‖ξ‖) / c₁ + W' * ∑ i, ‖ξ (Fin.castLE ha i) /
           (2 * Real.pi * Complex.I * z (Fin.castLE ha i))‖ / (tlog (z (Fin.castLE ha i)) - T₀))
         ≤ g * (g * (M * (2 * gnorm (poincareGram a z) ξ)) / c₁ + W' * (a * gnorm (poincareGram a z) ξ)) := by
@@ -1132,7 +1075,6 @@ theorem hodgeChartBounds_of_schur_lemW (hS : ∀ (k l : ℕ) (a bt : Matrix (Fin
     have hX0 : 0 ≤ g * (M * ‖ξ‖) / c₁ + ∑ i, ‖ξ (Fin.castLE ha i) / (2 * Real.pi * Complex.I *
         z (Fin.castLE ha i))‖ / (tlog (z (Fin.castLE ha i)) - T₀) := by positivity
     have hsq := pow_le_pow_left₀ hX0 hK 2
-    have hv0 : 0 ≤ gnorm (hodgeGram ha τ₀ B z) v ^ 2 := sq_nonneg _
     have hv0' : 0 ≤ gnorm ((imPeriod ha τ₀ B z).map Complex.ofReal) v ^ 2 := sq_nonneg _
     have hstep := mul_le_mul_of_nonneg_right hsq hv0'
     linarith [hbd', hstep]

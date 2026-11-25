@@ -56,7 +56,7 @@ import Mathlib.CategoryTheory.Countable
 -- Members: Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsRadicalNormalFormPairOfFlags, Development.AbelianVarietyTheory.Proofs.FlagMeasures.RootMeasureEqNormalFormRootMeasure
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsRadicalNormalFormPairOfFlags =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsRadicalNormalFormPairOfFlags", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti\npublic import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig\npublic import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicStabilizerRadicalStructure\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsRadicalNormalFormPairOfFlags", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti\npublic import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig\npublic import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicStabilizerRadicalStructure\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\nimport Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormalFormFlagZeroMiddleInverseMinorOrthogonal\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -80,26 +80,26 @@ theorem blockIdx_of_entry : ∀ (bs : List (ℂ × ℕ)) (i j : ℕ), ptEntry bs
     have := blockIdx_of_entry bs (i - s) (j - s)
     simp only [blockIdx, ptEntry] at h ⊢
     by_cases h1 : i < s ∧ j < s
-    · rw [if_pos h1.1, if_pos h1.2]
-    · rw [if_neg h1] at h
+    · rw [ite_eq_left h1.1, ite_eq_left h1.2]
+    · rw [ite_eq_right h1] at h
       by_cases h2 : s ≤ i ∧ s ≤ j
-      · rw [if_pos h2] at h
-        rw [if_neg (by omega), if_neg (by omega), this h]
-      · rw [if_neg h2] at h; exact absurd rfl h
+      · rw [ite_eq_left h2] at h
+        rw [ite_eq_right (by omega), ite_eq_right (by omega), this h]
+      · rw [ite_eq_right h2] at h; exact absurd rfl h
 
 theorem entry_cases (t : ℂ) (s : ℕ) (bs : List (ℂ × ℕ)) (i j : ℕ) (h : ptEntry ((t, s) :: bs) i j ≠ 0) :
     (i < s ∧ i + j + 1 = s ∧ ptEntry ((t, s) :: bs) i j = t) ∨
       (s ≤ i ∧ s ≤ j ∧ ptEntry ((t, s) :: bs) i j = ptEntry bs (i - s) (j - s)) := by
   simp only [ptEntry] at h ⊢
   by_cases h1 : i < s ∧ j < s
-  · rw [if_pos h1] at h ⊢
+  · rw [ite_eq_left h1] at h ⊢
     by_cases h3 : i + j + 1 = s
-    · exact Or.inl ⟨h1.1, h3, if_pos h3⟩
-    · rw [if_neg h3] at h; exact absurd rfl h
-  · rw [if_neg h1] at h ⊢
+    · exact Or.inl ⟨h1.1, h3, ite_eq_left h3⟩
+    · rw [ite_eq_right h3] at h; exact absurd rfl h
+  · rw [ite_eq_right h1] at h ⊢
     by_cases h2 : s ≤ i ∧ s ≤ j
-    · exact Or.inr ⟨h2.1, h2.2, if_pos h2⟩
-    · rw [if_neg h2] at h; exact absurd rfl h
+    · exact Or.inr ⟨h2.1, h2.2, ite_eq_left h2⟩
+    · rw [ite_eq_right h2] at h; exact absurd rfl h
 
 theorem entry_same : ∀ (bs : List (ℂ × ℕ)) (i j i' j' : ℕ), ptEntry bs i j ≠ 0 → ptEntry bs i' j' ≠ 0 →
     blockIdx bs i = blockIdx bs i' → ptEntry bs i j = ptEntry bs i' j' ∧ i + j = i' + j' := by
@@ -115,9 +115,9 @@ theorem entry_same : ∀ (bs : List (ℂ × ℕ)) (i j i' j' : ℕ), ptEntry bs 
     rcases entry_cases t s bs i j h with ⟨a1, a2, a3⟩ | ⟨a1, a2, a3⟩ <;>
       rcases entry_cases t s bs i' j' h' with ⟨b1, b2, b3⟩ | ⟨b1, b2, b3⟩
     · exact ⟨a3.trans b3.symm, by omega⟩
-    · rw [if_pos a1, if_neg (by omega)] at hb; omega
-    · rw [if_pos b1, if_neg (by omega)] at hb; omega
-    · rw [if_neg (by omega), if_neg (by omega)] at hb
+    · rw [ite_eq_left a1, ite_eq_right (by omega)] at hb; omega
+    · rw [ite_eq_left b1, ite_eq_right (by omega)] at hb; omega
+    · rw [ite_eq_right (by omega), ite_eq_right (by omega)] at hb
       obtain ⟨e1, e2⟩ := ih (i - s) (j - s) (i' - s) (j' - s)
         (a3 ▸ h) (b3 ▸ h') (by omega)
       exact ⟨by rw [a3, b3, e1], by omega⟩
@@ -136,12 +136,12 @@ theorem entry_exists : ∀ (bs : List (ℂ × ℕ)), (∀ b ∈ bs, b.1 ≠ 0 �
     by_cases h1 : j < s
     · refine ⟨s - 1 - j, by omega, ?_⟩
       simp only [ptEntry]
-      rw [if_pos (by omega), if_pos (by omega)]
+      rw [ite_eq_left (by omega), ite_eq_left (by omega)]
       exact (hb (t, s) (by simp)).1
     · obtain ⟨i, hi, he⟩ := ih (fun b hb' => hb b (by simp [hb'])) (j - s) (by omega)
       refine ⟨s + i, by omega, ?_⟩
       simp only [ptEntry]
-      rw [if_neg (by omega), if_pos (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_left (by omega)]
       simpa using he
 
 theorem point_facts {r : ℕ} (p : Point ℂ (r + 1)) (Z : Matrix (Fin r) (Fin r) ℂ) (hZ : Z.det ≠ 0)
@@ -189,11 +189,6 @@ theorem herm_split (v w : Fin (2 * r + k + 1) → ℂ) :
   simp only [herm, dotProduct, Matrix.mulVec, sum3 (k := k) (r := r)]
   simp [H_ee, H_ew, H_es, H_we, H_ww, H_ws, H_se, H_sw, H_ss]
 
-theorem herm_eI (v : Fin (2 * r + k + 1) → ℂ) (a : Fin r) :
-    herm (Hpk k r) v (bvec (eI k r a)) = v (esI k r a) := by
-  rw [herm_split, herm_Hb]
-  simp [bvec_apply, eI_inj, wI_ne_eI, esI_ne_eI, apply_ite (starRingEnd ℂ)]
-
 theorem eI_herm (v : Fin (2 * r + k + 1) → ℂ) (a : Fin r) :
     herm (Hpk k r) (bvec (eI k r a)) v = star (v (esI k r a)) := by
   rw [herm_split, herm_Hb]
@@ -213,7 +208,7 @@ theorem H_mul_H : Hpk k r * Hpk k r = 1 := by
       eI_inj, wI_inj, esI_inj, eI_ne_wI, eI_ne_esI, wI_ne_esI, wI_ne_eI, esI_ne_eI, esI_ne_wI]
   rename_i i j
   by_cases h : i = j
-  · subst h; simp only [if_true, sg]; split_ifs <;> simp
+  · subst h; simp only [ite_true, sg]; split_ifs <;> simp
   · simp [h]
 
 theorem isUnit_det {g : Mat k r} (hg : g ∈ GG k r) : IsUnit g.det := by
@@ -323,7 +318,7 @@ theorem normal_form : ∀ (k r : ℕ) (z z' : (Fin (2 * r + k + 1) → ℂ)) (g�
     simp [fvec]
   have hfl : fvec k r z' (Fin.last r) = z' := by simp [fvec]
   have hZ : ∀ a b : Fin r, Formalism.QuantumDeterminants.Zhat k r z z' g a.castSucc b.castSucc = Zr k r g a b := fun a b => by
-    simp only [Formalism.QuantumDeterminants.Zhat, hf, herm_eI, mulVec_bvec, Zr]
+    simp only [Formalism.QuantumDeterminants.Zhat, hf, GlobalTheory.Amp.NfMid.herm_e, mulVec_bvec, Zr]
   have hdet : (Zr k r g).det ≠ 0 := by
     intro h
     apply hD
@@ -340,13 +335,13 @@ theorem normal_form : ∀ (k r : ℕ) (z z' : (Fin (2 * r + k + 1) → ℂ)) (g�
   have hgi : ∀ v, g *ᵥ (g⁻¹ *ᵥ v) = v := fun v => by
     rw [Matrix.mulVec_mulVec, Matrix.mul_nonsing_inv _ hu, Matrix.one_mulVec]
   have hee : ∀ a b : Fin r, herm (Hpk k r) (bvec (eI k r a)) (bvec (eI k r b)) = 0 := fun a b => by
-    rw [herm_eI, bvec_apply, if_neg (esI_ne_eI _ _)]
+    rw [GlobalTheory.Amp.NfMid.herm_e, bvec_apply, ite_eq_right (esI_ne_eI _ _)]
   obtain ⟨q₁, h1, -⟩ := graph' (fun b => g *ᵥ bvec (eI k r b)) (fun a b => by rw [herm_isom hg, hee])
     (Zr k r g) hdet (fun a b => mulVec_bvec _ _ _)
   obtain ⟨q₀, h2, h3⟩ := graph' (fun b => g⁻¹ *ᵥ bvec (eI k r b))
     (fun a b => by rw [← herm_isom hg, hgi, hgi, hee]) (Zr k r g)ᴴ
     (by rw [Matrix.det_conjTranspose]; exact star_ne_zero.2 hdet) (fun a b => by
-      refine (herm_eI _ a).symm.trans ?_
+      refine (GlobalTheory.Amp.NfMid.herm_e _ a).symm.trans ?_
       rw [← herm_isom hg, hgi, eI_herm, mulVec_bvec]; rfl)
   have hZe : Zr k r (pOf k r q₁ * g * (pOf k r q₀)⁻¹) = Zr k r g := by
     unfold pOf
@@ -514,11 +509,11 @@ theorem eq_map (z' : Fin (2 * r + k + 1) → ℂ) (p : Point ℂ (r + 1))
       funext q
       change flagMat k r z' (Matrix.of x) q.1.1.1.castSucc q.1.1.2.castSucc = _
       unfold flagMat fvec
-      rw [dif_pos (show q.1.1.1.castSucc.val < r from q.1.1.1.2), dif_pos (show q.1.1.2.castSucc.val < r from q.1.1.2.2), hx']
+      rw [dite_eq_left (show q.1.1.1.castSucc.val < r from q.1.1.1.2), dite_eq_left (show q.1.1.2.castSucc.val < r from q.1.1.2.2), hx']
       refine (conj_entry p₀ _ q.1.1.1 q.1.1.2).trans ?_
       unfold upperIn upper
-      rw [dif_pos q.1.2]
-      exact dif_pos q.2
+      rw [dite_eq_left q.1.2]
+      exact dite_eq_left q.2
     rw [hy']
     unfold conjM
     rw [Matrix.nonsing_inv_nonsing_inv _ hu]

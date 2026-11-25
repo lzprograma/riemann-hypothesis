@@ -201,7 +201,7 @@ theorem diag_prod {V ι : Type*} [AddCommGroup V] [Module ℂ V] (c : ι → ι 
   simp only [sum_diag]
   rw [prod_alt (fun J => c (diagChart a b d o J) (diagChart a' b' d' o J)
     (diagChart z (-z) ((2 : ℂ) • z) 0 J))]
-  simp (config := {decide := true}) only [diagChart, if_true, if_false, ho]
+  simp (config := {decide := true}) only [diagChart, ite_true, ite_false, ho]
   simp only [inv_one, mul_one, one_mul]
   ring
 

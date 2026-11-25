@@ -94,7 +94,7 @@ private lemma z_mem_ker (W : WPres O X R) (h : W.HasOrigin) (i : W.σ) : W.z i �
 private lemma monomial_mem {σ : Type} (wt : σ → X) (m : σ →₀ ℕ) (c : O) :
     monomial m c ∈ wtPart O wt (Finsupp.weight wt m) := fun k hk => by
   classical
-  rw [coeff_monomial, if_neg]
+  rw [coeff_monomial, ite_eq_right]
   rintro rfl
   exact hk rfl
 
@@ -195,7 +195,7 @@ theorem UpperTheory.V.Alg.ker_pow :
 
       rw [map_sub, ht, map_sum]
       simp only [coeff_monomial]
-      rw [Finset.sum_ite_eq, if_pos hm', sub_self])
+      rw [Finset.sum_ite_eq, ite_eq_left hm', sub_self])
     show W.π f - W.π t ∈ _
 
     rw [← map_sub, hbs', map_sum]

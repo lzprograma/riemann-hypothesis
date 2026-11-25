@@ -96,7 +96,7 @@ theorem exists_eigen {u₀ : Fin k → ℝ} (hR : Qr.IsRepW k r z π) (h₀ : Is
   set X : Mx k r := ∑ a, ∑ b, Z a b • Q.unitB (Formalism.QuantumDeterminants.Hpk k r) (fun a => g *ᵥ bvec (bl k r a)) a b with hXdef
   have hadj : (Formalism.QuantumDeterminants.Hpk k r)⁻¹ * Xᴴ * Formalism.QuantumDeterminants.Hpk k r = -X := by
     simp only [hXdef, Matrix.conjTranspose_sum, Matrix.conjTranspose_smul, Finset.mul_sum, Finset.sum_mul,
-      Matrix.mul_smul, Matrix.smul_mul, Formalism.FourierDecayAlt.P.QrCap.unitB_adj]
+      Matrix.mul_smul, Matrix.smul_mul, Formalism.FourierDecayAlt.P.Qx8.unitB_adj]
     rw [Finset.sum_comm, ← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [← Finset.sum_neg_distrib]

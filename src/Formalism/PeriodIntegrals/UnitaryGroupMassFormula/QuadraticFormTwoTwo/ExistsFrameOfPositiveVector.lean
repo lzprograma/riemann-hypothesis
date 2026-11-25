@@ -2,58 +2,14 @@ module
 
 public import Formalism.HermitianCurvature.StatementQ
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.GANormSqStar
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Etale.Weakly
 import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
 import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -66,8 +22,6 @@ namespace Formalism.FourierDecayAlt.Q.LieAlgebraWeightVectors
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {k r : ℕ}
 
 theorem gb_entry {i j : Fin (2 * r + k + 1)} (hj : r ≤ j.val) (hj' : j.val ≤ r + k) :
@@ -76,11 +30,11 @@ theorem gb_entry {i j : Fin (2 * r + k + 1)} (hj : r ≤ j.val) (hj' : j.val ≤
   by_cases h : i = j
   · subst h
     have h1 : ¬ (i.val < r ∧ i.val + i.val = 2 * r + k) := by omega
-    rw [if_neg h1, if_neg h1, if_pos ⟨hj, hj', rfl⟩, if_pos rfl]
+    rw [ite_eq_right h1, ite_eq_right h1, ite_eq_left ⟨hj, hj', rfl⟩, ite_eq_left rfl]
   · have h1 : ¬ (i.val < r ∧ i.val + j.val = 2 * r + k) := by omega
     have h2 : ¬ (j.val < r ∧ i.val + j.val = 2 * r + k) := by omega
     have h3 : ¬ (r ≤ i.val ∧ i.val ≤ r + k ∧ i = j) := fun hh => h hh.2.2
-    rw [if_neg h1, if_neg h2, if_neg h3, if_neg h]
+    rw [ite_eq_right h1, ite_eq_right h2, ite_eq_right h3, ite_eq_right h]
 
 theorem gb_mulVec {v : Fin (2 * r + k + 1) → ℂ} (hv : inWb k r v) :
     Hpk k r *ᵥ v = fun i => (if i.val = r + k then -1 else 1) * v i := by
@@ -88,11 +42,11 @@ theorem gb_mulVec {v : Fin (2 * r + k + 1) → ℂ} (hv : inWb k r v) :
   simp only [Matrix.mulVec, dotProduct]
   rw [Finset.sum_eq_single i]
   · by_cases hi : r ≤ i.val ∧ i.val ≤ r + k
-    · rw [gb_entry hi.1 hi.2, if_pos rfl]
+    · rw [gb_entry hi.1 hi.2, ite_eq_left rfl]
     · rw [hv i (by omega)]; ring
   · intro b _ hb
     by_cases hb' : r ≤ b.val ∧ b.val ≤ r + k
-    · rw [gb_entry hb'.1 hb'.2, if_neg (Ne.symm hb)]; ring
+    · rw [gb_entry hb'.1 hb'.2, ite_eq_right (Ne.symm hb)]; ring
     · rw [hv b (by omega)]; ring
   · intro h; exact absurd (Finset.mem_univ i) h
 
@@ -145,10 +99,10 @@ theorem gb_pos {z v : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0 < T
     intro a b ha
     rw [gb_herm ha, ← Finset.add_sum_erase _ _ (Finset.mem_univ t)]
     congr 1
-    · rw [if_pos htv]; ring
+    · rw [ite_eq_left htv]; ring
     · refine Finset.sum_congr rfl fun i hi => ?_
       have hne : i.val ≠ r + k := fun h => Finset.ne_of_mem_erase hi (Fin.ext (by rw [htv]; exact h))
-      rw [if_neg hne]; ring
+      rw [ite_eq_right hne]; ring
   have nsq : ∀ x : ℂ, (star x * x).re = ‖x‖ ^ 2 := by
     intro x
     rw [← Complex.normSq_eq_norm_sq]
@@ -184,8 +138,7 @@ theorem gb_pos {z v : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0 < T
   have hNz : 0 ≤ ∑ i ∈ Finset.univ.erase t, ‖z i‖ ^ 2 := Finset.sum_nonneg fun i _ => by positivity
   have hNv : 0 ≤ ∑ i ∈ Finset.univ.erase t, ‖v i‖ ^ 2 := Finset.sum_nonneg fun i _ => by positivity
   rw [hre v hv]
-  by_contra hneg
-  push_neg at hneg
+  by_contra! hneg
   have hle : (∑ i ∈ Finset.univ.erase t, ‖v i‖ ^ 2) ≤ ‖v t‖ ^ 2 := by linarith
   have hb : ‖v t‖ ^ 2 ≤ 0 := by
     nlinarith [mul_nonneg hNz (sub_nonneg.2 hle), sq_nonneg ‖v t‖]
@@ -312,9 +265,9 @@ theorem exists_frame_of_positive_vector {a b : Fin (2 * r + k + 1) → ℂ} (hb 
       · rw [Fin.snoc_castSucc]; exact hB1 j
     · intro i j
       refine Fin.lastCases ?_ (fun i' => ?_) i <;> refine Fin.lastCases ?_ (fun j' => ?_) j
-      · rw [Fin.snoc_last, if_pos rfl]; exact hs
-      · rw [Fin.snoc_last, Fin.snoc_castSucc, h2, if_neg (Fin.castSucc_lt_last j').ne']
-      · rw [Fin.snoc_last, Fin.snoc_castSucc, h1, if_neg (Fin.castSucc_lt_last i').ne]
+      · rw [Fin.snoc_last, ite_eq_left rfl]; exact hs
+      · rw [Fin.snoc_last, Fin.snoc_castSucc, h2, ite_eq_right (Fin.castSucc_lt_last j').ne']
+      · rw [Fin.snoc_last, Fin.snoc_castSucc, h1, ite_eq_right (Fin.castSucc_lt_last i').ne]
       · rw [Fin.snoc_castSucc, Fin.snoc_castSucc, hB2]
         by_cases h : i' = j' <;> simp [h]
     · intro i w hw

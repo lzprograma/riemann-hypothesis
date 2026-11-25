@@ -37,23 +37,23 @@ theorem coeff_compB (b : Fin (D + 1)) (k : ℕ) (p : MvPolynomial (TVar D N) K) 
   simp only [coeff_monomial]
   rw [Finset.sum_ite_eq']
   by_cases h : degB b t = k
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     by_cases ht : t ∈ p.support
     · have hm : t ∈ p.support.filter (fun s => degB b s = k) := Finset.mem_filter.mpr ⟨ht, h⟩
-      rw [if_pos hm]
+      rw [ite_eq_left hm]
     · have hn : t ∉ p.support.filter (fun s => degB b s = k) := fun h' => ht (Finset.mem_filter.mp h').1
-      rw [if_neg hn]
+      rw [ite_eq_right hn]
       exact (by simpa using ht : AddMonoidAlgebra.coeff p t = 0).symm
   · have hn : t ∉ p.support.filter (fun s => degB b s = k) := fun h' => h (Finset.mem_filter.mp h').2
-    rw [if_neg h, if_neg hn]
+    rw [ite_eq_right h, ite_eq_right hn]
 
 theorem mem_support_compB {b : Fin (D + 1)} {k : ℕ} {p : MvPolynomial (TVar D N) K}
     {t : TVar D N →₀ ℕ} (ht : t ∈ (compB b k p).support) : t ∈ p.support ∧ degB b t = k := by
   rw [mem_support_iff, coeff_compB] at ht
   by_cases h : degB b t = k
-  · rw [if_pos h] at ht
+  · rw [ite_eq_left h] at ht
     exact ⟨mem_support_iff.mpr ht, h⟩
-  · rw [if_neg h] at ht
+  · rw [ite_eq_right h] at ht
     exact absurd rfl ht
 
 private lemma sum_filter_block_eq_degB {D N : ℕ} (b : Fin (D + 1)) (s : TVar D N →₀ ℕ) :
@@ -130,7 +130,7 @@ theorem one_block (b : Fin (D + 1)) (z : KTf K D N)
     intro k hk
     have h4 := congrArg (fun P => _root_.AddMonoidAlgebra.coeff (M := ℕ) P k) hQ
     simpa only [Polynomial.finsetSum_coeff, Polynomial.coeff_monomial_apply,
-      Polynomial.coeff_zero, Finset.sum_ite_eq', if_pos (Finset.mem_range.mpr hk)] using h4
+      Polynomial.coeff_zero, Finset.sum_ite_eq', ite_eq_left (Finset.mem_range.mpr hk)] using h4
   have hqs : q = ∑ k ∈ Finset.range M, compB b k q := by
     ext t
     rw [MvPolynomial.coeff_sum]
@@ -141,8 +141,7 @@ theorem one_block (b : Fin (D + 1)) (z : KTf K D N)
     · by_contra hne
       exact h (Finset.mem_range.mpr (hMq t (MvPolynomial.mem_support_iff.mpr hne)))
   obtain ⟨k, hk, hqk⟩ : ∃ k ∈ Finset.range M, compB b k q ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     apply hq
     rw [hqs]
     exact Finset.sum_eq_zero hc
@@ -164,8 +163,7 @@ private lemma aeval_block_zero_monomial (s : TVar D N →₀ ℕ) (a : K) :
     rw [Finsupp.prod_congr (g2 := fun i k => (X i : KTp K D N) ^ k) (fun i hi => by simp [hz i hi]),
       MvPolynomial.algebraMap_eq, ← monomial_eq]
   · have h' : ∃ j, s (0, j) ≠ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact h (Finset.sum_eq_zero fun j _ => hc j)
     obtain ⟨j, hj⟩ := h'
     rw [Finsupp.prod, Finset.prod_eq_zero (i := ((0 : Fin (D + 1)), j))
@@ -338,8 +336,7 @@ private theorem exists_fraction_free_of_block_zero {D N : ℕ} (z : KTf K D N)
     first
     | exact (div_mul_cancel₀ _ hq').symm
   obtain ⟨a, ha⟩ : ∃ a : Fin (N + 1) → K, S a q0 ≠ 0 := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     exact hq0 (eq_of_aeval_block_zero_eq q0 0 fun x => by rw [← hS x, hall x, map_zero])
   have hid : S a p0 * q0 = p0 * S a q0 := by
     apply eq_of_aeval_block_zero_eq

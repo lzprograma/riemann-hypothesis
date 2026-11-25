@@ -1,44 +1,6 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.EmbedsLevelZeroDepthZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -79,19 +41,19 @@ theorem exists_jPlus_mul_KOne (e : (Σ a, m a) ≃ n) {g : GL n k} (hg : g ∈ p
     simp only [U, Matrix.sub_apply, Matrix.of_apply, blk_apply]
     rcases lt_trichotomy a b with h | rfl | h
     · simp [h]
-    · rw [if_neg (lt_irrefl a), one_same, Valuation.map_sub_swap]
+    · rw [ite_eq_right (lt_irrefl a), one_same, Valuation.map_sub_swap]
       exact h3 a i j
-    · rw [if_neg h.not_gt, one_ne e h.ne', zero_sub, Valuation.map_neg]
+    · rw [ite_eq_right h.not_gt, one_ne e h.ne', zero_sub, Valuation.map_neg]
       exact h2 a b i j h
   obtain ⟨x, hx, hgx⟩ := StepData.exists_mul_KOne h1 hU
   refine ⟨g * x, ⟨mem_unipRad.2 ⟨mem_parab_iff.2 fun a b i j h => ?_, fun a i j => ?_⟩,
     mul_mem h1 (StepData.KOne_le_KO hx)⟩, x⁻¹, inv_mem hx, by simp⟩
   · rw [hgx]
     simp only [U, Matrix.of_apply, blk_apply]
-    rw [if_neg h.not_gt, one_ne e h.ne']
+    rw [ite_eq_right h.not_gt, one_ne e h.ne']
   · rw [hgx]
     simp only [U, Matrix.of_apply, blk_apply]
-    rw [if_neg (lt_irrefl a), one_same]
+    rw [ite_eq_right (lt_irrefl a), one_same]
 
 theorem exists_KOne_mul_jPlus (e : (Σ a, m a) ≃ n) {g : GL n k} (hg : g ∈ proRad k e) :
     ∃ x ∈ KOne k n, ∃ u ∈ jPlus k e, g = x * u := by
@@ -124,14 +86,14 @@ theorem exists_mul_mem_parab (e : (Σ a, m a) ≃ n) {x : GL n k} (hx : x ∈ KO
     exact this
   have h1 : ∀ i j, blk e i ≤ blk e j → c.val i j = (1 : Matrix n n k) i j := fun i j h => by
     have := key i j
-    simp only [if_neg h.not_gt] at this
+    simp only [ite_eq_right h.not_gt] at this
     rwa [← Matrix.mul_apply, Matrix.one_mul] at this
   refine ⟨c, ⟨(mem_unipRadLower k).2 ⟨(mem_parabLower_iff k).2 fun a b i j h => ?_, fun a i j => ?_⟩, hc⟩,
     mem_parab_iff.2 fun a b i j h => ?_⟩
   · rw [h1 _ _ (by simpa using h.le), one_ne e h.ne]
   · rw [h1 _ _ (by simp), one_same]
   · have := key (e ⟨a, i⟩) (e ⟨b, j⟩)
-    simp only [blk_apply, if_pos h] at this
+    simp only [blk_apply, ite_eq_left h] at this
     rw [Units.val_mul, Matrix.mul_apply, this, one_ne e h.ne']
 
 theorem exists_jLevi_mul_jPlus (e : (Σ a, m a) ≃ n) {p : GL n k} (hp : p ∈ parab k e) (h : p ∈ KOne k n) :

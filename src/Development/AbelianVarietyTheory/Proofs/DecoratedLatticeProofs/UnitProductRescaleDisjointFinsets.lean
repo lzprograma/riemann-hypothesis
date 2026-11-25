@@ -50,6 +50,7 @@ import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.LatticeFrames.JointSmooth
 import Development.AbelianVarietyTheory.Definitions.LatticeFrames.UnitRatio
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LevelPlacesDatumMulRightSourceLevelStatement
 
 @[expose] public section
 
@@ -58,7 +59,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.StepVecSum
 
@@ -68,14 +68,7 @@ variable {κ : Type} [CommRing κ] {a b : ℕ}
 
 theorem topL_mul_right (y : Matrix (Fin b) (Fin a) κ) (s : Matrix (Fin a) (Fin a) κ) :
     topL a (y * s) = topL a y * s := by
-  ext p q
-  rw [Matrix.mul_apply]
-  unfold topL
-  by_cases hp : p.val < b
-  · rw [dite_eq_left ⟨hp, q.2⟩, Matrix.mul_apply]
-    exact Finset.sum_congr rfl fun l _ => by rw [dite_eq_left ⟨hp, l.2⟩]
-  · rw [dif_neg fun h => hp h.1]
-    exact (Finset.sum_eq_zero fun l _ => by rw [dif_neg fun h => hp h.1, zero_mul]).symm
+  apply _root_.GlobalTheory.ChainOnto.RightMove.topL_mul <;> assumption
 
 theorem lowZero_mul_right {y : Matrix (Fin b) (Fin a) κ} (hy : LowZero a y) (s : Matrix (Fin a) (Fin a) κ) :
     LowZero a (y * s) := by
@@ -163,7 +156,7 @@ theorem omegaG_sum [Fintype P.H] (G : P.H → ∀ PP : Pl D.host.E, GL (Fin a) (
         b4.symm.trans (funext fun PP => congrArg (upperLeftBlock ha) (Units.ext ((b2 PP).trans (h2 PP).symm)))
       exact hp (Subtype.ext (inv_eq_iff_eq_inv.1 b5))
     · exact fun h => absurd (Finset.mem_univ _) h
-  · have h0 : omegaG (datY a r t j ha Pg Q P χ ξ Frm.B) χj y = 0 := dif_neg h
+  · have h0 : omegaG (datY a r t j ha Pg Q P χ ξ Frm.B) χj y = 0 := dite_eq_right h
     rw [h0]
     refine (Finset.sum_eq_zero fun p _ => ?_).symm
     rw [omegaG_of_not ha Pg Q χ ξ χj _ ?_, mul_zero]
@@ -256,8 +249,8 @@ theorem stepVec_eq_sum : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : Inf
   have sh : finE T (1 : GA D T) ∈ St βT := one1 ▸ one_mem _
   have r1 : ∀ PP, redFn βT PP (finE T (1 : GA D T)) = 1 := fun PP => by rw [one1, redFn_one]
   let a : ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ := fun PP => if PP ∈ Pg then (χ (k + 1) PP)⁻¹ else ξ PP
-  have a1 : ∀ PP ∈ Pg, a PP = (χ (k + 1) PP)⁻¹ := fun PP hP => if_pos hP
-  have a2 : ∀ PP ∈ Q, a PP = ξ PP := fun PP hP => if_neg (Finset.disjoint_right.1 hd hP)
+  have a1 : ∀ PP ∈ Pg, a PP = (χ (k + 1) PP)⁻¹ := fun PP hP => ite_eq_left hP
+  have a2 : ∀ PP ∈ Q, a PP = ξ PP := fun PP hP => ite_eq_right (Finset.disjoint_right.1 hd hP)
   have hres : ∀ PP ∈ Pg ∪ Q, GlobalTheory.StepLaw.ResAt χS PP (a PP) ∧ GlobalTheory.StepLaw.ResAt χT PP (a PP) := fun PP hP => by
     rcases Finset.mem_union.1 hP with hP | hP
     · rw [a1 PP hP]; exact hG PP hP
@@ -277,12 +270,12 @@ theorem stepVec_eq_sum : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : Inf
       fun H => GlobalTheory.SplitHecke.isHalf_actO _ _ H⟩
   have i12 := fun p => GlobalTheory.T.frameMatrix_movedHom_integral_reductions D S T βS βT (κ p) 1 (sg p) sh x
   by_cases hx : IsHalf e' x ∧ IsIntM (frMapO S T βS βT x)
-  · rw [if_pos hx, omegaG_sum (t := t) (j := k) ha Pg Q P χ ξ (χ (k + 1)) _ (fun p PP => redFn βS PP (finE S (κ p)))
+  · rw [ite_eq_left hx, omegaG_sum (t := t) (j := k) ha Pg Q P χ ξ (χ (k + 1)) _ (fun p PP => redFn βS PP (finE S (κ p)))
       (fun p PP hP => parLev_g (hκ p).2.1 hP) (fun p PP => congrFun (hκ p).2.2 PP), Finset.sum_mul]
     refine Finset.sum_congr rfl fun p _ => ?_
     have hoQ := GlobalTheory.T.twistPlaceDatum_parabolic_move D _ _ r ha hb Q ξ 1 (fun PP => redFn βS PP (finE S (κ p))) (fun PP => redFn βT PP (finE T 1))
       (fun PP hP => ⟨parLev_q (hκ p).2.1 hP, by rw [r1]; exact one_mem _⟩) (fun PP => redM PP (frMapO S T βS βT x))
-    rw [if_pos ⟨(i0 p).2 hx.1, (i12 p).1.2 hx.2⟩, funext ((i12 p).2 hx.2)]
+    rw [ite_eq_left ⟨(i0 p).2 hx.1, (i12 p).1.2 hx.2⟩, funext ((i12 p).2 hx.2)]
     erw [hoQ]
     have hl : levChi S βS (datY S.rank r t k ha Pg Q P χ ξ Frm.B) (κ p) = ((P.chi p *
         (∏ PP ∈ Pg, ∏ c ∈ Finset.range k, χ (c + 1) PP (dBlk (blkOf r t) (c + 1) (redFn βS PP (finE S (κ p))))) *
@@ -312,9 +305,9 @@ theorem stepVec_eq_sum : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : Inf
     · rw [r1, map_one, map_one, mul_one, a1 PP hP]; exact inv_inv _
     · rw [r1, map_one, map_one, mul_one, a2 PP hP]
     · rw [r1, map_one, dBlk, dBlk, blockDiagonalExtendByOnePrimeField_one, map_one, inv_one, mul_one, mul_one, zpow_one]
-  · rw [if_neg hx]
+  · rw [ite_eq_right hx]
     refine (Finset.sum_eq_zero fun p _ => ?_).symm
-    rw [if_neg fun H => hx ⟨(i0 p).1 H.1, (i12 p).1.1 H.2⟩, mul_zero]
+    rw [ite_eq_right fun H => hx ⟨(i0 p).1 H.1, (i12 p).1.1 H.2⟩, mul_zero]
 
 end GlobalTheory.StepVecSum
 

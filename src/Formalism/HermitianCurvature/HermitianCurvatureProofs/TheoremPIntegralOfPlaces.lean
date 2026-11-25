@@ -1,66 +1,18 @@
 module
 
+import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.TopsChoicePartA
 public import Formalism.HermitianCurvature.StatementJC
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelSizesJointMean
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellZetaMinors
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockEstimatesSumForm
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Matrix.Order
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.MeasureTheory.Integral.Pi
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
 open Formalism.FourierDecayAlt
-
-namespace Formalism.FourierDecayAlt.P
-
-end Formalism.FourierDecayAlt.P
 
 namespace Formalism.FourierDecayAlt.P.JCx1
 
@@ -75,19 +27,13 @@ theorem norm_σ {E : Type} [Field E] [NumberField E] [IsCMField E] {Wp Wq : Infi
 
 end Formalism.FourierDecayAlt.P.JCx1
 
-open Formalism.FourierDecayAlt
-
-namespace Formalism.FourierDecayAlt.P
-
-end Formalism.FourierDecayAlt.P
 
 section cutf
 
-open Formalism.FourierDecayAlt
 
 namespace Formalism.FourierDecayAlt.P.JCx1
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 theorem contDiff_entry {k r : ℕ} (i j : Fin (2 * r + k + 1)) :
     ContDiff ℝ (⊤ : ℕ∞) (fun g : B.Mat k r => g i j) := by
@@ -114,12 +60,7 @@ theorem contDiff_Dmin {k r : ℕ} (z z' : Fin (2 * r + k + 1) → ℂ) (l : Fin 
   exact contDiff_det _ fun a b => contDiff_Zhat z z' _ _
 
 theorem contDiff_normSq : ContDiff ℝ (⊤ : ℕ∞) (fun c : ℂ => Complex.normSq c) := by
-  have h1 : ContDiff ℝ (⊤ : ℕ∞) (fun c : ℂ => c.re) := Complex.reCLM.contDiff
-  have h2 : ContDiff ℝ (⊤ : ℕ∞) (fun c : ℂ => c.im) := Complex.imCLM.contDiff
-  have e : (fun c : ℂ => Complex.normSq c) = fun c => c.re * c.re + c.im * c.im :=
-    funext Complex.normSq_apply
-  rw [e]
-  exact (h1.mul h1).add (h2.mul h2)
+  apply _root_.Formalism.MainNotions.S.Inh.normSq_contDiff_smooth <;> assumption
 
 theorem contDiff_Gf {k r : ℕ} (z z' : Fin (2 * r + k + 1) → ℂ) :
     ContDiff ℝ (⊤ : ℕ∞) (fun g : B.Mat k r => Formalism.QuantumDeterminants.Gf k r z z' g) := by
@@ -131,7 +72,7 @@ end Formalism.FourierDecayAlt.P.JCx1
 
 namespace Formalism.FourierDecayAlt.P
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 theorem cutoff_smooth : Formalism.FourierDecayAlt.JC.CutFSmooth := by
   intro k r Wp Wq _ _ _ _ Bs χ f ε hχ hf hε g₀ hg₀
@@ -211,7 +152,7 @@ theorem sum_mult {Z X : Type} [DecidableEq Z] (P : Finset Z) (F : Z → ℂ) (Y 
   rw [Finset.sum_eq_single (⟨g h, hg h hh⟩ : P)]
   · simp
   · intro b _ hb
-    rw [if_neg]
+    rw [ite_eq_right]
     intro e
     exact hb (Subtype.ext e.symm)
   · intro hn
@@ -548,7 +489,7 @@ theorem gram_proposition_of_places : Formalism.FourierDecayAlt.JC.PropGramOfPlac
   filter_upwards [Filter.eventually_all.mpr hv] with ε hε
   intro p hp q hq
   rw [hT p q (hY p hp) (hY q hq)]
-  simp only [C.HidaSetting.gram, le_refl, if_true, C.HidaSetting.gramLoc, C.Word.emp]
+  simp only [C.HidaSetting.gram, le_refl, ite_true, C.HidaSetting.gramLoc, C.Word.emp]
   refine Finset.prod_congr rfl fun v _ => ?_
   rw [hε v _ (Finset.mem_image_of_mem _ hp) _ (Finset.mem_image_of_mem _ hq)]
 end Formalism.FourierDecayAlt.P
@@ -653,7 +594,7 @@ theorem vecV_cutF_eventually (hGS : D.PtGSpec) (Bs : RealPlaceData k r Wp Wq) (�
 theorem vecV_of_not {Bs : RealPlaceData k r Wp Wq} {ν' : Fin (2 * r + k + 1) → ℂ} {m₀ : Mat k r}
     {F : Mat k r → (Wq →L[ℂ] Wp)} {p : C.LPt} (h : ¬ D.IsLocPt p (r + 1)) : D.vecV Bs ν' m₀ F p = 0 := by
   unfold D.vecV
-  rw [dif_neg (fun h' => h h'.1)]
+  rw [dite_eq_right (fun h' => h h'.1)]
 
 theorem hsVec_zero [FiniteDimensional ℂ Wq] : hsVec (0 : Wq →L[ℂ] Wp) = 0 := by
   ext i
@@ -685,13 +626,13 @@ theorem gram_at_built_place : Formalism.FourierDecayAlt.JC.GramPlaceBuilt := by
   simp only [D.componentFamilySetting_ofSetting, D.RRplace, JC.vecPlace]
   by_cases hpq : D.IsLocPt (D.toStd S.G.r (S.g : ℝ) 1 p) (S.G.r + 1) ∧
       D.IsLocPt (D.toStd S.G.r (S.g : ℝ) 1 q) (S.G.r + 1)
-  · simp only [dif_pos hpq, dif_neg (show ¬ (S.G.r + 1 ≤ S.G.r) by omega), ↓reduceIte]
+  · simp only [dite_eq_left hpq, dite_eq_right (show ¬ (S.G.r + 1 ≤ S.G.r) by omega), ↓reduceIte]
     rw [hε p hp, hε q hq]
     simp only [D.GamLev, Finset.Ioc_self, Finset.prod_empty, one_pow, hsInner, inner_smul_left,
       inner_smul_right, Complex.conj_ofReal]
     push_cast
     ring
-  · rw [dif_neg hpq]
+  · rw [dite_eq_right hpq]
     rcases not_and_or.mp hpq with h | h
     · rw [Formalism.FourierDecayAlt.P.JCx1.needs.vecV_of_not h]
       simp [Formalism.FourierDecayAlt.P.JCx1.needs.hsVec_zero]
@@ -852,7 +793,7 @@ theorem thmPInt_of_covolume_prod (E : Type) [Field E] [NumberField E] [IsCMField
       refine Finset.sum_congr rfl fun h' _ => ?_
       rw [integral_const_mul, integral_fintype_prod_volume_eq_prod]
       congr 1
-      simp only [hφi, Finset.prod_mul_distrib, C.HidaSetting.gram, if_pos (show i - 1 ≤ S.G.r + 1 by omega)]
+      simp only [hφi, Finset.prod_mul_distrib, C.HidaSetting.gram, ite_eq_left (show i - 1 ≤ S.G.r + 1 by omega)]
       rw [← Complex.ofReal_prod, hprod i hi1 hi2]
 
     have hκH : ∀ h ∈ Y, ∀ h' ∈ Y, conj (κ h h') = κ h' h := by
@@ -860,7 +801,7 @@ theorem thmPInt_of_covolume_prod (E : Type) [Field E] [NumberField E] [IsCMField
       exact hκ.1.apply (⟨h', hh'⟩ : Y) (⟨h, hh⟩ : Y)
     have hgH : ∀ h h' : TB.Pt E, conj (S.gram ε (i - 1) w.1 h h') = S.gram ε (i - 1) w.1 h' h := by
       intro h h'
-      simp only [C.HidaSetting.gram, if_pos (show i - 1 ≤ S.G.r + 1 by omega), map_prod]
+      simp only [C.HidaSetting.gram, ite_eq_left (show i - 1 ≤ S.G.r + 1 by omega), map_prod]
       refine Finset.prod_congr rfl fun v _ => ?_
       have hP := hpos v ε hε (i - 1) (by omega) w {C.loc (S.σ v) h, C.loc (S.σ v) h'}
       exact hP.1.apply (⟨C.loc (S.σ v) h', by simp⟩ : ({C.loc (S.σ v) h, C.loc (S.σ v) h'} : Finset C.LPt))

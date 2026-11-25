@@ -82,7 +82,7 @@ theorem exists_vAdd_ge {K : Type} [Field K] [NumberField K] (S : Finset (HeightO
     · exact h
   · have h := (GlobalTheory.Core.Int.ProdPrimePow.vAdd_ge_of_mem_prod_zpow K _ (Equiv.refl _) S
       (fun _ => -(B : ℤ)) _ hmem w).resolve_left ha0
-    simp only [Equiv.refl_apply, neg_neg, if_pos hw] at h
+    simp only [Equiv.refl_apply, neg_neg, ite_eq_left hw] at h
     exact h
 
 end GlobalTheory.FlatTw.Good

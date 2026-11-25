@@ -18,8 +18,6 @@ namespace GroundTheory.ProfCoh
 
 open IsDedekindDomain NumberField CategoryTheory MonoidalCategory GroundTheory.Global GroundTheory.LocalField
 
-attribute [local instance 2000] Rep.hV2
-
 theorem bijective_of_bijective_precomp {X Y Y' Z : Type*} [AddCommGroup X] [AddCommGroup Y]
     [AddCommGroup Y'] [AddCommGroup Z] (β : X →+ Y →+ Z) (γ : X →+ Y' →+ Z) (e : Y ≃+ Y')
     (hβγ : ∀ x y, β x y = γ x (e y)) (hγ : Function.Bijective γ) : Function.Bijective β := by

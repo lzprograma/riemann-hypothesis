@@ -4,55 +4,8 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCC
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCCurvPolyCut
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCTheta
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormalFormOrderZeroOfParts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.TypeStar
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCCurvBlock, Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCCurvPoly, Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCCurvRTT, Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCCurvScal, Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCCurvTop, Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCCurvFinal
@@ -291,10 +244,10 @@ theorem PLT.mono {N N' : ℕ} {f : ℂ → R} (h : PLT N f) (hN : N ≤ N') : PL
   rw [ha]
   symm
   rw [← Finset.sum_subset (Finset.range_mono hN)]
-  · exact Finset.sum_congr rfl fun k hk => by dsimp only; rw [if_pos (Finset.mem_range.1 hk)]
+  · exact Finset.sum_congr rfl fun k hk => by dsimp only; rw [ite_eq_left (Finset.mem_range.1 hk)]
   · intro k _ hk
     dsimp only
-    rw [if_neg (fun h => hk (Finset.mem_range.2 h)), smul_zero]
+    rw [ite_eq_right (fun h => hk (Finset.mem_range.2 h)), smul_zero]
 
 theorem plt_zero (N : ℕ) : PLT N (fun _ => (0 : R)) := ⟨fun _ => 0, fun s => by simp⟩
 
@@ -447,7 +400,6 @@ end Formalism.FourierDecayAlt.P.CutMP.Gauge.GC.CurvPoly
 
 namespace Formalism.FourierDecayAlt.P.CutMP.Gauge.GC.CurvPoly
 
-open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
 noncomputable section
 
@@ -626,8 +578,8 @@ theorem curv_polyIn_sub {f g : ℂ → R} {d : ℕ} (hf : PolyIn f d) (hg : Poly
 theorem curv_polyIn_monomial (n : ℕ) (x : R) : PolyIn (fun s => s ^ n • x) n := by
   refine ⟨fun k => if k = n then x else 0, fun s => ?_⟩
   dsimp only
-  rw [Finset.sum_eq_single n (fun b _ hb => by rw [if_neg hb, smul_zero])
-    (fun h => absurd (Finset.mem_range.2 (Nat.lt_succ_self n)) h), if_pos rfl]
+  rw [Finset.sum_eq_single n (fun b _ hb => by rw [ite_eq_right hb, smul_zero])
+    (fun h => absurd (Finset.mem_range.2 (Nat.lt_succ_self n)) h), ite_eq_left rfl]
 
 end PolyTools
 
@@ -651,7 +603,7 @@ theorem curv_top_zero {E : Type*} [AddCommGroup E] [Module ℂ E] (n : ℕ) (c :
   simp only [hpdef, Polynomial.coeff_sub, Polynomial.coeff_C_mul_X_pow, Polynomial.finsetSum_coeff,
     Polynomial.coeff_zero] at hc
   rw [Finset.sum_eq_zero (fun i hi => by
-    rw [if_neg (by have := Finset.mem_range.1 hi; omega)]), sub_zero] at hc
+    rw [ite_eq_right (by have := Finset.mem_range.1 hi; omega)]), sub_zero] at hc
   exact hc
 
 theorem curvature_radial_torus_holds : GTCCurvRTT := by
@@ -919,10 +871,10 @@ theorem gTRTopNF_of_curvPoly (h : GTCCurvPoly) : GTRTopNF := by
     rw [Finset.sum_range_succ, Finset.sum_range_succ]
     simp only [show P.k ≠ P.k + 1 by omega, ↓reduceIte]
     rw [Finset.sum_congr rfl (fun j hj => by
-      rw [if_neg (by have := Finset.mem_range.1 hj; omega), if_neg (by have := Finset.mem_range.1 hj; omega),
-        if_pos (Finset.mem_range.1 hj)]), ← e]
+      rw [ite_eq_right (by have := Finset.mem_range.1 hj; omega), ite_eq_right (by have := Finset.mem_range.1 hj; omega),
+        ite_eq_left (Finset.mem_range.1 hj)]), ← e]
     abel
-  · simp only [show P.k ≠ P.k + 1 by omega, if_false, if_true, Int.cast_zero, zero_smul, add_zero]
+  · simp only [show P.k ≠ P.k + 1 by omega, ite_false, ite_true, Int.cast_zero, zero_smul, add_zero]
     exact thetaC_eq_thetaNF d hTT
 
 end

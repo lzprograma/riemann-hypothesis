@@ -133,11 +133,23 @@ theorem eval_map_firstGroup {F : Type} [Field F] {n e : ℕ} (p : Ideal (MvPolyn
     | zero => simp [specFirstVar, algebraMap_localization_C]
     | succ i => simp [specFirstVar]
 
-theorem ChartNorm.proof (h₁ : IncIdealBelow.Statement) (h₂ : SpecFirstMemIncIdeal.Statement)
+theorem chartNorm_setup (h₁ : IncIdealBelow.Statement) (h₂ : SpecFirstMemIncIdeal.Statement)
     (h₃ : LocalizationPrimeDVR.Statement) (h₄ : ChartFinite.Statement) (h₅ : ChartLocDomain.Statement)
-    (h₆ : ChartFirstGroupPrime.Statement) (h₇ : ChartFirstGroupDvd.Statement)
-    (h₈ : NormOfDividedForm.Statement) : ChartNorm.Statement := by
-  intro F _ _ n e I f t p _ hI hf hp hft u
+    (h₇ : ChartFirstGroupDvd.Statement) {F : Type} [Field F] {n e : ℕ}
+    {I : Ideal (MvPolynomial (Fin n) F)} {f : MvPolynomial (Fin (e + 1) × Fin n) F}
+    {t : Fin n → F} {p : Ideal (MvPolynomial (Fin e × Fin n) F)} [p.IsPrime]
+    (hI : IsProjPrime I) (hf : IsChowForm I (e + 1) f)
+    (hp : p = ⊥ ∨ ∃ q : MvPolynomial (Fin e × Fin n) F, Prime q ∧ p = Ideal.span {q})
+    (hft : specFirst f t ∉ p) :
+    linForm t ∉ I ∧ IsDomain (ChartLoc I t e p) ∧
+      Module.Finite (Localization.AtPrime p) (ChartLoc I t e p) ∧
+      Module.Free (Localization.AtPrime p) (ChartLoc I t e p) ∧
+      (∑ m, algebraMap F (Localization.AtPrime p) (t m) •
+        algebraMap (ChartInc I t e) (ChartLoc I t e p) (chartX I t e (X m)) = 1) ∧
+      ((∑ m, X m * C (algebraMap (ChartInc I t e) (ChartLoc I t e p) (chartX I t e (X m))) :
+          MvPolynomial (Fin n) (ChartLoc I t e p)) ∣
+        map (algebraMap (Localization.AtPrime p) (ChartLoc I t e p))
+          (map (algebraMap (MvPolynomial (Fin e × Fin n) F) (Localization.AtPrime p)) (firstGroup f))) := by
   have htI : linForm t ∉ I := by
     intro h
     have hmem := h₂ F n e I I f t hf le_rfl h
@@ -157,9 +169,8 @@ theorem ChartNorm.proof (h₁ : IncIdealBelow.Statement) (h₂ : SpecFirstMemInc
   have : Module.IsTorsionFree (Localization.AtPrime p) (ChartLoc I t e p) := by
     rw [Module.isTorsionFree_iff_algebraMap_injective]
     exact hinj
-  have : Module.Free (Localization.AtPrime p) (ChartLoc I t e p) := Module.free_of_finite_type_torsion_free'
-  have : CharZero (Localization.AtPrime p) :=
-    charZero_of_injective_algebraMap (algebraMap F (Localization.AtPrime p)).injective
+  have hfree : Module.Free (Localization.AtPrime p) (ChartLoc I t e p) :=
+    Module.free_of_finite_type_torsion_free'
   have hsum : ∑ m, algebraMap F (Localization.AtPrime p) (t m) •
       algebraMap (ChartInc I t e) (ChartLoc I t e p) (chartX I t e (X m)) = 1 := by
     rw [← chartLin_eq_sum, chartLin_self, map_one]
@@ -170,9 +181,18 @@ theorem ChartNorm.proof (h₁ : IncIdealBelow.Statement) (h₂ : SpecFirstMemInc
     RingHom.ext fun x => (chartLoc_algebraMap_tower I t p x).symm
   have hdvd := map_dvd (MvPolynomial.map (algebraMap (ChartInc I t e) (ChartLoc I t e p)))
     (h₇ F n e I f t hI hf htI)
-
   simp only [map_sum, map_mul, map_X, map_C, map_map, hcomp] at hdvd
   rw [← map_map] at hdvd
+  exact ⟨htI, hdom, inferInstance, hfree, hsum, hdvd⟩
+
+theorem ChartNorm.proof (h₁ : IncIdealBelow.Statement) (h₂ : SpecFirstMemIncIdeal.Statement)
+    (h₃ : LocalizationPrimeDVR.Statement) (h₄ : ChartFinite.Statement) (h₅ : ChartLocDomain.Statement)
+    (h₆ : ChartFirstGroupPrime.Statement) (h₇ : ChartFirstGroupDvd.Statement)
+    (h₈ : NormOfDividedForm.Statement) : ChartNorm.Statement := by
+  intro F _ _ n e I f t p _ hI hf hp hft u
+  obtain ⟨-, _, _, _, hsum, hdvd⟩ := chartNorm_setup h₁ h₂ h₃ h₄ h₅ h₇ hI hf hp hft
+  have : CharZero (Localization.AtPrime p) :=
+    charZero_of_injective_algebraMap (algebraMap F (Localization.AtPrime p)).injective
   have key := h₈ (Localization.AtPrime p) (ChartLoc I t e p) n _ _ _ (chartLoc_adjoin_eq_top I t p) hsum
     (h₆ F n e I f p hI hf) hdvd (fun m => algebraMap F (Localization.AtPrime p) (u m))
   rw [eval_map_firstGroup, eval_map_firstGroup, ← chartLin_eq_sum] at key

@@ -4,54 +4,7 @@ public import Formalism.SubspaceCounting.StatementB
 public import Mathlib.LinearAlgebra.Quotient.Defs
 public import Formalism.SubspaceCounting.SubspaceCountingProofs.QVandermonde
 public import Formalism.SubspaceCounting.SubspaceCountingProofs.SubspaceCount
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -155,22 +108,17 @@ namespace TypeIIDownP
 
 open QVandermondeP
 
-private theorem finrank_map_subtype_eq' {F W : Type} [Field F] [AddCommGroup W] [Module F W]
-    (A : Submodule F W) (V : Submodule F A) :
-    Module.finrank F (V.map A.subtype) = Module.finrank F V :=
-  (Submodule.equivMapOfInjective A.subtype (fun _ _ h => Subtype.ext h) V).finrank_eq.symm
-
 theorem countBelow_eq {F W : Type} [Field F] [AddCommGroup W] [Module F W] [Finite W]
     (A : Submodule F W) (k : ℕ) :
     countBelow A k = countBelow (⊤ : Submodule F A) k := by
   unfold Formalism.G0.countBelow
   exact Nat.card_congr
     { toFun := fun U => ⟨U.1.comap A.subtype, le_top, by
-        rw [← finrank_map_subtype_eq' A (U.1.comap A.subtype), Submodule.map_comap_subtype,
+        rw [← Submodule.finrank_map_subtype_eq A (U.1.comap A.subtype), Submodule.map_comap_subtype,
           inf_eq_right.mpr U.2.1]
         exact U.2.2⟩
       invFun := fun V => ⟨V.1.map A.subtype, Submodule.map_subtype_le A V.1, by
-        rw [finrank_map_subtype_eq']; exact V.2.2⟩
+        rw [Submodule.finrank_map_subtype_eq]; exact V.2.2⟩
       left_inv := fun U => Subtype.ext (by
         show Submodule.map A.subtype (Submodule.comap A.subtype U.1) = U.1
         rw [Submodule.map_comap_subtype, inf_eq_right.mpr U.2.1])
@@ -184,16 +132,6 @@ private theorem finrank_map_mkQ_add_finrank_eq {F Q : Type} [Field F] [AddCommGr
   have h1 := LinearMap.finrank_range_add_finrank_ker (R.mkQ.domRestrict U)
   rw [← h1, LinearMap.range_domRestrict, LinearMap.ker_domRestrict, Submodule.ker_mkQ, (Submodule.comapSubtypeEquivOfLe h).finrank_eq]
 
-private theorem le_comap_mkQ' {F Q : Type} [Field F] [AddCommGroup Q] [Module F Q]
-    (R : Submodule F Q) (V : Submodule F (Q ⧸ R)) : R ≤ V.comap R.mkQ := by
-  intro x hx
-  rw [Submodule.mem_comap, show R.mkQ x = 0 from by simpa using hx]
-  exact V.zero_mem
-
-private theorem mkQ_surjective' {F Q : Type} [Field F] [AddCommGroup Q] [Module F Q]
-    (R : Submodule F Q) : Function.Surjective R.mkQ :=
-  LinearMap.range_eq_top.mp (Submodule.range_mkQ R)
-
 theorem countAboveCodim_eq {F Q : Type} [Field F] [AddCommGroup Q] [Module F Q] [Finite Q]
     (R : Submodule F Q) (n j : ℕ) (hn : Module.finrank F Q = n) :
     Nat.card {U : Submodule F Q // R ≤ U ∧ Module.finrank F U + j = n} =
@@ -205,9 +143,9 @@ theorem countAboveCodim_eq {F Q : Type} [Field F] [AddCommGroup Q] [Module F Q] 
         have h1 := finrank_map_mkQ_add_finrank_eq R U.1 U.2.1
         have h2 := U.2.2
         omega⟩
-      invFun := fun V => ⟨V.1.comap R.mkQ, le_comap_mkQ' R V.1, by
-        have h1 := finrank_map_mkQ_add_finrank_eq R (V.1.comap R.mkQ) (le_comap_mkQ' R V.1)
-        rw [Submodule.map_comap_eq_of_surjective (mkQ_surjective' R)] at h1
+      invFun := fun V => ⟨V.1.comap R.mkQ, Submodule.le_comap_mkQ R V.1, by
+        have h1 := finrank_map_mkQ_add_finrank_eq R (V.1.comap R.mkQ) (Submodule.le_comap_mkQ R V.1)
+        rw [Submodule.map_comap_eq_of_surjective (Submodule.mkQ_surjective R)] at h1
         have h2 := V.2
         omega⟩
       left_inv := fun U => Subtype.ext (by
@@ -215,7 +153,7 @@ theorem countAboveCodim_eq {F Q : Type} [Field F] [AddCommGroup Q] [Module F Q] 
         rw [Submodule.comap_map_mkQ, sup_eq_right.mpr U.2.1])
       right_inv := fun V => Subtype.ext (by
         show Submodule.map R.mkQ (Submodule.comap R.mkQ V.1) = V.1
-        exact Submodule.map_comap_eq_of_surjective (mkQ_surjective' R) V.1) }
+        exact Submodule.map_comap_eq_of_surjective (Submodule.mkQ_surjective R) V.1) }
 
 end TypeIIDownP
 
@@ -258,7 +196,7 @@ theorem typeIIDown_of (hS : SubspaceCount) : TypeIIDown := by
   have : Module.Finite F P := Module.Finite.of_finite
   have : Module.Finite F Q := Module.Finite.of_finite
   have : Finite (Q ⧸ LinearMap.range f) :=
-    Finite.of_surjective _ (_root_.Formalism.G0.TypeIIDownP.mkQ_surjective' (LinearMap.range f))
+    Finite.of_surjective _ (Submodule.mkQ_surjective (LinearMap.range f))
   have hrn := LinearMap.finrank_range_add_finrank_ker f
   have hqr := Submodule.finrank_quotient_add_finrank (LinearMap.range f)
   have hdim : Module.finrank F (Q ⧸ LinearMap.range f) =

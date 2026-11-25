@@ -26,8 +26,6 @@ open scoped ENNReal
 
 namespace Formalism.L2.SG.Pf.OOCore3
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section K
 
 variable {D : D7} {X : HidaSetting D} (Y : Full X) (u u' : D.what₂.Word) (ν : X.B.I.Ginf → Measure X.B.I.Ginf)
@@ -69,7 +67,7 @@ theorem thetaWinP_of_K (h : JFactPK Y u u' ν C hB large₂ C1) : ThetaWinP Y u 
   have hP : 0 < localAmplitudeProduct u u' hB w := by rw [← e]; exact mul_pos hJ hK
   have e2 : thetaP u u' hB (J2of Y u u' ν (toPts w)) w = K ^ ((1 : ℝ) / (2 * Fintype.card D.what₂.Tau)) := by
     unfold thetaP
-    rw [if_pos ⟨hJ, hP⟩, ← e, mul_div_cancel_left₀ _ hJ.ne']
+    rw [ite_eq_left ⟨hJ, hP⟩, ← e, mul_div_cancel_left₀ _ hJ.ne']
   rw [e2]
   exact hW
 
@@ -107,8 +105,6 @@ open scoped Classical
 open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.LocWSOf Formalism.L2.SG.RealObj
 
 namespace Formalism.L2.SG.Pf.LocNorm
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {X : HidaSetting D} (Y : Formalism.L2.SG.Full.Full X) (u u' : D.what₂.Word) {θ : ℝ} (C : Choice X θ)
   (hB : WuBessel C) (large₂ : SizeData₂ D) (C1 : ℝ)

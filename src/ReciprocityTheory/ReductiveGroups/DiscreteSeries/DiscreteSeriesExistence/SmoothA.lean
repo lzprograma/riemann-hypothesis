@@ -5,6 +5,8 @@ import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.TypeStar
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothBr
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothDS
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.GelfandPhi
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.TransferA
 
 @[expose] public section
 
@@ -90,16 +92,9 @@ theorem inG_cpart1 (ε : Fin n → Bool) (Z : Matrix (Fin n) (Fin n) ℂ) : inG 
   module
 
 theorem inG_cpart2 (ε : Fin n → Bool) (Z : Matrix (Fin n) (Fin n) ℂ) : inG ε (S7.cpart2 ε Z) := by
-  have hI : star Complex.I = -Complex.I := Complex.conj_I
-  have hs : star (1 / (2 * Complex.I)) = -(1 / (2 * Complex.I)) := by
-    first
-      | (rw [one_div, star_inv₀, star_mul', hI, star_ofNat, mul_neg, inv_neg])
-  apply inG_of_J
-  unfold S7.cpart2
-  simp only [Matrix.conjTranspose_smul, Matrix.conjTranspose_add, Matrix.conjTranspose_mul,
-    Matrix.conjTranspose_conjTranspose, Jm_conjTranspose, Matrix.mul_smul, Matrix.smul_mul,
-    Matrix.mul_add, Matrix.add_mul, Matrix.mul_assoc, Jm_mul_Jm, Matrix.mul_one, Jm_mul_Jm_mulDiscreteSeriesExistence, hs]
-  module
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.DS.Lap.LemK.ta_inG_cpart2
+    | apply _root_.ReciprocityTheory.ChartRestriction.DS.Lap.LemK.ta_inG_cpart2 <;> first | assumption | rfl | infer_instance
 
 theorem cpart_decomp (ε : Fin n → Bool) (Z : Matrix (Fin n) (Fin n) ℂ) :
     Z = S7.cpart1 ε Z + Complex.I • S7.cpart2 ε Z := by
@@ -194,7 +189,7 @@ theorem Tm_apply (hσ : IsURepOn (UJset ε) σ) {X : Matrix (Fin n) (Fin n) ℂ}
     (v : smSub ε σ) : ((Tm hσ X v : smSub ε σ) : H) = dS σ X v := by
   first
     | (simp only [Tm, dif_pos hX]; done)
-    | (simp only [Tm, dif_pos hX]; rfl)
+    | (simp only [Tm, dite_eq_left hX]; rfl)
 
 theorem Tm_add (hσ : IsURepOn (UJset ε) σ) {X Y : Matrix (Fin n) (Fin n) ℂ} (hX : inG ε X)
     (hY : inG ε Y) : Tm hσ (X + Y) = Tm hσ X + Tm hσ Y := by
@@ -322,15 +317,9 @@ theorem EcL_br (hσ : IsURepOn (UJset ε) σ) (Z W : Matrix (Fin n) (Fin n) ℂ)
 
 private theorem single_one_mul_single_one' (a b c d : Fin n) :
     Matrix.single a b (1 : ℂ) * Matrix.single c d 1 = if b = c then Matrix.single a d 1 else 0 := by
-  ext i j
-  rw [Matrix.mul_apply, Finset.sum_eq_single b
-    (fun k _ hk => by simp [Matrix.single_apply, hk, Ne.symm hk])
-    (fun h => absurd (Finset.mem_univ b) h)]
-  by_cases hbc : b = c
-  · subst hbc
-    simp [Matrix.single_apply]
-    split_ifs <;> simp_all
-  · simp [Matrix.single_apply, hbc, Ne.symm hbc]
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.DS.S7.single_mul_single_one
+    | apply _root_.ReciprocityTheory.ChartRestriction.DS.S7.single_mul_single_one <;> first | assumption | rfl | infer_instance
 
 theorem EcL_glRep (hσ : IsURepOn (UJset ε) σ) :
     IsGlRep (fun a b : Fin n => EcL hσ (Matrix.single a b 1)) := by
@@ -405,8 +394,8 @@ theorem cas_pair_lt (ε : Fin n → Bool) {a b : Fin n} (hab : a < b) :
   have hsym : casSg ε (b, a) = casSg ε (a, b) := by
     unfold casSg
     by_cases h : ε a = ε b
-    · rw [if_pos h, if_pos h.symm]
-    · rw [if_neg h, if_neg (Ne.symm h)]
+    · rw [ite_eq_left h, ite_eq_left h.symm]
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
   have hw1 : casWt (a, b) = 1 / 2 := by simp [casWt, hne]
   have hw2 : casWt (b, a) = 1 / 2 := by simp [casWt, Ne.symm hne]
   have hg1 : casGen ε (a, b) = Matrix.single a b 1 - casSg ε (a, b) • Matrix.single b a 1 := by

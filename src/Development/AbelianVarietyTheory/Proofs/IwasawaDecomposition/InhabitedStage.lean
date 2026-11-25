@@ -148,7 +148,7 @@ def constMap (d : ℕ) : (Fin d → O) →ₗ[O] (Fin d → (noPlaces p O Kf).Tu
 
 theorem constMap_injective (d : ℕ) (hinj : Function.Injective (algebraMap O Kf)) :
     Function.Injective (constMap p O Kf d) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro c hc
   funext i
   have h : c i • (1 : (noPlaces p O Kf).Xsp) = 0 := congrFun (congrFun hc i) (fun v => isEmptyElim v)
@@ -252,7 +252,7 @@ theorem exists_inert {R : Ranks} (H : Host R) :
     have := Nat.le_of_mem_primeFactors h
     omega
   unfold Host.cls primeClass
-  rw [if_neg hs, if_neg (by omega), if_neg (by omega), if_neg (by rw [hj]; norm_num)]
+  rw [ite_eq_right hs, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by rw [hj]; norm_num)]
   split_ifs
   · exact Or.inl rfl
   · exact Or.inr rfl
@@ -310,21 +310,13 @@ theorem baseVol_pos (B : Base) (cd : CDHaar) (W : @HSpace B.host.E _ _ B.host.cm
 def noJet {R : Ranks} (H : Host R) : ThetaJet R H where
   Sit := Empty
   loc := fun i => i.elim
-  l_inert := fun i => i.elim
   jOf := fun i => i.elim
-  j_mem := fun i => i.elim
-  N0_eq := fun i => i.elim
-  N1_eq_exponentN1 := fun i => i.elim
   Sit1 := Empty
   loc1 := fun i => i.elim
-  l_inert1 := fun i => i.elim
   j1Of := fun i => i.elim
-  firstJetIndex_mem_range := fun i => i.elim
-  firstJet_lowerRank_eq := fun i => i.elim
-  firstJet_upperRank_eq := fun i => i.elim
 
-def oneJet {R : Ranks} (H : Host R) (hm : 1 ≤ R.m) (l : ℕ) (hl : l.Prime) (h5 : 5 ≤ l)
-    (hc : H.cls l = .signal ∨ H.cls l = .inertClass) : ThetaJet R H where
+def oneJet {R : Ranks} (H : Host R) (_hm : 1 ≤ R.m) (l : ℕ) (hl : l.Prime) (h5 : 5 ≤ l)
+    (_hc : H.cls l = .signal ∨ H.cls l = .inertClass) : ThetaJet R H where
   Sit := Unit
   loc := fun _ =>
     haveI : Fact l.Prime := ⟨hl⟩
@@ -336,18 +328,10 @@ def oneJet {R : Ranks} (H : Host R) (hm : 1 ≤ R.m) (l : ℕ) (hl : l.Prime) (h
       N0 := R.N 0
       N1 := R.N 1
       Th := 1 }
-  l_inert := fun _ => hc
   jOf := fun _ => 1
-  j_mem := fun _ => ⟨le_rfl, hm⟩
-  N0_eq := fun _ => rfl
-  N1_eq_exponentN1 := fun _ => rfl
   Sit1 := Empty
   loc1 := fun i => i.elim
-  l_inert1 := fun i => i.elim
   j1Of := fun i => i.elim
-  firstJetIndex_mem_range := fun i => i.elim
-  firstJet_lowerRank_eq := fun i => i.elim
-  firstJet_upperRank_eq := fun i => i.elim
 
 theorem exists_noJet (B : Base) (C : Cols B) (cd : CDHaar) :
     ∃ J : GJStage B C, J.cd = cd ∧ J.vol = baseVol B J.cd ∧ J.jet = noJet B.host ∧

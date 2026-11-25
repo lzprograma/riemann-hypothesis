@@ -54,10 +54,6 @@ namespace GlobalTheory.Proof.GenusMassSignature
 open NumberField Formalism.BasicNotions Matrix
 open scoped ComplexOrder MatrixOrder
 
-theorem denseRange_of_not_isReal {K : Type} [Field K] (σ : K →+* ℂ)
-    (h : ¬ ComplexEmbedding.IsReal σ) : DenseRange σ := by
-  apply CompanionTheory.Rg.FlCls.denseRange_of_not_isReal <;> assumption
-
 theorem hasSignature_of_posDef {n : ℕ} {J : Matrix (Fin n) (Fin n) ℂ} (h : J.PosDef) :
     Formalism.UG.HasSignature J n 0 := by
   let e : Fin n ≃ Fin n ⊕ Fin 0 := (Equiv.sumEmpty (Fin n) (Fin 0)).symm
@@ -119,7 +115,7 @@ theorem pos_iff_posDef (htc : IsTotallyComplex E)
   · intro h
     have hH := gram_isHermitian hst W τ
     have hd : DenseRange τ :=
-      denseRange_of_not_isReal τ (IsTotallyComplex.complexEmbedding_not_isReal τ)
+      CompanionTheory.Rg.FlCls.denseRange_of_not_isReal τ (IsTotallyComplex.complexEmbedding_not_isReal τ)
     have hdn : DenseRange fun (l : Fin W.rank → E) => (fun i => τ (l i)) :=
       DenseRange.piMap (fun _ : Fin W.rank => hd)
     have hco : ∀ l : Fin W.rank → E, τ (W.hD (W.frame.equivFun.symm l) (W.frame.equivFun.symm l)) =

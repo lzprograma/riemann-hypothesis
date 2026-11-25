@@ -113,9 +113,9 @@ theorem unit_away (D : 𝓞 F) (hD : D ≠ 0) :
         else (algebraMap (𝓞 F) (w.adicCompletion F) D)⁻¹) + _
   by_cases h : Valued.v (algebraMap (𝓞 F) (w.adicCompletion F) D) < 1
   · have h' : w ∈ (levelaf_finite_places D hD).toFinset := by simpa using h
-    rw [if_pos h, if_pos h', mul_zero, zero_add]
+    rw [ite_eq_left h, ite_eq_left h', mul_zero, zero_add]
   · have h' : w ∉ (levelaf_finite_places D hD).toFinset := by simpa using h
-    rw [if_neg h, if_neg h', add_zero, mul_inv_cancel₀ (levelaf_algebraMap_ne_zero w D hD)]
+    rw [ite_eq_right h, ite_eq_right h', add_zero, mul_inv_cancel₀ (levelaf_algebraMap_ne_zero w D hD)]
 
 end LG
 

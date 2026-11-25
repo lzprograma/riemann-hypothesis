@@ -101,7 +101,7 @@ theorem coef_mul {L : LocE F E} {r k : ℕ} (S : Frames L r k) (g : Fin (r + 1) 
       refine hb2.2 _ ?_
       refine hf_span_right L S.Hm _ _ ?_
       rintro _ ⟨i, hi, rfl⟩
-      rw [hg, if_neg]
+      rw [hg, ite_eq_right]
       rintro ⟨-, rfl⟩
       simp at hi
   have hB := (ha1 j).2 _ hA
@@ -109,12 +109,12 @@ theorem coef_mul {L : LocE F E} {r k : ℕ} (S : Frames L r k) (g : Fin (r + 1) 
     refine Submodule.span_le.2 ?_
     rintro _ ⟨i, hi, rfl⟩
     change hf L S.Hm (g i) (gs j) = 0
-    rw [hd, if_neg]
+    rw [hd, ite_eq_right]
     rintro rfl
     simp at hi
   have h0 : pairL L S.Hm (gs j) (g j.succ) = 0 := by
     change hf L S.Hm (g j.succ) (gs j) = 0
-    rw [hd, if_neg]
+    rw [hd, ite_eq_right]
     intro h
     have := congrArg Fin.val h
     simp at this

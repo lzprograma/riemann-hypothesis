@@ -2,46 +2,7 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.NotDominatesTopPlace
 import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsBasisKaehlerOfAlgebraicIndependent
-import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.TrdegPf
 
 @[expose] public section
@@ -50,8 +11,6 @@ open CategoryTheory AlgebraicGeometry TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.TopForm GlobalTheory.Discrepancy GlobalTheory.FieldPair
 open scoped TensorProduct
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -203,7 +162,7 @@ theorem trBasis_append : ∀ {K L : Type} [Field K] [Field L] (cK : ℂ →+* K)
     rw [← hb, Module.Basis.coord_apply, Module.Basis.repr_self, Finsupp.single_apply]
     by_cases hkk : k = k'
     · subst hkk; simp
-    · rw [if_neg (Ne.symm hkk), if_neg hkk]
+    · rw [ite_eq_right (Ne.symm hkk), ite_eq_right hkk]
   let Dfam : Fin (r + n) → Derivation ℂ L L :=
     Fin.addCases (fun i => Dof 0 (Pi.single i 1)) (fun k => Dof (dK k) 0)
   have hval : ∀ m m', Dfam m (y m') = if m = m' then 1 else 0 := by
@@ -215,25 +174,25 @@ theorem trBasis_append : ∀ {K L : Type} [Field K] [Field L] (cK : ℂ →+* K)
         simp only [Dfam, hy, Fin.addCases_left, Fin.append_left, hDof2, Pi.single_apply]
         by_cases hii : i = i'
         · subst hii; simp
-        · rw [if_neg (Ne.symm hii), if_neg]
+        · rw [ite_eq_right (Ne.symm hii), ite_eq_right]
           intro e; exact hii (Fin.castAdd_injective _ _ e)
       | right k' =>
         have hne : Fin.castAdd n i ≠ Fin.natAdd r k' := by
           rw [Ne, Fin.ext_iff]; simp; omega
-        simp only [Dfam, hy, Fin.addCases_left, Fin.append_right, hDof1, if_neg hne]
+        simp only [Dfam, hy, Fin.addCases_left, Fin.append_right, hDof1, ite_eq_right hne]
         simp
     | right k =>
       induction m' using Fin.addCases with
       | left i' =>
         have hne : Fin.natAdd r k ≠ Fin.castAdd n i' := by
           rw [Ne, Fin.ext_iff]; simp; omega
-        simp only [Dfam, hy, Fin.addCases_right, Fin.append_left, hDof2, if_neg hne]
+        simp only [Dfam, hy, Fin.addCases_right, Fin.append_left, hDof2, ite_eq_right hne]
         simp
       | right k' =>
         simp only [Dfam, hy, Fin.addCases_right, Fin.append_right, hDof1, hdK]
         by_cases hkk : k = k'
         · subst hkk; simp
-        · rw [if_neg hkk, if_neg, map_zero]
+        · rw [ite_eq_right hkk, ite_eq_right, map_zero]
           intro e; exact hkk (Fin.natAdd_injective _ _ e)
   have hlin : LinearIndependent L (fun m => KaehlerDifferential.D ℂ L (y m)) := by
     let F : Ω[L⁄ℂ] →ₗ[L] (Fin (r + n) → L) :=

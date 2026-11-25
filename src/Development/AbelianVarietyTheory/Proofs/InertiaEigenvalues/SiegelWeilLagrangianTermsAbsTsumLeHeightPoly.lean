@@ -14,49 +14,12 @@ public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.Sie
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelWeilSectionDegeneratePrincipalSeriesLaw
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelWeilSectionIntegrableAndContinuous
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DetGramSmul
-public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DoubledLagrangianTermFrameIndependent
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RationalSourceActsOnOrientedThetaBySubstitution
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SiegelEisensteinDoubledThetaTermsEqLagrangianIntStatement
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HermitianAdjointLawsStandardCharacter
 public import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.EisPoleLEZeroOfLt
 import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsFinNormComparison
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConjugateAdjointDagger
 public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DblApply
@@ -155,7 +118,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.AdelicU GlobalTheory.Doubling
 open GlobalTheory.IndefiniteRowSideFullHecke.SphericalZero (swSec sZero delta)
 open scoped NNReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
@@ -209,53 +171,6 @@ theorem norm_swSec_le {ψ : AddChar (AF D.host.F) ℂ} {A B : HSp D} {χ : (AE D
     one_mul, norm_npow (hom_pos _ _), ex, hgt_mul A a p hk, mul_comm]
   exact mul_le_mul_of_nonneg_right (hC k hk) (by positivity)
 
-theorem tsum_swSec_le {ψ : AddChar (AF D.host.F) ℂ} {A B : HSp D} {χ : (AE D)ˣ →* Circle}
-    {omh : GA D (dblSp A) × GA D B →* Module.End ℂ (WO (dblSp A) B → ℂ)} (hω : IsWeilDatumO ψ (dblSp A) B 1 χ omh)
-    (hb : 2 * A.rank < B.rank)
-    {ν : Measure (WO A B)} {𝓕 : Set (WO A B)} (hν : IsCovolOne (ratL B A) ν 𝓕) {φ : WO (dblSp A) B → ℂ}
-    (hφ : IsThetaFunO ψ (dblSp A) B φ) :
-    ∃ (M : ℕ) (C : ℝ), 0 ≤ C ∧ ∀ y, ∑' q : GlobalTheory.Eis.SiegelCosets A,
-      ‖swSec A B omh ν 𝓕 φ ((q.out : GQ (dblSp A)) * y)‖ₑ ≤ ENNReal.ofReal (C * GlobalTheory.Grow.height (dblSp A) y ^ M) := by
-  obtain ⟨a, ha⟩ := exists_isMaj A
-  have hI := GlobalTheory.Core.Rk.IP.hasIwasawa_Khat D A a ha
-  obtain ⟨C₁, hC₁, h₁⟩ := norm_swSec_le hω hν hφ a ha
-  obtain ⟨C₂, hC₂, h₂⟩ := hgt_mul_le A a ha
-  have hb' : (2 * A.rank : ℝ) < B.rank := by exact_mod_cast hb
-  have hs := GlobalTheory.Eis.sphConv D A a hI (((B.rank : ℝ) - A.rank) / 2) (by linarith)
-  rw [show ((B.rank : ℝ) - A.rank) / 2 + (A.rank : ℝ) / 2 = (B.rank : ℝ) / 2 by ring] at hs
-  set S := ∑' q : GlobalTheory.Eis.SiegelCosets A, (hgt A a (q.out : GQ (dblSp A)) : ℝ) ^ ((B.rank : ℝ) / 2) with hS
-  have hS0 : 0 ≤ S := tsum_nonneg fun _ => by positivity
-  refine ⟨2 * A.rank * B.rank, C₁ * (max C₂ 1) ^ B.rank * S, by positivity, fun y => ?_⟩
-  set H := GlobalTheory.Grow.height (dblSp A) y with hH
-  have hH1 : 1 ≤ H := GlobalTheory.Grow.one_le_height _ y
-  set c := C₁ * (max C₂ 1 * H ^ (2 * A.rank)) ^ B.rank with hc
-  have hc0 : 0 ≤ c := by positivity
-  have hone : 1 ≤ max C₂ 1 * H ^ (2 * A.rank) :=
-    one_le_mul_of_one_le_of_one_le (le_max_right _ _) (one_le_pow₀ hH1)
-  have hq : ∀ x : GA D (dblSp A), ‖swSec A B omh ν 𝓕 φ (x * y)‖ ≤ c * (hgt A a x : ℝ) ^ ((B.rank : ℝ) / 2) := by
-    intro x
-    refine (h₁ _).trans ?_
-    rw [hc, mul_assoc]
-    refine mul_le_mul_of_nonneg_left ?_ hC₁
-    have h3 : (hgt A a (x * y) : ℝ) ≤ hgt A a x * (max C₂ 1 * H ^ (2 * A.rank)) :=
-      (h₂ x y).trans (mul_le_mul_of_nonneg_left
-        (mul_le_mul_of_nonneg_right (le_max_left _ _) (by positivity)) (NNReal.coe_nonneg _))
-    refine (Real.rpow_le_rpow (NNReal.coe_nonneg _) h3 (by positivity)).trans ?_
-    rw [Real.mul_rpow (NNReal.coe_nonneg _) (by positivity), mul_comm]
-    refine mul_le_mul_of_nonneg_right ?_ (by positivity)
-    rw [← Real.rpow_natCast _ B.rank]
-    exact Real.rpow_le_rpow_of_exponent_le hone (by linarith [(Nat.cast_nonneg B.rank : (0 : ℝ) ≤ _)])
-  calc _ ≤ ∑' q : GlobalTheory.Eis.SiegelCosets A,
-        ENNReal.ofReal (c * (hgt A a (q.out : GQ (dblSp A)) : ℝ) ^ ((B.rank : ℝ) / 2)) :=
-        ENNReal.tsum_le_tsum fun q => by
-          rw [← ofReal_norm]
-          exact ENNReal.ofReal_le_ofReal (hq _)
-    _ = ENNReal.ofReal (c * S) := by
-        rw [← ENNReal.ofReal_tsum_of_nonneg (fun _ => by positivity) (hs.mul_left c), tsum_mul_left]
-    _ = _ := by
-        congr 1
-        rw [hc, mul_pow, ← pow_mul]; ring
-
 end Global
 
 section Main
@@ -264,62 +179,7 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.RawLift
-
-theorem tsum_lagTerm_le : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (V W : HSp D) (χV χW : (AE D)ˣ →* Circle) (om : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)) (νV : Measure (GA D V)) (𝓗 : Set (GA D V)) (νW : Measure (GA D W)) (𝓖 : Set (GA D W)) (μ : Measure (WO V W)) (𝓕 : Set (WO V W)) (fr : Lag W → Matrix (Fin W.rank) (Fin W.rank) D.host.E × Matrix (Fin W.rank) (Fin W.rank) D.host.E), SWSetup ψ V W χV χW om νV 𝓗 νW 𝓖 μ 𝓕 fr → ∀ (θ : InfFam D), IsInfFam θ → ∀ (f₁ f₂ : WO V W → ℂ), IsThetaFunO ψ V W f₁ → IsThetaFunO ψ V W f₂ → ∃ (M : ℕ) (C : ℝ), ∀ g₁ g₂ : GA D W, ∑' Y : Lag W, ‖lagTerm μ 𝓕 (fr Y) (om (1, g₁) f₁) (om (1, g₂) f₂)‖ₑ ≤ ENNReal.ofReal (C * ((GlobalTheory.IndefiniteRowSideFullHecke.LieAlgebraExponentialFamilies.height θ W g₁ : ℝ) * (GlobalTheory.IndefiniteRowSideFullHecke.LieAlgebraExponentialFamilies.height θ W g₂ : ℝ)) ^ M) := by
-  intro D ψ V W χV χW om νV 𝓗 νW 𝓖 μ 𝓕 fr hs θ hθ f₁ f₂ h₁ h₂
-  have hw := hs.weil
-  have hS := GlobalTheory.AdjLawPf.adjLaw D ψ hw.std V W
-  have hom' := GlobalTheory.ConjAdjWeil.isWeilDatumO_conjAdjoint D ψ V W χV χW om hw
-  have hr : ResEta D 1 (GlobalTheory.Doubling.dblSp W).rank := by
-    have := GlobalTheory.Eis.SimplePoleModel.resEta_one_two_mul D W.rank
-    convert this using 2
-    simp
-    omega
-  obtain ⟨omh, hω⟩ := GlobalTheory.weilRepresentationUnitaryPair D ψ (GlobalTheory.Doubling.dblSp W) V 1 χV hw.std
-    ⟨continuous_const, fun _ => rfl⟩ hw.hecS hr hw.resS
-  have TC := GlobalTheory.DoublingTheta.thetaClause D ψ W V χW χV (GlobalTheory.IndefiniteRowSideFullHecke.ConjugateAdjointDagger.conjAdjoint om) omh hom' hω
-  obtain ⟨hF, hrest⟩ := TC (GlobalTheory.PairLift.dag V W f₂) (GlobalTheory.PairLift.dag V W f₁) (hS.theta _ h₂) (hS.theta _ h₁)
-  have dd : ∀ f : WO V W → ℂ, GlobalTheory.PairLift.dag W V (GlobalTheory.PairLift.dag V W f) = f := fun f => by
-    funext y; simp only [GlobalTheory.PairLift.dag, hS.invol, Complex.conj_conj]
-  obtain ⟨ν, 𝓖', hν⟩ := GlobalTheory.Size.exists_isCovolOne W V
-  obtain ⟨M, C, hC, H⟩ := tsum_swSec_le hω hs.big hν hF
-  obtain ⟨K, hK, hcmp⟩ := GlobalTheory.Grow.height_comparison W hθ
-  refine ⟨M, C * (K * K) ^ M, fun g₁ g₂ => ?_⟩
-  have h₁' := hw.om_pres (1, g₁) f₁ h₁
-  have h₂' := hw.om_pres (1, g₂) f₂ h₂
-  have hF' : IsThetaFunO ψ (GlobalTheory.Doubling.dblSp W) V (GlobalTheory.SWPairProof.dbl V W (om (1, g₁) f₁) (om (1, g₂) f₂)) :=
-    (TC _ _ (hS.theta _ h₂') (hS.theta _ h₁')).1
-  obtain ⟨e, he⟩ := GlobalTheory.T.siegelEisenstein_doubledTheta_terms_eq_lagrangianIntegrals D ψ V W χV χW om νV 𝓗 νW 𝓖 μ 𝓕 fr hs _ _ h₁' h₂' ν 𝓖' hν
-  have hmove := (hrest g₂ g₁ 1).1
-  rw [GlobalTheory.ConjAdjWeil.conjAdjoint_apply, GlobalTheory.ConjAdjWeil.conjAdjoint_apply, dd, dd] at hmove
-  have hterm : ∀ q, ‖lagTerm μ 𝓕 (fr (e q)) (om (1, g₁) f₁) (om (1, g₂) f₂)‖ₑ =
-      ‖GlobalTheory.IndefiniteRowSideFullHecke.SphericalZero.swSec W V omh ν 𝓖' (GlobalTheory.IndefiniteRowSideFullHecke.SphericalZero.delta W V (GlobalTheory.PairLift.dag V W f₂) (GlobalTheory.PairLift.dag V W f₁))
-        ((q.out : GQ (GlobalTheory.Doubling.dblSp W)) * GlobalTheory.Doubling.io W (g₂, g₁))‖ₑ := by
-    intro q
-    obtain ⟨c, hc, hq⟩ := he q
-    rw [← lagTerm_frame_indep D ψ V W μ 𝓕 hs.covol hw.std _ _ h₁' h₂' (e q) c (fr (e q)) hc (hs.frame _), ← hq]
-    have e1 : ((((q.out : GQ (GlobalTheory.Doubling.dblSp W)) : GA D (GlobalTheory.Doubling.dblSp W)) * GlobalTheory.Doubling.io W (g₂, g₁), 1) :
-        GA D (GlobalTheory.Doubling.dblSp W) × GA D V) =
-        (((q.out : GQ (GlobalTheory.Doubling.dblSp W)) : GA D (GlobalTheory.Doubling.dblSp W)), 1) * (GlobalTheory.Doubling.io W (g₂, g₁), 1) := by
-      simp
-    simp only [GlobalTheory.IndefiniteRowSideFullHecke.SphericalZero.swSec, GlobalTheory.IndefiniteRowSideFullHecke.SphericalZero.evZero]
-    rw [e1, map_mul, Module.End.mul_apply, hmove, map_smul]
-    simp only [Pi.smul_apply, smul_eq_mul]
-    rw [integral_const_mul, enorm_mul, ← ofReal_norm ((_ : Circle) : ℂ), Circle.norm_coe, ENNReal.ofReal_one,
-      one_mul]
-    congr 2
-    funext y
-    exact (GlobalTheory.RatSubst.om_rat_left_apply D ψ _ V 1 χV omh hω _ hF' _ (q.out : GQ (GlobalTheory.Doubling.dblSp W)).2 _).symm
-  rw [← e.tsum_eq]
-  simp only [hterm]
-  refine (H _).trans (ENNReal.ofReal_le_ofReal ?_)
-  rw [mul_assoc, ← mul_pow]
-  refine mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (GlobalTheory.Grow.height_pos _ _).le ?_ M) hC
-  refine (GlobalTheory.Grow.IoHeight.height_io_le D W g₂ g₁).trans ?_
-  refine (mul_le_mul (hcmp g₂).2 (hcmp g₁).2 (GlobalTheory.Grow.height_pos _ _).le (by positivity)).trans (le_of_eq ?_)
-  ring
 
 end Main
 

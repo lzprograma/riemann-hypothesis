@@ -2,7 +2,6 @@ module
 
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsMajorantStabCompact
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PBoundedInverseCompact
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -31,7 +30,6 @@ open MajorantStabCompact
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
   [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
-
 
 omit [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem MajorantStabCompact.proof (h : HermitianForm F E W) (v : Basis ι E W) :

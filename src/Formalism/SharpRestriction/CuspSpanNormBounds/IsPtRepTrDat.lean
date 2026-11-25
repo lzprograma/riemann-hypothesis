@@ -4,55 +4,8 @@ public import Formalism.SharpRestriction.CuspSpanNormBounds.ContinuousCjIT
 public import Formalism.SharpRestriction.CuspSpanNormBounds.OnePlaceEstimates
 public import Formalism.SharpRestriction.CuspSpanNormBounds.StarVecMulDM
 public import Formalism.SharpRestriction.CuspSpanNormBounds.SpanMemOfImage
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Separation.CompletelyRegular
 import Formalism.SharpRestriction.CuspSpanNormBounds.DMiMulVecApply
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.CategoryTheory.Countable
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -113,17 +66,17 @@ theorem ptEntry_scaleBlocks (acc : ℕ) (bs : List (ℂ × ℕ)) (i j : ℕ)
     simp only [List.map_cons, List.sum_cons] at h
     simp only [scaleBlocks, ptEntry]
     by_cases h1 : i < s ∧ j < s
-    · rw [if_pos h1, if_pos h1]
+    · rw [ite_eq_left h1, ite_eq_left h1]
       by_cases h2 : i + j + 1 = s
-      · rw [if_pos h2, if_pos h2]
+      · rw [ite_eq_left h2, ite_eq_left h2]
         have e : 2 * (r + 1 - (acc + s)) + (s - 1) = (r - (acc + i)) + (r - (acc + j)) := by omega
         rw [e, tF, tF, pow_add]; push_cast; ring
-      · rw [if_neg h2, if_neg h2, mul_zero]
-    · rw [if_neg h1, if_neg h1]
+      · rw [ite_eq_right h2, ite_eq_right h2, mul_zero]
+    · rw [ite_eq_right h1, ite_eq_right h1]
       by_cases h3 : s ≤ i ∧ s ≤ j
-      · rw [if_pos h3, if_pos h3, ih (acc + s) (i - s) (j - s) (by omega),
+      · rw [ite_eq_left h3, ite_eq_left h3, ih (acc + s) (i - s) (j - s) (by omega),
           show acc + s + (i - s) = acc + i by omega, show acc + s + (j - s) = acc + j by omega]
-      · rw [if_neg h3, if_neg h3, mul_zero]
+      · rw [ite_eq_right h3, ite_eq_right h3, mul_zero]
 
 theorem ptMat_ptTr (hκ : 0 < κ) (hτ : 0 < τ) (γ : Point ℂ (r + 1)) (a b : Fin (r + 1)) :
     ptMat (ptTr κ τ hκ hτ γ) a b = ((tF r κ τ a * tF r κ τ b : ℝ) : ℂ) * ptMat γ a b := by
@@ -195,14 +148,6 @@ def frStart : List (ℂ × ℕ) → ℕ → ℕ
   | [], _ => 0
   | (_, s) :: bs, p => if p < s then 0 else s + frStart bs (p - s)
 
-theorem frStart_le : ∀ (bs : List (ℂ × ℕ)) (p : ℕ), frStart bs p ≤ p
-  | [], p => Nat.zero_le p
-  | (t, s) :: bs, p => by
-    simp only [frStart]
-    split_ifs with h
-    · exact Nat.zero_le p
-    · have := frStart_le bs (p - s); omega
-
 theorem blockIdx_eq_iff : ∀ (bs : List (ℂ × ℕ)) (a b : ℕ), a < b →
     (blockIdx bs a = blockIdx bs b ↔ frStart bs b ≤ a)
   | [], a, b, _ => by simp [blockIdx, frStart]
@@ -210,10 +155,10 @@ theorem blockIdx_eq_iff : ∀ (bs : List (ℂ × ℕ)) (a b : ℕ), a < b →
     simp only [blockIdx, frStart]
     by_cases hb : b < s
     · have ha : a < s := by omega
-      rw [if_pos ha, if_pos hb, if_pos hb]; simp
+      rw [ite_eq_left ha, ite_eq_left hb, ite_eq_left hb]; simp
     · by_cases ha : a < s
-      · rw [if_pos ha, if_neg hb, if_neg hb]; constructor <;> intro h <;> omega
-      · rw [if_neg ha, if_neg hb, if_neg hb]
+      · rw [ite_eq_left ha, ite_eq_right hb, ite_eq_right hb]; constructor <;> intro h <;> omega
+      · rw [ite_eq_right ha, ite_eq_right hb, ite_eq_right hb]
         have := blockIdx_eq_iff bs (a - s) (b - s) (by omega)
         constructor
         · intro h; have := this.mp (by omega); omega
@@ -236,8 +181,8 @@ theorem sum_rootPat (g : ℕ → ℕ → ℕ) (γ : Point ℂ (r + 1)) :
       · rintro ⟨h1, h2⟩; exact ⟨(blockIdx_eq_iff γ.1 a b h1).mp h2, h1⟩
       · rintro ⟨h1, h2⟩; exact ⟨h2, (blockIdx_eq_iff γ.1 a b h2).mpr h1⟩
     by_cases h : a < b ∧ blockIdx γ.1 a.val = blockIdx γ.1 b.val
-    · rw [if_pos h, if_pos (hiff.mp h)]
-    · rw [if_neg h, if_neg (fun h' => h (hiff.mpr h'))]
+    · rw [ite_eq_left h, ite_eq_left (hiff.mp h)]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h (hiff.mpr h'))]
   rw [rootPat, Finset.sum_filter, ← Finset.univ_product_univ, Finset.sum_product_right,
     Finset.sum_range (fun b => ∑ a ∈ Ico (frStart γ.1 b) b, g a b)]
   exact Finset.sum_congr rfl fun b _ => key b
@@ -345,7 +290,7 @@ theorem ptWeightFrom_scale (hκ : 0 < κ) (hτ : 0 < τ) (T T' : ℝ) (acc : ℕ
     simp only [scaleBlocks, ptWeightFrom, frameBlockSum]
     rw [ih (acc + s)]
     by_cases h : s = 1 ∧ acc + 1 = r + 1
-    · rw [if_pos h, if_pos h]
+    · rw [ite_eq_left h, ite_eq_left h]
       obtain ⟨rfl, h2⟩ := h
       have e1 : 2 * (r + 1 - (acc + 1)) + (1 - 1) = 0 := by omega
       have e2 : frGE r acc 1 = 0 := by unfold frGE; omega
@@ -355,7 +300,7 @@ theorem ptWeightFrom_scale (hκ : 0 < κ) (hτ : 0 < τ) (T T' : ℝ) (acc : ℕ
         rw [Complex.normSq_mul, Complex.normSq_ofReal]; ring
       rw [e1, hbase, e2, e3, mul_pow]
       ring
-    · rw [if_neg h, if_neg h, norm_mul, Complex.norm_real, Real.norm_of_nonneg (by positivity)]
+    · rw [ite_eq_right h, ite_eq_right h, norm_mul, Complex.norm_real, Real.norm_of_nonneg (by positivity)]
       unfold frGE frGN
       ring
 
@@ -371,10 +316,10 @@ theorem sum_pos_blocks (f : ℕ → ℕ → ℕ) (acc : ℕ) (bs : List (ℂ × 
     congr 1
     · refine Finset.sum_congr rfl fun p hp => ?_
       have hp' : p < s := Finset.mem_range.mp hp
-      simp only [frStart, if_pos hp', Nat.sub_zero]
+      simp only [frStart, ite_eq_left hp', Nat.sub_zero]
     · refine Finset.sum_congr rfl fun p _ => ?_
       simp only [frStart]
-      rw [if_neg (show ¬ (s + p < s) by omega), show s + p - s = p by omega,
+      rw [ite_eq_right (show ¬ (s + p < s) by omega), show s + p - s = p by omega,
         show acc + (s + p) = acc + s + p by omega,
         show s + p - (s + frStart bs p) = p - frStart bs p by omega]
 
@@ -616,7 +561,7 @@ theorem bcWeight_sBig (hκ : 0 < κ) (hτ : 0 < τ) (T T' : ℝ) (p : (Fin r →
   simp only
   rw [hn]
   by_cases hc : T * T' ≤ Complex.normSq p.2
-  · rw [if_pos (by nlinarith), if_pos hc]
+  · rw [ite_eq_left (by nlinarith), ite_eq_left hc]
     have hprod : ∏ a : Fin r, ‖((tF r κ τ a.val ^ 2 : ℝ) : ℂ) * p.1 a‖ ^ (2 * (Mdim k r a - 2)) =
         (∏ a : Fin r, (tF r κ τ a.val ^ 2) ^ (2 * (Mdim k r a - 2))) *
           ∏ a : Fin r, ‖p.1 a‖ ^ (2 * (Mdim k r a - 2)) := by
@@ -626,7 +571,7 @@ theorem bcWeight_sBig (hκ : 0 < κ) (hτ : 0 < τ) (T T' : ℝ) (p : (Fin r →
     rw [hprod, show τ ^ 4 * Complex.normSq p.2 - τ ^ 2 * T * (τ ^ 2 * T') =
       τ ^ 4 * (Complex.normSq p.2 - T * T') by ring, mul_pow, wBig]
     ring
-  · rw [if_neg (by intro h; apply hc; nlinarith), if_neg hc, mul_zero]
+  · rw [ite_eq_right (by intro h; apply hc; nlinarith), ite_eq_right hc, mul_zero]
 
 theorem hsNormSq_eq_sum {Wp Wq : Type*} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
     [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wq] (A : Wq →L[ℂ] Wp) :
@@ -868,14 +813,14 @@ theorem continuous_rootCoords (z : Fin (2 * r + k + 1) → ℂ) (γ : Point ℂ 
   by_cases hi : (p.1.1 : ℕ) < r
   · have e : (fun x => rootCoords k r z γ x p) =
         fun x : Mt k r => ((Matrix.of x : Mx k r) *ᵥ fvec k r z p.1.2) (eI k r ⟨p.1.1.val, hi⟩) := by
-      funext x; simp only [rootCoords, flagMat, dif_pos hi]
+      funext x; simp only [rootCoords, flagMat, dite_eq_left hi]
     rw [e]
     have hc : Continuous fun x : Mt k r => ((Matrix.of x : Mx k r) *ᵥ fvec k r z p.1.2) :=
       Continuous.matrix_mulVec (A := fun x : Mt k r => (Matrix.of x : Mx k r)) (B := fun _ => fvec k r z p.1.2)
         continuous_id continuous_const
     exact (continuous_apply (eI k r ⟨p.1.1.val, hi⟩)).comp hc
   · have e : (fun x => rootCoords k r z γ x p) = fun _ : Mt k r => (if p.1.1 = p.1.2 then (1 : ℂ) else 0) := by
-      funext x; simp only [rootCoords, flagMat, dif_neg hi]
+      funext x; simp only [rootCoords, flagMat, dite_eq_right hi]
     rw [e]
     exact continuous_const
 

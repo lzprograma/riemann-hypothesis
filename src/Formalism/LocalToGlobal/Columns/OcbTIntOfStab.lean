@@ -59,7 +59,7 @@ theorem ocbT_int_of_stab (hq0 : (q : E) ≠ 0) {n c : ℕ} {g : Sp E (n + c) ≃
     intro i
     by_cases hi : (i : ℕ) = m
     · refine ⟨1, ?_⟩
-      simp only [v, hi, if_true, map_one]
+      simp only [v, hi, ite_true, map_one]
       rw [← he, inv_mul_cancel₀ (zpow_ne_zero _ hq0)]
     · exact ⟨0, by simp [v, hi]⟩
   have hg' : ∀ x, g x ∈ LocE.lamY P q n c (fun i => i + 1) ↔ x ∈ LocE.lamY P q n c (fun i => i + 1) := hg

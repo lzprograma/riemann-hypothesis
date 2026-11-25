@@ -1,11 +1,10 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSemiAbelianTensorOverScheme
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegProd
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -25,21 +24,7 @@ theorem isAbelianScheme_of_proper (G : Over S) [GrpObj G] (hG : IsSemiAbelian G)
 
 theorem isAbelianScheme_tensor (G H : Over S) [GrpObj G] [GrpObj H] (hG : IsAbelianScheme G)
     (hH : IsAbelianScheme H) : IsAbelianScheme (G ⊗ H) := by
-  have := hG.comm
-  have := hH.comm
-  have := hG.smooth
-  have := hH.smooth
-  have := hG.proper
-  have := hH.proper
-  have := hG.geomConnected
-  have := hH.geomConnected
-  refine ⟨inferInstance, ?_, ?_, ?_⟩
-  · rw [Over.tensorObj_hom, pullback.condition]
-    infer_instance
-  · rw [Over.tensorObj_hom, pullback.condition]
-    infer_instance
-  · rw [Over.tensorObj_hom, pullback.condition]
-    exact GeometricallyConnected.comp _ _
+  apply GlobalTheory.SemiProd.isAbelianScheme_tensor <;> assumption
 
 theorem isAbelianScheme_tensor_unit (G : Over S) [GrpObj G] (hG : IsAbelianScheme G) :
     IsAbelianScheme (G ⊗ 𝟙_ (Over S)) := by

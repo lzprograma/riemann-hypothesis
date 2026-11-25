@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinsetDefiniteUnitaryDoubleCosets
 public import Development.AbelianVarietyTheory.Definitions.Foundations.ClassMassEqSumOfBijective
 public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
 public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
@@ -112,21 +113,7 @@ theorem continuous_adMap : Continuous (GlobalTheory.AdeleBaseChange.adMap F E) :
     fun w => InertChart.continuous_complMap (rfl : w.under (𝓞 F) = _)
 
 theorem continuous_finAdEquiv : Continuous (finAdEquiv F E) := by
-  haveI : Module.Finite F E := Module.Finite.of_restrictScalars_finite ℚ F E
-  haveI : IsModuleTopology 𝔸ᶠ[F] (𝔸ᶠ[F] ⊗[F] E) := ⟨rfl⟩
-  letI : Algebra 𝔸ᶠ[F] (FiniteAdeleRing (𝓞 E) E) := (GlobalTheory.AdeleBaseChange.adMap F E).toAlgebra
-  haveI : ContinuousSMul 𝔸ᶠ[F] (FiniteAdeleRing (𝓞 E) E) := continuousSMul_of_algebraMap _ _ continuous_adMap
-  let f : 𝔸ᶠ[F] ⊗[F] E →ₗ[𝔸ᶠ[F]] FiniteAdeleRing (𝓞 E) E :=
-    { toFun := finAdEquiv F E
-      map_add' := map_add _
-      map_smul' := fun r y => by
-        induction y using TensorProduct.induction_on with
-        | zero => simp only [smul_zero, map_zero]
-        | add a b ha hb => simp only [smul_add, map_add (f := _), ha, hb]
-        | tmul a x =>
-          change toFinAd F E ((r * a) ⊗ₜ[F] x) = GlobalTheory.AdeleBaseChange.adMap F E r * toFinAd F E (a ⊗ₜ[F] x)
-          rw [toFinAd_tmul, toFinAd_tmul, map_mul, mul_assoc] }
-  exact IsModuleTopology.continuous_of_linearMap f
+  first | exact _root_.GlobalTheory.UnitaryBC.ClassTransport.continuous_finAdEquiv | exact @_root_.GlobalTheory.UnitaryBC.ClassTransport.continuous_finAdEquiv | apply _root_.GlobalTheory.UnitaryBC.ClassTransport.continuous_finAdEquiv <;> assumption
 
 end Base
 

@@ -77,7 +77,7 @@ theorem leadProd_rows {σ : Type} {n l : ℕ} (h : l ≤ n) {a : Fin l → ℕ} 
     (z : Fin n × Fin l → σ) (hz : Function.Injective z) :
     (∀ c d : Fin n, c < d → rowDer z c d (leadProd h a z) = 0) ∧
       ∀ c : Fin n, rowDer z c c (leadProd h a z) = (ext0 a c : ℂ) • leadProd h a z := by
-  have := what₂ z hz (ext0 a) (partitionExtendByZero_antitone ha) l (fun i hi => dif_neg (by omega))
+  have := what₂ z hz (ext0 a) (partitionExtendByZero_antitone ha) l (fun i hi => dite_eq_right (by omega))
     (fun i => le_trans i.2 h) (fun i => i.2)
   simpa only [rowOp_eq_rowDer, leadProd] using this
 
@@ -165,7 +165,7 @@ theorem delta_mem_hwSub : ∀ (p q n : ℕ) (hn : p + q < n) (ap : Fin p → ℕ
     leadProd_kill _ _ _ _ fun w => rowDer_X_other _ _ _ _ fun w' => by simp [vp, vm]
   simp only [hwSub, wtSub, Submodule.mem_inf, Submodule.mem_iInf, LinearMap.mem_ker, Sum.forall,
     posC, IsEmpty.forall_iff, implies_true, and_true, LinearMap.sub_apply, LinearMap.smul_apply,
-    LinearMap.id_apply, act_eq, Derivation.leibniz, k1, k2, a1.2, a2.2, if_true]
+    LinearMap.id_apply, act_eq, Derivation.leibniz, k1, k2, a1.2, a2.2, ite_true]
   refine ⟨fun c => ?_, fun c d hcd => ?_⟩
   · have hw : ((wtH n ap am (.inl c) : ℚ) : ℂ) =
         (ext0 ap c : ℂ) - (ext0 am c.rev : ℂ) + ((p : ℂ) - q) / 2 := by
@@ -180,7 +180,7 @@ theorem delta_mem_hwSub : ∀ (p q n : ℕ) (hn : p + q < n) (ap : Fin p → ℕ
     generalize leadProd h2 am (vm p q n) = B
     simp only [mul_zero, zero_add, add_zero, smul_eq_mul, mul_smul_comm, mul_comm B A]
     module
-  · rw [a1.1 c d hcd, a2.1 _ _ (Fin.rev_lt_rev.2 hcd), if_neg hcd.ne]
+  · rw [a1.1 c d hcd, a2.1 _ _ (Fin.rev_lt_rev.2 hcd), ite_eq_right hcd.ne]
     simp
 
 end GlobalTheory.DeltaHighest

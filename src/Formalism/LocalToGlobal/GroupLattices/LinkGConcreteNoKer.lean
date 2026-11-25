@@ -49,56 +49,12 @@ public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.TiedRec
 public import Formalism.LocalToGlobal.GroupLattices.StdSubAtOfRing
 public import Formalism.LocalToGlobal.GroupLattices.TrivialTransfer.GramTotallyDefinite
 import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDlatLemmas
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.Tensor
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.TotallySplit
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
 import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.FrRevInj
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.DerivativeValuationBounds
 import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeMapFractionField
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Data.Finsupp.Pointwise
 import Formalism.SharpRestriction.GrowthBounds.AevalValuation.RestSpec
 import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.TensZeroRight
 import Formalism.LocalToGlobal.GroupLattices.FockModels.ElementaryDivisorBasis
@@ -255,7 +211,6 @@ theorem bc_map {R R' X X' Y Y' : Type*} [CommRing R] [CommRing R'] [AddCommGroup
   congr 1
   exact Set.image_congr fun a _ => (hT a).symm
 
-
 include hφ in
 theorem bc_nablaLTw (m : ℕ) (lam : Fin (m + 1) → ℤ) (g : Matrix (Fin (m + 1)) (Fin (m + 1)) K)
     (hg : IsUnit g.det) :
@@ -270,7 +225,6 @@ theorem map_blockEmb {S : Type} {k n : ℕ} (s : S) (F : MvPolynomial (Fin k × 
     MvPolynomial.map φK (blockEmb K s F) = blockEmb K' s (MvPolynomial.map φK F) := by
   unfold blockEmb
   exact (MvPolynomial.map_rename φK _ F)
-
 
 include hφ in
 theorem bc_tensorLat {S : Type} [Fintype S] {k n : ℕ} (M : S → Submodule R (MvPolynomial (Fin k × Fin n) K))
@@ -318,7 +272,6 @@ theorem bc_tensorLat {S : Type} [Fintype S] {k n : ℕ} (M : S → Submodule R (
     rw [map_prod]
     exact Finset.prod_congr rfl fun s _ => map_blockEmb φK s (F s)
 
-
 include hφ in
 theorem bc_colSpan {k : ℕ} (g : Matrix (Fin k) (Fin k) K) :
     BC (vecS φ φK hφ k) (colSpan R g) (colSpan R' (g.map φK)) := by
@@ -328,7 +281,6 @@ theorem bc_colSpan {k : ℕ} (g : Matrix (Fin k) (Fin k) K) :
     rw [← Set.range_comp]; rfl
   rw [h1] at h0
   exact h0
-
 
 include hφ in
 theorem base_change_H0 (hinj : Function.Injective (algebraMap R K)) (hinj' : Function.Injective (algebraMap R' K'))
@@ -543,7 +495,7 @@ theorem bc_Vsp {n' m : ℕ} (lam0 : Fin n' → Fin (m + 1) → ℤ) (hd : IsDomi
   intro s
   have hanti := kp_lamAt_antitone lam0 hd s
   beta_reduce
-  rw [if_pos hanti, if_pos hanti]
+  rw [ite_eq_left hanti, ite_eq_left hanti]
   exact bc_dualWeyl φK _ _ _
 
 end Lat
@@ -560,15 +512,13 @@ theorem Vsp_bot (K : Type) [Field K] {n' m : ℕ} (lam0 : Fin n' → Fin (m + 1)
     · intro ha
       apply hs
       intro a b hab
-      have h1 := ha (Fin.rev_le_rev.2 hab)
-      simp only [Fin.rev_rev] at h1
-      exact neg_le_neg_iff.1 h1
+      simpa only [Fin.rev_rev, neg_le_neg_iff] using ha (Fin.rev_le_rev.2 hab)
   unfold Vsp tensorLat
   rw [Submodule.span_eq_bot]
   rintro _ ⟨F, hF, rfl⟩
   have h2 := hF s
   beta_reduce at h2
-  rw [if_neg hs'] at h2
+  rw [ite_eq_right hs'] at h2
   apply Finset.prod_eq_zero (Finset.mem_univ s)
   rw [(Submodule.mem_bot _).1 h2, map_zero]
 
@@ -759,11 +709,6 @@ namespace Formalism.MainNotions.TraceSpectra
 open Formalism.MainNotions.G Formalism.GradedWeylDivisibility Formalism.MainNotions.SourceCleaning Formalism.MainNotions.Pf14 Formalism.MainNotions.PlaneGramData Formalism.MainNotions.TestSideCounting Formalism.MainNotions.TestSideWords Formalism.MainNotions.PairMembershipBlocks
 open Formalism.MainNotions.TestSideWords.TwistedFiltration.G3 Formalism.MainNotions.G.GLWeightTheory
 
-theorem ceil_le_of_geZ {x : WithTop ℤ} {t : ℝ} (h : geZ x t) : ((⌈t⌉ : ℤ) : WithTop ℤ) ≤ x := by
-  cases x with
-  | top => exact le_top
-  | coe k => exact WithTop.coe_le_coe.2 (Int.ceil_le.2 (h k rfl))
-
 theorem geZ_of_ceil_le {x : WithTop ℤ} {t : ℝ} (h : ((⌈t⌉ : ℤ) : WithTop ℤ) ≤ x) : geZ x t := by
   intro k hk
   subst hk
@@ -858,8 +803,7 @@ theorem geo_chain (hV : Fr.Valid L₁ N₁) (hT : TieS Fr Dt) (j : ZMod J) (i : 
   · rw [hm, chain_mem Dt hT]
     have hl := l.isLt
     refine ⟨⟨fun h => Or.inr ⟨l, rfl, ?_⟩, ?_⟩, ?_⟩
-    · by_contra hc
-      push_neg at hc
+    · by_contra! hc
       have hi' : i.val < Dt.nL j := lt_of_le_of_lt hc hl
       rw [Formalism.MainNotions.Proposition5Numerics.posU_ll' (Fr := Fr) (segZ j) (Dt.nL j) i.val hi'] at h
       rcases Nat.eq_or_lt_of_le hc with he | hlt
@@ -875,7 +819,7 @@ theorem geo_chain (hV : Fr.Valid L₁ N₁) (hT : TieS Fr Dt) (j : ZMod J) (i : 
           exact Formalism.MainNotions.Proposition5Numerics.llPos_lt (Fr := Fr) (segZ j) l.val i.val hlt (by rw [← hcard]; exact hi')
         · have he : posU Fr (Dt.nL j) (segZ j) i.val = Fr.fr (segZ j) 0 := by
             unfold posU
-            rw [if_neg hi', show i.val - Dt.nL j = 0 by omega]
+            rw [ite_eq_right hi', show i.val - Dt.nL j = 0 by omega]
           rw [he]
           exact (Formalism.MainNotions.NormalSetCounting.ll_between (Fr := Fr) (nL := Dt.nL) hT.2.1 j l).2
     · show Dt.sgn j l = decide (Even (llPos Fr (segZ j) l.val))
@@ -927,10 +871,10 @@ theorem val_chi (hVA : ValAeval) (hV : Fr.Valid L₁ N₁) (hT : TieS Fr Dt) (j 
   · intro v hvL hvS
     have hvL' : v.1 ∈ Fr.letters (segZ j) := hvL
     have hg := geo_chain Dt hV hT j i v.1 hvL'
-    exact ⟨if_pos hvL', hg.1.1 hvS, hg.2⟩
+    exact ⟨ite_eq_left hvL', hg.1.1 hvS, hg.2⟩
   · intro v hvL hvS
     have hvL' : v.1 ∈ Fr.letters (segZ j) := hvL
-    rw [if_pos hvL']
+    rw [ite_eq_left hvL']
     exact X_mem_supported.2 (fun h => hvS ((geo_chain Dt hV hT j i v.1 hvL').1.2 h))
 
 end Geo
@@ -1054,7 +998,7 @@ theorem restChain_of (hVA : ValAeval) (hVF : ValFilt) (hNN : ValNN) (hPM : PhMon
     refine le_trans ?_ (flt_valS_mul_ge _ _ _ _)
     have h1 : ((⌈t j i.val⌉ : ℤ) : WithTop ℤ) ≤ valS Dt.modelLet (Dt.chainML j i)
         (chi Fr Dt.nL (KK O) j (MvPolynomial.map (algebraMap O (KK O)) (A (segZ j)))) := by
-      refine le_trans (ceil_le_of_geZ (ht j i.val hu)) ?_
+      refine le_trans (Formalism.MainNotions.Proposition5Numerics.ceil_le_of_geZ (ht j i.val hu)) ?_
       rw [← Formalism.MainNotions.G.Joints.StandardMonomialSpace.valS_map (algebraMap O (KK O)) (IsFractionRing.injective O (KK O))]
       exact val_chi Dt hVA hV hT j i _ (hsuppA j)
     have h2 : (0 : WithTop ℤ) ≤ valS Dt.modelLet (Dt.chainML j i) (∏ j' ∈ Finset.univ.erase j,
@@ -1151,11 +1095,6 @@ theorem ph_monomial_mul (β : TL J Dt.nL r × Fin r →₀ ℕ) (c : KK O) (M : 
   have h := phMon p O r J Dt M a
   rw [h, monomial_mul]
 
-theorem multideg_add' {ι : Type} {n : ℕ} (a b : ι × Fin n →₀ ℕ) (x : ι) :
-    multideg (a + b) x = multideg a x + multideg b x := by
-  unfold multideg
-  simp [Finset.sum_add_distrib]
-
 theorem phExp_inl (M : ML J Dt.nL r × Fin r →₀ ℕ) (j : ZMod J) (l : Fin (Dt.nL j)) (a : Fin r) :
     phExp Dt M (⟨j, Sum.inl l⟩, a) = M (ML.ll j l, a) := by
   simp [phExp]
@@ -1197,7 +1136,7 @@ theorem compPh : CompPh := by
   have key : ∀ mo : ML J Dt.nL r × Fin r →₀ ℕ, ((∀ x, multideg (β + phExp Dt mo) x = d x) ↔
       ∀ x, multideg β x + phDeg Dt (fun y => multideg mo y) x = d x) := by
     intro mo
-    simp only [multideg_add', multideg_phExp]
+    simp only [Formalism.MainNotions.ColumnSystems.Pf.multideg_add, multideg_phExp]
   unfold filtQ
   conv_lhs => rw [F.as_sum]
 
@@ -1279,14 +1218,14 @@ theorem fdigPh : FdigPh := by
   rw [map_sum, Finset.mul_sum, hs]
   simp only [ph_monomial_mul, _root_.Formalism.MainNotions.PairMembershipBlocks.Fdig_mono]
   by_cases hd : Dt.digOK rho β
-  · rw [if_pos hd]
+  · rw [ite_eq_left hd]
     conv_rhs => rw [F.as_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl (fun mo hmo => ?_)
-    rw [if_pos ((digOK_phExp Dt hP rho β mo (hsupp mo hmo)).2 hd),
+    rw [ite_eq_left ((digOK_phExp Dt hP rho β mo (hsupp mo hmo)).2 hd),
       liftMon_phExp Dt hP β mo (hsupp mo hmo), monomial_mul]
-  · rw [if_neg hd]
+  · rw [ite_eq_right hd]
     refine Finset.sum_eq_zero (fun mo hmo => ?_)
-    rw [if_neg (fun h => hd ((digOK_phExp Dt hP rho β mo (hsupp mo hmo)).1 h))]
+    rw [ite_eq_right (fun h => hd ((digOK_phExp Dt hP rho β mo (hsupp mo hmo)).1 h))]
 
 end Formalism.MainNotions.LetterSubstitution
 end -- clump:auto
@@ -1602,8 +1541,6 @@ noncomputable section
 namespace Formalism.L2.G
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem stdSubF_of_tied {eps : ℝ} (Fm : FamP eps) (h : GroupCompatibilityFamily Fm) : Ev Fm fun x i => Joints.StdSubAt (Fm.D x i) := by
   obtain ⟨x0, h0⟩ := h.and (Ev.x1 Fm)

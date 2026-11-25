@@ -56,17 +56,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 section -- clump:auto
 @[expose] public section
 
-namespace GlobalTheory.DenominatorTheorem
-
-open NumberField
-
-theorem main_theorem : ∀ {E : Type} [inst : Field E] [NumberField E] {n : ℕ}
-    (G : Submodule (NumberField.RingOfIntegers E) (Fin n → E)),
-    Submodule.span E (↑G : Set (Fin n → E)) = ⊤ → ∀ (y : Fin n → E),
-    ∃ (c : NumberField.RingOfIntegers E), c ≠ (0 : NumberField.RingOfIntegers E) ∧ c • y ∈ G := by
-  apply ReciprocityTheory.MultiplicativeHeights.sc_scale
-
-end GlobalTheory.DenominatorTheorem
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.FlagMeasures.MainTheorem =====
@@ -133,7 +122,7 @@ theorem locDual : ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (n m : �
     refine mulVec_mem_of_span φ _ _ _ ?_
       (GlobalTheory.PerpBaseChange.mem_span_of_forms φ ∅ (P *ᵥ z) (by simp))
     intro y _
-    obtain ⟨c, hc, hy⟩ := _root_.GlobalTheory.DenominatorTheorem.main_theorem _ hsp y
+    obtain ⟨c, hc, hy⟩ := _root_.Bl.general_b_fact_second.goal1 _ hsp y
     exact mem_locFlag_of_smul φ P F m hc hy
   refine ⟨⟨?_, ?_, ?_, ?_⟩, htop⟩
   · intro a b hab
@@ -176,7 +165,7 @@ theorem locDual : ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (n m : �
       refine mulVec_mem_of_span φ _ _ _ ?_
         (GlobalTheory.PerpBaseChange.mem_span_of_forms φ (f '' (F b : Set _)) (P *ᵥ z) ?_)
       · intro y hy
-        obtain ⟨c, hc, hcy⟩ := _root_.GlobalTheory.DenominatorTheorem.main_theorem _ hsp y
+        obtain ⟨c, hc, hcy⟩ := _root_.Bl.general_b_fact_second.goal1 _ hsp y
         refine mem_locFlag_of_smul φ P F _ hc ((hd b hb _).2 ⟨hcy, fun x hx => ?_⟩)
         have h1 : star x ⬝ᵥ (J *ᵥ y) = 0 := hy (f x) ⟨x, hx, rfl⟩
         rw [Matrix.mulVec_smul, dotProduct_smul, h1, smul_zero]

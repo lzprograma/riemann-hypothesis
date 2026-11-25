@@ -58,23 +58,7 @@ theorem exists_finset_transversal_of_isCompact_of_isOpen
     (A L : AddSubgroup X) (hA : IsCompact (A : Set X)) (hL : IsOpen (L : Set X)) (_hLA : L ≤ A) :
     ∃ T : Finset X, (∀ t ∈ T, t ∈ A) ∧ (∀ a ∈ A, ∃! t, t ∈ T ∧ a - t ∈ L) := by
   classical
-  have hcoset : ∀ x : X, ((↑) : X → X ⧸ L) '' (Homeomorph.addLeft x '' (L : Set X)) =
-      {(x : X ⧸ L)} := by
-    intro x
-    ext q
-    constructor
-    · rintro ⟨_, ⟨l, hl, rfl⟩, rfl⟩
-      rw [Set.mem_singleton_iff, QuotientAddGroup.eq, Homeomorph.coe_addLeft]
-      simpa using L.neg_mem hl
-    · rintro rfl
-      exact ⟨x, ⟨0, L.zero_mem, by simp⟩, rfl⟩
-  have hdisc : DiscreteTopology (X ⧸ L) := by
-    rw [discreteTopology_iff_isOpen_singleton]
-    intro q
-    induction q using QuotientAddGroup.induction_on with
-    | H x =>
-      rw [← hcoset x]
-      exact QuotientAddGroup.isOpenMap_coe _ ((Homeomorph.addLeft x).isOpenMap _ hL)
+  have hdisc : DiscreteTopology (X ⧸ L) := QuotientAddGroup.discreteTopology hL
   have hfin : (((↑) : X → X ⧸ L) '' (A : Set X)).Finite :=
     (hA.image continuous_quotient_mk').finite_of_discrete
   have hout : ∀ q : X ⧸ L, ((q.out : X) : X ⧸ L) = q := fun q => Quotient.out_eq q

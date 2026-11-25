@@ -410,7 +410,7 @@ theorem poly_vanish : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAin
       MvPolynomial.eval (fun ij => ((Pm : Matrix (Fin m) (Fin m) ℂ_[l]) * Matrix.diagonal (fun i => t ^ k i) *
         ((Pm⁻¹ : Matrix.GeneralLinearGroup (Fin m) ℂ_[l]) : Matrix (Fin m) (Fin m) ℂ_[l])) ij.1 ij.2) f = 0 := by
   intro l _ P AI hT K LL K'' m r₁ hLL hK Pm k heig f hf t ht
-  letI act : MulSemiringAction ↥(GK K'') ℂ_[l] :=
+  let act : MulSemiringAction ↥(GK K'') ℂ_[l] :=
     { smul := fun g x => Per.σC (g : GQ l) x
       one_smul := fun x => GlobalTheory.RingBasics.σC_one x
       mul_smul := fun g h x => GlobalTheory.RingBasics.σC_mul (g : GQ l) (h : GQ l) x
@@ -455,8 +455,8 @@ theorem poly_vanish : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAin
 theorem mem_closure_of_jumps : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P), LocTied l P AI → ∀ {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] {Gw : Subgroup (Ω ≃ₐ[E] Ω)} {O : Type} [CommRing O] [Algebra ℤ_[l] O] [TopologicalSpace O] (Bw : LocBridge l E Ω Gw O) {a : ℕ} (r : ↥Gw →* Matrix.GeneralLinearGroup (Fin a) (Om l)) (τ : E →+* Om l) (J : Multiset ℤ), GlobalTheory.Pst.IsJumpsAt P Bw r τ J → Multiset.card J = a → ∃ (Pm : Matrix.GeneralLinearGroup (Fin a) ℂ_[l]) (k : Fin a → ℤ), Multiset.map k Finset.univ.val = J ∧ ∀ (K' : FinExt l), Bw.Kw.1 ≤ K'.1 → ∀ f : MvPolynomial (Fin a × Fin a) ℂ_[l], (∀ g : ↥Gw, ((Bw.e g : ↥(GK Bw.Kw)) : GQ l) ∈ GK K' → MvPolynomial.eval (fun ij => (((r g : Matrix (Fin a) (Fin a) (Om l)) ij.1 ij.2 : Om l) : ℂ_[l])) f = 0) → ∀ t : ℂ_[l], t ≠ 0 → MvPolynomial.eval (fun ij => ((Pm : Matrix (Fin a) (Fin a) ℂ_[l]) * Matrix.diagonal (fun i => t ^ k i) * ((Pm⁻¹ : Matrix.GeneralLinearGroup (Fin a) ℂ_[l]) : Matrix (Fin a) (Fin a) ℂ_[l])) ij.1 ij.2) f = 0 := by
   intro l _ P AI hT E Ω _ _ _ _ Gw O _ _ _ Bw a r τ J hJ hcard
   obtain ⟨LL', r', ⟨hLL, hmod⟩, hdR, τ', -, hcnt⟩ := hJ
-  haveI := Bw.Kw.2
-  haveI := LL'.2
+  have := Bw.Kw.2
+  have := LL'.2
 
   let τo : ↥Bw.Kw.1 →ₐ[ℚ_[l]] Om l := LL'.1.val.comp τ'
   let g : GQ l := AlgEquiv.ofBijective (τo.liftNormal (Om l)) (Algebra.IsAlgebraic.algHom_bijective _)
@@ -507,7 +507,7 @@ theorem mem_closure_of_jumps : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI
       rw [← AlgEquiv.mul_apply, mul_inv_cancel]; rfl)
     rw [← he]
     exact hLL (Bw.LL_split (σ.comp e₁) ⟨g⁻¹ (x : Om l), hx⟩)
-  haveI := K₁.2
+  have := K₁.2
   let K₀ : FinExt l := ⟨K₁.1 ⊔ LL'.1, inferInstance⟩
   obtain ⟨Pm, k, hk, heig⟩ := GlobalTheory.T.deRham_exists_hodgeTate_eigenbasis l P AI hT K₁ LL' a r₁ hdR₁ hsplit τ₂ hτ₂ K₀
     le_sup_left le_sup_right
@@ -516,12 +516,12 @@ theorem mem_closure_of_jumps : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI
     have := (hk n).trans ((hM n).symm.trans (hcnt n).symm)
     exact_mod_cast this
   intro K' hK' f hf t ht
-  haveI := K'.2
+  have := K'.2
   obtain ⟨K₂, hK₂⟩ : ∃ K₂ : FinExt l, K₂.1 = K'.1.map (g : Om l →ₐ[ℚ_[l]] Om l) :=
     ⟨⟨K'.1.map (g : Om l →ₐ[ℚ_[l]] Om l),
       LinearEquiv.finiteDimensional (IntermediateField.equivMap K'.1 (g : Om l →ₐ[ℚ_[l]] Om l)).toLinearEquiv⟩, rfl⟩
   have hK' : ∀ x, x ∈ K'.1 ↔ g x ∈ K₂.1 := GlobalTheory.Pst.BridgeInd.mem_iff_of_map_eq hK₂
-  haveI := K₂.2
+  have := K₂.2
   let K'' : FinExt l := ⟨K₂.1 ⊔ K₀.1, inferInstance⟩
   refine poly_vanish l P AI hT K₁ LL' K'' a r₁ (le_trans le_sup_right le_sup_right)
     (le_trans le_sup_left le_sup_right) Pm k (fun h hh => heig h (GK_le le_sup_right hh)) f ?_ t ht
@@ -576,7 +576,7 @@ theorem eval₂_dual {R K σ : Type} [CommRing R] [Field K] [Fintype σ] (φ : R
         try ring
     rw [MvPolynomial.eval₂_mul, hp, Finset.sum_congr rfl fun i _ => hterm i, Finset.sum_add_distrib,
       ← Finset.mul_sum, Finset.sum_ite_eq']
-    simp only [MvPolynomial.eval₂_X, MvPolynomial.eval₂_mul, Finset.mem_univ, if_true, map_add (f := _), map_mul]
+    simp only [MvPolynomial.eval₂_X, MvPolynomial.eval₂_mul, Finset.mem_univ, ite_true, map_add (f := _), map_mul]
     linear_combination (algebraMap K (DualNumber K) (∑ i, MvPolynomial.eval₂ φ x (MvPolynomial.pderiv i p) * v i) *
       algebraMap K (DualNumber K) (v n)) * DualNumber.eps_mul_eps (R := K)
 
@@ -726,7 +726,7 @@ open PositivityTheory.AutomorphicGaloisHodgeTate.Div.CochLie in
 theorem cocharToLie_holds : CocharToLie := by
   intro hHT E Ω _ _ _ _ _ l _ N n V hV hL
   obtain ⟨K', _, _, _, P, k, e, hP, he, hlac, hke, hvan⟩ := hHT E Ω l N n V hV hL
-  haveI : CharZero K' := charZero_of_injective_algebraMap (algebraMap (Formalism.ConjugateSelfDual.Qbar l) K').injective
+  have : CharZero K' := charZero_of_injective_algebraMap (algebraMap (Formalism.ConjugateSelfDual.Qbar l) K').injective
   refine ⟨K', inferInstance, inferInstance, inferInstance,
     P * Matrix.diagonal (fun j => ((k j : ℤ) : K')) * P⁻¹, ?_, fun i => ((e i : ℤ) : K'), ?_, ?_, ?_⟩
   · intro f hf
@@ -764,7 +764,6 @@ open GlobalTheory.TripleGal (rk1)
 open UpperTheory.V.Af (FrobEig algSat RepIso)
 open UpperTheory.Gal.TP.Sub (Cl Above unrPol)
 open UpperTheory.Gal.crystallineComparison (GenericMul rootPol)
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open GlobalTheory.BlockSum (blockRep)
 open PositivityTheory.AutomorphicGaloisHodgeTate.Div (DivWCoreLac SenWLac HTLac IsSSMat)
 open UpperTheory.Gal.Int.Div

@@ -4,52 +4,6 @@ public import Development.AbelianVarietyTheory.Definitions.Foundations.Integral
 public import Mathlib.NumberTheory.GaussSum
 public import Mathlib.NumberTheory.DirichletCharacter.GaussSum
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -104,15 +58,15 @@ theorem eval {M : ℕ} [NeZero M] {K : Type} [Field K] (ψ : DirichletCharacter 
   refine ⟨fun u hD hD' => ?_, fun hno => ?_⟩
   · have h0 : D + w * n₂ * D' = 0 := by rw [hD, hD']; linear_combination (u : ZMod M) * n₂ * hw
     have hl : w * D' = u := by rw [hD']; linear_combination (u : ZMod M) * hw
-    rw [if_pos h0, hl]; ring
+    rw [ite_eq_left h0, hl]; ring
   · by_cases hc : D + w * n₂ * D' = 0
     · have hnu : ¬ IsUnit (w * D') := by
         rintro ⟨v, hv⟩
         refine hno ⟨v, ?_, ?_⟩
         · rw [hv]; linear_combination hc
         · rw [hv]; linear_combination (-D') * hw
-      rw [if_pos hc, MulChar.map_nonunit _ hnu]; ring
-    · rw [if_neg hc, zero_mul]
+      rw [ite_eq_left hc, MulChar.map_nonunit _ hnu]; ring
+    · rw [ite_eq_right hc, zero_mul]
 
 theorem zpow_eq {M : ℕ} [NeZero M] {K : Type} [Field K] {ζ : K} (hζ : IsPrimitiveRoot ζ M) (z : ℤ) :
     ζ ^ z = AddChar.zmodChar M hζ.pow_eq_one (z : ZMod M) := by
@@ -431,20 +385,20 @@ theorem entry_sum (p m N k : ℕ) [Fact p.Prime] (hm : 1 ≤ m) (hN : 0 < N) (ψ
   refine sum_congr rfl fun q hq => ?_
   by_cases h₁ : (p : ℤ) ∣ q.1
   · simp [h₁]
-  rw [if_pos h₁]
+  rw [ite_eq_left h₁]
   simp only [sum_mul (j : ℤ).divisorsAntidiag]
   rw [sum_comm, mul_sum]
   refine sum_congr rfl fun q' hq' => ?_
   by_cases h₂ : (p : ℤ) ∣ q'.1
   · simp [h₂]
-  simp only [if_pos h₂, mul_assoc (q'.2.sign : K)]
+  simp only [ite_eq_left h₂, mul_assoc (q'.2.sign : K)]
   rw [← mul_sum, col_sum p m N hm hN ψ hψ ζ hζ (x * t) t q.1 q'.1 q.2 q'.2 h₁ h₂,
     (Int.mem_divisorsAntidiag.mp hq).1, (Int.mem_divisorsAntidiag.mp hq').1]
   have hc : (p : ℤ) ^ m ∣ (i : ℤ) + j ↔ p ^ m ∣ i + j := by norm_cast
   simp only [hc]
   rw [show k - 1 - 1 = k - 2 from rfl, div_pow, div_eq_mul_inv]
   by_cases a1 : p ^ m ∣ i + j <;> by_cases a2 : (p : ℤ) ∣ q.2 <;> by_cases a3 : (p : ℤ) ∣ q'.2 <;>
-    simp only [a1, a2, a3, h₁, h₂, not_true, not_false_iff, and_true, and_false, and_self, if_true, if_false,
+    simp only [a1, a2, a3, h₁, h₂, not_true, not_false_iff, and_true, and_false, and_self, ite_true, ite_false,
       mul_zero, zero_mul]
   ring
 
@@ -502,7 +456,7 @@ theorem drop_const (p m N k : ℕ) [Fact p.Prime] (hm : 1 ≤ m) (hN : 0 < N) (h
   by_cases hi : i = 0
   · subst hi
     have hk1 : k - 1 ≠ 1 := by omega
-    simp only [eisF, const0, if_true, if_neg hk1]
+    simp only [eisF, const0, ite_true, ite_eq_right hk1]
     rw [sum_zero_left p m hm ψ hψ]
     simp [coefPos]
   by_cases hj : j = 0
@@ -514,11 +468,11 @@ theorem drop_const (p m N k : ℕ) [Fact p.Prime] (hm : 1 ≤ m) (hN : 0 < N) (h
         intro h
         have h' : N * p ^ m ∣ N * v.val := by exact_mod_cast h
         exact (mem_filter.mp hv).2 ((dvd_pow_self p (by omega)).trans (Nat.dvd_of_mul_dvd_mul_left hN h'))
-      simp only [eisF, const0, if_true, if_neg this]
+      simp only [eisF, const0, ite_true, ite_eq_right this]
     rw [sum_congr rfl fun u _ => sum_congr rfl fun a _ => sum_congr rfl fun v hv => sum_congr rfl fun b _ => by
       rw [e v hv], sum_zero_right p m hm ψ hψ]
     simp [coefPos]
-  simp only [eisF, if_neg hi, if_neg hj]
+  simp only [eisF, ite_eq_right hi, ite_eq_right hj]
 
 end GlobalTheory.KummerEisensteinGalois.UnitPiece
 end -- clump:auto

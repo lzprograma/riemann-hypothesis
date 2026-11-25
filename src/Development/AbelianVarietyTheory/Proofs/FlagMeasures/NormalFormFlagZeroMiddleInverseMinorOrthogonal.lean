@@ -63,7 +63,7 @@ theorem herm_bvec_right (v : Fin (2 * r + k + 1) → ℂ) (i : Fin (2 * r + k + 
 theorem herm_e (v : Fin (2 * r + k + 1) → ℂ) (a : Fin r) : herm (Hpk k r) v (bvec (eI k r a)) = v (esI k r a) := by
   have ha := a.isLt
   have h1 : GBasic.sig k r (eI k r a) = esI k r a := Fin.ext (GBasic.sig_lo k r _ ha)
-  have h2 : GBasic.sgn k r (eI k r a) = 1 := if_neg (by simp only [eI]; omega)
+  have h2 : GBasic.sgn k r (eI k r a) = 1 := ite_eq_right (by simp only [eI]; omega)
   rw [herm_bvec_right, h1, h2, one_mul]
 
 theorem herm_es (v : Fin (2 * r + k + 1) → ℂ) (a : Fin r) : herm (Hpk k r) v (bvec (esI k r a)) = v (eI k r a) := by
@@ -72,7 +72,7 @@ theorem herm_es (v : Fin (2 * r + k + 1) → ℂ) (a : Fin r) : herm (Hpk k r) v
     apply Fin.ext
     rw [GBasic.sig_hi k r _ (by simp only [esI]; omega)]
     simp only [esI, eI]; omega
-  have h2 : GBasic.sgn k r (esI k r a) = 1 := if_neg (by simp only [esI]; omega)
+  have h2 : GBasic.sgn k r (esI k r a) = 1 := ite_eq_right (by simp only [esI]; omega)
   rw [herm_bvec_right, h1, h2, one_mul]
 
 theorem herm_star (v w : Fin (2 * r + k + 1) → ℂ) : herm (Hpk k r) v w = star (herm (Hpk k r) w v) := by
@@ -309,7 +309,7 @@ theorem exists_mid (hg : g ∈ GG k r) (hW : ∀ w, inWb k r w → inWb k r (g *
       rw [mulVec, dotProduct]
       refine Finset.sum_eq_zero fun p _ => ?_
       have : ¬ ((r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ p.val ∧ p.val ≤ r + k)) := by omega
-      simp only [mEmb, dif_neg this]
+      simp only [mEmb, dite_eq_right this]
       split_ifs with hp
       · rw [← hp, hw i hi, mul_zero]
       · rw [zero_mul]
@@ -318,7 +318,7 @@ theorem exists_mid (hg : g ∈ GG k r) (hW : ∀ w, inWb k r w → inWb k r (g *
       by_cases hp : p.val < r ∨ r + k < p.val
       · simp only [hw p hp, mul_zero]
       · have : (r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ p.val ∧ p.val ≤ r + k) := by omega
-        simp only [mEmb, dif_pos this, submatrix_apply]
+        simp only [mEmb, dite_eq_left this, submatrix_apply]
         congr 2 <;> exact Fin.ext (by simp only [wI]; omega)
 
 theorem tz_eq (h : IsNormal0 k r hj β c z z' g) : Tz k r z' = Tz k r z := by
@@ -334,7 +334,7 @@ theorem dj_pos (h : IsNormal0 k r hj β c z z' g) : 0 < Dj k r hj z z' g := by
   ext a b
   have ha : a.val < r := lt_of_lt_of_le a.isLt hj
   have hb : b.val < r := lt_of_lt_of_le b.isLt hj
-  simp only [submatrix_apply, Zhat, zr_eq, fvec, Fin.coe_castLE, dif_pos ha, dif_pos hb]
+  simp only [submatrix_apply, Zhat, zr_eq, fvec, Fin.coe_castLE, dite_eq_left ha, dite_eq_left hb]
   rfl
 
 theorem herm_Xsp_fvec (hz' : inWb k r z') {x : Fin (2 * r + k + 1) → ℂ} (hx : x ∈ Xsp k r) (a : Fin (r + 1)) :
@@ -370,14 +370,14 @@ theorem mem_hcom_sup (h : IsNormal0 k r hj β c z z' g) (hz' : inWb k r z') (w :
       · have hinj : ∀ b : Fin r, eI k r a = eI k r b ↔ a = b := fun b => by simp [eI, Fin.ext_iff]
         simp [hxdef, Finset.sum_apply, bvec, Pi.single_apply, hinj]
       · have := h1 a.castSucc
-        simp only [fvec, Fin.coe_castSucc, a.isLt, dif_pos] at this
+        simp only [fvec, Fin.coe_castSucc, a.isLt, dite_eq_left] at this
         rwa [herm_e] at this
     refine Submodule.mem_sup.2 ⟨w - x, fun a => ⟨h1 a, ?_⟩, x, hx, sub_add_cancel w x⟩
     unfold fvec
     split_ifs with ha
     · exact herm_Wb_inv_e h h2 _
     · have := h1 a
-      simp only [fvec, dif_neg ha] at this
+      simp only [fvec, dite_eq_right ha] at this
       rw [(isNormal0_inv h).2.2.1, herm_smul_right, this, mul_zero]
 
 theorem normal0_middle : ∀ (k r j : ℕ) (hj : j ≤ r) (z z' : (Fin (2 * r + k + 1) → ℂ)), ∀ (g₀ : Mat k r) (β : Fin r → ℕ) (c : ℂ), inWb k r z → inWb k r z' → 0 < Tz k r z → IsNormal0 k r hj β c z z' g₀ → Tz k r z' = Tz k r z ∧ (∃ m ∈ UH (Hb k), ∀ w, inWb k r w → g₀ *ᵥ w = mEmb k r m *ᵥ w) ∧ IsNormal0 k r hj β c⁻¹ z' z g₀⁻¹ ∧ 0 < Dj k r hj z z' g₀ ∧ Dj k r hj z' z g₀⁻¹ = Dj k r hj z z' g₀ ∧ (∀ l : Fin (r + 2), ‖Dmin k r z' z g₀⁻¹ l‖ = ‖Dmin k r z z' g₀ l‖) ∧ ∀ w, w ∈ Hcom k r z z' g₀ ⊔ Xsp k r ↔ ∀ a : Fin (r + 1), herm (Hpk k r) w (fvec k r z' a) = 0 :=

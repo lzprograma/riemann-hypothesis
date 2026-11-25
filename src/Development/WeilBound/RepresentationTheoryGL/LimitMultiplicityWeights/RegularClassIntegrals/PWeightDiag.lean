@@ -2,47 +2,7 @@ module
 
 public import Development.WeilBound.RepresentationTheoryGL.LimitMultiplicityWeights.RegularClassIntegrals.ClosedGraph
 public import Mathlib.Analysis.Calculus.BumpFunction.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -77,8 +37,7 @@ theorem N_smul {n : ℕ} (c : ℂ) (M : Matrix (Fin n) (Fin n) ℂ) : N (c • M
 
 theorem N_pos {n : ℕ} (M : Matrix (Fin n) (Fin n) ℂ) (hM : M ≠ 0) : 0 < N M := by
   obtain ⟨a, b, hab⟩ : ∃ a b, M a b ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hM (Matrix.ext hc)
   have h1 : 0 < Complex.normSq (M a b) := Complex.normSq_pos.mpr hab
   have h2 : Complex.normSq (M a b) ≤ ∑ b', Complex.normSq (M a b') :=
@@ -312,13 +271,11 @@ theorem MainStatements.WeightKernel.weightDiag : Lagr → ShiftT → BoundT → 
         rwa [mul_assoc, inv_mul_cancel₀ hMpos.ne', mul_one] at h5
       constructor
       · rw [div_le_iff₀ (by positivity)]
-        by_contra hc
-        push_neg at hc
+        by_contra! hc
         have h6 : ‖ι (t * t'⁻¹) i i‖ * M < 1 / 2 := by linarith
         have h7 : ‖ι (t * t'⁻¹) i i‖ < 1 / 2 := by nlinarith
         nlinarith
-      · by_contra hc
-        push_neg at hc
+      · by_contra! hc
         have h8 : 2 * M * (2 * M) < ‖ι (t * t'⁻¹) i i‖ * ‖ι (t * t'⁻¹) i i‖ :=
           mul_self_lt_mul_self (by positivity) hc
         nlinarith

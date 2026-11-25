@@ -3,50 +3,7 @@ module
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InjectiveWedgeHighestCoefficient
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.InjectiveDecompositionAction
 public import Mathlib.Algebra.RingQuot
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -175,12 +132,12 @@ theorem mem_NV (hm : Monotone lev) (E1 E2 : Fin n → Fin n → Module.End ℂ V
   cases s
   · convert h2 using 1
     simp only [op, LinearMap.add_apply, LinearMap.sub_apply]
-    simp only [Bool.false_eq_true, if_false]
+    simp only [Bool.false_eq_true, ite_false]
     rw [show E1 a b w + E2 a b w - (E1 a b w - E2 a b w) = (2 : ℂ) • E2 a b w by
       rw [two_smul]; abel, smul_smul]
     norm_num
   · convert h1 using 1
-    simp only [op, LinearMap.add_apply, LinearMap.sub_apply, if_true]
+    simp only [op, LinearMap.add_apply, LinearMap.sub_apply, ite_true]
     rw [show E1 a b w + E2 a b w + (E1 a b w - E2 a b w) = (2 : ℂ) • E1 a b w by
       rw [two_smul]; abel, smul_smul]
     norm_num
@@ -230,7 +187,7 @@ theorem hh_comm (lev : Fin n → ℕ) {E : Fin n → Fin n → Module.End ℂ V}
       · subst h; simp
       · simp [h, Ne.symm h]
   rw [hh, Finset.sum_mul, Finset.mul_sum, ← Finset.sum_sub_distrib]
-  simp only [h, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true, sub_smul]
+  simp only [h, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true, sub_smul]
 
 def ZZ (lev : Fin n → ℕ) (E1 E2 : Fin n → Fin n → Module.End ℂ V) : Module.End ℂ V :=
   ∑ c : Fin n, ((lev c : ℕ) : ℂ) • (E1 c c + E2 c c)
@@ -248,12 +205,12 @@ theorem ZZ_comm (h : PairRel E1 E2) (x : Bool × Fin n × Fin n) :
   · have hc : Commute (hh lev E1) (E2 a b) :=
       Commute.sum_left _ _ _ fun c _ => (h.2.2 c c a b).smul_left _
     have := hh_comm lev h.2.1 a b
-    simp only [op, Bool.false_eq_true, if_false]
+    simp only [op, Bool.false_eq_true, ite_false]
     rw [add_mul, mul_add, hc.eq, ← this]; abel
   · have hc : Commute (hh lev E2) (E1 a b) :=
       Commute.sum_left _ _ _ fun c _ => (h.2.2 a b c c).symm.smul_left _
     have := hh_comm lev h.1 a b
-    simp only [op, if_true]
+    simp only [op, ite_true]
     rw [add_mul, mul_add, hc.eq, ← this]; abel
 
 theorem Tl_comm (h : PairRel E1 E2) (l : Lt n) :
@@ -262,10 +219,10 @@ theorem Tl_comm (h : PairRel E1 E2) (l : Lt n) :
   obtain ⟨s, i⟩ := l
   have h1 := ZZ_comm (lev := lev) h (true, i.1.1, i.1.2)
   have h2 := ZZ_comm (lev := lev) h (false, i.1.1, i.1.2)
-  simp only [op, if_true, Bool.false_eq_true, if_false] at h1 h2
+  simp only [op, ite_true, Bool.false_eq_true, ite_false] at h1 h2
   cases s
-  · simp only [Tl, Ts, Bool.false_eq_true, if_false, map_sub, h1, h2, smul_sub]
-  · simp only [Tl, Ts, if_true, map_add (f := _), h1, h2, smul_add]
+  · simp only [Tl, Ts, Bool.false_eq_true, ite_false, map_sub, h1, h2, smul_sub]
+  · simp only [Tl, Ts, ite_true, map_add (f := _), h1, h2, smul_add]
 
 theorem ZZ_NV (h : PairRel E1 E2) (y : V) (hy : y ∈ NV lev E1 E2) :
     ZZ lev E1 E2 y ∈ NV lev E1 E2 := by
@@ -519,16 +476,16 @@ theorem ad_letter {lev : Fin n → ℕ} {W : Type} [AddCommGroup W] [Module ℂ 
     have k2 : (if b = c then (if lev a = lev d then (if s = true then X1 a d else X2 a d) else 0) else 0) =
         if b = c then (if s = true then X1 a d else X2 a d) else 0 := by
       split_ifs with h h' <;> first | rfl | exact absurd (e2 h) h'
-    rw [k1, k2, if_pos hab]
+    rw [k1, k2, ite_eq_left hab]
     cases s
     · have e := h2 c d a b hcd hab
       have k := (h3 c d a b hcd hab).eq
-      simp only [Bool.false_eq_true, if_false, add_mul, mul_add]
+      simp only [Bool.false_eq_true, ite_false, add_mul, mul_add]
       rw [k, ← e]
       abel
     · have e := h1 c d a b hcd hab
       have k := (h3 a b c d hab hcd).eq
-      simp only [if_true, add_mul, mul_add]
+      simp only [ite_true, add_mul, mul_add]
       rw [k, ← e]
       abel
   · have e1 : d = a → ¬ lev c = lev b := fun h => by rw [hcd, h]; exact hab
@@ -537,7 +494,7 @@ theorem ad_letter {lev : Fin n → ℕ} {W : Type} [AddCommGroup W] [Module ℂ 
       split_ifs with h h' <;> first | rfl | exact absurd h' (e1 h)
     have k2 : (if b = c then (if lev a = lev d then (if s = true then X1 a d else X2 a d) else 0) else 0) = 0 := by
       split_ifs with h h' <;> first | rfl | exact absurd h' (e2 h)
-    rw [k1, k2, if_neg hab]
+    rw [k1, k2, ite_eq_right hab]
     simp
 
 theorem exists_adFamL (lev : Fin n → ℕ) (a : FreeAlgebra ℂ (Bool × Fin n × Fin n)) :
@@ -589,7 +546,7 @@ theorem exists_adFamL (lev : Fin n → ℕ) (a : FreeAlgebra ℂ (Bool × Fin n 
       simp only []
       rw [this, e1, e2]
       simp only [Matrix.of_apply, add_smul, Finset.sum_add_distrib, Fintype.sum_prod_type, ite_smul, zero_smul,
-        Finset.sum_ite_eq', Finset.mem_univ, if_true, map_mul, Finset.sum_mul, Finset.mul_sum, smul_mul_assoc,
+        Finset.sum_ite_eq', Finset.mem_univ, ite_true, map_mul, Finset.sum_mul, Finset.mul_sum, smul_mul_assoc,
         mul_smul_comm]
       congr 1
       rw [Finset.sum_comm]
@@ -923,10 +880,10 @@ theorem evLv_toK (lev : Fin n → ℕ) (E1 E2 : Fin n → Fin n → Module.End �
     by_cases e : lev p = lev q
     · cases s
       · simp only [Function.comp, AlgHom.comp_apply, toK, evLv, GlobalTheory.CompanionTheory.PairMult.evB, FreeAlgebra.lift_ι_apply]
-        simp only [e, if_true, Bool.false_eq_true, if_false, map_smul, map_sub, FreeAlgebra.lift_ι_apply, kA, pA]
+        simp only [e, ite_true, Bool.false_eq_true, ite_false, map_smul, map_sub, FreeAlgebra.lift_ι_apply, kA, pA]
         module
       · simp only [Function.comp, AlgHom.comp_apply, toK, evLv, GlobalTheory.CompanionTheory.PairMult.evB, FreeAlgebra.lift_ι_apply]
-        simp only [e, if_true, Bool.false_eq_true, if_false, map_smul, map_add (f := _), FreeAlgebra.lift_ι_apply, kA, pA]
+        simp only [e, ite_true, Bool.false_eq_true, ite_false, map_smul, map_add (f := _), FreeAlgebra.lift_ι_apply, kA, pA]
         module
     · cases s <;> simp [toK, evLv, GlobalTheory.CompanionTheory.PairMult.evB, e]
   exact DFunLike.congr_fun h b
@@ -957,7 +914,7 @@ theorem RU_le_range {lev : Fin n → ℕ} (hm : Monotone lev) (E1 E2 : Fin n →
     have hK := xL_mem_range lev E1 E2 (l := (false, ⟨(a, b), hlt⟩)) hab ((1 / 2 : ℂ) • v)
     have hP := xL_mem_range lev E1 E2 (l := (true, ⟨(a, b), hlt⟩)) hab ((1 / 2 : ℂ) • v)
     have := add_mem hK hP
-    simp only [xL, kA, pA, Bool.false_eq_true, if_false, if_true, map_smul, LinearMap.add_apply,
+    simp only [xL, kA, pA, Bool.false_eq_true, ite_false, ite_true, map_smul, LinearMap.add_apply,
       LinearMap.sub_apply] at this
     have e : E1 a b v = (1 / 2 : ℂ) • (E1 a b v + E2 a b v) + (1 / 2 : ℂ) • (E1 a b v - E2 a b v) := by module
     rw [SetLike.mem_coe, e]
@@ -966,7 +923,7 @@ theorem RU_le_range {lev : Fin n → ℕ} (hm : Monotone lev) (E1 E2 : Fin n →
     have hK := xL_mem_range lev E1 E2 (l := (false, ⟨(a, b), hlt⟩)) hab ((1 / 2 : ℂ) • v)
     have hP := xL_mem_range lev E1 E2 (l := (true, ⟨(a, b), hlt⟩)) hab ((1 / 2 : ℂ) • v)
     have := sub_mem hK hP
-    simp only [xL, kA, pA, Bool.false_eq_true, if_false, if_true, map_smul, LinearMap.add_apply,
+    simp only [xL, kA, pA, Bool.false_eq_true, ite_false, ite_true, map_smul, LinearMap.add_apply,
       LinearMap.sub_apply] at this
     have e : E2 a b v = (1 / 2 : ℂ) • (E1 a b v + E2 a b v) - (1 / 2 : ℂ) • (E1 a b v - E2 a b v) := by module
     rw [SetLike.mem_coe, e]
@@ -979,9 +936,9 @@ theorem sum_Tl_mem (lev : Fin n → ℕ) (E1 E2 : Fin n → Fin n → Module.End
   split_ifs with h
   · obtain ⟨s, i⟩ := l
     cases s
-    · simp only [GlobalTheory.CompanionTheory.PairMult.Tl, GlobalTheory.CompanionTheory.PairMult.Ts, Bool.false_eq_true, if_false, LinearMap.sub_apply]
+    · simp only [GlobalTheory.CompanionTheory.PairMult.Tl, GlobalTheory.CompanionTheory.PairMult.Ts, Bool.false_eq_true, ite_false, LinearMap.sub_apply]
       exact sub_mem (left_mem lev E1 E2 h _) (right_mem lev E1 E2 h _)
-    · simp only [GlobalTheory.CompanionTheory.PairMult.Tl, GlobalTheory.CompanionTheory.PairMult.Ts, if_true, LinearMap.add_apply]
+    · simp only [GlobalTheory.CompanionTheory.PairMult.Tl, GlobalTheory.CompanionTheory.PairMult.Ts, ite_true, LinearMap.add_apply]
       exact add_mem (left_mem lev E1 E2 h _) (right_mem lev E1 E2 h _)
   · exact zero_mem _
 

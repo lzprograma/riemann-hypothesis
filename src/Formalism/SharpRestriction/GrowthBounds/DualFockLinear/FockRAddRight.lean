@@ -5,42 +5,6 @@ public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OneSidedLem
 import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.LetterWtAnti
 public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.TransposeWordsProofs.ProdBlockEmbMonomial
 public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FockRLinDual
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -55,14 +19,7 @@ open Formalism.L2.G.Model (Lin Th0 Aa Lin_comp Lin_one Lin_Pol Th0_inj mem_tens_
   letterWt_anti flat_lam)
 open Formalism.L2.G.Model.TS
 
-def fockL {τ K : Type} [CommRing K] (Q : MvPolynomial τ K) : MvPolynomial τ K →ₗ[K] K where
-  toFun P := fockR P Q
-  map_add' a b := FockPairing.pair_add_left a b Q
-  map_smul' c a := by simpa using FockPairing.pair_smul_left c a Q
-
-theorem fockR_add_right {τ K : Type} [CommRing K] (g f f' : MvPolynomial τ K) :
-    fockR g (f + f') = fockR g f + fockR g f' := by
-  exact FockPairing.pair_add_right g f f'
+export Formalism.MainNotions.ColumnSystems.Pf.TF (fockL fockR_add_right)
 
 section Pair
 
@@ -78,7 +35,7 @@ theorem VS_eq (Kf : Type) [Field Kf] {n' m : ℕ} (d : Fin n' → ℕ) :
   unfold VS Vsp
   congr 1
   funext s
-  rw [flat_lam (vecE n') d (flW d) (isFlat_flW d) s, if_pos (letterWt_anti _ _ _)]
+  rw [flat_lam (vecE n') d (flW d) (isFlat_flW d) s, ite_eq_left (letterWt_anti _ _ _)]
 
 theorem Hten_flW (O : Type) {Kf : Type} [CommRing O] [Field Kf] [Algebra O Kf] {n' m : ℕ} (d : Fin n' → ℕ)
     (Λ : Fin n' → Submodule O (Fin (m + 1) → Kf)) :
@@ -139,29 +96,8 @@ theorem TY_apply (c : Kf) (P Q : ↥(Pol Kf (ι := Fin n') (m + 1) d)) :
 theorem int_pair (p κ : ℕ) (hMD : MultDiv O p κ (k := m + 1) d) (G : MvPolynomial (Fin n' × Fin (m + 1)) O)
     (hG : G ∈ Pol O (m + 1) d) (E : MvPolynomial (Fin n' × Fin (m + 1)) O) :
     ∃ z : O, ((p : Kf) ^ κ / (((∏ s, (d s).factorial : ℕ) : ℕ) : Kf)) *
-      fockR (map (algebraMap O Kf) G) (map (algebraMap O Kf) E) = algebraMap O Kf z := by
-  classical
-  by_cases hD0 : (((∏ s, (d s).factorial : ℕ) : ℕ) : Kf) = 0
-  · refine ⟨0, ?_⟩
-    rw [hD0, div_zero, zero_mul, map_zero]
-  have hw : ∀ μ : Fin n' × Fin (m + 1) →₀ ℕ, ∃ w : O, μ ∈ G.support →
-      (p : O) ^ κ * ((∏ j ∈ μ.support, (μ j).factorial : ℕ) : O) = ((∏ s, (d s).factorial : ℕ) : O) * w := by
-    intro μ
-    by_cases hμ : μ ∈ G.support
-    · obtain ⟨w, hw⟩ := hMD μ ((mem_Pol.mp hG) μ hμ)
-      exact ⟨w, fun _ => hw⟩
-    · exact ⟨0, fun h => absurd h hμ⟩
-  choose w hw using hw
-  refine ⟨∑ μ ∈ G.support, AddMonoidAlgebra.coeff G μ * AddMonoidAlgebra.coeff E μ * w μ, ?_⟩
-
-  simp_rw [FockPairing.pair_eq_sum _ _ G.support (support_map_subset _ _), Finset.mul_sum, map_sum]
-  refine Finset.sum_congr rfl ?_
-  intro μ hμ
-  have h := congrArg (algebraMap O Kf) (hw μ hμ)
-  simp only [map_mul, map_pow, map_natCast] at h
-  simp only [coeff_map, map_mul, FockPairing.weight]
-  rw [div_mul_eq_mul_div, div_eq_iff hD0]
-  linear_combination (algebraMap O Kf (AddMonoidAlgebra.coeff G μ) * algebraMap O Kf (AddMonoidAlgebra.coeff E μ)) * h
+      fockR (map (algebraMap O Kf) G) (map (algebraMap O Kf) E) = algebraMap O Kf z :=
+  Formalism.MainNotions.ColumnSystems.Pf.TF.int_pair p κ hMD G hG E
 
 theorem sandwich (hm : 1 ≤ m)
     (hthK : ∀ P, ((thK P : ↥(Vsp Kf (flW (m := m) d))) : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) =

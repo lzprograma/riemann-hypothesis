@@ -46,8 +46,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.Proof.ColumnMapShift
@@ -84,12 +82,12 @@ def colMap (r : T → ℕ) (g : T → Fin n → Fin n → k) :
 
 theorem rowShift_X_self (σ : T) (i i' : Fin (r σ)) (t : k) (b : Fin n) :
     rowShift r n k σ i i' t (X ⟨σ, i, b⟩) = X ⟨σ, i, b⟩ + C t * X ⟨σ, i', b⟩ := by
-  rw [rowShift, aeval_X, if_pos ⟨b, rfl⟩]
+  rw [rowShift, aeval_X, ite_eq_left ⟨b, rfl⟩]
 
 theorem rowShift_X_ne (σ : T) (i i' : Fin (r σ)) (t : k) (τ : T) (j : Fin (r τ))
     (h : (⟨τ, j⟩ : Σ s, Fin (r s)) ≠ ⟨σ, i⟩) (b : Fin n) :
     rowShift r n k σ i i' t (X ⟨τ, j, b⟩) = X ⟨τ, j, b⟩ := by
-  rw [rowShift, aeval_X, if_neg]
+  rw [rowShift, aeval_X, ite_eq_right]
   rintro ⟨b', hb⟩
   apply h
   exact congrArg (fun ℓ : Letter T r n => (⟨ℓ.1, ℓ.2.1⟩ : Σ s, Fin (r s))) hb

@@ -87,22 +87,6 @@ theorem half_le {w : ℝ≥0∞} {p ψ : ℝ} (hw : ENNReal.ofReal (Real.exp (-(
 theorem orth_mem_dom {r : ℕ} (X : Data E r) {x0 : Frame X.Ψ r} (ho : IsOrth X x0) : x0 ∈ X.dom := by
   apply ReciprocityTheory.ChartRestriction.G.AR.Up.KU.orth_dom <;> assumption
 
-private lemma leviO_fderiv_lemma {m : ℕ} (c : ℝ) (f : V m → ℂ) (y : V m) :
-    fderiv ℝ (fun w => (c : ℂ) * f w) y = (c : ℂ) • fderiv ℝ f y := by
-  by_cases hf : DifferentiableAt ℝ f y
-  · exact fderiv_const_mul hf _
-  · by_cases hc : c = 0
-    · subst hc
-      simp
-    · have hc' : (c : ℂ) ≠ 0 := by exact_mod_cast hc
-      have h2 : ¬ DifferentiableAt ℝ (fun w => (c : ℂ) * f w) y := by
-        intro h
-        apply hf
-        refine (h.const_mul ((c : ℂ)⁻¹)).congr_of_eventuallyEq (Filter.Eventually.of_forall fun w => ?_)
-        show f w = (c : ℂ)⁻¹ * ((c : ℂ) * f w)
-        rw [← mul_assoc, inv_mul_cancel₀ hc', one_mul]
-      rw [fderiv_zero_of_not_differentiableAt hf, fderiv_zero_of_not_differentiableAt h2, smul_zero]
-
 theorem leviO_smul {r : ℕ} (X : Data E r) (x0 : Frame X.Ψ r) (g : Frame X.Ψ r → ℝ) (t : ℝ)
     {z : V (nd X)} (hg : ContDiffAt ℝ 2 (fun w => g (cpt X x0 w)) z) (ξ : Fin (nd X) → ℂ) :
     leviO X x0 (fun x => t * g x) z ξ = t * leviO X x0 g z ξ := by
@@ -110,16 +94,20 @@ theorem leviO_smul {r : ℕ} (X : Data E r) (x0 : Frame X.Ψ r) (g : Frame X.Ψ 
     t * (leviV (nd X) (fun w => ((g (cpt X x0 w) : ℝ) : ℂ)) z ξ).re
   have hf : (fun w => (((t * g (cpt X x0 w)) : ℝ) : ℂ)) =
       fun w => (t : ℂ) * ((g (cpt X x0 w) : ℝ) : ℂ) := funext fun w => Complex.ofReal_mul _ _
+  have hfd : ∀ (f : V (nd X) → ℂ) (y : V (nd X)),
+      fderiv ℝ (fun w => (t : ℂ) * f w) y = (t : ℂ) • fderiv ℝ f y := fun f y => by
+    rw [show (fun w => (t : ℂ) * f w) = (t : ℂ) • f from funext fun _ => (smul_eq_mul _ _).symm,
+      fderiv_const_smul_field (t : ℂ), Pi.smul_apply]
   have hwdb : ∀ (k : Fin (nd X)) (f : V (nd X) → ℂ),
       wdb (nd X) k (fun w => (t : ℂ) * f w) = fun y => (t : ℂ) * wdb (nd X) k f y := by
     intro k f
     funext y
-    simp only [wdb, leviO_fderiv_lemma, ContinuousLinearMap.smul_apply, smul_eq_mul]
+    simp only [wdb, hfd, ContinuousLinearMap.smul_apply, smul_eq_mul]
     ring
   have hwd : ∀ (j : Fin (nd X)) (f : V (nd X) → ℂ) (y : V (nd X)),
       wd (nd X) j (fun w => (t : ℂ) * f w) y = (t : ℂ) * wd (nd X) j f y := by
     intro j f y
-    simp only [wd, leviO_fderiv_lemma, ContinuousLinearMap.smul_apply, smul_eq_mul]
+    simp only [wd, hfd, ContinuousLinearMap.smul_apply, smul_eq_mul]
     ring
   rw [hf]
   simp only [leviV, hwdb, hwd, mul_assoc, ← Finset.mul_sum, Complex.re_ofReal_mul]

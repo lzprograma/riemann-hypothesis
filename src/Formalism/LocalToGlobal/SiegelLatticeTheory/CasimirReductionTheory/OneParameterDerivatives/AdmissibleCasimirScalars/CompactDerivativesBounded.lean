@@ -7,15 +7,11 @@ public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCPX
 open MeasureTheory Matrix Filter Topology
 open scoped InnerProductSpace
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace Formalism.L2.SG.Pf.admitted
 
 open Formalism.MainNotions.S Formalism.REAL Formalism.MainNotions.BridgeCPX
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 section Defs
 

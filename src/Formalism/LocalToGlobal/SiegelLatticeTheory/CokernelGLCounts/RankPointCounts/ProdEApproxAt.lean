@@ -50,9 +50,9 @@ theorem linG_mono {F : Type*} [Field F] [Algebra F K] (e : K ≃ₐ[F] F × F) (
   simp only [linG, mono, Matrix.of_apply]
   by_cases h : b = σ a
   · subst h
-    rw [if_pos rfl, if_pos (hσ a).symm, if_pos rfl]
+    rw [ite_eq_left rfl, ite_eq_left (hσ a).symm, ite_eq_left rfl]
   · have h' : ¬ a = σ b := fun h' => h (by rw [h', hσ])
-    rw [if_neg h, if_neg h', if_neg h]
+    rw [ite_eq_right h, ite_eq_right h', ite_eq_right h]
     simp
 
 theorem fix_single {K : Type*} [CommRing K] {l ρ : Matrix (Fin (r + 1)) (Fin (r + 1)) K} (hl : IsLoUni l)
@@ -62,12 +62,12 @@ theorem fix_single {K : Type*} [CommRing K] {l ρ : Matrix (Fin (r + 1)) (Fin (r
   rw [mul_single_mul]
   have h1 : l x (Fin.last r) = if x = Fin.last r then 1 else 0 := by
     by_cases hx : x = Fin.last r
-    · subst hx; rw [if_pos rfl]; exact (hl _ _).2 rfl
-    · rw [if_neg hx]; exact (hl _ _).1 (lt_of_le_of_ne (Fin.le_last x) hx)
+    · subst hx; rw [ite_eq_left rfl]; exact (hl _ _).2 rfl
+    · rw [ite_eq_right hx]; exact (hl _ _).1 (lt_of_le_of_ne (Fin.le_last x) hx)
   have h2 : ρ (Fin.last r) y = if y = Fin.last r then 1 else 0 := by
     by_cases hy : y = Fin.last r
-    · subst hy; rw [if_pos rfl]; exact (hρ _ _).2 rfl
-    · rw [if_neg hy]; exact (hρ _ _).1 (lt_of_le_of_ne (Fin.le_last y) hy)
+    · subst hy; rw [ite_eq_left rfl]; exact (hρ _ _).2 rfl
+    · rw [ite_eq_right hy]; exact (hρ _ _).1 (lt_of_le_of_ne (Fin.le_last y) hy)
   rw [h1, h2, Matrix.single_apply]
   by_cases hx : x = Fin.last r <;> by_cases hy : y = Fin.last r
   · subst hx; subst hy; simp
@@ -132,8 +132,6 @@ noncomputable section
 open IsDedekindDomain NumberField ValuativeRel Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.Pf.StabShape
 
 namespace Formalism.L2.SG.Pf.ProdEApprox
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section At
 
@@ -209,10 +207,10 @@ theorem exists_unit_monomial_stable_of_Y0 {p : PlF D} (hA : Agree δ M p) :
     by_cases h : σ j = σ i
     · have hij : i = j := by rw [← hσ i, ← h, hσ]
       subst hij
-      simp only [if_true]
+      simp only [ite_true]
       exact Ring.inverse_mul_cancel _ (hν _)
     · have hij : i ≠ j := fun e => h (by rw [e])
-      rw [if_neg h, if_neg hij, zero_mul]
+      rw [ite_eq_right h, ite_eq_right hij, zero_mul]
   · intro l ρ hl hρ h
     rw [hY0] at h
     exact fix_of_fix hl hρ κ h

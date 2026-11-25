@@ -42,8 +42,6 @@ import Development.AbelianVarietyTheory.Definitions.Jets.DepthNumbersThresholdEq
 
 @[expose] public section
 
-set_option autoImplicit false
-
 open scoped BigOperators TensorProduct
 open Classical NumberField IsDedekindDomain Formalism.L2.FormalSeriesBounds Formalism.IncomingBounds Formalism.L2.Pj Formalism.L2.DIV Formalism.BasicNotions GlobalTheory.RowLaw GlobalTheory.RowAt GlobalTheory.GoodDepth
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
@@ -55,13 +53,13 @@ private theorem gap_step (r : ℕ) (a : ℕ → ℕ) (h : ∀ i j, i ≤ j → j
   unfold gap
   by_cases h1 : k + 1 < r
   · have := h k (k + 1) (by omega) h1
-    rw [if_pos (show 1 ≤ k + 1 ∧ k + 1 ≤ r by omega), if_pos h1, if_pos (show k < r by omega),
+    rw [ite_eq_left (show 1 ≤ k + 1 ∧ k + 1 ≤ r by omega), ite_eq_left h1, ite_eq_left (show k < r by omega),
       Nat.add_sub_cancel]
     omega
   · by_cases h2 : k < r
-    · rw [if_pos (show 1 ≤ k + 1 ∧ k + 1 ≤ r by omega), if_neg h1, if_pos h2, Nat.add_sub_cancel]
+    · rw [ite_eq_left (show 1 ≤ k + 1 ∧ k + 1 ≤ r by omega), ite_eq_right h1, ite_eq_left h2, Nat.add_sub_cancel]
       omega
-    · rw [if_neg (show ¬ (1 ≤ k + 1 ∧ k + 1 ≤ r) by omega), if_neg h1, if_neg h2]
+    · rw [ite_eq_right (show ¬ (1 ≤ k + 1 ∧ k + 1 ≤ r) by omega), ite_eq_right h1, ite_eq_right h2]
 
 private theorem gap_tele (r : ℕ) (a : ℕ → ℕ) (h : ∀ i j, i ≤ j → j < r → a j ≤ a i) (i K : ℕ)
     (hK : i ≤ K) :
@@ -86,12 +84,12 @@ theorem gap_sums : ∀ (r : ℕ) (a : ℕ → ℕ), (∀ i j, i ≤ j → j < r 
   intro r a h
   refine ⟨fun k hk => ?_, fun K hK => ⟨fun i hi => ?_, ?_⟩⟩
   · by_contra hc
-    exact hk (by unfold gap; rw [if_neg hc])
+    exact hk (by unfold gap; rw [ite_eq_right hc])
   · have := gap_tele r a h i K (by omega)
-    rw [if_neg (show ¬ K < r by omega), if_pos hi, add_zero] at this
+    rw [ite_eq_right (show ¬ K < r by omega), ite_eq_left hi, add_zero] at this
     exact this
   · have := gap_parts r a h K
-    rw [if_neg (show ¬ K < r by omega), mul_zero, add_zero] at this
+    rw [ite_eq_right (show ¬ K < r by omega), mul_zero, add_zero] at this
     rw [this, Fin.sum_univ_eq_sum_range a r, ← Finset.sum_filter]
     congr 1
     ext i

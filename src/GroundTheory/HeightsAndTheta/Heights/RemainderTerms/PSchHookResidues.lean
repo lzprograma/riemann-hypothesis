@@ -4,8 +4,6 @@ public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsSchu
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 open Finset
@@ -75,7 +73,7 @@ theorem SchHookResidues.proof : SchHookResidues.Statement := by
       · subst h0; simp
       · have hi : (i : ℕ) ≠ 0 := fun h => h0 (Fin.ext (by simp [h]))
         have := hhook i hi
-        rw [if_neg h0, zero_add]
+        rw [ite_eq_right h0, zero_add]
         split_ifs with h <;> omega
     have hsum2 : ∑ i, nu i = nu 0 + t := by
       rw [Finset.sum_congr rfl (fun i _ => hpt i), Finset.sum_add_distrib, Finset.sum_boole]
@@ -89,14 +87,14 @@ theorem SchHookResidues.proof : SchHookResidues.Statement := by
     · have hlt : j < (⟨t, by omega⟩ : Fin (n + 1)) := Fin.lt_def.mpr h
       have hv : ((Fin.cycleRange (⟨t, by omega⟩ : Fin (n + 1)) j : Fin (n + 1)) : ℕ) = j + 1 :=
         Fin.coe_cycleRange_of_lt hlt
-      rw [hval _ (by rw [hv]; omega), hv, if_pos (by omega), Nat.mod_eq_of_lt (by omega)]
+      rw [hval _ (by rw [hv]; omega), hv, ite_eq_left (by omega), Nat.mod_eq_of_lt (by omega)]
       omega
     · rw [Fin.cycleRange_of_eq (Fin.ext h), Fin.val_zero]
       have h2 : nu 0 + (n + 1 - 1 - 0) = (n - t) + (n + 1) := by omega
       rw [h2, Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]
       omega
     · have hgt : (⟨t, by omega⟩ : Fin (n + 1)) < j := Fin.lt_def.mpr h
-      rw [Fin.cycleRange_of_gt hgt, hval j (by omega), if_neg (by omega),
+      rw [Fin.cycleRange_of_gt hgt, hval j (by omega), ite_eq_right (by omega),
         Nat.mod_eq_of_lt (by omega)]
       omega
   · rw [Equiv.Perm.sign_inv, Fin.sign_cycleRange]

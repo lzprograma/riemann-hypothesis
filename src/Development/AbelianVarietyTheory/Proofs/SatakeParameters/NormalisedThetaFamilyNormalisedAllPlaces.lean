@@ -23,58 +23,11 @@ public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntEa
 public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntPull
 public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntWAPlaces
 public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.FinalEq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
+import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.KappaSelfDualFourthPowerLattice
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.KernelLattices.XiIndCClass
 import Formalism.SharpRestriction.CuspSpanNormBounds.Point
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.TypeStar
-import Mathlib.Algebra.Order.Star.Int
 import Formalism.LocalToGlobal.GlobalTheory.GL3.PFamily
 import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.FinitelyGeneratedModPow
 import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.MatrixFormFourfoldBlock
@@ -84,9 +37,6 @@ import Formalism.SharpRestriction.GlobalSchurBounds.StandardIntegralLatticeExist
 import Formalism.LocalToGlobal.AlgebraicTheory.StatementA
 import Formalism.LocalToGlobal.GlobalTheory.GL3.NormNatCoprime
 import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.Th0CharMulOpUTh0HalfPeriodEq
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -272,35 +222,8 @@ alias stable_of_one := _root_.GlobalTheory.ThLoc.KapNonSplit.stable_of_one
 alias odd_of_cmOK := _root_.GlobalTheory.ThLoc.KapNonSplit.odd_of_cmOK
 
 theorem hermitianSelfDual_of_fourfoldBlock {n : Type} [Fintype n] (h : Matrix n n ℂ) (Λ : AddSubgroup (n → ℂ))
-    (hsd : IsSelfDual (matH (blk4 h)) (pow4 Λ)) : IsSelfDual (matH h) Λ := by
-  have key : ∀ (x : n → ℂ) (y : Fin 4 × n → ℂ), altE (matH (blk4 h)) (CmData.embA 0 x) y = altE (matH h) x (slice 0 y) := by
-    intro x y
-    simp only [altE, matrixForm_fourfoldBlock, CmData.slice_embA]
-    rw [Finset.sum_eq_single (0 : Fin 4)]
-    · simp
-    · intro b _ hb
-      simp [hb]
-    · intro hh
-      exact absurd (Finset.mem_univ _) hh
-  ext x
-  constructor
-  · intro hx
-    have h1 : CmData.embA 0 x ∈ dualLat (matH (blk4 h)) (pow4 Λ) := by
-      intro y hy
-      obtain ⟨m, hm⟩ := hx (slice 0 y) (hy 0)
-      exact ⟨m, by rw [key, hm]⟩
-    rw [hsd] at h1
-    have h2 := h1 0
-    rwa [CmData.slice_embA, if_pos rfl] at h2
-  · intro hx y hy
-    have h1 : CmData.embA 0 x ∈ dualLat (matH (blk4 h)) (pow4 Λ) := by
-      rw [hsd]
-      exact CmData.embA_mem Λ 0 hx
-    obtain ⟨m, hm⟩ := h1 _ (CmData.embA_mem Λ 0 hy)
-    refine ⟨m, ?_⟩
-    rw [key, CmData.slice_embA, if_pos rfl] at hm
-    exact hm
-
+    (hsd : IsSelfDual (matH (blk4 h)) (pow4 Λ)) : IsSelfDual (matH h) Λ :=
+  Formalism.L2.KerInert.Kap.selfDual_of_fourth_power_block h Λ hsd
 section Base
 
 variable {D : D7} {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (B : Base D cc δ)
@@ -310,8 +233,8 @@ theorem selfDual_fourfold_curveIdeal_lattice (hcc : TaylorLogMetric.IsCurveIdeal
   have h := ((B.latAll hcc hδ (base_linkage_nonempty D cc δ B)).1 2 2 _ _
     (Formalism.MainNotions.GlobalTheoryTheory.Inhab.Adm_std D 2 2 even_two even_two)).1
   rw [show TaylorLogMetric.area (TaylorLogMetric.lamOf D cc δ) = _ from B.areaOK, show TaylorLogMetric.La D B.tor _ _ = _ from B.lat0OK 2 2] at h
-  have h2 := SO.selfDual_img _ _ (SO.reix D.what₂.Tau) (SO.reix_isom B.L D.what₂.Tau) _ h
-  rw [SO.reix_pow] at h2
+  have h2 := SO.selfDual_img _ _ (GlobalTheory.FourthRootStd.reix D.what₂.Tau) (GlobalTheory.FourthRootStd.reix_isom B.L D.what₂.Tau) _ h
+  rw [GlobalTheory.FourthRootStd.reix_pow] at h2
   exact h2
 
 theorem selfDual_lamM (hcc : TaylorLogMetric.IsCurveIdeal D cc) (hδ : TaylorLogMetric.IsDiscriminantTwelfthRootOfIdealLattice D cc δ) :
@@ -320,8 +243,8 @@ theorem selfDual_lamM (hcc : TaylorLogMetric.IsCurveIdeal D cc) (hδ : TaylorLog
 
 theorem stable_lamM (b : ℤ) (hb : Odd b) : ∀ x ∈ B.lamM, cmTheta b D.host.d • x ∈ B.lamM := by
   refine stable_of_one _ _ (fun x hx => ?_) b hb
-  have := SO.lamMM_smul (AR.om D) hx
-  rw [← SO.theta_eq] at this
+  have := GlobalTheory.FourthRootStd.lamMM_smul (AR.om D) hx
+  rw [← GlobalTheory.FourthRootStd.theta_eq] at this
   exact this
 
 end Base
@@ -486,14 +409,14 @@ theorem hermitianSelfDual_of_fourfoldBlock {n : Type} [Fintype n] [DecidableEq n
       exact ⟨m, by rw [key, hm]⟩
     rw [hsd] at h1
     have h2 := h1 0
-    rwa [Formalism.L2.Th1.H.CmData.slice_embA, if_pos rfl] at h2
+    rwa [Formalism.L2.Th1.H.CmData.slice_embA, ite_eq_left rfl] at h2
   · intro hx y hy
     have h1 : Formalism.L2.Th1.H.CmData.embA 0 x ∈ dualLat (matH (blk4 h)) (pow4 Λ) := by
       rw [hsd]
       exact Formalism.L2.Th1.H.CmData.embA_mem Λ 0 hx
     obtain ⟨m, hm⟩ := h1 _ (Formalism.L2.Th1.H.CmData.embA_mem Λ 0 hy)
     refine ⟨m, ?_⟩
-    rw [key, Formalism.L2.Th1.H.CmData.slice_embA, if_pos rfl] at hm
+    rw [key, Formalism.L2.Th1.H.CmData.slice_embA, ite_eq_left rfl] at hm
     exact hm
 
 end GlobalTheory.ThLoc.LocStd
@@ -584,7 +507,7 @@ theorem locNorm_reix (a₀ : ℕ) (b₀ c₀ : ℤ) (dK : ℕ) (ha : 0 < a₀) (
     show (∑ i, ∑ j, y i * _ * conj (x j)) = conj (∑ i, ∑ j, x i * _ * conj (y j))
 
     simp only [Matrix.smul_apply, Matrix.one_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true, map_sum, map_mul, Complex.conj_conj, map_inv₀, Complex.conj_ofReal]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true, map_sum, map_mul, Complex.conj_conj, map_inv₀, Complex.conj_ofReal]
     refine Finset.sum_congr rfl fun i _ => ?_
     ring
   have hα : ∀ x, alphaQ (Real.sqrt dK / 2) (Formalism.L2.Th1.H.stdH L₀ (Fin 4 × n')) x =
@@ -669,7 +592,7 @@ theorem latAt_std : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ), Taylor
     let lm : TaylorLogMetric.Qbar →+* ℂ_[p] := (ι : ℂ →+* ℂ_[p]).comp (TaylorLogMetric.Qbar).val.toRingHom
     obtain ⟨h1, h2⟩ := Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.RestC.chiFacUnit χ hχ p lm N N' L L' hA hL hL'
     have e : TaylorLogMetric.lamC lm (Base.chiFac χ N N' L L') = ι (Base.chiFac χ N N' L L') := by
-      simp only [TaylorLogMetric.lamC, dif_pos h1]
+      simp only [TaylorLogMetric.lamC, dite_eq_left h1]
       rfl
     rw [← e, h2]
   have key := Formalism.L2.Ker.KS.locNorm_thF_of s B' _root_.GlobalTheory.locNormScale _root_.GlobalTheory.locNormPow_tensorPowers _root_.GlobalTheory.locNormInter χ a₀ b₀ c₀ ha hd lam hlam p ι
@@ -702,8 +625,6 @@ open Formalism.DworkPowerSeriesWeights (JetsIntegral)
 noncomputable section
 
 namespace GlobalTheory.ThLoc.AllPlaces
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} {N N' : ℕ}
 
@@ -778,8 +699,6 @@ end GlobalTheory.ThLoc.AllPlaces
 
 namespace GlobalTheory.ThLoc.AllPlaces
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} {N N' : ℕ}
 
 theorem formV_eq_Hf (u v : TaylorLogMetric.VC D N N') :
@@ -806,7 +725,6 @@ end GlobalTheory.ThLoc.AllPlaces
 
 
 open GlobalTheory.ThLoc.AllPlaces in
-attribute [local instance] Formalism.BasicNotions.Host.cmStar in
 theorem GlobalTheory.ThLoc.latAt_all : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ), TaylorLogMetric.IsCurveIdeal D cc → TaylorLogMetric.IsDiscriminantTwelfthRootOfIdealLattice D cc δ → ∀ (B : Base D cc δ) (χ : TaylorLogMetric.IdE D → ℂ), TaylorLogMetric.IsChi D χ → ∀ (X : Fields) (s : Seam D X), s.Ok → ∀ (a₀ : ℕ) (b₀ c₀ : ℤ) (ha : 0 < a₀) (hd : 0 < D.host.d) (lam : ℂ) (hlam : lam ≠ 0), CmOK a₀ b₀ c₀ D.host.d → (cmL a₀ b₀ D.host.d ha hd lam hlam).lattice.toAddSubgroup = TaylorLogMetric.lamOf D cc δ → ∀ (N N' : ℕ) (L : Submodule (𝓞 D.host.E) (Fin N → D.host.E)) (L' : Submodule (𝓞 D.host.E) (Fin N' → D.host.E)), TaylorLogMetric.admitted D N N' L L' → ∀ (p : ℕ) [Fact p.Prime] (ι : ℂ ≃+* ℂ_[p]), GlobalTheory.ThLoc.LatAt a₀ b₀ c₀ D.host.d ha hd lam hlam (Formalism.L2.AlgTh.hSc X.Tau N N' (TaylorLogMetric.area (TaylorLogMetric.lamOf D cc δ))⁻¹) (s.laF B.tor L L') (fun z => B.eNat χ N N' L L' (s.flatV N N' z)) p ι := by
   intro D cc δ hcc hδ B χ hχ X s hs a₀ b₀ c₀ ha hd lam hlam hcm hlat N N' L L' hA p _ ι
   have hp : p.Prime := Fact.out

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PowerSeriesExpIntegralCanonGaugeAdditiveSecond
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
 import Mathlib.RingTheory.SimpleRing.Principal
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.FormalGroupCoeffSecondLinear
@@ -10,8 +11,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.HStable
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -39,7 +38,7 @@ theorem dLin_addOf (F : Fin d → PS k 2 d)
       · exact hv i')]
   rw [Fintype.sum_prod_type, Fin.sum_univ_two]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, hF0, hF1, ite_mul, one_mul, zero_mul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rfl
 
 theorem const_actK' (B : FB R d O) (a : O) (l : Fin d) : constantCoeff (B.actK k a l) = 0 := by
@@ -47,32 +46,10 @@ theorem const_actK' (B : FB R d O) (a : O) (l : Fin d) : constantCoeff (B.actK k
 
 theorem actK_add (B : FB R d O) (a b : O) :
     B.actK k (a + b) = addOf (B.FK k) (B.actK k a) (B.actK k b) := by
-  funext i
-  show MvPowerSeries.map (algebraMap R k) (B.A.act (a + b) i) = ev ![B.actK k a, B.actK k b] (B.FK k i)
-  rw [B.A.add_act]
-  show MvPowerSeries.map (algebraMap R k) (ev ![B.A.act a, B.A.act b] (B.G.F i)) = _
-  rw [Nab.map_ev (algebraMap R k) (by
-      intro j l
-      fin_cases j
-      · exact B.A.const a l
-      · exact B.A.const b l)]
-  congr 1
-  funext j l
-  fin_cases j <;> rfl
+  apply _root_.GlobalTheory.FramePull.actK_add <;> assumption
 
 theorem actK_mul (B : FB R d O) (a b : O) : B.actK k (a * b) = comp1 (B.actK k a) (B.actK k b) := by
-  funext i
-  show MvPowerSeries.map (algebraMap R k) (B.A.act (a * b) i) = ev ![B.actK k b] (B.actK k a i)
-  rw [B.A.mul_act]
-  show MvPowerSeries.map (algebraMap R k) (ev ![B.A.act b] (B.A.act a i)) = _
-  rw [Nab.map_ev (algebraMap R k) (by
-      intro j l
-      fin_cases j
-      exact B.A.const b l)]
-  congr 1
-  funext j l
-  fin_cases j
-  rfl
+  apply _root_.GlobalTheory.FramePull.actK_mul <;> assumption
 
 theorem actK_one (B : FB R d O) : B.actK k 1 = pt k d 0 := by
   funext i

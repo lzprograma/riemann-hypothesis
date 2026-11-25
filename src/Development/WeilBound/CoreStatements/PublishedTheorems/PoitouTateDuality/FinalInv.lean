@@ -21,56 +21,16 @@ public import GroundTheory.GlobalFields.LocalFieldAtPlace
 public import GroundTheory.LocalFields.UnitsBasic
 public import GroundTheory.GlobalFields.TateThesis.ChebotarevAbelian
 public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDualPf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import ReciprocityTheory.GaloisValuations.GlobalA
 import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
 import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohDefs
 import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolUnramified
-import Mathlib.Tactic.Basify
 import Formalism.ConjugateSelfDual.Statement
 import GroundTheory.ProfiniteCohomology.CupProducts.Cocycles
 import GroundTheory.ProfiniteCohomology.RestrictedRamification.SUnits
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.GlobalFields.HerbrandQuotients.RationalForm
 import GroundTheory.LocalFields.FilteredSurj
 import GroundTheory.ProfiniteCohomology.ProcyclicDefs
@@ -89,8 +49,6 @@ open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheo
   ReciprocityTheory.Gal Formalism.ConjugateSelfDual GlobalTheory.Published GlobalTheory.Published.PoitouTate PositivityTheory.PoitouTateConclusion ValuativeRel
 
 namespace PositivityTheory.Lit1.PTN
-
-attribute [local instance 2000] Rep.hV2
 
 theorem natCast_card_pow_sub_one_notMem (F : Type) [Field F] [NumberField F]
     (v : HeightOneSpectrum (𝓞 F)) {n : ℕ} (hn : n ≠ 0) :
@@ -198,8 +156,6 @@ open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheo
 
 namespace PositivityTheory.Lit1.PTN
 
-attribute [local instance 2000] Rep.hV2
-
 set_option maxSynthPendingDepth 1
 
 section Local
@@ -271,8 +227,6 @@ open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheo
 open CompanionTheory.LocalTateOrthogonality.Gcoh (dn_two exists_coc)
 
 namespace PositivityTheory.Lit1.PTN
-
-attribute [local instance 2000] Rep.hV2
 
 set_option maxSynthPendingDepth 1
 
@@ -357,8 +311,6 @@ open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheo
 
 namespace PositivityTheory.Lit1.PTN
 
-attribute [local instance 2000] Rep.hV2
-
 section Local
 
 variable {Kf : FiniteSubfield} [NumberField Kf.1] [IsAlgClosure Kf.1 (AlgebraicClosure ℚ)]
@@ -396,8 +348,6 @@ open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheo
   ReciprocityTheory.Gal Formalism.ConjugateSelfDual GlobalTheory.Published GlobalTheory.Published.PoitouTate PositivityTheory.PoitouTateConclusion
 
 namespace PositivityTheory.Lit1.PTN
-
-attribute [local instance 2000] Rep.hV2
 
 section Hasse
 
@@ -466,112 +416,6 @@ theorem charCocycle_urPsi (N : ℕ+) (g h : Gal(Ω/K)) :
 
 end Hasse
 
-section HasseC
-
-variable {K Ω : Type} [Field K] [ValuativeRel K] [TopologicalSpace K]
-  [IsNonarchimedeanLocalField K] [Field Ω] [Algebra K Ω] [IsSepClosure K Ω]
-
-theorem brauerInv_galCupClass_urPsi (N : ℕ+) (ϖ : Kˣ) (hϖ : ord (ϖ : K) = 1) :
-    brauerInvZOfIsSepClosure K Ω (galCupClass K Ω (urPsi (K := K) (Ω := Ω) N) ϖ) =
-      zmodToQZ (N : ℕ) 1 := by
-  obtain ⟨σ, hσ⟩ := unramifiedDegree_surjective (K := K) (Ω := Ω) (Multiplicative.ofAdd 1)
-  letI := algebraicValuativeRel K Ω
-  letI := algebraicTopology K Ω
-  haveI := algebraicTopology_isValuativeTopology K Ω
-  haveI := algebraicValuativeRel_valuativeExtension K Ω
-  have hψ : ∀ g ∈ (unramifiedDegree K Ω).ker,
-      (urPsi (K := K) (Ω := Ω) N) (Additive.ofMul g) = 0 := by
-    intro g hg
-    show zmodToQZ (N : ℕ) (urChar K Ω N g) = 0
-    rw [urChar_of_ker N (MonoidHom.mem_ker.1 hg), map_zero]
-  have key := brauerInvZ_galCupClass_of_unramified (urPsi (K := K) (Ω := Ω) N) hψ hσ ϖ
-  show brauerInvZ K Ω _ = _
-  rw [key, hϖ, one_smul]
-  show zmodToQZ (N : ℕ) (urChar K Ω N σ) = _
-  rw [urChar_of_deg_one N hσ]
-
-end HasseC
-
-section HasseMain
-
-variable {K Ω : Type} [Field K] [ValuativeRel K] [TopologicalSpace K]
-  [IsNonarchimedeanLocalField K] [Field Ω] [Algebra K Ω] [IsSepClosure K Ω]
-
-theorem hasse_kummer_unram' (N : ℕ+)
-    (ϖ : Kˣ) (hϖ : ord (ϖ : K) = 1) (Y : Ω) (hY : Y ^ (N : ℕ) = algebraMap K Ω ϖ)
-    (ζ : Ω) (hζ : IsPrimitiveRoot ζ N) (κ : Gal(Ω/K) → ZMod (N : ℕ))
-    (hκ : ∀ g : Gal(Ω/K), g Y = ζ ^ (κ g).val * Y)
-    (c : cocycles (galUnitsZ K Ω) 2)
-    (hc : ∀ s : Fin 2 → Gal(Ω/K), ((Additive.toMul (cochainOf _ (cocycleι _ 2 c) s) : Ωˣ) : Ω) =
-      ζ ^ (κ (s 0) * urChar K Ω N (s 1)).val) :
-    brauerInvZOfIsSepClosure K Ω (cohomologyπ _ 2 c) = - zmodToQZ (N : ℕ) 1 := by
-  classical
-  have hN0 : (N : ℕ) ≠ 0 := N.ne_zero
-  have hϖ0 : algebraMap K Ω (ϖ : K) ≠ 0 :=
-    (map_ne_zero_iff _ (algebraMap K Ω).injective).2 ϖ.ne_zero
-  have hY0 : Y ≠ 0 := by
-    rintro rfl
-    rw [zero_pow hN0] at hY
-    exact hϖ0 hY.symm
-  let ψ := urPsi (K := K) (Ω := Ω) N
-  obtain ⟨w, hw, hwc⟩ := exists_cocycle_cupCharClassProf (galUnitsZ K Ω) ψ (unitsInvariant K Ω ϖ)
-  let Yu : Ωˣ := Units.mk0 Y hY0
-  let bf : Gal(Ω/K) → (galUnitsZ K Ω).V := fun h =>
-    Additive.ofMul (Yu ^ (urChar K Ω N h).val)
-  have hbf_lc : IsLocallyConstant fun t : Fin 1 → Gal(Ω/K) => bf (t 0) := by
-    have h1 : IsLocallyConstant (urChar K Ω N) :=
-      (IsLocallyConstant.iff_continuous _).2 (continuous_urChar (K := K) (Ω := Ω) N)
-    exact (h1.comp fun u => Additive.ofMul (Yu ^ u.val)).comp_continuous (continuous_apply 0)
-  have hsum : cohomologyπ _ 2 c + cohomologyπ _ 2 w = 0 := by
-    rw [← map_add (f := _)]
-    refine (CompanionTheory.LocalTateOrthogonality.Gcoh.pi_succ_eq_zero_iff (galUnitsZ K Ω) 1 (c + w)).2
-      ⟨fun t => bf (t 0), hbf_lc, ?_⟩
-    have hd := CompanionTheory.LocalTateOrthogonality.Gcoh.d_comp (galUnitsZ K Ω).ρ (galUnitsZ K Ω) (AddEquiv.refl _)
-      (fun _ _ => rfl) 1 (fun t => bf (t 0))
-    simp only [AddEquiv.refl_apply] at hd
-    rw [hd]
-    funext s
-    rw [CompanionTheory.LocalTateOrthogonality.Gcoh.dn_one, map_add (f := _), cochainOf_add, Pi.add_apply]
-    have hwc' := hwc s
-    have hc' := hc s
-    set a0 := (urChar K Ω N (s 0)).val with ha0
-    set a1 := (urChar K Ω N (s 1)).val with ha1
-    set a01 := (urChar K Ω N (s 0 * s 1)).val with ha01
-    set cc := charCocycle (charAdd ψ) (s 0, s 1) with hcc
-    have hrel : ((N : ℕ) : ℤ) * cc = (a0 : ℤ) + a1 - a01 := charCocycle_urPsi N (s 0) (s 1)
-    apply Additive.toMul.injective
-    apply Units.ext
-    rw [hwc']
-    simp only [toMul_add, toMul_zsmul, Units.val_mul, Units.val_zpow_eq_zpow_val, bf]
-    rw [hc', coe_unitsInvariant]
-    have hL : ((Additive.toMul (((zRepOfMonoidEnd (galUnitsHom K Ω)) (s 0))
-          (Additive.ofMul (Yu ^ (urChar K Ω N (s 1)).val)) -
-          Additive.ofMul (Yu ^ (urChar K Ω N (s 0 * s 1)).val) +
-          Additive.ofMul (Yu ^ (urChar K Ω N (s 0)).val)) : Ωˣ) : Ω) =
-        (s 0) Y ^ a1 * (Y ^ a01)⁻¹ * Y ^ a0 := by
-      show ((Additive.toMul ((Additive.ofMul (galUnitsHom K Ω (s 0) (Yu ^ a1)) : Additive Ωˣ) -
-          Additive.ofMul (Yu ^ a01) + Additive.ofMul (Yu ^ a0)) : Ωˣ) : Ω) = _
-      simp only [toMul_add, toMul_sub, toMul_ofMul, Units.val_mul, coe_galUnitsHom_apply, Units.val_inv_eq_inv_val, Units.val_pow_eq_pow_val, Yu, Units.val_mk0,
-        map_pow, div_eq_mul_inv]
-    refine Eq.trans hL ?_
-    rw [hκ (s 0), mul_pow]
-    have hYz : Y ^ a1 * (Y ^ a01)⁻¹ * Y ^ a0 = (algebraMap K Ω (ϖ : K)) ^ cc := by
-      rw [← hY, show (Y ^ (N : ℕ)) ^ cc = Y ^ (((N : ℕ) : ℤ) * cc) by rw [zpow_mul, zpow_natCast],
-        hrel, zpow_sub₀ hY0, zpow_add₀ hY0, zpow_natCast, zpow_natCast, zpow_natCast]
-      ring
-    have hζN : ζ ^ (N : ℕ) = 1 := hζ.pow_eq_one
-    have hzk : (ζ ^ (κ (s 0)).val) ^ a1 = ζ ^ (κ (s 0) * urChar K Ω N (s 1)).val := by
-      rw [← pow_mul, ZMod.val_mul]
-      conv_lhs => rw [← Nat.div_add_mod ((κ (s 0)).val * a1) (N : ℕ), pow_add, pow_mul, hζN,
-        one_pow, one_mul]
-    rw [← hzk, ← hYz]
-    ring
-  have hc0 : cohomologyπ _ 2 c = - cohomologyπ _ 2 w := eq_neg_of_add_eq_zero_left hsum
-  rw [hc0, map_neg, hw]
-  exact congrArg Neg.neg (brauerInv_galCupClass_urPsi (K := K) (Ω := Ω) N ϖ hϖ)
-
-end HasseMain
-
 end PositivityTheory.Lit1.PTN
 end -- clump:auto
 end -- clump:auto
@@ -589,8 +433,6 @@ open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheo
   ReciprocityTheory.Gal Formalism.ConjugateSelfDual GlobalTheory.Published GlobalTheory.Published.PoitouTate PositivityTheory.PoitouTateConclusion
 
 namespace PositivityTheory.Lit1.PTN.TL
-
-attribute [local instance 2000] Rep.hV2
 
 section Generic
 
@@ -810,8 +652,6 @@ open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheo
 
 namespace PositivityTheory.Lit1.PTN
 
-attribute [local instance 2000] Rep.hV2
-
 
 
 theorem found_side' (Kf : FiniteSubfield) [NumberField Kf.1] [IsAlgClosure Kf.1 (AlgebraicClosure ℚ)]
@@ -896,8 +736,6 @@ open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheo
   ReciprocityTheory.Gal Formalism.ConjugateSelfDual GlobalTheory.Published GlobalTheory.Published.PoitouTate PositivityTheory.PoitouTateConclusion
 
 namespace PositivityTheory.Lit1.PTN
-
-attribute [local instance 2000] Rep.hV2
 
 theorem exists_kummer' (F : Type) [Field F] [NumberField F] {l r : ℕ} [Fact l.Prime]
     (A : ValuationSubring (AlgebraicClosure ℚ)) [Algebra F (AlgebraicClosure ℚ)]
@@ -994,8 +832,6 @@ open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheo
 
 namespace PositivityTheory.Lit1.PTN
 
-attribute [local instance 2000] Rep.hV2
-
 theorem exists_uniformizer_ord' (F : Type) [Field F] [NumberField F] (v : HeightOneSpectrum (𝓞 F)) :
     ∃ ϖ : 𝓞 F, ϖ ∈ v.asIdeal ∧ ϖ ∉ v.asIdeal ^ 2 ∧
       ord ((ϖ : F) : v.adicCompletion F) = 1 := by
@@ -1038,8 +874,6 @@ open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheo
   ReciprocityTheory.Gal Formalism.ConjugateSelfDual GlobalTheory.Published GlobalTheory.Published.PoitouTate PositivityTheory.PoitouTateConclusion
 
 namespace PositivityTheory.Lit1.PTN
-
-attribute [local instance 2000] Rep.hV2
 
 
 theorem invMatch_gen' (Kf : FiniteSubfield) [NumberField Kf.1] [IsAlgClosure Kf.1 (AlgebraicClosure ℚ)]
@@ -1118,8 +952,6 @@ open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheo
   GlobalTheory.Published GlobalTheory.Published.PoitouTate PositivityTheory.PoitouTateConclusion
 
 namespace PositivityTheory.Lit1.PTN
-
-attribute [local instance 2000] Rep.hV2
 
 
 
@@ -1274,8 +1106,6 @@ open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheo
 
 namespace PositivityTheory.Lit1.PTN
 
-attribute [local instance 2000] Rep.hV2
-
 
 theorem invCmp' (Kf : FiniteSubfield) [NumberField Kf.1] [IsAlgClosure Kf.1 (AlgebraicClosure ℚ)]
     (S : Set (HeightOneSpectrum (𝓞 Kf.1))) [Fintype S] {l r : ℕ} [Fact l.Prime] (hr : 0 < r)
@@ -1336,8 +1166,6 @@ open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheo
   GlobalTheory.Published GlobalTheory.Published.PoitouTate PositivityTheory.PoitouTateConclusion
 
 namespace PositivityTheory.Lit1.PTN
-
-attribute [local instance 2000] Rep.hV2
 
 alias invCmp := _root_.PositivityTheory.Lit1.PTN.invCmp'
 

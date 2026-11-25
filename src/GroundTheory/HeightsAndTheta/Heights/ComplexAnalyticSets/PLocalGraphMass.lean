@@ -174,12 +174,21 @@ theorem frameFibreCount_ball_le (b : OrthonormalBasis (Fin n) ℂ (EuclideanSpac
     rw [h]
     simp
 
-end LocalGraphMass
-
-
-open LocalGraphMass in
-theorem LocalGraphMass.proof (hPF : ProjectionFormula.Statement) : LocalGraphMass.Statement := by
-  intro n d b I₀ S hd hS R
+theorem hausdorffMeasure_inter_le_sum_lintegral {d : ℕ}
+    (b c : OrthonormalBasis (Fin n) ℂ (EuclideanSpace ℂ (Fin n))) (I₀ : Finset (Fin n))
+    (S B : Set (EuclideanSpace ℂ (Fin n))) (hB : MeasurableSet B)
+    (hS : ∀ z ∈ S, ∃ (Ω : Set (I₀ → ℂ)) (V : Set (EuclideanSpace ℂ (Fin n)))
+      (g : (I₀ → ℂ) → EuclideanSpace ℂ (Fin n)), IsOpen Ω ∧ IsOpen V ∧ z ∈ V ∧
+        DifferentiableOn ℂ g Ω ∧ (∀ w ∈ Ω, frameProj b I₀ (g w) = w) ∧ S ∩ V = g '' Ω)
+    (hpiece_mass : ∀ (Ω : Set (I₀ → ℂ)) (g : (I₀ → ℂ) → EuclideanSpace ℂ (Fin n)),
+      IsOpen Ω → DifferentiableOn ℂ g Ω → (∀ w ∈ Ω, frameProj b I₀ (g w) = w) →
+      ∀ E : Set (EuclideanSpace ℂ (Fin n)), MeasurableSet E →
+      μH[((2 * d : ℕ) : ℝ)] (g '' Ω ∩ E) =
+        ∑ I ∈ Finset.univ.powersetCard d, ∫⁻ x : EuclideanSpace ℂ I,
+          frameFibreCount c I (g '' Ω ∩ E) (WithLp.ofLp x) ∂(μH[((2 * d : ℕ) : ℝ)])) :
+    μH[((2 * d : ℕ) : ℝ)] (S ∩ B) ≤
+      ∑ I ∈ Finset.univ.powersetCard d, ∫⁻ x : EuclideanSpace ℂ I,
+        frameFibreCount c I (S ∩ B) (WithLp.ofLp x) ∂(μH[((2 * d : ℕ) : ℝ)]) := by
   classical
   rcases S.eq_empty_or_nonempty with rfl | hne
   · simp
@@ -209,8 +218,7 @@ theorem LocalGraphMass.proof (hPF : ProjectionFormula.Statement) : LocalGraphMas
     exact Set.mem_iUnion.2 ⟨k, hzi⟩
   have hDmeas : ∀ k, MeasurableSet (disjointed W k) :=
     MeasurableSet.disjointed fun k => (hV _).measurableSet
-  have hpiece : ∀ k, S ∩ Metric.ball 0 R ∩ disjointed W k =
-      g (f k) '' Ω (f k) ∩ (Metric.ball 0 R ∩ disjointed W k) := by
+  have hpiece : ∀ k, S ∩ B ∩ disjointed W k = g (f k) '' Ω (f k) ∩ (B ∩ disjointed W k) := by
     intro k
     rw [← hSV (f k)]
     ext z
@@ -219,41 +227,45 @@ theorem LocalGraphMass.proof (hPF : ProjectionFormula.Statement) : LocalGraphMas
       exact ⟨⟨hzS, disjointed_subset W k hzD⟩, hzB, hzD⟩
     · rintro ⟨⟨hzS, -⟩, hzB, hzD⟩
       exact ⟨⟨hzS, hzB⟩, hzD⟩
-  have hdisj : Pairwise (Disjoint on fun k => S ∩ Metric.ball 0 R ∩ disjointed W k) :=
+  have hdisj : Pairwise (Disjoint on fun k => S ∩ B ∩ disjointed W k) :=
     fun i j hij => (disjoint_disjointed W hij).mono Set.inter_subset_right Set.inter_subset_right
-  calc μH[((2 * d : ℕ) : ℝ)] (S ∩ Metric.ball 0 R)
-      ≤ μH[((2 * d : ℕ) : ℝ)] (⋃ k, S ∩ Metric.ball 0 R ∩ disjointed W k) := by
+  calc μH[((2 * d : ℕ) : ℝ)] (S ∩ B)
+      ≤ μH[((2 * d : ℕ) : ℝ)] (⋃ k, S ∩ B ∩ disjointed W k) := by
         refine measure_mono fun z hz => ?_
         obtain ⟨k, hk⟩ := Set.mem_iUnion.1 (hcover hz.1)
         exact Set.mem_iUnion.2 ⟨k, hz, hk⟩
-    _ ≤ ∑' k, μH[((2 * d : ℕ) : ℝ)] (S ∩ Metric.ball 0 R ∩ disjointed W k) := measure_iUnion_le _
+    _ ≤ ∑' k, μH[((2 * d : ℕ) : ℝ)] (S ∩ B ∩ disjointed W k) := measure_iUnion_le _
     _ = ∑' k, ∑ I ∈ Finset.univ.powersetCard d, ∫⁻ x : EuclideanSpace ℂ I,
-          frameFibreCount b I (S ∩ Metric.ball 0 R ∩ disjointed W k) (WithLp.ofLp x)
-            ∂(μH[((2 * d : ℕ) : ℝ)]) := by
+          frameFibreCount c I (S ∩ B ∩ disjointed W k) (WithLp.ofLp x) ∂(μH[((2 * d : ℕ) : ℝ)]) := by
         congr 1
         funext k
         rw [hpiece k]
-        exact mass_piece hPF b I₀ hd _ _ (hΩ _) (hg _) (hfix _) _
-          (Metric.isOpen_ball.measurableSet.inter (hDmeas k))
+        exact hpiece_mass _ _ (hΩ _) (hg _) (hfix _) _ (hB.inter (hDmeas k))
     _ = ∑ I ∈ Finset.univ.powersetCard d, ∑' k, ∫⁻ x : EuclideanSpace ℂ I,
-          frameFibreCount b I (S ∩ Metric.ball 0 R ∩ disjointed W k) (WithLp.ofLp x)
-            ∂(μH[((2 * d : ℕ) : ℝ)]) :=
+          frameFibreCount c I (S ∩ B ∩ disjointed W k) (WithLp.ofLp x) ∂(μH[((2 * d : ℕ) : ℝ)]) :=
         Summable.tsum_finsetSum fun _ _ => ENNReal.summable
-    _ ≤ ∑ I ∈ Finset.univ.powersetCard d,
-          (⨆ x : I → ℂ, frameFibreCount b I S x) *
-            μH[((2 * d : ℕ) : ℝ)] (Metric.ball (0 : EuclideanSpace ℂ I) R) := by
-        refine Finset.sum_le_sum fun I _ => ?_
-        calc _ ≤ ∫⁻ x : EuclideanSpace ℂ I, ∑' k,
-              frameFibreCount b I (S ∩ Metric.ball 0 R ∩ disjointed W k) (WithLp.ofLp x)
-                ∂(μH[((2 * d : ℕ) : ℝ)]) := tsum_lintegral_le _ _
-          _ ≤ ∫⁻ x : EuclideanSpace ℂ I, frameFibreCount b I (S ∩ Metric.ball 0 R) (WithLp.ofLp x)
-                ∂(μH[((2 * d : ℕ) : ℝ)]) :=
-              lintegral_mono fun x =>
-                tsum_frameFibreCount_le b I _ (fun k => Set.inter_subset_left) hdisj _
-          _ ≤ ∫⁻ x : EuclideanSpace ℂ I, (Metric.ball (0 : EuclideanSpace ℂ I) R).indicator
-                (fun _ => ⨆ y : I → ℂ, frameFibreCount b I S y) x ∂(μH[((2 * d : ℕ) : ℝ)]) :=
-              lintegral_mono fun x => frameFibreCount_ball_le b I S R x
-          _ = _ := lintegral_indicator_const Metric.isOpen_ball.measurableSet _
+    _ ≤ ∑ I ∈ Finset.univ.powersetCard d, ∫⁻ x : EuclideanSpace ℂ I,
+          frameFibreCount c I (S ∩ B) (WithLp.ofLp x) ∂(μH[((2 * d : ℕ) : ℝ)]) := by
+        refine Finset.sum_le_sum fun I _ => (tsum_lintegral_le _ _).trans ?_
+        exact lintegral_mono fun x =>
+          tsum_frameFibreCount_le c I _ (fun k => Set.inter_subset_left) hdisj _
+
+end LocalGraphMass
+
+
+open LocalGraphMass in
+theorem LocalGraphMass.proof (hPF : ProjectionFormula.Statement) : LocalGraphMass.Statement := by
+  intro n d b I₀ S hd hS R
+  refine (hausdorffMeasure_inter_le_sum_lintegral b b I₀ S (Metric.ball 0 R)
+    Metric.isOpen_ball.measurableSet hS (fun Ω g hΩ hg hfix E hE =>
+      mass_piece hPF b I₀ hd Ω g hΩ hg hfix E hE)).trans ?_
+  refine Finset.sum_le_sum fun I _ => ?_
+  calc ∫⁻ x : EuclideanSpace ℂ I, frameFibreCount b I (S ∩ Metric.ball 0 R) (WithLp.ofLp x)
+          ∂(μH[((2 * d : ℕ) : ℝ)])
+      ≤ ∫⁻ x : EuclideanSpace ℂ I, (Metric.ball (0 : EuclideanSpace ℂ I) R).indicator
+          (fun _ => ⨆ y : I → ℂ, frameFibreCount b I S y) x ∂(μH[((2 * d : ℕ) : ℝ)]) :=
+        lintegral_mono fun x => frameFibreCount_ball_le b I S R x
+    _ = _ := lintegral_indicator_const Metric.isOpen_ball.measurableSet _
 
 end
 

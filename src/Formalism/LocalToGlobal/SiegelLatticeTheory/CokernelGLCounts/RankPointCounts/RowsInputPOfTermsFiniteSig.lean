@@ -24,8 +24,6 @@ namespace PI.TermsAtPtFiniteW
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem sigOK_holds (D : D7) : (VS D).SigOK := D.sp.Y_sig 0
 
 end PI.TermsAtPtFiniteW
@@ -144,7 +142,7 @@ theorem rowsDomAtP_of (hN : SupportG.NormProd D) (hTU : TopUnram D) (hRD : RowsD
       have hK : (dOf S δ M u u').Kr (D.R.rS + 1) x.1 y.1 = 0 := by
         show KrOf δ M (D.mem u).A.T (D.mem u').A.T (D.R.rS + 1) x.1 y.1 = 0
         unfold KrOf
-        rw [if_neg (Nat.succ_ne_zero _), if_neg (lt_irrefl _), hx]
+        rw [ite_eq_right (Nat.succ_ne_zero _), ite_eq_right (lt_irrefl _), hx]
       have hR : rowKer (PairVal.vRdef D u u' F0 what₂ δ M) κ (nc * α) x.1 y.1 = 0 := by
         unfold rowKer
         simp [rowVec, hx]
@@ -156,7 +154,7 @@ theorem rowsDomAtP_of (hN : SupportG.NormProd D) (hTU : TopUnram D) (hRD : RowsD
       have hK : (dOf S δ M u u').Kr (D.R.rS + 1) x.1 y.1 = 0 := by
         show KrOf δ M (D.mem u).A.T (D.mem u').A.T (D.R.rS + 1) x.1 y.1 = 0
         unfold KrOf
-        rw [if_neg (Nat.succ_ne_zero _), if_neg (lt_irrefl _), hx, hy]
+        rw [ite_eq_right (Nat.succ_ne_zero _), ite_eq_right (lt_irrefl _), hx, hy]
       have hR : rowKer (PairVal.vRdef D u u' F0 what₂ δ M) κ (nc * α) x.1 y.1 = 0 := by
         unfold rowKer
         simp [rowVec, hy]
@@ -178,7 +176,7 @@ theorem rowsDomAtP_of (hN : SupportG.NormProd D) (hTU : TopUnram D) (hRD : RowsD
         (((phi (D.R.rS + 1) x.1 : ℝ) : ℂ) * ((phi (D.R.rS + 1) y.1 : ℝ) : ℂ)) := by
       show KrOf δ M (D.mem u).A.T (D.mem u').A.T (D.R.rS + 1) x.1 y.1 = _
       unfold KrOf
-      rw [if_neg (Nat.succ_ne_zero _), if_neg (lt_irrefl _), hx, hy]
+      rw [ite_eq_right (Nat.succ_ne_zero _), ite_eq_right (lt_irrefl _), hx, hy]
       simp only
       rw [Kglob, dite_eq_left rfl]
     have hR : rowKer (PairVal.vRdef D u u' F0 what₂ δ M) κ (nc * α) x.1 y.1 =

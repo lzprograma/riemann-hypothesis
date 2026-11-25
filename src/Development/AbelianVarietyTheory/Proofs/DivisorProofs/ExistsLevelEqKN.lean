@@ -53,7 +53,6 @@ open scoped TensorProduct
 open scoped Classical
 
 open scoped RestrictedProduct
-set_option autoImplicit false
 noncomputable section
 
 namespace GlobalTheory.LKGeo.KNLevel

@@ -2,117 +2,36 @@ module
 
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.RepresentationTheory.Irreducible
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+import Mathlib.Analysis.Complex.Polynomial.Basic
 
 @[expose] public section
-
-open Matrix GlobalTheory.ClassFin
-open scoped Kronecker ComplexOrder TensorProduct
 
 namespace GlobalTheory.ClassFin
 
 open scoped MonoidAlgebra
 
-open Matrix in
-open scoped Kronecker ComplexOrder TensorProduct in
-open scoped MonoidAlgebra in
 private theorem subalgebra_end_eq_whole_of_isSimpleModule {V : Type} [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] (A : Subalgebra ℂ (Module.End ℂ V)) [IsSimpleModule A V] :
     A = ⊤ := by
-  classical
-  have schur : ∀ f : V →ₗ[A] V, ∃ c : ℂ, ∀ y, f y = c • y := by
-    intro f
-    obtain ⟨c, hc⟩ := (IsSimpleModule.algebraMap_end_bijective_of_isAlgClosed (A := A) (V := V) ℂ).2 f
-    exact ⟨c, fun y => by rw [← hc]; rfl⟩
-  let b := Module.finBasis ℂ V
-  let ι := Fin (Module.finrank ℂ V)
-  let N : Submodule A (ι → V) := Submodule.span A {fun i => b i}
-  obtain ⟨W, hW⟩ := exists_isCompl N
-  let P : (ι → V) →ₗ[A] (ι → V) := N.subtype.comp (Submodule.linearProjOfIsCompl N W hW)
-  have hPN : ∀ x, P x ∈ N := fun x => (Submodule.linearProjOfIsCompl N W hW x).2
-  have hPfix : ∀ x ∈ N, P x = x := fun x hx => by
-    simp only [P, LinearMap.comp_apply, Submodule.subtype_apply]
-    exact congrArg Subtype.val (Submodule.linearProjOfIsCompl_apply_left hW ⟨x, hx⟩)
-  have hcomm : ∀ (T : Module.End ℂ V) (x : ι → V), P (fun i => T (x i)) = fun i => T (P x i) := by
-    intro T x
-    have hsingle : ∀ (i j : ι) (y : V), P (Pi.single j (T y)) i = T (P (Pi.single j y) i) := by
-      intro i j y
-      obtain ⟨c, hc⟩ := schur ((LinearMap.proj i).comp (P.comp (LinearMap.single A (fun _ : ι => V) j)))
-      have h1 := hc (T y)
-      have h2 := hc y
-      simp only [LinearMap.comp_apply, LinearMap.proj_apply, LinearMap.single_apply] at h1 h2
-      rw [h1, h2, map_smul]
-    funext i
-
-    conv_lhs => rw [← Finset.univ_sum_single (fun i => T (x i)), map_sum]
-
-    conv_rhs => rw [← Finset.univ_sum_single x, map_sum]
-
-    simp only [Finset.sum_apply, map_sum, hsingle]
+  have : Module.Finite (Module.End A V) V :=
+    Module.Finite.of_restrictScalars_finite ℂ (Module.End A V) V
   ext T
   simp only [Algebra.mem_top, iff_true]
-  have hmem : (fun i => T (b i)) ∈ N := by
-    have hfix : P (fun i => T (b i)) = fun i => T (b i) := by
-      rw [hcomm T (fun i => b i), hPfix _ (Submodule.mem_span_singleton_self _)]
-    rw [← hfix]
-    exact hPN _
-  obtain ⟨a, ha⟩ := Submodule.mem_span_singleton.1 hmem
-  have hT : T = (a : Module.End ℂ V) := by
-    refine b.ext fun i => ?_
-    have := congrFun ha i
-    exact this.symm
-  rw [hT]
-  exact a.2
+  let F : Module.End (Module.End A V) V :=
+    { toFun := T
+      map_add' := T.map_add
+      map_smul' := fun f x => by
+        obtain ⟨c, rfl⟩ :=
+          (IsSimpleModule.algebraMap_end_bijective_of_isAlgClosed (A := A) (V := V) ℂ).2 f
+        exact T.map_smul c x }
+  obtain ⟨a, ha⟩ := Module.Finite.toModuleEnd_moduleEnd_surjective (R := A) (M := V) F
+  have hT : T = (a : Module.End ℂ V) :=
+    LinearMap.ext fun x => (LinearMap.congr_fun ha x).symm
+  exact hT ▸ a.2
 
-
-open Matrix in
-open scoped Kronecker ComplexOrder TensorProduct in
-open scoped MonoidAlgebra in
-theorem _root_.GlobalTheory.ClassFin.span_range_eq_top_of_isIrreducible :
-    ∀ (G : Type) [Group G] (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ G V) [FiniteDimensional ℂ V], ρ.IsIrreducible → Submodule.span ℂ (Set.range ρ) = ⊤ := by
+theorem span_range_eq_top_of_isIrreducible :
+    ∀ (G : Type) [Group G] (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ G V)
+      [FiniteDimensional ℂ V], ρ.IsIrreducible → Submodule.span ℂ (Set.range ρ) = ⊤ := by
   intro G _ V _ _ ρ _ h
   let A : Subalgebra ℂ (Module.End ℂ V) := Algebra.adjoin ℂ (Set.range ρ)
   have hρA : ∀ g, ρ g ∈ A := fun g => Algebra.subset_adjoin ⟨g, rfl⟩
@@ -124,26 +43,20 @@ theorem _root_.GlobalTheory.ClassFin.span_range_eq_top_of_isIrreducible :
     rw [this, Submonoid.closure_eq]
   let φ : Submodule A V → Subrepresentation ρ := fun M =>
     ⟨M.restrictScalars ℂ, fun g v hv => M.smul_mem (⟨ρ g, hρA g⟩ : A) hv⟩
-  haveI : IsSimpleModule A V := by
-    refine { exists_pair_ne := ⟨⊥, ⊤, fun hbt => ?_⟩, eq_bot_or_eq_top := fun M => ?_ }
-    · obtain ⟨S, S', hS'⟩ := h.exists_pair_ne
-      have hzero : ∀ x : V, x = 0 := fun x => by
-        have : x ∈ (⊤ : Submodule A V) := Submodule.mem_top
-        rw [← hbt] at this
-        exact (Submodule.mem_bot A).1 this
-      have hall : ∀ T U : Subrepresentation ρ, T = U := fun T U => by
-        apply Subrepresentation.ext
-        ext x
-        rw [hzero x]
-        exact ⟨fun _ => U.toSubmodule.zero_mem, fun _ => T.toSubmodule.zero_mem⟩
-      exact hS' (hall S S')
-    · rcases h.eq_bot_or_eq_top (φ M) with hM | hM
-      · left
-        have := congrArg Subrepresentation.toSubmodule hM
-        exact (Submodule.restrictScalars_eq_bot_iff ℂ A V).1 this
-      · right
-        have := congrArg Subrepresentation.toSubmodule hM
-        exact (Submodule.restrictScalars_eq_top_iff ℂ A V).1 this
+  have : IsSimpleModule ℂ[G] ρ.asModule :=
+    (Representation.irreducible_iff_isSimpleModule_asModule ρ).mp h
+  have : Nontrivial V := IsSimpleModule.nontrivial ℂ[G] ρ.asModule
+  have : IsSimpleModule A V := by
+    refine
+      { toNontrivial := (Submodule.nontrivial_iff A).2 inferInstance
+        eq_bot_or_eq_top := fun M => ?_ }
+    rcases h.eq_bot_or_eq_top (φ M) with hM | hM
+    · left
+      have := congrArg Subrepresentation.toSubmodule hM
+      exact (Submodule.restrictScalars_eq_bot_iff ℂ A V).1 this
+    · right
+      have := congrArg Subrepresentation.toSubmodule hM
+      exact (Submodule.restrictScalars_eq_top_iff ℂ A V).1 this
   rw [← hspan, subalgebra_end_eq_whole_of_isSimpleModule A]
   ext x
   simp

@@ -60,17 +60,17 @@ theorem pderiv_rowSubst (h : Matrix (Fin ν) (Fin ν) ℂ) (k : Fin ν) (a : ι)
     have e2 : ∑ m, C (h k m) * (rowSubst h p * (if n = (m, a) then 1 else 0)) =
         rowSubst h p * (if n.2 = a then C (h k n.1) else 0) := by
       by_cases hn : n.2 = a
-      · rw [if_pos hn, Finset.sum_eq_single n.1]
-        · rw [if_pos (show n = (n.1, a) from Prod.ext rfl hn)]
+      · rw [ite_eq_left hn, Finset.sum_eq_single n.1]
+        · rw [ite_eq_left (show n = (n.1, a) from Prod.ext rfl hn)]
           ring
         · intro m _ hm
-          rw [if_neg (fun h' => hm (congrArg Prod.fst h').symm)]
+          rw [ite_eq_right (fun h' => hm (congrArg Prod.fst h').symm)]
           ring
         · intro h'
           exact absurd (Finset.mem_univ _) h'
-      · rw [if_neg hn, mul_zero]
+      · rw [ite_eq_right hn, mul_zero]
         refine Finset.sum_eq_zero (fun m _ => ?_)
-        rw [if_neg (fun h' => hn (congrArg Prod.snd h'))]
+        rw [ite_eq_right (fun h' => hn (congrArg Prod.snd h'))]
         ring
     rw [map_mul, Derivation.leibniz, hp, pderiv_rowSubst_X, smul_eq_mul, smul_eq_mul, ← e2,
       Finset.mul_sum, ← Finset.sum_add_distrib]

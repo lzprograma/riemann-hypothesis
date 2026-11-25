@@ -1,50 +1,6 @@
 module
 
 public import Mathlib.NumberTheory.NumberField.ClassNumber
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -60,7 +16,7 @@ variable {K : Type} [Field K] [NumberField K]
 
 def primeTo (K : Type) [Field K] [NumberField K] (M : ℕ) : Submonoid (Ideal (𝓞 K)) where
   carrier := {I | IsCoprime I (Ideal.span {(M : 𝓞 K)}) ∧ I ≠ ⊥}
-  mul_mem' := fun {I J} hI hJ => ⟨hI.1.mul_left hJ.1, mul_ne_zero hI.2 hJ.2⟩
+  mul_mem' := fun {_ _} hI hJ => ⟨hI.1.mul_left hJ.1, mul_ne_zero hI.2 hJ.2⟩
   one_mem' := ⟨isCoprime_one_left, one_ne_zero⟩
 
 theorem one_mul_mem {R : Type} [CommRing R] {A : Ideal R} {a b : R} (ha : a - 1 ∈ A) (hb : b - 1 ∈ A) : a * b - 1 ∈ A := by
@@ -286,66 +242,6 @@ theorem cls_span {a : 𝓞 K} (ha : a ≠ 0) (h : a - 1 ∈ Ideal.span {(M : �
     ⟨1, a, one_ne_zero, ha, by simp, h, ?_⟩
   rw [Ideal.span_singleton_one, Ideal.top_mul]
 
-
-theorem card_eq_classNumber (D : RayData K 1) : Fintype.card D.G = classNumber K := by
-  classical
-  have htop : Ideal.span {((1 : ℕ) : 𝓞 K)} = ⊤ := by
-    rw [Nat.cast_one, Ideal.span_singleton_one]
-  have hcop : ∀ I : Ideal (𝓞 K), IsCoprime I (Ideal.span {((1 : ℕ) : 𝓞 K)}) := fun I => by
-    rw [htop, ← Ideal.one_eq_top]
-    exact isCoprime_one_right
-  have hmod : ∀ x : 𝓞 K, x ∈ Ideal.span {((1 : ℕ) : 𝓞 K)} := fun x => by
-    rw [htop]
-    exact Submodule.mem_top
-  have heq : ∀ (I J : Ideal (𝓞 K)) (hI : I ≠ ⊥) (hJ : J ≠ ⊥),
-      D.cls I = D.cls J ↔ ClassGroup.mk0 ⟨I, mem_nonZeroDivisors_of_ne_zero hI⟩ =
-        ClassGroup.mk0 ⟨J, mem_nonZeroDivisors_of_ne_zero hJ⟩ := by
-    intro I J hI hJ
-    rw [D.cls_eq I J (hcop I) (hcop J) hI hJ, ClassGroup.mk0_eq_mk0_iff]
-    constructor
-    · rintro ⟨a, b, ha, hb, -, -, h⟩
-      exact ⟨a, b, ha, hb, h⟩
-    · rintro ⟨a, b, ha, hb, h⟩
-      exact ⟨a, b, ha, hb, hmod _, hmod _, h⟩
-  choose r hr using D.cls_surj
-  let f : D.G → ClassGroup (𝓞 K) := fun c =>
-    ClassGroup.mk0 ⟨r c, mem_nonZeroDivisors_of_ne_zero (hr c).2.1⟩
-  have hf : Function.Bijective f := by
-    constructor
-    · intro c c' h
-      rw [← (hr c).2.2, ← (hr c').2.2]
-      exact (heq _ _ (hr c).2.1 (hr c').2.1).mpr h
-    · intro x
-      obtain ⟨⟨J, hJ⟩, rfl⟩ := ClassGroup.mk0_surjective x
-      have hJ' : J ≠ ⊥ := nonZeroDivisors.ne_zero hJ
-      exact ⟨D.cls J, (heq _ _ (hr _).2.1 hJ').mp (hr _).2.2⟩
-  rw [NumberField.classNumber]
-  exact Fintype.card_of_bijective hf
-
-theorem cls_two_ne_one (D : RayData ℚ 5) : D.cls (Ideal.span {2}) ≠ 1 := by
-  have hcop : IsCoprime (Ideal.span {(2 : 𝓞 ℚ)}) (Ideal.span {((5 : ℕ) : 𝓞 ℚ)}) := by
-    rw [Ideal.isCoprime_iff_exists]
-    refine ⟨2 * (-2), Ideal.mul_mem_right _ _ (Ideal.mem_span_singleton_self 2),
-      ((5 : ℕ) : 𝓞 ℚ) * 1, Ideal.mul_mem_right _ _ (Ideal.mem_span_singleton_self _), ?_⟩
-    push_cast
-    ring
-  have h2 : Ideal.span {(2 : 𝓞 ℚ)} ≠ ⊥ := by
-    rw [Ne, Ideal.span_singleton_eq_bot]
-    exact two_ne_zero
-  intro h
-  obtain ⟨a, b, -, -, ha1, hb1, hab⟩ := (D.cls_eq_one_iff hcop h2).mp h
-  rw [Ideal.span_singleton_mul_span_singleton, Ideal.span_singleton_eq_span_singleton] at hab
-  have hab' := hab.map Rat.ringOfIntegersEquiv
-  rw [map_mul, map_ofNat] at hab'
-  have ha5 : (5 : ℤ) ∣ Rat.ringOfIntegersEquiv a - 1 := by
-    have hd := map_dvd Rat.ringOfIntegersEquiv (Ideal.mem_span_singleton.mp ha1)
-    rw [map_natCast, map_sub, map_one] at hd
-    exact_mod_cast hd
-  have hb5 : (5 : ℤ) ∣ Rat.ringOfIntegersEquiv b - 1 := by
-    have hd := map_dvd Rat.ringOfIntegersEquiv (Ideal.mem_span_singleton.mp hb1)
-    rw [map_natCast, map_sub, map_one] at hd
-    exact_mod_cast hd
-  rcases Int.associated_iff.mp hab' with h' | h' <;> omega
 
 end RayData
 

@@ -10,8 +10,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 
 namespace Formalism.IndefR.Mi
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def nfScal (κ : ℕ → ℕ → D.host.E) (s : ℕ → D.host.E) (j : ℕ) : ℕ → D.host.E

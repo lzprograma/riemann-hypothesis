@@ -13,6 +13,7 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValUFD
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
 import Mathlib.RingTheory.RegularLocalRing.Defs
+import ReciprocityTheory.SemistableReduction.RestBlockSubstIsMultiHomogeneous
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.BlockSphereProbIsProbabilityMeasure, ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FZEqConstMulIrreduciblePow
@@ -28,20 +29,7 @@ open NumberField
 
 theorem blockSphereProb_isProbabilityMeasure {B n : ℕ} (hn : 0 < n) :
     MeasureTheory.IsProbabilityMeasure (ReciprocityTheory.MultiplicativeHeights.blockSphereProb B n) := by
-  unfold ReciprocityTheory.MultiplicativeHeights.blockSphereProb
-  haveI : MeasureTheory.IsProbabilityMeasure (ReciprocityTheory.MultiplicativeHeights.sphereProb n) := by
-    unfold ReciprocityTheory.MultiplicativeHeights.sphereProb
-    have hne : ∃ x : EuclideanSpace ℂ (Fin n), x ≠ 0 :=
-      ⟨EuclideanSpace.single ⟨0, hn⟩ 1, by simp⟩
-    have hdim : 0 < Module.finrank ℝ (EuclideanSpace ℂ (Fin n)) :=
-      Module.finrank_pos_iff_exists_ne_zero.mpr hne
-    apply ProbabilityTheory.cond_isProbabilityMeasure_of_finite
-    · rw [MeasureTheory.Measure.toSphere_apply_univ]
-      refine mul_ne_zero ?_ (Metric.measure_ball_pos _ _ one_pos).ne'
-      exact_mod_cast hdim.ne'
-    · rw [MeasureTheory.Measure.toSphere_apply_univ]
-      exact ENNReal.mul_ne_top (ENNReal.natCast_ne_top _) (MeasureTheory.measure_ball_lt_top).ne
-  infer_instance
+  apply _root_.ReciprocityTheory.MultiplicativeHeights.blockSphereMeasure_isProbability <;> assumption
 
 theorem height_const_eq_zero {K : Type} [Field K] [NumberField K] {B n : ℕ} (hn : 0 < n) (a : K) :
     ReciprocityTheory.MultiplicativeHeights.h0 (MvPolynomial.C a : MvPolynomial (Fin B × Fin n) K) = 0 := by
@@ -59,7 +47,7 @@ theorem height_const_eq_zero {K : Type} [Field K] [NumberField K] {B n : ℕ} (h
     unfold ReciprocityTheory.MultiplicativeHeights.gaussAbs
     by_cases ha : a = 0
     · simp [ha]
-    · rw [MvPolynomial.support_C, if_neg ha, Finset.sup_singleton, MvPolynomial.coeff_C, if_pos rfl,
+    · rw [MvPolynomial.support_C, ite_eq_right ha, Finset.sup_singleton, MvPolynomial.coeff_C, ite_eq_left rfl,
         Real.coe_toNNReal (w a) (by exact w.1.nonneg a)]
   simp_rw [hgauss, hmean]
   by_cases ha : a = 0
@@ -249,8 +237,7 @@ theorem fZ_factor_positive_places (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (F : KTp
   refine ⟨κ, hP0fin.toFinset, fun p => (Nn p).toNat, hκ, hTS,
     IsFractionRing.injective _ _ hF', ?_⟩
   intro p hpT hpos
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   have hz : Nn p = 0 := by
     rw [hNn]
     refine (finsum_mem_congr rfl fun w hw => ?_).trans (finsum_mem_zero _)
@@ -327,7 +314,7 @@ theorem relation_section_identity (hd : d.AxH 𝒜) (c : ι) (i : Fin (d.D + 1))
         algebraMap (MvPolynomial (SVar d.D d.N) (Ω c)) (OmS (Ω c) d.D d.N)
           (-∑ k, MvPolynomial.X (Sum.inr (i, k)) * MvPolynomial.C (d.x c k)) := by
       rw [hX]
-      simp only [sImg, hS0, if_neg hi]
+      simp only [sImg, hS0, ite_eq_right hi]
     have hB : ∀ k : Fin d.N, d.sH c (MvPolynomial.X (i, (d.jc c).succAbove k)) =
         algebraMap (MvPolynomial (SVar d.D d.N) (Ω c)) (OmS (Ω c) d.D d.N)
           (MvPolynomial.X (Sum.inr (i, k))) := by
@@ -432,7 +419,7 @@ theorem ker_relation_map_ne_bot (hd : d.AxH 𝒜) (c : ι) : RingHom.ker (d.rela
     by_cases hj : j = d.jc c
     · subst hj
 
-      simp only [if_true, Fin.insertNth_apply_same, map_neg, map_sum, map_mul, MvPolynomial.rename_X,
+      simp only [ite_true, Fin.insertNth_apply_same, map_neg, map_sum, map_mul, MvPolynomial.rename_X,
       MvPolynomial.rename_C, g]
       congr 1
       have e1 := Finset.add_sum_erase Finset.univ (fun k => (MvPolynomial.X (i, k) :
@@ -443,7 +430,7 @@ theorem ker_relation_map_ne_bot (hd : d.AxH 𝒜) (c : ι) : RingHom.ker (d.rela
         (d.jc c)
       exact add_left_cancel (e1.trans e2)
     · obtain ⟨k', rfl⟩ := Fin.exists_succAbove_eq hj
-      simp only [if_neg hj, Fin.insertNth_apply_succAbove, MvPolynomial.rename_X, g]
+      simp only [ite_eq_right hj, Fin.insertNth_apply_succAbove, MvPolynomial.rename_X, g]
   have hφ : Function.Injective φ := by
     intro a b hab
     apply hinj

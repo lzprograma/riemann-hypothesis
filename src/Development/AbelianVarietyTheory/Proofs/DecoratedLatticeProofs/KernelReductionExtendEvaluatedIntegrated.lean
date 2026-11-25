@@ -96,11 +96,11 @@ theorem toTrip_ofTrip (ev it : Finset (m × m')) (hd : Disjoint ev it) (β : Mat
   obtain ⟨x₀, x₁, x₂⟩ := x
   refine Prod.ext ?_ (Prod.ext ?_ ?_) <;> funext i
   · have h := i.2
-    simp only [toTrip, ofTrip, Matrix.of_apply, dif_neg h.1, dif_neg h.2]
+    simp only [toTrip, ofTrip, Matrix.of_apply, dite_eq_right h.1, dite_eq_right h.2]
   · have h : i.1 ∉ it := Finset.disjoint_left.mp hd i.2
-    simp only [toTrip, ofTrip, Matrix.of_apply, dif_neg h, dif_pos i.2]
+    simp only [toTrip, ofTrip, Matrix.of_apply, dite_eq_right h, dite_eq_left i.2]
     ring
-  · simp only [toTrip, ofTrip, Matrix.of_apply, dif_pos i.2]
+  · simp only [toTrip, ofTrip, Matrix.of_apply, dite_eq_left i.2]
 
 variable [TopologicalSpace k] [IsTopologicalRing k]
 
@@ -150,10 +150,10 @@ theorem toTrip_add (ev it : Finset (m × m')) (hd : Disjoint ev it) (β t : Matr
       toTrip ev it β t + (0, 0, a) := by
   refine Prod.ext ?_ (Prod.ext ?_ ?_) <;> funext i
   · have h := i.2
-    simp only [toTrip, Matrix.add_apply, sum_single_apply, h.1, if_false, add_zero] <;> simp
+    simp only [toTrip, Matrix.add_apply, sum_single_apply, h.1, ite_false, add_zero] <;> simp
   · have h : i.1 ∉ it := Finset.disjoint_left.mp hd i.2
-    simp only [toTrip, Matrix.add_apply, sum_single_apply, h, if_false, add_zero] <;> simp
-  · simp only [toTrip, Matrix.add_apply, sum_single_apply, i.2, if_true, dif_pos] <;> simp
+    simp only [toTrip, Matrix.add_apply, sum_single_apply, h, ite_false, add_zero] <;> simp
+  · simp only [toTrip, Matrix.add_apply, sum_single_apply, i.2, ite_true, dite_eq_left] <;> simp
 
 theorem ofTrip_zero (ev it : Finset (m × m')) (β : Matrix m m' k) (x₀ : Rest ev it → k) (a : {e // e ∈ it} → k) :
     ofTrip ev it β (x₀, 0, a) = fill ev it β (ofTrip ev it β (x₀, 0, 0)) a := by

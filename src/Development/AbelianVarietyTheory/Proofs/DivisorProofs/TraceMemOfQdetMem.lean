@@ -76,12 +76,12 @@ theorem prod_affine (L : List (ℂ × A)) : ∃ c : ℕ → A, (∀ k, L.length 
     · intro k hk
       simp only [List.length_cons] at hk
       have h1 : k ≠ 0 := by omega
-      simp only [h1, if_false, hc0 k (by omega), hc0 (k - 1) (by omega), smul_zero, mul_zero, add_zero]
+      simp only [h1, ite_false, hc0 k (by omega), hc0 (k - 1) (by omega), smul_zero, mul_zero, add_zero]
     · intro u
       have hS1 : ∑ k ∈ Finset.range (L.length + 1 + 1), u ^ k • (if k = 0 then (0:A) else p.1 • c (k - 1)) =
           ∑ k ∈ Finset.range (L.length + 1), (u * p.1) • (u ^ k • c k) := by
         rw [Finset.sum_range_succ']
-        simp only [Nat.succ_ne_zero, if_false, Nat.add_sub_cancel, if_true, smul_zero, add_zero]
+        simp only [Nat.succ_ne_zero, ite_false, Nat.add_sub_cancel, ite_true, smul_zero, add_zero]
         refine Finset.sum_congr rfl fun k _ => ?_
         rw [smul_smul, smul_smul, pow_succ]; ring_nf
       have hS2 : ∑ k ∈ Finset.range (L.length + 1 + 1), u ^ k • (p.2 * c k) =
@@ -90,7 +90,7 @@ theorem prod_affine (L : List (ℂ × A)) : ∃ c : ℕ → A, (∀ k, L.length 
         simp
       simp only [List.map_cons, List.prod_cons, hcu, List.length_cons, smul_add, Finset.sum_add_distrib, hS1, hS2,
         add_mul, Finset.mul_sum, smul_mul_assoc, one_mul]
-    · simp only [List.length_cons, Nat.succ_ne_zero, if_false, Nat.add_sub_cancel, hctop,
+    · simp only [List.length_cons, Nat.succ_ne_zero, ite_false, Nat.add_sub_cancel, hctop,
         hc0 (L.length + 1) (by omega), mul_zero, add_zero, dprod, List.map_cons, List.prod_cons, smul_smul]
     · intro j hj
       simp only [List.length_cons, Nat.add_right_cancel_iff] at hj
@@ -98,11 +98,11 @@ theorem prod_affine (L : List (ℂ × A)) : ∃ c : ℕ → A, (∀ k, L.length 
       beta_reduce
       rw [hctop, sub1_cons]
       rcases Nat.eq_zero_or_pos L.length with h | h
-      · rw [if_pos h]
+      · rw [ite_eq_left h]
         have : L = [] := List.length_eq_zero_iff.1 h
         subst this
         simp [sub1_nil, dprod]
-      · rw [if_neg (by omega), hcsub _ (by omega), mul_smul_comm, mul_one, add_comm]
+      · rw [ite_eq_right (by omega), hcsub _ (by omega), mul_smul_comm, mul_one, add_comm]
 
 end GlobalTheory.CapTrace
 

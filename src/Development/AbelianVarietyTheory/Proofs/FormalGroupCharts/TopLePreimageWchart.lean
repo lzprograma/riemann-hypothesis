@@ -46,7 +46,6 @@ noncomputable section
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj MvPowerSeries
 open ReciprocityTheory.ChartRestriction.G.Chart ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.TB GlobalTheory.JetSer
 open ReciprocityTheory.ChartRestriction.G.TB.WickVanishing
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.GermExist
 
@@ -90,19 +89,5 @@ theorem unit_comp_primφ {S : Scheme.{0}} {A : Over S} [GrpObj A] (w : A ⟶ A) 
   · exact Category.comp_id _
   · exact congrArg (·.left) hw
   · exact congrArg (·.left) h1
-
-theorem germ_exists_unique : JetAlgSt → RepSt → SerSt → SerExSt → GermExSt := by
-  intro _ hrep hser hex R _ G _ L _ w hw ρ d x hx j hj m s
-  obtain ⟨h1, -⟩ := hex R G d x hx
-  obtain ⟨σ, hσ, uσ⟩ := h1 (LB.wchart L (K := PUnit) (fun _ => 𝟙 G.left) (fun _ => j))
-    (top_le_preimage_wchart L _ j _ (fun _ => by rw [Category.comp_id]; exact hj)) (s.f (fun _ => j))
-  obtain ⟨r, hr, ur⟩ := h1 (LB.wchart L (primφ w) (fun _ => j))
-    (top_le_preimage_wchart L _ j _ (fun k => by rw [unit_comp_primφ w hw k]; exact hj)) (ρ.s (fun _ => j)).val
-  have hu : IsUnit (r ^ m) := (isUnit_of_isSer1 hrep hser hx (Units.isUnit _) hr).pow m
-  obtain ⟨v, hv⟩ := hu
-  refine ⟨σ * (v⁻¹).val, ⟨σ, r, hσ, hr, by rw [← hv, Units.inv_mul_cancel_right]⟩, ?_⟩
-  rintro f ⟨σ', r', hσ', hr', hf⟩
-  rw [uσ σ' hσ', ur r' hr', ← hv] at hf
-  rw [← hf, Units.mul_inv_cancel_right]
 
 end GlobalTheory.GermExist

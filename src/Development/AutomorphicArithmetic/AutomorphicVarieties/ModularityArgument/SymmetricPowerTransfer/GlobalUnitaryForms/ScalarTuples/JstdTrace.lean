@@ -134,9 +134,9 @@ theorem UpperTheory.V.Z.Sym.Loc.dOrb : UpperTheory.V.Z.Sym.Loc.DOrb := by
       ext s t
       by_cases hst : s = t <;> simp [hst, hz₀]
     rw [e, F.2 z _ ⟨k, rfl⟩]
-    exact (if_pos ((p1 _).1 hk)).trans (by simp)
+    exact (ite_eq_left ((p1 _).1 hk)).trans (by simp)
   · rw [F.1 _ h]
-    exact if_neg fun h' => h (Subgroup.mem_sup_right ((p1 _).2 h'))
+    exact ite_eq_right fun h' => h (Subgroup.mem_sup_right ((p1 _).2 h'))
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.DOrb =====

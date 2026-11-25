@@ -4,54 +4,11 @@ public import Formalism.RealPlaceAnalysis.FockPairGl
 public import Mathlib.RingTheory.Derivation.Lie
 public import Formalism.GradedWeylDivisibility.StatementA
 public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.RowDivStable
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalRingCardinality.Params
+import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.ProdMapPowSingle
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.RealPlaceAnalysis.RealPlaceTaylor.SatisfiesGlRelationsBilinearLeft, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.CapelliOps
@@ -69,17 +26,7 @@ namespace Formalism.REAL
 
 lemma pderiv_pderiv_comm_real_place_taylor {σ : Type*} (v w : σ) (f : MvPolynomial σ ℂ) :
     pderiv v (pderiv w f) = pderiv w (pderiv v f) := by
-  classical
-  have hc : ⁅(pderiv v : Derivation ℂ (MvPolynomial σ ℂ) (MvPolynomial σ ℂ)),
-      (pderiv w : Derivation ℂ (MvPolynomial σ ℂ) (MvPolynomial σ ℂ))⁆ = 0 := by
-    apply MvPolynomial.derivation_ext
-    intro i
-    rw [Derivation.commutator_apply]
-    simp only [pderiv_X, Pi.single_apply]
-    split_ifs <;> simp
-  have hf := congrArg (fun D : Derivation ℂ (MvPolynomial σ ℂ) (MvPolynomial σ ℂ) => D f) hc
-  simp only [Derivation.commutator_apply, Derivation.zero_apply] at hf
-  exact sub_eq_zero.mp hf
+  apply _root_.PositivityTheory.Rg.Sw.LC.CoreBb.pderiv_comm' <;> assumption
 
 lemma bilinear_commutator_identity {A : Type*} [Ring A] (p1 b1 p2 b2 d1 d2 : A)
     (h1 : b1 * p2 - p2 * b1 = d1) (h2 : b2 * p1 - p1 * b2 = d2)
@@ -134,7 +81,7 @@ lemma mulX_mul_mulX_comm (v w : σ) : (Mx v) * (Mx w) = (Mx w) * (Mx v) := by
 
 lemma deriv_mul_mulX_comm_of_ne {v w : σ} (h : v ≠ w) : (D v) * (Mx w) = (Mx w) * (D v) := by
   have hs := deriv_mulX_commutator v w
-  rw [if_neg h] at hs
+  rw [ite_eq_right h] at hs
   exact sub_eq_zero.mp hs
 
 end ops
@@ -146,32 +93,32 @@ theorem canonicalCommutation_holds : CCR := by
     by_cases hh : i = j ∧ a = b
     · obtain ⟨rfl, rfl⟩ := hh
       simp
-    · rw [if_neg hh, if_neg]
+    · rw [ite_eq_right hh, ite_eq_right]
       intro he
       exact hh (Prod.mk.inj he)
   simp only [bop, bpl]
   by_cases h1 : sgnv ε ε' i a = true <;> by_cases h2 : sgnv ε ε' j b = true
-  · simp only [if_pos h1, if_pos h2]
+  · simp only [ite_eq_left h1, ite_eq_left h2]
     exact ⟨(deriv_mulX_commutator _ _).trans hI, deriv_mul_deriv_comm _ _, mulX_mul_mulX_comm _ _⟩
   · have hne : (i, a) ≠ (j, b) := by
       intro he
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
       exact h2 h1
     have hnd : ¬(i = j ∧ a = b) := fun hh => hne (by rw [hh.1, hh.2])
-    simp only [if_pos h1, if_neg h2]
+    simp only [ite_eq_left h1, ite_eq_right h2]
     refine ⟨?_, deriv_mul_mulX_comm_of_ne hne, ?_⟩
-    · rw [if_neg hnd, mul_neg, neg_mul, deriv_mul_deriv_comm (i, a) (j, b), sub_self]
+    · rw [ite_eq_right hnd, mul_neg, neg_mul, deriv_mul_deriv_comm (i, a) (j, b), sub_self]
     · rw [mul_neg, neg_mul, deriv_mul_mulX_comm_of_ne hne.symm]
   · have hne : (i, a) ≠ (j, b) := by
       intro he
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
       exact h1 h2
     have hnd : ¬(i = j ∧ a = b) := fun hh => hne (by rw [hh.1, hh.2])
-    simp only [if_neg h1, if_pos h2]
+    simp only [ite_eq_right h1, ite_eq_left h2]
     refine ⟨?_, (deriv_mul_mulX_comm_of_ne hne.symm).symm, ?_⟩
-    · rw [if_neg hnd, mulX_mul_mulX_comm (i, a) (j, b), sub_self]
+    · rw [ite_eq_right hnd, mulX_mul_mulX_comm (i, a) (j, b), sub_self]
     · rw [neg_mul, mul_neg, deriv_mul_mulX_comm_of_ne hne]
-  · simp only [if_neg h1, if_neg h2]
+  · simp only [ite_eq_right h1, ite_eq_right h2]
     refine ⟨(mulX_negDeriv_commutator _ _).trans hI, mulX_mul_mulX_comm _ _, ?_⟩
     rw [neg_mul_neg, neg_mul_neg, deriv_mul_deriv_comm (i, a) (j, b)]
 
@@ -303,14 +250,14 @@ theorem pol_X (R : Type) [CommRing R] {r m : ℕ} (a b : Fin r) (v : Fin r × Fi
   classical
   rw [pol_apply]
   by_cases hv : v.1 = b
-  · rw [if_pos hv, Finset.sum_eq_single v.2]
+  · rw [ite_eq_left hv, Finset.sum_eq_single v.2]
     · have : (b, v.2) = v := by rw [← hv]
       rw [this, pderiv_X_self, mul_one]
     · intro s _ hs
       rw [pderiv_X_of_ne, mul_zero]
       intro h; exact hs (by rw [h])
     · simp
-  · rw [if_neg hv]
+  · rw [ite_eq_right hv]
     refine Finset.sum_eq_zero fun s _ => ?_
     rw [pderiv_X_of_ne, mul_zero]
     intro h; exact hv (by rw [h])
@@ -340,7 +287,7 @@ theorem deriv_rowGen (R : Type) [CommRing R] {r m : ℕ} (a b : Fin r) (f : MvPo
         rowGen R a b (if v.1 = b then X (a, v.2) else 0) := by
       rw [rowGen_X']
       by_cases hv : v.1 = b
-      · simp only [hv, if_true, Polynomial.derivative_add, Polynomial.derivative_C, zero_add,
+      · simp only [hv, ite_true, Polynomial.derivative_add, Polynomial.derivative_C, zero_add,
           Polynomial.derivative_mul, Polynomial.derivative_X, one_mul, mul_zero, add_zero, rowGen_X']
         by_cases hab : a = b
         · simp [hab]; ring
@@ -372,14 +319,14 @@ theorem rowDiv_succ (R : Type) [CommRing R] {r m : ℕ} (a b : Fin r) (k : ℕ)
   unfold rowDiv
   rw [← h]
   by_cases hab : a = b
-  · simp only [hab, if_true, add_mul, one_mul, Polynomial.coeff_add]
+  · simp only [hab, ite_true, add_mul, one_mul, Polynomial.coeff_add]
     rw [Polynomial.coeff_derivative]
     cases k with
     | zero => simp [Polynomial.coeff_derivative]
     | succ k =>
       rw [Polynomial.coeff_X_mul, Polynomial.coeff_derivative]
       push_cast; ring
-  · simp only [hab, if_false, one_mul, add_zero, Polynomial.coeff_derivative]
+  · simp only [hab, ite_false, one_mul, add_zero, Polynomial.coeff_derivative]
 
 theorem pol_eq_rowDiv (R : Type) [CommRing R] {r m : ℕ} (a b : Fin r) (f : MvPolynomial (Fin r × Fin m) R) :
     pol R a b f = rowDiv R a b 1 f := by

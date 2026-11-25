@@ -138,7 +138,7 @@ theorem mul_iterMat [Nontrivial R] (Y : Matrix (Fin n) (Fin n) R) (v : Fin n →
   · rw [Finset.sum_eq_single ⟨(j : ℕ) + 1, hj⟩]
     · simp
     · intro b _ hb
-      rw [if_neg (fun h => hb (Fin.ext h)), mul_zero]
+      rw [ite_eq_right (fun h => hb (Fin.ext h)), mul_zero]
     · simp
   · have : (j : ℕ) + 1 = n := by omega
     rw [this, pow_dim_mulVec, ← Finset.sum_neg_distrib]

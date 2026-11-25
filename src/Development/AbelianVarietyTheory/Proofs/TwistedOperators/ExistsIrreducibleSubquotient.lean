@@ -57,21 +57,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.BoundaryMaps
 
-section General
-
-variable {G H V W U : Type} [Group G] [Group H] [AddCommGroup V] [Module ℂ V]
-  [AddCommGroup W] [Module ℂ W] [AddCommGroup U] [Module ℂ U]
-
-end General
-
-section Local
-
-variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-  {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
-
-
-end Local
-
 section Products
 
 open Matrix

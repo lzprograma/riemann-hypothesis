@@ -94,12 +94,12 @@ theorem zhat_monomial {z z' : Fin (2 * r + k + 1) → ℂ} {g₀ : Matrix (Fin (
   simp only [Formalism.L2.SG.PtCell.mono, Formalism.FourierDecayAlt.C2.monoP, Matrix.of_apply, Function.Involutive.coe_toPerm]
   by_cases h : a = Formalism.L2.SG.PtCell.pinv p i
   · have h2 : i = Formalism.L2.SG.PtCell.pinv p a := by rw [h, hinv]
-    rw [if_pos h]
-    simp only [h2, if_true]
+    rw [ite_eq_left h]
+    simp only [h2, ite_true]
     ring
   · have h2 : ¬ i = Formalism.L2.SG.PtCell.pinv p a := fun e => h (by rw [e, hinv])
-    rw [if_neg h]
-    simp only [h2, if_false]
+    rw [ite_eq_right h]
+    simp only [h2, ite_false]
     ring
 
 theorem cell_representation : Formalism.MainNotions.S.Pv.LemmaJ.CellRep := by

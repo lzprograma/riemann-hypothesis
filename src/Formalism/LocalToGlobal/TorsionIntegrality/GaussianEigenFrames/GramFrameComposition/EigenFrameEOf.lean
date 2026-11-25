@@ -81,9 +81,9 @@ theorem EigenFrame_of (hB : GramBasic) (hC : EigenCompat) : EigenFrame := by
         simp
         ring
     · have h1 := hsplit x y
-      simp only [if_neg hxy, zero_add] at h1
+      simp only [ite_eq_right hxy, zero_add] at h1
       refine ⟨q1 x y, hq1 x y, ?_⟩
-      rw [if_neg, zero_add]
+      rw [ite_eq_right, zero_add]
       · exact h1
       · rintro ⟨h2, _, h3⟩
         apply hxy

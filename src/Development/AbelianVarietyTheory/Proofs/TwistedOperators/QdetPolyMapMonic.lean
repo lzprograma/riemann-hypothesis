@@ -63,9 +63,9 @@ theorem affine_mul_polyMap_top {A : Type} [Ring A] [Algebra ℂ A] (d : ℕ) (p 
     refine sum_congr rfl fun i _ => ?_
     simp only [smul_mul_assoc, mul_smul_comm, smul_smul, pow_succ]
   · rw [sum_range_succ _ (d + 1), mul_sum]
-    simp only [lt_irrefl, if_false, smul_zero, add_zero]
+    simp only [lt_irrefl, ite_false, smul_zero, add_zero]
     refine sum_congr rfl fun i hi => ?_
-    rw [if_pos (mem_range.mp hi), mul_smul_comm]
+    rw [ite_eq_left (mem_range.mp hi), mul_smul_comm]
 
 theorem prod_affine_polyMap_top {A : Type} [Ring A] [Algebra ℂ A] (t : ℕ) (p q : Fin t → A) :
     ∃ c : ℕ → A, c t = (List.ofFn p).prod ∧ ∀ u : ℂ, (List.ofFn fun k => u • p k + q k).prod
@@ -104,12 +104,11 @@ theorem qdet_polyMap_monic (A : Type) [Ring A] [Algebra ℂ A] (n : ℕ) (E : Fi
     intro σ hσ
     rw [hct σ]
     obtain ⟨k, hk⟩ : ∃ k, σ k ≠ k := by
-      by_contra hne
-      push_neg at hne
+      by_contra! hne
       exact hσ (Equiv.ext hne)
     apply List.prod_eq_zero
     rw [List.mem_ofFn]
-    exact ⟨k, if_neg hk⟩
+    exact ⟨k, ite_eq_right hk⟩
   refine ⟨fun i => ∑ σ : Equiv.Perm (Fin n), ((Equiv.Perm.sign σ : ℤ) : A) * c σ i, ?_, fun u => ?_⟩
   · simp only
     rw [Finset.sum_eq_single (1 : Equiv.Perm (Fin n))]

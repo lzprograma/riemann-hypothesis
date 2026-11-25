@@ -18,8 +18,6 @@ namespace Formalism.L2.SG.NormCut
 
 section Par
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 theorem hform_mulVec' {A : Type} [CommRing A] {n : Type} [Fintype n] [DecidableEq n] (σ : A →+* A)
@@ -162,14 +160,14 @@ theorem leviM_one (v : TR.Pl) : leviM TR 1 v = 1 := by
   rw [e, map_add (f := _), res_eq_zero_of_Z TR v _ hZ, zero_add]
   by_cases h : i = j
   · subst h
-    simp only [if_true, Matrix.one_apply_eq]
+    simp only [ite_true, Matrix.one_apply_eq]
     have e2 : (⟨X.ew, X.ew_int⟩ : IntAf X.B.I.F X.B.I.E) = ⟨X.ew * (1 : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F),
         (IntAf X.B.I.F X.B.I.E).mul_mem X.ew_int (one_mem _)⟩ := by apply Subtype.ext; simp
     have := TR.res_ew v 1
     simp only [OneMemClass.coe_one] at this
     convert this using 2
     exact (map_one (TR.res v)).symm
-  · simp only [h, if_false, Matrix.one_apply_ne h]
+  · simp only [h, ite_false, Matrix.one_apply_ne h]
     exact map_zero (TR.res v) |>.symm ▸ (by congr 1)
 
 end Par

@@ -1,50 +1,6 @@
 module
 
 public import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -201,7 +157,7 @@ theorem dSpace_congr (hy : ∃ y : E ⊗[F] FiniteAdeleRing (𝓞 F) F,
     refine diag_congr _ _ _ _ (fun i => ?_)
     by_cases h : negTail N q i = negTail N q' i
     · simp [h]
-    · simp only [if_neg h]
+    · simp only [ite_eq_right h]
       have h' : (sgn (negTail N q' i) : E ⊗[F] FiniteAdeleRing (𝓞 F) F) = - sgn (negTail N q i) := by
         cases h1 : negTail N q i <;> cases h2 : negTail N q' i <;> simp_all [sgn]
       rw [h', mul_right_comm, hy]
@@ -308,11 +264,11 @@ theorem ixN_ne_ixZ (i : Fin R.rS) : ixN R i ≠ ixZ R := by
 
 theorem baseForm_positive_negative_zero (i i' : Fin R.rS) :
     f0 (E := E) R (Pi.single (ixP R i) 1) (Pi.single (ixN R i') 1) = 0 := by
-  rw [diagForm_single, if_neg (posIndex_ne_negIndex R i i')]
+  rw [diagForm_single, ite_eq_right (posIndex_ne_negIndex R i i')]
 
 theorem baseForm_negative_positive_zero (i i' : Fin R.rS) :
     f0 (E := E) R (Pi.single (ixN R i) 1) (Pi.single (ixP R i') 1) = 0 := by
-  rw [diagForm_single, if_neg (posIndex_ne_negIndex R i' i).symm]
+  rw [diagForm_single, ite_eq_right (posIndex_ne_negIndex R i' i).symm]
 
 def hypEv (i : Fin R.rS) : Fin (R.rankY 0) → E := Pi.single (ixP R i) 1 + Pi.single (ixN R i) 1
 
@@ -366,7 +322,7 @@ theorem hyperbolic_orthogonal_anisotropic (i : Fin R.rS) :
 include hpz in
 theorem anisotropic_vector_norm_eq_neg : f0 R (Pi.single (ixZ R) pz) (Pi.single (ixZ R) pz) = -(T : E) := by
   rw [diagForm_single_left, neg_ixZ]
-  simp only [Pi.single_eq_same, sgn, if_true]
+  simp only [Pi.single_eq_same, sgn, ite_true]
   rw [← hpz]
   ring
 

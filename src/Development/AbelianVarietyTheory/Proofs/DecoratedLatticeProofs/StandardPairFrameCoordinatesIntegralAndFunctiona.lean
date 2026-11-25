@@ -43,7 +43,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open NumberField IsDedekindDomain Matrix MeasureTheory GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.SeeSaw GlobalTheory.LatPair GlobalTheory.SplitWeil
 open GlobalTheory.Unf GlobalTheory.Grow GlobalTheory.FinPl ValuativeRel IsLocalRing
 open scoped TensorProduct Pointwise
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 namespace GlobalTheory.AdForm.StdPairCoord
@@ -103,26 +102,26 @@ theorem GlobalTheory.AdForm.stdT_pair_coords : ∀ {B : Base} {X : PreX B.toPre}
     rw [hs1, Pi.single_apply]
     by_cases h : r₀ = r
     · subst h
-      rw [if_pos rfl, if_pos rfl, mul_one]
-    · rw [if_neg h, if_neg (Ne.symm h), mul_zero, map_zero, map_zero]
+      rw [ite_eq_left rfl, ite_eq_left rfl, mul_one]
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h), mul_zero, map_zero, map_zero]
   choose s hs using hs
   have key : ∀ y : Fin ((I.rec7 l Z).sp.X j).rank → 𝒪[k], (Q j i).HasVal ((β j i).b' *ᵥ fun r => (y r : k))
       (residue 𝒪[k] (s r₀ * y r₀)) := fun y => by
     have h1 := hasVal_mulVec (Q j i) (β j i).b' s (fun r => (hs r).2) y
     convert h1 using 1
     rw [Finset.sum_eq_single r₀ (fun r _ hr => ?_) (fun h => (h (Finset.mem_univ _)).elim), map_mul, mul_comm]
-    have : s r = 0 := Subtype.ext ((hs r).1.trans (if_neg hr))
+    have : s r = 0 := Subtype.ext ((hs r).1.trans (ite_eq_right hr))
     rw [this, map_zero, mul_zero]
   constructor
   · intro h
     have hx := (hmem x).1 h.mem
-    refine ⟨fun r => ⟨_, hx r⟩, fun r => rfl, s r₀, (hs r₀).1.trans (if_pos rfl), h.unique ?_⟩
+    refine ⟨fun r => ⟨_, hx r⟩, fun r => rfl, s r₀, (hs r₀).1.trans (ite_eq_left rfl), h.unique ?_⟩
     have := key fun r => ⟨_, hx r⟩
     rwa [show ((β j i).b' *ᵥ fun r => (((⟨_, hx r⟩ : 𝒪[k]) : k))) = x by
       rw [show (fun r => (((⟨_, hx r⟩ : 𝒪[k]) : k))) = (β j i).b *ᵥ x from rfl, Matrix.mulVec_mulVec, (β j i).b'b,
         Matrix.one_mulVec]] at this
   · rintro ⟨y, hy, s', hs', rfl⟩
-    obtain rfl : s' = s r₀ := Subtype.ext (hs'.trans ((hs r₀).1.trans (if_pos rfl)).symm)
+    obtain rfl : s' = s r₀ := Subtype.ext (hs'.trans ((hs r₀).1.trans (ite_eq_left rfl)).symm)
     have hx : x = (β j i).b' *ᵥ fun r => (y r : k) := by
       rw [show (fun r => (y r : k)) = (β j i).b *ᵥ x from funext hy, Matrix.mulVec_mulVec, (β j i).b'b, Matrix.one_mulVec]
     rw [hx]

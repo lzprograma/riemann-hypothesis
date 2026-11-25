@@ -152,8 +152,8 @@ private lemma phiOne_congr_of_sub_mulVec_mem_ker {P : Pair k n'} {Q : Pair k n} 
       simpa using h1.add hd
   unfold phiOne
   by_cases hx : Maps P Q x
-  · rw [if_pos (key.2 hx), if_pos hx]
-  · rw [if_neg (mt key.1 hx), if_neg hx]
+  · rw [ite_eq_left (key.2 hx), ite_eq_left hx]
+  · rw [ite_eq_right (mt key.1 hx), ite_eq_right hx]
 
 private lemma isClosed_setOf_mulVec_mem (S : Submodule 𝒪[k] (n' → k)) (L : Submodule 𝒪[k] (n → k))
     [S.IsFullLattice k] [L.IsFullLattice k] : IsClosed {x : Matrix n n' k | ∀ y ∈ S, x *ᵥ y ∈ L} := by
@@ -177,7 +177,7 @@ theorem phiOne_mem (P : Pair k n') (Q : Pair k n) : phiOne P Q ∈ SB (Matrix n 
     exact phiOne_congr_of_sub_mulVec_mem_ker hz
   · refine HasCompactSupport.intro' (hom_lat P.lat Q.lat).1 (isClosed_setOf_mulVec_mem P.lat Q.lat) fun x hx => ?_
     unfold phiOne
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨hm, -⟩
     exact hx hm
 
@@ -256,19 +256,9 @@ def K (hμ : IsUnram μ) (hθ : IsEquivTheta μ π' π θ) (P₀ : Pair k n') (Q
     EqForm π' →ₗ[ℂ] EqForm π :=
   (evalEquiv π Q₀).symm.toLinearMap ∘ₗ kerVec hμ hθ P₀ Q₀ ∘ₗ (evalEquiv π' P₀).toLinearMap
 
-theorem K_apply (hμ : IsUnram μ) (hθ : IsEquivTheta μ π' π θ) (P₀ : Pair k n') (Q₀ : Pair k n) (φ : EqForm π')
-    (h : GL n k) : (K hμ hθ P₀ Q₀ φ).1 (h • Q₀) = π h (θ (φ.1 P₀) (phiOneSB P₀ Q₀)) := by
-  change formOf π Q₀ (kerVec hμ hθ P₀ Q₀ (evalEquiv π' P₀ φ)) (h • Q₀) = _
-  rw [formOf_smul]
-  rfl
-
 
 open Classical in
 def midInd (q : Unif k) (L : Submodule 𝒪[k] (n' → k)) (e₁ : n' → k) (Q : Pair k n) (x : Matrix n n' k) : ℂ :=
   if (∀ y ∈ L, x *ᵥ y ∈ Q.lat) ∧ Q.HasVal (x *ᵥ (q.1 • e₁)) 1 then 1 else 0
-
-
-def scal (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (t : ℕ) : ℂ :=
-  (((resCard k : ℝ) ^ (((t : ℝ) + 1) / 2) : ℝ) : ℂ)
 
 end GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity

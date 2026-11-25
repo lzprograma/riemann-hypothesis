@@ -4,6 +4,7 @@ public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.Sca
 import Mathlib.Algebra.AffineMonoid.UniqueSums
 import Mathlib.RingTheory.Finiteness.Lattice
 import Mathlib.Tactic.TypeStar
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EpsilonFactorRecCompatible
 
 @[expose] public section
 
@@ -292,8 +293,6 @@ theorem iso_sum (a : WDRep h V) (hN : a.N = 0) (U W : Submodule ℂ V) (hU : ∀
       simp only [Submodule.coe_prodEquivOfIsCompl', WDRep.sum_ρ, LinearMap.prodMap_apply, res_ρ_apply, map_add (f := _)],
     fun x => by simp [hN, res]⟩
 
-theorem sumList_cons (x : WD h) (l : List (WD h)) : sumList (x :: l) = x.lpSum (sumList l) := rfl
-
 theorem key : ∀ (s : ℕ) {V : Type*} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] (a : WDRep h V),
     a.N = 0 → ∀ (d : Fin s → ℕ) (ψ : Fin s → Weil h →* ℂˣ), (∀ b, IsSmooth (ψ b)) →
     (∀ b c, b ≠ c → ∃ t : Ine (F := E) A, ψ b (ineIncl h t) ≠ ψ c (ineIncl h t)) →
@@ -387,7 +386,7 @@ theorem key : ∀ (s : ℕ) {V : Type*} [AddCommGroup V] [Module ℂ V] [FiniteD
       · simpa only [Fin.cons_succ] using hv' b
     · rw [List.ofFn_succ]
       simp only [Fin.cons_zero, Fin.cons_succ]
-      rw [sumList_cons, ← hmk, WD.lpSum_mk]
+      rw [SatakeLaw.sumList_cons, ← hmk, WD.lpSum_mk]
       exact (WD.sound hiso).symm
 
 end Isotypic₂

@@ -1,12 +1,8 @@
 module
 
-import Mathlib
+import Mathlib.Algebra.Category.ModuleCat.Descent
 import Mathlib.Algebra.Module.StablyFree.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
@@ -38,7 +34,7 @@ abbrev onT {T T' : LocLat G Qp LL O} (f : LatHom T.L T'.L) : ↥T.L.T →ₗ[O] 
   (f.f.restrictScalars O).restrict f.T_le
 
 theorem onT_inj {T Y Z : LocLat G Qp LL O} {ι : LatHom T.L Y.L} {π : LatHom Y.L Z.L}
-    (h : IsSESLat (Qp := Qp) ι π) : Function.Injective (onT ι) := fun a b hab =>
+    (h : IsSESLat (Qp := Qp) ι π) : Function.Injective (onT ι) := fun _ _ hab =>
   Subtype.ext (h.1 (congrArg Subtype.val hab))
 
 theorem onT_surj {T Y Z : LocLat G Qp LL O} {ι : LatHom T.L Y.L} {π : LatHom Y.L Z.L}

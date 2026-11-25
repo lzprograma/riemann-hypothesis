@@ -6,6 +6,7 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsE
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalComponentsThetaPull
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSConjSatC
 
 @[expose] public section
 
@@ -129,16 +130,10 @@ section Conj
 
 variable {M : Type} [Field M] [NumberField M]
 
-theorem conjSrc_conjSrc_symm (c : M ≃+* M) (w : HeightOneSpectrum (𝓞 M)) : conjSrc c (conjSrc c.symm w) = w := by
-  refine (eq_conjSrc fun x => ?_).symm
-  have := conjPl_conjSrc c.symm w (c x)
-  rw [c.symm_apply_apply] at this
-  exact this.symm
-
 theorem conjFin_injective (c : M ≃+* M) : Function.Injective (conjFin c) := by
   intro x y h
   refine FiniteAdeleRing.ext _ fun u => ?_
-  obtain ⟨v, rfl⟩ : ∃ v, conjSrc c v = u := ⟨_, conjSrc_conjSrc_symm c u⟩
+  obtain ⟨v, rfl⟩ : ∃ v, conjSrc c v = u := ⟨_, SConjSatCAux.conjSrc_conjSrc_symm c u⟩
   exact (conjLoc c v).injective
     ((pLoc_conjFin c x v).symm.trans ((congrArg (pLoc M v) h).trans (pLoc_conjFin c y v)))
 
@@ -267,4 +262,4 @@ theorem UpperTheory.CBC.SConjSatR_holds : UpperTheory.CBC.SConjSatR := by
     GlobalTheory.DefU.ClassFin.under_conjSrc σ.toRingEquiv.symm (fun x => σ.symm.commutes x) w, fun w => normV_conjSrc _ w,
     Filter.Eventually.of_forall fun w B hB => ?_⟩
   have := hasSat_conj σ.toRingEquiv s hs.2.2 (rel_of s P P' hsp) _ B hB
-  rwa [conjSrc_conjSrc_symm] at this
+  rwa [UpperTheory.CBC.SConjSatCAux.conjSrc_conjSrc_symm] at this

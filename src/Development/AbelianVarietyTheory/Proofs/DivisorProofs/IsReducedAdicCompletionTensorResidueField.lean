@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LengthSumHeightOneDisjointDivisors
 public import Mathlib.FieldTheory.Perfect
 public import Mathlib.RingTheory.RegularLocalRing.Defs
 public import Mathlib.Algebra.MvPolynomial.PDeriv
@@ -171,7 +172,7 @@ theorem generically_regular_quotient_of_finiteType_int :
   intro B _ _ p hp
   by_cases h : ∀ a : ℤ, algebraMap ℤ B a ∈ p → a = 0
   · exact _root_.GlobalTheory.prime_generically_regular_quotient ℤ B p h
-  push_neg at h
+  push Not at h
   obtain ⟨a, ha, ha0⟩ := h
   have hP : (p.comap (algebraMap ℤ B)) ≠ ⊥ := by
     intro hb
@@ -338,15 +339,7 @@ private lemma spanFinrank_maximalIdeal_le_add (A : Type) [CommRing A] [IsLocalRi
 open IsLocalRing TensorProduct in
 private lemma height_add_ringKrullDim_quotient_le' (A : Type) [CommRing A] (I : Ideal A)
     [I.IsPrime] : (I.height : WithBot ℕ∞) + ringKrullDim (A ⧸ I) ≤ ringKrullDim A := by
-  let P : PrimeSpectrum A := ⟨I, inferInstance⟩
-  have h1 : I.height = Order.height P := PrimeSpectrum.height_eq_orderHeight P
-  have h2 : ringKrullDim (A ⧸ I) = (Order.coheight P : WithBot ℕ∞) := by
-    rw [ringKrullDim_quotient, Order.coheight_eq_krullDim_Ici]
-    rfl
-  have : Nonempty (PrimeSpectrum A) := ⟨P⟩
-  rw [h1, h2, ringKrullDim, Order.krullDim_eq_iSup_height_add_coheight_of_nonempty]
-  norm_cast
-  exact le_iSup (fun a : PrimeSpectrum A => Order.height a + Order.coheight a) P
+  apply _root_.GlobalTheory.IntersectionSymm.height_add_dim_quotient_le <;> assumption
 
 
 open IsLocalRing TensorProduct in

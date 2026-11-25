@@ -238,18 +238,18 @@ theorem hilbFn_map (V : Ideal (MRing ι F)) (m' : K ⊕ Unit → ℤ) :
       if 0 ≤ m' (.inr ()) then hilbFn V (fun k => m' (.inl k)) else 0 := by
   unfold hilbFn
   by_cases ht : 0 ≤ m' (.inr ())
-  · rw [if_pos ht]
+  · rw [ite_eq_left ht]
     by_cases hk : ∀ k, 0 ≤ m' (.inl k)
     · have hall : ∀ x, 0 ≤ m' x := by
         rintro (k | u)
         · exact hk k
         · cases u
           exact ht
-      rw [if_pos hall, if_pos hk, finrank_gradedPiece]
+      rw [ite_eq_left hall, ite_eq_left hk, finrank_gradedPiece]
       rfl
     · have hall : ¬ ∀ x, 0 ≤ m' x := fun h => hk fun k => h _
-      rw [if_neg hall, if_neg hk]
-  · rw [if_neg ht, if_neg (fun h => ht (h _))]
+      rw [ite_eq_right hall, ite_eq_right hk]
+  · rw [ite_eq_right ht, ite_eq_right (fun h => ht (h _))]
 
 theorem foldr_diffStep_pullDeg (L : List (K → ℤ)) (h : (K → ℤ) → ℤ)
     (h' : (K ⊕ Unit → ℤ) → ℤ)
@@ -297,7 +297,7 @@ theorem proof : JoinIntNum.Statement := by
     obtain ⟨N, hN⟩ := Filter.eventually_atTop.mp hc
     refine Filter.eventually_atTop.mpr ⟨Sum.elim N 0, fun m' hm' => ?_⟩
     have ht : 0 ≤ m' (.inr ()) := by simpa using hm' (.inr ())
-    rw [if_pos ht]
+    rw [ite_eq_left ht]
     exact hN _ (fun k => by simpa using hm' (.inl k))
   · have hc' : ¬ ∃ c, ∀ᶠ m' in Filter.atTop,
         (fun m' : K ⊕ Unit → ℤ => if 0 ≤ m' (.inr ()) then f (fun k => m' (.inl k)) else 0) m' =

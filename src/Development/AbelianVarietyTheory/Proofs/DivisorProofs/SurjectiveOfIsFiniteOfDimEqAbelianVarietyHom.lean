@@ -49,21 +49,20 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.HTLat GlobalTheory.Published.AbVarRed GlobalTheory.CechPic GlobalTheory.AV GlobalTheory.AV.AbVar
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.AV.AbVar
 
 theorem surjective_of_isFinite_of_dim_eq : ∀ (K : Type) [Field K] (A B : AbVar K) (f : A ⟶ B),
     A.dim = B.dim → IsFinite f.hom.left → Surjective f.hom.left := by
   intro K _ A B f hdim hfin
-  obtain ⟨hBi, -, -⟩ := GlobalTheory.T.abelianVariety_isIntegral_noetherian_compact K B
+  obtain ⟨hBi, -, -⟩ := GlobalTheory.AV.AbVar.isIntegral_isLocallyNoetherian_compactSpace K B
   set g := f.hom.left
   have eA : topologicalKrullDim A.X.left = Order.krullDim A.X.left :=
     Order.krullDim_eq_of_orderIso (irreducibleSetEquivPoints (α := A.X.left))
   have eB : topologicalKrullDim B.X.left = Order.krullDim B.X.left :=
     Order.krullDim_eq_of_orderIso (irreducibleSetEquivPoints (α := B.X.left))
-  have dA := GlobalTheory.T.topologicalKrullDim_abVar_eq_dim K A
-  have dB := GlobalTheory.T.topologicalKrullDim_abVar_eq_dim K B
+  have dA := GlobalTheory.AV.AbVar.topologicalKrullDim_eq_dim K A
+  have dB := GlobalTheory.AV.AbVar.topologicalKrullDim_eq_dim K B
   rw [eA] at dA
   rw [eB] at dB
 

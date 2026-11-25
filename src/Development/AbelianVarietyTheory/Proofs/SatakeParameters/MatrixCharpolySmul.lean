@@ -60,10 +60,6 @@ namespace GlobalTheory.RowTieLP
 
 open GlobalTheory.WeilDeligne
 
-theorem matrix_charpoly_smul {n : Type} [Fintype n] [DecidableEq n] (M : Matrix n n ℂ) (c : ℂ) :
-    (c • M).charpoly = M.charpoly.scaleRoots c :=
-  Matrix.charpoly_smul M c
-
 theorem charpoly_smul_end {V : Type*} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
     (f : Module.End ℂ V) (c : ℂ) : (c • f).charpoly = f.charpoly.scaleRoots c :=
   LinearMap.charpoly_smul f c

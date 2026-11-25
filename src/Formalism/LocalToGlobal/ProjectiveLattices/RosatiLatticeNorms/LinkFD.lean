@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.ProjectiveLattices.TieReadSS
 public import Formalism.LocalToGlobal.ProjectiveLattices.EquivariantFiniteGroup
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.NonvanishingNearMaximum
@@ -20,17 +21,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ}
 
 theorem holSub_SS (h5 : SiegelSpaceAlgebra (E := E)) {Comp : Type} (X : Comp → Data E r) (la : ∀ c, Wt (X c).Ψ r)
     {P : FDSec X} (hP : P ∈ holSub X la) : ∀ c, P c ∈ (X c).SS (la c) := by
-  intro c
-  unfold holSub at hP
-  unfold SiegelSpaceAlgebra at h5
-  have hs := (h5 r (X c) (la c) (la c) 0).1
-  induction hP using Submodule.span_induction with
-  | mem Q hQ =>
-    unfold IsHolCusp at hQ
-    exact hQ c
-  | zero => exact hs.1
-  | add Q R _ _ hQ hR => exact hs.2.1 _ hQ _ hR
-  | smul a Q _ hQ => exact hs.2.2 a _ hQ
+  apply _root_.Formalism.L2.Pj.holSub_comp_SS <;> assumption
 
 theorem pnorm_le_supN {Comp : Type} (X : Comp → Data E r) (la : ∀ c, Wt (X c).Ψ r) (P : FDSec X)
     (hfin : supE X la P ≠ ⊤) (c : Comp) (x : Frame (X c).Ψ r) (hx : x ∈ (X c).dom) :

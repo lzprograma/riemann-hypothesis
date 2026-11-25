@@ -27,47 +27,8 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TateInte
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaIdentityOfLocalDensities
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.MassOneBase.MassOne
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelDensities.PlugInf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.SpecialFunctions.Log.Summable
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasure
@@ -550,7 +511,7 @@ theorem testEx : TestEx := by
     exact Finset.prod_congr rfl fun v hvS => by simp [hvS]
   refine ⟨φ, fun v => if v ∈ S then A0 v else latV b v, ⟨h1, h2, h3, h4, ?_, ?_⟩, ?_, ?_⟩
   · intro v hvS
-    simp only [hvS, if_true]
+    simp only [hvS, ite_true]
     exact ⟨hc v, ho v, hs v⟩
   · intro v hvS
     simp [hvS]
@@ -845,22 +806,7 @@ theorem coCpt_one {F E : Type} [Field F] [NumberField F] [Field E] [NumberField 
 
 theorem cfac_ne_zero {F : Type} (E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (v : HeightOneSpectrum (𝓞 F)) : cfac E v ≠ 0 := by
-  have hq : (1 : ℝ) < (Ideal.absNorm v.asIdeal : ℝ) := by
-    have h0 : Ideal.absNorm v.asIdeal ≠ 0 := by
-      rw [Ne, Ideal.absNorm_eq_zero_iff]; exact v.ne_bot
-    have h1 : Ideal.absNorm v.asIdeal ≠ 1 := by
-      rw [Ne, Ideal.absNorm_eq_one_iff]; exact v.isPrime.ne_top
-    exact_mod_cast (by omega : 1 < Ideal.absNorm v.asIdeal)
-  have he : eR E v ≤ 1 := by
-    unfold eR PositivityTheory.SiegelWeilFormula.Gen.eSp
-    split_ifs <;> norm_num
-  have hpos : 0 < 1 - eR E v / (Ideal.absNorm v.asIdeal : ℝ) := by
-    have : eR E v / (Ideal.absNorm v.asIdeal : ℝ) < 1 := by
-      rw [div_lt_one (by linarith)]; linarith
-    linarith
-  unfold cfac
-  simp only [ne_eq, Real.toNNReal_eq_zero, not_le]
-  exact inv_pos.2 hpos
+  apply _root_.GlobalTheory.CompanionTheory.RgBaseCnt.cfac_ne_zero <;> assumption
 
 theorem euler_of_factor {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) (n M d : ℕ) (b : Module.Basis (Fin d) F E)

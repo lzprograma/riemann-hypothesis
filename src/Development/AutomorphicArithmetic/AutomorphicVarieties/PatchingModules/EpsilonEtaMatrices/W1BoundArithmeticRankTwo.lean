@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.PsiCont
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.FixBdQZero
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PairedDualFirstOrderDualMatrixSpace
@@ -18,65 +19,16 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingMod
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.GaloisLiftMemFirstOrderDeformations
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.DualN
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.OneLevel
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.ConjugateSelfDual.Statement
 import ReciprocityTheory.GaloisValuations.GlobalA
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.RingTheory.PowerSeries.Inverse
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.TwistedCocycleApplyOne
-import Mathlib.RingTheory.PiTensorProduct
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.CommutingMatrixOffdiagZero, Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.HomCount, Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.OneCount, Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EntryZero, Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.FinrankCentralizerW1Le, Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.Rho1MapReductionLevel, Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.W1BoundArithmeticRankTwo
@@ -107,7 +59,7 @@ private theorem commuting_matrix_offdiag_zero {l : ℕ} [Fact l.Prime] {F : GFra
     show ∀ i' j' : Fin n, _
     intro i' j'
     refine ⟨fun _ => Submodule.mem_top, fun h => ?_⟩
-    rw [Submodule.mem_bot, Matrix.single_apply, if_neg]
+    rw [Submodule.mem_bot, Matrix.single_apply, ite_eq_right]
     rintro ⟨rfl, rfl⟩
     exact h Iff.rfl
   obtain ⟨s, hs⟩ := x.span _ hmem
@@ -508,52 +460,12 @@ open Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual Reci
 private theorem filt_ht {Z Y ι : Type} [AddCommGroup Z] [AddCommGroup Y] [Fintype ι] (ht : ι → ℕ) (f : ι → Z →+ Y)
     (P : ι → Set Y) (h0 : ∀ z, (∀ i, f i z = 0) → z = 0) (hP : ∀ i, (P i).Finite)
     (hf : ∀ i z, (∀ j, ht j < ht i → f j z = 0) → f i z ∈ P i) : Finite Z ∧ Nat.card Z ≤ ∏ i, (P i).ncard := by
-  classical
-  let σ := Fintype.equivFin ι
-  let key : ι → Lex (ℕ × Fin (Fintype.card ι)) := fun i => toLex (ht i, σ i)
-  have hkey : Function.Injective key := fun a b hab =>
-    σ.injective (by simpa [key] using congrArg (fun p => (ofLex p).2) hab)
-  letI : LinearOrder ι := LinearOrder.lift' key hkey
-  let e : Fin (Fintype.card ι) ≃o ι := Fintype.orderIsoFinOfCardEq ι rfl
-  have hmono : ∀ a b : Fin (Fintype.card ι), ht (e a) < ht (e b) → a < b := by
-    intro a b hab
-    have : e a < e b := by
-      show key (e a) < key (e b)
-      exact Prod.Lex.lt_iff.mpr (Or.inl hab)
-    exact e.lt_iff_lt.mp this
-  obtain ⟨hfin, hcard⟩ := filtCount Z Y (Fintype.card ι) (fun a => f (e a)) (fun a => P (e a))
-    (fun z hz => h0 z (fun i => by simpa using hz (e.symm i)))
-    (fun a => hP _)
-    (fun a z hz => hf (e a) z (fun j hj => by
-      simpa using hz (e.symm j) (hmono _ _ (by simpa using hj))))
-  refine ⟨hfin, hcard.trans_eq ?_⟩
-  exact Equiv.prod_comp e.toEquiv (fun i => (P i).ncard)
+  apply _root_.filt_ht <;> assumption
 
 private theorem conj_entry {R : Type} [CommRing R] {n : ℕ} (T B T' : Matrix (Fin n) (Fin n) R)
     (hT : ∀ i j, j < i → T i j = 0) (hT' : ∀ i j, j < i → T' i j = 0) (i j : Fin n)
     (hB : ∀ p q, i ≤ p → q ≤ j → (p ≠ i ∨ q ≠ j) → B p q = 0) : (T * B * T') i j = T i i * B i j * T' j j := by
-  rw [Matrix.mul_apply, Finset.sum_eq_single j]
-  · rw [Matrix.mul_apply, Finset.sum_eq_single i]
-    · intro p _ hp
-      by_cases hpi : i ≤ p
-      · rw [hB p j hpi le_rfl (Or.inl hp)]
-        ring
-      · rw [hT i p (not_le.mp hpi)]
-        ring
-    · simp
-  · intro q _ hq
-    by_cases hqj : q ≤ j
-    · rw [Matrix.mul_apply, Finset.sum_mul]
-      apply Finset.sum_eq_zero
-      intro p _
-      by_cases hpi : i ≤ p
-      · rw [hB p q hpi hqj (Or.inr hq)]
-        ring
-      · rw [hT i p (not_le.mp hpi)]
-        ring
-    · rw [hT' q j (not_le.mp hqj)]
-      ring
-  · simp
+  apply _root_.conj_entry <;> assumption
 
 private def co (X : Type) [CommRing X] {g : ℕ} (o : Option (Fin g)) : DD X g →+ X where
   toFun y := o.elim y.a y.ep
@@ -585,18 +497,7 @@ private theorem adic_mul {D R : Type} [TopologicalSpace D] [CommRing R] {I : Ide
 
 private theorem adic_sum {D R ι : Type} [TopologicalSpace D] [CommRing R] {I : Ideal R} (s : Finset ι) {f : ι → D → R}
     (h : ∀ i, AdicCont I (f i)) : AdicCont I fun g => ∑ i ∈ s, f i g := by
-  classical
-  intro N
-  show IsLocallyConstant (fun g => Ideal.Quotient.mk (I ^ N) (∑ i ∈ s, f i g))
-  refine Finset.induction_on s ?_ ?_
-  · simp only [Finset.sum_empty, map_zero]
-    exact IsLocallyConstant.const 0
-  · intro a s ha ih
-    have e : (fun g => Ideal.Quotient.mk (I ^ N) (∑ i ∈ insert a s, f i g)) =
-        fun g => Ideal.Quotient.mk (I ^ N) (f a g) + Ideal.Quotient.mk (I ^ N) (∑ i ∈ s, f i g) :=
-      funext fun g => by rw [Finset.sum_insert ha, map_add (f := _)]
-    rw [e]
-    exact (h a N).comp₂ ih _
+  apply _root_.adic_sum <;> assumption
 
 private theorem psi_cont {l : ℕ} [Fact l.Prime] {F : GFrame l} {n : ℕ} (x : NP F n) (v : F.Vl) (i : Fin n) :
     AdicCont (IsLocalRing.maximalIdeal x.A) fun g => (x.ψ v i g : x.A) := by
@@ -624,8 +525,7 @@ private theorem pair_count {l : ℕ} [Fact l.Prime] {F : GFrame l} {n : ℕ} (x 
     exact this
   have hne : ∃ g, ((χ g : x.Aˣ) : x.A) ≠
       algebraMap ℤ_[l] x.A ((F.ε.comp (F.η.ker.subtype.comp (F.φ v)) g : ℤ_[l]ˣ) : ℤ_[l]) := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     apply (x.N1 v).2 i j hij
     refine MonoidHom.ext fun g => Units.ext ?_
     have h1 := hall g

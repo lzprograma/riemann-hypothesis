@@ -1,5 +1,6 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnGeomAtGq
 public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacExGoodOfN
 public import Formalism.FormalDegreeBessel.FinalBF
@@ -51,19 +52,7 @@ theorem fam_eq {r k : ℕ} {P : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1
 theorem bigCell_mulVec_wb {k r : ℕ} (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ)
     {w : Fin (2 * r + k + 1) → ℂ} (hw : Formalism.QuantumDeterminants.inWb k r w) :
     Formalism.QuantumDeterminants.bigCell k r c μ *ᵥ w = Formalism.FourierDecayAlt.B2.embWb k r μ *ᵥ w := by
-  ext i
-  simp only [Matrix.mulVec, dotProduct]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  by_cases hj : r ≤ j.val ∧ j.val ≤ r + k
-  · have hj1 : ¬ j.val < r := by omega
-    unfold Formalism.QuantumDeterminants.bigCell Formalism.FourierDecayAlt.B2.embWb
-    rw [dite_eq_right hj1, dite_eq_left hj.2]
-    by_cases hi : r ≤ i.val ∧ i.val ≤ r + k
-    · rw [dite_eq_left hi, dite_eq_left ⟨hi, hj⟩]
-    · rw [dite_eq_right hi, dite_eq_right (fun h => hi h.1),
-        if_neg (fun (h : i = j ∧ ¬(r ≤ i.val ∧ i.val ≤ r + k)) => hi (by rw [h.1]; exact hj))]
-  · rw [hw j (by omega)]
-    simp
+  apply _root_.Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Geom.gq_wb <;> assumption
 
 theorem conj_scinv (sc : ℝ) (m : ℕ) : conj (((sc : ℂ) ^ m)⁻¹) = ((sc : ℂ) ^ m)⁻¹ := by
   simp [map_inv₀, map_pow]

@@ -52,7 +52,6 @@ import Mathlib.Tactic.ReduceModChar
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl Matrix
 open IsDedekindDomain NumberField
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 noncomputable section
 
 namespace GlobalTheory.FinPl.LatMem
@@ -82,7 +81,7 @@ theorem indicatorAdele_mem_integralAdeles' (F : Type) [Field F] [NumberField F] 
 theorem indicatorAdele_supported (F : Type) [Field F] [NumberField F] (P : HeightOneSpectrum (𝓞 F) → Prop) :
     ∀ v, ¬ P v → evalV F v (indP F P) = 0 := fun v hv => by
   classical
-  rw [evalV_indP, if_neg hv]
+  rw [evalV_indP, ite_eq_right hv]
 
 theorem compFin_eq_compAt (a : AE D) (v : Pl D) :
     GlobalTheory.AdelicU.compFin D.host.F D.host.E v a = compAt D v a := by
@@ -114,7 +113,7 @@ theorem mul_indP {P : Pl D → Prop} {a : AE D} (ha : a ∈ idAt D P) :
     have he : GlobalTheory.AdelicU.compFin D.host.F D.host.E v (pairA D.host.F 0 (indP D.host.F P) ⊗ₜ[D.host.F] (1 : D.host.E)) =
         evalV D.host.F v (indP D.host.F P) ⊗ₜ[D.host.F] (1 : D.host.E) := rfl
     by_cases hv : P v
-    · rw [he, evalV_indP, if_pos hv]
+    · rw [he, evalV_indP, ite_eq_left hv]
       exact mul_one _
     · rw [compFin_eq_compAt, hw v hv, zero_mul]
 
@@ -306,7 +305,7 @@ theorem exists_dualBasis (S : HSp D) {Λ : Submodule (𝓞 D.host.E) (Fin S.rank
   · have := congrFun (hid (Pi.single b 1)) a
     rw [Finset.sum_apply] at this
     simp only [hw, Pi.single_apply, ite_mul, one_mul, zero_mul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true] at this
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true] at this
     simp only [hs'row]
     rw [this]
     exact Finset.sum_congr rfl fun i _ => mul_comm _ _
@@ -408,8 +407,8 @@ theorem mem_latO_iff : ∀ (D : D7) (S T : HSp D) (LS : Lat S) (LT : Lat T), IsS
     rw [Finset.sum_comm]
     simp only [← Finset.mul_sum, ← TensorProduct.tmul_sum, hdual]
     rw [Finset.sum_eq_single j]
-    · rw [if_pos rfl]; exact (mul_indP (hP k j)).symm
-    · intro l _ hl; rw [if_neg hl, TensorProduct.tmul_zero, mul_zero]
+    · rw [ite_eq_left rfl]; exact (mul_indP (hP k j)).symm
+    · intro l _ hl; rw [ite_eq_right hl, TensorProduct.tmul_zero, mul_zero]
     · intro h; exact absurd (Finset.mem_univ j) h
   rw [hu]
   exact sum_mem fun i _ => rowMul_mem (hs' i) (hmap _ (hyv i))

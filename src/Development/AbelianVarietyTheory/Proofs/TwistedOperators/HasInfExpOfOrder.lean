@@ -59,7 +59,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx GlobalTheory.Chain NumberField
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.Chain.StepVac
 
@@ -108,11 +107,11 @@ theorem res_idemSum {e : AE D} {P : Finset (Pl D.host.E)} (he : IsIdemSum e P) :
 def rectOne (κ : Type) [Zero κ] [One κ] (b a : ℕ) : Matrix (Fin b) (Fin a) κ := fun i j => if i.val = j.val then 1 else 0
 
 theorem lowZero_rectOne (κ : Type) [Zero κ] [One κ] (b a k : ℕ) : LowZero k (rectOne κ b a) :=
-  fun i j hi hj => if_neg (by omega)
+  fun i j hi hj => ite_eq_right (by omega)
 
 theorem topL_rectOne (κ : Type) [Zero κ] [One κ] {b a k : ℕ} (ha : k ≤ a) (hb : k ≤ b) : topL k (rectOne κ b a) = 1 := by
   ext i j
-  rw [topL, dif_pos ⟨by omega, by omega⟩, rectOne, Matrix.one_apply]
+  rw [topL, dite_eq_left ⟨by omega, by omega⟩, rectOne, Matrix.one_apply]
   simp only [Fin.ext_iff]
 
 theorem frame_cancel {A : Type} [CommRing A] {a b : ℕ} (βS : GL (Fin a) A) (βT : GL (Fin b) A) (c : A)
@@ -142,12 +141,12 @@ theorem exists_point (S T : HSp D) (βS : GL (Fin S.rank) (EAf D)) (βT : GL (Fi
     exacts [h, zero_mem _]
   refine ⟨x, fun i j => by rw [← mul_assoc, idemSum_mul_self he], hi, fun PP hP => ?_⟩
   ext i j
-  exact (dif_pos (hi i j)).trans (res_ite _ (resS D.host.F PP) h (hi i j) (h1 PP hP) _ (hx' i j))
+  exact (dite_eq_left (hi i j)).trans (res_ite _ (resS D.host.F PP) h (hi i j) (h1 PP hP) _ (hx' i j))
 
 theorem omegaG_rectOne {a b : ℕ} (hab : a ≤ b) (L : LevDat D.host.E ℂ a) (χj : ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ) :
     omegaG L χj (fun PP => rectOne (kP PP) b a) ≠ 0 := by
   unfold omegaG
-  rw [dif_pos]
+  rw [dite_eq_left]
   · refine mul_ne_zero (mul_ne_zero (Units.ne_zero _) ?_) ?_
     · exact Finset.prod_ne_zero_iff.2 fun _ _ => Finset.prod_ne_zero_iff.2 fun _ _ => Units.ne_zero _
     · exact Finset.prod_ne_zero_iff.2 fun _ _ => inv_ne_zero (Units.ne_zero _)
@@ -160,7 +159,7 @@ theorem omegaG_rectOne {a b : ℕ} (hab : a ≤ b) (L : LevDat D.host.E ℂ a) (
 theorem omegaQ_rectOne {a b r : ℕ} (ha : r ≤ a) (hb : r ≤ b) (Q : Finset (Pl D.host.E))
     (ξ : ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ) (k : ℤ) : omegaQ Q r ξ k (fun PP => rectOne (kP PP) b a) ≠ 0 := by
   unfold omegaQ
-  rw [dif_pos]
+  rw [dite_eq_left]
   · exact Finset.prod_ne_zero_iff.2 fun _ _ => zpow_ne_zero _ (Units.ne_zero _)
   · intro PP _
     refine ⟨lowZero_rectOne _ _ _ _, ?_⟩
@@ -198,7 +197,7 @@ theorem stepVec_vac {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} {S T : HSp 
     simp [nrm2] at this
   · obtain ⟨x, a1, a2, a3⟩ := exists_point S T βS βT he
     have := congrFun hz x
-    rw [if_pos ⟨a1, a2⟩, omegaG_congr LS χj _ (fun PP => rectOne (kP PP) _ _) fun PP hP =>
+    rw [ite_eq_left ⟨a1, a2⟩, omegaG_congr LS χj _ (fun PP => rectOne (kP PP) _ _) fun PP hP =>
       a3 PP (Finset.mem_union_left _ hP), omegaQ_congr Q LS.r ξ 1 _ (fun PP => rectOne (kP PP) _ _) fun PP hP =>
       a3 PP (Finset.mem_union_right _ hP)] at this
     exact mul_ne_zero (omegaG_rectOne hr LS χj) (omegaQ_rectOne LS.hr (LS.hr.trans hr) Q ξ 1) this
@@ -249,9 +248,9 @@ theorem chrStep_exp {T : Type} {L : LevCh D T} {μ0 : T} (hL : L.Is μ0) {θ : I
   have h3 := hasInfExp_mul h1 (hasInfExp_inv h2)
   unfold Lift.chrStep expS expT
   by_cases hk : Even (k : ℕ)
-  · rw [if_pos hk.add_one, if_pos hk, if_pos hk, sub_zero, sub_eq_add_neg]
+  · rw [ite_eq_left hk.add_one, ite_eq_left hk, ite_eq_left hk, sub_zero, sub_eq_add_neg]
     exact ⟨h3, h1⟩
-  · rw [if_neg (by rwa [Nat.odd_add_one, Nat.not_odd_iff_even]), if_neg hk, if_neg hk, sub_zero, sub_eq_add_neg]
+  · rw [ite_eq_right (by rwa [Nat.odd_add_one, Nat.not_odd_iff_even]), ite_eq_right hk, ite_eq_right hk, sub_zero, sub_eq_add_neg]
     exact ⟨h1, h3⟩
 
 theorem rank_Yc {j : ℕ} (hj : j ≤ D.R.m) : (Yc D j).rank = D.R.r + j * D.R.t := by

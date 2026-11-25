@@ -33,12 +33,4 @@ theorem gramVol_nonneg {e n : ℕ} (v : (Fin e → ℂ) → (Fin n → ℂ)) (y 
   rw [← hM] at h
   exact (Complex.nonneg_iff.1 h).1
 
-section Abstract
-
-variable {E X W : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [MeasurableSpace E] [BorelSpace E]
-
-variable [MeasurableSpace X]
-
-end Abstract
-
 end GroundTheory.Heights₂.Heights

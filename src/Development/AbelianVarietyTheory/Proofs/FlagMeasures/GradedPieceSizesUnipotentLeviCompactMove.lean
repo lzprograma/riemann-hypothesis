@@ -263,7 +263,7 @@ theorem norm_det_gram (x : I.GA) (w : InfinitePlace I.E) {r : ℕ} (e : Fin r �
     intro y; ext i; simp [Formalism.HermitianLatticesTheory.vecAt]
   by_cases hw : w.embedding = I.φ v
   · have hfr : frm I x w = I.P v * U := by
-      simp only [frm, hU, hv]; rw [if_pos hw]
+      simp only [frm, hU, hv]; rw [ite_eq_left hw]
     have hf : ∀ y, Formalism.HermitianLatticesTheory.fcoord (bas I) (frm I x) w y = U⁻¹ *ᵥ crd I v y := by
       intro y
       rw [Formalism.HermitianLatticesTheory.fcoord, hfr, hvec, Matrix.mul_inv_rev, ← Matrix.mulVec_mulVec, crd, hw]
@@ -273,7 +273,7 @@ theorem norm_det_gram (x : I.GA) (w : InfinitePlace I.E) {r : ℕ} (e : Fin r �
   · have hw2 : w.embedding = ComplexEmbedding.conjugate (I.φ v) :=
       (GlobalTheory.Count.Test.embedding_cases I w).resolve_left hw
     have hfr : frm I x w = (I.P v * U).map (starRingEnd ℂ) := by
-      simp only [frm, hU, hv]; rw [if_neg hw]
+      simp only [frm, hU, hv]; rw [ite_eq_right hw]
     have hmap : ∀ A : Matrix (Fin I.n) (Fin I.n) ℂ, A.map (starRingEnd ℂ) = Aᴴᵀ := by
       intro A; ext i j; simp [Matrix.conjTranspose_apply]
     have hinv : ((I.P v * U).map (starRingEnd ℂ))⁻¹ = ((I.P v * U)⁻¹).map (starRingEnd ℂ) := by

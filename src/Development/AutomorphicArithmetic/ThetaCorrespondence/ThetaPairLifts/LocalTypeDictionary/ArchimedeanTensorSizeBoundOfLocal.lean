@@ -75,8 +75,6 @@ open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunOb
 
 namespace GlobalTheory.ArchTens
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem infTensAt_of_places {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 T : Type} {A : FamIn D.what₂.LL Γ Pl0 T D.R.m}
     {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat D A Ks} (ch : Choice R) {C : ℝ} (hC : 0 ≤ C)
     (hd : DatAt ch (C / 2)) (hc : CoefAt ch (C / 2)) : InfTensAt ch C := by
@@ -436,9 +434,9 @@ theorem isDiag_stair {G : Grid k} (hs : 1 ≤ G.s) (J : G.Level) (ϖ : kˣ) (e :
     | zero => exact exists_diag_stair hs ϖ e 0
     | succ j =>
       by_cases hj : j < G.m - 2
-      · simp only [Reps.through, dif_pos hj, if_true]
+      · simp only [Reps.through, dite_eq_left hj, ite_true]
         exact exists_diag_stair hs ϖ e (j + 1)
-      · simp only [dif_neg hj]
+      · simp only [dite_eq_right hj]
         exact exists_diag_one _ _ _
   · have : (Reps.through hs J (stair G ϖ e)).elt (fun i => DoubleCoset.mk _ _ (stair G ϖ e (i + 1))) (i, j) = 1 := by
       simp [Reps.elt, onColumn, hi]
@@ -534,8 +532,6 @@ section -- clump:auto
 section
 open MeasureTheory ValuativeRel Matrix
 noncomputable section
-namespace GlobalTheory.ArchTens.Unfold
-end GlobalTheory.ArchTens.Unfold
 namespace GlobalTheory.ArchTens.Unfold
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.SumSize GlobalTheory.RowClaim GlobalTheory.RowTest
@@ -727,9 +723,6 @@ section
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim GlobalTheory.TestLat GlobalTheory.SumSize
-namespace GlobalTheory.ArchTens
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-end GlobalTheory.ArchTens
 open GlobalTheory.ArchTens in
 theorem _root_.GlobalTheory.SumSize.archimedean_tensor_size_bound_of_local (hP : _root_.GlobalTheory.FunPr.ThetaLocalInputs) : InfTensK := by
   obtain ⟨F1, h1⟩ := _root_.GlobalTheory.T.local_character_power_conductor_bound hP
@@ -754,13 +747,6 @@ theorem _root_.GlobalTheory.SumSize.archimedean_tensor_size_bound_of_local (hP :
       (h1 D large₂ he ((le_max_left _ _).trans hx) Γ Pl0 T A Ks R F hS ch hIs hAt hF))
     (h3 D large₂ he (((le_max_right _ _).trans (le_max_right _ _)).trans hx) Γ Pl0 T A Ks R F hS ch hIs hAt hF)
 end
-end
-
-section
-open GlobalTheory.SumSize GlobalTheory.RowClaim
-
-theorem _root_.GlobalTheory.T.sum_size_archimedean_tensor_bound : _root_.GlobalTheory.FunPr.ThetaLocalInputs → InfTensK := by
-  first | exact @_root_.GlobalTheory.SumSize.archimedean_tensor_size_bound_of_local
 end
 end -- clump:auto
 end -- clump:auto

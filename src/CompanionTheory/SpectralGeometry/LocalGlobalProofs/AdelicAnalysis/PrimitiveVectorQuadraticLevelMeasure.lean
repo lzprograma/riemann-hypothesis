@@ -312,8 +312,7 @@ theorem dot_close {B : Matrix ι ι (Fv F v)} (hB : ∀ i j, Valued.v (B i j) �
 theorem exists_unit_coord {B : Matrix ι ι (Fv F v)} (hB : ∀ i j, Valued.v (B i j) ≤ 1)
     (hdet : Valued.v B.det = 1) {x : ι → Fv F v} (hx : ∀ i, Valued.v (x i) ≤ 1)
     (hp : ∃ i, Valued.v (x i) = 1) : ∃ i, Valued.v ((B *ᵥ x) i) = 1 := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hlt : ∀ i, Valued.v ((B *ᵥ x) i) < 1 := fun i =>
     lt_of_le_of_ne (mulVec_le hB hx i) (hcon i)
   obtain ⟨i, hi⟩ := hp

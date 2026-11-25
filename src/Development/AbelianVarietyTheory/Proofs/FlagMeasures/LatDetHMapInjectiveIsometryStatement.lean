@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.IsCrdExists
 public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -52,7 +53,6 @@ section -- clump:auto
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LoopC.DetMap
 
@@ -65,18 +65,7 @@ variable {R K U V : Type*} [CommRing R] [Field K] [Algebra R K]
 theorem length_quot_map (f : U →ₗ[R] V) (hf : Function.Injective f) (A B : Submodule R U) :
     Module.length R ((A.map f) ⧸ (B.map f).comap (A.map f).subtype) =
       Module.length R (A ⧸ B.comap A.subtype) := by
-  let e : A ≃ₗ[R] A.map f := Submodule.equivMapOfInjective f hf A
-  have he : (B.comap A.subtype).map (e : A →ₗ[R] A.map f) = (B.map f).comap (A.map f).subtype := by
-    ext z
-    constructor
-    · rintro ⟨⟨a, ha⟩, haB, rfl⟩
-      exact ⟨a, haB, rfl⟩
-    · intro hz
-      obtain ⟨b, hb, hbz⟩ := hz
-      obtain ⟨a, ha, haz⟩ := z.2
-      obtain rfl : a = b := hf (haz.trans hbz.symm)
-      exact ⟨⟨a, ha⟩, hb, Subtype.ext haz⟩
-  exact (Submodule.Quotient.equiv _ _ e he).length_eq.symm
+  first | exact _root_.Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.length_quot_map_of_injective | exact @_root_.Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.length_quot_map_of_injective | apply _root_.Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.length_quot_map_of_injective <;> assumption
 
 theorem localization_map₂ (hRK : Function.Injective (algebraMap R K)) (i : U →ₗ[K] V)
     (hi : Function.Injective i) (p : Ideal R) [p.IsPrime] (A : Submodule R U) :
@@ -174,10 +163,7 @@ section -- clump:auto
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-theorem _root_.GlobalTheory.T.latDetH_map_injective_isometry : ∀ (K U V : Type) [Field K] [NumberField K] [StarRing K] [AddCommGroup U] [Module K U] [Module (𝓞 K) U] [IsScalarTower (𝓞 K) K U] [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (hU : U →ₗ⋆[K] U →ₗ[K] K) (hV : V →ₗ⋆[K] V →ₗ[K] K) (i : U →ₗ[K] V), Function.Injective i → (∀ x y, hV (i x) (i y) = hU x y) → ∀ N : Submodule (𝓞 K) U, latDetH hV (N.map (i.restrictScalars (𝓞 K))) = latDetH hU N := by
-  first | exact @GlobalTheory.LoopC.DetMap.latDetH_map
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.FlagMeasures.LatDetHMapInjectiveIsometryStatement =====

@@ -12,8 +12,6 @@ open scoped TensorProduct ContDiff InnerProductSpace
 
 namespace Formalism.IndefR.Mult
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (V : HSp D)
 
 theorem rder_zero (τ : D.what₂.Tau) (X : Matrix (Fin V.rank) (Fin V.rank) ℂ) :
@@ -74,20 +72,6 @@ theorem isCuspFun_zero : IsCuspFun V (fun _ => 0) := by
 
 variable {V} {S : D.what₂.Tau → SPar}
 
-theorem isMultMap_zero (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ) : IsMultMap θ M J χ 0 := {
-  aut v := by
-    show IsAutFunSm θ V (fun _ => 0)
-    exact isAutFunSm_zero θ V
-  cusp v := by
-    show IsCuspFun V (fun _ => 0)
-    exact isCuspFun_zero V
-  lev v k _ g := by simp
-  equiv τ g _ v w _ := by
-    funext x
-    simp [rTr]
-  cont τ v x := by
-    refine ⟨0, ⟨[], 0, by simp, fun w _ => by simp⟩, fun w => by simp⟩ }
-
 
 variable (V) in
 theorem rder_smul (τ : D.what₂.Tau) (X : Matrix (Fin V.rank) (Fin V.rank) ℂ) (c : ℂ) (φ : GA D V → ℂ) :
@@ -132,27 +116,6 @@ theorem isCuspFun_smul {φ : GA D V → ℂ} (h : IsCuspFun V φ) (c : ℂ) : Is
   intro r C hC μ 𝓕 hμ h𝓕 g
   simp only [Pi.smul_apply]
   rw [MeasureTheory.integral_smul, h r C hC μ 𝓕 hμ h𝓕 g, smul_zero]
-
-theorem isMultMap_smul {M : DSModel V S} {J : Set (GA D V)} {χ : GA D V → ℂ} {T : MMap M}
-    (hT : IsMultMap θ M J χ T) (c : ℂ) : IsMultMap θ M J χ (c • T) := {
-  aut v := by
-    show IsAutFunSm θ V (c • T v)
-    exact isAutFunSm_smul θ V (hT.aut v) c
-  cusp v := by
-    show IsCuspFun V (c • T v)
-    exact isCuspFun_smul V (hT.cusp v) c
-  lev v k hk g := by
-    simp only [_root_.smul_apply, Pi.smul_apply, smul_eq_mul, hT.lev v k hk g]
-    ring
-  equiv τ g hg v w hw := by
-    rw [_root_.smul_apply, _root_.smul_apply, hT.equiv τ g hg v w hw]
-    rfl
-  cont τ v x := by
-    obtain ⟨ℓ, ⟨L, C, hL, hC⟩, hℓ⟩ := hT.cont τ v x
-    refine ⟨c • ℓ, ⟨L, ‖c‖ * C, hL, fun w hw => ?_⟩, fun w => ?_⟩
-    · rw [LinearMap.smul_apply, norm_smul, mul_assoc]
-      exact mul_le_mul_of_nonneg_left (hC w hw) (norm_nonneg c)
-    · simp only [LinearMap.smul_apply, _root_.smul_apply, Pi.smul_apply, hℓ w] }
 
 end Formalism.IndefR.Mult
 

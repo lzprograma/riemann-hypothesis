@@ -33,8 +33,6 @@ namespace ReciprocityTheory.ChartRestriction.DS.Lap.LemK
 
 open ReciprocityTheory.ChartRestriction.DS ReciprocityTheory.ChartRestriction.DS.S7
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace PsW
 
 variable {n : ℕ}
@@ -80,14 +78,14 @@ lemma contDiff_lead (i : ℕ) : ContDiff ℂ ω (fun z : 𝕄 => lead i z) := by
   · have e : (fun z : 𝕄 => lead i z) = fun z : 𝕄 =>
         Matrix.det (fun a b => z (Fin.castLE h a) (Fin.castLE h b) : Fin i → Fin i → ℂ) := by
       funext z
-      simp only [lead, dif_pos h]
+      simp only [lead, dite_eq_left h]
       rfl
     rw [e]
     exact contDiff_det_k_type.comp (contDiff_pi.2 fun a => contDiff_pi.2 fun b =>
       contDiff_pi.1 (contDiff_pi.1 contDiff_id (Fin.castLE h a)) (Fin.castLE h b))
   · have e : (fun z : 𝕄 => lead i z) = fun _ => 0 := by
       funext z
-      simp only [lead, dif_neg h]
+      simp only [lead, dite_eq_right h]
     rw [e]
     exact contDiff_const
 

@@ -57,7 +57,6 @@ open ReciprocityTheory.ChartRestriction.G.DVR.FlatBC (algX)
 open ReciprocityTheory.L2DbarEstimates (V)
 open scoped GlobalTheory.ProjSpace
 
-set_option autoImplicit false
 noncomputable section
 
 namespace GlobalTheory.StdProjChart
@@ -360,7 +359,7 @@ theorem exists_stdChart : ∀ N : ℕ, ∃ (c : AlgChart (PSpace.str ℂ N) (Rin
   have key : (ProjAn.fsO1 ℂ (RingHom.id ℂ) N).φ (0 : Fin (N + 1)) (c.e.symm v) =
       Real.log (∑ a, ‖w.1 a / w.1 0‖ ^ 2) := by
     refine (Weight.fsBasis_φ _ _ _ _ _ _ _).trans (congrArg _ (Finset.sum_congr rfl fun a _ => ?_))
-    simp only [Matrix.one_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [Matrix.one_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [div_eq_mul_inv, ← Ring.inverse_eq_inv, ← valR_pt_ratio (RingHom.id ℂ) w.1 w.2 hw0 a]
     rw [he]
     rfl

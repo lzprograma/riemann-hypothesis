@@ -38,15 +38,9 @@ omit [LinearOrder K] [∀ k, Fintype (ι k)] [∀ k, LinearOrder (ι k)] in
 theorem snapper_component_mul_X [DecidableEq K] (f : MvPolynomial (Σ k, ι k) F) (b : K → ℕ) (v : Σ k, ι k) :
     weightedHomogeneousComponent (NumbersDVR.blockWeight ι) (b + NumbersDVR.blockWeight ι v) (f * X v) =
       weightedHomogeneousComponent (NumbersDVR.blockWeight ι) b f * X v := by
-  have h := DirectSum.coe_decompose_mul_add_of_right_mem
-    (weightedHomogeneousSubmodule F (NumbersDVR.blockWeight ι)) (a := f) (i := b)
-    (isWeightedHomogeneous_X F (NumbersDVR.blockWeight ι) v)
-  have key : ∀ (φ : MvPolynomial (Σ k, ι k) F) (c : K → ℕ),
-      (DirectSum.decompose (weightedHomogeneousSubmodule F (NumbersDVR.blockWeight ι)) φ c :
-        MvPolynomial (Σ k, ι k) F) = weightedHomogeneousComponent (NumbersDVR.blockWeight ι) c φ :=
-    fun φ c => weightedDecomposition.decompose'_apply F (NumbersDVR.blockWeight ι) φ c
-  rw [key, key] at h
-  exact h
+  simp_rw [← weightedDecomposition.decompose'_apply]
+  exact DirectSum.coe_decompose_mul_add_of_right_mem (weightedHomogeneousSubmodule F (NumbersDVR.blockWeight ι))
+    (a := f) (i := b) (isWeightedHomogeneous_X F (NumbersDVR.blockWeight ι) v)
 
 
 omit [LinearOrder K] [∀ k, Fintype (ι k)] [∀ k, LinearOrder (ι k)] in

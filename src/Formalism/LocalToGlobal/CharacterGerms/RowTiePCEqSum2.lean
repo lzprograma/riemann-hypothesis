@@ -64,7 +64,7 @@ theorem coeff_subst_tyS {τ : Type} [Finite τ] {l : ℕ} (hl : 2 ≤ l) {T : Mv
       rw [coeff_tyS_pow hl, Finset.sum_eq_single s']
       · simp
       · intro s _ hs
-        rw [if_neg, smul_zero]
+        rw [ite_eq_right, smul_zero]
         intro h
         exact hs (Nat.pow_right_injective hl h).symm
       · intro h
@@ -76,7 +76,7 @@ theorem coeff_subst_tyS {τ : Type} [Finite τ] {l : ℕ} (hl : 2 ≤ l) {T : Mv
       rw [coeff_tyS_of_ne a m h]
       symm
       refine Finset.sum_eq_zero fun s _ => ?_
-      rw [if_neg (h s).symm, smul_zero]
+      rw [ite_eq_right (h s).symm, smul_zero]
   have hAg : Formalism.G.LogCR.Agree N (tyS l a : MvPowerSeries Unit C) (P : MvPowerSeries Unit C) := by
     intro e he
     have hes : e = Finsupp.single () (e ()) := Finsupp.unique_single e
@@ -91,13 +91,6 @@ theorem coeff_subst_tyS {τ : Type} [Finite τ] {l : ℕ} (hl : 2 ≤ l) {T : Mv
   rw [map_smul, map_pow, MvPowerSeries.coe_substAlgHom]
   rw [show (PowerSeries.X : PowerSeries C) = (MvPowerSeries.X () : MvPowerSeries Unit C) from rfl,
     MvPowerSeries.subst_X (hasSubst_unit hT), MvPowerSeries.coeff_smul]
-
-section Add
-
-variable [CharZero C] {V : VF C} {O : Type} [CommRing O] [StarRing O] {dd : ℕ} {d : ℕ} {I : Fin 2 → Type}
-  [∀ g, Fintype (I g)] (Y : FBChart C V O dd) (p : PairData Y d I)
-
-end Add
 
 end RowTiePCEqSum
 

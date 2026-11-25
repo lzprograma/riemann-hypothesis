@@ -216,7 +216,7 @@ theorem isKStableSub_of_kStable (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn
       · obtain ⟨rfl, rfl⟩ := h2
         rw [hab]
         ring
-      · rw [if_neg h1, if_neg h2]
+      · rw [ite_eq_right h1, ite_eq_right h2]
         ring
   set X₁ : Matrix (Fin n) (Fin n) ℂ := Matrix.of fun i j => (if i = a ∧ j = b then (1 : ℂ) else 0) +
       (if i = b ∧ j = a then (-1 : ℂ) else 0) with hX₁
@@ -233,7 +233,7 @@ theorem isKStableSub_of_kStable (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn
       · obtain ⟨rfl, rfl⟩ := h2
         rw [hab]
         ring
-      · rw [if_neg h1, if_neg h2]
+      · rw [ite_eq_right h1, ite_eq_right h2]
         ring
   have hJ₂ : X₂ * Jm ε = Jm ε * X₂ := hcommJ Complex.I
   have hH₁ : X₁ᴴ = -X₁ := by

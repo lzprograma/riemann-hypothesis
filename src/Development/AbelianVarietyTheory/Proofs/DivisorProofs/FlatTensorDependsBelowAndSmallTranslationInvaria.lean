@@ -103,8 +103,8 @@ theorem phase_add (x a : ColArgs G) (u : Vars G) : phase (x + a) u = phase x u +
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [Pi.add_apply, ch_add]
   by_cases hE : Even (G.m - 2 - (j : ℕ))
-  · simp only [if_pos hE, rowVar_add, colVar_add, add_mul, Finset.sum_add_distrib, add_assoc]
-  · simp only [if_neg hE, add_zero]
+  · simp only [ite_eq_left hE, rowVar_add, colVar_add, add_mul, Finset.sum_add_distrib, add_assoc]
+  · simp only [ite_eq_right hE, add_zero]
 
 section Loc
 variable [ValuativeRel k] (hs : 1 ≤ G.s)
@@ -216,6 +216,6 @@ theorem GlobalTheory.FunObj.FlatDep.flatTensor_dep_and_per : ∀ {k : Type} [Fie
       rw [Valuation.map_neg, Units.val_one, map_one]
       refine (valuation k).map_sum_le fun j _ => ?_
       by_cases hE : Even (G.m - 2 - (j : ℕ))
-      · rw [if_pos hE]; exact (valuation k).map_sum_le fun r _ => hD j r
-      · rw [if_neg hE, map_zero]; exact zero_le'
+      · rw [ite_eq_left hE]; exact (valuation k).map_sum_le fun r _ => hD j r
+      · rw [ite_eq_right hE, map_zero]; exact zero_le'
     rw [phase_add, neg_add, AddChar.map_add_eq_mul, (hψ 1).2 le_rfl _ hsum, mul_one]

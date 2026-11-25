@@ -42,6 +42,7 @@ import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSelfDualLatticePrescribedSplitPlace
 
 @[expose] public section
 
@@ -60,30 +61,7 @@ theorem idAt_mono {P Q : Pl D → Prop} (hPQ : ∀ w, P w → Q w) : idAt D P �
 theorem latV_le_of_off {S : HSp D} {L L' : Lat S} (hL : Submodule.IsLattice D.host.E L)
     (hL' : Submodule.IsLattice D.host.E L') {v₀ v : Pl D} (hv : v ≠ v₀)
     (h : latV S L (· ≠ v₀) = latV S L' (· ≠ v₀)) : latV S L (· = v) ≤ latV S L' (· = v) := by
-  intro y hy
-  obtain ⟨⟨ε, -, -, hεint, hεat, -⟩, hSv⟩ := _root_.GlobalTheory.FinPl.localComponents D (· = v)
-  have hyv := ((hSv S).2.2.2 L y hL).1 hy
-  have hoff := ((_root_.GlobalTheory.FinPl.localComponents D (· ≠ v₀)).2 S).2.2.2
-  have hy₀ : y ∈ latV S L (· ≠ v₀) := by
-    rw [hoff L y hL]
-    refine ⟨fun i => idAt_mono (fun w hw => hw ▸ hv) (hyv.1 i), fun u _ e he => ?_⟩
-    by_cases huv : u = v
-    · subst huv
-      exact hyv.2 u rfl e he
-    · obtain ⟨⟨εu, -, -, -, hεuat, hεuoff⟩, -⟩ := _root_.GlobalTheory.FinPl.localComponents D (· = u)
-      have hz : e • y = 0 := by
-        funext i
-        have hyi : y i ∈ idOff D (· = u) :=
-          (Submodule.mem_iInf _).2 fun w =>
-            (Submodule.mem_iInf _).1 (Submodule.mem_inf.1 (hyv.1 i)).2 ⟨w.1, fun hw => huv (w.2.symm.trans hw)⟩
-        change e * y i = 0
-        rw [← (hεuat e).1 he.1, mul_comm εu e, mul_assoc, (hεuoff (y i)).1 hyi, mul_zero]
-      rw [hz]
-      exact zero_mem _
-  rw [h] at hy₀
-  have h2 := ((hoff L' y hL').1 hy₀).2 v hv ε hεint
-  have hεy : ε • y = y := funext fun i => (hεat (y i)).1 (hyv.1 i)
-  rwa [hεy] at h2
+  apply _root_.GlobalTheory.SplitLat.latV_le_of_off <;> assumption
 
 theorem latV_eq_of_off {S : HSp D} {L L' : Lat S} (hL : Submodule.IsLattice D.host.E L)
     (hL' : Submodule.IsLattice D.host.E L') {v₀ v : Pl D} (hv : v ≠ v₀)

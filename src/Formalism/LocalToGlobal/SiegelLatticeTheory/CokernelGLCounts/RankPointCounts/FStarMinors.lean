@@ -80,8 +80,6 @@ end Formalism.L2.SG.Pf.FrameGlobalPatching.FStar.FsLA
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7} {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
 
@@ -131,14 +129,14 @@ theorem starMinors_holds : StarMinors u u' F0 what₂ := by
   have hcross : Dmin w D.R.rS * Dmin w' (D.R.rS + 1) = Dmin w' D.R.rS * Dmin w (D.R.rS + 1) := by
     unfold kind at hk
     by_cases h0 : Dmin w D.R.rS = 0
-    · rw [if_pos h0] at hk
+    · rw [ite_eq_left h0] at hk
       have h0' : Dmin w' D.R.rS = 0 := by
-        by_contra h; rw [if_neg h] at hk; cases hk
+        by_contra h; rw [ite_eq_right h] at hk; cases hk
       rw [h0, h0', zero_mul, zero_mul]
-    · rw [if_neg h0] at hk
+    · rw [ite_eq_right h0] at hk
       have h0' : Dmin w' D.R.rS ≠ 0 := by
-        intro h; rw [if_pos h] at hk; cases hk
-      rw [if_neg h0'] at hk
+        intro h; rw [ite_eq_left h] at hk; cases hk
+      rw [ite_eq_right h0'] at hk
       have hz := Option.some.inj hk
       unfold zetaOf at hz
       field_simp at hz

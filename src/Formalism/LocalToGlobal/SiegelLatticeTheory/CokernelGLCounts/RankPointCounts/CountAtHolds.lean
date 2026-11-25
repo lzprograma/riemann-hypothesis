@@ -105,14 +105,14 @@ theorem bd_lo {x : Matrix (Fin n) (Fin n) R} (hx : IsLoUni x) : IsLoUni (bd a x)
   · unfold bd; split_ifs
     · exact (hx i j).1 h
     · rfl
-  · subst h; unfold bd; rw [if_pos rfl]; exact (hx i i).2 rfl
+  · subst h; unfold bd; rw [ite_eq_left rfl]; exact (hx i i).2 rfl
 
 theorem bd_one : bd a (1 : Matrix (Fin n) (Fin n) R) = 1 := by
   ext i j
   unfold bd
   split_ifs with h
   · rfl
-  · rw [Matrix.one_apply, if_neg]
+  · rw [Matrix.one_apply, ite_eq_right]
     rintro rfl; exact h rfl
 
 theorem bd_mul {x y : Matrix (Fin n) (Fin n) R} (hx : IsLoUni x) (hy : IsLoUni y) :
@@ -120,11 +120,11 @@ theorem bd_mul {x y : Matrix (Fin n) (Fin n) R} (hx : IsLoUni x) (hy : IsLoUni y
   ext i j
   simp only [bd, Matrix.mul_apply]
   by_cases hij : bk a i = bk a j
-  · rw [if_pos hij]
+  · rw [ite_eq_left hij]
     refine Finset.sum_congr rfl fun k _ => ?_
     by_cases hk : bk a i = bk a k
-    · rw [if_pos hk, if_pos (hk.symm.trans hij)]
-    · rw [if_neg hk, zero_mul]
+    · rw [ite_eq_left hk, ite_eq_left (hk.symm.trans hij)]
+    · rw [ite_eq_right hk, zero_mul]
       by_cases h1 : i < k
       · rw [(hx i k).1 h1, zero_mul]
       · by_cases h2 : k < j
@@ -133,12 +133,12 @@ theorem bd_mul {x y : Matrix (Fin n) (Fin n) R} (hx : IsLoUni x) (hy : IsLoUni y
           have e1 := bk_mono a (not_lt.1 h1)
           have e2 := bk_mono a (not_lt.1 h2)
           omega
-  · rw [if_neg hij]
+  · rw [ite_eq_right hij]
     symm
     refine Finset.sum_eq_zero fun k _ => ?_
     by_cases hk : bk a i = bk a k
-    · rw [if_pos hk, if_neg (fun e => hij (hk.trans e)), mul_zero]
-    · rw [if_neg hk, zero_mul]
+    · rw [ite_eq_left hk, ite_eq_right (fun e => hij (hk.trans e)), mul_zero]
+    · rw [ite_eq_right hk, zero_mul]
 
 theorem bd_inv {x : Matrix (Fin n) (Fin n) R} (hx : IsLoUni x) : bd a x⁻¹ = (bd a x)⁻¹ := by
   obtain ⟨hi, -, h2⟩ := Formalism.L2.SG.Pf.ZsVolGrp.isLoUni_inv hx
@@ -150,7 +150,7 @@ theorem bd_eq_one_iff {x : Matrix (Fin n) (Fin n) R} (hx : IsLoUni x) :
   constructor
   · intro h i j hij hb
     have := congrFun (congrFun h i) j
-    simp only [bd, if_pos hb, Matrix.one_apply, if_neg hij] at this
+    simp only [bd, ite_eq_left hb, Matrix.one_apply, ite_eq_right hij] at this
     exact this
   · intro h
     ext i j
@@ -172,7 +172,7 @@ theorem rvM_one : rvM a (1 : Matrix (Fin n) (Fin n) R) = 1 := by
   simp only [rvM, Matrix.one_apply]
   by_cases h : i = j
   · subst h; simp
-  · rw [if_neg (fun e => h (by rw [← rv_rv a i, e, rv_rv])), if_neg h]
+  · rw [ite_eq_right (fun e => h (by rw [← rv_rv a i, e, rv_rv])), ite_eq_right h]
 
 theorem rvM_up {x : Matrix (Fin n) (Fin n) R} (hx : IsLoUni x) : IsUpUni (rvM a (bd a x)) := by
   intro i j
@@ -182,21 +182,21 @@ theorem rvM_up {x : Matrix (Fin n) (Fin n) R} (hx : IsLoUni x) : IsUpUni (rvM a 
     · rw [bk_rv, bk_rv] at hb
       exact (hx _ _).1 (rv_anti a h hb.symm)
     · rfl
-  · subst h; unfold rvM bd; rw [if_pos rfl]; exact (hx _ _).2 rfl
+  · subst h; unfold rvM bd; rw [ite_eq_left rfl]; exact (hx _ _).2 rfl
 
 theorem bd_mat (x : Matrix (Fin n) (Fin n) R) : bd a x * a.mat = a.mat * rvM a (bd a x) := by
   ext i j
   have h1 : (bd a x * a.mat) i j = bd a x i (rv a j) * cc a (rv a j) := by
     rw [Matrix.mul_apply, Finset.sum_eq_single (rv a j)]
-    · rw [mat_apply, if_pos (rv_rv a j).symm]
+    · rw [mat_apply, ite_eq_left (rv_rv a j).symm]
     · intro k _ hk
-      rw [mat_apply, if_neg (fun e => hk (by rw [e, rv_rv])), mul_zero]
+      rw [mat_apply, ite_eq_right (fun e => hk (by rw [e, rv_rv])), mul_zero]
     · simp
   have h2 : (a.mat * rvM a (bd a x)) i j = cc a i * bd a x i (rv a j) := by
     rw [Matrix.mul_apply, Finset.sum_eq_single (rv a i)]
-    · rw [mat_apply, if_pos rfl, rvM, rv_rv]
+    · rw [mat_apply, ite_eq_left rfl, rvM, rv_rv]
     · intro k _ hk
-      rw [mat_apply, if_neg hk, zero_mul]
+      rw [mat_apply, ite_eq_right hk, zero_mul]
     · simp
   rw [h1, h2, cc_rv]
   unfold bd
@@ -216,12 +216,12 @@ def matI (a : Loc.Pt R n) : Matrix (Fin n) (Fin n) R := fun i j => if j = rv a i
 theorem matI_mul : matI a * a.mat = 1 := by
   ext i j
   rw [Matrix.mul_apply, Finset.sum_eq_single (rv a i)]
-  · rw [matI, if_pos rfl, mat_apply, rv_rv, Matrix.one_apply]
+  · rw [matI, ite_eq_left rfl, mat_apply, rv_rv, Matrix.one_apply]
     by_cases h : j = i
-    · subst h; rw [if_pos rfl, if_pos rfl, cc_eq, ccU_rv]; exact Units.inv_mul _
-    · rw [if_neg h, if_neg (Ne.symm h), mul_zero]
+    · subst h; rw [ite_eq_left rfl, ite_eq_left rfl, cc_eq, ccU_rv]; exact Units.inv_mul _
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h), mul_zero]
   · intro k _ hk
-    rw [matI, if_neg hk, zero_mul]
+    rw [matI, ite_eq_right hk, zero_mul]
   · simp
 
 theorem bd_of_stab {l ρ : Matrix (Fin n) (Fin n) R} (hl : IsLoUni l) (hρ : IsUpUni ρ)
@@ -242,15 +242,15 @@ theorem bd_of_stab {l ρ : Matrix (Fin n) (Fin n) R} (hl : IsLoUni l) (hρ : IsU
       have e1 := congrFun (congrFun e i) (rv a j)
       have lhs : (l * a.mat) i (rv a j) = l i j * cc a j := by
         rw [Matrix.mul_apply, Finset.sum_eq_single j]
-        · rw [mat_apply, if_pos rfl]
+        · rw [mat_apply, ite_eq_left rfl]
         · intro k _ hk
-          rw [mat_apply, if_neg (fun e' => hk (by rw [← rv_rv a k, ← e', rv_rv])), mul_zero]
+          rw [mat_apply, ite_eq_right (fun e' => hk (by rw [← rv_rv a k, ← e', rv_rv])), mul_zero]
         · simp
       have rhs : (a.mat * ρ⁻¹) i (rv a j) = cc a i * ρ⁻¹ (rv a i) (rv a j) := by
         rw [Matrix.mul_apply, Finset.sum_eq_single (rv a i)]
-        · rw [mat_apply, if_pos rfl]
+        · rw [mat_apply, ite_eq_left rfl]
         · intro k _ hk
-          rw [mat_apply, if_neg hk, zero_mul]
+          rw [mat_apply, ite_eq_right hk, zero_mul]
         · simp
       have hlt : bk a j < bk a i := lt_of_le_of_ne (bk_mono a hij.le) (fun e' => hb e'.symm)
       have hz : ρ⁻¹ (rv a i) (rv a j) = 0 := (hρi _ _).1 (rv_lt_of_bk_lt a hlt)
@@ -276,8 +276,6 @@ end Formalism.L2.SG.Pf.BlockCounting
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.Pf.ProdE Formalism.L2.SG.Pf.ProdEP2Cut Formalism.L2.SG.Pf.BlockCounting
 
 namespace Formalism.L2.SG.Pf.CountAt
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (p : PlF D)
 
@@ -355,7 +353,7 @@ theorem retr_id (s : UP p) (hs : s • a.mat = a.mat) : retr a s = s := by
 theorem intLow_bd {l : MP p} (h : Formalism.MainNotions.S.TieN.IntLow (M p) l) : Formalism.MainNotions.S.TieN.IntLow (M p) (bd a l) := by
   obtain ⟨h1, h2, h3⟩ := h
   refine ⟨fun i => ?_, fun i j hij => ?_, fun i j => ?_⟩
-  · unfold bd; rw [if_pos rfl]; exact h1 i
+  · unfold bd; rw [ite_eq_left rfl]; exact h1 i
   · unfold bd; split_ifs
     · exact h2 i j hij
     · rfl
@@ -422,8 +420,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.CountAt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) {p : PlF D}
   (a : Loc.Pt (D.s.atP p).Ep (D.R.rS + 1)) (πa : UP p →* UP p)
   (hker : ∀ x : UP p, πa x = 1 ↔ ((x : GG p).1 : GLp p).val ∈ Va p a) (g : UP p)
@@ -481,8 +477,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.CountAt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (δ : ∀ p : PlF D, (D.s.atP p).Fp)
   (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) {p : PlF D}
 
@@ -520,8 +514,6 @@ open scoped Classical
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.Pf.ProdE Formalism.L2.SG.Pf.ProdEP2Cut
 
 namespace Formalism.L2.SG.Pf.CountAt
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (δ : ∀ p : PlF D, (D.s.atP p).Fp)
   (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D)
@@ -602,8 +594,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
   Formalism.L2.SG.Pf.StabShape
 
 namespace Formalism.L2.SG.Pf.CountAt
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (δ : ∀ p : PlF D, (D.s.atP p).Fp)
   (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) {p : PlF D}
@@ -768,8 +758,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.CountAt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (δ : ∀ p : PlF D, (D.s.atP p).Fp)
   (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) {p : PlF D}
 
@@ -861,8 +849,6 @@ namespace Formalism.L2.SG.Pf.CountBase
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc Formalism.L2.SG.Pf.AtPt
 open Classical ValuativeRel
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep} {δ : ∀ p : PlF D, (D.s.atP p).Fp}
 
 theorem zhatOM_sg (X : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E) :
@@ -888,11 +874,11 @@ theorem modMat_ord (hA : ∀ p, Agree δ M p) (T T' : ℕ) (p : PlF D) (hM : (M 
   ext a b
   rw [modMat_apply', Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply']
   by_cases hb : b = sgF w a
-  · rw [if_pos hb, if_pos hb, modMat_blk Zd]
+  · rw [ite_eq_left hb, ite_eq_left hb, modMat_blk Zd]
     simp only [twist, qE, tau0, hR, Ring.inverse_one, mul_one, ite_self, sub_zero, map_mul]
     subst hb
     ring
-  · rw [if_neg hb, if_neg hb, map_zero, mul_zero, zero_mul]
+  · rw [ite_eq_right hb, ite_eq_right hb, map_zero, mul_zero, zero_mul]
 
 theorem baseConj_L (hA : ∀ p, Agree δ M p) (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D)
     (hM : (M p).split = none) (a : Loc.Pt (D.s.atP p).Ep (D.R.rS + 1))
@@ -928,8 +914,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
   Formalism.L2.SG.Pf.AtPt Formalism.L2.SG.TermLoc
 
 namespace Formalism.L2.SG.Pf.CountAt
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Corner
 
@@ -1154,8 +1138,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.CountAt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (δ : ∀ p : PlF D, (D.s.atP p).Fp)
   (u u' : D.what₂.Word) (F0 : FlagG (VS D) D.R.rS (Formalism.L2.SG.CntLocal.Tn u))
   (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V))
@@ -1203,8 +1185,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
   Formalism.L2.SG.Pf.StabShape
 
 namespace Formalism.L2.SG.Pf.CountAt
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (δ : ∀ p : PlF D, (D.s.atP p).Fp)
   (u u' : D.what₂.Word) (F0 : FlagG (VS D) D.R.rS (Formalism.L2.SG.CntLocal.Tn u))

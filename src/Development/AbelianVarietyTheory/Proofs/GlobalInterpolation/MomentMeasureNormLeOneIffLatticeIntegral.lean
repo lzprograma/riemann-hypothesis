@@ -468,7 +468,7 @@ theorem norm_le_one_iff_latInt : ∀ (q : ℕ) [Fact q.Prime] (ι : ℂ ≃+* �
       · simp [GlobalTheory.MomOne.zc]
     · intro i
       rw [Finset.sum_eq_single i (fun j _ hj => by simp [Ne.symm hj]) (by simp)]
-      simp only [if_true]
+      simp only [ite_true]
       rw [smul_smul, div_eq_mul_inv, mul_comm]
 
 end GlobalTheory.MomN

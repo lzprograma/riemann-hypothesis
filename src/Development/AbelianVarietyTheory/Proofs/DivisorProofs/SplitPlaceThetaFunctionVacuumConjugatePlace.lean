@@ -51,14 +51,6 @@ noncomputable section
 
 namespace GlobalTheory.SplitVacF
 
-end GlobalTheory.SplitVacF
-
-end
-
-noncomputable section
-
-namespace GlobalTheory.SplitVacF
-
 open GlobalTheory.SplitInvFormF
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
@@ -135,16 +127,6 @@ theorem heisOF_add_half {e : AEF F E} (he : IsSplitIdemF σ e) {x y : WOF F E nS
     (hy : y ∈ conjHalf σ e nS nT) (f : WOF F E nS nT → ℂ) :
     heisOF σ JS JT xi0 ψ (x + y) f = heisOF σ JS JT xi0 ψ x (heisOF σ JS JT xi0 ψ y f) := by
   rw [heisOF_heisOF, symplOHF_half he hx hy, AddChar.map_zero_eq_one, one_smul]
-
-end GlobalTheory.SplitVacF
-
-end
-
-noncomputable section
-
-namespace GlobalTheory.SplitVacF
-
-open GlobalTheory.SplitInvFormF
 
 end GlobalTheory.SplitVacF
 

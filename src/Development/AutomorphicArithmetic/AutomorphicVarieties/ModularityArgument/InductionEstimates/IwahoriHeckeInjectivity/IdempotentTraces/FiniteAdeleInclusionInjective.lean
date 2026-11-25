@@ -95,7 +95,7 @@ private theorem coset_tr {G H : Type*} [Group G] [Group H] (f : G →* H) (hf : 
     intro c g' hg
     have hc : ∃ g', t (f c.out) = f g' := ⟨g', hg⟩
     have : hc.choose = g' := hf (hc.choose_spec.symm.trans hg)
-    simp only [m, dif_pos hc, this]
+    simp only [m, dite_eq_left hc, this]
   refine finsum_mem_eq_of_bijOn m ⟨?_, ?_, ?_⟩ ?_
   · intro c hc
     obtain ⟨g', e, u', hu', l', hl', rfl⟩ := key c hc

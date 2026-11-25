@@ -2,9 +2,6 @@ module
 
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.WchartLePreimage
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExistsRosatiGen
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExistsValGenHasVal
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.GenCalc
@@ -18,14 +15,10 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped CategoryTheory.Obj
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace ReciprocityTheory.ChartRestriction.G.DVR.TG
 
@@ -156,7 +149,9 @@ theorem fam_eq_zero (hϖ : Irreducible ϖ) (G : Fam D.toPre F 1)
       LB.wchart D.toPre.P.L (DegPre.famφ D.toPre F mu) j₁ ⊓
         LB.wchart D.toPre.P.L (fun k => (DegPre.trF D.toPre F mu).left ≫ DegPre.famφ D.toPre F 0 k) j₂ ⊓
         LB.wchart D.toPre.P.L (DegPre.deltaφ D.toPre F 1 0 mu) j₃ ≤ _)).op).hom ((G.s mu).f j₁) = 0 := by
-    erw [E, h0 j₂, map_zero, map_zero, zero_mul]
+    refine E.trans ?_
+    rw [show ((DegPre.trF D.toPre F mu).left.app (LB.wchart D.toPre.P.L (DegPre.famφ D.toPre F 0) j₂)).hom
+      ((G.s 0).f j₂) = 0 from (congrArg _ (h0 j₂)).trans (map_zero _), map_zero, zero_mul]
 
   let W := LB.wchart D.toPre.P.L (DegPre.famφ D.toPre F mu) j ⊓
     (LB.wchart D.toPre.P.L (DegPre.famφ D.toPre F mu) j₁ ⊓
@@ -165,22 +160,28 @@ theorem fam_eq_zero (hϖ : Irreducible ϖ) (G : Fam D.toPre F 1)
   have hyW : y ∈ W := ⟨hy, ⟨⟨hy1, hy2⟩, hy3⟩⟩
   have hW1 : W ≤ LB.wchart D.toPre.P.L (DegPre.famφ D.toPre F mu) j ⊓ LB.wchart D.toPre.P.L (DegPre.famφ D.toPre F mu) j₁ :=
     le_inf inf_le_left (inf_le_right.trans (inf_le_left.trans inf_le_left))
-  have hc1 := congrArg (rs hW1) ((G.s mu).compat j j₁)
-  have hWz : rs (inf_le_left : W ≤ _) ((G.s mu).f j) = 0 := by
-    erw [rs_rs, rs_mul, rs_rs] at hc1
-    erw [hc1]
-    have := congrArg (rs (inf_le_right : W ≤ _)) hz
-    erw [rs_rs] at this
-    erw [this]
-    exact (congrArg _ (map_zero _)).trans (mul_zero _)
-  show (DegPre.BF D.toPre F).left.presheaf.germ _ y hy ((G.s mu).f j) = (DegPre.BF D.toPre F).left.presheaf.germ _ y hy 0
-  erw [← TopCat.Presheaf.germ_res_apply _ (homOfLE (inf_le_left : W ≤ _)) y hyW]
-  exact (congrArg _ hWz).trans ((map_zero _).trans (map_zero _).symm)
+  let fj : Γ((DegPre.BF D.toPre F).left, LB.wchart D.toPre.P.L (DegPre.famφ D.toPre F mu) j) := (G.s mu).f j
+  let fj₁ : Γ((DegPre.BF D.toPre F).left, LB.wchart D.toPre.P.L (DegPre.famφ D.toPre F mu) j₁) := (G.s mu).f j₁
+  let gjj1 : Γ((DegPre.BF D.toPre F).left,
+      LB.wchart D.toPre.P.L (DegPre.famφ D.toPre F mu) j ⊓ LB.wchart D.toPre.P.L (DegPre.famφ D.toPre F mu) j₁) :=
+    ((D.toPre.P.L.LinComb (DegPre.famφ D.toPre F mu) (DegPre.famε 1)).g j j₁).val
+  have hcompat : rs (inf_le_left : LB.wchart D.toPre.P.L (DegPre.famφ D.toPre F mu) j ⊓
+        LB.wchart D.toPre.P.L (DegPre.famφ D.toPre F mu) j₁ ≤ _) fj =
+      gjj1 * rs (inf_le_right : LB.wchart D.toPre.P.L (DegPre.famφ D.toPre F mu) j ⊓
+        LB.wchart D.toPre.P.L (DegPre.famφ D.toPre F mu) j₁ ≤ _) fj₁ :=
+    (G.s mu).compat j j₁
+  have hc1 := congrArg (rs hW1) hcompat
+  have hWz : rs (inf_le_left : W ≤ _) fj = 0 := by
+    rw [rs_rs, rs_mul, rs_rs] at hc1
+    have h1 := congrArg (rs (inf_le_right : W ≤ _)) hz
+    change rs (inf_le_right : W ≤ _) (rs _ fj₁) = rs (inf_le_right : W ≤ _) 0 at h1
+    have h0r : rs (inf_le_right : W ≤ _) (0 : Γ((DegPre.BF D.toPre F).left, _)) = 0 := map_zero _
+    rw [rs_rs, h0r] at h1
+    rw [hc1, h1, mul_zero]
+  exact (TopCat.Presheaf.germ_res_apply (DegPre.BF D.toPre F).left.presheaf
+    (homOfLE (inf_le_left : W ≤ _)) y hyW fj).symm.trans
+      ((congrArg _ hWz).trans ((map_zero _).trans (map_zero _).symm))
 
 end FEGen
-
-section Local
-
-end Local
 
 end ReciprocityTheory.ChartRestriction.G.DVR.TG

@@ -3,6 +3,7 @@ module
 public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroLeviEigenvectorExists
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ApplyMemTwKerOfNormalizer
 import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.IsClosedUnipRad
 
 @[expose] public section
 
@@ -118,12 +119,6 @@ theorem eventually_conj_mem_NO {ϖ : kˣ} (hϖ : IsUnif ϖ) {u : GL (Fin n) k} (
   refine GlobalTheory.DepthZeroJac.mem_unipRad_of fun i j h => ?_
   rw [GlobalTheory.DepthZeroJac.conj_sub_apply, GlobalTheory.DepthZeroJac.sub_one_of_mem_unipRad hu h, mul_zero, zero_mul]
 
-theorem conj_inv_mem_unipRad (ϖ : kˣ) (m : ℕ) {u : GL (Fin n) k} (hu : u ∈ unipRad k G.e) :
-    (G.zEl ϖ ^ m)⁻¹ * u * G.zEl ϖ ^ m ∈ unipRad k G.e := by
-  rw [zEl_pow]
-  refine GlobalTheory.DepthZeroJac.mem_unipRad_of fun i j h => ?_
-  rw [GlobalTheory.DepthZeroJac.conj'_sub_apply, GlobalTheory.DepthZeroJac.sub_one_of_mem_unipRad hu h, mul_zero, zero_mul]
-
 theorem eventually_mem_twKer_NO {V : Type} [AddCommGroup V] [Module ℂ V]
     (π : Representation ℂ (GL (Fin n) k) V) {ϖ : kˣ} (hϖ : IsUnif ϖ) {x : V}
     (hx : x ∈ twKer π (unipRad k G.e) 1) :
@@ -150,53 +145,8 @@ theorem eventually_mem_twKer_NO {V : Type} [AddCommGroup V] [Module ℂ V]
 
 theorem isClosed_zero : IsClosed ({0} : Set k) := isClosed_singleton
 
-theorem isClosed_unipRad : IsClosed (unipRad k G.e : Set (GL (Fin n) k)) := by
-  have e : (unipRad k G.e : Set (GL (Fin n) k)) =
-      ⋂ i, ⋂ j, {g : GL (Fin n) k | ¬ blk G.e i < blk G.e j → (g.val - 1) i j = 0} := by
-    ext g
-    simp only [SetLike.mem_coe, Set.mem_iInter, Set.mem_ofPred_eq]
-    exact ⟨fun hg i j h => GlobalTheory.DepthZeroJac.sub_one_of_mem_unipRad hg h,
-      fun h => GlobalTheory.DepthZeroJac.mem_unipRad_of fun i j hij => h i j hij⟩
-  rw [e]
-  refine isClosed_iInter fun i => isClosed_iInter fun j => ?_
-  by_cases h : blk G.e i < blk G.e j
-  · simp only [h, not_true_eq_false, false_implies, Set.ofPred_true]
-    exact isClosed_univ
-  · simp only [h, not_false_eq_true, true_implies]
-    have hcont : Continuous fun g : GL (Fin n) k => (g.val - 1) i j := by
-      have := Units.continuous_val (M := Matrix (Fin n) (Fin n) k)
-      fun_prop
-    exact isClosed_zero.preimage hcont
-
 theorem isOpen_KO : IsOpen (KO k (Fin n) : Set (GL (Fin n) k)) :=
   Subgroup.isOpen_mono GlobalTheory.StepData.KOne_le_KO GlobalTheory.StepData.isOpen_KOne
-
-theorem isCompact_NO : IsCompact (G.NO : Set (GL (Fin n) k)) := by
-  have hKO : IsCompact (KO k (Fin n) : Set (GL (Fin n) k)) := GlobalTheory.SplitFlip.isCompact_KO
-  refine hKO.of_isClosed_subset ?_ (fun g hg => ((mem_NO G).1 hg).2)
-  show IsClosed ((unipRad k G.e : Set (GL (Fin n) k)) ∩ (KO k (Fin n) : Set (GL (Fin n) k)))
-  exact (isClosed_unipRad G).inter (Subgroup.isClosed_of_isOpen _ isOpen_KO)
-
-theorem isOpen_zN (ϖ : kˣ) (m : ℕ) : IsOpen ((G.zN ϖ m : Subgroup ↥G.NO) : Set ↥G.NO) := by
-  let f : ↥G.NO →* GL (Fin n) k := (MulAut.conj (G.zEl ϖ ^ m)⁻¹).toMonoidHom.comp G.NO.subtype
-  let S : Subgroup ↥G.NO := (KO k (Fin n)).comap f
-  have hf : Continuous f := by
-    show Continuous fun u : ↥G.NO => (G.zEl ϖ ^ m)⁻¹ * (u : GL (Fin n) k) * (G.zEl ϖ ^ m)⁻¹⁻¹
-    exact (continuous_const.mul continuous_subtype_val).mul continuous_const
-  have hS : IsOpen (S : Set ↥G.NO) := isOpen_KO.preimage hf
-  refine Subgroup.isOpen_mono (H₁ := S) ?_ hS
-  intro u hu
-  have hu' : (G.zEl ϖ ^ m)⁻¹ * (u : GL (Fin n) k) * (G.zEl ϖ ^ m)⁻¹⁻¹ ∈ KO k (Fin n) := hu
-  rw [inv_inv] at hu'
-  rw [zN, Subgroup.mem_subgroupOf, Subgroup.mem_map]
-  refine ⟨(G.zEl ϖ ^ m)⁻¹ * (u : GL (Fin n) k) * G.zEl ϖ ^ m,
-    (mem_NO G).2 ⟨conj_inv_mem_unipRad G ϖ m ((mem_NO G).1 u.2).1, hu'⟩, ?_⟩
-  change G.zEl ϖ ^ m * ((G.zEl ϖ ^ m)⁻¹ * (u : GL (Fin n) k) * G.zEl ϖ ^ m) * (G.zEl ϖ ^ m)⁻¹ = u
-  group
-
-theorem finite_quot (ϖ : kˣ) (m : ℕ) : Finite (↥G.NO ⧸ G.zN ϖ m) := by
-  have : CompactSpace ↥G.NO := isCompact_iff_compactSpace.1 (isCompact_NO G)
-  exact (G.zN ϖ m).quotient_finite_of_isOpen (isOpen_zN G ϖ m)
 
 end UpperTheory.TNZ.Grp.JacquetKernel
 
@@ -211,8 +161,8 @@ theorem step_jacKer (G : Grp k n) : G.JacquetKernelProp := by
   have h1 : x ∈ twKer π (unipRad k G.e) 1 := (Submodule.Quotient.mk_eq_zero _).1 h0
   obtain ⟨m, hm⟩ := (JacquetKernel.eventually_mem_twKer_NO G π hϖ h1).exists
   refine ⟨m, ?_⟩
-  have hc : IsCompact (G.NO : Set (GL (Fin n) k)) := JacquetKernel.isCompact_NO G
-  have : Finite (↥G.NO ⧸ G.zN ϖ m) := JacquetKernel.finite_quot G ϖ m
+  have hc : IsCompact (G.NO : Set (GL (Fin n) k)) := P_TzE.isCompact_NO G
+  have : Finite (↥G.NO ⧸ G.zN ϖ m) := P_TzE.finite_quot G ϖ m
   let : Fintype (↥G.NO ⧸ G.zN ϖ m) := Fintype.ofFinite _
   have hfix : ∀ u ∈ G.zN ϖ m,
       π ((u : ↥G.NO) : GL (Fin n) k) (π (G.zEl ϖ ^ m) x) = π (G.zEl ϖ ^ m) x := by

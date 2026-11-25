@@ -195,13 +195,9 @@ private theorem normAt_finset_sum_le {K V ι : Type} [Field K] [NumberField K] [
     [AddCommGroup V] [Module K V] [Fintype ι] [DecidableEq ι] (b : Basis ι K V)
     (X : InfinitePlace K → Matrix ι ι ℂ) (v : InfinitePlace K) {α : Type} (s : Finset α)
     (f : α → V) :
-    Formalism.HermitianLatticesTheory.normAt b X v (∑ a ∈ s, f a) ≤ ∑ a ∈ s, Formalism.HermitianLatticesTheory.normAt b X v (f a) := by
-  classical
-  refine Finset.induction_on s ?_ ?_
-  · simpa using (normAt_smul_indefinite_real b X v (0 : K) (0 : V)).le
-  · intro a s ha ih
-    rw [Finset.sum_insert ha, Finset.sum_insert ha]
-    exact (normAt_add_le b X v _ _).trans (add_le_add le_rfl ih)
+    Formalism.HermitianLatticesTheory.normAt b X v (∑ a ∈ s, f a) ≤ ∑ a ∈ s, Formalism.HermitianLatticesTheory.normAt b X v (f a) :=
+  Finset.le_sum_of_subadditive (Formalism.HermitianLatticesTheory.normAt b X v)
+    (by simpa using (normAt_smul_indefinite_real b X v (0 : K) (0 : V)).le) (normAt_add_le b X v) s f
 
 theorem metric : Metric := by
   intro K _ _ _ _ G _ _ V _ _ _ _ ι _ _ b X ρ hX hU

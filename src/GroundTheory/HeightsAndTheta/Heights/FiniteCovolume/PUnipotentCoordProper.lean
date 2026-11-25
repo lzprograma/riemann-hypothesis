@@ -3,7 +3,6 @@ module
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StUnipotentCoordProper
 public import GroundTheory.AutomorphicForms.HermitianOrthogonal
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PHermAtPlace
-import Mathlib.Tactic.TypeStar
 public import Mathlib.Topology.Algebra.Group.Units
 
 @[expose] public section

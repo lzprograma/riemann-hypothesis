@@ -44,8 +44,6 @@ import Mathlib.Tactic.TypeStar
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open scoped TensorProduct
 
 namespace GlobalTheory.PlaceSupp
@@ -57,35 +55,6 @@ theorem tensCast_tmul_one {E : Type} [Field E] [NumberField E] {F1 F2 : Subfield
   subst h
   exact ⟨v, α, rfl, h1, h0⟩
 
-
-open Classical in
-theorem equivFinsuppOfBasisRight_rTensor {K M N N' ι : Type*} [Field K] [AddCommGroup M] [Module K M]
-    [AddCommGroup N] [Module K N] [AddCommGroup N'] [Module K N']
-    (b : Module.Basis ι K M) (f : N →ₗ[K] N') (x : N ⊗[K] M) (i : ι) :
-    TensorProduct.equivFinsuppOfBasisRight b (LinearMap.rTensor M f x) i =
-      f (TensorProduct.equivFinsuppOfBasisRight b x i) := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
-  | tmul m n => simp
-  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
-
-theorem rTensor_eq_zero {K M N P Q ι : Type*} [Field K] [AddCommGroup M] [Module K M]
-    [AddCommGroup N] [Module K N] [AddCommGroup P] [Module K P] [AddCommGroup Q] [Module K Q]
-    (b : Module.Basis ι K M) (f : N →ₗ[K] P) (g : N →ₗ[K] Q) (hfg : ∀ n, f n = 0 → g n = 0 → n = 0)
-    (x : N ⊗[K] M) (h1 : LinearMap.rTensor M f x = 0) (h2 : LinearMap.rTensor M g x = 0) : x = 0 := by
-  classical
-  let e := TensorProduct.equivFinsuppOfBasisRight (M := N) b
-  have hc : ∀ i, e x i = 0 := by
-    intro i
-    apply hfg
-    · have := equivFinsuppOfBasisRight_rTensor b f x i
-      rw [h1, map_zero, Finsupp.zero_apply] at this
-      exact this.symm
-    · have := equivFinsuppOfBasisRight_rTensor b g x i
-      rw [h2, map_zero, Finsupp.zero_apply] at this
-      exact this.symm
-  have : e x = 0 := Finsupp.ext hc
-  simpa using congrArg e.symm this
 
 theorem idem_mul_eq_self : ∀ (D : D7) (s : SplitPlace D.host.E) (hF : D.host.F = maximalRealSubfield D.host.E) (p : GlobalTheory.LocMod.Place D (s.w.adicCompletion D.host.E)) (c : s.v.adicCompletion (maximalRealSubfield D.host.E) ≃+* s.w.adicCompletion D.host.E), (∀ a : Formalism.L2.Theta.AE D, p.π a = c (s.proj (GlobalTheory.NJoin.tensCast hF (Formalism.L2.Theta.finPart D a)))) → ∀ a : Formalism.L2.Theta.AE D, Formalism.L2.Theta.infPart D a = 0 → (∀ v' : HeightOneSpectrum (𝓞 (maximalRealSubfield D.host.E)), v' ≠ s.v → ReciprocityTheory.Aut.compAt D.host.E v' (GlobalTheory.NJoin.tensCast hF (Formalism.L2.Theta.finPart D a)) = 0) → (p.e + Formalism.L2.Theta.cA D p.e) * a = a := by
   intro D s hF p c hπ a ha0 haf

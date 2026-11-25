@@ -150,10 +150,10 @@ theorem twNext_surj {i : ℕ} {st : TwSt X Pr R (QE sel (mu : Chr X.F X.E X.K)) 
 variable (Ch sel mu cst)
 
 theorem twSt_succ_le {m2 i : ℕ} (h : i + 1 ≤ m2) : twSt Ch sel mu cst m2 (i + 1) = twNext Ch sel mu cst (twSt Ch sel mu cst m2 i) := by
-  rw [twSt, if_pos h]
+  rw [twSt, ite_eq_left h]
 
 theorem twSt_last (m2 : ℕ) : twSt Ch sel mu cst m2 (m2 + 1) = twUnitSt _ (m2 + 1) := by
-  rw [twSt, if_neg (by omega), if_pos rfl]
+  rw [twSt, ite_eq_right (by omega), ite_eq_left rfl]
 
 theorem twSt_le (m2 : ℕ) : ∀ (j : ℕ) (_b : (twSt Ch sel mu cst m2 j).β), j ≤ m2 + 1
   | 0, _ => Nat.zero_le _
@@ -163,7 +163,7 @@ theorem twSt_le (m2 : ℕ) : ∀ (j : ℕ) (_b : (twSt Ch sel mu cst m2 j).β), 
       · intro _; omega
       · by_cases h2 : i + 1 = m2 + 1
         · intro _; omega
-        · rw [show twSt Ch sel mu cst m2 (i + 1) = twEmptySt _ (i + 1) by rw [twSt, if_neg h1, if_neg h2]]
+        · rw [show twSt Ch sel mu cst m2 (i + 1) = twEmptySt _ (i + 1) by rw [twSt, ite_eq_right h1, ite_eq_right h2]]
           intro b; exact b.elim
 
 theorem twSt_h_g (m2 : ℕ) : ∀ (j : ℕ) (b : (twSt Ch sel mu cst m2 j).β) (P : rowSG Pr sel mu), P.1 ∈ Pr.vGs →
@@ -175,9 +175,9 @@ theorem twSt_h_g (m2 : ℕ) : ∀ (j : ℕ) (b : (twSt Ch sel mu cst m2 j).β) (
       · rw [twSt_succ_le Ch sel mu cst h1]
         intro b; exact twNext_h_g _ b P hP
       · by_cases h2 : i + 1 = m2 + 1
-        · rw [show twSt Ch sel mu cst m2 (i + 1) = twUnitSt _ (i + 1) by rw [twSt, if_neg h1, if_pos h2]]
+        · rw [show twSt Ch sel mu cst m2 (i + 1) = twUnitSt _ (i + 1) by rw [twSt, ite_eq_right h1, ite_eq_left h2]]
           intro _; rfl
-        · rw [show twSt Ch sel mu cst m2 (i + 1) = twEmptySt _ (i + 1) by rw [twSt, if_neg h1, if_neg h2]]
+        · rw [show twSt Ch sel mu cst m2 (i + 1) = twEmptySt _ (i + 1) by rw [twSt, ite_eq_right h1, ite_eq_right h2]]
           intro b; exact b.elim
 
 end TwL
@@ -261,19 +261,19 @@ theorem nElem : NElem := by
     intro l s hsl
     have hsl' : s.1 < l.1 := hsl
     by_cases hs : s.1 < n
-    · rw [hM_lt l s hs, if_neg (fun h => by rw [h] at hsl'; exact lt_irrefl _ hsl')]
+    · rw [hM_lt l s hs, ite_eq_right (fun h => by rw [h] at hsl'; exact lt_irrefl _ hsl')]
     · have hsc := s.2
       rw [show s = ⟨s.1, s.2⟩ from rfl, hM_ge l s.1 s.2 hs,
         embedMatrix_basisVec_apply_of_not_free xj tt (s.1 - n) (by omega) l (hnf l (s.1 - n) (by omega) (Or.inr (by omega))),
-        if_neg (by omega)]
+        ite_eq_right (by omega)]
   have hD : ∀ s : Fin (n + c), M s s = 1 := by
     intro s
     by_cases hs : s.1 < n
-    · rw [hM_lt s s hs, if_pos rfl]
+    · rw [hM_lt s s hs, ite_eq_left rfl]
     · have hsc := s.2
       rw [show s = ⟨s.1, s.2⟩ from rfl, hM_ge _ s.1 s.2 hs,
         embedMatrix_basisVec_apply_of_not_free xj tt (s.1 - n) (by omega) _ (hnf _ (s.1 - n) (by omega) (Or.inr (by simp; omega))),
-        if_pos (by simp; omega)]
+        ite_eq_left (by simp; omega)]
   have hUT : M.BlockTriangular id := fun i j hij => hT i j hij
   have hdet : IsUnit M.det := by
     rw [Matrix.det_of_upperTriangular hUT]
@@ -344,7 +344,7 @@ theorem nElem : NElem := by
     · rw [hD l, one_mul]
     · intro s _ hsl
       by_cases hs : s.1 < n
-      · rw [hM_lt l s hs, if_neg (fun h => hsl h.symm), zero_mul]
+      · rw [hM_lt l s hs, ite_eq_right (fun h => hsl h.symm), zero_mul]
       · rw [hinX v s hs, mul_zero]
     · intro h
       exact absurd (Finset.mem_univ l) h
@@ -412,7 +412,7 @@ theorem facts {k₀ m t j n' c n : ℕ} (h : Nums k₀ m t j n' c n) :
     simp [add_mul]
   refine ⟨?_, ?_, ?_, ?_, ?_, he1, ?_⟩ <;> omega
 
-theorem fIdx_lt {k₀ c n p : ℕ} (_hk : k₀ ≤ n) (hp : p < n + c) : fIdx k₀ c n p < n + c := by
+theorem fIdx_lt {k₀ c n p : ℕ} (hp : p < n + c) : fIdx k₀ c n p < n + c := by
   unfold PI.OneCosetSharp.LocE.fIdx
   split_ifs <;> omega
 
@@ -428,8 +428,8 @@ theorem ent_unit {k₀ m t j n' c n : ℕ} (hN : Nums k₀ m t j n' c n) (τ : F
   obtain ⟨hk, hc1, hlt, hle, hle2, heq1, heq2⟩ := facts hN
   have hR := fIdx_eq_cases k₀ c n p
   have hS := fIdx_eq_cases k₀ (c + 1) n' p'
-  have hrl : PI.OneCosetSharp.LocE.fIdx k₀ c n p < n + c := fIdx_lt (by omega) hp
-  have hsl : PI.OneCosetSharp.LocE.fIdx k₀ (c + 1) n' p' < n' + (c + 1) := fIdx_lt hk hp'
+  have hrl : PI.OneCosetSharp.LocE.fIdx k₀ c n p < n + c := fIdx_lt hp
+  have hsl : PI.OneCosetSharp.LocE.fIdx k₀ (c + 1) n' p' < n' + (c + 1) := fIdx_lt hp'
   rw [entry_embedMatrix k₀ _ _ p p' hrl hsl]
   generalize PI.OneCosetSharp.LocE.fIdx k₀ c n p = r at hR hrl ⊢
   generalize PI.OneCosetSharp.LocE.fIdx k₀ (c + 1) n' p' = s at hS hsl ⊢
@@ -442,8 +442,8 @@ theorem ent_τ0 {k₀ m t j n' c n : ℕ} (hN : Nums k₀ m t j n' c n) {p p' : 
   obtain ⟨hk, hc1, hlt, hle, hle2, heq1, heq2⟩ := facts hN
   have hR := fIdx_eq_cases k₀ c n p
   have hS := fIdx_eq_cases k₀ (c + 1) n' p'
-  have hrl : PI.OneCosetSharp.LocE.fIdx k₀ c n p < n + c := fIdx_lt (by omega) hp
-  have hsl : PI.OneCosetSharp.LocE.fIdx k₀ (c + 1) n' p' < n' + (c + 1) := fIdx_lt hk hp'
+  have hrl : PI.OneCosetSharp.LocE.fIdx k₀ c n p < n + c := fIdx_lt hp
+  have hsl : PI.OneCosetSharp.LocE.fIdx k₀ (c + 1) n' p' < n' + (c + 1) := fIdx_lt hp'
   rw [entry_embedMatrix k₀ _ _ p p' hrl hsl]
   generalize PI.OneCosetSharp.LocE.fIdx k₀ c n p = r at hR hrl ⊢
   generalize PI.OneCosetSharp.LocE.fIdx k₀ (c + 1) n' p' = s at hS hsl ⊢
@@ -462,7 +462,7 @@ theorem sum_eq_chArg {k₀ m t j n' c n : ℕ} (hN : Nums k₀ m t j n' c n) (τ
   have hz : ∀ i, i + 1 < n' + (c + 1) → (i + 1 ≤ k₀ ∨ k₀ + c < i + 1) →
       PI.OneCosetSharp.ent k₀ (c + 1) n' c n (PI.OneCosetSharp.Loc.xx1 (xj0 k₀ n' n) τ) i (i + 1) = 0 := by
     intro i hi hcol
-    rw [ent_unit hN τ (by omega) hi hcol, if_neg (by omega)]
+    rw [ent_unit hN τ (by omega) hi hcol, ite_eq_right (by omega)]
   have h1 : ∑ i ∈ Finset.range k₀, PI.OneCosetSharp.ent k₀ (c + 1) n' c n (PI.OneCosetSharp.Loc.xx1 (xj0 k₀ n' n) τ) i (i + 1) = 0 :=
     Finset.sum_eq_zero fun i hi => by
       rw [Finset.mem_range] at hi
@@ -508,7 +508,7 @@ theorem prod_blocks [DecidableEq k] {k₀ m t j n' c n : ℕ} (hN : Nums k₀ m 
     by_cases h : s = s'
     · subst h
       simp
-    · rw [if_neg h, if_neg]
+    · rw [ite_eq_right h, ite_eq_right]
       intro h'
       exact h (Fin.ext (by omega))
   rw [hM, Matrix.det_one, chiV_one]
@@ -532,14 +532,14 @@ theorem top_block [DecidableEq k] {k₀ m t j n' c n : ℕ} (hN : Nums k₀ m t 
       rw [Matrix.of_apply]
       by_cases hs : s.1 < k₀ + m - 1
       · exact hC.1 s.1 hs
-      · rw [ent_unit hN τ (by omega) (by omega) (by omega), if_pos rfl]
+      · rw [ent_unit hN τ (by omega) (by omega) (by omega), ite_eq_left rfl]
     · intro s s' hss
       have hss' : s'.1 < s.1 := hss
       have hs1 := s.isLt
       have hs2 := s'.isLt
       rw [Matrix.of_apply]
       by_cases hcol : s'.1 ≤ k₀ ∨ k₀ + c < s'.1
-      · rw [ent_unit hN τ (by omega) (by omega) hcol, if_neg (by omega)]
+      · rw [ent_unit hN τ (by omega) (by omega) hcol, ite_eq_right (by omega)]
       · by_contra hne
         have hA := hC.2 s.1 s'.1 (by omega) hs2 (by omega) hne
         unfold PI.OneCosetSharp.Allow at hA
@@ -577,8 +577,8 @@ theorem claim2 : Claim2 := by
   rw [Finset.sum_boole, Nat.cast_ne_zero, Finset.card_ne_zero]
   refine ⟨τ0 k₀ n' c n, Finset.mem_filter.mpr ⟨Fintype.mem_piFinset.mpr fun _ => Finset.mem_univ _, ?_⟩⟩
   refine ⟨fun p' hp' => ?_, fun p p' hp hp' hne h0 => ?_⟩
-  · rw [ent_τ0 hN (by omega) (by omega), if_pos rfl]
-  · exact absurd (by rw [ent_τ0 hN hp (by omega), if_neg hne]) h0
+  · rw [ent_τ0 hN (by omega) (by omega), ite_eq_left rfl]
+  · exact absurd (by rw [ent_τ0 hN hp (by omega), ite_eq_right hne]) h0
 
 end PI.OneCosetSharp.W.C2
 end -- clump:auto
@@ -639,7 +639,7 @@ theorem fix_of_basis (g : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c) → k))
   by_cases hl : l.1 < n
   · have h0 : w l = 0 := by
       have h1 := congrFun hw l
-      rw [lowProj_apply₂, if_pos hl] at h1
+      rw [lowProj_apply₂, ite_eq_left hl] at h1
       exact h1
     rw [h0, zero_smul, zero_smul]
   · have hlt := l.2
@@ -712,7 +712,7 @@ theorem gaStep : GaStep := by
   have hγl : ∀ v (l : Fin (n + c)), n ≤ l.1 → (g * κ⁻¹) v l = v l := by
     intro v l hl
     rw [hγ]
-    simp only [Pi.sub_apply, Pi.add_apply, projA_apply, if_neg (not_lt.mpr hl)]
+    simp only [Pi.sub_apply, Pi.add_apply, projA_apply, ite_eq_right (not_lt.mpr hl)]
     ring
   have hγfix : ∀ w, (XP : (Fin (n + c) → k) →ₗ[k] _) w = 0 → (g * κ⁻¹) w = w := by
     intro w hw
@@ -730,21 +730,21 @@ theorem gaStep : GaStep := by
       PI.OneCosetSharp.ent k₀ c n c n κ.toLinearMap p p' =
         (PI.OneCosetSharp.Loc.eN k (n + c) (PI.OneCosetSharp.LocE.fIdx k₀ c n p') + B (PI.OneCosetSharp.Loc.eN k (n + c) (PI.OneCosetSharp.LocE.fIdx k₀ c n p'))) ⟨_, hp⟩ := by
     intro p p' hp
-    simp only [PI.OneCosetSharp.ent, PI.OneCosetSharp.Loc.atN, dif_pos hp, LinearEquiv.coe_coe, hκ]
+    simp only [PI.OneCosetSharp.ent, PI.OneCosetSharp.Loc.atN, dite_eq_left hp, LinearEquiv.coe_coe, hκ]
   have hBq : ∀ q (hq : q < n + c), B (PI.OneCosetSharp.Loc.eN k (n + c) q) ⟨q, hq⟩ = 0 := by
     intro q hq
     by_cases h : q < n
     · rw [hB, projA_apply]
-      exact if_pos h
+      exact ite_eq_left h
     · rw [hB0 _ (lowProj_basisVec_of_le q (not_lt.mp h))]
       rfl
   refine ⟨g * κ⁻¹, mem_flagUnipotent hU, κ, ⟨fun p' hp' => ?_, fun p p' hp hp' hne hent => ?_⟩, by simp⟩
   · have hq := fIdx_lt_add_of_lt_add (k₀ := k₀) (show p' < n + c by omega)
     rw [hentry p' p' hq, Pi.add_apply, hBq _ hq, add_zero, eN_apply]
-    exact if_pos rfl
+    exact ite_eq_left rfl
   · have hq := fIdx_lt_add_of_lt_add (k₀ := k₀) hp
     have hqq : PI.OneCosetSharp.LocE.fIdx k₀ c n p ≠ PI.OneCosetSharp.LocE.fIdx k₀ c n p' := fun h => hne (fIdx_injOn_of_lt_add hkn hp hp' h)
-    rw [hentry p p' hq, Pi.add_apply, eN_apply, Fin.val_mk, if_neg hqq, zero_add] at hent
+    rw [hentry p p' hq, Pi.add_apply, eN_apply, Fin.val_mk, ite_eq_right hqq, zero_add] at hent
     by_cases hq'n : PI.OneCosetSharp.LocE.fIdx k₀ c n p' < n
     · rw [hB, lowProj_basisVec_of_lt _ hq'n] at hent
       rcases lt_or_le_of_fIdx_lt hq'n with h | h
@@ -754,7 +754,7 @@ theorem gaStep : GaStep := by
       · rw [projA_apply] at hent
         have hpn : n ≤ PI.OneCosetSharp.LocE.fIdx k₀ c n p := by
           by_contra h'
-          exact hent (if_pos (not_le.mp h'))
+          exact hent (ite_eq_left (not_le.mp h'))
         obtain ⟨hp1, hp2⟩ := mem_block_of_le_fIdx hkn hp hpn
         exact allow_of_mem_block_of_le_right hcm hp1 hp2 h
     · rw [hB0 _ (lowProj_basisVec_of_le _ (not_lt.mp hq'n))] at hent
@@ -788,7 +788,7 @@ private theorem det_eq_det_castLE_of_cols_eq_one {k : Type} [Field k] {a t N : �
     ext (s | s) (s' | s')
     · rfl
     · show K (Fin.castAdd t s) (Fin.natAdd a s') = 0
-      rw [h0 (Fin.castAdd t s) (Fin.natAdd a s') (by simp), if_neg]
+      rw [h0 (Fin.castAdd t s) (Fin.natAdd a s') (by simp), ite_eq_right]
       intro h
       have := congrArg Fin.val h
       simp only [Fin.val_castAdd, Fin.val_natAdd] at this
@@ -799,7 +799,7 @@ private theorem det_eq_det_castLE_of_cols_eq_one {k : Type} [Field k] {a t N : �
       by_cases h : s = s'
       · subst h
         simp
-      · rw [if_neg h, if_neg]
+      · rw [ite_eq_right h, ite_eq_right]
         intro h'
         apply h
         have := congrArg Fin.val h'
@@ -841,18 +841,18 @@ theorem kappaZero : KappaZero := by
       simp [PI.OneCosetSharp.chiV]
     · exact absurd rfl hy
   have hcoord : ∀ (v : Fin (n + c) → k) (l : Fin (n + c)), PI.OneCosetSharp.Loc.atN v l.1 = v l := fun v l => by
-    simp only [PI.OneCosetSharp.Loc.atN, dif_pos l.2, Fin.eta]
+    simp only [PI.OneCosetSharp.Loc.atN, dite_eq_left l.2, Fin.eta]
   obtain ⟨K, hK⟩ : ∃ K : Matrix (Fin (n + c)) (Fin (n + c)) k, ∀ p q, K p q =
       if q.1 < k₀ + m - 1 + (j - 1) * t then PI.OneCosetSharp.ent k₀ (c + 1) n' c n y p.1 q.1 else if p = q then 1 else 0 :=
     ⟨Matrix.of fun p q => if q.1 < k₀ + m - 1 + (j - 1) * t then PI.OneCosetSharp.ent k₀ (c + 1) n' c n y p.1 q.1
       else if p = q then 1 else 0, fun _ _ => rfl⟩
   have hdetK : K.det ≠ 0 := by
-    rw [det_eq_det_castLE_of_cols_eq_one hN K (fun p q hq => by rw [hK, if_neg (not_lt.mpr hq)])]
+    rw [det_eq_det_castLE_of_cols_eq_one hN K (fun p q hq => by rw [hK, ite_eq_right (not_lt.mpr hq)])]
     refine ne_of_eq_of_ne ?_ key.2.2
     congr 1
     ext s s'
     simp only [Matrix.of_apply]
-    rw [hK, if_pos] <;> first | rfl | exact s'.2
+    rw [hK, ite_eq_left] <;> first | rfl | exact s'.2
   have hA : IsUnit (K.submatrix (PI.OneCosetSharp.W.P2.fe k₀ c n hk).symm
       (PI.OneCosetSharp.W.P2.fe k₀ c n hk).symm).det := by
     rw [Matrix.det_submatrix_equiv_self]
@@ -873,12 +873,12 @@ theorem kappaZero : KappaZero := by
       · refine Or.inr ?_
         have hne : p.1 ≠ q.1 := fun h => hpq' (Fin.ext h)
         by_cases hq : q.1 < k₀ + m - 1 + (j - 1) * t
-        · rw [hK, if_pos hq] at hpq
+        · rw [hK, ite_eq_left hq] at hpq
           exact allow_mono (Nat.le.intro hN) (key.2.1 p.1 q.1 p.2 hq hne hpq)
-        · rw [hK, if_neg hq, if_neg hpq'] at hpq
+        · rw [hK, ite_eq_right hq, ite_eq_right hpq'] at hpq
           exact absurd rfl hpq
     · have hpa : p.1 < k₀ + m - 1 + (j - 1) * t := by omega
-      rw [hK, if_pos hpa]
+      rw [hK, ite_eq_left hpa]
       exact key.1 p.1 hp
   · intro p hp
     have hpa : p < k₀ + m - 1 + (j - 1) * t := by omega
@@ -887,7 +887,7 @@ theorem kappaZero : KappaZero := by
     have hl : PI.OneCosetSharp.LocE.fIdx k₀ c n ((PI.OneCosetSharp.W.P2.fe k₀ c n hk).symm l).1 = l.1 :=
       congrArg Fin.val ((PI.OneCosetSharp.W.P2.fe k₀ c n hk).apply_symm_apply l)
     have e1 := PI.OneCosetSharp.W.P2.ent_eq hk κ ((PI.OneCosetSharp.W.P2.fe k₀ c n hk).symm l) ⟨p, hpN⟩
-    rw [hperm, hK, if_pos hpa] at e1
+    rw [hperm, hK, ite_eq_left hpa] at e1
     unfold PI.OneCosetSharp.ent at e1
     rw [hl, hcoord, hcoord] at e1
     exact e1
@@ -947,7 +947,7 @@ theorem sum_step {k : Type} [Field k] [Fintype k] (ψ₀ : AddChar k ℂ) (χ : 
 
 theorem fIdx_add_of_lt (k₀ c n i : ℕ) (hi : i < c) : fIdx k₀ c n (k₀ + i) = n + i := by
   unfold fIdx
-  rw [if_neg (by omega), if_pos (by omega)]
+  rw [ite_eq_right (by omega), ite_eq_left (by omega)]
   omega
 
 theorem Nums.n'_ge {k₀ m t j n' c n : ℕ} (hn : Nums k₀ m t j n' c n) : k₀ ≤ n' := by
@@ -1232,7 +1232,7 @@ theorem twNF_one_zero {P : HeightOneSpectrum (𝓞 X.E)} (hP : P ∉ Pr.vGs) : T
   refine ⟨fun _ => 0, 0, fun _ => ⟨by simp, le_refl _⟩, zero_mem _, fun v => ?_⟩
   have hl : lamYat (Pr := Pr) (R := R) 0 P = LocE.lamY P (qOf P) (R.N 0) (cOf R 0) 0 := by
     unfold lamYat
-    rw [if_neg hP]
+    rw [ite_eq_right hP]
   rw [inv_one]
   show v ∈ _ ↔ _
   rw [hl]
@@ -1242,7 +1242,7 @@ theorem twNF_one_zero {P : HeightOneSpectrum (𝓞 X.E)} (hP : P ∉ Pr.vGs) : T
   · intro h
     refine ⟨fun l => ?_, fun i => ?_⟩
     · have h1 := h (Fin.castAdd _ l)
-      simp only [Fin.val_castAdd, LocE.scE, if_pos l.2, zpow_zero, inv_one, one_mul] at h1
+      simp only [Fin.val_castAdd, LocE.scE, ite_eq_left l.2, zpow_zero, inv_one, one_mul] at h1
       simpa using h1
     · have h1 := h (Fin.natAdd _ i)
       simp only [Fin.val_natAdd, LocE.scE] at h1
@@ -1250,7 +1250,7 @@ theorem twNF_one_zero {P : HeightOneSpectrum (𝓞 X.E)} (hP : P ∉ Pr.vGs) : T
   · rintro ⟨h1, h2⟩ l
     refine Fin.addCases (fun l => ?_) (fun i => ?_) l
     · have := h1 l
-      simp only [Fin.val_castAdd, LocE.scE, if_pos l.2, zpow_zero, inv_one, one_mul]
+      simp only [Fin.val_castAdd, LocE.scE, ite_eq_left l.2, zpow_zero, inv_one, one_mul]
       simpa using this
     · have := h2 i
       simp only [Fin.val_natAdd, LocE.scE]
@@ -1280,15 +1280,15 @@ theorem twSt_bdd {m2 : ℕ} (hN : ∀ i, i < m2 → TwNormAt (Ch := Ch) (cst := 
       · exact (twSt_cand h1 (hN i (by omega)) b P hP).1
       · revert b
         by_cases h2 : i + 1 = m2 + 1
-        · rw [show twSt Ch sel mu cst m2 (i + 1) = twUnitSt _ (i + 1) by rw [twSt, if_neg h1, if_pos h2]]
+        · rw [show twSt Ch sel mu cst m2 (i + 1) = twUnitSt _ (i + 1) by rw [twSt, ite_eq_right h1, ite_eq_left h2]]
           intro _; exact twBdd_one _ _
-        · rw [show twSt Ch sel mu cst m2 (i + 1) = twEmptySt _ (i + 1) by rw [twSt, if_neg h1, if_neg h2]]
+        · rw [show twSt Ch sel mu cst m2 (i + 1) = twEmptySt _ (i + 1) by rw [twSt, ite_eq_right h1, ite_eq_right h2]]
           intro b; exact b.elim
 
 theorem twJat_Q (sharp : Bool) (j : ℕ) {P : HeightOneSpectrum (𝓞 X.E)} (hP : P ∉ Pr.vGs) :
     Jat (Pr := Pr) (R := R) sharp j P = LocE.JQ P (qOf P) (R.k + j) (R.N j) (cOf R j) := by
   unfold Jat
-  rw [if_neg hP]
+  rw [ite_eq_right hP]
 
 theorem twSt_int {m2 : ℕ} (hs : cst.sharp = true) (hN : ∀ i, i < m2 → TwNormAt (Ch := Ch) (cst := cst) (twSt Ch sel mu cst m2 i)) :
     ∀ (j : ℕ) (b : (twSt Ch sel mu cst m2 j).β) (P : rowSG Pr sel mu),
@@ -1312,9 +1312,9 @@ theorem twSt_int {m2 : ℕ} (hs : cst.sharp = true) (hN : ∀ i, i < m2 → TwNo
       · exact (twSt_cand h2 (hN i (by omega)) b P hG).2.2.2
       · revert b h1
         by_cases h3 : i + 1 = m2 + 1
-        · rw [show twSt Ch sel mu cst m2 (i + 1) = twUnitSt _ (i + 1) by rw [twSt, if_neg h2, if_pos h3]]
+        · rw [show twSt Ch sel mu cst m2 (i + 1) = twUnitSt _ (i + 1) by rw [twSt, ite_eq_right h2, ite_eq_left h3]]
           intro b h1; exact h1 b rfl
-        · rw [show twSt Ch sel mu cst m2 (i + 1) = twEmptySt _ (i + 1) by rw [twSt, if_neg h2, if_neg h3]]
+        · rw [show twSt Ch sel mu cst m2 (i + 1) = twEmptySt _ (i + 1) by rw [twSt, ite_eq_right h2, ite_eq_right h3]]
           intro b; exact b.elim
 
 end TwOk

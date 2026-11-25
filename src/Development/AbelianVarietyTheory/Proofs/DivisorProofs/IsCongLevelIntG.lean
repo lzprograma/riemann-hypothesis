@@ -54,8 +54,6 @@ open GlobalTheory.NormDict
 
 namespace GlobalTheory.NormExact
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def IsScale (D : D7) (cc : Ideal (𝓞 D.host.K)) (r : D.host.E) : Prop :=

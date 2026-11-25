@@ -106,8 +106,7 @@ theorem offdiag_le {M : Fin 2 → Fin 2 → ℂ} (hM : (Matrix.of M).PosSemidef)
     have h' := h
     simp only [Complex.sub_re, Complex.re_ofReal_mul, Complex.add_re,
       Complex.ofReal_re] at h'
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have hm := mul_lt_mul_of_pos_left hlt (pow_pos hn 2)
     nlinarith
 
@@ -233,15 +232,15 @@ theorem coefficient_height_bound_of (h2 : UnipotentLatticeLift (E := E)) (h3d : 
       by_contra hn
       apply hfz
       unfold Data.fz
-      rw [if_neg hn]
+      rw [ite_eq_right hn]
     have e := h3d r X ![ξ, (X.NC : E) • x] hIso hΛ la P hPSS.1.1 hchar ν χ y hy
     by_cases hν : ∀ τ, χ τ 0 0 = (ν τ : ℂ)
-    · rw [if_pos hν] at e
+    · rw [ite_eq_left hν] at e
       have hP : X.fz ![ξ, (X.NC : E) • x] X.g χ P y ≠ 0 := fun h0 => hfz (e.trans h0)
       exact ⟨hHF.1, hHF.2, hν,
         fun τ => (h5 r X _ hIso hΛ la P hPSS hchar χ ⟨y, hy, hP⟩ τ).posSemidef⟩
     · exfalso
-      rw [if_neg hν] at e
+      rw [ite_eq_right hν] at e
       exact hfz e
 
   have hHne : ∀ τ : X.Ψ, X.Hf z0 τ (Data.emb τ.1 ξ) (Data.emb τ.1 ξ) ≠ 0 := fun τ h => by
@@ -478,8 +477,7 @@ private lemma prod_le_one_of_sum_le_card {ι : Type} [Fintype ι] [Nonempty ι] 
   rw [Real.finsetProd_rpow _ _ (fun i _ => (hv i).le), ← Finset.mul_sum] at key
   have h3 : 1 / (Fintype.card ι : ℝ) * ∑ i, v i ≤ 1 := by
     rw [one_div, inv_mul_le_iff₀ hn]; linarith
-  by_contra hgt
-  push_neg at hgt
+  by_contra! hgt
   have := Real.one_lt_rpow hgt (by positivity : (0 : ℝ) < 1 / (Fintype.card ι : ℝ))
   linarith
 
@@ -543,7 +541,7 @@ theorem coefficient_index_lower_bound (h2 : UnipotentLatticeLift (E := E)) (h3d 
     by_contra hn
     apply hy
     unfold Data.fz
-    rw [if_neg hn]
+    rw [ite_eq_right hn]
   have hSS' : X.IsBddSec la P ∧ _ := hSS
   have h3 := h3d r X ![ξ, (X.NC : E) • x] hpair hmem la P hSS'.1.1 hchar ν χ y hyd
   have hy' : X.fz ![ξ, (X.NC : E) • x] X.g χ
@@ -551,9 +549,9 @@ theorem coefficient_index_lower_bound (h2 : UnipotentLatticeLift (E := E)) (h3d 
   rw [h3] at hy'
   by_cases hcond : ∀ τ, χ τ 0 0 = (ν τ : ℂ)
   swap
-  · rw [if_neg hcond] at hy'
+  · rw [ite_eq_right hcond] at hy'
     exact absurd rfl hy'
-  rw [if_pos hcond] at hy'
+  rw [ite_eq_left hcond] at hy'
   have hPD := h5 r X ![ξ, (X.NC : E) • x] hpair hmem la P hSS hchar χ ⟨y, hyd, hy'⟩
   obtain ⟨β, -, hβ, hβint⟩ := (h2 r X ![ξ, (X.NC : E) • x] hpair hmem).2.2 χ hHF.1 hHF.2
   have hne0 : Nonempty X.Ψ := Fintype.card_pos_iff.mp (QuadraticCoefficientForms.card_Psi_pos (X := X.toData))
@@ -660,8 +658,7 @@ theorem coefficient_index_lower_bound (h2 : UnipotentLatticeLift (E := E)) (h3d 
   have hprod : 1 ≤ ∏ τ : X.Ψ, (((X.g : ℝ) * dE E ^ 2) ^ 2 * (Matrix.of (χ τ)).det.re) := by
     have hnn : 0 ≤ ∏ τ : X.Ψ, (((X.g : ℝ) * dE E ^ 2) ^ 2 * (Matrix.of (χ τ)).det.re) :=
       Finset.prod_nonneg fun τ _ => by have := (hdpos τ).1; positivity
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have := pow_lt_one₀ hnn hlt (two_ne_zero)
     linarith
 
@@ -790,12 +787,12 @@ theorem flow_coefficient_decay_holds (h1 : UnipotentVectorGroup (E := E)) (h2 : 
     h3d r X u hpair hmem la P hSS.1.1 hχ ν χ y hy
   by_cases hc : ∀ τ, χ τ 0 0 = (ν τ : ℂ)
   swap
-  · have h0 : X.fz u X.g χ Q z = 0 := by rw [hL3d z hz, if_neg hc]
+  · have h0 : X.fz u X.g χ Q z = 0 := by rw [hL3d z hz, ite_eq_right hc]
     show ‖X.fz u X.g χ Q z‖ * X.nfac la z ≤ _
     rw [h0, norm_zero, zero_mul]
     exact hRHS
   have hGP : ∀ y ∈ X.dom, X.fz u X.g χ Q y = X.fz u X.g χ P y := fun y hy => by
-    rw [hL3d y hy, if_pos hc]
+    rw [hL3d y hy, ite_eq_left hc]
 
   have hper := (h2 r X u hpair hmem).2.1 la P hSS.1.1 hχ
   obtain ⟨⟨hdiff, -, hcov⟩, -, -⟩ :=
@@ -907,12 +904,12 @@ theorem fourier_coefficient_support_of (h3 : FourierCoefficientProperties (E := 
     (h3 r X.toData u X.g hu X.g_pos la P hP.1 hP.2.1 hper χ).1.2.2
   by_cases hf : IsHermFam χ ∧ X.IsFreqZ X.g χ
   swap
-  · have e : ∀ G, X.fz u X.g χ G x = 0 := fun G => by simp only [Data.fz, if_neg hf]
+  · have e : ∀ G, X.fz u X.g χ G x = 0 := fun G => by simp only [Data.fz, ite_eq_right hf]
     rw [e, e]
     split_ifs <;> rfl
   by_cases hb : ∃ ω, X.IsLZBasis X.g ω
   swap
-  · have e : ∀ G, X.fz u X.g χ G x = 0 := fun G => by simp only [Data.fz, if_pos hf, dif_neg hb]
+  · have e : ∀ G, X.fz u X.g χ G x = 0 := fun G => by simp only [Data.fz, ite_eq_left hf, dite_eq_right hb]
     rw [e, e]
     split_ifs <;> rfl
   set ω := hb.choose with hωdef
@@ -923,7 +920,7 @@ theorem fourier_coefficient_support_of (h3 : FourierCoefficientProperties (E := 
   have hfz : ∀ (G : Frame X.Ψ r → ℂ) y, X.fz u X.g χ G y =
       ∫ t in C, G (X.Zb u (B t) y) * cexp (-(4 * Real.pi * I) * X.pairR χ (B t)) := by
     intro G y
-    simp only [Data.fz, if_pos hf, dif_pos hb]
+    simp only [Data.fz, ite_eq_left hf, dite_eq_left hb]
     rfl
   set χr : X.Ψ → ℝ := fun τ => (χ τ 0 0).re with hχrdef
   have hflowcov : ∀ (s : X.Ψ → ℝ), ∀ y ∈ X.dom,
@@ -966,7 +963,7 @@ theorem fourier_coefficient_support_of (h3 : FourierCoefficientProperties (E := 
   swap
   · have hfj0 : X.fj la (u 0) ν P = fun _ => 0 := by
       funext y
-      simp only [Data.fj, if_neg hν]
+      simp only [Data.fj, ite_eq_right hν]
     have hL : X.fz u X.g χ (X.fj la (u 0) ν P) x = 0 := by
       rw [hfj0, hfz]
       simp
@@ -986,7 +983,7 @@ theorem fourier_coefficient_support_of (h3 : FourierCoefficientProperties (E := 
   have hfj : ∀ y, X.fj la (u 0) ν P y = ((volume D).toReal : ℂ)⁻¹ *
       ∫ s in D, P (X.flow (u 0) (cR X.toData s) y) * cexp (-(4 * Real.pi * I) * ∑ τ, (ν τ : ℂ) * s τ) := by
     intro y
-    simp only [Data.fj, if_pos hν, dif_pos hDe]
+    simp only [Data.fj, ite_eq_left hν, dite_eq_left hDe]
     rfl
   have hCm : MeasurableSet C := MeasurableSet.univ_pi fun _ => measurableSet_Icc
   have hCc : IsCompact C := isCompact_univ_pi fun _ => isCompact_Icc
@@ -1108,9 +1105,9 @@ theorem fourier_coefficient_support_of (h3 : FourierCoefficientProperties (E := 
     have : 0 < (volume D).toReal := ENNReal.toReal_pos hDpos.ne' hDfin.ne
     exact_mod_cast this.ne'
   by_cases hc : χr = ν
-  · rw [if_pos (sub_eq_zero.2 hc), if_pos (hcond.2 hc)]
+  · rw [ite_eq_left (sub_eq_zero.2 hc), ite_eq_left (hcond.2 hc)]
     field_simp
-  · rw [if_neg (fun h => hc (sub_eq_zero.1 h)), if_neg (fun h => hc (hcond.1 h))]
+  · rw [ite_eq_right (fun h => hc (sub_eq_zero.1 h)), ite_eq_right (fun h => hc (hcond.1 h))]
     simp
 
 theorem fourier_coefficient_support_holds : FourierCoefficientSupport (E := E) := fourier_coefficient_support_of fourier_coefficients_holds unipotent_lattice_lift
@@ -1136,12 +1133,10 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ}
 
 lemma exists_minor {u : Fin 2 → Fin r → E} (hu : LinearIndependent E u) :
     ∃ a b : Fin r, u 0 a * u 1 b - u 0 b * u 1 a ≠ 0 := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hu0 : u 0 ≠ 0 := hu.ne_zero 0
   obtain ⟨a, ha⟩ : ∃ a, u 0 a ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hu0 (funext h)
   have key := Fintype.linearIndependent_iff.1 hu ![u 1 a, -(u 0 a)] (by
     funext b
@@ -1491,25 +1486,9 @@ lemma fz_zero_of_inv (X : Data E r) (u : Fin 2 → Fin r → E) (hu : ∀ i k, h
   have hV : (volume (exists_fd X la).choose).toReal ≠ 0 := (ENNReal.toReal_pos hfd_pos.ne' hfd_top.ne).ne'
   exact (smul_eq_zero.1 hL.symm).resolve_left hV
 
-private lemma herm_add_left_fundamental_domains (G : Matrix (Fin r) (Fin r) E) (x y z : Fin r → E) :
-    herm G (x + y) z = herm G x z + herm G y z := by
-  simp only [herm, Pi.add_apply, add_mul, Finset.sum_add_distrib]
-
 private lemma herm_add_right_fundamental_domains (G : Matrix (Fin r) (Fin r) E) (x y z : Fin r → E) :
     herm G x (y + z) = herm G x y + herm G x z := by
   simp only [herm, cc, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
-
-private lemma herm_smul_left_fundamental_domains' (G : Matrix (Fin r) (Fin r) E) (t : E) (x y : Fin r → E) :
-    herm G (t • x) y = t * herm G x y := by
-  simp only [herm, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
-  ring
-
-private lemma herm_smul_right_eq_cc_mul' (G : Matrix (Fin r) (Fin r) E) (t : E) (x y : Fin r → E) :
-    herm G x (t • y) = cc t * herm G x y := by
-  simp only [herm, cc, Pi.smul_apply, smul_eq_mul, map_mul, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
-  ring
 
 theorem nonvanishing_coefficient_positivity_of (h2 : UnipotentLatticeLift (E := E)) (h3 : FourierCoefficientProperties (E := E)) :
     NonvanishingCoefficientPositivity (E := E) := by
@@ -1570,8 +1549,8 @@ theorem nonvanishing_coefficient_positivity_of (h2 : UnipotentLatticeLift (E := 
     exact Submodule.smul_mem _ _ (hΛ i)
   have hξ0 : ξ ≠ 0 := fun h => he0 (funext (Fintype.linearIndependent_iff.1 hu.2 e h))
   have hξξ : herm X.Gm ξ ξ = 0 := by
-    simp only [hξ_def, Fin.sum_univ_two, herm_add_left_fundamental_domains, herm_add_right_fundamental_domains, herm_smul_left_fundamental_domains',
-      herm_smul_right_eq_cc_mul', hu.1, mul_zero, add_zero]
+    simp only [hξ_def, Fin.sum_univ_two, ReciprocityTheory.ChartRestriction.G.FD.HermitianTraceFormVanishing.herm_add_left, herm_add_right_fundamental_domains, ReciprocityTheory.ChartRestriction.G.FD.HermitianTraceFormVanishing.herm_smul_left,
+      ReciprocityTheory.ChartRestriction.G.FD.HermitianTraceFormVanishing.herm_smul_right, hu.1, mul_zero, add_zero]
   have hemb : ∀ σ : X.Ψ, Data.emb σ.1 ξ = X.uvec u (fun σ i => σ.1 (e i)) σ := by
     intro σ
     funext j

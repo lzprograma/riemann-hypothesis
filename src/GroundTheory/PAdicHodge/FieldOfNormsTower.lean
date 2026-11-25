@@ -118,15 +118,6 @@ variable [TopologicalSpace Ω] [IsValuativeTopology Ω]
 
 end Nrm
 
-section Estimates
-
-variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
-variable {Ω : Type*} [Field Ω] [Algebra K Ω] [Algebra.IsAlgebraic K Ω]
-
-variable {p : ℕ}
-
-end Estimates
-
 section Tower
 
 variable (K : Type*) [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
@@ -160,12 +151,6 @@ structure NormTower where
   exists_value : ∀ n, ∃ π ∈ E n, nrm K π = value n
   value_zpow : ∀ n, ∀ y ∈ E n, y ≠ 0 → ∃ j : ℤ, nrm K y = value n ^ j
   value_succ : ∀ n, value (n + 1) ^ (p ^ k n) = value n
-
-namespace NormTower
-
-variable {K Ω p} (t : NormTower K Ω p)
-
-end NormTower
 
 end Tower
 

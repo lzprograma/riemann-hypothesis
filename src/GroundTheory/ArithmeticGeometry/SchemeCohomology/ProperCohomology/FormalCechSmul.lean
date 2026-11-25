@@ -72,8 +72,7 @@ lemma reesCoefFam_reesMul (r : reesAlgebra I) (N : ℕ) (x : cechH (reesPre I F)
     refine cls_congr 𝔘 (funext fun t => ?_) _ _
     rw [Finset.sum_apply]
     exact reesCoef_reesInr_smul I hF (isAffineOpen_inter 𝔘 hU t) r N (σ t)
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [map_sum]
+  · rw [map_sum]
     exact Finset.sum_eq_zero fun ij _ => by
       rw [← push_d, ← CechFamily.cochain_d, hσ, map_zero, map_zero]
 

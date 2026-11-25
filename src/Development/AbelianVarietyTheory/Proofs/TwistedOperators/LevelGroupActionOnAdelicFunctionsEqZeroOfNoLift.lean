@@ -58,7 +58,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 open GlobalTheory.LiftRows
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.ChainScalar
 
@@ -138,7 +137,7 @@ theorem ip_sum (M : DSModel V S) {μ : Measure (GA D V)} {𝓕 : Set (GA D V)} {
 theorem levelGroupAction_apply_of_exists_lift {β : GL (Fin V.rank) (Lev.EAf D)} {L : LevDat D.host.E ℂ V.rank} {g : G0 L.Pg L.r}
     (hk : ∃ κ, IsLevelLift V β L g κ) (f : GA D V → ℂ) (h : GA D V) :
     actG0 V β L g f h = (levChi V β (flagL L) hk.choose)⁻¹ * f (h * hk.choose) := by
-  rw [actG0, dif_pos hk]
+  rw [actG0, dite_eq_left hk]
 
 theorem levelGroupActionOnAdelicFunctions_eq_zero_of_no_lift {β : GL (Fin V.rank) (Lev.EAf D)} {L : LevDat D.host.E ℂ V.rank} {g : G0 L.Pg L.r}
     (hk : ¬ ∃ κ, IsLevelLift V β L g κ) (f : GA D V → ℂ) : actG0 V β L g f = 0 := by
@@ -411,17 +410,17 @@ theorem bForm : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A 
     obtain ⟨B, hB, hL⟩ := hz ⟨j, hj'⟩
     obtain ⟨l, hl, hs⟩ := (hall B hB).1 j (by omega)
     rw [hl.unique hL] at hs
-    simpa only [Λ, dif_pos hj'] using hs
+    simpa only [Λ, dite_eq_left hj'] using hs
   have hΛ' : GlobalTheory.IndefiniteRowSideFullHecke.LabelSettingScalars.TopScalar R t c (Λ (D.R.m - 1)) := by
     have hj' : D.R.m - 1 < D.R.m := by omega
     obtain ⟨B, hB, hL⟩ := hz ⟨_, hj'⟩
     obtain ⟨l, hl, hs⟩ := (hall B hB).2
     simp only [hm] at hL
     rw [hl.unique hL] at hs
-    simpa only [Λ, dif_pos hj', hm] using hs
+    simpa only [Λ, dite_eq_left hj', hm] using hs
   have hp : ∏ j ∈ Finset.range (D.R.m - 1 + 1), Λ j = (∏ i : Fin D.R.m, κ ((i : ℕ) + 1)) * ∏ i, z i := by
     rw [hm, ← Fin.prod_univ_eq_prod_range, ← Finset.prod_mul_distrib]
-    exact Finset.prod_congr rfl fun i _ => dif_pos i.2
+    exact Finset.prod_congr rfl fun i _ => dite_eq_left i.2
   refine eq_smul_of_inner (R.Th t) _ _ (fun u₁ h₁ u₂ h₂ z₁ z₂ => ?_) hx' hx0 (hK t c x hx')
   exact (inner_adjoint (R := R) hM hC.chain.Th hS t c Λ hΛ hΛ' h₁ h₂ z₁ z₂).trans (by rw [hp])
 

@@ -254,16 +254,11 @@ theorem step_gram_posDef (hF : FOk emb σ) (hS : S.Ok) (h : (S.fam emb lam).Ok) 
     ((S.csd emb lam h).H.map φ).PosDef :=
   gram_posDef _ (hasRatBasis S emb σ lam hF hS h) φ (gramV_posDef S emb lam h φ)
 
-omit [StarRing K] in
-theorem dualFr_isFullLattice {n : ℕ} (M : Submodule (𝓞 K) (Fin n → K))
-    (hM : Submodule.IsFullLattice K M) : Submodule.IsFullLattice K (dualFr M) :=
-  GlobalTheory.DualLat.isLattice_dualFr M hM
-
 omit [StarRing E] [StarRing K] in
 theorem delAtr_isLattice (L : Submodule (𝓞 E) (Fin n → E)) (hL : Submodule.IsFullLattice E L) :
     Submodule.IsFullLattice K (delAtr emb lam L) :=
   (GlobalTheory.TransLattice.nabDelLattice K ι n lam _ fun τ =>
-    dualFr_isFullLattice _ (GlobalTheory.TauLat.tauLatLattice E K ι n emb τ L hL)).2
+    GlobalTheory.DualLat.isLattice_dualFr _ (GlobalTheory.TauLat.tauLatLattice E K ι n emb τ L hL)).2
 
 theorem lawGood (hF : FOk emb σ) (hS : S.Ok)
     (hLsh : ∀ b (d : S.D b), Submodule.IsFullLattice E (S.Lsh b d))

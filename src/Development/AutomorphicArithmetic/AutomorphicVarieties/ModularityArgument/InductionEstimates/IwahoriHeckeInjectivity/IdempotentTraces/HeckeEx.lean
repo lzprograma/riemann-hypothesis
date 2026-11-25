@@ -222,7 +222,6 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.heckeEx :
   have hAadd : ∀ f f' : G1 K (2 + 2) → ℂ, Continuous f → Continuous f' → FixA κ e f → FixA κ e f' → ∀ c : ℂ,
       FixA κ e (f + c • f') := by
     intro f f' hc hc' hf hf' c g
-    set_option synthInstance.maxHeartbeats 200000 in
     have hi : ∀ f₁ : G1 K (2 + 2) → ℂ, Continuous f₁ → Integrable (fun k => e k * f₁ (g * arc1 k)) κ := fun f₁ h₁ =>
       (he.cont.mul (h₁.comp (continuous_const.mul hac))).integrable_of_hasCompactSupport
         (HasCompactSupport.of_compactSpace _)

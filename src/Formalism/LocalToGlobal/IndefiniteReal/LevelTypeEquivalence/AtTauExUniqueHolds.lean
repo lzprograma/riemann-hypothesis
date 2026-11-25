@@ -11,8 +11,6 @@ open scoped TensorProduct
 
 namespace Formalism.IndefR.Eqv
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 
 open Classical
@@ -279,9 +277,9 @@ theorem isAtTau_atH (τ : D.what₂.Tau) (g : Matrix (Fin V.rank) (Fin V.rank) �
     IsAtTau (thetaC D) V τ g (atH D V τ g hg) := by
   refine ⟨?_, ?_, ?_⟩
   · rw [mem_GinfC, matA_atH, fin_atM]
-  · rw [infMat_thetaC, matA_atH, psi_atM, if_pos rfl]
+  · rw [infMat_thetaC, matA_atH, psi_atM, ite_eq_left rfl]
   · intro τ' hτ'
-    rw [infMat_thetaC, matA_atH, psi_atM, if_neg hτ']
+    rw [infMat_thetaC, matA_atH, psi_atM, ite_eq_right hτ']
 
 theorem matA_of_isAtTau {τ : D.what₂.Tau} {g : Matrix (Fin V.rank) (Fin V.rank) ℂ} {h : GA D V}
     (hh : IsAtTau (thetaC D) V τ g h) : matA D V h = atM D V τ g := by
@@ -308,7 +306,7 @@ theorem atTauUnitary_holds : AtTauUnitary D := by
   obtain rfl := eq_thetaC D hθ
   have hm := matA_of_isAtTau D V hh
   have hu := congrArg (fun M => M.map (psiT D τ)) (matA_unitary D V h)
-  rw [Matrix.map_mul, Matrix.map_mul, cT_map_psiT, JR_map_psiT, hm, psi_atM, if_pos rfl] at hu
+  rw [Matrix.map_mul, Matrix.map_mul, cT_map_psiT, JR_map_psiT, hm, psi_atM, ite_eq_left rfl] at hu
   exact hu
 
 end Formalism.IndefR.Eqv

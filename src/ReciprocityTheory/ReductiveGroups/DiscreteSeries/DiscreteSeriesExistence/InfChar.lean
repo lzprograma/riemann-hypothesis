@@ -20,7 +20,7 @@ open Finset Matrix MeasureTheory
 
 namespace ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ} {ε : Fin n → Bool}
 
@@ -84,40 +84,11 @@ private theorem inG_cpart2' (Z : Matrix (Fin n) (Fin n) ℂ) : inG ε (S7.cpart2
   rw [hc, neg_smul, add_comm (Jm ε * Z)]
   abel
 
-private theorem inUJ_mul_exp_smul_of_inG {g X : Matrix (Fin n) (Fin n) ℂ} (hg : inUJ ε g) (hX : inG ε X) (t : ℝ) :
-    inUJ ε (g * NormedSpace.exp ((t : ℂ) • X)) := by
-  have hX0 : Xᴴ * Jm ε + Jm ε * X = 0 := hX
-  have hX' : Xᴴ * Jm ε = -(Jm ε * X) := eq_neg_of_add_eq_zero_left hX0
-  unfold inUJ at hg ⊢
-  set Y := (t : ℂ) • X with hY
-  have hYJ : Yᴴ * Jm ε = Jm ε * -Y := by
-    rw [hY, Matrix.conjTranspose_smul, Matrix.smul_mul, hX', Matrix.mul_neg, Matrix.mul_smul, smul_neg]
-    simp
-  have hYc : Yᴴ = Jm ε * -Y * Jm ε := by
-    calc Yᴴ = Yᴴ * Jm ε * Jm ε := by rw [Matrix.mul_assoc, Jm_mul_Jm_eq_oneDiscreteSeriesExistence, Matrix.mul_one]
-      _ = Jm ε * -Y * Jm ε := by rw [hYJ]
-  have hJinv : (Jm ε)⁻¹ = Jm ε := Matrix.inv_eq_right_inv Jm_mul_Jm_eq_oneDiscreteSeriesExistence
-  have hJu : IsUnit (Jm ε) := ⟨⟨Jm ε, Jm ε, Jm_mul_Jm_eq_oneDiscreteSeriesExistence, Jm_mul_Jm_eq_oneDiscreteSeriesExistence⟩, rfl⟩
-  have hE : (NormedSpace.exp Y)ᴴ = Jm ε * NormedSpace.exp (-Y) * Jm ε := by
-    rw [← Matrix.exp_conjTranspose, hYc]
-    have := Matrix.exp_conj (Jm ε) (-Y) hJu
-    rw [hJinv] at this
-    exact this
-  have e1 : NormedSpace.exp (-Y) * NormedSpace.exp Y = 1 := by
-    rw [← Matrix.exp_add_of_commute _ _ (Commute.neg_left (Commute.refl Y)), neg_add_cancel,
-      NormedSpace.exp_zero]
-  have step : (g * NormedSpace.exp Y)ᴴ * Jm ε * (g * NormedSpace.exp Y) =
-      (NormedSpace.exp Y)ᴴ * (gᴴ * Jm ε * g) * NormedSpace.exp Y := by
-    rw [Matrix.conjTranspose_mul]
-    simp only [Matrix.mul_assoc]
-  rw [step, hg, hE, Matrix.mul_assoc (Jm ε * NormedSpace.exp (-Y)) (Jm ε) (Jm ε), Jm_mul_Jm_eq_oneDiscreteSeriesExistence,
-    Matrix.mul_one, Matrix.mul_assoc, e1, Matrix.mul_one]
-
 theorem icx_eabV_congr {f f' : Matrix (Fin n) (Fin n) ℂ → E} (h : ∀ g, inUJ ε g → f g = f' g) (a b : Fin n)
     {g : Matrix (Fin n) (Fin n) ℂ} (hg : inUJ ε g) : S7.EabV ε a b f g = S7.EabV ε a b f' g := by
   have key : ∀ X, inG ε X → (fun t : ℝ => f (g * NormedSpace.exp ((t : ℂ) • X))) =
       fun t : ℝ => f' (g * NormedSpace.exp ((t : ℂ) • X)) :=
-    fun X hX => funext fun t => h _ (inUJ_mul_exp_smul_of_inG hg hX t)
+    fun X hX => funext fun t => h _ (Formalism.REAL.curve_mem_indefinite_unitary hg hX t)
   have k1 := key _ (inG_cpart1' (ε := ε) (Matrix.single a b 1))
   have k2 := key _ (inG_cpart2' (ε := ε) (Matrix.single a b 1))
   simp only [S7.EabV, S7.EcV, S7.RdV]
@@ -215,7 +186,7 @@ variable {φ : E →L[ℂ] ℂ}
 
 private theorem toL2_zero' : toL2 ε (fun _ : Matrix (Fin n) (Fin n) ℂ => (0 : ℂ)) = 0 := by
   simp only [toL2]
-  rw [dif_pos (show MemLp (fun _ : Formalism.REAL.UJ ε => (0 : ℂ)) 2 (Formalism.REAL.muG ε) from MemLp.zero)]
+  rw [dite_eq_left (show MemLp (fun _ : Formalism.REAL.UJ ε => (0 : ℂ)) 2 (Formalism.REAL.muG ε) from MemLp.zero)]
   exact MemLp.toLp_zero _
 
 private theorem toL2_add_mul_of_memLp (F G : Matrix (Fin n) (Fin n) ℂ → ℂ)
@@ -224,7 +195,7 @@ private theorem toL2_add_mul_of_memLp (F G : Matrix (Fin n) (Fin n) ℂ → ℂ)
     toL2 ε (fun x => F x + c * G x) = toL2 ε F + c • toL2 ε G := by
   have hFG : MemLp (fun y : Formalism.REAL.UJ ε => F (Formalism.MainNotions.S.umat y) + c * G (Formalism.MainNotions.S.umat y)) 2
       (Formalism.REAL.muG ε) := hF.add (hG.const_mul c)
-  simp only [toL2, dif_pos hF, dif_pos hG, dif_pos hFG]
+  simp only [toL2, dite_eq_left hF, dite_eq_left hG, dite_eq_left hFG]
   rw [← MemLp.toLp_const_smul c hG, ← MemLp.toLp_add hF (hG.const_smul c)]
   rfl
 
@@ -359,10 +330,10 @@ theorem icxGood_tm {x : smD ε (rreg ε)} {Φ : Matrix (Fin n) (Fin n) ℂ → E
       (icxGood_eab hx a a) 1
     refine icxGood_congr h1 ?_ (fun g _ => ?_)
     · simp [Formalism.REAL.Tm]
-    · simp only [Formalism.QuantumDeterminants.Top, if_true, zero_add, one_smul, S7_EabV_eq_REAL_EabV]
+    · simp only [Formalism.QuantumDeterminants.Top, ite_true, zero_add, one_smul, S7_EabV_eq_REAL_EabV]
   · refine icxGood_congr (icxGood_eab hx a b) ?_ (fun g _ => ?_)
     · simp [Formalism.REAL.Tm, hab]
-    · simp only [Formalism.QuantumDeterminants.Top, if_neg hab, zero_add, S7_EabV_eq_REAL_EabV]
+    · simp only [Formalism.QuantumDeterminants.Top, ite_eq_right hab, zero_add, S7_EabV_eq_REAL_EabV]
 
 theorem icxGood_qdet {x : smD ε (rreg ε)} {Φ : Matrix (Fin n) (Fin n) ℂ → E} (hx : IcxGood ε φ x Φ) (u : ℂ) :
     IcxGood ε φ (Formalism.REAL.qdet (smE ε (rreg ε)) u x) (Formalism.QuantumDeterminants.qdetOp (Formalism.REAL.EabV ε) u Φ) := by
@@ -387,7 +358,7 @@ private theorem toL2_const_mul (F : Matrix (Fin n) (Fin n) ℂ → ℂ) (c : ℂ
   by_cases hm : MemLp (fun y : Formalism.REAL.UJ ε => F (Formalism.MainNotions.S.umat y)) 2 (Formalism.REAL.muG ε)
   · have hm' : MemLp (fun y : Formalism.REAL.UJ ε => c * F (Formalism.MainNotions.S.umat y)) 2 (Formalism.REAL.muG ε) :=
       hm.const_mul c
-    simp only [toL2, dif_pos hm, dif_pos hm']
+    simp only [toL2, dite_eq_left hm, dite_eq_left hm']
     rw [← MemLp.toLp_const_smul c hm]
     rfl
   · by_cases hc : c = 0
@@ -399,7 +370,7 @@ private theorem toL2_const_mul (F : Matrix (Fin n) (Fin n) ℂ → ℂ) (c : ℂ
         apply hm
         have := h.const_mul c⁻¹
         simpa [hc] using this
-      simp only [toL2, dif_neg hm, dif_neg hm', smul_zero]
+      simp only [toL2, dite_eq_right hm, dite_eq_right hm', smul_zero]
 
 theorem icx_val {x y : smD ε (rreg ε)} {Φ Φ₀ : Matrix (Fin n) (Fin n) ℂ → E} (hy : IcxGood ε φ y Φ)
     (hx : (x : L2 ε) = toL2 ε (fun g => φ (Φ₀ g))) (c : ℂ) (hΦ : ∀ g, inUJ ε g → Φ g = c • Φ₀ g) :

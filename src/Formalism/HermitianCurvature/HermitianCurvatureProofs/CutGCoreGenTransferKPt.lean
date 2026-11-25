@@ -9,55 +9,10 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingConst
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.ExistsFrameOfPositiveVector
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.GANormSqStar
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.RadialDecompositionOfParts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.InnerProductSpace.Spectrum
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.LinearAlgebra.Lagrange
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Formalism.HermitianCurvature.FrameExists2
 
@@ -111,8 +66,8 @@ theorem herm_proj {Bs : Fin m → Fin (2 * r + k + 1) → ℂ}
       rw [Finset.sum_insert ha, Finset.sum_insert ha, Formalism.FourierDecayAlt.P.SettingConstruction.herm_add_left,
         Formalism.FourierDecayAlt.P.SettingConstruction.herm_smul_left, ih]
   rw [hsum, Finset.sum_eq_single c]
-  · rw [hon, if_pos rfl, mul_one]
-  · intro b _ hb; rw [hon, if_neg hb, mul_zero]
+  · rw [hon, ite_eq_left rfl, mul_one]
+  · intro b _ hb; rw [hon, ite_eq_right hb, mul_zero]
   · intro h; exact absurd (Finset.mem_univ c) h
 
 theorem reflB_unitary {Bs : Fin m → Fin (2 * r + k + 1) → ℂ}
@@ -364,7 +319,7 @@ theorem gauge_kappa_pointwise_holds : GTKPt := by
   have htype : ∀ ρ, typeOf (M.xC P ρ (Y₀ : ℂ)) = ρ := by
     intro ρ
     have h : ∃ ρ', M.xC P ρ' (Y₀ : ℂ) = M.xC P ρ (Y₀ : ℂ) := ⟨ρ, rfl⟩
-    simp only [typeOf, dif_pos h]
+    simp only [typeOf, dite_eq_left h]
     exact hY₀ h.choose_spec
   let QQ : M.Ty P → (Wq →L[ℂ] Wq) := fun ρ => ∑ i ∈ Finset.univ.filter (fun i => typeOf (lam i) = ρ), rk1 (b i)
   have hQapply : ∀ ρ v, QQ ρ v = ∑ i ∈ Finset.univ.filter (fun i => typeOf (lam i) = ρ), ⟪b i, v⟫_ℂ • b i := by
@@ -388,11 +343,11 @@ theorem gauge_kappa_pointwise_holds : GTKPt := by
       rw [hQapply]
       refine Finset.sum_congr rfl fun i hi => ?_
       rw [Finset.mem_filter] at hi
-      rw [if_pos hi.2]
+      rw [ite_eq_left hi.2]
     · simp only [ContinuousLinearMap.zero_apply]
       refine Finset.sum_eq_zero fun i hi => ?_
       rw [Finset.mem_filter] at hi
-      rw [if_neg (fun h => hρσ (hi.2.symm.trans h)), zero_smul]
+      rw [ite_eq_right (fun h => hρσ (hi.2.symm.trans h)), zero_smul]
   ·
     ext v
     rw [ContinuousLinearMap.sum_apply, ContinuousLinearMap.one_apply]

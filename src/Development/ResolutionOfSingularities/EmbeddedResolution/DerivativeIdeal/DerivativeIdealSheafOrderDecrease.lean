@@ -8,48 +8,7 @@ public import Mathlib.RingTheory.SimpleRing.Principal
 import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealLocalization
 public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealOrderDecrease
 public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.LocalParameters
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -164,7 +123,6 @@ theorem orderAtLeastLocus_subset_orderAtLeastLocus_derivIdealSheafIterate (k : T
 private theorem formallySmooth_of_ringEquiv (k : Type u) [CommRing k] (R : Type u)
     [CommRing R] [Algebra k R] (e : k ≃+* R) (he : ∀ x : k, e x = algebraMap k R x) :
     Algebra.FormallySmooth k R := by
-  have : Algebra.FormallySmooth k k := inferInstance
   exact Algebra.FormallySmooth.of_equiv (AlgEquiv.ofRingEquiv (f := e) (fun x => he x))
 
 theorem formallySmooth_sections (k : Type u) [Field k] {X : Scheme.{u}}
@@ -191,7 +149,6 @@ theorem formallySmooth_sections (k : Type u) [Field k] {X : Scheme.{u}}
 private theorem isNoetherianRing_sections_of_smooth (k : Type u) [Field k] {X : Scheme.{u}}
     (p : X ⟶ Spec (CommRingCat.of k)) [AlgebraicGeometry.Smooth p] (U : X.Opens)
     (hU : IsAffineOpen U) : IsNoetherianRing Γ(X, U) := by
-  have : IsNoetherianRing k := inferInstance
   have hQ : RingHom.Smooth (p.appLE ⊤ U (le_preimage_top k p U)).hom :=
     (AlgebraicGeometry.smooth_iff p).mp ‹AlgebraicGeometry.Smooth p›
       (isAffineOpen_top (Spec (CommRingCat.of k))) hU (le_preimage_top k p U)
@@ -212,15 +169,10 @@ theorem isNoetherianRing_stalk (k : Type u) [Field k] {X : Scheme.{u}}
   have : IsLocallyNoetherian X := ⟨fun U => isNoetherianRing_sections_of_smooth k p U.1 U.2⟩
   infer_instance
 
-private theorem exists_isAffineOpen_mem (X : Scheme.{u}) (x : X) :
-    ∃ U : X.Opens, x ∈ U ∧ IsAffineOpen U :=
-  ⟨(X.affineCover.f (X.affineCover.idx x)).opensRange, X.affineCover.covers x,
-    isAffineOpen_opensRange _⟩
-
 theorem formallySmooth_stalk (k : Type u) [Field k] {X : Scheme.{u}}
     (p : X ⟶ Spec (CommRingCat.of k)) [AlgebraicGeometry.Smooth p] (x : X) :
     @Algebra.FormallySmooth k _ _ _ (stalkAlgebra k p x) := by
-  obtain ⟨U, hxU, hU⟩ := exists_isAffineOpen_mem X x
+  obtain ⟨⟨U, hU⟩, hxU⟩ := Scheme.exists_affineOpens_mem x
   let algU : Algebra k Γ(X, U) := sectionsAlgebra k p U
   let algStalk : Algebra k (X.presheaf.stalk x) := stalkAlgebra k p x
   let algGerm : Algebra Γ(X, U) (X.presheaf.stalk x) := (X.presheaf.germ U x hxU).hom.toAlgebra
@@ -239,10 +191,8 @@ private theorem finite_kaehlerDifferential_of_isLocalization (k A B : Type u) [C
     (hfin : Module.Finite A (KaehlerDifferential k A)) :
     Module.Finite B (KaehlerDifferential k B) := by
   have := hfin
-  have : IsLocalizedModule M (KaehlerDifferential.map k k A B) := inferInstance
   have hbc : IsBaseChange B (KaehlerDifferential.map k k A B) :=
     IsLocalizedModule.isBaseChange M B (KaehlerDifferential.map k k A B)
-  have : Module.Finite B (TensorProduct A B (KaehlerDifferential k A)) := inferInstance
   exact Module.Finite.equiv hbc.equiv
 
 theorem finite_kaehlerDifferential_stalk (k : Type u) [Field k] {X : Scheme.{u}}
@@ -251,7 +201,7 @@ theorem finite_kaehlerDifferential_stalk (k : Type u) [Field k] {X : Scheme.{u}}
     Module.Finite (X.presheaf.stalk x) (KaehlerDifferential k (X.presheaf.stalk x)) := by
   let algStalk : Algebra k (X.presheaf.stalk x) := stalkAlgebra k p x
   show Module.Finite (X.presheaf.stalk x) (KaehlerDifferential k (X.presheaf.stalk x))
-  obtain ⟨U, hxU, hUaff⟩ := exists_isAffineOpen_mem X x
+  obtain ⟨⟨U, hUaff⟩, hxU⟩ := Scheme.exists_affineOpens_mem x
   let algSections : Algebra k Γ(X, U) := sectionsAlgebra k p U
   let algGerm : Algebra Γ(X, U) (X.presheaf.stalk x) := (X.presheaf.germ U x hxU).hom.toAlgebra
   have : IsScalarTower k Γ(X, U) (X.presheaf.stalk x) :=
@@ -269,8 +219,6 @@ private theorem free_kaehlerDifferential_of_formallySmooth (k : Type u) [Field k
     Module.Free A (KaehlerDifferential k A) := by
   have _h1 : Module.FinitePresentation A (KaehlerDifferential k A) :=
     Module.finitePresentation_of_finite ..
-  have _h2 : Module.Projective A (KaehlerDifferential k A) := inferInstance
-  have _h3 : Module.Flat A (KaehlerDifferential k A) := inferInstance
   exact Module.free_of_flat_of_isLocalRing
 
 theorem free_kaehlerDifferential_stalk (k : Type u) [Field k] {X : Scheme.{u}}
@@ -292,71 +240,19 @@ theorem isUnit_natCast_stalk (k : Type u) [Field k] [CharZero k] {X : Scheme.{u}
   have h := hk.map (stalkAlgebraMap k p x)
   rwa [map_natCast] at h
 
-private theorem formallySmooth_of_isAlgebraic (k : Type u) [Field k] [CharZero k] (L : Type u)
-    [Field L] [Algebra k L] (A₀ : Type u) [CommRing A₀] [IsDomain A₀] [Algebra k A₀] [Algebra A₀ L]
-    [IsScalarTower k A₀ L] [Algebra.FormallySmooth k A₀] [Algebra.IsAlgebraic A₀ L]
-    (hinj : Function.Injective (algebraMap A₀ L)) :
-    Algebra.FormallySmooth k L := by
-  have hunit : ∀ y : nonZeroDivisors A₀, IsUnit (algebraMap A₀ L y) := by
-    intro y
-    refine isUnit_iff_ne_zero.mpr (fun hy => ?_)
-    have h0 : (y : A₀) = 0 := hinj (by rw [hy, map_zero])
-    exact nonZeroDivisors.coe_ne_zero y h0
-  let algFL : Algebra (FractionRing A₀) L := (IsLocalization.lift hunit).toAlgebra
-  have _twr1 : IsScalarTower k A₀ (FractionRing A₀) := inferInstance
-  have _twr2 : IsScalarTower A₀ (FractionRing A₀) L :=
-    IsScalarTower.of_algebraMap_eq (fun a => (IsLocalization.lift_eq hunit a).symm)
-  have _twr3 : IsScalarTower k (FractionRing A₀) L := by
-    refine IsScalarTower.of_algebraMap_eq (fun c => ?_)
-    rw [IsScalarTower.algebraMap_apply k A₀ (FractionRing A₀) c,
-      ← IsScalarTower.algebraMap_apply A₀ (FractionRing A₀) L,
-      ← IsScalarTower.algebraMap_apply k A₀ L]
-  have _fs1 : Algebra.FormallySmooth A₀ (FractionRing A₀) :=
-    Algebra.FormallySmooth.of_isLocalization (nonZeroDivisors A₀)
-  have _fs2 : Algebra.FormallySmooth k (FractionRing A₀) :=
-    Algebra.FormallySmooth.comp k A₀ (FractionRing A₀)
-  have _hchar : CharZero (FractionRing A₀) :=
-    charZero_of_injective_algebraMap (RingHom.injective (algebraMap k (FractionRing A₀)))
-  have _halgF : Algebra.IsAlgebraic (FractionRing A₀) L := by
-    refine ⟨fun a => ?_⟩
-    obtain ⟨q, hq0, hqa⟩ := (Algebra.IsAlgebraic.isAlgebraic a : IsAlgebraic A₀ a)
-    refine ⟨q.map (algebraMap A₀ (FractionRing A₀)), ?_, ?_⟩
-    · exact (Polynomial.map_ne_zero_iff
-        (IsFractionRing.injective A₀ (FractionRing A₀))).mpr hq0
-    · rw [Polynomial.aeval_map_algebraMap]
-      exact hqa
-  have _hsep : Algebra.IsSeparable (FractionRing A₀) L := by
-    refine ⟨fun a => ?_⟩
-    exact (minpoly.irreducible
-      ((Algebra.IsAlgebraic.isAlgebraic a : IsAlgebraic (FractionRing A₀) a).isIntegral)).separable
-  have _fet : Algebra.FormallyEtale (FractionRing A₀) L :=
-    Algebra.FormallyEtale.of_isSeparable ..
-  have _fs3 : Algebra.FormallySmooth (FractionRing A₀) L := inferInstance
-  exact Algebra.FormallySmooth.comp k (FractionRing A₀) L
-
-private theorem formallySmooth_of_isTranscendenceBasis (k : Type u) [Field k] [CharZero k]
-    (L : Type u) [Field L] [Algebra k L] {ι : Type u} {x : ι → L}
-    (hx : IsTranscendenceBasis k x) : Algebra.FormallySmooth k L := by
-  have hai : AlgebraicIndependent k x := hx.1
-  have _fsA : Algebra.FormallySmooth k ↥(Algebra.adjoin k (Set.range x)) :=
-    Algebra.FormallySmooth.of_equiv hai.aevalEquiv
-  have _halg : Algebra.IsAlgebraic ↥(Algebra.adjoin k (Set.range x)) L := hx.isAlgebraic
-  have _hdom : IsDomain ↥(Algebra.adjoin k (Set.range x)) := inferInstance
-  exact formallySmooth_of_isAlgebraic k L ↥(Algebra.adjoin k (Set.range x))
-    (fun a b h => Subtype.ext h)
-
-private theorem formallySmooth_of_charZero (k : Type u) [Field k] [CharZero k] (L : Type u) [Field L]
-    [Algebra k L] : Algebra.FormallySmooth k L := by
-  obtain ⟨B, hB⟩ := exists_isTranscendenceBasis k L
-  exact formallySmooth_of_isTranscendenceBasis k L hB
-
 theorem formallySmooth_residueField (k : Type u) [Field k] [CharZero k] {X : Scheme.{u}}
     (p : X ⟶ Spec (CommRingCat.of k)) [AlgebraicGeometry.Smooth p] (x : X)
     [Algebra k (IsLocalRing.ResidueField (X.presheaf.stalk x))]
     (_h : algebraMap k (IsLocalRing.ResidueField (X.presheaf.stalk x)) =
       (IsLocalRing.residue (X.presheaf.stalk x)).comp (stalkAlgebraMap k p x)) :
-    Algebra.FormallySmooth k (IsLocalRing.ResidueField (X.presheaf.stalk x)) :=
-  formallySmooth_of_charZero k (IsLocalRing.ResidueField (X.presheaf.stalk x))
+    Algebra.FormallySmooth k (IsLocalRing.ResidueField (X.presheaf.stalk x)) := by
+  let L := IsLocalRing.ResidueField (X.presheaf.stalk x)
+  obtain ⟨B, hB⟩ := exists_isTranscendenceBasis k L
+  have : Algebra.IsAlgebraic (IntermediateField.adjoin k (Set.range ((↑) : B → L))) L :=
+    hB.isAlgebraic_field
+  have : CharZero (IntermediateField.adjoin k (Set.range ((↑) : B → L))) :=
+    charZero_of_injective_algebraMap (algebraMap k _).injective
+  exact Algebra.FormallySmooth.of_algebraicIndependent_of_isSeparable hB.1
 
 theorem orderAt_derivIdealSheafIterate_eq_sub (k : Type u) [Field k] [CharZero k] {X : Scheme.{u}}
     (p : X ⟶ Spec (CommRingCat.of k)) [AlgebraicGeometry.Smooth p] (I : X.IdealSheafData)
@@ -448,32 +344,6 @@ theorem isClosed_orderAtLeastLocus (k : Type u) [Field k] [CharZero k] {X : Sche
     rw [← support_derivIdealSheafIterate_eq_orderAtLeastLocus k p I hm1]
     exact (derivIdealSheafIterate k p (m - 1) I).support.2
 
-private theorem ideal_eq_top_of_support_eq_empty {X : Scheme.{u}} (J : X.IdealSheafData)
-    (hJ : (J.support : Set X) = (∅ : Set X)) (U : X.affineOpens) :
-    J.ideal U = ⊤ := by
-  have hcover : (⨆ f : (J.ideal U : Set Γ(X, U.1)), X.basicOpen (f : Γ(X, U.1))) = U.1 := by
-    refine le_antisymm (iSup_le fun f => X.basicOpen_le (f : Γ(X, U.1))) ?_
-    rw [SetLike.le_def]
-    intro x hxU
-    have hxs : x ∉ J.support := by
-      intro hc
-      have hmem : x ∈ (J.support : Set X) := hc
-      rw [hJ] at hmem
-      simp at hmem
-    have hnle : ¬ stalkIdeal J x ≤ IsLocalRing.maximalIdeal (X.presheaf.stalk x) := fun hc =>
-      hxs ((mem_support_iff_stalkIdeal_le_maximalIdeal J x).mpr hc)
-    rw [stalkIdeal_eq_map_germ J x U hxU, Ideal.map_le_iff_le_comap,
-      SetLike.not_le_iff_exists] at hnle
-    obtain ⟨a, ha, ha2⟩ := hnle
-    have hbo : x ∈ X.basicOpen a := by
-      refine (X.mem_basicOpen a x hxU).mpr ?_
-      by_contra hc
-      exact ha2 (Ideal.mem_comap.mpr ((IsLocalRing.mem_maximalIdeal _).mpr
-        (mem_nonunits_iff.mpr hc)))
-    exact Opens.mem_iSup.mpr ⟨⟨a, ha⟩, hbo⟩
-  have hspan := (IsAffineOpen.iSup_basicOpen_eq_self_iff U.2).mp hcover
-  rwa [Ideal.span_eq] at hspan
-
 theorem derivIdealSheafIterate_eq_top_of_orderAtLeastLocus_eq_empty (k : Type u) [Field k] [CharZero k] {X : Scheme.{u}}
     (p : X ⟶ Spec (CommRingCat.of k)) [AlgebraicGeometry.Smooth p] (I : X.IdealSheafData)
     (m : ℕ) (h : orderAtLeastLocus I (m + 1) = (∅ : Set X)) :
@@ -482,9 +352,7 @@ theorem derivIdealSheafIterate_eq_top_of_orderAtLeastLocus_eq_empty (k : Type u)
     have h2 := support_derivIdealSheafIterate_eq_orderAtLeastLocus k p I (m := m + 1) (Nat.le_add_left 1 m)
     simp only [Nat.add_sub_cancel] at h2
     exact h2.trans h
-  refine le_antisymm le_top ?_
-  intro U
-  rw [ideal_eq_top_of_support_eq_empty (derivIdealSheafIterate k p m I) hsupp U]
-  exact le_top
+  rw [← Scheme.IdealSheafData.support_eq_bot_iff, SetLike.ext'_iff]
+  simpa using hsupp
 
 end FunctorialResolution.EmbeddedResolution

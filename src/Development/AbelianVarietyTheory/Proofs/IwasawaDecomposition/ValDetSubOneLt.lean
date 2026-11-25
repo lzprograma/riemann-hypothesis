@@ -225,9 +225,9 @@ theorem val_compAt_detIdl {SB : Finset (HeightOneSpectrum (𝓞 E))} (hSB : ∀ 
   rw [map_mul, valuation_star, CharValCompare.conjP_conjP] at k3
   rw [compAt_detIdl _ hN.1, compAt_detIdl _ hN.1, CharValCompare.conjP_conjP]
   by_cases h1 : P ∈ SB
-  · rw [if_pos h1, if_neg (hSB P h1), if_pos h1, map_one, mul_one, valued_algebraMap]
+  · rw [ite_eq_left h1, ite_eq_right (hSB P h1), ite_eq_left h1, map_one, mul_one, valued_algebraMap]
   by_cases h2 : conjPrime₂ P ∈ SB
-  · rw [if_neg h1, if_pos h2, if_pos h2, map_one, valued_algebraMap, k3]
+  · rw [ite_eq_right h1, ite_eq_left h2, ite_eq_left h2, map_one, valued_algebraMap, k3]
   have hfull : Submodule.IsFullLattice E N := by
     letI : Submodule.IsLattice E N := hN.1
     refine ⟨?_⟩
@@ -246,7 +246,7 @@ theorem val_compAt_detIdl {SB : Finset (HeightOneSpectrum (𝓞 E))} (hSB : ∀ 
         (algebraMap (𝓞 E) E s)⁻¹ (Submodule.subset_span hx')
       rw [← mul_smul, inv_mul_cancel₀ hs0, one_smul] at hm
       simpa only [Module.Basis.map_apply, Pi.basisFun_apply, SetLike.mem_coe] using hm
-  rw [if_neg h1, if_neg h2, if_neg h2, if_neg h1, map_pow, map_pow, valued_algebraMap, valued_algebraMap,
+  rw [ite_eq_right h1, ite_eq_right h2, ite_eq_right h2, ite_eq_right h1, map_pow, map_pow, valued_algebraMap, valued_algebraMap,
     ordSub_detSub_eq hfull (hf P), ordSub_detSub_eq hfull (hf (conjPrime₂ P))]
   have ex : ∀ (w : HeightOneSpectrum (𝓞 E)) (u : Eˣ), w.valuation E (u : E) = WithZero.exp (-ordF w u) := fun w u => by
     unfold ordF
@@ -258,8 +258,6 @@ theorem val_compAt_detIdl {SB : Finset (HeightOneSpectrum (𝓞 E))} (hSB : ∀ 
   omega
 
 end Glob
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem mk_eq_detPt (R : Ranks) (H : Formalism.BasicNotions.Host R) (n : ℕ) (ST SG Q SQ : Finset (HeightOneSpectrum (𝓞 H.E)))
     (p : DecoF H.E n ST SG Q) (g : GL (Fin n) (AfE H.F H.E)) (a : Ideles H.E) (hl : LevOk H SG SQ)
@@ -292,10 +290,10 @@ theorem mk_eq_detPt (R : Ranks) (H : Formalism.BasicNotions.Host R) (n : ℕ) (S
     have k2 : Valued.v (adAt H.F P (Formalism.UG.sigR (host_cmData R H).sig _ (finAf H.F H.E (ptIdl H SQ p) : AfE H.F H.E)) - 1) < 1 := by
       have e := valued_sigR (host_cmData R H) P ((finAf H.F H.E (ptIdl H SQ p) : AfE H.F H.E) - 1)
       rw [map_sub (Formalism.UG.sigR _ _), map_sub (adAt _ _), map_sub (adAt _ _), map_one, map_one, map_one, adAt_finAf] at e
-      rw [e, ptIdl, compAt_detIdl _ hN.1, if_neg (hl.split P hP), CharValCompare.conjP_conjP, if_pos hP, sub_self, map_zero]
+      rw [e, ptIdl, compAt_detIdl _ hN.1, ite_eq_right (hl.split P hP), CharValCompare.conjP_conjP, ite_eq_left hP, sub_self, map_zero]
       exact zero_lt_one
     have e1 : compAt P (ptIdl H SQ p) = algebraMap H.E _ (dt (ptFr p P)) := by
-      rw [ptIdl, compAt_detIdl _ hN.1, if_pos hP]
+      rw [ptIdl, compAt_detIdl _ hN.1, ite_eq_left hP]
     have e2 := compAt_eq ha P
     have e3 : adAt H.F P (Formalism.UG.sigR (host_cmData R H).sig _ (finAf H.F H.E a : AfE H.F H.E)) *
         adAt H.F P (Formalism.UG.sigR (host_cmData R H).sig _ (finAf H.F H.E (a⁻¹ * ptIdl H SQ p) : AfE H.F H.E)) =

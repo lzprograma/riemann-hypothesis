@@ -393,21 +393,6 @@ theorem finite_eigenSub [Module.Finite R N] (i : ι) : Module.Finite R (eigenSub
   exact Module.Finite.of_surjective (projTo h ρ i) fun y =>
     ⟨y, LinearMap.congr_fun (projTo_comp_subtype h ρ i) y⟩
 
-theorem projective_eigenSub [Module.Projective R N] (i : ι) :
-    Module.Projective R (eigenSub ρ (σ i)) := by
-  classical
-  exact Module.Projective.of_split _ _ (projTo_comp_subtype h ρ i)
-
-theorem flat_eigenSub [Module.Flat R N] (i : ι) : Module.Flat R (eigenSub ρ (σ i)) := by
-  classical
-  exact Module.Flat.of_retract _ _ (projTo_comp_subtype h ρ i)
-
-theorem free_eigenSub [IsLocalRing R] [Module.Finite R N] [Module.Flat R N] (i : ι) :
-    Module.Free R (eigenSub ρ (σ i)) :=
-  have := finite_eigenSub h ρ i
-  have := flat_eigenSub h ρ i
-  Module.free_of_flat_of_isLocalRing
-
 end Exact
 
 end Module
@@ -492,88 +477,12 @@ theorem mk_equivariant (a : O) (x : N) :
   change 1 ⊗ₜ[R] (ρ a x) = (ρ a).baseChange R' (1 ⊗ₜ[R] x)
   rw [LinearMap.baseChange_tmul]
 
-noncomputable def eigenBaseChangeEquiv [Finite ι] (h : IsSplitting σ) (i : ι) :
-    R' ⊗[R] eigenSub ρ (σ i) ≃ₗ[R']
-      eigenSub (baseChangeAction R' ρ) ((algebraMap R R').comp (σ i)) :=
-  (isBaseChange_eigenMapAlgebra h (mk_equivariant R' ρ) (TensorProduct.isBaseChange R N R') i).equiv
-
 end BaseChange
 
 section Charpoly
 
 variable {O : Type*} [CommRing O] {R : Type*} [CommRing R] {ι : Type*} [Fintype ι]
   {N : Type*} [AddCommGroup N] [Module R N]
-
-theorem exponents_eq_of_isDomain [IsDomain R] {σ : ι → O →+* R} (hσ : Function.Injective σ)
-    (r s : ι → ℕ) (hrs : ∀ a, ∏ i, (X - C (σ i a)) ^ r i = ∏ i, (X - C (σ i a)) ^ s i) :
-    r = s := by
-  classical
-  have hli : LinearIndependent R fun i => (σ i : O → R) :=
-    (linearIndependent_monoidHom O R).comp (fun i => (σ i : O →* R))
-      fun i j hij => hσ (RingHom.ext fun a => DFunLike.congr_fun hij a)
-  have hcast : ∀ r s : ι → ℕ,
-      (∀ a, ∏ i, (X - C (σ i a)) ^ r i = ∏ i, (X - C (σ i a)) ^ s i) →
-      ∀ i, (r i : R) = s i := by
-    intro r s hrs
-    have hn : ∀ (r : ι → ℕ) a, (∏ i, (X - C (σ i a)) ^ r i).nextCoeff
-        = -∑ i, (r i : R) * σ i a := by
-      intro r a
-      rw [Monic.nextCoeff_prod _ _ fun i _ => (monic_X_sub_C _).pow _, ← Finset.sum_neg_distrib]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      rw [(monic_X_sub_C _).nextCoeff_pow, nextCoeff_X_sub_C]
-      simp
-    refine Fintype.linearIndependent_iffₛ.1 hli _ _ ?_
-    ext a
-    have := congrArg nextCoeff (hrs a)
-    rw [hn, hn, neg_inj] at this
-    simpa using this
-  obtain ⟨p, hp⟩ := CharP.exists R
-  rcases CharP.char_is_prime_or_zero R p with hpp | rfl
-  · have : Fact p.Prime := ⟨hpp⟩
-    induction hn : ∑ i, (r i + s i) using Nat.strong_induction_on generalizing r s with
-    | _ n ih =>
-      rcases Nat.eq_zero_or_pos n with rfl | hpos
-      · ext i
-        have := Finset.sum_eq_zero_iff.1 hn i (Finset.mem_univ i)
-        omega
-      have hmod : ∀ i, r i % p = s i % p := fun i =>
-        (CharP.natCast_eq_natCast R p).1 (hcast r s hrs i)
-      have hdec : ∀ (r : ι → ℕ) a, ∏ i, (X - C (σ i a)) ^ r i
-          = (∏ i, (X - C (σ i a)) ^ (r i % p)) * (∏ i, (X - C (σ i a)) ^ (r i / p)) ^ p := by
-        intro r a
-        rw [← Finset.prod_pow, ← Finset.prod_mul_distrib]
-        refine Finset.prod_congr rfl fun i _ => ?_
-        rw [← pow_mul, ← pow_add, mul_comm, Nat.mod_add_div]
-      have hdiv : (fun i => r i / p) = fun i => s i / p := by
-        refine ih (∑ i, (r i / p + s i / p)) ?_ _ _ (fun a => ?_) rfl
-        · have h2 : 2 * ∑ i, (r i / p + s i / p) ≤ n := by
-            rw [← hn, Finset.mul_sum]
-            refine Finset.sum_le_sum fun i _ => ?_
-            have h1 := Nat.mul_div_le (r i) p
-            have h2 := Nat.mul_div_le (s i) p
-            have h3 := hpp.two_le
-            nlinarith [Nat.mul_le_mul_right (r i / p) h3, Nat.mul_le_mul_right (s i / p) h3]
-          omega
-        · have h1 := hrs a
-          rw [hdec r, hdec s] at h1
-          simp only [hmod] at h1
-          have h2 := mul_left_cancel₀
-            (monic_prod_of_monic _ _ fun i _ => (monic_X_sub_C _).pow _).ne_zero h1
-          exact frobenius_inj R[X] p h2
-      ext i
-      rw [← Nat.mod_add_div (r i) p, ← Nat.mod_add_div (s i) p, hmod, congrFun hdiv i]
-  · have := CharP.charP_to_charZero R
-    ext i
-    exact_mod_cast hcast r s hrs i
-
-theorem IsSplitting.exponents_eq [Nontrivial R] {σ : ι → O →+* R} (h : IsSplitting σ)
-    (r s : ι → ℕ) (hrs : ∀ a, ∏ i, (X - C (σ i a)) ^ r i = ∏ i, (X - C (σ i a)) ^ s i) :
-    r = s := by
-  classical
-  obtain ⟨m, hm⟩ := Ideal.exists_maximal R
-  refine exponents_eq_of_isDomain (h.map (Ideal.Quotient.mk m)).injective r s fun a => ?_
-  have := congrArg (Polynomial.map (Ideal.Quotient.mk m)) (hrs a)
-  simpa [Polynomial.map_prod] using this
 
 variable {σ : ι → O →+* R} (h : IsSplitting σ) (ρ : O →+* Module.End R N)
   [Module.Free R N] [Module.Finite R N]
@@ -597,33 +506,7 @@ theorem charpoly_eq_prod (hfree : ∀ i, Module.Free R (eigenSub ρ (σ i))) (a 
   refine Finset.prod_congr rfl fun i _ => ?_
   simp [Module.finrank_eq_card_chooseBasisIndex]
 
-theorem charpoly_eq_prod_of_isLocalRing [IsLocalRing R] (a : O) :
-    (ρ a).charpoly = ∏ i, (X - C (σ i a)) ^ Module.finrank R (eigenSub ρ (σ i)) :=
-  charpoly_eq_prod h ρ (free_eigenSub h ρ) a
-
-theorem finrank_eq_of_charpoly [Nontrivial R] (hfree : ∀ i, Module.Free R (eigenSub ρ (σ i)))
-    (r : ι → ℕ) (hr : ∀ a, (ρ a).charpoly = ∏ i, (X - C (σ i a)) ^ r i) (i : ι) :
-    Module.finrank R (eigenSub ρ (σ i)) = r i :=
-  congrFun (h.exponents_eq (fun i => Module.finrank R (eigenSub ρ (σ i))) r
-    fun a => by rw [← charpoly_eq_prod h ρ hfree, hr]) i
-
-theorem charpoly_eq_iff_finrank_eq [IsLocalRing R] (r : ι → ℕ) :
-    (∀ a, (ρ a).charpoly = ∏ i, (X - C (σ i a)) ^ r i) ↔
-      ∀ i, Module.finrank R (eigenSub ρ (σ i)) = r i :=
-  ⟨finrank_eq_of_charpoly h ρ (free_eigenSub h ρ) r, fun hr a => by
-    rw [charpoly_eq_prod_of_isLocalRing h ρ]; simp only [hr]⟩
-
 end Charpoly
-
-section Stalk
-
-variable {O : Type*} [CommRing O] {R : Type*} [CommRing R] {ι : Type*} [Fintype ι]
-  {N : Type*} [AddCommGroup N] [Module R N]
-  {σ : ι → O →+* R} (h : IsSplitting σ) (ρ : O →+* Module.End R N)
-include h
-
-
-end Stalk
 
 section Discr
 
@@ -703,26 +586,6 @@ theorem det_sq_eq_discr_of_isDomain {S : Type*} [CommRing S] [IsDomain S] [CharZ
   ext i j
   simp [hφσ]
 
-noncomputable def conjugateHom (L : Type*) [Field L] (R : Type*) [CommRing R] [Algebra (𝓞 L) R]
-    (φ : E →+* L) : 𝓞 E →+* R :=
-  (algebraMap (𝓞 L) R).comp (NumberField.RingOfIntegers.mapRingHom φ)
-
-theorem det_sq_conjugateHom {L : Type*} [Field L] [Algebra (𝓞 L) R] {φ : ι → E →+* L}
-    (hφ : Function.Injective φ) (b : Module.Basis ι ℤ (𝓞 E)) :
-    (Matrix.of fun i j => conjugateHom L R (φ i) (b j)).det ^ 2 = (NumberField.discr E : R) := by
-  refine det_sq_eq_discr_map (σ := fun i => NumberField.RingOfIntegers.mapRingHom (φ i)) ?_ _
-  apply NumberField.RingOfIntegers.coe_injective
-  have := det_sq_eq_discr_of_field hφ b
-  rw [map_pow, RingHom.map_det, map_intCast, ← this]
-  congr 2
-
-
-omit [Fintype ι] [DecidableEq ι] in
-theorem card_embeddings_of_splits {L : Type*} [Field L] [CharZero L] [Fintype (E →+* L)]
-    (hL : ∀ x : E, ((minpoly ℚ x).map (algebraMap ℚ L)).Splits) :
-    Fintype.card (E →+* L) = Module.finrank ℚ E := by
-  rw [← AlgHom.card_of_splits ℚ E L hL]
-  exact Fintype.card_congr (RingHom.equivRatAlgHom _ _)
 
 theorem isSplitting_of_isUnit_discr {σ : ι → 𝓞 E →+* R} (b : Module.Basis ι ℤ (𝓞 E))
     (hd : (Matrix.of fun i j => σ i (b j)).det ^ 2 = (NumberField.discr E : R))

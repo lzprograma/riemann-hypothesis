@@ -2,51 +2,13 @@ module
 
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralTwistedConjInvariant
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralProductGroup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitPlaceTwistedConstantTermMatches
 
 @[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 
@@ -67,23 +29,7 @@ theorem map_eq_of_mem (e : G ≃ₜ* H) (A : Subgroup G) (A' : Subgroup H) (h : 
 
 theorem cptPart_map_equiv (e : G ≃ₜ* H) (T : Subgroup G) :
     cptPart (T.map (e : G →* H)) = (cptPart T).map (e : G →* H) := by
-  unfold cptPart
-  rw [MonoidHom.map_closure]
-  congr 1
-  have hz : ∀ t, (Subgroup.zpowers ((e : G →* H) t) : Set H) = e.toHomeomorph '' (Subgroup.zpowers t : Set G) := by
-    intro t
-    rw [← MonoidHom.map_zpowers, Subgroup.coe_map]
-    rfl
-  have hk : ∀ t, IsCompact (closure (Subgroup.zpowers ((e : G →* H) t) : Set H)) ↔
-      IsCompact (closure (Subgroup.zpowers t : Set G)) := by
-    intro t
-    rw [hz, ← Homeomorph.image_closure, Homeomorph.isCompact_image]
-  ext x
-  constructor
-  · rintro ⟨⟨t, ht, rfl⟩, hc⟩
-    exact ⟨t, ⟨ht, (hk t).1 hc⟩, rfl⟩
-  · rintro ⟨t, ⟨ht, hc⟩, rfl⟩
-    exact ⟨⟨t, ht, rfl⟩, (hk t).2 hc⟩
+  apply _root_.GlobalTheory.BCT.SplitCtMatch.cptPart_map_equiv' <;> assumption
 
 end GlobalTheory.EulerTw.Transport
 
@@ -102,29 +48,7 @@ theorem summand_map (e : G ≃ₜ* H) (θ : G →* G) (θ' : H →* H) (K : Subg
     (f : G → ℂ) (f' : H → ℂ) (he : ∀ g, e (θ g) = θ' (e g)) (hK : ∀ g, g ∈ K ↔ e g ∈ K')
     (hf : ∀ g, f' (e g) = f g) (y : G) :
     summand θ' K' (e δ) f' (e y) = summand θ K δ f y := by
-  have hT : twCent θ' (e δ) = (twCent θ δ).map (e : G →* H) :=
-    map_eq_of_mem e _ _ (twCent_mem e θ θ' he δ)
-  have hK' : K' = K.map (e : G →* H) := map_eq_of_mem e _ _ hK
-  subst hK'
-  unfold summand
-  congr 1
-  · have h1 : (K.map (e : G →* H)).map (MulAut.conj (e y)).toMonoidHom =
-        (K.map (MulAut.conj y).toMonoidHom).map (e : G →* H) := by
-      rw [Subgroup.map_map, Subgroup.map_map]
-      congr 1
-      ext x
-      simp [MulAut.conj_apply]
-    rw [h1, hT, ← Subgroup.map_inf_eq _ _ _ e.injective, cptPart_map_equiv,
-      Subgroup.relIndex_map_map_of_injective _ _ e.injective]
-  · let ψ : K ≃* (K.map (e : G →* H)) := e.toMulEquiv.subgroupMap K
-    rw [← GlobalTheory.BCT.OrbProd.avg_comp_equiv ψ]
-    congr 1
-    funext k
-    simp only [Function.comp_apply]
-    rw [← hf]
-    congr 1
-    show (e y * e k.1)⁻¹ * e δ * θ' (e y * e k.1) = _
-    rw [← map_mul, ← he, ← map_inv, ← map_mul, ← map_mul]
+  apply _root_.GlobalTheory.BCT.SplitCtMatch.summand_map' <;> assumption
 
 end GlobalTheory.EulerTw.Transport
 
@@ -166,15 +90,8 @@ namespace GlobalTheory.EulerTw.Transport
 open GlobalTheory.BCT GlobalTheory.TwOrbConj
 
 theorem twOrb_transport : ∀ (G H : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Group H] [TopologicalSpace H] [IsTopologicalGroup H] (e : G ≃ₜ* H) (θ : G →* G) (θ' : H →* H) (K : Subgroup G) (K' : Subgroup H) (δ : G) (f : G → ℂ) (f' : H → ℂ), (∀ g, e (θ g) = θ' (e g)) → (∀ g, g ∈ K ↔ e g ∈ K') → (∀ g, f' (e g) = f g) → twOrb θ K δ f = twOrb θ' K' (e δ) f' := by
-  intro G H _ _ _ _ _ _ e θ θ' K K' δ f f' he hK hf
-  have hT := twCent_mem e θ θ' he δ
-  rw [twOrb_eq, twOrb_eq,
-    ← finsum_comp_equiv (Equiv.ofBijective _ (dcMap_bij e (twCent θ δ) K (twCent θ' (e δ)) K' hT hK))]
-  refine finsum_congr fun q => ?_
-  obtain ⟨a, ha, b, hb, hab⟩ := DoubleCoset.mk_out_eq_mul (twCent θ' (e δ)) K' (e (Quotient.out q))
-  have e2 : Quotient.out (Equiv.ofBijective _ (dcMap_bij e (twCent θ δ) K (twCent θ' (e δ)) K' hT hK) q) =
-      a * e (Quotient.out q) * b := hab
-  rw [e2, summand_rep θ' K' (e δ) f' _ ha hb, summand_map e θ θ' K K' δ f f' he hK hf]
+  intros
+  apply _root_.GlobalTheory.BCT.SplitCtMatch.twOrb_transport' <;> assumption
 
 end GlobalTheory.EulerTw.Transport
 

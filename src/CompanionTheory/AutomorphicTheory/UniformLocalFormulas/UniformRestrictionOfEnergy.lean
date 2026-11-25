@@ -254,8 +254,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.MainStatements.RowRest
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def UniqOfPin : Prop :=
   ∀ (D : D7), ConcreteSettingExists.GapHyp D → ∀ (X : HidaSetting D) (θ : ℝ) (C : Choice X θ) (hB : WuBessel C) (u u' : D.what₂.Word)
     (νl : Point D.host.E (D.R.rS + 1) → ∀ v : InfinitePlace X.B.I.F, Measure (Formalism.REAL.UJ (X.B.I.ε v))),
@@ -323,7 +321,7 @@ theorem uniform_restriction_of_energy (hF : LoopBCovN.CovNFormula) (hU : UniqOfP
   have hIC : B.IntC = IntC X u u' 1 := by
     show IntC X u u' 1 / MassDataConc.kapN D * kapU D = _
     unfold kapU
-    rw [if_pos hκ, div_mul_cancel₀ _ hκ.ne']
+    rw [ite_eq_left hκ, div_mul_cancel₀ _ hκ.ne']
   rw [hIC] at hF1
   rw [hv] at hF2 hrdb
   have hrd := _root_.Formalism.MainNotions.S.rdE_pos D

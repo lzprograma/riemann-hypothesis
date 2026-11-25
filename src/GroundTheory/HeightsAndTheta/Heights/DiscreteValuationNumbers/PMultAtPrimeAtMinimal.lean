@@ -59,10 +59,10 @@ theorem MultAtPrimeAtMinimal.proof : MultAtPrimeAtMinimal.Statement := by
   by_cases hQW : Q ≤ W
   · have hEq : Q = W := le_antisymm hQW (hW.2 ⟨‹Q.IsPrime›, hJQ⟩ hQW)
     subst hEq
-    rw [if_pos rfl, Module.length_eq_one_iff]
+    rw [ite_eq_left rfl, Module.length_eq_one_iff]
     exact localizedQuotient_isSimpleModule Q
   · have hne : Q ≠ W := fun h => hQW h.le
-    rw [if_neg hne, Module.length_eq_zero_iff]
+    rw [ite_eq_right hne, Module.length_eq_zero_iff]
     exact localizedQuotient_subsingleton_of_not_le Q W hQW
 
 end GroundTheory.Heights₂.Heights.NumbersDVR

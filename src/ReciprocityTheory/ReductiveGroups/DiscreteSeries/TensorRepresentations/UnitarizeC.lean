@@ -227,31 +227,28 @@ theorem wt_deriv_id (dual : Bool) {X : Matrix (Fin n) (Fin n) ℂ} (hX : inG ε 
     refine Finset.sum_congr rfl fun c _ => ?_
     linear_combination (star (Y ξ b) * I c) * key b c
 
-def mx {W : Type*} [AddCommGroup W] [Module ℂ W] (T : Fin n → Fin n → Module.End ℂ W)
-    (X : Matrix (Fin n) (Fin n) ℂ) : Module.End ℂ W := ∑ a, ∑ b, X a b • T a b
-
 theorem mx_apply_tensF {M : Type*} [AddCommGroup M] [Module ℂ M] (dual : Bool)
     (E : Fin n → Fin n → Module.End ℂ M) (X : Matrix (Fin n) (Fin n) ℂ) (f : Fin n → M) (c : Fin n) :
-    mx (tensF dual E) X f c = actM E X (f c) + cond dual (-∑ a, X a c • f a) (∑ b, X c b • f b) := by
+    ReciprocityTheory.ChartRestriction.DS.actM (tensF dual E) X f c = actM E X (f c) + cond dual (-∑ a, X a c • f a) (∑ b, X c b • f b) := by
   cases dual
-  · simp [mx, tensF, tensV, actM, coordV, smul_add, Finset.sum_add_distrib, Finset.sum_apply, LinearMap.sum_apply]
+  · simp [ReciprocityTheory.ChartRestriction.DS.actM, tensF, tensV, actM, coordV, smul_add, Finset.sum_add_distrib, Finset.sum_apply, LinearMap.sum_apply]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [Finset.sum_eq_single c]
     · simp
     · intro a _ ha
-      rw [if_neg (Ne.symm ha)]
+      rw [ite_eq_right (Ne.symm ha)]
       simp
     · intro h
       exact absurd (Finset.mem_univ c) h
-  · simp [mx, tensF, tensVd, actM, coordV, Finset.sum_apply, LinearMap.sum_apply, sub_eq_add_neg]
+  · simp [ReciprocityTheory.ChartRestriction.DS.actM, tensF, tensVd, actM, coordV, Finset.sum_apply, LinearMap.sum_apply, sub_eq_add_neg]
     simp only [Finset.sum_add_distrib, Finset.sum_neg_distrib]
     congr 2
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [Finset.sum_eq_single c]
     · simp
     · intro b _ hb
-      rw [if_neg (Ne.symm hb)]
+      rw [ite_eq_right (Ne.symm hb)]
       simp
     · intro h
       exact absurd (Finset.mem_univ c) h
@@ -333,7 +330,7 @@ theorem hasDerivAt_matrixCoeff_flow (hσ : IsURepOn (UJset ε) σ) (hD : IsDeriv
     {X : Matrix (Fin n) (Fin n) ℂ} (hX : inG ε X) (dual : Bool) (y : H) (ξ : Fin n) (f : Fin n → D)
     (z : Formalism.REAL.UJ ε) :
     HasDerivAt (fun s => cf dual ε σ y ξ (fun c => ((f c : D) : H)) (z * ex X hX s))
-      (cf dual ε σ y ξ (fun c => ((mx (tensF dual E) X f c : D) : H)) z) 0 := by
+      (cf dual ε σ y ξ (fun c => ((ReciprocityTheory.ChartRestriction.DS.actM (tensF dual E) X f c : D) : H)) z) 0 := by
   have hterm : ∀ c, HasDerivAt (fun s : ℝ => wt dual ε ξ (Formalism.MainNotions.S.umat z * NormedSpace.exp ((s : ℂ) • X)) c *
       inner ℂ y (σ (Formalism.MainNotions.S.umat z * NormedSpace.exp ((s : ℂ) • X)) ((f c : D) : H)))
       (wt dual ε ξ (Formalism.MainNotions.S.umat z * X) c * inner ℂ y (σ (Formalism.MainNotions.S.umat z) ((f c : D) : H)) +
@@ -343,7 +340,7 @@ theorem hasDerivAt_matrixCoeff_flow (hσ : IsURepOn (UJset ε) σ) (hD : IsDeriv
     simp only [Complex.ofReal_zero, zero_smul, NormedSpace.exp_zero, Matrix.mul_one]
   have hs := HasDerivAt.sum (u := (univ : Finset (Fin n))) (fun c _ => hterm c)
   rw [Finset.sum_fn] at hs
-  have hv : cf dual ε σ y ξ (fun c => ((mx (tensF dual E) X f c : D) : H)) z =
+  have hv : cf dual ε σ y ξ (fun c => ((ReciprocityTheory.ChartRestriction.DS.actM (tensF dual E) X f c : D) : H)) z =
       ∑ c, (wt dual ε ξ (Formalism.MainNotions.S.umat z * X) c * inner ℂ y (σ (Formalism.MainNotions.S.umat z) ((f c : D) : H)) +
         wt dual ε ξ (Formalism.MainNotions.S.umat z) c * inner ℂ y (σ (Formalism.MainNotions.S.umat z) ((actM E X (f c) : D) : H))) := by
     unfold cf
@@ -366,10 +363,10 @@ theorem hasDerivAt_cf (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E
     {X : Matrix (Fin n) (Fin n) ℂ} (hX : inG ε X) (dual : Bool) (y : H) (ξ : Fin n) (f : Fin n → D)
     (x : Formalism.REAL.UJ ε) (t : ℝ) :
     HasDerivAt (fun s => cf dual ε σ y ξ (fun c => ((f c : D) : H)) (x * ex X hX s))
-      (cf dual ε σ y ξ (fun c => ((mx (tensF dual E) X f c : D) : H)) (x * ex X hX t)) t := by
+      (cf dual ε σ y ξ (fun c => ((ReciprocityTheory.ChartRestriction.DS.actM (tensF dual E) X f c : D) : H)) (x * ex X hX t)) t := by
   have h0 := hasDerivAt_matrixCoeff_flow hσ hD hX dual y ξ f (x * ex X hX t)
   have h0' : HasDerivAt (fun u => cf dual ε σ y ξ (fun c => ((f c : D) : H)) (x * ex X hX t * ex X hX u))
-      (cf dual ε σ y ξ (fun c => ((mx (tensF dual E) X f c : D) : H)) (x * ex X hX t)) (t - t) := by
+      (cf dual ε σ y ξ (fun c => ((ReciprocityTheory.ChartRestriction.DS.actM (tensF dual E) X f c : D) : H)) (x * ex X hX t)) (t - t) := by
     rw [sub_self]
     exact h0
   have h1 := h0'.comp_sub_const t t

@@ -149,13 +149,13 @@ theorem eWeight_eventually_const {A : FinHolAtlas D X} {L : LocPot X} {s : X →
   filter_upwards [eventually_le_rSec hL hs hc₀ hq (l + 1)] with z hz
   by_cases hzY : z ∈ secOpen s
   · have h := hz hzY
-    rw [eWeight, if_pos hzY, heq (eWeightPair L s c₀ l z) 1 fun j hj => ?_]
+    rw [eWeight, ite_eq_left hzY, heq (eWeightPair L s c₀ l z) 1 fun j hj => ?_]
     · rfl
     · fin_cases j
       · show -(c₀ * rSec L s z) + 1 ≤ -l
         linarith
       · exact absurd rfl hj
-  · rw [eWeight, if_neg hzY]
+  · rw [eWeight, ite_eq_right hzY]
 
 theorem eWeight_smooth {A : FinHolAtlas D X} {L : LocPot X} {s : X → X → ℂ}
     (hL : IsPotential A L) (hs : IsSection A L s) {c₀ : ℝ} (hc₀ : 0 < c₀) (l : ℝ) :
@@ -170,7 +170,7 @@ theorem eWeight_smooth {A : FinHolAtlas D X} {L : LocPot X} {s : X → X → ℂ
         fun y' => regMax 1 (fun j => eWeightPair L s c₀ l ((A.chart k).symm y') j) - 1 := by
       filter_upwards [ht.eventually ((isOpen_secOpen hL hs).mem_nhds hq)] with y' hy'
       have hy'' : (A.chart k).symm y' ∈ secOpen s := hy'
-      simp only [Function.comp, eWeight, if_pos hy'']
+      simp only [Function.comp, eWeight, ite_eq_left hy'']
     refine ContDiffAt.congr_of_eventuallyEq ?_ hev
     refine (hcd.contDiffAt.comp y (contDiffAt_pi.2 fun j => ?_)).sub contDiffAt_const
     fin_cases j
@@ -217,7 +217,7 @@ theorem eWeight_psh {A : FinHolAtlas D X} (Om : KaehlerForm A) {L : LocPot X} {s
         fun y' => ((Om.pot.φ x ∘ (A.chart k).symm) y' + 1 * regMax 1 (fun j => u j y')) + (-1) := by
       filter_upwards [ht.eventually ((isOpen_secOpen hL hs).mem_nhds hq)] with y' hy'
       have hy'' : (A.chart k).symm y' ∈ secOpen s := hy'
-      simp only [Function.comp, eWeight, if_pos hy'', hudef]
+      simp only [Function.comp, eWeight, ite_eq_left hy'', hudef]
       ring
     have hg := regMaxLevi_thm D (Fin 2) 1 _ u hU one_pos hu y ⟨hy.1, hq⟩ v
       (-levi (Om.pot.φ x ∘ (A.chart k).symm) y v) fun j => ?_
@@ -266,7 +266,7 @@ theorem eWeight_bounds {L : LocPot X} {s : X → X → ℂ} (c₀ l : ℝ) {z : 
       exact neg_le_neg (min_le_left _ _)
     · show -l ≤ -min (c₀ * rSec L s z) l
       exact neg_le_neg (min_le_right _ _)
-  rw [eWeight, if_pos hz]
+  rw [eWeight, ite_eq_left hz]
   constructor <;> linarith
 
 theorem LemmaEWeight.proof : LemmaEWeight.Statement := by
@@ -274,7 +274,7 @@ theorem LemmaEWeight.proof : LemmaEWeight.Statement := by
   obtain ⟨c₀, hc₀, hc⟩ := exists_levi_weight_constant Om hL
   refine ⟨c₀, hc₀, fun l _ => ⟨eWeight L s c₀ l, eWeight_smooth hL hs hc₀ l,
     eWeight_psh Om hL hs hc₀ hc l, fun x hx => eWeight_bounds c₀ l hx, fun x hx => ?_⟩⟩
-  rw [eWeight, if_neg hx]
+  rw [eWeight, ite_eq_right hx]
   linarith
 
 end

@@ -50,7 +50,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 
@@ -63,13 +62,13 @@ def rectOne (R : Type) [Zero R] [One R] (b a : ℕ) : Matrix (Fin b) (Fin a) R :
   fun i j => if i.val = j.val then 1 else 0
 
 theorem lowZero_rectOne (R : Type) [Zero R] [One R] (b a k : ℕ) : LowZero k (rectOne R b a) :=
-  fun i j hi hj => if_neg (by omega)
+  fun i j hi hj => ite_eq_right (by omega)
 
 theorem topL_rectOne (R : Type) [Zero R] [One R] {b a : ℕ} (h : a ≤ b) : topL a (rectOne R b a) = 1 := by
   ext i j
   have h1 : i.val < b ∧ j.val < a := ⟨by omega, j.2⟩
   unfold topL rectOne
-  rw [dif_pos h1, Matrix.one_apply]
+  rw [dite_eq_left h1, Matrix.one_apply]
   simp only [Fin.ext_iff]
 
 theorem sandwich_cancel' {R : Type} [CommRing R] {m n : ℕ} (A A' G G' : Matrix (Fin m) (Fin m) R)
@@ -139,14 +138,14 @@ theorem redM_smul_rectOne {ε : EAf D} (hi : ε ∈ Formalism.L2.Herm.intAf D.ho
     (h : Formalism.L2.DIV.resS D.host.F PP ⟨ε, hi⟩ = 1) (b a : ℕ) :
     redM PP (ε • rectOne (EAf D) b a) = rectOne _ b a := by
   funext i j
-  refine (dif_pos (isIntM_smul_rectOne hi b a i j)).trans ?_
+  refine (dite_eq_left (isIntM_smul_rectOne hi b a i j)).trans ?_
   by_cases hij : i.val = j.val
-  · refine Eq.trans (congrArg _ (Subtype.ext ?_)) (h.trans (if_pos hij).symm)
+  · refine Eq.trans (congrArg _ (Subtype.ext ?_)) (h.trans (ite_eq_left hij).symm)
     change ε * (if i.val = j.val then 1 else 0) = ε
-    rw [if_pos hij, mul_one]
-  · refine Eq.trans (congrArg _ (Subtype.ext ?_)) ((RingHom.map_zero _).trans (if_neg hij).symm)
+    rw [ite_eq_left hij, mul_one]
+  · refine Eq.trans (congrArg _ (Subtype.ext ?_)) ((RingHom.map_zero _).trans (ite_eq_right hij).symm)
     change ε * (if i.val = j.val then 1 else 0) = 0
-    rw [if_neg hij, mul_zero]
+    rw [ite_eq_right hij, mul_zero]
 
 theorem exists_datum_ne_zero : ∀ (D : D7) (S T : HSp D) (βS : GL (Fin S.rank) (EAf D)) (βT : GL (Fin T.rank) (EAf D)) (Pg Q P : Finset (Formalism.L2.DIV.Pl D.host.E)) (ξ : ∀ PP : Formalism.L2.DIV.Pl D.host.E, (Formalism.L2.DIV.kP PP)ˣ →* ℂˣ) (e : AE D), T.rank ≤ S.rank → IsIdemSum e P → (∀ PP ∈ Pg, PP ∈ P) → (∀ PP ∈ Q, PP ∈ P) → ∃ x : WO S T, IsHalf (cA D e) x ∧ IsIntM (frMapAdj S T βS βT x) ∧ omegaK Pg (fun PP => redM PP (frMapAdj S T βS βT x)) * omegaQ Q T.rank ξ (-1) (fun PP => redM PP (frMapAdj S T βS βT x)) ≠ 0 := by
   intro D S T βS βT Pg Q P ξ e hr he hg hQ
@@ -160,10 +159,10 @@ theorem exists_datum_ne_zero : ∀ (D : D7) (S T : HSp D) (βS : GL (Fin S.rank)
       exact ⟨lowZero_rectOne _ _ _ _, topL_rectOne _ hr⟩
     refine mul_ne_zero ?_ ?_
     · unfold omegaK
-      rw [if_pos fun PP hPP => key PP (hg PP hPP)]
+      rw [ite_eq_left fun PP hPP => key PP (hg PP hPP)]
       exact one_ne_zero
     · unfold omegaQ
-      rw [dif_pos fun PP hPP => ⟨(key PP (hQ PP hPP)).1, by
+      rw [dite_eq_left fun PP hPP => ⟨(key PP (hQ PP hPP)).1, by
         rw [(key PP (hQ PP hPP)).2, Matrix.det_one]; exact isUnit_one⟩]
       exact Finset.prod_ne_zero_iff.2 fun PP _ => zpow_ne_zero _ (Units.ne_zero _)
 

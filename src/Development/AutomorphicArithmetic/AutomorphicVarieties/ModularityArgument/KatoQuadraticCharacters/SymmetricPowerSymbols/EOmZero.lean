@@ -61,7 +61,7 @@ private theorem dg_mat (k : ℕ) (hk : 0 < k) :
   have hdet : 0 < (!![(k : ℤ), 0; 0, 1] : Matrix (Fin 2) (Fin 2) ℤ).det := by
     simp [Matrix.det_fin_two_of]
     exact_mod_cast hk
-  simp only [dg, toGQ, dif_pos hdet]
+  simp only [dg, toGQ, dite_eq_left hdet]
   rfl
 
 private theorem ofSL_mat (γ : SL(2, ℤ)) :

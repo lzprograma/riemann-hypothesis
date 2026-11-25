@@ -142,12 +142,6 @@ def RootHeight.Statement : Prop :=
       II (Fin f) (plBlocks f j m) (rootPointIdeal ζ) 1 ![fsMulti (plBlocks f j m)] ≤
         grassConst f j m * degC (rootPointIdeal ζ)
 
-def lineExampleCoord : (Σ _ : Unit, Fin 2) → FractionRing (MvPolynomial (Fin 1) ℚ) :=
-  fun p => if p.2 = 0 then 1 else algebraMap _ _ (X 0 : MvPolynomial (Fin 1) ℚ)
-
-def lineExampleT : Fin 1 → FractionRing (MvPolynomial (Fin 1) ℚ) :=
-  fun _ => algebraMap _ _ (X 0 : MvPolynomial (Fin 1) ℚ)
-
 end
 
 end GroundTheory.Heights₂.Heights

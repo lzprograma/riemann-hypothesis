@@ -24,13 +24,8 @@ theorem exists_isCompact_mul_mem_of_ideleModule_mem_Icc {a : ℝ} (ha : 0 < a) (
   set I : Set {r : ℝ // 0 < r} := Subtype.val ⁻¹' Icc a b with hI
   have hIc : IsCompact I := by
     rw [Subtype.isCompact_iff]
-    have : Subtype.val '' I = Icc a b := by
-      ext r
-      constructor
-      · rintro ⟨t, ht, rfl⟩
-        exact ht
-      · intro hr
-        exact ⟨⟨r, lt_of_lt_of_le ha hr.1⟩, hr, rfl⟩
+    have : Subtype.val '' I = Icc a b :=
+      image_preimage_eq_of_subset fun r hr => ⟨⟨r, lt_of_lt_of_le ha hr.1⟩, rfl⟩
     rw [this]
     exact isCompact_Icc
   refine ⟨(fun p : IdeleGroup K × {r : ℝ // 0 < r} => p.1 * moduleSection w₀ p.2) '' (D ×ˢ I),

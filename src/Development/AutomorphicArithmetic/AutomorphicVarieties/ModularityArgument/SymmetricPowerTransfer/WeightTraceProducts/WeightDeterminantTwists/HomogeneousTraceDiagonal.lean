@@ -139,7 +139,7 @@ private theorem homogeneous_trace_diagonal {d : ℕ} (n : ℕ) (g : GL (Fin d) �
       rw [eval_sbs, a, MvPolynomial.eval_monomial, MvPolynomial.eval_monomial, Finsupp.prod_fintype _ _ (by simp),
         Finsupp.prod_fintype _ _ (by simp)]
       simp [Fintype.prod_prod_type, mul_pow, Finset.prod_mul_distrib, mul_comm]
-    rw [this, MvPolynomial.coeff_monomial, if_pos rfl]
+    rw [this, MvPolynomial.coeff_monomial, ite_eq_left rfl]
 
   rw [symPowTrace_eq_sum_coeff, hsymm, map_sum]
   simp only [e]

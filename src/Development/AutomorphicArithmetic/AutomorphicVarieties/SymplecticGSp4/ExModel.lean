@@ -639,8 +639,6 @@ private theorem fr_map {L : LocBase D} {R R' : Type} [CommRing R] [Algebra c.O R
   rw [Lift.map_hom, this]
   rfl
 
-set_option synthInstance.maxHeartbeats 200000 in
-set_option maxHeartbeats 1000000 in
 private theorem main (hD : D.Good) (L : LocBase D) (F : Fr D L) (Q : Type) [CommRing Q] [Algebra c.O Q] [Module c.Oᵐᵒᵖ Q]
     [IsCentralScalar c.O Q] [Module.Finite c.O Q] (z : G ℚ Ω → Q) (lc : IsLocallyConstant z)
     (coc : ∀ g h, z (g * h) = z g + ((D.Psi⁻¹ g : c.Oˣ) : c.O) • z h) (unr : D.UnrT z 0)
@@ -745,7 +743,6 @@ private theorem main (hD : D.Good) (L : LocBase D) (F : Fr D L) (Q : Type) [Comm
 
 end SlopeTestRemainingChoices
 
-set_option synthInstance.maxHeartbeats 200000 in
 theorem UpperTheory.exists_quotientDerivation_of_shaCocycle :
     ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l} (D : Raw Ω c), D.Good → ∀ (L : LocBase D) (F : Fr D L) (a : c.O) (z : G ℚ Ω → c.O ⧸ Ideal.span {a}), D.ShaCoc a z → ∃ Db ∈ QDer (F.W.origin F.org) a, ∃ DB ∈ PtDer (L.W.origin L.org) c.O, HasWt L.W.part (-wPs) DB ∧ (∀ x, Db (F.i x) = Ideal.Quotient.mk _ (DB x)) ∧ (∀ g i j, Db (F.r.hom g i j) = Ideal.Quotient.mk _ ((Xm c.O * D.r0 g) i j) * z g) ∧ ∀ v i j, Db (F.α v i j) = 0 := by
   intro Ω _ _ _ l _ c D hD L F a z hz
@@ -1394,11 +1391,11 @@ private theorem dims (b : ℕ) (a n' : ℤ × ℤ → ℕ) (ha : ∀ j, j ≠ 0 
             (j ≠ wPs ∧ j ≠ -wPs ∧ j = 0 ∧ dimL j = 2 ∧ dimP j = 2))) := by decide
     unfold tDims
     rcases this j hj with ⟨e1, e2, e3, e4, e5, ⟨e6, e7⟩ | ⟨e6, e7⟩⟩ | ⟨e1, e2, ⟨e3, e4, e5⟩ | ⟨e3, e4, e5, e6⟩ | ⟨e3, e4, e5, e6, e7⟩⟩
-    · rw [if_pos e6]; rw [e1, e2, e7, h2 e3 e4 e5] at h1; omega
-    · rw [if_neg e6, if_neg e4, if_neg e5, if_neg e3]; rw [e1, e2, e7, h2 e3 e4 e5] at h1; omega
-    · rw [if_neg e2, if_pos e3, ← e3]; rw [e1, e4, e5] at h1; omega
-    · rw [if_neg e2, if_neg e3, if_pos e4, ← e4]; rw [e1, e5, e6] at h1; omega
-    · rw [if_neg e2, if_neg e3, if_neg e4, if_pos e5, ← e5]; rw [e1, e6, e7] at h1; omega
+    · rw [ite_eq_left e6]; rw [e1, e2, e7, h2 e3 e4 e5] at h1; omega
+    · rw [ite_eq_right e6, ite_eq_right e4, ite_eq_right e5, ite_eq_right e3]; rw [e1, e2, e7, h2 e3 e4 e5] at h1; omega
+    · rw [ite_eq_right e2, ite_eq_left e3, ← e3]; rw [e1, e4, e5] at h1; omega
+    · rw [ite_eq_right e2, ite_eq_right e3, ite_eq_left e4, ← e4]; rw [e1, e5, e6] at h1; omega
+    · rw [ite_eq_right e2, ite_eq_right e3, ite_eq_right e4, ite_eq_left e5, ← e5]; rw [e1, e6, e7] at h1; omega
   · have n : ∀ x ∈ wts, j ≠ x := fun x hx e => hj (e ▸ hx)
     have e1 := n wAl (by decide)
     have e2 := n wBe (by decide)
@@ -1406,8 +1403,8 @@ private theorem dims (b : ℕ) (a n' : ℤ × ℤ → ℕ) (ha : ∀ j, j ≠ 0 
     have e4 := n wPs (by decide)
     have e5 := n (-wPs) (by decide)
     have e6 := n 0 (by decide)
-    simp only [dimL, dimP, e1, e2, e3, e4, e6, hj, or_self, if_false, h2 e6 e4 e5] at h1
-    simp only [tDims, e1, e2, e3, e4, e5, e6, or_self, if_false]
+    simp only [dimL, dimP, e1, e2, e3, e4, e6, hj, or_self, ite_false, h2 e6 e4 e5] at h1
+    simp only [tDims, e1, e2, e3, e4, e5, e6, or_self, ite_false]
     omega
 
 private theorem enum {ι R X : Type} [Finite ι] (q : ι → R) (w : ι → X) (j : X) (n : ℕ) (h : Nat.card {k // w k = j} = n) :
@@ -1502,21 +1499,21 @@ private theorem tOdd_ind (hD : D.Good) (k : D.T × Fin 6) :
       simp only [Raw.r0, diagRep, MonoidHom.coe_mk, OneHom.coe_mk, Matrix.sub_apply, Matrix.mul_diagonal, Matrix.diagonal_mul]
       ring
     refine ⟨δ, d1, ?_, ?_⟩
-    · simp only [tOdd, if_pos hv]
-      rw [e, if_pos rfl, one_mul]
+    · simp only [tOdd, ite_eq_left hv]
+      rw [e, ite_eq_left rfl, one_mul]
       exact ph_ne hD k
     · rintro ⟨v', k'⟩ hne
       unfold tOdd
       split_ifs with h
-      · rw [e, if_neg, zero_mul]
+      · rw [e, ite_eq_right, zero_mul]
         rintro rfl
         exact hne (Prod.ext (h.trans hv.symm) rfl)
       · rw [d3]; rfl
   · obtain ⟨δ, d1, d2, d3⟩ := UpperTheory.exists_pointDerivation_framed_commutator_tangent D hD L F 0 (zero_mem _) (fun v' => if v' = v then X else 0)
-      (fun v' => by split_ifs; exacts [hX, zero_mem _]) (if_neg (Ne.symm hv))
+      (fun v' => by split_ifs; exacts [hX, zero_mem _]) (ite_eq_right (Ne.symm hv))
     refine ⟨δ, d1, ?_, ?_⟩
-    · simp only [tOdd, if_neg hv]
-      rw [d3, if_pos rfl, hk, if_pos rfl]
+    · simp only [tOdd, ite_eq_right hv]
+      rw [d3, ite_eq_left rfl, hk, ite_eq_left rfl]
       exact one_ne_zero
     · rintro ⟨v', k'⟩ hne
       unfold tOdd
@@ -1524,10 +1521,10 @@ private theorem tOdd_ind (hD : D.Good) (k : D.T × Fin 6) :
       · rw [d2, zero_mul, mul_zero, sub_zero]; rfl
       · rw [d3]
         by_cases h' : v' = v
-        · rw [if_pos h', hk, if_neg]
+        · rw [ite_eq_left h', hk, ite_eq_right]
           rintro rfl
           exact hne (Prod.ext h' rfl)
-        · rw [if_neg h']; rfl
+        · rw [ite_eq_right h']; rfl
 
 variable {S : Type} [CommRing S] [Algebra c.O S] [IsCO c.O S] (σ : F.U →ₐ[c.O] S)
 
@@ -1545,7 +1542,7 @@ private theorem al_one (ht : ∀ k, σ (tOdd F k) = 0) (hs : ∀ k, σ (sEq F k)
     rw [map_one] at h1
     have t : ∀ k, σ (F.α ⟨p, hp⟩ (p6 k).1 (p6 k).2) = 0 := fun k => by
       have := ht (⟨p, hp⟩, k)
-      simpa only [tOdd, if_neg hv] using this
+      simpa only [tOdd, ite_eq_right hv] using this
     have s : ∀ k, σ (F.α ⟨p, hp⟩ (p4 k).1 (p4 k).2) = (1 : M4 S) (p4 k).1 (p4 k).2 := fun k => by
       have := hs (.inl (⟨p, hp'⟩, k))
       simp only [sEq, Matrix.sub_apply] at this
@@ -1559,7 +1556,7 @@ private theorem nrm (ht : ∀ k, σ (tOdd F k) = 0) (hs : ∀ k, σ (sEq F k) = 
   refine ⟨?_, ?_, ?_⟩
   · have t : ∀ k, σ (F.r.hom D.ph (p6 k).1 (p6 k).2) = 0 := fun k => by
       have := ht (⟨l, D.residueChar_mem_levelPrimes⟩, k)
-      simpa only [tOdd, if_pos] using this
+      simpa only [tOdd, ite_eq_left] using this
     refine (sixBlock S _ _ ((D.th D.ph).isUnit.map _) (Ex.mult_map D σ F.r F.fr.mult D.ph)
       (off_mem (c := c) ((F.r.map σ).red D.ph) fun a b h => ?_) (t 0) (t 1) (t 2) (t 3) (t 4) (t 5)).1
     show residue c.O (D.r0 D.ph a b) = 0
@@ -1633,17 +1630,17 @@ theorem UpperTheory.V.GradeZeroInterpolatingElement.exModel :
     rw [card_sum, card_sum (fun k => Sum.elim F.wf (wEq D) (.inr k) = j), ← hb, ← card_prod (fun k => wp (p4 k) = j)]
     rfl
   obtain ⟨Fq, f1, f2⟩ := enum q _ (-wPs) (1 + D.Sb.card + Nat.card {t // F.W.wt (F.e (.inr t)) = -wPs} + 1) (by
-    rw [hc, F.numf, c1, c4, if_neg (by decide), if_pos (Or.inr rfl)]; omega)
+    rw [hc, F.numf, c1, c4, ite_eq_right (by decide), ite_eq_left (Or.inr rfl)]; omega)
   obtain ⟨Eq, e1, e2⟩ := enum q _ wPs (2 + D.Sb.card + Nat.card {t // F.W.wt (F.e (.inr t)) = wPs}) (by
-    rw [hc, F.numf, c2, c5, if_neg (by decide), if_pos (Or.inl rfl)]; omega)
+    rw [hc, F.numf, c2, c5, ite_eq_right (by decide), ite_eq_left (Or.inl rfl)]; omega)
   obtain ⟨Zq, z1, z2⟩ := enum q (Sum.elim F.wf (wEq D)) 0 (2 + 2 * D.Sb.card + Nat.card {t // F.W.wt (F.e (.inr t)) = 0}) (by
-    rw [hc, F.numf, c3, c6, if_pos rfl]; omega)
+    rw [hc, F.numf, c3, c6, ite_eq_left rfl]; omega)
   have hw : ∀ k, Sum.elim F.wf (wEq D) k = -wPs ∨ Sum.elim F.wf (wEq D) k = wPs ∨ Sum.elim F.wf (wEq D) k = 0 := by
     rintro (u | k | k)
     · by_contra hne
       simp only [not_or, Sum.elim_inl] at hne
       have h1 := F.numf (F.wf u)
-      rw [F.numz _ hne.2.2 hne.2.1 hne.1, if_neg hne.2.2, if_neg (not_or.2 ⟨hne.2.1, hne.1⟩)] at h1
+      rw [F.numz _ hne.2.2 hne.2.1 hne.1, ite_eq_right hne.2.2, ite_eq_right (not_or.2 ⟨hne.2.1, hne.1⟩)] at h1
       haveI : Nonempty {u' // F.wf u' = F.wf u} := ⟨⟨u, rfl⟩⟩
       exact Nat.card_pos.ne' h1
     · exact c7 _

@@ -47,7 +47,6 @@ import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.Valuati
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.FinPl GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SymChain
 
 noncomputable section
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LastSeeSaw
 
@@ -91,13 +90,6 @@ theorem isThetaFunO_kap {L L'' : HSp D} (τ : Matrix (Fin L.rank) (Fin L''.rank)
   · have := hf.smooth n (K.comp M) (hcont.comp hM) (fun t => (hpart (M t)).2 (h0 t)) (kap τ S w)
     simp only [hadd]
     simpa only [AddMonoidHom.comp_apply, AddMonoidHom.mk'_apply, K] using this
-
-end GlobalTheory.LastSeeSaw
-end
-
-noncomputable section
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-namespace GlobalTheory.LastSeeSaw
 
 end GlobalTheory.LastSeeSaw
 end

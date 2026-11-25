@@ -77,7 +77,7 @@ theorem ClosedPtSkyscraper.proof (hU : ClosedPtChartUnit.Statement) : ClosedPtSk
   refine ⟨z, ⟨Submodule.mem_pi.mpr fun J _ => ?_, LinearMap.mem_ker.mpr (funext fun E => ?_)⟩, ?_⟩
   ·
     by_cases hJ : ∀ k, ∀ i ∈ J.1 k, (X ⟨k, i⟩ : MRingOver S ι) ∉ P
-    · simp only [z, dif_pos hJ]
+    · simp only [z, dite_eq_left hJ]
       refine GenSESStep.mk_mem_locPart _ _ (a + b J.1 J.2.1 hJ) (htb J.1 J.2.1 hJ) ?_
       have e : (d + fun k => ((a + b J.1 J.2.1 hJ) k : ℤ)) =
           (d + fun k => (a k : ℤ)) + fun k => (b J.1 J.2.1 hJ k : ℤ) := by
@@ -86,7 +86,7 @@ theorem ClosedPtSkyscraper.proof (hU : ClosedPtChartUnit.Statement) : ClosedPtSk
         ring
       rw [e]
       exact h𝓝.2 _ _ _ _ (hgb J.1 J.2.1 hJ) hm
-    · simp only [z, dif_neg hJ]
+    · simp only [z, dite_eq_right hJ]
       exact zero_mem _
   ·
     obtain ⟨J₁, J₂, h₁, h₂, σ, -, hD⟩ := GenTwistGenerated.cechD_zero_apply (S := S) (M := N) E
@@ -95,7 +95,7 @@ theorem ClosedPtSkyscraper.proof (hU : ClosedPtChartUnit.Statement) : ClosedPtSk
     · have hJ₁ : ∀ k, ∀ i ∈ J₁.1 k, (X ⟨k, i⟩ : MRingOver S ι) ∉ P := fun k i hi => hE k i (h₁ k hi)
       have hJ₂ : ∀ k, ∀ i ∈ J₂.1 k, (X ⟨k, i⟩ : MRingOver S ι) ∉ P := fun k i hi => hE k i (h₂ k hi)
       obtain ⟨u, hu, h', -, -, -, huP⟩ := hU S K ι P hP E.1 E.2.1 hE s a hsa hsP
-      simp only [z, dif_pos hJ₁, dif_pos hJ₂]
+      simp only [z, dite_eq_left hJ₁, dite_eq_left hJ₂]
       rw [GenTwistGenerated.cellRes_mk (GenTwistGenerated.cellMon_mono h₁),
         GenTwistGenerated.cellRes_mk (GenTwistGenerated.cellMon_mono h₂)]
       have heq : LocalizedModule.mk (g J₁.1 J₁.2.1 hJ₁ • m)
@@ -113,7 +113,7 @@ theorem ClosedPtSkyscraper.proof (hU : ClosedPtChartUnit.Statement) : ClosedPtSk
     · push Not at hE
       exact ClosedPtSkyscraper.loc_eq_zero hkill hE _
   ·
-    simp only [z, dif_pos hI]
+    simp only [z, dite_eq_left hI]
     refine LocalizedModule.mk_eq.mpr ⟨1, ?_⟩
     simp only [one_smul, Submonoid.smul_def, smul_smul]
     exact (hcong _ _ (by rw [mul_comm]; exact htg I.1 I.2.1 hI) m).symm

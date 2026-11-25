@@ -173,10 +173,10 @@ private theorem key_lemma' (F : FamilyUnif Xo σ ty) (hD : 1 ≤ D.p + D.q) (hσ
     (Set.toFinite _) (fun y _ => valAt'_idem y hee) i P P' hP hP'
     (pullback.lift (F.u i P) _ hw) (pullback.lift (F.u i P') _ hw')
     (pullback.lift_fst _ _ _) (pullback.lift_snd _ _ _) (pullback.lift_fst _ _ _) (pullback.lift_snd _ _ _)
-  rw [valAt'_spMap_comp, if_pos rfl] at hv1
+  rw [valAt'_spMap_comp, ite_eq_left rfl] at hv1
   rw [valAt'_spMap_comp, ← heq, hv1] at hv2
   by_contra hne
-  rw [if_neg hne] at hv2
+  rw [ite_eq_right hne] at hv2
   exact one_ne_zero hv2
 
 private theorem spMap_comp_u_comp_s_eq_of_fixes_rt0 (F : FamilyUnif Xo σ ty) (hσ : σ (baseKA l).ρ = H.rt0) (hA : l.A = 1)

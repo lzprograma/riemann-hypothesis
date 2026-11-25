@@ -3,6 +3,7 @@ module
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
 public import Mathlib.RingTheory.SimpleRing.Principal
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwMemIwC
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwMemIwC
 public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
 import Mathlib.Algebra.Order.Floor.Extended
@@ -67,12 +68,7 @@ variable {R n : Type} [CommRing R] [Fintype n] [DecidableEq n] [LinearOrder n]
 
 private theorem q_diag_mul {a b : GL n R} (ha : a ∈ borel R n) (hb : b ∈ borel R n) (i : n) :
     ((a * b : GL n R) : Matrix n n R) i i = (a : Matrix n n R) i i * (b : Matrix n n R) i i := by
-  rw [Units.val_mul, Matrix.mul_apply, Finset.sum_eq_single i]
-  · intro l _ hl
-    rcases lt_or_gt_of_ne hl with h | h
-    · rw [(mem_borel R).1 ha i l h, zero_mul]
-    · rw [(mem_borel R).1 hb l i h, mul_zero]
-  · simp
+  apply _root_.UpperTheory.V.AlgebraTools.diag_mul <;> assumption
 
 private theorem q_exD : ∃ D : borel R n →* (n → Rˣ),
     ∀ (g : borel R n) (i : n), (D g i : R) = ((g : GL n R) : Matrix n n R) i i := by
@@ -84,12 +80,7 @@ private theorem q_exD : ∃ D : borel R n →* (n → Rˣ),
 
 private theorem q_map_diagT {S : Type} [CommRing S] (f : R →+* S) (d : n → Rˣ) :
     GeneralLinearGroup.map (n := n) f (diagT R n d) = diagT S n fun i => Units.map f.toMonoidHom (d i) := by
-  ext i j
-  show f ((diagT R n d : Matrix n n R) i j) = _
-  rw [val_diagT, val_diagT, diagonal_apply, diagonal_apply]
-  split_ifs
-  · rfl
-  · simp
+  apply _root_.UpperTheory.V.AlgebraTools.map_diagT <;> assumption
 
 end Ring
 
@@ -200,7 +191,6 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil
 open UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Hi UpperTheory.V.AlgebraTools UpperTheory.V.Pa UpperTheory.V.Pa.Lev
 open scoped TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace UpperTheory.V.Pa.Lev
 

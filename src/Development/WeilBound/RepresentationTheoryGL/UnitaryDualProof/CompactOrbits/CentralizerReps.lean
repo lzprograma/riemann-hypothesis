@@ -678,17 +678,6 @@ theorem free_etale_sheaf_zmod_exists_hom_sending_generator : ∃ t : kˣ, 0 < na
 
 variable {k}
 
-theorem continuous_lin {n : ℕ} (L : Mat k n →ₗ[k] Mat k n) : Continuous L := by
-  have hL : (L : Mat k n → Mat k n) = fun x => ∑ i, ∑ j, x i j • L (Matrix.single i j 1) := by
-    funext x
-    conv_lhs => rw [Matrix.matrix_eq_sum_single x]
-    simp only [map_sum]
-    refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-    rw [← map_smul, Matrix.smul_single, smul_eq_mul, mul_one]
-  rw [hL]
-  exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
-    (continuous_id.matrix_elem i j).smul continuous_const
-
 variable [CharZero k]
 
 theorem pull_supp {n : ℕ} (Z : SubM k n) (hZ : CR Z) (t : kˣ) (ξ : DistS k n) (h : Supp ξ (Bz Z ×ˢ Set.univ)) :

@@ -86,7 +86,3 @@ theorem flat_int [CharZero Ω] (π : M.Z ⟶ Sp ℤ) : Flat π := by
     (RingHom.flat_algebraMap_iff.2 (flat_int_sections M U))
 
 end GlobalTheory.ZH.MinorModel
-
-namespace GlobalTheory.ZH.MinorModel
-
-end GlobalTheory.ZH.MinorModel

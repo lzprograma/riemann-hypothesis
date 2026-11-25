@@ -93,7 +93,7 @@ theorem richAt_ch (c : Cfg) (l N R : ℕ) (hN : 3 ≤ N) (hlen : 6 * (N : ℝ) ^
   have hmem : ∀ m, 1 ≤ m → m ≤ max 1 R → ∀ j : Fin (m + 1), Formalism.SA.C.chebPt α (α + ℓ) m j ∈ gridCh c l N R a := by
     intro m hm1 hm2 j
     unfold gridCh
-    rw [if_pos ⟨ha1, haN⟩]
+    rw [ite_eq_left ⟨ha1, haN⟩]
     refine Finset.mem_biUnion.mpr ⟨m, Finset.mem_Icc.mpr ⟨hm1, hm2⟩, Finset.mem_image.mpr ⟨j, Finset.mem_univ _, ?_⟩⟩
     rw [show α + ℓ = α + ((c.Del / 2 - c.v l) - (5 / 2 - c.v l)) / (6 * N) - 1 by rw [hℓ]; ring]
   rcases Nat.eq_zero_or_pos n with rfl | hn0
@@ -290,7 +290,7 @@ namespace Formalism.L2.SG.Pf.CarrierT
 
 open Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Built Formalism.L2.SG.LocWSOf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
+attribute [local instance] instCM
 
 def gridT {D : D7} (e : InfinitePlace D.host.E ≃ D.what₂.Tau) (l : ℕ) (j : Fin (nfE D)) : ℕ → Finset ℝ :=
   Formalism.L2.SG.Pf.CarrierSz.gridCh ((Formalism.L2.SG.SpectralTiesReal.gOf D e).place (plE D j)) l

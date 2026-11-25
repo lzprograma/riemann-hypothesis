@@ -4,51 +4,8 @@ public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Analysis.Complex.LocallyUniformLimit
 public import Mathlib.Analysis.Complex.TaylorSeries
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Analysis.Calculus.Deriv.Slope
 public import Mathlib.Analysis.Calculus.DiffContOnCl
 public import Mathlib.Analysis.Calculus.ParametricIntegral
@@ -119,18 +76,6 @@ lemma iteratedDeriv_series (hU : IsOpen U) (r : ℕ) : ∀ (F : κ → ℂ → �
     (∀ k, DifferentiableOn ℂ (F k) U) →
     (∀ z₀ ∈ U, ∃ V ∈ 𝓝 z₀, ∃ u : κ → ℝ, Summable u ∧ ∀ z ∈ V ∩ U, ∀ k, ‖F k z‖ ≤ u k) →
     ∀ z ∈ U, iteratedDeriv r (fun w => ∑' k, F k w) z = ∑' k, iteratedDeriv r (F k) z := by
-  have loc : ∀ (n : ℕ) (f g : ℂ → ℂ), Set.EqOn f g U →
-      Set.EqOn (iteratedDeriv n f) (iteratedDeriv n g) U := by
-    intro n
-    induction n with
-    | zero =>
-      intro f g h z hz
-      simp only [iteratedDeriv_zero]
-      exact h hz
-    | succ n ih =>
-      intro f g h z hz
-      rw [iteratedDeriv_succ, iteratedDeriv_succ]
-      exact Filter.EventuallyEq.deriv_eq (Filter.eventually_of_mem (hU.mem_nhds hz) (ih f g h))
   induction r with
   | zero =>
     intro F _ _ z _
@@ -140,8 +85,7 @@ lemma iteratedDeriv_series (hU : IsOpen U) (r : ℕ) : ∀ (F : κ → ℂ → �
     obtain ⟨_, hder, hb'⟩ := series_step hU F hF hb
     have hF' : ∀ k, DifferentiableOn ℂ (deriv (F k)) U := fun k => (hF k).deriv hU
     simp only [iteratedDeriv_succ']
-    rw [loc r (deriv (fun w => ∑' k, F k w)) (fun w => ∑' k, deriv (F k) w)
-      (fun w hw => hder w hw) hz]
+    rw [_root_.Set.EqOn.iteratedDeriv_of_isOpen (fun w hw => hder w hw) hU r hz]
     exact ih (fun k => deriv (F k)) hF' hb' z hz
 
 end Series
@@ -270,18 +214,6 @@ lemma iteratedDeriv_integral (hU : IsOpen U) (r : ℕ) : ∀ G : ℂ → Ω → 
     (∀ z₀ ∈ U, ∃ V ∈ 𝓝 z₀, ∃ g : Ω → ℝ, Integrable g μ ∧ ∀ z ∈ V ∩ U, ∀ ω, ‖G z ω‖ ≤ g ω) →
     ∀ z ∈ U, iteratedDeriv r (fun w => ∫ ω, G w ω ∂μ) z =
       ∫ ω, iteratedDeriv r (fun w => G w ω) z ∂μ := by
-  have loc : ∀ (n : ℕ) (f g : ℂ → ℂ), Set.EqOn f g U →
-      Set.EqOn (iteratedDeriv n f) (iteratedDeriv n g) U := by
-    intro n
-    induction n with
-    | zero =>
-      intro f g h z hz
-      simp only [iteratedDeriv_zero]
-      exact h hz
-    | succ n ih =>
-      intro f g h z hz
-      rw [iteratedDeriv_succ, iteratedDeriv_succ]
-      exact Filter.EventuallyEq.deriv_eq (Filter.eventually_of_mem (hU.mem_nhds hz) (ih f g h))
   induction r with
   | zero =>
     intro G _ _ _ z _
@@ -292,8 +224,8 @@ lemma iteratedDeriv_integral (hU : IsOpen U) (r : ℕ) : ∀ G : ℂ → Ω → 
     have hd' : ∀ ω, DifferentiableOn ℂ (fun z => deriv (fun w => G w ω) z) U :=
       fun ω => (hd ω).deriv hU
     simp only [iteratedDeriv_succ']
-    refine (loc r (deriv (fun w => ∫ ω, G w ω ∂μ)) (fun w => ∫ ω, deriv (fun w' => G w' ω) w ∂μ)
-      (fun w hw => (h1 w hw).deriv) hz).trans ?_
+    refine (_root_.Set.EqOn.iteratedDeriv_of_isOpen
+      (fun w hw => (h1 w hw).deriv) hU r hz).trans ?_
     exact ih (fun z ω => deriv (fun w => G w ω) z) hd' h2 h3 z hz
 
 end Integral

@@ -41,16 +41,12 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.AnVal
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.PullbackSections Formalism.L2.Pj
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 def fock {g : ℕ} (Hm : Matrix (Fin g) (Fin g) ℂ) (q : ℤ) (a : Fin g → ℂ) (θ : (Fin g → ℂ) → ℂ) :
     (Fin g → ℂ) → ℂ := fun z =>

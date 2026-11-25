@@ -1,46 +1,8 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PFrameEx
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PerCApply
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
@@ -60,24 +22,6 @@ private def unitBall (p : ℕ) [Fact p.Prime] : Subring (PadicAlgCl p) where
   add_mem' := fun {a b} ha hb => (PadicAlgCl.isNonarchimedean p a b).trans (max_le ha hb)
   zero_mem' := by simp
   neg_mem' := by simp
-
-private theorem den_of_norm {p : ℕ} [hp : Fact p.Prime] (q : ℚ) (h : ‖(q : ℚ_[p])‖ ≤ 1) :
-    ¬ p ∣ q.den := by
-  intro hd
-  have hnum : ¬ (p : ℤ) ∣ q.num := by
-    intro hn
-    have h1 : p ∣ q.num.natAbs := Int.natCast_dvd.mp hn
-    have h2 := Nat.dvd_gcd h1 hd
-    rw [Nat.Coprime.gcd_eq_one q.reduced] at h2
-    exact hp.out.one_lt.ne' (Nat.dvd_one.mp h2)
-  have hn1 : ‖(q.num : ℚ_[p])‖ = 1 :=
-    le_antisymm (Padic.norm_int_le_one _)
-      (not_lt.mp fun hlt => hnum (Padic.norm_intCast_lt_one_iff.mp hlt))
-  have hd1 : ‖(q.den : ℚ_[p])‖ < 1 := Padic.norm_natCast_lt_one_iff.mpr hd
-  have heq : (q : ℚ_[p]) * q.den = q.num := by exact_mod_cast Rat.mul_den_eq_num q
-  have hn := congrArg norm heq
-  rw [norm_mul, hn1] at hn
-  nlinarith [norm_nonneg (q.den : ℚ_[p]), norm_nonneg (q : ℚ_[p])]
 
 private theorem coeff_den {p : ℕ} [Fact p.Prime] {F : Type} [Field F] [NumberField F] (x : F)
     (h : ∀ τ : F →+* PadicAlgCl p, ‖τ x‖ ≤ 1) (i : ℕ) : ¬ p ∣ ((minpoly ℚ x).coeff i).den := by
@@ -107,12 +51,15 @@ private theorem coeff_den {p : ℕ} [Fact p.Prime] {F : Type} [Field F] [NumberF
     rw [← hy]
     exact y.2
   rw [hP, Polynomial.coeff_map] at hn
-  apply den_of_norm
+  intro hd
   have hc : algebraMap ℚ (PadicAlgCl p) ((minpoly ℚ x).coeff i)
       = algebraMap ℚ_[p] (PadicAlgCl p) (((minpoly ℚ x).coeff i : ℚ) : ℚ_[p]) := by
     simp only [eq_ratCast, map_ratCast]
   rw [hc] at hn
-  exact (PadicAlgCl.norm_extends p _).symm.trans_le hn
+  have h1 : ‖(((minpoly ℚ x).coeff i).den : ℤ_[p])‖ = 1 :=
+    PadicInt.isUnit_iff.mp <|
+      PadicInt.isUnit_den _ ((PadicAlgCl.norm_extends p _).symm.trans_le hn)
+  exact (PadicInt.norm_natCast_lt_one_iff.mpr hd).ne h1
 
 private theorem integral_multiple_coprime {p : ℕ} [Fact p.Prime] {F : Type} [Field F] [NumberField F] (x : F)
     (h : ∀ i, ¬ p ∣ ((minpoly ℚ x).coeff i).den) :

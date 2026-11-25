@@ -1,48 +1,6 @@
 module
 
 public import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.EquivariantSections.EquivSection
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -55,7 +13,7 @@ namespace GlobalTheory.CompanionTheory.TorusSymbol
 
 open ReciprocityTheory.ChartRestriction.DS ReciprocityTheory.ChartRestriction.DS.S7 PositivityTheory.RgDs.K
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ}
 
@@ -67,7 +25,7 @@ lemma isOpen_omegaSet (n : ℕ) : IsOpen (OmegaSet n) := by
   refine isOpen_iInter_of_finite fun i => ?_
   have hc : Continuous fun z : Matrix (Fin n) (Fin n) ℂ => lead ((i : ℕ) + 1) z := by
     have hi : (i : ℕ) + 1 ≤ n := i.2
-    simp only [lead, dif_pos hi]
+    simp only [lead, dite_eq_left hi]
     exact (continuous_id.matrix_submatrix _ _).matrix_det
   exact isOpen_ne_fun hc continuous_const
 
@@ -79,24 +37,24 @@ lemma lop_add (Y : Matrix (Fin n) (Fin n) ℂ) {F G : Matrix (Fin n) (Fin n) ℂ
     (hF : F ∈ OmF n) (hG : G ∈ OmF n) : lop Y (F + G) = lop Y F + lop Y G := by
   funext z
   by_cases hz : z ∈ OmegaSet n
-  · simp only [lop, Pi.add_apply, if_pos hz]
+  · simp only [lop, Pi.add_apply, ite_eq_left hz]
     have h : fderiv ℂ (F + G) z = fderiv ℂ F z + fderiv ℂ G z :=
       ((differentiableAt_of_mem hF hz).hasFDerivAt.add (differentiableAt_of_mem hG hz).hasFDerivAt).fderiv
     rw [h]
     simp only [ContinuousLinearMap.add_apply]
     ring
-  · simp [lop, if_neg hz]
+  · simp [lop, ite_eq_right hz]
 
 lemma lop_smul (Y : Matrix (Fin n) (Fin n) ℂ) (s : ℂ) {F : Matrix (Fin n) (Fin n) ℂ → ℂ}
     (hF : F ∈ OmF n) : lop Y (s • F) = s • lop Y F := by
   funext z
   by_cases hz : z ∈ OmegaSet n
-  · simp only [lop, Pi.smul_apply, if_pos hz]
+  · simp only [lop, Pi.smul_apply, ite_eq_left hz]
     have h : fderiv ℂ (s • F) z = s • fderiv ℂ F z :=
       ((differentiableAt_of_mem hF hz).hasFDerivAt.const_smul s).fderiv
     rw [h]
     simp
-  · simp [lop, if_neg hz]
+  · simp [lop, ite_eq_right hz]
 
 lemma lop_sum (Y : Matrix (Fin n) (Fin n) ℂ) {ι : Type*} (s : Finset ι)
     (f : ι → Matrix (Fin n) (Fin n) ℂ → ℂ) (hf : ∀ i, f i ∈ OmF n) :
@@ -106,8 +64,8 @@ lemma lop_sum (Y : Matrix (Fin n) (Fin n) ℂ) {ι : Type*} (s : Finset ι)
   | empty =>
     funext z
     by_cases hz : z ∈ OmegaSet n
-    · simp [lop, if_pos hz]
-    · simp [lop, if_neg hz]
+    · simp [lop, ite_eq_left hz]
+    · simp [lop, ite_eq_right hz]
   | insert i s hi ih =>
     rw [Finset.sum_insert hi, Finset.sum_insert hi, lop_add Y (hf i) (Submodule.sum_mem _ fun j _ => hf j), ih]
 

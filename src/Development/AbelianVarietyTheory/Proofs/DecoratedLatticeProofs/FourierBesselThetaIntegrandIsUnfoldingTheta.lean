@@ -58,7 +58,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf GlobalTheory.Unf.FB
 
 namespace GlobalTheory.ThLaws
@@ -186,7 +185,7 @@ theorem GlobalTheory.th_isTh : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), Is
   obtain ⟨t, ht⟩ := exists_psiE_ne_one hψ
   let A : Fin (σ + 1) → AE D := GlobalTheory.IndefiniteRowSideFullHecke.TransvectionAction.ratVec a
   let Bv : Fin (σ + 1) → AE D := fun k => if k = j' then cA D t else 0
-  have hB0 : ∀ k, k ≠ j' → Bv k = 0 := fun k hk => if_neg hk
+  have hB0 : ∀ k, k ≠ j' → Bv k = 0 := fun k hk => ite_eq_right hk
   have hA0 : ∀ i, j < i → A i = 0 := fun i hi => by
     show incA D (a i) = 0
     rw [ha0 i hi, map_zero]
@@ -210,7 +209,7 @@ theorem GlobalTheory.th_isTh : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), Is
   have hup : upSum (tvN A Bv) = t := by
     unfold upSum
     rw [Finset.sum_eq_single j, Finset.sum_eq_single j']
-    · rw [if_pos (by simp [j']), tvN_apply, show Bv j' = cA D t from if_pos rfl, cA_cA']
+    · rw [ite_eq_left (by simp [j']), tvN_apply, show Bv j' = cA D t from ite_eq_left rfl, cA_cA']
       show incA D (a j) * t = t
       rw [ha1, map_one, one_mul]
     · intro k _ hk
@@ -219,7 +218,7 @@ theorem GlobalTheory.th_isTh : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), Is
     · intro i _ hi
       refine Finset.sum_eq_zero fun k _ => ?_
       by_cases hk : k = j'
-      · rw [if_neg]
+      · rw [ite_eq_right]
         intro h
         apply hi
         rw [hk] at h
@@ -238,7 +237,7 @@ theorem GlobalTheory.th_isTh : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), Is
     have h1 := congrFun (congrFun (J.d.levi_jX (tvGL A Bv hAB)) k) i.1
     simp only [Matrix.mul_apply, Matrix.submatrix_apply, id] at h1 ⊢
     rw [h1]
-    simp only [hcol, Matrix.one_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [hcol, Matrix.one_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   · intro h1
     apply ht
     rw [← star_star (psiE ψ t), h1, star_one]

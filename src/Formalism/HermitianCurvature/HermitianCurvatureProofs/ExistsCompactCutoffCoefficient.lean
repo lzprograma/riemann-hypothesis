@@ -14,50 +14,6 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingV
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SlicesFiniteRegularityBuilt
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -91,10 +47,10 @@ theorem vecV_congr_Dr (Bs : B.RealPlaceData k r Wp Wq) (ν' : Fin (2 * r + k + 1
   unfold D.vecV
   by_cases hq : D.IsLocPt (h ++ [(1, ζ)]) (r + 1) ∧
       0 < D.ptG (Tz k r Bs.z * Tz k r Bs.z') r (h ++ [(1, ζ)])
-  · simp only [dif_pos hq]
+  · simp only [dite_eq_left hq]
     by_cases h' : ∃ γ ∈ B.GV k r, Zhat k r Bs.z Bs.z' γ = D.ptMatN (h ++ [(1, ζ)]) (r + 1) ∧
         D.IsDFrame Bs ν' m₀ γ
-    · simp only [dif_pos h']
+    · simp only [dite_eq_left h']
       have hγ := h'.choose_spec.1
       have hGq := P.ptG_spec k r Bs.z Bs.z' _ h'.choose hq.1 h'.choose_spec.2.1
       have hpos : 0 < Gf k r Bs.z Bs.z' h'.choose := hGq ▸ hq.2
@@ -106,8 +62,8 @@ theorem vecV_congr_Dr (Bs : B.RealPlaceData k r Wp Wq) (ν' : Fin (2 * r + k + 1
         rw [hH _ ⟨P.B7.sgs_mem Bs hp hγ, by rw [P.JCx1.needs.gf_sgs Bs hp]; exact hpos⟩
           (by rw [P.BigCellZetaMinors.dmin_sgs Bs hp]; exact hD)])
       rw [e, one_smul]
-    · simp only [dif_neg h']
-  · simp only [dif_neg hq]
+    · simp only [dite_eq_right h']
+  · simp only [dite_eq_right hq]
 
 end vec
 
@@ -251,7 +207,7 @@ theorem sliceAt_congr_Dr {r : ℕ} (z z' : Fin (2 * r + k + 1) → ℂ) (h : C.L
     (hG : ∀ x, Dmin k r z z' x ⟨D.ptSize h, by omega⟩ = (U.hMat (D.ptPerm h) (D.ptDiag h)).det → G₁ x = G₂ x) :
     D.sliceAt k r z z' G₁ h = D.sliceAt k r z z' G₂ h := by
   unfold D.sliceAt
-  rw [dif_pos hp, dif_pos hp]
+  rw [dite_eq_left hp, dite_eq_left hp]
   funext γ
   unfold U.PhiFun
   congr 1

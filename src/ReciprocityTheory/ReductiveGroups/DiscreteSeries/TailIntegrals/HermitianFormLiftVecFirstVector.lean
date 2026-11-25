@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.GoodRowsProjectorApplyEqSum
 public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.MatExtBvec
 import Mathlib.RingTheory.PiTensorProduct
@@ -21,10 +22,10 @@ theorem ell_col (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (g : Mat k r) :
   unfold ell
   refine Finset.sum_congr rfl fun a _ => ?_
   by_cases h : a.val + 1 < r
-  · rw [dif_pos h]
+  · rw [dite_eq_left h]
     first
       | simp [fvec, h, bvec]
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     simp [fvec, h]
 
 section Lv2
@@ -76,35 +77,9 @@ private lemma sum_eq_sum_sh_of_zero_at_edges (F : Fin (2 * (1 + r') + k + 1) →
   simp only [sh, Fin.val_mk]
   omega
 
-private lemma liftVec_apply_sh (v : Fin (2 * r' + k + 1) → ℂ) (q : Fin (2 * r' + k + 1)) :
-    liftVec k 1 r' v (sh q) = v q := by
-  have h1 : 1 ≤ (sh q : Fin (2 * (1 + r') + k + 1)).val ∧
-      (sh q : Fin (2 * (1 + r') + k + 1)).val < 2 * r' + k + 1 + 1 := by
-    have := q.isLt
-    simp only [sh, Fin.val_mk]
-    omega
-  simp only [liftVec]
-  rw [dif_pos h1]
-  exact congrArg v (Fin.ext (by simp [sh]))
-
 theorem hpk_lv (v : Fin (2 * r' + k + 1) → ℂ) :
     Hpk k (1 + r') *ᵥ liftVec k 1 r' v = liftVec k 1 r' (Hpk k r' *ᵥ v) := by
-  funext p
-  simp only [Matrix.mulVec, dotProduct]
-  refine (sum_eq_sum_sh_of_zero_at_edges _ ?_).trans ?_
-  · intro j hj
-    have h0 : ¬(1 ≤ j.val ∧ j.val < 2 * r' + k + 1 + 1) := by omega
-    simp only [liftVec, dif_neg h0, mul_zero]
-  · simp only [liftVec_apply_sh]
-    by_cases hp : p.val = 0 ∨ p.val = 2 * (1 + r') + k
-    · have h0 : ¬(1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1) := by omega
-      simp only [hpk_out p hp, zero_mul, Finset.sum_const_zero, liftVec, dif_neg h0]
-    · have hp' : p = sh ⟨p.val - 1, by have := p.isLt; omega⟩ := by
-        ext
-        simp only [sh, Fin.val_mk]
-        omega
-      rw [hp']
-      simp only [hpk_sh, liftVec_apply_sh, Matrix.mulVec, dotProduct]
+  apply ReciprocityTheory.ChartRestriction.DS.Xi.StepA.Hpk_lift <;> assumption
 
 theorem herm_lv (v w : Fin (2 * r' + k + 1) → ℂ) :
     herm (Hpk k (1 + r')) (liftVec k 1 r' v) (liftVec k 1 r' w) = herm (Hpk k r') v w := by
@@ -114,8 +89,8 @@ theorem herm_lv (v w : Fin (2 * r' + k + 1) → ℂ) :
   refine (sum_eq_sum_sh_of_zero_at_edges _ ?_).trans ?_
   · intro p hp
     have h0 : ¬(1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1) := by omega
-    simp only [liftVec, dif_neg h0, mul_zero]
-  · simp only [liftVec_apply_sh]
+    simp only [liftVec, dite_eq_right h0, mul_zero]
+  · simp only [lv_in]
 
 theorem hermitianForm_liftVec_firstVector (v : Fin (2 * r' + k + 1) → ℂ) : herm (Hpk k (1 + r')) (liftVec k 1 r' v) (e0 k r') = 0 := by
   unfold herm
@@ -135,55 +110,11 @@ theorem eI_succ (b : ℕ) (h : b + 1 < 1 + r') : eI k (1 + r') ⟨b + 1, h⟩ = 
   ext
   simp [eI, sh]
 
-private lemma lev_apply_sh_sh (m : Mat k r') (p q : Fin (2 * r' + k + 1)) :
-    ιLev k 1 r' m (sh p) (sh q) = m p q := by
-  have hp : 1 ≤ (sh p : Fin (2 * (1 + r') + k + 1)).val ∧
-      (sh p : Fin (2 * (1 + r') + k + 1)).val < 2 * r' + k + 1 + 1 := by
-    have := p.isLt
-    simp only [sh, Fin.val_mk]
-    omega
-  have hq : 1 ≤ (sh q : Fin (2 * (1 + r') + k + 1)).val ∧
-      (sh q : Fin (2 * (1 + r') + k + 1)).val < 2 * r' + k + 1 + 1 := by
-    have := q.isLt
-    simp only [sh, Fin.val_mk]
-    omega
-  simp only [ιLev]
-  rw [dif_pos hp, dif_pos hq]
-  exact congrArg₂ m (Fin.ext (by simp [sh])) (Fin.ext (by simp [sh]))
-
-private lemma lev_mulVec_liftVec_eq_liftVec_mulVec (m : Mat k r') (w : Fin (2 * r' + k + 1) → ℂ) :
-    ιLev k 1 r' m *ᵥ liftVec k 1 r' w = liftVec k 1 r' (m *ᵥ w) := by
-  funext p
-  simp only [Matrix.mulVec, dotProduct]
-  refine (sum_eq_sum_sh_of_zero_at_edges _ ?_).trans ?_
-  · intro j hj
-    have h0 : ¬(1 ≤ j.val ∧ j.val < 2 * r' + k + 1 + 1) := by omega
-    simp only [liftVec, dif_neg h0, mul_zero]
-  · simp only [liftVec_apply_sh]
-    by_cases hp : p.val = 0 ∨ p.val = 2 * (1 + r') + k
-    · have h0 : ¬(1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1) := by omega
-      have hz : ∀ q : Fin (2 * r' + k + 1), ιLev k 1 r' m p (sh q) = 0 := by
-        intro q
-        have hne : p ≠ sh q := by
-          intro he
-          rw [he] at hp
-          have := q.isLt
-          simp only [sh, Fin.val_mk] at hp
-          omega
-        simp only [ιLev, dif_neg h0, if_neg hne]
-      simp only [hz, zero_mul, Finset.sum_const_zero, liftVec, dif_neg h0]
-    · have hp' : p = sh ⟨p.val - 1, by have := p.isLt; omega⟩ := by
-        ext
-        simp only [sh, Fin.val_mk]
-        omega
-      rw [hp']
-      simp only [lev_apply_sh_sh, liftVec_apply_sh, Matrix.mulVec, dotProduct]
-
 theorem hcol (hHA : HeisAct) (m : Mat k r') (X : HPar k r') (w : Fin (2 * r' + k + 1) → ℂ) :
     (heis0 k r' X * ιLev k 1 r' m) *ᵥ liftVec k 1 r' w =
       liftVec k 1 r' (m *ᵥ w) - herm (Hpk k r') (m *ᵥ w) X.1 • e0 k r' := by
   unfold HeisAct at hHA
-  rw [← Matrix.mulVec_mulVec, lev_mulVec_liftVec_eq_liftVec_mulVec]
+  rw [← Matrix.mulVec_mulVec, io_lv]
   unfold heis0
   rw [hHA, herm_lv, hermitianForm_liftVec_firstVector, zero_smul, add_zero]
 
@@ -195,34 +126,15 @@ theorem sum_fin_one_add_eq_add_sum {M : Type} [AddCommMonoid M] (F : Fin (1 + r'
   · exact congrArg F (Fin.ext (by simp))
   · exact Finset.sum_congr rfl fun a _ => congrArg F (Fin.ext (by simp))
 
-private lemma liftVec_bvec_eq_bvec_sh (i : Fin (2 * r' + k + 1)) :
-    liftVec k 1 r' (bvec i) = bvec (sh i) := by
-  funext p
-  by_cases hp : p.val = 0 ∨ p.val = 2 * (1 + r') + k
-  · have h0 : ¬(1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1) := by omega
-    have hne : p ≠ sh i := by
-      intro he
-      rw [he] at hp
-      have := i.isLt
-      simp only [sh, Fin.val_mk] at hp
-      omega
-    simp only [liftVec, dif_neg h0, bvec, Pi.single_apply, if_neg hne]
-  · have hp' : p = sh ⟨p.val - 1, by have := p.isLt; omega⟩ := by
-      ext
-      simp only [sh, Fin.val_mk]
-      omega
-    rw [hp', liftVec_apply_sh]
-    simp [bvec, Pi.single_apply, sh, Fin.ext_iff]
-
 theorem fvec_lift (z1 : Fin (2 * r' + k + 1) → ℂ) (a : Fin (1 + r')) :
     fvec k (1 + r') (liftVec k 1 r' z1) ⟨a.val + 1, by omega⟩ = liftVec k 1 r' (fvec k r' z1 ⟨a.val, by omega⟩) := by
   by_cases ha : a.val < r'
   · have h1 : a.val + 1 < 1 + r' := by omega
-    simp only [fvec, dif_pos h1, dif_pos ha]
+    simp only [fvec, dite_eq_left h1, dite_eq_left ha]
     rw [eI_succ a.val h1]
-    exact (liftVec_bvec_eq_bvec_sh _).symm
+    exact bvec_lv _
   · have h1 : ¬ a.val + 1 < 1 + r' := by omega
-    simp only [fvec, dif_neg h1, dif_neg ha]
+    simp only [fvec, dite_eq_right h1, dite_eq_right ha]
 
 private lemma liftVec_apply_eI_zero_eq_zero (v : Fin (2 * r' + k + 1) → ℂ) (h : 0 < 1 + r') :
     liftVec k 1 r' v (eI k (1 + r') ⟨0, h⟩) = 0 := by
@@ -244,7 +156,7 @@ theorem ell_lev (hHA : HeisAct) (z1 : Fin (2 * r' + k + 1) → ℂ) (m : Mat k r
   · beta_reduce
     rw [key, firstVector_apply_first, liftVec_apply_eI_zero_eq_zero, mul_one, zero_sub]
   · beta_reduce
-    rw [key, firstVector_apply_succ, mul_zero, sub_zero, eI_succ, liftVec_apply_sh]
+    rw [key, firstVector_apply_succ, mul_zero, sub_zero, eI_succ, lv_in]
 
 theorem lam_lev (hHA : HeisAct) (z1 : Fin (2 * r' + k + 1) → ℂ) (m : Mat k r') (X : HPar k r') :
     lam k (1 + r') (liftVec k 1 r' z1) (heis0 k r' X * ιLev k 1 r' m) =
@@ -262,12 +174,12 @@ theorem z_lift (z : Fin (2 * (1 + r') + k + 1) → ℂ) (hz : inWb k (1 + r') z)
   by_cases hp : p.val = 0 ∨ p.val = 2 * (1 + r') + k
   · have h0 : ¬(1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1) := by omega
     rw [hz p (by omega)]
-    simp only [liftVec, dif_neg h0]
+    simp only [liftVec, dite_eq_right h0]
   · have hp' : p = sh ⟨p.val - 1, by have := p.isLt; omega⟩ := by
       ext
       simp only [sh, Fin.val_mk]
       omega
-    rw [hp', liftVec_apply_sh]
+    rw [hp', lv_in]
 
 theorem shifted_mem_weightSpace (z : Fin (2 * (1 + r') + k + 1) → ℂ) (hz : inWb k (1 + r') z) : inWb k r' (fun q => z (sh q)) := by
   unfold inWb at hz ⊢

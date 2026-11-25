@@ -951,8 +951,7 @@ private theorem isCMField_of_star_compat {E : Type} [Field E] [NumberField E] [S
     (hs : ∀ (φ : E →+* ℂ) (a : E), φ (star a) = starRingEnd ℂ (φ a)) : IsCMField E := by
   refine GlobalTheory.LeastExponentCompare.isCMField_of_conj E (fun z => star z)
     (fun φ z => by rw [hs, starRingEnd_apply]) ?_
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   obtain ⟨w⟩ := (inferInstance : Nonempty (InfinitePlace E))
   have hreal : w.IsReal := by
     rw [InfinitePlace.isReal_iff, ComplexEmbedding.isReal_iff]

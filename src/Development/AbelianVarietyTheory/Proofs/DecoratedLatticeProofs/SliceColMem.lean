@@ -220,7 +220,7 @@ theorem gval : ∀ (D : D7), FlatBF D → FlatFB D → ContrLoc D → GlobalTheo
       have hC'0 : (C' : ℂ) ≠ 0 := by exact_mod_cast hC'.ne'
       simp only [toCols₁_fromCols, fromCols_apply_inr, Matrix.zero_apply]
       have hz : (fun _ => (0 : k)) ∈ box (XIx (Fin κ) t (j + 1)) (S.ϖ ^ (σ + 1))⁻¹ := (box _ _).zero_mem
-      simp only [hz, if_true, mul_one]
+      simp only [hz, ite_true, mul_one]
       rw [← mul_assoc, inv_mul_cancel₀ hC'0, one_mul]
     rw [e]; exact (SB _).smul_mem _ hs
   have hE₂ : (S.T t).entry S.ψ ν (j + 1) c H 1 1 ∈ SB _ := by
@@ -233,7 +233,7 @@ theorem gval : ∀ (D : D7), FlatBF D → FlatFB D → ContrLoc D → GlobalTheo
       have hC'0 : (C' : ℂ) ≠ 0 := by exact_mod_cast hC'.ne'
       simp only [toRows₁_fromRows]
       have hz : a.fromRows (0 : Matrix Unit (XIx (Fin κ) t (j + 1)) k) (Sum.inr ()) ∈ box (XIx (Fin κ) t (j + 1)) (S.ϖ ^ (σ + 1)) := (box _ _).zero_mem
-      simp only [hz, if_true, mul_one]
+      simp only [hz, ite_true, mul_one]
       rw [← mul_assoc, inv_mul_cancel₀ hC'0, one_mul]
     rw [e]; exact (SB _).smul_mem _ hs
   let E₁ : SB _ := ⟨_, hE₁⟩
@@ -252,7 +252,7 @@ theorem gval : ∀ (D : D7), FlatBF D → FlatFB D → ContrLoc D → GlobalTheo
   let Q₂ : SB (Matrix (XIx (Fin κ) t (j + 1 + 1)) (XIx (Fin κ) t (j + 1)) k) := ⟨_, one_mem_SB _ _⟩
   have hP₁ : P₁.1 = Set.indicator {x : Matrix (XIx (Fin κ) t (j + 1)) (XIx (Fin κ) t j ⊕ Unit) k | ∀ r q, x r q ∈ 𝒪[k]} fun _ => 1 := by
     simp only [P₁]
-    rw [hO₁, (hun (XIx (Fin κ) t (j + 1)) (XIx (Fin κ) t j) (XIx (Fin κ) t j) (c + 1 + 1) (σ + 1 + 1)).1, if_neg (by omega)]
+    rw [hO₁, (hun (XIx (Fin κ) t (j + 1)) (XIx (Fin κ) t j) (XIx (Fin κ) t j) (c + 1 + 1) (σ + 1 + 1)).1, ite_eq_right (by omega)]
   have hP₂ : P₂.1 = Set.indicator {x : Matrix (XIx (Fin κ) t (j + 1 + 1) ⊕ Unit) (XIx (Fin κ) t (j + 1)) k | ∀ r q, x r q ∈ 𝒪[k]} fun _ => 1 := by
     simp only [P₂]
     rw [hO₂, (hun (XIx (Fin κ) t (j + 1 + 1)) (XIx (Fin κ) t (j + 1)) (XIx (Fin κ) t j) (c + 1) (σ + 1)).2.1 (by omega) (by omega)]

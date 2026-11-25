@@ -182,7 +182,7 @@ theorem subC_polDx (cD : ι → ℂ) (g : ι → Matrix (Fin a) (Fin a) ℂ) (h 
 
   simp only [AlgHom.comp_apply, polDx, subC, Formalism.GradedWeylDivisibility.blockAct, aeval_X, map_sum, map_mul, algHom_C, algebraMap_eq]
   by_cases hs : s.1 < b
-  · simp only [dif_pos hs, Fintype.sum_prod_type, Finset.mul_sum]
+  · simp only [dite_eq_left hs, Fintype.sum_prod_type, Finset.mul_sum]
 
     simp only [map_sum, Finset.mul_sum, Finset.sum_mul]
     conv_rhs => rw [Finset.sum_comm]
@@ -191,7 +191,7 @@ theorem subC_polDx (cD : ι → ℂ) (g : ι → Matrix (Fin a) (Fin a) ℂ) (h 
     refine Finset.sum_congr rfl fun β _ => Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
     simp only [map_mul]
     ring
-  · simp only [dif_neg hs, mul_zero, map_zero, zero_mul, Finset.sum_const_zero]
+  · simp only [dite_eq_right hs, mul_zero, map_zero, zero_mul, Finset.sum_const_zero]
 
 theorem atZero_subC (G : VCx ι a b → ℂ) (hG : ContDiff ℂ ⊤ G) (L : VCx ι a b →ₗ[ℂ] VCx ι a b)
     (g : ι → Matrix (Fin a) (Fin a) ℂ) (h : ι → Matrix (Fin b) (Fin b) ℂ)
@@ -282,22 +282,22 @@ theorem mulL_coordX (h : ι → Matrix (Fin b) (Fin b) ℂ) (g : ι → Matrix (
   simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, coordX]
   by_cases hτ : τ = k.1
   · rw [← Finset.sum_product', Finset.sum_eq_single (k.2.1, k.2.2), Finset.sum_eq_single (i, j)]
-    · rw [if_pos ⟨hτ, rfl, rfl⟩, if_pos ⟨hτ, rfl, rfl⟩, hτ]
+    · rw [ite_eq_left ⟨hτ, rfl, rfl⟩, ite_eq_left ⟨hτ, rfl, rfl⟩, hτ]
       ring
     · intro p _ hp
-      rw [if_neg (fun hh => hp (Prod.ext hh.2.1.symm hh.2.2.symm)), mul_zero]
+      rw [ite_eq_right (fun hh => hp (Prod.ext hh.2.1.symm hh.2.2.symm)), mul_zero]
     · intro hh
       exact absurd (Finset.mem_univ _) hh
     · intro p _ hp
-      rw [if_neg (fun hh => hp (Prod.ext hh.2.1 hh.2.2)), mul_zero, zero_mul]
+      rw [ite_eq_right (fun hh => hp (Prod.ext hh.2.1 hh.2.2)), mul_zero, zero_mul]
     · intro hh
       exact absurd (Finset.mem_product.2 ⟨Finset.mem_univ _, Finset.mem_univ _⟩) hh
   · rw [Finset.sum_eq_zero, Finset.sum_eq_zero]
     · intro p _
-      rw [if_neg (fun hh => hτ hh.1), mul_zero]
+      rw [ite_eq_right (fun hh => hτ hh.1), mul_zero]
     · intro k' _
       refine Finset.sum_eq_zero fun l _ => ?_
-      rw [if_neg (fun hh => hτ hh.1), mul_zero, zero_mul]
+      rw [ite_eq_right (fun hh => hτ hh.1), mul_zero, zero_mul]
 
 end MulL
 

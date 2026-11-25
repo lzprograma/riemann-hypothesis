@@ -196,14 +196,6 @@ def integerAlgHom (f : L →ₐ[K] M) : 𝒪[L] →ₐ[𝒪[K]] 𝒪[M] where
   map_add' x y := by ext; simp
   commutes' r := by ext; simp
 
-def residueAlgHom (f : L →ₐ[K] M) : 𝓀[L] →ₐ[𝓀[K]] 𝓀[M] :=
-  letI : IsLocalHom (integerAlgHom f) :=
-    ⟨fun x => by
-      rw [← not_imp_not, Valuation.Integer.not_isUnit_iff_valuation_lt_one,
-        Valuation.Integer.not_isUnit_iff_valuation_lt_one]
-      exact (valuation_map_lt_one_iff f x).mpr⟩
-  IsLocalRing.ResidueField.mapAlgHom' (integerAlgHom f)
-
 variable (K L)
 
 theorem valuation_algEquiv_apply (σ : L ≃ₐ[K] L) (x : L) : valuation L (σ x) = valuation L x := by

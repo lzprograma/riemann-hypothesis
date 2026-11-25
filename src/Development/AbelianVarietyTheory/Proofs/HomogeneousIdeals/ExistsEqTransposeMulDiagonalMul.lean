@@ -97,7 +97,7 @@ theorem IsSiegel.exists_eq_transpose_mul_diagonal_mul {σ : Matrix ι ι ℂ} (h
   have e1' := congrFun (congrFun e1 i) j
   have e2' := congrFun (congrFun e2 i) j
   simp only [Matrix.mul_apply, map_apply, transpose_apply, diagonal_apply, mul_ite, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true] at e1' e2' ⊢
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true] at e1' e2' ⊢
   apply Complex.ext <;> simp [e1', e2']
 
 

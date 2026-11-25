@@ -16,47 +16,11 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootOriginPo
 public import GroundTheory.HeightsAndTheta.Heights.Intersections.ProjLineRankTwoPushforwardHypotheses
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.JoinModelPointsProject
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithModel
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Algebra.MvPolynomial
@@ -98,7 +62,7 @@ theorem sum_single_block [DecidableEq K] (q : Σ k, J k) (n : ℕ) (k : K) :
     simp [Finsupp.single_apply]
   · have : ∀ i : J k, (Finsupp.single (⟨k₀, i₀⟩ : Σ k, J k) n) ⟨k, i⟩ = 0 := by
       intro i
-      rw [Finsupp.single_apply, if_neg]
+      rw [Finsupp.single_apply, ite_eq_right]
       intro e
       exact h (congrArg Sigma.fst e)
     simp [this, h]
@@ -119,7 +83,7 @@ theorem sum_mapDomain_block [DecidableEq K] {κ : K' → K} {u : (Σ k, ι k) �
     rw [Finsupp.mapDomain_single, sum_single_block, hu]
     simp only [sum_single_block]
     by_cases h : κ p.1 = k
-    · rw [if_pos h, Finset.sum_eq_single p.1]
+    · rw [ite_eq_left h, Finset.sum_eq_single p.1]
       · simp [h]
       · intro b _ hb
         split_ifs with h1 h2
@@ -127,7 +91,7 @@ theorem sum_mapDomain_block [DecidableEq K] {κ : K' → K} {u : (Σ k, ι k) �
         · rfl
         · rfl
       · simp
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       symm
       refine Finset.sum_eq_zero fun k' _ => ?_
       split_ifs with h1 h2
@@ -371,11 +335,11 @@ theorem sum_ite_pull {K₁ K : Type} [Fintype K₁] [DecidableEq K] {κ : K₁ �
     rw [pullDeg, hκ.extend_apply, Finset.sum_eq_single k₀]
     · simp
     · intro b _ hb
-      rw [if_neg fun e => hb (hκ e)]
+      rw [ite_eq_right fun e => hb (hκ e)]
     · simp
   · rw [pullDeg, Function.extend_apply' _ _ _ (by simpa using h)]
     refine Finset.sum_eq_zero fun k' _ => ?_
-    rw [if_neg fun e => h ⟨k', e⟩]
+    rw [ite_eq_right fun e => h ⟨k', e⟩]
 
 section Origin
 

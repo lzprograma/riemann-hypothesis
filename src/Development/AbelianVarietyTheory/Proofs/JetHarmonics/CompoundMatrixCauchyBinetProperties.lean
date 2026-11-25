@@ -40,6 +40,7 @@ import Mathlib.Tactic.NormNum.Parity
 import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Sheaves.Init
+import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LenEqOfUnitriangular
 
 @[expose] public section
 
@@ -91,17 +92,7 @@ theorem compound_one (n l : ℕ) : BranchingSupport.cmp l (1 : Matrix (Fin n) (F
 
 theorem compound_mulVec_wedge {n l : ℕ} (g : Matrix (Fin n) (Fin n) ℂ) (f : Fin l → Fin n → ℂ) :
     BranchingSupport.cmp l g *ᵥ BranchingSupport.wedge f = BranchingSupport.wedge (fun b => g *ᵥ f b) := by
-  ext I
-  have e : (Matrix.of fun a b : Fin l => (g *ᵥ f b) (I.1.orderEmbOfFin I.2 a))
-      = g.submatrix (I.1.orderEmbOfFin I.2) id * (Matrix.of fun (c : Fin n) (b : Fin l) => f b c) := by
-    ext a b
-    simp [Matrix.mul_apply, Matrix.mulVec, dotProduct]
-  unfold BranchingSupport.wedge
-  rw [e, Formalism.HermitianLatticeCounting.P.ge_cauchyBinet]
-  unfold Matrix.mulVec dotProduct BranchingSupport.cmp
-  refine Finset.sum_congr rfl fun K _ => ?_
-  rw [mul_comm]
-  rfl
+  apply _root_.GlobalTheory.TensLen.cmp_mulVec_wedge <;> assumption
 
 theorem compound_properties : ∀ (n l : ℕ) (g h : Matrix (Fin n) (Fin n) ℂ),
     BranchingSupport.cmp l (g * h) = BranchingSupport.cmp l g * BranchingSupport.cmp l h ∧ BranchingSupport.cmp l gᴴ = (BranchingSupport.cmp l g)ᴴ ∧

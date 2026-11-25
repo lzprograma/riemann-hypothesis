@@ -7,7 +7,6 @@ public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.MajorantInvolu
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
 public import Mathlib.Topology.Algebra.Group.Units
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentModulusMatrix
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -21,7 +20,6 @@ noncomputable section
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
   [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
-
 
 omit [NumberField F] [NumberField E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem TorusModulus.commute (h : HermitianForm F E W) (v : Basis ι E W)

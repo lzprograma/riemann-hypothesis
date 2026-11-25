@@ -69,7 +69,7 @@ theorem fam_eq_famExt_zcomb (hI : IsIntersectionFamily I) (hP : IsArithVar P (n 
   have hsm : ∀ i, IsSmoothHerm (![X, A] i) := Fin.forall_fin_two.mpr ⟨hX, hA⟩
   induction T using Finset.induction_on generalizing t with
   | empty =>
-    simp only [Finset.notMem_empty, if_false]
+    simp only [Finset.notMem_empty, ite_false]
     exact (famExt_basis ![X, A] t).symm
   | insert a T ha ih =>
     have hins : ∀ {β : Type} (w : β) (F : Fin 2 → β),

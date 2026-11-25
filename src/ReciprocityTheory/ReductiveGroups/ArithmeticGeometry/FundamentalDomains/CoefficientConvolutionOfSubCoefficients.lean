@@ -268,7 +268,7 @@ theorem scaledPeriod_mem_sum (la la' : Wt X.Ψ r) (j : Fin (Fintype.card X.Ψ)) 
 theorem fj_eq_zero_of_not_freq (la : Wt X.Ψ r) (ξ : Fin r → E) (ν : X.Ψ → ℝ) (P : Frame X.Ψ r → ℂ)
     (x : Frame X.Ψ r) (h : ¬ ∀ p ∈ X.periods la, ∃ k : ℤ, 2 * ∑ τ, ν τ * p τ = k) :
     X.fj la ξ ν P x = 0 := by
-  rw [Data.fj, if_neg h]
+  rw [Data.fj, ite_eq_right h]
 
 private lemma diag_ne_lemma {b : Frame X.Ψ r} (hb : b ∈ Bor X.Ψ r) (τ : X.Ψ) (i : Fin r) :
     b τ i i ≠ 0 := by
@@ -403,29 +403,6 @@ private lemma hsmull_lemma_22 {n : ℕ} (σ : E →+* ℂ) (G : Matrix (Fin n) (
     (k : ℂ) (u w : Fin n → ℂ) : hermC σ G (k • u) w = k * hermC σ G u w := by
   simp only [hermC, Pi.smul_apply, smul_eq_mul, Finset.mul_sum, mul_assoc]
 
-private lemma hsubr_lemma_23 {n : ℕ} (σ : E →+* ℂ) (G : Matrix (Fin n) (Fin n) E)
-    (v w w' : Fin n → ℂ) : hermC σ G v (w - w') = hermC σ G v w - hermC σ G v w' := by
-  simp only [hermC, Pi.sub_apply, map_sub, mul_sub, Finset.sum_sub_distrib]
-
-private lemma hsmulr_lemma_24 {n : ℕ} (σ : E →+* ℂ) (G : Matrix (Fin n) (Fin n) E)
-    (k : ℂ) (v w : Fin n → ℂ) : hermC σ G v (k • w) = conj k * hermC σ G v w := by
-  simp only [hermC, Pi.smul_apply, smul_eq_mul, map_mul, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
-  ring
-
-private lemma hconj_lemma_25 (τ : X.Ψ) (u v : Fin r → ℂ) :
-    conj (hermC τ.1 X.Gm u v) = hermC τ.1 X.Gm v u := by
-  have hG : ∀ a b, conj (τ.1 (X.Gm a b)) = τ.1 (X.Gm b a) := by
-    intro a b
-    rw [← X.Gm_herm a b]
-    first
-      | simp [cc, IsCMField.complexEmbedding_complexConj]
-
-  simp only [hermC, map_sum, map_mul, Complex.conj_conj, hG]
-  refine Finset.sum_comm.trans ?_
-  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
-  ring
-
 private lemma huu_lemma_26 {ξ : Fin r → E} (hξ : herm X.Gm ξ ξ = 0) (τ : X.Ψ) :
     hermC τ.1 X.Gm (Data.emb τ.1 ξ) (Data.emb τ.1 ξ) = 0 := by
   have h : τ.1 (herm X.Gm ξ ξ) = hermC τ.1 X.Gm (Data.emb τ.1 ξ) (Data.emb τ.1 ξ) := by
@@ -439,7 +416,7 @@ private lemma flowmv_lemma_28 (ξ : Fin r → E) (τ : X.Ψ) (s : ℂ) (p : Fin 
   funext a
   simp only [Matrix.mulVec, dotProduct, Data.flowMat, Matrix.of_apply, sub_mul,
     Finset.sum_sub_distrib, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ,
-    if_true, Pi.sub_apply, Pi.smul_apply, smul_eq_mul, hermC, Data.emb]
+    ite_true, Pi.sub_apply, Pi.smul_apply, smul_eq_mul, hermC, Data.emb]
   congr 1
   simp only [Finset.mul_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun k _ => ?_
@@ -449,21 +426,7 @@ private lemma gramflow_lemma_29 {ξ : Fin r → E} (hξ : herm X.Gm ξ ξ = 0) (
     (M : Matrix (Fin r) (Fin r) ℂ) :
     gram τ.1 X.Gm (X.flowMat ξ τ s * M) =
       gram τ.1 X.Gm M + ((2 * X.c τ * s.im : ℝ) : ℂ) • rk1 X ξ τ M := by
-  ext a b
-  have hu := huu_lemma_26 hξ τ
-  simp only [gram, Matrix.of_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, rk1,
-    Matrix.vecMulVec_apply, hv]
-  rw [_root_.ReciprocityTheory.ChartRestriction.G.FD.AdmissibleHermitianColumns.col_mul, _root_.ReciprocityTheory.ChartRestriction.G.FD.AdmissibleHermitianColumns.col_mul, flowmv_lemma_28, flowmv_lemma_28]
-  simp only [hsubl_lemma_21, hsubr_lemma_23, hsmull_lemma_22, hsmulr_lemma_24, hu]
-  rw [← hconj_lemma_25 τ (col M b) (Data.emb τ.1 ξ)]
-  simp only [map_mul, Complex.conj_I, Complex.conj_ofReal]
-  have hs : (starRingEnd ℂ) s = s - 2 * I * (s.im : ℂ) := by
-    apply Complex.ext <;> simp <;> ring
-  rw [hs]
-  push_cast
-  ring_nf
-  rw [Complex.I_sq]
-  ring
+  apply _root_.ReciprocityTheory.ChartRestriction.G.FD.AdmissibleHermitianColumns.gram_flowMat <;> assumption
 
 private lemma flowdet_lemma_210 {ξ : Fin r → E} (hξ : herm X.Gm ξ ξ = 0) (τ : X.Ψ) (s : ℂ) :
     (X.flowMat ξ τ s).det ≠ 0 := by

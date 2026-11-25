@@ -46,9 +46,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
-
-set_option backward.isDefEq.respectTransparency false
 
 namespace GlobalTheory
 
@@ -89,8 +86,7 @@ theorem mem_nonzeroLocus_secAlong {L : LB X} (s : L.Sec) (φ : Y ⟶ X) {y : Y} 
     (h : φ y ∈ X.basicOpen (s.f a)) : y ∈ nonzeroLocus (secAlong s φ) := by
   refine Opens.mem_iSup.2 ⟨fun _ ↦ a, ?_⟩
   change y ∈ Y.basicOpen (φ.appLE _ _ _ _)
-  rw [Scheme.basicOpen_appLE]
-  exact ⟨Set.mem_iInter.2 fun _ ↦ X.basicOpen_le _ h, h⟩
+  exact (Scheme.basicOpen_appLE φ _ _ _ _).ge ⟨Set.mem_iInter.2 fun _ ↦ X.basicOpen_le _ h, h⟩
 
 end SpecialFibreGenerator
 

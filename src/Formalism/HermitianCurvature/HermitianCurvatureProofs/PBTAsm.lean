@@ -16,53 +16,9 @@ public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AutomorphicInSphericalLevel
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorVanishesBigCell
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DensityConstantOfParts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
 import Mathlib.Tactic.Linter.HaveILetI
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSetting
@@ -104,20 +60,12 @@ theorem kap_last : kap Zm (Fin.last r) = (Zm.submatrix Fin.castSucc Fin.castSucc
   simp [← two_mul, pow_mul]
 
 theorem nk_pos (hdet : Zm.det ≠ 0) : 0 < nk Zm := by
-  obtain ⟨b, hb⟩ : ∃ b, kap Zm b ≠ 0 := by
-    by_contra h
-    push_neg at h
-    have h2 := mul_kap Zm (Fin.last r)
-    simp [h] at h2
-    first
-      | exact hdet h2.symm
-  exact Finset.sum_pos' (fun i _ => Complex.normSq_nonneg _)
-    ⟨b, Finset.mem_univ _, Complex.normSq_pos.mpr hb⟩
+  apply _root_.Formalism.FourierDecayAlt.P.PBI.Sm.nk_pos_of_det <;> assumption
 
 theorem sum_kap_al (hT : 0 < T) (hT' : 0 < T') :
     ∑ b, kap Zm b * al T T' Zm b = -Zm.det / ((Real.sqrt (T * T') : ℝ) : ℂ) := by
   have h := mul_kap Zm (Fin.last r)
-  rw [if_pos rfl] at h
+  rw [ite_eq_left rfl] at h
   rw [neg_div, ← h, Finset.sum_div, ← Finset.sum_neg_distrib]
   refine Finset.sum_congr rfl (fun b _ => ?_)
   unfold al
@@ -171,9 +119,9 @@ theorem Rm_herm : (Rm T T' Zm)ᴴ = Rm T T' Zm := by
     intro b c
     unfold Ap
     by_cases h : b = Fin.last r ∧ c = Fin.last r
-    · rw [if_pos ⟨h.2, h.1⟩, if_pos h]
+    · rw [ite_eq_left ⟨h.2, h.1⟩, ite_eq_left h]
       simp
-    · rw [if_neg (fun h' => h ⟨h'.2, h'.1⟩), if_neg h, star_zero]
+    · rw [ite_eq_right (fun h' => h ⟨h'.2, h'.1⟩), ite_eq_right h, star_zero]
   have hH : ∀ b c : Fin (r + 1), star (Heta T T' Zm c b) = Heta T T' Zm b c := by
     intro b c
     unfold Heta
@@ -212,7 +160,7 @@ theorem kap_Pm (hdet : Zm.det ≠ 0) (e : Fin (r + 1)) : ∑ d, conj (kap Zm d) 
     rw [← Complex.ofReal_sum]
     rfl
   simp only [Pm, Matrix.sub_apply, Matrix.one_apply, Qm, Matrix.of_apply, mul_sub, Finset.sum_sub_distrib,
-    mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have h2 : ∑ d, conj (kap Zm d) * (kap Zm d * conj (kap Zm e) / ((nk Zm : ℝ) : ℂ)) =
       (∑ d, conj (kap Zm d) * kap Zm d) * conj (kap Zm e) / ((nk Zm : ℝ) : ℂ) := by
     rw [Finset.sum_mul, Finset.sum_div]
@@ -255,7 +203,7 @@ theorem quad_zero (hT : 0 < T) (hT' : 0 < T') (hdet : Zm.det ≠ 0) (hG : 0 < gP
   have hA : ∑ d, ∑ e, conj (k d) * Ap T' e d * k e = -((T' : ℝ) : ℂ) * (conj (k (Fin.last r)) * k (Fin.last r)) := by
     rw [Fintype.sum_eq_single (Fin.last r)]
     · rw [Fintype.sum_eq_single (Fin.last r)]
-      · simp only [Ap, and_self, if_true]
+      · simp only [Ap, and_self, ite_true]
         ring
       · intro e he
         simp [Ap, he]
@@ -287,8 +235,6 @@ theorem quad_zero (hT : 0 < T) (hT' : 0 < T') (hdet : Zm.det ≠ 0) (hG : 0 < gP
     rw [← Complex.ofReal_mul, Real.mul_self_sqrt (mul_pos hT hT').le]
   have hg : ((sGT T T' Zm : ℝ) : ℂ) * ((sGT T T' Zm : ℝ) : ℂ) = ((gPoly (T * T') Zm / T : ℝ) : ℂ) := by
     rw [← Complex.ofReal_mul, sGT, Real.mul_self_sqrt (div_pos hG hT).le]
-  have hs0 : ((Real.sqrt (T * T') : ℝ) : ℂ) ≠ 0 := by
-    exact_mod_cast (Real.sqrt_pos.mpr (mul_pos hT hT')).ne'
   have hT0 : ((T : ℝ) : ℂ) ≠ 0 := by exact_mod_cast hT.ne'
   have hT'0 : ((T' : ℝ) : ℂ) ≠ 0 := by exact_mod_cast hT'.ne'
   rw [hsplit, hA, hB, hal, hbe, hkl]
@@ -403,7 +349,7 @@ theorem fco_gram (hT : 0 < T) (hT' : 0 < T') (a a' : Fin (r + 1)) :
   simp only [hco, fco, Pi.zero_apply, map_zero, mul_zero, zero_mul, Finset.sum_const_zero, add_zero]
   by_cases ha : a = Fin.last r <;> by_cases ha' : a' = Fin.last r
   · subst ha ha'
-    simp only [if_true, and_self]
+    simp only [ite_true, and_self]
     have hT0 : ((T' : ℝ) : ℂ) ≠ 0 := by exact_mod_cast hT'.ne'
     rw [mul_assoc, hs]; push_cast; field_simp; ring
   · simp [ha, ha']
@@ -433,7 +379,7 @@ theorem dual_coordinates_kronecker (hT : 0 < T) (hT' : 0 < T') (hdet : Zm.det �
   rw [h]
   by_cases hc : c = b.castSucc
   · subst hc; simp
-  · rw [if_neg hc, if_neg (Ne.symm hc)]; simp
+  · rw [ite_eq_right hc, ite_eq_right (Ne.symm hc)]; simp
 
 theorem ysco_xco (hT : 0 < T) (hT' : 0 < T') (hdet : Zm.det ≠ 0) (hG : 0 < gPoly (T * T') Zm) (b : Fin r)
     (d : Fin (r + 1)) : hco T' (ysco T T' Zm b) (xco T T' Zm d) = if d = b.castSucc then 1 else 0 := by
@@ -453,8 +399,8 @@ theorem ysco_ysco (hT : 0 < T) (hT' : 0 < T') (hdet : Zm.det ≠ 0) (hG : 0 < gP
   have hxx : ∀ (c d : Fin r), hco T' (xco T T' Zm c.castSucc) (xco T T' Zm d.castSucc) = 0 := by
     intro c d; rw [xco_gram T T' Zm hT hT' hdet hG, Ap_cs]
   simp only [ysco, hco_sub_left, hco_sub_right, hco_smul_left, hco_smul_right, hco_sum_left, hco_sum_right, hx, hy,
-    hxx, mul_zero, Finset.sum_const_zero, mul_ite, mul_one, Finset.sum_ite_eq', Finset.mem_univ, if_true]
-  simp only [sub_zero, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    hxx, mul_zero, Finset.sum_const_zero, mul_ite, mul_one, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
+  simp only [sub_zero, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [← hco_symm T' (y0 T T' Zm e) (y0 T T' Zm b)]
   simp only [map_div₀, map_one, map_ofNat]
   ring
@@ -468,14 +414,14 @@ theorem cofco_xco (hT : 0 < T) (hT' : 0 < T') (hdet : Zm.det ≠ 0) (b : Fin (r 
   rw [h]
   by_cases hb : b = Fin.last r
   · subst hb; simp
-  · rw [if_neg (Ne.symm hb), if_neg hb]; simp
+  · rw [ite_eq_right (Ne.symm hb), ite_eq_right hb]; simp
 
 theorem cofco_self (hT : 0 < T) (hT' : 0 < T') :
     hco T' (cofco T T' Zm) (cofco T T' Zm) = -((T : ℝ) : ℂ) * ((Complex.normSq (kap Zm (Fin.last r)) : ℝ) : ℂ) := by
   simp only [cofco, hco_sum_left, hco_sum_right, hco_smul_left, hco_smul_right, fco_gram T T' hT hT']
   simp only [mul_ite, mul_zero]
   rw [Finset.sum_eq_single (Fin.last r), Finset.sum_eq_single (Fin.last r)]
-  · simp only [and_self, if_true, kap, Complex.conj_conj, Complex.normSq_eq_conj_mul_self]; ring
+  · simp only [and_self, ite_true, kap, Complex.conj_conj, Complex.normSq_eq_conj_mul_self]; ring
   · intro a _ ha; simp [ha]
   · simp
   · intro a _ ha; simp [ha]
@@ -491,10 +437,10 @@ theorem pco_xco (hT : 0 < T) (hT' : 0 < T') (hdet : Zm.det ≠ 0) (hG : 0 < gPol
     simp only [Ap_last]
     simp only [mul_ite, mul_one, mul_zero]
     have : ∀ b : Fin r, ¬ (Fin.last r = b.castSucc) := fun b h => Fin.castSucc_ne_last b h.symm
-    simp only [this, if_false, Finset.sum_const_zero, sub_zero]
+    simp only [this, ite_false, Finset.sum_const_zero, sub_zero]
     field_simp; ring
   | cast d =>
-    simp only [Ap_cs', mul_zero, add_zero, mul_ite, mul_one, Fin.castSucc_inj, Finset.sum_ite_eq, Finset.mem_univ, if_true, sub_self]
+    simp only [Ap_cs', mul_zero, add_zero, mul_ite, mul_one, Fin.castSucc_inj, Finset.sum_ite_eq, Finset.mem_univ, ite_true, sub_self]
 
 theorem pco_ysco (hT : 0 < T) (hT' : 0 < T') (hdet : Zm.det ≠ 0) (hG : 0 < gPoly (T * T') Zm) (e : Fin r) :
     hco T' (pco T T' Zm) (ysco T T' Zm e) = 0 := by
@@ -514,8 +460,8 @@ theorem pco_self (hT : 0 < T) (hT' : 0 < T') (hdet : Zm.det ≠ 0) (hG : 0 < gPo
     intro d; rw [hco_symm, cofco_xco T T' Zm hT hT' hdet]; split_ifs <;> simp
   rw [h1]
   simp only [pco, hco_add_left, hco_sub_left, hco_smul_left, hco_sum_left, hxc, cofco_xco T T' Zm hT hT' hdet,
-    cofco_self T T' Zm hT hT', Fin.castSucc_ne_last, if_false, mul_zero, zero_mul, Finset.sum_const_zero,
-    sub_zero, if_true]
+    cofco_self T T' Zm hT hT', Fin.castSucc_ne_last, ite_false, mul_zero, zero_mul, Finset.sum_const_zero,
+    sub_zero, ite_true]
   rw [kap_last]
   simp only [gPoly]
   push_cast
@@ -608,7 +554,6 @@ theorem secM_spec (S : B.RealPlaceData k r Wp Wq) (ν' : Fin (2 * r + k + 1) →
   have hs2 : s ^ 2 = T' := Real.sq_sqrt hT'.le
   have hzz : herm (Hpk k r) S.z' S.z' = -((s : ℂ) ^ 2) := by
     rw [herm_self_alt]; congr 1; exact_mod_cast hs2.symm
-  have hzzT : herm (Hpk k r) S.z' S.z' = -((T' : ℝ) : ℂ) := herm_self_alt
   have hzz0 : herm (Hpk k r) S.z' S.z' ≠ 0 := by rw [hzz]; simpa using hs'
   have hzν : herm (Hpk k r) S.z' ν' = 0 := herm_zν hνz
   set μ := Real.sqrt (T' / T) with hμdef
@@ -750,7 +695,6 @@ theorem secM_spec (S : B.RealPlaceData k r Wp Wq) (ν' : Fin (2 * r + k + 1) →
     rw [hinv, prW_cvec hz' hν hνz hzz0, hZ]
     congr 1
     simp only [hddef]
-    have hpc := ph_conj Zm hdet
     have hph' : ph Zm = Zm.det / ((‖Zm.det‖ : ℝ) : ℂ) := rfl
     have hnorm : Zm.det * conj Zm.det = ((‖Zm.det‖ : ℝ) : ℂ) ^ 2 := by
       rw [Complex.mul_conj, Complex.normSq_eq_norm_sq]; push_cast; ring
@@ -795,7 +739,7 @@ theorem secM_spec (S : B.RealPlaceData k r Wp Wq) (ν' : Fin (2 * r + k + 1) →
           exact Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => by ring))
         · exact Finset.sum_congr rfl (fun b _ => by ring)
       rw [hsplit] at hsum
-      simp only [mul_kap, Fin.castSucc_ne_last, if_false, mul_zero, Finset.sum_const_zero, zero_add,
+      simp only [mul_kap, Fin.castSucc_ne_last, ite_false, mul_zero, Finset.sum_const_zero, zero_add,
         sum_kap_be T T' Zm hdet] at hsum
       have hsG : 0 < sGT T T' Zm := Real.sqrt_pos.2 (div_pos hG hT)
       have hsG0 : ((sGT T T' Zm : ℝ) : ℂ) ≠ 0 := by exact_mod_cast hsG.ne'
@@ -1207,7 +1151,6 @@ theorem fib_indep (ν' : Fin (2 * r + k + 1) → ℂ) (m₀ : B.Mat k r) (hbase 
   have hτN : τ ∈ Nset k r := A.tau_N hz hv
   have hτN' : τ' ∈ Nset k r := A.tau_N hz' hu'
   have uτ := _root_.Formalism.FourierDecayAlt.P.Dx2.OrbJ.isUnit_of_N hτN
-  have uτ' := _root_.Formalism.FourierDecayAlt.P.Dx2.OrbJ.isUnit_of_N hτN'
   have hGG := Formalism.FourierDecayAlt.P.unitary_group_closed k r
   have hg1 : τ⁻¹ * γ0 * τ' ∈ B.GV k r :=
     hGG.mul_mem _ (hGG.mul_mem _ (hGG.inv_mem _ hτN.1) _ hγe) _ hτN'.1
@@ -1233,7 +1176,6 @@ theorem fib_indep (ν' : Fin (2 * r + k + 1) → ℂ) (m₀ : B.Mat k r) (hbase 
   obtain ⟨hnB'', hfB''⟩ := conj_fix hz' hu' hnB huB
   have uhA : IsUnit hA.det := Dx2.OrbJ.isUnit_of_G hhA.1
   have uhB : IsUnit hB.det := Dx2.OrbJ.isUnit_of_G hhB.1
-  have unA : IsUnit nA.det := _root_.Formalism.FourierDecayAlt.P.Dx2.OrbJ.isUnit_of_N hnA
 
   have cA : hA⁻¹ * τ⁻¹ = τ⁻¹ * hA⁻¹ := by
     have := A.tau_comm hhA v
@@ -1385,7 +1327,7 @@ theorem fibre_integral_cells : PBI.FibIntCells := by
         G.Mat (P.r + 1))) := by
       rw [FK.gPoly_of, hgP Y]; exact hG
     unfold PBI.phi0
-    rw [if_pos hZp]
+    rw [ite_eq_left hZp]
     obtain ⟨hsG, hsZ, hsD⟩ := hsec.2 _ hZp
     have hv := lowPH_UT (w := w) Y.1
     have hu := UC.upper_mem Y.2
@@ -1404,7 +1346,7 @@ theorem fibre_integral_cells : PBI.FibIntCells := by
     refine integral_eq_zero_of_ae (Filter.Eventually.of_forall fun Y => ?_)
     simp only [Pi.smul_apply, Pi.zero_apply]
     unfold PBI.phi0
-    rw [if_neg (by rw [FK.gPoly_of, hgP Y]; exact hG), smul_zero, smul_zero]
+    rw [ite_eq_right (by rw [FK.gPoly_of, hgP Y]; exact hG), smul_zero, smul_zero]
 
 end Formalism.FourierDecayAlt.P
 end -- clump:auto

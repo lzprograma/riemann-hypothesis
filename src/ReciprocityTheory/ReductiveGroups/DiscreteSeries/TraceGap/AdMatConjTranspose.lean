@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.OccDAdjB
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.IsPhysSet
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DefsRep
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.FockWeights
@@ -34,13 +35,13 @@ theorem adMat_mul {k k' : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε) (_hk'
   rw [Matrix.mul_apply]
   by_cases hx : IsPhys ε x
   · by_cases hy : IsPhys ε y
-    · simp only [adMat, hx, hy, if_true]
+    · simp only [adMat, hx, hy, ite_true]
       rw [Fintype.sum_prod_type, Matrix.mul_apply, Matrix.mul_apply, star_sum, Finset.sum_mul_sum]
       refine Finset.sum_congr rfl fun u _ => Finset.sum_congr rfl fun v _ => ?_
       by_cases hz : IsPhys ε (u, v)
-      · simp only [hz, if_true, star_mul']
+      · simp only [hz, ite_true, star_mul']
         ring
-      · simp only [hz, if_false, zero_mul]
+      · simp only [hz, ite_false, zero_mul]
         have hz' : ¬ (ε u = true ∧ ε v = false) := hz
         by_cases hu : ε u = true
         · have hv : ε v ≠ false := fun hv => hz' ⟨hu, hv⟩
@@ -48,10 +49,10 @@ theorem adMat_mul {k k' : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε) (_hk'
           simp [this]
         · have : k x.1 u = 0 := kset_entry_zero hk (by rw [hx.1]; exact Ne.symm hu)
           simp [this]
-    · simp only [adMat, hx, hy, if_true, if_false]
+    · simp only [adMat, hx, hy, ite_true, ite_false]
       refine (Finset.sum_eq_zero fun z _ => ?_).symm
       split_ifs <;> simp
-  · simp only [adMat, hx, if_false, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  · simp only [adMat, hx, ite_false, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 theorem adPhys_mul {k k' : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε) (hk' : k' ∈ Kset ε) :
     adPhys ε (k * k') = adPhys ε k ∘ₗ adPhys ε k' := by
@@ -66,12 +67,12 @@ theorem adMat_one : adMat ε (1 : Matrix (Fin n) (Fin n) ℂ) = 1 := by
   obtain ⟨x1, x2⟩ := x
   obtain ⟨y1, y2⟩ := y
   by_cases hx : IsPhys ε (x1, x2) <;> by_cases hy : IsPhys ε (y1, y2)
-  · simp only [adMat, hx, hy, if_true, Matrix.one_apply, Prod.mk.injEq]
+  · simp only [adMat, hx, hy, ite_true, Matrix.one_apply, Prod.mk.injEq]
     by_cases h1 : x1 = y1 <;> by_cases h2 : x2 = y2 <;> simp [h1, h2]
   · have : (x1, x2) ≠ (y1, y2) := fun h => hy (h ▸ hx)
-    simp only [adMat, hx, hy, if_true, if_false, Matrix.one_apply, this]
-  · simp only [adMat, hx, if_false, Matrix.one_apply]
-  · simp only [adMat, hx, if_false, Matrix.one_apply]
+    simp only [adMat, hx, hy, ite_true, ite_false, Matrix.one_apply, this]
+  · simp only [adMat, hx, ite_false, Matrix.one_apply]
+  · simp only [adMat, hx, ite_false, Matrix.one_apply]
 
 theorem ff_one : ff ε 1 = AlgHom.id ℂ (Fock n) := by
   rw [ff, adPhys, adMat_one, Matrix.mulVecLin_one, ExteriorAlgebra.map_id]
@@ -123,26 +124,13 @@ theorem adMat_conjTranspose (k : Matrix (Fin n) (Fin n) ℂ) : (adMat ε k)ᴴ =
     simp [hx, hy, this]
   · have : x ≠ y := fun h => hx (h ▸ hy)
     simp [hx, hy, this]
-  · simp only [hx, hy, if_false]
+  · simp only [hx, hy, ite_false]
     by_cases h : y = x
     · subst h; simp
     · simp [h, Ne.symm h]
 
 theorem kset_conjTranspose {k : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε) : kᴴ ∈ Kset ε := by
-  refine ⟨?_, ?_⟩
-  · have := hk.1
-    rw [Matrix.mem_unitaryGroup_iff] at this ⊢
-    rw [star_eq_conjTranspose, conjTranspose_conjTranspose]
-    rw [star_eq_conjTranspose] at this
-    exact mul_eq_one_comm.mp this
-  · have hJ : (Jm ε)ᴴ = Jm ε := by
-      simp only [Jm, Matrix.diagonal_conjTranspose]
-      congr 1
-      funext a
-      by_cases h : ε a = true <;> simp [h]
-    have := congrArg Matrix.conjTranspose hk.2
-    rw [conjTranspose_mul, conjTranspose_mul, hJ] at this
-    exact this.symm
+  apply ReciprocityTheory.ChartRestriction.DS.adjB_star_Kset <;> assumption
 
 theorem adMat_unitary {k : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε) : (adMat ε k)ᴴ * adMat ε k = 1 := by
   rw [adMat_conjTranspose, ← adMat_mul (kset_conjTranspose hk) hk]

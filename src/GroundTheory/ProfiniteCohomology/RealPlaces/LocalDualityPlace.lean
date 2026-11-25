@@ -19,8 +19,6 @@ open CategoryTheory NumberField GroundTheory.Global Involution OrderTwo
 
 open scoped NumberField.LiesOver
 
-attribute [local instance 2000] Rep.hV2
-
 variable {K : FiniteSubfield} (v : InfinitePlace K.1) (hv : v.IsReal)
 
 

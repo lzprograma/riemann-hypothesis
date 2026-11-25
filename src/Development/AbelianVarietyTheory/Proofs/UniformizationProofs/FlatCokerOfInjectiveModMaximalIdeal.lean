@@ -234,14 +234,8 @@ private theorem mem_map_smul_of_maximalIdeal_pow_le {V A N : Type*} [CommRing V]
 open CategoryTheory CategoryTheory.Limits TensorProduct in
 theorem _root_.GlobalTheory.flat_coker_of_injective_mod_maximalIdeal : ∀ (V A : Type) [CommRing V] [IsNoetherianRing V] [IsLocalRing V] [CommRing A] [IsNoetherianRing A] [IsLocalRing A] [Algebra V A] [IsLocalHom (algebraMap V A)] (M N : Type) [AddCommGroup M] [Module A M] [Module.Finite A M] [AddCommGroup N] [Module A N] [Module V N] [IsScalarTower V A N] [Module.Flat V N] (u : M →ₗ[A] N), (∀ x : M, u x ∈ (((IsLocalRing.maximalIdeal V).map (algebraMap V A)) • ⊤ : Submodule A N) → x ∈ (((IsLocalRing.maximalIdeal V).map (algebraMap V A)) • ⊤ : Submodule A M)) → Module.Flat V (N ⧸ LinearMap.range u) := by
   intro V A _ _ _ _ _ _ _ _ M N _ _ _ _ _ _ _ _ u hu
-  have hmA : (IsLocalRing.maximalIdeal V).map (algebraMap V A) ≠ ⊤ := by
-    intro h
-    have hle : (IsLocalRing.maximalIdeal V).map (algebraMap V A) ≤ IsLocalRing.maximalIdeal A :=
-      Ideal.map_le_iff_le_comap.2 fun x hx => by
-        rw [Ideal.mem_comap, IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
-        exact fun h' => (IsLocalRing.mem_maximalIdeal x).1 hx (isUnit_of_map_unit _ _ h')
-    rw [h] at hle
-    exact (IsLocalRing.maximalIdeal.isMaximal A).ne_top (top_le_iff.1 hle)
+  have hmA : (IsLocalRing.maximalIdeal V).map (algebraMap V A) ≠ ⊤ :=
+    (IsLocalRing.map_maximalIdeal_lt_top (algebraMap V A)).ne
   have hgen : ∀ y ∈ IsLocalRing.maximalIdeal V • (⊤ : Submodule V N),
       y ∈ (IsLocalRing.maximalIdeal V).map (algebraMap V A) • (⊤ : Submodule A N) := by
     intro y hy

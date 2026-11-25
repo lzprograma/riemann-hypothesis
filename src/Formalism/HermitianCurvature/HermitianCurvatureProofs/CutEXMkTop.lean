@@ -24,57 +24,12 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingV
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightCosetActionMeasurePreserving
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 import Mathlib.CategoryTheory.Countable
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Lemma
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerParabolicCoordinates
 import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Linter.Style
 import Mathlib.Tactic.TypeStar
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.UwClosedSubgroup
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
@@ -110,7 +65,7 @@ theorem upper_inj {p : ℕ} {u u' : G.UT p → ℂ} (h : G.upper u = G.upper u')
   funext p
   have h1 := congrFun (congrFun h p.1.1) p.1.2
   simp only [G.upper, G.strictUpper, Matrix.add_apply, Matrix.of_apply, Matrix.one_apply_ne (ne_of_lt p.2),
-    zero_add, dif_pos p.2] at h1
+    zero_add, dite_eq_left p.2] at h1
   exact h1
 
 theorem kr_eq_integral_krI_psiR {k p ρ : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
@@ -343,13 +298,13 @@ theorem cd_Wm (i j : Fin n) :
     ContDiffOn ℝ ∞ (fun Z : Fin n → Fin n → ℂ => Wm (Matrix.of Z) i j) {Z | (Matrix.of Z).det ≠ 0} := by
   simp only [Wm, blkJ, Matrix.of_apply]
   by_cases hij : (i : ℕ) < j
-  · simp only [dif_pos hij, Matrix.mulVec, dotProduct]
+  · simp only [dite_eq_left hij, Matrix.mulVec, dotProduct]
     have hg : ContDiff ℝ ∞ (fun Z : Fin n → Fin n → ℂ => fun a b : Fin j =>
         gram (Matrix.of Z) (Fin.castLE j.isLt.le a) (Fin.castLE j.isLt.le b)) :=
       contDiff_pi.2 fun a => contDiff_pi.2 fun b => cd_gram _ _
     refine ContDiffOn.neg (ContDiffOn.sum fun c _ => ContDiffOn.mul ?_ (cd_gram _ _).contDiffOn)
     exact (cd_inv (m := j) ⟨i, hij⟩ c).comp hg.contDiffOn fun Z hZ => det_gram_castLE_ne_zero_of_det_ne_zero Z hZ j j.isLt.le
-  · simp only [dif_neg hij]
+  · simp only [dite_eq_right hij]
     split_ifs <;> exact contDiffOn_const
 
 theorem cd_Sm (i j : Fin n) :
@@ -533,11 +488,8 @@ theorem bump_two {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteD
 local instance bsS {p : ℕ} : BorelSpace ((G.UT p → ℂ) × (Fin p → ℝ)) := Prod.borelSpace
 local instance bsRC {k p ρ : ℕ} : BorelSpace (U.RC k p ρ) := Prod.borelSpace
 
-theorem piHaar {n p : ℕ} : (volume : Measure (Fin n → Fin p → ℂ)).IsAddHaarMeasure :=
-  Measure.pi.isAddHaarMeasure (fun _ => volume)
-
 theorem rcHaar {k p ρ : ℕ} : (volume : Measure (U.RC k p ρ)).IsAddHaarMeasure := by
-  have := @piHaar (2 * ρ + k + 1) p
+  have := @Formalism.FourierDecayAlt.P.Ux6.isAddHaarMeasure_matrix_volume (2 * ρ + k + 1) p
   rw [Measure.volume_eq_prod]
   exact Measure.prod.instIsAddHaarMeasure _ _
 
@@ -631,8 +583,6 @@ open scoped ContDiff
 
 namespace Formalism.FourierDecayAlt.P.CutEX.MkTopPf
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 section alg
 
 variable {k p ρ : ℕ}
@@ -665,18 +615,10 @@ end Formalism.FourierDecayAlt.P.CutEX.MkTopPf
 
 namespace Formalism.FourierDecayAlt.P.CutEX.MkTopPf
 
-end Formalism.FourierDecayAlt.P.CutEX.MkTopPf
-
-namespace Formalism.FourierDecayAlt.P.CutEX.MkTopPf
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 section right
 
 variable {k p ρ : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq]
-
-
 
 theorem krI_pt (Bj : B.RealPlaceData k ρ Wp Wq) (B0 : B.RealPlaceData k (p + ρ) Wp Wq)
     (hz' : B0.z' = liftVec k p ρ Bj.z') (hπ' : ∀ y : B.Mat k ρ, Bj.π' y = B0.π' (U.embG k p ρ y))
@@ -748,8 +690,6 @@ end right
 end Formalism.FourierDecayAlt.P.CutEX.MkTopPf
 
 namespace Formalism.FourierDecayAlt.P.CutEX.MkTopPf
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 section avg
 
@@ -829,7 +769,7 @@ theorem left_average_formula : Formalism.FourierDecayAlt.P.CutMK.LeftAvg := by
     have hh := hx.1
     have uh : IsUnit (Matrix.of x.1.1 : B.Mat k 0).det := hWs.unit _ hh
     unfold PBQ.pbI PBQ.sP PBQ.cP
-    rw [if_pos hx, hν, inv_one, Matrix.mul_one, Formalism.FourierDecayAlt.P.Dx2.MN.castM_rfl, hK _ hh x.2,
+    rw [ite_eq_left hx, hν, inv_one, Matrix.mul_one, Formalism.FourierDecayAlt.P.Dx2.MN.castM_rfl, hK _ hh x.2,
       Formalism.FourierDecayAlt.P.Qx5.psi_one Bj.z_mem, one_mul]
     have e : (Bj.π (Matrix.of x.1.1)).comp (Bj.π (Matrix.of x.1.1)⁻¹) = ContinuousLinearMap.id ℂ Wp := by
       rw [← Bj.π_rep.2 _ hh _ (hWs.inv_mem _ hh), Matrix.mul_nonsing_inv _ uh, Bj.π_rep.1]

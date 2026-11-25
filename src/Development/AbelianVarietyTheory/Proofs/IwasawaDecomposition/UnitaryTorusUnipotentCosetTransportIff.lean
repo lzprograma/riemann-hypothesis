@@ -175,17 +175,17 @@ theorem cosetT_tMat_unit {σ : K →+* K} {u : K} (hσ : σ u = u) (hv : Valued.
     by_cases h1 : (i : ℕ) < m
     · have h2 : ¬ (i.rev : ℕ) < m := by omega
       have h3 : n - m ≤ (i.rev : ℕ) ∧ n - 1 - (i.rev : ℕ) < m := by omega
-      simp only [dif_pos h1, dif_neg h2, dif_pos h3, hs]
+      simp only [dite_eq_left h1, dite_eq_right h2, dite_eq_left h3, hs]
       have : (⟨n - 1 - (i.rev : ℕ), h3.2⟩ : Fin m) = ⟨i, h1⟩ := Fin.ext (by simp only; omega)
       rw [this, ← zpow_add₀ h0, add_neg_cancel, zpow_zero]
     · by_cases h1' : n - m ≤ (i : ℕ) ∧ n - 1 - (i : ℕ) < m
       · have h2 : (i.rev : ℕ) < m := by omega
-        simp only [dif_neg h1, dif_pos h1', dif_pos h2, hs]
+        simp only [dite_eq_right h1, dite_eq_left h1', dite_eq_left h2, hs]
         have : (⟨(i.rev : ℕ), h2⟩ : Fin m) = ⟨n - 1 - i, h1'.2⟩ := Fin.ext (by simp only; omega)
         rw [this, ← zpow_add₀ h0, neg_add_cancel, zpow_zero]
       · have h2 : ¬ (i.rev : ℕ) < m := by omega
         have h3 : ¬ (n - m ≤ (i.rev : ℕ) ∧ n - 1 - (i.rev : ℕ) < m) := by omega
-        simp only [dif_neg h1, dif_neg h1', dif_neg h2, dif_neg h3, map_one, one_mul]
+        simp only [dite_eq_right h1, dite_eq_right h1', dite_eq_right h2, dite_eq_right h3, map_one, one_mul]
   obtain ⟨t, ht, ht'⟩ := fSatake_diag_exists f hf
   have hfval : ∀ i, Valued.v (f i) = 1 := by
     intro i

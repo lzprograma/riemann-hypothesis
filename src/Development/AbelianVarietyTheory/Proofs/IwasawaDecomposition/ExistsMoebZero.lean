@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Definitions.Divisors.FiniteNotLocFrOne
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FirstIndexEqOfUnfolded
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -55,61 +56,14 @@ namespace GlobalTheory.TrueCx.FrameOnto
 
 theorem exists_congr_one {n : Type} [Fintype n] [DecidableEq n] {M : Matrix n n ℂ} (hM : M.PosDef) :
     ∃ S : Matrix n n ℂ, IsUnit S.det ∧ Sᴴ * M * S = 1 := by
-  classical
-  set U : Matrix n n ℂ := (hM.1.eigenvectorUnitary : Matrix n n ℂ) with hU
-  have hD : star U * M * U = diagonal (RCLike.ofReal ∘ hM.1.eigenvalues) := by
-    have h := hM.1.conjStarAlgAut_star_eigenvectorUnitary
-    rw [Unitary.conjStarAlgAut_star_apply] at h
-    exact h
-  set c : n → ℂ := fun i => (RCLike.ofReal ((Real.sqrt (hM.1.eigenvalues i))⁻¹) : ℂ) with hc
-  refine ⟨U * diagonal c, ?_, ?_⟩
-  · rw [det_mul, det_diagonal]
-    refine IsUnit.mul (isUnit_det_of_left_inverse (Unitary.coe_star_mul_self _)) ?_
-    refine Ne.isUnit (Finset.prod_ne_zero_iff.mpr fun i _ => ?_)
-    exact RCLike.ofReal_ne_zero.mpr (inv_ne_zero (Real.sqrt_ne_zero'.mpr (hM.eigenvalues_pos i)))
-  · have hs : (U * diagonal c)ᴴ * M * (U * diagonal c) = diagonal (star c) * (star U * M * U) * diagonal c := by
-      rw [conjTranspose_mul, diagonal_conjTranspose, ← star_eq_conjTranspose]
-      simp only [Matrix.mul_assoc]
-    rw [hs, hD, diagonal_mul_diagonal, diagonal_mul_diagonal, ← diagonal_one]
-    congr 1
-    funext i
-    have hl := hM.eigenvalues_pos i
-    have hr : (Real.sqrt (hM.1.eigenvalues i))⁻¹ * hM.1.eigenvalues i * (Real.sqrt (hM.1.eigenvalues i))⁻¹ = 1 := by
-      have h0 : Real.sqrt (hM.1.eigenvalues i) ≠ 0 := Real.sqrt_ne_zero'.mpr hl
-      have h2 := Real.mul_self_sqrt hl.le
-      field_simp
-      linarith
-    simp only [hc, Pi.star_apply, Function.comp_apply, RCLike.star_def, RCLike.conj_ofReal]
-    rw [← RCLike.ofReal_mul, ← RCLike.ofReal_mul, hr, RCLike.ofReal_one]
-
-private lemma posDef_one_sub_mul_conjTranspose_of_posDef {p q : ℕ} {z : Matrix (Fin p) (Fin q) ℂ} (hz : (1 - zᴴ * z).PosDef) :
-    (1 - z * zᴴ).PosDef := by
-  have hsd : (1 - z * zᴴ).PosSemidef := by
-    haveI : Invertible (1 : Matrix (Fin p) (Fin p) ℂ) := invertibleOne
-    haveI : Invertible (1 : Matrix (Fin q) (Fin q) ℂ) := invertibleOne
-    have h1 : (fromBlocks (1 : Matrix (Fin p) (Fin p) ℂ) z zᴴ 1).PosSemidef := by
-      rw [PosDef.fromBlocks₁₁ (A := (1 : Matrix (Fin p) (Fin p) ℂ)) z 1 PosDef.one]
-      simpa using hz.posSemidef
-    rw [PosDef.fromBlocks₂₂ 1 z (D := (1 : Matrix (Fin q) (Fin q) ℂ)) PosDef.one] at h1
-    simpa using h1
-  rw [hsd.posDef_iff_det_ne_zero]
-  have hu : IsUnit (1 - zᴴ * z).det := (isUnit_iff_isUnit_det _).mp hz.isUnit
-  refine (isUnit_det_of_right_inverse (B := 1 + z * (1 - zᴴ * z)⁻¹ * zᴴ) ?_).ne_zero
-  have h := mul_nonsing_inv _ hu
-  calc (1 - z * zᴴ) * (1 + z * (1 - zᴴ * z)⁻¹ * zᴴ)
-      = 1 - z * zᴴ + z * ((1 - zᴴ * z) * (1 - zᴴ * z)⁻¹) * zᴴ := by
-        simp only [Matrix.mul_add, Matrix.sub_mul, Matrix.mul_sub, Matrix.mul_one,
-          Matrix.one_mul, Matrix.mul_assoc]
-    _ = 1 := by
-        rw [h, Matrix.mul_one]
-        abel
+  first | exact _root_.GlobalTheory.HolDS.exists_congr_one_of_posDef | exact @_root_.GlobalTheory.HolDS.exists_congr_one_of_posDef | apply _root_.GlobalTheory.HolDS.exists_congr_one_of_posDef <;> assumption
 
 theorem exists_moeb_zero {p q : ℕ} {z : Matrix (Fin p) (Fin q) ℂ} (hz : z ∈ hcDom p q) :
     ∃ g : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ, gᴴ * Jpq p q * g = Jpq p q ∧ moeb g 0 = z := by
   classical
   have hQ : (1 - zᴴ * z).PosDef := hz
   obtain ⟨S, hSu, hS⟩ := exists_congr_one hQ
-  obtain ⟨T, hTu, hT⟩ := exists_congr_one (posDef_one_sub_mul_conjTranspose_of_posDef hQ)
+  obtain ⟨T, hTu, hT⟩ := exists_congr_one (KU.posDef_swap _ hQ)
   have hJ : Jpq p q = fromBlocks 1 0 0 (-1) := rfl
   refine ⟨fromBlocks T (z * S) (zᴴ * T) S, ?_, ?_⟩
   · rw [hJ, fromBlocks_conjTranspose, fromBlocks_multiply, fromBlocks_multiply]

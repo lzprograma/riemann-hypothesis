@@ -30,103 +30,9 @@ def Qc (v : InfinitePlace X.B.I.F) : Matrix (Fin X.B.I.n) (Fin (2 * D.R.rS + D.R
 def Qic (v : InfinitePlace X.B.I.F) : Matrix (Fin (2 * D.R.rS + D.R.k + 1)) (Fin X.B.I.n) ℂ := Qics C (X.pl v)
 
 theorem transpC (v : InfinitePlace X.B.I.F) : IsTranspC X v (cfS D) D.R.k D.R.rS (Qc X C v) (Qic X C v) := by
-  have hrd : D.host.rdE ≠ 0 := by
-    unfold Formalism.BasicNotions.Host.rdE
-    exact (Real.rpow_pos_of_pos (abs_pos.mpr (by exact_mod_cast NumberField.discr_ne_zero (K := D.host.E))) _).ne'
-  have hc : cfS D ≠ 0 := by
-    unfold cfS
-    simp [Real.pi_ne_zero, (D.host.g_prime 0).ne_zero, (D.host.g_prime 1).ne_zero]
-  have hf : frS D ≠ 0 := by
-    unfold frS
-    simp [Formalism.BasicNotions.Host.ka, Formalism.BasicNotions.Host.v, hrd, Real.pi_ne_zero]
-  have hμ : muT D ≠ 0 := by
-    unfold muT
-    exact div_ne_zero hc hf
-  have hμf : muT D * frS D = cfS D := by
-    unfold muT
-    field_simp
-  have hμm : ∀ m : ℕ, muT D ^ m ≠ 0 := fun m => pow_ne_zero m hμ
-  have hsm : ∀ m : ℕ, star (muT D) ^ m ≠ 0 := fun m => pow_ne_zero m (star_ne_zero.mpr hμ)
-  have hTT : torS (muT D)⁻¹ D.R.k D.R.rS * torS (muT D) D.R.k D.R.rS = 1 := by
-    unfold torS
-    rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    funext i
-    split_ifs
-    · rw [← mul_pow, inv_mul_cancel₀ hμ, one_pow]
-    · rw [← mul_inv, ← star_mul', ← mul_pow, inv_mul_cancel₀ hμ, one_pow, star_one, inv_one]
-    · rw [mul_one]
-  have hTT' : torS (muT D) D.R.k D.R.rS * torS (muT D)⁻¹ D.R.k D.R.rS = 1 := by
-    unfold torS
-    rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    funext i
-    split_ifs
-    · rw [← mul_pow, mul_inv_cancel₀ hμ, one_pow]
-    · rw [← mul_inv, ← star_mul', ← mul_pow, mul_inv_cancel₀ hμ, one_pow, star_one, inv_one]
-    · rw [mul_one]
-  have hH : (torS (muT D) D.R.k D.R.rS)ᴴ * Hpk D.R.k D.R.rS * torS (muT D) D.R.k D.R.rS = Hpk D.R.k D.R.rS := by
-    ext i j
-    unfold torS
-    rw [Matrix.mul_diagonal, Matrix.diagonal_conjTranspose, Matrix.diagonal_mul]
-    simp only [Pi.star_apply, Hpk]
-    have hi := i.isLt
-    have hj := j.isLt
-    split_ifs <;> first
-      | (simp; done)
-      | (exfalso; omega)
-      | (have e : 2 * D.R.rS + D.R.k - (j : ℕ) = i := by omega
-         rw [e, mul_one, mul_inv_cancel₀ (star_ne_zero.mpr (hμm _))])
-      | (have e : 2 * D.R.rS + D.R.k - (i : ℕ) = j := by omega
-         rw [e, mul_one]
-         first | rw [star_inv₀]
-         rw [star_star, inv_mul_cancel₀ (hμm _)])
-      | (have e : 2 * D.R.rS + D.R.k - (j : ℕ) = i := by omega
-         rw [e]; simp [hμm, hsm]; done)
-      | (have e : 2 * D.R.rS + D.R.k - (i : ℕ) = j := by omega
-         rw [e]; simp [hμm, hsm]; done)
-      | (subst_vars; exfalso; omega)
-      | (subst_vars; simp; done)
-      | (simp_all; done)
-  have hTe : ∀ a : Fin D.R.rS, torS (muT D) D.R.k D.R.rS *ᵥ Pi.single (eI D.R.k D.R.rS a) 1 =
-      muT D ^ (D.R.rS - (a : ℕ)) • Pi.single (eI D.R.k D.R.rS a) 1 := by
-    intro a
-    ext x
-    unfold torS
-    rw [Matrix.mulVec_diagonal]
-    by_cases hx : x = eI D.R.k D.R.rS a
-    · subst hx
-      simp [eI]
-    · simp [hx]
-  have hTf : ∀ a : Fin D.R.rS, torS (muT D) D.R.k D.R.rS *ᵥ Pi.single (esI D.R.k D.R.rS a) 1 =
-      (star (muT D ^ (D.R.rS - (a : ℕ))))⁻¹ • Pi.single (esI D.R.k D.R.rS a) 1 := by
-    intro a
-    ext x
-    unfold torS
-    rw [Matrix.mulVec_diagonal]
-    by_cases hx : x = esI D.R.k D.R.rS a
-    · subst hx
-      have ha := a.isLt
-      have e1 : ¬ (2 * D.R.rS + D.R.k - (a : ℕ) < D.R.rS) := by omega
-      have e2 : D.R.rS + D.R.k < 2 * D.R.rS + D.R.k - (a : ℕ) := by omega
-      have e3 : 2 * D.R.rS + D.R.k - (2 * D.R.rS + D.R.k - (a : ℕ)) = a := by omega
-      simp [esI, e1, e2, e3]
-    · simp [hx]
-  obtain ⟨h1, h2, h3, h4⟩ := C.isT (X.pl v)
-  have hvv : vOf X (X.pl v) = v := by simp [vOf]
-  simp only [hvv] at h3 h4
-  unfold IsTranspC Qc Qic Qcs Qics
-  refine ⟨?_, ?_, ?_, fun a b hab => ⟨?_, ?_⟩⟩
-  · rw [Matrix.mul_assoc, ← Matrix.mul_assoc (C.Qi _), h1, Matrix.one_mul, hTT]
-  · rw [Matrix.mul_assoc, ← Matrix.mul_assoc (torS _ _ _), hTT', Matrix.one_mul, h2]
-  · have h3' := congrArg (· * torS (muT D) D.R.k D.R.rS) h3
-    simp only [Matrix.mul_assoc] at h3'
-    rw [Matrix.conjTranspose_mul]
-    simp only [Matrix.mul_assoc]
-    rw [h3', ← Matrix.mul_assoc, hH]
-  · rw [← Matrix.mulVec_mulVec, hTe a, Matrix.mulVec_smul, (h4 a b hab).1, smul_smul, ← mul_pow, hμf]
-  · rw [← Matrix.mulVec_mulVec, hTf a, Matrix.mulVec_smul, (h4 a b hab).2, smul_smul, ← mul_inv, ← star_mul',
-      ← mul_pow, hμf]
+  have h := Formalism.L2.SG.Pf.torTie X (vOf X (X.pl v)) (C.Q (X.pl v)) (C.Qi (X.pl v))
+    (C.isT (X.pl v))
+  rwa [show vOf X (X.pl v) = v from X.pl.symm_apply_apply v] at h
 
 def zc (u : D.what₂.Word) (v : InfinitePlace X.B.I.F) : Fin (2 * D.R.rS + D.R.k + 1) → ℂ :=
   Qic X C v *ᵥ rv X.B.I v (X.zR u)
@@ -215,8 +121,6 @@ section Carrier
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.LocWSOf Formalism.L2.SG.Pf.Choice Formalism.L2.SG.Pf.Carrier
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
-
 variable {D : D7} (X : HidaSetting D) {θ : ℝ} (C : Choice X θ)
 
 theorem baseOf_μW1 (u u' : D.what₂.Word) (v : InfinitePlace X.B.I.F) : (baseOf X C u u' v).μW Set.univ = 1 := (μW_exists X C u v).choose_spec.2
@@ -265,8 +169,7 @@ theorem fromX (u u' : D.what₂.Word) (e : InfinitePlace D.host.E ≃ D.what₂.
     (m₀ : Fin (nfE D) → Formalism.FourierDecayAlt.B.Mat D.R.k D.R.rS)
     (top : ∀ j : Fin (nfE D), (Formalism.FourierDecayAlt.B.Mat D.R.k D.R.rS → (X.Vloc u' (tauE X e j) →L[ℂ] X.Vloc u (tauE X e j))) →
       List Formalism.FourierDecayAlt.C.Letter → Formalism.FourierDecayAlt.C.LPt → Formalism.FourierDecayAlt.C.LPt → ℂ) (A₀ : ℝ)
-    (Mo : ModelsFor (sOf (carrierIn X C u u' e he hv CA de de' l grid grid1 fc χ sg ν' m₀ top A₀))) :
-    (CarrierOf (carrierIn X C u u' e he hv CA de de' l grid grid1 fc χ sg ν' m₀ top A₀) Mo).FromX := by
+    : (CarrierOf (carrierIn X C u u' e he hv CA de de' l grid grid1 fc χ sg ν' m₀ top A₀)).FromX := by
   intro v
   have hw : tauE X e ((tauE X e).symm v) = v := Equiv.apply_symm_apply _ v
   have hT := transpC X C v

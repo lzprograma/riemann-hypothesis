@@ -53,8 +53,6 @@ public import Mathlib.RingTheory.Ideal.BigOperators
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB
@@ -163,9 +161,9 @@ theorem word_value (π : A →ₐ[k] k) (D : ι → Derivation k A A) (lam : ι 
   | nil =>
     simp only [List.foldl_nil, map_mul, map_prod, map_pow, hlam]
     by_cases h : ∀ l, ([] : List ι).count l = a l
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       simp [← h]
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       simp only [List.count_nil] at h
       push Not at h
       obtain ⟨l, hl⟩ := h
@@ -183,7 +181,7 @@ theorem word_value (π : A →ₐ[k] k) (D : ι → Derivation k A A) (lam : ι 
       ((∏ l, lam l ^ Function.update a l₀ (a l₀ - 1) l) * E)), word_add, map_add, key2, zero_add,
       word_smul, map_smul]
     by_cases h0 : a l₀ = 0
-    · rw [if_neg]
+    · rw [ite_eq_right]
       · simp [h0]
       · intro h
         have := h l₀
@@ -251,7 +249,7 @@ theorem coeff_law {R : Type} [CommRing R] {d : ℕ} (G : FGLaw R d) (i j : Fin d
   rw [← h]
   by_cases hij : j = i
   · simp [hij]
-  · rw [if_neg hij, if_neg]
+  · rw [ite_eq_right hij, ite_eq_right]
     intro h'
     rw [Finsupp.single_left_inj one_ne_zero] at h'
     exact hij (congrArg Prod.snd h').symm

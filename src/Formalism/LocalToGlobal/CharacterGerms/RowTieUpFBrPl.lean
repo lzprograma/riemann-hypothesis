@@ -6,8 +6,6 @@ public import Mathlib.RingTheory.Discriminant
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open TensorProduct IsLocalRing

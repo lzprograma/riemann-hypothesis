@@ -110,7 +110,7 @@ theorem exists_psi (σ : K →+* ℂ) {P : HeightOneSpectrum (𝓞 E)} (hP : Deg
     intro a b hb
     have hex : ∃ b : ℤ, IntAt P (xi * a - (b : E) / (qOf P : E) ^ D) := ⟨b, hb⟩
     have h1 := hex.choose_spec
-    simp only [ψ, dif_pos hex]
+    simp only [ψ, dite_eq_left hex]
     generalize hex.choose = c at h1
     have h2 : IntAt P (((qOf P : E) ^ D)⁻¹ * ((c - b : ℤ) : E)) := by
       convert hb.add (GlobalTheory.IndefiniteRowSideFullHecke.SourceLatticeInvariance.intAt_neg h1) using 1
@@ -268,16 +268,16 @@ theorem exists_locCst_of_values (Ch : Chars X Pr R.m) (sel : HeightOneSpectrum (
       (if hP : P.1 ∈ Pr.vGs then (k ⟨j - 1, h⟩ P.1 hP)⁻¹ * (((qValC (mu : Chr X.F X.E X.K) P.1)⁻¹ : X.Kˣ) : X.K)
       else (((Ch.muVal ⟨j - 1, h⟩ P.1)⁻¹ * (qValC (mu : Chr X.F X.E X.K) P.1)⁻¹ : X.Kˣ) : X.K)) else 1, A, B, M, sharp⟩,
     ⟨hadd, hint, hne, hD1, hsq, hM, hA, hB, hM.trans hB⟩, fun P a b _ hb => htie P a b hb, rfl, rfl, rfl, rfl,
-    fun i hi P hP => ?_, fun i hi P hP qu hqu => ?_, fun P a hP ha => ?_, fun P hP => if_pos hP, fun P hP => if_neg hP⟩
+    fun i hi P hP => ?_, fun i hi P hP qu hqu => ?_, fun P a hP ha => ?_, fun P hP => ite_eq_left hP, fun P hP => ite_eq_right hP⟩
   · have hi' : i + 1 - 1 < R.m := hi
-    simp only [dif_pos hi', dif_neg hP]
+    simp only [dite_eq_left hi', dite_eq_right hP]
     rfl
   · obtain rfl : qu = Units.mk0 _ (hq P.1) := Units.ext hqu
     have hi' : i + 1 - 1 < R.m := hi
-    simp only [dif_pos hi', dif_pos hP]
+    simp only [dite_eq_left hi', dite_eq_left hP]
     rw [map_mul, map_inv₀, hk]
     rfl
-  · have hDP : D P = 1 := if_pos hP
+  · have hDP : D P = 1 := ite_eq_left hP
     have h1 : IntAt P.1 ((qOf P.1 : X.E) ^ D P * (a / (qOf P.1 : X.E))) := by
       rw [hDP, pow_one, mul_div_cancel₀ _ (hq P.1)]
       exact ha
@@ -296,7 +296,7 @@ theorem exists_locCst_of_values (Ch : Chars X Pr R.m) (sel : HeightOneSpectrum (
       add_neg_eq_zero] at h3
     apply G.σ₀.injective
     change G.σ₀ (ψ P _) = _
-    rw [h2, psi0P, dif_pos hP]
+    rw [h2, psi0P, dite_eq_left hP]
     exact (hW ⟨P.1, hP⟩ _ b h3).symm
 
 theorem exists_locCst (hX : X.Ok) (hPr : Pr.Ok) (Ch : Chars X Pr R.m)

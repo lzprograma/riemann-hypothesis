@@ -7,45 +7,6 @@ public import Mathlib.Data.Matrix.ColumnRowPartitioned
 public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.DifferentiableOnDetHMat
 public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DoubledHermitianTestFunctionSpec
 public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DoubledThetaTestFunctionSesquilinearHeisenberg
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.EqOfSiegelThetaSeriesRationalEq
 import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
 import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HeisenbergOperatorRationalPointLaws
@@ -53,11 +14,6 @@ import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.Rationa
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -83,7 +39,7 @@ theorem ind_sb {K : Type} [Field K] [NumberField K] {κ ι : Type} [Fintype κ] 
   refine ⟨fun x hx => ?_, fun x y hy => ?_⟩
   · rw [Nat.cast_one, one_smul]
     by_contra h
-    exact hx (if_neg h)
+    exact hx (ite_eq_right h)
   · rw [Nat.cast_one, one_smul]
     exact if_congr (intM_add_iff_of_intM_right hy) rfl rfl
 
@@ -98,7 +54,7 @@ theorem ind_ne_zero {K : Type} [Field K] [NumberField K] {κ ι : Type} [Fintype
     (fun x : Matrix κ ι K => if IntM x then (1:ℂ) else 0) ≠ 0 := by
   intro h
   have h0 := congrFun h 0
-  rw [if_pos (show IntM (0 : Matrix κ ι K) from fun k i => by simpa using isIntegral_zero)] at h0
+  rw [ite_eq_left (show IntM (0 : Matrix κ ι K) from fun k i => by simpa using isIntegral_zero)] at h0
   exact one_ne_zero h0
 
 end GlobalTheory.SW
@@ -166,7 +122,7 @@ omit [DecidableEq ι] [Fintype κ] [Fintype ι] in
 theorem hasLevel_cosetInd_zero (R : ℕ) : HasLevel R (cosetInd (κ := κ) (ι := ι) R 0) := by
   refine ⟨fun x hx => ?_, fun x y hy => ?_⟩
   · have h : (x : Matrix κ ι ℚ ⧸ perSub ℚ κ ι R) = 0 := by
-      by_contra h; exact hx (if_neg h)
+      by_contra h; exact hx (ite_eq_right h)
     obtain ⟨y, hy, rfl⟩ := IpPos.exists_of_mem_perSub ((QuotientAddGroup.eq_zero_iff _).1 h)
     exact IpPos.intM_natCast_smul _ (IpPos.intM_natCast_smul _ hy)
   · have h : (((R : ℚ) • y : Matrix κ ι ℚ) : Matrix κ ι ℚ ⧸ perSub ℚ κ ι R) = 0 :=

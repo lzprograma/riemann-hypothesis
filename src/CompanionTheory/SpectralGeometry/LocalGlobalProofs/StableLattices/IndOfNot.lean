@@ -28,9 +28,9 @@ theorem sig_anti (a b : Fin n) : sig b a = - sig a b := by
 theorem sig_mul {y : Fin n → ℝ} (hy : Antitone y) (a b : Fin n) : sig a b * (y a - y b) = |y a - y b| := by
   unfold sig
   rcases lt_trichotomy a b with h | h | h
-  · rw [if_pos h, one_mul, abs_of_nonneg (sub_nonneg.2 (hy h.le))]
+  · rw [ite_eq_left h, one_mul, abs_of_nonneg (sub_nonneg.2 (hy h.le))]
   · simp [h]
-  · rw [if_neg h.not_gt, if_pos h, abs_of_nonpos (sub_nonpos.2 (hy h.le))]; ring
+  · rw [ite_eq_right h.not_gt, ite_eq_left h, abs_of_nonpos (sub_nonpos.2 (hy h.le))]; ring
 
 theorem pair_eq (t : Fin n → Fin n → ℝ) (ht : ∀ a b, t b a = - t a b) (x : Fin n → ℝ) :
     4 * ∑ a, x a * ((∑ b, t a b) / 2) = ∑ a, ∑ b, t a b * (x a - x b) := by
@@ -146,7 +146,7 @@ theorem wtA_eq {ε : Fin n → Bool} (A : Finset (NC ε)) (c : Fin n) :
 theorem ind_of_not {ε : Fin n → Bool} (A : Finset (NC ε)) {a b : Fin n} (h : ¬ (ε a = true ∧ ε b = false)) :
     ind A a b = 0 := by
   unfold ind
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro ⟨h', _⟩
   exact h h'
 
@@ -211,7 +211,7 @@ theorem normLt : CompanionTheory.D.DSIC.NormLt := by
     push Not at hc
     exact hA (Finset.ext fun i => by simpa using hc i)
   have hcd : c ≠ d := by rintro rfl; simp [h.1] at h
-  have hne : tt A c d = - sig c d := by rw [tt_of A h, if_neg hi]
+  have hne : tt A c d = - sig c d := by rw [tt_of A h, ite_eq_right hi]
   have i1 := pair_lt (tt A) (tt_anti A) (abs_tt A) hl c d hcd hne
   have i2 := normSq_le (tt A) (tt_anti A) (abs_tt A)
   have f1 : ∀ a, (gam ε lam - wtA A + (2 : ℝ) • PI.UpqRep.rhoC ε) a = lam a + (∑ b, tt A a b) / 2 := fun a => by

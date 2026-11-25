@@ -4,8 +4,7 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThU
 public import Mathlib.GroupTheory.FiniteAbelian.Basic
 import Formalism.GL3MeanSquares.InvariantSeriesBidegreeOneOne
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.TypeStar
+import Formalism.LocalToGlobal.KernelLattices.ColumnData.IopIso
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.GL3MeanSquares.SignsFromTrianglesSquares, Formalism.GL3MeanSquares.HookFormulaTorsion.SquareEqDiagOfQuadraticEven, Formalism.LocalToGlobal.GlobalTheory.GL3.PIopIso
@@ -72,9 +71,6 @@ theorem t_heis : HeisenbergCocycle := by
 
 end Formalism.HermitianLattices.WeilRepresentation.CocycleEighthPower
 
-namespace Formalism.HermitianLattices.WeilRepresentation
-
-end Formalism.HermitianLattices.WeilRepresentation
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Formalism.GL3MeanSquares.HookFormulaTorsion.SquareEqDiagOfQuadraticEven =====
@@ -93,17 +89,12 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Cl
 variable {D : D7} {N N' : ℕ}
 
 theorem Hf_add_left (T : Tor D) (x x' y : VC D N N') :
-    Hf D T (x + x') y = Hf D T x y + Hf D T x' y := by
-  simp only [Hf, Pi.add_apply, add_mul, Finset.sum_add_distrib, add_div]
+    Hf D T (x + x') y = Hf D T x y + Hf D T x' y :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.Hf_add_left (D := Formalism.L2.Ker.Car.ofRec D) ⟨T.emb, T.abelian₂⟩ x x' y
 
 theorem Hf_herm (T : Tor D) (x y : VC D N N') :
-    Hf D T y x = starRingEnd ℂ (Hf D T x y) := by
-
-  simp only [Hf, map_div₀, map_sum, map_mul, Complex.conj_conj, Complex.conj_ofReal]
-  congr 1
-  refine Finset.sum_congr rfl fun τ _ => Finset.sum_congr rfl fun i _ =>
-    Finset.sum_congr rfl fun j _ => ?_
-  ring
+    Hf D T y x = starRingEnd ℂ (Hf D T x y) :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.Hf_herm (D := Formalism.L2.Ker.Car.ofRec D) ⟨T.emb, T.abelian₂⟩ x y
 
 def cf (T : Tor D) (x y : VC D N N') : ℂ :=
   Complex.exp (-((Real.pi : ℂ) * Complex.I * ((Hf D T x y).im : ℂ)))
@@ -266,80 +257,34 @@ def HfInt (T : Tor D) (La' : AddSubgroup (VC D N N')) : Prop :=
     Hf D T x y = (((a : ℝ) / Real.sqrt D.host.d : ℝ) : ℂ) + (b : ℂ) * Complex.I
 
 theorem sqrt_d_pos (D : D7) : 0 < Real.sqrt D.host.d :=
-  Real.sqrt_pos.mpr (by exact_mod_cast D.host.hyp.2.1.pos)
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.sqrt_d_pos (Formalism.L2.Ker.Car.ofRec D)
 
 theorem Hf_add_right (T : Tor D) (x y y' : VC D N N') :
-    Hf D T x (y + y') = Hf D T x y + Hf D T x y' := by
-  rw [Hf_herm T (y + y') x, Hf_add_left, map_add (f := _), ← Hf_herm, ← Hf_herm]
+    Hf D T x (y + y') = Hf D T x y + Hf D T x y' :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.Hf_add_right (D := Formalism.L2.Ker.Car.ofRec D) ⟨T.emb, T.abelian₂⟩ x y y'
 
-theorem Hf_self_im (T : Tor D) (x : VC D N N') : (Hf D T x x).im = 0 := by
-  have h := congrArg Complex.im (Hf_herm T x x)
-  rw [Complex.conj_im] at h
-  linarith
+theorem Hf_self_im (T : Tor D) (x : VC D N N') : (Hf D T x x).im = 0 :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.Hf_self_im (D := Formalism.L2.Ker.Car.ofRec D) ⟨T.emb, T.abelian₂⟩ x
 
-theorem Hf_re_swap (T : Tor D) (x y : VC D N N') : (Hf D T y x).re = (Hf D T x y).re := by
-  rw [Hf_herm T x y, Complex.conj_re]
+theorem Hf_re_swap (T : Tor D) (x y : VC D N N') : (Hf D T y x).re = (Hf D T x y).re :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.Hf_re_swap (D := Formalism.L2.Ker.Car.ofRec D) ⟨T.emb, T.abelian₂⟩ x y
 
 theorem self_int (T : Tor D) {La' : AddSubgroup (VC D N N')} (hI : HfInt T La')
     {x : VC D N N'} (hx : x ∈ La') :
     ∃ m : ℤ, (Hf D T x x).re = 2 * m / Real.sqrt D.host.d ∧
-      round (Real.sqrt D.host.d / 2 * (Hf D T x x).re) = m := by
-  obtain ⟨a, b, hab, h⟩ := hI x hx x hx
-  have hs := sqrt_d_pos D
-  have hb : (b : ℝ) = 0 := by
-    have := Hf_self_im T x
-    rw [h] at this
-    simpa using this
-  have hb' : b = 0 := by exact_mod_cast hb
-  rw [hb', sub_zero] at hab
-  obtain ⟨m, hm⟩ := hab
-  have hre : (Hf D T x x).re = 2 * m / Real.sqrt D.host.d := by
-    rw [h, hm]; simp [hb']; ring
-  refine ⟨m, hre, ?_⟩
-  rw [hre]
-  have : Real.sqrt D.host.d / 2 * (2 * (m : ℝ) / Real.sqrt D.host.d) = m := by
-    field_simp
-  rw [this, round_intCast]
+      round (Real.sqrt D.host.d / 2 * (Hf D T x x).re) = m :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.self_int (D := Formalism.L2.Ker.Car.ofRec D) ⟨T.emb, T.abelian₂⟩ hI hx
 
-theorem neg_one_zpow_congr {n m : ℤ} (h : Even (n - m)) : (-1 : ℂ) ^ n = (-1 : ℂ) ^ m := by
-  have : n = m + (n - m) := by ring
-  rw [this, zpow_add₀ (by norm_num : (-1 : ℂ) ≠ 0), h.neg_one_zpow, mul_one]
+theorem neg_one_zpow_congr {n m : ℤ} (h : Even (n - m)) : (-1 : ℂ) ^ n = (-1 : ℂ) ^ m :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.neg_one_zpow_congr h
 
 theorem cf_int (T : Tor D) (x y : VC D N N') (b : ℤ) (hb : (Hf D T x y).im = b) :
-    cf T x y = (-1 : ℂ) ^ (-b) := by
-  rw [cf, hb, ← Complex.exp_pi_mul_I, ← Complex.exp_int_mul]
-  congr 1
-  push_cast
-  ring
+    cf T x y = (-1 : ℂ) ^ (-b) :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.cf_int (D := Formalism.L2.Ker.Car.ofRec D) ⟨T.emb, T.abelian₂⟩ x y b hb
 
 theorem semiChar_of_HfInt (T : Tor D) {La' : AddSubgroup (VC D N N')} (hI : HfInt T La') :
-    SemiChar T La' := by
-  intro x hx y hy
-  have hs := sqrt_d_pos D
-  obtain ⟨mx, hxre, hxr⟩ := self_int T hI hx
-  obtain ⟨my, hyre, hyr⟩ := self_int T hI hy
-  obtain ⟨ms, hsre, hsr⟩ := self_int T hI (La'.add_mem hx hy)
-  obtain ⟨a, b, hab, h⟩ := hI x hx y hy
-  have hre : (Hf D T x y).re = a / Real.sqrt D.host.d := by rw [h]; simp
-  have him : (Hf D T x y).im = b := by rw [h]; simp
-  have hexp : (Hf D T (x + y) (x + y)).re =
-      (Hf D T x x).re + (Hf D T y y).re + 2 * (Hf D T x y).re := by
-    rw [Hf_add_left, Hf_add_right, Hf_add_right, Complex.add_re, Complex.add_re, Complex.add_re,
-      Hf_re_swap T x y]
-    ring
-  have hms : ms = mx + my + a := by
-    rw [hsre, hxre, hyre, hre] at hexp
-    have h2 : (2 * (ms : ℝ)) = 2 * mx + 2 * my + 2 * a := by
-      field_simp at hexp; linarith
-    exact_mod_cast (by linarith : (ms : ℝ) = mx + my + a)
-  simp only [al]
-  rw [hsr, hxr, hyr, cf_int T x y b him, ← zpow_add₀ (by norm_num : (-1 : ℂ) ≠ 0),
-    ← zpow_add₀ (by norm_num : (-1 : ℂ) ≠ 0)]
-  apply neg_one_zpow_congr
-  rw [hms]
-  have : mx + my + a - (mx + my + -b) = (a - b) + 2 * b := by ring
-  rw [this]
-  exact hab.add (even_two_mul b)
+    SemiChar T La' :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.semiChar_of_HfInt (D := Formalism.L2.Ker.Car.ofRec D) ⟨T.emb, T.abelian₂⟩ hI
 
 end Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.IO
 
@@ -349,21 +294,8 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Cl
 
 theorem finite_quot_of_smul {V : Type*} [AddCommGroup V] (La₁ La₂ R : AddSubgroup V)
     [Module.Finite ℤ R] (hle : La₂ ≤ R) (k : ℤ) (hk : k ≠ 0) (hkR : ∀ z ∈ R, k • z ∈ La₁) :
-    Finite (La₂ ⧸ La₁.addSubgroupOf La₂) := by
-  have hinj : Function.Injective (AddSubgroup.inclusion hle).toIntLinearMap :=
-    AddSubgroup.inclusion_injective hle
-  haveI : Module.Finite ℤ La₂ := Module.Finite.of_injective _ hinj
-  haveI : Module.Finite ℤ (La₂ ⧸ La₁.addSubgroupOf La₂) :=
-    Module.Finite.of_surjective (QuotientAddGroup.mk' (La₁.addSubgroupOf La₂)).toIntLinearMap
-      (QuotientAddGroup.mk'_surjective _)
-  apply Module.finite_of_fg_torsion
-  intro q
-  induction q using QuotientAddGroup.induction_on with | H a => ?_
-  refine ⟨⟨k, mem_nonZeroDivisors_of_ne_zero hk⟩, ?_⟩
-  change k • (a : La₂ ⧸ La₁.addSubgroupOf La₂) = 0
-  rw [← QuotientAddGroup.mk_zsmul, QuotientAddGroup.eq_zero_iff, AddSubgroup.mem_addSubgroupOf,
-    AddSubgroup.coe_zsmul]
-  exact hkR _ (hle a.2)
+    Finite (La₂ ⧸ La₁.addSubgroupOf La₂) :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.finite_quot_of_smul La₁ La₂ R hle k hk hkR
 
 variable {D : D7}
 
@@ -371,46 +303,23 @@ theorem Phi_smul_eq {N N' : ℕ} (δ : ℂ) (M : ℤ) (hM : M ≠ 0) (n : ℕ)
     (A : Fin N' → Fin N → 𝓞 D.host.E) :
     ((n : ℤ) * M) • FL.Phi D (N := N) (N' := N') (δ / M) A =
       ∑ i0 : Fin N', ∑ j0 : Fin N,
-        FL.ins D i0 j0 (fun τ => δ * n * embT D τ ((A i0 j0 : 𝓞 D.host.E) : D.host.E)) := by
-  have hM' : (M : ℂ) ≠ 0 := by exact_mod_cast hM
-  funext τ i j
-  simp only [Finset.sum_apply, Pi.smul_apply, FL.Phi, FL.ins, AddMonoidHom.coe_mk, ZeroHom.coe_mk]
-  rw [Finset.sum_eq_single i, Finset.sum_eq_single j]
-  · simp only [and_self, if_true, zsmul_eq_mul]
-    push_cast
-    field_simp
-  · intro b _ hb; simp [Ne.symm hb]
-  · intro h; exact absurd (Finset.mem_univ j) h
-  · intro b _ hb
-    apply Finset.sum_eq_zero
-    intro c _
-    simp [Ne.symm hb]
-  · intro h; exact absurd (Finset.mem_univ i) h
+        FL.ins D i0 j0 (fun τ => δ * n * embT D τ ((A i0 j0 : 𝓞 D.host.E) : D.host.E)) :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.Phi_smul_eq (D := Formalism.L2.Ker.Car.ofRec D) δ M hM n A
 
 theorem La_index_finite (cc : Ideal (𝓞 D.host.K)) (hcc : IsCurveIdeal D cc) (δ : ℂ) {N N' : ℕ}
     (L₁ L₂ : Submodule (𝓞 D.host.E) (Fin N → D.host.E))
     (L₁' L₂' : Submodule (𝓞 D.host.E) (Fin N' → D.host.E))
     (h₁ : admitted D N N' L₁ L₁') (h₂ : admitted D N N' L₂ L₂') :
     Finite (La D (tor0 D cc δ) L₂ L₂' ⧸
-      (La D (tor0 D cc δ) L₁ L₁').addSubgroupOf (La D (tor0 D cc δ) L₂ L₂')) := by
-  obtain ⟨M, hM, hup⟩ := FL.La_upper D L₂ L₂' h₂ cc δ
-  obtain ⟨n, hn, hlow⟩ := FL.La_lower D L₁ L₁' h₁ cc hcc δ
-  haveI : Module.Finite ℤ (FL.Phi D (N := N) (N' := N') (δ / M)).range :=
-    Module.Finite.of_surjective (FL.Phi D (N := N) (N' := N') (δ / M)).rangeRestrict.toIntLinearMap
-      (AddMonoidHom.rangeRestrict_surjective _)
-  refine finite_quot_of_smul _ _ _ hup ((n : ℤ) * M)
-    (mul_ne_zero (by exact_mod_cast hn) hM) ?_
-  rintro z ⟨A, rfl⟩
-  rw [Phi_smul_eq δ M hM n A]
-  exact AddSubgroup.sum_mem _ fun i0 _ => AddSubgroup.sum_mem _ fun j0 _ => hlow i0 j0 (A i0 j0)
+      (La D (tor0 D cc δ) L₁ L₁').addSubgroupOf (La D (tor0 D cc δ) L₂ L₂')) :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.La_index_finite (D := Formalism.L2.Ker.Car.ofRec D) cc hcc δ L₁ L₂ L₁' L₂' h₁ h₂
 
 theorem La_index_ne_zero (cc : Ideal (𝓞 D.host.K)) (hcc : IsCurveIdeal D cc) (δ : ℂ) {N N' : ℕ}
     (L₁ L₂ : Submodule (𝓞 D.host.E) (Fin N → D.host.E))
     (L₁' L₂' : Submodule (𝓞 D.host.E) (Fin N' → D.host.E))
     (h₁ : admitted D N N' L₁ L₁') (h₂ : admitted D N N' L₂ L₂') :
-    ((La D (tor0 D cc δ) L₁ L₁').addSubgroupOf (La D (tor0 D cc δ) L₂ L₂')).index ≠ 0 := by
-  haveI := La_index_finite cc hcc δ L₁ L₂ L₁' L₂' h₁ h₂
-  exact AddSubgroup.index_ne_zero_of_finite
+    ((La D (tor0 D cc δ) L₁ L₁').addSubgroupOf (La D (tor0 D cc δ) L₂ L₂')).index ≠ 0 :=
+  Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.La_index_ne_zero (D := Formalism.L2.Ker.Car.ofRec D) cc hcc δ L₁ L₂ L₁' L₂' h₁ h₂
 
 end Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.IO
 

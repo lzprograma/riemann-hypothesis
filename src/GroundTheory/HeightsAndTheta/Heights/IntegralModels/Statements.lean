@@ -22,15 +22,6 @@ open CategoryTheory Limits AlgebraicGeometry TopologicalSpace Opposite
 
 noncomputable section
 
-section VectorBundle
-
-universe u
-
-variable {X : Scheme.{u}}
-
-
-end VectorBundle
-
 section OverZ
 
 abbrev SpecZ : Scheme.{0} := Spec (CommRingCat.of ℤ)
@@ -38,26 +29,6 @@ abbrev SpecZ : Scheme.{0} := Spec (CommRingCat.of ℤ)
 variable {X : Scheme.{0}}
 
 end OverZ
-
-section Maps
-
-variable {X : Scheme.{0}}
-
-end Maps
-
-section Pullback
-
-universe u
-
-variable {T Y Z : Scheme.{u}}
-
-end Pullback
-
-section Normal
-
-universe u
-
-end Normal
 
 section Localised
 
@@ -179,19 +150,6 @@ def FiniteNormalization.Statement : Prop :=
   ∀ (Z : Scheme.{0}) [IsIntegral Z] (f : Z ⟶ SpecZ) [LocallyOfFiniteType f] [QuasiCompact f]
     (L : Type) [Field L] [Algebra Z.functionField L] [FiniteDimensional Z.functionField L],
     IsFinite (genericSpecMap Z L).fromNormalization
-
-section Transport
-
-universe u
-
-variable {X Y : Scheme.{u}}
-
-
-end Transport
-
-section Inhabitants
-
-end Inhabitants
 
 end
 

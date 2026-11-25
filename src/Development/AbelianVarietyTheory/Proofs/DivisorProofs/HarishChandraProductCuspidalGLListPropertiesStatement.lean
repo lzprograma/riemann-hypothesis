@@ -1,7 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
-public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockParabolicSubgroupLeviProjectionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockParabolicSubgroupLeviProjection
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBilinCyclic
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarishChandraInductionGLOneLeftRightUnitStatement
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedHarishChandraInductionGLIsTwistedClassFunStatement
@@ -58,7 +58,7 @@ import Mathlib.Tactic.Lemma
 -- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarishChandraInductionGLAssoc, Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarishChandraInductionGLAssocStatement, Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarishChandraInductionGLComm, Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarishChandraInductionGLCommStatement, Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarishChandraProductCuspidalGLListProperties, Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarishChandraProductCuspidalGLListPropertiesStatement
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarishChandraInductionGLAssoc =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarishChandraInductionGLAssoc", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockParabolicSubgroupLeviProjectionStatement\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\nimport Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarishChandraInductionGLAssoc", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockParabolicSubgroupLeviProjection\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\nimport Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -76,10 +76,6 @@ def InParM (a : ℕ) {n : ℕ} (M : Matrix (Fin n) (Fin n) F) : Prop :=
 
 theorem inPar_eq (a : ℕ) {n : ℕ} (x : GL (Fin n) F) :
     InPar a x ↔ InParM a (x : Matrix (Fin n) (Fin n) F) := Iff.rfl
-
-theorem gal_id (n : ℕ) (y : GL (Fin n) F) : gal (RingHom.id F) n y = y := by
-  ext i j
-  simp [gal]
 
 theorem inPar_one (a n : ℕ) : InPar a (1 : GL (Fin n) F) := by
   intro i j hj hi
@@ -136,7 +132,7 @@ def blk0 (a b : ℕ) (α : GL (Fin a) F → ℂ) (β : GL (Fin b) F → ℂ) (n 
 theorem hc_eq [Fintype F] (a b : ℕ) (α : GL (Fin a) F → ℂ) (β : GL (Fin b) F → ℂ) (n : ℕ) (x : GL (Fin n) F) :
     hc a b α β n x = (Nat.card {p : GL (Fin n) F // InPar a p} : ℂ)⁻¹ *
       hcT a b (fun u v => α u * β v) n x := by
-  simp only [hc, hcTw, hcT, gal_id, finsum_eq_sum_of_fintype]
+  simp only [hc, hcTw, hcT, GlobalTheory.Shin.gal_id_eq, finsum_eq_sum_of_fintype]
 
 theorem hc_eq' [Fintype F] (a b : ℕ) (α : GL (Fin a) F → ℂ) (β : GL (Fin b) F → ℂ) (n : ℕ) (x : GL (Fin n) F) :
     hc a b α β n x = (Nat.card {p : GL (Fin n) F // InPar a p} : ℂ)⁻¹ *
@@ -152,8 +148,8 @@ theorem hcT_conj [Fintype F] {a b n : ℕ} (hn : n = a + b) (Φ : GL (Fin a) F �
   have e : (y * s)⁻¹ * x * (y * s) = s⁻¹ * (y⁻¹ * x * y) * s := by group
   simp only [Equiv.coe_mulRight, e]
   by_cases hz : InPar a (y⁻¹ * x * y)
-  · rw [if_pos hz, if_pos ((hs _).1.2 hz), ((hs _).2 hz).1, ((hs _).2 hz).2]
-  · rw [if_neg hz, if_neg (fun h => hz ((hs _).1.1 h))]
+  · rw [ite_eq_left hz, ite_eq_left ((hs _).1.2 hz), ((hs _).2 hz).1, ((hs _).2 hz).2]
+  · rw [ite_eq_right hz, ite_eq_right (fun h => hz ((hs _).1.1 h))]
 
 theorem hcT_sum [Fintype F] {a b n : ℕ} {ι : Type} [Fintype ι] (Φ : ι → GL (Fin a) F → GL (Fin b) F → ℂ)
     (x : GL (Fin n) F) : hcT a b (fun u v => ∑ i, Φ i u v) n x = ∑ i, hcT a b (Φ i) n x := by
@@ -285,7 +281,7 @@ theorem parabolicDiagonalBlocksProduct_assoc {a b c n : ℕ} (hn : n = a + b + c
     rfl
   unfold blk0
   by_cases h1 : InPar (a + b) z
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     by_cases h2 : InPar a (tlG (a + b) z)
     · obtain ⟨h3, h4⟩ := pp.1 ⟨h1, h2⟩
       have e1 : tlG a (tlG (a + b) z) = tlG a z := by
@@ -300,15 +296,15 @@ theorem parabolicDiagonalBlocksProduct_assoc {a b c n : ℕ} (hn : n = a + b + c
         show toG (br b c ((brG a (b + c) z : GL (Fin (b + c)) F) : Matrix (Fin (b + c)) (Fin (b + c)) F)) =
           toG (br (a + b) c ((z : GL (Fin n) F) : Matrix (Fin n) (Fin n) F))
         rw [coe_brG hn' z h3, t3]
-      rw [if_pos h2, if_pos h3, if_pos h4, e1, e2, e3, mul_assoc]
-    · rw [if_neg h2, zero_mul]
+      rw [ite_eq_left h2, ite_eq_left h3, ite_eq_left h4, e1, e2, e3, mul_assoc]
+    · rw [ite_eq_right h2, zero_mul]
       by_cases h3 : InPar a z
-      · rw [if_pos h3, if_neg (fun h4 => h2 (pp.2 ⟨h3, h4⟩).2), mul_zero]
-      · rw [if_neg h3]
-  · rw [if_neg h1]
+      · rw [ite_eq_left h3, ite_eq_right (fun h4 => h2 (pp.2 ⟨h3, h4⟩).2), mul_zero]
+      · rw [ite_eq_right h3]
+  · rw [ite_eq_right h1]
     by_cases h3 : InPar a z
-    · rw [if_pos h3, if_neg (fun h4 => h1 (pp.2 ⟨h3, h4⟩).1), mul_zero]
-    · rw [if_neg h3]
+    · rw [ite_eq_left h3, ite_eq_right (fun h4 => h1 (pp.2 ⟨h3, h4⟩).1), mul_zero]
+    · rw [ite_eq_right h3]
 
 theorem card_comap {H L : Type} [Group H] [Group L] (π : H →* L) (hπ : Function.Surjective π)
     (M : Subgroup L) : Nat.card (M.comap π) * Nat.card L = Nat.card M * Nat.card H := by
@@ -514,11 +510,6 @@ theorem aflipG_conj {n : ℕ} (x : GL (Fin n) F) : ∃ p : GL (Fin n) F, aflipG 
   rw [eq_mul_inv_iff_mul_eq]
   exact Units.ext (by simp only [Units.val_mul, aflipG_coe, IsUnit.unit_spec, h])
 
-theorem toG_coe' {n : ℕ} (x : GL (Fin n) F) : toG (x : Matrix (Fin n) (Fin n) F) = x := by
-  unfold toG
-  rw [dite_eq_left x.isUnit]
-  exact Units.ext (IsUnit.unit_spec _)
-
 theorem cl_conj {n : ℕ} {α : GL (Fin n) F → ℂ} (hα : IsCl α) (p x : GL (Fin n) F) :
     α (p * x * p⁻¹) = α x := by
   have := hα x p⁻¹
@@ -529,8 +520,8 @@ theorem class_aflip {n : ℕ} {α : GL (Fin n) F → ℂ} (hα : IsCl α) (M : M
   by_cases h : IsUnit M
   · obtain ⟨x, rfl⟩ := h
     obtain ⟨p, hp⟩ := aflipG_conj x
-    have h1 : toG (aflip (x : Matrix (Fin n) (Fin n) F)) = aflipG x := toG_coe' (aflipG x)
-    rw [h1, toG_coe', hp, cl_conj hα]
+    have h1 : toG (aflip (x : Matrix (Fin n) (Fin n) F)) = aflipG x := GlobalTheory.Shin.HcUnit.toG_val (aflipG x)
+    rw [h1, GlobalTheory.Shin.HcUnit.toG_val, hp, cl_conj hα]
   · have h' : ¬ IsUnit (aflip M) := by
       rintro ⟨x, hx⟩
       exact h ⟨aflipG x, by rw [aflipG_coe, hx, aflip_aflip]⟩
@@ -564,9 +555,6 @@ theorem br_aflip {a b : ℕ} (M : Matrix (Fin (a + b)) (Fin (a + b)) F) : br b a
   rw [dite_eq_left (by omega), dite_eq_left (by simp only [Fin.val_rev]; omega), aflip_apply]
   congr 1 <;> apply Fin.ext <;> simp only [Fin.val_rev] <;> omega
 
-theorem gal_id (n : ℕ) (y : GL (Fin n) F) : gal (RingHom.id F) n y = y := by
-  ext i j; simp [gal]
-
 end GlobalTheory.HCCommF
 end -- clump:auto
 end -- clump:auto
@@ -584,7 +572,7 @@ private lemma hc_conj_invariant {F : Type} [Field F] (a b n : ℕ) (α : GL (Fin
     (β : GL (Fin b) F → ℂ) (x p : GL (Fin n) F) :
     hc a b α β n (p * x * p⁻¹) = hc a b α β n x := by
   unfold hc hcTw
-  simp only [GlobalTheory.HCCommF.gal_id]
+  simp only [GlobalTheory.Shin.gal_id_eq]
   congr 1
   rw [← finsum_comp_equiv (Equiv.mulLeft p)]
   congr 1
@@ -610,7 +598,7 @@ private lemma hc_swap_eq_hc_aflipG {F : Type} [Field F] (a b : ℕ) (α : GL (Fi
     (β : GL (Fin b) F → ℂ) (hα : IsCl α) (hβ : IsCl β) (x : GL (Fin (a + b)) F) :
     hc b a β α (a + b) x = hc a b α β (a + b) (GlobalTheory.HCCommF.aflipG x) := by
   unfold hc hcTw
-  simp only [GlobalTheory.HCCommF.gal_id]
+  simp only [GlobalTheory.Shin.gal_id_eq]
   have hcard : Nat.card {p : GL (Fin (a + b)) F // InPar b p} =
       Nat.card {p : GL (Fin (a + b)) F // InPar a p} :=
     Nat.card_congr (Equiv.subtypeEquiv (GlobalTheory.HCCommF.aflipE (F := F) (a + b)) (fun p => by

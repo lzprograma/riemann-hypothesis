@@ -1,48 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.EpsilonPairingZeta
 import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
@@ -50,8 +9,6 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
 @[expose] public section
 
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -82,12 +39,12 @@ theorem exists_split (n m : ℕ) (f : MvPowerSeries (Fin d) O) :
     exact (Finsupp.le_degree i α).trans hα.le
   obtain ⟨a, ha⟩ := hN (f - P) fun α hα => by
     rw [map_sub, MvPolynomial.coeff_coe, hP, coeff_trunc',
-      if_pos (hle α (lt_of_lt_of_le hα (le_max_left _ _))), sub_self]
+      ite_eq_left (hle α (lt_of_lt_of_le hα (le_max_left _ _))), sub_self]
   refine ⟨P, a, ?_, ?_, fun i => ?_⟩
   · rw [← ev_coe, ← ha, ← map_add (f := _), add_sub_cancel]
   · rw [MvPolynomial.constantCoeff_eq, hP, coeff_trunc',
-      if_pos (hle 0 (by simp)), coeff_zero_eq_constantCoeff_apply]
-  · rw [hP, coeff_trunc', if_pos (hle _ (lt_of_lt_of_le (by simp) (le_max_right N 2))), lin]
+      ite_eq_left (hle 0 (by simp)), coeff_zero_eq_constantCoeff_apply]
+  · rw [hP, coeff_trunc', ite_eq_left (hle _ (lt_of_lt_of_le (by simp) (le_max_right N 2))), lin]
 
 theorem eq_zero_of_dvd [IsAdicComplete (Ideal.span {(p : O)}) O] (x : O)
     (h : ∀ m, (p : O) ^ m ∣ x) : x = 0 :=
@@ -135,7 +92,7 @@ theorem d_aeval (n : ℕ) (P : MvPolynomial (Fin d) O) :
       by_cases hij : j = i
       · subst hij; simp [MvPolynomial.constantCoeff_eq]
       · simp [hij]
-    simp only [hc, ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [hc, ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     have hx : Bialgebra.counitAlgHom O (G.A n) (c.x n j) = 0 := by simpa using c.aug n j
     rw [map_mul, MvPolynomial.aeval_X, PDiv.dUnit, AugCot.d_mul, counit_aeval, hx, zero_smul,
       add_zero]

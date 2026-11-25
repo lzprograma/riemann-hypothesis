@@ -14,35 +14,9 @@ namespace Formalism.L2.FormalSeriesBounds
 
 variable {C : Type} [Field C] {V : VF C} {d : ℕ} {I J : Type} [Fintype I] [Fintype J]
 
-private theorem exists_subring_iff_ge_zero : ∃ R : Subring C, ∀ a, a ∈ R ↔ V.Ge 0 a := by
-  refine ⟨{ carrier := {a | V.Ge 0 a}
-            mul_mem' := ?_
-            one_mem' := ?_
-            add_mem' := ?_
-            zero_mem' := ?_
-            neg_mem' := ?_ }, fun a => Iff.rfl⟩
-  · intro a b ha hb
-    have ha' : ((0 : ℝ) : WithTop ℝ) ≤ V.v a := ha
-    have hb' : ((0 : ℝ) : WithTop ℝ) ≤ V.v b := hb
-    show ((0 : ℝ) : WithTop ℝ) ≤ V.v (a * b)
-    rw [AddValuation.map_mul]
-    rw [WithTop.coe_zero] at ha' hb' ⊢
-    exact add_nonneg ha' hb'
-  · show ((0 : ℝ) : WithTop ℝ) ≤ V.v 1
-    rw [AddValuation.map_one, WithTop.coe_zero]
-  · intro a b ha hb
-    have ha' : ((0 : ℝ) : WithTop ℝ) ≤ V.v a := ha
-    have hb' : ((0 : ℝ) : WithTop ℝ) ≤ V.v b := hb
-    show ((0 : ℝ) : WithTop ℝ) ≤ V.v (a + b)
-    exact le_trans (le_min ha' hb') (V.v.map_add a b)
-  · show ((0 : ℝ) : WithTop ℝ) ≤ V.v 0
-    rw [AddValuation.map_zero]
-    exact le_top
-  · intro a ha
-    have ha' : ((0 : ℝ) : WithTop ℝ) ≤ V.v a := ha
-    show ((0 : ℝ) : WithTop ℝ) ≤ V.v (-a)
-    rw [AddValuation.map_neg]
-    exact ha'
+private theorem exists_subring_iff_ge_zero : ∃ R : Subring C, ∀ a, a ∈ R ↔ V.Ge 0 a :=
+  ⟨{ carrier := {a | V.Ge 0 a}, mul_mem' := VF.Ge.mul_int, one_mem' := VF.Ge.one,
+     add_mem' := VF.Ge.add, zero_mem' := VF.Ge.zero 0, neg_mem' := VF.Ge.neg }, fun _ => Iff.rfl⟩
 
 theorem VF.Ge.prod {ι : Type*} {s : Finset ι} {f : ι → C} (h : ∀ i ∈ s, V.Ge 0 (f i)) :
     V.Ge 0 (∏ i ∈ s, f i) := by
@@ -135,46 +109,12 @@ theorem co_spec (h : I ⊕ J → C) (k : I) : ∑ b, S.co h b * S.U b k = h (Sum
   simp only [co, Finset.sum_mul]
   rw [Finset.sum_comm]
   simp only [mul_assoc, ← Finset.mul_sum, e, Matrix.one_apply, mul_ite, mul_one, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 end Sys
 
-private theorem ge_zero_l_pow_mul_of_mem_Ty (X : Cart V d I J) :
-    ∀ (i : ℕ) (x : ℕ → I ⊕ J → C), x ∈ X.Ty → ∀ n, V.Ge 0 ((V.l : C) ^ i * x i n) := by
-  intro i
-  induction i with
-  | zero =>
-    intro x hx n
-    rw [pow_zero, one_mul]
-    exact X.t2 x hx 0 (fun j hj => absurd hj (Nat.not_lt_zero _)) n
-  | succ i ih =>
-    intro x hx n
-    have h := ih (Fs V.l x) (X.F_mem x hx) n
-    simp only [Fs] at h
-    rw [pow_succ, mul_assoc]
-    exact h
-
-private theorem ge_neg_of_ge_zero_l_pow_mul (i : ℕ) (y : C) (h : V.Ge 0 ((V.l : C) ^ i * y)) : V.Ge (-(i : ℝ)) y := by
-  unfold VF.Ge at *
-  rw [AddValuation.map_mul, AddValuation.map_pow, V.v_l] at h
-  have hi : (i • (1 : WithTop ℝ)) = ((i : ℝ) : WithTop ℝ) := by
-    rw [← WithTop.coe_one, ← WithTop.coe_nsmul, nsmul_eq_mul, mul_one]
-  rw [hi] at h
-  by_cases hy : V.v y = ⊤
-  · rw [hy]
-    exact le_top
-  · obtain ⟨t, ht⟩ := WithTop.ne_top_iff_exists.mp hy
-    rw [← ht] at h ⊢
-    rw [← WithTop.coe_add] at h
-    have h' := WithTop.coe_le_coe.mp h
-    exact WithTop.coe_le_coe.mpr (by linarith)
-
-theorem lattice_inclusion_forms_injective (X : Cart V d I J) : LatticeInclusionFormsInjective X := by
-  intro S c i n
-  exact ge_neg_of_ge_zero_l_pow_mul i _ (ge_zero_l_pow_mul_of_mem_Ty X i _ (S.mem c) n)
-
-private theorem ge_mono' {w w' : ℝ} {a : C} (h : V.Ge w a) (hw : w' ≤ w) : V.Ge w' a :=
-  le_trans (WithTop.coe_le_coe.mpr hw) h
+theorem lattice_inclusion_forms_injective (X : Cart V d I J) : LatticeInclusionFormsInjective X :=
+  fun S c i n => X.bound0 i _ (S.mem c) n
 
 theorem eq16 (X : Cart V d I J) : Eq16 X := by
   intro a u x hx i hi
@@ -185,10 +125,10 @@ theorem eq16 (X : Cart V d I J) : Eq16 X := by
       show ((_ : ℝ) : WithTop ℝ) ≤ V.v 0
       rw [AddValuation.map_zero]
       exact le_top
-    · exact ge_mono' (hx.bound_one _) (by norm_num)
+    · exact (hx.bound_one _).mono (by norm_num)
   · obtain ⟨j, rfl⟩ : ∃ j, i = j + 2 := ⟨i - 2, by omega⟩
-    refine ⟨fun k => ge_mono' (hx.bound j _) (by push_cast; linarith),
-      fun κ => ge_mono' (hx.bound j _) (by push_cast; linarith [le_max_right (1 : ℝ) ((j : ℝ) + 2 - 1)])⟩
+    refine ⟨fun k => (hx.bound j _).mono (by push_cast; linarith), fun κ =>
+      (hx.bound j _).mono (by push_cast; linarith [le_max_right (1 : ℝ) ((j : ℝ) + 2 - 1)])⟩
 
 theorem sysExists (X : Cart V d I J) : SysExists X := by
   intro u hu hty hdet

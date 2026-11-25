@@ -1,49 +1,7 @@
 module
 
 public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Analysis.Calculus.ContDiff.Comp
 public import Mathlib.Analysis.Calculus.ContDiff.Operations
 import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
@@ -143,27 +101,27 @@ theorem locDens_expand_ofFun : ∀ {e : ℕ} {X : Type} [TopologicalSpace X] (A 
           else (if k ∈ Set.range c then 0 else 1)) := by
       intro S
       by_cases h : ∀ i, c i ∈ S
-      · rw [if_pos h]
+      · rw [ite_eq_left h]
         symm
         refine Finset.prod_eq_one fun k _ => ?_
         by_cases hkS : k ∈ S
-        · rw [if_pos hkS]
+        · rw [ite_eq_left hkS]
           split_ifs <;> simp
         · have hkr : k ∉ Set.range c := by
             rintro ⟨i, rfl⟩
             exact hkS (h i)
-          rw [if_neg hkS, if_neg hkr]
-      · push_neg at h
+          rw [ite_eq_right hkS, ite_eq_right hkr]
+      · push Not at h
         obtain ⟨i, hi⟩ := h
-        rw [if_neg (fun h' => hi (h' i))]
+        rw [ite_eq_right (fun h' => hi (h' i))]
         symm
         refine Finset.prod_eq_zero (Finset.mem_univ (c i)) ?_
-        rw [if_neg hi, if_pos (Set.mem_range_self i)]
+        rw [ite_eq_right hi, ite_eq_left (Set.mem_range_self i)]
     simp only [hterm]
     rw [hPE, Finset.prod_boole]
     by_cases hs : Function.Surjective c
-    · rw [if_pos hs, if_pos (show ∀ i ∈ Finset.univ, i ∈ Set.range c from fun k _ => hs k)]
-    · rw [if_neg hs, if_neg (show ¬ ∀ i ∈ Finset.univ, i ∈ Set.range c from fun h => hs fun k => h k (Finset.mem_univ k))]
+    · rw [ite_eq_left hs, ite_eq_left (show ∀ i ∈ Finset.univ, i ∈ Set.range c from fun k _ => hs k)]
+    · rw [ite_eq_right hs, ite_eq_right (show ¬ ∀ i ∈ Finset.univ, i ∈ Set.range c from fun h => hs fun k => h k (Finset.mem_univ k))]
   have hE : ∀ B : Fin e → Matrix (Fin e) (Fin e) ℂ,
       ∑ S : Finset (Fin e), (-1 : ℂ) ^ (e - S.card) * (∑ k ∈ S, B k).det =
         ∑ σ : Equiv.Perm (Fin e), ∑ c : Fin e → Fin e,
@@ -182,10 +140,10 @@ theorem locDens_expand_ofFun : ∀ {e : ℕ} {X : Type} [TopologicalSpace X] (A 
       rw [Fintype.prod_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun c _ => ?_
       by_cases h : ∀ i, c i ∈ S
-      · rw [if_pos h, one_mul, Finset.prod_congr rfl fun i _ => if_pos (h i)]
-      · push_neg at h
+      · rw [ite_eq_left h, one_mul, Finset.prod_congr rfl fun i _ => ite_eq_left (h i)]
+      · push Not at h
         obtain ⟨i, hi⟩ := h
-        rw [if_neg (fun h' => hi (h' i)), zero_mul, Finset.prod_eq_zero (Finset.mem_univ i) (if_neg hi),
+        rw [ite_eq_right (fun h' => hi (h' i)), zero_mul, Finset.prod_eq_zero (Finset.mem_univ i) (ite_eq_right hi),
           mul_zero]
     simp only [h1, Finset.mul_sum]
     rw [Finset.sum_comm (s := (Finset.univ : Finset (Finset (Fin e))))]
@@ -224,10 +182,10 @@ theorem locDens_expand_ofFun : ∀ {e : ℕ} {X : Type} [TopologicalSpace X] (A 
             (((Equiv.Perm.sign σ : ℤ) : ℂ) * ∏ i, (if c i ∈ T then B (c i) + C else C) (σ i) i)) := by
       intro σ c
       by_cases hc : Function.Surjective c
-      · rw [if_pos hc, ← hT B C σ c hc, Finset.mul_sum, Finset.mul_sum]
+      · rw [ite_eq_left hc, ← hT B C σ c hc, Finset.mul_sum, Finset.mul_sum]
         refine Finset.sum_congr rfl fun T _ => ?_
         ring
-      · simp only [if_neg hc, zero_mul, mul_zero, Finset.sum_const_zero]
+      · simp only [ite_eq_right hc, zero_mul, mul_zero, Finset.sum_const_zero]
     rw [Finset.sum_congr rfl fun σ _ => Finset.sum_congr rfl fun c _ => hterm σ c]
     simp only [Finset.mul_sum]
     rw [Finset.sum_comm (s := (Finset.univ : Finset (Finset (Fin e))))]

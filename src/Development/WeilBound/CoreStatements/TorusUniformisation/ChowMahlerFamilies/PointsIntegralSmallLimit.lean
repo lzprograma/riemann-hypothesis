@@ -3,48 +3,8 @@ module
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.MetricsProjectionFormulaNef
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AnalyticSystemRegularityProperties
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MongeAmpereIntegralCongrPotentials
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.AnalyticForms.LeviForms.TailCut
 import ReciprocityTheory.AnalyticForms.LeviForms.TailCutA
 import ReciprocityTheory.AnalyticForms.PotentialTheory.AnalyticSubsetChartLocal
@@ -180,15 +140,15 @@ theorem tendsto_base (hC : ConvergenceSignedStatement) (a : σ) (w : Fin e → �
     (fun _ => 0) (fun t y => if 0 < t ∧ t ≤ S.t₀ then S.ph a y - S.phT a t y else 0) (|S.C| + |S.C₅|)
     (fun t => by
       by_cases h : 0 < t ∧ t ≤ S.t₀
-      · simp only [if_pos h]
+      · simp only [ite_eq_left h]
         exact defect_cont S a h.1 h.2
-      · simp only [if_neg h]
+      · simp only [ite_eq_right h]
         exact continuousOn_const)
     (fun t y hy => by
       by_cases h : 0 < t ∧ t ≤ S.t₀
-      · simp only [if_pos h]
+      · simp only [ite_eq_left h]
         exact defect_bound S a h.1 h.2 hy
-      · simp only [if_neg h, abs_zero]
+      · simp only [ite_eq_right h, abs_zero]
         exact mul_nonneg (by positivity) (zero_le_one.trans (one_le_log S y)))
     (by
       refine Metric.tendstoLocallyUniformlyOn_iff.2 fun ε hε x hx => ?_
@@ -208,7 +168,7 @@ theorem tendsto_base (hC : ConvergenceSignedStatement) (a : σ) (w : Fin e → �
       filter_upwards [hu, Ioc_mem_nhdsGT ht0] with t ht ht' y hy
       have h1 := ht _ hy.2
       simp only [Function.comp_apply, (S.A.chart j).left_inv hy.1] at h1
-      rw [if_pos ⟨ht'.1, ht'.2⟩, Real.dist_eq, zero_sub, abs_neg]
+      rw [ite_eq_left ⟨ht'.1, ht'.2⟩, Real.dist_eq, zero_sub, abs_neg]
       rwa [Real.dist_eq] at h1)
   have h0 : mInt S.A (fun i => S.th (w i) + LocPot.ofFun (S.ph (w i))) (fun _ => (0 : ℝ)) = 0 := by
     unfold mInt
@@ -219,7 +179,7 @@ theorem tendsto_base (hC : ConvergenceSignedStatement) (a : σ) (w : Fin e → �
   rw [h0] at h2
   refine h2.congr' ?_
   filter_upwards [Ioc_mem_nhdsGT ht0] with t ht
-  simp only [if_pos (show 0 < t ∧ t ≤ S.t₀ from ⟨ht.1, ht.2⟩)]
+  simp only [ite_eq_left (show 0 < t ∧ t ≤ S.t₀ from ⟨ht.1, ht.2⟩)]
   rfl
 
 end Sys

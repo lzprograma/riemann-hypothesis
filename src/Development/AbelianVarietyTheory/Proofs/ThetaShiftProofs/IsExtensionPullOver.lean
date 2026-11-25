@@ -117,7 +117,7 @@ theorem gs_pullFn {π : Y ⟶ Spec (CommRingCat.of R)} {π' : Y' ⟶ Spec (CommR
 
 def resFn (π : Y ⟶ Spec (CommRingCat.of R)) {U V : Y.Opens} (h : V ≤ U) : FnOver π U →ₗ[R] FnOver π V where
   toFun a := (Y.presheaf.map (homOfLE h).op).hom a
-  map_add' a b := map_add _ _ _
+  map_add' _ _ := map_add _ _ _
   map_smul' c a := fn_ext fun y hy =>
     (gs_res _ y h hy _).trans ((gs_smul π _ y U (h hy) c a).trans
       (Eq.trans (congrArg _ (gs_res _ y h hy _).symm) (gs_smul π _ y V hy _ _).symm))
@@ -155,7 +155,7 @@ instance : Module R (SecOver π M) where
   one_smul a := SecOver.ext π M fun j => one_smul R (chartFun π M j a)
   mul_smul x y a := SecOver.ext π M fun j => mul_smul x y (chartFun π M j a)
   smul_zero x := SecOver.ext π M fun j => smul_zero (A := FnOver π (M.U j)) x
-  smul_add x a b := SecOver.ext π M fun j => smul_add x (chartFun π M j a) _
+  smul_add x a _ := SecOver.ext π M fun j => smul_add x (chartFun π M j a) _
   add_smul x y a := SecOver.ext π M fun j => add_smul x y (chartFun π M j a)
   zero_smul a := SecOver.ext π M fun j => zero_smul R (chartFun π M j a)
 

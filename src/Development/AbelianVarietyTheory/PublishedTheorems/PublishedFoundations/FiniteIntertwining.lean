@@ -63,15 +63,8 @@ def sqRep (R : Type) [CommRing R] (N : ℕ) (lam : DomWeight N) :
   map_one' := by
     ext1 f
     apply Subtype.ext
-    have h : Formalism.GradedWeylDivisibility.rowAct R (n := N) (1 : Matrix (Fin N) (Fin N) R) = AlgHom.id R _ := by
-      apply MvPolynomial.algHom_ext
-      intro v
-      simp only [Formalism.GradedWeylDivisibility.rowAct, aeval_X, Matrix.one_apply, AlgHom.id_apply]
-      rw [Finset.sum_eq_single v.1]
-      · simp
-      · intro b _ hb
-        simp [Ne.symm hb]
-      · simp
+    have h : Formalism.GradedWeylDivisibility.rowAct R (n := N) (1 : Matrix (Fin N) (Fin N) R) = AlgHom.id R _ :=
+      Formalism.GradedWeylDivisibility.ldlat_rowAct_one
     simp [sqAct, detPow, h]
   map_mul' g g' := by
     ext1 f

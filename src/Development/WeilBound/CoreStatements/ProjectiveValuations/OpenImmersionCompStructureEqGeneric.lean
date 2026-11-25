@@ -5,40 +5,6 @@ public import Development.WeilBound.CoreStatements.ProjectiveValuations.NV
 public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsFramesOfHolPeriods
 import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameBorelGroupoidProperties
 public import Development.WeilBound.CoreStatements.ProjectiveValuations.ExistsChartFrBor
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfD
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsVanBdOfMemExtVanZ
 
@@ -118,7 +84,7 @@ theorem differentiableAt_reads {V : Unf Xo c σ r} (hσ : GoodEmb c σ) (hU : Is
     exact ⟨⟨ψ, fun x => RingHom.congr_fun e₃ x⟩, fun u => (ev_eq hy u).symm, e₁⟩
   choose φ' hφ₁ hφ₂ using hφ
   let φ : (Fin m → ℂ) → (A →ₐ[c.F] CAt σ) := fun b => if hb : b ∈ B' then φ' (s b) hb.2 else φ' (s b₀) hbW
-  have hφb : ∀ b (hb : b ∈ B'), φ b = φ' (s b) hb.2 := fun b hb => dif_pos hb
+  have hφb : ∀ b (hb : b ∈ B'), φ b = φ' (s b) hb.2 := fun b hb => dite_eq_left hb
   choose y hy using fun b => GlobalTheory.FlagMod.exists_frMap (φ b) yA
   have hsub : ∀ b ∈ B', s b ∈ ptsIn _ σ (flagOpen T.X) ∧ s b ∈ ptsIn _ σ (T.X.F.U i) := fun b hb =>
     mem_ptsIn_inf.1 (ptsIn_mono hWle hb.2)

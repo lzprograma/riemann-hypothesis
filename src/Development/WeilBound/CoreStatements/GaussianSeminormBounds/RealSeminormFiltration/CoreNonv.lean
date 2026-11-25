@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.LoweringPartRightActionInlInr
 public import Formalism.LocalToGlobal.ThetaOperatorCommutation.RealTh
 public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreDefs
 public import Mathlib.Analysis.InnerProductSpace.Orthogonal
@@ -132,9 +133,6 @@ theorem dl_XR (a : Ix p q) (l : Fin s) :
     dl p q r s (X (a, Sum.inr l)) = (1 : Pol p q r 0) ⊗ₜ[ℂ] (X (a, Sum.inr l) : Pol p q 0 s) := by
   simp [dl, dv]
 
-theorem dl_C (c : ℂ) : dl p q r s (C c) = c • ((1 : Pol p q r 0) ⊗ₜ[ℂ] (1 : Pol p q 0 s)) := by
-  rw [dl, aeval_C, Algebra.algebraMap_eq_smul_one, Algebra.TensorProduct.one_def]
-
 theorem dl_mulL (a : Ix p q) (k : Fin r) (f : Pol p q r s) :
     dl p q r s (X (a, Sum.inl k) * f) =
       (LinearMap.mulLeft ℂ (X (a, Sum.inl k) : Pol p q r 0)).rTensor _ (dl p q r s f) := by
@@ -255,20 +253,7 @@ theorem dl_omR (a b : Ix p q) (k : Fin s) (f : Pol p q r s) :
 
 theorem act_unit (a b : Ix p q) :
     fockAct1 p q r s (Eab a b) = ∑ c : Ix r s, omE ((a, c) : Ln p q r s) (b, c) := by
-  simp only [fockAct1, LinearMap.comp_apply, LinearMap.flip_apply, kroneckerMapBilinear_apply_apply, omAct,
-    LinearMap.sum_apply, LinearMap.smulRight_apply, entryLinearMap_apply]
-  rw [Fintype.sum_prod_type]
-  simp only [kroneckerMap_apply, Eab, Matrix.single_apply, Matrix.one_apply, LinearMap.mul_apply']
-  rw [Finset.sum_eq_single a]
-  · refine Finset.sum_congr rfl (fun c _ => ?_)
-    rw [Finset.sum_eq_single (b, c)]
-    · simp
-    · rintro ⟨x2, d⟩ _ hl
-      by_cases h1 : b = x2 <;> by_cases h2 : c = d <;> simp_all
-    · simp
-  · intro x1 _ hx
-    simp [Ne.symm hx]
-  · simp
+  apply _root_.PI.WFJM.fockAct1_Eab <;> assumption
 
 section Form
 
@@ -276,23 +261,11 @@ variable (b : Pol p q r 0 →ₗ[ℂ] Pol p q 0 s →ₗ[ℂ] ℂ)
 
 theorem sumL {ι : Type} [Fintype ι] (F : ι → Module.End ℂ (Pol p q r 0)) (t : Pol p q r 0 ⊗[ℂ] Pol p q 0 s) :
     (∑ i, F i).rTensor (Pol p q 0 s) t = ∑ i, (F i).rTensor (Pol p q 0 s) t := by
-  classical
-  have key : ∀ S : Finset ι, (∑ i ∈ S, F i).rTensor (Pol p q 0 s) t = ∑ i ∈ S, (F i).rTensor (Pol p q 0 s) t := by
-    intro S
-    induction S using Finset.induction_on with
-    | empty => simp
-    | insert j S hj ih => rw [Finset.sum_insert hj, Finset.sum_insert hj, LinearMap.rTensor_add, LinearMap.add_apply, ih]
-  exact key Finset.univ
+  simp only [← LinearMap.coe_rTensorHom, map_sum, LinearMap.sum_apply]
 
 theorem sumR {ι : Type} [Fintype ι] (F : ι → Module.End ℂ (Pol p q 0 s)) (t : Pol p q r 0 ⊗[ℂ] Pol p q 0 s) :
     (∑ i, F i).lTensor (Pol p q r 0) t = ∑ i, (F i).lTensor (Pol p q r 0) t := by
-  classical
-  have key : ∀ S : Finset ι, (∑ i ∈ S, F i).lTensor (Pol p q r 0) t = ∑ i ∈ S, (F i).lTensor (Pol p q r 0) t := by
-    intro S
-    induction S using Finset.induction_on with
-    | empty => simp
-    | insert j S hj ih => rw [Finset.sum_insert hj, Finset.sum_insert hj, LinearMap.lTensor_add, LinearMap.add_apply, ih]
-  exact key Finset.univ
+  simp only [← LinearMap.coe_lTensorHom, map_sum, LinearMap.sum_apply]
 
 end Form
 
@@ -723,13 +696,13 @@ theorem unit_homog {p q r : ℕ} (a b : Ix p q) (i : ℕ) (P : Pol p q r 0) (hP 
   · refine ⟨1 + (1 + i), Submodule.sum_mem _ fun c _ => ?_⟩
     rcases c with c | c
     · rw [PI.FHS.omE_apply_of_ne (by simp)]
-      simp only [raiB, lowB, linePos, if_true, Bool.false_eq_true, if_false, LinearMap.mulLeft_apply]
+      simp only [raiB, lowB, linePos, ite_true, Bool.false_eq_true, ite_false, LinearMap.mulLeft_apply]
       exact (isHomogeneous_X ℂ _).mul ((isHomogeneous_X ℂ _).mul hP')
     · exact c.elim0
   · refine ⟨i - 1 - 1, Submodule.sum_mem _ fun c _ => ?_⟩
     rcases c with c | c
     · rw [PI.FHS.omE_apply_of_ne (by simp)]
-      simp only [raiB, lowB, linePos, if_true, Bool.false_eq_true, if_false, LinearMap.neg_apply]
+      simp only [raiB, lowB, linePos, ite_true, Bool.false_eq_true, ite_false, LinearMap.neg_apply]
       exact Submodule.neg_mem _ (hP'.pderiv.pderiv)
     · exact c.elim0
   · exact absurd trivial hab
@@ -967,7 +940,7 @@ theorem nontrivial_of_pair {p q r s : ℕ} (c : ℂ) (c0 : ℚ) (hc : c = c0) (h
   have hlam : ∀ a, (starRingEnd ℂ) (lam a) = lam a := by
     intro a
     have h1 := fock_inner_adjoint_first a a x x
-    rw [hxw a a (hsb a), if_pos rfl, epsB_self, one_mul, PI.FHS.fockInner_smul_left,
+    rw [hxw a a (hsb a), ite_eq_left rfl, epsB_self, one_mul, PI.FHS.fockInner_smul_left,
       PI.FHS.fockInner_smul_right] at h1
     have hne : fockInner x x ≠ 0 := fun h0 => hx0 (PI.FHS.fockInner_self_eq_zero h0)
     exact mul_right_cancel₀ hne h1
@@ -982,10 +955,10 @@ theorem nontrivial_of_pair {p q r s : ℕ} (c : ℂ) (c0 : ℚ) (hc : c = c0) (h
     rw [← conj_first_action_comm, hyw b a (hsym a b hab)]
     by_cases hab' : a = b
     · subst hab'
-      rw [if_pos rfl, if_pos rfl, if_pos rfl, cjP_smul, epsB_self, one_smul, map_sub, hlam, map_ratCast,
+      rw [ite_eq_left rfl, ite_eq_left rfl, ite_eq_left rfl, cjP_smul, epsB_self, one_smul, map_sub, hlam, map_ratCast,
         sub_smul]
       abel
-    · rw [if_neg hab', if_neg hab', if_neg (Ne.symm hab'), zero_smul, zero_smul]
+    · rw [ite_eq_right hab', ite_eq_right hab', ite_eq_right (Ne.symm hab'), zero_smul, zero_smul]
       simp [cjP]
   have hyl' : ∀ (i : Fin p) (j : Fin q), ρB (Eab (Sum.inr j) (Sum.inl i)) (cjP y : FV p q 0 s) = 0 := by
     intro i j
@@ -993,7 +966,7 @@ theorem nontrivial_of_pair {p q r s : ℕ} (c : ℂ) (c0 : ℚ) (hc : c = c0) (h
     refine (dualAct_Eab (fvAct1 p q 0 s) (c0 : ℂ) _ _ (cjP y)).trans ?_
     change (if (Sum.inr j : Ix p q) = Sum.inl i then (c0 : ℂ) else 0) • cjP y -
       epsB (Sum.inr j) (Sum.inl i) • fockAct1 p q 0 s (Eab (Sum.inl i) (Sum.inr j)) (cjP y) = 0
-    rw [← conj_first_action_comm, hyl i j, if_neg (by simp)]
+    rw [← conj_first_action_comm, hyl i j, ite_eq_right (by simp)]
     simp [cjP]
   obtain ⟨Φ, hΦ, hΦx⟩ := graph_map (fvAct1 p q r 0) ρB (lie1 p q r 0) (dualAct_lie (lie1 p q 0 s) _)
     (adj1 p q r 0) (dualAct_adj (adj1 p q 0 s) c0) lam x (cjP y) hx0 hxw hyw' hxl hyl' (proj_gen x dx hxh)

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilMixedCoordinatesContinuousBoundedSupNorm
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.KerBF
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ComplexEmbeddingHermitianQuadrupleSum
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergOperatorThetaFunctionalMixedSourceModeStatement
@@ -56,7 +57,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf
 
 namespace GlobalTheory.Unf.TermLaw
@@ -188,27 +188,7 @@ theorem continuous_periodic_integral {X : Type} [TopologicalSpace X] {m n : ℕ}
     {𝓕 : Set (Mx D m n)} (h : IsCovolOne (ratMx D m n) μ 𝓕) (G : X → Mx D m n → ℂ)
     (hG : Continuous (Function.uncurry G)) (hper : ∀ p, ∀ γ ∈ ratMx D m n, ∀ a, G p (γ + a) = G p a) :
     Continuous fun p => ∫ a in 𝓕, G p a ∂μ := by
-  obtain ⟨i1, i2, i3, i4, i5, K, hK, hKc⟩ := lattice_Mx D m n
-  haveI : BorelSpace (Mx D m n) := ⟨rfl⟩
-  have hint : ∀ p, IntegrableOn (G p) 𝓕 μ := fun p => covolOne_integrableOn h (G p) (hG.uncurry_left p) (hper p)
-  refine continuous_iff_continuousAt.2 fun p₀ => Metric.tendsto_nhds.2 fun ε hε => ?_
-  have hev : ∀ᶠ p in nhds p₀, ∀ k ∈ K, ‖G p k - G p₀ k‖ < ε / 2 :=
-    hK.eventually_forall_of_forall_eventually fun k hk => by
-      have hca : ContinuousAt (fun q : X × Mx D m n => ‖Function.uncurry G q - G p₀ q.2‖) (p₀, k) :=
-        (hG.sub ((hG.uncurry_left p₀).comp continuous_snd)).norm.continuousAt
-      have h1 : ‖Function.uncurry G (p₀, k) - G p₀ (p₀, k).2‖ < ε / 2 := by
-        rw [Function.uncurry_apply_pair, sub_self, norm_zero]; exact half_pos hε
-      exact hca.eventually_lt continuousAt_const h1
-  filter_upwards [hev] with p hp
-  rw [dist_eq_norm, ← integral_sub (hint p) (hint p₀)]
-  have hb : ∀ a ∈ 𝓕, ‖G p a - G p₀ a‖ ≤ ε / 2 := fun a _ => by
-    obtain ⟨γ, hγ, ha⟩ := hKc a
-    rw [← hper p γ hγ a, ← hper p₀ γ hγ a]
-    exact (hp _ ha).le
-  have h1 : μ 𝓕 = 1 := h.2.2
-  calc ‖∫ a in 𝓕, (G p a - G p₀ a) ∂μ‖ ≤ ε / 2 * _ :=
-        norm_setIntegral_le_of_norm_le_const (by rw [h1]; exact ENNReal.one_lt_top) hb
-    _ < ε := by simp [Measure.real, h1]; linarith
+  first | exact _root_.GlobalTheory.MixCont.continuous_covolOne_integral | exact @_root_.GlobalTheory.MixCont.continuous_covolOne_integral | apply _root_.GlobalTheory.MixCont.continuous_covolOne_integral <;> assumption
 
 end GlobalTheory.Unf.TermLaw
 
@@ -238,7 +218,7 @@ theorem term_laws : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (V V₀ W : HS
       mixS_nC d (hMS _ hΨ), hx']
     have hxu : rat x ⬝ u.1 ∈ ratMx D W.rank ρ := ratMx_mul (rat_mem x) hru
     have hq : ψ (d.qS W c (rat x ⬝ u.1)) = 1 :=
-      (((GlobalTheory.T.mixedModelCentralTerms_via_gramMatrices D).1 V V₀ W ρ d).2.2 ψ hstd).2.1 _ hxu c hrc
+      (((_root_.GlobalTheory.CentralGram.central D).1 V V₀ W ρ d).2.2 ψ hstd).2.1 _ hxu c hrc
     obtain ⟨β, hβ⟩ := ratMx_mul (rat_mem x) hrub
     have hθ := (hMV Ψ hΨ (rat x ⬝ u.1)).quasi β 0
     rw [add_zero, GlobalTheory.MixModel.symplOH_zero_right, neg_zero, AddChar.map_zero_eq_one, one_mul] at hθ

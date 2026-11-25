@@ -104,8 +104,6 @@ open MeasureTheory Set Formalism.BasicNotions Formalism.MainNotions.S Formalism.
   NumberField
 open scoped ENNReal
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def FormAllC : Prop :=
   ∀ (D : D7) (X : HidaSetting D) (Y : Formalism.L2.SG.Full.Full X) (u u' : D.what₂.Word)
     (t : GTerm X u u' (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u')) (μR ν : Measure X.B.I.Ginf) (K : Set X.B.I.Ginf),

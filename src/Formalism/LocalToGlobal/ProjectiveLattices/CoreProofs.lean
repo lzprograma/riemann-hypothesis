@@ -66,7 +66,7 @@ theorem unitIndep_of (hW : WtField Xo c) (hU : IntDiagUnit Xo c) : UnitIndep Xo 
     exact zero_ne_one hu
   by_cases hx : x = 0
   · simp [hx]
-  · rw [if_neg (mul_ne_zero hne hx), if_neg hx, vV_mul_lemma hu hx]
+  · rw [ite_eq_right (mul_ne_zero hne hx), ite_eq_right hx, vV_mul_lemma hu hx]
 
 theorem intFrNe_of (hA : AlgPtLa Xo c) (hE : IntFrExt Xo c) :
     IntFrNe Xo c (fun _ _ y => IntFr.IsAlg y) := by

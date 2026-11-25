@@ -110,11 +110,6 @@ theorem _root_.GlobalTheory.QuadSymbol.Model.eta_real_place (w : InfinitePlace K
 
 end Real
 
-section Tower
-variable {F K : Type} [Field F] [Field K] [Algebra F K] (d : F)
-
-end Tower
-
 end GlobalTheory.QuadSymbol.Model
 
 end

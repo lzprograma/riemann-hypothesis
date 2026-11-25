@@ -9,6 +9,7 @@ import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCou
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.NGCong
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.ValOneOfNotMem
 import Mathlib.Tactic.TypeStar
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MulConjApply
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ZzPlusSecondProjection, Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefXiTyped
@@ -26,8 +27,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
   Formalism.L2.SG.LsDatumB
 open Classical ValuativeRel
 open Formalism.L2.SG.Pf.AtPt Formalism.L2.SG.TermLoc
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Tau1Cut
 
@@ -54,7 +53,7 @@ theorem ptT_eq (hN : PairVal.NormRepExists D u u' F0 what₂) (hrows : IsRowReps
   obtain ⟨y, hy⟩ := hN γ w hat hrel hgen
   have hex : ∃ x : Point D.host.E (D.R.rS + 1) × LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) × PairVal.MatR D ×
       PairVal.MatR D, PairVal.NormRep γ x.1 x.2.1 x.2.2.1 x.2.2.2 := ⟨(w, y), hy⟩
-  have hn : nrep γ = some hex.choose := dif_pos hex
+  have hn : nrep γ = some hex.choose := dite_eq_left hex
   obtain ⟨hRep, -, hL, hU, e⟩ := hex.choose_spec
   obtain ⟨F₁, hR₁, -, hc₁⟩ := hat
   have hw : w = hex.choose.1 := pt_eq_of_cells cell_point_uniqueness (_root_.term_function_const D u u') hrows γ
@@ -113,7 +112,7 @@ theorem clsOf_mul_sgn (p : PlF D) (Y : MatP D p) :
   unfold clsOf
   by_cases hc : (∀ a b, Y a b ∈ (M p).R) ∧ IsUnit Y.det
   · have hc' : (∀ a b, (Y * S) a b ∈ (M p).R) ∧ IsUnit (Y * S).det := ⟨hint.2 hc.1, hdet.2 hc.2⟩
-    rw [dif_pos hc, dif_pos hc']
+    rw [dite_eq_left hc, dite_eq_left hc']
     congr 1
     apply Eq.symm
     apply Quotient.sound
@@ -132,7 +131,7 @@ theorem clsOf_mul_sgn (p : PlF D) (Y : MatP D p) :
       rw [Matrix.diagonal_apply]
       by_cases hb : b = Fin.last D.R.rS
       · subst hb; simp
-      · rw [if_neg (Ne.symm hb), if_neg hb]
+      · rw [ite_eq_right (Ne.symm hb), ite_eq_right hb]
     refine ⟨?_⟩
     have key := isoLR (M p) ⟨Matrix.of fun a b => ⟨Y a b, hc.1 a b⟩, by
         have : (Matrix.of fun a b => (⟨Y a b, hc.1 a b⟩ : (M p).R)).map (M p).R.subtype = Y := rfl
@@ -184,15 +183,7 @@ theorem det_mem_R (A : Matrix (Fin n) (Fin n) E) (h : ∀ i j, A i j ∈ M.R) : 
 
 theorem adj_mem_R (A : Matrix (Fin n) (Fin n) E) (h : ∀ i j, A i j ∈ M.R) (a b : Fin n) :
     A.adjugate a b ∈ M.R := by
-  rw [Matrix.adjugate_apply]
-  refine det_mem_R _ fun i j => ?_
-  rw [Matrix.updateRow_apply]
-  split_ifs
-  · rw [Pi.single_apply]
-    split_ifs
-    · exact one_mem _
-    · exact zero_mem _
-  · exact h _ _
+  apply _root_.Formalism.L2.SG.Pf.PCountEx.mem_of_adj <;> assumption
 
 theorem intUp_inv {ρ : Matrix (Fin n) (Fin n) E} (h : TieN.IntUp M ρ) : TieN.IntUp M ρ⁻¹ := by
   have hU : IsUp ρ := ⟨h.1, fun a b hab => h.2.1 b a hab⟩
@@ -538,8 +529,6 @@ open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S
 open Classical ValuativeRel
 open Formalism.L2.SG.Pf.AtPt Formalism.L2.SG.TermLoc
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section QMul
 
 variable {K : Type} [Field K] [ValuativeRel K] (q : K)
@@ -636,8 +625,8 @@ theorem xiTyped_of_ctx {Zd : LocDat D} {u u' : D.what₂.Word} {F0 : FlagG (VS D
       (if Fin.last D.R.rS = c then 1 else 0) = 0 := by
     intro c
     by_cases hc : Fin.last D.R.rS = c
-    · rw [if_pos hc, ← hc, hW.2.1]; simp
-    · rw [if_neg hc, hW.1 _ _ (lt_of_le_of_ne (Fin.le_last c) (Ne.symm hc))]; simp
+    · rw [ite_eq_left hc, ← hc, hW.2.1]; simp
+    · rw [ite_eq_right hc, hW.1 _ _ (lt_of_le_of_ne (Fin.le_last c) (Ne.symm hc))]; simp
 
   have hcoef : ∀ σ : D.host.E →+* (D.s.atP p).Fp, ∀ a c : Fin (D.R.rS + 1), a < c →
       QM (g.q : (D.s.atP p).Fp) (σ ((ξ a c : 𝓞 D.host.E) : D.host.E)) := by
@@ -709,7 +698,7 @@ theorem xiTyped_of_ctx {Zd : LocDat D} {u u' : D.what₂.Word} {F0 : FlagG (VS D
       rw [h] at hac; exact absurd hac (not_lt.2 (Fin.le_last c))
     obtain ⟨i, rfl⟩ : ∃ i : Fin D.R.rS, Fin.castSucc i = a := ⟨a.castPred ha, Fin.castSucc_castPred a ha⟩
     have hzi := hz i
-    rw [if_neg (ne_of_lt hac), sub_zero, sub_eq_zero] at hzi
+    rw [ite_eq_right (ne_of_lt hac), sub_zero, sub_eq_zero] at hzi
     have hv : valuation (D.s.atP p).Fp (σ ((t : D.host.E) * s)) = 1 := by
       rw [map_mul, Valuation.map_mul, PI.CntNotIntW.val_one_of_not_mem σ _ hl0 hl t htP,
         PI.CntNotIntW.val_one_of_not_mem σ _ hl0 hl s hsP, one_mul]

@@ -3,6 +3,7 @@ module
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsStatement
 import Mathlib.Tactic.TypeStar
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.OpEqExp
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.HasDerivAtRealOfComplex
 
 @[expose] public section
 
@@ -30,17 +31,9 @@ theorem inK_entry_eq_zero {ε : Fin n → Bool} {Y : Matrix (Fin n) (Fin n) ℂ}
 
 theorem single_mul_Jm_comm {ε : Fin n → Bool} {a b : Fin n} (hab : ε a = ε b) (c : ℂ) :
     Matrix.single a b c * Jm ε = Jm ε * Matrix.single a b c := by
-  unfold Jm
-  ext i j
-  rw [Matrix.mul_diagonal, Matrix.diagonal_mul]
-  by_cases hi : a = i
-  · by_cases hj : b = j
-    · subst hi
-      subst hj
-      simp only [hab]
-      ring
-    · simp [hj]
-  · simp [hi]
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.DS.HW.single_mul_Jm
+    | apply _root_.ReciprocityTheory.ChartRestriction.DS.HW.single_mul_Jm <;> first | assumption | rfl | infer_instance
 
 private theorem pow_mem_lemma {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     (W : Submodule ℂ V) (A : V →L[ℂ] V) (hA : ∀ v ∈ W, A v ∈ W) (k : ℕ) :

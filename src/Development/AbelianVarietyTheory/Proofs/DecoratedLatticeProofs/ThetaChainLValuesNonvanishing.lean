@@ -51,8 +51,6 @@ open scoped TensorProduct InnerProductSpace ComplexConjugate
 
 namespace GlobalTheory.ChainOnto
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section General
 
 variable {K : Type} [Field K] [NumberField K]

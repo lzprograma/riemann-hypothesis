@@ -14,8 +14,6 @@ open Matrix
 
 namespace Formalism.L2.SG.Pf.RelPtR
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : HidaSetting D} {θ : ℝ} (C : Choice X θ)
 
 theorem rv_crd_fvec (u : D.what₂.Word) (v : InfinitePlace X.B.I.F) (a : Fin (D.R.rS + 1)) :

@@ -3,51 +3,7 @@ module
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
 public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockDiagonalMinorVanishing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -142,11 +98,11 @@ variable {R : Type} [CommRing R] {N : ℕ}
 theorem minorIJ_eq (h : Matrix (Fin N) (Fin N) R) {I J : Finset (Fin N)} {s : ℕ} (hI : I.card = s) (hJ : J.card = s) :
     minorIJ h I J = (h.submatrix (I.orderEmbOfFin hI) (J.orderEmbOfFin hJ)).det := by
   subst hJ
-  exact dif_pos hI
+  exact dite_eq_left hI
 
 theorem minorIJ_one (I : Finset (Fin N)) : minorIJ (1 : Matrix (Fin N) (Fin N) R) I I = 1 := by
   unfold minorIJ
-  rw [dif_pos rfl]
+  rw [dite_eq_left rfl]
   have : (1 : Matrix (Fin N) (Fin N) R).submatrix ⇑(I.orderEmbOfFin rfl) ⇑(I.orderEmbOfFin rfl) = 1 :=
     Matrix.submatrix_one_embedding (I.orderEmbOfFin rfl).toEmbedding
   rw [this, Matrix.det_one]
@@ -165,7 +121,7 @@ theorem minorIJ_conj (h : Matrix (Fin N) (Fin N) ℂ) (I J : Finset (Fin N)) :
     minorIJ hᴴ J I = star (minorIJ h I J) := by
   unfold minorIJ
   by_cases e : I.card = J.card
-  · rw [dif_pos e.symm, dif_pos e, ← Matrix.det_conjTranspose, Matrix.conjTranspose_submatrix]
+  · rw [dite_eq_left e.symm, dite_eq_left e, ← Matrix.det_conjTranspose, Matrix.conjTranspose_submatrix]
     exact det_submatrix_orderEmbOfFin_congr e _ _ _ _ _ _ _
   · rw [dite_eq_right (fun e' => e e'.symm), dite_eq_right e, star_zero]
 
@@ -192,7 +148,7 @@ theorem exists_im {s : ℕ} (I : Finset (Fin N)) (h : I.card = s) : ∃ A : Plue
 theorem cols_eq (i : Fin N) (hi : (i : ℕ) + 1 ≤ N) :
     stepCols N N i = im ⟨Fin.castLE hi, Fin.strictMono_castLE _⟩ := by
   ext a
-  simp only [stepCols, im, Finset.mem_filter, Finset.mem_univ, true_and, if_pos hi, Finset.mem_image]
+  simp only [stepCols, im, Finset.mem_filter, Finset.mem_univ, true_and, ite_eq_left hi, Finset.mem_image]
   constructor
   · rintro ⟨-, h⟩
     exact ⟨⟨a, by omega⟩, Fin.ext (by simp)⟩
@@ -295,9 +251,9 @@ theorem good (x : (Σ k, baseIdx (FlIdx Ψ N) (blk Ψ N) k) → ℚ) (Q : Ideal 
   have r0 : RegAt x Q (0 : ℚ) := by simpa using regAt_int x hQ 0
   refine ⟨fun k => isEmptyElim k, fun q I => ?_, fun p _ => ⟨one_ne_zero, ?_, ?_⟩⟩
   · by_cases e : I = im q.2
-    · simp only [frame, coef, if_pos e]
+    · simp only [frame, coef, ite_eq_left e]
       exact ⟨r1, r1⟩
-    · simp only [frame, coef, if_neg e]
+    · simp only [frame, coef, ite_eq_right e]
       exact ⟨r0, r0⟩
   · simpa [frame] using r1
   · simpa [frame] using r1
@@ -347,7 +303,7 @@ def model : FlagModel (yFl Ψ N) Ψ N N where
   y_step p k hp m := by
     obtain rfl := blk_some.1 hp
     rw [Finset.sum_eq_single (im m) (fun I _ hI => by simp [coef, hI]) (by simp)]
-    simp only [coef, if_true, map_one, one_mul]
+    simp only [coef, ite_true, map_one, one_mul]
     refine Eq.trans ?_ (minor_im _ (stp k).2 (step_le k.2) m).symm
     rw [yFl, RingHom.map_det, ← det_transpose]
     rfl
@@ -386,8 +342,8 @@ theorem dy_eq (p : Ψ × Fin N) : (model Ψ N).dy p = fun q => if q.1 = p.1 ∧ 
     · rintro ⟨rfl, h⟩
       exact ⟨rfl, h.symm⟩
   by_cases hc : q.1 = p.1 ∧ (q.2 : ℕ) = p.2
-  · rw [if_pos (e.2 hc), if_pos hc]
-  · rw [if_neg (fun h => hc (e.1 h)), if_neg hc]
+  · rw [ite_eq_left (e.2 hc), ite_eq_left hc]
+  · rw [ite_eq_right (fun h => hc (e.1 h)), ite_eq_right hc]
 
 theorem periodGram : IsPeriodGram N (1 : Matrix (Fin N) (Fin N) ℂ) 1 := by
   have hE : ∀ a : {a : Fin N // (a : ℕ) < N - N}, False := fun a => by
@@ -446,7 +402,7 @@ theorem induced (zb) (p : Ψ × Fin N) : (model Ψ N).IsInducedAt (frame Ψ N) z
       rw [← hX]
       positivity
     rw [hA, hX]
-    simp only [blockPot, detFac_one, if_pos hpr, Complex.one_re, Real.log_one, mul_zero, zero_add]
+    simp only [blockPot, detFac_one, ite_eq_left hpr, Complex.one_re, Real.log_one, mul_zero, zero_add]
     rcases hnn.lt_or_eq with hpos | h0
     · rw [Real.log_rpow hpos]
     · rw [← h0]
@@ -528,13 +484,6 @@ section -- clump:auto
 
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
-
-namespace GlobalTheory.CompanionTheory.Ar.PB
-
-theorem flagModel_over_point : ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] [Nonempty Ψ] (N : ℕ), 2 ≤ N → ∃ (M : FlagModel (yFl Ψ N) Ψ N N) (BM : BaseMetric M 0), (∀ p, BM.hom p = yLineFl Ψ N p) ∧ (∀ p, fsHerm (FlIdx Ψ N) (M.dy p) = yLineFl Ψ N p) ∧ bdry BM.s = ∅ := by
-  exact @PositivityTheory.Xgp.t_c_fl_model
-
-end GlobalTheory.CompanionTheory.Ar.PB
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagVarietyModelBaseMetric =====

@@ -64,8 +64,7 @@ namespace GlobalTheory.HeckeLocN
 variable {D : D7}
 
 def mt0 (M : MtFam D) : MtFam0 D.host D.what₂ := fun μ j h1 h2 =>
-  { wt := (M μ j h1 h2).wt, J := (M μ j h1 h2).J, χ := (M μ j h1 h2).χ, J_open := (M μ j h1 h2).J_open,
-    real := (M μ j h1 h2).real, real_inj := (M μ j h1 h2).real_inj, real_range := (M μ j h1 h2).real_range }
+  { wt := (M μ j h1 h2).wt, J := (M μ j h1 h2).J, χ := (M μ j h1 h2).χ, real := (M μ j h1 h2).real }
 
 def plEmb (pl : PlSide D) : PlEmb D.what₂ where
   emb w := (pl.ι w).symm.toRingHom.comp D.what₂.embLL
@@ -79,23 +78,6 @@ def QOver (C : NChoice D) : Prop := ∀ w (v v' : PlE D.host), v ∈ C.Q w →
   (∃ v₀ : HeightOneSpectrum (𝓞 (maximalRealSubfield D.host.E)), NG.OverPl v v₀ ∧ NG.OverPl v' v₀) → v' ∈ C.Q w
 
 def QConj (C : NChoice D) : Prop := ∀ w (v v' : PlE D.host), v' ∈ C.Q w → IsConjPl D.host v v' → v ∈ C.Q w
-
-def nbase (M : MtFam D) (C : NChoice D) (hR : HeckeLift0 (mt0 M) C.Q) (X : CoefIn D.what₂)
-    (hS : SplitK (mt0 M) C.Q hR X) (hO : QOver C) (hc : QConj C) : NLocBase D M where
-  Oc := OcC X
-  ec := ecC X
-  ec_w := ecC_w X
-  V := VC X
-  iV := iVC X
-  iV_basis := iVC_basis X
-  Qc _ w := C.Q w
-  hL := hLC (mt0 M) C.Q hR
-  hL_def j w h1 h2 v k s ϖ hg hcj hu x := hLC_spec (mt0 M) C.Q hR j w v k h1 h2 hg s ϖ hcj hu x
-  hK := hKC (mt0 M) C.Q hR X
-  hK_def := hKC_def (mt0 M) C.Q hR X
-  split j w v k hg := hS j w v k hg
-  Qc_over _ w := hO w
-  Qc_conj _ w := hc w
 
 abbrev base (M : MtFam D) (C : NChoice D) (hR : HeckeLift0 (mt0 M) C.Q) (X : CoefIn D.what₂)
     (hS : SplitK (mt0 M) C.Q hR X) : LocBase0 D.host D.what₂ :=
@@ -233,8 +215,8 @@ def mkX (hs : HeckeStd0 B0) (hd : FinDimV B0) (hL : MtLoc B0 (partCompl_of hs hd
   chi_cont := hChi
   chi_def i c _ _ := by rw [chiN_one]; rfl
   s0 i := if lOf B0 i = 2 then D.host.QS.factorization 2 else max 1 (D.host.QS.factorization (lOf B0 i))
-  restNLevelExponent_of_odd i hl := if_neg hl
-  restNLevelExponent_of_two i hl := if_pos hl
+  restNLevelExponent_of_odd i hl := ite_eq_right hl
+  restNLevelExponent_of_two i hl := ite_eq_left hl
   S i := (exceptional_places_finite D.host (lOf B0 i)).toFinset
   Q i := B0.Qw (wOf B0 i)
   SQ_split := hSQs

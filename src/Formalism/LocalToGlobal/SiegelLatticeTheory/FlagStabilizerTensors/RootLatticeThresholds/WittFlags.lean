@@ -14,8 +14,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.WittFlags
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Gen
 
 variable {R K V : Type*} [CommRing R] [Field K] [StarRing K] [Algebra R K]

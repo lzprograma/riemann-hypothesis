@@ -78,8 +78,7 @@ theorem exists_consecutive_ratio_le_rpow :
   have hra : x ≤ r ^ a := by rw [← hrq]; exact pow_le_pow_of_le_one hr0.le hr1 haq
 
   obtain ⟨b, hb, hbr⟩ : ∃ b < a, τ b / τ (b + 1) ≤ r := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     have hstep : ∀ b < a, r * τ (b + 1) < τ b := fun b hb =>
       (lt_div_iff₀ (hpos (b + 1) (by omega))).mp (hne b hb)
     have hind : ∀ n, n < a → r ^ (n + 1) * τ (n + 1) < τ 0 := by

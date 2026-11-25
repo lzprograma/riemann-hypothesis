@@ -3,48 +3,6 @@ module
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupBasics.PtEntryNeZeroImp
 public import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupBasics.FlagMatLower
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -70,17 +28,17 @@ theorem pt_spec (p : Point ℂ (r + 1)) (i : Fin (r + 1)) :
       by_cases h1 : i < s
       · have e1 : pv ((t, s) :: bs) i = s - 1 - i := by simp [pv, h1]
         have e2 : pv ((t, s) :: bs) (s - 1 - i) = i := by
-          simp only [pv]; rw [if_pos (by omega)]; omega
+          simp only [pv]; rw [ite_eq_left (by omega)]; omega
         refine ⟨by omega, by rw [e1, e2], ?_⟩
         rw [e1]; unfold ptEntry
-        rw [if_pos ⟨h1, by omega⟩, if_pos (by omega)]; exact ht
+        rw [ite_eq_left ⟨h1, by omega⟩, ite_eq_left (by omega)]; exact ht
       · obtain ⟨ih1, ih2, ih3⟩ := pv_spec bs hb' (i - s) (by omega)
         have e1 : pv ((t, s) :: bs) i = s + pv bs (i - s) := by simp [pv, h1]
         have e2 : pv ((t, s) :: bs) (s + pv bs (i - s)) = i := by
-          simp only [pv]; rw [if_neg (by omega), Nat.add_sub_cancel_left, ih2]; omega
+          simp only [pv]; rw [ite_eq_right (by omega), Nat.add_sub_cancel_left, ih2]; omega
         refine ⟨by omega, by rw [e1, e2], ?_⟩
         rw [e1]; unfold ptEntry
-        rw [if_neg (by omega), if_pos ⟨by omega, by omega⟩, Nat.add_sub_cancel_left]; exact ih3
+        rw [ite_eq_right (by omega), ite_eq_left ⟨by omega, by omega⟩, Nat.add_sub_cancel_left]; exact ih3
   have h := pv_spec p.1 p.2.1 i.val (by rw [p.2.2]; exact i.isLt)
   rw [p.2.2] at h
   exact h
@@ -109,16 +67,16 @@ theorem zhat_pt {z z' : Fin (2 * r + k + 1) → ℂ} {g : Matrix (Fin (2 * r + k
       unfold ptEntry at h
       unfold pv
       by_cases h1 : i < s ∧ j < s
-      · rw [if_pos h1] at h
+      · rw [ite_eq_left h1] at h
         by_cases h2 : i + j + 1 = s
-        · rw [if_pos h1.1]; omega
-        · rw [if_neg h2] at h; exact absurd rfl h
-      · rw [if_neg h1] at h
+        · rw [ite_eq_left h1.1]; omega
+        · rw [ite_eq_right h2] at h; exact absurd rfl h
+      · rw [ite_eq_right h1] at h
         by_cases h3 : s ≤ i ∧ s ≤ j
-        · rw [if_pos h3] at h
+        · rw [ite_eq_left h3] at h
           have := ptEntry_ne_zero_imp bs (i - s) (j - s) h
-          rw [if_neg (by omega)]; omega
-        · rw [if_neg h3] at h; exact absurd rfl h
+          rw [ite_eq_right (by omega)]; omega
+        · rw [ite_eq_right h3] at h; exact absurd rfl h
   have hZ : Zhat k r z z' g i j = (-1 : ℂ) ^ (r - j.val) * ptMat p i j := by
     have h := congrFun (congrFun hP i) j
     simp only [ZhatO] at h
@@ -150,7 +108,7 @@ theorem pt_adj (p : Point ℂ (r + 1)) (i i1 : Fin (r + 1)) (hi1 : i1.val = i.va
         rw [e1, e2]
         refine ⟨by omega, ?_⟩
         unfold ptEntry
-        rw [if_pos ⟨by omega, h1⟩, if_pos (by omega), if_pos ⟨by omega, by omega⟩, if_pos (by omega)]
+        rw [ite_eq_left ⟨by omega, h1⟩, ite_eq_left (by omega), ite_eq_left ⟨by omega, by omega⟩, ite_eq_left (by omega)]
       · by_cases h2 : i + 1 = s
         · right
           have e1 : pv ((t, s) :: bs) i = s - 1 - i := by simp [pv, show i < s by omega]
@@ -158,7 +116,7 @@ theorem pt_adj (p : Point ℂ (r + 1)) (i i1 : Fin (r + 1)) (hi1 : i1.val = i.va
           rw [e1, e2]; omega
         · have e1 : pv ((t, s) :: bs) i = s + pv bs (i - s) := by simp [pv, show ¬ i < s by omega]
           have e2 : pv ((t, s) :: bs) (i + 1) = s + pv bs (i - s + 1) := by
-            simp only [pv]; rw [if_neg h1, show i + 1 - s = i - s + 1 by omega]
+            simp only [pv]; rw [ite_eq_right h1, show i + 1 - s = i - s + 1 by omega]
           rw [e1, e2]
           rcases pv_adj bs hb' (i - s) (by omega) with ⟨h3, h4⟩ | h3
           · left
@@ -168,7 +126,7 @@ theorem pt_adj (p : Point ℂ (r + 1)) (i i1 : Fin (r + 1)) (hi1 : i1.val = i.va
             have hC : ¬ (s + pv bs (i - s) < s ∧ i < s) := by omega
             have hD : s ≤ s + pv bs (i - s) ∧ s ≤ i := by omega
             unfold ptEntry
-            rw [if_neg hA, if_pos hB, if_neg hC, if_pos hD, Nat.add_sub_cancel_left, Nat.add_sub_cancel_left,
+            rw [ite_eq_right hA, ite_eq_left hB, ite_eq_right hC, ite_eq_left hD, Nat.add_sub_cancel_left, Nat.add_sub_cancel_left,
               show i + 1 - s = i - s + 1 by omega]
             exact h4
           · right; omega
@@ -237,7 +195,7 @@ theorem flag_entry (hz : inWb k r z) (hz' : inWb k r z') (hg : g ∈ UH (Hpk k r
       exact (ptσ_invol p j).symm
   have h := congrFun (congrFun hkey i) j
   simp only [Matrix.mul_apply, zhat_pt hP, hσ, ite_mul, zero_mul, mul_ite, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true, Matrix.conjTranspose_apply] at h
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true, Matrix.conjTranspose_apply] at h
   exact h
 
 private theorem blockTriangular_inv_of_unitriangular {n : ℕ} (u : Matrix (Fin n) (Fin n) ℂ) (hu : u.BlockTriangular id)
@@ -270,7 +228,7 @@ private theorem star_flagMat_mul_ptZeta_eq (hz : inWb k r z) (hz' : inWb k r z')
       exact (ptσ_invol p n).symm
   have h := congrFun (congrFun hkey m) n
   simp only [Matrix.mul_apply, zhat_pt hP, hσ, ite_mul, zero_mul, mul_ite, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true, Matrix.conjTranspose_apply] at h
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true, Matrix.conjTranspose_apply] at h
   exact h
 
 theorem flag_offblock (hz : inWb k r z) (hz' : inWb k r z') (hg : g ∈ UH (Hpk k r))

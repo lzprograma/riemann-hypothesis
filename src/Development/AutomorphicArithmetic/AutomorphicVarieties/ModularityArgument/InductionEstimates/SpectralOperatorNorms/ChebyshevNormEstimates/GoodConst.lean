@@ -754,7 +754,6 @@ open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Adel PositivityTheory.Rg
 private theorem memLp_out {K : Type} [Field K] [NumberField K] {n : ℕ} {μ : Measure (G1 K n)} [μ.IsHaarMeasure]
     {v : L2 μ} {φ : G1 K n → ℂ} (hc : Continuous φ) (hr : Reps μ v φ) :
     MemLp (fun m : RightCosetSpace (Gam K n) => φ (Quotient.out m)) 2 (quotientMeasure (Gam K n) μ) := by
-  set_option synthInstance.maxHeartbeats 200000 in
   have hinv : ∀ γ ∈ Gam K n, ∀ y, φ (γ * y) = φ y := fun γ hγ => by
     have h1 : (fun y => φ (γ * y)) =ᵐ[μ] φ := by
       filter_upwards [hr, (measurePreserving_mul_left μ γ).quasiMeasurePreserving.ae hr] with y a b
@@ -1112,7 +1111,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.evzEx :
   have hπX : ∀ y, π (X y) = if y.1 ∈ 𝔢.S then 0 else X y := fun y => eval₂Hom_X' _ _ _
   have hπ : ∀ R : PR E (2 + 2), (∀ y ∈ R.vars, y.1 ∉ 𝔢.S) → π R = R := fun R hR =>
     hom_congr_vars (f₁ := π) (f₂ := RingHom.id _) (RingHom.ext fun p => hπC p)
-      (fun y hy _ => by rw [hπX, if_neg (hR y hy)]; rfl) rfl
+      (fun y hy _ => by rw [hπX, ite_eq_right (hR y hy)]; rfl) rfl
   have hA : Act 𝔵.A'.J 𝔢.toAmp.A (symb 𝔵.βa) := by
     rw [← 𝔢.a_op]
     exact (actLaws 𝔵.A'.J).2.1 _ _ 𝔵.a_acts.1 𝔵.a_acts.2.1
@@ -1136,10 +1135,10 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.evzEx :
         rfl
     · simp only [RingHom.comp_apply, hπX]
       by_cases hy : y.1 ∈ 𝔢.S
-      · simp only [if_pos hy, map_zero]
+      · simp only [ite_eq_left hy, map_zero]
         simpa only [zero_smul] using good_const (J := 𝔵.A'.J) (P := 𝔵.P) (a := 𝔵.a₀) 0
       · obtain ⟨w, i⟩ := y
-        simp only [if_neg hy, val, eval₂Hom_X']
+        simp only [ite_eq_right hy, val, eval₂Hom_X']
         rw [hev.hecke w hy i]
         obtain ⟨⟨s, hs, hz⟩, hP⟩ := genT 𝔵 w hy i
         refine ⟨⟨s, hs, fun x hx v hv => ?_⟩, hP⟩

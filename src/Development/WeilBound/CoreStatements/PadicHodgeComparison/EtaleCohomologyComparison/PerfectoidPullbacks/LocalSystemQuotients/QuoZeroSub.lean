@@ -84,7 +84,6 @@ import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomology
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
@@ -141,7 +140,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
@@ -500,7 +498,6 @@ section -- clump:auto
 @[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
-set_option autoImplicit false
 set_option linter.unusedVariables false
 
 noncomputable section
@@ -582,7 +579,7 @@ theorem eta_X (he : m.Fr E E' e) (X : Pt E') :
       E.τ 0 ((e ≫ m.G.map X.s) ≫ m.G.map (Q'.j X.T)) (e ≫ m.G.map (Cut.sec Q' X)) :=
     Q.lift_X _ _ (E.mem 0 ((e ≫ m.G.map X.s) ≫ m.G.map (Q'.j X.T)) (e ≫ m.G.map (Cut.sec Q' X)))
   have h2 := he 0 (X.s ≫ Q'.j X.T) (Cut.sec Q' X)
-  rw [Cut.sec_spec, if_pos rfl, m.G.map_comp, ← Category.assoc] at h2
+  rw [Cut.sec_spec, ite_eq_left rfl, m.G.map_comp, ← Category.assoc] at h2
   rw [h1, h2]
 
 def etaH (he : m.Fr E E' e) (X : Pt E') : Q.P (m.G.obj X.T) ⟶ m.G.obj (Q'.P X.T) := ((eta m Q Q' he).app X).1
@@ -857,7 +854,6 @@ theorem rho_ev (X : Pt E') (cc : ℕ →₀ Φ.A.obj (m.G.obj X.T)) (y : ℕ →
         (cc.sum fun k u => (Φ.A.map (Q.j (m.G.obj X.T))).hom u * Φ.dp k (Q.X (m.G.obj X.T)))) =
       Ideal.Quotient.mk _ (y.sum fun k u => (Φ'.A.map (Q'.j X.T)).hom u * Φ'.dp k (Q'.X X.T)) := by
   classical
-  set_option synthInstance.maxHeartbeats 100000 in
     rw [Finsupp.sum_of_support_subset cc (Finset.subset_union_left (s₂ := y.support)) _ (by intros; simp),
     Finsupp.sum_of_support_subset y (Finset.subset_union_right (s₁ := cc.support)) _ (by intros; simp),
     map_sum, map_sum, map_sum]
@@ -886,13 +882,13 @@ theorem comm_g (B B' : IdF Φ'.A) (hB : ∀ T, c.S T ≤ B.S T) (hB' : ∀ T, c.
   obtain ⟨cc, rfl⟩ := Q.span (m.G.obj X.T) x
   let g : Φ.A.obj (m.G.obj X.T) → Φ'.A.obj X.T :=
     fun u => if u = 0 then 0 else Classical.choose (Ideal.Quotient.mk_surjective (m.ρ X.T u))
-  have g0 : g 0 = 0 := if_pos rfl
+  have g0 : g 0 = 0 := ite_eq_left rfl
   have hg : ∀ u, m.ρ X.T u = Ideal.Quotient.mk _ (g u) := by
     intro u
     by_cases hu : u = 0
     · subst hu
       rw [g0, map_zero, map_zero]
-    · simp only [g, if_neg hu]
+    · simp only [g, ite_eq_right hu]
       exact (Classical.choose_spec (Ideal.Quotient.mk_surjective (m.ρ X.T u))).symm
   let sc : ℕ →₀ Φ.A.obj (m.G.obj X.T) := GlobalTheory.CompanionTheory.PolySes.sh cc
   have e1 := hβ₀ ((Gpt m E E' e).obj X) cc sc (fun k => rfl)
@@ -980,7 +976,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
@@ -1186,7 +1181,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
@@ -1215,10 +1209,6 @@ def frameV {m : ℕ} {𝒱 : Set X.Opens} {d : ℕ} (E : Frame (sP (stF q ρ m �
   nat := E.nat
   bij := E.bij
 
-theorem nil_m (k : Type) [Field k] [CharP k l] [PerfectRing k l] (m : ℕ) : IsNilpotent ((l : ℕ) : Wc.Wm l k m) := ⟨m, by
-  rw [← map_natCast (Ideal.Quotient.mk (Ideal.span {(l : WittVector l k) ^ m})), ← map_pow, Ideal.Quotient.eq_zero_iff_mem]
-  exact Ideal.mem_span_singleton_self _⟩
-
 theorem o_bij {n : ℕ} (hn : n ≠ 0) (𝒱 : Set X.Opens) (T : (stF q ρ (n + 1) 𝒱).FullSubcategory) :
     Function.Bijective (((mqS q ρ hn 𝒱).o (IdF.span _ ((l : WittVector l k) ^ n)) fun _ => le_rfl).τ T) := by
   constructor
@@ -1235,13 +1225,11 @@ theorem iso_bij {m : ℕ} {T T' : Thick (Wc.L l (B.schFn q) ρ m)} (e : T ≅ T'
   · exact RingHom.congr_fun (congrArg (fun f => f.φ) e.hom_inv_id) x
   · exact RingHom.congr_fun (congrArg (fun f => f.φ) e.inv_hom_id) x
 
-
-
 theorem local_bij (q : X ⟶ Spec (CommRingCat.of O)) (ρ : O →+* k) {n : ℕ} (hn : n ≠ 0) {W : X.Opens} {d : ℕ}
     (cW : Coord q W d) (j : ℕ) :
     Function.Bijective (((mqS q ρ hn {W}).o (IdF.span _ ((l : WittVector l k) ^ n)) (fun _ => le_rfl)).pull j) := by
   have hl0 : l ≠ 0 := (Fact.out : l.Prime).ne_zero
-  obtain ⟨c', hF', -⟩ := GlobalTheory.CompanionTheory.FlatChartP.exists_flat_chart (Wc.pd l k (n + 1)) l hl0 (nil_m k (n + 1)) q
+  obtain ⟨c', hF', -⟩ := GlobalTheory.CompanionTheory.FlatChartP.exists_flat_chart (Wc.pd l k (n + 1)) l hl0 (GlobalTheory.CompanionTheory.FlatRes.nil_l k (n + 1)) q
     ((Wc.res l k (n + 1)).comp ρ) cW
   obtain ⟨c, e, hec, hfl⟩ := _root_.GlobalTheory.CompanionTheory.ChartRed.chart_q q ρ hn c'
   have hF : FlatT c.D := hfl (_root_.GlobalTheory.CompanionTheory.FlatThick.flatT_qT l k O (B.schFn q) ρ n hn c'.D hF')
@@ -1286,8 +1274,6 @@ section -- clump:auto
 
 open CategoryTheory AlgebraicGeometry GlobalTheory.LogCris CrystallineSemistableComparison CrystallineSemistableComparison.Ls CrystallineSemistableComparison.Pb CrystallineSemistableComparison.Pb.LsG CrystallineSemistableComparison.Pb.SubquotientResolution CrystallineSemistableComparison.Pb.LsQ
 
-theorem _root_.GlobalTheory.T.witt_coord_quotient_pull_bijective : ∀ {l : ℕ} [Fact l.Prime] {k : Type} [Field k] [CharP k l] [PerfectRing k l] {O : Type} [CommRing O] {X : Scheme.{0}} (q : X ⟶ Spec (CommRingCat.of O)) (ρ : O →+* k) {n : ℕ} (hn : n ≠ 0) {W : X.Opens} {d : ℕ} (cW : Coord q W d) (j : ℕ), Function.Bijective (((mqS q ρ hn {W}).o (IdF.span _ ((l : WittVector l k) ^ n)) (fun _ => le_rfl)).pull j) := by
-  first | exact @GlobalTheory.CompanionTheory.GradedDegreeZeroIsLocal.local_bij
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WittCoordQuotientPullBijectiveStatement =====
@@ -1303,8 +1289,6 @@ open CategoryTheory AlgebraicGeometry GlobalTheory.LogCris CrystallineSemistable
 noncomputable section
 
 namespace GlobalTheory.CompanionTheory.FlatCoverGlue
-
-
 
 theorem glue {l : ℕ} [Fact l.Prime] {k : Type} [Field k] [CharP k l] [PerfectRing k l] {O : Type} [CommRing O]
     {X : Scheme.{0}} (q : X ⟶ Spec (CommRingCat.of O)) (ρ : O →+* k) (U : Cov q) (n : ℕ) (c : WittVector l k)
@@ -1399,8 +1383,6 @@ theorem span_eq (m : ℕ) (𝒱 : Set X.Opens) (c : WittVector l k) (T : (stF q 
   rw [bot_sup_eq]
   rfl
 
-
-
 def scQ (m : ℕ) (𝒱 : Set X.Opens) (c : WittVector l k) :
     CH.Mor (sq (IdF.top (sV q ρ m 𝒱).A) (IdF.span (sV q ρ m 𝒱).A c))
       (sq (IdF.top (sP (stF q ρ m 𝒱)).A) (stdI (stF q ρ m 𝒱) none (mkW l k m c))) (mkW l k m) where
@@ -1474,8 +1456,6 @@ theorem top_res (m : ℕ) (c : WittVector l k) (j : ℕ) : Function.Bijective ((
 
 end Main
 
-
-
 theorem main : ∀ {l : ℕ} [Fact l.Prime] {k : Type} [Field k] [CharP k l] [PerfectRing k l] {O : Type} [CommRing O] {X : Scheme.{0}} (q : X ⟶ Spec (CommRingCat.of O)) (ρ : O →+* k) (m : ℕ) (𝒱 : Set X.Opens) (c : WittVector l k), sSup 𝒱 = ⊤ → ∀ j, Function.Bijective ((resVq q ρ m 𝒱 c).pull j) := by
   intro l _ k _ _ _ O _ X q ρ m 𝒱 c hU j
   have hle := st_le_top q ρ m 𝒱
@@ -1526,7 +1506,6 @@ def resG (q : X ⟶ Spec (CommRingCat.of O)) (ρ : O →+* k) (m : ℕ)
   τ _ := LinearMap.id
   nat _ _ := rfl
 
-
 theorem resG_bij (q : X ⟶ Spec (CommRingCat.of O)) (ρ : O →+* k) (m : ℕ) (𝒱 : Set X.Opens) (hU : sSup 𝒱 = ⊤)
     (P : ObjectProperty (Thick (Wc.L l (B.schFn q) ρ m))) (hP : P = stF q ρ m {⊤}) (h : stF q ρ m 𝒱 ≤ P) (j : ℕ) :
     Function.Bijective ((resG q ρ m P (stF q ρ m 𝒱) h).pull j) := by
@@ -1565,7 +1544,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
@@ -1617,7 +1595,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
@@ -1633,8 +1610,6 @@ section Q
 variable {l : ℕ} [Fact l.Prime] {k : Type} [Field k] [CharP k l] [PerfectRing k l] {O : Type} [CommRing O]
   {X : Scheme.{0}} (q : X ⟶ Spec (CommRingCat.of O)) (ρ : O →+* k)
 
-
-
 theorem bij_cov (U : Cov q) {n : ℕ} (hn : n ≠ 0) (j : ℕ) :
     Function.Bijective (((mq (F := B.schFn q) (ρ := ρ) hn).o (IdF.span _ ((l : WittVector l k) ^ n))
       (fun _ => le_rfl)).pull j) := by
@@ -1645,7 +1620,7 @@ theorem bij_cov (U : Cov q) {n : ℕ} (hn : n ≠ 0) (j : ℕ) :
     (fun S hS j => by
       obtain ⟨α, hα⟩ := hS
       obtain ⟨c', -⟩ := _root_.GlobalTheory.CompanionTheory.CoordRes.main (U.c α) (iInf₂_le α hα : (⨅ α ∈ S, U.U α) ≤ U.U α) (U.inter S ⟨α, hα⟩)
-      exact GlobalTheory.T.witt_coord_quotient_pull_bijective q ρ hn c' j) j
+      exact GlobalTheory.CompanionTheory.GradedDegreeZeroIsLocal.local_bij q ρ hn c' j) j
   have z0 := _root_.GlobalTheory.CompanionTheory.FlatZar.resV_bij q ρ n (Set.range U.U) hUs j
   have zq := _root_.GlobalTheory.CompanionTheory.ZariskiStratumQuotient.main q ρ (n + 1) (Set.range U.U) ((l : WittVector l k) ^ n) hUs j
   exact bij_of_sub (mq (F := B.schFn q) (ρ := ρ) hn) (stF q ρ n (Set.range U.U)) (stF q ρ (n + 1) (Set.range U.U)) (fun _ h => h.1)
@@ -1653,14 +1628,12 @@ theorem bij_cov (U : Cov q) {n : ℕ} (hn : n ≠ 0) (j : ℕ) :
 
 end Q
 
-
-
 theorem bij : ∀ {l : ℕ} [Fact l.Prime] {K : IntermediateField ℚ_[l] (PadicAlgCl l)} (r : Res l K) (M : Model l K), M.Sm →
     ∀ (n : ℕ) (hn : n ≠ 0) (j : ℕ), Function.Bijective (((mq (F := B.schFn M.p) (ρ := r.ρ) hn).o
       (IdF.span _ ((l : WittVector l r.k) ^ n)) (fun _ => le_rfl)).pull j) := by
   intro l _ K r M hM n hn j
   have : IsProper M.p := GlobalTheory.CommonModel.isProper_of_isProjOver hM.1.1
-  obtain ⟨U⟩ := (cov_ex M.p).1 hM.2
+  obtain ⟨U⟩ := (_root_.GlobalTheory.CompanionTheory.CovEx.exists_cov M.p).1 hM.2
   exact bij_cov M.p r.ρ U hn j
 
 end CrystallineSemistableComparison.Pb.SubquotientResolution
@@ -1675,7 +1648,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
@@ -1769,7 +1741,6 @@ theorem Kt_zero_sub (j : ℕ) : Subsingleton ((Kt l F ρ 0).H j) := by
 section Pos
 
 variable {n : ℕ} (hn : n ≠ 0)
-
 
 variable (F ρ) in
 def psiP : Cx.Hom (Kt l F ρ n) (quo l (Kt l F ρ (n + 1)) n) (RingHom.id _) :=

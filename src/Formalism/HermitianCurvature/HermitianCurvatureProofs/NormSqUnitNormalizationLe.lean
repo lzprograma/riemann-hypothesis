@@ -2,51 +2,7 @@ module
 
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellExpansionOfSubadditive
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -113,13 +69,13 @@ lemma eI_inj {n : ℕ} : Function.Injective (eI (n := n)) := by
 open Classical in
 def aF {n : ℕ} (S : Finset (Finset (Fin n))) (co : Finset (Fin n) → ℂ) : (Fin n → ℤ) →₀ ℂ :=
   Finsupp.mapDomain eI (Finsupp.onFinset S (fun I => if I ∈ S then co I else 0)
-    (fun I hI => by by_contra h'; exact hI (if_neg h')))
+    (fun I hI => by by_contra h'; exact hI (ite_eq_right h')))
 
 lemma aF_sum {M : Type*} [AddCommMonoid M] {n : ℕ} (S : Finset (Finset (Fin n))) (co : Finset (Fin n) → ℂ)
     (h : (Fin n → ℤ) → ℂ → M) (h0 : ∀ ν, h ν 0 = 0) : (aF S co).sum h = ∑ I ∈ S, h (eI I) (co I) := by
   unfold aF
   rw [Finsupp.sum_mapDomain_index_inj eI_inj, Finsupp.onFinset_sum _ (fun a => h0 _)]
-  exact Finset.sum_congr rfl fun I hI => by rw [if_pos hI]
+  exact Finset.sum_congr rfl fun I hI => by rw [ite_eq_left hI]
 
 lemma mem_supp_aF {n : ℕ} (S : Finset (Finset (Fin n))) (co : Finset (Fin n) → ℂ) (ν : Fin n → ℤ)
     (hν : ν ∈ (aF S co).support) : ∃ I ∈ S, ν = eI I := by
@@ -161,7 +117,7 @@ lemma Ew_csmul (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (c 
   have hr : ¬ (P.r + 1 ≤ P.r) := by omega
   have hRR : p.RR (fun g => c • F g) (P.r + 1) [] γ γ = ((‖c‖ ^ 2 : ℝ) : ℂ) * p.RR F (P.r + 1) [] γ γ := by
     by_cases h : D.IsLocPt γ (P.r + 1)
-    · simp only [KB.Pl.RR, D.RRplace, h, and_self, hr, dite_true, dite_false, if_true]
+    · simp only [KB.Pl.RR, D.RRplace, h, and_self, hr, dite_true, dite_false, ite_true]
       rw [hV]
       unfold B.hsInner
       rw [hv, inner_smul_left, inner_smul_right, ← mul_assoc, Complex.conj_mul']

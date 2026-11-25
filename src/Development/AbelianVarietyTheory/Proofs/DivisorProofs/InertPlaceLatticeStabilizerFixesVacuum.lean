@@ -212,8 +212,6 @@ namespace GlobalTheory.InertConjSq
 
 open Matrix GlobalTheory.InertDbl
 
-attribute [-instance] CStarMatrix.instHMulOfFintypeOfMulOfAddCommMonoid
-
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
 theorem blk_mul_fromRows (d : ℕ) (x y : AE F E) (X Y : Matrix (Fin d) (Fin d) (AE F E)) :
@@ -262,8 +260,6 @@ namespace GlobalTheory.InertConjSq
 
 open Matrix GlobalTheory.InertDbl
 
-attribute [-instance] CStarMatrix.instHMulOfFintypeOfMulOfAddCommMonoid
-
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
 def mkS (σ : E →ₐ[F] E) {d : ℕ} (W : Spc F E d) (α β : AE F E) (h1 : α * cA σ α - β * cA σ β = 1)
@@ -280,8 +276,6 @@ noncomputable section
 namespace GlobalTheory.InertConjSq
 
 open Matrix GlobalTheory.InertDbl
-
-attribute [-instance] CStarMatrix.instHMulOfFintypeOfMulOfAddCommMonoid
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
@@ -341,8 +335,6 @@ noncomputable section
 namespace GlobalTheory.InertConjSq
 
 open Matrix GlobalTheory.InertDbl
-
-attribute [-instance] CStarMatrix.instHMulOfFintypeOfMulOfAddCommMonoid
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
@@ -468,8 +460,6 @@ namespace GlobalTheory.InertConjSq
 
 open Matrix GlobalTheory.InertDbl IsDedekindDomain.HeightOneSpectrum
 
-attribute [-instance] CStarMatrix.instHMulOfFintypeOfMulOfAddCommMonoid
-
 theorem conj_sq : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E)
     (B : Base F E), B.IsGood σ → ∀ (d : ℕ) (W : Spc F E d) (v : Pl (F := F)) (w : HeightOneSpectrum (𝓞 E)),
     Formalism.UG.IsInertAt F E v w → ∀ n ∈ GlobalTheory.InertDbl.NabD σ W v, ∃ s ∈ GlobalTheory.InertDbl.ParD σ W v, s * n * s⁻¹ = n * n := by
@@ -497,7 +487,6 @@ theorem conj_sq : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberFi
     rw [← atV_sub, ← atV_add, mul_one, ← hK]
     congr 1
     ring
-  have h2' : (2 : AF F) * ⅟2 = 1 := mul_invOf_self 2
   have hιF : ∀ t : F, inclR (F := F) (AF F) (algebraMap F E t) =
       algebraMap (AF F) (AE F E) (algebraMap F (AF F) t) := fun t => by
     show Algebra.TensorProduct.includeRight (algebraMap F E t) = _
@@ -701,8 +690,7 @@ theorem scalar_eq_one : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
       ring
     rw [← e1, hfix]
   obtain ⟨y, hy⟩ : ∃ y, G.M'.vac v y ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hne (funext h)
   let x : Fin a' × Fin (a + a') → AF F := fun i => GlobalTheory.LatVac.liftV v (y i)
   have hRx : R x = R 0 := by

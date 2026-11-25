@@ -18,47 +18,7 @@ public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PhiTopTar
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XiTopInvariant
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LambdaCharSymMulInvEqOne
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfPowPred
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.SatakeParameters.PhiTopTargetGen, Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmulCompSmul
@@ -87,12 +47,12 @@ theorem supSum_eq {κ : Type} [CommRing κ] {n r : ℕ} (hr : r ≤ n) (M : Matr
   have h1 : ∀ i : Fin n, (∑ j : Fin n, if i.val + 1 = j.val ∧ j.val < r ∧ i.val ∈ Finset.range (r - 1) then M i j else 0) =
       if i.1 < r - 1 then A i.1 (i.1 + 1) else 0 := fun i => by
     split_ifs with h
-    · rw [Finset.sum_eq_single (⟨i.1 + 1, by omega⟩ : Fin n), if_pos ⟨rfl, by simp only; omega, Finset.mem_range.2 h⟩, ← hA]
+    · rw [Finset.sum_eq_single (⟨i.1 + 1, by omega⟩ : Fin n), ite_eq_left ⟨rfl, by simp only; omega, Finset.mem_range.2 h⟩, ← hA]
       · intro j _ hj
-        exact if_neg fun h' => hj (Fin.ext h'.1.symm)
+        exact ite_eq_right fun h' => hj (Fin.ext h'.1.symm)
       · intro h'
         exact absurd (Finset.mem_univ _) h'
-    · exact Finset.sum_eq_zero fun j _ => if_neg fun h' => h (Finset.mem_range.1 h'.2.2)
+    · exact Finset.sum_eq_zero fun j _ => ite_eq_right fun h' => h (Finset.mem_range.1 h'.2.2)
   rw [Finset.sum_congr rfl fun i _ => h1 i,
     Fin.sum_univ_eq_sum_range (fun i => if i < r - 1 then A i (i + 1) else 0) n, ← Finset.sum_filter]
   refine Finset.sum_congr ?_ fun _ _ => rfl
@@ -115,7 +75,7 @@ theorem lamJ_eq {κ K : Type} [CommRing κ] [Field K] (ψ : AddChar κ K) (χ : 
   rw [← GlobalTheory.TopLaw.blkDet_eq_dB (coarse r (List.replicate m t)) (s + 1) (r + s * t) t hb ?_
     (Subgroup.inclusion (uniUT_le_blockUT n κ r _) M) A hA]
   · unfold ext0
-    rw [dif_pos (Units.isUnit _), IsUnit.unit_of_val_units]
+    rw [dite_eq_left (Units.isUnit _), IsUnit.unit_of_val_units]
   · intro i hi
     by_cases h : i < r
     · rw [coarse_of_lt h]
@@ -128,7 +88,7 @@ variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] {P : Heig
 theorem red_entB (k₀ : ℕ) {n : ℕ} (ex : ℕ → ℕ) (j : GLint E n P) (p p' : Fin n) :
     redP P (LocE.entB (qOf P) k₀ 0 n 0 n ex ex (j.1.toLinearMap : HomE E (n + 0) (n + 0)) p.1 p'.1) =
       (redGL n P j : Matrix (Fin n) (Fin n) (𝓞 E ⧸ P.asIdeal)) p p' := by
-  rw [GlobalTheory.TopStep.entB_zero _ _ _ _ _ rfl, dif_pos ⟨p.2, p'.2⟩]
+  rw [GlobalTheory.TopStep.entB_zero _ _ _ _ _ rfl, dite_eq_left ⟨p.2, p'.2⟩]
   rfl
 
 theorem lamY_zero (n : ℕ) (ex : ℕ → ℕ) : LocE.lamY P (qOf P) n 0 ex = stdAt E n P := by
@@ -136,7 +96,7 @@ theorem lamY_zero (n : ℕ) (ex : ℕ → ℕ) : LocE.lamY P (qOf P) n 0 ex = st
   unfold LocE.lamY
   rw [LastSteps.mem_sclLat, mem_stdAt]
   refine forall_congr' fun l => ?_
-  have : LocE.scE n ex l.1 = 0 := if_pos l.2
+  have : LocE.scE n ex l.1 = 0 := ite_eq_left l.2
   rw [this, zpow_zero, inv_one, one_mul]
 
 theorem int_entB (k₀ : ℕ) {n : ℕ} (ex : ℕ → ℕ) (j : GLint E n P) :
@@ -206,15 +166,15 @@ theorem phiTop_target_gen : ∀ {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : C
     have := rowLevel_unipotent_group Ch ⟨P, hP⟩
     rw [this] at h
     exact h
-  have e1 : psi0P Ch P = Ch.psi0 ⟨P, hP⟩ := dif_pos hP
-  have e2 : chiP Ch P = chiAt Ch ⟨P, hP⟩ := dif_pos hP
+  have e1 : psi0P Ch P = Ch.psi0 ⟨P, hP⟩ := dite_eq_left hP
+  have e2 : chiP Ch P = chiAt Ch ⟨P, hP⟩ := dite_eq_left hP
   have hk : R.k ≤ R.N R.m - 1 := by
     have := r_le_X' R
     have := (ranks R (j := 0) (by omega)).2.2.2
     omega
   rw [rowLevel_unipotent_character Ch ⟨P, hP⟩ _ h h']
   unfold PhiTop
-  rw [if_pos hP, if_neg Bool.false_ne_true, e1, e2]
+  rw [ite_eq_left hP, ite_eq_right Bool.false_ne_true, e1, e2]
   exact phiG_target hq _ _ hm hk R.t_odd.pos (rank_X'_eq R) j h' x
 
 end GlobalTheory.TopTargetGen
@@ -265,7 +225,7 @@ theorem unitV_inv_det (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {n : ℕ} (k : GL
   rw [← DatumLaw.matrixExtendByZero_mul, ← Matrix.det_mul, ← redGL_val, ← redGL_val, ← Units.val_mul, ← map_mul, mul_inv_cancel, map_one,
     Units.val_one, Matrix.det_one]
   unfold DatumLaw.ext0
-  rw [dif_pos isUnit_one]
+  rw [dite_eq_left isUnit_one]
   simp
 
 theorem phiT_act {a b : ℕ} {ST SG SG' : Finset (HeightOneSpectrum (𝓞 E))} (d : Deco E a ST SG) (d' : Deco E b ST SG')
@@ -333,23 +293,23 @@ theorem exists_pass (hd : Disjoint Pr.vGs (QE sel (mu : Chr X.F X.E X.K))) (g : 
     fun P => ?_, fun P => ⟨fun hP => ?_, fun hQ hP => ?_⟩, ?_⟩
   · unfold frsF
     split_ifs with h
-    · simp only [dif_pos h]
+    · simp only [dite_eq_left h]
       show _ = g.1.1 * (p.deco.1.liftFr ⟨P.1, h⟩ * (((g • p).deco.1.liftFr ⟨P.1, h⟩)⁻¹ * g.1.1 * p.deco.1.liftFr ⟨P.1, h⟩)⁻¹)
       group
-    · simp only [dif_neg h]
+    · simp only [dite_eq_right h]
       exact mul_assoc _ _ _
-  · simp only [dif_pos hP]
+  · simp only [dite_eq_left hP]
     have e := redGL_passG g p ⟨P.1, hP⟩
     exact ⟨e ▸ g.2.1.2 _ (Set.mem_univ _), congrArg _ (Subtype.ext e.symm)⟩
-  · simp only [dif_neg hP]
+  · simp only [dite_eq_right hP]
     exact ⟨g.2.2.2 _ (Set.mem_univ _), trivial⟩
   · have e2 : Θ.chr g.2.2 = _ := piChar_apply (fun w => (Θ w).H) (fun w => (Θ w).lam) g.2.2
     rw [LevFam.chr_apply, e2]
     refine ((Equiv.Finset.union _ _ hd).prod_comp _).symm.trans ?_
     rw [Fintype.prod_sum_type]
     refine congrArg₂ (· * ·) (Finset.prod_congr rfl fun w _ => ?_) (Finset.prod_congr rfl fun w _ => ?_)
-    · exact dif_pos w.2
-    · exact dif_neg (Finset.disjoint_right.1 hd w.2)
+    · exact dite_eq_left w.2
+    · exact dite_eq_right (Finset.disjoint_right.1 hd w.2)
 
 end Pass
 
@@ -391,7 +351,7 @@ theorem locTop_target (hm : R.m = m2 + 2) (hc : cst.Ok) {P : rowSG Pr sel mu} (h
     have e3 : k.1.toLinearMap ∘ₗ y = (k * (extI (N_m_succ R) P.1 j)⁻¹).1.toLinearMap ∘ₗ
         ((extI (N_m_succ R) P.1 j).1.toLinearMap ∘ₗ y) :=
       LinearMap.ext fun v => congrArg k.1 (LinearEquiv.symm_apply_apply (extI (N_m_succ R) P.1 j).1 (y v)).symm
-    rw [e3, locTop_inv hm hc hP hq _ (by rw [map_mul, map_inv, e2, mul_inv_cancel]) _ (hG hP), if_pos hP,
+    rw [e3, locTop_inv hm hc hP hq _ (by rw [map_mul, map_inv, e2, mul_inv_cancel]) _ (hG hP), ite_eq_left hP,
       unitV_det_ext _ (N_m_succ R) j k e2, locTop_extI, mul_right_comm, e.trans (levExt_lam _ _ h1 hjb e1.symm)]
     unfold locTop
     rw [← mul_assoc]
@@ -409,7 +369,7 @@ theorem locTop_target (hm : R.m = m2 + 2) (hc : cst.Ok) {P : rowSG Pr sel mu} (h
     have e3 : k.1.toLinearMap ∘ₗ y = (extI (N_m_succ R) P.1 j).1.toLinearMap ∘ₗ (κ.1.toLinearMap ∘ₗ y) := by
       rw [e1]
       rfl
-    rw [← Model.locTop_invQ hm hc hP (hD hP) c hκ y (hQ hP), e3, if_neg hP, unitV_det_ext _ (N_m_succ R) j k e2, locTop_extI,
+    rw [← Model.locTop_invQ hm hc hP (hD hP) c hκ y (hQ hP), e3, ite_eq_right hP, unitV_det_ext _ (N_m_succ R) j k e2, locTop_extI,
       mul_right_comm, e.trans (parahoricTimesPrincipalCongruence_character_eq _ _ c.pos hj hκ h1 e1)]
     unfold locTop
     rw [← mul_assoc]
@@ -433,9 +393,9 @@ theorem coset_sub {u : Pr.Word} {j : ℕ} (p : ChPt (R := R) sel mu u j) {Y : Se
   rw [sub_sub_sub_cancel_right] at h
   rw [← map_sub]
   refine ⟨fun hP => ?_, fun hP => ?_⟩
-  · simp only [if_pos hP, zpow_zero, inv_one, one_smul] at h
+  · simp only [ite_eq_left hP, zpow_zero, inv_one, one_smul] at h
     exact (frsF_mem p P _).1 (by rwa [LinearEquiv.apply_symm_apply])
-  · simp only [if_neg hP, zpow_natCast] at h
+  · simp only [ite_eq_right hP, zpow_natCast] at h
     rw [← map_smul]
     exact (frsF_mem p P _).1 (by rwa [LinearEquiv.apply_symm_apply])
 
@@ -529,8 +489,8 @@ theorem topEquiv {u : Pr.Word} {T : ChTh W sel mu u m2} (b : L.β (m2 + 1)) (hY 
     ⟨p.deco.2.lat, p.deco.2.uni⟩ ⟨p'.deco.2.lat, p'.deco.2.uni⟩
     (GlobalTheory.TopXiInv.xiTop_invariant Ch sel mu cst m2 u hPr hL.hm hL.cst_ok hL.depthQ p Y p' hp1) fun x =>
       xiTop_law c hX hPr hsel hL hlev hp1 hp2 hκ hκ' ha ha' x (phiT_act _ _ _ _ _ _ _)
-  have e1 : topDegreeKTwo W Ch sel mu cst T p Y p' = _ := if_pos hp1
-  have e2 : topDegreeKTwo W Ch sel mu cst T (g • p) ((fun v => g.1.1 v) '' Y) (g₁ • p') = _ := if_pos hp2
+  have e1 : topDegreeKTwo W Ch sel mu cst T p Y p' = _ := ite_eq_left hp1
+  have e2 : topDegreeKTwo W Ch sel mu cst T (g • p) ((fun v => g.1.1 v) '' Y) (g₁ • p') = _ := ite_eq_left hp2
   refine e2.trans ?_
   rw [e1, funext hκ, funext hκ']
   refine key.trans ?_

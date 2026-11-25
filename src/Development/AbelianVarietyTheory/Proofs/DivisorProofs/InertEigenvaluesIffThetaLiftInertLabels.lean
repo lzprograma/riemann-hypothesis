@@ -56,7 +56,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Polynomial
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Hk3 (Core Good IsSF SchurAll TwoSided FixAll EEc Wcc eH IsLab HoweUnram)
 
 namespace GlobalTheory.InertTransferW
@@ -124,7 +123,7 @@ theorem inertEigenvalues_iff_thetaLift_inertLabels_alt : ∀ {D : D7} {G : Type}
     have e1 := K hc hn _ hP cV _ hM σ h1
     have e2 := K hc' hn' _ hP cV _ hM σ h2
     unfold GlobalTheory.Hk3.evC at e1 e2
-    rw [Finsupp.sum_single_index (by simp), if_pos hd, one_mul] at e1 e2
+    rw [Finsupp.sum_single_index (by simp), ite_eq_left hd, one_mul] at e1 e2
     exact e1.symm.trans e2
   · rintro hcc ⟨⟨Q0, hQ0⟩, sq⟩
     have hPl := (GlobalTheory.T.inert_places_iff_good_primes_fixed_by_conj R F hW A3.A.μ0 (R.plI Q0)).1 ⟨Q0, hQ0, rfl⟩

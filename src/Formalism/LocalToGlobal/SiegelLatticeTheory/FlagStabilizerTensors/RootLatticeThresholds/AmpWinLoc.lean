@@ -27,8 +27,6 @@ open MeasureTheory NumberField Matrix Formalism.BasicNotions Formalism.MainNotio
 
 namespace Formalism.L2.SG.Pf.AmpWinLoc
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Defs
 
 variable {D : D7} {X : HidaSetting D} {θ : ℝ} (C : Choice X θ)

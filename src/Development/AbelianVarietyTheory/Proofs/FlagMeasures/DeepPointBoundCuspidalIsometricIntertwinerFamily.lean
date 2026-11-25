@@ -1198,9 +1198,9 @@ theorem unipotent_orbit_cover : ∀ (I : AutInst) (x : I.GA) (g q : ℕ), 1 ≤ 
 
   obtain ⟨τ', hτ'⟩ : ∃ f : ℕ → ℝ, f = fun i => if h : i < a then τ ⟨i, h⟩ else 1 / 2 := ⟨_, rfl⟩
   have hτ'lt : ∀ i (h : i < a), τ' i = τ ⟨i, h⟩ := by
-    intro i h; rw [hτ']; exact dif_pos h
+    intro i h; rw [hτ']; exact dite_eq_left h
   have hτ'ge : ∀ i, a ≤ i → τ' i = 1 / 2 := by
-    intro i h; rw [hτ']; exact dif_neg (not_lt.2 h)
+    intro i h; rw [hτ']; exact dite_eq_right (not_lt.2 h)
   have hpos : ∀ i ≤ a, 0 < τ' i := by
     intro i _
     rcases lt_or_ge i a with h | h

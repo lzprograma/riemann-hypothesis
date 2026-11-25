@@ -524,7 +524,7 @@ theorem projective_compHom_of_free_of_finite_free :
         simp only [Pi.smul_apply, smul_eq_mul, map_mul, RingHom.id_apply, Finset.smul_sum,
           smul_smul, mul_assoc, ← Finset.mul_sum] }
   have hinj : Function.Injective f := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro c hc
     have h1 := hli (fun i => ∑ m, z (c i m) * w m) (congrArg Subtype.val hc)
     funext i
@@ -655,8 +655,8 @@ theorem build (E : WEt I) [Nontrivial R.EE] {Zl S W : Type} [CommRing Zl] [CommR
         exact hO T hT _ _ (hS T hT _ _ hy) }
   let N : ∀ T, Submodule (LetA O n) (E.DD T) := fun T => if hT : IsCrys PD T.ρ then N₀ T hT else ⊥
   have hN : ∀ T, IsCrys PD T.ρ → ∀ y, y ∈ N T ↔ E.jD T y ∈ L T := fun T hT y => by
-    simp only [N, dif_pos hT]; rfl
-  have hN0 : ∀ T, ¬ IsCrys PD T.ρ → N T = ⊥ := fun T hT => dif_neg hT
+    simp only [N, dite_eq_left hT]; rfl
+  have hN0 : ∀ T, ¬ IsCrys PD T.ρ → N T = ⊥ := fun T hT => dite_eq_right hT
   have hNx : ∀ T hT (y : E.DD T), y ∈ N T ↔ ∃ t : Fin (q T hT) → S, y = ∑ i, a (t i) • x T hT i :=
     fun T hT y => (hN T hT y).trans (hD T hT y)
   have hQk : ∀ T (k : ℕ) (y : E.DD T), E.jD T (R.Q ^ k • y) = c (ψ Q) ^ k • E.jD T y := fun T k y => by
@@ -1194,7 +1194,6 @@ theorem mem_range (E : WEt I) (T : LocLat G Qp LL O) (H : G → Prop) (hH : ∀ 
 end Generic
 
 
-set_option maxHeartbeats 1000000 in
 theorem fixed_mem_range : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) (K : FinExt l) (s : ℕ) (LL : FinExt l), Good K s LL → ∀ (Γ : GamS P K s LL) (R : WSer Γ) (I : IoS AI R), IoW I → ∀ (E : WEt I) (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)) (q : ℕ) (x : Fin q → TW (RW LL) T) (A : Matrix (Fin q) (Fin q) R.EE), IsUnit A → (∀ g : ↥(GK K), P.χQ (g : GQ l) = 1 → ∀ i, TWact (AI.gRW LL (g : GQ l)) T g (x i) = x i) → (∀ j, TWmap (φRW LL) T (x j) = ∑ i, TensorProduct.map (LinearMap.mulLeft ↥(OL LL) (I.ioE (A i j) : RW LL)) (LinearMap.id : ↥T.L.T →ₗ[↥(OL LL)] ↥T.L.T) (x i)) → ∀ i, x i ∈ Set.range (E.jD T) := by
   intro l _ P AI K s LL hG Γ R I hI E T q x A hA hx hφ
   have h1 : ∀ g : ↥(GK K), P.χQ (g : GQ l) = 1 → Γ.resΓ g = 1 := fun g hg =>
@@ -1206,7 +1205,7 @@ theorem fixed_mem_range : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : Lo
     fun p F U hF hU hE => GlobalTheory.T.fixedByCyclotomicKernel_etalePhi_solution_mem_wach l P AI K s LL hG Γ R I hI p q F A 0 U hF hA
       (fun i j g hg h1 => hU i j ⟨g, hg⟩ h1)
       (by simpa only [Matrix.map_zero, map_zero, add_zero] using hE)
-  exact mem_range E T (fun g => P.χQ (g : GQ l) = 1) h1 (_root_.GlobalTheory.IoInj.ioE_injective_saturated_inter l P AI K s LL hG Γ R I hI).2.1 q x A
+  exact mem_range E T (fun g => P.χQ (g : GQ l) = 1) h1 (_root_.GlobalTheory.IoInj.ioE_injective_saturated_inter l P AI K s LL Γ R I).2.1 q x A
     h2 hx hφ
 
 end GlobalTheory.HWL.EtMem
@@ -1399,7 +1398,7 @@ theorem main : GlobalTheory.Published.BhattScholzeCrystallineLattices →
   intro BS l _ P AI tied K s LL hG Γ R I hW E
   obtain ⟨PS, PW, ev, ioH, gH, a, z, π, Q, ha, hio, -, hγ, hioH, hev, hπ, -, hker, hI, hQ, hz, hloc, -, hS, hA⟩ :=
     _root_.GlobalTheory.PrismS.exists_prism l P AI K s LL hG Γ R I hW
-  obtain ⟨hinj, hunit, -, -⟩ := _root_.GlobalTheory.IoInj.ioE_injective_saturated_inter l P AI K s LL hG Γ R I hW
+  obtain ⟨hinj, hunit, -, -⟩ := _root_.GlobalTheory.IoInj.ioE_injective_saturated_inter l P AI K s LL Γ R I
   obtain ⟨d, ⟨o⟩⟩ := exists_basis_OL LL
   have := LL.2
   have := Module.Free.of_basis o

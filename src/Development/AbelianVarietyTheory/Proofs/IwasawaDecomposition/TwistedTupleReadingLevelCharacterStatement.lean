@@ -55,7 +55,6 @@ section -- clump:auto
 
 open scoped TensorProduct
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Col Formalism.L2.DIV Formalism.UG GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TypeLev Matrix Formalism.L2.Forms GlobalTheory.SeeSaw.TwLev
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -160,8 +159,8 @@ theorem coarseBlockIndex_eq_twoBlock (hn : n = r + b) : (fun i : Fin n => coarse
   funext i
   unfold Formalism.L2.DIV.blk2
   by_cases hi : i.val < r
-  · rw [if_pos hi, coarse_of_lt hi]
-  · rw [if_neg hi, coarse_of_le (Nat.not_lt.mp hi)]
+  · rw [ite_eq_left hi, coarse_of_lt hi]
+  · rw [ite_eq_right hi, coarse_of_le (Nat.not_lt.mp hi)]
     have : i.val - r < b := by have := i.2; omega
     simp [blkIdx, this]
 
@@ -272,7 +271,6 @@ section -- clump:auto
 
 open scoped TensorProduct
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Col Formalism.L2.DIV Formalism.UG GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TypeLev Matrix Formalism.L2.Forms GlobalTheory.SeeSaw.TwLev
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 
 theorem _root_.GlobalTheory.T.twistedTuple_reading_level_character : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l))

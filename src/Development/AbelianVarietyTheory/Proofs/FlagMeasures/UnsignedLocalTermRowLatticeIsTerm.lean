@@ -54,8 +54,6 @@ open scoped Classical
 
 namespace GlobalTheory.LocOver
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Scale
 
 open Formalism.MainNotions.S.Loc
@@ -74,7 +72,7 @@ theorem Dl_scale (H : HermSp M V) {r : ℕ} (s s' : Fin (r + 1) → E) (f f' : F
     H.Dl (fun a => s a • f a) (fun b => s' b • f' b) l =
       (∏ i : Fin l, M.L.cj (s (Fin.castLE hl i)) * s' (Fin.castLE hl i)) * H.Dl f f' l := by
   unfold HermSp.Dl
-  rw [dif_pos hl, dif_pos hl]
+  rw [dite_eq_left hl, dite_eq_left hl]
   have hsub : (H.Zhat (fun a => s a • f a) (fun b => s' b • f' b)).submatrix (Fin.castLE hl) (Fin.castLE hl) =
       Matrix.diagonal (fun i => M.L.cj (s (Fin.castLE hl i))) *
         (H.Zhat f f').submatrix (Fin.castLE hl) (Fin.castLE hl) *
@@ -124,7 +122,7 @@ theorem locU_isTerm : ∀ (D : D7) (Z : LocDat D), ∀ (u u' : D.what₂.Word) (
   have hDl : ∀ l, l ≤ D.R.rS + 1 → (locH Z p).Dl U.f U.f' l = c l * (locH Z p).Dl t.f t.f' l := by
     intro l hl
     rw [hf, hf', Dl_scale _ _ _ _ _ l hl, hc]
-    simp only [dif_pos hl]
+    simp only [dite_eq_left hl]
     rfl
   have hcu : ∀ l, IsUnit (c l) := by
     intro l
@@ -134,7 +132,7 @@ theorem locU_isTerm : ∀ (D : D7) (Z : LocDat D), ∀ (u u' : D.what₂.Word) (
         ((bt_isUnit_sq (localSign_sq p _)).map (Z.M p).L.cj).mul (bt_isUnit_sq (sgnP'_sq p _))
     · exact isUnit_one
   have hcl : c (D.R.rS + 1) = c D.R.rS := by
-    simp only [hc, dif_pos le_rfl, dif_pos (Nat.le_succ _)]
+    simp only [hc, dite_eq_left le_rfl, dite_eq_left (Nat.le_succ _)]
     rw [Fin.prod_univ_castSucc]
     simp only [Fin.castLE_rfl, id, sgnP_last₂, bt_sgnP'_last, map_one, mul_one]
     rfl

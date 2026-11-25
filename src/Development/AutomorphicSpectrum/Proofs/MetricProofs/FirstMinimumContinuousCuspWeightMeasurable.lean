@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsEigenComponentPolynomial
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjection
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsFundSet
@@ -9,50 +10,8 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.CuspWeightInva
 public import Mathlib.NumberTheory.NumberField.Discriminant.Defs
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FirstMinimumAndCuspWeightBounds
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsometryPreservesHermitianAndAction
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.WeilBound.CoreStatements.PlurisubharmonicCones.EmbEquivSymmApply
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentModulusMatrix
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
 
@@ -92,24 +51,7 @@ theorem toChar_injective : Function.Injective (toChar (E := E)) := by
   exact DFunLike.congr_fun h a
 
 theorem span_charVec : Submodule.span ℂ (Set.range (charVec (E := E))) = ⊤ := by
-  classical
-  by_contra hne
-  obtain ⟨f, hf0, hf⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.2 hne)
-  apply hf0
-  have li := (linearIndependent_monoidHom (𝓞 E) ℂ).comp _ (toChar_injective (E := E))
-  rw [Fintype.linearIndependent_iff] at li
-  have hl := li (fun s => f fun j => if s = j then 1 else 0) (by
-    funext a
-    have h1 : f (charVec a) = 0 := hf (Submodule.subset_span ⟨a, rfl⟩)
-    rw [LinearMap.pi_apply_eq_sum_univ] at h1
-    simp only [Finset.sum_apply, Pi.smul_apply, Function.comp, smul_eq_mul, Pi.zero_apply]
-    refine Eq.trans ?_ h1
-    refine Finset.sum_congr rfl fun s _ => ?_
-    rw [smul_eq_mul]
-    exact mul_comm (_ : ℂ) _)
-  refine LinearMap.ext fun v => ?_
-  rw [LinearMap.pi_apply_eq_sum_univ f v, LinearMap.zero_apply]
-  exact Finset.sum_eq_zero fun s _ => (congrArg (v s • ·) (hl s)).trans (smul_zero _)
+  apply _root_.GlobalTheory.CompanionTheory.Ar.Cusp.EigCoef.span_charVec <;> assumption
 
 
 open Classical in
@@ -180,23 +122,6 @@ theorem continuous_nzOf {Ψ : Type} [Fintype Ψ] (R : X → RiemLat E g Λ)
   refine continuous_matrix fun a b => ?_
   exact continuous_ip R hH (continuous_eigComp R hP _ _) (continuous_eigComp R hP _ _)
 
-theorem continuous_nz : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (g : ℕ) (Λ : Type) [AddCommGroup Λ]
-    [Module (𝓞 E) Λ] (Ψ : Type) [Fintype Ψ] (X : Type) [TopologicalSpace X] (R : X → RiemLat E g Λ)
-    (σ : Ψ → (𝓞 E →+* ℂ)) (I : Submodule (𝓞 E) Λ), (∀ v, Continuous fun x => (R x).P v) →
-    (Continuous fun x => (R x).Hm) → Continuous fun x => (R x).nz σ I := by
-  intro E _ _ _ g Λ _ _ Ψ _ X _ R σ I hP hH
-  by_cases h : ∃ r v, GroundTheory.Heights₂.Heights.LowerBoundFree.IsNzFamily I r v
-  · have e : (fun x => (R x).nz σ I) = fun x => (R x).nzOf σ I h.choose_spec.choose := by
-      funext x
-      simp only [RiemLat.nz, dif_pos h]
-    rw [e]
-    exact continuous_nzOf R hP hH σ I _
-  · have e : (fun x => (R x).nz σ I) = fun _ => 1 := by
-      funext x
-      simp only [RiemLat.nz, dif_neg h]
-    rw [e]
-    exact continuous_const
-
 end GlobalTheory.CompanionTheory.Ar.Cusp.NzCont
 end -- clump:auto
 end -- clump:auto
@@ -212,12 +137,10 @@ open NumberField Matrix Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTh
 
 theorem _root_.GlobalTheory.T.continuous_cusp_norm_family : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (g : ℕ) (Λ : Type) [AddCommGroup Λ] [Module (𝓞 E) Λ] (Ψ : Type) [Fintype Ψ] (X : Type) [TopologicalSpace X] (R : X → RiemLat E g Λ) (σ : Ψ → (𝓞 E →+* ℂ)) (I : Submodule (𝓞 E) Λ), (∀ v, Continuous fun x => (R x).P v) → (Continuous fun x => (R x).Hm) → Continuous fun x => (R x).nz σ I := by
   intro E _ _ _ g Λ _ _ Ψ _ X _ R σ I hP hH
-  by_cases h : ∃ r v, GroundTheory.Heights₂.Heights.LowerBoundFree.IsNzFamily I r v
-  · have hcont : Continuous fun x => (R x).nzOf σ I h.choose_spec.choose :=
-      GlobalTheory.CompanionTheory.Ar.Cusp.NzCont.continuous_nzOf R hP hH σ I _
-    simpa only [RiemLat.nz, dite_eq_left h] using hcont
-  · simpa only [RiemLat.nz, dite_eq_right h] using
-      (continuous_const : Continuous fun _ : X => (1 : ℝ))
+  unfold RiemLat.nz
+  split_ifs with h
+  · exact _root_.GlobalTheory.CompanionTheory.Ar.Cusp.NzCont.continuous_nzOf R hP hH σ I _
+  · exact continuous_const
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.ContinuousCuspNormFamilyStatement =====
@@ -326,10 +249,6 @@ theorem continuous_sInf_sqrt_form {X ι S : Type} [TopologicalSpace X] [Fintype 
   constructor <;> nlinarith
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {g : ℕ} {Λ : Type} [AddCommGroup Λ] [Module (𝓞 E) Λ]
-
-theorem linearIndependent_periods (R : RiemLat E g Λ) {ι : Type} [Fintype ι] (b : Module.Basis ι ℤ Λ) :
-    LinearIndependent ℝ fun i => R.P (b i) := by
-  apply LevelTowerAlt.basis_indep
 
 def comb (R : RiemLat E g Λ) {ι : Type} [Fintype ι] (b : ι → Λ) (a : ι → ℝ) : Fin g → ℂ :=
   ∑ i, ((a i : ℝ) : ℂ) • R.P (b i)
@@ -509,7 +428,7 @@ theorem first_minimum_cusp_weight_regular : ∀ (E : Type) [Field E] [NumberFiel
       · rintro ⟨y, rfl⟩
         refine ⟨_, ⟨γ.symm y, rfl⟩, ?_⟩
         rw [← hφ, γ.apply_symm_apply]
-    obtain ⟨a, b, -⟩ := _root_.GlobalTheory.CompanionTheory.Relay.cusp_weight_invariant_under_isometry E g Λ Ψ (F.R t) F.σ g Λ (F.R t') φ F.cm himg h1 h2
+    obtain ⟨a, b, -⟩ := _root_.LevelTowerAlt.riemann_lattice_isometry_transport E g Λ Ψ (F.R t) F.σ g Λ (F.R t') φ F.cm himg h1 h2
     exact ⟨b.symm, a.symm⟩
 
 end GlobalTheory.CompanionTheory.Ar.Cusp.FamilyMeas

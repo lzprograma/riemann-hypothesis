@@ -159,7 +159,7 @@ theorem _root_.GlobalTheory.HermModel.eq_zero_of_herm_eq_zero {G : Matrix (Fin r
   have h := hw (Pi.single b 1)
   unfold _root_.ReciprocityTheory.ChartRestriction.G.FD.herm _root_.ReciprocityTheory.ChartRestriction.G.FD.cc at h
   simp only [Pi.single_apply, apply_ite, map_one, map_zero, mul_one, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
   simpa [Matrix.vecMul, dotProduct] using h
 
 open NumberField Matrix in

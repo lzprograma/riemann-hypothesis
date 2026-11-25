@@ -350,12 +350,11 @@ theorem satake_coeff (h : SphericalHecke μ (F := F) (n := n)) (l : Fin n → �
 
 theorem satakeHom_injective : Function.Injective (satakeHom μ (F := F) (n := n)) := by
   classical
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro h h0
   by_contra hne
   obtain ⟨g, hg⟩ : ∃ g, (h : HeckeAlgebra μ) g ≠ 0 := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     exact hne (HeckeAlgebraLevel.ext _ _ (HeckeAlgebra.ext fun x => by
       rw [hall x, HeckeAlgebraLevel.val_zero, HeckeAlgebra.coe_zero, Pi.zero_apply]))
   set D := (cosetSupport h).filter fun x => (h : HeckeAlgebra μ) x.out ≠ 0
@@ -377,13 +376,13 @@ theorem satakeHom_injective : Function.Injective (satakeHom μ (F := F) (n := n)
     by_cases hxz : (h : HeckeAlgebra μ) x.out = 0
     · simp [hxz]
     by_cases hi : iwasawaExponent F n x.out = μ₀
-    · rw [if_pos hi, if_pos ⟨hi, hxz⟩]
+    · rw [ite_eq_left hi, ite_eq_left ⟨hi, hxz⟩]
       have h1 := hmin x (Finset.mem_filter.2 ⟨hx, hxz⟩)
       have h2 := ell_le_iwasawaExponent (cartanType_spec x.out).1 (cartanType_spec x.out).2
       rw [hi] at h2
       have heq : cartanType F n x.out = μ₀ := (h2.2 (le_antisymm h2.1 h1)).symm
       rw [apply_eq_apply_cartanType, heq]
-    · rw [if_neg hi, if_neg fun h' => hi h'.1]
+    · rw [ite_eq_right hi, ite_eq_right fun h' => hi h'.1]
   have hcoeff := congrArg (fun p : LaurentRing n => p.coeff μ₀) h0
   simp only [satakeHom_apply, satake_coeff, AddMonoidAlgebra.coeff_zero, Finsupp.coe_zero,
     Pi.zero_apply] at hcoeff
@@ -535,7 +534,7 @@ def cMat (S : Finset (Fin n)) (c : Pairs S → 𝓀[F]) : Matrix (Fin n) (Fin n)
   fun i j => if h : i ∈ S ∧ j ∉ S ∧ i < j then ((residueLift F (c ⟨(i, j), h⟩) : 𝒪[F]) : F) else 0
 
 theorem cMat_apply_of_not {S : Finset (Fin n)} (c : Pairs S → 𝓀[F]) {i j : Fin n}
-    (h : ¬(i ∈ S ∧ j ∉ S ∧ i < j)) : cMat S c i j = 0 := dif_neg h
+    (h : ¬(i ∈ S ∧ j ∉ S ∧ i < j)) : cMat S c i j = 0 := dite_eq_right h
 
 theorem cMat_mem {S : Finset (Fin n)} (c : Pairs S → 𝓀[F]) (i j : Fin n) : cMat S c i j ∈ 𝒪[F] := by
   unfold cMat
@@ -623,7 +622,7 @@ theorem gMat_mem_minusculeSet (S : Finset (Fin n)) (c : Pairs S → 𝓀[F]) :
     · exact (𝒪[F]).zero_mem
   · rw [gMat_inv_apply, ← mul_assoc, ← zpow_one_add₀ (Cartan.uniformizer_ne_zero F)]
     by_cases h : i ∈ S ∧ j ∉ S ∧ i < j
-    · have hi : lamS S i = 1 := if_pos h.1
+    · have hi : lamS S i = 1 := ite_eq_left h.1
       rw [hi, add_neg_cancel, zpow_zero, one_mul]
       exact Subring.sub_mem _ (by rw [Matrix.one_apply_ne (ne_of_lt h.2.2)]; exact (𝒪[F]).zero_mem)
         (cMat_mem c i j)
@@ -660,8 +659,8 @@ theorem gMat_injective (S : Finset (Fin n)) :
     simp only [Matrix.mul_assoc]
   have hentry : ((gMat S c)⁻¹ * gMat S c' : GL (Fin n) F) b a =
       π ^ (-1 : ℤ) * (cMat S c' b a - cMat S c b a) := by
-    have h1 : lamS S b = 1 := if_pos hb
-    have h2 : lamS S a = 0 := if_neg ha
+    have h1 : lamS S b = 1 := ite_eq_left hb
+    have h2 : lamS S a = 0 := ite_eq_right ha
     have := congrFun (congrFun hmat b) a
     rw [mul_diagonal, diagonal_mul] at this
     rw [this]
@@ -674,7 +673,7 @@ theorem gMat_injective (S : Finset (Fin n)) :
     rwa [zero_add, mul_comm, ← mul_assoc, ← zpow_add₀ (Cartan.uniformizer_ne_zero F),
       add_neg_cancel, zpow_zero, one_mul] at this
   have hpair : (b, a).1 ∈ S ∧ (b, a).2 ∉ S ∧ (b, a).1 < (b, a).2 := ⟨hb, ha, hba⟩
-  simp only [cMat, dif_pos hpair] at hbdd
+  simp only [cMat, dite_eq_left hpair] at hbdd
   have hmax : residueLift F (c' ⟨(b, a), hpair⟩) - residueLift F (c ⟨(b, a), hpair⟩) ∈
       IsLocalRing.maximalIdeal 𝒪[F] := by
     have := (mem_maximalIdeal_pow_iff F (m := 1)
@@ -763,7 +762,7 @@ theorem exists_gMat {k : ℕ} {g : GL (Fin n) F} (hg : g ∈ minusculeSet F n k)
   have hMt_row : ∀ m ∈ S, ∀ b, Mt m b = (1 : Matrix (Fin n) (Fin n) F) m b := by
     intro m hm b
     rw [hMt_def]
-    exact if_neg fun h => h.1 hm
+    exact ite_eq_right fun h => h.1 hm
   have hMt_up : Mt.IsUpperTriangular := by
     intro i j hij
     have hij' : j < i := hij
@@ -795,7 +794,7 @@ theorem exists_gMat {k : ℕ} {g : GL (Fin n) F} (hg : g ∈ minusculeSet F n k)
       simp only [Mt]
       split_ifs with hij
       · have := hM.1 i j
-        rw [hh, diag_mul_torusPow hu, hlS, lamS, if_neg hij.2, zpow_zero, mul_one] at this
+        rw [hh, diag_mul_torusPow hu, hlS, lamS, ite_eq_right hij.2, zpow_zero, mul_one] at this
         exact this
       · rw [Matrix.one_apply]
         split_ifs
@@ -840,8 +839,8 @@ theorem exists_gMat {k : ℕ} {g : GL (Fin n) F} (hg : g ∈ minusculeSet F n k)
     by_cases hm : m ∈ S
     · rw [hMinv m j hm hj, mul_zero, mul_zero]
     · congr 1
-      rw [hh, diag_mul_torusPow hu, hlS, lamS, if_neg hm, zpow_zero, mul_one]
-      simp only [Mt, hi, hm, not_false_eq_true, and_self, if_true]
+      rw [hh, diag_mul_torusPow hu, hlS, lamS, ite_eq_right hm, zpow_zero, mul_one]
+      simp only [Mt, hi, hm, not_false_eq_true, and_self, ite_true]
 
   set c : Pairs S → 𝓀[F] := fun p => IsLocalRing.residue 𝒪[F]
     ⟨(Y : Matrix (Fin n) (Fin n) F) p.1.1 p.1.2, hYM.1 _ _⟩
@@ -857,8 +856,8 @@ theorem exists_gMat {k : ℕ} {g : GL (Fin n) F} (hg : g ∈ minusculeSet F n k)
     simp only [Dm, Matrix.sub_apply, mul_diagonal, P]
     rw [gMat_apply]
     by_cases hj : j ∈ S
-    · have hlj : lamS S j = 1 := if_pos hj
-      simp only [hj, not_true_eq_false, if_false, mul_zero, sub_zero, hlj]
+    · have hlj : lamS S j = 1 := ite_eq_left hj
+      simp only [hj, not_true_eq_false, ite_false, mul_zero, sub_zero, hlj]
       have hδ : (1 : Matrix (Fin n) (Fin n) F) l' j + cMat S c l' j ∈ 𝒪[F] := by
         refine Subring.add_mem _ ?_ (cMat_mem c l' j)
         rw [Matrix.one_apply]
@@ -866,13 +865,13 @@ theorem exists_gMat {k : ℕ} {g : GL (Fin n) F} (hg : g ∈ minusculeSet F n k)
         · exact (𝒪[F]).one_mem
         · exact (𝒪[F]).zero_mem
       simpa using (bdd_of_mem hδ).mul (bdd_zpow (F := F) 1)
-    · have hlj : lamS S j = 0 := if_neg hj
-      simp only [hj, not_false_eq_true, if_true, mul_one, hlj, zpow_zero]
+    · have hlj : lamS S j = 0 := ite_eq_right hj
+      simp only [hj, not_false_eq_true, ite_true, mul_one, hlj, zpow_zero]
       by_cases hl : l' ∈ S
       · rcases lt_or_gt_of_ne (show l' ≠ j from fun h => hj (h ▸ hl)) with hlt | hgt
         · have hp : l' ∈ S ∧ j ∉ S ∧ l' < j := ⟨hl, hj, hlt⟩
           rw [Matrix.one_apply_ne (ne_of_lt hlt), zero_add]
-          simp only [cMat, dif_pos hp, c]
+          simp only [cMat, dite_eq_left hp, c]
           exact bdd_one_of_mem_maximalIdeal (residueLift_sub_mem _)
         · rw [Matrix.one_apply_ne (ne_of_gt hgt), zero_add,
             cMat_apply_of_not c (fun h => absurd h.2.2 (not_lt.2 hgt.le)), hYB hgt, sub_zero]

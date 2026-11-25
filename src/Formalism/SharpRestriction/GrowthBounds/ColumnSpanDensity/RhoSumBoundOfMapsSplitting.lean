@@ -4,47 +4,7 @@ public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoLower
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LatticeCountPrimeMonoLevel
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoLowerBoundOfEdgeCount
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoUpperBoundOfEdgeCount
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -83,7 +43,7 @@ theorem vO_eq {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] 
   classical
   have hz' : algebraMap O (KK O) z ≠ 0 := by
     rw [Ne, IsFractionRing.to_map_eq_zero_iff]; exact hz
-  simp only [vO, vK, ordW, if_neg hz']
+  simp only [vO, vK, ordW, ite_eq_right hz']
   set ab := Classical.choose (IsLocalization.surj (nonZeroDivisors O) (algebraMap O (KK O) z)) with hab
   have hspec : algebraMap O (KK O) z * algebraMap O (KK O) (ab.2 : O) = algebraMap O (KK O) ab.1 :=
     Classical.choose_spec (IsLocalization.surj (nonZeroDivisors O) (algebraMap O (KK O) z))
@@ -211,7 +171,7 @@ theorem rho_sum_bound_of_maps_splitting (hM : RhoSumLatticeMaps) (hBS : BlockSpl
   refine ⟨fun j => if h : j ∈ Jf then ν ⟨j, h⟩ else 0, ?_, ?_⟩
   · intro j hj
     have hjm : j ∈ Jf := Fintype.mem_piFinset.2 fun s => Finset.mem_range.2 (Nat.lt_succ_of_le (hj s))
-    have hnj : (if h : j ∈ Jf then ν ⟨j, h⟩ else 0) = ν ⟨j, hjm⟩ := dif_pos hjm
+    have hnj : (if h : j ∈ Jf then ν ⟨j, h⟩ else 0) = ν ⟨j, hjm⟩ := dite_eq_left hjm
     beta_reduce
     rw [hnj]
     set jj : Jf := ⟨j, hjm⟩ with hjj
@@ -257,7 +217,7 @@ theorem rho_sum_bound_of_maps_splitting (hM : RhoSumLatticeMaps) (hBS : BlockSpl
       rw [← Finset.sum_coe_sort Jf (fun j => (((if h : j ∈ Jf then ν ⟨j, h⟩ else 0 : ℕ)) : ℝ))]
       push_cast
       refine Finset.sum_congr rfl fun j _ => ?_
-      rw [dif_pos j.2]
+      rw [dite_eq_left j.2]
     rw [h1]
     exact le_trans hXn (by exact_mod_cast hν)
 

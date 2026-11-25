@@ -49,7 +49,6 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RangeSndRel
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim GlobalTheory.FlipRun
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
 noncomputable section
 
@@ -67,17 +66,17 @@ theorem prodHalf_halfInd {m n : ℕ} {a b : AE D} (ha : a * a = a) (hb : b * b =
   rw [prodHalf_apply]
   by_cases hx : IsHalf (a + b) x
   · have hx' : a • x + b • x = x := by rw [← add_smul]; exact (isHalf_iff' _ _).1 hx
-    rw [if_pos hx, mul_one]
+    rw [ite_eq_left hx, mul_one]
     unfold halfInd
     by_cases hxΛ : x ∈ Λ
-    · rw [if_pos ⟨hΛ a ha x hxΛ, isHalf_smul ha x⟩, if_pos ⟨hΛ b hb x hxΛ, isHalf_smul hb x⟩, if_pos ⟨hxΛ, hx⟩, one_mul]
-    · rw [if_neg (show ¬ (x ∈ Λ ∧ IsHalf (a + b) x) from fun h => hxΛ h.1)]
+    · rw [ite_eq_left ⟨hΛ a ha x hxΛ, isHalf_smul ha x⟩, ite_eq_left ⟨hΛ b hb x hxΛ, isHalf_smul hb x⟩, ite_eq_left ⟨hxΛ, hx⟩, one_mul]
+    · rw [ite_eq_right (show ¬ (x ∈ Λ ∧ IsHalf (a + b) x) from fun h => hxΛ h.1)]
       by_cases h1 : a • x ∈ Λ
-      · rw [if_neg (show ¬ (b • x ∈ Λ ∧ IsHalf b (b • x)) from fun h => hxΛ (hx' ▸ add_mem h1 h.1)), mul_zero]
-      · rw [if_neg (show ¬ (a • x ∈ Λ ∧ IsHalf a (a • x)) from fun h => h1 h.1), zero_mul]
-  · rw [if_neg hx, mul_zero]
+      · rw [ite_eq_right (show ¬ (b • x ∈ Λ ∧ IsHalf b (b • x)) from fun h => hxΛ (hx' ▸ add_mem h1 h.1)), mul_zero]
+      · rw [ite_eq_right (show ¬ (a • x ∈ Λ ∧ IsHalf a (a • x)) from fun h => h1 h.1), zero_mul]
+  · rw [ite_eq_right hx, mul_zero]
     unfold halfInd
-    rw [if_neg (show ¬ (x ∈ Λ ∧ IsHalf (a + b) x) from fun h => hx h.2)]
+    rw [ite_eq_right (show ¬ (x ∈ Λ ∧ IsHalf (a + b) x) from fun h => hx h.2)]
 
 theorem exists_compl_idem {e e₀ : AE D} {P P₀ : Finset (Pl D.host.E)} (hsub : P₀ ⊆ P) (he : IsIdemSum e P)
     (he₀ : IsIdemSum e₀ P₀) : ∃ b, e = e₀ + b ∧ b * b = b ∧ e₀ * b = 0 := by

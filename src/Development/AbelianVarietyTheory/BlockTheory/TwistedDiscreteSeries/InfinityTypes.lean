@@ -48,8 +48,6 @@ open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Cx
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.InfinityTypes
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Arith
 
 variable (D : D7) (i : Fin D.R.m) (τ : D.what₂.Tau)
@@ -83,8 +81,6 @@ def IsDataOf (w : IndefiniteWeightData.WeightData) : Prop :=
 
 structure ArithAt : Prop where
 
-  sig : pS D i τ = D.R.k + i ∧ qS D i τ = D.R.m - ((i : ℕ) + 1)
-
   rank : pS D i τ + qS D i τ = D.R.r ∧ (Vc D i).rank = D.R.r + D.R.t
 
   aP_eq_rat : ∀ a < pS D i τ, (aP D i τ a : ℚ) = aPlusQ D i τ a
@@ -95,10 +91,6 @@ structure ArithAt : Prop where
 
   aM_anti : ∀ a b, a ≤ b → b < qS D i τ → aM D i τ b ≤ aM D i τ a
 
-  aPlus_pos : ∀ a < pS D i τ, 1 ≤ aP D i τ a
-
-  aM_pos : ∀ a < qS D i τ, 1 ≤ aM D i τ a
-
   kap_plus : ∀ a : Fin (pS D i τ),
     (Formalism.L2.NTheta.kapW (D.hc τ) (pS D i τ) (qS D i τ) (Sum.inl a) : ℚ) =
       (aP D i τ a : ℚ) + ((D.R.r : ℚ) + D.R.t) / 2 - eS D i τ
@@ -108,11 +100,6 @@ structure ArithAt : Prop where
       -(aM D i τ (qS D i τ - 1 - c) : ℚ) - ((D.R.r : ℚ) + D.R.t) / 2 - eS D i τ
 
   d_int : ∃ z : ℤ, dShift D i τ = z
-
-  lamPrime_eq : ∀ w : IndefiniteWeightData.WeightData, IsDataOf D i τ w → ∀ a < D.R.r + D.R.t,
-    w.lamPrime (a + 1) = (thetaWt D i τ a : ℚ) + dShift D i τ
-
-  coef_isLamPrime : Bridge.IsLamPrime (D := D) (Bridge.lamLdef (D := D) (Vc D i).rank ((i : ℕ) + 1) τ) ((i : ℕ) + 1) τ
 
   coef_eq : ∀ a : Fin (Vc D i).rank,
     ((Bridge.lamLdef (D := D) (Vc D i).rank ((i : ℕ) + 1) τ).w a : ℚ) = (thetaWt D i τ a : ℚ) + dShift D i τ

@@ -158,7 +158,7 @@ theorem isLocallyConstant_of_mul_right {γ : Type*} {K : Subgroup (GL (Fin n) F)
 
 theorem exists_zeta_core [π.IsIrreducible] (hπ : IsAdmissible π)
     (μ : Measure (GL (Fin n) F)) [μ.IsHaarMeasure] :
-    ∃ s₀ : ℝ, ∃ D : ℂ[X], D.eval 0 = 1 ∧
+    ∃ s₀ : ℝ, ∃ D : ℂ[X], D.eval 0 = 1 ∧ D.natDegree ≤ n ∧
       ∀ Φ : Matrix (Fin n) (Fin n) F → ℂ, IsSchwartzBruhat Φ → ∀ (v : V) (ℓ : Module.Dual ℂ V),
         ℓ ∈ smoothVectors (Representation.dual π) →
         (∀ s : ℂ, s₀ < s.re → Integrable (fun g : GL (Fin n) F =>
@@ -169,8 +169,8 @@ theorem exists_zeta_core [π.IsIrreducible] (hπ : IsAdmissible π)
   classical
   obtain ⟨β, W, _, _, σ, hσirr, hσs, hσc, -, ι, hι⟩ := exists_embedding_parabolicInd (π := π) hπ.1
   have := hσirr
-  obtain ⟨s₀, D, hD0, hJ⟩ := exists_inducedZeta (β := β) hσs hσc μ
-  refine ⟨s₀, D, hD0, fun Φ hΦ v ℓ hℓ => ?_⟩
+  obtain ⟨s₀, D, hD0, hDn, hJ⟩ := exists_inducedZeta (β := β) hσs hσc μ
+  refine ⟨s₀, D, hD0, hDn, fun Φ hΦ v ℓ hℓ => ?_⟩
 
   obtain ⟨m₀, hm₀⟩ := hΦ.exists_congruence_invariant
   obtain ⟨m₁, -, hm₁⟩ := (hasBasis_nhds_one F n).mem_iff.1

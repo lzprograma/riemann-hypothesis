@@ -47,7 +47,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.MixModel GlobalTheory.MixPer
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -70,12 +69,12 @@ theorem uniRow_step {U V : Matrix (Fin ρ) (Fin ρ) R} (h : Keeps U V) {j j' : F
   obtain ⟨h1, h2⟩ := h i j hij
   have hjj : V j j = 1 := by simpa using hV j le_rfl
   have hU : ∀ p, j ≤ p → U p i = 0 := fun p hp => by simpa [hjj] using h1 p j hp
-  rw [Finset.sum_eq_single j', Finset.sum_eq_single j, if_pos hj, hjj, mul_one] at h2
+  rw [Finset.sum_eq_single j', Finset.sum_eq_single j, ite_eq_left hj, hjj, mul_one] at h2
   · rw [h2]
     refine if_congr ?_ rfl rfl
     rw [Fin.ext_iff]; omega
   · intro q _ hq
-    rw [if_neg fun e => hq (Fin.ext (by omega))]
+    rw [ite_eq_right fun e => hq (Fin.ext (by omega))]
   · simp
   · intro p _ hp
     refine Finset.sum_eq_zero fun q _ => ?_
@@ -84,7 +83,7 @@ theorem uniRow_step {U V : Matrix (Fin ρ) (Fin ρ) R} (h : Keeps U V) {j j' : F
       · have hq : q < j := by
           have : p.1 ≠ j'.1 := fun e' => hp (Fin.ext e')
           rw [Fin.lt_def] at hp' ⊢; omega
-        rw [hV q hq.le, if_neg hq.ne, mul_zero]
+        rw [hV q hq.le, ite_eq_right hq.ne, mul_zero]
       · rw [hU p hp', zero_mul]
     · rfl
   · simp
@@ -128,7 +127,7 @@ theorem last_dot (w : Fin ρ → R) (j : Fin ρ) (hj : j.1 + 1 = ρ) : (fun i : 
   rw [dotProduct, Finset.sum_eq_single j]
   · simp [hj]
   · intro p _ hp
-    rw [if_neg fun e => hp (Fin.ext (by omega)), zero_mul]
+    rw [ite_eq_right fun e => hp (Fin.ext (by omega)), zero_mul]
   · simp
 
 theorem mulVec_single_at {n : ℕ} (P : Matrix (Fin ρ) (Fin n) R) (J : Matrix (Fin n) (Fin ρ) R) (i j : Fin ρ) (s : R) :
@@ -201,19 +200,12 @@ theorem exists_transl (d : HypDec S S₀ ρ) {z : Fin S₀.rank → D.host.E} (h
 theorem exists_elem (d : HypDec S S₀ ρ) (y : Fin S₀.rank → AE D) {i j : Fin ρ} (hij : i < j) (s : AE D) :
     ∃ n ∈ flagN d, mt S n ⬝ d.jX = d.jX ⬝ (1 + Matrix.single i j s) ∧ mt S n *ᵥ (d.j0 *ᵥ y) = d.j0 *ᵥ y := by
   obtain ⟨u, hu, hu1⟩ := Decomp.exists_unit (D := D) (T := Matrix.single i j s) (fun p q hpq => by
-    rw [Matrix.single_apply, if_neg]
+    rw [Matrix.single_apply, ite_eq_right]
     rintro ⟨rfl, rfl⟩
     exact absurd hij (not_lt.2 hpq))
   refine ⟨d.levi u * (d.nB 0 * d.nC 0), (Decomp.mem_flag_iff d).2 ⟨u, hu, 0, 0, rfl⟩, ?_, ?_⟩
   · rw [Decomp.mt_flag_jX, hu1]
   · rw [Matrix.mulVec_mulVec, Decomp.flag_unipotent_product_anisotropic_action, Matrix.mul_zero, Matrix.mul_zero, add_zero]
-
-theorem upSum_one : upSum (1 : Mx D ρ ρ) = 0 := by
-  unfold upSum
-  refine Finset.sum_eq_zero fun p _ => Finset.sum_eq_zero fun q _ => ?_
-  split_ifs with e
-  · exact Matrix.one_apply_ne fun e' => by subst e'; omega
-  · rfl
 
 theorem entry_rat (d : HypDec S S₀ ρ) (d' : HypDec S S₁ ρ) (p q : Fin ρ) : (d'.pX ⬝ d.jX) p q ∈ (incA D).range := by
   rw [Matrix.mul_apply]
@@ -252,7 +244,6 @@ theorem last_row (hψ : ∃ s, psiE ψ s ≠ 1) (hz : z ≠ 0) (hz' : z' ≠ 0) 
   rw [psiBes_one, psiBes_one, e1, e2] at h
   exact h.symm
 
-
 theorem keeps (hψ : ∃ s, psiE ψ s ≠ 1) (hz' : z' ≠ 0) (hZ : d.j0 *ᵥ ratV z = d'.j0 *ᵥ ratV z')
     (hN : flagN d = flagN d') (hc : ∀ n ∈ flagN d, psiBes ψ d 1 z n = psiBes ψ d' 1 z' n) :
     Keeps (d'.pX ⬝ d.jX) (d.pX ⬝ d'.jX) := by
@@ -290,9 +281,9 @@ theorem first_eq (hψ : ∃ s, psiE ψ s ≠ 1) (hz : z ≠ 0) (hz' : z' ≠ 0) 
   have hU := uniRow_all (keeps hψ hz' hZ hN hc) (keeps hψ hz hZ.symm hN.symm hc') (last_row hψ hz hz' hZ hN hc)
     (last_row hψ hz' hz hZ.symm hN.symm hc')
   rw [jX_eq hz hZ hN, Matrix.mul_apply, Finset.sum_eq_single ⟨0, h0⟩]
-  · rw [hU _ _ le_rfl, if_pos rfl, mul_one]
+  · rw [hU _ _ le_rfl, ite_eq_left rfl, mul_one]
   · intro p _ hp
-    rw [hU p ⟨0, h0⟩ (Nat.zero_le _), if_neg hp.symm, mul_zero]
+    rw [hU p ⟨0, h0⟩ (Nat.zero_le _), ite_eq_right hp.symm, mul_zero]
   · exact fun e => absurd (Finset.mem_univ _) e
 
 end Two

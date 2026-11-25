@@ -10,6 +10,7 @@ import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Sheaves.Presheaf
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFS
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.GenericFibreKerTarget
+import GroundTheory.HeightsAndTheta.Heights.BlockScaling
 
 @[expose] public section
 
@@ -188,21 +189,7 @@ variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Φ : 
 
 theorem multiConeMap_of_homog (c : (Σ k, ι k) → Φ) (s : MRing ι) (β : K → ℕ) (hs : IsMultiHomog s β) :
     T.multiConeMap c s = C (aeval c s) * ∏ k, X k ^ β k := by
-  conv_lhs => rw [s.as_sum]
-  conv_rhs => rw [s.as_sum]
-
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun m hm => ?_
-  have hX : (m.prod fun p e => (X p.1 : MvPolynomial K Φ) ^ e) = ∏ k, X k ^ β k := by
-    rw [Finsupp.prod_fintype _ _ (fun _ => pow_zero _), Fintype.prod_sigma]
-    refine Finset.prod_congr rfl fun k _ => ?_
-    show ∏ y, (X k : MvPolynomial K Φ) ^ m ⟨k, y⟩ = _
-    rw [Finset.prod_pow_eq_pow_sum, hs m hm k]
-  simp only [T.multiConeMap, coe_eval₂Hom, eval₂_monomial, aeval_monomial, mul_pow, Finsupp.prod_mul,
-    ← hX, map_mul, eq_intCast, algebraMap_int_eq, map_intCast]
-  rw [show (m.prod fun p e => (C (c p) : MvPolynomial K Φ) ^ e) = C (m.prod fun p e => c p ^ e) by
-    simp [Finsupp.prod, map_prod, map_pow]]
-  ring
+  simpa [T.multiConeMap, aeval_def, RingHom.ext_int (C.comp (Int.castRingHom Φ)) (Int.castRingHom _), RingHom.ext_int (algebraMap ℤ Φ) (Int.castRingHom Φ)] using BlockScaling.eval₂_cone_block (Int.castRingHom Φ) c hs
 
 theorem not_mem_ker_iff_aeval_ne (c : (Σ k, ι k) → Φ) (s : MRing ι) (β : K → ℕ) (hs : IsMultiHomog s β) :
     s ∉ RingHom.ker (T.multiConeMap c) ↔ aeval c s ≠ 0 := by
@@ -259,19 +246,9 @@ theorem smooth_snoc {n : ℕ} {A : HermLine ι} {L : Fin n → HermLine ι} (hA 
 
 end Smooth
 
-section FibreSquare
-
-variable {ι ν κ : Type} [Fintype ι] [Fintype ν] [Fintype κ]
-
-end FibreSquare
-
 end DiagRAux
 
 open DiagRAux
-
-section Main
-
-end Main
 
 end
 

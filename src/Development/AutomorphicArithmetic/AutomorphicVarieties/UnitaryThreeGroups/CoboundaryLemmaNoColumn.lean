@@ -8,50 +8,6 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThre
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.PtIneL
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.PtInertiaAway
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormLeOneOfIsIntegral
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsLieElementMiddleBlockPart, Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.CoboundaryLemmaNoColumn
@@ -160,12 +116,12 @@ theorem UpperTheory.V.U3.exists_lieElement_middleBlockPart :
           rw [map_mul, SemidirectProduct.mul_right]
         rcases Int.units_eq_one_or (r g).right with hg | hg <;>
           rcases Int.units_eq_one_or (r h).right with hh | hh
-        · simp only [Wfun, hgh, hg, hh, mul_one, if_true, hp g h hg]
-        · simp only [Wfun, hgh, hg, hh, one_mul, if_true, hne, if_false, hp g h hg,
+        · simp only [Wfun, hgh, hg, hh, mul_one, ite_true, hp g h hg]
+        · simp only [Wfun, hgh, hg, hh, one_mul, ite_true, hne, ite_false, hp g h hg,
             Matrix.mul_assoc]
-        · simp only [Wfun, hgh, hg, hh, mul_one, if_true, hne, if_false, hn g h hg,
+        · simp only [Wfun, hgh, hg, hh, mul_one, ite_true, hne, ite_false, hn g h hg,
             Matrix.mul_assoc, hD]
-        · simp only [Wfun, hgh, hg, hh, neg_mul_neg, mul_one, if_true, hne, if_false, hn g h hg,
+        · simp only [Wfun, hgh, hg, hh, neg_mul_neg, mul_one, ite_true, hne, ite_false, hn g h hg,
             Matrix.mul_assoc] }
   refine ⟨W0.toHomUnits, fun g => rfl, fun g => ?_⟩
   change (Wfun r g).det = _
@@ -281,7 +237,7 @@ private theorem W_facts {Γ k : Type} [Group Γ] [TopologicalSpace Γ] [IsTopolo
   obtain ⟨hB, hirr⟩ := hII
   obtain ⟨W, hW, hWd⟩ := exists_lieElement_middleBlockPart η r cc hm hc hat hB hb
   have hWk : ∀ g ∈ η.ker, (W g : Matrix (Fin 2) (Fin 2) k) = corner (r g).mat := fun g hg => by
-    rw [hW, Wfun, if_pos ((hm g).trans hg)]
+    rw [hW, Wfun, ite_eq_left ((hm g).trans hg)]
   have hWc : Continuous fun g => (W g : Matrix (Fin 2) (Fin 2) k) := by
     have e : (fun g => (W g : Matrix (Fin 2) (Fin 2) k)) = fun g => corner (r g).mat *
         (fun s : ℤˣ => if s = 1 then (1 : Matrix (Fin 2) (Fin 2) k) else Matrix.diagonal ![-1, 1]) (η g) := by
@@ -294,7 +250,7 @@ private theorem W_facts {Γ k : Type} [Group Γ] [TopologicalSpace Γ] [IsTopolo
       (hηc.comp fun s : ℤˣ => if s = 1 then (1 : Matrix (Fin 2) (Fin 2) k) else Matrix.diagonal ![-1, 1]).continuous
   refine ⟨W, hWk, ?_, ?_, ⟨top_ne_bot, fun _ _ _ => Submodule.mem_top, fun V _ hV => hirr V fun g hg v hv => ?_⟩,
     hW, hWd⟩
-  · rw [hW, Wfun, if_neg (by rw [hm, hc]; decide), hat]
+  · rw [hW, Wfun, ite_eq_right (by rw [hm, hc]; decide), hat]
     rw [Matrix.trace_fin_two, Matrix.mul_diagonal, Matrix.mul_diagonal]
     change (1 : k) * (-1) + 1 * 1 = 0
     ring

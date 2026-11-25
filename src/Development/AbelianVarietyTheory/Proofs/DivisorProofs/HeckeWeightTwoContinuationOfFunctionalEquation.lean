@@ -29,59 +29,9 @@ public import ReciprocityTheory.Chebotarev.EulerSum
 public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeEisensteinNonconstantFourierSumSmoothHolomorphic
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeWeightTwoContinuationEqLatticeSeries
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Algebra.Order.Star.Real
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.Lemma
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -700,13 +650,13 @@ lemma lipschitzOneVariableKernel_two_eq_indicator {y : ℝ} (hy : 0 < y) :
   have him : ((y : ℂ) * I).im = y := by simp
   simp only [GlobalTheory.LipschitzTR.phi1, Set.indicator, Set.mem_Ioi, him, sign_pos hy, SignType.coe_one, one_mul]
   by_cases ht : 0 < t
-  · rw [if_pos ht, if_pos ht, abs_of_pos ht]
+  · rw [ite_eq_left ht, ite_eq_left ht, abs_of_pos ht]
     push_cast
     congr 2
     ring_nf
     rw [I_sq]
     ring
-  · rw [if_neg ht, if_neg ht]
+  · rw [ite_eq_right ht, ite_eq_right ht]
 
 lemma norm_inv_ofReal_add_mul_I_sq (x y : ℝ) : ‖((x : ℂ) + (y : ℂ) * I)⁻¹ ^ 2‖ = (x ^ 2 + y ^ 2)⁻¹ := by
   rw [norm_pow, norm_inv, inv_pow, Complex.sq_norm, Complex.normSq_apply]
@@ -773,12 +723,12 @@ theorem hTrans_sigma_zero_eq : ∀ (ν y : ℝ), 0 < y → GlobalTheory.HeckeTwo
   have him : ((y : ℂ) * I).im = y := by simp
   rw [him, sign_pos hy, SignType.coe_one, one_mul]
   by_cases hν : 0 < ν
-  · rw [if_pos hν, if_pos hν, abs_of_pos hν]
+  · rw [ite_eq_left hν, ite_eq_left hν, abs_of_pos hν]
     push_cast
     ring_nf
     rw [I_sq]
     ring_nf
-  · rw [if_neg hν, if_neg hν, mul_zero]
+  · rw [ite_eq_right hν, ite_eq_right hν, mul_zero]
 
 end GlobalTheory.HeckeTwo
 end -- clump:auto
@@ -869,7 +819,6 @@ theorem summable_qClass_two [IsTotallyReal F] (𝔞 𝔟 : Frac F) (z : Emb F �
   set K : ℝ := ((2 * f + n).factorial : ℝ) / (2 * Real.pi * m) ^ (2 * f + n) with hK
   set C : ℝ := K / (nrm 𝔞 * κ) with hC
   have hK0 : 0 < K := by positivity
-  have hC0 : 0 < C := by positivity
   have key : ∀ ν b : F, ν ∈ (𝔞 : FractionalIdeal (𝓞 F)⁰ F) → ν ≠ 0 → b ≠ 0 → (∀ τ : Emb F, 0 < τ (ν * b)) →
       ‖qTerm 𝔞 2 z (ν, b)‖ ≤
         C * ((|((Algebra.norm ℚ b : ℚ) : ℝ)| ^ 2)⁻¹ * ‖remb F (ν * b)‖⁻¹ ^ n) := by
@@ -972,7 +921,6 @@ theorem summable_qClass_two [IsTotallyReal F] (𝔞 𝔟 : Frac F) (z : Emb F �
       rw [tsum_mul_left, tsum_mul_left, Real.rpow_neg (abs_nonneg _), Real.rpow_two]
       have hH : ∑' ν, ‖ι c ν‖⁻¹ ^ n ≤ ∑' v : latOf N, ‖v‖⁻¹ ^ n :=
         tsum_comp_le_tsum_of_inj hL (fun _ => by positivity) (hι c)
-      have hB : 0 ≤ (Bf c ^ 2)⁻¹ := by positivity
       calc C * ((Bf c ^ 2)⁻¹ * ∑' ν, ‖ι c ν‖⁻¹ ^ n) ≤ C * ((Bf c ^ 2)⁻¹ * ∑' v : latOf N, ‖v‖⁻¹ ^ n) := by
             gcongr
         _ = _ := by simp only [hBf]; ring
@@ -1014,18 +962,18 @@ theorem hTrans_zero (ν y : ℝ) (hy : y ≠ 0) :
     rw [← e, _root_.GlobalTheory.HeckeTwo.hTrans_sigma_zero_eq _ _ (neg_pos.2 h)]
     by_cases hν : 0 < -ν
     · have h2 : 0 < ν * y := by nlinarith
-      rw [if_pos hν, if_pos h2, abs_of_neg (by linarith : ν < 0),
+      rw [ite_eq_left hν, ite_eq_left h2, abs_of_neg (by linarith : ν < 0),
         show -(2 * Real.pi * -ν * -y) = -(2 * Real.pi * (ν * y)) by ring]
     · have h2 : ¬ 0 < ν * y := by nlinarith
-      rw [if_neg hν, if_neg h2]
+      rw [ite_eq_right hν, ite_eq_right h2]
   · rw [_root_.GlobalTheory.HeckeTwo.hTrans_sigma_zero_eq _ _ h]
     by_cases hν : 0 < ν
     · have h2 : 0 < ν * y := mul_pos hν h
-      rw [if_pos hν, if_pos h2, abs_of_pos hν, show 2 * Real.pi * ν * y = 2 * Real.pi * (ν * y) by ring]
+      rw [ite_eq_left hν, ite_eq_left h2, abs_of_pos hν, show 2 * Real.pi * ν * y = 2 * Real.pi * (ν * y) by ring]
     · have h2 : ¬ 0 < ν * y := by nlinarith
-      rw [if_neg hν, if_neg h2]
+      rw [ite_eq_right hν, ite_eq_right h2]
 
-theorem fTerm_zero [IsTotallyReal F] {z : Emb F → ℂ} (hz : z ∈ upperHalf F) {b ν : F} (hb : b ≠ 0) (hν : ν ≠ 0) :
+theorem fTerm_zero [IsTotallyReal F] {z : Emb F → ℂ} (hz : z ∈ upperHalf F) {b ν : F} (hb : b ≠ 0) :
     fTerm 0 z b ν = if ∀ τ : Emb F, 0 < τ (ν * b) then
       (-4 * (Real.pi : ℂ) ^ 2) ^ Fintype.card (Emb F) * ((|(Algebra.norm ℚ ν : ℝ)| : ℝ) : ℂ) * qPow (ν * b) z
       else 0 := by
@@ -1035,7 +983,7 @@ theorem fTerm_zero [IsTotallyReal F] {z : Emb F → ℂ} (hz : z ∈ upperHalf F
   split_ifs with hc
   · have hc' : ∀ τ : Emb F, 0 < τ ν * (τ b * (z τ).im) := fun τ => by
       have := hc τ; rw [map_mul] at this; rw [← mul_assoc]; exact mul_pos this (hz τ)
-    rw [Finset.prod_congr rfl fun τ _ => by rw [if_pos (hc' τ)]]
+    rw [Finset.prod_congr rfl fun τ _ => by rw [ite_eq_left (hc' τ)]]
     rw [abs_norm_eq_prod, qPow, Finset.mul_sum, Complex.exp_sum]
     rw [show ((-4 * (Real.pi : ℂ) ^ 2) ^ Fintype.card (Emb F) * ∏ τ : Emb F, ((|τ ν| : ℝ) : ℂ)) *
         ∏ x : Emb F, Complex.exp (2 * (Real.pi : ℂ) * I * ((x (ν * b) : ℂ) * z x)) =
@@ -1049,11 +997,11 @@ theorem fTerm_zero [IsTotallyReal F] {z : Emb F → ℂ} (hz : z ∈ upperHalf F
     simp only [map_mul]
     push_cast
     linear_combination (-2 * (Real.pi : ℂ) * (τ ν : ℂ) * (τ b : ℂ) * ((z τ).im : ℂ)) * I_sq
-  · push_neg at hc
+  · push Not at hc
     obtain ⟨τ, hτ⟩ := hc
     have : ¬ 0 < τ ν * (τ b * (z τ).im) := by
       rw [map_mul] at hτ; rw [← mul_assoc]; exact not_lt.2 (mul_nonpos_of_nonpos_of_nonneg hτ (hz τ).le)
-    exact Finset.prod_eq_zero (Finset.mem_univ τ) (by rw [if_neg this, mul_zero])
+    exact Finset.prod_eq_zero (Finset.mem_univ τ) (by rw [ite_eq_right this, mul_zero])
 
 theorem bOne_zero_expansion [IsTotallyReal F] (𝔞 𝔟 : Frac F) (z : Emb F → ℂ) (hz : z ∈ upperHalf F) :
     Summable (qClass 𝔞 𝔟 2 z) ∧
@@ -1074,7 +1022,7 @@ theorem bOne_zero_expansion [IsTotallyReal F] (𝔞 𝔟 : Frac F) (z : Emb F �
   refine tsum_congr fun c => ?_
   rw [← tsum_mul_left]
   refine tsum_congr fun ν => ?_
-  rw [fTerm_zero hz c.out.2.2 ν.2.2]
+  rw [fTerm_zero hz c.out.2.2]
   split_ifs with hc
   · have hk := kFac_zero_mul (F := F)
     unfold qTerm
@@ -1106,11 +1054,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization GlobalTheory.Hec
 
 namespace GlobalTheory.HeckeTwo
 
-lemma ofReal_add_I_ne_zero (t : ℝ) : (t : ℂ) + I ≠ 0 := by
-  intro h
-  have := congrArg Complex.im h
-  simp at this
-
 lemma norm_inv_ofReal_add_I_sq (t : ℝ) : ‖((t : ℂ) + I)⁻¹ ^ 2‖ = (1 + t ^ 2)⁻¹ := by
   rw [norm_pow, norm_inv, inv_pow, Complex.sq_norm, Complex.normSq_apply]
   simp
@@ -1137,7 +1080,7 @@ lemma tendsto_inv_ofReal_add_I_atBot :
 lemma hasDerivAt_neg_inv_ofReal_add_I (t : ℝ) :
     HasDerivAt (fun s : ℝ => -((s : ℂ) + I)⁻¹) (((t : ℂ) + I)⁻¹ ^ 2) t := by
   have h1 : HasDerivAt (fun w : ℂ => w + I) 1 (t : ℂ) := (hasDerivAt_id _).add_const I
-  have h2 := (h1.inv (ofReal_add_I_ne_zero t)).neg
+  have h2 := (h1.inv (GlobalTheory.HeckeTwoC.tI_ne t)).neg
   have h3 := h2.comp_ofReal
   convert (preTransparency := .reducible) h3 using 1
   · funext s
@@ -1148,7 +1091,7 @@ lemma hasDerivAt_neg_inv_ofReal_add_I (t : ℝ) :
 lemma integral_inv_ofReal_add_I_sq : ∫ t : ℝ, ((t : ℂ) + I)⁻¹ ^ 2 = 0 := by
   have hint : MeasureTheory.Integrable (fun t : ℝ => ((t : ℂ) + I)⁻¹ ^ 2) := by
     refine integrable_inv_one_add_sq.mono' ?_ ?_
-    · exact (((continuous_ofReal.add continuous_const).inv₀ ofReal_add_I_ne_zero).pow 2).aestronglyMeasurable
+    · exact (((continuous_ofReal.add continuous_const).inv₀ GlobalTheory.HeckeTwoC.tI_ne).pow 2).aestronglyMeasurable
     · exact Filter.Eventually.of_forall (fun t => (norm_inv_ofReal_add_I_sq t).le)
   rw [MeasureTheory.integral_of_hasDerivAt_of_tendsto hasDerivAt_neg_inv_ofReal_add_I hint
     (by simpa using tendsto_inv_ofReal_add_I_atBot.neg)
@@ -1212,7 +1155,7 @@ theorem wirt_mono (c : ℂ → ℂ) (a : ℂ → Φ → ℂ) (σ : ℂ) {z : Φ 
   have e1 : ∀ x, ((if x = τ₀ then (1:ℂ) else 0).im) = 0 := fun x => by split_ifs <;> simp
   have e2 : ∀ x, ((if x = τ₀ then I else 0).im) = if x = τ₀ then 1 else 0 := fun x => by split_ifs <;> simp
   simp only [e1, e2, ofReal_zero, mul_zero, Finset.sum_const_zero, zero_add, apply_ite (fun r : ℝ => (r : ℂ)), ofReal_one, ofReal_zero,
-    mul_ite, mul_one, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    mul_ite, mul_one, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have he : ∑ x, (a σ x - if x = τ₀ then 1 else 0) * ((Real.log (z x).im : ℝ) : ℂ) =
       ∑ x, a σ x * ((Real.log (z x).im : ℝ) : ℂ) - ((Real.log (z τ₀).im : ℝ) : ℂ) := by
     simp [sub_mul, Finset.sum_sub_distrib, ite_mul]
@@ -1601,7 +1544,7 @@ theorem wirtWord_const_fun {Φ : Type} [Fintype Φ] (ws : List (Φ × Bool)) (d 
   | nil => rfl
   | cons w ws ih =>
     rw [GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization.wirtWord_cons, ih]
-    simp only [reduceCtorEq, if_false]
+    simp only [reduceCtorEq, ite_false]
     exact wirt_const_fun w.1 w.2 _
 
 theorem isGood_const (F : Type) [Field F] [NumberField F] (a : ℂ → ℂ)

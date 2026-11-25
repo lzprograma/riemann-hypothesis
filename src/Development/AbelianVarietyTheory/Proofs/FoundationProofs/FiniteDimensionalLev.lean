@@ -439,8 +439,7 @@ theorem hol_of_isIntegral (X : Tower Ω ε) (y : X.K) (hy : IsIntegral (Algebra.
     rw [← hran i]; rfl
   obtain ⟨a, b, ha, hb, hb0, hab⟩ := X.an_mero y
   have hbz : ∃ z ∈ Hs, b z ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     apply hb0
     have := hcongr (φ := b) (ψ := fun _ => 0) hc
     rw [this]; rfl

@@ -130,14 +130,6 @@ end FormsL
 
 end Defs
 
-section EEMetric
-
-variable {LL : Type} [Field LL]
-variable {QL : Type} [AddCommGroup QL] [Module LL QL]
-variable {Ix J : Type} [Fintype Ix] [Fintype J]
-
-end EEMetric
-
 section Statements
 
 variable {LL Ks : Type} [Field LL] [NumberField LL] [Field Ks] [NumberField Ks] [Algebra Ks LL]

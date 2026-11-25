@@ -51,8 +51,6 @@ open scoped TensorProduct nonZeroDivisors
 
 namespace GlobalTheory.AdIsom
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open GlobalTheory.IndefiniteRowSideFullHecke.FlatSpaceComponents
 open GlobalTheory.StdFrames hiding OA
 open GlobalTheory.IdemSupport (cP cO)

@@ -71,15 +71,15 @@ theorem tau1_injective {φ : Formalism.HC.Frame} {t t' : φ.A} (h : φ.tau1 t = 
 theorem topWt_top (L : SizeData₂ D) {τ : D.what₂.Tau} {t : D.host.TT}
     (h : (D.eTau τ : D.R.GG) = D.R.tau1 t) : topWt L τ = L.aT t := by
   unfold topWt
-  rw [Finset.sum_eq_single t, if_pos h]
+  rw [Finset.sum_eq_single t, ite_eq_left h]
   · intro s _ hs
-    exact if_neg fun h' => hs (Subtype.ext (tau1_injective (h'.symm.trans h)))
+    exact ite_eq_right fun h' => hs (Subtype.ext (tau1_injective (h'.symm.trans h)))
   · simp
 
 theorem topWt_off (L : SizeData₂ D) {τ : D.what₂.Tau}
     (h : (D.eTau τ : D.R.GG) ∉ D.host.topPlaces) : topWt L τ = 0 := by
   unfold topWt
-  refine Finset.sum_eq_zero fun t _ => if_neg fun h' => h ?_
+  refine Finset.sum_eq_zero fun t _ => ite_eq_right fun h' => h ?_
   unfold Host.topPlaces
   exact Finset.mem_image.2 ⟨t, t.2, h'.symm⟩
 
@@ -90,7 +90,7 @@ theorem sum_topWt (L : SizeData₂ D) : ∑ τ, topWt L τ = ∑ t : D.host.TT, 
   rw [Finset.sum_eq_single (D.eTau.symm ⟨D.R.tau1 t, (Formalism.HC.Frame.mem_Psi_iff _).2 rfl⟩)]
   · simp
   · intro τ _ hτ
-    refine if_neg fun h' => hτ ?_
+    refine ite_eq_right fun h' => hτ ?_
     rw [Equiv.eq_symm_apply]
     exact Subtype.ext h'
   · simp

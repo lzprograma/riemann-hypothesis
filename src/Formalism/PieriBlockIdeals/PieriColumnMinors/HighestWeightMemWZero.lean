@@ -6,48 +6,7 @@ import Formalism.GradedWeylDivisibility.FinalB
 public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LGradedLemmas
 public import Formalism.PieriBlockIdeals.PieriColumnMinors.BinaryFormsExample
 import Formalism.PieriBlockIdeals.PieriColumnMinors.DividedPowerZeroZeroVector
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -141,7 +100,7 @@ theorem der_hw_lower {r : ℕ} (ν : Fin r → ℕ) (hν : Antitone ν) (a b : F
   by_contra hne
   have hpos := (fockQPos _ (der r r b a (hw ℚ le_rfl ν)) (der r r b a (hw ℚ le_rfl ν))).2 hne
   have hc := der_comm (n := r) a b b a (hw ℚ le_rfl ν)
-  simp only [if_true, der_hw_raise ν a b hab, map_zero, sub_zero] at hc
+  simp only [ite_true, der_hw_raise ν a b hab, map_zero, sub_zero] at hc
   have hd := (der_diag_iff _ _).1 (hw_rowHom ν hν)
   rw [fock_der, hc, hd a, hd b, he, sub_self] at hpos
   have h0 : fockQ (hw ℚ le_rfl ν) (0 : MvPolynomial (Fin r × Fin r) ℚ) = 0 := by
@@ -168,12 +127,12 @@ theorem hwV_mem (p q w : ℕ) (lam2 : Fin q → ℕ) (ha : Antitone lam2) (hb : 
     have hval : ∀ γ : Fin p, LD.blockWt p q w lam2 (Fin.castAdd q γ) = w := fun γ => Fin.append_left _ _ γ
     show der _ _ (Fin.castAdd q α) (Fin.castAdd q β) (hw ℚ le_rfl (LD.blockWt p q w lam2)) = _
     rcases lt_trichotomy α β with h | h | h
-    · rw [if_neg (ne_of_lt h)]
+    · rw [ite_eq_right (ne_of_lt h)]
       exact der_hw_raise _ _ _ (by rw [Fin.lt_def] at h ⊢; simpa using h)
     · subst h
-      rw [if_pos rfl, (der_diag_iff _ _).1 (hw_rowHom _ hanti), hval]
+      rw [ite_eq_left rfl, (der_diag_iff _ _).1 (hw_rowHom _ hanti), hval]
       rfl
-    · rw [if_neg (ne_of_gt h)]
+    · rw [ite_eq_right (ne_of_gt h)]
       exact der_hw_lower _ hanti _ _ (by rw [Fin.lt_def] at h ⊢; simpa using h) (by rw [hval, hval])
 
 theorem closed_of_stable (p q w : ℕ) (lam2 : Fin q → ℕ) (U : Submodule ℚ (VQ p q w lam2))

@@ -179,7 +179,7 @@ theorem twistStep_eq_self_iff {ℓ : MvPowerSeries ι B} (hℓ : constantCoeff �
     have hlin : ∀ e : ι →₀ ℕ, e.degree ≤ 1 → coeff e φ = coeff e ℓ := by
       intro e he
       have := congrArg (coeff e) hs
-      rw [coeff_twistStep, if_pos he] at this
+      rw [coeff_twistStep, ite_eq_left he] at this
       exact this.symm
     have hφ0 : constantCoeff φ = 0 := by
       rw [← coeff_zero_eq_constantCoeff_apply, hlin 0 (by simp),
@@ -204,7 +204,7 @@ theorem twistStep_eq_self_iff {ℓ : MvPowerSeries ι B} (hℓ : constantCoeff �
           rw [hd0, sub_zero, coeff_dropConst _ he0, h, pow_one, hlin e (by omega), hℓ1 e h,
             sub_self]
       · have := congrArg (coeff e) hs
-        rw [coeff_twistStep, if_neg he] at this
+        rw [coeff_twistStep, ite_eq_right he] at this
         have hT' := hT e.degree (by omega)
         have h2 := congrArg (twistOp σ u π e.degree) this
         rw [Function.invFun_eq (hT'.2 _)] at h2
@@ -643,17 +643,12 @@ theorem exists_iso_lubinTateFormalGroup :
     ∃ θ : Iso ((lubinTateFormalGroup hπ hf).map (algebraMap A B))
         ((lubinTateFormalGroup ((irreducible_units_mul u).2 hπ) hg).map (algebraMap A B)),
       IsUnit (PowerSeries.coeff 1 θ.hom.toPowerSeries) ∧
-      σ (PowerSeries.coeff 1 θ.hom.toPowerSeries) =
-        algebraMap A B u * PowerSeries.coeff 1 θ.hom.toPowerSeries ∧
       PowerSeries.map (σ : B →+* B) θ.hom.toPowerSeries =
         PowerSeries.subst (PowerSeries.map (algebraMap A B) (lubinTateHom hπ hf hf u).toPowerSeries)
           θ.hom.toPowerSeries ∧
       (∀ a : A, θ.hom.comp ((lubinTateHom hπ hf hf a).map (algebraMap A B)) =
         ((lubinTateHom ((irreducible_units_mul u).2 hπ) hg hg a).map (algebraMap A B)).comp
-          θ.hom) ∧
-      PowerSeries.subst θ.hom.toPowerSeries (PowerSeries.map (algebraMap A B) g) =
-        PowerSeries.subst (PowerSeries.map (algebraMap A B) f)
-          (PowerSeries.map (σ : B →+* B) θ.hom.toPowerSeries) := by
+          θ.hom) := by
   have hπ' : Irreducible (u * π) := (irreducible_units_mul u).2 hπ
   have hπB := irreducible_algebraMap hunr hπ
   have hσc : ∀ x, (σ : B →+* B) x = σ x := fun _ => rfl
@@ -740,12 +735,10 @@ theorem exists_iso_lubinTateFormalGroup :
     change IsUnit (PowerSeries.coeff 1 θ)
     rw [hθ1]
     exact η.isUnit)
-  refine ⟨θi, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨θi, ?_, ?_, ?_⟩
   · change IsUnit (PowerSeries.coeff 1 θ)
     rw [hθ1]
     exact η.isUnit
-  · change σ (PowerSeries.coeff 1 θ) = _ * PowerSeries.coeff 1 θ
-    rw [hθ1, hε]
   ·
     change PowerSeries.map (σ : B →+* B) θ = PowerSeries.subst _ θ
     have h1 := hθ.map (σ : B →+* B) hf0B (powerSeries_map_sigma_map_algebraMap σ f)
@@ -781,10 +774,6 @@ theorem exists_iso_lubinTateFormalGroup :
         PowerSeries.C (algebraMap A B a) * (PowerSeries.C ε * PowerSeries.X) := by ring
     rw [e] at h1
     exact uniq h1 h2
-  ·
-    change PowerSeries.subst θ _ = PowerSeries.subst _ (PowerSeries.map (σ : B →+* B) θ)
-    rw [hθ.2.2, subst_substEach_unit]
-    rfl
 
 end Main
 
@@ -960,7 +949,7 @@ theorem repr_ringHom_eq (T : AdjoinRoot P →+* AdjoinRoot P) (ψ : B → B)
   rw [hTz, map_sum]
   simp only [map_smul, Module.Basis.repr_self, Finsupp.coe_finsetSum, Finset.sum_apply,
     Finsupp.smul_apply, Finsupp.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 end Coordinates
 
@@ -1116,7 +1105,7 @@ theorem exists_twistFrob_fixed_root :
     ∃ x : AdjoinRoot (ltEisB π B m), twistFrob hπ hunr m φ u x = x ∧
       Polynomial.aeval x (ltEisB ((u : 𝒪[K]) * π) B m) = 0 := by
   have hπ' : Irreducible ((u : 𝒪[K]) * π) := (irreducible_units_mul u).2 hπ
-  obtain ⟨θ, hθ1, -, hθφ, hθcomm, -⟩ := exists_iso_lubinTateFormalGroup hunr φ hφ hπ u
+  obtain ⟨θ, hθ1, hθφ, hθcomm⟩ := exists_iso_lubinTateFormalGroup hunr φ hφ hπ u
     (isLubinTateSeries_ltPoly π) (isLubinTateSeries_ltPoly ((u : 𝒪[K]) * π))
   set t := θ.hom.toPowerSeries with ht
   have ht0 : constantCoeff t = 0 := θ.hom.constantCoeff_eq_zero

@@ -47,7 +47,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil ValuativeRel IsLocalRing
 open GlobalTheory.FinPl
 open scoped TensorProduct Pointwise
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -162,12 +161,12 @@ theorem GlobalTheory.FinPl.LatIndHalf.extFun_latInd_eq_halfInd : ∀ (D : D7) (k
   funext t
   unfold extFun halfInd
   by_cases ht : IsHalf p.e t
-  · rw [if_pos ht]
+  · rw [ite_eq_left ht]
     unfold latInd
     have key := GlobalTheory.FinPl.LatIndHalf.mem_latO_iff_rd α β hS hT hU hα hβ ht
     by_cases h : t ∈ latO S T (LS : Set _) (LT : Set _) (· = p.v)
-    · rw [if_pos (key.1 h), if_pos ⟨h, ht⟩]
-    · rw [if_neg fun h' => h (key.2 h'), if_neg fun h' => h h'.1]
-  · rw [if_neg ht, if_neg fun h => ht h.2]
+    · rw [ite_eq_left (key.1 h), ite_eq_left ⟨h, ht⟩]
+    · rw [ite_eq_right fun h' => h (key.2 h'), ite_eq_right fun h' => h h'.1]
+  · rw [ite_eq_right ht, ite_eq_right fun h => ht h.2]
 
 end

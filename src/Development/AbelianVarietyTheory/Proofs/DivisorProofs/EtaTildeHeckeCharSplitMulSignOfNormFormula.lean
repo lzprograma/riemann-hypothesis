@@ -4,7 +4,7 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsHalf
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CharacterTrivialAtInertPrimes
 public import Formalism.LocalToGlobal.JointCharacters.LocEMulLocE
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHeckeCharacterOfUnitaryTensorIdeles
-public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdeleAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIdeleAt
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NoRatInert
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnramifiedHeckeCharHalfExponentRestrictQua
 import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
@@ -13,48 +13,7 @@ import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFinitePlac
 import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRealSpanEqConjFixedPrimeMulRelNorm
 import Development.AbelianVarietyTheory.Proofs.HeightProofs.CmTypeRestrictRealSubfieldInfinitePlaceBijective
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -249,7 +208,6 @@ end General
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.L2.JoinChr
 open GlobalTheory.WeilParts GlobalTheory.RatAut GlobalTheory.SplitScalar GlobalTheory.InertTrivial
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
@@ -318,9 +276,9 @@ theorem eta_inf {η : (AE D)ˣ →* Circle} (hη : ∀ τ, HasInfExp D η τ (1 
     ((η x : Circle) : ℂ) = ∏ τ, θ τ (infPart D (x : AE D)) / (‖θ τ (infPart D (x : AE D))‖ : ℂ) := by
   classical
   have hw0 : ∀ τ, θ τ (infPart D (x : AE D)) ≠ 0 := fun τ => (x.isUnit.map ((θ τ).comp (infPart D))).ne_zero
-  choose z hz1 hz2 using fun τ => GlobalTheory.VacuumCharacter.exists_idele_at hθ τ _ (hw0 τ)
+  choose z hz1 hz2 using fun τ => GlobalTheory.OneMapRef.RealMove.exists_idele_at hθ τ _ (hw0 τ)
   have e : x = ∏ τ, z τ := by
-    refine Units.ext (GlobalTheory.VacuumCharacter.adele_ext hθ ?_ fun τ => ?_)
+    refine Units.ext (GlobalTheory.OneMapRef.RealMove.adele_ext hθ ?_ fun τ => ?_)
     · rw [Units.coe_prod, map_prod, hx]; exact (Finset.prod_eq_one fun τ _ => hz1 τ).symm
     · rw [Units.coe_prod, map_prod, map_prod]
       simp [hz2]
@@ -330,7 +288,7 @@ theorem eta_inf {η : (AE D)ˣ →* Circle} (hη : ∀ τ, HasInfExp D η τ (1 
   have e : n = 1 := by
     have : (n : ℚ) = 1 := by rw [hn]; norm_num
     exact_mod_cast this
-  rw [h θ hθ (z τ) (hz1 τ) (fun τ' h' => by rw [hz2, if_neg h']), hz2, if_pos rfl, e, zpow_one]
+  rw [h θ hθ (z τ) (hz1 τ) (fun τ' h' => by rw [hz2, ite_eq_right h']), hz2, ite_eq_left rfl, e, zpow_one]
 
 theorem eta_norm {η : (AE D)ˣ →* Circle} (hη : ResEta D η 1) (y : (AE D)ˣ) :
     η (y * Units.map (cA D).toMonoidHom y) = 1 := by

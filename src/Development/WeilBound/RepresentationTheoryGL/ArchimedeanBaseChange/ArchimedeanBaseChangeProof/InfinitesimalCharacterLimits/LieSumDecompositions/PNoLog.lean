@@ -25,55 +25,7 @@ public import Mathlib.LinearAlgebra.Dual.Lemmas
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CapS
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PNoLogSt
 public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.NormalisedExistence.ExistsNormed
-import Mathlib.Algebra.CharP.Pi
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Calculus.Deriv.Prod
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.HaveILetI
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CommuteCapOfCommuteEop
@@ -148,8 +100,8 @@ theorem lieS_diag_comm {N : ℕ} (i j : Fin N) (x y : Cinf E) : Commute (lieS E 
         refine Finset.sum_eq_zero fun c _ => ?_
         simp only [Matrix.single_apply]
         by_cases h1 : p = a ∧ p = c
-        · rw [if_pos h1, if_neg (fun h2 => hpq (h1.2.trans h2.1.symm)), mul_zero]
-        · rw [if_neg h1, zero_mul]
+        · rw [ite_eq_left h1, ite_eq_right (fun h2 => hpq (h1.2.trans h2.1.symm)), mul_zero]
+        · rw [ite_eq_right h1, zero_mul]
       rw [z i j x y hij, z j i y x (Ne.symm hij)]
   rw [e, sub_self] at h
   exact sub_eq_zero.1 h
@@ -180,19 +132,19 @@ theorem lie_Zr (r s : ℕ) : lie E (r + s) (Zr (r + s) r) =
   funext a b
   simp only [Zr, toL, Finset.sum_apply, Matrix.of_symm_apply, Matrix.single_apply]
   by_cases hab : a = b ∧ (a : ℕ) < r
-  · rw [if_pos hab]
+  · rw [ite_eq_left hab]
     obtain ⟨rfl, ha⟩ := hab
     rw [Finset.sum_eq_single (⟨a, ha⟩ : Fin r)]
-    · rw [if_pos]
+    · rw [ite_eq_left]
       exact ⟨Fin.ext rfl, Fin.ext rfl⟩
     · intro c _ hc
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨h1, -⟩
       exact hc (Fin.ext (by have := congrArg Fin.val h1; simpa using this))
     · simp
-  · rw [if_neg hab]
+  · rw [ite_eq_right hab]
     refine (Finset.sum_eq_zero fun c _ => ?_).symm
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2⟩
     exact hab ⟨h1.symm.trans h2, by rw [← h1]; simp⟩
 
@@ -213,12 +165,12 @@ theorem hasDerivAt_aInf (N r : ℕ) : HasDerivAt (fun t : ℝ => toL (aInf E N r
   by_cases hij : i = j
   · subst hij
     by_cases hi : (i : ℕ) < r
-    · simp only [if_true, hi, and_self, Pi.one_apply]
+    · simp only [ite_true, hi, and_self, Pi.one_apply]
       have := (Complex.hasDerivAt_exp ((0 : ℝ) : ℂ)).comp_ofReal
       simpa using this
-    · simp only [if_true, hi, and_false, if_false, Pi.zero_apply]
+    · simp only [ite_true, hi, and_false, ite_false, Pi.zero_apply]
       exact hasDerivAt_const _ _
-  · simp only [hij, if_false, false_and, Pi.zero_apply]
+  · simp only [hij, ite_false, false_and, Pi.zero_apply]
     exact hasDerivAt_const _ _
 
 theorem hasDerivAt_aT (r s : ℕ) (Φ : Sm E (r + s)) (h : GA E (r + s)) (t : ℝ) :
@@ -425,7 +377,6 @@ theorem pev_C_mul (c : ℂ) (p : ℂ[X]) (f : ℕ → ℝ → ℂ) (t : ℝ) : p
 
 theorem pev_sum {ι : Type} (s : Finset ι) (p : ι → ℂ[X]) (f : ℕ → ℝ → ℂ) (t : ℝ) :
     pev (∑ i ∈ s, p i) f t = ∑ i ∈ s, pev (p i) f t := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp only [pev_eq, map_sum]
 
 theorem pev_monomial (n : ℕ) (a : ℂ) (f : ℕ → ℝ → ℂ) (t : ℝ) : pev (monomial n a) f t = a * f n t := by
@@ -666,7 +617,7 @@ theorem eq_zero_of_eval_algebraMap (D : B[X]) (h : ∀ u : ℂ, D.eval (algebraM
       · have : D.coeff k = 0 := coeff_eq_zero_of_natDegree_lt (by simpa [Nat.lt_succ_iff] using hk)
         simp [this]
       · intro i hi
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro rfl
         exact hk hi
   rw [← hc, hq, coeff_zero]
@@ -692,7 +643,7 @@ theorem IsSS.adjoin {s : Set A} (hs : ∀ x ∈ s, IsSS x) (hc : ∀ x ∈ s, �
 
 
 set_option linter.deprecated false in
-theorem isSS_coeff_fun (m : Multiset ℂ) (hm : m.Nodup) (r s : ℕ) (_hrs : Multiset.card m = r + s) (c₁ c₂ : ℂ)
+theorem isSS_coeff_fun (m : Multiset ℂ) (hm : m.Nodup) (r s : ℕ) (c₁ c₂ : ℂ)
     (a b : ℕ → A) (ha : a r = 1) (hb : b s = 1)
     (hcomm : ∀ i j, Commute (a i) (a j) ∧ Commute (a i) (b j) ∧ Commute (b i) (b j))
     (hrel : ∀ u : ℂ, (∑ k ∈ Finset.range (r + 1), (u + c₁) ^ k • a k) *
@@ -1005,7 +956,7 @@ theorem trace_ss (hm : ∀ τ, (m τ).Nodup ∧ Multiset.card (m τ) = r + s) (�
   have ha1' : π (aP r) = 1 := by
     rw [show aP r = 1 from Subtype.ext ha1, map_one]
   have hss : ∀ k ≤ r, IsSS (π (aP k)) := fun k hk =>
-    (isSS_coeff_fun (m τ) (hm τ).1 s r (by rw [(hm τ).2, add_comm]) 0 0 (fun k => π (bP k)) (fun k => π (aP k))
+    (isSS_coeff_fun (m τ) (hm τ).1 s r 0 0 (fun k => π (bP k)) (fun k => π (aP k))
       hb1' ha1' (fun i j => ⟨((hcab i j).2.2).map π, ((hcab j i).2.1).symm.map π, ((hcab i j).1).map π⟩)
       hrel k).2 hk
 

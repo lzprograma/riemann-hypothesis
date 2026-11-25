@@ -6,49 +6,8 @@ public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.NoOpStep
 public import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
 public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.JointEIntList
 public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.TwistedMonomialFiltration.MaxTwistDegreePderivLeAddOne
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.MonomialSupport.SupportSubNuSet, Formalism.SharpRestriction.GrowthBounds.MonomialSupport.Lam1SPderivAndXMulLeAddIndicator
@@ -154,14 +113,7 @@ variable {p : ℕ} {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing
   (Dt : SignedChainData p O r J) (d : TL J Dt.nL r → ℕ) (th : ∀ j, Fin (Dt.nch j) → ℝ) (thL : ZMod J → Fin r → ℝ)
 
 private theorem geZ_of_le {a b : WithTop ℤ} {t : ℝ} (ha : geZ a t) (hab : a ≤ b) : geZ b t := by
-  intro k hk
-  subst hk
-  induction a using WithTop.recTopCoe with
-  | top => exact absurd hab (by simp)
-  | coe a =>
-    have h1 := ha a rfl
-    have h2 : a ≤ k := WithTop.coe_le_coe.1 hab
-    exact le_trans h1 (by exact_mod_cast h2)
+  apply _root_.Formalism.MainNotions.TestSideWords.geZ_mono <;> assumption
 
 private theorem valS_inf_le_valS_add {R : Type} [CommRing R] {ι : Type} {n : ℕ} [NeZero n] (LL : Letters ι) (S : Set ι)
     (F G : MvPolynomial (ι × Fin n) R) : valS LL S F ⊓ valS LL S G ≤ valS LL S (F + G) := by
@@ -330,17 +282,17 @@ theorem joint_dec (hee : ∀ i mu, IsIsoProj (E i) mu (ee i mu))
       | cons a L ih =>
         rw [List.map_cons, List.prod_cons, Module.End.mul_apply, ih]
         by_cases hL : ∀ i ∈ L, ka' i = ka i
-        · rw [if_pos hL]
+        · rw [ite_eq_left hL]
           by_cases ha : ka' a = ka a
-          · rw [ha, (hee a (ka a)).1 x (hx a), if_pos]
+          · rw [ha, (hee a (ka a)).1 x (hx a), ite_eq_left]
             intro i hi
             rcases List.mem_cons.1 hi with rfl | hi
             · exact ha
             · exact hL i hi
-          · rw [(hee a (ka' a)).2 (ka a) (Ne.symm ha) x (hx a), if_neg]
+          · rw [(hee a (ka' a)).2 (ka a) (Ne.symm ha) x (hx a), ite_eq_right]
             intro h
             exact ha (h a List.mem_cons_self)
-        · rw [if_neg hL, map_zero, if_neg]
+        · rw [ite_eq_right hL, map_zero, ite_eq_right]
           intro h
           exact hL fun i hi => h i (List.mem_cons_of_mem _ hi)
     rw [hL]
@@ -361,7 +313,7 @@ theorem joint_dec (hee : ∀ i mu, IsIsoProj (E i) mu (ee i mu))
   rw [← Finset.smul_sum]
   congr 1
   rw [Finset.sum_congr rfl fun ka _ => key _ _ (hkx j) ka, Finset.sum_ite_eq']
-  rw [if_pos (hS' (Finset.mem_image_of_mem kx (Finset.mem_univ j)))]
+  rw [ite_eq_left (hS' (Finset.mem_image_of_mem kx (Finset.mem_univ j)))]
 
 end Dec
 
@@ -393,7 +345,7 @@ theorem lam1S_pderiv_and_X_mul_le_add_indicator (x0 : ι) (b : Fin n) (Fp : MvPo
     lam1S LL S (X (x0, b) * Fp) ≤ lam1S LL S Fp + (((if x0 ∈ S then 1 else 0 : ℤ)) : WithBot ℤ) ∧
     lam1S LL S (X (x0, b) * pderiv (x0, b) Fp) ≤ lam1S LL S Fp + (((if x0 ∈ S then 1 else 0 : ℤ)) : WithBot ℤ) := by
   by_cases hx : x0 ∈ S
-  · simp only [hx, if_true]
+  · simp only [hx, ite_true]
     refine ⟨Formalism.MainNotions.TestSideWords.TwistedFiltration.G2.maxTwistDegree_pderiv_le_add_one LL S Fp (x0, b), Formalism.MainNotions.TestSideWords.TwistedFiltration.G2.maxTwistDegree_X_mul_le_add_one LL S Fp (x0, b), ?_⟩
     cases hv : LL.vec x0
     · calc lam1S LL S (X (x0, b) * pderiv (x0, b) Fp) ≤ lam1S LL S (pderiv (x0, b) Fp) :=
@@ -403,7 +355,7 @@ theorem lam1S_pderiv_and_X_mul_le_add_indicator (x0 : ι) (b : Fin n) (Fp : MvPo
             Formalism.MainNotions.TestSideWords.TwistedFiltration.G2.maxTwistDegree_X_mul_le_add_one LL S _ (x0, b)
         _ ≤ lam1S LL S Fp + ((1 : ℤ) : WithBot ℤ) :=
             add_le_add (Formalism.MainNotions.TestSideWords.TwistedFiltration.G2.maxTwistDegree_pderiv_le_of LL S Fp (x0, b) (fun _ => hv)) le_rfl
-  · simp only [hx, if_false, WithBot.coe_zero, add_zero]
+  · simp only [hx, ite_false, WithBot.coe_zero, add_zero]
     have h1 := Formalism.MainNotions.TestSideWords.TwistedFiltration.G2.maxTwistDegree_pderiv_le_of LL S Fp (x0, b) (fun h => absurd h hx)
     have h2 := Formalism.MainNotions.TestSideWords.TwistedFiltration.G2.maxTwistDegree_X_mul_le_of LL S Fp (x0, b) (fun h => absurd h hx)
     have h3 := Formalism.MainNotions.TestSideWords.TwistedFiltration.G2.maxTwistDegree_X_mul_le_of LL S (pderiv (x0, b) Fp) (x0, b) (fun h => absurd h hx)
@@ -493,7 +445,7 @@ theorem noOpStep : NoOpStep := by
   have hka : (fun i : (Σ j : ZMod J, Fin (Dt.nL j + r + 1)) => ka i.1 i.2.val) = κ := by
     funext i
     obtain ⟨j, u⟩ := i
-    exact dif_pos u.isLt
+    exact dite_eq_left u.isLt
   by_cases hC : ∀ j u, ka' j u 0 ≤ ka j u 0 + inN Dt.nL x0 j u
   · have hP : IsJProj (normE p K Dt) {fun i => ka i.1 i.2.val} (jointE (eeN D K Dt) κ) := by
       rw [hka]
@@ -505,12 +457,12 @@ theorem noOpStep : NoOpStep := by
     obtain ⟨j, u, hju⟩ := hC
     have hu : u < Dt.nL j + r + 1 := by
       by_contra hu
-      have hk : ka j u = ka' j u := dif_neg hu
+      have hk : ka j u = ka' j u := dite_eq_right hu
       rw [hk] at hju
       linarith [hin0 j u]
     have hki : κ ⟨j, ⟨u, hu⟩⟩ = ka j u := by
       show κ ⟨j, ⟨u, hu⟩⟩ = (if h : u < Dt.nL j + r + 1 then κ ⟨j, ⟨u, h⟩⟩ else ka' j u)
-      rw [dif_pos hu]
+      rw [dite_eq_left hu]
     have hlt : κ ⟨j, ⟨u, hu⟩⟩ 0 + inN Dt.nL x0 j u < ka' j u 0 := by
       rw [hki]
       exact hju

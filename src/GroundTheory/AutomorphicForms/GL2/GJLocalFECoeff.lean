@@ -291,15 +291,6 @@ theorem integrable_and_integral_mul_coeff_eq (μ : Measure (GL (Fin n) F)) [μ.I
 
 end Decomposition
 
-section Reduction
-
-universe u
-
-variable {V : Type u} [AddCommGroup V] [Module ℂ V] {π : Representation ℂ (GL (Fin n) F) V}
-  [MeasurableSpace F] [BorelSpace F] [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)]
-
-end Reduction
-
 end GodementJacquet
 
 end GroundTheory.Automorphic

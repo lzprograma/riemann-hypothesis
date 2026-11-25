@@ -36,7 +36,7 @@ theorem gc_support_phys {ε : Fin n → Bool} {f : Fock n} (hf : f ∈ physFock 
     simp only [physFock, Submodule.mem_iInf, LinearMap.mem_ker] at hf
     exact hf x.1 x.2 hx
   have h := LinearMap.congr_fun (gc_coord_num x s) f
-  simp only [LinearMap.comp_apply, h0, map_zero, if_pos hm, one_smul] at h
+  simp only [LinearMap.comp_apply, h0, map_zero, ite_eq_left hm, one_smul] at h
   exact hs h.symm
 
 def gcPh (ε : Fin n → Bool) (s : Finset (Fin (n * n))) : Finset (Fin n × Fin n) :=
@@ -95,11 +95,11 @@ theorem gc_phSum (ε : Fin n → Bool) {s : Finset (Fin (n * n))} (hs : s ⊆ lf
   · refine Finset.sum_congr rfl fun k hk => ?_
     have hp := hs (Finset.mem_sdiff.1 hk).1
     simp only [lfPhysModes, mem_filter, mem_univ, true_and] at hp
-    simp only [modeWt, if_pos hp]
+    simp only [modeWt, ite_eq_left hp]
   · refine Finset.sum_congr rfl fun k hk => ?_
     have hp := (lowerWedgeAlt ε).2 (Finset.mem_sdiff.1 hk).1
     simp only [lfPhysModes, mem_filter, mem_univ, true_and] at hp
-    simp only [modeWt, if_pos hp, root, neg_sub]
+    simp only [modeWt, ite_eq_left hp, root, neg_sub]
 
 theorem fockWeight_wedge_lowerModes (ε : Fin n → Bool) : fockWt ε (lowerWedgeAlt ε).1 = rhoHol ε - rhoN ε :=
   (coord_wt_eq ε (lowerWedge_weight ε) (by simp)).symm
@@ -136,7 +136,7 @@ theorem gc_plus_sum {ε : Fin n → Bool} {s : Finset (Fin (n * n))} (hs : s ⊆
   have hp := hs hk
   obtain ⟨y, rfl⟩ := finProdFinEquiv.surjective k
   have hp' := (lf_mem_phys ε y.1 y.2).1 hp
-  simp only [Equiv.symm_apply_apply, modeWt, if_pos hp', root, Pi.sub_apply, Finset.sum_sub_distrib]
+  simp only [Equiv.symm_apply_apply, modeWt, ite_eq_left hp', root, Pi.sub_apply, Finset.sum_sub_distrib]
   simp [plusIdx, Pi.single_apply, hp'.1, hp'.2]
 
 end ReciprocityTheory.ChartRestriction.DS.TRGap

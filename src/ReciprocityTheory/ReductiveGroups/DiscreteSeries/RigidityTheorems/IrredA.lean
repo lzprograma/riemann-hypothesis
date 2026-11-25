@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.DerivEntries
 public import Mathlib.Analysis.InnerProductSpace.Projection.Basic
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DefsRep
 public import Mathlib.Analysis.Normed.Algebra.MatrixExponential
@@ -90,17 +91,7 @@ lemma actM_sub (X Y : Matrix (Fin n) (Fin n) ℂ) : actM E (X - Y) = actM E X - 
   simp only [actM, Matrix.sub_apply, sub_smul, Finset.sum_sub_distrib]
 
 lemma actM_single (a b : Fin n) : actM E (Matrix.single a b 1) = E a b := by
-  simp only [actM, Matrix.single_apply, ite_smul, one_smul, zero_smul]
-  rw [Finset.sum_eq_single a]
-  · rw [Finset.sum_eq_single b]
-    · simp
-    · intro j _ hj
-      simp [Ne.symm hj]
-    · simp
-  · intro i _ hi
-    refine Finset.sum_eq_zero fun j _ => ?_
-    simp [Ne.symm hi]
-  · simp
+  apply ReciprocityTheory.ChartRestriction.DS.Lap.LemK.TRA.actM_single <;> assumption
 
 lemma E_eq (ε : Fin n → Bool) (a b : Fin n) :
     E a b = (1 / 2 : ℂ) • (actM E (Matrix.single a b 1 - Jm ε * (Matrix.single a b 1)ᴴ * Jm ε) -

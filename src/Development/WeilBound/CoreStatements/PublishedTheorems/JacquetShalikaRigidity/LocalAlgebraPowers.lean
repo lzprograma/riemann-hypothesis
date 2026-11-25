@@ -3,45 +3,6 @@ module
 public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
 public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.SatakeEigenvalues
 public import GroundTheory.AutomorphicForms.MacdonaldFormula
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -52,8 +13,6 @@ open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open GlobalTheory.CuspGeneric GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DiscSpec PositivityTheory.jumpWindows PositivityTheory.RgJS
 open GroundTheory.Automorphic GroundTheory.Automorphic.FourierWhittaker GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.Spherical
 open scoped ENNReal ComplexConjugate
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.AdelicQuotientData
 
@@ -66,8 +25,8 @@ theorem pad_self {k : ℕ} (l : Fin k → ℤ) : pad k l = l := by
 theorem rhoPair_pad {m k : ℕ} (hkm : k ≤ m) (l : Fin k → ℤ) :
     rhoPair (pad m l) = rhoPair l + ((m : ℤ) - k) * ∑ i, l i := by
   obtain ⟨d, rfl⟩ : ∃ d, m = k + d := ⟨m - k, by omega⟩
-  simp only [rhoPair, pad, Fin.sum_univ_add, Fin.coe_castAdd, Fin.coe_natAdd, Fin.is_lt, dif_pos]
-  simp only [show ∀ j : Fin d, ¬ (k + (j : ℕ) < k) from fun j => by omega, dif_neg, not_false_eq_true,
+  simp only [rhoPair, pad, Fin.sum_univ_add, Fin.coe_castAdd, Fin.coe_natAdd, Fin.is_lt, dite_eq_left]
+  simp only [show ∀ j : Fin d, ¬ (k + (j : ℕ) < k) from fun j => by omega, dite_eq_right, not_false_eq_true,
     mul_zero, Finset.sum_const_zero, add_zero]
   rw [Finset.mul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
@@ -87,9 +46,9 @@ theorem antitone_pad {m k : ℕ} (hkm : k < m) (l : Fin k → ℤ) :
     have hab' : (a : ℕ) ≤ b := hab
     by_cases hb : (b : ℕ) < k
     · have ha : (a : ℕ) < k := lt_of_le_of_lt hab' hb
-      simp only [pad, ha, hb, dif_pos]
+      simp only [pad, ha, hb, dite_eq_left]
       exact hl (Fin.mk_le_mk.mpr hab')
-    · simp only [pad, hb, dif_neg, not_false_eq_true]
+    · simp only [pad, hb, dite_eq_right, not_false_eq_true]
       split_ifs
       · exact h0 _
       · exact le_rfl
@@ -197,21 +156,21 @@ theorem localHeckeAlgebra_statement : LocalHeckeAlgebra := by
         congr 1
         push_cast
         ring
-      rw [if_pos hpA, if_pos hA.1]
-      simp only [aLoc, loc, if_pos hA, neg_zero, zero_mul, Complex.cpow_zero, mul_one, map_mul]
+      rw [ite_eq_left hpA, ite_eq_left hA.1]
+      simp only [aLoc, loc, ite_eq_left hA, neg_zero, zero_mul, Complex.cpow_zero, mul_one, map_mul]
       linear_combination ((evalAt (α w)) (schur (pad m l)) * conj ((evalAt (α' w)) (schur l))) * hfac
     · have hR : aLoc α α' w l = 0 := by
-        simp only [aLoc, loc, if_neg hA, mul_zero]
+        simp only [aLoc, loc, ite_eq_right hA, mul_zero]
       rw [hR]
       by_cases hl : Antitone l
       · have hpA : ¬ Antitone (pad m l) := fun h => hA ⟨hl, (antitone_pad_iff hk hkm l hl hcase).mp h⟩
-        rw [if_neg hpA, zero_mul]
-      · rw [if_neg hl, map_zero, mul_zero]
+        rw [ite_eq_right hpA, zero_mul]
+      · rw [ite_eq_right hl, map_zero, mul_zero]
   · have hA : ¬ (Antitone l ∧ ∀ i, 0 ≤ l i) := by
       rintro ⟨-, h⟩
       obtain ⟨i, hi⟩ := hneg
       exact absurd (h i) (not_le.mpr hi)
-    simp only [aLoc, loc, if_neg hA, mul_zero]
+    simp only [aLoc, loc, ite_eq_right hA, mul_zero]
 
 end PositivityTheory.AdelicQuotientData
 

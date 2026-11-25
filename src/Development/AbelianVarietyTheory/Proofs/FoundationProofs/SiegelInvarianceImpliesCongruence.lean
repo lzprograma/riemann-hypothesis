@@ -15,50 +15,9 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SiegelUni
 public import Mathlib.RingTheory.RootsOfUnity.Complex
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SiegelUnitJPolynomialBoundedDenominators
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SmoothedSiegelUnitIndexAddIntVector
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Presheaf
 import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
 import Development.AbelianVarietyTheory.Definitions.Foundations.Integral
@@ -130,10 +89,6 @@ theorem hasQ_expo (c M a b : ℕ) (hM : 0 < M) (ha : a < M) (hadm : admitted c !
   · rw [tc_zero]
     exact unitPart_zero_ne hc hM ha (pow_ne_zero _ hζ0) hne
 
-theorem hasQ_shift {M : ℕ} {f : ℍ → ℂ} {α : ℕ → ℂ} (h : HasQ M f α) (d : ℕ) :
-    HasQ M (fun τ => f τ * ee (((d : ℂ) / M) * (τ : ℂ))) (fun n => if d ≤ n then α (n - d) else 0) := by
-  apply GlobalTheory.FracBd.shift_hasQ <;> assumption
-
 theorem exp_siegel_ord {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (ε : Ω →+* ℂ) (T : Tower Ω ε)
     (c M a b : ℕ) (hM : 0 < M) (ha : a < M) (hadm : admitted c ![(a : ℚ) / M, (b : ℚ) / M]) :
     (T.exp (siegel T c ![(a : ℚ) / M, (b : ℚ) / M])).coeff ((expo c M a : ℚ) / M) ≠ 0 ∧
@@ -152,29 +107,28 @@ theorem exp_siegel_ord {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ
     have hd' : (d : ℂ) = (u : ℂ) - v := by exact_mod_cast hd
     rw [hd']; ring
   have hke : k ≤ e := by
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have hd : (((k - e).toNat : ℕ) : ℤ) = k - e := Int.toNat_of_nonneg (by omega)
-    have h1 := hasQ_shift hA (k - e).toNat
+    have h1 := GlobalTheory.FracBd.shift_hasQ hA (k - e).toNat
     rw [shift k e _ hd] at h1
     have h2 := HasQ.coeff_unique hM hB h1
     have h3 := congrFun h2 0
-    rw [if_neg (by omega)] at h3
+    rw [ite_eq_right (by omega)] at h3
     exact hB0 h3
   have hd : (((e - k).toNat : ℕ) : ℤ) = e - k := Int.toNat_of_nonneg (by omega)
   set d := (e - k).toNat with hdd
-  have h1 := hasQ_shift hB d
+  have h1 := GlobalTheory.FracBd.shift_hasQ hB d
   rw [shift e k _ hd] at h1
   have h2 := HasQ.coeff_unique hM hA h1
   have hAd : A d ≠ 0 := by
     intro h0
     have h3 := congrFun h2 d
-    simp only [le_refl, if_true, Nat.sub_self, h0, map_zero] at h3
+    simp only [le_refl, ite_true, Nat.sub_self, h0, map_zero] at h3
     exact hB0 h3.symm
   have hAn : ∀ n, n < d → A n = 0 := by
     intro n hn
     have h3 := congrFun h2 n
-    simp only [if_neg (show ¬ d ≤ n by omega)] at h3
+    simp only [ite_eq_right (show ¬ d ≤ n by omega)] at h3
     exact (map_eq_zero ε).1 h3
   have hMq : (0 : ℚ) < M := by exact_mod_cast hM
   have hed : (e : ℚ) = (k : ℚ) + d := by
@@ -182,8 +136,7 @@ theorem exp_siegel_ord {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ
     exact_mod_cast this
   refine ⟨?_, fun r hr => ?_⟩
   · rw [hed, hco d]; exact hAd
-  · by_contra hlt
-    push_neg at hlt
+  · by_contra! hlt
     by_cases hex : ∃ n : ℕ, r = ((k : ℚ) + n) / M
     · obtain ⟨n, rfl⟩ := hex
       rw [hco n] at hr
@@ -193,7 +146,7 @@ theorem exp_siegel_ord {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ
       have : ((k : ℚ) + n) < (k : ℚ) + d := (div_lt_div_iff_of_pos_right hMq).1 hlt
       have : (n : ℚ) < d := by linarith
       exact absurd (by exact_mod_cast this : n < d) (by omega)
-    · push_neg at hex
+    · push Not at hex
       exact hr (hz r hex)
 
 theorem sum_sub (M K : ℕ) : ∀ n : ℕ, n * M ≤ K →

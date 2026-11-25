@@ -57,11 +57,11 @@ import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowFormsWeightEqParameterSubRho
 
 @[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -206,7 +206,7 @@ theorem rowPar_eq (B : Base) (u : B.Word) (τ : Tau B.R) : RowPar.of (B.hcW u τ
 theorem natW_shW {N : ℕ} (l : DomWeight N) (c : ℤ) : (GlobalTheory.Mem.Col2.shW l c).natW = l.natW := by
   funext i
   have hN : 0 < N := lt_of_le_of_lt (Nat.zero_le _) i.2
-  simp only [DomWeight.natW, DomWeight.detShift, dif_pos hN, GlobalTheory.Mem.Col2.shW]
+  simp only [DomWeight.natW, DomWeight.detShift, dite_eq_left hN, GlobalTheory.Mem.Col2.shW]
   congr 1
   ring
 
@@ -226,26 +226,7 @@ theorem mem_baseL_one (B : Base) (n : ℕ) (x : Fin n → B.host.E) : x ∈ TC.b
 
 theorem sgHC_eq {R : Ranks} (P : HCParam R) (i : Fin (R.N R.m - 1)) :
     Formalism.L2.Forms.sgHC R P i = (RowPar.of P).sgHC i := by
-  have hi := i.2
-  have hN : R.N R.m = (R.k + R.m) + R.m * R.t := N_eq_blocks R R.m
-  unfold Formalism.L2.Forms.sgHC RowPar.sgHC
-  congr 1
-  by_cases h1 : (i : ℕ) < R.k - 1
-  · rw [dif_pos h1, dif_pos h1]
-    rfl
-  · rw [dite_eq_right h1, dite_eq_right h1]
-    have h2 : ((i : ℕ) - (R.k - 1)) / (R.t + 1) < R.m := by
-      rw [Nat.div_lt_iff_lt_mul (Nat.succ_pos _)]
-      have := R.two_le_m
-      have e : R.m * (R.t + 1) = R.m + R.m * R.t := by ring
-      have e' : R.m * R.t.succ = R.m * (R.t + 1) := rfl
-      omega
-    rw [dif_pos h2]
-    split_ifs with h3
-    · simp [RowPar.bAt, h2]
-      rfl
-    · simp [RowPar.eAt, h2]
-      rfl
+  apply _root_.GlobalTheory.Mem.Col2.TC.tup_sgHC_eq <;> assumption
 
 end GlobalTheory.Mem.Col2.RowTie
 

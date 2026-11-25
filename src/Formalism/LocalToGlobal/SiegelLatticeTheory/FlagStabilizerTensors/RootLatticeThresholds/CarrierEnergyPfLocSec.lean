@@ -14,8 +14,6 @@ namespace Formalism.L2.SG.Pf.Carrier.EnergyPfLoc
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.RealObj.EnergyCut Formalism.L2.SG.Pf.Carrier.EnergyPf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem stepSecX_holds : StepSecX := by
   intro D X u u' v
   obtain ⟨h, hm, hsec⟩ := Formalism.L2.SG.RealObj.InfCut.ProductExactness.SecMeasLoc_holds _ _ _ _ _ _ _ _ _ 1

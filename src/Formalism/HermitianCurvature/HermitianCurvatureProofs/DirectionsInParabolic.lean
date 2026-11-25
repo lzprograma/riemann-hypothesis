@@ -1,49 +1,7 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
 public import Formalism.HermitianCurvature.StatementU
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -169,16 +127,7 @@ theorem wMat_mul_self (d : ℕ) : G.wMat d * G.wMat d = 1 := by
     exact absurd (Finset.mem_univ _) h
 
 theorem wMat_conjTranspose (d : ℕ) : (G.wMat d)ᴴ = G.wMat d := by
-  ext a b
-  simp only [G.wMat, Matrix.conjTranspose_apply, Matrix.of_apply]
-  by_cases h : b = a.rev
-  · subst h
-    simp [Fin.rev_rev]
-  · have h' : a ≠ b.rev := by
-      intro h'
-      apply h
-      rw [h', Fin.rev_rev]
-    simp [h, h']
+  apply _root_.Formalism.FourierDecayAlt.P.Ux3.wMat_conjTranspose <;> assumption
 
 theorem hpk_conjTranspose (k r : ℕ) : (Hpk k r)ᴴ = Hpk k r := by
   ext a b
@@ -187,22 +136,11 @@ theorem hpk_conjTranspose (k r : ℕ) : (Hpk k r)ᴴ = Hpk k r := by
   · subst hab
     split_ifs <;> simp
   · have hba : b ≠ a := Ne.symm hab
-    simp only [hab, hba, and_false, if_false]
+    simp only [hab, hba, and_false, ite_false]
     split_ifs <;> first | (exfalso; omega) | simp
 
 theorem hpkBlocks : HpkBlocks := by
-  intro k j ρ
-  apply ext_eB
-  intro x y
-  rw [block3_apply]
-  rcases x with ((a | a) | a) <;> rcases y with ((b | b) | b) <;>
-  · have ha := a.isLt
-    have hb := b.isLt
-    simp only [Hpk, G.wMat, Fin.ext_iff, block_index_first_val_eq, block_index_middle_val_eq, block_index_last_val_eq, Fin.val_rev, Matrix.of_apply,
-      Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁,
-      Matrix.fromBlocks_apply₂₂, Matrix.fromRows_apply_inl, Matrix.fromRows_apply_inr,
-      Matrix.fromCols_apply_inl, Matrix.fromCols_apply_inr, Matrix.zero_apply]
-    split_ifs <;> first | rfl | (exfalso; omega)
+  apply _root_.Formalism.FourierDecayAlt.P.Ux3.hpkBlocks <;> assumption
 
 end blocks
 
@@ -331,18 +269,7 @@ theorem skewOf_conjTranspose (q : (G.UT j → ℂ) × (Fin j → ℝ)) : (skewOf
   abel
 
 theorem Rn_unitary (x : RC k j ρ) : (Rn k j ρ x)ᴴ * Hpk k (j + ρ) * Rn k j ρ x = Hpk k (j + ρ) := by
-  rw [hpkBlocks k j ρ]
-  unfold Rn
-  rw [block3_conjTranspose, block3_mul, block3_mul]
-  have hw := wMat_conjTranspose j
-  have hH := hpk_conjTranspose k ρ
-  have hS := skewOf_conjTranspose x.2
-  congr 1 <;> simp only [Matrix.one_mul, Matrix.mul_one, Matrix.zero_mul, Matrix.mul_zero, add_zero, zero_add,
-    Matrix.conjTranspose_one, Matrix.conjTranspose_zero, Matrix.conjTranspose_neg, Matrix.conjTranspose_mul,
-    Matrix.conjTranspose_add, Matrix.conjTranspose_smul, Matrix.conjTranspose_conjTranspose, hw, hH, hS,
-    Matrix.mul_neg, Matrix.neg_mul, Matrix.mul_add, Matrix.add_mul, Matrix.mul_assoc, w_w_mul, w_w_mul', wMat_mul_self,
-    neg_zero, neg_add_cancel, Matrix.smul_mul, star_neg, star_div₀, star_one, star_ofNat]
-  all_goals module
+  apply _root_.Formalism.FourierDecayAlt.P.Ux3.rn_unitary <;> assumption
 
 theorem conj_lie {N : ℕ} (n M H : Matrix (Fin N) (Fin N) ℂ) (hu : nᴴ * H * n = H) (hH : Hᴴ = H)
     (hn : n * n⁻¹ = 1) (hM : Mᴴ * H + H * M = 0) :

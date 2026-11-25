@@ -1,47 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsClosedImmersionGenericPoint
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Morphisms.SchemeTheoreticallyDominant
-import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
-import Mathlib.AlgebraicGeometry.Sites.Fpqc
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Definitions.Divisors.CharZeroFunctionField
 import Development.AbelianVarietyTheory.Definitions.Divisors.NefFibOfIsNef
 
@@ -51,7 +11,6 @@ open CategoryTheory AlgebraicGeometry TopologicalSpace Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.ArInt GlobalTheory.CxPts GlobalTheory.Cartier GlobalTheory.VolBr
 
-set_option autoImplicit false
 noncomputable section
 open ReciprocityTheory.ChartRestriction.G.DVR.FlatBC (algX)
 
@@ -96,8 +55,7 @@ theorem exists_continuous_read : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) [I
     obtain ⟨σ₀, hσ₀⟩ : ∃ σ₀, x₀.comp (algX p U) = σ₀ := ⟨_, rfl⟩
     have hN : {x : Γ(X, U) →+* ℂ | x.comp (algX p U) = σ₀} ∈ 𝓝 x₀ := by
       have hex : ∀ τ : k →+* ℂ, τ ≠ σ₀ → ∃ a, τ a ≠ σ₀ a := fun τ h => by
-        by_contra hc
-        push_neg at hc
+        by_contra! hc
         exact h (RingHom.ext hc)
       choose! a ha using hex
       have hopen : ∀ τ : k →+* ℂ,
@@ -115,11 +73,11 @@ theorem exists_continuous_read : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) [I
     let F : (Γ(X, U) →+* ℂ) → CxPts p σ₀ := fun x =>
       if h : x.comp (algX p U) = σ₀ then ofHom hU x (fun a => RingHom.congr_fun h a)
       else ofHom hU x₀ (fun a => RingHom.congr_fun hσ₀ a)
-    have hF0 : F x₀ = ofHom hU x₀ (fun a => RingHom.congr_fun hσ₀ a) := dif_pos hσ₀
+    have hF0 : F x₀ = ofHom hU x₀ (fun a => RingHom.congr_fun hσ₀ a) := dite_eq_left hσ₀
     have hFmem : ∀ x, F x ∈ ptsIn p σ₀ U := fun x => by
       by_cases h : x.comp (algX p U) = σ₀
-      · simp only [F, dif_pos h]; exact ofHom_mem _ _ _
-      · simp only [F, dif_neg h]; exact ofHom_mem _ _ _
+      · simp only [F, dite_eq_left h]; exact ofHom_mem _ _ _
+      · simp only [F, dite_eq_right h]; exact ofHom_mem _ _ _
     have hF : ContinuousAt F x₀ := by
       refine tendsto_subtype_rng.2 ?_
       rw [hF0]
@@ -127,7 +85,7 @@ theorem exists_continuous_read : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) [I
         fun f => ?_
       have e : ∀ᶠ x in 𝓝 x₀, x f = valR (F x).1 U f := by
         filter_upwards [hN] with x hx
-        simp only [F, dif_pos hx]
+        simp only [F, dite_eq_left hx]
         exact (ev_ofHom hU x _ f).symm
       rw [show valR (ofHom hU x₀ (fun a => RingHom.congr_fun hσ₀ a)).1 U f = x₀ f from
         ev_ofHom hU x₀ _ f]
@@ -136,7 +94,7 @@ theorem exists_continuous_read : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) [I
       (hu σ₀).continuousAt ((isOpen_ptsIn U).mem_nhds (hFmem x₀))
     refine (hu0.comp hF).congr_of_eventuallyEq ?_
     filter_upwards [hN] with x hx
-    simp only [Function.comp_apply, F, dif_pos hx]
+    simp only [Function.comp_apply, F, dite_eq_left hx]
     exact eq_of_val_eq u hx _ _ rfl
   · intro σ y hy
     exact eq_of_val_eq u (evHom_comp_algX hy) _ _

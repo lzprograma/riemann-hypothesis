@@ -86,33 +86,6 @@ def stdDatum (μ : kˣ →* ℂˣ) (ϖ : kˣ) (c : ℕ) (x : Matrix (Fin n ⊕ F
 
 end GlobalTheory.StdLocZeta
 
-namespace GlobalTheory.StdLocZeta
-
-variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-  {n n' : ℕ}
-
-end GlobalTheory.StdLocZeta
-
-namespace GlobalTheory.StdLocZeta
-
-variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-  {n n' : ℕ}
-
-end GlobalTheory.StdLocZeta
-
-namespace GlobalTheory.StdLocZeta
-
-variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-  {n n' : ℕ}
-
-end GlobalTheory.StdLocZeta
-
-namespace GlobalTheory.StdLocZeta
-
-variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-  {n n' : ℕ}
-
-end GlobalTheory.StdLocZeta
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -136,12 +109,6 @@ attribute [local instance 2000] GlobalTheory.SplitWeil.matrixMeasurableSpace
 namespace GlobalTheory.LocStd
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-
-section Renumber
-
-variable {X a b a' b' : Type} [Fintype a] [Fintype b] [Fintype a'] [Fintype b'] [MeasurableSpace X]
-
-end Renumber
 
 section Level
 
@@ -179,23 +146,8 @@ section Pair
 
 variable {n n' : ℕ} {D : Type} [Fintype D] [DecidableEq D]
 
-def colDatum (ν : kˣ →* ℂˣ) (ϖ : kˣ) (c : ℕ) (σ : Fin n ⊕ Fin n' ≃ D) (X : Matrix (Fin n) D k) : ℂ :=
-  stdDatum ν ϖ c (Xᵀ.submatrix σ id)
-
 variable (ν : kˣ →* ℂˣ) (ϖ : kˣ) (c : ℕ) (σ : Fin n ⊕ Fin n' ≃ D)
 
-
-omit [Fintype D] [DecidableEq D] in
-theorem colDatum_eq {X : Matrix (Fin n) D k} {u : GL (Fin n) k} (hu : u ∈ KO k (Fin n))
-    (h₁ : ∀ i j, X i (σ (.inl j)) = u.val i j) (h₂ : ∀ i j, X i (σ (.inr j)) ∈ cball (ϖ ^ c)) :
-    colDatum ν ϖ c σ X = (((ν (GeneralLinearGroup.det u))⁻¹ : ℂˣ) : ℂ) := by
-  have e : (Xᵀ.submatrix σ id).toRows₁ = u.valᵀ := by ext i j; exact h₁ j i
-  have h : StdSupp ϖ c (Xᵀ.submatrix σ id) :=
-    ⟨fun i j => by rw [e]; exact (mem_KO_iff_det.1 hu).1 j i, by rw [e, det_transpose]; exact (mem_KO_iff_det.1 hu).2,
-      fun i j => h₂ j i⟩
-  rw [colDatum, stdDatum, dite_eq_left h]
-  congr 3
-  exact Units.ext (by simp [e])
 
 variable [MeasurableSpace k] [BorelSpace k] {m : Measure k}
 
@@ -203,22 +155,6 @@ variable {ν ϖ}
 
 
 end Pair
-
-section Main
-
-variable {a a' : ℕ} {D : Type} [Fintype D] [DecidableEq D]
-
-end Main
-
-section Place
-
-open IsDedekindDomain NumberField GlobalTheory.CMVal
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E]
-
-end Place
 
 end GlobalTheory.LocStd
 

@@ -1,47 +1,7 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -99,12 +59,12 @@ instance nP_neZero (D : D7) (p : ℕ) : NeZero (nP D p) := by
 theorem posPl_period (D : D7) (p : ℕ) (z : Bool × HH D) : posPl D p z (nP D p) = z := by
   have key : ¬ (IsSg D p ∧ Odd (nP D p)) ∧ nP D p • hP D p = 0 := by
     by_cases hs : IsSg D p
-    · have hn : nP D p = 2 * addOrderOf (2 • hP D p) := if_pos hs
+    · have hn : nP D p = 2 * addOrderOf (2 • hP D p) := ite_eq_left hs
       rw [hn]
       refine ⟨fun h => (Nat.not_odd_iff_even.2 (even_two_mul _)) h.2, ?_⟩
       rw [mul_comm, mul_smul]
       exact addOrderOf_nsmul_eq_zero _
-    · have hn : nP D p = addOrderOf (hP D p) := if_neg hs
+    · have hn : nP D p = addOrderOf (hP D p) := ite_eq_right hs
       rw [hn]
       exact ⟨fun h => hs h.1, addOrderOf_nsmul_eq_zero _⟩
   refine Prod.ext ?_ ?_
@@ -189,14 +149,14 @@ theorem posPl_fix (D : D7) (p : ℕ) (y : Bool × HH D) (c : ℕ) (h : posPl D p
     rw [decide_eq_true hc] at h1
     cases hy : y.1 <;> simp [hy] at h1
   by_cases hs : IsSg D p
-  · have hn : nP D p = 2 * addOrderOf (2 • hP D p) := if_pos hs
+  · have hn : nP D p = 2 * addOrderOf (2 • hP D p) := ite_eq_left hs
     have hev : Even c := Nat.not_odd_iff_even.1 (fun ho => h1' ⟨hs, ho⟩)
     obtain ⟨a, rfl⟩ := hev
     have h3 : a • (2 • hP D p) = 0 := by
       rw [← mul_smul, mul_two]; exact h2'
     rw [hn, ← two_mul]
     exact Nat.mul_dvd_mul_left 2 (addOrderOf_dvd_of_nsmul_eq_zero h3)
-  · have hn : nP D p = addOrderOf (hP D p) := if_neg hs
+  · have hn : nP D p = addOrderOf (hP D p) := ite_eq_right hs
     rw [hn]
     exact addOrderOf_dvd_of_nsmul_eq_zero h2'
 
@@ -244,7 +204,7 @@ variable {D : D7} (L : SizeData₂ D) (j : ℕ) {p : ℕ}
 
 theorem FvalP_above (hX : L.sc.X'' D.R.n < (p : ℝ)) (hg : p ∉ L.gTypes) (hd : p ≠ D.host.d) : FvalP L j p = 0 := by
   unfold FvalP
-  rw [if_neg hg, if_neg (fun h => hd (cls_ramD h)), if_neg (fun h => absurd h.2 (not_le.2 hX))]
+  rw [ite_eq_right hg, ite_eq_right (fun h => hd (cls_ramD h)), ite_eq_right (fun h => absurd h.2 (not_le.2 hX))]
 
 end Cases
 

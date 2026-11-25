@@ -33,7 +33,7 @@ theorem primeIdealUnit_mem_idealsPrimeTo {𝔪 : Ideal (𝓞 K)} {v : HeightOneS
     (hv : ¬ v.asIdeal ∣ 𝔪) : primeIdealUnit v ∈ idealsPrimeTo 𝔪 := by
   classical
   intro w hw
-  rw [count_primeIdealUnit, if_neg]
+  rw [count_primeIdealUnit, ite_eq_right]
   rintro rfl
   exact hv hw
 

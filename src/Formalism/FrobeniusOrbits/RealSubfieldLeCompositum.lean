@@ -3,51 +3,7 @@ module
 public import Formalism.FrobeniusOrbits.Statement
 public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.ConjReal
 public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Galois
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -88,7 +44,7 @@ private lemma sgn_eq_one_iff_apply_eq {M : Type*} [Field M] [Algebra ℚ M] (σ 
   unfold Formalism.TwoAdicCyclotomicDecomposition.sgn
   by_cases hx : σ x = x
   · simp [hx]
-  · rw [if_neg hx]
+  · rw [ite_eq_right hx]
     exact iff_of_false (by decide) hx
 
 theorem galE_mem_Psi_iff (σ : hostE ζ a b ≃ₐ[ℚ] hostE ζ a b) :
@@ -209,9 +165,9 @@ theorem galE_aE (hqd : HypOdd q d) (h : IsLayer (e + 2) q d ζ a b)
   dsimp only
   unfold Formalism.TwoAdicCyclotomicDecomposition.sgn
   by_cases hx : σ (aE ζ a b) = aE ζ a b
-  · rw [if_pos hx, hx]
+  · rw [ite_eq_left hx, hx]
     simp [aE]
-  · rw [if_neg hx]
+  · rw [ite_eq_right hx]
     rcases hor with h1 | h1
     · exact absurd h1 hx
     · rw [h1]
@@ -231,9 +187,9 @@ theorem galE_bE (hqd : HypOdd q d) (h : IsLayer (e + 2) q d ζ a b)
   dsimp only
   unfold Formalism.TwoAdicCyclotomicDecomposition.sgn
   by_cases hx : σ (bE ζ a b) = bE ζ a b
-  · rw [if_pos hx, hx]
+  · rw [ite_eq_left hx, hx]
     simp [bE]
-  · rw [if_neg hx]
+  · rw [ite_eq_right hx]
     rcases hor with h1 | h1
     · exact absurd h1 hx
     · rw [h1]

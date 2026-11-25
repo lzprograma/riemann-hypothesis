@@ -1,5 +1,9 @@
 module
 
+import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionProduct
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemOfAevalEqZero
+import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionBounded
+import GroundTheory.HeightsAndTheta.Heights.Intersections.OneNotMemOfIsPrime
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ModelSmall
 public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.GoodOrigin
 import Mathlib.Algebra.Order.Floor.Extended
@@ -74,35 +78,13 @@ theorem homog_mul {f g : MRing ι} {a b : K → ℕ} (hf : IsMultiHomog f a) (hg
 
 theorem homog_X [DecidableEq K] (k₀ : K) (i₀ : ι k₀) :
     IsMultiHomog (MvPolynomial.X ⟨k₀, i₀⟩ : MRing ι) (Pi.single k₀ 1) := by
-  classical
-  intro m hm k
-  have hm' : m = Finsupp.single ⟨k₀, i₀⟩ 1 := by
-    rw [MvPolynomial.X, MvPolynomial.support_monomial, if_neg one_ne_zero] at hm
-    exact Finset.mem_singleton.mp hm
-  subst hm'
-  simp only [Finsupp.single_apply, Sigma.mk.inj_iff, Pi.single_apply]
-  by_cases hk : k = k₀
-  · subst hk
-    simp
-  · simp [Ne.symm hk, hk]
+  apply _root_.GroundTheory.Heights₂.Heights.Inter.regularityLocalFlat_holds.homog_X <;> assumption
 
 def mon (c : ∀ k, ι k) (m : K → ℕ) : MRing ι := ∏ k, MvPolynomial.X ⟨k, c k⟩ ^ m k
 
 theorem homog_pow {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) (e : ℕ) :
     IsMultiHomog (f ^ e) (e • a) := by
-  induction e with
-  | zero =>
-    have h0 : ((0 : ℕ) • a : K → ℕ) = 0 := by
-      ext k
-      simp
-    rw [pow_zero, h0]
-    exact _root_.GroundTheory.Heights₂.Heights.LowerBoundFree.isMultiHomog_one
-  | succ n ih =>
-    have h1 : ((n + 1) • a : K → ℕ) = n • a + a := by
-      ext k
-      simp [add_mul]
-    rw [pow_succ, h1]
-    exact homog_mul ih hf
+  apply _root_.GroundTheory.Heights₂.Heights.HilbertSamuel.SectionProduct.isMultiHomog_pow <;> assumption
 
 theorem homog_mon (c : ∀ k, ι k) (m : K → ℕ) : IsMultiHomog (mon c m) m := by
   classical

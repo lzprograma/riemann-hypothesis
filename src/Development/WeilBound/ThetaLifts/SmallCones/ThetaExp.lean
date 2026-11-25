@@ -34,51 +34,9 @@ public import Development.WeilBound.ThetaLifts.SmallCones.UnipEx
 import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.PlaneAd
 import Development.WeilBound.ThetaLifts.SmallCones.FourierUniq
 import Development.WeilBound.ThetaLifts.SmallCones.MatCancel
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardTraceAddCharIsStandardCharOfAdmissibleCM
 import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.TotallySplit
 import Mathlib.Tactic.Linter.HaveILetI
 import Development.WeilBound.ThetaLifts.SmallCones.SoStab
 import Development.WeilBound.ThetaLifts.SmallCones.WittOf
@@ -132,7 +90,7 @@ theorem tm_eq (hp : IsPair B M χX χW om r s r' s') (hi : ∀ u ∈ unip σ W H
   rw [tm, rho_om hp _ _ hΦ, hi _ u.2 _ (rho_mem M hp.base.std _ hΦ)]
 
 theorem tm_mul (U) (Φ) (u v : unip σ W H') : tm B M om H' e U Φ (u * v) = tm B M om H' e U (om (1, v.1) Φ) u := by
-  rw [tm, tm, om_om]
+  rw [tm, tm, PositivityTheory.ThKCT.om_mul]
   simp
 
 theorem tm_one (U) (Φ) : tm B M om H' e U Φ 1 = thetaSum F (e (M.co.rho B.ψ (incM F U) Φ)) := by
@@ -396,7 +354,7 @@ theorem theta_unif {κ : Type} [Fintype κ] {ψ : AddChar (AF F) ℂ} (hψ : IsS
     by_cases h0 : g (fun i => ((y + k) i).2) = 0
     · rw [h0, mul_zero, norm_zero]
       exact mul_nonneg (by positivity) (hw0 _)
-    have hm : wt η = (PositivityTheory.ThKCT.sz y ^ N)⁻¹ := if_pos ⟨(_, k), ⟨subset_tsupport g h0, hkK⟩, by
+    have hm : wt η = (PositivityTheory.ThKCT.sz y ^ N)⁻¹ := ite_eq_left ⟨(_, k), ⟨subset_tsupport g h0, hkK⟩, by
       funext i
       change (y i).2 + (k i).2 - (k i).2 = _
       rw [add_sub_cancel_right]⟩
@@ -543,9 +501,9 @@ theorem constant_term_rational_translate (hW : MixW) (hT : ThetaBasic) (hp : IsP
   have h1 := rho_mem M hp.base.std (incM F (vecMulVec x H'.y)) (om_mem hp (1, u.1) hΦ)
   have h2 := ((hT F E σ B n d₁ X W₁ M₁ χX χW om₁ r s r₁ s₁ hp₁).1 _ (he.maps _ h1)).2.1 γ hγ 1 (one_mem _) 1 1
   rw [theta, theta, mul_one, mul_one, ← mix0 hW hp hH' hp₁ he γ (one_mem _) h1, show ((1 : UA σ X.J), (1 : UA σ W₁.J)) = 1 from rfl,
-    map_one, Module.End.one_apply, om_rho hp _ _ _ (om_mem hp _ hΦ), Fr.mat_one, Matrix.transpose_one, Matrix.mul_one, om_om, incM_vv,
+    map_one, Module.End.one_apply, om_rho hp _ _ _ (om_mem hp _ hΦ), Fr.mat_one, Matrix.transpose_one, Matrix.mul_one, PositivityTheory.ThKCT.om_mul, incM_vv,
     Matrix.mul_vecMulVec, hx] at h2
-  rw [tm, tm, incM_vv, incM_vv, ← h2, om_om]
+  rw [tm, tm, incM_vv, incM_vv, ← h2, PositivityTheory.ThKCT.om_mul]
   simp
 
 theorem constant_term_cone_integral_eq (hA : EvAdm) (hm : MeanOK σ W H' μ 𝓕) (hp : IsPair B M χX χW om r s r' s') (h : PG σ X X₁ H 1)
@@ -620,7 +578,7 @@ theorem ctKernel_of (hE : ThetaExp) (hQ : EvUniq) (hS : Slice) (hA : EvAdm) (hW 
     have hΨ := om_mem hp (g, h) hΦ
     have := split_sum (sum0 hS hA hm hp h' hM₁ he₀ (hi₀ hp) hs₀ hΨ) (fun x => form σ X.J x x = 0) fun x hx => by
       rw [constant_term_anisotropic_integral_zero hm hp h' hM₁ he₀ (hi₀ hp) hx hΨ, mul_zero]
-    simp only [constant_term_integral_at_zero hm (hi₀ hp) hΨ, om_om, Prod.mk_mul_mk, one_mul] at this
+    simp only [constant_term_integral_at_zero hm (hi₀ hp) hΨ, PositivityTheory.ThKCT.om_mul, Prod.mk_mul_mk, one_mul] at this
     exact this
   refine ⟨C₀, hC₀, fun han χX χW om r s r' s' hp Φ hΦ g μ 𝓕 a b c h => ?_, fun n₁ X₁ H j₀ j₁ M₂ hH hM₂ e he => ?_⟩
   · haveI : IsEmpty (IsoV σ X) := ⟨fun x => x.2.1 (han _ x.2.2)⟩
@@ -644,7 +602,7 @@ theorem ctKernel_of (hE : ThetaExp) (hQ : EvUniq) (hS : Slice) (hA : EvAdm) (hW 
       (∫ u in 𝓕, theta om Φ g (u.1 * k) ∂μ - C₀ * thetaSum F (e₀ (om (g, k) Φ))) := fun hm k => by
     obtain ⟨om₁, hp₁⟩ := pair_low hP hL hp hH' hM₁
     convert key hp hm Φ hΦ g k using 2 with x
-    simp only [constant_term_rational_translate hW hT hp hH' hp₁ he₀ (hγ x).1 (hγ x).2 (om_mem hp _ hΦ), om_om, Prod.mk_mul_mk, one_mul]
+    simp only [constant_term_rational_translate hW hT hp hH' hp₁ he₀ (hγ x).1 (hγ x).2 (om_mem hp _ hΦ), PositivityTheory.ThKCT.om_mul, Prod.mk_mul_mk, one_mul]
     rw [constant_term_cone_integral_eq hA hm hp h h' hM₂ he₀ he' (hi₀ hp) hc hsX hce (om_mem hp _ hΦ), mul_assoc]
   refine ⟨fun k => ?_, fun μ 𝓕 a b c' k => ?_⟩
   · obtain ⟨μ, 𝓕, a, b, c'⟩ := (hU F E σ B d d₁ W W₁ H' i₀ i₁ r' s' hB (Or.inr hp.skew) hH').1

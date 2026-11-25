@@ -41,7 +41,7 @@ theorem occurrence_pairing (dual : Bool) (hgap : StdGap ε lam) (hP : IsPsiFor �
       MemLp (fun g : Formalism.REAL.UJ ε => ((Real.sqrt (S7.hs (Formalism.MainNotions.S.umat g)) : ℝ) : ℂ) *
         inner ℂ ((w : smD ε (rreg ε)) : L2 ε) (rreg ε (Formalism.MainNotions.S.umat g) ((v : smD ε (rreg ε)) : L2 ε))) 2 (Formalism.REAL.muG ε))
     (hB : ∃ (ξ ζ : Fin n → T.V) (v' : T'.V), ∫ g : Formalism.REAL.UJ ε,
-      starRingEnd ℂ (occPsiCoef dual Ψ ξ ζ (Formalism.MainNotions.S.umat g)) * inner ℂ v₀' (Ψ' (Formalism.MainNotions.S.umat g) v')
+      starRingEnd ℂ (ReciprocityTheory.ChartRestriction.DS.ob3PsiCoef dual Ψ ξ ζ (Formalism.MainNotions.S.umat g)) * inner ℂ v₀' (Ψ' (Formalism.MainNotions.S.umat g) v')
         ∂(Formalism.REAL.muG ε) ≠ 0) :
     ∃ η ∈ tensSub (genSub (smE ε (rreg ε)) (datumV ε Ψ v₀)), ∃ f ∈ tensSub (genSub (smE ε (rreg ε)) (datumV ε Ψ v₀)),
       ∃ x' ∈ genSub (smE ε (rreg ε)) (datumV ε Ψ' v₀'),
@@ -58,23 +58,23 @@ theorem occurrence_pairing (dual : Bool) (hgap : StdGap ε lam) (hP : IsPsiFor �
     layer_le_genSub (ε := ε) 0 ((mem_datumV_iff hP' v₀' _).2 ⟨v', rfl⟩), ?_⟩
   have hF : ∀ g, inUJ ε g → occCoef dual (rreg ε) (fun c => ((jm (ξ c) : smD ε (rreg ε)) : L2 ε))
       (fun c => ((jm (ζ c) : smD ε (rreg ε)) : L2 ε)) g =
-      ((‖uniformisationL2 ε Ψ v₀ T.w‖ ^ 2 : ℝ) : ℂ) * occPsiCoef dual Ψ ξ ζ g := by
+      ((‖uniformisationL2 ε Ψ v₀ T.w‖ ^ 2 : ℝ) : ℂ) * ReciprocityTheory.ChartRestriction.DS.ob3PsiCoef dual Ψ ξ ζ g := by
     intro g hg
     have hg' : g ∈ UJset ε := hg
-    simp only [occCoef, occPsiCoef, tensGrp, jm, inner_sum, inner_smul_right, formulaF hgap hP hv₀ hg',
+    simp only [occCoef, ReciprocityTheory.ChartRestriction.DS.ob3PsiCoef, tensGrp, jm, inner_sum, inner_smul_right, formulaF hgap hP hv₀ hg',
       Finset.mul_sum]
     exact Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => by ring
   have hM1 : MemLp (fun g : Formalism.REAL.UJ ε => (fun g => ((‖uniformisationL2 ε Ψ v₀ T.w‖ ^ 2 : ℝ) : ℂ) *
-      occPsiCoef dual Ψ ξ ζ g) (Formalism.MainNotions.S.umat g)) 2 (Formalism.REAL.muG ε) :=
+      ReciprocityTheory.ChartRestriction.DS.ob3PsiCoef dual Ψ ξ ζ g) (Formalism.MainNotions.S.umat g)) 2 (Formalism.REAL.muG ε) :=
     (occA_coef_memLp dual hσ hW _ _ hη hf).ae_eq (Filter.Eventually.of_forall fun g => hF _ g.2)
   have e1 : toL2 ε (occCoef dual (rreg ε) (fun c => ((jm (ξ c) : smD ε (rreg ε)) : L2 ε))
       (fun c => ((jm (ζ c) : smD ε (rreg ε)) : L2 ε))) =
-      toL2 ε (fun g => ((‖uniformisationL2 ε Ψ v₀ T.w‖ ^ 2 : ℝ) : ℂ) * occPsiCoef dual Ψ ξ ζ g) := toL2_congr_of_forall_inUJ_eq hF
-  have e2 : inner ℂ (toL2 ε (fun g => ((‖uniformisationL2 ε Ψ v₀ T.w‖ ^ 2 : ℝ) : ℂ) * occPsiCoef dual Ψ ξ ζ g))
+      toL2 ε (fun g => ((‖uniformisationL2 ε Ψ v₀ T.w‖ ^ 2 : ℝ) : ℂ) * ReciprocityTheory.ChartRestriction.DS.ob3PsiCoef dual Ψ ξ ζ g) := toL2_congr_of_forall_inUJ_eq hF
+  have e2 : inner ℂ (toL2 ε (fun g => ((‖uniformisationL2 ε Ψ v₀ T.w‖ ^ 2 : ℝ) : ℂ) * ReciprocityTheory.ChartRestriction.DS.ob3PsiCoef dual Ψ ξ ζ g))
       (toL2 ε (jfun Ψ' v₀' v')) = starRingEnd ℂ (((‖uniformisationL2 ε Ψ v₀ T.w‖ ^ 2 : ℝ) : ℂ)) *
-        ∫ g : Formalism.REAL.UJ ε, starRingEnd ℂ (occPsiCoef dual Ψ ξ ζ (Formalism.MainNotions.S.umat g)) *
+        ∫ g : Formalism.REAL.UJ ε, starRingEnd ℂ (ReciprocityTheory.ChartRestriction.DS.ob3PsiCoef dual Ψ ξ ζ (Formalism.MainNotions.S.umat g)) *
           inner ℂ v₀' (Ψ' (Formalism.MainNotions.S.umat g) v') ∂(Formalism.REAL.muG ε) := by
-    rw [inner_toL2_eq_theta_pairing ε (F := fun g => ((‖uniformisationL2 ε Ψ v₀ T.w‖ ^ 2 : ℝ) : ℂ) * occPsiCoef dual Ψ ξ ζ g)
+    rw [inner_toL2_eq_theta_pairing ε (F := fun g => ((‖uniformisationL2 ε Ψ v₀ T.w‖ ^ 2 : ℝ) : ℂ) * ReciprocityTheory.ChartRestriction.DS.ob3PsiCoef dual Ψ ξ ζ g)
       (G := jfun Ψ' v₀' v') hM1 (dt_memLp hP' v₀' v'), ← integral_const_mul]
     refine integral_congr_ae (Filter.Eventually.of_forall fun g => ?_)
     simp only [map_mul, jfun, mul_assoc]

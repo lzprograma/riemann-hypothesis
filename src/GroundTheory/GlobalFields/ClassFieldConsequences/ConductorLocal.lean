@@ -58,9 +58,9 @@ theorem multiplicity_finprod_asIdeal_pow_eq {a : HeightOneSpectrum (𝓞 K) → 
     refine (finprod_asIdeal_pow_dvd_iff hb hI).2 fun w ↦ ?_
     by_cases hw : w = v
     · subst hw
-      simp only [b, if_true]
+      simp only [b, ite_true]
       omega
-    · simp only [b, if_neg hw, add_zero]
+    · simp only [b, ite_eq_right hw, add_zero]
       exact (finprod_asIdeal_pow_dvd_iff ha hI).1 dvd_rfl w
   have hfa : HasFiniteMulSupport fun w : HeightOneSpectrum (𝓞 K) ↦ w.asIdeal ^ a w := by
     rw [HasFiniteMulSupport, mulSupport_asIdeal_pow]; exact ha
@@ -73,7 +73,7 @@ theorem multiplicity_finprod_asIdeal_pow_eq {a : HeightOneSpectrum (𝓞 K) → 
     simp only [b, pow_add]
     rw [finprod_mul_distrib hfa hfv]
     congr 1
-    rw [finprod_eq_single _ v fun w hw ↦ by simp [hw], if_pos rfl, pow_one]
+    rw [finprod_eq_single _ v fun w hw ↦ by simp [hw], ite_eq_left rfl, pow_one]
   rw [hsplit] at hdvd
   have h1' : I * v.asIdeal ∣ I * 1 := by rwa [mul_one]
   have hv1 := (mul_dvd_mul_iff_left (show I ≠ 0 from hI)).1 h1'

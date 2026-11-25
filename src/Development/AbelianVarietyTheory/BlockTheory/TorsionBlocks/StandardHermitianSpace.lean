@@ -45,8 +45,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Stan
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.StandardHermitianSpace
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def intVecs (D : D7) (n : ℕ) : Set (Fin n → D.host.E) :=
   {x | ∀ a, x a ∈ Set.range (algebraMap (𝓞 D.host.E) D.host.E)}
 

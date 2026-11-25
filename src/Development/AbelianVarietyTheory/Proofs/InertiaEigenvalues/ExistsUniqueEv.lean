@@ -156,7 +156,7 @@ theorem ev_bounded (hi : ∀ r : O, ‖i (algebraMap O L r)‖ ≤ 1) {c : O} (h
       refine ⟨∑ p ∈ Finset.HasAntidiagonal.antidiagonal k, ‖i (coeff p.1 z)‖ * B p.2, fun b => ?_⟩
       obtain ⟨r, q, hq⟩ := hz b
 
-      rw [hq ev h, map_add (f := _), coeff_succ_X_mul, coeff_C, if_neg k.succ_ne_zero, zero_add, coeff_mul,
+      rw [hq ev h, map_add (f := _), coeff_succ_X_mul, coeff_C, ite_eq_right k.succ_ne_zero, zero_add, coeff_mul,
       map_sum]
       refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun p hp => ?_)
       rw [map_mul, norm_mul]

@@ -186,7 +186,7 @@ theorem exists_pos_le_height {C : Set (AdelicGLn.AdelicGL K n)} (hC : IsCompact 
   rw [hxy]
   refine (adelicNorm_le_of_local ((hasFiniteContent_height g hx).vecMul g⁻¹)
     (hasFiniteContent_height g hx) (fun w => √n * (n * a w)) b' S (fun w => ?_)
-    (fun v hv => by rw [hb']; dsimp only; rw [if_neg hv]) (fun v => ?_)).trans (le_of_eq rfl)
+    (fun v hv => by rw [hb']; dsimp only; rw [ite_eq_right hv]) (fun v => ?_)).trans (le_of_eq rfl)
   · rw [infComp_vecMul_GL, show infAt w g⁻¹ = (infAt w g)⁻¹ by simp [infAt, map_inv]]
     exact euclidNorm_vecMul_le (zero_le_one.trans (ha1 w)) (ha w g hg) _
   · rw [finComp_vecMul_GL, show finAt v g⁻¹ = (finAt v g)⁻¹ by

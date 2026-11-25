@@ -17,48 +17,6 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.Integrab
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensOp
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TwistPerm
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TwistYA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.HaveILetI
 import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GlueBasic
@@ -83,55 +41,34 @@ namespace UpperTheory.ConvolutionTheory.L1
 section Hilbert
 variable {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-private lemma prj_mem {M : Submodule ℂ H} (hM : IsClosed (M : Set H)) (x : H) : prj M x ∈ M := by
-  have h : M.topologicalClosure = M := hM.submodule_topologicalClosure_eq
-  have h2 : prj M x ∈ M.topologicalClosure := Submodule.starProjection_apply_mem M.topologicalClosure x
-  rwa [h] at h2
-
-private lemma prj_orth {M : Submodule ℂ H} (hM : IsClosed (M : Set H)) (x : H) {w : H} (hw : w ∈ M) :
-    ⟪x - prj M x, w⟫_ℂ = 0 := by
-  exact (Submodule.mem_orthogonal' _ _).1
-    (Submodule.sub_starProjection_mem_orthogonal (K := M.topologicalClosure) x) w
-    (M.le_topologicalClosure hw)
-
-private lemma prj_eq {M : Submodule ℂ H} (hM : IsClosed (M : Set H)) {u v : H} (hv : v ∈ M)
-    (ho : ∀ w ∈ M, ⟪u - v, w⟫_ℂ = 0) : prj M u = v := by
-  have h : M.topologicalClosure = M := hM.submodule_topologicalClosure_eq
-  exact Submodule.eq_starProjection_of_mem_of_inner_eq_zero (K := M.topologicalClosure)
-    (M.le_topologicalClosure hv) fun w hw => ho w (by rwa [h] at hw)
-
-private lemma prj_of_mem {M : Submodule ℂ H} (hM : IsClosed (M : Set H)) {v : H} (hv : v ∈ M) :
-    prj M v = v :=
-  prj_eq hM hv fun w _ => by simp
-
 private lemma inner_prj_left {M : Submodule ℂ H} (hM : IsClosed (M : Set H)) (x : H) {w : H}
     (hw : w ∈ M) : ⟪prj M x, w⟫_ℂ = ⟪x, w⟫_ℂ := by
-  have := prj_orth hM x hw
+  have := TY.prj_inner x hw
   rw [inner_sub_left, sub_eq_zero] at this
   exact this.symm
 
 private lemma prj_congr {M : Submodule ℂ H} (hM : IsClosed (M : Set H)) {a b : H}
     (h : ∀ w ∈ M, ⟪a, w⟫_ℂ = ⟪b, w⟫_ℂ) : prj M a = prj M b := by
-  refine prj_eq hM (prj_mem hM b) fun w hw => ?_
+  refine TY.prj_eq_of hM _ _ (TY.prj_mem hM b) fun w hw => ?_
   rw [inner_sub_left, h w hw, ← inner_sub_left]
-  exact prj_orth hM b hw
+  exact TY.prj_inner b hw
 
 private lemma inner_prj_symm {M : Submodule ℂ H} (hM : IsClosed (M : Set H)) (x y : H) :
     ⟪prj M x, y⟫_ℂ = ⟪x, prj M y⟫_ℂ := by
   have h1 : ⟪prj M x, y⟫_ℂ = ⟪prj M x, prj M y⟫_ℂ := by
-    rw [← inner_conj_symm, ← inner_prj_left hM y (prj_mem hM x), inner_conj_symm]
-  rw [h1, inner_prj_left hM x (prj_mem hM y)]
+    rw [← inner_conj_symm, ← inner_prj_left hM y (TY.prj_mem hM x), inner_conj_symm]
+  rw [h1, inner_prj_left hM x (TY.prj_mem hM y)]
 
 private lemma comm_prj {M : Submodule ℂ H} (hM : IsClosed (M : Set H)) (B B' : H →L[ℂ] H)
     (hadj : ∀ x y, ⟪B x, y⟫_ℂ = ⟪x, B' y⟫_ℂ) (h1 : ∀ v ∈ M, B v ∈ M) (h2 : ∀ v ∈ M, B' v ∈ M)
     (x : H) : prj M (B x) = B (prj M x) := by
-  refine prj_eq hM (h1 _ (prj_mem hM x)) fun w hw => ?_
+  refine TY.prj_eq_of hM _ _ (h1 _ (TY.prj_mem hM x)) fun w hw => ?_
   rw [← map_sub, hadj]
-  exact prj_orth hM x (h2 w hw)
+  exact TY.prj_inner x (h2 w hw)
 
 private def cmp (W : Submodule ℂ H) [FiniteDimensional ℂ W] (B : H →L[ℂ] H) : Module.End ℂ W :=
   LinearMap.codRestrict W (((prj W ∘L B : H →L[ℂ] H) : H →ₗ[ℂ] H) ∘ₗ W.subtype)
-    fun w => prj_mem (Submodule.closed_of_finiteDimensional W) _
+    fun w => TY.prj_mem (Submodule.closed_of_finiteDimensional W) _
 
 private lemma coe_cmp (W : Submodule ℂ H) [FiniteDimensional ℂ W] (B : H →L[ℂ] H) (w : W) :
     ((cmp W B w : W) : H) = prj W (B w) := rfl
@@ -153,7 +90,7 @@ private lemma trOn_eq (W : Submodule ℂ H) [FiniteDimensional ℂ W] (B : H →
   have hbf : ∀ k, b (f k) = (e k : H) := fun k => hbi _
 
   have hout : ∀ i, i ∉ Set.range f → prj W (b i) = 0 := fun i hi => by
-    refine prj_eq hcl W.zero_mem fun w hw => ?_
+    refine TY.prj_eq_of hcl _ _ W.zero_mem fun w hw => ?_
     have hw' : (w : H) = ∑ k, ⟪(e k : H), w⟫_ℂ • (e k : H) := by
       have := e.sum_repr' (⟨w, hw⟩ : W)
       have h2 := congrArg (Subtype.val) this
@@ -179,7 +116,7 @@ private lemma trOn_eq (W : Submodule ℂ H) [FiniteDimensional ℂ W] (B : H →
   rw [h2.unique (hasSum_fintype _)]
   refine Finset.sum_congr rfl fun k _ => ?_
   simp only [Function.comp, hbf, ContinuousLinearMap.comp_apply]
-  rw [prj_of_mem hcl (e k).2, Submodule.coe_inner, coe_cmp]
+  rw [TY.prj_self (e k).2, Submodule.coe_inner, coe_cmp]
 
 end Hilbert
 
@@ -243,13 +180,13 @@ private lemma Q_mem (h : Slots π V m ι E A U) {y : ℝ} {j : Fin (m + 1)} {x :
     rw [← hPV, hv, map_smul]
   have hQV := comm_prj hF (prj V) (prj V) (inner_prj_symm hV) hPVF hPVF x
   refine mem_W.2 ⟨mem_R.2 ⟨?_, ?_⟩, fun k => ?_⟩
-  · rw [prj_of_mem hV hxV] at hQV
+  · rw [TY.prj_self hxV] at hQV
     rw [hQV]
-    exact prj_mem hV _
+    exact TY.prj_mem hV _
   · rw [← comm_prj hF E E (E_sym h) hEF hEF x, hxE]
   · by_cases hk : k = j
     · subst hk
-      exact prj_mem hF x
+      exact TY.prj_mem hF x
     · rw [mem_eF, ← comm_prj hF (A k) (A k) (A_sym h k) (hAF k) (hAF k) x,
         mem_eF.1 (hxk k hk), map_smul]
 
@@ -258,7 +195,7 @@ private lemma inner_P (h : Slots π V m ι E A U) {y : ℝ}
     (hx : Near V E A y j x) (hf : f ∈ eF (A j) y) :
     ⟪prj (jointEig V E A y) x, f⟫_ℂ = ⟪x, f⟫_ℂ := by
   have hP : prj (jointEig V E A y) x = prj (eF (A j) y) x :=
-    prj_eq hW (Q_mem h hx) fun w hw => prj_orth (eF_closed _ _) x ((mem_W.1 hw).2 j)
+    TY.prj_eq_of hW _ _ (Q_mem h hx) fun w hw => TY.prj_inner x ((mem_W.1 hw).2 j)
   rw [hP]
   exact inner_prj_left (eF_closed _ _) x hf
 
@@ -325,7 +262,7 @@ private lemma irr (h : Slots π V m ι E A U) (y : ℝ) [FiniteDimensional ℂ (
       intro w hw
       have hw' := hp'W w hw
       simp only [Finset.piecewise_empty, map_one, UnitaryRep.map_one_apply]
-      exact ⟨(mem_W.1 hw').1, fun k _ => (mem_W.1 hw').2 k, by rwa [prj_of_mem hW hw']⟩
+      exact ⟨(mem_W.1 hw').1, fun k _ => (mem_W.1 hw').2 k, by rwa [TY.prj_self hw']⟩
     | insert a s ha ih =>
       intro w hw
       have e1 : (insert a s).piecewise g 1 = Pi.mulSingle a (g a) * s.piecewise g 1 := by
@@ -387,7 +324,7 @@ private lemma irr (h : Slots π V m ι E A U) (y : ℝ) [FiniteDimensional ℂ (
       rw [h1]
       exact (mem_W.1 w.2).1
     have := hCp _ hwC
-    rw [prj_of_mem hW w.2] at this
+    rw [TY.prj_self w.2] at this
     obtain ⟨z, hz, hzw⟩ := this
     have : z = w := Subtype.ext hzw
     rwa [← this]

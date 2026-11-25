@@ -51,7 +51,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open GlobalTheory.Grid GlobalTheory.ChiGrid GlobalTheory.GridJoin
 open scoped Pointwise TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -85,7 +84,7 @@ theorem one_sub_mem_idS_prod [StarRing E] (P : Finset (Pl E)) (d : Pl E → ℕ)
     refine Finset.prod_induction b (fun x => t * x = t) (fun x y hx hy => by rw [← mul_assoc, hx, hy]) (mul_one t) ?_
     intro w hw
     apply Subtype.ext
-    simp only [hb, hw, dif_pos, ht, Subring.coe_mul]
+    simp only [hb, hw, dite_eq_left, ht, Subring.coe_mul]
     linear_combination (hae w hw)
   refine ⟨t, ?_, rfl⟩
   rw [← hfix, ← hmap]
@@ -116,8 +115,7 @@ theorem isIdemSum_props : ∀ {D : D7} (e : AE D) (P : Finset (Formalism.L2.DIV.
     rw [he, map_sum]
     exact sum_mem fun w hw => (idemOf_toEAf (hes w hw)).mem
   refine ⟨?_, hint, ?_⟩
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [he, map_sum]
+  · rw [he, map_sum]
     exact Finset.sum_eq_zero fun w hw =>
       GlobalTheory.ExportSeries.SpecGood.infPart_eq_zero_of_isIdemAt D w (es w) (hes w hw)
   · refine one_sub_mem_idS_prod P d hint fun w hw => ?_

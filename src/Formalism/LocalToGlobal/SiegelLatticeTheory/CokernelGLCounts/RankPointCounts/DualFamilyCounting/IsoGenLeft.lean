@@ -15,8 +15,6 @@ namespace Formalism.L2.SG.Pf.NcReal.JX.NOf.Ex
 
 open Formalism.L2.SG.HidaSetting Formalism.MainNotions.S Formalism.L2.SG.Pf.NcReal.JX.NOf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : HidaSetting D) (X0 : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E) (xs : Fin D.R.rS → (VS D).V)
   (M : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E)
 

@@ -67,8 +67,8 @@ theorem tsum_subtype_and_eq_ite {α : Type*} (S : Set α) (p q : α → Prop) (f
   · have hpq := h t hS
     rw [Set.indicator_of_mem hS]
     by_cases hq : q t
-    · rw [if_pos hq, Set.indicator_of_mem (show t ∈ {t | t ∈ S ∧ p t} from ⟨hS, hpq.2 hq⟩)]
-    · rw [if_neg hq]
+    · rw [ite_eq_left hq, Set.indicator_of_mem (show t ∈ {t | t ∈ S ∧ p t} from ⟨hS, hpq.2 hq⟩)]
+    · rw [ite_eq_right hq]
       exact Set.indicator_apply_eq_zero.mpr (fun (hm : t ∈ {t | t ∈ S ∧ p t}) =>
         absurd (hpq.1 hm.2) hq)
   · rw [Set.indicator_apply_eq_zero.mpr (fun (hm : t ∈ {t | t ∈ S ∧ p t}) =>

@@ -8,7 +8,7 @@ public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 namespace Bl.general_b_fact_right_more
 
 theorem goal1 :
-  ∀ {E : Type} [inst : Field.{0} E] [NumberField.{0} E] [StarRing.{0} E]
+  ∀ {E : Type} [Field.{0} E] [NumberField.{0} E] [StarRing.{0} E]
   (P : IsDedekindDomain.HeightOneSpectrum.{0} (NumberField.RingOfIntegers.{0} E)),
   Exists.{1} fun (a : NumberField.RingOfIntegers.{0} E) ↦
     And (Membership.mem.{0, 0} (IsDedekindDomain.HeightOneSpectrum.asIdeal.{0} P) a)

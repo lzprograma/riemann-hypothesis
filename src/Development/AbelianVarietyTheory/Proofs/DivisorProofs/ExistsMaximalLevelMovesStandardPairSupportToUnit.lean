@@ -63,7 +63,6 @@ open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTh
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.NormSum (Pair Tup)
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.BotSmallDict GlobalTheory.NormExact
 open scoped Pointwise
 
@@ -225,24 +224,7 @@ private theorem cF_oToS (b : 𝓞 D.host.E) :
   rw [Formalism.MainNotions.GlobalTheoryTheory.jnt_sig_eq_conj]
 
 private theorem cF_mem (z : EAf D) (hz : z ∈ OO) : σσ z ∈ OO := by
-  induction hz using Subring.closure_induction with
-  | mem r hr =>
-    rcases hr with ⟨⟨_, b, rfl⟩, rfl⟩ | ⟨⟨β, hβ⟩, rfl⟩
-    · have := (Formalism.L2.DIV.oToS D.host.F D.host.E (D.host.conj • b)).2
-      rw [← cF_oToS] at this
-      exact this
-    · have h : σσ ((1 : D.host.E) ⊗ₜ[D.host.F] β) = (1 : D.host.E) ⊗ₜ[D.host.F] β := by
-        rw [GlobalTheory.AdelicLatMove.cF_tmul, star_one]
-      have h2 : (1 : D.host.E) ⊗ₜ[D.host.F] β ∈ OO := Subring.subset_closure (Or.inr ⟨⟨β, hβ⟩, rfl⟩)
-      rw [← h] at h2
-      exact h2
-  | zero => rw [map_zero]; exact zero_mem _
-  | one => rw [map_one]; exact one_mem _
-  | add a b _ _ ha hb =>
-    rw [(σσ).map_add]
-    exact add_mem ha hb
-  | neg a _ ha => rw [map_neg]; exact neg_mem ha
-  | mul a b _ _ ha hb => rw [map_mul]; exact mul_mem ha hb
+  apply _root_.GlobalTheory.PlaceVec.cF_mem_int <;> assumption
 
 private theorem inId_cF {I : Ideal (𝓞 D.host.E)} {z : EAf D} (hz : GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle.InId I z) :
     GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle.InId (D.host.conj • I) (σσ z) := by

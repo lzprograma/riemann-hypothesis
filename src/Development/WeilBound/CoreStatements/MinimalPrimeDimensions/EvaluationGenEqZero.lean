@@ -1,50 +1,9 @@
 module
 
 public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.GenIdeal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -213,7 +172,7 @@ theorem eval₂_loc_eq_zero (hi : y ∈ ptsIn p σ (B.U i)) {q : MvPolynomial (F
   have hi' : ⊤ ≤ (y : Sp ℂ ⟶ Z) ⁻¹ᵁ B.U i := hi
   obtain ⟨φ, hφ⟩ : ∃ φ : Γ(Z, B.U i) →+* ℂ, ∀ f, φ f = ev p σ (B.U i) f y :=
     ⟨(Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom.comp (Scheme.Hom.appLE y.1 (B.U i) ⊤ hi').hom,
-      fun f => by simp only [ev, valR, dif_pos hi']; rfl⟩
+      fun f => by simp only [ev, valR, dite_eq_left hi']; rfl⟩
   have h0 : under y ∈ B.U i := hi (Set.mem_univ _)
   have hU : genericPoint Z ∈ B.U i :=
     (genericPoint_spec Z).mem_open_set_iff (B.U i).isOpen |>.mpr ⟨_, Set.mem_univ _, h0⟩
@@ -246,8 +205,7 @@ theorem exists_loc (hE : Emb p s) {x : Fin m → ℂ} (hx : x ≠ 0)
     (h : ∀ q ∈ ptIdeal p s (genericPoint Z), eval₂ σ x q = 0) :
     ∃ (y : CxPts p σ) (c : ℂ), c ≠ 0 ∧ x = c • loc p s σ (pick hE.isLB y) y := by
   obtain ⟨k, hk⟩ : ∃ k, x k ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     exact hx (funext hne)
   obtain ⟨hU, t, hsurj, ht⟩ := hE.chart k
   have hgen : genericPoint Z ∈ nonzeroLocus (s k) := by
@@ -325,8 +283,7 @@ theorem eval₂_loc_ne_zero (hy : under y = genericPoint Z) (hj : y ∈ ptsIn p 
     {q : MvPolynomial (Fin m) R} (hn : q.IsHomogeneous n) (hq : q ∉ ptIdeal p s (genericPoint Z)) :
     eval₂ σ (loc p s σ j y) q ≠ 0 := by
   have hq' : ∃ i, ∃ hU : genericPoint Z ∈ B.U i, coneHom p s (genericPoint Z) i hU q ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hq (mem_ptIdeal_iff.mpr hc)
   obtain ⟨i, hU, hne⟩ := hq'
   have hyi : y ∈ ptsIn p σ (B.U i) := by

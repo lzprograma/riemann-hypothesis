@@ -135,13 +135,6 @@ theorem toAdditive_cycNorm (i : M →* N) (hi : ∀ (g : G) (x : M), i (g • x)
   simp_rw [hi]
   rfl
 
-private theorem range_toAdditive (i : M →* N) :
-    (MonoidHom.toAdditive i).range = i.range.toAddSubgroup := by
-  ext y
-  rw [AddMonoidHom.mem_range, Additive.mem_toAddSubgroup, MonoidHom.mem_range]
-  exact ⟨fun ⟨x, hx⟩ => ⟨x.toMul, by rw [← hx]; rfl⟩,
-    fun ⟨x, hx⟩ => ⟨Additive.ofMul x, Additive.toMul.injective hx⟩⟩
-
 theorem cycHerbrand_eq_of_injective (i : M →* N) (hinj : Function.Injective i)
     (hi : ∀ (g : G) (x : M), i (g • x) = g • i x) [i.range.FiniteIndex] (τ : G) :
     (HasHerbrandQuotient (cycSubOne (Representation.ofMulDistribMulAction G M) τ)
@@ -152,7 +145,7 @@ theorem cycHerbrand_eq_of_injective (i : M →* N) (hinj : Function.Injective i)
       cycHerbrand (Representation.ofMulDistribMulAction G N) τ := by
   have hfi : (MonoidHom.toAdditive i).range.FiniteIndex := by
     constructor
-    rw [range_toAdditive, Subgroup.index_toAddSubgroup]
+    rw [MonoidHom.coe_toAdditive_range, Subgroup.index_toAddSubgroup]
     exact Subgroup.FiniteIndex.index_ne_zero
   have : Finite (Additive N ⧸ (MonoidHom.toAdditive i).range) :=
     AddSubgroup.finite_quotient_of_finiteIndex

@@ -301,7 +301,7 @@ def infinitePlaceMeasure (w : InfinitePlace K) : Measure w.Completion :=
 omit [NumberField K] in
 theorem infinitePlaceMeasure_of_isReal {w : InfinitePlace K} (hw : w.IsReal) :
     infinitePlaceMeasure w = Measure.map (isometryEquivRealOfIsReal hw).symm volume :=
-  dif_pos hw
+  dite_eq_left hw
 
 omit [NumberField K] in
 theorem infinitePlaceMeasure_of_isComplex {w : InfinitePlace K} (hw : w.IsComplex) :
@@ -356,7 +356,7 @@ theorem map_mul_left_infinitePlaceMeasure (w : InfinitePlace K) {a : w.Completio
       Real.map_volume_mul_left hea, Measure.map_smul _ e.symm.continuous.measurable.aemeasurable]
     congr 2
     have h0 : e 0 = 0 := map_zero (ringEquivRealOfIsReal hw)
-    rw [abs_inv, ← Real.norm_eq_abs, e.isometry.norm_map_of_map_zero h0, mult, if_pos hw,
+    rw [abs_inv, ← Real.norm_eq_abs, e.isometry.norm_map_of_map_zero h0, mult, ite_eq_left hw,
       pow_one]
   · have hc := not_isReal_iff_isComplex.1 hw
     rw [infinitePlaceMeasure_of_isComplex hc]
@@ -378,7 +378,7 @@ theorem map_mul_left_infinitePlaceMeasure (w : InfinitePlace K) {a : w.Completio
       Measure.map_smul _ e.symm.continuous.measurable.aemeasurable]
     congr 2
     have h0 : e 0 = 0 := map_zero (ringEquivComplexOfIsComplex hc)
-    rw [e.isometry.norm_map_of_map_zero h0, mult, if_neg hw]
+    rw [e.isometry.norm_map_of_map_zero h0, mult, ite_eq_right hw]
 
 def infinitePlaceUnitsMeasure (w : InfinitePlace K) : Measure (w.Completion)ˣ :=
   unitsMeasure (infinitePlaceMeasure w) w.mult

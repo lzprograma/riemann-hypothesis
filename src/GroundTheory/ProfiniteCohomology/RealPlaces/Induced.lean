@@ -93,9 +93,9 @@ theorem exists_norm_eq_res_coind (hfree : ∀ (x : G) (h : H), x * ι h * x⁻¹
     change (if InOutCoset U ι ((u : G) * y) then f.1 ((u : G) * y) else 0) =
       N.ρ u (if InOutCoset U ι y then f.1 y else 0)
     by_cases hy : InOutCoset U ι y
-    · rw [if_pos ((inOutCoset_mul_left_iff U ι u y).2 hy), if_pos hy]
+    · rw [ite_eq_left ((inOutCoset_mul_left_iff U ι u y).2 hy), ite_eq_left hy]
       exact f.2 u y
-    · rw [if_neg (mt (inOutCoset_mul_left_iff U ι u y).1 hy), if_neg hy, map_zero]
+    · rw [ite_eq_right (mt (inOutCoset_mul_left_iff U ι u y).1 hy), ite_eq_right hy, map_zero]
   refine ⟨⟨_, hmem⟩, Subtype.ext (funext fun y => ?_)⟩
   have hnorm : ((Rep.res ι (Rep.coind U.subtype N)).ρ.norm ⟨_, hmem⟩).1 y =
       ∑ h : H, (if InOutCoset U ι (y * ι h) then f.1 (y * ι h) else 0) := by
@@ -110,11 +110,11 @@ theorem exists_norm_eq_res_coind (hfree : ∀ (x : G) (h : H), x * ι h * x⁻¹
   have hinv : ∀ h : H, f.1 (y * ι h) = f.1 y := fun h =>
     congrArg (fun g : Rep.res ι (Rep.coind U.subtype N) => g.1 y) (hf h)
   rw [Finset.sum_eq_single h₀⁻¹]
-  · rw [if_pos, hinv]
+  · rw [ite_eq_left, hinv]
     refine ⟨u₀, ?_⟩
     rw [hD, ← hx, e₀, mul_assoc, ← map_mul, mul_inv_cancel, map_one, mul_one]
   · intro h _ hne
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨u, hu⟩
     rw [hD, ← hx] at hu
     apply hne
@@ -129,38 +129,6 @@ theorem exists_norm_eq_res_coind (hfree : ∀ (x : G) (h : H), x * ι h * x⁻¹
     exact absurd (Finset.mem_univ _) h
 
 end FreeAction
-
-section Naturality
-
-variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-  {ι : Type u} {H : ι → Type u} [∀ v, Group (H v)] [∀ v, TopologicalSpace (H v)]
-  [∀ v, IsTopologicalGroup (H v)] (φ : ∀ v, H v →ₜ* G)
-  {κ : Type u} {F : κ → Type u} [∀ w, Group (F w)] [∀ w, TopologicalSpace (F w)]
-  [∀ w, IsTopologicalGroup (F w)] [∀ w, Fintype (F w)] (ψ : ∀ w, F w →ₜ* G)
-  {A B : Rep.{u} k G} [IsDiscreteRep A] [IsDiscreteRep B]
-  {Aᵥ Bᵥ : ∀ v, Rep.{u} k (H v)} [∀ v, IsDiscreteRep (Aᵥ v)] [∀ v, IsDiscreteRep (Bᵥ v)]
-  {a : ∀ v, Rep.res (φ v).toMonoidHom A ⟶ Aᵥ v} {b : ∀ v, Rep.res (φ v).toMonoidHom B ⟶ Bᵥ v}
-  {Aᵣ Bᵣ : ∀ w, Rep.{u} k (F w)} [∀ w, IsDiscreteRep (Aᵣ w)] [∀ w, IsDiscreteRep (Bᵣ w)]
-  {ar : ∀ w, Rep.res (ψ w).toMonoidHom A ⟶ Aᵣ w} {br : ∀ w, Rep.res (ψ w).toMonoidHom B ⟶ Bᵣ w}
-  (g : A ⟶ B) (gᵥ : ∀ v, Aᵥ v ⟶ Bᵥ v) (gᵣ : ∀ w, Aᵣ w ⟶ Bᵣ w)
-  (hg : ∀ v, a v ≫ gᵥ v = (Rep.resFunctor (φ v).toMonoidHom).map g ≫ b v)
-  (hgr : ∀ w, ar w ≫ gᵣ w = (Rep.resFunctor (ψ w).toMonoidHom).map g ≫ br w)
-
-end Naturality
-
-section LocalClasses
-
-variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-  {ι : Type u} {H : ι → Type u} [∀ v, Group (H v)] [∀ v, TopologicalSpace (H v)]
-  [∀ v, IsTopologicalGroup (H v)] (φ : ∀ v, H v →ₜ* G)
-  {κ : Type u} {F : κ → Type u} [∀ w, Group (F w)] [∀ w, TopologicalSpace (F w)]
-  [∀ w, IsTopologicalGroup (F w)] [∀ w, Fintype (F w)] (ψ : ∀ w, F w →ₜ* G)
-  (A : Rep.{u} k G) [IsDiscreteRep A] (Aᵥ : ∀ v, Rep.{u} k (H v))
-  [∀ v, IsDiscreteRep (Aᵥ v)] (a : ∀ v, Rep.res (φ v).toMonoidHom A ⟶ Aᵥ v)
-  (Aᵣ : ∀ w, Rep.{u} k (F w)) [∀ w, IsDiscreteRep (Aᵣ w)]
-  (ar : ∀ w, Rep.res (ψ w).toMonoidHom A ⟶ Aᵣ w)
-
-end LocalClasses
 
 section Tate
 

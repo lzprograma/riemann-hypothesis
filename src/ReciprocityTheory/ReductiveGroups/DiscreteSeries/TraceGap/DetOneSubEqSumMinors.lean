@@ -86,7 +86,7 @@ theorem ffMat_map_physEmb (k : Matrix (Fin n) (Fin n) ℂ) (s : Finset {x : Fin 
   ext i j
   simp only [Matrix.submatrix_apply, Matrix.of_apply, Equiv.ofBijective_apply]
   rw [he i, he j]
-  simp only [adMat, if_pos (hp i), if_pos (hp j)]
+  simp only [adMat, ite_eq_left (hp i), ite_eq_left (hp j)]
 
 theorem strPhys_eq_physDet (k : Matrix (Fin n) (Fin n) ℂ) : strPhys ε k = physDet ε k := by
   classical

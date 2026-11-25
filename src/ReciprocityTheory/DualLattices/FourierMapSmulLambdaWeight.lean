@@ -205,14 +205,12 @@ theorem v_gamma (hv : v.Integers R) (hpv : v (p : C) < 1) {ω : ZMod p → C} (h
     v (∑ a, u0 ω a * ζ ^ a.val) ^ (p - 1) = v (p : C) := by
   have hpp : 2 ≤ p := hp.out.two_le
   have hζ1 : v ζ ≤ 1 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have h2 := one_lt_pow₀ h (show p ≠ 0 by omega)
     rw [← map_pow, hζ.pow_eq_one, map_one] at h2
     exact lt_irrefl _ h2
   have hπ1 : v (ζ - 1) < 1 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have h2 := one_le_pow₀ (n := p - 1) h
     rw [val_prim_root hζ] at h2
     exact absurd hpv (not_lt.mpr h2)
@@ -317,17 +315,17 @@ theorem fourierMap_smul_lambdaWeight {ω : ZMod p → C} (hω : IsTeich v ω) {�
     simp only [u0]
     by_cases hb : b = 0
     · subst hb
-      simp only [mul_zero, if_true, hwt0]
+      simp only [mul_zero, ite_true, hwt0]
       nth_rewrite 1 [hS h hh]; ring
     · have : h⁻¹ * b ≠ 0 := mul_ne_zero (inv_ne_zero hh) hb
-      simp only [this, hb, if_false, sub_zero, hwtmul, hwtinv h hh]
+      simp only [this, hb, ite_false, sub_zero, hwtmul, hwtinv h hh]
   funext h
   simp only [L2.fourier, LinearMap.coe_mk, AddHom.coe_mk, he2]
   by_cases hh : h = 0
   · subst hh
     simp only [zero_mul, ZMod.val_zero, pow_zero, mul_one, hω.zero, mul_zero]
     rw [← Finset.mul_sum]
-    simp only [u0, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [u0, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     simp [sS]
   · have hb := Fintype.sum_bijective (h⁻¹ * ·) (mulLeft_bijective₀ h⁻¹ (inv_ne_zero hh))
       (fun b => c * u0 ω (h⁻¹ * b) * ζ ^ (h * (h⁻¹ * b)).val)

@@ -62,6 +62,7 @@ import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyCompactDualHaar
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
+import Development.WeilBound.CoreStatements.OrbitDecayEstimates.CurveDerivativeDecay.HasDerivAtCurve
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsRiemannianHaarOnSubgroupSigmaFiniteUnique, Development.AbelianVarietyTheory.Proofs.FlagMeasures.TendstoRescaledIntegralOfDensityOne, Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitarySubgroupChartAlmostIsometricNearOne, Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitarySubgroupChartSurjectiveNearOrigin, Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaugeMeasureMatrixAlgebraSubgroupLocalAsymptotic
@@ -165,8 +166,7 @@ theorem _root_.GlobalTheory.GaugeSubHaar.isGaugeSub_haar : ∀ (n : ℕ) (ε : F
   obtain ⟨hmap', hinv', hfin', -⟩ := comap_subtype_val_haar_properties S hS d μ' hμ'
   set ν' := μ'.comap (Subtype.val : S → _root_.Formalism.REAL.UJ ε) with hν'
   have hcover : ∃ k, ν (compactCovering S k) ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hne
     rw [← Measure.measure_univ_eq_zero, ← iUnion_compactCovering]
     exact measure_iUnion_null hcon
@@ -286,8 +286,7 @@ private theorem rescaled_integral_comparable_of_nonneg_compactSupport {d : ℕ} 
     intro y hy
     simp only [hU, Set.mem_setOf_eq, not_lt] at hy
     refine hR y ?_
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     nlinarith [mul_lt_mul_of_pos_left hlt hr]
   have hnear : ∀ y ∈ U, ∀ᶠ s : ℝ in nhdsWithin 0 (Set.Ioi 0),
       (ν (Metric.closedBall (r • y) (r * s)) ≤
@@ -501,23 +500,10 @@ theorem norm_coord_span (E : Fin d → Matrix (Fin n) (Fin n) ℂ)
 variable {ε : Fin n → Bool}
 
 theorem uMat_inv (g : UJ ε) : uMat g⁻¹ = Jm ε * (uMat g)ᴴ * Jm ε := by
-  have hu : (uMat g)ᴴ * Jm ε * uMat g = Jm ε := g.2
-  calc uMat g⁻¹ = Jm ε * Jm ε * uMat g⁻¹ := by rw [Jm_mul_self, Matrix.one_mul]
-    _ = Jm ε * ((uMat g)ᴴ * Jm ε * uMat g) * uMat g⁻¹ := by rw [hu]
-    _ = Jm ε * (uMat g)ᴴ * Jm ε * (uMat g * uMat g⁻¹) := by simp only [Matrix.mul_assoc]
-    _ = _ := by rw [uMat_mul_inv, Matrix.mul_one]
+  exact CompanionTheory.Lime.T3.uMat_inv g
 
 theorem hs_inv_sub_one (g : UJ ε) : hs (uMat g⁻¹ - 1) = hs (uMat g - 1) := by
-  have h1 : uMat g⁻¹ - 1 = Jm ε * (uMat g - 1)ᴴ * Jm ε := by
-    rw [uMat_inv, Matrix.conjTranspose_sub, Matrix.conjTranspose_one, Matrix.mul_sub,
-      Matrix.sub_mul, Matrix.mul_one, Jm_mul_self]
-  rw [h1, hs_eq, hs_eq, trForm_apply, trForm_apply]
-  set X := uMat g - 1
-  have h2 : Jm ε * Xᴴ * Jm ε * (Jm ε * Xᴴ * Jm ε)ᴴ = Jm ε * (Xᴴ * (Jm ε * Jm ε) * X * Jm ε) := by
-    simp only [Matrix.conjTranspose_mul, Jm_conjTranspose, Matrix.conjTranspose_conjTranspose,
-      Matrix.mul_assoc]
-  rw [h2, Jm_mul_self, Matrix.mul_one, Matrix.trace_mul_comm, Matrix.mul_assoc, Jm_mul_self,
-    Matrix.mul_one, Matrix.trace_mul_comm]
+  apply _root_.CompanionTheory.Lime.T3.hs_inv_sub_one <;> assumption
 
 theorem sub_inv_mem_lie (g : UJ ε) : uMat g - uMat g⁻¹ ∈ GlobalTheory.GaugeConst.lieJ ε := by
   rw [GlobalTheory.GaugeConst.mem_lieJ, uMat_inv]

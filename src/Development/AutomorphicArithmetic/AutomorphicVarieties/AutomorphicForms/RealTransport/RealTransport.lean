@@ -1,39 +1,6 @@
 module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.BcDefs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -45,36 +12,10 @@ open UpperTheory.V.Af.Bc
 
 namespace UpperTheory.V.Af.Cr
 
-def QuadCM : Prop :=
-  ∀ (F Ω : Type) [Field F] [NumberField F] [IsTotallyReal F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (d : F) (δ : Ω),
-    δ ^ 2 = algebraMap F Ω d → (∀ φ : F →+* ℝ, φ d < 0) →
-    ∃ (K : Type) (_ : Field K) (_ : NumberField K) (_ : IsCMField K) (_ : Algebra F K) (_ : Algebra K Ω) (_ : IsScalarTower F K Ω)
-      (_ : IsAlgClosure K Ω), Module.finrank F K = 2 ∧ ∃ y : K, algebraMap K Ω y = δ ∧
-        ∀ x : K, ∃ a b : F, x = algebraMap F K a + algebraMap F K b * y
-
-def ImagGen : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K], Module.finrank ℚ K = 2 →
-    ∃ (d : ℚ) (y : K), d < 0 ∧ y ^ 2 = (d : K) ∧ ∀ x : K, ∃ a b : ℚ, x = (a : K) + (b : K) * y
-
 def IneRes : Prop :=
   ∀ (F₀ F Ω : Type) [Field F₀] [NumberField F₀] [Field F] [NumberField F] [Field Ω] [Algebra F₀ F] [Algebra F₀ Ω] [Algebra F Ω]
     [IsScalarTower F₀ F Ω] [IsAlgClosure F Ω], ∀ᶠ v : HeightOneSpectrum (𝓞 F₀) in Filter.cofinite,
       ∀ A : ValuationSubring Ω, IsPlaceOver A v → Ine (F := F₀) A ≤ (res F₀ Ω F).range
-
-def ExQuadR : Prop :=
-  ∀ (F Ω : Type) [Field F] [NumberField F] [IsTotallyReal F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime],
-    l ≠ 2 → ∀ S : HeightOneSpectrum (𝓞 F) → Prop, (∀ᶠ v in Filter.cofinite, S v) →
-    ∃ (K : Type) (_ : Field K) (_ : NumberField K) (_ : IsCMField K) (_ : Algebra F K) (_ : Algebra K Ω) (_ : IsScalarTower F K Ω)
-      (_ : IsAlgClosure K Ω), Module.finrank F K = 2 ∧
-      (∀ (j : Ω →+* Om l) (L : FinExt l), (∀ x : F, j (algebraMap F Ω x) ∈ L.1) → ∀ x : K, j (algebraMap K Ω x) ∈ L.1) ∧
-      ∃ (v : HeightOneSpectrum (𝓞 F)) (A : ValuationSubring Ω), S v ∧ IsPlaceOver A v ∧
-        ∃ s ∈ Ine (F := F) A, s ∉ (res F Ω K).range
-
-def NoTwistRam : Prop :=
-  ∀ (F E Ω : Type) [Field F] [NumberField F] [IsTotallyReal F] [Field E] [NumberField E] [Field Ω] [Algebra F E] [Algebra F Ω]
-    [Algebra E Ω] [IsScalarTower F E Ω] [IsAlgClosure E Ω] (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ), Module.finrank F E = 2 →
-    ∀ (n : ℕ), 1 ≤ n → ∀ (r : G F Ω →* GL (Fin n) (Qbar l)) (π : TR.CuspSub F n), Continuous r → AttR ι r π →
-      (∃ s, s ∉ (res F Ω E).range ∧ r s = 1) → ∀ η : HChar F, IsQuadCharOf E η → ¬ IsoTwist π η
 
 def SSRes : Prop :=
   ∀ (Γ Γ' k : Type) [Group Γ] [Group Γ'] [Field k] (n : ℕ) (r : Γ →* GL (Fin n) k) (φ : Γ' →* Γ), φ.range.Normal →
@@ -95,12 +36,6 @@ def Parallel : Prop :=
 def AlgOfSign : Prop :=
   ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (χ : HChar F) (b : ℤ), IsAlgPos χ (fun _ => b) →
     (∀ v : InfinitePlace F, χ.locInf v (-1) = (-1) ^ b) → χ.IsAlg fun _ => b
-
-def CsdTw : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsCMField K] (n : ℕ), 1 ≤ n → ∀ (P : CuspSub K n) (χ : HChar (maximalRealSubfield K)),
-    (CG.mk P).IsRegAlg → (∀ v v' : InfinitePlace (maximalRealSubfield K), χ.locInf v (-1) = χ.locInf v' (-1)) →
-    GlobalTheory.ContraPair.DualIsConjBy P (compNorm K χ) →
-    ∃ (κ : HChar K) (m : (K →+* ℂ) → ℤ), κ.IsAlg m ∧ GlobalTheory.ContraPair.DualIsConj (P.twist κ)
 
 def BcDual : Prop :=
   GlobalTheory.Published.JacquetShalikaRigidity → GlobalTheory.Published.GelfandKazhdanDual →

@@ -43,14 +43,4 @@ theorem mk_eq_zero_iff (q : ℚ) : mk q = 0 ↔ ∃ n : ℤ, (n : ℚ) = q := by
 
 end QZ
 
-abbrev QZDual (A : Type*) [AddCommGroup A] [TopologicalSpace A] : Type _ := A →ₜ+ QZ
-
-namespace QZDual
-
-variable {A B C : Type*} [AddCommGroup A] [TopologicalSpace A] [AddCommGroup B]
-  [TopologicalSpace B] [AddCommGroup C] [TopologicalSpace C]
-
-
-end QZDual
-
 end GroundTheory.ProfCoh

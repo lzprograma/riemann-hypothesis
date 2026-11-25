@@ -76,43 +76,6 @@ def fnSec (π : X' ⟶ X) (s : Γ(X', ⊤)) : LB.Sec ((Inh.trivLB X).pull π) wh
     rw [Inh.linComb_triv_g, Units.val_one, _root_.one_mul]
     exact (rs_rs _ _ s).trans (rs_rs _ _ s).symm
 
-theorem triv_pull (π : X' ⟶ X) : Triv ((Inh.trivLB X).pull π) :=
-  ⟨⟨fun _ => 1⟩, fun i j => by
-    erw [Inh.linComb_triv_g, _root_.one_mul]
-    exact (map_one _).trans (map_one _).symm⟩
-
-theorem preconnectedSpace_of_line {R F : Type} [CommRing R] [Field F]
-    {f : X ⟶ Spec (CommRingCat.of R)} (P : Perf f (Inh.trivLB X)) {g : R →+* F} {π : X' ⟶ X}
-    {f' : X' ⟶ Spec (CommRingCat.of F)} (h : IsPullback π f' f (Spec.map (CommRingCat.ofHom g)))
-    (v : Fin P.a → F) (hv : ∀ w, (P.D₀.map g).mulVec w = 0 → ∃ c : F, w = c • v) :
-    PreconnectedSpace X' := by
-  obtain ⟨E, hE⟩ := P.sec F g X' π f' h
-  have key : ∀ s : Γ(X', ⊤), ∃ c : F, ∀ i,
-      rs X' (le_top : π ⁻¹ᵁ P.W i ≤ ⊤) s = AbLaw.cst f' _ c * loc P π f' v i := fun s => by
-    obtain ⟨w, hw⟩ := E.surjective (fnSec π s)
-    obtain ⟨c, hc⟩ := hv w.1 w.2
-    refine ⟨c, fun i => ?_⟩
-    have e := hE w i
-    rw [hw] at e
-    refine ((rs_rs _ _ s).symm.trans e).trans ?_
-    rw [← loc_smul, ← hc]
-    rfl
-  obtain ⟨c₁, h₁⟩ := key 1
-  have hu : ∀ i, IsUnit (loc P π f' v i) := fun i =>
-    isUnit_of_mul_isUnit_right (by rw [← h₁ i, map_one]; exact isUnit_one)
-  refine preconnectedSpace_of_functions X' fun s => ?_
-  obtain ⟨c, hc⟩ := key s
-  by_cases h0 : c = 0
-  · refine Or.inl (le_bot_iff.1 fun y hy => ?_)
-    obtain ⟨i, hi⟩ := exists_mem P (π y)
-    have := (mem_basicOpen_rs (le_top : π ⁻¹ᵁ P.W i ≤ ⊤) s hi).2 hy
-    rwa [hc, h0, map_zero, zero_mul, Scheme.basicOpen_zero] at this
-  · refine Or.inr (top_unique fun y _ => ?_)
-    obtain ⟨i, hi⟩ := exists_mem P (π y)
-    refine (mem_basicOpen_rs (le_top : π ⁻¹ᵁ P.W i ≤ ⊤) s hi).1 ?_
-    rw [hc]
-    exact mem_of_isUnit (((IsUnit.mk0 c h0).map _).mul (hu i)) hi
-
 theorem exists_geometricallyConnected_away_of_fibre : ∀ (R : Type) [CommRing R] [IsNoetherianRing R] (Z : Scheme.{0}) (s : Z ⟶ Sp R) (K : Type) [Field K] (x : R →+* K), IsProjOver s → Smooth s → GeometricallyConnected (pullback.snd s (spMap x)) → ∃ f : R, x f ≠ 0 ∧ GeometricallyConnected (pullback.snd s (spMap (algebraMap R (Localization.Away f)))) := by
   intro R _ _ Z s K _ x hp hs hc
   have hp' : IsProjBy s := (GlobalTheory.ProjSpace.isProjBy_iff_isProjOver s).2 hp
@@ -122,7 +85,7 @@ theorem exists_geometricallyConnected_away_of_fibre : ∀ (R : Type) [CommRing R
       (Spec.map (CommRingCat.ofHom x)) := IsPullback.of_hasPullback _ _
   have hbij := bijective_appTop_of_smooth_of_isProper_of_geometricallyConnected K _
     (pullback.snd s (spMap x)) inferInstance inferInstance hc
-  obtain ⟨v, -, hu, hline⟩ := loc_of_triv P h₀ (Inh.trivLB_isLB _) (triv_pull _)
+  obtain ⟨v, -, hu, hline⟩ := loc_of_triv P h₀ (Inh.trivLB_isLB _) (GlobalTheory.AlgGroup.triv_pull _)
   obtain ⟨x₀, -⟩ := (pullback.snd s (spMap x)).surjective (⊥ : PrimeSpectrum K)
   have hv0 : v ≠ 0 := by
     rintro rfl
@@ -157,7 +120,7 @@ theorem exists_geometricallyConnected_away_of_fibre : ∀ (R : Type) [CommRing R
     hεs fun h0 : g ε ∈ (⊥ : Ideal F) => (isUnit_of_mul_isUnit_right hg).ne_zero h0
   obtain ⟨z, hz⟩ := hmem
   obtain ⟨y, -⟩ := Scheme.exists_preimage_of_isPullback h' z _ hz
-  have := preconnectedSpace_of_line P h' _ (hker F _ (isUnit_of_mul_isUnit_left hg))
+  have := GlobalTheory.AlgGroup.preconnectedSpace_of_line P h' _ (hker F _ (isUnit_of_mul_isUnit_left hg))
   exact ⟨⟨y⟩⟩
 
 end GlobalTheory.ConnSpread

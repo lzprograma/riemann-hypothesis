@@ -27,12 +27,6 @@ def TwistIntersectionAnyDegree.Statement : Prop :=
         ((D + 1 : ℕ) : ℝ) * genDeg (mCoordIdeal y) D A.a *
           ((∑ sg, Real.log (Λ sg)) / Fintype.card (F →+* ℂ))
 
-section Inhabitants
-
-open ProjLine
-
-end Inhabitants
-
 end
 
 end GroundTheory.Heights₂.Heights.HilbertSamuel

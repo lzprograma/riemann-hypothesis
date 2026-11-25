@@ -33,7 +33,7 @@ theorem exists_sqrt_near_unit : ∀ (R : Type) [CommRing R] [TopologicalSpace R]
   have haf : ∀ u : U, a (f u) = (u : Rˣ) := by
     intro u
     have : Function.invFun f (f u) = u := Function.leftInverse_invFun hf.injective u
-    simp only [a, Set.mem_range_self, if_true, this]
+    simp only [a, Set.mem_range_self, ite_true, this]
   refine ⟨Set.range f, a, hf.isOpen_range, ⟨1, hf1⟩, ?_, ?_, ?_, ?_⟩
   · rintro _ ⟨u, rfl⟩
     apply ContinuousAt.continuousWithinAt
@@ -42,7 +42,7 @@ theorem exists_sqrt_near_unit : ∀ (R : Type) [CommRing R] [TopologicalSpace R]
     rw [this]
     exact continuous_subtype_val.continuousAt
   · intro y hy
-    simp only [a, if_neg hy]
+    simp only [a, ite_eq_right hy]
   · rintro _ ⟨u, rfl⟩
     rw [haf]
     simp [f]

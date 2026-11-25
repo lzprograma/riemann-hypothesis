@@ -15,12 +15,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι] {K : Type*} [CommRing K] [St
 
 theorem conj_pow {G G' Z : Matrix ι ι K} (h : G * G' = 1) (j : ℕ) : G' * Z ^ j * G = (G' * Z * G) ^ j := by
   have hG : G' * G = 1 := _root_.Formalism.L2.SG.Pf.Unip.mul_comm_one h
-  induction j with
-  | zero => rw [pow_zero, pow_zero, Matrix.mul_one, hG]
-  | succ n ih =>
-    rw [pow_succ, pow_succ, ← ih]
-    simp only [Matrix.mul_assoc]
-    rw [← Matrix.mul_assoc G G', h, Matrix.one_mul]
+  exact (Units.conj_pow (M := Matrix ι ι K) ⟨G', G, hG, h⟩ Z j).symm
 
 theorem conj_geo {G G' Z : Matrix ι ι K} (h : G * G' = 1) (N : ℕ) : G' * geo N Z * G = geo N (G' * Z * G) := by
   unfold geo

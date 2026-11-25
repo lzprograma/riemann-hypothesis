@@ -37,15 +37,4 @@ theorem exists_aut (ι τ : Qb →+* ℂ) : ∃ σ : Qb ≃ₐ[ℚ] Qb, ∀ x, �
     rw [RingEquiv.apply_symm_apply]; rfl
   exact h.symm
 
-theorem finite_pow_eq {n : ℕ} (hn : 0 < n) (a : Qb) : {z : Qb | z ^ n = a}.Finite := by
-  classical
-  refine (Polynomial.nthRoots n a).toFinset.finite_toSet.subset fun z hz => ?_
-  simpa [Polynomial.mem_nthRoots hn] using hz
-
-theorem isIntegralQb (x : Qb) : IsIntegral ℚ x := ((AlgebraicClosure.isAlgebraic ℚ).isAlgebraic x).isIntegral
-
-theorem fin_adjoin {S : Set Qb} (hS : S.Finite) : FiniteDimensional ℚ (adjoin ℚ S) := by
-  have : Finite S := hS
-  exact finiteDimensional_adjoin fun x _ => isIntegralQb x
-
 end Formalism.L2.DIV

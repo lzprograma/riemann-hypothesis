@@ -7,49 +7,7 @@ public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProof
 public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.FirstWeightLeOfSupport
 import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.MulEarlyLettersHolds
 public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.ResInto
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.PolynomialDimension.MultinomialDepth.PartnerM
 
 @[expose] public section
@@ -169,7 +127,7 @@ theorem raising_comm_holds : UComm := by
       glAct p LL (K + 1) s t (X (Fin.last K, b) * G) =
         (if t = b then X (Fin.last K, s) * G else 0) + X (Fin.last K, b) * glAct p LL (K + 1) s t G := by
     intro b G
-    rw [glAct_mul, glAct_X, if_pos hlt, if_pos hv]
+    rw [glAct_mul, glAct_X, ite_eq_left hlt, ite_eq_left hv]
     split_ifs <;> simp
   have hc : ∀ b, glAct p LL (K + 1) s t (glAct p LL K a b F) = glAct p LL K a b (glAct p LL (K + 1) s t F) +
       ((if t = a then glAct p LL K s b F else 0) - (if b = s then glAct p LL K a t F else 0)) := by
@@ -179,11 +137,11 @@ theorem raising_comm_holds : UComm := by
   simp only [hX, hc, mul_add, mul_sub, Finset.sum_add_distrib, Finset.sum_sub_distrib]
   have h1 : ∑ b ∈ Cs, (if t = b then X (Fin.last K, s) * glAct p LL K a b F else 0) =
       X (Fin.last K, s) * glAct p LL K a t F := by
-    rw [Finset.sum_ite_eq, if_pos ht]
+    rw [Finset.sum_ite_eq, ite_eq_left ht]
   have h2 : ∑ b ∈ Cs, X (Fin.last K, b) * (if b = s then glAct p LL K a t F else 0) =
       X (Fin.last K, s) * glAct p LL K a t F := by
     simp only [mul_ite, mul_zero]
-    rw [Finset.sum_ite_eq', if_pos hs]
+    rw [Finset.sum_ite_eq', ite_eq_left hs]
   rw [h1, h2]
   split_ifs with hta
   · rw [Uop_apply]
@@ -266,7 +224,7 @@ theorem raising_keeps_last_letter : UKeepsLast := by
         have h3 : glAct p LL (K + 1) 0 0 (glAct p LL (K + 1) 0 b G) =
             (((c + 1 : ℤ)) : ℚ_[p]) • glAct p LL (K + 1) 0 b G := by
           have := glAct_comm LL (K + 1) 0 0 0 b G
-          rw [if_pos rfl, if_neg hb, sub_zero, h0, map_smul] at this
+          rw [ite_eq_left rfl, ite_eq_right hb, sub_zero, h0, map_smul] at this
           rw [sub_eq_iff_eq_add.mp this]
           push_cast
           rw [add_smul, one_smul]
@@ -291,10 +249,10 @@ theorem raising_keeps_last_letter : UKeepsLast := by
         rw [map_sub, Uop_top LL hv c G h0 hb, sub_zero]
       rw [e]
       have := Uop_supp LL hv c (c - 1) univ 0 (F - G) hR
-      rw [if_pos rfl, sub_add_cancel] at this
+      rw [ite_eq_left rfl, sub_add_cancel] at this
       exact this
     · have := Uop_supp LL hv c c univ a F (hYs F hF)
-      rw [if_neg ha, add_zero] at this
+      rw [ite_eq_right ha, add_zero] at this
       exact this
   set B : Submodule ℚ_[p] (MvPolynomial (Fin (K + 1) × Fin r) ℚ_[p]) :=
     ⨆ a : Fin r, Yc.map (Uop p LL c univ a) with hB

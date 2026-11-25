@@ -11,53 +11,10 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposi
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.InstAll
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.InstLeftInvMuInf
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.ModOne
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Topology.Algebra.Group.Units
+import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HaarOn
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureInverseContraction.RightInvOfContract, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureInverseContraction.Development
@@ -86,15 +43,7 @@ def HaarOn (N : Subgroup G) (μ : Measure G) : Prop :=
 
 theorem map_comap_subgroup (H : Subgroup G) (hH : IsClosed (H : Set G)) (μ : Measure G)
     (hc : μ (H : Set G)ᶜ = 0) : (μ.comap ((↑) : H → G)).map ((↑) : H → G) = μ := by
-  have hemb : MeasurableEmbedding ((↑) : H → G) := MeasurableEmbedding.subtype_coe hH.measurableSet
-  ext s hs
-  rw [Measure.map_apply hemb.measurable hs, hemb.comap_apply, Set.image_preimage_eq_inter_range]
-  have hr : Set.range ((↑) : H → G) = (H : Set G) := by ext x; simp
-  rw [hr]
-  have h1 := measure_inter_add_diff (μ := μ) s hH.measurableSet
-  have h2 : μ (s \ (H : Set G)) = 0 := measure_mono_null (fun x hx => hx.2) hc
-  rw [h2, add_zero] at h1
-  exact h1
+  apply _root_.Formalism.L2.SG.Pf.map_comap_subgroup <;> assumption
 
 private theorem abs_inv_lemma (S : Subgroup G) (hS : IsClosed (S : Set G)) (ν : Measure G)
     (hνc : ν (S : Set G)ᶜ = 0) (hνi : ∀ s ∈ S, ν.map (fun x => s * x) = ν) :
@@ -114,60 +63,10 @@ private theorem abs_inv_lemma (S : Subgroup G) (hS : IsClosed (S : Set G)) (ν :
           Subtype.val := (hemb.comap_map _).symm
     _ = ν.comap Subtype.val := by rw [h1]
 
-private theorem abs_scal_lemma_2 (S : Subgroup G) [LocallyCompactSpace S] (la : Measure S)
-    [SigmaFinite la] [la.IsMulLeftInvariant] (h0 : la ≠ 0) :
-    ∃ c : ℝ≥0∞, c ≠ 0 ∧ c ≠ ⊤ ∧ la = c • (haar : Measure S) := by
-  haveI : SecondCountableTopology S := inferInstanceAs (SecondCountableTopology (S : Set G))
-  obtain ⟨K, hK, hK1⟩ := exists_compact_mem_nhds (1 : S)
-  have hKpos : 0 < (haar : Measure S) K :=
-    lt_of_lt_of_le (isOpen_interior.measure_pos haar ⟨1, mem_interior_iff_mem_nhds.mpr hK1⟩)
-      (measure_mono interior_subset)
-  have hKtop : (haar : Measure S) K ≠ ⊤ := hK.measure_lt_top.ne
-  have heq := measure_eq_div_smul (s := K) la (haar : Measure S) hKpos.ne' hKtop
-  refine ⟨la K / haar K, ?_, ?_, heq⟩
-  · intro hc; rw [hc, zero_smul] at heq; exact h0 heq
-  · intro hc
-    rw [hc] at heq
-    have hsp : ∀ i, (haar : Measure S) (spanningSets la i) = 0 := by
-      intro i
-      have h1 : ((⊤ : ℝ≥0∞) • (haar : Measure S)) (spanningSets la i) < ⊤ := by
-        rw [← heq]; exact measure_spanningSets_lt_top la i
-      rw [Measure.smul_apply, smul_eq_mul] at h1
-      by_contra hne
-      rw [ENNReal.top_mul hne] at h1
-      exact lt_irrefl _ h1
-    have hu : (haar : Measure S) Set.univ = 0 := by
-      rw [← iUnion_spanningSets la]; exact measure_iUnion_null hsp
-    exact (isOpen_univ.measure_pos haar ⟨1, trivial⟩).ne' hu
-
 theorem haarOn_props (H : Subgroup G) (hH : IsClosed (H : Set G)) (μ : Measure G) (hμ : HaarOn H μ) :
     (∀ K : Set G, IsCompact K → μ K < ⊤) ∧
-      ∀ U : Set G, IsOpen U → (U ∩ (H : Set G)).Nonempty → 0 < μ U := by
-  haveI : LocallyCompactSpace H := hH.isClosedEmbedding_subtypeVal.locallyCompactSpace
-  obtain ⟨hσ, h0, hc, hi⟩ := hμ
-  have hemb : MeasurableEmbedding (Subtype.val : H → G) :=
-    MeasurableEmbedding.subtype_coe hH.measurableSet
-  have hmc := map_comap_subgroup H hH μ hc
-  haveI := abs_inv_lemma H hH μ hc hi
-  haveI : SigmaFinite (μ.comap (Subtype.val : H → G)) :=
-    SigmaFinite.of_map _ hemb.measurable.aemeasurable (by rw [hmc]; exact hσ)
-  have hne : μ.comap (Subtype.val : H → G) ≠ 0 := by
-    intro h; apply h0; rw [← hmc, h, Measure.map_zero]
-  obtain ⟨c, hc0, hct, hceq⟩ := abs_scal_lemma_2 H (μ.comap (Subtype.val : H → G)) hne
-  have hμeq : μ = c • (haar : Measure H).map Subtype.val := by
-    rw [← hmc, hceq, Measure.map_smul c hemb.measurable.aemeasurable]
-  constructor
-  · intro K hK
-    rw [hμeq, Measure.smul_apply, Measure.map_apply hemb.measurable hK.isClosed.measurableSet,
-      smul_eq_mul]
-    exact ENNReal.mul_lt_top hct.lt_top
-      ((hH.isClosedEmbedding_subtypeVal.isCompact_preimage hK).measure_lt_top)
-  · intro U hU hne'
-    rw [hμeq, Measure.smul_apply, Measure.map_apply hemb.measurable hU.measurableSet, smul_eq_mul]
-    obtain ⟨x, hxU, hxH⟩ := hne'
-    have hpos : 0 < (haar : Measure H) (Subtype.val ⁻¹' U) :=
-      (hU.preimage continuous_subtype_val).measure_pos haar ⟨⟨x, hxH⟩, hxU⟩
-    exact ENNReal.mul_pos hc0 hpos.ne'
+      ∀ U : Set G, IsOpen U → (U ∩ (H : Set G)).Nonempty → 0 < μ U :=
+  (_root_.Formalism.L2.SG.Pf.haarOnSet_isHaar H hH μ hμ.1 hμ.2.1 hμ.2.2.1 hμ.2.2.2).2
 
 theorem pull (S : Subgroup G) (hS : IsClosed (S : Set G)) (ν : Measure G) (hνc : ν (S : Set G)ᶜ = 0)
     (hνi : ∀ s ∈ S, ν.map (fun x => s * x) = ν) (hνf : IsFiniteMeasureOnCompacts ν) :
@@ -266,8 +165,7 @@ theorem haarOn_conj (N : Subgroup G) (hN : IsClosed (N : Set G)) {μ : Measure G
     (by ext x; simp) (fun x hx => h1 x hx) (fun s hs => ⟨a⁻¹ * s * a, h2 s hs, fun x => by group⟩)
 
 theorem le_one_of_pow_le {x B : ℝ≥0∞} (hB : B ≠ ⊤) (h : ∀ p : ℕ, x ^ p ≤ B) : x ≤ 1 := by
-  by_contra hx
-  push_neg at hx
+  by_contra! hx
   have hxt : x ≠ ⊤ := by
     rintro rfl
     have h1 := h 1

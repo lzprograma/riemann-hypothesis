@@ -4,61 +4,15 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormPowLeNormFactorial
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffOfW
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsGenIsUnitSub
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.InvertibleSpanSingleton
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.RealisesUnitPow
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NatCastNeZeroPs
 import Formalism.SharpRestriction.CuspSpanNormBounds.Point
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
 import Mathlib.Tactic.Linter.Style
-import Mathlib.RingTheory.WittVector.DiscreteValuationRing
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffCoeffPowEqOfBox, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffFrobeniusDoublePowerSeriesCongrBox, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConstantCoeffFamilyFrobeniusCongrPow, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DividedPowerFamilySingleEqMul, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DividedUniformizerPowerFrobeniusCongrPow, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DividedVariablePowerFrobeniusCongrPow, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusCongrOfFiniteOfLocalDividedPower, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusPowMemFiniteSupportDoublePowerSeries, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusPreservesLadicDecayDividedPower, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MulMemCrystallinePrismDividedPowerFamilies, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UniformizerFamilyFrobeniusCongrPow, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedWittEmbeddingTwistedAlgebraMapInjectiv, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobMemPPSetCongr
@@ -142,8 +96,8 @@ theorem coeff_frob2_congr_box : ∀ (l : ℕ) [Fact l.Prime] (K : Type) [NormedF
     rw [map_mul, hC, map_pow, frob_X, ← pow_mul]
   have hz : coeff n (coeff i (φ₂ (G - H))) = 0 := by
     rw [hAB, map_add (f := _), e1, e2, map_add (f := _), map_add (f := _), coeff_X_pow_mul',
-      if_neg (show ¬ (i + 1 ≤ i) by omega), map_zero, zero_add, coeff_C_mul, coeff_X_pow_mul',
-      if_neg (show ¬ (l * (n + 1) ≤ n) by nlinarith)]
+      ite_eq_right (show ¬ (i + 1 ≤ i) by omega), map_zero, zero_add, coeff_C_mul, coeff_X_pow_mul',
+      ite_eq_right (show ¬ (l * (n + 1) ≤ n) by nlinarith)]
   rwa [map_sub, map_sub, map_sub, sub_eq_zero] at hz
 
 end GlobalTheory.CrysPrism
@@ -297,12 +251,12 @@ theorem intCast_div_factorial_mem_QSet (z : ℤ) (m : ℕ) :
   rw [coeff_ofW, coeff_C]
   by_cases hi : i = 0
   · subst hi
-    rw [if_pos rfl, coeff_C_mul, coeff_X_pow]
+    rw [ite_eq_left rfl, coeff_C_mul, coeff_X_pow]
     by_cases hn : n = e * m
     · subst hn
       simp [dpDen, Nat.mul_div_cancel_left m (Nat.pos_of_ne_zero (NeZero.ne e))]
-    · rw [if_neg hn, Pi.single_eq_of_ne (by simpa using hn)]; simp
-  · rw [if_neg hi, Pi.single_eq_of_ne (by simp [hi])]; simp
+    · rw [ite_eq_right hn, Pi.single_eq_of_ne (by simpa using hn)]; simp
+  · rw [ite_eq_right hi, Pi.single_eq_of_ne (by simp [hi])]; simp
 
 end
 
@@ -357,13 +311,6 @@ noncomputable section
 
 namespace GlobalTheory.CrysPrism.GoodX
 
-theorem pow_factorial_dvd (i m : ℕ) : i.factorial ^ m ∣ (m * i).factorial := by
-  induction m with
-  | zero => simp
-  | succ m ih =>
-    rw [pow_succ, Nat.succ_mul]
-    exact (Nat.mul_dvd_mul_right ih _).trans (Nat.factorial_mul_factorial_dvd_factorial_add _ _)
-
 theorem mul_pow_factorial_dvd (l i : ℕ) (hl : l ≠ 0) (hi : i ≠ 0) :
     i.factorial ^ l * l ∣ (l * i).factorial := by
   obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hl
@@ -371,7 +318,7 @@ theorem mul_pow_factorial_dvd (l i : ℕ) (hl : l ≠ 0) (hi : i ≠ 0) :
   have h2 := Nat.choose_mul_factorial_mul_factorial h1
   have h3 : (m + 1) * i - i = m * i := by rw [Nat.succ_mul]; omega
   rw [h3, Nat.choose_mul_right hi] at h2
-  obtain ⟨c, hc⟩ := pow_factorial_dvd i m
+  obtain ⟨c, hc⟩ := GlobalTheory.CrysPrism.factorial_pow_dvd_factorial_mul i m
   refine ⟨((m + 1) * i - 1).choose (i - 1) * c, ?_⟩
   rw [Nat.succ_eq_add_one, ← h2, hc]; ring
 
@@ -466,7 +413,7 @@ theorem mono_mem (c : Wq l a) (i n : ℕ) :
   rw [coeff_ofW, coeff_C_mul, coeff_X_pow]
   by_cases hj : j = i
   · subst hj
-    rw [if_pos rfl, mul_one, coeff_C_mul, coeff_X_pow]
+    rw [ite_eq_left rfl, mul_one, coeff_C_mul, coeff_X_pow]
     by_cases hm : m = n
     · subst hm; simp
     · simp [hm]
@@ -485,11 +432,6 @@ theorem neg_mem {x : ZMod a → K⟦X⟧⟦X⟧} (hx : x ∈ QSet t K e) : -x �
   ext j m
   simp only [Pi.neg_apply, map_neg, coeff_ofW, neg_div]
 
-theorem cstW_mem (c : Wq l a) : cstW t K c ∈ QSet t K e := by
-  convert mono_mem t K e c 0 0 using 1
-  funext τ
-  simp [cstW, dpDen]
-
 theorem xFam_mem (i : ℕ) : xFam a K i ∈ QSet t K e := by
   convert mono_mem t K e 1 i 0 using 1
   funext τ
@@ -506,11 +448,11 @@ def qSub (h : ∀ x ∈ QSet t K e, ∀ y ∈ QSet t K e, x * y ∈ QSet t K e) 
   carrier := QSet t K e
   mul_mem' := fun hx hy => h _ hx _ hy
   one_mem' := by
-    convert cstW_mem t K e 1 using 1
+    convert GlobalTheory.CrysPrism.cstW_mem_QSet_of_const t K e 1 using 1
     funext τ; simp [cstW]
   add_mem' := add_mem t K e
   zero_mem' := by
-    convert cstW_mem t K e 0 using 1
+    convert GlobalTheory.CrysPrism.cstW_mem_QSet_of_const t K e 0 using 1
     funext τ; simp [cstW]
   neg_mem' := neg_mem t K e
 
@@ -528,7 +470,7 @@ theorem xFam_mem_GoodSet : ∀ (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZero a] [
   obtain ⟨d, hd⟩ := exists_padic l i hi
   refine abstract (fun n hn x hx => tf_pi (natCast_ne_zero_ps (natCast_ne_zero_ps (Nat.cast_ne_zero.2 hn))) x hx)
     (qSub t K e hmul) (frob2 φ₂) l hl.out.ne_zero (uFam a K) (fun _ => X) (xFam a K) (fun k => ?_)
-    (uFam_mem t K e) (xFam_mem t K e) ?_ i hi (cstW t K (algebraMap ℤ_[l] _ d)) (cstW_mem t K e _) ?_
+    (uFam_mem t K e) (xFam_mem t K e) ?_ i hi (cstW t K (algebraMap ℤ_[l] _ d)) (GlobalTheory.CrysPrism.cstW_mem_QSet_of_const t K e _) ?_
   · funext τ
     have h : (k.factorial : K) ≠ 0 := Nat.cast_ne_zero.2 (Nat.factorial_ne_zero k)
     simp only [Pi.mul_apply, Pi.natCast_apply, Pi.pow_apply, xFam]
@@ -590,7 +532,7 @@ theorem goodSet_of_finite_of_local (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZero 
       have hm : (i', n') ∈ s := by
         simp only [hs, Finset.mem_product, Finset.mem_range]
         omega
-      rw [coeff_ofW, coeff_ofW, if_pos hm]
+      rw [coeff_ofW, coeff_ofW, ite_eq_left hm]
     refine ⟨v (i, n), b (i, n), fun τ => ?_⟩
     have h1 : coeff n (coeff i (frob2 φ₂ (ofW t K e w) τ)) =
         coeff n (coeff i (frob2 φ₂ (ofW t K e (fun p => if p ∈ s then w p else 0)) τ)) :=
@@ -651,23 +593,22 @@ theorem bd_CC (c : K) : Bd 0 (C (C c) : K⟦X⟧⟦X⟧) := by
   intro i n hin
   rw [coeff_C]
   split_ifs with h
-  · rw [coeff_C, if_neg (by omega)]
+  · rw [coeff_C, ite_eq_right (by omega)]
   · simp
 
 theorem bd_CX : Bd 1 (C X : K⟦X⟧⟦X⟧) := by
   intro i n hin
   rw [coeff_C]
   split_ifs with h
-  · rw [coeff_X, if_neg (by omega)]
+  · rw [coeff_X, ite_eq_right (by omega)]
   · simp
 
 theorem bd_X : Bd 1 (X : K⟦X⟧⟦X⟧) := by
   intro i n hin
   rw [coeff_X]
   split_ifs with h
-  · rw [coeff_one, if_neg (by omega)]
+  · rw [coeff_one, ite_eq_right (by omega)]
   · simp
-
 
 variable (K) in
 def fin : Subring K⟦X⟧⟦X⟧ where
@@ -692,13 +633,13 @@ theorem Bd.eq_sum {M : ℕ} {F : K⟦X⟧⟦X⟧} (h : Bd M F) :
 
   simp only [map_sum (coeff i), coeff_C_mul_X_pow, Finset.sum_ite_eq, Finset.mem_range]
   by_cases hi : i < M + 1
-  · simp only [if_pos hi]
+  · simp only [ite_eq_left hi]
 
     simp only [map_sum (coeff n), coeff_C_mul_X_pow, Finset.sum_ite_eq, Finset.mem_range]
     split_ifs with hn
     · rfl
     · exact h i n (by omega)
-  · simp only [if_neg hi, map_zero]
+  · simp only [ite_eq_right hi, map_zero]
     exact h i n (by omega)
 
 theorem map_mem (φ : K⟦X⟧⟦X⟧ →+* K⟦X⟧⟦X⟧) (h1 : ∀ c : K, φ (C (C c)) ∈ fin K)
@@ -835,15 +776,15 @@ theorem frob_keeps_decay (l : ℕ) [hl : Fact l.Prime] (a e : ℕ) [NeZero a] [N
       by_cases h : (l : Wq l a) ^ (r + 1) ∣ w p
       · obtain ⟨c, hc⟩ := id h
         refine ⟨c, ?_⟩
-        simp only [w1, if_pos h]
+        simp only [w1, ite_eq_left h]
         simp [hc]
-      · exact ⟨0, by simp only [w1, if_neg h]; simp⟩
+      · exact ⟨0, by simp only [w1, ite_eq_right h]; simp⟩
     choose w2 hw2 using hex
     have hw12 : w = w1 + (l ^ (r + 1) : ℕ) • w2 := funext hw2
     have hw1 : ∀ i n, max N1 N2 < i ∨ max N1 N2 < n → w1 (i, n) = 0 := by
       intro i n h
       by_cases h' : (l : Wq l a) ^ (r + 1) ∣ w (i, n)
-      · simp only [w1, if_pos h']
+      · simp only [w1, ite_eq_left h']
       · have h3 : (i, n) ≤ (N1, N2) := hN h'
         obtain ⟨h4, h5⟩ := h3
         simp only at h4 h5
@@ -981,15 +922,15 @@ theorem uPow_mem_QSet_goodU [CharZero K] (m : ℕ) :
   by_cases h : (i, n) = (0, m)
   · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
     have : (dpDen e 0 n : K) ≠ 0 := Nat.cast_ne_zero.mpr (dpDen_pos e 0 n).ne'
-    simp only [if_true, map_natCast, coeff_X_pow_self]
+    simp only [ite_true, map_natCast, coeff_X_pow_self]
     exact div_self this
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     simp only [map_zero, zero_div]
     by_cases hi : i = 0
     · subst hi
       have hn : n ≠ m := fun hn => h (by rw [hn])
-      rw [if_pos rfl, coeff_X_pow, if_neg hn]
-    · rw [if_neg hi, map_zero]
+      rw [ite_eq_left rfl, coeff_X_pow, ite_eq_right hn]
+    · rw [ite_eq_right hi, map_zero]
 
 end
 
@@ -1080,7 +1021,6 @@ theorem ofW_zero : ofW t K e (0 : ℕ × ℕ → Wq l a) = 0 := by
 theorem ofW_neg (w : ℕ × ℕ → Wq l a) : ofW t K e (-w) = -ofW t K e w := by
   funext τ; ext i n; simp [coeff_ofW, neg_div]
 
-
 variable (K e) in
 def ofWHom : (ℕ × ℕ → Wq l a) →+ (ZMod a → K⟦X⟧⟦X⟧) where
   toFun := ofW t K e
@@ -1157,7 +1097,6 @@ theorem good_fin (hφC : ∀ f : K⟦X⟧, φ₂ (C f) = C (frob K l f)) (hφX :
   have h : (fun p => if p ∈ s then w p else 0) = ∑ p ∈ s, Pi.single p (w p) := by
     funext q; rw [Finset.sum_apply]; simp [Pi.single_apply]
   have h2 : ofW t K e (fun p => if p ∈ s then w p else 0) = ∑ p ∈ s, ofW t K e (Pi.single p (w p)) := by
-    set_option synthInstance.maxHeartbeats 100000 in
       rw [h]; exact map_sum (ofWHom (K := K) (e := e) t) _ s
   rw [h2]
   refine Finset.sum_induction _ (· ∈ GoodSet t e φ₂) (fun _ _ => good_add t) (good_zero t) fun p _ => ?_

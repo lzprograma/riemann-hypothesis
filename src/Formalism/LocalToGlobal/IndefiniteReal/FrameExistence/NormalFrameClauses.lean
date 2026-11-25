@@ -19,8 +19,6 @@ open Formalism.IndefR.Mi IsDedekindDomain NumberField
 
 namespace Formalism.IndefR.Seed.Frm
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 
@@ -54,8 +52,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.IndefR.Mi IsDedekindDomain NumberField
 
 namespace Formalism.IndefR.Seed.Frm
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 

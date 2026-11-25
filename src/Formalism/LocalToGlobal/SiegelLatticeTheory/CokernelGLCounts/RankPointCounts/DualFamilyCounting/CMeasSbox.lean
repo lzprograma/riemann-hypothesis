@@ -15,8 +15,6 @@ namespace Formalism.L2.SG.Pf.NcReal.JX
 
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj Formalism.L2.SG.RealObj.InfCut Formalism.MainNotions.S
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Phi
 
 variable {ι : Type} [Fintype ι] {r k : ℕ}
@@ -73,10 +71,10 @@ theorem Ψc_Φc (x : ∀ p : CBlk r, CSpc ι k p) : Ψc (Φc x) = x := by
     split_ifs with h
     · apply Complex.ext
       · show LsNc5.reim (_ : ℂ) false = _
-        simp only [LsNc5.reim, Bool.false_eq_true, if_false]
+        simp only [LsNc5.reim, Bool.false_eq_true, ite_false]
         congr 2
       · show LsNc5.reim (_ : ℂ) true = _
-        simp only [LsNc5.reim, if_true]
+        simp only [LsNc5.reim, ite_true]
         congr 2
     · have hj : j = Fin.last k := Fin.ext (by have := j.isLt; simp only [Fin.val_last]; omega)
       subst hj

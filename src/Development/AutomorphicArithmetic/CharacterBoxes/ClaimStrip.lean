@@ -1,62 +1,13 @@
 module
 
 public import Development.AutomorphicArithmetic.CharacterBoxes.HalfPlane
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
 public import Mathlib.NumberTheory.LSeries.Nonvanishing
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
 open Complex
 
 namespace Claim
-
-/-- A zero in the open critical strip descends to the inducing primitive character:
-the extra Euler factors are nonzero there. -/
-theorem prim_zero {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) [NeZero χ.conductor] {s : ℂ}
-    (hs0 : 0 < s.re) (hs1 : s.re < 1) (h : DirichletCharacter.LFunction χ s = 0) :
-    DirichletCharacter.LFunction χ.primitiveCharacter s = 0 := by
-  have hs : s ≠ 1 := by rintro rfl; norm_num at hs1
-  exact (LFunction_eq_zero_iff_primitiveCharacter χ hs0 (Or.inr hs)).mp h
 
 theorem gamma_ne_zero {M : ℕ} [NeZero M] (φ : DirichletCharacter ℂ M) {t : ℂ} (ht : 0 < t.re) :
     DirichletCharacter.gammaFactor φ t ≠ 0 := by
@@ -66,11 +17,10 @@ theorem gamma_ne_zero {M : ℕ} [NeZero M] (φ : DirichletCharacter ℂ M) {t : 
     exact Complex.Gammaℝ_ne_zero_of_re_pos (by rw [Complex.add_re, Complex.one_re]; linarith)
 
 /-- The functional equation reflects a primitive zero at `s` to a zero for the inverse
-character at `1 - s`. The gamma factors are nonzero in the open critical strip. -/
+character at `1 - s`. The positive real part of `s` ensures its gamma factor is nonzero. -/
 theorem prim_reflect {M : ℕ} [NeZero M] (ψ : DirichletCharacter ℂ M) (hψ : ψ.IsPrimitive) {s : ℂ}
-    (hs0 : 0 < s.re) (hs1 : s.re < 1) (h : DirichletCharacter.LFunction ψ s = 0) :
+    (hs0 : 0 < s.re) (hs : s ≠ 1) (h : DirichletCharacter.LFunction ψ s = 0) :
     DirichletCharacter.LFunction ψ⁻¹ (1 - s) = 0 := by
-  have ht0 : 0 < (1 - s).re := by rw [Complex.sub_re, Complex.one_re]; linarith
   have hc : DirichletCharacter.completedLFunction ψ s = 0 := by
     rw [DirichletCharacter.LFunction_eq_completed_div_gammaFactor ψ s
       (Or.inl (ne_zero_of_re_pos hs0)), div_eq_zero_iff] at h
@@ -78,21 +28,20 @@ theorem prim_reflect {M : ℕ} [NeZero M] (ψ : DirichletCharacter ℂ M) (hψ :
   have fe := hψ.inv.completedLFunction_one_sub s
   rw [inv_inv, hc, mul_zero] at fe
   rw [DirichletCharacter.LFunction_eq_completed_div_gammaFactor ψ⁻¹ (1 - s)
-    (Or.inl (ne_zero_of_re_pos ht0)), fe, zero_div]
+    (Or.inl (sub_ne_zero.mpr hs.symm)), fe, zero_div]
 
 /-- Right-half-plane nonvanishing for all Dirichlet characters forces all zeros in the
 open critical strip onto the critical line. A zero to the left is first reduced to a
 primitive character and then reflected into the right half-plane. -/
-theorem strip (h : HalfPlane) : Strip := by
-  unfold HalfPlane at h
+theorem strip (h : DirichletLNonvanishingRightOfHalf) : DirichletLZerosOnLine := by
   intro N _ χ s hs0 hs1 hz
   have hs : s ≠ 1 := fun e => by rw [e, Complex.one_re] at hs1; exact lt_irrefl _ hs1
   have hs0' : s ≠ 0 := fun e => by rw [e, Complex.zero_re] at hs0; exact lt_irrefl _ hs0
   rcases lt_trichotomy s.re (1 / 2) with hlt | heq | hgt
   · exfalso
     have : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩
-    have hprimitive := prim_zero χ hs0 hs1 hz
-    have hreflected := prim_reflect χ.primitiveCharacter χ.primitiveCharacter_isPrimitive hs0 hs1 hprimitive
+    have hprimitive := (LFunction_eq_zero_iff_primitiveCharacter χ hs0 (Or.inr hs)).mp hz
+    have hreflected := prim_reflect χ.primitiveCharacter χ.primitiveCharacter_isPrimitive hs0 hs hprimitive
     have ht : (1 : ℂ) - s ≠ 1 := fun e => hs0' (sub_eq_self.mp e)
     exact h χ.conductor χ.primitiveCharacter⁻¹ (1 - s)
       (by rw [Complex.sub_re, Complex.one_re]; linarith) (Or.inr ht) hreflected
@@ -102,7 +51,7 @@ theorem strip (h : HalfPlane) : Strip := by
 /-- Specialize the strip result to the character of modulus one. Outside the open
 critical strip, use zeta nonvanishing for real part at least one and the classification
 of zeros for nonpositive real part. -/
-theorem zeta (h : HalfPlane) : Zeta := by
+theorem zeta (h : DirichletLNonvanishingRightOfHalf) : RiemannZetaZerosOnLine := by
   intro s hz htriv _
   by_cases hpos : 0 < s.re
   · by_cases hlt : s.re < 1

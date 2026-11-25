@@ -57,7 +57,6 @@ open Filter Topology
 open GlobalTheory.ShFam GlobalTheory.ShFam.BdArc GlobalTheory.Toroidal
 
 open MonoidalCategory CartesianMonoidalCategory MonObj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.CompHS.BridgeValue
 
@@ -81,7 +80,6 @@ theorem val_sec₀_eq_evR : ∀ {E : Type} [Field E] [NumberField E] [IsCMField 
   let z' : Sp (CAt σ) ⟶ TF.X.YY := spMap ψ' ≫ q
   have hz' : ⊤ ≤ z' ⁻¹ᵁ TF.X.F.U k := GlobalTheory.FlagMod.le_preimage_comp _ hz
   have hO' : ⊤ ≤ z' ⁻¹ᵁ flagOpen TF.X := fun s hs => hO hs
-  have hpt : AllWt.ptF y = GlobalTheory.FlagMod.frX y := rfl
   have ex : spMap ψ' ≫ (x ≫ genι TF.Y) = z' ≫ TF.X.π := by
     rw [← hx]; exact (Category.assoc _ _ _).symm
   have hxy : GlobalTheory.FlagMod.frX y ≫ TF.Y.j = z' ≫ TF.X.π := by

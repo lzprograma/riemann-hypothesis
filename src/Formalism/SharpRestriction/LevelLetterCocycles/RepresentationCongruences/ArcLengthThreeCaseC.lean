@@ -1,5 +1,7 @@
 module
 
+import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfMembership
+import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcLengthOneOrTwoCaseB
 public import Formalism.SharpRestriction.LevelLetterCocycles.AdmBoundsBOfAdm
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.Pi0MemADelta
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ProdTwoLevelsEqConst
@@ -13,57 +15,13 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.LetterConditionGlob
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.AcoordSumVecMul
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.FilVSep
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LemGBInImgIff
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcLenThreeThickLetters, Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DvOSmulO, Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.MemPairXIff, Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.Numerics, Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.PhiSqPi0PowPowerSeries, Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcLengthThreeCaseC
@@ -93,15 +51,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
 namespace ArcLengthThreeFiltration
 
 theorem φVB_inj (T : LocLat G Qp LL O) : Function.Injective (φVB PD (LL := LL) (V := T.V)) := by
-  have hφ : Function.Injective (PD.φ.toLinearMap) := by simpa using PD.φ_inj
-  have h : ⇑(φVB PD (LL := LL) (V := T.V)) = ⇑(LinearMap.lTensor T.V PD.φ.toLinearMap) := by
-    funext x
-    induction x using TensorProduct.induction_on with
-    | zero => simp
-    | tmul a c => simp [φVB]
-    | add x y hx hy => simp only [map_add (f := _), hx, hy]
-  rw [h]
-  exact Module.Flat.lTensor_preserves_injective_linearMap _ hφ
+  intros
+  apply _root_.Formalism.MainNotions.UnusedSlot80.ArcF.φVB_inj <;> assumption
 
 theorem crisMap_φ {T₁ T₂ : LocLat G Qp LL O} (F : LatHom T₁.L T₂.L) (x : T₁.V ⊗[Qp] B) :
     Formalism.MainNotions.TruncatedSeriesCountingBounds.crisMap B F.f (φVB PD (LL := LL) (V := T₁.V) x) =
@@ -134,19 +85,10 @@ theorem dv_sum (T : LocLat G Qp LL O) (e : ℕ) {d : ℕ} (b : Fin d → W.DD T)
   · intro a s ha ih
     rw [Finset.sum_insert ha, Finset.sum_insert ha, dv_add, ih]
 
-theorem dv_eq_sum (T : LocLat G Qp LL O) (e : ℕ) {d : ℕ} (b : Fin d → W.DD T) (c₀ : Fin d → LL) :
-    dv W T e b c₀ = ∑ m, c₀ m • dv W T e b (Pi.single m 1) := by
-  have h : c₀ = ∑ m, c₀ m • (Pi.single m 1 : Fin d → LL) := by
-    ext k
-    simp [Finset.sum_apply, Pi.single_apply]
-  conv_lhs => rw [h]
-  rw [dv_sum]
-  simp only [dv_smul]
-
 theorem dvO_eq (T : LocLat G Qp LL O) (e : ℕ) {d : ℕ} (b : Fin d → W.DD T) (c₀ : Fin d → O) :
     dvO W T e b c₀ = ∑ m, algebraMap O LL (c₀ m) • dv W T e b (Pi.single m 1) := by
   first
-  | (unfold dvO; exact dv_eq_sum W T e b _)
+  | (unfold dvO; exact Formalism.MainNotions.N.FrobeniusPowerSeries.TC.dv_eq_sum W T e b _)
 
 theorem dvO_single (T : LocLat G Qp LL O) (e : ℕ) {d : ℕ} (b : Fin d → W.DD T) (k : Fin d) :
     dvO W T e b (Pi.single k 1) = dv W T e b (Pi.single k 1) := by
@@ -155,21 +97,7 @@ theorem dvO_single (T : LocLat G Qp LL O) (e : ℕ) {d : ℕ} (b : Fin d → W.D
 
 theorem filS_anti (T : LocLat G Qp LL O) (a : ZMod n) (s : ℕ) {u u' : ℤ} (h : u ≤ u') :
     FilS W T a s u' ≤ FilS W T a s u := by
-  unfold FilS
-  apply Submodule.map_mono
-  apply inf_le_inf_right
-  unfold FilCris
-  apply inf_le_inf_left
-  apply Submodule.comap_mono
-  unfold FilV
-  have hF : PD.Fil u' ≤ PD.Fil u := antitone_int_of_succ_le PD.Fil_anti h
-  intro y hy
-  rw [LinearMap.mem_range] at hy
-  obtain ⟨z, rfl⟩ := hy
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a c => exact LinearMap.mem_range.mpr ⟨a ⊗ₜ ⟨c.1, hF c.2⟩, by simp⟩
-  | add z w hz hw => rw [map_add (f := _)]; exact Submodule.add_mem _ hz hw
+  apply _root_.Formalism.MainNotions.N.FrobeniusPowerSeries.ArcLengthTwoLifting.filS_anti <;> assumption
 
 theorem filS_zero_iff (T : LocLat G Qp LL O) (a : ZMod n) (u : ℤ) (x : T.V ⊗[Qp] B) :
     x ∈ FilS W T a 0 u ↔ x ∈ FilCris PD T.ρ u ⊓ DcrisL PD T.ρ (W.emb a) := by
@@ -263,7 +191,7 @@ theorem lam_inner [NeZero n] {c : ZMod n} (hlen : (arcOf b w S η up size).len c
   have hs0 : ∀ a : ZMod n, (arcOf b w S η up size).Hs a 2 0 = (arcOf b w S η up size).h := by
     intro a
     unfold Formalism.MainNotions.ArcLiftingSetup.ArcP.Hs
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro (hc | hc)
     · simp only [arcOf] at hc
       split at hc <;> simp at hc
@@ -271,7 +199,7 @@ theorem lam_inner [NeZero n] {c : ZMod n} (hlen : (arcOf b w S η up size).len c
   have hs1 : ∀ a : ZMod n, (arcOf b w S η up size).Hs a 2 1 = (arcOf b w S η up size).G₀ := by
     intro a
     unfold Formalism.MainNotions.ArcLiftingSetup.ArcP.Hs
-    rw [if_pos (Or.inr (by simp [arcOf]))]
+    rw [ite_eq_left (Or.inr (by simp [arcOf]))]
   rw [hs0, hs1]
 
 end ThetaShiftProofs
@@ -400,7 +328,7 @@ theorem coef_fil (hinj : Function.Injective (algebraMap O LL)) {T : LocLat G Qp 
       rw [← mul_assoc, mul_comm (algebraMap (LetA O n) W.EE _) (algebraMap (LetA O n) W.EE _), mul_assoc,
         hU i, cst_mul_ea, cst_mul_ea]
       congr 1
-      simp only [Gi, if_pos hi]
+      simp only [Gi, ite_eq_left hi]
       have e0 := toNat_split m₀ (α i 0) (hα0 i hi)
       have e1 := toNat_split m₁ (α i 1) (hα1 i hi)
       calc X ^ m₀ * Br.P.p 1 ^ m₁ * (X ^ (α i 0).toNat * Br.P.p 1 ^ (α i 1).toNat * U i)
@@ -409,7 +337,7 @@ theorem coef_fil (hinj : Function.Injective (algebraMap O LL)) {T : LocLat G Qp 
               Br.P.p 1 ^ ((-(α i 1)).toNat + (m₁ + α i 1).toNat) * U i := by rw [e0, e1]
         _ = _ := by ring
     · rw [hbad i hi]
-      simp [Gi, if_neg hi, ea_zero]
+      simp [Gi, ite_eq_right hi, ea_zero]
   let V : Fin d → PowerSeries O := fun k => ∑ i, C (c₀ i k) * Gi i
   have hV : ∀ k, lE W κ * (algebraMap (LetA O n) W.EE (Br.cst (X ^ m₀ * Br.P.p 1 ^ m₁)) * f k) =
       ea Br a (V k) := by
@@ -478,12 +406,12 @@ theorem coef_fil (hinj : Function.Injective (algebraMap O LL)) {T : LocLat G Qp 
       by_cases h0 : coeff j (Gi i) = 0
       · rw [h0, map_zero, zero_smul]; exact Submodule.zero_mem _
       · refine Submodule.smul_mem _ _ ?_
-        have hi : good i := fun hz => h0 (by simp only [Gi]; rw [if_neg (fun h => h hz)]; exact map_zero _)
+        have hi : good i := fun hz => h0 (by simp only [Gi]; rw [ite_eq_right (fun h => h hz)]; exact map_zero _)
         have hle : (m₀ + α i 0).toNat ≤ j := by
           by_contra hlt
           apply h0
-          simp only [Gi, if_pos hi]
-          rw [coeff_X_pow_mul', if_neg hlt]
+          simp only [Gi, ite_eq_left hi]
+          rw [coeff_X_pow_mul', ite_eq_right hlt]
         have hα : (η : ℤ) + 1 ≤ -(α i 0) := by
           have h4 := hα0 i hi
           have h5 := Int.toNat_of_nonneg (show 0 ≤ (m₀ : ℤ) + α i 0 by omega)
@@ -522,7 +450,7 @@ theorem mem_pair_X_iff (a : O) (f : O⟦X⟧) (B : ℕ) :
   constructor
   · intro hf j hj
     obtain ⟨u, w, huw⟩ := Ideal.mem_span_pair.mp hf
-    rw [← huw, map_add (f := _), PowerSeries.coeff_mul_C, PowerSeries.coeff_mul_X_pow', if_neg (by omega), add_zero]
+    rw [← huw, map_add (f := _), PowerSeries.coeff_mul_C, PowerSeries.coeff_mul_X_pow', ite_eq_right (by omega), add_zero]
     exact dvd_mul_left _ _
   · intro h
     choose c hc using h
@@ -617,7 +545,7 @@ theorem content_notMem {l : ℕ} [Fact l.Prime] (P : PhiData O l) (σ A S y b₁
     rw [← map_pow, mem_pair_X_iff]
     intro j hj
     have h2 := hK (j + (A + t - 1 + S)) (by omega)
-    rwa [PowerSeries.coeff_X_pow_mul', if_pos (by omega), Nat.add_sub_cancel] at h2
+    rwa [PowerSeries.coeff_X_pow_mul', ite_eq_left (by omega), Nat.add_sub_cancel] at h2
   rw [pair_l_eq hϖ P.hl0 t] at hP
   have hdX : IsDist ((X : O⟦X⟧) ^ B) := by
     unfold IsDist
@@ -843,7 +771,7 @@ theorem coeff_zero_of_coord (hinj : Function.Injective (algebraMap O LL)) (a : Z
   intro j hj
   have h1 := congrArg (coeff j) hD
   rw [coeff_C_mul, show (X - C ((PD.p : ℕ) : O)) * (X ^ h * Y) * U = X ^ h * ((X - C ((PD.p : ℕ) : O)) * Y * U) by ring,
-    coeff_X_pow_mul', if_neg (by omega)] at h1
+    coeff_X_pow_mul', ite_eq_right (by omega)] at h1
   have hpF : Fact PD.p.Prime := ⟨PD.hp⟩
   exact (mul_eq_zero.1 h1).resolve_left (pow_ne_zero _ Br.P.hl0)
 
@@ -938,7 +866,7 @@ theorem arc_length_three_case_c [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsDomain
   have hb₁b' : size (c - 1) ≤ b + η := hTc1.2
   have hAh : (arcOf b w S η up size).h = b + η + S := by
     show Formalism.MainNotions.TruncatedSeriesCountingBounds.hB b w S η size = b + η + S
-    unfold Formalism.MainNotions.TruncatedSeriesCountingBounds.hB; rw [if_pos ⟨c, hTc⟩]
+    unfold Formalism.MainNotions.TruncatedSeriesCountingBounds.hB; rw [ite_eq_left ⟨c, hTc⟩]
   have hj2 : (arcOf b w S η up size).j ≤ 2 := by show 1 ≤ 2; norm_num
   have h2l : 2 ≤ (arcOf b w S η up size).len c := by rw [hlen]; norm_num
   have hT₁ : IsCrys PD T₁.ρ := hW₁.1
@@ -1016,8 +944,8 @@ theorem arc_length_three_case_c [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsDomain
       rw [e, ArcLengthThreeFiltration.ea_def]
     · beta_reduce
       rw [ArcLengthThreeFiltration.inId_two Br]
-      have h0 : α₂ 0 = -((size (c - 1) : ℕ) : ℤ) := if_pos rfl
-      have h1 : α₂ 1 = ((size (c - 2) + S : ℕ) : ℤ) := if_neg one_ne_zero
+      have h0 : α₂ 0 = -((size (c - 1) : ℕ) : ℤ) := ite_eq_left rfl
+      have h1 : α₂ 1 = ((size (c - 2) + S : ℕ) : ℤ) := ite_eq_right one_ne_zero
       rw [h0, h1, neg_neg, Int.toNat_natCast, Int.toNat_natCast,
         Int.toNat_eq_zero.2 (show -((size (c - 1) : ℕ) : ℤ) ≤ 0 by omega),
         Int.toNat_eq_zero.2 (show -((size (c - 2) + S : ℕ) : ℤ) ≤ 0 by omega),
@@ -1027,9 +955,9 @@ theorem arc_length_three_case_c [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsDomain
     · intro s hs
       interval_cases s
       · show dvO W T₂ 2 bb (Pi.single k₀ 1) ∈ FilS W T₂ a 0 (-(α₂ 0))
-        rw [show α₂ 0 = -((size (c - 1) : ℕ) : ℤ) from if_pos rfl, neg_neg]; exact hℓa
+        rw [show α₂ 0 = -((size (c - 1) : ℕ) : ℤ) from ite_eq_left rfl, neg_neg]; exact hℓa
       · show dvO W T₂ 2 bb (Pi.single k₀ 1) ∈ FilS W T₂ a 1 (-(α₂ 1))
-        rw [show α₂ 1 = ((size (c - 2) + S : ℕ) : ℤ) from if_neg one_ne_zero]; exact hℓa1
+        rw [show α₂ 1 = ((size (c - 2) + S : ℕ) : ℤ) from ite_eq_right one_ne_zero]; exact hℓa1
     · simp [f₂, lE]
   obtain ⟨n₂, ⟨y₂, hy₂N, hy₂a, rfl⟩, hn₂R⟩ := hAC9₂ f₂ hNL₂
   rw [one_smul] at hn₂R

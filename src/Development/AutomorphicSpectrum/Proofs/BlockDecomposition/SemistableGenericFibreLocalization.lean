@@ -2,49 +2,8 @@ module
 
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import Mathlib.RingTheory.RingHom.Smooth
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -83,10 +42,10 @@ theorem smooth_away_core (O : Type) [CommRing O] (ϖ : O) (σ : Type) [Finite σ
   have hzg : ∏ i ∈ T.erase i0, z i = algebraMap C C' g := by
     rw [map_prod]
     refine Finset.prod_congr rfl (fun i hi => ?_)
-    simp only [z, if_neg (Finset.ne_of_mem_erase hi)]
+    simp only [z, ite_eq_right (Finset.ne_of_mem_erase hi)]
   have hz : ∏ i ∈ T, z i = algebraMap O C' ϖ := by
     rw [← Finset.mul_prod_erase T z hi0, hzg]
-    simp only [z, if_pos rfl]
+    simp only [z, ite_eq_left rfl]
     linear_combination (algebraMap O C' ϖ) * hu - (algebraMap O C' ϖ * u) * e1
   let ψP : P →ₐ[O] C' := MvPolynomial.aeval z
   have hψP : ∀ x ∈ I, ψP x = 0 := by
@@ -131,7 +90,7 @@ theorem smooth_away_core (O : Type) [CommRing O] (ϖ : O) (σ : Type) [Finite σ
   have hχy : ∀ i ∈ T.erase i0, χC (y i) = xB i := by
     intro i hi
     have hne : i ≠ i0 := Finset.ne_of_mem_erase hi
-    have hyi : y i = MvPolynomial.X ⟨i, hne⟩ := dif_neg hne
+    have hyi : y i = MvPolynomial.X ⟨i, hne⟩ := dite_eq_right hne
     rw [hyi, hχX ⟨i, hne⟩]
   have hχh : χC h = algebraMap O B ϖ * ∏ i ∈ T.erase i0, xB i := by
     show χC (MvPolynomial.C ϖ * ∏ i ∈ T.erase i0, y i) = _
@@ -162,11 +121,11 @@ theorem smooth_away_core (O : Type) [CommRing O] (ϖ : O) (σ : Type) [Finite σ
     show χ (z i) = xB i
     by_cases hi : i = i0
     · rw [hi]
-      have hz0 : z i0 = algebraMap O C' ϖ ^ 2 * u := if_pos rfl
+      have hz0 : z i0 = algebraMap O C' ϖ ^ 2 * u := ite_eq_left rfl
       rw [hz0, map_mul, map_pow, AlgHom.commutes]
       linear_combination (χ u * algebraMap O B ϖ) * hxB'.symm + xB i0 * hχu
-    · have hzi : z i = algebraMap C C' (y i) := if_neg hi
-      have hyi : y i = MvPolynomial.X ⟨i, hi⟩ := dif_neg hi
+    · have hzi : z i = algebraMap C C' (y i) := ite_eq_right hi
+      have hyi : y i = MvPolynomial.X ⟨i, hi⟩ := dite_eq_right hi
       rw [hzi, hχ, hyi, hχX ⟨i, hi⟩]
   have h2 : ψ.comp χ = AlgHom.id O C' := by
     apply IsLocalization.algHom_ext (Submonoid.powers h)
@@ -178,8 +137,8 @@ theorem smooth_away_core (O : Type) [CommRing O] (ϖ : O) (σ : Type) [Finite σ
     show ψ (algebraMap A B (Ideal.Quotient.mk I (MvPolynomial.X j.1))) = _
     rw [hψ, hψA]
     have hXi : ψP (MvPolynomial.X j.1) = z j.1 := MvPolynomial.aeval_X z j.1
-    have hzi : z j.1 = algebraMap C C' (y j.1) := if_neg j.2
-    have hyi : y j.1 = MvPolynomial.X ⟨j.1, j.2⟩ := dif_neg j.2
+    have hzi : z j.1 = algebraMap C C' (y j.1) := ite_eq_right j.2
+    have hyi : y j.1 = MvPolynomial.X ⟨j.1, j.2⟩ := dite_eq_right j.2
     rw [hXi, hzi, hyi]
   let e : C' ≃ₐ[O] B := AlgEquiv.ofAlgHom χ ψ h1 h2
   haveI : Algebra.FormallySmooth C C' := Algebra.FormallySmooth.of_isLocalization (Submonoid.powers h)

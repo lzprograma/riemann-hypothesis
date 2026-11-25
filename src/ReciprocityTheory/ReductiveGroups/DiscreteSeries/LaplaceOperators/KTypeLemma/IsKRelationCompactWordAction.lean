@@ -54,7 +54,7 @@ theorem compactWordAction_commute (hV : IsKStableSub ε E V) (a b c d : Fin n) :
 
   rw [Module.End.mul_apply, Module.End.mul_apply, sC_single, compactWordAction_single, map_add (f := _), map_sum]
   by_cases h1 : p.2 = d <;> by_cases h : ε a = ε b <;>
-    simp only [h1, h, if_true, if_false, dif_pos, dif_neg, not_false_eq_true, compactWordAction_single, map_smul,
+    simp only [h1, h, ite_true, ite_false, dite_eq_left, dite_eq_right, not_false_eq_true, compactWordAction_single, map_smul,
       sC_single, map_zero, smul_zero, sum_const_zero, add_zero]
 
 theorem isKRelation_compactWordAction (hV : IsKStableSub ε E V) (hE : IsGlRep E) : IsKRel ε (compactWordAction ε E V hV) := by

@@ -115,10 +115,10 @@ theorem stabU_map_eq_ofRoots {K : Type} [Field K] (ψ : K →+* ℂ) (p : Point 
   · rw [dite_eq_left hr]
   · rw [dite_eq_right hr]
     rcases lt_trichotomy a b with hab | rfl | hab
-    · rw [if_neg hab.ne]
+    · rw [ite_eq_right hab.ne]
       have hσ : σ.symm a < σ.symm b := by
         rw [GlobalTheory.LoopV.Cell.mono_roots hd hw] at hr
-        push_neg at hr
+        push Not at hr
         rcases (hr hab).lt_or_eq with h | h
         · exact h
         · exact absurd (σ.symm.injective h) hab.ne
@@ -126,8 +126,8 @@ theorem stabU_map_eq_ofRoots {K : Type} [Field K] (ψ : K →+* ℂ) (p : Point 
       rw [GlobalTheory.LoopV.Cell.mono_conj hd' hw'] at h0
       simp only [Equiv.apply_symm_apply, mul_eq_zero, inv_eq_zero, hd', false_or, or_false] at h0
       exact h0
-    · rw [if_pos rfl]; exact (hx.1 a a).2 rfl
-    · rw [if_neg hab.ne']; exact (hx.1 a b).1 hab
+    · rw [ite_eq_left rfl]; exact (hx.1 a a).2 rfl
+    · rw [ite_eq_right hab.ne']; exact (hx.1 a b).1 hab
 
 end GlobalTheory.LoopAct
 

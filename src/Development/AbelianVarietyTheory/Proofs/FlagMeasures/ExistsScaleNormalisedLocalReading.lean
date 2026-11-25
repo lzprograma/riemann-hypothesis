@@ -130,7 +130,6 @@ section -- clump:auto
 
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.HL GlobalTheory.LocOver
 open scoped Pointwise ENNReal Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -156,17 +155,17 @@ theorem ptEntry_row_zero {K : Type*} [Zero K] :
         subst hj0
         have hs : 0 < s := by omega
         simp only [Formalism.MainNotions.S.ptEntry]
-        rw [if_pos ⟨hs, hs⟩, if_neg (by omega)]
+        rw [ite_eq_left ⟨hs, hs⟩, ite_eq_right (by omega)]
       · exfalso
         simp [blkOf, ha, hbs] at hbl
     · have hbs : ¬ b < s := by omega
-      simp only [blkOf, ha, hbs, if_false] at hbl
+      simp only [blkOf, ha, hbs, ite_false] at hbl
       have hbl' : blkOf rest (a - s) = blkOf rest (b - s) := by omega
       have hb' : b - s < (rest.map Prod.snd).sum := by simp at hb; omega
       obtain ⟨c, hc, hz⟩ := ih (a - s) (b - s) (by omega) hb' hbl'
       refine ⟨c + s, by omega, fun j hj => ?_⟩
       simp only [Formalism.MainNotions.S.ptEntry]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       split_ifs with h
       · have hcs : c + s - s = c := by omega
         rw [hcs]
@@ -186,7 +185,7 @@ theorem isEmpty_freeE_of_reg {D : D7} (X : HidaSetting D) (u u' : D.what₂.Word
   have hle : c + 1 ≤ D.R.rS + 1 := by omega
   apply (hreg v).1 (c + 1) (by omega) (by omega)
   unfold Formalism.L2.SG.RealObj.Dl
-  rw [dif_pos hle]
+  rw [dite_eq_left hle]
   apply Matrix.det_eq_zero_of_row_eq_zero ⟨c, by omega⟩
   intro j
   simp only [Matrix.submatrix_apply]
@@ -233,10 +232,10 @@ theorem scale_pin : ∀ (D : D7) (X : HidaSetting D) (u u' : D.what₂.Word), �
     have hex0 : ∃ γ, IsPtRep X u u' w γ := ⟨γ0, hγ0⟩
     have hw : IsPtRep X u u' w (gamW X u u' w) := by
       unfold gamW
-      rw [dif_pos hex0]
+      rw [dite_eq_left hex0]
       exact hex0.choose_spec
     have hex : ∃ w', IsPtRep X u u' w' (gamW X u u' w) := ⟨w, hw⟩
-    simp only [sc, dif_pos hex]
+    simp only [sc, dite_eq_left hex]
     rw [ptRep_unique X u u' hex.choose_spec hw]
     push_cast
     rfl

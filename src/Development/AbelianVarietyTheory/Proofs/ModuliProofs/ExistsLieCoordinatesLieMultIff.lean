@@ -107,17 +107,6 @@ private theorem spMap_fstHom_comp_epsR_hom (K : Type) [Field K] :
   show Spec.map (CommRingCat.ofHom _) ≫ Spec.map (CommRingCat.ofHom _) = 𝟙 _
   rw [← Spec.map_comp, ← CommRingCat.ofHom_comp, e1, CommRingCat.ofHom_id, Spec.map_id]
 
-private theorem isLieComb_iff_eq_prodPts {K : Type} [Field K] {G' : Over (Sp K)} [GrpObj G'] {n : ℕ} (c : Fin n → K)
-    (v : Fin n → (epsR K ⟶ G')) (y : epsR K ⟶ G') : IsLieComb c v y ↔ y = Chart.prodPts c v := by
-  unfold IsLieComb
-  constructor
-  · rintro ⟨u, hu, rfl⟩
-    have e1 : u = fun i => Chart.spMap (Chart.scaleD (c i)) ≫ v i := funext fun i => Over.OverMorphism.ext (hu i)
-    rw [e1]
-    rfl
-  · rintro rfl
-    exact ⟨fun i => Chart.spMap (Chart.scaleD (c i)) ≫ v i, fun i => rfl, rfl⟩
-
 private theorem lieMult_of_finrank_eigenSub_eq {O K : Type} [CommRing O] [Field K] {S : Scheme.{0}} {x : Sp K ⟶ S} {G : Over S}
     {G' : Over (Sp K)} [GrpObj G] [GrpObj G'] [IsCommMonObj G'] {φ : G'.left ⟶ G.left} (h : IsGrpPullback G' G x φ)
     {n : ℕ} {v : Fin n → (epsR K ⟶ G')} (hv : IsLieBasis v) (act : OAct O G) (act' : OAct O G')
@@ -207,7 +196,7 @@ private theorem lieMult_of_finrank_eigenSub_eq {O K : Type} [CommRing O] [Field 
     have hty : IsTangent y := (htan y).2 hw0
     have hye : ∀ a, y ≫ act'.act a = Chart.spMap (Chart.scaleD (τ a)) ≫ y := fun a => (heig y a (τ a)).1 (hw1 a)
     obtain ⟨c, hc, -⟩ := hvu y hty
-    rw [isLieComb_iff_eq_prodPts] at hc
+    rw [Chart.isLieComb_iff] at hc
     subst hc
     have hcm : c ∈ GlobalTheory.EigenSplit.eigenSub ρ τ := by
       rw [GlobalTheory.EigenSplit.mem_eigenSub]

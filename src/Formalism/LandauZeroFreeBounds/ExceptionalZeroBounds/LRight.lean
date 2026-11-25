@@ -4,48 +4,8 @@ public import Formalism.LandauZeroFreeBounds.NoZeroComplexOf
 public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.NormLogDerivLeLamF
 public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.LogDerivRight
 public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.ZetaInvBound
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 public import Mathlib.Analysis.SumIntegralComparisons
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -87,14 +47,7 @@ theorem inverseBound : LInvBound := by
   have hinv : ‖LSeries ↗χ s‖⁻¹ = ‖LSeries (↗χ * ↗μ) s‖ := by
     rw [← norm_inv, inv_eq_of_mul_eq_one_right hmul]
   rw [hinv]
-  have hS2 : Summable fun n => ‖term (↗χ * ↗μ) s n‖ :=
-    Summable.of_nonneg_of_le (fun _ => norm_nonneg _)
-      (fun n => norm_term_twist_moebius_le χ s n) hS1
-  calc ‖LSeries (↗χ * ↗μ) s‖ = ‖∑' n, term (↗χ * ↗μ) s n‖ := rfl
-    _ ≤ ∑' n, ‖term (↗χ * ↗μ) s n‖ := norm_tsum_le_tsum_norm hS2
-    _ ≤ ∑' n, ‖term (1 : ℕ → ℂ) s n‖ :=
-      Summable.tsum_le_tsum (fun n => norm_term_twist_moebius_le χ s n) hS2 hS1
-    _ ≤ s.re / (s.re - 1) := hT1
+  exact (tsum_of_norm_bounded hS1.hasSum (norm_term_twist_moebius_le χ s)).trans hT1
 
 lemma negLD_eq_LSeries_mul_vonMangoldt {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {s : ℂ} (hs : 1 < s.re) :
     negLD χ s = L (↗χ * ↗Λ) s := by
@@ -117,12 +70,7 @@ lemma norm_LSeries_twist_vonMangoldt_le {q : ℕ} (χ : DirichletCharacter ℂ q
           exact mul_le_of_le_one_left (norm_nonneg _) (DirichletCharacter.norm_le_one χ _)
       _ = ‖term ↗Λ (s.re : ℂ) n‖ := by
           rw [LSeries.norm_term_eq, LSeries.norm_term_eq, Complex.ofReal_re]
-  have hS2 : Summable fun n => ‖term (↗χ * ↗Λ) s n‖ :=
-    Summable.of_nonneg_of_le (fun _ => norm_nonneg _) hle hSΛ
-  calc ‖L (↗χ * ↗Λ) s‖ = ‖∑' n, term (↗χ * ↗Λ) s n‖ := rfl
-    _ ≤ ∑' n, ‖term (↗χ * ↗Λ) s n‖ := norm_tsum_le_tsum_norm hS2
-    _ ≤ ∑' n, ‖term ↗Λ (s.re : ℂ) n‖ := Summable.tsum_le_tsum hle hS2 hSΛ
-    _ = Formalism.ZF.lamF s.re := rfl
+  exact tsum_of_norm_bounded hSΛ.hasSum hle
 
 theorem l_log_deriv_right : LLogDerivRight := by
   obtain ⟨C, hC0, hC⟩ := Formalism.ZF.logDerivBoundRightHalfPlane

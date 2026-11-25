@@ -102,8 +102,8 @@ theorem exists_smul_eq_of_eq_on_invariants {G B D : Type*} [Group G] [Finite G] 
   have hcoef : ∀ g, p.coeff (e g) = c g := by
     intro g
     simp only [p, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow]
-    rw [Finset.sum_eq_single g (fun g' _ hg' => if_neg (fun hh => hg' (e.injective (Fin.ext hh)).symm))
-      (by simp), if_pos rfl]
+    rw [Finset.sum_eq_single g (fun g' _ hg' => ite_eq_right (fun hh => hg' (e.injective (Fin.ext hh)).symm))
+      (by simp), ite_eq_left rfl]
   have hyp : ∀ q : Polynomial B, (∀ g : G, g • q = q) →
       Polynomial.mapRingHom x q = Polynomial.mapRingHom y q := by
     intro q hq

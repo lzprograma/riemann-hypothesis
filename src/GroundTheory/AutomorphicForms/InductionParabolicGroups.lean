@@ -38,15 +38,15 @@ theorem blockDiagPart_mul {A B : Matrix (Fin n) (Fin n) F} (hA : A.BlockTriangul
   split_ifs with h
   · refine Finset.sum_congr rfl fun k _ => ?_
     by_cases hk : β i = β k
-    · rw [if_pos hk, if_pos (hk.symm.trans h)]
-    · rw [if_neg hk, zero_mul]
+    · rw [ite_eq_left hk, ite_eq_left (hk.symm.trans h)]
+    · rw [ite_eq_right hk, zero_mul]
       rcases lt_or_gt_of_ne hk with hlt | hlt
       · rw [hB (h ▸ hlt : β j < β k), mul_zero]
       · rw [hA hlt, zero_mul]
   · refine (Finset.sum_eq_zero fun k _ => ?_).symm
     by_cases hk : β i = β k
-    · rw [if_neg fun h' => h (hk.trans h'), mul_zero]
-    · rw [if_neg hk, zero_mul]
+    · rw [ite_eq_right fun h' => h (hk.trans h'), mul_zero]
+    · rw [ite_eq_right hk, zero_mul]
 
 theorem blockDiagPart_of_forall {A : Matrix (Fin n) (Fin n) F}
     (hA : ∀ i j, β i ≠ β j → A i j = 0) : blockDiagPart F n β A = A := by
@@ -96,7 +96,7 @@ theorem leviProjFun_mem (p : blockUpper F n β) : leviProjFun p ∈ levi F n β 
   rw [mem_levi]
   intro i j hij
   show blockDiagPart F n β _ i j = 0
-  rw [blockDiagPart_apply, if_neg hij]
+  rw [blockDiagPart_apply, ite_eq_right hij]
 
 variable (F n β)
 
@@ -145,7 +145,7 @@ theorem mem_unipotentRadical {g : GL (Fin n) F} :
     refine ⟨p.2, fun i j hij => ?_⟩
     have h := congrArg (fun m : levi F n β => ((m : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) i j)
       ((leviProj F n β).mem_ker.1 hp)
-    simp only [leviProj_apply, if_pos hij] at h
+    simp only [leviProj_apply, ite_eq_left hij] at h
     simpa using h
   · rintro ⟨hP, h⟩
     refine ⟨⟨g, hP⟩, (leviProj F n β).mem_ker.2 (Subtype.ext (Units.ext ?_)), rfl⟩

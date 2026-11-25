@@ -552,7 +552,7 @@ private lemma exists_isMF_mul_eq_of_vanishes_on_orbit {Γ : Subgroup SL(2, ℤ)}
       rw [h0, zero_mul, hγ, hHz γ]
     · have h0' : e τ ≠ 0 := by rwa [hEe]
       show E τ * (if e τ = 0 then _ else _) = H τ
-      rw [if_neg h0', hEe, hHh, mul_div_cancel₀ _ h0]
+      rw [ite_eq_right h0', hEe, hHh, mul_div_cancel₀ _ h0]
   set G : ℍ → ℂ := fun τ => g τ with hG_def
   have hGdiv : ∀ τ, E τ ≠ 0 → G τ = H τ / E τ := fun τ hτ =>
     eq_div_of_mul_eq hτ (by rw [mul_comm]; exact hprod τ)
@@ -579,7 +579,7 @@ private lemma exists_isMF_mul_eq_of_vanishes_on_orbit {Γ : Subgroup SL(2, ℤ)}
       by_cases hwz : w = z
       · rw [hwz]
         show (if e z = 0 then _ else _) = _
-        rw [if_pos hez, dslope_same, dslope_same]
+        rw [ite_eq_left hez, dslope_same, dslope_same]
       · have he' : e w = (w - z) * dslope e z w := by
           have := sub_smul_dslope e z w
           rw [hez, sub_zero, smul_eq_mul] at this
@@ -590,13 +590,13 @@ private lemma exists_isMF_mul_eq_of_vanishes_on_orbit {Γ : Subgroup SL(2, ℤ)}
           exact this.symm
         have hew : e w ≠ 0 := by rw [he']; exact mul_ne_zero (sub_ne_zero.2 hwz) hw
         show (if e w = 0 then _ else _) = _
-        rw [if_neg hew, he', hh', mul_div_mul_left _ _ (sub_ne_zero.2 hwz)]
+        rw [ite_eq_right hew, he', hh', mul_div_mul_left _ _ (sub_ne_zero.2 hwz)]
     · have hq : DifferentiableAt ℂ (fun w => h w / e w) z :=
         (hhd.differentiableAt hU).div (hed.differentiableAt hU) hez
       apply hq.congr_of_eventuallyEq
       filter_upwards [(hed.differentiableAt hU).continuousAt.eventually_ne hez] with w hw
       show (if e w = 0 then _ else _) = _
-      rw [if_neg hw]
+      rw [ite_eq_right hw]
   have hGm : MDiff G := by
     rw [UpperHalfPlane.mdifferentiable_iff]
     intro z hz
@@ -703,7 +703,7 @@ theorem _root_.GlobalTheory.OddFrame.reduces_of_det_evM_eq_zero : ∀ (Γ : Subg
       rw [Finset.mul_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       by_cases hd : (n : ℤ) ∣ w j - w j₁
-      · rw [if_pos hd, if_pos (dvd_sub_comm.1 hd)]
+      · rw [ite_eq_left hd, ite_eq_left (dvd_sub_comm.1 hd)]
         ring
       · have hd' : ¬ (n : ℤ) ∣ w j₁ - w j := fun h' => hd (dvd_sub_comm.1 h')
         simp [hd, hd']
@@ -730,12 +730,12 @@ theorem _root_.GlobalTheory.OddFrame.reduces_of_det_evM_eq_zero : ∀ (Γ : Subg
     intro j
     simp only [he_def, Pi.smul_apply, smul_eq_mul]
     by_cases hj : P j
-    · rw [if_pos hj, if_pos hj.2, div_mul_cancel₀ _ (hfne j hj)]
-    · rw [if_neg hj, zero_mul]
+    · rw [ite_eq_left hj, ite_eq_left hj.2, div_mul_cancel₀ _ (hfne j hj)]
+    · rw [ite_eq_right hj, zero_mul]
       by_cases hd : (n : ℤ) ∣ w j - w j₁
-      · rw [if_pos hd]
+      · rw [ite_eq_left hd]
         exact (not_not.1 fun hv' => hj ⟨hv', hd⟩).symm
-      · rw [if_neg hd]
+      · rw [ite_eq_right hd]
   set H : ℍ → ℂ := ∑ j, e j * F j with hH_def
   have hHmf : _root_.GlobalTheory.OddFrame.IsMF Γ (w j₀ + a) H :=
     _root_.GlobalTheory.OddFrame.IsMF.sum _ fun j _ =>
@@ -765,7 +765,7 @@ theorem _root_.GlobalTheory.OddFrame.reduces_of_det_evM_eq_zero : ∀ (Γ : Subg
     exact (hF j₀).1.sub_even hba
   · intro h0
     have := congrFun h0 τ₀
-    rw [he0, if_pos hj₀.2, Pi.zero_apply] at this
+    rw [he0, ite_eq_left hj₀.2, Pi.zero_apply] at this
     exact hj₀.1 this
   · intro x τ
     rw [← hHslash]

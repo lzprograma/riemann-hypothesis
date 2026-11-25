@@ -38,10 +38,10 @@ lemma sum_single_embedding_extend_le {E : Type} [Field E] [NumberField E] (e : E
     (g : Fin p → ℕ) :
     ∑ τ : E →+* ℂ, ∑ i : Fin (mult τ), (if τ = e then ext0 g i else 0) ≤ ∑ i, g i := by
   rw [Finset.sum_eq_single e]
-  · simp only [if_true]
+  · simp only [ite_true]
     exact sum_extendByZero_le_sum g (mult e)
   · intro τ _ hτ
-    exact Finset.sum_eq_zero (fun i _ => if_neg hτ)
+    exact Finset.sum_eq_zero (fun i _ => ite_eq_right hτ)
   · intro h
     exact absurd (Finset.mem_univ e) h
 

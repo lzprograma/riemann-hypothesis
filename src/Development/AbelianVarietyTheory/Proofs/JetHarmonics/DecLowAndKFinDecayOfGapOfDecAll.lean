@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.ZhatNormLinearBound
 public import Mathlib.Analysis.Real.Sqrt
 public import Formalism.HermitianCurvature.BesselNonvanishingReduction
 public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.CuspFrame
@@ -179,20 +180,7 @@ lemma exp_le_rpow {a b c N G : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) (hc : 0 < c) 
   nlinarith [mul_le_mul_of_nonneg_left hl ha, mul_le_mul_of_nonneg_right hab hN]
 
 lemma gN_pos {k r : ℕ} {x : Mat k r} (hx : x ∈ UH (Hpk k r)) : 0 < gN x := by
-  refine lt_of_le_of_ne (Real.sqrt_nonneg _) fun h => ?_
-  have h0 : ∑ i, ∑ j, Complex.normSq (x i j) = 0 :=
-    (Real.sqrt_eq_zero (Finset.sum_nonneg fun i _ => Finset.sum_nonneg fun j _ => Complex.normSq_nonneg _)).1 h.symm
-  have hx0 : x = 0 := by
-    ext i j
-    have h1 := (Finset.sum_eq_zero_iff_of_nonneg fun i _ =>
-      Finset.sum_nonneg fun j _ => Complex.normSq_nonneg (x i j)).1 h0 i (mem_univ _)
-    exact Complex.normSq_eq_zero.1
-      ((Finset.sum_eq_zero_iff_of_nonneg fun j _ => Complex.normSq_nonneg (x i j)).1 h1 j (mem_univ _))
-  have h2 := (Formalism.QuantumDeterminants.hermitian_pos_facts_hold k r).2.1
-  have h3 : xᴴ * Hpk k r * x = Hpk k r := hx
-  rw [hx0, Matrix.mul_zero] at h3
-  rw [← h3, Matrix.mul_zero] at h2
-  exact zero_ne_one h2
+  apply _root_.PI.PolynomialProperness.GN.gN_pos <;> assumption
 
 end GlobalTheory.DecTransport
 end -- clump:auto

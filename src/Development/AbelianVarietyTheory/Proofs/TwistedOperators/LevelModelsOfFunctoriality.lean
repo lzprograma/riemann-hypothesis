@@ -51,7 +51,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.Grow
 open GlobalTheory.IndefiniteRowSideFullHecke.LevelPlusSubgroup (coefPlus Cols SizeRows)
 open GlobalTheory.SepRows
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -78,7 +77,7 @@ theorem exists_model_of_enum {D : D7} (hDS : GlobalTheory.Published.DiscreteSeri
     · rw [GlobalTheory.GridJoin.gram_submatrix, h1, GlobalTheory.GridJoin.jm_submatrix, e]
     · rw [GlobalTheory.GridJoin.mul_submatrix_cols, h2, GlobalTheory.GridJoin.submatrix_mul_jm, e]
   choose σ lam ε hE hH h1 h2 using key
-  obtain ⟨M, hM, -⟩ := GlobalTheory.T.exists_discreteSeriesModel_of_orthonormalBasis_cartan D hDS V S (fun τ => (O τ).submatrix id (σ τ)) C
+  obtain ⟨M, hM, -⟩ := GlobalTheory.dsModel_of_onb_cart D hDS V S (fun τ => (O τ).submatrix id (σ τ)) C
     (fun τ => ⟨lam τ, ε τ, hE τ, hH τ, h1 τ⟩) (fun τ => ⟨ε τ, h1 τ, h2 τ⟩)
   exact ⟨M, hM⟩
 
@@ -96,13 +95,13 @@ theorem isHCParam_dual_parV (D : D7) (i j : ℕ) (τ : D.what₂.Tau) {n : ℕ} 
   rw [hq a', ← hy1]
   by_cases ho : Odd (i + j)
   · obtain ⟨N, hN⟩ := hpar.2 ho
-    rw [if_pos ho]
+    rw [ite_eq_left ho]
     refine ⟨-z + 1 - N, ?_⟩
     have : (n : ℝ) = N + N := by rw [hn, hN]; push_cast; ring
     simp only [hz, this]; push_cast; ring
   · have hne : ¬ Even (rankV D i j) := fun h => ho (hpar.1 h)
     obtain ⟨N, hN⟩ := Nat.not_even_iff_odd.1 hne
-    rw [if_neg ho]
+    rw [ite_eq_right ho]
     refine ⟨-z - N, ?_⟩
     have : (n : ℝ) = 2 * N + 1 := by rw [hn, hN]; push_cast; ring
     simp only [hz, this]; push_cast; ring

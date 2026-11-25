@@ -2,49 +2,6 @@ module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PairedDualFirstOrderDualMatrixSpace
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.DerEv, Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.DTw
@@ -60,7 +17,7 @@ private theorem single_mem_ev_of_same_block {F : Type} [CommRing F] {n a : ℕ} 
     (h : ((p : ℕ) < a ↔ (q : ℕ) < a)) : Matrix.single p q c ∈ Ev F F n a := by
   intro i j
   refine ⟨fun _ => Submodule.mem_top, fun hij => ?_⟩
-  rw [Submodule.mem_bot, Matrix.single_apply, if_neg]
+  rw [Submodule.mem_bot, Matrix.single_apply, ite_eq_right]
   rintro ⟨rfl, rfl⟩
   exact hij h
 
@@ -73,17 +30,17 @@ theorem UpperTheory.V.Pa.Det.derEv :
   have hβ : ∀ i : Fin n, ((i : ℕ) < a ↔ (β i : ℕ) < a) := by
     intro i
     by_cases h : (i : ℕ) < a
-    · simp only [β, dif_pos h]
+    · simp only [β, dite_eq_left h]
       exact ⟨fun _ => Nat.zero_lt_of_lt h, fun _ => h⟩
-    · simp only [β, dif_neg h]
+    · simp only [β, dite_eq_right h]
       exact ⟨fun h' => absurd h' h, fun h' => absurd h' (lt_irrefl _)⟩
   have hβeq : ∀ i j : Fin n, ((i : ℕ) < a ↔ (j : ℕ) < a) → β i = β j := by
     intro i j h
     by_cases hi : (i : ℕ) < a
     · have hj := h.mp hi
-      simp only [β, dif_pos hi, dif_pos hj]
+      simp only [β, dite_eq_left hi, dite_eq_left hj]
     · have hj : ¬ (j : ℕ) < a := fun hj => hi (h.mpr hj)
-      simp only [β, dif_neg hi, dif_neg hj]
+      simp only [β, dite_eq_right hi, dite_eq_right hj]
   let E : Fin n → Fin n → Matrix (Fin n) (Fin n) F := fun i j => Matrix.single i j 1
   let u : Fin n → Matrix (Fin n) (Fin n) F := fun k => E k (β k)
   let v : Fin n → Matrix (Fin n) (Fin n) F := fun k => E (β k) k
@@ -125,9 +82,9 @@ theorem UpperTheory.V.Pa.Det.derEv :
             rw [Finset.sum_sub_distrib, ← Finset.mul_sum, hsum, mul_one]
             congr 1
             rw [Finset.sum_eq_single j]
-            · rw [hEu, if_pos rfl]
+            · rw [hEu, ite_eq_left rfl]
             · intro k _ hk
-              rw [hEu, if_neg (Ne.symm hk), map_zero, zero_mul]
+              rw [hEu, ite_eq_right (Ne.symm hk), map_zero, zero_mul]
             · simp
     rw [h1, h2]
     abel

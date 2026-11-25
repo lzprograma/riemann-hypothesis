@@ -53,10 +53,6 @@ open UpperTheory.V.W (Plc Lp HidaSetting Vl Resid LamObj)
 open UpperTheory.V.Hi UpperTheory.V.Hi.CaseU
 open scoped Matrix TensorProduct
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
-
-
 open UpperTheory.V.Z.J.D
 
 namespace UpperTheory.V.Z.Desc.V0
@@ -80,18 +76,6 @@ private theorem sr_tmul (l : W →ₗ[ℂ] ℂ) (w : W) (z : Z) : sr l (w ⊗ₜ
 
 end Lin
 
-section Rep
-
-variable {G Y X : Type} [Group G] [AddCommGroup Y] [Module ℂ Y] [AddCommGroup X] [Module ℂ X]
-
-end Rep
-
-section Main
-
-variable {L : Type} [Field L] [NumberField L] {n : ℕ} {V : Type} [Fintype V] {S : V → UpperTheory.V.W.Plc L}
-
-end Main
-
 section Inv
 
 variable {G H : Type} [Group G] [Group H] {m : ℕ} (K₁ : Subgroup G) (K₂ : Subgroup H) (τ₀ : K₁ →* GL (Fin m) ℂ)
@@ -102,24 +86,6 @@ private theorem mem_invT {Y : Type} [AddCommGroup Y] [Module ℂ Y] (ρ : Repres
   Iff.rfl
 
 end Inv
-
-section Box
-
-variable {G H W W' : Type} [Group G] [Group H] [AddCommGroup W] [Module ℂ W] [AddCommGroup W'] [Module ℂ W']
-
-end Box
-
-section Part
-
-variable {H Y X : Type} [Group H] [AddCommGroup Y] [Module ℂ Y] [AddCommGroup X] [Module ℂ X]
-
-end Part
-
-section InvE
-
-variable {G H : Type} [Group G] [Group H] {m : ℕ} (K₁ : Subgroup G) (K₂ : Subgroup H) (τ₀ : K₁ →* GL (Fin m) ℂ)
-
-end InvE
 
 private theorem eigBoxL_lemma {G Q Y X : Type} [Group G] [AddCommGroup Y] [Module ℂ Y] [AddCommGroup X] [Module ℂ X]
     (c : Q → G) (τ : Representation ℂ G Y) (τ' : Representation ℂ G X) (f : Y →ₗ[ℂ] X)
@@ -367,10 +333,8 @@ theorem eigBoxL {L : Type} [Field L] [NumberField L] {n : ℕ} {V : Type} [Finty
     funext i
     rw [hpr, hpr]
     exact hf (by rw [← hΦ, ← hΦ, h])
-  have hMi : Function.Injective M := by
-    haveI : Module.Flat ℂ A := Module.Flat.of_free
-    haveI : Module.Flat ℂ B := Module.Flat.of_free
-    exact TensorProduct.map_injective_of_flat_flat _ _ A.injective_subtype B.injective_subtype
+  have hMi : Function.Injective M :=
+    TensorProduct.map_injective_of_flat_flat _ _ A.injective_subtype B.injective_subtype
   have hP : ((invT K₁ K₂ τ₀ (π.comp (MonoidHom.inr _ _)) ⊓ Submodule.pi Set.univ fun _ =>
         ePart ((π.comp (MonoidHom.inr _ _)).comp (MonoidHom.inr G H)) a N) ⊓ Submodule.pi Set.univ fun _ =>
       LinearMap.range f ⊓ eigL S (π.comp (MonoidHom.inl _ _)) b φ μ) = LinearMap.range (Φ ∘ₗ M) := by

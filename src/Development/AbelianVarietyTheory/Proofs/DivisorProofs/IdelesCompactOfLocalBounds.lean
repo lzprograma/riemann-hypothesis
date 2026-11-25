@@ -167,9 +167,3 @@ theorem GlobalTheory.IdeleCyl.exists_isCompact_box : ∀ (F E : Type) [Field F] 
   · refine ⟨compFin F E v z, hz2 v, ?_⟩
     exact repr_map_tens b (evFin F v) z j
 
-namespace GlobalTheory.IdeleCyl
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-
-end GlobalTheory.IdeleCyl
-

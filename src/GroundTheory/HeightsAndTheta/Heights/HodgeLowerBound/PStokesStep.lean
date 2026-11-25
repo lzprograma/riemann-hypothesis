@@ -36,11 +36,6 @@ theorem isOpen_multicone : IsOpen {z : (Σ k, ι k) → ℂ | ∀ k, ∃ i, z �
   exact isOpen_iInter_of_finite fun k => isOpen_iUnion fun i =>
     isOpen_ne_fun (continuous_apply _) continuous_const
 
-theorem ptsIntegral_congr_g (P : Ideal (MRing ι)) {e : ℕ} (φ : Fin e → ((Σ k, ι k) → ℂ) → ℝ)
-    {g g' : ((Σ k, ι k) → ℂ) → ℝ} (hg : ∀ z ∈ mcPts P, g z = g' z) :
-    ptsIntegral P φ g = ptsIntegral P φ g' := by
-  apply _root_.GroundTheory.Heights₂.Heights.LowerBoundFree.StokesTelescope.ptsIntegral_congr_g <;> assumption
-
 theorem isConeTangent_lift {P J : Ideal (MRing ι)} {e : ℕ} (R : AnLogRes P J e) (x : R.X)
     (j : Fin R.A.n) {y : Fin e → ℂ}
     (hy : y ∈ (R.A.chart j).target ∩ (R.A.chart j).symm ⁻¹' R.U x) (w : Fin e → ℂ) :
@@ -78,7 +73,6 @@ theorem isPsh_potOf {P J : Ideal (MRing ι)} {e : ℕ} (R : AnLogRes P J e) {A :
 
 end StokesStep
 
-
 open StokesStep in
 theorem StokesStep.proof (hE : ResExistsStatement) : StokesStep.Statement := by
   intro K _ ι _ P n i A A' hP ha hA hA' hi
@@ -109,7 +103,7 @@ theorem StokesStep.proof (hE : ResExistsStatement) : StokesStep.Statement := by
   have key : ∀ l, ptsIntegral P (stokesMixPot A A' (m + 1) l)
       (fun z => Real.log (A'.h z) - Real.log (A.h z)) = mInt R.A (fun j => potOf R (L l j)) v := by
     intro l
-    rw [ptsIntegral_congr_g P _ (g' := logNorm C.inv 1) fun z hz => by
+    rw [GroundTheory.Heights₂.Heights.LowerBoundFree.StokesTelescope.ptsIntegral_congr_g P _ (g' := logNorm C.inv 1) fun z hz => by
       rw [logNorm_inv_one, hlogC z hz.1], hpot,
       ptsIntegral_eq_mInt' hE resBridge R hP (hL l) (isSmoothHerm_inv hCs) hs]
     congr 1
@@ -126,8 +120,8 @@ theorem StokesStep.proof (hE : ResExistsStatement) : StokesStep.Statement := by
     have hj' : j.val ≠ i := fun h => hj (Fin.ext h)
     simp only [L]
     by_cases h : j.val < i
-    · rw [if_pos (by omega), if_pos h]
-    · rw [if_neg (by omega), if_neg h]
+    · rw [ite_eq_left (by omega), ite_eq_left h]
+    · rw [ite_eq_right (by omega), ite_eq_right h]
   have hσs : ∀ k : Fin m, σ k.succ ≠ ⟨i, hi⟩ := by
     intro k hk
     rw [hσ, Equiv.swap_apply_eq_iff, Equiv.swap_apply_right] at hk

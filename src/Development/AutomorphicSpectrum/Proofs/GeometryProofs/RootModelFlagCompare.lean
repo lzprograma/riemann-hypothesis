@@ -21,50 +21,7 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FunctionFiel
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrIsGenAt
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootOriginRootIndexBound
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalAtLocalRing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Formalism.LocalRingCardinality.DataHost
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsHomogeneousGrL
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.DefiniteFormStabilizerFiniteAwayFromP
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.IsStrictDom
@@ -72,14 +29,11 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.Uppe
 import Development.AutomorphicSpectrum.Statements.GeometryStatements.ExistsAlgPtOff
 import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackCorrespondence
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.HodgeComponentFlagDegree
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelLocalSubringPoint, Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalSubringChartPoint, Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemPtsOverOfMemMcPts, Development.AutomorphicSpectrum.Proofs.GeometryProofs.OneMemChartLatNm, Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalSubringCoordRatioValue, Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValueScalingByMonomial, Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootModelFlagCompare
@@ -166,7 +120,6 @@ theorem stalk_value (hg : IsCptGen ξ) {R : Type} [CommRing R] [IsLocalRing R] (
   have e3 : s' = s := hg.inj ⟨centre z, h⟩ e1
   subst e3
   exact e2
-
 
 set_option backward.isDefEq.respectTransparency false in
 theorem spec_square {F : Type} [Field F] (θ : Ω →+* F) {A : Subring F} [IsLocalRing A]
@@ -264,7 +217,6 @@ open NumberField IsDedekindDomain MeasureTheory Filter Topology
 open Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.ChartRestriction.G.AR.Inst Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Rec
 open scoped Matrix
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -319,41 +271,9 @@ theorem hasVal_zero_of {a : K → ℤ} {s : Ω} {w : 𝕜} (h : Small.HasVal y a
 
 end Vals
 
-section Coef
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E}
-
-end Coef
-
-section Fin
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H}
-  {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {r : ℕ}
-
-end Fin
-
-section Arch
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H}
-  {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {r : ℕ}
-
-end Arch
-
-section ArchD
-
-variable {D : D7} {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E} {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l}
-  {c : Coeff l}
-
-end ArchD
-
-section Emb
-
-end Emb
-
 end GlobalTheory.CompanionTheory.Ar.Rec.OS
 
 namespace GlobalTheory.CompanionTheory.Ar.Rec
-
 
 end GlobalTheory.CompanionTheory.Ar.Rec
 end -- clump:auto
@@ -368,24 +288,6 @@ section -- clump:auto
 
 noncomputable section
 
-namespace GlobalTheory.CompanionTheory.Ar.Ht.Diag
-
-open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo NumberField GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Top GlobalTheory.CompanionTheory.Ar.Small GlobalTheory.CompanionTheory.Ar.Cmp GlobalTheory.CompanionTheory.Ar.Ht
-open GlobalTheory.CompanionTheory.Ar.Flat.UnitChart
-
-section General
-
-variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω]
-
-theorem hasVal_unique {y : (Σ k, ι k) → Ω} {a : K → ℤ} {s : Ω} {L : Type} [Field L] {z : (Σ k, ι k) → L}
-    (hz : z ∈ ptsOver L (mCoordIdeal y)) {w w' : L} (h : HasVal y a s z w) (h' : HasVal y a s z w') : w = w' := by
-  apply (config := { allowSynthFailures := true }) GlobalTheory.CompanionTheory.Ar.Small.ReadFinTest.hasVal_unique <;> assumption
-
-end General
-
-variable {Ψ : Type} [Fintype Ψ] {N : ℕ}
-
-end GlobalTheory.CompanionTheory.Ar.Ht.Diag
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -472,12 +374,12 @@ variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : 
 
 def evVal (hz : z ∈ ptsOver L (mCoordIdeal y)) : valRing y z →+* L where
   toFun s := Classical.choose s.2
-  map_one' := GlobalTheory.CompanionTheory.Ar.Ht.Diag.hasVal_unique hz (Classical.choose_spec (valRing y z).one_mem) hasVal_one
-  map_mul' s t := GlobalTheory.CompanionTheory.Ar.Ht.Diag.hasVal_unique hz (Classical.choose_spec (s * t).2)
+  map_one' := GlobalTheory.CompanionTheory.Ar.Small.ReadFinTest.hasVal_unique hz (Classical.choose_spec (valRing y z).one_mem) hasVal_one
+  map_mul' s t := GlobalTheory.CompanionTheory.Ar.Small.ReadFinTest.hasVal_unique hz (Classical.choose_spec (s * t).2)
     (hasVal_mul (Classical.choose_spec s.2) (Classical.choose_spec t.2))
-  map_zero' := GlobalTheory.CompanionTheory.Ar.Ht.Diag.hasVal_unique hz (Classical.choose_spec (valRing y z).zero_mem)
+  map_zero' := GlobalTheory.CompanionTheory.Ar.Small.ReadFinTest.hasVal_unique hz (Classical.choose_spec (valRing y z).zero_mem)
     (GlobalTheory.CompanionTheory.Ar.Rec.OS.hasVal_zero_of (hasVal_one (y := y) (z := z)))
-  map_add' s t := GlobalTheory.CompanionTheory.Ar.Ht.Diag.hasVal_unique hz (Classical.choose_spec (s + t).2)
+  map_add' s t := GlobalTheory.CompanionTheory.Ar.Small.ReadFinTest.hasVal_unique hz (Classical.choose_spec (s + t).2)
     (GlobalTheory.CompanionTheory.Ar.Rec.OS.hasVal_add (Classical.choose_spec s.2) (Classical.choose_spec t.2))
 
 theorem hasVal_evVal (hz : z ∈ ptsOver L (mCoordIdeal y)) (s : valRing y z) :
@@ -529,7 +431,7 @@ theorem exists_localRing : ∀ (K : Type) [Fintype K] (J : K → Type) [∀ k, F
     rintro rfl
     have h1 := hasVal_mul hw hw'
     rw [mul_inv_cancel₀ hs, zero_mul] at h1
-    exact zero_ne_one (GlobalTheory.CompanionTheory.Ar.Ht.Diag.hasVal_unique hz h1 hasVal_one)
+    exact zero_ne_one (GlobalTheory.CompanionTheory.Ar.Small.ReadFinTest.hasVal_unique hz h1 hasVal_one)
 
 end GlobalTheory.CompanionTheory.Ar.ClosLoc
 end -- clump:auto
@@ -721,31 +623,13 @@ theorem coeff_mem {F : Type} [Field F] (A : Subring F) (hfrac : ∀ a : F, ∃ d
     · intro l _ hl
       simp [hl]
     · simp
-  rw [if_pos trivial, hs, add_zero] at e
+  rw [ite_eq_left trivial, hs, add_zero] at e
   have : d * ((g x : A) : F) = d * (n * C) := by rw [e]; ring
   exact (mul_left_cancel₀ hd0 this).symm
 
 theorem exists_gen {Ω V : Type} [Field Ω] [AddCommGroup V] [Module Ω V] {r : ℕ} {b c : Fin r → V}
     (hF : ∀ i : ℕ, flagStep Ω b i = flagStep Ω c i) (j : Fin r) : ∃ t : Ω, b j - t • c j ∈ flagStep Ω c j := by
-  classical
-  have h1 : b j ∈ flagStep Ω c (j + 1) := by
-    rw [← hF]
-    exact Submodule.subset_span ⟨j, by simp, rfl⟩
-  obtain ⟨f, hf0, hfe⟩ := Rec.FinRd.Roots.RootUnit.exists_coeff_of_mem h1
-  refine ⟨f j, ?_⟩
-  have e : b j - f j • c j = ∑ l ∈ Finset.univ.erase j, f l • c l := by
-    rw [hfe, ← Finset.add_sum_erase _ _ (Finset.mem_univ j)]
-    abel
-  rw [e]
-  refine Submodule.sum_mem _ fun l hl => ?_
-  by_cases hlt : (l : ℕ) < j
-  · exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨l, hlt, rfl⟩)
-  · have hne : l ≠ j := Finset.ne_of_mem_erase hl
-    have : l ∉ {k : Fin r | (k : ℕ) < j + 1} := fun h => by
-      have h2 : (l : ℕ) < j + 1 := h
-      exact hne (Fin.ext (by omega))
-    rw [hf0 l this, zero_smul]
-    exact Submodule.zero_mem _
+  apply _root_.GlobalTheory.CompanionTheory.Ar.FlagDet.exists_diag <;> assumption
 
 theorem semilin_mem {Ω₀ Ω V₀ V : Type} [Field Ω₀] [Field Ω] [AddCommGroup V₀] [Module Ω₀ V₀] [AddCommGroup V]
     [Module Ω V] (i : Ω₀ →+* Ω) (L : V₀ →+ V) (hs : ∀ (a : Ω₀) (e : V₀), L (a • e) = i a • L e) {r : ℕ}

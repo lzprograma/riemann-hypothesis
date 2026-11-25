@@ -11,8 +11,6 @@ open scoped TensorProduct ContDiff ComplexOrder
 
 namespace Formalism.IndefR.Datum
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 abbrev Mx (D : D7) (m n : ℕ) : Type := Matrix (Fin m) (Fin n) (AE D)

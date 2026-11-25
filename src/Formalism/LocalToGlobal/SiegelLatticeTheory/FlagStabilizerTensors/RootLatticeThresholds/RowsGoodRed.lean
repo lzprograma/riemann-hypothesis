@@ -16,8 +16,6 @@ open MeasureTheory
 
 namespace Formalism.L2.SG.Pf.RowsGoodRed
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 def VT (t : Tup2 D) : Submodule ℂ (L2X X) :=

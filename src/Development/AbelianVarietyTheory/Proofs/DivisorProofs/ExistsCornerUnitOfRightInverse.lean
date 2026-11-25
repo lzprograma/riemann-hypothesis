@@ -115,11 +115,6 @@ theorem exists_corner_unit_of_right_inverse :
     linear_combination (w - p * q * w) * he + e * hw
   have hq : q * (e * p * w) = e := by
     linear_combination (w - p * q * w) * he + e * hw
-  have hpow : ∀ k : ℕ, e ^ k * e = e := by
-    intro k
-    induction k with
-    | zero => simp
-    | succ k ih => rw [pow_succ, mul_assoc, he, ih]
   refine ⟨(e * q * w) • (Q * P'.adjugate), ?_⟩
   set M : Matrix (Fin n) (Fin n) R := D + C * ((e * q * w) • (Q * P'.adjugate)) with hM
   have hxP : ((e * q * w) • (Q * P'.adjugate)) * P' = e • Q := by
@@ -134,7 +129,7 @@ theorem exists_corner_unit_of_right_inverse :
     calc M.det * (e ^ n * p * (e * p * w)) = (e ^ n * (M.det * p)) * (e * p * w) := by ring
       _ = (e ^ n * q) * (e * p * w) := by rw [hdet]
       _ = e ^ n * e := by rw [mul_assoc, hq]
-      _ = e := hpow n
+      _ = e := (pow_succ e n).symm.trans (IsIdempotentElem.pow_succ_eq n he)
   refine isUnit_iff_exists_inv.mpr ⟨e * (e ^ n * p * (e * p * w)) + (1 - e), ?_⟩
   linear_combination (M.det * (e ^ n * p * (e * p * w)) - M.det - (e ^ n * p * (e * p * w)) + 2) * he + e * hab
 

@@ -74,7 +74,6 @@ open GlobalTheory.FunObj.SqNum (hatId CongOne skewLat unitBlock cosetVec)
 open GlobalTheory.NormExact (Reads Setup IsFinIdl HasFinPart finPt)
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (InId IsUnitDet unitChar stdFst)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.StdRead
 
 open scoped TensorProduct nonZeroDivisors
@@ -332,7 +331,7 @@ theorem sum_char (hc : D.host.ccK = ⊤) (hs : Setup ψ θ S T ⊤ δ 1) {e : AE
   rw [hcos, ← Finset.sum_mul, halfInd]
   by_cases ht : IsHalf e t
   swap
-  · rw [if_neg fun hh => ht hh.2, if_neg fun hh => ht hh.1, mul_zero, mul_zero]
+  · rw [ite_eq_right fun hh => ht hh.2, ite_eq_right fun hh => ht hh.1, mul_zero, mul_zero]
   have h0 : ∀ i j, infPart D (t i j) = 0 := fun i j => by
     obtain ⟨SS, c, he, -⟩ := h
     rw [← ht i j, RingHom.map_mul, (GlobalTheory.IdemSumIdeal.isIdemSum_props e SS c he).1, zero_mul]
@@ -347,10 +346,10 @@ theorem sum_char (hc : D.host.ccK = ⊤) (hs : Setup ψ θ S T ⊤ δ 1) {e : AE
       rw [FractionalIdeal.le_div_iff_mul_le hn0]
       simpa using mul_le_mul' (le_refl (𝔪 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E))
         (FractionalIdeal.coeIdeal_le_one (I := D.host.conj • 𝔪))) h0 hI
-    rw [if_pos ⟨h1, ht⟩, if_pos ⟨ht, hI⟩, Finset.sum_congr rfl fun q _ => char_sympl_eq_one hs.std (sdC_std hs.gS) hsk h2
+    rw [ite_eq_left ⟨h1, ht⟩, ite_eq_left ⟨ht, hI⟩, Finset.sum_congr rfl fun q _ => char_sympl_eq_one hs.std (sdC_std hs.gS) hsk h2
       (finTens_mem_latO (one_mem_intAf _) ((hrat _).2 (neg_mem (hz q))))]
     simp
-  · rw [if_neg (fun hh => hI hh.2 : ¬ (IsHalf e t ∧ ∀ i j, toEAf D (t i j) ∈ idGrp 𝔪)), mul_zero]
+  · rw [ite_eq_right (fun hh => hI hh.2 : ¬ (IsHalf e t ∧ ∀ i j, toEAf D (t i j) ∈ idGrp 𝔪)), mul_zero]
     split_ifs with h1
     swap
     · exact mul_zero _
@@ -396,7 +395,7 @@ theorem indicator_reads : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (θ : In
   have hW := (_root_.GlobalTheory.ThetaLine.theta_line D h1 ⊤ δ hs.crv _ _ _ (klat_skew δ h𝔪 S.rank T.rank)).2.1
   have hn : 0 < Ideal.absNorm 𝔪 ^ (S.rank * T.rank) :=
     pow_pos (Nat.pos_of_ne_zero (Ideal.absNorm_eq_zero_iff.not.2 h𝔪)) _
-  rw [cosV, GlobalTheory.NormSum.VacMove.pt_zero, GlobalTheory.NormSum.VacMove.wd_zero, ← Nat.cast_pow]
+  rw [cosV, GlobalTheory.NormSum.VacMove.pt_zero, GlobalTheory.NormSum.wd_zero, ← Nat.cast_pow]
   generalize La0 D (tor0 D ⊤ δ) S.rank T.rank = A at hidx hA ⊢
   generalize La D (tor0 D ⊤ δ) (stdL D S.rank) (skewLat D 𝔪 T.rank) = B at hidx hB hW ⊢
   generalize Ideal.absNorm 𝔪 ^ (S.rank * T.rank) = n at hidx hn ⊢
@@ -414,14 +413,14 @@ theorem indicator_reads : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (θ : In
       (stdL D T.rank : Set (Fin T.rank → D.host.E)) fun _ => True)) := by
     refine ⟨fun t ht => ?_, 1, one_pos, fun u hu hue t => ?_, fun t ht => ?_⟩
     · by_contra hh
-      exact ht (if_neg fun h' => hh h'.2)
+      exact ht (ite_eq_right fun h' => hh h'.2)
     · have : IsHalf e (t + u) ↔ IsHalf e t := by
         rw [GlobalTheory.PlaceModel.isHalf_iff, GlobalTheory.PlaceModel.isHalf_iff]
         exact add_mem_cancel_right ((GlobalTheory.PlaceModel.isHalf_iff S T).1 hue)
       simp only [one_smul, halfInd, add_mem_cancel_right hu, this]
     · rw [one_smul]
       by_contra hh
-      exact ht (if_neg fun h' => hh h'.1)
+      exact ht (ite_eq_right fun h' => hh h'.1)
   have hvac := hTm.vac
   rw [one_smul] at hvac
   have hsum := reads_sum Finset.univ _ _ hr fun q => term_reads hc hs hv.2.lat hG hr h (hz q)

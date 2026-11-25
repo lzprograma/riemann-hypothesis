@@ -203,14 +203,8 @@ lemma x_ne (M : Mdl q) (hM : M.Ok) (c z₀ : ℂ) : ∀ᶠ z in 𝓝[≠] z₀, 
   · exact absurd (meromorphicOrderAt_eq_top_iff.2 h) h1
   · exact h
 
-lemma tendsto_add_punct (p : ℂ) : Filter.Tendsto (fun z : ℂ => z + p) (𝓝[≠] 0) (𝓝[≠] p) := by
-  refine tendsto_nhdsWithin_iff.2 ⟨?_, ?_⟩
-  · have : Filter.Tendsto (fun z : ℂ => z + p) (𝓝 0) (𝓝 (0 + p)) :=
-      (continuous_id.add continuous_const).tendsto 0
-    rw [zero_add] at this
-    exact this.mono_left nhdsWithin_le_nhds
-  · filter_upwards [self_mem_nhdsWithin] with z hz
-    simpa using hz
+lemma tendsto_add_punct (p : ℂ) : Filter.Tendsto (fun z : ℂ => z + p) (𝓝[≠] 0) (𝓝[≠] p) :=
+  (Filter.map_add_right_nhdsNE (c := p) (a := (0 : ℂ))).le.trans_eq (by rw [zero_add])
 
 theorem shift_eq_hat_translate : ∀ (q : ℕ) [Fact q.Prime] (M : Mdl q) (ω ζ : ℂ_[q]) (p : ℂ) (φ : ℂ → ℂ), M.MChart ω → M.At ω ζ p → Ell M.L φ → AnalyticAt ℂ φ 0 → Bdd (hat M.ι (C ω * logS) φ) → ∃ ψ : ℂ → ℂ, AnalyticAt ℂ ψ 0 ∧ (∀ᶠ z in 𝓝[≠] (0 : ℂ), ψ z = φ (z + p)) ∧ hat M.ι (C ω * logS) ψ = shiftS ζ (hat M.ι (C ω * logS) φ) := by
   intro q _ M ω ζ p φ hch hat' hφ hφ0 hφb

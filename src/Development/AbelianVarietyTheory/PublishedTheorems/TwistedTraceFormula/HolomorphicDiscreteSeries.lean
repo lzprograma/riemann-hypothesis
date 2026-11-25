@@ -98,7 +98,7 @@ variable {n : ℕ}
 theorem single_mem_pPlus {ε : Fin n → Bool} {a b : Fin n} (ha : ε a = true) (hb : ε b = false) (z : ℂ) :
     Matrix.single a b z ∈ pPlus ε := by
   intro c d h
-  rw [Matrix.single_apply, if_neg]
+  rw [Matrix.single_apply, ite_eq_right]
   rintro ⟨rfl, rfl⟩
   exact h ⟨ha, hb⟩
 
@@ -202,9 +202,5 @@ theorem lowK_holPar (h : HolOK p q κ) {lam : Fin n → ℝ} {ε : Fin n → Boo
     ring
 
 end GlobalTheory.HolDS
-
-namespace GlobalTheory.Published
-
-end GlobalTheory.Published
 
 end

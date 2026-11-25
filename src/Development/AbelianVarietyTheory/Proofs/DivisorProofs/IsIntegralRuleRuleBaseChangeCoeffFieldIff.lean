@@ -56,8 +56,6 @@ open NumberField MeasureTheory Formalism.BasicNotions Formalism.BasicNotions.TH 
 open scoped ENNReal
 open IsDedekindDomain
 
-set_option autoImplicit false
-
 
 noncomputable section
 

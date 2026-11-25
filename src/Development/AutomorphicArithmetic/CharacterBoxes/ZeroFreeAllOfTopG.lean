@@ -8,7 +8,7 @@ public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.Calculus.Deriv.Pow
 public import Mathlib.MeasureTheory.Function.Floor
-public import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.MellinRamp
+public import Formalism.ZetaNonvanishing.MellinSAux
 public import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.CharFamilyLFunctionNeZeroOfOneLeRe
 public import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.landauWindow
 public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.Window
@@ -17,56 +17,6 @@ public import Development.AutomorphicArithmetic.CharacterBoxes.Supply
 public import Development.AutomorphicArithmetic.CharacterBoxes.DivinNOfHypV
 public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.TopDefs
 public import Development.AutomorphicArithmetic.PrimitiveCosets.LevelGmLeOnFamilyScales
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Calculus.Deriv.Star
-import Mathlib.NumberTheory.MulChar.Lemmas
-import Mathlib.Tactic.Basify
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
-import Mathlib.NumberTheory.LSeries.Nonvanishing
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicArithmetic.DedekindLFunctions.SplitInertia
@@ -246,10 +196,10 @@ theorem Gchi_conj {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (y : ℝ)
     (starRingEnd ℂ) (Gchi χ y) = Gchi χ⁻¹ y := by
   by_cases h1 : χ = 1
   · subst h1
-    simp only [Gchi, inv_one, if_true]
+    simp only [Gchi, inv_one, ite_true]
     rw [map_add (f := _), map_sub, Gchi_conj_ramp, inv_one, Complex.conj_ofReal, Complex.conj_ofReal]
   · have h2 : χ⁻¹ ≠ 1 := fun h => h1 (inv_eq_one.mp h)
-    simp only [Gchi, h1, h2, if_false]
+    simp only [Gchi, h1, h2, ite_false]
     have hL := Gchi_conj_LFunction χ
     have h1c : (starRingEnd ℂ) (1 : ℂ) = 1 := map_one _
     rw [map_add (f := _), map_mul, map_div₀, Gchi_conj_ramp, Complex.conj_ofReal, hL]
@@ -313,7 +263,7 @@ theorem Gchi_growth {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) :
     have hl : Real.log y ≤ y := Real.log_le_self hy0
     have hyy : y ≤ y ^ 2 := by nlinarith
     unfold Gchi
-    rw [if_pos h]
+    rw [ite_eq_left h]
     refine (norm_add_le _ _).trans ?_
     refine (add_le_add (norm_sub_le _ _) le_rfl).trans ?_
     rw [Complex.norm_real, Complex.norm_real, Real.norm_of_nonneg (mul_nonneg hy0 hl0),
@@ -327,7 +277,7 @@ theorem Gchi_growth {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) :
     have hy0 : 0 ≤ y := by linarith
     have hyy : y ≤ y ^ 2 := by nlinarith
     unfold Gchi
-    rw [if_neg h]
+    rw [ite_eq_right h]
     refine (norm_add_le _ _).trans ?_
     rw [norm_mul, Complex.norm_real, Real.norm_of_nonneg hy0]
     have h2 := mul_le_mul_of_nonneg_left hyy
@@ -431,7 +381,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.measurableGchi =====
 
 -- ===== clump member: Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.mellinGchiModOne =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.mellinGchiModOne", "h": "module\n\npublic import Development.AutomorphicArithmetic.DedekindLFunctions.CharFamily\npublic import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.MellinRamp\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.LocallyConvex.AbsConvexOpen\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.mellinGchiModOne", "h": "module\n\npublic import Development.AutomorphicArithmetic.DedekindLFunctions.CharFamily\npublic import Formalism.ZetaNonvanishing.MellinSAux\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.LocallyConvex.AbsConvexOpen\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -460,24 +410,9 @@ theorem mellin_Gchi_modOne_sum {μ : Measure ℝ} (T : ℕ → ℝ → ℂ) (E :
 
 theorem mellin_Gchi_modOne_int (n : ℕ) (s : ℂ) (hs : 1 < s.re) :
     IntegrableOn (fun y : ℝ => ((max (y / n - 1) 0 : ℝ) : ℂ) * (y : ℂ) ^ (-s - 1)) (Ioi 1) := by
-  have ha : (-s).re < -1 := by simp; linarith
-  have hb : (-s - 1).re < -1 := by simp; linarith
-  refine Integrable.mono' (integrableOn_Ioi_norm_cpow_of_lt ha zero_lt_one) ?_ ?_
-  · refine AEStronglyMeasurable.mul ?_ (integrableOn_Ioi_cpow_of_lt hb zero_lt_one).1
-    exact Continuous.aestronglyMeasurable (by fun_prop)
-  · refine ae_restrict_of_forall_mem measurableSet_Ioi fun y hy => ?_
-    have hy1 : (1 : ℝ) < y := hy
-    have hy0 : (0 : ℝ) < y := by linarith
-    have hyC : (y : ℂ) ≠ 0 := by exact_mod_cast hy0.ne'
-    have h1 : y / n ≤ y := by
-      rcases Nat.eq_zero_or_pos n with rfl | hn
-      · simpa using hy0.le
-      · exact div_le_self hy0.le (by exact_mod_cast hn)
-    have h2 : max (y / n - 1) 0 ≤ y := max_le (by linarith) hy0.le
-    rw [norm_mul, cpow_sub _ _ hyC, cpow_one, norm_div, Complex.norm_real, Complex.norm_real,
-      Real.norm_of_nonneg (le_max_right _ _), Real.norm_of_nonneg hy0.le]
-    calc _ ≤ y * (‖(y : ℂ) ^ (-s)‖ / y) := by gcongr
-      _ = _ := by field_simp
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simp
+  · exact (Formalism.mxS_mellin hn hs).1
 
 theorem mellin_Gchi_modOne_term (n : ℕ) (s : ℂ) (hs : 1 < s.re) :
     ∫ y in Ioi (1 : ℝ), ((ArithmeticFunction.vonMangoldt n : ℝ) : ℂ) *
@@ -485,7 +420,9 @@ theorem mellin_Gchi_modOne_term (n : ℕ) (s : ℂ) (hs : 1 < s.re) :
       LSeries.term (fun n => ((ArithmeticFunction.vonMangoldt n : ℝ) : ℂ)) s n / (s * (s - 1)) := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp
-  rw [integral_const_mul, mellin_ramp n hn s hs, LSeries.term_of_ne_zero hn.ne', cpow_neg]
+  have hint := (Formalism.mxS_mellin hn hs).2
+  unfold Formalism.mxS at hint
+  rw [integral_const_mul, hint, LSeries.term_of_ne_zero hn.ne', cpow_neg]
   ring
 
 theorem mellin_Gchi_modOne_log_int (s : ℂ) (hs : 1 < s.re) :
@@ -593,7 +530,7 @@ theorem mellin_Gchi_modOne (χ : DirichletCharacter ℂ 1) (s : ℂ) (hs : 1 < s
       field_simp
     beta_reduce
     rw [tsum_eq_sum (hz y)]
-    simp only [Gchi, if_pos h1, h2, ramp, T, E, h3, mul_one, ← mul_assoc,
+    simp only [Gchi, ite_eq_left h1, h2, ramp, T, E, h3, mul_one, ← mul_assoc,
       ← Finset.sum_mul]
     push_cast
     ring
@@ -640,7 +577,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.mellinGchiModOne =====
 
 -- ===== clump member: Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.mellinGchiOfNeOne =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.mellinGchiOfNeOne", "h": "module\n\npublic import Development.AutomorphicArithmetic.DedekindLFunctions.CharFamily\npublic import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.MellinRamp\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.mellinGchiOfNeOne", "h": "module\n\npublic import Development.AutomorphicArithmetic.DedekindLFunctions.CharFamily\npublic import Formalism.ZetaNonvanishing.MellinSAux\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -659,29 +596,14 @@ theorem mellin_Gchi_of_ne_one_ne {s : ℂ} (hs : 1 < s.re) : s ≠ 0 ∧ s - 1 �
     rw [sub_eq_zero.mp h] at hs
     simp at hs
 
-theorem mellin_Gchi_of_ne_one_int (n : ℕ) (hn : 1 ≤ n) (s : ℂ) (hs : 1 < s.re) :
-    IntegrableOn (fun y : ℝ => ((max (y / n - 1) 0 : ℝ) : ℂ) * (y : ℂ) ^ (-s - 1)) (Ioi 1) := by
-  obtain ⟨h0, h1⟩ := mellin_Gchi_of_ne_one_ne hs
-  apply Integrable.of_integral_ne_zero
-  rw [mellin_ramp n hn s hs]
-  have hnC : (n : ℂ) ≠ 0 := by exact_mod_cast (by omega : n ≠ 0)
-  exact div_ne_zero (cpow_ne_zero_iff.mpr (Or.inl hnC)) (mul_ne_zero h0 h1)
-
 theorem mellin_Gchi_of_ne_one_norm (n : ℕ) (hn : 1 ≤ n) (s : ℂ) (hs : 1 < s.re) :
     ∫ y in Ioi (1 : ℝ), ‖((max (y / n - 1) 0 : ℝ) : ℂ) * (y : ℂ) ^ (-s - 1)‖ =
       (n : ℝ) ^ (-s.re) / (s.re * (s.re - 1)) := by
-  have h := mellin_ramp n hn (s.re : ℂ) (by simpa using hs)
-  apply ofReal_injective
-  rw [← integral_complex_ofReal, ofReal_div, ofReal_cpow (Nat.cast_nonneg n)]
-  push_cast
-  rw [← h]
+  rw [← (Formalism.mxS_mellin_real hn hs).2]
   refine setIntegral_congr_fun measurableSet_Ioi fun y hy => ?_
-  have hy0 : (0 : ℝ) < y := lt_trans one_pos hy
-  rw [norm_mul, norm_cpow_eq_rpow_re_of_pos hy0, Complex.norm_real,
+  rw [norm_mul, norm_cpow_eq_rpow_re_of_pos (zero_lt_one.trans hy), Complex.norm_real,
     Real.norm_of_nonneg (le_max_right _ _)]
-  change (((max (y / n - 1) 0 * y ^ (-s - 1).re : ℝ)) : ℂ) = _
-  rw [ofReal_mul, ofReal_cpow hy0.le]
-  simp
+  simp [Formalism.mxS]
 
 theorem mellin_Gchi_of_ne_one_hasSum (f : ℕ → ℂ) (y : ℝ) :
     HasSum (fun n : ℕ => ((ArithmeticFunction.vonMangoldt n : ℝ) : ℂ) * f n *
@@ -718,7 +640,7 @@ theorem mellin_Gchi_of_ne_one_ramp (f : ℕ → ℂ) (s : ℂ) (hs : 1 < s.re)
   have hint : ∀ n, Integrable (F n) (volume.restrict (Ioi 1)) := by
     rintro (_ | m)
     · exact hg
-    · exact (mellin_Gchi_of_ne_one_int (m + 1) (by omega) s hs).const_mul _
+    · exact (mellin_Gchi_modOne_int (m + 1) s hs).const_mul _
   have hsum : Summable fun n => ∫ y in Ioi (1 : ℝ), ‖F n y‖ := by
     rw [← summable_nat_add_iff 1]
     have h1 := ((summable_nat_add_iff 1).mpr hf.norm).div_const (s.re * (s.re - 1))
@@ -726,7 +648,7 @@ theorem mellin_Gchi_of_ne_one_ramp (f : ℕ → ℂ) (s : ℂ) (hs : 1 < s.re)
     simp only [F]
     simp_rw [norm_mul (a (m + 1))]
     rw [integral_const_mul, mellin_Gchi_of_ne_one_norm (m + 1) (by omega) s hs,
-      LSeries.norm_term_eq, if_neg (by omega), Real.rpow_neg (Nat.cast_nonneg _)]
+      LSeries.norm_term_eq, ite_eq_right (by omega), Real.rpow_neg (Nat.cast_nonneg _)]
     ring
   have h := hasSum_integral_of_summable_integral_norm hint hsum
   have hF : ∀ y, ∑' n, F n y = ramp f y * (y : ℂ) ^ (-s - 1) + g y := by
@@ -747,8 +669,9 @@ theorem mellin_Gchi_of_ne_one_ramp (f : ℕ → ℂ) (s : ℂ) (hs : 1 < s.re)
     convert h1 using 1
     · funext m
       simp only [F]
-      rw [integral_const_mul, mellin_ramp (m + 1) (by omega) s hs,
-        LSeries.term_of_ne_zero (by omega), cpow_neg]
+      have hval := (Formalism.mxS_mellin (n := m + 1) (by lia) hs).2
+      unfold Formalism.mxS at hval
+      rw [integral_const_mul, hval, LSeries.term_of_ne_zero (by lia), cpow_neg]
       ring
     · simp [LSeries]
   have h3 := (hasSum_nat_add_iff (f := fun n => ∫ y in Ioi (1 : ℝ), F n y) 1).mp h2
@@ -778,7 +701,7 @@ theorem mellin_Gchi_of_ne_one {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ 
     ring
   · intro y hy
     have hy0 : (y : ℂ) ≠ 0 := by exact_mod_cast (lt_trans one_pos hy).ne'
-    simp only [Gchi, if_neg hχ, ← hc]
+    simp only [Gchi, ite_eq_right hχ, ← hc]
     rw [cpow_sub _ _ hy0, cpow_one]
     field_simp
 

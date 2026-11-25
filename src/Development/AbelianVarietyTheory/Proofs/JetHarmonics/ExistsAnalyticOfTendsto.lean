@@ -81,7 +81,7 @@ lemma even_case {g : ℂ → ℂ} (hg : Meromorphic g)
   classical
   let G : ℂ → ℂ := fun z ↦ if z ∈ L.lattice then 0 else limUnder (𝓝[≠] z) g
   have hG : ∀ a ∉ L.lattice, ∀ c, Tendsto g (𝓝[≠] a) (𝓝 c) → G a = c := fun a ha c h ↦ by
-    simp only [G, if_neg ha]
+    simp only [G, ite_eq_right ha]
     exact h.limUnder_eq
   have hGg : ∀ z₀, G =ᶠ[𝓝[≠] z₀] g := fun z₀ ↦ by
     filter_upwards [(hg z₀).eventually_analyticAt, eventually_ne_notMem_periodLattice L z₀]

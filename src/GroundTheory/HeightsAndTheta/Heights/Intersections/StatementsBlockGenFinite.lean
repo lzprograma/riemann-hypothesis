@@ -24,10 +24,4 @@ def BlockGenFinite.Statement : Prop :=
         ∀ z' ∈ mcPts P', eval z' (map (Int.castRingHom ℂ) f₀) ≠ 0 →
           SameOrbit (fun p => z' (v p)) u → ∃ t ∈ T, SameOrbit z' t
 
-section Inhabitants
-
-open IndefiniteRowSideFullHecke.Inter
-
-end Inhabitants
-
 end GroundTheory.Heights₂.Heights.Inter

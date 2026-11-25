@@ -5,47 +5,6 @@ public import Formalism.SharpRestriction.GrowthBounds.ObjSeg
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.MapFloorMono
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.DivDerZero
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.CthMonomial
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BlockWithThresholds, Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.LettersAtUpdate, Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.ChainEmbInj
@@ -214,11 +173,11 @@ theorem lettersAt_update {D : BlockData N} (hT : TieOK D) {j : Fin D.T.t → ℕ
       · exact hi' (hT.inj _ _ (by omega))
     have s1 : (∑ i', if (a : ℕ) = D.T.pos i' ∨ (a : ℕ) = D.T.pos i' + 1 then
         Function.update j i (j i - l) i' else 0) = j i - l := by
-      rw [Finset.sum_eq_single i (fun i' _ hi' => if_neg (hoth i' hi')) (fun h => absurd (Finset.mem_univ i) h),
-        if_pos ha, Function.update_self]
+      rw [Finset.sum_eq_single i (fun i' _ hi' => ite_eq_right (hoth i' hi')) (fun h => absurd (Finset.mem_univ i) h),
+        ite_eq_left ha, Function.update_self]
     have s2 : (∑ i', if (a : ℕ) = D.T.pos i' ∨ (a : ℕ) = D.T.pos i' + 1 then j i' else 0) = j i := by
-      rw [Finset.sum_eq_single i (fun i' _ hi' => if_neg (hoth i' hi')) (fun h => absurd (Finset.mem_univ i) h),
-        if_pos ha]
+      rw [Finset.sum_eq_single i (fun i' _ hi' => ite_eq_right (hoth i' hi')) (fun h => absurd (Finset.mem_univ i) h),
+        ite_eq_left ha]
     have hu : a ≠ D.uPos := by
       intro h
       rcases ha with ha | ha
@@ -239,14 +198,14 @@ theorem lettersAt_update {D : BlockData N} (hT : TieOK D) {j : Fin D.T.t → ℕ
           simp only
           omega
         rw [← this]; exact (hL.1 i).2
-    rw [s1, s2, if_neg hu, if_pos ha]
+    rw [s1, s2, ite_eq_right hu, ite_eq_left ha]
     omega
-  · rw [if_neg ha, add_zero]
+  · rw [ite_eq_right ha, add_zero]
     congr 2
     refine Finset.sum_congr rfl fun i' _ => ?_
     by_cases hi' : i' = i
     · subst hi'
-      rw [if_neg ha, if_neg ha]
+      rw [ite_eq_right ha, ite_eq_right ha]
     · rw [Function.update_of_ne hi']
 
 theorem levelOK_update {D : BlockData N} {j : Fin D.T.t → ℕ} {jp : ℕ} (hL : D.LevelOK j jp) (i : Fin D.T.t) (l : ℕ) :
@@ -357,7 +316,7 @@ theorem tie_mem {D : BlockData N} (hT : TieOK D) {thr thr' : Fin D.T.q → WithT
         SSt O r D thr' := by
       cases δ with
       | false =>
-        simp only [Bool.false_eq_true, if_false, zero_add] at hq
+        simp only [Bool.false_eq_true, ite_false, zero_add] at hq
         rw [hq]
         refine shift_mem hT hL i l hl (fun k => ?_) hq0 hyb hg
         refine le_trans (le_of_eq ?_) (hthr k)
@@ -365,7 +324,7 @@ theorem tie_mem {D : BlockData N} (hT : TieOK D) {thr thr' : Fin D.T.q → WithT
         push_cast
         rw [add_comm (l : WithTop ℤ)]
       | true =>
-        simp only [if_true] at hq
+        simp only [ite_true] at hq
         rw [hq, add_pow, Finset.mul_sum, Finset.sum_mul, Finset.sum_mul]
         refine Submodule.sum_mem _ fun a ha => ?_
         have ha' : a ≤ l := Nat.lt_succ_iff.1 (Finset.mem_range.1 ha)

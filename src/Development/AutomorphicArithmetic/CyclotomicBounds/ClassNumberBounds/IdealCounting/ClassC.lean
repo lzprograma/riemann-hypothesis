@@ -165,7 +165,7 @@ private theorem classB_prod {ι : Type*} {n : ℕ} (q : ι → ℕ) (idx : ι �
       by_cases h : idx a = i
       · simp [Multiset.filter_cons_of_pos, h]
       · simp [Multiset.filter_cons_of_neg, h]
-    simp only [h, Finset.prod_mul_distrib, ih, Finset.prod_ite_eq, Finset.mem_univ, if_true,
+    simp only [h, Finset.prod_mul_distrib, ih, Finset.prod_ite_eq, Finset.mem_univ, ite_true,
       Multiset.map_cons, Multiset.prod_cons]
 
 private theorem classB_inj {ι : Type*} {n : ℕ} (q : ι → ℕ) (idx : ι → Fin n)

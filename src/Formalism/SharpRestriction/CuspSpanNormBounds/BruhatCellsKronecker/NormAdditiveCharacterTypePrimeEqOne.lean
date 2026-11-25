@@ -3,47 +3,7 @@ module
 public import Formalism.SharpRestriction.CuspSpanNormBounds.NonGenericAndKTwoTheorems
 public import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
 public import Formalism.FlagUnipotentLattices.SignaturePreservingEntryNorms
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -52,8 +12,6 @@ noncomputable section
 namespace Formalism.MainNotions.BridgeLemma
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Schur
 
@@ -73,7 +31,7 @@ def htF {k : ℕ} (x : Fin k → ℝ) : ℝ := ∑ a : Fin k, -((a : ℕ) : ℝ)
 theorem htF_root {k : ℕ} (a b : Fin k) : htF (Formalism.REAL.root a b) = ((b : ℕ) : ℝ) - ((a : ℕ) : ℝ) := by
   unfold htF Formalism.REAL.root
   simp only [Pi.sub_apply, mul_sub, Finset.sum_sub_distrib, Pi.single_apply, mul_ite, mul_one, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   ring
 
 theorem htF_sum {k : ℕ} (c : Fin k → Fin k → ℕ) :
@@ -249,7 +207,7 @@ theorem gram_det_eq (P : FPair H r) (hs : M.split = none) :
         by_cases ha : a = Fin.last r
         · subst ha; simp [P.A.h_zz]
         · simp [ha, P.A.h_iso a a (Or.inl ha)]
-      · rw [if_neg hab]
+      · rw [ite_eq_right hab]
         by_cases ha : a = Fin.last r
         · exact P.A.h_iso b a (Or.inl (fun h => hab (by rw [ha, h])))
         · exact P.A.h_iso b a (Or.inr ha)
@@ -263,7 +221,7 @@ theorem gram_det_eq (P : FPair H r) (hs : M.split = none) :
         by_cases ha : a = Fin.last r
         · subst ha; simp [P.B.h_zz]
         · simp [ha, P.B.h_iso a a (Or.inl ha)]
-      · rw [if_neg hab]
+      · rw [ite_eq_right hab]
         by_cases ha : a = Fin.last r
         · exact P.B.h_iso b a (Or.inl (fun h => hab (by rw [ha, h])))
         · exact P.B.h_iso b a (Or.inr ha)
@@ -290,36 +248,6 @@ theorem gram_det_eq (P : FPair H r) (hs : M.split = none) :
   ring
 
 end NG
-
-section K2
-
-open Formalism.MainNotions.S.Cnt
-
-variable {eps : ℝ} (Fm : FamP eps)
-
-end K2
-
-section Copies
-
-end Copies
-
-section Vol
-
-variable {eps : ℝ} (Fm : FamP eps)
-
-end Vol
-
-section NGEq
-
-open Formalism.MainNotions.S.Loc Formalism.MainNotions.S.LocNG ValuativeRel ComplexConjugate
-
-variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
-variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E]
-variable {M : Model F E} {V : Type} [AddCommGroup V] [Module E V]
-
-variable {H : HermSp M V} {r : ℕ} {P : FPair H r}
-
-end NGEq
 
 section BB
 
@@ -493,12 +421,12 @@ theorem prF_e (a : Fin r) : Fr.prF (Fr.e a) = 0 := by
   have h1 : ∑ c, H.h (Fr.e a) (Fr.es c) • Fr.e c = Fr.e a := by
     rw [Finset.sum_eq_single a]
     · have := Fr.h_es a a
-      simp only [if_true] at this
+      simp only [ite_true] at this
       show H.h (Fr.f a.castSucc) (Fr.es a) • Fr.e a = _
       rw [this, one_smul]
     · intro c _ hc
       have := Fr.h_es a c
-      rw [if_neg (Ne.symm hc)] at this
+      rw [ite_eq_right (Ne.symm hc)] at this
       show H.h (Fr.f a.castSucc) (Fr.es c) • Fr.e c = _
       rw [this, zero_smul]
     · intro h; exact absurd (Finset.mem_univ a) h
@@ -601,11 +529,11 @@ theorem N_row {g : V ≃ₗ[E] V} (hg : g ∈ Fr.NSet) (a : Fin (r + 1)) :
     · rcases Fin.eq_castSucc_or_eq_last b with ⟨b', rfl⟩ | rfl
       · have hlt : a' < b' := by simpa using hb
         beta_reduce
-        rw [Fin.lastCases_castSucc, hc0 b' (le_of_lt hlt), if_neg (ne_of_gt hlt), add_zero]
+        rw [Fin.lastCases_castSucc, hc0 b' (le_of_lt hlt), ite_eq_right (ne_of_gt hlt), add_zero]
       · beta_reduce
         rw [Fin.lastCases_last]
     · beta_reduce
-      rw [Fin.lastCases_castSucc, hc0 a' le_rfl, if_pos rfl, zero_add]
+      rw [Fin.lastCases_castSucc, hc0 a' le_rfl, ite_eq_left rfl, zero_add]
     · rw [Fin.sum_univ_castSucc]
       simp only [Fin.lastCases_castSucc, Fin.lastCases_last, zero_smul, add_zero, add_smul, Finset.sum_add_distrib]
       have e1 : ∑ x : Fin r, (if x = a' then (1 : E) else 0) • Fr.f x.castSucc = Fr.f a'.castSucc := by
@@ -659,21 +587,6 @@ def massS (R : Reps P) (d : Datum P) (S : Term V M r → Prop) : ℝ :=
   ∑' t : {t // t ∈ R.RT d ∧ S t}, mu P t.1
 
 end NGAsm
-
-section NGAll
-
-open Formalism.MainNotions.S.Loc Formalism.MainNotions.S.LocNG ValuativeRel
-
-section One
-
-variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
-variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E]
-variable {M : Model F E} {V : Type} [AddCommGroup V] [Module E V]
-variable {H : HermSp M V} {r : ℕ} {P : FPair H r}
-
-end One
-
-end NGAll
 
 end Formalism.MainNotions.BridgeLemma
 

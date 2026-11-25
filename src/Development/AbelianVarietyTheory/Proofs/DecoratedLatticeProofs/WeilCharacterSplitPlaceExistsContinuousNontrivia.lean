@@ -48,7 +48,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 
 noncomputable section
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LocChar
 
@@ -58,18 +57,14 @@ theorem ι_one : p.ι 1 = p.e := by
   have h := p.ι_π 1
   rwa [map_one, mul_one] at h
 
-alias e_mul_ι := _root_.GlobalTheory.LocMod.Witness.e_ι
-
 theorem ι_mul (x y : k) : p.ι (x * y) = p.ι x * p.ι y := by
   have h := p.ι_π (p.ι x * p.ι y)
   rw [map_mul, p.π_ι, p.π_ι] at h
-  rw [h, ← mul_assoc, e_mul_ι]
-
-alias xi_ne := _root_.GlobalTheory.LocMod.Witness.xi_ne
+  rw [h, ← mul_assoc, GlobalTheory.LocMod.Witness.e_ι]
 
 theorem mul_aux (x y : k) : (p.ι x + (1 - p.e)) * (p.ι y + (1 - p.e)) = p.ι (x * y) + (1 - p.e) := by
-  have h1 := e_mul_ι p x
-  have h2 := e_mul_ι p y
+  have h1 := GlobalTheory.LocMod.Witness.e_ι p x
+  have h2 := GlobalTheory.LocMod.Witness.e_ι p y
   have h3 : p.e * p.e = p.e := p.split.1
   rw [ι_mul]
   linear_combination (-1 : AE D) * h1 + (-1 : AE D) * h2 + h3
@@ -103,7 +98,7 @@ namespace GlobalTheory.LocChar
 
 theorem weil_char_split : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (p : Place D k) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → (∃ ψk : AddChar k Circle, p.IsChar ψ ψk) ∧ (∀ ψk : AddChar k Circle, p.IsChar ψ ψk → Continuous ψk ∧ ψk ≠ 1) ∧ p.xi ≠ 0 ∧ (∀ x y, p.ι (x * y) = p.ι x * p.ι y) ∧ ∀ χ : (AE D)ˣ →* Circle, ∃ μ : kˣ →* ℂˣ, p.IsComp χ μ := by
   intro D k _ _ _ _ p ψ hψ
-  refine ⟨⟨wchar p ψ hψ.1.2.1, fun x => rfl⟩, fun ψk hk => ⟨?_, ?_⟩, xi_ne p, ι_mul p, fun χ =>
+  refine ⟨⟨wchar p ψ hψ.1.2.1, fun x => rfl⟩, fun ψk hk => ⟨?_, ?_⟩, GlobalTheory.LocMod.Witness.xi_ne p, ι_mul p, fun χ =>
     ⟨(Circle.toUnits.comp χ).comp (unitsHom p), fun x a ha => ?_⟩⟩
   · have : IsModuleTopology (AF D.host.F) (AE D) := ⟨rfl⟩
     have : IsTopologicalRing (AE D) := IsModuleTopology.isTopologicalRing (AF D.host.F) (AE D)

@@ -31,7 +31,6 @@ theorem frac_one (P : Ideal (MRing ι R)) [P.IsPrime] : frac P 1 = 1 := by
 
 theorem frac_add (P : Ideal (MRing ι R)) [P.IsPrime] (x y : MRing ι R) :
     frac P (x + y) = frac P x + frac P y := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [frac]
 
 theorem frac_mul (P : Ideal (MRing ι R)) [P.IsPrime] (x y : MRing ι R) :

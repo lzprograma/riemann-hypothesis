@@ -1,5 +1,7 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.MetricProofs.UniformIntegrabilityStatementHolds
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StandardSmoothChartOfNonzero
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SplitComps
 public import Mathlib.RingTheory.Valuation.ValuationSubring
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EmbedsGeneric
@@ -19,67 +21,16 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HolomorphicA
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieModel
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TwoWeightEqOneAddRoot
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPushAlongMap
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.FieldTheory.PurelyInseparable.Exponent
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
-import Mathlib.CategoryTheory.Monoidal.Cartesian.Basic
-import Mathlib.CategoryTheory.Monoidal.Category
-import Mathlib.CategoryTheory.Monoidal.Mon
-import Mathlib.Topology.Sheaves.Presheaf
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.CompRightEqZero
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodD
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
+import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartConstantsDetermined
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.GeometryProofs.AlgebraicConstantsInRange, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MatchStatement, Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordRelationsHomogeneous, Development.AutomorphicSpectrum.Proofs.GeometryProofs.AmpleOfSingleCoordBlock, Development.AutomorphicSpectrum.Proofs.GeometryProofs.HolomorphicInverseChartValue, Development.AutomorphicSpectrum.Proofs.GeometryProofs.SameOrbitOfProportionalCoords, Development.AutomorphicSpectrum.Proofs.GeometryProofs.EffectiveScaledWeightOfRetraction
@@ -297,18 +248,7 @@ theorem ne_zero_of_pt {L : Type} [Field L] {z : (Σ k, J k) → L}
 theorem aeval_ratio_eq_zero (c : ∀ k, J k) (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) {f : MRing J}
     (hf : f ∈ mCoordIdeal y) :
     aeval (fun p : Σ k, J k => y p / y ⟨p.1, c p.1⟩) f = 0 := by
-  have h0 : mConeMap y f = 0 := hf
-  have h1 := congrArg (eval (fun k => (y ⟨k, c k⟩)⁻¹)) h0
-  rw [map_zero] at h1
-  have h2 := ringHom_aevalZ (eval (fun k => (y ⟨k, c k⟩)⁻¹))
-    (fun p : Σ k, J k => (C (y p) * X p.1 : MvPolynomial K Ω)) f
-  have h3 : (fun p : Σ k, J k => eval (fun k => (y ⟨k, c k⟩)⁻¹)
-      (C (y p) * X p.1 : MvPolynomial K Ω)) = fun p => y p / y ⟨p.1, c p.1⟩ := by
-    funext p
-    simp [div_eq_mul_inv]
-  rw [h3] at h2
-  rw [← h2]
-  exact h1
+  apply _root_.GroundTheory.Heights₂.Heights.HilbertSamuel.ChartConstantsDetermined.aeval_chart_eq_zero <;> assumption
 
 theorem ratio_pt_mem (W : ValuationSubring Ω) (c : ∀ k, J k) (hc : ∀ k, y ⟨k, c k⟩ ≠ 0)
     (hcW : ∀ p : Σ k, J k, y p / y ⟨p.1, c p.1⟩ ∈ W) :
@@ -508,8 +448,7 @@ theorem exists_finset_at [CharZero Ω] (k₀ : K) (hy : ∀ k, ∃ j, y ⟨k, j�
   obtain ⟨T, hT, rfl⟩ := Finset.subset_set_image_iff.1 hs
   refine ⟨T, hT, ?_⟩
   intro L _ _ z hz hzi
-  by_contra hall
-  push_neg at hall
+  by_contra! hall
   have key : ∀ b ∈ Ideal.span ((T.image fun f => aeval (ratioA y k₀ i) f :
       Finset (chartSub y k₀ i)) : Set (chartSub y k₀ i)),
       ∃ (N : ℕ) (G : MvPolynomial (J k₀) ℤ), N ≠ 0 ∧ (N : Ω) * (b : Ω) = aeval (ratio y k₀ i) G ∧
@@ -739,7 +678,7 @@ theorem ampleQ_of_forms (y : (Σ k, J k) → Ω) (k₀ : K) (a : K → ℤ) (ha�
     Ht.AmpleQ y a := by
   by_cases hy : ∀ k, ∃ j, y ⟨k, j⟩ ≠ 0
   swap
-  · push_neg at hy
+  · push Not at hy
     obtain ⟨k, hk⟩ := hy
     refine ⟨0, 0, Fin.elim0, fun i => i.elim0, fun L _ _ z hz => ?_⟩
     exfalso
@@ -930,16 +869,8 @@ namespace GlobalTheory.CompanionTheory.Ar.OrbitBlock
 theorem aeval_smul_of_homog {σ A : Type} [Fintype σ] [CommRing A] [Algebra ℤ A] {n : ℕ}
     {F : MvPolynomial σ ℤ} (hF : F.IsHomogeneous n) (t : A) (b : σ → A) :
     MvPolynomial.aeval (fun i => t * b i) F = t ^ n * MvPolynomial.aeval b F := by
-  classical
-  simp only [MvPolynomial.aeval_def]
-  rw [MvPolynomial.eval₂_eq', MvPolynomial.eval₂_eq', Finset.mul_sum]
-  refine Finset.sum_congr rfl fun d hd => ?_
-  have hdeg : ∑ i, d i = n := by
-    have h := hF (MvPolynomial.mem_support_iff.1 hd)
-    rw [← h, Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by simp)]
-    simp
-  simp only [mul_pow, Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum, hdeg]
-  ring
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.Ar.SncRes.SegreForm.aeval_const_mul <;> assumption
 
 variable {K : Type} [Fintype K] {J : K → Type} [∀ k, Fintype (J k)] {Ω : Type} [Field Ω]
 
@@ -1113,10 +1044,10 @@ theorem stepLine_a {G : RefGeo Y} (A : G.An) (t : ℝ) (r : RootIx D) :
     simp [Finset.sum_apply]
   simp only [stepLine, PB.combLine_a, Fin.sum_univ_two]
   by_cases h : (i : ℕ) = 0
-  · simp only [prevLine, dif_pos h]
+  · simp only [prevLine, dite_eq_left h]
     simp [Top.trivLine, hl, Iic_zero i h]
   · have hi : 0 < (i : ℕ) := Nat.pos_of_ne_zero h
-    simp only [prevLine, dif_neg h]
+    simp only [prevLine, dite_eq_right h]
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one, hl]
     rw [Iic_pred i hi, Finset.sum_insert (not_mem_Iic_pred i hi)]
     simp
@@ -1149,10 +1080,10 @@ theorem log_line_eq {G : RefGeo Y} (A : G.An) (t : ℝ) (τ : CMType H) (i : Fin
       -∑ k ∈ Finset.Iic i, Real.log ((stepLine A t (τ, k)).h z) := by
   have := sum_Iic_step (fun i' : Fin (D.p + D.q) => Real.log ((A.Re.line (some (τ, i')) t).h z))
     (fun k => Real.log ((stepLine A t (τ, k)).h z)) (fun k hk => by
-      simp only [stepLine_h, prevLine, dif_pos hk, Top.trivLine]
+      simp only [stepLine_h, prevLine, dite_eq_left hk, Top.trivLine]
       rw [Real.log_div one_ne_zero ((A.Re.line _ t).pos z hz).ne']
       simp) (fun k hk => by
-      simp only [stepLine_h, prevLine, dif_neg hk.ne']
+      simp only [stepLine_h, prevLine, dite_eq_right hk.ne']
       rw [Real.log_div ((A.Re.line _ t).pos z hz).ne' ((A.Re.line _ t).pos z hz).ne']) i
   rw [this, neg_neg]
 
@@ -1321,18 +1252,8 @@ theorem holoOn_comp {e e' : ℕ} {M M' : Type} [TopologicalSpace M] [Topological
     {A : ReciprocityTheory.AnForm.M.FinHolAtlas e M} {B : ReciprocityTheory.AnForm.M.FinHolAtlas e' M'} {h : M' → M}
     (hh : ReciprocityTheory.AnForm.M.HoloMap B A h) {V : Set M} {g : M → ℂ} (hg : A.HoloOn V g) :
     B.HoloOn (h ⁻¹' V) (g ∘ h) := by
-  intro j z hz
-  obtain ⟨k, hk⟩ := A.cover (h ((B.chart j).symm z))
-  have h1 := hh.2 j k z ⟨hz.1, hk⟩
-  have h2 := hg k ((A.chart k) (h ((B.chart j).symm z)))
-    ⟨(A.chart k).map_source hk, by
-      simpa [(A.chart k).left_inv hk] using hz.2⟩
-  have h3 := h2.comp_of_eq h1 rfl
-  refine h3.congr ?_
-  have hc : ContinuousAt (h ∘ (B.chart j).symm) z :=
-    hh.1.continuousAt.comp ((B.chart j).continuousAt_symm hz.1)
-  filter_upwards [hc.preimage_mem_nhds ((A.chart k).open_source.mem_nhds hk)] with w hw
-  exact congrArg g ((A.chart k).left_inv hw)
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.Ar.Giv.Restrict.holoOn_comp <;> assumption
 
 end Main
 

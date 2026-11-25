@@ -68,7 +68,6 @@ open Formalism.UG (IsUnifV qV IsUnramInv GU KU IsInertAt Hecke dosetInd IsCommen
 open Formalism.MainNotions.SchurIrreducible (IsSplit)
 open GlobalTheory.LGrp (IsUnitarisable IsIrrSmooth bcParam)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LatCoef
 
@@ -93,8 +92,7 @@ theorem map_eq_zero_of_local_vacuum {N : Type} [AddCommGroup N] [Module ℂ N] (
     | H s ih =>
       intro e he hfix
       by_cases hall : ∀ i ∈ s, P (x i) ∈ A
-      · set_option synthInstance.maxHeartbeats 100000 in
-          rw [map_sum]
+      · rw [map_sum]
         exact Finset.sum_eq_zero fun i hi => hL _ _ (he i) (hall i hi)
       · push Not at hall
         obtain ⟨j, hj, hjA⟩ := hall

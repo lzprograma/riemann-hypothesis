@@ -100,7 +100,7 @@ theorem gap_shift {ε : Fin n → Bool} {μ : Fin n → ℝ} {h : ℝ} (hg : Gap
   rw [le_abs] at h1 ⊢
   by_cases e1 : a = s <;> by_cases e2 : c = s
   · exact absurd (e1.trans e2.symm) hne
-  all_goals cases b <;> simp only [e1, e2, if_true, if_false, Bool.false_eq_true] at h1 ⊢ <;>
+  all_goals cases b <;> simp only [e1, e2, ite_true, ite_false, Bool.false_eq_true] at h1 ⊢ <;>
     rcases h1 with h1 | h1 <;> first | (left; linarith) | (right; linarith)
 
 theorem casG_shift (b : Bool) (μ : Fin n → ℝ) (s : Fin n) :

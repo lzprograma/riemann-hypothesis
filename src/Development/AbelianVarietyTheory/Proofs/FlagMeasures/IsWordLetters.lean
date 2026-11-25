@@ -64,8 +64,6 @@ noncomputable section
 
 namespace GlobalTheory.CritLevel
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem m_eq (R : Ranks) : R.m = 2 * R.rS + 2 := by
   obtain ⟨t, ht⟩ := R.m_even
   have := R.two_le_m
@@ -316,11 +314,11 @@ theorem cfg_lam (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau) :
   unfold lamSH lamS Sz.Cfg.lam
   simp only [Fin.val_cast]
   by_cases h : i.val < D.R.k - 1
-  · rw [dite_eq_left h, if_pos (show i.val + 1 < (cfg D u τ).k from (by omega : i.val + 1 < D.R.k)), cfg_v D u τ (by omega) (by omega)]
+  · rw [dite_eq_left h, ite_eq_left (show i.val + 1 < (cfg D u τ).k from (by omega : i.val + 1 < D.R.k)), cfg_v D u τ (by omega) (by omega)]
     unfold vOne
     rw [dite_eq_left ⟨by omega, by omega⟩]
     rfl
-  · rw [dite_eq_right h, dite_eq_left (by omega), if_neg (show ¬ i.val + 1 < (cfg D u τ).k from (by omega : ¬ i.val + 1 < D.R.k))]
+  · rw [dite_eq_right h, dite_eq_left (by omega), ite_eq_right (show ¬ i.val + 1 < (cfg D u τ).k from (by omega : ¬ i.val + 1 < D.R.k))]
     show _ = -bOne D τ (i.val + 1 + 1 - D.R.k)
     unfold bOne
     rw [dite_eq_left ⟨by omega, by omega⟩]
@@ -340,20 +338,20 @@ theorem cfg_u (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau)
     rfl
   unfold Sz.Cfg.u
   by_cases h1 : i.val + 1 = 1
-  · rw [if_pos h1, e, h1]; rfl
-  rw [if_neg h1]
+  · rw [ite_eq_left h1, e, h1]; rfl
+  rw [ite_eq_right h1]
   by_cases h2 : i.val + 1 = D.R.k
-  · rw [if_pos (show i.val + 1 = (cfg D u τ).k from h2), e, h2]
+  · rw [ite_eq_left (show i.val + 1 = (cfg D u τ).k from h2), e, h2]
     unfold Sz.Cfg.ulast
     by_cases ht : IsTop D τ
-    · rw [if_pos (by simpa [cfg] using ht)]
+    · rw [ite_eq_left (by simpa [cfg] using ht)]
       show _ = - -uOne D D.u₀ τ D.R.k
       unfold uOne uS
       rw [neg_neg, dite_eq_left ⟨by omega, le_rfl⟩, dite_eq_left ⟨by omega, le_rfl⟩, D.hcW_last u τ (by omega),
         D.hcW_last D.u₀ τ (by omega)]
-    · rw [if_neg (by simpa [cfg] using ht)]
+    · rw [ite_eq_right (by simpa [cfg] using ht)]
       exact hl ht
-  · rw [if_neg (show ¬ i.val + 1 = (cfg D u τ).k from h2), Nat.add_sub_cancel, cfg_v D u τ (by omega) (by omega)]
+  · rw [ite_eq_right (show ¬ i.val + 1 = (cfg D u τ).k from h2), Nat.add_sub_cancel, cfg_v D u τ (by omega) (by omega)]
     have h3 := D.s.u_letter u τ (i.val - 1) (by omega)
     simp only [D.hcW_v] at h3
     have e2 : (⟨i.val - 1 + 1, by omega⟩ : Fin D.R.k) = i := Fin.ext (by simp only; omega)
@@ -377,37 +375,50 @@ theorem vv_eq (hE : GlobalTheory.Published.DiscreteSeriesUpqExists) (hF : Global
   exact prod_congr rfl fun a _ => prod_congr rfl fun b hb =>
     abs_of_pos (sub_pos.2 (hpar.1 (mem_filter.1 hb).2))
 
-theorem num_bound (k m r : ℕ) (B P ae c ka : ℝ) (hm : m = 2 * r + 2) (h40 : 40 ≤ m) (hk : 5 ≤ k)
-    (hB : (k : ℝ) ^ 40 ≤ B) (hP : B ^ m ≤ P) (ha0 : 0 < ae) (ha : ae ≤ B ^ 4) (hc : 1 / 8 ≤ c) (hka0 : 0 < ka)
+theorem num_bound_pow (k m r e : ℕ) (B P ae c ka : ℝ) (hm : m = 2 * r + 2)
+    (he1 : e ≤ m) (he2 : 3 * r + (m - 1) + 2 ≤ 40 * (m - e)) (hk : 5 ≤ k)
+    (hB : (k : ℝ) ^ 40 ≤ B) (hP : B ^ m ≤ P) (ha0 : 0 < ae) (ha : ae ≤ B ^ e) (hc : 1 / 8 ≤ c) (hka0 : 0 < ka)
     (hka : ka ≤ 4) : (k : ℝ) ^ (3 * r) ≤ c * (ka ^ (m - 1))⁻¹ * P / ae := by
   have hkR : (5 : ℝ) ≤ k := by exact_mod_cast hk
   have hB0 : 0 < B := lt_of_lt_of_le (by positivity) hB
   have h1 : ka ^ (m - 1) ≤ (k : ℝ) ^ (m - 1) := pow_le_pow_left₀ hka0.le (by linarith) _
   have h2 : (8 : ℝ) ≤ (k : ℝ) ^ 2 := by nlinarith
-  have h3 : (k : ℝ) ^ (3 * r) * (k : ℝ) ^ (m - 1) * (k : ℝ) ^ 2 ≤ B ^ (m - 4) := by
+  have h3 : (k : ℝ) ^ (3 * r) * (k : ℝ) ^ (m - 1) * (k : ℝ) ^ 2 ≤ B ^ (m - e) := by
     rw [← pow_add, ← pow_add]
-    calc (k : ℝ) ^ (3 * r + (m - 1) + 2) ≤ (k : ℝ) ^ (40 * (m - 4)) := pow_le_pow_right₀ (by linarith) (by omega)
-      _ = ((k : ℝ) ^ 40) ^ (m - 4) := pow_mul _ _ _
-      _ ≤ B ^ (m - 4) := pow_le_pow_left₀ (by positivity) hB _
-  have h4 : B ^ (m - 4) * B ^ 4 = B ^ m := by rw [← pow_add]; congr 1; omega
+    calc (k : ℝ) ^ (3 * r + (m - 1) + 2) ≤ (k : ℝ) ^ (40 * (m - e)) := pow_le_pow_right₀ (by linarith) he2
+      _ = ((k : ℝ) ^ 40) ^ (m - e) := pow_mul _ _ _
+      _ ≤ B ^ (m - e) := pow_le_pow_left₀ (by positivity) hB _
+  have h4 : B ^ (m - e) * B ^ e = B ^ m := by rw [← pow_add]; congr 1; omega
   have h5 : (k : ℝ) ^ (3 * r) * ka ^ (m - 1) * 8 * ae ≤ P :=
     calc (k : ℝ) ^ (3 * r) * ka ^ (m - 1) * 8 * ae
-        ≤ (k : ℝ) ^ (3 * r) * (k : ℝ) ^ (m - 1) * (k : ℝ) ^ 2 * B ^ 4 := by gcongr
-      _ ≤ B ^ (m - 4) * B ^ 4 := by gcongr
+        ≤ (k : ℝ) ^ (3 * r) * (k : ℝ) ^ (m - 1) * (k : ℝ) ^ 2 * B ^ e := by gcongr
+      _ ≤ B ^ (m - e) * B ^ e := by gcongr
       _ ≤ P := h4 ▸ hP
-  have hP0 : 0 ≤ P := le_trans (by positivity) hP
   rw [le_div_iff₀ ha0]
   calc (k : ℝ) ^ (3 * r) * ae = 1 / 8 * (ka ^ (m - 1))⁻¹ * ((k : ℝ) ^ (3 * r) * ka ^ (m - 1) * 8 * ae) := by
         field_simp
     _ ≤ c * (ka ^ (m - 1))⁻¹ * P := by
         gcongr
 
+theorem num_bound (k m r : ℕ) (B P ae c ka : ℝ) (hm : m = 2 * r + 2) (h40 : 40 ≤ m) (hk : 5 ≤ k)
+    (hB : (k : ℝ) ^ 40 ≤ B) (hP : B ^ m ≤ P) (ha0 : 0 < ae) (ha : ae ≤ B ^ 4) (hc : 1 / 8 ≤ c) (hka0 : 0 < ka)
+    (hka : ka ≤ 4) : (k : ℝ) ^ (3 * r) ≤ c * (ka ^ (m - 1))⁻¹ * P / ae :=
+  num_bound_pow k m r 4 B P ae c ka hm (by omega) (by omega) hk hB hP ha0 ha hc hka0 hka
 
-
-theorem tcrit_low (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb Cu cT CT C0 : ℝ) (hCl : 40 ≤ Cl)
-    (hVV : ∀ τ, VV D τ = vand (lamSH D.R (D.hc τ))) (hb' : Real.sqrt large₂.sc.b ≤ large₂.sc.b') (hx : large₂.sc.x ≤ D.R.k) :
+theorem tcrit_low_core (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb Cu cT CT C0 : ℝ) (e : ℕ)
+    (he1 : 1 ≤ e) (hCl : 40 ≤ Cl)
+    (hme : Cnt.Hyp0 D large₂ C' Cl Cg cb Cu cT CT C0 →
+      e ≤ D.R.m ∧ 3 * D.R.rS + (D.R.m - 1) + 2 ≤ 40 * (D.R.m - e))
+    (hVV : ∀ τ, VV D τ = vand (lamSH D.R (D.hc τ)))
+    (huTop : Cnt.Hyp0 D large₂ C' Cl Cg cb Cu cT CT C0 →
+      ∀ (u : D.what₂.Word) (τ : D.what₂.Tau), IsTop D τ →
+      (D.R.k : ℝ) ^ 40 ≤ bOne D τ 1 → 1 ≤ large₂.sc.b →
+      0 < bTop D τ → bTop D τ ≤ bOne D τ 1 →
+      uOne D u τ 1 * bTop D τ ≤ bOne D τ 1 ^ e) :
     UnitaryVolumeMass.stTcritLow D large₂ C' Cl Cg cb Cu cT CT C0 := by
-  rintro ⟨hH, hD, -⟩ u τ
+  intro hHyp u τ
+  have hH := hHyp.1
+  have hD := hHyp.2.1
   obtain ⟨-, -, -, -, -, -, hmL, hbD, -, -, -, hg0, -, hg1, -, hbj, -, -, hv, hDel, hgap, -, -, hClm, -⟩ := hH
   obtain ⟨hvw, -, ha, ha', hl, htop, -⟩ := hD
   have hk := D.R.m_add_three_le_k
@@ -493,57 +504,29 @@ theorem tcrit_low (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb Cu cT CT C0 :
   rw [← cfg_u D u τ (hl u τ), ← tcrit_eq D (by linarith)] at hlow
   have hg0' : 0 < gg D := by linarith
   have hvone := (hvw τ 1 le_rfl (by omega)).1
-  have hae : 0 < c.aeff ∧ c.aeff ≤ B ^ 4 ∧ 0 ≤ c.vthp ∧ c.vthp ≤ 1 := by
+  have hBe : B ≤ B ^ e := le_self_pow₀ hB1 (by omega)
+  have hae : 0 < c.aeff ∧ c.aeff ≤ B ^ e ∧ 0 ≤ c.vthp ∧ c.vthp ≤ 1 := by
     unfold Sz.Cfg.aeff Sz.Cfg.vthp
     by_cases ht : IsTop D τ
-    · rw [if_pos (htp.2 ht), if_pos (htp.2 ht)]
+    · rw [ite_eq_left (htp.2 ht), ite_eq_left (htp.2 ht)]
       obtain ⟨t1, t2⟩ := htop τ ht
-      obtain ⟨t, ht⟩ := ht
       have ha0 : 0 < uOne D u τ 1 := by linarith [ha u τ]
       have hbp : 0 < bTop D τ := by linarith
-      have hBt : large₂.sc.b' ≤ B := by
-        have h1 := large₂.top_b τ t (by omega) ht
-        have h2 := large₂.bT_ge t
-        have h3 : B = (((D.hc τ).b ⟨0, by omega⟩ : ℚ) : ℝ) := by
-          rw [hBdef]; unfold bOne; rw [dite_eq_left ⟨le_rfl, by omega⟩]
-        linarith
-      have hbB : large₂.sc.b ≤ B ^ 2 := (Real.sqrt_le_left (by linarith)).1 (hb'.trans hBt)
-      have hu1 : uOne D u τ 1 ≤ B ^ 3 := by
-        have h1 := (large₂.top_u τ t (by omega) ht).1
-        have h2 := (large₂.aT_win t).2
-        have h3 : uOne D u τ 1 = (((D.hc τ).u ⟨0, by omega⟩ : ℚ) : ℝ) := by
-          unfold uOne uS
-          rw [dite_eq_left ⟨le_rfl, by omega⟩, ← D.hcW_first u τ (by omega)]
-        have hx1 := large₂.sc.one_lt_alt
-        have h4 : large₂.sc.a ≤ D.R.k * B ^ 2 := by
-          unfold Scale.a
-          gcongr
-        have h5 : 0 ≤ large₂.sc.a := by unfold Scale.a; positivity
-        have h6 : large₂.sc.a / ((D.R.k : ℝ) * large₂.sc.x ^ (Scale.A / 2)) ≤ large₂.sc.a :=
-          div_le_self h5 (one_le_mul_of_one_le_of_one_le (by linarith)
-            (Real.one_le_rpow hx1.le (by unfold Scale.A; norm_num)))
-        have h7 : (D.R.k : ℝ) ≤ D.R.k * B ^ 2 := le_mul_of_one_le_right (by linarith) (one_le_pow₀ hB1)
-        have h8 : 3 * (D.R.k : ℝ) * B ^ 2 ≤ B * B ^ 2 := by gcongr
-        have h9 : B * B ^ 2 = B ^ 3 := by ring
-        linarith
       refine ⟨div_pos (mul_pos ha0 hbp) hkD, ?_, ?_, ?_⟩
-      · show uOne D u τ 1 * bTop D τ / ((D.R.k : ℝ) * D.s.Del) ≤ B ^ 4
-        refine (div_le_self (by positivity) (by nlinarith)).trans ?_
-        calc uOne D u τ 1 * bTop D τ ≤ B ^ 3 * B := by gcongr; linarith
-          _ = B ^ 4 := by ring
+      · show uOne D u τ 1 * bTop D τ / ((D.R.k : ℝ) * D.s.Del) ≤ B ^ e
+        exact (div_le_self (by positivity) (by nlinarith)).trans (huTop hHyp u τ ht hB hb hbp (by linarith))
       · show 0 ≤ 4 * (D.R.k : ℝ) * D.s.Del / bTop D τ
         positivity
       · show 4 * (D.R.k : ℝ) * D.s.Del / bTop D τ ≤ 1
         rw [div_le_one hbp]
         linarith
-    · rw [if_neg (fun h => ht (htp.1 h)), if_neg (fun h => ht (htp.1 h)), hv1]
+    · rw [ite_eq_right (fun h => ht (htp.1 h)), ite_eq_right (fun h => ht (htp.1 h)), hv1]
       have h1 := ha u τ
       have h2 := ha' u τ ht
-      have h3 : B ≤ B ^ 4 := le_self_pow₀ hB1 (by norm_num)
       refine ⟨?_, ?_, le_rfl, zero_le_one⟩
       · show 0 < uOne D u τ 1 - vOne D τ 1
         linarith
-      · show uOne D u τ 1 - vOne D τ 1 ≤ B ^ 4
+      · show uOne D u τ 1 - vOne D τ 1 ≤ B ^ e
         linarith
   have hc1 : 1 / 8 ≤ Sz.cOne c large₂.sc.b := by
     unfold Sz.cOne
@@ -558,12 +541,57 @@ theorem tcrit_low (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb Cu cT CT C0 :
     exact this
   have hka0 : 0 < D.host.ka := div_pos hpi (by linarith)
   have hka : D.host.ka ≤ 4 := (div_le_self hpi.le hv).trans hpi4
-  have hnum := num_bound D.R.k D.R.m D.R.rS B c.prodb c.aeff _ _ hm (by exact_mod_cast hmR) (by omega) hB hP
+  have hme' := hme hHyp
+  have hnum := num_bound_pow D.R.k D.R.m D.R.rS e B c.prodb c.aeff _ _ hm hme'.1 hme'.2 (by omega) hB hP
     hae.1 hae.2.1 hc1 hka0 hka
   rw [Real.rpow_neg hg0'.le, Real.rpow_natCast, le_inv_mul_iff₀ (by positivity)]
   refine le_trans ?_ hlow
   calc gg D ^ D.R.m * (D.R.k : ℝ) ^ (3 * D.R.rS)
       ≤ gg D ^ D.R.m * (Sz.cOne c large₂.sc.b * (D.host.ka ^ (D.R.m - 1))⁻¹ * c.prodb / c.aeff) := by gcongr
     _ = _ := by ring
+
+theorem tcrit_low (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb Cu cT CT C0 : ℝ) (hCl : 40 ≤ Cl)
+    (hVV : ∀ τ, VV D τ = vand (lamSH D.R (D.hc τ))) (hb' : Real.sqrt large₂.sc.b ≤ large₂.sc.b') (hx : large₂.sc.x ≤ D.R.k) :
+    UnitaryVolumeMass.stTcritLow D large₂ C' Cl Cg cb Cu cT CT C0 := by
+  refine tcrit_low_core D large₂ C' Cl Cg cb Cu cT CT C0 4 (by omega) hCl (fun ⟨hH, _, _⟩ => ?_) hVV
+    fun _ u τ ht hB hb hbp hbtop => ?_
+  · obtain ⟨-, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, hClm, -⟩ := hH
+    have hm := m_eq D.R
+    have hmR : (40 : ℝ) ≤ D.R.m := hCl.trans hClm
+    have hm40 : 40 ≤ D.R.m := by exact_mod_cast hmR
+    omega
+  · set B := bOne D τ 1 with hBdef
+    have hk := D.R.m_add_three_le_k
+    have hm2 := D.R.two_le_m
+    have hkR : (5 : ℝ) ≤ D.R.k := by exact_mod_cast (by omega : 5 ≤ D.R.k)
+    have hB1 : 1 ≤ B := le_trans (by norm_num) ((pow_le_pow_left₀ (by norm_num) hkR 40).trans hB)
+    have hk2 : 3 * (D.R.k : ℝ) ≤ B :=
+      le_trans (le_trans (by nlinarith) (pow_le_pow_right₀ (by linarith) (by norm_num : 2 ≤ 40))) hB
+    obtain ⟨t, ht⟩ := ht
+    have hBt : large₂.sc.b' ≤ B := by
+      have h1 := large₂.top_b τ t (by omega) ht
+      have h2 := large₂.bT_ge t
+      have h3 : B = (((D.hc τ).b ⟨0, by omega⟩ : ℚ) : ℝ) := by
+        rw [hBdef]; unfold bOne; rw [dite_eq_left ⟨le_rfl, by omega⟩]
+      linarith
+    have hbB : large₂.sc.b ≤ B ^ 2 := (Real.sqrt_le_left (by linarith)).1 (hb'.trans hBt)
+    have hu1 : uOne D u τ 1 ≤ B ^ 3 := by
+      have h1 := (large₂.top_u τ t (by omega) ht).1
+      have h2 := (large₂.aT_win t).2
+      have h3 : uOne D u τ 1 = (((D.hc τ).u ⟨0, by omega⟩ : ℚ) : ℝ) := by
+        unfold uOne uS
+        rw [dite_eq_left ⟨le_rfl, by omega⟩, ← D.hcW_first u τ (by omega)]
+      have hx1 := large₂.sc.one_lt_alt
+      have h4 : large₂.sc.a ≤ D.R.k * B ^ 2 := by unfold Scale.a; gcongr
+      have h5 : 0 ≤ large₂.sc.a := by unfold Scale.a; positivity
+      have h6 : large₂.sc.a / ((D.R.k : ℝ) * large₂.sc.x ^ (Scale.A / 2)) ≤ large₂.sc.a :=
+        div_le_self h5 (one_le_mul_of_one_le_of_one_le (by linarith)
+          (Real.one_le_rpow hx1.le (by unfold Scale.A; norm_num)))
+      have h7 : (D.R.k : ℝ) ≤ D.R.k * B ^ 2 := le_mul_of_one_le_right (by linarith) (one_le_pow₀ hB1)
+      have h8 : 3 * (D.R.k : ℝ) * B ^ 2 ≤ B * B ^ 2 := by gcongr
+      have h9 : B * B ^ 2 = B ^ 3 := by ring
+      linarith
+    calc uOne D u τ 1 * bTop D τ ≤ B ^ 3 * B := by gcongr
+      _ = B ^ 4 := by ring
 
 end GlobalTheory.CritLevel

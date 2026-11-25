@@ -40,7 +40,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DatP
 
 @[expose] public section
 
@@ -48,9 +47,7 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.RawLift
-open GlobalTheory.BadPlace
 open Classical
 
 namespace GlobalTheory.IdemSumBranch
@@ -78,19 +75,5 @@ theorem conjPrime_ne {ea : AE D} {S : Finset (Pl D.host.E)} (h : IsIdemSum ea S)
   have h2 := cpt_sg_eq_zero h1
   rw [sg_sg, cpt_idemSum h hQ] at h2
   exact one_ne_zero h2
-
-theorem branch : ∀ (D : D7) (P : Pl D.host.E) (e f ea : AE D) (S : Finset (Pl D.host.E)),
-    IsPrimeIdem P e f → IsIdemSum ea S → P ∈ S → Formalism.L2.NTheta.IsIdemAt e P ∧ f = e + cA D e ∧ cA D f = f ∧
-      infPart D f = 0 ∧ ∀ PP ∈ S, GlobalTheory.IdemSupport.cP PP ≠ P := by
-  intro D P e f ea S h1 hS hP
-  obtain ⟨hd, ε, hε, hf⟩ := of_isPrimeIdem (comp_toAd D) h1
-  have hinf : infPart D f = 0 := hf ▸ (place_comp (comp_toAd D) hε).1
-  rcases h1 with ⟨h1, h2⟩ | ⟨rfl, -⟩
-  · refine ⟨h1, h2, ?_, hinf, fun Q hQ => conjPrime_ne hS hP hQ⟩
-    rw [h2, RingHom.map_add (f := _), Formalism.L2.Theta.cA_cA, add_comm]
-  · exfalso
-    have h2 := (place_comp (comp_toAd D) hε).2.1 (cP P) (under_cP P)
-    rw [← hf, hd.2.2 _ (conjPrime_ne hS hP hP)] at h2
-    exact zero_ne_one h2
 
 end GlobalTheory.IdemSumBranch

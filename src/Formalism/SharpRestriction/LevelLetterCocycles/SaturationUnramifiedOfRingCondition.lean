@@ -1,45 +1,7 @@
 module
 
+import Formalism.SharpRestriction.LevelLetterCocycles.JumpsLetOfWin
 public import Formalism.SharpRestriction.LevelLetterCocycles.FiltrationSaturationKiller
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -199,16 +161,11 @@ theorem smul_cancel (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) {g : LetA O
 
 theorem γD_smulA' (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (g : W.Gam) (a : LetA O n)
     (x : W.DD T) : W.γD T g (a • x) = W.γA g a • W.γD T g x := by
-  rw [← algebraMap_smul W.EE a x, W.γD_smul, W.γE_ext, algebraMap_smul]
-  rfl
+  exact Formalism.MainNotions.WachCoordinates.Br.γD_smulA W T g a x
 
 theorem smul_mem_NΔ (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) {a : LetA O n} (ha : a ∈ W.AΔ)
     {b : W.DD T} (hb : b ∈ W.NΔ T) : a • b ∈ W.NΔ T := by
-  have ha' : ∀ δ ∈ W.DelF, W.γA δ a = a := ha
-  have hb' : b ∈ W.N T ∧ ∀ δ ∈ W.DelF, W.γD T δ b = b := hb
-  show a • b ∈ W.N T ∧ ∀ δ ∈ W.DelF, W.γD T δ (a • b) = a • b
-  refine ⟨(W.N T).smul_mem a hb'.1, fun δ hδ => ?_⟩
-  rw [γD_smulA' W T δ a b, ha' δ hδ, hb'.2 δ hδ]
+  apply _root_.Formalism.MainNotions.UnusedSlot80.PhiPowers.smul_mem_NΔ <;> assumption
 
 theorem mem_AΔ_of_p_pow (W : LocWach PD LL O v n) (hO : ∀ c : O, ((PD.p : ℕ) : O) * c = 0 → c = 0)
     (k : ℕ) {a : LetA O n} (ha : ((PD.p : ℕ) : LetA O n) ^ k * a ∈ W.AΔ) : a ∈ W.AΔ := by

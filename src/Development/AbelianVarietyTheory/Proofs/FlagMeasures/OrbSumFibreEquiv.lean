@@ -284,8 +284,8 @@ theorem cyclic_of_genus (h : V →ₗ⋆[K] V →ₗ[K] K) (hK : IsCMUnram K) (h
       refine kill _ ((mem_span_iff hT hsp _).2 fun ρ => ?_) _ (hxs χ)
       rw [map_mul, map_mul, hes, hes]
       by_cases h3 : ρ = χ
-      · rw [if_neg (h3 ▸ Finset.ne_of_mem_erase hχ), zero_mul, zero_mul]
-      · rw [if_neg h3, mul_zero]
+      · rw [ite_eq_right (h3 ▸ Finset.ne_of_mem_erase hχ), zero_mul, zero_mul]
+      · rw [ite_eq_right h3, mul_zero]
     have h3 := (Submodule.add_mem_iff_left _ h2).1 h1
     rw [← mul_smul, ← mul_smul] at h3
     have h4 := hann ψ _ h3
@@ -335,7 +335,7 @@ theorem card_classes (hK : IsCMUnram K) {T : ℕ} (hT : T.Prime)
       · rw [map_mul, hu]
         by_cases h1 : χ = ψ
         · rw [h1, hψ, mul_zero]
-        · rw [if_neg h1, zero_mul]
+        · rw [ite_eq_right h1, zero_mul]
     obtain ⟨u, hu⟩ := exists_forall_hom_eq (R := 𝓞 K) (T := T) (fun χ => (χ c)⁻¹)
     have : 1 - u * c ∈ Ideal.span {(T : 𝓞 K)} := (mem_span_iff hT hsp _).2 fun χ => by
       rw [map_sub, map_mul, hu, inv_mul_cancel₀ (h0 χ), map_one, sub_self]

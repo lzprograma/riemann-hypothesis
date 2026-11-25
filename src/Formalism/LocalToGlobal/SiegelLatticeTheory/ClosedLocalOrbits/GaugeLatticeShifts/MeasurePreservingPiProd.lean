@@ -26,8 +26,8 @@ variable {ι : Type} [Fintype ι] {α β : ι → Type} [∀ i, MeasurableSpace 
 def piProdEquiv : ((i : ι) → α i × β i) ≃ᵐ ((i : ι) → α i) × ((i : ι) → β i) where
   toFun x := (fun i => (x i).1, fun i => (x i).2)
   invFun p i := (p.1 i, p.2 i)
-  left_inv x := rfl
-  right_inv p := rfl
+  left_inv _ := rfl
+  right_inv _ := rfl
   measurable_toFun := (Measurable.of_eval fun i => measurable_fst.comp (measurable_pi_apply i)).prodMk
     (Measurable.of_eval fun i => measurable_snd.comp (measurable_pi_apply i))
   measurable_invFun := Measurable.of_eval fun i =>

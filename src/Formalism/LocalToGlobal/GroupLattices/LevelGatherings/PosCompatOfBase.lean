@@ -12,8 +12,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.G
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem emb_mul {R : Ranks} (H : Host R) (g g' : R.GG) (x : H.E) : H.emb (g * g') x = H.emb g (H.sigmaOf g' x) := by
   show H.φ₀ ((H.sigmaOf (g * g')) x) = H.φ₀ ((H.sigmaOf g) ((H.sigmaOf g') x))
   simp only [Formalism.BasicNotions.Host.sigmaOf, map_mul, AlgEquiv.mul_apply]

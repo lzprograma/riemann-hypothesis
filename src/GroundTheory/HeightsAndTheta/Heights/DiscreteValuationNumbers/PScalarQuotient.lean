@@ -61,7 +61,7 @@ theorem classNum_monomial {σ : Type*} (cls : σ → K → ℤ) (μ : σ →₀ 
   by_cases hc : c = 0
   · subst hc
     simp
-  · rw [support_monomial, if_neg hc, Finset.sum_singleton, coeff_monomial, if_pos rfl]
+  · rw [support_monomial, ite_eq_right hc, Finset.sum_singleton, coeff_monomial, ite_eq_left rfl]
 
 
 omit [DecidableEq K] in

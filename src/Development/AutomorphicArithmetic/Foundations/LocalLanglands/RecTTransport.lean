@@ -3,42 +3,6 @@ module
 public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CuspLaws
 public import Mathlib.Data.Multiset.Functor
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -46,8 +10,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain ValuativeRel Matrix Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.WeilDeligne GlobalTheory.LocGL GlobalTheory.LocLanglands GlobalTheory.GLq
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace UpperTheory.Zero.LLC
 
@@ -169,7 +131,7 @@ def IsoUniq : Prop :=
 
 def TypeEx : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
+    (w : HeightOneSpectrum (𝓞 E)) (_ : IsPlaceOver A w) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
     ∀ n : ℕ, 0 < n → ∀ σ : IrrRep (GL (Fin n) (w.adicCompletion E)),
       ((cls σ).IsCusp → DZ (cls σ) → ∃ τ : FDRep ℂ (Gn g n), IsCusp τ.character ∧
         GlobalTheory.SerSys.TameGen.Inflates (σ.ρ.comp (GeneralLinearGroup.map i.toRingHom)) τ) ∧
@@ -179,7 +141,7 @@ def TypeEx : Prop :=
 
 def DetByType : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
+    (w : HeightOneSpectrum (𝓞 E)) (_ : IsPlaceOver A w) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
     ∀ n : ℕ, 0 < n → ∀ (σ σ' : IrrRep (GL (Fin n) (w.adicCompletion E))) (τ τ' : FDRep ℂ (Gn g n)) (ω : (w.adicCompletion E)ˣ →* ℂˣ),
       IsCusp τ.character → τ'.character = τ.character →
       GlobalTheory.SerSys.TameGen.Inflates (σ.ρ.comp (GeneralLinearGroup.map i.toRingHom)) τ →
@@ -204,7 +166,7 @@ def ClBasic : Prop :=
 
 def Expo : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a), ∃ e : IrrGL (k := w.adicCompletion E) → ℝ, ∀ x : IrrGL (k := w.adicCompletion E), 0 < x.1 →
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (_ : IsLocalArtin h a), ∃ e : IrrGL (k := w.adicCompletion E) → ℝ, ∀ x : IrrGL (k := w.adicCompletion E), 0 < x.1 →
     (∀ s : ℝ, e (x.nu s) = e x + s) ∧ ∀ ω, HasCentralChar x.rep ω → ∀ (J : WD h), J.lpDim = x.1 → (∀ σ, ‖(J.eig σ).prod‖ = 1) →
       ∀ σ, ‖((J.lpTw (e x)).eig σ).prod‖ = ‖(ω (a σ) : ℂ)‖
 
@@ -227,7 +189,7 @@ def ResEx : Prop :=
 
 def ResBase : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (_ : IsLocalArtin h a) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
     ∀ n : ℕ, 0 < n → ∀ (D : Ext h g n) (R : Ine (F := E) A →* D.Kˣ), D.Res R → ∀ t : Ine (F := E) A,
       ∃ u : ℤ_[g]ˣ, (a (ineIncl h t) : w.adicCompletion E) = i ((u : ℤ_[g]) : ℚ_[g]) ∧
         algebraMap (ZMod g) D.K (PadicInt.toZMod (u : ℤ_[g])) = ∏ j ∈ Finset.range n, ((R t ^ g ^ j : D.Kˣ) : D.K)
@@ -270,7 +232,7 @@ def WDBasic : Prop :=
 
 def TameArt : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (χ : (w.adicCompletion E)ˣ →* ℂˣ), IsSmoothChar χ →
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (_ : IsLocalArtin h a) (χ : (w.adicCompletion E)ˣ →* ℂˣ), IsSmoothChar χ →
     (TameChar χ ↔ ∀ σ : Weil h, Formalism.MainNotions.BlochKatoReduction.IsWild A (σ : G E Ω) → χ (a σ) = 1)
 
 def TameUniq : Prop :=
@@ -289,11 +251,11 @@ def JunkEx : Prop :=
       ∀ (V : WD h) ξ hξ, IsTameWD V → J ≠ V.lpTwist ξ hξ)
 
 def ParEx : Prop := ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i → ∀ y : IrrGL (k := w.adicCompletion E), y.IsCusp → DZ y → ∃ V : WD h, Par a y V
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (_ : IsLocalArtin h a) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i → ∀ y : IrrGL (k := w.adicCompletion E), y.IsCusp → DZ y → ∃ V : WD h, Par a y V
 
 def ParUniq : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (_ : IsLocalArtin h a) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
     ∀ y : IrrGL (k := w.adicCompletion E), y.IsCusp → DZ y → ∀ V : WD h, Par a y V →
       (∀ V', Par a y V' → V' = V) ∧ ∀ y' : IrrGL (k := w.adicCompletion E), y'.IsCusp → DZ y' → Par a y' V → y' = y
 
@@ -305,7 +267,7 @@ def ParTw : Prop :=
 
 def ParDual : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (_ : IsLocalArtin h a) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
     ∀ y y' : IrrGL (k := w.adicCompletion E), y.IsCusp → DZ y → DualCl y y' → ∀ V : WD h, Par a y V → Par a y' V.lpDual
 
 def ParOne : Prop :=

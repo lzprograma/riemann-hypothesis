@@ -90,9 +90,9 @@ theorem paTail (hP : Ext.PackingCount) (hA : Ext.GaussianTailBound) (Y : GT ι) 
     funext γ
     by_cases h0 : (γ : EuclideanSpace ℂ ι) = 0
     · have : γ ∉ s := fun h => h h0
-      rw [if_pos h0, Set.indicator_of_notMem this]
+      rw [ite_eq_left h0, Set.indicator_of_notMem this]
     · have : γ ∈ s := h0
-      rw [if_neg h0, Set.indicator_of_mem this]
+      rw [ite_eq_right h0, Set.indicator_of_mem this]
   have hqpi : (0 : ℝ) ≤ q * Real.pi := by positivity
   have hh : ∀ i : s, Real.exp (-(Real.sqrt (q * Real.pi) * ‖((i : lat Y.b) : EuclideanSpace ℂ ι)‖) ^ 2 / 16) =
       f i := by

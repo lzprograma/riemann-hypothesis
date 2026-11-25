@@ -35,59 +35,9 @@ public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentation
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PPnCls
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PPnFacts
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PRingL
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.Linter.Style
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.DivLHolds, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.InjLHolds, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.KunLHolds, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.LowLHolds, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PAffVan, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PBasisOne, Development.EtaleCohomology.EtaleTrace.LCompIntPf, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PComps, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PDetectL, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PDualL, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PFinFib, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PGysTL, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PHypEmb, Development.EtaleCohomology.EtaleTrace.LKunnethCut, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PKunBij, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PLimOnto, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.POffEx, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PPairs, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PPtInt, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PPtVanT, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PQEasy, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PQOnto, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PQProj, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PSlice, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PTopPart, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ProjTrans, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PTowerL, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PTrComp, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.PTwBij, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.SwapSymmetry, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtMain
@@ -295,7 +245,7 @@ theorem UpperTheory.Gal.KunnethLefschetz.kunL_holds :
       obtain rfl : b = n - a := by omega
       have ha : a ≠ 2 * (d : ℤ) := by omega
       simp only [LinearMap.coe_comp, LinearEquiv.coe_coe, Function.comp_apply, he,
-        DirectSum.toModule_lof, dif_neg ha, LinearMap.zero_apply]
+        DirectSum.toModule_lof, dite_eq_right ha, LinearMap.zero_apply]
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -487,8 +437,7 @@ theorem basisOne_holds : BasisOne := by
   · haveI := hlam h0
     exact ⟨0, Module.Basis.empty M, fun t => t.elim0⟩
   obtain ⟨x, hx⟩ : ∃ x, lam x ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact h0 (LinearMap.ext hc)
   set v : M := (lam x)⁻¹ • x with hvdef
   have hv : lam v = 1 := by
@@ -780,8 +729,7 @@ theorem UpperTheory.Gal.KunnethLefschetz.dualL_holds :
       haveI : Subsingleton (V l X 0) := ⟨fun x y => by rw [hz x, hz y]⟩
       simp [Module.finrank_zero_of_subsingleton]
   obtain ⟨x0, hx0⟩ : ∃ x, lam x ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hlam (LinearMap.ext hc)
   have surj : Function.Surjective lam := fun r => ⟨(r / lam x0) • x0, by
     rw [map_smul, smul_eq_mul, div_mul_cancel₀ _ hx0]⟩
@@ -1519,7 +1467,7 @@ theorem slice_holds : Slice := by
     simpa [map_natCast] using h2
   have hunit : IsUnit ((l : Γ(S k, ⊤))) := by
     simpa [map_natCast] using hunitX.map (y.1.appTop).hom
-  simp only [GysQ.diag, GysQ.pt, GysQ.cls, dif_pos hdiag, dif_pos hy]
+  simp only [GysQ.diag, GysQ.pt, GysQ.cls, dite_eq_left hdiag, dite_eq_left hy]
   rw [G.nat hy hdiag (slice y) y.1
     (by rw [slice, ← Category.assoc, pullback.lift_fst, Category.id_comp]) hpb]
   congr 1
@@ -1746,16 +1694,14 @@ private theorem pb_id (l : ℕ) [Fact l.Prime] (X : Scheme.{0}) (n : ℤ) : pb l
   unfold pullHQ
   rw [pullHl_id, LinearMap.baseChange_id]
 
-private theorem lift_square {A B C : Scheme.{0}} (i : A ⟶ C) [IsOpenImmersion i] (y : B ⟶ C) (y' : B ⟶ A)
-    (h : y' ≫ i = y) : IsPullback y' (𝟙 B) i y := (IsPullback.of_horiz_isIso_mono ⟨by simp [h]⟩ : IsPullback (𝟙 B) y' y i).flip
-
 private theorem pt_restrict {k : Type} [Field k] {l : ℕ} [Fact l.Prime] (G : GysQ k l) (d : ℕ) {X : Scheme.{0}} {p : X ⟶ S k}
     (U : X.Opens) (y : Pt p) (y' : Pt (U.ι ≫ p)) (hy : y'.1 ≫ U.ι = y.1)
     (h : IsPair d 0 p y.1) (h' : IsPair d 0 (U.ι ≫ p) y'.1) :
     pb l U.ι _ (G.pt d y) = G.pt d y' := by
   show pb l U.ι _ (G.cls d 0 p y.1) = G.cls d 0 (U.ι ≫ p) y'.1
   unfold GysQ.cls
-  rw [dite_eq_left h, dite_eq_left h', G.nat h' h U.ι (𝟙 _) rfl (lift_square U.ι y.1 y'.1 hy), pb_id]
+  rw [dite_eq_left h, dite_eq_left h', G.nat h' h U.ι (𝟙 _) rfl
+    (IsPullback.of_horiz_isIso_mono ⟨by simp [hy]⟩).flip, pb_id]
   rfl
 
 theorem trComp_holds : TrComp := by
@@ -1892,14 +1838,6 @@ noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.EtaleTrace UpperTheory.Gal.KunnethLefschetz
 open scoped TensorProduct DirectSum
 
-private theorem pb_self (l : ℕ) [Fact l.Prime] {X : Scheme.{0}} (n : ℤ) (x : V l X n) : pb l (𝟙 X) n x = x := by
-  simp [pb, pullHQ, pullHl_id, LinearMap.baseChange_id]
-
-private theorem pb_comp_apply (l : ℕ) [Fact l.Prime] {Z Y X : Scheme.{0}} (f : Z ⟶ Y) (g : Y ⟶ X) (n : ℤ) (x : V l X n) :
-    pb l (f ≫ g) n x = pb l f n (pb l g n x) := by
-  rw [LateralTheory.EtaleTrace.pb_comp]
-  rfl
-
 theorem UpperTheory.Gal.KunnethLefschetz.swap_holds :
     UpperTheory.Gal.KunnethLefschetz.Swap := by
   intro hP l _ k _ _ hl d X p hSP hR G n w h h' x
@@ -1915,9 +1853,9 @@ theorem UpperTheory.Gal.KunnethLefschetz.swap_holds :
       cupV l (pullback p p) h (pb l f n x) (G.diag d p) = G.g hpair h x := by
     intro f hf
     have hd : G.diag d p = G.g hpair (show (0 : ℤ) + 2 * d = 2 * d by simp) (oneV l X) := by
-      simp only [GysQ.diag, GysQ.cls, dif_pos hpair]
+      simp only [GysQ.diag, GysQ.cls, dite_eq_left hpair]
     rw [hd, ← G.proj hpair (show n + 0 = n by simp) h (show (0 : ℤ) + 2 * d = 2 * d by simp) h,
-      ← pb_comp_apply, hf, pb_self, hu]
+      ← UpperTheory.Gal.KunnethLefschetz.pbc, hf, UpperTheory.Gal.KunnethLefschetz.pb_id', hu]
   rw [key _ (by simp), hR.comm (pullback p p) (2 * d) n w h' h,
     key _ (by simp), Int.negOnePow_even _ ⟨d * n, by ring⟩, one_smul]
 end -- clump:auto

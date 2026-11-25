@@ -5,50 +5,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoor
 public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateSubscheme
 public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.AffineSpaceSmooth
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
 public import Mathlib.RingTheory.Flat.TorsionFree
 
 @[expose] public section
@@ -94,7 +51,6 @@ theorem smooth_ι_comp_subschemeι_comp_of_eq_coordIdeal (Z : X.IdealSheafData) 
   have hsm : Smooth (affineSpaceFinToSpec k (m - S.card)) := affineSpaceIsSmooth ..
   have het : Etale (c.restrictToSubscheme hU Z S h).map :=
     (c.restrictToSubscheme hU Z S h).isEtale
-  have hsm2 : Smooth (c.restrictToSubscheme hU Z S h).map := inferInstance
   have hc : (c.restrictToSubscheme hU Z S h).map ≫ affineSpaceFinToSpec k (m - S.card)
       = (Z.subschemeι ⁻¹ᵁ U).ι ≫ (Z.subschemeι ≫ p) :=
     (c.restrictToSubscheme hU Z S h).comp_struct
@@ -172,49 +128,6 @@ theorem coord_mem_nonZeroDivisors {U : X.Opens} (hU : IsAffineOpen U) (c : Etale
   rw [halg] at key
   rwa [c.coordRingHom_X j] at key
 
-private theorem mem_span_X_of_X_mul_mem {σ : Type u} {k : Type u} [Field k]
-    {j s : σ} (hjs : j ≠ s) (r : MvPolynomial σ k)
-    (hr : MvPolynomial.X s * r ∈ Ideal.span {(MvPolynomial.X j : MvPolynomial σ k)}) :
-    r ∈ Ideal.span {(MvPolynomial.X j : MvPolynomial σ k)} := by
-  classical
-  obtain ⟨ψ, hψC, hψXj, hψXi⟩ : ∃ ψ : MvPolynomial σ k →+* MvPolynomial σ k,
-      (∀ a : k, ψ (MvPolynomial.C a) = MvPolynomial.C a) ∧
-        ψ (MvPolynomial.X j) = 0 ∧
-        ∀ i : σ, i ≠ j → ψ (MvPolynomial.X i) = MvPolynomial.X i := by
-    refine ⟨MvPolynomial.eval₂Hom (MvPolynomial.C : k →+* MvPolynomial σ k)
-        (fun i : σ => if i = j then (0 : MvPolynomial σ k) else MvPolynomial.X i), ?_, ?_, ?_⟩
-    · intro a
-      simp
-    · simp
-    · intro i hi
-      simp [hi]
-  have hXjmem : (MvPolynomial.X j : MvPolynomial σ k)
-      ∈ Ideal.span {(MvPolynomial.X j : MvPolynomial σ k)} := Ideal.mem_span_singleton_self _
-  have key : (Ideal.Quotient.mk (Ideal.span {(MvPolynomial.X j : MvPolynomial σ k)})).comp ψ
-      = Ideal.Quotient.mk (Ideal.span {(MvPolynomial.X j : MvPolynomial σ k)}) := by
-    apply MvPolynomial.ringHom_ext
-    · intro a
-      rw [RingHom.comp_apply, hψC]
-    · intro i
-      rw [RingHom.comp_apply]
-      by_cases h : i = j
-      · subst h
-        rw [hψXj, map_zero]
-        exact (Ideal.Quotient.eq_zero_iff_mem.mpr hXjmem).symm
-      · rw [hψXi i h]
-  obtain ⟨t, ht⟩ := Ideal.mem_span_singleton.mp hr
-  have h0 : ψ (MvPolynomial.X s * r) = 0 := by
-    rw [ht, map_mul, hψXj, zero_mul]
-  rw [map_mul, hψXi s (Ne.symm hjs)] at h0
-  have hXs : (MvPolynomial.X s : MvPolynomial σ k) ≠ 0 := MvPolynomial.X_ne_zero _
-  have hψr : ψ r = 0 := by
-    rcases mul_eq_zero.mp h0 with h | h
-    · exact absurd h hXs
-    · exact h
-  have h3 := DFunLike.congr_fun key r
-  rw [RingHom.comp_apply, hψr, map_zero] at h3
-  exact Ideal.Quotient.eq_zero_iff_mem.mp h3.symm
-
 private theorem eq_of_mk_X_mul_eq_quotient_span_X {σ : Type u} {k : Type u} [Field k]
     {j s : σ} (hjs : j ≠ s)
     (a b : MvPolynomial σ k ⧸ Ideal.span {(MvPolynomial.X j : MvPolynomial σ k)})
@@ -224,8 +137,9 @@ private theorem eq_of_mk_X_mul_eq_quotient_span_X {σ : Type u} {k : Type u} [Fi
             (MvPolynomial.X s) * b) : a = b := by
   obtain ⟨a', rfl⟩ := Ideal.Quotient.mk_surjective a
   obtain ⟨b', rfl⟩ := Ideal.Quotient.mk_surjective b
-  rw [← map_mul, ← map_mul, Ideal.Quotient.eq, ← mul_sub] at h
-  exact Ideal.Quotient.eq.mpr (mem_span_X_of_X_mul_mem hjs (a' - b') h)
+  rw [← map_mul, ← map_mul, Ideal.Quotient.eq, ← mul_sub, Ideal.mem_span_singleton] at h
+  exact Ideal.Quotient.eq.mpr (Ideal.mem_span_singleton.mpr
+    ((MvPolynomial.X_dvd_mul_iff.mp h).resolve_left (by rw [MvPolynomial.X_dvd_X]; exact hjs)))
 
 private theorem mem_map_of_mul_mem_of_etale {P A : Type u} [CommRing P] [CommRing A]
     {f : P →+* A} (hf : f.Etale) (I : Ideal P) (w : P)
@@ -237,7 +151,6 @@ private theorem mem_map_of_mul_mem_of_etale {P A : Type u} [CommRing P] [CommRin
   let _ : Algebra (P ⧸ I) (A ⧸ Ideal.map f I) :=
     (Ideal.quotientMap (Ideal.map f I) f Ideal.le_comap_map).toAlgebra
   have : Algebra.Etale (P ⧸ I) (A ⧸ Ideal.map f I) := hg
-  have : Module.Flat (P ⧸ I) (A ⧸ Ideal.map f I) := inferInstance
   have hreg : IsSMulRegular (P ⧸ I) ((Ideal.Quotient.mk I) w) := by
     intro a b h
     exact hw a b (by simpa only [smul_eq_mul] using h)
@@ -299,8 +212,7 @@ private theorem X_pow_dvd_of_X_pow_dvd_X_mul {σ : Type u} {k : Type u} [Field k
     have h1 : (MvPolynomial.X j : MvPolynomial σ k) ∣ MvPolynomial.X s * r :=
       dvd_trans (dvd_pow_self _ (Nat.succ_ne_zero n)) hr
     have h2 : (MvPolynomial.X j : MvPolynomial σ k) ∣ r :=
-      Ideal.mem_span_singleton.mp
-        (mem_span_X_of_X_mul_mem hjs r (Ideal.mem_span_singleton.mpr h1))
+      (MvPolynomial.X_dvd_mul_iff.mp h1).resolve_left (by rw [MvPolynomial.X_dvd_X]; exact hjs)
     obtain ⟨r', rfl⟩ := h2
     have h3 : (MvPolynomial.X j : MvPolynomial σ k) * MvPolynomial.X j ^ n ∣
         MvPolynomial.X j * (MvPolynomial.X s * r') := by
@@ -364,38 +276,6 @@ theorem mem_span_coord_pow_of_mul_mem {U : X.Opens} (hU : IsAffineOpen U) (c : E
   rw [hmapspan] at hfin
   exact hfin
 
-private theorem appLE_ι_top_eq_topIso_inv {Y : Scheme.{u}} (V : Y.Opens)
-    (hle : (⊤ : V.toScheme.Opens) ≤ V.ι ⁻¹ᵁ V) :
-    V.ι.appLE V ⊤ hle = V.topIso.inv := by
-  simp
-  rfl
-
-private theorem bijective_appLE_ι_top {Y : Scheme.{u}} (V : Y.Opens)
-    (hle : (⊤ : V.toScheme.Opens) ≤ V.ι ⁻¹ᵁ V) :
-    Function.Bijective (CommRingCat.Hom.hom (V.ι.appLE V ⊤ hle)) := by
-  rw [appLE_ι_top_eq_topIso_inv V hle]
-  exact V.topIso.commRingCatIsoToRingEquiv.symm.bijective
-
-private theorem ideal_eq_top_of_restrictIdeal_eq_top {Y : Scheme.{u}} (D : Y.IdealSheafData)
-    {V : Y.Opens} (hV : IsAffineOpen V) (htop : restrictIdeal D V = ⊤) :
-    D.ideal ⟨V, hV⟩ = ⊤ := by
-  have : IsAffine V.toScheme := hV
-  have hle : (⊤ : V.toScheme.Opens) ≤ V.ι ⁻¹ᵁ V := V.ι_preimage_self.ge
-  have key := Scheme.IdealSheafData.comap_ideal_eq_map_appLE D V.ι ⟨V, hV⟩
-      ⟨⊤, isAffineOpen_top V.toScheme⟩ hle
-  rw [← restrictIdeal_eq_comap_ι, htop] at key
-  have h0 : ((⊤ : V.toScheme.IdealSheafData).ideal ⟨⊤, isAffineOpen_top V.toScheme⟩) = ⊤ := by
-    simp
-  rw [h0] at key
-  have key2 : Ideal.map (CommRingCat.Hom.hom (V.ι.appLE V ⊤ hle)) (D.ideal ⟨V, hV⟩) = ⊤ :=
-    key.symm
-  have hcomap : Ideal.comap (CommRingCat.Hom.hom (V.ι.appLE V ⊤ hle))
-      (Ideal.map (CommRingCat.Hom.hom (V.ι.appLE V ⊤ hle)) (D.ideal ⟨V, hV⟩))
-      = D.ideal ⟨V, hV⟩ := by
-    apply Ideal.comap_map_of_bijective
-    exact bijective_appLE_ι_top V hle
-  rw [← hcomap, key2, Ideal.comap_top]
-
 theorem isLocallyGeneratedByNonZeroDivisor_of_locally_coordIdeal (D : X.IdealSheafData)
     (h : ∀ x : X, ∃ (U : X.Opens) (_ : x ∈ U) (n : ℕ) (c : EtaleChart p U n),
       restrictIdeal D U = ⊤ ∨ ∃ j : Fin n, restrictIdeal D U = c.coordIdeal {j}) :
@@ -408,24 +288,16 @@ theorem isLocallyGeneratedByNonZeroDivisor_of_locally_coordIdeal (D : X.IdealShe
         D.ideal ⟨V, hV⟩ = Ideal.span {f} := by
     rcases hc with htop | ⟨j, hj⟩
     · refine ⟨1, one_mem _, ?_⟩
-      rw [ideal_eq_top_of_restrictIdeal_eq_top D hV (restrictIdeal_eq_top_of_le D hVU htop),
+      have htopV : D.comap V.ι = ⊤ := by
+        rw [← restrictIdeal_eq_comap_ι]
+        exact restrictIdeal_eq_top_of_le D hVU htop
+      rw [(Scheme.IdealSheafData.comap_ι_eq_top_iff_ideal_eq_top D hV).mp htopV,
         Ideal.span_singleton_one]
     · refine ⟨(c.restrict hVU).coord j, coord_mem_nonZeroDivisors hV (c.restrict hVU) j, ?_⟩
       rw [(c.restrict hVU).ideal_eq_span_coord hV D {j}
         (restrictIdeal_eq_restrict_coordIdeal_of_le hVU c D {j} hj), Finset.coe_singleton,
         Set.image_singleton]
   exact ⟨⟨V, hV⟩, f, hxV, hf, hfspan⟩
-
-private theorem notMem_support_of_mem_of_restrictIdeal_eq_top {Y : Scheme.{u}}
-    (I : Y.IdealSheafData) {U : Y.Opens} (h : restrictIdeal I U = ⊤) {x : Y} (hxU : x ∈ U) :
-    x ∉ I.support := by
-  intro hx
-  have h1 : (⟨x, hxU⟩ : ↥U) ∈ (I.comap U.ι).support := by
-    rw [AlgebraicGeometry.Scheme.IdealSheafData.support_comap]
-    exact hx
-  rw [← restrictIdeal_eq_comap_ι, h, AlgebraicGeometry.Scheme.IdealSheafData.support_top] at h1
-  have h2 : (⟨x, hxU⟩ : ↥U) ∈ ((⊥ : TopologicalSpace.Closeds ↥U) : Set ↥U) := h1
-  simp at h2
 
 theorem isSmoothDivisor_of_locally_coordIdeal (D : X.IdealSheafData)
     (h : ∀ x : X, ∃ (U : X.Opens) (_ : x ∈ U) (n : ℕ) (c : EtaleChart p U n),
@@ -436,7 +308,8 @@ theorem isSmoothDivisor_of_locally_coordIdeal (D : X.IdealSheafData)
   intro x hx
   obtain ⟨U, hxU, n, c, hc⟩ := h x
   rcases hc with hc | ⟨j, hj⟩
-  · exact absurd hx (notMem_support_of_mem_of_restrictIdeal_eq_top D hc hxU)
+  · rw [restrictIdeal_eq_comap_ι] at hc
+    exact absurd hx (Scheme.IdealSheafData.notMem_support_of_comap_ι_eq_top D hc hxU)
   · exact ⟨U, hxU, n, c, {j}, hj⟩
 
 end FunctorialResolution.EmbeddedResolution

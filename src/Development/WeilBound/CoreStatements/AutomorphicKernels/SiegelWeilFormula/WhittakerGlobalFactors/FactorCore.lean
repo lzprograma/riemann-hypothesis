@@ -29,58 +29,14 @@ import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TensTo
 import GroundTheory.GlobalFields.LocalFieldAtPlace
 import GroundTheory.GlobalFields.TateThesis.IdeleMeasure
 import GroundTheory.LocalFields.LocalFourierHaar
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.CategoryTheory.Countable
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Proofs.GlobalProofs.MeasurableSetIntF
-import Mathlib.MeasureTheory.Integral.Pi
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.LocalDefs
 import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.IsSingTest
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.UnitProductClosureProperties
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
 import Development.AbelianVarietyTheory.Definitions.Foundations.EventuallyEqOfIsPreconnected
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -234,8 +190,8 @@ theorem map_restrict_intH (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) {d : ℕ} 
     fun v => if h : v ∈ S then s ⟨v, h⟩ else Set.univ
   have hA' : ∀ v, MeasurableSet (A' v) := fun v => by
     by_cases h : v ∈ S
-    · simp only [A', dif_pos h]; exact hs _
-    · simp only [A', dif_neg h]; exact MeasurableSet.univ
+    · simp only [A', dite_eq_left h]; exact hs _
+    · simp only [A', dite_eq_right h]; exact MeasurableSet.univ
   have key := coordHerm_box σ hCM b lam hlam lf hlf h1 n S A' hA'
   have hset : (fun y (v : S) => hV σ v.1 y) ⁻¹' Set.univ.pi s ∩ intHR σ b n S =
       ({y | (∀ v ∈ S, hermV σ v y ∈ A' v) ∧ ∀ v, v ∉ S → hermV σ v y ∈ latH σ b v n} : Set (HermR (Af F) σ n)) := by
@@ -243,12 +199,12 @@ theorem map_restrict_intH (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) {d : ℕ} 
     change (∀ v : S, v ∈ Set.univ → hV σ v.1 y ∈ s v) ∧ (∀ v, v ∉ S → hV σ v y ∈ (latH σ b v n : Set (HermR (Fv F v) σ n))) ↔
       (∀ v ∈ S, hV σ v y ∈ A' v) ∧ ∀ v, v ∉ S → hV σ v y ∈ (latH σ b v n : Set (HermR (Fv F v) σ n))
     refine and_congr ⟨fun h v hv => ?_, fun h v _ => ?_⟩ Iff.rfl
-    · simpa only [A', dif_pos hv] using h ⟨v, hv⟩ (Set.mem_univ _)
+    · simpa only [A', dite_eq_left hv] using h ⟨v, hv⟩ (Set.mem_univ _)
     · have := h v.1 v.2
-      simpa only [A', dif_pos v.2] using this
+      simpa only [A', dite_eq_left v.2] using this
   rw [hset, key, ← Finset.prod_coe_sort S]
   refine Finset.prod_congr rfl fun v _ => ?_
-  simp only [A', dif_pos v.2]
+  simp only [A', dite_eq_left v.2]
 
 end PositivityTheory.SiegelWeilFormula.GFac.HS
 
@@ -342,7 +298,7 @@ theorem herm_split (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) (ψ : AddChar (AF
       (GlobalTheory.CompanionTheory.SW.HermSd.mp_hermVec hCM (Fv F v) bs n (lam v))
   haveI : ∀ v : S, SigmaFinite (GlobalTheory.CompanionTheory.SW.coordHerm (Fv F v.1) σ bs (lam v.1) n) := fun v => hSF v.1
   have hmp := HS.db_split σ hCM ψ hψ n ν hν bs laminf hinf lf hlf h1
-  obtain ⟨-, -, -, -, -, -, -, -, hme0, -⟩ := GlobalTheory.T.hermitian_haar_splits_arch_times_finite F E σ hCM n ν hν.1
+  obtain ⟨-, -, -, -, -, -, -, -, hme0, -⟩ := _root_.GlobalTheory.CompanionTheory.SiegelND.Integ.MapHerm.map_eq_smul_prod F E σ hCM n ν hν.1
   have hme : MeasurableEmbedding (fun S : HermR (AF F) σ n => (HS.hInfR σ S, HS.hFinR σ S)) := hme0
   haveI : SFinite (GlobalTheory.CompanionTheory.SW.coordHerm (Ainf F) σ bs laminf n) := by
     obtain ⟨hH, -⟩ := hinf
@@ -525,16 +481,14 @@ theorem eventually_good (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) {d M n : ℕ
     refine sum_mem_intE bs v _ _ fun k _ => sum_mem_intE bs v _ _ fun l _ => ?_
     rw [Algebra.TensorProduct.tmul_mul_tmul]
     exact tmul_mem_intE bs v (mul_mem (he k) (he' l)) (h2 k l)
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [eq_sum_tmul bs (Fv F v) e, map_sum]
+  · rw [eq_sum_tmul bs (Fv F v) e, map_sum]
     refine sum_mem_intE bs v _ _ fun k _ => ?_
     have : sigR (Fv F v) σ ((Algebra.TensorProduct.basis (Fv F v) bs).repr e k ⊗ₜ[F] bs k) =
         (Algebra.TensorProduct.basis (Fv F v) bs).repr e k ⊗ₜ[F] σ (bs k) := by
       simp [sigR]
     rw [this]
     exact tmul_mem_intE bs v (he k) (h3 k)
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [eq_sum_tmul bs (Fv F v) e, map_sum]
+  · rw [eq_sum_tmul bs (Fv F v) e, map_sum]
     refine sum_mem fun k _ => ?_
     rw [GlobalTheory.CompanionTheory.SW.HermSd.trace_tmul]
     exact mul_mem (he k) (h4 k)
@@ -685,12 +639,12 @@ theorem psi_split (ψ : AddChar (AF F) ℂ) (hψ : IsCharAF F ψ) :
 
     rw [hr, map_sub, map_sum]
     by_cases hv : v ∈ S
-    · rw [if_pos hv, Finset.sum_eq_single v]
+    · rw [ite_eq_left hv, Finset.sum_eq_single v]
       · rw [evalV_singleV_same, sub_self]
       · intro w _ hw
         exact evalV_singleV_ne (Ne.symm hw) _
       · intro h; exact absurd hv h
-    · rw [if_neg hv, Finset.sum_eq_zero, sub_zero]
+    · rw [ite_eq_right hv, Finset.sum_eq_zero, sub_zero]
       intro w hw
       exact evalV_singleV_ne (by rintro rfl; exact hv hw) _
   have hmem : algebraMap F (Af F) ξ * r ∈ GroundTheory.Global.finiteInvDifferent F := by
@@ -698,9 +652,9 @@ theorem psi_split (ψ : AddChar (AF F) ℂ) (hψ : IsCharAF F ψ) :
     have e1 : (algebraMap F (Af F) ξ * r) v = algebraMap F (Fv F v) ξ * evalV F v r := rfl
     rw [e1, hrv v]
     by_cases hv : v ∈ S
-    · rw [if_pos hv, mul_zero]
+    · rw [ite_eq_left hv, mul_zero]
       exact zero_mem _
-    · rw [if_neg hv]
+    · rw [ite_eq_right hv]
       have hξv : algebraMap F (Fv F v) ξ ∈ v.adicCompletionIntegers F := by
         by_contra h
         exact hv (hS (hfin.mem_toFinset.2 h))
@@ -922,19 +876,19 @@ theorem tup_split (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) (ψ : AddChar (AF 
       fun v => if h : v ∈ S then s ⟨v, h⟩ else Set.univ
     have hA' : ∀ v, MeasurableSet (A' v) := fun v => by
       by_cases h : v ∈ S
-      · simp only [A', dif_pos h]; exact hs _
-      · simp only [A', dif_neg h]; exact MeasurableSet.univ
+      · simp only [A', dite_eq_left h]; exact hs _
+      · simp only [A', dite_eq_right h]; exact MeasurableSet.univ
     have key := GlobalTheory.CompanionTheory.SW.WBox.coordW_box F E σ hCM d bs lam hlam lf hlf h1 n M S A' hA'
     have hset : ρ ⁻¹' Set.univ.pi s ∩ A = {X | (∀ v ∈ S, projV v X ∈ A' v) ∧ ∀ v, v ∉ S → projV v X ∈ latV bs v} := by
       ext X
       simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_pi, Set.mem_univ, forall_true_left, hA, Set.mem_setOf_eq]
       refine and_congr_left fun _ => ⟨fun h v hv => ?_, fun h v => ?_⟩
-      · simpa only [A', dif_pos hv] using h ⟨v, hv⟩
+      · simpa only [A', dite_eq_left hv] using h ⟨v, hv⟩
       · have := h v.1 v.2
-        simpa only [A', dif_pos v.2] using this
+        simpa only [A', dite_eq_left v.2] using this
     rw [hset, key, ← Finset.prod_coe_sort S]
     refine Finset.prod_congr rfl fun v _ => ?_
-    simp only [A', dif_pos v.2]
+    simp only [A', dite_eq_left v.2]
 
   have hgc : ∀ v : S, AEStronglyMeasurable (g v.1) (GlobalTheory.CompanionTheory.SW.coordW (Fv F v.1) bs (lam v.1) n M) := by
     intro v
@@ -963,7 +917,7 @@ theorem tup_split (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) (ψ : AddChar (AF 
       rw [← Finset.prod_coe_sort S]
     rw [e1, hmap, integral_fintype_prod_eq_prod (fun v : S => g v.1), ← Finset.prod_coe_sort S]
 
-  obtain ⟨-, -, -, -, -, -, -, -, hme, -⟩ := GlobalTheory.T.adelic_haar_splits_as_arch_times_finite F E σ hCM M n μ hμ.1
+  obtain ⟨-, -, -, -, -, -, -, -, hme, -⟩ := _root_.GlobalTheory.CompanionTheory.SiegelND.Integ.MapTup.map_tuple F E σ hCM M n μ hμ.1
   haveI : SFinite (GlobalTheory.CompanionTheory.SW.coordW (Af F) bs lf n M) :=
     GlobalTheory.CompanionTheory.Hypotheses₂.OneV.DxEuler.sfinite_coordW σ hCM bs lf hlf n M
   haveI : SFinite (GlobalTheory.CompanionTheory.SW.coordW (Ainf F) bs laminf n M) := by
@@ -1215,7 +1169,7 @@ theorem jt_split (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) (M n d : ℕ) (J : 
       ring
     · rw [Set.indicator_of_notMem hY]
       have hY' : ¬ ∀ v, v ∉ S → projV v (projFin Y) ∈ latV bs v := hY
-      push_neg at hY'
+      push Not at hY'
       obtain ⟨v, hvS, hYv⟩ := hY'
       have hsupp : (Function.mulSupport fun w => Φv w (projV w (projFin Y))).Finite := by
         refine (hfinp.union (Filter.eventually_cofinite.1 (hlat (projFin Y)))).subset ?_

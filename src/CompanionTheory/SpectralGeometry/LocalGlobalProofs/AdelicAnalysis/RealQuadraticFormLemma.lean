@@ -373,7 +373,7 @@ theorem fourier_coefficient : ∀ (F : Type) [Field F] [NumberField F], ∀ [Mea
       by_cases hall : ∀ ω, s z ω = 0
       · exact Or.inr hall
       left
-      push_neg at hall
+      push Not at hall
       obtain ⟨ω, hω⟩ := hall
       obtain ⟨r, hr⟩ := integral_of_ne_zero (hOrth ω) hint hmem hω
       obtain ⟨r₀, hr₀⟩ := hNβ

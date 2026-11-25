@@ -56,12 +56,12 @@ variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : 
 theorem rla_dia_inv (c : DiaG (E := E) (ST := ST)) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : (d.dia c⁻¹).dia c = d := by
   apply Subtype.ext
   show (d.1.dia c⁻¹).dia c = d.1
-  ext <;> simp [Deco.dia, ← mul_assoc]
+  ext <;> simp [Deco.dia]
 
 theorem rla_dia_inv' (c : DiaG (E := E) (ST := ST)) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : (d.dia c).dia c⁻¹ = d := by
   apply Subtype.ext
   show (d.1.dia c).dia c⁻¹ = d.1
-  ext <;> simp [Deco.dia, ← mul_assoc]
+  ext <;> simp [Deco.dia]
 
 theorem rla_dia_inj (c : DiaG (E := E) (ST := ST)) {d d' : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)} (h : d.dia c = d'.dia c) : d = d' := by
   rw [← rla_dia_inv' n ST SG c d, h, rla_dia_inv' n ST SG c d']

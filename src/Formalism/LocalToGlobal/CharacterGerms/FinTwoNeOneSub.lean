@@ -27,7 +27,7 @@ theorem pderiv_comm' {σ R : Type} [CommRing R] (i j : σ) (p : MvPolynomial σ 
       rfl
     · congr 1
       · rw [tsub_right_comm]
-      · simp only [Finsupp.coe_tsub, Pi.sub_apply, Finsupp.single_apply, if_neg hij, if_neg (Ne.symm hij),
+      · simp only [Finsupp.coe_tsub, Pi.sub_apply, Finsupp.single_apply, ite_eq_right hij, ite_eq_right (Ne.symm hij),
           tsub_zero]
         ring
   | add p q hp hq => simp only [map_add (f := _), hp, hq]
@@ -97,11 +97,11 @@ theorem exists_rowsOK (hdich : X.Alt ∨ ∀ a, X.big 0 a) (hj : X.j' < X.n) (b 
     · have hl : 0 < V.l ^ i * y := Nat.mul_pos (pow_pos V.l_prime.pos i) (Nat.pos_of_ne_zero hy)
       have w1 : X.n ≤ X.rkF g a := by
         apply hwt g a X.n
-        simp only [GlobalTheory.wt, and_self, if_true]
+        simp only [GlobalTheory.wt, and_self, ite_true]
         omega
       have w2 : X.n ≤ X.rkF (1 - g) (a + (i : ZMod d)) := by
         apply hwt (1 - g) (a + (i : ZMod d)) X.n
-        simp only [GlobalTheory.wt, and_self, if_true]
+        simp only [GlobalTheory.wt, and_self, ite_true]
         omega
       have hao := alt_odd_of_big X hdich (big_of_le_rk X hj w1) (big_of_le_rk X hj w2)
       refine ⟨(GlobalTheory.bi g a i y).kind X.n, (rowsOK_iff _ _ _ _).2 ⟨?_, ?_⟩⟩
@@ -116,16 +116,6 @@ theorem exists_rowsOK (hdich : X.Alt ∨ ∀ a, X.big 0 a) (hj : X.j' < X.n) (b 
         exact absurd hk (by simp [GlobalTheory.kind])
 
 end One
-
-section Fam
-
-variable {C : Type} [Field C] {V : VF C} {d : ℕ} [NeZero d] {T : Type} {r : T → ℕ} {cc : T → T} {a : T → ℕ → ℕ}
-  {Orb : Type} [Fintype Orb] {tau : Orb → Fin 2 → ZMod d → T} {J : Orb → Fin 2 → Type} [∀ o g, Fintype (J o g)]
-  {X : ∀ o, RowData C V d (IIof r tau o) (J o)} {F : ∀ o, Flag (X o)} {Z : Finset Orb}
-  {ga : Orb → Fin 2 → ZMod d → ℕ → ℕ} {n : ℕ} {L : Orb → List (GlobalTheory d × ℝ)}
-  {pl : (Σ o, Σ i : Fin (L o).length, Fin (rowsAt (X := X) L o i)) → Fin n}
-
-end Fam
 
 theorem lap_one_apply {T : Type} (r : T → ℕ) (n : ℕ) (C : Type) [Field C] (τ τ' : T) (a : Fin (r τ)) (a' : Fin (r τ'))
     (P : MvPolynomial (Letter T r n) C) :

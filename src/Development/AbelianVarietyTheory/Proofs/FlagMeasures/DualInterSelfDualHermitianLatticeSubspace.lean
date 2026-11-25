@@ -116,7 +116,7 @@ theorem eq_zero_of_hf (h : IsHermND L Hm) {y : Fin n → E} (hy : ∀ x, hf L Hm
   exact L.cj.injective (by simpa using congrFun h2 j)
 
 theorem hf_eq_zero_of_span {S : Set (Fin n → E)} {y : Fin n → E} (hy : ∀ x ∈ S, hf L Hm x y = 0) :
-    ∀ x ∈ Submodule.span E S, hf L Hm x y = 0 := fun x hx =>
+    ∀ x ∈ Submodule.span E S, hf L Hm x y = 0 := fun _ hx =>
   (Submodule.span_le (p := LinearMap.ker (hfL L Hm y))).2 hy hx
 
 variable [IsNonarchimedeanLocalField F]

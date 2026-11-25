@@ -48,8 +48,8 @@ public import Mathlib.LinearAlgebra.Matrix.BilinearForm
 @[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qm9.det_sq_eq_one_of_preserves_bilin.{u_1} :
-    ∀ {V : Type u_1} [inst : AddCommGroup V]
-    [inst_1 : _root_.Module ℝ V] [FiniteDimensional ℝ V] (B : LinearMap.BilinForm ℝ V),
+    ∀ {V : Type u_1} [AddCommGroup V]
+    [_root_.Module ℝ V] [FiniteDimensional ℝ V] (B : LinearMap.BilinForm ℝ V),
     B.Nondegenerate →
       ∀ (f : V →ₗ[ℝ] V),
         (∀ (x y : V), ((B : V → V →ₗ[ℝ] ℝ) ((f : V → V) x) : V → ℝ) ((f : V → V) y) = ((B : V → V →ₗ[ℝ] ℝ) x : V → ℝ) y) →

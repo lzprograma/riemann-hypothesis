@@ -1,5 +1,6 @@
 module
 
+import all ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothDefs
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SquareIntegrableInnerProduct
 public import Formalism.RealPlaceAnalysis.QuotientSettingHolds
 import Mathlib.Analysis.Normed.Algebra.MatrixExponential
@@ -16,7 +17,7 @@ open Finset Matrix MeasureTheory
 
 namespace ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ}
 
@@ -28,27 +29,6 @@ theorem pdA_toMK_kg {ε : Fin n → Bool} (k : Matrix (Fin n) (Fin n) ℂ) (hk :
 
 theorem pdA_toMK_one (ε : Fin n → Bool) : S7.toMK (1 : S7.KG ε) = 1 := rfl
 
-private theorem inUJ_exp_of_inG' {ε : Fin n → Bool} {A : Matrix (Fin n) (Fin n) ℂ} (hA : inG ε A) :
-    inUJ ε (NormedSpace.exp A) := by
-  have hJJ := _root_.ReciprocityTheory.ChartRestriction.DS.S7.Jm_mul_self ε
-  have hJJ' : ∀ X : Matrix (Fin n) (Fin n) ℂ, Jm ε * (Jm ε * X) = X := fun X => by
-    rw [← Matrix.mul_assoc, hJJ, Matrix.one_mul]
-  have hU : IsUnit (Jm ε) := ⟨⟨Jm ε, Jm ε, hJJ, hJJ⟩, rfl⟩
-  have hinv : (Jm ε)⁻¹ = Jm ε := Matrix.inv_eq_left_inv hJJ
-  have h0 : Aᴴ * Jm ε = -(Jm ε * A) := by
-    unfold inG at hA
-    exact eq_neg_of_add_eq_zero_left hA
-  have hAH : Aᴴ = Jm ε * (-A) * (Jm ε)⁻¹ := by
-    rw [hinv]
-    calc Aᴴ = Aᴴ * Jm ε * Jm ε := by rw [Matrix.mul_assoc, hJJ, Matrix.mul_one]
-      _ = Jm ε * (-A) * Jm ε := by rw [h0, Matrix.mul_neg, Matrix.neg_mul]
-  have h1 : NormedSpace.exp (-A) * NormedSpace.exp A = 1 := by
-    rw [← Matrix.exp_add_of_commute _ _ (Commute.refl A).neg_left, neg_add_cancel, NormedSpace.exp_zero]
-  unfold inUJ
-  rw [← Matrix.exp_conjTranspose, hAH, Matrix.exp_conj _ _ hU, hinv]
-  simp only [Matrix.mul_assoc, hJJ']
-  rw [h1, Matrix.mul_one]
-
 theorem pdA_rdV_congr {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {ε : Fin n → Bool}
     {f f' : Matrix (Fin n) (Fin n) ℂ → E} (he : ∀ h, inUJ ε h → f h = f' h) {X g : Matrix (Fin n) (Fin n) ℂ}
     (hX : inG ε X) (hg : inUJ ε g) : Formalism.REAL.RdV X f g = Formalism.REAL.RdV X f' g := by
@@ -59,7 +39,7 @@ theorem pdA_rdV_congr {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {ε
     rw [← smul_add, hX, smul_zero]
   have e : (fun t : ℝ => f (g * NormedSpace.exp ((t : ℂ) • X))) =
       fun t : ℝ => f' (g * NormedSpace.exp ((t : ℂ) • X)) :=
-    funext fun t => he _ (_root_.ReciprocityTheory.ChartRestriction.DS.smd_inUJ_mul hg (inUJ_exp_of_inG' (hX' t)))
+    funext fun t => he _ (_root_.ReciprocityTheory.ChartRestriction.DS.smd_inUJ_mul hg (_root_.ReciprocityTheory.ChartRestriction.DS.smd_exp_inUJ_lemma (hX' t)))
   simp only [Formalism.REAL.RdV]
   rw [e]
 
@@ -170,16 +150,6 @@ theorem pdA_inK_cpart {ε : Fin n → Bool} {Z : Matrix (Fin n) (Fin n) ℂ} (hZ
       hJJ', hZ, hZH]
   · simp only [Formalism.REAL.cpart2, hJr, Matrix.smul_mul, Matrix.mul_smul, add_mul, mul_add, Matrix.mul_assoc,
       hJJ', hZ, hZH]
-
-theorem pdA_inK_smul {ε : Fin n → Bool} {X : Matrix (Fin n) (Fin n) ℂ} (hX : inK ε X) (t : ℝ) :
-    inK ε ((t : ℂ) • X) := by
-  obtain ⟨h1, h2⟩ := hX
-  refine ⟨?_, ?_⟩
-  · unfold inG at h1 ⊢
-    simp only [Matrix.conjTranspose_smul, Complex.star_def, Complex.conj_ofReal, Matrix.smul_mul,
-      Matrix.mul_smul]
-    rw [← smul_add, h1, smul_zero]
-  · rw [Matrix.smul_mul, Matrix.mul_smul, h2]
 
 theorem pdA_op_one {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : S7.KType ε Λ) : T.op 1 = 1 := by
   simp [S7.KType.op]

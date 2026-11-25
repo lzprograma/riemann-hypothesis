@@ -48,8 +48,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.EC
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.CompanionTheory.ThetaInv
 
 variable {D : D7}
@@ -73,7 +71,6 @@ theorem psi_unip_rat {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.F �
     rw [rat_mul, rat_mul, rat_mul, rat_conjTranspose, gA]
   have ht : ∀ M : Matrix (Fin n) (Fin n) D.host.E,
       Matrix.trace (M.map (incA D)) = incA D (Matrix.trace M) := fun M => by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp only [Matrix.trace, Matrix.diag, Matrix.map_apply, map_sum]
   rw [h, ht, halfTr_incA]
   exact hψ.2.2.1 _

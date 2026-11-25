@@ -56,9 +56,6 @@ namespace Formalism.L2.GlobalTheoryTheory.GenusMassVolumes
 open Formalism.BasicNotions Formalism.MainNotions.StandardLattice Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-
 variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
 theorem standardLattice_aux2b (D : D7) : Formalism.MainNotions.StandardLattice.MassRatio₂ D :=
   Formalism.MainNotions.StandardLattice.massRatio_of_modelMassRatio D Formalism.HermitianLattices.SiegelMassBounds.siegel_mass_ratio

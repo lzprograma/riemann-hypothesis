@@ -1,49 +1,9 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumACorr
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarOmPart
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfA
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocModel
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -89,18 +49,7 @@ theorem om_pair {r : ℕ} (f g : Fin (r + 1) → V) (a : Fin (r + 1)) :
   rw [e, Matrix.mul_adjugate, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul]
 
 theorem om_perp {r : ℕ} (f g : Fin (r + 1) → V) : H.om' f g ∈ H.perp (H.X f) := by
-  intro s hs
-  have hl : ∀ s ∈ H.X f, H.h s (H.om' f g) = 0 := by
-    intro s hs
-    induction hs using Submodule.span_induction with
-    | mem x hx =>
-      obtain ⟨i, rfl⟩ := hx
-      rw [H.h_herm (H.om' f g), om_pair]
-      simp [Fin.castSucc_ne_last]
-    | zero => exact H.h_zero_left _
-    | add x y _ _ hx hy => rw [H.h_add_left, hx, hy, add_zero]
-    | smul c x _ hx => rw [H.h_smul_left, hx, mul_zero]
-  rw [H.h_herm s, hl s hs, map_zero]
+  apply +allowSynthFailures _root_.Formalism.L2.SG.LsDatumA.om'_mem_perpX <;> assumption
 
 theorem uniq_loc {r : ℕ} (f g : Fin (r + 1) → V) (hdet : IsUnit (H.Zhat f g).det) {d : V}
     (hd : d ∈ Submodule.span E (Set.range g)) (h0 : ∀ a, H.h d (f a) = 0) : d = 0 := by
@@ -141,8 +90,6 @@ theorem smul_combine {W : Type} [AddCommGroup W] [Module E W] (k d₁ d₂ : E) 
 end Gen
 
 section D7
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) (p : PlF D)
 
@@ -234,7 +181,7 @@ theorem descend {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (c : Fin D.R.rS → 
   have hℓe : ∀ i : Fin D.R.rS, ℓ (F0.fvec i.castSucc) = 0 := by
     intro i
     have : ℓ (F0.fvec i.castSucc) ∈ F0.X.map ℓ :=
-      Submodule.mem_map_of_mem (by rw [fvec_cs]; exact Submodule.subset_span ⟨i, rfl⟩)
+      Submodule.mem_map_of_mem (by rw [PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc]; exact Submodule.subset_span ⟨i, rfl⟩)
     rw [hℓX] at this
     exact (Submodule.mem_bot _).1 this
   have hle : Submodule.span (D.s.atP p).Ep (Set.range fun i : Fin D.R.rS => c i • baseChange₂ D p (F0.fvec i.castSucc)) ≤
@@ -249,8 +196,6 @@ theorem descend {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (c : Fin D.R.rS → 
 end D7
 
 section Main
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem sp_frameAct {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {n : ℕ}
     (f : Fin n → S.V) (ξ : Matrix (Fin n) (Fin n) (𝓞 E)) (hξ : ξ⁻¹ * ξ = 1) :
@@ -283,8 +228,6 @@ end Main
 end OmL
 
 open OmL
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}

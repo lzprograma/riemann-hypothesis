@@ -1,48 +1,7 @@
 module
 
 public import Formalism.PieriBlockIdeals.TailInequalityEventually
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -152,20 +111,13 @@ theorem eventually_large_parameter_bound : BigEv := by
         = 40 * ((x ^ C) ^ 7 * x ^ 2 * (x ^ ε) ^ 3) := by ring
     linarith
 
-private theorem pow_le_pow_add_of_one_le {A : ℝ} (hA : 1 ≤ A) (i k : ℕ) : A ^ i ≤ A ^ (i + k) := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    rw [← add_assoc, pow_succ]
-    linarith [mul_nonneg (pow_nonneg (by linarith : (0 : ℝ) ≤ A) (i + k)) (sub_nonneg.2 hA)]
-
 theorem polynomial_inequality_large_x (A x L S t : ℝ) (hA : 1 ≤ A) (hx : 5 ≤ x) (hL : 4 ≤ L) (hS : 0 ≤ S)
     (ht : t ≤ A) :
     4 * A ^ 4 * x * L ^ 2 + 2 * A ^ 3 * (S + t + L) + t ≤ A ^ 4 * x ^ 2 * (L ^ 2 + S) := by
   have hA0 : 0 ≤ A := by linarith
-  have hA3 : 1 ≤ A ^ 3 := by simpa using pow_le_pow_add_of_one_le hA 0 3
-  have h34 : A ^ 3 ≤ A ^ 4 := pow_le_pow_add_of_one_le hA 3 1
-  have hA4 : A ≤ A ^ 4 := by simpa using pow_le_pow_add_of_one_le hA 1 3
+  have hA3 : 1 ≤ A ^ 3 := one_le_pow₀ hA
+  have h34 : A ^ 3 ≤ A ^ 4 := pow_le_pow_right₀ hA (by omega)
+  have hA4 : A ≤ A ^ 4 := le_self_pow₀ hA (by omega)
   have hat : A ^ 3 * t ≤ A ^ 4 := by
     linarith [mul_le_mul_of_nonneg_left ht (by linarith : (0 : ℝ) ≤ A ^ 3)]
   have hL0 : 0 ≤ L := by linarith
@@ -336,7 +288,7 @@ theorem small_term_bound_third : Small3 := by
     rw [le_div_iff₀ hX]; linarith [hR.sum_le]
   have hB0 : 0 ≤ P.b / X' := div_nonneg hb.le hX.le
   have hK := (maximal_index_size_bound P X' A hH hR hB).2.2.2.2
-  have hA4 : 1 ≤ A ^ 4 := by simpa using pow_le_pow_add_of_one_le F.A_ge 0 4
+  have hA4 : 1 ≤ A ^ 4 := one_le_pow₀ F.A_ge
   have hx2 : 25 ≤ P.x ^ 2 := by calc (25 : ℝ) = 5 ^ 2 := by norm_num
     _ ≤ P.x ^ 2 := pow_le_pow_left₀ (by norm_num) F.x_ge 2
   have hq : 25 ≤ A ^ 4 * P.x ^ 2 := by
@@ -413,8 +365,8 @@ theorem forty_eight_k_sq_t_sq_lt_b {P : Par} {X' A : ℝ} (hH : P.Hyp) (hR : Row
   have hkt : (P.k : ℝ) * P.t ≤ A ^ 2 := by linarith [mul_le_mul F.kA F.tA ht0 hA0]
   have hkt2 : ((P.k : ℝ) * P.t) * ((P.k : ℝ) * P.t) ≤ A ^ 2 * A ^ 2 :=
     mul_le_mul hkt hkt (mul_nonneg hk0 ht0) (by positivity)
-  have h47 : A ^ 4 ≤ A ^ 7 := pow_le_pow_add_of_one_le F.A_ge 4 3
-  have hA4 : 1 ≤ A ^ 4 := by simpa using pow_le_pow_add_of_one_le F.A_ge 0 4
+  have h47 : A ^ 4 ≤ A ^ 7 := pow_le_pow_right₀ F.A_ge (by omega)
+  have hA4 : 1 ≤ A ^ 4 := one_le_pow₀ F.A_ge
   have hx2 : 25 ≤ P.x ^ 2 := by calc (25 : ℝ) = 5 ^ 2 := by norm_num
     _ ≤ P.x ^ 2 := pow_le_pow_left₀ (by norm_num) F.x_ge 2
   have hL2 : 16 ≤ P.L ^ 2 := by linarith [mul_le_mul F.L_ge F.L_ge (by norm_num) hL0]
@@ -435,8 +387,8 @@ theorem twelve_k_t_mul_lt_b {P : Par} {X' A : ℝ} (hH : P.Hyp) (hR : Rows P X' 
   have hL0 : 0 ≤ P.L := by linarith [F.L_ge]
   have ht0 : (0 : ℝ) ≤ P.t := Nat.cast_nonneg _
   have hkt : (P.k : ℝ) * P.t ≤ A ^ 2 := by linarith [mul_le_mul F.kA F.tA ht0 hA0]
-  have h27 : A ^ 2 ≤ A ^ 7 := pow_le_pow_add_of_one_le F.A_ge 2 5
-  have hA2 : 1 ≤ A ^ 2 := by simpa using pow_le_pow_add_of_one_le F.A_ge 0 2
+  have h27 : A ^ 2 ≤ A ^ 7 := pow_le_pow_right₀ F.A_ge (by omega)
+  have hA2 : 1 ≤ A ^ 2 := one_le_pow₀ F.A_ge
   have hxL : 20 ≤ P.x * P.L := by
     linarith [mul_le_mul F.x_ge F.L_ge (by norm_num) hx0.le]
   have key : 12 * (P.k : ℝ) * P.t * P.x < X' := by

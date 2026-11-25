@@ -11,54 +11,9 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreDone
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Analysis.Calculus.Deriv.Prod
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeB
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSTr
 import Mathlib.RingTheory.SimpleRing.Principal
@@ -100,25 +55,25 @@ theorem exp_genW (w : Fin (k + 1) → ℝ) (t : ℝ) :
   by_cases hij : i = j
   · subst hij
     by_cases h : r ≤ i.val ∧ i.val ≤ r + k
-    · rw [dif_pos ⟨h, h⟩, Matrix.diagonal_apply_eq, Matrix.diagonal_apply_eq]
-      simp only [Pi.coe_exp, Pi.smul_apply, dif_pos h, smul_eq_mul]
+    · rw [dite_eq_left ⟨h, h⟩, Matrix.diagonal_apply_eq, Matrix.diagonal_apply_eq]
+      simp only [Pi.coe_exp, Pi.smul_apply, dite_eq_left h, smul_eq_mul]
       rw [← Complex.exp_eq_exp_ℂ]
       congr 1
       push_cast
       ring
-    · rw [dif_neg (fun h' => h h'.1), if_pos ⟨rfl, h⟩, Matrix.diagonal_apply_eq]
-      simp only [Pi.coe_exp, Pi.smul_apply, dif_neg h, smul_zero]
+    · rw [dite_eq_right (fun h' => h h'.1), ite_eq_left ⟨rfl, h⟩, Matrix.diagonal_apply_eq]
+      simp only [Pi.coe_exp, Pi.smul_apply, dite_eq_right h, smul_zero]
       exact NormedSpace.exp_zero
   · rw [Matrix.diagonal_apply_ne _ hij]
     by_cases h1 : (r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k)
-    · rw [dif_pos h1, Matrix.diagonal_apply_ne]
+    · rw [dite_eq_left h1, Matrix.diagonal_apply_ne]
       intro he
       apply hij
       ext
       have := congrArg Fin.val he
       simp only at this
       omega
-    · rw [dif_neg h1, if_neg (fun h2 => hij h2.1)]
+    · rw [dite_eq_right h1, ite_eq_right (fun h2 => hij h2.1)]
 
 theorem dW_uh (w : Fin (k + 1) → ℝ) (t : ℝ) : dW k w t ∈ UH (Hb k) := by
   show Matrix.conjTranspose (dW k w t) * Hb k * dW k w t = Hb k
@@ -165,18 +120,18 @@ theorem hpk_col (p i : Fin (2 * r + k + 1)) (hp : r ≤ p.val ∧ p.val ≤ r + 
   unfold Hpk
   by_cases hip : i = p
   · subst hip
-    rw [if_neg (by omega), if_neg (by omega), if_pos ⟨hp.1, hp.2, rfl⟩, if_pos rfl]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left ⟨hp.1, hp.2, rfl⟩, ite_eq_left rfl]
   · have hv : i.val ≠ p.val := fun h => hip (Fin.ext h)
-    rw [if_neg (by omega), if_neg (by omega), if_neg (fun h => hip h.2.2), if_neg hip]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (fun h => hip h.2.2), ite_eq_right hip]
 
 theorem hpk_row (p j : Fin (2 * r + k + 1)) (hp : r ≤ p.val ∧ p.val ≤ r + k) :
     Hpk k r p j = if j = p then (if p.val = r + k then -1 else 1) else 0 := by
   unfold Hpk
   by_cases hip : j = p
   · subst hip
-    rw [if_neg (by omega), if_neg (by omega), if_pos ⟨hp.1, hp.2, rfl⟩, if_pos rfl]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left ⟨hp.1, hp.2, rfl⟩, ite_eq_left rfl]
   · have hv : j.val ≠ p.val := fun h => hip (Fin.ext h)
-    rw [if_neg (by omega), if_neg (by omega), if_neg (fun h => hip h.2.2.symm), if_neg hip]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (fun h => hip h.2.2.symm), ite_eq_right hip]
 
 theorem hs_apply (p i m : Fin (2 * r + k + 1)) :
     (Hpk k r * Matrix.single p p (1 : ℂ)) i m = if m = p then Hpk k r i p else 0 := by
@@ -192,14 +147,14 @@ theorem hpk_single (p : Fin (2 * r + k + 1)) (hp : r ≤ p.val ∧ p.val ≤ r +
   rw [Qx2.hpk_inv, Matrix.conjTranspose_single, star_one]
   ext i j
   rw [Matrix.mul_apply, Finset.sum_eq_single p]
-  · rw [hs_apply, if_pos rfl, hpk_col p i hp, hpk_row p j hp, Matrix.single_apply]
+  · rw [hs_apply, ite_eq_left rfl, hpk_col p i hp, hpk_row p j hp, Matrix.single_apply]
     by_cases hi : i = p <;> by_cases hj : j = p
-    · subst hi; subst hj; simp only [if_true, and_self]; split_ifs <;> norm_num
+    · subst hi; subst hj; simp only [ite_true, and_self]; split_ifs <;> norm_num
     · simp [hi, hj, Ne.symm hj]
     · simp [hi, hj, Ne.symm hi]
     · simp [hi, hj, Ne.symm hi]
   · intro m _ hm
-    rw [hs_apply, if_neg hm, zero_mul]
+    rw [hs_apply, ite_eq_right hm, zero_mul]
   · intro h; exact absurd (Finset.mem_univ p) h
 
 theorem hpart1_single (p : Fin (2 * r + k + 1)) (hp : r ≤ p.val ∧ p.val ≤ r + k) :
@@ -218,23 +173,23 @@ theorem hpart2_single (n : ℕ) (p : Fin (2 * r + k + 1)) (hpn : p.val = r + n) 
   have hI : Complex.I ≠ 0 := Complex.I_ne_zero
   by_cases hil : i = l
   · subst hil
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     by_cases hi : i = p
     · subst hi
-      rw [if_pos ⟨rfl, rfl⟩, dif_pos hp]
+      rw [ite_eq_left ⟨rfl, rfl⟩, dite_eq_left hp]
       dsimp only
-      rw [if_pos (by omega)]
+      rw [ite_eq_left (by omega)]
       field_simp
       push_cast
       ring_nf
       rw [Complex.I_sq]
       ring
-    · rw [if_neg (fun h => hi h.1.symm)]
+    · rw [ite_eq_right (fun h => hi h.1.symm)]
       dsimp only
       split_ifs with h1 h2
       · exfalso; apply hi; apply Fin.ext; omega
       all_goals simp
-  · rw [if_neg (fun h => hil (h.1.symm.trans h.2)), if_neg hil]
+  · rw [ite_eq_right (fun h => hil (h.1.symm.trans h.2)), ite_eq_right hil]
     simp
 
 theorem rdV_zero' {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] (f : Q.Mx k r → E) (g : Q.Mx k r) :
@@ -250,18 +205,18 @@ theorem genW_sum : ∑ a : Fin (Q.mdim k r (Fin.last r)),
   simp only [Matrix.diagonal_apply]
   by_cases hil : i = l
   · subst hil
-    simp only [if_true]
+    simp only [ite_true]
     by_cases h : r ≤ i.val ∧ i.val ≤ r + k
-    · simp only [dif_pos h]
+    · simp only [dite_eq_left h]
       have hm : i.val - r < Q.mdim k r (Fin.last r) := by unfold Q.mdim; simp; omega
       rw [Finset.sum_eq_single ⟨i.val - r, hm⟩]
       · simp
       · intro b _ hb
-        rw [if_neg]
+        rw [ite_eq_right]
         · simp
         · intro hh; apply hb; ext; simp only at hh ⊢; omega
       · intro hh; exact absurd (Finset.mem_univ _) hh
-    · simp [dif_neg h]
+    · simp [dite_eq_right h]
   · simp [hil]
 
 theorem zc_eq (φ : ℝ) : zc k r φ = NormedSpace.exp ((φ : ℂ) • genW k r (fun _ => 1)) := by
@@ -337,8 +292,6 @@ namespace Formalism.FourierDecayAlt.P.CutMP.Gauge.GC
 
 noncomputable section
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace RRFin
 
 theorem hasDerivAt_rotExp (m : ℂ) :
@@ -398,7 +351,7 @@ theorem rotation_finite_from_matrix : GTRRFinFrom := by
     rw [rot_eqv hS P Bs hpl hsec Φ q.1.1 hcq q.1.2 hζq φ]
     conv_lhs => rw [hexp]
     rw [rotA_sum, SSTr.hsVec_sum, inner_sum]
-    simp only [VLem.hsV_smul, inner_smul_right, hM, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [VLem.hsV_smul, inner_smul_right, hM, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     ring
 
   have hD : ((q.1.1, NF.muZ P.k P.r Bs.μsec q.1.2) : (Fin P.r → ℂ) × Q.Mx P.k P.r) ∈ Q.DomR P.k P.r Bs.z Bs.z' :=
@@ -492,7 +445,7 @@ theorem rotation_ode_holds : GTRRODE := by
     intro i
     have h1 := hsol i i (2 * Real.pi)
     rw [hper] at h1
-    simp only [Matrix.one_apply_eq, if_true, mul_one] at h1
+    simp only [Matrix.one_apply_eq, ite_true, mul_one] at h1
     obtain ⟨n, hn⟩ := Complex.exp_eq_one_iff.1 h1.symm
     refine ⟨n, ?_⟩
     have hpi : (2 * (Real.pi : ℂ)) ≠ 0 := by
@@ -553,15 +506,6 @@ theorem inv_of_UH {g : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ} (hg : g ∈ UH (H
       _ = 1 := by rw [hg', Hb_mul_self]
   rw [Matrix.inv_eq_left_inv hl]
   exact ⟨hl, mul_eq_one_comm.1 hl⟩
-
-theorem UH_mul {g h : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ} (hg : g ∈ UH (Hb k)) (hh : h ∈ UH (Hb k)) :
-    g * h ∈ UH (Hb k) := by
-  have e1 : gᴴ * Hb k * g = Hb k := hg
-  have e2 : hᴴ * Hb k * h = Hb k := hh
-  show (g * h)ᴴ * Hb k * (g * h) = Hb k
-  rw [conjTranspose_mul]
-  calc hᴴ * gᴴ * Hb k * (g * h) = hᴴ * (gᴴ * Hb k * g) * h := by simp only [Matrix.mul_assoc]
-    _ = Hb k := by rw [e1, e2]
 
 theorem UH_inv {g : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ} (hg : g ∈ UH (Hb k)) : g⁻¹ ∈ UH (Hb k) := by
   have hg' : gᴴ * Hb k * g = Hb k := hg
@@ -789,7 +733,7 @@ theorem rotation_section_holds : GTRRSec := by
   obtain ⟨hB1, hB2⟩ := inv_of_UH hB
   have hsec := theSection_isSection k r z z' hk hz hz' hT hT'
   refine ⟨fun φ => ⟨?_, ?_⟩, ⟨?_, ?_, ?_, ?_⟩, fun φ ψ => ⟨?_, ?_⟩, ?_, ?_⟩
-  · refine (UWset_iff hz _).2 ⟨_, Formalism.FourierDecayAlt.P.GTRRSecH.UH_mul (Formalism.FourierDecayAlt.P.GTRRSecH.UH_mul hA (dOne_UH φ)) (UH_inv hA), ?_, rfl⟩
+  · refine (UWset_iff hz _).2 ⟨_, Formalism.FourierDecayAlt.P.TwoByOneBlock.UHb_mul (Formalism.FourierDecayAlt.P.TwoByOneBlock.UHb_mul hA (dOne_UH φ)) (UH_inv hA), ?_, rfl⟩
     have hinv : (gA k (wbPart k r z) (Tz k r z))⁻¹ *ᵥ wbPart k r z =
         (↑√(Tz k r z) : ℂ) • Pi.single (Fin.last k) 1 := by
       calc (gA k (wbPart k r z) (Tz k r z))⁻¹ *ᵥ wbPart k r z
@@ -797,7 +741,7 @@ theorem rotation_section_holds : GTRRSec := by
               ((↑√(Tz k r z) : ℂ) • Pi.single (Fin.last k) 1)) := by rw [hAv]
         _ = (↑√(Tz k r z) : ℂ) • Pi.single (Fin.last k) 1 := by rw [mulVec_mulVec, hA1, one_mulVec]
     rw [← mulVec_mulVec, ← mulVec_mulVec, hinv, dOne_fix_last, hAv]
-  · refine (UWset_iff hz' _).2 ⟨_, Formalism.FourierDecayAlt.P.GTRRSecH.UH_mul (Formalism.FourierDecayAlt.P.GTRRSecH.UH_mul (UH_inv hB) (dTwo_UH φ)) hB, ?_, rfl⟩
+  · refine (UWset_iff hz' _).2 ⟨_, Formalism.FourierDecayAlt.P.TwoByOneBlock.UHb_mul (Formalism.FourierDecayAlt.P.TwoByOneBlock.UHb_mul (UH_inv hB) (dTwo_UH φ)) hB, ?_, rfl⟩
     rw [← mulVec_mulVec, ← mulVec_mulVec, hBv, dTwo_fix_last hk, ← hBv, mulVec_mulVec, hB1, one_mulVec]
   · simp only [hL]
     rw [dOne_eq_one exp_zero_I, Matrix.mul_one, hA2, emb_one]
@@ -841,7 +785,7 @@ theorem rotation_section_holds : GTRRSec := by
         rw [emb_mul]
       refine ⟨hc, ?_, ?_⟩
       · rw [hprod]
-        obtain ⟨hU, hfix⟩ := emb_mem_UWb (r := r) (Formalism.FourierDecayAlt.P.GTRRSecH.UH_mul hSU (smul_one_UH φ))
+        obtain ⟨hU, hfix⟩ := emb_mem_UWb (r := r) (Formalism.FourierDecayAlt.P.TwoByOneBlock.UHb_mul hSU (smul_one_UH φ))
         exact ⟨hU, fun a _ => hfix a⟩
       · show 0 < Q.GGl k r z z' _
         simp only [Q.GGl]

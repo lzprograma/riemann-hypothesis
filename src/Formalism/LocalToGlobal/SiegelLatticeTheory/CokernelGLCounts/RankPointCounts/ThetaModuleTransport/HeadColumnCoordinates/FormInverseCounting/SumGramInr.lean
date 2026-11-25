@@ -21,10 +21,10 @@ theorem sum_gram_inl (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (T T' : E) (c : 
     Matrix.transpose_apply]
   by_cases hj : j = Fin.last r
   · subst hj
-    simp only [and_true, if_true, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ]
+    simp only [and_true, ite_true, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ]
     rw [mul_comm (c _) (-T), neg_mul, Finset.sum_congr rfl (fun b _ => mul_comm (c (Sum.inr b)) _)]
     ring
-  · simp only [hj, and_false, if_false, mul_zero, Finset.sum_const_zero, zero_add, sub_zero]
+  · simp only [hj, and_false, ite_false, mul_zero, Finset.sum_const_zero, zero_add, sub_zero]
     exact Finset.sum_congr rfl (fun b _ => mul_comm _ _)
 
 theorem sum_gram_inr (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (T T' : E) (c : Ix r → E)
@@ -35,10 +35,10 @@ theorem sum_gram_inr (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (T T' : E) (c : 
   simp only [gramC, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₂, Matrix.of_apply]
   by_cases hj : j = Fin.last r
   · subst hj
-    simp only [and_true, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [and_true, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [mul_comm (c _) (-T'), neg_mul, Finset.sum_congr rfl (fun a _ => mul_comm (c (Sum.inl a)) _)]
     ring
-  · simp only [hj, and_false, if_false, mul_zero, Finset.sum_const_zero, add_zero, sub_zero]
+  · simp only [hj, and_false, ite_false, mul_zero, Finset.sum_const_zero, add_zero, sub_zero]
     exact Finset.sum_congr rfl (fun a _ => mul_comm _ _)
 
 end Formalism.L2.SG.LocalCountModules.LocCnt0LAlg

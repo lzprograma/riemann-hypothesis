@@ -3,44 +3,8 @@ module
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.CProps
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.SelfDualMeasureSFinite
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -109,31 +73,18 @@ theorem relIndex_eq_card_range {W P Q : Type} [AddCommGroup W] [AddCommGroup P] 
   rw [hr]
   exact Nat.card_congr (e1.symm.trans (e3.trans e2))
 
+open scoped Pointwise in
 theorem vol_ratio (lam : Measure V) [lam.IsAddHaarMeasure] (L : AddSubgroup V) (hLo : IsOpen (L : Set V))
     (hLc : IsCompact (L : Set V)) (φ : V →+ V) (hφ : Continuous φ) {P Q : Type} [AddCommGroup P] [AddCommGroup Q]
     (f : P →+ V) (g : P →+ Q) (hr : f.range = L.map φ) (hfg : ∀ p, g p = 0 ↔ f p ∈ L) :
     (lam {x | ∃ y ∈ L, ∃ y' ∈ L, x = y + φ y'} / lam L).toReal = Nat.card (Set.range g) := by
   set N : AddSubgroup V := L ⊔ L.map φ with hNdef
+  have heq : (N : Set V) = (L : Set V) + φ '' (L : Set V) := by
+    rw [hNdef, AddSubgroup.add_normal, AddSubgroup.coe_map]
   have hset : {x | ∃ y ∈ L, ∃ y' ∈ L, x = y + φ y'} = (N : Set V) := by
-    ext x
-    simp only [Set.mem_setOf_eq, SetLike.mem_coe, hNdef, AddSubgroup.mem_sup, AddSubgroup.mem_map]
-    constructor
-    · rintro ⟨y, hy, y', hy', rfl⟩
-      exact ⟨y, hy, _, ⟨y', hy', rfl⟩, rfl⟩
-    · rintro ⟨y, hy, _, ⟨y', hy', rfl⟩, rfl⟩
-      exact ⟨y, hy, y', hy', rfl⟩
+    rw [heq]; ext x; simp [Set.mem_add, eq_comm]
   have hle : L ≤ N := le_sup_left
-  have hNc : IsCompact (N : Set V) := by
-    have : (N : Set V) = (fun p : V × V => p.1 + φ p.2) '' ((L : Set V) ×ˢ (L : Set V)) := by
-      rw [← hset]
-      ext x
-      constructor
-      · rintro ⟨y, hy, y', hy', rfl⟩
-        exact ⟨(y, y'), ⟨hy, hy'⟩, rfl⟩
-      · rintro ⟨⟨y, y'⟩, ⟨hy, hy'⟩, rfl⟩
-        exact ⟨y, hy, y', hy', rfl⟩
-    rw [this]
-    exact (hLc.prod hLc).image (continuous_fst.add (hφ.comp continuous_snd))
+  have hNc : IsCompact (N : Set V) := heq ▸ hLc.add (hLc.image hφ)
   have hidx : L.relIndex N ≠ 0 := by
     haveI : CompactSpace N := isCompact_iff_compactSpace.mp hNc
     have ho : IsOpen ((L.addSubgroupOf N : AddSubgroup N) : Set N) := hLo.preimage continuous_subtype_val

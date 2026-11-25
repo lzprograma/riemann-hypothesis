@@ -36,13 +36,8 @@ theorem expS_mem_UH {G X : Matrix (Fin n) (Fin n) ℂ} (hX : X ∈ lieG G) (t : 
 
 theorem mul_mem_UH₂ (G : Matrix (Fin n) (Fin n) ℂ) :
     ∀ a ∈ Formalism.QuantumDeterminants.UH G, ∀ b ∈ Formalism.QuantumDeterminants.UH G, a * b ∈ Formalism.QuantumDeterminants.UH G := by
-  intro a ha b hb
-  have ha' : aᴴ * G * a = G := ha
-  have hb' : bᴴ * G * b = G := hb
-  show (a * b)ᴴ * G * (a * b) = G
-  rw [Matrix.conjTranspose_mul]
-  calc bᴴ * aᴴ * G * (a * b) = bᴴ * (aᴴ * G * a) * b := by simp only [Matrix.mul_assoc]
-    _ = G := by rw [ha', hb']
+  intros
+  apply CCRuleCW.UH_mul <;> assumption
 
 theorem smooth_oneProd {G : Matrix (Fin n) (Fin n) ℂ} {π : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)}
     (hπ : IsGRep G π) {w : H} (hw : SmoothVec (lieG G) π w) :

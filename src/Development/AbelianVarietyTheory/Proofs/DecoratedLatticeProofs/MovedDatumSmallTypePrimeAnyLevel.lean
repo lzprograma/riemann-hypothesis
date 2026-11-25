@@ -139,7 +139,7 @@ theorem omPhi_locSmall_sharp : ∀ (CY : ℝ) (D : D7) (N : NumDatum) (X : Field
   refine GlobalTheory.ColNorms.MovedDatum.locSmall_om _ _ _ hh hh' ?_
   unfold PhiAt
   rw [hs]
-  simp only [if_pos hP, if_true]
+  simp only [ite_eq_left hP, ite_true]
   have hq0 : Formalism.L2.Col.qOf P.1 ≠ 0 := fun h0 => P.1.ne_bot (Ideal.absNorm_eq_zero_iff.1 h0)
   have hN : ∀ j, N.R.N j = N.R.k + j * N.R.t + j := fun j => by unfold Ranks.N; ring
   have h2 := N.R.two_le_m

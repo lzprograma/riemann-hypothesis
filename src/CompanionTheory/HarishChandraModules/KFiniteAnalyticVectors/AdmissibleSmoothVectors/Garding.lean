@@ -19,7 +19,7 @@ namespace CompanionTheory.D.gk.admitted
 
 open PI.UpqRep
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 namespace Gard
 

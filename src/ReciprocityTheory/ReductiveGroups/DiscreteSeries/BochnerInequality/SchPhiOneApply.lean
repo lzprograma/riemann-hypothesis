@@ -28,9 +28,17 @@ section Sch
 variable {M : Type*} [NormedAddCommGroup M] [InnerProductSpace ℂ M] {ε : Fin n → Bool}
   {E : Fin n → Fin n → Module.End ℂ M} {V : Submodule ℂ M} {lam : Fin n → ℝ}
 
-theorem phi_one_Wm (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
-    (hmono : StrictAnti lam) {h : ℝ} (hh : GapAtLeast ε lam h)
-    (hbig : (n : ℝ) * (pOf ε : ℝ) * (qOf ε : ℝ) + 1 < h) {x : Big n 1 M} (hx : x ∈ Wm ε E V) : phi E 1 x = 0 := by
+theorem phi_one_Wm_of (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hV : IsKIrrHW ε E (lowK ε lam) V)
+    (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
+    (hWm : ∀ {x : Big n 1 M} {μ : Fin n → ℝ}, x ∈ Wm ε E V → x ≠ 0 →
+      IsKHWVec ε (bAct E 1) μ x →
+      ∃ a b : Fin n, a < b ∧ ε a ≠ ε b ∧ μ = lowK ε lam - root a b)
+    (hvanish : ∀ {T : Submodule ℂ M} {a b : Fin n} {y : M},
+      FiniteDimensional ℂ T → IsKStableSub ε E T →
+      (∀ v ∈ T, casimir E v = (casVal lam : ℂ) • v) →
+      a < b → ε a ≠ ε b → y ∈ T →
+      IsKHWVec ε E (lowK ε lam - root a b) y → y = 0)
+    {x : Big n 1 M} (hx : x ∈ Wm ε E V) : phi E 1 x = 0 := by
   by_contra hne
   have := finiteDimensional_ncV (ε := ε) hV.1 1
   have hfdW : FiniteDimensional ℂ (Wm ε E V) := Submodule.finiteDimensional_of_le Wm_le_ncV
@@ -56,13 +64,25 @@ theorem phi_one_Wm (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hV : IsKIrrHW ε E
     rintro rfl
     rw [map_zero] at hfx
     exact hy0 hfx.symm
-  obtain ⟨a, b, hab, hε, hμ⟩ := Wm_khw hE hU hV hmono hh hbig hx1 hx10 hkhw
-  have hlay : phi E 1 x₀ ∈ layer ε E V 1 := _root_.ReciprocityTheory.ChartRestriction.DS.wordContraction_mem_noncompactLayer' (Wm_le_ncV hx₀)
-  have hcas : casimir E (phi E 1 x₀) = (casVal lam : ℂ) • phi E 1 x₀ :=
-    casimir_genSub hE hc _ (layer_le_genSub (ε := ε) 1 hlay)
+  obtain ⟨a, b, hab, hε, hμ⟩ := hWm hx1 hx10 hkhw
+  have hTc : ∀ v ∈ T, casimir E v = (casVal lam : ℂ) • v := by
+    intro v hv
+    obtain ⟨x', hx', rfl⟩ := Submodule.mem_map.1 hv
+    exact casimir_genSub hE hc _
+      (layer_le_genSub (ε := ε) 1
+        (_root_.ReciprocityTheory.ChartRestriction.DS.wordContraction_mem_noncompactLayer' (Wm_le_ncV hx')))
   rw [hμ] at hyμ
-  exact hy0 (khw_lowK_sub_root_eq_zero ε hE hU lam hab hε
-    (sch_gap ⟨hmono, h, hh, hbig⟩ hab hε) hyμ hcas)
+  exact hy0 (hvanish hfdT hTst hTc hab hε hyT hyμ)
+
+theorem phi_one_Wm (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
+    (hmono : StrictAnti lam) {h : ℝ} (hh : GapAtLeast ε lam h)
+    (hbig : (n : ℝ) * (pOf ε : ℝ) * (qOf ε : ℝ) + 1 < h) {x : Big n 1 M} (hx : x ∈ Wm ε E V) : phi E 1 x = 0 :=
+  phi_one_Wm_of hE hU hV hc
+    (fun hx1 hx10 hkhw => Wm_khw hE hU hV hmono hh hbig hx1 hx10 hkhw)
+    (fun _ _ hTc hab hε hyT hyμ =>
+      khw_lowK_sub_root_eq_zero ε hE hU lam hab hε
+        (sch_gap ⟨hmono, h, hh, hbig⟩ hab hε) hyμ (hTc _ hyT))
+    hx
 
 theorem sch_coord_apply {k : ℕ} (κ : Fin k → Fin n × Fin n) (F : Big n k M) : coord k κ F = F κ := rfl
 
@@ -85,9 +105,8 @@ theorem sch_phi_one_apply (G : Big n 1 M) :
   obtain ⟨p, rfl⟩ : ∃ p, κ = fun _ => p := ⟨κ 0, funext fun j => by rw [Fin.fin_one_eq_zero j]⟩
   rfl
 
-theorem phi_Wm_last (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
-    (hmono : StrictAnti lam) {h : ℝ} (hh : GapAtLeast ε lam h)
-    (hbig : (n : ℝ) * (pOf ε : ℝ) * (qOf ε : ℝ) + 1 < h) {k : ℕ} {F : Big n (k + 1) M}
+theorem phi_Wm_last_of {k : ℕ} {F : Big n (k + 1) M}
+    (hphi1 : ∀ {x : Big n 1 M}, x ∈ Wm ε E V → phi E 1 x = 0)
     (hF : ∀ κ, slice (Fin.last k) κ F ∈ Wm ε E V) : phi E (k + 1) F = 0 := by
 
   let e : (Fin k → Fin n × Fin n) × (Fin n × Fin n) ≃ (Fin (k + 1) → Fin n × Fin n) :=
@@ -106,14 +125,20 @@ theorem phi_Wm_last (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hV : IsKIrrHW ε 
   rw [← map_sum]
   rcases isEmpty_or_nonempty (Fin n × Fin n) with hX | ⟨⟨p0⟩⟩
   · simp
-  · have h := phi_one_Wm hE hU hV hc hmono hh hbig (hF (Fin.snoc init p0))
+  · have h := hphi1 (hF (Fin.snoc init p0))
     rw [sch_phi_one_apply] at h
     simp only [sch_slice_apply, Fin.update_snoc_last] at h
     rw [h, map_zero]
 
-theorem phi_Wm_position (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
+theorem phi_Wm_last (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
     (hmono : StrictAnti lam) {h : ℝ} (hh : GapAtLeast ε lam h)
-    (hbig : (n : ℝ) * (pOf ε : ℝ) * (qOf ε : ℝ) + 1 < h) {k : ℕ} (i : Fin (k + 1)) {F : Big n (k + 1) M} (hF0 : F ∈ ncV ε V (k + 1))
+    (hbig : (n : ℝ) * (pOf ε : ℝ) * (qOf ε : ℝ) + 1 < h) {k : ℕ} {F : Big n (k + 1) M}
+    (hF : ∀ κ, slice (Fin.last k) κ F ∈ Wm ε E V) : phi E (k + 1) F = 0 :=
+  phi_Wm_last_of (fun hx => phi_one_Wm hE hU hV hc hmono hh hbig hx) hF
+
+theorem phi_Wm_position_of (hE : IsGlRep E) (hVk : IsKStableSub ε E V)
+    {k : ℕ} (i : Fin (k + 1)) {F : Big n (k + 1) M} (hF0 : F ∈ ncV ε V (k + 1))
+    (hphi1 : ∀ {x : Big n 1 M}, x ∈ Wm ε E V → phi E 1 x = 0)
     (hF : ∀ κ, slice i κ F ∈ Wm ε E V) : phi E (k + 1) F ∈ layer ε E V k := by
 
   have hperm : ∀ κ, slice (Fin.last k) κ (permute (Equiv.swap i (Fin.last k)) F) ∈ Wm ε E V := by
@@ -125,10 +150,16 @@ theorem phi_Wm_position (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hV : IsKIrrHW
         Equiv.symm_swap, Equiv.swap_apply_right]
     rw [heq]
     exact hF _
-  have h0 := phi_Wm_last hE hU hV hc hmono hh hbig hperm
-  have hsub := phi_permute_sub_mem hE hV.2.1 (Equiv.swap i (Fin.last k)) hF0
+  have h0 := phi_Wm_last_of hphi1 hperm
+  have hsub := phi_permute_sub_mem hE hVk (Equiv.swap i (Fin.last k)) hF0
   rw [h0, sub_zero] at hsub
   exact hsub
+
+theorem phi_Wm_position (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
+    (hmono : StrictAnti lam) {h : ℝ} (hh : GapAtLeast ε lam h)
+    (hbig : (n : ℝ) * (pOf ε : ℝ) * (qOf ε : ℝ) + 1 < h) {k : ℕ} (i : Fin (k + 1)) {F : Big n (k + 1) M} (hF0 : F ∈ ncV ε V (k + 1))
+    (hF : ∀ κ, slice i κ F ∈ Wm ε E V) : phi E (k + 1) F ∈ layer ε E V k :=
+  phi_Wm_position_of hE hV.2.1 i hF0 (fun hx => phi_one_Wm hE hU hV hc hmono hh hbig hx) hF
 
 end Sch
 

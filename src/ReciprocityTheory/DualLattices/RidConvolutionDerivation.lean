@@ -288,7 +288,7 @@ theorem coeff_eq_zero_of_stable (ε : A →ₐ[R] R) (x : Fin d → A) (hx : ∀
         omega
       have h0 := ih Q' hQ' hlow' β hβr hβd
       rw [hQ'def, coeff_sum, Finset.sum_eq_single i] at h0
-      · rw [hsplit i β hβd.le hβr, if_pos rfl, mul_one, coeff_pderiv, ← hαβ] at h0
+      · rw [hsplit i β hβd.le hβr, ite_eq_left rfl, mul_one, coeff_pderiv, ← hαβ] at h0
         have hb : α i = β i + 1 := by rw [hαβ]; simp
         have hu : IsUnit ((β i : R) + 1) := by
           have := hunit (α i) (Nat.pos_of_ne_zero hi) (hα i)
@@ -296,7 +296,7 @@ theorem coeff_eq_zero_of_stable (ε : A →ₐ[R] R) (x : Fin d → A) (hx : ∀
           exact_mod_cast this
         exact (hu.mul_left_eq_zero).1 h0
       · intro j _ hj
-        rw [hsplit j β hβd.le hβr, if_neg (Ne.symm hj), mul_zero]
+        rw [hsplit j β hβd.le hβr, ite_eq_right (Ne.symm hj), mul_zero]
       · simp
   have W : ∀ m, ∀ Q : MvPolynomial (Fin d) R, aeval x Q ∈ K → LowRed p m Q := by
     intro m

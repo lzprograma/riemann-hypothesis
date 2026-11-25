@@ -27,60 +27,14 @@ public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormO
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormOneModEqOneAndOfDvd
 public import Development.AutomorphicArithmetic.ShortNorms.levelData
 public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Foundations.RayPrimes
 import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.WittVector.IsPoly
 import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MeanSquareHypWIff
-import Mathlib.Tactic.ENatToNat
 import Development.AutomorphicArithmetic.CoprimeRanks.SecondSetNoRelation
-import Mathlib.Algebra.Order.Star.Real
 import Formalism.SubspaceCounting.Statement
-import Mathlib.Algebra.Order.Star.Int
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FoundationProofs.JacobiSymNegEqOfThreeModFour, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KroneckerTwoNegEqJacobiSymTwo, Development.AutomorphicArithmetic.CharacterBoxes.PairRows, Development.AutomorphicArithmetic.MeanSquareBounds.realDecomp, Development.AutomorphicArithmetic.CharacterBoxes.RealSplit, Development.AutomorphicArithmetic.CharacterBoxes.RealBox, Development.AutomorphicArithmetic.ShortNorms.MulLogLeRpowEventually, Development.AutomorphicArithmetic.ThickFrames.ThickFrame2Large, Development.AutomorphicArithmetic.ThickFrames.topsBase, Development.AutomorphicArithmetic.ThickFrames.topsChoiceH, Development.AutomorphicArithmetic.ShortNorms.hostOfFieldOf
@@ -659,15 +613,6 @@ section -- clump:auto
 
 open Formalism.HC UpperTheory.Top
 
-private theorem UpperTheory.Top.realSplit_step (f q i : ℕ) [NeZero f] (ξ : DirichletCharacter ℂ f) (hξ : ξ.IsPrimitive)
-    (hq : q.Prime) (h2 : q ≠ 2) (hf : ¬ q ∣ f) (hi : i ≤ 1) :
-    ∃ (M : ℕ) (ψ : DirichletCharacter ℂ M), M = f * q ^ i ∧ ψ.IsPrimitive ∧
-      ∀ n : ℕ, ψ (n : ZMod M) = ξ (n : ZMod f) * QH.J q n ^ i := by
-  interval_cases i
-  · exact ⟨f, ξ, by simp, hξ, fun n => by simp⟩
-  · obtain ⟨ψ, h1, -, h3⟩ := QH.twist_prim f q ξ hξ hq h2 hf
-    exact ⟨f * q, ψ, by simp, h1, fun n => by simpa using h3 n⟩
-
 private theorem UpperTheory.Top.realSplit_J (q n i : ℕ) (h : n.Coprime q) : (QH.J q n ^ i) ^ 2 = 1 := by
   have h1 : jacobiSym (n : ℤ) q = 1 ∨ jacobiSym (n : ℤ) q = -1 :=
     jacobiSym.eq_one_or_neg_one (by rw [Int.gcd_natCast_natCast]; exact h)
@@ -750,7 +695,7 @@ private theorem exists_real_pchar_twist_decomposition (N : ℕ) [NeZero N] (χ :
     exact h
   have hcN₀ : ξ.conductor ∣ 8 * ordCompl[2] S := ξ.conductor_dvd_level
   have hqc : ¬ q ∣ ξ.conductor := fun h => hq8 (h.trans hcN₀)
-  obtain ⟨M1, ψ1, hM1, hψ1, hψ1eq⟩ := UpperTheory.Top.realSplit_step ξ.conductor q a
+  obtain ⟨M1, ψ1, hM1, hψ1, hψ1eq⟩ := boxes_step ξ.conductor q a
     ξ.primitiveCharacter ξ.primitiveCharacter_isPrimitive hq hq2 hqc ha
   subst hM1
   haveI : NeZero (ξ.conductor * q ^ a) := ⟨mul_ne_zero (NeZero.ne _) (pow_ne_zero _ hq.ne_zero)⟩
@@ -760,7 +705,7 @@ private theorem exists_real_pchar_twist_decomposition (N : ℕ) [NeZero N] (χ :
     · exact hd8 (h.trans hcN₀)
     · exact hqd ((Nat.prime_dvd_prime_iff_eq hd hq).1 (hd.dvd_of_dvd_pow h)).symm
   obtain ⟨M2, ψ2, hM2, hψ2, hψ2eq⟩ :=
-    UpperTheory.Top.realSplit_step (ξ.conductor * q ^ a) d b ψ1 hψ1 hd hd2 hdc hb
+    boxes_step (ξ.conductor * q ^ a) d b ψ1 hψ1 hd hd2 hdc hb
   subst hM2
   haveI : NeZero (ξ.conductor * q ^ a * d ^ b) :=
     ⟨mul_ne_zero (NeZero.ne _) (pow_ne_zero _ hd.ne_zero)⟩
@@ -876,8 +821,7 @@ private theorem UpperTheory.Top.realBox_main (M : ℕ) (φ : Frame) (H : HostRaw
   have hi01 : i = 0 ∨ i = 1 := by fin_cases i <;> simp
   have hj01 : j = 0 ∨ j = 1 := by fin_cases j <;> simp
   have hij : i ≠ 0 ∨ j ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     obtain ⟨rfl, rfl⟩ := hc
     rw [show H.q ^ ((0 : Fin 2) : ℕ) = 1 by simp, show H.d ^ ((0 : Fin 2) : ℕ) = 1 by simp,
       mul_one, mul_one] at hN
@@ -888,12 +832,12 @@ private theorem UpperTheory.Top.realBox_main (M : ℕ) (φ : Frame) (H : HostRaw
   have hdqi : ∀ k : ℕ, ¬ H.d ∣ H.q ^ k := fun k h => hdq (hd.dvd_of_dvd_pow h)
   have hjd : (if H.d ∣ χ.N then (1 : Fin 2) else 0) = j := by
     rcases hj01 with rfl | rfl
-    · rw [if_neg]
+    · rw [ite_eq_right]
       rw [hN, show H.d ^ ((0 : Fin 2) : ℕ) = 1 by simp, mul_one]
       intro h
       rcases (Nat.Prime.dvd_mul hd).1 h with h | h
       exacts [hdρ h, hdqi _ h]
-    · rw [if_pos]
+    · rw [ite_eq_left]
       rw [hN]
       exact dvd_mul_of_dvd_right (dvd_pow_self _ (by simp)) _
   have hqe : (H.q : ℝ) ≤ Real.exp (Y ^ (eps / 5)) :=
@@ -1079,8 +1023,7 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.thickFrame2 :
   have hLw2 : (2:ℝ) ≤ Lw := by exact_mod_cast hLw
   have hLwpos : (0:ℝ) < Lw := by linarith
   have hCL : 0 < CL := by
-    by_contra hneg
-    push_neg at hneg
+    by_contra! hneg
     have := mul_le_mul_of_nonneg_right hneg hypos.le
     linarith
   have hb : Real.log Lw ≤ Real.log CL + Real.log (Real.log x) := by
@@ -1367,8 +1310,7 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Fo
 
 private theorem lt_of_classC0' {R : Ranks} (H : Host R) {p : ℕ} {y : ℝ} (hp : p.Prime) (hc : H.cls p = PrimeClass.inertClass)
     (hs : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ y → GlobalTheoryTheory.kronSym (-(H.d : ℤ)) p = 1) : y < p := by
-  by_contra hle
-  push_neg at hle
+  by_contra! hle
   have hk := hs p hp hle
   have hc' := hc
   simp only [Host.cls, primeClass] at hc'
@@ -1378,7 +1320,7 @@ private theorem lt_of_classC0' {R : Ranks} (H : Host R) {p : ℕ} {y : ℝ} (hp 
       rw [Formalism.HC.HostRaw.small, Nat.mem_primeFactors]
       refine ⟨Nat.prime_two, ?_, H.QS_pos.ne'⟩
       exact dvd_trans (dvd_pow_self 2 (by omega)) H.tower_dvd
-    rw [if_pos hmem] at hc'
+    rw [ite_eq_left hmem] at hc'
     exact absurd hc' (by decide)
   · have hodd : p.factorization 2 = 0 :=
       Nat.factorization_eq_zero_of_not_dvd
@@ -1464,17 +1406,6 @@ private theorem hof_abs_dlogH_le {R : Ranks} (H : Host R) {x eps C : ℝ} (h : Q
   have h1 := (h.2.1 H.d _ (hof_quadraticChar_induces H.d (8 * H.q * H.d) (by omega) (by
     rw [mul_assoc]; omega))).2
   exact (Complex.abs_re_le_norm _).trans h1
-
-private theorem hof_log_le_rpow (eps C : ℝ) (he : 0 < eps) (hC : 0 < C) :
-    ∃ x0 : ℝ, ∀ x, x0 ≤ x → C * Real.log x ≤ x ^ eps := by
-  have h := (isLittleO_log_rpow_atTop he).bound (inv_pos.2 hC)
-  obtain ⟨x0, h0⟩ := Filter.eventually_atTop.1 h
-  refine ⟨max x0 1, fun x hx => ?_⟩
-  have h1 := h0 x (le_of_max_le_left hx)
-  have hx1 : 1 ≤ x := le_of_max_le_right hx
-  rw [Real.norm_of_nonneg (Real.log_nonneg hx1), Real.norm_of_nonneg (by positivity)] at h1
-  calc C * Real.log x ≤ C * (C⁻¹ * x ^ eps) := by gcongr
-    _ = x ^ eps := by field_simp
 
 private theorem hof_Lwv_le (s : Scale) (hy : 1 ≤ Real.log s.x) :
     (Lwv s : ℝ) ≤ (4084 + 60 / s.eps) * Real.log s.x := by
@@ -1565,13 +1496,13 @@ private theorem hof_box {R : Ranks} (H : Host R) {M : ℕ} {eps Y X : ℝ} (hM :
   have key := a ⟨N, χ, hχ.1⟩ ((isCharH_iff H χ).1 hχ) hr
   refine ⟨fun hd => ?_, fun hq hd => ?_⟩
   · obtain ⟨k1, k2⟩ := key (Or.inr hd)
-    rw [if_pos hd] at k1 k2
+    rw [ite_eq_left hd] at k1 k2
     have e : 8 * ((ordCompl[2] H.QS : ℕ) : ℝ) * GlobalTheoryTheory.X1 Y eps * GlobalTheoryTheory.X2 Y eps = height (ordCompl[2] H.QS) eps Y 1 := by
       simp [height, GlobalTheoryTheory.X1, GlobalTheoryTheory.X2]
     rw [e]
     exact ⟨hχ.1, hr, k2, fun z z1 z2 => k1 z z1 (z2.trans (hmono _))⟩
   · obtain ⟨k1, k2⟩ := key (Or.inl hq)
-    rw [if_neg hd] at k1 k2
+    rw [ite_eq_right hd] at k1 k2
     have e : 8 * ((ordCompl[2] H.QS : ℕ) : ℝ) * GlobalTheoryTheory.X1 Y eps = height (ordCompl[2] H.QS) eps Y 0 := by
       simp [height, GlobalTheoryTheory.X1]
     rw [e]
@@ -1591,7 +1522,7 @@ theorem UpperTheory.T3.hostOfFieldOf :
   obtain ⟨xd, hP⟩ := UpperTheory.Top.pairRows eps C0 he he'
   obtain ⟨CT2, hT⟩ := hof_thick
   obtain ⟨xe, hT⟩ := hT eps C0 he he'
-  obtain ⟨xf, hlog⟩ := hof_log_le_rpow eps 4 he (by norm_num)
+  obtain ⟨xf, hlog⟩ := mul_log_le_rpow_eventually eps 4 he (by norm_num)
   obtain ⟨xg, hbig⟩ := UpperTheory.T3.qdBig eps C0 he he'
   refine ⟨CT2, max C0 C1, 1, Cb, max (max xa (max xc xd)) (max (max xe xf) xg), le_max_left _ _, one_pos, hCb,
     fun s R H0 M Y hs hx hR hJ ho hQS hM _ hQ hW hG hF hA => ?_⟩

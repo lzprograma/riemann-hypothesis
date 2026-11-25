@@ -3,49 +3,7 @@ module
 public import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsMemRowHighestTotalDegreeEqTwo
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
 public import Development.AbelianVarietyTheory.Definitions.ThetaValues.PolyDerivSmulLetter
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ColTorusA
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -137,12 +95,12 @@ theorem eigen_of_triangular (f : (J → V) → ℂ) (lt : J → J → Prop) (rk 
       funext j
       by_cases hj : j = a
       · subst hj
-        rw [Function.update_self, if_pos (Finset.mem_insert_self _ _), if_neg ha,
+        rw [Function.update_self, ite_eq_left (Finset.mem_insert_self _ _), ite_eq_right ha,
           ← Finset.add_sum_erase _ _ (Finset.mem_univ j)]
         congr 1
         refine Finset.sum_congr rfl fun i hi => ?_
         by_cases h : lt i j
-        · rw [if_neg fun hS => (hmin i hS).not_gt (hrk i j h)]
+        · rw [ite_eq_right fun hS => (hmin i hS).not_gt (hrk i j h)]
         · rw [hN i j (Finset.ne_of_mem_erase hi) h, zero_smul, zero_smul]
       · simp [hj]
   simpa using key Finset.univ
@@ -176,7 +134,7 @@ theorem polyDeriv_triangular {T κ W : Type*} [Fintype T] [Fintype κ] {p q : �
     by_cases e : t' = t ∧ r'' = r'
     · obtain ⟨rfl, rfl⟩ := e
       simp
-    · rw [Function.update_of_ne (by simpa using e), if_neg e]
+    · rw [Function.update_of_ne (by simpa using e), ite_eq_right e]
       simp
   · rintro ⟨t, r⟩ s w
     rw [← polyDeriv_smul_letter P (fun l => if l.1 = t ∧ l.2.1 = r then s else 1) _ fun m hm => ?_]
@@ -185,7 +143,7 @@ theorem polyDeriv_triangular {T κ W : Type*} [Fintype T] [Fintype κ] {p q : �
       by_cases e : t' = t ∧ r'' = r
       · obtain ⟨rfl, rfl⟩ := e
         simp
-      · rw [Function.update_of_ne (by simpa using e), if_neg e]
+      · rw [Function.update_of_ne (by simpa using e), ite_eq_right e]
         simp
     · rw [← hdeg t r (mem_support_iff.1 hm), Finsupp.weight_apply, Finsupp.sum,
         ← Finset.prod_pow_eq_pow_sum]

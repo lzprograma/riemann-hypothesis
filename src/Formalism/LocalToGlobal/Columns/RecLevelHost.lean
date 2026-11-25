@@ -80,11 +80,4 @@ theorem rlh_conjP_conjP (P : Pl E) : conjPrime₂ (conjPrime₂ P) = P := by
 
 end Split
 
-section Primes
-
-variable {X : Fields} {Pr : Primes X}
-
-
-end Primes
-
 end Formalism.L2.Col

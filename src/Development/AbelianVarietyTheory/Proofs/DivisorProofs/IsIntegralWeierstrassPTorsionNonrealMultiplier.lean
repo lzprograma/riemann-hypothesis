@@ -110,7 +110,7 @@ theorem isIntegral_sq_mul_wp_sub_div : ∀ (N : ℕ) [NeZero N] (τ : ℍ) (ω :
       rw [hmem]
       have e : (N : ℂ) ^ 2 * (cP N p.1.1 n - cP N p.1.2 n) =
           (N : ℂ) ^ 2 * cB N p.1.1 n - (N : ℂ) ^ 2 * cB N p.1.2 n := by
-        simp only [cP, if_neg p.2.1, if_neg p.2.2]; ring
+        simp only [cP, ite_eq_right p.2.1, ite_eq_right p.2.2]; ring
       rw [e]
       exact (_root_.GlobalTheory.WpFam.isIntegral_coefficients N N p.1.1 n (NeZero.pos N) (hNx _)).1.sub
         (_root_.GlobalTheory.WpFam.isIntegral_coefficients N N p.1.2 n (NeZero.pos N) (hNx _)).1

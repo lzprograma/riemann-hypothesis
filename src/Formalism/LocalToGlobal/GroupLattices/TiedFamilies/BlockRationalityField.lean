@@ -17,8 +17,6 @@ def BlockRationalityField : Prop :=
     (lam : Tau → DomWeight n), WtTie P h pos lam → (∀ τ, ∃ M0 : GL (Fin n) LL, M τ = M0.1.map embLL) →
     BlockRational P h pos G M embLL lam
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 

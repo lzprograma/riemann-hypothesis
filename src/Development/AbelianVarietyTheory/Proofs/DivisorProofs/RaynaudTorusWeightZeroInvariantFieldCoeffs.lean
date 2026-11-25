@@ -9,44 +9,7 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsRaynaudTor
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusInvariantHeatOperatorPreservesWeight
 public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.AwayToAwayRightEqOfComp
 public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeG
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -64,9 +27,6 @@ open GlobalTheory.KS (rsT pbT C1 IsCoc IsCob)
 open GlobalTheory.LogKS (IsField)
 open GlobalTheory.RayEv (Ray)
 open GlobalTheory.Toroidal GlobalTheory.LogKS GlobalTheory.LogKSChart GlobalTheory.Heat
-attribute [local instance] Over.cartesianMonoidalCategory
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -81,7 +41,6 @@ section Group
 variable {R : Type} [CommRing R] {G : Over (Sp R)} [GrpObj G] [IsCommMonObj G] {n : ℕ}
 
 alias exists_isLieBasis := _root_.GlobalTheory.Heat.TangentTranslation.exists_isLieBasis
-alias top_le_of_fst := _root_.GlobalTheory.Heat.TangentTranslation.top_le_of_fst
 alias valR_translate := _root_.GlobalTheory.Heat.TangentTranslation.valR_translate
 
 variable {B : Type} [CommRing B] [Algebra R B]
@@ -127,7 +86,7 @@ open GlobalTheory.TorusModel (cv pt_ext isPull_iff)
 theorem gs_valR {S : Type} [CommRing S] {X : Scheme.{0}} (b : Sp S ⟶ X) {V W : X.Opens} (hV : V ≤ W)
     (hb : ⊤ ≤ b ⁻¹ᵁ V) (s : Γ(X, W)) (z : Sp S) :
     gs (𝟙 _) z ⊤ ((Scheme.ΓSpecIso (CommRingCat.of S)).inv.hom (valR b V (rsT s V))) = gs b z W s := by
-  rw [valR, dif_pos hb, Iso.hom_inv_id_apply, rsT, dif_pos hV]
+  rw [valR, dite_eq_left hb, Iso.hom_inv_id_apply, rsT, dite_eq_left hV]
   refine (gs_res (𝟙 _) z hb trivial _).trans ((gs_pull (𝟙 _) b z V (hb trivial) _).trans ?_)
   rw [Category.id_comp]
   exact gs_res b z hV (hb trivial) _
@@ -135,7 +94,7 @@ theorem gs_valR {S : Type} [CommRing S] {X : Scheme.{0}} (b : Sp S ⟶ X) {V W :
 theorem valR_app {S : Type} [CommRing S] {X Z : Scheme.{0}} (b : Sp S ⟶ X) (q : X ⟶ Z) (V : Z.Opens)
     (hb : ⊤ ≤ b ⁻¹ᵁ (q ⁻¹ᵁ V)) (g : Γ(Z, V)) : valR b (q ⁻¹ᵁ V) ((q.app V).hom g) = valR (b ≫ q) V g := by
   have hb' : ⊤ ≤ (b ≫ q) ⁻¹ᵁ V := hb
-  rw [valR, valR, dif_pos hb, dif_pos hb']
+  rw [valR, valR, dite_eq_left hb, dite_eq_left hb']
   rfl
 
 variable {R : Type} [CommRing R] [IsDomain R] {Q : DegPre R} {O : Type} [CommRing O] [StarRing O] [Module O Q.X]
@@ -206,7 +165,7 @@ theorem eq_of_valR {B : Type} [CommRing B] {ψ : R →+* B} (w w' : Over.mk (spM
     refine Over.OverMorphism.ext (TangentOrigin.ext_evalPt (R := B) hW h₂ h₁ (RingHom.ext fun g => ?_))
     have := h₃ 0 _ (isWt_app Y W g)
     rw [valR_app (S := B) _ _ _ h₁, valR_app (S := B) _ _ _ h₂] at this
-    exact (dif_pos h₂).symm.trans (this.symm.trans (dif_pos h₁))
+    exact (dite_eq_left h₂).symm.trans (this.symm.trans (dite_eq_left h₁))
   refine (Y.Φ _).injective (pt_ext (by rw [Y.Φ_b, Y.Φ_b, hq]) fun χ y J hJ => ?_)
   choose j hj using fun k => exists_chart Q.P.isLB (DegPre.gtφT Q Q.P.A (𝟙 _) χ k (Y.q.left p))
   obtain ⟨h₁, h₂, h₃⟩ := h (V ⊓ LB.wchart Q.P.L (DegPre.gtφT Q Q.P.A (𝟙 _) χ) j) inf_le_left
@@ -285,7 +244,7 @@ theorem isWt_coeff : ∀ (R : Type) [CommRing R] [IsDomain R] (Q : DegPre R) (O 
 
       rw [hcf _ hle', GlobalTheory.ZH.CrdCalc.valR_eq _ _ hb, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
-      rw [map_mul, ← GlobalTheory.ZH.CrdCalc.valR_eq _ _ hb, ← GlobalTheory.ZH.CrdCalc.valR_eq _ _ hb, rsT, dif_pos hle', valR_res _ _ hb]
+      rw [map_mul, ← GlobalTheory.ZH.CrdCalc.valR_eq _ _ hb, ← GlobalTheory.ZH.CrdCalc.valR_eq _ _ hb, rsT, dite_eq_left hle', valR_res _ _ hb]
     have t := hδ α V' hle f hf S φ x x' c _ _ rfl rfl m m' hq hc
     have td := fun i => GlobalTheory.T.isRaynaudTorusWeightFunction_invariantField Y (v i) (dd i) (hd i) α _ f hf S φ x x' c _ _ rfl rfl m m' hq hc
     rw [ev _ m, ev _ m', Finset.mul_sum] at t

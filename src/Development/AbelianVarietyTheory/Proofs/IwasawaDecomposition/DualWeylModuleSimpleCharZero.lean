@@ -315,8 +315,7 @@ theorem nablaSq_simple_charZero : ∀ (k : Type) [Field k] [CharZero k] (N : ℕ
   intro k _ _ N lam M hM hG
   haveI : Infinite k := Infinite.of_injective _ Nat.cast_injective
   have hN := factNatW N lam
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   have hMg : Good M := good_of_isGLSubmodule k N lam M (isGLSubmodule_of_stable k N lam M hG)
   have key := hw_mem_of_lt_charZero k N lam.natW hN.1 hN.2.2
   have h1 := (key ⊥ M (good_top_bot k N N).2 hMg (bot_lt_iff_ne_bot.2 hc.1) hM).1

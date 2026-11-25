@@ -1,48 +1,8 @@
 module
 
 public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -103,44 +63,16 @@ theorem rhoReal_pos (i s : ℕ) : 0 < rhoReal D i s := zpow_pos (rdE_pos D) _
 def ptWeightG (ρ : ℕ → ℕ → ℝ) (T T' : ℝ) (bs : List (D.host.E × ℕ)) : ℝ :=
   ∏ v, ptWeightFrom D.R.k D.R.rS T T' 0 (locBlocks D ρ v bs)
 
-def ptSnoc {j : ℕ} (h : Point D.host.E j) (t : D.host.E) (ht : t ≠ 0) (s : ℕ) (hs : 1 ≤ s) :
-    Point D.host.E (j + s) :=
-  ⟨h.1 ++ [(t, s)], by
-    refine ⟨fun b hb => ?_, ?_⟩
-    · rcases List.mem_append.1 hb with hb | hb
-      · exact h.2.1 b hb
-      · rw [List.mem_singleton.1 hb]; exact ⟨ht, hs⟩
-    · simp [h.2.2]⟩
-
 def embInf : D.host.E →+ (D.what₂.Tau → ℂ) := (RingHom.pi fun v => plEmb D v).toAddMonoidHom
 
 def cPsi (δ : D.host.E) (v : D.what₂.Tau) : ℂ := 4 * (Real.pi : ℂ) / plEmb D v δ
 
 def kaV (δ : D.host.E) (v : D.what₂.Tau) : ℝ := 2 * Real.pi / ‖plEmb D v δ‖
 
-def dualPsi (δ : D.host.E) (L : Submodule ℤ D.host.E) : Set D.host.E :=
-  {l | ∀ c ∈ L, ∃ z : ℤ, Algebra.trace ℚ D.host.E (l * c / δ) = (z : ℚ)}
-
 def FullLat (L : Submodule ℤ D.host.E) : Prop :=
   L.FG ∧ Submodule.span ℚ (L : Set D.host.E) = ⊤
 
-def embInfS (c : ℝ) : D.host.E →+ (D.what₂.Tau → ℂ) :=
-  { toFun := fun x v => ((c : ℝ) : ℂ) * plEmb D v x
-    map_zero' := by funext v; simp
-    map_add' := fun x y => by funext v; simp [mul_add] }
-
-def IsCovol (κ c : ℝ) (L : Submodule ℤ D.host.E) : Prop :=
-  ∃ F : Set (D.what₂.Tau → ℂ), MeasurableSet F ∧
-    IsAddFundamentalDomain (L.toAddSubgroup.map (embInfS D c)) F volume ∧ volume F = ENNReal.ofReal κ
-
 end S1bNum
-
-section Kernels
-
-def PSDK {α : Type*} (K : α → α → ℂ) : Prop :=
-  ∀ (X : Finset α) (a : α → ℂ), 0 ≤ ∑ p ∈ X, ∑ q ∈ X, star (a p) * K p q * a q
-
-end Kernels
 
 section S1bData
 
@@ -170,11 +102,6 @@ structure KernelData where
   e : ℕ → ℝ
 
 def IsBlockSL2Embedding (i s : ℕ) : Prop := 1 ≤ i ∧ 1 ≤ s ∧ i - 1 + s ≤ D.R.rS + 1
-
-def LatAx (δ : D.host.E) (L : LatticeDataWithDual D) : Prop :=
-  0 < L.κ ∧ ∀ i s, IsBlockSL2Embedding D i s →
-    0 < L.ρ i s ∧ FullLat D (L.La i s) ∧ FullLat D (L.La' i s) ∧ IsCovol D L.κ (L.ρ i s) (L.La i s) ∧
-    dualPsi D δ (L.La i s) ⊆ (L.aaV i s : Set D.host.E) ∧ (L.La' i s : Set D.host.E) ⊆ (L.aaP i s : Set D.host.E)
 
 def IsFrameScale (L : LatticeDataWithDual D) (ϱ : ℝ) : Prop :=
   0 < ϱ ∧ ∀ i s, IsBlockSL2Embedding D i s → L.ρ i s = ϱ ^ (-((((2 * D.R.rS + 3 : ℕ) : ℤ) - 2 * (i : ℤ) - (s : ℤ))))
@@ -215,9 +142,5 @@ def ThS (C1 C2 N T T' : ℝ) (δ : D.host.E) (x : D.what₂.Tau → LocalDataRea
   ThInvF D C1 C2 N T T' δ x L ^ (-(1 / (D.R.f : ℝ)))
 
 end Sizes
-
-section Rows
-
-end Rows
 
 end Formalism.MainNotions.S

@@ -221,7 +221,7 @@ theorem secondProj_uniformizer_mul (x : M.R) : p2 g ((q2 hs * x : M.R) : E) = (g
 
 theorem dl_cast (a : Fin r) : dl (F := F) r a.castSucc = 0 := by
   unfold dl
-  rw [if_neg (Fin.castSucc_lt_last a).ne]
+  rw [ite_eq_right (Fin.castSucc_lt_last a).ne]
 
 theorem gamSup_holds : GamSupP := by
   intro F _ _ _ E _ _ _ _ M g hs r T T' TT Zh Z Zσ h

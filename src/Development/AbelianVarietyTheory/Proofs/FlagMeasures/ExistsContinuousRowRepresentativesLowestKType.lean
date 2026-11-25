@@ -508,7 +508,7 @@ theorem repsExist : ∀ (B : RowsAut) (d : InfinitePlace B.I.F → ℝ), IsDSDat
   have hFr : ∀ u f, IsContRep B (T u) f → Fr u = f := by
     intro u f hf
     have h : ∃ f, IsContRep B (T u) f := ⟨f, hf⟩
-    have : Fr u = h.choose := dif_pos h
+    have : Fr u = h.choose := dite_eq_left h
     rw [this]
     exact huniq _ _ _ h.choose_spec hf
   refine ⟨Fr, fun P u hu => ?_⟩

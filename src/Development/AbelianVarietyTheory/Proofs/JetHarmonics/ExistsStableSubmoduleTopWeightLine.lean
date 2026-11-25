@@ -127,7 +127,7 @@ theorem loweringWord_height (hE : GlRel E) (hv : IsHW E ν v) {N : ℕ} {x : V}
       simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul]
       simp only [glRel_apply_comm hE _ _ c d y, smul_sub, smul_add, Finset.sum_sub_distrib,
         Finset.sum_add_distrib, smul_ite, smul_zero, Finset.sum_ite_eq, Finset.sum_ite_eq',
-        Finset.mem_univ, if_true]
+        Finset.mem_univ, ite_true]
     rw [key, ih, map_smul]
     have hle : d.val ≤ c.val := le_of_lt h
     push_cast [Nat.cast_sub hle]

@@ -78,7 +78,7 @@ theorem prod_ofFn_sub {A : Type*} [Ring A] [Algebra ℂ A] :
       intro k _
       rw [List.ofFn_succ, List.prod_cons]
       have h0 : (Fin.castSucc (0 : Fin (n+1)) : Fin (n+2)) < k.succ := by simp [Fin.succ_pos]
-      rw [if_pos h0, Fin.castSucc_zero, ← mul_assoc (x 0), ← Algebra.commutes, mul_assoc]
+      rw [ite_eq_left h0, Fin.castSucc_zero, ← mul_assoc (x 0), ← Algebra.commutes, mul_assoc]
       have hl : (List.ofFn fun j : Fin n => if j.castSucc < k then x j.castSucc.succ else y j.succ.succ) =
           (List.ofFn fun i : Fin n => if i.succ.castSucc < k.succ then x i.succ.castSucc else y i.succ.succ) := by
         congr 1; funext j; simp only [← Fin.succ_castSucc, Fin.succ_lt_succ_iff]
@@ -140,9 +140,9 @@ theorem qdet_add_one_sub (A : Type) [Ring A] [Algebra ℂ A] (m : ℕ) (E : Fin 
       congr 1
       funext j
       by_cases hj : Fin.castSucc j < k
-      · rw [if_pos hj, Fin.succAbove_of_castSucc_lt k j hj]
+      · rw [ite_eq_left hj, Fin.succAbove_of_castSucc_lt k j hj]
         simp
-      · rw [if_neg hj, Fin.succAbove_of_le_castSucc k j (not_lt.mp hj)]
+      · rw [ite_eq_right hj, Fin.succAbove_of_le_castSucc k j (not_lt.mp hj)]
         simp only [id, Fin.val_succ]
         congr 1
         push_cast; ring

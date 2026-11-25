@@ -234,7 +234,6 @@ private theorem isDiscrete_of_norm' {E : Type} [Field E] [NumberField E] [IsCMFi
     exact GlobalTheory.DiscChar.isSqInt_of_bounded (hn φ hφ) (C := C) fun g => by simpa using hC g
 
 private theorem cuspFin_of (hF : FinDisc) : CuspFin := by
-  set_option synthInstance.maxHeartbeats 200000 in
     intro E _ _ _ N hN K W R hK hW
     letI : MeasurableSpace (GA E N) := _root_.borel _
     haveI : BorelSpace (GA E N) := ⟨rfl⟩

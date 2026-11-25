@@ -97,7 +97,7 @@ theorem finrank_piece_eq_hilbFn (y : Fin (N + 1) → Ω) (n : ℕ) :
     (Module.finrank k ((coordGraded k y).piece (n : ℤ)) : ℤ) =
       NumbersDVR.hilbFn (primeOfOne (S := k) y) (fun _ => (n : ℤ)) := by
   classical
-  rw [NumbersDVR.hilbFn, if_pos (fun _ => Int.natCast_nonneg n)]
+  rw [NumbersDVR.hilbFn, ite_eq_left (fun _ => Int.natCast_nonneg n)]
   simp only [Int.toNat_natCast]
   congr 1
   set V := weightedHomogeneousSubmodule k (NumbersDVR.blockWeight (fun _ : Unit => Fin (N + 1)))

@@ -12,8 +12,6 @@ namespace Formalism.L2.Ker
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.HermitianLatticesTheory Formalism.L2.DIV
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def twMt (D : D7) (ξ : D.Dt →* ℂˣ) : ℕ → D.Dt →* ℂˣ := fun j =>
   if 1 ≤ j ∧ j ≤ D.R.m then D.muTil j * ξ else D.muTil j
 

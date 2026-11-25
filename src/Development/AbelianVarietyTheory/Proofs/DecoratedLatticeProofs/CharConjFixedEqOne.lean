@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
 public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedWeil
 import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
 import Mathlib.Algebra.Order.Floor.Extended
@@ -54,7 +55,6 @@ import Mathlib.Algebra.Azumaya.Basic
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Forms Formalism.L2.Ker Formalism.UG
 open NumberField IsDedekindDomain Matrix MeasureTheory GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.MixPer GlobalTheory.Core.Rk GlobalTheory.AdForm
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.CharConjFixed
 
@@ -72,21 +72,7 @@ theorem cA_tmul (D : D7) (a : AF D.host.F) (e : D.host.E) :
 
 theorem trace_mem (D : D7) (y : AE D) :
     ∃ b : AF D.host.F, algebraMap (AF D.host.F) (AE D) b = y + cA D y := by
-  induction y using TensorProduct.induction_on with
-  | zero => exact ⟨0, by simp⟩
-  | add a b ha hb =>
-    obtain ⟨u, hu⟩ := ha
-    obtain ⟨v, hv⟩ := hb
-    refine ⟨u + v, ?_⟩
-    rw [map_add (f := _), hu, hv, map_add (f := _)]; abel
-  | tmul a e =>
-    have hfix : star (e + star e) = e + star e := by
-      rw [star_add, star_star, add_comm]
-    obtain ⟨f, hf⟩ := (D.sp.cm.fixed _).1 hfix
-    refine ⟨f • a, ?_⟩
-    rw [cA_tmul, ← TensorProduct.tmul_add, ← hf, Algebra.algebraMap_eq_smul_one (A := D.host.E) f,
-      ← TensorProduct.smul_tmul]
-    rfl
+  first | exact _root_.GlobalTheory.PlaceModelSum.exists_add_conj | exact @_root_.GlobalTheory.PlaceModelSum.exists_add_conj | apply _root_.GlobalTheory.PlaceModelSum.exists_add_conj <;> assumption
 
 theorem fixed_mem (D : D7) (y : AE D) (hy : cA D y = y) :
     ∃ b : AF D.host.F, algebraMap (AF D.host.F) (AE D) b = y := by

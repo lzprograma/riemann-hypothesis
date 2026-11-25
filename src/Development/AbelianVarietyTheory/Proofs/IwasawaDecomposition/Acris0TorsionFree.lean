@@ -44,6 +44,7 @@ import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdicCompletionPrincipalPerfect
 
 @[expose] public section
 
@@ -59,32 +60,16 @@ theorem fg : (Ideal.span {a}).FG := Submodule.fg_span_singleton a
 theorem eval_eq_zero_iff (n : ℕ) (x : AdicCompletion (Ideal.span {a}) R) :
     AdicCompletion.eval (Ideal.span {a}) R n x = 0 ↔
       (algebraMap R (AdicCompletion (Ideal.span {a}) R) a) ^ n ∣ x := by
-  rw [← LinearMap.mem_ker, ← AdicCompletion.pow_smul_top_eq_ker_eval (fg a),
-    Ideal.span_singleton_pow, Submodule.ideal_span_singleton_smul,
-    Submodule.mem_smul_pointwise_iff_exists]
-  constructor
-  · rintro ⟨b, -, rfl⟩
-    exact ⟨b, by rw [Algebra.smul_def, map_pow]⟩
-  · rintro ⟨b, rfl⟩
-    exact ⟨b, trivial, by rw [Algebra.smul_def, map_pow]⟩
+  apply _root_.GlobalTheory.PerfectCompletion.eval_eq_zero_iff <;> assumption
 
 theorem complete :
     IsAdicComplete (Ideal.span {algebraMap R (AdicCompletion (Ideal.span {a}) R) a})
-      (AdicCompletion (Ideal.span {a}) R) := by
-  have h := AdicCompletion.isAdicComplete (M := R) (fg a)
-  rw [← IsAdicComplete.map_algebraMap_iff (S := AdicCompletion (Ideal.span {a}) R),
-    Ideal.map_span, Set.image_singleton] at h
-  exact h
+      (AdicCompletion (Ideal.span {a}) R) := GlobalTheory.PerfectCompletion.complete a
 
 theorem dense (x : AdicCompletion (Ideal.span {a}) R) (r : ℕ) :
     ∃ (s : R) (z : AdicCompletion (Ideal.span {a}) R),
       x = algebraMap R _ s + (algebraMap R (AdicCompletion (Ideal.span {a}) R) a) ^ r * z := by
-  obtain ⟨s, hs⟩ := Submodule.Quotient.mk_surjective _ (AdicCompletion.eval (Ideal.span {a}) R r x)
-  have : AdicCompletion.eval (Ideal.span {a}) R r (x - algebraMap R _ s) = 0 := by
-    rw [map_sub, ← hs, sub_eq_zero]
-    rfl
-  obtain ⟨z, hz⟩ := (eval_eq_zero_iff a r _).1 this
-  exact ⟨s, z, by rw [← hz]; ring⟩
+  exact GlobalTheory.PerfectCompletion.dense a x r
 
 theorem dvd_iff (s : R) (r : ℕ) :
     (algebraMap R (AdicCompletion (Ideal.span {a}) R) a) ^ r ∣ algebraMap R _ s ↔ a ^ r ∣ s := by

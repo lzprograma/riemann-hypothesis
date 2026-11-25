@@ -97,7 +97,7 @@ private theorem lc_rows {R : Type} [CommRing R] (X Y : UPos (2 + 2) 2 → R) (a 
     simp only [wGL, Matrix.reindex_apply, Matrix.submatrix_apply, finSumFinEquiv_symm_apply_castAdd,
       finSumFinEquiv_symm_apply_natAdd, Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂, Matrix.zero_apply, zero_mul,
       Finset.sum_const_zero, add_zero, coe_unipGL, Matrix.one_apply, ite_mul, one_mul, Finset.sum_ite_eq, Finset.mem_univ,
-      if_true]
+      ite_true]
   have hU : ∀ (i : Fin 2) (M : Matrix (Fin (2 + 2)) (Fin (2 + 2)) R) (j : Fin (2 + 2)),
       (unipMatrix Y * M) (Fin.natAdd 2 i) j = M (Fin.natAdd 2 i) j := by
     intro i M j

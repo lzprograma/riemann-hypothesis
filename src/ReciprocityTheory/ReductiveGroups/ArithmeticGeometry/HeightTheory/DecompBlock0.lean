@@ -85,7 +85,7 @@ theorem hL_rename (p : MvPolynomial {v : TVar D N // v.1 ≠ 0} K) :
   induction p using MvPolynomial.induction_on with
   | C a => rw [MvPolynomial.rename_C, hL_C]
   | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _)]
-  | mul_X p n hp => rw [map_mul, map_mul, hp, MvPolynomial.rename_X, hL_X, dif_neg n.2, map_mul]
+  | mul_X p n hp => rw [map_mul, map_mul, hp, MvPolynomial.rename_X, hL_X, dite_eq_right n.2, map_mul]
 
 theorem hE_C (j0 : Fin (N + 1)) (r : Ω) :
     hE Ω D N j0 (MvPolynomial.C r) = MvPolynomial.C (MvPolynomial.C r) := by
@@ -343,34 +343,21 @@ theorem eEX4_algebraMap (c : ι) (P : MvPolynomial (SVar d.D d.N) (Ω c)) :
 noncomputable def psiE (c : ι) : d.PolyRingPositiveRowsBase →+* d.FracFieldPositiveRowsOmega c :=
   (algebraMap (d.PolyRingPositiveRowsOmega c) (d.FracFieldPositiveRowsOmega c)).comp (d.offBaseSubstitution c).toRingHom
 
-private theorem sumRingEquiv_X_inl' (R S₁ S₂ : Type) [CommSemiring R] (b : S₁) :
-    MvPolynomial.sumRingEquiv R S₁ S₂ (MvPolynomial.X (Sum.inl b)) = MvPolynomial.X b :=
-  MvPolynomial.sumRingEquiv_X_inl R S₁ S₂ b
-
-private theorem sumRingEquiv_X_inr' (R S₁ S₂ : Type) [CommSemiring R] (q : S₂) :
-    MvPolynomial.sumRingEquiv R S₁ S₂ (MvPolynomial.X (Sum.inr q)) =
-      MvPolynomial.C (MvPolynomial.X q) :=
-  MvPolynomial.sumRingEquiv_X_inr R S₁ S₂ q
-
-private theorem sumRingEquiv_C' (R S₁ S₂ : Type) [CommSemiring R] (a : R) :
-    MvPolynomial.sumRingEquiv R S₁ S₂ (MvPolynomial.C a) = MvPolynomial.C (MvPolynomial.C a) :=
-  MvPolynomial.sumRingEquiv_C R S₁ S₂ a
-
 theorem compat0 (c : ι) (P : KTp K d.D d.N) :
     d.eEX4 c (d.sH c P) = algebraMap (MvPolynomial (Fin (d.N + 1)) (d.FracFieldPositiveRowsOmega c)) _
       (MvPolynomial.map (d.psiE c) (FractionFieldVariableLift.hL K d.D d.N P)) := by
   have hXlE : ∀ b, MvPolynomial.sumRingEquiv (Ω c) (Fin (d.N + 1)) ({i : Fin (d.D + 1) // i ≠ 0} × Fin d.N) (MvPolynomial.X (Sum.inl b)) = MvPolynomial.X b :=
-    fun b => sumRingEquiv_X_inl' _ _ _ b
+    fun b => MvPolynomial.sumRingEquiv_X_inl _ _ _ b
   have hXrE : ∀ q, MvPolynomial.sumRingEquiv (Ω c) (Fin (d.N + 1)) ({i : Fin (d.D + 1) // i ≠ 0} × Fin d.N) (MvPolynomial.X (Sum.inr q)) = MvPolynomial.C (MvPolynomial.X q) :=
-    fun q => sumRingEquiv_X_inr' _ _ _ q
+    fun q => MvPolynomial.sumRingEquiv_X_inr _ _ _ q
   have hCE : ∀ b, MvPolynomial.sumRingEquiv (Ω c) (Fin (d.N + 1)) ({i : Fin (d.D + 1) // i ≠ 0} × Fin d.N) (MvPolynomial.C b) = MvPolynomial.C (MvPolynomial.C b) :=
-    fun b => sumRingEquiv_C' _ _ _ b
+    fun b => MvPolynomial.sumRingEquiv_C _ _ _ b
   have hXlL : ∀ b, MvPolynomial.sumRingEquiv K (Fin (d.N + 1)) {v : TVar d.D d.N // v.1 ≠ 0} (MvPolynomial.X (Sum.inl b)) = MvPolynomial.X b :=
-    fun b => sumRingEquiv_X_inl' _ _ _ b
+    fun b => MvPolynomial.sumRingEquiv_X_inl _ _ _ b
   have hXrL : ∀ q, MvPolynomial.sumRingEquiv K (Fin (d.N + 1)) {v : TVar d.D d.N // v.1 ≠ 0} (MvPolynomial.X (Sum.inr q)) = MvPolynomial.C (MvPolynomial.X q) :=
-    fun q => sumRingEquiv_X_inr' _ _ _ q
+    fun q => MvPolynomial.sumRingEquiv_X_inr _ _ _ q
   have hCL : ∀ b, MvPolynomial.sumRingEquiv K (Fin (d.N + 1)) {v : TVar d.D d.N // v.1 ≠ 0} (MvPolynomial.C b) = MvPolynomial.C (MvPolynomial.C b) :=
-    fun b => sumRingEquiv_C' _ _ _ b
+    fun b => MvPolynomial.sumRingEquiv_C _ _ _ b
   have hEX : ∀ p, FractionFieldVariableLift.hE (Ω c) d.D d.N (d.jc c) p =
       MvPolynomial.sumRingEquiv (Ω c) (Fin (d.N + 1)) ({i : Fin (d.D + 1) // i ≠ 0} × Fin d.N) (MvPolynomial.rename (FractionFieldVariableLift.eS d.D d.N (d.jc c)) p) := fun p => rfl
   have hLX : ∀ p, FractionFieldVariableLift.hL K d.D d.N p =
@@ -416,8 +403,7 @@ theorem compat0 (c : ι) (P : KTp K d.D d.N) :
       · by_cases hi : i = 0
         · subst hi
           simp [e2, sImg, d.eEX4_algebraMap, hEX, hLX, hXlE, hXlL, FractionFieldVariableLift.eS, FractionFieldVariableLift.eT, FractionFieldVariableLift.toFracY]
-        · set_option synthInstance.maxHeartbeats 100000 in
-          simp [e2, sImg, hi, d.eEX4_algebraMap, hEX, hLX, hXrE, hXrL, hCE,
+        · simp [e2, sImg, hi, d.eEX4_algebraMap, hEX, hLX, hXrE, hXrL, hCE,
             FractionFieldVariableLift.eS, FractionFieldVariableLift.eT, FractionFieldVariableLift.toFracY, hpsi, hpsiX]
       · by_cases hi : i = 0
         · subst hi
@@ -427,7 +413,7 @@ theorem compat0 (c : ι) (P : KTp K d.D d.N) :
   exact RingHom.congr_fun key P
 
 theorem psiE_injective (h : d.S1) (c : ι) : Function.Injective (d.psiE c) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro p hp
   have e := d.compat0 c ((FractionFieldVariableLift.hL K d.D d.N).symm (MvPolynomial.C p))
   rw [RingEquiv.apply_symm_apply, MvPolynomial.map_C, hp, map_zero, map_zero] at e

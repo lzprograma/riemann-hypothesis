@@ -1,50 +1,7 @@
 module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.JointMultOfSteps
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.LoweringPartRightActionInlInr
 
 @[expose] public section
 
@@ -89,8 +46,8 @@ theorem det_vars_ne_zero {σ : Type*} {n : ℕ} (f : Fin n × Fin n → σ) (hf 
     intro i j
     by_cases hij : i = j
     · subst hij
-      rw [if_pos ⟨i, rfl⟩, if_pos rfl]
-    · rw [if_neg hij, if_neg]
+      rw [ite_eq_left ⟨i, rfl⟩, ite_eq_left rfl]
+    · rw [ite_eq_right hij, ite_eq_right]
       rintro ⟨i', hi'⟩
       have hpair := hf hi'
       simp only [Prod.mk.injEq] at hpair
@@ -125,20 +82,6 @@ theorem shapeProd_varMat_ne_zero {p q r s m k : ℕ} (ρ : Fin m → Ix p q) (κ
   exact det_vars_ne_zero
     (fun x : Fin (t + 1) × Fin (t + 1) => (ρ (Fin.castLE hc.1 x.1), κ (Fin.castLE hc.2 x.2))) hinj
 
-private theorem pderiv_pderiv_comm_of_complex {σ : Type*} (i j : σ) (P : MvPolynomial σ ℂ) :
-    MvPolynomial.pderiv i (MvPolynomial.pderiv j P) = MvPolynomial.pderiv j (MvPolynomial.pderiv i P) := by
-  classical
-  induction P using MvPolynomial.induction_on
-  next a =>
-    simp only [MvPolynomial.pderiv_C, map_zero]
-  next P Q hP hQ =>
-    simp only [map_add (f := _), hP, hQ]
-  next P n hP =>
-    simp only [Derivation.leibniz, map_add (f := _), smul_eq_mul, MvPolynomial.pderiv_X, Pi.single_apply]
-    split_ifs <;>
-      simp only [Derivation.map_one_eq_zero, map_zero, mul_zero, zero_mul, add_zero, zero_add,
-        mul_one, one_mul, hP] <;> ring
-
 private theorem pderiv_eq_zero_of_mem_supported_of_not_mem {σ : Type*} {S : Set σ} {P : MvPolynomial σ ℂ}
     (hP : P ∈ MvPolynomial.supported ℂ S) {i : σ} (hi : i ∉ S) : MvPolynomial.pderiv i P = 0 := by
   have hv : i ∉ P.vars := fun hmem => hi ((MvPolynomial.mem_supported.mp hP) (Finset.mem_coe.mpr hmem))
@@ -152,7 +95,7 @@ theorem dd_eq_zero {p q r s : ℕ} {S : Set (Ln p q r s)} {P : Pol p q r s}
     | rfl
   rw [key]
   rcases h with h | h
-  · rw [pderiv_pderiv_comm_of_complex, pderiv_eq_zero_of_mem_supported_of_not_mem hP h, map_zero]
+  · rw [_root_.PI.WFJM.pderiv_comm, pderiv_eq_zero_of_mem_supported_of_not_mem hP h, map_zero]
   · rw [pderiv_eq_zero_of_mem_supported_of_not_mem hP h, map_zero]
 
 def inS {p q r s : ℕ} (la lb lc ld : ℕ) : Ln p q r s → Prop
@@ -166,8 +109,6 @@ theorem posPart_length (a : List ℤ) : (PI.FJM.posPart a).length = a.length := 
 
 theorem negPart_length (b : List ℤ) : (PI.FJM.negPart b).length = b.length := by
   simp [PI.FJM.negPart]
-
-private theorem fin_rev_val {n : ℕ} (i : Fin n) : (Fin.rev i).val = n - (i.val + 1) := rfl
 
 private theorem varMat_apply_mem_supported {p q r s m k : ℕ} (ρ : Fin m → FockH1Action.Ix p q)
     (κ : Fin k → FockH1Action.Ix r s) (T : Set (FockH1Action.Ln p q r s)) (i : Fin m) (j : Fin k)
@@ -191,7 +132,7 @@ theorem hwVec_mem_supported (p q r s : ℕ) (a b c d : List ℤ) :
     intro i j hi hj
     rw [negPart_length] at hi hj
     apply varMat_apply_mem_supported
-    simp only [Set.mem_setOf_eq, inS, fin_rev_val]
+    simp only [Set.mem_setOf_eq, inS, Fin.val_rev]
     have := i.isLt
     have := j.isLt
     constructor <;> omega
@@ -205,7 +146,7 @@ theorem hwVec_mem_supported (p q r s : ℕ) (a b c d : List ℤ) :
     intro i j hi hj
     rw [negPart_length] at hi hj
     apply varMat_apply_mem_supported
-    simp only [Set.mem_setOf_eq, inS, fin_rev_val]
+    simp only [Set.mem_setOf_eq, inS, Fin.val_rev]
     have := i.isLt
     have := j.isLt
     constructor <;> omega

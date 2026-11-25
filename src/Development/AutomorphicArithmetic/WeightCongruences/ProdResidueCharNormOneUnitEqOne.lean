@@ -214,7 +214,7 @@ theorem UpperTheory.prod_residue_char_norm_one_unit_eq_one :
     if h : (a w).Coprime p then ZMod.unitOfCoprime (a w) h else 1
   have hval : ∀ w ∈ S, θ w (Units.map (Ideal.Quotient.mk w.asIdeal).toMonoidHom ζ) = ω (u w) := by
     intro w hw
-    simp only [u, dif_pos (hcop w hw)]
+    simp only [u, dite_eq_left (hcop w hw)]
     obtain ⟨b, hb, hθb⟩ := hθ w hw (a w) (hcop w hw)
     rw [← hθb]
     congr 1
@@ -225,5 +225,5 @@ theorem UpperTheory.prod_residue_char_norm_one_unit_eq_one :
     apply Units.ext
     rw [Units.coe_prod, Units.val_one, ← hmod]
     refine Finset.prod_congr rfl fun w hw => ?_
-    simp only [u, dif_pos (hcop w hw), ZMod.coe_unitOfCoprime]
+    simp only [u, dite_eq_left (hcop w hw), ZMod.coe_unitOfCoprime]
   rw [hu1, map_one]

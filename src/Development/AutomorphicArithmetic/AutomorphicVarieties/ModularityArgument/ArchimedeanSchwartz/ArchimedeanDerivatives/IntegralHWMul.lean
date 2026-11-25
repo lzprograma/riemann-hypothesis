@@ -65,12 +65,6 @@ open scoped ContDiff
 
 namespace GlobalTheory.HenQ
 
-section Fin
-
-variable {K : Type} [Field K] [NumberField K] {n : ℕ}
-
-end Fin
-
 section Inf
 
 variable {K : Type} [Field K] [NumberField K] {n : ℕ}
@@ -106,8 +100,6 @@ open GlobalTheory.CuspRep (GA Af Ad ratGL finGL locGL pFin)
 open UpperTheory.V.TR (Rinf Lie chart infGL pInf toL rmul invSet CuspSub)
 open scoped ContDiff
 open GlobalTheory.HenQ
-
-set_option autoImplicit false
 
 noncomputable section
 

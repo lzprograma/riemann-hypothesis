@@ -440,7 +440,7 @@ lemma exists_vec {s : Fin n} (hs : GoodRep σ a s) :
   have hv : ∀ m : ℕ, v ((σ ^ m) s) = orbProd σ a m s := by
     intro m
     have h : ∃ m' : ℕ, (σ ^ m') s = (σ ^ m) s := ⟨m, rfl⟩
-    simp only [v, dif_pos h]
+    simp only [v, dite_eq_left h]
     exact orbProd_eq σ a hs.2 _ _ h.choose_spec
   refine ⟨v, fun j => ?_, by simpa [orbProd] using hv 0, fun t ht hts => ?_⟩
   · by_cases h : ∃ m : ℕ, (σ ^ m) s = j
@@ -452,14 +452,14 @@ lemma exists_vec {s : Fin n} (hs : GoodRep σ a s) :
         refine h ⟨m' + m, ?_⟩
         rw [pow_add, Equiv.Perm.mul_apply, hm]
         simpa using hm'
-      simp only [v, dif_neg h, dif_neg h', mul_zero]
+      simp only [v, dite_eq_right h, dite_eq_right h', mul_zero]
   · have h' : ¬ ∃ m : ℕ, (σ ^ m) s = t := by
       rintro ⟨m, rfl⟩
       obtain ⟨m', hm'⟩ := exists_back σ m s
       have h1 := ht.1 m'
       rw [hm'] at h1
       exact hts (le_antisymm h1 (hs.1 m))
-    simp only [v, dif_neg h']
+    simp only [v, dite_eq_right h']
 
 theorem finrank_eq_card (E : Submodule K (Fin n → K))
     (hE : ∀ v, v ∈ E ↔ ∀ j, v (σ j) = a j * v j) :
@@ -479,7 +479,7 @@ theorem finrank_eq_card (E : Submodule K (Fin n → K))
       · have := congrFun h0 ⟨j, hg⟩
         simpa [hf] using this
       · have : ¬ ∀ m : ℕ, (σ ^ m) j = j → orbProd σ a m j = 1 := fun h => hg ⟨hj, h⟩
-        push_neg at this
+        push Not at this
         obtain ⟨r, hr, hne⟩ := this
         have h2 := apply_pow σ a hv r j
         rw [hr] at h2
@@ -508,7 +508,7 @@ lemma mem_eigenspace_iff (c : Fin n → K) (μ : K) (hμ : μ ≠ 0) (v : Fin n 
   refine forall_congr' fun j => ?_
   simp only [Matrix.toLin'_apply, Matrix.mulVec, dotProduct, Matrix.of_apply,
     EmbeddingLike.apply_eq_iff_eq, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ,
-    if_true, Pi.smul_apply, smul_eq_mul]
+    ite_true, Pi.smul_apply, smul_eq_mul]
   constructor
   · intro h
     field_simp

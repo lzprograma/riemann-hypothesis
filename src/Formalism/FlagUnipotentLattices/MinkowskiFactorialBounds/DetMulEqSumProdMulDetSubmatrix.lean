@@ -2,52 +2,9 @@ module
 
 public import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
 public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.LatticeSumBounds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -125,15 +82,15 @@ theorem leadingMinorColumnReplace : CramerUpper := by
   have hrow : ∀ j, A c j = if j = c then 1 else 0 := by
     intro j
     rcases lt_trichotomy j c with h | h | h
-    · rw [if_neg h.ne]; exact hU0 _ _ (by simpa using h)
+    · rw [ite_eq_right h.ne]; exact hU0 _ _ (by simpa using h)
     · subst h; simp [hA, hU1]
-    · rw [if_neg h.ne']; exact hc j h
+    · rw [ite_eq_right h.ne']; exact hc j h
   have hadj : ∀ k, A.adjugate c k = if k = c then 1 else 0 := by
     intro k
     have h1 : (A * A.adjugate) c k = (1 : Matrix (Fin l) (Fin l) R) c k := by
       rw [Matrix.mul_adjugate, hAdet, one_smul]
     rw [Matrix.mul_apply] at h1
-    simp only [hrow, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h1
+    simp only [hrow, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h1
     rw [h1, Matrix.one_apply]
     simp only [eq_comm]
   have e2 : (A.updateCol c u).det = u c := by
@@ -351,11 +308,11 @@ theorem unitriangularReduction : UnipotentReduce := by
         refine ⟨n', ?_, ?_, ?_, ?_⟩
         · intro i
           by_cases hi : i = s
-          · subst hi; rw [hn's, if_neg (lt_irrefl _), h1]
+          · subst hi; rw [hn's, ite_eq_right (lt_irrefl _), h1]
           · rw [hn'ne i i hi, h1]
         · intro i j hji
           by_cases hi : i = s
-          · subst hi; rw [hn's, if_neg (not_lt.2 hji.le), h0 _ _ hji]
+          · subst hi; rw [hn's, ite_eq_right (not_lt.2 hji.le), h0 _ _ hji]
           · rw [hn'ne i j hi, h0 _ _ hji]
         · intro i j
           by_cases hi : i = s
@@ -367,7 +324,7 @@ theorem unitriangularReduction : UnipotentReduce := by
           rw [hmul]
           by_cases his : i = s
           · subst his
-            rw [hu1, hn's, if_pos hij]
+            rw [hu1, hn's, ite_eq_left hij]
             have hsplit : (u * n) s j = n s j +
                 ∑ k ∈ Finset.univ.filter (fun k => s < k), u s k * n k j := by
               rw [Matrix.mul_apply, ← Finset.sum_filter_add_sum_filter_not Finset.univ (fun k => s < k)]
@@ -443,7 +400,7 @@ theorem normMinorMonomialLe : MonomialMinor := by
         by_contra hπ
         exact hne (huniq π π₀ hπ h₀)
       · simp
-    · push_neg at hex
+    · push Not at hex
       rw [Finset.sum_eq_zero fun π _ => hex π]; linarith
   · obtain ⟨a, b, hab, hne⟩ : ∃ a b, I a = I b ∧ a ≠ b := by
       simpa [Function.Injective] using hI

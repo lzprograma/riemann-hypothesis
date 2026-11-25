@@ -48,7 +48,7 @@ theorem pairK_onto (hk : V.v (X.k : C) = 0) (g : Fin 2) :
     · exact VF.Ge.zero 0
   · intro q q'
     have hk0 := X.k_ne_zero hk
-    simp only [pairK, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [pairK, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     split_ifs
     · field_simp
     · simp
@@ -96,7 +96,7 @@ def rowData [NeZero d] (H : X.Hyps V) : RowData C V d I (JJ I) where
   pair_type := by
     intro g q c h
     unfold pairK
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro rfl
     exact h rfl
   pair_onto := X.pairK_onto H.k_unit

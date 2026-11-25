@@ -179,7 +179,7 @@ def lin {σ : Type} (c : (σ →₀ ℕ) → ℂ) : MvPolynomial σ ℂ →+ ℂ
 theorem lin_monomial {σ : Type} (c : (σ →₀ ℕ) → ℂ) (m : σ →₀ ℕ) (a : ℂ) : lin c (monomial m a) = a * c m := by
   classical
   show ∑ k ∈ (monomial m a).support, (monomial m a).coeff k * c k = _
-  rw [sum_support_eq c _ {m} MvPolynomial.support_monomial_subset, Finset.sum_singleton, coeff_monomial, if_pos rfl]
+  rw [sum_support_eq c _ {m} MvPolynomial.support_monomial_subset, Finset.sum_singleton, coeff_monomial, ite_eq_left rfl]
 
 def LJ (v : κ → V) (f : V → ℂ) : MvPolynomial κ ℂ →+ ℂ := lin (monoJet v f)
 

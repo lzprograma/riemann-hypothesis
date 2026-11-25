@@ -28,7 +28,7 @@ theorem leadForm_ne_zero {f : MvPolynomial (Fin n) ℂ} (hf : f ≠ 0) : leadFor
   intro h0
   have hc := congrArg (AddMonoidAlgebra.coeff · d) h0
   rw [leadForm, coeff_homogeneousComponent] at hc
-  rw [if_pos (by rw [totalDegree, hdeg]; rfl)] at hc
+  rw [ite_eq_left (by rw [totalDegree, hdeg]; rfl)] at hc
   apply (mem_support_iff.mp hd)
   simpa [AddMonoidAlgebra.coeff] using hc
 

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsHolToFibPtAndCompFibre
 import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticChartsRealizationCompPointEq
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
 import Mathlib.AlgebraicGeometry.Modules.Sheaf
@@ -7,8 +8,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSecti
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ValAtLem
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -20,21 +19,8 @@ variable {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
 theorem isHolTo_comp {Y Y' : Scheme.{0}} {B : Set V} {y : V → (Sp ℂ ⟶ Y)} (hy : IsHolTo B y) (φ : Y ⟶ Y') :
     IsHolTo B (fun b => y b ≫ φ) := by
-  intro U f
-  have hpre : ∀ b, (y b ≫ φ) ⁻¹ᵁ U = y b ⁻¹ᵁ (φ ⁻¹ᵁ U) := fun b => by
-    first
-      | rfl
-  obtain ⟨h1, h2⟩ := hy (φ ⁻¹ᵁ U) (φ.app U f)
-  simp only [hpre]
-  refine ⟨h1, ?_⟩
-  refine h2.congr (fun b hb => ?_)
-  have hb2 : ⊤ ≤ (y b ≫ φ) ⁻¹ᵁ U := by
-    rw [hpre]
-    exact hb.2
-  unfold valAt'
-  rw [dite_eq_left hb2, dite_eq_left hb.2]
-  first
-    | rfl
+  intros
+  apply _root_.GlobalTheory.HolFibre.isHolTo_comp <;> assumption
 
 theorem isHolTo_of_local {Y : Scheme.{0}} {B : Set V} {y : V → (Sp ℂ ⟶ Y)}
     (h : ∀ (U : Y.Opens) (f : Γ(Y, U)) (b₀ : V), b₀ ∈ B → ⊤ ≤ y b₀ ⁻¹ᵁ U →

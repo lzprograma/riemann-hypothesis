@@ -41,20 +41,17 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.BCT.CtLevel
 open scoped Classical TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.BCT.CtReg
 
 theorem exists_ne_of_avg_ne {H : Type} [Group H] {u : H → ℂ} (h : avg u ≠ 0) : ∃ x, u x ≠ 0 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   apply h
   rw [avg, finsum_eq_zero_of_forall_eq_zero (fun q => hc _), mul_zero]
 
 theorem exists_ne_of_hint_ne {H : Type} [Group H] {K : Subgroup H} {u : H → ℂ} (h : hint K u ≠ 0) :
     ∃ x, u x ≠ 0 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   apply h
   rw [hint, finsum_eq_zero_of_forall_eq_zero (fun q => hc _), mul_zero]
 
@@ -73,13 +70,13 @@ theorem ctMu_regAt2 : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a 
   obtain ⟨k, hk⟩ := exists_ne_of_avg_ne hX
   have hsep := hf _ hk
   have hmem : ((k : GLw n w)⁻¹ * blk h w m (Multiplicative.toAdd X) * k) ∈ UL n w := by
-    rw [UL, if_pos hw]; exact Subgroup.mem_top _
+    rw [UL, ite_eq_left hw]; exact Subgroup.mem_top _
   have e0 : (toSub (UL n w) ((k : GLw n w)⁻¹ * blk h w m (Multiplicative.toAdd X) * k)).1 =
       (k : GLw n w)⁻¹ * blk h w m (Multiplicative.toAdd X) * k := by
     rw [toSub, dite_eq_left hmem]
   rw [e0, charpoly_conj_GL, blk_val, Matrix.charpoly_reindex, Matrix.charpoly_fromBlocks_zero₂₁] at hsep
-  have e1 : nrmL a w m.1 = m.1 := by rw [nrmL, if_pos hw]
-  have e2 : nrmL b w m.2 = m.2 := by rw [nrmL, if_pos hw]
+  have e1 : nrmL a w m.1 = m.1 := by rw [nrmL, ite_eq_left hw]
+  have e2 : nrmL b w m.2 = m.2 := by rw [nrmL, ite_eq_left hw]
   rw [e1, e2]
   exact hsep
 

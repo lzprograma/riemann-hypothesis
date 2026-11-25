@@ -1,6 +1,0 @@
-module
-
-public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
-public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.SobDer
-public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.AdlEqZeroOfMemNbhd
-public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GrowthNorm

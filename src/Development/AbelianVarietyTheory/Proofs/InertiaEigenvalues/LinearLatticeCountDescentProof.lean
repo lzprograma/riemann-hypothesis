@@ -642,10 +642,10 @@ theorem exists_isPre (K : UQ) (B : InvAlg K) (hP : B.P.Separable) :
       rw [hττ m]
       by_cases h1 : enc m ≤ enc (τ m) <;> by_cases h2 : enc (τ m) ≤ enc m
       · have h3 : m = τ m := enc.injective (le_antisymm h1 h2)
-        rw [if_pos h2, if_pos h1]
+        rw [ite_eq_left h2, ite_eq_left h1]
         exact h3.symm
-      · rw [if_neg h2, if_pos h1]
-      · rw [if_pos h2, if_neg h1]
+      · rw [ite_eq_right h2, ite_eq_left h1]
+      · rw [ite_eq_left h2, ite_eq_right h1]
       · exact (le_total (enc m) (enc (τ m))).elim (fun h => absurd h h1) (fun h => absurd h h2)
   have rep_rep : ∀ m, rep (rep m) = rep m := by
     intro m
@@ -700,9 +700,9 @@ theorem exists_isPre (K : UQ) (B : InvAlg K) (hP : B.P.Separable) :
     exact hf.complete
   · refine ⟨f i.1, (hF _).1, (hF _).2.1, (hF _).2.2, fun hi => ?_, fun hi => ?_⟩
     · have hi' : τ i.1 = i.1 := (Finset.mem_filter.mp hi).2
-      exact ⟨by rw [hsum i, if_pos hi'], by rw [hτ, hi']⟩
+      exact ⟨by rw [hsum i, ite_eq_left hi'], by rw [hτ, hi']⟩
     · have hi' : τ i.1 ≠ i.1 := fun h => hi (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩)
-      exact ⟨by rw [hτ]; exact hf.ortho (Ne.symm hi'), by rw [hsum i, if_neg hi', hτ]⟩
+      exact ⟨by rw [hτ]; exact hf.ortho (Ne.symm hi'), by rw [hsum i, ite_eq_right hi', hτ]⟩
 
 theorem isPre_of_separable : ∀ (K : UQ) (B : InvAlg K), B.P.Separable →
     ∃ (ι : Type) (_ : Fintype ι) (e : ι → B.A) (S : Finset ι), IsPre B e S := fun K B hP => exists_isPre K B hP
@@ -738,7 +738,7 @@ theorem sum_powerset_neg_one_pow_inter {ι : Type} [DecidableEq ι] (S J : Finse
   rw [h2]
   split_ifs with hJe
   · subst hJe
-    simp only [Finset.notMem_empty, if_false, Finset.prod_const]
+    simp only [Finset.notMem_empty, ite_false, Finset.prod_const]
     norm_num
   · obtain ⟨j, hj⟩ := Finset.nonempty_iff_ne_empty.2 hJe
     exact Finset.prod_eq_zero (hJ hj) (by simp [hj])
@@ -765,8 +765,7 @@ theorem sum_chi_mul_chi {K : UQ} (B : InvAlg K) {ι : Type} [Fintype ι] [Decida
     have : ∀ k : B.Cl, chi B e I k.rep * chi B e I k.rep = 1 := fun k => eta_sq _
     simp [this]
   · obtain ⟨j, hjS, hj⟩ : ∃ j ∈ S, ¬ (j ∈ I ↔ j ∈ I₀) := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       apply hII
       ext j
       constructor
@@ -833,7 +832,7 @@ theorem sum_chi_ell_cl : ∀ (K : UQ) (B : InvAlg K) (ι : Type) [Fintype ι] [D
           rw [Finset.sum_eq_single ∅]
           · simp
           · intro J hJ hJe
-            rw [sum_powerset_neg_one_pow_inter S J (Finset.mem_powerset.1 hJ), if_neg hJe, zero_mul]
+            rw [sum_powerset_neg_one_pow_inter S J (Finset.mem_powerset.1 hJ), ite_eq_right hJe, zero_mul]
           · intro hn; exact absurd (Finset.empty_mem_powerset S) hn
       _ = ∑ I ∈ S.powerset, ∑ J ∈ S.powerset, (-1 : ℝ) ^ (J ∩ I).card * ℓ ((∏ j ∈ J, π j) * x) := by
           simp_rw [Finset.sum_mul]; exact Finset.sum_comm
@@ -856,7 +855,7 @@ theorem sum_chi_ell_cl : ∀ (K : UQ) (B : InvAlg K) (ι : Type) [Fintype ι] [D
     _ = ((2 : ℝ) ^ S.card)⁻¹ * ∑ I ∈ S.powerset, h I * (if I = I₀ then (Fintype.card B.Cl : ℝ) else 0) := by
         rw [Finset.sum_congr rfl fun I hI => by rw [orth I hI]]
     _ = (Fintype.card B.Cl : ℝ) / 2 ^ S.card * h I₀ := by
-        simp only [mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_powerset.2 h₀, if_true]
+        simp only [mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_powerset.2 h₀, ite_true]
         ring
 
 end GlobalTheory.UnitLemma.Desc
@@ -978,11 +977,11 @@ theorem HH_eq_alternating_GG : ∀ (K : UQ) (B : InvAlg K) (ι : Type) [Fintype 
     by_cases h1 : M ∈ B.Lin
     · by_cases h2 : v ∈ M
       · by_cases h3 : InDual B 1 M
-        · rw [if_pos h1, if_pos h2, if_pos h3, if_pos ⟨h1, h2, hD.1 h3⟩]; ring
-        · rw [if_pos h1, if_pos h2, if_neg h3, if_neg (fun h => h3 (hD.2 h.2.2))]; ring
-      · rw [if_pos h1, if_neg h2, zero_mul, mul_zero]
-        exact (if_neg (fun h => h2 h.2.1)).symm
-    · rw [if_neg h1, if_neg (fun h => h1 h.1)]
+        · rw [ite_eq_left h1, ite_eq_left h2, ite_eq_left h3, ite_eq_left ⟨h1, h2, hD.1 h3⟩]; ring
+        · rw [ite_eq_left h1, ite_eq_left h2, ite_eq_right h3, ite_eq_right (fun h => h3 (hD.2 h.2.2))]; ring
+      · rw [ite_eq_left h1, ite_eq_right h2, zero_mul, mul_zero]
+        exact (ite_eq_right (fun h => h2 h.2.1)).symm
+    · rw [ite_eq_right h1, ite_eq_right (fun h => h1 h.1)]
   have hexp : HH B π I (S \ I) u 1 = ∑ p ∈ I.powerset ×ˢ (S \ I).powerset,
       (-1 : ℚ) ^ p.1.card * (-1 : ℚ) ^ p.2.card *
         HH B π ∅ ∅ ((∏ j ∈ p.1, π j) * u) ((∏ j ∈ p.2, π j) * 1) := by

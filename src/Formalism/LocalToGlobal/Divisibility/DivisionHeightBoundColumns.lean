@@ -81,62 +81,6 @@ variable {K : Type} [Field K] [NumberField K] [StarRing K]
 
 end Fub
 
-section Rev
-
-open Pointwise
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 E))}
-
-
-end Rev
-
-section PhiLem
-
-open Pointwise
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E] {SG : Finset (HeightOneSpectrum (𝓞 E))}
-
-variable {K : Type} [Field K] {a b : ℕ}
-
-
-end PhiLem
-
-section Gauss
-
-variable {L : Type} [Field L]
-
-end Gauss
-
-section Count
-
-variable (E : Type) [Field E] [NumberField E] [StarRing E]
-
-
-end Count
-
-section ClassRel
-
-open Classical
-
-variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] {a b : ℕ} {SG : Finset (HeightOneSpectrum (𝓞 E))}
-  {V V' : Type} [AddCommGroup V] [Module K V] [AddCommGroup V'] [Module K V']
-
-end ClassRel
-
-section RelOf
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S)
-
-end RelOf
-
-section Main
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S)
-
-end Main
-
 end Formalism.L2.Col
 end -- clump:auto
 end -- clump:auto
@@ -300,53 +244,6 @@ variable (hX : X.Ok) (v0 : InfinitePlace X.K) (TU : Finset (Tup X.F X.E X.K S))
   (Xg : Finset (Col.G0 X.E Pr.vGs R.r → X.K)) (S0 : Set (HeightOneSpectrum (𝓞 X.E)))
   (xiVal : Tup X.F X.E X.K S → HeightOneSpectrum (𝓞 X.E) → X.Kˣ)
 
-theorem colFam_rows_ok (commR : ∀ τ : TupF TU, Col.HeckeComm (rowPts W Ch sel τ.1) S0)
-    (splitR : ∀ τ : TupF TU, Col.HeckeFieldsIn (rowPts W Ch sel τ.1) S0) (τ : TupF TU) :
-    ((colFam W Ch sel hX v0 TU Xg S0 xiVal).R τ).Ok 1 := by
-  exact {
-    good := Col.MtildeKCSD_good W Ch sel τ.1 hX _
-    hrat := Col.CSDRat.H_mem _ (Col.MtildeKCSD_rat W Ch sel τ.1 hX _)
-      (Col.csd_hasRatBasis _ (Col.MtildeKCSD_rat W Ch sel τ.1 hX _))
-    hpos := fun v => (Col.mtildeK_rat W Ch sel τ.1 hX).posH _ v
-    act := Col.unipotentActionForms_good W Ch sel τ.1 hX _
-    actRat := Col.unipotentActionForms_rational W Ch sel τ.1 hX _
-    comm := heckeCSD_comm _ _ _ _ _ (commR τ)
-    split := heckeCSD_split _ _ _ _ _ (splitR τ)
-    opG := fun i g => heckeCSD_comm_trRep _ _ _ _ _ _ _ i g
-    blocks := Col.blockOk_firstValB (fun j (P : ↥(offSub ∅ Pr.vGs (Col.rowSG Pr sel τ.1) S0)) =>
-        Ch.muVal j P.1.1 * xiVal τ.1 P.1.1) (q := fun P => Col.SplitOff.q P.1) R.r R.t_odd.pos
-      (by have := R.two_le_m; omega) (fun P => Col.SplitOff.q_ne_zero P.1)
-    q_pos := fun P => Nat.pos_of_ne_zero (Col.SplitOff.q_ne_zero P.1)
-    pl_inj := Subtype.val_injective }
-
-theorem colFam_lifts_ok (commL : ∀ (j : Fin R.m) (τ : TupF TU), Col.HeckeComm (liftPts W Ch sel τ.1 (j.1 + 1)) S0)
-    (splitL : ∀ (j : Fin R.m) (τ : TupF TU), Col.HeckeFieldsIn (liftPts W Ch sel τ.1 (j.1 + 1)) S0)
-    (j : Fin R.m) (τ : TupF TU) :
-    ((colFam W Ch sel hX v0 TU Xg S0 xiVal).L j τ).Ok 1 := by
-  exact {
-    good := Col.MtKCSD_good W Ch sel τ.1 hX (j.1 + 1) _
-    hrat := Col.CSDRat.H_mem _ (Col.MtKCSD_rat W Ch sel τ.1 hX (j.1 + 1) _)
-      (Col.csd_hasRatBasis _ (Col.MtKCSD_rat W Ch sel τ.1 hX (j.1 + 1) _))
-    hpos := fun v => (Col.mtK_rat W Ch sel τ.1 hX (j.1 + 1)).posH _ v
-    act := Col.unipotentActionClassSum_good W Ch sel τ.1 hX (j.1 + 1) _
-    actRat := Col.unipotentActionClassSum_rational W Ch sel τ.1 hX (j.1 + 1) _
-    comm := heckeCSD_comm _ _ _ _ _ (commL j τ)
-    split := heckeCSD_split _ _ _ _ _ (splitL j τ)
-    opG := fun i g => heckeCSD_comm_trRep _ _ _ _ _ _ _ i g
-    blocks := Col.blockOk_firstValA (fun (P : ↥(offSub ∅ Pr.vGs (Col.rowSG Pr sel τ.1) S0)) =>
-        Ch.muVal j P.1.1 * xiVal τ.1 P.1.1) (fun P => Ch.etaVal P.1.1) (q := fun P => Col.SplitOff.q P.1) R.r
-      R.t_odd.pos (fun P => Col.SplitOff.q_ne_zero P.1)
-    q_pos := fun P => Nat.pos_of_ne_zero (Col.SplitOff.q_ne_zero P.1)
-    pl_inj := Subtype.val_injective }
-
-theorem colFam_ok (hH : ColHyp W Ch sel v0 TU Xg S0) : (colFam W Ch sel hX v0 TU Xg S0 xiVal).Ok 1 := by
-  exact {
-    conj := hH.conj
-    tup_fin := tupF_finite TU
-    irr := hH.irr
-    what₂ := colFam_rows_ok W Ch sel hX v0 TU Xg S0 xiVal hH.commR hH.splitR
-    lifts := colFam_lifts_ok W Ch sel hX v0 TU Xg S0 xiVal hH.commL hH.splitL }
-
 end Inst
 
 section Xi
@@ -377,15 +274,6 @@ variable (hX : X.Ok) (v0 : InfinitePlace X.K) (TU : Finset (Tup X.F X.E X.K S))
   (Xg : Finset (Col.G0 X.E Pr.vGs R.r → X.K)) (S0 : Set (HeightOneSpectrum (𝓞 X.E)))
 
 end XiCol
-
-section LinkCol
-
-variable {X : Col.Fields} {Pr : Col.Primes X} {R : Ranks} (W : Col.Wts X Pr.Word R) (Ch : Col.Chars X Pr R.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (hX : X.Ok) (v0 : InfinitePlace X.K)
-  (TU : Finset (Tup X.F X.E X.K S)) (Xg : Finset (Col.G0 X.E Pr.vGs R.r → X.K)) (S0 : Set (HeightOneSpectrum (𝓞 X.E)))
-
-
-end LinkCol
 
 end Formalism.L2.DIV
 end -- clump:auto

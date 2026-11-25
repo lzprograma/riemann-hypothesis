@@ -178,16 +178,6 @@ def Linked (c c' : PD Φ.ι Γ R) : Prop :=
 def Chain (c c' : PD Φ.ι Γ R) : Prop :=
   Φ.Good a c ∧ Relation.ReflTransGen (fun x y => Φ.Good a y ∧ Φ.Linked a x y) c c'
 
-def Zloc (H : Subgroup Γ) (w : ℤ × ℤ) : Submodule R (H → R) where
-  carrier := {z | IsLocallyConstant z ∧ ∀ g h : H, z (g * h) = z g + a (Φ.rt w g) * z h}
-  add_mem' := by
-    rintro x y ⟨a1, a2⟩ ⟨b1, b2⟩
-    exact ⟨a1.add b1, fun g h => by simp only [Pi.add_apply, a2, b2]; ring⟩
-  zero_mem' := ⟨IsLocallyConstant.const 0, by simp⟩
-  smul_mem' := by
-    rintro c x ⟨a1, a2⟩
-    exact ⟨a1.comp (c • ·), fun g h => by simp only [Pi.smul_apply, a2, smul_eq_mul]; ring⟩
-
 def Zgl (w : ℤ × ℤ) : Submodule R (Γ → R) where
   carrier := {z | IsLocallyConstant z ∧ (∀ g h, z (g * h) = z g + a (Φ.rt w g) * z h) ∧ (∀ g ∈ Φ.N, z g = 0) ∧
     (w ≠ 0 → z Φ.g0 = 0)}
@@ -219,7 +209,6 @@ structure Bounds (d C : ℕ) : Prop where
   str : ∀ w ∈ roots, Module.rank R (Φ.Str a w) ≤ C
   even : ∀ w ∈ [0, wPs, -wPs], Module.rank R (Φ.Zgl a w) ≤ C
   odd : ∀ w ∈ oddRoots, Module.rank R (Φ.Zgl a w) ≤ d + C
-  loc : ∀ w ∈ oddRoots, Module.rank R (∀ v, Φ.Zloc a (Φ.Gv v) w) ≤ d + C
 
 structure Ok : Prop where
   mul : ∀ i g, Φ.χ i g * Φ.χ i.rev g = Φ.ν g

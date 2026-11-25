@@ -129,7 +129,7 @@ theorem gram_matrix_exists : GramExists := by
       simp only [h3]
       rw [OrbitCoverLemmas.blk_gram σ _ h2 hlam]
       simp
-    · rw [if_neg (fun h' => h h'.2)]
+    · rw [ite_eq_right (fun h' => h h'.2)]
       refine Finset.sum_eq_zero fun k _ => Finset.sum_eq_zero fun y _ => ?_
       by_cases hy : y = e
       · have : ¬ y = e' := fun h' => h (hy ▸ h')

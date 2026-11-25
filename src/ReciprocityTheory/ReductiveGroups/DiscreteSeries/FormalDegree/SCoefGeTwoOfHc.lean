@@ -19,7 +19,7 @@ variable {n : ℕ}
 theorem sCoef_ge_one {lam : Fin n → ℝ} (hlam : Antitone lam) {i : ℕ} (hi : i + 1 < n) :
     1 ≤ sCoef lam i := by
   have h : lam ⟨i + 1, hi⟩ ≤ lam ⟨i, by omega⟩ := hlam (Fin.mk_le_mk.mpr (Nat.le_succ i))
-  simp only [sCoef, dif_pos hi]
+  simp only [sCoef, dite_eq_left hi]
   linarith
 
 theorem fi_scale {ε : Fin n → Bool} (z : PCoord ε → ℂ) {i : ℕ} (hi : i ≤ n) {t : ℝ} (ht : 1 ≤ t) :
@@ -61,7 +61,7 @@ theorem sum_Ico_sCoef (lam : Fin n → ℝ) {b a : ℕ} (hba : b ≤ a) (ha : a 
   | base => simp
   | succ k hbk ih =>
     rw [Finset.sum_Ico_succ_top hbk, ih (by omega)]
-    simp only [sCoef, dif_pos ha]
+    simp only [sCoef, dite_eq_left ha]
     push_cast
     ring
 
@@ -90,7 +90,7 @@ theorem sum_sCoef_ind (lam : Fin n → ℝ) (a b : Fin n) (c : ℝ) :
 theorem pmat_coord {ε : Fin n → Bool} (z : PCoord ε → ℂ) (ab : PCoord ε) :
     pmat z ab.1.1 ab.1.2 = z ab := by
   unfold pmat
-  rw [dif_pos ab.2]
+  rw [dite_eq_left ab.2]
 
 theorem sum_pairs_pmat {ε : Fin n → Bool} (w : Fin n → Fin n → ℝ) (z : PCoord ε → ℂ) :
     ∑ x : Fin n × Fin n, (if x.2 < x.1 then w x.1 x.2 * ‖pmat z x.1 x.2‖ ^ 2 else 0) =
@@ -98,7 +98,7 @@ theorem sum_pairs_pmat {ε : Fin n → Bool} (w : Fin n → Fin n → ℝ) (z : 
   rw [← Finset.sum_filter_of_ne (p := fun x : Fin n × Fin n => x.2 < x.1 ∧ ε x.1 ≠ ε x.2)]
   · rw [Finset.sum_subtype (p := fun x : Fin n × Fin n => x.2 < x.1 ∧ ε x.1 ≠ ε x.2) _ (by simp)]
     refine Finset.sum_congr rfl fun ab _ => ?_
-    rw [if_pos ab.2.1, pmat_coord]
+    rw [ite_eq_left ab.2.1, pmat_coord]
   · intro x _ hx
     by_contra hP
     apply hx
@@ -109,9 +109,9 @@ theorem sum_pairs_pmat {ε : Fin n → Bool} (w : Fin n → Fin n → ℝ) (z : 
       have h3 : pmat z x.1 x.2 = 0 := by
         unfold pmat
         rw [dite_eq_right (fun h => h.2 h2), dite_eq_right (fun h => lt_asymm h.1 h1)]
-      rw [if_pos h1, h3, norm_zero]
+      rw [ite_eq_left h1, h3, norm_zero]
       ring
-    · rw [if_neg h1]
+    · rw [ite_eq_right h1]
 
 theorem sum_sCoef_Vi {ε : Fin n → Bool} (lam : Fin n → ℝ) (z : PCoord ε → ℂ) :
     ∑ i ∈ range (n - 1), sCoef lam i * Vi (pmat z) (i + 1) = Qf lam z := by

@@ -18,8 +18,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions Form
 
 namespace Formalism.L2.SG.ThmSOwn
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (C0 : ℝ)
 
 def kloostermanDiagonalThreshold (hC : Formalism.L2.SG.RowsPos.KppDiagP) (l : List ℝ) : ℝ :=
@@ -82,7 +80,7 @@ theorem hypOwnL_diagP (hC : Formalism.L2.SG.RowsPos.DiagLP) (hExp : KExpTied) (h
   have e1 : thDLP C0 hC (Fm.cOut ++ Fm.cMid CH) = max 3
       (max ((cDiagLP C0 hC ((Fm.cOut ++ Fm.cMid CH).take 16)).choose_spec.choose_spec.2.2 _ hm').choose
         ((cDiagLP C0 hC ((Fm.cOut ++ Fm.cMid CH).take 16)).choose_spec.choose_spec.2.2 _ hm').choose_spec.choose) :=
-    dif_pos hm'
+    dite_eq_left hm'
   have hs := ((cDiagLP C0 hC ((Fm.cOut ++ Fm.cMid CH).take 16)).choose_spec.choose_spec.2.2 _ hm').choose_spec.choose_spec
   rw [e1] at h1 h2
   have hC' : 1 ≤ sC' Fm := le_trans (by norm_num) (le_trans (le_max_left _ _) h1)

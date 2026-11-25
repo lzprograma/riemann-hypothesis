@@ -49,8 +49,6 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ArchimedeanU
 open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DefU Formalism.BasicNotions Formalism.CohomologicalDescent.DepthNonnegative GlobalTheory.ExpFrame GlobalTheory.FrameAut
 open scoped Topology
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.AutRec

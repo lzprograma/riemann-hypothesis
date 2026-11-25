@@ -168,7 +168,7 @@ theorem expansion_j : ∀ (Ω : Type) [Field Ω] (ε : Ω →+* ℂ), ∃ h : Ha
     by_cases h2 : ∃ n : ℕ, (n : ℚ) = r
     · obtain ⟨n, rfl⟩ := h2
       exact ⟨n, by simp⟩
-    · push_neg at h2
+    · push Not at h2
       exfalso
       apply hr
       rw [HahnSeries.coeff_add, HahnSeries.coeff_single_of_ne h1, h0 r h2, add_zero]
@@ -220,7 +220,7 @@ theorem expansion_j : ∀ (Ω : Type) [Field Ω] (ε : Ω →+* ℂ), ∃ h : Ha
     · obtain ⟨n, rfl⟩ := h2
       refine ⟨c n, ?_⟩
       rw [HahnSeries.coeff_add, HahnSeries.coeff_single_of_ne h1, hP, zero_add]
-    · push_neg at h2
+    · push Not at h2
       exact ⟨0, by rw [HahnSeries.coeff_add, HahnSeries.coeff_single_of_ne h1, h0 r h2]; simp⟩
 
 end GlobalTheory.FNExpJ
@@ -439,7 +439,7 @@ theorem laurent_iff : ∀ (E : Subring ℂ) (M : ℕ) (φ : ℍ → ℂ), 0 < M 
       · exact hbE _
       · exact E.zero_mem
     · simp only [c]
-      rw [if_neg (not_le.mpr hn)]
+      rw [ite_eq_right (not_le.mpr hn)]
     · rw [← hginj.hasSum_iff]
       · have h1 := (hb τ).mul_left (Complex.exp (2 * Real.pi * Complex.I * τ) ^ w)⁻¹
         have hφ : (Complex.exp (2 * Real.pi * Complex.I * τ) ^ w)⁻¹ *
@@ -453,7 +453,7 @@ theorem laurent_iff : ∀ (E : Subring ℂ) (M : ℕ) (φ : ℍ → ℂ), 0 < M 
             (fun n : ℤ => c n * Complex.exp (2 * Real.pi * Complex.I * (n : ℂ) * τ / M)) ∘ g := by
           funext k
           simp only [Function.comp, g, c]
-          rw [if_pos (by omega)]
+          rw [ite_eq_left (by omega)]
           have hk : ((k : ℤ) - ((w * M : ℕ) : ℤ) + ((w * M : ℕ) : ℤ)).toNat = k := by omega
           rw [hk]
           have := laurent_exp_shift M hM w k τ
@@ -465,7 +465,7 @@ theorem laurent_iff : ∀ (E : Subring ℂ) (M : ℕ) (φ : ℍ → ℂ), 0 < M 
         have : ¬ (-((w * M : ℕ) : ℤ) ≤ n) := fun h => hn ⟨(n + ((w * M : ℕ) : ℤ)).toNat, by
           simp only [g]; omega⟩
         simp only [c]
-        rw [if_neg this, zero_mul]
+        rw [ite_eq_right this, zero_mul]
   · rintro ⟨c, n₀, hcE, hc0, hs⟩
     refine ⟨(-n₀).toNat, ?_⟩
     set w := (-n₀).toNat with hw
@@ -533,7 +533,7 @@ theorem uniform_pole_order : ∀ (E : Subring ℂ) (M : ℕ) (f : ℍ → ℂ), 
   let W : ℕ := Finset.univ.sup fun g => w (lift g)
   refine ⟨W, hinv, fun γ => ?_⟩
   have hex : ∃ γ', red γ' = red γ := ⟨γ, rfl⟩
-  have hl : lift (red γ) = hex.choose := dif_pos hex
+  have hl : lift (red γ) = hex.choose := dite_eq_left hex
   set γ' := lift (red γ) with hγ'
   have hred : red γ' = red γ := by rw [hl]; exact hex.choose_spec
   have hmem : γ * γ'⁻¹ ∈ CongruenceSubgroup.Gamma M := by
@@ -776,7 +776,7 @@ theorem exists_finset_coeff_mem_closure :
     hmin D hD0 hDc (hD ▸ Polynomial.natDegree_derivative_lt hdeg)
   obtain ⟨F, hF⟩ : ∃ F, F = D.eval b := ⟨_, rfl⟩
   have hex2 : ∃ m, PowerSeries.coeff m F ≠ 0 := by
-    by_contra h; push_neg at h; exact hDb (hF ▸ PowerSeries.ext fun k => by simpa using h k)
+    by_contra h; push Not at h; exact hDb (hF ▸ PowerSeries.ext fun k => by simpa using h k)
   obtain ⟨m, hc, hlow⟩ : ∃ m, PowerSeries.coeff m F ≠ 0 ∧ ∀ i < m, PowerSeries.coeff i F = 0 :=
     ⟨Nat.find hex2, Nat.find_spec hex2, fun i hi => not_not.mp (Nat.find_min hex2 hi)⟩
   obtain ⟨c, hcdef⟩ : ∃ c, c = PowerSeries.coeff m F := ⟨_, rfl⟩
@@ -808,8 +808,8 @@ theorem exists_finset_coeff_mem_closure :
     rw [map_add (f := _), PowerSeries.coeff_X_pow_mul', hu, hv]
     simp only [PowerSeries.coeff_mk]
     by_cases h1 : k < n
-    · rw [if_pos h1, if_neg (by omega), add_zero]
-    · rw [if_neg h1, if_pos (by omega), zero_add, show n + (k - n) = k by omega]
+    · rw [ite_eq_left h1, ite_eq_right (by omega), add_zero]
+    · rw [ite_eq_right h1, ite_eq_left (by omega), zero_add, show n + (k - n) = k by omega]
   have huB : u ∈ RB := by
     rw [hRBdef]
     refine (mem_range_map_iff B u).2 fun k => ?_
@@ -834,7 +834,7 @@ theorem exists_finset_coeff_mem_closure :
     rw [hk]; ring
   have hc2 := congrArg (PowerSeries.coeff (n + m)) key
   rw [map_zero, map_add (f := _), map_add (f := _), PowerSeries.coeff_X_pow_mul', PowerSeries.coeff_X_pow_mul',
-    if_pos (by omega), if_neg (by omega), add_zero, Nat.add_sub_cancel_left] at hc2
+    ite_eq_left (by omega), ite_eq_right (by omega), add_zero, Nat.add_sub_cancel_left] at hc2
   have hFv : PowerSeries.coeff m (F * v) = c * PowerSeries.coeff n b := by
     rw [PowerSeries.coeff_mul, Finset.sum_eq_single (m, 0)]
     · rw [← hcdef, hv, PowerSeries.coeff_mk, add_zero]
@@ -979,7 +979,7 @@ theorem qcoeff_finitelyGenerated : ∀ (Ω : Type) [Field Ω] (ε : Ω →+* ℂ
   have hQne : Q ≠ 0 := by
     intro h0
     have hn := hcoef n
-    rw [h0, Polynomial.coeff_zero, if_pos (Finset.self_mem_range_succ n)] at hn
+    rw [h0, Polynomial.coeff_zero, ite_eq_left (Finset.self_mem_range_succ n)] at hn
     have hc0 : c' n = 0 := funext fun k => by
       have h1 := congrArg (PowerSeries.coeff k) hn
       rw [PowerSeries.coeff_mk, map_zero] at h1
@@ -1062,7 +1062,7 @@ theorem coeff_fg : ∀ (Ω : Type) [Field Ω] (ε : Ω →+* ℂ) (f : ℍ → �
     by_cases hr : ∃ k : ℕ, r = (k : ℚ) / N
     · obtain ⟨k, rfl⟩ := hr
       rw [hHa k]; exact hS k
-    · push_neg at hr
+    · push Not at hr
       rw [hH0 r hr]; exact A.zero_mem
   have hDA : ∀ r, hD.coeff r ∈ A := by
     intro r

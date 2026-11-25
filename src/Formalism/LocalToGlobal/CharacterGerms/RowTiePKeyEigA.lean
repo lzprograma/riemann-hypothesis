@@ -28,7 +28,7 @@ def MT (V : VF C) (A : ℕ → Matrix (Fin n) (Fin n) C) (B : Matrix (Fin n) (Fi
 def IntM (V : VF C) (A : Matrix (Fin n) (Fin n) C) : Prop := ∀ i j, V.Ge 0 (A i j)
 
 theorem MT.const (B : Matrix (Fin n) (Fin n) C) : MT V (fun _ => B) B :=
-  fun i j => _root_.Formalism.L2.FormalSeriesBounds.RowTiePE0.tends_const _
+  fun _ _ => _root_.Formalism.L2.FormalSeriesBounds.RowTiePE0.tends_const _
 
 variable {A A' : ℕ → Matrix (Fin n) (Fin n) C} {B B' : Matrix (Fin n) (Fin n) C}
 
@@ -100,7 +100,7 @@ theorem ρ_natmul (m : ℕ) (y : O) : K.ρ ((m : O) * y) = (m : C) • K.ρ y :=
   rw [map_mul, map_natCast, ← nsmul_eq_mul, Nat.cast_smul_eq_nsmul]
 
 theorem P_int : IntM V K.P :=
-  IntM.of_MT (hPT K) (fun k i j => K.ρ_int _ i j)
+  IntM.of_MT (hPT K) (fun _ i j => K.ρ_int _ i j)
 
 theorem P_idem : K.P * K.P = K.P := by
   obtain ⟨y, hy⟩ := K.ε_idem

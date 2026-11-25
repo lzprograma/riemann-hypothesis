@@ -435,7 +435,7 @@ lemma blk (K : ℕ) (hK : 40 ≤ K) :
       rw [e, Finset.sum_Ico_succ_top (by omega), Finset.sum_Ico_succ_top (by omega),
         Finset.sum_Ico_succ_top (by omega), Finset.sum_Ico_succ_top (by omega),
         Finset.sum_Ico_succ_top (by omega), Finset.sum_Ico_succ_top (by omega),
-        if_neg c0, if_pos c1, if_neg c2, if_neg c3, if_neg c4, if_pos c5]
+        ite_eq_right c0, ite_eq_left c1, ite_eq_right c2, ite_eq_right c3, ite_eq_right c4, ite_eq_left c5]
       ring
     rw [hsum]
     have hKr : (240 : ℝ) ≤ ((6 * K : ℕ) : ℝ) := by exact_mod_cast (by omega : 240 ≤ 6 * K)
@@ -601,11 +601,11 @@ theorem untwisted_choice : UntwistedChoice := by
     fun w j => if w ∈ Tw then Jx w j else jT w j / D,
     fun w j => if w ∈ Tw then η w j else 0, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro w hw j
-    simp only [hw, if_true, and_self]
+    simp only [hw, ite_true, and_self]
   · intro w hw
     by_cases hT : w ∈ Tw
-    · simpa only [hT, if_true] using h3 w hT
-    · simp only [hT, if_false]
+    · simpa only [hT, ite_true] using h3 w hT
+    · simp only [hT, ite_false]
       have e : ∑ j, (2 * F w j + (I w j + Ic w j) / D) = (∑ j, (I w j + Ic w j)) / D := by
         rw [Finset.sum_div]
         exact Finset.sum_congr rfl (fun j _ => by rw [hF w hw hT j]; ring)
@@ -614,18 +614,18 @@ theorem untwisted_choice : UntwistedChoice := by
       linarith
   · intro w hw j
     by_cases hT : w ∈ Tw
-    · simpa only [hT, if_true] using h4 w hT j
-    · simp only [hT, if_false]
+    · simpa only [hT, ite_true] using h4 w hT j
+    · simp only [hT, ite_false]
       rw [div_mul_cancel₀ _ hD'.ne', add_zero]
   · intro j
     rw [← Finset.sum_subset hTS (fun w hw hT => by
-      simp only [hT, if_false]
+      simp only [hT, ite_false]
       rw [← add_div, hA w hw hT j, zero_div, mul_zero])]
-    exact Finset.sum_congr rfl (fun w hw => by simp only [hw, if_true])
+    exact Finset.sum_congr rfl (fun w hw => by simp only [hw, ite_true])
   · intro j
     rw [← Finset.sum_subset hTS (fun w hw hT => by
-      simp only [hT, if_false, mul_zero, zero_div])]
-    exact Finset.sum_congr rfl (fun w hw => by simp only [hw, if_true])
+      simp only [hT, ite_false, mul_zero, zero_div])]
+    exact Finset.sum_congr rfl (fun w hw => by simp only [hw, ite_true])
   · intro j
     exact (Finset.sum_subset hTS (fun w hw hT => by rw [hF w hw hT j, mul_zero])).symm
 

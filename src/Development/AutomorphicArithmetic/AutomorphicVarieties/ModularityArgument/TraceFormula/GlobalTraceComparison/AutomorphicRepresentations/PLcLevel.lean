@@ -114,19 +114,19 @@ theorem lcLevel_pf : LcLevel := by
   refine ⟨fun w => if w ∈ Z then C w else N₀ w, ?_, ?_, ?_⟩
   · intro w
     by_cases hw : w ∈ Z
-    · simp only [if_pos hw]
+    · simp only [ite_eq_left hw]
       obtain ⟨a, b, c, -⟩ := hC w hw
       exact ⟨a, b.trans (hN₀ w).2.1, c, fun h => absurd hw h⟩
-    · simp only [if_neg hw]
+    · simp only [ite_eq_right hw]
       exact hN₀ w
   · intro w
     by_cases hw : w ∈ Z
-    · simp only [if_pos hw]
+    · simp only [ite_eq_left hw]
       exact (hC w hw).2.1
-    · simp only [if_neg hw]
+    · simp only [ite_eq_right hw]
       exact le_rfl
   · intro w hw b
-    simp only [if_pos hw]
+    simp only [ite_eq_left hw]
     exact (hC w hw).2.2.2 b
 
 end UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi

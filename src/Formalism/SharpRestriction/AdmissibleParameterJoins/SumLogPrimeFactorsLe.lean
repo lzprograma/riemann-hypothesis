@@ -6,48 +6,10 @@ public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLi
 public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DualPl
 import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ShiftInvariance
 import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 public import Mathlib.RingTheory.Ideal.Int
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.NumberTheory.Primorial
+import Mathlib.NumberTheory.Chebyshev
+import Formalism.SharpRestriction.LevelLetterCocycles.TwGuard
 
 @[expose] public section
 
@@ -300,26 +262,15 @@ end places
 
 theorem resChar_mem (D : D7) (w : D.what₂.places.Pl) :
     ((D.what₂.places.resChar w : ℕ) : 𝓞 D.what₂.LL) ∈ (D.plEq w).asIdeal := by
-  have hv := D.what₂.places.val_resChar w
-  have hne : ((D.what₂.places.resChar w : ℕ) : D.what₂.LL) ≠ 0 := by
-    exact_mod_cast (D.what₂.places.resChar_prime w).ne_zero
-  rw [D.val_eq w _ hne] at hv
-  have hv' : vAdd (D.plEq w) ((D.what₂.places.resChar w : ℕ) : D.what₂.LL) =
-      ((D.what₂.places.ramIdx w : ℕ) : ℤ) := by exact_mod_cast hv
-  have hpos := D.what₂.places.ramIdx_pos w
-  have h1 : (D.plEq w).valuation D.what₂.LL (algebraMap (𝓞 D.what₂.LL) D.what₂.LL
-      ((D.what₂.places.resChar w : ℕ) : 𝓞 D.what₂.LL)) < 1 := by
-    have hx : ((D.what₂.places.resChar w : ℕ) : D.what₂.LL) = algebraMap (𝓞 D.what₂.LL) D.what₂.LL
-        ((D.what₂.places.resChar w : ℕ) : 𝓞 D.what₂.LL) := by simp
-    rw [← hx]
-    have hv0 : (D.plEq w).valuation D.what₂.LL ((D.what₂.places.resChar w : ℕ) : D.what₂.LL) ≠ 0 :=
-      (Valuation.ne_zero_iff _).mpr hne
-    unfold vAdd at hv'
-    rw [← WithZero.exp_log hv0, show WithZero.log ((D.plEq w).valuation D.what₂.LL
-      ((D.what₂.places.resChar w : ℕ) : D.what₂.LL)) = -((D.what₂.places.ramIdx w : ℕ) : ℤ) by omega]
-    rw [← WithZero.exp_zero, WithZero.exp_lt_exp]
-    omega
-  exact ((D.plEq w).valuation_lt_one_iff_mem _).mp h1
+  have hp := (D.what₂.places.resChar_prime w).ne_zero
+  have hv := D.val_eq w _ (Nat.cast_ne_zero.mpr hp)
+  rw [D.what₂.places.val_resChar] at hv
+  apply (vAdd_pos_iff_mem (D.plEq w) (Nat.cast_ne_zero.mpr hp)).mp
+  have hval : vAdd (D.plEq w) ((D.what₂.places.resChar w : ℕ) : D.what₂.LL) =
+      (D.what₂.places.ramIdx w : ℤ) := by exact_mod_cast hv.symm
+  push_cast
+  rw [hval]
+  exact_mod_cast D.what₂.places.ramIdx_pos w
 
 theorem logWeight_nonneg {D : D7} (w : D.what₂.places.Pl) : 0 ≤ SizeData₂.lwP w := lw_nonneg _
 
@@ -373,18 +324,8 @@ theorem sum_log_union_le (A B : Finset ℕ) :
 
 theorem sum_log_primes_le (N : ℕ) :
     ∑ p ∈ (Finset.range (N + 1)).filter Nat.Prime, Real.log (p : ℝ) ≤ N * Real.log 4 := by
-  have hpr : ((primorial N : ℕ) : ℝ) = ∏ p ∈ (Finset.range (N + 1)).filter Nat.Prime, (p : ℝ) := by
-    rw [primorial, Nat.cast_prod]
-  have h1 : Real.log ((primorial N : ℕ) : ℝ) =
-      ∑ p ∈ (Finset.range (N + 1)).filter Nat.Prime, Real.log (p : ℝ) := by
-    rw [hpr, Real.log_prod]
-    intro p hp
-    exact Nat.cast_ne_zero.mpr (Finset.mem_filter.mp hp).2.ne_zero
-  rw [← h1]
-  have h2 : ((primorial N : ℕ) : ℝ) ≤ (4 : ℝ) ^ N := by exact_mod_cast primorial_le_four_pow N
-  have h3 : (0 : ℝ) < ((primorial N : ℕ) : ℝ) := by exact_mod_cast primorial_pos N
-  calc Real.log ((primorial N : ℕ) : ℝ) ≤ Real.log ((4 : ℝ) ^ N) := Real.log_le_log h3 h2
-    _ = N * Real.log 4 := by rw [Real.log_pow]
+  rw [← Nat.primesLE_eq_filter_range, ← Chebyshev.theta_eq_sum_primesLE_log, mul_comm]
+  exact Chebyshev.theta_le_log4_mul_x (Nat.cast_nonneg N)
 
 theorem sum_log_primeFactors_le (n : ℕ) (hn : 0 < n) :
     ∑ p ∈ n.primeFactors, Real.log (p : ℝ) ≤ Real.log n := by
@@ -474,7 +415,7 @@ theorem round_le (D : D7) (L : SizeData₂ D) (hdef : DV.NprimeDef D L) (u : D.w
       constructor <;> linarith
     have h4 := mul_le_mul_of_nonneg_left h3 (by linarith : (0 : ℝ) ≤ 2 * SizeData₂.lwP w)
     linarith
-  · push_neg at hs
+  · push Not at hs
     rw [hs]
     simp
 
@@ -505,35 +446,33 @@ theorem nprimeMu_at (D : D7) (L : SizeData₂ D) (hdef : DV.NprimeDef D L) (hZ :
           Real.log ((D.mem u).C.DGam : ℝ)))))) := by
   classical
   refine (round_le D L hdef u hX hfg hne).trans ?_
-  set N : ℕ := ⌊L.sc.X'' D.R.n⌋₊ with hN
-  set P : Finset ℕ := (Finset.range (N + 1)).filter Nat.Prime ∪ ({(D.mem u).A.T} ∪ ({D.host.g 0} ∪
+  set P : Finset ℕ := Nat.primesLE ⌊L.sc.X'' D.R.n⌋₊ ∪ ({(D.mem u).A.T} ∪ ({D.host.g 0} ∪
     ({D.host.g 1} ∪ ({D.host.d} ∪ (D.mem u).C.DGam.primeFactors)))) with hP
   have hmem : ∀ w ∈ L.supp.filter (fun w => L.sg u w ≠ 0), D.what₂.places.resChar w ∈ P := by
     intro w hw
     have hsg := (Finset.mem_filter.1 hw).2
     by_contra hcon
-    simp only [hP, Finset.mem_union, Finset.mem_filter, Finset.mem_range, Finset.mem_singleton,
+    simp only [hP, Finset.mem_union, Nat.mem_primesLE, Finset.mem_singleton,
       not_or, not_and] at hcon
     obtain ⟨c1, c2, c3, c4, c5, c6⟩ := hcon
     apply hsg
     refine sg_eq_zero D L hZ u w ?_ c2 ?_ c5 ?_
-    · have : ¬ D.what₂.places.resChar w < N + 1 := fun h => c1 h (D.what₂.places.resChar_prime w)
-      have h' : N < D.what₂.places.resChar w := by omega
-      exact Nat.lt_of_floor_lt h'
+    · exact Nat.lt_of_floor_lt (lt_of_not_ge fun h => c1 h (D.what₂.places.resChar_prime w))
     · simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
       exact ⟨c3, c4⟩
     · intro hd
       exact c6 (Nat.mem_primeFactors.2 ⟨D.what₂.places.resChar_prime w, hd, (D.mem u).C.DGam_pos.ne'⟩)
   have h1 := sum_lwP_le_primes D _ P hmem
-  have hNle : (N : ℝ) ≤ L.sc.X'' D.R.n := Nat.floor_le hXpp
-  have hlog4 : 0 ≤ Real.log 4 := Real.log_nonneg (by norm_num)
+  have hprime : ∑ p ∈ Nat.primesLE ⌊L.sc.X'' D.R.n⌋₊, Real.log (p : ℝ) ≤
+      L.sc.X'' D.R.n * Real.log 4 := by
+    rw [← Chebyshev.theta_eq_sum_primesLE, mul_comm]
+    exact Chebyshev.theta_le_log4_mul_x hXpp
   have h2 : ∑ p ∈ P, Real.log (p : ℝ) ≤ L.sc.X'' D.R.n * Real.log 4 +
       (Real.log ((D.mem u).A.T : ℝ) + (Real.log (D.host.g 0 : ℝ) +
         (Real.log (D.host.g 1 : ℝ) + (Real.log (D.host.d : ℝ) +
           Real.log ((D.mem u).C.DGam : ℝ))))) := by
     rw [hP]
-    refine (sum_log_union_le _ _).trans (add_le_add ((sum_log_primes_le N).trans
-      (mul_le_mul_of_nonneg_right hNle hlog4)) ?_)
+    refine (sum_log_union_le _ _).trans (add_le_add hprime ?_)
     refine (sum_log_union_le _ _).trans (add_le_add (by rw [Finset.sum_singleton]) ?_)
     refine (sum_log_union_le _ _).trans (add_le_add (by rw [Finset.sum_singleton]) ?_)
     refine (sum_log_union_le _ _).trans (add_le_add (by rw [Finset.sum_singleton]) ?_)

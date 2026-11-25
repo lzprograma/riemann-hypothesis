@@ -15,8 +15,6 @@ open Formalism.BasicNotions Formalism.L2.SG.LocWSOf Formalism.L2.SG.Pf.BaseOf Fo
 
 namespace Formalism.L2.SG.Pf.Carrier.CarPinTor
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {θ : ℝ} (C : Choice X θ) (hB : WuBessel C)
 
 abbrev gB (τ : D.what₂.Tau) (γ : Formalism.REAL.UJ (X.B.I.ε (vOf X τ))) : MatKR D.R.k D.R.rS := trG (C.Q τ) (C.Qi τ) γ

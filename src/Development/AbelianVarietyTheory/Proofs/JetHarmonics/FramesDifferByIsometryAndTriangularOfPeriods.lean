@@ -108,7 +108,7 @@ theorem perFr_mem (X : Data E r) (x : Frame X.Ψ r) (v : Fin r → E) (τ : E �
   unfold Formalism.L2.PjFree.perFr natPer
   rw [dite_eq_left h]
   split_ifs with hi
-  · rw [locPer_apply, if_neg (by simp)]
+  · rw [locPer_apply, ite_eq_right (by simp)]
   · rfl
 
 theorem conjEmb_conjEmb (τ : E →+* ℂ) : conjEmb (conjEmb τ) = τ := by
@@ -132,7 +132,7 @@ theorem perFr_conj (X : Data E r) (x : Frame X.Ψ r) (v : Fin r → E) (τ : E �
   unfold Formalism.L2.PjFree.perFr natPer
   rw [dite_eq_right hn, dite_eq_left h]
   split_ifs with hj
-  · rw [locPer_apply, if_pos (by simp only; omega)]
+  · rw [locPer_apply, ite_eq_left (by simp only; omega)]
   · rfl
 
 theorem natPer_move {X X' : Data E r} {a : GL (Fin r) E} (h : IsMatch X X' a) (τ : E →+* ℂ) (q : ℕ)
@@ -229,14 +229,14 @@ theorem loc_borel (X : Data E r) (τ : E →+* ℂ) (M M' : Matrix (Fin r) (Fin 
     refine GlobalTheory.FibreFlag.upper_of_blocks q B hBd (fun a c hc hca => ?_) (fun a c hc hca => ?_)
     · rw [← c1 c a hc]
       rw [Fin.lt_def] at hca
-      simp only [K, K0, Matrix.of_apply, if_pos hc]
+      simp only [K, K0, Matrix.of_apply, ite_eq_left hc]
       split_ifs
       · exact hA' _ _ (by omega)
       · rfl
     · rw [Fin.lt_def] at hca
       rw [← c2 a c (by omega)]
       simp only [K, K0, Matrix.of_apply]
-      rw [if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega)]
       exact hA _ _ (by omega)
   refine ⟨hup, fun hd => ⟨fun i hi => ?_, fun i hi => ?_⟩⟩
   · let a : Fin r := ⟨q + i, by omega⟩
@@ -260,7 +260,7 @@ theorem loc_borel (X : Data E r) (τ : E →+* ℂ) (M M' : Matrix (Fin r) (Fin 
     have ha : (a : ℕ) < q := by simp only [a]; omega
     have e2 := hd a
     rw [← c1 a a ha] at e2
-    simp only [K, K0, Matrix.of_apply, if_pos ha] at e2
+    simp only [K, K0, Matrix.of_apply, ite_eq_left ha] at e2
     rwa [show q - 1 - (a : ℕ) = i by simp only [a]; omega] at e2
 
 theorem borel_of_periods : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (X X' : Data E r) (a : GL (Fin r) E) (h : IsMatch X X' a), ∀ (m : (E →+* ℂ) → ℕ), (∀ τ ∈ X.Ψ, m τ = r - X.p0) → (∀ τ ∉ X.Ψ, m τ = X.p0) → ∀ x ∈ X.dom, ∀ x' ∈ X'.dom, ∀ (A : (E →+* ℂ) → ℕ → ℕ → ℂ), (∀ τ i j, j < i → A τ i j = 0) → (∀ τ, ∀ i < m τ, ∀ v ∈ X.Λ, Formalism.L2.PjFree.perFr X' x' ((a : Matrix (Fin r) (Fin r) E) *ᵥ v) τ i = ∑ j ∈ Finset.range (m τ), A τ i j * Formalism.L2.PjFree.perFr X x v τ j) → ∃ b ∈ Bor X'.Ψ r, x' = rmul (lact a (castFr h.psi x)) b ∧ (IsUnitFr X x → IsUnitFr X' x' → (∀ τ i, ‖b τ i i‖ = 1) ∧ ∀ τ, ∀ i < m τ, ‖A τ i i‖ = 1) := by

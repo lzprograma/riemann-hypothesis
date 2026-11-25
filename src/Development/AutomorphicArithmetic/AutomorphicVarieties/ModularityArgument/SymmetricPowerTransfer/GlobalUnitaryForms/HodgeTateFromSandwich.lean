@@ -52,22 +52,6 @@ namespace UpperTheory.V.Z.Sym.Glob
 
 open NumberField IsDedekindDomain Matrix Loc
 
-section Shortcuts
-
-variable {I : Type} (Gv : I → Type) [∀ v, Group (Gv v)] (K : ∀ v, Subgroup (Gv v))
-
-instance rpGroup : Group (RP Gv K) := inferInstance
-instance rpDivInvMonoid : DivInvMonoid (RP Gv K) := inferInstance
-instance rpMonoid : Monoid (RP Gv K) := inferInstance
-instance rpMulOneClass : MulOneClass (RP Gv K) := inferInstance
-instance rpMulOne : MulOne (RP Gv K) := inferInstance
-instance rpSemigroup : Semigroup (RP Gv K) := inferInstance
-instance rpMul : Mul (RP Gv K) := inferInstance
-instance rpOne : One (RP Gv K) := inferInstance
-instance rpInv : Inv (RP Gv K) := inferInstance
-
-end Shortcuts
-
 section Defs
 
 variable {K K' : Type} [Field K] [Field K']

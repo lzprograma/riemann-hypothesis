@@ -181,10 +181,6 @@ namespace CyclotomicLayer
 
 local notation "ℚ̄" => AlgebraicClosure ℚ
 
-section TotallyReal
-
-end TotallyReal
-
 section Order
 
 theorem pow_dvd_addOrderOf_toZModPow {q : ℕ} [hq : Fact q.Prime] {n e a : ℕ} (hna : n + e ≤ a)
@@ -291,10 +287,11 @@ end Primes
 
 section Main
 
-theorem exists_dvd_finrank_cyclotomicLayer (K : FiniteSubfield) (S : Finset (HeightOneSpectrum (𝓞 K.1)))
-    {m : ℕ} (hm : m ≠ 0) :
-    ∃ r : ℕ+, ∀ v ∈ S, ∀ w : SemiLocal.PlacesOver (cyclotomicLayer K r).1 v,
-      m ∣ Module.finrank (v.adicCompletion K.1) (w.1.adicCompletion (cyclotomicLayer K r).1) := by
+theorem exists_pow_dvd_finrank_cyclotomicLayer (K : FiniteSubfield)
+    (S : Finset (HeightOneSpectrum (𝓞 K.1))) {m : ℕ} (hm : m ≠ 0) :
+    ∃ r : ℕ+, (∃ N : ℕ, (r : ℕ) = m ^ (N + 1)) ∧ ∀ v ∈ S,
+      ∀ w : SemiLocal.PlacesOver (cyclotomicLayer K r).1 v,
+        m ∣ Module.finrank (v.adicCompletion K.1) (w.1.adicCompletion (cyclotomicLayer K r).1) := by
   have h (v : HeightOneSpectrum (𝓞 K.1)) (q : Nat.Primes) :=
     exists_mem_stabilizer_toZModPow_degreeComponent_ne_zero (K := K) v q
   choose n hn using h
@@ -302,7 +299,7 @@ theorem exists_dvd_finrank_cyclotomicLayer (K : FiniteSubfield) (S : Finset (Hei
     m.primeFactors.attach.sup fun q => n v ⟨q.1, Nat.prime_of_mem_primeFactors q.2⟩
   obtain ⟨r, hr⟩ : ∃ r : ℕ+, (r : ℕ) = m ^ (N + 1) :=
     ⟨⟨m ^ (N + 1), pow_pos (Nat.pos_of_ne_zero hm) _⟩, rfl⟩
-  refine ⟨r, fun v hv w => ?_⟩
+  refine ⟨r, ⟨N, hr⟩, fun v hv w => ?_⟩
   rw [SemiLocal.finrank_eq_ramificationIdx_mul_inertiaDeg _ v w.1, ← card_decompositionGroup v w.1]
   refine dvd_trans ?_ (Subgroup.card_map_dvd _ (layerDegree K _))
   refine dvd_natCard_of_forall_pow_dvd_orderOf _ hm fun q hq hqm => ?_
@@ -326,6 +323,13 @@ theorem exists_dvd_finrank_cyclotomicLayer (K : FiniteSubfield) (S : Finset (Hei
         _ = (q ^ m.factorization q) ^ (N + 1) := pow_mul _ _ _
         _ ∣ m ^ (N + 1) := pow_dvd_pow_of_dvd (Nat.ordProj_dvd m q) _
     exact pow_dvd_orderOf_degreeMod r ⟨q, hq⟩ (hr ▸ hqr) (by omega) hσ
+
+theorem exists_dvd_finrank_cyclotomicLayer (K : FiniteSubfield) (S : Finset (HeightOneSpectrum (𝓞 K.1)))
+    {m : ℕ} (hm : m ≠ 0) :
+    ∃ r : ℕ+, ∀ v ∈ S, ∀ w : SemiLocal.PlacesOver (cyclotomicLayer K r).1 v,
+      m ∣ Module.finrank (v.adicCompletion K.1) (w.1.adicCompletion (cyclotomicLayer K r).1) :=
+  let ⟨r, _, hr⟩ := exists_pow_dvd_finrank_cyclotomicLayer K S hm
+  ⟨r, hr⟩
 
 theorem exists_cyclic_layer_dvd_localDegree (K : FiniteSubfield)
     (S : Finset (HeightOneSpectrum (𝓞 K.1))) {m : ℕ} (hm : m ≠ 0) :

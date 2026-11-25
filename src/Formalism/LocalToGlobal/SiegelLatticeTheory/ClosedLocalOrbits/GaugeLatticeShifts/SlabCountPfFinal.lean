@@ -34,8 +34,6 @@ open Formalism.L2.SG.FoldBound Formalism.L2.SG.PoincareSeriesSquareIntegrable Nu
   Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PoincareInHH.Cut Formalism.L2.SG.TermOp.KExpCut Formalism.L2.SG.Full
   Formalism.L2.SG.Pf.Slab
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Eq
 
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what₂.Word}
@@ -164,13 +162,13 @@ theorem countC_of_leviFin (hL : LeviFinC) : CountC := by
             i0.1.1.mem'
     · intro i hi
       have hei : e i = (i.1.1.lam', (hex i hi).choose) := by
-        simp only [e, dif_pos (hex i hi)]
+        simp only [e, dite_eq_left (hex i hi)]
       refine ⟨?_, ?_⟩
       · rw [hei]
         exact Finset.mem_biUnion.2 ⟨i.1.1.lam', i.1.1.mem', Finset.mem_image.2 ⟨_, (hex i hi).choose_spec.1, rfl⟩⟩
       intro j hj hij
       have hej : e j = (j.1.1.lam', (hex j hj).choose) := by
-        simp only [e, dif_pos (hex j hj)]
+        simp only [e, dite_eq_left (hex j hj)]
       rw [hei, hej] at hij
       have hl' : i.1.1.lam' = j.1.1.lam' := congrArg Prod.fst hij
       have hf : (hex i hi).choose = (hex j hj).choose := congrArg Prod.snd hij
@@ -245,8 +243,6 @@ namespace Formalism.L2.SG.Pf.SlabCount
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermOp Formalism.L2.SG.PoincareInHH.PoincareSetting
   Formalism.L2.SG.PoincareInHH.Cut Formalism.L2.SG.Full
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace LeviAlg
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u' : D.what₂.Word)
@@ -265,11 +261,8 @@ theorem orth_span_iff {T : Set (VS D).V} {v : (VS D).V} :
     v ∈ orth (VS D) (Submodule.span D.host.E T) ↔ ∀ y ∈ T, (VS D).hT y v = 0 := by
   rw [mem_orth']
   refine ⟨fun h y hy => h y (Submodule.subset_span hy), fun h y hy => ?_⟩
-  induction hy using Submodule.span_induction with
-  | mem y hy => exact h y hy
-  | zero => simp
-  | add a b _ _ ha hb => rw [map_add (f := _), LinearMap.add_apply, ha, hb, add_zero]
-  | smul c a _ ha => rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, ha, smul_zero]
+  exact (LinearMap.flip_apply _ _ _).symm.trans (LinearMap.mem_ker.mp
+    ((Submodule.span_le (p := LinearMap.ker ((VS D).hT.flip v))).mpr h hy))
 
 variable {X} in
 theorem hconj (x y : (VS D).V) : (VS D).hT y x = starRingEnd D.host.E ((VS D).hT x y) :=
@@ -583,13 +576,13 @@ theorem leviStabFinC_of (hWF : LeviWFinC) (hZ : SratZC) : LeviStabFinC := by
   · intro τ hτ
     obtain ⟨g, hg, rfl⟩ := Finset.mem_image.1 hτ
     have hg' : ∃ σ : G, Φ σ = g := hfin.mem_toFinset.1 hg
-    simp only [ch, dif_pos hg']
+    simp only [ch, dite_eq_left hg']
     exact hg'.choose.2
   · intro σ s hs hσ hS hgσ
     have hσG : σ ∈ G := ⟨hσ, hgσ, s, hs, hS⟩
     have hg' : ∃ ρ : G, Φ ρ = Φ ⟨σ, hσG⟩ := ⟨_, rfl⟩
     refine ⟨ch (Φ ⟨σ, hσG⟩), Finset.mem_image.2 ⟨_, hfin.mem_toFinset.2 ⟨_, rfl⟩, rfl⟩, ?_⟩
-    simp only [ch, dif_pos hg']
+    simp only [ch, dite_eq_left hg']
     have hτ := hg'.choose_spec
     intro x hx
     rw [LeviAlg.xsp_eq] at hx ⊢
@@ -648,8 +641,7 @@ theorem wu_pos (ι : X.B.I.F →+* ℝ) (x : Fin X.B.I.n → X.B.I.E) (hx0 : x �
     rw [← phi_hform, ← ha, X.B.I.φ_over v a, hemb]; rfl
   have hre : ι a = (hJ (X.B.I.ε v) (rv X.B.I v x) (rv X.B.I v x)).re := by rw [← hval]; simp
   rw [hre]
-  by_contra hle
-  push_neg at hle
+  by_contra! hle
 
   let nv : Fin (D.R.rS + 1) → Fin X.B.I.n → ℂ := fun j =>
     if h : j.1 < D.R.rS then rv X.B.I v (X.eR ⟨j.1, h⟩) - rv X.B.I v (X.fR ⟨j.1, h⟩) else rv X.B.I v (X.zR u)
@@ -681,7 +673,7 @@ theorem wu_pos (ι : X.B.I.F →+* ℝ) (x : Fin X.B.I.n → X.B.I.E) (hx0 : x �
     simp only [nv]
     split_ifs with hj
     · rw [hJ_sub_left, hJ_sub_right, hJ_sub_right]
-      simp only [HidaSetting.eR, HidaSetting.fR, hJ_crd, X.ee, X.ff, X.ef, hT_f_e, if_true, map_zero, map_one]
+      simp only [HidaSetting.eR, HidaSetting.fR, hJ_crd, X.ee, X.ff, X.ef, hT_f_e, ite_true, map_zero, map_one]
       norm_num
     · simp only [HidaSetting.zR, hJ_crd, X.zu_norm, map_neg, map_natCast]
       simp only [Complex.neg_re, Complex.natCast_re, Left.neg_neg_iff]
@@ -715,19 +707,17 @@ theorem trace_pos_of_totPos {F : Type} [Field F] [NumberField F] (hF : NumberFie
     (ha : ∀ ι : F →+* ℝ, 0 < ι a) : 0 < Algebra.trace ℚ F a := by
   have := hF
   have h := trace_eq_sum_embeddings (K := ℚ) (L := F) (E := ℂ) (x := a)
-  have hre : ∀ σ : F →ₐ[ℚ] ℂ, 0 < (σ a).re ∧ (σ a).im = 0 := by
-    intro σ
-    have hr : NumberField.ComplexEmbedding.IsReal (σ : F →+* ℂ) := IsTotallyReal.complexEmbedding_isReal _
-    have e := NumberField.ComplexEmbedding.IsReal.coe_embedding_apply hr a
-    have e2 : σ a = ((hr.embedding a : ℝ) : ℂ) := e.symm
-    refine ⟨?_, ?_⟩
-    · simp only [e2, Complex.ofReal_re]; exact ha hr.embedding
-    · simp only [e2, Complex.ofReal_im]
+  have hre : ∀ σ : F →ₐ[ℚ] ℂ, 0 < (σ a).re := fun σ => by
+    have hr : NumberField.ComplexEmbedding.IsReal (σ : F →+* ℂ) :=
+      IsTotallyReal.complexEmbedding_isReal _
+    have e2 : σ a = ((hr.embedding a : ℝ) : ℂ) :=
+      (NumberField.ComplexEmbedding.IsReal.coe_embedding_apply hr a).symm
+    simp only [e2, Complex.ofReal_re]; exact ha hr.embedding
   have hsum : (0 : ℝ) < (∑ σ : F →ₐ[ℚ] ℂ, σ a).re := by
     rw [Complex.re_sum]
     obtain ⟨v⟩ : Nonempty (InfinitePlace F) := inferInstance
     let σ0 : F →ₐ[ℚ] ℂ := v.embedding.toRatAlgHom
-    exact Finset.sum_pos (fun σ _ => (hre σ).1) ⟨σ0, Finset.mem_univ _⟩
+    exact Finset.sum_pos (fun σ _ => hre σ) ⟨σ0, Finset.mem_univ _⟩
   rw [← h] at hsum
   simpa using hsum
 
@@ -786,8 +776,6 @@ namespace Formalism.L2.SG.Pf.SlabCount
 
 open Formalism.L2.SG.FoldBound Formalism.L2.SG.PoincareSeriesSquareIntegrable Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermOp
   Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PoincareInHH.Cut Formalism.L2.SG.TermOp.KExpCut Formalism.L2.SG.Full
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u' : D.what₂.Word)
 
@@ -889,8 +877,6 @@ namespace Formalism.L2.SG.Pf.SlabCount
 
 open Formalism.L2.SG.FoldBound Formalism.L2.SG.PoincareSeriesSquareIntegrable NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermOp
   Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PoincareInHH.Cut Formalism.L2.SG.TermOp.KExpCut Formalism.L2.SG.Full
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Matrix
 

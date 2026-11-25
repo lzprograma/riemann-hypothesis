@@ -28,11 +28,4 @@ theorem sabMapCast_φ {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Ho
   subst h
   rfl
 
-section Model
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
-  {Xo : Moduli Dw l} {c : Coeff l} {O : Type} [CommRing O] {β : O →+* c.F}
-
-end Model
-
 end ReciprocityTheory.ChartRestriction.G.PullbackSections

@@ -88,12 +88,12 @@ lemma loc_compare (τ : E →+* ℂ) (Gm : Matrix (Fin r) (Fin r) E) (hG : Gm.de
       apply eq_of_hermC_eq τ Gm hG
       intro u
       have := congrFun (h u) a
-      rw [locPer_apply, if_pos ha] at this
+      rw [locPer_apply, ite_eq_left ha] at this
       rw [this, FD.hermC_sum_left, mulVec, dotProduct]
       refine Finset.sum_congr rfl fun e _ => ?_
       rw [FD.hermC_smul_left, locPer_apply]
       by_cases he : (e : ℕ) < q
-      · rw [if_pos he]
+      · rw [ite_eq_left he]
       · rw [hK a e (by simp [ha, he])]; simp
     rw [← FD.Data.mulVec_eq_sum_col] at h1
     have h2 : M⁻¹ *ᵥ FD.col M' a = K a := by
@@ -104,13 +104,13 @@ lemma loc_compare (τ : E →+* ℂ) (Gm : Matrix (Fin r) (Fin r) E) (hG : Gm.de
     have ha' : ¬ (a : ℕ) < q := not_lt.2 ha
     rw [Matrix.mul_inv_rev, Matrix.nonsing_inv_nonsing_inv _ hMu]
     have h1 := congrFun (h (M *ᵥ Pi.single c 1)) a
-    rw [locPer_apply, if_neg ha', mulVec_mulVec] at h1
+    rw [locPer_apply, ite_eq_right ha', mulVec_mulVec] at h1
     have h2 : (K *ᵥ locPer τ Gm q M (M *ᵥ Pi.single c 1)) a = (K *ᵥ Pi.single c 1) a := by
       rw [mulVec, mulVec, dotProduct, dotProduct]
       refine Finset.sum_congr rfl fun e _ => ?_
       by_cases he : (e : ℕ) < q
       · rw [hK a e (by simp [ha', he])]; simp
-      · rw [locPer_apply, if_neg he, mulVec_mulVec, Matrix.nonsing_inv_mul _ hMu, one_mulVec]
+      · rw [locPer_apply, ite_eq_right he, mulVec_mulVec, Matrix.nonsing_inv_mul _ hMu, one_mulVec]
     rw [h2] at h1
     simpa using h1.symm
 
@@ -151,10 +151,10 @@ lemma block_of_allPer {Ψ : Finset (E →+* ℂ)} (Gm : Matrix (Fin r) (Fin r) E
     have hI : (2 * Complex.I) ≠ 0 := by simp
     by_cases ha : ((idx k).2 : ℕ) < q <;> by_cases hb : ((idx k').2 : ℕ) < q
     · exact absurd ⟨h1, by simp [ha, hb]⟩ hk
-    · rw [if_pos ha, if_neg hb, Complex.conj_I] at h2
+    · rw [ite_eq_left ha, ite_eq_right hb, Complex.conj_I] at h2
       apply mul_left_cancel₀ hI
       linear_combination -h2
-    · rw [if_neg ha, if_pos hb, Complex.conj_I] at h2
+    · rw [ite_eq_right ha, ite_eq_left hb, Complex.conj_I] at h2
       apply mul_left_cancel₀ hI
       linear_combination h2
     · exact absurd ⟨h1, by simp [ha, hb]⟩ hk

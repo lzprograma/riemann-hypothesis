@@ -1,5 +1,6 @@
 module
 
+import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PSectionComponents
 public import Mathlib.Data.ENat.Basic
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgDimSt
 public import ReciprocityTheory.CommutativeAlgebra.ChainConnInDim
@@ -100,45 +101,8 @@ theorem dimPIT_fin (F : Type) [Field F] (N : ℕ) (V W : Ideal (MvPolynomial (Fi
     (hW : W ∈ (V ⊔ Ideal.span {s}).minimalPrimes) :
     ringKrullDim (MvPolynomial (Fin N) F ⧸ W) + 1 =
       ringKrullDim (MvPolynomial (Fin N) F ⧸ V) := by
-  have hWp : W.IsPrime := hW.1.1
-  have hVW : V ≤ W := le_sup_left.trans hW.1.2
-  have hsW : s ∈ W := hW.1.2 (Ideal.mem_sup_right (Ideal.mem_span_singleton_self s))
-  obtain ⟨𝔐, h𝔐, hW𝔐⟩ := Ideal.exists_le_maximal W hWp.ne_top
-  have hCM := (height_maximal_mvPolynomial_field F N 𝔐).1
-  have hCMW := isCM_atPrime_of_le 𝔐 W hCM hW𝔐
-  have hrel := height_eq_add_of_isCM_localization W V hCMW hVW
-  let f := Ideal.Quotient.mk V
-  have hf : Function.Surjective f := Ideal.Quotient.mk_surjective
-  have hker : RingHom.ker f ≤ W := by rw [Ideal.mk_ker]; exact hVW
-  have hP : (W.map f).IsPrime := Ideal.map_isPrime_of_surjective hf hker
-  have hcomapJ : (Ideal.span {f s}).comap f = V ⊔ Ideal.span {s} := by
-    rw [← Set.image_singleton, ← Ideal.map_span, Ideal.comap_map_of_surjective _ hf,
-      ← RingHom.ker_eq_comap_bot, Ideal.mk_ker, sup_comm]
-  have hmin : W.map f ∈ (Ideal.span {f s}).minimalPrimes := by
-    have h0 := hW
-    rw [← hcomapJ, Ideal.comap_minimalPrimes_eq_of_surjective hf] at h0
-    obtain ⟨Q, hQ, hQW⟩ := h0
-    rw [← hQW, Ideal.map_comap_of_surjective _ hf]
-    exact hQ
-  have : (Ideal.span {f s}).IsPrincipal := ⟨⟨f s, rfl⟩⟩
-  have hle1 : (W.map f).height ≤ 1 :=
-    Ideal.height_le_one_of_isPrincipal_of_mem_minimalPrimes _ _ hmin
-  have hne : W.map f ≠ ⊥ := by
-    intro h0
-    have h3 : f s ∈ W.map f := Ideal.mem_map_of_mem f hsW
-    rw [h0, Ideal.mem_bot, Ideal.Quotient.eq_zero_iff_mem] at h3
-    exact hs h3
-  have hge1 : 1 ≤ (W.map f).height := by
-    rw [Order.one_le_iff_ne_zero]
-    exact fun h0 => hne (Ideal.height_eq_zero_iff_eq_bot.mp h0)
-  have h1 : (W.map f).height = 1 := le_antisymm hle1 hge1
-  have eV := height_add_ringKrullDim_quotient_mvPolynomial_field F N V
-  have eW := height_add_ringKrullDim_quotient_mvPolynomial_field F N W
-  rw [hrel, h1] at eW
-  have := dimFormula_arith V.height 1 _ _ N (ringKrullDim_quotient_ne_bot W hWp.ne_top)
-    (ringKrullDim_quotient_ne_bot V hV.ne_top) eW eV
-  rw [add_comm]
-  exact_mod_cast this
+  apply GroundTheory.Heights₂.Heights.SectionComponents.ringKrullDim_quotient_add_one_eq <;>
+    assumption
 
 theorem dimPIT' : DimPITStatement := by
   intro F _ σ _ V W s hV hs hW

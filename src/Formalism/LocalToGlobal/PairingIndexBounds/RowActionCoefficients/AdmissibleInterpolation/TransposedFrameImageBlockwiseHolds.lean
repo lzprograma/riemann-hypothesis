@@ -267,7 +267,7 @@ theorem frame_change_group_action_holds : XG := by
   rw [smul_eval, eval_map, coeff_map, coe_eval₂Hom]
   congr 1
   unfold derAt
-  rw [if_pos (PairingSeriesCoefficients.PI_good X j I i0 n (mem_support_iff.1 hn))]
+  rw [ite_eq_left (PairingSeriesCoefficients.PI_good X j I i0 n (mem_support_iff.1 hn))]
 
 theorem frame_change_injective_holds : XInj := by
   intro p _ X j

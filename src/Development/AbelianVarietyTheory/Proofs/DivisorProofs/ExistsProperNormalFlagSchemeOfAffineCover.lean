@@ -915,7 +915,7 @@ theorem exists_lower_mul_upper (A : Matrix (Fin n) (Fin n) K)
   refine ⟨Matrix.of fun i k => if h : (k : ℕ) < i then -v i ⟨k, h⟩ else if k = i then 1 else 0, ?_, ?_, ?_⟩
   · intro i k h
     simp only [Matrix.of_apply]
-    rw [dite_eq_right (by have := Fin.lt_def.mp h; omega), if_neg (ne_of_gt h)]
+    rw [dite_eq_right (by have := Fin.lt_def.mp h; omega), ite_eq_right (ne_of_gt h)]
   · intro i
     simp
   · intro i j h
@@ -927,12 +927,12 @@ theorem exists_lower_mul_upper (A : Matrix (Fin n) (Fin n) K)
       simp only [Matrix.of_apply]
       rcases lt_trichotomy k i with h | h | h
       · have hk : (k : ℕ) < i := h
-        rw [dite_eq_left hk, dite_eq_left hk, if_neg (ne_of_lt h), add_zero]
+        rw [dite_eq_left hk, dite_eq_left hk, ite_eq_right (ne_of_lt h), add_zero]
       · subst h; simp
       · have hk : ¬ (k : ℕ) < i := by have := Fin.lt_def.mp h; omega
-        rw [dite_eq_right hk, dite_eq_right hk, if_neg (ne_of_gt h), if_neg (ne_of_gt h), zero_mul, add_zero]
+        rw [dite_eq_right hk, dite_eq_right hk, ite_eq_right (ne_of_gt h), ite_eq_right (ne_of_gt h), zero_mul, add_zero]
     rw [Finset.sum_congr rfl fun k _ => hsplit k, Finset.sum_add_distrib, Finset.sum_ite_eq',
-      if_pos (Finset.mem_univ _)]
+      ite_eq_left (Finset.mem_univ _)]
     have hs : ∑ k : Fin i, -v i k * A (Fin.castLE i.isLt.le k) j =
         ∑ k : Fin n, (if h : (k : ℕ) < i then -v i ⟨k, h⟩ * A k j else 0) := by
       refine Fintype.sum_of_injective (Fin.castLE i.isLt.le) (Fin.castLE_injective _) _ _ (fun k hk => ?_)
@@ -1012,7 +1012,7 @@ theorem exists_cell (T : Type) (m : T → ℕ) (K : Type) [Field K] (M : ℕ) (D
           rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun r _ => by ring, h1]
       by_cases hi : i' = i
       · subst hi; simp [wLet]
-      · rw [if_neg hi, if_neg, mul_zero]
+      · rw [ite_eq_right hi, ite_eq_right, mul_zero]
         intro he
         simp only [wLet, Sigma.mk.injEq, heq_eq_eq, true_and] at he
         exact hi ((w τ).injective he).symm
@@ -1030,7 +1030,7 @@ theorem exists_cell (T : Type) (m : T → ℕ) (K : Type) [Field K] (M : ℕ) (D
     intro τ i j
     unfold cell
     rcases lt_trichotomy i j with h | h | h
-    · rw [dite_eq_right (not_lt.2 h.le), if_neg h.ne, hN τ i j h]
+    · rw [dite_eq_right (not_lt.2 h.le), ite_eq_right h.ne, hN τ i j h]
     · subst h; simp [hN1]
     · rw [dite_eq_left h]
   rintro ⟨τ, j⟩

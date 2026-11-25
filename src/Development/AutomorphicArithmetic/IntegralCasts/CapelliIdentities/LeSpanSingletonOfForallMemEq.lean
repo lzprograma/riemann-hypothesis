@@ -47,7 +47,7 @@ import Mathlib.Topology.Sheaves.Init
 @[expose] public section
 
 theorem UpperTheory.Reformulated.B.Yhc2.le_span_singleton_of_forall_mem_eq.{u_1} :
-    ∀ {R : Type u_1} [inst : CommRing R] {π ξ : R} [IsAdicComplete (Ideal.span {π}) R] {J : Ideal R},
+    ∀ {R : Type u_1} [CommRing R] {π ξ : R} [IsAdicComplete (Ideal.span {π}) R] {J : Ideal R},
       (∀ x ∈ J, ∃ (a : R), ∃ z ∈ J, x = a * ξ + z * π) → J ≤ Ideal.span {ξ} := by
   intro R _ π ξ hc J h x hx
   choose! a z hz he using h

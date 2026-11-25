@@ -5,39 +5,6 @@ public import Development.AbelianVarietyTheory.Definitions.Foundations.CdScaleTi
 public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
 import Formalism.LocalToGlobal.UnitaryNorms.CharUniq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -150,8 +117,6 @@ def LgOn {Δ : Pre → Type} (Sm : ∀ B : Pre, Fr B → Δ B → IntermediateFi
       Has₂ B (S₁ B.toPre f δ B.KsC) (S₂ B.toPre f δ B.KsC B.fixedCoefficientFieldInComplex (T.set f)) → P₁ B.toPre f δ B.KsC B.fixedCoefficientFieldInComplex ⊆ T.pl →
       T.Avoids (A B.toPre f δ B.KsC B.fixedCoefficientFieldInComplex) → p B f δ T
 
-def RecFld (B : Pre) (f : Fr B) (D : Fld.FieldDat B) (F : IntermediateField ℚ ℂ) : Prop := Fld.listField D f ≤ F ∧ F ≤ D.Om
-
 def EvLg (p : Ctx → ∀ B : Base, Fr B.toPre → TwDat B → Prop) : Prop := Ev fun K => large₂ K (p K)
 
 def EvLgG (p : Ctx → ∀ B : Base, Fr B.toPre → TwDat B → Prop) : Prop := EvG fun K => large₂ K (p K)
@@ -166,15 +131,9 @@ structure MuIs (X : Stages) (f : Fr X.B.toPre) (T : TwDat X.B) (xi : X.C.Tup →
   on : ∀ w, X.B.places.resChar w ∈ T.pl → X.W.muAt w = X.W.muTw w
   off : ∀ w, X.B.places.resChar w ∉ T.pl → X.W.muAt w = X.C.mu0
 
-abbrev LayProp : Type 1 :=
-  ∀ (_ : Scale) (_ : FC) (_ _ : ℝ) (P : PreCh) (_ _ : P.R.A → ℤ) (D : D7), Lay D → Prop
-
 def RecAtG (QL : ∀ (_ : Ctx) (D : D7), Lay D → Prop) : Prop :=
   EvG fun K => ∃ (D : D7) (Y : Lay D), Over D K.P K.Lv ∧ RecOK K.s K.C K.cD D ∧ LedOK K.s K.C K.cD K.ch Y K.a K.b ∧
     LocalQuadraticParts.TWAt D Y.nch Y.xd ∧ QL K D Y
-
-def AtLed (QO : ∀ D : D7, Obj D → Prop) : LayProp := fun s C cD ch _ a b _ Y =>
-  ∀ p : LedPart C Y, p.L.sc = s → WtEq p.L a b → Val C cD ch p.L → CanonInst p.ta.Gx → QO p.pt.D (Obj.ofPt p.pt)
 
 theorem Enl.KsC_eq {B B' : Base} (h : Enl B B') : B'.KsC = B.KsC := SetLike.coe_injective h.2.1
 

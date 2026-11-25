@@ -6,8 +6,6 @@ import Mathlib.Algebra.Order.Star.Rat
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators

@@ -21,50 +21,6 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialSideRaising
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothnessOnGoodSet
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSAGrp, Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSALoc, Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSARad, Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpADone
@@ -181,57 +137,13 @@ theorem rdsag_tvGrp {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace �
   let TorV (hD : IsOpen D) (j : ℕ) : Subalgebra ℂ (SA E hD) :=
     Algebra.adjoin ℂ {x | ∃ l : Fin r, l.val < j ∧ x = EA hD (esI k r l) (esI k r l)}
 
-  have comm_TorV (hD : IsOpen D) (j : ℕ) (p q : Fin (2 * r + k + 1))
-      (hp : ∀ l : Fin r, l.val < j → p ≠ esI k r l) (hq : ∀ l : Fin r, l.val < j → q ≠ esI k r l) (P : SA E hD)
-      (hP : P ∈ TorV hD j) : Commute (EA hD p q) P := by
-    induction hP using Algebra.adjoin_induction with
-    | mem y hy =>
-      obtain ⟨l, hl, rfl⟩ := hy
-      have h := EA_gl (E := E) hD p q (esI k r l) (esI k r l)
-      rw [if_neg (hq l hl), if_neg (fun e => hp l hl e.symm), sub_zero] at h
-      exact sub_eq_zero.1 h
-    | algebraMap c => exact Algebra.commute_algebraMap_right c _
-    | add y₁ y₂ _ _ h₁ h₂ => exact h₁.add_right h₂
-    | mul y₁ y₂ _ _ h₁ h₂ => exact h₁.mul_right h₂
-
-  have TorV_mono (hD : IsOpen D) {j j' : ℕ} (h : j ≤ j') : TorV hD j ≤ TorV hD j' := Algebra.adjoin_mono fun x ⟨l, hl, hx⟩ => ⟨l, lt_of_lt_of_le hl h, hx⟩
-
-  have EAs_mem_TorV (hD : IsOpen D) (l : Fin r) {j : ℕ} (h : l.val < j) :
-      EA (E := E) hD (esI k r l) (esI k r l) ∈ TorV hD j := Algebra.subset_adjoin ⟨l, h, rfl⟩
-
   have root_action_on_truncated_vector (hD : IsOpen D) (z' : Fin (2 * r + k + 1) → ℂ) (hz' : inWb k r z') (hRR : RightRuleEv)
       {f : Mx k r → E} (hf : SmoothLev k r 0 D f) (hRf : RightEq k r z' 0 D f) (a b : Fin r) (hab : b.val < a.val) :
       ((EA hD (esI k r a) (esI k r b) : SA E hD) : Module.End ℂ (VS k r 0 D E)) ⟨cut k r 0 D f, cut_mem hD hf⟩ =
         (if a.val = b.val + 1 then (1 : ℂ) else 0) • ⟨cut k r 0 D f, cut_mem hD hf⟩ := by
-    apply Subtype.ext
-    funext g
-    by_cases hg : g ∈ Glev k r 0 ∩ D
-    · rw [EA_val, ev_E hD _ _ _ hg]
-      have hloc := (good_eh (E := E) hD (cI (esI k r a)) (cI (esI k r b))).loc (cut k r 0 D f) f
-        (fun x hx => cut_of_mem f hx) g hg
-      simp only [posL_cI] at hloc
-      rw [posL_cI, posL_cI]
-      show EH k r (esI k r a) (esI k r b) (cut k r 0 D f) g = (if a.val = b.val + 1 then (1 : ℂ) else 0) • cut k r 0 D f g
-      rw [hloc, hRR E k r z' D f hz' hD hf hRf g hg a b hab, cut_of_mem f hg]
-    · show ((Eh hD (cI (esI k r a)) (cI (esI k r b)) ⟨cut k r 0 D f, cut_mem hD hf⟩ : VS k r 0 D E) : Mx k r → E) g =
-        (if a.val = b.val + 1 then (1 : ℂ) else 0) • cut k r 0 D f g
-      rw [(Eh hD (cI (esI k r a)) (cI (esI k r b)) ⟨cut k r 0 D f, cut_mem hD hf⟩).2.2 g hg,
-        show cut k r 0 D f g = 0 from Set.indicator_of_notMem hg f, smul_zero]
-
-  have la_torus (hD : IsOpen D) (hTC : TorusCellv) (v₀ : VS k r 0 D E) (g₀ : Mx k r)
-      (hg₀ : g₀ ∈ Glev k r (Fin.last r)) (hcell : ∀ c ∈ OmX r, wCell k r (Fin.last r) c * g₀ ∈ Glev k r 0 ∩ D)
-      (l : Fin r) (w' : ℂ) (x : SA E hD) (c : Fin r → ℂ) (hc : c ∈ OmX r) :
-      La hD v₀ (wCell k r (Fin.last r) c * g₀) (Tm (EA hD) w' (esI k r l) (esI k r l) * x) =
-        w' • La hD v₀ (wCell k r (Fin.last r) c * g₀) x -
-          pbOp l (fun c' => La hD v₀ (wCell k r (Fin.last r) c' * g₀) x) c := by
-    have hγ := hcell c hc
-    rw [La_apply, La_apply]
-    simp only [Tm, Subalgebra.coe_mul, Subalgebra.coe_add, Module.End.mul_apply, LinearMap.add_apply, EA_val,
-      Submodule.coe_add, Pi.add_apply, ite_true, Subalgebra.coe_algebraMap, Module.algebraMap_end_apply,
-      Submodule.coe_smul, Pi.smul_apply]
-    rw [ev_E hD _ _ _ hγ, posL_cI, hTC E k r D _ hD ((x : Module.End ℂ (VS k r 0 D E)) v₀).2.1 c hc g₀ hg₀ hγ.2 l,
-      sub_eq_add_neg]
-    rfl
+    first
+    | exact _root_.Formalism.FourierDecayAlt.P.CutMP.TVG.root_action_on_truncated_vector
+    | apply _root_.Formalism.FourierDecayAlt.P.CutMP.TVG.root_action_on_truncated_vector <;> assumption
 
   have claimV (hRR : RightRuleEv) (hLR : LeftRuleCellv) (hTC : TorusCellv) (hCh : MirrorChainExpansion)
       (hD : IsOpen D) (v₀ : VS k r 0 D E) (g₀ : Mx k r) (w : ℂ)
@@ -243,91 +155,8 @@ theorem rdsag_tvGrp {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace �
       ∀ (m : ℕ), m ≤ r → ∀ P ∈ TorV hD (r - m), ∀ c ∈ OmX r,
         La hD v₀ (wCell k r (Fin.last r) c * g₀) (qminor (EA hD) (colsVm k r m) (colsVm k r m) w * P) =
           kvC r w m (fun c' => La hD v₀ (wCell k r (Fin.last r) c' * g₀) P) c := by
-    have hLv : LeftEq k r z 0 D (v₀ : Mx k r → E) := by rw [hv]; exact leftEq_cut z hN hLf
-    intro m
-    induction m using Nat.strong_induction_on with
-    | _ m ih =>
-    intro hm P hP c hc
-    rcases m with _ | _ | m
-    · rw [MC.qminor_zero, one_mul]
-      rfl
-    · rw [MC.qminor_one]
-      have hx0 : colsVm k r 1 0 = esI k r ⟨r - 1, by omega⟩ := by
-        ext
-        simp only [colsVm, esI, Fin.val_zero]
-        omega
-      rw [hx0, la_torus hD hTC v₀ g₀ hg₀ hcell ⟨r - 1, by omega⟩ w P c hc, kvC_one w _ hm c]
-    · have hm2 : m + 2 ≤ r := hm
-      have hP1 : P ∈ TorV hD (r - (m + 1)) := TorV_mono hD (by omega) hP
-      have hP0 : P ∈ TorV hD (r - m) := TorV_mono hD (by omega) hP
-      set ρ : ℂ := star (c ⟨r - m - 1, by omega⟩) / star (c ⟨r - m - 2, by omega⟩) with hρ
-      set_option synthInstance.maxHeartbeats 200000 in
-      set LaP : SA E hD →ₗ[ℂ] E := (La hD v₀ (wCell k r (Fin.last r) c * g₀)).comp (LinearMap.mulRight ℂ P) with hLaP
-      have hLaP_apply : ∀ x, LaP x = La hD v₀ (wCell k r (Fin.last r) c * g₀) (x * P) := fun x => rfl
-      have hnot : ∀ a : Fin r, r - m - 2 ≤ a.val → ∀ l' : Fin r, l'.val < r - (m + 2) → esI k r a ≠ esI k r l' :=
-        fun a ha l' hl' => esI_ne (by omega)
-      have hR0 : ∀ (x : SA E hD) (a : Fin r), r - m - 1 < a.val →
-          LaP (x * EA hD (esI k r a) (esI k r ⟨r - m - 2, by omega⟩)) = 0 := by
-        intro x a ha
-        rw [hLaP_apply, mul_assoc, (comm_TorV hD (r - (m + 2)) _ _ (hnot a (by omega))
-          (hnot ⟨r - m - 2, by omega⟩ le_rfl) P hP).eq, ← mul_assoc, La_apply, Subalgebra.coe_mul, Module.End.mul_apply]
-        conv_lhs => rw [hv]
-        rw [root_action_on_truncated_vector hD z' hz' hRR hf hRf a ⟨r - m - 2, by omega⟩ (by simp only; omega), if_neg (by simp only; omega),
-          zero_smul, map_zero]
-        rfl
-      have hR1 : ∀ x : SA E hD,
-          LaP (x * EA hD (esI k r ⟨r - m - 1, by omega⟩) (esI k r ⟨r - m - 2, by omega⟩)) = LaP x := by
-        intro x
-        rw [hLaP_apply, hLaP_apply, mul_assoc, (comm_TorV hD (r - (m + 2)) _ _ (hnot ⟨r - m - 1, by omega⟩ (by simp only; omega))
-          (hnot ⟨r - m - 2, by omega⟩ le_rfl) P hP).eq, ← mul_assoc, La_apply, La_apply, Subalgebra.coe_mul,
-          Module.End.mul_apply]
-        conv_lhs => rw [hv]
-        rw [root_action_on_truncated_vector hD z' hz' hRR hf hRf ⟨r - m - 1, by omega⟩ ⟨r - m - 2, by omega⟩ (by simp only; omega),
-          if_pos (by simp only; omega), one_smul, ← hv]
-      have hL : ∀ (x : SA E hD) (b : Fin r), r - m - 2 < b.val →
-          LaP (EA hD (esI k r ⟨r - m - 2, by omega⟩) (esI k r b) * x) =
-            (if b.val = r - m - 1 then ρ else 0) • LaP x := by
-        intro x b hb
-        rw [hLaP_apply, hLaP_apply, mul_assoc, La_apply, La_apply, Subalgebra.coe_mul, Module.End.mul_apply, EA_val,
-          ev_E hD _ _ _ (hcell c hc), posL_cI, posL_cI]
-        have hsm := (((x * P : SA E hD) : Module.End ℂ (VS k r 0 D E)) v₀).2.1
-        have hle := leftEq_SA hD z hN (x * P) v₀ hLv
-        rw [hLR E k r z D _ hz hD hN hsm hle c hc g₀ hg₀ (hcell c hc).2 b ⟨r - m - 2, by omega⟩ (by simp only; omega)]
-        congr 1
-        by_cases hbm : b.val = r - m - 1
-        · have hb' : b = ⟨r - m - 1, by omega⟩ := Fin.ext hbm
-          rw [if_pos (by simp only; omega), if_pos hbm, hρ, congrArg c hb']
-        · rw [if_neg (by simp only; omega), if_neg hbm]
-      have hX := hCh (SA E hD) E k r (EA (E := E) hD) LaP ρ (EA_gl (E := E) hD) m hm2 w hR0 hR1 hL
-      set T := Tm (EA (E := E) hD) (w - ((m + 1 : ℕ) : ℂ)) (esI k r ⟨r - m - 2, by omega⟩)
-        (esI k r ⟨r - m - 2, by omega⟩) with hT
-      have hTmem : T ∈ TorV hD (r - (m + 1)) := by
-        rw [hT]
-        unfold Tm
-        rw [if_pos rfl]
-        exact Subalgebra.add_mem _ (Subalgebra.algebraMap_mem _ _) (EAs_mem_TorV hD ⟨r - m - 2, by omega⟩ (by simp only; omega))
-      have hTP : T * P ∈ TorV hD (r - (m + 1)) := Subalgebra.mul_mem _ hTmem hP1
-      have ih1 := ih (m + 1) (by omega) (by omega) (T * P) hTP c hc
-      have ih0 := ih m (by omega) (by omega) P hP0 c hc
-      rw [hLaP_apply, hLaP_apply, hLaP_apply, mul_assoc] at hX
-      rw [hX, ih1, ih0, kvC_two]
-      have hloc := kvC_loc w (m + 1) (fun c' => La hD v₀ (wCell k r (Fin.last r) c' * g₀) (T * P))
-        (fun c' => (w - ((m + 1 : ℕ) : ℂ)) • La hD v₀ (wCell k r (Fin.last r) c' * g₀) P -
-          pbN r (r - (m + 1) - 1) (fun c'' => La hD v₀ (wCell k r (Fin.last r) c'' * g₀) P) c')
-        (fun c' hc' => by
-          rw [hT, la_torus hD hTC v₀ g₀ hg₀ hcell ⟨r - m - 2, by omega⟩ _ P c' hc']
-          unfold pbN
-          rw [dite_eq_left (by omega)]
-          have e : (⟨r - (m + 1) - 1, by omega⟩ : Fin r) = ⟨r - m - 2, by omega⟩ := Fin.ext (by simp only; omega)
-          rw [e]) hc
-      rw [hloc]
-      congr 1
-      unfold cbN cbiN
-      rw [dite_eq_left (by omega), dite_eq_left (by omega)]
-      have e1 : (⟨r - (m + 1), by omega⟩ : Fin r) = ⟨r - m - 1, by omega⟩ := Fin.ext (by simp only; omega)
-      have e2 : (⟨r - (m + 1) - 1, by omega⟩ : Fin r) = ⟨r - m - 2, by omega⟩ := Fin.ext (by simp only; omega)
-      rw [e1, e2]
-      simp only [cbOp, cbiOp, hρ, div_eq_mul_inv, mul_smul]
+    exact _root_.Formalism.FourierDecayAlt.P.CutMP.TVG.claimV hRR hLR hTC hCh hD v₀ g₀ w z z' hz hz'
+      hN (f := f) hf hLf hRf hv hg₀ hcell
   have h1N : (1 : Mx P.k P.r) ∈ Nlev P.k P.r 0 :=
     ⟨(Formalism.QuantumDeterminants.unipotent_subgroup_holds P.k P.r).1, by simp [Glev, UH]⟩
   have hN : ∀ g ∈ Glev P.k P.r 0 ∩ D, ∀ n ∈ Nlev P.k P.r 0, n * g ∈ D := by
@@ -411,7 +240,7 @@ theorem rdsag_todaV {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace �
   have hfun : (fun c' => gaugeF P.k P.r c' • J (Q.wCell P.k P.r (Fin.last P.r) c' * g)) =
       fun c' => Q.resG P.k P.r (Fin.last P.r) J c' g := funext hgauge
   rw [hfun] at e3
-  simp only [dMul, Q.crd, Q.cmp, if_true]
+  simp only [dMul, Q.crd, Q.cmp, ite_true]
   rw [← e3]
   have hres : Q.resG P.k P.r (Fin.last P.r) (capAv P.k P.r y J) c g =
       gaugeF P.k P.r c • capAv P.k P.r y J (Q.wCell P.k P.r (Fin.last P.r) c * g) := by
@@ -476,13 +305,13 @@ theorem rds_vABm_loc (Y : ℂ) : ∀ (i : ℕ) (f₁ f₂ : (Fin r → ℂ) → 
   | i + 1, f₁, f₂, h, c, hc => by
     have ih := rds_vABm_loc Y i f₁ f₂ h
     by_cases hi : i < r
-    · simp only [CutMP.vABm, dif_pos hi]
+    · simp only [CutMP.vABm, dite_eq_left hi]
       refine ⟨?_, ?_⟩
       · simp only [Pi.sub_apply, Pi.smul_apply, cbOp]
         rw [(ih c hc).1, (ih c hc).2, _root_.Formalism.FourierDecayAlt.P.CutMP.TVG.pbOp_locO _ (fun c' hc' => (ih c' hc').1) hc]
       · simp only [cbiOp]
         rw [(ih c hc).1]
-    · simp only [CutMP.vABm, dif_neg hi]
+    · simp only [CutMP.vABm, dite_eq_right hi]
       exact ih c hc
 
 end loc
@@ -500,7 +329,7 @@ theorem spectral_action_locality : RDSALoc := by
     intro l g₁ g₂ hg c hc
     have hev : g₁ =ᶠ[nhds c] g₂ := Filter.eventuallyEq_of_mem (hopen.mem_nhds hc) hg
     unfold pOp Formalism.QuantumDeterminants.wirt
-    rw [if_pos hc, if_pos hc, hev.fderiv_eq]
+    rw [ite_eq_left hc, ite_eq_left hc, hev.fderiv_eq]
   have hA : ∀ i : ℕ, ∀ g₁ g₂ : (Fin r → ℂ) → E, (∀ c ∈ OmX r, g₁ c = g₂ c) → ∀ c ∈ OmX r,
       (Q.vAB r y i).1 g₁ c = (Q.vAB r y i).1 g₂ c ∧ (Q.vAB r y i).2 g₁ c = (Q.vAB r y i).2 g₂ c := by
     intro i
@@ -642,7 +471,7 @@ theorem rds_vab_ind (hL : IsActualLevel X L) (Y : ℂ) : ∀ i : ℕ, i ≤ r �
           sub_eq_add_neg]
       rw [e, Submodule.coe_sub, Submodule.coe_add, Submodule.coe_smul, rds_op_coe, rds_op_coe, hA, hB]
       funext c g
-      simp only [crd, Q.cmp, Q.vAB, dif_pos h, if_true, Pi.sub_apply, Pi.add_apply, Pi.smul_apply]
+      simp only [crd, Q.cmp, Q.vAB, dite_eq_left h, ite_true, Pi.sub_apply, Pi.add_apply, Pi.smul_apply]
       rfl
     · have e : ((L.ci ⟨i, h⟩ * rdsVp L Y i 0 0).1 Φ : RadSp k r z z' π π') =
           X.op ⟨i, h⟩ 2 ((rdsVp L Y i 0 0).1 Φ) := by
@@ -650,7 +479,7 @@ theorem rds_vab_ind (hL : IsActualLevel X L) (Y : ℂ) : ∀ i : ℕ, i ≤ r �
         rfl
       rw [e, rds_op_coe, hA]
       funext c g
-      simp only [crd, Q.cmp, Q.vAB, dif_pos h]
+      simp only [crd, Q.cmp, Q.vAB, dite_eq_left h]
       rfl
 
 theorem rds_vabm_ind (hL : IsActualLevel X L) (Y : ℂ) : ∀ i : ℕ, i ≤ r → ∀ Φ : RadSp k r z z' π π',
@@ -689,7 +518,7 @@ theorem rds_vabm_ind (hL : IsActualLevel X L) (Y : ℂ) : ∀ i : ℕ, i ≤ r �
           Module.algebraMap_end_apply, sub_eq_add_neg]
       rw [e, Submodule.coe_sub, Submodule.coe_sub, Submodule.coe_smul, rds_op_coe, rds_op_coe, hA, hB]
       funext c g
-      simp only [crd, Q.cmp, CutMP.vABm, dif_pos h, if_true, Pi.sub_apply, Pi.smul_apply]
+      simp only [crd, Q.cmp, CutMP.vABm, dite_eq_left h, ite_true, Pi.sub_apply, Pi.smul_apply]
       rfl
     · have e : ((L.cbi ⟨i, h⟩ * rdsVvp L Y i 0 0).1 Φ : RadSp k r z z' π π') =
           X.op ⟨i, h⟩ 5 ((rdsVvp L Y i 0 0).1 Φ) := by
@@ -697,7 +526,7 @@ theorem rds_vabm_ind (hL : IsActualLevel X L) (Y : ℂ) : ∀ i : ℕ, i ≤ r �
         rfl
       rw [e, rds_op_coe, hA]
       funext c g
-      simp only [crd, Q.cmp, CutMP.vABm, dif_pos h]
+      simp only [crd, Q.cmp, CutMP.vABm, dite_eq_left h]
       rfl
 
 theorem rds_cprod (hL : IsActualLevel X L) : ∀ (ls : List (Fin r)) (Φ : RadSp k r z z' π π'),

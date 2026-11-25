@@ -126,21 +126,9 @@ def dual (ρ : Γ →* GL (Fin n) A) : Γ →* GL (Fin n) A where
     apply Units.ext
     simp only [transGL, mul_inv_rev, map_mul, Units.val_mul, Matrix.transpose_mul]
 
-def IsoLat (ρ ρ' : Γ →* GL (Fin n) A) : Prop :=
-  ∃ P : GL (Fin n) A, ∀ g, P * ρ g = ρ' g * P
-
 end Rep
 
 variable (D : _root_.Formalism.BasicNotions.D7)
-
-def cycField (l : ℕ) : IntermediateField D.host.E D.nd.Om :=
-  IntermediateField.adjoin D.host.E {x : D.nd.Om | x ^ l = 1}
-
-def UnramifiedIn (l : ℕ) : Prop :=
-  ∀ v : HeightOneSpectrum (𝓞 D.host.E), ((l : ℕ) : 𝓞 D.host.E) ∉ v.asIdeal ^ 2
-
-def NC (l : ℕ) : Prop :=
-  l = 2 ∨ UnramifiedIn D l ∨ D.R.t * D.R.r < Module.finrank D.host.E ↥(cycField D l)
 
 end GlobalTheory.IndefiniteRowSideFullHecke.UnramifiedNoJump
 

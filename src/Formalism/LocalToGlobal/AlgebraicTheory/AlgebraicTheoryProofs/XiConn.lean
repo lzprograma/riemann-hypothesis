@@ -296,12 +296,12 @@ theorem XiConnection.ser_eq {p : ℕ} [Fact p.Prime] (ι : ℂ ≃+* ℂ_[p]) {n
     funext i x
     simp only [Matrix.map_apply, Matrix.diagonal_apply]
     rw [Finset.sum_eq_single i]
-    · simp only [if_true, RingEquiv.coe_toRingHom]
+    · simp only [ite_true, RingEquiv.coe_toRingHom]
       unfold frameM
       rw [Finset.mul_sum]
       exact Finset.sum_congr rfl fun j _ => by ring
     · intro w _ hw
-      rw [if_neg (Ne.symm hw), map_zero, zero_mul]
+      rw [ite_eq_right (Ne.symm hw), map_zero, zero_mul]
     · intro hi; exact absurd (Finset.mem_univ i) hi
   unfold serLin
 

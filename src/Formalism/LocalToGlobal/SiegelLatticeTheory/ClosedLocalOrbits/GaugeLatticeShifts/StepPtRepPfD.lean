@@ -77,9 +77,9 @@ theorem dframe (A B : Fr ε r k) (he : B.e = A.e) (i0 : Fin k) (Z : Matrix (Fin 
       simp only [mulVec, dotProduct, hνdef, Finset.mul_sum, hZs]
       exact Finset.sum_congr rfl fun b _ => by ring
     by_cases ha : a = L
-    · rw [ha, hlL, one_mul, if_pos rfl, mul_one] at h2
+    · rw [ha, hlL, one_mul, ite_eq_left rfl, mul_one] at h2
       rw [ha, h2, Pi.single_eq_same]
-    · rw [if_neg ha, mul_zero] at h2
+    · rw [ite_eq_right ha, mul_zero] at h2
       rw [Pi.single_eq_of_ne ha]
       exact (mul_eq_zero.1 h2).resolve_left (hl0 a)
   have hν : ν = Zs.det • c := by
@@ -97,7 +97,7 @@ theorem dframe (A B : Fr ε r k) (he : B.e = A.e) (i0 : Fin k) (Z : Matrix (Fin 
     rw [hx'def, hJ_sum_right]
     simp only [hJ_smul_right, hp4]
     by_cases hi : i = i0
-    · simp only [hi, if_true]
+    · simp only [hi, ite_true]
       have : ∑ b, ν b * t b = ν ⬝ᵥ t := rfl
       rw [this, hν, smul_dotProduct, dotProduct_comm, htc, smul_eq_mul]
     · simp [hi]
@@ -105,8 +105,8 @@ theorem dframe (A B : Fr ε r k) (he : B.e = A.e) (i0 : Fin k) (Z : Matrix (Fin 
     funext i
     simp only [Pi.smul_apply, wCoord, hPx', smul_eq_mul]
     by_cases hi : i = i0
-    · rw [if_pos hi, hi, Pi.single_eq_same, ← mul_assoc, inv_mul_cancel₀ hDs, one_mul]
-    · rw [if_neg hi, Pi.single_eq_of_ne hi, mul_zero]
+    · rw [ite_eq_left hi, hi, Pi.single_eq_same, ← mul_assoc, inv_mul_cancel₀ hDs, one_mul]
+    · rw [ite_eq_right hi, Pi.single_eq_of_ne hi, mul_zero]
 
   obtain ⟨ρ, hρdef⟩ : ∃ ρ : Fin (r + 1) → ℂ, ρ = fun a => adjugate Zs L a * lam a := ⟨_, rfl⟩
   obtain ⟨x, hxv⟩ : ∃ x, xUn Zs (famSc sc A.e A.z) = x := ⟨_, rfl⟩
@@ -126,9 +126,9 @@ theorem dframe (A B : Fr ε r k) (he : B.e = A.e) (i0 : Fin k) (Z : Matrix (Fin 
       simp only [vecMul, dotProduct, hρdef, Finset.mul_sum, hZs]
       exact Finset.sum_congr rfl fun a _ => by ring
     by_cases hb : b = L
-    · rw [hb, hlL, one_mul, if_pos rfl, mul_one] at h2
+    · rw [hb, hlL, one_mul, ite_eq_left rfl, mul_one] at h2
       rw [hb, h2, Pi.single_eq_same]
-    · rw [if_neg (Ne.symm hb), mul_zero] at h2
+    · rw [ite_eq_right (Ne.symm hb), mul_zero] at h2
       rw [Pi.single_eq_of_ne hb]
       exact (mul_eq_zero.1 h2).resolve_left (hl0 b)
   have hρL : ρ L = Zs.det * c L := by
@@ -155,15 +155,15 @@ theorem dframe (A B : Fr ε r k) (he : B.e = A.e) (i0 : Fin k) (Z : Matrix (Fin 
       _ = -(A.T : ℂ) * (ρ L * star (ρ L)) := by
         rw [hJ_sum_left]
         simp only [hJ_smul_left, star_star, hfx, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
-          if_true]
+          ite_true]
         ring
 
   have hwx : ∀ i, hJ ε (A.wb i) x = 0 := fun i => by
     rw [hxdef, hJ_sum_right]; simp [hJ_smul_right, A.w_fam]
   have hev : ∀ a, hJ ε (B.e a) (uMat g⁻¹ *ᵥ x) = 0 := fun a => by
-    rw [hpv, ← fam_cs B.e B.z a, hgf, swapJ (hxy _), if_neg (Fin.castSucc_ne_last a), star_zero]
+    rw [hpv, ← fam_cs B.e B.z a, hgf, swapJ (hxy _), ite_eq_right (Fin.castSucc_ne_last a), star_zero]
   have hzv : hJ ε B.z (uMat g⁻¹ *ᵥ x) = star Zs.det := by
-    rw [hpv, ← fam_last B.e B.z, hgf, swapJ (hxy _), if_pos rfl]
+    rw [hpv, ← fam_last B.e B.z, hgf, swapJ (hxy _), ite_eq_left rfl]
   have hwv : ∀ i, i ≠ i0 → hJ ε (B.wb i) (uMat g⁻¹ *ᵥ x) = 0 := fun i hi => by
     rw [hpv, hgw i hi, hwx]
   obtain ⟨κ, hκdef⟩ : ∃ κ, hJ ε (B.wb i0) (uMat g⁻¹ *ᵥ x) = κ := ⟨_, rfl⟩
@@ -204,7 +204,7 @@ theorem dframe (A B : Fr ε r k) (he : B.e = A.e) (i0 : Fin k) (Z : Matrix (Fin 
     congr 1
     funext i
     by_cases hi : i = i0
-    · simp only [hi, if_true, Pi.star_apply]; rw [mul_comm]; exact hφ
+    · simp only [hi, ite_true, Pi.star_apply]; rw [mul_comm]; exact hφ
     · simp [hi]
   · rw [hnn, eN_single, Complex.norm_of_nonneg hσ.le, one_mulVec]
     funext j
@@ -214,7 +214,7 @@ theorem dframe (A B : Fr ε r k) (he : B.e = A.e) (i0 : Fin k) (Z : Matrix (Fin 
   · rw [hnn', eN_single, diagonal_mulVec_single]
     funext j
     by_cases hj : j = i0
-    · subst hj; simp only [if_true, mul_one, Pi.single_eq_same, Pi.smul_apply, smul_eq_mul, hφdef]
+    · subst hj; simp only [ite_true, mul_one, Pi.single_eq_same, Pi.smul_apply, smul_eq_mul, hφdef]
       push_cast; ring
     · simp [hj]
   · intro y' hf hgF
@@ -241,8 +241,8 @@ theorem dframe (A B : Fr ε r k) (he : B.e = A.e) (i0 : Fin k) (Z : Matrix (Fin 
     have hpr := A.pair x' y' hex' hey'
     have hsum : ∑ i, hJ ε (A.wb i) y' * star (hJ ε (A.wb i) x') =
         hJ ε (A.wb i0) y' * star (Zs.det * σ) := by
-      rw [Finset.sum_eq_single i0 (fun j _ hj => by rw [hPx', if_neg hj, star_zero, mul_zero]) (by simp),
-        hPx', if_pos rfl]
+      rw [Finset.sum_eq_single i0 (fun j _ hj => by rw [hPx', ite_eq_right hj, star_zero, mul_zero]) (by simp),
+        hPx', ite_eq_left rfl]
     rw [hsum, hx'y, hzy] at hpr
     simp only [mul_zero, zero_mul, zero_add] at hpr
     have hne : star (Zs.det * (σ : ℂ)) ≠ 0 :=

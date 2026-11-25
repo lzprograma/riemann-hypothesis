@@ -1,58 +1,8 @@
 module
 
 public import Formalism.QuotientMetricDivisors.RatHermLcvTwist
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
 import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ConjugateWeightLatticeOfGeneral
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -171,8 +121,7 @@ variable {j}
 private theorem exists_fnl_apply_eq_one_of_ne_zero (c : Ω) (hc : c ≠ 0) : ∃ ρ : Fnl j, ρ.toFun c = 1 := by
   letI : Algebra K Ω := j.toAlgebra
   obtain ⟨φ, hφ⟩ : ∃ φ : Module.Dual K Ω, φ c ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hc ((Module.forall_dual_apply_eq_zero_iff K c).1 h)
   refine ⟨⟨fun x => (φ c)⁻¹ * φ x, fun x y => by simp only [map_add (f := _), mul_add], fun a x => ?_⟩, ?_⟩
   · show (φ c)⁻¹ * φ (j a * x) = a * ((φ c)⁻¹ * φ x)
@@ -299,10 +248,7 @@ theorem posDef_all {n : ℕ} {H : Matrix (Fin n) (Fin n) K}
 
 theorem herm_of_pos {v0 : InfinitePlace K} (hv0 : IsConjAt v0) {n : ℕ}
     {H : Matrix (Fin n) (Fin n) K} (hpos : (H.map v0.embedding).PosDef) : Hᴴ = H := by
-  ext i k
-  apply v0.embedding.injective
-  rw [Matrix.conjTranspose_apply, hv0 (H k i), starRingEnd_apply]
-  exact hpos.isHermitian.apply i k
+  apply Formalism.DivisionValues.R0.conjTranspose_eq_of_posDef <;> assumption
 
 theorem isUnit_of_pos {σ : K →+* ℂ} {n : ℕ}
     {H : Matrix (Fin n) (Fin n) K} (hpos : (H.map σ).PosDef) : IsUnit H := by
@@ -512,32 +458,6 @@ theorem commuting_twist : CommTwist := by
   show extSpan σ Z = extSpan (twist σ) Z
   rw [extSpan_eq_range Z e h1 h2, extSpan_eq_range Z e h1 h2, heq]
 
-
-namespace FinitelyNonzeroLinear
-
-section Cx
-
-variable {n : ℕ} {Hc : Matrix (Fin n) (Fin n) ℂ}
-
-end Cx
-
-section Diag
-
-variable {K : Type} [Field K] {n : ℕ}
-
-end Diag
-
-end FinitelyNonzeroLinear
-
-namespace FinitelyNonzeroLinear
-
-section Dich
-
-variable {n : ℕ} {Hc : Matrix (Fin n) (Fin n) ℂ}
-
-end Dich
-
-end FinitelyNonzeroLinear
 
 
 

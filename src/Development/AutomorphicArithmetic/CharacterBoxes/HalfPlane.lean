@@ -5,15 +5,6 @@ import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula
 
 @[expose] public section
 
-/-- The common right-half-plane nonvanishing statement used by the critical-strip reduction. -/
-def Claim.HalfPlane : Prop := DirichletLNonvanishingRightOfHalf
-
-def Claim.Strip : Prop :=
-  ∀ (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N) (s : ℂ), 0 < s.re → s.re < 1 → DirichletCharacter.LFunction χ s = 0 → s.re = 1 / 2
-
-def Claim.Zeta : Prop :=
-  ∀ s : ℂ, riemannZeta s = 0 → (¬ ∃ n : ℕ, s = -2 * (n + 1)) → s ≠ 1 → s.re = 1 / 2
-
 open Complex
 
 /-- An extra Euler factor cannot vanish to the right of zero. -/

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSmulMemOfLeLocP
 public import Formalism.LocalToGlobal.Columns.CoefModB
 public import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
 public import Formalism.LocalToGlobal.Columns.CoefficientsModP.NablaIndependenceHolds
@@ -52,42 +53,7 @@ theorem pb_invTr_inv_mulVec (B : GL (Fin n) K) (x : Fin n → K) (a : Fin n) :
 
 theorem pb_isBasisAt_dualFr (w : HeightOneSpectrum (𝓞 K)) (M : Submodule (𝓞 K) (Fin n → K)) (hfg : M.FG)
     (B : GL (Fin n) K) (hB : IsBasisAt w M B) : IsBasisAt w (dualFr M) (inside₂ K n B) := by
-  classical
-  unfold IsBasisAt at hB ⊢
-  ext x
-  rw [mem_localized_columnLattice_iff]
-  simp only [pb_invTr_inv_mulVec]
-  constructor
-  · intro hx a
-    obtain ⟨s, hs, hx⟩ := (lc_mem_locP w _ _).1 hx
-    have hc : (fun b => (B : Matrix (Fin n) (Fin n) K) b a) ∈ Formalism.HermitianLatticesTheory.localization₂ w.asIdeal M := by
-      rw [hB]; exact lc_le_locP w _ (lc_col_mem_colLat B a)
-    obtain ⟨t, ht, hc⟩ := (lc_mem_locP w _ _).1 hc
-    refine (lc_mem_locP w _ _).2 ⟨s * t, lc_mul_notMem w hs ht, ?_⟩
-    have h := hx _ hc
-    rwa [smul_dotProduct, dotProduct_smul, smul_smul] at h
-  · intro h
-    have h1 : ∀ m ∈ M, x ⬝ᵥ m ∈ Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (1 : Submodule (𝓞 K) K) := by
-      intro m hm
-      have hm' : m ∈ Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (colLat B) := by rw [← hB]; exact lc_le_locP w _ hm
-      rw [mem_localized_columnLattice_iff] at hm'
-      have e : m = (B : Matrix (Fin n) (Fin n) K) *ᵥ (((B⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K) *ᵥ m) := by
-        rw [Matrix.mulVec_mulVec, ← Units.val_mul, mul_inv_cancel, Units.val_one, Matrix.one_mulVec]
-      rw [e, Matrix.dotProduct_mulVec]
-      refine Submodule.sum_mem _ fun a _ => ?_
-      exact mul_mem_locP_one w (h a) (hm' a)
-    obtain ⟨S, hS⟩ := hfg
-    obtain ⟨s, hs, hsS⟩ := pb_common_den w (1 : Submodule (𝓞 K) K) S (fun m => x ⬝ᵥ m) fun m hm =>
-      h1 m (hS ▸ Submodule.subset_span hm)
-    refine (lc_mem_locP w _ _).2 ⟨s, hs, ?_⟩
-    intro m hm
-    rw [← hS] at hm
-    rw [smul_dotProduct]
-    induction hm using Submodule.span_induction with
-    | mem m hm => exact hsS m hm
-    | zero => rw [dotProduct_zero, smul_zero]; exact zero_mem _
-    | add a b _ _ ha hb => rw [dotProduct_add, smul_add]; exact add_mem ha hb
-    | smul c a _ ha => rw [dotProduct_smul, smul_comm]; exact Submodule.smul_mem _ c ha
+  apply GlobalTheory.DualWeylDual.isBasisAt_dualFr <;> assumption
 
 end Tools
 

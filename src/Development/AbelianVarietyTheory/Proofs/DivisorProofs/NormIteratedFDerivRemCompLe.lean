@@ -2,57 +2,13 @@ module
 
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Distribution.SchwartzSpace.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Calculus.ContDiff.Bounds
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.Complex.RealDeriv
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 
 @[expose] public section
 
@@ -90,13 +46,8 @@ theorem deriv_affine_cexp (a c d e : ℂ) :
   rw [h.deriv]; ring
 
 theorem norm_cexp_mul_I_sub_one_le (z : ℝ) : ‖Complex.exp (z * I) - 1‖ ≤ 2 * |z| := by
-  rcases le_or_gt |z| 1 with hz | hz
-  · have hn : ‖(z : ℂ) * I‖ = |z| := by simp
-    have := Complex.norm_exp_sub_one_le (x := (z : ℂ) * I) (by rw [hn]; exact hz)
-    rwa [hn] at this
-  · calc ‖Complex.exp (z * I) - 1‖ ≤ ‖Complex.exp (z * I)‖ + ‖(1 : ℂ)‖ := norm_sub_le _ _
-      _ = 2 := by rw [Complex.norm_exp_ofReal_mul_I]; norm_num
-      _ ≤ 2 * |z| := by linarith
+  rw [mul_comm _ I]
+  exact Real.norm_exp_I_mul_ofReal_sub_one_le.trans (by rw [Real.norm_eq_abs]; linarith [abs_nonneg z])
 
 theorem norm_cexp_mul_I_sub_one_sub_le (z : ℝ) :
     ‖Complex.exp (z * I) - 1 - z * I‖ ≤ 3 * z ^ 2 := by
@@ -236,7 +187,6 @@ theorem seminorm_rem_mul_le {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V
       (2 ^ (k + 2) * ((Finset.Iic (k + 2, n)).sup fun m => SchwartzMap.seminorm ℂ m.1 m.2) f)) := by
   set S := 2 ^ (k + 2) * ((Finset.Iic (k + 2, n)).sup fun m => SchwartzMap.seminorm ℂ m.1 m.2) f
     with hS
-  have hS0 : 0 ≤ S := mul_nonneg (by positivity) (apply_nonneg _ _)
   have hL0 : 0 ≤ ‖L‖ := norm_nonneg L
   refine SchwartzMap.seminorm_le_bound ℂ k n u (by positivity) fun x => ?_
   have hu' : (⇑u) = fun x => rem t (L x) * f x := funext hu
@@ -262,7 +212,6 @@ theorem seminorm_rem_mul_le {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V
     have hA : ‖iteratedFDeriv ℝ i (rem t ∘ ⇑L) x‖
         ≤ 3 * |t| * ((1 + ‖L‖) ^ 2 * (1 + ‖x‖) ^ 2) * (1 + ‖L‖) ^ n :=
       h1.trans (by gcongr)
-    have hc0 : (0 : ℝ) ≤ n.choose i := Nat.cast_nonneg _
     calc ‖x‖ ^ k * ((n.choose i : ℝ) * ‖iteratedFDeriv ℝ i (rem t ∘ ⇑L) x‖ *
           ‖iteratedFDeriv ℝ (n - i) f x‖)
         = (n.choose i : ℝ) * (‖x‖ ^ k * ‖iteratedFDeriv ℝ i (rem t ∘ ⇑L) x‖ *
@@ -294,17 +243,16 @@ end GlobalTheory.CharFormDeriv
 
 namespace GlobalTheory.CharFormDeriv
 
-theorem charForm_kills_linear_mul : ∀ (V : Type) [NormedAddCommGroup V] [NormedSpace ℝ V]
-    [FiniteDimensional ℝ V] (T : SchwartzMap V ℂ →L[ℂ] ℂ),
-    (∀ (L : V →L[ℝ] ℝ) (f f' : SchwartzMap V ℂ),
-      (∀ x, f' x = Complex.exp (Complex.I * (L x : ℂ)) * f x) → T f' = T f) →
-    ∀ (L : V →L[ℝ] ℝ) (f g : SchwartzMap V ℂ), (∀ x, g x = (L x : ℂ) * f x) → T g = 0 := by
-  intro V _ _ _ T hT L f g hg
+theorem charForm_kills_linear_mul {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimensional ℝ V]
+    (T : SchwartzMap V ℂ →L[ℂ] ℂ) (L : V →L[ℝ] ℝ)
+    (hT : ∀ (t : ℝ) (f f' : SchwartzMap V ℂ), (∀ x, f' x = Complex.exp (Complex.I * ((t • L) x : ℂ)) * f x) →
+      T f' = T f)
+    (f g : SchwartzMap V ℂ) (hg : ∀ x, g x = (L x : ℂ) * f x) : T g = 0 := by
   let ft : ℝ → SchwartzMap V ℂ := fun t =>
     SchwartzMap.smulLeftCLM ℂ (fun x : V => Complex.exp ((I * t) * (L x : ℂ))) f
   have hft : ∀ t x, ft t x = Complex.exp ((I * t) * (L x : ℂ)) * f x := fun t x => by
     simp only [ft, SchwartzMap.smulLeftCLM_apply_apply (hasTemperateGrowth_char L t), smul_eq_mul]
-  have hTft : ∀ t : ℝ, T (ft t) = T f := fun t => hT (t • L) f (ft t) (fun x => by
+  have hTft : ∀ t : ℝ, T (ft t) = T f := fun t => hT t f (ft t) (fun x => by
     rw [hft, ContinuousLinearMap.smul_apply, smul_eq_mul, Complex.ofReal_mul, mul_assoc])
   let u : ℝ → SchwartzMap V ℂ := fun t => (t : ℂ)⁻¹ • (ft t - f) - I • g
   have hu : ∀ t : ℝ, ∀ x, u t x = rem t (L x) * f x := fun t x => by

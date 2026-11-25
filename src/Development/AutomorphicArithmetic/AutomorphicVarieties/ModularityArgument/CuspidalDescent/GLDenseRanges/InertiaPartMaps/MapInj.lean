@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.CohomologySumBound
 public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.LeviEmbMemNormalizerLower
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.KirCusp
 public import Mathlib.Analysis.Complex.Circle
@@ -218,12 +219,12 @@ private theorem tv_apply (i j : Fin n) (h : i ≠ j) (c : F) (a b : Fin n) :
 private theorem tv_mem (p : SD n) (c : F) : tv p.1.1 p.1.2 (SD.ne p) c ∈ unipB F (Fin n) := by
   rw [mem_unipB]
   refine ⟨fun a b hab => ?_, fun a => ?_⟩
-  · rw [tv_apply, Matrix.one_apply_ne (ne_of_gt hab), Matrix.single_apply, if_neg, add_zero]
+  · rw [tv_apply, Matrix.one_apply_ne (ne_of_gt hab), Matrix.single_apply, ite_eq_right, add_zero]
     rintro ⟨rfl, rfl⟩
     have h1 := p.2
     have h2 := Fin.lt_iff_val_lt_val.mp hab
     omega
-  · rw [tv_apply, Matrix.one_apply_eq, Matrix.single_apply, if_neg, add_zero]
+  · rw [tv_apply, Matrix.one_apply_eq, Matrix.single_apply, ite_eq_right, add_zero]
     rintro ⟨rfl, h⟩
     exact SD.ne p h.symm
 
@@ -231,9 +232,9 @@ private theorem sup_tv (f : SD n → Fˣ) (p : SD n) (c : F) :
     sup f ((tv p.1.1 p.1.2 (SD.ne p) c : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) = f p * c := by
   simp only [sup]
   rw [Finset.sum_eq_single p]
-  · rw [tv_apply, Matrix.one_apply_ne (SD.ne p), zero_add, Matrix.single_apply, if_pos ⟨rfl, rfl⟩]
+  · rw [tv_apply, Matrix.one_apply_ne (SD.ne p), zero_add, Matrix.single_apply, ite_eq_left ⟨rfl, rfl⟩]
   · intro q _ hq
-    rw [tv_apply, Matrix.one_apply_ne (SD.ne q), zero_add, Matrix.single_apply, if_neg, mul_zero]
+    rw [tv_apply, Matrix.one_apply_ne (SD.ne q), zero_add, Matrix.single_apply, ite_eq_right, mul_zero]
     rintro ⟨h1, h2⟩
     exact hq (Subtype.ext (Prod.ext h1.symm h2.symm))
   · intro h
@@ -432,8 +433,7 @@ open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.
 private theorem chi_orth {Q : Type} [Group Q] [Fintype Q] (f g : Q →* ℂˣ) (h : f ≠ g) :
     ∑ x, (((f x)⁻¹ : ℂˣ) : ℂ) * ((g x : ℂˣ) : ℂ) = 0 := by
   obtain ⟨y, hy⟩ : ∃ y, f y ≠ g y := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     exact h (MonoidHom.ext hne)
   have ha : ((f y)⁻¹ * g y : ℂˣ) ≠ 1 := by
     intro h1
@@ -486,7 +486,7 @@ private theorem c_conv {Q I : Type} [Group Q] [Fintype Q] [Fintype I]
     _ = (Fintype.card Q : ℂ) * ∑ t, (((χ t w)⁻¹ : ℂˣ) : ℂ) := by
         rw [Finset.mul_sum]
         refine Finset.sum_congr rfl fun t _ => ?_
-        simp only [mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        simp only [mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
         ring
 
 private theorem opE_sum {G R W Q : Type} [Group G] [CommRing R] [AddCommGroup W] [Module R W]
@@ -548,40 +548,14 @@ open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.
 
 private theorem cardinal_sum_fintype {I : Type} [Fintype I] (f : I → Cardinal.{0}) :
     Cardinal.sum f = ∑ t, f t := by
-  have gen : ∀ (J : Type) [Fintype J] (β : J → Type), Cardinal.mk (Σ j, β j) = ∑ j, Cardinal.mk (β j) := by
-    intro J _
-    refine Fintype.induction_empty_option
-      (P := fun J _ => ∀ β : J → Type, Cardinal.mk (Σ j, β j) = ∑ j, Cardinal.mk (β j)) ?_ ?_ ?_ J
-    · intro α γ _ e h β
-      rw [← Cardinal.mk_congr (Equiv.sigmaCongrLeft (β := β) e), h (fun a => β (e a))]
-      exact @Equiv.sum_comp α γ Cardinal.{0} (Fintype.ofEquiv γ e.symm) _ _ e (fun b => Cardinal.mk (β b))
-    · intro β
-      simp
-    · intro α _ h β
-      let e : (Σ j : Option α, β j) ≃ (β none ⊕ Σ a : α, β (some a)) :=
-        { toFun := fun p => match p with
-            | ⟨none, b⟩ => Sum.inl b
-            | ⟨some a, b⟩ => Sum.inr ⟨a, b⟩
-          invFun := fun q => match q with
-            | Sum.inl b => ⟨none, b⟩
-            | Sum.inr ⟨a, b⟩ => ⟨some a, b⟩
-          left_inv := by rintro ⟨_ | a, b⟩ <;> rfl
-          right_inv := by rintro (b | ⟨a, b⟩) <;> rfl }
-      rw [Cardinal.mk_congr e, Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id,
-        h (fun a => β (some a)), Fintype.sum_option]
-  have hf : f = fun t => Cardinal.mk (Quotient.out (f t)) := by
-    funext t
-    exact (Cardinal.mk_out (f t)).symm
-  rw [hf, ← Cardinal.mk_sigma]
-  exact gen I _
+  apply _root_.UpperTheory.V.Af.CohB.cardSum_eq <;> assumption
 
 private theorem character_orthogonality_distinct {Q I : Type} [Group Q] [Fintype Q] (χ : I → Q →* ℂˣ)
     (hχ : Function.Injective χ) (s t : I) (hst : s ≠ t) :
     ∑ x, (((χ s x)⁻¹ : ℂˣ) : ℂ) * ((χ t x : ℂˣ) : ℂ) = 0 := by
   have hne : χ s ≠ χ t := fun h => hst (hχ h)
   obtain ⟨y, hy⟩ : ∃ y, χ s y ≠ χ t y := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hne (MonoidHom.ext h)
   have hshift : ∑ x, (((χ s x)⁻¹ : ℂˣ) : ℂ) * ((χ t x : ℂˣ) : ℂ) =
       ((((χ s y)⁻¹ * χ t y : ℂˣ)) : ℂ) * ∑ x, (((χ s x)⁻¹ : ℂˣ) : ℂ) * ((χ t x : ℂˣ) : ℂ) := by
@@ -674,9 +648,9 @@ private theorem rank_isotypic_character_projection {Q I W : Type} [Group Q] [Fin
     intro w t
 
     rw [map_sum, Finset.sum_eq_single t]
-    · rw [hproj t t _ (w t).2, if_pos rfl]
+    · rw [hproj t t _ (w t).2, ite_eq_left rfl]
     · intro s _ hst
-      rw [hproj s t _ (w s).2, if_neg hst]
+      rw [hproj s t _ (w s).2, ite_eq_right hst]
     · intro h
       exact absurd (Finset.mem_univ t) h
   have hsumV : ∀ (w : ∀ t, ↥(V ⊓ ⨅ x, Module.End.eigenspace (T x) ((χ t x : ℂˣ) : ℂ))),
@@ -796,7 +770,7 @@ theorem UpperTheory.unipotent_upper_map_surjective :
     have hmap : ((GeneralLinearGroup.map (n := Fin n) f (GeneralLinearGroup.mk'' A hunit) : GL (Fin n) R) : Matrix (Fin n) (Fin n) R) i j = f (A i j) := rfl
     rw [hmap]
     rcases lt_trichotomy i j with h | h | h
-    · simp only [A, if_pos h]
+    · simp only [A, ite_eq_left h]
       exact Function.surjInv_eq hf _
     · subst h
       simp [A, hdiag]
@@ -913,7 +887,7 @@ theorem eOp : EOp := by
     have h : (i : ℕ) + 1 < n := by have := i'.2; simp only at hp; omega
     have e : (⟨(i, ⟨(i : ℕ) + 1, h⟩), rfl⟩ : {p : Fin n × Fin n // (p.2 : ℕ) = p.1 + 1}) = ⟨(i, i'), hp⟩ :=
       Subtype.ext (Prod.ext rfl (Fin.ext hp.symm))
-    simp only [lift, dif_pos h, e]
+    simp only [lift, dite_eq_left h, e]
   have hinj : Function.Injective lift := fun f g h => by
     funext p
     refine Units.ext ?_
@@ -957,9 +931,9 @@ theorem eOp : EOp := by
     obtain ⟨f, -, rfl⟩ := Finset.mem_map.1 ht
     change valuation k (lift f i) = 1
     by_cases h : (i : ℕ) + 1 < n
-    · simp only [lift, dif_pos h]
+    · simp only [lift, dite_eq_left h]
       exact hunit _
-    · simp only [lift, dif_neg h, map_one]
+    · simp only [lift, dite_eq_right h, map_one]
   · intro W _ _ τ
     rw [← hcard, UpperTheory.rank_fixed_inf_character_eigenspace (Kc k n 1) (iA k n) (pA k n) s hs (pA_ker k n) hn χ hχi c hc W τ, Finset.sum_map]
     refine Finset.sum_congr rfl fun f _ => ?_

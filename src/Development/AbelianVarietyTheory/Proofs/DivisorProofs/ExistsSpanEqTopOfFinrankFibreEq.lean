@@ -137,7 +137,7 @@ theorem _root_.GlobalTheory.nonempty_basis_of_basis_baseChange {B A M : Type*} [
       intro j
       simp only [x, tmul_sum, tmul_smul]
       simp only [hsm, hmk, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ,
-        if_true]
+        ite_true]
     have h0 : N.mkQ.baseChange (B ⧸ P.asIdeal) = 0 := by
       apply LinearMap.ext_on_range (he P)
       intro j

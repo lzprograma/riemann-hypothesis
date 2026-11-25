@@ -70,7 +70,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 open GlobalTheory.LiftRows
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.SourceLaw
 variable {D : D7}
@@ -81,7 +80,6 @@ theorem omegaG_levelDatum_zero_indep_chars (a r t : ℕ) (ha : r ≤ a) (Pg : Fi
     omegaG (Lev.datY a r t 0 ha Pg ∅ P χ ξ Lev.Frm.B) χj y = omegaG (Lev.datY a r t 0 ha Pg ∅ P χ' ξ' Lev.Frm.B) χj y := by
   unfold omegaG
   rfl
-
 
 open GlobalTheory.AdjDatumMove in
 theorem levelDatum_target_under_sourceLevel_element (S T : HSp D) (βS : GL (Fin S.rank) (Lev.EAf D)) (βT : GL (Fin T.rank) (Lev.EAf D))
@@ -115,13 +113,13 @@ theorem levelDatum_target_under_sourceLevel_element (S T : HSp D) (βS : GL (Fin
     simp only [inv_one, Units.val_one, Matrix.mul_one, map_one, mul_one] at hq
     have hm := GlobalTheory.ChainOnto.omegaG_levelP_move D T.rank S.rank r t 0 ha hb ea eb Pg P (fun _ => m) (fun _ => 1)
       (fun PP => redFn βS PP (finE S g)) hG hP (fun PP => redM PP (frMapAdj S T βS βT x))
-    rw [if_pos hx, if_pos ⟨isHalf_actO' _ _ hx.1, h1.1⟩, funext h2, hq,
+    rw [ite_eq_left hx, ite_eq_left ⟨isHalf_actO' _ _ hx.1, h1.1⟩, funext h2, hq,
       omegaG_levelDatum_zero_indep_chars T.rank r t ha Pg P (fun _ _ => 1) (fun _ => m) (fun _ => 1) (fun _ => 1) m
         (fun PP => ((redFn βS PP (finE S g))⁻¹).val * redM PP (frMapAdj S T βS βT x)),
       omegaG_levelDatum_zero_indep_chars T.rank r t ha Pg P (fun _ _ => 1) (fun _ => m) (fun _ => 1) (fun _ => 1) m
         (fun PP => redM PP (frMapAdj S T βS βT x)), hm]
     ring
-  · rw [if_neg hx, if_neg, mul_zero]
+  · rw [ite_eq_right hx, ite_eq_right, mul_zero]
     rintro ⟨h1, h2⟩
     have e' := GlobalTheory.AdelicLatMove.actO_actO_inv S T g (1 : GA D T) x
     have h3 := isHalf_actO' g (1 : GA D T) h1
@@ -132,7 +130,6 @@ theorem levelDatum_target_under_sourceLevel_element (S T : HSp D) (βS : GL (Fin
 end GlobalTheory.SourceLaw
 
 namespace GlobalTheory.SourceLaw
-
 
 open GlobalTheory.AdelicScalar GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues in
 
@@ -159,7 +156,7 @@ theorem om_src_law {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A :
   have dW := GlobalTheory.SDFrameLattice.isSelfDualC_of_isSDFrame D _ _ _ _ (hL.βW i)
   have fV := (hL.βV i).choose_spec.1
   have fW := (hL.βW i).choose_spec.1
-  have hch' := GlobalTheory.T.conjugatedThetaCharacters_restriction_ramification R hL i t s cμ cη m hch
+  have hch' := GlobalTheory.ConjSplitChars.conj_chars_res R hL i t s cμ cη m hch
   have hres : ∀ PP ∈ (R.datWp i P).Pg ∪ R.Q t, GlobalTheory.StepLaw.ResAt cμ PP (m PP) ∧ GlobalTheory.StepLaw.ResAt (cμ * cη⁻¹) PP (m PP) :=
     fun PP hP => hch'.1 PP (Finset.mem_union.1 hP)
   have hun := hch'.2.1 ((R.datWp i P).Pg ∪ R.Q t) (fun PP h => Finset.mem_union.2 h)
@@ -247,7 +244,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 open GlobalTheory.LiftRows
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem _root_.GlobalTheory.T.finiteDatum_sourceLevelCharacter_law : GlobalTheory.IndefiniteRowSideFullHecke.LocalIntegralGL.LocalIntegralSingleBlock → ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting.PlaceModels D → SourceLevelLawC R F := by
   first | exact @GlobalTheory.SourceLaw.sourceLevelLaw

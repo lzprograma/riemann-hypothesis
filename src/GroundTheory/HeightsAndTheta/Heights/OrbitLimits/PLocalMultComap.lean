@@ -19,15 +19,8 @@ theorem LocalMultComap.proof : LocalMultComap.Statement := by
   unfold localMult
   rw [dite_eq_left hW, dite_eq_left (Ideal.comap_isPrime σ W)]
 
-  have hM : P.primeCompl.map σ = W.primeCompl := by
-    ext y
-    simp only [Submonoid.mem_map, Ideal.mem_primeCompl_iff]
-    constructor
-    · rintro ⟨x, hx, rfl⟩
-      exact hx
-    · intro hy
-      obtain ⟨x, rfl⟩ := hσ y
-      exact ⟨x, hy, rfl⟩
+  have hM : P.primeCompl.map σ = W.primeCompl :=
+    Ideal.map_primeCompl_comap_of_surjective σ hσ W
   have : IsLocalization (P.primeCompl.map σ) (Localization.AtPrime W) := by
     rw [hM]; infer_instance
   let φ : Localization.AtPrime P →+* Localization.AtPrime W := Localization.localRingHom P W σ hPW

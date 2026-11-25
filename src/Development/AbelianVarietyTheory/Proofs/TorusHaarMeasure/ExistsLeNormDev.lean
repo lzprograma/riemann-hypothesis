@@ -186,8 +186,7 @@ theorem _root_.GlobalTheory.grpSep : ∀ (r : ℕ) (X : _root_.ReciprocityTheory
       rw [← shift_dev_eq_lact x0 hdet, rmul_oneF']
       exact (congrArg (_root_.GlobalTheory.GrpSep.shift x0) h0).trans (shift_zero_torus_haar_measure x0))
   refine ⟨min ε δ, lt_min hε hδ, fun γ hγ h1 => ?_⟩
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hlt : ‖(_root_.GlobalTheory.GrpSep.dev x0 γ : X.Ψ → Fin r → Fin r → ℂ)‖ < min ε δ := by
     refine (pi_norm_lt_iff (lt_min hε hδ)).mpr fun τ => (pi_norm_lt_iff (lt_min hε hδ)).mpr
       fun a => (pi_norm_lt_iff (lt_min hε hδ)).mpr fun b => hcon τ a b

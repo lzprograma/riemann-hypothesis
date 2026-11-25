@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordsAtSmul
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeGram
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsValFam
@@ -17,50 +18,10 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsCombMatrix
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionField
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemSpanOfIotaMultiProportional
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.WedgeEqSpanOfIsFrameAt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsLineGenOn
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PullbackFramesComplexPoint
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLatticeVectorBundle
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 
@@ -133,17 +94,7 @@ theorem comb_base {F' : Type} [Field F'] (f : F →+* F') {x' : Sp F' ⟶ S} (hx
     {w' : epsAt x' ⟶ G} (hv : ∀ i, (v' i).left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ (v i).left)
     (hw : w'.left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ w.left) (h : IsComb cf v w) :
     IsComb (fun i => f (cf i)) v' w' := by
-  obtain ⟨u, hu, e⟩ := h
-  let g := LieCarrier.epsHom f x x' hx
-  have hw' : w' = g ≫ w := Over.OverMorphism.ext hw
-  refine ⟨fun i => g ≫ u i, fun i => ?_, ?_⟩
-  · have hscale : spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ spMap (epsMul (cf i)) =
-        spMap (epsMul (f (cf i))) ≫ spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) := by
-      simp only [spMap, ← Spec.map_comp, ← CommRingCat.ofHom_comp, LieCarrier.dualMap_epsMul]
-    change spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ (u i).left = _
-    rw [hu i, ← Category.assoc, hscale, Category.assoc, hv i]
-  · rw [hw', e, CombBase.comp_list_prod, List.map_ofFn]
-    rfl
+  apply _root_.GlobalTheory.CompanionTheory.Ar.CombBase.isComb_base <;> assumption
 
 theorem eigFrame_base [Smooth G.hom] {P : Type} [CommRing P] (act : OAct P G) (σ : P →+* F) {F' : Type} [Field F']
     (f : F →+* F') {x' : Sp F' ⟶ S} (hx : spMap f ≫ x = x') {n : ℕ} {v : Fin n → (epsAt x ⟶ G)}
@@ -218,31 +169,9 @@ end Val2
 section Val
 variable {X : Scheme.{0}} {Ω : Type} [Field Ω] {ξ : Sp Ω ⟶ X} {F : Type} [Field F] {z : Sp F ⟶ X}
 
-theorem val_mul {a a' : Ω} {r r' : F} (h : ValAt ξ z a r) (h' : ValAt ξ z a' r') : ValAt ξ z (a * a') (r * r') := by
-  obtain ⟨hs, s, e1, e2⟩ := h
-  obtain ⟨_, s', e1', e2'⟩ := h'
-  have f2 : RootHt.Pick.valMap z s = r := e2
-  have f2' : RootHt.Pick.valMap z s' = r' := e2'
-  refine ⟨hs, s * s', by rw [map_mul, e1, e1'], ?_⟩
-  show RootHt.Pick.valMap z (s * s') = r * r'
-  rw [map_mul, f2, f2']
-
 theorem val_inv {a : Ω} {r : F} (h : ValAt ξ z a r) (hr : r ≠ 0) : ValAt ξ z a⁻¹ r⁻¹ := by
-  obtain ⟨hs, s, e1, e2⟩ := h
-  have hu : IsUnit s := by
-    haveI := RootHt.Pick.isLocalHom_valMap z
-    refine isUnit_of_map_unit (RootHt.Pick.valMap z) s ?_
-    have : RootHt.Pick.valMap z s = r := e2
-    rw [this]
-    exact hr.isUnit
-  obtain ⟨u, rfl⟩ := hu
-  refine ⟨hs, ((u⁻¹ : (X.presheaf.stalk (centre z))ˣ) : X.presheaf.stalk (centre z)), ?_, ?_⟩
-  · rw [← e1]
-    exact eq_inv_of_mul_eq_one_left (by rw [← map_mul]; simp)
-  · have f2 : RootHt.Pick.valMap z (u : X.presheaf.stalk (centre z)) = r := e2
-    show RootHt.Pick.valMap z _ = r⁻¹
-    rw [← f2]
-    exact eq_inv_of_mul_eq_one_left (by rw [← map_mul]; simp)
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.Ar.RootHt.ArchB.val_inv₀ <;> assumption
 
 theorem val_det (h : genPt ξ ⤳ centre z) {n : ℕ} {P : Matrix (Fin n) (Fin n) Ω} {A : Matrix (Fin n) (Fin n) F}
     (hP : ∀ i j, ValAt ξ z (P i j) (A i j)) : ValAt ξ z P.det A.det := by
@@ -257,26 +186,6 @@ theorem spMap_inj {R R' : Type} [CommRing R] [CommRing R'] {f g : R →+* R'} (h
 section Gen
 variable {S : Scheme.{0}} {G : Over S} [GrpObj G] [IsCommMonObj G] {F : Type} [Field F] {x : Sp F ⟶ S}
 
-theorem exists_comb {n : ℕ} (cf : Fin n → F) (v : Fin n → (epsAt x ⟶ G)) : ∃ w, IsComb cf v w :=
-  ⟨_, fun i => LieTangent.epsScale x (cf i) ≫ v i, fun _ => rfl, rfl⟩
-
-theorem frame_det {P : Type} [CommRing P] {act : OAct P G} {σ : P →+* F} {n : ℕ} {v v' : Fin n → (epsAt x ⟶ G)}
-    {A : Matrix (Fin n) (Fin n) F} (hv : IsEigFrame act x σ v) (hv' : IsEigFrame act x σ v')
-    (hA : ∀ i, IsComb (A i) v (v' i)) : A.det ≠ 0 := by
-  have : ∀ i, ∃ cf, IsComb cf v' (v i) := fun i => (hv'.2 _ (hv.1 i)).exists
-  choose C hC using this
-  have ht : ∀ i, IsTanAt G x (v i) := fun i => (hv.1 i).1
-  have h1 := comb_mul (C := A) (A := Matrix.of C) ht hA hC
-  have h2 := comb_self (F := F) ht
-  have h3 : Matrix.of C * A = 1 := by
-    ext i j
-    have := (hv.2 _ (hv.1 i)).unique (h1 i) (h2 i)
-    exact congrFun this j
-  intro h0
-  have := congrArg Matrix.det h3
-  rw [Matrix.det_mul, h0, mul_zero, Matrix.det_one] at this
-  exact zero_ne_one this
-
 end Gen
 
 section Main
@@ -286,10 +195,6 @@ theorem spec_pt (Z : CptOver Y U) {F : Type} [Field F] {y : Sp F ⟶ Xo.XF c} (h
     genPt (Z.ξ₀ ≫ Y.j) ⤳ centre (y ≫ Y.j) := by
   have h : genPt Z.ξ₀ ⤳ y (IsLocalRing.closedPoint F) := (Z.closure _).1 (hU ⟨_, rfl⟩)
   exact h.map Y.j.continuous
-
-theorem pt_mem_genFib (Z : CptOver Y U) {F : Type} [Field F] (y : Sp F ⟶ Xo.XF c)
-    (h : genPt (Z.ξ₀ ≫ Y.j) ⤳ centre (y ≫ Y.j)) : (⟨_, h⟩ : Cpt (Z.ξ₀ ≫ Y.j)) ∈ Z.genFib := by
-  exact ⟨Y.jQ (y (IsLocalRing.closedPoint F)), rfl⟩
 
 theorem expand (Z : CptOver Y U) {F : Type} [Field F] {y : Sp F ⟶ Xo.XF c}
     (h : genPt (Z.ξ₀ ≫ Y.j) ⤳ centre (y ≫ Y.j)) (σ : E →+* ℂ) (σ' : 𝓞 E →+* F) {n : ℕ} {c₀ b₁ : Fin n → Z.V}
@@ -330,7 +235,7 @@ theorem expand (Z : CptOver Y U) {F : Type} [Field F] {y : Sp F ⟶ Xo.XF c}
       rw [sub_smul, h1, sub_self]
     exact sub_eq_zero.1 ((smul_eq_zero.1 h2).resolve_right (wedge_ne_zero hc.1))
   have hcomb : ∀ i, IsComb (Matrix.of A i) v₀ (v i) := fun i => by
-    obtain ⟨w, hw'⟩ := exists_comb (Matrix.of A i) v₀
+    obtain ⟨w, hw'⟩ := GlobalTheory.CompanionTheory.Ar.Flat.PointCompare.exists_comb (Matrix.of A i) v₀
     obtain ⟨w', hw₁, hw₂⟩ := valFam_comb Z (s := Pm i) h h₀ (hA i) hw'
     obtain ⟨v', hv₁, hv₂⟩ := h₁ i
     have e : ∑ j, Pm i j • c₀ j = b₁ i := by rw [hb']
@@ -339,7 +244,7 @@ theorem expand (Z : CptOver Y U) {F : Type} [Field F] {y : Sp F ⟶ Xo.XF c}
     subst e'
     rw [← SameVec.unique_left hw₂ hv₂]
     exact hw'
-  refine ⟨Matrix.of A, hcomb, frame_det hf₀ hf hcomb, ?_⟩
+  refine ⟨Matrix.of A, hcomb, GlobalTheory.CompanionTheory.Ar.Flat.PointCompare.frame_det hf₀ hf hcomb, ?_⟩
   rw [hdet]
   exact val_det h hA
 
@@ -375,7 +280,7 @@ theorem exists_chart
       IsValFam Z y c₁ v₀ ∧ IsValFam Z y c₂ w₀ ∧ IsFramed U τ βF y v₀ w₀ ∧
       ValAt (Z.ξ₀ ≫ Y.j) (y ≫ Y.j) (α₀ / κ₀) r₀ ∧ r₀ ≠ 0 := by
   have h := spec_pt Z hU
-  have hx := pt_mem_genFib Z y h
+  have hx := GlobalTheory.CompanionTheory.Ar.Flat.Rep.ValExists.mem_genFib Z y h
   obtain ⟨hvb₁, hvb₂, -, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Flat.isVBOn_eig_genFib E H D l Xo c O β Y U Z τ hβ hτ
   obtain ⟨W₁, hW₁, c₁, -, hc₁⟩ := hvb₁ _ hx
   obtain ⟨W₂, hW₂, c₂, -, hc₂⟩ := hvb₂ _ hx
@@ -400,7 +305,7 @@ theorem exists_chart
   have hne : r₀ ≠ 0 := by
     intro h0
     have h1 : ValAt (Z.ξ₀ ≫ Y.j) (y ≫ Y.j) (1 : Z.Ω) (r₀ * r₁) := by
-      have := val_mul hr₀ hr₁
+      have := GlobalTheory.CompanionTheory.Ar.Flat.PointCompare.val_mul hr₀ hr₁
       rwa [mul_inv_cancel₀ hun.1] at this
     have h2 : ValAt (Z.ξ₀ ≫ Y.j) (y ≫ Y.j) (1 : Z.Ω) (1 : F) := ⟨h, 1, map_one _, map_one (RootHt.Pick.valMap _)⟩
     have := LieTangent.valAt_unique Z.gen h1 h2
@@ -438,7 +343,7 @@ theorem vs_chart {F : Type} [Field F] {βF : c.F →+* F} {y : Sp F ⟶ Xo.XF c}
   obtain ⟨A, hA, dA, vA⟩ := expand Z h τ _ f₁ hv₀ hv hfr₀.2.2.1 hfr.2.2.1 (div_ne_zero hα₀ hα) w₁
   obtain ⟨B, hB, dB, vB⟩ := expand Z h _ _ f₂ hw₀ hw hfr₀.2.2.2 hfr.2.2.2 (div_ne_zero hκ₀ hκ) w₂
   refine ⟨A, B, hA, hB, dA, dB, ?_⟩
-  have := val_mul (val_mul hr₀ vB) (val_inv vA dA)
+  have := GlobalTheory.CompanionTheory.Ar.Flat.PointCompare.val_mul (GlobalTheory.CompanionTheory.Ar.Flat.PointCompare.val_mul hr₀ vB) (val_inv vA dA)
   have e : α₀ / κ₀ * (κ₀ / κ) * (α₀ / α)⁻¹ = α / κ := by field_simp
   rw [e] at this
   rw [div_eq_mul_inv (r₀ * B.det)]
@@ -520,8 +425,8 @@ theorem exists_isGen {F : Type} [Field F] {βF : c.F →+* F} {y : Sp F ⟶ Xo.X
   choose A hA using this
   have : ∀ i, ∃ cf, IsComb cf w₀ (w i) := fun i => (hfr₀.2.2.2.2 _ (hfr.2.2.2.1 i)).exists
   choose B hB using this
-  have dA : (Matrix.of A).det ≠ 0 := frame_det hfr₀.2.2.1 hfr.2.2.1 hA
-  have dB : (Matrix.of B).det ≠ 0 := frame_det hfr₀.2.2.2 hfr.2.2.2 hB
+  have dA : (Matrix.of A).det ≠ 0 := GlobalTheory.CompanionTheory.Ar.Flat.PointCompare.frame_det hfr₀.2.2.1 hfr.2.2.1 hA
+  have dB : (Matrix.of B).det ≠ 0 := GlobalTheory.CompanionTheory.Ar.Flat.PointCompare.frame_det hfr₀.2.2.2 hfr.2.2.2 hB
   refine ⟨r₀ * (Matrix.of B).det / (Matrix.of A).det, div_ne_zero (mul_ne_zero hne dB) dA, v₀, w₀, r₀, Matrix.of A,
     Matrix.of B, ⟨βF, c₁, c₂, α₀, κ₀, hfr₀, ea₀, eb₀, hv₀, hw₀, hr₀⟩, hA, hB, dA, ?_⟩
   field_simp
@@ -581,7 +486,7 @@ theorem isLineFn_repFn : IsLineFn U τ (repFn Z τ a b) := by
     have hR' := hR
     obtain ⟨βF', -, -, -, -, hfr₀, -⟩ := hR'
     obtain rfl : βF = βF' := spMap_inj (hfr.1.symm.trans hfr₀.1)
-    have dA : A.det ≠ 0 := frame_det hfr.2.2.1 hfr'.2.2.1 hA
+    have dA : A.det ≠ 0 := GlobalTheory.CompanionTheory.Ar.Flat.PointCompare.frame_det hfr.2.2.1 hfr'.2.2.1 hA
     have h' : IsGen Z τ a b y v' w' (r₀ * (B * B₀).det / (A * A₀).det) :=
       ⟨v₀, w₀, r₀, A * A₀, B * B₀, hR, comb_mul (fun k => (hfr₀.2.2.1.1 k).1) a₀ hA,
         comb_mul (fun k => (hfr₀.2.2.2.1 k).1) b₀ hB, by rw [Matrix.det_mul]; exact mul_ne_zero dA d₀,

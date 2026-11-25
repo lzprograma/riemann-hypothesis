@@ -1,10 +1,12 @@
 module
 
+import all ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.AdmissibleHermitianColumns
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.TypeStar
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsIntegralCc
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.EmbeddingHermitianPairs
 
 @[expose] public section
 
@@ -47,12 +49,7 @@ lemma hC_sum_left {ι : Type*} (s : Finset ι) (f : ι → Fin r → ℂ) (v : F
 
 lemma hC_symm (hG : ∀ a b, cc (G a b) = G b a) (u v : Fin r → ℂ) :
     hermC τ G v u = conj (hermC τ G u v) := by
-
-  simp only [hermC, map_sum, map_mul, Complex.conj_conj]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
-  rw [← emb_cc, hG]
-  ring
+  apply _root_.ReciprocityTheory.ChartRestriction.G.FD.AdmissibleHermitianColumns.hermC_swap_of_conj_symm <;> assumption
 
 lemma emb_herm (x y : Fin r → E) : τ (herm G x y) = hermC τ G (Data.emb τ x) (Data.emb τ y) := by
 
@@ -70,15 +67,9 @@ lemma col_mul (A B : Matrix (Fin r) (Fin r) ℂ) (a : Fin r) : col (A * B) a = M
 lemma flowMat_mulVec (ξ : Fin r → E) (τ : X.Ψ) (s : ℂ) (v : Fin r → ℂ) :
     Matrix.mulVec (X.flowMat ξ τ s) v =
       v + (-(I * X.c τ * s) * hermC τ.1 X.Gm v (emb τ.1 ξ)) • emb τ.1 ξ := by
-  funext a
-  simp only [flowMat, Matrix.mulVec, dotProduct, Matrix.of_apply, Pi.add_apply, Pi.smul_apply,
-    smul_eq_mul, hermC, emb, sub_mul, Finset.sum_sub_distrib, ite_mul, one_mul, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true]
-  rw [sub_eq_add_neg]
-  congr 1
-  simp only [Finset.mul_sum, Finset.sum_mul, ← Finset.sum_neg_distrib]
-  refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun k _ => ?_
-  ring
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.G.FD.EmbeddingHermitianPairs.flowMat_mulVec
+    | apply _root_.ReciprocityTheory.ChartRestriction.G.FD.EmbeddingHermitianPairs.flowMat_mulVec <;> first | assumption | rfl | infer_instance
 
 lemma mat_flow (ξ : Fin r → E) (s : X.Ψ → ℂ) (x : Frame X.Ψ r) (τ : X.Ψ) :
     mat (X.flow ξ s x) τ = X.flowMat ξ τ (s τ) * mat x τ := rfl

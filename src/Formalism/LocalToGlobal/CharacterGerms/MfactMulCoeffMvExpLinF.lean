@@ -64,7 +64,7 @@ theorem coeff_mvExp_linF_step (lam : τ → K) (w : τ) (m : τ →₀ ℕ) :
     Finset.sum_range_succ', Finset.mul_sum, add_mul, Finset.sum_mul]
   have h0 : coeff (m + Finsupp.single w 1) (linF lam ^ 0) = 0 := by
     classical
-    rw [pow_zero, MvPowerSeries.coeff_one, if_neg (add_single_one_ne_zero m w)]
+    rw [pow_zero, MvPowerSeries.coeff_one, ite_eq_right (add_single_one_ne_zero m w)]
   rw [h0, zero_div, zero_mul, add_zero]
   refine Finset.sum_congr rfl fun j _ => ?_
   have h3 := coeff_linF_pow_step lam w m j
@@ -79,11 +79,5 @@ theorem coeff_zero_mvExp (h : MvPowerSeries τ K) : coeff 0 (mvExp h) = 1 := by
   simp
 
 end ExpLin
-
-section Rename
-
-variable {K : Type} [Field K] {σ τ : Type}
-
-end Rename
 
 end Formalism.L2.FormalSeriesBounds

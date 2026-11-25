@@ -99,7 +99,7 @@ theorem second_unramified_condition_holds (A : AtTTied u) : Formalism.L2.GlobalT
 
   have hπ : 0 < ν (A.piU : D.host.E) := by
     have := A.seenP w hw' ((D.fm u).tauOf w v)
-    rw [if_pos hseen] at this
+    rw [ite_eq_left hseen] at this
     exact this
   have hpb : A.res v (cO A.piU) ≠ 0 := A.res_conj v (cO A.piU) rfl
   have hπb : ν ((cO A.piU : 𝓞 D.host.E) : D.host.E) = 0 := by

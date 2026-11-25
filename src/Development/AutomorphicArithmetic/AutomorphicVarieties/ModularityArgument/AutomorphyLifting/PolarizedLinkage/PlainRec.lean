@@ -64,8 +64,6 @@ open UpperTheory.GalN.V GroundTheory.Global.SemiLocal UpperTheory.V.Published Up
 
 open scoped commutatorElement
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.V.Z.Win.MonodromyFreeReciprocity
 
 section Loc

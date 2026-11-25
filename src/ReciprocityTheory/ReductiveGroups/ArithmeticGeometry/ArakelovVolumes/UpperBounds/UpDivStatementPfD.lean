@@ -114,7 +114,7 @@ theorem wSk_eq {z : V (nd X)} (hz : z ∈ OmF X x0) (hs : 0 < Ss X Xa Fl x0 z) (
       zpow_pos (norm_pos_iff.mpr (_root_.ReciprocityTheory.ChartRestriction.G.FD.FlowCoefficientBounds.dmin_ne X hx τ _)) _
   unfold Sw at hSw
   unfold Ss at hs
-  rw [WSk, if_pos hx, phla_add X hx, phla_nsmul X hx, hW, hS]
+  rw [WSk, ite_eq_left hx, phla_add X hx, phla_nsmul X hx, hW, hS]
   unfold kaF
   rw [ENNReal.ofReal_rpow_of_pos (mul_pos (Real.exp_pos _) hSw),
     ENNReal.ofReal_rpow_of_pos (div_pos (mul_pos (Real.exp_pos _) hs) (mul_pos (Real.exp_pos _) hSw))]

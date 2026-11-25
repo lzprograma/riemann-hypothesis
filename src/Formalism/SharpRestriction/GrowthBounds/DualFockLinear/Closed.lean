@@ -22,63 +22,13 @@ public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SymbolRealisabl
 public import Formalism.SharpRestriction.GrowthBounds.Joints
 public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments
 public import Formalism.SharpRestriction.GrowthBounds.PathWeight
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalToGlobal.GroupLattices.FockModels.MkP
 import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.RankMulConductorDivLeOne
-import Mathlib.RingTheory.PiTensorProduct
 import Formalism.LocalToGlobal.GroupLattices.FockModels.ElementaryDivisorBasis
 import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.EdgeLatOfG
 import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.LetterWtAnti
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.Tactic.Linter.HaveILetI
 import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIntegralForm
@@ -113,9 +63,9 @@ theorem Mv_deg (F : Type) [Field F] (m : ℕ) (vec : Bool) (c : Fin (m + 1)) :
       (colLex (m + 1) (m + 1)).leadingCoeff (Mv F m vec c) = 1 := by
   unfold Mv dg
   cases vec
-  · simp only [Bool.false_eq_true, if_false]
+  · simp only [Bool.false_eq_true, ite_false]
     exact colLexInitMinor F (m + 1) (m + 1) m c.succAbove (Nat.le_succ m) (Fin.strictMono_succAbove c)
-  · simp only [if_true]
+  · simp only [ite_true]
     have hsm : StrictMono (fun _ : Fin 1 => c) := by
       intro a b hab
       exact absurd hab (by rw [Subsingleton.elim a b]; exact lt_irrefl b)
@@ -132,11 +82,11 @@ theorem Nv_eq (F : Type) [Field F] (m : ℕ) (vec : Bool) (c : Fin (m + 1)) :
     Nv F m vec c = sg F m vec c • Mv F m vec c := by
   cases vec
   · rw [Nv_false_eq]
-    simp only [sg, Mv, Bool.false_eq_true, if_false, Units.smul_def, Units.val_pow_eq_pow_val,
+    simp only [sg, Mv, Bool.false_eq_true, ite_false, Units.smul_def, Units.val_pow_eq_pow_val,
       Units.val_neg, Units.val_one]
     rw [smul_eq_C_mul, map_pow, map_neg, map_one]
   · rw [Nv_true_eq]
-    simp only [sg, Mv, if_true, one_smul]
+    simp only [sg, Mv, ite_true, one_smul]
 
 theorem fam_deg (F : Type) [Field F] (m : ℕ) (vec : Bool) (α : Fin (m + 1) →₀ ℕ)
     (g : MvPolynomial (Fin (m + 1) × Fin (m + 1)) F) (e : Fin (m + 1) × Fin (m + 1) →₀ ℕ)
@@ -174,24 +124,24 @@ theorem fam_deg (F : Type) [Field F] (m : ℕ) (vec : Bool) (α : Fin (m + 1) �
 
 theorem dg_false_diag (m : ℕ) (c t : Fin (m + 1)) (ht : t.val < m) :
     dg m false c (t, t) = if t < c then 1 else 0 := by
-  simp only [dg, Bool.false_eq_true, if_false, Finsupp.finsetSum_apply, Finsupp.single_apply]
+  simp only [dg, Bool.false_eq_true, ite_false, Finsupp.finsetSum_apply, Finsupp.single_apply]
   rw [Finset.sum_eq_single (⟨t.val, ht⟩ : Fin m)]
   · by_cases htc : t < c
-    · rw [if_pos htc, if_pos]
+    · rw [ite_eq_left htc, ite_eq_left]
       simp only [Prod.mk.injEq]
       constructor
       · rw [Fin.succAbove_of_castSucc_lt]
         · exact Fin.ext rfl
         · exact htc
       · exact Fin.ext rfl
-    · rw [if_neg htc, if_neg]
+    · rw [ite_eq_right htc, ite_eq_right]
       simp only [Prod.mk.injEq, not_and]
       intro h _
       rw [Fin.succAbove_of_le_castSucc _ _ (not_lt.mp htc)] at h
       rw [Fin.ext_iff] at h
       simp at h
   · intro p _ hp
-    rw [if_neg]
+    rw [ite_eq_right]
     simp only [Prod.mk.injEq, not_and]
     intro _ h2
     apply hp
@@ -252,9 +202,9 @@ private theorem sum_mul_dg_diag_eq_sum_filter (m n : ℕ) (β : Fin (m + 1) →�
   rw [dg_false_diag m c t ht]
   by_cases hc : t < c
   · rw [Fin.lt_def] at hc
-    rw [if_pos (Fin.lt_def.mpr hc), if_pos (by omega), mul_one]
+    rw [ite_eq_left (Fin.lt_def.mpr hc), ite_eq_left (by omega), mul_one]
   · rw [Fin.lt_def] at hc
-    rw [if_neg (fun h => hc (Fin.lt_def.mp h)), if_neg (by omega), mul_zero]
+    rw [ite_eq_right (fun h => hc (Fin.lt_def.mp h)), ite_eq_right (by omega), mul_zero]
 
 theorem key_inj (m : ℕ) (top vec : Bool) (d : ℕ) (ν : Fin (m + 1) → ℕ) (htop : top = false → d = 0)
     (α α' : Fin (m + 1) →₀ ℕ) (hα : ∑ c, α c = d) (hα' : ∑ c, α' c = d) (x x' : Xs m top vec ν)
@@ -445,9 +395,9 @@ theorem expand {R : Type} [CommRing R] {n' k : ℕ} {d : Fin n' → ℕ} [Fintyp
       ext v
       rfl
     rw [Finset.sum_eq_single a]
-    · rw [if_pos ha, ha]
+    · rw [ite_eq_left ha, ha]
     · intro a' _ hne
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       apply hne
       funext s
@@ -539,7 +489,7 @@ theorem big_core [∀ s, Finite (X s)] (hpos : ∀ s, LinearIndependent F (fam1 
     rw [expand (Q i) (hQ i)]
     refine Finset.sum_eq_zero fun a _ => ?_
     have h1 := key (a, i)
-    simp only [hi, if_true] at h1
+    simp only [hi, ite_true] at h1
     rw [h1, monomial_zero]
   · rw [Fintype.sum_prod_type_right, ← hsum]
     have h1 : ∀ i : (∀ s, X s),
@@ -547,9 +497,9 @@ theorem big_core [∀ s, Finite (X s)] (hpos : ∀ s, LinearIndependent F (fam1 
         if i ∈ J then thAll F n' m vec (Q i) * ∏ s, blockEmb F s (b s (i s)) else 0 := by
       intro i
       by_cases hi : i ∈ J
-      · simp only [hi, if_true]
+      · simp only [hi, ite_true]
         exact famG_sum F n' m vec d b (Q i) (hQ i) i
-      · simp only [hi, if_false, zero_smul, Finset.sum_const_zero]
+      · simp only [hi, ite_false, zero_smul, Finset.sum_const_zero]
     rw [Finset.sum_congr rfl fun i _ => h1 i, Finset.sum_ite_mem, Finset.univ_inter]
 
 end Core
@@ -806,7 +756,7 @@ theorem transStep : TransStep := by
     unfold Vsp
     congr 1
     funext s
-    rw [if_pos (lamAt_antitone' lam hl s)]
+    rw [ite_eq_left (lamAt_antitone' lam hl s)]
   have hfl : IsDominant (flW (m := m) d) := flW_dom d
   have hl0 : IsDominant lam0 := by rw [hlam]; exact isDominant_add hfl hrest
   let dt : (Fin n' → Fin (m + 1) → ℤ) → Kf := fun lam => ∏ s, (M s).det ^ (lamAt lam s (Fin.last m))

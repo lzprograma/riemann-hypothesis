@@ -4,47 +4,7 @@ public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership
 public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PlaceProjectionZeroIntegralIffComponentsAbove
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CharacterValueAtT
 
@@ -138,7 +98,7 @@ theorem exists_res [StarRing E] (P : HeightOneSpectrum (𝓞 E)) (z : AfE F E) (
     · simp
   obtain ⟨c, -, hc⟩ := PtExist.hasRes_redA P hz
   refine ⟨c, ?_⟩
-  rwa [map_mul, PtExist.adAt_idem, if_pos rfl, one_mul] at hc
+  rwa [map_mul, PtExist.adAt_idem, ite_eq_left rfl, one_mul] at hc
 
 theorem adAt_of_bc_eq_one {n : ℕ} (G : GL (Fin n) (AfE F E)) (w : HeightOneSpectrum (𝓞 E))
     (h : bc (prV (E := E) (w.under (𝓞 F))) G = 1) (i j : Fin n) :
@@ -377,13 +337,13 @@ theorem fT_kill (hLb : IsBase S π) (hv : (T : 𝓞 F) ∈ v.asIdeal) (hP : P.un
       · exact Or.inl (mul_mem (incl_mem_intV v _) ((coord_of_mem (v := v) hLb s.2 j).1 fun h => hj ((hlast j).1 h)))
     refine mem_latS_of_coords (S := S) (fun j => if hj : j = r then ⟨_, hu⟩ else ⟨_, (hjm j).resolve_right hj⟩)
       (fun j => if j = r then π else 1) (fun j => single_mem_Lb hLb j _ fun h => ?_) fun j => ?_
-    · rw [if_pos ((hlast j).1 h)]
+    · rw [ite_eq_left ((hlast j).1 h)]
     · by_cases hj : j = r
       · subst hj
-        simp only [dif_pos, if_pos]
+        simp only [dite_eq_left, ite_eq_left]
         show ι _ * s.1 j = ι _ * s.1 j * ι _
         rw [mul_right_comm, ← map_mul, mul_right_comm, inv_mul_cancel₀ hπ0, one_mul]
-      · simp only [dif_neg hj, if_neg hj, map_one, mul_one]
+      · simp only [dite_eq_right hj, ite_eq_right hj, map_one, mul_one]
         rfl
 
   have hB : S.fT v hv (kap F v i • s) = 0 := by
@@ -495,14 +455,14 @@ theorem last_row (hLb : IsBase S π) (hv : (T : 𝓞 F) ∈ v.asIdeal) (hP : P.u
   refine ⟨c, ?_, hc'⟩
   by_cases hjr : j = r
   · subst hjr
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     have hee : ej = eL := Subtype.ext (hej.trans heL.symm)
     have e4 : kap F v (c - (a : 𝓞 E)) • S.fT v hv eL = 0 := by
       rw [map_sub, sub_smul, ← hfx, ← hx, hee, map_intCast, Int.cast_smul_eq_zsmul, sub_self]
     have e5 := hdiv _ e4
     rw [← map_intCast (Ideal.Quotient.mk P.asIdeal) a]
     exact Ideal.Quotient.eq.2 e5
-  · rw [if_neg hjr]
+  · rw [ite_eq_right hjr]
     have e6 := kill ej (by
       rw [hej, ee_ne hjr, map_zero]
       simp)

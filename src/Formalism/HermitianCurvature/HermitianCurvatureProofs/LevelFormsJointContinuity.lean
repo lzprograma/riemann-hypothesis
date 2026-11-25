@@ -11,48 +11,7 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.LimitOfModuleForms
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OmLongContinuousOn
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCutInside
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveDensityModerateGrowth
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -208,13 +167,13 @@ theorem rrTop_cont (P : M.Par) (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq �
       have l1 := isLocPt_app hh1 hm hcc.1 hsz
       have l2 := isLocPt_app hh2 hm hcc.2 hsz'
       unfold KB.Pl.RR D.RRplace
-      rw [dite_eq_left ⟨l1, l2⟩, dite_eq_right (by omega), if_pos rfl]
+      rw [dite_eq_left ⟨l1, l2⟩, dite_eq_right (by omega), ite_eq_left rfl]
       rfl
     by_cases hw0 : w = []
     · refine (hsV_continuousOn P p F hF h h' hh1 hh2 m hm hsz hsz').congr fun cc hcc => ?_
-      rw [hform cc hcc, if_pos hw0]
+      rw [hform cc hcc, ite_eq_left hw0]
     · refine (topOf_continuousOn P p F hF Cb hCb w hw h h' hh1 hh2 m hm hsz hsz').congr fun cc hcc => ?_
-      rw [hform cc hcc, if_neg hw0]
+      rw [hform cc hcc, ite_eq_right hw0]
   · refine (continuousOn_const (c := (0 : ℂ))).congr fun cc _ => ?_
     exact PBL.rr_zero_of_not p F _ w _ _ (fun hl => hh ⟨heads_of_loc hl.1, heads_of_loc hl.2⟩)
 

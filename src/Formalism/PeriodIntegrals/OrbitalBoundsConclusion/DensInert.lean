@@ -10,62 +10,8 @@ public import Mathlib.Algebra.CharP.Lemmas
 public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.Algebra.CharP.Frobenius
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.SiegelMassRatios.DensExact
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.TotallySplit
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -141,13 +87,13 @@ theorem an_fiber [Fintype L] {n m q : ℕ} {M : Matrix (Fin n) (Fin n) L}
         | zero => simpa [Matrix.diagonal_apply] using hxx
         | succ j =>
           simp only [Fin.cons_zero, Fin.cons_succ, Matrix.diagonal_apply,
-            (Fin.succ_ne_zero j).symm, if_false]
+            (Fin.succ_ne_zero j).symm, ite_false]
           exact hxU j
       | succ i =>
         induction j using Fin.cases with
         | zero =>
           simp only [Fin.cons_zero, Fin.cons_succ, Matrix.diagonal_apply, Fin.succ_ne_zero,
-            if_false]
+            ite_false]
           exact hUx i
         | succ j =>
           simp only [Fin.cons_succ, Matrix.diagonal_apply, Fin.succ_inj]
@@ -158,7 +104,7 @@ theorem an_fiber [Fintype L] {n m q : ℕ} {M : Matrix (Fin n) (Fin n) L}
     rw [Finset.mem_coe, Finset.mem_filter]
     refine ⟨Finset.mem_univ _, fun i => ⟨hXW _, ?_⟩, hXi.comp _ (Fin.succ_injective _), ?_⟩
     · change hf q M (X i.succ) x = 0
-      rw [← hX0, hXg, Matrix.diagonal_apply, if_neg (Fin.succ_ne_zero i)]
+      rw [← hX0, hXg, Matrix.diagonal_apply, ite_eq_right (Fin.succ_ne_zero i)]
     · intro i j
       rw [hXg, Matrix.diagonal_apply, Matrix.diagonal_apply]
       simp only [Fin.succ_inj, Fin.cons_succ]
@@ -198,7 +144,7 @@ theorem anisoPeel_of_valCount (hv : ValCount) : AnisoPeel := by
         x ∈ W ∧ hf (Fintype.card K) M x x = b)).card : ℤ) =
         valN (Fintype.card K) (Module.finrank L W) := by
       have h0 := hv K L h2 n M W hM hW b hbf
-      rw [if_neg hb0] at h0
+      rw [ite_eq_right hb0] at h0
       rw [← h0, ← Set.ncard_coe_finset]
       congr 2
       ext v
@@ -306,7 +252,7 @@ theorem top_nondeg_top {L : Type} [Field L] {n : ℕ} (q : ℕ) (hq : 0 < q)
     funext l0
     have h := hw (Pi.single l0 1) Submodule.mem_top
     simp only [hf, Pi.single_apply, ite_pow, one_pow, zero_pow hq.ne', mul_ite, mul_one,
-      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
+      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
     simpa [Matrix.vecMul, dotProduct] using h
   calc w = Matrix.vecMul w (M * M⁻¹) := by rw [Matrix.mul_nonsing_inv _ hdet, Matrix.vecMul_one]
     _ = Matrix.vecMul (Matrix.vecMul w M) M⁻¹ := by rw [Matrix.vecMul_vecMul]
@@ -835,8 +781,7 @@ theorem isoPeel_of_valCount (hv : ValCount) : IsoPeel := by
     simp only [hS, Finset.mem_filter, Finset.mem_univ, true_and] at hx
     obtain ⟨hxW, hx0, hxx⟩ := hx
     have hex : ∃ v ∈ W, hf q M x v ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hx0 (hW x hxW h)
     obtain ⟨v, hvW, hv⟩ := hex
     obtain ⟨y, hy⟩ : ∃ y : Fin n → L, y = ((hf q M x v)⁻¹ ^ q) • v := ⟨_, rfl⟩
@@ -908,7 +853,7 @@ theorem isoPeel_of_valCount (hv : ValCount) : IsoPeel := by
     ring
 
   have hval := hv K L hKL n M W hM hW 0 (by rw [zero_pow hq0])
-  simp only [if_true] at hval
+  simp only [ite_true] at hval
   have hT : ({v : Fin n → L | v ∈ W ∧ hf q M v v = 0}.ncard) =
       (Finset.univ.filter fun v => v ∈ W ∧ hf q M v v = 0).card := by
     rw [← Set.ncard_coe_finset]

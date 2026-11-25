@@ -5,46 +5,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ResGContDiff
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainX1
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialRaisingTopOfParts
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -114,7 +74,7 @@ theorem vAB_succ (y : ℂ) (i : ℕ) (hi : i < r) (G : (Fin r → ℂ) → V) :
     (Q.vAB r y (i + 1)).1 G = (fun c => y • (Q.vAB r y i).1 G c + pOp ⟨i, hi⟩ ((Q.vAB r y i).1 G) c -
       cOp ⟨i, hi⟩ ((Q.vAB r y i).2 G) c) ∧
     (Q.vAB r y (i + 1)).2 G = ciOp ⟨i, hi⟩ ((Q.vAB r y i).1 G) := by
-  simp only [Q.vAB, dif_pos hi]
+  simp only [Q.vAB, dite_eq_left hi]
   exact ⟨funext fun c => rfl, trivial⟩
 
 end vab
@@ -174,7 +134,7 @@ theorem claim (hRR : RightRuleE) (hLR : LeftRuleCell) (hTC : TorusCell) (hGP : G
       rw [hLaP_apply, mul_assoc, (comm_Tor hD (m + 2) _ _ (hnot l (by omega)) (hnot (m + 1) (by omega)) P hP).eq,
         ← mul_assoc, La_apply, Subalgebra.coe_mul, Module.End.mul_apply]
       conv_lhs => rw [hv]
-      rw [root_vector_action_cutoff hD z' hz' hRR hf hRf ⟨l, by omega⟩ ⟨m + 1, by omega⟩ (by simp; omega), if_neg (by simp; omega),
+      rw [root_vector_action_cutoff hD z' hz' hRR hf hRf ⟨l, by omega⟩ ⟨m + 1, by omega⟩ (by simp; omega), ite_eq_right (by simp; omega),
         zero_smul, map_zero]
       rfl
     have hR1 : ∀ x : SA E hD, LaP (x * EA hD (eI k r ⟨m, by omega⟩) (eI k r ⟨m + 1, by omega⟩)) = LaP x := by
@@ -182,7 +142,7 @@ theorem claim (hRR : RightRuleE) (hLR : LeftRuleCell) (hTC : TorusCell) (hGP : G
       rw [hLaP_apply, hLaP_apply, mul_assoc, (comm_Tor hD (m + 2) _ _ (hnot m (by omega)) (hnot (m + 1) (by omega)) P hP).eq,
         ← mul_assoc, La_apply, La_apply, Subalgebra.coe_mul, Module.End.mul_apply]
       conv_lhs => rw [hv]
-      rw [root_vector_action_cutoff hD z' hz' hRR hf hRf ⟨m, by omega⟩ ⟨m + 1, by omega⟩ (by simp), if_pos (by simp), one_smul, ← hv]
+      rw [root_vector_action_cutoff hD z' hz' hRR hf hRf ⟨m, by omega⟩ ⟨m + 1, by omega⟩ (by simp), ite_eq_left (by simp), one_smul, ← hv]
     have hL : ∀ (x : SA E hD) (q : ℕ) (hq : q ≤ m),
         LaP (EA hD (eI k r ⟨m + 1, by omega⟩) (eI k r ⟨q, by omega⟩) * x) =
           (if q = m then c ⟨m + 1, by omega⟩ / c ⟨m, by omega⟩ else 0) • LaP x := by
@@ -196,14 +156,14 @@ theorem claim (hRR : RightRuleE) (hLR : LeftRuleCell) (hTC : TorusCell) (hGP : G
       by_cases hqm : q = m
       · subst hqm
         simp
-      · rw [if_neg (by simp; omega), if_neg hqm]
+      · rw [ite_eq_right (by simp; omega), ite_eq_right hqm]
     have hX := Formalism.FourierDecayAlt.P.PBN.chainX1' k r c (EA (E := E) hD) LaP (EA_gl (E := E) hD) m hm2 u hR0 hR1 hL
 
     set T := Tm (EA (E := E) hD) (u - ((m + 1 : ℕ) : ℂ)) (eI k r ⟨m + 1, by omega⟩) (eI k r ⟨m + 1, by omega⟩) with hT
     have hTmem : T ∈ Tor hD (m + 1) := by
       rw [hT]
       unfold Tm
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact Subalgebra.add_mem _ (Subalgebra.algebraMap_mem _ _) (EA_mem_Tor hD ⟨m + 1, by omega⟩ le_rfl)
     have hTP : T * P ∈ Tor hD (m + 1) := Subalgebra.mul_mem _ hTmem hP1
     have ih1 := ih (m + 1) (by omega) (by omega) (T * P) hTP c hc
@@ -251,14 +211,14 @@ theorem claim (hRR : RightRuleE) (hLR : LeftRuleCell) (hTC : TorusCell) (hGP : G
       | succ i ih =>
         intro f₁ f₂ h c hc
         by_cases hi : i < r
-        · simp only [Q.vAB, dif_pos hi]
+        · simp only [Q.vAB, dite_eq_left hi]
           refine ⟨?_, ?_⟩
           · simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, cOp]
             rw [(ih f₁ f₂ h c hc).1, (ih f₁ f₂ h c hc).2,
               pOp_locO _ (fun c' hc' => (ih f₁ f₂ h c' hc').1) hc]
           · simp only [ciOp]
             rw [(ih f₁ f₂ h c hc).1]
-        · simp only [Q.vAB, dif_neg hi]
+        · simp only [Q.vAB, dite_eq_right hi]
           exact ih f₁ f₂ h c hc
     have hl1 := vAB_loc (m + 1)
       (fun c' => Q.resG k r (Fin.last r) (((T * P : SA E hD) : Module.End ℂ (VS k r 0 D E)) v₀ : Mx k r → E) c' g₀)

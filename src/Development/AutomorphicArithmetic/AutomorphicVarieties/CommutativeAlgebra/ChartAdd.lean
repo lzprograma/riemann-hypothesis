@@ -79,19 +79,19 @@ private theorem exists_intertwiner_decomp_of_kernel_intertwines {σ O : Type} [F
     simp only [coeff_monomial_mul, one_mul]
     by_cases hn : n.support.Nonempty
     · have hi0 : hn.choose ∈ n.support := hn.choose_spec
-      have hsel : sel n = some hn.choose := dif_pos hn
+      have hsel : sel n = some hn.choose := dite_eq_left hn
       have hle0 : Finsupp.single hn.choose 1 ≤ n := by
         rw [Finsupp.single_le_iff]
         exact Nat.one_le_iff_ne_zero.2 (Finsupp.mem_support_iff.1 hi0)
       rw [Finset.sum_eq_single hn.choose]
-      · rw [if_pos hle0, hc, tsub_add_cancel_of_le hle0, if_pos hsel]
+      · rw [ite_eq_left hle0, hc, tsub_add_cancel_of_le hle0, ite_eq_left hsel]
       · intro i _ hi
         by_cases hle : Finsupp.single i 1 ≤ n
-        · rw [if_pos hle, hc, tsub_add_cancel_of_le hle, if_neg]
+        · rw [ite_eq_left hle, hc, tsub_add_cancel_of_le hle, ite_eq_right]
           rw [hsel]
           intro heq
           exact hi (Option.some_injective _ heq).symm
-        · rw [if_neg hle]
+        · rw [ite_eq_right hle]
       · intro hnot
         exact absurd (Finset.mem_univ _) hnot
     · have hn0 : n = 0 := by
@@ -102,15 +102,15 @@ private theorem exists_intertwiner_decomp_of_kernel_intertwines {σ O : Type} [F
       · rw [coeff_zero_eq_constantCoeff_apply]
         exact hg
       · intro i _
-        rw [if_neg]
+        rw [ite_eq_right]
         intro hle
         have h1 := Finsupp.single_le_iff.1 hle
         simp at h1
   · intro i
-    rw [← coeff_zero_eq_constantCoeff_apply, hc, zero_add, if_pos]
+    rw [← coeff_zero_eq_constantCoeff_apply, hc, zero_add, ite_eq_left]
     have hn : (Finsupp.single i 1 : σ →₀ ℕ).support.Nonempty := ⟨i, by simp⟩
     show (if hn : (Finsupp.single i 1 : σ →₀ ℕ).support.Nonempty then some hn.choose else none) = some i
-    rw [dif_pos hn]
+    rw [dite_eq_left hn]
     have hs : hn.choose ∈ ({i} : Finset σ) := by
       rw [← Finsupp.support_single_ne_zero i (one_ne_zero : (1 : ℕ) ≠ 0)]
       exact hn.choose_spec
@@ -127,7 +127,7 @@ private lemma π_mem_sq {O X R : Type} [CommRing O] [AddCommGroup X] [CommRing R
     intro i
     rw [RingHom.mem_ker]
     erw [WPres.origin_π]
-    rw [← coeff_zero_eq_constantCoeff_apply, coeff_monomial, if_neg]
+    rw [← coeff_zero_eq_constantCoeff_apply, coeff_monomial, ite_eq_right]
     exact (Finsupp.single_ne_zero.2 one_ne_zero).symm
 
   rw [hf, map_sum]
@@ -168,10 +168,10 @@ theorem UpperTheory.V.Alg.chart_free :
       ← coeff_zero_eq_constantCoeff_apply, MvPowerSeries.coeff_map]
   · intro i
     refine ⟨W.π (MvPowerSeries.X i), ?_, ?_⟩
-    · rw [hφ, MvPowerSeries.map_X, MvPowerSeries.coeff_X, if_pos rfl]
+    · rw [hφ, MvPowerSeries.map_X, MvPowerSeries.coeff_X, ite_eq_left rfl]
       exact one_ne_zero
     · intro i' hi'
-      rw [hφ, MvPowerSeries.map_X, MvPowerSeries.coeff_X, if_neg]
+      rw [hφ, MvPowerSeries.map_X, MvPowerSeries.coeff_X, ite_eq_right]
       intro heq
       exact hi' (Finsupp.single_left_injective one_ne_zero heq)
   · intro f hf0 hlin

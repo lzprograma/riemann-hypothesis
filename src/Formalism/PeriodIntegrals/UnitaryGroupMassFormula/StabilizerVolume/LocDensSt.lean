@@ -2,43 +2,7 @@ module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.ExStabSt
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.PosNear
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 public import Mathlib.Analysis.SpecialFunctions.Log.Summable
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -119,14 +83,14 @@ theorem nuNeZero_of_dens (hA : ArchPos) (hL : LocPos) (hD : DensAA) (hQ : QvSum)
   let Φ : (Fin a → Fin M → AF F ⊗[F] E) → ℂ := fun X => Φinf (projInf X) * Φf (projFin X)
   have hSB : ∀ v, IsSB (Φv v) := fun v => by
     by_cases h : good v
-    · rw [show Φv v = (latV b v).indicator 1 from if_pos h]
+    · rw [show Φv v = (latV b v).indicator 1 from ite_eq_left h]
       exact PositiveNearLattice.isSB_latV b v a M
-    · rw [show Φv v = Φp v from if_neg h]
+    · rw [show Φv v = Φp v from ite_eq_right h]
       exact hΦpSB v
   have hpure : IsPureFin b Φf Φv := by
     refine ⟨hSB, ?_, fun _ => rfl⟩
     filter_upwards [hgood] with v hv
-    exact if_pos hv
+    exact ite_eq_left hv
   obtain ⟨-, -, heq⟩ := a6 fibV hfv _ b Φ Φinf Φf Φv hcΦ hcs hpure (fun _ => rfl)
   rw [h0, integral_zero_measure] at heq
   let Jv : HeightOneSpectrum (𝓞 F) → ℂ := fun v =>
@@ -134,21 +98,21 @@ theorem nuNeZero_of_dens (hA : ArchPos) (hL : LocPos) (hD : DensAA) (hQ : QvSum)
   have hJ0 : ∀ v, Jv v ≠ 0 := fun v => by
     by_cases h : good v
     · have e : Jv v = I v := by
-        simp only [Jv, I, Φv, if_pos h]
+        simp only [Jv, I, Φv, ite_eq_left h]
       rw [e]
       intro hI
       have := h.1
       rw [hI, zero_sub, norm_neg, norm_one] at this
       linarith [h.2]
     · have e : Jv v = ∫ X, Φp v X ∂(fibV v (hermOf (Fv F v) σ (gramE σ J X0) hT)) := by
-        simp only [Jv, Φv, if_neg h]
+        simp only [Jv, Φv, ite_eq_right h]
       rw [e]
       exact hΦp v
   have hJs : Summable fun v => ‖Jv v - 1‖ := by
     refine Summable.of_norm_bounded_eventually hsum ?_
     filter_upwards [hgood] with v hv
     have e : Jv v = I v := by
-      simp only [Jv, I, Φv, if_pos hv]
+      simp only [Jv, I, Φv, ite_eq_left hv]
     rw [e, norm_norm]
     exact hv.1
   have hne : ∏' v, (1 + (Jv v - 1)) ≠ 0 :=

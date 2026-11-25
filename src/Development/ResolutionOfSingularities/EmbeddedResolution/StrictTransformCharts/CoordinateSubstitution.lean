@@ -2,45 +2,7 @@ module
 
 public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
 public import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -101,7 +63,7 @@ theorem coordBlowupSubstMap_appTop_coord_of_mem (k : Type u) [Field k] (m : ℕ)
         AffineSpace.coord (Spec (CommRingCat.of k)) (ULift.up s) := by
   have hc : (ULift.up j : ULift.{u} (Fin m)).down ∈ S ∧
       (ULift.up j : ULift.{u} (Fin m)).down ≠ s := ⟨hj, hjs⟩
-  rw [coordBlowupSubstMap_appTop_coord k m S s (ULift.up j : ULift.{u} (Fin m)), if_pos hc]
+  rw [coordBlowupSubstMap_appTop_coord k m S s (ULift.up j : ULift.{u} (Fin m)), ite_eq_left hc]
 
 theorem coordBlowupSubstMap_appTop_coord_self (k : Type u) [Field k] (m : ℕ) (S : Finset (Fin m))
     (s : Fin m) :
@@ -112,7 +74,7 @@ theorem coordBlowupSubstMap_appTop_coord_self (k : Type u) [Field k] (m : ℕ) (
       (ULift.up s : ULift.{u} (Fin m)).down ≠ s) := by
     rintro ⟨-, h⟩
     exact h rfl
-  rw [coordBlowupSubstMap_appTop_coord k m S s (ULift.up s : ULift.{u} (Fin m)), if_neg hc]
+  rw [coordBlowupSubstMap_appTop_coord k m S s (ULift.up s : ULift.{u} (Fin m)), ite_eq_right hc]
 
 theorem coordBlowupSubstMap_appTop_coord_of_notMem (k : Type u) [Field k] (m : ℕ) (S : Finset (Fin m))
     (s : Fin m) (j : Fin m) (hj : j ∉ S) :
@@ -121,7 +83,7 @@ theorem coordBlowupSubstMap_appTop_coord_of_notMem (k : Type u) [Field k] (m : �
       AffineSpace.coord (Spec (CommRingCat.of k)) (ULift.up j) := by
   have hc : ¬ ((ULift.up j : ULift.{u} (Fin m)).down ∈ S ∧
       (ULift.up j : ULift.{u} (Fin m)).down ≠ s) := fun h => hj h.1
-  rw [coordBlowupSubstMap_appTop_coord k m S s (ULift.up j : ULift.{u} (Fin m)), if_neg hc]
+  rw [coordBlowupSubstMap_appTop_coord k m S s (ULift.up j : ULift.{u} (Fin m)), ite_eq_right hc]
 
 theorem comap_coordBlowupSubstMap_coordSubspaceIdeal_singleton_of_mem (k : Type u) [Field k] (m : ℕ)
     (S : Finset (Fin m)) (s : Fin m) (j : Fin m) (hj : j ∈ S) (hjs : j ≠ s) :

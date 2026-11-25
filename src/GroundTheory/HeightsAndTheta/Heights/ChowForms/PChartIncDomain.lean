@@ -110,14 +110,15 @@ theorem ker_aeval_eta (I : Ideal (MvPolynomial (Fin n) F)) (t : Fin n → F) (hI
       change aeval (τ⁻¹ • ξ) (linForm t - 1) = 0
       rw [map_sub, map_one, hhom _ 1 (isHomogeneous_linForm t), pow_one, inv_mul_cancel₀ hτ, sub_self]
 
-theorem proof : ChartIncDomain.Statement := by
-  intro F _ n e I t hI ht
-  have := hI.isPrime
+theorem exists_embed (I : Ideal (MvPolynomial (Fin n) F)) (t : Fin n → F) (e : ℕ) :
+    let J := I ⊔ Ideal.span {linForm t - 1}
+    let q : MvPolynomial (Fin n) F →+* MvPolynomial (Fin n) F ⧸ J := Ideal.Quotient.mk J
+    ∃ γbar : ChartInc I t e →+* MvPolynomial (Fin e × Fin n) (MvPolynomial (Fin n) F ⧸ J),
+      Function.Injective γbar ∧
+      (∀ g, γbar (chartX I t e g) = C (q g)) ∧
+      (∀ im, γbar (algebraMap (MvPolynomial (Fin e × Fin n) F) (ChartInc I t e) (X im)) =
+        genSubst (fun m => q (X m)) (fun m => q (C (t m))) im) := by
   set J := I ⊔ Ideal.span {linForm t - 1} with hJdef
-  have hJ : J.IsPrime := by
-    rw [hJdef, ← ker_aeval_eta I t hI ht]
-    exact RingHom.ker_isPrime _
-
   set q : MvPolynomial (Fin n) F →+* MvPolynomial (Fin n) F ⧸ J := Ideal.Quotient.mk J with hq
   set ζ : Fin n → MvPolynomial (Fin n) F ⧸ J := fun m => q (X m) with hζ
   set c : Fin n → MvPolynomial (Fin n) F ⧸ J := fun m => q (C (t m)) with hc'
@@ -128,7 +129,6 @@ theorem proof : ChartIncDomain.Statement := by
     set_option synthInstance.maxHeartbeats 100000 in
       rw [← h1, linForm, map_sum]
     simp only [map_mul, hζ, hc']
-
   set γ : MvPolynomial (Fin n ⊕ Fin e × Fin n) F →+* MvPolynomial (Fin e × Fin n) (MvPolynomial (Fin n) F ⧸ J) :=
     eval₂Hom (C.comp (q.comp C)) (Sum.elim (fun m => C (ζ m)) (genSubst ζ c)) with hγ
   have hγX : ∀ g, γ (rename Sum.inl g) = C (q g) := by
@@ -142,8 +142,7 @@ theorem proof : ChartIncDomain.Statement := by
     refine sup_le ?_ ?_
     · rw [Ideal.map_le_iff_le_comap]
       intro g hg
-      rw [Ideal.mem_comap, RingHom.mem_ker]
-      rw [hγX, hq, (Ideal.Quotient.eq_zero_iff_mem).mpr hg, map_zero]
+      rw [Ideal.mem_comap, RingHom.mem_ker, hγX, hq, (Ideal.Quotient.eq_zero_iff_mem).mpr hg, map_zero]
     · rw [Ideal.span_le]
       rintro _ ⟨i, rfl⟩
       rw [SetLike.mem_coe, RingHom.mem_ker]
@@ -155,17 +154,15 @@ theorem proof : ChartIncDomain.Statement := by
         simp only [map_sum, map_mul, hγ, coe_eval₂Hom, eval₂_X, Sum.elim_inl, Sum.elim_inr]
       simp only [genSubst, sub_mul, Finset.sum_sub_distrib, mul_assoc, ← Finset.mul_sum, hC, mul_one,
         sub_self]
-
-  set γbar : MvPolynomial (Fin n ⊕ Fin e × Fin n) F ⧸ chartIncIdeal I t e →+* MvPolynomial (Fin e × Fin n) (MvPolynomial (Fin n) F ⧸ J) :=
+  set γbar : MvPolynomial (Fin n ⊕ Fin e × Fin n) F ⧸ chartIncIdeal I t e →+*
+      MvPolynomial (Fin e × Fin n) (MvPolynomial (Fin n) F ⧸ J) :=
     Ideal.Quotient.lift (chartIncIdeal I t e) γ (fun a ha => RingHom.mem_ker.mp (hker ha)) with hγbar
   set χ : MvPolynomial (Fin n) F →+* MvPolynomial (Fin n ⊕ Fin e × Fin n) F ⧸ chartIncIdeal I t e :=
     (Ideal.Quotient.mk (chartIncIdeal I t e)).comp (rename Sum.inl).toRingHom with hχ
   have hJX : ∀ a ∈ J, χ a = 0 := by
     intro a ha
-    rw [hχ, RingHom.comp_apply]
-    rw [Ideal.Quotient.eq_zero_iff_mem]
+    rw [hχ, RingHom.comp_apply, Ideal.Quotient.eq_zero_iff_mem]
     exact Ideal.mem_sup_left (Ideal.mem_map_of_mem _ ha)
-
   set β : MvPolynomial (Fin e × Fin n) (MvPolynomial (Fin n) F ⧸ J) →+*
       MvPolynomial (Fin n ⊕ Fin e × Fin n) F ⧸ chartIncIdeal I t e :=
     eval₂Hom (Ideal.Quotient.lift J χ hJX)
@@ -188,21 +185,37 @@ theorem proof : ChartIncDomain.Statement := by
     obtain ⟨g, rfl⟩ := Ideal.Quotient.mk_surjective (I := chartIncIdeal I t e) x
     rw [hγbar, Ideal.Quotient.lift_mk]
     exact RingHom.congr_fun hβγ g
-  have hinj : Function.Injective γbar := Function.LeftInverse.injective hleft
+  refine ⟨γbar, Function.LeftInverse.injective hleft, ?_, ?_⟩
+  · intro g
+    rw [hγbar]
+    exact (Ideal.Quotient.lift_mk _ _ _).trans (hγX g)
+  · intro im
+    change γbar (Ideal.Quotient.mk _ (rename Sum.inr (X im))) = _
+    rw [hγbar, Ideal.Quotient.lift_mk, rename_X]
+    simp [hγ]
+    rfl
+
+theorem proof : ChartIncDomain.Statement := by
+  intro F _ n e I t hI ht
+  have := hI.isPrime
+  set J := I ⊔ Ideal.span {linForm t - 1} with hJdef
+  have hJ : J.IsPrime := by
+    rw [hJdef, ← ker_aeval_eta I t hI ht]
+    exact RingHom.ker_isPrime _
+  obtain ⟨γbar, hinj, hγX, -⟩ := exists_embed I t e
   refine ⟨(hinj.isDomain γbar :), ?_⟩
-  change RingHom.ker χ = J
   ext g
   constructor
   · intro hg
     rw [RingHom.mem_ker] at hg
     have h := hγX g
-    have h' : γbar (χ g) = γ (rename Sum.inl g) := by
-      rw [hγbar, hχ, RingHom.comp_apply]
-      exact Ideal.Quotient.lift_mk _ _ _
-    rw [← h', hg, map_zero, eq_comm, C_eq_zero, hq, Ideal.Quotient.eq_zero_iff_mem] at h
+    rw [hg, map_zero, eq_comm, C_eq_zero, Ideal.Quotient.eq_zero_iff_mem] at h
     exact h
   · intro hg
-    exact hJX g hg
+    rw [RingHom.mem_ker]
+    change Ideal.Quotient.mk (chartIncIdeal I t e) (rename Sum.inl g) = 0
+    rw [Ideal.Quotient.eq_zero_iff_mem]
+    exact Ideal.mem_sup_left (Ideal.mem_map_of_mem _ hg)
 
 end ChartIncDomain
 

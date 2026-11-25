@@ -18,45 +18,6 @@ public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PGen
 public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.ContractRelevant
 public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BundleObjects
 import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PHomLocRingLocal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.LiftFormNotMemBlowUpOf
 import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
 import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PComponentDim
@@ -75,14 +36,6 @@ import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PFiniteAlgebraLength
 import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPFDegree
 import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PSemilocalFiniteRank
 import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsExamples
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.KrullDimension.Field
-import Mathlib.RingTheory.Valuation.LocalSubring
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KrullDimQuotientEqOneIffEqBot
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.GenericFibreKerTarget
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -1493,7 +1446,7 @@ theorem fibre_degree (hϖ : Irreducible ϖ) (hP' : IsModelOver P' d)
   rw [← key4, finsum_eq_sum_of_support_subset _ (s := 𝒲.toFinset),
     Finset.sum_set_coe 𝒲 (f := fun W' => divCycle P' (rr j ι' O f) W' * (srd j W' : ℤ))]
   · refine Finset.sum_congr rfl fun W' h => ?_
-    rw [if_pos (Set.mem_toFinset.mp h).2.2]
+    rw [ite_eq_left (Set.mem_toFinset.mp h).2.2]
   · intro W' h
     rw [Function.mem_support] at h
     rw [Set.coe_toFinset]
@@ -1606,26 +1559,26 @@ theorem push (hϖ : Irreducible ϖ) (hP' : IsModelOver P' d)
           (if (C ϖ : MRing (fun k => ι' (j k)) O) ∈ W then vNum W a else 0)) := by
     intro W
     by_cases hW : (C ϖ : MRing (fun k => ι' (j k)) O) ∈ W
-    · rw [if_pos hW, hδ, ← fibre_num hϖ hP' hP hf hfP hW φ hφ a,
+    · rw [ite_eq_left hW, hδ, ← fibre_num hϖ hP' hP hf hfP hW φ hφ a,
         finsum_eq_sum_of_support_subset _ (s := hZ.toFinset), Finset.sum_filter]
       · refine Finset.sum_congr rfl fun W' _ => ?_
         by_cases h1 : W'.comap (rr j ι' O) = W
-        · rw [if_pos h1, if_pos h1, hg_def]
+        · rw [ite_eq_left h1, ite_eq_left h1, hg_def]
           dsimp only
-          rw [if_pos ((C_mem_comap j ι' W').mp (by rw [h1]; exact hW))]
-        · rw [if_neg h1, if_neg h1]
+          rw [ite_eq_left ((C_mem_comap j ι' W').mp (by rw [h1]; exact hW))]
+        · rw [ite_eq_right h1, ite_eq_right h1]
       · intro W' hW'
         refine hZ.mem_toFinset.mpr ?_
         rw [Function.mem_support] at hW' ⊢
         intro h0
         apply hW'
         simp [h0]
-    · rw [if_neg hW, mul_zero, mul_zero]
+    · rw [ite_eq_right hW, mul_zero, mul_zero]
       refine Finset.sum_eq_zero fun W' hW' => ?_
       have h1 := (Finset.mem_filter.mp hW').2
       rw [hg_def]
       dsimp only
-      rw [if_neg (fun h => hW (h1 ▸ (C_mem_comap j ι' W').mpr h)), mul_zero]
+      rw [ite_eq_right (fun h => hW (h1 ▸ (C_mem_comap j ι' W').mpr h)), mul_zero]
   unfold cycEval
   rw [mul_finsum]
   calc (∑ᶠ W', g W') = ∑ W' ∈ hZ.toFinset, g W' := finsum_eq_sum_of_support_subset g hg

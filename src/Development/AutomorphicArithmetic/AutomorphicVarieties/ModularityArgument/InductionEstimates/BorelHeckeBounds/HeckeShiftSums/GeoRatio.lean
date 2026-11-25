@@ -4,6 +4,7 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityA
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.SgBasics
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PluckOne
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpqMinor
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpqMinor
 public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QhtBasic
 import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
 import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
@@ -198,19 +199,7 @@ private theorem rows_eq {R : Type} [CommRing R] (X : UPos (2 + 2) 2 → R) (a b 
     (h : Matrix (Fin (2 + 2)) (Fin (2 + 2)) R) (c : Fin 2 → Fin (2 + 2)) :
     (((unipGL X * blk a b : GL (Fin (2 + 2)) R) : Matrix (Fin (2 + 2)) (Fin (2 + 2)) R) * h).submatrix (Fin.natAdd 2) c =
       (b : Matrix (Fin 2) (Fin 2) R) * h.submatrix (Fin.natAdd 2) c := by
-  have h1 : ∀ (M : Matrix (Fin (2 + 2)) (Fin (2 + 2)) R) (i : Fin 2) j,
-      (unipMatrix X * M) (Fin.natAdd 2 i) j = M (Fin.natAdd 2 i) j := by
-    intro M i j
-    have : (blockEntry X * M) (Fin.natAdd 2 i) j = 0 := by
-      rw [Matrix.mul_apply]
-      refine Finset.sum_eq_zero fun l _ => ?_
-      rw [blockEntry_apply, dite_eq_right (by simp), zero_mul]
-    rw [unipMatrix, add_mul, one_mul, Matrix.add_apply, this, add_zero]
-  ext i j
-  rw [Matrix.submatrix_apply, Units.val_mul, coe_unipGL, mul_assoc, h1, Matrix.mul_apply, Matrix.mul_apply, Fin.sum_univ_add]
-  simp only [blk, Matrix.reindex_apply, Matrix.submatrix_apply, finSumFinEquiv_symm_apply_natAdd,
-    finSumFinEquiv_symm_apply_castAdd, Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂, Matrix.zero_apply, zero_mul,
-    Finset.sum_const_zero, zero_add]
+  apply _root_.hpq_rows <;> assumption
 
 private theorem ent_step {K : Type} [Field K] [NumberField K] {b : AdelicGLn.AdelicGL K (2 + 2)} {m₀ : ℝ}
     (hB : b ∈ (adelicBorel : Subgroup (AdelicGLn.AdelicGL K (2 + 2))))

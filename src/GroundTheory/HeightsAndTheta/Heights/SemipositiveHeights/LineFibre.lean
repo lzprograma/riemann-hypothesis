@@ -72,7 +72,7 @@ theorem linearForm_fin_one_eq {g : MvPolynomial (Fin 1) F} (hg : g.IsHomogeneous
   by_cases h : Finsupp.single 0 1 = d
   · subst h
     simp
-  · rw [if_neg h, mul_zero]
+  · rw [ite_eq_right h, mul_zero]
     by_contra hne
     apply h
     have hw := hg hne
@@ -139,7 +139,7 @@ theorem LineFibreBlocks.proof (hLin : LinearQuotient.Statement) : LineFibreBlock
     rw [hφ0] at hf
     have := congrArg (AddMonoidAlgebra.coeff · (Finsupp.single 0 1)) hf
     simp [Algebra.ofId_apply, coeff_X, algebraMap_eq, coeff_C] at this
-    rw [if_neg (Finsupp.single_ne_zero.mpr one_ne_zero).symm] at this
+    rw [ite_eq_right (Finsupp.single_ne_zero.mpr one_ne_zero).symm] at this
     exact zero_ne_one this
   obtain ⟨s₁, hs₁⟩ := hex
   have hWrel : IsRelevant W := fun k => by

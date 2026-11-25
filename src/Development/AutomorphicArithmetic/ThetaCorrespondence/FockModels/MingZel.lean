@@ -13,64 +13,11 @@ public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.
 public import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField
 public import Development.WeilBound.RepresentationTheoryGL.PointAveraging.MinkowskiBalls.MeasurableSetBallM
 public import Development.WeilBound.RepresentationTheoryGL.PointAveraging.MinkowskiBalls.ValLeOneOfLc
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
 import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Compactness.Paracompact
 import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RadfordShufflePolynomialHolds
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -288,7 +235,6 @@ section Mat
 
 variable {α β : Type} [Fintype α]
 
-
 open MeasureTheory ValuativeRel in
 open scoped TensorProduct Topology in
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
@@ -317,12 +263,12 @@ theorem _root_.GlobalTheory.GodementJacquet.parab_mul_eMat
     rfl
   ext i j
   simp only [Matrix.mul_apply, hE, hL, mul_ite, ite_mul, mul_one, one_mul, mul_zero, zero_mul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   refine Fin.addCases (fun i => ?_) (fun i => ?_) i
   · simp
   · rw [hlow]
     refine (Finset.sum_eq_zero fun x _ => ?_).symm
-    rw [if_neg]
+    rw [ite_eq_right]
     simp only [Fin.ext_iff, Fin.coe_natAdd, Fin.coe_castAdd]
     omega
 
@@ -348,10 +294,6 @@ variable (hσ : IsSmooth σ) (hs : ∀ v w, Bf w v = starRingEnd ℂ (Bf v w))
     (hp : ∀ v, v ≠ 0 → 0 < (Bf v v).re) (hu : ∀ g v w, Bf (σ g v) (σ g w) = Bf v w)
 include hσ hs hp hu
 
-
-
-
-
 end Int
 
 section Family
@@ -360,14 +302,11 @@ variable [MeasurableSpace (GL (Fin r) k)] [BorelSpace (GL (Fin r) k)] [SecondCou
   {m : Measure (GL (Fin r) k)} {μ : kˣ →* ℂˣ} {σ : Representation ℂ (GL (Fin r) k) V}
   {Bf : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ}
 
-
 variable [m.IsMulLeftInvariant] (hσ : IsSmooth σ) (hs : ∀ v w, Bf w v = starRingEnd ℂ (Bf v w))
     (hp : ∀ v, v ≠ 0 → 0 < (Bf v v).re) (hu : ∀ g v w, Bf (σ g v) (σ g w) = Bf v w)
     (hI : ∀ (h : GL (Fin (r + t)) k) (Φ : Matrix (Fin (r + t)) (Fin r) k → ℂ),
       Φ ∈ SB (Matrix (Fin (r + t)) (Fin r) k) →
       Integrable (fun g : GL (Fin r) k => om μ g h Φ (eMat k r t)) m)
-
-
 
 end Family
 
@@ -388,7 +327,6 @@ variable [MeasurableSpace (GL (Fin r) k)] [BorelSpace (GL (Fin r) k)] [SecondCou
   (hI : ∀ (h : GL (Fin (r + t)) k) (Φ : Matrix (Fin (r + t)) (Fin r) k → ℂ),
     Φ ∈ SB (Matrix (Fin (r + t)) (Fin r) k) →
     Integrable (fun g : GL (Fin r) k => om μ g h Φ (eMat k r t)) m)
-
 
 end Pairing
 
@@ -575,22 +513,22 @@ theorem E_mul {R : Type*} [Semiring R] {a b c j : ℕ} (hb : j ≤ b) :
   ext i l
   simp only [Matrix.mul_apply, E_apply]
   by_cases h : (i : ℕ) = l ∧ (l : ℕ) < j
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     obtain ⟨h1, h2⟩ := h
     have hi : (i : ℕ) < j := h1 ▸ h2
     rw [Finset.sum_eq_single (⟨i, by omega⟩ : Fin b)]
     · simp [h1, h2]
     · intro m _ hm
       have hne : ¬ ((i : ℕ) = m ∧ (m : ℕ) < j) := fun e => hm (Fin.ext e.1.symm)
-      rw [if_neg hne, zero_mul]
+      rw [ite_eq_right hne, zero_mul]
     · intro h'
       exact absurd (Finset.mem_univ _) h'
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     refine Finset.sum_eq_zero fun m _ => ?_
     by_cases h1 : (i : ℕ) = m ∧ (m : ℕ) < j
     · have h2 : ¬ ((m : ℕ) = l ∧ (l : ℕ) < j) := fun h2 => h ⟨h1.1.trans h2.1, h2.2⟩
-      rw [if_neg h2, mul_zero]
-    · rw [if_neg h1, zero_mul]
+      rw [ite_eq_right h2, mul_zero]
+    · rw [ite_eq_right h1, zero_mul]
 
 theorem E_diag {R : Type*} [Semiring R] {a j : ℕ} :
     E R a a j = diagonal fun i : Fin a => if (i : ℕ) < j then 1 else 0 := by
@@ -684,13 +622,12 @@ private theorem E_mul_apply_eq_dite_lt {R : Type*} [Semiring R] {a b c j : ℕ} 
     · simp [h]
     · intro t _ ht
       have hne : ¬ ((i : ℕ) = t ∧ (t : ℕ) < j) := fun e => ht (Fin.ext e.1.symm)
-      rw [if_neg hne, zero_mul]
+      rw [ite_eq_right hne, zero_mul]
     · intro h'
       exact absurd (Finset.mem_univ _) h'
   · refine Finset.sum_eq_zero fun t _ => ?_
     have hne : ¬ ((i : ℕ) = t ∧ (t : ℕ) < j) := fun e => h (by rw [e.1]; exact e.2)
-    rw [if_neg hne, zero_mul]
-
+    rw [ite_eq_right hne, zero_mul]
 
 theorem nf1 {k : Type*} [Field k] {n r j : ℕ} (x : Matrix (Fin n) (Fin r) k) (hx : x.rank = j) :
     ∃ (H : GL (Fin n) k) (G : GL (Fin r) k), x = H.val * E k n r j * G.val := by
@@ -708,7 +645,7 @@ theorem nf1 {k : Type*} [Field k] {n r j : ℕ} (x : Matrix (Fin n) (Fin r) k) (
     · have hc : (H.val * E k n n j).col m = (bb ⟨m, hm⟩ : Fin n → k) := by
         ext i
         show (H.val * E k n n j) i m = _
-        simp only [E_diag, mul_diagonal, hm, if_true, mul_one]
+        simp only [E_diag, mul_diagonal, hm, ite_true, mul_one]
         exact hH i ⟨m, hm⟩
       rw [hc]
       exact (bb ⟨m, hm⟩).2
@@ -926,77 +863,7 @@ namespace PositivityTheory.Rg.Ming.UniqX
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem valSet_eq (a : k) (c : kˣ) :
-    {y : k | valuation k (y - a) ≤ valuation k (c : k)} = (fun y => -a + y) ⁻¹' (c • (𝒪[k] : Set k)) := by
-  ext y
-  have hc : 0 < valuation k (c : k) := by
-    rw [zero_lt_iff]; simp
-  simp only [Set.mem_setOf_eq, Set.mem_preimage]
-  rw [Set.mem_smul_set_iff_inv_smul_mem, SetLike.mem_coe, Valuation.mem_integer_iff, Units.smul_def,
-    Units.val_inv_eq_inv_val, smul_eq_mul, map_mul, map_inv₀, neg_add_eq_sub, inv_mul_le_one₀ hc]
-
-theorem isOpen_valSet (a : k) (c : kˣ) : IsOpen {y : k | valuation k (y - a) ≤ valuation k (c : k)} := by
-  rw [valSet_eq]
-  exact (Valuation.isOpen_integer.smul c).preimage (continuous_const.add continuous_id)
-
-theorem vol_valSet [MeasurableSpace k] [BorelSpace k] (ν : Measure k) (hν : IsUnitVol ν) (a : k) (c : kˣ) :
-    ν {y : k | valuation k (y - a) ≤ valuation k (c : k)} = ENNReal.ofReal (nabs k c) := by
-  obtain ⟨hH, h1⟩ := hν
-  haveI := hH
-  haveI : SecondCountableTopology k := by exact secondCountable k
-  rw [valSet_eq, measure_preimage_add, ← distribHaarChar_mul, h1, mul_one, nabs, ENNReal.ofReal_coe_nnreal]
-
 variable {n r : ℕ}
-
-theorem ballM_eq_pi (c : kˣ) (x₀ : Matrix (Fin n) (Fin r) k) :
-    (ballM c x₀ : Set (Matrix (Fin n) (Fin r) k)) =
-      (Set.univ.pi fun i => Set.univ.pi fun l => {y : k | valuation k (y - x₀ i l) ≤ valuation k (c : k)} :
-        Set (Fin n → Fin r → k)) := by
-  ext x
-  simp only [ballM, Set.mem_setOf_eq]
-  constructor
-  · intro h i _ l _
-    exact h i l
-  · intro h i l
-    exact h i (Set.mem_univ _) l (Set.mem_univ _)
-
-theorem measurableSet_ballM [MeasurableSpace k] [BorelSpace k] (c : kˣ) (x₀ : Matrix (Fin n) (Fin r) k) :
-    MeasurableSet (ballM c x₀) := by
-  rw [ballM_eq_pi]
-  exact MeasurableSet.univ_pi fun i => MeasurableSet.univ_pi fun l => (isOpen_valSet _ c).measurableSet
-
-theorem volM_ballM [MeasurableSpace k] [BorelSpace k] (ν : Measure k) (hν : IsUnitVol ν) (c : kˣ)
-    (x₀ : Matrix (Fin n) (Fin r) k) :
-    volM ν (Fin n) (Fin r) (ballM c x₀) = ∏ _i : Fin n, ∏ _l : Fin r, ENNReal.ofReal (nabs k c) := by
-  obtain ⟨hH, h1⟩ := hν
-  haveI := hH
-  haveI : SecondCountableTopology k := by exact secondCountable k
-  rw [volM, ballM_eq_pi]
-  erw [Measure.pi_pi]
-  refine Finset.prod_congr rfl fun i _ => ?_
-  rw [Measure.pi_pi]
-  exact Finset.prod_congr rfl fun l _ => vol_valSet ν ⟨hH, h1⟩ (x₀ i l) c
-
-theorem volM_ballM_ne_zero [MeasurableSpace k] [BorelSpace k] (ν : Measure k) (hν : IsUnitVol ν) (c : kˣ)
-    (x₀ : Matrix (Fin n) (Fin r) k) : (volM ν (Fin n) (Fin r) (ballM c x₀)).toReal ≠ 0 := by
-  have hpos : 0 < nabs k c := by
-    unfold nabs
-    have h : distribHaarChar k c * distribHaarChar k c⁻¹ = 1 := by
-      rw [← map_mul, mul_inv_cancel, map_one]
-    have hne : distribHaarChar k c ≠ 0 := left_ne_zero_of_mul_eq_one h
-    exact_mod_cast pos_iff_ne_zero.2 hne
-  rw [volM_ballM ν hν, ENNReal.toReal_prod]
-  refine Finset.prod_ne_zero_iff.2 fun i _ => ?_
-  rw [ENNReal.toReal_prod]
-  refine Finset.prod_ne_zero_iff.2 fun l _ => ?_
-  rw [ENNReal.toReal_ofReal hpos.le]
-  exact hpos.ne'
-
-theorem integral_ind [MeasurableSpace k] [BorelSpace k] (ν : Measure k) (c : kˣ) (x₀ : Matrix (Fin n) (Fin r) k) :
-    ∫ x, (ballM c x₀).indicator (fun _ => (1 : ℂ)) x ∂volM ν (Fin n) (Fin r) =
-      ((volM ν (Fin n) (Fin r) (ballM c x₀)).toReal : ℂ) := by
-  rw [integral_indicator_const _ (measurableSet_ballM c x₀)]
-  simp [Measure.real]
 
 theorem ballM_mono {c c' : kˣ} (hle : valuation k (c : k) ≤ valuation k (c' : k))
     {x₀ : Matrix (Fin n) (Fin r) k} : ballM c x₀ ⊆ ballM c' x₀ :=
@@ -1040,8 +907,8 @@ theorem germ_unique (hb : BallSt) [MeasurableSpace k] [BorelSpace k] (ν : Measu
   have e₂ := hc₂ Φ fun x hx => ballM_mono hle₂ (hsupp x hx)
   have hI : (∫ x, (Φ : Matrix (Fin n) (Fin r) k → ℂ) x ∂volM ν (Fin n) (Fin r)) ≠ 0 := by
     change (∫ x, (ballM c x₀).indicator (fun _ => (1 : ℂ)) x ∂volM ν (Fin n) (Fin r)) ≠ 0
-    rw [integral_ind]
-    exact Complex.ofReal_ne_zero.2 (volM_ballM_ne_zero ν hν c x₀)
+    rw [PositivityTheory.Rg.Ming.GermX.integral_ind]
+    exact Complex.ofReal_ne_zero.2 (PositivityTheory.Rg.Ming.GermX.volM_ballM_ne_zero ν hν c x₀)
   exact smul_right_injective V hI (e₁.symm.trans e₂)
 
 end PositivityTheory.Rg.Ming.UniqX
@@ -1117,13 +984,6 @@ theorem isCompact_cb (a : k) (γ : ValueGroupWithZero k) :
     rw [add_sub_cancel_right]
     exact hx
 
-theorem ballM_eq_pi (c : kˣ) (x₀ : Matrix (Fin n) (Fin r) k) :
-    (ballM c x₀ : Set (Matrix (Fin n) (Fin r) k)) =
-      (Set.univ.pi fun i => Set.univ.pi fun l => {y : k | valuation k (y - x₀ i l) ≤ valuation k (c : k)} :
-        Set (Fin n → Fin r → k)) := by
-  ext x
-  exact ⟨fun h i _ l _ => h i l, fun h i l => h i trivial l trivial⟩
-
 theorem mem_ballM_self (c : kˣ) (x : Matrix (Fin n) (Fin r) k) : x ∈ ballM c x := by
   intro i l
   simp
@@ -1148,12 +1008,12 @@ theorem mem_symm {c : kˣ} {x x₀ : Matrix (Fin n) (Fin r) k} (hx : x ∈ ballM
   rw [ballM_eq_of_mem hx]; exact mem_ballM_self c x₀
 
 theorem isOpen_ballM (c : kˣ) (x₀ : Matrix (Fin n) (Fin r) k) : IsOpen (ballM c x₀) := by
-  rw [ballM_eq_pi]
+  rw [PositivityTheory.Rg.Ming.GermX.ballM_eq_pi]
   exact isOpen_set_pi Set.finite_univ (fun i _ => isOpen_set_pi Set.finite_univ
     (fun l _ => isOpen_cb _ (by simp)))
 
 theorem isCompact_ballM (c : kˣ) (x₀ : Matrix (Fin n) (Fin r) k) : IsCompact (ballM c x₀) := by
-  rw [ballM_eq_pi]
+  rw [PositivityTheory.Rg.Ming.GermX.ballM_eq_pi]
   exact isCompact_univ_pi (fun i => isCompact_univ_pi (fun l => isCompact_cb _ _))
 
 theorem disj {c : kˣ} {x x₀ : Matrix (Fin n) (Fin r) k} (hx : x ∉ ballM c x₀) :
@@ -1180,11 +1040,6 @@ theorem indicator_mem_SB (c : kˣ) (x₀ : Matrix (Fin n) (Fin r) k) :
       rw [Set.indicator_of_notMem (disj hx x' hx'), Set.indicator_of_notMem hx]
   · exact HasCompactSupport.intro' (isCompact_ballM c x₀) (isClosed_ballM c x₀)
       (fun x hx => Set.indicator_of_notMem hx _)
-
-theorem KO_entry {N : ℕ} {h : GL (Fin N) k} (hh : h ∈ KO k (Fin N)) (i j : Fin N) :
-    valuation k (h.val i j) ≤ 1 := by
-  obtain ⟨H, rfl⟩ := hh
-  exact (H.val i j).2
 
 theorem left_le {m p q : ℕ} (h : Matrix (Fin m) (Fin p) k) (y : Matrix (Fin p) (Fin q) k)
     {γ : ValueGroupWithZero k} (hh : ∀ i j, valuation k (h i j) ≤ 1) (hy : ∀ i j, valuation k (y i j) ≤ γ) :
@@ -1213,8 +1068,8 @@ theorem KO_fwd {c : kˣ} {h : GL (Fin n) k} (hh : h ∈ KO k (Fin n)) {g : GL (F
   have e : h.val * x * g.val - h.val * x₀ * g.val = h.val * (x - x₀) * g.val := by
     rw [Matrix.mul_sub, Matrix.sub_mul]
   rw [← Matrix.sub_apply, e]
-  exact right_le _ _ (left_le _ _ (KO_entry hh) (fun i l => by rw [Matrix.sub_apply]; exact hx i l))
-    (KO_entry hg) i l
+  exact right_le _ _ (left_le _ _ (PositivityTheory.Rg.Ming.GermX.KO_entry hh) (fun i l => by rw [Matrix.sub_apply]; exact hx i l))
+    (PositivityTheory.Rg.Ming.GermX.KO_entry hg) i l
 
 theorem KO_inv {c : kˣ} {h : GL (Fin n) k} (hh : h ∈ KO k (Fin n)) {g : GL (Fin r) k} (hg : g ∈ KO k (Fin r))
     {x x₀ : Matrix (Fin n) (Fin r) k} :
@@ -1591,7 +1446,7 @@ theorem key (hball : BallSt) (hnf : NfSt) (hcore : CoreSt) {j : ℕ} (hj : j < r
       by_cases hz : z ∈ ballM c' x
       · rw [Set.indicator_of_mem hz, Set.indicator_of_mem (hiff.mpr hz)]
       · rw [Set.indicator_of_notMem hz, Set.indicator_of_notMem (fun h' => hz (hiff.mp h'))]
-    · push_neg at hr
+    · push Not at hr
       apply hV
       intro z hz
       show (ballM c' x).indicator (fun _ => (1 : ℂ)) z = 0

@@ -2,53 +2,10 @@ module
 
 public import Formalism.SatakeDualWeyl.Statement
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FundamentalEquivalence.LevelIntersectParabolic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.SemiGen, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.HermitianIsotropicProjComplement, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.SemiAlg
@@ -286,14 +243,6 @@ theorem h_pX_right (H : D.Hyp) {y : n → A} (hy : ∀ b, D.h (D.e b) y = 0) (u 
     D.h y (D.pX u) = 0 := by
   rw [h_symm H (D.pX u) y, h_pX_left hy, map_zero]
 
-theorem h_span_left {x y : n → A} (hx : x ∈ Submodule.span A (Set.range D.e))
-    (hy : ∀ b, D.h (D.e b) y = 0) : D.h x y = 0 := by
-  induction hx using Submodule.span_induction with
-  | mem x hx => obtain ⟨a, rfl⟩ := hx; exact hy a
-  | zero => simp [Dat.h, hform]
-  | add x x' _ _ h1 h2 => rw [h_add_left, h1, h2, add_zero]
-  | smul c x _ h1 => rw [h_smul_left, h1, mul_zero]
-
 theorem pW_span (H : D.Hyp) {x : n → A} (hx : x ∈ Submodule.span A (Set.range D.e)) :
     D.pW x = 0 := by
   induction hx using Submodule.span_induction with
@@ -420,16 +369,6 @@ theorem Pi_of_N (H : D.Hyp) {S : (n → A) →ₗ[A] (n → A)}
   simp only [pW, LinearMap.sub_apply, LinearMap.id_apply]
   abel
 
-theorem mapW_of_inv {S Si : (n → A) →ₗ[A] (n → A)} (hSSi : ∀ v, S (Si v) = v) (hU : D.Uni S)
-    (hXi : D.MapX Si) (hZi : Si D.z - D.z ∈ Submodule.span A (Set.range D.e)) : D.MapW S := by
-  intro w hw
-  refine ⟨fun b => ?_, ?_⟩
-  · rw [← hSSi (D.e b), hU]
-    exact h_span_left (hXi b) hw.1
-  · rw [← hSSi D.z, hU]
-    have hz : Si D.z = D.z + (Si D.z - D.z) := by abel
-    rw [hz, h_add_left, hw.2.2, h_span_left hZi hw.1, add_zero]
-
 theorem N_part (H : D.Hyp) {S : (n → A) →ₗ[A] (n → A)} (hX : D.MapX S) (hW : D.MapW S)
     (hZ : S D.z - D.z ∈ Submodule.span A (Set.range D.e)) (v : n → A)
     (hv : ∀ a, D.h (D.e a) v = 0) : S v - D.Pi S v ∈ Submodule.span A (Set.range D.e) := by
@@ -496,7 +435,6 @@ theorem sigR_inclR (x : E) : sigR R σ (inclR (F := F) R x) = inclR (F := F) R (
 
 theorem hR_ratV (x y : Fin M → E) :
     hR R σ J (ratV (F := F) R x) (ratV (F := F) R y) = inclR (F := F) R (hE σ J x y) := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [hR, hE, Formalism.UG.hform, ratV, JR, sigR_inclR, map_sum, map_mul]
 
 variable {R σ J P T}

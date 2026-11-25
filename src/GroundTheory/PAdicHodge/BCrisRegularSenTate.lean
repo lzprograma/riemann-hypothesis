@@ -184,20 +184,6 @@ namespace GroundTheory.PAdicHodge
 
 open GroundTheory.LocalField ValuativeRel Filter Topology IntermediateField IsLocalRing
 
-section Tower
-
-variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
-  {Ω : Type*} [Field Ω] [ValuativeRel Ω] [TopologicalSpace Ω] [IsValuativeTopology Ω]
-  [Algebra K Ω] [ValuativeExtension K Ω] [Algebra.IsAlgebraic K Ω] {p : ℕ}
-
-namespace NormTower
-
-variable (t : NormTower K Ω p)
-
-end NormTower
-
-end Tower
-
 section FieldOfNorms
 
 variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]

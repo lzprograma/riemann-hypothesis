@@ -1,53 +1,12 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionLatticeGradedOfLevelLe
 public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.MemPolKIff
 public import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Sheaves.Presheaf
-import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 
 @[expose] public section
@@ -186,18 +145,10 @@ theorem cge_mul {σ : Type} {a b : ℝ} {F G : MvPolynomial σ K} (hF : cge v a 
   exact vge_sum v _ _ fun x _ => vge_mul v (hF _) (hG _)
 
 theorem v_natCast_nonneg (n : ℕ) : 0 ≤ v (n : K) := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    push_cast
-    exact le_trans (le_min ih (by simp)) (v.map_add _ _)
+  apply _root_.GlobalTheory.NL.GradedLat.val_nat_nonneg <;> assumption
 
 theorem v_intCast_nonneg (z : ℤ) : 0 ≤ v (z : K) := by
-  cases z with
-  | ofNat n => simpa using v_natCast_nonneg v n
-  | negSucc n =>
-    rw [Int.cast_negSucc, AddValuation.map_neg]
-    exact v_natCast_nonneg v (n + 1)
+  apply _root_.GlobalTheory.NL.GradedLat.val_int_nonneg <;> assumption
 
 theorem vge_natCast (n : ℕ) : vge v 0 (n : K) := (vge_zero_iff v _).mpr (v_natCast_nonneg v n)
 
@@ -253,8 +204,7 @@ theorem v_natCast_of_not_dvd (hD : DVRHyp v p) {m : ℕ} (h : ¬ p ∣ m) : v (m
     rw [v.map_mul, hD.vp]
     exact lt_of_lt_of_le h01 (le_add_of_nonneg_left (v_intCast_nonneg v b))
   have ham : v ((a : K) * m) ≤ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact absurd h1 (not_le.mpr (lt_min hc hbp))
   rw [v.map_mul] at ham
   exact le_antisymm (le_trans (le_add_of_nonneg_left (v_intCast_nonneg v a)) ham)
@@ -417,12 +367,12 @@ theorem kapL_mono {p : ℕ} (hp : 2 ≤ p) (r : ℕ) {L : Type} [Fintype L] {d d
   apply Finset.sum_le_sum
   intro i _
   by_cases h0 : d i = 0
-  · rw [if_pos h0]
+  · rw [ite_eq_left h0]
     exact kapL_term_nonneg hp r (d' i)
   · have h1 : d' i ≠ 0 := by
       have := h i
       omega
-    rw [if_neg h0, if_neg h1]
+    rw [ite_eq_right h0, ite_eq_right h1]
     exact mul_le_mul_of_nonneg_left (logb_add_mono hp r (by omega) (h i)) (Nat.cast_nonneg r)
 
 theorem kapL_le_kap {p : ℕ} (hp : 2 ≤ p) {r : ℕ} (hr : 1 ≤ r) {L : Type} [Fintype L] (d : L → ℕ) :
@@ -433,7 +383,6 @@ theorem kapL_le_kap {p : ℕ} (hp : 2 ≤ p) {r : ℕ} (hr : 1 ≤ r) {L : Type}
   apply Finset.sum_le_sum
   intro i _
   have hl := logb_add_nonneg hp r (d i) (by omega)
-  have hr0 : (0 : ℝ) ≤ r := Nat.cast_nonneg r
   split_ifs with h0
   · nlinarith
   · apply le_of_eq
@@ -456,7 +405,6 @@ theorem natLog_le_term {p : ℕ} (hp : 2 ≤ p) (r a : ℕ) :
     simp
   · apply mul_le_mul_of_nonneg_left _ (Nat.cast_nonneg r)
     have ha0 : (0 : ℝ) < a := Nat.cast_pos.mpr (Nat.pos_of_ne_zero ha)
-    have hr0 : (0 : ℝ) ≤ r := Nat.cast_nonneg r
     rw [Real.le_logb_iff_rpow_le (by exact_mod_cast (by omega : 1 < p)) (by linarith),
       Real.rpow_natCast]
     have h2 : ((p ^ Nat.log p a : ℕ) : ℝ) ≤ a := by exact_mod_cast Nat.pow_log_le_self p ha

@@ -8,7 +8,7 @@ public import Mathlib.NumberTheory.NumberField.Basic
 namespace Bl.general_b_fact_bis_other
 
 theorem goal1 :
-  ∀ {K : Type} [inst : Field.{0} K] [NumberField.{0} K] {r n : Nat} (v : Fin n → Fin r → K) {x : Fin r → K},
+  ∀ {K : Type} [Field.{0} K] [NumberField.{0} K] {r n : Nat} (v : Fin n → Fin r → K) {x : Fin r → K},
   Membership.mem.{0, 0} (Submodule.span.{0, 0} K (Set.range.{0, 1} v)) x →
     Exists.{1} fun (d : Int) ↦
       And (Ne.{1} d 0)

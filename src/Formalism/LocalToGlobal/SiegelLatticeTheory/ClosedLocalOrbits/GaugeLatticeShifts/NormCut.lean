@@ -228,7 +228,7 @@ theorem normExp_abs {τ Rw H K Q1 Q2 R R' : Type} [NormedAddCommGroup H] [InnerP
   have ha_le : ∀ t, w (intersection_update_fsHerm_neg_one t) * ‖a t‖ ≤ ‖X.vec t‖ := by
     intro t
     have e : (X.vec t).ofLp (intersection_update_fsHerm_neg_one t) = ((w (intersection_update_fsHerm_neg_one t) : ℝ) : ℂ) • a t := by
-      rw [hvec t, PiLp.toLp_apply, if_pos rfl]
+      rw [hvec t, PiLp.toLp_apply, ite_eq_left rfl]
     have h1 := PiLp.norm_apply_le (X.vec t) (intersection_update_fsHerm_neg_one t)
     rw [e, norm_smul, Complex.norm_real, Real.norm_of_nonneg (hw0 _).le] at h1
     exact h1
@@ -239,13 +239,13 @@ theorem normExp_abs {τ Rw H K Q1 Q2 R R' : Type} [NormedAddCommGroup H] [InnerP
       ((hsumv.mul_left _).mul_left _) ?_
     intro t
     by_cases h : c t
-    · rw [if_pos h, norm_smul]
+    · rw [ite_eq_left h, norm_smul]
       gcongr
       have := ha_le t
       rw [hc t h] at this
       rw [inv_mul_eq_div, le_div_iff₀ (hw0 q)]
       linarith
-    · rw [if_neg h, norm_zero]
+    · rw [ite_eq_right h, norm_zero]
       have := hw0 q
       positivity
 
@@ -263,23 +263,23 @@ theorem normExp_abs {τ Rw H K Q1 Q2 R R' : Type} [NormedAddCommGroup H] [InnerP
     refine tsum_congr fun t => ?_
     rw [Set.indicator_apply]
     by_cases ht : t ∈ S
-    · rw [if_pos ht, hop t ρ ρ']
+    · rw [ite_eq_left ht, hop t ρ ρ']
       by_cases hs : intersection_update_fsHerm_neg_one t = (lamR ρ, lamR' ρ')
-      · rw [if_pos hs, Finset.sum_eq_single (ιt t)]
-        · rw [if_pos ⟨ht, hs, rfl⟩]
+      · rw [ite_eq_left hs, Finset.sum_eq_single (ιt t)]
+        · rw [ite_eq_left ⟨ht, hs, rfl⟩]
         · intro i _ hi
-          exact if_neg (fun h => hi h.2.2.symm)
+          exact ite_eq_right (fun h => hi h.2.2.symm)
         · intro h; exact absurd (Finset.mem_univ _) h
-      · rw [if_neg hs]
+      · rw [ite_eq_right hs]
         symm
         apply Finset.sum_eq_zero
         intro i _
-        exact if_neg (fun h => hs h.2.1)
-    · rw [if_neg ht, map_zero]
+        exact ite_eq_right (fun h => hs h.2.1)
+    · rw [ite_eq_right ht, map_zero]
       symm
       apply Finset.sum_eq_zero
       intro i _
-      exact if_neg (fun h => ht h.1)
+      exact ite_eq_right (fun h => ht h.1)
   have hnorm : ‖X.part S‖ ^ 2 = (∑ ρ, ∑ ρ', fForm p (G (lamR ρ, lamR' ρ')) (sR ρ) (sR' ρ')).re := by
     rw [@norm_sq_eq_re_inner ℂ, hBl]
     simp only [hBl_part, inner_sum_smul, fForm, hGdef]
@@ -462,8 +462,6 @@ end Blocks
 
 section Conc
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what₂.Word}
   {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)} {F0' : FlagG (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)}
   {what₂ rows' : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
@@ -540,27 +538,27 @@ theorem hsEmb_blk {sc : cs.Cl → Iof TR} {sc' : cs'.Cl → Iof TR} (hChi : ChiN
   · obtain ⟨h1, h2⟩ := hs
     have hposition : positionT t = (lamQ cs ρ, lamQ cs' ρ') := Prod.ext (Subtype.ext h1.symm) (Subtype.ext h2.symm)
     have hP := hPh t ρ ρ' h1 h2
-    rw [if_pos hposition]
+    rw [ite_eq_left hposition]
     by_cases hk : kOf X u u' (cs.h ρ : X.B.I.Gf) (cs'.h ρ' : X.B.I.Gf) t.pt ∈ X.K2
-    · rw [if_pos hk] at hP
+    · rw [ite_eq_left hk] at hP
       have hb : blk cs cs' FdN FdN' t ρ ρ' =
           chiL X (kOf X u u' (cs.h ρ : X.B.I.Gf) (cs'.h ρ' : X.B.I.Gf) t.pt) • ampN cs cs' FdN FdN' t := by
-        rw [blk, if_pos ⟨h1, h2, hk⟩, ampN, level_char_eq_mul, hChi t ρ ρ' h1 h2 hk, smul_smul, smul_smul, smul_smul]
+        rw [blk, ite_eq_left ⟨h1, h2, hk⟩, ampN, level_char_eq_mul, hChi t ρ ρ' h1 h2 hk, smul_smul, smul_smul, smul_smul]
         congr 1
         ring
       rw [hb, map_smul, ← hP]
       rfl
-    · rw [if_neg hk] at hP
+    · rw [ite_eq_right hk] at hP
       have hb : blk cs cs' FdN FdN' t ρ ρ' = 0 := by
-        rw [blk, if_neg (fun h => hk h.2.2)]
+        rw [blk, ite_eq_right (fun h => hk h.2.2)]
       rw [hb, map_zero, ← hP, zero_smul]
   · have hb : blk cs cs' FdN FdN' t ρ ρ' = 0 := by
-      rw [blk, if_neg (fun h => hs ⟨h.1, h.2.1⟩)]
+      rw [blk, ite_eq_right (fun h => hs ⟨h.1, h.2.1⟩)]
     have hposition : ¬ positionT t = (lamQ cs ρ, lamQ cs' ρ') := by
       intro he
       simp only [positionT, lamQ, Prod.mk.injEq, Subtype.mk.injEq] at he
       exact hs ⟨he.1.symm, he.2.symm⟩
-    rw [hb, map_zero, if_neg hposition]
+    rw [hb, map_zero, ite_eq_right hposition]
 
 
 variable (F0 F0') in
@@ -601,13 +599,13 @@ theorem normExpansionOn_tOf (hHS : HSBlocks) (hGam : GamProdSum) (hPsi : PsiNatE
       funext q
       by_cases h : q = (⟨t.lam, t.mem⟩, ⟨t.lam', t.mem'⟩)
       · subst h
-        exact Eq.trans (if_pos rfl) (if_pos rfl).symm
-      · exact Eq.trans (if_neg h) (if_neg h).symm)
+        exact Eq.trans (ite_eq_left rfl) (ite_eq_left rfl).symm
+      · exact Eq.trans (ite_eq_right h) (ite_eq_right h).symm)
     (hio := fun t => rfl) (U := UG TR)
     (h0 := fun x hx => by
       simp only [UG, Set.mem_setOf_eq, not_forall] at hx
       obtain ⟨v, hv⟩ := hx
-      exact Finset.prod_eq_zero (Finset.mem_univ v) (by rw [Formalism.L2.SG.GGMirabolic.psiNat, if_neg hv]))
+      exact Finset.prod_eq_zero (Finset.mem_univ v) (by rw [Formalism.L2.SG.GGMirabolic.psiNat, ite_eq_right hv]))
     (hr := fun x y hy => by
       simp only [psiG, Pi.mul_apply, ← Finset.prod_mul_distrib]
       exact Finset.prod_congr rfl fun v _ => (hPsi _ _ (TR.psi0 v) (x v) (y v) (hU y hy v)).1)

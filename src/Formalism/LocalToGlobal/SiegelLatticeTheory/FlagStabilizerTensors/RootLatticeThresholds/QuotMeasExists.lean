@@ -208,14 +208,14 @@ theorem quotM_existsSF (hG : PI.IsMatGroup G) (hS : PI.IsMatGroup S) (hSG : S �
     refine measurable_of_restrict_of_restrict_compl hGm ?_ ?_
     · have e1 : Set.domRestrict {y | Matrix.of y ∈ G} φ = fun y => β (mk G (Matrix.of y.1) y.2)⁻¹ := by
         funext y
-        exact dif_pos y.2
+        exact dite_eq_left y.2
       rw [e1]
       refine hβm.comp (measurable_inv.comp ?_)
       exact (continuous_mk G (f := fun y : {y : PI.MtM m | Matrix.of y ∈ G} => Matrix.of y.1)
         continuous_subtype_val fun y => y.2).measurable
     · have e2 : Set.domRestrict {y | Matrix.of y ∈ G}ᶜ φ = fun _ => 0 := by
         funext y
-        exact dif_neg y.2
+        exact dite_eq_right y.2
       rw [e2]
       exact measurable_const
   refine ⟨μG.withDensity (fun y => c⁻¹ * φ y), inferInstance, fun f hf => ?_⟩
@@ -260,7 +260,7 @@ theorem quotM_existsSF (hG : PI.IsMatGroup G) (hS : PI.IsMatGroup S) (hSG : S �
         ext_mat G (by rw [mat_mk, mat_mul, mat_mk]; rfl)
       show (if hy' : Matrix.of (PI.lmulQ (mat G (h⁻¹ : H).1) y) ∈ G then
         β (mk G (Matrix.of (PI.lmulQ (mat G (h⁻¹ : H).1) y)) hy')⁻¹ else 0) = _
-      rw [dif_pos hm, hk, mul_inv_rev, Subgroup.coe_inv, inv_inv]
+      rw [dite_eq_left hm, hk, mul_inv_rev, Subgroup.coe_inv, inv_inv]
     simp_rw [hval]
     rw [hκeq, lintegral_smul_measure]
     have := hβ1 (mk G (Matrix.of y) hy)⁻¹

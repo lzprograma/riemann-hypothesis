@@ -4,49 +4,6 @@ public import GroundTheory.PAdicHodge.PerfectoidField
 public import Mathlib.NumberTheory.LocalField.Basic
 public import Mathlib.NumberTheory.Padics.ValuativeRel
 public import GroundTheory.LocalFields.Examples
-import Mathlib.Algebra.Lie.OfAssociative
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Analysis.Normed.Module.FiniteDimension
 
 @[expose] public section
@@ -162,47 +119,11 @@ local instance valuativeExtension_intermediateField {F : Type*} [Field F] [Algeb
     ValuativeExtension E L :=
   ⟨fun {_ _} => by rw [subfield_vle_iff_norm_le, subfield_vle_iff_norm_le]; rfl⟩
 
-section Unique
-
-variable (K : IntermediateField ℚ_[p] (PadicAlgCl p)) [FiniteDimensional ℚ_[p] K]
-
-end Unique
-
 section Inclusion
 
 variable {K L : IntermediateField ℚ_[p] (PadicAlgCl p)} (h : K ≤ L)
 
-theorem valuativeExtension_inclusion :
-    (letI := (IntermediateField.inclusion h).toRingHom.toAlgebra; ValuativeExtension K L) := by
-  let := (IntermediateField.inclusion h).toRingHom.toAlgebra
-  exact ⟨fun {_ _} => by rw [subfield_vle_iff_norm_le, subfield_vle_iff_norm_le]; rfl⟩
-
-theorem isScalarTower_inclusion :
-    (letI := (IntermediateField.inclusion h).toRingHom.toAlgebra; IsScalarTower ℚ_[p] K L) := by
-  let := (IntermediateField.inclusion h).toRingHom.toAlgebra
-  exact IsScalarTower.of_algebraMap_eq fun _ => rfl
-
-theorem finiteDimensional_inclusion [FiniteDimensional ℚ_[p] L] :
-    (letI := (IntermediateField.inclusion h).toRingHom.toAlgebra; FiniteDimensional K L) := by
-  let := (IntermediateField.inclusion h).toRingHom.toAlgebra
-  have := isScalarTower_inclusion h
-  exact Module.Finite.of_restrictScalars_finite ℚ_[p] K L
-
 end Inclusion
-
-section Galois
-
-variable (K : IntermediateField ℚ_[p] (PadicAlgCl p)) (L : IntermediateField K (PadicAlgCl p))
-  [Normal K L]
-
-end Galois
-
-section Examples
-
-variable (K : IntermediateField ℚ_[p] (PadicAlgCl p)) [FiniteDimensional ℚ_[p] K]
-  (L : IntermediateField K (PadicAlgCl p)) [FiniteDimensional K L]
-
-end Examples
 
 /-! The `ValuativeRel` structure on subfields of `PadicAlgCl p` defined above (from the norm) and the
 instances built on it are not global instances: `GroundTheory.LocalField.intermediateField_valuativeRel`

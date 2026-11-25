@@ -4,54 +4,10 @@ public import Formalism.TruncatedSeriesCounting.PowMemSpanOfMemSpanLinearDisting
 public import Formalism.WindowSums.PowerSeriesRelationList
 public import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
 public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.AevalApplySubEvalOneMem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.Interval.Finset.Box
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.KapWin, Formalism.SharpRestriction.LevelLetterCocycles.DivisibilityInvariantMulLinear
@@ -218,7 +174,7 @@ private lemma exists_divisibilityInvariant {O : Type} [CommRing O] (ϖ : O) (e :
 private lemma coeff_dvd_of_mem_span {O : Type} [CommRing O] (d : O) (B : ℕ) (F : PowerSeries O)
     (hF : F ∈ Ideal.span {C d, (X : PowerSeries O) ^ B}) (j : ℕ) (hj : j < B) : d ∣ coeff j F := by
   obtain ⟨a, b, rfl⟩ := Ideal.mem_span_pair.mp hF
-  rw [map_add (f := _), coeff_mul_C, coeff_mul_X_pow', if_neg (by omega), add_zero]
+  rw [map_add (f := _), coeff_mul_C, coeff_mul_X_pow', ite_eq_right (by omega), add_zero]
   exact dvd_mul_left _ _
 
 theorem content_divisibility : R2 := by
@@ -247,8 +203,7 @@ theorem content_divisibility : R2 := by
     have h'' := (mul_dvd_mul_iff_left (pow_ne_zero _ hϖ.ne_zero)).mp h'
     exact Units.dvd_mul_left.mp h''
   have hk : k < e * (v₁ - i₀) + 1 + e * a := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hnd ((pow_dvd_pow ϖ hcon).trans hd)
   have h1 : e * (v₁ - i₀) ≤ e * v₁ := Nat.mul_le_mul_left e (Nat.sub_le _ _)
   have h3 : e * (a + v₁ + 1) = e * a + e * v₁ + e := by ring

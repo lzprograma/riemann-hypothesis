@@ -50,7 +50,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.Core.Rk.SWLaw GlobalTheory.Core.Rk.SW GlobalTheory.StdUnn
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.IndefiniteRowSideFullHecke.SphericalVolumeLift (RealMat IsFockVec)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -85,7 +84,7 @@ theorem hasDerivAt_eval_line {σ : Type} [Fintype σ] [DecidableEq σ] (p : MvPo
     · refine Finset.sum_congr rfl fun j _ => ?_
       simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
       ring
-    · simp only [hs, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    · simp only [hs, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
       ring
 
 section Line
@@ -142,7 +141,7 @@ theorem hasDerivAt_gauss (hM : ∀ τ, (gramAt D V τ * s τ).IsHermitian) (z : 
   rw [← hz]
   have hbτ : b τ = ((2 * (Matrix.trace (Xᴴ * (gramAt D V τ * s τ) * z τ)).re : ℝ) : ℂ) := by
     rw [← Complex.add_conj]
-    simp only [hb, hY, dirAt, if_true, hMdef]
+    simp only [hb, hY, dirAt, ite_true, hMdef]
     congr 1
     rw [← Complex.star_def, ← Matrix.trace_conjTranspose]
     rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, (hM τ).eq, Matrix.conjTranspose_conjTranspose]

@@ -15,6 +15,7 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.Automorphic
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.DenseAway
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.EigOfSat
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.FinKir
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.FinKir
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.HalfBound
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.IsYBlockGL
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.LevelS
@@ -141,7 +142,7 @@ theorem UpperTheory.V.Af.Smo.archKir :
     · have hs : IsUnit (rowM m' ((1 : GL (Fin n) (Rinf E)).val m')) := by
         rw [Units.val_one, rowM_one]; exact isUnit_one
       have e : hs.unit = 1 := Units.ext (by rw [hs.unit_spec, Units.val_one, rowM_one])
-      simp only [dif_pos hs, e]
+      simp only [dite_eq_left hs, e]
       simp [h1, c1, H1]
     · obtain ⟨β₀, hβ₀⟩ := hH α
       obtain ⟨β, hβ⟩ := hh β₀
@@ -156,7 +157,7 @@ theorem UpperTheory.V.Af.Smo.archKir :
       by_cases h0 : h (p.val m') = 0
       · simp [h0]
       have hs := hu _ h0
-      simp only [dif_pos hs]
+      simp only [dite_eq_left hs]
       have hy := hR (Rinf E) n m' p hs.unit hp hs.unit_spec
       have e1 := hβ₀ w wm ⟨C, hCb⟩ hw _ hy
       have e2 := hc hs.unit (fun y => w (lmul (toL (p * hs.unit⁻¹).val) y) * β₀ y)
@@ -244,11 +245,11 @@ private theorem colL_sq (m : Fin n) (u : EuclideanSpace ℝ (Fin n × InfinitePl
   refine Finset.sum_eq_zero fun k _ => ?_
   simp only [colL, LinearMap.coe_mk, AddHom.coe_mk, Matrix.of_apply]
   by_cases h : k ≤ m
-  · rw [if_neg, zero_mul]
+  · rw [ite_eq_right, zero_mul]
     rintro ⟨-, h'⟩
     rw [Fin.le_def] at h
     omega
-  · rw [if_neg (fun h' : k ≤ m ∧ _ => h h'.1), mul_zero]
+  · rw [ite_eq_right (fun h' : k ≤ m ∧ _ => h h'.1), mul_zero]
 
 private theorem rowM_eq (m : Fin n) (ξ : Fin n → Rinf E) :
     rowM m ξ = 1 + rowL m (eta m ξ - eta m ((1 : Matrix (Fin n) (Fin n) (Rinf E)) m)) := by
@@ -477,13 +478,7 @@ open scoped SchwartzMap FourierTransform RealInnerProductSpace ContDiff Topology
 
 private theorem isY_map {R R' : Type} [CommRing R] [CommRing R'] {n m : ℕ} (f : R →+* R') (p : GL (Fin n) R)
     (hp : IsY m p.val) : IsY m (GeneralLinearGroup.map f p).val := by
-  intro i hi
-  obtain ⟨h1, h2⟩ := hp i hi
-  refine ⟨?_, fun j hj => ?_⟩
-  · change f (p.val i i) = 1
-    rw [h1, map_one]
-  · change f (p.val i j) = 0
-    rw [h2 j hj, map_zero]
+  apply _root_.isY_map <;> assumption
 
 private theorem chart_smul {E : Type} [Field E] [NumberField E] [IsTotallyReal E] {n : ℕ} (f f' : GA E n → ℂ)
     (g g' : GA E n) (a : ℂ) (h : ∀ y, f (g * infGL E n y) = a * f' (g' * infGL E n y)) (x : Lie E n) :
@@ -590,7 +585,7 @@ theorem UpperTheory.V.Af.Smo.convCont :
       · have : (fun g => chart f g x) = fun _ => 0 := by
           funext g
           unfold UpperTheory.V.TR.chart
-          exact dif_neg hx
+          exact dite_eq_right hx
         rw [this]
         exact continuous_const
   · exact norm_integral_le_of_norm_le hint (Filter.Eventually.of_forall (hbd g))
@@ -627,7 +622,7 @@ theorem UpperTheory.V.Af.Smo.convFub :
     by_cases hz : z ∈ (Set.univ : Set X) ×ˢ invSet E n
     · rw [Set.piecewise_eq_of_mem _ _ _ hz]
     · rw [Set.piecewise_eq_of_notMem _ _ _ hz, chart]
-      exact dif_neg fun h => hz ⟨trivial, h⟩
+      exact dite_eq_right fun h => hz ⟨trivial, h⟩
   have hb : ∀ g y, ‖chart f g y‖ ≤ C := fun g y => by
     unfold chart
     split_ifs
@@ -821,8 +816,8 @@ theorem UpperTheory.V.Af.Smo.eigMap :
   · refine eig_int volume (hf 1).card (fun x y => chart f (g * finGL E n (locGL E n w y)) x) α (fun x => ?_) fun y => ?_
     · by_cases hx : IsUnit (Matrix.of x)
       · have := hf (g * infGL E n hx.unit)
-        simpa only [chart, dif_pos hx, mul_assoc, TR.infGL_comm] using this
-      · simpa only [chart, dif_neg hx] using eig_zero (w := w) (hf 1).card
+        simpa only [chart, dite_eq_left hx, mul_assoc, TR.infGL_comm] using this
+      · simpa only [chart, dite_eq_right hx] using eig_zero (w := w) (hf 1).card
     · obtain ⟨C, hC'⟩ := hN.bdd
       haveI : BorelSpace (Lie E n) := inferInstance
       haveI : (volume : Measure (Rinf E)).IsAddHaarMeasure := inferInstance
@@ -1202,7 +1197,7 @@ theorem UpperTheory.V.Af.Smo.orthStep :
       intro q x hx
       obtain ⟨y, rfl⟩ := RightCosetSpace.mk_surjective _ q
       rw [hFmk]
-      exact dif_neg hx
+      exact dite_eq_right hx
     have hopen : IsOpen ((Set.univ : Set (RightCosetSpace (Reduction.rationalGLOne (K := E) (n := n)))) ×ˢ invSet E n) :=
       isOpen_univ.prod TR.isOpen_invSet
     have hFc : ContinuousOn F (Set.univ ×ˢ invSet E n) := by
@@ -1247,7 +1242,7 @@ theorem UpperTheory.V.Af.Smo.orthStep :
           intro q
           obtain ⟨y, rfl⟩ := RightCosetSpace.mk_surjective _ q
           rw [hFmk, CuspidalSpectrum.cuspQuot_mk]
-          exact dif_pos hx'
+          exact dite_eq_left hx'
         simp only [e]
         rw [h0, zero_mul]
       · simp [hF0 _ x hx]

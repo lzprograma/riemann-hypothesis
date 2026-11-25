@@ -87,14 +87,6 @@ theorem inv_eq_self_of_isMulRightInvariant (ν : Measure H) [ν.IsHaarMeasure]
 
 end Unimodular
 
-section Weil
-
-variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [LocallyCompactSpace G]
-  [T2Space G] [SecondCountableTopology G] [MeasurableSpace G] [BorelSpace G]
-  (Γ : Subgroup G) [DiscreteTopology Γ] [CompactSpace (RightCosetSpace Γ)]
-
-end Weil
-
 end RightCosetSpace
 
 end

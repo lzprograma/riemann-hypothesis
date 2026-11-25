@@ -38,8 +38,6 @@ namespace Formalism.L2.S.L6.UnitaryStandardVectors
 
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj Formalism.L2.SG.Pf.Carrier.JointQuot
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1))
 
 def piW : Fin (D.R.rS + 1) → Fin (D.R.rS + 1) := fun b =>
@@ -126,8 +124,6 @@ namespace Formalism.L2.S.L6.UnitaryStandardVectors
 
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj Formalism.L2.SG.Pf.Carrier.JointQuot
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def Cw (w : Point D.host.E (D.R.rS + 1)) (c : FreeE w → ℂ) : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) ℂ :=
@@ -144,7 +140,7 @@ theorem isUB_Cw (w : Point D.host.E (D.R.rS + 1)) (c : FreeE w → ℂ) : IsUB (
 theorem Cw_apply_free (w : Point D.host.E (D.R.rS + 1)) (c : FreeE w → ℂ) (p : FreeE w) :
     Cw w c p.1.1 p.1.2 = c p := by
   simp only [Cw, Matrix.of_apply]
-  rw [if_neg (ne_of_lt p.2.1), dite_eq_left p.2]
+  rw [ite_eq_right (ne_of_lt p.2.1), dite_eq_left p.2]
   rfl
 
 theorem span_frm_le (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (w : D.what₂.Word) (v : InfinitePlace X.B.I.F) (k : ℕ)
@@ -197,8 +193,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Ma
 namespace Formalism.L2.S.L6.UnitaryStandardVectors
 
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj Formalism.L2.SG.Pf.Carrier.JointQuot
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
@@ -258,8 +252,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Ma
 namespace Formalism.L2.S.L6.UnitaryStandardVectors
 
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj Formalism.L2.SG.Pf.Carrier.JointQuot
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1))
   (v : InfinitePlace X.B.I.F)
@@ -448,12 +440,6 @@ def mkUJ (y : Matrix (Fin n) (Fin n) ℂ) (hy : yᴴ * Formalism.REAL.Jm ε * y 
 
 end Pack
 
-section Adj
-
-variable {m : ℕ}
-
-end Adj
-
 end Formalism.L2.S.L6.UnitaryStandardVectors
 end -- clump:auto
 end -- clump:auto
@@ -472,8 +458,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Ma
 namespace Formalism.L2.S.L6.UnitaryStandardVectors
 
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj Formalism.L2.SG.Pf.Carrier.JointQuot
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1))
   (v : InfinitePlace X.B.I.F)
@@ -521,7 +505,7 @@ theorem TG_comb (c : FreeE w → ℂ) (b : Fin (D.R.rS + 1)) :
     rw [Matrix.mulVec_mulVec, h1, Matrix.one_mulVec]
   rw [yM_G X u u' w v hw c b]
   simp only [G_eq, Matrix.mulVec_sub, Matrix.mulVec_sum, Matrix.mulVec_smul, hA, Matrix.sub_apply, sub_smul,
-    Finset.sum_sub_distrib, Matrix.one_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_sub_distrib, Matrix.one_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 include hw in
 theorem inN_u' (c : FreeE w → ℂ) :
@@ -567,8 +551,6 @@ namespace Formalism.L2.S.L6.UnitaryStandardVectors
 
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj Formalism.L2.SG.Pf.Carrier.JointQuot
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1))
   (v : InfinitePlace X.B.I.F)
 
@@ -577,12 +559,12 @@ theorem hfF (w' : D.what₂.Word) (a : Fin D.R.rS) (b : Fin (D.R.rS + 1)) :
       if b = a.castSucc then ((D.host.rdE : ℂ) ^ (D.R.rS - a.1))⁻¹ else 0 := by
   induction b using Fin.lastCases with
   | last =>
-    rw [frm_last, hfz_v, if_neg (Fin.castSucc_ne_last a).symm]
+    rw [frm_last, hfz_v, ite_eq_right (Fin.castSucc_ne_last a).symm]
   | cast b =>
     rw [frm_castSucc, _root_.Formalism.L2.SG.Pf.Carrier.JointQuot.hJ_smul_r, hfe_v]
     by_cases h : b = a
     · subst h; simp
-    · rw [if_neg h, if_neg (fun e => h (Fin.castSucc_injective _ e)), mul_zero]
+    · rw [ite_eq_right h, ite_eq_right (fun e => h (Fin.castSucc_injective _ e)), mul_zero]
 
 theorem coord_eq (hw : OkPt X u u' w) (c : FreeE w → ℂ) (p : FreeE w) :
     stCoordV X u' w (gamW X u u' w) v (yU X u u' w v c hw) p = c p := by
@@ -594,16 +576,16 @@ theorem coord_eq (hw : OkPt X u u' w) (c : FreeE w → ℂ) (p : FreeE w) :
     have h1 := T_sub X u u' w v hw c (frm X u' D.host.rdE v p.1.2)
     rw [sub_one_mulVec, ← G_eq, TG_comb X u u' w v hw c] at h1
     rw [← h1]; abel
-  rw [hT, hJ_add_r', hJ_sum_r', hfF, if_neg (fun e => (ne_of_lt p.2.1) (by rw [← hcs, e]))]
+  rw [hT, hJ_add_r', hJ_sum_r', hfF, ite_eq_right (fun e => (ne_of_lt p.2.1) (by rw [← hcs, e]))]
   rw [Finset.sum_eq_single a'.castSucc]
-  · rw [hfF, if_pos rfl, zero_add, hcs, Matrix.sub_apply, Matrix.one_apply, if_neg (ne_of_lt p.2.1), sub_zero,
+  · rw [hfF, ite_eq_left rfl, zero_add, hcs, Matrix.sub_apply, Matrix.one_apply, ite_eq_right (ne_of_lt p.2.1), sub_zero,
       Cw_apply_free]
     have hrd : (D.host.rdE : ℂ) ^ (D.R.rS - a'.1) ≠ 0 :=
       pow_ne_zero _ (Complex.ofReal_ne_zero.2 (rdE_pos_c (D := D)).ne')
     rw [show p.1.1.1 = a'.1 from rfl]
     field_simp
   · intro b _ hb
-    rw [hfF, if_neg hb, mul_zero]
+    rw [hfF, ite_eq_right hb, mul_zero]
   · simp
 
 theorem continuous_yM (hw : OkPt X u u' w) :
@@ -624,7 +606,7 @@ theorem continuous_yM (hw : OkPt X u u' w) :
     · intro i j hij
       simp only [Cw, Matrix.of_apply]
       have hji : j < i := hij
-      rw [if_neg (ne_of_gt hji), dite_eq_right (fun h => absurd h.1 (lt_asymm hji))]
+      rw [ite_eq_right (ne_of_gt hji), dite_eq_right (fun h => absurd h.1 (lt_asymm hji))]
 
   have hinv : Continuous fun c : FreeE w → ℂ => (Cw w c)⁻¹ := by
     have h : (fun c : FreeE w → ℂ => (Cw w c)⁻¹) = fun c => (Cw w c).adjugate := by

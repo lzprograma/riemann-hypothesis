@@ -73,7 +73,7 @@ theorem puniq_exists_h {lam' : Fin n → ℝ} (hgap : StdGap ε lam) (hgap' : St
     refine ⟨min h1 h2, fun a b hab => le_trans (min_le_left _ _) (hg1 a b hab),
       fun a b hab => le_trans (min_le_right _ _) (hg2 a b hab), hm, ?_⟩
     nlinarith
-  · push_neg at hex
+  · push Not at hex
     refine ⟨(n : ℝ) * (pOf ε : ℝ) * (qOf ε : ℝ) + (n : ℝ) + 2, fun a b h => absurd (hex a b) h,
       fun a b h => absurd (hex a b) h, by linarith, ?_⟩
     linarith

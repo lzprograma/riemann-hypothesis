@@ -15,7 +15,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.WittFlags
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 section Flag
 
 variable {D : D7} {T : D.host.E} (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (hβ : β ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT)

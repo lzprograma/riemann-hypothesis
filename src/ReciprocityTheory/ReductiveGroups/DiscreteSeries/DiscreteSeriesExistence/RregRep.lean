@@ -27,16 +27,6 @@ private theorem mul_Jm_conjTranspose_Jm_eq_one_of_mem_UJset (ε : Fin n → Bool
   first
   | exact mul_eq_one_comm.mp hl
 
-theorem rregRep_range (ε : Fin n → Bool) :
-    Set.range (fun g : Formalism.REAL.UJ ε => Formalism.MainNotions.S.umat g) = UJset ε := by
-  ext g
-  constructor
-  · rintro ⟨y, rfl⟩
-    exact y.2
-  · intro hg
-    exact ⟨⟨⟨g, Formalism.REAL.Jm ε * gᴴ * Formalism.REAL.Jm ε, mul_Jm_conjTranspose_Jm_eq_one_of_mem_UJset ε hg,
-      Jm_conjTranspose_Jm_mul_eq_one_of_mem_UJset ε hg⟩, hg⟩, rfl⟩
-
 theorem rregRep_one (ε : Fin n → Bool) : rreg ε 1 = 1 := by
   have h1 : (1 : Matrix (Fin n) (Fin n) ℂ) = Formalism.MainNotions.S.umat (1 : Formalism.REAL.UJ ε) := rfl
   rw [h1, _root_.ReciprocityTheory.ChartRestriction.DS.rightRegular_unitary_eq]

@@ -3,52 +3,7 @@ module
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TrDefs
 public import Mathlib.RingTheory.SimpleModule.IsAlgClosed
 public import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -166,16 +121,6 @@ private theorem uu_same (a b c : Fin d) : uu a b * uu b c = uu a c := by
 private theorem uu_ne {a b b' c : Fin d} (h : b ≠ b') : uu a b * uu b' c = 0 := by
   simp [uu, Matrix.single_mul_single_of_ne _ _ _ _ h]
 
-private theorem uu_sum : ∑ a : Fin d, uu a a = 1 := by
-  ext i j
-  by_cases h : i = j
-  · subst h; simp [uu, Matrix.single_apply, Matrix.sum_apply]
-  · simp [uu, Matrix.single_apply, Matrix.sum_apply, h]
-
-private theorem uu_sandwich (a : Fin d) (b : Mt d) : uu a a * b * uu a a = b a a • uu a a := by
-  ext i j
-  simp only [uu, Matrix.single_apply, Matrix.mul_apply, Matrix.smul_apply]
-  rcases eq_or_ne a i with rfl | h1 <;> rcases eq_or_ne a j with rfl | h2 <;> simp [*]
 
 private def RR (r : Fin (m + 1) → (Mt d →ₐ[ℂ] Module.End ℂ W))
     (hc : ∀ i j, i ≠ j → ∀ a b, Commute (r i a) (r j b)) :
@@ -257,7 +202,7 @@ private def FF (p : Fin (m + 1) → Fin d) : Module.End ℂ W := RR r hc (fun i 
 
 private theorem FF_sum : ∑ p : Fin (m + 1) → Fin d, FF r hc p = 1 := by
   have h := (RM r hc).map_sum (fun (_ : Fin (m + 1)) (a : Fin d) => uu a a)
-  simp only [uu_sum, RM_apply] at h
+  simp only [Matrix.sum_single_one, RM_apply] at h
   have h1 : (fun _ : Fin (m + 1) => (1 : Mt d)) = 1 := rfl
   rw [h1, map_one] at h
   exact h.symm
@@ -375,7 +320,7 @@ private theorem tr_fib [FiniteDimensional ℂ W] (i₀ : Fin (m + 1)) (S : Modul
     funext j
     by_cases h : j = i₀
     · subst h; simp
-    · simp only [Pi.mul_apply, h, if_false]
+    · simp only [Pi.mul_apply, h, ite_false]
       rw [uu_same, uu_same]
   have h3 : Commute S X := by
     have : X ∈ Submonoid.centralizer ({S} : Set (Module.End ℂ W)) := by
@@ -478,7 +423,7 @@ private theorem exists_scalar [FiniteDimensional ℂ W] [Nontrivial W] (o : Fin 
         rw [← h, ← map_mul, ← map_mul]
         congr 1
         funext i
-        exact uu_sandwich o (b i)
+        simp [uu, Matrix.smul_single]
       have h2 : f (RR r hc b w) = (∏ i, b i o o) • w := by
         have h := LinearMap.congr_fun h1 w
         simpa [Module.End.mul_apply, hfw] using h
@@ -587,29 +532,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-private theorem factor_alg {A B C : Type} [Ring A] [Ring B] [Ring C] [Algebra ℂ A] [Algebra ℂ B] [Algebra ℂ C]
-    (p : A →ₐ[ℂ] B) (hp : Function.Surjective p) (g : A →ₐ[ℂ] C) (h : ∀ a, p a = 0 → g a = 0) :
-    ∃ r : B →ₐ[ℂ] C, ∀ a, r (p a) = g a := by
-  have key : ∀ a, g (Function.surjInv hp (p a)) = g a := by
-    intro a
-    rw [← sub_eq_zero, ← map_sub]
-    apply h
-    rw [map_sub, Function.surjInv_eq hp, sub_self]
-  refine ⟨{ toFun := fun b => g (Function.surjInv hp b)
-            map_one' := ?_, map_mul' := ?_, map_zero' := ?_, map_add' := ?_, commutes' := ?_ }, key⟩
-  · rw [← map_one p, key, map_one]
-  · intro x y
-    obtain ⟨x, rfl⟩ := hp x
-    obtain ⟨y, rfl⟩ := hp y
-    simp only [← map_mul p, key, map_mul g]
-  · rw [← map_zero p, key, map_zero]
-  · intro x y
-    obtain ⟨x, rfl⟩ := hp x
-    obtain ⟨y, rfl⟩ := hp y
-    simp only [← map_add p, key, map_add g]
-  · intro c
-    simp only [← p.commutes c, key, g.commutes]
-
 private theorem comm_lift {X E : Type} [Ring E] [Algebra ℂ E] (T : X → E) (S : E) (h : ∀ x, Commute S (T x))
     (a : FreeAlgebra ℂ X) : Commute S (FreeAlgebra.lift ℂ T a) := by
   induction a using FreeAlgebra.induction with
@@ -670,7 +592,10 @@ theorem UpperTheory.ConvolutionTheory.L1.algTrace :
     have h1 : e ((ρ 0).rangeRestrict a) = 0 := ha
     have h2 : (ρ 0).rangeRestrict a = 0 := (map_eq_zero_iff e e.injective).1 h1
     exact congrArg Subtype.val h2
-  choose r hr using fun i => factor_alg p hp (ρ i) (fun a ha => hker a (hp0 a ha) i)
+  let r : Fin (m + 1) → (Matrix (Fin d) (Fin d) ℂ →ₐ[ℂ] Module.End ℂ W) := fun i =>
+    (Ideal.Quotient.liftₐ (RingHom.ker p) (ρ i) fun a ha => hker a (hp0 a (RingHom.mem_ker.1 ha)) i).comp
+      (Ideal.quotientKerAlgEquivOfSurjective hp).symm.toAlgHom
+  have hr : ∀ i a, r i (p a) = ρ i a := fun i a => by simp [r]; rfl
   obtain ⟨c, hc, H⟩ := UpperTheory.ConvolutionTheory.L1.unitsTrace W m d r
     (by
       intro i j hij a b

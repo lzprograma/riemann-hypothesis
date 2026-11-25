@@ -1,52 +1,12 @@
 module
 
+import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpChartJet
 public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
 public import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
 import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDJet
 public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.JetSubstPSTrunc
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -70,25 +30,7 @@ theorem jetSubstPS_X (m : ℕ) (P : κ → MvPowerSeries κ' S) (hP : ∀ i, MvP
 
 theorem jetSubstPS_eq_jetMap (m : ℕ) (Q : κ → MvPowerSeries κ' S) (hQ : ∀ i, MvPowerSeries.constantCoeff (Q i) = 0) :
     jetSubstPS (m := m) Q = jetMap (fun i => psTrunc m (Q i)) (fun i => psTrunc_mem_orig m (Q i) (hQ i)) := by
-  unfold jetSubstPS
-  congr 1
-  funext i
-  have h0 : MvPolynomial.constantCoeff (psTrunc m (Q i)) = 0 := by
-    have hmem : (0 : κ' →₀ ℕ) ∈ degLE (ι := κ') m := by
-      simp only [degLE, Finset.mem_filter, Finset.mem_image, Finset.mem_univ, true_and]
-      refine ⟨⟨fun _ => 0, ?_⟩, ?_⟩
-      · ext j
-        simp
-      · simp
-    rw [← hQ i]
-    change AddMonoidAlgebra.coeff (psTrunc m (Q i)) 0 = _
-    unfold psTrunc
-    rw [MvPolynomial.coeff_sum]
-    simp only [MvPolynomial.coeff_monomial]
-    rw [Finset.sum_ite_eq']
-    rw [if_pos hmem]
-    rfl
-  rw [h0, map_zero, sub_zero]
+  apply _root_.Formalism.MainNotions.ModuliIntegralCharts.H1.ExpChartJet.jetSubstPS_eq <;> assumption
 
 theorem jetSubstPS_psJet (m : ℕ) (Q : κ → MvPowerSeries κ' S) (hQ : ∀ i, MvPowerSeries.constantCoeff (Q i) = 0)
     (f : MvPowerSeries κ S) : jetSubstPS (m := m) Q (psJet m f) = psJet m (MvPowerSeries.subst Q f) := by
@@ -112,17 +54,7 @@ theorem jetSubstPS_comp (m : ℕ) (P : κ → MvPowerSeries κ' S) (Q : κ' → 
 
 theorem jetSubstP_eq_jetSubstPS (m : ℕ) (σ : κ → MvPolynomial κ' S) (hσ : ∀ i, MvPolynomial.constantCoeff (σ i) = 0) :
     jetSubstP m σ = jetSubstPS (m := m) (fun i => (σ i : MvPowerSeries κ' S)) := by
-  have hσ' : ∀ i, MvPowerSeries.constantCoeff ((σ i : MvPowerSeries κ' S)) = 0 := fun i => by
-    show MvPowerSeries.coeff (0 : κ' →₀ ℕ) ((σ i : MvPowerSeries κ' S)) = 0
-    rw [MvPolynomial.coeff_coe]
-    exact hσ i
-  apply Ideal.Quotient.algHom_ext
-  apply MvPolynomial.algHom_ext
-  intro i
-  simp only [AlgHom.comp_apply, Ideal.Quotient.mkₐ_eq_mk]
-  rw [jetSubstPS_X m _ hσ' i, psJet_coe]
-  unfold jetSubstP
-  rw [jetMap_mk, MvPolynomial.aeval_X, hσ i, map_zero, sub_zero]
+  apply _root_.Formalism.MainNotions.ModuliIntegralCharts.H1.ExpChartJet.jetSubstP_eq_jetSubstPS <;> assumption
 
 theorem jetCopy_eq_PS {d n : ℕ} (m : ℕ) (i : Fin n) :
     jetCopy (S := S) d m i =

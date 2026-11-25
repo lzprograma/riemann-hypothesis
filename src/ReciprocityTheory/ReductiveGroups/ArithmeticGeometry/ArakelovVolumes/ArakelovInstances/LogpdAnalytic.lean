@@ -9,8 +9,6 @@ public import Mathlib.Analysis.Complex.CauchyIntegral
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Inst.CurvPf

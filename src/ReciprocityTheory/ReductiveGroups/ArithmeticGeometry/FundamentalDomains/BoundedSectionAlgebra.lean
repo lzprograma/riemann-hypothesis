@@ -87,7 +87,7 @@ private lemma col_flowMat_mul (ξ : Fin r → E) (τ : X.Ψ) (s : ℂ) (M : Matr
       (I * X.c τ * s * hermC τ.1 X.Gm (col M a) (fun k => τ.1 (ξ k))) • (fun k => τ.1 (ξ k)) := by
   funext k
   simp only [col, Data.flowMat, Matrix.mul_apply, Matrix.of_apply, sub_mul, Finset.sum_sub_distrib,
-    ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true, hermC, Pi.sub_apply,
+    ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true, hermC, Pi.sub_apply,
     Pi.smul_apply, smul_eq_mul, Finset.mul_sum, Finset.sum_mul]
   congr 1
   refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun m _ => ?_

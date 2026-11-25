@@ -374,7 +374,7 @@ theorem pos_pc_sub (hΨ : IsProductIso k Ψ) {N : ℕ} {π : Representation ℂ 
     omega
   · have hz : (Finsupp.single (IrrGL.of π hs hi) (1 : ℤ)) y = 0 := by
       classical
-      exact (Finsupp.single_apply).trans (if_neg hy)
+      exact (Finsupp.single_apply).trans (ite_eq_right hy)
     have hg : ∀ a b : ℤ, 0 ≤ a → b = 0 → 0 ≤ a - b := fun a b h e => by omega
     exact hg _ _ h0 hz
 
@@ -454,8 +454,7 @@ theorem exists_hasSupport (hZ : GlobalTheory.Published.ZelevinskyPolynomialRing)
     exact Finset.prod_induction _ Q qm q1 fun Δ _ => qp Δ _
   set P := Ψ (Finsupp.single x 1) with hP
   have h1 : ∃ m, Ψ.symm (MvPolynomial.monomial m 1) x ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     have h2 : Finsupp.single x (1 : ℤ) = Ψ.symm P := (Ψ.symm_apply_apply _).symm
     have h3 : Ψ.symm P x = 0 := by
 

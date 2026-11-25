@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ZarhinBundleKernelFirstCoordEquations
 public import Mathlib.RingTheory.MvPolynomial.Homogeneous
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
@@ -71,16 +72,8 @@ theorem UpperTheory.Reformulated.B.Qk4.aeval_mul_homog :
       ∀ (b : S) (x : G → S),
         (MvPolynomial.aeval fun (g : G) ↦ b * x g : MvPolynomial G A → S) P =
           b ^ n * (MvPolynomial.aeval x : MvPolynomial G A → S) P := by
-  intro n A G S _ _ _ P hP b x
-  rw [MvPolynomial.aeval_def, MvPolynomial.aeval_def, MvPolynomial.eval₂_eq,
-    MvPolynomial.eval₂_eq, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun d hd ↦ ?_
-  have hdeg : ∑ i ∈ d.support, d i = n := by
-    have h := hP (MvPolynomial.mem_support_iff.mp hd)
-    simpa [Finsupp.weight_apply, Finsupp.sum] using h
-  simp only [mul_pow]
-  rw [Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum, hdeg]
-  ring
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.Ar.ProjCoord.aeval_mul_of_isHomogeneous <;> assumption
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AevalMulHomog =====
@@ -151,11 +144,11 @@ private theorem scale_coeff {A G : Type} [CommRing A] (P : MvPolynomial G A) (k 
     by_cases hmd : m = d
     · subst hmd
       by_cases hk : k = m.degree
-      · rw [if_pos hk, if_pos hk.symm]
-      · rw [if_neg hk, if_neg fun h => hk h.symm, MvPolynomial.coeff_zero, Finsupp.zero_apply]
+      · rw [ite_eq_left hk, ite_eq_left hk.symm]
+      · rw [ite_eq_right hk, ite_eq_right fun h => hk h.symm, MvPolynomial.coeff_zero, Finsupp.zero_apply]
     · classical
       have hz : AddMonoidAlgebra.coeff (MvPolynomial.monomial m c) d = 0 := by
-        rw [MvPolynomial.coeff_monomial, if_neg hmd]
+        rw [MvPolynomial.coeff_monomial, ite_eq_right hmd]
       split_ifs <;> simp only [hz, MvPolynomial.coeff_zero, Finsupp.zero_apply]
   | add p q hp hq =>
     rw [map_add (f := _), Polynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, MvPolynomial.coeff_add]
@@ -167,9 +160,9 @@ private theorem homog_of_scale {A G : Type} [CommRing A] (P : MvPolynomial G A) 
   intro d hd
   have key : d.degree = n := by
     have e := scale_coeff P d.degree d
-    rw [h, mul_comm, Polynomial.coeff_C_mul_X_pow, if_pos (rfl : d.degree = d.degree)] at e
+    rw [h, mul_comm, Polynomial.coeff_C_mul_X_pow, ite_eq_left (rfl : d.degree = d.degree)] at e
     by_contra hne
-    rw [if_neg hne, MvPolynomial.coeff_zero] at e
+    rw [ite_eq_right hne, MvPolynomial.coeff_zero] at e
     exact hd e.symm
   show (Finsupp.weight (fun _ => 1)) d = n
   rw [← Finsupp.degree_eq_weight_one]
@@ -302,22 +295,15 @@ private theorem PRep.d2 {D : GDet n A G} {P : MvPolynomial G A} (h : PRep D P) :
     rw [Finset.sum_eq_single (a⁻¹ * g)]
     · simp
     · intro b _ hb
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hab
       exact hb (eq_inv_mul_of_mul_eq hab)
     · intro hn
       exact absurd (Finset.mem_univ _) hn
   rw [hc] at hxy
-  have e1 : MvPolynomial.rename Sum.inl P =
-      MvPolynomial.aeval (fun a => (MvPolynomial.X (Sum.inl a) : MvPolynomial (G ⊕ G) A)) P := by
-    rw [← MvPolynomial.aeval_X_left_apply (MvPolynomial.rename Sum.inl P), MvPolynomial.aeval_rename]
-    rfl
-  have e2 : MvPolynomial.rename Sum.inr P =
-      MvPolynomial.aeval (fun a => (MvPolynomial.X (Sum.inr a) : MvPolynomial (G ⊕ G) A)) P := by
-    rw [← MvPolynomial.aeval_X_left_apply (MvPolynomial.rename Sum.inr P), MvPolynomial.aeval_rename]
-    rfl
   unfold _root_.d2
-  rw [sub_eq_zero, ← hxy, e1, e2]
+  rw [sub_eq_zero, ← hxy, MvPolynomial.rename_eq_aeval, MvPolynomial.rename_eq_aeval]
+  rfl
 
 private def Mn (G : Type) (n : ℕ) : Type := {d : G →₀ ℕ // d.degree = n}
 
@@ -343,7 +329,7 @@ private theorem pol_coeff (a : Mn G n → A) (s : Mn G n) : AddMonoidAlgebra.coe
   rw [MvPolynomial.coeff_sum, Finset.sum_eq_single s]
   · simp
   · intro t _ hts
-    rw [MvPolynomial.coeff_monomial, if_neg]
+    rw [MvPolynomial.coeff_monomial, ite_eq_right]
     intro h
     exact hts (Subtype.ext h)
   · intro hs
@@ -363,14 +349,8 @@ private def defI (P : MvPolynomial G A) : Ideal A :=
 private theorem defI_iff (P : MvPolynomial G A) (f : A →+* A') :
     (∀ x ∈ defI P, f x = 0) ↔ d1 (MvPolynomial.map f P) = 0 ∧ d2 (MvPolynomial.map f P) = 0 := by
   have key : (∀ x ∈ defI P, f x = 0) ↔
-      ∀ x ∈ insert (d1 P) (Set.range fun d => AddMonoidAlgebra.coeff (d2 P) d), f x = 0 := by
-    constructor
-    · intro h x hx
-      exact h x (Ideal.subset_span hx)
-    · intro h x hx
-      have hle : defI P ≤ RingHom.ker f :=
-        Ideal.span_le.2 fun y hy => RingHom.mem_ker.2 (h y hy)
-      exact RingHom.mem_ker.1 (hle hx)
+      ∀ x ∈ insert (d1 P) (Set.range fun d => AddMonoidAlgebra.coeff (d2 P) d), f x = 0 :=
+    ⟨fun h x hx => h x (Ideal.subset_span hx), fun h x hx => (Ideal.span_le (I := RingHom.ker f)).2 h hx⟩
   rw [key, Set.forall_mem_insert, Set.forall_mem_range, diffOne_natural, diffTwo_natural]
   apply and_congr Iff.rfl
   rw [MvPolynomial.ext_iff]

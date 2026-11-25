@@ -68,10 +68,10 @@ theorem isTypeFn_of_enum {E : Type} [Field E] [NumberField E] [IsCMField E] {H :
   refine ⟨fun h => ?_, fun h => ?_⟩
   · refine hcard.trans ?_
     unfold Datum.mult
-    rw [if_pos h]
+    rw [ite_eq_left h]
   · refine hcard.trans ?_
     unfold Datum.mult
-    rw [if_neg h]
+    rw [ite_eq_right h]
 
 theorem exists_openChart_testRing : Out.SecBaseChangeSt → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (z : Xo.XF c), ∃ (p : TRing c.F) (j : Sp p.R ⟶ Xo.XF c) (y₀ : FrPt Xo c p.R), OpenChart j y₀ ∧ z ∈ Set.range j := by
   intro hS E _ _ _ H Dw l Xo c z

@@ -59,6 +59,3 @@ def ExtendLin : Prop :=
       ∃ Xi : M →ₗ[k] T, ∀ i, Xi (f i) = g i
 
 end Formalism.L2.PairingIndexBounds.Mv
-
-namespace Formalism.L2.PairingIndexBounds.Mv
-end Formalism.L2.PairingIndexBounds.Mv

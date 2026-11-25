@@ -11,8 +11,6 @@ open scoped TensorProduct
 
 namespace Formalism.IndefR.Eqv.Act
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Comm
 
 variable {D : D7} {V : HSp D}
@@ -48,12 +46,6 @@ theorem oneP_mem (τ : D.what₂.Tau) (X : Matrix (Fin V.rank) (Fin V.rank) ℂ)
   exact atTau_mem θ τ _
 
 end Comm
-
-section RTr
-
-variable {D : D7} {V : HSp D} (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) {κ : GA D V}
-
-end RTr
 
 end Formalism.IndefR.Eqv.Act
 

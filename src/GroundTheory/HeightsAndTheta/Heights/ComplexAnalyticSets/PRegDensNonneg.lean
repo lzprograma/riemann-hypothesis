@@ -30,6 +30,33 @@ theorem half_log_eq_phi (a : ℂ) {ε : ℝ} (hε : 0 ≤ ε) :
     Complex.norm_real, Real.norm_eq_abs, sq_abs, Real.sq_sqrt hε]
   ring
 
+theorem hessC_logReg_comp_posSemidef {n e : ℕ} (u : Fin n → ℂ) {ε : ℝ} (hε : 0 < ε)
+    {s : (Fin e → ℂ) → Fin n → ℂ} {y : Fin e → ℂ} (han : AnalyticAt ℂ s y) :
+    (ReciprocityTheory.AnForm.hessC (logReg u ε ∘ s) y).PosSemidef := by
+  have hh : AnalyticAt ℂ (fun w => linEval u (s w)) y := by
+    unfold linEval
+    exact Finset.analyticAt_fun_sum _ fun j _ => analyticAt_const.mul ((analyticAt_pi_iff.1 han) j)
+  let τ : (Fin e → ℂ) → (Fin 2 → ℂ) := fun w => ![linEval u (s w), ((√ε : ℝ) : ℂ)]
+  have hτ : AnalyticAt ℂ τ y := by
+    refine analyticAt_pi_iff.2 fun i => ?_
+    fin_cases i
+    · simpa [τ] using hh
+    · simpa [τ] using (analyticAt_const : AnalyticAt ℂ (fun _ : Fin e → ℂ => ((√ε : ℝ) : ℂ)) y)
+  have hS : sqSum (τ y) ≠ 0 := by
+    have : sqSum (τ y) = ‖linEval u (s y)‖ ^ 2 + ε := by
+      simp only [τ, sqSum, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one,
+        Complex.norm_real, Real.norm_eq_abs, sq_abs, Real.sq_sqrt hε.le]
+    rw [this]
+    positivity
+  have hφ : ContDiffAt ℝ 2 phi (τ y) := contDiffAt_phi hS
+  have hfun : logReg u ε ∘ s = phi ∘ τ := by
+    funext w
+    exact half_log_eq_phi _ hε.le
+  rw [hfun]
+  refine ReciprocityTheory.AnForm.M.hessC_posSemidef _ _ (hφ.comp _ hτ.restrictScalars.contDiffAt) fun v => ?_
+  rw [ReciprocityTheory.AnForm.levi_comp v hτ hφ]
+  exact GroundTheory.Heights₂.Heights.Inter.TorusInvariantLevi.leviForm_phi_nonneg hS _
+
 end RegularizedDensityNonneg
 
 theorem RegDensNonneg.proof : RegDensNonneg.Statement := by
@@ -38,30 +65,7 @@ theorem RegDensNonneg.proof : RegDensNonneg.Statement := by
   refine ReciprocityTheory.AnForm.A.maDens_nonneg_of_posSemidef _ _ fun k => ?_
   refine Fin.cases ?_ (fun j => ?_) k
   · simp only [Matrix.cons_val_zero]
-    set y := A *ᵥ x
-    have hh : AnalyticAt ℂ (fun w => linEval u (s w)) y := by
-      unfold linEval
-      exact Finset.analyticAt_fun_sum _ fun j _ => analyticAt_const.mul ((analyticAt_pi_iff.1 han) j)
-    let τ : (Fin (d + 1) → ℂ) → (Fin 2 → ℂ) := fun w => ![linEval u (s w), ((√ε : ℝ) : ℂ)]
-    have hτ : AnalyticAt ℂ τ y := by
-      refine analyticAt_pi_iff.2 fun i => ?_
-      fin_cases i
-      · simpa [τ] using hh
-      · simpa [τ] using (analyticAt_const : AnalyticAt ℂ (fun _ : Fin (d + 1) → ℂ => ((√ε : ℝ) : ℂ)) y)
-    have hS : sqSum (τ y) ≠ 0 := by
-      have : sqSum (τ y) = ‖linEval u (s y)‖ ^ 2 + ε := by
-        simp only [τ, sqSum, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one,
-          Complex.norm_real, Real.norm_eq_abs, sq_abs, Real.sq_sqrt hε.le]
-      rw [this]
-      positivity
-    have hφ : ContDiffAt ℝ 2 phi (τ y) := contDiffAt_phi hS
-    have hfun : logReg u ε ∘ s = phi ∘ τ := by
-      funext w
-      exact RegularizedDensityNonneg.half_log_eq_phi _ hε.le
-    rw [hfun]
-    refine ReciprocityTheory.AnForm.M.hessC_posSemidef _ _ (hφ.comp _ hτ.restrictScalars.contDiffAt) fun v => ?_
-    rw [ReciprocityTheory.AnForm.levi_comp v hτ hφ]
-    exact GroundTheory.Heights₂.Heights.Inter.TorusInvariantLevi.leviForm_phi_nonneg hS _
+    exact RegularizedDensityNonneg.hessC_logReg_comp_posSemidef u hε han
   · simp only [Matrix.cons_val_succ]
     have hE : ContDiffAt ℝ 2 (euclPot : (Fin n → ℂ) → ℝ) (s (A *ᵥ x)) :=
       ((contDiff_euclPot n).of_le (WithTop.coe_le_coe.mpr le_top)).contDiffAt

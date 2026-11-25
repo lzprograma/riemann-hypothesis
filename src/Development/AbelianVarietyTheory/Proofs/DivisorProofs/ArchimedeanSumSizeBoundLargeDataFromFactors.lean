@@ -7,44 +7,6 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalUnit
 import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkMapInitMinor
 import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.InclusionInjective
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.PaddedLastEntry
 import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TopPlaceLogTheta
@@ -61,7 +23,6 @@ open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunOb
 open Formalism.DivisionValues (vw lw)
 noncomputable section
 namespace GlobalTheory.CompanionTheory.InfAssembly
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open Formalism.UG
 
 theorem exists_ratFin {D : D7} (V : HSp D) (γ : UR D.sp.cm V.gram) :
@@ -119,12 +80,12 @@ theorem deltaForm_sum {Γ A K M : Type} [Group Γ] [Group A] [Field K] [AddCommG
   classical
   unfold deltaForm
   rw [finsum_eq_sum_of_support_subset (s := hA.toFinset)]
-  · exact Finset.sum_congr rfl fun γ h => if_pos (hA.mem_toFinset.1 h)
+  · exact Finset.sum_congr rfl fun γ h => ite_eq_left (hA.mem_toFinset.1 h)
   · intro γ h
     rw [Function.mem_support] at h
     simp only [Set.Finite.coe_toFinset]
     by_contra h'
-    exact h (if_neg h')
+    exact h (ite_eq_right h')
 
 theorem psiC_delta_lin {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} (rp : ClassReps G) (cl : G.ClPlus)
     (x : FinPt G (.top 0)) (hx : gamOrd (Xp G) G.Kplus x ≠ 0) {ι : Type} [Fintype ι] (w : ι → D.what₂.LL) (b : ι → WtSp G) :
@@ -310,8 +271,7 @@ theorem denseRange_embedding {K : Type} [Field K] [NumberField K] [_root_.Number
   have hc : p.IsComplex := IsTotallyComplex.isComplex p
   have hr : ¬ ComplexEmbedding.IsReal p.embedding := InfinitePlace.isComplex_iff.1 hc
   obtain ⟨a, ha⟩ : ∃ a, (starRingEnd ℂ) (p.embedding a) ≠ p.embedding a := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hr (RingHom.ext fun x => h x)
   set α := p.embedding a with hα
   have him : α.im ≠ 0 := fun h0 => ha (Complex.conj_eq_iff_im.2 h0)
@@ -577,13 +537,13 @@ theorem pair_ratLe (C b : ℝ) (p : InfinitePlace D.what₂.LL) {g g' : Infinite
     (fun j => if h : j < D.R.m then ch.S.Z.kkMap 1 (d.1 ⟨j, h⟩) (ch.S.ptTop c j) (ch.S.ptTop c (j + 1)) else 0)
     (fun j v B => NrmLe _ p.embedding v B) (g p) D.R.m
     (fun j hj B v h => by
-      simp only [dif_pos hj]
+      simp only [dite_eq_left hj]
       exact hg p Φ β d hd c ⟨j, hj⟩ B v h) D.R.m le_rfl _ Bu hu
   have h2 := chain_le (V := fun i => VV ℂ (wt ch.G (.grid i D.R.m)))
     (fun i => if h : i < D.R.m then ch.S.Z.kkMap 1 (d.2 ⟨i, h⟩) (ch.S.ptRow c i) (ch.S.ptRow c (i + 1)) else 0)
     (fun j v B => NrmLe _ p.embedding v B) (g' p) D.R.m
     (fun j hj B v h => by
-      simp only [dif_pos hj]
+      simp only [dite_eq_left hj]
       exact hg' p Φ β d hd c ⟨j, hj⟩ B v h) D.R.m le_rfl _ Bf hv
   obtain ⟨y, e, hy⟩ := hP p.embedding _ _ _ _ h1 h2
   exact ⟨y, e, Real.le_sqrt_of_sq_le hy⟩
@@ -626,7 +586,6 @@ open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunOb
 open Formalism.DivisionValues (vw lw)
 noncomputable section
 namespace GlobalTheory.CompanionTheory.InfAssembly
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open Formalism.UG
 
 section Place
@@ -669,10 +628,6 @@ theorem test_bound (C sb : ℝ) (hm : 0 < D.R.m) (hA : 0 ≤ D.R.m * aOne ch.G C
   set eg := Real.exp (D.R.m * g p) with heg
   set eg' := Real.exp (D.R.m * g' p) with heg'
   have hea0 : 0 < ea := Real.exp_pos _
-  have hes0 : 0 < es := Real.exp_pos _
-  have he10 : 0 < e1 := Real.exp_pos _
-  have heg0 : 0 < eg := Real.exp_pos _
-  have heg'0 : 0 < eg' := Real.exp_pos _
   rcases isEmpty_or_nonempty (Fin ch.n) with h0 | ⟨⟨a0⟩⟩
   · simp [dotProduct]
   set k0 := (ch.e a0).2 with hk0
@@ -722,7 +677,6 @@ theorem test_bound (C sb : ℝ) (hm : 0 < D.R.m) (hA : 0 ≤ D.R.m * aOne ch.G C
     rw [← Nat.card_eq_fintype_card, Nat.card_prod]
     push_cast
     exact mul_le_mul hN.1 hC.1 (by positivity) hea0.le
-  have hE : 0 ≤ ea ^ 8 * es ^ 2 * e1 * eg * eg' := by positivity
   rw [hdot, ← hsum]
   calc ‖∑ b, σ (z b)‖ ^ 2 ≤ (∑ b, ‖σ (z b)‖) ^ 2 := pow_le_pow_left₀ (norm_nonneg _) (norm_sum_le _ _) 2
     _ ≤ (Finset.univ : Finset (TestIx ch.G)).card * ∑ b, ‖σ (z b)‖ ^ 2 := sq_sum_le_card_mul_sum_sq

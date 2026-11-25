@@ -63,17 +63,8 @@ namespace GlobalTheory.CsaCharpoly
 open Polynomial
 
 theorem injective_of_isSimpleRing {R S : Type} [Ring R] [IsSimpleRing R] [Ring S] [Nontrivial S]
-    (f : R →+* S) : Function.Injective f := by
-  rcases eq_bot_or_eq_top (TwoSidedIdeal.ker f) with h | h
-  · rw [injective_iff_map_eq_zero]
-    intro x hx
-    have : x ∈ TwoSidedIdeal.ker f := (TwoSidedIdeal.mem_ker f).2 hx
-    rw [h] at this
-    simpa using this
-  · exfalso
-    have : (1 : R) ∈ TwoSidedIdeal.ker f := by rw [h]; trivial
-    rw [TwoSidedIdeal.mem_ker, map_one] at this
-    exact one_ne_zero this
+    (f : R →+* S) : Function.Injective f :=
+  RingHom.injective f
 
 theorem natDegree_minpoly_le_one_tmul {F A : Type} [Field F] [Ring A] [Algebra F A] (K : Type)
     [Field K] [Algebra F K] (g : A) (hK : IsIntegral K ((1 : K) ⊗ₜ[F] g)) :

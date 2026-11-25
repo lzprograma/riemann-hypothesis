@@ -16,52 +16,7 @@ public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FockRAddRig
 public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RestrictedWeightFirstTwoEq
 public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.WspanLeOpCl
 import Formalism.ThetaLogCoordinates.SandwichModelDomains.FinalW
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
 import Formalism.GradedWeylDivisibility.FinalD
 import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDlatLemmas
@@ -69,9 +24,6 @@ import Formalism.LocalToGlobal.GroupLattices.FockModels.DualInclusionLattices
 import Formalism.LocalToGlobal.GroupLattices.FockModels.ElementaryDivisorBasis
 import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSidePos
 import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideTen
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.Tactic.Linter.Style
 import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.RankMulConductorDivLeOne
 
@@ -186,31 +138,6 @@ def FormCoreSKX : Prop :=
       (∀ Q ∈ nabO O Kf m (nuOf lam), ∀ P ∈ nabO O Kf m (nuOf lam),
         B P (((p : Kf) ^ expN p m lam) • Q) ∈ Set.range (algebraMap O Kf))
 
-private theorem not_isUnit_p_of_hidaSetting {p n' : ℕ} {W Qq O Kf : Type} [CommRing W] [IsDomain W] [IsDiscreteValuationRing W]
-    [Field Qq] [Algebra W Qq] [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field Kf] [Algebra O Kf]
-    {ι : Qq →+* Kf} {σ : Qq ≃+* Qq} {j : W →+* O} {w : O} (hS : HidaSetting p n' W Qq O Kf ι σ j w) :
-    ¬ IsUnit ((p : ℕ) : O) := by
-  intro hu
-  letI : Algebra W O := j.toAlgebra
-  haveI : Module.Finite W O := hS.finite
-  have hfg : (⊤ : Submodule W O).FG := Module.Finite.fg_top
-  have hpm : Ideal.span {((p : ℕ) : W)} ≤ IsLocalRing.maximalIdeal W := by
-    rw [Ideal.span_le, Set.singleton_subset_iff]
-    exact hS.p_unif.not_isUnit
-  have hjac : Ideal.span {((p : ℕ) : W)} ≤ (⊥ : Ideal W).jacobson := by
-    rw [IsLocalRing.jacobson_eq_maximalIdeal ⊥ bot_ne_top]
-    exact hpm
-  have hle : (⊤ : Submodule W O) ≤ Ideal.span {((p : ℕ) : W)} • ⊤ := by
-    intro x _
-    obtain ⟨u, hu'⟩ := hu
-    have hx : x = ((p : ℕ) : W) • ((↑u⁻¹ : O) * x) := by
-      rw [Algebra.smul_def, RingHom.algebraMap_toAlgebra, map_natCast, ← hu', ← mul_assoc, Units.mul_inv, one_mul]
-    rw [hx]
-    exact Submodule.smul_mem_smul (Ideal.mem_span_singleton_self _) Submodule.mem_top
-  have hbot := Submodule.eq_bot_of_le_smul_of_le_jacobson_bot _ _ hfg hle hjac
-  have h1 : (1 : O) ∈ (⊥ : Submodule W O) := hbot ▸ Submodule.mem_top
-  exact one_ne_zero ((Submodule.mem_bot W).mp h1)
-
 theorem formCoreSKX_of (h : FormCoreGX) : FormCoreSKX := by
   intro p n' W Qq O Kf _ _ _ _ _ _ _ _ _ _ ι σ j w hS m lam hlam
   haveI : Fact p.Prime := ⟨hS.prime⟩
@@ -220,7 +147,7 @@ theorem formCoreSKX_of (h : FormCoreGX) : FormCoreSKX := by
   haveI : CharZero Qq := charZero_of_injective_algebraMap (IsFractionRing.injective W Qq)
   haveI : CharZero Kf := charZero_of_injective_ringHom ι.injective
   obtain ⟨B, hc, hrow, hnd, hint, hbd, hzero⟩ :=
-    h p O Kf (not_isUnit_p_of_hidaSetting hS) (m + 1) (m + 1) le_rfl (nuOf lam) (nuOf_antitone hlam)
+    h p O Kf (Formalism.MainNotions.Pf14.p_nonunit hS) (m + 1) (m + 1) le_rfl (nuOf lam) (nuOf_antitone hlam)
   refine ⟨B, hc, hrow, hnd, hint, ?_⟩
   intro Q hQ P hP
   by_cases h0 : ellWt lam = 0
@@ -228,7 +155,7 @@ theorem formCoreSKX_of (h : FormCoreGX) : FormCoreSKX := by
     rw [hE, pow_zero, one_smul]
     exact hzero (fun t => by have := nuOf_le_ellWt hlam t; omega) Q hQ P hP
   · have hE : expN p m lam = sExp p (m + 1) (ellWt lam) := by
-      simp only [expN, if_neg h0, sExp, N0, deF]
+      simp only [expN, ite_eq_right h0, sExp, N0, deF]
     rw [hE]
     exact hbd _ (Or.inl (nuOf_le_ellWt hlam)) Q hQ P hP
 
@@ -278,7 +205,6 @@ theorem posCore_of_formX {O Kf : Type} [CommRing O] [IsDomain O] [Field Kf] [Alg
       (by intro c Q P; simp)
       (by intro Q P P'; simp)
       (by intro c Q P; simp)
-  have hβ0 : ∀ Q P : V, β0 Q P = B (P : MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf) Q := fun _ _ => rfl
   have hinjβ : Function.Injective β0 := by
     rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
     intro Q hQ
@@ -347,7 +273,6 @@ theorem ten_sideX (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O 
   subst hVs
   classical
   have hinj : Function.Injective (algebraMap O Kf) := IsFractionRing.injective O Kf
-  have hanti := kp_lamAt_antitone lam0 hd
   have hfin : ∀ s : Fin n', Finite ↥(ssIdx (m + 1) (m + 1) (nuOf (lamAt lam0 s))) :=
     fun s => (sSIdxFinite (m + 1) (m + 1) (nuOf (lamAt lam0 s))).to_subtype
   let _ : ∀ s : Fin n', Fintype ↥(ssIdx (m + 1) (m + 1) (nuOf (lamAt lam0 s))) := fun s => Fintype.ofFinite _
@@ -356,150 +281,59 @@ theorem ten_sideX (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O 
   have hb := fun s : Fin n' => latBasis (O := O) hinj m (lamAt lam0 s) 1 (by simp)
   choose b _ using hb
   obtain ⟨Ψ, hΨ⟩ := psi_exists V β b
-  refine ⟨Ψ, ?_, fun Ms hMs => ?_⟩
-  · obtain ⟨x, hx⟩ := prodBasis V b
-    obtain ⟨x', hx'⟩ := prodBasis V (fun s => dualB (β s) (b s))
-    have h1 : ∀ j, Ψ.symm (x' j) = x.coord j := fun j => by
-      rw [← hΨ b x x' hx hx' j, LinearEquiv.symm_apply_apply]
-    have hpure : ∀ (Q P : ∀ s, V s) (y u : tensorLat Kf Kf V),
-        (y : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) =
-          ∏ s, blockEmb Kf s ((Q s : V s) : MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf) →
-        (u : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) =
-          ∏ s, blockEmb Kf s ((P s : V s) : MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf) →
-        Ψ.symm y u = ∏ s, β s (Q s) (P s) := by
-      intro Q P y u hy hu
-      have h2 : y = ∑ i, (∏ s, β s (Q s) (b s (i s))) • x' i := by
-        conv_lhs => rw [← x'.sum_repr y]
-        refine Finset.sum_congr rfl fun i _ => ?_
-        rw [repr_prod V (fun s => dualB (β s) (b s)) x' hx' Q y hy i]
-        congr 1
-        exact Finset.prod_congr rfl fun s _ => dualB_repr (β s) (b s) (Q s) (i s)
-      have h3 : ∀ i, x.repr u i = ∏ s, (b s).repr (P s) (i s) := fun i => repr_prod V b x hx P u hu i
-
-      rw [h2, map_sum, LinearMap.sum_apply]
-      simp only [map_smul, LinearMap.smul_apply, h1, Module.Basis.coord_apply, smul_eq_mul, h3,
-        ← Finset.prod_mul_distrib]
-      rw [← Fintype.piFinset_univ,
-        ← Finset.prod_univ_sum (fun _ => Finset.univ) (fun s a => β s (Q s) (b s a) * (b s).repr (P s) a)]
-      refine Finset.prod_congr rfl fun s _ => ?_
-      conv_rhs => rw [← (b s).sum_repr (P s)]
-
-      rw [map_sum]
-      refine Finset.sum_congr rfl fun a _ => ?_
-      rw [map_smul, smul_eq_mul, mul_comm]
-    have hB := TS.fock_pairing_bilinear
-    let Bc := TS.tscForm hB (K := Kf) (σ := Fin n' × (Fin (m + 1) × Fin (m + 1))) ((∏ s, cs s)⁻¹)
-    let Φ2 : (tensorLat Kf Kf V) →ₗ[Kf] Module.Dual Kf (tensorLat Kf Kf V) :=
-      LinearMap.mk₂ Kf (fun (y u : tensorLat Kf Kf V) => Bc (u : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) y)
-        (by intro Q Q' P; simp)
-        (by intro c Q P; simp)
-        (by intro Q P P'; simp)
-        (by intro c Q P; simp)
-    have hΦ : ∀ y u : tensorLat Kf Kf V, Φ2 y u = (∏ s, cs s) * TS.fockR (u : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf)
-        (y : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) := by
-      intro y u
-      show ((∏ s, cs s)⁻¹)⁻¹ * TS.fockR _ _ = _
-      rw [inv_inv]
-    have hEq : Ψ.symm.toLinearMap = Φ2 := by
-      refine x.ext fun i => x.ext fun j => ?_
-      show Ψ.symm (x i) (x j) = Φ2 (x i) (x j)
-      rw [hΦ, hpure (fun s => b s (i s)) (fun s => b s (j s)) (x i) (x j) (hx i) (hx j), hx i, hx j,
-        TS.fock_pairing_block Kf (Fin n') (m + 1) (m + 1), ← Finset.prod_mul_distrib]
-      exact Finset.prod_congr rfl fun s _ => hcs s _ _
-    intro y u
-    rw [← hΦ]
-    exact congrArg (fun f => f y u) hEq
-  have hMs' : ∀ s, IsUnit (((Ms s)⁻¹).transpose).det := fun s => det_invT _ (hMs s)
-  have hZ := fun s : Fin n' => latBasis (O := O) hinj m (lamAt lam0 s) (Ms s) (hMs s)
-  choose Z hZ using hZ
-  obtain ⟨z, hz⟩ := prodBasis V Z
-  obtain ⟨z', hz'⟩ := prodBasis V (fun s => dualB (β s) (Z s))
-  have hH : ∀ Ns : Fin n' → Matrix (Fin (m + 1)) (Fin (m + 1)) Kf, (∀ s, IsUnit (Ns s).det) →
-      Hten O lam0 (fun s => colSpan O (Ns s)) =
-        tensorLat O Kf (fun s => nablaLTw O Kf m (lamAt lam0 s) (Ns s)) := by
-    intro Ns hNs
-    unfold Hten
-    congr 1
-    funext s
-    rw [H0_eq_twisted_nabla (la_indep hinj) _ _ (hanti s) _ (hNs s)]
-
-  have hΛ : (Hten O lam0 fun s => colSpan O (Ms s)).comap ((tensorLat Kf Kf V).subtype.restrictScalars O) =
-      Submodule.span O (Set.range z) := by
-    obtain ⟨-, oS⟩ := tensorBasis O Kf (Fin n') (m + 1) (m + 1) _ _
-      (fun s i => ((Z s i : V s) : MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf))
-      (fun s => li_coe hinj (V s) (Z s)) hZ
-    rw [hH Ms hMs, ← oS, ← comap_span_coe]
-    congr 3
-    funext i
-    exact (hz i).symm
-  have hdual : dualLat O Kf (Submodule.span O (Set.range z)) =
-      Submodule.span O (Set.range fun i => z.coord i) := by
-    have := dualLat_span (O := O) z (fun _ => 1) (fun _ => one_ne_zero)
-    simpa using this
-  have hmap : (dualLat O Kf ((Hten O lam0 fun s => colSpan O (Ms s)).comap
-      ((tensorLat Kf Kf V).subtype.restrictScalars O))).map (Ψ.toLinearMap.restrictScalars O) =
-      Submodule.span O (Set.range z') := by
-    rw [hΛ, hdual, Submodule.map_span, ← Set.range_comp]
-    congr 2
-    funext j
-    exact hΨ Z z z' hz hz' j
-  rw [hmap]
-  have hPmem : ∀ s (P : V s), (P : MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf) ∈
-      nablaLTw O Kf m (lamAt lam0 s) (Ms s) → P ∈ Submodule.span O (Set.range (Z s)) := by
-    intro s P hP
-    rw [← hZ s] at hP
-    rw [← comap_span_coe]
-    exact hP
-  constructor
-  · rw [Submodule.span_le]
-    rintro _ ⟨j, rfl⟩
-    show ((z' j : tensorLat Kf Kf V) : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) ∈
-      Hten O lam0 fun s => colSpan O ((Ms s)⁻¹).transpose
-    rw [hz', hH _ hMs']
-    apply Submodule.subset_span
-    refine ⟨fun s => ((dualB (β s) (Z s) (j s) : V s) : MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf),
-      fun s => ?_, rfl⟩
-    apply (hβ s).up (Ms s) (hMs s)
-    intro P hP
-    rw [beta_dualB, Module.Basis.coord_apply]
-    exact repr_int (Z s) P (hPmem s P hP) (j s)
-  · rintro _ ⟨Q, hQ, rfl⟩
-    show ((p : Kf) ^ (∑ s, N s)) • Q ∈ Submodule.span O (Set.range z')
-    rw [← comap_span_coe]
-    show ((((p : Kf) ^ (∑ s, N s)) • Q : tensorLat Kf Kf V) :
-      MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) ∈
-      Submodule.span O (Set.range fun i => ((z' i : tensorLat Kf Kf V) :
-        MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf))
-    obtain ⟨-, oS'⟩ := tensorBasis O Kf (Fin n') (m + 1) (m + 1) _
-      (fun s => Submodule.span O (Set.range fun i =>
-        ((dualB (β s) (Z s) i : V s) : MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf)))
-      (fun s i => ((dualB (β s) (Z s) i : V s) : MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf))
-      (fun s => li_coe hinj (V s) (dualB (β s) (Z s))) (fun s => rfl)
-    have hr : (Set.range fun i => ((z' i : tensorLat Kf Kf V) :
-        MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf)) =
-        Set.range fun i : (∀ s, ↥(ssIdx (m + 1) (m + 1) (nuOf (lamAt lam0 s)))) =>
-          ∏ s, blockEmb Kf s ((dualB (β s) (Z s) (i s) : V s) : MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf) := by
+  refine ⟨Ψ, ?_, ten_side_of_psi O Kf p lam0 hd N β hβ Ψ hΨ⟩
+  obtain ⟨x, hx⟩ := prodBasis V b
+  obtain ⟨x', hx'⟩ := prodBasis V (fun s => dualB (β s) (b s))
+  have h1 : ∀ j, Ψ.symm (x' j) = x.coord j := fun j => by
+    rw [← hΨ b x x' hx hx' j, LinearEquiv.symm_apply_apply]
+  have hpure : ∀ (Q P : ∀ s, V s) (y u : tensorLat Kf Kf V),
+      (y : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) =
+        ∏ s, blockEmb Kf s ((Q s : V s) : MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf) →
+      (u : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) =
+        ∏ s, blockEmb Kf s ((P s : V s) : MvPolynomial (Fin (m + 1) × Fin (m + 1)) Kf) →
+      Ψ.symm y u = ∏ s, β s (Q s) (P s) := by
+    intro Q P y u hy hu
+    have h2 : y = ∑ i, (∏ s, β s (Q s) (b s (i s))) • x' i := by
+      conv_lhs => rw [← x'.sum_repr y]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [repr_prod V (fun s => dualB (β s) (b s)) x' hx' Q y hy i]
       congr 1
-      funext i
-      exact hz' i
-    rw [hr, oS', Submodule.coe_smul, ← Finset.prod_pow_eq_pow_sum]
-    have hQ' : (Q : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) ∈
-        tensorLat O Kf (fun s => nablaLTw O Kf m (lamAt lam0 s) ((Ms s)⁻¹).transpose) := by
-      rw [← hH _ hMs']
-      exact hQ
-    refine lb_tensor O Kf _ _ (fun s => (p : Kf) ^ N s) (fun s F hF => ?_) _ hQ'
-    have hFV : F ∈ V s := la_nablaLTw_le m (lamAt lam0 s) _ (hMs' s) F hF
-    have h1 : (((p : Kf) ^ N s) • (⟨F, hFV⟩ : V s)) ∈
-        Submodule.span O (Set.range fun i => (1 : Kf) • dualB (β s) (Z s) i) := by
-      apply mem_span_of_coord (dualB (β s) (Z s)) (fun _ => 1) (fun _ => one_ne_zero)
-      intro i
-      rw [inv_one, one_mul, Module.Basis.coord_apply, dualB_repr]
-      apply (hβ s).low (Ms s) (hMs s) ⟨F, hFV⟩ (Z s i) hF
-      rw [← hZ s]
-      exact Submodule.subset_span ⟨i, rfl⟩
-    simp only [one_smul] at h1
-    rw [← comap_span_coe] at h1
-    exact h1
+      exact Finset.prod_congr rfl fun s _ => dualB_repr (β s) (b s) (Q s) (i s)
+    have h3 : ∀ i, x.repr u i = ∏ s, (b s).repr (P s) (i s) := fun i => repr_prod V b x hx P u hu i
+
+    rw [h2, map_sum, LinearMap.sum_apply]
+    simp only [map_smul, LinearMap.smul_apply, h1, Module.Basis.coord_apply, smul_eq_mul, h3,
+      ← Finset.prod_mul_distrib]
+    rw [← Fintype.piFinset_univ,
+      ← Finset.prod_univ_sum (fun _ => Finset.univ) (fun s a => β s (Q s) (b s a) * (b s).repr (P s) a)]
+    refine Finset.prod_congr rfl fun s _ => ?_
+    conv_rhs => rw [← (b s).sum_repr (P s)]
+
+    rw [map_sum]
+    refine Finset.sum_congr rfl fun a _ => ?_
+    rw [map_smul, smul_eq_mul, mul_comm]
+  have hB := TS.fock_pairing_bilinear
+  let Bc := TS.tscForm hB (K := Kf) (σ := Fin n' × (Fin (m + 1) × Fin (m + 1))) ((∏ s, cs s)⁻¹)
+  let Φ2 : (tensorLat Kf Kf V) →ₗ[Kf] Module.Dual Kf (tensorLat Kf Kf V) :=
+    LinearMap.mk₂ Kf (fun (y u : tensorLat Kf Kf V) => Bc (u : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) y)
+      (by intro Q Q' P; simp)
+      (by intro c Q P; simp)
+      (by intro Q P P'; simp)
+      (by intro c Q P; simp)
+  have hΦ : ∀ y u : tensorLat Kf Kf V, Φ2 y u = (∏ s, cs s) * TS.fockR (u : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf)
+      (y : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) := by
+    intro y u
+    show ((∏ s, cs s)⁻¹)⁻¹ * TS.fockR _ _ = _
+    rw [inv_inv]
+  have hEq : Ψ.symm.toLinearMap = Φ2 := by
+    refine x.ext fun i => x.ext fun j => ?_
+    show Ψ.symm (x i) (x j) = Φ2 (x i) (x j)
+    rw [hΦ, hpure (fun s => b s (i s)) (fun s => b s (j s)) (x i) (x j) (hx i) (hx j), hx i, hx j,
+      TS.fock_pairing_block Kf (Fin n') (m + 1) (m + 1), ← Finset.prod_mul_distrib]
+    exact Finset.prod_congr rfl fun s _ => hcs s _ _
+  intro y u
+  rw [← hΦ]
+  exact congrArg (fun f => f y u) hEq
 
 theorem test_side_explicit_identification : Formalism.MainNotions.TestSideCounting.RestTSX := by
   intro p n' W Qq O Kf _ _ _ _ _ _ _ _ _ _ ι σ j w h m r lam0 hd
@@ -519,7 +353,7 @@ theorem test_side_explicit_identification : Formalism.MainNotions.TestSideCounti
     unfold Vsp
     congr 1
     funext s
-    rw [if_pos (hanti s)]
+    rw [ite_eq_left (hanti s)]
   obtain ⟨Ψ, hform, hΨ⟩ := ten_sideX O Kf p lam0 hd (fun s => expN p m (lamAt lam0 s)) β hβ cs hcs (Vsp Kf lam0) hV
   have hκ : (p : Kf) ^ ((kap1 p lam0 : ℕ) : ℤ) = (p : Kf) ^ (∑ s, expN p m (lamAt lam0 s)) := by
     rw [zpow_natCast]
@@ -663,7 +497,6 @@ theorem first_weight_le_conductor {n' m : ℕ} (hm : 2 ≤ m) {TT : Finset (Fin 
   · show (-restW TT lam0 t (Fin.rev 0) - -restW TT lam0 t (Fin.rev (Fin.last m))).toNat ≤ c0
     rw [Fin.rev_last, Fin.rev_zero]; omega
 
-
 theorem opFAt_of_ten (hT : TenOp) {p n' : ℕ} {W Qq O Kf : Type} [CommRing W] [IsDomain W] [IsDiscreteValuationRing W]
     [Field Qq] [Algebra W Qq] [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field Kf] [Algebra O Kf] [CharZero Kf]
     {ι : Qq →+* Kf} {σ : Qq ≃+* Qq} {j : W →+* O} {w : O} (hS : HidaSetting p n' W Qq O Kf ι σ j w) {m : ℕ} (hm : 1 ≤ m)
@@ -678,7 +511,7 @@ theorem opFAt_of_ten (hT : TenOp) {p n' : ℕ} {W Qq O Kf : Type} [CommRing W] [
     unfold Vsp
     congr 1
     funext t
-    rw [if_pos (hanti t)]
+    rw [ite_eq_left (hanti t)]
   obtain ⟨L, a, hL, hmain⟩ := hT Kf n' m hm (vecE n') TT d c0 (fun t => nuOf (lamAt rest t))
     (fun t => Formalism.L2.G.Model.TS.nuOf_antitone (hanti t)) h0 h1 β (hV ▸ β.2) s (hV ▸ s.2)
   set A : Fin n' → Matrix (Fin (m + 1)) (Fin (m + 1)) Kf := fun x => Aa (vecE n' x) (la_tw ι σ x.val hmat)⁻¹ with hA

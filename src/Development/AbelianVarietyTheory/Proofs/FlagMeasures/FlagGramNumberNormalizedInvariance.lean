@@ -64,7 +64,7 @@ theorem N_ej (hj : j ≤ r) {n : Mat k r} (hn : n ∈ Nset k r) (a : Fin j) :
     by_contra h
     exact hb ⟨⟨b.val, by omega⟩, by simp, rfl⟩
   have ha := a.isLt
-  rw [hn.2.1 (Fin.castLE hj a) _ (by simp [eI]; omega), if_neg, zero_smul]
+  rw [hn.2.1 (Fin.castLE hj a) _ (by simp [eI]; omega), ite_eq_right, zero_smul]
   intro h
   have := congrArg Fin.val h
   simp [eI] at this
@@ -75,11 +75,11 @@ theorem N_detj (hj : j ≤ r) {n : Mat k r} (hn : n ∈ Nset k r) :
   rw [Matrix.det_of_upperTriangular]
   · refine Finset.prod_eq_one fun a _ => ?_
     simp only [Matrix.of_apply]
-    rw [hn.2.1 (Fin.castLE hj a) _ le_rfl, if_pos rfl]
+    rw [hn.2.1 (Fin.castLE hj a) _ le_rfl, ite_eq_left rfl]
   · intro b a hab
     have hab' : a.val < b.val := hab
     simp only [Matrix.of_apply]
-    rw [hn.2.1 (Fin.castLE hj a) (eI k r (Fin.castLE hj b)) hab'.le, if_neg]
+    rw [hn.2.1 (Fin.castLE hj a) (eI k r (Fin.castLE hj b)) hab'.le, ite_eq_right]
     intro h
     have := congrArg Fin.val h
     simp [eI] at this

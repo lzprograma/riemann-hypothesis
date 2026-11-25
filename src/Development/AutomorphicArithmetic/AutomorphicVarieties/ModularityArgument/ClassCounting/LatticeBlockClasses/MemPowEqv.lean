@@ -72,7 +72,7 @@ private theorem intVal_eqv {R : Type} [CommRing R] [IsDedekindDomain R] (e : R �
   have hey : e y ≠ 0 := by simpa using hy
   have form : ∀ (v : HeightOneSpectrum R) (r : R), r ≠ 0 →
       ∃ m : ℕ, v.intValuation r = WithZero.exp (-(m : ℤ)) :=
-    fun v r hr => ⟨_, by rw [HeightOneSpectrum.intValuation_def, if_neg hr]⟩
+    fun v r hr => ⟨_, by rw [HeightOneSpectrum.intValuation_def, ite_eq_right hr]⟩
   obtain ⟨m1, h1⟩ := form Q _ hey
   obtain ⟨m2, h2⟩ := form P _ hy
   rw [h1, h2] at key ⊢

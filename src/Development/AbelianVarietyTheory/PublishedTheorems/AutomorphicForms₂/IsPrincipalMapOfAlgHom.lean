@@ -42,8 +42,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open NumberField IsDedekindDomain GlobalTheory.NT GlobalTheory.Mem.Fld
@@ -64,7 +62,7 @@ variable {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyCompl
 omit [NumberField K] in
 theorem isEmpty_realEmb : IsEmpty (K →+* ℝ) :=
   ⟨fun φ => IsTotallyComplex.complexEmbedding_not_isReal (Complex.ofRealHom.comp φ)
-    (ComplexEmbedding.isReal_iff.2 (RingHom.ext fun x => Complex.conj_ofReal _))⟩
+    (ComplexEmbedding.isReal_iff.2 (RingHom.ext fun _ => Complex.conj_ofReal _))⟩
 
 theorem exists_rayPair_top_iff {I : Ideal (𝓞 K)} (hI : I ≠ ⊥) :
     (∃ α β : 𝓞 K, RayPair ⊤ α β ∧ I * Ideal.span {β} = Ideal.span {α}) ↔ I.IsPrincipal := by
@@ -90,17 +88,6 @@ theorem isRayField_top_iff (L : Type) [Field L] [NumberField L] [Algebra K L] : 
   simp only [IsRayField, hp, hc, not_false_eq_true, forall_const, true_and]
   refine and_congr_right' (and_congr_right' (and_congr_right' (forall₂_congr fun I hI => ?_)))
   rw [exists_rayPair_top_iff hI]
-
-theorem isRayField_self_top_iff : IsRayField K K ⊤ ↔ IsPrincipalIdealRing (𝓞 K) := by
-  have h1 : ∀ (I : Ideal (𝓞 K)) (χ : (K ≃ₐ[K] K) →* ℂˣ), heckeIdeal K χ I = 1 := fun I χ => by
-    rw [Subsingleton.elim χ 1]
-    simp [heckeIdeal, heckeVal_one]
-  rw [isRayField_top_iff]
-  refine ⟨fun h => ⟨fun I => ?_⟩, fun h => ⟨inferInstance, fun _ σ _ => Subsingleton.elim _ _, Subsingleton.elim _ _,
-    fun I _ => iff_of_true (h1 I) (h.principal I)⟩⟩
-  by_cases hI : I = ⊥
-  · rw [hI]; infer_instance
-  · exact (h.2.2.2 I hI).1 (h1 I)
 
 
 omit [NumberField K] [_root_.NumberField.IsTotallyComplex K] in

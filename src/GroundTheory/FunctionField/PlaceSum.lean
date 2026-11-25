@@ -187,14 +187,7 @@ noncomputable def primeOfPlace {w : Place k K'} (h : w.LiesOver v) :
     (maximalIdeal v.ring).primesOver (integralClosure v.ring K') :=
   ⟨(maximalIdeal w.ring).comap (v.closureHom h), Ideal.comap_isPrime _ _, ⟨by
     let := h.algebra
-    have : IsLocalHom (algebraMap v.ring w.ring) := by
-      refine ⟨fun a ha => ?_⟩
-      obtain ⟨hne, hinv⟩ := Submonoid.isUnit_iff_and.mp ha
-      refine Submonoid.isUnit_iff_and.mpr ⟨fun hzero => hne ?_, h.mem_iff.mp ?_⟩
-      · change algebraMap K K' (a : K) = 0
-        rw [hzero, map_zero]
-      · rw [map_inv₀]
-        exact hinv
+    have : IsLocalHom (algebraMap v.ring w.ring) := h.isLocalHom
     have hc : (v.closureHom h).comp (algebraMap v.ring (integralClosure v.ring K')) =
         algebraMap v.ring w.ring := RingHom.ext fun a => Subtype.ext rfl
     change maximalIdeal v.ring = Ideal.comap (algebraMap v.ring (integralClosure v.ring K'))
@@ -320,13 +313,7 @@ theorem inertiaDeg_primeOfPlace_eq
   let w := v.placeOfPrime q
   have h : w.LiesOver v := v.placeOfPrime_liesOver q
   let := h.algebra
-  have hcomap : (maximalIdeal w.ring).comap (algebraMap v.ring w.ring) = maximalIdeal v.ring := by
-    have hq : maximalIdeal v.ring =
-        ((maximalIdeal w.ring).comap (v.closureHom h)).under v.ring := (v.primeOfPlace h).2.2.over
-    have hc : (v.closureHom h).comp (algebraMap v.ring (integralClosure v.ring K')) =
-        algebraMap v.ring w.ring := RingHom.ext fun a => Subtype.ext rfl
-    simpa only [Ideal.under, Ideal.comap_comap, hc] using hq.symm
-  have : IsLocalHom (algebraMap v.ring w.ring) := ((local_hom_tfae _).out 5 1).mp hcomap
+  have : IsLocalHom (algebraMap v.ring w.ring) := h.isLocalHom
   have hfinrank : Module.finrank v.ResidueField w.ResidueField = w.inertiaDeg v := by
     let : Algebra k w.ring := (fun u : Place k K' => (inferInstance : Algebra k u.ring)) w
     have : IsScalarTower k v.ring w.ring := IsScalarTower.of_algebraMap_eq fun c =>

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TwistPlaceNormalisedCombinationsPreserveThetaFun
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsOneComb
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsBiSmooth
@@ -18,47 +19,8 @@ import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
 import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacua
 import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.MarkSpec
 import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PlacewiseToAdelicDecompositionForall
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
 import Mathlib.Data.Finsupp.Pointwise
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -68,7 +30,6 @@ open GlobalTheory.PosOne (toOne Covers TriPos)
 open GlobalTheory.IndefiniteRowSideFullHecke.FourierJacobiAverage (app HasTensorVal fl opEFJ IsQuotIntFJ RFJ)
 open GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum (IsCO)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.FinPl (Vac Moves InK Lat Pl latV idAt idOff intAt grpAt grpOff MxAt hand0 SplitPt extS extT)
 
 noncomputable section
@@ -177,45 +138,17 @@ theorem isFinComb_of_half {k : Type} [Field k] [ValuativeRel k] [TopologicalSpac
   exact (RingHom.mem_ker).1 (Ideal.mem_inf.1 (GlobalTheory.FinPl.SplitHalfSupp.mxAt_of_isHalf_above D k q _ _ u (hc u hu) i j)).1
 
 theorem isFinComb_aconv {S T : HSp D} (l : List (WO S T →₀ ℂ)) (hl : ∀ c ∈ l, IsFinComb c) : IsFinComb (aconv l) := by
-  induction l with
-  | nil =>
-    intro u hu
-    have : u = 0 := by simpa [aconv] using hu
-    subst this
-    ext i j
-    simp
-  | cons c l ih =>
-    intro u hu
-    have e1 : aconv [aconv l] = aconv l := by
-      show (aconv l).sum (fun g a => (Finsupp.single (0 : WO S T) (1 : ℂ)).sum fun h b => Finsupp.single (g + h) (a * b)) = aconv l
-      have : ∀ (g : WO S T) (a : ℂ), ((Finsupp.single (0 : WO S T) (1 : ℂ)).sum fun h b => Finsupp.single (g + h) (a * b)) =
-          Finsupp.single g a := fun g a => by rw [Finsupp.sum_single_index (by simp), add_zero, mul_one]
-      simp only [this, Finsupp.sum_single]
-    have e2 : aconv (c :: l) = aconv [c, aconv l] := by
-      show _ = c.sum fun g a => (aconv [aconv l]).sum fun h b => Finsupp.single (g + h) (a * b)
-      rw [e1]; rfl
-    rw [e2] at hu
-    obtain ⟨a, ha, b, hb, rfl⟩ := GlobalTheory.QValOuter.mem_support_aconv_pair _ _ hu
-    have h1 := hl c List.mem_cons_self a ha
-    have h2 := ih (fun c hc => hl c (List.mem_cons_of_mem _ hc)) b hb
-    ext i j
-    have h3 : infPart D (a i j) = 0 := congrFun (congrFun h1 i) j
-    have h4 : infPart D (b i j) = 0 := congrFun (congrFun h2 i) j
-    show infPart D (a i j + b i j) = 0
-    rw [RingHom.map_add (f := _), h3, h4, add_zero]
+  first | exact _root_.GlobalTheory.QPl.ThetaPin.isFinComb_aconv | exact @_root_.GlobalTheory.QPl.ThetaPin.isFinComb_aconv | apply _root_.GlobalTheory.QPl.ThetaPin.isFinComb_aconv <;> assumption
 
 theorem aconv_single_cons {G : Type} [AddMonoid G] (l : List (G →₀ ℂ)) : aconv (Finsupp.single 0 1 :: l) = aconv l := by
   show (Finsupp.single (0 : G) (1 : ℂ)).sum (fun g a => (aconv l).sum fun h b => Finsupp.single (g + h) (a * b)) = aconv l
   rw [Finsupp.sum_single_index (by simp)]
   simp
 
-theorem comb_single_zero (S T : HSp D) (f : WO S T → ℂ) : comb ψ S T (Finsupp.single 0 1) f = f := by
-  simp [comb, GlobalTheory.BoxSlice.heisO_zero']
-
 theorem biComb_single_zero (A S A' : HSp D) (C : WO A S → WO S A' → ℂ) :
     biComb ψ A S A' (Finsupp.single 0 1) (Finsupp.single 0 1) C = C := by
   funext u v
-  simp only [biComb, comb_single_zero]
+  simp only [biComb, GlobalTheory.FinPl.OffTest.comb_single_zero]
 
 theorem sum_support_smul {G M : Type} [AddCommMonoid M] [Module ℂ M] (a : ℂ) (e : G →₀ ℂ) (F : G → M) :
     ∑ g ∈ (a • e).support, (a • e) g • F g = a • ∑ g ∈ e.support, e g • F g := by

@@ -23,7 +23,6 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneParamSubg
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzFockVacuumLineUniqueOfHeisenbergDerivati
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKernelReal
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilModelLineActionExists
-public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.ILiescalar
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieFirstOfLieSecond
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolActs
 public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
@@ -102,7 +101,7 @@ import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSu
 import Formalism.LocalToGlobal.IndefiniteReal.PHeisFC
 import Mathlib.Tactic.Linter.HaveILetI
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchActionReadingsCompatible
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.WeilLieAlgebraScalarAction
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HoweSplittingActsFockActionPlusTraceMultiples
 import Mathlib.RingTheory.Coalgebra.CoassocSimps
 import Development.WeilBound.ThetaLifts.SphericalLattices.ThetaSubSup
 
@@ -169,7 +168,6 @@ open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNo
 
 noncomputable section
 namespace GlobalTheory.ConjCartan
-
 
 open scoped ComplexOrder in
 theorem exists_conj_cartan_matrix : ∀ (n : ℕ) (M θ₁ θ₂ : Matrix (Fin n) (Fin n) ℂ), Mᴴ = M → IsCartan M θ₁ → IsCartan M θ₂ →
@@ -264,7 +262,6 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
 theorem piInf_inclR {w : InfinitePlace F} (τ : EmbOver E w) (x : E) : piInf τ (inclR (F := F) (AF F) x) = τ.1 x := by
   simp [piInf, inclR, compInf, infEmb_tmul]
-
 
 variable (F E) in
 def archIdeal : Ideal (AE F E) where
@@ -424,11 +421,6 @@ open scoped Matrix
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem incM_map_piInf {n m : Type} (J : Matrix n m E) {w : InfinitePlace F} (τ : EmbOver E w) :
-    (incM F J).map (piInf τ) = J.map τ.1 := by
-  ext i j
-  simp [incM, piInf, compInf, inclR, infEmb_tmul]
-
 theorem exists_mat_at {σ : E →ₐ[F] E} (hcm : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, EmbOver E w)
     {m k : Type} (z : InfinitePlace F → Matrix m k ℂ) :
     ∃ u : Matrix m k (AE F E), At (evI F) u ∧ ∀ w, u.map (piInf (τ w)) = z w := by
@@ -452,10 +444,6 @@ theorem mat_eq_zero {σ : E →ₐ[F] E} (hcm : IsCMExt F E σ) (τ : ∀ w : In
 theorem at_add {m k : Type} {D D' : Matrix m k (AE F E)} (hD : At (evI F) D) (hD' : At (evI F) D') :
     At (evI F) (D + D') := by
   intro u hu; rw [smul_add, hD u hu, hD' u hu, add_zero]
-
-theorem at_mul_left {m k l : Type} [Fintype k] {D : Matrix m k (AE F E)} (hD : At (evI F) D) (N : Matrix k l (AE F E)) :
-    At (evI F) (D * N) := by
-  intro u hu; rw [← Matrix.smul_mul, hD u hu, Matrix.zero_mul]
 
 theorem at_mul_right {m k l : Type} [Fintype k] {D : Matrix k l (AE F E)} (hD : At (evI F) D) (N : Matrix m k (AE F E)) :
     At (evI F) (N * D) := by
@@ -538,7 +526,7 @@ theorem conj_skew : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Number
     have h0 : (1 + G) * (1 + H) - 1 = 0 := by
       apply mat_eq_zero hcm B.emb
       · have e : (1 + G) * (1 + H) - 1 = G + H + G * H := by noncomm_ring
-        rw [e]; exact at_add (at_add hGat hHat) (at_mul_left hGat H)
+        rw [e]; exact at_add (at_add hGat hHat) (GlobalTheory.FockCompactW.at_mul_right hGat H)
       · intro w
         rw [Matrix.map_sub _ (map_sub _), Matrix.map_mul, hgmap, hhmap, hmap1, huv, sub_self]
     exact sub_eq_zero.1 h0
@@ -553,11 +541,11 @@ theorem conj_skew : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Number
           rw [Matrix.map_add _ (map_add _), Matrix.map_one _ (map_zero _) (map_one _), Matrix.transpose_add, Matrix.transpose_one]
           noncomm_ring
         rw [e]
-        exact at_add (at_add (at_mul_left (at_transpose hGat) _) (at_mul_right (at_map_cA σ hGat) _))
+        exact at_add (at_add (GlobalTheory.FockCompactW.at_mul_right (at_transpose hGat) _) (at_mul_right (at_map_cA σ hGat) _))
           (at_mul_right (at_map_cA σ hGat) _)
       · intro w
         rw [Matrix.map_sub _ (map_sub _), Matrix.map_mul, Matrix.map_mul, Matrix.transpose_map, map_cA_piInf hcm, hgmap,
-          incM_map_piInf, hu, sub_self]
+          GlobalTheory.RealLift.Main.incM_map_piInf, hu, sub_self]
     exact sub_eq_zero.1 h0
   refine ⟨⟨g0, hmem⟩, ?_, fun w => ?_⟩
   · show At (evI F) ((1 + G) - 1)
@@ -670,7 +658,6 @@ end Proj
 open GlobalTheory.WeilSchUnique
 
 variable {F : Type} [Field F] [NumberField F] {E : Type} [Field E] [NumberField E] [Algebra F E]
-
 
 variable (F) in
 def eInf : AF F := ((1 : InfiniteAdeleRing F), (0 : FiniteAdeleRing (𝓞 F) F))
@@ -855,7 +842,7 @@ theorem exists_rebase_splitting_datum : _root_.GlobalTheory.FunPr.ThetaLocalInpu
     (r s r' s' : ℕ), B.IsGood σ → X.IsHerm σ B r s → W.IsSkew σ B r' s' → M.IsGood B.ψ → M.IsWeil B.ψ χX χW om →
     ∀ γ ∈ Lines σ X, ∀ f ∈ M.Pol B.ψ B.emb, ∃ f₁ : SInf F (Fin n × Fin d),
       GlobalTheory.RealLift.SD (fun t => om (γ (Multiplicative.ofAdd t), 1)) f f₁ := by
-  intro hKP F E _ _ _ _ _ σ B n d X W M χX χW om r s r' s' hB hX hW hM hWeil γ hγ f hf
+  intro _ F E _ _ _ _ _ σ B n d X W M χX χW om r s r' s' hB hX hW hM hWeil γ hγ f hf
   choose A hA hAθ using fun w => frameEx_holds _ _ _ _ _ (hX.sig w) (hX.cartan w)
   choose C hC hCθ using fun w => frameEx_holds _ _ _ _ _ (hW.sig w) (hW.cartan w)
   have hA1 : ∀ w, IsFrame ((1 : ℂ) • (incM F X.J).map (piInf (B.emb w))) (A w) := fun w => by
@@ -870,7 +857,7 @@ theorem exists_rebase_splitting_datum : _root_.GlobalTheory.FunPr.ThetaLocalInpu
   have hwp : IsUWeilPair (cA σ) (adeleClass F) B.ψ (-1) (incM F X.J) (incM F W.J) M.co χX χW om := hWeil
   obtain ⟨d', hdd, hB1'⟩ := hwp.2.1
   have hΦ' := fockMap_swap hΦ hdd
-  obtain ⟨c, hact⟩ := _root_.GlobalTheory.T.weil_lie_algebra_scalar_action hKP _root_.GlobalTheory.HeisDer.derEx hvl F E σ _ _ _ _ _ _ _ B.ψ B.emb _ _ d' Complex.I 1 C A _
+  obtain ⟨c, hact⟩ := _root_.GlobalTheory.HoweD.lieScalar F E σ _ _ _ _ _ _ _ B.ψ B.emb _ _ d' Complex.I 1 C A _
     (om.comp (MonoidHom.inl _ _)) hB.cm hB.std fr' hΦ' hB1'.1
   obtain ⟨Y, -, hY⟩ := _root_.GlobalTheory.RealLiftGen.genEx F E σ (Fin n) r s B.emb (incM F X.J) 1 A hB.cm hA1 γ hγ
   rw [← hr] at hf
@@ -927,7 +914,7 @@ theorem conjugation_acts_on_derivation : _root_.GlobalTheory.FunPr.ThetaLocalInp
     ∀ γ ∈ Lines σ W, ∀ f ∈ M.Pol B.ψ B.emb, ∀ f₁ : SInf F (Fin n × Fin d),
       ActsD (evI F) (fun t => om (1, γ (Multiplicative.ofAdd t))) f f₁ →
       ActsD (evI F) (fun t => om (1, h * γ (Multiplicative.ofAdd t) * h⁻¹)) (T f) (T f₁) := by
-  intro hK F E _ _ _ _ _ σ B n d X W M χX χW om r s r' s' hb hX hW _hM hw g _hg h _hh T hT hTs γ hγ f hf f₁ hf₁
+  intro _ F E _ _ _ _ _ σ B n d X W M χX χW om r s r' s' hb hX hW _hM hw g _hg h _hh T hT hTs γ hγ f hf f₁ hf₁
   have hder := GlobalTheory.RealLift.Main.i_derex
   have hvl := GlobalTheory.RealLift.Main.i_vacline hder
   have hfe := GlobalTheory.RealLift.Main.i_fockex hder
@@ -943,7 +930,7 @@ theorem conjugation_acts_on_derivation : _root_.GlobalTheory.FunPr.ThetaLocalInp
     hb.std fr hAθ hCθ hΦ
   have hsp : IsUSplitting (adeleClass F) B.ψ M.co (actAB (cA σ)) om := IsUWeilPair.isUSplitting hw
   have hsp2 := GlobalTheory.WeilSchrodinger.isUSplitting_inr hsp
-  obtain ⟨c, hc⟩ := _root_.GlobalTheory.LieScal.lie_algebra_acts_by_scalar hK hder hvl F E σ _ _ _ _ _ _ _ B.ψ B.emb _ _ M.co 1 Complex.I A C Φ _
+  obtain ⟨c, hc⟩ := _root_.GlobalTheory.HoweD.lieScalar F E σ _ _ _ _ _ _ _ B.ψ B.emb _ _ M.co 1 Complex.I A C Φ _
     hb.cm hb.std fr hΦ hsp2
   obtain ⟨Yg, -, hY⟩ := GlobalTheory.RealLift.Main.i_genex F E σ (Fin d) _ _ B.emb (incM F W.J) Complex.I C hb.cm hC1 γ hγ
   obtain ⟨T0, rfl⟩ := GlobalTheory.RealLift.Main.pol_eq B M Φ hr hf
@@ -1385,7 +1372,7 @@ theorem real_maps_unique : _root_.GlobalTheory.FunPr.ThetaLocalInputs → ∀ (F
       _ = R.p (D i g) := hρ i g hg
     rw [Module.End.mul_apply, Module.End.mul_apply, lhs, rhs]
   have hrank : Module.rank ℂ R.Pi ≤ Cardinal.aleph0 :=
-    (LinearMap.rank_le_of_surjective π hπ).trans (_root_.GlobalTheory.T.polarization_rank_le_dim hKP _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ hPV)
+    (LinearMap.rank_le_of_surjective π hπ).trans (_root_.GlobalTheory.ThK.PolRank.polarization_rank_le hKP _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ hPV)
   obtain ⟨c, hc⟩ := _root_.GlobalTheory.dixmier_schur_of_rank_le_aleph0 R.Pi ι ρ T hR.nontriv hrank irrρ comm
   have hT : ∀ x, T x = c • x := fun x => by rw [hc]; rfl
   refine ⟨ψ, c, ?_, hψ, fun f hf => ?_⟩
@@ -1400,9 +1387,6 @@ theorem real_maps_unique : _root_.GlobalTheory.FunPr.ThetaLocalInputs → ∀ (F
           rw [LinearEquiv.apply_symm_apply]
     _ = c • ψ (R.p' f) := by rw [hT, map_smul]
 end Real
-section Fin
-open GlobalTheory.FinUniq
-end Fin
 end GlobalTheory.ReBase
 end
 end
@@ -1618,20 +1602,8 @@ theorem isMulRightInvariant_of_equiv {G H : Type} [Group G] [Group H]
     [TopologicalSpace G] [TopologicalSpace H] [IsTopologicalGroup G] [IsTopologicalGroup H]
     [MeasurableSpace G] [MeasurableSpace H] [BorelSpace G] [BorelSpace H]
     (e : G ≃ₜ* H) (μ : Measure G) (h : (μ.map e).IsMulRightInvariant) :
-    μ.IsMulRightInvariant := by
-  have he : Measurable e := e.continuous.measurable
-  have hs : Measurable e.symm := e.symm.continuous.measurable
-  have hμ : μ = (μ.map e).map e.symm := by
-    rw [Measure.map_map hs he]
-    have : (e.symm : H → G) ∘ e = id := by ext x; simp
-    rw [this, Measure.map_id]
-  refine ⟨fun g => ?_⟩
-  have h1 := h.map_mul_right_eq_self (e g)
-  have hc : (fun x : G => x * g) ∘ (e.symm : H → G) = (e.symm : H → G) ∘ (fun y : H => y * e g) := by
-    ext y; simp
-  conv_lhs => rw [hμ]
-  rw [Measure.map_map (measurable_mul_const g) hs, hc,
-    ← Measure.map_map hs (measurable_mul_const _), h1, ← hμ]
+    μ.IsMulRightInvariant :=
+  UpqUnimodular.isMulRightInvariant_of_continuousMulEquiv e μ h
 
 theorem isMulRightInvariant (σ : E →ₐ[F] E) (hcm : IsCMExt F E σ) {n : ℕ} (J : Matrix (Fin n) (Fin n) E)
     (hJ : ∀ i j, σ (J j i) = J i j) (hd : IsUnit J.det) (μ : Measure (UA σ J)) [μ.IsHaarMeasure] :
@@ -1743,7 +1715,6 @@ namespace GlobalTheory.ReBase
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
   {B : Base F E} {a a' : ℕ} {G : Geo σ a a'} {X : Chars F E} {V : Spc F E a} {V' : Spc F E a'} {Z : Spc F E (a + a')}
 variable {om : Rep σ G.V G.W} {om' : Rep σ G.V' G.W}
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
 theorem rebase_finite_scalar (hP : _root_.GlobalTheory.FunPr.ThetaLocalInputs) {R R₂ : RealMaps F a a'} {Rf S : FinMaps F a a'}
     (hM : IsMatched B G X om om' R Rf) (hM₂ : IsMatched B (reG G V V' Z) X om om' R₂ S) :
     ∃ (ψ : ∀ v, Rf.Pi v ≃ₗ[ℂ] S.Pi v) (l : Pl F → ℂ), (∀ v ∉ X.T, l v = 1) ∧
@@ -1768,8 +1739,8 @@ theorem rebase_finite_scalar (hP : _root_.GlobalTheory.FunPr.ThetaLocalInputs) {
         have h' : (splitPrime (B.τ v)).under (𝓞 F) ∈ (X.T : Set (Pl F)) := h
         rwa [splitPrime_under] at h')
       have hk := valuation_kap hM.triple.geo hM₂.triple.geo v
-      have h1 := (GlobalTheory.T.splitPlaceCharacterComponent_smooth_unitary_conductor F E X.α hc.heckeα v.1 (B.τ v)).2.2.2 (hc.unrα _ hw) _ hk
-      have h2 := (GlobalTheory.T.splitPlaceCharacterComponent_smooth_unitary_conductor F E X.β hc.heckeβ v.1 (B.τ v)).2.2.2 (hc.unrβ _ hw) _ hk
+      have h1 := (_root_.GlobalTheory.ChrWLocal.chrW_local F E X.α hc.heckeα v.1 (B.τ v)).2.2.2 (hc.unrα _ hw) _ hk
+      have h2 := (_root_.GlobalTheory.ChrWLocal.chrW_local F E X.β hc.heckeβ v.1 (B.τ v)).2.2.2 (hc.unrβ _ hw) _ hk
       have h0 : chrW X.ν (B.τ v) (kap G V V' Z v.1) =
           chrW X.α (B.τ v) (kap G V V' Z v.1) / chrW X.β (B.τ v) (kap G V V' Z v.1) := by
         simp only [Chars.ν, chrW, locChar, MonoidHom.comp_apply, MonoidHom.div_apply, map_div]

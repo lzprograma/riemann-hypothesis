@@ -27,7 +27,7 @@ theorem derivation_aeval_eq {K R ι : Type*} [CommRing K] [CommRing R] [Algebra 
       Finset.mul_sum]
     simp only [map_add (f := _), map_mul, aeval_X, apply_ite (aeval z), map_zero, add_mul, mul_ite,
       mul_one, mul_zero, ite_mul, zero_mul, Finset.sum_add_distrib, Finset.sum_ite_eq,
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
     ring_nf
 
 theorem totalDegree_pderiv_lt {K ι : Type*} [CommRing K] (P : MvPolynomial ι K) (i : ι)
@@ -69,8 +69,7 @@ theorem eq_C_of_pderiv_eq_zero {K ι : Type*} [Field K] [CharZero K] (P : MvPoly
     apply hne
     simpa [totalDegree] using hmd
   obtain ⟨i, hi⟩ : ∃ i, m i ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hm0 (Finsupp.ext hc)
   have hc := congrArg (AddMonoidAlgebra.coeff · (m - Finsupp.single i 1)) (h i)
   rw [coeff_pderiv, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at hc

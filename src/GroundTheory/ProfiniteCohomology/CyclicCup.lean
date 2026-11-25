@@ -121,8 +121,6 @@ end Formula
 
 section CupFormula
 
-attribute [local instance 2000] Rep.hV2
-
 variable {G : Type} [Group G] {A : Rep ℤ G}
 
 theorem smul_mem_cocycles₂ (c : cocycles₂ (Rep.trivial ℤ G ℤ)) (a : A.ρ.invariants) :
@@ -168,7 +166,7 @@ end CupFormula
 
 section Cyclic
 
-attribute [local instance 2000] Rep.hV2 Submodule.module Submodule.Quotient.module
+attribute [local instance 2000] Submodule.module Submodule.Quotient.module
 
 variable {G : Type} [Group G] {A : Rep ℤ G}
 

@@ -60,17 +60,6 @@ open GlobalTheory.ZM.NearBuild
 namespace GlobalTheory.ZM.NearCut
 
 
-open MvPolynomial in
-theorem homogeneousComponent_mem_vanIdeal {R σ Hh : Type} [CommRing R] (d : ℕ) (p : Hh → σ → R)
-    (F : MvPolynomial σ R) (hF : F ∈ vanIdeal d p) (e : ℕ) : homogeneousComponent e F ∈ vanIdeal d p := by
-  classical
-  letI := (MvPolynomial.gradedAlgebra : GradedAlgebra (homogeneousSubmodule σ R))
-  have h : (vanIdeal d p).IsHomogeneous (homogeneousSubmodule σ R) :=
-    Ideal.homogeneous_span _ _ fun x hx => ⟨d, hx.1⟩
-  have := h e hF
-  rwa [show ((DirectSum.decompose (homogeneousSubmodule σ R) F e : homogeneousSubmodule σ R e) : MvPolynomial σ R)
-    = homogeneousComponent e F from MvPolynomial.decomposition.decompose'_apply F e] at this
-
 
 open MvPolynomial in
 theorem eval₂_eq_zero_of_forms_le {K σ : Type} [CommRing K] {I J : Ideal (MvPolynomial σ K)} {d : ℕ}
@@ -101,14 +90,14 @@ theorem exists_away_flat_projRep : ∀ (R σ Hh : Type) [CommRing R] [IsNoetheri
   intro R σ Hh _ _ _ _ _ p Q d P hP hcutP q₀ hq₀
   obtain ⟨f, hf, hproj, hmap⟩ := _root_.GlobalTheory.ZM.FormsFamily.exists_away_projective_vanIdeal R σ Hh p Q d P hP hcutP q₀ hq₀
   obtain ⟨Z, s, M, th, -, hrep, -, hflat⟩ := _root_.GlobalTheory.ProjFlat.exists_projRep_flat (Localization.Away f) σ
-    (vanIdeal d (fun h i => loc f (p h i))) d (homogeneousComponent_mem_vanIdeal d _)
+    (vanIdeal d (fun h i => loc f (p h i))) d (GlobalTheory.ZM.FormsFamily.component_mem_vanIdeal d _)
   refine ⟨f, hf, Over.mk s, M, th, hrep, hflat fun e he => by have := hproj e he; infer_instance, ?_⟩
   intro K _ x I X s' M' th' hI hcut hrep'
   have hpb := IsPullback.of_hasPullback s (spMap x)
   obtain ⟨th₁, hrep₁, hc₁⟩ := _root_.GlobalTheory.ZM.RepBC.projRep_baseChange _ K σ x _ Z _ s _ _ M th hrep hpb
   rw [hmap K x] at hrep₁
   obtain ⟨e, he, hiso, hc⟩ := _root_.GlobalTheory.RepUniq.exists_iso_of_projRep K σ I _ X _ s' _ M' _ th' th₁ hrep' hrep₁ fun T _ β v hv =>
-    ⟨eval₂_eq_zero_of_forms_le (homogeneousComponent_mem_vanIdeal d _) (fun e he F hF h => ((hcut e he).2 F hF).2 h) β v hv,
+    ⟨eval₂_eq_zero_of_forms_le (GlobalTheory.ZM.FormsFamily.component_mem_vanIdeal d _) (fun e he F hF h => ((hcut e he).2 F hF).2 h) β v hv,
       eval₂_eq_zero_of_forms_le hI (fun e he F hF h => ((hcut e he).2 F hF).1 h) β v hv⟩
   refine ⟨e.hom ≫ pullback.fst s (spMap x), ?_, ?_, fun T _ y w => ?_⟩
   · have h0 : IsPullback e.hom s' (pullback.snd s (spMap x)) (𝟙 _) :=

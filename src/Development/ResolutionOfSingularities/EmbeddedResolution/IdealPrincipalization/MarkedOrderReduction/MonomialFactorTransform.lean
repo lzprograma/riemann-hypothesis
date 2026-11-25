@@ -13,46 +13,6 @@ import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.
 public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.ControlledTransform
 import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupCoproduct
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -793,8 +753,6 @@ private theorem isNoetherian_subscheme_of_smooth (T : MarkedIdealWithBoundary.{u
   have := hT.quasiCompact
   have : AlgebraicGeometry.IsNoetherian (Spec (CommRingCat.of T.base)) :=
     isNoetherian_spec_field T.base
-  have : AlgebraicGeometry.LocallyOfFiniteType (Z.subschemeι ≫ T.structMap) := inferInstance
-  have : AlgebraicGeometry.QuasiCompact (Z.subschemeι ≫ T.structMap) := inferInstance
   exact isNoetherian_of_locallyOfFiniteType (Z.subschemeι ≫ T.structMap)
 
 private theorem exists_opens_isIrreducible_support_inter (T : MarkedIdealWithBoundary.{u}) (hT : T.IsAdmissible)
@@ -806,7 +764,6 @@ private theorem exists_opens_isIrreducible_support_inter (T : MarkedIdealWithBou
   have := hT.charZero
   have := hT.smooth
   have : AlgebraicGeometry.IsNoetherian Z.subscheme := isNoetherian_subscheme_of_smooth T hT Z hsm
-  have : TopologicalSpace.NoetherianSpace ↥Z.subscheme := inferInstance
   have hemb : Topology.IsClosedEmbedding (⇑(Z.subschemeι).base) :=
     AlgebraicGeometry.IsClosedImmersion.isClosedEmbedding Z.subschemeι
   have hrange : Set.range (⇑(Z.subschemeι).base) = (↑Z.support : Set ↥T.scheme) := by

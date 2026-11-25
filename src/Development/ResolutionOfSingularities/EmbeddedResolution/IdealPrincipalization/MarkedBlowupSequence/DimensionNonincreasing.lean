@@ -9,47 +9,6 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTra
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceTransforms
 public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsWithoutUnitIdeals
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.KrullDimClosedSubset
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Bool
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -69,7 +28,6 @@ namespace FunctorialResolution.EmbeddedResolution
 theorem ringKrullDim_stalk_eq_of_isOpenImmersion {Y W : Scheme.{u}} (g : Y ⟶ W)
     [AlgebraicGeometry.IsOpenImmersion g] (y : Y) :
     ringKrullDim (Y.presheaf.stalk y) = ringKrullDim (W.presheaf.stalk (g.base y)) := by
-  have : IsIso (g.stalkMap y) := inferInstance
   have e : (W.presheaf.stalk (g.base y)) ≅ (Y.presheaf.stalk y) := asIso (g.stalkMap y)
   exact (ringKrullDim_eq_of_ringEquiv e.commRingCatIsoToRingEquiv).symm
 
@@ -77,7 +35,6 @@ theorem isNoetherianRing_stalk_of_isOpenImmersion {Y W : Scheme.{u}} (g : Y ⟶ 
     [AlgebraicGeometry.IsOpenImmersion g] (y : Y)
     [IsNoetherianRing (W.presheaf.stalk (g.base y))] :
     IsNoetherianRing (Y.presheaf.stalk y) := by
-  have : IsIso (g.stalkMap y) := inferInstance
   exact isNoetherianRing_of_ringEquiv _
     (CategoryTheory.asIso (g.stalkMap y)).commRingCatIsoToRingEquiv
 
@@ -109,9 +66,6 @@ theorem le_topologicalKrullDim_of_etaleChart {k : Type u} [Field k] {X : Scheme.
   obtain ⟨V, hVaff, hxv, -⟩ :=
     exists_isAffineOpen_mem_and_subset (X := U.toScheme) (x := ⟨x0, hx0⟩) (U := ⊤) trivial
   obtain ⟨y, hy⟩ := exists_isClosed_singleton_of_isAffineOpen V hVaff ⟨_, hxv⟩
-  have he1 : AlgebraicGeometry.Etale (Scheme.Opens.ι V) := inferInstance
-  have he2 : AlgebraicGeometry.Etale (V.ι ≫ c.map) := inferInstance
-  have : IsNoetherianRing (X.presheaf.stalk ((V.ι ≫ U.ι).base y)) := inferInstance
   have : IsNoetherianRing (V.toScheme.presheaf.stalk y) :=
     isNoetherianRing_stalk_of_isOpenImmersion (V.ι ≫ U.ι) y
   calc ((m : ℕ∞) : WithBot ℕ∞)
@@ -138,7 +92,6 @@ theorem ringKrullDim_stalk_eq_of_isBlowupAlongIdealSheaf_of_notMem {X X₁ : Sch
     exact h2
   have hx : x₁ ∈ π ⁻¹ᵁ W := hxW
   have hiso : IsIso (π ∣_ W) := isIso_morphismRestrict_of_isBlowupAlongIdealSheaf hπ W hW
-  have hoi : AlgebraicGeometry.IsOpenImmersion (π ∣_ W) := inferInstance
   have e1 := ringKrullDim_stalk_eq_of_isOpenImmersion (Scheme.Opens.ι (π ⁻¹ᵁ W))
     (⟨x₁, hx⟩ : ↥(π ⁻¹ᵁ W))
   have e2 := ringKrullDim_stalk_eq_of_isOpenImmersion ((π ∣_ W) ≫ Scheme.Opens.ι W)

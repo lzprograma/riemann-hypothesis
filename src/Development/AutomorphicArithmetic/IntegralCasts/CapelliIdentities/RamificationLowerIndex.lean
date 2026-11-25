@@ -1,51 +1,6 @@
 module
 
 public import GroundTheory.LocalFields.LowerIndex
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.RingTheory.Valuation.Discrete.IsDiscreteValuationRing
 
 @[expose] public section
@@ -169,25 +124,6 @@ private lemma dvd_prod {S : Type*} [CommRing S]
   simpa only [Polynomial.map_prod, Polynomial.map_sub, map_prod, map_sub, coe_evalRingHom, map_X,
     map_C, eval_X, eval_C, h3, sub_zero] using h2
 
-private lemma addVal_algebraMap {T S : Type*} [CommRing T] [CommRing S] [IsDomain T] [IsDomain S]
-    [IsDiscreteValuationRing T] [IsDiscreteValuationRing S] [Algebra T S] (e : ℕ) (he : e ≠ 0)
-    (h : (maximalIdeal T).map (algebraMap T S) = maximalIdeal S ^ e) (z : T) :
-    addVal S (algebraMap T S z) = e * addVal T z := by
-  by_cases hz : z = 0
-  · subst hz
-    rw [map_zero, addVal_zero, addVal_zero, ENat.mul_top (by exact_mod_cast he)]
-  obtain ⟨π, hπ⟩ := exists_irreducible T
-  obtain ⟨ϖ, hϖ⟩ := exists_irreducible S
-  rw [hπ.maximalIdeal_eq, hϖ.maximalIdeal_eq, Ideal.map_span, Set.image_singleton,
-    Ideal.span_singleton_pow, Ideal.span_singleton_eq_span_singleton] at h
-  obtain ⟨w, hw⟩ := h.symm
-  obtain ⟨n, u, rfl⟩ := eq_unit_mul_pow_irreducible hz hπ
-  rw [addVal_def' u hπ n, ← Nat.cast_mul]
-  refine addVal_def _ (Units.map (algebraMap T S : T →* S) u * w ^ n) hϖ _ ?_
-  rw [map_mul, map_pow, ← hw]
-  simp only [Units.val_mul, Units.coe_map, MonoidHom.coe_coe, Units.val_pow_eq_pow_val]
-  ring
-
 private lemma addVal_prod {S : Type*} [CommRing S] [IsDomain S] [IsDiscreteValuationRing S]
     {H : Type*} (F : Finset H) (b : H → S) :
     addVal S (∏ t ∈ F, b t) = ∑ t ∈ F, addVal S (b t) := by
@@ -201,17 +137,15 @@ end UpperTheory.Reformulated.B.RamificationLowerIndex
 open Polynomial IsLocalRing ValuativeRel GroundTheory.LocalField in
 open IsDiscreteValuationRing hiding maximalIdeal in
 theorem UpperTheory.Reformulated.B.RamificationLowerIndex.ramificationIndex_mul_lowerIndex_restrictNormalHom.{u_1, u_2} :
-    ∀ {K : Type u_1} {L : Type u_2} [inst : Field K] [inst_1 : ValuativeRel K] [inst_2 : TopologicalSpace K]
-      [inst_3 : IsNonarchimedeanLocalField K] [inst_4 : Field L] [inst_5 : ValuativeRel L] [inst_6 : TopologicalSpace L]
-      [inst_7 : IsNonarchimedeanLocalField L] [inst_8 : Algebra K L] [inst_9 : ValuativeExtension K L]
-      [inst_10 : FiniteDimensional K L] (M : IntermediateField K L) [IsGalois K L] [inst_12 : Normal K ↥M] (σ : Gal(L/K)),
+    ∀ {K : Type u_1} {L : Type u_2} [Field K] [ValuativeRel K] [TopologicalSpace K]
+      [IsNonarchimedeanLocalField K] [Field L] [ValuativeRel L] [TopologicalSpace L]
+      [IsNonarchimedeanLocalField L] [Algebra K L] [ValuativeExtension K L]
+      [FiniteDimensional K L] (M : IntermediateField K L) [IsGalois K L] [Normal K ↥M] (σ : Gal(L/K)),
       (↑((_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation (↥M))))) : ℕ∞) *
           GroundTheory.LocalField.lowerIndex K (↥M) ((AlgEquiv.restrictNormalHom ↥M : Gal(L/K) → Gal(↥M/K)) σ) =
         ∑ τ : Gal(L/↥M), GroundTheory.LocalField.lowerIndex K L (σ * AlgEquiv.restrictScalars K τ) := by
   intro K L _ _ _ _ _ _ _ _ _ _ _ M _ _ σ
   obtain ⟨x, hx⟩ := exists_generator (R := 𝒪[K]) (S := 𝒪[L]) _ (map_maximalIdeal K L).ge
-  have hv := addVal_algebraMap (T := 𝒪[M]) (S := 𝒪[L]) _ (ramificationIndex_pos M L).ne'
-    (map_maximalIdeal M L)
   set σ' : Gal(M/K) := AlgEquiv.restrictNormalHom M σ with hσ'
   let r : Gal(L/M) → (𝒪[L] ≃ₐ[𝒪[K]] 𝒪[L]) := fun τ => integerAlgEquiv K L (τ.restrictScalars K)
   let s := integerAlgEquiv K L σ
@@ -242,7 +176,7 @@ theorem UpperTheory.Reformulated.B.RamificationLowerIndex.ramificationIndex_mul_
   obtain ⟨y₀, hy₀⟩ := ENat.exists_eq_iInf
     (fun y : 𝒪[M] => addVal 𝒪[M] (integerAlgEquiv K M σ' y - y))
   have hy₁ : lowerIndex K M σ' = addVal 𝒪[M] (integerAlgEquiv K M σ' y₀ - y₀) := hy₀.symm
-  rw [hsum, hy₁, ← hv]
+  rw [hsum, hy₁, ← addVal_algebraMap_integer M L]
   apply le_antisymm
   · rw [addVal_le_iff_dvd, ← ha1]
     refine dvd_prod a 1 _ (s : 𝒪[L] →+* 𝒪[L]) fun i => ?_

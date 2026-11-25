@@ -55,8 +55,6 @@ open Formalism.BasicNotions Formalism.MainNotions.G Formalism.L2.G Formalism.L2.
   Formalism.MainNotions.G.CmpJ.AgreeLv Formalism.MainNotions.G.KAat
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X0 : Formalism.L2.Herm.Herm0 D) (u : D.what₂.Word) (w : D.what₂.places.Pl)
   (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w))
 
@@ -163,11 +161,9 @@ def loc (i : ℕ) (hi : i + 1 ≤ D.R.m) : LocIn X0 u w hg (Z.lv Fl ht) i (Z.Fo 
     (Z.S i hi).B
 
 theorem loc_Uloc (i : ℕ) (hi : i + 1 ≤ D.R.m) : (Z.loc Fl ht i hi).Uloc = fun β => ulocOf (Z.Fo i hi) β := by
-  set_option backward.isDefEq.respectTransparency false in
     rfl
 
 theorem frRat (i : ℕ) (hi : i + 1 ≤ D.R.m) (β : (Z.Fo i hi).Ch) : FrRatJ ((Z.loc Fl ht i hi).t β) (Z.loc Fl ht i hi).B := by
-  set_option backward.isDefEq.respectTransparency false in
     intro w' h
     rfl
 
@@ -192,8 +188,6 @@ open Formalism Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotio
 
 open Formalism.BasicNotions Formalism.MainNotions.G Formalism.L2.G Formalism.L2.G.Cmp Formalism.L2.Forms Formalism.UG NumberField IsDedekindDomain Matrix Formalism.MainNotions.G.CmpJ
 open scoped TensorProduct
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem finite_compG_re {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {a b : ℕ} (h : a = b)
     (σ : E →ₐ[F] E) (J : Matrix (Fin a) (Fin a) E) (J' : Matrix (Fin b) (Fin b) E)
@@ -238,8 +232,6 @@ open Formalism Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotio
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formalism.L2.G Formalism.L2.G.Cmp Formalism.L2.Forms Formalism.UG NumberField IsDedekindDomain Matrix Formalism.MainNotions.G.CmpJ
   Formalism.MainNotions.G.CmpJ.AgreeLv Formalism.MainNotions.G.KAat
 open scoped TensorProduct
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Mem
 
@@ -301,7 +293,6 @@ theorem formsInMem_mid (F : FormsTiedSym D u Ch chOf) (dt : MemDt F) (i : ℕ) (
 
 theorem formsInMem_fin [∀ i, Finite (Ch i)] (F : FormsTiedSym D u Ch chOf) (dt : MemDt F) (i : ℕ) (hi : i + 1 ≤ D.R.m) :
     Finite (formsInMem F dt i hi).Ch := by
-  set_option backward.isDefEq.respectTransparency false in
     by_cases h : i + 1 = D.R.m
     · rw [formsInMem_top F dt i hi h]
       exact (inferInstance : Finite Unit)
@@ -335,8 +326,6 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formal
   Formalism.MainNotions.G.CmpJ.AgreeLv Formalism.MainNotions.G.KAat
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Step
 
 variable {D : D7} (X0 : Formalism.L2.Herm.Herm0 D) (u : D.what₂.Word) (w : D.what₂.places.Pl)
@@ -361,13 +350,6 @@ variable {X0}
 
 end Step
 
-section Rec
-
-variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : G.Inst D L} {Gl : G.LatInst D} {K : G.Consts} {Dx : DivX D} {cX : ExtraC}
-  {ex : Extra D L hT Gi Gl K Dx cX}
-
-end Rec
-
 end GlobalTheory.Port
 
 end
@@ -379,8 +361,6 @@ open Formalism Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotio
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formalism.L2.G Formalism.L2.G.Cmp Formalism.L2.Forms Formalism.MainNotions.G.CmpJ Formalism.MainNotions.G.CmpJ.PStabEq Formalism.MainNotions.G.KAat
   Formalism.L2.KerInert.SecondKernelProjection
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section One
 
@@ -414,14 +394,6 @@ def labOf {I : CmpJIn Tw u μ w h Lv} (hI : LabHyp I) (fl_t : Fl.t = D.R.t) (fl_
 
 end One
 
-section Built
-
-variable {D : D7} {X0 : Formalism.L2.Herm.Herm0 D} {Tw : TwForms D} {u : D.what₂.Word} {μ : D.what₂.Tup} {w : D.what₂.places.Pl}
-  {h : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)} {Fl : Fills (D.gat u w h)} {Lv : Levels Fl}
-
-
-end Built
-
 section Rec
 
 variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : G.Inst D L} {Gl : G.LatInst D} {K : G.Consts} {Dx : DivX D} {cX : ExtraC}
@@ -443,8 +415,6 @@ namespace GlobalTheory.Port
 open Formalism Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotions.G.ChartsLv
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formalism.L2.G Formalism.L2.G.Cmp Formalism.L2.Forms Formalism.MainNotions.G.CmpJ Formalism.MainNotions.G.CmpJ.AgreeLv Formalism.MainNotions.G.KAat Formalism.MainNotions.G.ChartsLv
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem memberChainForms_levelPrime_eq_member {D : D7} {u : D.what₂.Word} {Ch : ℕ → Type} {chOf : ∀ i, (D.mem u).C.cls i → Ch i} (F : FormsTiedSym D u Ch chOf)
     (dt : MemDt F) (i : ℕ) (hi : i + 1 ≤ D.R.m) : (formsInMem F dt i hi).T = (D.mem u).A.T := by
@@ -470,8 +440,6 @@ open Formalism Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotio
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formalism.L2.G Formalism.L2.G.Cmp Formalism.L2.Forms Formalism.UG NumberField IsDedekindDomain Matrix Formalism.MainNotions.G.CmpJ
   Formalism.MainNotions.G.CmpJ.PStabEq Formalism.MainNotions.G.KAat Formalism.MainNotions.G.ChartsLv Formalism.MainNotions.G.CmpJ.AgreeLv
 open scoped TensorProduct
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem reL_symm {a b : ℕ} (h : a = b) {E : Type} [Field E] [NumberField E] (L : Submodule (𝓞 E) (Fin b → E)) :
     reL h (reL h.symm L) = L := by
@@ -507,7 +475,6 @@ section Rec
 
 theorem formsInMem_bad {u : D.what₂.Word} {Ch : ℕ → Type} {chOf : ∀ i, (D.mem u).C.cls i → Ch i} (F : FormsTiedSym D u Ch chOf)
     (dt : MemDt F) (i : ℕ) (hi : i + 1 ≤ D.R.m) : (formsInMem F dt i hi).bad = badG D := by
-  set_option backward.isDefEq.respectTransparency false in
     by_cases h : i + 1 = D.R.m
     · rw [formsInMem_top F dt i hi h]
       try rfl
@@ -517,7 +484,6 @@ theorem formsInMem_bad {u : D.what₂.Word} {Ch : ℕ → Type} {chOf : ∀ i, (
 
 theorem formsInMem_ok {u : D.what₂.Word} {Ch : ℕ → Type} {chOf : ∀ i, (D.mem u).C.cls i → Ch i} (F : FormsTiedSym D u Ch chOf)
     (dt : MemDt F) (i : ℕ) (hi : i + 1 ≤ D.R.m) (w : D.what₂.places.Pl) : (formsInMem F dt i hi).okW w := by
-  set_option backward.isDefEq.respectTransparency false in
     by_cases h : i + 1 = D.R.m
     · rw [formsInMem_top F dt i hi h]
       exact trivial
@@ -537,7 +503,6 @@ end
 section
 namespace GlobalTheory.Port
 open Formalism Formalism.MainNotions Formalism.MainNotions.G Formalism.BasicNotions Formalism.L2.G Formalism.L2.G.Cmp Formalism.L2.Forms Formalism.UG NumberField IsDedekindDomain Matrix Formalism.MainNotions.G.CmpJ Formalism.MainNotions.G.CmpJ.AgreeLv
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 variable {D : D7} (X0 : Formalism.L2.Herm.Herm0 D) (u : D.what₂.Word) (w : D.what₂.places.Pl)
   (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w))
   {C : ColumnChain D.R D.what₂.Tau (D.hcW u)} {A : ColumnsAtT D.R C} {P : PeriodMap D.R C}
@@ -546,15 +511,6 @@ variable {D : D7} (X0 : Formalism.L2.Herm.Herm0 D) (u : D.what₂.Word) (w : D.w
 def ChartBaseLatticeEqSelfDualAtP (Fo : FormsIn M (i + 1) hi) (p : ℕ) : Prop :=
   ∀ β (w' : HeightOneSpectrum (𝓞 D.host.F)), ((p : ℕ) : 𝓞 D.host.F) ∈ w'.asIdeal →
     Formalism.L2.Herm.locL w' (lbOf Fo β) = Formalism.L2.Herm.locL w' (Formalism.L2.Herm.crdLat (D.sp.X (i + 1)) (D.sp.X (i + 1)).L0)
-
-end GlobalTheory.Port
-end
-section
-namespace GlobalTheory.Port
-open Formalism Formalism.MainNotions Formalism.MainNotions.G Formalism.BasicNotions Formalism.L2.G Formalism.L2.G.Cmp Formalism.L2.Forms Formalism.UG NumberField IsDedekindDomain Matrix Formalism.MainNotions.G.CmpJ Formalism.MainNotions.G.CmpJ.AgreeLv
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-variable {D : D7} {u : D.what₂.Word} {Ch : ℕ → Type} {chOf : ∀ i, (D.mem u).C.cls i → Ch i}
-
 
 end GlobalTheory.Port
 end

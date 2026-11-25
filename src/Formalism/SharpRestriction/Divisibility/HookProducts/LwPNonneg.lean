@@ -6,43 +6,6 @@ public import Formalism.SharpRestriction.Divisibility.HookProducts.CardLiftsEq
 import Formalism.SharpRestriction.GrowthBounds.AdmissibleIntegers.FirstTermSizeBound
 import Formalism.SharpRestriction.GrowthBounds.JointsLit
 import Formalism.SharpRestriction.GrowthBounds.TopChoiceBounds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -138,7 +101,6 @@ theorem FInert_le (j : ℕ) (W : ℝ) (hW0 : 0 ≤ W) (hW : ∀ τ, 0 ≤ wj D j
       intro τ
       rw [div_le_div_iff₀ hq0 hp0]
       have h1 : ((D.R.k : ℝ) - 1) * wj D j τ ≤ ((D.R.k : ℝ) - 1) * W := mul_le_mul_of_nonneg_left (hW τ).2 hk0
-      have h2 : 0 ≤ ((D.R.k : ℝ) - 1) * wj D j τ := mul_nonneg hk0 (hW τ).1
       nlinarith
     refine le_trans (Finset.sum_le_sum fun τ _ => hterm τ) ?_
     rw [Finset.sum_const, nsmul_eq_mul]
@@ -222,21 +184,17 @@ theorem F_le (hFD : L.FDef) (hS : SizesAt L) (j : ℕ) (hj : j ∈ SizeData₂.l
     have hs : 0 ≤ ∑ t : HH D, min (wPl D j (false, t)) (wPl D j (true, t)) :=
       Finset.sum_nonneg fun t _ => le_min (hW _).1 (hW _).1
     have : -(((D.R.k : ℝ) - 1) / 2) * ∑ t : HH D, min (wPl D j (false, t)) (wPl D j (true, t)) ≤ 0 := by
-      have hk2 : 0 ≤ ((D.R.k : ℝ) - 1) / 2 := by linarith
       nlinarith
     linarith
   ·
     have hI := FInert_le j (4 * Pz ^ 5 * L.sc.b) hW0 hW hk (f_le L) _ hp
     unfold gC
-    rw [if_pos h3.2]
+    rw [ite_eq_left h3.2]
     refine le_trans hI ?_
     rw [div_le_div_iff_of_pos_right hp0]
-    have hk0 : 0 ≤ (D.R.k : ℝ) - 1 := by linarith
-    have e1 : ((D.R.k : ℝ) - 1) ≤ Pz := by linarith
     have e2 : 4 * Pz * ((D.R.k : ℝ) - 1) ≤ 4 * Pz * Pz := by nlinarith
     have e3 : 4 * Pz * ((D.R.k : ℝ) - 1) * (4 * Pz ^ 5 * L.sc.b) ≤ 4 * Pz * Pz * (4 * Pz ^ 5 * L.sc.b) :=
       mul_le_mul_of_nonneg_right e2 hW0
-    have e4 : 4 * Pz * Pz * (4 * Pz ^ 5 * L.sc.b) = 16 * Pz ^ 7 * L.sc.b := by ring
     linarith
   · exact hg0
 
@@ -250,11 +208,7 @@ theorem fo_le_pol (hFD : L.FDef) (hS : SizesAt L) (hM : Formalism.MainNotions.Co
   have hL0 : 0 ≤ L.sc.L := by
     simp only [Scale.L]
     exact Real.rpow_nonneg hx0.le _
-  have hf : (0 : ℝ) ≤ (D.R.f : ℝ) := by positivity
-  have hk0 : (0 : ℝ) ≤ (D.R.k : ℝ) := by positivity
   have hm0 : (0 : ℝ) ≤ (D.R.m : ℝ) := by positivity
-  have ht : (0 : ℝ) ≤ (D.R.t : ℝ) := by positivity
-  have hNm : (0 : ℝ) ≤ (D.R.N D.R.m : ℝ) := by positivity
   have hmP : (D.R.m : ℝ) ≤ Formalism.MainNotions.DIV.Proofs.szPol L := by
     unfold Formalism.MainNotions.DIV.Proofs.szPol; linarith
   have hQ1 : 1 ≤ Formalism.MainNotions.DIV.Proofs.szPol L := by

@@ -57,10 +57,10 @@ variable {k : Type*} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchi
 
 theorem ite_mem_SB {X : Type*} [TopologicalSpace X] {p : X → Prop} [DecidablePred p] (h : IsClopen {x | p x})
     (hc : IsCompact {x | p x}) : (fun x => if p x then (1 : ℂ) else 0) ∈ SB X := by
-  refine ⟨(IsLocallyConstant.iff_exists_open _).2 fun x => ?_, HasCompactSupport.intro' hc h.1 fun x hx => if_neg hx⟩
+  refine ⟨(IsLocallyConstant.iff_exists_open _).2 fun x => ?_, HasCompactSupport.intro' hc h.1 fun x hx => ite_eq_right hx⟩
   by_cases hx : p x
-  · exact ⟨_, h.2, hx, fun y hy => (if_pos hy).trans (if_pos hx).symm⟩
-  · exact ⟨_, h.compl.2, hx, fun y hy => (if_neg hy).trans (if_neg hx).symm⟩
+  · exact ⟨_, h.2, hx, fun y hy => (ite_eq_left hy).trans (ite_eq_left hx).symm⟩
+  · exact ⟨_, h.compl.2, hx, fun y hy => (ite_eq_right hy).trans (ite_eq_right hx).symm⟩
 
 variable [Fintype n] [Fintype n']
 

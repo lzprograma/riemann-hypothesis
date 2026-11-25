@@ -58,11 +58,6 @@ namespace GlobalTheory.LGrp
 section Rational
 open Polynomial
 
-def IsLaurentPoly (R : RatFunc ℂ) : Prop :=
-  ∃ (m : ℕ) (p : ℂ[X]), R * RatFunc.X ^ m = algebraMap _ _ p
-
-def lFactor (S : Multiset ℂˣ) : RatFunc ℂ := (S.map fun a : ℂˣ => (1 - RatFunc.C (a : ℂ) * RatFunc.X)⁻¹).prod
-
 end Rational
 
 section ZetaNonvanishing₂

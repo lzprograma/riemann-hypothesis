@@ -53,8 +53,6 @@ noncomputable section
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace GlobalTheory
 
 section Defs
@@ -166,29 +164,5 @@ theorem ThetaDeform.exists_homogeneous (i : Fin (m + 1)) (p : MvPolynomial (Fin 
     exact ⟨F * MvPolynomial.X j, hF.mul (isHomogeneous_X _ j), by rw [← sub_mul]; exact h.mul_right _⟩
 
 end CutOut
-
-section Families
-
-variable {R : Type} [CommRing R]
-
-end Families
-
-section Point
-
-end Point
-
-section Zero
-
-open Out Out.Inh Out.InhVV
-
-section Ones
-
-variable {X Y Z : Scheme.{0}} (L : LB X) {K K' : Type} [Fintype K] [Fintype K'] {φ : K → (Y ⟶ X)} {ε : K → ℤ}
-  {φ' : K' → (Y ⟶ X)} {ε' : K' → ℤ} {t : LB.Gen (LB.LinComb L φ ε)} {t' : LB.Gen (LB.LinComb L φ' ε')}
-
-end Ones
-
-
-end Zero
 
 end GlobalTheory

@@ -1,5 +1,7 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LambdaCharSymMulInvEqOne
+import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StandardRankOneLatticeOfLocal
 public import Formalism.LocalToGlobal.KernelLattices.ThDistC
 public import Formalism.LocalToGlobal.Columns.AdjointFrobeniusPreservesRamified
 public import Formalism.LocalToGlobal.Columns.ChainInst
@@ -25,53 +27,12 @@ namespace Formalism.L2.Ker
 
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col
 
-section Abs
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K]
-
-variable {S : GSD K}
-
-end Abs
-
-section Pts
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} {ST SG Q : Finset (HeightOneSpectrum (𝓞 E))}
-
-end Pts
-
 section PtsFin
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} {ST SG Q : Finset (HeightOneSpectrum (𝓞 E))}
 
 
-omit [NumberField E] in
-theorem decoF_ext {p p' : DecoF E n ST SG Q} (h1 : p.deco = p'.deco) (h2 : ∀ R : Q, p.fr R = p'.fr R) : p = p' :=
-  Subtype.ext (Prod.ext h1 (funext h2))
-
 end PtsFin
-
-section PtsG
-
-variable {X : Fields} {n : ℕ} {ST SG Q : Finset (HeightOneSpectrum (𝓞 X.E))}
-
-end PtsG
-
-section ChN
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
-  (mu : Tup X.F X.E X.K S) (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K)))
-
-end ChN
-
-section Local
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E] {a b : ℕ} {ST SG SG' : Finset (HeightOneSpectrum (𝓞 E))}
-
-variable {K : Type} [Field K] {SB : Finset (HeightOneSpectrum (𝓞 E))}
-  {V V' : Type} [AddCommGroup V] [Module K V] [AddCommGroup V'] [Module K V']
-
-end Local
 
 section Chain
 
@@ -79,19 +40,11 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Ch
   (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
   (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K)))
 
-section Ops
-
-variable (hX : X.Ok) (hPr : Pr.Ok) (u : Pr.Word)
-
-end Ops
-
 variable {u : Pr.Word}
 
 
 variable (R u) in
 abbrev TopPt : Type := RowPt Pr R sel mu × DecoSet (E := X.E) (n := R.N R.m) (ST := Pr.vT u) (SG := rowSG Pr sel mu)
-
-def tilTop (d : RowPt Pr R sel mu) : TopPt R sel mu u := (d, tilQ sel mu u d)
 
 
 
@@ -109,34 +62,6 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Ch
 
 end Stmts
 
-section Move
-
-variable {X : Fields} (A : Amb X) {a b : ℕ}
-
-end Move
-
-section MoveCh
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
-  (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu))
-
-end MoveCh
-
-section MoveC
-
-variable {X : Fields} (A : Amb X) {a b : ℕ}
-
-end MoveC
-
-section MoveCCh
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks}
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
-  (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu))
-
-end MoveCCh
-
 section OrdDet
 
 variable (E : Type) [Field E] [NumberField E] [StarRing E] (n : ℕ)
@@ -145,29 +70,6 @@ def OrdDetFin : Prop :=
   ∀ N : Submodule (𝓞 E) (Sp E n), IsSdLat N → {Q : HeightOneSpectrum (𝓞 E) | ordDet Q N ≠ 0}.Finite
 
 end OrdDet
-
-section OrdDetCh
-
-variable {X : Fields} {Pr : Primes X} (R : Ranks) (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S)
-
-end OrdDetCh
-
-section Dia
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} {ST SG Q : Finset (HeightOneSpectrum (𝓞 E))}
-
-end Dia
-
-section DiaCh
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
-  (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K)))
-  (A : Amb X) (u : Pr.Word) (m2 : ℕ) (b : L.β (m2 + 1)) (hY : YbHyp (R := R) sel mu cst L u m2 b)
-  (hM : MatEquiv W Ch sel mu cst L (chTh W Ch sel mu cst A u m2)) (h1 : Cp1Equiv W Ch sel mu cst L (chTh W Ch sel mu cst A u m2) b hY)
-  (hF : ∀ j, (chF W sel mu L u j).Ok)
-
-end DiaCh
 
 end Formalism.L2.Ker
 end -- clump:auto
@@ -188,26 +90,6 @@ namespace Formalism.L2.Ker
 
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col
 
-section Abs
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {S : GSD K}
-
-variable {S' : GSD K}
-
-end Abs
-
-section Abs3
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {S S' : GSD K}
-
-end Abs3
-
-section Abs3b
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {S : GSD K}
-
-end Abs3b
-
 section KerLin
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {K : Type} [Field K] {a b : ℕ} {SB : Finset (HeightOneSpectrum (𝓞 E))}
@@ -223,103 +105,13 @@ theorem kerOf_congr (th : ThDist E K a b SB V V') (Sall : Finset (HeightOneSpect
 
 end KerLin
 
-section OffT
-
-set_option linter.unusedSectionVars false
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 E))}
-
-end OffT
-
-section OffTCh
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks}
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
-  (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu))
-
-variable {u : Pr.Word} {j : ℕ}
-
-end OffTCh
-
-section SumF
-
-set_option linter.unusedSectionVars false
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} {ST SG Q : Finset (HeightOneSpectrum (𝓞 E))}
-
-end SumF
-
-section SumCh
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks}
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S)
-
-end SumCh
-
 section Step3
 
 set_option linter.unusedSectionVars false
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 E))}
 
-theorem localization_kerAt_eq {d : Deco E n ST SG} (hd : d.Ok) (P : ST) (z : Sp E n) :
-    z ∈ localization₂ P.1.asIdeal (d.kerAt P) ↔ z ∈ d.at P.1 ∧ d.f P z = 0 := by
-  constructor
-  · intro hz
-    obtain ⟨s, hs, hsz⟩ := (mem_locP P.1 _ z).1 hz
-    obtain ⟨h1, h2⟩ := (hd.mem_kerAt P _).1 hsz
-    have hz' : z ∈ d.at P.1 := (mem_locP P.1 _ z).2 ⟨s, hs, h1⟩
-    refine ⟨hz', ?_⟩
-    rw [hd.f_smul P s z hz'] at h2
-    exact (mul_eq_zero.1 h2).resolve_left (mk_ne_zero hs)
-  · rintro ⟨hz, h0⟩
-    obtain ⟨s, hs, hsz⟩ := (mem_locP P.1 _ z).1 hz
-    refine (mem_locP P.1 _ z).2 ⟨s, hs, (hd.mem_kerAt P _).2 ⟨hsz, ?_⟩⟩
-    rw [hd.f_smul P s z hz, h0, mul_zero]
-
-theorem exists_f_one {d : Deco E n ST SG} (hd : d.Ok) (P : ST) : ∃ e ∈ d.N, d.f P e = 1 := by
-  obtain ⟨x, hx, hne⟩ := hd.f_ne P
-  have := P.1.isMaximal
-  obtain ⟨b, hb⟩ := Ideal.Quotient.exists_inv hne
-  obtain ⟨t, rfl⟩ := Ideal.Quotient.mk_surjective b
-  exact ⟨t • x, Submodule.smul_mem _ t hx, by rw [hd.f_smul P t x (le_locP _ _ hx), mul_comm, hb]⟩
-
-theorem f_sub {d : Deco E n ST SG} (hd : d.Ok) (P : ST) {y y' : Sp E n} (hy : y ∈ d.at P.1) (hy' : y' ∈ d.at P.1) :
-    d.f P (y - y') = d.f P y - d.f P y' := by
-  have e : y - y' = y + (-1 : 𝓞 E) • y' := by rw [neg_smul, one_smul, sub_eq_add_neg]
-  rw [e, hd.f_add P y hy _ (Submodule.smul_mem _ _ hy'), hd.f_smul P _ y' hy', map_neg, map_one, neg_mul, one_mul, sub_eq_add_neg]
-
-theorem isUp_facts {lo hi : Deco E n ST SG} (hlo : lo.Ok) {P : ST} (hP : MoveHyp ST SG P) {q : 𝓞 E} (hq : q ∈ P.1.asIdeal)
-    (hq2 : q ∉ P.1.asIdeal ^ 2) (h : Deco.IsUp P q lo hi) :
-    (∀ z, z ∈ lo.at P.1 ↔ z ∈ hi.at P.1 ∧ hi.f P z = 0) ∧ (∀ z ∈ hi.at P.1, hi.f P z = lo.f P (q • z)) ∧
-      (∀ Q : ST, Q ≠ P → hi.at Q.1 = lo.at Q.1 ∧ hi.f Q = lo.f Q) := by
-  obtain ⟨x, hx, hfx, rfl⟩ := h
-  have hhi := hlo.up P hP hq hq2 hx hfx
-  refine ⟨fun z => ?_, fun z hz => ?_, fun Q hQ => ⟨?_, lo.up_f_ne P q x hQ⟩⟩
-  · rw [← localization_kerAt_eq hhi P z, ← (hhi.dnN_spec P hP.ne).2.2.2, hlo.dnN_up P hP hq hq2 hx hfx]
-  · rw [Deco.up_f]
-    exact if_pos hz
-  · exact ((upN_spec hlo.lat hlo.uni P.1 hP.ne hx).2.2.1 Q.1 (fun h => hQ (Subtype.ext h)) (hP.st Q)).localization_eq
-
 variable {a b : ℕ} {SG' : Finset (HeightOneSpectrum (𝓞 E))}
-
-def PhiCond (d : Deco E a ST SG) (d' : Deco E b ST SG') (x : HomE E a b) : Prop :=
-  ∀ Q : ST, ∀ y ∈ d.at Q.1, x y ∈ d'.at Q.1 ∧ d'.f Q (x y) = d.f Q y
-
-theorem dn_unique {d e₁ e₂ : Deco E a ST SG} {d' : Deco E b ST SG'} (h₁ : e₁.Ok) (h₂ : e₂.Ok) {P : ST} {q : 𝓞 E}
-    (k₁ : Deco.IsDn P q d e₁) (k₂ : Deco.IsDn P q d e₂) {x : HomE E a b} (x₁ : PhiCond e₁ d' x) (x₂ : PhiCond e₂ d' x) : e₁ = e₂ := by
-  have hN : e₁.N = e₂.N := (congrArg Deco.N k₁.1).trans (congrArg Deco.N k₂.1).symm
-  have hat : e₁.at P.1 = e₂.at P.1 := by
-    show localization₂ _ e₁.N = localization₂ _ e₂.N
-    rw [hN]
-  have hf : e₁.f P = e₂.f P := by
-    funext y
-    by_cases hy : y ∈ e₁.at P.1
-    · rw [← (x₁ P y hy).2, ← (x₂ P y (hat ▸ hy)).2]
-    · rw [h₁.f_off P y hy, h₂.f_off P y (hat ▸ hy)]
-  calc e₁ = d.dn P (e₁.f P) := k₁.1
-    _ = d.dn P (e₂.f P) := by rw [hf]
-    _ = e₂ := k₂.1.symm
 
 theorem q_ne_zero {P : HeightOneSpectrum (𝓞 E)} {q : 𝓞 E} (hq2 : q ∉ P.asIdeal ^ 2) : algebraMap (𝓞 E) E q ≠ 0 := by
   intro h
@@ -330,73 +122,7 @@ theorem q_ne_zero {P : HeightOneSpectrum (𝓞 E)} {q : 𝓞 E} (hq2 : q ∉ P.a
   rw [this]
   exact Ideal.zero_mem _
 
-theorem q_smul_inv {P : HeightOneSpectrum (𝓞 E)} {q : 𝓞 E} (hq2 : q ∉ P.asIdeal ^ 2) (w : Sp E n) :
-    q • ((algebraMap (𝓞 E) E q)⁻¹ • w) = w := by
-  rw [← algebraMap_smul E q, smul_smul, mul_inv_cancel₀ (q_ne_zero hq2), one_smul]
-
-theorem up_diff_mem {d' : Deco E n ST SG} (hd' : d'.Ok) {P : ST} (hP' : MoveHyp ST SG P) {q : 𝓞 E} (hq : q ∈ P.1.asIdeal)
-    (hq2 : q ∉ P.1.asIdeal ^ 2) {xW : Sp E n} (hxW : xW ∈ d'.N) (hfW : d'.f P xW = 1) :
-    (algebraMap (𝓞 E) E q)⁻¹ • xW ∈ (d'.up P q xW).at P.1 ∧
-      ∀ z ∈ (d'.up P q xW).at P.1, (d'.up P q xW).f P z = 1 → z - (algebraMap (𝓞 E) E q)⁻¹ • xW ∈ d'.at P.1 := by
-  have hOk := hd'.up P hP' hq hq2 hxW hfW
-  have hv := hd'.up_f_inv P hP' hq hq2 hxW hfW
-  have hvm : (algebraMap (𝓞 E) E q)⁻¹ • xW ∈ (d'.up P q xW).at P.1 := by
-    by_contra hc
-    rw [hOk.f_off P _ hc] at hv
-    exact zero_ne_one hv
-  refine ⟨hvm, fun z hz h1 => ?_⟩
-  exact ((isUp_facts hd' hP' hq hq2 ⟨xW, hxW, hfW, rfl⟩).1 _).2 ⟨Submodule.sub_mem _ hz hvm, by
-    rw [f_sub hOk P hz hvm, h1, hv, sub_self]⟩
-
-theorem up_unique {d : Deco E a ST SG} {d' e₁ e₂ : Deco E b ST SG'} (hd : d.Ok) (hd' : d'.Ok) {P : ST} (hP' : MoveHyp ST SG' P) {q : 𝓞 E}
-    (hq : q ∈ P.1.asIdeal) (hq2 : q ∉ P.1.asIdeal ^ 2) (k₁ : Deco.IsUp P q d' e₁) (k₂ : Deco.IsUp P q d' e₂) {x : HomE E a b}
-    (x₁ : PhiCond d e₁ x) (x₂ : PhiCond d e₂ x) : e₁ = e₂ := by
-  obtain ⟨w₁, hw₁, hf₁, rfl⟩ := k₁
-  obtain ⟨w₂, hw₂, hf₂, rfl⟩ := k₂
-  apply Deco.up_congr
-  obtain ⟨e1, he1, hfe1⟩ := exists_f_one hd P
-  have he1P : e1 ∈ d.at P.1 := le_locP _ _ he1
-  have m₁ := (up_diff_mem hd' hP' hq hq2 hw₁ hf₁).2 (x e1) (x₁ P e1 he1P).1 ((x₁ P e1 he1P).2.trans hfe1)
-  have m₂ := (up_diff_mem hd' hP' hq hq2 hw₂ hf₂).2 (x e1) (x₂ P e1 he1P).1 ((x₂ P e1 he1P).2.trans hfe1)
-  have m : (algebraMap (𝓞 E) E q)⁻¹ • w₁ - (algebraMap (𝓞 E) E q)⁻¹ • w₂ ∈ d'.at P.1 := by
-    have := Submodule.sub_mem _ m₂ m₁
-    rwa [sub_sub_sub_cancel_left] at this
-  obtain ⟨s, hs, hsm⟩ := (mem_locP P.1 _ _).1 m
-  refine mem_smul_of_loc (Submodule.sub_mem _ hw₁ hw₂) hs ?_
-  have e : s • (w₁ - w₂) = q • (s • ((algebraMap (𝓞 E) E q)⁻¹ • w₁ - (algebraMap (𝓞 E) E q)⁻¹ • w₂)) := by
-    rw [smul_comm q s, smul_sub q, q_smul_inv hq2, q_smul_inv hq2]
-  rw [e]
-  exact Submodule.smul_mem_smul hq hsm
-
 end Step3
-
-section KI
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E] {K : Type} [Field K] {a b : ℕ} {SB : Finset (HeightOneSpectrum (𝓞 E))}
-  {V V' : Type} [AddCommGroup V] [Module K V] [AddCommGroup V'] [Module K V'] {ST SG SG' : Finset (HeightOneSpectrum (𝓞 E))}
-
-end KI
-
-section AsmG
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K]
-
-end AsmG
-
-section AsmL
-
-variable {E : Type} [Field E] [NumberField E] {K : Type} [Field K] {a b : ℕ}
-
-end AsmL
-
-section AsmCh
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
-  (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K)))
-  (hX : X.Ok) (hPr : Pr.Ok) {u : Pr.Word}
-
-end AsmCh
 
 section FrLoc
 
@@ -406,15 +132,7 @@ def IsFrAt (P : HeightOneSpectrum (𝓞 E)) {n : ℕ} (N : Submodule (𝓞 E) (S
   ∀ x, f x ∈ localization₂ P.asIdeal N ↔ x ∈ stdAt E n P
 
 theorem single_mem_stdAt {n : ℕ} (P : HeightOneSpectrum (𝓞 E)) (s : Fin n) : (Pi.single s (1 : E) : Sp E n) ∈ stdAt E n P := by
-  unfold stdAt
-  rw [mem_localization_standardLattice]
-  intro i
-  by_cases h : i = s
-  · subst h
-    rw [Pi.single_eq_same]
-    simpa using IntAt.coe P (1 : 𝓞 E)
-  · rw [Pi.single_eq_of_ne h]
-    simpa using IntAt.coe P (0 : 𝓞 E)
+  apply _root_.GlobalTheory.CharValCompare.single_mem_stdAt <;> assumption
 
 omit [NumberField E] [StarRing E] in
 theorem inFr_add (f : Sp E a ≃ₗ[E] Sp E a) (f' : Sp E b ≃ₗ[E] Sp E b) (x y : HomE E a b) : inFr f f' (x + y) = inFr f f' x + inFr f f' y := by
@@ -423,17 +141,6 @@ theorem inFr_add (f : Sp E a ≃ₗ[E] Sp E a) (f' : Sp E b ≃ₗ[E] Sp E b) (x
   simp
 
 end FrLoc
-
-section FrProd
-
-set_option linter.unusedSectionVars false
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E] {K : Type} [Field K] {a b : ℕ}
-
-theorem intAt_natCast (P : HeightOneSpectrum (𝓞 E)) (k : ℕ) : IntAt P (k : E) := by
-  simpa using IntAt.coe P (k : 𝓞 E)
-
-end FrProd
 
 section OffAdmCh
 
@@ -588,63 +295,6 @@ theorem ordDet_eq_of_frame {n : ℕ} (Q : HeightOneSpectrum (𝓞 E)) (N : Submo
 
 end OrdWD
 
-section MuMoveChP
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
-  (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu))
-
-end MuMoveChP
-
-section AsmCh2
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
-  (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K)))
-  (hX : X.Ok) (hPr : Pr.Ok) {u : Pr.Word}
-
-end AsmCh2
-
-section Tests
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
-  (mu : Tup X.F X.E X.K S) (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K)))
-
-end Tests
-
-section MoveP
-
-variable {X : Fields} (A : Amb X) {a b : ℕ}
-
-end MoveP
-
-section MoveChP
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
-  (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu))
-
-end MoveChP
-
-section Tests2
-
-variable {E : Type} [Field E] [NumberField E] {K : Type} [Field K] {a b : ℕ}
-
-end Tests2
-
-section MoveCP
-
-variable {X : Fields} (A : Amb X) {a b : ℕ}
-
-end MoveCP
-
-section DiaP
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E] {a b : ℕ} {ST SG SG' : Finset (HeightOneSpectrum (𝓞 E))}
-
-end DiaP
-
 section RedRing
 
 variable {E : Type} [Field E] [NumberField E] (P : HeightOneSpectrum (𝓞 E))
@@ -678,17 +328,7 @@ def redHomB : intSubB P →+* (𝓞 E ⧸ P.asIdeal) where
 
 theorem reduction_det_eq_det_reduction₂ {m : ℕ} (A : Matrix (Fin m) (Fin m) E) (hA : ∀ i j, IntAt P (A i j)) :
     redP P A.det = (Matrix.of fun i j => redP P (A i j)).det := by
-  let A' : Matrix (Fin m) (Fin m) (intSubB P) := Matrix.of fun i j => ⟨A i j, hA i j⟩
-  have e1 : A = (intSubB P).subtype.mapMatrix A' := by
-    ext i j
-    rfl
-  have e2 : A.det = ((A'.det : intSubB P) : E) := by
-    rw [e1, ← RingHom.map_det]
-    rfl
-  rw [e2]
-  show redHomB P A'.det = _
-  rw [RingHom.map_det]
-  rfl
+  apply _root_.GlobalTheory.SymLevelInv.reduction_det <;> assumption
 
 theorem reduction_det_congr {m : ℕ} (A B : Matrix (Fin m) (Fin m) E) (hA : ∀ i j, IntAt P (A i j)) (hB : ∀ i j, IntAt P (B i j))
     (h : ∀ i j, redP P (A i j) = redP P (B i j)) : redP P A.det = redP P B.det := by
@@ -744,12 +384,12 @@ section Loc1
 theorem ite_congrB {α : Type} {c c' : Prop} {i : Decidable c} {i' : Decidable c'} {a a' b : α} (h : c ↔ c') (hv : c' → a = a') :
     @ite α c i a b = @ite α c' i' a' b := by
   by_cases hc : c'
-  · rw [if_pos hc, if_pos (h.2 hc), hv hc]
-  · rw [if_neg hc, if_neg (mt h.1 hc)]
+  · rw [ite_eq_left hc, ite_eq_left (h.2 hc), hv hc]
+  · rw [ite_eq_right hc, ite_eq_right (mt h.1 hc)]
 
 theorem ite_neB {α : Type} {c : Prop} {i : Decidable c} {a b : α} (h : @ite α c i a b ≠ b) : c := by
   by_contra hc
-  exact h (if_neg hc)
+  exact h (ite_eq_right hc)
 
 variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] {P : HeightOneSpectrum (𝓞 E)}
 
@@ -766,14 +406,14 @@ theorem eN_inB (N p : ℕ) (hp : p < N) : Loc.eN E N p = Pi.single (⟨p, hp⟩ 
   unfold Loc.eN
   by_cases h : l.1 = p
   · have hl : l = ⟨p, hp⟩ := Fin.ext h
-    rw [if_pos h, hl, Pi.single_eq_same]
+    rw [ite_eq_left h, hl, Pi.single_eq_same]
   · have hl : l ≠ ⟨p, hp⟩ := fun e => h (congrArg Fin.val e)
-    rw [if_neg h, Pi.single_eq_of_ne hl]
+    rw [ite_eq_right h, Pi.single_eq_of_ne hl]
 
 theorem eN_outB (N p : ℕ) (hp : ¬ p < N) : Loc.eN E N p = 0 := by
   funext l
   unfold Loc.eN
-  rw [if_neg fun h : l.1 = p => hp (h ▸ l.2)]
+  rw [ite_eq_right fun h : l.1 = p => hp (h ▸ l.2)]
   rfl
 
 theorem entB_inB (q k₀ n' n : ℕ) (ex' ex : ℕ → ℕ) (x : HomE E (n' + 0) (n + 0)) {p p' : ℕ} (hp : p < n + 0) (hp' : p' < n' + 0) :
@@ -782,10 +422,10 @@ theorem entB_inB (q k₀ n' n : ℕ) (ex' ex : ℕ → ℕ) (x : HomE E (n' + 0)
   rw [fIdx_zeroB, fIdx_zeroB]
   have s1 : LocE.scE n' ex' p' = 0 := by
     unfold LocE.scE
-    rw [if_pos (by omega)]
+    rw [ite_eq_left (by omega)]
   have s2 : LocE.scE n ex p = 0 := by
     unfold LocE.scE
-    rw [if_pos (by omega)]
+    rw [ite_eq_left (by omega)]
   rw [s1, s2, sub_zero, zpow_zero, mul_one, eN_inB _ _ hp']
   unfold Loc.atN
   rw [dite_eq_left hp]
@@ -908,9 +548,9 @@ theorem coupling_index_scaled_mem_local {n : ℕ} {N : Submodule (𝓞 X.E) (Sp 
     exact zero_mem _
   · intro a ha
     have h1 := (mem_locLat _ _ _ _).1 hy0 w
-    simp only [if_neg hw, zpow_neg, zpow_natCast, inv_inv] at h1
+    simp only [ite_eq_right hw, zpow_neg, zpow_natCast, inv_inv] at h1
     have h2 := (mem_locLat _ _ _ (a - y0)).1 ha w
-    simp only [if_neg hw, zpow_natCast] at h2
+    simp only [ite_eq_right hw, zpow_natCast] at h2
     have hq0 : (qOf w.1 : X.E) ^ cst.M ≠ 0 := pow_ne_zero _ (by exact_mod_cast (qOf_pos w.1).ne')
     have e : ((qOf w.1 : X.E) ^ cst.M) • a = ((qOf w.1 : X.E) ^ cst.M) • y0 +
         ((qOf w.1 ^ cst.M * qOf w.1 ^ cst.M : ℕ) : X.E) • (((qOf w.1 : X.E) ^ cst.M)⁻¹ • (a - y0)) := by
@@ -925,43 +565,13 @@ theorem coupling_index_scaled_mem_local {n : ℕ} {N : Submodule (𝓞 X.E) (Sp 
 
 end FtY3
 
-section Main3
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
-  (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) {u : Pr.Word}
-
-end Main3
-
-section Rk1C
-
-variable {E : Type} [Field E] {n : ℕ}
-
-end Rk1C
-
-section OrdC
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
-
-variable {ST SG : Finset (HeightOneSpectrum (𝓞 E))}
-
-end OrdC
-
 section OrdD
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
 
 theorem intAt_smul_locPD (Q : HeightOneSpectrum (𝓞 E)) {N : Submodule (𝓞 E) (Sp E n)} {c : E} (hc : IntAt Q c) {z : Sp E n}
     (hz : z ∈ localization₂ Q.asIdeal N) : c • z ∈ localization₂ Q.asIdeal N := by
-  obtain ⟨r, s, hs, hrs⟩ := hc
-  obtain ⟨s', hs', hz'⟩ := (mem_locP Q N z).1 hz
-  refine (mem_locP Q N _).2 ⟨s * s', fun h => (Q.isPrime.mem_or_mem h).elim hs hs', ?_⟩
-  have e : (s * s') • (c • z) = r • (s' • z) := by
-    rw [← algebraMap_smul E (s * s'), ← algebraMap_smul E r, ← algebraMap_smul E s' z, smul_smul, smul_smul, map_mul, ← hrs]
-    congr 1
-    ring
-  rw [e]
-  exact N.smul_mem r hz'
+  apply _root_.Formalism.L2.Col.yInt_smul_mem <;> assumption
 
 theorem exists_frameD (Q : HeightOneSpectrum (𝓞 E)) {N : Submodule (𝓞 E) (Sp E n)} (hN : Submodule.IsFullLattice E N) :
     ∃ f : Sp E n ≃ₗ[E] Sp E n, IsFrAt Q N f := by
@@ -975,18 +585,6 @@ theorem exists_frameD (Q : HeightOneSpectrum (𝓞 E)) {N : Submodule (𝓞 E) (
     exact Submodule.sum_mem _ fun i _ => intAt_smul_locPD Q ((ciMem_stdAt Q y).1 h i) (hβ i)
 
 end OrdD
-
-section OrdD2
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 E))}
-
-end OrdD2
-
-section OrdUpP
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E]
-
-end OrdUpP
 
 end Formalism.L2.Ker
 end -- clump:auto

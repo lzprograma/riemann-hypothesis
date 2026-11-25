@@ -69,10 +69,10 @@ theorem toJet_one_eq {O κ : Type} [CommRing O] [Fintype κ] (u : MvPowerSeries 
       omega
     rw [← Finsupp.range_single_one] at h1
     obtain ⟨q, rfl⟩ := h1
-    rw [if_neg (Finsupp.single_ne_zero.2 one_ne_zero).symm, zero_add, Finset.sum_eq_single q]
+    rw [ite_eq_right (Finsupp.single_ne_zero.2 one_ne_zero).symm, zero_add, Finset.sum_eq_single q]
     · simp
     · intro b _ hb
-      rw [if_neg, mul_zero]
+      rw [ite_eq_right, mul_zero]
       rwa [Finsupp.single_left_inj one_ne_zero]
     · simp
 

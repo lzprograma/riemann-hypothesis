@@ -1,51 +1,11 @@
 module
 
 public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensityRatio
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.RingTheory.Flat.FaithfullyFlat.Algebra
 import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsSqAbsNormOfInert
 
@@ -79,32 +39,16 @@ theorem pow_le_span_sup (hP : P.IsPrime) (hP0 : P ≠ ⊥) {g : R} {c : ℕ} (hg
 private theorem not_pow_dvd_mul_of_not_pow_dvd_of_not_pow_dvd (hpr : Prime P) (i : ℕ) :
     ∀ (j : ℕ) (A B : Ideal R), ¬ P ^ (i + 1) ∣ A → ¬ P ^ (j + 1) ∣ B →
       ¬ P ^ (i + j + 1) ∣ A * B := by
-  induction i with
-  | zero =>
-    intro j A B hA hB h
-    apply hB
-    have hA' : ¬ P ∣ A := by simpa using hA
-    have h' : P ^ (j + 1) ∣ A * B := by simpa using h
-    exact hpr.pow_dvd_of_dvd_mul_left (j + 1) hA' h'
-  | succ i ih =>
-    intro j A B hA hB h
-    by_cases hPA : P ∣ A
-    · obtain ⟨A1, rfl⟩ := hPA
-      apply ih j A1 B
-      · intro h1
-        apply hA
-        rw [pow_succ']
-        exact mul_dvd_mul_left P h1
-      · exact hB
-      · have h2 : P * P ^ (i + j + 1) ∣ P * (A1 * B) := by
-          rw [← pow_succ', ← mul_assoc]
-          have e : i + j + 1 + 1 = i + 1 + j + 1 := by omega
-          rw [e]
-          exact h
-        exact (mul_dvd_mul_iff_left hpr.ne_zero).mp h2
-    · apply hB
-      have h3 := hpr.pow_dvd_of_dvd_mul_left (i + 1 + j + 1) hPA h
-      exact dvd_trans (pow_dvd_pow P (by omega)) h3
+  intro j A B hA hB
+  rw [← emultiplicity_lt_iff_not_dvd] at hA hB ⊢
+  obtain ⟨a, ha⟩ := ENat.ne_top_iff_exists.1 hA.ne_top
+  obtain ⟨b, hb⟩ := ENat.ne_top_iff_exists.1 hB.ne_top
+  rw [← ha] at hA
+  rw [← hb] at hB
+  rw [emultiplicity_mul hpr, ← ha, ← hb]
+  have h1 : a < i + 1 := by exact_mod_cast hA
+  have h2 : b < j + 1 := by exact_mod_cast hB
+  exact_mod_cast (show a + b < i + j + 1 by omega)
 
 theorem mul_notMem (hP : P.IsPrime) (hP0 : P ≠ ⊥) {a b : R} {i j : ℕ} (ha : a ∉ P ^ (i + 1))
     (hb : b ∉ P ^ (j + 1)) : a * b ∉ P ^ (i + j + 1) := by

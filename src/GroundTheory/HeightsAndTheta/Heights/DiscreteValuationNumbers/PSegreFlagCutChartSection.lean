@@ -292,7 +292,7 @@ theorem chart_data (y : (Σ k, ι k) → Ω) (B₁ : ChartBundle O (segreVec y) 
     rcases hi.lt_or_eq with h | h
     · have hfc : flagCoord w e t (k + 1) i = 0 := by
         unfold flagCoord
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
       have hw0 : w.repr (w₁ ⟨k, hk⟩) i = 0 := hsame _ _ (by rw [Fin.lt_def]; exact h)
       simp only [c'', hfc, hwr, hw0, mul_zero, map_zero, zero_sub, neg_zero]
     · have hi' : i = ⟨k, hk⟩ := Fin.ext h.symm
@@ -360,7 +360,7 @@ theorem SegreFlagCutChartSection.proof : SegreFlagCutChartSection.Statement := b
     Φ _ _ _ _ e t ht k hk c hc
   classical
   have hsame₀ : ∀ i j : Fin N, i < j → w.repr (w i) j = 0 := fun i j h => by
-    rw [Module.Basis.repr_self, Finsupp.single_apply, if_neg (ne_of_lt h)]
+    rw [Module.Basis.repr_self, Finsupp.single_apply, ite_eq_right (ne_of_lt h)]
   constructor
   · obtain ⟨β, δ, lam, Y, c'', hβ0, hlam, hlamv, hYh, hYs, hYv, hc''⟩ :=
       chart_data (O := O) y B w w e x hfl.flag hsame₀ a₀ φ hφ φ φ' t k hk c hc (some none)

@@ -1,5 +1,7 @@
 module
 
+import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
+import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.FiniteClassSetOfLe
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianClassFiniteness.HformSumRight
 public import Formalism.SatakeDualWeyl.Statement
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianClassFiniteness.Development
@@ -358,41 +360,12 @@ open DoubleCoset
 
 theorem classSet_mono {G : Type} [Group G] (Γ K K' : Subgroup G) (h : K ≤ K') :
     Finite (Formalism.UG.ClassSet Γ K) → Finite (Formalism.UG.ClassSet Γ K') := by
-  intro hfin
-  let f : Formalism.UG.ClassSet Γ K → Formalism.UG.ClassSet Γ K' := Quotient.map' id (fun a b hab => by
-    have hb : b ∈ DoubleCoset.doubleCoset a (Γ : Set G) (K : Set G) := by
-      rw [show DoubleCoset.doubleCoset a (Γ : Set G) (K : Set G) = DoubleCoset.doubleCoset b Γ K from hab]
-      exact DoubleCoset.mem_doubleCoset_self Γ K b
-    obtain ⟨x, hx, y, hy, hxy⟩ := DoubleCoset.mem_doubleCoset.mp hb
-    have hb' : b ∈ DoubleCoset.doubleCoset a (Γ : Set G) (K' : Set G) :=
-      DoubleCoset.mem_doubleCoset.mpr ⟨x, hx, y, h hy, hxy⟩
-    exact (DoubleCoset.doubleCoset_eq_of_mem hb').symm)
-  refine Finite.of_surjective f (fun q => ?_)
-  induction q using Quotient.inductionOn' with
-  | h x => exact ⟨Quotient.mk'' x, rfl⟩
+  apply _root_.Formalism.L2.G.finite_classSet_of_le <;> assumption
 
 theorem classSet_finIdx {G : Type} [Group G] (Γ K K' : Subgroup G) (h : K' ≤ K)
     (hi : K'.relIndex K ≠ 0) :
     Finite (Formalism.UG.ClassSet Γ K) → Finite (Formalism.UG.ClassSet Γ K') := by
-  intro hf
-  haveI : (K'.subgroupOf K).FiniteIndex := ⟨hi⟩
-  haveI : Finite (K ⧸ K'.subgroupOf K) := Subgroup.finite_quotient_of_finiteIndex
-  let f : Formalism.UG.ClassSet Γ K × (K ⧸ K'.subgroupOf K) → Formalism.UG.ClassSet Γ K' :=
-    fun p => DoubleCoset.mk Γ K' (p.1.out * ((p.2.out : K) : G))
-  refine Finite.of_surjective f ?_
-  intro q
-  obtain ⟨g, rfl⟩ := Quotient.mk''_surjective q
-  obtain ⟨a, ha, b, hb, hab⟩ := DoubleCoset.mk_out_eq_mul Γ K g
-  let k : K := ⟨b⁻¹, K.inv_mem hb⟩
-  refine ⟨(DoubleCoset.mk Γ K g, (QuotientGroup.mk k : K ⧸ K'.subgroupOf K)), ?_⟩
-  have ht : ((QuotientGroup.mk k : K ⧸ K'.subgroupOf K).out)⁻¹ * k ∈ K'.subgroupOf K :=
-    QuotientGroup.eq.1 (QuotientGroup.out_eq' _)
-  rw [Subgroup.mem_subgroupOf] at ht
-  show DoubleCoset.mk Γ K' _ = DoubleCoset.mk Γ K' g
-  rw [DoubleCoset.eq]
-  refine ⟨a⁻¹, Γ.inv_mem ha, _, ht, ?_⟩
-  simp only [Subgroup.coe_mul, Subgroup.coe_inv, k]
-  rw [hab]; group
+  apply _root_.Formalism.L2.DIV.class_set_finite_of_finite_index <;> assumption
 
 theorem classSet_map {G G' : Type} [Group G] [Group G'] (Φ : G ≃* G') (Γ K : Subgroup G) :
     Finite (Formalism.UG.ClassSet (Γ.map Φ.toMonoidHom) (K.map Φ.toMonoidHom)) →
@@ -918,10 +891,7 @@ open scoped TensorProduct
 namespace PI.UnitaryGroupMassFormula.InHHClassFin
 
 theorem one_mem_Kg (I : Formalism.MainNotions.S.AutInst) (g : ℕ) : (1 : I.Gf) ∈ I.Kg g := by
-  refine ⟨?_, fun y _ => ⟨0, Submodule.zero_mem _, ?_⟩⟩
-  · show ((1 : I.Gf) : GL (Fin I.n) _) ∈ Formalism.UG.stabGL I.Lf
-    simpa using (Formalism.UG.stabGL I.Lf).one_mem
-  · simp [Formalism.MainNotions.S.AutInst.fmat]
+  exact Formalism.L2.SG.Pf.one_mem_Kg I g
 
 theorem kgNhd : KgNhd := by
   intro I g x hg

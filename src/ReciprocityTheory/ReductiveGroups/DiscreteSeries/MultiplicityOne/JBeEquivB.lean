@@ -28,10 +28,10 @@ private theorem Hpk_mul_self_eq_one : Hpk k r * Hpk k r = 1 := by
   rw [Matrix.mul_apply, Matrix.one_apply]
   rw [Finset.sum_eq_single (if i.val < r ∨ r + k < i.val then i.rev else i)]
   · by_cases h : i.val < r ∨ r + k < i.val
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       simp only [Hpk, Fin.val_rev, Fin.ext_iff]
       split_ifs <;> first | (exfalso; omega) | norm_num
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       simp only [Hpk, Fin.ext_iff, and_true]
       split_ifs <;> first | (exfalso; omega) | norm_num
   · intro l _ hl

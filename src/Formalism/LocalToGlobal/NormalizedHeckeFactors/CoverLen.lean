@@ -45,26 +45,12 @@ theorem length_quot_map (φ : R ≃+* R') (f : M →ₛₗ[(φ : R →+* R')] M'
     haveI := RingHomInvPair.of_ringEquiv φ
     Module.length R' (↥(p.map f) ⧸ (q.map f).comap (p.map f).subtype) =
       Module.length R (↥p ⧸ q.comap p.subtype) := by
-  letI := RingHomInvPair.of_ringEquiv φ
-  let g : ↥p →ₛₗ[(φ : R →+* R')] ↥(p.map f) :=
-    { toFun := fun x => ⟨f x, Submodule.mem_map_of_mem x.2⟩
-      map_add' := fun x y => Subtype.ext (map_add f (x : M) (y : M))
-      map_smul' := fun r x => Subtype.ext (f.map_smulₛₗ r (x : M)) }
-  refine length_quotient_eq_of_bijective_semilinear φ g ⟨?_, ?_⟩ _ _ ?_
-  · intro x y hxy
-    exact Subtype.ext (hf (congrArg Subtype.val hxy))
-  · rintro ⟨y, hy⟩
-    obtain ⟨x, hx, rfl⟩ := Submodule.mem_map.1 hy
-    exact ⟨⟨x, hx⟩, rfl⟩
-  · intro x
-    show f x ∈ q.map f ↔ (x : M) ∈ q
-    constructor
-    · intro hx
-      obtain ⟨y, hy, hyx⟩ := Submodule.mem_map.1 hx
-      rw [← hf hyx]
-      exact hy
-    · intro hx
-      exact Submodule.mem_map_of_mem hx
+  let _ := RingHomInvPair.of_ringEquiv φ
+  let _ := RingHomInvPair.symm (φ : R →+* R') (φ.symm : R' →+* R)
+  let g := Submodule.equivMapOfInjective f hf p
+  refine length_quotient_eq_of_bijective_semilinear φ g.toLinearMap g.bijective _ _ fun x => ?_
+  change (x : M) ∈ (q.map f).comap f ↔ (x : M) ∈ q
+  rw [Submodule.comap_map_eq_of_injective hf]
 
 theorem length_quot_natCast (φ : R ≃+* R') (n : ℕ) :
     Module.length R' (R' ⧸ Ideal.span {(n : R')}) = Module.length R (R ⧸ Ideal.span {(n : R)}) := by

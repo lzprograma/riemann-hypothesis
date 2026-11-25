@@ -90,8 +90,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.PeterssonFrameChange
@@ -101,7 +99,6 @@ open scoped ENNReal
 
 variable {r : ℕ}
 
-set_option autoImplicit false in
 open MeasureTheory Topology Matrix NumberField in
 open scoped ENNReal in
 variable {r : ℕ} in
@@ -111,7 +108,6 @@ private lemma det_ne_zero_of_form_eq {K G M : Matrix (Fin r) (Fin r) ℂ} (hK : 
   apply hK
   rw [← h, det_mul, det_mul, det_transpose, hM0, zero_mul, zero_mul]
 
-set_option autoImplicit false in
 open MeasureTheory Topology Matrix NumberField in
 open scoped ENNReal in
 variable {r : ℕ} in
@@ -119,7 +115,6 @@ private lemma form_smul_left_automorphic_membership (c : ℂ) (K A : Matrix (Fin
     Aᵀ * (c • K) * A.map (starRingEnd ℂ) = c • (Aᵀ * K * A.map (starRingEnd ℂ)) := by
   rw [Matrix.mul_smul, Matrix.smul_mul]
 
-set_option autoImplicit false in
 open MeasureTheory Topology Matrix NumberField in
 open scoped ENNReal in
 variable {r : ℕ} in
@@ -135,7 +130,6 @@ private lemma form_smul_right_automorphic_membership (a : ℝ) (K A : Matrix (Fi
   push_cast
   ring
 
-set_option autoImplicit false in
 open MeasureTheory Topology Matrix NumberField in
 open scoped ENNReal in
 variable {r : ℕ} in
@@ -145,7 +139,6 @@ private lemma form_mul' (K A B : Matrix (Fin r) (Fin r) ℂ) :
   rw [transpose_mul, Matrix.map_mul]
   simp only [Matrix.mul_assoc]
 
-set_option autoImplicit false in
 open MeasureTheory Topology Matrix NumberField in
 open scoped ENNReal in
 variable {r : ℕ} in
@@ -153,7 +146,6 @@ private lemma form_one' (K : Matrix (Fin r) (Fin r) ℂ) :
     (1 : Matrix (Fin r) (Fin r) ℂ)ᵀ * K * (1 : Matrix (Fin r) (Fin r) ℂ).map (starRingEnd ℂ) = K := by
   simp [Matrix.map_one]
 
-set_option autoImplicit false in
 open MeasureTheory Topology Matrix NumberField in
 open scoped ENNReal in
 variable {r : ℕ} in
@@ -171,7 +163,6 @@ private lemma form_conj_eq_of_similitude {J B g : Matrix (Fin r) (Fin r) ℂ} {c
   rw [form_mul', form_mul', hinv, form_smul_left_automorphic_membership, hg, form_smul_left_automorphic_membership, hsim, smul_smul,
     inv_mul_cancel₀ hc, one_smul]
 
-set_option autoImplicit false in
 open MeasureTheory Topology Matrix NumberField in
 open scoped ENNReal in
 variable {r : ℕ} in
@@ -186,7 +177,6 @@ private lemma exists_transport_haarU_pi {ι : Type} (Ψ Ψ' : Finset ι) (p p' :
   rw [Subtype.ext h]
   rfl
 
-set_option autoImplicit false in
 open MeasureTheory Topology Matrix NumberField in
 open scoped ENNReal in
 variable {r : ℕ} in
@@ -792,8 +782,7 @@ theorem hermitian_eq_smul_of_const_on_unitary_orbit :
   obtain ⟨t, ht, hAB⟩ := form_eq_smul_of_const_on_orbit (matForm A) (matForm B)
     (matForm_symm hA) (matForm_symm hB) (Pi.single i 1) e he
     (by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       apply hdet
       refine Matrix.det_eq_zero_of_row_eq_zero i fun j => ?_
       rw [← matForm_single B i j, hcon])
@@ -816,8 +805,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open MeasureTheory Topology Matrix NumberField ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHaarVolume
 open scoped ENNReal
 
@@ -835,18 +822,9 @@ theorem det_conjT {r : ℕ} {M x : Matrix (Fin r) (Fin r) ℂ} (hM : M.det ≠ 0
     show x.map (starRingEnd ℂ) = (starRingEnd ℂ).mapMatrix x from rfl, ← RingHom.map_det]
   exact mul_ne_zero (mul_ne_zero hx hM) ((map_ne_zero _).2 hx)
 
-theorem conjT_mul {r : ℕ} (M x y : Matrix (Fin r) (Fin r) ℂ) :
-    (x * y)ᵀ * M * (x * y).map (starRingEnd ℂ) = yᵀ * (xᵀ * M * x.map (starRingEnd ℂ)) * y.map (starRingEnd ℂ) := by
-  rw [Matrix.transpose_mul, Matrix.map_mul]
-  simp only [Matrix.mul_assoc]
-
-theorem conjT_one {r : ℕ} (M : Matrix (Fin r) (Fin r) ℂ) :
-    (1 : Matrix (Fin r) (Fin r) ℂ)ᵀ * M * (1 : Matrix (Fin r) (Fin r) ℂ).map (starRingEnd ℂ) = M := by
-  simp
-
 theorem conjT_cancel {r : ℕ} {x : Matrix (Fin r) (Fin r) ℂ} (hx : x.det ≠ 0) (M : Matrix (Fin r) (Fin r) ℂ) :
     (x⁻¹)ᵀ * (xᵀ * M * x.map (starRingEnd ℂ)) * (x⁻¹).map (starRingEnd ℂ) = M := by
-  rw [← conjT_mul, Matrix.mul_nonsing_inv _ hx.isUnit, conjT_one]
+  rw [← GlobalTheory.PeterssonFrameChange.form_mul', Matrix.mul_nonsing_inv _ hx.isUnit, GlobalTheory.PeterssonFrameChange.form_one']
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
@@ -908,8 +886,8 @@ theorem rigid : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ)
       intro σ
       by_cases hσ : σ = τ
       · subst hσ
-        rw [Function.update_self, conjT_mul, conjT_mul, hu, conjT_cancel hd]
-      · rw [Function.update_of_ne hσ, conjT_one])
+        rw [Function.update_self, GlobalTheory.PeterssonFrameChange.form_mul', GlobalTheory.PeterssonFrameChange.form_mul', hu, conjT_cancel hd]
+      · rw [Function.update_of_ne hσ, GlobalTheory.PeterssonFrameChange.form_one'])
     have hm := hmul g a ha
     rw [h] at hm
     obtain ⟨γ, hγ, hm⟩ := hm
@@ -951,8 +929,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DetNeZeroOfOrth", "h": "module\n\npublic import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.UnitaryHaarVolume\npublic import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsDiscreteArithGroupImageRealUnitary\npublic import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsMeasurePreservingFrameChangeProportionalHe\npublic import Mathlib.MeasureTheory.Group.FundamentalDomain\npublic import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LintegralUnfoldArithmeticQuotientDoubleCosets\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature\npublic import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitFrameRealUnitaryOrbitGramRigid\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetPf\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OrthoStatementPf\nimport Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsProbabilityMeasureAutQuotientNormalized\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.TotallySplit\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Algebra.Group.Units\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.DetSubUpper\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -1203,8 +1179,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.PeterssonCompare
@@ -1213,10 +1187,7 @@ open MeasureTheory Topology Matrix NumberField ReciprocityTheory.ChartRestrictio
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2
 open scoped ENNReal TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
-
 
 open Classical in
 def archHom (V : HSp D) (τ : D.host.E →+* ℂ) : GA D V →* Matrix (Fin V.rank) (Fin V.rank) ℂ :=

@@ -5,41 +5,6 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponen
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorPureTensorComponentAtPlace
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportFinprodSchwartzBruhatFiniteAdel
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantFinprodSchwartzBruhatFiniteAdel
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
 
 @[expose] public section
@@ -118,14 +83,14 @@ theorem tensInj : TensInj := by
     · congr 1
       · refine Finset.prod_congr rfl fun v _ => ?_
         congr 1; funext k
-        rw [hx, if_pos (Finset.mem_union_left _ v.2)]
-        simp only [pt, dif_pos v.2]
+        rw [hx, ite_eq_left (Finset.mem_union_left _ v.2)]
+        simp only [pt, dite_eq_left v.2]
       · refine Finset.prod_congr rfl fun v hv => ?_
         have hT : v ∉ T := (Finset.mem_sdiff.1 hv).2
         rw [hφ i v hT]
         congr 1; funext k
-        rw [hx, if_pos (Finset.mem_union_right _ hv)]
-        simp only [pt, dif_neg hT]
+        rw [hx, ite_eq_left (Finset.mem_union_right _ hv)]
+        simp only [pt, dite_eq_right hT]
     · intro v hv
       by_contra hn
       have hn' : v ∉ T ∪ s := fun h => hn (Finset.mem_coe.2 h)
@@ -134,7 +99,7 @@ theorem tensInj : TensInj := by
         by_contra h
         exact hn' (Finset.mem_union_right _ (Finset.mem_sdiff.2 ⟨(Set.Finite.mem_toFinset _).2 h, hT⟩))
       apply hv
-      simp only [hφ i v hT, hs, hx, if_neg hn']
+      simp only [hφ i v hT, hs, hx, ite_eq_right hn']
       rw [Set.indicator_of_mem (by intro i; exact zero_mem _)]
       rfl
   have h0 := congrFun hsum x

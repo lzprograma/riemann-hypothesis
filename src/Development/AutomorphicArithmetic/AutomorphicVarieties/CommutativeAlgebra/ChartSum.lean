@@ -95,7 +95,7 @@ private theorem one_mem_wtPart_zero {ι A G : Type} [CommRing A] [AddCommGroup G
     (1 : MvPowerSeries ι A) ∈ wtPart A w' 0 := by
   classical
   intro n hn
-  rw [coeff_one, if_neg]
+  rw [coeff_one, ite_eq_right]
   rintro rfl
   exact hn (map_zero _)
 

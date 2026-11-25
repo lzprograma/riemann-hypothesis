@@ -36,63 +36,9 @@ public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PNormIdentit
 public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSecBTorsionFree
 public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSecIdealOfPrime
 public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSpecMax
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.KrullDimension.Field
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.Henselian
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.RingTheory.KrullDimension.PID
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
 import Mathlib.Tactic.Linter.HaveILetI
 import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormExists
 import GroundTheory.HeightsAndTheta.Heights.ChowForms.PConeDimOfChowForm
@@ -900,16 +846,8 @@ noncomputable section
 namespace SecAlgField
 
 theorem genPar_algebraicIndependent (k : Type*) [Field k] (e n : ℕ) :
-    AlgebraicIndependent k (genPar k e n) := by
-  have hinj : Function.Injective (IsScalarTower.toAlgHom k (MvPolynomial (Par e n) k)
-      (GenParField k e n)) :=
-    IsFractionRing.injective (MvPolynomial (Par e n) k) (GenParField k e n)
-  have h := (MvPolynomial.algebraicIndependent_X (Par e n) k).map' hinj
-  have hc : (⇑(IsScalarTower.toAlgHom k (MvPolynomial (Par e n) k) (GenParField k e n)) ∘ X) =
-      genPar k e n := by
-    funext p
-    simp only [Function.comp_apply, IsScalarTower.coe_toAlgHom', genPar]
-  rwa [hc] at h
+    AlgebraicIndependent k (genPar k e n) :=
+  by apply _root_.GroundTheory.Heights₂.Heights.Vertical.genPar_algebraicIndependent
 
 end SecAlgField
 
@@ -1026,7 +964,7 @@ theorem coord_integral (h1 : IncidenceNull.Statement) (Q : Ideal (MvPolynomial (
 
         simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, map_sum, map_mul, hφ, aeval_X,
         Sum.elim_inr, Sum.elim_inl, h0, sub_mul, Finset.sum_sub_distrib, ite_mul, one_mul,
-        zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+        zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
         rw [sub_eq_zero]
         conv_rhs => rw [← mul_one (x m), ← ht, Finset.mul_sum]
         exact Finset.sum_congr rfl fun j _ => by ring
@@ -1132,7 +1070,7 @@ theorem SecBLinInj.proof (h1 : SecBGeneric.Statement) (h2 : SecBTorsionFree.Stat
   obtain ⟨φ, hφc, hφr, hloc⟩ := h1 K n e I v hI
   let _ : Algebra (SecB e I v) (SecAlg (idealF e I) (parYF K e n)) := φ.toAlgebra
   have hφinj : Function.Injective φ := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro b hb
     obtain ⟨⟨m, hm⟩, hmb⟩ := (IsLocalization.map_eq_zero_iff
       (Algebra.algebraMapSubmonoid (SecB e I v) (nonZeroDivisors (ParDVR e n v)))
@@ -1553,67 +1491,17 @@ theorem SpecResidue.proof (hCSD : ChowSecDegree.Statement) (hCNF : ChowNormForm.
   have hρ : Function.Surjective ρ := Ideal.algebraMap_residueField_surjective _
   let Ψ : MvPolynomial (Fin n) R →+* MvPolynomial (Fin n) E := MvPolynomial.map ρ
   have hΨ : Function.Surjective Ψ := MvPolynomial.map_surjective _ hρ
-  have hcomp : ρ.comp ι = (algebraMap k E).comp (algebraMap (𝓞 K) k) := by
-    ext a
-    exact (Ideal.ResidueField.map_algebraMap _ _ _ _ a).symm
-  have hmm : ∀ {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (φ₁ : A →+* B) (φ₂ : B →+* C),
-      (MvPolynomial.map φ₂).comp (MvPolynomial.map φ₁) =
-        (MvPolynomial.map (φ₂.comp φ₁) : MvPolynomial (Fin n) A →+* MvPolynomial (Fin n) C) :=
-    fun φ₁ φ₂ ↦ RingHom.ext fun p ↦ MvPolynomial.map_map _ _ p
-
-  have hJW : integralModel I ⊔ Ideal.map C v.asIdeal ≤ W := hW.1.1.2
   let WR : Ideal (MvPolynomial (Fin n) R) := W.map (MvPolynomial.map ι)
   let S := secIdeal (modelR e I v) (parY e n v)
   let QE := (reduceMod v W).map (MvPolynomial.map (algebraMap k E))
   let T := secIdeal QE (parYκ e n v)
-  have hWR : WR.map Ψ = QE := by
-    simp only [WR, QE, reduceMod, Ideal.map_map, Ψ, hmm, hcomp]
-    rfl
-  have hM : (modelR e I v).map Ψ ≤ QE := by
-    rw [← hWR]
-    exact Ideal.map_mono (Ideal.map_mono (le_sup_left.trans hJW))
-  have hA : (Ideal.span (Set.range (secForm (parY e n v)))).map Ψ =
-      Ideal.span (Set.range (secForm (parYκ e n v))) := by
-    rw [Ideal.map_span, ← Set.range_comp]
-    congr 2
-    funext i
-    simp [Ψ, secForm, linForm, parYκ, ρ]
-    rfl
-  have hB : (Ideal.span {chartForm (parY e n v) - 1}).map Ψ =
-      Ideal.span {chartForm (parYκ e n v) - 1} := by
-    rw [Ideal.map_span, Set.image_singleton]
-    congr 2
-    simp [Ψ, chartForm, linForm, parYκ, ρ]
-    rfl
-  have hT : (S ⊔ WR).map Ψ = T := by
-    simp only [S, T, secIdeal, Ideal.map_sup, hA, hB, hWR]
-    apply le_antisymm
-    · exact sup_le (sup_le (sup_le (hM.trans (le_sup_left.trans le_sup_left))
-        (le_sup_right.trans le_sup_left)) le_sup_right) (le_sup_left.trans le_sup_left)
-    · exact sup_le (sup_le le_sup_right (le_sup_right.trans (le_sup_left.trans le_sup_left)))
-        (le_sup_right.trans le_sup_left)
-  have hkerΨ : RingHom.ker Ψ ≤ WR := by
-    have h1 : ι = (algebraMap (MvPolynomial (Par e n) (𝓞 K)) R).comp C :=
-      IsScalarTower.algebraMap_eq _ _ _
-    have hmax : IsLocalRing.maximalIdeal R = v.asIdeal.map ι := by
-      rw [h1, ← Ideal.map_map]
-      exact Localization.AtPrime.map_eq_maximalIdeal.symm
-    rw [MvPolynomial.ker_map, Ideal.ker_algebraMap_residueField, hmax, Ideal.map_map,
-      ← MvPolynomial.map_comp_C, ← Ideal.map_map]
-    exact Ideal.map_mono (le_sup_right.trans hJW)
-
   let Φ : MvPolynomial (Fin n) R →ₐ[R] SecAlg QE (parYκ e n v) :=
     { toRingHom := (Ideal.Quotient.mk T).comp Ψ
       commutes' := fun r ↦ by
         simp [Ψ, ρ]
         rfl }
   have hΦ : Function.Surjective Φ := Ideal.Quotient.mk_surjective.comp hΨ
-  have hker : RingHom.ker Φ = S ⊔ WR := by
-    have : RingHom.ker Φ = T.comap Ψ := by
-      ext x
-      simp [Φ, RingHom.mem_ker, Ideal.Quotient.eq_zero_iff_mem]
-    rw [this, ← hT, Ideal.comap_map_of_surjective _ hΨ, ← RingHom.ker_eq_comap_bot]
-    exact sup_eq_left.mpr (hkerΨ.trans le_sup_right)
+  have hker : RingHom.ker Φ = S ⊔ WR := SecIdealOfPrime.ker_specResidue_map I v hW.1.1.2
   have hsec : secIdealOf e I v W = WR.map (Ideal.Quotient.mkₐ R S) := rfl
   let eq : (SecB e I v ⧸ secIdealOf e I v W) ≃ₐ[R] SecAlg QE (parYκ e n v) :=
     ((Ideal.quotientEquivAlgOfEq R hsec).trans (DoubleQuot.quotQuotEquivQuotSupₐ R S WR)).trans

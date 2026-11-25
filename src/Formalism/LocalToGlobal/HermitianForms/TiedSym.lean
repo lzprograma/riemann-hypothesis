@@ -70,11 +70,11 @@ structure FormsTiedSym (D : D7) (u : D.what₂.Word) (Ch : ℕ → Type) (chOf :
   norm : ∀ i hi h, NormTie (val i hi h)
   bw : ∀ i hi h, BwTie atT (val i hi h)
 
-  ch : ∀ i (h1 : 1 ≤ i) (h2 : i + 1 ≤ D.R.m) (β : Ch i),
+  ch : ∀ i (_ : 1 ≤ i) (h2 : i + 1 ≤ D.R.m) (β : Ch i),
     LevelChart D (D.mem u).A.T (badG D) i (le_of_succ_m h2)
       (fun c : {c // chOf i c = β} => (D.mem u).C.stab i c.1) (fun c => clsCrd D u i (le_of_succ_m h2) c.1)
 
-  H : ∀ i (β : Ch i) (a : Fin 2) (v : HeightOneSpectrum (𝓞 D.host.F)), (D.host.g a : 𝓞 D.host.F) ∈ v.asIdeal →
+  H : ∀ i (_ : Ch i) (a : Fin 2) (v : HeightOneSpectrum (𝓞 D.host.F)), (D.host.g a : 𝓞 D.host.F) ∈ v.asIdeal →
     Subgroup (GL (Fin (D.R.N i)) (kv D.host.F v))
   lamC : ∀ i β a v h, H i β a v h →* ℂˣ
   glevC : ∀ i h1 h2 β, GLevH (ch i h1 h2 β).lev gl (H i β) (lamC i β)

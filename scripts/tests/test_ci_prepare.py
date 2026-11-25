@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
+import threading
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
@@ -414,6 +415,108 @@ class PreparationTests(unittest.TestCase):
                     self.assertEqual(stdout.getvalue().splitlines(), [expected])
             self.assertEqual(list(root.iterdir()), [])
 
+
+    def test_quick_base_requires_successful_exact_revision_and_source(self):
+        identity = sample_identity()
+        head = "8" * 40
+        base = identity["candidate_head"]
+        request = {"base_ref": "main", "base_head": base, "expected": dict(identity, candidate_head=head)}
+        responses, data = self.published_cache(base, "Ancestor", "1")
+        url = f"{prep.BASE}/ci/revisions/{base}.json"
+        published = json.loads(responses[url])
+        manifest = responses[prep.BASE + "/" + published["module_manifest_key"]]
+        published["module_manifest_bytes"] = len(manifest)
+
+        def check(receipt, *, wait_for_both=False):
+            responses[url] = json.dumps(receipt).encode() if receipt is not None else None
+            barrier = threading.Barrier(2) if wait_for_both else None
+            def fetch(key, **kwargs):
+                if barrier is not None and key != url:
+                    barrier.wait(timeout=5)
+                return responses.get(key)
+            with patch.object(prep, "get", side_effect=fetch), \
+                    patch.object(prep.subprocess, "check_output",
+                                 side_effect=["", identity["candidate_tree"] + "\n" + identity["source_tree"]]):
+                return prep.quick_base(request, Path("."))
+
+        self.assertEqual(check(published, wait_for_both=True), (data, manifest, published))
+        self.assertIsNone(check(None))
+        self.assertIsNone(check(dict(published, build_exit_code=1)))
+        self.assertIsNone(check(dict(published, source_tree="9" * 40)))
+        with self.assertRaisesRegex(ValueError, "exact base"):
+            check(dict(published, candidate_head=head))
+        for key in ("map_key", "module_manifest_key"):
+            with patch.dict(responses, {prep.BASE + "/" + published[key]: None}):
+                self.assertIsNone(check(published))
+        responses[prep.BASE + "/" + published["map_key"]] += b"bad"
+        with self.assertRaisesRegex(ValueError, "integrity mismatch"):
+            check(published)
+        with patch.dict(responses, {prep.BASE + "/" + published["module_manifest_key"]: None}):
+            with self.assertRaisesRegex(ValueError, "integrity mismatch"):
+                check(published)
+
+    def test_legacy_quick_plan_uses_pinned_cone_and_new_plans_require_a_bound_subset(self):
+        head, base = "1" * 40, "2" * 40
+        request = {"expected": {"candidate_head": head}, "base_head": base}
+        old = {"candidate_head": head, "status": "ready", "closure": ["Changed", "Unchanged"]}
+        self.assertEqual(prep.quick_modules(old, request), (set(old["closure"]), False))
+        new = dict(old, base_head=base, targets=["Changed"], unchanged_ancestors=["Unchanged"])
+        self.assertEqual(prep.quick_modules(new, request), ({"Unchanged"}, True))
+        for change in ({"status": "deferred"}, {"candidate_head": base}, {"base_head": head},
+                       {"targets": ["Elsewhere"]}, {"unchanged_ancestors": ["Changed"]},
+                       {"unchanged_ancestors": ["Elsewhere"]}, {"closure": []}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                prep.quick_modules(dict(new, **change), request)
+
+    def test_quick_exports_isolate_metadata_and_unavailable_exact_archives_use_pinned_cache(self):
+        head, base = "1" * 40, "2" * 40
+        responses, data = self.published_cache(base, "Ancestor", "1")
+        record = json.loads(responses[f"{prep.BASE}/ci/revisions/{base}.json"])
+        manifest = responses[prep.BASE + "/" + record["module_manifest_key"]]
+        pinned_responses, pinned_map = self.published_cache(head, "Ancestor", "2")
+        pinned_record = json.loads(pinned_responses[f"{prep.BASE}/ci/revisions/{head}.json"])
+        pinned_manifest = pinned_responses[prep.BASE + "/" + pinned_record["module_manifest_key"]]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            args = SimpleNamespace(candidate=root, trusted=Path(SPEC.origin).parents[1],
+                                   state=root/"state", request=root/"request.json", quick_plan=root/"plan.json")
+            args.request.write_text(json.dumps({"expected": {"candidate_head": head}, "base_head": base}))
+            args.quick_plan.write_text(json.dumps({"status": "ready", "candidate_head": head, "base_head": base,
+                "closure": ["Target", "Ancestor"], "targets": ["Target"], "unchanged_ancestors": ["Ancestor"]}))
+            def export(filename, available):
+                args.output = root/filename
+                def download(cache, entries, hashes, *, optional=False):
+                    self.assertEqual(set(entries), {("1" if optional else "2") * 16})
+                    return available or not optional
+                with patch.object(prep, "report_max_map_count"), patch.object(prep.resource, "setrlimit"), \
+                        patch.object(prep.subprocess, "run"), patch.object(prep, "downloads", side_effect=download), \
+                        patch.object(prep, "quick_base", return_value=(data, manifest, record)), \
+                        patch.object(prep, "MAP_SHA", prep.digest(pinned_map)), \
+                        patch.object(prep, "MANIFEST_SHA", prep.digest(pinned_manifest)), \
+                        patch.object(prep, "get", side_effect=lambda url: pinned_manifest if url.endswith(".gz") else pinned_map):
+                    prep.prepare(args)
+                return json.loads(args.output.read_text())
+            a, b = export("one.json", True), export("two.json", True)
+            for key in ("baseline_map", "baseline_manifest"):
+                self.assertNotEqual(a[key], b[key])
+                self.assertEqual(Path(a[key]).read_bytes(), Path(b[key]).read_bytes())
+            fallback = export("missing.json", False)
+            self.assertNotIn("quick_manifest_sha256", fallback)
+            self.assertEqual(Path(fallback["baseline_map"]).read_bytes(), pinned_map)
+
+    def test_missing_optional_archive_falls_back_without_installing_partial_downloads(self):
+        entries = {v * 16: v * 16 + ".ltar" for v in "12"}
+        hashes = dict.fromkeys(entries.values(), "a" * 64)
+        with tempfile.TemporaryDirectory() as directory:
+            cache = Path(directory)
+            def fetch(status):
+                response = subprocess.CompletedProcess(["curl"], 22, stdout=status)
+                with patch.object(prep.subprocess, "run", return_value=response):
+                    return prep.downloads(cache, entries, hashes, optional=True)
+            self.assertFalse(fetch("200\n404\n"))
+            self.assertEqual(list((cache / "artifacts").iterdir()), [])
+            with self.assertRaises(subprocess.CalledProcessError):
+                fetch("503\n404\n")
 
 if __name__ == "__main__":
     unittest.main()

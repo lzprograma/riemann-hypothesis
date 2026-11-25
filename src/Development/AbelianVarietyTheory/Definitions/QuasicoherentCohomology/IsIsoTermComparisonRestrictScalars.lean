@@ -12,52 +12,8 @@ public import Mathlib.RingTheory.Flat.Basic
 public import Mathlib.Tactic.Monotonicity.Lemmas
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -182,10 +138,10 @@ def extend (A : Cube.{v} ι R) (p : ℕ) : Term A p →ₗ[R] ∀ s, A.obj s whe
   map_smul' r x := by ext s; by_cases h : s.card = p <;> simp [h]
 
 theorem extend_apply_of_eq (A : Cube.{v} ι R) {p : ℕ} (x : Term A p) {s : Finset ι}
-    (h : s.card = p) : extend A p x s = x ⟨s, h⟩ := dif_pos h
+    (h : s.card = p) : extend A p x s = x ⟨s, h⟩ := dite_eq_left h
 
 theorem extend_apply_of_ne (A : Cube.{v} ι R) {p : ℕ} (x : Term A p) {s : Finset ι}
-    (h : s.card ≠ p) : extend A p x s = 0 := dif_neg h
+    (h : s.card ≠ p) : extend A p x s = 0 := dite_eq_right h
 
 def termMap {A B : Cube.{v} ι R} (φ : A ⟶ B) (p : ℕ) : Term A p →ₗ[R] Term B p where
   toFun x s := (φ.app s.1).hom (x s)
@@ -619,12 +575,6 @@ theorem cubeComplex_exactAt_of_bijective (A : Cube.{v} ι R) (i : ι)
 
 end Complex
 
-section Linear
-
-variable {ι : Type} [LinearOrder ι] {R : Type u} [CommRing R]
-
-end Linear
-
 section ChangeOfRings
 
 variable {ι : Type} {R : Type u} [Ring R] {S : Type u'} [Ring S]
@@ -758,16 +708,6 @@ instance Cube.extendScalars_additive {S : Type u'} [CommRing S] (f : R →+* S) 
   map_add {M N g h} := by
     letI := ((algebraMap S S).comp f).toAlgebra
     exact ModuleCat.hom_ext (LinearMap.baseChange_add g.hom h.hom)
-
-noncomputable def cubeExtendScalarsIso [LinearOrder ι] [Finite ι] {S : Type u'} [CommRing S]
-    (f : R →+* S) (A : Cube.{v} ι R) :
-    ((ModuleCat.extendScalars f).mapHomologicalComplex _).obj (cubeComplex A) ≅
-      cubeComplex (A ⋙ ModuleCat.extendScalars f) :=
-  haveI : ∀ p, IsIso ((cubeComparison (ModuleCat.extendScalars f) A).f p) :=
-    Cube.isIso_termComparison (ModuleCat.extendScalars f) A
-  haveI := HomologicalComplex.Hom.isIso_of_components
-    (cubeComparison (ModuleCat.extendScalars f) A)
-  asIso (cubeComparison _ A)
 
 noncomputable def cechExtendScalarsIso [LinearOrder ι] [Finite ι] {S : Type u'} [CommRing S]
     (f : R →+* S) (A : Cube.{v} ι R) :
@@ -906,7 +846,7 @@ theorem Cube.directSumIncl_proj (A : κ → Cube.{v} ι R) (k : κ) :
 theorem Cube.directSumIncl_proj_of_ne (A : κ → Cube.{v} ι R) {k j : κ} (h : k ≠ j) :
     Cube.directSumIncl A k ≫ Cube.directSumProj A j = 0 := by
   ext s x
-  exact (DirectSum.component.of (M := fun k => (A k).obj s) R j k x).trans (dif_neg h)
+  exact (DirectSum.component.of (M := fun k => (A k).obj s) R j k x).trans (dite_eq_right h)
 
 theorem Cube.exists_sum_directSum [Finite ι] (A : κ → Cube.{v} ι R) (p : ℕ)
     (z : Cube.Term (Cube.directSum A) p) : ∃ T : Finset κ,
@@ -951,39 +891,6 @@ section TwoDirections
 
 variable {R : Type u} [Ring R]
 
-noncomputable def Cube.termOneFinTwo (A : Cube.{v} (Fin 2) R) :
-    Cube.Term A 1 ≃ₗ[R] A.obj {0} × A.obj {1} :=
-  (Cube.termOneEquiv A).symm ≪≫ₗ LinearEquiv.piFinTwo R fun i : Fin 2 => A.obj {i}
-
-theorem Cube.termOneFinTwo_apply (A : Cube.{v} (Fin 2) R) (x : Cube.Term A 1) :
-    Cube.termOneFinTwo A x = (x ⟨{0}, rfl⟩, x ⟨{1}, rfl⟩) := rfl
-
-def Cube.termTwoFinTwo (A : Cube.{v} (Fin 2) R) : Cube.Term A 2 ≃ₗ[R] A.obj {0, 1} where
-  toFun x := x ⟨{0, 1}, rfl⟩
-  map_add' _ _ := rfl
-  map_smul' _ _ := rfl
-  invFun a s := Cube.res A (by obtain ⟨s, hs⟩ := s; revert s; decide) a
-  left_inv x := by
-    ext ⟨s, hs⟩
-    obtain rfl : s = {0, 1} := by revert s; decide
-    simp
-  right_inv a := by simp
-
-theorem Cube.termTwoFinTwo_apply (A : Cube.{v} (Fin 2) R) (x : Cube.Term A 2) :
-    Cube.termTwoFinTwo A x = x ⟨{0, 1}, rfl⟩ := rfl
-
-theorem Cube.d_one_finTwo (A : Cube.{v} (Fin 2) R) (x : Cube.Term A 1) :
-    Cube.termTwoFinTwo A (Cube.d A 1 x) =
-      Cube.res A (by decide) (Cube.termOneFinTwo A x).2 -
-        Cube.res A (by decide) (Cube.termOneFinTwo A x).1 := by
-  have h := Cube.d_one_apply_pair A x (i := 0) (j := 1) (by decide)
-  rw [Cube.termOneFinTwo_apply]
-  exact (Cube.termTwoFinTwo_apply A _).trans h
-
 end TwoDirections
-
-section Examples
-
-end Examples
 
 end GlobalTheory

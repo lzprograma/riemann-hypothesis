@@ -1,49 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -135,8 +93,6 @@ private theorem fromBlocks_transpose_dbl_map_eq_dbl {J : Matrix β β E} {ey fx 
     (hJ : J = m1ᵀ * m2.map c - m2ᵀ * m1.map c) :
     (fromBlocks 1 (-(fx * m2)) (-(fx * m1)) (fx * m1 - ey * m2) : Matrix (β ⊕ β) (β ⊕ β) E)ᵀ * dbl J *
       (fromBlocks 1 (-(fx * m2)) (-(fx * m1)) (fx * m1 - ey * m2) : Matrix (β ⊕ β) (β ⊕ β) E).map c = dbl J := by
-  have mneg : ∀ {a b : Type} (A : Matrix a b E), (-A).map c = -(A.map c) := fun A => by ext; simp
-  have msub : ∀ {a b : Type} (A B : Matrix a b E), (A - B).map c = A.map c - B.map c := fun A B => by ext; simp
   have c1e : m1.map c * ey.map c = 1 := by rw [← map_mul', h1e, map_one']
   have c1f : m1.map c * fx.map c = 0 := by rw [← map_mul', h1f]; ext; simp
   have c2e : m2.map c * ey.map c = 0 := by rw [← map_mul', h2e]; ext; simp
@@ -162,7 +118,8 @@ private theorem fromBlocks_transpose_dbl_map_eq_dbl {J : Matrix β β E} {ey fx 
   have t2f' : ∀ {k : Type} (Z : Matrix ν k E), fxᵀ * (m2ᵀ * Z) = Z := fun Z => by
     rw [← Matrix.mul_assoc, t2f, Matrix.one_mul]
   subst hJ
-  simp only [Matrix.fromBlocks_map, map_one', mneg, msub, map_mul']
+  simp only [Matrix.fromBlocks_map, map_one', Matrix.map_neg c (map_neg c),
+    Matrix.map_sub c (map_sub c), map_mul']
   simp only [dbl, Matrix.fromBlocks_transpose, Matrix.fromBlocks_multiply, Matrix.transpose_one, Matrix.transpose_neg,
     Matrix.transpose_sub, Matrix.transpose_mul]
   rw [Matrix.fromBlocks_inj]
@@ -190,8 +147,6 @@ theorem exists_gamma (hc : ∀ z, c (c z) = z) {J : Matrix β β E} (hsk : ∀ i
   rw [Matrix.fromCols_mul_fromRows] at hPM
   rw [Matrix.fromRows_mul_fromCols, ← Matrix.fromBlocks_one, Matrix.fromBlocks_inj] at hMP
   obtain ⟨k1e, k1f, k2e, k2f⟩ := hMP
-  have madd : ∀ {a b : Type} (X Y : Matrix a b E), (X + Y).map c = X.map c + Y.map c := fun X Y => by ext; simp
-  have hcc : ∀ {a b : Type} (X : Matrix a b E), (X.map c).map c = X := fun X => by ext; simp [hc]
   have herm : ∀ {m n : Type} (P : Matrix β m E) (Q : Matrix β n E),
       Qᵀ * J * P.map c = -((Pᵀ * J * Q.map c).map c)ᵀ := by
     intro m n P Q
@@ -205,7 +160,7 @@ theorem exists_gamma (hc : ∀ z, c (c z) = z) {J : Matrix β β E} (hsk : ∀ i
     ring
   have hJinv : J * J⁻¹ = 1 := Matrix.mul_nonsing_inv J hJ
   have hPMc : Cy.map c * m1.map c + Cx.map c * m2.map c = 1 := by
-    rw [← map_mul', ← map_mul', ← madd, hPM, map_one']
+    rw [← map_mul', ← map_mul', ← Matrix.map_add c (map_add c), hPM, map_one']
   obtain ⟨A, hA⟩ : ∃ A : Matrix ν ν E, A = Cyᵀ * J * Cx.map c := ⟨_, rfl⟩
   obtain ⟨Ai, hAi⟩ : ∃ Ai : Matrix ν ν E, Ai = m2.map c * J⁻¹ * m1ᵀ := ⟨_, rfl⟩
   have hAAi : A * Ai = 1 := by
@@ -229,7 +184,8 @@ theorem exists_gamma (hc : ∀ z, c (c z) = z) {J : Matrix β β E} (hsk : ∀ i
     have h' : f * n2 = Cx * m2 := by
       rw [hf, hn2, Matrix.mul_assoc, ← Matrix.mul_assoc (Ai.map c), ← map_mul', hAiA, map_one', Matrix.one_mul]
     rw [h']; exact hPM
-  have hfc : f.map c = Cx.map c * Ai := by rw [hf, map_mul', hcc]
+  have hfc : f.map c = Cx.map c * Ai := by
+    rw [hf, map_mul']; exact congrArg _ (Matrix.map_involutive hc Ai)
   have hef : Cyᵀ * J * f.map c = 1 := by rw [hfc, ← Matrix.mul_assoc, ← hA, hAAi]
   have hfe : fᵀ * J * Cy.map c = -1 := by rw [herm Cy f, hef, map_one', Matrix.transpose_one]
   have hff : fᵀ * J * f.map c = 0 := by
@@ -242,7 +198,7 @@ theorem exists_gamma (hc : ∀ z, c (c z) = z) {J : Matrix β β E} (hsk : ∀ i
           rw [hsum, Matrix.transpose_one, map_one', Matrix.one_mul, Matrix.mul_one]
       _ = m1ᵀ * (Cyᵀ * J * Cy.map c) * m1.map c + m1ᵀ * (Cyᵀ * J * f.map c) * n2.map c +
             n2ᵀ * (fᵀ * J * Cy.map c) * m1.map c + n2ᵀ * (fᵀ * J * f.map c) * n2.map c := by
-          rw [madd, map_mul', map_mul']
+          rw [Matrix.map_add c (map_add c), map_mul', map_mul']
           simp only [Matrix.transpose_add, Matrix.transpose_mul, Matrix.add_mul, Matrix.mul_add, Matrix.mul_assoc]
           abel
       _ = m1ᵀ * n2.map c - n2ᵀ * m1.map c := by

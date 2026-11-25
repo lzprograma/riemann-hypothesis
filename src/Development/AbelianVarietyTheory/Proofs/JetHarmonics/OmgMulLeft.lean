@@ -72,18 +72,13 @@ private lemma rW_mulVec_adjugate_zhat_single_last (z z' : Fin (2 * r + k + 1) �
 
 open Matrix in
 variable {k r : ℕ} in
-private lemma conjTranspose_hpk : (_root_.Formalism.QuantumDeterminants.Hpk k r)ᴴ = _root_.Formalism.QuantumDeterminants.Hpk k r :=
-  _root_.PI.QuotSetU.UnitaryGroupMassFormula.SW.Hpk_conjTranspose
-
-open Matrix in
-variable {k r : ℕ} in
 private lemma gram_eq_upper_bounds (z z' : Fin (2 * r + k + 1) → ℂ) (g : _root_.Formalism.FourierDecayAlt.Q.Mx k r) :
     _root_.Formalism.QuantumDeterminants.Zhat k r z z' g = (_root_.Formalism.QuantumDeterminants.Hpk k r * gᴴ * _root_.Formalism.QuantumDeterminants.Hpk k r * _root_.GlobalTheory.LeadingMinorInv.flagMat k r z)ᴴ *
       (_root_.Formalism.QuantumDeterminants.Hpk k r * _root_.GlobalTheory.LeadingMinorInv.flagMat k r z') := by
   rw [_root_.GlobalTheory.LeadingMinorInv.zhat_eq]
-  simp only [conjTranspose_mul, conjTranspose_conjTranspose, conjTranspose_hpk,
+  simp only [conjTranspose_mul, conjTranspose_conjTranspose, Formalism.QuantumDeterminants.GBasic.Hpk_herm,
     Matrix.mul_assoc]
-  rw [← Matrix.mul_assoc (_root_.Formalism.QuantumDeterminants.Hpk k r) (_root_.Formalism.QuantumDeterminants.Hpk k r), _root_.GlobalTheory.CompanionTheory.ZuckCasSplit.hpk_sq, Matrix.one_mul]
+  rw [← Matrix.mul_assoc (_root_.Formalism.QuantumDeterminants.Hpk k r) (_root_.Formalism.QuantumDeterminants.Hpk k r), _root_.Formalism.QuantumDeterminants.GBasic.Hpk_sq, Matrix.one_mul]
 
 open Matrix in
 variable {k r : ℕ} in
@@ -100,7 +95,6 @@ private lemma det_eq_one_of_upUni {n : ℕ} {U : Matrix (Fin n) (Fin n) ℂ}
     (hU : _root_.GlobalTheory.LeadingMinorInv.UpUni U) : U.det = 1 := by
   rw [det_of_upperTriangular (fun i j h => hU.1 i j h)]
   simp [hU.2]
-
 
 open Matrix in
 theorem _root_.GlobalTheory.WigSh.OmLeftN.omg_mul_left (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ)

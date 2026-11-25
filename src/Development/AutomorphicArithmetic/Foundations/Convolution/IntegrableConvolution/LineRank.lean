@@ -2,43 +2,7 @@ module
 
 public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensFactor
 public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -186,7 +150,7 @@ section Main
 
 variable {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
-private theorem mem_eigL {w : Pl K} {J : Subgroup (Gw n w)} {χ : Gw n w → ℂ} {v : LL μ} :
+theorem mem_eigL_iff {w : Pl K} {J : Subgroup (Gw n w)} {χ : Gw n w → ℂ} {v : LL μ} :
     v ∈ eigL μ w J χ ↔ ∀ x ∈ J, rhoL μ w x v = χ x • v := by
   simp only [eigL, Submodule.mem_iInf, LinearMap.mem_eqLocus, ContinuousLinearMap.coe_coe, LinearMap.smul_apply,
     LinearMap.id_apply]
@@ -203,7 +167,7 @@ private theorem prj_avg {w : Pl K} {J : Subgroup (Gw n w)} {χ : Gw n w → ℂ}
   have h0 : x - z ∈ (eigL μ w J χ)ᗮ := by
     rw [Submodule.mem_orthogonal]
     intro u hu
-    have hu' := (mem_eigL μ).1 hu
+    have hu' := (mem_eigL_iff μ).1 hu
     have h1 : ∀ i, ⟪u, conj (χ (t i)) • rhoL μ w (t i) x⟫_ℂ = ⟪u, x⟫_ℂ := fun i => by
       rw [inner_smul_right, ← inner_smul_left, ← hu' _ (ht i), rhoL_inner]
     have hc : (Fintype.card ι : ℂ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
@@ -246,7 +210,7 @@ private theorem rho_comm {w : Pl K} {c : normOneGL (K := K) (n := n)}
   rw [hc g] at h
   exact h.symm.trans h'
 
-private theorem ker_of_all {V : Submodule ℂ (LL μ)} (hV : IsSummand μ V) {w : Pl K} {π : SmIrr (Gw n w)}
+theorem eq_zero_on_summand_of_forall_intertwiner {V : Submodule ℂ (LL μ)} (hV : IsSummand μ V) {w : Pl K} {π : SmIrr (Gw n w)}
     (hocc : Occurs μ V w π) (Q : LL μ →L[ℂ] LL μ)
     (hQ : ∀ f : π.V →ₗ[ℂ] LL μ, (∀ g x, f (π.ρ g x) = rhoL μ w g (f x)) → ∀ y, Q (f y) = 0) :
     ∀ v ∈ V, Q v = 0 := by
@@ -260,6 +224,24 @@ private theorem ker_of_all {V : Submodule ℂ (LL μ)} (hV : IsSummand μ V) {w 
   rw [e2]
   exact h2
 
+/-- A single vector in the character space represents the projected image of `y` under
+every intertwiner into the automorphic representation. -/
+theorem exists_vector_for_character_projection {w : Pl K} (π : SmIrr (Gw n w))
+    {J : Subgroup (Gw n w)} {χ : Gw n w → ℂ} (hJ : CO J) (hχ : IsChr J χ) (y : π.V) :
+    ∃ z : π.V, (∀ g ∈ J, π.ρ g z = χ g • z) ∧
+      ∀ f : π.V →ₗ[ℂ] LL μ, (∀ g x, f (π.ρ g x) = rhoL μ w g (f x)) →
+        prj (eigL μ w J χ) (f y) = f z := by
+  classical
+  obtain ⟨ι, _, t, hne, ht, hav⟩ := exists_avg π.ρ π.smooth hJ hχ y
+  let z := (Fintype.card ι : ℂ)⁻¹ • ∑ i, conj (χ (t i)) • π.ρ (t i) y
+  have hz : ∀ g ∈ J, π.ρ g z = χ g • z := fun g hg => by
+    dsimp only [z]
+    rw [map_smul, hav g hg, smul_comm]
+  refine ⟨z, hz, fun f hf => ?_⟩
+  refine prj_avg μ t ht _ _ ?_ ((mem_eigL_iff μ).2 fun g hg => ?_)
+  · simp only [z, map_smul, map_sum, hf]
+  · rw [← hf, hz g hg, map_smul]
+
 end Main
 
 theorem lineRank : LineRank := by
@@ -268,16 +250,8 @@ theorem lineRank : LineRank := by
   set P := prj (eigL μ w J χ) with hP
   let IsE : π.V → Prop := fun x => ∀ g ∈ J, π.ρ g x = χ g • x
   have hE : ∀ y, ∃ y', IsE y' ∧ ∀ f : π.V →ₗ[ℂ] LL μ, (∀ g x, f (π.ρ g x) = rhoL μ w g (f x)) →
-      P (f y) = f y' := by
-    intro y
-    obtain ⟨ι, _, t, hne, ht, hav⟩ := exists_avg π.ρ π.smooth hJ hχ y
-    have hy : IsE ((Fintype.card ι : ℂ)⁻¹ • ∑ i, conj (χ (t i)) • π.ρ (t i) y) := fun g hg => by
-      rw [map_smul, hav g hg, smul_comm]
-    refine ⟨_, hy, fun f hf => ?_⟩
-    refine prj_avg μ t ht _ _ ?_ ((mem_eigL μ).2 fun g hg => ?_)
-
-    · simp only [map_smul, map_sum, hf]
-    · rw [← hf, hy g hg, map_smul]
+      P (f y) = f y' :=
+    exists_vector_for_character_projection μ π hJ hχ
   have he0 : ∃ e₀, IsE e₀ ∧ ∀ x, IsE x → ∃ c : ℂ, x = c • e₀ := by
     by_cases h : IsE e
     · exact ⟨e, h, he⟩
@@ -301,7 +275,7 @@ theorem lineRank : LineRank := by
     obtain ⟨l, rfl⟩ := hall y' hy'
     rw [hyf f hf, map_smul, map_smul, map_smul, ← hf, hzf f hf, map_smul, smul_comm]
   let Q : LL μ →L[ℂ] LL μ := P ∘L rhoL μ w g ∘L P - κ • P
-  have hQ : ∀ v ∈ V, Q v = 0 := ker_of_all μ hV hocc Q fun f hf y => by
+  have hQ : ∀ v ∈ V, Q v = 0 := eq_zero_on_summand_of_forall_intertwiner μ hV hocc Q fun f hf y => by
     show P (rhoL μ w g (P (f y))) - κ • P (f y) = 0
     rw [hloc f hf, sub_self]
   refine ⟨κ, fun v hv => ?_⟩

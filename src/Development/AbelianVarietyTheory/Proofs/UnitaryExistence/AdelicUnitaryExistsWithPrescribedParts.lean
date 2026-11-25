@@ -174,11 +174,11 @@ theorem adelic_glue : ∀ (D : D7) (V : HSp D), (∀ gf : GL (Fin V.rank) (Af D.
   classical
   let θ : (D.host.E →+* ℂ) → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ) :=
     fun τ => if h : τ ∈ Ψ then th ⟨τ, h⟩ else θ₀ τ
-  have hθt : ∀ τ : Ψ, θ τ.1 = th τ := fun τ => dif_pos τ.2
+  have hθt : ∀ τ : Ψ, θ τ.1 = th τ := fun τ => dite_eq_left τ.2
   obtain ⟨hcont, hconj, hbij⟩ := hall θ (fun τ => by
     by_cases h : τ ∈ Ψ
     · rw [hθt ⟨τ, h⟩]; exact hth ⟨τ, h⟩
-    · have : θ τ = θ₀ τ := dif_neg h
+    · have : θ τ = θ₀ τ := dite_eq_right h
       rw [this]; exact hθ₀ τ)
   have hb : Function.Bijective fun (z : Ainf D.host.F ⊗[D.host.F] D.host.E) (τ : Ψ) => th τ z := by
     have := hbij (Ψ : Set _) hΨ

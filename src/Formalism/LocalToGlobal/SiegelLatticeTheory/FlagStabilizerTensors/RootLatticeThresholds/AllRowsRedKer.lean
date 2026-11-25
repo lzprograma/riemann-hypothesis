@@ -76,12 +76,6 @@ theorem wB_conjH (X : HidaSetting D) (w : HeightOneSpectrum (𝓞 D.host.E)) : w
     simp [RingOfIntegers.mapRingEquiv, sigO_coe, X.ιE_conj]
   rw [hc]
 
-theorem finrank_cmField (D : D7) : Module.finrank ℚ D.host.E = 2 * D.R.f := by
-  haveI := D.host.galois
-  rw [← IsGalois.card_aut_eq_finrank, Nat.card_congr D.host.gal.toEquiv, Formalism.HC.Frame.natCard_GG]
-  simp only [Formalism.BasicNotions.Ranks.f, Formalism.BasicNotions.Ranks.n]
-  ring
-
 theorem cover (X : HidaSetting D) (k : Fin 2) (w : HeightOneSpectrum (𝓞 D.host.E))
     (hw : ((D.host.g k : ℕ) : 𝓞 D.host.E) ∈ w.asIdeal) :
     ∃ v, w = D.naut.plGw k v ∨ w = conjH (D.naut.plGw k v) := by

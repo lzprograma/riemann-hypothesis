@@ -59,11 +59,6 @@ open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootE
 
 namespace GlobalTheory.StepData.NormalForm
 
-section Plain
-variable {k : Type} [Field k] {n : Type} [Fintype n] [DecidableEq n] {c : ℕ}
-
-end Plain
-
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
 
@@ -164,7 +159,7 @@ theorem _root_.GlobalTheory.StepData.NormalForm.normalFormModN : ∀ (k : Type) 
         have hc : 0 < c := j.pos
         have hj' : j = ⟨0, hc⟩ := Fin.ext hj
         subst hj'
-        simp only [fromBlocks_apply₁₂, of_apply, if_true, hz, dif_pos hc, hεv, Sum.elim_inr,
+        simp only [fromBlocks_apply₁₂, of_apply, ite_true, hz, dite_eq_left hc, hεv, Sum.elim_inr,
           Units.val_mul, Units.val_mk0, Units.val_zpow_eq_zpow_val, _root_.zpow_neg,
           Units.val_inv_eq_inv_val]
         have := ht ⟨0, hc⟩

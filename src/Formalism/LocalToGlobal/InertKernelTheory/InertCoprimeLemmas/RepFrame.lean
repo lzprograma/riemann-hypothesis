@@ -192,35 +192,22 @@ theorem linFrame_subGen (M : ∀ j, X.Lt j → ∀ v : X.Pl, Matrix (Fin ((X.Pj 
     simp [subGen, Ne.symm ht']
   · intro h
     exact absurd (Finset.mem_univ t) h
-  simp only [subGen, if_true, kapInv, invF, Matrix.kroneckerMap_apply, Fintype.sum_prod_type, map_mul]
+  simp only [subGen, ite_true, kapInv, invF, Matrix.kroneckerMap_apply, Fintype.sum_prod_type, map_mul]
   by_cases hodd : IsOddPos (pos.symm t).2
-  · simp only [if_pos hodd, stdLin, Pi, Qi, Matrix.transpose_apply]
+  · simp only [ite_eq_left hodd, stdLin, Pi, Qi, Matrix.transpose_apply]
     refine Eq.trans (Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun a _ => by rw [map_mul])
       (Eq.trans (sum4 _ _ _ _ _) ?_)
     refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => ?_
     rw [map_mul, ← mAt_mul_left, ← mAt_mul_right]
 
     simp only [map_sum, map_mul]
-  · simp only [if_neg hodd, stdLin, Pi, Qi, Matrix.transpose_apply]
+  · simp only [ite_eq_right hodd, stdLin, Pi, Qi, Matrix.transpose_apply]
     refine Eq.trans (Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun a _ => by rw [map_mul])
       (Eq.trans (sum4' _ _ _ _ _) ?_)
     refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => ?_
     rw [map_mul, ← mAt_mul_left, ← mAt_mul_right]
 
     simp only [map_sum, map_mul]
-
-end Formalism.L2.KerInert.RepFrame
-
-namespace Formalism.L2.KerInert.RepFrame
-
-open Formalism.MainNotions.FormalGroupSystem Formalism.L2.KerInert.Rep
-open Formalism.L2.G.Pend (Frm)
-open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker
-
-variable {p : ℕ} [Fact p.Prime] (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (E : Formalism.L2.G.Pend.CEmbC X.G)
-  (hfin : ∀ j c, (X.Lv.lev j c).FinClasses) (D : D7) (pos : (Σ v : X.Pl, Fin (X.G.P.n' v)) ≃ D.what₂.Tau)
-  (large₂ : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj j).m + 1) → D.host.E))
-  (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
 
 end Formalism.L2.KerInert.RepFrame
 
@@ -310,17 +297,6 @@ namespace Formalism.L2.KerInert.RepFrame
 open Formalism.MainNotions.FormalGroupSystem
 open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker
 
-variable {p : ℕ} [Fact p.Prime] (X : Sys p) (hfin : ∀ j c, (X.Lv.lev j c).FinClasses) (D : D7)
-    (large₂ : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj j).m + 1) → D.host.E))
-    (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
-
-end Formalism.L2.KerInert.RepFrame
-
-namespace Formalism.L2.KerInert.RepFrame
-
-open Formalism.MainNotions.FormalGroupSystem
-open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker
-
 theorem lamONB_of_cols (D : D7) {p : ℕ} [Fact p.Prime] (lam : Qbar →+* ℂ_[p]) {N N' r : ℕ}
     (b : Fin r → Matrix (Fin N') (Fin N) D.host.E) (hr : r = Fintype.card (D.what₂.Tau × Fin N' × Fin N))
     (hcol : ∀ i i', ∑ k, lamBc D lam b k i * lamB D lam b k i' = if i = i' then 1 else 0) :
@@ -369,9 +345,9 @@ theorem cols_of_trace (D : D7) (hT : TraceTau D) {p : ℕ} [Fact p.Prime] (lam :
     simp only [embQ, RingHom.codRestrict_apply]
     rw [hT Y, htr]
     by_cases h : i = i'
-    · rw [if_pos h.symm, if_pos h]
+    · rw [ite_eq_left h.symm, ite_eq_left h]
       simp
-    · rw [if_neg (fun e => h e.symm), if_neg h]
+    · rw [ite_eq_right (fun e => h e.symm), ite_eq_right h]
       simp
   calc ∑ k, lamBc D lam b k i * lamB D lam b k i'
       = ∑ τ : D.what₂.Tau, lam (embQ D τ Y) := by
@@ -434,9 +410,9 @@ theorem frVec_inl_same {j : ℕ} {L0 : X.Lt j} {La' : X.Lt (j + 1)} (φ : Frm X 
   simp only [frVec, stdLin]
   rw [Equiv.symm_apply_apply]
   by_cases hs : IsOddPos s
-  · simp only [if_pos hs, zOfX, Finset.mul_sum, ← mul_assoc, map_sum, coeff_CC_mul_X]
+  · simp only [ite_eq_left hs, zOfX, Finset.mul_sum, ← mul_assoc, map_sum, coeff_CC_mul_X]
     simp
-  · simp only [if_neg hs, zOfX, Finset.mul_sum, ← mul_assoc, map_sum, coeff_CC_mul_X]
+  · simp only [ite_eq_right hs, zOfX, Finset.mul_sum, ← mul_assoc, map_sum, coeff_CC_mul_X]
     obtain ⟨v, r, a, b⟩ := e
     simp only [Sum.inl.injEq, Sigma.mk.inj_iff, heq_eq_eq, Prod.mk.injEq, true_and]
     rw [Finset.sum_eq_single a (fun x _ hx => by simp [hx]) (by simp),
@@ -459,14 +435,14 @@ theorem frVec_inr_same {j : ℕ} {L0 : X.Lt j} {La' : X.Lt (j + 1)} (φ : Frm X 
   simp only [frVec, stdLin]
   rw [Equiv.symm_apply_apply]
   by_cases hs : IsOddPos s
-  · simp only [if_pos hs, zOfX, Finset.mul_sum, ← mul_assoc, map_sum, coeff_CC_mul_X]
+  · simp only [ite_eq_left hs, zOfX, Finset.mul_sum, ← mul_assoc, map_sum, coeff_CC_mul_X]
     obtain ⟨v, r, a, b⟩ := e
     simp only [Sum.inr.injEq, Sigma.mk.inj_iff, heq_eq_eq, Prod.mk.injEq, true_and]
     rw [Finset.sum_eq_single a (fun x _ hx => by simp [hx]) (by simp),
       Finset.sum_eq_single b (fun x _ hx => by simp [hx]) (by simp),
       Finset.sum_eq_single r (fun x _ hx => by simp [hx]) (by simp)]
     simp
-  · simp only [if_neg hs, zOfX, Finset.mul_sum, ← mul_assoc, map_sum, coeff_CC_mul_X]
+  · simp only [ite_eq_right hs, zOfX, Finset.mul_sum, ← mul_assoc, map_sum, coeff_CC_mul_X]
     simp
 
 theorem frVec_ne {j : ℕ} {L0 : X.Lt j} {La' : X.Lt (j + 1)} (φ : Frm X j L0 La') (y : X.EA j ⊕ X.EA j)
@@ -480,7 +456,7 @@ theorem frVec_ne {j : ℕ} {L0 : X.Lt j} {La' : X.Lt (j + 1)} (φ : Frm X j L0 L
   rcases y with ⟨v', r, a, b⟩ | ⟨v', r, a, b⟩ <;>
   · simp only [Sum.elim_inl, Sum.elim_inr, id] at hv
     by_cases hs : IsOddPos s <;>
-    · simp only [hs, if_true, if_false, zOfX, Finset.mul_sum, ← mul_assoc, map_sum, coeff_CC_mul_X]
+    · simp only [hs, ite_true, ite_false, zOfX, Finset.mul_sum, ← mul_assoc, map_sum, coeff_CC_mul_X]
       simp [hv]
 
 end Formalism.L2.KerInert.RepFrame
@@ -517,7 +493,7 @@ theorem val_finRotate {n : ℕ} (s : Fin n) : (finRotate n s).val = if s.val + 1
     rw [coe_finRotate]
     by_cases h : s = Fin.last n
     · subst h; simp
-    · rw [if_neg h, if_neg]
+    · rw [ite_eq_right h, ite_eq_right]
       intro e
       apply h
       ext
@@ -530,11 +506,11 @@ theorem odd_finRotate {n : ℕ} (hn : Even n) (s : Fin n) : IsOddPos (finRotate 
   rw [val_finRotate]
   have hs := s.isLt
   by_cases h1 : s.val + 1 = n
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     constructor
     · intro h2; exact absurd h2 (by decide)
     · intro h2; exfalso; apply h2; omega
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
     constructor
     · intro h2 h3; omega
     · intro h2; omega
@@ -634,9 +610,9 @@ theorem sigma_LBc (v : X.Pl) (k : PIx X (j := j) v) (i : Fin r) :
   congr 2
   by_cases hs : IsOddPos k.1
   · have h2 : ¬ IsOddPos (finRotate _ k.1) := by rw [odd_finRotate (hev v)]; exact not_not.2 hs
-    rw [if_pos hs, if_neg h2, hconj]
+    rw [ite_eq_left hs, ite_eq_right h2, hconj]
   · have h2 : IsOddPos (finRotate _ k.1) := (odd_finRotate (hev v) _).2 hs
-    rw [if_neg hs, if_pos h2]
+    rw [ite_eq_right hs, ite_eq_left h2]
 
 include hσtw hev hconj in
 theorem sigma_LB (v : X.Pl) (k : PIx X (j := j) v) (i : Fin r) :
@@ -645,9 +621,9 @@ theorem sigma_LB (v : X.Pl) (k : PIx X (j := j) v) (i : Fin r) :
   congr 2
   by_cases hs : IsOddPos k.1
   · have h2 : ¬ IsOddPos (finRotate _ k.1) := by rw [odd_finRotate (hev v)]; exact not_not.2 hs
-    rw [if_pos hs, if_neg h2]
+    rw [ite_eq_left hs, ite_eq_right h2]
   · have h2 : IsOddPos (finRotate _ k.1) := (odd_finRotate (hev v) _).2 hs
-    rw [if_neg hs, if_pos h2, hconj]
+    rw [ite_eq_right hs, ite_eq_left h2, hconj]
 
 include hσtw hσw hev in
 theorem sigma_YX (e : X.EA j) (k : PIx X (j := j) e.1) :
@@ -655,9 +631,9 @@ theorem sigma_YX (e : X.EA j) (k : PIx X (j := j) e.1) :
   simp only [YX, ZX, rotP, Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map, id]
   by_cases hs : IsOddPos k.1
   · have h2 : ¬ IsOddPos (finRotate _ k.1) := by rw [odd_finRotate (hev e.1)]; exact not_not.2 hs
-    rw [if_pos hs, if_neg h2, map_zero]
+    rw [ite_eq_left hs, ite_eq_right h2, map_zero]
   · have h2 : IsOddPos (finRotate _ k.1) := (odd_finRotate (hev e.1) _).2 hs
-    rw [if_neg hs, if_pos h2, map_mul, map_mul, hσtw, hσtw, hσw, ← Function.iterate_succ_apply' (sigW p),
+    rw [ite_eq_right hs, ite_eq_left h2, map_mul, map_mul, hσtw, hσtw, hσw, ← Function.iterate_succ_apply' (sigW p),
       iter_rot (sigW p) _ ((X.om e.1).fix e.2.1) k.1]
 
 include hσtw hσw hev in
@@ -666,10 +642,10 @@ theorem sigma_ZX (e : X.EA j) (k : PIx X (j := j) e.1) :
   simp only [YX, ZX, rotP, Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map, id]
   by_cases hs : IsOddPos k.1
   · have h2 : ¬ IsOddPos (finRotate _ k.1) := by rw [odd_finRotate (hev e.1)]; exact not_not.2 hs
-    rw [if_pos hs, if_neg h2, map_mul, map_mul, hσtw, hσtw, hσw, ← Function.iterate_succ_apply' (sigW p),
+    rw [ite_eq_left hs, ite_eq_right h2, map_mul, map_mul, hσtw, hσtw, hσw, ← Function.iterate_succ_apply' (sigW p),
       iter_rot (sigW p) _ ((X.om e.1).fix e.2.1) k.1]
   · have h2 : IsOddPos (finRotate _ k.1) := (odd_finRotate (hev e.1) _).2 hs
-    rw [if_neg hs, if_pos h2, map_zero]
+    rw [ite_eq_right hs, ite_eq_left h2, map_zero]
 
 include hσtw hσw hev in
 theorem sigma_YX' (e : X.EA j) (k : PIx X (j := j) e.1) :
@@ -677,10 +653,10 @@ theorem sigma_YX' (e : X.EA j) (k : PIx X (j := j) e.1) :
   simp only [YX', ZX', rotP, Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map, id]
   by_cases hs : IsOddPos k.1
   · have h2 : ¬ IsOddPos (finRotate _ k.1) := by rw [odd_finRotate (hev e.1)]; exact not_not.2 hs
-    rw [if_pos hs, if_neg h2, map_mul, map_mul, hσtw, hσtw, hσw, ← Function.iterate_succ_apply' (sigW p),
+    rw [ite_eq_left hs, ite_eq_right h2, map_mul, map_mul, hσtw, hσtw, hσw, ← Function.iterate_succ_apply' (sigW p),
       iter_rot (sigW p) _ ((X.om e.1).fixS e.2.1) k.1]
   · have h2 : IsOddPos (finRotate _ k.1) := (odd_finRotate (hev e.1) _).2 hs
-    rw [if_neg hs, if_pos h2, map_zero]
+    rw [ite_eq_right hs, ite_eq_left h2, map_zero]
 
 include hσtw hσw hev in
 theorem sigma_ZX' (e : X.EA j) (k : PIx X (j := j) e.1) :
@@ -688,9 +664,9 @@ theorem sigma_ZX' (e : X.EA j) (k : PIx X (j := j) e.1) :
   simp only [YX', ZX', rotP, Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map, id]
   by_cases hs : IsOddPos k.1
   · have h2 : ¬ IsOddPos (finRotate _ k.1) := by rw [odd_finRotate (hev e.1)]; exact not_not.2 hs
-    rw [if_pos hs, if_neg h2, map_zero]
+    rw [ite_eq_left hs, ite_eq_right h2, map_zero]
   · have h2 : IsOddPos (finRotate _ k.1) := (odd_finRotate (hev e.1) _).2 hs
-    rw [if_neg hs, if_pos h2, map_mul, map_mul, hσtw, hσtw, hσw, ← Function.iterate_succ_apply' (sigW p),
+    rw [ite_eq_right hs, ite_eq_left h2, map_mul, map_mul, hσtw, hσtw, hσw, ← Function.iterate_succ_apply' (sigW p),
       iter_rot (sigW p) _ ((X.om e.1).fixS e.2.1) k.1]
 
 end Sigma
@@ -803,7 +779,7 @@ theorem iso_fK (hL : LamONB D lam b) (e e' : X.EA j) :
   obtain ⟨v', x'⟩ := e'
   by_cases hv : v = v'
   · subst hv
-    simp only [pos_delta_same X D pos, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [pos_delta_same X D pos, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     refine Finset.sum_eq_zero fun k _ => ?_
     simp only [ZX, YX]
     by_cases hs : IsOddPos k.1 <;> simp [hs]
@@ -821,7 +797,7 @@ theorem iso_fK' (hL : LamONB D lam b) (e e' : X.EA j) :
   obtain ⟨v', x'⟩ := e'
   by_cases hv : v = v'
   · subst hv
-    simp only [pos_delta_same X D pos, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [pos_delta_same X D pos, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     refine Finset.sum_eq_zero fun k _ => ?_
     simp only [ZX', YX']
     by_cases hs : IsOddPos k.1 <;> simp [hs]
@@ -877,7 +853,7 @@ theorem dual_fK (hL : LamONB D lam b) (hM : ∀ v, IsUnit (M j L0 v).det) (hM' :
   obtain ⟨v', r1, a1, b1⟩ := e'
   by_cases hv : v = v'
   · subst hv
-    simp only [pos_delta_same X D pos, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [pos_delta_same X D pos, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     rw [Fintype.sum_prod_type]
     have key : ∀ s : Fin (X.G.P.n' v), ∑ x : Fin ((X.Pj (j + 1)).m + 1) × Fin ((X.Pj j).m + 1),
         ZX X M φ twK wK ⟨v, (r0, a0, b0)⟩ (s, x) * YX' X M φ twK wK ⟨v, (r1, a1, b1)⟩ (s, x) =
@@ -888,7 +864,7 @@ theorem dual_fK (hL : LamONB D lam b) (hM : ∀ v, IsUnit (M j L0 v).det) (hM' :
           else 0 := by
       intro s
       by_cases hs : IsOddPos s
-      · simp only [ZX, YX', if_pos hs]
+      · simp only [ZX, YX', ite_eq_left hs]
         rw [Fintype.sum_prod_type]
         dsimp only
 
@@ -900,30 +876,30 @@ theorem dual_fK (hL : LamONB D lam b) (hM : ∀ v, IsUnit (M j L0 v).det) (hM' :
     · by_cases hb : b1 = b0
       · subst ha
         subst hb
-        simp only [if_true, mul_one, map_one, one_mul]
+        simp only [ite_true, mul_one, map_one, one_mul]
         rw [← Finset.sum_filter]
 
         simp only [← map_mul, ← map_sum]
         rw [dualT (X.om v) (hev v) 1 (by norm_num) IsOddPos (fun s => Iff.rfl) r0 r1]
         by_cases hr : r0 = r1
         · subst hr; simp
-        · rw [if_neg hr, map_zero, if_neg]
+        · rw [ite_eq_right hr, map_zero, ite_eq_right]
           intro h
           simp only [Sigma.mk.inj_iff, heq_eq_eq, Prod.mk.injEq, true_and] at h
           exact hr h.1
-      · simp only [if_neg hb, mul_zero, map_zero, zero_mul, ite_self, Finset.sum_const_zero]
-        rw [if_neg]
+      · simp only [ite_eq_right hb, mul_zero, map_zero, zero_mul, ite_self, Finset.sum_const_zero]
+        rw [ite_eq_right]
         intro h
         simp only [Sigma.mk.inj_iff, heq_eq_eq, Prod.mk.injEq, true_and] at h
         exact hb h.2.2.symm
-    · simp only [if_neg ha, zero_mul, map_zero, ite_self, Finset.sum_const_zero]
-      rw [if_neg]
+    · simp only [ite_eq_right ha, zero_mul, map_zero, ite_self, Finset.sum_const_zero]
+      rw [ite_eq_right]
       intro h
       simp only [Sigma.mk.inj_iff, heq_eq_eq, Prod.mk.injEq, true_and] at h
       exact ha h.2.1
-  · rw [if_neg]
+  · rw [ite_eq_right]
     · refine Finset.sum_eq_zero fun k _ => Finset.sum_eq_zero fun k' _ => ?_
-      rw [if_neg (pos_delta_ne X D pos hv k k')]
+      rw [ite_eq_right (pos_delta_ne X D pos hv k k')]
       simp
     · intro h
       exact hv (congrArg Sigma.fst h)
@@ -962,7 +938,7 @@ theorem coe_fK (e : X.EA j) (i : Fin r) :
     rw [frVec_inl_same]
     by_cases hs : IsOddPos s
     · simp [YX, hs]
-    · simp only [YX, if_neg hs, MulMemClass.coe_mul, htwK, hwK, wE, mAt_apply_cast, mAt_apply_cast', Gp, Gmi]
+    · simp only [YX, ite_eq_right hs, MulMemClass.coe_mul, htwK, hwK, wE, mAt_apply_cast, mAt_apply_cast', Gp, Gmi]
   · intro v _ hv
     refine Finset.sum_eq_zero fun s _ => Finset.sum_eq_zero fun x _ => ?_
     rw [frVec_ne X E pos M φ (Sum.inl e) v hv s x.1 x.2, mul_zero]
@@ -980,7 +956,7 @@ theorem coe_fK' (hconj : ∀ x, D.host.conj (D.host.conj x) = x) (e : X.EA j) (i
     congr 1
     rw [frVec_inr_same]
     by_cases hs : IsOddPos s
-    · simp only [YX', if_pos hs, MulMemClass.coe_mul, htwK, hwK, wE, mAt_apply_cast, mAt_apply_cast', Gm, Gpi]
+    · simp only [YX', ite_eq_left hs, MulMemClass.coe_mul, htwK, hwK, wE, mAt_apply_cast, mAt_apply_cast', Gm, Gpi]
     · simp [YX', hs]
   · intro v _ hv
     refine Finset.sum_eq_zero fun s _ => Finset.sum_eq_zero fun x _ => ?_
@@ -996,7 +972,7 @@ theorem fK_pos (e : X.EA j) (i : Fin r) (s : Fin (X.G.P.n' e.1)) :
           Gmi X M φ e.1 (Fin.cast (rank_eq X j).symm e.2.2.1) A) * wK ((sigW p)^[s.val] ((X.om e.1).om e.2.1)) := by
   by_cases hs : IsOddPos s
   · simp [YX, hs]
-  · simp only [LBc, YX, if_neg hs, Fintype.sum_prod_type, map_sum, map_mul, Finset.sum_mul]
+  · simp only [LBc, YX, ite_eq_right hs, Fintype.sum_prod_type, map_sum, map_mul, Finset.sum_mul]
     refine Finset.sum_congr rfl fun B _ => Finset.sum_congr rfl fun A _ => ?_
     ring
 
@@ -1008,7 +984,7 @@ theorem fK'_pos (hconj : ∀ x, D.host.conj (D.host.conj x) = x) (e : X.EA j) (i
           Gpi X M φ e.1 (Fin.cast (rank_eq X (j + 1)).symm e.2.2.2) B) * wK ((sigW p)^[s.val] ((X.om e.1).omS e.2.1))
       else 0 := by
   by_cases hs : IsOddPos s
-  · simp only [LBc, YX', if_pos hs, hconj, Fintype.sum_prod_type, map_sum, map_mul, Finset.sum_mul]
+  · simp only [LBc, YX', ite_eq_left hs, hconj, Fintype.sum_prod_type, map_sum, map_mul, Finset.sum_mul]
     refine Finset.sum_congr rfl fun B _ => Finset.sum_congr rfl fun A _ => ?_
     ring
   · simp [YX', hs]
@@ -1040,22 +1016,6 @@ theorem norm_fK' (hconj : ∀ x, D.host.conj (D.host.conj x) = x) (hwn : ∀ w, 
   · rw [MulMemClass.coe_mul, norm_mul, htwK]
     exact mul_le_one₀ (hint' i e.1 s _ _) (norm_nonneg _) (hwn _)
   · simp
-
-end Formalism.L2.KerInert.RepFrame
-
-namespace Formalism.L2.KerInert.RepFrame
-
-open Formalism.MainNotions.FormalGroupSystem Formalism.L2.Th1.D Formalism.L2.Th1.Top Formalism.L2.KerInert.K1
-open Formalism.InvariantFactorPaths.G7 (UnrOK)
-open Formalism.L2.G.Pend (Frm)
-open Formalism.L2.Th1.CM (MaximalUnramifiedExtension)
-open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker
-
-variable {p : ℕ} [Fact p.Prime] (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (E : Formalism.L2.G.Pend.CEmbC X.G)
-  (hfin : ∀ j c, (X.Lv.lev j c).FinClasses) (D : D7) (pos : (Σ v : X.Pl, Fin (X.G.P.n' v)) ≃ D.what₂.Tau)
-  (large₂ : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj j).m + 1) → D.host.E))
-  (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
-  (M : ∀ j, X.Lt j → ∀ v : X.Pl, Matrix (Fin ((X.Pj j).m + 1)) (Fin ((X.Pj j).m + 1)) (X.G.P.Qq v))
 
 end Formalism.L2.KerInert.RepFrame
 
@@ -1102,18 +1062,5 @@ variable {p : ℕ} [Fact p.Prime] (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (E :
   (hfin : ∀ j c, (X.Lv.lev j c).FinClasses) (D : D7)
   (large₂ : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj j).m + 1) → D.host.E))
   (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
-
-end Formalism.L2.KerInert.RepFrame
-
-namespace Formalism.L2.KerInert.RepFrame
-
-open Formalism.MainNotions.FormalGroupSystem
-open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker
-
-variable {p : ℕ} [Fact p.Prime] (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (E : Formalism.L2.G.Pend.CEmbC X.G)
-  (hfin : ∀ j c, (X.Lv.lev j c).FinClasses) (D : D7) (pos : (Σ v : X.Pl, Fin (X.G.P.n' v)) ≃ D.what₂.Tau)
-  (large₂ : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj j).m + 1) → D.host.E))
-  (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
-  (M : ∀ j, X.Lt j → ∀ v : X.Pl, Matrix (Fin ((X.Pj j).m + 1)) (Fin ((X.Pj j).m + 1)) (X.G.P.Qq v))
 
 end Formalism.L2.KerInert.RepFrame

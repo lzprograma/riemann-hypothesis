@@ -140,7 +140,6 @@ lemma app_exact_of_shortExact (W : Opens X) (y : S.X₂.obj.obj (op W))
     (hy : S.g.hom.app (op W) y = 0) : ∃ x, S.f.hom.app (op W) x = y :=
   TopCat.Sheaf.sections_exact_of_left_exact hS.1 hS.2 y hy
 
-set_option backward.isDefEq.respectTransparency false in
 lemma comp_hom_eq_zero : S.f.hom ≫ S.g.hom = 0 := by
   rw [← ObjectProperty.FullSubcategory.comp_hom, S.zero]
   rfl

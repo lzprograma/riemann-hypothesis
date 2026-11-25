@@ -48,8 +48,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.Core.Rk.Top
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {u : D.what₂.Word}
 
 def HasMat (h : GA D D.sp.X')

@@ -296,8 +296,8 @@ private theorem jacobi_symbol_eq_one_of_congr (p q : ℕ) (s : ℤˣ) (hq : q.Pr
   rcases hq.eq_two_or_odd' with rfl | hq2
   · rw [Nat.cast_ofNat, jacobiSym.at_two hp, ZMod.χ₈_nat_eq_if_mod_eight]
     rcases Int.units_eq_one_or s with rfl | rfl <;> simp only [Int.ModEq, Units.val_one, Units.val_neg] at h8
-    · rw [if_neg (by omega), if_pos (by omega)]
-    · rw [if_neg (by omega), if_pos (by omega)]
+    · rw [ite_eq_right (by omega), ite_eq_left (by omega)]
+    · rw [ite_eq_right (by omega), ite_eq_left (by omega)]
   · have e : jacobiSym p q = jacobiSym s q := jacobiSym.mod_left' hpq
     rcases Int.units_eq_one_or s with rfl | rfl <;> simp only [Int.ModEq, Units.val_one, Units.val_neg] at h8 e
     · rw [jacobiSym.quadratic_reciprocity_one_mod_four' hq2 (by omega), e, jacobiSym.one_left]

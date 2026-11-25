@@ -102,12 +102,6 @@ namespace GlobalTheory.K5.FinLevel
 
 variable {p : ℕ} [Fact p.Prime] {Ω : Type} [Field Ω] [Algebra (O0 p) Ω]
 
-end GlobalTheory.K5.FinLevel
-
-namespace GlobalTheory.K5.FinLevel
-
-variable {p : ℕ} [Fact p.Prime] {Ω : Type} [Field Ω] [Algebra (O0 p) Ω]
-
 theorem sum_fixed (H : Subgroup (Gal p Ω)) (E : Finset (Gal p Ω)) (y₀ x : Ω)
     (hEH : ∀ g ∈ E, g ∈ H)
     (huniq : ∀ h ∈ H, ∃! g, g ∈ E ∧ h y₀ = g y₀ ∧ ∀ s ∈ ({x} : Finset Ω), h s = g s) :
@@ -117,7 +111,7 @@ theorem sum_fixed (H : Subgroup (Gal p Ω)) (E : Finset (Gal p Ω)) (y₀ x : Ω
   let rep : Gal p Ω → Gal p Ω := fun a => if ha : a ∈ H then (huniq a ha).exists.choose else 1
   have hrep : ∀ a ∈ H, rep a ∈ E ∧ a y₀ = rep a y₀ ∧ a x = rep a x := by
     intro a ha
-    simp only [rep, dif_pos ha]
+    simp only [rep, dite_eq_left ha]
     exact (huniq a ha).exists.choose_spec
   have hun : ∀ a ∈ H, ∀ g ∈ E, a y₀ = g y₀ → a x = g x → rep a = g := by
     intro a ha g hg h1 h2

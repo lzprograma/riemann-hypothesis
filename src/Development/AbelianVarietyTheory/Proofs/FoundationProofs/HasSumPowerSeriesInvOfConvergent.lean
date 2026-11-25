@@ -86,8 +86,8 @@ theorem coeff_inv_norm_le (a : ℕ → ℂ) (M R : ℝ) (hR : 0 < R) (ha0 : a 0 
   have hgeom : ∀ n : ℕ, ∑ k ∈ Finset.range (n + 1), (if 1 ≤ k then q ^ k else 0) ≤ A / M := by
     intro n
     rw [Finset.sum_range_succ']
-    simp only [show ∀ k : ℕ, 1 ≤ k + 1 from fun k => by omega, if_true,
-      show ¬ (1 ≤ 0) from by omega, if_false, add_zero]
+    simp only [show ∀ k : ℕ, 1 ≤ k + 1 from fun k => by omega, ite_true,
+      show ¬ (1 ≤ 0) from by omega, ite_false, add_zero]
     simp_rw [pow_succ]
     rw [← Finset.sum_mul]
     have h := geom_sum_Ico_le_of_lt_one (m := 0) (n := n) hq0 hq1

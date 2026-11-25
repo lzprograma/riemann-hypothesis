@@ -35,55 +35,12 @@ public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.
 import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianThetaSummableAndDeterminesTestFn
 import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
 import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RationalSchwartzBruhatAlgebraIntegralLinear
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Analysis.Matrix.Hermitian
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.RingTheory.PiTensorProduct
 import Std.Tactic.BVDecide.Normalize.Bool
@@ -361,10 +318,10 @@ theorem _root_.GlobalTheory.SW.polyDeriv_pairing_eq_zero_of_isHeat : ∀ (E : Ty
       · funext σ i j
         change p.1 σ i j + s * (if σ = v.1 then (single v.2.1 v.2.2 (1 : ℂ) : Matrix (Fin N) (Fin N) ℂ) else 0) i j = p.1 σ i j + (if σ = v.1 then (single v.2.1 v.2.2 s : Matrix (Fin N) (Fin N) ℂ) else 0) i j
         by_cases hσ : σ = v.1
-        · rw [if_pos hσ, if_pos hσ]
+        · rw [ite_eq_left hσ, ite_eq_left hσ]
           simp only [Matrix.single_apply]
           split_ifs <;> simp
-        · rw [if_neg hσ, if_neg hσ]
+        · rw [ite_eq_right hσ, ite_eq_right hσ]
           simp
       · funext σ i j
         change p.2.1 σ i j + s * 0 = p.2.1 σ i j
@@ -383,18 +340,18 @@ theorem _root_.GlobalTheory.SW.polyDeriv_pairing_eq_zero_of_isHeat : ∀ (E : Ty
       · funext σ i j
         change p.2.1 σ i j + s * (Pi.single (v.1, false, k, v.2.1) (1 : ℂ) : Ψ × Bool × Fin n × Fin N → ℂ) (σ, false, i, j) + t * (Pi.single (v.1, true, k, v.2.2) (1 : ℂ) : Ψ × Bool × Fin n × Fin N → ℂ) (σ, false, i, j) = p.2.1 σ i j + (if σ = v.1 then (single k v.2.1 s : Matrix (Fin n) (Fin N) ℂ) else 0) i j
         by_cases hσ : σ = v.1
-        · rw [if_pos hσ]
+        · rw [ite_eq_left hσ]
           subst hσ
           by_cases hi : i = k <;> by_cases hj : j = v.2.1 <;> simp [hi, hj, eq_comm (a := k), eq_comm (a := v.2.1)]
-        · rw [if_neg hσ]
+        · rw [ite_eq_right hσ]
           simp [hσ]
       · funext σ i j
         change p.2.2 σ i j + s * (Pi.single (v.1, false, k, v.2.1) (1 : ℂ) : Ψ × Bool × Fin n × Fin N → ℂ) (σ, true, i, j) + t * (Pi.single (v.1, true, k, v.2.2) (1 : ℂ) : Ψ × Bool × Fin n × Fin N → ℂ) (σ, true, i, j) = p.2.2 σ i j + (if σ = v.1 then (single k v.2.2 t : Matrix (Fin n) (Fin N) ℂ) else 0) i j
         by_cases hσ : σ = v.1
-        · rw [if_pos hσ]
+        · rw [ite_eq_left hσ]
           subst hσ
           by_cases hi : i = k <;> by_cases hj : j = v.2.2 <;> simp [hi, hj, eq_comm (a := k), eq_comm (a := v.2.2)]
-        · rw [if_neg hσ]
+        · rw [ite_eq_right hσ]
           simp [hσ]
     have l1 : _root_.GlobalTheory.lineDerivList ℂ [ez v] (fun p : ((Ψ → Fin N → Fin N → ℂ) × (Ψ → Fin n → Fin N → ℂ) × (Ψ → Fin n → Fin N → ℂ)) => D p.1 p.2.1 p.2.2) p = deriv (fun s : ℂ => D (fun σ => (show Ψ → Matrix (Fin N) (Fin N) ℂ from p.1) σ + if σ = v.1 then single v.2.1 v.2.2 s else 0) p.2.1 p.2.2) 0 := by
       simp only [_root_.GlobalTheory.lineDerivList, lineDeriv]

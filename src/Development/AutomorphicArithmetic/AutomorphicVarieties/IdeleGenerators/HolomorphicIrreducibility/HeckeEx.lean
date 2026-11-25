@@ -4,56 +4,8 @@ public import Mathlib.NumberTheory.DirichletCharacter.Basic
 public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.GroupTheory.Nilpotent
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TwoNeZeroNat, Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.HeckeEx
@@ -119,7 +71,7 @@ private lemma matV_det (p : ℕ) [NeZero p] : (matV p).det.val = p := by
 
 private lemma smul_slash_pos (k : ℤ) (g : GL (Fin 2) ℝ) (hg : 0 < g.det.val) (f : ℍ → ℂ) (c : ℂ) :
     (c • f) ∣[k] g = c • f ∣[k] g := by
-  rw [ModularForm.smul_slash, σ, if_pos hg]
+  rw [ModularForm.smul_slash, σ, ite_eq_left hg]
   rfl
 
 private lemma slash_factor {N k : ℕ} {χ : DirichletCharacter ℂ N} {f : ℍ → ℂ}
@@ -341,7 +293,7 @@ private lemma slash_U_apply (k : ℤ) (p : ℕ) [NeZero p] (j : ℤ) (f : ℍ �
     (f ∣[k] matU p j) τ = (p : ℂ)⁻¹ * f (matU p j • τ) := by
   have hp : (p : ℂ) ≠ 0 := by exact_mod_cast NeZero.ne p
   have hd : denom (matU p j) τ = p := by simp [denom, matU_val]
-  rw [ModularForm.slash_apply, σ, if_pos (by rw [matU_det]; exact_mod_cast NeZero.pos p),
+  rw [ModularForm.slash_apply, σ, ite_eq_left (by rw [matU_det]; exact_mod_cast NeZero.pos p),
     matU_det, hd, Nat.abs_cast, Complex.ofReal_natCast, mul_assoc, ← zpow_add₀ hp,
     show k - 1 + -k = -1 by ring]
   simp [mul_comm]
@@ -349,7 +301,7 @@ private lemma slash_U_apply (k : ℤ) (p : ℕ) [NeZero p] (j : ℤ) (f : ℍ �
 private lemma slash_V_apply (k : ℤ) (p : ℕ) [NeZero p] (f : ℍ → ℂ) (τ : ℍ) :
     (f ∣[k] matV p) τ = (p : ℂ) ^ (k - 1) * f (matV p • τ) := by
   have hd : denom (matV p) τ = 1 := by simp [denom, matV_val]
-  rw [ModularForm.slash_apply, σ, if_pos (by rw [matV_det]; exact_mod_cast NeZero.pos p),
+  rw [ModularForm.slash_apply, σ, ite_eq_left (by rw [matV_det]; exact_mod_cast NeZero.pos p),
     matV_det, hd, Nat.abs_cast, Complex.ofReal_natCast]
   simp [mul_comm]
 
@@ -376,7 +328,7 @@ private lemma hasSum_V (p : ℕ) [NeZero p] {f : ℍ → ℂ} {a : ℕ → ℂ}
       ring
     simp [this, pow_mul, Nat.mul_div_cancel_left _ (NeZero.pos p)]
   · intro n hn
-    rw [if_neg, zero_mul]
+    rw [ite_eq_right, zero_mul]
     rintro ⟨m, rfl⟩
     exact hn ⟨m, rfl⟩
 
@@ -414,9 +366,9 @@ private lemma hasSum_U (p : ℕ) [NeZero p] {f : ℍ → ℂ} {a : ℕ → ℂ}
       rw [qParam, qParam, ← Complex.exp_nat_mul]
       congr 1
       field_simp
-    simpa only [Function.comp_def, dvd_mul_right, if_true, pow_mul, this] using h1
+    simpa only [Function.comp_def, dvd_mul_right, ite_true, pow_mul, this] using h1
   · intro n hn
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨m, rfl⟩
     exact hn ⟨m, rfl⟩
 
@@ -497,9 +449,6 @@ private theorem hM_det (p : ℕ) (x : Option (Fin p)) : (hM p x).det = p := by
 private def hG {p : ℕ} (hp : p.Prime) (x : Option (Fin p)) : GL (Fin 2) ℝ :=
   Matrix.GeneralLinearGroup.mkOfDetNeZero ((Int.castRingHom ℝ).mapMatrix (hM p x)) (by
     rw [← RingHom.map_det, hM_det]; simpa using hp.ne_zero)
-
-private def hT {p : ℕ} (hp : p.Prime) (k : ℕ) {N : ℕ} (χ : DirichletCharacter ℂ N) (f : ℍ → ℂ) : ℍ → ℂ :=
-  ∑ x : Option (Fin p), χ ((hM p x 0 0 : ℤ) : ZMod N) • f ∣[(k : ℤ)] hG hp x
 
 end UpperTheory.V.Sd
 

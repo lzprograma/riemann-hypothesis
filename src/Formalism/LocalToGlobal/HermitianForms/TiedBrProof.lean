@@ -124,38 +124,10 @@ theorem blk_sqAct_eq {ι : Type} [Fintype ι] {n : ℕ} (l : ι → DomWeight n)
   rw [e, Formalism.L2.Ker.blk_smul, blkRow_eq_blk]
   rfl
 
-theorem fnOf_sqAct {ι : Type} [Fintype ι] {n : ℕ} (G : ι → Matrix (Fin n) (Fin n) ℂ) (l : ι → DomWeight n)
-    (M o : ι → Matrix (Fin n) (Fin n) ℂ) (ho : ∀ τ, IsUnit (o τ).det) (g : ι → GL (Fin n) ℂ)
-    (hg : ∀ τ, (g τ : Matrix (Fin n) (Fin n) ℂ) = (M τ * o τ).transpose) (Q : MvPolynomial (ι × Fin n × Fin n) ℂ) :
-    fnOf G (fun τ => (l τ).detShift) (fun τ => (o τ)⁻¹) (Formalism.MainNotions.product_first_zeroth_parts.blk (fun τ => sqAct ℂ n (l τ) (g τ)) Q) =
-      fnOf G (fun τ => (l τ).detShift) M Q := by
-  have hi : ∀ τ, IsUnit ((o τ)⁻¹).det := fun τ => Matrix.isUnit_nonsing_inv_det _ (ho τ)
-  rw [fnOf_change G _ (fun τ => (o τ)⁻¹) M hi Q, blk_sqAct_eq]
-  have hK : (fun τ => M τ * ((fun τ => (o τ)⁻¹) τ)⁻¹) = fun τ => (g τ : Matrix (Fin n) (Fin n) ℂ).transpose := by
-    funext τ
-    simp only [hg, Matrix.transpose_transpose, Matrix.nonsing_inv_nonsing_inv _ (ho τ)]
-  rw [hK]
-  congr 2
-  refine Finset.prod_congr rfl fun τ _ => ?_
-  unfold detPow
-  rw [Units.val_zpow_eq_zpow_val, Matrix.GeneralLinearGroup.val_det_apply, hg, Matrix.det_transpose,
-    Matrix.nonsing_inv_nonsing_inv _ (ho τ)]
-
 def gPof (B : D.what₂.places.Pl → (D.fm u).clsP → Matrix (Fin (D.R.N D.R.m - 1)) (Fin (D.R.N D.R.m - 1)) D.host.E)
     (hB : ∀ w c, IsUnit (B w c).det) (o : FrP D) :
     D.what₂.places.Pl → (D.fm u).clsP → D.what₂.Tau → GL (Fin (D.R.N D.R.m - 1)) ℂ :=
   fun w c τ => Matrix.nonsingInvUnit ((atInf (embT D) (B w c)⁻¹ τ * o.1 τ).transpose) (by
     rw [Matrix.det_transpose, Matrix.det_mul]; exact (atInf_inv_isUnit _ (hB w c) τ).mul (o.2 τ))
-
-theorem shift_sgTr (τ : D.what₂.Tau) : (sgTr D u τ).detShift = shiftOf (sgT u) τ := by
-  have hk := D.R.m_add_three_le_k
-  have hN : D.R.N D.R.m = D.R.k + D.R.m * (D.R.t + 1) := rfl
-  have h2 : 0 < D.R.N D.R.m - 1 := by omega
-  simp only [shiftOf, sgT, sgTr]
-  rw [detShift_shW _ _ h2, detShift_wSh _ _ h2]
-  rfl
-
-theorem cspan_sgTr : Formalism.MainNotions.product_first_zeroth_parts.CSpan (sgTr D u) = Formalism.MainNotions.product_first_zeroth_parts.CSpan (D.fm u).sg := by
-  simp only [Formalism.MainNotions.product_first_zeroth_parts.CSpan, sgTr, delSq_wSh]
 
 end Formalism.L2.Forms

@@ -392,9 +392,9 @@ theorem exists_flip {f : n → n → ℤ} (hf : Chamber f) {i j : n} (hij : i �
   let g : n → n → ℤ := fun a b => if a = i ∧ b = j then f a b - 1 else f a b
   let f' : n → n → ℤ := fun a b => if a = j ∧ b = i then g a b + 1 else g a b
   have g1 : f i j = g i j + 1 := by simp [g]
-  have g2 : ∀ a b, ¬ (a = i ∧ b = j) → f a b = g a b := fun a b h => by simp only [g, if_neg h]
+  have g2 : ∀ a b, ¬ (a = i ∧ b = j) → f a b = g a b := fun a b h => by simp only [g, ite_eq_right h]
   have f1 : f' j i = g j i + 1 := by simp [f']
-  have f2 : ∀ a b, ¬ (a = j ∧ b = i) → f' a b = g a b := fun a b h => by simp only [f', if_neg h]
+  have f2 : ∀ a b, ¬ (a = j ∧ b = i) → f' a b = g a b := fun a b h => by simp only [f', ite_eq_right h]
   have gle : ∀ a b, g a b ≤ f a b := fun a b => by simp only [g]; split_ifs <;> omega
   have fle : ∀ a b, g a b ≤ f' a b := fun a b => by simp only [f']; split_ifs <;> omega
   clear_value f' g
@@ -668,7 +668,7 @@ theorem eventually_mem_ray {u : GL n k} (hu : u ∈ unipB k n) :
           ⟨i, by simpa using h, by simp⟩))
         simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha ⊢
         exact ha.trans h
-      simp only [ray, if_neg h.not_gt]
+      simp only [ray, ite_eq_right h.not_gt]
       nlinarith
     · simp [((mem_unipB k).1 hu).2, ray, deep_zero_iff]
     · simp [((mem_unipB k).1 hu).1 i j h, deep_zero]

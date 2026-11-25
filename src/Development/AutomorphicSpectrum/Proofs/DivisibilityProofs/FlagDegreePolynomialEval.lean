@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.KerJet
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
 public import Mathlib.RingTheory.KrullDimension.Field
 public import Mathlib.RingTheory.KrullDimension.Polynomial
@@ -40,59 +41,10 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.UniformisedDeg
 public import Development.WeilBound.CoreStatements.PluriharmonicCharts.XCFlAn
 public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ExistsUnique
 public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PLiftGraphFactor
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.PermFinTwoUniv
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFlagRatioTrdeg
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PGenLeadMinorNeZero
 import GroundTheory.HeightsAndTheta.Heights.Intersections.PFlagPivotIdentity
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 import GroundTheory.HeightsAndTheta.Heights.Intersections.IsSmoothHermFubiniStudyO1
@@ -100,8 +52,6 @@ import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.IntNumRelabel
 import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsExamples
 import Mathlib.Tactic.Linter.HaveILetI
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.SwapLoc
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.Topology.Sheaves.Presheaf
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FieldIntersectionLinearDegreeOne, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagChainArithVariety, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagChainUnitLogIntegral, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.IsBlockMapDrop, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RhoCoeffGapDeltaOne, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RhoFactorialProductEq, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.SymmetricFormPolynomialCoeff, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.WeightGapDeltaEqAntisymmetric, Development.WeilBound.CoreStatements.IntegralPointHeights.NegativeIntegralPoints.FlDegFree, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagDegreePolynomialEval
@@ -320,7 +270,7 @@ theorem eq_linForm (k₀ : K) (hK : ∀ a : K, a = k₀) {f : MRingOver F ι}
     subst hk
     by_cases hb : b = a
     · subst hb; simp [ha]
-    · rw [h0 b hb, Finsupp.single_apply, if_neg]
+    · rw [h0 b hb, Finsupp.single_apply, ite_eq_right]
       intro h
       exact hb (sigma_mk_injective h).symm
   ext m
@@ -331,7 +281,7 @@ theorem eq_linForm (k₀ : K) (hK : ∀ a : K, a = k₀) {f : MRingOver F ι}
     rw [Finset.sum_eq_single q]
     · simp
     · intro b _ hb
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       exact hb (Finsupp.single_left_injective one_ne_zero h)
     · simp
@@ -391,8 +341,7 @@ theorem ptDeg_eq_one [DecidableEq (Σ k, ι k)] (k₀ : K) (hK : ∀ a : K, a = 
 theorem exists_single_notMem [DecidableEq (Σ k, ι k)] (U : Submodule F ((Σ k, ι k) → F))
     (hd : 0 < Module.finrank F (((Σ k, ι k) → F) ⧸ U)) :
     ∃ q : Σ k, ι k, (Pi.single q (1 : F) : (Σ k, ι k) → F) ∉ U := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have htop : U = ⊤ := by
     refine (Submodule.eq_top_iff').2 fun c => ?_
     rw [eq_sum_single c]
@@ -541,7 +490,7 @@ theorem pivotRatio_algebraicIndependent (F : Type) [Field F] (Ψ : Type) (n : �
       simp only [δ, incl, Fin.val_castLE] at this
       have := q.2.2.2
       omega
-    simp only [Function.comp_apply, hne, if_false]
+    simp only [Function.comp_apply, hne, ite_false]
     rfl
   exact hrat ▸ hz.comp incl hincl
 
@@ -804,7 +753,6 @@ theorem arithVar_bot (k₀ : K) (hk : ∀ a : K, a = k₀) {n : ℕ} (σ : ι k�
     push_cast
     exact add_comm _ _
 
-
 omit p in
 theorem ptsIntegral_bot (II : IntersectionSystem) (hII : IsIntersectionSystem II) (k₀ : K) (hk : ∀ a : K, a = k₀)
     {n : ℕ} (σ : ι k₀ ≃ Fin (n + 1)) (L : HermLine ι) (hL : IsSmoothHerm L) (ha : L.a k₀ = 1) :
@@ -821,7 +769,7 @@ theorem ptsIntegral_bot (II : IntersectionSystem) (hII : IsIntersectionSystem II
     have hg : geoNum n (Ideal.span {C ((2 : ℕ) : ℤ)} : Ideal (MRing ι)) (fun j => ((fun _ : Fin n => L) j).a) = 1 :=
       geoNum_span 2 k₀ hk σ L.a ha
     unfold vertR
-    rw [divSupp_bot 2 k₀ hk σ, finsum_mem_singleton, if_neg (Inter.Conservation.not_horizontal Nat.prime_two hW),
+    rw [divSupp_bot 2 k₀ hk σ, finsum_mem_singleton, ite_eq_right (Inter.Conservation.not_horizontal Nat.prime_two hW),
       Inter.Conservation.charOf_eq Nat.prime_two hW, bot_sup_eq, ReciprocityTheory.ChartRestriction.G.AI.I1.inh_multAt_self, hg]
     simp
   rw [h1, hv] at h2
@@ -1021,7 +969,7 @@ theorem lex_sum_Ico {σ : Type*} [LinearOrder σ] [WellFoundedGT σ] {n : ℕ} (
     rw [hdegX, MonomialOrder.degree_lt_iff hzero]
     intro c hc
     obtain ⟨s, hs, hcs⟩ := Finset.mem_biUnion.mp (MvPolynomial.support_sum hc)
-    rw [X, support_monomial, if_neg one_ne_zero, Finset.mem_singleton] at hcs
+    rw [X, support_monomial, ite_eq_right one_ne_zero, Finset.mem_singleton] at hcs
     rw [hcs]
     exact hlt s (Finset.mem_Ioo.mp hs).1
   rw [← Finset.Ioo_insert_left hab, Finset.sum_insert (by simp)]
@@ -1097,12 +1045,12 @@ theorem prod_range_sub_eq_factorial (i n : ℕ) :
     · obtain ⟨t, rfl⟩ : ∃ t, n = i + 1 + t := ⟨n - (i + 1), by omega⟩
       have e1 : i + 1 + t - 1 - i = t := by omega
       have e2 : i + 1 + t + 1 - 1 - i = t + 1 := by omega
-      rw [if_pos h, e1, e2, Nat.factorial_succ]
+      rw [ite_eq_left h, e1, e2, Nat.factorial_succ]
       push_cast
       ring
     · have e1 : n - 1 - i = 0 := by omega
       have e2 : n + 1 - 1 - i = 0 := by omega
-      rw [if_neg h, e1, e2]
+      rw [ite_eq_right h, e1, e2]
       simp
 
 theorem prod_rhoM_factorial (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) :
@@ -1166,32 +1114,7 @@ theorem exists_perm_of_letterCount_eq (w w₀ : Fin n → σ) (h : letterCount w
 theorem card_letterCount_mul (w₀ : Fin n → σ) :
     (univ.filter fun w : Fin n → σ => letterCount w = letterCount w₀).card *
       ∏ p, (letterCount w₀ p).factorial = n.factorial := by
-  have hst : Fintype.card {g : Equiv.Perm (Fin n) // w₀ ∘ g = w₀} =
-      ∏ p, (letterCount w₀ p).factorial := by
-    rw [DomMulAct.stabilizer_card]
-    exact Finset.prod_congr rfl fun p _ => by rw [Fintype.card_subtype, letterCount_apply]
-  have hcard : (univ : Finset (Equiv.Perm (Fin n))).card = n.factorial := by
-    simp [Finset.card_univ, Fintype.card_perm]
-  have hfib : ∀ w ∈ univ.filter (fun w : Fin n → σ => letterCount w = letterCount w₀),
-      (univ.filter fun π : Equiv.Perm (Fin n) => w₀ ∘ π = w).card =
-        Fintype.card {g : Equiv.Perm (Fin n) // w₀ ∘ g = w₀} := by
-    intro w hw
-    obtain ⟨π₀, rfl⟩ := exists_perm_of_letterCount_eq w w₀ (Finset.mem_filter.1 hw).2
-    rw [← Fintype.card_subtype]
-    refine Fintype.card_congr (Equiv.subtypeEquiv (Equiv.mulRight π₀⁻¹) fun g => ?_)
-    constructor
-    · intro h
-      funext r
-      have := congrFun h (π₀⁻¹ r)
-      simpa using this
-    · intro h
-      funext r
-      have := congrFun h (π₀ r)
-      simpa using this
-  rw [← hst, ← hcard, Finset.card_eq_sum_card_fiberwise (s := univ)
-    (f := fun π : Equiv.Perm (Fin n) => w₀ ∘ π)
-    (t := univ.filter fun w : Fin n → σ => letterCount w = letterCount w₀)
-    (fun π _ => by simp [letterCount_comp]), Finset.sum_congr rfl hfib, Finset.sum_const, smul_eq_mul]
+  apply _root_.Formalism.L2.AlgTh.KerJet.card_cnt <;> assumption
 
 theorem coeff_formPoly_mul (σ : Type) [Fintype σ] [DecidableEq σ] (n : ℕ) (a : (Fin n → σ) → ℝ)
     (hsym : ∀ (π : Equiv.Perm (Fin n)) (w : Fin n → σ), a (w ∘ π) = a w) (w₀ : Fin n → σ) (m : σ →₀ ℕ)
@@ -1319,19 +1242,6 @@ theorem coeff_formPoly_sym {σ : Type} [Fintype σ] [DecidableEq σ] (n : ℕ) (
     AddMonoidAlgebra.coeff (PB.formPoly n a) m * ∏ p, ((m p).factorial : ℝ) = (n.factorial : ℝ) * a w₀ :=
   _root_.GlobalTheory.CompanionTheory.Ar.Top.FlDeg.CoeffSym.coeff_formPoly_mul σ n a hsym w₀ m hm
 
-theorem toWt_injective (Ψ : Type) (N : ℕ) :
-    Function.Injective (PB.toWt : MvPolynomial (Ψ × Fin N) ℝ →ₐ[ℝ] MvPolynomial (Ψ × Fin N) ℝ) := _root_.GlobalTheory.CompanionTheory.Ar.Top.FlDeg.toWt_leftInverse_injective Ψ N
-
-theorem toWt_gapDelta (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) :
-    PB.toWt (gapDelta Ψ N) = GroundTheory.Heights₂.Heights.antisymDelta Ψ N := _root_.GlobalTheory.CompanionTheory.Ar.Top.FlDeg.toWt_gapDelta_eq_antisymDelta Ψ N
-
-theorem coeff_gapDelta (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) : AddMonoidAlgebra.coeff (gapDelta Ψ N) (rhoM Ψ N) = 1 :=
-  _root_.GlobalTheory.CompanionTheory.Ar.Top.FlDeg.coeff_rhoM_gapDelta Ψ N
-
-theorem prod_rhoM (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) :
-    ∏ p, (((rhoM Ψ N) p).factorial : ℝ) =
-      ∏ _τ : Ψ, ∏ i : Fin N, ∏ k : Fin N, (if i < k then ((k : ℝ) - (i : ℝ)) else 1) := _root_.GlobalTheory.CompanionTheory.Ar.Top.FlDeg.prod_rhoM_factorial Ψ N
-
 theorem fsHerm_smooth {K : Type} [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (a : K → ℤ) :
     IsSmoothHerm (fsHerm ι a) := by
   refine ContDiffOn.congr (GroundTheory.Heights₂.Heights.Targets.LiftGraphFactor.isSmoothHerm_fsLineZ (ι := ι) a) ?_
@@ -1425,7 +1335,7 @@ theorem isPull_unit [Fintype K] [DecidableEq K] (j : K → FlBlock Ψ N) (k₀ :
     show (if k' = k.1 then (1 : ℤ) else 0) = Function.extend _ _ _ k'
     by_cases h : k' = k₀
     · subst h
-      rw [Function.extend_apply' _ _ _ (by rintro ⟨x, hx⟩; exact x.2 hx), if_neg (Ne.symm k.2)]
+      rw [Function.extend_apply' _ _ _ (by rintro ⟨x, hx⟩; exact x.2 hx), ite_eq_right (Ne.symm k.2)]
       rfl
     · rw [show k' = ((⟨k', h⟩ : {k // k ≠ k₀}) : K) from rfl, Subtype.val_injective.extend_apply]
       show _ = if (⟨k', h⟩ : {k // k ≠ k₀}) = k then (1 : ℤ) else 0
@@ -1652,11 +1562,11 @@ theorem alg_const (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) (D : ℕ)
 open GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights in
 theorem degFl_vand (hIn : PB.Inputs) (II : IntersectionSystem) (hII : IsFullIntersectionSystem II) (Ψ : Type) [Fintype Ψ]
     [DecidableEq Ψ] [Nonempty Ψ] (N : ℕ) (hN : 2 ≤ N) : ∃ c : ℝ, degFlPoly Ψ N = C c * antisymDelta Ψ N := by
-  obtain ⟨M, BM, hhom, hfs, hbd⟩ := _root_.GlobalTheory.CompanionTheory.Ar.PB.flagModel_over_point Ψ N hN
+  obtain ⟨M, BM, hhom, hfs, hbd⟩ := _root_.PositivityTheory.Xgp.t_c_fl_model Ψ N hN
   have hpos : 1 ≤ antisymDegree Ψ N := Nat.mul_pos Fintype.card_pos (Nat.choose_pos hN)
   obtain ⟨d, hd⟩ : ∃ d, d + 1 = antisymDegree Ψ N := ⟨antisymDegree Ψ N - 1, by omega⟩
   have harith : IsArithVar (mCoordIdeal (yFl Ψ N)) (d + 2) := by
-    have := _root_.GlobalTheory.CompanionTheory.Ar.PB.pFl_isArithVar Ψ N hN
+    have := _root_.PositivityTheory.Xgp.t_c_fl_arith Ψ N hN
     rw [← hd] at this
     exact this
   have hdim : d + 1 = 0 + Fintype.card Ψ * (N.choose 2 + (N - N).choose 2) := by
@@ -1667,7 +1577,7 @@ theorem degFl_vand (hIn : PB.Inputs) (II : IntersectionSystem) (hII : IsFullInte
   have hU := _root_.GlobalTheory.CompanionTheory.Relay.flag_analytic_data_uniformised _ _ _ (yFl Ψ N) Ψ N N M 0 d BM FA (by simp) hd
   have hdeg1 : CR.Re.deg = 1 := by rw [CR.deg_eq, hdeg]
   have href1 : ∀ p, CR.Re.ref p = yLineFl Ψ N p := fun p => by rw [href, FA.ref_some, hfs]
-  have hP := (_root_.GlobalTheory.CompanionTheory.Ar.PB.flag_isArithVar_and_image Ψ N hN).1
+  have hP := (_root_.PositivityTheory.Xgp.t_fl_arith Ψ N hN).1
   have hR := _root_.GlobalTheory.CompanionTheory.Ar.PB.re_pot hIn.2.1.1 _ _ _ _ (FA.S.comap some) _ CR.Re
   have hw : ∀ w : Fin (d + 1) → Ψ × Fin N,
       ptsIntegral (PFl Ψ N) (pot fun r => yLineFl Ψ N (w r)) (fun _ => 1) = (FA.S.comap some).degNum w := by
@@ -1694,7 +1604,7 @@ namespace GlobalTheory.CompanionTheory.Ar.IndefiniteRowSideFullHecke
 theorem degFlPoly_eval' : PB.Inputs → ∀ II : IntersectionSystem, IsFullIntersectionSystem II → ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) [Nonempty Ψ] (lam : Wt Ψ N), 2 ≤ N → eval (fun x => lam x.1 x.2) (PB.degFlPoly Ψ N) = flagDeg lam := by
   intro hIn II hII Ψ _ _ N _ lam hN
   obtain ⟨c, hC⟩ := degFl_vand hIn II hII Ψ N hN
-  have hAr := (_root_.GlobalTheory.CompanionTheory.Ar.PB.flag_isArithVar_and_image Ψ N hN).1
+  have hAr := (_root_.PositivityTheory.Xgp.t_fl_arith Ψ N hN).1
   have hL := (_root_.GlobalTheory.CompanionTheory.Ar.PB.flLines_polys hIn II hII Ψ N hN hAr).2
   have hchain : IsChain (id : FlBlock Ψ N → FlBlock Ψ N) := ⟨Function.injective_id, fun _ q _ _ => ⟨q, rfl⟩⟩
   haveI hK : Nonempty (FlBlock Ψ N) := ⟨(Classical.arbitrary Ψ, ⟨0, by omega⟩)⟩

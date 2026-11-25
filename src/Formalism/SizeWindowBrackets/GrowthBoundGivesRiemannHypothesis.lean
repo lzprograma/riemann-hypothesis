@@ -1,46 +1,6 @@
 module
 
 public import Formalism.SizeWindowBrackets.FirstPrimeNeSecondPrime
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -72,24 +32,9 @@ def psC : AddChar (E0 × H) ℂ where
 
 def chpsC : AddChar (E0 × H) ℂ := chC * psC
 
-def Gsig (D : ArithData H) (ell : AddChar (E0 × H) ℂ → ℂ) (y : ℝ) : ℂ :=
-  GPsi D ell 0 y + GPsi D ell psC y - GPsi D ell chC y - GPsi D ell chpsC y
-
 def fPl (H : Type) [AddCommGroup H] [Fintype H] [DecidableEq H] : ℝ := ((PhiSet (H := H)).card : ℝ)
 
 def delta2 (T2 : Finset H) : ℝ := (T2.card : ℝ) / (Fintype.card H : ℝ)
-
-def ThickPartTranslateMean : Prop :=
-  ∀ (D : ArithData H) (ell : AddChar (E0 × H) ℂ → ℂ) (T2 : Finset H) (t : H) (A b : ℝ), 0 < A → 0 < b →
-    (1 / (Fintype.card H : ℂ)) * ∑ u0 : H, (1 / ((PhiSet (H := H)).card : ℂ)) *
-        ∑ g ∈ univ.filter (fun g : E0 × H => ¬ InPhi g ∧ IsThickAt T2 u0 (partner t g)),
-          ∑ ψ : AddChar (E0 × H) ℂ, starRingEnd ℂ (ψ g) * (b : ℂ) * GPsi D ell ψ (A / b)
-      = ((delta2 T2 * b / 2 : ℝ) : ℂ) * Gsig D ell (A / b)
-
-def topExcess (D : ArithData H) (N : ℕ) (ell : AddChar (E0 × H) ℂ → ℂ) {m : ℕ} (TT : Finset H) (a : H → ℝ)
-    (w : H → Fin m → E0 × H → ℝ) : ℝ :=
-  (1 / (Fintype.card H : ℝ)) * ∑ u0 : H, ∑ t ∈ TT, ∑ j : Fin m,
-    (ASK D N (a t) t (w u0 j) - (MAIN ell (a t) (w u0 j)).re)
 
 def ThinScales (D : ArithData H) (ell : AddChar (E0 × H) ℂ → ℂ) (X' θ : ℝ) : Prop :=
   ∀ ψ : AddChar (E0 × H) ℂ, ∀ y : ℝ, X' / 3 ≤ y → ‖GPsi D ell ψ y‖ ≤ y * θ
@@ -114,35 +59,6 @@ def NodeSizes {m : ℕ} (T2 : Finset H) (b b' η : ℝ) (w : H → Fin m → E0 
 
 def moveCost (x Cd CL : ℝ) : ℝ := Cd + 3 * (Real.log (x + 1) + Cd + CL * Real.log x)
 
-def GrowthInequalityHypotheses (D : ArithData H) (ell : AddChar (E0 × H) ℂ → ℂ) (N : ℕ) {m : ℕ} (TT T2 : Finset H) (a : H → ℝ)
-    (w : H → Fin m → E0 × H → ℝ) (x ε b b' η X' θ Cd CL Err : ℝ) : Prop :=
-  3 ≤ x ∧ 0 < b ∧ 0 ≤ η ∧ 0 < X' ∧ 0 < b' ∧ b' * X' ≤ x * b ∧ 0 ≤ θ ∧ 0 ≤ Cd ∧
-  (∀ t ∈ TT, |a t / b - x| ≤ 1) ∧
-  NodeSizes T2 b b' η w ∧
-  (∀ u0 j t ρ, t ∈ TT → InPhi ρ → a t / w u0 j ρ ≤ N) ∧
-  topExcess D N ell TT a w ≤ Err ∧
-  ThinScales D ell X' θ ∧ LipW D ell ∧ DerivInt D ell Cd ∧ ValuesAtX D ell x ε CL
-
-def GrowthInequalityExplicit : Prop :=
-  AskMainBalance (H := H) → ∀ (D : ArithData H), HostFacts D →
-  ∀ (ell : AddChar (E0 × H) ℂ → ℂ) (N m : ℕ) (TT T2 : Finset H) (a : H → ℝ) (w : H → Fin m → E0 × H → ℝ)
-    (x ε b b' η X' θ Cd CL Err : ℝ),
-    GrowthInequalityHypotheses D ell N TT T2 a w x ε b b' η X' θ Cd CL Err →
-    (TT.card : ℝ) * m * b * (delta2 T2 / 2) * (Gz x - 3 * x ^ ((1 : ℝ) / 2 + ε) - moveCost x Cd CL)
-      ≤ Err + (TT.card : ℝ) * m * (2 * fPl H * (x + 1) * b * θ)
-        + (TT.card : ℝ) * m * (6 * fPl H * (x + 1) * (η + 1))
-
-def SmallCosts (x ε f b η θ Cd CL : ℝ) : Prop :=
-  moveCost x Cd CL ≤ x ^ ((1 : ℝ) / 2 + ε) ∧ 2 * f * (x + 1) * θ ≤ 1 / x ∧ 6 * f * (x + 1) * (η + 1) ≤ b / x
-
-def GrowthInequalityForm : Prop :=
-  AskMainBalance (H := H) → ∀ (D : ArithData H), HostFacts D →
-  ∀ (ell : AddChar (E0 × H) ℂ → ℂ) (N m : ℕ) (TT T2 : Finset H) (a : H → ℝ) (w : H → Fin m → E0 × H → ℝ)
-    (x ε b b' η X' θ Cd CL Err : ℝ),
-    GrowthInequalityHypotheses D ell N TT T2 a w x ε b b' η X' θ Cd CL Err → SmallCosts x ε (fPl H) b η θ Cd CL →
-    (TT.card : ℝ) * m * b * (delta2 T2 / 2) * (Gz x - 4 * x ^ ((1 : ℝ) / 2 + ε))
-      ≤ Err + 2 * (TT.card : ℝ) * m * b / x
-
 end
 
 def SizeWindows (C ε x : ℝ) (n nT nT2 m : ℕ) (b k aE Err : ℝ) : Prop :=
@@ -159,11 +75,6 @@ def GrowthSizeBound : Prop :=
   ∀ (C ε x : ℝ) (n nT nT2 m : ℕ) (b k aE Err Gx : ℝ), SizeWindows C ε x n nT nT2 m b k aE Err →
     (nT : ℝ) * m * b * (((nT2 : ℝ) / n) / 2) * (Gx - 4 * x ^ ((1 : ℝ) / 2 + ε)) ≤ Err + 2 * (nT : ℝ) * m * b / x →
     Gx ≤ x ^ ((1 : ℝ) / 2 + (C + 3) * ε)
-
-section
-variable {H : Type} [AddCommGroup H] [Fintype H] [DecidableEq H]
-
-end
 
 def LipWAll : Prop :=
   ∀ (H : Type) [AddCommGroup H] [Fintype H] [DecidableEq H] (D : ArithData H) (ell : AddChar (E0 × H) ℂ → ℂ),

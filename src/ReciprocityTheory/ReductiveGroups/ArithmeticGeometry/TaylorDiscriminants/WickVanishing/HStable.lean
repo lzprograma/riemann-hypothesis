@@ -6,8 +6,6 @@ import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ Finsupp
@@ -29,10 +27,10 @@ theorem eq_xz {n : Fin 2 × Fin d →₀ ℕ} {l m : Fin d} (h0 : n (0, l) ≠ 0
     by_cases h0x : ((0 : Fin 2), l) = x <;> by_cases h1x : ((1 : Fin 2), m) = x
     · exact absurd (h0x.trans h1x.symm) hne
     · subst h0x
-      simp only [if_true, h1x, if_false]
+      simp only [ite_true, h1x, ite_false]
       omega
     · subst h1x
-      simp only [if_true, h0x, if_false]
+      simp only [ite_true, h0x, ite_false]
       omega
     · simp [h0x, h1x]
   obtain ⟨w, rfl⟩ : ∃ w, n = u + w := ⟨n - u, (add_tsub_cancel_of_le hle).symm⟩
@@ -53,7 +51,7 @@ theorem eq_xz {n : Fin 2 × Fin d →₀ ℕ} {l m : Fin d} (h0 : n (0, l) ≠ 0
 
 theorem coeff_mul_X_eq_zero {σ R : Type*} [CommRing R] (p : MvPowerSeries σ R) (s : σ) (n : σ →₀ ℕ) (hn : n s = 0) :
     coeff n (p * X s) = 0 := by
-  rw [MvPowerSeries.X, MvPowerSeries.coeff_mul_monomial, if_neg]
+  rw [MvPowerSeries.X, MvPowerSeries.coeff_mul_monomial, ite_eq_right]
   intro hle
   have h1 := Finsupp.le_def.1 hle s
   simp [hn] at h1
@@ -91,7 +89,7 @@ theorem coeff_subst_xz {τ : Type*} (h : PS k 2 d) (h0 : ev (n := 1) ![0, pt k d
     simp only [true_and] at e0 e1
     have n01 : ((1 : Fin 2) = 0) = False := by simp
     have n10 : ((0 : Fin 2) = 1) = False := by simp
-    simp only [n01, n10, false_and, if_false, add_zero, zero_add] at e0 e1
+    simp only [n01, n10, false_and, ite_false, add_zero, zero_add] at e0 e1
     split_ifs at e0 e1 <;> simp_all
   have hprod : ∀ D : Fin 2 × Fin d →₀ ℕ, D.prod (fun s e => a s ^ e) = subst a (monomial D (1 : k)) := fun D => by
     rw [subst_monomial hs, map_one, one_mul]
@@ -170,15 +168,15 @@ theorem coeff_xz_mul_X (φ : PS k 1 d) (j i m : Fin d) :
   classical
   by_cases hm : m = i
   · subst hm
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     have e : single ((0 : Fin 2), j) 1 = embDomain (eXv d) (single ((0 : Fin 1), j) 1) := by
       rw [embDomain_single]; rfl
     rw [e]
     show coeff _ (_ * monomial (single ((1 : Fin 2), m) 1) 1) = _
-    rw [coeff_mul_monomial, if_pos le_add_self, add_tsub_cancel_right]
+    rw [coeff_mul_monomial, ite_eq_left le_add_self, add_tsub_cancel_right]
     try rw [mul_one]
     rw [coeff_embDomain_rename]
-  · rw [if_neg hm]
+  · rw [ite_eq_right hm]
     apply coeff_mul_X_eq_zero
     simp [Ne.symm hm]
 
@@ -189,15 +187,15 @@ theorem coeff_xz_X_mul (ψ : PS k 1 d) (j i l : Fin d) :
   rw [mul_comm, add_comm]
   by_cases hl : l = j
   · subst hl
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     have e : single ((1 : Fin 2), i) 1 = embDomain (eZ d) (single ((0 : Fin 1), i) 1) := by
       rw [embDomain_single]; rfl
     rw [e]
     show coeff _ (_ * monomial (single ((0 : Fin 2), l) 1) 1) = _
-    rw [coeff_mul_monomial, if_pos le_add_self, add_tsub_cancel_right]
+    rw [coeff_mul_monomial, ite_eq_left le_add_self, add_tsub_cancel_right]
     try rw [mul_one]
     rw [coeff_embDomain_rename]
-  · rw [if_neg hl]
+  · rw [ite_eq_right hl]
     apply coeff_mul_X_eq_zero
     simp [Ne.symm hl]
 
@@ -217,7 +215,7 @@ theorem coeff_ad_side1 (B : FB R d O) (h : PS k 2 d) (hc : B.IsCanonGauge k h) (
         rename (eXv d) (B.actK k a l) := eval_first_point_rename _
     have e1 : ∀ m : Fin d, ![comp1 (B.actK k a) (pt k d 0), pt k d 1] ((1, m) : Fin 2 × Fin d).1
         ((1, m) : Fin 2 × Fin d).2 = X ((1 : Fin 2), m) := fun m => rfl
-    simp only [e0, e1, coeff_xz_mul_X, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [e0, e1, coeff_xz_mul_X, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rfl
   · rintro ⟨j', i'⟩
     fin_cases j'
@@ -238,7 +236,7 @@ theorem coeff_ad_side2 (B : FB R d O) (h : PS k 2 d) (hc : B.IsCanonGauge k h) (
         ((1, m) : Fin 2 × Fin d).2 = rename (eZ d) (B.actK k (star a) m) := fun m => eval_second_point_rename _
     simp only [e0, e1, coeff_xz_X_mul, mul_ite, mul_zero]
     rw [Finset.sum_comm]
-    simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rfl
   · rintro ⟨j', i'⟩
     fin_cases j'
@@ -312,11 +310,9 @@ theorem gauge_stable : ReciprocityTheory.ChartRestriction.G.TB.HStableSt := by
   let u₂ : Fin d → R := fun i => ∑ j, coeff (single ((0 : Fin 1), j) 1) (B.A.act a i) * u j
   let φ₂ : Fin d → R := fun i => ∑ j, coeff (single ((0 : Fin 1), i) 1) (B.A.act (star a) j) * φ j + ∑ j, M i j * u j
   have hu₂ : (fun i => algebraMap R k (u₂ i)) = (dAct k B a).mulVec vu := funext fun i => by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp only [u₂, map_sum, map_mul, Matrix.mulVec, dotProduct, hA, vu]
   have hφ₂ : (fun i => algebraMap R k (φ₂ i)) = (dAct k B (star a)).transpose.mulVec vφ +
       (S * dAct k B a - (dAct k B (star a)).transpose * S).mulVec vu := funext fun i => by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp only [φ₂, map_add (f := _), map_sum, map_mul, Matrix.mulVec, dotProduct, hA, hM, Matrix.transpose_apply,
       Pi.add_apply, vu, vφ]
   refine ⟨u₂, φ₂, Prod.ext ?_ ?_⟩

@@ -5,6 +5,7 @@ import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.CoeffSlD
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.SCycZ
 public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.EqOneOfMemPrincOne
+import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsEqSubOfMemCob
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -66,15 +67,6 @@ private theorem root_mem {l : ℕ} [hl : Fact l.Prime] (c : Coef l) {x : Qbar l}
   obtain ⟨i, -, rfl⟩ := hq.eq_pow_of_pow_eq_one hx
   exact pow_mem (c.O.algebraMap_mem _) i
 
-private theorem nle {l : ℕ} [Fact l.Prime] (c : Coef l) {a : Qbar l} (ha : a ∈ c.O) : ‖a‖ ≤ 1 := by
-  have hi : IsIntegral ℤ_[l] a := (Algebra.IsIntegral.isIntegral (R := ℤ_[l]) (⟨a, ha⟩ : c.O)).map c.O.val
-  have hq : IsIntegral ℚ_[l] a := Algebra.IsIntegral.isIntegral a
-  change spectralValue (minpoly ℚ_[l] a) ≤ 1
-  rw [spectralValue_le_one_iff (minpoly.monic hq)]
-  intro k
-  rw [minpoly.isIntegrallyClosed_eq_field_fractions' ℚ_[l] hi, Polynomial.coeff_map]
-  exact PadicInt.norm_le_one _
-
 private theorem mv_mem {l : ℕ} [Fact l.Prime] (c : Coef l) {M : Matrix (Fin 2) (Fin 2) (Qbar l)} {v : Fin 2 → Qbar l}
     (hM : ∀ i k, M i k ∈ c.O) (hv : ∀ k, v k ∈ c.O) (i : Fin 2) : (M *ᵥ v) i ∈ c.O := by
   rw [Matrix.mulVec, dotProduct]
@@ -133,10 +125,10 @@ theorem UpperTheory.V.Z.Kato.Nb.sInteg :
     rw [rhoK, hθ, hθi, Matrix.smul_apply, smul_eq_mul]
     exact mul_mem (hθO _) (hW s i k)
   refine ⟨fun s => ?_, h1, hmul, fun u => ?_, hρO, fun s t => ?_, fun c₀ Y hY r s y i => ?_⟩
-  · have h2 := nle cf (hθO s⁻¹)
+  · have h2 := GlobalTheory.LambdaValuationPowers.norm_le_one_of_mem (hθO s⁻¹)
     rw [← hθi, norm_inv, inv_le_one₀ (norm_pos_iff.2 (θ s).ne_zero)] at h2
     rw [hθ]
-    exact le_antisymm (nle cf (hθO s)) h2
+    exact le_antisymm (GlobalTheory.LambdaValuationPowers.norm_le_one_of_mem (hθO s)) h2
   · obtain ⟨s, rfl⟩ := hsurj u
     rw [← hχ']
     exact hχO s
@@ -156,7 +148,9 @@ theorem UpperTheory.V.Z.Kato.Nb.sInteg :
       rw [← mul_assoc, mul_inv_cancel_left, hm, hr, hr, mul_left_comm, mul_inv_cancel, mul_one] at h3
       exact (mul_eq_left.1 h3.symm)
     have h4 := hc s y i
-    have h5 := nle cf (add_mem hF (sub_mem (mv_mem cf (hρO s) (hb (y * (cycMod (F := ℚ) (Ω := Ω) l r s)⁻¹)) i) (hb y i)))
+    have h5 := GlobalTheory.LambdaValuationPowers.norm_le_one_of_mem
+      (add_mem hF (sub_mem (mv_mem cf (hρO s) (hb (y * (cycMod (F := ℚ) (Ω := Ω) l r s)⁻¹)) i)
+        (hb y i)))
     rw [Cg, pow_zero, norm_one] at h4
     have h7 : ∀ a a' : Qbar l, ‖a - a'‖ ≤ 1 → ‖a'‖ ≤ 1 → ‖a‖ ≤ 1 := fun a a' ha ha' => by
       have h6 := (IsUltrametricDist.norm_add_le_max (a - a') a').trans (max_le ha ha')

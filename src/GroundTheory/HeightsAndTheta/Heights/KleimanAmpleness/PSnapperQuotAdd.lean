@@ -90,10 +90,7 @@ theorem hdeg_subsingleton {R' : Type*} [CommRing R'] [∀ I, Module R' (G I)] (d
     Subsingleton (Cech.Hdeg G deg ρ' i) := by
   have : Subsingleton (Cech.cocyDeg G deg ρ' i) :=
     ⟨fun a b => Subtype.ext (funext fun I => isEmptyElim I)⟩
-  refine ⟨fun a b => ?_⟩
-  obtain ⟨z, rfl⟩ := Cech.Hdeg_mk_surjective a
-  obtain ⟨z', rfl⟩ := Cech.Hdeg_mk_surjective b
-  rw [Subsingleton.elim z z']
+  exact Function.Surjective.subsingleton (f := Cech.Hdeg.mk) Cech.Hdeg_mk_surjective
 
 end Top
 
@@ -166,9 +163,7 @@ theorem exists_quotInl (F₁ F₂ F₃ : SubSystem k x E) (h21 : ∀ I, F₂.sub
 
 theorem quotPr_surjective (F₁ F₂ F₃ : SubSystem k x E) (h32 : ∀ I, F₃.sub I ≤ F₂.sub I) (I : Chart x) :
     Function.Surjective (quotPr F₁ F₂ F₃ h32 I) := by
-  intro m
-  obtain ⟨z, rfl⟩ := Submodule.Quotient.mk_surjective _ m
-  exact ⟨Submodule.Quotient.mk z, rfl⟩
+  exact Submodule.factor_surjective _
 
 theorem finrank_quotH (F₁ F₂ : SubSystem k x E) (i : ℕ) :
     Module.finrank k (SubSystem.quotH F₁ F₂ i) =

@@ -17,59 +17,16 @@ public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ProjAE
 public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsRowHighestHarmonicPolyDerivUnitaryAction
 public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FockHxDifferentiable
 public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LevelTestFunctionFiniteSumEquivariant
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Dynamics.Ergodic.Action.Regular
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TiledBoundaries.MemSpanBn
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.SupLeL2PrincipalTorus
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.ConjSymm
 import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.DeterminantBlockProductRenameTorusPolynomial
@@ -91,7 +48,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level
 open GlobalTheory.SW hiding Level
 open Formalism.L2.Pj Formalism.L2.PjFree
 open scoped ComplexConjugate Classical
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.Dict
 
 namespace GlobalTheory.Dict.ThetaPT
@@ -105,20 +61,6 @@ theorem Hf_add_smul_left {κ : Type} [Fintype κ] (c : ℂ) (v w u : EuclideanSp
   refine Finset.sum_congr rfl fun i _ => ?_
   simp only [PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
   ring
-
-theorem Hf_neg_right {κ : Type} [Fintype κ] (v w : EuclideanSpace ℂ κ) :
-    I2.Hf v (-w) = -I2.Hf v w := by
-  unfold I2.Hf
-  rw [← Finset.sum_neg_distrib]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  simp
-
-theorem Hf_neg_left {κ : Type} [Fintype κ] (v w : EuclideanSpace ℂ κ) :
-    I2.Hf (-v) w = -I2.Hf v w := by
-  unfold I2.Hf
-  rw [← Finset.sum_neg_distrib]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  simp
 
 theorem cexp_pi_int (k : ℤ) : cexp (Real.pi * I * (k : ℂ)) = ((Real.cos (Real.pi * k) : ℝ) : ℂ) := by
   have h : (Real.pi : ℂ) * I * (k : ℂ) = ((Real.pi * k : ℝ) : ℂ) * I := by push_cast; ring
@@ -293,7 +235,7 @@ theorem theta_on_torus :
     rw [Finset.prod_mul_distrib, ← Complex.exp_sum]
     congr 1
     congr 1
-    simp only [I2.HC, Hf_neg_right, Hf_neg_left, neg_neg, hH, hHadd']
+    simp only [I2.HC, GlobalTheory.FockTranslation.herm_neg_right, GlobalTheory.FockTranslation.herm_neg_left, neg_neg, hH, hHadd']
     rw [Finset.mul_sum, Finset.mul_sum, Finset.sum_div, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun b _ => ?_
     ring
@@ -575,7 +517,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level
 open GlobalTheory.SW hiding Level
 open Formalism.L2.Pj Formalism.L2.PjFree
 open scoped ComplexConjugate Classical
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.Dict
 
 namespace GlobalTheory.Dict.VacJet
@@ -600,11 +541,6 @@ theorem sum_norm_coeff_rename {σ κ : Type} {ρ : σ → κ} (hρ : Function.In
   rw [MvPolynomial.support_rename_of_injective hρ,
     Finset.sum_image (fun a _ b _ h => Finsupp.mapDomain_injective hρ h)]
   exact Finset.sum_congr rfl fun m _ => by rw [MvPolynomial.coeff_rename_mapDomain ρ hρ]
-
-theorem polyDeriv_smul_dir {σ W : Type} [NormedAddCommGroup W] [NormedSpace ℂ W] {P : MvPolynomial σ ℂ} {d : ℕ}
-    (hP : P.IsHomogeneous d) (c : ℂ) (u : σ → W) (F : W → ℂ) (x : W) :
-    I2.polyDeriv P (fun l => c • u l) F x = c ^ d * I2.polyDeriv P u F x := by
-  apply GlobalTheory.BlockRen.polyDeriv_scale <;> assumption
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r g n : ℕ} {X : Data E r}
   {bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ}
@@ -819,7 +755,7 @@ theorem jet_projA_le : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r
       simp only [letterDir, I2.dir, ρ, Pi.smul_apply, Pi.single_eq_same, (he _).2]
     · simp [letterDir, I2.dir, ρ, h]
   rw [thP, hth, I2.polyDeriv_smul_fun _ _ (hGd.fun_comp (ContinuousLinearMap.contDiff _)),
-    ColPoly.polyDeriv_comp_linear hGd, hdir, polyDeriv_smul_dir hP, ← polyDeriv_rename hGd, map_zero]
+    ColPoly.polyDeriv_comp_linear hGd, hdir, GlobalTheory.BlockRen.polyDeriv_scale hP, ← polyDeriv_rename hGd, map_zero]
   have hc0 : (0 : ℝ) < R.card := by exact_mod_cast hpos
   have hsq : 0 < Real.sqrt R.card := Real.sqrt_pos.2 hc0
   have hpw : (Real.pi * Real.exp 1 * t * d) ^ ((d : ℝ) / 2) =

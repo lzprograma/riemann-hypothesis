@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HermCmpWedgeEqDet
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GroupFactorizationHolds
 public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPrAlt
 public import Formalism.FlagUnipotentLattices.UnipotentStabiliserCharacterisation
@@ -130,15 +131,7 @@ end general
 
 theorem cmp_mulVec_wedge {n l : ℕ} (g : Matrix (Fin n) (Fin n) ℂ) (f : Fin l → Fin n → ℂ) :
     BranchingSupport.cmp l g *ᵥ wedge f = wedge (fun b => g *ᵥ f b) := by
-  funext I
-  have h := Formalism.HermitianLatticeCounting.P.ge_cauchyBinet (g.submatrix (I.1.orderEmbOfFin I.2) id)
-    (Matrix.of fun (i : Fin n) (b : Fin l) => f b i)
-  refine Eq.trans ?_ (h.symm.trans ?_)
-  · simp only [mulVec, dotProduct]
-    refine Finset.sum_congr rfl fun J _ => ?_
-    rw [mul_comm]
-    rfl
-  · rfl
+  apply _root_.GlobalTheory.TopMinorWedge.cmp_mulVec_wedge <;> assumption
 
 theorem sum_norm_wedge {n l : ℕ} (f : Fin l → Fin n → ℂ) :
     ∑ J, ‖wedge f J‖ ^ 2 =
@@ -199,15 +192,15 @@ theorem fvec_indep (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (hz : Formalism
     · rw [Pi.smul_apply, Formalism.QuantumDeterminants.fvec_apply_lt z hz _ _ ha] at this
       simpa using this
     · intro b _ hb
-      rw [Pi.smul_apply, Formalism.QuantumDeterminants.fvec_apply_lt z hz _ _ ha, if_neg (fun h => hb (Fin.ext h)), smul_zero]
+      rw [Pi.smul_apply, Formalism.QuantumDeterminants.fvec_apply_lt z hz _ _ ha, ite_eq_right (fun h => hb (Fin.ext h)), smul_zero]
     · intro h; exact absurd (Finset.mem_univ _) h
   · have := congrFun hc i
     rw [Finset.sum_apply, Finset.sum_eq_single a] at this
-    · rw [Pi.smul_apply, Formalism.QuantumDeterminants.fvec_apply_ge z _ _ hir, if_pos (by omega)] at this
+    · rw [Pi.smul_apply, Formalism.QuantumDeterminants.fvec_apply_ge z _ _ hir, ite_eq_left (by omega)] at this
       exact (mul_eq_zero.1 this).resolve_right hi
     · intro b _ hb
       rw [Pi.smul_apply, Formalism.QuantumDeterminants.fvec_apply_ge z _ _ hir,
-        if_neg (fun h => hb (Fin.ext (by omega))), smul_zero]
+        ite_eq_right (fun h => hb (Fin.ext (by omega))), smul_zero]
     · intro h; exact absurd (Finset.mem_univ _) h
 
 theorem isUnit_det_of_unitary {n : ℕ} {H g : Matrix (Fin n) (Fin n) ℂ} (hHH : H * H = 1)

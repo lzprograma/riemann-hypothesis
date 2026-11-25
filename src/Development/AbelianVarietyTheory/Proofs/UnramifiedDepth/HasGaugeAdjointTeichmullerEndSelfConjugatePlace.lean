@@ -65,34 +65,11 @@ open MvPowerSeries
 
 variable {C : Type} [Field C]
 
-theorem teichSelf_intS_mul {V : VF C} {τ : Type} {f g : MvPowerSeries τ C} (hf : IntS V f) (hg : IntS V g) :
-    IntS V (f * g) := by
-  classical
-  intro μ
-  rw [coeff_mul]
-  exact VF.Ge.sum fun p _ => (hf _).mul_int (hg _)
-
-theorem teichSelf_intS_one {V : VF C} {τ : Type} : IntS V (1 : MvPowerSeries τ C) := by
-  classical
-  intro μ
-  rw [coeff_one]
-  split_ifs
-  · exact VF.Ge.one
-  · exact VF.Ge.zero 0
-
-theorem teichSelf_intS_X {V : VF C} {τ : Type} (t : τ) : IntS V (X t : MvPowerSeries τ C) := by
-  classical
-  intro μ
-  rw [coeff_X]
-  split_ifs
-  · exact VF.Ge.one
-  · exact VF.Ge.zero 0
-
 theorem teichSelf_intS_pow {V : VF C} {τ : Type} {f : MvPowerSeries τ C} (hf : IntS V f) (n : ℕ) :
     IntS V (f ^ n) := by
   induction n with
-  | zero => rw [pow_zero]; exact teichSelf_intS_one
-  | succ n ih => rw [pow_succ]; exact teichSelf_intS_mul ih hf
+  | zero => rw [pow_zero]; exact GlobalTheory.RowVal.intS_one
+  | succ n ih => rw [pow_succ]; exact GlobalTheory.RowVal.intS_mul ih hf
 
 theorem teichSelf_intS_subst {V : VF C} {σ τ : Type} [Finite σ] (a : σ → MvPowerSeries τ C)
     (h0 : ∀ s, constantCoeff (a s) = 0) (ha : ∀ s, IntS V (a s)) {F : MvPowerSeries σ C} (hF : IntS V F) :
@@ -102,33 +79,15 @@ theorem teichSelf_intS_subst {V : VF C} {σ τ : Type} [Finite σ] (a : σ → M
   refine finsum_induction (fun x => V.Ge 0 x) (VF.Ge.zero 0) (fun _ _ => VF.Ge.add) fun e => ?_
   rw [smul_eq_mul]
   refine (hF e).mul_int ((?_ : IntS V (e.prod fun s n => a s ^ n)) μ)
-  exact Finset.prod_induction _ (IntS V) (fun _ _ => teichSelf_intS_mul) teichSelf_intS_one
+  exact Finset.prod_induction _ (IntS V) (fun _ _ => GlobalTheory.RowVal.intS_mul) GlobalTheory.RowVal.intS_one
     fun s _ => teichSelf_intS_pow (ha s) _
-
-theorem teichSelf_mvExp_eq [CharZero C] {τ : Type} {f : MvPowerSeries τ C} (hf : constantCoeff f = 0) :
-    mvExp f = PowerSeries.subst f (PowerSeries.exp C) := by
-  apply GlobalTheory.RowVal.mvExp_eq_subst <;> assumption
 
 theorem teichSelf_subst_mvExp [CharZero C] {σ τ : Type} (b : σ → MvPowerSeries τ C) [Finite σ]
     (hb : ∀ s, constantCoeff (b s) = 0) {f : MvPowerSeries σ C} (hf : constantCoeff f = 0) :
     subst b (mvExp f) = mvExp (subst b f) := by
-  rw [teichSelf_mvExp_eq hf, teichSelf_mvExp_eq (constantCoeff_subst_zero hb hf)]
+  rw [GlobalTheory.RowVal.mvExp_eq_subst hf, GlobalTheory.RowVal.mvExp_eq_subst (constantCoeff_subst_zero hb hf)]
   simp only [PowerSeries.subst_def]
   rw [subst_comp_subst_apply (hasSubst_of_constantCoeff_zero fun _ => hf) (hasSubst_of_constantCoeff_zero hb)]
-
-theorem teichSelf_mvExp_add [CharZero C] {τ : Type} {x y : MvPowerSeries τ C} (hx : constantCoeff x = 0)
-    (hy : constantCoeff y = 0) : mvExp (x + y) = mvExp x * mvExp y := by
-  have h0 : ∀ s, constantCoeff ((![x, y] : Fin 2 → MvPowerSeries τ C) s) = 0 := by
-    intro s; fin_cases s <;> simp [hx, hy]
-  have hb := hasSubst_of_constantCoeff_zero h0
-  have c01 : constantCoeff (X 0 + X 1 : MvPowerSeries (Fin 2) C) = 0 := by simp
-  have c0 : constantCoeff (X 0 : MvPowerSeries (Fin 2) C) = 0 := by simp
-  have c1 : constantCoeff (X 1 : MvPowerSeries (Fin 2) C) = 0 := by simp
-  have := congrArg (subst (![x, y] : Fin 2 → MvPowerSeries τ C)) (ReciprocityTheory.ChartRestriction.G.TB.WickVanishing.exp_subst_add_two_vars C)
-  rw [← teichSelf_mvExp_eq c01, ← teichSelf_mvExp_eq c0, ← teichSelf_mvExp_eq c1, subst_mul hb,
-    teichSelf_subst_mvExp _ h0 c01, teichSelf_subst_mvExp _ h0 c0, teichSelf_subst_mvExp _ h0 c1,
-    subst_add hb, subst_X hb, subst_X hb] at this
-  simpa using this
 
 variable {d d' dd : ℕ} {I I' : Fin 2 → Type}
 
@@ -211,7 +170,7 @@ theorem teichSelf_endP_col [CharZero C] {τ : Type} (X : RawChart C d I (Fin dd)
   · refine Finset.sum_congr rfl fun y _ => ?_
     rw [e1]
     show (if x.1 = x.1 then M z y else 0) • subst a (inCol x.1 (X.lg y)) = _
-    rw [if_pos rfl, teichSelf_subst_inCol _ ha]
+    rw [ite_eq_left rfl, teichSelf_subst_inCol _ ha]
   · intro b _ hb
     simp [Ne.symm hb]
   · simp
@@ -244,7 +203,7 @@ theorem teichSelf_double : ∀ (C : Type) [Field C] [CharZero C] (V : VF C) (dd 
     rw [teichSelf_endP_col X X' hlg e1 e2 T _ (fun _ => MvPowerSeries.constantCoeff_X _)]
     have c : ∀ y : Fin dd, MvPowerSeries.constantCoeff
         (MvPowerSeries.X (x.1, y) : MvPowerSeries (Fin 2 × Fin dd) C) = 0 := fun _ => MvPowerSeries.constantCoeff_X _
-    have := teichSelf_intS_subst _ c (fun _ => teichSelf_intS_X _) (hT x.2)
+    have := teichSelf_intS_subst _ c (fun _ => GlobalTheory.RowVal.intS_X _) (hT x.2)
     rw [teichSelf_subst_endP X hlg T _ (fun _ => MvPowerSeries.constantCoeff_X _) _ c] at this
     simpa only [MvPowerSeries.subst_X (MvPowerSeries.hasSubst_of_constantCoeff_zero c)] using this
   refine ⟨one M h1, one M' h2, ?_⟩
@@ -286,10 +245,10 @@ theorem teichSelf_double : ∀ (C : Type) [Field C] [CharZero C] (V : VF C) (dd 
       teichSelf_subst_hAt X _ _ c1 (cg _ 1) _ (cφ col), teichSelf_subst_hAt X _ _ (cg _ 0) c2 _ (cφ col)]
     simp only [teichSelf_subst_endP X hlg _ _ (cg _ _) _ (cφ col), eg,
       teichSelf_endP_col X X' hlg e1 e2 _ _ (cg _ _)]
-  rw [key, Fin.sum_univ_two, teichSelf_mvExp_add (constantCoeff_subst_zero (cφ 0) cD)
+  rw [key, Fin.sum_univ_two, GlobalTheory.RowVal.mvExp_add (constantCoeff_subst_zero (cφ 0) cD)
     (constantCoeff_subst_zero (cφ 1) cD), ← teichSelf_subst_mvExp _ (cφ 0) cD, ← teichSelf_subst_mvExp _ (cφ 1) cD]
-  exact teichSelf_intS_mul (teichSelf_intS_subst _ (cφ 0) (fun _ => teichSelf_intS_X _) h3)
-    (teichSelf_intS_subst _ (cφ 1) (fun _ => teichSelf_intS_X _) h3)
+  exact GlobalTheory.RowVal.intS_mul (teichSelf_intS_subst _ (cφ 0) (fun _ => GlobalTheory.RowVal.intS_X _) h3)
+    (teichSelf_intS_subst _ (cφ 1) (fun _ => GlobalTheory.RowVal.intS_X _) h3)
 
 theorem teichSelf_eq_zero {C : Type} [Field C] {V : VF C} {x : C} (h : ∀ K : ℕ, V.Ge K x) : x = 0 := by
   by_contra hx
@@ -322,7 +281,7 @@ theorem teichSelf_mulVec {C : Type} [Field C] {dd : ℕ} (M : Matrix (Fin dd) (F
   have h1 := h x.2
   simp only [Matrix.mulVec, dotProduct] at h1 ⊢
   rw [Fintype.sum_prod_type, Finset.sum_eq_single x.1]
-  · simp only [if_true, Pi.smul_apply, smul_eq_mul]
+  · simp only [ite_true, Pi.smul_apply, smul_eq_mul]
     rw [mul_left_comm, ← h1, Finset.mul_sum]
     exact Finset.sum_congr rfl fun _ _ => by ring
   · intro b _ hb

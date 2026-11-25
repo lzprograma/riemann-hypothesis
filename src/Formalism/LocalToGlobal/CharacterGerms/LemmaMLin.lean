@@ -115,18 +115,18 @@ theorem pderiv_subst_coe [Fintype σ] {a : σ → MvPowerSeries τ C} (ha : HasS
         subst_X ha]
       by_cases hw : w = w0
       · subst hw
-        rw [pderiv_X_self, if_pos rfl]
+        rw [pderiv_X_self, ite_eq_left rfl]
         have : subst a (1 : MvPowerSeries σ C) = 1 := by
           rw [← substAlgHom_apply ha, map_one]
         rw [this]
         ring
-      · rw [pderiv_X_of_ne (Ne.symm hw), if_neg hw]
+      · rw [pderiv_X_of_ne (Ne.symm hw), ite_eq_right hw]
         have : subst a (0 : MvPowerSeries σ C) = 0 := by
           rw [← substAlgHom_apply ha, map_zero]
         rw [this]
         ring
     simp only [h1]
-    rw [Finset.sum_add_distrib, Finset.sum_ite_eq' Finset.univ w0, if_pos (Finset.mem_univ _),
+    rw [Finset.sum_add_distrib, Finset.sum_ite_eq' Finset.univ w0, ite_eq_left (Finset.mem_univ _),
       ← Finset.mul_sum, smul_eq_mul, smul_eq_mul]
     ring
 
@@ -231,15 +231,6 @@ theorem rename_subst_linS {σ τ τ' : Type} [Fintype σ] [Fintype τ] (f : τ �
 
 end Rows
 
-section Bridge
-
-variable {C : Type} [Field C] {V : VF C} {d : ℕ} {I J : Type} [Fintype I] [Fintype J]
-  {Xc : Cart V d I J} (S : Sys Xc)
-
-variable {τ : Type} [Fintype τ]
-
-end Bridge
-
 section Pull
 
 variable {C : Type} [Field C] {I : Fin 2 → Type} [∀ g, Fintype (I g)] {ι ι' : Type} [Fintype ι]
@@ -251,13 +242,5 @@ theorem constantCoeff_upG (g : Fin 2) {F : MvPowerSeries (I g) C} (hF : constant
   exact (ordGE_one_iff _).1 (ordGE_subst (fun x => Formalism.BaseCaseIdentities.OrdGE.X _) ((ordGE_one_iff _).2 hF))
 
 end Pull
-
-section RowDataPull
-
-variable {C : Type} [Field C] {V : VF C} {d : ℕ} [NeZero d] {I J : Fin 2 → Type}
-  [∀ g, Fintype (I g)] [∀ g, Fintype (J g)] (Xr : RowData C V d I J) {ι ι' : Type} [Fintype ι]
-  [Fintype ι']
-
-end RowDataPull
 
 end Formalism.L2.FormalSeriesBounds

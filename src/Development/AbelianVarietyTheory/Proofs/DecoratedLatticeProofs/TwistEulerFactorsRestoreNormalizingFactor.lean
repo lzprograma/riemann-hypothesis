@@ -53,7 +53,6 @@ open scoped TensorProduct InnerProductSpace ComplexConjugate
 open GlobalTheory.ChainOnto GlobalTheory.ChainTw
 open GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting (SplitProj IsProjAt IsIdemOf LiftsChar rdA grpCo frCo gAt)
 open GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection (Blocks parahoric datum)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 namespace GlobalTheory.ChainTw
 
 
@@ -64,7 +63,7 @@ theorem dv_center_of_isSplit {F E : Type} [Field F] [NumberField F] [Field E] [N
       (∏ n ∈ Finset.Ioc t (a + t), (1 - (((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ^ n)⁻¹))⁻¹ := by
   have hI : Finset.Icc (t + 1) (t + a) = Finset.Ioc t (a + t) := by
     ext n; simp only [Finset.mem_Icc, Finset.mem_Ioc]; omega
-  have he : etaU E v = 1 := by unfold etaU; exact if_pos hv
+  have he : etaU E v = 1 := by unfold etaU; exact ite_eq_left hv
   rw [dv_center, hI, ← Finset.prod_inv_distrib]
   refine Finset.prod_congr rfl fun n _ => ?_
   rw [locL, etaFam_of_unram (isUnram_of_isSplit h2 hv), he, one_pow, eulerFac_singleton, Units.val_one, one_mul,

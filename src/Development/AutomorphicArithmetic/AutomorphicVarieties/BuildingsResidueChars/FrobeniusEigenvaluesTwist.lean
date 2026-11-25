@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NotMemPlacesOverOfNe
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.BcDefs
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -46,25 +47,7 @@ open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.Conjuga
 private theorem charpoly_smul_prod {ι : Type*} [Fintype ι] [DecidableEq ι] (M : Matrix ι ι ℂ) (u : ℂ)
     (L : Multiset ℂ) (hM : M.charpoly = (L.map fun α => X - C α).prod) :
     (u • M).charpoly = ((L.map (· * u)).map fun α => X - C α).prod := by
-  have hc : Multiset.card L = Fintype.card ι := by
-    rw [← Matrix.charpoly_natDegree_eq_dim M, hM, natDegree_multiset_prod_X_sub_C_eq_card]
-  rcases eq_or_ne u 0 with rfl | hu
-  · simp [hc]
-  · refine Polynomial.funext fun x => ?_
-    have h1 := congrArg (eval (x / u)) hM
-    rw [Matrix.eval_charpoly, eval_multiset_prod, Multiset.map_map] at h1
-    have e : Matrix.scalar ι x - u • M = u • (Matrix.scalar ι (x / u) - M) := by
-      ext a b
-      by_cases hab : a = b
-      · subst hab
-        simp
-        field_simp
-      · simp [Matrix.diagonal_apply_ne _ hab]
-    rw [Matrix.eval_charpoly, e, Matrix.det_smul, h1, eval_multiset_prod, Multiset.map_map,
-      Multiset.map_map, ← hc, ← Multiset.prod_replicate, ← Multiset.map_const, ← Multiset.prod_map_mul]
-    refine congrArg _ (Multiset.map_congr rfl fun α _ => ?_)
-    simp
-    field_simp
+  apply _root_.GlobalTheory.ParamRep.charpoly_smul_of_prod <;> assumption
 
 theorem UpperTheory.frobenius_eigenvalues_twist :
     UpperTheory.V.Af.Bc.FrobTw := by

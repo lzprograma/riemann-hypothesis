@@ -86,8 +86,6 @@ end General
 
 section Res
 
-attribute [local instance 2000] Rep.hV2
-
 theorem eq_zero_tateCompactCohomologyRes_of_shortExact {S : ShortComplex (Rep.{u} k G)}
     [IsDiscreteRep S.X₁] [IsDiscreteRep S.X₂] [IsDiscreteRep S.X₃] (hS : S.ShortExact) (n : ℕ)
     (h₁ : ∀ x : tateCompactCohomologyRes φ ψ S.X₁ n, x = 0)
@@ -130,31 +128,28 @@ theorem eq_zero_tateCompactCohomologyRes_of_retract {A B : Rep.{u} k G} [IsDiscr
     [IsDiscreteRep B] (i : A ⟶ B) (p : B ⟶ A) (hip : i ≫ p = 𝟙 A) (n : ℕ)
     (hB : ∀ x : tateCompactCohomologyRes φ ψ B n, x = 0) (x : tateCompactCohomologyRes φ ψ A n) :
     x = 0 := by
-  have hi : ∀ v, 𝟙 (Rep.res (φ v).toMonoidHom A) ≫ (Rep.resFunctor (φ v).toMonoidHom).map i =
-      (Rep.resFunctor (φ v).toMonoidHom).map i ≫ 𝟙 _ := fun _ =>
-    (Category.id_comp _).trans (Category.comp_id _).symm
-  have hir : ∀ w, 𝟙 (Rep.res (ψ w).toMonoidHom A) ≫ (Rep.resFunctor (ψ w).toMonoidHom).map i =
-      (Rep.resFunctor (ψ w).toMonoidHom).map i ≫ 𝟙 _ := fun _ =>
-    (Category.id_comp _).trans (Category.comp_id _).symm
-  have hp : ∀ v, 𝟙 (Rep.res (φ v).toMonoidHom B) ≫ (Rep.resFunctor (φ v).toMonoidHom).map p =
-      (Rep.resFunctor (φ v).toMonoidHom).map p ≫ 𝟙 _ := fun _ =>
-    (Category.id_comp _).trans (Category.comp_id _).symm
-  have hpr : ∀ w, 𝟙 (Rep.res (ψ w).toMonoidHom B) ≫ (Rep.resFunctor (ψ w).toMonoidHom).map p =
-      (Rep.resFunctor (ψ w).toMonoidHom).map p ≫ 𝟙 _ := fun _ =>
-    (Category.id_comp _).trans (Category.comp_id _).symm
-  have hcomp := tateCompactCohomologyMap_comp φ ψ i (fun v => (Rep.resFunctor (φ v).toMonoidHom).map i)
-    (fun w => (Rep.resFunctor (ψ w).toMonoidHom).map i) hi hir p
-    (fun v => (Rep.resFunctor (φ v).toMonoidHom).map p) (fun w => (Rep.resFunctor (ψ w).toMonoidHom).map p)
-    hp hpr n
+  have hcomm : ∀ {K : Type u} [Group K] (m : K →* G) {X Y : Rep.{u} k G} (f : X ⟶ Y),
+      𝟙 (Rep.res m X) ≫ (Rep.resFunctor m).map f = (Rep.resFunctor m).map f ≫ 𝟙 _ := by
+    intro K _ m X Y f
+    exact (Category.id_comp _).trans (Category.comp_id _).symm
+  have hcomp := tateCompactCohomologyMap_comp φ ψ i
+    (fun v => (Rep.resFunctor (φ v).toMonoidHom).map i)
+    (fun w => (Rep.resFunctor (ψ w).toMonoidHom).map i)
+    (fun v => hcomm _ i) (fun w => hcomm _ i) p
+    (fun v => (Rep.resFunctor (φ v).toMonoidHom).map p)
+    (fun w => (Rep.resFunctor (ψ w).toMonoidHom).map p)
+    (fun v => hcomm _ p) (fun w => hcomm _ p) n
   rw [tateCompactCohomologyMap_eq_id φ ψ _ _ _ _ _ hip
-    (fun v => by rw [← CategoryTheory.Functor.map_comp, hip, CategoryTheory.Functor.map_id])
-    (fun w => by rw [← CategoryTheory.Functor.map_comp, hip, CategoryTheory.Functor.map_id])] at hcomp
+    (fun v => by
+      rw [← CategoryTheory.Functor.map_comp, hip, CategoryTheory.Functor.map_id])
+    (fun w => by
+      rw [← CategoryTheory.Functor.map_comp, hip, CategoryTheory.Functor.map_id])] at hcomp
   have hx := congrArg (fun f => f.hom x) hcomp
   change x = _ at hx
   rw [hx]
-  change (tateCompactCohomologyMap φ ψ p _ _ hp hpr n).hom
-    ((tateCompactCohomologyMap φ ψ i _ _ hi hir n).hom x) = 0
-  rw [hB ((tateCompactCohomologyMap φ ψ i _ _ hi hir n).hom x)]
+  change (tateCompactCohomologyMap φ ψ p _ _ (fun _ => hcomm _ p) (fun _ => hcomm _ p) n).hom
+    ((tateCompactCohomologyMap φ ψ i _ _ (fun _ => hcomm _ i) (fun _ => hcomm _ i) n).hom x) = 0
+  rw [hB ((tateCompactCohomologyMap φ ψ i _ _ (fun _ => hcomm _ i) (fun _ => hcomm _ i) n).hom x)]
   exact map_zero _
 
 end Res

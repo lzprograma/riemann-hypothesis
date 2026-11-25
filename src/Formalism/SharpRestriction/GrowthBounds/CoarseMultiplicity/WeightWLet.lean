@@ -4,49 +4,8 @@ public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FinalTheorem
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.DegSplit
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymbolVariableLowerLetter
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentChainDegreeEven
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Bool
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockWh, Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.WeightWLet
@@ -79,7 +38,7 @@ def TD (b : SegBlock (segS X.TT j) X.m) (ω : (X.TT × Bool) × Fin (X.m + 1) �
   (segAPlus X.TT X.aT j - b.oPlus) * ω ((topEnd X j, true), 0) + b.oPlus * ω ((topEnd X j, true), Fin.succ 0) +
     (X.seg C0 CE1 CE2 j).bPlus * ω ((topEnd X j, false), Fin.succ 0)
 
-theorem ioBlock_wh (O : Type) [CommRing O] [IsDomain O] (mm : ℝ) (b : SegBlock (segS X.TT j) X.m)
+theorem ioBlock_wh (O : Type) [CommRing O] [IsDomain O] (b : SegBlock (segS X.TT j) X.m)
     (ω : (X.TT × Bool) × Fin (X.m + 1) → ℕ) (hc : ∀ x (c c' : Fin X.m), ω (x, c.succ) = ω (x, c'.succ))
     (hU : ∀ l : Fin (X.seg C0 CE1 CE2 j).t,
       ω ((topOdd X j (uTop (X.seg C0 CE1 CE2 j) l), true), 0) + ω ((topOdd X j (uTop (X.seg C0 CE1 CE2 j) l), false), 0) =
@@ -88,7 +47,16 @@ theorem ioBlock_wh (O : Type) [CommRing O] [IsDomain O] (mm : ℝ) (b : SegBlock
     (hP : ω ((topEnd X j, true), 0) + ω ((topEnd X j, false), 0) =
       ω ((topEnd X j, true), Fin.succ 0) + ω ((topEnd X j, false), Fin.succ 0))
     (s : MvPolynomial (BVar (2 * segS X.TT j + 1) X.m (X.seg C0 CE1 CE2 j).t) (KK O))
-    (hs : s ∈ (blockData X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) (segAPlus X.TT X.aT j) mm b).SSZ O (r := X.m)) :
+    (hs : ∀ (ω' : BVar (2 * segS X.TT j + 1) X.m (X.seg C0 CE1 CE2 j).t → ℕ)
+      (ωL : Fin (2 * segS X.TT j + 1 + 1) → ℕ),
+      (∀ a c, ω' (Sum.inl (a, c)) = ωL a) →
+      (∀ l : Fin (X.seg C0 CE1 CE2 j).t, ω' (Sum.inr (Fin.castSucc l, false)) + ω' (Sum.inr (Fin.castSucc l, true)) =
+        ωL (finPos (2 * segS X.TT j + 1) (2 * (uTop (X.seg C0 CE1 CE2 j) l : ℕ))) +
+          ωL (finPos (2 * segS X.TT j + 1) (2 * (uTop (X.seg C0 CE1 CE2 j) l : ℕ) + 1))) →
+      ω' (Sum.inr (Fin.last (X.seg C0 CE1 CE2 j).t, false)) + ω' (Sum.inr (Fin.last (X.seg C0 CE1 CE2 j).t, true)) =
+        ωL (Fin.castSucc ⟨2 * segS X.TT j, by lia⟩) + ωL (Fin.last _) →
+      IsWeightedHomogeneous ω' s
+        (OmB X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) (segAPlus X.TT X.aT j) b ω' ωL)) :
     IsWeightedHomogeneous ω (ioBlock (KK O) X.p C0 CE1 CE2 X j b s) (TD C0 CE1 CE2 X j b ω) := by
   let ω' : BVar (2 * segS X.TT j + 1) X.m (X.seg C0 CE1 CE2 j).t → ℕ := fun v => symLev X.p C0 CE1 CE2 X j v * ω (symVar C0 CE1 CE2 X j v)
   let ωL : Fin (2 * segS X.TT j + 1 + 1) → ℕ := fun a => ω' (Sum.inl (a, 0))
@@ -146,7 +114,7 @@ theorem ioBlock_wh (O : Type) [CommRing O] [IsDomain O] (mm : ℝ) (b : SegBlock
       ωL (Fin.castSucc ⟨2 * segS X.TT j, by omega⟩) + ωL (Fin.last _) := by
     rw [hx, hx, hUU, hXi]
     exact hP
-  have hS := ssz_wh O X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) (segAPlus X.TT X.aT j) mm b ω' ωL h1 h2 h3 s hs
+  have hS := hs ω' ωL h1 h2 h3
   have hA := wh_aeval ω (symVar C0 CE1 CE2 X j) (symLev X.p C0 CE1 CE2 X j) s _ hS
   have hDg : IsWeightedHomogeneous ω (digitMon (KK O) C0 CE1 CE2 X j b)
       (∑ i : Fin (segS X.TT j), ∑ c : Fin (X.m + 1),
@@ -204,9 +172,9 @@ theorem ioBlock_wh (O : Type) [CommRing O] [IsDomain O] (mm : ℝ) (b : SegBlock
           else coarseC X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b i) * ((X.seg C0 CE1 CE2 j).P X.p i * ω ((topOdd X j i, false), Fin.succ 0))) := by
     intro i
     by_cases h : (i : ℕ) < (X.seg C0 CE1 CE2 j).sigma
-    · rw [if_pos h, if_pos h, if_neg (not_le.2 h), if_pos h, if_pos h]
+    · rw [ite_eq_left h, ite_eq_left h, ite_eq_right (not_le.2 h), ite_eq_left h, ite_eq_left h]
       ring
-    · rw [if_neg h, if_neg h, if_pos (not_lt.1 h), if_neg h, if_neg h]
+    · rw [ite_eq_right h, ite_eq_right h, ite_eq_left (not_lt.1 h), ite_eq_right h, ite_eq_right h]
       ring
   rw [Finset.sum_congr rfl fun i _ => key i]
   simp only [Finset.sum_add_distrib]
@@ -249,8 +217,12 @@ theorem weight_wLet (X : Loc) (x : X.TT × Bool) (μ : (X.TT × Bool) × Fin (X.
 
 variable (C0 CE1 CE2 : ℝ) (X : Loc) [NeZero X.m] (j : Fin (numSeg X.TT))
 
-theorem TD_wLet (x : X.TT × Bool) (b : SegBlock (segS X.TT j) X.m)
-    (hk : Kept X.p X.m (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b) (ho : b.oPlus ≤ segAPlus X.TT X.aT j) :
+theorem TD_wLet_of_bounds (x : X.TT × Bool) (b : SegBlock (segS X.TT j) X.m)
+    (hdig : DigitsOK X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b)
+    (hw : ∀ i : Fin (segS X.TT j), (i : ℕ) < (X.seg C0 CE1 CE2 j).sigma → b.w i ≤ coarseA X.p (X.seg C0 CE1 CE2 j) b i)
+    (hsig : ∀ i : Fin (segS X.TT j), (i : ℕ) < (X.seg C0 CE1 CE2 j).sigma → b.sg i ≤ coarseC X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b i)
+    (hoBound : ∀ i : Fin (segS X.TT j), (X.seg C0 CE1 CE2 j).sigma ≤ (i : ℕ) → b.o i ≤ coarseA X.p (X.seg C0 CE1 CE2 j) b i)
+    (ho : b.oPlus ≤ segAPlus X.TT X.aT j) :
     TD C0 CE1 CE2 X j b (wLet X x) =
       (if segNext X.TT j = x.1.val then hhDegs X.TT X.aT X.bT x else 0) +
         ∑ i, (if segPos X.TT j i = x.1.val then hhDegs X.TT X.aT X.bT x else 0) := by
@@ -275,12 +247,12 @@ theorem TD_wLet (x : X.TT × Bool) (b : SegBlock (segS X.TT j) X.m)
     by_cases h : segPos X.TT j i = t.val
     · have ht : topOdd X j i = t := Subtype.ext h
       subst ht
-      rw [if_pos h]
+      rw [ite_eq_left h]
       cases bb
-      · have w1 : ∀ c, wLet X (topOdd X j i, false) ((topOdd X j i, true), c) = 0 := fun c => if_neg (by simp)
-        have w2 : ∀ c, wLet X (topOdd X j i, false) ((topOdd X j i, false), c) = 1 := fun c => if_pos rfl
+      · have w1 : ∀ c, wLet X (topOdd X j i, false) ((topOdd X j i, true), c) = 0 := fun c => ite_eq_right (by simp)
+        have w2 : ∀ c, wLet X (topOdd X j i, false) ((topOdd X j i, false), c) = 1 := fun c => ite_eq_left rfl
         simp only [w1, w2, mul_zero, mul_one, zero_add, add_zero]
-        have hd := hk.1.2.2 i
+        have hd := hdig.2.2 i
         have hPC : (X.seg C0 CE1 CE2 j).P X.p i * coarseC X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b i =
             segATop X.TT X.aT j i - ∑ c, b.ry i c := Nat.mul_div_cancel' hd.2
         have hdeg : hhDegs X.TT X.aT X.bT (topOdd X j i, false) = segATop X.TT X.aT j i := by
@@ -292,16 +264,16 @@ theorem TD_wLet (x : X.TT × Bool) (b : SegBlock (segS X.TT j) X.m)
             else coarseC X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b i) =
             coarseC X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b i := by
           split_ifs with hs
-          · have := (hk.2.2.1 i hs).2.2.1
+          · have := hsig i hs
             omega
           · rfl
         rw [hin, hPC, hdeg]
         have := hd.1
         omega
-      · have w1 : ∀ c, wLet X (topOdd X j i, true) ((topOdd X j i, true), c) = 1 := fun c => if_pos rfl
-        have w2 : ∀ c, wLet X (topOdd X j i, true) ((topOdd X j i, false), c) = 0 := fun c => if_neg (by simp)
+      · have w1 : ∀ c, wLet X (topOdd X j i, true) ((topOdd X j i, true), c) = 1 := fun c => ite_eq_left rfl
+        have w2 : ∀ c, wLet X (topOdd X j i, true) ((topOdd X j i, false), c) = 0 := fun c => ite_eq_right (by simp)
         simp only [w1, w2, mul_zero, mul_one, add_zero]
-        have hd := hk.1.2.1 i
+        have hd := hdig.2.1 i
         have hPA : (X.seg C0 CE1 CE2 j).P X.p i * coarseA X.p (X.seg C0 CE1 CE2 j) b i =
             (X.seg C0 CE1 CE2 j).bTop i - ∑ c, b.rz i c := Nat.mul_div_cancel' hd.2
         have hdeg : hhDegs X.TT X.aT X.bT (topOdd X j i, true) = (X.seg C0 CE1 CE2 j).bTop i := by
@@ -312,16 +284,16 @@ theorem TD_wLet (x : X.TT × Bool) (b : SegBlock (segS X.TT j) X.m)
             coarseA X.p (X.seg C0 CE1 CE2 j) b i - b.w i + b.w i
             else coarseA X.p (X.seg C0 CE1 CE2 j) b i - b.o i + b.o i) = coarseA X.p (X.seg C0 CE1 CE2 j) b i := by
           split_ifs with hs
-          · have := (hk.2.2.1 i hs).2.1
+          · have := hw i hs
             omega
-          · have := (hk.2.1 i (not_lt.1 hs)).1
+          · have := hoBound i (not_lt.1 hs)
             omega
         rw [hin, hPA, hdeg]
         have := hd.1
         omega
     · have w0 : ∀ b' c, wLet X (t, bb) ((topOdd X j i, b'), c) = 0 := fun b' c =>
-        if_neg (fun e => h (congrArg (fun z : X.TT × Bool => z.1.val) e))
-      rw [if_neg h]
+        ite_eq_right (fun e => h (congrArg (fun z : X.TT × Bool => z.1.val) e))
+      rw [ite_eq_right h]
       simp only [w0, mul_zero, add_zero, Finset.sum_const_zero, ite_self]
   have hend : (segAPlus X.TT X.aT j - b.oPlus) * wLet X (t, bb) ((topEnd X j, true), 0) +
       b.oPlus * wLet X (t, bb) ((topEnd X j, true), Fin.succ 0) +
@@ -331,24 +303,24 @@ theorem TD_wLet (x : X.TT × Bool) (b : SegBlock (segS X.TT j) X.m)
     by_cases h : segNext X.TT j = t.val
     · have ht : topEnd X j = t := Subtype.ext h
       subst ht
-      rw [if_pos h]
+      rw [ite_eq_left h]
       cases bb
-      · have w1 : ∀ c, wLet X (topEnd X j, false) ((topEnd X j, true), c) = 0 := fun c => if_neg (by simp)
-        have w2 : ∀ c, wLet X (topEnd X j, false) ((topEnd X j, false), c) = 1 := fun c => if_pos rfl
+      · have w1 : ∀ c, wLet X (topEnd X j, false) ((topEnd X j, true), c) = 0 := fun c => ite_eq_right (by simp)
+        have w2 : ∀ c, wLet X (topEnd X j, false) ((topEnd X j, false), c) = 1 := fun c => ite_eq_left rfl
         simp only [w1, w2, mul_zero, mul_one, zero_add]
         show X.bT (segNext X.TT j) = hhDeg X.aT X.bT (segNext X.TT j) false
         unfold hhDeg
         simp [hev]
-      · have w1 : ∀ c, wLet X (topEnd X j, true) ((topEnd X j, true), c) = 1 := fun c => if_pos rfl
-        have w2 : ∀ c, wLet X (topEnd X j, true) ((topEnd X j, false), c) = 0 := fun c => if_neg (by simp)
+      · have w1 : ∀ c, wLet X (topEnd X j, true) ((topEnd X j, true), c) = 1 := fun c => ite_eq_left rfl
+        have w2 : ∀ c, wLet X (topEnd X j, true) ((topEnd X j, false), c) = 0 := fun c => ite_eq_right (by simp)
         simp only [w1, w2, mul_zero, mul_one, add_zero]
         rw [Nat.sub_add_cancel ho]
         show X.aT (segNext X.TT j) = hhDeg X.aT X.bT (segNext X.TT j) true
         unfold hhDeg
         simp [hev]
     · have w0 : ∀ b' c, wLet X (t, bb) ((topEnd X j, b'), c) = 0 := fun b' c =>
-        if_neg (fun e => h (congrArg (fun z : X.TT × Bool => z.1.val) e))
-      rw [if_neg h]
+        ite_eq_right (fun e => h (congrArg (fun z : X.TT × Bool => z.1.val) e))
+      rw [ite_eq_right h]
       simp only [w0, mul_zero, add_zero]
   unfold TD
   rw [Finset.sum_congr rfl fun i _ => hterm i, add_assoc, add_assoc, ← add_assoc ((segAPlus X.TT X.aT j - b.oPlus) * _),

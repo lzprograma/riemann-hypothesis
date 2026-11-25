@@ -75,7 +75,7 @@ private theorem orbRep_vOfH_eq_secPsi_tau1P (φ : Formalism.HC.Frame) (h t : φ.
       orbEquiv (zH φ h) (vOfH φ h t) :=
     ((orbEquiv (zH φ h)).apply_symm_apply _).symm
   have hz : ((zH φ h : φ.Psi) : φ.GG).1 = 1 := rfl
-  have hs : OrbSec.sec (zH φ h) (tau1P φ t) = secPsi φ (zH φ h) (tau1P φ t) := if_pos hz
+  have hs : OrbSec.sec (zH φ h) (tau1P φ t) = secPsi φ (zH φ h) (tau1P φ t) := ite_eq_left hz
   rw [orbRep_of_mk _ _ _ hv, hs]
 
 theorem bsH_eq_bsA (φ : Formalism.HC.Frame) (h t : φ.A) : bsH φ h t = Formalism.MainNotions.Inhab.bsA h t := by

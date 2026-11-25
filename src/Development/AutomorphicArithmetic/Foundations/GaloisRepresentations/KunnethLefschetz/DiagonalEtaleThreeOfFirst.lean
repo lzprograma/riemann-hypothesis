@@ -55,6 +55,6 @@ namespace UpperTheory.Gal.KunnethLefschetz
 open GlobalTheory.EtC CrystallineSemistableComparison
 
 theorem inSum_holds : InSum :=
-  CrystallineSemistableComparison.sum ⟨GlobalTheory.T.quasiIso_hypercohomology_bijective, GlobalTheory.T.cup_chern_kummer_pullback_naturality, GlobalTheory.T.cupProduct_gradedCommRingAxioms_hold, GlobalTheory.T.etaleCohomology_coefficient_longExactSequence, _root_.GlobalTheory.EtC.a8, _root_.GlobalTheory.EtC.etale_cohomology_vanishing_negative_degree_zero, GlobalTheory.T.etaleCohomology_bijective_of_support_bijective, CrystallineSemistableComparison.E.etIn⟩
+  CrystallineSemistableComparison.sum ⟨GlobalTheory.T.cupProduct_gradedCommRingAxioms_hold, _root_.GlobalTheory.EtC.etale_cohomology_vanishing_negative_degree_zero, CrystallineSemistableComparison.E.etIn⟩
 
 end UpperTheory.Gal.KunnethLefschetz

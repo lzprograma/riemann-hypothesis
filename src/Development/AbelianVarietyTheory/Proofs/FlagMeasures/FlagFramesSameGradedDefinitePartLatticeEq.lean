@@ -177,7 +177,7 @@ private theorem det_of_eq_of_sub_mem_span_lt {l : ℕ} (u u' w : Fin l → V)
     rw [Finsupp.linearCombination_apply, Finsupp.sum_fintype _ _ (by simp)] at h1
     simp only [hM, Matrix.add_apply, Matrix.one_apply, Matrix.of_apply, add_smul,
       Finset.sum_add_distrib, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ,
-      if_true, h1]
+      ite_true, h1]
     abel
   have hmat : (Matrix.of fun a b => H.B (u' a) (w b)) = M * Matrix.of fun a b => H.B (u a) (w b) := by
     ext a b

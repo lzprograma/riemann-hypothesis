@@ -54,24 +54,11 @@ import Mathlib.Topology.Sheaves.Init
 open scoped MatrixGroups Matrix
 open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.V.Z.Kato.Sym
 
-private theorem valuation_lt_one_iff_inv_not_mem {K : Type} [Field K] (A : ValuationSubring K) (x : K) (hx : x ≠ 0) :
-    A.valuation x < 1 ↔ x⁻¹ ∉ A := by
-  rw [← A.valuation_le_one_iff, map_inv₀, not_le]
-  have h0 : A.valuation x ≠ 0 := by simpa using hx
-  constructor
-  · intro h
-    exact one_lt_inv_iff₀.mpr ⟨zero_lt_iff.mpr h0, h⟩
-  · intro h
-    exact (one_lt_inv_iff₀.mp h).2
-
 private theorem comap_lt_one {K L : Type} [Field K] [Field L] (B : ValuationSubring L) (f : K →+* L) (x : K) :
     (B.comap f).valuation x < 1 ↔ B.valuation (f x) < 1 := by
-  by_cases hx : x = 0
-  · subst hx
-    simp
-  have hfx : f x ≠ 0 := (map_ne_zero f).mpr hx
-  rw [valuation_lt_one_iff_inv_not_mem _ x hx, valuation_lt_one_iff_inv_not_mem _ (f x) hfx, ← map_inv₀]
-  exact Iff.rfl
+  rw [← ValuationSubring.mem_nonunits_iff, ValuationSubring.mem_nonunits_iff_or,
+    ← ValuationSubring.mem_nonunits_iff, ValuationSubring.mem_nonunits_iff_or]
+  simp [map_inv₀]
 
 theorem UpperTheory.V.Z.Kato.Sym.mvPt :
     UpperTheory.V.Z.Kato.Sym.MvPt := by

@@ -241,8 +241,7 @@ theorem ballS_subset {S : Set (Mat k r)} (hS : IsClosedSub k r S) {R : ℝ} {F :
       rw [Finset.card_insert_of_notMem ht] at this
       omega
     have hex : ∃ h ∈ F, ¬ Disjoint (trU s⁻¹) (trU h) := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       apply hnot
       refine ⟨?_, ?_⟩
       · intro g hg

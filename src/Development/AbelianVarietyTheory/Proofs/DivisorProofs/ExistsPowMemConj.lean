@@ -66,7 +66,7 @@ theorem jM_root (P : Pair G) : jM P (AdjoinRoot.root P.pol) = P.γ := by
   rw [← AdjoinRoot.mk_X, jM_mk, aeval_X]
 
 theorem jM_injective (P : Pair G) : Function.Injective (jM P) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro a ha
   obtain ⟨f, rfl⟩ := AdjoinRoot.mk_surjective a
   rw [jM_mk] at ha
@@ -99,9 +99,6 @@ theorem sh_zero : sh G (0 : G.C) = 0 := by simp [sh]
 
 theorem sh_sh (x : G.C) : sh G (sh G x) = x := G.star_star x
 
-theorem sh_algF (a : G.F) : sh G (algebraMap G.F G.C a) = algebraMap G.F G.C (IsCMField.complexConj G.F a) :=
-  G.star_F a
-
 def iC (P : Pair G) (x : G.C) : G.C := (P.β : G.C) * sh G x * ((P.β⁻¹ : G.Cˣ) : G.C)
 
 theorem iC_mul (P : Pair G) (x y : G.C) : iC P (x * y) = iC P y * iC P x := by
@@ -116,7 +113,7 @@ theorem iC_zero (P : Pair G) : iC P 0 = 0 := by simp [iC, sh_zero]
 
 theorem iC_algF (P : Pair G) (a : G.F) :
     iC P (algebraMap G.F G.C a) = algebraMap G.F G.C (IsCMField.complexConj G.F a) := by
-  rw [iC, sh_algF, ← Algebra.commutes, mul_assoc, Units.mul_inv, mul_one]
+  rw [iC, GlobalTheory.LKMid.sh_algebraMap, ← Algebra.commutes, mul_assoc, Units.mul_inv, mul_one]
 
 theorem iC_algQ (P : Pair G) (q : ℚ) : iC P (algebraMap ℚ G.C q) = algebraMap ℚ G.C q := by
   rw [IsScalarTower.algebraMap_apply ℚ G.F G.C, iC_algF]

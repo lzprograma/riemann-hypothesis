@@ -57,9 +57,3 @@ theorem fibPt_injective {X : Scheme.{0}} (G : Over X) {k : Type} [Field k] {y : 
   simpa only [fibPt, pullback.lift_fst] using this)
 
 end GlobalTheory.HeckePoint
-
-namespace GlobalTheory
-
-open HeckePoint
-
-end GlobalTheory

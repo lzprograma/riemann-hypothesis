@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.CycDim
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
 public import Lemmata.GeneralBFactTerForm.Imports
 import Mathlib.Order.CompletePartialOrder
@@ -50,10 +51,6 @@ theorem dim_quot_minimal_add_one (P W : Ideal (MvPolynomial σ ℤ)) [P.IsPrime]
   have key := mvPolynomialInt_dimFormula P W hPW
   rw [hh] at key
   exact_mod_cast key
-
-theorem withBot_eq_of_add_one_by_cancellation {x : WithBot ℕ∞} {m : ℕ} (h : x + 1 = ((m + 1 : ℕ) : WithBot ℕ∞)) :
-    x = (m : WithBot ℕ∞) := by
-  first | (apply Bl.general_b_fact_ter_form.goal1 <;> assumption)
 
 end Dim
 
@@ -118,33 +115,7 @@ theorem exists_blockComponent [DecidableEq K] {W : Ideal (MRing ι)}
 theorem isMultiHomogIdeal_of_isHomogeneous [DecidableEq K] {W : Ideal (MRing ι)}
     (hW : ∀ k, W.IsHomogeneous (weightedHomogeneousSubmodule ℤ (blockWeight (ι := ι) k))) :
     IsMultiHomogIdeal W := by
-  refine ⟨{f | f ∈ W ∧ ∃ a, IsMultiHomog f a}, fun f hf => hf.2, le_antisymm (fun f hf => ?_)
-    (Ideal.span_le.mpr fun f hf => hf.1)⟩
-  choose g hgW hg using fun a : K → ℕ => exists_blockComponent hW a Finset.univ hf
-  have hsum : f = ∑ a ∈ f.support.image (fun m k => ∑ i, m ⟨k, i⟩), g a := by
-    ext m
-    rw [coeff_sum]
-    have e : ∀ a : K → ℕ,
-        AddMonoidAlgebra.coeff (g a) m = if (fun k => ∑ i, m ⟨k, i⟩) = a then AddMonoidAlgebra.coeff f m else 0 := by
-      intro a
-      rw [hg a]
-      by_cases h : (fun k => ∑ i, m ⟨k, i⟩) = a
-      · subst h
-        simp
-      · rw [if_neg h, if_neg]
-        intro h'
-        exact h (funext fun k => h' k (Finset.mem_univ k))
-    simp_rw [e]
-    rw [Finset.sum_ite_eq]
-    split_ifs with hm
-    · rfl
-    · by_contra hne
-      exact hm (Finset.mem_image_of_mem _ (mem_support_iff.mpr hne))
-  rw [hsum]
-  refine Ideal.sum_mem _ fun a _ => Ideal.subset_span ⟨hgW a, a, fun m hm k => ?_⟩
-  rw [mem_support_iff, hg a] at hm
-  by_contra hk
-  exact hm (if_neg fun h => hk (h k (Finset.mem_univ k)))
+  apply _root_.ReciprocityTheory.ChartRestriction.G.AI.I1.cyc_isMultiHomogIdeal_of_isHomogeneous <;> assumption
 
 theorem isMultiHomogIdeal_of_mem_minimalPrimes {P W : Ideal (MRing ι)} {s : MRing ι} {a : K → ℕ}
     (hP : IsMultiHomogIdeal P) (hs : IsMultiHomog s a)

@@ -98,10 +98,6 @@ theorem Fr.adj (h : Fr s J J' P Q x y) {a b : ℕ} {U : Matrix (Fin n) (Fin a) R
   have := congrArg (cT s) e
   rwa [cT_mul, cT_mul, h.cc, h.herm, cT_zero, ← Matrix.mul_assoc] at this
 
-theorem Fr.yx (h : Fr s J J' P Q x y) : cT s y * J * x = 1 := by
-  have := congrArg (cT s) h.xy
-  rwa [cT_mul, cT_mul, h.cc, h.herm, cT_one, ← Matrix.mul_assoc] at this
-
 theorem Fr.Px (h : Fr s J J' P Q x y) : cT s P * J * x = 0 := h.adj h.xP
 theorem Fr.Py (h : Fr s J J' P Q x y) : cT s P * J * y = 0 := h.adj h.yP
 
@@ -853,7 +849,6 @@ theorem Fr.dec (hσ : IsCMExt F E σ) (hJ : IsHermND σ J) (hW : IsWittFrame σ 
 end Adelic3
 
 open NumberField MeasureTheory Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet PositivityTheory.ThKR GlobalTheory.CompanionTheory.RedCov
-open Formalism.UG (cT)
 open scoped TensorProduct NNReal ENNReal
 
 theorem exists_levi : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (n : ℕ) (J : Matrix (Fin n) (Fin n) E), IsHermND σ J → ∀ (r : ℕ) (X Y : Matrix (Fin n) (Fin (r + 1)) E), IsWittFrame σ J X Y → ∃ (n' : ℕ) (J' : Matrix (Fin n') (Fin n') E) (X' Y' : Matrix (Fin n') (Fin r) E) (ι : GAd σ J' →* GAd σ J), IsHermND σ J' ∧ IsWittFrame σ J' X' Y' ∧ Continuous ι ∧ (∀ γ ∈ ratPts σ J', ι γ ∈ ratPts σ J) ∧ (∀ g', Sends σ J (ι g') (Xᵀ 0) (Xᵀ 0)) ∧ (∀ q ∈ minParOne σ J' X', ι q ∈ minParOne σ J X) ∧ ∀ a, IsTorus σ J X Y a → (∀ a', IsTorus σ J' X' Y' a' → ∀ s', ι (a' s') = a (Fin.cons 0 s')) ∧ (∀ (s₁ : ℝ) g', Commute (a (Fin.cons s₁ 0)) (ι g')) ∧ ∀ p ∈ minPar σ J X, ∃ g', ∃ q₀ ∈ minParOne σ J X, ∃ s₁ : ℝ, p = q₀ * a (Fin.cons s₁ 0) * ι g' ∧ ∀ h', (ι h')⁻¹ * q₀ * ι h' ∈ minParOne σ J X := by

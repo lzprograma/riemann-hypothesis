@@ -87,7 +87,7 @@ private theorem dbl (μ : Measure G) [μ.IsHaarMeasure] (K : Subgroup G) (hKo : 
     ⟨_, hA.mem_toFinset.2 ⟨1, K.one_mem, rfl⟩⟩, fun x hx => (hr x (hA.mem_toFinset.1 hx)).1, ?_, ?_, fun F hF => ?_⟩
   · exact Complex.ofReal_ne_zero.2 (ENNReal.toReal_ne_zero.2 ⟨hpos, hfin⟩)
   · refine HasCompactSupport.intro ((hKc.prod hKc).image
-      (f := fun p : G × G => p.1 * g * p.2) (by fun_prop)) fun y hy => if_neg ?_
+      (f := fun p : G × G => p.1 * g * p.2) (by fun_prop)) fun y hy => ite_eq_right ?_
     rintro ⟨k, hk, e⟩
     exact hy ⟨(k, (k * g)⁻¹ * y), ⟨hk, QuotientGroup.eq.1 e⟩, mul_inv_cancel_left _ _⟩
   · intro k₁ h₁ k₂ h₂ y
@@ -106,12 +106,12 @@ private theorem dbl (μ : Measure G) [μ.IsHaarMeasure] (K : Subgroup G) (hKo : 
         ∑ x ∈ hA.toFinset, (C x).indicator (fun _ => F (r x * g)) y := fun y => by
       by_cases hy : (y : G ⧸ K) ∈ A
       · have hm := (hC _ hy y).2 rfl
-        rw [if_pos hy, one_mul, Finset.sum_eq_single (y : G ⧸ K), Set.indicator_of_mem hm]
+        rw [ite_eq_left hy, one_mul, Finset.sum_eq_single (y : G ⧸ K), Set.indicator_of_mem hm]
         · rw [← hF (r y * g) _ hm, mul_inv_cancel_left]
         · exact fun x hx hne => Set.indicator_of_notMem
             (fun h => hne ((hC x (hA.mem_toFinset.1 hx) y).1 h).symm) _
         · exact fun h => (h (hA.mem_toFinset.2 hy)).elim
-      · rw [if_neg hy, zero_mul]
+      · rw [ite_eq_right hy, zero_mul]
         refine (Finset.sum_eq_zero fun x hx => Set.indicator_of_notMem (fun h => hy ?_) _).symm
         rw [(hC x (hA.mem_toFinset.1 hx) y).1 h]
         exact hA.mem_toFinset.1 hx

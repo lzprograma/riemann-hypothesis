@@ -1,5 +1,7 @@
 module
 
+import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.TransportFirstLevel
+import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.FirstKernelSmallOfFrameTwist
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaRestSExpV
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.DworkExponentialRestrictions
 import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.AllPlacesOfRestrictions
@@ -7,45 +9,7 @@ import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.AtPiEqRescale
 import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.InParamMap
 import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.IntRPsubst
 import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NatCastInvMemRp
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -68,22 +32,8 @@ private theorem subst_C_mul_lgF_eq_C_mul_X_of_inverse (K' : Type) [Field K'] [Al
     (h1 : (PowerSeries.subst μ (lamF p vp) : PowerSeries K') = PowerSeries.X) :
     (PowerSeries.subst (PowerSeries.C vp * μ) (lgF K' p) : PowerSeries K') =
       PowerSeries.C vp * PowerSeries.X := by
-  have hμ : PowerSeries.HasSubst μ := PowerSeries.HasSubst.of_constantCoeff_zero' h0
-  have hl0 : PowerSeries.coeff 0 (lgF K' p) = 0 := by
-    rw [PowerSeries.coeff_zero_eq_constantCoeff_apply]; exact lgF_const p K'
-  have hr : PowerSeries.rescale vp (lgF K' p) = PowerSeries.C vp * lamF p vp := by
-    ext n
-    rcases n with _ | n
-    · rw [PowerSeries.coeff_rescale, hl0, PowerSeries.coeff_C_mul]
-      simp [lamF, hl0]
-    · simp [lamF, PowerSeries.coeff_rescale, pow_succ]
-      ring
-  have hs : (PowerSeries.subst μ (vp • PowerSeries.X : PowerSeries K') : PowerSeries K') =
-      PowerSeries.C vp * μ := by
-    rw [PowerSeries.subst_smul hμ, PowerSeries.subst_X hμ, PowerSeries.smul_eq_C_mul]
-  rw [← hs, ← PowerSeries.subst_comp_subst_apply (PowerSeries.HasSubst.smul_X' vp) hμ,
-    ← PowerSeries.rescale_eq_subst, hr, PowerSeries.subst_mul hμ, h1, PowerSeries.subst_C]
-  rfl
+  intros
+  apply _root_.Formalism.L2.Th1.D.CohomologyFunctoriality₂.log_scale <;> assumption
 
 private theorem subst_C_mul_map_eq_subst_tOf_map_inParam {σ τ : Type} [Finite σ] (K' : Type) [Field K'] [Algebra (K0 p) K'] (vp : K')
     (μ : PowerSeries K') (h0 : PowerSeries.constantCoeff μ = 0)
@@ -277,18 +227,7 @@ theorem ea_reduce {σ τ A : Type} [Finite σ] [Fintype A] (a b : A → σ) (be 
       map_mul, MvPowerSeries.subst_mul hT, th_map_expK, map_neg]
 
 theorem ea_Simeq_refl {σ : Type} [Finite σ] (f : MvPowerSeries σ (K0 p)) : Simeq p f f := by
-  refine ⟨by simp, 0, by simp, ?_⟩
-  have h0 : inParam p (f - f) = 0 := by
-    rw [th_inParam_sub]; exact sub_self _
-  rw [h0, map_zero, add_zero]
-  ext n
-  change (∑ k ∈ Finset.range (Finsupp.degree n + 1), ((k.factorial : K0 p))⁻¹ *
-    MvPowerSeries.coeff n ((0 : MvPowerSeries σ (K0 p)) ^ k)) = _
-  rw [Finset.sum_eq_single 0]
-  · simp
-  · intro k _ hk
-    simp [zero_pow hk]
-  · intro h; simp at h
+  apply _root_.Formalism.L2.KerInert.K1.simeq_refl' <;> assumption
 
 end Reduce
 

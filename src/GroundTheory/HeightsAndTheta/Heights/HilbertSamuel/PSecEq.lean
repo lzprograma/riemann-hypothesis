@@ -98,9 +98,9 @@ theorem swap_mem {a : K → ℕ} (μ : Mono ι a) (k : K) (i₀ i : ι k) (h : �
   intro i' _
   by_cases hq : (⟨k, i₀⟩ : Σ k, ι k) = ⟨k', i'⟩
   · cases hq
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     omega
-  · rw [if_neg hq]
+  · rw [ite_eq_right hq]
     exact Nat.zero_le _
 
 theorem monVal_swap (y : (Σ k, ι k) → Ω) (μ : (Σ k, ι k) → ℕ) (q p : Σ k, ι k) (h : μ q ≠ 0) :
@@ -112,9 +112,9 @@ theorem monVal_swap (y : (Σ k, ι k) → Ω) (μ : (Σ k, ι k) → ℕ) (q p :
   rw [← pow_add, ← pow_add, swap, Nat.sub_add_cancel]
   by_cases h1 : q = r
   · subst h1
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     omega
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
     exact Nat.zero_le _
 
 def pure (c : ∀ k, ι k) (a : K → ℕ) : Mono ι a :=

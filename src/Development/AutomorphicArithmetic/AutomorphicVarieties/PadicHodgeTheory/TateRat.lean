@@ -35,76 +35,20 @@ public import ReciprocityTheory.GroupCohomology.IsLowExists
 public import ReciprocityTheory.GroupCohomology.Localise
 public import ReciprocityTheory.GroupCohomology.ContinuousContractNth
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.LinearAlgebra.FreeProduct.Basic
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.NumberTheory.Padics.LocalField
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
 import Formalism.WeaklyAdmissibleFiltrations.Statement
 import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
 import Mathlib.FieldTheory.Galois.Profinite
-import Mathlib.RingTheory.PicardGroup
 import Mathlib.RingTheory.Valuation.Integral
 import Mathlib.Topology.Connected.Separation
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import Mathlib.NumberTheory.Padics.ProperSpace
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.TotallySplit
 import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-import Mathlib.Topology.Separation.CompletelyRegular
 import ReciprocityTheory.GroupCohomology.IsSuccSubset
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -269,53 +213,6 @@ private theorem exists_pow_mul_norm_le {l : ℕ} [Fact l.Prime] (C : ℝ) :
   have hp : (0 : ℝ) < (l : ℝ) ^ m := by positivity
   rw [norm_mul, norm_pow, Padic.norm_p, inv_pow, inv_mul_le_iff₀ hp, mul_one]
   exact ha.trans hm.le
-
-private theorem exists_lattice {l : ℕ} [Fact l.Prime] {G : Type} [Group G] [TopologicalSpace G] [CompactSpace G]
-    {V : Type} [AddCommGroup V] [Module ℚ_[l] V] [Module ℤ_[l] V] [IsScalarTower ℤ_[l] ℚ_[l] V]
-    [FiniteDimensional ℚ_[l] V] [TopologicalSpace V] [IsModuleTopology ℚ_[l] V]
-    (ρ : Representation ℚ_[l] G V) (h : ContAction ρ) :
-    ∃ L : Submodule ℤ_[l] V, Submodule.IsLattice ℚ_[l] L ∧ ∀ g, ∀ x ∈ L, ρ g x ∈ L := by
-  classical
-  let b := Module.finBasis ℚ_[l] V
-  let S : Set V := Set.range fun p : G × Fin (finrank ℚ_[l] V) => ρ p.1 (b p.2)
-  have hc : Continuous fun g : G => fun i => b.equivFun (ρ g (b i)) := by
-    refine continuous_pi fun i => ?_
-    exact (IsModuleTopology.continuous_of_linearMap b.equivFun.toLinearMap).comp
-      (h.comp (continuous_id.prodMk continuous_const))
-  obtain ⟨C, hC⟩ := (isCompact_range hc).isBounded.exists_norm_le
-  obtain ⟨m, hm⟩ := exists_pow_mul_norm_le (l := l) C
-  have hl : ((l : ℚ_[l]) ^ m) ≠ 0 := pow_ne_zero _ (by exact_mod_cast (Fact.out : l.Prime).ne_zero)
-  refine ⟨Submodule.span ℤ_[l] S, ⟨?_, ?_⟩, ?_⟩
-  · let N : Submodule ℤ_[l] V := Submodule.span ℤ_[l] (Set.range fun i => ((l : ℚ_[l]) ^ m)⁻¹ • b i)
-    have hN : N.FG := Submodule.fg_span (Set.finite_range _)
-    refine hN.of_le ?_
-    rw [Submodule.span_le]
-    rintro _ ⟨⟨g, i⟩, rfl⟩
-    have e := b.sum_repr (ρ g (b i))
-    simp only [SetLike.mem_coe]
-    rw [← e]
-    refine Submodule.sum_mem _ fun k _ => ?_
-    have hk : ‖b.repr (ρ g (b i)) k‖ ≤ C :=
-      ((norm_le_pi_norm (b.equivFun (ρ g (b i))) k).trans
-        (norm_le_pi_norm (fun i => b.equivFun (ρ g (b i))) i)).trans (hC _ ⟨g, rfl⟩)
-    let z : ℤ_[l] := ⟨_, hm _ hk⟩
-    have : b.repr (ρ g (b i)) k • b k = z • (((l : ℚ_[l]) ^ m)⁻¹ • b k) := by
-      rw [← algebraMap_smul ℚ_[l] z, smul_smul]
-      congr 1
-      change _ = ((l : ℚ_[l]) ^ m * b.repr (ρ g (b i)) k) * _
-      field_simp
-    rw [this]
-    exact N.smul_mem z (Submodule.subset_span ⟨k, rfl⟩)
-  · intro s hs hli
-    exact (LinearIndependent.iff_fractionRing ℤ_[l] ℚ_[l]).mp hli
-  · intro g x hx
-    induction hx using Submodule.span_induction with
-    | mem x hx =>
-      obtain ⟨⟨g', i⟩, rfl⟩ := hx
-      exact Submodule.subset_span ⟨(g * g', i), by simp⟩
-    | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
-    | smul a x _ hx => rw [LinearMap.map_smul_of_tower]; exact Submodule.smul_mem _ a hx
 
 theorem UpperTheory.exists_invariant_lattice_openEmbedding :
     ∀ {l : ℕ} [Fact l.Prime] {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] {V : Type} [AddCommGroup V] [Module ℚ_[l] V] [Module ℤ_[l] V] [IsScalarTower ℤ_[l] ℚ_[l] V] [FiniteDimensional ℚ_[l] V] [TopologicalSpace V] [IsModuleTopology ℚ_[l] V] [IsTopologicalAddGroup V] [ContinuousConstSMul ℚ_[l] V] (ρ : Representation ℚ_[l] G V), ContAction ρ → ∃ (ρT : Representation ℤ_[l] G (Fin (finrank ℚ_[l] V) → ℤ_[l])) (j : (Fin (finrank ℚ_[l] V) → ℤ_[l]) →ₗ[ℤ_[l]] V), ContAction ρT ∧ IsOpenEmbedding j ∧ (∀ g x, j (ρT g x) = ρ g (j x)) ∧ ∀ y : V, ∃ m : ℕ, (l : ℤ_[l]) ^ m • y ∈ LinearMap.range j := by
@@ -593,7 +490,7 @@ theorem UpperTheory.finiteLevel_cyclotomic_of_openEmbedding :
   have hK := K.2
   by_cases hvl : v = l
   · subst hvl
-    rw [if_pos rfl, hi]
+    rw [ite_eq_left rfl, hi]
     obtain ⟨hf, hf'⟩ := GlobalTheory.fixingSubgroupEquiv_bicontinuous ℚ_[v] (PadicAlgCl v) K.1
     let ε : G ≃* Formalism.GaloisCohomology.GK v K.1 := e.trans (IntermediateField.fixingSubgroupEquiv K.1)
     have hε : Continuous ε := hf.comp he
@@ -606,7 +503,7 @@ theorem UpperTheory.finiteLevel_cyclotomic_of_openEmbedding :
       (P.leK v K.1 hK r M σ hr hσ)
     simp only [MonoidHom.comp_apply, ← hc']
     rfl
-  · rw [if_neg hvl, pow_zero]
+  · rw [ite_eq_right hvl, pow_zero]
     let Ω := AlgebraicClosure ℚ
     have : IsAlgClosure ℚ Ω := AlgebraicClosure.instIsAlgClosure ℚ
     let j : Ω →+* PadicAlgCl v := (IsAlgClosed.lift (R := ℚ) (S := Ω) (M := PadicAlgCl v)).toRingHom

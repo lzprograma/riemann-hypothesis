@@ -69,14 +69,14 @@ private theorem one_orbit {T Y : Type} [Group T] [MulAction T Y] (C S : Subgroup
   refine ⟨Set.Subsingleton.finite fun o ho o' ho' => (key o ho).trans (key o' ho').symm, ?_⟩
   unfold wcount
   by_cases hP : P
-  · rw [if_pos hP, finsum_eq_single _ (Quotient.mk'' y₀)]
+  · rw [ite_eq_left hP, finsum_eq_single _ (Quotient.mk'' y₀)]
     · have hm : (Quotient.mk'' y₀ : orbitRel.Quotient T Y).out ∈ orbit T y₀ :=
         orbitRel_apply.1 (Quotient.eq''.1 (Quotient.out_eq' _))
       rw [ht _ hm, hv hP _ hm]
     · intro o ho
       have h0 : f o.out = 0 := by_contra fun h => ho (key o h)
       simp [h0]
-  · rw [if_neg hP]
+  · rw [ite_eq_right hP]
     have h0 : ∀ o : orbitRel.Quotient T Y, f o.out = 0 := fun o => by_contra fun h => hP (hs _ h).1
     simp [h0]
 

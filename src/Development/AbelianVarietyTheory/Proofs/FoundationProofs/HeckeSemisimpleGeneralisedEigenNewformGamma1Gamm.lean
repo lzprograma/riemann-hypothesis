@@ -398,7 +398,7 @@ theorem card_dvd_col_eq_one : ∀ (q : ℕ) (σ γ : SL(2, ℤ)), q.Prime →
       (q : ℤ) ∣ (tqFam q σ i * mat γ) 1 0) ↔ ((γ 1 0 : ℤ) : ZMod q) = 0) := by
     intro i hi
     rw [ZMod.intCast_zmod_eq_zero_iff_dvd]
-    simp only [tqFam, hi, if_false, Matrix.mul_assoc, dvd_col_SL_mul]
+    simp only [tqFam, hi, ite_false, Matrix.mul_assoc, dvd_col_SL_mul]
     simp [dg, Matrix.mul_apply, Fin.sum_univ_two]
   rw [Finset.card_eq_one]
   by_cases hc : ((γ 1 0 : ℤ) : ZMod q) = 0
@@ -442,7 +442,7 @@ theorem tendsto_slash_upper : ∀ (k : ℤ) (F : ℍ → ℂ) (c : ℂ) (g b d :
   have hd' : (0 : ℝ) < d := by exact_mod_cast hd
   set β := toGL !![g, b; 0, d] with hβ
   have hv : ∀ i j, (β : Matrix (Fin 2) (Fin 2) ℝ) i j = ((!![g, b; 0, d] : Matrix (Fin 2) (Fin 2) ℤ) i j : ℝ) := by
-    intro i j; simp only [hβ, toGL, hdet, dif_neg, not_false_eq_true]; rfl
+    intro i j; simp only [hβ, toGL, hdet, dite_eq_right, not_false_eq_true]; rfl
   have hD : β.det.val = (g : ℝ) * d := by
     simp [Matrix.det_fin_two, hv]
   have hpos : 0 < β.det.val := by rw [hD]; positivity
@@ -455,7 +455,7 @@ theorem tendsto_slash_upper : ∀ (k : ℤ) (F : ℍ → ℂ) (c : ℂ) (g b d :
       Complex.normSq_intCast]
     field_simp
   refine (((hF.comp hmap).const_mul (((g * d : ℤ) : ℂ) ^ (k - 1) * ((d : ℤ) : ℂ) ^ (-k)))).congr (fun τ => ?_)
-  rw [ModularForm.slash_apply, hden, hD, abs_of_pos (mul_pos hg' hd'), UpperHalfPlane.σ, if_pos hpos]
+  rw [ModularForm.slash_apply, hden, hD, abs_of_pos (mul_pos hg' hd'), UpperHalfPlane.σ, ite_eq_left hpos]
   simp
   ring
 
@@ -572,8 +572,8 @@ theorem tq_sum_tendsto (N l : ℕ) (k : ℤ) (q : ℕ) (hq : q.Prime) (hN : 0 < 
   let u : Fin (q + 1) → SL(2, ℤ) := fun i => if (i : ℕ) < q then ModularGroup.T ^ ((i : ℕ) : ℤ) else σ
   have hu : ∀ i, u i ∈ Lev N l := fun i => by
     by_cases h : (i : ℕ) < q
-    · simp only [u, h, if_true]; exact T_zpow_mem_lev N l _
-    · simp only [u, h, if_false]; exact hσ
+    · simp only [u, h, ite_true]; exact T_zpow_mem_lev N l _
+    · simp only [u, h, ite_false]; exact hσ
   have hdet : ∀ i, (tqFam q σ i).det = q := fun i => by
     by_cases h : (i : ℕ) < q
     · simp [tqFam, h, Matrix.det_fin_two_of]
@@ -581,9 +581,9 @@ theorem tq_sum_tendsto (N l : ℕ) (k : ℤ) (q : ℕ) (hq : q.Prime) (hN : 0 < 
   have hqM' : (N : ℤ) * l ∣ (q : ℤ) - 1 := by exact_mod_cast hqM
   have hcong : ∀ i a b, ((N * l : ℕ) : ℤ) ∣ tqFam q σ i a b - mat (u i) a b := fun i a b => by
     by_cases h : (i : ℕ) < q
-    · simp only [tqFam, u, h, if_true, mat, ModularGroup.coe_T_zpow]
+    · simp only [tqFam, u, h, ite_true, mat, ModularGroup.coe_T_zpow]
       fin_cases a <;> fin_cases b <;> simp [hqM']
-    · simp only [tqFam, u, h, if_false]
+    · simp only [tqFam, u, h, ite_false]
       fin_cases a <;> fin_cases b <;>
         simp [mat, dg, Matrix.mul_apply, Fin.sum_univ_two, ← mul_sub_one, Dvd.dvd.mul_left hqM']
   have hdec := fun i => slash_decomp N l k q hq hM hqM f (tqFam q σ i) (u i) (hu i) (hdet i) (hcong i) γ
@@ -597,12 +597,12 @@ theorem tq_sum_tendsto (N l : ℕ) (k : ℤ) (q : ℕ) (hq : q.Prime) (hN : 0 < 
     by_cases h : P i
     · have := tendsto_slash_upper k _ c q (b i) 1 (by exact_mod_cast hq.pos) one_pos hF
       simp only [P] at h
-      simp only [v, P, h, and_self, if_true]
+      simp only [v, P, h, and_self, ite_true]
       convert this using 2
       push_cast; simp
     · have := tendsto_slash_upper k _ c 1 (b i) q one_pos (by exact_mod_cast hq.pos) hF
       simp only [P] at h
-      simp only [v, P, h, if_false]
+      simp only [v, P, h, ite_false]
       convert this using 2
       push_cast
       rw [one_mul, ← zpow_add₀ hq0, show k - 1 + -k = -1 by ring, zpow_neg_one]

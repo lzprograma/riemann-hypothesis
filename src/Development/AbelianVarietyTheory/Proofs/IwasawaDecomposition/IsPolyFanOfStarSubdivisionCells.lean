@@ -73,7 +73,7 @@ theorem inRCone_of_range_subset {X : Type} [AddCommGroup X] {m m' : ℕ} {γ : F
   simp only [Finset.sum_smul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [Finset.sum_eq_single (j i) (fun k _ hk => by rw [if_neg (Ne.symm hk), zero_smul]) (by simp), if_pos rfl, hj]
+  rw [Finset.sum_eq_single (j i) (fun k _ hk => by rw [ite_eq_right (Ne.symm hk), zero_smul]) (by simp), ite_eq_left rfl, hj]
 
 theorem evalZ_zero_form {O : Type} [CommRing O] (φ : InvFun O) {X : Type} [AddCommGroup X] [Module O X]
     [Module.Finite O X] : φ.evalZ (0 : LinearMap.BilinForm ℤ X) = 0 := by

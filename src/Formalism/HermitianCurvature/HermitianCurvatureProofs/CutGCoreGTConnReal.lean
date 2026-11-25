@@ -9,53 +9,9 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSS
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSConst
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSTr
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGenTransferFn
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 public import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -232,7 +188,7 @@ theorem v_pj (hk : KapF P Bs d e) (W : Q.RadSp P.k P.r Bs.z Bs.z' Bs.π Bs.π') 
     rawR P Bs.μsec e (((Formalism.FourierDecayAlt.P.NFx4.NO.Pj d ρ).1 W : Q.RadSp P.k P.r Bs.z Bs.z' Bs.π Bs.π') : Q.Fn P.k P.r (Wq →L[ℂ] Wp)) ρ q =
       rawR P Bs.μsec e (W : Q.Fn P.k P.r (Wq →L[ℂ] Wp)) ρ q := by
   have h := SSAdjH.kap_pt P Bs hH.1 hH.2.1 e he d hk (fun σ => if σ = ρ then (1 : ℂ) else 0) W ρ q
-  simp only [if_true, one_mul] at h
+  simp only [ite_true, one_mul] at h
   exact h
 
 theorem blk (hk : KapF P Bs d e) (A Bf : M.Ty P → ℂ → ℂ) (hAB : SmAB P A Bf) (hC : ConnF P Bs d e A Bf)
@@ -249,7 +205,7 @@ theorem blk (hk : KapF P Bs d e) (A Bf : M.Ty P → ℂ → ℂ) (hAB : SmAB P A
   have hRel := hH.2.2.2.2.2.1
   have hQ := hH.2.2.2.2.2.2
   have hΦρ : ∀ q : MA.Qp P.r P.TT, rawR P Bs.μsec e (Φ : Q.Fn P.k P.r (Wq →L[ℂ] Wp)) ρ q = F q.1.2 := by
-    intro q'; rw [hΦr ρ q', if_pos rfl, one_mul]
+    intro q'; rw [hΦr ρ q', ite_eq_left rfl, one_mul]
   have hgg : ((Complex.normSq q.1.2 : ℂ) - (P.TT : ℂ)) ≠ 0 := by
     have h2 := q.2.2
     intro h0
@@ -391,8 +347,8 @@ theorem gauge_reality_holds : GTCReal := by
       have hp := SSAdjH.hs_pair P Bs hpl hk2 e he (X.t (Yr : ℂ) 1 0 Φ) Ψ q
       refine hp.trans ?_
       rw [Finset.sum_eq_single ρ]
-      · rw [hΨr ρ q, if_pos rfl, one_mul, (blk P Bs X d hH e he hk A Bf hAB hC ρ (Yr : ℂ) F hF.contDiffOn Φ hΦr hΦP q).1]
-      · intro σ _ hσ; rw [hΨr σ q, if_neg hσ, zero_mul, mul_zero]
+      · rw [hΨr ρ q, ite_eq_left rfl, one_mul, (blk P Bs X d hH e he hk A Bf hAB hC ρ (Yr : ℂ) F hF.contDiffOn Φ hΦr hΦP q).1]
+      · intro σ _ hσ; rw [hΨr σ q, ite_eq_right hσ, zero_mul, mul_zero]
       · intro h0; exact absurd (Finset.mem_univ _) h0
     have eR : Set.EqOn (fun ζ => (((wR P.k P.TT ζ) ^ 2 : ℝ) : ℂ) *
         inner ℂ (B.hsVec ((Φ : Q.Fn P.k P.r (Wq →L[ℂ] Wp)) c0 (NF.muZ P.k P.r Bs.μsec ζ)))
@@ -405,8 +361,8 @@ theorem gauge_reality_holds : GTCReal := by
       have hp := SSAdjH.hs_pair P Bs hpl hk2 e he Φ (X.t (Yr : ℂ) 0 1 Ψ) q
       refine hp.trans ?_
       rw [Finset.sum_eq_single ρ]
-      · rw [hΦr ρ q, if_pos rfl, one_mul, (blk P Bs X d hH e he hk A Bf hAB hC ρ (Yr : ℂ) G hG.contDiffOn Ψ hΨr hΨP q).2]
-      · intro σ _ hσ; rw [hΦr σ q, if_neg hσ, zero_mul, star_zero, zero_mul]
+      · rw [hΦr ρ q, ite_eq_left rfl, one_mul, (blk P Bs X d hH e he hk A Bf hAB hC ρ (Yr : ℂ) G hG.contDiffOn Ψ hΨr hΨP q).2]
+      · intro σ _ hσ; rw [hΦr σ q, ite_eq_right hσ, zero_mul, star_zero, zero_mul]
       · intro h0; exact absurd (Finset.mem_univ _) h0
     rw [setIntegral_congr_fun (ann_open P).measurableSet eL, setIntegral_congr_fun (ann_open P).measurableSet eR]
       at radj

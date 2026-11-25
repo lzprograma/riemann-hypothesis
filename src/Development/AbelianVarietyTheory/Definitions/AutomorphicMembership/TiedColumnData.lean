@@ -54,8 +54,6 @@ namespace GlobalTheory.Mem.Top.Bl
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.Host GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top.GroupRetwisting NumberField IsDedekindDomain
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Rec
 
 open Formalism.MainNotions.G Formalism.UG Formalism.L2.Forms Formalism.L2.G
@@ -162,7 +160,6 @@ structure ThT {w : ColW B f T} {Z : w.Lt} {Wt : Set B.places.Pl} {nch : NChoice 
     Type 1 where
   provA : TH.ProvA
   all : Formalism.L2.Theta.AllTied (w.D Z) th provA
-  weq : Formalism.L2.Theta.WeilCompatibleEquivariance all.W
   chr : ThetaChrTied (w.D Z) (TC.cf w.I w.l Z) nch n.tp th
   same : Formalism.L2.JoinChr.SameChr all.T chr
   std : Formalism.L2.Theta.IsStdChar (w.D Z) all.W.ψ (-1)

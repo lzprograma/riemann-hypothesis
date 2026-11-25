@@ -1,44 +1,6 @@
 module
 
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.OrderReductionAlgorithm
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -49,155 +11,6 @@ open CategoryTheory AlgebraicGeometry
 noncomputable section
 
 namespace FunctorialResolution.EmbeddedResolution
-
-private theorem comap_eqToHom_self {X : Scheme.{u}} (h : X = X) (J : X.IdealSheafData) :
-    J.comap (eqToHom h) = J := by
-  simp
-
-private theorem comap_eqToHom_trans {X Y Z : Scheme.{u}} (h1 : X = Y) (h2 : Y = Z)
-    (J : Z.IdealSheafData) :
-    (J.comap (eqToHom h2)).comap (eqToHom h1) = J.comap (eqToHom (h1.trans h2)) := by
-  subst h1
-  subst h2
-  simp
-
-private theorem map_comap_eqToHom_self {X : Scheme.{u}} (h : X = X) (L : List X.IdealSheafData) :
-    List.map (fun D => D.comap (eqToHom h)) L = L := by
-  induction L with
-  | nil => rfl
-  | cons a l ih => rw [List.map_cons, ih, comap_eqToHom_self]
-
-private theorem map_comap_eqToHom_trans {X Y Z : Scheme.{u}} (h1 : X = Y) (h2 : Y = Z)
-    (L : List Z.IdealSheafData) :
-    List.map (fun D => D.comap (eqToHom h1)) (List.map (fun D => D.comap (eqToHom h2)) L)
-      = List.map (fun D => D.comap (eqToHom (h1.trans h2))) L := by
-  induction L with
-  | nil => rfl
-  | cons a l ih =>
-    rw [List.map_cons, List.map_cons, List.map_cons, ih, comap_eqToHom_trans]
-
-private theorem eq_eqToHom_comp_of_eq_eqToHom_symm_comp {A B C : Scheme.{u}} (f : A ⟶ C) (g : B ⟶ C) (h : A = B)
-    (hg : g = eqToHom h.symm ≫ f) : f = eqToHom h ≫ g := by
-  subst h
-  simp only [eqToHom_refl, Category.id_comp] at hg ⊢
-  exact hg.symm
-
-private theorem blowupSequenceData_center_eq_comap_eqToHom {X : Scheme.{u}} {d d' : BlowupSequenceData X} (hd : d = d')
-    (i : ℕ) (hobj : d.obj i = d'.obj i) :
-    d.center i = (d'.center i).comap (eqToHom hobj) := by
-  subst hd
-  exact (comap_eqToHom_self hobj _).symm
-
-private theorem blowupSequenceData_blowupMorphism_comp_eqToHom {X : Scheme.{u}} {d d' : BlowupSequenceData X} (hd : d = d')
-    (i : ℕ) (h0 : d.obj i = d'.obj i) (h1 : d.obj (i + 1) = d'.obj (i + 1)) :
-    d.map i ≫ eqToHom h0 = eqToHom h1 ≫ d'.map i := by
-  subst hd
-  simp
-
-private theorem comp_eqToHom_eq_eqToHom_comp_of_eqToHom_conj {A B A' B' A'' B'' : Scheme.{u}}
-    (f : A ⟶ B) (M : A'' ⟶ B'') (N : A' ⟶ B')
-    (c0 : B'' = B') (c1 : A'' = A') (a : A' = A) (b : B = B')
-    (hi0 : B = B'') (hi1 : A = A'')
-    (key0 : M ≫ eqToHom c0 = eqToHom c1 ≫ N)
-    (L : N = eqToHom a ≫ f ≫ eqToHom b) :
-    f ≫ eqToHom hi0 = eqToHom hi1 ≫ M := by
-  subst b
-  subst c0
-  subst a
-  subst c1
-  simp only [eqToHom_refl, Category.comp_id, Category.id_comp] at key0 L ⊢
-  exact L.symm.trans key0.symm
-
-namespace MarkedBlowupSequenceData
-
-variable {k : Type u} [Field k] {X : Scheme.{u}} {p : X ⟶ Spec (CommRingCat.of k)}
-  {I : X.IdealSheafData} {m : ℕ} {E : List X.IdealSheafData}
-
-structure IsPrefix (s t : MarkedBlowupSequenceData p I m E) : Prop where
-  length_le : s.length ≤ t.length
-  obj_eq : ∀ i ≤ s.length, s.obj i = t.obj i
-  proj_eq : ∀ (i : ℕ) (hi : i ≤ s.length), s.proj i = eqToHom (obj_eq i hi) ≫ t.proj i
-  ideal_eq : ∀ (i : ℕ) (hi : i ≤ s.length),
-    s.ideal i = (t.ideal i).comap (eqToHom (obj_eq i hi))
-  boundary_eq : ∀ (i : ℕ) (hi : i ≤ s.length),
-    s.boundary i = List.map (fun D => D.comap (eqToHom (obj_eq i hi))) (t.boundary i)
-  center_eq : ∀ (i : ℕ) (hi : i < s.length),
-    s.center i = (t.center i).comap (eqToHom (obj_eq i (Nat.le_of_lt hi)))
-  map_eq : ∀ (i : ℕ) (hi : i < s.length),
-    s.map i ≫ eqToHom (obj_eq i (Nat.le_of_lt hi)) =
-      eqToHom (obj_eq (i + 1) (Nat.succ_le_of_lt hi)) ≫ t.map i
-
-theorem IsPrefix.refl (s : MarkedBlowupSequenceData p I m E) : s.IsPrefix s := by
-  refine ⟨le_rfl, fun _ _ => rfl, ?_, ?_, ?_, ?_, ?_⟩
-  · intro i hi
-    simp
-  · intro i hi
-    exact (comap_eqToHom_self _ _).symm
-  · intro i hi
-    exact (map_comap_eqToHom_self _ _).symm
-  · intro i hi
-    exact (comap_eqToHom_self _ _).symm
-  · intro i hi
-    simp
-
-theorem IsPrefix.trans {s t r : MarkedBlowupSequenceData p I m E} (h : s.IsPrefix t)
-    (h' : t.IsPrefix r) : s.IsPrefix r := by
-  have hlen : s.length ≤ t.length := h.length_le
-  have hobj : ∀ i ≤ s.length, s.obj i = r.obj i := fun i hi =>
-    (h.obj_eq i hi).trans (h'.obj_eq i (hi.trans hlen))
-  refine ⟨hlen.trans h'.length_le, hobj, ?_, ?_, ?_, ?_, ?_⟩
-  · intro i hi
-    rw [h.proj_eq i hi, h'.proj_eq i (hi.trans hlen), ← Category.assoc, eqToHom_trans]
-  · intro i hi
-    rw [h.ideal_eq i hi, h'.ideal_eq i (hi.trans hlen), comap_eqToHom_trans]
-  · intro i hi
-    rw [h.boundary_eq i hi, h'.boundary_eq i (hi.trans hlen), map_comap_eqToHom_trans]
-  · intro i hi
-    rw [h.center_eq i hi, h'.center_eq i (lt_of_lt_of_le hi hlen), comap_eqToHom_trans]
-  · intro i hi
-    have hi' : i < t.length := lt_of_lt_of_le hi hlen
-    rw [← eqToHom_trans (h.obj_eq i (Nat.le_of_lt hi)) (h'.obj_eq i (Nat.le_of_lt hi')),
-      ← eqToHom_trans (h.obj_eq (i + 1) (Nat.succ_le_of_lt hi))
-        (h'.obj_eq (i + 1) (Nat.succ_le_of_lt hi')),
-      ← Category.assoc, h.map_eq i hi, Category.assoc, h'.map_eq i hi', ← Category.assoc]
-
-theorem isPrefix_append (s : MarkedBlowupSequenceData p I m E)
-    (t : MarkedBlowupSequenceData (s.proj s.length ≫ p) (s.ideal s.length) m (s.boundary s.length))
-    (hinv : ComapIsoInvariance.{u}) : s.IsPrefix (s.append t hinv) := by
-  have hobj : ∀ i ≤ s.length, s.obj i = (s.append t hinv).obj i := fun i hi =>
-    (s.append_schemeAt_of_le_length t hinv hi).symm
-  have hbd : (s.append t hinv).toBlowupSequenceData = s.appendToBlowupSequenceData t := s.append_toBlowupSequenceData t hinv
-  refine ⟨?_, hobj, ?_, ?_, ?_, ?_, ?_⟩
-  · rw [MarkedBlowupSequenceData.append_length]
-    exact Nat.le_add_right _ _
-  · intro i hi
-    have key : (s.append t hinv).proj i = eqToHom (hobj i hi).symm ≫ s.proj i := by
-      rw [s.append_projectionToBase t hinv i]
-      exact s.appendProjectionToBase_of_le_length t hi
-    exact eq_eqToHom_comp_of_eq_eqToHom_symm_comp (s.proj i) ((s.append t hinv).proj i) (hobj i hi) key
-  · intro i hi
-    have key : (s.append t hinv).ideal i = (s.ideal i).comap (eqToHom (hobj i hi).symm) := by
-      rw [s.append_ideal t hinv i]
-      exact s.appendIdeal_of_le_length t hi
-    rw [key, comap_eqToHom_trans, comap_eqToHom_self]
-  · intro i hi
-    have key : (s.append t hinv).boundary i =
-        List.map (fun D => D.comap (eqToHom (hobj i hi).symm)) (s.boundary i) := by
-      rw [s.append_boundary t hinv i]
-      exact s.appendBoundary_of_le_length t hi
-    rw [key, map_comap_eqToHom_trans, map_comap_eqToHom_self]
-  · intro i hi
-    rw [blowupSequenceData_center_eq_comap_eqToHom hbd i (congrArg (fun d => BlowupSequenceData.obj d i) hbd),
-      s.appendToBlowupSequenceData_center_of_lt_length t hi, comap_eqToHom_trans, comap_eqToHom_trans, comap_eqToHom_self]
-  · intro i hi
-    have c0 : (s.append t hinv).obj i = (s.appendToBlowupSequenceData t).obj i :=
-      congrArg (fun d => BlowupSequenceData.obj d i) hbd
-    have c1 : (s.append t hinv).obj (i + 1) = (s.appendToBlowupSequenceData t).obj (i + 1) :=
-      congrArg (fun d => BlowupSequenceData.obj d (i + 1)) hbd
-    exact comp_eqToHom_eq_eqToHom_comp_of_eqToHom_conj (s.map i) ((s.append t hinv).map i) ((s.appendToBlowupSequenceData t).map i)
-      c0 c1 _ _ _ _ (blowupSequenceData_blowupMorphism_comp_eqToHom hbd i c0 c1) (s.appendToBlowupSequenceData_blowupMorphism_of_lt_length t hi)
-
-end MarkedBlowupSequenceData
 
 section
 
@@ -265,7 +78,7 @@ theorem appendRecursivePrincipalization_eq_appendIfMarked (hinv : ComapIsoInvari
     (hd : (tripleAtLength T s J μ).krullDimSucc ≤ T.krullDimSucc) :
     appendRecursivePrincipalization hinv T rc s J μ = appendIfMarked hinv s J μ (principalizationSeqAtEnd T rc s J μ hd) := by
   unfold appendRecursivePrincipalization principalizationSeqAtEnd
-  rw [dif_pos hd]
+  rw [dite_eq_left hd]
 
 theorem appendRecursivePrincipalization_eq_append (hinv : ComapIsoInvariance.{u}) (T : MarkedIdealWithBoundary.{u})
     (rc : ∀ S : MarkedIdealWithBoundary.{u}, S.krullDimSucc ≤ T.krullDimSucc → S.SequenceOfBlowups)
@@ -283,7 +96,7 @@ theorem appendRecursivePrincipalization_eq_append (hinv : ComapIsoInvariance.{u}
       some ((MarkedBlowupSequenceData.ofMarkedSequence (principalizationSeqAtEnd T rc s J μ hd)).toBlowupSequenceData.toMarkedBlowupSequenceData
         (s.proj s.length ≫ T.structMap) (s.ideal s.length) T.mult (s.boundary s.length) hm) := by
     unfold markedDataOfSeq
-    exact dif_pos hm
+    exact dite_eq_left hm
   rw [appendRecursivePrincipalization_eq_appendIfMarked hinv T rc s J μ hd]
   unfold appendIfMarked
   rw [hr]
@@ -310,12 +123,12 @@ theorem nonMonomialOrderReductionIter_zero :
 theorem nonMonomialOrderReductionIter_succ_of_continues (f : ℕ) (h : NonMonomialOrderReductionContinues T (nonMonomialOrderReductionIter hinv T rc f)) :
     nonMonomialOrderReductionIter hinv T rc (f + 1) = extendByNonMonomialPart hinv T rc (nonMonomialOrderReductionIter hinv T rc f) := by
   rw [nonMonomialOrderReductionIter]
-  exact if_pos h
+  exact ite_eq_left h
 
 theorem nonMonomialOrderReductionIter_succ_of_not_continues (f : ℕ) (h : ¬ NonMonomialOrderReductionContinues T (nonMonomialOrderReductionIter hinv T rc f)) :
     nonMonomialOrderReductionIter hinv T rc (f + 1) = nonMonomialOrderReductionIter hinv T rc f := by
   rw [nonMonomialOrderReductionIter]
-  exact if_neg h
+  exact ite_eq_right h
 
 theorem nonMonomialOrderReductionIter_eq_of_not_continues (f : ℕ) (h : ¬ NonMonomialOrderReductionContinues T (nonMonomialOrderReductionIter hinv T rc f)) :
     ∀ g, f ≤ g → nonMonomialOrderReductionIter hinv T rc g = nonMonomialOrderReductionIter hinv T rc f := by
@@ -343,14 +156,14 @@ theorem companionIdealReductionIter_succ_of_continues (s₀ : MarkedBlowupSequen
     companionIdealReductionIter hinv T rc s₀ (f + 1) =
       extendByCompanionIdeal hinv T rc (companionIdealReductionIter hinv T rc s₀ f) := by
   rw [companionIdealReductionIter]
-  exact if_pos h
+  exact ite_eq_left h
 
 theorem companionIdealReductionIter_succ_of_not_continues
     (s₀ : MarkedBlowupSequenceData T.structMap T.ideal T.mult T.boundary)
     (f : ℕ) (h : ¬ CompanionIdealReductionContinues T (companionIdealReductionIter hinv T rc s₀ f)) :
     companionIdealReductionIter hinv T rc s₀ (f + 1) = companionIdealReductionIter hinv T rc s₀ f := by
   rw [companionIdealReductionIter]
-  exact if_neg h
+  exact ite_eq_right h
 
 theorem companionIdealReductionIter_eq_of_not_continues
     (s₀ : MarkedBlowupSequenceData T.structMap T.ideal T.mult T.boundary)
@@ -385,7 +198,7 @@ theorem orderReductionData_eq :
 theorem orderReductionSeq_eq_of_nonempty (h : (orderAtLeastLocus T.ideal T.mult).Nonempty) :
     orderReductionSeq hinv T rc = (orderReductionData hinv T rc).toMarkedSequenceOfBlowups := by
   unfold orderReductionSeq
-  rw [if_neg h.ne_empty]
+  rw [ite_eq_right h.ne_empty]
 
 end
 

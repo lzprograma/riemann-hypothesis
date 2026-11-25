@@ -47,7 +47,6 @@ import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 
 open NumberField IsDedekindDomain Matrix Polynomial GlobalTheory.BCT GlobalTheory.UnitaryBC Formalism.UG
 open scoped Classical
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 
@@ -105,7 +104,7 @@ theorem diagT_mem_UJ_antiJ_iff (σ : L →+* L) (u : Fin n → Lˣ) :
     intro i
     have : i.val + (Fin.rev i).val + 1 = n := by
       rw [Fin.val_rev]; omega
-    exact if_pos this
+    exact ite_eq_left this
   change cT σ (GlobalTheory.SmGL.diagT L (Fin n) u).val * antiJ L n * (GlobalTheory.SmGL.diagT L (Fin n) u).val = antiJ L n ↔ _
   constructor
   · intro h i
@@ -127,7 +126,7 @@ end Generic
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-theorem UL_eq_of_not_split {w : Pl E} (hw : ¬ IsSplitAt w) (n : ℕ) : UL n w = UJ (cj w) 1 := if_neg hw
+theorem UL_eq_of_not_split {w : Pl E} (hw : ¬ IsSplitAt w) (n : ℕ) : UL n w = UJ (cj w) 1 := ite_eq_right hw
 
 theorem mem_iwU_iff (n : ℕ) (w : Pl E) (b : GLw n w) (γ : UL n w) :
     γ ∈ iwU n w b ↔ b⁻¹ * γ.1 * b ∈ iwGL n w := by

@@ -49,8 +49,6 @@ open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory
 open UpperTheory.V.W (Plc Lp)
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob UpperTheory.V.Z.Sym.Sig UpperTheory.V.Z.Sym.So UpperTheory.V.Z.Sym.Dict UpperTheory.V.Z.Sym.Dict.Br
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 private theorem eq_one_of_cong {L : Type} [Field L] [NumberField L] [IsCMField L] (m : ℕ) (hm : 3 ≤ m) (δ : L)
     (hδ : δ * IsCMField.complexConj L δ = 1)
     (h : ∀ w : HeightOneSpectrum (𝓞 L), ∃ a ∈ w.adicCompletionIntegers L,

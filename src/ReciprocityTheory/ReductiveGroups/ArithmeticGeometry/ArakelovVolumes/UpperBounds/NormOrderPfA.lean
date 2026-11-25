@@ -48,8 +48,7 @@ theorem exists_val_of_prime {Kf : Type*} [Field Kf] (A : Subring Kf) (P : Ideal 
       first
       | (convert h'' using 1
          exact (e.symm_apply_apply _).symm)
-    by_contra hge
-    push_neg at hge
+    by_contra! hge
     have hv1 : B.valuation (a : Kf) = 1 := le_antisymm ((B.valuation_le_one_iff _).2 (hmem a)) hge
     have hunit : IsUnit (⟨a, hmem a⟩ : B) := (B.valuation_eq_one_iff ⟨a, hmem a⟩).2 hv1
     apply hnu2

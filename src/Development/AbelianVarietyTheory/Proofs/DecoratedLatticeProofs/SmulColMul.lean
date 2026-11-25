@@ -54,7 +54,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Matrix ValuativeRel IsLocalRing
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.SeeSaw GlobalTheory.FinPl GlobalTheory.FinPlLoc GlobalTheory.IwaPlace NumberField Filter
 open scoped TensorProduct nonZeroDivisors
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 
@@ -170,9 +169,7 @@ theorem herm_rat (S : HSp D) (z : Fin S.rank → D.host.E) :
   rfl
 
 theorem rat_mulVec {m n : ℕ} (M : Matrix (Fin m) (Fin n) D.host.E) (z : Fin n → D.host.E) :
-    (rat M : Mx D m n) *ᵥ ratV z = ratV (M *ᵥ z) := by
-  funext i
-  exact (RingHom.map_mulVec (incA D) M z i).symm
+    (rat M : Mx D m n) *ᵥ ratV z = ratV (M *ᵥ z) := (GlobalTheory.MixPer.ratV_mulVec M z).symm
 
 theorem ratV_smul {n : ℕ} (a : D.host.E) (z : Fin n → D.host.E) : (ratV (a • z) : Fin n → AE D) = incA D a • ratV z := by
   funext i

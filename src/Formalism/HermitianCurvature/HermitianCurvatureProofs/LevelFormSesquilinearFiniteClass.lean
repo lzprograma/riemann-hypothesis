@@ -1,5 +1,6 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatQMinOp
 public import Formalism.HermitianCurvature.StatementJC
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
 public import Formalism.HermitianCurvature.StatementJF
@@ -37,57 +38,8 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZinvBound
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.LinearAlgebra.Matrix.CharP
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.UniformSpace.Matrix
-import Mathlib.Topology.UniformSpace.Uniformizable
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleWordLengthLe
 
@@ -185,7 +137,6 @@ end Formalism.FourierDecayAlt.P.JCx2
 
 namespace Formalism.FourierDecayAlt.P
 
-open Formalism.FourierDecayAlt
 
 theorem radial_module_form_of_parts : Formalism.FourierDecayAlt.JC.RadialModuleFormOfParts := by
   intro hBeta hAct hJF hBes hNice Wp Wq _ _ _ _ _ _ P0 T j X μ L st l0 hD
@@ -203,7 +154,6 @@ end Formalism.FourierDecayAlt.P
 
 namespace Formalism.FourierDecayAlt.P.JCx2
 
-open Formalism.FourierDecayAlt
 
 theorem form_zero_indep {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {Wp Wq : Type} [NormedAddCommGroup Wp]
     [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wq]
@@ -220,7 +170,6 @@ end Formalism.FourierDecayAlt.P.JCx2
 
 namespace Formalism.FourierDecayAlt.P
 
-open Formalism.FourierDecayAlt
 open scoped ComplexOrder
 
 end Formalism.FourierDecayAlt.P
@@ -340,12 +289,12 @@ theorem norm_mnP_le (w : List (Bool × Mat k r)) (hw : ∀ x ∈ w, ‖x.2‖ �
     have hn : (1 : ℝ) ≤ ((2 * r + k + 1 : ℕ) : ℝ) := by exact_mod_cast (by omega)
     obtain ⟨b, X⟩ := x
     cases b
-    · simp only [mnP, Bool.false_eq_true, if_false, List.length_cons, pow_succ]
+    · simp only [mnP, Bool.false_eq_true, ite_false, List.length_cons, pow_succ]
       calc ‖mnP w P‖ ≤ ((2 * r + k + 1 : ℕ) : ℝ) ^ w.length * ‖P‖ := ih'
         _ ≤ (((2 * r + k + 1 : ℕ) : ℝ) ^ w.length * ‖P‖) * ((2 * r + k + 1 : ℕ) : ℝ) :=
             le_mul_of_one_le_right (by positivity) hn
         _ = ((2 * r + k + 1 : ℕ) : ℝ) ^ w.length * ((2 * r + k + 1 : ℕ) : ℝ) * ‖P‖ := by ring
-    · simp only [mnP, if_true, List.length_cons, pow_succ]
+    · simp only [mnP, ite_true, List.length_cons, pow_succ]
       calc ‖mnP w P * -X‖ ≤ ((2 * r + k + 1 : ℕ) : ℝ) * ‖mnP w P‖ * ‖-X‖ := mn_norm_mul_le _ _
         _ ≤ ((2 * r + k + 1 : ℕ) : ℝ) * (((2 * r + k + 1 : ℕ) : ℝ) ^ w.length * ‖P‖) * 1 := by
           rw [norm_neg]
@@ -362,12 +311,12 @@ theorem mn_mnQ_norm (w : List (Bool × Mat k r)) (hw : ∀ x ∈ w, ‖x.2‖ �
     have hn : (1 : ℝ) ≤ ((2 * r + k + 1 : ℕ) : ℝ) := by exact_mod_cast (by omega)
     obtain ⟨b, X⟩ := x
     cases b
-    · simp only [mnQ, Bool.false_eq_true, if_false, List.length_cons, pow_succ]
+    · simp only [mnQ, Bool.false_eq_true, ite_false, List.length_cons, pow_succ]
       calc ‖X * mnQ w Q‖ ≤ ((2 * r + k + 1 : ℕ) : ℝ) * ‖X‖ * ‖mnQ w Q‖ := mn_norm_mul_le _ _
         _ ≤ ((2 * r + k + 1 : ℕ) : ℝ) * 1 * (((2 * r + k + 1 : ℕ) : ℝ) ^ w.length * ‖Q‖) := by
           gcongr
         _ = _ := by ring
-    · simp only [mnQ, if_true, List.length_cons, pow_succ]
+    · simp only [mnQ, ite_true, List.length_cons, pow_succ]
       calc ‖mnQ w Q‖ ≤ ((2 * r + k + 1 : ℕ) : ℝ) ^ w.length * ‖Q‖ := ih'
         _ ≤ (((2 * r + k + 1 : ℕ) : ℝ) ^ w.length * ‖Q‖) * ((2 * r + k + 1 : ℕ) : ℝ) :=
             le_mul_of_one_le_right (by positivity) hn
@@ -682,12 +631,12 @@ theorem mn_np_chat2L {Eop : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → (Mat
   apply mn_nice_sum; intro j _
   apply mn_nice_sum; intro j' _
   by_cases hP : i < i' ∧ j < j'
-  · simp only [if_pos hP]
+  · simp only [ite_eq_left hP]
     exact mn_good_mul (mn_good_mul (mn_good_const _)
       (mn_good_sub (mn_good_mul (hβ i) (hβ' i')) (mn_good_mul (hβ i') (hβ' i))))
       (mn_good_sub (mn_good_mul (ha j) (ha' j')) (mn_good_mul (ha j') (ha' j))) _
       (mn_np_qminorOp hE _ _ u F hF)
-  · simp only [if_neg hP]
+  · simp only [ite_eq_right hP]
     exact mn_nice_zero
 
 theorem mn_np_EH : ∀ a b, mnNP Bs ε (Q.EH k r a b) := fun a b _ hF => mn_nice_EH a b hF
@@ -857,32 +806,7 @@ theorem bc_qminorWords (k r : ℕ) {t : ℕ} (p q : Fin t → Fin (2 * r + k + 1
     ∀ (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E] (UU : Set (B.Mat k r)) (f : B.Mat k r → E),
       B.CkOn (t : ℕ∞) UU f → ∀ g ∈ UU, g ∈ B.GV k r →
         qminorOp (Q.EH k r) p q u f g = (L.map fun cw => cw.1 • B.Rw cw.2 f g).sum := by
-  let ts : Equiv.Perm (Fin t) → List (ℂ × Fin (2 * r + k + 1) × Fin (2 * r + k + 1)) :=
-    fun σ => List.ofFn fun j : Fin t => (u - ((j : ℕ) : ℂ), p (σ j), q j)
-  refine ⟨(Finset.univ : Finset (Equiv.Perm (Fin t))).toList.flatMap
-      (fun σ => (CapelliWordSumExpansion.expand k r (ts σ)).map fun cw => (((Equiv.Perm.sign σ : ℤ) : ℂ) * cw.1, cw.2)), ?_, ?_⟩
-  · intro cw hcw
-    simp only [List.mem_flatMap, List.mem_map] at hcw
-    obtain ⟨σ, _, cw', hm', rfl⟩ := hcw
-    have := CapelliWordSumExpansion.expand_words (k := k) (r := r) (ts σ) cw' hm'
-    refine ⟨this.1, this.2.trans ?_⟩
-    simp [ts]
-  · intro E _ _ UU f hf g hgU hg
-    have hloc : ∀ σ, CapelliWordSumExpansion.Loc ((ts σ).length : ℕ∞) f g := by
-      intro σ
-      obtain ⟨U, f', a, b, c, d⟩ := hf g hgU
-      refine ⟨U, f', a, b, ?_, d⟩
-      simpa [ts] using c
-    have e1 : qminorOp (Q.EH k r) p q u f g = ∑ σ, (((Equiv.Perm.sign σ : ℤ) : ℂ)) • CapelliWordSumExpansion.foldT (ts σ) f g := by
-      simp only [qminorOp, Finset.sum_apply, Pi.smul_apply]
-      refine Finset.sum_congr rfl (fun σ _ => ?_)
-      congr 1
-      simp only [CapelliWordSumExpansion.foldT, ts, List.map_ofFn]
-      rfl
-    rw [e1, CapelliWordSumExpansion.sum_flatMap, Finset.sum_map_toList]
-    refine Finset.sum_congr rfl (fun σ _ => ?_)
-    rw [CapelliWordSumExpansion.expand_eq (ts σ) f g hg (hloc σ), List.map_map, ← CapelliWordSumExpansion.sum_map_mul_smul]
-    rfl
+  apply +allowSynthFailures _root_.Formalism.FourierDecayAlt.P.CutMP.QMinOp.qminorWordSum <;> assumption
 
 section under
 
@@ -1008,9 +932,9 @@ theorem bcUnder_coef {Θ : (B.Mat k r → (Wq →L[ℂ] Wp)) → B.Mat k r → (
 theorem bcUnder_ite {Θ : (B.Mat k r → (Wq →L[ℂ] Wp)) → B.Mat k r → (Wq →L[ℂ] Wp)} (P : Prop) [Decidable P]
     (h : P → BcUnder D F g Θ) : BcUnder D F g (fun f x => if P then Θ f x else 0) := by
   by_cases hP : P
-  · simp only [if_pos hP]
+  · simp only [ite_eq_left hP]
     exact h hP
-  · simp only [if_neg hP]
+  · simp only [ite_eq_right hP]
     exact ⟨by simp, by simp⟩
 
 theorem bc_tL_under (A : ℝ) (m : ℕ) (hnm : 2 * r + k + 1 ≤ m) (hThr : JF.TransportedAlt k r A m) (hF : B.InCC A m F)
@@ -1197,8 +1121,8 @@ theorem bcLoc_ite {Θ : (B.Mat k r → E) → B.Mat k r → E} (P : Prop) [Decid
     BcLoc U (fun f x => if P then Θ f x else 0) := by
   intro f f' hff x hx hxG
   by_cases hP : P
-  · simp only [if_pos hP]; exact h hP f f' hff x hx hxG
-  · simp only [if_neg hP]
+  · simp only [ite_eq_left hP]; exact h hP f f' hff x hx hxG
+  · simp only [ite_eq_right hP]
 
 theorem bcLoc_fold (Ts : List ((B.Mat k r → E) → B.Mat k r → E))
     (hT : ∀ T ∈ Ts, BcLoc U T) : BcLoc U (fun f => Ts.foldr (fun T h => T h) f) := by
@@ -1441,7 +1365,7 @@ def rma_resFn (J : Mx k r → (Wq →L[ℂ] Wp)) : Fn k r (Wq →L[ℂ] Wp) := f
 theorem rma_resFn_of_mem (J : Mx k r → (Wq →L[ℂ] Wp)) {y : (Fin r → ℂ) × Mx k r} (hy : y ∈ DomR k r z z') :
     rma_resFn z z' J y.1 y.2 = resG k r (Fin.last r) J y.1 y.2 := by
   unfold rma_resFn
-  rw [if_pos (by simpa using hy)]
+  rw [ite_eq_left (by simpa using hy)]
 
 theorem rma_resFn_mem (hz : inWb k r z) (hz' : inWb k r z') (J : Mx k r → (Wq →L[ℂ] Wp))
     (hJ : J ∈ FFl k r z z' π π' 0 (OmPlus k r z z')) : rma_resFn z z' J ∈ RadSp k r z z' π π' := by
@@ -1449,7 +1373,7 @@ theorem rma_resFn_mem (hz : inWb k r z) (hz' : inWb k r z') (J : Mx k r → (Wq 
   have hsm := Formalism.FourierDecayAlt.P5.Rad.sf_resG hJ.1
   refine ⟨fun x hx => ?_, fun x₀ hx₀ => ?_, fun x hx h hh h' hh' => ?_⟩
   · show (if (x.1, x.2) ∈ DomR k r z z' then resG k r (Fin.last r) J x.1 x.2 else 0) = 0
-    rw [if_neg (by rw [Prod.mk.eta]; exact hx)]
+    rw [ite_eq_right (by rw [Prod.mk.eta]; exact hx)]
   · obtain ⟨U, Fe, hU, hxU, hFe, hΦ⟩ := hsm x₀
       ⟨hx₀.1, Formalism.FourierDecayAlt.P5.Rad.wCell_mem_omPlus hz hz' hx₀.1 hx₀.2.1 hx₀.2.2⟩ hx₀.2.1
     have hV : IsOpen {x : (Fin r → ℂ) × Mx k r | x.1 ∈ OmX r ∧ 0 < GGl k r z z' x.2} :=
@@ -1459,12 +1383,12 @@ theorem rma_resFn_mem (hz : inWb k r z) (hz' : inWb k r z') (J : Mx k r → (Wq 
       ⟨hxU, hx₀.1, hx₀.2.2⟩, hFe.mono Set.inter_subset_left, fun x hx hxG => ?_⟩
     have hxD : (x.1, x.2) ∈ DomR k r z z' := ⟨hx.2.1, hxG, hx.2.2⟩
     show (if (x.1, x.2) ∈ DomR k r z z' then resG k r (Fin.last r) J x.1 x.2 else 0) = _
-    rw [if_pos hxD]
+    rw [ite_eq_left hxD]
     exact hΦ x hx.1 hxG
   · have hx' : (x.1, x.2) ∈ DomR k r z z' := by simpa using hx
     show (if (x.1, h * x.2 * h') ∈ DomR k r z z' then resG k r (Fin.last r) J x.1 (h * x.2 * h') else 0) =
       (π h).comp ((if (x.1, x.2) ∈ DomR k r z z' then resG k r (Fin.last r) J x.1 x.2 else 0).comp (π' h'))
-    rw [if_pos (Formalism.FourierDecayAlt.P5.Rad.domR_uw hx hh hh'), if_pos hx']
+    rw [ite_eq_left (Formalism.FourierDecayAlt.P5.Rad.domR_uw hx hh hh'), ite_eq_left hx']
     unfold resG
     have e : wCell k r (Fin.last r) x.1 * (h * x.2 * h') =
         h * (wCell k r (Fin.last r) x.1 * x.2) * h' := by
@@ -1665,8 +1589,8 @@ theorem rma_tprod_pref (L : R.LevelData (Pr (RadSp k r z z' π π')) r) (Y : ℂ
   | m + 1, i, h => by
     have hi : i < r := by omega
     have e : rma_pref L Y (i + 1) = Wd.Ts (P5.site L ⟨i, hi⟩) Y * rma_pref L Y i := by
-      simp only [rma_pref, dif_pos hi]
-    rw [P5.tprod, dif_pos hi, Matrix.mul_assoc, ← e]
+      simp only [rma_pref, dite_eq_left hi]
+    rw [P5.tprod, dite_eq_left hi, Matrix.mul_assoc, ← e]
     exact rma_tprod_pref L Y m (i + 1) (by omega)
 
 theorem rma_sandw (X : ActualOps k r z z' π π') (L : R.LevelData (Pr (RadSp k r z z' π π')) r)
@@ -1685,11 +1609,11 @@ theorem rma_sandw (X : ActualOps k r z z' π π') (L : R.LevelData (Pr (RadSp k 
     have ih := rma_sandw X L hL Y n (by omega) _ _ hstep.1 hstep.2
     have e1 : sandw k r Y (n + 1) N =
         sandw k r Y n (oMul (TLs k ⟨n, h⟩ Y) (oMul N (TL k ⟨n, h⟩ Y))) := by
-      simp only [sandw, dif_pos h]
+      simp only [sandw, dite_eq_left h]
     have e2 : (rma_pref L (star Y) (n + 1))ᴴ * M * rma_pref L Y (n + 1) =
         (rma_pref L (star Y) n)ᴴ * ((Wd.Ts (P5.site L ⟨n, h⟩) (star Y))ᴴ * M * Wd.Ts (P5.site L ⟨n, h⟩) Y) *
           rma_pref L Y n := by
-      simp only [rma_pref, dif_pos h, Matrix.conjTranspose_mul, Matrix.mul_assoc]
+      simp only [rma_pref, dite_eq_left h, Matrix.conjTranspose_mul, Matrix.mul_assoc]
     rw [e1, e2]
     exact ih
 
@@ -2064,7 +1988,6 @@ end Formalism.FourierDecayAlt.P.JCx2
 namespace Formalism.FourierDecayAlt.P
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.P.JCx2
-open scoped ComplexConjugate
 
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
@@ -2162,7 +2085,7 @@ theorem rb_ae_ne_circle {T T' : ℝ} (hc : 0 < T * T') : ∀ᵐ ζ : ℂ, Comple
 theorem rb_zWeight_zero_of_not {k : ℕ} {T T' : ℝ} {ζ : ℂ} (h1 : ζ ∉ rbO T T') (h2 : Complex.normSq ζ ≠ T * T') :
     B2.zWeight k T T' ζ = 0 := by
   unfold B2.zWeight
-  rw [if_neg]
+  rw [ite_eq_right]
   intro hle
   exact h1 (lt_of_le_of_ne hle (Ne.symm h2))
 
@@ -2452,7 +2375,7 @@ variable {k r : ℕ}
 theorem rb_gauge_eq (c : Fin r → ℂ) : rbGauge k r c = ∏ a : Fin r, ‖c a‖ ^ (Mdim k r a - 1) := by
   unfold rbGauge
   refine Finset.prod_congr rfl fun a _ => ?_
-  rw [if_pos (by simp [a.isLt])]
+  rw [ite_eq_left (by simp [a.isLt])]
 
 theorem rb_cw_eq {c : Fin r → ℂ} (hc : c ∈ OmX r) :
     (∏ a : Fin r, ‖c a‖ ^ (-2 : ℤ)) * rbGauge k r c ^ 2 = B2.cWeight k r c := by
@@ -2520,7 +2443,7 @@ theorem rb_contOn_bcW (D : B.RealPlaceData k r Wp Wq) :
       (((Complex.continuous_normSq.comp continuous_snd).sub continuous_const).pow _)
   refine hc.continuousOn.congr fun q hq => ?_
   unfold bcWeight
-  rw [if_pos hq.2.le]
+  rw [ite_eq_left hq.2.le]
 
 theorem rb_contOn_J (D : B.RealPlaceData k r Wp Wq) (F : B.Mat k r → (Wq →L[ℂ] Wp)) (hF : ∀ (A : ℝ) (m : ℕ), B.InCC A m F) :
     ContinuousOn (fun q => B.hsVec (B.JF D F (B.gq D q))) (B7.Q0 D) := by
@@ -3071,7 +2994,7 @@ theorem pd_cut_ccle {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] (m : �
     by_cases hg' : gN g < R
     · rw [h2 hg', map_zero, norm_zero]
       positivity
-    · push_neg at hg'
+    · push Not at hg'
       calc ‖L (Dw (wL u ++ wR v) (pdPsi R) g)‖ ≤ ‖L‖ * ‖Dw (wL u ++ wR v) (pdPsi R) g‖ := L.le_opNorm _
         _ ≤ ‖L‖ * C := mul_le_mul_of_nonneg_left h1 (norm_nonneg _)
         _ ≤ ‖L‖ * C / R * gN g := by
@@ -3150,8 +3073,7 @@ theorem pd_nonneg_of_approx (z : ℂ) (M : ℝ) (h : ∀ R : ℝ, 1 ≤ R → �
       linarith [le_abs_self M]
     linarith
   have hre : 0 ≤ z.re := by
-    by_contra hneg
-    push_neg at hneg
+    by_contra! hneg
     have hpos : 0 < -z.re := by linarith
     obtain ⟨w, hw, hzw⟩ := h (max 1 ((|M| + 1) / (-z.re))) (le_max_left _ _)
     have hwre : 0 ≤ w.re := (Complex.nonneg_iff.1 hw).1

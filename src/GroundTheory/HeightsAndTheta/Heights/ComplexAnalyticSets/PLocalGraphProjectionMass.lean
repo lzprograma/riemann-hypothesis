@@ -124,76 +124,20 @@ theorem LocalGraphProjectionMass.proof (hPF : ProjectionFormula.Statement) :
   intro n d b I₀ S hd hS U hU B hB
   classical
   obtain ⟨c, hc⟩ := MassFinite.exists_frame U hU
-  rcases S.eq_empty_or_nonempty with rfl | hne
-  · simp
-  have hS' : ∀ z : S, ∃ (Ω : Set (I₀ → ℂ)) (V : Set (EuclideanSpace ℂ (Fin n)))
-      (g : (I₀ → ℂ) → EuclideanSpace ℂ (Fin n)), IsOpen Ω ∧ IsOpen V ∧ (z : EuclideanSpace ℂ (Fin n)) ∈ V ∧
-        DifferentiableOn ℂ g Ω ∧ (∀ w ∈ Ω, frameProj b I₀ (g w) = w) ∧ S ∩ V = g '' Ω :=
-    fun z => hS z z.2
-  choose Ω V g hΩ hV hzV hg hfix hSV using hS'
-  obtain ⟨T, hTc, hTU⟩ := TopologicalSpace.isOpen_iUnion_countable V hV
-  have hmemT : ∀ z ∈ S, ∃ i ∈ T, z ∈ V i := by
-    intro z hz
-    have : z ∈ ⋃ i ∈ T, V i := hTU ▸ Set.mem_iUnion.2 ⟨⟨z, hz⟩, hzV _⟩
-    obtain ⟨i, hi, hzi⟩ := Set.mem_iUnion₂.1 this
-    exact ⟨i, hi, hzi⟩
-  have hTne : T.Nonempty := by
-    obtain ⟨z, hz⟩ := hne
-    obtain ⟨i, hi, -⟩ := hmemT z hz
-    exact ⟨i, hi⟩
-  obtain ⟨f, hf⟩ := hTc.exists_eq_range hTne
-  let W : ℕ → Set (EuclideanSpace ℂ (Fin n)) := fun k => V (f k)
-  have hcover : S ⊆ ⋃ k, disjointed W k := by
-    intro z hz
-    rw [iUnion_disjointed]
-    obtain ⟨i, hi, hzi⟩ := hmemT z hz
-    rw [hf] at hi
-    obtain ⟨k, rfl⟩ := hi
-    exact Set.mem_iUnion.2 ⟨k, hzi⟩
-  have hDmeas : ∀ k, MeasurableSet (disjointed W k) :=
-    MeasurableSet.disjointed fun k => (hV _).measurableSet
-  have hpiece : ∀ k, S ∩ B ∩ disjointed W k = g (f k) '' Ω (f k) ∩ (B ∩ disjointed W k) := by
-    intro k
-    rw [← hSV (f k)]
-    ext z
-    constructor
-    · rintro ⟨⟨hzS, hzB⟩, hzD⟩
-      exact ⟨⟨hzS, disjointed_subset W k hzD⟩, hzB, hzD⟩
-    · rintro ⟨⟨hzS, -⟩, hzB, hzD⟩
-      exact ⟨⟨hzS, hzB⟩, hzD⟩
-  have hdisj : Pairwise (Disjoint on fun k => S ∩ B ∩ disjointed W k) :=
-    fun i j hij => (disjoint_disjointed W hij).mono Set.inter_subset_right Set.inter_subset_right
   let G : (Fin d → Fin n) → ℝ≥0∞ := fun s =>
     (⨆ x : EuclideanSpace ℂ (Fin d),
         (({z | z ∈ S ∩ B ∧ rowsProj U s z = x}.encard : ℕ∞) : ℝ≥0∞)) *
       μH[((2 * d : ℕ) : ℝ)] (rowsProj U s '' (S ∩ B))
   calc μH[((2 * d : ℕ) : ℝ)] (S ∩ B)
-      ≤ μH[((2 * d : ℕ) : ℝ)] (⋃ k, S ∩ B ∩ disjointed W k) := by
-        refine measure_mono fun z hz => ?_
-        obtain ⟨k, hk⟩ := Set.mem_iUnion.1 (hcover hz.1)
-        exact Set.mem_iUnion.2 ⟨k, hz, hk⟩
-    _ ≤ ∑' k, μH[((2 * d : ℕ) : ℝ)] (S ∩ B ∩ disjointed W k) := measure_iUnion_le _
-    _ = ∑' k, ∑ I ∈ Finset.univ.powersetCard d, ∫⁻ x : EuclideanSpace ℂ I,
-          frameFibreCount c I (S ∩ B ∩ disjointed W k) (WithLp.ofLp x) ∂(μH[((2 * d : ℕ) : ℝ)]) := by
-        congr 1
-        funext k
-        rw [hpiece k]
-        exact mass_piece_frame hPF b c I₀ hd _ _ (hΩ _) (hg _) (hfix _) _ (hB.inter (hDmeas k))
-    _ = ∑ I ∈ Finset.univ.powersetCard d, ∑' k, ∫⁻ x : EuclideanSpace ℂ I,
-          frameFibreCount c I (S ∩ B ∩ disjointed W k) (WithLp.ofLp x) ∂(μH[((2 * d : ℕ) : ℝ)]) :=
-        Summable.tsum_finsetSum fun _ _ => ENNReal.summable
+      ≤ ∑ I ∈ Finset.univ.powersetCard d, ∫⁻ x : EuclideanSpace ℂ I,
+          frameFibreCount c I (S ∩ B) (WithLp.ofLp x) ∂(μH[((2 * d : ℕ) : ℝ)]) :=
+        LocalGraphMass.hausdorffMeasure_inter_le_sum_lintegral b c I₀ S B hB hS
+          (fun Ω g hΩ hg hfix E hE => mass_piece_frame hPF b c I₀ hd Ω g hΩ hg hfix E hE)
     _ ≤ ∑ I ∈ Finset.univ.powersetCard d, ⨆ hI : I.card = d, G (I.orderEmbOfFin hI) := by
         refine Finset.sum_le_sum fun I hI => ?_
         have hIc := (Finset.mem_powersetCard.1 hI).2
-        refine le_trans ?_ (le_iSup (fun h : I.card = d => G (I.orderEmbOfFin h)) hIc)
-        calc _ ≤ ∫⁻ x : EuclideanSpace ℂ I, ∑' k,
-              frameFibreCount c I (S ∩ B ∩ disjointed W k) (WithLp.ofLp x) ∂(μH[((2 * d : ℕ) : ℝ)]) :=
-              LocalGraphMass.tsum_lintegral_le _ _
-          _ ≤ ∫⁻ x : EuclideanSpace ℂ I, frameFibreCount c I (S ∩ B) (WithLp.ofLp x)
-                ∂(μH[((2 * d : ℕ) : ℝ)]) :=
-              lintegral_mono fun x =>
-                LocalGraphMass.tsum_frameFibreCount_le c I _ (fun k => Set.inter_subset_left) hdisj _
-          _ ≤ G (I.orderEmbOfFin hIc) := lintegral_count_le U c hc I hIc (S ∩ B)
+        exact (lintegral_count_le U c hc I hIc (S ∩ B)).trans
+          (le_iSup (fun h : I.card = d => G (I.orderEmbOfFin h)) hIc)
     _ = ∑ s ∈ Finset.univ.filter (fun s : Fin d → Fin n => StrictMono s), G s := by
         refine Finset.sum_bij (fun I hI => ⇑(I.orderEmbOfFin (Finset.mem_powersetCard.1 hI).2))
           (fun I hI => Finset.mem_filter.2 ⟨Finset.mem_univ _, (I.orderEmbOfFin _).strictMono⟩)

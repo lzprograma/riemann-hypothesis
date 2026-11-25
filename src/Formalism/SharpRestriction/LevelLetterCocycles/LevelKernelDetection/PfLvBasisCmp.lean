@@ -1,48 +1,10 @@
 module
 
+import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfMembership
+import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvFil
 public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvBasisPhi
 public import Formalism.SharpRestriction.LevelLetterCocycles.RingConditionOfDeltaInvariants
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.DistinguishedUnitIdeals.ExistsConstOfInvariantMod
 public import Formalism.SharpRestriction.LevelLetterCocycles.CoordHomMapTrace
 
@@ -119,16 +81,8 @@ theorem lvBasis_cmp_smul_letter {w : W.DD T} (hw : w ∈ W.N T) (i : ZMod n)
     _ = _ := by rw [ea, add_smul, smul_assoc, hwi, mul_smul]
 
 theorem lvBasis_q₀_const : PowerSeries.constantCoeff W.q₀ = (PD.p : O) := by
-  have h1 : PowerSeries.coeff 1 (PowerSeries.X * W.q₀) = PowerSeries.constantCoeff W.q₀ := by
-    simp
-  rw [← h1, W.q₀_def]
-  have e : (1 + PowerSeries.X : PowerSeries O) ^ PD.p - 1 =
-      (((1 + Polynomial.X) ^ PD.p - 1 : Polynomial O) : PowerSeries O) := by
-    simp only [Polynomial.coe_sub, Polynomial.coe_pow, Polynomial.coe_add, Polynomial.coe_one,
-      Polynomial.coe_X]
-  rw [e, Polynomial.coeff_coe, Polynomial.coeff_sub, Polynomial.coeff_one_add_X_pow,
-    Polynomial.coeff_one]
-  simp
+  intros
+  apply _root_.Formalism.MainNotions.UnusedSlot80.ArcF.constantCoeff_q_zero_eq_p <;> assumption
 
 theorem lvBasis_Q_const (j : ZMod n) : PowerSeries.constantCoeff (W.Q j) = (PD.p : O) := by
   have hφ : ∀ (a : LetA O n) (j : ZMod n),
@@ -180,7 +134,7 @@ theorem lvBasis_letter_span (hspan : Submodule.span LL (Set.range (W.cmp T)) = D
       · subst hij
         rw [map_sub, smul_sub, h1, ((lvBasis_mem_DcrisL PD T.ρ _ _).1 hd).2 c]
       · rw [sub_zero, h1]) (by simp [Finset.sum_sub_distrib, hzs]) j
-  rw [if_pos rfl, sub_eq_zero] at key
+  rw [ite_eq_left rfl, sub_eq_zero] at key
   rw [← key]
   exact hzj
 
@@ -267,11 +221,7 @@ theorem lvBasis_letter_pre (hspan : Submodule.span LL (Set.range (W.cmp T)) = Dc
 
 theorem lvBasis_φpow_letter (i : ZMod n) (k : ℕ) {x : T.V ⊗[Qp] B} (hx : x ∈ DcrisL PD T.ρ (W.emb i)) :
     ((φVB PD (LL := LL) (V := T.V)) ^ k) x ∈ DcrisL PD T.ρ (W.emb (i + k)) := by
-  induction k with
-  | zero => simpa using hx
-  | succ k ih =>
-    rw [pow_succ', Module.End.mul_apply, Nat.cast_succ, ← add_assoc]
-    exact lvBasis_φ_letter PD T.ρ (W.emb_σ (i + k)) ih
+  apply _root_.Formalism.MainNotions.N.Ln03.Pf.lvFil_φpow_letter <;> assumption
 
 theorem lvBasis_φpow_pre (hspan : Submodule.span LL (Set.range (W.cmp T)) = Dcris PD T.ρ)
     (h3 : ∀ (x : ↥(W.N T)) (k : ℕ) (hk : W.Q ^ k • W.φD T x ∈ W.N T),

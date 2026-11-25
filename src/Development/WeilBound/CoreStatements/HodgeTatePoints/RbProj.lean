@@ -4,54 +4,7 @@ public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.Ste
 public import Mathlib.CategoryTheory.Category.Basic
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import Development.WeilBound.CoreStatements.HodgeTatePoints.RbFund
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TeichmullerCharacterOrderGenerates
 
 @[expose] public section
@@ -181,20 +134,6 @@ theorem mem_pFun {p : ℕ} {X : Type} {g : X → C} :
 
 end general
 
-private theorem sum_Icc_pow_eq_mul_sum_range {R : Type} [CommRing R] (ζ : R) (n : ℕ) :
-    ∑ m ∈ Finset.Icc 1 n, ζ ^ m = ζ * ∑ m ∈ Finset.range n, ζ ^ m := by
-  induction n with
-  | zero => simp
-  | succ k ih =>
-    rw [Finset.sum_Icc_succ_top (by omega), ih, Finset.sum_range_succ, mul_add, pow_succ']
-
-private theorem sum_Icc_pow_eq_zero_of_root_of_unity_ne_one {R : Type} [CommRing R] [IsDomain R] (ζ : R) (n : ℕ)
-    (hn : ζ ^ n = 1) (h1 : ζ ≠ 1) : ∑ m ∈ Finset.Icc 1 n, ζ ^ m = 0 := by
-  rw [sum_Icc_pow_eq_mul_sum_range]
-  have h := geom_sum_mul ζ n
-  rw [hn, sub_self] at h
-  rw [(mul_eq_zero.1 h).resolve_right (sub_ne_zero.2 h1), mul_zero]
-
 private theorem comp_smul_mem_augIdeal_of_fStable {C : Type} [Field C] {R : Type} [CommRing R] [Algebra R C]
     {F : Type} [Field F] {N : Type} [AddCommGroup N] [Module F N] (A : Submodule R (N → C))
     (hA : FStable (F := F) A) (a : F) : ∀ f ∈ augIdeal A, (fun x => f (a • x)) ∈ augIdeal A := by
@@ -237,9 +176,10 @@ theorem proj_props : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClo
       split_ifs with ha
       · subst ha
         simp
-      · refine sum_Icc_pow_eq_zero_of_root_of_unity_ne_one _ _ ?_ ?_
-        · rw [← MulChar.pow_apply_coe, inv_pow, hσq, inv_one, MulChar.one_apply_coe]
-        · intro h1
+      · have hpow' : (σ⁻¹ (a : F)) ^ (p ^ f - 1) = 1 := by
+          rw [← MulChar.pow_apply_coe, inv_pow, hσq, inv_one, MulChar.one_apply_coe]
+        have hne1 : σ⁻¹ (a : F) ≠ 1 := by
+          intro h1
           have hne : (a : F) ≠ 1 := fun h => ha (Units.val_eq_one.1 h)
           have hs := hsep (a : F) 1 hne
           have hsa : σ (a : F) = 1 := by
@@ -247,6 +187,9 @@ theorem proj_props : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClo
             rwa [h1, one_mul] at this
           rw [hsa, MulChar.map_one, sub_self, map_zero, map_zero] at hs
           exact zero_ne_one hs
+        have hsum0 := geom_sum_Ico_mul (σ⁻¹ (a : F)) (m := 1) (n := p ^ f - 1 + 1) (by omega)
+        rw [Finset.Ico_add_one_right_eq_Icc, pow_succ, hpow', one_mul, pow_one, sub_self] at hsum0
+        exact (mul_eq_zero.1 hsum0).resolve_right (sub_ne_zero.2 hne1)
     funext x
     have hsum : (∑ m ∈ Finset.Icc 1 (p ^ f - 1), proj (σ ^ m) g) x =
         ((Fintype.card Fˣ : C))⁻¹ * ∑ a : Fˣ, algebraMap R C
@@ -260,7 +203,7 @@ theorem proj_props : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClo
       rw [map_sum, Finset.sum_mul]
     rw [hsum]
     simp only [hz, apply_ite (algebraMap R C), ite_mul, map_zero, zero_mul, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true, Units.val_one, one_smul, map_natCast]
+      Finset.mem_univ, ite_true, Units.val_one, one_smul, map_natCast]
     rw [← hcardU, inv_mul_cancel_left₀ h0]
   · intro haf χ
     have hA : g ∈ AA.carrier := (Submodule.mem_inf.1 haf).1

@@ -58,7 +58,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.PlaceDatum
 
@@ -515,8 +514,8 @@ theorem redM_add {a b : ℕ} (PP : Formalism.L2.DIV.Pl D.host.E) (X Y Z : Matrix
   funext i j
   have hY : Y i j ∈ Formalism.L2.Herm.intAf D.host.F D.host.E := by
     rw [h]; exact add_mem (hX i j) (mul_mem (natCast_mem _ _) (hZ i j))
-  have e : redM PP X i j = Formalism.L2.DIV.resS D.host.F PP ⟨X i j, hX i j⟩ := dif_pos (hX i j)
-  exact (dif_pos hY).trans ((resS_add PP (hX i j) hY (hZ i j) (h i j)).trans e.symm)
+  have e : redM PP X i j = Formalism.L2.DIV.resS D.host.F PP ⟨X i j, hX i j⟩ := dite_eq_left (hX i j)
+  exact (dite_eq_left hY).trans ((resS_add PP (hX i j) hY (hZ i j) (h i j)).trans e.symm)
 
 
 open Classical in
@@ -535,7 +534,7 @@ theorem isSBHalf_of_red {a b : ℕ} (e : AE D) (Λ : AddSubgroup (WO S T)) (fr :
   refine ⟨fun t ht => ?_, K * ((∏ PP ∈ P, Ideal.absNorm PP.asIdeal) * M), by positivity, fun u hu hh t => ?_,
     fun t ht => ?_⟩
   · by_contra h
-    exact ht (if_neg fun h' => h h'.1)
+    exact ht (ite_eq_right fun h' => h h'.1)
   · have hi : ∀ i j, ((K * ((∏ PP ∈ P, Ideal.absNorm PP.asIdeal) * M) : ℕ) : EAf D) * fr u i j ∈
         Formalism.L2.Herm.intAf D.host.F D.host.E := fun i j => by
       rw [← mul_assoc, Nat.cast_mul, mul_assoc]
@@ -548,17 +547,17 @@ theorem isSBHalf_of_red {a b : ℕ} (e : AE D) (Λ : AddSubgroup (WO S T)) (fr :
       rw [hadd]
       exact add_mem_cancel_right (hi i j)
     by_cases ht : IsHalf e t ∧ IsIntM (fr t)
-    · simp only [if_pos ht, if_pos (And.intro (h1.2 ht.1) (h2.2 ht.2))]
+    · simp only [ite_eq_left ht, ite_eq_left (And.intro (h1.2 ht.1) (h2.2 ht.2))]
       refine hω _ _ fun PP hPP => redM_add PP _ _
         (fun i j => ((K * (∏ PP ∈ P.erase PP, Ideal.absNorm PP.asIdeal) : ℕ) : EAf D) * ((M : EAf D) * fr u i j))
         ht.2 (fun i j => mul_mem (natCast_mem _ _) (hB u hu i j)) fun i j => ?_
       rw [hadd, ← Finset.mul_prod_erase P _ hPP]
       simp only [Nat.cast_mul]
       ring
-    · simp only [if_neg ht, if_neg fun h : _ ∧ _ => ht ⟨h1.1 h.1, h2.1 h.2⟩]
+    · simp only [ite_eq_right ht, ite_eq_right fun h : _ ∧ _ => ht ⟨h1.1 h.1, h2.1 h.2⟩]
   · have h : IsHalf e t ∧ IsIntM (fr t) := by
       by_contra h
-      exact ht (if_neg h)
+      exact ht (ite_eq_right h)
     rw [mul_nsmul]
     exact nsmul_mem (hC t h.1 h.2) _
 
@@ -571,7 +570,7 @@ theorem omegaQ_congr {a b : ℕ} (Q : Finset (Formalism.L2.DIV.Pl D.host.E)) (r 
     forall₂_congr fun PP hPP => by rw [h PP hPP]
   unfold omegaQ
   by_cases hy : ∀ PP ∈ Q, LowZero r (y PP) ∧ IsUnit (topL r (y PP)).det
-  · rw [dif_pos hy, dif_pos (hiff.1 hy)]
+  · rw [dite_eq_left hy, dite_eq_left (hiff.1 hy)]
     refine Finset.prod_congr rfl fun PP _ => ?_
     congr 3
     exact Units.ext (by rw [IsUnit.unit_spec, IsUnit.unit_spec, h PP.1 PP.2])

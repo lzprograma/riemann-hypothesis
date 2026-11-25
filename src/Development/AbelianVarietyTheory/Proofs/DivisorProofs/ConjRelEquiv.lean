@@ -99,12 +99,7 @@ theorem conjRel_equiv (G : Type) [Group G] :
   · rintro x y z ⟨g, rfl⟩ ⟨h, rfl⟩
     exact ⟨g * h, by simp [mul_assoc]⟩
 
-theorem cast_finsum {α : Type*} (f : α → ℚ) : ((∑ᶠ a, f a : ℚ) : ℂ) = ∑ᶠ a, (f a : ℂ) := by
-  by_cases h : (Function.support f).Finite
-  · exact map_finsum (Rat.castHom ℂ) h
-  · have h' : ¬ (Function.support fun a => (f a : ℂ)).Finite := by
-      simpa [Function.support] using h
-    rw [finsum_of_infinite_support h, finsum_of_infinite_support h']
-    simp
+theorem cast_finsum {α : Type*} (f : α → ℚ) : ((∑ᶠ a, f a : ℚ) : ℂ) = ∑ᶠ a, (f a : ℂ) :=
+  (Rat.castHom ℂ).toAddMonoidHom.map_finsum_of_injective (Rat.cast_injective (α := ℂ)) f
 
 end GlobalTheory.KapLat

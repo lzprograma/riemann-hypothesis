@@ -104,7 +104,7 @@ private theorem sum_neg_index_smul_diag_apply_comm {V : Type*} [AddCommGroup V] 
 
   simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, h1, smul_add,
   Finset.sum_add_distrib, smul_sub, Finset.sum_sub_distrib, smul_ite, smul_zero,
-  Finset.sum_ite_eq', Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  Finset.sum_ite_eq', Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   rw [sub_smul, neg_smul, neg_smul]
   abel
 

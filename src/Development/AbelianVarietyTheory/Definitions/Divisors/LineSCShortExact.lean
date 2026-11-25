@@ -42,8 +42,6 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.NefFibOfIsNef
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry MvPolynomial MeasureTheory
@@ -70,9 +68,5 @@ theorem wInt_one [MeasurableSpace M] (α : A.Fld) : wInt A (fun _ => 1) α = A.i
   simp [wInt, HolAtlas.integral]
 
 end Manifold
-
-variable {k : Type} [CommRing k] {X Y : Scheme.{0}} {p : X ⟶ Sp k} {p' : Y ⟶ Sp k} {D D' : ℕ}
-
-variable (h : IsRegVar p D) (h' : IsRegVar p' D') (σ : k →+* ℂ)
 
 end GlobalTheory.LineForm

@@ -61,7 +61,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level
 open GlobalTheory.SW hiding Level
 open Formalism.L2.Pj Formalism.L2.PjFree
 open scoped ComplexConjugate Classical
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.Dict
 
 namespace GlobalTheory.Dict.CoverFourier
@@ -367,7 +366,7 @@ theorem int_of_nok {M N : ℕ} {Λ : Lt E n} (hΛ : Λ ∈ Vset E n M) (hN : NOK
     · subst h; simpa using Submodule.one_le.1 le_rfl
     · simp [h]
   have := (hΛ.2.1 v).1 hv _ h1
-  rw [Base.herm_one, Finset.sum_eq_single b (fun j _ hj => by simp [Pi.single_apply, hj, cc]) (by simp)] at this
+  rw [Base.herm_one, Finset.sum_eq_single b (fun j _ hj => by simp [hj, cc]) (by simp)] at this
   simpa [cc, Algebra.smul_def, mul_comm] using this
 
 variable {H : Host E} {Dw : Datum H}

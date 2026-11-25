@@ -19,8 +19,6 @@ namespace Formalism.L2.SG.Pf.Carrier.EnergyPfLoc
 open Formalism.L2.SG.RealObj Formalism.L2.SG.RealObj.EnergyCut Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.Carrier.EnergyPf
 open Formalism.L2.SG.HidaSetting
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Gram
 
 variable {α V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℂ V] [FiniteDimensional ℂ V]

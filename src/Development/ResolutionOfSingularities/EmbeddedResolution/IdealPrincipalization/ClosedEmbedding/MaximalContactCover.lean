@@ -11,45 +11,6 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.Resolutio
 import Development.ResolutionOfSingularities.Foundations.Schemes.AffineOpens
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
 import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeMorphismProperties
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -88,20 +49,7 @@ theorem EtaleChart.coordIdeal_mono {Y : Scheme.{u}} {k : Type u} [Field k]
 
 private theorem coe_support_ker_eq_range {X X' : Scheme.{u}} (τ : X ⟶ X') [IsClosedImmersion τ] :
     (↑(Scheme.Hom.ker τ).support : Set X') = Set.range τ.base := by
-  have h1 : ∀ z, ((FunctorialResolution.EmbeddedResolution.kerSubschemeIso τ).hom ≫ τ).base z
-      = (Scheme.Hom.ker τ).subschemeι.base z := by
-    intro z
-    rw [FunctorialResolution.EmbeddedResolution.kerSubschemeIso_hom_comp τ]
-  have h2 : ∀ x, ((FunctorialResolution.EmbeddedResolution.kerSubschemeIso τ).inv ≫ (Scheme.Hom.ker τ).subschemeι).base x
-      = τ.base x := by
-    intro x
-    rw [FunctorialResolution.EmbeddedResolution.kerSubschemeIso_inv_comp τ]
-  rw [← Scheme.IdealSheafData.range_subschemeι]
-  apply Set.Subset.antisymm
-  · rintro y ⟨z, rfl⟩
-    exact ⟨(FunctorialResolution.EmbeddedResolution.kerSubschemeIso τ).hom.base z, h1 z⟩
-  · rintro y ⟨x, rfl⟩
-    exact ⟨(FunctorialResolution.EmbeddedResolution.kerSubschemeIso τ).inv.base x, h2 x⟩
+  rw [Scheme.Hom.support_ker, τ.isClosedEmbedding.isClosed_range.closure_eq]
 
 theorem restrictIdeal_ker_eq_top_of_not_mem {X X' : Scheme.{u}} (τ : X ⟶ X')
     [IsClosedImmersion τ] (U : X'.Opens) (h : ∀ x : X, τ.base x ∉ U) :
@@ -159,9 +107,7 @@ theorem exists_disjointEtaleChart {X X' : Scheme.{u}} {k : Type u} [Field k]
     (hcharts : HasLocalEtaleCharts p) (y : X') (hy : ∀ x : X, τ.base x ≠ y) :
     ∃ F : DisjointEtaleChart p τ, y ∈ F.opens := by
   obtain ⟨W, hyW, n, ⟨ch⟩⟩ := hcharts y
-  have hclosed : IsClosed (Set.range τ.base) := by
-    rw [← coe_support_ker_eq_range τ]
-    exact (Scheme.Hom.ker τ).support.2
+  have hclosed : IsClosed (Set.range τ.base) := τ.isClosedEmbedding.isClosed_range
   have hopen : IsOpen ((W : Set X') ∩ (Set.range τ.base)ᶜ) :=
     W.isOpen.inter hclosed.isOpen_compl
   have hynot : y ∉ Set.range τ.base := by
@@ -346,7 +292,6 @@ theorem surjective_pullbackFiberToBase (C : MaximalContactCover p τ I c) :
 
 theorem ker_pullbackFiberToTotal (C : MaximalContactCover p τ I c) [IsClosedImmersion τ] :
     Scheme.Hom.ker C.pullbackFiberToTotal = τ.ker.comap C.projection := by
-  have hq : AlgebraicGeometry.QuasiCompact τ := inferInstance
   have hq' : AlgebraicGeometry.QuasiCompact C.pullbackFiberToTotal :=
     quasiCompact_of_isPullback C.isPullback_pullbackFiber
   have hf : AlgebraicGeometry.Flat C.projection :=
@@ -458,7 +403,6 @@ theorem comapImageIdealSheaf_eq_imageIdealSheaf_idealOnHypersurface (C : Maximal
 theorem idealOnHypersurface_eq_imageIdealSheaf (C : MaximalContactCover p τ I c)
     [IsClosedImmersion τ] :
     C.idealOnHypersurface = _root_.FunctorialResolution.Blowup.schemeImageIdeal C.pullbackFiberToHypersurface (I.comap C.pullbackFiberToBase) := by
-  have hqc : AlgebraicGeometry.QuasiCompact τ := inferInstance
   have hflat : AlgebraicGeometry.Flat C.projection :=
     MaxContactReduction.FiniteOpenCoverWithIdeals.flat_disjointUnionMap C.toCoverData
   have h1 : (_root_.FunctorialResolution.Blowup.schemeImageIdeal τ I).comap C.projection

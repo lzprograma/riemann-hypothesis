@@ -34,10 +34,10 @@ theorem orthonormalChartNormControl_holds : OrthonormalChartNormControl (E := E)
     refine Differentiable.const_mul ?_ _
     refine (differentiable_const _).add ?_
     by_cases h : X.p0 ≤ (k : ℕ) ∧ (b : ℕ) < X.p0
-    · simp only [dif_pos h]
+    · simp only [dite_eq_left h]
       first
         | fun_prop
-    · simp only [dif_neg h]
+    · simp only [dite_eq_right h]
       exact differentiable_const _
   refine hG.comp hd.differentiableOn ?_
   intro Z hZ

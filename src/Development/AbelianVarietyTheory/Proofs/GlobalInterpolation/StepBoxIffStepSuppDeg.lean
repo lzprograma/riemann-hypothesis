@@ -77,12 +77,6 @@ def JetsIn {X : Fields} (A : Amb X) {a b : ℕ} (S : Finset (HeightOneSpectrum (
     (∀ τ, ((∑ k ∈ m.support.filter (fun k => k.1 = τ), m k : ℕ) : ℤ) = deg τ) →
     ∃ y : X.K, A.σ₀ y = (A.chiF a b N N')⁻¹ * jetC A.cD (A.thInd S N N' c x) m
 
-section Scalar
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m) {S : Set ℕ} (mu : Tup X.F X.E X.K S)
-
-end Scalar
-
 end GlobalTheory.IndefiniteRowSideFullHecke.MovementLaw
 end -- clump:auto
 end -- clump:auto
@@ -119,7 +113,7 @@ theorem inRange_indicator (K : Type) [Field K] {a b : ℕ} (S : Finset (HeightOn
     MovementLaw.InRangeOf S cA cB N N' (fun x => if x ∈ divLat cA (homAt S N N') then (1 : K) else 0) := by
   refine ⟨fun x hx => ?_, fun x y hy => ?_⟩
   · by_contra h
-    exact hx (if_neg h)
+    exact hx (ite_eq_right h)
   · have hy' := mulLat_le_divLat cA cB _ hy
     have : x + y ∈ divLat cA (homAt S N N') ↔ x ∈ divLat cA (homAt S N N') := Submodule.add_mem_iff_left _ hy'
     simp only [this]
@@ -151,7 +145,7 @@ theorem nuW_detShift_nonneg {X : Fields} {Word : Type} {R : Ranks} (W : Wts X Wo
     rw [Nat.add_sub_cancel_left, Nat.mul_div_cancel _ (Nat.succ_pos _)]
   have h1 : Examples₂.wtN (W.hc u τ) (R.N i) = -wG R ((W.hc u τ).e ⟨i, hi⟩) (i + 1) := by
     unfold Examples₂.wtN
-    rw [dite_eq_right (by unfold Ranks.N; omega), dif_pos (by rw [hb]; exact hi)]
+    rw [dite_eq_right (by unfold Ranks.N; omega), dite_eq_left (by rw [hb]; exact hi)]
     simp only [hb]
   have h2 := Examples₂.wtN_anti (W.hc u τ) (Nat.sub_le (R.N i) 1) hlt
   have h3 := Examples₂.lamOf_eq (W.hc u τ) i hi.le ⟨R.N i - 1, by omega⟩
@@ -159,8 +153,8 @@ theorem nuW_detShift_nonneg {X : Fields} {Word : Type} {R : Ranks} (W : Wts X Wo
   have h4 : (W.nuW u (i + 1) τ).detShift =
       (Examples₂.lamOf (W.hc u τ) i).w ⟨R.N i - 1, by omega⟩ + ⌊wG R ((W.hc u τ).e ⟨i, hi⟩) (i + 1)⌋ := by
     unfold DomWeight.detShift
-    rw [dif_pos (show 0 < R.N (i + 1 - 1) from hpos)]
-    simp only [Wts.nuW, shiftW, Wts.lamN, RowPar.eAt, RowPar.of, Nat.add_sub_cancel, hi, dif_pos]
+    rw [dite_eq_left (show 0 < R.N (i + 1 - 1) from hpos)]
+    simp only [Wts.nuW, shiftW, Wts.lamN, RowPar.eAt, RowPar.of, Nat.add_sub_cancel, hi, dite_eq_left]
     rfl
   rw [h4]
   have h5 : -(Examples₂.lamOf (W.hc u τ) i).w ⟨R.N i - 1, by omega⟩ ≤ ⌊wG R ((W.hc u τ).e ⟨i, hi⟩) (i + 1)⌋ := by
@@ -178,7 +172,7 @@ theorem degNu_eq {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) 
   rw [Int.toNat_of_nonneg (nuW_detShift_nonneg W u hi τ)]
   refine Finset.sum_congr rfl fun s _ => ?_
   unfold DomWeight.detShift
-  rw [dif_pos (show 0 < R.N (i + 1 - 1) from hpos), dif_pos hpos]
+  rw [dite_eq_left (show 0 < R.N (i + 1 - 1) from hpos), dite_eq_left hpos]
   show ((W.lamN u i τ).w s + _) - ((W.lamN u i τ).w ⟨R.N i - 1, _⟩ + _) + ((W.lamN u i τ).w ⟨R.N i - 1, _⟩ + _) =
     (W.lamN u i τ).w s + _
   ring
@@ -225,14 +219,6 @@ theorem cBof_pos {X : Fields} {Pr : Primes X} (hP : Pr.Ok) (sel : HeightOneSpect
   unfold cBof
   refine Nat.mul_pos (hP.T_prime u).pos (pow_pos (Finset.prod_pos fun P _ => ?_) _)
   exact Nat.pos_of_ne_zero (by unfold Formalism.L2.Col.qOf; rw [Ne, Ideal.absNorm_eq_zero_iff]; exact P.1.ne_bot)
-
-section Step
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S)
-  (cst : LocCst X (rowSG Pr sel mu)) (u : Pr.Word) (A : Amb X) {i : ℕ} {b : ℕ} (lam' : X.Tau → DomWeight b)
-
-end Step
 
 end GlobalTheory.MoveCompare
 end -- clump:auto

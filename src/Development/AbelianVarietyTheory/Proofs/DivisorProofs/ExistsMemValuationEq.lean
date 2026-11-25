@@ -58,8 +58,6 @@ open ReciprocityTheory.ChartRestriction.G.PullbackSections.PfModelLatA (Dinv xi_
 open GlobalTheory.FunObj.Good (char_int mem_Dinv atPl_mul inc_mul_inc mem_intAE exists_pole isEquiv_Kw valued_alg psiAt_eq_one
   trace_inc_pair cpt_pair)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
-
 variable {D : D7}
 
 namespace CondAA
@@ -79,8 +77,7 @@ theorem exists_mem_valuation_eq (w : Pl D.host.E) {I : FractionalIdeal (𝓞 D.h
     omega
   obtain ⟨c, hc, hc'⟩ := SetLike.not_le_iff_exists.1 hne
   refine ⟨c, hc, le_antisymm ((GlobalTheory.Idele.mem_iff_valuation_le hI c).1 hc w) ?_⟩
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   refine hc' ((GlobalTheory.Idele.mem_iff_valuation_le hIw c).2 fun Q => ?_)
   rw [FractionalIdeal.count_mul D.host.E Q hI hw0]
   by_cases hQ : w = Q

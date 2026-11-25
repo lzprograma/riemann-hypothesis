@@ -40,7 +40,6 @@ import Mathlib.Topology.Sheaves.Init
 @[expose] public section
 
 open Formalism.BasicNotions NumberField IsDedekindDomain Formalism.MainNotions.G Formalism.MainNotions.FormalGroupSystem Formalism.L2.G.Pend Formalism.MainNotions Formalism.L2.Ker Formalism.L2.PairingIndexBounds.F Formalism.L2.KerInert Formalism.UG Formalism.L2.G.Cmp Formalism.L2.Forms Formalism.L2.KerInert.SecondKernelProjection Formalism.L2.KerInert.QuadraticBaseChangeGL3 Formalism.L2.KerInert.SecondKernelDifference Formalism.L2.KerInert.SecondKernelHermitian GlobalTheory.TwV.DelA
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.TwV.DelA
 
@@ -73,19 +72,19 @@ theorem blkC_atR_read : ∀ {p : ℕ} [Fact p.Prime] (X : Sys p) (D : D7) (pos :
         simp [atR, map_inv]
       rw [Matrix.transpose_apply, hinv]
       simp only [atR, Matrix.GeneralLinearGroup.map_apply]
-      rw [stdU_inv_eq_star D M hU, hT', if_pos hs]
+      rw [stdU_inv_eq_star D M hU, hT', ite_eq_left hs]
       simp [Matrix.star_apply]
     · simp only [atR, Matrix.GeneralLinearGroup.map_apply]
-      rw [hT', if_neg hs]
+      rw [hT', ite_eq_right hs]
   · split_ifs with hs
     · have h := hT' (M : Matrix (Fin n) (Fin n) D.host.E).det
-      rw [if_pos hs] at h
+      rw [ite_eq_left hs] at h
       have h2 := hT' (star (M : Matrix (Fin n) (Fin n) D.host.E).det)
-      rw [if_pos hs, star_star] at h2
+      rw [ite_eq_left hs, star_star] at h2
       rw [← h2, zpow_neg_one]
       have h3 := congrArg (fun x => ι (embT D (pos ⟨v, s⟩) x)) (stdU_star_det_mul_det D M hU)
       simp only [map_mul, map_one] at h3
       exact (eq_inv_of_mul_eq_one_left h3)
-    · rw [hT', if_neg hs, zpow_one]
+    · rw [hT', ite_eq_right hs, zpow_one]
 
 end GlobalTheory.TwV.DelA

@@ -48,7 +48,6 @@ import Mathlib.Tactic.ReduceModChar
 
 open NumberField IsDedekindDomain Matrix Polynomial GlobalTheory.BCT GlobalTheory.UnitaryBC Formalism.UG
 open scoped Classical
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 
@@ -128,11 +127,11 @@ theorem isCompact_support_fU {w : Pl E} (hw : ¬ IsSplitAt w) (n : ℕ) (b : GLw
     constructor
     · intro h
       by_contra hn
-      refine h (if_neg ?_)
+      refine h (ite_eq_right ?_)
       rintro ⟨x, hx, z, hz, e⟩
       exact hn ⟨(x, z), ⟨hx, hz⟩, e.symm⟩
     · rintro ⟨⟨x, z⟩, ⟨hx, hz⟩, e⟩
-      rw [if_pos ⟨x, hx, z, hz, e.symm⟩]
+      rw [ite_eq_left ⟨x, hx, z, hz, e.symm⟩]
       exact one_ne_zero
   rw [e]
   exact (isClosed_UL hw n hc).isClosedEmbedding_subtypeVal.isCompact_preimage hS

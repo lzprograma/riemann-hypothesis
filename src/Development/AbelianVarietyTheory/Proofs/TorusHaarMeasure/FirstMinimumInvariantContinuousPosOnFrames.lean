@@ -86,44 +86,27 @@ private lemma exists_nhds_maj_two_sided_norm_sq_bound {r : ℕ} (X : _root_.Reci
 open NumberField MeasureTheory Topology in
 open scoped ContDiff ENNReal Matrix in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] in
-private lemma exists_integral_denominator (x : E) :
-    ∃ b : 𝓞 E, b ≠ 0 ∧ IsIntegral ℤ ((b : E) * x) := by
-  obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (A := 𝓞 E) x
-  refine ⟨b, nonZeroDivisors.ne_zero hb, ?_⟩
-  have hb' : (b : E) ≠ 0 := by
-    simpa using nonZeroDivisors.ne_zero hb
-  have : (b : E) * (algebraMap (𝓞 E) E a / algebraMap (𝓞 E) E b) = a := by
-    simp [mul_div_cancel₀ _ hb']
-  rw [this]
-  exact RingOfIntegers.isIntegral_coe a
-
-open NumberField MeasureTheory Topology in
-open scoped ContDiff ENNReal Matrix in
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] in
 private lemma exists_common_denominator_lattice {r : ℕ} (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r) :
     ∃ y : 𝓞 E, y ≠ 0 ∧ ∀ v ∈ X.Λ, ∀ i, IsIntegral ℤ ((y : E) * v i) := by
   classical
   obtain ⟨S, hS⟩ := X.Λ_fg
-  choose d hd0 hd using fun x : E => exists_integral_denominator x
   let T : Finset E := S.biUnion fun s => Finset.univ.image s
-  refine ⟨∏ t ∈ T, d t, Finset.prod_ne_zero_iff.2 (fun t _ => hd0 t), fun v hv => ?_⟩
+  obtain ⟨⟨y, hy0⟩, hy⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors (𝓞 E)) T id
+  refine ⟨y, nonZeroDivisors.ne_zero hy0, fun v hv => ?_⟩
   rw [← hS] at hv
   induction hv using Submodule.span_induction with
   | mem s hs =>
     intro i
     have ht : s i ∈ T :=
       Finset.mem_biUnion.2 ⟨s, hs, Finset.mem_image.2 ⟨i, Finset.mem_univ _, rfl⟩⟩
-    rw [← Finset.mul_prod_erase T d ht]
-    push_cast
-    rw [mul_comm (d (s i) : E), mul_assoc]
-    have h1 := (RingOfIntegers.isIntegral_coe (∏ t ∈ T.erase (s i), d t)).mul (hd (s i))
-    simpa using h1
+    obtain ⟨a, ha⟩ := hy (s i) ht
+    have hEq : (y : E) * s i = a := by simpa [Algebra.smul_def] using ha.symm
+    exact hEq ▸ RingOfIntegers.isIntegral_coe a
   | zero => intro i; simpa using isIntegral_zero
   | add u w _ _ hu hw => intro i; simpa [mul_add] using (hu i).add (hw i)
   | smul a u _ hu =>
     intro i
-    have : ((∏ t ∈ T, d t : 𝓞 E) : E) * (a • u) i =
-        (a : E) * (((∏ t ∈ T, d t : 𝓞 E) : E) * u i) := by
+    have : (y : E) * (a • u) i = (a : E) * ((y : E) * u i) := by
       simp [Algebra.smul_def]; ring
     rw [this]
     exact (RingOfIntegers.isIntegral_coe a).mul (hu i)
@@ -394,7 +377,7 @@ private lemma la1sq_pos_of_mem_dom {r : ℕ} (X : _root_.ReciprocityTheory.Chart
     intro v hvΛ hv0
     by_cases hsmall : ∀ τ : X.Ψ, ‖_root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb (τ : E →+* ℂ) v‖ ≤ 1
     · exact le_trans (min_le_left _ _) (hδf v ⟨⟨hvΛ, hsmall⟩, hv0⟩)
-    · push_neg at hsmall
+    · push Not at hsmall
       obtain ⟨τ, hτ⟩ := hsmall
       refine le_trans (min_le_right _ _) ?_
       have h1 : m * c0 ≤ X.c τ * X.maj x τ (_root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb (τ : E →+* ℂ) v) := by
@@ -410,8 +393,7 @@ private lemma la1sq_pos_of_mem_dom {r : ℕ} (X : _root_.ReciprocityTheory.Chart
         X.c τ * X.maj x τ (_root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb (τ : E →+* ℂ) v)) (fun τ _ => hterm v τ)
         (Finset.mem_univ _))
   obtain ⟨v0, hv0Λ, hv00⟩ : ∃ v ∈ X.Λ, v ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hbot : (X.Λ : Set (Fin r → E)) ⊆ {0} := fun v hv => hcon v hv
     have := X.Λ_span
     rw [eq_top_iff] at this

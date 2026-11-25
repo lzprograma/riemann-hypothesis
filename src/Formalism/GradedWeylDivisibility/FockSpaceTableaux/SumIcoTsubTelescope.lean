@@ -2,49 +2,7 @@ module
 
 public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetMinor
 public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetLemmas
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -99,9 +57,9 @@ theorem hw_weight_eq {n : ℕ} (ν : Fin n → ℕ) (hν : Antitone ν) :
     rw [h1, h2]
     by_cases hts : t.val ≤ s.val
     · have h3 : t.val < s.val + 1 := by omega
-      simp only [hts, h3, if_true, mul_one]
+      simp only [hts, h3, ite_true, mul_one]
     · have h3 : ¬ t.val < s.val + 1 := by omega
-      simp only [hts, h3, if_false, mul_zero]
+      simp only [hts, h3, ite_false, mul_zero]
   have hsum : ∑ s : Fin n, (ν s - nuNext ν s) * initW n (s.val + 1) t
       = ∑ i ∈ Finset.range n,
           (if t.val ≤ i then extNu ν i - extNu ν (i + 1) else 0) := by
@@ -125,8 +83,8 @@ theorem hw_weight_eq {n : ℕ} (ν : Fin n → ℕ) (hν : Antitone ν) :
         · refine Finset.sum_eq_zero (fun i hi => ?_)
           rw [Finset.mem_range] at hi
           have h0 : ¬ t.val ≤ i := by omega
-          exact if_neg h0
-        · exact Finset.sum_congr rfl (fun i hi => if_pos (Finset.mem_Ico.mp hi).1)
+          exact ite_eq_right h0
+        · exact Finset.sum_congr rfl (fun i hi => ite_eq_left (Finset.mem_Ico.mp hi).1)
     _ = extNu ν t.val := by
         rw [zero_add]
         exact sum_Ico_tsub_telescope _ n hg hz (n - t.val) t.val rfl

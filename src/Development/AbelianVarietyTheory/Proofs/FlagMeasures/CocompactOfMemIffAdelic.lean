@@ -96,18 +96,26 @@ theorem cay_sub {M : ℕ} {y : S} (h0 : y ^ M = 0) :
         noncomm_ring
     _ = _ := by rw [a1]; simp
 
-theorem compact_mod_of_filtration [TopologicalSpace S] [IsTopologicalRing S] (S₀ : Subring S) (h : S) (K : Set S)
+theorem map_cay {T : Type} [Ring T] (π : S →+* T) (M : ℕ) (y : S) : π (cay M y) = cay M (π y) := by
+  simp [cay, map_sum, map_pow]
+
+open Topology in
+theorem compact_mod_near_of_filtration {T : Type} [TopologicalSpace S] [IsTopologicalRing S]
+    [Ring T] [TopologicalSpace T] [IsTopologicalRing T] (S₀ : Subring S) (h : S)
     (N : ℕ → AddSubgroup S) (p : ℕ → S →+ S) (m : ℕ) (hcont : Continuous st)
     (hm : ∀ x y, st (x * y) = st y * st x) (hi : ∀ x, st (st x) = x)
     (h0 : ∀ x ∈ S₀, st x ∈ S₀) (hh0 : h ∈ S₀) (hh : h + h = 1) (hc : ∀ x, h * x = x * h)
-    (hK : IsCompact K) (hcov : ∀ x, ∃ y ∈ S₀, x - y ∈ K)
     (hp : ∀ i, Continuous (p i)) (hpN : ∀ i x, p i x ∈ N i) (hpf : ∀ i, ∀ x ∈ N i, p i x = x)
     (hp0 : ∀ i, ∀ x ∈ S₀, p i x ∈ S₀) (hle : ∀ i, N (i + 1) ≤ N i)
     (hmul : ∀ i, ∀ x ∈ N i, ∀ y ∈ N i, x * y ∈ N (i + 1)) (hst : ∀ i, ∀ x ∈ N i, st x ∈ N i)
-    (hz : ∀ x ∈ N m, x = 0) :
-    ∃ K' : Set S, IsCompact K' ∧ (∀ g ∈ K', (st g * g = 1 ∧ g * st g = 1) ∧ g - 1 ∈ N 0) ∧
-      ∀ g, (st g * g = 1 ∧ g * st g = 1) ∧ g - 1 ∈ N 0 →
-        ∃ γ ∈ S₀, ((st γ * γ = 1 ∧ γ * st γ = 1) ∧ γ - 1 ∈ N 0) ∧ ∃ k ∈ K', g = γ * k := by
+    (hz : ∀ x ∈ N m, x = 0)
+    (π : S →+* T) (stT : T →+ T) (pT : ℕ → T →+ T) (hstT : Continuous stT) (hpT : ∀ i, Continuous (pT i))
+    (hπs : ∀ x, π (st x) = stT (π x)) (hπp : ∀ i x, π (p i x) = pT i (π x))
+    (D : Set T) (hD : D ∈ 𝓝 (1 : T)) :
+    ∃ V ∈ 𝓝 (0 : T), ∀ K : Set S, IsCompact K → (∀ x ∈ K, π x ∈ V) → (∀ x, ∃ y ∈ S₀, x - y ∈ K) →
+      ∃ K' : Set S, IsCompact K' ∧ (∀ g ∈ K', π g ∈ D) ∧ (∀ g ∈ K', (st g * g = 1 ∧ g * st g = 1) ∧ g - 1 ∈ N 0) ∧
+        ∀ g, (st g * g = 1 ∧ g * st g = 1) ∧ g - 1 ∈ N 0 →
+          ∃ γ ∈ S₀, ((st γ * γ = 1 ∧ γ * st γ = 1) ∧ γ - 1 ∈ N 0) ∧ ∃ k ∈ K', g = γ * k := by
   have h1 : st 1 = 1 := GlobalTheory.TwoStepUnipotent.st_one hm hi
   have hsh : st h = h := GlobalTheory.TwoStepUnipotent.st_half hm hi hh hc
   have hhx : ∀ x, h * x + h * x = x := fun x => by rw [← add_mul, hh, one_mul]
@@ -141,19 +149,30 @@ theorem compact_mod_of_filtration [TopologicalSpace S] [IsTopologicalRing S] (S�
     have : g * g' - 1 - (x + x') = (g - 1) * (g' - 1) + (g - 1 - x) + (g' - 1 - x') := by noncomm_ring
     rw [this]
     exact add_mem (add_mem (hmul i _ u _ u') v) v'
-  have key : ∀ i ≤ m, ∃ K' : Set S, IsCompact K' ∧ (∀ g ∈ K', (st g * g = 1 ∧ g * st g = 1) ∧ g - 1 ∈ N 0) ∧
+  have key : ∀ i ≤ m, ∀ D ∈ 𝓝 (1 : T), ∃ V ∈ 𝓝 (0 : T), ∀ K : Set S, IsCompact K → (∀ x ∈ K, π x ∈ V) →
+      (∀ x, ∃ y ∈ S₀, x - y ∈ K) →
+      ∃ K' : Set S, IsCompact K' ∧ (∀ g ∈ K', π g ∈ D) ∧ (∀ g ∈ K', (st g * g = 1 ∧ g * st g = 1) ∧ g - 1 ∈ N 0) ∧
       ∀ g, (st g * g = 1 ∧ g * st g = 1) ∧ g - 1 ∈ N i →
         ∃ γ ∈ S₀, ((st γ * γ = 1 ∧ γ * st γ = 1) ∧ γ - 1 ∈ N 0) ∧ ∃ k ∈ K', g = γ * k := by
     intro i him
     induction him using Nat.decreasingInduction with
     | self =>
+      intro D hD
       have one : (st 1 * 1 = 1 ∧ 1 * st 1 = 1) ∧ (1 : S) - 1 ∈ N 0 := by simp [h1]
-      refine ⟨{1}, isCompact_singleton, fun g hg => by rw [Set.mem_singleton_iff.1 hg]; exact one,
-        fun g hg => ⟨1, one_mem _, one, 1, rfl, ?_⟩⟩
+      refine ⟨Set.univ, Filter.univ_mem, fun K _ _ _ => ⟨{1}, isCompact_singleton, fun g hg => ?_,
+        fun g hg => by rw [Set.mem_singleton_iff.1 hg]; exact one,
+        fun g hg => ⟨1, one_mem _, one, 1, rfl, ?_⟩⟩⟩
+      · rw [Set.mem_singleton_iff.1 hg, map_one]; exact mem_of_mem_nhds hD
       rw [one_mul, ← sub_eq_zero]
       exact hz _ hg.2
     | of_succ i _ ih =>
-      obtain ⟨K', hK', hU, hcov'⟩ := ih
+      intro D hD
+      obtain ⟨D₁, hD₁, hDD⟩ : ∃ D₁ ∈ 𝓝 (1 : T), ∀ a ∈ D₁, ∀ b ∈ D₁, a * b ∈ D := by
+        have e : ∀ᶠ x : T × T in 𝓝 ((1 : T), (1 : T)), x.1 * x.2 ∈ D :=
+          (continuous_mul.tendsto ((1 : T), (1 : T))).eventually (by simpa using hD)
+        obtain ⟨u, hu, v, hv, huv⟩ := mem_nhds_prod_iff.1 e
+        exact ⟨u ∩ v, Filter.inter_mem hu hv, fun a ha b hb => huv (Set.mk_mem_prod ha.1 hb.2)⟩
+      obtain ⟨V₂, hV₂, ih'⟩ := ih D₁ hD₁
       obtain ⟨q, hq⟩ : ∃ q : S → S, ∀ z, q z = h * (h * (p i z - st (p i z))) := ⟨_, fun _ => rfl⟩
       have qc : Continuous q := by
         rw [show q = fun z => h * (h * (p i z - st (p i z))) from funext hq]
@@ -191,7 +210,29 @@ theorem compact_mod_of_filtration [TopologicalSpace S] [IsTopologicalRing S] (S�
       have sl : ∀ z, st (c z) - 1 - -(q z + q z) ∈ N (i + 1) := fun z => by
         have := hst _ _ (cl z)
         rwa [map_sub, map_sub, map_add, h1, qs, ← neg_add] at this
-      refine ⟨(fun x : S × S => x.1 * c x.2) '' (K' ×ˢ K), (hK'.prod hK).image (by fun_prop), ?_, ?_⟩
+      obtain ⟨cT, hcT⟩ : ∃ cT : T → T, ∀ t, cT t = cay (2 ^ m) (π h * (π h * (pT i t - stT (pT i t)))) :=
+        ⟨_, fun _ => rfl⟩
+      have cTc : Continuous cT := by
+        rw [show cT = fun t => cay (2 ^ m) (π h * (π h * (pT i t - stT (pT i t)))) from funext hcT]
+        have := hpT i
+        unfold cay
+        fun_prop
+      have cT0 : cT 0 = 1 := by
+        rw [hcT]
+        simp only [map_zero, sub_zero, mul_zero]
+        unfold cay
+        rw [add_zero, one_mul, Finset.sum_eq_single_of_mem 0 (Finset.mem_range.2 (by positivity))
+          (fun b _ hb => zero_pow hb), pow_zero]
+      have cπ : ∀ z, π (c z) = cT (π z) := fun z => by
+        rw [hcd, hq, hcT, map_cay]
+        simp only [map_mul, map_sub, hπp, hπs]
+      refine ⟨V₂ ∩ cT ⁻¹' D₁, Filter.inter_mem hV₂
+        (cTc.continuousAt.preimage_mem_nhds (by rw [cT0]; exact hD₁)), fun K hK hKV hcov => ?_⟩
+      obtain ⟨K', hK', hKD, hU, hcov'⟩ := ih' K hK (fun x hx => (hKV x hx).1) hcov
+      refine ⟨(fun x : S × S => x.1 * c x.2) '' (K' ×ˢ K), (hK'.prod hK).image (by fun_prop), ?_, ?_, ?_⟩
+      · rintro _ ⟨⟨k, z⟩, ⟨hk, hz'⟩, rfl⟩
+        rw [map_mul, cπ]
+        exact hDD _ (hKD k hk) _ (hKV z hz').2
       · rintro _ ⟨⟨k, z⟩, ⟨hk, -⟩, rfl⟩
         exact ⟨umul _ _ (hU k hk).1 (cu z), nmul _ _ _ (hU k hk).2 (hle0 i (cN z))⟩
       · rintro g ⟨u, hg⟩
@@ -218,7 +259,26 @@ theorem compact_mod_of_filtration [TopologicalSpace S] [IsTopologicalRing S] (S�
         calc g = (c y * st (c y)) * g * (st (c (g - 1 - y)) * c (g - 1 - y)) := by rw [(cu _).1, (cu _).2, one_mul, mul_one]
           _ = c y * (st (c y) * g * st (c (g - 1 - y))) * c (g - 1 - y) := by simp only [mul_assoc]
           _ = _ := by rw [hgk]; simp only [mul_assoc]
-  exact key 0 (Nat.zero_le m)
+  exact key 0 (Nat.zero_le m) D hD
+
+theorem compact_mod_of_filtration [TopologicalSpace S] [IsTopologicalRing S] (S₀ : Subring S) (h : S) (K : Set S)
+    (N : ℕ → AddSubgroup S) (p : ℕ → S →+ S) (m : ℕ) (hcont : Continuous st)
+    (hm : ∀ x y, st (x * y) = st y * st x) (hi : ∀ x, st (st x) = x)
+    (h0 : ∀ x ∈ S₀, st x ∈ S₀) (hh0 : h ∈ S₀) (hh : h + h = 1) (hc : ∀ x, h * x = x * h)
+    (hK : IsCompact K) (hcov : ∀ x, ∃ y ∈ S₀, x - y ∈ K)
+    (hp : ∀ i, Continuous (p i)) (hpN : ∀ i x, p i x ∈ N i) (hpf : ∀ i, ∀ x ∈ N i, p i x = x)
+    (hp0 : ∀ i, ∀ x ∈ S₀, p i x ∈ S₀) (hle : ∀ i, N (i + 1) ≤ N i)
+    (hmul : ∀ i, ∀ x ∈ N i, ∀ y ∈ N i, x * y ∈ N (i + 1)) (hst : ∀ i, ∀ x ∈ N i, st x ∈ N i)
+    (hz : ∀ x ∈ N m, x = 0) :
+    ∃ K' : Set S, IsCompact K' ∧ (∀ g ∈ K', (st g * g = 1 ∧ g * st g = 1) ∧ g - 1 ∈ N 0) ∧
+      ∀ g, (st g * g = 1 ∧ g * st g = 1) ∧ g - 1 ∈ N 0 →
+        ∃ γ ∈ S₀, ((st γ * γ = 1 ∧ γ * st γ = 1) ∧ γ - 1 ∈ N 0) ∧ ∃ k ∈ K', g = γ * k := by
+  let π : S →+* PUnit := { toFun := fun _ => (), map_one' := rfl, map_mul' := fun _ _ => rfl, map_zero' := rfl, map_add' := fun _ _ => rfl }
+  obtain ⟨V, hV, H⟩ := compact_mod_near_of_filtration (T := PUnit) S₀ h N p m hcont hm hi h0 hh0 hh hc
+    hp hpN hpf hp0 hle hmul hst hz π 0 (fun _ => 0) continuous_const (fun _ => continuous_const)
+    (fun _ => rfl) (fun _ _ => rfl) Set.univ Filter.univ_mem
+  obtain ⟨K', hK', _, hU, hcov'⟩ := H K hK (fun _ _ => mem_of_mem_nhds hV) hcov
+  exact ⟨K', hK', hU, hcov'⟩
 
 variable {ι : Type} [Fintype ι] (ε : ι → S) (w : ι → ℤ)
 
@@ -257,14 +317,20 @@ theorem raise_st (hm : ∀ x y, st (x * y) = st y * st x) (hi : ∀ x, st (st x)
     have := congrArg st (hx b' a' (by omega))
     rwa [hm, hm, ← ha, ← hb, hi, hi, map_zero, ← mul_assoc] at this
 
-theorem compact_mod_of_weights [TopologicalSpace S] [IsTopologicalRing S] (S₀ : Subring S) (h : S) (K : Set S)
+open Topology in
+theorem compact_mod_near_of_weights {T : Type} [TopologicalSpace S] [IsTopologicalRing S]
+    [Ring T] [TopologicalSpace T] [IsTopologicalRing T] (S₀ : Subring S) (h : S)
     (hcont : Continuous st) (hm : ∀ x y, st (x * y) = st y * st x) (hi : ∀ x, st (st x) = x)
     (h0 : ∀ x ∈ S₀, st x ∈ S₀) (hh0 : h ∈ S₀) (hh : h + h = 1) (hc : ∀ x, h * x = x * h)
-    (hK : IsCompact K) (hcov : ∀ x, ∃ y ∈ S₀, x - y ∈ K) (he : CompleteOrthogonalIdempotents ε)
-    (he0 : ∀ a, ε a ∈ S₀) (hs : ∀ a, ∃ a', st (ε a) = ε a' ∧ w a' = - w a) :
-    ∃ K' : Set S, IsCompact K' ∧ (∀ g ∈ K', (st g * g = 1 ∧ g * st g = 1) ∧ g - 1 ∈ raise ε w 0) ∧
-      ∀ g, (st g * g = 1 ∧ g * st g = 1) ∧ g - 1 ∈ raise ε w 0 →
-        ∃ γ ∈ S₀, ((st γ * γ = 1 ∧ γ * st γ = 1) ∧ γ - 1 ∈ raise ε w 0) ∧ ∃ k ∈ K', g = γ * k := by
+    (he : CompleteOrthogonalIdempotents ε)
+    (he0 : ∀ a, ε a ∈ S₀) (hs : ∀ a, ∃ a', st (ε a) = ε a' ∧ w a' = - w a)
+    (π : S →+* T) (stT : T →+ T) (hstT : Continuous stT) (hπs : ∀ x, π (st x) = stT (π x))
+    (D : Set T) (hD : D ∈ 𝓝 (1 : T)) :
+    ∃ V ∈ 𝓝 (0 : T), ∀ K : Set S, IsCompact K → (∀ x ∈ K, π x ∈ V) → (∀ x, ∃ y ∈ S₀, x - y ∈ K) →
+      ∃ K' : Set S, IsCompact K' ∧ (∀ g ∈ K', π g ∈ D) ∧
+        (∀ g ∈ K', (st g * g = 1 ∧ g * st g = 1) ∧ g - 1 ∈ raise ε w 0) ∧
+        ∀ g, (st g * g = 1 ∧ g * st g = 1) ∧ g - 1 ∈ raise ε w 0 →
+          ∃ γ ∈ S₀, ((st γ * γ = 1 ∧ γ * st γ = 1) ∧ γ - 1 ∈ raise ε w 0) ∧ ∃ k ∈ K', g = γ * k := by
   classical
   obtain ⟨m, hmb⟩ : ∃ m : ℕ, ∀ a b, w a ≤ w b + m := by
     obtain ⟨M, hM⟩ := (Set.finite_range fun ab : ι × ι => (w ab.1 - w ab.2).toNat).bddAbove
@@ -278,9 +344,13 @@ theorem compact_mod_of_weights [TopologicalSpace S] [IsTopologicalRing S] (S₀ 
     { toFun := fun x => ∑ ab ∈ Finset.univ.filter (fun ab : ι × ι => ¬ w ab.1 ≤ w ab.2 + i), ε ab.1 * x * ε ab.2
       map_zero' := by simp
       map_add' := fun x y => by simp only [mul_add, add_mul, Finset.sum_add_distrib] }
-  refine compact_mod_of_filtration S₀ h K (raise ε w) p m hcont hm hi h0 hh0 hh hc hK hcov (fun i => ?_) (fun i x => ?_)
+  let pT : ℕ → T →+ T := fun i =>
+    { toFun := fun x => ∑ ab ∈ Finset.univ.filter (fun ab : ι × ι => ¬ w ab.1 ≤ w ab.2 + i), π (ε ab.1) * x * π (ε ab.2)
+      map_zero' := by simp
+      map_add' := fun x y => by simp only [mul_add, add_mul, Finset.sum_add_distrib] }
+  refine compact_mod_near_of_filtration S₀ h (raise ε w) p m hcont hm hi h0 hh0 hh hc (fun i => ?_) (fun i x => ?_)
     (fun i x hx => ?_) (fun i x hx => ?_) raise_le (fun i x hx y hy => raise_mul he i hx hy)
-    (fun i x hx => raise_st hm hi hs i hx) (fun x hx => ?_)
+    (fun i x hx => raise_st hm hi hs i hx) (fun x hx => ?_) π stT pT hstT (fun i => ?_) hπs (fun i x => ?_) D hD
   · exact continuous_finsetSum _ fun ab _ => by fun_prop
   · refine sum_mem fun ab hab a b h' => ?_
     have hab' := (Finset.mem_filter.1 hab).2
@@ -293,6 +363,23 @@ theorem compact_mod_of_weights [TopologicalSpace S] [IsTopologicalRing S] (S₀ 
   · exact sum_mem fun ab _ => mul_mem (mul_mem (he0 _) hx) (he0 _)
   · rw [← hall x]
     exact Finset.sum_eq_zero fun ab _ => hx _ _ (hmb _ _)
+  · exact continuous_finsetSum _ fun ab _ => by fun_prop
+  · show π (∑ ab ∈ _, _) = ∑ ab ∈ _, _
+    simp only [map_sum, map_mul]
+
+theorem compact_mod_of_weights [TopologicalSpace S] [IsTopologicalRing S] (S₀ : Subring S) (h : S) (K : Set S)
+    (hcont : Continuous st) (hm : ∀ x y, st (x * y) = st y * st x) (hi : ∀ x, st (st x) = x)
+    (h0 : ∀ x ∈ S₀, st x ∈ S₀) (hh0 : h ∈ S₀) (hh : h + h = 1) (hc : ∀ x, h * x = x * h)
+    (hK : IsCompact K) (hcov : ∀ x, ∃ y ∈ S₀, x - y ∈ K) (he : CompleteOrthogonalIdempotents ε)
+    (he0 : ∀ a, ε a ∈ S₀) (hs : ∀ a, ∃ a', st (ε a) = ε a' ∧ w a' = - w a) :
+    ∃ K' : Set S, IsCompact K' ∧ (∀ g ∈ K', (st g * g = 1 ∧ g * st g = 1) ∧ g - 1 ∈ raise ε w 0) ∧
+      ∀ g, (st g * g = 1 ∧ g * st g = 1) ∧ g - 1 ∈ raise ε w 0 →
+        ∃ γ ∈ S₀, ((st γ * γ = 1 ∧ γ * st γ = 1) ∧ γ - 1 ∈ raise ε w 0) ∧ ∃ k ∈ K', g = γ * k := by
+  let π : S →+* PUnit := { toFun := fun _ => (), map_one' := rfl, map_mul' := fun _ _ => rfl, map_zero' := rfl, map_add' := fun _ _ => rfl }
+  obtain ⟨V, hV, H⟩ := compact_mod_near_of_weights (T := PUnit) S₀ h hcont hm hi h0 hh0 hh hc he he0 hs
+    π 0 continuous_const (fun _ => rfl) Set.univ Filter.univ_mem
+  obtain ⟨K', hK', _, hU, hcov'⟩ := H K hK (fun _ _ => mem_of_mem_nhds hV) hcov
+  exact ⟨K', hK', hU, hcov'⟩
 
 variable {κ : Type} [Fintype κ]
 

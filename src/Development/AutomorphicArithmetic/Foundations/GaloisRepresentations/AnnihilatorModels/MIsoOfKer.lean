@@ -2,45 +2,7 @@ module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PairCalc
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.OrdReadOf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -48,32 +10,18 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.ES
 open GlobalTheory.IwLevel (InSub IsIsogDeg)
 open GlobalTheory.AbDual (evc IsAdditive swap)
-attribute [local instance] Ideal.Quotient.field
 open UpperTheory.Gal.crystallineComparison UpperTheory.Gal.crystallineComparison.Mod
 
 namespace UpperTheory.Gal.crystallineComparison.Mod.IsoOfKernelFactorization
 
 variable {S : Scheme.{0}}
 
-private lemma pow_comp' {T A B : Over S} [GrpObj A] [GrpObj B] (x : T ⟶ A) (f : A ⟶ B) [IsMonHom f] (n : ℕ) :
-    (x ^ n) ≫ f = (x ≫ f) ^ n := by
-  exact (IsMonHom.monoidHom f T).map_pow x n
-
-private lemma comp_pow' {T' T A : Over S} [GrpObj A] (t : T' ⟶ T) (x : T ⟶ A) (n : ℕ) :
-    t ≫ (x ^ n) = (t ≫ x) ^ n := by
-  induction n with
-  | zero => simp [Hom.one_def]
-  | succ n ih => simp only [pow_succ, Hom.mul_def, comp_lift_assoc, ih]
-
-private lemma self_pow {A B : Over S} [GrpObj A] [GrpObj B] (f : A ⟶ B) [IsMonHom f] (n : ℕ) :
-    f ^ n = ((𝟙 A) ^ n) ≫ f := by
-  rw [pow_comp', Category.id_comp]
-
 private lemma cancel (hDiv : DivC) {A₀ A B : Over S} [GrpObj A₀] [GrpObj A] [IsCommMonObj A] [GrpObj B] [IsCommMonObj B]
     (hA : IsAbelianScheme A) {c : ℕ} (hc : 0 < c) (ψ : A₀ ⟶ A) (ψ' : A ⟶ A₀) (e : ψ' ≫ ψ = (𝟙 A) ^ c)
     (u v : A ⟶ B) [IsMonHom u] [IsMonHom v] (h : ψ ≫ u = ψ ≫ v) : u = v := by
   have h2 : ψ' ≫ ψ ≫ u = ψ' ≫ ψ ≫ v := by rw [h]
-  rw [← Category.assoc, ← Category.assoc, e, ← self_pow, ← self_pow] at h2
+  rw [← Category.assoc, ← Category.assoc, e, pow_comp, Category.id_comp,
+    pow_comp, Category.id_comp] at h2
   exact (hDiv S A B hA c hc).2 u v inferInstance inferInstance h2
 
 private lemma factor (hDiv : DivC) {A₀ A₁ A₂ : Over S} [GrpObj A₀] [IsCommMonObj A₀] [GrpObj A₁] [IsCommMonObj A₁]
@@ -85,13 +33,13 @@ private lemma factor (hDiv : DivC) {A₀ A₁ A₂ : Over S} [GrpObj A₀] [IsCo
   obtain ⟨ν, hν, hνc⟩ := (hDiv S A₁ A₂ h₁ c hc).1 (ψ₁' ≫ ψ₂) inferInstance (by
     intro T g hg
     have : (g ≫ ψ₁') ≫ ψ₁ = 1 := by
-      rw [Category.assoc, v, comp_pow', Category.comp_id, hg]
+      rw [Category.assoc, v, comp_pow, Category.comp_id, hg]
     rw [← Category.assoc]
     exact hk T _ this)
   haveI := hν
   refine ⟨ν, hν, hνc, ?_⟩
   refine (hDiv S A₀ A₂ h₀ c hc).2 (ψ₁ ≫ ν) ψ₂ inferInstance inferInstance ?_
-  rw [← comp_pow', hνc, ← Category.assoc, u, ← self_pow]
+  rw [← comp_pow, hνc, ← Category.assoc, u, pow_comp, Category.id_comp]
 
 variable {A T Y : Over S} [GrpObj A]
 
@@ -177,7 +125,7 @@ theorem UpperTheory.Gal.crystallineComparison.Mod.isoOfKer_of :
     rw [hevL, Category.assoc, Category.assoc, hρ1, e1, e2, sub_self]
   have hxc : ∀ {Y : Over (Sp k)} (x : Y ⟶ o₁.A), x ^ c = (x ≫ ψ₁') ≫ ψ₁ := by
     intro Y x
-    rw [Category.assoc, v1, comp_pow', Category.comp_id]
+    rw [Category.assoc, v1, comp_pow, Category.comp_id]
   have huniv : evc hL (fst o₁.A o₁.A) (snd o₁.A o₁.A) = GlobalTheory.CechPic.cls _ hL := by
     unfold GlobalTheory.AbDual.evc
     rw [lift_fst_snd, Over.id_left, GlobalTheory.CechPic.pull_id]

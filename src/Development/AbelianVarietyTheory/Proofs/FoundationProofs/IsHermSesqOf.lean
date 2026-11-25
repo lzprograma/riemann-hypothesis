@@ -83,16 +83,7 @@ variable {D : D7} {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} {N N' : ℕ}
 
 theorem lam_mul_mem (a : 𝓞 D.host.K) {w : ℂ} (hw : w ∈ lamOf D cc δ) :
     D.host.φ₀ (((a : D.host.K) : D.host.E)) * w ∈ lamOf D cc δ := by
-  induction hw using AddSubgroup.closure_induction with
-  | mem w hw =>
-    obtain ⟨c, hc, rfl⟩ := hw
-    refine AddSubgroup.subset_closure ⟨a * c, cc.mul_mem_left a hc, ?_⟩
-    push_cast
-    rw [map_mul]
-    ring
-  | zero => simp
-  | add a b _ _ ha hb => rw [mul_add]; exact AddSubgroup.add_mem _ ha hb
-  | neg a _ ha => rw [mul_neg]; exact AddSubgroup.neg_mem _ ha
+  exact GlobalTheory.ConjNorm.Line.lam_mul cc δ a hw
 
 theorem klat_gen {A : AddSubgroup (VC D N N')} (hA : KLat D (tor0 D cc δ) A) :
     ∃ S : Set (Matrix (Fin N') (Fin N) D.host.E), Submodule.span D.host.K S = ⊤ ∧

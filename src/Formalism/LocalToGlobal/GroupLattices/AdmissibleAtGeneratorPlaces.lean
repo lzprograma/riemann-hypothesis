@@ -119,10 +119,10 @@ theorem ETDef_of {X : ErrX D} {K : Formalism.MainNotions.G.Consts} {c : ErrC} (P
       rintro ⟨h | h, _⟩
       · exact absurd (hs.symm.trans h) (fun h => by cases h)
       · exact absurd (hs.symm.trans h) (fun h => by cases h)
-    rw [if_neg h1, if_neg h2, if_neg h3]
+    rw [ite_eq_right h1, ite_eq_right h2, ite_eq_right h3]
   · rw [hE u j hj w]
     unfold Eval
-    simp only [hw', if_true]
+    simp only [hw', ite_true]
 
 end Formalism.MainNotions.J
 
@@ -201,7 +201,7 @@ theorem servedModel_of_params (P : ParameterChoice' D L) (X : Inst D L) (K : Con
   refine Formalism.BasicNotions.gIdx_of_cand P K h3 u _ ?_ hw
   unfold VV at hV
   by_contra hc
-  exact hV (if_neg (fun h => hc h.1))
+  exact hV (ite_eq_right (fun h => hc h.1))
 
 end Formalism.MainNotions.J
 end -- clump:auto
@@ -468,6 +468,11 @@ theorem admissible_away_from_twist {K : Consts} {Dx : DivX D} {T : TwForms D} {l
   rw [show lowFE L u w + 1 * vDG D u w - vDG D u w = lowFE L u w by ring] at h1
   exact h1
 
+/-- Prove the level-two period bound and its complement. For the period bound, use
+the twist-place estimate when the residue characteristic is the twist prime.
+At the remaining places, use the generator-place estimate at the two generator
+primes and the Weil–Jacquet–Shalika service estimate elsewhere. Apply
+`valuation_bound_of_unrounded` to pass to the floor in `adm2`. -/
 theorem admissible_level_two {X : Inst D L} {Y : LatInst D} {K : Consts} {c : LatCmp D} {Dx : DivX D} {T : TwForms D}
     {lev : LevelData D} {Xe : ErrX D} {ce : ErrC} {C : ℝ}
     (h0 : MemberChainIntegral D) (hT : TwistedPointIntegral D T) (hp0 : PeriodClassSumWeyl D) (hpT : TwistedPeriodAdmissible D Dx T)

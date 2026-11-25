@@ -160,7 +160,7 @@ theorem bwD_elim (hL : bwD_Loc O) (M : Matrix (Fin r) (Fin r) ℂ) (hM : bwD_Int
       have h1 := congrFun (congrFun hM'M j) c
       have hcol : ∀ x, M x c = if x = c then 1 else 0 := fun x => hstd x c hc
       simp only [Matrix.mul_apply, hcol, mul_ite, mul_one, mul_zero] at h1
-      rw [Finset.sum_ite_eq', if_pos (Finset.mem_univ _)] at h1
+      rw [Finset.sum_ite_eq', ite_eq_left (Finset.mem_univ _)] at h1
       rw [h1, Matrix.one_apply_ne (Fin.ne_of_val_ne (by omega))]
     have hsum : ∑ a ∈ Finset.univ.filter (fun a : Fin r => k ≤ a.val), M' j a * M a j = 1 := by
       have h1 := congrFun (congrFun hM'M j) j
@@ -199,11 +199,11 @@ theorem bwD_elim (hL : bwD_Loc O) (M : Matrix (Fin r) (Fin r) ℂ) (hM : bwD_Int
       rw [hM₁, add_mul, one_mul, Matrix.add_apply, bwD_single_mul_apply]
     have hM₁I : bwD_Int O M₁ := by rw [hM₁]; exact bwD_Int_mul hR₁I hMI
     have hM₁jj : M₁ j j = 1 := by
-      rw [hM₁e, if_pos rfl, hc₁]
+      rw [hM₁e, ite_eq_left rfl, hc₁]
       linear_combination (1 - M j j) * hay'
     have hMa : ∀ c : Fin r, c.val < k → M a c = 0 := by
       intro c hc
-      rw [hstd a c hc, if_neg (Fin.ne_of_val_ne (by omega))]
+      rw [hstd a c hc, ite_eq_right (Fin.ne_of_val_ne (by omega))]
     have hM₁c : ∀ x (c : Fin r), c.val < k → M₁ x c = if x = c then 1 else 0 := by
       intro x c hc
       rw [hM₁e, hMa c hc, mul_zero, ite_self, add_zero, hstd x c hc]
@@ -239,13 +239,13 @@ theorem bwD_elim (hL : bwD_Loc O) (M : Matrix (Fin r) (Fin r) ℂ) (hM : bwD_Int
       intro x c hc
       rw [hM₂e]
       rcases Nat.lt_succ_iff_lt_or_eq.mp hc with hc | hc
-      · rw [hM₁c j c hc, if_neg (Fin.ne_of_val_ne (by omega)), mul_zero, ite_self, sub_zero,
+      · rw [hM₁c j c hc, ite_eq_right (Fin.ne_of_val_ne (by omega)), mul_zero, ite_self, sub_zero,
           hM₁c x c hc]
       · have hcj : c = j := Fin.ext (by omega)
         rw [hcj, hM₁jj, mul_one]
         by_cases hx : x = j
         · rw [hx]; simp [hM₁jj]
-        · rw [if_pos (Finset.mem_erase.mpr ⟨hx, Finset.mem_univ _⟩), sub_self, if_neg hx]
+        · rw [ite_eq_left (Finset.mem_erase.mpr ⟨hx, Finset.mem_univ _⟩), sub_self, ite_eq_right hx]
     have hM₂inv : ∃ M'', bwD_Int O M'' ∧ M'' * M₂ = 1 := by
       refine ⟨M' * (1 + Matrix.single j a d₁) * (1 + S),
         bwD_Int_mul (bwD_Int_mul hM'I hG₁I) (bwD_Int_add bwD_Int_one hSI), ?_⟩
@@ -315,7 +315,7 @@ theorem bwD_decomp (hL : bwD_Loc O) (N M : Matrix (Fin r) (Fin r) ℂ) (t : ℂ)
     by_cases hb : b = j
     · rw [hb]; simpa using hs a
     · have h1 : Function.update (1 : Fin r → ℂ) j s b = 1 := by simp [hb]
-      rw [h1, mul_one, if_pos (Finset.mem_erase.mpr ⟨hb, Finset.mem_univ _⟩)]
+      rw [h1, mul_one, ite_eq_left (Finset.mem_erase.mpr ⟨hb, Finset.mem_univ _⟩)]
       exact hcol b hb a
   have hdet : ∀ s : ℂ, (N₀ * Matrix.diagonal (Function.update (1 : Fin r → ℂ) j s)).det = N.det * s := by
     intro s
@@ -411,9 +411,6 @@ theorem bwD_col_loc (w : D.what₂.places.Pl) (hw : OverT D u w) {n : ℕ} {L : 
     split_ifs
     · exact ⟨1, map_one _⟩
     · exact ⟨0, map_zero _⟩
-
-def BwLcInt : Prop :=
-  ∀ i (hi : i ≤ D.R.m) (c : (D.mem u).C.cls i), clsCrd D u i hi c ≤ Ld D u i hi c
 
 end Spec
 

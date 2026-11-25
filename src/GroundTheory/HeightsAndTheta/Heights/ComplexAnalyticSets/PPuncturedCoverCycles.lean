@@ -53,7 +53,7 @@ theorem PuncturedCoverCycles.proof (hCov : FibreSectionsCovering.Statement)
   let Ψ : Fin m → (Fin (e + 1) → ℂ) → Fin n → ℂ := fun b t =>
     if h : t ∈ Metric.ball c δ ∩ {t | t 0 ≠ 0} then (ψ b ⟨t, h⟩ : Fin n → ℂ) else 0
   have hΨ : ∀ b t (h : t ∈ Metric.ball c δ ∩ {t | t 0 ≠ 0}), Ψ b t = ψ b ⟨t, h⟩ :=
-    fun b t h => dif_pos h
+    fun b t h => dite_eq_left h
   have hAΨ : ∀ b t (h : t ∈ Metric.ball c δ ∩ {t | t 0 ≠ 0}),
       A *ᵥ Ψ b t = Function.update t 0 (t 0 ^ ord b) := by
     intro b t h

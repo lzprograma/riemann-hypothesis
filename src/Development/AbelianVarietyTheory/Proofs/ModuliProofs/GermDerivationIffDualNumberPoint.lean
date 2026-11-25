@@ -186,14 +186,14 @@ theorem exists_ptDer {y : Sp ℂ ⟶ X} {v : Sp (DualNumber ℂ) ⟶ X} (hv : pt
   have H : ∀ W, ⊤ ≤ y ⁻¹ᵁ W → ⊤ ≤ v ⁻¹ᵁ W := fun W h => (le_preimage_iff v _).2 (hv ▸ h)
   refine ⟨fun W f => if h : ⊤ ≤ v ⁻¹ᵁ W then (ev v W h f).snd else 0, ⟨?_, ?_, ?_⟩, fun W h f => ?_⟩
   · intro W h f f'
-    simp only [dif_pos (H W h), map_add (f := _), TrivSqZeroExt.snd_add]
+    simp only [dite_eq_left (H W h), map_add (f := _), TrivSqZeroExt.snd_add]
   · intro W h f f'
-    simp only [dif_pos (H W h), map_mul, DualNumber.snd_mul, fst_ev hv]
+    simp only [dite_eq_left (H W h), map_mul, DualNumber.snd_mul, fst_ev hv]
     ring
   · intro W W' e h f
     have k := H W (top_le_preimage_mono y e h)
-    simp only [dif_pos (H W' h), dif_pos k, ev_res v e k]
-  · simp only [dif_pos h]
+    simp only [dite_eq_left (H W' h), dite_eq_left k, ev_res v e k]
+  · simp only [dite_eq_left h]
 
 theorem existsUnique_point {y : Sp ℂ ⟶ X} {δ : ∀ W : X.Opens, Γ(X, W) → ℂ} (hδ : PtDer y δ) :
     ∃! v : Sp (DualNumber ℂ) ⟶ X, pt0 ≫ v = y ∧

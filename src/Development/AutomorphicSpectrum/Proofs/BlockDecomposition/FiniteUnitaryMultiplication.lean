@@ -8,43 +8,7 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryI
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VLtOneOfOrdLEqOne
 import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwistedTraceFormulaStable
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -53,8 +17,6 @@ noncomputable section
 open NumberField IsDedekindDomain Matrix Polynomial
 open GlobalTheory.BCT GlobalTheory.UnitaryBC PositivityTheory.Rg.Bc.ArchbcB.B PositivityTheory.Rg.BcB.F.MT Formalism.UG
 open scoped Classical
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.CompanionTheory.FUMulPf
 
@@ -125,9 +87,9 @@ theorem hint_ind (K : Subgroup H) (hIK : I ≤ K) (g : H) (u : H → ℂ)
     constructor
     · rintro ⟨h, -⟩
       have h1 : u (g * k) = u g := h g
-      rw [hu, hu, inv_mul_cancel_left, inv_mul_cancel, if_pos I.one_mem] at h1
+      rw [hu, hu, inv_mul_cancel_left, inv_mul_cancel, ite_eq_left I.one_mem] at h1
       by_contra hk
-      rw [if_neg hk] at h1
+      rw [ite_eq_right hk] at h1
       exact zero_ne_one h1
     · intro hk
       refine ⟨fun x => ?_, hIK hk⟩
@@ -139,10 +101,10 @@ theorem hint_ind (K : Subgroup H) (hIK : I ≤ K) (g : H) (u : H → ℂ)
   rw [hS]
   have hsum : ∑ᶠ q : H ⧸ I, u q.out = 1 := by
     rw [finsum_eq_single (fun q : H ⧸ I => u q.out) (QuotientGroup.mk g)]
-    · rw [hu, if_pos]
+    · rw [hu, ite_eq_left]
       exact QuotientGroup.eq.1 (QuotientGroup.out_eq' (QuotientGroup.mk g : H ⧸ I)).symm
     · intro q hq
-      rw [hu, if_neg]
+      rw [hu, ite_eq_right]
       intro h
       apply hq
       rw [← QuotientGroup.out_eq' q]
@@ -153,21 +115,21 @@ theorem hint_dc (K : Subgroup H) (hIK : I ≤ K) (hF : Fac I B M) {t t' : H} (ht
     (ht' : Dom I B M t') (y : H) :
     hint K (fun z => dc I t z * dc I t' (z⁻¹ * y)) = ((I.relIndex K : ℕ) : ℂ)⁻¹ * dc I (t * t') y := by
   by_cases hy : ∃ x ∈ I, ∃ c ∈ I, y = x * (t * t') * c
-  · rw [dc, if_pos hy, mul_one]
+  · rw [dc, ite_eq_left hy, mul_one]
     obtain ⟨a, ha, c, hc, rfl⟩ := hy
     refine hint_ind K hIK (a * t) _ fun z => ?_
     by_cases hz : (a * t)⁻¹ * z ∈ I
-    · rw [if_pos hz, dc, dc, if_pos, if_pos, mul_one]
+    · rw [ite_eq_left hz, dc, dc, ite_eq_left, ite_eq_left, mul_one]
       · exact ⟨((a * t)⁻¹ * z)⁻¹, I.inv_mem hz, c, hc, by group⟩
       · exact ⟨a, ha, _, hz, by group⟩
-    · rw [if_neg hz]
+    · rw [ite_eq_right hz]
       by_contra hne
       have h1 : ∃ x ∈ I, ∃ c ∈ I, z = x * t * c := by
         by_contra h
-        exact hne (by rw [dc, if_neg h, zero_mul])
+        exact hne (by rw [dc, ite_eq_right h, zero_mul])
       have h2 : ∃ x ∈ I, ∃ c' ∈ I, z⁻¹ * (a * (t * t') * c) = x * t' * c' := by
         by_contra h
-        exact hne (by rw [dc, dc, if_neg h, mul_zero])
+        exact hne (by rw [dc, dc, ite_eq_right h, mul_zero])
       obtain ⟨x, hx, d, hd, e⟩ := h1
       obtain ⟨x₂, hx₂, d₂, hd₂, e₂⟩ := h2
       apply hz
@@ -178,16 +140,16 @@ theorem hint_dc (K : Subgroup H) (hIK : I ≤ K) (hF : Fac I B M) {t t' : H} (ht
       have h5 : (a * t)⁻¹ * z = t⁻¹ * (a⁻¹ * z) := by group
       rw [h5]
       exact h3
-  · rw [dc, if_neg hy, mul_zero]
+  · rw [dc, ite_eq_right hy, mul_zero]
     have hu : (fun z => dc I t z * dc I t' (z⁻¹ * y)) = fun _ => 0 := by
       funext z
       by_contra hne
       have h1 : ∃ x ∈ I, ∃ c ∈ I, z = x * t * c := by
         by_contra h
-        exact hne (by rw [dc, if_neg h, zero_mul])
+        exact hne (by rw [dc, ite_eq_right h, zero_mul])
       have h2 : ∃ x ∈ I, ∃ c ∈ I, z⁻¹ * y = x * t' * c := by
         by_contra h
-        exact hne (by rw [dc, dc, if_neg h, mul_zero])
+        exact hne (by rw [dc, dc, ite_eq_right h, mul_zero])
       apply hy
       have := dc_mul hF ht ht' h1 h2
       simpa using this

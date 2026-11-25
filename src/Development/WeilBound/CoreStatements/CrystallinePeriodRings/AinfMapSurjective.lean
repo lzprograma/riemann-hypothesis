@@ -86,7 +86,7 @@ theorem ιCD_aB (a : Ainf l) :
   rfl
 
 theorem wittTo_injective : Function.Injective (wittToBDeRhamPlus ↥(normInteger ℂ_[l]) l) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro w hw
   obtain ⟨ξ, hξ, h1⟩ := IsPerfectoidField.exists_mem_ker_fontaineTheta_isUnit_coeff_one ℂ_[l] l
   have hker := IsPerfectoidField.ker_fontaineTheta_eq_span hξ h1
@@ -98,27 +98,6 @@ theorem wittTo_injective : Function.Injective (wittToBDeRhamPlus ↥(normInteger
   have : toBDeRhamPlus ↥(normInteger ℂ_[l]) l (algebraMap _ _ w) = 0 := hw
   rw [this]
   exact Submodule.zero_mem _
-
-theorem ainfMap_injective : Function.Injective (Per6.ainfMap l) :=
-  WittVector.map_injective _ (tiltEquiv l).injective
-
-theorem ainfMap_surjective : Function.Surjective (Per6.ainfMap l) :=
-  WittVector.map_surjective _ (tiltEquiv l).surjective
-
-theorem aB_injective : Function.Injective (Per6.aB l) := by
-  intro a b h
-  have h1 := congrArg (ιCD l) h
-  rw [ιCD_aB, ιCD_aB] at h1
-  exact ainfMap_injective (wittTo_injective
-    (IsPerfectoidField.algebraMap_bDeRham_injective (K := ℂ_[l]) (p := l) h1))
-
-theorem aB_act (g : GQ l) (a : Ainf l) :
-    Per6.aB l (WittVector.map (galT g) a) = Per6.σB g (Per6.aB l a) := by
-  have h : Per6.ainfMap l (WittVector.map (galT g) a) = Per6.toBot g • Per6.ainfMap l a := by
-    refine WittVector.ext fun n => ?_
-    rw [AInf.gal_smul_coeff]
-    exact tiltMap_tiltInv l _
-  rw [frob_aB_apply, frob_aB_apply, σB_cB, h, ← ACris.gal_smul_algebraMap, ACris.gal_smul_def]
 
 theorem tiltMap_εO : Per6.tiltMap l (εO l) = epsilon l := tiltMap_tiltInv l _
 

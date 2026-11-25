@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocOrbCut
 public import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
 public import Formalism.SharpRestriction.CuspSpanNormBounds.FrameFixingOrbitRelation
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntLowMul
@@ -15,19 +16,15 @@ namespace Formalism.L2.SG.Pf.ZsVolGrp
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.Pf.ZsVolCut Matrix
 open Classical
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Uni
 
 variable {R : Type*} [CommRing R] {n : ℕ}
 
 theorem det_lo {l : Matrix (Fin n) (Fin n) R} (h1 : ∀ a, l a a = 1) (h2 : ∀ a b, a < b → l a b = 0) : l.det = 1 := by
-  rw [Matrix.det_of_lowerTriangular l (fun i j hij => h2 i j hij)]
-  exact Finset.prod_eq_one fun i _ => h1 i
+  apply PI.TermAttrConst.UnitaryGroupMassFormula.det_lower_one <;> assumption
 
 theorem det_up {l : Matrix (Fin n) (Fin n) R} (h1 : ∀ a, l a a = 1) (h2 : ∀ a b, b < a → l a b = 0) : l.det = 1 := by
-  rw [Matrix.det_of_upperTriangular (fun i j hij => h2 i j hij)]
-  exact Finset.prod_eq_one fun i _ => h1 i
+  apply PI.TermAttrConst.UnitaryGroupMassFormula.det_upper_one <;> assumption
 
 theorem inv_eq_adj {l : Matrix (Fin n) (Fin n) R} (h : l.det = 1) : l⁻¹ = l.adjugate := by
   rw [Matrix.inv_def, h, Ring.inverse_one, one_smul]
@@ -64,23 +61,7 @@ alias intLow_mul := _root_.GlobalTheory.LowerIntegralMul.intLow_mul
 
 theorem intUp_mul {l l' : Matrix (Fin n) (Fin n) E} (h : Formalism.MainNotions.S.TieN.IntUp Mp l)
     (h' : Formalism.MainNotions.S.TieN.IntUp Mp l') : Formalism.MainNotions.S.TieN.IntUp Mp (l * l') := by
-  obtain ⟨h1, h2, h3⟩ := h
-  obtain ⟨h1', h2', h3'⟩ := h'
-  refine ⟨fun a => ?_, fun a b hab => ?_, fun a b => ?_⟩
-  · rw [Matrix.mul_apply, Finset.sum_eq_single a]
-    · rw [h1, h1', mul_one]
-    · intro c _ hc
-      rcases lt_or_gt_of_ne hc with h | h
-      · rw [h2 a c h, zero_mul]
-      · rw [h2' c a h, mul_zero]
-    · simp
-  · rw [Matrix.mul_apply]
-    refine Finset.sum_eq_zero fun c _ => ?_
-    rcases lt_or_ge c a with h | h
-    · rw [h2 a c h, zero_mul]
-    · rw [h2' c b (lt_of_lt_of_le hab h), mul_zero]
-  · rw [Matrix.mul_apply]
-    exact sum_mem fun c _ => mul_mem (h3 a c) (h3' c b)
+  apply _root_.Formalism.L2.SG.Pf.LocOrbCut.intUp_mul <;> assumption
 
 theorem intLow_inv {l : Matrix (Fin n) (Fin n) E} (h : Formalism.MainNotions.S.TieN.IntLow Mp l) :
     Formalism.MainNotions.S.TieN.IntLow Mp l⁻¹ ∧ l⁻¹ * l = 1 ∧ l * l⁻¹ = 1 := by

@@ -5,49 +5,7 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGau
 public import Mathlib.MeasureTheory.Measure.WithDensity
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.TBallMeas
 public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.RhsHaar, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.RhsWInv
@@ -172,9 +130,9 @@ theorem inWb_eq {w : Fin (2 * r + k + 1) → ℂ} (hw : inWb k r w) : MB.Em k r 
   simp only [Matrix.mulVec, dotProduct, MB.Em, wbPart, ite_mul, one_mul, zero_mul]
   by_cases hi : MB.mid k r i
   · rw [Finset.sum_eq_single (MB.midx hi)]
-    · rw [if_pos (MB.wI_midx hi).symm, MB.wI_midx hi]
+    · rw [ite_eq_left (MB.wI_midx hi).symm, MB.wI_midx hi]
     · intro m _ hm
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       exact hm (MB.wI_inj (h.symm.trans (MB.wI_midx hi).symm))
     · intro h
@@ -184,7 +142,7 @@ theorem inWb_eq {w : Fin (2 * r + k + 1) → ℂ} (hw : inWb k r w) : MB.Em k r 
       simp only [MB.mid, not_and_or, not_le] at hi
       omega
     · intro m _
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       exact hi (by rw [h]; exact MB.mid_wI m)
 
@@ -210,7 +168,7 @@ theorem herm_emb (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (hz : inWb k r z)
 
 theorem secP_eq {ζ : ℂ} (h : Tz k r z * Tz k r z' < Complex.normSq ζ) : secP k r z z' μsec ζ = μsec ζ := by
   unfold secP
-  exact if_pos h
+  exact ite_eq_left h
 
 theorem zF_chart (hD : WbData k r z z' μW μW' a a' μsec) {q : ℂ × Mt k r × Mt k r} (hq : q ∈ goodS k r z z') :
     zF k r z z' (chartF k r z z' μsec q) = q.1 := by
@@ -235,7 +193,7 @@ theorem mem_chart (hD : WbData k r z z' μW μW' a a' μsec) {q : ℂ × Mt k r 
 
 theorem wD_zero_off {ζ : ℂ} (h : ¬ Tz k r z * Tz k r z' < Complex.normSq ζ) : wD k r z z' ζ = 0 := by
   unfold wD
-  exact if_neg h
+  exact ite_eq_right h
 
 theorem src_null (hD : WbData k r z z' μW μW' a a' μsec) : srcM k r z z' μW μW' (goodS k r z z')ᶜ = 0 := by
   have := hD.haarW.1
@@ -282,7 +240,7 @@ theorem repr (hD : WbData k r z z' μW μW' a a' μsec) (φ : Mt k r → ℝ≥0
   by_cases h : Tz k r z * Tz k r z' < Complex.normSq ζ
   · have hw : wD k r z z' ζ = ENNReal.ofReal (zWeight k (Tz k r z) (Tz k r z') ζ) := by
       unfold wD
-      exact if_pos h
+      exact ite_eq_left h
     rw [hw]
     congr 1
     refine lintegral_congr fun x => lintegral_congr fun y => ?_
@@ -294,7 +252,7 @@ theorem repr (hD : WbData k r z z' μW μW' a a' μsec) (φ : Mt k r → ℝ≥0
   · have hlt : Complex.normSq ζ < Tz k r z * Tz k r z' := lt_of_le_of_ne (not_lt.1 h) hζ
     have hz : zWeight k (Tz k r z) (Tz k r z') ζ = 0 := by
       unfold zWeight
-      exact if_neg (not_le.2 hlt)
+      exact ite_eq_right (not_le.2 hlt)
     rw [wD_zero_off h, hz, ENNReal.ofReal_zero, zero_mul, zero_mul]
 
 theorem wvol_lt (hT : 0 ≤ Tz k r z * Tz k r z') (n : ℕ) :
@@ -307,7 +265,7 @@ theorem wvol_lt (hT : 0 ≤ Tz k r z * Tz k r z') (n : ℕ) :
     split_ifs with h
     · apply ENNReal.ofReal_le_ofReal
       unfold zWeight
-      rw [if_pos h.le]
+      rw [ite_eq_left h.le]
       have h1 : Complex.normSq ζ ≤ (n : ℝ) ^ 2 := by
         rw [Complex.normSq_eq_norm_sq]
         exact pow_le_pow_left₀ (norm_nonneg _) (mem_closedBall_zero_iff.1 hζ) 2
@@ -371,7 +329,7 @@ theorem nu_ne_zero (hD : WbData k r z z' μW μW' a a' μsec) : nuR k r z z' μW
       have hζ' : Tz k r z * Tz k r z' + 1 < Complex.normSq ζ := hζ
       have hD' : Tz k r z * Tz k r z' < Complex.normSq ζ := by linarith
       unfold wD zWeight
-      rw [if_pos hD', if_pos hD'.le, ← ENNReal.ofReal_one]
+      rw [ite_eq_left hD', ite_eq_left hD'.le, ← ENNReal.ofReal_one]
       exact ENNReal.ofReal_le_ofReal (one_le_pow₀ (by linarith))
     exact (ne_of_gt (lt_of_lt_of_le hE (hle.trans (measure_mono (Set.subset_univ _))))) h
   · rcases mul_eq_zero.1 h with h | h

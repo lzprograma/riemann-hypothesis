@@ -119,7 +119,7 @@ theorem eventually_eq_zero [FiniteDimensional ℝ 𝔸] {S : Set 𝔸} (hc : IsC
   by_contra hcon
   rw [not_eventually] at hcon
   obtain ⟨y, hy0, hy⟩ := exists_seq_forall_of_frequently hcon
-  push_neg at hy
+  push Not at hy
   haveI : ProperSpace 𝔸 := FiniteDimensional.proper ℝ 𝔸
   have hsph : ∀ n, ‖y n‖⁻¹ • y n ∈ Metric.sphere (0 : 𝔸) 1 := fun n => by
     rw [mem_sphere_zero_iff_norm, norm_smul, norm_inv, norm_norm, inv_mul_cancel₀ (norm_ne_zero_iff.2 (hy n).2.2)]

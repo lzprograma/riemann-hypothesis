@@ -5,6 +5,7 @@ public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApp
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
 public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAdeleRingTensorEquivInfiniteProdFinite
 public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsPrimeIdemOfComp
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -53,7 +54,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Formalism.L2.Theta Formalism.L2.NTheta Formalism.IndefR.Mult
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.IdemSupport
 
@@ -199,53 +199,21 @@ structure Comp (D : D7) (Φ : Formalism.L2.Theta.AE D →+* FiniteAdeleRing (�
   base : ∀ (a : AF D.host.F) Q, Φ (algebraMap _ _ a) Q =
     GlobalTheory.AdeleBaseChange.locMap D.host.F Q (a.2 (Q.under (𝓞 D.host.F)))
 
-theorem mem_intAE_iff (z : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F ⊗[D.host.F] D.host.E) :
-    z ∈ intAE D ↔ Formalism.IndefR.Lev.swapAE D z ∈ Formalism.L2.DIV.RInt D.host.F D.host.E := by
-  constructor
-  · intro hz
-    have : intAE D ≤ (Formalism.L2.DIV.RInt D.host.F D.host.E).toAddSubgroup.comap
-        (Formalism.IndefR.Lev.swapAE D).toAddMonoidHom := by
-      refine (AddSubgroup.closure_le _).2 ?_
-      rintro _ ⟨a, ha, x, rfl⟩
-      exact Formalism.UG.P.levelaf_tmul_mem x ha
-    exact this hz
-  · intro hz
-    obtain ⟨m, g, hg⟩ := Module.Finite.exists_fin (R := ℤ) (M := 𝓞 D.host.E)
-    obtain ⟨r, hr, e⟩ := Formalism.UG.P.levelaf_decomp g hg hz
-    have : z = ∑ j, r j ⊗ₜ[D.host.F] (g j : D.host.E) := by
-      apply (Algebra.TensorProduct.comm D.host.F (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F) D.host.E).injective
+private theorem isCMExt_of (D : D7) :
+    HeckeCharacterZeroLocus.ThmBIn.IsCMExt D.host.F D.host.E D.sp.cm.sig :=
+  ⟨D.sp.cm.totReal, D.sp.cm.cmUnram.1, D.sp.cm.deg2, D.sp.cm.cmUnram.2.1⟩
 
-      rw [map_sum]
-      exact e
-    rw [this]
-    exact sum_mem fun j _ => AddSubgroup.subset_closure ⟨r j, hr j, g j, rfl⟩
+private theorem Comp.toCM {Φ : Formalism.L2.Theta.AE D →+* FiniteAdeleRing (𝓞 D.host.E) D.host.E}
+    (hΦ : Comp D Φ) : GlobalTheory.CMPrimeIdele.Comp Φ :=
+  ⟨hΦ.ext, hΦ.surj, hΦ.inc, hΦ.int, hΦ.base⟩
+
+theorem mem_intAE_iff (z : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F ⊗[D.host.F] D.host.E) :
+    z ∈ intAE D ↔ Formalism.IndefR.Lev.swapAE D z ∈ Formalism.L2.DIV.RInt D.host.F D.host.E :=
+  GlobalTheory.CMPrimeIdele.mem_intAE_iff z
 
 theorem exists_comp (D : D7) : ∃ Φ, Comp D Φ := by
-  obtain ⟨ι, hι⟩ := GlobalTheory.AdeleBaseChange.exists_toAd D.host.F D.host.E
-  obtain ⟨e, he, -⟩ := GlobalTheory.AdSplit.exists_adele_equiv D.host.F D.host.E
-  have he1 : ∀ z, (e z).1 = infPart D z := fun z => (he z).1
-  have he2 : ∀ z, (e z).2 = finPart D z := fun z => (he z).2
-  have hb : Function.Bijective (Formalism.IndefR.Lev.swapAE D) :=
-    (Algebra.TensorProduct.comm D.host.F (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F) D.host.E).bijective
-  refine ⟨ι.comp ((Formalism.IndefR.Lev.swapAE D).comp (finPart D)), fun z h1 h2 => ?_, fun s => ?_, fun x => ?_,
-    fun z => ?_, fun a Q => ?_⟩
-  · have h3 : finPart D z = 0 := hb.1 (GlobalTheory.AdeleBaseChange.map_injective hι (by
-      rw [map_zero, map_zero]; exact h2))
-    apply e.injective
-    rw [map_zero]
-    exact Prod.ext ((he1 z).trans h1) ((he2 z).trans h3)
-  · obtain ⟨y, rfl⟩ := GlobalTheory.AdeleBaseChange.map_surjective hι s
-    obtain ⟨y, rfl⟩ := hb.2 y
-    obtain ⟨z, hz⟩ := e.surjective (0, y)
-    refine ⟨z, by rw [← he1, hz], ?_⟩
-    change ι (Formalism.IndefR.Lev.swapAE D (finPart D z)) = _
-    rw [← he2, hz]
-  · exact GlobalTheory.AdeleBaseChange.map_tmul_one hι x
-  · rw [mem_intAE_iff]
-    exact ⟨fun h => GlobalTheory.AdeleBaseChange.map_mem_int hι h, fun h => GlobalTheory.AdeleBaseChange.mem_int_of_map hι h⟩
-  · change ι ((1 : D.host.E) ⊗ₜ[D.host.F] a.2) Q = _
-    rw [hι, map_one, one_mul]
-    rfl
+  obtain ⟨Φ, h1, h2, h3, h4, h5⟩ := GlobalTheory.CMPrimeIdele.exists_comp D.host.F D.host.E
+  exact ⟨Φ, h1, h2, h3, h4, h5⟩
 
 def IsDelta (Φ : Formalism.L2.Theta.AE D →+* FiniteAdeleRing (𝓞 D.host.E) D.host.E)
     (P : HeightOneSpectrum (𝓞 D.host.E)) (e : Formalism.L2.Theta.AE D) : Prop :=
@@ -259,9 +227,8 @@ def cO (D : D7) : 𝓞 D.host.E ≃+* 𝓞 D.host.E :=
 
 theorem cO_coe (x : 𝓞 D.host.E) : (cO D x : D.host.E) = star (x : D.host.E) := rfl
 
-theorem cO_cO (x : 𝓞 D.host.E) : cO D (cO D x) = x := by
-  apply RingOfIntegers.ext
-  rw [cO_coe, cO_coe, star_star]
+theorem cO_cO (x : 𝓞 D.host.E) : cO D (cO D x) = x :=
+  GlobalTheory.CMPrimeIdele.cO_cO (isCMExt_of D) x
 
 def cP (P : HeightOneSpectrum (𝓞 D.host.E)) : HeightOneSpectrum (𝓞 D.host.E) :=
   HeightOneSpectrum.comap (cO D).toRingHom (cO D).surjective P
@@ -270,7 +237,7 @@ theorem mem_cP (P : HeightOneSpectrum (𝓞 D.host.E)) (x : 𝓞 D.host.E) :
     x ∈ (cP P).asIdeal ↔ cO D x ∈ P.asIdeal := Iff.rfl
 
 theorem eq_of_le {P Q : HeightOneSpectrum (𝓞 D.host.E)} (h : P.asIdeal ≤ Q.asIdeal) : P = Q :=
-  HeightOneSpectrum.ext (P.isMaximal.eq_of_le Q.isPrime.ne_top h)
+  GlobalTheory.CMPrimeIdele.eq_of_le h
 
 theorem isConjPl_iff (P P' : HeightOneSpectrum (𝓞 D.host.E)) : Formalism.IndefR.Lev.IsConjPl P P' ↔ P' = cP P := by
   constructor
@@ -293,38 +260,20 @@ theorem cA_algebraMap (a : AF D.host.F) :
 
 theorem parts_cA (z : Formalism.L2.Theta.AE D) :
     infPart D (cA D z) = sigR (Ainf D.host.F) D.sp.cm.sig (infPart D z) ∧
-    finPart D (cA D z) = sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F) D.sp.cm.sig (finPart D z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp only [map_zero, and_self]
-  | tmul a x => exact ⟨rfl, rfl⟩
-  | add a b ha hb => simp only [map_add (f := _), ha.1, ha.2, hb.1, hb.2, and_self]
+    finPart D (cA D z) = sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F) D.sp.cm.sig (finPart D z) :=
+  GlobalTheory.CMPrimeIdele.parts_cA z
 
-theorem finPart_cA_mem {z : Formalism.L2.Theta.AE D} (hz : finPart D z ∈ intAE D) : finPart D (cA D z) ∈ intAE D := by
-  rw [(parts_cA z).2]
-  have : intAE D ≤ (intAE D).comap (sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F) D.sp.cm.sig).toAddMonoidHom := by
-    refine (AddSubgroup.closure_le _).2 ?_
-    rintro _ ⟨a, ha, x, rfl⟩
-    exact AddSubgroup.subset_closure ⟨a, ha, cO D x, rfl⟩
-  exact this hz
+theorem finPart_cA_mem {z : Formalism.L2.Theta.AE D} (hz : finPart D z ∈ intAE D) : finPart D (cA D z) ∈ intAE D :=
+  GlobalTheory.CMPrimeIdele.finPart_cA_mem hz
 
 theorem Comparison₂.conj {P : HeightOneSpectrum (𝓞 D.host.E)} {e : Formalism.L2.Theta.AE D} (h : Comparison₂ P e) :
-    Comparison₂ (cP P) (cA D e) := by
-  intro x hx
-  have e1 : cA D (e * incA D ((cO D x : D.host.E)⁻¹)) = cA D e * incA D ((x : D.host.E)⁻¹) := by
-    rw [map_mul, cA_incA, cO_coe, star_inv₀, star_star]
-  rw [mem_cP, h _ (by simpa using hx), ← e1]
-  refine not_congr ⟨finPart_cA_mem, fun h => ?_⟩
-  have := finPart_cA_mem h
-  rwa [cA_cA] at this
+    Comparison₂ (cP P) (cA D e) :=
+  GlobalTheory.CMPrimeIdele.Comparison₂.conj (isCMExt_of D) h
 
 theorem inv_mem_iff (Q : HeightOneSpectrum (𝓞 D.host.E)) {x : 𝓞 D.host.E} (hx : x ≠ 0) :
     algebraMap D.host.E (Q.adicCompletion D.host.E) ((x : D.host.E)⁻¹) ∈ Q.adicCompletionIntegers D.host.E ↔
-      x ∉ Q.asIdeal := by
-  rw [HeightOneSpectrum.mem_adicCompletionIntegers, Formalism.UG.P.levelaf_valued_algebraMap, map_inv₀,
-    ← HeightOneSpectrum.valuation_lt_one_iff_mem (K := D.host.E), not_lt]
-  refine inv_le_one₀ (zero_lt_iff.2 ?_)
-  rw [Ne, Valuation.zero_iff]
-  exact_mod_cast hx
+      x ∉ Q.asIdeal :=
+  GlobalTheory.CMPrimeIdele.inv_mem_iff Q hx
 
 section
 
@@ -341,121 +290,50 @@ theorem ev_zero (Q : HeightOneSpectrum (𝓞 D.host.E)) : Φ 0 Q = 0 := by rw [m
 variable (hΦ : Comp D Φ)
 include hΦ
 
-theorem Comp.ext' {a b : Formalism.L2.Theta.AE D} (h1 : infPart D a = infPart D b) (h2 : ∀ Q, Φ a Q = Φ b Q) : a = b := by
-  rw [← sub_eq_zero]
-  refine hΦ.ext _ (by rw [RingHom.map_sub, h1, sub_self]) ?_
-  rw [map_sub, sub_eq_zero]
-  exact FiniteAdeleRing.ext _ h2
+theorem Comp.ext' {a b : Formalism.L2.Theta.AE D} (h1 : infPart D a = infPart D b) (h2 : ∀ Q, Φ a Q = Φ b Q) : a = b :=
+  GlobalTheory.CMPrimeIdele.Comp.ext' hΦ.toCM h1 h2
 
-theorem exists_delta (P : HeightOneSpectrum (𝓞 D.host.E)) : ∃ e, IsDelta Φ P e := by
-  classical
-  obtain ⟨z, h1, h2⟩ := hΦ.surj (singleV D.host.E P 1)
-  refine ⟨z, h1, ?_, fun Q hQ => ?_⟩
-  · rw [h2]; exact Pi.single_eq_same (M := fun w : HeightOneSpectrum (𝓞 D.host.E) => w.adicCompletion D.host.E) P 1
-  · rw [h2]; exact Pi.single_eq_of_ne (M := fun w : HeightOneSpectrum (𝓞 D.host.E) => w.adicCompletion D.host.E) hQ 1
+theorem exists_delta (P : HeightOneSpectrum (𝓞 D.host.E)) : ∃ e, IsDelta Φ P e :=
+  GlobalTheory.CMPrimeIdele.exists_delta hΦ.toCM P
 
 theorem delta_unique {P : HeightOneSpectrum (𝓞 D.host.E)} {e e' : Formalism.L2.Theta.AE D} (h : IsDelta Φ P e)
-    (h' : IsDelta Φ P e') : e = e' := by
-  refine hΦ.ext' (h.1.trans h'.1.symm) fun Q => ?_
-  by_cases hQ : Q = P
-  · rw [hQ, h.2.1, h'.2.1]
-  · rw [h.2.2 Q hQ, h'.2.2 Q hQ]
+    (h' : IsDelta Φ P e') : e = e' :=
+  GlobalTheory.CMPrimeIdele.delta_unique hΦ.toCM h h'
 
 theorem delta_idem {P : HeightOneSpectrum (𝓞 D.host.E)} {e : Formalism.L2.Theta.AE D} (h : IsDelta Φ P e) :
-    e * e = e := by
-  refine delta_unique hΦ ⟨by rw [map_mul, h.1, zero_mul], by rw [ev_mul, h.2.1, one_mul], fun Q hQ => ?_⟩ h
-  rw [ev_mul, h.2.2 Q hQ, zero_mul]
+    e * e = e :=
+  GlobalTheory.CMPrimeIdele.delta_idem hΦ.toCM h
 
 theorem not_int_iff {e : Formalism.L2.Theta.AE D} (he : e * e = e) {x : 𝓞 D.host.E} (hx : x ≠ 0) :
-    finPart D (e * incA D ((x : D.host.E)⁻¹)) ∉ intAE D ↔ ∃ Q, Φ e Q ≠ 0 ∧ x ∈ Q.asIdeal := by
-  rw [hΦ.int, not_forall]
-  refine exists_congr fun Q => ?_
-  rw [ev_mul, hΦ.inc]
-  by_cases h0 : Φ e Q = 0
-  · rw [h0, zero_mul]
-    exact iff_of_false (fun h => h (zero_mem _)) (fun h => h.1 rfl)
-  · have h1 : Φ e Q = 1 := mul_left_cancel₀ h0 (by rw [← ev_mul, he, mul_one])
-    rw [h1, one_mul]
-    exact ((inv_mem_iff Q hx).not.trans not_not).trans (and_iff_right one_ne_zero).symm
+    finPart D (e * incA D ((x : D.host.E)⁻¹)) ∉ intAE D ↔ ∃ Q, Φ e Q ≠ 0 ∧ x ∈ Q.asIdeal :=
+  GlobalTheory.CMPrimeIdele.not_int_iff hΦ.toCM he hx
 
 theorem tie_iff {e : Formalism.L2.Theta.AE D} (he : e * e = e) (h0 : infPart D e = 0)
-    (P : HeightOneSpectrum (𝓞 D.host.E)) : Comparison₂ P e ↔ IsDelta Φ P e := by
-  constructor
-  · intro h
-    have h1 : ∀ Q, Φ e Q ≠ 0 → Q = P := fun Q hQ => eq_of_le fun x hx => by
-      by_cases hx0 : x = 0
-      · rw [hx0]; exact zero_mem _
-      · exact (h x hx0).2 ((not_int_iff hΦ he hx0).2 ⟨Q, hQ, hx⟩)
-    refine ⟨h0, ?_, fun Q hQ => by_contra fun h2 => hQ (h1 Q h2)⟩
-    obtain ⟨x, hx, hx0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot P.ne_bot
-    obtain ⟨Q, hQ, -⟩ := (not_int_iff hΦ he hx0).1 ((h x hx0).1 hx)
-    rw [h1 Q hQ] at hQ
-    exact mul_left_cancel₀ hQ (by rw [← ev_mul, he, mul_one])
-  · intro h x hx
-    rw [not_int_iff hΦ he hx]
-    refine ⟨fun hP => ⟨P, by rw [h.2.1]; exact one_ne_zero, hP⟩, ?_⟩
-    rintro ⟨Q, h1, h2⟩
-    have : Q = P := by_contra fun h3 => h1 (h.2.2 Q h3)
-    exact this ▸ h2
+    (P : HeightOneSpectrum (𝓞 D.host.E)) : Comparison₂ P e ↔ IsDelta Φ P e :=
+  GlobalTheory.CMPrimeIdele.tie_iff hΦ.toCM he h0 P
 
 theorem delta_conj {P : HeightOneSpectrum (𝓞 D.host.E)} {e : Formalism.L2.Theta.AE D} (h : IsDelta Φ P e) :
-    IsDelta Φ (cP P) (cA D e) := by
-  have he := delta_idem hΦ h
-  refine (tie_iff hΦ (by rw [← map_mul, he]) (by rw [(parts_cA e).1, h.1, map_zero]) _).1 ?_
-  exact ((tie_iff hΦ he h.1 P).2 h).conj
+    IsDelta Φ (cP P) (cA D e) :=
+  GlobalTheory.CMPrimeIdele.delta_conj hΦ.toCM (isCMExt_of D) h
 
 theorem place_comp {v : HeightOneSpectrum (𝓞 D.host.F)} {ε : AF D.host.F} (h : IsPlaceIdem D v ε) :
     infPart D (algebraMap _ (Formalism.L2.Theta.AE D) ε) = 0 ∧
     (∀ Q : HeightOneSpectrum (𝓞 D.host.E), Q.under (𝓞 D.host.F) = v → Φ (algebraMap _ _ ε) Q = 1) ∧
-    (∀ Q : HeightOneSpectrum (𝓞 D.host.E), Q.under (𝓞 D.host.F) ≠ v → Φ (algebraMap _ _ ε) Q = 0) := by
-  obtain ⟨α, rfl, h1, h0⟩ := h
-  refine ⟨TensorProduct.zero_tmul _ _, fun Q hQ => ?_, fun Q hQ => ?_⟩
-  · subst hQ
-    rw [hΦ.base]
-    exact (congrArg _ h1).trans (map_one _)
-  · rw [hΦ.base]
-    exact (congrArg _ (h0 _ hQ)).trans (map_zero _)
+    (∀ Q : HeightOneSpectrum (𝓞 D.host.E), Q.under (𝓞 D.host.F) ≠ v → Φ (algebraMap _ _ ε) Q = 0) :=
+  GlobalTheory.CMPrimeIdele.place_comp hΦ.toCM h
 
 end
 
 theorem under_cP (P : HeightOneSpectrum (𝓞 D.host.E)) :
-    (cP P).under (𝓞 D.host.F) = P.under (𝓞 D.host.F) := by
-  refine HeightOneSpectrum.ext (Ideal.ext fun x => ?_)
-  have : cO D (algebraMap (𝓞 D.host.F) (𝓞 D.host.E) x) = algebraMap (𝓞 D.host.F) (𝓞 D.host.E) x := by
-    apply RingOfIntegers.ext
-    rw [cO_coe]
-    exact (D.sp.cm.fixed _).2 ⟨x, rfl⟩
-  change cO D (algebraMap (𝓞 D.host.F) (𝓞 D.host.E) x) ∈ P.asIdeal ↔
-    algebraMap (𝓞 D.host.F) (𝓞 D.host.E) x ∈ P.asIdeal
-  rw [this]
+    (cP P).under (𝓞 D.host.F) = P.under (𝓞 D.host.F) :=
+  GlobalTheory.CMPrimeIdele.under_cP (isCMExt_of D) P
 
 theorem eq_or_eq_cP {P Q : HeightOneSpectrum (𝓞 D.host.E)}
-    (h : Q.under (𝓞 D.host.F) = P.under (𝓞 D.host.F)) : Q = P ∨ Q = cP P := by
-  have hle : (Q.asIdeal : Set (𝓞 D.host.E)) ⊆ P.asIdeal ∪ (cP P).asIdeal := by
-    intro x hx
-    obtain ⟨t, ht⟩ := (D.sp.cm.fixed ((x : D.host.E) * star (x : D.host.E))).1
-      (by rw [star_mul, star_star])
-    have hint : IsIntegral ℤ t := by
-      rw [← isIntegral_algHom_iff (IsScalarTower.toAlgHom ℤ D.host.F D.host.E) (algebraMap D.host.F D.host.E).injective]
-      change IsIntegral ℤ (algebraMap D.host.F D.host.E t)
-      rw [ht]
-      exact (x * cO D x).isIntegral_coe
-    have e : algebraMap (𝓞 D.host.F) (𝓞 D.host.E) ⟨t, hint⟩ = x * cO D x := RingOfIntegers.ext ht
-    have h1 : (⟨t, hint⟩ : 𝓞 D.host.F) ∈ (Q.under (𝓞 D.host.F)).asIdeal := by
-      change algebraMap (𝓞 D.host.F) (𝓞 D.host.E) _ ∈ Q.asIdeal
-      rw [e]
-      exact Ideal.mul_mem_right _ _ hx
-    rw [h] at h1
-    change algebraMap (𝓞 D.host.F) (𝓞 D.host.E) _ ∈ P.asIdeal at h1
-    rw [e] at h1
-    exact P.isPrime.mem_or_mem h1
-  exact (Ideal.subset_union.1 hle).imp eq_of_le eq_of_le
+    (h : Q.under (𝓞 D.host.F) = P.under (𝓞 D.host.F)) : Q = P ∨ Q = cP P :=
+  GlobalTheory.CMPrimeIdele.eq_or_eq_cP (isCMExt_of D) h
 
-theorem exists_placeIdem (v : HeightOneSpectrum (𝓞 D.host.F)) : ∃ ε, IsPlaceIdem D v ε := by
-  classical
-  exact ⟨_, singleV D.host.F v 1, rfl,
-    Pi.single_eq_same (M := fun w : HeightOneSpectrum (𝓞 D.host.F) => w.adicCompletion D.host.F) v 1,
-    fun w hw => Pi.single_eq_of_ne (M := fun w : HeightOneSpectrum (𝓞 D.host.F) => w.adicCompletion D.host.F) hw 1⟩
+theorem exists_placeIdem (v : HeightOneSpectrum (𝓞 D.host.F)) : ∃ ε, IsPlaceIdem D v ε :=
+  GlobalTheory.CMPrimeIdele.exists_placeIdem v
 
 theorem placeIdem_unique {v : HeightOneSpectrum (𝓞 D.host.F)} {ε ε' : AF D.host.F} (h : IsPlaceIdem D v ε)
     (h' : IsPlaceIdem D v ε') : ε = ε' := by
@@ -522,31 +400,8 @@ theorem of_isPrimeIdem {P : HeightOneSpectrum (𝓞 D.host.E)} {e f : Formalism.
     exact h5 ▸ hε
 
 theorem exists_isPrimeIdem (P : HeightOneSpectrum (𝓞 D.host.E)) : ∃ e f, IsPrimeIdem P e f := by
-  obtain ⟨e, he⟩ := exists_delta hΦ P
-  obtain ⟨ε, hε⟩ := exists_placeIdem (D := D) (P.under (𝓞 D.host.F))
-  obtain ⟨h0, h1, h2⟩ := place_comp hΦ hε
-  have hi := delta_idem hΦ he
-  have ht := (tie_iff hΦ hi he.1 P).2 he
-  by_cases hc : cP P = P
-  · refine ⟨e, e, Or.inr ⟨rfl, ⟨_, ε, hε, delta_unique hΦ he ⟨h0, h1 P rfl, fun Q hQ => h2 Q fun h => ?_⟩⟩, ht⟩⟩
-    exact (eq_or_eq_cP h).elim hQ fun h => hQ (h.trans hc)
-  · have he' := delta_conj hΦ he
-    refine ⟨e, _, Or.inl ⟨⟨⟨hi, ?_, _, ε, hε, ?_⟩, ht⟩, rfl⟩⟩
-    · refine hΦ.ext' (by rw [RingHom.map_mul, he.1, zero_mul, RingHom.map_zero]) fun Q => ?_
-      rw [ev_mul, ev_zero]
-      by_cases hQ : Q = P
-      · subst hQ
-        rw [he'.2.2 Q (Ne.symm hc), mul_zero]
-      · rw [he.2.2 Q hQ, zero_mul]
-    · refine hΦ.ext' (by rw [RingHom.map_add (f := _), he.1, he'.1, add_zero, h0]) fun Q => ?_
-      rw [ev_add]
-      by_cases hQ : Q = P
-      · subst hQ
-        rw [he.2.1, he'.2.2 Q (Ne.symm hc), add_zero, h1 Q rfl]
-      · by_cases hQ' : Q = cP P
-        · subst hQ'
-          rw [he.2.2 _ hQ, he'.2.1, zero_add, h1 _ (under_cP P)]
-        · rw [he.2.2 Q hQ, he'.2.2 Q hQ', add_zero, h2 Q fun h => (eq_or_eq_cP h).elim hQ hQ']
+  obtain ⟨e, f, -, h⟩ := GlobalTheory.CMPrimeIdele.exists_isPrimeIdem_of_comp hΦ.toCM (isCMExt_of D) P
+  exact ⟨e, f, h⟩
 
 end
 

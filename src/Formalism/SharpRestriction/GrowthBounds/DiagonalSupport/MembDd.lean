@@ -1,45 +1,7 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.RestValBdG
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -63,14 +25,14 @@ theorem mapDomain_le {α β : Type} (f : α → β) (mo : α →₀ ℕ) (b : β
     have hz : ∑ x ∈ mo.support.erase a0, (Finsupp.single (f x) (mo x)) b = 0 := by
       apply Finset.sum_eq_zero
       intro x hx
-      rw [Finsupp.single_apply, if_neg]
+      rw [Finsupp.single_apply, ite_eq_right]
       intro hfx
       exact (Finset.ne_of_mem_erase hx) (h x hfx)
     rw [hz, zero_add, Finsupp.single_apply]
     split_ifs <;> omega
   · have hz : ∀ x ∈ mo.support, (Finsupp.single (f x) (mo x)) b = 0 := by
       intro x hx
-      rw [Finsupp.single_apply, if_neg]
+      rw [Finsupp.single_apply, ite_eq_right]
       intro hfx
       exact ha (h x hfx ▸ hx)
     rw [Finset.sum_eq_zero hz]
@@ -93,21 +55,21 @@ theorem sumIteLe {α β : Type} [Fintype α] (g : α → β) (h : α → ℕ) (b
   have hz : ∑ t ∈ Finset.univ.erase t0, (if g t = b then h t else 0) = 0 := by
     apply Finset.sum_eq_zero
     intro t ht
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hgt
     exact Finset.ne_of_mem_erase ht (hu t hgt)
   rw [hz, zero_add]
   split_ifs <;> omega
 
 theorem sumIteZero {α β : Type} [Fintype α] (g : α → β) (h : α → ℕ) (b : β)
-    (hu : ∀ t, g t ≠ b) : (∑ t, if g t = b then h t else 0) = 0 := Finset.sum_eq_zero fun t _ => if_neg (hu t)
+    (hu : ∀ t, g t ≠ b) : (∑ t, if g t = b then h t else 0) = 0 := Finset.sum_eq_zero fun t _ => ite_eq_right (hu t)
 
 theorem multideg_of_mem_Pol {R : Type} [CommRing R] [Nontrivial R] {ι : Type} {n : ℕ} {dd : ι → ℕ}
     {E : ι × Fin n →₀ ℕ} (h : monomial E (1 : R) ∈ Pol R n dd) (i : ι) : multideg E i = dd i := by
   have h' : monomial E (1 : R) ∈ MvPolynomial.restrictSupport R {m : ι × Fin n →₀ ℕ | ∀ i, multideg m i = dd i} := h
   rw [MvPolynomial.mem_restrictSupport_iff] at h'
   have hE : E ∈ (monomial E (1 : R)).support := by
-    rw [MvPolynomial.support_monomial, if_neg one_ne_zero]
+    rw [MvPolynomial.support_monomial, ite_eq_right one_ne_zero]
     exact Finset.mem_singleton_self E
   exact h' hE i
 
@@ -117,7 +79,6 @@ theorem real_le {p : ℕ} (hp : 0 < p) (D a b : ℕ) (h : p ^ D * a ≤ b) :
   have h1 : (a : ℝ) ≤ (b : ℝ) / (p : ℝ) ^ D := by
     rw [le_div_iff₀ hpD, mul_comm]
     exact_mod_cast h
-  have h2 : (0 : ℝ) ≤ (b : ℝ) / (p : ℝ) ^ D / 100 := by positivity
   linarith
 
 section Fr
@@ -161,7 +122,7 @@ theorem eq_fr (hgap : ∀ j : ℤ, ∀ i, ∀ x : ℤ, i + 1 < r → Fr.fr j i <
       have hmem : i + 1 ∈ S := Finset.mem_filter.mpr ⟨Finset.mem_range.mpr hlast, hle⟩
       have := himax _ hmem
       omega
-    push_neg at hnot
+    push Not at hnot
     rcases lt_or_eq_of_le hix with hlt | heq
     · exact absurd hx (hgap a i x hlast hlt hnot)
     · exact ⟨i, hir, heq.symm⟩

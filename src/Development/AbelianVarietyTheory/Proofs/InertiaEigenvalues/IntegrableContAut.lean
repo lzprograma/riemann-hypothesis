@@ -111,7 +111,6 @@ open GlobalTheory.SphTheta (IsStd CayleyRule intMat liftPar antiG)
 open GlobalTheory.LGrp (bcParam)
 open Formalism.UG (qV IsUnramInv GU KU IsInertAt Hecke SatU antiJ)
 open Formalism.MainNotions.SchurIrreducible (IsSplit)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -154,7 +153,7 @@ theorem howe_down [CharZero L] (hH : GlobalTheory.Hk3.HoweUnram) {δ : L} {ψ : 
       rw [GlobalTheory.SphTheta.mul_antiJ_apply, GlobalTheory.SphTheta.antiJ_mul_apply]
       simp [hσ]
     rwa [hu'] at this
-  obtain ⟨h', hh', e⟩ := GlobalTheory.T.unramified_hecke_vacuum_larger_eq_smaller hH L ϖ σ q (-δ) ψ n' n M _ _ s hS' h hh
+  obtain ⟨h', hh', e⟩ := _root_.GlobalTheory.ChainOnto.heckeVec_howe hH L ϖ σ q (-δ) ψ n' n M _ _ s hS' h hh
   exact ⟨h', hh', e.symm, _root_.GlobalTheory.SphTheta.satU_eq_satU_liftPar_of_heckeVec_eq L ϖ σ q (-δ) ψ n' n M _ _ s hS' (fun e he => hC' e (key e he))
     (fun e he => hC e (key e he)) hn h' hh' h hh e qu hq⟩
 
@@ -193,8 +192,8 @@ theorem hecke_down (hH : GlobalTheory.Hk3.HoweUnram) {ψ : AddChar (AF D.host.F)
     charZero_of_injective_algebraMap (algebraMap D.host.E (w.adicCompletion D.host.E)).injective
   set RS : Representation ℂ (GU c S.rank) (WO S T → ℂ) := (om.comp (MonoidHom.inl _ _)).comp ((embV S v).comp eS.symm.toMonoidHom)
   set RT : Representation ℂ (GU c T.rank) (WO S T → ℂ) := (om.comp (MonoidHom.inr _ _)).comp ((embV T v).comp eT.symm.toMonoidHom)
-  have hcS := (GlobalTheory.T.inert_unitary_coset_symmetry_hecke_even _ ϖ c _ hU S.rank).1
-  have hcT := (GlobalTheory.T.inert_unitary_coset_symmetry_hecke_even _ ϖ c _ hU T.rank).1
+  have hcS := (_root_.GlobalTheory.ChainOnto.inert_cosetSym_heckeEven _ ϖ c _ hU S.rank).1
+  have hcT := (_root_.GlobalTheory.ChainOnto.inert_cosetSym_heckeEven _ ϖ c _ hU T.rank).1
 
   have step : ∀ f, VacFin ψ S T v f → f ≠ 0 → ∃ hT ∈ Hecke ℂ (KU c T.rank),
       (∀ α : Fin (T.rank / 2) → ℂˣ, SatU ϖ (qV D.host.F v) hT (fun i => (α i : ℂ)) =
@@ -290,8 +289,7 @@ theorem param_down (hH : GlobalTheory.Hk3.HoweUnram) {ψ : AddChar (AF D.host.F)
     (frameLat S) hH' hL.fg hspan (GlobalTheory.AdelicU.SelfDual.isSelfDualAt_frameLat D S v)
 
   obtain ⟨j0, hj0⟩ : ∃ j, b (f j) (x j) ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hz0 (Finset.sum_eq_zero fun j _ => hc j)
   have hx0 : x j0 ≠ 0 := fun e => hj0 (by rw [e, map_zero])
   have hf0 : (f j0 : WO S T → ℂ) ≠ 0 := fun e => hj0 (by rw [show f j0 = 0 from Subtype.ext e, map_zero, LinearMap.zero_apply])
@@ -321,8 +319,8 @@ theorem param_down (hH : GlobalTheory.Hk3.HoweUnram) {ψ : AddChar (AF D.host.F)
     show om (1, embV T v (eT.symm g)) u ∈ U; rw [← e0S]; exact hUs _ _ u hu
   have hπS : ∀ g (u : U), ((πS g u : U) : WO S T → ℂ) = RS g u := fun _ _ => rfl
   have hπT : ∀ g (u : U), ((πT g u : U) : WO S T → ℂ) = RT g u := fun _ _ => rfl
-  have hcS := GlobalTheory.T.inert_unitary_coset_symmetry_hecke_even _ ϖ c _ hUI S.rank
-  have hcT := GlobalTheory.T.inert_unitary_coset_symmetry_hecke_even _ ϖ c _ hUI T.rank
+  have hcS := _root_.GlobalTheory.ChainOnto.inert_cosetSym_heckeEven _ ϖ c _ hUI S.rank
+  have hcT := _root_.GlobalTheory.ChainOnto.inert_cosetSym_heckeEven _ ϖ c _ hUI T.rank
   have hρ1 : ∀ y, ρ 1 y = y := fun y => by rw [map_one]; rfl
   have hbT : ∀ g (u : U) y, b (πT g u) y = ρT g (b u y) := fun g u y => by
     have e2 := hb 1 (eT.symm g) u y
@@ -571,8 +569,7 @@ theorem unrCorr_inert : GlobalTheory.Hk3.HoweUnram → ∀ (D : D7) (G : Type) [
     unrAt_of_unrPl hw (GlobalTheory.VacFixInert.unrPl_mul_inv' u1 hU.1)
 
   obtain ⟨v0, hv0⟩ : ∃ v0 : ∀ ρ, lowT (R.MW i (sg0 D A)) ρ, R.thF i t y (fun ρ => v0 ρ) ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hth (GlobalTheory.LowTypeDetermined.eq_zero_of_lowT D _ _ _ R.θ hC.models.inf (GlobalTheory.LowTypeRestriction.lowT_ne_bot _) _ _ _
       (hC.thP.thF_mem i t y) hc)
 

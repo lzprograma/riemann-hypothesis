@@ -4,57 +4,8 @@ public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StMixedTw
 public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StCutRestrLenExact
 public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterNumCut
 public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCycleSplitFilt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
 public import Mathlib.RingTheory.KrullDimension.NonZeroDivisors
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.UniformSpace.Uniformizable
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -429,30 +380,6 @@ section Final
 
 variable {k : Type u} [Field k] {Ω : Type w} [Field Ω] [Algebra k Ω] {N : ℕ}
 
-private theorem span_homog (Gs : Set (Poly k N)) (h : ∀ f ∈ Gs, ∃ c : ℕ, f.IsHomogeneous c) :
-    ∀ p ∈ Ideal.span Gs, ∀ d : ℕ, homogeneousComponent d p ∈ Ideal.span Gs := by
-  classical
-  letI : GradedAlgebra (homogeneousSubmodule (Fin (N + 1)) k) := gradedAlgebra
-  have hh : (Ideal.span Gs).IsHomogeneous (homogeneousSubmodule (Fin (N + 1)) k) :=
-    Ideal.homogeneous_span _ _ fun f hf => by
-      obtain ⟨c, hc⟩ := h f hf
-      exact ⟨c, (mem_homogeneousSubmodule c f).mpr hc⟩
-  intro p hp d
-  have := hh d hp
-  have e : ((DirectSum.decompose (homogeneousSubmodule (Fin (N + 1)) k) p d :
-      homogeneousSubmodule (Fin (N + 1)) k d) : Poly k N) = homogeneousComponent d p :=
-    decomposition.decompose'_apply p d
-  rwa [e] at this
-
-private theorem sup_homog {A B : Ideal (Poly k N)}
-    (hA : ∀ p ∈ A, ∀ d : ℕ, homogeneousComponent d p ∈ A)
-    (hB : ∀ p ∈ B, ∀ d : ℕ, homogeneousComponent d p ∈ B) :
-    ∀ p ∈ A ⊔ B, ∀ d : ℕ, homogeneousComponent d p ∈ A ⊔ B := by
-  intro p hp d
-  obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hp
-  rw [map_add (f := _)]
-  exact add_mem (Ideal.mem_sup_left (hA a ha d)) (Ideal.mem_sup_right (hB b hb d))
-
 open Classical in
 private theorem sum_eq_finsum (x : Fin (N + 1) → Ω) (n : ℕ) (J : Ideal (Poly k N))
     (Ls : Fin n → SubSystem k x Ω) (m : ℕ) (P : Fin m → Ideal (Poly k N))
@@ -492,8 +419,8 @@ private theorem sum_eq_finsum (x : Fin (N + 1) → Ω) (n : ℕ) (J : Ideal (Pol
   · have hm := hmin j h
     haveI : (P j).IsPrime := h.isPrime
     have hc := hcard (P j) hm
-    rw [if_pos h, dite_eq_left ⟨hm, h⟩, ← hc, ENat.toNat_coe, nsmul_eq_mul]
-  · rw [if_neg h, dite_eq_right (fun h' => h h'.2), smul_zero]
+    rw [ite_eq_left h, dite_eq_left ⟨hm, h⟩, ← hc, ENat.toNat_coe, nsmul_eq_mul]
+  · rw [ite_eq_right h, dite_eq_right (fun h' => h h'.2), smul_zero]
 
 private theorem main : CycleSplit.Filt.Statement.{u, w} → CutRestrLenExact.Statement.{u, w} →
     MixedTwistShift.Statement.{u, w} → InterNumCut.Statement.{u, w} := by
@@ -504,8 +431,15 @@ private theorem main : CycleSplit.Filt.Statement.{u, w} → CutRestrLenExact.Sta
   have hfJ : f ∈ pp ⊔ zeroIdeal Lc.toSubSystem s := Ideal.mem_sup_right hfZ
   haveI := hsub.isPrime
   have hJh : ∀ p ∈ pp ⊔ zeroIdeal Lc.toSubSystem s, ∀ d : ℕ,
-      homogeneousComponent d p ∈ pp ⊔ zeroIdeal Lc.toSubSystem s :=
-    sup_homog hsub.homog (span_homog _ fun f ⟨c, hc, _⟩ => ⟨c, hc⟩)
+      homogeneousComponent d p ∈ pp ⊔ zeroIdeal Lc.toSubSystem s := by
+    letI : GradedAlgebra (homogeneousSubmodule (Fin (N + 1)) k) := gradedAlgebra
+    have hpp : Ideal.IsHomogeneous (homogeneousSubmodule (Fin (N + 1)) k) pp := fun d p hp => by
+      change (decomposition.decompose' p d : Poly k N) ∈ pp
+      rw [decomposition.decompose'_apply]
+      exact hsub.homog p hp d
+    have hz : (zeroIdeal Lc.toSubSystem s).IsHomogeneous (homogeneousSubmodule (Fin (N + 1)) k) :=
+      Ideal.homogeneous_span _ _ fun f ⟨c, hc, _⟩ => ⟨c, (mem_homogeneousSubmodule c f).mpr hc⟩
+    exact fun p hp d => homogeneousComponent_mem_of_mem (hpp.sup hz) hp d
   obtain ⟨m, P, d, hP, hcard, hsplit⟩ := hCyc k Ω N x ⊥ Ideal.bot_isMaximal _ hJh
     (hsub.le.trans hle) (by rw [Ideal.map_bot]; exact bot_le)
   have hdim : ∀ q : Ideal (Poly k N), q.IsPrime → pp ⊔ zeroIdeal Lc.toSubSystem s ≤ q →

@@ -96,25 +96,6 @@ theorem mem_aboveF_iff {v : HeightOneSpectrum (𝓞 D.host.F)} {P : HeightOneSpe
     P ∈ aboveF (L := D.host.E) D.host.F v ↔ P.under (𝓞 D.host.F) = v := by
   rw [aboveF, Set.Finite.mem_toFinset]; rfl
 
-theorem absNorm_eq_of_mem {v : HeightOneSpectrum (𝓞 D.host.F)} {P : HeightOneSpectrum (𝓞 D.host.E)}
-    (hP : P ∈ aboveF (L := D.host.E) D.host.F v) (h : (Ideal.absNorm P.asIdeal).Prime) :
-    Ideal.absNorm v.asIdeal = Ideal.absNorm P.asIdeal := by
-  rw [mem_aboveF_iff] at hP
-  subst hP
-  have hd : Ideal.absNorm (P.under (𝓞 D.host.F)).asIdeal ∣ Ideal.absNorm P.asIdeal := by
-    rw [Ideal.absNorm_apply, Ideal.absNorm_apply, Submodule.cardQuot_apply, Submodule.cardQuot_apply]
-    exact AddSubgroup.card_dvd_of_injective
-      (Ideal.quotientMap P.asIdeal (algebraMap (𝓞 D.host.F) (𝓞 D.host.E)) le_rfl).toAddMonoidHom
-      Ideal.quotientMap_injective
-  exact ((Nat.dvd_prime h).1 hd).resolve_left fun h1 =>
-    (P.under (𝓞 D.host.F)).isPrime.ne_top (Ideal.absNorm_eq_one_iff.1 h1)
-
-theorem finite_inQ (Tp : TupTied D C nch) (μ : D.what₂.Tup) :
-    {v : HeightOneSpectrum (𝓞 D.host.F) | Tp.InQ' μ v}.Finite := by
-  refine ((GlobalTheory.Mem.UnrAe.finite_ramified (Tp.xi μ)).image fun w => w.under (𝓞 D.host.F)).subset ?_
-  rintro v ⟨w, hw, hr⟩
-  exact ⟨w, hr, mem_aboveF_iff.1 hw⟩
-
 theorem prime_eq_of_overP {p q : ℕ} (hp : p.Prime) (hq : q.Prime) {w : HeightOneSpectrum (𝓞 D.host.E)}
     (h1 : OverP D.host p w) (h2 : OverP D.host q w) : p = q := by
   by_contra hne
@@ -150,41 +131,17 @@ theorem qpSet_muAt (Tp : TupTied D C nch) (hp : TupPins Tp) (w : D.what₂.place
   obtain ⟨-, w', hw', hr⟩ := (mem_qpSet Tp _ _).1 h
   exact hr (hp.atl w w' hw')
 
-theorem qpSet_g (Tp : TupTied D C nch) (hp : TupPins Tp) (μ : D.what₂.Tup) (i : Fin 2) :
-    D.host.g i ∉ qpSet Tp μ := fun h => by
-  obtain ⟨-, w, hw, hr⟩ := (mem_qpSet Tp _ _).1 h
-  exact (hp.ram μ w hr).2.2.2 i hw
+variable (Tp : TupTied D C nch) (hp : TupPins Tp)
 
-theorem one_lt_absNorm {L : Type} [Field L] [NumberField L] (v : HeightOneSpectrum (𝓞 L)) :
-    1 < Ideal.absNorm v.asIdeal := by
-  have h0 : Ideal.absNorm v.asIdeal ≠ 0 := fun h => v.ne_bot (Ideal.absNorm_eq_zero_iff.1 h)
-  have h1 : Ideal.absNorm v.asIdeal ≠ 1 := fun h => v.isPrime.ne_top (Ideal.absNorm_eq_one_iff.1 h)
-  omega
-
-variable (Tp : TupTied D C nch) (hp : TupPins Tp) (Pv : HeightOneSpectrum (𝓞 D.host.F) → HeightOneSpectrum (𝓞 D.host.E))
-
-def reQ (Z₀ : DivX D) : DivX D :=
+def reQ (_Pv : HeightOneSpectrum (𝓞 D.host.F) → HeightOneSpectrum (𝓞 D.host.E)) (Z₀ : DivX D) : DivX D :=
   { Z₀ with
     Qp := qpSet Tp
     degreeZero_partial_set_empty := ramifiedRationalPrimesOfTuple_baseTuple_eq_empty Tp
     Qp_muAt := qpSet_muAt Tp hp
-    Qp_g := fun μ _ i => qpSet_g Tp hp μ i
     QPl := fun μ => {v : HeightOneSpectrum (𝓞 D.host.F) // Tp.InQ' μ v}
-    finQ := fun μ => by
-      haveI : Finite {v : HeightOneSpectrum (𝓞 D.host.F) // Tp.InQ' μ v} := (finite_inQ Tp μ).to_subtype
-      exact Fintype.ofFinite _
-    qv := fun _ v => Ideal.absNorm v.1.asIdeal
-    qv_gt := fun _ v => one_lt_absNorm v.1
-    qv_char := fun μ _ v => by
-      obtain ⟨w, hw, hr⟩ := v.2
-      have hpr := (hp.ram μ w hr).2.1
-      refine ⟨Ideal.absNorm v.1.asIdeal, (mem_qpSet Tp μ _).2 ⟨?_, w, ?_, hr⟩, ?_, rfl⟩
-      · rw [absNorm_eq_of_mem hw hpr]; exact hpr
-      · rw [absNorm_eq_of_mem hw hpr]; exact Ideal.absNorm_mem _
-      · rw [absNorm_eq_of_mem hw hpr]; exact hpr
-    nu := fun _ v i => ((nuP C (Pv v.1) i (piP (Pv v.1)) : ℂˣ) : ℂ) }
+    qv := fun _ v => Ideal.absNorm v.1.asIdeal }
 
-def reducedDivisorCharacter (Z₀ : DivX D) : DivisorCharacterCompatibility D C nch Tp (reQ Tp hp Pv Z₀) where
+def reducedDivisorCharacter (Pv : HeightOneSpectrum (𝓞 D.host.F) → HeightOneSpectrum (𝓞 D.host.E)) (Z₀ : DivX D) : DivisorCharacterCompatibility D C nch Tp (reQ Tp hp Pv Z₀) where
   Qp_iff := mem_qpSet Tp
   eQPl := fun _ => Equiv.refl _
   qv_eq := fun _ _ => rfl

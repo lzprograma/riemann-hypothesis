@@ -327,7 +327,7 @@ theorem derivative2_dblInt (e : PowerSeries K) :
     d⁄dX (d⁄dX (dblInt e)) = e := by
   ext n
   simp only [dblInt, PowerSeries.coeff_derivative, PowerSeries.coeff_mk]
-  rw [if_neg (show ¬ (n + 1 + 1 < 2) by omega), show n + 1 + 1 - 2 = n by omega]
+  rw [ite_eq_right (show ¬ (n + 1 + 1 < 2) by omega), show n + 1 + 1 - 2 = n by omega]
   push_cast
   rw [show (n : K) + 1 + 1 - 1 = n + 1 by ring]
   have h1 : (n : K) + 1 ≠ 0 := by exact_mod_cast n.succ_ne_zero
@@ -505,7 +505,7 @@ theorem lGSubst : LGSubst := lGSubst_of mvExpSubst
 theorem isogenyIffBar : IsogenyIffBar := isogenyIffBar_of mvExpLaws
 
 theorem isogenyU : IsogenyU := isogenyU_of mvExpLaws mvExpSubst
-theorem phNormUnit : PhNormUnit := phNormUnit_of mvExpLaws mvExpSubst lGHalf isogenyU
+theorem phNormUnit : PhNormUnit := phNormUnit_of mvExpLaws lGHalf isogenyU
 
 end Formalism.L2.Th1.C
 end -- clump:auto

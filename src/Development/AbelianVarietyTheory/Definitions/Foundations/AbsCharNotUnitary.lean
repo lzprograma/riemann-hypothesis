@@ -3,49 +3,6 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Foundations.IsUnitaryOfOrder
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
 public import Development.AbelianVarietyTheory.Definitions.Foundations.DiagUnitsEqLocalIdele
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Algebra.Group.Units
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -284,7 +241,7 @@ def cut (a : FiniteAdeleRing (𝓞 F) F) (T : Finset (HeightOneSpectrum (𝓞 F)
     by_contra h
     apply hw
     have h' : w ∉ T := h
-    simp only [h', if_false]
+    simp only [h', ite_false]
     exact one_mem _⟩
 
 theorem tendsto_cut (a : FiniteAdeleRing (𝓞 F) F) : Filter.Tendsto (cut a) Filter.atTop (nhds a) := by
@@ -298,8 +255,8 @@ theorem tendsto_cut (a : FiniteAdeleRing (𝓞 F) F) : Filter.Tendsto (cut a) Fi
     rw [Filter.eventually_principal]
     intro w hw
     by_cases h : w ∈ T
-    · simp only [h, if_true]; exact hw
-    · simp only [h, if_false]; exact one_mem _⟩
+    · simp only [h, ite_true]; exact hw
+    · simp only [h, ite_false]; exact one_mem _⟩
   let a' : P := ⟨fun v => a v, by rw [Filter.eventually_principal]; exact fun w hw => hw⟩
   have hf : Filter.Tendsto f Filter.atTop (nhds a') := by
     rw [RestrictedProduct.isEmbedding_coe_of_principal.tendsto_nhds_iff, tendsto_pi_nhds]
@@ -308,7 +265,7 @@ theorem tendsto_cut (a : FiniteAdeleRing (𝓞 F) F) : Filter.Tendsto (cut a) Fi
     filter_upwards [Filter.eventually_ge_atTop ({v} : Finset _)] with T hT
     have : v ∈ T := hT (Finset.mem_singleton_self v)
     change a v = if v ∈ T then a v else 1
-    rw [if_pos this]
+    rw [ite_eq_left this]
   exact ((RestrictedProduct.continuous_inclusion hle).tendsto a').comp hf
 
 theorem prod_local (k : Fˣ) (T : Finset (HeightOneSpectrum (𝓞 F))) :
@@ -331,7 +288,7 @@ theorem prod_local (k : Fˣ) (T : Finset (HeightOneSpectrum (𝓞 F))) :
         if v ∈ insert u T then _ else 1
       by_cases h : v = u
       · subst h
-        rw [Model.localIdele_snd_self, if_neg hu, if_pos (Finset.mem_insert_self _ _), mul_one]; rfl
+        rw [Model.localIdele_snd_self, ite_eq_right hu, ite_eq_left (Finset.mem_insert_self _ _), mul_one]; rfl
       · rw [Model.localIdele_snd_ne F u v h, one_mul]; simp [h]
 
 theorem tendsto_prod_local (k : Fˣ) :
@@ -395,13 +352,5 @@ theorem productRule (χ : HChar F) : χ.ProductRule := by
     exact hv (by rw [h0, zpow_zero])
 
 end Product
-
-section HostData
-
-open Formalism.BasicNotions Formalism.FrobeniusOrbits
-
-variable {R : Ranks} (H : Formalism.BasicNotions.Host R)
-
-end HostData
 
 end GlobalTheory.Mem.Chr.CharModel

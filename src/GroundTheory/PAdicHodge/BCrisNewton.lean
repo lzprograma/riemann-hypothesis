@@ -26,36 +26,10 @@ theorem exists_eq_div_of_mem_closure_range {R F : Type*} [CommRing R] [Field F] 
   obtain ⟨v, rfl⟩ := hle hz
   exact ⟨u, v, rfl⟩
 
-theorem exists_mul_eq_of_away_away {A B F : Type*} [CommRing A] [CommRing B] [CommRing F] {r : A}
-    {t : Localization.Away r} (ι : A →+* B) (ιP : Localization.Away r →+* B)
-    (hP : ∀ a, ιP (algebraMap A _ a) = ι a) (φ : B →+* F) (ιB : Localization.Away t →+* F)
-    (hB : ∀ x, ιB (algebraMap _ _ x) = φ (ιP x)) (u : Localization.Away t) :
-    ∃ (w : A) (n m : ℕ), ιB u * φ (ιP t ^ n * ι r ^ m) = φ (ι w) := by
-  obtain ⟨x, n, hx⟩ := ACris.exists_mul_pow_eq_of_away (φ.comp ιP) ιB hB u
-  obtain ⟨w, m, hw⟩ := ACris.exists_mul_pow_eq_of_away ι ιP hP x
-  refine ⟨w, n, m, ?_⟩
-  rw [RingHom.comp_apply, RingHom.comp_apply] at hx
-  rw [map_mul, map_pow, ← mul_assoc, hx, ← map_mul, hw]
-
 theorem mul_eq_mul_of_eqs {F : Type*} [CommRing F] {Y U V Wu Wv Su Sv : F} (h1 : Y * V = U)
     (hu : U * Su = Wu) (hv : V * Sv = Wv) : Wu * Sv = Y * (Wv * Su) := by
   rw [← hu, ← hv, ← h1]
   ac_rfl
-
-private theorem clear_denominator_of_away_away {A B F : Type*}
-    [CommRing A] [CommRing B] [IsDomain B] [CommRing F] {r a : A}
-    (i : A →+* B) (iP : Localization.Away r →+* B)
-    (hP : ∀ x, iP (algebraMap A (Localization.Away r) x) = i x)
-    (j : B →+* F) (iB : Localization.Away (algebraMap A (Localization.Away r) a) →+* F)
-    (hB : ∀ x, iB (algebraMap _ _ x) = j (iP x))
-    (u : Localization.Away (algebraMap A (Localization.Away r) a)) (hr : i r ≠ 0) (ha : i a ≠ 0) :
-    ∃ w s : A, s ≠ 0 ∧ iB u * j (i s) = j (i w) := by
-  obtain ⟨w, n, m, hw⟩ := exists_mul_eq_of_away_away i iP hP j iB hB u
-  refine ⟨w, a ^ n * r ^ m, ?_, ?_⟩
-  · intro hz
-    apply mul_ne_zero (pow_ne_zero n ha) (pow_ne_zero m hr)
-    simpa only [map_mul, map_pow, map_zero] using congrArg i hz
-  · simpa only [hP, map_mul i, map_pow i] using hw
 
 private theorem exists_fraction_of_mem_closure_range {A B R F : Type*}
     [CommRing A] [CommRing B] [CommRing R] [Field F]
@@ -131,11 +105,21 @@ theorem exists_iotaB_mul_eq (u : BCris hε) : ∃ w s : ACris ℂ_[p] p, s ≠ 0
     fun hz => natCast_p_ne_zero_bdR (p := p) ((map_natCast (iota ℂ_[p] p) p).symm.trans hz)
   have ha : iota ℂ_[p] p (periodT hε) ≠ 0 :=
     fun hz => fontaineT_ne_zero hε hζ ((iota_periodT hε).symm.trans hz)
-  exact clear_denominator_of_away_away (r := (p : ACris ℂ_[p] p)) (a := periodT hε)
-    (iota ℂ_[p] p) (iotaPlus ℂ_[p] p) (iotaPlus_algebraMap (K := ℂ_[p]) (p := p))
-    (algebraMap 𝔹 𝔹dR) (iotaB hε hζ) (iotaB_algebraMap hε hζ) u hr ha
-
-
+  -- Clear the two denominators through `IsLocalization.Away.surj` at `BCris hε` and
+  -- `BCrisPlus ℂ_[p] p` themselves. A lemma stated for a generic `Localization.Away` makes the
+  -- kernel identify its ring structures with the named instances of these two rings, which is slow.
+  obtain ⟨n, x, hx⟩ := IsLocalization.Away.surj (S := BCris hε)
+    (algebraMap (ACris ℂ_[p] p) (BCrisPlus ℂ_[p] p) (periodT hε)) u
+  obtain ⟨m, w, hw⟩ := IsLocalization.Away.surj (S := BCrisPlus ℂ_[p] p) (p : ACris ℂ_[p] p) x
+  refine ⟨w, periodT hε ^ n * (p : ACris ℂ_[p] p) ^ m, fun hz => ?_, ?_⟩
+  · apply mul_ne_zero (pow_ne_zero n ha) (pow_ne_zero m hr)
+    simpa only [map_mul, map_pow, map_zero] using congrArg (iota ℂ_[p] p) hz
+  · have h1 := congrArg (iotaB hε hζ) hx
+    have h2 := congrArg (iotaPlus ℂ_[p] p) hw
+    rw [map_mul, map_pow, iotaB_algebraMap, iotaB_algebraMap, iotaPlus_algebraMap] at h1
+    rw [map_mul, map_pow, iotaPlus_algebraMap, iotaPlus_algebraMap] at h2
+    rw [map_mul (iota ℂ_[p] p), map_pow, map_pow, map_mul (algebraMap 𝔹 𝔹dR), ← mul_assoc, map_pow,
+      h1, ← map_mul, h2]
 
 theorem isACrisFraction_of_mem_fracBCris {y : PadicAlgCl p}
     (hy : algClToBdRField p y ∈ fracBCris hε hζ) : IsACrisFraction y := by

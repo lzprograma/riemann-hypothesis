@@ -69,7 +69,7 @@ theorem m3bExp_holds : FourierJacobiExpansion (E := E) := by
   · intro ν hν
     have hfj : X.fj la ξ ν P x = 0 := by
       rw [Data.fj]
-      refine if_neg ?_
+      refine ite_eq_right ?_
       intro hall
       apply hν
       choose k hk using fun j => hall (ω j) (hωp j)

@@ -65,7 +65,7 @@ theorem aux_statement_11 (hG : ThetaFixedGlobalCharacter) (hθ : ThetaFixOf) : T
     K h1 h2 h3 h4 μC μf μ
   · rw [map_infOf_true]
     exact hl _
-  · rw [map_infOf_false, ← GlobalTheory.T.infChar_conjEmbedding_neg_of_invariant_pairing E n π π hd w.embedding _ _ (hl _) (hl _)]
+  · rw [map_infOf_false, ← GlobalTheory.CapPair.infChar_conj_of_paired E n π π hd w.embedding _ _ (hl _) (hl _)]
     exact hl _
 
 end UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi

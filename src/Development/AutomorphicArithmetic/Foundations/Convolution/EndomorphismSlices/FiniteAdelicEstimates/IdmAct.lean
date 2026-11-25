@@ -10,43 +10,7 @@ import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSli
 import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.PositionTest
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousPairProjection
 import GroundTheory.LocalFields.PadicLogSeries
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -108,17 +72,17 @@ private theorem position_left {Z : Finset (Pl E)} (T : Finset (Pl E)) (L : Lv a 
   intro k hk y
   unfold intersection_update_fsHerm_neg_one
   by_cases h1 : w ∈ Z
-  · simp only [if_pos h1]
+  · simp only [ite_eq_left h1]
     exact ((hφ w h1).2 k hk y).1
-  · simp only [if_neg h1]
+  · simp only [ite_eq_right h1]
     have hk' : k ∈ K2 a b w := by
       have ho := L.off w h1
       rw [ho.1, ho.2] at hk
       exact hk
     by_cases h2 : w ∈ T
-    · simp only [if_pos h2]
+    · simp only [ite_eq_left h2]
       exact ((UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.exHecke2 E a b w (e w)).2 k hk' y).1
-    · simp only [if_neg h2]
+    · simp only [ite_eq_right h2]
       have hc : k * y ∈ (K2 a b w : Set (GLw a w × GLw b w)) ↔ y ∈ (K2 a b w : Set (GLw a w × GLw b w)) :=
         (K2 a b w).mul_mem_cancel_left hk'
       by_cases hy : y ∈ (K2 a b w : Set (GLw a w × GLw b w))

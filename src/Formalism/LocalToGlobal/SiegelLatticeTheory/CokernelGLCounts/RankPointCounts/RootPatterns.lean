@@ -16,8 +16,6 @@ open scoped ENNReal
 
 namespace Formalism.L2.SG.RootPatterns
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.RealConjugatorData
 
 variable {D : D7}

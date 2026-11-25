@@ -105,7 +105,6 @@ theorem _root_.GlobalTheory.FinWeil.span_translates_vacua : ∀ {R X M : Type} [
       zero_mem' := ⟨A.zero_mem, fun t _ => hW.zero_left t⟩
       neg_mem' := fun {a} ha => ⟨A.neg_mem ha.1, fun t ht => by
         rw [hW.neg_left, ha.2 t ht, inv_one]⟩ }
-  have hSmem : ∀ a, a ∈ S ↔ a ∈ A ∧ ∀ t ∈ T, γ a t = 1 := fun a => Iff.rfl
   let T₀ : AddSubgroup X := A.toAddSubgroup ⊓ T.toAddSubgroup
   have hS : ∀ a ∈ A.toAddSubgroup, a ∈ S ↔ ∀ t ∈ T.toAddSubgroup, γ a t = 1 :=
     fun a ha => ⟨fun h => h.2, fun h => ⟨ha, h⟩⟩
@@ -179,12 +178,12 @@ theorem _root_.GlobalTheory.FinWeil.span_translates_vacua : ∀ {R X M : Type} [
           ↥A.toAddSubgroup) : X) ∈ S :=
         AddSubgroup.mem_addSubgroupOf.mp
           ((QuotientAddGroup.eq_zero_iff _).mp (QuotientAddGroup.out_eq' 0))
-      rw [if_pos h0, hfix _ h0.1 h0.2]
+      rw [ite_eq_left h0, hfix _ h0.1 h0.2]
     · intro q _ hq
       have hqS : ¬ (((Quotient.out q : ↥A.toAddSubgroup) : X) ∈ S) := fun h => hq (by
         rw [← QuotientAddGroup.out_eq' q, QuotientAddGroup.eq_zero_iff]
         exact AddSubgroup.mem_addSubgroupOf.mpr h)
-      rw [if_neg hqS, zero_smul]
+      rw [ite_eq_right hqS, zero_smul]
     · intro h
       exact absurd (Finset.mem_univ _) h
   have hNne : ((T₀.relIndex T.toAddSubgroup : ℕ) : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hidx

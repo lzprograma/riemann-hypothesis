@@ -158,8 +158,6 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.HeckePointLawRing
@@ -168,188 +166,91 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open GlobalTheory.IndefiniteRowSideFullHecke.FibrePushforwardExistenceTori GlobalTheory.HeckeFrCompare
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 theorem existsUnique_dual_lift {X Y : Scheme.{0}} (f : X ⟶ Y) [Etale f] {T : Type} [CommRing T]
     (s : Sp (DualNumber T) ⟶ Y) (x₀ : Sp T ⟶ X)
     (h : x₀ ≫ f = spMap (TrivSqZeroExt.fstHom T T T).toRingHom ≫ s) :
     ∃! x : Sp (DualNumber T) ⟶ X,
-      spMap (TrivSqZeroExt.fstHom T T T).toRingHom ≫ x = x₀ ∧ x ≫ f = s := by
-  let π : CommRingCat.of (DualNumber T) ⟶ CommRingCat.of T :=
-    CommRingCat.ofHom (TrivSqZeroExt.fstHom T T T).toRingHom
-  have hπ : Function.Surjective π := fun a => ⟨TrivSqZeroExt.inl a, rfl⟩
-  have hsq : ∀ a b : DualNumber T, a.fst = 0 → b.fst = 0 → a * b = 0 := fun a b ha hb => by
-    ext <;> simp [ha, hb]
-  have hnil : IsNilpotent (RingHom.ker π.hom) :=
-    ⟨2, by
-      rw [pow_two, Ideal.zero_eq_bot, eq_bot_iff, Ideal.mul_le]
-      exact fun a ha b hb => hsq a b ha hb⟩
-  exact GlobalTheory.existsUnique_lift_of_etale_of_surjective f π hπ hnil x₀ s h
+      spMap (TrivSqZeroExt.fstHom T T T).toRingHom ≫ x = x₀ ∧ x ≫ f = s :=
+  GlobalTheory.HeckePointLaw.existsUnique_dual_lift f s x₀ h
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 variable {Xo : Moduli Dw l}
 
 variable {T : Type} [CommRing T]
 
-abbrev epsBase (T : Type) [CommRing T] : Sp (DualNumber T) ⟶ Sp T := spMap (algebraMap T (DualNumber T))
+abbrev epsBase (T : Type) [CommRing T] : Sp (DualNumber T) ⟶ Sp T := GlobalTheory.HeckePointLaw.epsBase T
 
-abbrev epsZero (T : Type) [CommRing T] : Sp T ⟶ Sp (DualNumber T) := spMap (TrivSqZeroExt.fstHom T T T).toRingHom
+abbrev epsZero (T : Type) [CommRing T] : Sp T ⟶ Sp (DualNumber T) := GlobalTheory.HeckePointLaw.epsZero T
 
 theorem spMap_spMap {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (f : A →+* B) (g : B →+* C) :
     spMap g ≫ spMap f = spMap (g.comp f) := (Spec.map_comp (CommRingCat.ofHom f) (CommRingCat.ofHom g)).symm
 
-theorem epsZero_base : epsZero T ≫ epsBase T = 𝟙 _ := by
-  rw [spMap_spMap]
-  exact (congrArg spMap (RingHom.ext fun _ => rfl)).trans (Spec.map_id _)
+theorem epsZero_base : epsZero T ≫ epsBase T = 𝟙 _ := GlobalTheory.HeckePointLaw.epsZero_base
 
-theorem eps_base (a : T) : spMap (epsMul a) ≫ epsBase T = epsBase T := by
-  rw [spMap_spMap]
-  refine congrArg spMap (RingHom.ext fun r => ?_)
-  ext <;> simp [epsMul, TrivSqZeroExt.algebraMap_eq_inl]
+theorem eps_base (a : T) : spMap (epsMul a) ≫ epsBase T = epsBase T := GlobalTheory.HeckePointLaw.eps_base a
 
-theorem epsZero_eps (a : T) : epsZero T ≫ spMap (epsMul a) = epsZero T := by
-  rw [spMap_spMap]
-  refine congrArg spMap (RingHom.ext fun r => ?_)
-  simp [epsMul]
+theorem epsZero_eps (a : T) : epsZero T ≫ spMap (epsMul a) = epsZero T := GlobalTheory.HeckePointLaw.epsZero_eps a
 
-theorem eps_comm (a b : T) : spMap (epsMul a) ≫ spMap (epsMul b) = spMap (epsMul b) ≫ spMap (epsMul a) := by
-  rw [spMap_spMap, spMap_spMap]
-  refine congrArg spMap (RingHom.ext fun r => ?_)
-  ext <;> simp [epsMul, mul_left_comm]
+theorem eps_comm (a b : T) : spMap (epsMul a) ≫ spMap (epsMul b) = spMap (epsMul b) ≫ spMap (epsMul a) :=
+  GlobalTheory.HeckePointLaw.eps_comm a b
 
-theorem eps_cancel {a b : T} (h : a * b = 1) : spMap (epsMul a) ≫ spMap (epsMul b) = 𝟙 _ := by
-  have : (epsMul a).comp (epsMul b) = RingHom.id _ := by
-    refine RingHom.ext fun x => ?_
-    ext <;> simp [epsMul, ← _root_.mul_assoc, h]
-  rw [← Spec.map_comp, ← CommRingCat.ofHom_comp, this]
-  exact Spec.map_id _
+theorem eps_cancel {a b : T} (h : a * b = 1) : spMap (epsMul a) ≫ spMap (epsMul b) = 𝟙 _ :=
+  GlobalTheory.HeckePointLaw.eps_cancel' h
 
-abbrev zeroAt (x : Sp T ⟶ Xo.X) : (Over.mk x : Over Xo.X) ⟶ tEps x := sec' x (epsZero T) epsZero_base
+abbrev zeroAt (x : Sp T ⟶ Xo.X) : (Over.mk x : Over Xo.X) ⟶ tEps x := GlobalTheory.HeckePointLaw.zeroAt x
 
-abbrev scaleAt (x : Sp T ⟶ Xo.X) (a : T) : tEps x ⟶ tEps x := res x (spMap (epsMul a)) (eps_base a)
+abbrev scaleAt (x : Sp T ⟶ Xo.X) (a : T) : tEps x ⟶ tEps x := GlobalTheory.HeckePointLaw.scaleAt x a
 
 theorem zeroAt_scaleAt (x : Sp T ⟶ Xo.X) (a : T) : zeroAt x ≫ scaleAt x a = zeroAt x :=
-  Over.OverMorphism.ext (epsZero_eps a)
+  GlobalTheory.HeckePointLaw.zeroAt_scaleAt x a
 
 theorem scaleAt_comm (x : Sp T ⟶ Xo.X) (a b : T) : scaleAt x a ≫ scaleAt x b = scaleAt x b ≫ scaleAt x a :=
-  Over.OverMorphism.ext (eps_comm a b)
+  GlobalTheory.HeckePointLaw.scaleAt_comm x a b
 
 theorem isTanAt_iff {x : Sp T ⟶ Xo.X} (a : tEps x ⟶ Xo.univ.t.G) : IsTanAt x a.left ↔ zeroAt x ≫ a = 1 :=
-  ⟨fun h => Over.OverMorphism.ext h.2, fun h => ⟨Over.w a, congrArg (·.left) h⟩⟩
+  GlobalTheory.HeckePointLaw.isTanAt_iff a
 
 theorem isEigAt_iff {c : Coeff l} [Algebra c.F T] {x : Sp T ⟶ Xo.X} (τ : E →+* ℂ) (a : tEps x ⟶ Xo.univ.t.G) :
     IsEigAt c τ a.left ↔ ∀ r : 𝓞 E, a ≫ Xo.univ.t.act.act r = scaleAt x (algebraMap c.F T (embK c τ r)) ≫ a :=
-  forall_congr' fun _ => ⟨fun h => Over.OverMorphism.ext h, fun h => congrArg (·.left) h⟩
+  GlobalTheory.HeckePointLaw.isEigAt_iff τ a
 
 theorem isCombAt_iff {x : Sp T ⟶ Xo.X} {m : ℕ} (a : Fin m → (tEps x ⟶ Xo.univ.t.G)) (cf : Fin m → T)
     (b : tEps x ⟶ Xo.univ.t.G) :
-    IsCombAt x (fun i => (a i).left) cf b.left ↔ (List.ofFn fun i => scaleAt x (cf i) ≫ a i).prod = b := by
-  constructor
-  · rintro ⟨u, hu, h⟩
-    obtain rfl : u = fun i => scaleAt x (cf i) ≫ a i := funext fun i => Over.OverMorphism.ext (hu i)
-    exact Over.OverMorphism.ext h
-  · intro h
-    exact ⟨_, fun _ => rfl, congrArg (·.left) h⟩
+    IsCombAt x (fun i => (a i).left) cf b.left ↔ (List.ofFn fun i => scaleAt x (cf i) ≫ a i).prod = b :=
+  GlobalTheory.HeckePointLaw.isCombAt_iff a cf b
 
 variable {x x' : Sp T ⟶ Xo.X} {Ψ : Gx x ⟶ Gx x'}
 
 def tanMap (h : IsLinHom Ψ) : (tEps x ⟶ Xo.univ.t.G) →* (tEps x' ⟶ Xo.univ.t.G) :=
-  MonoidHom.mk' (fun a => Over.homMk (push Ψ (epsBase T) a) (push_hom h.1 _ a)) fun a b =>
-    Over.OverMorphism.ext (h.2.1 _ _ a b _ _ rfl rfl).symm
+  GlobalTheory.HeckePointLaw.tanMap h
 
 theorem tanMap_left (h : IsLinHom Ψ) (a : tEps x ⟶ Xo.univ.t.G) : (tanMap h a).left = push Ψ (epsBase T) a := rfl
 
 theorem tanMap_scale (h : IsLinHom Ψ) (s : T) (a : tEps x ⟶ Xo.univ.t.G) :
     tanMap h (scaleAt x s ≫ a) = scaleAt x' s ≫ tanMap h a :=
-  Over.OverMorphism.ext (push_res Ψ _ _ a)
+  GlobalTheory.HeckePointLaw.tanMap_scale h s a
 
 theorem tanMap_act (h : IsLinHom Ψ) (r : 𝓞 E) (a : tEps x ⟶ Xo.univ.t.G) :
-    tanMap h (a ≫ Xo.univ.t.act.act r) = tanMap h a ≫ Xo.univ.t.act.act r := by
-  refine Over.OverMorphism.ext ?_
-  have e : toFib x (epsBase T) (a ≫ Xo.univ.t.act.act r) =
-      toFib x (epsBase T) a ≫ (Over.mk x ◁ Xo.univ.t.act.act r).left := by
-    rw [toFib, toFib, ← Over.comp_left, lift_whiskerLeft]
-  rw [Over.comp_left, tanMap_left, tanMap_left, push, push, e, Category.assoc, reassoc_of% (h.2.2 r),
-    ← Over.comp_left, whiskerLeft_snd, Over.comp_left]
-  simp only [Category.assoc]
+    tanMap h (a ≫ Xo.univ.t.act.act r) = tanMap h a ≫ Xo.univ.t.act.act r :=
+  GlobalTheory.HeckePointLaw.tanMap_act h r a
 
-theorem sends_one (h : IsLinHom Ψ) : Sends Ψ 1 1 := by
-  obtain ⟨f, hf, -⟩ := exists_pointHom h
-  simpa using hf 1
+theorem sends_one (h : IsLinHom Ψ) : Sends Ψ 1 1 := GlobalTheory.HeckePointLaw.sends_one h
 
 theorem tanMap_zero (h : IsLinHom Ψ) {a : tEps x ⟶ Xo.univ.t.G} (ha : zeroAt x ≫ a = 1) :
     zeroAt x' ≫ tanMap h a = 1 :=
-  Over.OverMorphism.ext ((sends_sec'_iff h.1 (epsZero T) epsZero_base a 1).1 (by rw [ha]; exact sends_one h))
+  GlobalTheory.HeckePointLaw.tanMap_zero h ha
 
 theorem existsUnique_tanMap (h : IsLinHom Ψ) [Etale Ψ] {w : tEps x' ⟶ Xo.univ.t.G} (hw : zeroAt x' ≫ w = 1) :
-    ∃! a : tEps x ⟶ Xo.univ.t.G, zeroAt x ≫ a = 1 ∧ tanMap h a = w := by
-  have e₀ : ∀ (y : Sp T ⟶ Xo.X) (a : tEps y ⟶ Xo.univ.t.G), zeroAt y ≫ a = 1 ↔
-      epsZero T ≫ toFib y (epsBase T) a = (lift (𝟙 (Over.mk y)) (1 : Over.mk y ⟶ Xo.univ.t.G)).left := fun y a => by
-    rw [← lift_sec' y _ epsZero_base]
-    refine ⟨fun e => by rw [← e], fun e => Over.OverMorphism.ext ?_⟩
-    rw [← lift_l_snd (𝟙 (Over.mk y)) (_ ≫ a), e, lift_l_snd]
-  have e₁ : ∀ a : tEps x ⟶ Xo.univ.t.G, tanMap h a = w ↔ toFib x (epsBase T) a ≫ Ψ = toFib x' (epsBase T) w :=
-    fun a => by
-      refine ⟨fun e => gx_ext ?_ ?_, fun e => Over.OverMorphism.ext ?_⟩
-      · rw [Category.assoc, h.1, toFib_fst, toFib_fst]
-      · rw [toFib_snd, ← e, tanMap_left, push, Category.assoc]
-      · rw [tanMap_left, push, reassoc_of% e, toFib_snd]
-  obtain ⟨v, ⟨h₁, h₂⟩, hu⟩ := existsUnique_dual_lift Ψ (toFib x' (epsBase T) w)
-    (lift (𝟙 (Over.mk x)) (1 : Over.mk x ⟶ Xo.univ.t.G)).left ((sends_one h).trans ((e₀ x' w).1 hw).symm)
-  have hv : v ≫ (fst (Over.mk x) Xo.univ.t.G).left = epsBase T := by rw [← h.1, reassoc_of% h₂, toFib_fst]
-  let a : tEps x ⟶ Xo.univ.t.G := Over.homMk (v ≫ (snd (Over.mk x) Xo.univ.t.G).left) (by
-    rw [Category.assoc, snd_hom, reassoc_of% hv]; rfl)
-  have ha : toFib x (epsBase T) a = v := gx_ext (by rw [toFib_fst, hv]) (by rw [toFib_snd]; rfl)
-  refine ⟨a, ⟨(e₀ x a).2 (by rw [ha, h₁]), (e₁ a).2 (by rw [ha, h₂])⟩, fun b hb => Over.OverMorphism.ext ?_⟩
-  rw [← toFib_snd x _ b, hu _ ⟨(e₀ x b).1 hb.1, (e₁ b).1 hb.2⟩]
-  rfl
+    ∃! a : tEps x ⟶ Xo.univ.t.G, zeroAt x ≫ a = 1 ∧ tanMap h a = w :=
+  GlobalTheory.HeckePointLaw.existsUnique_tanMap h hw
 
 theorem exists_basis_image {c : Coeff l} [Algebra c.F T] (h : IsLinHom Ψ) [Etale Ψ] {p : ℕ} {q : T}
     (hq : q * p = 1) (τ : E →+* ℂ) {m : ℕ} (u : Fin m → (Sp (DualNumber T) ⟶ Xo.univ.t.G.left))
     (tan : ∀ i, IsTanAt x (u i)) (eig : ∀ i, IsEigAt c τ (u i))
     (basis : ∀ w, IsTanAt x w → IsEigAt c τ w → ∃! a : Fin m → T, IsCombAt x u a w) :
     ∃ u' : Fin m → (Sp (DualNumber T) ⟶ Xo.univ.t.G.left), (∀ i, IsLieImg p Ψ (u i) (u' i)) ∧
-      (∀ i, IsEigAt c τ (u' i)) ∧ ∀ w, IsTanAt x' w → IsEigAt c τ w → ∃! a : Fin m → T, IsCombAt x' u' a w := by
-  obtain ⟨a, rfl⟩ : ∃ a : Fin m → (tEps x ⟶ Xo.univ.t.G), u = fun i => (a i).left :=
-    ⟨fun i => Over.homMk (u i) (tan i).1, rfl⟩
-  have c₁ : ∀ y : Sp T ⟶ Xo.X, scaleAt y q ≫ scaleAt y p = 𝟙 _ := fun y =>
-    Over.OverMorphism.ext (eps_cancel hq)
-  have c₂ : ∀ y : Sp T ⟶ Xo.X, scaleAt y p ≫ scaleAt y q = 𝟙 _ := fun y =>
-    Over.OverMorphism.ext (eps_cancel ((mul_comm _ _).trans hq))
-  let L : (tEps x ⟶ Xo.univ.t.G) →* (tEps x' ⟶ Xo.univ.t.G) :=
-    MonoidHom.mk' (fun b => scaleAt x' q ≫ tanMap h b) fun b b' => by rw [map_mul, MonObj.comp_mul]
-  have hL : ∀ b, L b = scaleAt x' q ≫ tanMap h b := fun _ => rfl
-  have zs : ∀ (y : Sp T ⟶ Xo.X) (s : T) (b : tEps y ⟶ Xo.univ.t.G), zeroAt y ≫ b = 1 →
-      zeroAt y ≫ scaleAt y s ≫ b = 1 := fun y s b hb => by rw [← Category.assoc, zeroAt_scaleAt, hb]
-  have Lz : ∀ b, zeroAt x ≫ b = 1 → zeroAt x' ≫ L b = 1 := fun b hb => zs _ _ _ (tanMap_zero h hb)
-  have Ls : ∀ s b, L (scaleAt x s ≫ b) = scaleAt x' s ≫ L b := fun s b => by
-    rw [hL, hL, tanMap_scale, ← Category.assoc, scaleAt_comm, Category.assoc]
-  have La : ∀ r b, L (b ≫ Xo.univ.t.act.act r) = L b ≫ Xo.univ.t.act.act r := fun r b => by
-    rw [hL, hL, tanMap_act, Category.assoc]
-  have Li : ∀ b b', zeroAt x ≫ b = 1 → zeroAt x ≫ b' = 1 → L b = L b' → b = b' := fun b b' hb hb' e => by
-    have e' := congrArg (scaleAt x' p ≫ ·) e
-    simp only [hL, reassoc_of% (c₂ x')] at e'
-    exact (existsUnique_tanMap h (tanMap_zero h hb')).unique ⟨hb, e'⟩ ⟨hb', rfl⟩
-  have ta : ∀ i, zeroAt x ≫ a i = 1 := fun i => (isTanAt_iff _).1 (tan i)
-  refine ⟨fun i => (L (a i)).left, fun i => ⟨tan i, (isTanAt_iff _).2 (Lz _ (ta i)), a i, rfl, ?_⟩,
-    fun i => (isEigAt_iff τ _).2 fun r => ?_, fun w hw hw' => ?_⟩
-  · exact congrArg (·.left) (show scaleAt x' p ≫ L (a i) = tanMap h (a i) by rw [hL, reassoc_of% (c₂ x')])
-  · rw [← La, (isEigAt_iff τ _).1 (eig i), Ls]
-  · obtain ⟨w, rfl⟩ : ∃ b : tEps x' ⟶ Xo.univ.t.G, w = b.left := ⟨Over.homMk w hw.1, rfl⟩
-    obtain ⟨v, ⟨hv, e⟩, -⟩ := existsUnique_tanMap h (zs x' p w ((isTanAt_iff _).1 hw))
-    obtain rfl : L v = w := by rw [hL, e, reassoc_of% (c₁ x')]
-    have ev : IsEigAt c τ v.left := (isEigAt_iff τ _).2 fun r => Li _ _
-      (by have := Xo.univ.t.act.hom r; rw [← Category.assoc, hv, MonObj.one_comp]) (zs _ _ _ hv)
-      (by rw [La, Ls, (isEigAt_iff τ _).1 hw'])
-    refine (existsUnique_congr fun cf => ?_).1 (basis _ ((isTanAt_iff _).2 hv) ev)
-    have e : L (List.ofFn fun i => scaleAt x (cf i) ≫ a i).prod =
-        (List.ofFn fun i => scaleAt x' (cf i) ≫ L (a i)).prod := by
-      rw [map_list_prod, List.map_ofFn]
-      exact congrArg (fun f => (List.ofFn f).prod) (funext fun i => Ls _ _)
-    rw [isCombAt_iff, isCombAt_iff, ← e]
-    refine ⟨congrArg L, Li _ _ (LieEtale.comp_listProd _ _ fun b hb => ?_) hv⟩
-    obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hb
-    exact zs _ _ _ (ta i)
+      (∀ i, IsEigAt c τ (u' i)) ∧ ∀ w, IsTanAt x' w → IsEigAt c τ w → ∃! a : Fin m → T, IsCombAt x' u' a w :=
+  GlobalTheory.HeckePointLaw.exists_basis_image_of_inv h hq τ u tan eig basis
 
 end GlobalTheory.HeckePointLawRing
 
@@ -393,18 +294,6 @@ variable {S : Scheme.{0}} {s : S ⟶ Sp (KA l)}
 namespace IndexZero
 open GlobalTheory.HeckeKerModel
 
-theorem exists_pt (X : Scheme.{0}) (g : X) :
-    ∃ (k : Type) (_ : Field k) (_ : IsAlgClosed k) (x : Sp k ⟶ X), Set.range x = {g} := by
-  refine ⟨AlgebraicClosure (X.residueField g), inferInstance, inferInstance,
-    Spec.map (CommRingCat.ofHom (algebraMap (X.residueField g) (AlgebraicClosure (X.residueField g))))
-      ≫ X.fromSpecResidueField g, ?_⟩
-  apply Set.eq_singleton_iff_unique_mem.2
-  refine ⟨⟨IsLocalRing.closedPoint _, ?_⟩, ?_⟩
-  · exact (Scheme.Hom.comp_apply _ _ _).trans (Scheme.fromSpecResidueField_apply _ _)
-  · rintro _ ⟨y, rfl⟩
-    rw [Scheme.Hom.comp_apply]
-    exact Scheme.fromSpecResidueField_apply _ _
-
 theorem lift_closed {T N B : Scheme.{0}} [IsReduced T] (x : T ⟶ B) (ν : N ⟶ B)
     [IsClosedImmersion ν] (h : Set.range x ⊆ Set.range ν) : ∃ l : T ⟶ N, l ≫ ν = x := by
   have hs : Surjective (pullback.snd ν x) := ⟨by
@@ -413,197 +302,6 @@ theorem lift_closed {T N B : Scheme.{0}} [IsReduced T] (x : T ⟶ B) (ν : N ⟶
   have : IsIso (pullback.snd ν x) := isIso_of_isClosedImmersion_of_surjective _
   exact ⟨inv (pullback.snd ν x) ≫ pullback.fst ν x, by
     rw [Category.assoc, pullback.condition, IsIso.inv_hom_id_assoc]⟩
-
-theorem set_ext {G : Over S} {K K' : Set G.left}
-    (h : ∀ (k : Type) [Field k] [IsAlgClosed k] (x : Sp k ⟶ S) (z : Over.mk x ⟶ G),
-      Set.range z.left ⊆ K ↔ Set.range z.left ⊆ K') : K = K' := by
-  ext g
-  obtain ⟨k, _, _, z, hz⟩ := exists_pt G.left g
-  have := h k (z ≫ G.hom) (Over.homMk z rfl)
-  change Set.range z ⊆ K ↔ Set.range z ⊆ K' at this
-  simpa [hz] using this
-
-theorem kerSet_unique {G G' : Over S} [GrpObj G'] {ψ : G ⟶ G'} {K K' : Set G.left} (h : KerSet ψ K)
-    (h' : KerSet ψ K') : K = K' :=
-  set_ext fun k _ _ x z => (h k x z).symm.trans (h' k x z)
-
-theorem kerSet_preimage {G G' : Over S} [GrpObj G'] [IsSeparated G'.hom] (ψ : G ⟶ G') :
-    KerSet ψ (ψ.left ⁻¹' Set.range (η[G'] : 𝟙_ (Over S) ⟶ G').left) := by
-  intro k _ _ x z
-  have hw : (η[G'] : 𝟙_ (Over S) ⟶ G').left ≫ G'.hom = 𝟙 _ := Over.w _
-  have : IsClosedImmersion (η[G'] : 𝟙_ (Over S) ⟶ G').left := by
-    have : IsClosedImmersion ((η[G'] : 𝟙_ (Over S) ⟶ G').left ≫ G'.hom) := by rw [hw]; infer_instance
-    exact IsClosedImmersion.of_comp _ G'.hom
-  have h1 : (1 : Over.mk x ⟶ G').left = x ≫ (η[G'] : 𝟙_ (Over S) ⟶ G').left := rfl
-  constructor
-  · rintro h _ ⟨w, rfl⟩
-    refine ⟨x w, ?_⟩
-    have := congrArg (fun f : Over.mk x ⟶ G' => f.left w) h
-    simp only [h1, Over.comp_left, Scheme.Hom.comp_apply] at this
-    exact this.symm
-  · intro h
-    obtain ⟨t, ht⟩ := lift_closed (T := Sp k) (z.left ≫ ψ.left) (η[G'] : 𝟙_ (Over S) ⟶ G').left (by
-      rintro _ ⟨w, rfl⟩
-      exact h ⟨w, rfl⟩)
-    have ht' : t = x := by
-      have := Over.w (z ≫ ψ)
-      rw [Over.comp_left, ← ht, Category.assoc, hw] at this
-      exact (Category.comp_id _).symm.trans this
-    exact Over.OverMorphism.ext (by rw [h1, Over.comp_left, ← ht, ht'])
-
-theorem etSet_of_kerSet {G G' : Over S} [GrpObj G'] [IsSeparated G'.hom] {ψ : G ⟶ G'} [IsFinite ψ.left] [Etale ψ.left]
-    {K : Set G.left} (h : KerSet ψ K) : EtSet G K := by
-  have hw : (η[G'] : 𝟙_ (Over S) ⟶ G').left ≫ G'.hom = 𝟙 _ := Over.w _
-  have : IsClosedImmersion (η[G'] : 𝟙_ (Over S) ⟶ G').left := by
-    have : IsClosedImmersion ((η[G'] : 𝟙_ (Over S) ⟶ G').left ≫ G'.hom) := by rw [hw]; infer_instance
-    exact IsClosedImmersion.of_comp _ G'.hom
-  refine ⟨Over.mk (pullback.snd ψ.left (η[G'] : 𝟙_ (Over S) ⟶ G').left),
-    Over.homMk (pullback.fst ψ.left (η[G'] : 𝟙_ (Over S) ⟶ G').left) ?_, ?_, ?_, ?_, ?_⟩
-  · rw [← Over.w ψ, ← Category.assoc, pullback.condition, Category.assoc, hw]
-    exact Category.comp_id _
-  · exact inferInstanceAs (IsFinite (pullback.snd ψ.left (η[G'] : 𝟙_ (Over S) ⟶ G').left))
-  · exact inferInstanceAs (Etale (pullback.snd ψ.left (η[G'] : 𝟙_ (Over S) ⟶ G').left))
-  · exact inferInstanceAs (IsClosedImmersion (pullback.fst ψ.left (η[G'] : 𝟙_ (Over S) ⟶ G').left))
-  · rw [kerSet_unique h (kerSet_preimage ψ)]
-    exact Scheme.Pullback.range_fst _ _
-
-theorem isHecke_iff (o o' : Ob D l s) (P : Ideal (𝓞 E)) (p i : ℕ) (ψ : o.t.G ⟶ o'.t.G) :
-    IsHecke o o' P p i ψ ↔ IsIsog o o' p ψ ∧ ∃ K, KerSet ψ K ∧ HeckeSet D o.t P p i K ∧ EtSet o.t.G K ∧ HasQuot o p K := by
-  refine ⟨fun ⟨h, K, hK, hH⟩ => ⟨h, K, hK, hH, ?_, o', ψ, h, hK⟩, fun ⟨h, K, hK, hH, _⟩ => ⟨h, K, hK, hH⟩⟩
-  have := o'.proper
-  have := h.1.2.1
-  have := h.1.2.2.1
-  exact etSet_of_kerSet hK
-
-def torsSet (o : Ob D l s) (p : ℕ) : Set o.t.G.left :=
-  (o.t.act.act (p : 𝓞 E)).left ⁻¹' Set.range (η[o.t.G] : 𝟙_ (Over S) ⟶ o.t.G).left
-
-theorem range_subset_torsSet (o : Ob D l s) (p : ℕ) (k : Type) [Field k] [IsAlgClosed k] (x : Sp k ⟶ S)
-    (z : Over.mk x ⟶ o.t.G) : Set.range z.left ⊆ torsSet o p ↔ z ≫ o.t.act.act (p : 𝓞 E) = 1 := by
-  have := o.proper
-  exact (kerSet_preimage _ k x z).symm
-
-theorem heckeKer_tors (o : Ob D l s) (P : Ideal (𝓞 E)) {p : ℕ} (hp : 0 < p) (k : Type) [Field k] [IsAlgClosed k]
-    (x : Sp k ⟶ S) : o.t.HeckeKer (Over.mk x) D P p 0 (torsSub o.t (Over.mk x) p) :=
-  heckeKer_zero o k x (Spec.preimage (x ≫ s)).hom (Spec.map_preimage (x ≫ s)).symm P p hp
-
-theorem heckeSet_torsSet (o : Ob D l s) (P : Ideal (𝓞 E)) {p : ℕ} (hp : 0 < p) :
-    HeckeSet D o.t P p 0 (torsSet o p) := fun k _ _ x =>
-  ⟨_, fun z => by rw [range_subset_torsSet, comp_act_natCast]; exact mem_tors_span o.t z p,
-    heckeKer_tors o P hp k x⟩
-
-theorem eq_torsSub (o : Ob D l s) (P : Ideal (𝓞 E)) {p : ℕ} (hp : 0 < p) (k : Type) [Field k] [IsAlgClosed k]
-    (x : Sp k ⟶ S) (C : Subgroup (Over.mk x ⟶ o.t.G)) (hC : o.t.HeckeKer (Over.mk x) D P p 0 C) :
-    C = torsSub o.t (Over.mk x) p := by
-  have hT := (heckeKer_tors o P hp k x).2.2.2.2.1
-  have h1 := hC.2.2.2.2.1
-  have h2 := hC.2.2.2.2.2
-  rw [pow_zero, _root_.mul_one] at h2
-  have fT : Finite (torsSub o.t (Over.mk x) p) := Nat.finite_of_card_ne_zero (hT ▸ pow_ne_zero _ hp.ne')
-  have fC : Finite C := Nat.finite_of_card_ne_zero (h1 ▸ pow_ne_zero _ hp.ne')
-  have e1 : C ⊓ torsSub o.t (Over.mk x) p = torsSub o.t (Over.mk x) p :=
-    Subgroup.eq_of_le_of_card_ge inf_le_right h2.le
-  exact (Subgroup.eq_of_le_of_card_ge (e1 ▸ inf_le_left) (h1.trans hT.symm).le).symm
-
-theorem eq_torsSet (o : Ob D l s) (P : Ideal (𝓞 E)) {p : ℕ} (hp : 0 < p) {K : Set o.t.G.left}
-    (hK : HeckeSet D o.t P p 0 K) : K = torsSet o p :=
-  set_ext fun k _ _ x z => by
-    obtain ⟨C, hC, hk⟩ := hK k x
-    rw [← hC, eq_torsSub o P hp k x C hk, range_subset_torsSet, comp_act_natCast]
-    exact mem_tors_span o.t z p
-
-theorem torsSet_pull {S' : Scheme.{0}} {s' : S' ⟶ Sp (KA l)} (o' : Ob D l s') (o : Ob D l s) {f : S' ⟶ S}
-    (n : ObjMap o' o f) (p : ℕ) : torsSet o' p = n.toSABMap.φ ⁻¹' torsSet o p :=
-  set_ext fun k _ _ x z => by
-    have hc := n.cart.1
-    let z₀ : Over.mk (x ≫ f) ⟶ o.t.G := Over.homMk (z.left ≫ n.cm.F) (by
-      rw [Category.assoc, hc.w, ← Category.assoc, Over.w z]; rfl)
-    have e0 : Set.range z.left ⊆ n.toSABMap.φ ⁻¹' torsSet o p ↔ Set.range z₀.left ⊆ torsSet o p := by
-      constructor
-      · rintro h _ ⟨w, rfl⟩; exact h ⟨w, rfl⟩
-      · rintro h _ ⟨w, rfl⟩; exact h ⟨w, rfl⟩
-    have he : (η[o'.t.G] : 𝟙_ (Over S') ⟶ o'.t.G).left ≫ n.cm.F = f ≫ (η[o.t.G] : 𝟙_ (Over S) ⟶ o.t.G).left := by
-      have := n.cm.e_comm
-      rw [n.base] at this
-      exact this
-    have h1 : (1 : Over.mk x ⟶ o'.t.G).left ≫ n.cm.F = (1 : Over.mk (x ≫ f) ⟶ o.t.G).left :=
-      ((Category.assoc x _ _).trans (congrArg (x ≫ ·) he)).trans (Category.assoc x f _).symm
-    have h2 : (z ≫ o'.t.act.act (p : 𝓞 E)).left ≫ n.cm.F = (z₀ ≫ o.t.act.act (p : 𝓞 E)).left := by
-      rw [Over.comp_left, Over.comp_left, Category.assoc, n.act]
-      exact (Category.assoc _ _ _).symm
-    rw [e0, range_subset_torsSet, range_subset_torsSet]
-    constructor
-    · intro h
-      exact Over.OverMorphism.ext (by rw [← h2, h, h1])
-    · intro h
-      refine Over.OverMorphism.ext (hc.hom_ext (by rw [h2, h, h1]) ?_)
-      rw [Over.w, Over.w]
-
-theorem isHecke_mul [IsLocallyNoetherian S] (o : Ob D l s) (P : Ideal (𝓞 E)) {p : ℕ} (hp : 0 < p) : IsHecke o o P p 0 (o.t.act.act (p : 𝓞 E)) := by
-  have hg := (GlobalTheory.obj_isAbelianScheme_dim_rigidified_sym E H D l _ _ S s o).2.1
-  have hL : Out.Laws := GlobalTheory.abelianSchemeLaws_all.1
-  let Q := HeckePoint.polOf o.t o.proper o.ample o.ktriv hg
-  have e : o.t.act.act (p : 𝓞 E) = 𝟙 o.t.G ^ p := by rw [← comp_act_natCast, Category.id_comp]
-  obtain ⟨h1, -, h2, h3, -⟩ := hL.mulN S Q p hp
-  have hu : IsUnit (p : Γ(S, ⊤)) := by
-    have h0 : IsUnit (p : Γ(Sp (KA l), ⊤)) := by
-      simpa using ((baseKA l).unit p hp).map (Scheme.ΓSpecIso (CommRingCat.of (KA l))).inv.hom
-    simpa using h0.map s.appTop.hom
-  have := o.proper
-  refine ⟨⟨⟨o.t.act.hom _, e ▸ h1, e ▸ h3 hu, e ▸ h2, fun a => ?_, ?_⟩, fun p' hp' a => ?_⟩, _, kerSet_preimage _,
-    heckeSet_torsSet o P hp⟩
-  · rw [← o.t.act.mul, ← o.t.act.mul, _root_.mul_comm]
-  · have hN := o.t.PP.isLB
-    have h₂ := (CechPic.cls_eq_zero_iff (LB.isLB_linComb hN _ _)).2 (hL.mulPull S Q p)
-    rw [CechPic.cls_linComb hN] at h₂
-    simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one, one_zsmul,
-      neg_zsmul] at h₂
-    refine (CechPic.cls_eq_iff (LB.isLB_linComb hN _ _) (LB.isLB_linComb hN _ _)).1 ?_
-    rw [CechPic.cls_lbPow hN, CechPic.cls_pull hN, e, ← add_neg_eq_zero.1 h₂, ← natCast_zsmul, Nat.cast_pow]
-    exact congrArg _ (CechPic.pull_id _).symm
-  · have key : ∀ f : D.La → (𝟙_ (Over S) ⟶ o.t.G), (∀ a c, f (a + c) = f a * f c) → ∀ (n : ℕ) a, f a ^ n = f (n • a) := by
-      intro f hf n a
-      induction n with
-      | zero =>
-        have h := hf 0 0
-        rw [add_zero] at h
-        rw [pow_zero, zero_nsmul, left_eq_mul.1 h]
-      | succ n ih => rw [pow_succ, ih, succ_nsmul, hf]
-    have hM : ∀ a, o.eta (l.M • a) = 1 := fun a => o.eta_ker _ (by
-      rw [← Nat.cast_smul_eq_nsmul (𝓞 E)]
-      exact Submodule.smul_mem_smul (HeckePoint.natCast_M_mem l) Submodule.mem_top)
-    rw [comp_act_natCast, comp_act_natCast, key _ o.eta_add, key _ o.etaA_add, ← mul_nsmul',
-      HeckePoint.eq_of_modEq _ o.eta_add hM (hp'.of_dvd (Nat.dvd_lcm_left _ _)),
-      HeckePoint.eq_of_modEq _ o.etaA_add o.etaA_ker (hp'.of_dvd (Nat.dvd_lcm_right _ _)), one_nsmul]
-    exact ⟨rfl, rfl⟩
-
-theorem etSet_torsSet [IsLocallyNoetherian S] (o : Ob D l s) {p : ℕ} (hp : 0 < p) : EtSet o.t.G (torsSet o p) := by
-  obtain ⟨-, K, -, h1, h2, -⟩ := (isHecke_iff o o ⊤ p 0 _).1 (isHecke_mul o ⊤ hp)
-  exact eq_torsSet o ⊤ hp h1 ▸ h2
-
-def univId (Xo : Moduli D l) : Ob D l (𝟙 Xo.X ≫ Xo.s) :=
-  { Xo.univ with geom := fun k _ _ x β hx => Xo.univ.geom k x β (by rw [← hx, Category.id_comp]) }
-
-def kerZero (Xo : Moduli D l) (P : Ideal (𝓞 E)) {p : ℕ} (hp : 0 < p) : KerScheme Xo P p 0 where
-  Hk := Xo.X
-  π₁ := 𝟙 _
-  fin₁ := inferInstance
-  et₁ := inferInstance
-  o₁ := univId Xo
-  m₁ := ⟨ObjComp.sabMapId Xo.univ.t, (ObjComp.objMapId Xo.univ).eta, (ObjComp.objMapId Xo.univ).etaA⟩
-  K := torsSet (univId Xo) p
-  hecke := heckeSet_torsSet _ P hp
-  et := by
-    have := Xo.smooth
-    have := (GlobalTheory.isReduced_isNormalScheme_isLocallyNoetherian_of_smooth_over_field _ _ Xo.s
-      (SmoothOfRelativeDimension.smooth D.dim Xo.s)).2.2
-    exact etSet_torsSet (univId Xo) hp
-  rep := fun S s hS o K' _ hK => by
-    obtain ⟨f, ⟨hf, ⟨n⟩⟩, hu⟩ := Xo.rep S s hS o
-    let n' : ObjMap o (univId Xo) f := ⟨n.toSABMap, n.eta, n.etaA⟩
-    refine ⟨f, ⟨by rw [Category.id_comp, hf], n', (eq_torsSet o P hp hK).trans (torsSet_pull o _ n' p)⟩, ?_⟩
-    rintro g ⟨hg, m, -⟩
-    exact hu g ⟨by rw [← hg, Category.id_comp], ⟨⟨m.toSABMap, m.eta, m.etaA⟩⟩⟩
 
 end IndexZero
 
@@ -886,11 +584,9 @@ theorem algHom_eq_eval : ∀ {K : Type} [inst : Field K] {P : Type} [Fintype P] 
   have hsum : ∑ p, (Pi.single p (1:K) : P → K) = 1 := by
     ext x; simp [Finset.sum_apply, Pi.single_apply]
   have h1 : ∑ p, θ (Pi.single p 1) = 1 := by
-    set_option synthInstance.maxHeartbeats 100000 in
       rw [← map_sum, hsum, map_one]
   obtain ⟨p, -, hp⟩ : ∃ p ∈ Finset.univ, θ (Pi.single p 1) ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     rw [Finset.sum_eq_zero h] at h1
     exact zero_ne_one h1
   refine ⟨p, fun z => ?_⟩
@@ -1118,10 +814,8 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory.ThetaTrace GlobalTheory.HkFam GlobalTheory.Frames GlobalTheory.HeckeEx
 open GlobalTheory.IndefiniteRowSideFullHecke.FibrePushforwardExistenceTori (IsLinHom IsLieImg IsThGen IsHeckeIsog)
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.HeckeWeight
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.HeckePointLaw (scaleAt tanMap tanMap_scale scaleAt_comm isCombAt_iff tanMap_left)
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
@@ -1228,8 +922,6 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open GlobalTheory.ThetaTrace GlobalTheory.HkFam GlobalTheory.Frames GlobalTheory.HeckeEx
 open GlobalTheory.IndefiniteRowSideFullHecke.FibrePushforwardExistenceTori (IsLieImg IsLinHom IsThGen IsHeckeIsog)
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.HeckeLieBC
 
@@ -1366,7 +1058,7 @@ theorem evR_scale_of_isReduced (hL : GlobalTheory.Reg.EvLaws Xo c) {a : (E →+*
     · subst h1; simp [hM1, hG1]
     · by_cases h2 : i < j
       · simp [hM2 τ i j h2, hG2 τ i j h2]
-      · simp only [M, Matrix.map_apply, Matrix.of_apply, if_neg h1, if_neg h2, hk]
+      · simp only [M, Matrix.map_apply, Matrix.of_apply, ite_eq_right h1, ite_eq_right h2, hk]
         simp [k₀, v, R]
   have hdet : ∀ τ, IsUnit (M τ).det := fun τ => by
     rw [Matrix.det_of_isLowerTriangular (M τ) (fun i j hij => hM2 τ i j hij)]
@@ -1467,8 +1159,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.HeckeEx
@@ -1563,7 +1253,7 @@ theorem exists_term_of_family (hA : admitted l P p) (hT : TotalAt Xo c P p i)
   refine ⟨a₀ ^ n * evR Xo c f z₀, fun Ω _ _ _ χ y₁ x₁' Ψ₁ C hy hF hC => ?_⟩
   obtain ⟨-, hI⟩ := hΨ.2.2.2.2 Ω _ _ _ Ψ₁ hF
   have hex := hT Ω y₁ C
-  rw [term, hkTerm, dif_pos hex]
+  rw [term, hkTerm, dite_eq_left hex]
   have hz := hex.choose_spec
   generalize hex.choose = z at hz ⊢
   obtain ⟨rfl, h₁, h₂⟩ := hkPt_along hA C.2 (hC ▸ hI) hz
@@ -1692,7 +1382,7 @@ theorem secTransform (hL : GlobalTheory.IndefiniteRowSideFullHecke.HeckePrimeDet
   rw [evalAt_smul]
   congr 1
   have hy := _root_.GlobalTheory.Frames.allTest_of_secBaseChange GlobalTheory.lawsFieldsSeparately.2.1 E H Dw l Xo c Ω y
-  rw [evalAt, dif_pos hy]
+  rw [evalAt, dite_eq_left hy]
   exact hg _ _ Ω _ y hy.choose_spec.choose_spec.choose_spec
 
 end Sec
@@ -1741,11 +1431,11 @@ theorem exists_qmatch (hσ : Formalism.L2.PjFree.GoodEmb c σ) (hU : Formalism.L
   have he : ∀ τ, Formalism.L2.PjFree.relab c σ (e.symm τ) = τ := e.apply_symm_apply
   have m1 : ∀ τ ∈ (U.X k).Ψ, Dw.mult (e.symm τ) = r - (U.X k).p0 := fun τ hτ => by
     unfold Datum.mult
-    rw [if_pos ((hrt _).1 (by rw [he]; exact ((hty k).2 τ).1 hτ)), (hty k).1]
+    rw [ite_eq_left ((hrt _).1 (by rw [he]; exact ((hty k).2 τ).1 hτ)), (hty k).1]
     omega
   have m2 : ∀ τ ∉ (U.X k).Ψ, Dw.mult (e.symm τ) = (U.X k).p0 := fun τ hτ => by
     unfold Datum.mult
-    rw [if_neg (fun h => hτ (((hty k).2 τ).2 (by rw [← he τ]; exact (hrt _).2 h))), (hty k).1]
+    rw [ite_eq_right (fun h => hτ (((hty k).2 τ).2 (by rw [← he τ]; exact (hrt _).2 h))), (hty k).1]
   have hrel : ∀ τ, ∀ i < Dw.mult (e.symm τ), ∀ v ∈ (U.X k).Λ,
       Formalism.L2.PjFree.perFr (U.X k') x'.1 ((a : Matrix (Fin r) (Fin r) E) *ᵥ v) τ i =
         ∑ j ∈ Finset.range (Dw.mult (e.symm τ)), A (e.symm τ) i j * Formalism.L2.PjFree.perFr (U.X k) x.1 v τ j :=
@@ -1800,7 +1490,7 @@ theorem rdU_mem_SS (hσ : Formalism.L2.PjFree.GoodEmb c σ) (hU : Formalism.L2.P
     obtain ⟨a, h, b, hbB, hxb, hb1, ht⟩ := exists_qmatch hσ hU hr hxi hA C.2 hz hb hx₀ hx'
     have ht0 := _root_.GlobalTheory.HeckeEx.cabs_gen_le_of_hkPt E H Dw l Xo c σ r U hσ hU P p i k k' x₀ x' C.1 z t hA C.2 hz hb hx₀ hx'
     have hQ := (hfc k').1.1
-    have v2 : Formalism.L2.PjFree.rdU U f k' x'.1 = Formalism.L2.PjFree.toC (evR Xo c f (U.un k' x')) := dif_pos x'.2
+    have v2 : Formalism.L2.PjFree.rdU U f k' x'.1 = Formalism.L2.PjFree.toC (evR Xo c f (U.un k' x')) := dite_eq_left x'.2
     have v3 := (GlobalTheory.Frames.algebraic_laws GlobalTheory.lawsFieldsSeparately.2.1 E H Dw l Xo c).2.2.2.2.2.2 (CAt σ)
       (inferInstanceAs (IsReduced ℂ)) w n f hf t _ z hb
     have v4 : ‖Formalism.L2.PjFree.toC (wchar (ex Dw w n) t : CAt σ)‖ ≤ ((Ideal.absNorm P : ℝ) ^ i) ^ n := by
@@ -1828,7 +1518,7 @@ theorem rdU_mem_SS (hσ : Formalism.L2.PjFree.GoodEmb c σ) (hU : Formalism.L2.P
     exact_mod_cast hM (CAt σ) (U.un k x₀).x
   have v1 : Formalism.L2.PjFree.rdU U g k x₀.1 =
       σ (hkScal c cq P i n) * ∑ C, Formalism.L2.PjFree.toC (term P p i f (U.un k x₀) C) :=
-    (dif_pos x₀.2).trans ((hT (CAt σ) (U.un k x₀)).trans (congrArg _ (finsum_eq_sum_of_fintype _)))
+    (dite_eq_left x₀.2).trans ((hT (CAt σ) (U.un k x₀)).trans (congrArg _ (finsum_eq_sum_of_fintype _)))
   have v7 := congrArg norm v1
   rw [e₀, hsec.2.1 x hx b₀ hb₀, norm_mul, norm_mul] at v7
   have v8 := (norm_sum_le _ _).trans (Finset.sum_le_card_nsmul Finset.univ

@@ -88,57 +88,8 @@ public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBase
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBridge
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIsomInvariance
 public import GroundTheory.HeightsAndTheta.Heights.Intersections.Assembly
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.ResolutionExistsOfResolutionStatementStatement
 import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartDensityIntegrable
@@ -1038,8 +989,8 @@ theorem poly : ∀ (K : Type) [Field K] [NumberField K] (i : ℕ) (F F' : HermLa
     simp only [h2, Q, map_sum, map_mul, map_C, Finset.mul_sum, map_X]
     refine Finset.sum_congr rfl fun j _ => ?_
     by_cases hj : j = j₀
-    · simp only [W, hj, if_true]; ring
-    · simp only [W, hj, if_false, map_one]; ring
+    · simp only [W, hj, ite_true]; ring
+    · simp only [W, hj, ite_false, map_one]; ring
   have hamπ : (C (am π) : MvPolynomial ι K) ≠ 0 := by
     rw [Ne, C_eq_zero]
     exact fun h => hπ ((map_eq_zero_iff am RingOfIntegers.coe_injective).1 h)
@@ -1190,8 +1141,7 @@ theorem dualStackedExcLeadForm : GroundTheory.Heights₂.Heights.DualStackedExcL
   have hsv : ∀ (μ : 𝓞 K) (v : dualLattice F'), ρ' ⟨am μ • (v : Fin i → K), dual_stable F' μ _ v.2⟩ = ρ μ * ρ' v :=
     fun μ v => hρ'l μ v _ rfl
   obtain ⟨j₀, hj₀⟩ : ∃ j₀, ρ' (pL j₀) ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     obtain ⟨v₀, hv₀⟩ := hρ's 1
     obtain ⟨y₀, hy₀⟩ := hcoordp v₀
     have h1 := hρ'sum y₀ pL ⟨am s • (v₀ : Fin i → K), dual_stable F' s _ v₀.2⟩ hy₀
@@ -1225,7 +1175,7 @@ theorem dualStackedExcLeadForm : GroundTheory.Heights₂.Heights.DualStackedExcL
     have h1 : ∑ j, (g j - if j = j₀ then A else 0) • p j = 0 := by
       have : ∑ j, (g j - if j = j₀ then A else 0) • p j = ∑ j, g j • e j := by
         simp only [e, sub_smul, smul_sub, Finset.sum_sub_distrib, smul_smul, ite_smul, zero_smul,
-          Finset.sum_ite_eq', Finset.mem_univ, if_true, ← Finset.sum_smul, hA]
+          Finset.sum_ite_eq', Finset.mem_univ, ite_true, ← Finset.sum_smul, hA]
       rw [this, hg]
     have h2 := Fintype.linearIndependent_iff.1 hpK _ h1
     have h3 : ∀ j, j ≠ j₀ → g j = 0 := fun j hj => by simpa [hj] using h2 j
@@ -1247,7 +1197,7 @@ theorem dualStackedExcLeadForm : GroundTheory.Heights₂.Heights.DualStackedExcL
     refine ⟨fun j => y j + if j = j₀ then ∑ l, y l * cc l else 0, ?_⟩
     rw [hy]
     simp only [map_add (f := _), add_smul, Finset.sum_add_distrib, apply_ite am, map_zero, ite_smul, zero_smul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true, he₀]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true, he₀]
 
     simp only [e, smul_sub, Finset.sum_sub_distrib, smul_smul, map_sum, map_mul, Finset.sum_smul]
     abel
@@ -1255,13 +1205,13 @@ theorem dualStackedExcLeadForm : GroundTheory.Heights₂.Heights.DualStackedExcL
     intro j
     by_cases hj : j = j₀
     · subst hj
-      simp only [if_true]
+      simp only [ite_true]
       have h2 := (hker ⟨am π • e j, dual_stable F' _ _ (hemem j)⟩).1 (by
         have := hsv π (eL j)
         rw [hρπ, zero_mul] at this
         exact this)
       exact h2
-    · simp only [hj, if_false]
+    · simp only [hj, ite_false]
       exact (hker (eL j)).1 (hρe j hj)
   let lL : ι → dualLattice F := fun j => ⟨_, hlmem j⟩
   let N : ι → Fin i → k := fun j => σ (lL j)
@@ -1292,10 +1242,10 @@ theorem dualStackedExcLeadForm : GroundTheory.Heights₂.Heights.DualStackedExcL
     refine Finset.sum_congr rfl fun j _ => ?_
     by_cases hj : j = j₀
     · subst hj
-      simp only [if_true, smul_smul]
+      simp only [ite_true, smul_smul]
       rw [← map_mul, ← map_mul, hcD t, mul_comm π]
     · beta_reduce
-      rw [if_neg hj, if_neg hj, map_mul, mul_smul]
+      rw [ite_eq_right hj, ite_eq_right hj, map_mul, mul_smul]
   · intro t
     have hv : ((⟨am (s₁ * s) • (b' t : Fin i → K), dual_stable F' _ _ (b' t).2⟩ : dualLattice F') : Fin i → K) =
         ∑ j, am (s₁ * yC t j) • (eL j : Fin i → K) := by
@@ -1316,10 +1266,10 @@ theorem dualStackedExcLeadForm : GroundTheory.Heights₂.Heights.DualStackedExcL
       refine Finset.sum_congr rfl fun j _ => ?_
       by_cases hj : j = j₀
       · subst hj
-        simp only [if_true, smul_smul]
+        simp only [ite_true, smul_smul]
         rw [← map_mul, ← map_mul, hcD t, mul_comm π]
       · beta_reduce
-        rw [if_neg hj, if_neg hj, map_mul, mul_smul]
+        rw [ite_eq_right hj, ite_eq_right hj, map_mul, mul_smul]
     have h1 := semi_sum ρ (dualLattice F) (dual_stable F) σ hσl _ lL _ hv
     rw [hσl (s₁ * s) (b t) _ rfl, ← hM t] at h1
     exact h1
@@ -1436,7 +1386,7 @@ theorem lineOfLargeDegree_of_use :
       (fun F _ K _ ι _ => Targets.ExistsUnique.full F ι)
       DualStdBasePtFree.proof DualStdImageBot.proof hStdGenDeg DualStdMetricPull.proof
   exact LineOfLargeDegreeFromZ.ofOpen hVRI hSN hEnergy hBasis hStacked hSDeg hBC
-    (GrassLinesProj.proof (_root_.GlobalTheory.CompanionTheory.Relay.coordinate_projection_of_arith_system hAIS))
+    (GrassLinesProj.proof (_root_.PositivityTheory.HtPt.Aig.pfCoord_of_system hAIS))
     (DualGeomDegCharts.proof ChartDensityIntegrable.proof) GrassGeomDegChart.proof ChartMassInvariant.proof
     (degree_of_system hAIS) hInd hU.z1 hZ2 hI
 

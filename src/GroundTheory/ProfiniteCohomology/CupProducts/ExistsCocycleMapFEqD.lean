@@ -88,22 +88,4 @@ theorem exists_cocycle_map_f_eq_d (hS : S.ShortExact) {i : ℕ} (j : ℕ)
 
 end Connecting
 
-section TensorRight
-
-variable {S : ShortComplex (Rep.{u} k G)} [IsDiscreteRep S.X₁] [IsDiscreteRep S.X₂]
-  [IsDiscreteRep S.X₃] (B : Rep.{u} k G) [IsDiscreteRep B]
-
-variable {B}
-
-end TensorRight
-
-section TensorLeft
-
-variable {S : ShortComplex (Rep.{u} k G)} [IsDiscreteRep S.X₁] [IsDiscreteRep S.X₂]
-  [IsDiscreteRep S.X₃] (B : Rep.{u} k G) [IsDiscreteRep B]
-
-variable {B}
-
-end TensorLeft
-
 end GroundTheory.ProfCoh

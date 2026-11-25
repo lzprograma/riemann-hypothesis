@@ -15,8 +15,6 @@ namespace Formalism.L2.GlobalTheoryTheory.ColValS
 
 open Formalism.BasicNotions Formalism.UG Formalism.L2.Forms Formalism.MainNotions.GlobalTheoryTheory.Inhab
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem sigD_eq_star (a : D.host.E) : sigD D a = star a := rfl
@@ -35,8 +33,7 @@ theorem rhoC_conj (s : D.what₂.LL →+* ℂ) (τ : D.what₂.Tau) (a : D.host.
     | exact NumberField.IsCMField.complexEmbedding_complexConj _ (s.comp D.embE) _
 
 theorem exists_im_ne (φ : D.host.E →+* ℂ) : ∃ t : D.host.E, (φ t).im ≠ 0 := by
-  by_contra h
-  push_neg at h
+  by_contra! h
   have hr : NumberField.ComplexEmbedding.IsReal φ := by
     first
       | (rw [NumberField.ComplexEmbedding.isReal_iff]; ext t; simp [Complex.conj_eq_iff_im, h t])

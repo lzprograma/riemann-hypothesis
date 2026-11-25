@@ -115,9 +115,9 @@ theorem realize (A B : Fr ε r k) (i0 : Fin k) (Z : Matrix (Fin (r + 1)) (Fin (r
     rintro (b|i) (c'|j)
     · exact hgram b c'
     · show hJ ε (y b) (A.wb j.1) = hJ ε (fam B.e B.z b) (B.wb j.1)
-      rw [swapJ (A.p4 i0 Z Aα t j.1 b), if_neg j.2, star_zero, B.fam_w]
+      rw [swapJ (A.p4 i0 Z Aα t j.1 b), ite_eq_right j.2, star_zero, B.fam_w]
     · show hJ ε (A.wb i.1) (y c') = hJ ε (B.wb i.1) (fam B.e B.z c')
-      rw [hydef, A.p4, if_neg i.2, B.w_fam]
+      rw [hydef, A.p4, ite_eq_right i.2, B.w_fam]
     · show hJ ε (A.wb i.1) (A.wb j.1) = hJ ε (B.wb i.1) (B.wb j.1)
       rw [A.ww, B.ww]
   obtain ⟨g, hg⟩ := wittFam ε s tt hs ht hG

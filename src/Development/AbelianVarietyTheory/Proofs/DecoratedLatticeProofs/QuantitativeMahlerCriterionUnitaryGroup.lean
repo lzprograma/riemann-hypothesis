@@ -99,7 +99,7 @@ theorem sub_of_red {E : Type} [Field E] [NumberField E] {n : ℕ} (M : ℕ) {A B
     ∀ i j, ∃ b : E, IsIntegral ℤ b ∧ (A - B) i j = (M : E) * b := by
   intro i j
   have e := congrFun (congrFun h i) j
-  simp only [red, dif_pos (hA i j), dif_pos (hB i j)] at e
+  simp only [red, dite_eq_left (hA i j), dite_eq_left (hB i j)] at e
   obtain ⟨b, hb⟩ := Ideal.mem_span_singleton'.1 (Ideal.Quotient.eq.1 e)
   clear e
   refine ⟨b, RingOfIntegers.isIntegral_coe b, ?_⟩
@@ -175,7 +175,7 @@ theorem intUnit_compact : ∀ I : AutInst, ∃ K : Set I.Gf, IsCompact K ∧ ∀
       ⟨γ, ⟨hγ, hi, hi'⟩, rfl⟩
     refine ⟨(fun v => Formalism.L2.S.S7.DensRat.ratReal I γ hγ v, fp I γ hγ), ⟨γ, hγ, fun v => rfl, rfl⟩,
       Set.mem_iUnion.2 ⟨red M (γ : Matrix (Fin I.n) (Fin I.n) I.E), ?_⟩, fun v => rfl⟩
-    simp only [Kq, dif_pos hex]
+    simp only [Kq, dite_eq_left hex]
     obtain ⟨hT', hr⟩ := hex.choose_spec
     set γ' := hex.choose with hγ'def
     refine ⟨(fp I γ' hT'.1)⁻¹ * fp I γ hγ, ?_, mul_inv_cancel_left _ _⟩
@@ -646,15 +646,7 @@ lemma entry_bound {N : ℕ} (P Z Q : Matrix (Fin N) (Fin N) ℝ) (i j : Fin N) (
 
 lemma orth_entry_le {N : ℕ} (k : Matrix (Fin N) (Fin N) ℝ) (h : kᵀ * k = 1) (p q : Fin N) :
     |k p q| ≤ 1 := by
-  have h1 : ∑ r, k r q * k r q = 1 := by
-    have := congrFun (congrFun h q) q
-    simpa [Matrix.mul_apply] using this
-  have h2 : k p q * k p q ≤ ∑ r, k r q * k r q :=
-    Finset.single_le_sum (f := fun r => k r q * k r q) (fun r _ => mul_self_nonneg _)
-      (Finset.mem_univ p)
-  rw [h1] at h2
-  have h3 : |k p q| ^ 2 ≤ 1 := by rw [sq_abs, sq]; exact h2
-  nlinarith [abs_nonneg (k p q)]
+  apply _root_.GlobalTheory.ReducedBasisBound.abs_entry_le_one <;> assumption
 
 lemma le_of_le_idx {N : ℕ} {C Cm : ℝ} {k : Matrix (Fin N) (Fin N) ℝ} {a : Fin N → ℝ}
     {n : Matrix (Fin N) (Fin N) ℝ} (hS : IsSiegel C k a n) (h1 : 1 ≤ Cm) (hC : C ≤ Cm)
@@ -743,7 +735,7 @@ theorem reduced_bound : ∀ (N : ℕ) (C R : ℝ), ∃ C' : ℝ, ∀ (k : Matrix
       · rw [hmlow p r hr]; simp; positivity
       by_cases hs : s < q
       · rw [hmlow q s hs]; simp; positivity
-      push_neg at hr hs
+      push Not at hr hs
       have hWb : |W r s| * (a r * a s) ≤ R₀ * R' := by
         calc |W r s| * (a r * a s) = |a r * W r s * a s| := by
               rw [abs_mul, abs_mul, abs_of_pos (hS.pos r), abs_of_pos (hS.pos s)]; ring
@@ -778,7 +770,7 @@ theorem reduced_bound : ∀ (N : ℕ) (C R : ℝ), ∃ C' : ℝ, ∀ (k : Matrix
     · rw [hS.lower p r hr]; ring
     by_cases hs : s < q
     · rw [hS.lower q s hs]; ring
-    push_neg at hr hs
+    push Not at hr hs
     have hapq := prod_le hS hCm1 hCC hr hs
     have hT' : T ≤ a r * a s := by
       have : Cm ^ 2 * T ≤ Cm ^ 2 * (a r * a s) := h.trans hapq
@@ -793,7 +785,7 @@ theorem reduced_bound : ∀ (N : ℕ) (C R : ℝ), ∃ C' : ℝ, ∀ (k : Matrix
       have h0 : μ * X' p q = 0 := by rw [← e]; ring
       have hx : X' p q = 0 := (mul_eq_zero.mp h0).resolve_left hμ
       rw [hx]; simp; positivity
-    · push_neg at h
+    · push Not at h
       calc |a p * X' p q * a q| = (a p * a q) * |X' p q| := by
             rw [abs_mul, abs_mul, abs_of_pos (hS.pos p), abs_of_pos (hS.pos q)]; ring
         _ ≤ (Cm ^ 2 * T) * R' := mul_le_mul h.le (hX' p q) (abs_nonneg _) (by positivity)
@@ -1177,7 +1169,7 @@ theorem trace_form_real_coord : ∀ (I : AutInst) (N : ℕ) (ρ : (InfinitePlace
   refine ⟨B, adjugate B, hBr, ?_, hB⟩
   have hex : ∃ e : Fin N → Fin I.n → I.E, IsZBasis I e := ⟨e, he⟩
   have hΔe : Δ = (B.det : ℝ) := by
-    simp only [Δ, dif_pos hex]
+    simp only [Δ, dite_eq_left hex]
     exact_mod_cast det_eq I he hex.choose_spec c hc1 B _ hB (hBex hex.choose hex.choose_spec).choose_spec
   have hadj : (adjugate B).map (Int.cast : ℤ → ℝ) = adjugate (B.map (Int.cast : ℤ → ℝ)) :=
     (Int.castRingHom ℝ).map_adjugate B
@@ -1749,7 +1741,7 @@ theorem bases_finite_classes : ∀ (I : AutInst) (N : ℕ) (R : ℝ), ∃ S : Se
     if h : ∃ e, IsZBasis I e ∧ has e t then Classical.choose h else 0
   have hpick : ∀ t (h : ∃ e, IsZBasis I e ∧ has e t), IsZBasis I (pick t) ∧ has (pick t) t := by
     intro t h
-    simp only [pick, dif_pos h]
+    simp only [pick, dite_eq_left h]
     exact Classical.choose_spec h
   have uniq : ∀ (f : Fin N → Fin I.n → I.E) (t : T), IsZBasis I f → has f t → ∀ k j (w : Fin N → ℤ),
       (integralBasis I.E k : I.E) • f j = ∑ i, w i • f i → w = t.1 k j := by

@@ -7,6 +7,7 @@ public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitA
 public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.Comparison
 public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FiniteSupportHeight
 import Mathlib.Tactic.TypeStar
+import GroundTheory.HeightsAndTheta.Heights.BlockScaling
 
 @[expose] public section
 
@@ -25,22 +26,7 @@ omit [DecidableEq ι] in
 theorem mConeMap_of_isMultiHomog {Ω : Type*} [Field Ω] (y : Coord n → Ω)
     (s : MvPolynomial (Coord n) ℤ) (a : ι → ℕ) (hs : Geo.IsMultiHomog (ι := blockIdx n) s a) :
     Geo.mConeMap (ι := blockIdx n) y s = C (eval₂ (Int.castRingHom Ω) y s) * ∏ k, X k ^ a k := by
-  classical
-  conv_lhs => rw [s.as_sum]
-  conv_rhs => rw [s.as_sum, eval₂_sum]
-
-  rw [map_sum, map_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun m hm ↦ ?_
-  have hmon : ∏ p ∈ m.support, (X p.1 : MvPolynomial ι Ω) ^ m p = ∏ k, X k ^ a k := by
-    rw [Finset.prod_subset (Finset.subset_univ m.support) (fun p _ hp ↦ by
-      rw [Finsupp.notMem_support_iff.mp hp, pow_zero]), Fintype.prod_sigma]
-    refine Finset.prod_congr rfl fun k _ ↦ ?_
-    show ∏ i, (X k : MvPolynomial ι Ω) ^ m ⟨k, i⟩ = _
-    rw [Finset.prod_pow_eq_pow_sum, hs m hm k]
-  rw [Geo.mConeMap, aeval_monomial, eval₂_monomial, Finsupp.prod, Finsupp.prod]
-  simp only [mul_pow, Finset.prod_mul_distrib, hmon, map_mul, map_prod, map_pow, eq_intCast,
-    map_intCast]
-  ring
+  simpa [Geo.mConeMap, aeval_def, RingHom.ext_int (C.comp (Int.castRingHom Ω)) (algebraMap ℤ _)] using BlockScaling.eval₂_cone_block (Int.castRingHom Ω) y hs
 
 theorem evalCone_coordVec_ne_zero (x : Cone n (AlgebraicClosure ℚ)) (s : MvPolynomial (Coord n) ℤ)
     (a : ι → ℕ) (hs : Geo.IsMultiHomog (ι := blockIdx n) s a) (hW : s ∉ orbitIdeal x) :
@@ -67,7 +53,7 @@ theorem HeightRecR.proof (hV : OrbitDivVertical.Statement) (hF : OrbitFiniteSum.
     unfold Geo.recR
     congr 1
     refine finsum_mem_congr rfl fun V hV' ↦ ?_
-    rw [if_neg (hV ι n A x s hx hs V hV')]
+    rw [ite_eq_right (hV ι n A x s hx hs V hV')]
     congr 4
     funext j
     exact j.elim0

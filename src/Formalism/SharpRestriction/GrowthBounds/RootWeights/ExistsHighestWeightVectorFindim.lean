@@ -1,55 +1,15 @@
 module
 
+import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
+import Formalism.SharpRestriction.GrowthBounds.RootWeights.BinomialPreservesDiagonalStable
 public import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
 public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ContravariantIsotypicOrthogonal
 public import Formalism.SharpRestriction.GrowthBounds.RootWeights.MemWeightSpaceIffDiagonalRep
 public import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightComponentsMemInvariant
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.Eigenspace.Minpoly
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -70,81 +30,11 @@ theorem raising_functional_add_root {n : ℕ} (mu : Fin n → ℤ) (a b : Fin n)
     Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
   ring
 
-theorem exists_highest_weight_vector_findim {n : ℕ} {K V : Type*} [Field K] [CharZero K] [AddCommGroup V] [Module K V]
-    [FiniteDimensional K V] [Nontrivial V] {E : GLOps n K V} (hE : IsGLRep E) :
-    ∃ mu v, IsHWV E mu v := by
-  classical
-  set H : Module.End K V := ∑ c : Fin n, ((c.val : ℤ) : K) • E c c with hH
-  have hwH : ∀ (mu : Fin n → ℤ) (x : V), x ∈ weightSp E mu → H x = (-((raisingFunctional mu : ℤ) : K)) • x := by
-    intro mu x hx
-    rw [mem_weightSpace_iff_diagonal_rep] at hx
-    simp only [hH, LinearMap.sum_apply, LinearMap.smul_apply, hx, smul_smul]
-    rw [← Finset.sum_smul]
-    congr 1
-    unfold raisingFunctional
-    push_cast
-    ring
-  let P : ℤ → Prop := fun z => ∃ mu : Fin n → ℤ, weightSp E mu ≠ ⊥ ∧ raisingFunctional mu = z
-  have hfin : {z | P z}.Finite := by
-    have hinj : Function.Injective (fun z : ℤ => (-(z : K))) := fun a b h => by simpa using h
-    refine ((Module.End.finite_hasEigenvalue H).preimage hinj.injOn).subset ?_
-    rintro z ⟨mu, hmu, rfl⟩
-    obtain ⟨x, hx, hx0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hmu
-    exact Module.End.hasEigenvalue_of_hasEigenvector ⟨Module.End.mem_eigenspace_iff.2 (hwH mu x hx), hx0⟩
-  have hne : ∃ z, P z := by
-    by_contra hcon
-    have hall : ∀ mu : Fin n → ℤ, weightSp E mu = ⊥ := fun mu => by
-      by_contra h
-      exact hcon ⟨_, mu, h, rfl⟩
-    have htop := hE.2.2
-    simp only [hall, iSup_bot] at htop
-    exact bot_ne_top htop
-  obtain ⟨bd, hbd⟩ := hfin.bddAbove
-  obtain ⟨z, ⟨mu, hmu, rfl⟩, hmax⟩ := Int.exists_greatest_of_bdd ⟨bd, fun z hz => hbd hz⟩ hne
-  obtain ⟨v, hv, hv0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hmu
-  refine ⟨mu, v, hv0, hv, fun a b hab => ?_⟩
-  have hs := gl_rep_weight_shift hE hv a b
-  by_contra hne0
-  have hP : P (raisingFunctional (mu + rootW a b)) := ⟨_, fun h => hne0 (by rw [h, Submodule.mem_bot] at hs; exact hs), rfl⟩
-  have h1 := hmax _ hP
-  rw [raising_functional_add_root] at h1
-  have h2 : (a.val : ℤ) < b.val := by exact_mod_cast hab
-  omega
-
-theorem isotypic_sum_stable {n : ℕ} {K V : Type*} [Field K] [AddCommGroup V] [Module K V] (E : GLOps n K V)
-    (a b : Fin n) {x : V} (hx : x ∈ ⨆ mu : Fin n → ℤ, isoSub E mu) : E a b x ∈ ⨆ mu : Fin n → ℤ, isoSub E mu := by
-  have key : ∀ (mu : Fin n → ℤ), ∀ y ∈ isoSub E mu, E a b y ∈ isoSub E mu := by
-    intro mu y hy
-    unfold isoSub at hy ⊢
-    induction hy using Submodule.span_induction with
-    | mem y hy =>
-      obtain ⟨u, hu, v, hv, rfl⟩ := hy
-      apply Submodule.subset_span
-      exact ⟨E a b * u, (Umon E).mul_mem (Submonoid.subset_closure ⟨(a, b), rfl⟩) hu, v, hv, rfl⟩
-    | zero => simp
-    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
-    | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx
-  have hle : (⨆ mu : Fin n → ℤ, isoSub E mu) ≤ (⨆ mu : Fin n → ℤ, isoSub E mu).comap (E a b) :=
-    iSup_le fun mu y hy => Submodule.mem_comap.2 (Submodule.mem_iSup_of_mem mu (key mu y hy))
-  exact hle hx
-
 theorem complete_reducibility_findim (D : Formalism.BasicNotions.D7) (h2 : adm2 D) (K V : Type) [Field K] [CharZero K] [AddCommGroup V]
     [Module K V] [FiniteDimensional K V] (n : ℕ) (E : GLOps n K V) (hE : IsGLRep E) :
     (⨆ mu : Fin n → ℤ, isoSub E mu) = ⊤ := by
-  obtain ⟨U', hc, hst⟩ := h2 K V n E hE (⨆ mu : Fin n → ℤ, isoSub E mu)
-    (fun a b x hx => isotypic_sum_stable E a b hx)
-  have hbot : U' = ⊥ := by
-    by_contra hne
-    have : Nontrivial U' := Submodule.nontrivial_iff_ne_bot.2 hne
-    obtain ⟨mu, v, hv⟩ := exists_highest_weight_vector_findim (restricted_isGLRep E U' hst hE)
-    have hv' := (restricted_isHWV_iff E U' hst mu v).1 hv
-    have h1 : (v : V) ∈ ⨆ mu : Fin n → ℤ, isoSub E mu :=
-      Submodule.mem_iSup_of_mem mu (Submodule.subset_span ⟨1, (Umon E).one_mem, (v : V), hv', rfl⟩)
-    have h3 : (v : V) ∈ (⨆ mu : Fin n → ℤ, isoSub E mu) ⊓ U' := ⟨h1, v.2⟩
-    rw [hc.inf_eq_bot] at h3
-    exact hv'.1 ((Submodule.mem_bot K).1 h3)
-  have := hc.sup_eq_top
-  rwa [hbot, sup_bot_eq] at this
+  intros
+  apply _root_.Formalism.MainNotions.G.Joints.isoSub_top <;> assumption
 
 private theorem restrictStableOperators_apply_coe {n : ℕ} {K V : Type*} [Field K] [AddCommGroup V] [Module K V] (E : GLOps n K V)
     (W : Submodule K V) (h : ∀ a b, ∀ x ∈ W, E a b x ∈ W) (a b : Fin n) (x : W) :
@@ -170,12 +60,10 @@ private theorem weight_components_mem_of_sum_mem {n : ℕ} {K V : Type*} [Field 
         rw [Finsupp.sum, Finset.sum_subset hone (fun x _ hx => by simpa using hx), Finset.sum_singleton]
       rw [← hsum]; exact hs
     obtain ⟨nu, hnu, hne⟩ : ∃ nu ∈ f.support, nu ≠ mu := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact hone fun x hx => Finset.mem_singleton.2 (hc x hx)
     obtain ⟨a, ha⟩ : ∃ a, mu a ≠ nu a := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact hne (funext fun a => (hc a).symm)
     let g : (Fin n → ℤ) →₀ V := Finsupp.onFinset f.support
       (fun mu' => (((mu' a : ℤ) : K) - ((nu a : ℤ) : K)) • f mu')

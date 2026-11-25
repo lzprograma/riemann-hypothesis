@@ -439,10 +439,10 @@ theorem chiFix : ChiFix := by
   refine ⟨fun d => if d.Coprime N then χd d else 0, ?_, ?_, ?_, ?_⟩
   · intro d hd
     dsimp only
-    rw [if_pos hd]
+    rw [ite_eq_left hd]
   · intro d hd
     dsimp only
-    rw [if_pos hd]
+    rw [ite_eq_left hd]
     rcases Nat.eq_zero_or_pos N with hN | hN
     · subst hN
       have hd1 : d = 1 := Nat.coprime_zero_right d |>.1 hd
@@ -460,23 +460,23 @@ theorem chiFix : ChiFix := by
     by_cases ha : a.Coprime N
     · by_cases hb : b.Coprime N
       · have hab : (a * b).Coprime N := Nat.Coprime.mul_left ha hb
-        rw [if_pos hab, if_pos ha, if_pos hb]
+        rw [ite_eq_left hab, ite_eq_left ha, ite_eq_left hb]
         apply hinj
         rw [hFm, hχ _ hab, hχ _ ha, hχ _ hb, Nat.cast_mul, map_mul]
       · have hab : ¬ (a * b).Coprime N := fun h => hb (Nat.Coprime.coprime_mul_left h)
-        rw [if_neg hab, if_neg hb, mul_zero]
+        rw [ite_eq_right hab, ite_eq_right hb, mul_zero]
     · have hab : ¬ (a * b).Coprime N := fun h => ha (Nat.Coprime.coprime_mul_right h)
-      rw [if_neg hab, if_neg ha, zero_mul]
+      rw [ite_eq_right hab, ite_eq_right ha, zero_mul]
   · intro a b hab
     dsimp only
     have hiff : a.Coprime N ↔ b.Coprime N := by rw [hcop a, hcop b, hab]
     by_cases ha : a.Coprime N
     · have hb : b.Coprime N := hiff.1 ha
-      rw [if_pos ha, if_pos hb]
+      rw [ite_eq_left ha, ite_eq_left hb]
       apply hinj
       rw [hχ _ ha, hχ _ hb, (ZMod.natCast_eq_natCast_iff' a b N).2 hab]
     · have hb : ¬ b.Coprime N := fun h => ha (hiff.2 h)
-      rw [if_neg ha, if_neg hb]
+      rw [ite_eq_right ha, ite_eq_right hb]
 
 end UpperTheory.V.Z.Kato.Joint
 
@@ -829,11 +829,6 @@ namespace UpperTheory.V.Z.Kato.Joint
 def twb (N : ℕ) (s : ℂ) (b : ℤ) : ℤ → ℂ := fun B =>
   (if (B : ZMod N) = b then 1 else 0) - s * (if (B : ZMod N) = -b then 1 else 0)
 
-theorem Uo_iterate {R : Type*} [CommRing R] (l m : ℕ) (f : ℕ → R) (i : ℕ) : (Uo l)^[m] f i = f (l ^ m * i) := by
-  induction m generalizing f with
-  | zero => simp
-  | succ m ih => rw [Function.iterate_succ_apply, ih, Uo, pow_succ', mul_assoc]
-
 private def hz {N : ℕ} [NeZero N] (θ : DirichletCharacter ℂ N) (z : ZMod N) : ℂ :=
   ∑ y : ZMod N, θ y * ZMod.stdAddChar (y * z)
 
@@ -865,7 +860,7 @@ private theorem wsum {N : ℕ} [NeZero N] (θ : DirichletCharacter ℂ N) (u : (
     ∑ x : ZMod N, hz θ x / 2 * ((if A = x * u then c else 0) + (if -A = x * u then s * c else 0)) =
       θ u * ((1 + s * θ (-1)) / 2) * (hz θ A * c) := by
   have h : ∀ (A x : ZMod N), A = x * u ↔ A * (u⁻¹ : (ZMod N)ˣ) = x := fun A x => (Units.mul_inv_eq_iff_eq_mul u).symm
-  simp only [h, mul_add, Finset.sum_add_distrib, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [h, mul_add, Finset.sum_add_distrib, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   rw [hz_unit, hz_unit, hz_neg]
   ring
 
@@ -902,7 +897,7 @@ private theorem ee_eq {l : ℕ} [hl : Fact l.Prime] (ι : PadicAlgCl l ≃+* ℂ
   generalize s / d = B at hs ⊢
   simp only [← ZMod.intCast_eq_intCast_iff, hs, ite_not, Int.cast_neg, Int.cast_natCast, twb, neg_eq_iff_eq_neg]
   by_cases h : ¬ l ∣ d ∧ ¬ l ∣ B
-  · rw [if_pos h, if_pos h]
+  · rw [ite_eq_left h, ite_eq_left h]
     have hu : IsUnit (d : ZMod (l ^ m)) :=
       (ZMod.isUnit_iff_coprime d (l ^ m)).mpr (Nat.Coprime.pow_right m ((hl.out.coprime_iff_not_dvd.mpr h.1).symm))
     have h1 : ψ⁻¹ (d : ZMod (l ^ m)) = ψ ((d : ZMod (l ^ m))⁻¹) := by
@@ -915,7 +910,7 @@ private theorem ee_eq {l : ℕ} [hl : Fact l.Prime] (ι : PadicAlgCl l ≃+* ℂ
       rw [← map_mul]; simp
     rw [← neg_one_mul (d : ZMod (l ^ m)), map_mul, h1, h2]
     split_ifs <;> simp [sub_mul]
-  · rw [if_neg h, if_neg h, map_zero]
+  · rw [ite_eq_right h, ite_eq_right h, map_zero]
 
 theorem ser_eq_Zm {l : ℕ} [hl : Fact l.Prime] (ι : PadicAlgCl l ≃+* ℂ) (N : ℕ) [NeZero N] (θ : DirichletCharacter ℂ N) (m k : ℕ)
     (ψ : DirichletCharacter (PadicAlgCl l) (l ^ m)) (a b : ℤ) (hk : 3 ≤ k) (ho : Odd k) (ha : IsCoprime a N) (i : ℕ) :
@@ -932,9 +927,9 @@ theorem ser_eq_Zm {l : ℕ} [hl : Fact l.Prime] (ι : PadicAlgCl l ≃+* ℂ) (N
     refine Finset.sum_congr rfl fun p _ => ?_
     by_cases h : l ∣ s
     · simp [h]
-    · simp only [h, if_false, Int.cast_mul, Int.cast_natCast, ZMod.natCast_zmod_val, ← hu]
+    · simp only [h, ite_false, Int.cast_mul, Int.cast_natCast, ZMod.natCast_zmod_val, ← hu]
       exact wsum θ u _ _ _
-  rw [Uo_iterate, ser, up]
+  rw [GlobalTheory.zs_iter_Uo, ser, up]
   generalize l ^ m * i = n
 
   simp only [coPtMu, ← mul_eq_cmul, mul, map_sum, map_mul, RingEquiv.apply_symm_apply, Finset.mul_sum, Zm]
@@ -979,14 +974,14 @@ private theorem ind_sum {N : ℕ} [NeZero N] (ν : DirichletCharacter ℂ N) (v 
   · obtain ⟨w, rfl⟩ := hB
     have h : ∀ u : (ZMod N)ˣ, ((w : ZMod N) = (u : ZMod N) * v) ↔ w * v⁻¹ = u := fun u => by
       rw [← Units.val_mul, Units.val_inj, mul_inv_eq_iff_eq_mul]
-    simp only [h, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true, Units.val_mul, map_mul]
+    simp only [h, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true, Units.val_mul, map_mul]
     rw [mul_comm, MulChar.inv_apply_eq_inv']
     congr 1
     refine eq_inv_of_mul_eq_one_right ?_
     rw [← map_mul]; simp
   · rw [MulChar.map_nonunit _ hB, mul_zero]
     refine Finset.sum_eq_zero fun u _ => ?_
-    rw [if_neg, mul_zero]
+    rw [ite_eq_right, mul_zero]
     rintro rfl
     exact hB (u * v).isUnit
 
@@ -1049,7 +1044,7 @@ theorem UpperTheory.V.Z.Kato.Joint.avgEq :
       IsCoprime.mul_left (Nat.isCoprime_iff_coprime.mpr (ZMod.val_coe_unit_coprime u)) ha
     have key := Zm_sum Finset.univ k l (hat θ) _ _ _ _
       (fun A d => ι (ψ ((A : ZMod (l ^ m)) * (d : ZMod (l ^ m))⁻¹))) (twb_sum θ χ hχ b hb) (l ^ m * i)
-    simp only [ser_eq_Zm_of_parity ι N θ m k ψ _ _ hk ho (hu _) hs, frm, Uo_iterate]
+    simp only [ser_eq_Zm_of_parity ι N θ m k ψ _ _ hk ho (hu _) hs, frm, GlobalTheory.zs_iter_Uo]
     calc _ = θ (a : ZMod N) * ∑ u : (ZMod N)ˣ, (θ * χ) u * Zm k l (hat θ) (twb N (θ (-1)) (((u : ZMod N).val : ℤ) * b))
             (fun A d => ι (ψ ((A : ZMod (l ^ m)) * (d : ZMod (l ^ m))⁻¹))) (l ^ m * i) := by
           rw [Finset.mul_sum]
@@ -1069,15 +1064,10 @@ section -- clump:auto
 open UpperTheory.V.Z.Kato.Joint
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ
 
-private theorem norm_l_lt_one (l : ℕ) [Fact l.Prime] : ‖((l : ℕ) : Qbar l)‖ < 1 := by
-  have h : ((l : ℕ) : Qbar l) = algebraMap ℚ_[l] (PadicAlgCl l) ((l : ℕ) : ℚ_[l]) := by simp
-  rw [h, PadicAlgCl.norm_extends]
-  exact Padic.norm_p_lt_one
-
 private theorem cg_scale {l : ℕ} [Fact l.Prime] (K : Qbar l) : ∃ N : ℕ, ∀ m, N ≤ m → ∀ (c₀ : ℕ) (u x y : Qbar l),
     ‖u‖ = 1 → Cg (2 * m) x y → Cg (m - c₀) (u * K * y) (u * K * x) := by
   have hl0 : 0 ≤ ‖((l : ℕ) : Qbar l)‖ := norm_nonneg _
-  have hl1 := norm_l_lt_one l
+  have hl1 := GlobalTheory.norm_natCast_prime_qbar l
   obtain ⟨N, hN⟩ : ∃ N : ℕ, ‖((l : ℕ) : Qbar l)‖ ^ N * ‖K‖ ≤ 1 := by
     rcases eq_or_ne ‖K‖ 0 with hK | hK
     · exact ⟨0, by rw [hK, mul_zero]; exact zero_le_one⟩
@@ -1120,7 +1110,7 @@ private theorem cg_cases {l : ℕ} [Fact l.Prime] {κ₀ κ : Qbar l} (hκ : κ 
   refine ⟨N, fun m hm c₀ v a p s X b g w hv ha hp hs h1 h2 => ?_⟩
   have hu : ‖v * a ^ m‖ = 1 := by rw [norm_mul, norm_pow, hv, ha, one_pow, one_mul]
   by_cases hE : p = s
-  · rw [if_pos hE]
+  · rw [ite_eq_left hE]
     have h3 := hN m hm c₀ (v * a ^ m) X (κ * b * g * w) hu (h1 hE)
     have e1 : v * a ^ m * (κ₀ / κ) * (κ * b * g * w) = v * κ₀ * a ^ m * (b * g * w) := by
       field_simp
@@ -1129,7 +1119,7 @@ private theorem cg_cases {l : ℕ} [Fact l.Prime] {κ₀ κ : Qbar l} (hκ : κ 
     exact h3
   · have hps : p ^ 2 = s ^ 2 := by rw [hp, hs]
     have hO : p = -s := (sq_eq_sq_iff_eq_or_eq_neg.1 hps).resolve_left hE
-    rw [if_neg hE]
+    rw [ite_eq_right hE]
     have h3 := hN m hm c₀ (v * a ^ m) X 0 hu (h2 hO)
     have e2 : v * a ^ m * (κ₀ / κ) * X = v * (κ₀ / κ) * a ^ m * X := by ring
     rw [mul_zero, e2] at h3
@@ -1177,17 +1167,6 @@ private theorem norm_le_of_pow {l : ℕ} [Fact l.Prime] (ι : PadicAlgCl l ≃+*
   have h1 : ‖ι.symm z‖ ^ n = 1 := by rw [← norm_pow, ← map_pow, h, map_one, norm_one]
   exact ((pow_eq_one_iff_of_nonneg (norm_nonneg _) hn).mp h1).le
 
-private theorem hat_std {N : ℕ} [NeZero N] (φ : ZMod N → ℂ) (d : ℤ) :
-    GlobalTheory.EisM.hat φ d = ∑ y : ZMod N, φ y * ZMod.stdAddChar (y * (d : ZMod N)) := by
-  unfold GlobalTheory.EisM.hat
-  refine Finset.sum_nbij' (fun i => (i : ZMod N)) (fun y => y.val) (fun _ _ => Finset.mem_univ _)
-    (fun y _ => Finset.mem_range.mpr (ZMod.val_lt y)) (fun i hi => ZMod.val_cast_of_lt (Finset.mem_range.mp hi))
-    (fun y _ => ZMod.natCast_zmod_val y) (fun i _ => ?_)
-  have h : ((i : ZMod N)) * (d : ZMod N) = (((i : ℤ) * d : ℤ) : ZMod N) := by push_cast; rfl
-  rw [h, ZMod.stdAddChar_coe]
-  push_cast
-  rfl
-
 private theorem norm_two' {l : ℕ} [hl : Fact l.Prime] (h : l ≠ 2) : ‖(2 : PadicAlgCl l)‖ = 1 := by
   have h1 : (2 : PadicAlgCl l) = algebraMap ℚ_[l] (PadicAlgCl l) ((2 : ℕ) : ℚ_[l]) := by
     rw [map_natCast]; rfl
@@ -1203,7 +1182,7 @@ theorem UpperTheory.V.Z.Kato.Joint.hatW :
     have h0 : ZMod.dft (fun y : ZMod N => θ y) = 0 := by
       funext k
       have := hc (-k)
-      rw [hat_std] at this
+      rw [GlobalTheory.EisM.hat_eq_sum_std] at this
       rw [ZMod.dft_apply, Pi.zero_apply, ← this]
       refine Finset.sum_congr rfl fun y _ => ?_
       simp [mul_comm]
@@ -1211,7 +1190,7 @@ theorem UpperTheory.V.Z.Kato.Joint.hatW :
     simp at h1
   · have h2 : ι.symm 2 = 2 := map_ofNat _ 2
 
-    rw [map_div₀, norm_div, h2, norm_two' hl, div_one, hat_std, map_sum]
+    rw [map_div₀, norm_div, h2, norm_two' hl, div_one, GlobalTheory.EisM.hat_eq_sum_std, map_sum]
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun y _ => ?_
     rw [map_mul, norm_mul]
     refine mul_le_one₀ ?_ (norm_nonneg _) ?_
@@ -1223,7 +1202,7 @@ theorem UpperTheory.V.Z.Kato.Joint.hatW :
     · refine norm_le_of_pow ι _ N (NeZero.ne N) ?_
       rw [← AddChar.map_nsmul_eq_pow]
       simp
-  · rw [hat_std, hat_std]
+  · rw [GlobalTheory.EisM.hat_eq_sum_std, GlobalTheory.EisM.hat_eq_sum_std]
     simp
 end -- clump:auto
 end -- clump:auto

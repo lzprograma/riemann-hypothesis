@@ -9,8 +9,6 @@ import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms.Comb
 
 open MvPolynomial Finset Equiv
@@ -96,7 +94,7 @@ theorem cf_monomial (l v : Fin m → ℕ) :
   rw [coeff_monomial]
   by_cases h : l = v
   · simp [h]
-  · rw [if_neg, if_neg h]
+  · rw [ite_eq_right, ite_eq_right h]
     intro h'
     apply h
     have := congrArg (fun d : Fin m →₀ ℕ => (d : Fin m → ℕ)) h'
@@ -142,7 +140,7 @@ theorem cf_alt_of_strictAnti {l v : Fin m → ℕ} (hl : StrictAnti l) (hv : Str
   · have h1 : v ∘ ⇑(Equiv.symm (1 : Perm (Fin m))) = v := rfl
     simp [h1]
   · intro σ _ hσ
-    rw [if_neg, mul_zero]
+    rw [ite_eq_right, mul_zero]
     intro h
     apply hσ
     have : σ.symm = 1 := by
@@ -170,13 +168,13 @@ theorem cf_mul_psum (l : Fin m → ℕ) (A : MvPolynomial (Fin m) ℚ) (q : ℕ)
   have hle : Finsupp.single i q ≤ ex l ↔ q ≤ l i := by
     rw [Finsupp.single_le_iff]; simp
   by_cases h : q ≤ l i
-  · rw [if_pos (hle.mpr h), if_pos h]
+  · rw [ite_eq_left (hle.mpr h), ite_eq_left h]
     congr 1
     ext j
     by_cases hj : j = i
     · subst hj; simp
     · simp [Function.update_of_ne hj, Ne.symm hj]
-  · rw [if_neg (fun h' => h (hle.mp h')), if_neg h]
+  · rw [ite_eq_right (fun h' => h (hle.mp h')), ite_eq_right h]
 
 theorem IsAlt.mul_symm {P S : MvPolynomial (Fin m) ℚ} (hP : IsAlt P) (hS : S.IsSymmetric) :
     IsAlt (P * S) := by
@@ -254,7 +252,7 @@ theorem IsAlt.eq_sum_alt {P : MvPolynomial (Fin m) ℚ} (hP : IsAlt P) :
     rw [MvPolynomial.coeff_smul, this, smul_eq_mul]
     by_cases hdl : d = ex l
     · subst hdl; simp
-    · rw [if_neg, if_neg hdl, mul_zero]
+    · rw [ite_eq_right, ite_eq_right hdl, mul_zero]
       intro h; apply hdl; ext i; simp [h]
   rw [Finset.sum_congr rfl hterm, Finset.sum_ite_eq']
   split_ifs with hmem

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardQuotPowSmulBoundsDvrFgModule
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
 public import Formalism.LocalToGlobal.Columns.CoefColLemmas
 public import Formalism.LocalToGlobal.Columns.ColFormsLemmas
@@ -389,32 +390,7 @@ open scoped TensorProduct in
 theorem natCard_quot {R N : Type} [CommRing R] [IsDomain R] [AddCommGroup N] [Module R N]
     [Module.Finite R N] [Module.Projective R N] (I : Ideal R) [Finite (R ⧸ I)] :
     Nat.card (N ⧸ (I • ⊤ : Submodule R N)) = Nat.card (R ⧸ I) ^ Module.finrank R N := by
-  have : IsArtinianRing (R ⧸ I) := isArtinian_of_finite
-  obtain ⟨b⟩ := Module.nonempty_basis_of_flat_of_finrank_eq (R ⧸ I) ((R ⧸ I) ⊗[R] N) (Module.finrank R N)
-    (fun P => by
-      have := P.isMaximal
-      let : Field ((R ⧸ I) ⧸ P.asIdeal) := Ideal.Quotient.field _
-      rw [(TensorProduct.AlgebraTensorModule.cancelBaseChange R (R ⧸ I) ((R ⧸ I) ⧸ P.asIdeal)
-        ((R ⧸ I) ⧸ P.asIdeal) N).finrank_eq]
-      have h1 := Module.rankAtStalk_baseChange (R := R) (M := N) (S := (R ⧸ I) ⧸ P.asIdeal) ⊥
-      rw [Module.rankAtStalk_eq_finrank_of_free, Module.rankAtStalk_eq, Ideal.finrank_fiber_eq_finrank] at h1
-      exact h1)
-  rw [← Nat.card_congr (TensorProduct.quotTensorEquivQuotSMul N I).toEquiv, Nat.card_congr b.equivFun.toEquiv,
-    Nat.card_fun, Nat.card_eq_fintype_card (α := Fin _), Fintype.card_fin]
-
-theorem finrank_of_span_top {K V : Type} [Field K] [NumberField K] [AddCommGroup V] [Module K V]
-    [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (p : Submodule (𝓞 K) V)
-    (h : Submodule.span K (p : Set V) = ⊤) : Module.finrank (𝓞 K) p = Module.finrank K V := by
-  have : IsLocalizedModule (nonZeroDivisors (𝓞 K)) p.subtype := by
-    refine ⟨fun s => ?_, fun y => ?_, fun {a b} hab => ⟨1, by simpa using hab⟩⟩
-    · have := isLocalizedModule_id (nonZeroDivisors (𝓞 K)) V K
-      exact IsLocalizedModule.map_units (S := nonZeroDivisors (𝓞 K)) (LinearMap.id : V →ₗ[𝓞 K] V) s
-    · have hy : y ∈ Submodule.span K (p : Set V) := h ▸ Submodule.mem_top
-      obtain ⟨t, ht⟩ := multiple_mem_span_of_mem_localization_span (nonZeroDivisors (𝓞 K)) K _ y hy
-      rw [Submodule.span_eq] at ht
-      exact ⟨(⟨_, ht⟩, t), rfl⟩
-  rw [← IsLocalizedModule.finrank_eq (nonZeroDivisors (𝓞 K)) p.subtype le_rfl,
-    IsFractionRing.finrank_right_eq (𝓞 K) K V]
+  first | exact _root_.GlobalTheory.DVRQuotCount.card_quot_smul_top_of_flat' | exact @_root_.GlobalTheory.DVRQuotCount.card_quot_smul_top_of_flat' | apply _root_.GlobalTheory.DVRQuotCount.card_quot_smul_top_of_flat' <;> assumption
 
 theorem finrank_of_card {F V : Type} [Field F] [Finite F] [AddCommGroup V] [Module F V] {n : ℕ}
     (h : Nat.card V = Nat.card F ^ n) : Module.finrank F V = n := by
@@ -493,18 +469,6 @@ section General
 variable {E K ι : Type} [Field E] [NumberField E] [StarRing E] [Field K] [NumberField K] [StarRing K] [Fintype ι] {n : ℕ}
   (S : GStep E K n) (emb : ι → E →+* K) (σ : K →+* ℂ) (lam : ι → DomWeight n)
 
-theorem evV_rho_tr (b : S.β) (g : S.G b) (v : VV K lam) :
-    evV emb (1 : Matrix (Fin n) (Fin n) E) lam σ (S.rho emb lam b g v) =
-      S.tr emb σ b g (evV emb (1 : Matrix (Fin n) (Fin n) E) lam σ v) := by
-  funext y
-  have h : S.rho emb lam b g v = ((S.chr b g : Kˣ) : K) • rhoVr emb lam (S.gam b g) v := rfl
-  rw [h, LinearMap.map_smulₛₗ, GStep.tr, trFr_apply, Pi.smul_apply, smul_eq_mul]
-  congr 1
-  refine evV_rhoVr_tr emb 1 lam σ _ v y _ ?_
-  have := congrArg Subtype.val ((frEquiv emb σ (S.gam b g)).apply_symm_apply y)
-  intro τ
-  exact (congrFun this τ).symm
-
 theorem exists_pull (hf : S.Free) (h : (S.fam emb lam).Ok) (p : ∀ c : S.Cl, S.D c.1)
     (hp : ∀ c, S.Lsh c.1 (p c) = S.Lsh c.1 (S.rep c)) (x : S.FormsK emb lam h) (hx : x ∈ (S.hlat emb lam h).L) :
     ∃ y ∈ (S.hlat emb lam h).L, ∀ c, S.embF emb σ lam h y c =
@@ -522,7 +486,7 @@ theorem exists_pull (hf : S.Free) (h : (S.fam emb lam).Ok) (p : ∀ c : S.Cl, S.
     show S.rho emb lam c.1 (S.mv c.1 (p c)) (x.1 (S.cl c.1 (p c))) ∈ delAtr emb lam (S.Lsh c.1 (S.rep c))
     rw [h1]
     exact Submodule.mem_map_of_mem (hx (S.cl c.1 (p c)))
-  · exact evV_rho_tr S emb σ lam c.1 _ _
+  · exact GlobalTheory.Mem.Col2.DiaStab.evV_rho S emb σ lam c.1 _ _
 
 end General
 
@@ -694,17 +658,6 @@ theorem smul_mem_of_dvd {A V : Type} [CommRing A] [AddCommGroup V] [Module A V] 
   rw [mul_comm, mul_smul]
   exact M.smul_mem _ hx
 
-theorem dualFr_isFullLattice {K : Type} [Field K] [NumberField K] {n : ℕ} (M : Submodule (𝓞 K) (Fin n → K))
-    (hM : Submodule.IsFullLattice K M) : Submodule.IsFullLattice K (dualFr M) :=
-  GlobalTheory.DualLat.isLattice_dualFr M hM
-
-
-theorem isLattice_delAtr {E K ι : Type} [Field E] [NumberField E] [Field K] [NumberField K] [Fintype ι] {n : ℕ}
-    (emb : ι → E →+* K) (lam : ι → DomWeight n) (L : Submodule (𝓞 E) (Fin n → E)) (hL : Submodule.IsFullLattice E L) :
-    Submodule.IsFullLattice K (delAtr emb lam L) :=
-  (GlobalTheory.TransLattice.nabDelLattice K ι n lam _ fun τ =>
-    dualFr_isFullLattice _ (GlobalTheory.TauLat.tauLat_lattice_dual_round.1 E K ι n emb τ L hL)).2
-
 theorem span_locW_eq_top {K V : Type} [Field K] [NumberField K] [AddCommGroup V] [Module K V] [Module (𝓞 K) V]
     [IsScalarTower (𝓞 K) K V] (Pl : Rows.Places K) (w : Pl.Pl) (M : Submodule (𝓞 K) V)
     (h : ∀ x : V, ∃ d : 𝓞 K, d ≠ 0 ∧ d • x ∈ M) : Submodule.span K (locW Pl w M : Set V) = ⊤ := by
@@ -757,7 +710,7 @@ theorem span_locW_BLat : ∀ {E K ι : Type} [Field E] [NumberField E] [StarRing
             Submodule.span E (((J.A i).ker b d P) : Set _) := Submodule.smul_mem _ _ hspan
         rw [← algebraMap_smul E r x, smul_smul, inv_mul_cancel₀ hrE, one_smul] at hh
         exact hh
-      letI := isLattice_delAtr emb (lamT hc i) ((J.A i).ker b d P) hker
+      letI := GlobalTheory.Mem.LatGood.delAtr_isLattice emb (lamT hc i) ((J.A i).ker b d P) hker
       exact Submodule.IsFullLattice.span_eq_top) x
 
 end GlobalTheory.Mem.BSpan
@@ -808,7 +761,7 @@ theorem laws_all : ∀ {E K ι : Type} [Field E] [NumberField E] [StarRing E] [F
   have hd := _root_.GlobalTheory.Mem.Col2.DiaRep.diamond_rep I J emb σ hc hF hI hJ
   have hfam : ∀ i, ((I.S i).fam emb (lamT hc i)).Ok := fun i => _root_.GlobalTheory.Mem.Col2.fam_ok (I.S i) emb σ (lamT hc i) hF (hI.step i)
   have hfamP : (Q.S'.fam emb Q.sgT).Ok := _root_.GlobalTheory.Mem.Col2.fam_ok Q.S' emb σ Q.sgT hF hQ.step
-  refine ⟨⟨hd.1, hd.2, _root_.GlobalTheory.Mem.Col2.GStep.fi_finiteDimensional (I.S 0) emb σ (lamT hc 0) hF (hI.step 0), _root_.GlobalTheory.Mem.Col2.DiaStab.lawDiaStable I J emb σ hc hF hI hJ⟩, ?_⟩
+  refine ⟨⟨hd.1, hd.2, _root_.GlobalTheory.Mem.Col2.GStep.fi_finiteDimensional (I.S 0) emb σ (lamT hc 0) (hI.step 0), _root_.GlobalTheory.Mem.Col2.DiaStab.lawDiaStable I J emb σ hc hJ⟩, ?_⟩
   exact
     { fam := hfam
       famP := hfamP

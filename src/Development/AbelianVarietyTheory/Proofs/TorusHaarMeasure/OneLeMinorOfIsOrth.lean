@@ -78,13 +78,13 @@ theorem one_le_norm_lminor_sq {n p : ℕ} (h : p ≤ n) (g : Matrix (Fin n) (Fin
       rw [e, Matrix.one_apply]
       by_cases hab : a = b
       · subst hab; simp [sgn]
-      · rw [if_neg hab, if_neg (Ne.symm hab)]
+      · rw [ite_eq_right hab, ite_eq_right (Ne.symm hab)]
     have e2 : (Aᴴ * A) a b = ∑ k : Fin n, if (k : ℕ) < p then
         starRingEnd ℂ (g k (Fin.castLE h a)) * g k (Fin.castLE h b) else 0 := by
       rw [Matrix.mul_apply]
       refine Fintype.sum_of_injective (Fin.castLE h) (Fin.castLE_injective h) _ _ (fun k hk => ?_)
         (fun k => ?_)
-      · rw [if_neg]
+      · rw [ite_eq_right]
         intro hlt
         exact hk ⟨⟨k, hlt⟩, Fin.ext rfl⟩
       · simp [hA, Matrix.conjTranspose_apply]

@@ -7,59 +7,7 @@ public import Mathlib.Algebra.QuadraticAlgebra.Basic
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.LinearAlgebra.Dimension.Constructions
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.ENatToNat
 import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.LevelTwoFiniteIndex
 import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.EvenVal
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -95,7 +43,7 @@ private lemma trace_inverseGram_conj_smul_eq {K : Type} [Field K] [CharZero K] (
   have e1 := hp 1
   have em := hp (-1)
   simp only [Matrix.det_fin_three, Matrix.sub_apply, Matrix.scalar_apply, Matrix.diagonal_apply] at e0 e1 em
-  simp only [Fin.isValue, Fin.reduceEq, if_true, if_false] at e0 e1 em
+  simp only [Fin.isValue, Fin.reduceEq, ite_true, ite_false] at e0 e1 em
   constructor
   · rw [Matrix.trace_fin_three]
     linear_combination e0 - e1 / 2 - em / 2
@@ -181,8 +129,7 @@ theorem UpperTheory.exists_fixed_rotation_basis_of_charpoly :
     simp only [Matrix.toLin'_apply, Matrix.mulVec_mulVec, hMF]
   let g : W →ₗ[K] W := (Matrix.toLin' M).restrict hW
   obtain ⟨v0, hv0⟩ : ∃ v : W, LinearIndependent K ![v, g v] := by
-    by_contra hno
-    push_neg at hno
+    by_contra! hno
     obtain ⟨a, ha⟩ := LinearMap.exists_eq_smul_id_of_forall_notLinearIndependent hno
     have hMFx : ∀ x : Fin 3 → K, M *ᵥ (F *ᵥ x) = a • (F *ᵥ x) := by
       intro x
@@ -199,8 +146,7 @@ theorem UpperTheory.exists_fixed_rotation_basis_of_charpoly :
       rw [hsplit, Matrix.trace_add, hME, hMFm, Matrix.trace_smul, htrE, htrF, smul_eq_mul]
       ring
     have hF0 : ∃ x : Fin 3 → K, F *ᵥ x ≠ 0 := by
-      by_contra hall
-      push_neg at hall
+      by_contra! hall
       have hF00 : F = 0 := by
         apply Matrix.toLin'.injective
         apply LinearMap.ext
@@ -276,27 +222,19 @@ private theorem om_om (v : Fin 3 → Lsq K Δ) : om K Δ • om K Δ • v = Δ 
   simp only [Pi.smul_apply, smul_eq_mul]
   ext <;> simp [om]
 
-private theorem star_smulK (r : K) (z : Lsq K Δ) : star (r • z) = r • star z := by
-  ext <;> simp
-
 private def S (B : Matrix (Fin 3) (Fin 3) (Lsq K Δ)) : (Fin 3 → Lsq K Δ) →ₗ[K] (Fin 3 → Lsq K Δ) where
   toFun v := B *ᵥ star v
   map_add' x y := by rw [star_add, mulVec_add]
   map_smul' r x := by
-    have : star (r • x) = r • star x := by
-      funext i
-      exact star_smulK r (x i)
+    have : star (r • x) = r • star x := funext fun _ => by ext <;> simp
     rw [this, RingHom.id_apply, mulVec_smul]
 
 private theorem S_apply (B : Matrix (Fin 3) (Fin 3) (Lsq K Δ)) (v) : S B v = B *ᵥ star v := rfl
 
-private theorem star_mulVec' (M : Matrix (Fin 3) (Fin 3) (Lsq K Δ)) (v : Fin 3 → Lsq K Δ) :
-    star (M *ᵥ v) = M.map star *ᵥ star v := by
-  funext i
-  simp [mulVec, dotProduct, star_sum]
-
 private theorem S_S {B : Matrix (Fin 3) (Fin 3) (Lsq K Δ)} (h : B * B.map star = 1) (v) : S B (S B v) = v := by
-  rw [S_apply, S_apply, star_mulVec', star_star, mulVec_mulVec, h, one_mulVec]
+  rw [S_apply, S_apply, show star (B *ᵥ star v) = B.map star *ᵥ star (star v) from
+      funext (RingHom.map_mulVec (starRingEnd _) B (star v)),
+    star_star, mulVec_mulVec, h, one_mulVec]
 
 private theorem S_om (B : Matrix (Fin 3) (Fin 3) (Lsq K Δ)) (v) : S B (om K Δ • v) = - (om K Δ • S B v) := by
   have e : star (om K Δ • v) = -(om K Δ • star v) := by
@@ -404,15 +342,6 @@ private theorem star_fixed_eq {K : Type} [Field K] [CharZero K] (Δ : K) (z : Ls
   · simp
   · simp [h0]
 
-private theorem star_algebraMap {K : Type} [Field K] (Δ : K) (x : K) :
-    star (algebraMap K (Lsq K Δ) x) = algebraMap K (Lsq K Δ) x := by
-  ext <;> simp
-
-private theorem map_star_mulVec {R : Type} [CommRing R] [StarRing R] (A : Matrix (Fin 3) (Fin 3) R) (y : Fin 3 → R) :
-    star (A *ᵥ y) = A.map star *ᵥ star y := by
-  funext i
-  exact RingHom.map_mulVec (starRingEnd R) A y i
-
 private theorem conj_fixed {R : Type} [CommRing R] [StarRing R] (B N Q : Matrix (Fin 3) (Fin 3) R)
     (hB : B * B.map star = 1) (hNB : N * B = B * N.map star) (hQu : IsUnit Q.det) (hQ : B * Q.map star = Q) :
     (Q⁻¹ * N * Q).map star = Q⁻¹ * N * Q := by
@@ -451,11 +380,6 @@ private theorem det_unit {K R : Type} [Field K] [CommRing R] (A : K →+* R) (Q 
   rw [this]
   exact (isUnit_iff_ne_zero.2 hdet).map A
 
-private theorem charpoly_conj' {n R : Type} [Fintype n] [DecidableEq n] [CommRing R] (Q N : Matrix n n R)
-    (hRQ : Q⁻¹ * Q = 1) (hQR : Q * Q⁻¹ = 1) : (Q⁻¹ * N * Q).charpoly = N.charpoly := by
-  have := Matrix.charpoly_units_conj' (⟨Q, Q⁻¹, hQR, hRQ⟩ : (Matrix n n R)ˣ) N
-  simpa using this
-
 private theorem core {K R : Type} [Field K] [CommRing R] [StarRing R] (A : K →+* R)
     (hAinj : Function.Injective A) (hfix : ∀ z : R, star z = z → ∃ x, A x = z)
     (hst : ∀ x, star (A x) = A x) (τ : K)
@@ -477,7 +401,9 @@ private theorem core {K R : Type} [Field K] [CommRing R] [StarRing R] (A : K →
     refine ⟨Matrix.of m, ?_⟩
     ext i j
     exact hm i j
-  have hcp : (Q⁻¹ * N * Q).charpoly = N.charpoly := charpoly_conj' Q N hRQ hQR
+  have hcp : (Q⁻¹ * N * Q).charpoly = N.charpoly := by
+    simpa using Matrix.charpoly_units_conj'
+      (⟨Q, Q⁻¹, hQR, hRQ⟩ : (Matrix (Fin 3) (Fin 3) R)ˣ) N
   have hMc : M.charpoly = (Polynomial.X - 1) * (Polynomial.X ^ 2 - Polynomial.C τ * Polynomial.X + 1) := by
     apply Polynomial.map_injective A hAinj
     rw [← Matrix.charpoly_map, hM, hcp, hchar]
@@ -498,7 +424,9 @@ private theorem core {K R : Type} [Field K] [CommRing R] [StarRing R] (A : K →
     have : star (A ∘ x) = A ∘ x := by
       funext i
       exact hst (x i)
-    rw [map_star_mulVec, this, Matrix.mulVec_mulVec, hQ]
+    rw [show star (Q *ᵥ (A ∘ x)) = Q.map star *ᵥ star (A ∘ x) from
+        funext (RingHom.map_mulVec (starRingEnd R) Q (A ∘ x)),
+      this, Matrix.mulVec_mulVec, hQ]
   refine ⟨Q *ᵥ (A ∘ e₀), Q *ᵥ (A ∘ v₀), hS _, hS _, ?_, ?_, ?_⟩
   · rw [hN, he]
   · rw [hN, hN, hv]
@@ -517,7 +445,8 @@ theorem UpperTheory.exists_star_fixed_rotation_basis_of_charpoly :
           N *ᵥ (N *ᵥ v) = algebraMap K (Lsq K Δ) τ • (N *ᵥ v) - v ∧ IsUnit (Matrix.of ![e, v, N *ᵥ v]).det := by
   intro K _ _ Δ τ hΔ hτ B N hB hNB hchar
   obtain ⟨Q, hQu, hQ⟩ := UpperTheory.exists_isUnit_det_mul_map_star_eq_of_unitary K Δ hΔ B hB
-  refine core (algebraMap K (Lsq K Δ)) ?_ (fun z hz => ⟨z.re, star_fixed_eq Δ z hz⟩) (star_algebraMap Δ) τ
+  refine core (algebraMap K (Lsq K Δ)) ?_ (fun z hz => ⟨z.re, star_fixed_eq Δ z hz⟩)
+    (fun x => QuadraticAlgebra.ext (by simp) (by simp)) τ
     (UpperTheory.exists_fixed_rotation_basis_of_charpoly K τ hτ) B N Q hB hNB hchar hQu hQ
   intro x y h
   simpa using congrArg QuadraticAlgebra.re h

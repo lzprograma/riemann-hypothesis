@@ -852,8 +852,7 @@ theorem vF_ne_zero_iff {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {x : �
       simp only [Submodule.mem_iInf, not_forall] at h0
       obtain ⟨n, hn⟩ := h0
       refine ⟨n, fun e he => ?_⟩
-      by_contra hlt
-      push_neg at hlt
+      by_contra! hlt
       exact hn (Ideal.pow_le_pow_right hlt.le he)
     have h1 : 1 ≤ sSup {e : ℕ | x ∈ 𝔭 ^ e} :=
       le_csSup hbdd (show x ∈ 𝔭 ^ 1 by rwa [pow_one])

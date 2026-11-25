@@ -3,43 +3,7 @@ module
 public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelativeEquivalence.DCRelEquivAllHolds
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermAttractorConstant.LeadMinorEMulUpper
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SaturatedPf
 
 @[expose] public section
 
@@ -76,19 +40,8 @@ theorem mem_localization_iff (P : Ideal (𝓞 E)) [P.IsPrime] (M : Submodule (�
 
 theorem locP_gmap (P : Ideal (𝓞 E)) [P.IsPrime] (n : S.V ≃ₗ[E] S.V) (M : Submodule (𝓞 E) S.V) :
     Formalism.HermitianLatticesTheory.localization₂ P (Formalism.HermitianLatticesTheory.gmap n M) = Formalism.HermitianLatticesTheory.gmap n (Formalism.HermitianLatticesTheory.localization₂ P M) := by
-  ext v
-  rw [mem_localization_iff, mem_gmap_iff, mem_localization_iff]
-  constructor
-  · rintro ⟨s, hs, hsv⟩
-    refine ⟨s, hs, ?_⟩
-    rw [mem_gmap_iff] at hsv
-    have e : n.symm (s • v) = s • n.symm v := (fO n.symm).map_smul s v
-    rwa [e] at hsv
-  · rintro ⟨s, hs, hsv⟩
-    refine ⟨s, hs, ?_⟩
-    rw [mem_gmap_iff]
-    have e : n.symm (s • v) = s • n.symm v := (fO n.symm).map_smul s v
-    rwa [e]
+  intros
+  apply _root_.Formalism.L2.SG.Pf.gmap_locP <;> assumption
 
 theorem sup_span_swap {M : Submodule (𝓞 E) S.V} {a b : S.V} (h : a - b ∈ M) :
     M ⊔ Submodule.span (𝓞 E) {a} = M ⊔ Submodule.span (𝓞 E) {b} := by
@@ -131,17 +84,7 @@ theorem mem_XLam {F : LFlag S r T} {v : S.V} : v ∈ XLam Λ F ↔ v ∈ Λ ∧ 
 
 theorem gmap_XLam_self {F : LFlag S r T} {n : S.V ≃ₗ[E] S.V} (hn : n ∈ NLam Λ F) :
     Formalism.HermitianLatticesTheory.gmap n (XLam Λ F) = XLam Λ F := by
-  have hni : n.symm ∈ NLam Λ F := nlam_inv hn
-  ext v
-  rw [mem_gmap_iff, mem_XLam, mem_XLam]
-  constructor
-  · rintro ⟨h1, h2⟩
-    have a1 := autLam_maps hn.1 h1
-    have a2 := nlam_maps_X hn _ h2
-    simp only [LinearEquiv.apply_symm_apply] at a1 a2
-    exact ⟨a1, a2⟩
-  · rintro ⟨h1, h2⟩
-    exact ⟨autLam_symm_maps hn.1 h1, nlam_maps_X hni _ h2⟩
+  apply _root_.Formalism.L2.SG.Pf.NLam_XLam <;> assumption
 
 theorem nlam_z_sub {F : LFlag S r T} {n : S.V ≃ₗ[E] S.V} (hn : n ∈ NLam Λ F) (hz : F.fl.z ∈ Λ) :
     n F.fl.z - F.fl.z ∈ XLam Λ F :=
@@ -171,19 +114,8 @@ theorem UU_transport {F : LFlag S r T} {F₁ F₂ : LFlag S r T'} {n m : S.V ≃
     (hF : IsLift Λ F) (h₁ : IsLift Λ F₁) (hn : n ∈ NLam Λ F) (hm : m ∈ NLam Λ F₁)
     (hfr : ∀ a, frame F₂ a = n (m (frame F₁ a))) (hzt : F₂.zt = n (m F₁.zt)) :
     UU Λ F F₂ = Formalism.HermitianLatticesTheory.gmap n (UU Λ F F₁) := by
-  unfold UU
-  rw [gmap_sup, gmap_sup, gmap_sup, gmap_span_singleton, gmap_span_singleton, gmap_XLam_self hn,
-    ← XLam_transport hn hm hfr, sup_assoc, sup_assoc (XLam Λ F ⊔ _)]
-  have e1 : XLam Λ F ⊔ Submodule.span (𝓞 E) {F.zt} = XLam Λ F ⊔ Submodule.span (𝓞 E) {n F.zt} := by
-    refine sup_span_swap ?_
-    rw [hF.2]
-    have := Submodule.neg_mem _ (nlam_z_sub hn hF.1)
-    rwa [neg_sub] at this
-  have e2 : XLam Λ F₂ ⊔ Submodule.span (𝓞 E) {F₂.zt} = XLam Λ F₂ ⊔ Submodule.span (𝓞 E) {n F₁.zt} := by
-    refine sup_span_swap ?_
-    rw [hzt, ← map_sub, XLam_transport hn hm hfr, mem_gmap_iff, LinearEquiv.symm_apply_apply, h₁.2]
-    exact nlam_z_sub hm h₁.1
-  rw [e1, e2]
+  intros
+  apply _root_.Formalism.L2.SG.Pf.UU_DC <;> assumption
 
 theorem spanE_gmap (n : S.V ≃ₗ[E] S.V) (M : Submodule (𝓞 E) S.V) :
     spanE S (Formalism.HermitianLatticesTheory.gmap n M) = (spanE S M).map (n : S.V →ₗ[E] S.V) := by
@@ -196,18 +128,8 @@ theorem BLat_transport {F : LFlag S r T} {F₁ F₂ : LFlag S r T'} {n m : S.V �
     (hF : IsLift Λ F) (h₁ : IsLift Λ F₁) (hn : n ∈ NLam Λ F) (hm : m ∈ NLam Λ F₁)
     (hfr : ∀ a, frame F₂ a = n (m (frame F₁ a))) (hzt : F₂.zt = n (m F₁.zt)) :
     BLat Λ F F₂ = Formalism.HermitianLatticesTheory.gmap n (BLat Λ F F₁) := by
-  unfold BLat UUE
-  rw [UU_transport hF h₁ hn hm hfr hzt, spanE_gmap]
-  ext v
-  rw [mem_gmap_iff, Submodule.mem_inf, Submodule.mem_inf, Submodule.restrictScalars_mem,
-    Submodule.restrictScalars_mem, Submodule.mem_map_equiv]
-  constructor
-  · rintro ⟨h1, h2⟩
-    exact ⟨autLam_symm_maps hn.1 h1, h2⟩
-  · rintro ⟨h1, h2⟩
-    refine ⟨?_, h2⟩
-    have := autLam_maps hn.1 h1
-    simpa using this
+  intros
+  apply _root_.Formalism.L2.SG.Pf.BLat_DC <;> assumption
 
 theorem locP_BLat_transport {F : LFlag S r T} {F₁ F₂ : LFlag S r T'} {n m : S.V ≃ₗ[E] S.V}
     (hF : IsLift Λ F) (h₁ : IsLift Λ F₁) (hn : n ∈ NLam Λ F) (hm : m ∈ NLam Λ F₁)

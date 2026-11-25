@@ -60,14 +60,6 @@ def MVIntStatement (n : ℕ) : Prop :=
   1 ≤ n → ∀ s : ℝ,
     (∫⁻ y in ball (0 : V n) 1, ENNReal.ofReal ‖y‖ ^ (-2 * s) < ⊤ ↔ s < n)
 
-def LSEStatement (n : ℕ) (M : Type*) [TopologicalSpace M] : Prop :=
-  ∀ (z : M → V n), IsLocalHomeomorph z →
-    ∀ (p q : ℕ) (ph : Fin p → M → ℝ) (g : Fin q → M → ℂ),
-      (∀ i, SmoothR n z (ph i)) → (∀ i, LeviNonneg n z (ph i)) → (∀ j, Holo n z (g j)) →
-      (∀ x, 0 < ∑ i, Real.exp (ph i x) + ∑ j, ‖g j x‖ ^ 2) →
-      SmoothR n z (fun x => Real.log (∑ i, Real.exp (ph i x) + ∑ j, ‖g j x‖ ^ 2)) ∧
-        LeviNonneg n z (fun x => Real.log (∑ i, Real.exp (ph i x) + ∑ j, ‖g j x‖ ^ 2))
-
 def ChainStatement (n : ℕ) (M : Type*) [TopologicalSpace M] : Prop :=
   ∀ (z : M → V n), IsLocalHomeomorph z →
     ∀ (k : ℝ → ℝ) (v : M → ℝ), ContDiff ℝ 2 k → SmoothR n z v →
@@ -93,23 +85,6 @@ def TWStatement (n : ℕ) (M : Type*) [TopologicalSpace M] [T2Space M]
         ∫⁻ x, ENNReal.ofReal (‖F0 x - F x‖ ^ 2 * Real.exp (Ph x - ps x)) ∂vol n X.z ≤
           ∫⁻ x, ENNReal.ofReal ((Real.sqrt (a x) + ‖F0 x - F x‖ * Real.sqrt (b x)) ^ 2 *
             Real.exp (Ph x - ps x)) ∂vol n X.z
-
-def NORMStatement (n : ℕ) (M : Type*) [TopologicalSpace M] : Prop :=
-  ∀ (z : M → V n) (Δ : MvPolynomial (Fin n) ℂ) (u : M → ℂ) (C : ℝ) (m : ℕ),
-    MvPolynomial.constantCoeff Δ ≠ 0 →
-    IsCoveringMapOn z {y : V n | MvPolynomial.eval (fun i => y i) Δ ≠ 0} →
-    (∀ x, MvPolynomial.eval (fun i => z x i) Δ ≠ 0) →
-    (∀ y : V n, (z ⁻¹' {y}).Finite) →
-    ConnectedSpace M → Holo n z u →
-    (∀ x, ‖u x‖ ≤ C * (1 + ‖z x‖ ^ 2) ^ ((m : ℝ) / 2)) →
-    (∀ x, z x = 0 → VanishesBeyond n z u x m) →
-    u = 0
-
-def MAStatement (n : ℕ) : Prop :=
-  ∀ (Ω : Set (V n)) (ph v : V n → ℝ),
-    IsOpen Ω → ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) ph Ω → ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) v → HasCompactSupport v → tsupport v ⊆ Ω →
-    ∫ y in Ω, ((cHess n (fun w => ((ph w + v w : ℝ) : ℂ)) y).det -
-      (cHess n (fun w => (ph w : ℂ)) y).det) = 0
 
 def DetMonoStatement (n : ℕ) : Prop :=
   ∀ A B : Matrix (Fin n) (Fin n) ℂ, B.PosSemidef → (A - B).PosSemidef → B.det.re ≤ A.det.re

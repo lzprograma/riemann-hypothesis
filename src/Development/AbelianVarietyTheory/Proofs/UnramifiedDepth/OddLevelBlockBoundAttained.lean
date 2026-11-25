@@ -202,7 +202,7 @@ theorem exists_std_coords {V : VF K} {d : ℕ} {I J : Type} [Fintype I] [Fintype
     ∃ (S : Sys G) (t : I → MvPowerSeries I K), S.IsT t ∧ ∀ x, OrdGE 2 (t x - X x) := by
   obtain ⟨S, hS⟩ := sysExists G (fun c x => if x = c then 1 else 0)
     (fun c x => by split_ifs; exacts [VF.Ge.one, VF.Ge.zero _])
-    (fun c x h => if_neg fun h' => h (by rw [h']))
+    (fun c x h => ite_eq_right fun h' => h (by rw [h']))
     (by
       have : (Matrix.of fun c x : I => if x = c then (1 : K) else 0) = 1 := by
         ext c x; simp [Matrix.one_apply, eq_comm]
@@ -217,7 +217,7 @@ theorem exists_std_coords {V : VF K} {d : ℕ} {I J : Type} [Fintype I] [Fintype
     rw [(S.curve c).2.1, hS]; rfl
   rw [Finset.sum_range_succ', Finset.sum_eq_zero, zero_add] at h
   · simp only [hal, pow_zero, pow_one, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ,
-      if_true] at h
+      ite_true] at h
     rw [h]
   · intro s _
     refine Finset.sum_eq_zero fun c _ => ?_
@@ -230,20 +230,12 @@ variable {I : Fin 2 → Type} [∀ g, Fintype (I g)]
 
 theorem one_sub_ne (g : Fin 2) : 1 - g ≠ g := by fin_cases g <;> decide
 
-omit [∀ g, Fintype (I g)] in
-theorem toW_same (g : Fin 2) (u : I g → K) (x : I g) : toW g u ⟨g, x⟩ = u x := by
-  simp [toW]
-
-omit [∀ g, Fintype (I g)] in
-theorem toW_ne {g g' : Fin 2} (h : g' ≠ g) (u : I g → K) (x : I g') : toW g u ⟨g', x⟩ = 0 := by
-  simp [toW, h]
-
 theorem sum_toW {M : Type} [CommRing M] (φ : K →+* M) (g : Fin 2) (u : I g → K) (f : WV I → M) :
     ∑ w, φ (toW g u w) * f w = ∑ x, φ (u x) * f ⟨g, x⟩ := by
   rw [Fintype.sum_sigma, Finset.sum_eq_single g]
-  · simp only [toW_same]
+  · simp only [GlobalTheory.MainTerm.toW_same]
   · intro g' _ h
-    simp [toW_ne h]
+    simp [GlobalTheory.MainTerm.toW_other h]
   · intro h; exact absurd (Finset.mem_univ _) h
 
 def rowForm {n : ℕ} (g : Fin 2) (E : Fin n → I g → K) (E' : Fin n → I (1 - g) → K) (ρ : Fin n) (w : WV I) :
@@ -270,14 +262,14 @@ theorem jetAt0_rowForm {n : ℕ} (g : Fin 2) (E : Fin n → I g → K) (E' : Fin
   · funext z
     rw [Fintype.sum_sum_type, Fintype.sum_prod_type, Fintype.sum_prod_type]
     simp only [Sum.elim_inl, Sum.elim_inr, ite_smul, zero_smul, Finset.sum_ite_irrel, Finset.sum_const_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true, rowForm]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true, rowForm]
   · congr 1
     funext u
     rw [Fintype.sum_prod_type]
     rcases u with ⟨ρ, c⟩ | ⟨ρ, c⟩
     all_goals
       simp only [Sum.elim_inl, Sum.elim_inr, apply_ite MvPolynomial.C, map_zero, ite_mul, zero_mul,
-        Finset.sum_ite_irrel, Finset.sum_const_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        Finset.sum_ite_irrel, Finset.sum_const_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
       rw [sum_toW]
 
 theorem subst_rowCopy {n : ℕ} (a : Fin n × WV I → MvPowerSeries (PVar n) K)
@@ -305,12 +297,8 @@ theorem inRow_rowForm {n : ℕ} (g : Fin 2) (E : Fin n → I g → K) (E' : Fin 
     (fun w => by simp [map_sum]) _ (fun w => by simp [rowForm, map_sum]) h m hm x hx
   rcases c with c | c <;> rfl
 
-theorem embV_injective {n0 n : ℕ} (hn : n0 ≤ n) : Function.Injective (embV hn) :=
-  Sum.map_injective.2 ⟨(Fin.castLE_injective hn).prodMap (Fin.castLE_injective hn),
-    (Fin.castLE_injective hn).prodMap (Fin.castLE_injective hn)⟩
-
 theorem restr_eq_killCompl {n0 n : ℕ} (hn : n0 ≤ n) (G : MvPowerSeries (PVar n) K) :
-    restr hn G = killCompl ⟨embV hn, embV_injective hn⟩ G := by
+    restr hn G = killCompl ⟨embV hn, GlobalTheory.DiagBlock.embV_inj hn⟩ G := by
   ext m
   rw [coeff_killCompl, Finsupp.embDomain_eq_mapDomain]; rfl
 
@@ -324,7 +312,7 @@ theorem restr_rows {n0 n : ℕ} (hn : n0 ≤ n) (g : Fin 2) (E : Fin n → I g �
 
   rw [restr_eq_killCompl, Finset.sum_filter, ← Fintype.sum_of_injective (Fin.castLE hn)
   (Fin.castLE_injective hn) (fun ρ => subst (rowForm g E E' (Fin.castLE hn ρ)) h) _
-  (fun c hc => if_neg (hrange c hc)) (fun ρ => (if_pos ρ.2).symm), map_sum]
+  (fun c hc => ite_eq_right (hrange c hc)) (fun ρ => (ite_eq_left ρ.2).symm), map_sum]
   unfold hRows
   refine Finset.sum_congr rfl fun ρ _ => ?_
   have hs : HasSubst (Sum.elim (fun c => (X (Sum.inl (ρ, c)) : MvPowerSeries (PVar n0) K))
@@ -348,7 +336,7 @@ theorem restr_rows {n0 n : ℕ} (hn : n0 ≤ n) (g : Fin 2) (E : Fin n → I g �
         exact hc ⟨u2, hu.2⟩
       · simp [embV] at hu
     · congr 1
-      exact (killCompl_X (e := ⟨embV hn, embV_injective hn⟩) (Sum.inl (ρ, c))).symm
+      exact (killCompl_X (e := ⟨embV hn, GlobalTheory.DiagBlock.embV_inj hn⟩) (Sum.inl (ρ, c))).symm
   · symm
     refine Fintype.sum_of_injective (Fin.castLE hn) (Fin.castLE_injective hn) _ _ (fun c hc => ?_) (fun c => ?_)
     · rw [killCompl_X_eq_zero, smul_zero]
@@ -357,7 +345,7 @@ theorem restr_rows {n0 n : ℕ} (hn : n0 ≤ n) (g : Fin 2) (E : Fin n → I g �
       · simp only [Function.Embedding.coeFn_mk, embV, Sum.map_inr, Prod.map, Sum.inr.injEq, Prod.mk.injEq] at hu
         exact hc ⟨u2, hu.2⟩
     · congr 1
-      exact (killCompl_X (e := ⟨embV hn, embV_injective hn⟩) (Sum.inr (ρ, c))).symm
+      exact (killCompl_X (e := ⟨embV hn, GlobalTheory.DiagBlock.embV_inj hn⟩) (Sum.inr (ρ, c))).symm
 
 def letterDet (K : Type) [Field K] {n : ℕ} (g : Fin 2) (p : Fin n → I g) : MvPolynomial (Fin n × WV I) K :=
   Matrix.det (Matrix.of fun ρ c : Fin n => MvPolynomial.X (ρ, (⟨g, p c⟩ : WV I)))
@@ -376,7 +364,7 @@ theorem det_change {n : ℕ} (g : Fin 2) (p : Fin n → I g) (A : Fin n → Fin 
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun b _ => ?_
   simp only [mul_ite, mul_one, mul_zero, apply_ite MvPolynomial.C, map_zero, ite_mul, zero_mul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   ring
 
 theorem v_le_of_int_mul {V : VF K} {a b : K} (ha : V.Ge 0 a) : V.v b ≤ V.v (a * b) := by
@@ -469,17 +457,16 @@ theorem block_of_normal_form (X : RowData K V d I J) (g : Fin 2) (a : ZMod d) (i
       simp only [γ]
       split_ifs
       · rw [map_one, map_one]
-      · set_option synthInstance.maxHeartbeats 100000 in
-          simp only [map_mul, map_pow, map_sum, map_smul, substAlgHom_X]
+      · simp only [map_mul, map_pow, map_sum, map_smul, substAlgHom_X]
         simp only [coe_substAlgHom, subst_upG _ (cc_rowForm g E v' ρ)]
         have e1 : (fun x => rowForm g E v' ρ ⟨g, x⟩) = fun x => ∑ c, E c x •
             (MvPowerSeries.X (Sum.inl (ρ, c)) : MvPowerSeries (PVar X.n) K) := by
           funext x
-          simp [rowForm, toW_same, toW_ne (one_sub_ne g).symm]
+          simp [rowForm, GlobalTheory.MainTerm.toW_same, GlobalTheory.MainTerm.toW_other (one_sub_ne g).symm]
         have e2 : (fun x => rowForm g E v' ρ ⟨1 - g, x⟩) = fun x => ∑ c, v' c x •
             (MvPowerSeries.X (Sum.inr (ρ, c)) : MvPowerSeries (PVar X.n) K) := by
           funext x
-          simp [rowForm, toW_same, toW_ne (one_sub_ne g)]
+          simp [rowForm, GlobalTheory.MainTerm.toW_same, GlobalTheory.MainTerm.toW_other (one_sub_ne g)]
         rw [e1, e2,
           ← coe_substAlgHom (hasSubst_of_constantCoeff_zero fun x => cc_linear (fun c => E c x) _),
           ← coe_substAlgHom (hasSubst_of_constantCoeff_zero fun x => cc_linear (fun c => v' c x) _)]
@@ -656,12 +643,11 @@ theorem rows_main (V : VF C) (i n0 : ℕ) :
   unfold mainM
   refine Eq.trans (Finset.sum_congr rfl fun ρ _ => ?_) (Finset.smul_sum).symm
 
-  simp only [ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true, map_smul, map_sum,
+  simp only [ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true, map_smul, map_sum,
   map_mul, map_pow, rename_X, neg_smul, one_smul, map_neg, Finset.sum_neg_distrib, smul_neg]
   rfl
 
 end GlobalTheory.MainToRows
-
 
 open GlobalTheory.MainToRows in
 theorem GlobalTheory.mainTerm_to_rowHypothesis :
@@ -771,7 +757,7 @@ theorem satIn_single (X : RowData K V d I J) (g : Fin 2) (a : ZMod d) {N : ℕ} 
     intro P _; split_ifs
     exacts [VF.Ge.one, VF.Ge.zero _]
   refine ⟨⟨fun c x => h01 _, fun x c => if x = p c then 1 else 0, fun x c => h01 _, fun c c' => ?_⟩,
-    fun c x hx => if_neg fun h => hx (by rw [h, hty])⟩
+    fun c x hx => ite_eq_right fun h => hx (by rw [h, hty])⟩
   simp [hp.eq_iff, eq_comm]
 
 theorem cc_mvExp' {σ : Type} (x : MvPowerSeries σ K) : constantCoeff (mvExp x) = 1 := by
@@ -832,10 +818,10 @@ theorem window_letterDet (X : RowData K V d I J) (hA : X.Alt) (hl : 5 ≤ V.l) (
     refine ⟨gr, hgr, hv.trans ?_⟩
     by_cases h0 : y = 0
     · subst h0
-      simp only [blockBd, if_true, mul_zero, pow_zero, mul_one, jetAt0_one', BiF, ite_self, one_mul, map_prod,
+      simp only [blockBd, ite_true, mul_zero, pow_zero, mul_one, jetAt0_one', BiF, ite_self, one_mul, map_prod,
         cc_mvExp', Finset.prod_const_one, V.v.map_one]
       rfl
-    · rw [blockBd, if_neg h0]
+    · rw [blockBd, ite_eq_right h0]
       exact h.resolve_right h0
   refine ⟨⟨S, t, hSt, hgood 0 (Or.inr rfl)⟩, fun Y0 => ?_⟩
   rcases Nat.eq_zero_or_pos n0 with h0 | h0
@@ -843,7 +829,7 @@ theorem window_letterDet (X : RowData K V d I J) (hA : X.Alt) (hl : 5 ≤ V.l) (
     refine ⟨Y0, ⟨S, t, hSt, hgood Y0 (Or.inl ?_)⟩, le_rfl, Nat.lt_add_of_pos_right (sum_positive_of_five_le hl hn1)⟩
     have hl1 : (1 : ℝ) < V.l := by exact_mod_cast (by omega : 1 < V.l)
     rw [_root_.GlobalTheory.blockValue_rows K V.l i 0 X.n hn hr tt tt' _ hB Y0]
-    refine (GlobalTheory.OddBlock.content_and_window.1 K V.v V.l V.l_prime hl V.v_l i X.n 0 Y0 hi hn1 hn _ ?_).trans ?_
+    refine (GlobalTheory.OddBlock.BlockContent.biContent_and_biWindow.1 K V.v V.l V.l_prime hl V.v_l i X.n 0 Y0 hi hn1 hn _ ?_).trans ?_
     · have : LamP K V.l i 0 (X.restrictedCurveSystemSeries g a i hn e v') Y0 = 1 := by
         simp [LamP, detL, detR, jetAt0_one', cc_mvExp']
       rw [this, V.v.map_one]
@@ -857,7 +843,7 @@ theorem window_letterDet (X : RowData K V d I J) (hA : X.Alt) (hl : 5 ≤ V.l) (
         rw [Nat.cast_zero, sub_zero]; exact_mod_cast hrank
       have : (0 : ℝ) < (V.l : ℝ) - 1 := by linarith
       gcongr
-  · obtain ⟨y, h1, h2, h3⟩ := GlobalTheory.OddBlock.content_and_window.2 K V.v V.l V.l_prime hl V.v_l i hi n0 X.n X.m hn h0 hrank hr tt tt' _
+  · obtain ⟨y, h1, h2, h3⟩ := GlobalTheory.OddBlock.BlockContent.biContent_and_biWindow.2 K V.v V.l V.l_prime hl V.v_l i hi n0 X.n X.m hn h0 hrank hr tt tt' _
       hB hH1 hH2 Y0
     exact ⟨y, ⟨S, t, hSt, hgood y (Or.inl h3)⟩, h1, h2.trans_le (Nat.add_le_add_left (mono_resι_var hl hn) _)⟩
 

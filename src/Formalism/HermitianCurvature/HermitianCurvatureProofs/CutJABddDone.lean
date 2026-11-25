@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.ThmMOfXi
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKap
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddGen
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKapTP
@@ -28,52 +29,9 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGaugeLi
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoExists
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnGeom
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModelPlaceBuilt2OfBdd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Analysis.Normed.Module.HahnBanach
-import Mathlib.Tactic.Linter.Style
 import Mathlib.Tactic.TypeStar
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepDatumUnit
 
@@ -92,8 +50,6 @@ namespace Formalism.FourierDecayAlt.P.CutMP.JA
 open NumberField Formalism.FourierDecayAlt.P.CutMP
 
 noncomputable section
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem jABddKapQQ_of_kapRealiser (hR : KapRealiser) : JABddKapQQ := by
   obtain ⟨K, hK, hR⟩ := hR
@@ -275,32 +231,7 @@ theorem scal_bound_of_ubl (D : B.RealPlaceData k r Wp Wq) (φ : B.Mat k r → �
     ∃ C : ℝ, ∀ u w : List (B.Mat k r),
       (∀ X ∈ u, B.unitLie k r X) → (∀ X ∈ w, B.unitLie k r X) → u.length + w.length ≤ m →
       ∀ g ∈ B.GV k r, ε ≤ Gf k r D.z D.z' g → ‖B.dLR u w φ g‖ ≤ C * B.gN g ^ (Bg * m) := by
-  rcases Nat.eq_zero_or_pos m with hm | hm
-  · subst hm
-    obtain ⟨C0, hC0⟩ := h0
-    refine ⟨C0, fun u w _ _ hl g hg hgε => ?_⟩
-    have hu : u = [] := List.eq_nil_of_length_eq_zero (by omega)
-    have hw : w = [] := List.eq_nil_of_length_eq_zero (by omega)
-    subst hu hw
-    simp only [Nat.cast_zero, mul_zero, Real.rpow_zero, mul_one]
-    exact hC0 g ⟨hg, hgε⟩
-  · obtain ⟨⟨C, hC0, hUB⟩, -⟩ := hU m
-    refine ⟨C, fun u w hu hw hl g hg hgε => ?_⟩
-    have hA : admitted m (wL u ++ wR w) := ⟨u, w, hu, hw, hl, rfl⟩
-    have hb := hUB _ hA g ⟨hg, hgε⟩
-    rw [dLR_eq]
-    refine hb.trans (mul_le_mul_of_nonneg_left ?_ hC0)
-    have h1 : 1 ≤ B.gN g := gN_ge_one hg
-    rw [← Real.rpow_natCast]
-    apply Real.rpow_le_rpow_of_exponent_le h1
-    rw [len_LR]
-    have hm1 : (1 : ℝ) ≤ m := by exact_mod_cast hm
-    have hl' : ((u.length + w.length : ℕ) : ℝ) ≤ m := by exact_mod_cast hl
-    have he : (0 : ℝ) ≤ e := Nat.cast_nonneg _
-    have hγ : (0 : ℝ) ≤ γ := Nat.cast_nonneg _
-    push_cast at hl' ⊢
-    nlinarith [mul_le_mul_of_nonneg_left hl' hγ, mul_le_mul_of_nonneg_left hm1 he,
-      mul_le_mul_of_nonneg_right hBg (by linarith : (0 : ℝ) ≤ m)]
+  apply _root_.Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Geom.bd_of_ubl <;> assumption
 
 theorem dlast_pos (D : B.RealPlaceData k r Wp Wq) {ε : ℝ} (hε : 0 < ε) {g : B.Mat k r} (hg : ε ≤ Gf k r D.z D.z' g) :
     ε ≤ Complex.normSq (Dmin k r D.z D.z' g (Fin.last (r + 1))) :=
@@ -464,18 +395,8 @@ theorem dLR_conj (u w : List (B.Mat k r)) (f : B.Mat k r → ℂ) :
 
 theorem dLR_smulc (A : F) (u w : List (B.Mat k r)) (f : B.Mat k r → ℂ) :
     B.dLR u w (fun g => f g • A) = fun g => B.dLR u w f g • A := by
-  by_cases hA : A = 0
-  · subst hA; simp only [smul_zero]; exact Formalism.FourierDecayAlt.P.BetaSesquilinearity.dLR_zero u w
-  obtain ⟨ℓ, -, hℓ⟩ := exists_dual_vector ℂ A (norm_ne_zero_iff.2 hA)
-  have hn : ((‖A‖ : ℝ) : ℂ) ≠ 0 := by exact_mod_cast norm_ne_zero_iff.2 hA
-  let L : ℂ →L[ℝ] F := ((ContinuousLinearMap.id ℂ ℂ).smulRight A).restrictScalars ℝ
-  let L' : F →L[ℝ] ℂ := ((((‖A‖ : ℝ) : ℂ))⁻¹ • ℓ).restrictScalars ℝ
-  have hL : ∀ y, L' (L y) = y := fun y => by
-    simp only [L, L', ContinuousLinearMap.coe_restrictScalars', ContinuousLinearMap.smul_apply,
-      ContinuousLinearMap.smulRight_apply, ContinuousLinearMap.id_apply, map_smul, hℓ, smul_eq_mul]
-    field_simp
-    norm_cast
-  exact dLR_rl L L' hL w u f
+  intros
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.Mult1.SymBetaA.dLR_smul <;> assumption
 
 end deriv
 

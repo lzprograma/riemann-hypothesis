@@ -8,6 +8,7 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityA
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BfFun
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.DenseCc
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ThBasic
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ThBasic
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.ConvSpec
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.Carries
 import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
@@ -82,39 +83,10 @@ open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Adel PositivityTheory.Rg
 open scoped ENNReal NumberField.AdeleRing InnerProductSpace ComplexConjugate
 open UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial
 
-set_option synthInstance.maxHeartbeats 400000
-
 private theorem exists_rep {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (G1 K n)) [μ.IsHaarMeasure]
     (φ : G1 K n → ℂ) (hc : Continuous φ) (hi : ∀ γ ∈ Gam K n, ∀ g, φ (γ * g) = φ g) (C : ℝ) (hC : ∀ g, ‖φ g‖ ≤ C) :
     ∃ v : L2 μ, Reps μ v φ := by
-  have := isFiniteMeasure_quotientMeasure (K := K) (n := n) μ
-  let f : RightCosetSpace (Gam K n) → ℂ := fun x => φ x.out
-  have hf : ∀ g, f (mk (Gam K n) g) = φ g := fun g => by
-    obtain ⟨γ, hγ⟩ := (mk_eq_mk_iff (Γ := Gam K n) (g := (mk (Gam K n) g).out) (h := g)).1 (Quotient.out_eq _)
-    change φ _ = _
-    rw [← hγ]
-    exact hi γ γ.2 g
-  have hfc : Continuous f := by
-    rw [(isOpenQuotientMap_mk (Gam K n)).isQuotientMap.continuous_iff]
-    have : f ∘ mk (Gam K n) = φ := funext hf
-    rwa [this]
-  have hm : MemLp f 2 (quotientMeasure (Gam K n) μ) :=
-    MemLp.of_bound hfc.aestronglyMeasurable C (Eventually.of_forall fun x => hC _)
-  refine ⟨hm.toLp f, ?_⟩
-  have h1 := hm.coeFn_toLp
-  have h2 : ∀ᵐ y ∂μ.restrict (fundamentalDomain (Gam K n)), (hm.toLp f) (mk (Gam K n) y) = f (mk (Gam K n) y) :=
-    ae_of_ae_map (measurable_mk (Gam K n)).aemeasurable h1
-  have hF := isFundamentalDomain_fundamentalDomain (Gam K n) μ
-  have h3 : μ {y | ¬ (hm.toLp f) (mk (Gam K n) y) = f (mk (Gam K n) y)} = 0 := by
-    refine hF.measure_zero_of_invariant _ (fun γ => ?_) ?_
-    · ext y
-      simp [Set.mem_smul_set_iff_inv_smul_mem]
-    · rw [ae_restrict_iff' (measurableSet_fundamentalDomain (Gam K n)), ae_iff] at h2
-      refine measure_mono_null (fun y hy => ?_) h2
-      exact fun h => hy.1 (h hy.2)
-  have h4 : ∀ᵐ y ∂μ, (hm.toLp f) (mk (Gam K n) y) = f (mk (Gam K n) y) := ae_iff.2 h3
-  filter_upwards [h4] with y hy
-  rw [hy, hf]
+  apply _root_.exists_rep <;> assumption
 
 private theorem orth {K : Type} [Field K] [NumberField K] {n : ℕ} {μ : Measure (G1 K n)} (u : L2 μ) {w : L2 μ}
     {ψ : G1 K n → ℂ} (hw : Reps μ w ψ) :
@@ -184,7 +156,6 @@ private theorem fix_int {G : Type} [Group G] [TopologicalSpace G] [IsTopological
   rw [integral_integral_swap (f := fun k g => e k * a (k⁻¹ * g) * Θ g) hI]
   simp only [integral_mul_const, h]
 
-set_option maxHeartbeats 800000 in
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.tChiSec :
     ∀ {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (μ : Measure (G1 K (2 + 2))) [μ.IsHaarMeasure] (μ₂ : Measure (G1 K 2)) [μ₂.IsHaarMeasure] (τ₁ τ₂ : Submodule ℂ (L2 μ₂)) (D : TypeDat K (2 + 2)), CuspIrr μ₂ τ₁ → CuspIrr μ₂ τ₂ → ∀ (a : CC K (2 + 2)) (χ : ℝ → ℂ) (f : G1 K (2 + 2) → ℂ),
       D.Hecke a → Continuous χ → IsSec τ₁ τ₂ f → D.Fix f → IsSec τ₁ τ₂ (tChi μ a χ f) ∧ D.Fix (tChi μ a χ f) := by

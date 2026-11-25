@@ -10,64 +10,13 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Block3MulBlo
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationContinuousOnInvertible
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateSizesOfHypotheses
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.FormalDegreeBessel.FinalG
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeisenbergLeviConjugationMeasure
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormDiagonalEntryDilationGeneratorLeOne
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Presheaf
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.JConvOfJDom, Formalism.HermitianCurvature.HermitianCurvatureProofs.JfJqSmoothOfNnMaj, Formalism.HermitianCurvature.HermitianCurvatureProofs.LUFactorOrbitBounds
@@ -84,8 +33,6 @@ noncomputable section
 namespace Formalism.FourierDecayAlt.P.JFxDs1
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.JF
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem jConv_of_jDom : Formalism.FourierDecayAlt.JF.JDom → Formalism.FourierDecayAlt.JF.JConv := by
   intro hD k r Wp Wq _ _ _ _ _ _ D A F hT hC
@@ -170,26 +117,26 @@ lemma hpk_apply (i j : Fin (2 * r + k + 1)) :
     Hpk k r i j = if j = sg k r i then ep k r i else 0 := by
   unfold Hpk sg ep
   by_cases h1 : i.val < r ∨ r + k < i.val
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     rcases h1 with h1 | h1
     · by_cases hj : i.val + j.val = 2 * r + k
-      · rw [if_pos ⟨h1, hj⟩, if_pos (Fin.ext (by simp; omega)), if_neg (by omega)]
-      · rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by rw [Fin.ext_iff]; simp; omega)]
+      · rw [ite_eq_left ⟨h1, hj⟩, ite_eq_left (Fin.ext (by simp; omega)), ite_eq_right (by omega)]
+      · rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by rw [Fin.ext_iff]; simp; omega)]
     · by_cases hj : i.val + j.val = 2 * r + k
-      · rw [if_neg (by omega), if_pos ⟨by omega, hj⟩, if_pos (Fin.ext (by simp; omega)), if_neg (by omega)]
-      · rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by rw [Fin.ext_iff]; simp; omega)]
-  · rw [if_neg h1]
+      · rw [ite_eq_right (by omega), ite_eq_left ⟨by omega, hj⟩, ite_eq_left (Fin.ext (by simp; omega)), ite_eq_right (by omega)]
+      · rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by rw [Fin.ext_iff]; simp; omega)]
+  · rw [ite_eq_right h1]
     simp only [not_or, not_lt] at h1
     by_cases hj : j = i
     · subst hj
-      rw [if_neg (by omega), if_neg (by omega), if_pos ⟨h1.1, h1.2, rfl⟩, if_pos rfl]
-    · rw [if_neg (by omega), if_neg (by omega), if_neg (by tauto), if_neg hj]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left ⟨h1.1, h1.2, rfl⟩, ite_eq_left rfl]
+    · rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by tauto), ite_eq_right hj]
 
 lemma sg_sg (i : Fin (2 * r + k + 1)) : sg k r (sg k r i) = i := by
   unfold sg
   by_cases h1 : i.val < r ∨ r + k < i.val
-  · rw [if_pos h1, if_pos (by simp; omega)]; ext; simp; omega
-  · rw [if_neg h1, if_neg h1]
+  · rw [ite_eq_left h1, ite_eq_left (by simp; omega)]; ext; simp; omega
+  · rw [ite_eq_right h1, ite_eq_right h1]
 
 lemma sg_eq_iff (i j : Fin (2 * r + k + 1)) : j = sg k r i ↔ i = sg k r j := by
   constructor
@@ -199,8 +146,8 @@ lemma sg_eq_iff (i j : Fin (2 * r + k + 1)) : j = sg k r i ↔ i = sg k r j := b
 lemma ep_sg (i : Fin (2 * r + k + 1)) : ep k r (sg k r i) = ep k r i := by
   unfold ep sg
   by_cases h1 : i.val < r ∨ r + k < i.val
-  · rw [if_pos h1]; simp only; rw [if_neg (by omega), if_neg (by omega)]
-  · rw [if_neg h1]
+  · rw [ite_eq_left h1]; simp only; rw [ite_eq_right (by omega), ite_eq_right (by omega)]
+  · rw [ite_eq_right h1]
 
 lemma norm_ep (i : Fin (2 * r + k + 1)) : ‖ep k r i‖ = 1 := by
   unfold ep; split_ifs <;> simp
@@ -228,9 +175,9 @@ lemma inv_apply {y : Mat k r} (hy : y ∈ GV k r) (i j : Fin (2 * r + k + 1)) :
       if sg k r j = l then ep k r i * star (y l (sg k r i)) * ep k r l else 0 := by
     intro l
     by_cases h : sg k r j = l
-    · rw [if_pos h, if_pos ((sg_eq_iff l j).2 h.symm)]
-    · rw [if_neg h, if_neg (fun h' => h ((sg_eq_iff l j).1 h').symm), mul_zero]
-  simp only [this, Finset.sum_ite_eq, Finset.mem_univ, if_true, ep_sg]
+    · rw [ite_eq_left h, ite_eq_left ((sg_eq_iff l j).2 h.symm)]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h ((sg_eq_iff l j).1 h').symm), mul_zero]
+  simp only [this, Finset.sum_ite_eq, Finset.mem_univ, ite_true, ep_sg]
 
 lemma norm_inv_apply {y : Mat k r} (hy : y ∈ GV k r) (i j : Fin (2 * r + k + 1)) :
     ‖y⁻¹ i j‖ = ‖y (sg k r j) (sg k r i)‖ := by
@@ -254,8 +201,8 @@ lemma n_rowEs {n : Mat k r} (hn : n ∈ Nset k r) (i l : Fin (2 * r + k + 1)) (h
   · have := n_colE hn ⟨l.val, hl'⟩ i (by simp; omega)
     have e : eI k r ⟨l.val, hl'⟩ = l := Fin.ext rfl
     rw [e] at this
-    rw [this, if_neg (by rintro rfl; omega)]
-  · rw [n_colM hn i l (by omega) hl (by omega), if_neg (by rintro rfl; omega)]
+    rw [this, ite_eq_right (by rintro rfl; omega)]
+  · rw [n_colM hn i l (by omega) hl (by omega), ite_eq_right (by rintro rfl; omega)]
 
 lemma n_rowM {n : Mat k r} (hn : n ∈ Nset k r) (i l : Fin (2 * r + k + 1)) (hi1 : r ≤ i.val)
     (hl : l.val ≤ r + k) : n i l = if i = l then 1 else 0 := by
@@ -269,7 +216,7 @@ lemma n_rowM {n : Mat k r} (hn : n ∈ Nset k r) (i l : Fin (2 * r + k + 1)) (hi
 lemma n_colE_zero {n : Mat k r} (hn : n ∈ Nset k r) (l : Fin (2 * r + k + 1)) (b : Fin r) (hl : r ≤ l.val) :
     n l (eI k r b) = 0 := by
   rw [n_colE hn b l (by have := b.isLt; omega),
-    if_neg (by intro h; have := congrArg Fin.val h; simp [eI] at this; omega)]
+    ite_eq_right (by intro h; have := congrArg Fin.val h; simp [eI] at this; omega)]
 
 lemma eI_inj : Function.Injective (eI k r) := fun a b h => Fin.ext (by simpa [eI] using congrArg Fin.val h)
 
@@ -295,15 +242,13 @@ lemma sum_split_Es {M : Type*} [AddCommMonoid M] (f : Fin (2 * r + k + 1) → M)
   have h1 : ∀ l : Fin (2 * r + k + 1), f l = (if l.val ≤ r + k then f l else 0) +
       (if l.val ≤ r + k then 0 else f l) := by intro l; split_ifs <;> simp
   rw [Finset.sum_congr rfl (fun l _ => h1 l), Finset.sum_add_distrib,
-    sum_Es (fun l => if l.val ≤ r + k then 0 else f l) (fun l hl => if_pos hl)]
+    sum_Es (fun l => if l.val ≤ r + k then 0 else f l) (fun l hl => ite_eq_left hl)]
   congr 1
   refine Finset.sum_congr rfl fun a _ => ?_
-  rw [if_neg (by simp [esI]; omega)]
+  rw [ite_eq_right (by simp [esI]; omega)]
 
 end Formalism.FourierDecayAlt.P.WeakDominationMajorants.Orb
 
-open Matrix MeasureTheory Filter Topology
-open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.JF
 
 namespace Formalism.FourierDecayAlt.P.WeakDominationMajorants.Orb
 
@@ -341,23 +286,23 @@ lemma Zm_mul {n n' : Mat k r} (hn : n ∈ Nset k r) (hn' : n' ∈ Nset k r) (g :
 
 lemma Um_lower {n : Mat k r} (hn : n ∈ Nset k r) (b c : Fin r) (h : c < b) : Um n b c = 0 := by
   simp only [Um, Matrix.of_apply]
-  rw [n_colE hn c (eI k r b) (by simp [eI]; omega), if_neg (by intro h'; have := congrArg Fin.val h'; simp [eI] at this; omega)]
+  rw [n_colE hn c (eI k r b) (by simp [eI]; omega), ite_eq_right (by intro h'; have := congrArg Fin.val h'; simp [eI] at this; omega)]
 
 lemma Um_diag {n : Mat k r} (hn : n ∈ Nset k r) (b : Fin r) : Um n b b = 1 := by
   simp only [Um, Matrix.of_apply]
-  rw [n_colE hn b (eI k r b) le_rfl, if_pos rfl]
+  rw [n_colE hn b (eI k r b) le_rfl, ite_eq_left rfl]
 
 lemma sg_esI (a : Fin r) : sg k r (esI k r a) = eI k r a := by
-  unfold sg; rw [if_pos (by right; simp [esI]; omega)]; ext; simp [esI, eI]; omega
+  unfold sg; rw [ite_eq_left (by right; simp [esI]; omega)]; ext; simp [esI, eI]; omega
 
 lemma sg_eI (a : Fin r) : sg k r (eI k r a) = esI k r a := by
-  unfold sg; rw [if_pos (by left; simp [eI])]; ext; simp [esI, eI]
+  unfold sg; rw [ite_eq_left (by left; simp [eI])]; ext; simp [esI, eI]
 
 lemma ep_esI (a : Fin r) : ep k r (esI k r a) = 1 := by
-  unfold ep; rw [if_neg (by simp [esI]; omega)]
+  unfold ep; rw [ite_eq_right (by simp [esI]; omega)]
 
 lemma ep_eI (a : Fin r) : ep k r (eI k r a) = 1 := by
-  unfold ep; rw [if_neg (by simp [eI]; omega)]
+  unfold ep; rw [ite_eq_right (by simp [eI]; omega)]
 
 lemma Lm_apply {n : Mat k r} (hn : n ∈ Nset k r) (a c : Fin r) :
     Lm n a c = star (n (eI k r c) (eI k r a)) := by
@@ -365,11 +310,11 @@ lemma Lm_apply {n : Mat k r} (hn : n ∈ Nset k r) (a c : Fin r) :
 
 lemma Lm_upper {n : Mat k r} (hn : n ∈ Nset k r) (a c : Fin r) (h : a < c) : Lm n a c = 0 := by
   rw [Lm_apply hn, n_colE hn a (eI k r c) (by simp [eI]; omega),
-    if_neg (by intro h'; have := congrArg Fin.val h'; simp [eI] at this; omega)]
+    ite_eq_right (by intro h'; have := congrArg Fin.val h'; simp [eI] at this; omega)]
   simp
 
 lemma Lm_diag {n : Mat k r} (hn : n ∈ Nset k r) (a : Fin r) : Lm n a a = 1 := by
-  rw [Lm_apply hn, n_colE hn a (eI k r a) le_rfl, if_pos rfl]; simp
+  rw [Lm_apply hn, n_colE hn a (eI k r a) le_rfl, ite_eq_left rfl]; simp
 
 lemma det_Um {n : Mat k r} (hn : n ∈ Nset k r) : (Um n).det = 1 := by
   rw [Matrix.det_of_isUpperTriangular (fun i j h => Um_lower hn i j h)]
@@ -381,7 +326,6 @@ lemma det_Lm {n : Mat k r} (hn : n ∈ Nset k r) : (Lm n).det = 1 := by
 
 end Formalism.FourierDecayAlt.P.WeakDominationMajorants.Orb
 
-open Matrix
 
 namespace Formalism.FourierDecayAlt.P.WeakDominationMajorants.LU
 
@@ -451,8 +395,8 @@ lemma split_lt (b : ℕ) (hb : b ≤ r) (f : Fin r → ℂ) :
     ∑ t, f t = ∑ l : Fin b, f (Fin.castLE hb l) + ∑ t, if b ≤ t.val then f t else 0 := by
   have h1 : ∀ t : Fin r, f t = (if t.val < b then f t else 0) + (if b ≤ t.val then f t else 0) := by
     intro t; by_cases h : t.val < b
-    · rw [if_pos h, if_neg (by omega), add_zero]
-    · rw [if_neg h, if_pos (by omega), zero_add]
+    · rw [ite_eq_left h, ite_eq_right (by omega), add_zero]
+    · rw [ite_eq_right h, ite_eq_left (by omega), zero_add]
   rw [Finset.sum_congr rfl (fun t _ => h1 t), Finset.sum_add_distrib]
   congr 1
   rw [← Finset.sum_image (s := Finset.univ) (g := Fin.castLE hb)
@@ -460,9 +404,9 @@ lemma split_lt (b : ℕ) (hb : b ≤ r) (f : Fin r → ℂ) :
   rw [← Finset.sum_subset (Finset.subset_univ (Finset.univ.image (Fin.castLE hb)))]
   · refine Finset.sum_congr rfl fun t ht => ?_
     obtain ⟨l, -, rfl⟩ := Finset.mem_image.1 ht
-    rw [if_pos (by simp)]
+    rw [ite_eq_left (by simp)]
   · intro t _ ht
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact ht (Finset.mem_image.2 ⟨⟨t.val, h⟩, Finset.mem_univ _, Fin.ext rfl⟩)
 
@@ -490,7 +434,7 @@ lemma mn_lower_mul (L Y : Matrix (Fin r) (Fin r) ℂ) (hL : IsLU L) (a b : Fin r
       congr 1
     have hΛc : ∀ l : Fin b.val, Λ i (Fin.castSucc l) = L (S i) (Fin.castLE hb l) := by
       intro l
-      simp only [Λ, Matrix.of_apply, Fin.val_castSucc, l.isLt, if_true]
+      simp only [Λ, Matrix.of_apply, Fin.val_castSucc, l.isLt, ite_true]
       congr 1
     simp only [hYc, hΛc]
     congr 1
@@ -501,19 +445,19 @@ lemma mn_lower_mul (L Y : Matrix (Fin r) (Fin r) ℂ) (hL : IsLU L) (a b : Fin r
     · subst hi
       have hS : S (Fin.last b.val) = a := by
         simp only [S, rs, Fin.val_last, lt_irrefl, dite_false]
-      simp only [Λ, Matrix.of_apply, Fin.val_last, lt_irrefl, if_false, if_true, one_mul, hS, c]
+      simp only [Λ, Matrix.of_apply, Fin.val_last, lt_irrefl, ite_false, ite_true, one_mul, hS, c]
       refine Finset.sum_congr rfl fun t _ => ?_
       by_cases h1 : b.val ≤ t.val
       · have h2 : b ≤ t := Fin.le_def.2 h1
-        rw [if_pos h1, if_pos h2]
+        rw [ite_eq_left h1, ite_eq_left h2]
       · have h2 : ¬ b ≤ t := fun h => h1 (Fin.le_def.1 h)
-        rw [if_neg h1, if_neg h2, zero_mul]
+        rw [ite_eq_right h1, ite_eq_right h2, zero_mul]
     · have hilt : i.val < b.val := by
         have := i.isLt
         rcases Nat.lt_succ_iff_lt_or_eq.1 this with h | h
         · exact h
         · exact absurd (Fin.ext h) hi
-      simp only [Λ, Matrix.of_apply, Fin.val_last, lt_irrefl, if_false, hi, zero_mul]
+      simp only [Λ, Matrix.of_apply, Fin.val_last, lt_irrefl, ite_false, hi, zero_mul]
       refine Finset.sum_eq_zero fun t _ => ?_
       split_ifs with h1
       · have hS : S i = ⟨i.val, by omega⟩ := by simp only [S, rs, hilt, dite_true]
@@ -558,12 +502,11 @@ lemma mn_lower_mul (L Y : Matrix (Fin r) (Fin r) ℂ) (hL : IsLU L) (a b : Fin r
   refine Finset.sum_congr rfl fun t _ => ?_
   rw [hrow t]
   by_cases h : b ≤ t
-  · simp only [c, if_pos h]; rfl
-  · simp only [c, if_neg h, zero_mul]
+  · simp only [c, ite_eq_left h]; rfl
+  · simp only [c, ite_eq_right h, zero_mul]
 
 end Formalism.FourierDecayAlt.P.WeakDominationMajorants.LU
 
-open Matrix
 
 namespace Formalism.FourierDecayAlt.P.WeakDominationMajorants.LU
 
@@ -574,7 +517,7 @@ lemma ld_LYU (L Y U : Matrix (Fin r) (Fin r) ℂ) (hL : IsLU L) (hU : IsUU U) (b
   unfold ld
   rw [mn_mul_upper _ _ hU, mn_lower_mul _ _ hL]
   rw [Finset.sum_eq_single b]
-  · rw [if_pos le_rfl, hL.2, one_mul]
+  · rw [ite_eq_left le_rfl, hL.2, one_mul]
   · intro t _ htb
     split_ifs with h
     · rw [hL.1 b t (lt_of_le_of_ne h (Ne.symm htb)), zero_mul]
@@ -587,12 +530,12 @@ lemma ell_LYU (L Y U : Matrix (Fin r) (Fin r) ℂ) (hL : IsLU L) (hU : IsUU U) :
   simp only [ell, Matrix.of_apply, Matrix.mul_apply]
   rw [ld_LYU L Y U hL hU, mn_mul_upper _ _ hU, mn_lower_mul _ _ hL]
   by_cases hba : b ≤ a
-  · rw [if_pos hba, Finset.sum_div]
+  · rw [ite_eq_left hba, Finset.sum_div]
     refine Finset.sum_congr rfl fun t _ => ?_
     split_ifs with h
     · ring
     · simp
-  · rw [if_neg hba]
+  · rw [ite_eq_right hba]
     symm
     refine Finset.sum_eq_zero fun t _ => ?_
     split_ifs with h
@@ -602,7 +545,7 @@ lemma ell_LYU (L Y U : Matrix (Fin r) (Fin r) ℂ) (hL : IsLU L) (hU : IsUU U) :
 lemma ell_isLU (Y : Matrix (Fin r) (Fin r) ℂ) (hY : ∀ b, ld Y b ≠ 0) : IsLU (ell Y) := by
   refine ⟨fun i j h => ?_, fun i => ?_⟩
   · simp [ell, not_le.2 h]
-  · simp only [ell, Matrix.of_apply, le_refl, if_true]
+  · simp only [ell, Matrix.of_apply, le_refl, ite_true]
     exact div_self (hY i)
 
 lemma det_isLU {L : Matrix (Fin r) (Fin r) ℂ} (hL : IsLU L) : L.det = 1 := by
@@ -675,8 +618,6 @@ lemma norm_mul_entry {m n p : Type*} [Fintype n] (A : Matrix m n ℂ) (B' : Matr
 
 end Formalism.FourierDecayAlt.P.WeakDominationMajorants.LU
 
-open Matrix MeasureTheory Filter Topology
-open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.JF
 
 namespace Formalism.FourierDecayAlt.P.WeakDominationMajorants.Orb
 
@@ -753,8 +694,6 @@ lemma U_bd (L Y U : Matrix (Fin r) (Fin r) ℂ) (hL : IsLU L) (hU : IsUU U) {Γ 
 
 end Formalism.FourierDecayAlt.P.WeakDominationMajorants.Orb
 
-open Matrix MeasureTheory Filter Topology
-open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.JF
 
 namespace Formalism.FourierDecayAlt.P.WeakDominationMajorants.Orb
 
@@ -866,8 +805,6 @@ end main
 
 end Formalism.FourierDecayAlt.P.WeakDominationMajorants.Orb
 
-open Matrix MeasureTheory Filter Topology
-open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.JF
 
 namespace Formalism.FourierDecayAlt.P.WeakDominationMajorants.Orb
 
@@ -936,17 +873,17 @@ lemma rowM_eq (hδ : 0 < δ) (hdet : δ ≤ ‖(Zm g).det‖) (hn : n ∈ Nset k
     rw [hPg, Matrix.mul_apply, sum_split_Es]
     congr 1
     · rw [Finset.sum_eq_single j]
-      · rw [if_pos hj2, n_rowM hn j j hj1 hj2, if_pos rfl, one_mul]
+      · rw [ite_eq_left hj2, n_rowM hn j j hj1 hj2, ite_eq_left rfl, one_mul]
       · intro l _ hlj
         split_ifs with hl
-        · rw [n_rowM hn j l hj1 hl, if_neg (Ne.symm hlj), zero_mul]
+        · rw [n_rowM hn j l hj1 hl, ite_eq_right (Ne.symm hlj), zero_mul]
         · rfl
       · intro h; exact absurd (Finset.mem_univ _) h
     · simp only [Matrix.mul_apply, Rm, Matrix.of_apply]
       refine Finset.sum_congr rfl fun a' _ => ?_
       congr 1
       rw [hQ, Matrix.mul_apply]
-      simp only [Pm_Es _ hx, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      simp only [Pm_Es _ hx, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   have hLL : Lm n * (Lm n)⁻¹ = 1 := Matrix.mul_nonsing_inv _ (by rw [det_Lm hn]; exact isUnit_one)
   have e1 : (Pm g * (Lm n)⁻¹) j a = (Q * (Lm n)⁻¹) j a + (Rm * Lm n * (Lm n)⁻¹) j a := by
     simp only [Matrix.mul_apply (M := Pm g), hrow, add_mul, Finset.sum_add_distrib]
@@ -982,7 +919,7 @@ lemma E_of_lt (m : Fin (2 * r + k + 1)) (h : m.val < r) : ∃ a : Fin r, m = eI 
   ⟨⟨m.val, h⟩, Fin.ext rfl⟩
 
 lemma sg_M (m : Fin (2 * r + k + 1)) (h1 : r ≤ m.val) (h2 : m.val ≤ r + k) : sg k r m = m := by
-  unfold sg; rw [if_neg (by omega)]
+  unfold sg; rw [ite_eq_right (by omega)]
 
 lemma ninv_EM_bd (hΓ : 1 ≤ Γ) (hδ : 0 < δ) (hg : g ∈ GV k r) (hgΓ : gN g ≤ Γ) (hld : ∀ b, δ ≤ ‖ld (Zm g) b‖)
     (hdet : δ ≤ ‖(Zm g).det‖) (hn : n ∈ Nset k r) (hn' : n' ∈ Nset k r)
@@ -1034,7 +971,7 @@ lemma ninv_bd (hΓ : 1 ≤ Γ) (hδ : 0 < δ) (hg : g ∈ GV k r) (hgΓ : gN g �
     have hk := congrFun (congrFun (key hδ hdet hn hn') i) a
     rw [Matrix.mul_apply, sum_split_Es] at hk
     simp only [Pm_Es g (unit_of_det hδ hdet), mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true] at hk
+      Finset.mem_univ, ite_true] at hk
     have e : n⁻¹ i (esI k r a) = (Pm (n⁻¹ * g * n') * Lm n) i a -
         ∑ l, (if l.val ≤ r + k then n⁻¹ i l * Pm g l a else 0) := by rw [← hk]; ring
     rw [e]
@@ -1079,8 +1016,6 @@ end main
 
 end Formalism.FourierDecayAlt.P.WeakDominationMajorants.Orb
 
-open Matrix MeasureTheory Filter Topology
-open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.JF
 
 namespace Formalism.FourierDecayAlt.P.WeakDominationMajorants.Orb
 
@@ -1137,14 +1072,14 @@ lemma dot_bvec (e : Fin (2 * r + k + 1)) (v : Fin (2 * r + k + 1) → ℂ) : sta
 lemma hpk_mulVec (v : Fin (2 * r + k + 1) → ℂ) (e : Fin (2 * r + k + 1)) :
     (Hpk k r *ᵥ v) e = ep k r e * v (sg k r e) := by
   simp only [Matrix.mulVec, dotProduct, hpk_apply, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ,
-    if_true]
+    ite_true]
 
 lemma mulVec_bvec (g : Mat k r) (e : Fin (2 * r + k + 1)) : g *ᵥ bvec e = fun i => g i e := by
   unfold bvec; ext i; simp [Matrix.mulVec, dotProduct, Pi.single_apply]
 
 lemma zhat_eq (z z' : Fin (2 * r + k + 1) → ℂ) (g : Mat k r) (a b : Fin (r + 1)) (ha : a.val < r) (hb : b.val < r) :
     Zhat k r z z' g a b = Zm g ⟨a.val, ha⟩ ⟨b.val, hb⟩ := by
-  simp only [Zhat, fvec, dif_pos ha, dif_pos hb, herm]
+  simp only [Zhat, fvec, dite_eq_left ha, dite_eq_left hb, herm]
   rw [dot_bvec, hpk_mulVec, mulVec_bvec, sg_eI, ep_eI, one_mul]
   rfl
 
@@ -1169,8 +1104,6 @@ lemma det_eq_Dmin (z z' : Fin (2 * r + k + 1) → ℂ) (g : Mat k r) :
 
 end Formalism.FourierDecayAlt.P.WeakDominationMajorants.Orb
 
-open Matrix MeasureTheory Filter Topology
-open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.JF
 
 namespace Formalism.FourierDecayAlt.P.WeakDominationMajorants.Orb
 
@@ -1231,7 +1164,6 @@ theorem orbit (z z' : Fin (2 * r + k + 1) → ℂ) (K : Set (Mat k r)) (hK : IsC
 
 end Formalism.FourierDecayAlt.P.WeakDominationMajorants.Orb
 
-open Matrix MeasureTheory Filter Topology
 open scoped ENNReal NNReal
 
 namespace Formalism.FourierDecayAlt.P.WeakDominationMajorants.NInt
@@ -1383,12 +1315,12 @@ lemma levM_meas (k r' : ℕ) : Measurable (levM k r') := by
   show Continuous fun x : Mt k r' => ιLev k 1 r' (Matrix.of x) p q
   unfold ιLev
   by_cases hp : 1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1
-  · simp only [dif_pos hp]
+  · simp only [dite_eq_left hp]
     by_cases hq : 1 ≤ q.val ∧ q.val < 2 * r' + k + 1 + 1
-    · simp only [dif_pos hq]
+    · simp only [dite_eq_left hq]
       exact (continuous_apply _).comp (continuous_apply _)
-    · simp only [dif_neg hq]; exact continuous_const
-  · simp only [dif_neg hp]; exact continuous_const
+    · simp only [dite_eq_right hq]; exact continuous_const
+  · simp only [dite_eq_right hp]; exact continuous_const
 
 lemma base (k : ℕ) (μ : Measure (Mt k 0)) (hμ : IsHaarOn (Nset k 0) μ) (a : ℝ) :
     ∫⁻ x, ENNReal.ofReal (gN (Matrix.of x : Mat k 0) ^ (-a)) ∂μ < ⊤ := by
@@ -1499,8 +1431,6 @@ end main
 
 end Formalism.FourierDecayAlt.P.WeakDominationMajorants.NInt
 
-open Matrix MeasureTheory Filter Topology
-open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.JF
 
 namespace Formalism.FourierDecayAlt.P.WeakDominationMajorants.Asm
 
@@ -1601,8 +1531,6 @@ lemma haar_finite {U : Set (Mat k r)} {μ : Measure (Mt k r)} (h : IsHaarOn U μ
 
 end Formalism.FourierDecayAlt.P.WeakDominationMajorants.Asm
 
-open Matrix MeasureTheory Filter Topology
-open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.JF
 
 namespace Formalism.FourierDecayAlt.P.WeakDominationMajorants.Asm
 
@@ -1610,8 +1538,15 @@ attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 open Formalism.FourierDecayAlt.P.WeakDominationMajorants
 
-theorem nnMaj : Formalism.FourierDecayAlt.P.JFxDs2.NNMaj := by
-  intro k r Wp Wq _ _ _ _ D A m hThr K hK hKO
+theorem nnMaj_core (k r : ℕ) (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
+    [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] (D : B.RealPlaceData k r Wp Wq) (A : ℝ) (m : ℕ)
+    (hA1pos : 0 < A - 6 * (r : ℝ) * (m : ℝ))
+    (hthr : r = 0 ∨ (r : ℝ) * (4 * (r : ℝ) + 2 * (k : ℝ) - 1) < (A - 6 * (r : ℝ) * (m : ℝ)) / (6 * (r : ℝ) + 1))
+    (K : Set (B.Mat k r)) (hK : IsCompact K) (hKO : K ⊆ Om k r D.z D.z') :
+    ∃ b : B.SS k r → ℝ, Integrable b D.μSS ∧
+      ∀ u v : List (B.Mat k r), (∀ X ∈ u, B.unitLie k r X) → (∀ X ∈ v, B.unitLie k r X) →
+        u.length + v.length ≤ m → ∀ g ∈ K, ∀ᵐ p ∂D.μSS,
+          (u.map fun X => ‖AdL p X‖).prod * (v.map fun X => ‖AdR p X‖).prod * B.gN (B.sgs p g) ^ (-A) ≤ b p := by
   obtain ⟨C3, hC3, horb⟩ := orbit3 D.z D.z' K hK hKO
   obtain ⟨cW, hcW, hW⟩ := uw_bound D.z D.z_mem D.T_pos
   obtain ⟨cW', hcW', hW'⟩ := uw_bound D.z' D.z'_mem D.T'_pos
@@ -1623,29 +1558,12 @@ theorem nnMaj : Formalism.FourierDecayAlt.P.JFxDs2.NNMaj := by
   set Λ1 := max 1 (NN * c ^ 2 * C4 ^ 2) with hΛ1_def
   have hΛ1 : 1 ≤ Λ1 := le_max_left _ _
   set A1 := A - 6 * (r : ℝ) * (m : ℝ) with hA1_def
-
-  have hThr' : 9 * ((r : ℝ) + 1) * NN ^ 2 < A1 := by
-    have h9 : (0 : ℝ) < 9 * ((r : ℝ) + 1) := by positivity
-    have := (lt_div_iff₀ h9).1 hThr
-    rw [hNN]; linarith
-  have hA1pos : 0 < A1 := lt_of_le_of_lt (by positivity) hThr'
   set β := A1 / (6 * (r : ℝ) + 1) with hβ_def
   have hβ0 : 0 ≤ β := div_nonneg hA1pos.le (by positivity)
   have hβA : 6 * (r : ℝ) * β ≤ A1 := by
     rw [hβ_def, mul_div_assoc']
     rw [div_le_iff₀ (by positivity)]
     nlinarith
-  have hthr : r = 0 ∨ (r : ℝ) * (4 * (r : ℝ) + 2 * (k : ℝ) - 1) < β := by
-    rcases Nat.eq_zero_or_pos r with h | h
-    · exact Or.inl h
-    · right
-      rw [hβ_def, lt_div_iff₀ (by positivity)]
-      have hr : (1 : ℝ) ≤ r := by exact_mod_cast h
-      have hk : (0 : ℝ) ≤ k := by positivity
-      have hNNe : NN = 2 * (r : ℝ) + k + 1 := by rw [hNN]; push_cast; ring
-      rw [hNNe] at hThr'
-      nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ r) hk, mul_nonneg hk hk, mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ r) hk) hk,
-        mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ r) (by linarith : (0:ℝ) ≤ r)) hk]
 
   set f : Mt k r → ℝ := fun x => gN (Matrix.of x : Mat k r) ^ (-β) with hf_def
   refine ⟨fun p => Λ1 ^ m * (C4 ^ β) ^ 2 * (f p.1.2 * f p.2.2), ?_, ?_⟩
@@ -1749,6 +1667,28 @@ theorem nnMaj : Formalism.FourierDecayAlt.P.JFxDs2.NNMaj := by
     exact real_step X (gN (Matrix.of p.1.2)) (gN (Matrix.of p.2.2)) C4 Λ1 A A1 β _ m r hX1 hC4
       (Formalism.FourierDecayAlt.P.BetaSesquilinearity.gN_ge_one (Orb.n_mem_G hn)) (Formalism.FourierDecayAlt.P.BetaSesquilinearity.gN_ge_one (Orb.n_mem_G hn')) hG1 hG2 hβ0 hβA
       hA1_def hΛ1 hP
+
+theorem nnMaj : Formalism.FourierDecayAlt.P.JFxDs2.NNMaj := by
+  intro k r Wp Wq _ _ _ _ D A m hThr K hK hKO
+  set NN : ℝ := ((2 * r + k + 1 : ℕ) : ℝ) with hNN
+  set A1 := A - 6 * (r : ℝ) * (m : ℝ)
+  have hThr' : 9 * ((r : ℝ) + 1) * NN ^ 2 < A1 := by
+    have h9 : (0 : ℝ) < 9 * ((r : ℝ) + 1) := by positivity
+    have := (lt_div_iff₀ h9).1 hThr
+    rw [hNN]; linarith
+  have hA1pos : 0 < A1 := lt_of_le_of_lt (by positivity) hThr'
+  have hthr : r = 0 ∨ (r : ℝ) * (4 * (r : ℝ) + 2 * (k : ℝ) - 1) < A1 / (6 * (r : ℝ) + 1) := by
+    rcases Nat.eq_zero_or_pos r with h | h
+    · exact Or.inl h
+    · right
+      rw [lt_div_iff₀ (by positivity)]
+      have hr : (1 : ℝ) ≤ r := by exact_mod_cast h
+      have hk : (0 : ℝ) ≤ k := by positivity
+      have hNNe : NN = 2 * (r : ℝ) + k + 1 := by rw [hNN]; push_cast; ring
+      rw [hNNe] at hThr'
+      nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ r) hk, mul_nonneg hk hk, mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ r) hk) hk,
+        mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ r) (by linarith : (0:ℝ) ≤ r)) hk]
+  exact nnMaj_core k r Wp Wq D A m hA1pos hthr K hK hKO
 
 end Formalism.FourierDecayAlt.P.WeakDominationMajorants.Asm
 

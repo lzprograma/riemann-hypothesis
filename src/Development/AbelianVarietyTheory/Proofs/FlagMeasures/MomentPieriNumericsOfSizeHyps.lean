@@ -445,7 +445,7 @@ theorem num_of_size : ∀ (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb Cu cT
       · exfalso
         apply hac
         unfold PI.BesselPeriodGGP.eps48
-        rw [if_pos ha, if_pos hc]
+        rw [ite_eq_left ha, ite_eq_left hc]
       · have h1 := (hC6 a (by omega)).1
         have h2 := (hC7 c (by omega)).2
         have h0 := (hC6 ⟨0, by omega⟩ (show 0 + 1 < D.R.k by omega)).1

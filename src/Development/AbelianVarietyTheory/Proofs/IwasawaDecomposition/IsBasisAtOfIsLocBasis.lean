@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DualLOneEqDual
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
 public import Formalism.LocalToGlobal.Columns.CoefficientsModP.BaseCh
 public import Formalism.LocalToGlobal.Columns.SmulMemTrpSet
@@ -175,22 +176,14 @@ theorem mem_localization_ker (emb : ι → E →+* K) (σ : K →+* ℂ) (lam : 
     rw [he]
     by_cases hQ : Q = P
     · subst hQ
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact (localization_LshKer_eq_localization_sup hd ha Q).trans (isBasisAt_of_isLocBasis hT Q.1 (hST Q) hB')
-    · rw [if_neg fun h => hQ (e.injective h)]
+    · rw [ite_eq_right fun h => hQ (e.injective h)]
       exact (hd.locP_LshKer_ne ha hQ).trans (isBasisAt_of_isLocBasis hT Q.1 (hST Q) hB)
 
 theorem dualL_std (s : E →+* E) (hs : ∀ x, s x = star x) (L : Submodule (𝓞 E) (Sp E n)) :
     dualL s (1 : Matrix (Fin n) (Fin n) E) L = dual (hStd E n) L := by
-  have e : dualSet s (1 : Matrix (Fin n) (Fin n) E) L = (dual (hStd E n) L : Set (Sp E n)) := by
-    ext y
-    rw [SetLike.mem_coe, mem_dual]
-    refine forall₂_congr fun x _ => ?_
-    have : Formalism.UG.hform s (1 : Matrix (Fin n) (Fin n) E) x y = hStd E n x y := by
-      simp [Formalism.UG.hform, hStd_apply, Matrix.one_apply, hs]
-    rw [this, Submodule.mem_one]
-    rfl
-  rw [dualL, e, Submodule.span_eq]
+  apply _root_.GlobalTheory.Mem.Col2.TC.dualL_one_eq_dual <;> assumption
 
 theorem mem_localization_latticeOf [StarRing K] (S : GStep E K n) [Finite S.Cl] (emb : ι → E →+* K) (lam : ι → DomWeight n)
     (h : (S.fam emb lam).Ok) (M : S.Cl → Submodule (𝓞 K) (Formalism.L2.DIV.VV K lam)) (w : HeightOneSpectrum (𝓞 K))
@@ -229,7 +222,6 @@ end GlobalTheory.Mem.Col2.BwLat
 namespace GlobalTheory.Mem.Col2.TC
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 open GlobalTheory.Mem.Col2.BwLat GlobalTheory.LvT.Built.ValLat Formalism.HermitianLatticesTheory
 

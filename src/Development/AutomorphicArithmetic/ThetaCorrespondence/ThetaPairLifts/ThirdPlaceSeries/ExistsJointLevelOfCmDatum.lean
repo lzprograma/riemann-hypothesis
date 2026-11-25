@@ -71,7 +71,6 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formal
 open Formalism.AUTREP (GAf)
 open Neutral.B1 (Ideles)
 open GlobalTheory.HeckeGal (Gab IsGlobalArtin)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 open GlobalTheory.LevCmp
@@ -263,7 +262,7 @@ theorem para_mem (hP : IdFrame hF P) (hPq : ∀ v, NG.OverPl (Pq v) v) (hsp : �
     Lev.finE V (P.ψ κ) ∈ Formalism.L2.DIV.lev D.sp.cm V.gram 1 L := by
   obtain ⟨hn, -⟩ := id hP
   have hU := umax_of_para h hp
-  refine mem_lev_of_red hL _ ((GlobalTheory.T.frameKeepsMatrices_splitPlace_reduction_local D V _ hF P hP hn κ).1.1 hU) (fun kv => ?_) fun PP hPP => ?_
+  refine mem_lev_of_red hL _ ((_root_.GlobalTheory.MtRead.Red.red_eq_local D V _ hF P hP hn κ).1.1 hU) (fun kv => ?_) fun PP hPP => ?_
   · rw [red_one' hP hU h (hsp kv) fun ho => hg ⟨_, ho, kv.1, D.naut.plGw_over kv.1 kv.2⟩]
     exact ⟨one_mem _, ut_one⟩
   · obtain ⟨-, -, -, hQ, -⟩ := hL
@@ -293,7 +292,7 @@ theorem uni_mem (hP : IdFrame hF P) (hsp : ∀ kv, ∃ s : SplitPlace D.host.E, 
     Lev.finE V (P.ψ κ) ∈ Formalism.L2.DIV.lev D.sp.cm V.gram 1 L := by
   obtain ⟨hn, -⟩ := id hP
   have hU := umax_of_para h hp.1
-  refine mem_lev_of_red hL _ ((GlobalTheory.T.frameKeepsMatrices_splitPlace_reduction_local D V _ hF P hP hn κ).1.1 hU) (fun kv' => ?_) fun PP hPP => ?_
+  refine mem_lev_of_red hL _ ((_root_.GlobalTheory.MtRead.Red.red_eq_local D V _ hF P hP hn κ).1.1 hU) (fun kv' => ?_) fun PP hPP => ?_
   · by_cases e : NX.pG D kv' = s.w
     · rw [e]
       exact (inLevG_iff hP hn hU s _).1 (inLevG_of_uni hp)
@@ -309,7 +308,7 @@ theorem chr_pow (hP : IdFrame hF P) (hsp : ∀ kv, ∃ s : SplitPlace D.host.E, 
     (hκ' : Lev.finE V (P.ψ κ) ∈ Formalism.L2.DIV.lev D.sp.cm V.gram 1 L') :
     Lev.levChi V 1 L (P.ψ κ) ^ (D.host.g kv.1 - 1) = Lev.levChi V 1 L' (P.ψ κ) ^ (D.host.g kv.1 - 1) := by
   obtain ⟨hn, -⟩ := id hP
-  have hU := (GlobalTheory.T.frameKeepsMatrices_splitPlace_reduction_local D V _ hF P hP hn κ).1.2 (Formalism.L2.DIV.parLev_St hκ.1)
+  have hU := (_root_.GlobalTheory.MtRead.Red.red_eq_local D V _ hF P hP hn κ).1.2 (Formalism.L2.DIV.parLev_St hκ.1)
   have hg : ∀ kv', NX.pG D kv' ≠ NX.pG D kv → redFn 1 (NX.pG D kv') (Lev.finE V (P.ψ κ)) = 1 := fun kv' e =>
     red_one' hP hU h (hsp kv') (hoff kv' (hs ▸ e))
   unfold Lev.levChi
@@ -418,7 +417,7 @@ theorem joint_of {Y : R3.Read (A3 := A3) R.toRealDat F.lv2 X0} {M : MtFam D} (ad
           ((L.chi ⟨x, hx⟩ : ℂˣ) : ℂ) = (((R.toRealDat.levR F.lv2 false).chi ⟨x, by rw [hL] at hx; exact hx⟩ : ℂˣ) : ℂ)⁻¹ := by
         rintro _ rfl x hx
         exact Units.val_inv_eq_inv_val _
-      exact (key _ (if_neg (by decide)) _ _).trans rfl
+      exact (key _ (ite_eq_right (by decide)) _ _).trans rfl
   have h2 : UniDat iso Pq f ((ser.ex.ρ.B i j b).levS (ser.ex.ρ.tw i b k Q ψ)) := by
     refine ⟨FWT.rank_Wc j, blockSizes_sub_eq_twoBlock _, fun PP => (hp.Pg i j b ▸ hPg PP :), fun PP hPP => ?_, ser.ex.ρ.eG i j b,
       fun g kv h a c => (hp.grp i j b g _ h (hp.Pg i j b ▸ h) a c).trans (hiso kv g _ _ _), fun g => ?_, fun g h h' => ?_⟩
@@ -500,7 +499,6 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formal
 open Formalism.AUTREP (GAf)
 open Neutral.B1 (Ideles)
 open GlobalTheory.HeckeGal (Gab IsGlobalArtin)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 open GlobalTheory.LevCmp
@@ -509,25 +507,7 @@ namespace GlobalTheory.JointLevel
 open scoped TensorProduct
 open Formalism.IndefR Formalism.BasicNotions.TH GlobalTheory.MtRead GlobalTheory.MtLev
 open Formalism.L2.DIV (redFn rTup levFn kP blockTri blk2 blkOf dBlk upperLeftBlock ext1 G0 Pl)
-section Loc
-variable {D : D7} {V : HSp D} {n : ℕ} {hF : D.host.F = maximalRealSubfield D.host.E} {P : principalLevelFrame.RowPsi V n}
-end Loc
 variable {D : D7}
-section Dat
-variable {iso : ∀ kv : (Σ kk : Fin 2, D.nd.PlG kk), ZMod (D.host.g kv.1) ≃+* kP (NX.pG D kv)}
-  {Pq : HeightOneSpectrum (𝓞 (maximalRealSubfield D.host.E)) → PlE D.host} {f : Formalism.IndefR.NX.U D.nd → ℂ}
-end Dat
-section Shape
-variable {iso : ∀ kv : (Σ kk : Fin 2, D.nd.PlG kk), ZMod (D.host.g kv.1) ≃+* kP (NX.pG D kv)}
-  {Pq : HeightOneSpectrum (𝓞 (maximalRealSubfield D.host.E)) → PlE D.host} {f : Formalism.IndefR.NX.U D.nd → ℂ}
-  {V : HSp D} {hF : D.host.F = maximalRealSubfield D.host.E} {P : principalLevelFrame.RowPsi V D.R.nV}
-end Shape
-section Rows
-open Formalism.IndefR.Links Formalism.IndefR.RecTie Formalism.L2.DIV
-variable {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 I0 T : Type} {A3 : FamIn3 D.what₂.LL Γ Pl0 I0 (List ℕ) T D.R.m} {Ks : Type} [Field Ks]
-  [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat3 D A3 Ks} {F : Face3 D A3} {X0 : BaseLevelRowSide D}
-  {cG : G0 R.Pg D.R.r ≃* G0g D.nd}
-end Rows
 theorem joint_level_of_twOK_at_twisted : _root_.GlobalTheory.HeightCounting.Up.PublishedInputsThirdLayerAlt → ∀ hL : _root_.UpperTheory.Zero.LLC.RecTExists, AllSt fun _ B _ T w P x => ∀ (l : _root_.GlobalTheory.HeightCounting.Up.ThirdIntermediateLevel hL x) (v : B.places.Pl) (i : (Dof x).ntw.Tw) (b : Bool) (ψ : G (Dof x).host.E (Dof x).nd.Om →* ((Dof x).ntw.Ok i (T.k v))ˣ) (hA : NX.AdmTw (Dof x) i (T.k v) (QOf P v) ψ) (j : Fin (Dof x).R.m), TwistedAt (Dof x) v → (Dof x).ntw.l i = B.places.resChar v → IntegralHeckeForms.TwOK i (T.k v) (QOf P v) ψ → Joint (D := Dof x) (eta (D := Dof x) (cfOf x) w.I.xi v j) (mtAt (D := Dof x) l.mt.M v j) l.b.Bs.exp b hA j := by
   intro _ hL
   refine StepW.of_all ?_
@@ -547,20 +527,6 @@ theorem joint_level_of_twOK_at_twisted : _root_.GlobalTheory.HeightCounting.Up.P
     rfl
 end GlobalTheory.JointLevel
 end
-end
-section
-open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up
-open Formalism.AUTREP (GAf)
-open Neutral.B1 (Ideles)
-open GlobalTheory.HeckeGal (Gab IsGlobalArtin)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-
-open GlobalTheory.LevCmp
-open GlobalTheory.TwistChoice (Reading ReadsAt)
-
-theorem _root_.GlobalTheory.T.joint_level_of_cm_datum_twOK : _root_.GlobalTheory.HeightCounting.Up.PublishedInputsThirdLayerAlt → ∀ hL : _root_.UpperTheory.Zero.LLC.RecTExists, AllSt fun _ B _ T w P x => ∀ (l : _root_.GlobalTheory.HeightCounting.Up.ThirdIntermediateLevel hL x) (v : B.places.Pl) (i : (Dof x).ntw.Tw) (b : Bool) (ψ : G (Dof x).host.E (Dof x).nd.Om →* ((Dof x).ntw.Ok i (T.k v))ˣ) (hA : NX.AdmTw (Dof x) i (T.k v) (QOf P v) ψ) (j : Fin (Dof x).R.m), TwistedAt (Dof x) v → (Dof x).ntw.l i = B.places.resChar v → IntegralHeckeForms.TwOK i (T.k v) (QOf P v) ψ → Joint (D := Dof x) (eta (D := Dof x) (cfOf x) w.I.xi v j) (mtAt (D := Dof x) l.mt.M v j) l.b.Bs.exp b hA j := by
-  first | exact @_root_.GlobalTheory.JointLevel.joint_level_of_twOK_at_twisted
 end
 end
 end -- clump:auto

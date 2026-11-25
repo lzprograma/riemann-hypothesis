@@ -18,47 +18,6 @@ public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.Monomi
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
 import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockMonomial
 import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Lemma44IdentityOfRawTail
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.RingTheory.LocalProperties.Reduced
 
@@ -80,112 +39,6 @@ section TDs
 
 variable (C0 CE1 CE2 : ℝ) (X : Loc) [NeZero X.m] (j : Fin (numSeg X.TT))
 
-theorem TD_wLetBL {Cde E : ℝ} (x : X.TT × Bool) (b : SegBlock (segS X.TT j) X.m)
-    (hk : BLk C0 Cde CE1 CE2 X E j b) :
-    TD C0 CE1 CE2 X j b (wLet X x) =
-      (if segNext X.TT j = x.1.val then hhDegs X.TT X.aT X.bT x else 0) +
-        ∑ i, (if segPos X.TT j i = x.1.val then hhDegs X.TT X.aT X.bT x else 0) := by
-  have ho : b.oPlus ≤ segAPlus X.TT X.aT j := hk.2.2.2.1
-  obtain ⟨t, bb⟩ := x
-  have hterm : ∀ i : Fin (segS X.TT j),
-      ((∑ c : Fin (X.m + 1), (b.rz i c * wLet X (t, bb) ((topOdd X j i, true), c) +
-          b.ry i c * wLet X (t, bb) ((topOdd X j i, false), c))) +
-     (X.seg C0 CE1 CE2 j).P X.p i *
-      (if (i : ℕ) < (X.seg C0 CE1 CE2 j).sigma then
-        (coarseA X.p (X.seg C0 CE1 CE2 j) b i - b.w i) * wLet X (t, bb) ((topOdd X j i, true), 0) +
-          b.sg i * wLet X (t, bb) ((topOdd X j i, false), 0) + b.w i * wLet X (t, bb) ((topOdd X j i, true), Fin.succ 0) +
-          (coarseC X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b i - b.sg i) *
-            wLet X (t, bb) ((topOdd X j i, false), Fin.succ 0)
-       else
-        (coarseA X.p (X.seg C0 CE1 CE2 j) b i - b.o i) * wLet X (t, bb) ((topOdd X j i, true), 0) +
-          b.o i * wLet X (t, bb) ((topOdd X j i, true), Fin.succ 0) +
-          coarseC X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b i *
-            wLet X (t, bb) ((topOdd X j i, false), Fin.succ 0))) =
-      (if segPos X.TT j i = t.val then hhDegs X.TT X.aT X.bT (t, bb) else 0) := by
-    intro i
-    have hodd := (pos_mem X.TT j i).2
-    by_cases h : segPos X.TT j i = t.val
-    · have ht : topOdd X j i = t := Subtype.ext h
-      subst ht
-      rw [if_pos h]
-      cases bb
-      · have w1 : ∀ c, wLet X (topOdd X j i, false) ((topOdd X j i, true), c) = 0 := fun c => if_neg (by simp)
-        have w2 : ∀ c, wLet X (topOdd X j i, false) ((topOdd X j i, false), c) = 1 := fun c => if_pos rfl
-        simp only [w1, w2, mul_zero, mul_one, zero_add, add_zero]
-        have hd := hk.1.2.2 i
-        have hPC : (X.seg C0 CE1 CE2 j).P X.p i * coarseC X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b i =
-            segATop X.TT X.aT j i - ∑ c, b.ry i c := Nat.mul_div_cancel' hd.2
-        have hdeg : hhDegs X.TT X.aT X.bT (topOdd X j i, false) = segATop X.TT X.aT j i := by
-          show hhDeg X.aT X.bT (segPos X.TT j i) false = X.aT (segPos X.TT j i)
-          unfold hhDeg
-          simp [hodd]
-        have hin : (if (i : ℕ) < (X.seg C0 CE1 CE2 j).sigma then
-            b.sg i + (coarseC X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b i - b.sg i)
-            else coarseC X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b i) =
-            coarseC X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b i := by
-          split_ifs with hs
-          · have := (hk.2.2.1 i hs).2.2.1
-            omega
-          · rfl
-        rw [hin, hPC, hdeg]
-        have := hd.1
-        omega
-      · have w1 : ∀ c, wLet X (topOdd X j i, true) ((topOdd X j i, true), c) = 1 := fun c => if_pos rfl
-        have w2 : ∀ c, wLet X (topOdd X j i, true) ((topOdd X j i, false), c) = 0 := fun c => if_neg (by simp)
-        simp only [w1, w2, mul_zero, mul_one, add_zero]
-        have hd := hk.1.2.1 i
-        have hPA : (X.seg C0 CE1 CE2 j).P X.p i * coarseA X.p (X.seg C0 CE1 CE2 j) b i =
-            (X.seg C0 CE1 CE2 j).bTop i - ∑ c, b.rz i c := Nat.mul_div_cancel' hd.2
-        have hdeg : hhDegs X.TT X.aT X.bT (topOdd X j i, true) = (X.seg C0 CE1 CE2 j).bTop i := by
-          show hhDeg X.aT X.bT (segPos X.TT j i) true = X.bT (segPos X.TT j i)
-          unfold hhDeg
-          simp [hodd]
-        have hin : (if (i : ℕ) < (X.seg C0 CE1 CE2 j).sigma then
-            coarseA X.p (X.seg C0 CE1 CE2 j) b i - b.w i + b.w i
-            else coarseA X.p (X.seg C0 CE1 CE2 j) b i - b.o i + b.o i) = coarseA X.p (X.seg C0 CE1 CE2 j) b i := by
-          split_ifs with hs
-          · have := (hk.2.2.1 i hs).2.1
-            omega
-          · have := (hk.2.1 i (not_lt.1 hs)).1
-            omega
-        rw [hin, hPA, hdeg]
-        have := hd.1
-        omega
-    · have w0 : ∀ b' c, wLet X (t, bb) ((topOdd X j i, b'), c) = 0 := fun b' c =>
-        if_neg (fun e => h (congrArg (fun z : X.TT × Bool => z.1.val) e))
-      rw [if_neg h]
-      simp only [w0, mul_zero, add_zero, Finset.sum_const_zero, ite_self]
-  have hend : (segAPlus X.TT X.aT j - b.oPlus) * wLet X (t, bb) ((topEnd X j, true), 0) +
-      b.oPlus * wLet X (t, bb) ((topEnd X j, true), Fin.succ 0) +
-      (X.seg C0 CE1 CE2 j).bPlus * wLet X (t, bb) ((topEnd X j, false), Fin.succ 0) =
-      (if segNext X.TT j = t.val then hhDegs X.TT X.aT X.bT (t, bb) else 0) := by
-    have hev := (next_mem X.TT j).2
-    by_cases h : segNext X.TT j = t.val
-    · have ht : topEnd X j = t := Subtype.ext h
-      subst ht
-      rw [if_pos h]
-      cases bb
-      · have w1 : ∀ c, wLet X (topEnd X j, false) ((topEnd X j, true), c) = 0 := fun c => if_neg (by simp)
-        have w2 : ∀ c, wLet X (topEnd X j, false) ((topEnd X j, false), c) = 1 := fun c => if_pos rfl
-        simp only [w1, w2, mul_zero, mul_one, zero_add]
-        show X.bT (segNext X.TT j) = hhDeg X.aT X.bT (segNext X.TT j) false
-        unfold hhDeg
-        simp [hev]
-      · have w1 : ∀ c, wLet X (topEnd X j, true) ((topEnd X j, true), c) = 1 := fun c => if_pos rfl
-        have w2 : ∀ c, wLet X (topEnd X j, true) ((topEnd X j, false), c) = 0 := fun c => if_neg (by simp)
-        simp only [w1, w2, mul_zero, mul_one, add_zero]
-        rw [Nat.sub_add_cancel ho]
-        show X.aT (segNext X.TT j) = hhDeg X.aT X.bT (segNext X.TT j) true
-        unfold hhDeg
-        simp [hev]
-    · have w0 : ∀ b' c, wLet X (t, bb) ((topEnd X j, b'), c) = 0 := fun b' c =>
-        if_neg (fun e => h (congrArg (fun z : X.TT × Bool => z.1.val) e))
-      rw [if_neg h]
-      simp only [w0, mul_zero, add_zero]
-  unfold TD
-  rw [Finset.sum_congr rfl fun i _ => hterm i, add_assoc, add_assoc, ← add_assoc ((segAPlus X.TT X.aT j - b.oPlus) * _),
-    hend, add_comm]
-
 theorem TD_wN (b : SegBlock (segS X.TT j) X.m) :
     TD C0 CE1 CE2 X j b (wN X) = blockOrd X.p (X.seg C0 CE1 CE2 j) b := by
   unfold TD blockOrd oEff
@@ -195,8 +48,8 @@ theorem TD_wN (b : SegBlock (segS X.TT j) X.m) :
   have h1 : ∑ c : Fin (X.m + 1), (b.rz i c * wN X ((topOdd X j i, true), c) + b.ry i c * wN X ((topOdd X j i, false), c)) =
       (∑ c : Fin (X.m + 1), if (c : ℕ) = 0 then 0 else b.rz i c) + b.ry i 0 := by
     rw [Fin.sum_univ_succ, Fin.sum_univ_succ]
-    simp only [normal_weight_vector_zero_eq_zero, wN_vecS, normal_weight_covector_zero, wN_covS, mul_zero, mul_one, zero_add, add_zero, Fin.val_zero, if_true,
-      Fin.val_succ, Nat.succ_ne_zero, if_false]
+    simp only [normal_weight_vector_zero_eq_zero, wN_vecS, normal_weight_covector_zero, wN_covS, mul_zero, mul_one, zero_add, add_zero, Fin.val_zero, ite_true,
+      Fin.val_succ, Nat.succ_ne_zero, ite_false]
     ring
   rw [h1]
   split_ifs <;> ring
@@ -221,26 +74,31 @@ theorem symPolBL (h2 : 2 ≤ numSeg X.TT) {E : ℝ} (β : GlobalTheory X) (hβ :
   intro μ hμ x
   have hwh : IsWeightedHomogeneous (wLet X x) (symFam (KK O) X.p C0 CE1 CE2 X β s)
       (∑ j, TD C0 CE1 CE2 X j (β j) (wLet X x)) :=
-    IsWeightedHomogeneous.prod _ _ _ (fun j _ => ioBlock_wh' C0 CE1 CE2 X j O 0 (β j) (wLet X x) (fun _ _ _ => rfl)
-      (fun _ => rfl) rfl (s j) (hs j))
+    IsWeightedHomogeneous.prod _ _ _ (fun j _ => ioBlock_wh C0 CE1 CE2 X j O (β j) (wLet X x) (fun _ _ _ => rfl)
+      (fun _ => rfl) rfl (s j) (fun ω' ωL h1 h2 h3 => hs j ω' ωL ⟨h1, h2, h3⟩))
   have h1 := hwh (mem_support_iff.1 (Finset.mem_coe.1 hμ))
   rw [weight_wLet] at h1
-  rw [h1, Finset.sum_congr rfl fun j _ => TD_wLetBL C0 CE1 CE2 X j x (β j) (hβ j),
+  rw [h1, Finset.sum_congr rfl fun j _ =>
+    let hk := hβ j
+    TD_wLet_of_bounds C0 CE1 CE2 X j x (β j) hk.1
+      (fun i h => (hk.2.2.1 i h).2.1) (fun i h => (hk.2.2.1 i h).2.2.1)
+      (fun i h => (hk.2.1 i h).1) hk.2.2.2.1,
     ← natPartSum X.TT h2 (fun s => if s = x.1.val then hhDegs X.TT X.aT X.bT x else 0), Finset.sum_ite_eq',
-    if_pos x.1.2]
+    ite_eq_left x.1.2]
 
 theorem symNdBL (β : GlobalTheory X) (s : Syms O C0 CE1 CE2 X) (hs : BalHom O C0 CE1 CE2 X β s) :
     IsWeightedHomogeneous (wN X) (symFam (KK O) X.p C0 CE1 CE2 X β s) (ordFam C0 CE1 CE2 X β) := by
   have hwh : IsWeightedHomogeneous (wN X) (symFam (KK O) X.p C0 CE1 CE2 X β s)
       (∑ j, TD C0 CE1 CE2 X j (β j) (wN X)) :=
-    IsWeightedHomogeneous.prod _ _ _ (fun j _ => ioBlock_wh' C0 CE1 CE2 X j O 0 (β j) (wN X)
+    IsWeightedHomogeneous.prod _ _ _ (fun j _ => ioBlock_wh C0 CE1 CE2 X j O (β j) (wN X)
       (fun x c c' => by
         rcases x with ⟨t, bb⟩
         cases bb
         · rw [wN_covS, wN_covS]
         · rw [wN_vecS, wN_vecS])
       (fun l => by rw [normal_weight_vector_zero_eq_zero, normal_weight_covector_zero, wN_vecS, wN_covS])
-      (by rw [normal_weight_vector_zero_eq_zero, normal_weight_covector_zero, wN_vecS, wN_covS]) (s j) (hs j))
+      (by rw [normal_weight_vector_zero_eq_zero, normal_weight_covector_zero, wN_vecS, wN_covS])
+      (s j) (fun ω' ωL h1 h2 h3 => hs j ω' ωL ⟨h1, h2, h3⟩))
   have e : ∑ j, TD C0 CE1 CE2 X j (β j) (wN X) = ordFam C0 CE1 CE2 X β :=
     Finset.sum_congr rfl fun j _ => TD_wN C0 CE1 CE2 X j (β j)
   rwa [e] at hwh
@@ -253,8 +111,8 @@ theorem ioBlock_coeff (hp : 0 < X.p) (j : Fin (numSeg X.TT)) (b : SegBlock (segS
   | monomial ν c =>
     rw [ioBlock_monomial, coeff_monomial, coeff_monomial]
     by_cases h : ν = μ
-    · rw [if_pos h, if_pos (by rw [h])]
-    · rw [if_neg h, if_neg fun e => h (ioExp_inj C0 CE1 CE2 X hp j b e)]
+    · rw [ite_eq_left h, ite_eq_left (by rw [h])]
+    · rw [ite_eq_right h, ite_eq_right fun e => h (ioExp_inj C0 CE1 CE2 X hp j b e)]
   | add p q hp' hq' => rw [ioBlock_add, MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp', hq']
 
 theorem ioBlock_ne_zero (hp : 0 < X.p) (j : Fin (numSeg X.TT)) (b : SegBlock (segS X.TT j) X.m)
@@ -393,9 +251,9 @@ theorem stdPoly_eq (O : Type) [CommRing O] [IsDomain O] (L : LvDat C0 CE1 CE2 mu
     intro i
     rw [Fin.sum_univ_succ, Finset.sum_add_distrib, Finsupp.single_add]
     by_cases h : (i : ℕ) < (X.seg C0 CE1 CE2 j).sigma
-    · simp only [if_pos h]
+    · simp only [ite_eq_left h]
       abel
-    · simp only [if_neg h, hsg i h, mul_zero, Finsupp.single_zero]
+    · simp only [ite_eq_right h, hsg i h, mul_zero, Finsupp.single_zero]
       abel
   have hsum := Finset.sum_congr (s₁ := (Finset.univ : Finset (Fin (segS X.TT j)))) rfl (fun i _ => hi i)
   simp only [Finset.sum_add_distrib] at hsum
@@ -485,9 +343,9 @@ theorem std_eq (O : Type) [CommRing O] [IsDomain O] (L : LvDat C0 CE1 CE2 mu X �
     simp only [hus, Finsupp.single_add, Finset.sum_add_distrib]
     congr 1
     rw [Finset.sum_eq_single j0]
-    · rw [if_pos rfl]
+    · rw [ite_eq_left rfl]
     · intro j _ hj
-      rw [if_neg hj, Finsupp.single_zero]
+      rw [ite_eq_right hj, Finsupp.single_zero]
     · intro h; exact absurd (Finset.mem_univ _) h
   have hrot : ∑ j, Finsupp.single ((topStart X j, true), (0 : Fin (X.m + 1))) (usedX X β a0 j0 j) =
       ∑ j, Finsupp.single ((topEnd X j, true), (0 : Fin (X.m + 1))) (usedX X β a0 j0 (rot _ j)) :=
@@ -568,13 +426,13 @@ private theorem gen_wh_of_pos_separated_of_le_deg {N T : ℕ} (deg : Fin N → �
       have hn : ∀ i, ¬ ((a : ℕ) = pos i ∨ (a : ℕ) = pos i + 1) := fun i h => by
         have := hu i
         omega
-      simp only [hn, if_false, Finset.sum_const_zero, if_true, zero_add]
+      simp only [hn, ite_false, Finset.sum_const_zero, ite_true, zero_add]
       exact hjp
-    · rw [if_neg hau, add_zero]
+    · rw [ite_eq_right hau, add_zero]
       by_cases hex : ∃ i0, (a : ℕ) = pos i0 ∨ (a : ℕ) = pos i0 + 1
       · obtain ⟨i0, h0⟩ := hex
         rw [Finset.sum_eq_single i0]
-        · rw [if_pos h0]
+        · rw [ite_eq_left h0]
           rcases h0 with h0 | h0
           · have h' := (hj i0).1
             have ha : a = ⟨pos i0, by have := hpos i0; omega⟩ := Fin.ext h0
@@ -585,17 +443,17 @@ private theorem gen_wh_of_pos_separated_of_le_deg {N T : ℕ} (deg : Fin N → �
             rw [ha]
             exact h'
         · intro i _ hi
-          rw [if_neg]
+          rw [ite_eq_right]
           intro h
           have := hdis i i0 hi
           omega
         · intro h
           exact absurd (Finset.mem_univ i0) h
-      · push_neg at hex
+      · push Not at hex
         rw [Finset.sum_eq_zero]
         · exact Nat.zero_le _
         · intro i _
-          rw [if_neg]
+          rw [ite_eq_right]
           rintro (h | h)
           · exact (hex i).1 h
           · exact (hex i).2 h
@@ -610,17 +468,17 @@ private theorem gen_wh_of_pos_separated_of_le_deg {N T : ℕ} (deg : Fin N → �
       · have h2 : a ≠ ⟨pos i + 1, hpos i⟩ := fun h => by
           rw [h] at h1
           simp at h1
-        rw [if_pos (Or.inl h1), if_pos (Fin.ext h1), if_neg h2, add_zero]
+        rw [ite_eq_left (Or.inl h1), ite_eq_left (Fin.ext h1), ite_eq_right h2, add_zero]
       · by_cases h3 : (a : ℕ) = pos i + 1
         · have h2 : a ≠ ⟨pos i, by have := hpos i; omega⟩ := fun h => h1 (by rw [h])
-          rw [if_pos (Or.inr h3), if_neg h2, if_pos (Fin.ext h3), zero_add]
+          rw [ite_eq_left (Or.inr h3), ite_eq_right h2, ite_eq_left (Fin.ext h3), zero_add]
         · have h2 : a ≠ ⟨pos i, by have := hpos i; omega⟩ := fun h => h1 (by rw [h])
           have h4 : a ≠ ⟨pos i + 1, hpos i⟩ := fun h => h3 (by rw [h])
-          rw [if_neg (by tauto), if_neg h2, if_neg h4, add_zero]
+          rw [ite_eq_right (by tauto), ite_eq_right h2, ite_eq_right h4, add_zero]
     simp only [hs, add_mul, Finset.sum_add_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ,
-      if_true, mul_add]
+      ite_true, mul_add]
   have hB : ∑ a : Fin N, (if a = u then jp else 0) * w a = jp * w u := by
-    simp only [ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have hA : ∑ a : Fin N, (∑ i, if (a : ℕ) = pos i ∨ (a : ℕ) = pos i + 1 then j i else 0) * w a
       = ∑ i, j i * (w ⟨pos i, by have := hpos i; omega⟩ + w ⟨pos i + 1, hpos i⟩) := by
     simp only [Finset.sum_mul]

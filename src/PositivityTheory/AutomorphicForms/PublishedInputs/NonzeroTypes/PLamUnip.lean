@@ -66,7 +66,7 @@ theorem diag_of_unipRad {n : ℕ} (G : Grp k n) (g : GL (Fin n) k) (hg : g ∈ u
   rw [hD a i' j', Matrix.one_apply]
   by_cases hij : i' = j'
   · subst hij; simp
-  · rw [if_neg hij, if_neg]
+  · rw [ite_eq_right hij, ite_eq_right]
     intro he
     have := G.e.injective he
     simp at this

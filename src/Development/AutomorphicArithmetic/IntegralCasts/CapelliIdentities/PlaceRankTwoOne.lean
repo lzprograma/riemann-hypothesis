@@ -63,10 +63,10 @@ public import Mathlib.RingTheory.Norm.Transitivity
 namespace UpperTheory.Reformulated.B.placeRankTwoOne
 
 noncomputable def Jm : {n : ℕ} → (Fin n → Bool) → Matrix (Fin n) (Fin n) ℂ :=
-  fun {n} ε => Matrix.diagonal fun a => if ε a = Bool.true then 1 else -1
+  fun {_} ε => Matrix.diagonal fun a => if ε a = Bool.true then 1 else -1
 
 noncomputable def inUJ : {n : ℕ} → (Fin n → Bool) → Matrix (Fin n) (Fin n) ℂ → Prop :=
-  fun {n} ε g =>
+  fun {_} ε g =>
     g.conjTranspose * Jm ε * g =
       Jm ε
 
@@ -112,7 +112,7 @@ noncomputable def UJ : {n : ℕ} → (Fin n → Bool) → Subgroup (Matrix (Fin 
 
 @[reducible] noncomputable def instMeasurableSpaceUJ : (n : ℕ) →
   (ε : Fin n → Bool) → MeasurableSpace ↥(UJ ε) :=
-  fun n ε => borel ↥(UJ ε)
+  fun _ ε => borel ↥(UJ ε)
 
 attribute [local instance] instMeasurableSpaceUJ
 
@@ -195,11 +195,11 @@ noncomputable def muG : {n : ℕ} →
     exact MeasureTheory.Measure.haar
 
 noncomputable def hs : {n : ℕ} → Matrix (Fin n) (Fin n) ℂ → ℝ :=
-  fun {n} g => ∑ i, ∑ j, ‖g i j‖ ^ 2
+  fun {_} g => ∑ i, ∑ j, ‖g i j‖ ^ 2
 
 noncomputable def hsG : {n : ℕ} →
   {ε : Fin n → Bool} → ↥(UJ ε) → ℝ :=
-  fun {n} {ε} g => hs g.val.val
+  fun {_} {_} g => hs g.val.val
 
 noncomputable def VolGrowth : Prop :=
 ∀ (n : ℕ) (ε : Fin n → Bool),

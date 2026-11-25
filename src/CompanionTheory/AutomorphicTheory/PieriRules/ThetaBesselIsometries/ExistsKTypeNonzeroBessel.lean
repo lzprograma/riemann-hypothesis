@@ -29,8 +29,7 @@ theorem bessel_nonzero_on_translates : HypsG → ∀ (k r : ℕ) (ε : Fin (2 * 
     · exact Submodule.smul_mem _ _ (Submodule.mem_sSup.mpr fun N hN => hN S hS hvS)
   obtain ⟨w0, hlow⟩ := hex
   have hwK : R.KFin w0 := PI.UnitaryGroupMassFormula.LowSmooth.isKFinHpk_of_lowUnit hlow
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   obtain ⟨w, hw, hlw⟩ := hnz
   refine hlw (Formalism.FourierDecayAlt.P.bessel_ne_zero_of_cyclic_orbit hCyc hKF k r ε mu R.H R.σ w0 Wp z Formalism.QuantumDeterminants.cStd π hds.1 hds.2 hlow
     l hB (fun x hx => hcon x ?_) w hw)

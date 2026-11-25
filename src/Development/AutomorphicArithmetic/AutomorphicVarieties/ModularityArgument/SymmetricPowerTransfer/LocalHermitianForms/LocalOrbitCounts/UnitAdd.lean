@@ -395,7 +395,7 @@ private theorem pt_eq {k : Type} [Field k] {α β γ δ : k} (h1 : α ≠ 0 ∨ 
     simp [ha, hc, hb]
   · have hd : δ ≠ 0 := h2.resolve_left (not_not.mpr hc)
     simp [ha, hc, hd]
-  · simp only [ha, hc, if_false, Option.some.injEq]
+  · simp only [ha, hc, ite_false, Option.some.injEq]
     rw [div_eq_div_iff ha hc]
     constructor <;> intro h <;> linear_combination -h
 
@@ -464,8 +464,7 @@ private theorem count (L : IsLoc O Δ) {π : O} {n : ℕ} {e : Oˣ} {h : O} {x :
     simpa [r, map_sub, map_mul, map_pow] using this
   have hnz : ∀ g, r (A g) ≠ 0 ∨ r (B g) ≠ 0 := by
     intro g
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hN' g
     rw [hcon.1, hcon.2]
     ring
@@ -1084,8 +1083,8 @@ theorem UpperTheory.V.Z.Sym.Loc.pKappa :
           = (t0 : K) * algebraMap O K (π ^ (n + m)) * algebraMap O K π by ring,
         ev_odd L hπ0 hodd (mul_ne_zero (Units.ne_zero t0) (hP m))]
       by_cases hE : EvenVal O ((t0 : K) * algebraMap O K (π ^ (n + m)))
-      · rw [if_pos hE, if_neg (not_not.2 hE), add_zero]
-      · rw [if_neg hE, if_pos hE, zero_add]
+      · rw [ite_eq_left hE, ite_eq_right (not_not.2 hE), add_zero]
+      · rw [ite_eq_right hE, ite_eq_left hE, zero_add]
     rw [hL.2.2.2 _ _ hD hsq, one_mul, hp, hcount, hcount, ← Finset.sum_add_distrib, Finset.sum_congr rfl (hterm _)]
     exact_mod_cast sum_split r q r0 r1 rs n
   · have hE : ¬ IsSquare (e : O) := fun h' => hsq (hDe.2 h')
@@ -1651,7 +1650,7 @@ theorem UpperTheory.V.Z.Sym.Loc.kapM :
   have hsDD : hs (τ ^ 2 - 4) (τ ^ 2 - 4) = 1 := by
     have h8 : hs (τ ^ 2 - 4) (-(τ ^ 2 - 4)) = 1 := by
       unfold UpperTheory.V.Z.Sym.Loc.hs
-      rw [if_pos ⟨0, 1, by ring⟩]
+      rw [ite_eq_left ⟨0, 1, by ring⟩]
     have h9 : hs (τ ^ 2 - 4) (-1) = 1 := hL.2.1 _ _ hDv ⟨-1, 1, one_ne_zero, by simp⟩
     have h10 := hsMul O K Δ L (τ ^ 2 - 4) (-1) (-(τ ^ 2 - 4)) hD (by norm_num) (neg_ne_zero.2 hD)
     rw [show (-1 : K) * -(τ ^ 2 - 4) = τ ^ 2 - 4 by ring, h9, h8, one_mul] at h10

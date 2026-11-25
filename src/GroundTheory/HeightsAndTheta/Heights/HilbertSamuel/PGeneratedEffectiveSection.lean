@@ -6,6 +6,7 @@ public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.DivC
 public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
 public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PVocabDivCycle
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenTwistGenerated
+import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartNakayamaGenAgree
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Order.Interval.Finset.Box
 import Mathlib.Tactic.TypeStar
@@ -172,97 +173,8 @@ theorem res_eq_of_pair {M : Type*} [AddCommGroup M] [Module (MRingOver F ι) M] 
     (j : ι k) (hj : j ≠ c k) (f : KH.CechC F ι M 0) (hf : KH.cechD F ι M 0 f = 0) :
     KH.cellRes F M (chart c).1 (pairCell c k j hj).1 (f (chart c)) =
       KH.cellRes F M (chart (Function.update c k j)).1 (pairCell c k j hj).1
-        (f (chart (Function.update c k j))) := by
-  classical
-  have h := congrFun hf (pairCell c k j hj)
-  have hIk : (pairCell c k j hj).1 k = {c k, j} := by simp [pairCell]
-  have hIl : ∀ l, l ≠ k → (pairCell c k j hj).1 l = {c l} := fun l hl => by
-    simp [pairCell, Function.update_of_ne hl]
-  generalize pairCell c k j hj = I at h hIk hIl ⊢
-  have hne : ∀ l, (I.1 l).Nonempty := I.2.1
-  have hxy : c k ≠ j := hj.symm
-  have hx : c k ∈ I.1 k := by rw [hIk]; simp
-  have hy : j ∈ I.1 k := by rw [hIk]; simp
-  have hcard₀ : (I.1 k).card = 2 := by rw [hIk]; exact Finset.card_pair hxy
-  have hother : ∀ l, l ≠ k → (I.1 l).card = 1 := fun l hl => by rw [hIl l hl]; rfl
-  have hface : ∀ i ∈ I.1 k, (∀ l, (Function.update I.1 k ((I.1 k).erase i) l).Nonempty) ∧
-      ∑ l, ((Function.update I.1 k ((I.1 k).erase i) l).card - 1) = 0 := by
-    intro i hi
-    have hc : ((I.1 k).erase i).card = 1 := by rw [Finset.card_erase_of_mem hi, hcard₀]
-    refine ⟨fun l => ?_, Finset.sum_eq_zero fun l _ => ?_⟩
-    · by_cases hl : l = k
-      · subst hl; rw [Function.update_self]; exact Finset.card_pos.mp (by omega)
-      · rw [Function.update_of_ne hl]; exact hne l
-    · by_cases hl : l = k
-      · subst hl; rw [Function.update_self, hc]; rfl
-      · rw [Function.update_of_ne hl, hother l hl]; rfl
-  have hsign : KH.faceSign I.1 k j = -KH.faceSign I.1 k (c k) := by
-    unfold KH.faceSign
-    rcases lt_or_gt_of_ne hxy with h' | h'
-    · have e₁ : ((I.1 k).filter (· < c k)).card = 0 := by
-        rw [hIk]; simp [Finset.filter_insert, Finset.filter_singleton, h'.not_gt]
-      have e₂ : ((I.1 k).filter (· < j)).card = 1 := by
-        rw [hIk]; simp [Finset.filter_insert, Finset.filter_singleton, h']
-      rw [e₁, e₂, add_comm 1, pow_succ, zero_add]; ring
-    · have e₁ : ((I.1 k).filter (· < c k)).card = 1 := by
-        rw [hIk]; simp [Finset.filter_insert, Finset.filter_singleton, h']
-      have e₂ : ((I.1 k).filter (· < j)).card = 0 := by
-        rw [hIk]; simp [Finset.filter_insert, Finset.filter_singleton, h'.not_gt]
-      rw [e₁, e₂, add_comm 1, pow_succ, zero_add]; ring
-  have key : ∀ (c₀ : ∀ k, ι k) (a : ∀ l, Finset (ι l)) (p : (∀ l, (a l).Nonempty) ∧ ∑ l, ((a l).card - 1) = 0),
-      a = (chart c₀).1 →
-      KH.cellRes F M a I.1 (f ⟨a, p⟩) = KH.cellRes F M (chart c₀).1 I.1 (f (chart c₀)) := by
-    rintro c₀ a p rfl
-    rfl
-  have f₁ : Function.update I.1 k ((I.1 k).erase (c k)) = (chart (Function.update c k j)).1 := by
-    funext l
-    by_cases hl : l = k
-    · subst hl
-      rw [Function.update_self, hIk]
-      simp [chart, hxy]
-    · rw [Function.update_of_ne hl, hIl l hl]
-      simp [chart, Function.update_of_ne hl]
-  have f₂ : Function.update I.1 k ((I.1 k).erase j) = (chart c).1 := by
-    funext l
-    by_cases hl : l = k
-    · subst hl
-      rw [Function.update_self, hIk]
-      ext x
-      simp only [chart, Finset.mem_erase, Finset.mem_insert, Finset.mem_singleton]
-      constructor
-      · rintro ⟨h1, h2 | h2⟩
-        · exact h2
-        · exact absurd h2 h1
-      · rintro rfl
-        exact ⟨hxy, Or.inl rfl⟩
-    · rw [Function.update_of_ne hl, hIl l hl]
-      rfl
-  change (∑ l : K, ∑ i ∈ I.1 l, _ :
-    KH.CechC F ι M 0 →ₗ[MRingOver F ι] LocalizedModule (KH.cellMon F I.1) M) f = 0 at h
-  rw [Finset.sum_eq_single k, Finset.sum_eq_add_of_mem (c k) j hx hy hxy, dite_eq_left (hface (c k) hx),
-    dite_eq_left (hface j hy)] at h
-  · rw [hsign, LinearMap.add_apply] at h
-    change KH.faceSign I.1 k (c k) • (KH.cellRes F M _ I.1 (f _)) +
-      (-KH.faceSign I.1 k (c k)) • (KH.cellRes F M _ I.1 (f _)) = 0 at h
-    rw [key _ _ _ f₁, key _ _ _ f₂, neg_smul, ← sub_eq_add_neg] at h
-    have h' := sub_eq_zero.mp h
-    have hs2 : KH.faceSign I.1 k (c k) * KH.faceSign I.1 k (c k) = 1 := by
-      unfold KH.faceSign
-      rw [← pow_add, ← two_mul, pow_mul]
-      norm_num
-    have h'' := congrArg (fun x => KH.faceSign I.1 k (c k) • x) h'
-    simp only [smul_smul, hs2, one_smul] at h''
-    exact h''.symm
-  · intro i hi _
-    have : i = c k ∨ i = j := by rw [hIk] at hi; simpa using hi
-    tauto
-  · intro l _ hl
-    refine Finset.sum_eq_zero fun i hi => dif_neg fun h' => ?_
-    have := h'.1 l
-    rw [Function.update_self, ← Finset.card_pos, Finset.card_erase_of_mem hi, hother l hl] at this
-    omega
-  · intro h'
-    exact absurd (Finset.mem_univ k) h'
+        (f (chart (Function.update c k j))) :=
+  ChartNakayamaGen.res_eq_of_pair c k j hj f hf
 
 section Chain
 

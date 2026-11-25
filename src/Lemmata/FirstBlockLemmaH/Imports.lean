@@ -44,8 +44,8 @@ theorem exists_integer_smul_basis_repr {R K V ι : Type*} [CommSemiring R] [Comm
     exact IsLocalization.isInteger_smul (hx i)
 
 theorem goal1 :
-  ∀ {E : Type} [inst : Field.{0} E] [NumberField.{0} E] {V : Type} [inst_2 : AddCommGroup.{0} V]
-  [inst_3 : Module.{0, 0} E V] [inst_4 : Module.{0, 0} (NumberField.RingOfIntegers.{0} E) V]
+  ∀ {E : Type} [Field.{0} E] [NumberField.{0} E] {V : Type} [AddCommGroup.{0} V]
+  [Module.{0, 0} E V] [Module.{0, 0} (NumberField.RingOfIntegers.{0} E) V]
   [IsScalarTower.{0, 0, 0} (NumberField.RingOfIntegers.{0} E) E V] {ι : Type} [Fintype.{0} ι] [DecidableEq.{1} ι]
   {b : Module.Basis.{0, 0, 0} ι E V} {M : Submodule.{0, 0} (NumberField.RingOfIntegers.{0} E) V},
   Module.Finite.{0, 0} (NumberField.RingOfIntegers.{0} E) (Subtype.{1} fun (x : V) ↦ Membership.mem.{0, 0} M x) →

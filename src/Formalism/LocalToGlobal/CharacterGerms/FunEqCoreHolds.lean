@@ -18,8 +18,6 @@ import Mathlib.RingTheory.RegularLocalRing.Defs
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators
@@ -61,10 +59,10 @@ theorem decomp {f : PS C 3 dd} (h1 : ev (rz 2) f = 1) : f = 1 + ∑ k, X ((0 : F
   by_cases hfree : ∀ j, p ((0 : Fin 3), j) = 0
   · rw [coeff_free h1 hfree, Finset.sum_eq_zero, add_zero]
     intro k _
-    rw [if_neg]
+    rw [ite_eq_right]
     rw [Finsupp.single_le_iff, hfree k]
     omega
-  · push_neg at hfree
+  · push Not at hfree
     set S := Finset.univ.filter (fun j : Fin dd => p ((0 : Fin 3), j) ≠ 0) with hSdef
     have hS : S.Nonempty := by
       obtain ⟨j, hj⟩ := hfree
@@ -89,14 +87,14 @@ theorem decomp {f : PS C 3 dd} (h1 : ev (rz 2) f = 1) : f = 1 + ∑ k, X ((0 : F
     have hle0 : Finsupp.single ((0 : Fin 3), k0) 1 ≤ p := by
       rw [Finsupp.single_le_iff]
       omega
-    rw [if_neg hp0, zero_add, Finset.sum_eq_single k0]
-    · rw [if_pos hle0]
+    rw [ite_eq_right hp0, zero_add, Finset.sum_eq_single k0]
+    · rw [ite_eq_left hle0]
       show coeff p f = (if (∀ j : Fin dd, j < k0 →
           (p - Finsupp.single ((0 : Fin 3), k0) 1 : Fin 3 × Fin dd →₀ ℕ) ((0 : Fin 3), j) = 0) then
           coeff (p - Finsupp.single ((0 : Fin 3), k0) 1 + Finsupp.single ((0 : Fin 3), k0) 1) f else 0)
-      rw [if_pos, tsub_add_cancel_of_le hle0]
+      rw [ite_eq_left, tsub_add_cancel_of_le hle0]
       intro j hj
-      rw [Finsupp.tsub_apply, Finsupp.single_apply, if_neg, hmin j hj]
+      rw [Finsupp.tsub_apply, Finsupp.single_apply, ite_eq_right, hmin j hj]
       all_goals first
         | rfl
         | (intro h
@@ -105,11 +103,11 @@ theorem decomp {f : PS C 3 dd} (h1 : ev (rz 2) f = 1) : f = 1 + ∑ k, X ((0 : F
            exact lt_irrefl _ hj)
     · intro k _ hk
       by_cases hle : Finsupp.single ((0 : Fin 3), k) 1 ≤ p
-      · rw [if_pos hle]
+      · rw [ite_eq_left hle]
         show (if (∀ j : Fin dd, j < k →
             (p - Finsupp.single ((0 : Fin 3), k) 1 : Fin 3 × Fin dd →₀ ℕ) ((0 : Fin 3), j) = 0) then
             coeff (p - Finsupp.single ((0 : Fin 3), k) 1 + Finsupp.single ((0 : Fin 3), k) 1) f else 0) = 0
-        rw [if_neg]
+        rw [ite_eq_right]
         intro hall
         have hkS : k ∈ S := by
           simp only [hSdef, Finset.mem_filter, Finset.mem_univ, true_and]
@@ -117,12 +115,12 @@ theorem decomp {f : PS C 3 dd} (h1 : ev (rz 2) f = 1) : f = 1 + ∑ k, X ((0 : F
           omega
         have hk0k : k0 < k := lt_of_le_of_ne (S.min'_le k hkS) (Ne.symm hk)
         have h2 := hall k0 hk0k
-        rw [Finsupp.tsub_apply, Finsupp.single_apply, if_neg] at h2
+        rw [Finsupp.tsub_apply, Finsupp.single_apply, ite_eq_right] at h2
         · exact hk0p (by omega)
         · intro h
           simp only [Prod.mk.injEq, true_and] at h
           exact hk h
-      · rw [if_neg hle]
+      · rw [ite_eq_right hle]
     · intro h
       exact absurd (Finset.mem_univ k0) h
 
@@ -141,7 +139,7 @@ theorem triple_multiplication_pderiv_other (Y : FBChart C V O dd) (k : Fin dd) (
   apply Finset.sum_eq_zero
   intro j _
   simp only [p3, pderiv_pt]
-  rw [if_neg (fun h => hs (congrArg Prod.fst h).symm), mul_zero]
+  rw [ite_eq_right (fun h => hs (congrArg Prod.fst h).symm), mul_zero]
 
 theorem triple_multiplication_first_only (Y : FBChart C V O dd) (k : Fin dd) (p : Fin 3 × Fin dd →₀ ℕ) (s : Fin 3 × Fin dd)
     (hs : s.1 ≠ 0) (hp : p s ≠ 0) : coeff p (m3 Y.B.G V.l k) = 0 := by
@@ -231,7 +229,7 @@ theorem m3mul (Y : FBChart C V O dd) (k i : Fin dd) (γ : Fin 2 × Fin dd →₀
   classical
   set N := ix i V.l γ with hN
   have hl0 : 0 < V.l := V.l_prime.pos
-  have hNi : N ((0 : Fin 3), i) = V.l := by rw [hN, index_raise_first, if_pos rfl]
+  have hNi : N ((0 : Fin 3), i) = V.l := by rw [hN, index_raise_first, ite_eq_left rfl]
   have key : ∀ a : Fin 3 × Fin dd →₀ ℕ, a ≤ N → a ≠ Finsupp.single ((0 : Fin 3), i) V.l →
       V.MM (coeff a (m3 Y.B.G V.l k)) := by
     intro a ha hne
@@ -239,7 +237,7 @@ theorem m3mul (Y : FBChart C V O dd) (k i : Fin dd) (γ : Fin 2 × Fin dd →₀
     · obtain ⟨s, hs, has⟩ := hz
       rw [triple_multiplication_first_only Y k a s hs has]
       exact mm_zero_of_vf
-    · push_neg at hz
+    · push Not at hz
       have hx : ∀ j, j ≠ i → a ((0 : Fin 3), j) = 0 := fun j hj => x_le i γ ha j hj
       by_cases hd : V.l ∣ a ((0 : Fin 3), i)
       · have hle : a ((0 : Fin 3), i) ≤ V.l := by
@@ -263,11 +261,11 @@ theorem m3mul (Y : FBChart C V O dd) (k i : Fin dd) (γ : Fin 2 × Fin dd →₀
             rw [Finsupp.single_apply]
             by_cases hj : j = i
             · subst hj
-              rw [if_pos rfl]
+              rw [ite_eq_left rfl]
               exact hc
-            · rw [if_neg (fun h => hj (congrArg Prod.snd h).symm), hx j hj]
+            · rw [ite_eq_right (fun h => hj (congrArg Prod.snd h).symm), hx j hj]
           | succ kk' =>
-            rw [Finsupp.single_apply, if_neg (fun h => Fin.succ_ne_zero _ (congrArg Prod.fst h).symm)]
+            rw [Finsupp.single_apply, ite_eq_right (fun h => Fin.succ_ne_zero _ (congrArg Prod.fst h).symm)]
             exact hz _ (Fin.succ_ne_zero _)
         rcases h01 with h0 | hL
         · rw [hext 0 h0, Finsupp.single_zero, MvPowerSeries.coeff_zero_eq_constantCoeff_apply, triple_multiplication_constantCoeff]
@@ -385,7 +383,7 @@ theorem phiQ (Y : FBChart C V O dd) (u : Fin dd → C) (hu : ∀ i, V.Ge 0 (u i)
         (Tk Y.B.ph2 k)) := by
     intro i
 
-    rw [map_add (f := _), map_sum, MvPowerSeries.coeff_one, if_neg, zero_add]
+    rw [map_add (f := _), map_sum, MvPowerSeries.coeff_one, ite_eq_right, zero_add]
     intro h
     have h2 := congrArg (fun p => p ((0 : Fin 3), i)) h
     simp [index_raise_first] at h2
@@ -472,7 +470,7 @@ theorem mm_sum_pow {ι : Type} (s : Finset ι) (a : ι → C) (ha : ∀ i, V.Ge 
 
 private theorem single_zero_apply_up_two_eq_zero (i : Fin dd) (L : ℕ) (t : Fin 2 × Fin dd) :
     (Finsupp.single ((0 : Fin 3), i) L : Fin 3 × Fin dd →₀ ℕ) (up 2 t) = 0 := by
-  rw [Finsupp.single_apply, if_neg]
+  rw [Finsupp.single_apply, ite_eq_right]
   intro h
   simp only [up, Prod.mk.injEq] at h
   exact Fin.succ_ne_zero _ h.1.symm
@@ -533,12 +531,12 @@ theorem phiP (Y : FBChart C V O dd) (u : Fin dd → C) (hu : ∀ i, V.Ge 0 (u i)
   refine GmExArith.mm_add (GmExArith.mm_sum fun i _ => GmExArith.mm_int_mul ((hu i).pow _) (hP _)) ?_
   rw [MaximalIdealCongruence.coeff_frobTw]
   by_cases hd : ∀ t, V.l ∣ γ t
-  · rw [if_pos hd]
+  · rw [ite_eq_left hd]
     have e2 : ∀ i, coeff (ix i V.l γ) (frobTw V.l Y.B.ph2) =
         (coeff ((γ.mapRange (fun n => n / V.l) (Nat.zero_div V.l)).mapDomain (up 2) +
           Finsupp.single ((0 : Fin 3), i) 1) Y.B.ph2) ^ V.l := by
       intro i
-      rw [MaximalIdealCongruence.coeff_frobTw, if_pos ((ix_dvd i γ).2 hd), ix_div i γ V.l hl.pos]
+      rw [MaximalIdealCongruence.coeff_frobTw, ite_eq_left ((ix_dvd i γ).2 hd), ix_div i γ V.l hl.pos]
     simp only [e2]
     set ν := γ.mapRange (fun n => n / V.l) (Nat.zero_div V.l) with hν
     have e3 : coeff ν (Y.chartLinearTerm u) = ∑ i, u i * coeff (ν.mapDomain (up 2) + Finsupp.single ((0 : Fin 3), i) 1) Y.B.ph2 :=
@@ -549,9 +547,9 @@ theorem phiP (Y : FBChart C V O dd) (u : Fin dd → C) (hu : ∀ i, V.Ge 0 (u i)
       Finset.sum_congr rfl fun i _ => (mul_pow _ _ _).symm
     rw [e4, ← neg_sub]
     exact GmExArith.mm_neg (mm_sum_pow _ _ fun i => (hu i).mul_int (Y.intPh2 _))
-  · rw [if_neg hd, sub_zero]
+  · rw [ite_eq_right hd, sub_zero]
     refine GmExArith.mm_sum fun i _ => ?_
-    rw [MaximalIdealCongruence.coeff_frobTw, if_neg (fun h => hd ((ix_dvd i γ).1 h)), mul_zero]
+    rw [MaximalIdealCongruence.coeff_frobTw, ite_eq_right (fun h => hd ((ix_dvd i γ).1 h)), mul_zero]
     exact GmExArith.mm_zero
 
 end Formalism.L2.FormalSeriesBounds.FunEq
@@ -564,8 +562,6 @@ end -- clump:auto
 -- clump-header: {"m": "Formalism.LocalToGlobal.CharacterGerms.FunEqCoreHolds", "h": "module\n\npublic import Formalism.LocalToGlobal.CharacterGerms.IteratePderivTripleMultiplication\nimport Formalism.LocalToGlobal.CharacterGerms.PderivTripleMultiplicationMaximal\nimport Formalism.LocalToGlobal.CharacterGerms.RowTiePGmExLem\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 

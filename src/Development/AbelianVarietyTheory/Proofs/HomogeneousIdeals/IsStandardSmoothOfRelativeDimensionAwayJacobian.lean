@@ -351,13 +351,6 @@ private theorem exists_isOpenImmersion_of_origin_preimage {X : Scheme.{u}}
     infer_instance
   exact .of_comp _ fZ
 
-theorem exists_isOpenImmersion_away_originW :
-    ∃ f : Spec (.of (Localization.Away (originW W))) ⟶ Spec (.of W.toAffine.CoordinateRing),
-      IsOpenImmersion f ∧ f ≫ chartZ W =
-        Spec.map (CommRingCat.ofHom (algebraMap (OriginRing W) _)) ≫ chartY W :=
-  exists_isOpenImmersion_of_origin_preimage W (chartY W) (chartZ W)
-    (chartY_preimage_coordOpen_two W) (opensRange_chartZ W)
-
 private def originAwayChart : Spec (.of (OriginRing W)) ⟶ scheme W :=
   Spec.map (CommRingCat.ofHom (awayEquivOrigin W).toRingHom) ≫ awayChart W 1
 
@@ -426,10 +419,6 @@ private theorem denseRange_of_origin_preimage {X : Scheme.{u}}
     exact fY.continuous.closure_preimage_subset _ (hd y)
   · rw [← hZ] at hx
     exact subset_closure hx
-
-theorem denseRange_chartZ : DenseRange (chartZ W) :=
-  denseRange_of_origin_preimage W (chartY W) (chartZ W)
-    (opensRange_chartY W) (opensRange_chartZ W) (chartY_preimage_coordOpen_two W)
 
 private theorem isReduced_scheme_of_reduced_charts
     [IsReduced W.toAffine.CoordinateRing] [IsReduced (OriginRing W)] :

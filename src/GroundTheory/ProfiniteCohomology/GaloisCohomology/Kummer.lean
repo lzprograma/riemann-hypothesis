@@ -224,22 +224,4 @@ instance isDiscreteRep_kummerSequence_X₃ : IsDiscreteRep (kummerSequence K L n
 
 end Sequence
 
-section H1
-
-variable {K L} [IsSepClosure K L] {n : ℕ} (hn : (n : K) ≠ 0)
-
-
-
-
-end H1
-
-section H2
-
-variable {K L} [IsGalois K L]
-
-variable [IsSepClosure K L] {n : ℕ} (hn : (n : K) ≠ 0)
-
-
-end H2
-
 end GroundTheory.ProfCoh

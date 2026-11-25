@@ -4,54 +4,18 @@ public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.Adeli
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicUnitaryHaarBiInvariant
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulRightInvariantHaarAdelicUnitaryGroupHermiti
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HermitianFormFiniteZerosOnLineCmExt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Etale.Weakly
 import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Matrix Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicUnimod
   GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryHaarMeasure
-open Formalism.UG (UJ cT cT_mul)
+open Formalism.UG (UJ cT cT_mul cT_one)
 open scoped TensorProduct NNReal
 
 noncomputable section
@@ -74,14 +38,6 @@ theorem cT_add' (P Q : Matrix n n A) : cT σ (P + Q) = cT σ P + cT σ Q := by
   unfold Formalism.UG.cT
   ext i j
   simp
-
-private theorem cT_one_global_interpolation {p : Type} [Fintype p] [DecidableEq p] : cT σ (1 : Matrix p p A) = 1 := by
-  unfold Formalism.UG.cT
-  ext i j
-  by_cases hij : i = j
-  · subst hij
-    simp
-  · simp [Matrix.one_apply_ne hij, Matrix.one_apply_ne (Ne.symm hij)]
 
 private theorem mem_UJ_iff' {p : Type} [Fintype p] [DecidableEq p] {K : Matrix p p A} {g : GL p A} :
     g ∈ UJ σ K ↔ cT σ (g : Matrix p p A) * K * g = K := Iff.rfl
@@ -115,7 +71,7 @@ theorem OrthSplit.preserves (h : OrthSplit σ J B C X Y) {g : Matrix n n A} (hg 
   obtain ⟨h1, h2, h3, h4, h5, h6, h7, hJ⟩ := h
   have hJJ : J⁻¹ * J = 1 := Matrix.nonsing_inv_mul J ((Matrix.isUnit_iff_isUnit_det J).mp hJ)
   have hc : cT σ C * cT σ B + cT σ Y * cT σ X = 1 := by
-    rw [← cT_mul, ← cT_mul, ← cT_add', h2, cT_one_global_interpolation]
+    rw [← cT_mul, ← cT_mul, ← cT_add', h2, cT_one]
   have key : (Y * J⁻¹ * cT σ Y) * (cT σ X * J * X) = 1 := by
     have e1 : cT σ Y * cT σ X = 1 - cT σ C * cT σ B := eq_sub_of_add_eq' hc
     calc (Y * J⁻¹ * cT σ Y) * (cT σ X * J * X) = Y * J⁻¹ * (cT σ Y * cT σ X) * J * X := by
@@ -153,7 +109,7 @@ theorem OrthSplit.exists_equiv [TopologicalSpace A] [IsTopologicalRing A] (h : O
     intro g hg
     have e0 := h.form_ext 1
     rw [map_one] at e0
-    simp only [cT_one_global_interpolation, Matrix.one_mul, Matrix.mul_one] at e0
+    simp only [cT_one, Matrix.one_mul, Matrix.mul_one] at e0
     rw [h.form_ext g, hg, ← e0]
   have fixX : ∀ g : Matrix m m A, h.ext g * X = X := by
     intro g

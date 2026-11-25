@@ -5,46 +5,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterm
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorCommutatorQuantumDet
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -142,10 +102,10 @@ theorem minorVec_gen (hE : GlRel E) (y : Fin n → A) (hy : IsVec E y) {m : ℕ}
   have hM : Commute (y (a l₀)) (qminor E (a ∘ l₀.succAbove) (b ∘ l.succAbove) u) := by
     refine commute_qminor E _ _ u _ (fun s s' => ?_)
     have := hy ((a ∘ l₀.succAbove) s) ((b ∘ l.succAbove) s') (a l₀)
-    rw [if_neg (show (a ∘ l₀.succAbove) s ≠ a l₀ from hne s), sub_eq_zero] at this
+    rw [ite_eq_right (show (a ∘ l₀.succAbove) s ≠ a l₀ from hne s), sub_eq_zero] at this
     exact this.symm
   have hT : Tm E (u - (m : ℂ)) (a l₀) (b l) * y (a l₀) - y (a l₀) * Tm E (u - (m : ℂ)) (a l₀) (b l) = -y (b l) := by
-    rw [Tm_comm, hy, if_pos rfl]
+    rw [Tm_comm, hy, ite_eq_left rfl]
   have hc : y (a l₀) * (((-1 : ℤ) ^ ((l₀ : ℕ) + (l : ℕ)) : ℤ) : A) =
       (((-1 : ℤ) ^ ((l₀ : ℕ) + (l : ℕ)) : ℤ) : A) * y (a l₀) := (Int.commute_cast _ _).eq
   have hT' : y (b l) = y (a l₀) * Tm E (u - (m : ℂ)) (a l₀) (b l) - Tm E (u - (m : ℂ)) (a l₀) (b l) * y (a l₀) := by
@@ -165,10 +125,10 @@ theorem minorCov_gen (hE : GlRel E) (η : Fin n → A) (hη : IsCov E η) {m : �
   have hM : Commute (η (b l₀)) (qminor E (a ∘ l.succAbove) (b ∘ l₀.succAbove) u) := by
     refine commute_qminor E _ _ u _ (fun s s' => ?_)
     have := hη ((a ∘ l.succAbove) s) ((b ∘ l₀.succAbove) s') (b l₀)
-    rw [if_neg (show (b ∘ l₀.succAbove) s' ≠ b l₀ from hne s'), sub_eq_zero] at this
+    rw [ite_eq_right (show (b ∘ l₀.succAbove) s' ≠ b l₀ from hne s'), sub_eq_zero] at this
     exact this.symm
   have hT : Tm E (u - (m : ℂ)) (a l) (b l₀) * η (b l₀) - η (b l₀) * Tm E (u - (m : ℂ)) (a l) (b l₀) = η (a l) := by
-    rw [Tm_comm, hη, if_pos rfl]
+    rw [Tm_comm, hη, ite_eq_left rfl]
   have hc : η (b l₀) * (((-1 : ℤ) ^ ((l₀ : ℕ) + (l : ℕ)) : ℤ) : A) =
       (((-1 : ℤ) ^ ((l₀ : ℕ) + (l : ℕ)) : ℤ) : A) * η (b l₀) := (Int.commute_cast _ _).eq
   rw [← mul_assoc (η (b l₀)), hc, mul_assoc _ (η (b l₀)), ← mul_assoc (η (b l₀)), hM.eq,
@@ -220,9 +180,9 @@ theorem minorCov_succ {A : Type} [Ring A] [Algebra ℂ A] {m : ℕ} (E : Fin (m 
   obtain ⟨l₀, rfl⟩ := Fin.exists_succAbove_eq hip
   have h := minorCov_gen E hE η hη q.succAbove p.succAbove l₀
     (fun k => fun hk => Fin.succAbove_ne l₀ k (Fin.succAbove_right_injective hk)) u
-  rw [skip_one_eq_succAbove, skip_one_eq_succAbove, h, Fin.sum_univ_succAbove _ q, if_pos rfl, zero_add]
+  rw [skip_one_eq_succAbove, skip_one_eq_succAbove, h, Fin.sum_univ_succAbove _ q, ite_eq_left rfl, zero_add]
   refine Finset.sum_congr rfl (fun l _ => ?_)
-  rw [if_neg (Fin.succAbove_ne q l), skip_comp, skip_comp]
+  rw [ite_eq_right (Fin.succAbove_ne q l), skip_comp, skip_comp]
   congr 2
   rw [pow_add, pow_add, ← eps_sa q l, ← eps_sa p l₀]
   ring
@@ -238,7 +198,7 @@ theorem Formalism.FourierDecayAlt.P.quantum_determinant_vector : Formalism.Fouri
 theorem Formalism.FourierDecayAlt.P.quantum_minor_covariance : Formalism.FourierDecayAlt.Qr.MinorCov := by
   intro A _ _ t E η hE hη u q p i
   by_cases hip : i = p
-  · rw [if_pos hip, sub_eq_zero]
+  · rw [ite_eq_left hip, sub_eq_zero]
     refine (Formalism.FourierDecayAlt.P.QuantumMinorCommutation.commute_qminor E _ _ u _ (fun s s' => ?_)).eq.symm
     have := hη (Formalism.FourierDecayAlt.Q.skip1 q s) (Formalism.FourierDecayAlt.Q.skip1 p s') i
     have hne : Formalism.FourierDecayAlt.Q.skip1 p s' ≠ i := by
@@ -247,9 +207,9 @@ theorem Formalism.FourierDecayAlt.P.quantum_minor_covariance : Formalism.Fourier
       have h' := congrArg Fin.val h
       unfold Formalism.FourierDecayAlt.Q.skip1 at h'
       split_ifs at h' <;> simp only [] at h' <;> omega
-    rw [if_neg hne, sub_eq_zero] at this
+    rw [ite_eq_right hne, sub_eq_zero] at this
     exact this.symm
-  · rw [if_neg hip]
+  · rw [ite_eq_right hip]
     match t, E, η, hE, hη, q, p, i, hip with
     | 0, _, _, _, _, q, _, _, _ => exact q.elim0
     | 1, _, _, _, _, _, p, i, hip => exact absurd (Subsingleton.elim i p) hip

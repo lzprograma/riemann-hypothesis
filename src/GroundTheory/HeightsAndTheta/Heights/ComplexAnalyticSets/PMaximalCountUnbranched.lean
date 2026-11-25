@@ -17,15 +17,9 @@ open Topology Filter Metric
 namespace MaximalCountUnbranched
 
 theorem analyticOnNhd_of_differentiableOn_pi {d : ℕ} {σ : Type} [Fintype σ] {U : Set (Fin d → ℂ)}
-    {G : (Fin d → ℂ) → σ → ℂ} (hU : IsOpen U) (hG : DifferentiableOn ℂ G U) : AnalyticOnNhd ℂ G U := by
-  intro y hy
-  refine AnalyticAt.pi fun s => ?_
-  have hs : DifferentiableOn ℂ (fun x => G x s) U := differentiableOn_pi.1 hG s
-  refine analyticOnNhd_of_continuousOn_of_separately hU hs.continuousOn (fun z hz i => ?_) y hy
-  have h1 : DifferentiableAt ℂ (fun x => G x s) (Function.update z i (z i)) := by
-    rw [Function.update_eq_self]
-    exact hs.differentiableAt (hU.mem_nhds hz)
-  exact h1.comp (z i) (hasFDerivAt_update (𝕜 := ℂ) z (z i)).differentiableAt
+    {G : (Fin d → ℂ) → σ → ℂ} (hU : IsOpen U) (hG : DifferentiableOn ℂ G U) : AnalyticOnNhd ℂ G U :=
+  fun y hy => AnalyticAt.pi fun s =>
+    ReciprocityTheory.AnForm.Osgood.osgood d U (fun x => G x s) hU (differentiableOn_pi.1 hG s) y hy
 
 theorem fibre_unique_near {σ : Type} [Fintype σ] {Y : Set (σ → ℂ)} {d : ℕ}
     {A : (σ → ℂ) →L[ℂ] (Fin d → ℂ)} {D : Set (Fin d → ℂ)} {N : ℕ} (hmaps : Set.MapsTo A Y D)

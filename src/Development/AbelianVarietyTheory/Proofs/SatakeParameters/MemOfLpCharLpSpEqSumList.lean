@@ -3,51 +3,8 @@ module
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.RepresentationTheory.Irreducible
 public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasNormGroups
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -97,7 +54,6 @@ section -- clump:auto
 @[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel Matrix Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocDict
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 
@@ -130,14 +86,14 @@ theorem shiftEnd_pow_single_zero (n j : ℕ) (hj : j < n) :
   split_ifs with hi
   · simp only [Pi.single_apply, Fin.ext_iff]
     split_ifs <;> first | rfl | (exfalso; omega)
-  · rw [Pi.single_apply, if_neg]
+  · rw [Pi.single_apply, ite_eq_right]
     intro e
     apply hi
     rw [e]
 
 theorem shiftEnd_pow_eq_zero {n j : ℕ} (hj : n ≤ j) : shiftEnd n ^ j = 0 :=
   LinearMap.ext fun y => funext fun i => by
-    rw [shiftEnd_pow_apply, if_neg (by omega)]
+    rw [shiftEnd_pow_apply, ite_eq_right (by omega)]
     rfl
 
 theorem shiftEnd_pow_self (k : ℕ) : shiftEnd (k + 1) ^ k =
@@ -178,8 +134,7 @@ theorem stable_eq_bot_or_top {ρ : Representation ℂ G V} (hρ : ρ.IsIrreducib
   · exact Or.inr (congrArg Subrepresentation.toSubmodule h)
 
 theorem exists_ne_zero {ρ : Representation ℂ G V} (hρ : ρ.IsIrreducible) : ∃ v : V, v ≠ 0 := by
-  by_contra hall
-  push_neg at hall
+  by_contra! hall
   haveI := hρ
   apply (bot_ne_top : (⊥ : Subrepresentation ρ) ≠ ⊤)
   apply Subrepresentation.ext
@@ -351,15 +306,13 @@ theorem eq_of_hasCopy (a : WDRep h V) (ha : a.ρ.IsIrreducible) (a' : WDRep h V'
   obtain ⟨f, g, hf, hc, hfg⟩ := H
   rw [tensor_sp_N_pow a' hN'] at hfg
   have hmk : m ≤ k := by
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     obtain ⟨v, hv⟩ := exists_ne_zero ha'
     apply tmul_single_ne_zero (⟨k + 1, by omega⟩ : Fin (m + 1)) hv
     have := LinearMap.congr_fun Z (v ⊗ₜ Pi.single ⟨0, by omega⟩ 1)
     rwa [LinearMap.lTensor_tmul, shiftEnd_pow_single_zero, LinearMap.zero_apply] at this
   have hkm : k ≤ m := by
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     apply hf
     rw [hfg, shiftEnd_pow_eq_zero (by omega), LinearMap.lTensor_zero, LinearMap.zero_comp]
   obtain rfl : m = k := le_antisymm hmk hkm

@@ -131,16 +131,6 @@ noncomputable def UJ : {A : Type} →
       one_mem' := aux3 σ J,
       inv_mem' := @aux4 A inst n inst_1 inst_2 σ J }
 
-theorem aux6 : ∀ {F : Type} [inst : Field F] (R : Type) [inst_1 : CommRing R]
-  [inst_2 : Algebra F R], SMulCommClass F F R := by
-  intro F _ R _ _
-  exact inferInstance
-
-theorem aux7 : ∀ {F : Type} [inst : Field F] (R : Type) [inst_1 : CommRing R]
-  [inst_2 : Algebra F R], IsScalarTower F F R := by
-  intro F _ R _ _
-  exact inferInstance
-
 noncomputable def sigR : {F E : Type} →
   [inst : Field F] →
     [inst_1 : Field E] →
@@ -149,26 +139,6 @@ noncomputable def sigR : {F E : Type} →
           [inst_3 : CommRing R] → [inst_4 : Algebra F R] → (E →ₐ[F] E) → TensorProduct F R E →+* TensorProduct F R E :=
   fun {F E} [Field F] [Field E] [Algebra F E] R [CommRing R] [Algebra F R] σ =>
     (Algebra.TensorProduct.map (AlgHom.id F R) σ).toRingHom
-
-theorem aux9 : ∀ {F : Type} [inst : Field F] (R : Type) [inst_1 : CommRing R]
-  [inst_2 : Algebra F R], SMulCommClass F R R := by
-  intro F _ R _ _
-  exact inferInstance
-
-theorem laurent_T_neg_one_mul_T_one : ∀ {F : Type} [inst : Field F] (R : Type)
-  [inst_1 : CommRing R] [inst_2 : Algebra F R], IsScalarTower F R R := by
-  intro F _ R _ _
-  exact inferInstance
-
-theorem aux11 : ∀ {F E : Type} [inst : Field F] [inst_1 : Field E]
-  [inst_2 : Algebra F E], SMulCommClass F E E := by
-  intro F E _ _ _
-  exact inferInstance
-
-theorem aux12 : ∀ {F E : Type} [inst : Field F] [inst_1 : Field E]
-  [inst_2 : Algebra F E], IsScalarTower F E E := by
-  intro F E _ _ _
-  exact inferInstance
 
 noncomputable def inclR : {F E : Type} →
   [inst : Field F] →

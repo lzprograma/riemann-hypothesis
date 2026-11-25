@@ -74,12 +74,12 @@ theorem exists_sum_add {X M : Type} [AddCommGroup M] [Module ℂ M] (S : Finset 
   refine ⟨insert y S, fun x => if x = y then (if y ∈ S then a y + b else b) else a x, fun c => ?_⟩
   by_cases hy : y ∈ S
   · rw [Finset.insert_eq_of_mem hy, ← Finset.add_sum_erase S _ hy, ← Finset.add_sum_erase S _ hy]
-    simp only [hy, if_true, smul_add]
-    rw [Finset.sum_congr rfl (fun x hx => by rw [if_neg (Finset.ne_of_mem_erase hx)])]
+    simp only [hy, ite_true, smul_add]
+    rw [Finset.sum_congr rfl (fun x hx => by rw [ite_eq_right (Finset.ne_of_mem_erase hx)])]
     abel
   · rw [Finset.sum_insert hy]
-    simp only [if_neg hy, if_true]
-    rw [Finset.sum_congr rfl (fun x hx => by rw [if_neg (fun (h : x = y) => hy (h ▸ hx))]), add_comm]
+    simp only [ite_eq_right hy, ite_true]
+    rw [Finset.sum_congr rfl (fun x hx => by rw [ite_eq_right (fun (h : x = y) => hy (h ▸ hx))]), add_comm]
 
 theorem exists_interpolation {X : Type} (V : Submodule ℂ (X → ℂ)) (F : Finset V) :
     ∃ (S : Finset X) (u : X → V), ∀ f ∈ F, f = ∑ x ∈ S, (f : X → ℂ) x • u x := by

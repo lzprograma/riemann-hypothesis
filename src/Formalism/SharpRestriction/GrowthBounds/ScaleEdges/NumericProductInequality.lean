@@ -1,41 +1,6 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ManyEdges
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -61,7 +26,6 @@ theorem num_size (C k r N Q cS c0 z Y a : ℝ) (hC : 2 ≤ C) (hk : 1 ≤ k) (hr
   have hk3 : k ≤ k ^ 3 := le_self_pow₀ hk (by norm_num)
   have hr21 : (1 : ℝ) ≤ r ^ 2 := one_le_pow₀ (by linarith)
   have hQ5 : (1 : ℝ) ≤ Q ^ 5 := one_le_pow₀ hQ
-  have hk0 : 0 ≤ k := by linarith
   have hN0 : 0 ≤ N := by linarith
   have e1 : k ≤ C * k ^ 3 := le_trans hk3 (le_mul_of_one_le_left (by positivity) (by linarith))
   have e2 : k ≤ C * k ^ 3 * r ^ 2 := le_trans e1 (le_mul_of_one_le_right (by positivity) hr21)
@@ -96,7 +60,6 @@ theorem level_bound_numeric (C Ct0 r N X c0 z : ℝ) (hC2 : 2 ≤ C) (hC3 : Ct0 
     mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hCr hN) hX
   have e2 : (r + 1) * (N * c0) ≤ C * r * (N * c0) := mul_le_mul_of_nonneg_right hCr2 (mul_nonneg hN hc0)
   have e3 : C * r * N * (X + c0) = C * r * N * X + C * r * (N * c0) := by ring
-  have e4 : (r + 1) * (N * c0) = r * N * c0 + N * c0 := by ring
   rw [e3]
   linarith
 
@@ -105,7 +68,6 @@ theorem num_count (C Cr r k Y a c0 : ℝ) (n : ℕ) (hCr : 0 < Cr) (hC5 : Cr + 1
     1 - C * n * r ^ 2 * k / Y ≤ (1 - Cr * n * r ^ 2 * k / Y) * (1 - k * c0 / a) ^ n := by
   have hYpos : 0 < Y := by linarith
   have hapos : 0 < a := by linarith
-  have hk0 : 0 ≤ k := by linarith
   have hB0 : 0 ≤ (n : ℝ) * r ^ 2 * k / Y := by positivity
   have hB1 : 1 / Y ≤ (n : ℝ) * r ^ 2 * k / Y := by
     apply div_le_div_of_nonneg_right _ hYpos.le
@@ -155,7 +117,6 @@ theorem num : Num := by
   have hp1 : (1 : ℝ) < p := by
     have : 1 < p := by omega
     exact_mod_cast this
-  have hp0 : (0 : ℝ) < p := by linarith
   have hQ : (1 : ℝ) ≤ (p : ℝ) ^ goodG' r de h x := one_le_pow₀ hp1.le
   have hY2 : (2 : ℝ) ≤ Y := le_trans hr2 hY
   have hc0 : (0 : ℝ) ≤ c0 := Nat.cast_nonneg _
@@ -164,7 +125,6 @@ theorem num : Num := by
     have : 8 ≤ cStar := by omega
     exact_mod_cast this
   obtain ⟨ha1, ha2⟩ := num_size C _ _ _ _ _ _ _ Y a hC2 hk1 hr2 hN hQ hcS hc0 hz hY2 hsz
-  have hapos : 0 < a := by linarith
   have hlog : 0 ≤ Real.log a := Real.log_nonneg ha1
   have hlogb : 0 ≤ Real.logb p a := Real.logb_nonneg hp1 ha1
   refine ⟨?_, mul_nonneg (by linarith) hc0, ?_, ?_⟩

@@ -5,47 +5,6 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFr
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothLevOfCk
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -72,16 +31,6 @@ theorem rdb_ffl_om_eq (k r : ℕ) {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerP
     Q.FFl k r z z' π π' 0 (JF.Om k r z z') = Q.FFl k r z z' π π' 0 (Q.OmPlus k r z z') := by
   simp only [Q.FFl, Q.SmoothLev, Q.LeftEq, Q.RightEq, rdb_glev0_inter_om]
 
-private theorem conjTranspose_mul_H_mul_preserved_of_preserved {n : ℕ} (H a b : Matrix (Fin n) (Fin n) ℂ)
-    (ha : a.conjTranspose * H * a = H) (hb : b.conjTranspose * H * b = H) :
-    (a * b).conjTranspose * H * (a * b) = H := by
-  rw [Matrix.conjTranspose_mul]
-  calc b.conjTranspose * a.conjTranspose * H * (a * b)
-      = b.conjTranspose * (a.conjTranspose * H * a) * b := by
-        simp only [Matrix.mul_assoc]
-    _ = H := by
-        rw [ha, hb]
-
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 theorem radial_residue_formula : RDResRad := by
   classical
@@ -90,14 +39,9 @@ theorem radial_residue_formula : RDResRad := by
   have hz' := hD.1.2.2.1
   rw [rdb_ffl_om_eq] at hJ
   obtain ⟨hS, -, -, hE⟩ := hJ
-  have huh : ∀ a b : Mx P.k P.r, a ∈ UH (Hpk P.k P.r) → b ∈ UH (Hpk P.k P.r) →
-      a * b ∈ UH (Hpk P.k P.r) :=
-    fun a b ha hb => conjTranspose_mul_H_mul_preserved_of_preserved _ a b ha hb
   have hcell : ∀ c ∈ OmX P.r, wCell P.k P.r (Fin.last P.r) c ∈ UH (Hpk P.k P.r) := by
     intro c hc
-    refine List.prod_induction _ huh ?_ ?_
-    · show (1 : Mx P.k P.r).conjTranspose * Hpk P.k P.r * 1 = Hpk P.k P.r
-      simp
+    refine List.prod_induction _ (fun _ _ => WeylGroupFacts.uh_mul) WeylGroupFacts.uh_one ?_
     · intro x hx
       obtain ⟨a, -, rfl⟩ := List.mem_map.1 hx
       exact Qx3.weyl_cell_mem_unitary a (hc a)
@@ -110,14 +54,14 @@ theorem radial_residue_formula : RDResRad := by
     exact Qx3.w1_commute_of_mem_Glev a (c a) ⟨hh.1, fun b _ => hh.2.1 b⟩
   have hin : ∀ x ∈ DomR P.k P.r z z',
       wCell P.k P.r (Fin.last P.r) x.1 * x.2 ∈ Glev P.k P.r 0 ∩ OmPlus P.k P.r z z' :=
-    fun x hx => ⟨Rad.glev0 (huh _ _ (hcell _ hx.1) hx.2.1.1),
+    fun x hx => ⟨Rad.glev0 (WeylGroupFacts.uh_mul (hcell _ hx.1) hx.2.1.1),
       Rad.wCell_mem_omPlus hz hz' hx.1 hx.2.1 hx.2.2⟩
   let Φ0 : Fn P.k P.r (Wq →L[ℂ] Wp) := fun c g =>
     if (c, g) ∈ DomR P.k P.r z z' then resG P.k P.r (Fin.last P.r) J c g else 0
   have hmem : Φ0 ∈ RadSp P.k P.r z z' π π' := by
     refine ⟨?_, ?_, ?_⟩
     · intro x hx
-      exact if_neg hx
+      exact ite_eq_right hx
     · intro x₀ hx₀
       obtain ⟨U, F, hU, hxU, hF, hag⟩ :=
         Rad.sf_resG hS x₀ ⟨hx₀.1, (hin x₀ hx₀).2⟩ hx₀.2.1
@@ -128,13 +72,13 @@ theorem radial_residue_formula : RDResRad := by
       intro x hx hg
       have hxD : x ∈ DomR P.k P.r z z' := ⟨hx.2.1, hg, hx.2.2⟩
       show (if (x.1, x.2) ∈ DomR P.k P.r z z' then _ else _) = _
-      rw [if_pos hxD]
+      rw [ite_eq_left hxD]
       exact hag x hx.1 hg
     · intro x hx h hh h' hh'
       have hx' := Rad.domR_uw hx hh hh'
       show (if (x.1, h * x.2 * h') ∈ DomR P.k P.r z z' then _ else _) =
         π h ∘SL (if (x.1, x.2) ∈ DomR P.k P.r z z' then _ else _) ∘SL π' h'
-      rw [if_pos hx', if_pos hx]
+      rw [ite_eq_left hx', ite_eq_left hx]
       simp only [resG]
       rw [show wCell P.k P.r (Fin.last P.r) x.1 * (h * x.2 * h') =
           h * (wCell P.k P.r (Fin.last P.r) x.1 * x.2) * h' by
@@ -143,6 +87,6 @@ theorem radial_residue_formula : RDResRad := by
       simp [ContinuousLinearMap.smul_comp]
   refine ⟨⟨Φ0, hmem⟩, fun x hx => ?_⟩
   show (if (x.1, x.2) ∈ DomR P.k P.r z z' then _ else _) = _
-  rw [if_pos hx]
+  rw [ite_eq_left hx]
 
 end Formalism.FourierDecayAlt.P.CutSE

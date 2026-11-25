@@ -20,17 +20,8 @@ variable {F : Type} [Field F] {n : ℕ}
 theorem aeval_mul_of_isHomogeneous {A : Type*} [CommRing A] [Algebra F A]
     {g : MvPolynomial (Fin n) F} {d : ℕ} (hg : g.IsHomogeneous d) (c : A) (x : Fin n → A) :
     aeval (fun m => c * x m) g = c ^ d * aeval x g := by
-  conv_lhs => rw [g.as_sum]
-  conv_rhs => rw [g.as_sum]
-
-  rw [map_sum, map_sum, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun s hs => ?_
-  have hd := hg (mem_support_iff.mp hs)
-  simp only [aeval_monomial, mul_pow]
-  rw [Finsupp.prod_mul, Finsupp.prod_pow, Finsupp.prod_pow, Finset.prod_pow_eq_pow_sum, ← hd,
-    Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by simp)]
-  simp only [smul_eq_mul, Pi.one_apply, mul_one]
-  ring
+  rw [aeval_def, aeval_def, ← eval_map, ← eval_map]
+  exact (hg.map (algebraMap F A)).eval_smul c x
 
 theorem linForm_isHomogeneous (u : Fin n → F) : (linForm u).IsHomogeneous 1 :=
   IsHomogeneous.sum _ _ _ fun _ _ => isHomogeneous_C_mul_X _ _
@@ -51,8 +42,7 @@ theorem linForm_not_mem_sup {I : Ideal (MvPolynomial (Fin n) F)} (hI : IsProjPri
     fun hg => by rw [← hφ]; exact aeval_mul_of_isHomogeneous hg _ _
   have hle : I ⊔ Ideal.span {linForm t - 1} ≤ RingHom.ker ψ := by
     refine sup_le (fun g hg => ?_) ?_
-    · set_option synthInstance.maxHeartbeats 100000 in
-        rw [RingHom.mem_ker, ← sum_homogeneousComponent g, map_sum]
+    · rw [RingHom.mem_ker, ← sum_homogeneousComponent g, map_sum]
       refine Finset.sum_eq_zero fun d _ => ?_
       rw [hhom (homogeneousComponent_isHomogeneous d g)]
       have : φ (homogeneousComponent d g) = 0 := by

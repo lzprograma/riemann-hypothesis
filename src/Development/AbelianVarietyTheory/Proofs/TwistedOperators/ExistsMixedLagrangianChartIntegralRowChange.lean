@@ -56,7 +56,6 @@ open GlobalTheory.FunObj GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheor
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation (spV spW spW₁ spV₁ Num IsTripleOf IsDatumA IsDatumB mulG colV adjV₁)
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model Chars Rep IsTriple Acts SInf At piW psiLoc chrW)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.FlipMatch
 
 noncomputable section
@@ -233,7 +232,7 @@ theorem isFrameAt_loc {β : GL (Fin n) (Formalism.IndefR.Lev.EAf D)} {Λ : Submo
     (h : IsFrame β Λ) (w : Pl D.host.E) : IsFrameAt w Λ (loc w β) :=
   isFrameAt_map h w (cpt w) (fun x =>
     congrArg (fun z : FiniteAdeleRing (𝓞 D.host.E) D.host.E => z w) (GlobalTheory.AdeleBaseChange.map_tmul_one (toAd_spec D) x))
-    fun x hx => (mem_OA_iff _).1 hx w
+    fun _ hx => (mem_OA_iff _).1 hx w
 
 variable {v : Pl D.host.F} (τ : D.host.E →ₐ[D.host.F] Fv D.host.F v)
 

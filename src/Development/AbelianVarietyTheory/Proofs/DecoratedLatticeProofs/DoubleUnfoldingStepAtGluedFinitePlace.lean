@@ -12,49 +12,8 @@ public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.Fou
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.GluedLatticeFiniteExpansionsLocalFieldStatement
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SourceLiftAtGluedPlaceProof
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceLineComponentsContraction
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
 import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceBaseVacuumDatumExistsUniqueStatement
 import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceLinearModelLatticeVacuumBase
@@ -156,8 +115,8 @@ theorem dualInd_add (L : Submodule 𝒪[k] (n → k)) (η ξ : n → k) (hξ : I
     dualInd L (η + ξ) = dualInd L η := by
   unfold dualInd
   by_cases h : InDual L η
-  · rw [if_pos (inDual_add h hξ), if_pos h]
-  · rw [if_neg h, if_neg]
+  · rw [ite_eq_left (inDual_add h hξ), ite_eq_left h]
+  · rw [ite_eq_right h, ite_eq_right]
     intro h'
     apply h
     simpa using inDual_sub h' hξ
@@ -167,7 +126,7 @@ theorem dualInd_supp (q : Unif k) (L : Submodule 𝒪[k] (n → k)) (η : n → 
   unfold dualInd at h
   by_cases hd : InDual L η
   · exact inDual_smul hd q.1
-  · exact absurd (if_neg hd) h
+  · exact absurd (ite_eq_right hd) h
 
 theorem cosetInd_add (q : Unif k) (L : Submodule 𝒪[k] (n → k)) (f : Module.Dual 𝓀[k] (Red L)) (η ξ : n → k)
     (hξ : InDual L ξ) : cosetInd q L f (η + ξ) = cosetInd q L f η := by
@@ -184,8 +143,8 @@ theorem cosetInd_add (q : Unif k) (L : Submodule 𝒪[k] (n → k)) (f : Module.
       have h := inDual_add hd hξ
       rwa [show η - q.inv • F + ξ = η + ξ - q.inv • F by abel] at h
   by_cases h : ∃ F : n → k, Lifts L F f ∧ InDual L (η - q.inv • F)
-  · rw [if_pos (e.2 h), if_pos h]
-  · rw [if_neg (fun h' => h (e.1 h')), if_neg h]
+  · rw [ite_eq_left (e.2 h), ite_eq_left h]
+  · rw [ite_eq_right (fun h' => h (e.1 h')), ite_eq_right h]
 
 theorem inDual_of_lifts {L : Submodule 𝒪[k] (n → k)} {F : n → k} {f : Module.Dual 𝓀[k] (Red L)} (h : Lifts L F f) :
     InDual L F := by
@@ -208,7 +167,7 @@ theorem cosetInd_supp (q : Unif k) (L : Submodule 𝒪[k] (n → k)) (f : Module
       rw [smul_sub, hq, sub_add_cancel]
     rw [h3]
     exact inDual_add (inDual_smul hd q.1) (inDual_of_lifts hF)
-  · exact absurd (if_neg hc) h
+  · exact absurd (ite_eq_right hc) h
 
 theorem inner_add (χ : AddChar k Circle) (hχ : HasConductor χ 1) {e : k} (he : e = 1 ∨ e = -1)
     [MeasurableSpace k] (μ : Measure (n → k)) (L : Submodule 𝒪[k] (n → k)) {a : (n → k) → ℂ}
@@ -313,7 +272,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil ValuativeRel IsLocalRing
 open scoped TensorProduct Pointwise
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData (lastKer lastPair cosetInd InDual mainDatum)
 open GlobalTheory.FinPl.Comm (fpair)
 
@@ -409,8 +367,6 @@ section Local
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   {n : Type} [Fintype n] [DecidableEq n]
-
-alias charInd_mem' := _root_.GlobalTheory.FinPl.SBFacts.charInd_mem
 
 theorem inDual_vecMul {L : Submodule 𝒪[k] (n → k)} {g : GL n k} (hg : g • L = L) (η : n → k) :
     InDual L (η ᵥ* g.val) ↔ InDual L η := by
@@ -521,6 +477,252 @@ namespace GlobalTheory.FinPl.Vertex
 
 
 open Classical in
+theorem vertex_step_core (D : D7) {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
+    [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] [SecondCountableTopology k]
+    (p : SplitPt D k) (q : Unif k) (ψ : AddChar (AF D.host.F) ℂ) (χ : AddChar k Circle) (hχ : HasConductor χ 1)
+    (hIs : p.IsChar ψ χ) (e : k) (he : e = 1 ∨ e = -1) (ε : 𝓀[k]ˣ)
+    (hεe : (e = 1 ∧ ε = 1) ∨ (e = -1 ∧ ε = -1)) {ν : Measure k} [Measure.IsAddHaarMeasure ν]
+    {n n' n'' : Type} [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] [Fintype n''] [DecidableEq n'']
+    {σ : ℕ} {B : BesLev D (σ + 1)} {J : JacLev D (σ + 1)} {B' : BesLev D σ}
+    (s₁ : StepBF ψ B J) (s₂ : StepFB ψ J B') (l : Link B B'.L B'.ζ) (vL : VolM D B'.L.rank J.W₀.rank)
+    (hu₁ : UnrAt s₁ p.v) (hu₂ : UnrAt s₂ p.v)
+    (α : Frame p B.A n') (α₀ : Frame p B.V₀ (n' ⊕ Fin 1)) (β : Frame p J.W₀ n)
+    (γ : Frame p B'.A n'') (γ₀ : Frame p B'.V₀ (n'' ⊕ Fin 1))
+    (hα : IsSumFrame B.o B.ζ α α₀) (hγ : IsSumFrame B'.o B'.ζ γ γ₀)
+    (P P₁ : Pair k n') (Q : Pair k n) (R : Pair k n'')
+    (L₁ : Lat B.V₀) (L₂ L₂' : Lat J.W₀) (L₃ : Lat B'.V₀)
+    (f₁ Ξ₁ Ξ₁' : WO B.V₀ J.W₀ → ℂ) (f₂ Ξ₂ Ξ₂' : WO J.W₀ B'.V₀ → ℂ)
+    (o₁ : Over ψ α₀ β L₁ L₂ f₁ (latInd (gluedS q 1 P.ker P.vec) Q.lat) Ξ₁)
+    (o₁' : Over ψ α₀ β L₁ L₂ f₁ (tensCol (phiOne P₁ Q) (vecInd Q.lat)) Ξ₁')
+    (o₂ : Over ψ β γ₀ L₂' L₃ f₂ (latInd Q.lat (gluedS q 1 R.ker R.vec)) Ξ₂)
+    (o₂' : Over ψ β γ₀ L₂' L₃ f₂ (tensRow (phiOne Q R) (dualInd Q.lat)) Ξ₂')
+    (φ : Pair k n' → GA D B.A → ℂ) (hφ : IsRam α φ) (c₀ : ℂ)
+    (hHC : ∀ (Ψ₁ : Matrix n n' k → ℂ) (Ψ₂ : Matrix n'' n k → ℂ) (a a' b b' : (n → k) → ℂ),
+      a ∈ SB (n → k) → a' ∈ SB (n → k) → b ∈ SB (n → k) → b' ∈ SB (n → k) →
+      ∀ (Ξa Ξa' : WO B.V₀ J.W₀ → ℂ) (Ξb Ξb' : WO J.W₀ B'.V₀ → ℂ),
+        Over ψ α₀ β L₁ L₂ f₁ (tensCol Ψ₁ a) Ξa → Over ψ α₀ β L₁ L₂ f₁ (tensCol Ψ₁ a') Ξa' →
+        Over ψ β γ₀ L₂' L₃ f₂ (tensRow Ψ₂ b) Ξb → Over ψ β γ₀ L₂' L₃ f₂ (tensRow Ψ₂ b') Ξb' →
+        ∀ φ', IsContAut B.A φ' →
+          fpair χ e (Measure.pi fun _ : n => ν) a' b' • hand0 s₁ s₂ l vL φ' Ξa Ξb =
+            fpair χ e (Measure.pi fun _ : n => ν) a b • hand0 s₁ s₂ l vL φ' Ξa' Ξb')
+    (h2_fn : ∀ (U₁ : SB (Matrix n (n' ⊕ Fin 1) k) →ₗ[ℂ] WO B.V₀ J.W₀ → ℂ),
+      (∀ Ψ, Over ψ α₀ β L₁ L₂ f₁ Ψ.1 (U₁ Ψ)) →
+      (∀ Ψ, IsThetaFunO ψ B.V₀ J.W₀ (U₁ Ψ)) →
+      hand0 s₁ s₂ l vL (φ P) Ξ₁ Ξ₂ = c₀ • hand0 s₁ s₂ l vL (FFStar q (resChar χ hχ q) φ P₁)
+        (U₁ (∑ Q' ∈ withLat Q.lat, ⟨tensCol (phiOne P₁ Q') (charInd (resChar χ hχ q) Q'),
+          Comm.tensCol_mem (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem P₁ Q')
+            (GlobalTheory.FinPl.SBFacts.charInd_mem _ Q')⟩)) Ξ₂) :
+    hand0 s₁ s₂ l vL (φ P) Ξ₁ Ξ₂ =
+      (c₀ * ((withLat Q.lat).card : ℂ)) •
+        hand0 s₁ s₂ l vL (dia ε (FFStar q (resChar χ hχ q) φ) P₁) Ξ₁' Ξ₂' := by
+  have hψ : IsStdChar D ψ (-1) := s₁.weil₀.std
+  have hχc : Continuous χ := by
+    have ht : Continuous (Algebra.trace (AF D.host.F) (AE D)) := IsModuleTopology.continuous_of_linearMap _
+    have h1 : Continuous fun a => psiE ψ (p.sec a) := hψ.1.1.comp (ht.comp p.cont_sec)
+    have h2 : (fun a => ((χ a : Circle) : ℂ)) = fun a => psiE ψ (p.sec a) := funext hIs
+    refine continuous_induced_rng.2 ?_
+    change Continuous (fun a => ((χ a : Circle) : ℂ))
+    rw [h2]
+    exact h1
+  obtain ⟨lS₁, lT₁, uS₁, uT₁, lin₁⟩ := _root_.GlobalTheory.SplitLinAt.linModelAt D k p ψ _ _ _ _ _ s₁.weil₀
+  obtain ⟨lS₂, lT₂, uS₂, uT₂, lin₂⟩ := _root_.GlobalTheory.SplitLinAt.linModelAt D k p ψ _ _ _ _ _ s₂.weil₀
+  have vS₁ := uS₁ hu₁.2
+  have vT₁ := uT₁ hu₁.1
+  have vS₂ := uS₂ hu₂.2
+  have vT₂ := uT₂ hu₂.1
+  obtain ⟨-, D2, -⟩ := GlobalTheory.T.gluedLattice_finite_expansions_localField k n n'' q (resChar χ hχ q) (resChar_ne_one hχ q) Q.lat
+  let μ : Measure (n → k) := Measure.pi fun _ => ν
+  have I0 : fpair χ e μ (vecInd Q.lat) (dualInd Q.lat) ≠ 0 := Comm.fpair_ne_zero χ hχc e he μ Q.lat
+  have hvec := Comm.vecInd_mem Q.lat
+  have hdual := Comm.dualInd_mem Q.lat
+  let col : ∀ Ψ : Matrix n n' k → ℂ, Ψ ∈ SB (Matrix n n' k) → ∀ a : (n → k) → ℂ, a ∈ SB (n → k) →
+      SB (Matrix n (n' ⊕ Fin 1) k) := fun Ψ hΨ a ha => ⟨tensCol Ψ a, Comm.tensCol_mem hΨ ha⟩
+  let row : ∀ Ψ : Matrix n'' n k → ℂ, Ψ ∈ SB (Matrix n'' n k) → ∀ b : (n → k) → ℂ, b ∈ SB (n → k) →
+      SB (Matrix (n'' ⊕ Fin 1) n k) := fun Ψ hΨ b hb => ⟨tensRow Ψ b, Comm.tensRow_mem hΨ hb⟩
+  have one_emb : ∀ {S₀ A L : HSp D} (o : OrthDec S₀ A L), o.emb (1, 1) = 1 := fun o => map_one o.emb
+  obtain ⟨U₁, a₁, b₁, t₁⟩ := overMap hψ o₁ fun Ψ f h => (lin₁ _ _ α₀ β L₁ L₂ f₁ Ψ f h).2.2
+  obtain ⟨U₂, a₂, b₂, t₂⟩ := overMap hψ o₂ fun Ψ f h => (lin₂ _ _ β γ₀ L₂' L₃ f₂ Ψ f h).2.2
+  obtain ⟨Θ, hΘ⟩ := exists_trilinear s₁ s₂ l vL U₁ U₂ t₁ t₂
+  have key : ∀ (v : caSub B.A) (Ψ₁ : Matrix n n' k → ℂ) (h₁ : Ψ₁ ∈ SB (Matrix n n' k)) (Ψ₂ : Matrix n'' n k → ℂ)
+      (h₂ : Ψ₂ ∈ SB (Matrix n'' n k)) (a a' b b' : (n → k) → ℂ) (ha : a ∈ SB (n → k)) (ha' : a' ∈ SB (n → k))
+      (hb : b ∈ SB (n → k)) (hb' : b' ∈ SB (n → k)),
+      fpair χ e μ a' b' • (Θ v (col Ψ₁ h₁ a ha) (row Ψ₂ h₂ b hb)).1 =
+        fpair χ e μ a b • (Θ v (col Ψ₁ h₁ a' ha') (row Ψ₂ h₂ b' hb')).1 := by
+    intro v Ψ₁ h₁ Ψ₂ h₂ a a' b b' ha ha' hb hb'
+    rw [hΘ, hΘ]
+    exact hHC Ψ₁ Ψ₂ a a' b b' ha ha' hb hb' _ _ _ _
+      (a₁ (col Ψ₁ h₁ a ha)) (a₁ (col Ψ₁ h₁ a' ha')) (a₂ (row Ψ₂ h₂ b hb)) (a₂ (row Ψ₂ h₂ b' hb')) v.1 v.2
+  have hFF : ∀ A : Pair k n', IsContAut B.A (FFStar q (resChar χ hχ q) φ A) := fun A => by
+    have := (FFStar q (resChar χ hχ q) (fun P₂ => (⟨φ P₂, hφ.2.2 P₂⟩ : caSub B.A)) A).2
+    rwa [val_FFStar'] at this
+  let v' : caSub B.A := ⟨_, hFF P₁⟩
+  let x : Pair k n → SB (Matrix n (n' ⊕ Fin 1) k) := fun Q' =>
+    col (phiOne P₁ Q') (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem P₁ Q') (charInd (resChar χ hχ q) Q') (GlobalTheory.FinPl.SBFacts.charInd_mem _ Q')
+  let xv : Pair k n' → Pair k n → SB (Matrix n (n' ⊕ Fin 1) k) := fun A Q' =>
+    col (phiOne A Q') (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem A Q') (vecInd Q.lat) hvec
+  let yd : Pair k n → SB (Matrix (n'' ⊕ Fin 1) n k) := fun Q'' =>
+    row (phiOne Q'' R) (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem Q'' R) (dualInd Q.lat) hdual
+  let y₀ : SB (Matrix (n'' ⊕ Fin 1) n k) := row (latInd Q.lat R.ker) (latInd_mem_SB _ _) (dualInd Q.lat) hdual
+  let y : Pair k n → SB (Matrix (n'' ⊕ Fin 1) n k) := fun Q'' =>
+    row (phiOne Q'' R) (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem Q'' R) (cosetInd q Q''.lat Q''.red) (_root_.GlobalTheory.FinPl.CosetSB.cosetInd_mem_SB k n q _ _)
+  have h2 : hand0 s₁ s₂ l vL (φ P) Ξ₁ Ξ₂ = c₀ • hand0 s₁ s₂ l vL (FFStar q (resChar χ hχ q) φ P₁)
+      (U₁ (∑ Q' ∈ withLat Q.lat, x Q')) Ξ₂ :=
+    h2_fn U₁ a₁ t₁
+  have hΞ₂ : Ξ₂ = U₂ (y₀ + ∑ Q'' ∈ withLat Q.lat, y Q'') := by
+    rw [b₂ ⟨_, o₂.2.2.2.1⟩ Ξ₂ o₂]
+    congr 1
+    apply Subtype.ext
+    simp only [Submodule.coe_add, Submodule.coe_sum]
+    exact D2 R
+  have t0 : ∀ Q' ∈ withLat Q.lat, (Θ v' (x Q') y₀).1 = 0 := fun Q' hQ' => by
+    have := key v' (phiOne P₁ Q') (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem P₁ Q') (latInd Q.lat R.ker) (latInd_mem_SB _ _)
+      (charInd (resChar χ hχ q) Q') (vecInd Q.lat) (dualInd Q.lat) (dualInd Q.lat) (GlobalTheory.FinPl.SBFacts.charInd_mem _ Q') hvec hdual hdual
+    have hf := _root_.GlobalTheory.FinPl.Comm.fpair_charInd_dualInd k n q χ hχ e he μ Q'
+    rw [mem_withLat.1 hQ'] at hf
+    rw [hf, zero_smul] at this
+    exact (smul_eq_zero.1 this).resolve_left I0
+  have t1 : ∀ Q' ∈ withLat Q.lat, ∑ Q'' ∈ withLat Q.lat, (Θ v' (x Q') (y Q'')).1 =
+      (Θ v' (xv P₁ Q') (yd (ε • Q'))).1 := by
+    intro Q' hQ'
+    have hQ'l : Q'.lat = Q.lat := mem_withLat.1 hQ'
+    have hmem : ε • Q' ∈ withLat Q.lat := mem_withLat.2 (by rw [Pair.dia_lat, hQ'l])
+    rw [Finset.sum_eq_single_of_mem (ε • Q') hmem]
+    · have := key v' (phiOne P₁ Q') (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem P₁ Q') (phiOne (ε • Q') R)
+        (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem _ R) (charInd (resChar χ hχ q) Q') (vecInd Q.lat)
+        (cosetInd q (ε • Q').lat (ε • Q').red) (dualInd Q.lat) (GlobalTheory.FinPl.SBFacts.charInd_mem _ Q') hvec (_root_.GlobalTheory.FinPl.CosetSB.cosetInd_mem_SB k n q _ _) hdual
+      rw [(_root_.GlobalTheory.FinPl.CosetPairing.fpair_charInd_cosetInd k n q χ hχ e ε hεe μ Q' (ε • Q') (by rw [Pair.dia_lat])).1 rfl, hQ'l] at this
+      exact smul_right_injective _ I0 this
+    · intro Q'' hQ'' hne
+      have hQ''l : Q''.lat = Q.lat := mem_withLat.1 hQ''
+      have := key v' (phiOne P₁ Q') (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem P₁ Q') (phiOne Q'' R)
+        (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem _ R) (charInd (resChar χ hχ q) Q') (vecInd Q.lat)
+        (cosetInd q Q''.lat Q''.red) (dualInd Q.lat) (GlobalTheory.FinPl.SBFacts.charInd_mem _ Q') hvec (_root_.GlobalTheory.FinPl.CosetSB.cosetInd_mem_SB k n q _ _) hdual
+      rw [(_root_.GlobalTheory.FinPl.CosetPairing.fpair_charInd_cosetInd k n q χ hχ e ε hεe μ Q' Q'' (hQ''l.trans hQ'l.symm)).2 hne, zero_smul] at this
+      exact (smul_eq_zero.1 this).resolve_left I0
+  have hmove : ∀ (Q₀ : Pair k n) (g : GL n k), g • Q.lat = Q.lat →
+      (Θ v' (xv P₁ (g • Q₀)) (yd (g • ε • Q₀))).1 = (Θ v' (xv P₁ Q₀) (yd (ε • Q₀))).1 := by
+    intro Q₀ g hgL
+    have hdet := GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.valuation_det_of_fix Q.lat hgL
+    have hgL' : g⁻¹ • Q.lat = Q.lat := by
+      conv_lhs => rw [← hgL]
+      exact inv_smul_smul g Q.lat
+    have e1 : s₁.om₀ (α₀.gl 1, β.gl g) (U₁ (xv P₁ Q₀)) = U₁ (xv P₁ (g • Q₀)) := by
+      refine b₁ _ _ ?_
+      have := (lin₁ _ _ α₀ β L₁ L₂ f₁ _ _ (a₁ (xv P₁ Q₀))).1 1 g
+      convert this using 1
+      funext z
+      have hl : ((lS₁ (Matrix.GeneralLinearGroup.det (1 : GL (n' ⊕ Fin 1) k)) : ℂˣ) : ℂ) = 1 := by simp
+      have hr : ((lT₁ (Matrix.GeneralLinearGroup.det g) : ℂˣ) : ℂ) = 1 := by rw [vT₁ _ hdet]; rfl
+      show tensCol (phiOne P₁ (g • Q₀)) (vecInd Q.lat) z = _ * _ * tensCol (phiOne P₁ Q₀) (vecInd Q.lat) _
+      rw [hl, hr, one_mul, one_mul,
+        show (1 : GL (n' ⊕ Fin 1) k) = GlobalTheory.RootEx.embX 1 (1 : GL n' k) from (map_one _).symm,
+        tensCol_subst' (vecInd Q.lat) ((g⁻¹ : GL n k) : Matrix n n k) (1 : GL n' k)
+          (Ψ' := phiOne P₁ (g • Q₀)) (fun x => by
+            have := phiOne_smul (P := P₁) (Q := Q₀) (x := x) (1 : GL n' k) g
+            rw [one_smul] at this
+            exact this) z]
+      congr 1
+      funext w
+      exact (vecInd_mulVec hgL' w).symm
+    have e2 : s₂.om₀ (β.gl g, γ₀.gl 1) (U₂ (yd (ε • Q₀))) = U₂ (yd (g • ε • Q₀)) := by
+      refine b₂ _ _ ?_
+      have := (lin₂ _ _ β γ₀ L₂' L₃ f₂ _ _ (a₂ (yd (ε • Q₀)))).1 g 1
+      convert this using 1
+      funext z
+      have hl : ((lS₂ (Matrix.GeneralLinearGroup.det g) : ℂˣ) : ℂ) = 1 := by rw [vS₂ _ hdet]; rfl
+      have hr : ((lT₂ (Matrix.GeneralLinearGroup.det (1 : GL (n'' ⊕ Fin 1) k)) : ℂˣ) : ℂ) = 1 := by simp
+      show tensRow (phiOne (g • ε • Q₀) R) (dualInd Q.lat) z = _ * _ * tensRow (phiOne (ε • Q₀) R) (dualInd Q.lat) _
+      rw [hl, hr, one_mul, one_mul,
+        show (1 : GL (n'' ⊕ Fin 1) k) = GlobalTheory.RootEx.embX 1 (1 : GL n'' k) from (map_one _).symm,
+        tensRow_subst' (dualInd Q.lat) (1 : GL n'' k) (g : Matrix n n k)
+          (Ψ' := phiOne (g • ε • Q₀) R) (fun x => by
+            have := phiOne_smul (P := ε • Q₀) (Q := R) (x := x) g (1 : GL n'' k)
+            rw [one_smul] at this
+            exact this) z]
+      congr 1
+      funext w
+      exact (dualInd_vecMul hgL w).symm
+    have e3 := Comm.doubleThetaUnfolding_equivariant_unitaryGroups s₁ s₂ l vL (hFF P₁) (t₁ (xv P₁ Q₀)) (t₂ (yd (ε • Q₀))) 1 (β.gl g) 1
+    rw [one_emb, one_emb] at e3
+    rw [hΘ, hΘ, ← e1, ← e2, map_one α₀.gl, map_one γ₀.gl]
+    rw [show (fun x : GA D B.A => FFStar q (resChar χ hχ q) φ P₁ (x * 1)) = FFStar q (resChar χ hχ q) φ P₁ from
+      funext fun x => by rw [mul_one]] at e3
+    rw [e3]
+    funext x
+    rw [mul_one]
+  have hall : ∀ Q' ∈ withLat Q.lat, (Θ v' (xv P₁ Q') (yd (ε • Q'))).1 =
+      (Θ v' (xv P₁ (ε⁻¹ • Q)) (yd (ε • ε⁻¹ • Q))).1 := by
+    intro Q' hQ'
+    obtain ⟨g, hg⟩ := MulAction.exists_smul_eq (GL n k) (ε⁻¹ • Q) Q'
+    have hgL : g • Q.lat = Q.lat := by
+      have := congrArg Pair.lat hg
+      rw [Pair.smul_lat, Pair.dia_lat, mem_withLat.1 hQ'] at this
+      exact this
+    have := hmove (ε⁻¹ • Q) g hgL
+    rw [hg, smul_comm g ε (ε⁻¹ • Q), hg] at this
+    exact this
+  have hid : ∀ Y', s₂.om₀ (1, 1) Y' = Y' := fun Y' => by
+    rw [show ((1 : GA D J.W₀), (1 : GA D B'.V₀)) = 1 from rfl, map_one]
+    rfl
+  have hsrc : ∀ (g : GL n' k), valuation k ((Matrix.GeneralLinearGroup.det g : kˣ) : k) = 1 → ∀ A A' : Pair k n',
+      hand0 s₁ s₂ l vL (FFStar q (resChar χ hχ q) φ (g • A)) (U₁ (xv (g • A') Q)) (U₂ (yd Q)) =
+        hand0 s₁ s₂ l vL (FFStar q (resChar χ hχ q) φ A) (U₁ (xv A' Q)) (U₂ (yd Q)) := by
+    intro g hdet A A'
+    have e1 : s₁.om₀ (α₀.gl (GlobalTheory.RootEx.embX 1 g), β.gl 1) (U₁ (xv A' Q)) = U₁ (xv (g • A') Q) := by
+      refine b₁ _ _ ?_
+      have := (lin₁ _ _ α₀ β L₁ L₂ f₁ _ _ (a₁ (xv A' Q))).1 (GlobalTheory.RootEx.embX 1 g) 1
+      convert this using 1
+      funext z
+      have hl : ((lS₁ (Matrix.GeneralLinearGroup.det (GlobalTheory.RootEx.embX 1 g)) : ℂˣ) : ℂ) = 1 := by
+        rw [det_embX_one', vS₁ _ hdet]; rfl
+      have hr : ((lT₁ (Matrix.GeneralLinearGroup.det (1 : GL n k)) : ℂˣ) : ℂ) = 1 := by simp
+      show tensCol (phiOne (g • A') Q) (vecInd Q.lat) z = _ * _ * tensCol (phiOne A' Q) (vecInd Q.lat) _
+      rw [hl, hr, one_mul, one_mul,
+        tensCol_subst' (vecInd Q.lat) (((1 : GL n k)⁻¹ : GL n k) : Matrix n n k) g
+          (Ψ' := phiOne (g • A') Q) (fun x => by
+            have := phiOne_smul (P := A') (Q := Q) (x := x) g (1 : GL n k)
+            rw [one_smul] at this
+            exact this) z]
+      congr 1
+      simp
+    have e3 := Comm.doubleThetaUnfolding_equivariant_unitaryGroups s₁ s₂ l vL (hFF A) (t₁ (xv A' Q)) (t₂ (yd Q)) (α.gl g) 1 1
+    rw [one_emb, Comm.emb_gl hα g, hid] at e3
+    have e4 : FFStar q (resChar χ hχ q) φ (g • A) = fun x => FFStar q (resChar χ hχ q) φ A (x * α.gl g) :=
+      FFStar_mem_EqForm q _ hφ.1 g A
+    rw [e4, ← e1, map_one β.gl, e3]
+    funext x
+    rw [mul_one]
+  obtain ⟨g₁, hg₁a, hg₁b, hg₁d⟩ : ∃ g₁ : GL n' k, g₁ • P₁ = ε • P₁ ∧ g₁ • (ε • P₁) = P₁ ∧
+      valuation k ((Matrix.GeneralLinearGroup.det g₁ : kˣ) : k) = 1 := by
+    rcases hεe with ⟨-, h⟩ | ⟨-, h⟩
+    · exact ⟨1, by rw [h, one_smul, one_smul], by rw [h, one_smul, one_smul], by simp⟩
+    · refine ⟨-1, by rw [neg_one_smul_pair, h], ?_, val_det_neg_one⟩
+      rw [neg_one_smul_pair, h, smul_smul]
+      simp
+  have hfin : (Θ v' (xv P₁ (ε⁻¹ • Q)) (yd (ε • ε⁻¹ • Q))).1 =
+      hand0 s₁ s₂ l vL (dia ε (FFStar q (resChar χ hχ q) φ) P₁) Ξ₁' Ξ₂' := by
+    rw [hΘ, b₁ (xv P₁ Q) Ξ₁' o₁', b₂ (yd Q) Ξ₂' o₂', dia_apply, smul_inv_smul]
+    have hx : xv P₁ (ε⁻¹ • Q) = xv (ε • P₁) Q := by
+      apply Subtype.ext
+      show tensCol (phiOne P₁ (ε⁻¹ • Q)) _ = tensCol (phiOne (ε • P₁) Q) _
+      have := phiOne_dia (P := P₁) (Q := ε⁻¹ • Q) ε
+      rw [smul_inv_smul] at this
+      rw [this]
+    rw [hx]
+    have := hsrc g₁ hg₁d P₁ (ε • P₁)
+    rw [hg₁a, hg₁b] at this
+    exact this.symm
+  have hexp : hand0 s₁ s₂ l vL (FFStar q (resChar χ hχ q) φ P₁) (U₁ (∑ Q' ∈ withLat Q.lat, x Q'))
+      (U₂ (y₀ + ∑ Q'' ∈ withLat Q.lat, y Q'')) =
+      ∑ Q' ∈ withLat Q.lat, ((Θ v' (x Q') y₀).1 + ∑ Q'' ∈ withLat Q.lat, (Θ v' (x Q') (y Q'')).1) := by
+    refine (hΘ v' _ _).symm.trans ?_
+    rw [map_sum, LinearMap.sum_apply, Submodule.coe_sum]
+    refine Finset.sum_congr rfl fun Q' _ => ?_
+    rw [map_add (f := _), map_sum, Submodule.coe_add, Submodule.coe_sum]
+  rw [h2, hΞ₂, hexp, Finset.sum_congr rfl fun Q' hQ' => by rw [t0 Q' hQ', zero_add, t1 Q' hQ', hall Q' hQ'],
+    Finset.sum_const, ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, hfin]
+
+open Classical in
 theorem vertexGlued (D : D7) : VertexGlued D := by
   intro k _ _ _ _ p q ψ χ hχ hIs
   letI : MeasurableSpace k := borel k
@@ -531,8 +733,8 @@ theorem vertexGlued (D : D7) : VertexGlued D := by
   let ε : 𝓀[k]ˣ := if e = 1 then 1 else -1
   have hεe : (e = 1 ∧ ε = 1) ∨ (e = -1 ∧ ε = -1) := by
     by_cases h1 : e = 1
-    · exact Or.inl ⟨h1, if_pos h1⟩
-    · exact Or.inr ⟨he.resolve_left h1, if_neg h1⟩
+    · exact Or.inl ⟨h1, ite_eq_left h1⟩
+    · exact Or.inr ⟨he.resolve_left h1, ite_eq_right h1⟩
   refine ⟨ε, ?_, ?_⟩
   · rcases hεe with ⟨-, h⟩ | ⟨-, h⟩
     · exact Or.inl h
@@ -550,14 +752,10 @@ theorem vertexGlued (D : D7) : VertexGlued D := by
     exact h1
   obtain ⟨lS₁, lT₁, uS₁, uT₁, lin₁⟩ := _root_.GlobalTheory.SplitLinAt.linModelAt D k p ψ _ _ _ _ _ s₁.weil₀
   obtain ⟨lS₂, lT₂, uS₂, uT₂, lin₂⟩ := _root_.GlobalTheory.SplitLinAt.linModelAt D k p ψ _ _ _ _ _ s₂.weil₀
-  have vS₁ := uS₁ hu₁.2
-  have vT₁ := uT₁ hu₁.1
-  have vS₂ := uS₂ hu₂.2
-  have vT₂ := uT₂ hu₂.1
   obtain ⟨⟨c₀, HS⟩, SG2⟩ := _root_.GlobalTheory.FinPl.sourceGlued D k p n n' q χ hχ (resChar χ hχ q) rfl ψ B.V₀ B.A B.L J.W₀ B.o B.ζ B.line
     B.cpt B.vA s₁.χV s₁.χW s₁.om₀ s₁.weil₀ hu₁.1 hu₁.2 α α₀ β hα P P₁ Q.lat
   obtain ⟨D1, -, -⟩ := GlobalTheory.T.gluedLattice_finite_expansions_localField k n n' q (resChar χ hχ q) (resChar_ne_one hχ q) Q.lat
-  obtain ⟨-, D2, D3⟩ := GlobalTheory.T.gluedLattice_finite_expansions_localField k n n'' q (resChar χ hχ q) (resChar_ne_one hχ q) Q.lat
+  obtain ⟨-, -, D3⟩ := GlobalTheory.T.gluedLattice_finite_expansions_localField k n n'' q (resChar χ hχ q) (resChar_ne_one hχ q) Q.lat
   let μ : Measure (n → k) := Measure.pi fun _ => ν
   have I0 : fpair χ e μ (vecInd Q.lat) (dualInd Q.lat) ≠ 0 := Comm.fpair_ne_zero χ hχc e he μ Q.lat
   have hvec := Comm.vecInd_mem Q.lat
@@ -566,200 +764,23 @@ theorem vertexGlued (D : D7) : VertexGlued D := by
       SB (Matrix n (n' ⊕ Fin 1) k) := fun Ψ hΨ a ha => ⟨tensCol Ψ a, Comm.tensCol_mem hΨ ha⟩
   let row : ∀ Ψ : Matrix n'' n k → ℂ, Ψ ∈ SB (Matrix n'' n k) → ∀ b : (n → k) → ℂ, b ∈ SB (n → k) →
       SB (Matrix (n'' ⊕ Fin 1) n k) := fun Ψ hΨ b hb => ⟨tensRow Ψ b, Comm.tensRow_mem hΨ hb⟩
-  have one_emb : ∀ {S₀ A L : HSp D} (o : OrthDec S₀ A L), o.emb (1, 1) = 1 := fun o => map_one o.emb
 
   refine ⟨fun R => ⟨c₀ * ((withLat Q.lat).card : ℂ), ?_⟩, ?_⟩
   · intro L₁ L₂ L₂' L₃ f₁ Ξ₁ Ξ₁' f₂ Ξ₂ Ξ₂' o₁ o₁' o₂ o₂' φ hφ
-    obtain ⟨U₁, a₁, b₁, t₁⟩ := overMap hψ o₁ fun Ψ f h => (lin₁ _ _ α₀ β L₁ L₂ f₁ Ψ f h).2.2
-    obtain ⟨U₂, a₂, b₂, t₂⟩ := overMap hψ o₂ fun Ψ f h => (lin₂ _ _ β γ₀ L₂' L₃ f₂ Ψ f h).2.2
-    obtain ⟨Θ, hΘ⟩ := exists_trilinear s₁ s₂ l vL U₁ U₂ t₁ t₂
-    have key : ∀ (v : caSub B.A) (Ψ₁ : Matrix n n' k → ℂ) (h₁ : Ψ₁ ∈ SB (Matrix n n' k)) (Ψ₂ : Matrix n'' n k → ℂ)
-        (h₂ : Ψ₂ ∈ SB (Matrix n'' n k)) (a a' b b' : (n → k) → ℂ) (ha : a ∈ SB (n → k)) (ha' : a' ∈ SB (n → k))
-        (hb : b ∈ SB (n → k)) (hb' : b' ∈ SB (n → k)),
-        fpair χ e μ a' b' • (Θ v (col Ψ₁ h₁ a ha) (row Ψ₂ h₂ b hb)).1 =
-          fpair χ e μ a b • (Θ v (col Ψ₁ h₁ a' ha') (row Ψ₂ h₂ b' hb')).1 := by
-      intro v Ψ₁ h₁ Ψ₂ h₂ a a' b b' ha ha' hb hb'
-      rw [hΘ, hΘ]
-      exact HC n n' n'' σ B J B' s₁ s₂ l vL α α₀ β γ γ₀ hα hγ μ L₁ L₂ L₂' L₃ f₁ _ _ f₂ _ _ Ψ₁ Ψ₂ a a' b b' ha ha' hb hb'
-        (a₁ (col Ψ₁ h₁ a ha)) (a₁ (col Ψ₁ h₁ a' ha')) (a₂ (row Ψ₂ h₂ b hb)) (a₂ (row Ψ₂ h₂ b' hb')) v.1 v.2
-    have hFF : ∀ A : Pair k n', IsContAut B.A (FFStar q (resChar χ hχ q) φ A) := fun A => by
-      have := (FFStar q (resChar χ hχ q) (fun P₂ => (⟨φ P₂, hφ.2.2 P₂⟩ : caSub B.A)) A).2
+    have hFF : IsContAut B.A (FFStar q (resChar χ hχ q) φ P₁) := by
+      have := (FFStar q (resChar χ hχ q) (fun P₂ => (⟨φ P₂, hφ.2.2 P₂⟩ : caSub B.A)) P₁).2
       rwa [val_FFStar'] at this
-    let v' : caSub B.A := ⟨_, hFF P₁⟩
-    let x : Pair k n → SB (Matrix n (n' ⊕ Fin 1) k) := fun Q' =>
-      col (phiOne P₁ Q') (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem P₁ Q') (charInd (resChar χ hχ q) Q') (charInd_mem' _ Q')
-    let xv : Pair k n' → Pair k n → SB (Matrix n (n' ⊕ Fin 1) k) := fun A Q' =>
-      col (phiOne A Q') (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem A Q') (vecInd Q.lat) hvec
-    let yd : Pair k n → SB (Matrix (n'' ⊕ Fin 1) n k) := fun Q'' =>
-      row (phiOne Q'' R) (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem Q'' R) (dualInd Q.lat) hdual
-    let y₀ : SB (Matrix (n'' ⊕ Fin 1) n k) := row (latInd Q.lat R.ker) (latInd_mem_SB _ _) (dualInd Q.lat) hdual
-    let y : Pair k n → SB (Matrix (n'' ⊕ Fin 1) n k) := fun Q'' =>
-      row (phiOne Q'' R) (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem Q'' R) (cosetInd q Q''.lat Q''.red) (_root_.GlobalTheory.FinPl.CosetSB.cosetInd_mem_SB k n q _ _)
-
-    have h2 : hand0 s₁ s₂ l vL (φ P) Ξ₁ Ξ₂ = c₀ • hand0 s₁ s₂ l vL (FFStar q (resChar χ hχ q) φ P₁)
-        (U₁ (∑ Q' ∈ withLat Q.lat, x Q')) Ξ₂ :=
-      lift_step s₁ s₂ l vL (hFF P₁) U₁ t₁ (withLat Q.lat) x Ξ₁ Ξ₂
-        (HS L₁ L₂ f₁ Ξ₁ (fun Q' => U₁ (x Q')) o₁ (fun Q' _ => a₁ (x Q')) φ hφ)
-
-    have hΞ₂ : Ξ₂ = U₂ (y₀ + ∑ Q'' ∈ withLat Q.lat, y Q'') := by
-      rw [b₂ ⟨_, o₂.2.2.2.1⟩ Ξ₂ o₂]
-      congr 1
-      apply Subtype.ext
-      simp only [Submodule.coe_add, Submodule.coe_sum]
-      exact D2 R
-
-    have t0 : ∀ Q' ∈ withLat Q.lat, (Θ v' (x Q') y₀).1 = 0 := fun Q' hQ' => by
-      have := key v' (phiOne P₁ Q') (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem P₁ Q') (latInd Q.lat R.ker) (latInd_mem_SB _ _)
-        (charInd (resChar χ hχ q) Q') (vecInd Q.lat) (dualInd Q.lat) (dualInd Q.lat) (charInd_mem' _ Q') hvec hdual hdual
-      have hf := _root_.GlobalTheory.FinPl.Comm.fpair_charInd_dualInd k n q χ hχ e he μ Q'
-      rw [mem_withLat.1 hQ'] at hf
-      rw [hf, zero_smul] at this
-      exact (smul_eq_zero.1 this).resolve_left I0
-
-    have t1 : ∀ Q' ∈ withLat Q.lat, ∑ Q'' ∈ withLat Q.lat, (Θ v' (x Q') (y Q'')).1 =
-        (Θ v' (xv P₁ Q') (yd (ε • Q'))).1 := by
-      intro Q' hQ'
-      have hQ'l : Q'.lat = Q.lat := mem_withLat.1 hQ'
-      have hmem : ε • Q' ∈ withLat Q.lat := mem_withLat.2 (by rw [Pair.dia_lat, hQ'l])
-      rw [Finset.sum_eq_single_of_mem (ε • Q') hmem]
-      · have := key v' (phiOne P₁ Q') (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem P₁ Q') (phiOne (ε • Q') R)
-          (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem _ R) (charInd (resChar χ hχ q) Q') (vecInd Q.lat)
-          (cosetInd q (ε • Q').lat (ε • Q').red) (dualInd Q.lat) (charInd_mem' _ Q') hvec (_root_.GlobalTheory.FinPl.CosetSB.cosetInd_mem_SB k n q _ _) hdual
-        rw [(_root_.GlobalTheory.FinPl.CosetPairing.fpair_charInd_cosetInd k n q χ hχ e ε hεe μ Q' (ε • Q') (by rw [Pair.dia_lat])).1 rfl, hQ'l] at this
-        exact smul_right_injective _ I0 this
-      · intro Q'' hQ'' hne
-        have hQ''l : Q''.lat = Q.lat := mem_withLat.1 hQ''
-        have := key v' (phiOne P₁ Q') (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem P₁ Q') (phiOne Q'' R)
-          (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem _ R) (charInd (resChar χ hχ q) Q') (vecInd Q.lat)
-          (cosetInd q Q''.lat Q''.red) (dualInd Q.lat) (charInd_mem' _ Q') hvec (_root_.GlobalTheory.FinPl.CosetSB.cosetInd_mem_SB k n q _ _) hdual
-        rw [(_root_.GlobalTheory.FinPl.CosetPairing.fpair_charInd_cosetInd k n q χ hχ e ε hεe μ Q' Q'' (hQ''l.trans hQ'l.symm)).2 hne, zero_smul] at this
-        exact (smul_eq_zero.1 this).resolve_left I0
-
-    have hmove : ∀ (Q₀ : Pair k n) (g : GL n k), g • Q.lat = Q.lat →
-        (Θ v' (xv P₁ (g • Q₀)) (yd (g • ε • Q₀))).1 = (Θ v' (xv P₁ Q₀) (yd (ε • Q₀))).1 := by
-      intro Q₀ g hgL
-      have hdet := GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.valuation_det_of_fix Q.lat hgL
-      have hgL' : g⁻¹ • Q.lat = Q.lat := by
-        conv_lhs => rw [← hgL]
-        exact inv_smul_smul g Q.lat
-      have e1 : s₁.om₀ (α₀.gl 1, β.gl g) (U₁ (xv P₁ Q₀)) = U₁ (xv P₁ (g • Q₀)) := by
-        refine b₁ _ _ ?_
-        have := (lin₁ _ _ α₀ β L₁ L₂ f₁ _ _ (a₁ (xv P₁ Q₀))).1 1 g
-        convert this using 1
-        funext z
-        have hl : ((lS₁ (Matrix.GeneralLinearGroup.det (1 : GL (n' ⊕ Fin 1) k)) : ℂˣ) : ℂ) = 1 := by simp
-        have hr : ((lT₁ (Matrix.GeneralLinearGroup.det g) : ℂˣ) : ℂ) = 1 := by rw [vT₁ _ hdet]; rfl
-        show tensCol (phiOne P₁ (g • Q₀)) (vecInd Q.lat) z = _ * _ * tensCol (phiOne P₁ Q₀) (vecInd Q.lat) _
-        rw [hl, hr, one_mul, one_mul,
-          show (1 : GL (n' ⊕ Fin 1) k) = GlobalTheory.RootEx.embX 1 (1 : GL n' k) from (map_one _).symm,
-          tensCol_subst' (vecInd Q.lat) ((g⁻¹ : GL n k) : Matrix n n k) (1 : GL n' k)
-            (Ψ' := phiOne P₁ (g • Q₀)) (fun x => by
-              have := phiOne_smul (P := P₁) (Q := Q₀) (x := x) (1 : GL n' k) g
-              rw [one_smul] at this
-              exact this) z]
-        congr 1
-        funext w
-        exact (vecInd_mulVec hgL' w).symm
-      have e2 : s₂.om₀ (β.gl g, γ₀.gl 1) (U₂ (yd (ε • Q₀))) = U₂ (yd (g • ε • Q₀)) := by
-        refine b₂ _ _ ?_
-        have := (lin₂ _ _ β γ₀ L₂' L₃ f₂ _ _ (a₂ (yd (ε • Q₀)))).1 g 1
-        convert this using 1
-        funext z
-        have hl : ((lS₂ (Matrix.GeneralLinearGroup.det g) : ℂˣ) : ℂ) = 1 := by rw [vS₂ _ hdet]; rfl
-        have hr : ((lT₂ (Matrix.GeneralLinearGroup.det (1 : GL (n'' ⊕ Fin 1) k)) : ℂˣ) : ℂ) = 1 := by simp
-        show tensRow (phiOne (g • ε • Q₀) R) (dualInd Q.lat) z = _ * _ * tensRow (phiOne (ε • Q₀) R) (dualInd Q.lat) _
-        rw [hl, hr, one_mul, one_mul,
-          show (1 : GL (n'' ⊕ Fin 1) k) = GlobalTheory.RootEx.embX 1 (1 : GL n'' k) from (map_one _).symm,
-          tensRow_subst' (dualInd Q.lat) (1 : GL n'' k) (g : Matrix n n k)
-            (Ψ' := phiOne (g • ε • Q₀) R) (fun x => by
-              have := phiOne_smul (P := ε • Q₀) (Q := R) (x := x) g (1 : GL n'' k)
-              rw [one_smul] at this
-              exact this) z]
-        congr 1
-        funext w
-        exact (dualInd_vecMul hgL w).symm
-      have e3 := Comm.doubleThetaUnfolding_equivariant_unitaryGroups s₁ s₂ l vL (hFF P₁) (t₁ (xv P₁ Q₀)) (t₂ (yd (ε • Q₀))) 1 (β.gl g) 1
-      rw [one_emb, one_emb] at e3
-      rw [hΘ, hΘ, ← e1, ← e2, map_one α₀.gl, map_one γ₀.gl]
-      rw [show (fun x : GA D B.A => FFStar q (resChar χ hχ q) φ P₁ (x * 1)) = FFStar q (resChar χ hχ q) φ P₁ from
-        funext fun x => by rw [mul_one]] at e3
-      rw [e3]
-      funext x
-      rw [mul_one]
-    have hall : ∀ Q' ∈ withLat Q.lat, (Θ v' (xv P₁ Q') (yd (ε • Q'))).1 =
-        (Θ v' (xv P₁ (ε⁻¹ • Q)) (yd (ε • ε⁻¹ • Q))).1 := by
-      intro Q' hQ'
-      obtain ⟨g, hg⟩ := MulAction.exists_smul_eq (GL n k) (ε⁻¹ • Q) Q'
-      have hgL : g • Q.lat = Q.lat := by
-        have := congrArg Pair.lat hg
-        rw [Pair.smul_lat, Pair.dia_lat, mem_withLat.1 hQ'] at this
-        exact this
-      have := hmove (ε⁻¹ • Q) g hgL
-      rw [hg, smul_comm g ε (ε⁻¹ • Q), hg] at this
-      exact this
-
-    have hid : ∀ Y', s₂.om₀ (1, 1) Y' = Y' := fun Y' => by
-      rw [show ((1 : GA D J.W₀), (1 : GA D B'.V₀)) = 1 from rfl, map_one]
-      rfl
-    have hsrc : ∀ (g : GL n' k), valuation k ((Matrix.GeneralLinearGroup.det g : kˣ) : k) = 1 → ∀ A A' : Pair k n',
-        hand0 s₁ s₂ l vL (FFStar q (resChar χ hχ q) φ (g • A)) (U₁ (xv (g • A') Q)) (U₂ (yd Q)) =
-          hand0 s₁ s₂ l vL (FFStar q (resChar χ hχ q) φ A) (U₁ (xv A' Q)) (U₂ (yd Q)) := by
-      intro g hdet A A'
-      have e1 : s₁.om₀ (α₀.gl (GlobalTheory.RootEx.embX 1 g), β.gl 1) (U₁ (xv A' Q)) = U₁ (xv (g • A') Q) := by
-        refine b₁ _ _ ?_
-        have := (lin₁ _ _ α₀ β L₁ L₂ f₁ _ _ (a₁ (xv A' Q))).1 (GlobalTheory.RootEx.embX 1 g) 1
-        convert this using 1
-        funext z
-        have hl : ((lS₁ (Matrix.GeneralLinearGroup.det (GlobalTheory.RootEx.embX 1 g)) : ℂˣ) : ℂ) = 1 := by
-          rw [det_embX_one', vS₁ _ hdet]; rfl
-        have hr : ((lT₁ (Matrix.GeneralLinearGroup.det (1 : GL n k)) : ℂˣ) : ℂ) = 1 := by simp
-        show tensCol (phiOne (g • A') Q) (vecInd Q.lat) z = _ * _ * tensCol (phiOne A' Q) (vecInd Q.lat) _
-        rw [hl, hr, one_mul, one_mul,
-          tensCol_subst' (vecInd Q.lat) (((1 : GL n k)⁻¹ : GL n k) : Matrix n n k) g
-            (Ψ' := phiOne (g • A') Q) (fun x => by
-              have := phiOne_smul (P := A') (Q := Q) (x := x) g (1 : GL n k)
-              rw [one_smul] at this
-              exact this) z]
-        congr 1
-        simp
-      have e3 := Comm.doubleThetaUnfolding_equivariant_unitaryGroups s₁ s₂ l vL (hFF A) (t₁ (xv A' Q)) (t₂ (yd Q)) (α.gl g) 1 1
-      rw [one_emb, Comm.emb_gl hα g, hid] at e3
-      have e4 : FFStar q (resChar χ hχ q) φ (g • A) = fun x => FFStar q (resChar χ hχ q) φ A (x * α.gl g) :=
-        FFStar_mem_EqForm q _ hφ.1 g A
-      rw [e4, ← e1, map_one β.gl, e3]
-      funext x
-      rw [mul_one]
-    obtain ⟨g₁, hg₁a, hg₁b, hg₁d⟩ : ∃ g₁ : GL n' k, g₁ • P₁ = ε • P₁ ∧ g₁ • (ε • P₁) = P₁ ∧
-        valuation k ((Matrix.GeneralLinearGroup.det g₁ : kˣ) : k) = 1 := by
-      rcases hεe with ⟨-, h⟩ | ⟨-, h⟩
-      · exact ⟨1, by rw [h, one_smul, one_smul], by rw [h, one_smul, one_smul], by simp⟩
-      · refine ⟨-1, by rw [neg_one_smul_pair, h], ?_, val_det_neg_one⟩
-        rw [neg_one_smul_pair, h, smul_smul]
-        simp
-    have hfin : (Θ v' (xv P₁ (ε⁻¹ • Q)) (yd (ε • ε⁻¹ • Q))).1 =
-        hand0 s₁ s₂ l vL (dia ε (FFStar q (resChar χ hχ q) φ) P₁) Ξ₁' Ξ₂' := by
-      rw [hΘ, b₁ (xv P₁ Q) Ξ₁' o₁', b₂ (yd Q) Ξ₂' o₂', dia_apply, smul_inv_smul]
-      have hx : xv P₁ (ε⁻¹ • Q) = xv (ε • P₁) Q := by
-        apply Subtype.ext
-        show tensCol (phiOne P₁ (ε⁻¹ • Q)) _ = tensCol (phiOne (ε • P₁) Q) _
-        have := phiOne_dia (P := P₁) (Q := ε⁻¹ • Q) ε
-        rw [smul_inv_smul] at this
-        rw [this]
-      rw [hx]
-      have := hsrc g₁ hg₁d P₁ (ε • P₁)
-      rw [hg₁a, hg₁b] at this
-      exact this.symm
-    have hexp : hand0 s₁ s₂ l vL (FFStar q (resChar χ hχ q) φ P₁) (U₁ (∑ Q' ∈ withLat Q.lat, x Q'))
-        (U₂ (y₀ + ∑ Q'' ∈ withLat Q.lat, y Q'')) =
-        ∑ Q' ∈ withLat Q.lat, ((Θ v' (x Q') y₀).1 + ∑ Q'' ∈ withLat Q.lat, (Θ v' (x Q') (y Q'')).1) := by
-      refine (hΘ v' _ _).symm.trans ?_
-
-      rw [map_sum, LinearMap.sum_apply, Submodule.coe_sum]
-      refine Finset.sum_congr rfl fun Q' _ => ?_
-
-      rw [map_add (f := _), map_sum, Submodule.coe_add, Submodule.coe_sum]
-    rw [h2, hΞ₂, hexp, Finset.sum_congr rfl fun Q' hQ' => by rw [t0 Q' hQ', zero_add, t1 Q' hQ', hall Q' hQ'],
-      Finset.sum_const, ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, hfin]
+    exact vertex_step_core D p q ψ χ hχ hIs e he ε hεe s₁ s₂ l vL hu₁ hu₂ α α₀ β γ γ₀ hα hγ
+      P P₁ Q R L₁ L₂ L₂' L₃ f₁ Ξ₁ Ξ₁' f₂ Ξ₂ Ξ₂' o₁ o₁' o₂ o₂' φ hφ c₀
+      (fun Ψ₁ Ψ₂ a a' b b' ha ha' hb hb' _ _ _ _ o1 o1' o2 o2' φ' hφ' =>
+        HC n n' n'' σ B J B' s₁ s₂ l vL α α₀ β γ γ₀ hα hγ μ L₁ L₂ L₂' L₃ f₁ _ _ f₂ _ _
+          Ψ₁ Ψ₂ a a' b b' ha ha' hb hb' o1 o1' o2 o2' φ' hφ')
+      (fun U₁ a₁ t₁ =>
+        let x : Pair k n → SB (Matrix n (n' ⊕ Fin 1) k) := fun Q' =>
+          col (phiOne P₁ Q') (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem P₁ Q')
+            (charInd (resChar χ hχ q) Q') (GlobalTheory.FinPl.SBFacts.charInd_mem _ Q')
+        lift_step s₁ s₂ l vL hFF U₁ t₁ (withLat Q.lat) x Ξ₁ Ξ₂
+          (HS L₁ L₂ f₁ Ξ₁ (fun Q' => U₁ (x Q')) o₁ (fun Q' _ => a₁ (x Q')) φ hφ))
 
   · intro Λ _ L₁ L₂ L₂' L₃ f₁ Ξ₁ f₂ Ξ₂ o₁ o₂ φ hφ
     have hL : latInd Q.lat Λ ∈ SB (Matrix n'' n k) := latInd_mem_SB _ _
@@ -785,7 +806,7 @@ theorem vertexGlued (D : D7) : VertexGlued D := by
         rwa [val_FFStar'] at this
       let v' : caSub B.A := ⟨_, hFF⟩
       let x : Pair k n → SB (Matrix n (n' ⊕ Fin 1) k) := fun Q' =>
-        col (phiOne P₁ Q') (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem P₁ Q') (charInd (resChar χ hχ q) Q') (charInd_mem' _ Q')
+        col (phiOne P₁ Q') (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem P₁ Q') (charInd (resChar χ hχ q) Q') (GlobalTheory.FinPl.SBFacts.charInd_mem _ Q')
       let yK : SB (Matrix (n'' ⊕ Fin 1) n k) := row (latInd Q.lat Λ) hL (dualInd Q.lat) hdual
       have h2 : hand0 s₁ s₂ l vL (φ P) Ξ₁ Ξ₂ = c₀ • hand0 s₁ s₂ l vL (FFStar q (resChar χ hχ q) φ P₁)
           (U₁ (∑ Q' ∈ withLat Q.lat, x Q')) Ξ₂ :=
@@ -798,7 +819,7 @@ theorem vertexGlued (D : D7) : VertexGlued D := by
         rw [map_sum, LinearMap.sum_apply, Submodule.coe_sum]
       have t0 : ∀ Q' ∈ withLat Q.lat, (Θ v' (x Q') yK).1 = 0 := fun Q' hQ' => by
         have := key v' (phiOne P₁ Q') (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem P₁ Q') (latInd Q.lat Λ) hL
-          (charInd (resChar χ hχ q) Q') (vecInd Q.lat) (dualInd Q.lat) (dualInd Q.lat) (charInd_mem' _ Q') hvec hdual hdual
+          (charInd (resChar χ hχ q) Q') (vecInd Q.lat) (dualInd Q.lat) (dualInd Q.lat) (GlobalTheory.FinPl.SBFacts.charInd_mem _ Q') hvec hdual hdual
         have hf := _root_.GlobalTheory.FinPl.Comm.fpair_charInd_dualInd k n q χ hχ e he μ Q'
         rw [mem_withLat.1 hQ'] at hf
         rw [hf, zero_smul] at this
@@ -834,7 +855,7 @@ theorem vertexGlued (D : D7) : VertexGlued D := by
       let x₀ : SB (Matrix n (n' ⊕ Fin 1) k) := col (latInd P.ker Q.lat) (latInd_mem_SB _ _) (vecInd Q.lat) hvec
       let xm : Pair k n → SB (Matrix n (n' ⊕ Fin 1) k) := fun Q' =>
         col (latInd P.ker Q'.ker + mainDatum q (resChar χ hχ q) 1 P Q') (hM Q') (charInd (resChar χ hχ q) Q')
-          (charInd_mem' _ Q')
+          (GlobalTheory.FinPl.SBFacts.charInd_mem _ Q')
       let xmv : Pair k n → SB (Matrix n (n' ⊕ Fin 1) k) := fun Q' =>
         col (latInd P.ker Q'.ker + mainDatum q (resChar χ hχ q) 1 P Q') (hM Q') (vecInd Q.lat) hvec
       let xL : SB (Matrix n (n' ⊕ Fin 1) k) := col (latInd P.lat Q.lat) (latInd_mem_SB _ _) (vecInd Q.lat) hvec
@@ -859,7 +880,7 @@ theorem vertexGlued (D : D7) : VertexGlued D := by
       have hm : ∀ Q' ∈ withLat Q.lat, (Θ vP (xm Q') yP).1 = (Θ vP (xmv Q') yP).1 := by
         intro Q' hQ'
         have := key vP _ (hM Q') (latInd Q.lat Λ) hL (charInd (resChar χ hχ q) Q') (vecInd Q.lat) btot btot
-          (charInd_mem' _ Q') hvec hbtot hbtot
+          (GlobalTheory.FinPl.SBFacts.charInd_mem _ Q') hvec hbtot hbtot
         have f4 := _root_.GlobalTheory.FinPl.Comm.DualCosets.fpair_charInd_dualInd_add_cosets k n q χ hχ e he μ Q'
         have f3 := _root_.GlobalTheory.FinPl.Comm.fpair_vecInd_dualInd_add_cosets k n q χ hχ e he μ Q.lat
         rw [mem_withLat.1 hQ', ← hbdef] at f4

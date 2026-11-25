@@ -22,8 +22,6 @@ set_option linter.dupNamespace false
 
 namespace Formalism.L2.SG.RowsConc
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Num
 
 variable {D : D7} (X : HidaSetting D) (Y : Full X)
@@ -166,15 +164,6 @@ theorem idOneC_of_full (hFo : FoldOKC) (hF : FundExistsC) (hO : OOIntAllC)
 
 end FromFull
 
-section TermReal
-
-variable {D : D7} (X : HidaSetting D)
-
-variable {X} {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)}
-  {F0' : FlagG (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)} {what₂ rows' : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
-
-end TermReal
-
 section NGData
 
 def toPts {K : Type} [Zero K] {i : ℕ} (p : Formalism.MainNotions.S.Point K (i + 1)) : Σ c : Composition (i + 1), (Fin c.length → K) :=
@@ -241,9 +230,5 @@ def clsOf (t : TauC Y u u') : Set (TauC Y u u') :=
   {t' | t' ∈ (Y.tO u u').ngSet ∧ (Y.tO u u').rowOf t' = (Y.tO u u').rowOf t ∧ (Y.tO u u').s0 t t' = 1}
 
 end NGData
-
-section NGCut
-
-end NGCut
 
 end Formalism.L2.SG.RowsConc

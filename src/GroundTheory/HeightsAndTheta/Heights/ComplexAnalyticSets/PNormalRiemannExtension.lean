@@ -40,10 +40,10 @@ theorem NormalRiemannExtension.proof (hloc : NormalRiemannExtensionLocal.Stateme
   refine ⟨fun z => if z ∈ zeroSetIn I ∩ U then F z z else f z, ?_, ?_⟩
   · intro w hw
     refine ⟨V w, hVo w hw, hwV w hw, F w, hF w hw, fun y hy => ?_⟩
-    simp only [if_pos hy.1]
+    simp only [ite_eq_left hy.1]
     exact hagree w hw y hy.1 hy.2
   · intro z hz
-    simp only [if_pos hz.1]
+    simp only [ite_eq_left hz.1]
     exact hFf z hz.1 ⟨⟨hz.1.1, hwV z hz.1⟩, hz.2⟩
 
 end GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets

@@ -1,6 +1,5 @@
 module
 
-public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.DivisorReductionStepProperties
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsIdeal
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.UntwistedDivisorRestriction
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.ControlledTransform
@@ -11,8 +10,6 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrin
 public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.IdealSheafOpenRestriction
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.DivisorReductionSequence
 public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafOrderDecrease
-public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.BaseChangeMorphismProperties
-public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsSmoothPullback
 public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderPullback
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.AmbientBlowupSequence
 public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderAtMultiplicativity
@@ -75,246 +72,7 @@ import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipaliz
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.DivisorReductionProperties, Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.ControlledTransformOrderMonotone, Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.AmbientBlowupMarked, Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SubschemeMapFlatness, Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsFunctoriality, Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsIdealTop, Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.OrderLocusDisjointBoundary, Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.TwistedDivisorRestriction, Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.BalancedDivisorReduction
-
--- ===== clump member: Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.DivisorReductionProperties =====
--- clump-header: {"m": "Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.DivisorReductionProperties", "h": "module\n\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.DivisorReductionStepProperties\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsIdeal\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.UntwistedDivisorRestriction\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
-section -- clump:auto
-@[expose] public section
-
-universe u
-
-open CategoryTheory AlgebraicGeometry
-
-noncomputable section
-
-namespace FunctorialResolution.EmbeddedResolution
-
-structure DivisorReductionProperties (hres : FunctorialResolution.Blowup.StrictTransformIsBlowupOfClosedSubscheme.{u})
-    (hno : BlowupPreservesNoetherian.{u}) : Prop where
-  isMarked_pushedTop :
-    ∀ (T : MarkedIdealWithBoundary.{u}) (hV : T.IsAdmissible), T.IsOrderBoundedByMult →
-      T.IsBalanced hV.locallyOfFiniteType →
-        ∀ (j : ℕ) (hj : j < T.boundary.length),
-          DivisorReduction.containedComponentsIdeal T j hj = ⊤ →
-            (DivisorReduction.restrictToDivisor T j hj).IsAdmissible →
-              ∀ [AlgebraicGeometry.IsNoetherian T.scheme]
-                (s : (DivisorReduction.restrictToDivisor T j hj).SequenceOfBlowups)
-                (hpr : (MarkedBlowupSequenceData.ofMarkedSequence s).CentersContainNoComponent),
-                (DivisorReduction.ambientBlowupSeq hres hno T j hj (DivisorReduction.lowerIdealWithoutBlowup T)
-                      (DivisorReduction.lowerBoundaryWithoutBlowup T) s hpr).IsMarked
-                  T.structMap T.ideal T.mult T.boundary
-  isMarked_pushedPre :
-    ∀ (T : MarkedIdealWithBoundary.{u}) (hV : T.IsAdmissible), T.IsOrderBoundedByMult →
-      T.IsBalanced hV.locallyOfFiniteType →
-        ∀ (j : ℕ) (hj : j < T.boundary.length),
-          DivisorReduction.containedComponentsIdeal T j hj ≠ ⊤ →
-            ∀ (hb : Blowup.IsBlowupAlongIdealSheaf (CategoryTheory.CategoryStruct.id T.scheme)
-                (DivisorReduction.containedComponentsIdeal T j hj)),
-              (DivisorReduction.restrictTwistedToDivisor T j hj).IsAdmissible →
-                ∀ [AlgebraicGeometry.IsNoetherian T.scheme]
-                  (s : (DivisorReduction.restrictTwistedToDivisor T j hj).SequenceOfBlowups)
-                  (hpr : (MarkedBlowupSequenceData.ofMarkedSequence s).CentersContainNoComponent),
-                  (BlowupSequenceData.prepend (DivisorReduction.containedComponentsIdeal T j hj) hb
-                        (DivisorReduction.ambientBlowupSeq hres hno T j hj
-                          (DivisorReduction.lowerIdealAfterBlowup T j hj)
-                          (DivisorReduction.lowerBoundaryAfterBlowup T j hj) s hpr)).IsMarked
-                    T.structMap T.ideal T.mult T.boundary
-  valid_lowerPre :
-    ∀ (T : MarkedIdealWithBoundary.{u}) (hV : T.IsAdmissible), T.IsOrderBoundedByMult →
-      T.IsBalanced hV.locallyOfFiniteType →
-        ∀ (j : ℕ) (hj : j < T.boundary.length),
-          DivisorReduction.containedComponentsIdeal T j hj ≠ ⊤ → (DivisorReduction.restrictTwistedToDivisor T j hj).IsAdmissible
-  orderAt_ctrlIdeal_le_top :
-    ∀ (T : MarkedIdealWithBoundary.{u}) (hV : T.IsAdmissible), T.IsOrderBoundedByMult →
-      T.IsBalanced hV.locallyOfFiniteType →
-        ∀ (j : ℕ) (hj : j < T.boundary.length),
-          DivisorReduction.containedComponentsIdeal T j hj = ⊤ →
-            (DivisorReduction.restrictToDivisor T j hj).IsAdmissible →
-              ∀ [AlgebraicGeometry.IsNoetherian T.scheme]
-                (s : (DivisorReduction.restrictToDivisor T j hj).SequenceOfBlowups)
-                (hpr : (MarkedBlowupSequenceData.ofMarkedSequence s).CentersContainNoComponent),
-                ∀ i ≤ s.length,
-                  ∀ (x : ↥((DivisorReduction.ambientBlowupSeq hres hno T j hj
-                            (DivisorReduction.lowerIdealWithoutBlowup T)
-                            (DivisorReduction.lowerBoundaryWithoutBlowup T) s hpr).obj i)),
-                    orderAt ((DivisorReduction.ambientBlowupSeq hres hno T j hj
-                          (DivisorReduction.lowerIdealWithoutBlowup T)
-                          (DivisorReduction.lowerBoundaryWithoutBlowup T) s hpr).controlledTransform
-                        T.ideal T.mult i) x ≤ (T.mult : ℕ∞)
-  orderAt_ctrlIdeal_le_pre :
-    ∀ (T : MarkedIdealWithBoundary.{u}) (hV : T.IsAdmissible), T.IsOrderBoundedByMult →
-      T.IsBalanced hV.locallyOfFiniteType →
-        ∀ (j : ℕ) (hj : j < T.boundary.length),
-          DivisorReduction.containedComponentsIdeal T j hj ≠ ⊤ →
-            ∀ (hb : Blowup.IsBlowupAlongIdealSheaf (CategoryTheory.CategoryStruct.id T.scheme)
-                (DivisorReduction.containedComponentsIdeal T j hj)),
-              (DivisorReduction.restrictTwistedToDivisor T j hj).IsAdmissible →
-                ∀ [AlgebraicGeometry.IsNoetherian T.scheme]
-                  (s : (DivisorReduction.restrictTwistedToDivisor T j hj).SequenceOfBlowups)
-                  (hpr : (MarkedBlowupSequenceData.ofMarkedSequence s).CentersContainNoComponent),
-                  ∀ i ≤ s.length + 1,
-                    ∀ (x : ↥((BlowupSequenceData.prepend (DivisorReduction.containedComponentsIdeal T j hj) hb
-                              (DivisorReduction.ambientBlowupSeq hres hno T j hj
-                                (DivisorReduction.lowerIdealAfterBlowup T j hj)
-                                (DivisorReduction.lowerBoundaryAfterBlowup T j hj) s hpr)).obj i)),
-                      orderAt ((BlowupSequenceData.prepend (DivisorReduction.containedComponentsIdeal T j hj) hb
-                            (DivisorReduction.ambientBlowupSeq hres hno T j hj
-                              (DivisorReduction.lowerIdealAfterBlowup T j hj)
-                              (DivisorReduction.lowerBoundaryAfterBlowup T j hj) s hpr)).controlledTransform
-                          T.ideal T.mult i) x ≤ (T.mult : ℕ∞)
-  coSupport_inter_ker_eq_empty_top :
-    ∀ (T : MarkedIdealWithBoundary.{u}) (hV : T.IsAdmissible), T.IsOrderBoundedByMult →
-      T.IsBalanced hV.locallyOfFiniteType →
-        ∀ (j : ℕ) (hj : j < T.boundary.length),
-          DivisorReduction.containedComponentsIdeal T j hj = ⊤ →
-            (DivisorReduction.restrictToDivisor T j hj).IsAdmissible →
-              ∀ [AlgebraicGeometry.IsNoetherian T.scheme]
-                (s : (DivisorReduction.restrictToDivisor T j hj).SequenceOfBlowups)
-                (hpr : (MarkedBlowupSequenceData.ofMarkedSequence s).CentersContainNoComponent),
-                orderAtLeastLocus (s.ideal s.length) T.mult = ∅ →
-                  orderAtLeastLocus ((DivisorReduction.ambientBlowupSeq hres hno T j hj
-                          (DivisorReduction.lowerIdealWithoutBlowup T)
-                          (DivisorReduction.lowerBoundaryWithoutBlowup T) s hpr).controlledTransform
-                        T.ideal T.mult s.length) T.mult ∩
-                      ↑(AlgebraicGeometry.Scheme.Hom.ker
-                          (DivisorReduction.embeddingIntoAmbient hres hno T j hj
-                            (DivisorReduction.lowerIdealWithoutBlowup T)
-                            (DivisorReduction.lowerBoundaryWithoutBlowup T) s hpr s.length)).support = ∅
-  coSupport_inter_ker_eq_empty_pre :
-    ∀ (T : MarkedIdealWithBoundary.{u}) (hV : T.IsAdmissible), T.IsOrderBoundedByMult →
-      T.IsBalanced hV.locallyOfFiniteType →
-        ∀ (j : ℕ) (hj : j < T.boundary.length),
-          DivisorReduction.containedComponentsIdeal T j hj ≠ ⊤ →
-            ∀ (hb : Blowup.IsBlowupAlongIdealSheaf (CategoryTheory.CategoryStruct.id T.scheme)
-                (DivisorReduction.containedComponentsIdeal T j hj)),
-              (DivisorReduction.restrictTwistedToDivisor T j hj).IsAdmissible →
-                ∀ [AlgebraicGeometry.IsNoetherian T.scheme]
-                  (s : (DivisorReduction.restrictTwistedToDivisor T j hj).SequenceOfBlowups)
-                  (hpr : (MarkedBlowupSequenceData.ofMarkedSequence s).CentersContainNoComponent),
-                  orderAtLeastLocus (s.ideal s.length) T.mult = ∅ →
-                    orderAtLeastLocus ((BlowupSequenceData.prepend (DivisorReduction.containedComponentsIdeal T j hj) hb
-                            (DivisorReduction.ambientBlowupSeq hres hno T j hj
-                              (DivisorReduction.lowerIdealAfterBlowup T j hj)
-                              (DivisorReduction.lowerBoundaryAfterBlowup T j hj) s hpr)).controlledTransform
-                          T.ideal T.mult (s.length + 1)) T.mult ∩
-                        (((AlgebraicGeometry.Scheme.Hom.ker
-                            (DivisorReduction.embeddingIntoAmbient hres hno T j hj
-                              (DivisorReduction.lowerIdealAfterBlowup T j hj)
-                              (DivisorReduction.lowerBoundaryAfterBlowup T j hj) s hpr s.length)).support :
-                          Set ↥((DivisorReduction.ambientBlowupSeq hres hno T j hj
-                              (DivisorReduction.lowerIdealAfterBlowup T j hj)
-                              (DivisorReduction.lowerBoundaryAfterBlowup T j hj) s hpr).obj s.length))) = ∅
-  isPullbackSeq_ambientTower :
-    ∀ (X Y S S' : AlgebraicGeometry.Scheme.{u}) (σ : S ⟶ X) (σ' : S' ⟶ Y) (φ : Y ⟶ X) (ψ : S' ⟶ S)
-      [AlgebraicGeometry.IsClosedImmersion σ] [AlgebraicGeometry.IsClosedImmersion σ']
-      [AlgebraicGeometry.Flat φ] [AlgebraicGeometry.IsNoetherian X]
-      [AlgebraicGeometry.IsNoetherian Y],
-      CategoryTheory.IsPullback σ' ψ φ σ →
-        ∀ (d : BlowupSequenceData S) (d' : BlowupSequenceData S') (hc : d.CentersContainNoComponent) (hc' : d'.CentersContainNoComponent),
-          IsPullbackBlowupSequence ψ d'.toSequenceOfBlowups d.toSequenceOfBlowups →
-            IsPullbackBlowupSequence φ (ambientBlowupSequence σ' d' hres hno hc').toSequenceOfBlowups
-              (ambientBlowupSequence σ d hres hno hc).toSequenceOfBlowups
-  isStrictPullbackSeq_ambientTower :
-    ∀ (X Y S S' : AlgebraicGeometry.Scheme.{u}) (σ : S ⟶ X) (σ' : S' ⟶ Y) (φ : Y ⟶ X) (ψ : S' ⟶ S)
-      [AlgebraicGeometry.IsClosedImmersion σ] [AlgebraicGeometry.IsClosedImmersion σ']
-      [AlgebraicGeometry.Flat φ] [AlgebraicGeometry.IsNoetherian X]
-      [AlgebraicGeometry.IsNoetherian Y],
-      CategoryTheory.IsPullback σ' ψ φ σ →
-        ∀ (d : BlowupSequenceData S) (d' : BlowupSequenceData S') (hc : d.CentersContainNoComponent) (hc' : d'.CentersContainNoComponent),
-          IsStrictPullbackBlowupSeq ψ d'.toSequenceOfBlowups d.toSequenceOfBlowups →
-            IsStrictPullbackBlowupSeq φ (ambientBlowupSequence σ' d' hres hno hc').toSequenceOfBlowups
-              (ambientBlowupSequence σ d hres hno hc).toSequenceOfBlowups
-  comap_ctrlIdeal_top :
-    ∀ (T : MarkedIdealWithBoundary.{u}) (hV : T.IsAdmissible), T.IsOrderBoundedByMult →
-      T.IsBalanced hV.locallyOfFiniteType →
-        ∀ (j : ℕ) (hj : j < T.boundary.length),
-          DivisorReduction.containedComponentsIdeal T j hj = ⊤ →
-            (DivisorReduction.restrictToDivisor T j hj).IsAdmissible →
-              ∀ [AlgebraicGeometry.IsNoetherian T.scheme]
-                (s : (DivisorReduction.restrictToDivisor T j hj).SequenceOfBlowups)
-                (hpr : (MarkedBlowupSequenceData.ofMarkedSequence s).CentersContainNoComponent),
-                ∀ i ≤ s.length,
-                  ((DivisorReduction.ambientBlowupSeq hres hno T j hj (DivisorReduction.lowerIdealWithoutBlowup T)
-                            (DivisorReduction.lowerBoundaryWithoutBlowup T) s hpr).controlledTransform
-                        T.ideal T.mult i).comap
-                      (DivisorReduction.embeddingIntoAmbient hres hno T j hj (DivisorReduction.lowerIdealWithoutBlowup T)
-                        (DivisorReduction.lowerBoundaryWithoutBlowup T) s hpr i) = s.ideal i
-  comap_ctrlIdeal_pre :
-    ∀ (T : MarkedIdealWithBoundary.{u}) (hV : T.IsAdmissible), T.IsOrderBoundedByMult →
-      T.IsBalanced hV.locallyOfFiniteType →
-        ∀ (j : ℕ) (hj : j < T.boundary.length),
-          DivisorReduction.containedComponentsIdeal T j hj ≠ ⊤ →
-            ∀ (hb : Blowup.IsBlowupAlongIdealSheaf (CategoryTheory.CategoryStruct.id T.scheme)
-                (DivisorReduction.containedComponentsIdeal T j hj)),
-              (DivisorReduction.restrictTwistedToDivisor T j hj).IsAdmissible →
-                ∀ [AlgebraicGeometry.IsNoetherian T.scheme]
-                  (s : (DivisorReduction.restrictTwistedToDivisor T j hj).SequenceOfBlowups)
-                  (hpr : (MarkedBlowupSequenceData.ofMarkedSequence s).CentersContainNoComponent),
-                  ∀ i ≤ s.length,
-                    ((BlowupSequenceData.prepend (DivisorReduction.containedComponentsIdeal T j hj) hb
-                              (DivisorReduction.ambientBlowupSeq hres hno T j hj
-                                (DivisorReduction.lowerIdealAfterBlowup T j hj)
-                                (DivisorReduction.lowerBoundaryAfterBlowup T j hj) s hpr)).controlledTransform
-                          T.ideal T.mult (i + 1)).comap
-                        (DivisorReduction.embeddingIntoAmbient hres hno T j hj
-                          (DivisorReduction.lowerIdealAfterBlowup T j hj)
-                          (DivisorReduction.lowerBoundaryAfterBlowup T j hj) s hpr i) = s.ideal i
-  preIdeal_pullbackAlong :
-    ∀ (T : MarkedIdealWithBoundary.{u}), T.IsAdmissible →
-      ∀ (Y : AlgebraicGeometry.Scheme.{u})
-        (q : Y ⟶ AlgebraicGeometry.Spec (CommRingCat.of T.base)) (h : Y ⟶ T.scheme)
-        [AlgebraicGeometry.Smooth h],
-        CategoryTheory.CategoryStruct.comp h T.structMap = q →
-          (T.pullbackAlong Y q h).IsAdmissible →
-            ∀ (j : ℕ) (hj : j < T.boundary.length)
-              (hj' : j < (T.pullbackAlong Y q h).boundary.length),
-              DivisorReduction.containedComponentsIdeal (T.pullbackAlong Y q h) j hj' =
-                (DivisorReduction.containedComponentsIdeal T j hj).comap h
-  preIdeal_eq_top_of_imageIdeal :
-    ∀ (T : MarkedIdealWithBoundary.{u}), T.IsAdmissible →
-      ∀ (j : ℕ) (hj : j < T.boundary.length)
-        (J : (T.boundary.get ⟨j, hj⟩).subscheme.IdealSheafData),
-        T.mult = 1 →
-          (T.withSchemeIdealBoundary (T.boundary.get ⟨j, hj⟩).subscheme
-                (CategoryTheory.CategoryStruct.comp (T.boundary.get ⟨j, hj⟩).subschemeι
-                  T.structMap) J
-                (List.map (fun D => D.comap (T.boundary.get ⟨j, hj⟩).subschemeι)
-                  (T.boundary.eraseIdx j))).IsAdmissible →
-            T.ideal = _root_.FunctorialResolution.Blowup.schemeImageIdeal (T.boundary.get ⟨j, hj⟩).subschemeι J →
-              DivisorReduction.containedComponentsIdeal T j hj = ⊤
-
-theorem DivisorReductionProperties.toDivisorReductionStepProperties {hres : FunctorialResolution.Blowup.StrictTransformIsBlowupOfClosedSubscheme.{u}}
-    {hno : BlowupPreservesNoetherian.{u}} (h : DivisorReductionProperties hres hno) :
-    DivisorReductionStepProperties hres hno :=
-  { exists_ideal_mul_preIdeal_pow := fun T hV _ j hj =>
-      exists_mul_pow_containedComponentsIdeal_eq_ideal T hV j hj
-    isMarked_pushedTop := h.isMarked_pushedTop
-    isMarked_pushedPre := h.isMarked_pushedPre
-    isBlowup_id_preIdeal := fun T hV j hj => isBlowupAlongIdealSheaf_id_containedComponentsIdeal T hV j hj
-    valid_lowerTop := fun T hV hOB hbal j hj hZ =>
-      DivisorReduction.isAdmissible_restrictToDivisor T hV hOB hbal j hj hZ
-    valid_lowerPre := h.valid_lowerPre
-    orderAt_ctrlIdeal_le_top := h.orderAt_ctrlIdeal_le_top
-    orderAt_ctrlIdeal_le_pre := h.orderAt_ctrlIdeal_le_pre
-    coSupport_inter_ker_eq_empty_top := h.coSupport_inter_ker_eq_empty_top
-    coSupport_inter_ker_eq_empty_pre := h.coSupport_inter_ker_eq_empty_pre
-    isPullbackSeq_ambientTower := h.isPullbackSeq_ambientTower
-    isStrictPullbackSeq_ambientTower := h.isStrictPullbackSeq_ambientTower
-    comap_ctrlIdeal_top := h.comap_ctrlIdeal_top
-    comap_ctrlIdeal_pre := h.comap_ctrlIdeal_pre
-    preIdeal_pullbackAlong := h.preIdeal_pullbackAlong
-    preIdeal_eq_top_of_imageIdeal := h.preIdeal_eq_top_of_imageIdeal
-    smooth_preIdeal := fun T hV j hj => smooth_subschemeι_containedComponentsIdeal_comp T hV j hj
-    hasSNCWith_preIdeal := fun T hV j hj => hasStrictNormalCrossingsWith_containedComponentsIdeal T hV j hj
-    support_preIdeal_subset := fun T hV j hj => support_containedComponentsIdeal_subset_orderAtLeastLocus T hV j hj }
-
-end FunctorialResolution.EmbeddedResolution
-
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.DivisorReductionProperties =====
+-- Members: Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.ControlledTransformOrderMonotone, Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.AmbientBlowupMarked, Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SubschemeMapFlatness, Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsFunctoriality, Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsIdealTop, Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.OrderLocusDisjointBoundary, Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.TwistedDivisorRestriction, Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.BalancedDivisorReduction
 
 -- ===== clump member: Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.ControlledTransformOrderMonotone =====
 -- clump-header: {"m": "Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.ControlledTransformOrderMonotone", "h": "module\n\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.ControlledTransform\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.ControlledTransformOrderBound\nimport Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.PowerContainmentAndOrderLocus\nimport Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupSmoothness\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
@@ -608,45 +366,19 @@ noncomputable section
 
 namespace FunctorialResolution.EmbeddedResolution
 
-theorem exists_comp_subschemeι_eq_subschemeι_comp {X Y : Scheme.{u}} (g : Y ⟶ X) (Z : X.IdealSheafData) :
-    ∃ q : (Z.comap g).subscheme ⟶ Z.subscheme,
-      q ≫ Z.subschemeι = (Z.comap g).subschemeι ≫ g := by
-  have : IsClosedImmersion (Limits.pullback.fst g Z.subschemeι) := inferInstance
-  have hle : Scheme.Hom.ker (Limits.pullback.fst g Z.subschemeι) ≤
-      Scheme.Hom.ker (Z.comap g).subschemeι :=
-    le_of_eq (Scheme.IdealSheafData.ker_subschemeι (Z.comap g)).symm
-  refine ⟨IsClosedImmersion.lift (Limits.pullback.fst g Z.subschemeι)
-      (Z.comap g).subschemeι hle ≫ Limits.pullback.snd g Z.subschemeι, ?_⟩
-  rw [Category.assoc, ← Limits.pullback.condition, ← Category.assoc,
-    IsClosedImmersion.lift_fac]
-
 def subschemeMapOfComap {X Y : Scheme.{u}} (g : Y ⟶ X) (Z : X.IdealSheafData) :
     (Z.comap g).subscheme ⟶ Z.subscheme :=
-  (exists_comp_subschemeι_eq_subschemeι_comp g Z).choose
+  (Z.comap g).subschemeMap Z g (Z.le_map_comap g)
 
 theorem subschemeMapOfComap_comp {X Y : Scheme.{u}} (g : Y ⟶ X) (Z : X.IdealSheafData) :
     subschemeMapOfComap g Z ≫ Z.subschemeι = (Z.comap g).subschemeι ≫ g :=
-  (exists_comp_subschemeι_eq_subschemeι_comp g Z).choose_spec
-
-private theorem flat_of_comp_subschemeι_eq_of_iso_pullback {X Y : Scheme.{u}} (g : Y ⟶ X) [AlgebraicGeometry.Flat g]
-    (Z : X.IdealSheafData)
-    (e : (Z.comap g).subscheme ≅ Limits.pullback g Z.subschemeι)
-    (he : e.hom ≫ Limits.pullback.fst g Z.subschemeι = (Z.comap g).subschemeι)
-    (q : (Z.comap g).subscheme ⟶ Z.subscheme)
-    (hq : q ≫ Z.subschemeι = (Z.comap g).subschemeι ≫ g) :
-    AlgebraicGeometry.Flat q := by
-  have hq' : q = e.hom ≫ Limits.pullback.snd g Z.subschemeι := by
-    rw [← cancel_mono Z.subschemeι, hq, Category.assoc, ← Limits.pullback.condition,
-      ← Category.assoc, he]
-  rw [hq']
-  infer_instance
+  (Z.comap g).subschemeMap_subschemeι ..
 
 theorem flat_subschemeMapOfComap {X Y : Scheme.{u}} (g : Y ⟶ X)
     [AlgebraicGeometry.Flat g] (Z : X.IdealSheafData) :
     AlgebraicGeometry.Flat (subschemeMapOfComap g Z) := by
-  refine flat_of_comp_subschemeι_eq_of_iso_pullback g Z (Scheme.IdealSheafData.comapIso ..) ?_ _
-    (subschemeMapOfComap_comp g Z)
-  exact Scheme.IdealSheafData.comapIso_hom_fst ..
+  rw [subschemeMapOfComap, ← Scheme.IdealSheafData.comapIso_hom_snd]
+  infer_instance
 
 instance instFlatComapSubschemeMap {X Y : Scheme.{u}} (g : Y ⟶ X)
     [AlgebraicGeometry.Flat g] (Z : X.IdealSheafData) :
@@ -679,92 +411,9 @@ theorem mem_connectedComponent_of_specializes {α : Type*} [TopologicalSpace α]
   have hz : z ∈ connectedComponent y := hsub hzy
   rwa [← connectedComponent_eq hy] at hz
 
-private theorem ideal_eq_of_comap_opensι_eq {X : Scheme.{u}} (I J : X.IdealSheafData)
-    (V : X.Opens) (hV : IsAffineOpen V) (hIJ : I.comap V.ι = J.comap V.ι) :
-    I.ideal ⟨V, hV⟩ = J.ideal ⟨V, hV⟩ := by
-  have : IsAffine V.toScheme := hV
-  have main : ∀ W : X.affineOpens, (W : X.Opens) = V → I.ideal W = J.ideal W →
-      I.ideal ⟨V, hV⟩ = J.ideal ⟨V, hV⟩ := by
-    rintro ⟨W, hWaff⟩ rfl hW
-    exact hW
-  refine main ⟨V.ι ''ᵁ (⊤ : V.toScheme.Opens),
-    (isAffineOpen_top V.toScheme).image_of_isOpenImmersion V.ι⟩
-    (Scheme.Opens.ι_image_top V) ?_
-  have h3 : (I.comap V.ι).ideal ⟨⊤, isAffineOpen_top _⟩
-      = (J.comap V.ι).ideal ⟨⊤, isAffineOpen_top _⟩ := by rw [hIJ]
-  rw [Scheme.IdealSheafData.ideal_comap_of_isOpenImmersion,
-    Scheme.IdealSheafData.ideal_comap_of_isOpenImmersion] at h3
-  have hid : (CommRingCat.Hom.hom (Scheme.Hom.appIso V.ι (⊤ : V.toScheme.Opens)).inv).comp
-      (CommRingCat.Hom.hom (Scheme.Hom.appIso V.ι (⊤ : V.toScheme.Opens)).hom)
-      = RingHom.id _ := by
-    rw [← CommRingCat.hom_comp, (Scheme.Hom.appIso V.ι (⊤ : V.toScheme.Opens)).hom_inv_id,
-      CommRingCat.hom_id]
-  have hsurj : Function.Surjective
-      ⇑(CommRingCat.Hom.hom (Scheme.Hom.appIso V.ι (⊤ : V.toScheme.Opens)).inv) := fun y =>
-    ⟨CommRingCat.Hom.hom (Scheme.Hom.appIso V.ι (⊤ : V.toScheme.Opens)).hom y,
-      DFunLike.congr_fun hid y⟩
-  exact Ideal.comap_injective_of_surjective _ hsurj h3
-
-private theorem span_eq_top_of_basicOpen_cover {X : Scheme.{u}} (W : X.affineOpens)
-    (S : Set Γ(X, (W : X.Opens)))
-    (hcov : ∀ x ∈ (W : X.Opens), ∃ f ∈ S, x ∈ X.basicOpen f) :
-    Ideal.span S = ⊤ := by
-  rw [← W.2.iSup_basicOpen_eq_self_iff]
-  refine le_antisymm (iSup_le fun f => X.basicOpen_le (f : Γ(X, (W : X.Opens)))) ?_
-  rw [SetLike.le_def]
-  intro x hx
-  obtain ⟨f, hfS, hxf⟩ := hcov x hx
-  exact TopologicalSpace.Opens.mem_iSup.mpr ⟨⟨f, hfS⟩, hxf⟩
-
-private theorem exists_pow_mul_mem_of_ideal_basicOpen_eq {X : Scheme.{u}}
-    (A B : X.IdealSheafData) (W : X.affineOpens)
-    (f : Γ(X, (W : X.Opens)))
-    (hf : A.ideal (X.affineBasicOpen f) = B.ideal (X.affineBasicOpen f))
-    (s : Γ(X, (W : X.Opens))) (hs : s ∈ A.ideal W) :
-    ∃ n : ℕ, f ^ n * s ∈ B.ideal W := by
-  have := W.2.isLocalization_basicOpen f
-  have hA := A.map_ideal_basicOpen W f
-  have hB := B.map_ideal_basicOpen W f
-  rw [hf, ← hB] at hA
-  have halg : (algebraMap Γ(X, (W : X.Opens)) Γ(X, X.basicOpen f))
-      = CommRingCat.Hom.hom (X.presheaf.map (homOfLE (X.basicOpen_le f)).op) := rfl
-  have hmem : (algebraMap Γ(X, (W : X.Opens)) Γ(X, X.basicOpen f)) s
-      ∈ Ideal.map (algebraMap Γ(X, (W : X.Opens)) Γ(X, X.basicOpen f)) (B.ideal W) := by
-    rw [halg, ← hA]
-    exact Ideal.mem_map_of_mem _ hs
-  obtain ⟨⟨y, m⟩, hym⟩ :=
-    (IsLocalization.mem_map_algebraMap_iff (Submonoid.powers f) Γ(X, X.basicOpen f)).mp hmem
-  rw [← map_mul] at hym
-  obtain ⟨c, hc⟩ :=
-    (IsLocalization.eq_iff_exists (Submonoid.powers f) Γ(X, X.basicOpen f)).mp hym
-  obtain ⟨n1, hn1⟩ := (Submonoid.mem_powers_iff (m : Γ(X, (W : X.Opens))) f).mp m.2
-  obtain ⟨n2, hn2⟩ := (Submonoid.mem_powers_iff (c : Γ(X, (W : X.Opens))) f).mp c.2
-  refine ⟨n2 + n1, ?_⟩
-  have hrw : f ^ (n2 + n1) * s
-      = (c : Γ(X, (W : X.Opens))) * (s * (m : Γ(X, (W : X.Opens)))) := by
-    rw [← hn1, ← hn2]; ring
-  rw [hrw, hc]
-  exact Ideal.mul_mem_left _ _ y.2
-
-private theorem ideal_le_of_basicOpen_cover {X : Scheme.{u}} (A B : X.IdealSheafData)
-    (W : X.affineOpens)
-    (hcov : ∀ x ∈ (W : X.Opens), ∃ f : Γ(X, (W : X.Opens)), x ∈ X.basicOpen f ∧
-      A.ideal (X.affineBasicOpen f) = B.ideal (X.affineBasicOpen f)) :
-    A.ideal W ≤ B.ideal W := by
-  intro s hs
-  have hspan : Ideal.span {f : Γ(X, (W : X.Opens)) |
-      A.ideal (X.affineBasicOpen f) = B.ideal (X.affineBasicOpen f)} = ⊤ := by
-    refine span_eq_top_of_basicOpen_cover W _ (fun x hx => ?_)
-    obtain ⟨f, hxf, hf⟩ := hcov x hx
-    exact ⟨f, hf, hxf⟩
-  refine Submodule.mem_of_span_eq_top_of_smul_pow_mem _ _ hspan s ?_
-  rintro ⟨f, hf⟩
-  obtain ⟨n, hn⟩ := exists_pow_mul_mem_of_ideal_basicOpen_eq A B W f hf s hs
-  exact ⟨n, by rwa [smul_eq_mul]⟩
-
 theorem idealSheafData_eq_of_forall_restrictIdeal_eq {X : Scheme.{u}} (I J : X.IdealSheafData)
     (h : ∀ x : X, ∃ U : X.Opens, x ∈ U ∧ restrictIdeal I U = restrictIdeal J U) : I = J := by
-  apply FunctorialResolution.EmbeddedResolution.eq_of_locally_restrictIdeal_eq <;> assumption
+  exact eq_of_locally_restrictIdeal_eq I J h
 
 theorem mem_of_subschemeMapOfComap_apply_mem {X Y : Scheme.{u}} (g : Y ⟶ X) (Z : X.IdealSheafData)
     (A : Set X) (W : Z.subscheme.Opens) (W' : (Z.comap g).subscheme.Opens)
@@ -893,7 +542,7 @@ end -- clump:auto
 -- ===== end clump member: Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SubschemeMapFlatness =====
 
 -- ===== clump member: Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsFunctoriality =====
--- clump-header: {"m": "Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsFunctoriality", "h": "module\n\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.IdealSheafOpenRestriction\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.DivisorReductionSequence\nimport Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafOrderDecrease\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SubschemeMapFlatness\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.BaseChangeMorphismProperties\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsIdeal\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsSmoothPullback\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.DivisorReductionStepProperties\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.UntwistedDivisorRestriction\nimport Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.SmoothComponentsDisjoint\nimport Development.ResolutionOfSingularities.Foundations.Schemes.SchemeMorphismProperties\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
+-- clump-header: {"m": "Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsFunctoriality", "h": "module\n\nimport Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderPullback\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.IdealSheafOpenRestriction\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.DivisorReductionSequence\nimport Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafOrderDecrease\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SubschemeMapFlatness\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsIdeal\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.UntwistedDivisorRestriction\nimport Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.SmoothComponentsDisjoint\nimport Development.ResolutionOfSingularities.Foundations.Schemes.SchemeMorphismProperties\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -992,7 +641,7 @@ private theorem containedComponentsIdeal_comap_of_flat (T T' : MarkedIdealWithBo
 
 theorem containedComponentsIdeal_pullbackAlong_of_smooth (T : MarkedIdealWithBoundary.{u}) (hV : T.IsAdmissible) (Y : Scheme.{u})
     (q : Y ⟶ Spec (CommRingCat.of T.base)) (h : Y ⟶ T.scheme) [AlgebraicGeometry.Smooth h]
-    (hq : h ≫ T.structMap = q) (hV' : (T.pullbackAlong Y q h).IsAdmissible) (j : ℕ)
+    (hV' : (T.pullbackAlong Y q h).IsAdmissible) (j : ℕ)
     (hj : j < T.boundary.length) (hj' : j < (T.pullbackAlong Y q h).boundary.length) :
     DivisorReduction.containedComponentsIdeal (T.pullbackAlong Y q h) j hj' =
       (DivisorReduction.containedComponentsIdeal T j hj).comap h := by
@@ -1005,7 +654,7 @@ theorem containedComponentsIdeal_pullbackAlong_of_smooth (T : MarkedIdealWithBou
       (MarkedIdealWithBoundary.pullbackAlong_boundary T Y q h) j hj hj'
   have hcs : orderAtLeastLocus (T.pullbackAlong Y q h).ideal (T.pullbackAlong Y q h).mult =
       ⇑h.base ⁻¹' orderAtLeastLocus T.ideal T.mult :=
-    DivisorReduction.orderAtLeastLocus_comap_of_smooth T hV Y q h hq T.mult
+    orderAtLeastLocus_comap T.base T.structMap h T.ideal T.mult
   have hcl : IsClosed (orderAtLeastLocus T.ideal T.mult) :=
     isClosed_orderAtLeastLocus T.base T.structMap T.ideal T.mult
   exact containedComponentsIdeal_comap_of_flat T (T.pullbackAlong Y q h) hV hV' h hfl j hj hj' hD hcs hcl
@@ -1224,7 +873,7 @@ end -- clump:auto
 -- ===== end clump member: Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.OrderLocusDisjointBoundary =====
 
 -- ===== clump member: Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.TwistedDivisorRestriction =====
--- clump-header: {"m": "Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.TwistedDivisorRestriction", "h": "module\n\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.AmbientBlowupSequence\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderAtMultiplicativity\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsIdeal\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.DivisorReductionStepProperties\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.LowerBoundaryAfterBlowup\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.UntwistedDivisorRestriction\nimport Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.SmoothComponentsDisjoint\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafOrderDecrease\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.IdealSheafOpenRestriction\n\n"}
+-- clump-header: {"m": "Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.TwistedDivisorRestriction", "h": "module\n\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.AmbientBlowupSequence\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderAtMultiplicativity\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsIdeal\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.LowerBoundaryAfterBlowup\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.UntwistedDivisorRestriction\nimport Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.SmoothComponentsDisjoint\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafOrderDecrease\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.IdealSheafOpenRestriction\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -1410,7 +1059,7 @@ end -- clump:auto
 -- ===== end clump member: Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.TwistedDivisorRestriction =====
 
 -- ===== clump member: Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.BalancedDivisorReduction =====
--- clump-header: {"m": "Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.BalancedDivisorReduction", "h": "module\n\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.DivisorReductionProperties\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.ControlledTransformOrderMonotone\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsHypersurfaceRestriction\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.ClosedEmbedding.AmbientBlowupFlatBaseChange\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.AmbientBlowupMarked\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsFunctoriality\nimport Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsIdeal\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsIdealTop\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.PreimageSupportOfAdmissible\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.LowerIdealAfterBlowup\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.OrderLocusDisjointBoundary\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.TwistedDivisorRestriction\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.BoundaryComponentsInOrderLocus\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.GoingUpInvariantOnOpens\n\n"}
+-- clump-header: {"m": "Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.BalancedDivisorReduction", "h": "module\n\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.UntwistedDivisorRestriction\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.ControlledTransformOrderMonotone\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsHypersurfaceRestriction\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.ClosedEmbedding.AmbientBlowupFlatBaseChange\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.AmbientBlowupMarked\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsFunctoriality\nimport Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsIdeal\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.ContainedComponentsIdealTop\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.PreimageSupportOfAdmissible\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.LowerIdealAfterBlowup\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.OrderLocusDisjointBoundary\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.TwistedDivisorRestriction\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.BoundaryComponentsInOrderLocus\npublic import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.GoingUpInvariantOnOpens\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -1471,11 +1120,20 @@ private theorem goingUpInvariant_length_of_isBalanced (hres : FunctorialResoluti
     (DivisorReduction.lowerBoundaryWithoutBlowup T) s hpr hbalLower hV.one_le_mult hVlow hlift hE₀ hjE hget
     htrunc s.length le_rfl
 
-theorem divisorReductionProperties_of_blowupPreservesNoetherian (hres : FunctorialResolution.Blowup.StrictTransformIsBlowupOfClosedSubscheme.{u})
-    (hno : BlowupPreservesNoetherian.{u}) : DivisorReductionProperties hres hno := by
+theorem divisorReductionTerminationProperties (hres : FunctorialResolution.Blowup.StrictTransformIsBlowupOfClosedSubscheme.{u})
+    (hno : BlowupPreservesNoetherian.{u}) : DivisorReductionTerminationProperties hres hno := by
   have hlift : StrictNormalCrossingsLiftFromDivisor.{u} := hasStrictNormalCrossingsWith_ker_cons_of_comap
   exact
-    { isMarked_pushedTop := by
+    { exists_ideal_mul_preIdeal_pow := fun T hV _ j hj => exists_mul_pow_containedComponentsIdeal_eq_ideal T hV j hj
+      isBlowup_id_preIdeal := isBlowupAlongIdealSheaf_id_containedComponentsIdeal
+      lowerTriple_dim_lt := dim_restrictToBoundaryDivisor_lt
+      properCenters := centersContainNoComponent_of_isAdmissible
+      isOpen_preLocus := isOpen_setOf_connectedComponent_subset_orderAtLeastLocus
+      smooth_preIdeal := smooth_subschemeι_containedComponentsIdeal_comp
+      hasSNCWith_preIdeal := hasStrictNormalCrossingsWith_containedComponentsIdeal
+      support_preIdeal_subset := support_containedComponentsIdeal_subset_orderAtLeastLocus
+      valid_lowerTop := DivisorReduction.isAdmissible_restrictToDivisor
+      isMarked_pushedTop := by
         intro T hV hOB hbal j hj hZ hVlow inst s hpr
         have := inst
         exact DivisorReduction.isMarked_ambientBlowupSeq_of_containedComponentsIdeal_eq_top hres hno hlift T hV
@@ -1559,9 +1217,6 @@ theorem divisorReductionProperties_of_blowupPreservesNoetherian (hres : Functori
       isPullbackSeq_ambientTower := by
         intro X Y S S' σ σ' φ ψ _ _ _ _ _ hsq d d' hc hc' hpb
         exact isPullbackBlowupSequence_ambientBlowupSequence_of_flat hres hno σ σ' φ ψ hsq d d' hc hc' hpb
-      isStrictPullbackSeq_ambientTower := by
-        intro X Y S S' σ σ' φ ψ _ _ _ _ _ hsq d d' hc hc' hpb
-        exact isStrictPullbackBlowupSeq_ambientBlowupSequence_of_flat hres hno σ σ' φ ψ hsq d d' hc hc' hpb
       comap_ctrlIdeal_top := by
         intro T hV hOB hbal j hj hZ hVlow inst s hpr i hi
         have := inst
@@ -1583,7 +1238,7 @@ theorem divisorReductionProperties_of_blowupPreservesNoetherian (hres : Functori
           i hi
       preIdeal_pullbackAlong := by
         intro T hV Y q h _ hq hV' j hj hj'
-        exact containedComponentsIdeal_pullbackAlong_of_smooth T hV Y q h hq hV' j hj hj'
+        exact containedComponentsIdeal_pullbackAlong_of_smooth T hV Y q h hV' j hj hj'
       preIdeal_eq_top_of_imageIdeal := by
         intro T hV j hj J hm hlow hpush
         exact DivisorReduction.containedComponentsIdeal_eq_top_of_eq_imageIdealSheaf T hV j hj J hm hlow hpush }

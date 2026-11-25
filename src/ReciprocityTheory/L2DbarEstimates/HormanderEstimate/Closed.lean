@@ -323,15 +323,6 @@ theorem holoClosedNeed (n : ℕ) (M : Type*) [TopologicalSpace M] [T2Space M]
   have hc : Continuous ps := continuous_of_smoothR n X.z hz ps hps
   exact closedCore_of_regM n M hReg X.z hz ps hc F f hF hf.aestronglyMeasurable hT
 
-theorem evalNeed (n : ℕ) (M : Type*) [TopologicalSpace M] [T2Space M]
-    [SecondCountableTopology M] [MeasurableSpace M] [BorelSpace M] (hMV : C.MVStatement) :
-    I.EvalNeed n M := by
-  intro X ps x0 hps
-  have hz : IsLocalHomeomorph X.z := X.isLocalHomeomorph
-  have hc : Continuous ps := continuous_of_smoothR n X.z hz ps hps
-  obtain ⟨C, -, hC⟩ := evalPt n M hMV X.z hz ps hc x0
-  exact ⟨C, hC⟩
-
 end
 
 end ReciprocityTheory.L2DbarEstimates.F

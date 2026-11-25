@@ -175,12 +175,12 @@ theorem uniform_denom {y : (Σ k, ι k) → Ω} {m : Ideal (curveRing y)} (hm : 
   have hF : ∀ c'', F c'' ∈ m.primeCompl := by
     intro c''
     by_cases h : ∀ k, y ⟨k, c'' k⟩ ≠ 0
-    · simp only [F, dif_pos h]; exact (hf c'' h).1
-    · simp only [F, dif_neg h]; exact m.primeCompl.one_mem
+    · simp only [F, dite_eq_left h]; exact (hf c'' h).1
+    · simp only [F, dite_eq_right h]; exact m.primeCompl.one_mem
   refine ⟨∏ c'', F c'', Submonoid.prod_mem _ fun c'' _ => hF c'', fun c'' hc'' => ?_⟩
   obtain ⟨q, hq⟩ : F c'' ∣ ∏ c, F c := Finset.dvd_prod_of_mem _ (Finset.mem_univ _)
   rw [hq]
-  have h2 : (F c'' : Ω) * r c'' ∈ chartRingZ y c'' := by simpa [F, dif_pos hc''] using (hf c'' hc'').2
+  have h2 : (F c'' : Ω) * r c'' ∈ chartRingZ y c'' := by simpa [F, dite_eq_left hc''] using (hf c'' hc'').2
   have h3 : (q : Ω) ∈ chartRingZ y c'' := mem_curveRing.mp q.2 c'' hc''
   have := (chartRingZ y c'').mul_mem h3 h2
   convert this using 1

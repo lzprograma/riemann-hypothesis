@@ -39,10 +39,6 @@ def embComp {K : Type} [Field K] [NumberField K] {i : ℕ} (σ : K →+* ℂ) (z
     classical
     exact fun j => ∑ m, (canonicalEmbedding.latticeBasis K).repr (Pi.single σ 1) m * z (m, j)
 
-def latticeNormSq {K : Type} [Field K] [NumberField K] {i : ℕ} (F : HermLattice K i)
-    (z : ProjIdx K i → ℂ) : ℝ :=
-  ∑ σ : K →+* ℂ, (star (embComp σ z) ⬝ᵥ (F.metric σ *ᵥ embComp σ z)).re
-
 theorem latticeNormSq_term_nonneg {K : Type} [Field K] [NumberField K] {i : ℕ}
     (F : HermLattice K i) (σ : K →+* ℂ) (w : Fin i → ℂ) :
     0 ≤ (star w ⬝ᵥ (F.metric σ *ᵥ w)).re := by
@@ -86,42 +82,6 @@ theorem sum_emb_embComp {K : Type} [Field K] [NumberField K] {i : ℕ} (z : Proj
         Finset.sum_comm
     _ = ∑ m', (if m = m' then (1 : ℂ) else 0) * z (m', j) := Finset.sum_congr rfl fun m' _ => hs m'
     _ = z (m, j) := by simp
-
-def latticeLine {K : Type} [Field K] [NumberField K] {i : ℕ} (F : HermLattice K i) :
-    HermLine (projBlocks K i) where
-  a := fun _ => 1
-  h z := Real.sqrt (latticeNormSq F fun q => z ⟨(), q⟩)
-  pos z hz := by
-    apply Real.sqrt_pos.mpr
-    obtain ⟨⟨m, j⟩, hmj⟩ := hz ()
-    have hσ : ∃ σ : K →+* ℂ, embComp σ (fun q => z ⟨(), q⟩) ≠ 0 := by
-      by_contra h
-      push Not at h
-      apply hmj
-      rw [← sum_emb_embComp (fun q => z ⟨(), q⟩) m j]
-      simp [h]
-    obtain ⟨σ, hσ⟩ := hσ
-    have hpos : 0 < (star (embComp σ fun q => z ⟨(), q⟩) ⬝ᵥ
-        (F.metric σ *ᵥ embComp σ fun q => z ⟨(), q⟩)).re :=
-      (Complex.lt_def.mp ((F.posDef σ).dotProduct_mulVec_pos hσ)).1
-    exact lt_of_lt_of_le hpos (Finset.single_le_sum (f := fun σ =>
-      (star (embComp σ fun q => z ⟨(), q⟩) ⬝ᵥ (F.metric σ *ᵥ embComp σ fun q => z ⟨(), q⟩)).re)
-      (fun σ _ => latticeNormSq_term_nonneg F σ _) (Finset.mem_univ σ))
-  smul c z hc := by
-    have hz : (fun q => (fun p : Σ _ : Unit, ProjIdx K i => c p.1 * z p) ⟨(), q⟩) =
-        c () • fun q => z ⟨(), q⟩ := by
-      funext q; rfl
-    simp only [hz, latticeNormSq, embComp_smul, Finset.univ_unique, Finset.prod_singleton, zpow_one]
-    have : ∀ σ : K →+* ℂ, (star (c () • embComp σ fun q => z ⟨(), q⟩) ⬝ᵥ
-        (F.metric σ *ᵥ (c () • embComp σ fun q => z ⟨(), q⟩))).re =
-        ‖c ()‖ ^ 2 * (star (embComp σ fun q => z ⟨(), q⟩) ⬝ᵥ
-          (F.metric σ *ᵥ embComp σ fun q => z ⟨(), q⟩)).re := by
-      intro σ
-      rw [Matrix.mulVec_smul, star_smul, smul_dotProduct, dotProduct_smul, smul_eq_mul, smul_eq_mul,
-        ← mul_assoc, Complex.star_def, ← Complex.normSq_eq_conj_mul_self, Complex.re_ofReal_mul,
-        Complex.normSq_eq_norm_sq]
-    simp only [this, ← Finset.mul_sum]
-    rw [Real.sqrt_mul (sq_nonneg _), Real.sqrt_sq (norm_nonneg _)]
 
 def LineOfLargeDegreeFromZ.Statement : Prop :=
   SuccessiveMinimaLowerBound → SuccessiveMinimaUpperBound → ReciprocityTheory.ChartRestriction.G.AI.I2.ExistsStatement → LineOfLargeDegree.Statement

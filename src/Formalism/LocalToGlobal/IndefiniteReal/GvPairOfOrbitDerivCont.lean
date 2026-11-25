@@ -25,7 +25,7 @@ namespace Formalism.IndefR.SchurOrthogonalityAlt
 
 section GenAdd
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 open PI.UpqRep PI.KFinSmoothW
 open scoped InnerProductSpace
@@ -118,7 +118,7 @@ end GenAdd
 
 section GvPairSec
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar Matrix.normedAddCommGroup Matrix.normedSpace
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar}
 

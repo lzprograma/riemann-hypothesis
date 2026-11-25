@@ -2,47 +2,6 @@ module
 
 public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveDensityModerateGrowth
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
 
@@ -233,8 +192,8 @@ theorem uInv_add_smul (s : ℂ) : ∀ (w : List C.Letter) (x y : Wd.Ix (Fin w.le
     simp only [KB.uInv]
     rw [r0, r1, hx, hx1]
     by_cases h0 : e 0 = 0
-    · simp only [if_pos h0, Pi.add_apply, Pi.smul_apply]
-    · simp only [if_neg h0, Pi.add_apply, Pi.smul_apply, smul_add, smul_smul]
+    · simp only [ite_eq_left h0, Pi.add_apply, Pi.smul_apply]
+    · simp only [ite_eq_right h0, Pi.add_apply, Pi.smul_apply, smul_add, smul_smul]
       rw [mul_comm c]
       abel
 
@@ -273,7 +232,7 @@ theorem waveG_cons0 (Bs : B.RealPlaceData k ρ Wp Wq) (s : ℂ) (t : ℝ) (w : L
   funext g
   have h1 : (fun a : Fin w.length => (Fin.cons (0 : Fin 2) e' : Wd.Ix (Fin (w.length + 1))) a.succ) = e' := by
     funext a; simp
-  simp only [KB.waveG, KB.uInv, Fin.cons_zero, if_true, h1]
+  simp only [KB.waveG, KB.uInv, Fin.cons_zero, ite_true, h1]
 
 theorem waveG_cons1 (Bs : B.RealPlaceData k ρ Wp Wq) (s : ℂ) (t : ℝ) (w : List C.Letter)
     (x : Wd.Ix (Fin (w.length + 1)) → B.Mat k ρ → (Wq →L[ℂ] Wp)) (e' : Wd.Ix (Fin w.length)) :
@@ -282,8 +241,8 @@ theorem waveG_cons1 (Bs : B.RealPlaceData k ρ Wp Wq) (s : ℂ) (t : ℝ) (w : L
   funext g
   have h1 : (fun a : Fin w.length => (Fin.cons (1 : Fin 2) e' : Wd.Ix (Fin (w.length + 1))) a.succ) = e' := by
     funext a; simp
-  simp only [KB.waveG, KB.uInv, Fin.cons_zero, h1, Pi.add_apply, Pi.smul_apply, if_true,
-    show ((1 : Fin 2) = 0) = False from by decide, if_false, smul_add]
+  simp only [KB.waveG, KB.uInv, Fin.cons_zero, h1, Pi.add_apply, Pi.smul_apply, ite_true,
+    show ((1 : Fin 2) = 0) = False from by decide, ite_false, smul_add]
   rw [smul_comm s]
 
 theorem waveG_congrGV (Bs : B.RealPlaceData k ρ Wp Wq) (s : ℂ) :

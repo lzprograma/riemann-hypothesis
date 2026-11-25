@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ManyIndependentProductsInFunctionField
 public import Mathlib.RingTheory.LocalRing.MaximalIdeal.Defs
 public import Mathlib.RingTheory.MvPowerSeries.Inverse
 public import Mathlib.RingTheory.Ideal.Operations
@@ -84,28 +85,8 @@ theorem UpperTheory.Reformulated.B.PreservedCoefficient.pres_new_coeff :
       ∀ (a : σ →₀ ℕ),
         (MvPowerSeries.coeff a : MvPowerSeries σ O → O) h ∈
           IsLocalRing.maximalIdeal O ^ (N - (Finsupp.degree : (σ →₀ ℕ) → ℕ) a) := by
-  intro O σ _ _ N
-  classical
-  induction N with
-  | zero =>
-    intro h _ a
-    rw [Nat.zero_sub, pow_zero, Ideal.one_eq_top]
-    exact Submodule.mem_top
-  | succ N ih =>
-    intro h hh
-    rw [pow_succ] at hh
-    refine Submodule.mul_induction_on hh ?_ ?_
-    · intro f hf g hg a
-      rw [MvPowerSeries.coeff_mul]
-      refine Submodule.sum_mem _ fun p hp => ?_
-      have hsum : Finsupp.degree p.1 + Finsupp.degree p.2 = Finsupp.degree a := by
-        rw [← map_add (f := _), Finset.HasAntidiagonal.mem_antidiagonal.1 hp]
-      have hmul := Ideal.mul_mem_mul (ih f hf p.1) (coeff_mem_of_mem_maximalIdeal hg p.2)
-      rw [← pow_add] at hmul
-      exact Ideal.pow_le_pow_right (by omega) hmul
-    · intro f g hf hg a
-      rw [map_add (f := _)]
-      exact Submodule.add_mem _ (hf a) (hg a)
+  intros
+  apply _root_.GlobalTheory.PowerSeriesIdealPowers.coeff_mem_of_mem_pow <;> assumption
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PreservedCoefficient =====
@@ -155,11 +136,11 @@ private theorem pres_new_wcomp {O σ X : Type} [CommRing O] [AddCommGroup X] [De
   rw [coeff_wcomp]
   by_cases hij : i = j
   · subst hij
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     split_ifs with h1
     · rfl
     · exact (hh a h1).symm
-  · rw [if_neg hij]
+  · rw [ite_eq_right hij]
     split_ifs with h1
     · rw [map_zero]
       exact hh a (h1 ▸ Ne.symm hij)

@@ -200,10 +200,10 @@ theorem det_hMatrix_staircase :
     intro i _
     have := i.isLt
     simp only [hMatrix, Matrix.of_apply, completeSymmetric_natSub]
-    rw [if_pos (by omega), show m - 1 - (i : ℕ) - (m - 1 - (i : ℕ)) = 0 by omega, hsymm_zero]
+    rw [ite_eq_left (by omega), show m - 1 - (i : ℕ) - (m - 1 - (i : ℕ)) = 0 by omega, hsymm_zero]
   · intro i c hci
     simp only [hMatrix, Matrix.of_apply, completeSymmetric_natSub]
-    rw [if_neg]
+    rw [ite_eq_right]
     have := c.isLt
     have : (c : ℕ) < i := hci
     omega
@@ -285,7 +285,7 @@ theorem schur_eq_of_last_eq_zero {n : ℕ} (lam : Fin (n + 1) → ℕ) (h : lam 
       omega
     simp only [Matrix.of_apply, h, Fin.val_last]
     rw [show completeSymmetric σ (((0 : ℕ) : ℤ) - (n : ℤ) + ((j : ℕ) : ℤ)) = 0 by
-      unfold completeSymmetric; rw [if_neg (by omega)]]
+      unfold completeSymmetric; rw [ite_eq_right (by omega)]]
     simp
 
 theorem schur_padPartition {r : ℕ} (lam : Fin r → ℕ) :

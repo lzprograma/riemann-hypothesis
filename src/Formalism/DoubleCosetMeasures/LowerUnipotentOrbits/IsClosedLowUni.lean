@@ -65,10 +65,6 @@ section Top
 
 variable {K : Type} [CommRing K] [TopologicalSpace K] [IsTopologicalRing K]
 
-theorem glR_open (R : Subring K) (hR : IsOpen (R : Set K)) (n : ℕ) :
-    IsOpen (glR R n : Set (GL (Fin n) K)) :=
-  _root_.UpperTheory.Reformulated.B.GLRealOpen.glR_open R hR n
-
 theorem glR_compact [T2Space K] (R : Subring K) (hR : IsCompact (R : Set K)) (n : ℕ) :
     IsCompact (glR R n : Set (GL (Fin n) K)) := by
   let S : Set (Matrix (Fin n) (Fin n) K) :=

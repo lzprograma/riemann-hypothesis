@@ -42,7 +42,7 @@ def stepCoef (X : GMod n) (z : ℂ) (c : X.V →ₗ[ℂ] (Matrix (Fin n) (Fin n)
 
 def pathCoef : (X : GMod n) → (X.V →ₗ[ℂ] (Matrix (Fin n) (Fin n) ℂ → ℂ)) → (χ : Fin n → ℂ) → (ss : List (Fin n)) →
     List (Fin n) → ((path X χ ss).V →ₗ[ℂ] (Matrix (Fin n) (Fin n) ℂ → ℂ))
-  | X, c, _, [], _ => c
+  | _, c, _, [], _ => c
   | X, c, χ, s :: ss, js => pathCoef (step X (χ s)) (stepCoef X (χ s) c (js.headD s)) (χ + Pi.single s 1) ss js.tail
 
 def IsGrad (ε : Fin n → Bool) (A : Matrix (Fin n) (Fin n) ℂ) : Prop :=

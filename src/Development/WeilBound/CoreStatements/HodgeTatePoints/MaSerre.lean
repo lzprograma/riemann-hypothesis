@@ -226,8 +226,7 @@ theorem finite_gen (hsm : ∀ (a : A) (e : E), a • e = ι a • e) (hAR : ∀ 
   obtain ⟨c, hc⟩ := Finsupp.mem_ideal_span_range_iff_exists_finsupp.1 h1
   have hsome : ∀ q, ∃ l ∈ c.support, IsU (R q) (ι (F l)) := by
     intro q
-    by_contra hn
-    push_neg at hn
+    by_contra! hn
     letI := hloc q
     let φ : A →+* R q := ι.codRestrict (R q) (hAR q)
     have hmem : (1 : A) ∈ (IsLocalRing.maximalIdeal (R q)).comap φ := by

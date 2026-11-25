@@ -303,7 +303,7 @@ theorem spectral_parts_of_diag {n : Type} [Fintype n] [DecidableEq n] (Y J U : M
     · subst hij
       simp only [diagonal_apply_eq]
       rw [Finset.sum_eq_single |μ i|]
-      · simp only [if_true, hs2]
+      · simp only [ite_true, hs2]
       · intro b _ hb
         simp [Ne.symm hb]
       · intro h

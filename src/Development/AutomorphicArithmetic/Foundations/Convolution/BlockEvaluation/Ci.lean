@@ -26,57 +26,10 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.Convolut
 public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspTrBand
 public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.DecayTraceClass
 public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SmoothDecay
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
 import GroundTheory.AutomorphicForms.ReductionBlock
 import GroundTheory.AutomorphicForms.WhittakerRelevance
-import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.EvExSub
 import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.PolyBdAll
@@ -486,14 +439,14 @@ private theorem UpperTheory.ConvolutionTheory.Ci.abs2 {A B : Type} (τE : ℝ ×
         · simpa [hg] using this.2 hg
     · rintro (y | y) - hg ha
       · simp only [Sum.elim_inl] at hg ha ⊢
-        rw [if_pos hg, ha]
+        rw [ite_eq_left hg, ha]
       · simp only [Sum.elim_inr] at hg ha ⊢
-        rw [if_pos hg, ha]
+        rw [ite_eq_left hg, ha]
     · rintro (y | y) - hg
       · simp only [Sum.elim_inl] at hg ⊢
-        rw [if_neg hg]
+        rw [ite_eq_right hg]
       · simp only [Sum.elim_inr] at hg ⊢
-        rw [if_neg hg]
+        rw [ite_eq_right hg]
     · intro N s₀
       obtain ⟨ME, MF, hME, hMF, hev⟩ := hb N s₀
       refine ⟨ME + (1 + ‖c‖) * MF, ?_⟩
@@ -529,7 +482,7 @@ private theorem UpperTheory.ConvolutionTheory.Ci.abs2 {A B : Type} (τE : ℝ ×
         _ = (ME ^ (d j + 1) + ((1 + ‖c‖) * MF) ^ (d j + 1)) * Er := by rw [mul_pow]; ring
         _ ≤ _ := mul_le_mul_of_nonneg_right (pow_add_pow_le hME (by positivity) (by omega)) hEr0
 
-private theorem UpperTheory.ConvolutionTheory.Ci.chiEx (η : ℝ) (hη : 0 < η) : ∃ χ : ℝ → ℝ, Continuous χ ∧ (∀ x, 0 ≤ χ x ∧ χ x ≤ 1) ∧
+theorem UpperTheory.ConvolutionTheory.Ci.chiEx (η : ℝ) (hη : 0 < η) : ∃ χ : ℝ → ℝ, Continuous χ ∧ (∀ x, 0 ≤ χ x ∧ χ x ≤ 1) ∧
     (∀ x ≥ η, χ x = 1) ∧ ∀ x ≤ η / 2, χ x = 0 := by
   refine ⟨fun x => max 0 (min 1 (2 * x / η - 1)), by fun_prop, fun x => ⟨le_max_left _ _, ?_⟩, fun x hx => ?_, fun x hx => ?_⟩
   · exact max_le zero_le_one (min_le_left _ _)
@@ -539,7 +492,7 @@ private theorem UpperTheory.ConvolutionTheory.Ci.chiEx (η : ℝ) (hη : 0 < η)
   · have : 2 * x / η ≤ 1 := by rw [div_le_iff₀ hη]; linarith
     exact max_eq_left ((min_le_right _ _).trans (by linarith))
 
-private theorem UpperTheory.ConvolutionTheory.Ci.degEv (d : ℕ → ℕ) (hd : Tendsto (fun j : ℕ => (d j : ℝ) / j) atTop (𝓝 0)) (p : ℕ) (hp : 0 < p)
+theorem UpperTheory.ConvolutionTheory.Ci.degEv (d : ℕ → ℕ) (hd : Tendsto (fun j : ℕ => (d j : ℝ) / j) atTop (𝓝 0)) (p : ℕ) (hp : 0 < p)
     (e : ℕ) : ∀ᶠ j : ℕ in atTop, j / (2 * p) + d j + e ≤ j / p := by
   have h1 := hd.eventually (gt_mem_nhds (show (0 : ℝ) < 1 / (4 * p) by positivity))
   filter_upwards [h1, eventually_ge_atTop (4 * p * e + 1)] with j hj hj'
@@ -550,7 +503,7 @@ private theorem UpperTheory.ConvolutionTheory.Ci.degEv (d : ℕ → ℕ) (hd : T
   rw [Nat.le_div_iff_mul_le hp]
   nlinarith
 
-private theorem UpperTheory.ConvolutionTheory.Ci.trOn_bot {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+theorem UpperTheory.ConvolutionTheory.Ci.trOn_bot {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
     (T : H →L[ℂ] H) : trOn ⊥ T = 0 := by
   have : prj (⊥ : Submodule ℂ H) = 0 := by
     ext v
@@ -561,7 +514,7 @@ private theorem UpperTheory.ConvolutionTheory.Ci.trOn_bot {H : Type*} [NormedAdd
   rw [trOn, this]
   simp [trace]
 
-private theorem UpperTheory.ConvolutionTheory.Ci.eig_bot {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+theorem UpperTheory.ConvolutionTheory.Ci.eig_bot {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
     (V : Submodule ℂ H) (A : H →L[ℂ] H) (hA : ‖A‖ ≤ 1) (x : ℝ) (hx : 1 < x) : eigIn V A x = ⊥ := by
   rw [eq_bot_iff]
   rintro v ⟨-, hv⟩
@@ -571,7 +524,7 @@ private theorem UpperTheory.ConvolutionTheory.Ci.eig_bot {H : Type*} [NormedAddC
   have h2 : ‖v‖ ≤ 0 := by nlinarith [norm_nonneg v, norm_nonneg A]
   exact norm_le_zero_iff.1 h2
 
-private theorem UpperTheory.ConvolutionTheory.Ci.ptCard {K : Type} [Field K] [NumberField K] {n : ℕ}
+theorem UpperTheory.ConvolutionTheory.Ci.ptCard {K : Type} [Field K] [NumberField K] {n : ℕ}
     (b : Datum K n) (S : Set (Pl K)) (Λ : (K →+* ℂ) → Multiset ℂ) (t : Pl K → Multiset ℂ)
     (h : b.Pt S Λ t) : ∀ w ∉ S, (t w).card = n := by
   obtain ⟨lam, m, B, h1, -, h3⟩ := h
@@ -581,11 +534,11 @@ private theorem UpperTheory.ConvolutionTheory.Ci.ptCard {K : Type} [Field K] [Nu
   rw [Multiset.card_map]
   exact ((h1 i).2 w hw).1
 
-private theorem UpperTheory.ConvolutionTheory.Ci.valCongr {K : Type} [Field K] [NumberField K] {n : ℕ} (x : ℝ) (Λ) (t t' : Pl K → Multiset ℂ)
+theorem UpperTheory.ConvolutionTheory.Ci.valCongr {K : Type} [Field K] [NumberField K] {n : ℕ} (x : ℝ) (Λ) (t t' : Pl K → Multiset ℂ)
     (S : Set (Pl K)) (h : ∀ w ∉ S, t w = t' w) (P : PR K n) (hP : ∀ y ∈ P.vars, y.1 ∉ S) : val x Λ t P = val x Λ t' P :=
   eval₂Hom_congr' rfl (fun y hy _ => by rw [hval, hval, h _ (hP y hy)]) rfl
 
-private theorem UpperTheory.ConvolutionTheory.Ci.valC {K : Type} [Field K] [NumberField K] {n : ℕ} (x : ℝ) (Λ) (t : Pl K → Multiset ℂ)
+theorem UpperTheory.ConvolutionTheory.Ci.valC {K : Type} [Field K] [NumberField K] {n : ℕ} (x : ℝ) (Λ) (t : Pl K → Multiset ℂ)
     (γ : MvPolynomial (Pl K × Fin n) ℂ) : val x Λ t (map C γ : PR K n) = eval (hval t) γ := by
   rw [val, coe_eval₂Hom, eval₂_map]
   change _ = eval₂ (RingHom.id ℂ) _ _

@@ -91,7 +91,7 @@ theorem exists_centred_chart (hy : HolAt y b₀) {N : Set ((Fin m → ℂ) × (F
   let s : ∀ b, (Fin g → ℂ) → (Over.mk (y b) ⟶ G) := fun b w =>
     if h : τ (b, w) ∈ N then Over.homMk (σ (τ (b, w))) (hσN _ h).1 else 1
   have hs : ∀ q, τ q ∈ N → pt (s q.1 q.2) = σ (τ q) := fun q hq => by
-    have : s q.1 q.2 = Over.homMk (σ (τ q)) (hσN _ hq).1 := dif_pos hq
+    have : s q.1 q.2 = Over.homMk (σ (τ q)) (hσN _ hq).1 := dite_eq_left hq
     rw [this]; rfl
   have hev : ∀ᶠ q in 𝓝 (b₀, (0 : Fin g → ℂ)), τ q ∈ N := hτ.continuousAt.eventually (hN.mem_nhds hτ0)
   refine ⟨s, (HolAt.comp ⟨N, hN, hτ0, hσ⟩ hτ).congr (hev.mono fun q hq => (hs q hq).symm), hev.mono fun q hq => ?_,

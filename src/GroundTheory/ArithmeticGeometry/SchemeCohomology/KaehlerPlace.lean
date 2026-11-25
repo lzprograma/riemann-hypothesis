@@ -133,10 +133,4 @@ theorem isSeparable_of_D_ne_zero {z : K} (hz : D k K z ≠ 0) : Algebra.IsSepara
 
 end Perfect
 
-section Order
-
-variable [PerfectField k]
-
-end Order
-
 end GroundTheory.Arith.SchemeCoh

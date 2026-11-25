@@ -84,12 +84,6 @@ theorem cohomologyπ_comp_cohomologyMap (f : A ⟶ B) (n : ℕ) :
 
 end Map
 
-section Functor
-
-variable (k G)
-
-end Functor
-
 section Comparison
 
 variable (A : Rep.{u} k G) [IsDiscreteRep A]

@@ -7,53 +7,9 @@ public import Formalism.GrowthSums.LemmaATwoFactList
 public import Formalism.PolynomialDimension.DetMulEqSumAdjugate
 public import Formalism.PolynomialDimension.FinalNum
 public import Formalism.SubspaceCounting.ChoiceOfTopsRefined
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 public import Mathlib.RingTheory.MvPolynomial.Groebner
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.DiscreteValuationRing
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -119,8 +75,8 @@ theorem inWj_one : InWj w (1 : MvPolynomial σ (KK O)) 0 := fun m => by
 
 theorem inWj_C (j : ℕ) (c : O) : InWj w (C (algebraMap O (KK O) (w ^ j * c)) : MvPolynomial σ (KK O)) j := fun m => by
   by_cases h : 0 = m
-  · exact ⟨c, by rw [coeff_C, if_pos h]⟩
-  · exact ⟨0, by rw [coeff_C, if_neg h]; simp⟩
+  · exact ⟨c, by rw [coeff_C, ite_eq_left h]⟩
+  · exact ⟨0, by rw [coeff_C, ite_eq_right h]; simp⟩
 
 theorem inWj_Cpow (j : ℕ) : InWj w (C (algebraMap O (KK O) (w ^ j)) : MvPolynomial σ (KK O)) j := by
   have := inWj_C (σ := σ) (w := w) j 1
@@ -245,18 +201,18 @@ theorem subst_X_even (w : O) (r : ℕ) (g : Matrix (Fin k) (Fin k) (WF p n')) (s
       ∑ b : Fin k, newVar w r (s, b) * C ((sigMat p n' O g (s.val : ℤ))⁻¹ b c) := by
   unfold subst liftSubst
   rw [aeval_X]
-  simp only [LLT, hs, decide_true, if_true]
+  simp only [LLT, hs, decide_true, ite_true]
   refine Finset.sum_congr rfl fun b _ => ?_
-  simp only [newVar, IsNormal, hs, if_true]
+  simp only [newVar, IsNormal, hs, ite_true]
 
 theorem subst_X_odd (w : O) (r : ℕ) (g : Matrix (Fin k) (Fin k) (WF p n')) (s : Fin n') (hs : ¬ Even s.val)
     (c : Fin k) : subst p n' O w n' r g (X (s, c)) =
       ∑ b : Fin k, newVar w r (s, b) * C (sigMat p n' O g (s.val : ℤ) c b) := by
   unfold subst liftSubst
   rw [aeval_X]
-  simp only [LLT, hs, decide_false, Bool.false_eq_true, if_false]
+  simp only [LLT, hs, decide_false, Bool.false_eq_true, ite_false]
   refine Finset.sum_congr rfl fun b _ => ?_
-  simp only [newVar, IsNormal, hs, if_false]
+  simp only [newVar, IsNormal, hs, ite_false]
 
 theorem subst_xg (w : O) (r : ℕ) {g : Matrix (Fin k) (Fin k) (WF p n')} (hg : IsGLW g) (hn : Even n') (a : ℤ)
     (ha : Even a) (b : Fin k) :
@@ -518,8 +474,8 @@ theorem sum_ite_first_columns {M : Type} [AddCommMonoid M] {r k : ℕ} (hrk : r 
     (fun a _ b _ hab => Fin.castLE_injective hrk hab), ← first_columns_eq_image hrk, Ifirst, Finset.sum_filter]
   refine Finset.sum_congr rfl fun b' _ => ?_
   by_cases hb : r ≤ b'.val
-  · rw [if_pos hb, if_neg (by omega)]
-  · rw [if_neg hb, if_pos (by omega)]
+  · rw [ite_eq_left hb, ite_eq_right (by omega)]
+  · rw [ite_eq_right hb, ite_eq_left (by omega)]
 
 def integralPrimalRow (p n' : ℕ) [Fact p.Prime] [NeZero n'] (O : Type) [CommRing O] [IsDomain O] [Algebra (WF p n') O]
     (w : O) (r : ℕ) {k : ℕ} (h : Matrix (Fin k) (Fin k) (WF p n')) (a : ℤ) (b : Fin k) :
@@ -553,7 +509,7 @@ theorem subst_twisted_row_even (w : O) (r : ℕ) (g : Matrix (Fin k) (Fin k) (WF
   have hN : MvPolynomial.map (algebraMap O (KK O))
       (if r ≤ b'.val then C w * X (posOf n' a, b') else X (posOf n' a, b')) = newVar w r (posOf n' a, b') := by
     unfold newVar IsNormal
-    simp only [hs, if_true]
+    simp only [hs, ite_true]
     split_ifs <;> simp
   have hC : MvPolynomial.map (algebraMap O (KK O)) (C (algebraMap (WF p n') O (sigPow p n' a ((g'⁻¹ * g) b' b)))) =
       (C (sigMat p n' O (g'⁻¹ * g) a b' b) : MvPolynomial (TV n' k) (KK O)) := by
@@ -981,8 +937,8 @@ theorem order_filtration_prod {ι : Type*} (s : Finset ι) (P : ι → MvPolynom
 theorem newVar_pow_mem_even_top (v : TV n' k) (hv : v.1 ∈ Fr.TT) (he : Even v.1.val) (P : ℕ) (hP : 1 ≤ P) :
     newVar w r v ^ P ∈ uniformiserOrderFiltration w Fr (if r ≤ v.2.val then 1 else 0) := by
   by_cases hb : r ≤ v.2.val
-  · have hN : IsNormal r v := by simp only [IsNormal, he, if_true]; exact hb
-    rw [if_pos hb]
+  · have hN : IsNormal r v := by simp only [IsNormal, he, ite_true]; exact hb
+    rw [ite_eq_left hb]
     refine order_filtration_antitone w Fr hP (AddSubmonoid.subset_closure ⟨P, Finsupp.single v P, 1, le_rfl, ?_, ?_, ?_, ?_, ?_⟩)
     · intro v' hv'
       have := Finset.mem_singleton.1 (Finsupp.support_single_subset hv')
@@ -991,10 +947,10 @@ theorem newVar_pow_mem_even_top (v : TV n' k) (hv : v.1 ∈ Fr.TT) (he : Even v.
     · rw [Finsupp.sum_single_index rfl]
     · intro v' hv'; simp at hv'
     · intro v' hv'; simp at hv'
-    · simp only [newVar, hN, if_true]
+    · simp only [newVar, hN, ite_true]
       rw [mul_pow, X_pow_eq_monomial, map_pow, map_pow, (MvPolynomial.map (algebraMap O (KK O))).map_one, mul_one]
-  · have hN : ¬ IsNormal r v := by simp only [IsNormal, he, if_true]; exact hb
-    rw [if_neg hb]
+  · have hN : ¬ IsNormal r v := by simp only [IsNormal, he, ite_true]; exact hb
+    rw [ite_eq_right hb]
     refine AddSubmonoid.subset_closure ⟨0, 0, X v ^ P, le_rfl, ?_, ?_, ?_, ?_, ?_⟩
     · intro v' hv'; simp at hv'
     · simp
@@ -1008,7 +964,7 @@ theorem newVar_pow_mem_even_top (v : TV n' k) (hv : v.1 ∈ Fr.TT) (he : Even v.
       rw [vars_X, Finset.mem_singleton] at h1
       subst h1
       exact hv
-    · simp only [newVar, hN, if_false]
+    · simp only [newVar, hN, ite_false]
       simp
 
 end Graded
@@ -1048,8 +1004,7 @@ theorem complement_minor_order_pos (hV : Fr.Valid L₁ N₁) (hn : Even n') (hr 
   have hfr := hV.2.2.2.2.1
 
   obtain ⟨c, hcI, hc⟩ : ∃ c ∈ I, c ∉ Ifirst r k := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have : I ∩ Ifirst r k = I := Finset.inter_eq_left.2 hcon
     rw [this] at hIi
     omega
@@ -1072,7 +1027,7 @@ theorem complement_minor_order_pos (hV : Fr.Valid L₁ N₁) (hn : Even n') (hr 
     refine order_filtration_antitone w Fr ?_ (order_filtration_prod w Fr Finset.univ _ _ fun i _ => hentry (s i) i)
     have := Finset.single_le_sum (f := fun i : Fin r => if r ≤ (I.orderEmbOfFin hIc i).val then 1 else 0)
       (fun i _ => Nat.zero_le _) (Finset.mem_univ i0)
-    simp only [hi0, hc', if_true] at this
+    simp only [hi0, hc', ite_true] at this
     exact this
 
   rw [minorI, dite_eq_left hIc, Matrix.det_apply, map_sum]
@@ -1696,7 +1651,7 @@ theorem subst_true_coordinates (w : O) (r : ℕ) {g : Matrix (Fin k) (Fin k) (WF
   rw [map_mul, subst_C_alt, map_prod, monomial_eq, coeff_map, Finsupp.prod]
   congr 1
   refine Finset.prod_congr rfl fun i hi => ?_
-  rw [map_pow, substitute_new_coordinate w r hg hn, newVar, if_neg]
+  rw [map_pow, substitute_new_coordinate w r hg hn, newVar, ite_eq_right]
   exact hh i (vars_map _ _ ((mem_vars_iff_mem_support i).2 ⟨d, hd, hi⟩))
 
 end B4e
@@ -1944,7 +1899,7 @@ theorem bd_orbit_interval {n' : ℕ} [NeZero n'] (TT : Finset (Fin n')) (L₂ K 
 
 theorem bd_orbit_next {n' : ℕ} [NeZero n'] (TT : Finset (Fin n')) (L₂ K r : ℕ) (de h x : ℝ) (hn : Even n')
     (hr : 1 ≤ r) (hde : 0 < de) (h3 : 3 * goodG' r de h x ≤ n') (hg : IsGoodOrbit n' TT L₂ K r de h x)
-    (y z : ℤ) (_hyz : y < z) (_hy : posOf n' y ∈ TT) (_hye : Even y) (_hz : posOf n' z ∈ TT) (_hze : Even z)
+    (y z : ℤ)
     (hno : ∀ t : ℤ, y < t → t < z → ¬ (posOf n' t ∈ TT ∧ Even t)) :
     z - y ≤ goodG' r de h x ∧ ((Finset.Ioo y z).filter fun t => posOf n' t ∈ TT).card ≤ orbitWindowCount r de h x := by
   obtain ⟨c1, c2, c3⟩ := bd_core_hyps TT r de h x h3
@@ -1997,18 +1952,15 @@ theorem bd_count_real (n N G N1 u M P de h lx R B : ℝ)
   have hMR : 0 ≤ (M + 5) * R := by positivity
   have hup : G * de ≤ (M + 5) * R * 2 := by rw [hGde]; exact mul_le_mul_of_nonneg_left hud2 hMR
   have hlo : (M + 5) * R ≤ G * de := by rw [hGde]; exact le_mul_of_one_le_right hMR hud1
-  have hc0 : 0 ≤ (h + 3) / P := by positivity
   have hM5 : M + 5 ≤ ((h + 3) / P + 6) * lx := by
     have e : (h + 3) * lx / P = (h + 3) / P * lx := by ring
     rw [e] at hM2
     nlinarith
-  have hR0 : 0 ≤ R := by linarith
   have hCe : G * de ≤ (((h + 3) / P + 6) * R * 2) * lx := by
     calc G * de ≤ (M + 5) * R * 2 := hup
       _ ≤ (((h + 3) / P + 6) * lx) * R * 2 := by gcongr
       _ = _ := by ring
   have hMR5 : M + 5 ≤ (M + 5) * R := le_mul_of_one_le_right (by linarith) (by linarith)
-  have hG5 : 5 ≤ G * de := by linarith
   have hGpos : 0 < G := by
     by_contra hneg
     have : G * de ≤ 0 := mul_nonpos_of_nonpos_of_nonneg (not_lt.mp hneg) hde.le
@@ -2032,7 +1984,6 @@ theorem bd_count_real (n N G N1 u M P de h lx R B : ℝ)
         _ ≤ (16.8 * (G * de)) * (4 / 3 * n) := by gcongr
         _ = (22.4 * de * n) * G := by ring
     have := le_of_mul_le_mul_right hfin hGpos
-    have hnd : 0 ≤ n * de := by positivity
     linarith
 
 def bd_Ce (r : ℕ) (h : ℝ) : ℝ := ((h + 3) / (10 : ℝ) ^ (-((6 * r + 1 : ℕ) : ℤ)) + 6) * (6 * (r : ℝ) + 1) * 2
@@ -2119,7 +2070,7 @@ theorem good_orbits_of_frames (D : Formalism.BasicNotions.D7) (hR : bd_RestOrbit
   intro u G' N₁ T ell
   exact ⟨fun s _ hm => _root_.Formalism.G0.marked_run _ r _ s (bd_goodU_pos hde) hm,
     hR r h hr hh n' TT L₁ L₂ de x hn hL1 hL12 hde hde1 hx hLu h3 hg,
-    fun y z hyz a b c d e => bd_orbit_next TT L₂ (r - 1) r de h x hn (by omega) hde h3 hg y z hyz a b c d e,
+    fun y z _ _ _ _ _ hno => bd_orbit_next TT L₂ (r - 1) r de h x hn (by omega) hde h3 hg y z hno,
     hcnt.1, hcnt.2, fun y => bd_orbit_interval TT L₂ (r - 1) r de h x hL2n hg y⟩
 
 theorem bd_letters_card {n' r : ℕ} [NeZero n'] (F : Frames n' r) (L₂ K r' : ℕ) (de h x : ℝ)
@@ -2355,7 +2306,7 @@ def bf_F (J : ℕ) (B : ℤ → ℤ) : Frames n' r :=
   ⟨TT, J, fun j i => if i < r then bf_tp TT u (B j) (2 * r + 2 + 2 * i) else B j⟩
 
 theorem bf_F_fr (J : ℕ) (B : ℤ → ℤ) (j : ℤ) {i : ℕ} (hi : i < r) :
-    (bf_F TT r u J B).fr j i = bf_tp TT u (B j) (2 * r + 2 + 2 * i) := if_pos hi
+    (bf_F TT r u J B).fr j i = bf_tp TT u (B j) (2 * r + 2 + 2 * i) := ite_eq_left hi
 
 variable {TT r u} {J : ℕ} {B : ℤ → ℤ} (hr : 2 ≤ r) (hu : 1 ≤ u) (hMT : ∀ j, bf_MT TT r u (B j))
   (hstep : ∀ j, B j + ((6 * r + 1 : ℕ) : ℤ) * u ≤ B (j + 1))
@@ -2475,7 +2426,6 @@ theorem bf_gapGt {L₂ : ℕ} (hL : L₂ < u) (j : ℤ) {b : ℤ} (h : bf_MT TT 
   intro y hy hlt _
   have hy' : posOf n' y ∈ TT := (mem_filter.1 hy).2
   have := bf_gap TT r u h h1 h2 he hy' hlt
-  have hL' : (L₂ : ℤ) < u := by exact_mod_cast hL
   linarith
 
 theorem bf_cell {b : ℤ} (h : bf_MT TT r u b) (s : ℕ) (q : ℤ)
@@ -2556,7 +2506,7 @@ theorem bf_frames (TT : Finset (Fin n')) (r u L₂ Gp M J : ℕ) (B : ℤ → �
       rw [bf_F_fr TT r u J B _ hi, bf_F_fr TT r u J B _ hi, hper]
       exact bf_tp_shift TT r u (hMT j) (by rw [← hper]; exact hMT _) (by omega) (by omega) (hev i)
     · show (if i < r then _ else B (j + (J : ℤ))) = (if i < r then _ else B j) + (n' : ℤ)
-      rw [if_neg hi, if_neg hi]
+      rw [ite_eq_right hi, ite_eq_right hi]
       exact hper j
   · intro j i hi
     rw [bf_F_fr TT r u J B _ (show i < r by omega), bf_F_fr TT r u J B _ hi]
@@ -3012,9 +2962,9 @@ theorem weighted_homog_zero_of_inT {R : Type*} [CommRing R] (r : ℕ) (h : MvPol
   have hT : IsT r v := (mem_supported.mp hh) (Finset.mem_coe.mpr hv')
   have : ¬ IsNormal r v := by
     unfold IsNormal
-    rw [if_pos hT.1]
+    rw [ite_eq_left hT.1]
     exact Nat.not_le.mpr hT.2
-  rw [if_neg this]
+  rw [ite_eq_right this]
 
 theorem leading_part_normal_degree {O : Type} [CommRing O] [IsDomain O] (r o : ℕ) (a : KK O) (P : MvPolynomial (TV n' k) O)
     (hP : IsWeightedHomogeneous (normalVariableWeight n' k r) P o) :
@@ -3045,12 +2995,12 @@ variable {p n' r k : ℕ} [Fact p.Prime] [NeZero n'] {O : Type} [CommRing O] [Is
 
 theorem normal_variable_iff_even_index {s' : Fin n'} (hE : Even s'.val) (c : Fin k) : IsNormal r ((s', c) : TV n' k) ↔ r ≤ c.val := by
   unfold IsNormal
-  simp only [hE, if_true]
+  simp only [hE, ite_true]
 
 theorem normal_variable_iff_odd_index {s' : Fin n'} (hE : ¬ Even s'.val) (c : Fin k) :
     IsNormal r ((s', c) : TV n' k) ↔ c.val < r := by
   unfold IsNormal
-  simp only [hE, if_false]
+  simp only [hE, ite_false]
 
 def rowPowerExponent (p : ℕ) (Fr : Frames n' r) (s : ℤ) (l : ℕ) : ℕ := p ^ (s - Arow Fr s l).toNat
 
@@ -3093,28 +3043,28 @@ theorem substitute_primal_top_variable (w : O) (hrk : r ≤ k) {g : Matrix (Fin 
       X (posOf n' a, Fin.castLE hrk i) := by
   rw [subst_xg w r hg hn a ha]
   unfold newVar
-  rw [if_neg ((normal_variable_iff_even_index ((posOf_even hn a).2 ha) (Fin.castLE hrk i)).not.mpr (Nat.not_le.mpr i.isLt))]
+  rw [ite_eq_right ((normal_variable_iff_even_index ((posOf_even hn a).2 ha) (Fin.castLE hrk i)).not.mpr (Nat.not_le.mpr i.isLt))]
 
 theorem substitute_even_normal_variable (w : O) {g : Matrix (Fin k) (Fin k) (WF p n')} (hg : IsGLW g) (hn : Even n') (a : ℤ)
     (ha : Even a) (c : Fin k) (hc : r ≤ c.val) : subst p n' O w n' r g (xg p n' O n' g a c) =
       C (algebraMap O (KK O) w) * X (posOf n' a, c) := by
   rw [subst_xg w r hg hn a ha]
   unfold newVar
-  rw [if_pos ((normal_variable_iff_even_index ((posOf_even hn a).2 ha) _).mpr hc)]
+  rw [ite_eq_left ((normal_variable_iff_even_index ((posOf_even hn a).2 ha) _).mpr hc)]
 
 theorem subst_odd_row_eq (w : O) {g : Matrix (Fin k) (Fin k) (WF p n')} (hg : IsGLW g) (hn : Even n') (a : ℤ)
     (ha : ¬ Even a) (c : Fin k) (hc : c.val < r) : subst p n' O w n' r g (yg p n' O n' g a c) =
       C (algebraMap O (KK O) w) * X (posOf n' a, c) := by
   rw [subst_yg w r hg hn a ha]
   unfold newVar
-  rw [if_pos ((normal_variable_iff_odd_index (fun h => ha ((posOf_even hn a).1 h)) _).mpr hc)]
+  rw [ite_eq_left ((normal_variable_iff_odd_index (fun h => ha ((posOf_even hn a).1 h)) _).mpr hc)]
 
 theorem substitute_dual_odd_variable (w : O) {g : Matrix (Fin k) (Fin k) (WF p n')} (hg : IsGLW g) (hn : Even n') (a : ℤ)
     (ha : ¬ Even a) (c : Fin k) (hc : ¬ c.val < r) : subst p n' O w n' r g (yg p n' O n' g a c) =
       X (posOf n' a, c) := by
   rw [subst_yg w r hg hn a ha]
   unfold newVar
-  rw [if_neg ((normal_variable_iff_odd_index (fun h => ha ((posOf_even hn a).1 h)) _).not.mpr hc)]
+  rw [ite_eq_right ((normal_variable_iff_odd_index (fun h => ha ((posOf_even hn a).1 h)) _).not.mpr hc)]
 
 theorem keyMatrix_congr {R : Type} [CommRing R] {r : ℕ} {ts ts' : Fin r → R} {u u' : R}
     {T T' : Matrix (Fin r) (Fin r) R} {b b' : Fin r → R} (h1 : ts = ts') (h2 : u = u') (h3 : T = T') (h4 : b = b') :
@@ -3270,12 +3220,12 @@ theorem substitute_pairing_key_leading_part (hp : 2 ≤ p) (w : O) (Fr : Frames 
   rw [map_mul, map_pow]
   by_cases hc : c.val < r
   · have hc' : c = Fin.castLE hrk ⟨c.val, hc⟩ := rfl
-    rw [if_pos hc, if_pos hc, mul_zero, add_zero, subst_odd_row_eq w hg hn s hs c hc]
+    rw [ite_eq_left hc, ite_eq_left hc, mul_zero, add_zero, subst_odd_row_eq w hg hn s hs c hc]
     conv_lhs => rw [hc', substitute_primal_top_variable w hrk hg hn _ (hA l.val l.isLt).1]
     simp only [map_mul, map_pow, MvPolynomial.map_C, MvPolynomial.map_X]
     rw [← hc']
     ring
-  · rw [if_neg hc, if_neg hc, zero_add, substitute_dual_odd_variable w hg hn s hs c hc,
+  · rw [ite_eq_right hc, ite_eq_right hc, zero_add, substitute_dual_odd_variable w hg hn s hs c hc,
       substitute_even_normal_variable w hg hn _ (hA l.val l.isLt).1 c (Nat.le_of_not_lt hc)]
     have e3 : (C (w ^ 2) * (C (w ^ (rowPowerExponent p Fr s l.val - 2)) * X (posOf n' (Arow Fr s l.val), c) ^ rowPowerExponent p Fr s l.val *
         X (posOf n' s, c)) : MvPolynomial (TV n' k) O) =
@@ -3343,7 +3293,7 @@ theorem minor_leading_part_normal_degree (w : O) (Fr : Frames n' r) (hrk : r ≤
     (hA : RowsEvenTopsBefore Fr s) (c : Fin k) (hc : r ≤ c.val) :
     ∀ m ∈ (firstKeyLeading p w Fr hrk s c).support, normDeg r m = 1 := by
   refine leading_part_normal_degree r 1 _ _ ?_
-  have hv : normalVariableWeight n' k r (posOf n' s, c) = 1 := if_pos ((normal_variable_iff_even_index ((posOf_even hn s).2 hs) c).mpr hc)
+  have hv : normalVariableWeight n' k r (posOf n' s, c) = 1 := ite_eq_left ((normal_variable_iff_even_index ((posOf_even hn s).2 hs) c).mpr hc)
   have h1 : IsWeightedHomogeneous (normalVariableWeight n' k r) ((-1 : MvPolynomial (TV n' k) O) ^ r) 0 := by
     have : ((-1 : MvPolynomial (TV n' k) O) ^ r) = C ((-1) ^ r) := by simp
     rw [this]
@@ -3359,7 +3309,7 @@ theorem k3_leading_support_normDeg_eq_one (w : O) (Fr : Frames n' r) (hrk : r �
   refine leading_part_normal_degree r 1 _ _ ?_
   refine IsWeightedHomogeneous.sum _ _ _ fun a _ => ?_
   have hv : normalVariableWeight n' k r (posOf n' s, Fin.castLE hrk a) = 1 :=
-    if_pos ((normal_variable_iff_odd_index (fun h => hs ((posOf_even hn s).1 h)) (Fin.castLE hrk a)).mpr a.isLt)
+    ite_eq_left ((normal_variable_iff_odd_index (fun h => hs ((posOf_even hn s).1 h)) (Fin.castLE hrk a)).mpr a.isLt)
   have h2 := (weighted_homog_zero_of_inT r _ (pairing_matrix_supported_tops (p := p) (O := O) Fr hrk hn s hA l a)).mul
     (isWeightedHomogeneous_X O (normalVariableWeight n' k r) (posOf n' s, Fin.castLE hrk a))
   rw [hv] at h2
@@ -3482,7 +3432,6 @@ theorem window_holds_even_tops : RowsEvenTopsInWindow := by
       exact heT
     · intro i _ j _ hij
       have h2 : (n' : ℤ) * ((i : ℤ) - q) = (n' : ℤ) * ((j : ℤ) - q) := by
-        have h3 : Fr.fr 0 0 + (n' : ℤ) * ((i : ℤ) - q) = Fr.fr 0 0 + (n' : ℤ) * ((j : ℤ) - q) := hij
         linarith
       have h4 := mul_left_cancel₀ hn0.ne' h2
       have h5 : (i : ℤ) = j := by linarith
@@ -3573,7 +3522,7 @@ theorem twisted_pairing_eq_zero {R : Type} [CommRing R] (p : ℕ) [Fact p.Prime]
       apply hb
       rw [← h]
       exact i.isLt
-    rw [if_neg hne, zero_pow (pow_ne_zero _ (Fact.out : p.Prime).ne_zero), mul_zero]
+    rw [ite_eq_right hne, zero_pow (pow_ne_zero _ (Fact.out : p.Prime).ne_zero), mul_zero]
 
 theorem residue_exponent_shift (n' : ℕ) [NeZero n'] (A s : ℤ) (h : A < s) :
     ∃ t : ℕ, (A % (n' : ℤ)).toNat + (s - A).toNat = (s % (n' : ℤ)).toNat + n' * t := by
@@ -3614,9 +3563,9 @@ theorem residue_twisted_row_eq [IsDiscreteValuationRing O] (S : UniformizedDVR p
   rw [map_mul, MvPolynomial.map_C, hF]
   unfold newVariableIntegral
   by_cases hb : b'.val < r
-  · rw [if_pos ((normal_variable_iff_odd_index hs b').mpr hb), if_pos hb]
+  · rw [ite_eq_left ((normal_variable_iff_odd_index hs b').mpr hb), ite_eq_left hb]
     simp [hw]
-  · rw [if_neg ((normal_variable_iff_odd_index hs b').not.mpr hb), if_neg hb]
+  · rw [ite_eq_right ((normal_variable_iff_odd_index hs b').not.mpr hb), ite_eq_right hb]
     simp
 
 theorem third_key_residue_eq_zero [IsDiscreteValuationRing O] (S : UniformizedDVR p O) (Fr : Frames n' r) (hrk : r ≤ k)
@@ -3658,7 +3607,7 @@ theorem third_key_residue_eq_zero [IsDiscreteValuationRing O] (S : UniformizedDV
     (fun b' : Fin k => if b'.val < r then 0 else X (posOf n' s, b'))
     (fun i c => C (ι (WittVector.constantCoeff ((g'⁻¹ * g) i c))))
     (fun c b' => C (ι (WittVector.constantCoeff ((g⁻¹ * g') c b'))))
-    ((Arow Fr s l.val) % (n' : ℤ)).toNat (s - Arow Fr s l.val).toNat hαβ (fun b' hb => if_pos hb))
+    ((Arow Fr s l.val) % (n' : ℤ)).toNat (s - Arow Fr s l.val).toNat hαβ (fun b' hb => ite_eq_left hb))
   rw [map_mul, map_pow, residue_integral_primal_row S hrk _ _ c ι hι' ((Arow Fr s l.val) % (n' : ℤ)).toNat 0 (by simp),
     residue_twisted_row_eq S r g' g hn s hs c ι hι' _ t ht]
 
@@ -3760,7 +3709,7 @@ theorem bk_vanish1 (S : UniformizedDVR p O) (hrk : r ≤ k) (hn : Even n') (g : 
   have key := ((Formalism.CountingSumsFrames.Top.keyVanish p (FractionRing (MvPolynomial (TV n' k) (FF O))) r k _ hunit Sn).1 An
     (fun l i => if r ≤ i.val then 0 else algebraMap (MvPolynomial (TV n' k) (FF O))
       (FractionRing (MvPolynomial (TV n' k) (FF O))) (X (posOf n' (aZ l), i))) cols hle
-    (fun l i hi => if_pos hi))
+    (fun l i hi => ite_eq_left hi))
   rw [← key]
   refine congrArg Matrix.det (Matrix.ext fun l c' => ?_)
   obtain ⟨t, ht⟩ := hAn l
@@ -3912,8 +3861,8 @@ theorem bx_Gr_mul {P Q : MvPolynomial (TV n' k) (KK O)} (hP : bx_Gr w r P) (hQ :
 theorem bx_Gr_C (c : O) : bx_Gr w r (C (algebraMap O (KK O) c) : MvPolynomial (TV n' k) (KK O)) := fun m => by
   by_cases h : 0 = m
   · subst h
-    exact ⟨c, by rw [coeff_C, if_pos rfl, bx_normDeg_zero, pow_zero, one_mul]⟩
-  · exact ⟨0, by rw [coeff_C, if_neg h]; simp⟩
+    exact ⟨c, by rw [coeff_C, ite_eq_left rfl, bx_normDeg_zero, pow_zero, one_mul]⟩
+  · exact ⟨0, by rw [coeff_C, ite_eq_right h]; simp⟩
 
 theorem bx_Gr_newVar (v : TV n' k) : bx_Gr w r (newVar w r v) := fun m => by
   unfold newVar
@@ -3921,12 +3870,12 @@ theorem bx_Gr_newVar (v : TV n' k) : bx_Gr w r (newVar w r v) := fun m => by
   · subst hm
     rw [bx_normDeg_single]
     split_ifs with hN
-    · exact ⟨1, by rw [coeff_C_mul, coeff_X, if_pos rfl, pow_one, mul_one, mul_one]⟩
-    · exact ⟨1, by rw [coeff_X, if_pos rfl, pow_zero, mul_one, map_one]⟩
+    · exact ⟨1, by rw [coeff_C_mul, coeff_X, ite_eq_left rfl, pow_one, mul_one, mul_one]⟩
+    · exact ⟨1, by rw [coeff_X, ite_eq_left rfl, pow_zero, mul_one, map_one]⟩
   · refine ⟨0, ?_⟩
     split_ifs with hN
-    · rw [coeff_C_mul, coeff_X, if_neg hm]; simp
-    · rw [coeff_X, if_neg hm]; simp
+    · rw [coeff_C_mul, coeff_X, ite_eq_right hm]; simp
+    · rw [coeff_X, ite_eq_right hm]; simp
 
 end C0
 
@@ -4427,7 +4376,7 @@ theorem bc_IT_Del {L₁ N₁ : ℕ} (hV : Fr.Valid L₁ N₁) (hn : Even n') (hr
   have hE := (posOf_even hn (Fr.fr j l.val)).2 (hV.2.2.2.2.1 j l.val l.2).2
   have hN : ¬ IsNormal r ((posOf n' (Fr.fr j l.val), (Ifirst r k).orderEmbOfFin (first_columns_card hrk) i) : TV n' k) := by
     rw [normal_variable_iff_even_index hE]; omega
-  rw [newVar, if_neg hN]
+  rw [newVar, ite_eq_right hN]
   exact X_mem_supported.2 ⟨hN, (hV.2.2.2.2.1 j l.val l.2).1⟩
 
 theorem bc_IT_Dtop {L₁ N₁ : ℕ} (hV : Fr.Valid L₁ N₁) (hn : Even n') (hr : 1 ≤ r) (hrk : r ≤ k)
@@ -4503,7 +4452,7 @@ theorem bc_claim_of_tail (D : Formalism.BasicNotions.D7) (hL : Conclusion2 D) (h
       bc_IT_mul ⟨H i, fun v hv => ?_, (hc i).2.2.2.2, rfl⟩ hrest, rfl⟩
     have h1 := (hc i).2.1 v hv
     unfold IsNormal
-    rw [if_pos h1.1]
+    rw [ite_eq_left h1.1]
     have := h1.2
     omega
 
@@ -4539,7 +4488,7 @@ theorem bc_claim_of_tail (D : Formalism.BasicNotions.D7) (hL : Conclusion2 D) (h
       le_trans (hc i).2.2.1 (Nat.le_mul_of_pos_left _ (by omega)), fun j hj => ?_, by ring⟩
     · have h1 := (hc i).2.2.2.1 v hv
       unfold IsNormal
-      rw [if_pos h1.1]
+      rw [ite_eq_left h1.1]
       have := h1.2
       omega
     · have := (hc i).2.2.2.2.2 j hj
@@ -5000,10 +4949,10 @@ theorem determinant_coefficients_units : DeterminantCoefficientsUnits := by
     apply Equiv.ext
     intro i
     have h1 := DFunLike.congr_fun hst (A (s i), i)
-    rw [hmu_apply, hmu_apply, if_pos rfl] at h1
+    rw [hmu_apply, hmu_apply, ite_eq_left rfl] at h1
     by_contra hne
     have h2 : A (t i) ≠ A (s i) := fun h => hne (hA h).symm
-    rw [if_neg h2] at h1
+    rw [ite_eq_right h2] at h1
     exact one_ne_zero h1
   have hdet : letterDeterminant R0 A = ∑ s : Equiv.Perm (Fin r), monomial (mu s) (((Equiv.Perm.sign s : ℤˣ) : ℤ) : R0) := by
     unfold letterDeterminant
@@ -5024,7 +4973,7 @@ theorem determinant_coefficients_units : DeterminantCoefficientsUnits := by
     rw [Finset.sum_eq_single s0]
     · simp
     · intro s _ hs
-      rw [if_neg (fun h => hs (hinj h))]
+      rw [ite_eq_right (fun h => hs (hinj h))]
     · simp
   have hunit : ∀ s0 : Equiv.Perm (Fin r), IsUnit ((((Equiv.Perm.sign s0 : ℤˣ) : ℤ) : R0)) := fun s0 =>
     (Units.isUnit (Equiv.Perm.sign s0)).map (Int.castRingHom R0)
@@ -5043,7 +4992,7 @@ theorem determinant_coefficients_units : DeterminantCoefficientsUnits := by
       rw [hdet, coeff_sum]
       apply Finset.sum_eq_zero
       intro s _
-      rw [coeff_monomial, if_neg (fun h => hex ⟨s, h⟩)]
+      rw [coeff_monomial, ite_eq_right (fun h => hex ⟨s, h⟩)]
 
 theorem gauss_quotient_integral : GaussQuotientIntegral := gauss_of_det_coefficients determinant_coefficients_units
 
@@ -5201,7 +5150,6 @@ theorem level_degree_ge_ratio {n' r : ℕ} [NeZero n'] (CLa CD Csz : ℝ) (p : �
   have hp' : (1 : ℝ) ≤ p := by exact_mod_cast hp
   have hpow : (p : ℝ) ^ (Fr.dist j (Fr.oldest j x)) ≤ (p : ℝ) ^ G' := pow_le_pow_right₀ hp' hdist
   have hpos : 0 < (p : ℝ) ^ (Fr.dist j (Fr.oldest j x)) := pow_pos (by linarith) _
-  have hc : (0 : ℝ) ≤ c'' := Nat.cast_nonneg _
   exact div_le_div₀ (Nat.cast_nonneg _) (by linarith) hpos hpow
 
 theorem slope_bounds_on_letters : ∃ C : ℝ, 1 ≤ C ∧
@@ -5530,7 +5478,7 @@ theorem glCoordMap_inv_det : glCoordRingMap R0 n (IsLocalization.Away.invSelf (g
     _ = _ := by rw [h3, one_mul]
 
 theorem laurent_coordinate_embedding_injective : Function.Injective (glCoordRingMap R0 n) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨a, s, rfl⟩ := IsLocalization.exists_mk'_eq (Submonoid.powers (genMat R0 n).det) x
   have h1 := IsLocalization.mk'_spec (GLCoord R0 n) a s
@@ -5561,7 +5509,7 @@ theorem laurentCoordinateMap_support (x : GLLaurent R0 n) : (laurentRingMap R0 n
   exact map_ne_zero_iff _ (laurent_coordinate_embedding_injective R0 n)
 
 theorem laurentRingMap_injective : Function.Injective (laurentRingMap R0 n) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   have h := laurentCoordinateMap_support R0 n x
   rw [hx] at h

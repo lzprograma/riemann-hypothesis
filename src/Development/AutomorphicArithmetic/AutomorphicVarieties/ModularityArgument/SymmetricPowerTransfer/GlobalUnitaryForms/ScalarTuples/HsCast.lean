@@ -52,9 +52,9 @@ private theorem hs_cast {F A : Type} [Field F] [NumberField F] [Field A] (φ : F
   unfold Loc.hs
   by_cases hx : x ∈ GlobalTheory.HilbertRecip.nrm p d
   · obtain ⟨a, b, e⟩ := h.1 hx
-    rw [if_pos ⟨a, b, e.symm⟩, GlobalTheory.HilbertRecip.hs_eq_one_iff.2 hx]
+    rw [ite_eq_left ⟨a, b, e.symm⟩, GlobalTheory.HilbertRecip.hs_eq_one_iff.2 hx]
     simp
-  · rw [if_neg fun ⟨a, b, e⟩ => hx (h.2 ⟨a, b, e.symm⟩), GlobalTheory.HilbertRecip.hs_eq_neg_one_iff.2 hx]
+  · rw [ite_eq_right fun ⟨a, b, e⟩ => hx (h.2 ⟨a, b, e.symm⟩), GlobalTheory.HilbertRecip.hs_eq_neg_one_iff.2 hx]
     simp
 
 theorem UpperTheory.V.Z.Sym.Glob.recip :

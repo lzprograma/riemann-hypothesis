@@ -32,7 +32,7 @@ abbrev gsKernel : Subgroup K.1.fixingSubgroup := (gsRestrict K S).ker
 
 theorem isClosed_gsKernel : IsClosed (gsKernel K S : Set K.1.fixingSubgroup) := by
   have ht2 : T2Space (galUnramifiedOutside K.1 ℚ̄ S) :=
-    galois_t2Space K.1 (maxUnramifiedOutside K.1 ℚ̄ S)
+    krullTopology_t2 (K := K.1) (L := maxUnramifiedOutside K.1 ℚ̄ S)
   have : T1Space (galUnramifiedOutside K.1 ℚ̄ S) := @T2Space.t1Space _ _ ht2
   exact (isClosed_singleton (x := (1 : galUnramifiedOutside K.1 ℚ̄ S))).preimage (continuous_gsRestrict K S)
 
@@ -109,62 +109,6 @@ theorem isZero_cohomology_one_gsKernel :
       (unitsLimitRep K)) 1) :=
     ModuleCat.subsingleton_of_isZero (isZero_cohomology_one_res_subgroupOf (K := K) (E := L))
   rw [Subsingleton.elim y' 0, map_zero]
-
-theorem exists_unitsResField_eq_zero_of_pow_nsmul (L : FiniteSubfield) {ℓ : ℕ} (hℓ : ℓ.Prime)
-    (x : cohomology (unitsLimitRep L) 2) (k : ℕ) (hx : ℓ ^ k • x = 0) :
-    ∃ (E : FiniteSubfield) (_ : Fact (L ≤ E)) (b : ℕ),
-      E.1 = L.1 ⊔ Cyclotomic.rootsOfUnityField (ℓ ^ b) ∧ (unitsResField L E 2).hom x = 0 := by
-  classical
-  have hℓ2 : 2 < ℓ ^ 2 := by nlinarith [hℓ.two_le]
-  have : NeZero (ℓ ^ 2) := ⟨pow_ne_zero _ hℓ.ne_zero⟩
-
-  let F₂ : FiniteSubfield := ⟨Cyclotomic.rootsOfUnityField (ℓ ^ 2), inferInstance⟩
-  let K' : FiniteSubfield := CyclotomicSymbol.compositum L F₂
-  have : Fact ℓ.Prime := ⟨hℓ⟩
-  have : Fact (F₂ ≤ K') := CyclotomicSymbol.fact_le_compositum_right L F₂
-  have : IsTotallyComplex F₂.1 := IsCyclotomicExtension.Rat.isTotallyComplex (n := ℓ ^ 2) F₂.1 hℓ2
-  let _ : Algebra F₂.1 K'.1 := FiniteSubfield.algebraOfLE (Fact.out : F₂ ≤ K')
-  have : IsTotallyComplex K'.1 := NumberField.isTotallyComplex_of_algebra (F := F₂.1) K'.1
-  obtain ⟨ι'⟩ := nonempty_localEmbeddings K'
-  set x' := (unitsResField L K' 2).hom x with hx'
-  have hm : (ℓ ^ k) • x' = 0 := by rw [hx', ← map_nsmul, hx, map_zero]
-
-  let T : Finset (HeightOneSpectrum (𝓞 K'.1)) :=
-    (brauerLocal ι' x').support.preimage Sum.inr Sum.inr_injective.injOn
-  obtain ⟨r, ⟨N, hr⟩, hdeg⟩ :=
-    CyclotomicLayer.exists_pow_dvd_finrank_cyclotomicLayer K' T (pow_ne_zero k hℓ.ne_zero)
-  let E' : FiniteSubfield := CyclotomicLayer.cyclotomicLayer K' r
-  have hsplit : (unitsResField K' E' 2).hom x' = 0 := by
-    refine unitsResField_eq_zero_of_dvd_finrank ι' x' (ℓ ^ k) hm (fun v => ?_) fun v hv w => ?_
-    · have := subsingleton_cohomology_two_of_isComplex v (IsTotallyComplex.isComplex v)
-      exact Subsingleton.elim (α := cohomology (galUnitsZ v.Completion (AlgebraicClosure v.Completion)) 2) _ _
-    · exact hdeg v (by rw [Finset.mem_preimage, DFinsupp.mem_support_iff]; exact hv) w
-
-  let a := k * (N + 1)
-  let b := a + Cyclotomic.unitsLevel ℓ + 2
-  have : NeZero (ℓ ^ b) := ⟨pow_ne_zero _ hℓ.ne_zero⟩
-  let F : FiniteSubfield := ⟨Cyclotomic.rootsOfUnityField (ℓ ^ b), inferInstance⟩
-  let E : FiniteSubfield := CyclotomicSymbol.compositum L F
-  have hrq : r = Cyclotomic.primePowPNat ℓ a := by
-    apply PNat.eq
-    rw [hr, Cyclotomic.coe_primePowPNat, ← pow_mul]
-  have hF₂F : F₂.1 ≤ F.1 := rootsOfUnityField_pow_le (by omega)
-  have hZF : (CyclotomicLayer.zhatLayer r).1 ≤ F.1 := by
-    rw [hrq, CyclotomicLayer.zhatLayer_coe]
-    exact (CyclotomicLayer.zhatLayerField_le_rootsOfUnityField ⟨ℓ, hℓ⟩ a).trans
-      (rootsOfUnityField_pow_le (a := a + Cyclotomic.unitsLevel ℓ) (b := b) (by omega))
-  have hE'E : E' ≤ E := by
-    change (L.1 ⊔ F₂.1) ⊔ (CyclotomicLayer.zhatLayer r).1 ≤ L.1 ⊔ F.1
-    exact sup_le (sup_le le_sup_left (hF₂F.trans le_sup_right)) (hZF.trans le_sup_right)
-  have : Fact (E' ≤ E) := ⟨hE'E⟩
-  have hres : (unitsResField L E 2).hom x = 0 := by
-    have hKE' : Fact (L ≤ E') := ⟨(Fact.out : L ≤ K').trans (Fact.out : K' ≤ E')⟩
-    have h1 := unitsResField_comp_unitsResField (K := L) (E := E') (M := E) 2
-    have h2 := unitsResField_comp_unitsResField (K := L) (E := K') (M := E') 2
-    rw [← h1, ConcreteCategory.comp_apply, ← h2, ConcreteCategory.comp_apply]
-    change (unitsResField E' E 2).hom ((unitsResField K' E' 2).hom x') = 0
-    rw [hsplit, map_zero]
-  exact ⟨E, inferInstance, b, rfl, hres⟩
 
 section SubgroupOf
 

@@ -42,47 +42,7 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstBasisVe
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameParameterRegularity
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadGermSmoothExtension
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.KloostermanDensityOfParts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.FormalDegreeBessel.FinalG
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.EmbeddedGroupMeasurePreserving
@@ -90,7 +50,6 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.LieBracketMultiplic
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaFiniteOfHaar
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.TypeStar
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellDiagonalMap
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.UwClosedSubgroup
@@ -99,24 +58,15 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfBetaAdjCOfLemmaBNorm
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadJFExists
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RhsInt
-import Mathlib.CategoryTheory.Countable
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Topology.Separation.CompletelyRegular
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFusionForms
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
-import Std.Tactic.BVDecide.Normalize.BitVec
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Lemma
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.Interlace
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterlaceSignTwo
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParametersUPrimeForULower
 import Mathlib.LinearAlgebra.Lagrange
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableUnipotentNormRpowNeg
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerParabolicCoordinates
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -583,7 +533,7 @@ theorem pbF_left_uw (Bj : B.RealPlaceData k ρ Wp Wq) (B0 : B.RealPlaceData k n 
     rw [← Matrix.mul_assoc, ← _root_.Formalism.FourierDecayAlt.P.Dx2.Tower.castM_mul]
     congr 2
     unfold PBQ.sP
-    rw [if_pos hx, if_pos hΦ]
+    rw [ite_eq_left hx, ite_eq_left hΦ]
     show U.Rn k p ρ (-x.2) * U.embG k p ρ ((Matrix.of x.1.1)⁻¹ * (Matrix.of x.1.2)⁻¹) * U.embG k p ρ h =
       U.Rn k p ρ (-x.2) * U.embG k p ρ ((h⁻¹ * Matrix.of x.1.1)⁻¹ * (h⁻¹ * Matrix.of x.1.2 * h⁻¹⁻¹)⁻¹)
     rw [Matrix.mul_assoc, ← Formalism.FourierDecayAlt.P.Dx2.Split.embG_mul]
@@ -726,11 +676,6 @@ theorem xT_GV (r : ℕ) {Z : Matrix (Fin r) (Fin r) ℂ} {μ : B.Mat k (r - r)} 
     xT k r Z μ ∈ B.GV k r :=
   Formalism.FourierDecayAlt.P.PBE.castM_GV _ ((_root_.Formalism.FourierDecayAlt.P.Ux2.sliceMem k r (r - r)).1 Z μ hZ hμ)
 
-theorem gf_castM {a b : ℕ} (e : a = b) (z z' : Fin (2 * b + k + 1) → ℂ) (g : B.Mat k a) :
-    Gf k b z z' (D.castM e g) = Gf k a (D.castV e.symm z) (D.castV e.symm z') g := by
-  subst e
-  rw [Formalism.FourierDecayAlt.P.Dx2.MN.castM_rfl, Formalism.FourierDecayAlt.P.JCTx5.castV_rfl, Formalism.FourierDecayAlt.P.JCTx5.castV_rfl]
-
 end lemmas
 
 theorem pullback_smooth_formula : PbSmooth := by
@@ -746,7 +691,7 @@ theorem pullback_smooth_formula : PbSmooth := by
   have hG₀' : Matrix.of q₀.2 ∈ B.GV P.k (P.r - P.r) := hG₀.1
   have hgf : 0 < Gf P.k P.r p.T.base.z p.T.base.z' (xT P.k P.r (Matrix.of q₀.1) (Matrix.of q₀.2)) := by
     unfold xT
-    rw [gf_castM]
+    rw [Formalism.FourierDecayAlt.P.CutEXPbSupp.gf_castM]
     have e := _root_.Formalism.FourierDecayAlt.P.Ux3.gfSlice P.k P.r (P.r - P.r)
       (D.castV (by omega : P.r = P.r + (P.r - P.r)) p.T.base.z) (D.castV (by omega : P.r = P.r + (P.r - P.r)) p.T.base.z')
       (_root_.Formalism.FourierDecayAlt.P.PBH.inWb_castV _ p.T.base.z_mem) (_root_.Formalism.FourierDecayAlt.P.PBH.inWb_castV _ p.T.base.z'_mem) 0 0 (Matrix.of q₀.1) (Matrix.of q₀.2)
@@ -1136,7 +1081,7 @@ theorem radial_of_function_holds : RadOfFun := by
   refine ⟨⟨fun c g => if (c, g) ∈ DomR k ρ z z' then f g else 0, ?_, ?_, ?_⟩, ?_⟩
   · intro x hx
     show (if (x.1, x.2) ∈ DomR k ρ z z' then f x.2 else 0) = 0
-    exact if_neg hx
+    exact ite_eq_right hx
   · intro x₀ hx₀
     obtain ⟨hΩ, hG, hpos⟩ := hx₀
     obtain ⟨U, F, hU, hgU, hF, hFe⟩ := hloc x₀.2 hG hpos
@@ -1148,7 +1093,7 @@ theorem radial_of_function_holds : RadOfFun := by
     · intro x hx hxG
       have hxD : (x.1, x.2) ∈ DomR k ρ z z' := ⟨hx.1, hxG, hx.2.2⟩
       show (if (x.1, x.2) ∈ DomR k ρ z z' then f x.2 else 0) = F x.2
-      rw [if_pos hxD]
+      rw [ite_eq_left hxD]
       exact hFe x.2 hx.2.1 hxG
   · intro x hx h hh h' hh'
     obtain ⟨hΩ, hG, hpos⟩ := hx
@@ -1158,11 +1103,11 @@ theorem radial_of_function_holds : RadOfFun := by
     have hD0 : (x.1, x.2) ∈ DomR k ρ z z' := ⟨hΩ, hG, hpos⟩
     show (if (x.1, h * x.2 * h') ∈ DomR k ρ z z' then f (h * x.2 * h') else 0) =
       π h ∘SL (if (x.1, x.2) ∈ DomR k ρ z z' then f x.2 else 0) ∘SL π' h'
-    rw [if_pos hD, if_pos hD0]
+    rw [ite_eq_left hD, ite_eq_left hD0]
     exact hequiv x.2 hG hpos h hh h' hh'
   · intro x hx
     show (if (x.1, x.2) ∈ DomR k ρ z z' then f x.2 else 0) = f x.2
-    exact if_pos hx
+    exact ite_eq_left hx
 
 theorem determinant_vanishing_holds : ZxDet := by
   intro r h hh v
@@ -1325,7 +1270,7 @@ theorem frame_dframe (S : B.RealPlaceData k r Wp Wq) (hr : r = 0) {ν' : Fin (2 
         γ⁻¹ *ᵥ S.z := by
       funext i
       have := i.isLt
-      rw [if_pos (by omega)]
+      rw [ite_eq_left (by omega)]
     have hpr : γ⁻¹ *ᵥ S.z = Formalism.FourierDecayAlt.D.prW k 0 S.z' (γ⁻¹ *ᵥ S.z) +
         (herm (Hpk k 0) (γ⁻¹ *ᵥ S.z) S.z' / herm (Hpk k 0) S.z' S.z') • S.z' := by
       unfold Formalism.FourierDecayAlt.D.prW
@@ -1378,7 +1323,6 @@ end Formalism.FourierDecayAlt.P.DiagonalScalarMatrices
 namespace Formalism.FourierDecayAlt.P
 
 open Finset Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
-open scoped ComplexOrder
 
 theorem head_weight_at_of_exists : DiagonalScalarMatrices.HeadWeightAtOfEx := by
   intro Wp Wq _ _ _ _ _ _ P p w X μ L st ν'r m₀r hD hcut hLF x hx γ₀ hγG hζ hγF hex h hh y e
@@ -1577,8 +1521,6 @@ section outer
 variable {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
   [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp]
 
-
-
 theorem outer_int (S : B.RealPlaceData k r Wp Wq) (hN : S.μN = D.muN k r) (hW1 : S.μW Set.univ = 1)
     (hW1' : S.μW' Set.univ = 1) (z0 z0' : Fin (2 * 0 + k + 1) → ℂ)
     (hz : S.z = liftVec k r 0 z0) (hz' : S.z' = liftVec k r 0 z0')
@@ -1723,7 +1665,7 @@ theorem ptMatN_one (ζ : ℂ) : D.ptMatN [(1, ζ)] (0 + 1) = Matrix.of fun _ _ =
 theorem ptMatN_append_head (h : C.LPt) (ζ : ℂ) (R : ℕ) (hR : D.ptSize h = R) :
     D.ptMatN (h ++ [(1, ζ)]) R = D.ptMatN h R := by
   ext a b
-  simp only [D.ptMatN, _root_.Formalism.FourierDecayAlt.P.PBJ.Asm.ptEntry_append, hR, a.isLt, b.isLt, and_self, if_true]
+  simp only [D.ptMatN, _root_.Formalism.FourierDecayAlt.P.PBJ.Asm.ptEntry_append, hR, a.isLt, b.isLt, and_self, ite_true]
 
 alias isLocPt_app := _root_.Formalism.FourierDecayAlt.P.PBI.isLocPt_app
 
@@ -1740,8 +1682,6 @@ variable {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [Norm
 theorem lev_inv {k R : ℕ} (y : B.Mat k 0) (hy : IsUnit y.det) : ιLev k R 0 y⁻¹ = (ιLev k R 0 y)⁻¹ := by
   refine (Matrix.inv_eq_left_inv ?_).symm
   rw [← Dx2.Tower.lev_mul, Matrix.nonsing_inv_mul _ hy, Dx2.Tower.lev_one]
-
-
 
 theorem vecV_append_singleton_eq_vecV_sliceAt (k R ρ : ℕ) (hρ : ρ = 0) (e : R + ρ = R) (S : B.RealPlaceData k R Wp Wq) (S0 : B.RealPlaceData k ρ Wp Wq)
     (hzL : D.castV e (liftVec k R ρ S0.z) = S.z) (hzL' : D.castV e (liftVec k R ρ S0.z') = S.z')
@@ -1782,7 +1722,7 @@ theorem vecV_append_singleton_eq_vecV_sliceAt (k R ρ : ℕ) (hρ : ρ = 0) (e :
       rw [hG] at hpos
       nlinarith
     rw [hL, vector_level_zero_degenerate rfl S0 ν'r m₀r _ ζ (by rw [← hT, ← hT']; exact hζT)]
-  push_neg at hζT
+  push Not at hζT
   have hζT0 : Tz k 0 S0.z * Tz k 0 S0.z' < Complex.normSq ζ := by rw [← hT, ← hT']; exact hζT
   obtain ⟨γ0, hγ0G, hZ0, hD0⟩ := exists_frame_level_zero rfl S0 ν'r m₀r hF0 ζ hζT0
   rw [vector_level_zero_eq_jacquet rfl S0 ν'r m₀r hF0 _ ζ hζT0 γ0 hγ0G hZ0 hD0, jacquet_integral_level_zero rfl S0 hN0 _ γ0]

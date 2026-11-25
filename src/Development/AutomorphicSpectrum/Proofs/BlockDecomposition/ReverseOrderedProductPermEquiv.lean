@@ -4,48 +4,6 @@ public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.
 public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleAppendEquiv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -71,18 +29,9 @@ theorem swap_lt_swap {i j x y : Fin h} (hij : (j : ℕ) = i + 1)
 
 theorem strictMono_of_adj {g : Fin h → Fin h} (hg : ∀ p q : Fin h, (q : ℕ) = p + 1 → g p < g q) :
     StrictMono g := by
-  intro x y hxy
-  rw [Fin.lt_def] at hxy
-  have key : ∀ (d : ℕ) (y : Fin h), (y : ℕ) = x + d + 1 → g x < g y := by
-    intro d
-    induction d with
-    | zero => intro y hy; exact hg x y (by omega)
-    | succ d ih =>
-      intro y hy
-      have hy1 : (y : ℕ) - 1 < h := by omega
-      exact (ih ⟨y - 1, hy1⟩ (show (y : ℕ) - 1 = x + d + 1 by omega)).trans
-        (hg ⟨y - 1, hy1⟩ y (show (y : ℕ) = ((y : ℕ) - 1) + 1 by omega))
-  exact key (y - x - 1) y (by omega)
+  cases h with
+  | zero => intro x; exact absurd x.isLt (Nat.not_lt_zero _)
+  | succ h => exact Fin.strictMono_iff_lt_succ.2 fun i => hg (Fin.castSucc i) i.succ (by simp)
 
 theorem rel_comp_perm (r : (Fin h → α) → (Fin h → α) → Prop) (hrefl : ∀ f, r f f)
     (htrans : ∀ f g l, r f g → r g l → r f l) (U : α → α → Prop)
@@ -126,7 +75,7 @@ theorem rel_comp_perm (r : (Fin h → α) → (Fin h → α) → Prop) (hrefl : 
     refine htrans _ _ _ h1 (hswap _ p q hpq ?_)
     have := hσ (σ q) (σ p) hlt (by simp only [Equiv.symm_apply_apply]; rw [Fin.lt_def]; omega)
     simpa [σ'] using this
-  · push_neg at hd
+  · push Not at hd
     have hm : StrictMono σ := strictMono_of_adj fun p q hpq => lt_of_le_of_ne (hd p q hpq)
       (fun e => by have := σ.injective e; rw [Fin.ext_iff] at this; omega)
     have he : σ = 1 := Equiv.ext fun x => congrFun (StrictMono.eq_id hm) x

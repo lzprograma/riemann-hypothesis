@@ -46,8 +46,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.RationalCountable
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem discrete_countable_GQ :
     ∀ (D : D7) (V : HSp D), DiscreteTopology (GQ V) ∧ Countable (GQ V) :=
   fun D V => ⟨GlobalTheory.RationalDiscrete.discreteTopology_GQ D V,

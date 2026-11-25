@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricLevelLiftsExist
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
 public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TraceUnique
 import Mathlib.Algebra.Order.Floor.Extended
@@ -126,20 +127,8 @@ private lemma prod_mul_prod {I R : Type} [Monoid R] (u v : I → R) (l : List I)
 
 private lemma prod_single {I R : Type} [Monoid R] (u : I → R) (i : I) (l : List I) (hl : l.Nodup)
     (hi : i ∈ l) (h : ∀ k, k ≠ i → u k = 1) : (l.map u).prod = u i := by
-  induction l with
-  | nil => simp at hi
-  | cons j l ih =>
-    have hn := List.nodup_cons.1 hl
-    simp only [List.map_cons, List.prod_cons]
-    by_cases e : j = i
-    · subst e
-      have : (l.map u).prod = 1 := List.prod_eq_one (by
-        intro x hx
-        obtain ⟨k, hk, rfl⟩ := List.mem_map.1 hx
-        exact h k (fun e => hn.1 (e ▸ hk)))
-      rw [this, mul_one]
-    · rw [h j e, one_mul]
-      exact ih hn.2 ((List.mem_cons.1 hi).resolve_left (Ne.symm e))
+  intros
+  apply _root_.GlobalTheory.ParahoricLift.prod_map_single <;> assumption
 
 end UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.AC
 

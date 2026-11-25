@@ -52,15 +52,9 @@ section SlopeTestRemainingChoices
 variable {K L Ω : Type} [Field K] [NumberField K] [Field L] [NumberField L] [Field Ω] [Algebra K L] [Algebra L Ω]
   [Algebra K Ω] [IsScalarTower K L Ω]
 
-private theorem int_mem (A : ValuationSubring Ω) {b : Ω} (hb : IsIntegral ℤ b) : b ∈ A := by
-  have h : IsIntegral A b := hb.tower_top
-  obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.1 h
-  rw [← hy]
-  exact y.2
-
 omit [NumberField L] in
 private theorem int_mem' (A : ValuationSubring Ω) (x : 𝓞 L) : algebraMap L Ω (x : L) ∈ A := by
-  exact int_mem A (RingOfIntegers.isIntegral_coe x).algebraMap
+  exact mem_of_isIntegral_int A (RingOfIntegers.isIntegral_coe x).algebraMap
 
 private theorem place_between {A : ValuationSubring Ω} {v : HeightOneSpectrum (𝓞 K)} (hA : IsPlaceOver A v) :
     ∃ w : HeightOneSpectrum (𝓞 L), IsPlaceOver A w ∧ w.asIdeal.LiesOver v.asIdeal := by

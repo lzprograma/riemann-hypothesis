@@ -109,7 +109,7 @@ theorem equality : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F
       rw [mass_eq_sumCls L r k S d _ (fun _ _ _ _ _ => trivial)]
       unfold Frames.sumCls
       let o₀ : MulAction.orbitRel.Quotient S.St (Set S.FrP) := Quotient.mk _ C0
-      rw [tsum_eq_single o₀ (fun o ho => if_neg fun hI => ho (by
+      rw [tsum_eq_single o₀ (fun o ho => ite_eq_right fun hI => ho (by
         obtain ⟨h, hh, e⟩ := hall _ hI
         rw [← Quotient.out_eq o]
         exact Quotient.sound ⟨⟨h, hh⟩, e.symm⟩))]
@@ -147,19 +147,19 @@ theorem equality : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F
       unfold Frames.mass
       rw [tsum_eq_single o₁]
       · congr
-      · exact fun o ho => if_neg (hone o ho)
+      · exact fun o ho => ite_eq_right (hone o ho)
     have e2 : (S.amp d fun _ => True) =
         if S.IsTerm d o₁.out ∧ True then (S.mu o₁.out : ℂ) * S.om d o₁.out else 0 := by
       unfold Frames.amp
       rw [tsum_eq_single o₁]
       · congr
-      · exact fun o ho => if_neg (hone o ho)
+      · exact fun o ho => ite_eq_right (hone o ho)
     rw [e1] at hm ⊢
     rw [e2]
     by_cases hT : S.IsTerm d o₁.out ∧ True
     swap
-    · simp only [if_neg hT]; simp
-    simp only [if_pos hT] at hm ⊢
+    · simp only [ite_eq_right hT]; simp
+    simp only [ite_eq_left hT] at hm ⊢
     have hom : ‖S.om d o₁.out‖ = 1 := by
       obtain ⟨p, hp⟩ := hT.1
       exact (WitIndep.witness_independence L r k S d _ _ _ hp).2.2.2.2

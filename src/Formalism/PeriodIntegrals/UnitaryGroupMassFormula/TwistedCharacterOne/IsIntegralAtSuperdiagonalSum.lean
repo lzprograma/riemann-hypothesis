@@ -1,50 +1,7 @@
 module
 
 public import Formalism.PeriodIntegrals.TwChrOne
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -218,12 +175,12 @@ private lemma intAt_inv_absNorm_mul_apply_of_mem_JQ {r : Sp E (N + c) ≃ₗ[E] 
     · have hlj : l.1 ≠ j.1 := fun h => hj (h ▸ hl)
       exact ⟨0, by simp [Loc.eN, hlj]⟩
     · refine ⟨if l.1 = j.1 then 1 else 0, ?_⟩
-      simp only [Loc.eN, if_neg hl, zpow_zero, inv_one, one_mul]
+      simp only [Loc.eN, ite_eq_right hl, zpow_zero, inv_one, one_mul]
       split_ifs <;> simp
   have h1 := (Subgroup.mem_inf.1 hr).2 _ |>.2 hej
   rw [mem_parL] at h1
   have h2 := int_of_mem_stdAt P h1 i
-  simpa only [if_pos (And.intro hi1 hi2), zpow_one] using h2
+  simpa only [ite_eq_left (And.intro hi1 hi2), zpow_one] using h2
 
 private lemma redP_eq_zero_of_intAt_inv_absNorm_mul {a : E} (h : IntAt P (((Ideal.absNorm P.asIdeal : ℕ) : E)⁻¹ * a)) :
     redP P a = 0 := by
@@ -330,17 +287,8 @@ lemma inX_eN {j : ℕ} (hj : j < N) : Loc.inX E N c (Loc.eN E N j) = Loc.eN E (N
     rfl
   · rw [dite_eq_right hl, LinearMap.zero_apply]
     unfold Loc.eN
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
 
 variable {K : Type} [Field K]
-
-lemma unitV_mul (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {a b d : E} (ha : IsUnit (redP P a)) (hb : IsUnit (redP P b))
-    (hd : redP P d = redP P a * redP P b) :
-    LocE.unitV (P := P) ξ d = LocE.unitV (P := P) ξ a * LocE.unitV (P := P) ξ b := by
-  have hd' : IsUnit (redP P d) := hd ▸ ha.mul hb
-  unfold LocE.unitV
-  rw [dite_eq_left hd', dite_eq_left ha, dite_eq_left hb]
-  have hu : hd'.unit = ha.unit * hb.unit := Units.ext (by simp [hd])
-  rw [hu, map_mul, Units.val_mul]
 
 end PI.TwChrOne.Pf

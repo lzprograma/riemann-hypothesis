@@ -47,8 +47,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.ClassFunctionSumIntegral
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def IsDefiniteSpace (V : HSp D) : Prop := V.SigOK ∧ V.IsDefinite

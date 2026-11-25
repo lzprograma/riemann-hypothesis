@@ -55,7 +55,7 @@ import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermsCorrespond
 -- Members: Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardLatticeDualVectorsChangeUnipotent, Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramePairChangedDualVectors, Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermsOrbitsHeightsAmplitudesInCoordinates
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardLatticeDualVectorsChangeUnipotent =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardLatticeDualVectorsChangeUnipotent", "h": "module\n\npublic import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver\npublic import Formalism.SharpRestriction.CuspSpanNormBounds.KappaEndpoints\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardLatticeDualVectorsChangeUnipotent", "h": "module\n\npublic import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver\npublic import Formalism.SharpRestriction.CuspSpanNormBounds.KappaEndpoints\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramePairCoordinatesTransportInnerLattices\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -77,11 +77,6 @@ theorem hR_add (x y z : V) : H.h x (y + z) = H.h x y + H.h x z := by
 theorem hR_smul (c : E) (x y : V) : H.h x (c • y) = M.L.cj c * H.h x y := by
   rw [H.h_herm (c • y) x, H.h_smul_left, map_mul, ← H.h_herm]
 
-theorem hL_neg (x y : V) : H.h (-x) y = - H.h x y := by
-  have := H.h_add_left x (-x) y
-  rw [add_neg_cancel, H.h_zero_left] at this
-  linear_combination -this
-
 theorem h_symm_zero {x y : V} (h : H.h y x = 0) : H.h x y = 0 := by
   rw [H.h_herm y x, h, map_zero]
 
@@ -96,8 +91,6 @@ theorem perp_of {k : V} (h : ∀ a : Fin r, H.h k (A.e a) = 0) : k ∈ H.perp (H
   | add x y _ _ hx hy => rw [hR_add, hx, hy, add_zero]
   | smul c x _ hx => rw [hR_smul, hx, mul_zero]
 
-theorem e_mem_X (a : Fin r) : A.e a ∈ H.X A.f := Submodule.subset_span ⟨a, rfl⟩
-
 theorem h_X_e {ξ : V} (hξ : ξ ∈ H.X A.f) (b : Fin r) : H.h ξ (A.e b) = 0 := by
   unfold HermSp.X at hξ
   induction hξ using Submodule.span_induction with
@@ -110,9 +103,6 @@ theorem X_le_perp {ξ : V} (hξ : ξ ∈ H.X A.f) : ξ ∈ H.perp (H.X A.f) := p
 
 theorem hX_perp {ξ w : V} (hξ : ξ ∈ H.X A.f) (hw : w ∈ H.perp (H.X A.f)) : H.h ξ w = 0 :=
   h_symm_zero (hw ξ hξ)
-
-theorem prF_mem_perp' (y : V) : A.prF y ∈ H.perp (H.X A.f) :=
-  perp_of A (fun a => ng_prF_e (Fr := A) y a)
 
 theorem prF_add (x y : V) : A.prF (x + y) = A.prF x + A.prF y := by
   unfold FrameD.prF
@@ -160,7 +150,7 @@ theorem swap_es (x : V) (b : Fin r) : H.h (swapMap A B x) (B.es b) = H.h x (A.es
   unfold swapFun
   rw [_root_.Formalism.MainNotions.BridgeLemma.h_sub_left, H.h_add_left, H.h_add_left, _root_.Formalism.MainNotions.BridgeLemma.h_sum_left, _root_.Formalism.MainNotions.BridgeLemma.h_sum_left, _root_.Formalism.MainNotions.BridgeLemma.h_sum_left]
   simp only [h_e_esB A B hf, B.h_ss, mul_zero, Finset.sum_const_zero, add_zero, mul_ite, mul_one,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   ring
 
 theorem swap_e (x : V) (b : Fin r) : H.h (swapMap A B x) (A.e b) = H.h x (A.e b) := by
@@ -169,7 +159,7 @@ theorem swap_e (x : V) (b : Fin r) : H.h (swapMap A B x) (A.e b) = H.h x (A.e b)
   rw [_root_.Formalism.MainNotions.BridgeLemma.h_sub_left, H.h_add_left, H.h_add_left, _root_.Formalism.MainNotions.BridgeLemma.h_sum_left, _root_.Formalism.MainNotions.BridgeLemma.h_sum_left, _root_.Formalism.MainNotions.BridgeLemma.h_sum_left]
   have hee : ∀ a, H.h (A.e a) (A.e b) = 0 := fun a => A.h_iso _ _ (Or.inl (Fin.castSucc_lt_last a).ne)
   simp only [hee, ng_prF_e, h_esB_e A B hf, mul_zero, Finset.sum_const_zero, add_zero, zero_add, mul_ite, mul_one,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true, sub_zero]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true, sub_zero]
 
 theorem swap_prF (x : V) : B.prF (swapMap A B x) - A.prF x = - ∑ a, H.h (A.prF x) (B.es a) • A.e a := by
   have e1 : B.prF (swapMap A B x) = swapMap A B x - ∑ a, H.h x (A.es a) • A.e a -
@@ -182,7 +172,7 @@ theorem swap_prF (x : V) : B.prF (swapMap A B x) - A.prF x = - ∑ a, H.h (A.prF
 
 theorem swap_prF_mem (x : V) : B.prF (swapMap A B x) - A.prF x ∈ H.X A.f := by
   rw [swap_prF A B hf]
-  exact Submodule.neg_mem _ (Submodule.sum_mem _ (fun a _ => Submodule.smul_mem _ _ (e_mem_X A a)))
+  exact Submodule.neg_mem _ (Submodule.sum_mem _ (fun a _ => Submodule.smul_mem _ _ (GlobalTheory.HL.CoordInnerSnd.e_mem_X A a)))
 
 theorem swap_unit (x y : V) : H.h (swapMap A B x) (swapMap A B y) = H.h x y := by
   have k1 : ∀ a, H.h (A.e a) (swapMap A B y) = H.h (A.e a) y := fun a => by
@@ -196,8 +186,8 @@ theorem swap_unit (x y : V) : H.h (swapMap A B x) (swapMap A B y) = H.h x y := b
     set η := B.prF (swapMap A B y) - A.prF y
     rw [show B.prF (swapMap A B x) = A.prF x + ξ by simp [ξ],
       show B.prF (swapMap A B y) = A.prF y + η by simp [η],
-      H.h_add_left, hR_add, hR_add, hX_perp A hx (prF_mem_perp' A y), hX_perp A hx (X_le_perp A hy),
-      h_symm_zero (hX_perp A hy (prF_mem_perp' A x))]
+      H.h_add_left, hR_add, hR_add, hX_perp A hx (GlobalTheory.HL.CoordInnerSnd.prF_perp A y), hX_perp A hx (X_le_perp A hy),
+      h_symm_zero (hX_perp A hy (GlobalTheory.HL.CoordInnerSnd.prF_perp A x))]
     ring
   rw [ng_expand (Fr := B) (swapMap A B x) (swapMap A B y), ng_prF_prF (Fr := B) (swapMap A B x) (swapMap A B y),
     ng_expand (Fr := A) x y, ng_prF_prF (Fr := A) x y, k3]
@@ -211,13 +201,13 @@ theorem swap_fix (b : Fin (r + 1)) : swapMap A B (A.f b) = A.f b := by
       have := ng_prF_e (Fr := A) (A.f a.castSucc)
       unfold FrameD.prF
       have hs : ∑ c, H.h (A.f a.castSucc) (A.es c) • A.e c = A.e a := by
-        simp only [A.h_es, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        simp only [A.h_es, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
       have hz : ∑ c, H.h (A.f a.castSucc) (A.e c) • A.es c = 0 :=
         Finset.sum_eq_zero (fun c _ => by
           rw [show H.h (A.f a.castSucc) (A.e c) = 0 from A.h_iso _ _ (Or.inl (Fin.castSucc_lt_last a).ne), zero_smul])
       rw [hs, hz]; show A.f a.castSucc - A.f a.castSucc - 0 = 0; simp
     have hs : ∑ c, H.h (A.f a.castSucc) (A.es c) • A.e c = A.f a.castSucc := by
-      simp only [A.h_es, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true]; rfl
+      simp only [A.h_es, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]; rfl
     have hz : ∑ c, H.h (A.f a.castSucc) (A.e c) • B.es c = 0 :=
       Finset.sum_eq_zero (fun c _ => by
         rw [show H.h (A.f a.castSucc) (A.e c) = 0 from A.h_iso _ _ (Or.inl (Fin.castSucc_lt_last a).ne), zero_smul])
@@ -241,7 +231,7 @@ theorem eq_zero_of (v : V) (h1 : ∀ a, H.h v (A.es a) = 0) (h2 : ∀ a, H.h v (
   intro y
   rw [ng_expand (Fr := A) v y, ng_prF_prF (Fr := A) v y]
   simp only [h1, h2, zero_mul, Finset.sum_const_zero, zero_add, add_zero]
-  exact hX_perp A h3 (prF_mem_perp' A y)
+  exact hX_perp A h3 (GlobalTheory.HL.CoordInnerSnd.prF_perp A y)
 
 theorem swap_inv (hf : B.f = A.f) (x : V) : swapMap B A (swapMap A B x) = x := by
   have hf' : A.f = B.f := hf.symm
@@ -282,7 +272,7 @@ theorem swap_mem_N (hf : B.f = A.f) : swapEquiv A B hf ∈ A.N := by
       | smul c x _ hx => rw [map_smul, hx]
     rw [hfix, sub_self]; exact Submodule.zero_mem _
   · intro v hv
-    have h0 : ∀ a, H.h v (A.e a) = 0 := fun a => hv _ (e_mem_X A a)
+    have h0 : ∀ a, H.h v (A.e a) = 0 := fun a => hv _ (GlobalTheory.HL.CoordInnerSnd.e_mem_X A a)
     have e : swapEquiv A B hf v - v = - ∑ a, H.h (A.prF v) (B.es a) • A.e a := by
       rw [swapEquiv_apply, swapMap_apply]
       unfold swapFun
@@ -293,7 +283,7 @@ theorem swap_mem_N (hf : B.f = A.f) : swapEquiv A B hf ∈ A.N := by
       rw [show ∀ u : V, u - v = u - (∑ a, H.h v (A.es a) • A.e a + A.prF v) from fun u => by rw [← hv']]
       abel
     rw [e]
-    exact Submodule.neg_mem _ (Submodule.sum_mem _ (fun a _ => Submodule.smul_mem _ _ (e_mem_X A a)))
+    exact Submodule.neg_mem _ (Submodule.sum_mem _ (fun a _ => Submodule.smul_mem _ _ (GlobalTheory.HL.CoordInnerSnd.e_mem_X A a)))
 
 theorem lamStd_swap : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E] (M : Model F E), M.OK → ∀ {V : Type} [AddCommGroup V] [Module E V] (H : HermSp M V) (r : ℕ) (Fr : LocNG.FrameD H r) (es₂ : Fin r → V) (h1 : ∀ i j, H.h (es₂ i) (es₂ j) = 0) (h2 : ∀ i j : Fin r, H.h (Fr.f i.castSucc) (es₂ j) = if i = j then 1 else 0) (h3 : ∀ i, H.h (es₂ i) (Fr.f (Fin.last r)) = 0), Fr.T ≠ 0 → ∀ L : Submodule M.L.O (H.Wb Fr.f), Fr.IsInner L → ∃ m ∈ Fr.N, (∀ b, m (Fr.f b) = Fr.f b) ∧ (⟨Fr.f, es₂, Fr.T, Fr.h_iso, Fr.h_zz, h1, h2, h3⟩ : LocNG.FrameD H r).LamStd L = LocNG.img m (Fr.LamStd L) := by
   intro F _ _ _ E _ _ _ _ M _ V _ _ H r Fr es₂ h1 h2 h3 _ L _
@@ -318,10 +308,10 @@ theorem lamStd_swap : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpac
     simp only [swap_es Fr B hf, e_eq Fr B hf, swap_e Fr B hf]
     refine and_congr Iff.rfl (and_congr Iff.rfl ⟨?_, ?_⟩)
     · rintro ⟨w, hw, hwL⟩
-      refine ⟨⟨B.prF (swapMap Fr B x), prF_mem_perp' B _⟩, rfl, ?_⟩
+      refine ⟨⟨B.prF (swapMap Fr B x), GlobalTheory.HL.CoordInnerSnd.prF_perp B _⟩, rfl, ?_⟩
       rw [← hcls w _ hw rfl]; exact hwL
     · rintro ⟨w', hw', hwL⟩
-      refine ⟨⟨Fr.prF x, prF_mem_perp' Fr _⟩, rfl, ?_⟩
+      refine ⟨⟨Fr.prF x, GlobalTheory.HL.CoordInnerSnd.prF_perp Fr _⟩, rfl, ?_⟩
       rw [hcls _ w' rfl hw']; exact hwL
   unfold FrameD.LamStd img
   rw [Submodule.map_span]
@@ -423,9 +413,6 @@ def datEq (c : WCoord P S) : LocNG.Datum P ≃ LocNG.Datum (pair₂ c) where
   invFun d := ⟨d.L, d.L', d.hL, d.hL', d.io, d.io_L⟩
   left_inv _ := rfl
   right_inv _ := rfl
-
-theorem std_swap : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E] (M : Model F E), M.OK → ∀ {V : Type} [AddCommGroup V] [Module E V] (H : HermSp M V) (r : ℕ) (Fr : LocNG.FrameD H r) (es₂ : Fin r → V) (h1 : ∀ i j, H.h (es₂ i) (es₂ j) = 0) (h2 : ∀ i j : Fin r, H.h (Fr.f i.castSucc) (es₂ j) = if i = j then 1 else 0) (h3 : ∀ i, H.h (es₂ i) (Fr.f (Fin.last r)) = 0), Fr.T ≠ 0 → ∀ L : Submodule M.L.O (H.Wb Fr.f), Fr.IsInner L → ∃ m ∈ Fr.N, (∀ b, m (Fr.f b) = Fr.f b) ∧ (⟨Fr.f, es₂, Fr.T, Fr.h_iso, Fr.h_zz, h1, h2, h3⟩ : LocNG.FrameD H r).LamStd L = LocNG.img m (Fr.LamStd L) :=
-  _root_.GlobalTheory.SwapStd.lamStd_swap
 
 lemma inv_fix {m : V ≃ₗ[E] V} {x : V} (hx : m x = x) : m⁻¹ x = x := by
   conv_lhs => rw [← hx]

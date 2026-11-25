@@ -12,43 +12,7 @@ import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.Heisenb
 public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SectionsReadAsTranslatesAtScaledPointStatement
 public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaSeriesTestFunctionHolomorphicWeight
 public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.L2NormFundamentalDomain
 
 @[expose] public section
@@ -59,7 +23,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level
 open GlobalTheory.SW hiding Level
 open Formalism.L2.Pj Formalism.L2.PjFree
 open scoped ComplexConjugate Classical
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.Dict
 
 namespace GlobalTheory.Dict.ThVal
@@ -265,9 +228,9 @@ theorem thVal_eq_thP : Formalism.MainNotions.ModuliIntegralCharts.H1.ChartIndepS
   have huniq := (GlobalTheory.thValTot_of_chartIndep hlaws hci E H Dw l Xo c nab hnab ℂ y a n xs P hP).unique hv0 hval
   have hread : ∀ b, A.Reads ((l.M : ℤ) ^ 2) (F b)
       (fun z => fock X bas idx x 1 (pv X idx x (Y b)) θ ((l.M : ℂ) • z)) := fun b => by
-    have := (GlobalTheory.T.sections_read_as_translates_at_scaled_point E H Dw l Xo c r g X bas idx e x L y A hs hx hL l.M l.odd θ hθ).2 _ (hroot b).2 _ _ (hF b)
+    have := (_root_.GlobalTheory.Dict.reads_isUUOver_isVtOver E H Dw l Xo c r g X bas idx e x L y A hs hx hL l.M l.odd θ hθ).2 _ (hroot b).2 _ _ (hF b)
     rwa [hMY] at this
-  have hnv := GlobalTheory.T.harmonicConnectionValue_eq_polynomial_derivative hci E H Dw l Xo c r g X bas idx e x L y A hs hx hL nab hnab n l.M a P hP.1 F _ hread
+  have hnv := _root_.GlobalTheory.Dict.nab_harm_val_eq_polyDeriv hci E H Dw l Xo c r g X bas idx e x L y A hs hx hL nab hnab n l.M a P hP.1 F _ hread
   have hfock := (GlobalTheory.Dict.fock_laws E r X g bas idx n hs hn x hx 1 θ).2.2.2.2 (fun _ => θ) κ v hv.1 hκ Y
   have hsb : IsSB (heisG X bas Y v) := (GlobalTheory.SW.heisS_laws _ _ _ _ v hv.1).1
   have han := (GlobalTheory.SW.theta_holomorphic_weight E r X g q0 hr bas idx n hs hn (fun _ _ => 0) (fun _ _ => 0) _ hsb 0

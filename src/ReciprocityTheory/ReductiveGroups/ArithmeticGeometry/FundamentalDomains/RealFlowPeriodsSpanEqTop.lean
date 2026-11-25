@@ -110,7 +110,7 @@ theorem spectralGap_holds : CuspFormGapCondition (E := E) := by
   have hint : ∀ p ∈ X.periods la, ∃ k : ℤ, 2 * ∑ τ, ν τ * p τ = k := by
     by_contra hc
     apply hne
-    rw [Data.fj, if_neg hc]
+    rw [Data.fj, ite_eq_right hc]
   have hpos : ∀ τ, 0 ≤ ν τ := hnn ξ hξ ν x hx hne
   have hsmall : ∀ τ, ν τ ≤ 1 / (2 * M + 2) := fun τ =>
     le_trans (Finset.single_le_sum (fun σ _ => hpos σ) (Finset.mem_univ τ)) hν

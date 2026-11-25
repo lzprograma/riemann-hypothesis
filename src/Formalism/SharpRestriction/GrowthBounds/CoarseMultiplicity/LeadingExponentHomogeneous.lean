@@ -6,48 +6,7 @@ public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.ExpFact
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FactorsOfPerturb
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.MemIntPolOfCoeff
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymbolVariableLowerLetter
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -82,9 +41,9 @@ theorem fact_abs {D : Formalism.BasicNotions.D7} (h52 : Formalism.MainNotions.Co
   have hlt : ∀ k, ρ' k < p ^ (t' k + 1) := by
     intro k
     by_cases hk : odd k
-    · simp only [hρ', ht', if_pos hk]
+    · simp only [hρ', ht', ite_eq_left hk]
       rw [← (hodd k hk).1]; exact (hodd k hk).2
-    · simp only [hρ', ht', if_neg hk]
+    · simp only [hρ', ht', ite_eq_right hk]
       exact pow_pos hp.pos _
   obtain ⟨hunit, -, hop⟩ := h2 σ t' ρ' hlt
   obtain ⟨T, q, hT, hq⟩ := hop true c
@@ -124,7 +83,7 @@ theorem fact_abs {D : Formalism.BasicNotions.D7} (h52 : Formalism.MainNotions.Co
       exact mul_ne_zero (mul_ne_zero a1 a2) (pow_ne_zero _ a3)
     have hq' : PadicGe p (U⁻¹ - g) c := by
       have := hq e'
-      simp only [if_true] at this
+      simp only [ite_true] at this
       have e : A / B = U := by rw [hAB]; field_simp
       rw [← hA, ← hB, e] at this
       exact this
@@ -133,19 +92,19 @@ theorem fact_abs {D : Formalism.BasicNotions.D7} (h52 : Formalism.MainNotions.Co
       rw [Finset.sum_image fun a _ b _ h => hE h, hg, Finset.sum_filter]
       refine Finset.sum_congr rfl fun j _ => ?_
       by_cases hj : ∀ v, ¬ odd v → j v = 0
-      · rw [if_pos hj, Finsupp.prod_fintype _ _ (fun _ => Nat.choose_zero_right _)]
+      · rw [ite_eq_left hj, Finsupp.prod_fintype _ _ (fun _ => Nat.choose_zero_right _)]
         push_cast
         congr 1
         refine Finset.prod_congr rfl fun k _ => ?_
         by_cases hk : odd k
-        · simp only [he', if_pos hk, hEa]
-        · simp only [he', if_neg hk, hEa, hj k hk, Nat.choose_zero_right]
-      · rw [if_neg hj]
-        push_neg at hj
+        · simp only [he', ite_eq_left hk, hEa]
+        · simp only [he', ite_eq_right hk, hEa, hj k hk, Nat.choose_zero_right]
+      · rw [ite_eq_right hj]
+        push Not at hj
         obtain ⟨v, hv, hjv⟩ := hj
         have : (∏ k, ((e' k).choose (j k) : ℚ)) = 0 := by
           refine Finset.prod_eq_zero (Finset.mem_univ v) ?_
-          simp only [he', if_neg hv]
+          simp only [he', ite_eq_right hv]
           rw [Nat.choose_eq_zero_of_lt (Nat.pos_of_ne_zero hjv)]
           simp
         rw [this, mul_zero]
@@ -159,15 +118,15 @@ theorem fact_abs {D : Formalism.BasicNotions.D7} (h52 : Formalism.MainNotions.Co
         rw [hA, hM, ← Finset.prod_mul_distrib]
         refine Finset.prod_congr rfl fun v _ => ?_
         by_cases hv : odd v
-        · simp only [hρ', ht', he', if_pos hv, (hodd v hv).1, mul_one]
-        · simp only [hρ', ht', he', if_neg hv, (hend v hv).1, (hend v hv).2]
+        · simp only [hρ', ht', he', ite_eq_left hv, (hodd v hv).1, mul_one]
+        · simp only [hρ', ht', he', ite_eq_right hv, (hend v hv).1, (hend v hv).2]
           simp
       have l2 : (∏ v, ((ρ v).factorial : ℚ) * ((μ v).factorial : ℚ) * ((L v).factorial : ℚ) ^ (μ v)) = B * M := by
         rw [hB, hM, ← Finset.prod_mul_distrib]
         refine Finset.prod_congr rfl fun v _ => ?_
         by_cases hv : odd v
-        · simp only [hρ', ht', he', if_pos hv, (hodd v hv).1, mul_one]
-        · simp only [hρ', ht', he', if_neg hv, (hend v hv).1, (hend v hv).2]
+        · simp only [hρ', ht', he', ite_eq_left hv, (hodd v hv).1, mul_one]
+        · simp only [hρ', ht', he', ite_eq_right hv, (hend v hv).1, (hend v hv).2]
           simp
       rw [l1, l2, hAB]
       field_simp
@@ -230,7 +189,6 @@ def KapAt (C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ) : Prop :=
 theorem lev_pow (C0 CE1 CE2 : ℝ) (X : Loc) (j : Fin (numSeg X.TT)) (i : Fin (segS X.TT j)) :
     ∃ t, (X.seg C0 CE1 CE2 j).P X.p i = X.p ^ (t + 1) := by
   obtain ⟨s, ⟨-, -, -, h4⟩, h5⟩ := get_spec X.TT j i
-  have hlt : (segDists X.TT j).get i < segG X.TT j := h5 ▸ h4
   refine ⟨segG X.TT j - (segDists X.TT j).get i - 1, ?_⟩
   show X.p ^ (segG X.TT j - (segDists X.TT j).get i) = _
   congr 1
@@ -243,21 +201,21 @@ theorem oddVar_data (C0 CE1 CE2 : ℝ) (X : Loc) (j : Fin (numSeg X.TT)) (b : Se
       baseExp C0 CE1 CE2 X j b (symVar C0 CE1 CE2 X j v) < symLev X.p C0 CE1 CE2 X j v := by
   rcases v with ⟨a, c⟩ | ⟨l, bo⟩
   · have h : (a : ℕ) < 2 * segS X.TT j := hv
-    simp only [symLev, symVar, dif_pos h]
+    simp only [symLev, symVar, dite_eq_left h]
     refine ⟨lev_pow C0 CE1 CE2 X j _, ?_⟩
     rw [baseExp_odd]
-    simp only [Fin.succ_ne_zero, and_false, if_false, add_zero]
+    simp only [Fin.succ_ne_zero, and_false, ite_false, add_zero]
     split_ifs
     · exact (hb.1.1 _ _).1
     · exact (hb.1.1 _ _).2
   · have h : (l : ℕ) < (X.seg C0 CE1 CE2 j).t := hv
-    simp only [symLev, symVar, dif_pos h]
+    simp only [symLev, symVar, dite_eq_left h]
     refine ⟨lev_pow C0 CE1 CE2 X j _, ?_⟩
     rw [baseExp_odd]
     have hz : ¬ ((uTop (X.seg C0 CE1 CE2 j) ⟨l, h⟩ : ℕ) < (X.seg C0 CE1 CE2 j).sigma) := by
       show ¬ ((X.seg C0 CE1 CE2 j).sigma + (l : ℕ) < (X.seg C0 CE1 CE2 j).sigma)
       omega
-    simp only [hz, false_and, if_false, add_zero]
+    simp only [hz, false_and, ite_false, add_zero]
     split_ifs
     · exact (hb.1.1 _ _).1
     · exact (hb.1.1 _ _).2
@@ -267,10 +225,10 @@ theorem endVar_data (C0 CE1 CE2 : ℝ) (X : Loc) (j : Fin (numSeg X.TT)) (b : Se
     symLev X.p C0 CE1 CE2 X j v = 1 ∧ baseExp C0 CE1 CE2 X j b (symVar C0 CE1 CE2 X j v) = 0 := by
   rcases v with ⟨a, c⟩ | ⟨l, bo⟩
   · have h : ¬ (a : ℕ) < 2 * segS X.TT j := hv
-    simp only [symLev, symVar, dif_neg h]
+    simp only [symLev, symVar, dite_eq_right h]
     exact ⟨trivial, baseExp_end C0 CE1 CE2 X j b _ _⟩
   · have h : ¬ (l : ℕ) < (X.seg C0 CE1 CE2 j).t := hv
-    simp only [symLev, symVar, dif_neg h]
+    simp only [symLev, symVar, dite_eq_right h]
     exact ⟨trivial, baseExp_end C0 CE1 CE2 X j b _ _⟩
 
 theorem factAt_of {D : Formalism.BasicNotions.D7} (h52 : Formalism.MainNotions.CovariantDegrees.FactorialUnitDecomposition D) {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
@@ -470,9 +428,9 @@ theorem leading_exponent_homogeneous (b : SegBlock (segS X.TT j) X.m) : HomExp C
         (fun a' => (segChain X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) b).deg a') a * ωL a := by
     intro a
     rw [Finset.sum_eq_single (0 : Fin X.m)]
-    · simp only [mu0F, if_true, h1]
+    · simp only [mu0F, ite_true, h1]
     · intro c _ hc
-      simp only [mu0F, if_neg hc, zero_mul]
+      simp only [mu0F, ite_eq_right hc, zero_mul]
     · intro h; exact absurd (Finset.mem_univ _) h
   have a2 : ∀ l : Fin ((X.seg C0 CE1 CE2 j).t + 1), ∑ β : Bool, mu0F C0 CE1 CE2 X j b (Sum.inr (l, β)) * ω (Sum.inr (l, β)) =
       Fin.lastCases (motive := fun _ => ℕ) (segAPlus X.TT X.aT j - b.oPlus)

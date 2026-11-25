@@ -229,13 +229,10 @@ lemma Zb_zero (x : Frame X.Ψ r) : X.Zb u 0 x = x := by
   rw [zmat_zero, one_mul]
   rfl
 
-def fac (la : Wt X.Ψ r) (x : Frame X.Ψ r) : ℝ :=
-  ∏ τ, ∏ i : Fin r, ‖dmin X.Gm x τ i.succ / dmin X.Gm x τ i.castSucc‖ ^ (-(la τ i : ℝ) / 2)
-
 lemma pnorm_eq (la : Wt X.Ψ r) (P : Frame X.Ψ r → ℂ) (x : Frame X.Ψ r) :
-    X.pnorm la P x = ‖P x‖ * fac X la x := rfl
+    X.pnorm la P x = ‖P x‖ * ReciprocityTheory.ChartRestriction.G.FD.Data.nfac X la x := rfl
 
-lemma fac_nonneg (la : Wt X.Ψ r) (x : Frame X.Ψ r) : 0 ≤ fac X la x := Finset.prod_nonneg fun _ _ => Finset.prod_nonneg fun _ _ => Real.rpow_nonneg (norm_nonneg _) _
+lemma fac_nonneg (la : Wt X.Ψ r) (x : Frame X.Ψ r) : 0 ≤ ReciprocityTheory.ChartRestriction.G.FD.Data.nfac X la x := Finset.prod_nonneg fun _ _ => Finset.prod_nonneg fun _ _ => Real.rpow_nonneg (norm_nonneg _) _
 
 end ZbFacts
 

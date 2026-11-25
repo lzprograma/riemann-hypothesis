@@ -61,6 +61,15 @@ open scoped ComplexConjugate InnerProductSpace Classical
 
 namespace UpperTheory.ConvolutionTheory.L1.TY
 
+theorem eigIn_closed {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+    {W : Submodule ℂ H} (hW : IsClosed (W : Set H)) (A : H →L[ℂ] H) (x : ℝ) :
+    IsClosed (eigIn W A x : Set H) := by
+  have : (eigIn W A x : Set H) = (W : Set H) ∩ {v | A v = (x : ℂ) • v} := by
+    ext v
+    simp [eigIn]
+  rw [this]
+  exact hW.inter (isClosed_eq A.continuous (continuous_const_smul _))
+
 section Hil
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
@@ -106,6 +115,67 @@ theorem prj_equiv {W W' : Submodule ℂ H} (hW : IsClosed (W : Set H)) (hW' : Is
 
 theorem mem_eigIn {W : Submodule ℂ H} {A : H →L[ℂ] H} {x : ℝ} {v : H} : v ∈ eigIn W A x ↔ v ∈ W ∧ A v = (x : ℂ) • v := by
   simp only [eigIn, Submodule.mem_inf, Module.End.mem_eigenspace_iff, ContinuousLinearMap.coe_coe]
+
+theorem prj_eigIn_comp_prj (Ty Fx V : Submodule ℂ H) (hTy : IsClosed (Ty : Set H)) (hFx : IsClosed (Fx : Set H))
+    (hV : IsClosed (V : Set H)) (hle : Ty ≤ Fx) (Oa : H →L[ℂ] H) (hOa : ContinuousLinearMap.adjoint Oa = Oa)
+    (hOT : ∀ v ∈ Ty, Oa v ∈ Ty) (hOF : ∀ v ∈ Fx, Oa v ∈ Fx) (hVT : ∀ v ∈ Ty, prj V v ∈ Ty) (x : ℝ) :
+    prj (eigIn V (Oa ∘L prj Fx) x) * prj Ty = prj (eigIn (V ⊓ Ty) Oa x) ∧
+    prj Ty * prj (eigIn V (Oa ∘L prj Fx) x) = prj (eigIn (V ⊓ Ty) Oa x) ∧
+    prj (eigIn V (Oa ∘L prj Fx) x) * (Oa ∘L prj Fx) = (x : ℂ) • prj (eigIn V (Oa ∘L prj Fx) x) := by
+  set A := Oa ∘L prj Fx
+  set X := eigIn V A x with hXd
+  have hXc : IsClosed (X : Set H) := eigIn_closed hV A x
+  have hadj : ∀ Q : Submodule ℂ H, ContinuousLinearMap.adjoint (prj Q) = prj Q := fun Q =>
+    (prj_star Q).isSelfAdjoint.adjoint_eq
+  have hOP : Oa * prj Ty = prj Ty * Oa := (prj_commute hTy Oa hOT (hOa.symm ▸ hOT)).eq
+  have hOFx : Oa * prj Fx = prj Fx * Oa := (prj_commute hFx Oa hOF (hOa.symm ▸ hOF)).eq
+  have hVP : prj V * prj Ty = prj Ty * prj V := (prj_commute hTy (prj V) hVT ((hadj V).symm ▸ hVT)).eq
+  have hFP : prj Fx * prj Ty = prj Ty := ContinuousLinearMap.ext fun v => prj_self (hle (prj_mem hTy v))
+  have hPF : prj Ty * prj Fx = prj Ty :=
+    ((prj_commute hFx (prj Ty) (fun _ _ => hle (prj_mem hTy _))
+      ((hadj Ty).symm ▸ fun _ _ => hle (prj_mem hTy _))).eq).trans hFP
+  have hAP : A * prj Ty = prj Ty * A := by
+    show Oa * prj Fx * prj Ty = prj Ty * (Oa * prj Fx)
+    rw [mul_assoc, hFP, hOP, ← mul_assoc, ← hOP, mul_assoc, hPF, hOP]
+  have hAadj : star A = A := by
+    show star (Oa * prj Fx) = Oa * prj Fx
+    rw [star_mul, ContinuousLinearMap.star_eq_adjoint, ContinuousLinearMap.star_eq_adjoint, hOa, hadj, hOFx]
+  have heq : X ⊓ Ty = eigIn (V ⊓ Ty) Oa x := by
+    ext v
+    simp only [Submodule.mem_inf, mem_eigIn, hXd]
+    have hA1 : v ∈ Ty → A v = Oa v := fun hv => by
+      show Oa (prj Fx v) = Oa v
+      rw [prj_self (hle hv)]
+    constructor
+    · rintro ⟨⟨h1, h2⟩, h3⟩; exact ⟨⟨h1, h3⟩, by rwa [← hA1 h3]⟩
+    · rintro ⟨⟨h1, h3⟩, h2⟩; exact ⟨⟨h1, by rwa [hA1 h3]⟩, h3⟩
+  have hPX : ∀ v ∈ X, prj Ty v ∈ X := fun v hv => by
+    obtain ⟨h1, h2⟩ := mem_eigIn.1 hv
+    refine mem_eigIn.2 ⟨?_, ?_⟩
+    · have := congrArg (fun S : H →L[ℂ] H => S v) hVP
+      simp only [mul_apply_eq_comp, prj_self h1] at this
+      rw [← this]; exact prj_mem hV _
+    · have := congrArg (fun S : H →L[ℂ] H => S v) hAP
+      simp only [mul_apply_eq_comp] at this
+      rw [this, h2, map_smul]
+  have hc : Commute (prj Ty) (prj X) := prj_commute hXc (prj Ty) hPX ((hadj Ty).symm ▸ hPX)
+  have k1 : prj X * prj Ty = prj (eigIn (V ⊓ Ty) Oa x) := heq ▸ prj_mul hXc hTy hc.symm
+  refine ⟨k1, hc.eq.trans k1, ?_⟩
+  have hAX : A * prj X = (x : ℂ) • prj X := ContinuousLinearMap.ext fun v => (mem_eigIn.1 (prj_mem hXc v)).2
+  have := congrArg star hAX
+  rwa [star_mul, star_smul, hAadj, (prj_star X).isSelfAdjoint.star_eq, RCLike.star_def, Complex.conj_ofReal] at this
+
+theorem isHS_prj (E : Submodule ℂ H) [FiniteDimensional ℂ E] : IsHilbertSchmidt (prj E) := by
+  have hcl : E.topologicalClosure = E :=
+    (Submodule.isClosed_of_finiteDimensional E).submodule_topologicalClosure_eq
+  have : FiniteDimensional ℂ E.topologicalClosure := by rw [hcl]; infer_instance
+  have h1 : IsHilbertSchmidt (E.topologicalClosure.subtypeL) := by
+    rw [isHilbertSchmidt_iff (stdOrthonormalBasis ℂ E.topologicalClosure).toHilbertBasis, tsum_fintype]
+    exact ENNReal.sum_lt_top.2 fun i _ => ENNReal.pow_lt_top eNorm_lt_top
+  exact h1.comp_right E.topologicalClosure.orthogonalProjectionOnto
+
+theorem trace_sm (c : ℂ) (S : H →L[ℂ] H) : trace (c • S) = c * trace S := by
+  simp only [trace, smul_apply, inner_smul_right, tsum_mul_left]
 
 theorem eig_mul {W : Submodule ℂ H} (hW : IsClosed (W : Set H)) {O : H →L[ℂ] H} (hc : Commute O (prj W)) {x : ℝ} (hx : x ≠ 0)
     (v : H) : (O * prj W) v = (x : ℂ) • v ↔ v ∈ W ∧ O v = (x : ℂ) • v := by
@@ -229,8 +299,7 @@ section Loc
 variable {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 theorem rhoL_adj (w : Pl K) (g : Gw n w) : ContinuousLinearMap.adjoint (rhoL μ w g) = rhoL μ w g⁻¹ := by
-  have := (UpperTheory.ConvolutionTheory.Tf.commPrj K n μ ⊥).2.2.2.2.2.2.2.1 (AdelicGLn.localEmbedding w g)
-  simpa only [rhoL, map_inv] using this
+  exact UpperTheory.ConvolutionTheory.L1.rhoL_adj μ w g
 
 theorem rhoL_comm {v w : Pl K} (h : v ≠ w) (g : Gw n v) (x : Gw n w) : Commute (rhoL μ v g) (rhoL μ w x) := by
   have hm := (UpperTheory.ConvolutionTheory.Tf.commPrj K n μ ⊥).2.2.2.2.2.1
@@ -357,6 +426,122 @@ theorem split_fin (M : Submonoid (normOneGL (K := K) (n := n))) (B : Finset (Pl 
       · rw [(UpperTheory.ConvolutionTheory.Tf.locEmb K n w).2.1, inv_mul_cancel]
       · rw [(UpperTheory.ConvolutionTheory.Tf.locEmb K n b).2.2.1 w (fun e => hb (e ▸ hw)), h1 w hw, inv_one, one_mul]
 
+theorem rhoL_mul (w : Pl K) (g h : Gw n w) : rhoL μ w (g * h) = rhoL μ w g ∘L rhoL μ w h := by
+  exact UpperTheory.ConvolutionTheory.L1.rhoL_mul μ w g h
+
+theorem arch_comm (a : archGroup K n) (w : Pl K) (g : Gw n w) :
+    Commute (rightRegularRep (rationalGLOne (K := K) (n := n)) μ (archP K n a)) (rhoL μ w g) := by
+  show rightRegularRep (rationalGLOne (K := K) (n := n)) μ (archP K n a) *
+      rightRegularRep (rationalGLOne (K := K) (n := n)) μ (MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w g)) =
+    rightRegularRep (rationalGLOne (K := K) (n := n)) μ (MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w g)) *
+      rightRegularRep (rationalGLOne (K := K) (n := n)) μ (archP K n a)
+  rw [← UnitaryRep.map_mul, ← UnitaryRep.map_mul, (arch_fin a _).eq]
+
+theorem oloc_comm {w : Pl K} [MeasurableSpace (Gw n w)] {m : Measure (Gw n w)} {ψ : Gw n w → ℂ}
+    {Bo : LL μ →L[ℂ] LL μ} (h : IsOloc μ w m ψ Bo) (R : LL μ →L[ℂ] LL μ) (hR : ∀ g, Commute R (rhoL μ w g)) :
+    Commute R Bo := by
+  refine ContinuousLinearMap.ext fun v => ext_inner_left ℂ fun u => ?_
+  show ⟪u, R (Bo v)⟫_ℂ = ⟪u, Bo (R v)⟫_ℂ
+  rw [← ContinuousLinearMap.adjoint_inner_left R, h, h]
+  refine integral_congr_ae (Filter.Eventually.of_forall fun g => ?_)
+  show ψ g * _ = ψ g * _
+  congr 1
+  rw [ContinuousLinearMap.adjoint_inner_left]
+  have := congrArg (fun S : LL μ →L[ℂ] LL μ => S v) (hR g).eq
+  simp only [mul_apply_eq_comp] at this
+  rw [this]
+
+theorem oloc_fix {w : Pl K} [MeasurableSpace (Gw n w)] [BorelSpace (Gw n w)] {m : Measure (Gw n w)} [m.IsHaarMeasure]
+    {ψ : Gw n w → ℂ} {Bo : LL μ →L[ℂ] LL μ} (h : IsOloc μ w m ψ Bo) (J : Subgroup (Gw n w))
+    (hJ : ∀ u ∈ J, ∀ g, ψ (u * g) = ψ g) (v : LL μ) : Bo v ∈ fixL μ w J := by
+  refine ((UpperTheory.ConvolutionTheory.Tf.commPrj K n μ _).2.1 _).2 ?_
+  rintro _ ⟨u, hu, rfl⟩
+  refine ext_inner_left ℂ fun a => ?_
+  show ⟪a, rhoL μ w u (Bo v)⟫_ℂ = ⟪a, Bo v⟫_ℂ
+  rw [← ContinuousLinearMap.adjoint_inner_left (rhoL μ w u), h, h,
+    ← integral_mul_left_eq_self (μ := m) (fun g => ψ g * ⟪a, rhoL μ w g v⟫_ℂ) u]
+  refine integral_congr_ae (Filter.Eventually.of_forall fun g => ?_)
+  show ψ g * _ = ψ (u * g) * _
+  rw [hJ u hu, rhoL_mul, ContinuousLinearMap.comp_apply, ContinuousLinearMap.adjoint_inner_left]
+
+theorem mem_fixL {w : Pl K} {J : Subgroup (Gw n w)} {v : LL μ} :
+    v ∈ fixL μ w J ↔ ∀ x ∈ J, rhoL μ w x v = v := by
+  refine ((UpperTheory.ConvolutionTheory.Tf.commPrj K n μ _).2.1 v).trans ⟨fun h x hx => h _ ⟨x, hx, rfl⟩, ?_⟩
+  rintro h _ ⟨x, hx, rfl⟩
+  exact h x hx
+
+theorem oinf_congr {ν₁ ν₂ : Measure (archGroup K n)} [ν₁.IsHaarMeasure] [ν₂.IsHaarMeasure] (h : ν₁ = ν₂) (β : TI K n) :
+    Oinf μ ν₁ β = Oinf μ ν₂ β := by
+  subst h; rfl
+
+theorem rho_typed (J : ∀ w : Pl K, Subgroup (Gw n w)) (χ : ∀ w : Pl K, Gw n w → ℂ) (f : LL μ)
+    (hf : ∀ w, f ∈ eigL μ w (J w) (χ w)) (P : Finset (Pl K))
+    (hP : ∀ w ∉ P, J w = GLnLocal.integralGL (w.adicCompletion K) n ∧ χ w = 1) (R : Finset (Pl K)) :
+    ∀ g : AdelicGLn.FiniteAdelicGL K n, (∀ w ∈ R, finAt w (finEmb K n g) ∈ J w) →
+      (∀ w ∈ P, w ∉ R → finAt w (finEmb K n g) = 1) →
+      (∀ w ∉ P, finAt w (finEmb K n g) ∈ GLnLocal.integralGL (w.adicCompletion K) n) →
+      rhoF μ g f = (∏ w ∈ R, χ w (finAt w (finEmb K n g))) • f := by
+  obtain ⟨-, -, -, -, -, hmul, hone, -⟩ := UpperTheory.ConvolutionTheory.Tf.commPrj K n μ ⊥
+  have heig : ∀ w, ∀ x ∈ J w, rhoF μ (AdelicGLn.localEmbedding w x) f = χ w x • f := fun w x hx =>
+    (mem_eigL μ).1 (hf w) x hx
+  induction R using Finset.induction_on with
+  | empty =>
+    intro g _ h1 h2
+    have hfix : f ∈ fixF μ (levOn P fun _ => ⊥) := by
+      rw [UpperTheory.ConvolutionTheory.C.fixLev K n μ P]
+      refine Submodule.mem_inf.2 ⟨?_, ?_⟩
+      · refine Submodule.mem_iInf _ |>.2 fun v => Submodule.mem_iInf _ |>.2 fun hv => ?_
+        refine ((UpperTheory.ConvolutionTheory.Tf.commPrj K n μ _).2.1 f).2 ?_
+        rintro _ ⟨x, hx, rfl⟩
+        obtain ⟨e1, e2⟩ := hP v hv
+        have := heig v x (by rw [e1]; exact hx)
+        rw [this, e2]
+        simp
+      · refine Submodule.mem_iInf _ |>.2 fun v => Submodule.mem_iInf _ |>.2 fun hv => ?_
+        refine ((UpperTheory.ConvolutionTheory.Tf.commPrj K n μ _).2.1 f).2 ?_
+        rintro _ ⟨x, hx, rfl⟩
+        rw [Subgroup.mem_bot.1 hx, map_one, hone]
+        rfl
+    have hg : g ∈ levOn P (fun _ => ⊥) := fun v => by
+      by_cases hv : v ∈ P
+      · simp only [hv, ite_true]
+        exact Subgroup.mem_bot.2 (h1 v hv (Finset.notMem_empty v))
+      · simp only [hv, ite_false]
+        exact h2 v hv
+    simpa using ((UpperTheory.ConvolutionTheory.Tf.commPrj K n μ _).2.1 f).1 hfix g hg
+  | insert a R ha ih =>
+    intro g h0 h1 h2
+    obtain ⟨-, e1, e2, -, -⟩ := UpperTheory.ConvolutionTheory.Tf.locEmb K n a
+    set x := finAt a (finEmb K n g) with hx
+    set g' := (AdelicGLn.localEmbedding a x)⁻¹ * g with hg'
+    have hc : ∀ w, w ≠ a → finAt w (finEmb K n g') = finAt w (finEmb K n g) := fun w hw => by
+      rw [hg', map_mul, finAt_mul, map_inv, finAt_inv, e2 w hw]
+      simp
+    have hca : finAt a (finEmb K n g') = 1 := by
+      rw [hg', map_mul, finAt_mul, map_inv, finAt_inv, e1]
+      simp [hx]
+    have key := ih g' (fun w hw => by
+        have hwa : w ≠ a := fun h => ha (h ▸ hw)
+        rw [hc w hwa]
+        exact h0 w (Finset.mem_insert_of_mem hw))
+      (fun w hw hwR => by
+        by_cases hwa : w = a
+        · subst hwa; exact hca
+        · rw [hc w hwa]
+          exact h1 w hw (by simp [hwa, hwR]))
+      (fun w hw => by
+        by_cases hwa : w = a
+        · subst hwa; rw [hca]; exact one_mem _
+        · rw [hc w hwa]; exact h2 w hw)
+    have hgg : g = AdelicGLn.localEmbedding a x * g' := by simp [hg']
+    have hprod : ∏ w ∈ R, χ w (finAt w (finEmb K n g')) = ∏ w ∈ R, χ w (finAt w (finEmb K n g)) :=
+      Finset.prod_congr rfl fun w hw => by rw [hc w fun h => ha (h ▸ hw)]
+    have hstep : rhoF μ g f = rhoF μ (AdelicGLn.localEmbedding a x) (rhoF μ g' f) := by
+      conv_lhs => rw [hgg, hmul]
+      rfl
+    rw [hstep, key, hprod, map_smul, heig a x (h0 a (Finset.mem_insert_self a R)), smul_smul,
+      Finset.prod_insert ha, mul_comm]
+
 end Loc
 
 section Two
@@ -384,5 +569,11 @@ theorem finite_over (v : Pl F) : {w : Pl E | w.under (𝓞 F) = v}.Finite := by
   exact ⟨⟨w, ⟨rfl⟩⟩, rfl⟩
 
 end Two
+
+theorem cmp_atFin {F E : Type} [Field F] [Field E] [NumberField E] [Algebra F E] {n : ℕ}
+    {v : Pl F} (w : PlacesOver E v) (g : AdelicGLn.AdelicGL E n) :
+    GM.cmp w (mapGL n (atFin v) g) = finAt w.1 g := by
+  ext i j
+  rfl
 
 end UpperTheory.ConvolutionTheory.L1.TY

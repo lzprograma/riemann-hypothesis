@@ -108,7 +108,7 @@ theorem ite_dl (a b : Fin n) (x : ℂ) : (if a = b then x else 0) = dl a b * x :
 theorem sum_at (f : Fin n × Fin n → ℂ) (s : Fin n × Fin n) (hs : (s.1 : ℕ) < s.2) :
     ∑ k : Pos n, (if k.1 = s then f k.1 else 0) = f s := by
   have e : ∀ k : Pos n, k.1 = s ↔ k = ⟨s, hs⟩ := fun k => (Subtype.ext_iff (a1 := k) (a2 := ⟨s, hs⟩)).symm
-  simp only [e, Finset.sum_ite_eq', mem_univ, if_true]
+  simp only [e, Finset.sum_ite_eq', mem_univ, ite_true]
 
 theorem sum_adC {lev : Fin n → ℕ} (hm : Monotone lev) {p q : Fin n} (hpq : lev p = lev q) {i : Pos n}
     (hi : inU lev i) (f : Fin n × Fin n → ℂ) :
@@ -120,7 +120,7 @@ theorem sum_adC {lev : Fin n → ℕ} (hm : Monotone lev) {p q : Fin n} (hpq : l
         have : lev p < lev i.1.2 := by rw [hpq, h]; exact hi
         exact hm.reflect_lt this
       have := sum_at f (p, i.1.2) hs
-      simp only [h, true_and, dl, if_true, one_mul, ite_mul, zero_mul] at this ⊢
+      simp only [h, true_and, dl, ite_true, one_mul, ite_mul, zero_mul] at this ⊢
       exact this
     · simp [h, dl]
   have a2 : ∑ k : Pos n, (if i.1.2 = p ∧ k.1 = (i.1.1, q) then 1 else 0) * f k.1 = dl i.1.2 p * f (i.1.1, q) := by
@@ -129,7 +129,7 @@ theorem sum_adC {lev : Fin n → ℕ} (hm : Monotone lev) {p q : Fin n} (hpq : l
         have : lev i.1.1 < lev q := by rw [← hpq, ← h]; exact hi
         exact hm.reflect_lt this
       have := sum_at f (i.1.1, q) hs
-      simp only [h, true_and, dl, if_true, one_mul, ite_mul, zero_mul] at this ⊢
+      simp only [h, true_and, dl, ite_true, one_mul, ite_mul, zero_mul] at this ⊢
       exact this
     · simp [h, dl]
   simp only [adC, sub_mul, Finset.sum_sub_distrib, a1, a2]

@@ -3,49 +3,8 @@ module
 public import Formalism.PieriBlockIdeals.PieriColumnMinors.HeightDescentMinors
 public import Mathlib.RingTheory.WittVector.Compare
 public import Mathlib.RingTheory.WittVector.Frobenius
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
 public import Mathlib.RingTheory.WittVector.Complete
 public import Mathlib.RingTheory.WittVector.DiscreteValuationRing
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Expand
 
 @[expose] public section
@@ -145,31 +104,6 @@ end GlobalTheory.Col
 namespace GlobalTheory.Col
 variable {R : Type} [CommRing R]
 
-theorem FrobLift.witt (p : ℕ) [hp : Fact p.Prime] (k : Type) [Field k] [CharP k p] [PerfectRing k p] :
-    FrobLift (WittVector p k) p (WittVector.frobeniusEquiv p k) := by
-  refine { dom := inferInstance
-           prime := (WittVector.irreducible p).prime
-           complete := WittVector.isAdicCompleteIdealSpanP
-           frob := ?_
-           perfect := ?_ }
-  · intro x
-    rw [WittVector.mem_span_p_iff_coeff_zero_eq_zero]
-    have : WittVector.constantCoeff (WittVector.frobeniusEquiv p k x - x ^ p) = 0 := by
-      rw [map_sub, map_pow]
-      simp [WittVector.constantCoeff_apply, WittVector.coeff_frobenius_charP]
-    exact this
-  · intro x
-    refine ⟨(WittVector.frobeniusEquiv p k).symm x, ?_⟩
-    rw [WittVector.mem_span_p_iff_coeff_zero_eq_zero]
-    have : WittVector.constantCoeff (((WittVector.frobeniusEquiv p k).symm x) ^ p - x) = 0 := by
-      obtain ⟨y, rfl⟩ := (WittVector.frobeniusEquiv p k).surjective x
-      rw [RingEquiv.symm_apply_apply, map_sub, map_pow]
-      simp [WittVector.constantCoeff_apply, WittVector.coeff_frobenius_charP]
-    exact this
-
-def padicToWitt (p : ℕ) [Fact p.Prime] (k : Type) [CommRing k] [CharP k p] : ℤ_[p] →+* WittVector p k :=
-  (WittVector.map (ZMod.castHom (dvd_refl p) k)).comp (WittVector.equiv p).symm.toRingHom
-
 theorem padicHom_ext (p : ℕ) [Fact p.Prime] [IsHausdorff (Ideal.span {(p : R)}) R] (f g : ℤ_[p] →+* R) : f = g := by
   ext x
   rw [← sub_eq_zero]
@@ -201,33 +135,6 @@ theorem coeffMap_cyc {S : Type} [CommRing S] (τ : R →+* S) (p m : ℕ) : Powe
   · ext a : 1; simp
   · simp
 
-def levMap {S : Type} [CommRing S] (τ : R →+* S) (p m : ℕ) : lev R p m →+* lev S p m :=
-  Ideal.Quotient.lift _ ((ev S p m).comp (PowerSeries.map τ)) (by
-    intro a ha
-    obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.1 ha
-    rw [RingHom.comp_apply, map_mul, coeffMap_cyc, map_mul, ev_cyc_self, mul_zero])
-
-theorem levMap_ev {S : Type} [CommRing S] (τ : R →+* S) (p m : ℕ) (h : PowerSeries R) :
-    levMap τ p m (ev R p m h) = ev S p m (PowerSeries.map τ h) := rfl
-
-theorem levMap_id (p m : ℕ) (x : lev R p m) : levMap (RingHom.id R) p m x = x := by
-  obtain ⟨h, rfl⟩ := Ideal.Quotient.mk_surjective x
-  rw [levMap_ev, PowerSeries.map_id]; rfl
-
-theorem levMap_comp {S U : Type} [CommRing S] [CommRing U] (τ : R →+* S) (υ : S →+* U) (p m : ℕ) (x : lev R p m) :
-    levMap (υ.comp τ) p m x = levMap υ p m (levMap τ p m x) := by
-  obtain ⟨h, rfl⟩ := Ideal.Quotient.mk_surjective x
-  rw [levMap_ev, levMap_ev, levMap_ev, PowerSeries.map_comp]; rfl
-
-def levF (σ : R ≃+* R) (p m : ℕ) : lev R p m ≃+* lev R p m :=
-  RingEquiv.ofRingHom (levMap (σ : R →+* R) p m) (levMap (σ.symm : R →+* R) p m)
-    (RingHom.ext fun x => by
-      rw [RingHom.comp_apply, ← levMap_comp, RingEquiv.comp_symm, levMap_id]; rfl)
-    (RingHom.ext fun x => by
-      rw [RingHom.comp_apply, ← levMap_comp, RingEquiv.symm_comp, levMap_id]; rfl)
-
-theorem levF_ev (σ : R ≃+* R) (p m : ℕ) (h : PowerSeries R) : levF σ p m (ev R p m h) = ev R p m (smap σ h) := rfl
-
 section Act
 open Formalism.CohomologicalDescent.HeightDescentMinors (br act hasSubst_br_padic binomialSeriesSubOne_natCast binomialAction_comp_eq_mul binomialAction_binomialSeriesSubOne constantCoeff_binomialSeriesSubOne dvd_subst_self)
 
@@ -252,25 +159,6 @@ theorem sbp_one (h : PowerSeries R) : sbp p 1 h = h := by
 
 theorem sbp_mul (b c : ℤ_[p]) (h : PowerSeries R) : sbp p (b * c) h = sbp p b (sbp p c h) := by
   rw [sbp_apply, sbp_apply, sbp_apply, binomialAction_comp_eq_mul, mul_comm]
-
-theorem coeffMap_sbp {S : Type} [CommRing S] [Algebra ℤ_[p] S] (τ : R →+* S)
-    (hτ : τ.comp (algebraMap ℤ_[p] R) = algebraMap ℤ_[p] S) (b : ℤ_[p]) (h : PowerSeries R) :
-    PowerSeries.map τ (sbp p b h) = sbp p b (PowerSeries.map τ h) := by
-  rw [sbp_apply, sbp_apply, act, act]
-  have := PowerSeries.map_subst (hasSubst_br_padic p R b) (h := τ) h
-  refine Eq.trans this ?_
-  congr 1
-  change PowerSeries.map τ _ = _
-  rw [br, br, map_sub, map_one]
-  congr 1
-  ext n
-  rw [PowerSeries.coeff_map, PowerSeries.binomialSeries_coeff, PowerSeries.binomialSeries_coeff,
-    Algebra.smul_def, Algebra.smul_def, mul_one, mul_one, ← hτ]
-  rfl
-
-theorem smap_sbp [IsHausdorff (Ideal.span {(p : R)}) R] (σ : R ≃+* R) (b : ℤ_[p]) (h : PowerSeries R) :
-    smap σ (sbp p b h) = sbp p b (smap σ h) :=
-  coeffMap_sbp p _ (padicHom_ext p _ _) b h
 
 theorem ev_binomialSeries (m : ℕ) (b : ℤ_[p]) (n : ℕ) (hn : b - n ∈ Ideal.span {(p : ℤ_[p]) ^ m}) :
     ev R p m (PowerSeries.binomialSeries R b) = levZeta R p m ^ n := by
@@ -354,11 +242,6 @@ def levAct (m : ℕ) : ℤ_[p]ˣ →* (lev R p m ≃ₐ[R] lev R p m) :=
 
 theorem levAct_ev (m : ℕ) (b : ℤ_[p]ˣ) (h : PowerSeries R) :
     levAct p m b (ev R p m h) = ev R p m (sbp p (b : ℤ_[p]) h) := rfl
-
-theorem levF_levAct [IsHausdorff (Ideal.span {(p : R)}) R] (σ : R ≃+* R) (m : ℕ) (b : ℤ_[p]ˣ) (x : lev R p m) :
-    levF σ p m (levAct p m b x) = levAct p m b (levF σ p m x) := by
-  obtain ⟨h, rfl⟩ := Ideal.Quotient.mk_surjective x
-  rw [levAct_ev, levF_ev, levF_ev, levAct_ev, smap_sbp]
 
 end Act
 

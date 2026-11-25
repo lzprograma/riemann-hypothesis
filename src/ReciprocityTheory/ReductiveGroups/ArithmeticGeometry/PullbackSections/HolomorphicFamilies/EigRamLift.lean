@@ -7,8 +7,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB ReciprocityTheory.ChartRestriction.G.TB.WickVanishing
@@ -138,7 +136,7 @@ theorem eigLiftRam_core (hRQ : IsRQ (R := R) k) (B : FB R d O) (h : PS k 2 d) (h
   have hξh_fst : ∀ ℓ, (ξh ℓ).1 = fun j => algebraMap R k (u ℓ j) := by
     intro ℓ
     show (actP B _ _ _).1 = _
-    rw [actP_fst_eig B (χ (ty ℓ)) _ _ _ (heig ℓ), hP, if_pos rfl, one_smul]
+    rw [actP_fst_eig B (χ (ty ℓ)) _ _ _ (heig ℓ), hP, ite_eq_left rfl, one_smul]
   choose u1 φ1 hu1 using hξh_mem
   have hU1 : ∀ ℓ, (fun j => algebraMap R k (u1 ℓ j)) = fun j => algebraMap R k (u ℓ j) := fun ℓ =>
     (congrArg Prod.fst (hu1 ℓ)).symm.trans (hξh_fst ℓ)
@@ -164,7 +162,7 @@ theorem eigLiftRam_core (hRQ : IsRQ (R := R) k) (B : FB R d O) (h : PS k 2 d) (h
     intro w t ht
     rw [hP] at ht
     by_contra hne
-    exact ht (if_neg hne)
+    exact ht (ite_eq_right hne)
   have hsuppE : ∀ τ t, evD (χ t) (bE τ) (cE τ) ≠ 0 → pl t = pl τ := by
     intro τ t ht
     by_cases he : t = τ

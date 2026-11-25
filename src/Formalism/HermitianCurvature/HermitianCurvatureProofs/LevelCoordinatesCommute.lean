@@ -6,53 +6,9 @@ import Formalism.FormalDegreeBessel.FinalWR
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexifiedDerivativeCommutator
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.FDeriv.Symmetric
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -187,21 +143,9 @@ theorem weyl_pci (l : Fin r) : X.op l 0 * X.op l 2 = X.op l 2 * X.op l 0 - X.op 
   refine end_of_slices (fun f => opL l 0 (opL l 2 f)) (fun f => opL l 2 (opL l 0 f) - opL l 2 f) (fun Φ => opop_coe X l l 0 2 Φ) (fun Φ => ?_) (fun f hf => fun_pci l hf)
   rw [coe_sub, opop_coe X l l 2 0 Φ, op_coe X l 2 Φ] <;> rfl
 
-private theorem pbOp_cbiOp_eq_cbiOp_pbOp_sub (l : Fin r) {f : (Fin r → ℂ) → (Wq →L[ℂ] Wp)} (hf : f ∈ WSm r (Wq →L[ℂ] Wp)) :
-    pbOp l (cbiOp l f) = cbiOp l (pbOp l f) - cbiOp l f := by
-  have hg : cbiOp l f ∈ WSm r (Wq →L[ℂ] Wp) := presOps r _ l 5 f hf
-  have hpg : pbOp l (cbiOp l f) ∈ WSm r (Wq →L[ℂ] Wp) := presOps r _ l 3 _ hg
-  have hcpg : cbOp l (pbOp l (cbiOp l f)) ∈ WSm r (Wq →L[ℂ] Wp) := presOps r _ l 4 _ hpg
-  have w1 := (weylFun r _ l _ hg).2.2.2.2.2
-  have w2 := (weylFun r _ l f hf).2.2.2.1
-  have w3 : cbiOp l (cbOp l (pbOp l (cbiOp l f))) = pbOp l (cbiOp l f) := (weylFun r _ l _ hpg).2.2.2.2.1
-  have hadd : cbiOp l (cbOp l (pbOp l (cbiOp l f)) + f) = cbiOp l (cbOp l (pbOp l (cbiOp l f))) + cbiOp l f :=
-    (linOps r _ l 5 _ f 1 hcpg hf).1
-  rw [w2] at w1
-  rw [w1, hadd, w3, add_sub_cancel_right]
-
 theorem weyl_pbcbi (l : Fin r) : X.op l 3 * X.op l 5 = X.op l 5 * X.op l 3 - X.op l 5 := by
-  refine end_of_slices (fun f => opL l 3 (opL l 5 f)) (fun f => opL l 5 (opL l 3 f) - opL l 5 f) (fun Φ => opop_coe X l l 3 5 Φ) (fun Φ => ?_) (fun f hf => pbOp_cbiOp_eq_cbiOp_pbOp_sub l hf)
+  refine end_of_slices (fun f => opL l 3 (opL l 5 f)) (fun f => opL l 5 (opL l 3 f) - opL l 5 f)
+    (fun Φ => opop_coe X l l 3 5 Φ) (fun Φ => ?_) (fun f hf => Qx2.pb_cbi l hf)
   rw [coe_sub, opop_coe X l l 5 3 Φ, op_coe X l 5 Φ] <;> rfl
 
 theorem comm_ops (l m : Fin r) (i j : Fin 6) (h : l ≠ m ∨ (holoIdx i ↔ ¬ holoIdx j)) :
@@ -500,8 +444,6 @@ theorem Formalism.FourierDecayAlt.P.actual_pre_level : Formalism.FourierDecayAlt
   intro Wp Wq _ _ _ _ _ _ P z z' π π' hpl X
   exact ⟨Formalism.FourierDecayAlt.P.NFx1.APL.preOf X (Formalism.FourierDecayAlt.P.Qx5.place_alt_alt hpl), Formalism.FourierDecayAlt.P.NFx1.APL.preOf_actual X _⟩
 
-open Matrix Finset Filter Topology
-open scoped ContDiff
 
 noncomputable section
 
@@ -658,14 +600,14 @@ theorem cd_top (u : ℂ) (a b : Fin (mdim k r i)) :
     have e : (fun f : Mx k r → E => QuantumDeterminants.Top (EH k r) u (posL k r i a) (posL k r i b) f) =
         fun f x => u • f x + EH k r (posL k r i a) (posL k r i b) f x := by
       funext f x
-      simp only [QuantumDeterminants.Top, if_pos h]
+      simp only [QuantumDeterminants.Top, ite_eq_left h]
     rw [e]
     exact this
   · have := (cd_zero (E := E) (k := k) (r := r) (i := i)).add (cd_eh a b)
     have e : (fun f : Mx k r → E => QuantumDeterminants.Top (EH k r) u (posL k r i a) (posL k r i b) f) =
         fun f x => 0 + EH k r (posL k r i a) (posL k r i b) f x := by
       funext f x
-      simp only [QuantumDeterminants.Top, if_neg h]
+      simp only [QuantumDeterminants.Top, ite_eq_right h]
     rw [e]
     exact this
 
@@ -741,8 +683,8 @@ theorem CW.neg {T : (Mx k r → E) → Mx k r → E} (h : CW k r i T) : CW k r i
 theorem CW.ite {T : (Mx k r → E) → Mx k r → E} (h : CW k r i T) (p : Prop) [Decidable p] :
     CW k r i (fun f x => if p then T f x else 0) := by
   by_cases hp : p
-  · simpa only [if_pos hp] using h
-  · simpa only [if_neg hp] using (cw_zero (E := E) (k := k) (r := r) (i := i))
+  · simpa only [ite_eq_left hp] using h
+  · simpa only [ite_eq_right hp] using (cw_zero (E := E) (k := k) (r := r) (i := i))
 
 theorem cw_sum {ι : Type*} (s : Finset ι) (T : ι → (Mx k r → E) → Mx k r → E)
     (hT : ∀ j ∈ s, CW k r i (T j)) : CW k r i (fun f x => ∑ j ∈ s, T j f x) := by
@@ -847,14 +789,14 @@ theorem t_op_comm (Y : ℂ) (a b : Fin 2) (l : Fin r) (i : Fin 6) :
           (-(c l * (1 / 2) * Complex.I)) •
             fderiv ℝ (fun c' => (Φ : Fn k r (Wq →L[ℂ] Wp)) c' g') c (Pi.single l Complex.I) := by
         funext g'
-        simp only [pOp, if_pos hc, wirt]
+        simp only [pOp, ite_eq_left hc, wirt]
         module
       have hr : pOp l (fun c' => ((X.t Y a b Φ : RadSp k r z z' π π') : Fn k r (Wq →L[ℂ] Wp)) c' g) c =
           (c l * (1 / 2)) • fderiv ℝ (fun c' => tL k r z z' (Fin.last r) Y a b ((Φ : Fn k r (Wq →L[ℂ] Wp)) c') g)
             c (Pi.single l 1) +
           (-(c l * (1 / 2) * Complex.I)) • fderiv ℝ
             (fun c' => tL k r z z' (Fin.last r) Y a b ((Φ : Fn k r (Wq →L[ℂ] Wp)) c') g) c (Pi.single l Complex.I) := by
-        simp only [pOp, if_pos hc, wirt, hev.fderiv_eq]
+        simp only [pOp, ite_eq_left hc, wirt, hev.fderiv_eq]
         module
       rw [hf, hr, transfer_operator_linear (dir_smooth Φ.2 hc _) (dir_smooth Φ.2 hc _) Y a b _ _ hgD, transfer_operator_fderiv Φ.2 hx, transfer_operator_fderiv Φ.2 hx]
     · show tL k r z z' (Fin.last r) Y a b (fun g' => c l • (Φ : Fn k r (Wq →L[ℂ] Wp)) c g') g =
@@ -870,14 +812,14 @@ theorem t_op_comm (Y : ℂ) (a b : Fin 2) (l : Fin r) (i : Fin 6) :
           (star (c l) * (1 / 2) * Complex.I) •
             fderiv ℝ (fun c' => (Φ : Fn k r (Wq →L[ℂ] Wp)) c' g') c (Pi.single l Complex.I) := by
         funext g'
-        simp only [pbOp, if_pos hc, wirtBar]
+        simp only [pbOp, ite_eq_left hc, wirtBar]
         module
       have hr : pbOp l (fun c' => ((X.t Y a b Φ : RadSp k r z z' π π') : Fn k r (Wq →L[ℂ] Wp)) c' g) c =
           (star (c l) * (1 / 2)) • fderiv ℝ
             (fun c' => tL k r z z' (Fin.last r) Y a b ((Φ : Fn k r (Wq →L[ℂ] Wp)) c') g) c (Pi.single l 1) +
           (star (c l) * (1 / 2) * Complex.I) • fderiv ℝ
             (fun c' => tL k r z z' (Fin.last r) Y a b ((Φ : Fn k r (Wq →L[ℂ] Wp)) c') g) c (Pi.single l Complex.I) := by
-        simp only [pbOp, if_pos hc, wirtBar, hev.fderiv_eq]
+        simp only [pbOp, ite_eq_left hc, wirtBar, hev.fderiv_eq]
         module
       rw [hf, hr, transfer_operator_linear (dir_smooth Φ.2 hc _) (dir_smooth Φ.2 hc _) Y a b _ _ hgD, transfer_operator_fderiv Φ.2 hx, transfer_operator_fderiv Φ.2 hx]
     · show tL k r z z' (Fin.last r) Y a b (fun g' => star (c l) • (Φ : Fn k r (Wq →L[ℂ] Wp)) c g') g =

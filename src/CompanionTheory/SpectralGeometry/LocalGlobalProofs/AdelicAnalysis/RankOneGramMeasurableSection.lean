@@ -364,9 +364,9 @@ theorem orbit_section : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
         refine (hg.mul (continuous_const (y := h₀))).congr fun y => ?_
         show g y * h₀ = (if hy : y.1 ∈ (fun y : Fin 1 → Fin M → R ⊗[F] E => y 0) ⁻¹' U ∩
           {y : Fin 1 → Fin M → R ⊗[F] E | gramR R σ J y = gramR R σ J x} then g ⟨y.1, hy⟩ * h₀ else 1)
-        rw [dif_pos y.2]
+        rw [dite_eq_left y.2]
       · intro y hy
-        simp only [dif_pos hy]
+        simp only [dite_eq_left hy]
         rw [(hact 1).2.2.1, hh₀]
         funext a
         rw [Fin.fin_one_eq_zero a]

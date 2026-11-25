@@ -19,8 +19,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.BasicNotions.TH 
 
 namespace Formalism.L2.SG.ThmSOwn
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def InstTie (I : AutInst) : Prop :=
   ∃ (D : D7) (V : HSp D) (fr : Formalism.IndefR.Eqv.UI.Frames D V) (P Q : ℕ),
     I = Formalism.IndefR.Eqv.UI.instV fr ∧ fr.Λ = Formalism.IndefR.Eqv.UI.Lv D V ∧

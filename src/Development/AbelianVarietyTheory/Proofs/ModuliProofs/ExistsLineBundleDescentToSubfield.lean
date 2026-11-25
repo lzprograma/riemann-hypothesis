@@ -62,7 +62,6 @@ variable (D : I ⥤ Scheme.{0}) {X : Scheme.{0}} (π : ∀ i, X ⟶ D.obj i)
 
 
 omit [∀ i, CompactSpace (D.obj i)] in
-set_option backward.isDefEq.respectTransparency false in
 include hc in
 theorem exists_appLE_eq {i : I} {U : (D.obj i).Opens} (hU : IsCompact (U : Set (D.obj i)))
     (s : Γ(X, π i ⁻¹ᵁ U)) :

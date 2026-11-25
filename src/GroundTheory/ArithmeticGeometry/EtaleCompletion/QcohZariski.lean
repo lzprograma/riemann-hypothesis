@@ -82,10 +82,4 @@ lemma pullbackUnitApp_bijective (j : T ⟶ U) [IsOpenImmersion j] (N : U.Modules
 
 end Unit
 
-section Opens
-
-variable {X : Scheme.{u}} (F : X.Modules) (U : X.Etale)
-
-end Opens
-
 end GroundTheory.Arith.Etale

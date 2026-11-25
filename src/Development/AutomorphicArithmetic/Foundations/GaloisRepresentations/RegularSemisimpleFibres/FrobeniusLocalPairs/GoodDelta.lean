@@ -3,50 +3,11 @@ module
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobeniusTwistedHilbertNinetyAlt
 public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ExistsNotMem
 public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalField
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Algebra.Order.Star.Int
 import GroundTheory.LocalFields.Uniqueness
 import GroundTheory.LocalFields.UnramifiedHensel
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.TypeStar
 import Formalism.LocalToGlobal.GroupLattices.PerfectRings.IsLocalRingOfComplete
 import Mathlib.RingTheory.PiTensorProduct
@@ -576,41 +537,12 @@ private theorem exists_adjoinRoot_ringEquiv_iterate_mk_of_map_eq {R : Type*} [Co
     (hψ : ψ.map (φ : R →+* R) = ψ) :
     ∃ τ : AdjoinRoot ψ ≃+* AdjoinRoot ψ, ∀ (j : ℕ) (g : R[X]),
       (⇑τ)^[j] (AdjoinRoot.mk ψ g) = AdjoinRoot.mk ψ (g.map ((φ : R →+* R) ^ j)) := by
-  have key : ∀ φ' : R →+* R, ψ.map φ' = ψ → ∃ f : AdjoinRoot ψ →+* AdjoinRoot ψ,
-      ∀ g, f (AdjoinRoot.mk ψ g) = AdjoinRoot.mk ψ (g.map φ') := by
-    intro φ' h
-    refine ⟨AdjoinRoot.lift ((AdjoinRoot.of ψ).comp φ') (AdjoinRoot.root ψ) ?_, fun g => ?_⟩
-    · rw [← Polynomial.eval₂_map, h]
-      exact AdjoinRoot.eval₂_root ψ
-    · rw [AdjoinRoot.lift_mk, ← Polynomial.eval₂_map, ← AdjoinRoot.aeval_eq, Polynomial.aeval_def]
-      rfl
-  have hψ' : ψ.map (φ.symm : R →+* R) = ψ := by
-    conv_lhs => rw [← hψ]
-    rw [Polynomial.map_map]
-    convert Polynomial.map_id
-    ext x
-    simp
-  obtain ⟨f, hf⟩ := key _ hψ
-  obtain ⟨f', hf'⟩ := key _ hψ'
-  have e1 : f'.comp f = RingHom.id _ := by
-    refine RingHom.ext fun x => ?_
-    induction x using AdjoinRoot.induction_on with
-    | ih g =>
-      simp only [RingHom.comp_apply, hf, hf', Polynomial.map_map, RingHom.id_apply]
-      congr 1
-      convert Polynomial.map_id
-      ext x
-      simp
-  have e2 : f.comp f' = RingHom.id _ := by
-    refine RingHom.ext fun x => ?_
-    induction x using AdjoinRoot.induction_on with
-    | ih g =>
-      simp only [RingHom.comp_apply, hf, hf', Polynomial.map_map, RingHom.id_apply]
-      congr 1
-      convert Polynomial.map_id
-      ext x
-      simp
-  refine ⟨RingEquiv.ofRingHom f f' e2 e1, fun j => ?_⟩
+  refine ⟨AdjoinRoot.mapRingEquiv φ ψ ψ (by rw [hψ]), fun j => ?_⟩
+  have hstep : ∀ (h : ψ ∣ ψ.map (φ : R →+* R)) (g : R[X]),
+      AdjoinRoot.map (φ : R →+* R) ψ ψ h (AdjoinRoot.mk ψ g) =
+        AdjoinRoot.mk ψ (g.map (φ : R →+* R)) := fun h g => by
+    rw [AdjoinRoot.map, AdjoinRoot.lift_mk, ← Polynomial.eval₂_map, ← AdjoinRoot.aeval_eq,
+      Polynomial.aeval_def]; rfl
   induction j with
   | zero =>
     intro g
@@ -618,10 +550,8 @@ private theorem exists_adjoinRoot_ringEquiv_iterate_mk_of_map_eq {R : Type*} [Co
     exact (congrArg (AdjoinRoot.mk ψ) (Polynomial.map_id (p := g))).symm
   | succ j ih =>
     intro g
-    rw [Function.iterate_succ_apply]
-    have : (RingEquiv.ofRingHom f f' e2 e1) (AdjoinRoot.mk ψ g) = AdjoinRoot.mk ψ (g.map (φ : R →+* R)) :=
-      hf g
-    rw [this, ih, Polynomial.map_map, pow_succ]
+    rw [Function.iterate_succ_apply', ih, AdjoinRoot.coe_mapRingEquiv, hstep,
+      Polynomial.map_map, pow_succ']
     rfl
 
 private theorem isUnit_adjoinRoot_root_of_isUnit_coeff_zero {R : Type*} [CommRing R] (ψ : R[X]) (hc : IsUnit (ψ.coeff 0)) :
@@ -632,16 +562,6 @@ private theorem isUnit_adjoinRoot_root_of_isUnit_coeff_zero {R : Type*} [CommRin
   refine isUnit_of_mul_isUnit_left (y := AdjoinRoot.mk ψ q) ?_
   rw [h]
   exact (hc.map (AdjoinRoot.of ψ)).neg
-
-private theorem normPoly_lemma_8 {R S : Type*} [CommRing R] [CommRing S] (r : R →+* S) (ψ : R[X]) :
-    ∃ ρ : AdjoinRoot ψ →+* AdjoinRoot (ψ.map r),
-      ∀ g, ρ (AdjoinRoot.mk ψ g) = AdjoinRoot.mk (ψ.map r) (g.map r) := by
-  refine ⟨AdjoinRoot.lift ((AdjoinRoot.of (ψ.map r)).comp r) (AdjoinRoot.root (ψ.map r)) ?_,
-    fun g => ?_⟩
-  · rw [← Polynomial.eval₂_map]
-    exact AdjoinRoot.eval₂_root _
-  · rw [AdjoinRoot.lift_mk, ← Polynomial.eval₂_map, ← AdjoinRoot.aeval_eq, Polynomial.aeval_def]
-    rfl
 
 private theorem gal_pow_finrank_eq_one_of_eq_pow_card {F₀ F₁ : Type*} [Field F₀] [Fintype F₀] [Field F₁] [Fintype F₁]
     [Algebra F₀ F₁] (sb : Gal(F₁/F₀)) (hfrob : ∀ z, sb z = z ^ Fintype.card F₀) :
@@ -787,7 +707,11 @@ private theorem normPoly_lemma_7 {R F₀ F₁ : Type} [CommRing R] [IsNoetherian
       have h1 := hτ₀ 1 X
       rw [Function.iterate_one, Polynomial.map_X, AdjoinRoot.mk_X] at h1
       exact h1)
-  obtain ⟨ρ, hρ⟩ := normPoly_lemma_8 r ψ
+  let ρ := AdjoinRoot.map r ψ (ψ.map r) dvd_rfl
+  have hρ : ∀ g, ρ (AdjoinRoot.mk ψ g) = AdjoinRoot.mk (ψ.map r) (g.map r) := fun g => by
+    dsimp only [ρ, AdjoinRoot.map]
+    rw [AdjoinRoot.lift_mk, ← Polynomial.eval₂_map, ← AdjoinRoot.aeval_eq, Polynomial.aeval_def]
+    rfl
   have hρsurj : Function.Surjective ρ := by
     intro w
     induction w using AdjoinRoot.induction_on with

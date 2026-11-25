@@ -31,7 +31,7 @@ theorem shift_same (hΦ : ∀ x, Φ (X x) = ∑ q, MvPolynomial.C (w x.1 q) * X 
 
   rw [hΦ, map_sum]
   refine Finset.sum_congr rfl fun q _ => ?_
-  rw [map_mul, rowShift_C, rowShift_X, hlt, if_neg]
+  rw [map_mul, rowShift_C, rowShift_X, hlt, ite_eq_right]
   intro e
   apply h
   exact ⟨(congrArg (fun x : T × ℕ × Fin n => x.1) e).symm, congrArg (fun x : T × ℕ × Fin n => x.2.1) e⟩
@@ -45,7 +45,7 @@ theorem shift_add (hΦ : ∀ x, Φ (X x) = ∑ q, MvPolynomial.C (w x.1 q) * X (
   refine Finset.sum_congr rfl fun q _ => ?_
   have h2 : (lt (ρ, c) q).2.2 = colf ρ q := congrArg (fun x : T × ℕ × Fin n => x.2.2) (hlt ρ c q)
   have h1 : keyL (lt (ρ, c) q) = (σ0, i.val, (lt (ρ, c) q).2.2) := by rw [hlt, hc, h2]
-  rw [map_mul, rowShift_C, rowShift_X, if_pos h1]
+  rw [map_mul, rowShift_C, rowShift_X, ite_eq_left h1]
   have h3 : (⟨σ0, i', (lt (ρ, c) q).2.2⟩ : Letter T r n) = lt (ρ, c') q := by
     apply keyL_inj
     rw [hlt, hc', h2]
@@ -82,9 +82,9 @@ theorem rowShift_minor_lin (hΦ : ∀ x, Φ (X x) = ∑ q, MvPolynomial.C (w x.1
         simp only [hA, Matrix.of_apply]
         by_cases hcc : c = ci
         · subst hcc
-          rw [if_pos rfl, smul_eq_mul]
+          rw [ite_eq_left rfl, smul_eq_mul]
           exact shift_add Φ σ w lt colf hΦ hlt i i' t _ _ _ rfl rfl
-        · rw [if_neg hcc]
+        · rw [ite_eq_right hcc]
           refine shift_same Φ σ w lt colf hΦ hlt σ i i' t _ _ ?_
           rintro ⟨_, e⟩
           exact hcc (Fin.ext e)

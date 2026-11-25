@@ -54,8 +54,6 @@ open GlobalTheory.RecDict
 
 namespace GlobalTheory.RecDict
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem cmData_sig_ne_id {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E]
     [Algebra F E] (hc : CMData F E) : ∃ a, hc.sig a ≠ a := by
   by_contra h

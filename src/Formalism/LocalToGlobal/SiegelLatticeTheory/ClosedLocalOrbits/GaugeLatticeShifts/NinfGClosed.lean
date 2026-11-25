@@ -73,8 +73,6 @@ namespace Formalism.L2.SG.RealObj.InfCut.ProductExactness
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj.InfCut.JacobianCoordinates
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section SetM
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)

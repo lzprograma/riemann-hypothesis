@@ -11,46 +11,7 @@ public import Development.WeilBound.CuspidalAdmissibility.OccursIff
 public import Development.WeilBound.NonsplitUniqueness.Places
 import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TwistUnitary
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.DetAdmA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSConjSpaceR
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 
 @[expose] public section
 
@@ -76,31 +37,14 @@ private theorem gal_central (σ : E ≃ₐ[F] E) (n : ℕ) (t : {r : ℝ // 0 < 
   rw [← hs, ← UpperTheory.centralSection_baseChange F E n s]
   exact (UpperTheory.adele_galois_action_baseChange_compat F E σ n).2.2.2.2.1 _
 
-private theorem galOf_mul' {A B : Type*} [CommRing A] [Algebra F A] [CommRing B] [Algebra E B] (e : E ⊗[F] A ≃ₐ[E] B)
-    (σ τ : E ≃ₐ[F] E) (b : B) : galOf e σ (galOf e τ b) = galOf e (σ * τ) b := by
-  have h : ∀ x : E ⊗[F] A, Algebra.TensorProduct.map (σ : E →ₐ[F] E) (AlgHom.id F A)
-      (Algebra.TensorProduct.map (τ : E →ₐ[F] E) (AlgHom.id F A) x) =
-      Algebra.TensorProduct.map ((σ * τ : E ≃ₐ[F] E) : E →ₐ[F] E) (AlgHom.id F A) x := by
-    intro x
-    induction x using TensorProduct.inductionOn with
-    | tmul a c => simp
-    | add a c ha hc => simp only [map_add (f := _), ha, hc]
-  simp [galOf, h]
-
-private theorem galOf_one' {A B : Type*} [CommRing A] [Algebra F A] [CommRing B] [Algebra E B] (e : E ⊗[F] A ≃ₐ[E] B)
-    (b : B) : galOf e (1 : E ≃ₐ[F] E) b = b := by
-  have h : ∀ x : E ⊗[F] A, Algebra.TensorProduct.map ((1 : E ≃ₐ[F] E) : E →ₐ[F] E) (AlgHom.id F A) x = x := by
-    intro x
-    induction x using TensorProduct.inductionOn with
-    | tmul a c => simp
-    | add a c ha hc => simp only [map_add (f := _), ha, hc]
-  simp [galOf, h]
-
 private theorem gal_module [IsGalois F E] (σ : E ≃ₐ[F] E) (hσ : σ = 1 ∨ ∀ τ, τ ∈ Subgroup.zpowers σ) (n : ℕ)
     (g : AdelicGLn.AdelicGL E n) : detModule E n (mapGL n (galAd σ) g) = detModule E n g := by
   rcases hσ with rfl | hσ
-  · have : mapGL n (galAd (1 : E ≃ₐ[F] E)) g = g :=
-      Units.ext (Matrix.ext fun a b => galOf_one' (adeleTensorEquiv F E) _)
+  · have : mapGL n (galAd (1 : E ≃ₐ[F] E)) g = g := by
+      refine Units.ext (Matrix.ext fun a b => ?_)
+      change galOf (adeleTensorEquiv F E) 1 (g.val a b) = g.val a b
+      have hid : ((1 : E ≃ₐ[F] E) : E →ₐ[F] E) = AlgHom.id F E := by ext; rfl
+      simp [galOf, hid, Algebra.TensorProduct.map_id]
     rw [this]
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · have : Subsingleton (AdelicGLn.AdelicGL E 0) :=
@@ -234,13 +178,17 @@ private theorem rr_inv (σ τ : E ≃ₐ[F] E) (h : σ * τ = 1) {v : Pl F} (w :
   rw [rr_apply, rr_apply, RingEquiv.symm_apply_apply]
   have h1 : galFin σ v (galFin τ v ((eW w hw).symm y)) = (eW w hw).symm y := by
     change galOf (tensorEquiv' E v) σ (galOf (tensorEquiv' E v) τ _) = _
-    rw [galOf_mul', h, galOf_one']
+    simp [galOf]
+    rw [← AlgHom.comp_apply, ← Algebra.TensorProduct.map_comp, AlgHom.comp_id,
+      show (σ : E →ₐ[F] E).comp (τ : E →ₐ[F] E) = AlgHom.id F E from
+        AlgHom.ext fun x => DFunLike.congr_fun h x,
+      Algebra.TensorProduct.map_id, AlgHom.id_apply, AlgEquiv.apply_symm_apply]
   rw [h1, RingEquiv.apply_symm_apply]
 
 private theorem mapGL_rr_inv (σ τ : E ≃ₐ[F] E) (h : σ * τ = 1) {v : Pl F} (w : PlacesOver E v)
     (hw : ∀ u : PlacesOver E v, u = w) (n : ℕ) (g : Gw n w.1) :
     mapGL n (rr σ w hw) (mapGL n (rr τ w hw) g) = g :=
-  Units.ext (Matrix.ext fun a b => rr_inv σ τ h w hw _)
+  Units.ext (Matrix.ext fun _ _ => rr_inv σ τ h w hw _)
 
 private def sOf (σ : E ≃ₐ[F] E) {v : Pl F} (w : PlacesOver E v) (hw : ∀ u : PlacesOver E v, u = w) (n : ℕ) :
     Gw n w.1 ≃ₜ* Gw n w.1 where

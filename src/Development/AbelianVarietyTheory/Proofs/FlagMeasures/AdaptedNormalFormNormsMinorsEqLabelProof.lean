@@ -48,7 +48,6 @@ open scoped Classical
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full
   Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.KappaEndpoints Formalism.L2.SG.RowsConc
 namespace GlobalTheory.TypeAsm.HasLabelling
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem frameExp_cast (r l : ℕ) (hl : l ≤ r + 1) :
     ((frameExp r l : ℕ) : ℤ) = ∑ a ∈ Finset.range l, ((r : ℤ) - a) := by
@@ -110,7 +109,6 @@ end GlobalTheory.TypeAsm.HasLabelling
 
 namespace GlobalTheory.TypeAsm
 open GlobalTheory.TypeAsm.HasLabelling
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem labC : LabC := by
   intro D large₂ X Y u hS t N hN
@@ -131,7 +129,7 @@ theorem labC : LabC := by
     intro l hl
     have hl' : l ≤ D.R.rS + 1 := by omega
     have hlab : labT t l = star (Formalism.HermitianLatticeCounting.S6.Dl (F0 X u) (Ft t) l hl') := by
-      simp only [labT, if_pos hl]
+      simp only [labT, ite_eq_left hl]
       exact hnf l hl'
     unfold GlobalTheory.DegCnt.NF.nD
     rw [dite_eq_left hl', hDl l hl', nloc_eq, hlab, norm_star, hd, frameExp_cast _ _ hl']
@@ -169,9 +167,9 @@ theorem labC : LabC := by
     by_cases hl : l ≤ jT t
     · have hl' : l ≤ D.R.rS + 1 := by omega
       rw [dite_eq_left ⟨hl, hl'⟩]
-      simp only [labT, if_pos hl]
+      simp only [labT, ite_eq_left hl]
       rw [hnf l hl', star_star]
     · rw [dite_eq_right (fun h => hl h.1)]
-      simp only [labT, if_neg hl, star_zero]
+      simp only [labT, ite_eq_right hl, star_zero]
 
 end GlobalTheory.TypeAsm

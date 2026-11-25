@@ -123,7 +123,6 @@ theorem quadratic_preimage_compact_on_subspace
     ∃ B : Set (Matrix (Fin m) (Fin m) K), IsCompact B ∧ ∀ w ∈ S, q w ∈ Q → w ∈ B := by
   haveI : ProperSpace (Matrix (Fin m) (Fin m) K) := FiniteDimensional.proper K _
   obtain ⟨c₀, hc₀⟩ := NormedField.exists_one_lt_norm K
-  have hc₀pos : 0 < ‖c₀‖ := lt_trans one_pos hc₀
   obtain ⟨R, hR⟩ := hQ.isBounded.subset_closedBall 0
   set Sh : Set (Matrix (Fin m) (Fin m) K) :=
     (S : Set _) ∩ {w | 1 / ‖c₀‖ ≤ ‖w‖ ∧ ‖w‖ ≤ 1} with hShdef
@@ -178,7 +177,7 @@ theorem quadratic_preimage_compact_on_subspace
         _ ≤ R := by linarith
     by_cases h1 : ‖w‖ ≤ 1
     · exact le_trans h1 (le_max_left _ _)
-    · push_neg at h1
+    · push Not at h1
       refine le_trans ?_ (le_max_right _ _)
       rw [le_div_iff₀ hμpos]
       have h2 : ‖w‖ * μ ≤ ‖w‖ ^ 2 * μ := by
@@ -254,7 +253,6 @@ theorem reducedArtinian_involution_split :
   have hεf : ε * f = ε := by rw [hεa]; linear_combination a * hw'f
   have hσεf : σ ε * f = σ ε := by
     have := congrArg σ hεf; rw [map_mul, hσf] at this; exact this
-  have hσε : σ ε * σ ε = σ ε := by rw [← map_mul, hε]
   have heε : e * ε = 0 := by linear_combination (-e) * hεf + ε * hef
   have heσε : e * σ ε = 0 := by linear_combination (-e) * hσεf + σ ε * hef
   have hσeε : σ e * ε = 0 := by linear_combination (-σ e) * hεf + ε * hσef

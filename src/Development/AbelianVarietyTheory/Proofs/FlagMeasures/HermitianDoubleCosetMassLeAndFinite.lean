@@ -808,7 +808,7 @@ theorem mass_le (S : Frames L r k) (d : S.Datum) (j : ℕ) :
     omega
   · have : (S.mass d fun Λ => S.cardI d Λ = j) = 0 := by
       unfold Frames.mass
-      refine ENNReal.tsum_eq_zero.2 fun o => if_neg fun h => hex ⟨_, h.1⟩
+      refine ENNReal.tsum_eq_zero.2 fun o => ite_eq_right fun h => hex ⟨_, h.1⟩
     rw [this]
     exact zero_le
 
@@ -836,7 +836,7 @@ theorem finite_cls (S : Frames L r k) (h : ∃ d Λ, S.IsTerm d Λ) :
   unfold Frames.sumCls at h1
   refine (ENNReal.finite_const_le_of_tsum_ne_top h1 (ε := 1) one_ne_zero).subset fun o ho => ?_
   have ho' : S.IsIntCls o.out := ho
-  simp only [Set.mem_setOf_eq, if_pos ho', mul_one]
+  simp only [Set.mem_setOf_eq, ite_eq_left ho', mul_one]
   exact ENNReal.one_le_ofReal.2 ((_root_.GlobalTheory.HL.volSt L r k S).2 _ ho'.1).2.2.1
 
 theorem finite_orbits (S : Frames L r k) (d : S.Datum) :

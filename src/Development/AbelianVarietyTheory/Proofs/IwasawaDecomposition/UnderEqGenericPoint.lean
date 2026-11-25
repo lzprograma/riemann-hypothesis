@@ -1,52 +1,10 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NontrivialIsomClassInt
 public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.Finsupp.Pointwise
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
 import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.CmpbHessAtAddConst
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -152,22 +110,8 @@ theorem Refines.logNorm (h : Refines N L π 0) (hr : IsRatSec L.B r) {σ : k →
   rw [logNorm_eq (L.φ σ) hr hy (ptsIn_mono (h.le _) hi), Cartier.logNorm, h.φ σ _ y hi, Pi.zero_apply, add_zero]
 
 theorem under_eq_genericPoint (hX : IsArithVar p 0) {σ : k →+* ℂ} (y : CxPts p σ) : under y = genericPoint X := by
-  by_contra hne
-  have hd : Order.krullDim (IrreducibleCloseds X) ≤ 1 := hX.dim_eq.le
-  have hcl : IsClosed {under y} := by
-    rcases Order.krullDim_le_one_iff.1 hd ⟨closure {under y}, isIrreducible_singleton.closure, isClosed_closure⟩
-      with h | h
-    · rw [← closure_subset_iff_isClosed]
-      intro w hw
-      have := @h ⟨closure {w}, isIrreducible_singleton.closure, isClosed_closure⟩
-        (closure_minimal (singleton_subset_iff.2 hw) isClosed_closure)
-      exact ((specializes_iff_mem_closure.2 (this (subset_closure rfl))).antisymm
-        (specializes_iff_mem_closure.2 hw)).eq
-    · exact absurd (IsGenericPoint.eq (eq_univ_of_univ_subset (@h
-        ⟨univ, IrreducibleSpace.isIrreducible_univ X, isClosed_univ⟩ (subset_univ _))) (genericPoint_spec X)) hne
-  have := hX.finite_residueField hcl
-  have := (Scheme.descResidueField (Scheme.stalkClosedPointTo y.1)).hom.charZero
-  exact not_finite (X.residueField (under y))
+  intros
+  apply _root_.GlobalTheory.IsArithVar.under_eq_genericPoint <;> assumption
 
 end Rat
 

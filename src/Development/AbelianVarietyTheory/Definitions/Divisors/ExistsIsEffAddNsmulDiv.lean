@@ -12,51 +12,10 @@ public import Mathlib.CategoryTheory.Abelian.DiagramLemmas.KernelCokernelComp
 public import Mathlib.GroupTheory.MonoidLocalization.GrothendieckGroup
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsionFreeOfForallExists
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleIdentityIso
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallySubsingletonCohTwistZOfIsProjOver
 import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsSmulEqMapOfIsCompactOfIsQuasiSeparated
 import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsFiniteLengthOfIsArtinianRingAnnihilator
 import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
-import Mathlib.RingTheory.KrullDimension.Polynomial
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Definitions.ModuliSpaces.ExistsRetractTensorTriple, Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsEffAddNsmulDiv
@@ -76,38 +35,12 @@ namespace GlobalTheory.Models
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
 
-section Amp
-
-variable {D : Datum H} {Xo : ∀ l : Level H, Moduli D l}
-
-end Amp
-
-section Refl
-
-variable {U : Scheme.{0}} {F O : Type} [Field F] [CommRing O] {c : U ⟶ Sp F} {t₀ : SAB H U} {β : O →+* F}
-
-end Refl
-
-section Abelian
-
-variable {O F : Type} [CommRing O] [Field F] (β : O →+* F) {X : Scheme.{0}} (s : X ⟶ Sp O) (t : SAB H X)
-
-variable (A : Over X) [GrpObj A] [IsCommMonObj A] (hA : IsAbelianScheme A)
-
-end Abelian
-
 theorem flat_projSpace (R : Type) [CommRing R] (N : ℕ) : Flat (PSpace.str R N) :=
   haveI : IsZariskiLocalAtSource @Flat.{0} := HasRingHomProperty.instIsZariskiLocalAtSource
   IsZariskiLocalAtSource.of_openCover (P := @Flat) (ProjSpace.chartCover R N) fun (i : Fin (N + 1)) => by
     change Flat (ProjSpace.chartι R N i ≫ _)
     rw [ProjSpace.chartι_str, HasRingHomProperty.Spec_iff (P := @Flat)]
     exact RingHom.flat_algebraMap_iff.2 (inferInstanceAs (Module.Flat R (MvPolynomial _ R)))
-
-theorem isNormalScheme_projSpace (R : Type) [CommRing R] [IsDomain R] [UniqueFactorizationMonoid R] (N : ℕ) :
-    Geo.Tor.IsNormalScheme (PSpace R N) := by
-  refine (isNormalScheme_iff_pred _).1 (IsNormalScheme.of_forall_exists_isOpenImmersion fun x => ?_)
-  obtain ⟨i, y, hy⟩ := (ProjSpace.chartCover R N).exists_eq x
-  exact ⟨_, ProjSpace.chartι R N i, ProjSpace.isOpenImmersion_chartι R N i, IsNormalScheme.of_pred (ZJ.isNormalScheme_sp _), y, hy⟩
 
 end GlobalTheory.Models
 
@@ -121,7 +54,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
@@ -145,68 +77,7 @@ section Divisor
 
 variable {X : Scheme.{0}}
 
-def divMod (I : X.IdealSheafData) : X.Modules :=
-  (Scheme.Modules.pushforward I.subschemeι).obj (structureModule I.subscheme)
-
 variable (D D' : EffCartierData X)
-
-theorem secIdeal_canonical :
-    ThickeningDetermines.secIdeal D.isLB_lb D.canonical = D.idealSheaf :=
-  D.eq_idealSheaf fun x =>
-    have ⟨i, hi⟩ := D.exists_mem x
-    have ⟨W, hx, hW⟩ := EffCartierData.exists_affine_le hi
-    ⟨W, i, hW, hx, ideal_secIdeal D.isLB_lb D.canonical W i hW⟩
-
-theorem nonempty_cokernel_iso {G : X.Modules} [G.IsQuasicoherent] {φ : G ⟶ structureModule X}
-    (h : IsMulBy φ D.canonical) : Nonempty (cokernel φ ≅ divMod D.idealSheaf) := by
-  rw [← secIdeal_canonical]
-  exact ⟨(h.exists_cokernel_iso D.isLB_lb _ (surjective_and_ker_unitToPush_subschemeι _)).choose⟩
-
-theorem nonempty_cut_iso :
-    Nonempty (cut (structureModule X) D.isLB_lb D.canonical ≅ divMod D.idealSheaf) :=
-  have := Twist.isQuasicoherent_twist (F := structureModule X) (Twist.isLB_lbZPow D.isLB_lb (-1))
-  nonempty_cokernel_iso D (isMulBy_cutHom _ _ _)
-
-instance mono_cutHom_canonical : Mono (cutHom (structureModule X) D.isLB_lb D.canonical) :=
-  mono_of_locally_app_injective _ fun W x hx =>
-    have ⟨i, hi⟩ := D.exists_mem x
-    ⟨W ⊓ D.U i, ⟨hx, hi⟩, inf_le_left,
-      ((isMulBy_cutHom _ D.isLB_lb D.canonical).injective_app_iff i inf_le_right).2
-        fun _ _ h => (mul_cancel_left_mem_nonZeroDivisors (D.regular i _ inf_le_right)).1 h⟩
-
-instance isFiniteQC_divMod : IsFiniteQC (divMod D.idealSheaf) :=
-  (nonempty_cut_iso D).elim fun e => .of_iso e
-
-theorem support_divMod : support (divMod D.idealSheaf) = D.idealSheaf.support := by
-  obtain ⟨e⟩ := nonempty_cut_iso D
-  rw [← support_eq_of_iso e, support_cut_eq_inter, support_structureModule, Set.univ_inter,
-    secIdeal_canonical]
-
-theorem exists_shortExact_add : ∃ S : ShortComplex X.Modules, S.ShortExact ∧
-    Nonempty (S.X₁ ≅ twistZ (divMod D.idealSheaf) D'.lb (-1)) ∧
-    Nonempty (S.X₂ ≅ divMod (D.idealSheaf * D'.idealSheaf)) ∧
-    Nonempty (S.X₃ ≅ divMod D'.idealSheaf) := by
-  have hM := Twist.isLB_lbZPow D'.isLB_lb (-1)
-  let a := Twist.map (lbZPow D'.lb (-1)) (cutHom (structureModule X) D.isLB_lb D.canonical)
-  let b := cutHom (structureModule X) D'.isLB_lb D'.canonical
-  have := Twist.preservesFiniteColimits_twistFunctor hM
-  refine ⟨_, shortExact_cokernel_comp a b, (nonempty_cut_iso D).map fun e =>
-    (PreservesCokernel.iso (twistFunctor _) _).symm ≪≫ (twistFunctor _).mapIso e, ?_,
-    nonempty_cut_iso D'⟩
-  rw [← D.idealSheaf_add]
-  have := Twist.isQuasicoherent_twist (F := structureModule X) (Twist.isLB_lbZPow D.isLB_lb (-1))
-  have := Twist.isQuasicoherent_twist (F := twistZ (structureModule X) D.lb (-1)) hM
-  refine nonempty_cokernel_iso (D.add D') fun p V h => ⟨(Twist.zchartEquiv D'.isLB_lb (-1) p.2
-    (h.trans inf_le_right)).trans (Twist.zchartEquiv D.isLB_lb (-1) p.1 (h.trans inf_le_left)),
-    fun t => ?_⟩
-  have e : Twist.zchartEquiv D'.isLB_lb (-1) p.2 (h.trans inf_le_right) (a.app V t) =
-      (cutHom (structureModule X) D.isLB_lb D.canonical).app V
-        (Twist.zchartEquiv D'.isLB_lb (-1) p.2 (h.trans inf_le_right) t) :=
-    Twist.chartEquiv_map_app hM _ _ _ t
-  change b.app V (a.app V t) = resG X h ((D.add D').f (p.1, p.2)) • _
-  rw [cutHom_app _ _ _ p.2 (h.trans inf_le_right), e, cutHom_app _ _ _ p.1 (h.trans inf_le_left),
-    smul_smul, mul_comm]
-  exact congrArg (· • _) (D.resG_add_f D' p.1 p.2 h).symm
 
 theorem idealSheaf_eq_of_germ
     (h : ∀ (x : X) (i : D.ι) (j : D'.ι) (hi : x ∈ D.U i) (hj : x ∈ D'.U j),
@@ -294,9 +165,6 @@ instance isNoetherian : AlgebraicGeometry.IsNoetherian Z.X :=
 
 instance isProper : IsProper Z.str := (isProper_and_exists_isAmpleLB_of_isProjOver Z.isProjOver).1
 
-theorem exists_isAmpleLB : ∃ A : LB Z.X, IsAmpleLB A :=
-  (isProper_and_exists_isAmpleLB_of_isProjOver Z.isProjOver).2
-
 def gen : Z.X.Opens :=
   Z.str ⁻¹ᵁ ⟨{closedPoint O}ᶜ, (IsLocalRing.isClosed_singleton_closedPoint O).isOpen_compl⟩
 
@@ -382,9 +250,6 @@ theorem relDim_eq_iff {d : ℕ} : Z.relDim = d ↔ topologicalKrullDim Z.X = (d 
   rw [dim_eq]
   exact ⟨fun h => h ▸ rfl, fun h => Nat.succ_injective (by exact_mod_cast h)⟩
 
-theorem dim_special_le : topologicalKrullDim ((Z.gen : Set Z.X)ᶜ : Set Z.X) ≤ Z.relDim :=
-  ENat.WithBot.add_le_add_one_right_iff.1 (Z.dim_special_add_one_le.trans_eq Z.dim_eq)
-
 
 variable (O) in
 def projSpace (N : ℕ) : Model O where
@@ -423,32 +288,6 @@ theorem appTop_const (g : O) : f.appTop (Z.const g) = Z₁.const g := by
   rw [const, const, const_eq, const_eq, ← hf, Scheme.Hom.comp_appTop]; rfl
 
 end Over
-
-def IsVertical (F : Z.X.Modules) : Prop := ∀ x ∈ support F, x ∉ Z.gen
-
-variable {Z} {F G : Z.X.Modules}
-
-theorem IsVertical.suppDim_lt (h : Z.IsVertical F) : suppDim F < (Z.relDim + 1 : ℕ) :=
-  ((topologicalKrullDim_mono h).trans Z.dim_special_le).trans_lt
-    (by exact_mod_cast Z.relDim.lt_succ_self)
-
-theorem IsVertical.finiteLenTwists [IsFiniteQC F] (h : Z.IsVertical F) : FiniteLenTwists O F :=
-  have ⟨_, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible O
-  finiteLenTwists_of_support Z.const_eq Z.isProjOver h.suppDim_lt hϖ.ne_zero
-    (Z.gen_eq_basicOpen hϖ.ne_zero hϖ.not_isUnit ▸ h)
-
-theorem IsVertical.diffVanish [IsFiniteQC F] (h : Z.IsVertical F) :
-    DiffVanish (Z.relDim + 1) (chiLenPic O F) :=
-  have ⟨_, hA⟩ := Z.exists_isAmpleLB
-  diffVanish_chiLenPic hA h.finiteLenTwists h.suppDim_lt
-
-def IsVertical.deg [IsFiniteQC F] (h : Z.IsVertical F) : PicSym Z.X →ₗ[ℚ] ℚ := picForm h.diffVanish
-
-theorem IsVertical.deg_prod [IsFiniteQC F] (h : Z.IsVertical F) {ι : Type} [Fintype ι]
-    {L : ι → LB Z.X} (hL : ∀ i, (L i).IsLB) : h.deg (∏ i, c1 (L i) (hL i)) =
-      if Fintype.card ι = Z.relDim then (interLen O F L : ℚ) else 0 := by
-  rw [interLen_eq_multiDiff O F hL]
-  exact picForm_prod _ fun i => cls (L i) (hL i)
 
 end Model
 
@@ -493,11 +332,6 @@ instance : IsCancelMul Z.effVert :=
     exact congrArg Subtype.val h⟩
   CommMagma.IsLeftCancelMul.toIsCancelMul _
 
-instance (I : Z.effVert) : IsFiniteQC (divMod I.1) := idealSheaf_effData I ▸ isFiniteQC_divMod _
-
-theorem isVertical_divMod (I : Z.effVert) : Z.IsVertical (divMod I.1) := fun x hx =>
-  I.2.2 x (by rwa [← idealSheaf_effData, support_divMod, idealSheaf_effData] at hx)
-
 def effCls (I : Z.effVert) : Pic Z.X := cls _ (effData I).isLB_lb
 
 theorem effCls_eq {I : Z.effVert} {D : EffCartierData Z.X} (h : D.idealSheaf = I.1) :
@@ -510,19 +344,6 @@ theorem effCls_mul (I J : Z.effVert) : effCls (I * J) = effCls I + effCls J := b
   rw [cls_div ((effData I).add (effData J)).isLB_lb (effData I).isLB_lb] at h
   rw [effCls_eq (D := (effData I).add (effData J)) (by simp [EffCartierData.idealSheaf_add]),
     effCls, effCls, h, add_sub_cancel]
-
-def effDeg (I : Z.effVert) : PicSym Z.X →ₗ[ℚ] ℚ := (isVertical_divMod I).deg
-
-theorem effDeg_mul (I J : Z.effVert) : effDeg (I * J) = effDeg I + effDeg J := by
-  obtain ⟨S, hS, ⟨e₁⟩, ⟨e₂⟩, ⟨e₃⟩⟩ := exists_shortExact_add (effData I) (effData J)
-  simp only [idealSheaf_effData] at e₁ e₂ e₃
-  have hM := Twist.isLB_lbZPow (effData J).isLB_lb (-1)
-  refine picForm_eq_add (isVertical_divMod (I * J)).diffVanish (isVertical_divMod I).diffVanish
-    (isVertical_divMod J).diffVanish (cls _ hM) fun c => ?_
-  have := chiLenPic_shortExact hS (((isVertical_divMod I).finiteLenTwists.twist hM).of_iso e₁.symm)
-    ((isVertical_divMod J).finiteLenTwists.of_iso e₃.symm)
-  rw [chiLenPic_congr O e₁, chiLenPic_congr O e₂, chiLenPic_congr O e₃] at this
-  exact (congrFun this c).trans (congrArg (· + _) (chiLenPic_twist O _ hM c))
 
 
 variable (Z) in
@@ -538,12 +359,6 @@ theorem ofEff_mul (I J : Z.effVert) : ofEff (I * J) = ofEff I + ofEff J :=
 theorem ofEff_injective : Function.Injective (ofEff (Z := Z)) :=
   Algebra.GrothendieckAddGroup.of_injective (M := Additive Z.effVert)
 
-theorem exists_eq_ofEff_sub (D : Z.VDivZ) : ∃ I J, D = ofEff I - ofEff J := by
-  induction D using AddLocalization.induction_on with
-  | H p =>
-    refine ⟨p.1.toMul, p.2.1.toMul, ?_⟩
-    exact ((Algebra.GrothendieckAddGroup.mk_sub_mk p.1 p.2.1 0 0).trans (by simp)).symm
-
 def vLift {A : Type*} [AddCommGroup A] (f : Z.effVert → A) (h : ∀ I J, f (I * J) = f I + f J) :
     Z.VDivZ →+ A :=
   Algebra.GrothendieckAddGroup.lift (AddMonoidHom.mk' (fun I => f I.toMul) h)
@@ -557,31 +372,10 @@ variable (Z)
 
 def vCls : Z.VDivZ →+ Pic Z.X := vLift effCls effCls_mul
 
-def vDeg : Z.VDivZ →+ (PicSym Z.X →ₗ[ℚ] ℚ) := vLift effDeg effDeg_mul
-
 
 variable {Z} in
 @[simp] theorem vCls_ofEff (I : Z.effVert) : Z.vCls (ofEff I) = effCls I := vLift_ofEff _ _ I
 
-
-variable {Z} in
-@[simp] theorem vDeg_ofEff (I : Z.effVert) : Z.vDeg (ofEff I) = effDeg I := vLift_ofEff _ _ I
-
-
-variable {Z} in
-theorem vDeg_ofEff_prod (I : Z.effVert) {ι : Type} [Fintype ι] {L : ι → LB Z.X}
-    (hL : ∀ i, (L i).IsLB) : Z.vDeg (ofEff I) (∏ i, c1 (L i) (hL i)) =
-      if Fintype.card ι = Z.relDim then (interLen O (divMod I.1) L : ℚ) else 0 := by
-  rw [vDeg_ofEff]
-  exact (isVertical_divMod I).deg_prod hL
-
-
-variable {Z} in
-theorem vDeg_eq_zero (D : Z.VDivZ) {n : ℕ} (hn : n ≠ Z.relDim) {x : PicSym Z.X}
-    (hx : x ∈ symDeg (SmallPic Z.X) n) : Z.vDeg D x = 0 := by
-  obtain ⟨I, J, rfl⟩ := exists_eq_ofEff_sub D
-  rw [map_sub, vDeg_ofEff, vDeg_ofEff, LinearMap.sub_apply, effDeg, effDeg, IsVertical.deg,
-    IsVertical.deg, picForm_eq_zero _ hn hx, picForm_eq_zero _ hn hx, sub_zero]
 
 def effConst (g : O) (hg : g ≠ 0) : Z.effVert :=
   effMk (.principal (Z.const g) (Z.isRegularFn_const hg))
@@ -897,12 +691,6 @@ variable {Z₁ : Model O} {f : Z₁.X ⟶ Z.X} (hf : f ≫ Z.str = Z₁.str)
 end Pull
 
 end VertDiv
-
-namespace Model
-
-variable {O} {Z : Model O}
-
-end Model
 
 end GlobalTheory.Vert
 end -- clump:auto

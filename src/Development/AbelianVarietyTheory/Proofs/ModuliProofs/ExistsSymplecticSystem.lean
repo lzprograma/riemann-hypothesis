@@ -147,7 +147,3 @@ theorem exists_symplectic_system (hL : Out.Laws) {K : Type} [Field K] [IsAlgClos
   exact ⟨v, hv1, hv2⟩
 
 end GlobalTheory.EllipticLevel
-
-namespace GlobalTheory
-
-end GlobalTheory

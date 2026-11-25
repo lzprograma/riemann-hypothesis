@@ -288,15 +288,14 @@ theorem detects_restrictNormal_inf : ∀ (l : ℕ) [Fact l.Prime] (L : Type) [Fi
       lift s ∈ N ∧ AlgEquiv.restrictNormalHom L (lift s) = s := by
     intro s hs
     have h : ∃ σ ∈ N, AlgEquiv.restrictNormalHom L σ = s := Subgroup.mem_map.mp hs
-    simp only [lift, dif_pos h]
+    simp only [lift, dite_eq_left h]
     exact h.choose_spec
   obtain ⟨hτN, hτ⟩ := hlift σ₀ hσ₀.1
   have hτN' : lift σ₀ ∉ N' := by
     intro h
     exact hσ₀B ⟨Subgroup.mem_map.mpr ⟨lift σ₀, h, hτ⟩, hσ₀.2⟩
   have hex : ∃ i, ¬ (l : ℤ) ^ r ∣ a i (lift σ₀) := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hτN' (hN' _ hτN hc)
   obtain ⟨i, hi⟩ := hex
   obtain ⟨x', hx'⟩ := hx i
@@ -477,8 +476,7 @@ theorem card_le_jumpSum_wild_of_exponent :
     exact hpow σ
   have hM1 := _root_.GlobalTheory.PMon.Ram.upperRamificationGroup_one_eq_top_of_exponent F M p e hp he hordF hM0 hMexp
   obtain ⟨σ₀, hσ₀⟩ : ∃ σ₀, σ₀ ∉ B := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hB (eq_top_iff.mpr fun x _ => h x)
   have hmem : AlgEquiv.restrictNormalHom M σ₀ ∈ (upperRamificationGroup F L 1).map (AlgEquiv.restrictNormalHom M) := by
     rw [map_upperRamificationGroup M 1, hM1]; trivial
@@ -670,8 +668,7 @@ theorem jumpSum_support_subset {G : Type} [Group G] (R : ℕ → Subgroup G) (A 
   classical
   intro t ht
   simp only [Finset.coe_range, Set.mem_Iio]
-  by_contra h
-  push_neg at h
+  by_contra! h
   apply ht
   have h1 : R t = ⊥ := le_bot_iff.mp (hm ▸ hR h)
   simp [h1]
@@ -731,8 +728,7 @@ theorem exists_mem_upperRamificationGroup_jumpSum_not_mem :
   cases n with
   | zero =>
     obtain ⟨σ, hσ⟩ : ∃ σ, σ ∉ B := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hB (eq_top_iff.mpr fun σ _ => h σ)
     refine ⟨σ, ?_, hσ⟩
     rw [Nat.cast_zero, h0]
@@ -1443,8 +1439,7 @@ theorem jumpSum_kernel_le_six_mul :
     · exact h
 
   have hdM : differentExponent F M < (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation M))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation F))) * (3 * e) := by
-    by_contra hle
-    push_neg at hle
+    by_contra! hle
     obtain ⟨w, hw, hwt⟩ := _root_.GlobalTheory.PMon.Ram.exists_mem_maximalIdeal_pow_eq_trace_of_le_differentExponent F M (3 * e) hle z
     exact _root_.GlobalTheory.PMon.Ram.sq_mul_not_mem_maxIdeal_pow F p e c hp he hordF hpc w hw (hwt.trans hz)
   have htow := differentExponent_tower F M L
@@ -1496,7 +1491,7 @@ theorem jumpSum_mono_of_le :
   intro t _
   by_cases hC : A ⊓ R t ≤ C
   · simp [hBC t hC]
-  · rw [if_neg hC]
+  · rw [ite_eq_right hC]
     split_ifs <;> simp
 
 end GlobalTheory.PMon.Ram

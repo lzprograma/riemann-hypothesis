@@ -1,40 +1,6 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.BlockBoundAlt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -58,7 +24,7 @@ private theorem one_le {a : ℕ} (lam : DomWeight a) :
     intro i
     have ha : 0 < a := i.pos
     have hd : lam.detShift = lam.w ⟨a - 1, by omega⟩ := by
-      simp only [DomWeight.detShift, dif_pos ha]
+      simp only [DomWeight.detShift, dite_eq_left ha]
     have hnat : lam.natW i = (lam.w i - lam.w ⟨a - 1, by omega⟩).toNat := by
       simp only [DomWeight.natW, hd]
     have hLle : (lam.w ⟨a - 1, by omega⟩).natAbs ≤ sz lam := by
@@ -88,17 +54,11 @@ private noncomputable def emb : InfinitePlace E ⊕ InfinitePlace E → (E →+*
   | .inl v => v.embedding
   | .inr v => ComplexEmbedding.conjugate v.embedding
 
-private theorem mk_emb_inl (v : InfinitePlace E) : InfinitePlace.mk (emb (.inl v)) = v :=
-  InfinitePlace.mk_embedding v
-
-private theorem mk_emb_inr (v : InfinitePlace E) : InfinitePlace.mk (emb (.inr v)) = v := by
-  simp [emb]
-
 private theorem emb_injective : Function.Injective (emb (E := E)) := by
   intro x y h
   have hm : InfinitePlace.mk (emb x) = InfinitePlace.mk (emb y) := by rw [h]
   rcases x with v | v <;> rcases y with w | w <;>
-    simp only [mk_emb_inl, mk_emb_inr] at hm <;> subst hm
+    simp only [emb, InfinitePlace.mk_embedding, InfinitePlace.mk_conjugate_eq] at hm <;> subst hm
   · rfl
   · simp only [emb] at h
     exact absurd h.symm (conjugate_ne _)

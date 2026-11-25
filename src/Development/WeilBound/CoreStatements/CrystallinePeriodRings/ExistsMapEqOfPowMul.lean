@@ -8,45 +8,6 @@ public import GroundTheory.PAdicHodge.UnramifiedClosure
 import GroundTheory.PAdicHodge.ACrisBdRInj
 public import GroundTheory.PAdicHodge.BCrisPlusInvariants
 import GroundTheory.PAdicHodge.ThetaBDeRhamPlusFieldCycloUnitBdRZpow
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -89,7 +50,7 @@ theorem loc2_surj (x : Per6.Loc2 a t) : ∃ (m n : ℕ) (y : A),
 theorem loc2_lift_injective {E : Type} [CommRing E] (f : A →+* E) (ha : IsUnit (f a))
     (ht : IsUnit (f t)) (hf : Function.Injective f) :
     Function.Injective (Per6.Loc2.lift f ha ht) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨m, n, y, h⟩ := loc2_surj x
   have h1 := congrArg (Per6.Loc2.lift f ha ht) h
@@ -210,11 +171,6 @@ theorem isUnit_cB_l : IsUnit (Per6.cB l (l : Acris)) := (cB_isFrac l).1
 
 
 variable {l} in
-theorem bcris_surj (x : Per6.Bcris l) : ∃ (m n : ℕ) (y : Acris),
-    Per6.cB l (l : Acris) ^ m * Per6.cB l (Per6.tA l) ^ n * x = Per6.cB l y :=
-  (cB_isFrac l).2.2 x
-
-variable {l} in
 theorem bcris_hom_ext {E : Type} [Semiring E] {f g : Per6.Bcris l →+* E}
     (h : ∀ x, f (Per6.cB l x) = g (Per6.cB l x)) : f = g :=
   (cB_isFrac l).hom_ext h
@@ -284,9 +240,6 @@ variable {l} in
 theorem ιCD_qB (q : ℚ_[l]) : ιCD l (qB l q) = oD l (algebraMap ℚ_[l] (Om l) q) :=
   ιCD_uB _
 
-variable {l} in
-theorem uB_algebraMap (q : ℚ_[l]) : uB l (algebraMap ℚ_[l] ↥(MaximalUnramifiedExtension l) q) = qB l q := rfl
-
 def tB : Per6.Bcris l := Per6.cB l (Per6.tA l)
 
 def toBotHom : GQ l →* (Om l ≃ₐ[(⊥ : IntermediateField ℚ_[l] (Om l))] Om l) where
@@ -304,14 +257,6 @@ def tiltInv : PreTilt ↥(normInteger ℂ_[l]) l →+* OCb l :=
 
 theorem tiltMap_tiltInv (x : PreTilt ↥(normInteger ℂ_[l]) l) : Per6.tiltMap l (tiltInv l x) = x :=
   Perfection.ext fun _ => (Per6.modPEquiv l).apply_symm_apply _
-
-theorem tiltInv_tiltMap (x : OCb l) : tiltInv l (Per6.tiltMap l x) = x :=
-  Perfection.ext fun _ => (Per6.modPEquiv l).symm_apply_apply _
-
-def tiltEquiv : OCb l ≃+* PreTilt ↥(normInteger ℂ_[l]) l :=
-  RingEquiv.ofRingHom (Per6.tiltMap l) (tiltInv l) (RingHom.ext (tiltMap_tiltInv l))
-    (RingHom.ext (tiltInv_tiltMap l))
-
 
 variable {l} in
 def galT (g : GQ l) : OCb l →+* OCb l :=

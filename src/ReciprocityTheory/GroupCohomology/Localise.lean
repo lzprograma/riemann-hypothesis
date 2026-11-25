@@ -101,12 +101,6 @@ theorem isLocalized_of_cx (j : Hom A B) (t : R) (hj : ∀ n, Injective (j.f n))
 
 end Alg
 
-section Trunc
-
-variable {R : Type u} [CommRing R] (A : Cx R) (L : Submodule R (A.H 1))
-
-end Trunc
-
 end ReciprocityTheory.Coh
 end -- clump:auto
 end -- clump:auto

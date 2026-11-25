@@ -6,46 +6,7 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemChainV
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LabelEqOfSuppAdds
 public import Mathlib.NumberTheory.Padics.LocalField
 public import Mathlib.Topology.Algebra.Group.Units
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RepresentationTheory.FinGroupCharZero
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -133,7 +94,7 @@ theorem exists_simple {G W : Type} [Group G] [Fintype G] [AddCommGroup W] [Modul
     have hc : (Nat.card G : ℂ) ≠ 0 := Nat.cast_ne_zero.2 Nat.card_pos.ne'
     have := invertibleOfNonzero hc
     have h := Representation.char_orthonormal σU σU
-    rw [if_pos ⟨Representation.Equiv.refl σU⟩, inv_mul_eq_one₀ hc] at h
+    rw [ite_eq_left ⟨Representation.Equiv.refl σU⟩, inv_mul_eq_one₀ hc] at h
     exact h.symm
   · refine LinearMap.ext fun u => Subtype.ext ?_
     refine Eq.trans ?_ (hfix _ u.2)
@@ -167,13 +128,13 @@ theorem mem_unipRadical_iff {d a : ℕ} (had : a < d) (x : Gn g d) :
     · ext i j
       have hi : (i : ℕ) < d := by omega
       have hj : (j : ℕ) < d := by omega
-      simp only [tl, Formalism.MainNotions.ArithmeticCylinders.entN, hi, hj, and_self, dif_pos]
+      simp only [tl, Formalism.MainNotions.ArithmeticCylinders.entN, hi, hj, and_self, dite_eq_left]
       rw [h _ _ (by simp)]
       simp [Matrix.one_apply, Fin.ext_iff]
     · ext i j
       have hi : a + (i : ℕ) < d := by omega
       have hj : a + (j : ℕ) < d := by omega
-      simp only [br, Formalism.MainNotions.ArithmeticCylinders.entN, hi, hj, and_self, dif_pos]
+      simp only [br, Formalism.MainNotions.ArithmeticCylinders.entN, hi, hj, and_self, dite_eq_left]
       rw [h _ _ (by simp)]
       simp [Matrix.one_apply, Fin.ext_iff]
   · rintro ⟨h0, h1, h2⟩ i j hij

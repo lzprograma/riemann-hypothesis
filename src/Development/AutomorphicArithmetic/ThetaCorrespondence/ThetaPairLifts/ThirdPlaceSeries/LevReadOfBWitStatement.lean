@@ -24,44 +24,7 @@ public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLif
 public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.PackB
 public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TopReadAt
 public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ColsStdOfBWit
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPtOfOfDecoRaw
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
 import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NarrowJetMoments
@@ -76,8 +39,6 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StepLevelCon
 import Formalism.LocalToGlobal.Columns.RecLevelLocP
 import Formalism.LocalToGlobal.Columns.RowFormsSel
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.CharZeroAdicCompletion
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ValidForConstructedPointClassesEventuallyWorking
 import Development.AbelianVarietyTheory.Definitions.LatticeFrames.MiStarOfMid
 import Development.AbelianVarietyTheory.Definitions.LatticeFrames.UnitRatio
@@ -218,8 +179,6 @@ open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Col Formal
 open Formalism.IndefR Formalism.IndefR.Links GlobalTheory.SeeSaw.TopLevel
 
 namespace GlobalTheory.SeeSaw.TwLev
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem cl_nonempty {B : Base} {X : PreX B.toPre} (I : TC B X) (a : I.ι) : Nonempty (I.stX a).Cl := by
   haveI : NeZero (B.R.N B.R.m - 1) := ⟨by
@@ -380,7 +339,6 @@ section Cols
 open NumberField IsDedekindDomain Formalism.BasicNotions _root_.Formalism.L2.Col Formalism.L2.DIV Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.AdT Matrix GlobalTheory.EX
 open Formalism.IndefR Formalism.IndefR.Links
 open scoped TensorProduct
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 variable {B : Base} {X : PreX B.toPre} (I : TC B X)
 
@@ -481,16 +439,16 @@ theorem levRead_of (hI : I.Ok) (hP : TC.Pins B X) (l : I.Laws) (Z : TC.Later B (
     (fun c w x => by
       by_cases hc : c < B.R.m
       · obtain ⟨b, k, h1, h2⟩ := exists_rep w.1 x
-        have e1 : cg (c + 1) w.1 = chi (c + 1) w.1 := if_pos hc
-        have e2 : chiAt I.Ch w c = I.Ch.chi ⟨c, hc⟩ w := dif_pos hc
+        have e1 : cg (c + 1) w.1 = chi (c + 1) w.1 := ite_eq_left hc
+        have e2 : chiAt I.Ch w c = I.Ch.chi ⟨c, hc⟩ w := dite_eq_left hc
         have e3 := hchi ⟨c, hc⟩ w.1 w.2 b k x h1 h2
         have e4 := (hI.ch_tied.mu0 ⟨c, hc⟩).atg w k b x h1 h2
         have e5 := (congrArg (fun z : ℂˣ => (z : ℂ)) e3).trans e4
         rw [e1, e2]
         refine inv_injective ?_
         exact (Units.val_inv_eq_inv_val _).symm.trans (e5.trans ((congrArg B.embLL (Units.val_inv_eq_inv_val _)).trans (map_inv₀ _ _)))
-      · have e1 : cg (c + 1) w.1 = 1 := if_neg hc
-        have e2 : chiAt I.Ch w c = 1 := dif_neg hc
+      · have e1 : cg (c + 1) w.1 = 1 := ite_eq_right hc
+        have e2 : chiAt I.Ch w c = 1 := dite_eq_right hc
         rw [e1, e2]
         exact (map_one B.embLL).symm)
     (xiR t)
@@ -504,7 +462,7 @@ theorem levRead_of (hI : I.Ok) (hP : TC.Pins B X) (l : I.Laws) (Z : TC.Later B (
   refine ⟨key.1, fun h κ hκ => Eq.trans ?_ (key.2 h κ hκ)⟩
   refine congrArg (fun z : ℂˣ => (z : ℂ)) (congrArg₂ (· * ·) (congrArg₂ (· * ·) rfl ?_) rfl)
   refine Finset.prod_congr rfl fun PP _ => Finset.prod_congr rfl fun c hc => ?_
-  have e1 : cg (c + 1) PP = chi (c + 1) PP := if_pos (Finset.mem_range.1 hc)
+  have e1 : cg (c + 1) PP = chi (c + 1) PP := ite_eq_left (Finset.mem_range.1 hc)
   exact congrArg (fun f : (kP PP)ˣ →* ℂˣ => f _) e1.symm
 
 end Cols
@@ -513,7 +471,6 @@ section Pack
 
 open Formalism.BasicNotions Formalism.MainNotions GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Top GlobalTheory.Fc GlobalTheory.MiS GlobalTheory.Fam
 open Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev GlobalTheory.Mem.Col2
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 
@@ -526,21 +483,45 @@ theorem levRead_rows (K : Ctx) (B : GlobalTheory.Mem.Base) (f : Top.Fr B.toPre) 
 
 
 
+private abbrev PackSigma (D : D7) :=
+  Σ' (G : Type) (_ : Group G) (_ : Fintype G) (Pl0 I0 T0 : Type)
+    (A3 : Formalism.L2.DIV.FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T0 D.R.m) (C : Formalism.L2.Pj.CoreJ D)
+    (_ : Algebra C.Q.c.F D.what₂.LL) (R : RealDat3 D A3 C.Q.c.F) (_ : Face3 D A3), G0 R.Pg D.R.r ≃* G0g D.nd
+
+private def PackLevRead {B : GlobalTheory.Mem.Base} {f : Top.Fr B.toPre} {T : TwDat B}
+    (w : Bl.ColW B f T) (Z : w.Lt) {T₀ : Type} (tup₀ : T₀ → w.I.ι) : PackSigma (w.st Z).toD7 → Prop
+  | ⟨_, grp, fin, _, _, T', _, _, alg, R, F, _⟩ =>
+    letI := grp; letI := fin; letI := alg
+    ∀ (tup : T' → w.I.ι), HEq tup tup₀ →
+      LevRead w.I w.l Z R.toLevCh (R.toRealDat.levR F.lv2 true) tup
+
+private theorem pack_levRead {B : GlobalTheory.Mem.Base} {f : Top.Fr B.toPre} {T : TwDat B}
+    (w : Bl.ColW B f T) (Z : w.Lt)
+    {G₁ G₂ : Type} {grp₁ : Group G₁} {grp₂ : Group G₂} {fin₁ : Fintype G₁} {fin₂ : Fintype G₂} {Pl₁ Pl₂ I₁ I₂ T₁ T₂ : Type}
+    {A₁ : letI := grp₁; letI := fin₁; Formalism.L2.DIV.FamIn3 (w.st Z).toD7.what₂.LL G₁ Pl₁ I₁ (List ℕ) T₁ (w.st Z).toD7.R.m}
+    {A₂ : letI := grp₂; letI := fin₂; Formalism.L2.DIV.FamIn3 (w.st Z).toD7.what₂.LL G₂ Pl₂ I₂ (List ℕ) T₂ (w.st Z).toD7.R.m}
+    {C₁ C₂ : Formalism.L2.Pj.CoreJ (w.st Z).toD7}
+    {alg₁ : Algebra C₁.Q.c.F (w.st Z).toD7.what₂.LL} {alg₂ : Algebra C₂.Q.c.F (w.st Z).toD7.what₂.LL}
+    {R₁ : letI := grp₁; letI := fin₁; letI := alg₁; RealDat3 (w.st Z).toD7 A₁ C₁.Q.c.F}
+    {R₂ : letI := grp₂; letI := fin₂; letI := alg₂; RealDat3 (w.st Z).toD7 A₂ C₂.Q.c.F}
+    {F₁ : letI := grp₁; letI := fin₁; Face3 (w.st Z).toD7 A₁} {F₂ : letI := grp₂; letI := fin₂; Face3 (w.st Z).toD7 A₂}
+    {cG₁ : letI := grp₁; letI := fin₁; letI := alg₁; G0 R₁.Pg (w.st Z).toD7.R.r ≃* G0g (w.st Z).toD7.nd}
+    {cG₂ : letI := grp₂; letI := fin₂; letI := alg₂; G0 R₂.Pg (w.st Z).toD7.R.r ≃* G0g (w.st Z).toD7.nd}
+    (hp : (⟨G₁, grp₁, fin₁, Pl₁, I₁, T₁, A₁, C₁, alg₁, R₁, F₁, cG₁⟩ : PackSigma (w.st Z).toD7) = ⟨G₂, grp₂, fin₂, Pl₂, I₂, T₂, A₂, C₂, alg₂, R₂, F₂, cG₂⟩)
+    {tup₁ : T₁ → w.I.ι} {tup₂ : T₂ → w.I.ι} (ht : HEq tup₁ tup₂)
+    (h : letI := grp₂; letI := fin₂; letI := alg₂
+         LevRead w.I w.l Z R₂.toLevCh (R₂.toRealDat.levR F₂.lv2 true) tup₂) :
+    letI := grp₁; letI := fin₁; letI := alg₁
+    LevRead w.I w.l Z R₁.toLevCh (R₁.toRealDat.levR F₁.lv2 true) tup₁ :=
+  (congrArg (PackLevRead w Z tup₂) hp).mpr
+    (fun _ ht' => (congrArg (LevRead w.I w.l Z R₂.toLevCh (R₂.toRealDat.levR F₂.lv2 true)) (eq_of_heq ht')).mpr h) tup₁ ht
+
 theorem levRead_twArgs (K : Ctx) (B : GlobalTheory.Mem.Base) (f : Top.Fr B.toPre) (T : TwDat B) (w : Bl.ColW B f T) (Z : w.Lt)
     (Wt : Set B.places.Pl) (L : SizeData₂ (w.st Z).toD7) (hT : GatTies (w.st Z).toD7) (Gi : G.Inst (w.st Z).toD7 L)
     (Gl : G.LatInst (w.st Z).toD7) (Kc : G.Consts) (Yd : DivX (w.st Z).toD7) (cX : ExtraC)
     (ex : Extra (w.st Z).toD7 L hT Gi Gl Kc Yd cX) (t : Bl.RowsT K w Z Wt ex.p0) (a : R3.TwArgs ex t) :
-    LevRead w.I w.l Z a.x.R.toLevCh (a.x.R.toRealDat.levR a.x.F.lv2 true) a.x.Y.tup := by
-  have h := levRead_rows K B f T w Z Wt ex.p0 t
-  cases a with
-  | mk Dc Sp Zsc lam err lam_eq x pack intersectionNumber_baseChange hκ hv hfw htup htupT hjA hjA0 heMt hPY hPW heFT hIL heE heW hjW heRR =>
-  cases x with
-  | mk G Pl0 I0 T' A3 core R F cG geo pins err' Y Z' C' sEE div JA amb0 JM mjH =>
-  cases pack
-  have hT' : Y.tup = t.r.Y.tup := eq_of_heq htup
-  rw [← hT'] at h
-  exact (h)
-
+    LevRead w.I w.l Z a.x.R.toLevCh (a.x.R.toRealDat.levR a.x.F.lv2 true) a.x.Y.tup :=
+  pack_levRead w Z a.pack a.tup (levRead_rows K B f T w Z Wt ex.p0 t)
 
 
 end Pack
@@ -562,22 +543,9 @@ section -- clump:auto
 section
 noncomputable section
 namespace GlobalTheory.TopVal.LevTw
-section Gen
-open NumberField IsDedekindDomain Formalism.BasicNotions _root_.Formalism.L2.Col Formalism.L2.DIV Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.AdT Matrix
-open scoped TensorProduct
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [StarRing E]
-end Gen
-section Cols
-open NumberField IsDedekindDomain Formalism.BasicNotions _root_.Formalism.L2.Col Formalism.L2.DIV Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.AdT Matrix GlobalTheory.EX
-open Formalism.IndefR Formalism.IndefR.Links
-open scoped TensorProduct
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
-variable {B : Base} {X : PreX B.toPre} (I : TC B X)
-end Cols
 section Pack
 open Formalism.BasicNotions Formalism.MainNotions GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Top GlobalTheory.Fc GlobalTheory.MiS GlobalTheory.Fam
 open Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev GlobalTheory.Mem.Col2
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem levRead_packB_of_bWit {hL : _root_.UpperTheory.Zero.LLC.RecTExists} {p : _root_.GlobalTheory.Mem.Top.Bl.Parameters hL} {K : Ctx} (q : Bl.WPt p.s K) {c : ℝ}
     (b : _root_.GlobalTheory.Fc.BundleCondition (q.w.D q.Z) q.O c) (hw : _root_.GlobalTheory.Mem.Top.Bl.BundleWitness q b) :

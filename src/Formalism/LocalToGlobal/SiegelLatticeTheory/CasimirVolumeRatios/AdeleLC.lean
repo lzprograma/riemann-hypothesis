@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IwasawaMeasureExistence.LeviSizesMeasurable
 import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.GlobalConditionOfLocalAgreement
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
 public import Mathlib.RingTheory.Henselian
@@ -84,42 +85,14 @@ theorem mem_max_iff (y : Valued.integer (v.adicCompletion K)) :
 
 
 theorem finite_residue : Finite (IsLocalRing.ResidueField (Valued.integer (v.adicCompletion K))) := by
-  haveI := v.isMaximal
-  let ψ := (IsLocalRing.residue (Valued.integer (v.adicCompletion K))).comp (toInt v)
-  have hsurj : Function.Surjective ψ := by
-    intro z
-    obtain ⟨y, rfl⟩ := IsLocalRing.residue_surjective z
-    obtain ⟨r, hr⟩ := exists_approx v (y : v.adicCompletion K) y.2
-    refine ⟨r, ?_⟩
-    show IsLocalRing.residue _ (toInt v r) = IsLocalRing.residue _ y
-    rw [← sub_eq_zero, ← map_sub, IsLocalRing.residue_eq_zero_iff, mem_max_iff]
-    have : ((toInt v r - y : Valued.integer (v.adicCompletion K)) : v.adicCompletion K) =
-        -((y : v.adicCompletion K) - algebraMap K (v.adicCompletion K) (r : K)) := by
-      push_cast
-      show algebraMap K (v.adicCompletion K) (r : K) - _ = _
-      ring
-    rw [this, Valuation.map_neg]
-    exact hr
-  have hker : ∀ r ∈ v.asIdeal, ψ r = 0 := by
-    intro r hr
-    show IsLocalRing.residue _ (toInt v r) = 0
-    rw [IsLocalRing.residue_eq_zero_iff, mem_max_iff, toInt_valued]
-    exact (v.intValuation_lt_one_iff_mem r).2 hr
-  let χ := Ideal.Quotient.lift v.asIdeal ψ hker
-  refine Finite.of_surjective χ fun z => ?_
-  obtain ⟨r, hr⟩ := hsurj z
-  exact ⟨Ideal.Quotient.mk _ r, hr⟩
+  apply _root_.PI.IwaMeasEx.Wau.finite_residue <;> assumption
 
 theorem isClosed_integer : IsClosed (Valued.integer (v.adicCompletion K) : Set (v.adicCompletion K)) :=
   (Valued.integer (v.adicCompletion K)).toAddSubgroup.isClosed_of_isOpen (Valued.isOpen_integer _)
 
 
 theorem compactSpace_integer : CompactSpace (Valued.integer (v.adicCompletion K)) := by
-  have : CompleteSpace (Valued.integer (v.adicCompletion K)) := (isClosed_integer v).completeSpace_coe
-  haveI : IsDiscreteValuationRing (Valued.integer (v.adicCompletion K)) :=
-    inferInstanceAs (IsDiscreteValuationRing (v.adicCompletionIntegers K))
-  exact Valued.integer.compactSpace_iff_completeSpace_and_isDiscreteValuationRing_and_finite_residueField.2
-    ⟨inferInstance, inferInstance, finite_residue v⟩
+  apply _root_.PI.IwaMeasEx.Wau.compactSpace_integer <;> assumption
 
 theorem isCompact_integers : IsCompact (v.adicCompletionIntegers K : Set (v.adicCompletion K)) := by
   have := compactSpace_integer v

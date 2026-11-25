@@ -160,14 +160,14 @@ theorem variance_eq_trace_diff {n i : ℕ} (hi : i ≤ n) (M : Matrix (Fin n) (F
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => ?_
   by_cases ha : (a : ℕ) < i
-  · rw [if_pos ha, if_pos ha, ← Finset.sum_sub_distrib]
+  · rw [ite_eq_left ha, ite_eq_left ha, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun b _ => ?_
     by_cases hb : (b : ℕ) < i
-    · rw [if_pos hb, sub_self, if_neg (by omega)]
-    · rw [if_neg hb, sub_zero, if_pos (by omega), hMab]
-  · rw [if_neg ha, if_neg ha, sub_zero]
+    · rw [ite_eq_left hb, sub_self, ite_eq_right (by omega)]
+    · rw [ite_eq_right hb, sub_zero, ite_eq_left (by omega), hMab]
+  · rw [ite_eq_right ha, ite_eq_right ha, sub_zero]
     refine Finset.sum_eq_zero fun b _ => ?_
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
 
 end ReciprocityTheory.ChartRestriction.DS
 end -- clump:auto

@@ -1,47 +1,6 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Foundations.PetIPSmulRight
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Newform
 
 @[expose] public section
@@ -56,7 +15,7 @@ theorem eis_U_pair (j l : ℕ) (c t : ℂ) (a b : ℤ → ℂ) (hl : l.Prime)
     eis j c a b (l * n) = t * eis j c a b n := by
   have hl0 : l ≠ 0 := hl.ne_zero
   have hln : l * n ≠ 0 := mul_ne_zero hl0 hn
-  simp only [eis, hln, hn, if_false]
+  simp only [eis, hln, hn, ite_false]
   rw [Finset.mul_sum]
   symm
   refine Finset.sum_bij_ne_zero (fun p _ _ => (p.1, l * p.2)) ?_ ?_ ?_ ?_
@@ -103,8 +62,8 @@ theorem eis_V_pair (j l : ℕ) (c t : ℂ) (a b : ℤ → ℂ) (hl : l.Prime)
   by_cases hd : l ∣ n
   · obtain ⟨m, rfl⟩ := hd
     have hm : m ≠ 0 := by rintro rfl; simp at hn
-    simp only [Vo, dvd_mul_right, if_true, Nat.mul_div_cancel_left m hl.pos]
-    simp only [eis, hn, hm, if_false]
+    simp only [Vo, dvd_mul_right, ite_true, Nat.mul_div_cancel_left m hl.pos]
+    simp only [eis, hn, hm, ite_false]
     rw [Finset.mul_sum]
     symm
     refine Finset.sum_bij_ne_zero (fun p _ _ => (l * p.1, p.2)) ?_ ?_ ?_ ?_
@@ -133,7 +92,7 @@ theorem eis_V_pair (j l : ℕ) (c t : ℂ) (a b : ℤ → ℂ) (hl : l.Prime)
       · intro h0
         apply hne
         have hdv : (l : ℤ) ∣ (q.1 : ℤ) := by rw [hx]; push_cast; exact dvd_mul_right _ _
-        simp only [hdv, if_true]
+        simp only [hdv, ite_true]
         have : a (q.1 : ℤ) = t * a (x : ℤ) := by rw [hx]; push_cast; exact ha _
         rw [this, hx]
         simp only at h0
@@ -143,12 +102,12 @@ theorem eis_V_pair (j l : ℕ) (c t : ℂ) (a b : ℤ → ℂ) (hl : l.Prime)
       · ext <;> simp [hx]
     · intro p _ _
       have hdv : (l : ℤ) ∣ ((l * p.1 : ℕ) : ℤ) := by push_cast; exact dvd_mul_right _ _
-      simp only [hdv, if_true]
+      simp only [hdv, ite_true]
       push_cast
       rw [ha, mul_pow]; ring
   · have h0 : Vo l (eis j c a b) n = 0 := by simp [Vo, hd]
     rw [h0, mul_zero]
-    simp only [eis, hn, if_false]
+    simp only [eis, hn, ite_false]
     refine Finset.sum_eq_zero fun q hq => ?_
     rw [Nat.mem_divisorsAntidiagonal] at hq
     have : ¬ (l : ℤ) ∣ (q.1 : ℤ) := by

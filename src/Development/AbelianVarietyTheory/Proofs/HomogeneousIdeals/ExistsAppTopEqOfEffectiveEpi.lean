@@ -126,29 +126,9 @@ section Opens
 theorem isPullback_resLE {p : Y ⟶ X} {f g : Z ⟶ Y} (h : IsPullback f g p p) (U : X.Opens)
     (W : Z.Opens) (hW : W = f ⁻¹ᵁ p ⁻¹ᵁ U) (hf : W ≤ f ⁻¹ᵁ p ⁻¹ᵁ U) (hg : W ≤ g ⁻¹ᵁ p ⁻¹ᵁ U) :
     IsPullback (f.resLE _ W hf) (g.resLE _ W hg) (p ∣_ U) (p ∣_ U) := by
-  subst hW
-  have hc : ∀ s : PullbackCone (p ∣_ U) (p ∣_ U),
-      (s.fst ≫ (p ⁻¹ᵁ U).ι) ≫ p = (s.snd ≫ (p ⁻¹ᵁ U).ι) ≫ p := fun s => by
-    rw [Category.assoc, Category.assoc, ← morphismRestrict_ι, s.condition_assoc]
-  have hr : ∀ s : PullbackCone (p ∣_ U) (p ∣_ U),
-      Set.range (h.lift _ _ (hc s)) ⊆ Set.range (f ⁻¹ᵁ p ⁻¹ᵁ U).ι := fun s => by
-    rintro _ ⟨x, rfl⟩
-    rw [Scheme.Opens.range_ι]
-    change f (h.lift _ _ _ x) ∈ p ⁻¹ᵁ U
-    rw [← Scheme.Hom.comp_apply, h.lift_fst, Scheme.Hom.comp_apply]
-    exact (s.fst x).2
-  refine ⟨⟨?_⟩, ⟨PullbackCone.IsLimit.mk _ (fun s => IsOpenImmersion.lift (f ⁻¹ᵁ p ⁻¹ᵁ U).ι
-    (h.lift _ _ (hc s)) (hr s)) (fun s => ?_) (fun s => ?_) (fun s m h₁ h₂ => ?_)⟩⟩
-  · rw [← cancel_mono U.ι]
-    simp [morphismRestrict_ι, Scheme.Hom.resLE_comp_ι_assoc, h.w]
-  · rw [← cancel_mono (p ⁻¹ᵁ U).ι]
-    simp
-  · rw [← cancel_mono (p ⁻¹ᵁ U).ι]
-    simp
-  · rw [← cancel_mono (f ⁻¹ᵁ p ⁻¹ᵁ U).ι, IsOpenImmersion.lift_fac]
-    refine h.hom_ext ?_ ?_
-    · simp [← h₁]
-    · simp [← h₂]
+  subst W
+  simpa only [Scheme.Hom.resLE_eq_morphismRestrict] using
+    Scheme.Hom.isPullback_resLE h (US := U) le_rfl le_rfl (inf_eq_left.mpr hg).symm
 
 theorem appTop_resLE_apply (f : Z ⟶ Y) (V : Y.Opens) (W : Z.Opens) (e : W ≤ f ⁻¹ᵁ V)
     (s : Γ(Y, V)) : (f.resLE V W e).appTop (V.topIso.inv s) = W.topIso.inv (f.appLE V W e s) := by

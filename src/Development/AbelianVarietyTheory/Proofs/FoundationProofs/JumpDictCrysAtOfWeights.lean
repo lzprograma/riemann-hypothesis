@@ -112,10 +112,6 @@ section Frob
 
 variable {R : Ranks} (H : Host R)
 
-theorem exists_finite_split : ∃ A : Set (HeightOneSpectrum (𝓞 H.E)), A.Finite ∧
-    ∀ v, v ∉ A → v.asIdeal.inertiaDeg ℤ = 1 → IsSplitPl H v := by
-  apply GlobalTheory.FrobDense.exists_finite_split
-
 variable {H} {what₂ : Rows.Data R} (N : NData R H what₂)
 
 theorem eq_of_frob (hC : GlobalTheory.TwSys.Cheb) (i : N.Loc) {Y : Type} [TopologicalSpace Y] [T2Space Y]
@@ -129,7 +125,7 @@ theorem eq_of_frob (hC : GlobalTheory.TwSys.Cheb) (i : N.Loc) {Y : Type} [Topolo
     (isClosed_eq (ha.comp (continuous_mul_const g)) (hb.comp (continuous_mul_const g))).isOpen_compl
   have : IsGalois H.E N.Om := {}
   obtain ⟨U, hU⟩ := ProfiniteGrp.exist_openNormalSubgroup_sub_open_nhds_of_one hV (by simpa using hne)
-  obtain ⟨A, hA, hsp⟩ := exists_finite_split H
+  obtain ⟨A, hA, hsp⟩ := GlobalTheory.FrobDense.exists_finite_split H
   have hl : (placesOver H.E (N.l i)).Finite := by
     have h0 : ((N.l i : ℕ) : 𝓞 H.E) ≠ 0 := Nat.cast_ne_zero.2 (N.lPrime i).out.ne_zero
     refine (Ideal.finite_factors (I := Ideal.span {((N.l i : ℕ) : 𝓞 H.E)})
@@ -263,9 +259,9 @@ theorem shift_embOver (ρ : D.what₂.Tau) (b : Bool) :
   have h2 : D.R.nV / 2 = u + v + 1 := by omega
   unfold shift
   cases b
-  · rw [if_pos ⟨ρ, rfl⟩, h2, hn]
+  · rw [ite_eq_left ⟨ρ, rfl⟩, h2, hn]
     simp
-  · rw [if_neg (fun ⟨ρ', h⟩ => embOver_true_ne D ρ ρ' h), h2, hn]
+  · rw [ite_eq_right (fun ⟨ρ', h⟩ => embOver_true_ne D ρ ρ' h), h2, hn]
     simp
 
 end GlobalTheory.JumpDictionaryFoundation

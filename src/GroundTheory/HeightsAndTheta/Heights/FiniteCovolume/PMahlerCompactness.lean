@@ -5,7 +5,6 @@ public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StLenCauchySch
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StGramDetermines
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StBoundedInverseCompact
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Statements
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 

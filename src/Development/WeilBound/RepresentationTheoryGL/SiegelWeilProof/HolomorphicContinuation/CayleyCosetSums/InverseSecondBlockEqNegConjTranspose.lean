@@ -2,51 +2,7 @@ module
 
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.MultiplicityOneTestOperatorsAlt
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.InverseFirstBlockEqConjTranspose
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.DerivativeVacuumDilationsAlt
 import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.ScalarSectionCompactBlockInvariant
 
@@ -62,61 +18,26 @@ open PositivityTheory.Rg.Sw PositivityTheory.Rg.Sw.LVs PositivityTheory.Rg.Sw.HS
 
 variable {n : ℕ}
 
-private theorem mul_toBlocks₁₂ (g h : M2 n) :
-    (g * h).toBlocks₁₂ = g.toBlocks₁₁ * h.toBlocks₁₂ + g.toBlocks₁₂ * h.toBlocks₂₂ := by
-  ext i j
-  simp [Matrix.mul_apply, Fintype.sum_sum_type, Matrix.toBlocks₁₂, Matrix.toBlocks₁₁, Matrix.toBlocks₂₂]
-
-private theorem conjTranspose_toBlocks (g : M2 n) :
-    (gᴴ).toBlocks₁₁ = (g.toBlocks₁₁)ᴴ ∧ (gᴴ).toBlocks₁₂ = (g.toBlocks₂₁)ᴴ ∧
-      (gᴴ).toBlocks₂₁ = (g.toBlocks₁₂)ᴴ ∧ (gᴴ).toBlocks₂₂ = (g.toBlocks₂₂)ᴴ := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> ext i j <;>
-    simp [Matrix.toBlocks₁₁, Matrix.toBlocks₁₂, Matrix.toBlocks₂₁, Matrix.toBlocks₂₂,
-      Matrix.conjTranspose_apply]
-
-private theorem JJ_toBlocks :
-    (JJ n).toBlocks₁₁ = 0 ∧ (JJ n).toBlocks₁₂ = 1 ∧ (JJ n).toBlocks₂₁ = -1 ∧ (JJ n).toBlocks₂₂ = 0 := by
-  simp [JJ]
-
 private theorem inK_toBlocks₂_eq {k : M2 n} (hk : InK k) :
     k.toBlocks₂₁ = -k.toBlocks₁₂ ∧ k.toBlocks₂₂ = k.toBlocks₁₁ := by
-  have hG : kᴴ * JJ n * k = JJ n := hk.1
-  have h2 : k * kᴴ = 1 := mul_eq_one_comm.mp hk.2
   have h3 : JJ n * k = k * JJ n := by
-    calc JJ n * k = (k * kᴴ) * JJ n * k := by rw [h2, Matrix.one_mul]
+    calc JJ n * k = (k * kᴴ) * JJ n * k := by rw [mul_eq_one_comm.mp hk.2, Matrix.one_mul]
       _ = k * (kᴴ * JJ n * k) := by simp only [Matrix.mul_assoc]
-      _ = k * JJ n := by rw [hG]
-  obtain ⟨j11, j12, j21, j22⟩ := (JJ_toBlocks (n := n))
-  have e1 := congrArg Matrix.toBlocks₁₁ h3
-  have e2 := congrArg Matrix.toBlocks₁₂ h3
-  rw [_root_.PositivityTheory.Rg.Sw.HSt.LoweringDerivative.upper_left_block_mul_eq, _root_.PositivityTheory.Rg.Sw.HSt.LoweringDerivative.upper_left_block_mul_eq, j11, j12, j21] at e1
-  rw [mul_toBlocks₁₂, mul_toBlocks₁₂, j11, j12, j22] at e2
-  simp at e1 e2
-  exact ⟨e1, e2⟩
-
-private theorem neg_toBlocks₁₁_toBlocks₂₁ (g : M2 n) :
-    (-g).toBlocks₁₁ = -g.toBlocks₁₁ ∧ (-g).toBlocks₂₁ = -g.toBlocks₂₁ := by
-  refine ⟨?_, ?_⟩ <;> ext i j <;> simp [Matrix.toBlocks₁₁, Matrix.toBlocks₂₁]
-
-private theorem one_toBlocks₁₁_toBlocks₁₂ :
-    (1 : M2 n).toBlocks₁₁ = 1 ∧ (1 : M2 n).toBlocks₁₂ = 0 := by
-  refine ⟨?_, ?_⟩ <;> ext i j <;> simp [Matrix.toBlocks₁₁, Matrix.toBlocks₁₂, Matrix.one_apply]
+      _ = k * JJ n := by rw [hk.1]
+  rw [← fromBlocks_toBlocks k, JJ, fromBlocks_multiply, fromBlocks_multiply, fromBlocks_inj] at h3
+  simp only [Matrix.zero_mul, Matrix.one_mul, Matrix.mul_zero, Matrix.mul_neg, Matrix.mul_one,
+    zero_add, add_zero] at h3
+  exact ⟨h3.1, h3.2.1⟩
 
 private theorem inK_toBlocks₁_unitary_relations {k : M2 n} (hk : InK k) :
     (k.toBlocks₁₁)ᴴ * k.toBlocks₁₁ + (k.toBlocks₁₂)ᴴ * k.toBlocks₁₂ = 1 ∧
       (k.toBlocks₁₁)ᴴ * k.toBlocks₁₂ = (k.toBlocks₁₂)ᴴ * k.toBlocks₁₁ := by
   obtain ⟨hc, hd⟩ := inK_toBlocks₂_eq hk
   have hU : kᴴ * k = 1 := hk.2
-  obtain ⟨c11, c12, c21, c22⟩ := conjTranspose_toBlocks k
-  obtain ⟨o11, o12⟩ := (one_toBlocks₁₁_toBlocks₁₂ (n := n))
-  have e1 := congrArg Matrix.toBlocks₁₁ hU
-  have e2 := congrArg Matrix.toBlocks₁₂ hU
-  rw [_root_.PositivityTheory.Rg.Sw.HSt.LoweringDerivative.upper_left_block_mul_eq, c11, c12, hc, o11] at e1
-  rw [mul_toBlocks₁₂, c11, c12, hc, hd, o12] at e2
-  simp only [Matrix.conjTranspose_neg, neg_mul, mul_neg, neg_neg] at e1 e2
-  refine ⟨e1, ?_⟩
-  rw [← sub_eq_zero]
-  simpa [sub_eq_add_neg] using e2
+  rw [← fromBlocks_toBlocks k, hc, hd, fromBlocks_conjTranspose, fromBlocks_multiply,
+    ← fromBlocks_one, fromBlocks_inj] at hU
+  simp only [Matrix.conjTranspose_neg, neg_mul, mul_neg, neg_neg] at hU
+  exact ⟨hU.1, sub_eq_zero.mp (by simpa [sub_eq_add_neg] using hU.2.1)⟩
 
 theorem first_cayley_block_mul_compact (g : M2 n) {k : M2 n} (hk : InK k) : u1 (g * k) = u1 g * u1 k := by
   obtain ⟨hc, hd⟩ := inK_toBlocks₂_eq hk
@@ -182,15 +103,11 @@ theorem second_cayley_block_compact_unitary {k : M2 n} (hk : InK k) : (u2 k)ᴴ 
 theorem second_cayley_block_inv_eq_conjTranspose {k : M2 n} (hk : InK k) : (u2 k)⁻¹ = (u2 k)ᴴ := Matrix.inv_eq_left_inv (second_cayley_block_compact_unitary hk)
 
 theorem inverse_second_block_eq_neg_conjTranspose {x : M2 n} (hx : InG x) : ub2 x = -(u2 x)ᴴ := by
-  obtain ⟨c11, c12, c21, c22⟩ := conjTranspose_toBlocks x
-  obtain ⟨j11, j12, j21, j22⟩ := (JJ_toBlocks (n := n))
-  obtain ⟨n11, n21⟩ := neg_toBlocks₁₁_toBlocks₂₁ (JJ n * xᴴ * JJ n)
-  simp only [ub2, u2, inv_of_inG hx, n11, n21, _root_.PositivityTheory.Rg.Sw.HSt.LoweringDerivative.upper_left_block_mul_eq, _root_.PositivityTheory.Rg.Sw.LVs.toBlocks₂₁_mul, _root_.PositivityTheory.Rg.Sw.LVs.toBlocks₂₂_mul, mul_toBlocks₁₂,
-    c11, c12, c21, c22,
-    j11, j12, j21, j22, Matrix.conjTranspose_add, Matrix.conjTranspose_neg, Matrix.conjTranspose_smul,
-    Complex.star_def, Complex.conj_I, Matrix.mul_one, Matrix.mul_zero, Matrix.zero_mul, Matrix.one_mul,
-    Matrix.mul_neg, Matrix.neg_mul, add_zero, zero_add, neg_neg, neg_smul, smul_neg]
-  module
+  rw [ub2, inv_of_inG hx, u2]
+  conv_lhs => rw [← fromBlocks_toBlocks x]
+  simp only [JJ, fromBlocks_conjTranspose, fromBlocks_multiply, fromBlocks_neg,
+    toBlocks_fromBlocks₁₁, toBlocks_fromBlocks₂₁]
+  simp [Matrix.conjTranspose_add, Matrix.conjTranspose_smul]
 
 theorem Om_K {k : M2 n} (hk : InK k) : Om k = -((u2 k)⁻¹ * u1 k) := by
   unfold Om
@@ -218,15 +135,10 @@ theorem second_cayley_block_upper_triangular_mul {p : M2 n} (hp : p.toBlocks₂�
 
 theorem Om_up {p y : M2 n} (hp : InG p) (hp21 : p.toBlocks₂₁ = 0) (hy : InG y) : Om (p * y) = Om y := by
   have hp' : pᴴ * JJ n * p = JJ n := hp
-  obtain ⟨c11, c12, c21, c22⟩ := conjTranspose_toBlocks p
-  obtain ⟨j11, j12, j21, j22⟩ := (JJ_toBlocks (n := n))
-  have e := congrArg Matrix.toBlocks₁₂ hp'
-  rw [mul_toBlocks₁₂, _root_.PositivityTheory.Rg.Sw.HSt.LoweringDerivative.upper_left_block_mul_eq, mul_toBlocks₁₂, c11, c12, j11, j12, j21, j22, hp21] at e
-  simp only [Matrix.conjTranspose_zero, Matrix.mul_zero, Matrix.zero_mul, Matrix.mul_one,
-    zero_add, add_zero, Matrix.mul_neg, neg_zero] at e
+  rw [← fromBlocks_toBlocks p, hp21, JJ, fromBlocks_conjTranspose, fromBlocks_multiply,
+    fromBlocks_multiply, fromBlocks_inj] at hp'
   have hq : (p.toBlocks₂₂)ᴴ * p.toBlocks₁₁ = 1 := by
-    have := congrArg Matrix.conjTranspose e
-    simpa [Matrix.conjTranspose_mul] using this
+    simpa [Matrix.conjTranspose_mul] using congrArg Matrix.conjTranspose hp'.2.1
   unfold Om
   rw [inverse_second_block_eq_neg_conjTranspose (_root_.PositivityTheory.Rg.Sw.LVs.inG_mul hp hy), inverse_first_block_eq_conjTranspose (_root_.PositivityTheory.Rg.Sw.LVs.inG_mul hp hy), inverse_second_block_eq_neg_conjTranspose hy, inverse_first_block_eq_conjTranspose hy, second_cayley_block_upper_triangular_mul hp21, first_cayley_block_upper_triangular_mul hp21,
     Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, Matrix.mul_inv_rev, Matrix.inv_eq_right_inv hq,

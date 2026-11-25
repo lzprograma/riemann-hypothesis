@@ -78,7 +78,7 @@ theorem appTop_injective {Y Y' : Scheme.{0}} [IsIntegral Y] (h : Y' ⟶ Y) [IsOp
   simp only [CommRingCat.hom_comp, RingHom.comp_apply] at k
   exact (k a).symm.trans ((congrArg _ e).trans (k b))
 
-theorem val_eq_of_open {X Y Y' : Scheme.{0}} [IsIntegral Y] (h : Y' ⟶ Y) [IsOpenImmersion h] [Nonempty Y']
+theorem val_eq_of_inj {X Y Y' : Scheme.{0}} (h : Y' ⟶ Y) (hinj : Function.Injective h.appTop.hom)
     {M : LB X} (hM : M.IsLB) {K K' : Type} [Fintype K] [Fintype K'] {φ : K → (Y ⟶ X)} {ε : K → ℤ}
     {φ' : K' → (Y ⟶ X)} {ε' : K' → ℤ} (hf : FormEq φ ε φ' ε')
     {u : LB.Gen (LB.LinComb M φ ε)} {u' : LB.Gen (LB.LinComb M φ' ε')} (hu : u.IsGen) (hu' : u'.IsGen)
@@ -97,7 +97,7 @@ theorem val_eq_of_open {X Y Y' : Scheme.{0}} [IsIntegral Y] (h : Y' ⟶ Y) [IsOp
     rw [← val_inv, ← val_mul hJ, ← hv Z r z J hJ, val_of t r z J PEmpty.elim (fun k => k.elim)]
     exact (congrArg Units.val (gm_res r z le trivial _)).symm.trans ((gs_unit r z ⊤ trivial _).symm.trans
       (congrArg (gs r z ⊤) ha.symm))
-  have a1 : a = 1 := appTop_injective h ((fn_ext (V := ⊤) fun y _ => by
+  have a1 : a = 1 := hinj ((fn_ext (V := ⊤) fun y _ => by
     choose I hI using fun χ : Y' ⟶ X => exists_chart hM (χ y)
     have := key _ h y I hI
     rw [H y I hI, mul_inv_cancel] at this
@@ -106,6 +106,14 @@ theorem val_eq_of_open {X Y Y' : Scheme.{0}} [IsIntegral Y] (h : Y' ⟶ Y) [IsOp
   have := key Z r z J hJ
   rw [a1, gs_eq _ z ⊤ trivial, map_one, map_one] at this
   exact mul_inv_eq_one.1 (Units.ext this)
+
+theorem val_eq_of_open {X Y Y' : Scheme.{0}} [IsIntegral Y] (h : Y' ⟶ Y) [IsOpenImmersion h] [Nonempty Y']
+    {M : LB X} (hM : M.IsLB) {K K' : Type} [Fintype K] [Fintype K'] {φ : K → (Y ⟶ X)} {ε : K → ℤ}
+    {φ' : K' → (Y ⟶ X)} {ε' : K' → ℤ} (hf : FormEq φ ε φ' ε')
+    {u : LB.Gen (LB.LinComb M φ ε)} {u' : LB.Gen (LB.LinComb M φ' ε')} (hu : u.IsGen) (hu' : u'.IsGen)
+    (H : ∀ y J, Good M y J → val u h y J = val u' h y J) (Z : Scheme.{0}) (r : Z ⟶ Y) (z : Z) (J) (hJ : Good M z J) :
+    val u r z J = val u' r z J :=
+  val_eq_of_inj h (appTop_injective h) hM hf hu hu' H Z r z J hJ
 
 section Base
 
@@ -135,10 +143,15 @@ theorem isCub_formal (T : Over S) {V : Type} [CommGroup V] (k : (T.left ⟶ G.le
   isCub_mul_diff (θ := fun _ _ _ => 1) ⟨fun _ _ => rfl, fun _ _ _ => rfl, fun _ _ _ => rfl, fun _ _ _ _ => rfl⟩
     (fun a => k a.left) fun a b c => (prod_cub a b c k).trans (_root_.mul_one _).symm
 
-variable {U : Scheme.{0}} [IsIntegral S] [Nonempty U] (j : U ⟶ S) [IsOpenImmersion j]
-  [Smooth G.hom] [GeometricallyConnected G.hom]
-
-theorem exists_cubical_of_open (L : RigLB G) (t : LB.Gen (Theta G L.L)) (ht : t.IsGen)
+theorem exists_cubical_of_corr {U : Scheme.{0}} (j : U ⟶ S) [Smooth G.hom] [GeometricallyConnected G.hom]
+    (hcorr : ∀ {X : Scheme.{0}} (T : Over S) [Smooth T.hom] [GeometricallyConnected T.hom]
+      {L : LB X} (_ : L.IsLB) {I I' : Type} [Fintype I] [Fintype I']
+      {φ : I → (T.left ⟶ X)} {ε : I → ℤ} {φ' : I' → (T.left ⟶ X)} {ε' : I' → ℤ}, FormEq φ ε φ' ε' →
+      ∀ {t : LB.Gen (LB.LinComb L φ ε)} {t' : LB.Gen (LB.LinComb L φ' ε')}, t.IsGen → t'.IsGen →
+      (∀ (y : (pullback T.hom j :)) J, Good L y J →
+        val t (pullback.fst T.hom j) y J = val t' (pullback.fst T.hom j) y J) →
+      LB.Gen.Corr L _ _ _ _ t t')
+    (L : RigLB G) (t : LB.Gen (Theta G L.L)) (ht : t.IsGen)
     (h : ∀ (T : Over U) (z : T.left) (J), Good L.L z J →
       IsCub (thV t (T := Over.mk (T.hom ≫ j)) z J)) : ∃ c : CubicalStr G L, c.t = t := by
   have s₂ := CubeExtension.smooth_tensor G G
@@ -170,10 +183,10 @@ theorem exists_cubical_of_open (L : RigLB G) (t : LB.Gen (Theta G L.L)) (ht : t.
     exact Finset.prod_congr rfl fun I _ => congrArg (fun q => k q ^ thε I) (Category.id_comp _).symm
   have g : ∀ {Z : Scheme.{0}} (r : Z ⟶ (G3 G).left), (LB.pullGen L.L (thφ G (x3 G)) thε t r).IsGen := fun r =>
     DVR.pullGen_isGen _ _ _ _ ht r
-  refine ⟨⟨t, ht, fun i => corr_of_open j (G2 G) L.isLB (fun V _ k => ?_) (g _) (LB.isGen_oneGen _) fun y J hJ => ?_,
-    corr_of_open j (G3 G) L.isLB (fun V _ k => ?_) ht (g _) fun y J hJ => ?_,
-    corr_of_open j (G3 G) L.isLB (fun V _ k => ?_) ht (g _) fun y J hJ => ?_,
-    corr_of_open j (G4 G) L.isLB (fun V _ k => ?_) (DVR.mulGen_isGen _ _ _ _ _ _ _ (g _) (g _))
+  refine ⟨⟨t, ht, fun i => hcorr (G2 G) L.isLB (fun V _ k => ?_) (g _) (LB.isGen_oneGen _) fun y J hJ => ?_,
+    hcorr (G3 G) L.isLB (fun V _ k => ?_) ht (g _) fun y J hJ => ?_,
+    hcorr (G3 G) L.isLB (fun V _ k => ?_) ht (g _) fun y J hJ => ?_,
+    hcorr (G4 G) L.isLB (fun V _ k => ?_) (DVR.mulGen_isGen _ _ _ _ _ _ _ (g _) (g _))
       (DVR.mulGen_isGen _ _ _ _ _ _ _ (g _) (g _)) fun y J hJ => ?_⟩, rfl⟩
   · refine Eq.trans ?_ (Fintype.prod_empty _).symm
     have C := isCub_formal (G := G) (G2 G) k
@@ -203,6 +216,14 @@ theorem exists_cubical_of_open (L : RigLB G) (t : LB.Gen (Theta G L.L)) (ht : t.
       (Eq.trans ?_ ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (v _ y J hJ _ _ _) (v _ y J hJ _ _ _))).symm)
     rw [m, m]
     exact C.coc _ _ _ _
+
+variable {U : Scheme.{0}} [IsIntegral S] [Nonempty U] (j : U ⟶ S) [IsOpenImmersion j]
+  [Smooth G.hom] [GeometricallyConnected G.hom]
+
+theorem exists_cubical_of_open (L : RigLB G) (t : LB.Gen (Theta G L.L)) (ht : t.IsGen)
+    (h : ∀ (T : Over U) (z : T.left) (J), Good L.L z J →
+      IsCub (thV t (T := Over.mk (T.hom ≫ j)) z J)) : ∃ c : CubicalStr G L, c.t = t :=
+  exists_cubical_of_corr j (corr_of_open j) L t ht h
 
 end Group
 
@@ -243,15 +264,16 @@ theorem isPullback_tripleProduct_groupPullback (gp : IsGrpPullback A G j F) :
 
 end Pull
 
-theorem exists_extension {S : Scheme.{0}} [IsIntegral S] [IsLocallyNoetherian S] (hS : Geo.Tor.IsNormalScheme S)
-    {U H HU X X' : Scheme.{0}} [Nonempty U] (j : U ⟶ S) [IsOpenImmersion j] (p : H ⟶ S) (e : S ⟶ H) (jH : HU ⟶ H)
-    (pU : HU ⟶ U) (eU : U ⟶ HU) (hs : Smooth p) (hc : GeometricallyConnected p) (he : e ≫ p = 𝟙 _)
-    (hp : IsPullback jH pU p j) (heU : eU ≫ jH = j ≫ e) {L : LB X} (hL : L.IsLB) {L' : LB X'} (hL' : L'.IsLB)
-    {F : X' ⟶ X} {w : LB.Iso L' (L.pull F)} (hw : PGen w) {K : Type} [Fintype K] (φ : K → (H ⟶ X))
-    (φ' : K → (HU ⟶ X')) (ε : K → ℤ) (hφ : ∀ k, φ' k ≫ F = jH ≫ φ k)
+theorem exists_extension_of {S U H HU X X' : Scheme.{0}} (j : U ⟶ S) (e : S ⟶ H) (jH : HU ⟶ H) (eU : U ⟶ HU)
+    {L : LB X} (hL : L.IsLB) {L' : LB X'} (hL' : L'.IsLB) {F : X' ⟶ X} {w : LB.Iso L' (L.pull F)} (hw : PGen w)
+    {K : Type} [Fintype K] (φ : K → (H ⟶ X)) (φ' : K → (HU ⟶ X')) (ε : K → ℤ) (hφ : ∀ k, φ' k ≫ F = jH ≫ φ k)
     (f₁ : FormEq (K := PEmpty) (PEmpty.elim : PEmpty → (S ⟶ X)) PEmpty.elim (fun k => e ≫ φ k) ε)
     (f₂ : FormEq (K := PEmpty) (PEmpty.elim : PEmpty → (U ⟶ X')) PEmpty.elim (fun k => eU ≫ φ' k) ε)
-    (s : LB.Gen (LB.LinComb L' φ' ε)) (hg : s.IsGen) (h1 : ∀ y J, Good L' y J → val s eU y J = 1) :
+    (s : LB.Gen (LB.LinComb L' φ' ε)) (hg : s.IsGen) (h1 : ∀ y J, Good L' y J → val s eU y J = 1)
+    (hext : ∀ (t : LB.Gen (LB.LinComb L (fun k => jH ≫ φ k) ε)) (ρ : LB.Gen (LB.LinComb L (fun k => e ≫ φ k) ε)),
+      t.IsGen → ρ.IsGen →
+      LB.Gen.Corr L _ _ _ _ (LB.pullGen L _ ε t eU) (LB.pullGen L _ ε ρ j) →
+      ∃ c : LB.Gen (LB.LinComb L φ ε), c.IsGen ∧ LB.pullGen L φ ε c jH = t) :
     ∃ c : LB.Gen (LB.LinComb L φ ε), c.IsGen ∧ PMaps w φ' φ ε s c jH := by
   have key : ∀ (ψ : K → (HU ⟶ X)) (_ : ∀ k, φ' k ≫ F = ψ k),
       ∃ t : LB.Gen (LB.LinComb L ψ ε), t.IsGen ∧
@@ -263,8 +285,7 @@ theorem exists_extension {S : Scheme.{0}} [IsIntegral S] [IsLocallyNoetherian S]
     exact exists_up hw hL hL' s hg
   obtain ⟨t, ht, hv⟩ := key _ hφ
   obtain ⟨ρ, hρ, vρ⟩ := exists_gen hL f₁ (LB.oneGen L) (LB.isGen_oneGen L)
-  obtain ⟨c, ⟨hc₁, hc₂⟩, -⟩ := _root_.GlobalTheory.GenExtendNormal.existsUnique_gen_extend S hS U H HU X j p e jH pU eU hs
-    (forall_geometricallyIntegral_of_smooth_of_geometricallyConnected _ _ _ hs hc) he hp heU L hL K φ ε t ρ ht hρ
+  obtain ⟨c, hc₁, hc₂⟩ := hext t ρ ht hρ
     (corr_of_val hL fun y J hJ => by
       refine (val_pull hJ _ _ _).trans (Eq.trans ?_
         ((val_pull hJ ρ _ _).trans ((vρ _ _ y J hJ).trans (val_one _))).symm)
@@ -282,6 +303,20 @@ theorem exists_extension {S : Scheme.{0}} [IsIntegral S] [IsLocallyNoetherian S]
   refine Eq.trans ?_ (hv Z r z p q hm (Set.mem_iInter.2 hq))
   exact ((gm_res r z _ hm _).trans (gm_pull r jH z (LB.wchart L φ p)
     (Set.mem_iInter.2 fun k => Set.mem_iInter.1 hm k) _)).symm
+
+theorem exists_extension {S : Scheme.{0}} [IsIntegral S] [IsLocallyNoetherian S] (hS : Geo.Tor.IsNormalScheme S)
+    {U H HU X X' : Scheme.{0}} [Nonempty U] (j : U ⟶ S) [IsOpenImmersion j] (p : H ⟶ S) (e : S ⟶ H) (jH : HU ⟶ H)
+    (pU : HU ⟶ U) (eU : U ⟶ HU) (hs : Smooth p) (hc : GeometricallyConnected p) (he : e ≫ p = 𝟙 _)
+    (hp : IsPullback jH pU p j) (heU : eU ≫ jH = j ≫ e) {L : LB X} (hL : L.IsLB) {L' : LB X'} (hL' : L'.IsLB)
+    {F : X' ⟶ X} {w : LB.Iso L' (L.pull F)} (hw : PGen w) {K : Type} [Fintype K] (φ : K → (H ⟶ X))
+    (φ' : K → (HU ⟶ X')) (ε : K → ℤ) (hφ : ∀ k, φ' k ≫ F = jH ≫ φ k)
+    (f₁ : FormEq (K := PEmpty) (PEmpty.elim : PEmpty → (S ⟶ X)) PEmpty.elim (fun k => e ≫ φ k) ε)
+    (f₂ : FormEq (K := PEmpty) (PEmpty.elim : PEmpty → (U ⟶ X')) PEmpty.elim (fun k => eU ≫ φ' k) ε)
+    (s : LB.Gen (LB.LinComb L' φ' ε)) (hg : s.IsGen) (h1 : ∀ y J, Good L' y J → val s eU y J = 1) :
+    ∃ c : LB.Gen (LB.LinComb L φ ε), c.IsGen ∧ PMaps w φ' φ ε s c jH :=
+  exists_extension_of j e jH eU hL hL' hw φ φ' ε hφ f₁ f₂ s hg h1 fun t ρ ht hρ hcorr =>
+    (_root_.GlobalTheory.GenExtendNormal.existsUnique_gen_extend S hS U H HU X j p e jH pU eU hs
+      (forall_geometricallyIntegral_of_smooth_of_geometricallyConnected _ _ _ hs hc) he hp heU L hL K φ ε t ρ ht hρ hcorr).exists
 
 section Main
 
@@ -306,28 +341,26 @@ theorem exists_rigidified (gp : IsGrpPullback A G j F) (L : RigLB A) {M : LB G.l
     exact Category.assoc _ _ _
   rw [cls_pull h', c, map_sub, ← pull_comp, d, pull_comp, pull_comp, a, b, map_zero, sub_zero]
 
-variable [IsIntegral S] [IsLocallyNoetherian S] [Nonempty U] [IsOpenImmersion j]
-  [Smooth G.hom] [GeometricallyConnected G.hom]
-
-theorem exists_cubical (hS : Geo.Tor.IsNormalScheme S) (gp : IsGrpPullback A G j F) {L : RigLB A} (c : CubicalStr A L)
-    (L' : RigLB G) {w : LB.Iso L.L (L'.L.pull F)} (hw : PGen w) :
+theorem exists_cubical_of (gp : IsGrpPullback A G j F) {L : RigLB A} (c : CubicalStr A L)
+    (L' : RigLB G) {w : LB.Iso L.L (L'.L.pull F)}
+    (hext : (∀ I : thK.{0}, thφ A (x3 A) I ≫ F = (cubeMapOf gp).F3 ≫ thφ G (x3 G) I) →
+      (eSec (G3 A) ≫ (cubeMapOf gp).F3 = j ≫ eSec (G3 G)) →
+      (∀ y J, Good L.L y J → val c.t (eSec (G3 A)) y J = 1) →
+      ∃ t : LB.Gen (Theta G L'.L), t.IsGen ∧ PMaps w (thφ A (x3 A)) (thφ G (x3 G)) thε c.t t (cubeMapOf gp).F3)
+    (hopen : ∀ (t : LB.Gen (Theta G L'.L)), t.IsGen →
+      (∀ (T : Over U) (z : T.left) (J), Good L'.L z J → IsCub (thV t (T := Over.mk (T.hom ≫ j)) z J)) →
+      ∃ c' : CubicalStr G L', c'.t = t) :
     ∃ c' : CubicalStr G L', PMaps w (thφ A (x3 A)) (thφ G (x3 G)) thε c.t c'.t (cubeMapOf gp).F3 := by
-  have s₂ := CubeExtension.smooth_tensor G G
-  have s₃ := CubeExtension.smooth_tensor G (G ⊗ G)
-  have c₂ := CubeExtension.geometricallyConnected_tensor G G
-  have c₃ := CubeExtension.geometricallyConnected_tensor G (G ⊗ G)
   have hc : ∀ I : thK.{0}, thφ A (x3 A) I ≫ F = (cubeMapOf gp).F3 ≫ thφ G (x3 G) I :=
     fun I => (cubeMapOf gp).psum_comm I.down
-  obtain ⟨t, ht, Ht⟩ := exists_extension hS j (G3 G).hom (eSec (G3 G)) (cubeMapOf gp).F3 (G3 A).hom (eSec (G3 A))
-    s₃ c₃ (CubeExtension.eSec_comp _) (isPullback_tripleProduct_groupPullback gp) (by
+  obtain ⟨t, ht, Ht⟩ := hext hc (by
       rw [CubeExtension.eSec_three, groupPullback_tripleProductMap_lift, map_one, CubeExtension.eSec_three]
       refine hom_ext_triple _ fun i => ?_
       rw [Category.assoc, ← Over.comp_left, ← Over.comp_left]
-      fin_cases i <;> simp [x3, Hom.one_def]) L'.isLB L.isLB hw (thφ G (x3 G)) (thφ A (x3 A)) thε hc
-    (CubeExtension.formEq_origin G) (CubeExtension.formEq_origin A) c.t c.isGen (fun y J hJ => by
+      fin_cases i <;> simp [x3, Hom.one_def]) (fun y J hJ => by
       rw [CubeExtension.eSec_three]
       exact (isCub_cubV c (T := 𝟙_ _) hJ).face 1 1)
-  obtain ⟨c', rfl⟩ := exists_cubical_of_open j L' t ht fun T z J hJ => by
+  obtain ⟨c', rfl⟩ := hopen t ht fun T z J hJ => by
     refine isCub_of_surjective (pushHom gp T) (fun a => ?_) ?_
     · exact ⟨Over.homMk (gp.1.lift a.left T.hom (Over.w a)) (gp.1.lift_snd _ _ _),
         Over.OverMorphism.ext (gp.1.lift_fst _ _ _)⟩
@@ -338,8 +371,15 @@ theorem exists_cubical (hS : Geo.Tor.IsNormalScheme S) (gp : IsGrpPullback A G j
       exact e.trans (congrArg₂ (· * ·) (prod_cub a b d (fun q => gw w q z (J (q ≫ F)) (J' q))) rfl)
   exact ⟨c', Ht⟩
 
-theorem isSymmetric (hS : Geo.Tor.IsNormalScheme S) (gp : IsGrpPullback A G j F) {L : RigLB A}
-    (L' : RigLB G) {w : LB.Iso L.L (L'.L.pull F)} (hw : PGen w) (h : L.IsSymmetric) : L'.IsSymmetric := by
+theorem isSymmetric_of (gp : IsGrpPullback A G j F) {L : RigLB A}
+    (L' : RigLB G) {w : LB.Iso L.L (L'.L.pull F)} (h : L.IsSymmetric)
+    (hext : (∀ k : Fin 2, ![(ι[A]).left, 𝟙 A.left] k ≫ F = F ≫ ![(ι[G]).left, 𝟙 G.left] k) →
+      FormEq (K := PEmpty) (PEmpty.elim : PEmpty → (S ⟶ G.left)) PEmpty.elim (fun k => eSec G ≫ ![(ι[G]).left, 𝟙 G.left] k) ![1, -1] →
+      FormEq (K := PEmpty) (PEmpty.elim : PEmpty → (U ⟶ A.left)) PEmpty.elim (fun k => eSec A ≫ ![(ι[A]).left, 𝟙 A.left] k) ![1, -1] →
+      ∀ (s : LB.Gen (LB.LinComb L.L ![(ι[A]).left, 𝟙 A.left] ![1, -1])), s.IsGen →
+      (∀ y J, Good L.L y J → val s (eSec A) y J = 1) →
+      ∃ t : LB.Gen (LB.LinComb L'.L ![(ι[G]).left, 𝟙 G.left] ![1, -1]), t.IsGen ∧
+        PMaps w ![(ι[A]).left, 𝟙 A.left] ![(ι[G]).left, 𝟙 G.left] ![1, -1] s t F) : L'.IsSymmetric := by
   obtain ⟨s, hs, h1⟩ := (isSymmetric_iff_exists_gen U A L).1 h
   have hι : (ι[A]).left ≫ F = F ≫ (ι[G]).left := by
     have e := congrArg (fun q => q.left) (map_inv (pushHom gp A) (𝟙 A))
@@ -351,9 +391,7 @@ theorem isSymmetric (hS : Geo.Tor.IsNormalScheme S) (gp : IsGrpPullback A G j F)
     rw [eSec, ← Over.comp_left, GrpObj.one_inv]
   have e₂ : eSec G ≫ (ι[G]).left = eSec G := by
     rw [eSec, ← Over.comp_left, GrpObj.one_inv]
-  obtain ⟨t, ht, -⟩ := exists_extension hS j G.hom (eSec G) F A.hom (eSec A) inferInstance inferInstance
-    (CubeExtension.eSec_comp _) gp.1 (cubeMapOf gp).e_comm L'.isLB L.isLB hw (K := Fin 2)
-    ![(ι[G]).left, 𝟙 G.left] ![(ι[A]).left, 𝟙 A.left] ![1, -1] (fun k => by
+  obtain ⟨t, ht, -⟩ := hext (fun k => by
       fin_cases k
       · exact hι
       · exact (Category.id_comp _).trans (Category.comp_id _).symm)
@@ -368,6 +406,28 @@ theorem isSymmetric (hS : Geo.Tor.IsNormalScheme S) (gp : IsGrpPullback A G j F)
   have he : eSec G ≫ (ι[G]).left = 𝟙 _ ≫ eSec G := e₂.trans (Category.id_comp _).symm
   exact ⟨he, Unif.RigidifyIso.exists_rigidified_iso S S (𝟙 S) G G _ he L' L'
     ((cls_eq_iff L'.isLB (pull_isLB L'.isLB _)).1 z.symm)⟩
+
+variable [IsIntegral S] [IsLocallyNoetherian S] [Nonempty U] [IsOpenImmersion j]
+  [Smooth G.hom] [GeometricallyConnected G.hom]
+
+theorem exists_cubical (hS : Geo.Tor.IsNormalScheme S) (gp : IsGrpPullback A G j F) {L : RigLB A} (c : CubicalStr A L)
+    (L' : RigLB G) {w : LB.Iso L.L (L'.L.pull F)} (hw : PGen w) :
+    ∃ c' : CubicalStr G L', PMaps w (thφ A (x3 A)) (thφ G (x3 G)) thε c.t c'.t (cubeMapOf gp).F3 :=
+  have := CubeExtension.smooth_tensor G G
+  have := CubeExtension.geometricallyConnected_tensor G G
+  exists_cubical_of gp c L'
+    (fun hc heU h1 => exists_extension hS j (G3 G).hom (eSec (G3 G)) (cubeMapOf gp).F3 (G3 A).hom (eSec (G3 A))
+      (CubeExtension.smooth_tensor G (G ⊗ G)) (CubeExtension.geometricallyConnected_tensor G (G ⊗ G))
+      (CubeExtension.eSec_comp _) (isPullback_tripleProduct_groupPullback gp) heU L'.isLB L.isLB hw
+      (thφ G (x3 G)) (thφ A (x3 A)) thε hc (CubeExtension.formEq_origin G) (CubeExtension.formEq_origin A) c.t c.isGen h1)
+    (exists_cubical_of_open j L')
+
+theorem isSymmetric (hS : Geo.Tor.IsNormalScheme S) (gp : IsGrpPullback A G j F) {L : RigLB A}
+    (L' : RigLB G) {w : LB.Iso L.L (L'.L.pull F)} (hw : PGen w) (h : L.IsSymmetric) : L'.IsSymmetric :=
+  isSymmetric_of gp L' h fun hφ f₁ f₂ s hs h1 =>
+    exists_extension hS j G.hom (eSec G) F A.hom (eSec A) inferInstance inferInstance
+      (CubeExtension.eSec_comp _) gp.1 (cubeMapOf gp).e_comm L'.isLB L.isLB hw (K := Fin 2)
+      ![(ι[G]).left, 𝟙 G.left] ![(ι[A]).left, 𝟙 A.left] ![1, -1] hφ f₁ f₂ s hs h1
 
 end Main
 

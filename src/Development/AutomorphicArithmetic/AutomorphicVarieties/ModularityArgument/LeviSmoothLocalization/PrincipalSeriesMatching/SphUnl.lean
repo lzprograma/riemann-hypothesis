@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.PolFacts
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasSatakeOfIsLocComp
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SupercuspidalSupportOfPrincipalSeriesSubquotient
@@ -47,20 +48,9 @@ import Mathlib.Tactic.NormNum.RealSqrt
 open NumberField IsDedekindDomain Polynomial UpperTheory.V UpperTheory.V.Z.Gam UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter
 open GlobalTheory.CuspRep GlobalTheory.SmGL GlobalTheory.LocGL ValuativeRel
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 private theorem val_unif (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] :
     valuation k (unif k : k) = uniformizer k := by
-  obtain ⟨p, hp⟩ := valuation_surjective (uniformizer k : ValueGroupWithZero k)
-  have hp0 : p ≠ 0 := by
-    rintro rfl
-    rw [map_zero] at hp
-    exact uniformizer_ne_zero hp.symm
-  have h := Classical.epsilon_spec (p := fun p : kˣ => valuation k (p : k) < 1 ∧
-    ∀ x : k, valuation k x < 1 → valuation k x ≤ valuation k (p : k))
-    ⟨Units.mk0 p hp0, by rw [Units.val_mk0, hp]; exact uniformizer_lt_one,
-      fun x hx => by rw [Units.val_mk0, hp]; exact le_uniformizer_iff.2 hx⟩
-  exact le_antisymm (le_uniformizer_iff.2 h.1) (hp ▸ h.2 p (hp ▸ uniformizer_lt_one))
+  apply _root_.val_unif <;> assumption
 
 theorem UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter.sphUnl :
     UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter.SphUnl := by

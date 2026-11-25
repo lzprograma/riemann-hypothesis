@@ -2,49 +2,7 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.ObjBridge
 public import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.WittVector.DiscreteValuationRing
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.GrowthBounds.WittFrameLocaliserOrders
 
 @[expose] public section
@@ -163,7 +121,7 @@ private theorem mem_src_iff_lemma_2 [IsDomain W] [IsFractionRing W Qq] (p r : �
   · rintro ⟨z, hz⟩ c hc
     have h1 := congrFun (mulVec_cancel B hB hz) c
     unfold dD at h1
-    simp only [Matrix.mulVec_diagonal, if_pos hc] at h1
+    simp only [Matrix.mulVec_diagonal, ite_eq_left hc] at h1
     rw [Ideal.mem_span_singleton]
     refine ⟨z c, hinj ?_⟩
     rw [map_mul, map_natCast, ← h1, ← mul_assoc, mul_inv_cancel₀ hpQ, one_mul]
@@ -174,8 +132,8 @@ private theorem mem_src_iff_lemma_2 [IsDomain W] [IsFractionRing W Qq] (p r : �
       by_cases hc : c.val < r
       · obtain ⟨w, hw⟩ := Ideal.mem_span_singleton.mp (h c hc)
         refine ⟨w, ?_⟩
-        rw [if_pos hc, hw, map_mul, map_natCast, ← mul_assoc, inv_mul_cancel₀ hpQ, one_mul]
-      · exact ⟨y c, by rw [if_neg hc, one_mul]⟩
+        rw [ite_eq_left hc, hw, map_mul, map_natCast, ← mul_assoc, inv_mul_cancel₀ hpQ, one_mul]
+      · exact ⟨y c, by rw [ite_eq_right hc, one_mul]⟩
     choose z hz using hex
     refine ⟨z, ?_⟩
     congr 1
@@ -236,13 +194,13 @@ theorem isEdge_of_basis [IsDomain W] [IsFractionRing W Qq] (p n' r : ℕ) (hp0 :
     constructor
     · intro h c
       by_cases hc : c.val < r
-      · rw [if_pos hc]
+      · rw [ite_eq_left hc]
         exact h c hc
-      · rw [if_neg hc]
+      · rw [ite_eq_right hc]
         exact Submodule.mem_top
     · intro h c hc
       have h' := h c
-      rwa [if_pos hc] at h'
+      rwa [ite_eq_left hc] at h'
   have e1 := Submodule.Quotient.equiv _ _ b.equivFun hP
   rw [Nat.card_congr e1.toEquiv, Nat.card_congr (Submodule.quotientPi _).toEquiv, Nat.card_pi]
   have hfac : ∀ c : Fin k, Nat.card (W ⧸ (if c.val < r then Ideal.span {(p : W)} else ⊤ :
@@ -255,15 +213,7 @@ theorem isEdge_of_basis [IsDomain W] [IsFractionRing W Qq] (p n' r : ℕ) (hp0 :
       exact Nat.card_unique
   rw [Finset.prod_congr rfl (fun c _ => hfac c)]
   have hcardF : (Finset.univ.filter fun c : Fin k => c.val < r).card = r := by
-    have hF : (Finset.univ.filter fun c : Fin k => c.val < r) = Finset.univ.map (Fin.castLEEmb hr) := by
-      ext c
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_map, Fin.castLEEmb_apply]
-      constructor
-      · intro hc
-        exact ⟨⟨c.val, hc⟩, Fin.ext rfl⟩
-      · rintro ⟨a, rfl⟩
-        exact a.isLt
-    rw [hF, Finset.card_map, Finset.card_univ, Fintype.card_fin]
+    rw [Fin.card_filter_val_lt, min_eq_right hr]
   rw [Finset.prod_ite, Finset.prod_const, Finset.prod_const_one, mul_one, ← pow_mul, hcardF]
 
 end Col
@@ -321,17 +271,17 @@ theorem mem_plane (r : ℕ) (g : Matrix (Fin k) (Fin k) (WF p n')) (x : Fin k �
     rintro _ ⟨i, rfl⟩
     dsimp only
     by_cases hi : i.val < r
-    · rw [if_pos hi]
+    · rw [ite_eq_left hi]
       apply Submodule.subset_span
       exact ⟨i, hi, rfl⟩
-    · rw [if_neg hi]
+    · rw [ite_eq_right hi]
       exact Submodule.zero_mem _
   have hS : ratPlane p n' r g ≤ Submodule.span (GaloisField p n') (Set.range fun i : Fin k =>
       if i.val < r then (fun c => WittVector.constantCoeff (g⁻¹ i c)) else 0) := by
     refine Submodule.span_le.mpr ?_
     rintro _ ⟨i, hi, rfl⟩
     apply Submodule.subset_span
-    exact ⟨i, if_pos hi⟩
+    exact ⟨i, ite_eq_left hi⟩
   have hEq := le_antisymm hS (Submodule.span_le.mpr hR)
   rw [hEq, Submodule.mem_span_range_iff_exists_fun]
   constructor
@@ -379,7 +329,7 @@ private theorem cc_zero_lemma_3 (r : ℕ) (g g' : Matrix (Fin k) (Fin k) (WF p n
   rw [Finset.sum_comm]
   refine Finset.sum_eq_zero (fun l _ => ?_)
   by_cases hl : l.val < r
-  · simp only [hl, if_true, mul_assoc, ← Finset.mul_sum, hone l hl, mul_zero]
+  · simp only [hl, ite_true, mul_assoc, ← Finset.mul_sum, hone l hl, mul_zero]
   · simp [hl]
 
 theorem tgt_le_of_plane (φ : WF p n' ≃+* W) (r : ℕ) (hpQ : (p : Qq) ≠ 0)
@@ -403,16 +353,16 @@ theorem tgt_le_of_plane (φ : WF p n' ≃+* W) (r : ℕ) (hpQ : (p : Qq) ≠ 0)
     intro i c
     by_cases hi : i.val < r
     · by_cases hc : c.val < r
-      · exact ⟨(Ngi φ g' * Ng φ g) i c, by rw [if_pos hi, if_pos hc, mul_comm]⟩
+      · exact ⟨(Ngi φ g' * Ng φ g) i c, by rw [ite_eq_left hi, ite_eq_left hc, mul_comm]⟩
       · refine ⟨(p : W) * (Ngi φ g' * Ng φ g) i c, ?_⟩
-        rw [if_pos hi, if_neg hc, mul_one, map_mul, map_natCast, ← mul_assoc,
+        rw [ite_eq_left hi, ite_eq_right hc, mul_one, map_mul, map_natCast, ← mul_assoc,
           inv_mul_cancel₀ hpQ, one_mul]
     · by_cases hc : c.val < r
       · obtain ⟨w, hw⟩ := hZ i c hi hc
         refine ⟨w, ?_⟩
-        rw [if_neg hi, if_pos hc, one_mul, hw, map_mul, map_natCast, mul_comm, ← mul_assoc,
+        rw [ite_eq_right hi, ite_eq_left hc, one_mul, hw, map_mul, map_natCast, mul_comm, ← mul_assoc,
           inv_mul_cancel₀ hpQ, one_mul]
-      · exact ⟨(Ngi φ g' * Ng φ g) i c, by rw [if_neg hi, if_neg hc, mul_one, one_mul]⟩
+      · exact ⟨(Ngi φ g' * Ng φ g) i c, by rw [ite_eq_right hi, ite_eq_right hc, mul_one, one_mul]⟩
   choose Y hY using hd
   have hE : (Ngi φ g' * Ng φ g).map (algebraMap W Qq) * dD Qq p r k =
       dD Qq p r k * Matrix.map Y (algebraMap W Qq) := by
@@ -457,7 +407,7 @@ theorem plane_le_of_tgt [IsDomain W] [IsFractionRing W Qq] (φ : WF p n' ≃+* W
   have h2 := mulVec_cancel h hh h1
   funext j
   have h3 := congrFun h2 j
-  simp only [dD, Matrix.mul_diagonal, Matrix.map_apply, Ng, Matrix.mulVec, dotProduct, if_pos hc] at h3
+  simp only [dD, Matrix.mul_diagonal, Matrix.map_apply, Ng, Matrix.mulVec, dotProduct, ite_eq_left hc] at h3
   have h5 : algebraMap W Qq (φ (g⁻¹ c j)) = (∑ i, algebraMap W Qq (φ (g'⁻¹ i j)) *
       (if i.val < r then ((p : Qq))⁻¹ else 1) * algebraMap W Qq (Y c i)) * (p : Qq) := by
     rw [← h3, mul_assoc, inv_mul_cancel₀ hpQ, mul_one]
@@ -467,9 +417,9 @@ theorem plane_le_of_tgt [IsDomain W] [IsFractionRing W Qq] (φ : WF p n' ≃+* W
     rw [h5, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     by_cases hi : i.val < r
-    · simp only [hi, if_true, map_mul, mul_one]
+    · simp only [hi, ite_true, map_mul, mul_one]
       rw [mul_assoc, mul_assoc, mul_left_comm ((p : Qq))⁻¹, inv_mul_cancel₀ hpQ, mul_one]
-    · simp only [hi, if_false, map_mul, map_natCast, mul_one]
+    · simp only [hi, ite_false, map_mul, map_natCast, mul_one]
       ring
   have h6 := hinj h4
   have h7 : g⁻¹ c j = ∑ i, g'⁻¹ i j * (if i.val < r then 1 else (p : WF p n')) * φ.symm (Y c i) := by
@@ -482,8 +432,8 @@ theorem plane_le_of_tgt [IsDomain W] [IsFractionRing W Qq] (φ : WF p n' ≃+* W
   rw [h7, map_sum]
   refine Finset.sum_congr rfl (fun i _ => ?_)
   by_cases hi : i.val < r
-  · rw [if_pos hi, if_pos hi, mul_one, map_mul, mul_comm]
-  · rw [if_neg hi, if_neg hi, mul_zero, map_mul, map_mul, cc_p, mul_zero, zero_mul]
+  · rw [ite_eq_left hi, ite_eq_left hi, mul_one, map_mul, mul_comm]
+  · rw [ite_eq_right hi, ite_eq_right hi, mul_zero, map_mul, map_mul, cc_p, mul_zero, zero_mul]
 
 end Witt
 
@@ -529,8 +479,8 @@ theorem edgePlane : EdgePlane := by
         _ = φ ((1 : Matrix (Fin (m + 1)) (Fin (m + 1)) (WF p n')) a b) := by
             rw [Matrix.one_apply, Matrix.one_apply]
             by_cases hab : a = b
-            · rw [if_pos hab, if_pos hab.symm, map_one]
-            · rw [if_neg hab, if_neg (Ne.symm hab), map_zero]
+            · rw [ite_eq_left hab, ite_eq_left hab.symm, map_one]
+            · rw [ite_eq_right hab, ite_eq_right (Ne.symm hab), map_zero]
     have hgl : IsGLW g := by
       unfold IsGLW
       have h1 : g.det * gi.det = 1 := by rw [← Matrix.det_mul, hggi, Matrix.det_one]

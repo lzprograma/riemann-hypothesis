@@ -1,53 +1,7 @@
 module
 
 public import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.IntIndPow
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.MeasureTheory.Integral.Pi
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -123,7 +77,7 @@ theorem rad_le (hϖ : IsUnif ϖ) (e : Fin n → Fin d) (j) : valuation k (rad ϖ
   · simp
   · exact val_pow_le hϖ c
 
-theorem rad_e (e : Fin n → Fin d) (i) : rad ϖ c e (e i) = 1 := if_pos ⟨i, rfl⟩
+theorem rad_e (e : Fin n → Fin d) (i) : rad ϖ c e (e i) = 1 := ite_eq_left ⟨i, rfl⟩
 
 theorem ind_zero (c : k) : ind c 0 = 1 := by simp [ind]
 
@@ -152,7 +106,7 @@ theorem prod_mid (hr : Function.Injective jr) (hc : Function.Injective jc) {e : 
     push Not at h
     obtain ⟨⟨i, hi⟩, j, hj⟩ := h
     exact hp ⟨(i, j), Prod.ext hi.symm hj.symm⟩
-  · simp only [Prod.map, if_neg (hP _ _), ext_mid hr hc, rad, he]
+  · simp only [Prod.map, ite_eq_right (hP _ _), ext_mid hr hc, rad, he]
 
 variable [SecondCountableTopology k] [MeasurableSpace k] [BorelSpace k] {m : Measure k} {ψ : AddChar k ℂ}
 
@@ -163,10 +117,10 @@ theorem prod_vol (hm : IsVol m) (hϖ : IsUnif ϖ) {e : Fin n → Fin d} {P : Fin
   refine (Fintype.prod_of_injective g hg _ _ (fun p hp => ?_) fun p => ?_).symm
   · by_cases h1 : p ∈ P
     · have h2 : p.2 ∈ Set.range e := by by_contra h2; exact hp ((h p).2 ⟨h1, h2⟩)
-      simp only [if_pos h1, rad, if_pos h2, int_ind_one hm]
-    · simp only [if_neg h1, int_ind_one hm]
+      simp only [ite_eq_left h1, rad, ite_eq_left h2, int_ind_one hm]
+    · simp only [ite_eq_right h1, int_ind_one hm]
   · obtain ⟨h1, h2⟩ := (h _).1 ⟨p, rfl⟩
-    simp only [if_pos h1, rad, if_neg h2, int_ind_pow hm hϖ]
+    simp only [ite_eq_left h1, rad, ite_eq_right h2, int_ind_pow hm hϖ]
 
 theorem split_prod {e : Fin n → Fin d} (P : Finset (Fin n × Fin d)) (Y : Matrix (Fin n) (Fin d) k) (hY : ∀ p ∈ P, Y p.1 p.2 = 0)
     (Z : Fin n × Fin d → k) : (∏ p : Fin n × Fin d, ind (rad ϖ c e p.2) ((tm (cut P Z) + Y) p.1 p.2)) * wt P Z =
@@ -238,7 +192,7 @@ theorem int_cone (hm : IsVol m) (hϖ : IsUnif ϖ) {b : ℕ} {jc : Fin d₁ → F
       simp [tm, cut, hYd, hb, ext_off y (Or.inl m0)]
     have e3 : (tm (cut P Z) + Y).submatrix id e (Fin.last _) 0 = Z (Fin.last _, e 0) := by
       have := hY _ ha
-      simp only [submatrix_apply, id, Matrix.add_apply, this, tm, of_apply, cut, if_pos ha, add_zero]
+      simp only [submatrix_apply, id, Matrix.add_apply, this, tm, of_apply, cut, ite_eq_left ha, add_zero]
     rcases hAB with ⟨x1, x2⟩ | ⟨x1, x2⟩
     · rw [detB _ (fun j hj => by simp [tm, cut, hYd, x1 j hj, ext_off y (Or.inl m0), single_apply, hei.eq_iff, hj.symm])
         (fun i => by simp [tm, cut, hYd, x2 i, ext_off y (Or.inr h0), single_apply, m0]), e1, e2, e3]
@@ -262,7 +216,7 @@ theorem int_cone (hm : IsVol m) (hϖ : IsUnif ϖ) {b : ℕ} {jc : Fin d₁ → F
     by_cases hp : p = (0, e (Fin.last _))
     · subst hp
       simp [hb, hYd, ext_off y (Or.inl m0), rad_e, ind_zero]
-    · rw [if_neg hp, mul_one, hYd, Matrix.add_apply, single_apply_of_ne, add_zero]
+    · rw [ite_eq_right hp, mul_one, hYd, Matrix.add_apply, single_apply_of_ne, add_zero]
       rintro ⟨a, b⟩
       exact hp (Prod.ext a.symm b.symm)
   let f : Fin (b + 2) × Fin d → k → ℂ := fun p x => (if p ∈ P then ind (rad ϖ c e p.2) x else ind 1 x) *
@@ -271,7 +225,7 @@ theorem int_cone (hm : IsVol m) (hϖ : IsUnif ϖ) {b : ℕ} {jc : Fin d₁ → F
       dl ν s * std ν ϖ c e₁ y * ∏ p, f p (Z p) := fun Z => by
     have e1 := split_prod (ϖ := ϖ) (c := c) (e := e) P Y hY Z
     rw [hA] at e1
-    simp only [f, Finset.prod_mul_distrib, Finset.prod_ite_eq', Finset.mem_univ, if_true, std, hd]
+    simp only [f, Finset.prod_mul_distrib, Finset.prod_ite_eq', Finset.mem_univ, ite_true, std, hd]
     set A := ∏ p : Fin b × Fin d₁, ind (rad ϖ c e₁ p.2) (y p.1 p.2) with hA'
     set Q := ∏ p : Fin (b + 2) × Fin d, (if p ∈ P then ind (rad ϖ c e p.2) (Z p) else ind 1 (Z p)) with hQ
     have e2 : A * ind 1 s * Q * dl ν (s * -Z (Fin.last _, e 0) * (y.submatrix id e₁).det) =
@@ -283,11 +237,11 @@ theorem int_cone (hm : IsVol m) (hϖ : IsUnif ϖ) {b : ℕ} {jc : Fin d₁ → F
       have b1 : valuation k (y.submatrix id e₁).det ≤ 1 := val_det fun i j =>
         (ind_ne (Finset.prod_ne_zero_iff.1 a1 (i, e₁ j) (Finset.mem_univ _))).trans (rad_le hϖ _ _)
       have b2 := Finset.prod_ne_zero_iff.1 a2 _ (Finset.mem_univ (Fin.last _, e 0))
-      rw [if_pos ha] at b2
+      rw [ite_eq_left ha] at b2
       have b3 : valuation k (-Z (Fin.last _, e 0)) ≤ 1 := by simpa using (ind_ne b2).trans (rad_le hϖ _ _)
       by_cases a3 : valuation k s ≤ 1
-      · rw [dl_mul (by rw [map_mul]; exact mul_le_one' a3 b3) b1, dl_mul a3 b3, ind, if_pos (by simpa using a3), mul_one]
-      · rw [ind, if_neg (by simpa using a3), dl_of_ne (x := s) fun h => a3 h.le]; simp
+      · rw [dl_mul (by rw [map_mul]; exact mul_le_one' a3 b3) b1, dl_mul a3 b3, ind, ite_eq_left (by simpa using a3), mul_one]
+      · rw [ind, ite_eq_right (by simpa using a3), dl_of_ne (x := s) fun h => a3 h.le]; simp
     linear_combination ψ (-(t * Z (Fin.last _, e 0))) * dl ν (s * -Z (Fin.last _, e 0) * (y.submatrix id e₁).det) * e1 +
       ψ (-(t * Z (Fin.last _, e 0))) * e2
   simp only [key]
@@ -299,13 +253,13 @@ theorem int_cone (hm : IsVol m) (hϖ : IsUnif ϖ) {b : ℕ} {jc : Fin d₁ → F
     refine Finset.prod_congr rfl fun p _ => ?_
     by_cases hp : p = (Fin.last (b + 1), e 0)
     · subst hp
-      simp only [f, if_pos ha, if_true, rad_e, int_ind_one hm, one_mul, ← gI_neg hm]
+      simp only [f, ite_eq_left ha, ite_true, rad_e, int_ind_one hm, one_mul, ← gI_neg hm]
       congr 1
       funext x
       by_cases hx : valuation k x ≤ 1
       · simp [ind, hx]
       · rw [dl_of_ne (x := -x) fun h => hx (by simpa using h.le)]; simp
-    · simp only [f, if_neg hp, mul_one]
+    · simp only [f, ite_eq_right hp, mul_one]
   rw [this]; ring
 
 end PositivityTheory.ThKG.Std

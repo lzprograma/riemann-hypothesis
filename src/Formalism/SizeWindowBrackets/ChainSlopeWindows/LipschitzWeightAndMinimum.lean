@@ -12,6 +12,7 @@ import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.Normed.Algebra.GelfandRadius
+import Mathlib.Analysis.SpecialFunctions.Log.Sum
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 import Mathlib.Combinatorics.Enumerative.DyckWord
 import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
@@ -54,6 +55,7 @@ import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
+import Mathlib.Analysis.SpecialFunctions.Log.Sum
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.ThickAverageLoss.ThickAverageProofs.Balance, Formalism.StatementU, Formalism.ZetaNonvanishing.GzLipschitz, Formalism.SizeWindowBrackets.ChainSlopeWindows.LipschitzWeightAndMinimum
@@ -220,32 +222,10 @@ lemma Icc_one_eq_Ioc (k : ℕ) : Finset.Icc 1 k = Finset.Ioc 0 k := by
   simp only [Finset.mem_Icc, Finset.mem_Ioc]
   omega
 
-lemma sum_log_eq_log_factorial (k : ℕ) :
-    ∑ n ∈ Finset.Ioc 0 k, Real.log n = Real.log (k.factorial : ℝ) := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    rw [Finset.sum_Ioc_succ_top (Nat.zero_le k), ih, Nat.factorial_succ, Nat.cast_mul,
-      Real.log_mul (by positivity) (Nat.cast_ne_zero.2 (Nat.factorial_ne_zero k))]
-    ring
-
 lemma sum_log_eq (k : ℕ) :
     ∑ n ∈ Finset.Ioc 0 k, Real.log n = ∑ n ∈ Finset.Ioc 0 k, Λ n * ((k / n : ℕ) : ℝ) := by
-  have h1 : ∀ n ∈ Finset.Ioc 0 k, Real.log n = ∑ d ∈ n.divisors, Λ d :=
-    fun n _ => ArithmeticFunction.vonMangoldt_sum.symm
-  rw [Finset.sum_congr rfl h1]
-  rw [Finset.sum_comm' (t' := Finset.Ioc 0 k) (s' := fun d => (Finset.Ioc 0 k).filter (d ∣ ·))]
-  · refine Finset.sum_congr rfl fun d _ => ?_
-    rw [Finset.sum_const, Nat.Ioc_filter_dvd_card_eq_div, nsmul_eq_mul, mul_comm]
-  · intro n d
-    simp only [Finset.mem_Ioc, Nat.mem_divisors, Finset.mem_filter]
-    constructor
-    · rintro ⟨⟨h0, hk⟩, hd, -⟩
-      have hle := Nat.le_of_dvd h0 hd
-      have hpos := Nat.pos_of_dvd_of_pos hd h0
-      exact ⟨⟨⟨h0, hk⟩, hd⟩, hpos, by omega⟩
-    · rintro ⟨⟨⟨h0, hk⟩, hd⟩, -, -⟩
-      exact ⟨⟨h0, hk⟩, hd, by omega⟩
+  simpa only [ArithmeticFunction.vonMangoldt_mul_zeta, ArithmeticFunction.log_apply] using
+    ArithmeticFunction.sum_Ioc_mul_zeta_eq_sum (R := ℝ) ArithmeticFunction.vonMangoldt k
 
 lemma mertens_upper (k : ℕ) (hk : 1 ≤ k) : A k ≤ Real.log k + (Real.log 4 + 4) := by
   have hk0 : (0:ℝ) < k := by exact_mod_cast hk
@@ -274,14 +254,14 @@ lemma mertens_upper (k : ℕ) (hk : 1 ≤ k) : A k ≤ Real.log k + (Real.log 4 
     have h3 : (k:ℝ) * (Λ n / n) = Λ n * ((k:ℝ) / n) := by ring
     rw [h3]
     nlinarith [mul_le_mul_of_nonneg_left h2 hΛ]
-  rw [← sum_log_eq, sum_log_eq_log_factorial] at hmain
+  rw [← sum_log_eq, Real.sum_log_eq_log_factorial] at hmain
   have h4 : (k:ℝ) * A k ≤ k * (Real.log k + (Real.log 4 + 4)) := by nlinarith
   exact le_of_mul_le_mul_left h4 hk0
 
 lemma mertens_lower (k : ℕ) (hk : 1 ≤ k) : Real.log k - 1 ≤ A k := by
   have hk0 : (0:ℝ) < k := by exact_mod_cast hk
   have hfl : Real.log (k.factorial : ℝ) ≤ k * A k := by
-    rw [← sum_log_eq_log_factorial, sum_log_eq, A, Finset.mul_sum]
+    rw [← Real.sum_log_eq_log_factorial, sum_log_eq, A, Finset.mul_sum]
     apply Finset.sum_le_sum
     intro n _
     have hΛ : 0 ≤ Λ n := ArithmeticFunction.vonMangoldt_nonneg
@@ -551,41 +531,9 @@ namespace CR
 section
 variable {H : Type} [AddCommGroup H] [Fintype H] [DecidableEq H]
 
-lemma primVal_zero (D : ArithData H) (n : ℕ) : primVal D 0 n = 1 := by
-  classical
-  unfold primVal
-  apply Finset.prod_eq_one
-  intro p _
-  unfold cosetMean
-  simp only [AddChar.zero_apply, Finset.sum_const, nsmul_eq_mul, mul_one]
-  apply div_self
-  have h0 : (0 : E0 × H) ∈ univ.filter (fun x => x ∈ D.inertia p) := by
-    simp
-  have := Finset.card_pos.2 ⟨0, h0⟩
-  exact_mod_cast this.ne'
-
-lemma chC_apply' (g : E0 × H) : (chC : AddChar (E0 × H) ℂ) g = ((sgn2 g.1.1 : ℝ) : ℂ) := by
-  show (if g.1.1 = 0 then (1 : ℂ) else -1) = _
-  unfold sgn2; split_ifs <;> simp
-
-lemma psC_apply' (g : E0 × H) : (psC : AddChar (E0 × H) ℂ) g = ((sgn2 g.1.2 : ℝ) : ℂ) := by
-  show (if g.1.2 = 0 then (1 : ℂ) else -1) = _
-  unfold sgn2; split_ifs <;> simp
-
-lemma chpsC_apply' (g : E0 × H) :
-    (chpsC : AddChar (E0 × H) ℂ) g = ((sgn2 g.1.1 * sgn2 g.1.2 : ℝ) : ℂ) := by
-  unfold chpsC; rw [AddChar.mul_apply, chC_apply', psC_apply']; push_cast; ring
-
 def host (D : ArithData H) (ell : AddChar (E0 × H) ℂ → ℂ) : CycHost H where
   cv := primVal D
-  cv_zero := primVal_zero D
   ell := ell
-  chC := chC
-  psC := psC
-  chpsC := chpsC
-  chC_apply := chC_apply'
-  psC_apply := psC_apply'
-  chpsC_apply := chpsC_apply'
 
 lemma GC_host (D : ArithData H) (ell : AddChar (E0 × H) ℂ → ℂ) (ψ : AddChar (E0 × H) ℂ) (y : ℝ) :
     GC (host D ell) ψ y = GPsi D ell ψ y := rfl
@@ -649,16 +597,6 @@ lemma partner_inPhi {g : E0 × H} (t : H) (hg : ¬ InPhi (g + topPl t)) : InPhi 
   show (cconj + g + topPl t).1.1 = 0
   simp [cconj, topPl, h1]
   decide
-
-end
-
-section
-variable {H : Type} [AddCommGroup H] [Fintype H] [DecidableEq H]
-
-end
-
-section
-variable {H : Type} [AddCommGroup H] [Fintype H] [DecidableEq H]
 
 end
 
@@ -873,7 +811,7 @@ lemma deriv_char (D : ArithData H) (ell : AddChar (E0 × H) ℂ → ℂ) (ψ : A
   have ty := truncC (fun n => (Λ n : ℂ) * primVal D ψ n) y _ hyM
   have tz := truncC (fun n => (Λ n : ℂ) * primVal D ψ n) z _ hzM
   unfold GPsi
-  rw [if_neg hψ, if_neg hψ, ty, tz]
+  rw [ite_eq_right hψ, ite_eq_right hψ, ty, tz]
   have e : (∑ n ∈ Icc 1 ⌊max y z⌋₊, (Λ n : ℂ) * primVal D ψ n * ((max (y / n - 1) 0 : ℝ) : ℂ) + (y : ℂ) * ell ψ)
       - (∑ n ∈ Icc 1 ⌊max y z⌋₊, (Λ n : ℂ) * primVal D ψ n * ((max (z / n - 1) 0 : ℝ) : ℂ) + (z : ℂ) * ell ψ)
       = ∑ n ∈ Icc 1 ⌊max y z⌋₊, (Λ n : ℂ) * primVal D ψ n * ((max (y / n - 1) 0 - max (z / n - 1) 0 : ℝ) : ℂ)
@@ -919,7 +857,7 @@ lemma wG_char (D : ArithData H) (ell : AddChar (E0 × H) ℂ → ℂ) (ψ : AddC
       = ∑ n ∈ Icc 1 M, (Λ n : ℂ) * primVal D ψ n * ((max (A / n - w) 0 : ℝ) : ℂ) + (A : ℂ) * ell ψ := by
   have t := truncC (fun n => (Λ n : ℂ) * primVal D ψ n) (A / w) M hM
   unfold GPsi
-  rw [if_neg hψ, t, mul_add, Finset.mul_sum]
+  rw [ite_eq_right hψ, t, mul_add, Finset.mul_sum]
   congr 1
   · apply Finset.sum_congr rfl
     intro n hn

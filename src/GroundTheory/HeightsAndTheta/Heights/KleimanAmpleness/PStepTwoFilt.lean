@@ -85,8 +85,8 @@ theorem laurent_smul_apply_of_isHomogeneous {f : Poly S N} {d : ℕ} (hf : f.IsH
     change (f • laurentSingle x a m) c = aeval x f • laurentSingle x a m (c - d)
     rw [laurent_smul_single hf, laurentSingle_apply, laurentSingle_apply]
     by_cases h : a = c - d
-    · rw [if_pos (by omega), if_pos h]
-    · rw [if_neg (by omega), if_neg h, smul_zero]
+    · rw [ite_eq_left (by omega), ite_eq_left h]
+    · rw [ite_eq_right (by omega), ite_eq_right h, smul_zero]
 
 theorem laurent_smul_apply (f : Poly S N) (m : LaurentSpace x E) (c : ℤ) :
     (f • m) c = ∑ i ∈ Finset.range (f.totalDegree + 1),
@@ -179,7 +179,7 @@ theorem quotIota_eq_zero_iff {c : ℤ} (z : M₁.piece c) :
   constructor
   · intro h
     have := FinGradedSub.mem_laurent.mp h c
-    rwa [laurentSingle_apply, if_pos rfl] at this
+    rwa [laurentSingle_apply, ite_eq_left rfl] at this
   · exact laurentSingle_mem
 
 def laurentCoeff (c : ℤ) : M₁.laurent →ₗ[S] M₁.piece c :=
@@ -194,14 +194,14 @@ theorem quotProj_iota_self (c : ℤ) (z : M₁.piece c) :
     quotProj M₁ M₂ c (quotIota M₁ M₂ c z) = quotIota M₁ M₂ c z := by
   have h : (⟨laurentSingle x c (z : E) c, FinGradedSub.mem_laurent.mp (laurentSingle_mem z.2) c⟩ :
       M₁.piece c) = z :=
-    Subtype.ext (by change laurentSingle x c (z : E) c = (z : E); rw [laurentSingle_apply, if_pos rfl])
+    Subtype.ext (by change laurentSingle x c (z : E) c = (z : E); rw [laurentSingle_apply, ite_eq_left rfl])
   exact congrArg (quotIota M₁ M₂ c) h
 
 theorem quotProj_iota_ne {c c' : ℤ} (h : c' ≠ c) (z : M₁.piece c') :
     quotProj M₁ M₂ c (quotIota M₁ M₂ c' z) = 0 := by
   have h0 : (⟨laurentSingle x c' (z : E) c, FinGradedSub.mem_laurent.mp (laurentSingle_mem z.2) c⟩ :
       M₁.piece c) = 0 :=
-    Subtype.ext (by change laurentSingle x c' (z : E) c = 0; rw [laurentSingle_apply, if_neg h])
+    Subtype.ext (by change laurentSingle x c' (z : E) c = 0; rw [laurentSingle_apply, ite_eq_right h])
   exact (congrArg (quotIota M₁ M₂ c) h0).trans (map_zero _)
 
 def quotPiece (c : ℤ) : Submodule S (quotLaurent M₁ M₂) := LinearMap.range (quotIota M₁ M₂ c)

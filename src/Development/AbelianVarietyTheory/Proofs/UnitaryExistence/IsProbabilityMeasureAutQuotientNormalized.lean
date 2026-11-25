@@ -54,8 +54,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDo
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.PeterssonCompare
@@ -80,16 +78,6 @@ variable [MeasurableSpace G] (μ₀ : Measure (AutQ Γ))
 end Adelic
 
 variable {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l}
-
-section AdelicCusp
-
-variable (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (σ : c.F →+* ℂ) {G : Type} [Group G] [MeasurableSpace G]
-  (Γ : Subgroup G) (μ₀ : Measure (AutQ Γ)) (dict : G → Σ k, Frame ((U σ).X k).Ψ r) (mu : G → ℂ)
-
-
-variable {U σ Γ μ₀ dict mu}
-
-end AdelicCusp
 
 section Fundamental
 
@@ -302,21 +290,5 @@ theorem measurable_pnorm (X : Data E r) (la : Wt X.Ψ r) {P : Frame X.Ψ r → �
   unfold Data.pnorm
   refine hm.norm.mul (Finset.measurable_prod _ fun τ _ => Finset.measurable_prod _ fun i _ => ?_)
   exact ((continuous_dmin X τ _).measurable.div (continuous_dmin X τ _).measurable).norm.pow_const _
-
-section One
-
-variable {U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r} {σ : c.F →+* ℂ} {G : Type} [Group G] [MeasurableSpace G]
-  {Γ : Subgroup G} {μ₀ : Measure (AutQ Γ)} {dict : G → Σ k, Frame ((U σ).X k).Ψ r} {mu : G → ℂ} {x : ℝ}
-  {a : (E →+* ℂ) × ℕ → ℕ} {n : ℕ}
-
-end One
-
-section All
-
-variable (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) {G : (c.F →+* ℂ) → Type} [∀ σ, Group (G σ)]
-  [∀ σ, MeasurableSpace (G σ)] (Γ : ∀ σ, Subgroup (G σ)) (μ₀ : ∀ σ, Measure (AutQ (Γ σ)))
-  (dict : ∀ σ, G σ → Σ k, Frame ((U σ).X k).Ψ r) (mu : ∀ σ, G σ → ℂ) (x : ℝ)
-
-end All
 
 end GlobalTheory.PeterssonCompare

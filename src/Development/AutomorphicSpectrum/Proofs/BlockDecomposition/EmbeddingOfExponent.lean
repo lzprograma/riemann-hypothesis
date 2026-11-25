@@ -83,7 +83,7 @@ import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEqu
 import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.LeviEmbMemNormalizerLower
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DeepLevelSubgroupsFiltration, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GeneralizedEigenvectorExists, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsFixedLift, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CentralStrictlyDominantExists, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetHeckeCompatHolds, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetHeckeConditionHolds, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetFixedVectorLift, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetProjectionFixedSurjective, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetProjectionFixedSurjectiveStatement, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsDominantOneAndMul, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetFixedFirstCondition, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StrictlyDominantContractsUnipotent, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StrictlyDominantHeckeKernel, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ImportsBisTer, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetCuspidalSupportOfFunctional, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetModuleAdmissibleFixed, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetVectorFixedDeepLevel, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeviEmbLeviProjMemKm, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SupportOfExponentOfCasselman, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EmbeddingOfExponent
+-- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DeepLevelSubgroupsFiltration, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GeneralizedEigenvectorExists, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsFixedLift, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CentralStrictlyDominantExists, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetHeckeCompatHolds, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetHeckeConditionHolds, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetFixedVectorLift, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetProjectionFixedSurjective, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsDominantOneAndMul, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetFixedFirstCondition, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StrictlyDominantContractsUnipotent, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StrictlyDominantHeckeKernel, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ImportsBisTer, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetCuspidalSupportOfFunctional, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetModuleAdmissibleFixed, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetVectorFixedDeepLevel, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeviEmbLeviProjMemKm, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SupportOfExponentOfCasselman, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EmbeddingOfExponent
 
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DeepLevelSubgroupsFiltration =====
 -- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DeepLevelSubgroupsFiltration", "h": "module\n\npublic import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.StrictDominanceCasselman.IsStrictlyDominant\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
@@ -584,23 +584,17 @@ namespace GlobalTheory.CompanionTheory.CentralDom
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 variable {N : ℕ}
 
-theorem coe_diagPow (l : Fin N → ℤ) :
-    ((Zls.diagPow k N l : GL (Fin N) k) : Matrix (Fin N) (Fin N) k) =
-      Matrix.diagonal fun i => ((Zls.unifU k ^ l i : kˣ) : k) := by
-  ext i j
-  simp [Zls.diagPow, Matrix.diagonal_apply]
-
 theorem diagPow_add (l l' : Fin N → ℤ) :
     Zls.diagPow k N (l + l') = Zls.diagPow k N l * Zls.diagPow k N l' := by
   apply Units.ext
-  rw [Units.val_mul, coe_diagPow, coe_diagPow, coe_diagPow, Matrix.diagonal_mul_diagonal]
+  rw [Units.val_mul, GlobalTheory.CompanionTheory.HeckeJacquet.coe_diagPow, GlobalTheory.CompanionTheory.HeckeJacquet.coe_diagPow, GlobalTheory.CompanionTheory.HeckeJacquet.coe_diagPow, Matrix.diagonal_mul_diagonal]
   congr 1
   funext i
   rw [Pi.add_apply, _root_.zpow_add, Units.val_mul]
 
 theorem diagPow_zero : Zls.diagPow k N 0 = 1 := by
   apply Units.ext
-  rw [coe_diagPow]
+  rw [GlobalTheory.CompanionTheory.HeckeJacquet.coe_diagPow]
   simp
 
 theorem diagPow_neg (l : Fin N → ℤ) : Zls.diagPow k N (-l) = (Zls.diagPow k N l)⁻¹ := by
@@ -621,7 +615,7 @@ theorem diagPow_pow (l : Fin N → ℤ) (j : ℕ) :
 theorem conj_apply (l : Fin N → ℤ) (y : GL (Fin N) k) (i j : Fin N) :
     ((Zls.diagPow k N l * y * (Zls.diagPow k N l)⁻¹ : GL (Fin N) k) : Matrix (Fin N) (Fin N) k) i j =
       ((Zls.unifU k ^ (l i - l j) : kˣ) : k) * (y : Matrix (Fin N) (Fin N) k) i j := by
-  rw [← diagPow_neg, Units.val_mul, Units.val_mul, coe_diagPow, coe_diagPow, Matrix.mul_diagonal,
+  rw [← diagPow_neg, Units.val_mul, Units.val_mul, GlobalTheory.CompanionTheory.HeckeJacquet.coe_diagPow, GlobalTheory.CompanionTheory.HeckeJacquet.coe_diagPow, Matrix.mul_diagonal,
     Matrix.diagonal_mul, Pi.neg_apply, sub_eq_add_neg, _root_.zpow_add, Units.val_mul]
   ring
 
@@ -633,9 +627,9 @@ theorem continuous_contractMat (l : Fin N → ℤ) {X : Type} [TopologicalSpace 
     Continuous fun x => contractMat l (f x) (g x) := by
   refine continuous_matrix fun i j => ?_
   by_cases h : l j < l i
-  · simp only [contractMat, Matrix.of_apply, h, if_true]
+  · simp only [contractMat, Matrix.of_apply, h, ite_true]
     exact (hf.pow _).mul (hg.matrix_elem i j)
-  · simp only [contractMat, Matrix.of_apply, h, if_false]
+  · simp only [contractMat, Matrix.of_apply, h, ite_false]
     exact continuous_const
 
 theorem contractMat_zero (l : Fin N → ℤ) (m : Matrix (Fin N) (Fin N) k) : contractMat l 0 m = 1 := by
@@ -654,7 +648,7 @@ theorem val_conj_eq (l : Fin N → ℤ) (c : ℕ) (y : GL (Fin N) k)
   ext i j
   rw [conj_apply]
   by_cases h : l j < l i
-  · simp only [contractMat, Matrix.of_apply, h, if_true]
+  · simp only [contractMat, Matrix.of_apply, h, ite_true]
     congr 1
     have he : ((l i - l j).toNat : ℤ) = l i - l j := Int.toNat_of_nonneg (by omega)
     have : ((c : ℤ) • l) i - ((c : ℤ) • l) j = ((c * (l i - l j).toNat : ℕ) : ℤ) := by
@@ -664,7 +658,7 @@ theorem val_conj_eq (l : Fin N → ℤ) (c : ℕ) (y : GL (Fin N) k)
       ring
     rw [this, zpow_natCast, Units.val_pow_eq_pow_val, pow_mul]
   · have h' : l i ≤ l j := not_lt.1 h
-    simp only [contractMat, Matrix.of_apply, h, if_false]
+    simp only [contractMat, Matrix.of_apply, h, ite_false]
     rw [hy i j h']
     by_cases hij : i = j
     · subst hij
@@ -744,7 +738,7 @@ theorem leviEmb_zLevi (d : Fin h → ℕ) (hd : ∑ a, d a = N) (w : Fin h → �
   ext i j
   obtain ⟨⟨a, i⟩, rfl⟩ := (stdBlocks d hd).surjective i
   obtain ⟨⟨b, j⟩, rfl⟩ := (stdBlocks d hd).surjective j
-  rw [coe_diagPow]
+  rw [GlobalTheory.CompanionTheory.HeckeJacquet.coe_diagPow]
   by_cases hab : a = b
   · subst hab
     have hs : (leviEmb k (stdBlocks d hd) (zLevi d w) : Matrix (Fin N) (Fin N) k)
@@ -826,7 +820,7 @@ theorem exists_central_strictlyDominant : ∀ (k : Type) [Field k] [ValuativeRel
     rw [hemb]
     apply mem_parab.2
     intro i j hij
-    rw [coe_diagPow, Matrix.diagonal_apply_ne]
+    rw [GlobalTheory.CompanionTheory.HeckeJacquet.coe_diagPow, Matrix.diagonal_apply_ne]
     intro e
     subst e
     exact lt_irrefl _ hij
@@ -834,7 +828,7 @@ theorem exists_central_strictlyDominant : ∀ (k : Type) [Field k] [ValuativeRel
     rw [hemb]
     apply (mem_parabLower_iff k).2
     intro b b' i j hlt
-    rw [coe_diagPow, Matrix.diagonal_apply_ne]
+    rw [GlobalTheory.CompanionTheory.HeckeJacquet.coe_diagPow, Matrix.diagonal_apply_ne]
     exact stdBlocks_ne d hd i j (fun e => hlt.ne (congrArg Sigma.fst e))
   have hcent : ∀ x : Levi k (Bl d), a * x = x * a := zLevi_comm d _
   refine ⟨a, hcent, ⟨⟨?_, ?_, ?_⟩, ?_⟩, ?_⟩
@@ -1133,19 +1127,6 @@ end GlobalTheory.CompanionTheory.Casselman
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetProjectionFixedSurjective =====
-
--- ===== clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetProjectionFixedSurjectiveStatement =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetProjectionFixedSurjectiveStatement", "h": "module\n\npublic import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.StrictDominanceCasselman.IsStrictlyDominant\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetProjectionFixedSurjective\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open GlobalTheory.PRep GlobalTheory.SmGL ValuativeRel PositivityTheory.Lbc
-
-theorem _root_.GlobalTheory.T.jacquet_projection_fixed_surjective : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (N h : ℕ) (d : Fin h → ℕ) (hd : ∑ a, d a = N) (J : Subgroup (GL (Fin N) k)), IsOpen (J : Set (GL (Fin N) k)) → IsCompact (J : Set (GL (Fin N) k)) → HasIwahoriFact k N J d hd → (∀ a, 0 < d a) → ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V), IsSmooth π → ∀ v : fixed π J, (Submodule.Quotient.mk (v : V) : Jacquet π (unipRad k (stdBlocks d hd))) ∈ fixed (jac (stdBlocks d hd) π) (KM k N J d hd) := by
-  first | exact @GlobalTheory.CompanionTheory.Casselman.mk_mem_fixed_jac
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetProjectionFixedSurjectiveStatement =====
 
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsDominantOneAndMul =====
 -- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsDominantOneAndMul", "h": "module\n\npublic import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.StrictDominanceCasselman.IsStrictlyDominant\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
@@ -1451,7 +1432,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StrictlyDominantHeckeKernel =====
 
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ImportsBisTer =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ImportsBisTer", "h": "module\n\npublic import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.StrictDominanceCasselman.IsStrictlyDominant\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetFixedVectorLift\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetProjectionFixedSurjectiveStatement\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StrictlyDominantHeckeKernel\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ImportsBisTer", "h": "module\n\npublic import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.StrictDominanceCasselman.IsStrictlyDominant\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetFixedVectorLift\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetProjectionFixedSurjective\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StrictlyDominantHeckeKernel\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -1461,7 +1442,7 @@ namespace GlobalTheory.CompanionTheory.Lbc
 
 theorem c3 : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k], PositivityTheory.Lbc.C3 k := by
   intro k _ _ _ _ N h d hd J hJo hJc hJf hpos V _ _ π hπ
-  exact ⟨GlobalTheory.T.jacquet_projection_fixed_surjective k N h d hd J hJo hJc hJf hpos V π hπ.1,
+  exact ⟨_root_.GlobalTheory.CompanionTheory.Casselman.mk_mem_fixed_jac k N h d hd J hJo hJc hJf hpos V π hπ.1,
     _root_.GlobalTheory.CompanionTheory.JacquetLemma.jacquet_surjective k N h d hd J hJo hJc hJf hpos V π hπ,
     _root_.GlobalTheory.CompanionTheory.Lbc.heckeOp_nilpotent_on_ker k N h d hd J hJo hJc hJf hpos V π hπ.1⟩
 
@@ -1522,17 +1503,12 @@ theorem exists_intertwiningMap_piTensor_ofChar {k : Type} [Field k] [ValuativeRe
         rw [hfe]
         exact (mul_smul _ _ _).trans (piTensor_detRep_apply ξ t (f w • o)).symm }
   obtain ⟨w, hw⟩ : ∃ w, f w ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hf (LinearMap.ext h)
   refine ⟨E.toIntertwiningMap.comp g₀, w, fun h => ?_⟩
   have h1 : E.toLinearEquiv (f w • o) = 0 := h
   rw [LinearEquiv.map_eq_zero_iff] at h1
   exact (smul_ne_zero hw (tprod_one_ne_zero n)) h1
-
-theorem chartotensor : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (n : ℕ) {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin n) k) V) (ξ : Fin n → (kˣ →* ℂˣ)) (hξ : ∀ a, IsSmoothChar (ξ a)) (hd : ∑ a, (IrrGL.ofChar (ξ a) (hξ a)).1 = n) (f : Jacquet π (unipRad k (stdBlocks (fun a => (IrrGL.ofChar (ξ a) (hξ a)).1) hd)) →ₗ[ℂ] ℂ), f ≠ 0 → (∀ t w, f (jac (stdBlocks (fun a => (IrrGL.ofChar (ξ a) (hξ a)).1) hd) π t w) = PositivityTheory.Lbc.torusChar ξ t * f w) → ∃ g : (jac (stdBlocks (fun a => (IrrGL.ofChar (ξ a) (hξ a)).1) hd) π).IntertwiningMap (piTensor fun a => (IrrGL.ofChar (ξ a) (hξ a)).rep), ∃ w, g w ≠ 0 := by
-  intro k _ _ _ _ n V _ _ π ξ hξ hd f hf hfe
-  exact exists_intertwiningMap_piTensor_ofChar n π ξ hξ hd f hf hfe
 
 end GlobalTheory.CompanionTheory.CharTensor
 
@@ -1664,14 +1640,14 @@ theorem exists_mul_mem_parab {N m : ℕ} (hm : 1 ≤ m) (e : (Σ a, μ a) ≃ Fi
     exact this
   have h1 : ∀ i j, blk e i ≤ blk e j → c.val i j = (1 : Matrix (Fin N) (Fin N) k) i j := fun i j h => by
     have := key i j
-    simp only [if_neg h.not_gt] at this
+    simp only [ite_eq_right h.not_gt] at this
     rwa [← Matrix.mul_apply, Matrix.one_mul] at this
   refine ⟨c, ⟨hc, (mem_unipRadLower k).2 ⟨(mem_parabLower_iff k).2 fun a b i j h => ?_, fun a i j => ?_⟩⟩,
     mem_parab_iff.2 fun a b i j h => ?_⟩
   · rw [h1 _ _ (by simpa using h.le), one_ne e h.ne]
   · rw [h1 _ _ (by simp), one_same]
   · have := key (e ⟨a, i⟩) (e ⟨b, j⟩)
-    simp only [blk_apply, if_pos h] at this
+    simp only [blk_apply, ite_eq_left h] at this
     rw [Units.val_mul, Matrix.mul_apply, this, one_ne e h.ne']
 
 theorem leviEmb_leviProj_mem_Km {N m : ℕ} (hm : 1 ≤ m) (e : (Σ a, μ a) ≃ Fin N) (p : parab k e)
@@ -1786,8 +1762,6 @@ open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.SplitWe
 
 namespace GlobalTheory.CompanionTheory.GlFrob
 
-
-
 theorem embedding_of_exponent : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (n : ℕ) (hd1 : ∑ _a : Fin n, 1 = n) (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin n) k) V), IsSmooth π → IsAdmissible π → π.IsIrreducible → ∀ (ξ : Fin n → kˣ →* ℂˣ) (hξ : ∀ a, IsSmoothChar (ξ a)) (hd : ∑ a, (IrrGL.ofChar (ξ a) (hξ a)).1 = n), (∃ v : Jacquet π (unipRad k (stdBlocks (fun _ : Fin n => 1) hd1)), v ≠ 0 ∧ ∀ t : Levi k (fun _ : Fin n => Fin 1), v ∈ Module.End.maxGenEigenspace (jac (stdBlocks (fun _ : Fin n => 1) hd1) π t) (PositivityTheory.Lbc.torusChar ξ t)) → ∃ f : π.IntertwiningMap (prodIrr (fun a => IrrGL.ofChar (ξ a) (hξ a)) hd), Function.Injective f := by
   intro k _ _ _ _ _ n hd1 V _ _ π hs ha hirr ξ hξ hd hv
   obtain ⟨v, hv0, hv⟩ := hv
@@ -1827,7 +1801,7 @@ theorem embedding_of_exponent : ∀ (k : Type) [Field k] [ValuativeRel k] [Topol
     (jac (stdBlocks (fun _ : Fin n => 1) hd1) π) hcomm
     (fun m => PositivityTheory.Lbc.KM k n (Zls.Km k n (m + 1)) (fun _ : Fin n => 1) hd1) hanti hpow hsm hfd
     (GlobalTheory.CompanionTheory.PinLift.torusCharHom ξ) v hv0 hv
-  obtain ⟨g, w, hg⟩ := _root_.GlobalTheory.CompanionTheory.CharTensor.chartotensor n π ξ hξ hd f hf0 hf
+  obtain ⟨g, w, hg⟩ := _root_.GlobalTheory.CompanionTheory.CharTensor.exists_intertwiningMap_piTensor_ofChar n π ξ hξ hd f hf0 hf
   obtain ⟨G, x, hx⟩ := GlobalTheory.CompanionTheory.FrobInv.exists_map_prodIrr (fun a => IrrGL.ofChar (ξ a) (hξ a)) hd π hs g ⟨w, hg⟩
   refine ⟨G, ?_⟩
   have hso : IsSimpleOrder (Subrepresentation π) := hirr

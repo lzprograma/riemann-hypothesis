@@ -213,7 +213,7 @@ theorem exists_killed (F : Filt X A) (B : GradBasis A) (W' : Submodule ℂ (Modu
       intro φ hφ hn
       by_cases hall : ∀ p q, bl B p < bl B q → (Eb X B p q).dualMap φ ∈ W'
       · exact ⟨φ, ⟨_, hφ⟩, hn, hall⟩
-      · push_neg at hall
+      · push Not at hall
         obtain ⟨p, q, hpq, hnot⟩ := hall
         refine ih _ (fun u hu => ?_) hnot
         refine hφ _ (F.mono _ _ ?_ (shift_Eb F B p q _ u hu))
@@ -455,7 +455,7 @@ theorem re_lt {n : ℕ} {M : GMod n} {A : Matrix (Fin n) (Fin n) ℂ} (F : Filt 
     rw [hq₁, (monic_X_sub_C z).natDegree_mul hq₁m, natDegree_X_sub_C]
     ring
   have hnot := hmin q₁.natDegree (by omega)
-  push_neg at hnot
+  push Not at hnot
   obtain ⟨u, hu⟩ := hnot q₁ hq₁m rfl
   refine (F.eig s0 t ht0 hs0 z _ hu ?_).2
   have := hqu u
@@ -511,10 +511,10 @@ theorem label_of_prod {ι : Type} [DecidableEq ι] (χ : ι → ℂ) (T : Finset
     rw [Finset.filter_insert, hfil]
     by_cases hj : j = i
     · subst hj
-      simp only [Function.update_self, if_true]
+      simp only [Function.update_self, ite_true]
       rw [Finset.prod_insert (by simp [ha]), ← hL, Function.update_self, hg']
     · have : ¬ i = j := fun e => hj e.symm
-      simp only [Function.update_self, this, if_false]
+      simp only [Function.update_self, this, ite_false]
       rw [← hL, Function.update_of_ne hj]
 
 end Lin
@@ -604,9 +604,9 @@ theorem exists_joint_eig {ι : Type} [DecidableEq ι] (T : ι → Module.End ℂ
     · exact hθ i hi'
 
 theorem natDegree_sumPoly (θ : ℕ → ℂ) (m : ℕ) (h : θ m = 1) : (sumPoly θ m).natDegree = m := by
-  refine natDegree_eq_of_le_of_coeff_ne_zero ?_ (by rw [sumPoly_coeff, if_pos (by omega), h]; exact one_ne_zero)
+  refine natDegree_eq_of_le_of_coeff_ne_zero ?_ (by rw [sumPoly_coeff, ite_eq_left (by omega), h]; exact one_ne_zero)
   refine natDegree_le_iff_coeff_eq_zero.2 fun N hN => ?_
-  rw [sumPoly_coeff, if_neg (by omega)]
+  rw [sumPoly_coeff, ite_eq_right (by omega)]
 
 theorem coeff_sumPoly_comp (θ : ℕ → ℂ) (e : ℕ) (h : θ (e + 1) = 1) (c : ℂ) :
     ((sumPoly θ (e + 1)).comp (X + C c)).coeff e = θ e + ((e : ℂ) + 1) * c := by
@@ -680,7 +680,7 @@ theorem joint_label {n : ℕ} [Nontrivial Z] (χ : Fin n → ℂ) (d : Fin 3 →
     intro i k hk
     have := hcoef i (Finset.mem_univ i) k
     simp only [Pp, sumPoly_coeff] at this
-    rw [if_pos hk] at this
+    rw [ite_eq_left hk] at this
     exact this.map (Algebra.adjoin ℂ s).val
   obtain ⟨v, -, hv0, hθ'⟩ := exists_joint_eig (fun p : (_ : Fin 3) × ℕ => a p.1 p.2)
     (fun p q => hcomm _ _ _ _) (Finset.univ.sigma fun i => Finset.range (d i + 1))
@@ -827,7 +827,7 @@ theorem exists_coefs (X : GMod n) {A : Matrix (Fin n) (Fin n) ℂ} (B : GradBasi
     intro i j hij p q r v
     have := hX (stdBlocks (dims n B.j) B.hj ⟨i, p⟩) (stdBlocks (dims n B.j) B.hj ⟨i, q⟩)
       (stdBlocks (dims n B.j) B.hj ⟨j, r⟩) (stdBlocks (dims n B.j) B.hj ⟨j, v⟩)
-    rw [if_neg (hne _ _ _ _ hij), if_neg (hne _ _ _ _ (Ne.symm hij)), sub_self] at this
+    rw [ite_eq_right (hne _ _ _ _ hij), ite_eq_right (hne _ _ _ _ (Ne.symm hij)), sub_self] at this
     exact sub_eq_zero.1 this
   exact GlobalTheory.CompanionTheory.RgCOBlock.capelli_coef_commute X.V 3 (dims n B.j) (Xb X B) hglr hcm
 

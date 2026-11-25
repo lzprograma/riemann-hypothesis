@@ -224,8 +224,7 @@ theorem uniqueDiffWithinAt_compl {V : Type} [NormedAddCommGroup V] [NormedSpace 
   obtain ⟨f, hf0, hf⟩ := exists_support hK hne hx
   obtain ⟨v, hv⟩ : ∃ v, 0 < f v := by
     obtain ⟨w, hw⟩ : ∃ w, f w ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hf0 (ContinuousLinearMap.ext h)
     rcases lt_or_gt_of_ne hw with h | h
     · exact ⟨-w, by simpa using h⟩
@@ -467,15 +466,15 @@ theorem zR_flip (e : X.Ψ → X'.Ψ) (he : ∀ τ, (e τ).1 = ComplexEmbedding.c
   dsimp only
   rw [hm, hv', Fin.val_rev]
   by_cases h : (a : ℕ) < X.p0
-  · rw [if_pos h, if_neg (by omega), ← conj_hermC, h1, sgn, if_pos h]
+  · rw [ite_eq_left h, ite_eq_right (by omega), ← conj_hermC, h1, sgn, ite_eq_left h]
     have := Matrix.inv_submatrix_equiv ((mat x τ).map conj) (Equiv.refl _) Fin.revPerm
     rw [Equiv.coe_refl] at this
     rw [this, Ker.ONBasis.inv_map_conj hu]
     simp [mulVec, dotProduct]
-  · rw [if_neg h, if_pos (by omega), he, hG]
+  · rw [ite_eq_right h, ite_eq_left (by omega), he, hG]
     have e2 : FD.col (((mat x τ).map conj).submatrix id Fin.revPerm) a.rev = fun i => conj (FD.col (mat x τ) a i) := by
       funext i; simp [FD.col]
-    rw [e2, hermC_flip, conj_hermC, h1, sgn, if_neg h]
+    rw [e2, hermC_flip, conj_hermC, h1, sgn, ite_eq_right h]
     simp
 
 theorem thA_congr (hb : ∀ s, perMat X' bas' idx' s x' = perMat X bas idx s x) (φ : TF n g) :
@@ -537,7 +536,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.F
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Datum Level Moduli Coeff SABMap)
 open GlobalTheory.SW hiding Level
 open scoped TensorProduct ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.OneMapRef GlobalTheory.WeilParts
 
 theorem gram_frOf {D : D7} {T : HSp D} {X : Data D.host.E T.rank} (eT : D.what₂.Tau ≃ X.Ψ)

@@ -15,60 +15,10 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEqual
 public import Mathlib.RingTheory.Valuation.Integral
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.SplitGL
 public import Formalism.PeriodIntegrals.ScXuExists
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.Valuation.AlgebraInstances
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.TotallySplit
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.Commensurated
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianClassFiniteness.HformSumRight
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.LinLeg, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.LinMain, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.LocalIdempotentExistence, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.Assemble, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.SecondCoordinateVectorMemSpan, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.LocalDataSatisfyLinearHypotheses, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.SplitGen, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.SplitLoc, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.SecondProjectionSplitEquiv, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.SecondCoordinateVectorNsmul, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.SplitUnitaryProjectionCompatibility, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ScXuExists
@@ -225,16 +175,6 @@ theorem v_neg_one : O.valuation (-1 : K) = 1 := by
   | simp
 
 end Main
-
-private theorem sub_vecMul_field {K : Type} [Field K] {n : ℕ} (M : Matrix (Fin n) (Fin n) K)
-    (x y : Fin n → K) : (x - y) ᵥ* M = x ᵥ* M - y ᵥ* M := by
-  first
-  | exact Matrix.sub_vecMul M x y
-
-private theorem add_vecMul_field {K : Type} [Field K] {n : ℕ} (M : Matrix (Fin n) (Fin n) K)
-    (x y : Fin n → K) : (x + y) ᵥ* M = x ᵥ* M + y ᵥ* M := by
-  first
-  | exact Matrix.add_vecMul M x y
 
 private theorem smul_vecMul_field {K : Type} [Field K] {n : ℕ} (M : Matrix (Fin n) (Fin n) K)
     (c : K) (x : Fin n → K) : (c • x) ᵥ* M = c • (x ᵥ* M) := by
@@ -399,7 +339,7 @@ theorem existsLatticeAutomorphismApprox : LocLin := by
     ⟨kc • φ1 - w2, Λ2.sub_mem (smem O hkc hφ1) hw2, ?_⟩⟩
   · rw [hTinv, hu1e, smul_neg]
     abel
-  · rw [hTφ, hc, hφ0e, add_vecMul_field, sub_vecMul_field, smul_vecMul_field, smul_vecMul_field]
+  · rw [hTφ, hc, hφ0e, Matrix.add_vecMul, Matrix.sub_vecMul, smul_vecMul_field, smul_vecMul_field]
     first
     | module
 
@@ -624,16 +564,7 @@ theorem pr_rat (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (p1 : RV I v →
 
 theorem hformE_swap (I : AutInst) (x y : Fin I.n → I.E) :
     Formalism.UG.hform (starRingEnd I.E) I.J y x = starRingEnd I.E (Formalism.UG.hform (starRingEnd I.E) I.J x y) := by
-  have hJij : ∀ i j, starRingEnd I.E (I.J j i) = I.J i j := by
-    intro i j
-    have := congrFun (congrFun I.J_herm i) j
-    simpa [Formalism.UG.cT] using this
-
-  simp only [Formalism.UG.hform, map_sum, map_mul, RingHomCompTriple.comp_apply, RingHom.id_apply]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  rw [hJij j i]
-  ring
+  apply _root_.PI.UnitaryGroupMassFormula.InHHClassFin.hform_swap <;> assumption
 
 theorem first_coordinate_vector_smul (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (p1 : RV I v →+* KV I v)
     (hp : ∀ c : KV I v, p1 (algebraMap (KV I v) (RV I v) c) = c) (c : OV I v) (X : Fin I.n → RV I v) :
@@ -673,28 +604,16 @@ section PrSpan
 
 variable {K : Type} [Field K] (O : ValuationSubring K) {n : ℕ} (P : Matrix (Fin n) (Fin n) K)
 
-theorem prA_add_left (β β' x : Fin n → K) : pr P (β + β') x = pr P β x + pr P β' x := by
-  simp [pr, add_dotProduct]
-
-theorem prA_smul_left (c : K) (β x : Fin n → K) : pr P (c • β) x = c * pr P β x := by
-  simp [pr, smul_dotProduct]
-
-theorem prA_add_right (β x y : Fin n → K) : pr P β (x + y) = pr P β x + pr P β y := by
-  simp [pr, mulVec_add, dotProduct_add]
-
-theorem prA_smul_right (c : K) (β x : Fin n → K) : pr P β (c • x) = c * pr P β x := by
-  simp [pr, mulVec_smul, dotProduct_smul]
-
 theorem pr_span_left {S : Set (Fin n → K)} {x : Fin n → K} (h : ∀ β ∈ S, pr P β x ∈ O) :
     ∀ β ∈ Submodule.span O S, pr P β x ∈ O := by
   intro β hβ
   induction hβ using Submodule.span_induction with
   | mem y hy => exact h y hy
   | zero => simp [pr]
-  | add a b _ _ ha hb => rw [prA_add_left]; exact add_mem ha hb
+  | add a b _ _ ha hb => rw [PI.UnitaryGroupMassFormula.ScXuExists.pr_add_left]; exact add_mem ha hb
   | smul c a _ ha =>
     have : c • a = (c : K) • a := rfl
-    rw [this, prA_smul_left]
+    rw [this, PI.UnitaryGroupMassFormula.ScXuExists.pr_smul_left]
     exact mul_mem c.2 ha
 
 theorem pr_span_right {S : Set (Fin n → K)} {β : Fin n → K} (h : ∀ x ∈ S, pr P β x ∈ O) :
@@ -703,10 +622,10 @@ theorem pr_span_right {S : Set (Fin n → K)} {β : Fin n → K} (h : ∀ x ∈ 
   induction hx using Submodule.span_induction with
   | mem y hy => exact h y hy
   | zero => simp [pr]
-  | add a b _ _ ha hb => rw [prA_add_right]; exact add_mem ha hb
+  | add a b _ _ ha hb => rw [PI.UnitaryGroupMassFormula.ScXuExists.pr_add_right]; exact add_mem ha hb
   | smul c a _ ha =>
     have : c • a = (c : K) • a := rfl
-    rw [this, prA_smul_right]
+    rw [this, PI.UnitaryGroupMassFormula.ScXuExists.pr_smul_right]
     exact mul_mem c.2 ha
 
 end PrSpan
@@ -1225,12 +1144,7 @@ abbrev LL (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) : Submodule (OV I v) 
 
 theorem sigV_sigV (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (r : RV I v) :
     sigV I v (sigV I v r) = r := by
-  induction r using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a e =>
-    simp only [sigV, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, Algebra.TensorProduct.map_tmul, AlgHom.id_apply]
-    rw [show I.cm.sig (I.cm.sig e) = e from star_star e]
-  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
+  apply _root_.PI.UnitaryGroupMassFormula.ScXuExists.BrA.sig2 <;> assumption
 
 theorem sigV_alg (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (c : KV I v) :
     sigV I v (algebraMap (KV I v) (RV I v) c) = algebraMap (KV I v) (RV I v) c := by
@@ -1325,7 +1239,6 @@ namespace PI.UnitaryGroupMassFormula.ScXuExists.BrB
 open NumberField IsDedekindDomain Matrix PI.UnitaryGroupMassFormula.AdIndexEq PI.UnitaryGroupMassFormula.ScXuExists
 open scoped TensorProduct
 open Formalism.MainNotions.S PI.ScRefExists
-
 
 theorem split_unitary_projection_compatibility : BridgeB := by
   intro I g r k e f z Rf _hH v _hv _hsum p1 hp1 T hT

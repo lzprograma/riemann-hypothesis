@@ -3,48 +3,8 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.NormDegUniv
 public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.SubstSPtrue
 public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SymbolRealisableIffGeneralRank
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -66,16 +26,10 @@ theorem normal_degree_zero_one (r : ℕ) : (1 : MvPolynomial (TV n' k) R) ∈ ND
   intro m hm
   have hm0 : m = 0 := by
     by_contra hne
-    rw [Finset.mem_coe, MvPolynomial.mem_support_iff, MvPolynomial.coeff_one, if_neg (Ne.symm hne)] at hm
+    rw [Finset.mem_coe, MvPolynomial.mem_support_iff, MvPolynomial.coeff_one, ite_eq_right (Ne.symm hne)] at hm
     exact hm rfl
   subst hm0
   simp [normDeg]
-
-private lemma normDeg_add' {r : ℕ} (a b : TV n' k →₀ ℕ) : normDeg r (a + b) = normDeg r a + normDeg r b := by
-  classical
-  unfold normDeg
-  exact Finsupp.sum_add_index' (h := fun v c => if IsNormal r v then c else 0) (fun v => by simp)
-    (fun v c₁ c₂ => by split_ifs <;> simp)
 
 theorem normal_degree_zero_mul {r : ℕ} {P Q : MvPolynomial (TV n' k) R} (hP : P ∈ NDsub R n' k r 0) (hQ : Q ∈ NDsub R n' k r 0) :
     P * Q ∈ NDsub R n' k r 0 := by
@@ -85,7 +39,7 @@ theorem normal_degree_zero_mul {r : ℕ} {P Q : MvPolynomial (TV n' k) R} (hP : 
   have h1 := hP ha
   have h2 := hQ hb
   simp only [Set.mem_setOf_eq, nonpos_iff_eq_zero] at h1 h2 ⊢
-  simp [normDeg_add', h1, h2]
+  simp [bx_normDeg_add, h1, h2]
 
 theorem normal_degree_zero_pow {r : ℕ} {P : MvPolynomial (TV n' k) R} (hP : P ∈ NDsub R n' k r 0) (n : ℕ) :
     P ^ n ∈ NDsub R n' k r 0 := by
@@ -117,7 +71,7 @@ theorem normal_degree_zero_X_abnormal {r : ℕ} (v : TV n' k) (hv : ¬ IsNormal 
   subst hm'
   show normDeg r (Finsupp.single v 1) ≤ 0
   unfold normDeg
-  rw [Finsupp.support_single_ne_zero _ one_ne_zero, Finset.sum_singleton, if_neg hv]
+  rw [Finsupp.support_single_ne_zero _ one_ne_zero, Finset.sum_singleton, ite_eq_right hv]
 
 theorem normal_degree_zero_det_pmat {r : ℕ} (hrk : r ≤ k) (A : Fin r → Fin n') (P : Fin r → ℕ) (hA : ∀ l, Even (A l).val) :
     (pmat R hrk A P).det ∈ NDsub R n' k r 0 := by
@@ -130,7 +84,7 @@ theorem normal_degree_zero_det_pmat {r : ℕ} (hrk : r ≤ k) (A : Fin r → Fin
   refine normal_degree_zero_X_abnormal _ ?_
   intro hN
   unfold IsNormal at hN
-  rw [if_pos (hA _)] at hN
+  rw [ite_eq_left (hA _)] at hN
   simp only [Fin.coe_castLE] at hN
   omega
 
@@ -172,9 +126,9 @@ theorem nd_rename {r K : ℕ} (hk : k = r + K) {T : ℕ} {P : MvPolynomial (Fin 
     refine Finset.sum_congr rfl fun t _ => ?_
     rw [Fin.sum_univ_add]
     by_cases ht : Even t.val
-    · rw [if_pos ht]
+    · rw [ite_eq_left ht]
       simp [IsNormal, castVK, ht]
-    · rw [if_neg ht]
+    · rw [ite_eq_right ht]
       simp [IsNormal, castVK, ht]
   rw [Set.mem_setOf_eq, key]
   exact hP mm hmm
@@ -202,12 +156,12 @@ theorem subst_eq_Lin (f : MvPolynomial (TV n' k) (KK O)) :
     unfold subst liftSubst Lin
     rw [aeval_X, aeval_X]
     by_cases hs : Even v.1.val
-    · simp only [LLT, hs, decide_true, if_true, Nsub]
+    · simp only [LLT, hs, decide_true, ite_true, Nsub]
       refine Finset.sum_congr rfl fun b _ => ?_
       split_ifs
       · rw [C_mul]; ring
       · rw [one_mul]; ring
-    · simp only [LLT, hs, decide_false, Bool.false_eq_true, if_false, Nsub]
+    · simp only [LLT, hs, decide_false, Bool.false_eq_true, ite_false, Nsub]
       refine Finset.sum_congr rfl fun b _ => ?_
       split_ifs
       · rw [C_mul]; ring
@@ -229,7 +183,7 @@ theorem Nsub_mul (hw : algebraMap O (KK O) w ≠ 0) (hg : IsGLW g) (s : Fin n') 
     rw [h1, ← RingHom.map_det]
     exact hg.map φ
   by_cases hs : Even s.val
-  · simp only [if_pos hs]
+  · simp only [ite_eq_left hs]
     have h2 : ∀ b : Fin k, (if r ≤ b.val then algebraMap O (KK O) w else 1) * σ⁻¹ b a *
         ((if r ≤ b.val then (algebraMap O (KK O) w)⁻¹ else 1) * σ c b) = σ c b * σ⁻¹ b a := by
       intro b
@@ -239,7 +193,7 @@ theorem Nsub_mul (hw : algebraMap O (KK O) w ≠ 0) (hg : IsGLW g) (s : Fin n') 
     simp_rw [h2]
     rw [← Matrix.mul_apply, Matrix.mul_nonsing_inv _ hσ, Matrix.one_apply]
     simp [eq_comm]
-  · simp only [if_neg hs]
+  · simp only [ite_eq_right hs]
     have h2 : ∀ b : Fin k, (if b.val < r then algebraMap O (KK O) w else 1) * σ a b *
         ((if b.val < r then (algebraMap O (KK O) w)⁻¹ else 1) * σ⁻¹ b c) = σ a b * σ⁻¹ b c := by
       intro b

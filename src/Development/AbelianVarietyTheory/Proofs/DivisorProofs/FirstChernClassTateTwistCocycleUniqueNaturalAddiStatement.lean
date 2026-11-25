@@ -4,45 +4,6 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.PullHlComp
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCochainEvEqOfNatural
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FirstChernClassTateTwistCocycleUniqueNaturalAddi
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZeroChains
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEtaleCocycleFirstChernClassTateTwist
 
@@ -71,38 +32,6 @@ theorem _root_.GlobalTheory.T.firstChernClassTateTwist_cocycle_unique_natural_ad
   intro q _
   refine ⟨?_, fun f L hE => ChernSpec.firstChernClassTateTwist_pullback q f L hE,
     fun L M N hE hN => ChernSpec.isOneCochain_add q L M N hE hN⟩
-  have exists_single {E : Spc} {I : Cx (ZMod q)} {n : ℤ} (p₀ : ℕ) (s₀ : ℤ) (h₀ : -(p₀ : ℤ) + n = s₀)
-      (b : ∀ U : Scheme.{0}, Sx E p₀ U → Sec (I.X s₀) U)
-      (hb : ∀ (V U : Scheme.{0}) (g : V ⟶ U) (x : Sx E p₀ U), Sec.res g (b U x) = b V (x.res g)) :
-      ∃ α : Cochain ((chains (ZMod q)).obj E) I n, (∀ U x, ev (R := ZMod q) α p₀ s₀ h₀ U x = b U x) ∧
-        ∀ p s h U x, p ≠ p₀ → ev (R := ZMod q) α p s h U x = 0 := by
-    subst h₀
-    obtain ⟨α, hα⟩ := exists_cochain_ev_eq_of_natural (ZMod q) (E := E) (I := I) (n := n)
-      (fun p s h U x => if hp : p = p₀ then (by subst hp; subst h; exact b U x) else 0) (by
-        intro p s h V U g x
-        by_cases hp : p = p₀
-        · subst hp; subst h
-          simp only [dite_eq_left]
-          exact hb V U g x
-        · simp only [dite_eq_right hp]
-          exact map_zero _)
-    refine ⟨α, fun U x => ?_, fun p s h U x hp => ?_⟩
-    · rw [hα]
-      simp only [dite_eq_left]
-    · rw [hα]
-      simp only [dite_eq_right hp]
-  have differential_eq_zero {E : Spc} {I : Cx (ZMod q)} {n m : ℤ} (hm : n + 1 = m) (α : Cochain ((chains (ZMod q)).obj E) I n)
-      (h₀ : ∀ (U : Scheme.{0}) (x : Sx E 0 U), Sec.map (I.d n m) (ev (R := ZMod q) α 0 n (by simp) U x) = 0)
-      (h₁ : ∀ (U : Scheme.{0}) (p : ℕ) (s t : ℤ) (hs : -((p + 1 : ℕ) : ℤ) + n = s) (ht : -(p : ℤ) + n = t) (x : Sx E (p + 1) U),
-        Sec.map (I.d s t) (ev (R := ZMod q) α (p + 1) s hs U x) +
-          m.negOnePow • ∑ i : Fin (p + 2), (-1 : ℤ) ^ (i : ℕ) • ev (R := ZMod q) α p t ht U (x.face i) = 0) : δ n m α = 0 := by
-    refine CupSpec.ev_ext _ _ fun p t ht U x => ?_
-    rw [CupSpec.ev_zero]
-    cases p with
-    | zero =>
-      obtain rfl : m = t := by simpa using ht
-      exact (CupSpec.ev_δ_zero hm α U n m (by simp) (by simp) x).trans (h₀ U x)
-    | succ p => exact (CupSpec.ev_δ_succ hm α U p _ t rfl ht x).trans (h₁ U p _ t rfl _ x)
   have exists_cocycle {t : ∀ U : Scheme.{0}, (Γ(U, ⊤))ˣ → Sec ((res _ (tw q 1)).X 0) U} (ht : IsKum q t)
       {E : Spc} (hE : Inv q E) (L : E ⟶ ofCat (glCat 1)) :
       ∃ γ : Cocycle ((chains (ZMod q)).obj E) (res _ (tw q 1)) 2,
@@ -156,7 +85,8 @@ theorem _root_.GlobalTheory.T.firstChernClassTateTwist_cocycle_unique_natural_ad
     have c₂ : ∀ h U x, ev (R := ZMod q) (α + β) 2 0 h U x = e U x := fun h U x => by
       rw [CupSpec.ev_add, b₁, a₂ _ _ _ _ _ (by decide), zero_add]
     have hs : (3 : ℤ).negOnePow = -1 := rfl
-    refine ⟨Cocycle.mk (α + β) 3 rfl (differential_eq_zero (m := 3) rfl _ (fun U x => ?_) (fun U p s t hs' ht' x => ?_)),
+    refine ⟨Cocycle.mk (α + β) 3 rfl (δ_eq_zero (m := 3) rfl _
+        (fun U x => ?_) (fun U p s t hs' ht' x => ?_)),
       fun U x => c₀ 0 2 _ U x (by decide) (by decide), fun U x v h => (c₁ _ U x).trans (hv U x v h),
       fun U x v w h h' => (c₂ _ U x).trans (hw U x v w h h')⟩
     · rw [c₀ _ _ _ _ _ (by decide) (by decide), smap_zero]

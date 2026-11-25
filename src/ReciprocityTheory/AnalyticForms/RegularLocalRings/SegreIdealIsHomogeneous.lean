@@ -161,7 +161,7 @@ theorem segreIdeal_isHomogeneous {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)} (hP
     by_cases h : n = m
     · subst h
       simp
-    · rw [if_neg, if_neg h]
+    · rw [ite_eq_right, ite_eq_right h]
       intro he
       obtain ⟨k⟩ := ‹Nonempty K›
       exact h (congrFun he k)
@@ -202,8 +202,7 @@ theorem chartOpen_cover {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)} (hP : IsMult
     (x : projX P hP) : ∃ p, x ∈ (chartOpen hP p).1 := by
   classical
   letI := segreGraded hP
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hall : ∀ p, segreW P p ∈ x.asHomogeneousIdeal := by
     intro p
     by_contra h
@@ -236,8 +235,7 @@ theorem chartOpen_cover {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)} (hP : IsMult
     apply key
     rw [MvPolynomial.mem_ideal_span_X_image]
     intro m hm
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     have hm0 : m = 0 := Finsupp.ext fun p => hne p (Set.mem_univ p)
     have hw := ((mem_homogeneousSubmodule i f).mp hf) (MvPolynomial.mem_support_iff.mp hm)
     rw [hm0, map_zero] at hw

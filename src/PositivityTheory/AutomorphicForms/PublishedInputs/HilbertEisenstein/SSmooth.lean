@@ -110,7 +110,7 @@ def SLow : Prop := ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (�
     UpperTheory.V.TR.Eop v 0 0 ⟨Eis ω (Phi c), hs⟩ - UpperTheory.V.TR.Eop v 1 1 ⟨Eis ω (Phi c), hs⟩ =
       Complex.I • (UpperTheory.V.TR.Eop v 0 1 ⟨Eis ω (Phi c), hs⟩ + UpperTheory.V.TR.Eop v 1 0 ⟨Eis ω (Phi c), hs⟩)
 
-def SZfin : Prop := ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (ω : HChar F) (c : HeightOneSpectrum (𝓞 F) → ℕ),
+def SZfin : Prop := ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (ω : HChar F) (_ : HeightOneSpectrum (𝓞 F) → ℕ),
   IsOfFinOrder ω → ∀ φ : UpperTheory.V.TR.Sm F 2,
     (∀ (z : Ideles F) (g : GA F 2), φ.1 (Matrix.GeneralLinearGroup.scalar (Fin 2) z * g) = ((ω.1 z : ℂˣ) : ℂ) * φ.1 g) →
     (∀ v, UpperTheory.V.TR.Eop v 0 1 φ - UpperTheory.V.TR.Eop v 1 0 φ = (Complex.I * (1 : ℕ)) • φ) →

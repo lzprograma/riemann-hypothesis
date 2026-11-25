@@ -182,7 +182,7 @@ theorem step (hσ : ∀ x, σ (σ x) = x) (hJ : cT σ J = J) {δ : E} (hδ : δ 
     ∃ g, IsUn σ J g ∧ (∀ i, g *ᵥ y i = y i) ∧ g *ᵥ x = x' := by
   by_cases hc : form σ J x (x - x') ≠ 0
   · exact stepA hσ hJ y x x' hy hxx hc
-  push_neg at hc
+  push Not at hc
 
   obtain ⟨u, hu, hxu, hx'u⟩ : ∃ u : Fin n → E, (∀ i, form σ J (y i) u = 0) ∧
       form σ J x u ≠ 0 ∧ form σ J x' u ≠ 0 := by
@@ -190,7 +190,7 @@ theorem step (hσ : ∀ x, σ (σ x) = x) (hJ : cT σ J = J) {δ : E} (hδ : δ 
     · exact ⟨u₁, hu₁, by rw [hxu₁]; exact one_ne_zero, h1⟩
     by_cases h2' : form σ J x u₂ ≠ 0
     · exact ⟨u₂, hu₂, h2', by rw [hxu₂]; exact one_ne_zero⟩
-    push_neg at h1 h2'
+    push Not at h1 h2'
     refine ⟨u₁ + u₂, fun i => ?_, ?_, ?_⟩
     · rw [form_add_right, hu₁, hu₂]; simp
     · rw [form_add_right, hxu₁, h2']; simp

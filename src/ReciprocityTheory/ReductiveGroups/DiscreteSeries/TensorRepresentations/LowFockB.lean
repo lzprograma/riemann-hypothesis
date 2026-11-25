@@ -89,7 +89,7 @@ theorem lf_cpcm_repr {ε : Fin n → Bool} {i a : Fin n} (j b : Fin n) (hia : ε
   have e : (cpFock i a * cmFock j b) (fockBasis n S) = (c * c') • fockBasis n U' := by
     show cpFock i a (cmFock j b (fockBasis n S)) = _
     rw [hcm, map_smul, hcp, smul_smul]
-  rw [e, map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply, if_neg, smul_zero]
+  rw [e, map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply, ite_eq_right, smul_zero]
   rintro rfl
   exact hT hU'
 
@@ -159,6 +159,6 @@ theorem lfMat_mulVec_single (ε : Fin n → Bool) (a b : Fin n) (S : LfIdx ε) (
     Pi.single_apply]
   rcases eq_or_ne T S with rfl | hTS
   · simp
-  · rw [if_neg (fun h' => hTS (Subtype.ext h'.symm)), if_neg hTS]
+  · rw [ite_eq_right (fun h' => hTS (Subtype.ext h'.symm)), ite_eq_right hTS]
 
 end ReciprocityTheory.ChartRestriction.DS

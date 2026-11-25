@@ -258,9 +258,6 @@ namespace Formalism.L2.Th1.F
 
 namespace PeriodLatticeBasisLemmas
 
-private theorem mem_lattice_iff_exists_int_comb' (L : PeriodPair) {x : ℂ} :
-    x ∈ L.lattice ↔ ∃ m n : ℤ, (m : ℂ) * L.ω₁ + (n : ℂ) * L.ω₂ = x := L.mem_lattice
-
 private theorem basis_equivFun_real_comb_periods (L : PeriodPair) (s t : ℝ) :
     L.basis.equivFun ((s : ℂ) * L.ω₁ + (t : ℂ) * L.ω₂) = ![s, t] := by
   have e : ((s : ℂ) * L.ω₁ + (t : ℂ) * L.ω₂) = L.basis.equivFun.symm ![s, t] := by
@@ -274,7 +271,7 @@ private theorem lattice_eq_iInter_preimage_int_coords (L : PeriodPair) :
   simp only [SetLike.mem_coe, Set.mem_iInter, Set.mem_preimage]
   constructor
   · intro hx i
-    obtain ⟨m, n, rfl⟩ := (mem_lattice_iff_exists_int_comb' L).mp hx
+    obtain ⟨m, n, rfl⟩ := (PeriodPair.mem_lattice (L := L)).mp hx
     have h : L.basis.equivFun ((m : ℂ) * L.ω₁ + (n : ℂ) * L.ω₂) = ![(m : ℝ), (n : ℝ)] := by
       exact_mod_cast basis_equivFun_real_comb_periods L m n
     rw [h]
@@ -284,7 +281,7 @@ private theorem lattice_eq_iInter_preimage_int_coords (L : PeriodPair) :
   · intro h
     obtain ⟨m, hm⟩ := h 0
     obtain ⟨n, hn⟩ := h 1
-    refine (mem_lattice_iff_exists_int_comb' L).mpr ⟨m, n, ?_⟩
+    refine (PeriodPair.mem_lattice (L := L)).mpr ⟨m, n, ?_⟩
     have hs := L.basis.sum_equivFun x
     rw [Fin.sum_univ_two, _root_.PeriodPair.basis_zero, _root_.PeriodPair.basis_one, ← hm, ← hn] at hs
     rw [← hs]
@@ -304,7 +301,7 @@ lemma isPreconnected_compl (L : PeriodPair) : IsPreconnected ((L.lattice : Set �
   have hc : (L.lattice : Set ℂ).Countable := by
     refine (Set.countable_range (fun p : ℤ × ℤ => (p.1 : ℂ) * L.ω₁ + (p.2 : ℂ) * L.ω₂)).mono ?_
     intro x hx
-    obtain ⟨m, n, rfl⟩ := (mem_lattice_iff_exists_int_comb' L).mp hx
+    obtain ⟨m, n, rfl⟩ := (PeriodPair.mem_lattice (L := L)).mp hx
     exact ⟨(m, n), rfl⟩
   have hr : 1 < Module.rank ℝ ℂ := by
     rw [← Module.finrank_eq_rank, Complex.finrank_real_complex]
@@ -437,11 +434,11 @@ lemma coords_half (L : PeriodPair) {a b a' b' : ℤ}
 
 private theorem int_comb_periods_mem_lattice (L : PeriodPair) (a b : ℤ) :
     (a : ℂ) * L.ω₁ + (b : ℂ) * L.ω₂ ∈ L.lattice :=
-  (mem_lattice_iff_exists_int_comb' L).mpr ⟨a, b, rfl⟩
+  (PeriodPair.mem_lattice (L := L)).mpr ⟨a, b, rfl⟩
 
 private theorem semiChar_zero_eq_one (L : PeriodPair) : Formalism.L2.Th1.F.semiChar L 0 = 1 := by
   unfold Formalism.L2.Th1.F.semiChar
-  rw [if_pos (by rw [zero_div]; exact L.lattice.zero_mem)]
+  rw [ite_eq_left (by rw [zero_div]; exact L.lattice.zero_mem)]
 
 private theorem quasiPeriodic_zero_semiChar_zero (L : PeriodPair) : QP L 0 (Formalism.L2.Th1.F.semiChar L 0) := by
   rw [semiChar_zero_eq_one]
@@ -465,7 +462,7 @@ lemma qp_coords (hq : ZetaQuasi) (hl : SigmaLogDeriv) (ho : SigmaOdd) (hz : Sigm
   | succ n ih =>
     intro a b h
     by_cases h2 : ((a : ℂ) * L.ω₁ + (b : ℂ) * L.ω₂) / 2 ∈ L.lattice
-    · obtain ⟨a', b', hab⟩ := (mem_lattice_iff_exists_int_comb' L).mp h2
+    · obtain ⟨a', b', hab⟩ := (PeriodPair.mem_lattice (L := L)).mp h2
       obtain ⟨rfl, rfl⟩ := coords_half L hab
       have e2 : (2 : ℤ).natAbs = 2 := rfl
       rw [Int.natAbs_mul, Int.natAbs_mul, e2] at h
@@ -473,13 +470,13 @@ lemma qp_coords (hq : ZetaQuasi) (hl : SigmaLogDeriv) (ho : SigmaOdd) (hz : Sigm
       have h3 := qp_two_mul L ih' (semiChar_sq L _)
       have hs1 : Formalism.L2.Th1.F.semiChar L (((2 * a' : ℤ) : ℂ) * L.ω₁ + ((2 * b' : ℤ) : ℂ) * L.ω₂) = 1 := by
         unfold Formalism.L2.Th1.F.semiChar
-        rw [if_pos h2]
+        rw [ite_eq_left h2]
       rw [hs1, show (((2 * a' : ℤ) : ℂ) * L.ω₁ + ((2 * b' : ℤ) : ℂ) * L.ω₂)
           = 2 * ((a' : ℂ) * L.ω₁ + (b' : ℂ) * L.ω₂) by push_cast; ring]
       exact h3
     · have hs1 : Formalism.L2.Th1.F.semiChar L ((a : ℂ) * L.ω₁ + (b : ℂ) * L.ω₂) = -1 := by
         unfold Formalism.L2.Th1.F.semiChar
-        rw [if_neg h2]
+        rw [ite_eq_right h2]
       rw [hs1]
       exact qp_of_half_notMem hq hl ho hz L (int_comb_periods_mem_lattice L a b) h2
 
@@ -487,10 +484,10 @@ end PeriodLatticeBasisLemmas
 
 
 open PeriodLatticeBasisLemmas in
-theorem sigmaQuasi_of (hq : ZetaQuasi) (hl : SigmaLogDeriv) (_he : SigmaEntire) (ho : SigmaOdd)
+theorem sigmaQuasi_of (hq : ZetaQuasi) (hl : SigmaLogDeriv) (ho : SigmaOdd)
     (hz : SigmaZero) : SigmaQuasi := by
   intro L ω z hω
-  obtain ⟨a, b, rfl⟩ := (_root_.Formalism.L2.Th1.F.PeriodLatticeBasisLemmas.mem_lattice_iff_exists_int_comb' L).mp hω
+  obtain ⟨a, b, rfl⟩ := (PeriodPair.mem_lattice (L := L)).mp hω
   exact Formalism.L2.Th1.F.PeriodLatticeBasisLemmas.qp_coords hq hl ho hz L _ a b le_rfl z
 
 
@@ -628,7 +625,7 @@ theorem zetaQuasi : ZetaQuasi := zetaQuasi_of zetaHasDeriv _root_.Formalism.L2.T
 theorem sigmaEntire : SigmaEntire := sigmaEntire_of _root_.Formalism.L2.Th1.F.sigma_product_locally_uniform
 theorem sigmaZero : SigmaZero := sigmaZero_of _root_.Formalism.L2.Th1.F.sigma_summable
 theorem sigmaLogDeriv : SigmaLogDeriv := sigmaLogDeriv_of _root_.Formalism.L2.Th1.F.sigma_product_locally_uniform _root_.Formalism.L2.Th1.F.sigma_summable _root_.Formalism.L2.Th1.F.zeta_summable
-theorem sigmaQuasi : SigmaQuasi := sigmaQuasi_of zetaQuasi sigmaLogDeriv sigmaEntire _root_.Formalism.L2.Th1.F.sigma_odd sigmaZero
+theorem sigmaQuasi : SigmaQuasi := sigmaQuasi_of zetaQuasi sigmaLogDeriv _root_.Formalism.L2.Th1.F.sigma_odd sigmaZero
 theorem sigmaSimple : SigmaSimple := sigmaSimple_of sigmaQuasi sigmaEntire (sigmaDerivZero_of _root_.Formalism.L2.Th1.F.sigma_product_locally_uniform)
 theorem etaEisenstein : EtaEisenstein := etaEisenstein_of _root_.Formalism.L2.Th1.F.zeta_summable _root_.Formalism.L2.Th1.F.zeta_odd
 theorem legendre : Legendre := legendre_of etaEisenstein

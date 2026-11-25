@@ -1,11 +1,10 @@
 module
 
+import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.MulLeftCompOfPullbackPointEquivMul
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.JetGlue
 public import Mathlib.AlgebraicGeometry.Stalk
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -24,20 +23,7 @@ theorem specMap_stalkCongr {X : Scheme.{u}} {x y : X} (e : x = y) :
 
 theorem ext_of_fromSpecStalk {Y X : Scheme.{u}} (f g : Y ⟶ X)
     (h : ∀ y, Y.fromSpecStalk y ≫ f = Y.fromSpecStalk y ≫ g) : f = g := by
-  have hb : ∀ y, f y = g y := fun y => by
-    have := congr($(h y) (IsLocalRing.closedPoint (Y.presheaf.stalk y)))
-    change f (Y.fromSpecStalk y (IsLocalRing.closedPoint _)) = g (Y.fromSpecStalk y (IsLocalRing.closedPoint _)) at this
-    rwa [Scheme.fromSpecStalk_closedPoint] at this
-  have hbase : f.base = g.base := by ext y; exact hb y
-  have hs : ∀ y, f.stalkMap y = (X.presheaf.stalkCongr (Inseparable.of_eq (hb y))).hom ≫ g.stalkMap y := by
-    intro y
-    apply Spec.map_injective
-    rw [← cancel_mono (X.fromSpecStalk (f y))]
-    rw [Scheme.SpecMap_stalkMap_fromSpecStalk, Spec.map_comp, Category.assoc, specMap_stalkCongr (hb y),
-      Scheme.SpecMap_stalkMap_fromSpecStalk, h y]
-  refine Scheme.Hom.ext' (LocallyRingedSpace.Hom.ext' ?_)
-  have := SheafedSpace.hom_stalk_ext _ _ hbase hs
-  exact congrArg InducedCategory.Hom.hom this
+  apply GlobalTheory.hom_ext_of_fromSpecStalk <;> assumption
 
 theorem comp_eq {A B C D : Scheme.{u}} (u : A ⟶ B) (v : B ⟶ C) (f g : C ⟶ D) (h : v ≫ f = v ≫ g) :
     (u ≫ v) ≫ f = (u ≫ v) ≫ g := by

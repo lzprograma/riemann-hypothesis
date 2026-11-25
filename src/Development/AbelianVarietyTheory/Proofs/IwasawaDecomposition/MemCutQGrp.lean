@@ -124,7 +124,6 @@ theorem mem_map_conj {G : Type} [Group G] (S : Subgroup G) (k x : G) :
 
 section Main
 
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 variable {B : Base} {X : PreX B.toPre} (I : TC B X)
 

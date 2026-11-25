@@ -90,18 +90,12 @@ structure StepLevel (hc : CMData F E) (S : HSpace E) (gp : Fin 2 → ℕ) (T f :
   U : Subgroup (GL (Fin S.rank) (E ⊗[F] Af F))
   U_eq : ∀ x, x ∈ U ↔ x ∈ UAf hc S ∧ ∀ v, bc (prV (E := E) v) x ∈ Uloc v
 
-structure StepLevel0 (hc : CMData F E) (S : HSpace E) (gp : Fin 2 → ℕ)
-    (Lb : Submodule (𝓞 E) (Fin S.rank → E)) where
+structure StepLevel0 (_hc : CMData F E) (S : HSpace E) (_gp : Fin 2 → ℕ)
+    (_Lb : Submodule (𝓞 E) (Fin S.rank → E)) where
 
   Uloc : ∀ v : HeightOneSpectrum (𝓞 F), Subgroup (GL (Fin S.rank) (E ⊗[F] v.adicCompletion F))
-  Uloc_lev : ∀ v, Uloc v ≤ levelVL hc.sig S.gram v Lb
-  Uloc_hyp : ∀ v : HeightOneSpectrum (𝓞 F), ((gp 0 : 𝓞 F) ∉ v.asIdeal) →
-    ((gp 1 : 𝓞 F) ∉ v.asIdeal) → Uloc v = levelVL hc.sig S.gram v Lb
-  Uloc_g : ∀ (i : Fin 2) (v : HeightOneSpectrum (𝓞 F)), (gp i : 𝓞 F) ∈ v.asIdeal →
-    ∀ x, InPrinc hc S v (gp i) Lb x → x ∈ Uloc v
 
   U : Subgroup (GL (Fin S.rank) (E ⊗[F] Af F))
-  U_eq : ∀ x, x ∈ U ↔ x ∈ UAf hc S ∧ ∀ v, bc (prV (E := E) v) x ∈ Uloc v
 
 structure ClassTie (hc : CMData F E) (S : HSpace E) (Lb : Submodule (𝓞 E) (Fin S.rank → E))
     (U : Subgroup (GL (Fin S.rank) (E ⊗[F] Af F))) {cls : Type} (stab : cls → Type)

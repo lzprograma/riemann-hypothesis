@@ -31,12 +31,8 @@ theorem analyticAt_of_differentiableOn {σ : Type} [Fintype σ] {N : Set (σ →
   have hO : IsOpen (L ⁻¹' N) := hN.preimage L.continuous
   have hg : DifferentiableOn ℂ (f ∘ L) (L ⁻¹' N) :=
     hf.comp L.differentiable.differentiableOn fun x hx => hx
-  have hA : AnalyticOnNhd ℂ (f ∘ L) (L ⁻¹' N) := by
-    refine analyticOnNhd_of_continuousOn_of_separately hO hg.continuousOn fun x hx i => ?_
-    have h1 : DifferentiableAt ℂ (f ∘ L) (Function.update x i (x i)) := by
-      rw [Function.update_eq_self]
-      exact hg.differentiableAt (hO.mem_nhds hx)
-    exact h1.comp (x i) (hasFDerivAt_update x (x i)).differentiableAt
+  have hA : AnalyticOnNhd ℂ (f ∘ L) (L ⁻¹' N) :=
+    ReciprocityTheory.AnForm.Osgood.osgood _ _ _ hO hg
   have hz' : L.symm z ∈ L ⁻¹' N := by simpa using hz
   have h2 := (hA _ hz').comp ((L.symm : (σ → ℂ) →L[ℂ] (Fin (Fintype.card σ) → ℂ)).analyticAt z)
   simpa [Function.comp_def] using h2

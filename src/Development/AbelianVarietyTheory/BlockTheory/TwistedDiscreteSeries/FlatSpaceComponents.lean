@@ -48,8 +48,6 @@ open scoped TensorProduct nonZeroDivisors
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.FlatSpaceComponents
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 abbrev OA (D : D7) : Subring (EAf D) := Formalism.L2.Herm.intAf D.host.F D.host.E

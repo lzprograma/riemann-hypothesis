@@ -95,7 +95,7 @@ theorem SmOn.flow {A : Set E} {f : E → V} (hf : SmOn A f) {γ : E → ℝ → 
 
 end SmOn
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ} {H : Type*} [NormedAddCommGroup H] [NormedSpace ℂ H]
 

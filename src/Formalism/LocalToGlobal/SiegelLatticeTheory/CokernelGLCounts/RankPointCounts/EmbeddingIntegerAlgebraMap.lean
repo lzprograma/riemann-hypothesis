@@ -16,8 +16,6 @@ open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum Formalism.B
 
 namespace Formalism.L2.SG.Pf.LocalDenominators
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem conjF_invol (e : D.host.E) : D.conjF (D.conjF e) = e := by

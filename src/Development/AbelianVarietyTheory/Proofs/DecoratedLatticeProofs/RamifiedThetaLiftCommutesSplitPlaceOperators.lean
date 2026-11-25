@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubleThetaUnfoldingEquivariantUnitaryGroups
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousIntegralCompactAutomorphicQuotientParaStatement
 public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IndicatorFunctionIdentity
@@ -119,18 +120,7 @@ theorem om_mul (g a : GA D S) (h b : GA D T) (f : WO S T → ℂ) : om (g, h) (o
 
 theorem setIntegral_mul_right (hS : CoCpt S) (v : Vol S) (G : GA D S → ℂ) (hG : ∀ γ ∈ GQ S, ∀ h, G (γ * h) = G h)
     (a : GA D S) : ∫ h in v.𝓕, G (h * a) ∂v.μ = ∫ h in v.𝓕, G h ∂v.μ := by
-  obtain ⟨i1, i2, i3, i4, i5, i6, i7⟩ := GlobalTheory.Mem.AdelicGroupTop.adelic_unitary_topology D S
-  haveI := v.haar
-  obtain ⟨K, hK, hcov⟩ := hS
-  have hmap : ∀ b : GA D S, v.μ.map (· * b) = v.μ := fun b =>
-    Formalism.L2.SG.CovariantRepresentation.haar_map_mul_right_of_lattice v.μ (GQ S) hK hcov b
-  have hmp : MeasurePreserving (· * a) v.μ v.μ := ⟨measurable_mul_const a, hmap a⟩
-  have hmp' : MeasurePreserving (· * a⁻¹) v.μ v.μ := ⟨measurable_mul_const a⁻¹, hmap a⁻¹⟩
-  rw [← hmp.setIntegral_image_emb (measurableEmbedding_mulRight a) G v.𝓕, Set.image_mul_right]
-  have hF : IsFundamentalDomain (GQ S) ((· * a⁻¹) ⁻¹' v.𝓕) v.μ :=
-    v.fund.preimage_of_equiv hmp'.quasiMeasurePreserving (e := id) Function.bijective_id
-      fun g x => by simp [Subgroup.smul_def, smul_eq_mul, mul_assoc]
-  exact (v.fund.setIntegral_eq hF fun γ x => hG γ γ.2 x).symm
+  apply _root_.GlobalTheory.FinPl.Comm.integral_right <;> assumption
 
 theorem lift_facts (hS : CoCpt S) (vS : Vol S) (hW : IsWeilDatumO ψ S T χS χT om) {f : WO S T → ℂ}
     (hf : IsThetaFunO ψ S T f) {φ : GA D S → ℂ} (hφ : IsContAut S φ) :

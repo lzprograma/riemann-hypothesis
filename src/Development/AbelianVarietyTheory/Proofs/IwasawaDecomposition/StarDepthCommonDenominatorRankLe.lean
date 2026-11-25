@@ -174,14 +174,14 @@ theorem cell_den {m : ℕ} {γ : Fin m → LinearMap.BilinForm ℤ X} (hγ : IsC
         have e : (((h₀ v).toNat : ℤ) : ℝ) = (h₀ v : ℝ) := by rw [Int.toNat_of_nonneg hh₀.le]
         rw [← key, ← e]
         norm_cast
-      · push_neg at hne
+      · push Not at hne
         exact ⟨1, one_pos, fun x hx => (hne x hx).elim⟩
     obtain ⟨D, hD, hall⟩ := common_den A hA
     refine ⟨D, hD, fun β hβ => ?_⟩
     obtain ⟨m', s, h, hF, hh, hβ'⟩ := GlobalTheory.StarCover.star_cover X m γ v (toReal β) (fun i y z => (hγ.mem i).1 y z)
       hγ.nonneg hv0 hvc hβ
     exact hall (Set.range s) _ ⟨β, rfl, m', s, h, rfl, hF, hh, hβ'⟩
-  · push_neg at hc
+  · push Not at hc
     refine ⟨1, one_pos, fun β hβ => ⟨0, ?_⟩⟩
     have hup := GlobalTheory.PolFan.evalR_starDepth_le O bar ψ w X m γ (toReal β) 0 hγ hβ le_rfl
       fun v hb hp hw1 hc' => absurd hc' (hc v hb hp hw1)
@@ -222,7 +222,7 @@ theorem module_den (hX : IsPolyFanOn bar ψ X)
       have : γ i ∈ Set.range γ₀ := by rw [hr₀, ← hr]; exact ⟨i, rfl⟩
       obtain ⟨j, hj⟩ := this
       exact ⟨j, hj.symm⟩
-    · push_neg at hne
+    · push Not at hne
       exact ⟨1, one_pos, fun x hx => (hne x hx).elim⟩
   obtain ⟨D, hD, hall⟩ := common_den A hA
   refine ⟨D, hD, fun β hβ => ?_⟩

@@ -2,75 +2,12 @@ module
 
 public import Formalism.FlagUnipotentLattices.UnipotentStabiliserCharacterisation
 public import Formalism.FormalDegreeBessel.FinalDS
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
 namespace Formalism.HermitianLatticeCounting.P
-
-section G1
-open Finset Polynomial
-
-end G1
-
-section G2
-open Finset Metric
-
-end G2
-
-section G3
-open Finset Polynomial Formalism.HermitianLatticeCounting.ExpansionTerms
-
-end G3
-
-section G4
-open Finset Formalism.HermitianLatticeCounting.ExpansionTerms
-
-end G4
 
 section G5
 open Finset
@@ -267,10 +204,10 @@ theorem degree_set_cardinality_bound : Formalism.HermitianLatticeCounting.Expans
     intro J a b
     obtain ⟨m, hm⟩ := hint a b
     by_cases ha : a ∈ J <;> by_cases hb : b ∈ J
-    · exact ⟨m, by simp only [ha, hb, if_true]; linarith⟩
-    · exact ⟨m + 1, by simp only [ha, hb, if_true, if_false]; push_cast; linarith⟩
-    · exact ⟨m - 1, by simp only [ha, hb, if_true, if_false]; push_cast; linarith⟩
-    · exact ⟨m, by simp only [ha, hb, if_false]; linarith⟩
+    · exact ⟨m, by simp only [ha, hb, ite_true]; linarith⟩
+    · exact ⟨m + 1, by simp only [ha, hb, ite_true, ite_false]; push_cast; linarith⟩
+    · exact ⟨m - 1, by simp only [ha, hb, ite_true, ite_false]; push_cast; linarith⟩
+    · exact ⟨m, by simp only [ha, hb, ite_false]; linarith⟩
   have fμ := _root_.Formalism.QuantumDeterminants.formal_degree_pos_holds n μ hμ.injective
   induction I using Finset.induction_on with
   | empty =>
@@ -376,8 +313,7 @@ lemma paired_sum_exp_bound {ι κ : Type} [DecidableEq ι] [DecidableEq κ] (I I
 lemma half_integer_neg_le_neg_half (y : ℝ) (z : ℤ) (h : y = (z : ℝ) + 1 / 2) (hy : y < 0) : y ≤ -(1 / 2) := by
   subst h
   have hz : z ≤ -1 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have h0 : (0:ℤ) ≤ z := by omega
     have : (0:ℝ) ≤ z := by exact_mod_cast h0
     linarith
@@ -456,7 +392,7 @@ theorem first_operator_norm_bound : Formalism.HermitianLatticeCounting.Expansion
       _ ≤ 2 * q0 / c := by gcongr
   rw [div_le_iff₀ hDpos]
   by_cases hs : (s : ℕ) + 1 < k
-  · rw [if_pos hs]
+  · rw [ite_eq_left hs]
     have above : ∀ (i : Fin k) (a : Fin (k + M)), (a : ℕ) + 1 = (i : ℕ) → (i : ℕ) < (s : ℕ) →
         |mu s - 1 / 2 - u i| ≤ Real.exp (2 * |mu a - lam a| / (ga / 2)) * |mu s - 1 - mu a| := by
       intro i a hai his
@@ -520,9 +456,9 @@ theorem first_operator_norm_bound : Formalism.HermitianLatticeCounting.Expansion
         have h := (Finset.mem_filter.mp hi).2
         by_cases c : (i : ℕ) < (s : ℕ)
         · apply above i _ _ c
-          simp only [c, if_true]; omega
+          simp only [c, ite_true]; omega
         · apply below i _ _ (by omega)
-          simp only [c, if_false])
+          simp only [c, ite_false])
       (fun i _ => hN i) (by linarith)
       (by
         have hsub : (univ : Finset (Fin k)) \
@@ -553,7 +489,7 @@ theorem first_operator_norm_bound : Formalism.HermitianLatticeCounting.Expansion
             mul_le_mul_of_nonneg_left hsq (by positivity)
           calc _ ≤ (4 * b) ^ 3 * Real.exp 1 * Real.sqrt k := by linarith
             _ = 64 * Real.exp 1 * Real.sqrt k * b ^ 3 := by ring
-  · rw [if_neg hs]
+  · rw [ite_eq_right hs]
     have above : ∀ (i : Fin k) (a : Fin (k + M)), (a : ℕ) + 1 = (i : ℕ) → (i : ℕ) + 1 < k →
         |mu s - 1 / 2 - u i| ≤ Real.exp (2 * |mu a - lam a| / (bv / 2)) * |mu s - 1 - mu a| := by
       intro i a hai hik
@@ -628,15 +564,5 @@ theorem first_operator_norm_bound : Formalism.HermitianLatticeCounting.Expansion
             _ = 16 * Real.exp 1 * b ^ 2 := by ring
 
 end G6
-
-section G8
-open Finset
-
-end G8
-
-section G7
-open Finset
-
-end G7
 
 end Formalism.HermitianLatticeCounting.P

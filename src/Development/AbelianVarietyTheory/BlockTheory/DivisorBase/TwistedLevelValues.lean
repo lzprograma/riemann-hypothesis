@@ -49,8 +49,6 @@ open scoped TensorProduct InnerProductSpace
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def twVal {E : Type} [Field E] [NumberField E] (χ : Formalism.L2.Host.HChar E) (w : ℝ) (P : HeightOneSpectrum (𝓞 E)) (k : Eˣ) : ℂ :=

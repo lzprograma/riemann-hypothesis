@@ -98,8 +98,7 @@ theorem kaehler_atPrime_of_away (K A : Type) [Field K] [CommRing A] [Algebra K A
       Module.Finite (Localization.AtPrime P) Ω[Localization.AtPrime P⁄K] ∧
       Module.finrank (Localization.AtPrime P) Ω[Localization.AtPrime P⁄K] = D := by
   obtain ⟨t, ht, htP⟩ : ∃ t ∈ s, t ∉ P := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact (‹P.IsPrime›).ne_top (top_le_iff.1 (hs ▸ Ideal.span_le.2 hc))
   have hle : Submonoid.powers t ≤ P.primeCompl := by
     rintro _ ⟨n, rfl⟩
@@ -292,25 +291,6 @@ theorem relDim_of_dense {X S : Scheme.{0}} (f : X ⟶ S) [Smooth f] (D : ℕ) (W
     (top_le_iff.1 fun x _ => TopologicalSpace.Opens.mem_iSup.2 ⟨x, hV x⟩) fun x => ?_
   rw [← hall x]; exact hd x
 
-theorem basis_spread (K A : Type) [Field K] [CommRing A] [Algebra K A] [Algebra.FinitePresentation K A]
-    (P : Ideal A) [P.IsPrime] {n : ℕ} (x : Fin n → A)
-    (hx : LinearIndependent (Localization.AtPrime P)
-        (fun i => KaehlerDifferential.D K (Localization.AtPrime P) (algebraMap A _ (x i))) ∧
-      Submodule.span (Localization.AtPrime P)
-        (Set.range fun i => KaehlerDifferential.D K (Localization.AtPrime P) (algebraMap A _ (x i))) = ⊤) :
-    ∃ s ∉ P, ∀ (B : Type) [CommRing B] [Algebra A B] [Algebra K B] [IsScalarTower K A B]
-      [IsLocalization.Away s B],
-      LinearIndependent B (fun i => KaehlerDifferential.D K B (algebraMap A B (x i))) ∧
-        Submodule.span B (Set.range fun i => KaehlerDifferential.D K B (algebraMap A B (x i))) = ⊤ := _root_.GlobalTheory.CompanionTheory.KaehlerSpread.spread K A P x hx
-
-theorem stalk_transfer (Y : Scheme.{0}) (U : Y.affineOpens) (y : Y) (hy : y ∈ U.1)
-    (hreg : IsRegularLocalRing (Y.presheaf.stalk y)) (m : ℕ) (f : Fin m → Γ(Y, U.1))
-    (hf : FinalTheorems.Rsp (Y.presheaf.stalk y) m (fun i => Y.presheaf.germ U.1 y hy (f i))) :
-    IsRegularLocalRing (Localization.AtPrime (U.2.primeIdealOf ⟨y, hy⟩).asIdeal) ∧
-      FinalTheorems.Rsp (Localization.AtPrime (U.2.primeIdealOf ⟨y, hy⟩).asIdeal) m
-        (fun i => algebraMap Γ(Y, U.1) _ (f i)) ∧
-      ∀ s : Γ(Y, U.1), y ∈ Y.basicOpen s ↔ s ∉ (U.2.primeIdealOf ⟨y, hy⟩).asIdeal := _root_.GlobalTheory.CompanionTheory.ResKCoords.stalk_to_localization Y U y hy hreg m f hf
-
 theorem coords_at_point (K : Type) [Field K] [CharZero K] (D : ℕ) (Y : Scheme.{0}) (g : Y ⟶ Sp K)
     (hD : SmoothOfRelativeDimension D g) (U : Y.affineOpens) (y : Y) (hy : y ∈ U.1)
     (hreg : IsRegularLocalRing (Y.presheaf.stalk y)) (m : ℕ) (f : Fin m → Γ(Y, U.1))
@@ -425,7 +405,7 @@ theorem point_coords (K : Type) [Field K] [CharZero K] (D : ℕ) (Y : Scheme.{0}
     have hwU : w ∈ U.1 := Y.basicOpen_le s hw
     have h1 : w ∉ Y.basicOpen (∏ j ∈ J, f j) := (hset.subset ⟨hwU, hwT⟩).2
     rw [mem_basicOpen_prod] at h1
-    push_neg at h1
+    push Not at h1
     obtain ⟨j, hj, hwj⟩ := h1 hwU
     refine ⟨hw, σ.symm (e j), (hσ _).2 (by rw [Equiv.apply_symm_apply]; exact Finset.mem_map_of_mem e hj), ?_⟩
     rw [Equiv.apply_symm_apply, hr _ _ hw, hxe]; exact hwj
@@ -468,13 +448,6 @@ section -- clump:auto
 @[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R ReciprocityTheory.ChartRestriction.G.Geo.ResK
-
-namespace GlobalTheory.CompanionTheory.Geo.SncCoordsSide
-
-theorem coordsStatement_side : ReciprocityTheory.ChartRestriction.G.Geo.ResK.CoordsStatement :=
-  GlobalTheory.CompanionTheory.Geo.SncCoords.coordsStatement
-
-end GlobalTheory.CompanionTheory.Geo.SncCoordsSide
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordsStatement =====

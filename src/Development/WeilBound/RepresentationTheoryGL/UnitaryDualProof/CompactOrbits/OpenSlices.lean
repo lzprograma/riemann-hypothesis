@@ -371,7 +371,7 @@ theorem relIndex_Lc (Z : SubM k n) {m m' : ℕ} (hm : 1 ≤ m) (hmm : m ≤ m') 
     (fun h hh _ hx => mul_mem_Lat Z (by simpa using one_add_mem_Lat0 Z ((mem_Lc_iff Z hm h).1 hh)) hx)
     (fun h => mem_Lc_iff Z (hm.trans hmm) h)
 
-theorem relIndex_Lc_conj (Z : SubM k n) (g : GLn k n) (_hg : g ∈ Gz Z)
+theorem relIndex_Lc_conj (Z : SubM k n) (g : GLn k n)
     (c : ℕ) (hc : ∀ j : ℕ, ∀ x ∈ Lat Z (j + c), conjA g x ∈ Lat Z j ∧ conjA g⁻¹ x ∈ Lat Z j)
     {m m' : ℕ} (hm : 1 ≤ m) (hcm : c ≤ m) (hmm : m ≤ m') :
     (Lc Z m').relIndex ((Lc Z m).map (MulAut.conj g).toMonoidHom) =
@@ -393,7 +393,7 @@ theorem relIndex_Lc_conj (Z : SubM k n) (g : GLn k n) (_hg : g ∈ Gz Z)
         mul_sub, sub_mul, mul_one, Units.mul_inv]; abel] at hy
     exact mul_mem_Lat Z hy hx
 
-theorem Lc_le (Z : SubM k n) (g : GLn k n) (_hg : g ∈ Gz Z)
+theorem Lc_le (Z : SubM k n) (g : GLn k n)
     (c : ℕ) (hc : ∀ j : ℕ, ∀ x ∈ Lat Z (j + c), conjA g x ∈ Lat Z j ∧ conjA g⁻¹ x ∈ Lat Z j)
     {m m' : ℕ} (hm : 1 ≤ m) (hmm : m + c ≤ m') :
     Lc Z m' ≤ Lc Z m ⊓ (Lc Z m).map (MulAut.conj g).toMonoidHom := fun h hh => by
@@ -445,8 +445,8 @@ theorem indexSym [CharZero k] : IndexSym (k := k) := by
   obtain ⟨c1, hc1⟩ := core Z hZ g hg
   refine ⟨c0 + c1, fun m hm m' hm' => ?_⟩
   obtain ⟨r, rfl⟩ : ∃ r, m' = m + r := ⟨m' - m, by omega⟩
-  exact ⟨Lc_le Z g hg c0 hc0 (by omega) (by omega),
-    by rw [relIndex_Lc_conj Z g hg c0 hc0 (by omega) (by omega) (by omega), relIndex_Lc Z (by omega) (by omega),
+  exact ⟨Lc_le Z g c0 hc0 (by omega) (by omega),
+    by rw [relIndex_Lc_conj Z g c0 hc0 (by omega) (by omega) (by omega), relIndex_Lc Z (by omega) (by omega),
       Bi.relIndex_lat_conj, Bi.relIndex_lat]; exact (hc1 r (by omega)).1,
     by rw [relIndex_Lc Z (by omega) (by omega), Bi.relIndex_lat]; exact (hc1 r (by omega)).2⟩
 
@@ -679,10 +679,6 @@ theorem isClosed_subalgebra (Z : SubM k n) : IsClosed (Z : Set (Mat k n)) := by
   have hfy : f y ∈ (Subalgebra.toSubmodule Z).map f := ⟨y, hyZ, rfl⟩
   rw [hf] at hfy; simpa using hfy
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
-theorem eq_zero_of_mem_of_isNilpotent {Z : SubM k n} (hZ : CR Z) {c : Mat k n} (hc : c ∈ Z) (h : IsNilpotent c) :
-    c = 0 := eq_zero_of_nilp_shared hZ hc h
-
 theorem exists_sep {Z : SubM k n} (hZ : CR Z) : ∃ J : ℕ,
     ∀ s ∈ (Z : Set (Mat k n)), s ∈ ball n 1 → s ∉ ball n (valuation k (ϖ k)) →
       ∀ w ∈ ball n (valuation k (ϖ k) ^ J), ¬ IsNilpotent (s + w) := by
@@ -692,7 +688,7 @@ theorem exists_sep {Z : SubM k n} (hZ : CR Z) : ∃ J : ℕ,
     ((isCompact_ball 1).inter_left (isClosed_subalgebra Z)).inter_right (isOpen_ball hq0).isClosed_compl
   have hloc : ∀ s ∈ S, ∃ J : ℕ, ∀ w ∈ ball n (valuation k (ϖ k) ^ J), ¬ IsNilpotent (s + w) := fun s hs => by
     have hsN : ¬ IsNilpotent s := fun h =>
-      hs.2 (by rw [eq_zero_of_mem_of_isNilpotent hZ hs.1.1 h]; exact fun _ _ => by simp)
+      hs.2 (by rw [PositivityTheory.RgUd.T.eq_zero_of_nilp_shared hZ hs.1.1 h]; exact fun _ _ => by simp)
     by_contra hcon; push Not at hcon
     let C : ℕ → Set (Mat k n) := fun J => {M | M - s ∈ ball n (valuation k (ϖ k) ^ J)} ∩ {M | IsNilpotent M}
     have hCc : ∀ J, IsClosed (C J) := fun J =>

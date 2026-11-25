@@ -501,7 +501,7 @@ private theorem exists_generalized_inverse_mod_ideal {R S B P : Type} [CommRing 
 
     rw [Matrix.sub_apply, map_sub, Matrix.mul_apply, map_sum]
     simp only [AlgHom.coe_toRingHom, map_mul, hcomp, Pi.sub_apply, sub_mul, Finset.sum_sub_distrib, Pi.single_apply,
-      ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     rw [show ∑ m, s (p m) l * π (Φ m j) = ∑ m, π (Φ m j) * s (p m) l from
       Finset.sum_congr rfl fun _ _ => mul_comm _ _, hsuml]
     ring

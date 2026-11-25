@@ -56,8 +56,6 @@ public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsCh
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
@@ -155,7 +153,7 @@ theorem prodPts_injective (hv : IsLieBasis v) : Function.Injective fun c => prod
     ((Chart.isLieComb_iff _ _ _).2 h)
 
 def tanHom (hv : ∀ i, IsTangent (v i)) : Multiplicative (Fin n → R) →* (epsR R ⟶ G) :=
-  MonoidHom.mk' (fun c => prodPts c.toAdd v) fun c c' => prodPts_add hv _ _
+  MonoidHom.mk' (fun c => prodPts c.toAdd v) fun _ _ => prodPts_add hv _ _
 
 theorem prodPts_prodPts (hv : ∀ i, IsTangent (v i)) {m : ℕ} (d : Fin m → R) (b : Fin m → Fin n → R) :
     prodPts d (fun i => prodPts (b i) v) = prodPts (∑ i, d i • b i) v := by

@@ -2,42 +2,6 @@ module
 
 public import Formalism.PeriodIntegrals.DSInfCharCap
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsNormEmbId
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -101,25 +65,6 @@ def ForPairs (Q : ∀ {n : ℕ} (ε : Fin (n + 1) → Bool) (_ : Fin (n + 1) →
     (π : Matrix (Fin (n + 1)) (Fin (n + 1)) ℂ → (H →L[ℂ] H)) (σ : Matrix (Fin n) (Fin n) ℂ → (H' →L[ℂ] H'))
     (ν : Measure (UJ ε')), ν.IsHaarMeasure → Fits ε ε' e → Par ε lam ε' mu B → IsDS ε lam π → IsDS ε' mu σ →
     Q ε lam ε' mu B e π σ ν
-
-def Moment : Prop := ForPairs fun {n} ε lam ε' _ B e H H' _ _ _ _ _ _ π σ ν =>
-  ∀ (P : H →L[ℂ] H') (w : H') (κ : ℝ), Intertw ε' e π σ P → ‖w‖ = 1 → ‖ContinuousLinearMap.adjoint P w‖ = 1 → 0 < κ →
-    Integrable (fun h : UJ ε' => ⟪w, σ (um h) w⟫_ℂ) ν →
-    (∀ x : UJ ε', ∫ h : UJ ε', conj ⟪w, σ (um h) w⟫_ℂ * conj ⟪w, σ (um (h⁻¹ * x)) w⟫_ℂ ∂ν = κ * conj ⟪w, σ (um x) w⟫_ℂ) →
-    (∀ a b : H, ∫ h : UJ ε', conj ⟪w, σ (um h) w⟫_ℂ * ⟪b, π (emb e (um h)) a⟫_ℂ ∂ν =
-      κ * (⟪b, ContinuousLinearMap.adjoint P w⟫_ℂ * ⟪ContinuousLinearMap.adjoint P w, a⟫_ℂ)) →
-    ∀ v ∈ lowKSub ε lam π, ‖v‖ = 1 →
-      ∫⁻ g : UJ ε, ENNReal.ofReal (colSq (um g⁻¹) (zi e) * ‖⟪ContinuousLinearMap.adjoint P w, π (um g) v⟫_ℂ‖ ^ 2) ∂(muG ε) ≤
-        ENNReal.ofReal ((8 * ((n : ℝ) + 1) * B) ^ (8 * (n + 1))) *
-          ∫⁻ g : UJ ε, ENNReal.ofReal (‖⟪ContinuousLinearMap.adjoint P w, π (um g) v⟫_ℂ‖ ^ 2) ∂(muG ε)
-
-def WordBd : Prop :=
-  ∀ (m : ℕ) (ε : Fin m → Bool) (lam : Fin m → ℝ) (B : ℝ) (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H]
-    (π : Matrix (Fin m) (Fin m) ℂ → (H →L[ℂ] H)), 2 ≤ m → Formalism.QuantumDeterminants.IsHCParam lam → IsDS ε lam π → (∀ a, |lam a| ≤ B) →
-    Formalism.QuantumDeterminants.GapAtLeast ε lam (100 * (m : ℝ) ^ 3) →
-    ∀ v ∈ lowKSub ε lam π, v ∈ PI.PhMeasCore.smoothVecs (Jm ε) π ∧
-      ∀ (S : ℕ) (W : List (Matrix (Fin m) (Fin m) ℂ)), W.length ≤ S → (∀ X ∈ W, hs X ≤ 1) →
-        ‖dsigCW ε π W v‖ ≤ (8 * Real.sqrt m * (B + S)) ^ W.length * ‖v‖
 
 section Analysis
 

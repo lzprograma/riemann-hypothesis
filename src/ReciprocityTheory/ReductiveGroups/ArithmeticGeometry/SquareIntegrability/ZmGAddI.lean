@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.MemOfProjTwoEqZero
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.IKDiscrete
 import Mathlib.RingTheory.PiTensorProduct
 
@@ -44,19 +45,8 @@ def gaugeExp (I : Submodule ℤ (Vsp X.dim)) (γ v : Vsp X.dim) : ℂ :=
 
 private theorem Hf_im_eq_zero_on_IR_of_isSplit (hI : IsSplit P I) :
     ∀ a ∈ IR I, ∀ b ∈ IR I, (Hf a b).im = 0 := by
-  intro a ha b hb
-  change a ∈ Submodule.span ℝ (I : Set (Vsp X.dim)) at ha
-  change b ∈ Submodule.span ℝ (I : Set (Vsp X.dim)) at hb
-  induction hb using Submodule.span_induction with
-  | mem y hy =>
-    induction ha using Submodule.span_induction with
-    | mem x hx => exact hI.iso x hx y hy
-    | zero => simp [Hf]
-    | add x x' _ _ h1 h2 => rw [_root_.ReciprocityTheory.ChartRestriction.G.I2.Col.Hf_add_l, Complex.add_im, h1, h2, add_zero]
-    | smul t x _ h => rw [_root_.ReciprocityTheory.ChartRestriction.G.I2.Col.Hf_rsmul_l, Complex.im_ofReal_mul, h, mul_zero]
-  | zero => simp [Hf]
-  | add y y' _ _ h1 h2 => rw [_root_.ReciprocityTheory.ChartRestriction.G.I2.Col.Hf_add_r, Complex.add_im, h1, h2, add_zero]
-  | smul t y _ h => rw [_root_.ReciprocityTheory.ChartRestriction.G.I2.Col.Hf_rsmul_r, Complex.im_ofReal_mul, h, mul_zero]
+  intros
+  apply _root_.ReciprocityTheory.ChartRestriction.G.I2.Col.hK_of <;> assumption
 
 theorem zmG_add (hI : IsSplit P I) {s : (Fin 1 → Vsp X.dim) → ℂ} (hs : s ∈ X.Sec 1 1)
     {γ : Vsp X.dim} (hγ : γ ∈ X.L) (v : Vsp X.dim) :

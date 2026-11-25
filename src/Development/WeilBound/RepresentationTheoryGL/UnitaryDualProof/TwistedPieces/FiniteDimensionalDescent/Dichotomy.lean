@@ -21,14 +21,6 @@ private theorem rank_pos_of_ne {e : Mat k N} (h : e ≠ 0) : 0 < e.rank := by
   rw [← Matrix.finrank_range_mulVecLin, Submodule.finrank_eq_zero, LinearMap.range_eq_bot] at h0
   simpa using congrArg LinearMap.toMatrix' (show Matrix.toLin' e = 0 from h0)
 
-private theorem sq_sum_le {ι : Type*} [DecidableEq ι] (s : Finset ι) (m : ι → ℕ) :
-    ∑ i ∈ s, m i ^ 2 ≤ (∑ i ∈ s, m i) ^ 2 := by
-  induction s using Finset.induction_on with
-  | empty => simp
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha, Finset.sum_insert ha]
-    nlinarith [ih, Nat.zero_le (m a * ∑ i ∈ s, m i)]
-
 private theorem num_fib {ι : Type*} [DecidableEq ι] (s : Finset ι) (m dE : ι → ℕ) (n dF : ℕ)
     (hdF : 0 < dF) (hm : ∀ i ∈ s, 1 ≤ m i) (hd : ∀ i ∈ s, dF ≤ dE i)
     (hsum : n * dF = ∑ i ∈ s, m i * dE i) :
@@ -37,7 +29,7 @@ private theorem num_fib {ι : Type*} [DecidableEq ι] (s : Finset ι) (m dE : ι
   have hMn : ∑ i ∈ s, m i ≤ n := Nat.le_of_mul_le_mul_right
     (by rw [hsum, Finset.sum_mul]; exact Finset.sum_le_sum fun i hi => Nat.mul_le_mul_left _ (hd i hi))
     hdF
-  refine ⟨(sq_sum_le s m).trans (Nat.pow_le_pow_left hMn 2), fun heq hne i hi => ?_⟩
+  refine ⟨(Finset.sum_sq_le_sq_sum_of_nonneg fun _ _ => Nat.zero_le _).trans (Nat.pow_le_pow_left hMn 2), fun heq hne i hi => ?_⟩
   have hcard : s.card = 1 := by
     by_contra hc
     have hgt : 1 < s.card := by have := hne.card_pos; omega
@@ -47,7 +39,7 @@ private theorem num_fib {ι : Type*} [DecidableEq ι] (s : Finset ι) (m dE : ι
     have hM : 1 ≤ ∑ j ∈ s.erase a, m j :=
       (hm b (Finset.mem_of_mem_erase hb)).trans (Finset.single_le_sum (fun _ _ => Nat.zero_le _) hb)
     have hlt : ∑ j ∈ s, m j ^ 2 < (∑ j ∈ s, m j) ^ 2 := by
-      have ih := sq_sum_le (s.erase a) m; have := hm a ha
+      have ih := Finset.sum_sq_le_sq_sum_of_nonneg (s := s.erase a) (f := m) fun _ _ => Nat.zero_le _; have := hm a ha
       rw [← Finset.add_sum_erase s _ ha, ← Finset.add_sum_erase s _ ha]; nlinarith
     have := Nat.pow_le_pow_left hMn 2; omega
   obtain ⟨a, rfl⟩ := Finset.card_eq_one.mp hcard
@@ -60,9 +52,6 @@ private theorem num_fib {ι : Type*} [DecidableEq ι] (s : Finset ι) (m dE : ι
 
 private abbrev Wd (e : Mat k N) : Submodule k (Fin N → k) := LinearMap.range e.mulVecLin
 private abbrev Pe (e : Mat k N) : (Fin N → k) →ₗ[k] Wd e := LinearMap.rangeRestrict e.mulVecLin
-
-private lemma mat_ext {b b' : Mat k N} (h : ∀ v, b *ᵥ v = b' *ᵥ v) : b = b' :=
-  Matrix.toLin'.injective (LinearMap.ext fun v => by simpa [Matrix.toLin'_apply] using h v)
 
 private lemma W_stable {e a : Mat k N} (hc : a * e = e * a) {w : Fin N → k} (hw : w ∈ Wd e) :
     a *ᵥ w ∈ Wd e := by
@@ -132,7 +121,7 @@ private theorem pi_ratio {A : SubMat k N} (hA : ∀ a ∈ A, ∀ b ∈ A, a * b 
   classical
   have hFeF : IsField (Fe hA he) := by
     have hW : ∃ v : Fin N → k, e *ᵥ v ≠ 0 := by
-      by_contra h; push Not at h; exact hne (mat_ext fun v => by simp [h v])
+      by_contra h; push Not at h; exact hne (Matrix.ext_iff_mulVec.2 fun v => by simp [h v])
     obtain ⟨v₀, hv₀⟩ := hW
     refine ⟨⟨0, 1, fun h => hv₀ (congrArg (fun x : Fe hA he => ((x.1 (Pe e v₀) : Wd e) : Fin N → k)) h).symm⟩,
       fun ⟨_, a, ha⟩ ⟨_, b, hb⟩ => Subtype.ext <| by
@@ -154,7 +143,7 @@ private theorem pi_ratio {A : SubMat k N} (hA : ∀ a ∈ A, ∀ b ∈ A, a * b 
     rw [Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, mul_assoc, hA _ hb _ he, ← mul_assoc,
       hA _ a.2 _ he, hab]
   let instF : Field (Fe hA he) := hFeF.toField
-  have hTh_rho : ∀ a : A, Th e (rho hA he a) = e * a.1 := fun a => mat_ext fun v => by
+  have hTh_rho : ∀ a : A, Th e (rho hA he a) = e * a.1 := fun a => Matrix.ext_iff_mulVec.2 fun v => by
     rw [Th_mulVec]; change a.1 *ᵥ (e *ᵥ v) = (e * a.1) *ᵥ v
     rw [Matrix.mulVec_mulVec, hA _ a.2 _ he]
   have hmap : (Fe hA he).toSubmodule.map (Th e) = A.toSubmodule.map (LinearMap.mulLeft k e) := by
@@ -170,8 +159,8 @@ private theorem pi_ratio {A : SubMat k N} (hA : ∀ a ∈ A, ∀ b ∈ A, a * b 
   have hrange : LinearMap.range (Psi hA he) = (cenSub A).map (LinearMap.mulLeft k e) := by
     ext m; constructor
     · rintro ⟨φ, rfl⟩
-      refine ⟨Psi hA he φ, (Subalgebra.mem_centralizer_iff k).2 fun a ha => mat_ext fun v => ?_,
-        mat_ext fun v => ?_⟩
+      refine ⟨Psi hA he φ, (Subalgebra.mem_centralizer_iff k).2 fun a ha => Matrix.ext_iff_mulVec.2 fun v => ?_,
+        Matrix.ext_iff_mulVec.2 fun v => ?_⟩
       · rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, hPsi_mul, hPsi_mul]
         have hPe : Pe e (a *ᵥ v) = (⟨rho hA he ⟨a, ha⟩, ⟨a, ha⟩, rfl⟩ : Fe hA he) • Pe e v :=
           Subtype.ext <| by
@@ -187,7 +176,7 @@ private theorem pi_ratio {A : SubMat k N} (hA : ∀ a ∈ A, ∀ b ∈ A, a * b 
                 map_add' := fun _ _ => Subtype.ext (Matrix.mulVec_add c _ _)
                 map_smul' := fun ⟨_, a, ha⟩ w => Subtype.ext <| by
                   subst ha; show c *ᵥ (a.1 *ᵥ (w : Fin N → k)) = a.1 *ᵥ (c *ᵥ (w : Fin N → k))
-                  rw [Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, hc _ a.2] }, mat_ext fun v => ?_⟩
+                  rw [Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, hc _ a.2] }, Matrix.ext_iff_mulVec.2 fun v => ?_⟩
       rw [hPsi_mul]; show c *ᵥ (e *ᵥ v) = (e * c) *ᵥ v; rw [Matrix.mulVec_mulVec, hc e he]
   have hD : finrank k ((cenSub A).map (LinearMap.mulLeft k e)) = finrank k (Module.End (Fe hA he) (Wd e)) := by
     rw [← hrange, LinearMap.finrank_range_of_inj hPsi_inj]
@@ -270,7 +259,7 @@ private theorem pi_sum {A : SubMat k N} (hA : CR A) : ∑ e ∈ (pi_fin hA).toFi
         refine Submodule.finrank_lt_finrank_of_lt (lt_of_le_of_ne ?_ fun heq => hhg' ?_)
         · rw [← show g * h = h by rw [hA.1 _ hgA _ hhA, hhg], Matrix.mulVecLin_mul]
           exact LinearMap.range_comp_le_range _ _
-        · have hhg2 : h * g = g := mat_ext fun v => by
+        · have hhg2 : h * g = g := Matrix.ext_iff_mulVec.2 fun v => by
             obtain ⟨u, hu⟩ : g *ᵥ v ∈ LinearMap.range h.mulVecLin := heq ▸ ⟨v, rfl⟩
             simp only [Matrix.mulVecLin_apply] at hu
             rw [← Matrix.mulVec_mulVec, ← hu, Matrix.mulVec_mulVec, hhi.eq]

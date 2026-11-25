@@ -15,8 +15,6 @@ namespace GroundTheory.Automorphic
 
 noncomputable section
 
-set_option linter.unusedSectionVars false
-
 namespace CuspidalProjection
 
 open Reduction

@@ -8,46 +8,7 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasDeriv
 public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSliceA
 public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CompBound
 import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceUmg
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -86,19 +47,12 @@ private theorem aV_zero : aV E r s 0 = 1 := by
   rw [aV, zt_zero]
   exact map_one _
 
-private theorem ct_rt {n : ℕ} (h g : GA E n) (φ : Sm E n) :
-    AutomorphicForm.constantTerm r (rt E n h φ).1 g = AutomorphicForm.constantTerm r φ.1 (g * h) := by
-  unfold AutomorphicForm.constantTerm
-  refine integral_congr_ae (.of_forall fun X => ?_)
-  show φ.1 (_ * g * h) = φ.1 (_ * (g * h))
-  rw [mul_assoc]
-
 private theorem shift (f : GA E r → ℂ) (t v : ℝ) (φ : Sm E (r + s)) (m : GA E s) :
     slice f t (rt E (r + s) (aV E r s v) φ).1 m = slice f (t + v) φ.1 m := by
   unfold slice
   refine integral_congr_ae (.of_forall fun y => ?_)
   show AutomorphicForm.constantTerm r (rt E (r + s) (aV E r s v) φ).1 _ * _ = AutomorphicForm.constantTerm r φ.1 _ * _
-  rw [ct_rt, aV, ← map_mul]
+  rw [SliceClasses.ct_rt r, aV, ← map_mul]
   congr 3
   refine Prod.ext ?_ (mul_one _)
   show zt E r t * _ * zt E r v = zt E r (t + v) * _
@@ -156,7 +110,7 @@ private theorem height_aV (hr : 0 < r) : ∃ H : ℝ, 0 ≤ H ∧ ∀ v : ℝ, |
     refine congrArg _ (Prod.ext ?_ ?_)
     · refine congrArg (diagUnits r) (funext fun i => ?_)
       refine posIdele_eq (Real.rpow_pos_of_pos (Real.exp_pos _) _) _ ?_
-      simp only [hρd, Fin.val_castAdd, i.2, if_true]
+      simp only [hρd, Fin.val_castAdd, i.2, ite_true]
       rw [← Real.exp_mul]
     · symm
       refine Units.ext (Matrix.ext fun i j => ?_)
@@ -205,7 +159,6 @@ private theorem taylor (F : Sm E (r + s)) (g : GA E (r + s)) {K : ℝ}
 
 private theorem exists_casimir_center : ∃ u : UC E (r + s), j1 E r s = uC E (r + s) u :=
   ⟨((r * Module.finrank ℚ E : ℕ) : ℂ)⁻¹ • ∑ τ : E →+* ℂ, ∑ i : Fin r, genC τ (Fin.castAdd s i) (Fin.castAdd s i), by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp only [j1, map_smul, map_sum, uC_genC]⟩
 
 end UpperTheory.ConvolutionTheory.BW

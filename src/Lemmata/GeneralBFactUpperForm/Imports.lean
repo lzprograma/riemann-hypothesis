@@ -9,8 +9,8 @@ universe u_3 u_4
 namespace Bl.general_b_fact_upper_form
 
 theorem goal1 :
-  ∀ {LL : Type u_3} {M : Type u_4} [inst : Field.{u_3} LL] [inst_1 : AddCommGroup.{u_4} M]
-  [inst_2 : Module.{u_3, u_4} LL M] (T : Module.End.{u_3, u_4} LL M) (W : Submodule.{u_3, u_4} LL M),
+  ∀ {LL : Type u_3} {M : Type u_4} [Field.{u_3} LL] [AddCommGroup.{u_4} M]
+  [Module.{u_3, u_4} LL M] (T : Module.End.{u_3, u_4} LL M) (W : Submodule.{u_3, u_4} LL M),
   (∀ (x : M),
       Membership.mem.{u_4, u_4} W x → Membership.mem.{u_4, u_4} W (DFunLike.coe.{u_4 + 1, u_4 + 1, u_4 + 1} T x)) →
     ∀ (p : Polynomial.{u_3} LL) (x : M),

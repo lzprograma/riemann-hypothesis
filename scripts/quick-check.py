@@ -50,7 +50,7 @@ def imports(path):
     if depth: raise ValueError('unterminated header comment')
     return result
 
-def dependency_closure(project, targets, maximum=MAX_CLOSURE):
+def dependency_closure(project, targets, maximum=MAX_CLOSURE, importers=None):
     # Project files enter seen, but common package imports recur in many headers.
     # Bound the lookup cache independently of how many package imports a PR adds.
     @lru_cache(maxsize=MAX_CLOSURE)
@@ -68,7 +68,12 @@ def dependency_closure(project, targets, maximum=MAX_CLOSURE):
         ci.safe_file(project, str(source.relative_to(project)))
         seen.add(module)
         if len(seen) > maximum: raise ValueError('project ancestor cone exceeds small-runner budget')
-        pending.extend(imports(source))
+        dependencies = imports(source)
+        for dependency in dependencies:
+            if project_source(dependency) is not None:
+                pending.append(dependency)
+                if importers is not None:
+                    importers.setdefault(dependency, set()).add(module)
     return sorted(seen)
 
 def plan(candidate, request):
@@ -80,7 +85,8 @@ def plan(candidate, request):
     if ci.sha256(candidate/'lakefile.toml') != ci.sha256(HERE.parent/'lakefile.toml'): raise ValueError('configuration changes need the priority/full build pool')
     base = request.get('base_head', '')
     if not re.fullmatch('[0-9a-f]{40}', base): raise ValueError('resolved base identity missing')
-    changed = ci.git(candidate, 'diff', '--name-only', '-z', base, expected['candidate_head'], '--', 'src').split('\0')
+    changed = ci.git(candidate, 'diff', '--name-only', '-z', '--no-renames',
+                     base, expected['candidate_head'], '--', 'src').split('\0')
     changed = [name for name in changed if name.endswith('.lean')]
     if len(changed) > MAX_ROOTS: raise ValueError('more than eight changed source roots; deferred')
     targets = []
@@ -89,9 +95,20 @@ def plan(candidate, request):
         target = name[4:-5].replace('/', '.')
         if not ci.MODULE.fullmatch(target): raise ValueError('invalid target name')
         targets.append(target)
+    importers = {}
+    closure = dependency_closure(candidate, targets, importers=importers)
+    # A changed root can itself be an ancestor of another changed root.
+    rebuild = set(targets)
+    pending = list(targets)
+    while pending:
+        for module in importers.get(pending.pop(), ()):
+            if module not in rebuild:
+                rebuild.add(module)
+                pending.append(module)
     return {'schema':1, 'status':'ready' if targets else 'no_source_changes', 'scope':'changed-modules-only',
             'full_build':False, 'candidate_head':expected['candidate_head'], 'pr_head':request['pr_head'],
-            'base_head':base, 'targets':sorted(targets), 'closure':dependency_closure(candidate, targets)}
+            'base_head':base, 'targets':sorted(targets), 'closure':closure,
+            'unchanged_ancestors':sorted(set(closure) - rebuild)}
 
 def resolve(args):
     host = runner(args.runner)
@@ -149,21 +166,27 @@ def run(args):
         print(f'Runner preflight failed before compilation: {reason}', file=sys.stderr)
         return 1
     if doctor.returncode or not doctor_safe(report,host): raise ValueError('runner doctor failed; candidate was not executed')
-    paths_file=output/'paths.json'
-    prep.prepare(SimpleNamespace(trusted=HERE.parent,candidate=candidate,state=state,request=args.request,output=paths_file,quick_plan=output/'plan.json'))
-    paths=json.loads(paths_file.read_text())
+    with tempfile.TemporaryDirectory(dir=output.parent) as metadata:
+        paths_file=Path(metadata)/'paths.json'
+        prep.prepare(SimpleNamespace(trusted=HERE.parent,candidate=candidate,state=state,request=args.request,output=paths_file,quick_plan=output/'plan.json'))
+        paths=json.loads(paths_file.read_text())
+        # The immutable hashes identify the exact metadata after the private copies are removed.
+        diagnostic_paths = paths.copy()
+        if 'quick_manifest_sha256' in paths:
+            del diagnostic_paths['baseline_map'], diagnostic_paths['baseline_manifest']
+        write(output/'paths.json',diagnostic_paths)
+        parent=state/'quick-work';parent.mkdir(parents=True,exist_ok=True)
+        work=Path(tempfile.mkdtemp(prefix='quick-',dir=parent));project=work/'project';project.mkdir()
+        ci.snapshot(candidate,request['expected']['candidate_head'],project)
+        cache,result,control=[work/name for name in ['cache','result','control']]
+        for directory in [cache/'artifacts',result,control]:directory.mkdir(parents=True)
+        packages=Path(paths['packages']);ci.validate_packages(project,packages)
+        private=ci.private_package_builds(project,packages,work/'dependency-builds')
+        overrides=ci.package_overrides(project,control)
+        baseline_args=SimpleNamespace(baseline_manifest=Path(paths['baseline_manifest']),baseline_manifest_sha256=paths.get('quick_manifest_sha256', ci.BASE_MANIFEST),
+                                      baseline_map=Path(paths['baseline_map']),baseline_cache=Path(paths['baseline_cache']))
+        _,warm,_=ci.baseline(baseline_args,project,cache,modules=set(selected['unchanged_ancestors']))
     tc=Path(subprocess.check_output(['elan','which','lean'],env={**prep.clean_env(),'ELAN_TOOLCHAIN':ci.TOOLCHAIN},text=True).strip()).parent.parent
-    parent=state/'quick-work';parent.mkdir(parents=True,exist_ok=True)
-    work=Path(tempfile.mkdtemp(prefix='quick-',dir=parent));project=work/'project';project.mkdir()
-    ci.snapshot(candidate,request['expected']['candidate_head'],project)
-    cache,result,control=[work/name for name in ['cache','result','control']]
-    for directory in [cache/'artifacts',result,control]:directory.mkdir(parents=True)
-    packages=Path(paths['packages']);ci.validate_packages(project,packages)
-    private=ci.private_package_builds(project,packages,work/'dependency-builds')
-    overrides=ci.package_overrides(project,control)
-    baseline_args=SimpleNamespace(baseline_manifest=Path(paths['baseline_manifest']),baseline_manifest_sha256=ci.BASE_MANIFEST,
-                                  baseline_map=Path(paths['baseline_map']),baseline_cache=Path(paths['baseline_cache']))
-    _,warm,_=ci.baseline(baseline_args,project,cache,modules=set(selected['closure']))
     (project/'.lake/packages').mkdir(parents=True,exist_ok=True)
     command=ci.sandbox(tc,project,packages,cache,result,control,host['jobs'],private)
     if warm:subprocess.run(command+['/opt/lean/bin/leantar','--jobs',str(host['jobs']),'-f','-x','-j','-'],input=json.dumps(warm),text=True,env=ci.trusted_env(),check=True)

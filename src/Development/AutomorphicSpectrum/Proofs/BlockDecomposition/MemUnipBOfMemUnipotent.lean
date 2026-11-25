@@ -52,8 +52,6 @@ open NumberField IsDedekindDomain GlobalTheory.CuspRep GroundTheory.Automorphic 
 open scoped ValuativeRel
 open PositivityTheory.JacquetShalikaLocal
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace GlobalTheory.CompanionTheory.JSBound
 
 section Local

@@ -167,15 +167,14 @@ theorem characterSum : CharSum := by
   have h₂' : dualLat H Λ₂ = Λ₂ := h₂
   have hy₂ : y ∈ dualLat H Λ₂ := by rw [h₂']; exact hy
   by_cases hy₁ : y ∈ Λ₁
-  · rw [if_pos hy₁]
+  · rw [ite_eq_left hy₁]
     have hy₁' : y ∈ dualLat H Λ₁ := by rw [h₁']; exact hy₁
     rw [Finset.sum_congr rfl fun x hx => _root_.Formalism.L2.Th1.H.Inv.hermitian_character_exp_eq_one_of_mem_dual_lattice hH hy₁' (hS.1 x hx)]
     simp
-  · rw [if_neg hy₁]
+  · rw [ite_eq_right hy₁]
     have hy₁' : y ∉ dualLat H Λ₁ := by rw [h₁']; exact hy₁
     have hx' : ∃ x' ∈ Λ₁, Complex.exp (-(2 * (Real.pi : ℂ)) * Complex.I * (altE H x' y : ℂ)) ≠ 1 := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       apply hy₁'
       show ∀ x ∈ Λ₁, ∃ m : ℤ, altE H y x = m
       intro x hx
@@ -193,14 +192,14 @@ theorem IndexEq_of (hc : CharSum) (hr : RepsExist) : IndexEq := by
   have hA : ∑ y ∈ S₂, ∑ x ∈ S₁, Complex.exp (-(2 * (Real.pi : ℂ)) * Complex.I * (altE H x y : ℂ)) = (S₁.card : ℂ) := by
     obtain ⟨y₀, hy₀S, hy₀, hsum⟩ := Formalism.L2.Th1.H.Inv.sum_reps hS₂ (fun y => ∑ x ∈ S₁, Complex.exp (-(2 * (Real.pi : ℂ)) * Complex.I * (altE H x y : ℂ))) (by
       intro y hy hyn
-      rw [hc V H hH Λ₁ Λ₂ h₁ h₂ S₁ hS₁ y (hS₂.1 y hy), if_neg hyn])
-    rw [hsum, hc V H hH Λ₁ Λ₂ h₁ h₂ S₁ hS₁ y₀ (hS₂.1 y₀ hy₀S), if_pos hy₀]
+      rw [hc V H hH Λ₁ Λ₂ h₁ h₂ S₁ hS₁ y (hS₂.1 y hy), ite_eq_right hyn])
+    rw [hsum, hc V H hH Λ₁ Λ₂ h₁ h₂ S₁ hS₁ y₀ (hS₂.1 y₀ hy₀S), ite_eq_left hy₀]
   have hB : ∑ x ∈ S₁, ∑ y ∈ S₂, Complex.exp (-(2 * (Real.pi : ℂ)) * Complex.I * (altE H y (-x) : ℂ)) = (S₂.card : ℂ) := by
     obtain ⟨x₀, hx₀S, hx₀, hsum⟩ := Formalism.L2.Th1.H.Inv.sum_reps hS₁ (fun x => ∑ y ∈ S₂, Complex.exp (-(2 * (Real.pi : ℂ)) * Complex.I * (altE H y (-x) : ℂ))) (by
       intro x hx hxn
       rw [hc V H hH Λ₂ Λ₁ h₂ h₁ S₂ hS₂ (-x) (Λ₁.neg_mem (hS₁.1 x hx)),
-        if_neg (fun h => hxn (by simpa using Λ₂.neg_mem h))])
-    rw [hsum, hc V H hH Λ₂ Λ₁ h₂ h₁ S₂ hS₂ (-x₀) (Λ₁.neg_mem (hS₁.1 x₀ hx₀S)), if_pos (Λ₂.neg_mem hx₀)]
+        ite_eq_right (fun h => hxn (by simpa using Λ₂.neg_mem h))])
+    rw [hsum, hc V H hH Λ₂ Λ₁ h₂ h₁ S₂ hS₂ (-x₀) (Λ₁.neg_mem (hS₁.1 x₀ hx₀S)), ite_eq_left (Λ₂.neg_mem hx₀)]
   have key : (S₁.card : ℂ) = (S₂.card : ℂ) := by
     rw [← hA, ← hB, Finset.sum_comm]
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
@@ -244,8 +243,8 @@ theorem InterInv_of (hcomm : OpUComm) (hreps : InterReps) (hfix : InterFixed) (h
   obtain ⟨y₀, hy₀S, hy₀, hsum⟩ := Formalism.L2.Th1.H.Inv.sum_reps hS₂
     (fun y => (∑ x ∈ S₁, Complex.exp (-(2 * (Real.pi : ℂ)) * Complex.I * (altE H x y : ℂ))) * (α y * opU H y F z)) (by
       intro y hy hyn
-      rw [characterSum V H hH Λ₁ Λ₂ h₁ h₂ S₁ hS₁ y (hS₂.1 y hy), if_neg hyn, zero_mul])
-  rw [hsum, characterSum V H hH Λ₁ Λ₂ h₁ h₂ S₁ hS₁ y₀ (hS₂.1 y₀ hy₀S), if_pos hy₀, hF' y₀ hy₀ z,
+      rw [characterSum V H hH Λ₁ Λ₂ h₁ h₂ S₁ hS₁ y (hS₂.1 y hy), ite_eq_right hyn, zero_mul])
+  rw [hsum, characterSum V H hH Λ₁ Λ₂ h₁ h₂ S₁ hS₁ y₀ (hS₂.1 y₀ hy₀S), ite_eq_left hy₀, hF' y₀ hy₀ z,
     hcard₁ S₁ hS₁, hidx]
   exact _root_.Formalism.L2.Th1.H.Inv.inv_sqrt_mul_inv_sqrt_mul_natCast_mul h21 (F z)
 

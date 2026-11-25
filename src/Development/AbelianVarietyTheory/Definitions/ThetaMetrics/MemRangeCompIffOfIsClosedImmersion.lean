@@ -3,49 +3,7 @@ module
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
 public import Mathlib.Algebra.Category.Ring.Topology
 public import Mathlib.Topology.Algebra.IsOpenUnits
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChartA
 
@@ -66,7 +24,7 @@ def valMap (x : Sp C ⟶ X) (U : X.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) : Γ(X, U) 
   x.appLE U ⊤ h ≫ (Scheme.ΓSpecIso (CommRingCat.of C)).hom
 
 theorem valR_eq (x : Sp C ⟶ X) (U : X.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) (f : Γ(X, U)) :
-    valR x U f = (valMap x U h).hom f := dif_pos h
+    valR x U f = (valMap x U h).hom f := dite_eq_left h
 
 theorem valF_eq_valR {F : Type} [Field F] (x : Sp F ⟶ X) (U : X.Opens) (f : Γ(X, U)) :
     valF x U f = valR x U f := rfl
@@ -497,18 +455,6 @@ def specHomeomorph (C : Type) [CommRing C] [TopologicalSpace C] [IsTopologicalRi
     exact (continuous_valR_top (C := C) _).congr fun x => (preimage_apply x a).symm
   continuous_invFun := continuous_specMap A
 
-def affineHomeomorph {U : X.Opens} (hU : IsAffineOpen U) :
-    {x : Sp C ⟶ X // ⊤ ≤ x ⁻¹ᵁ U} ≃ₜ (Γ(X, U) ⟶ CommRingCat.of C) where
-  toFun x := valMap x.1 U x.2
-  invFun φ := ⟨Spec.map φ ≫ hU.fromSpec, le_preimage_specMap_fromSpec hU φ⟩
-  left_inv x := Subtype.ext (specMap_valMap_fromSpec hU x.1 x.2)
-  right_inv φ := valMap_specMap_fromSpec hU φ _
-  continuous_toFun := by
-    refine continuous_induced_rng.2 (continuous_pi fun f => ?_)
-    exact (continuousOn_iff_continuous_restrict.1 (continuousOn_valR (C := C) f)).congr
-      fun x => valR_eq x.1 U x.2 f
-  continuous_invFun := ((continuous_comp _).comp (continuous_specMap _)).subtype_mk _
-
 theorem continuous_spMap_comp {C₀ : Type} [CommRing C₀] [TopologicalSpace C₀] [IsLocalRing C₀]
     (σ : C₀ →+* C) (hσ : Continuous σ) : Continuous fun x : Sp C₀ ⟶ X => spMap σ ≫ x := by
   refine continuous_iff_continuousAt.2 fun x => ?_
@@ -616,7 +562,7 @@ theorem isEmbedding_of_isPullback {P S : Scheme.{0}} {fst : P ⟶ X} {snd : P �
     if h : ⊤ ≤ (y ≫ fst) ⁻¹ᵁ U ∧ ⊤ ≤ (y ≫ snd) ⁻¹ᵁ V then pushout.desc _ _ (hcond y h.1 h.2)
     else pushout.desc _ _ (hcond z hzU hzV)
   have hψ : ∀ (y : Sp C ⟶ P) (h1 : ⊤ ≤ (y ≫ fst) ⁻¹ᵁ U) (h2 : ⊤ ≤ (y ≫ snd) ⁻¹ᵁ V),
-      ψ y = pushout.desc _ _ (hcond y h1 h2) := fun y h1 h2 => dif_pos ⟨h1, h2⟩
+      ψ y = pushout.desc _ _ (hcond y h1 h2) := fun y h1 h2 => dite_eq_left ⟨h1, h2⟩
   have hlim : Tendsto ψ l (𝓝 (ψ z)) := by
     rw [(isEmbedding_pushout (R := CommRingCat.of C) a b).tendsto_nhds_iff]
     refine Tendsto.prodMk_nhds ?_ ?_
@@ -753,37 +699,6 @@ theorem isClosedEmbedding_coord [T1Space C] {t : Sp C ⟶ Sp R} (ht : t = spMap 
     fun_prop
   exact isClosed_singleton.preimage this
 
-
-omit [TopologicalSpace C] [IsTopologicalRing C] [IsLocalRing C] [IsOpenUnits C] in
-theorem aeval_mk_X {σ : Type} (I : Ideal (MvPolynomial σ R)) (q : MvPolynomial σ R) :
-    MvPolynomial.aeval (fun i => Ideal.Quotient.mk I (MvPolynomial.X i)) q = Ideal.Quotient.mk I q := by
-  have : MvPolynomial.aeval (fun i => Ideal.Quotient.mk I (MvPolynomial.X i)) = Ideal.Quotient.mkₐ R I := by
-    ext i
-    simp
-  rw [this]
-  rfl
-
-def zeroSetHomeomorph {t : Sp C ⟶ Sp R} (ht : t = spMap (algebraMap R C)) {σ : Type}
-    (I : Ideal (MvPolynomial σ R)) :
-    PtsOver (spMap (algebraMap R (MvPolynomial σ R ⧸ I))) t ≃ₜ
-      {z : σ → C | ∀ q ∈ I, MvPolynomial.aeval z q = 0} :=
-  have ha : Function.Surjective
-      (MvPolynomial.aeval (R := R) fun i => Ideal.Quotient.mk I (MvPolynomial.X i)) := fun u => by
-    obtain ⟨q, rfl⟩ := Ideal.Quotient.mk_surjective u
-    exact ⟨q, aeval_mk_X I q⟩
-  (isEmbedding_coord ht _ ha).toHomeomorph.trans (Homeomorph.setCongr (by
-    rw [range_coord ht _ ha]
-    simp only [aeval_mk_X, Ideal.Quotient.eq_zero_iff_mem]))
-
-def affineSpaceHomeomorph {t : Sp C ⟶ Sp R} (ht : t = spMap (algebraMap R C)) (σ : Type) :
-    PtsOver (spMap (algebraMap R (MvPolynomial σ R))) t ≃ₜ (σ → C) :=
-  have ha : Function.Surjective (MvPolynomial.aeval (R := R) (MvPolynomial.X : σ → MvPolynomial σ R)) :=
-    fun q => ⟨q, MvPolynomial.aeval_X_left_apply q⟩
-  (isEmbedding_coord ht _ ha).toHomeomorphOfSurjective (by
-    rw [← Set.range_eq_univ, range_coord ht _ ha, Set.eq_univ_iff_forall]
-    intro z q hq
-    rw [MvPolynomial.aeval_X_left_apply] at hq
-    rw [hq, map_zero])
 
 end Algebra
 

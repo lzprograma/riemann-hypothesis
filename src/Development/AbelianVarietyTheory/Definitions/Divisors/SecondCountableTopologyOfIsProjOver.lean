@@ -4,53 +4,10 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.NoCommonZero
 public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIsClosedEmbeddingOfAffine
 public import Development.AbelianVarietyTheory.Definitions.Divisors.SmoothOfRelativeDimensionPspace
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DOnEqZeroOfEqOne
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Calculus.ContDiff.WithLp
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -309,34 +266,6 @@ def topDens (y : CxPts p σ) : ℝ :=
     Real.exp (-φ.φ (pick φ.isLB y) y))
 
 
-variable {f} in
-theorem topDens_eq (hf : f ∈ fibSec p σ (tens K.bundle B)) (hy : y ∈ c.e.source) {a : K.bundle.ι}
-    {b : B.ι} (ha : y ∈ ptsIn p σ (K.bundle.U a)) (hb : y ∈ ptsIn p σ (B.U b)) :
-    c.topDens K φ f y = 2 ^ D * (‖c.topCoeff K f a b y‖ ^ 2 * Real.exp (-φ.φ b y)) := by
-  have ha' := mem_pick K.isLB y
-  have hb' := mem_pick φ.isLB y
-  have e : y ∈ ptsIn p σ ((tens K.bundle B).U (a, b)) := mem_ptsIn_inf.2 ⟨ha, hb⟩
-  have e' : y ∈ ptsIn p σ ((tens K.bundle B).U (pick K.isLB y, pick φ.isLB y)) :=
-    mem_ptsIn_inf.2 ⟨ha', hb'⟩
-  rw [topDens, ← normSq_mul_exp (gv_ne_zero hb hb'), φ.trans b _ y hb hb', sub_add_cancel, topCoeff,
-    topCoeff, hf.1 _ _ y e e', gv_tens e e', gv_canon,
-    ← rv_mul _ (K.isFrame a) _ (c.source_subset hy) ha ha']
-  congr 4
-  ring
-
-theorem topDens_trans (hy : y ∈ c.e.source) (hy' : y ∈ c'.e.source) :
-    c.topDens K φ f y = ‖transDet c.e c'.e y‖ ^ 2 * c'.topDens K φ f y := by
-  rw [topDens, topDens, topCoeff, topCoeff, ← rv_mul _ c'.isFrame _ (c.source_subset hy)
-    (c'.source_subset hy') (mem_pick K.isLB y), rv_chart c c' hy hy', mul_assoc (transDet _ _ _),
-    norm_mul]
-  ring
-
-theorem chartMeas_topDens {A : Set (CxPts p σ)} (hA : MeasurableSet A) (h : A ⊆ c.e.source)
-    (h' : A ⊆ c'.e.source) : chartMeas c.e (fun y => ENNReal.ofReal (c.topDens K φ f y)) A =
-      chartMeas c'.e (fun y => ENNReal.ofReal (c'.topDens K φ f y)) A :=
-  chartMeas_eq _ _ (c.holo_trans c') hA h h' fun y hy => by
-    rw [c.topDens_trans K φ f c' (h hy) (h' hy), ENNReal.ofReal_mul (sq_nonneg _)]
-
 end AlgChart
 
 namespace AnRead
@@ -346,59 +275,9 @@ variable (R : AnRead p σ D)
 def topMeasure : Measure (CxPts p σ) :=
   glueMeas (fun i => (R.chart i).e) fun i y => ENNReal.ofReal ((R.chart i).topDens K φ f y)
 
-def topInt : ℝ≥0∞ := R.topMeasure K φ f univ
-
 variable [SecondCountableTopology (CxPts p σ)]
 
-theorem topMeasure_apply (c : AlgChart p σ D) {A : Set (CxPts p σ)} (hA : MeasurableSet A)
-    (h : A ⊆ c.e.source) : R.topMeasure K φ f A =
-      ∫⁻ v in c.e '' A, ENNReal.ofReal (c.topDens K φ f (c.e.symm v)) := by
-  have key : (R.topMeasure K φ f).restrict A =
-      (chartMeas c.e fun y => ENNReal.ofReal (c.topDens K φ f y)).restrict A :=
-    ext_of_cover _ (fun i => (R.chart i).e.open_source) R.cover fun i T hT hi => by
-      rw [Measure.restrict_apply hT, Measure.restrict_apply hT, topMeasure,
-        glueMeas_apply _ _ (fun i j => (R.chart i).holo_trans (R.chart j)) (fun i j y hi hj => by
-          rw [(R.chart i).topDens_trans K φ f _ hi hj, ENNReal.ofReal_mul (sq_nonneg _)])
-        i (hT.inter hA) (inter_subset_left.trans hi)]
-      exact AlgChart.chartMeas_topDens K φ f _ c (hT.inter hA) (inter_subset_left.trans hi)
-        (inter_subset_right.trans h)
-  rw [← chartMeas_apply_of_subset c.e (fun y => ENNReal.ofReal (c.topDens K φ f y)) hA h,
-    ← Measure.restrict_apply_self, key, Measure.restrict_apply_self]
 
-
-variable {R φ f} in
-theorem isLocallyFiniteMeasure_topMeasure (hφ : φ.IsSmooth R) (hf : f ∈ R.holSec (tens K.bundle B)) :
-    IsLocallyFiniteMeasure (R.topMeasure K φ f) := ⟨fun y => by
-  obtain ⟨i, hi⟩ := R.cover y
-  set c := R.chart i
-  have ha := mem_pick K.isLB y
-  have hb := mem_pick φ.isLB y
-  let S := ptsIn p σ (c.U ⊓ K.bundle.U (pick K.isLB y)) ∩ ptsIn p σ (B.U (pick φ.isLB y))
-  have hS : IsOpen S := (isOpen_ptsIn _).inter (isOpen_ptsIn _)
-  have hc : ContinuousOn (fun v => c.topDens K φ f (c.e.symm v)) (c.e.target ∩ c.e.symm ⁻¹' S) := by
-    have h₁ := (holoOn_ev_of_subset (R := R) (c.isFrame.ratio (K.isFrame (pick K.isLB y))).val
-      (inter_subset_left (t := ptsIn p σ (B.U (pick φ.isLB y))))).mul
-      ((hf.2 (pick K.isLB y, pick φ.isLB y)).mono
-        fun _ hz => mem_ptsIn_inf.2 ⟨(mem_ptsIn_inf.1 hz.1).2, hz.2⟩) i
-    have h₂ := (hφ (pick φ.isLB y)).mono (inter_subset_right : S ⊆ _) i
-    exact (continuousOn_const.mul ((h₁.continuousOn.norm.pow 2).mul h₂.continuousOn.neg.rexp)).congr
-      fun v hv => c.topDens_eq K φ hf.1 (c.e.map_target hv.1) (mem_ptsIn_inf.1 hv.2.1).2 hv.2.2
-  obtain ⟨C, hC, hCs, hCc⟩ := local_compact_nhds ((isOpen_over c.e hS).mem_nhds
-    (mem_over c.e hi ⟨mem_ptsIn_inf.2 ⟨c.source_subset hi, ha⟩, hb⟩))
-  have ho := c.e.isOpen_inter_preimage (isOpen_interior (s := C))
-  refine ⟨_, ho.mem_nhds ⟨hi, mem_interior_iff_mem_nhds.2 hC⟩, ?_⟩
-  rw [R.topMeasure_apply K φ f c ho.measurableSet inter_subset_left]
-  refine (lintegral_mono_set ?_).trans_lt
-    (Integrable.lintegral_lt_top ((hc.mono hCs).integrableOn_compact hCc))
-  rintro _ ⟨z, hz, rfl⟩
-  exact interior_subset hz.2⟩
-
-
-variable {R φ f} in
-theorem topInt_lt_top [CompactSpace (CxPts p σ)] (hφ : φ.IsSmooth R)
-    (hf : f ∈ R.holSec (tens K.bundle B)) : R.topInt K φ f < ⊤ :=
-  have := isLocallyFiniteMeasure_topMeasure K hφ hf
-  isCompact_univ.measure_lt_top
 
 end AnRead
 
@@ -513,23 +392,13 @@ abbrev wt (a : κ) : Option κ → ℤ := Pi.single (some a) 1
 theorem atlas_g (m : Option κ → ℤ) (c c' : F.Idx) (y : CxPts p σ) :
     F.atlas.g m c c' y = ∏ o, F.g₀ o c c' y ^ m o := rfl
 
-theorem atlas_ph (m : Option κ → ℤ) (c : F.Idx) (y : CxPts p σ) :
-    F.atlas.ph m c y = ∑ o, m o * F.ph₀ o c y := rfl
-
 theorem atlas_g_single (o : Option κ) (c c' : F.Idx) (y : CxPts p σ) :
     F.atlas.g (Pi.single o 1) c c' y = F.g₀ o c c' y := by
   rw [atlas_g, Fintype.prod_eq_single o fun a ha => by rw [Pi.single_eq_of_ne ha, zpow_zero],
     Pi.single_eq_same, zpow_one]
 
-theorem atlas_ph_single (o : Option κ) (c : F.Idx) (y : CxPts p σ) :
-    F.atlas.ph (Pi.single o 1) c y = F.ph₀ o c y := by
-  simp [atlas_ph, Pi.single_apply]
-
 theorem atlas_g_wt (a : κ) (c c' : F.Idx) (y : CxPts p σ) :
     F.atlas.g (wt a) c c' y = gv p σ (F.L a) (c.2.2 a) (c'.2.2 a) y := F.atlas_g_single _ c c' y
-
-theorem atlas_ph_wt (a : κ) (c : F.Idx) (y : CxPts p σ) :
-    F.atlas.ph (wt a) c y = (F.φ a).φ (c.2.2 a) y := F.atlas_ph_single _ c y
 
 structure Reading (B : LB Y) (m : Option κ → ℤ) where
 
@@ -565,21 +434,6 @@ theorem read_eq (hs : s ∈ fibSec p σ B) (h : y ∈ (F.atlas.chart c).source) 
   rw [hs.1 i _ y hi (mem_pick r.isLB y), ← mul_assoc, ← e]
   rfl
 
-theorem isSec_read (hs : s ∈ R.holSec B) : F.atlas.IsSec m (r.read s) := by
-  refine ⟨fun c => ?_, fun c c' y _ h h' => ?_⟩
-  · have : R.HoloOn (F.atlas.chart c).source (r.read s c) :=
-      holoOn_of_cover (fun i => isOpen_ptsIn (B.U i)) (fun y _ => ⟨_, mem_pick r.isLB y⟩) fun i =>
-        ((r.holo c i).mul ((hs.2 i).mono inter_subset_right)).congr
-          fun _ hy => r.read_eq hs.1 hy.1 hy.2
-    exact (this.chart (F.atlas.chart c).open_source (F.refine.chart c)).mono
-      fun _ hv => ⟨hv.1, (F.atlas.chart c).map_target hv.1⟩
-  · have hi := mem_pick r.isLB y
-    rw [r.read_eq hs.1 h hi, r.read_eq hs.1 h' hi, ← mul_assoc, r.compat c c' _ _ y h h' hi hi,
-      gv_self r.isLB hi, mul_one]
-
-theorem isSec_read_secVal (s : B.Sec) : F.atlas.IsSec m (r.read (secVal p σ s)) :=
-  r.isSec_read (R.secVal_mem_holSec s)
-
 def Isometric (φ : Weight p σ B) : Prop :=
   ∀ c i y, y ∈ (F.atlas.chart c).source → y ∈ ptsIn p σ (B.U i) →
     F.atlas.ph m c y = φ.φ i y + Real.log (‖r.u c i y‖ ^ 2)
@@ -595,10 +449,6 @@ def ofMem (a : κ) : F.Reading (F.L a) (wt a) where
   compat c c' i i' y h h' hi hi' := by
     rw [atlas_g_wt, gv_mul (F.φ a).isLB (mem_L h a) (mem_L h' a) hi',
       gv_mul (F.φ a).isLB (mem_L h a) hi hi']
-
-theorem isometric_ofMem (a : κ) : (ofMem F a).Isometric (F.φ a) := fun c i y h hi => by
-  rw [atlas_ph_wt, (F.φ a).trans _ i y (mem_L h a) hi]
-  exact (sub_add_cancel _ _).symm
 
 
 
@@ -670,14 +520,6 @@ instance compact : CompactSpace (CxPts (PSpace.str k N) σ) := compactSpace_pSpa
 
 def fsO1 : Weight (PSpace.str k N) σ (O1 k N) :=
   Weight.fsBasis _ σ (O1_isLB k N) (coord k N) (iSup_nonzeroLocus_coord k N) 1 (by simp)
-
-theorem fubiniStudyWeight_projPoint (v : Unimodular ℂ N) (i : Fin (N + 1)) (hi : v.1 i ≠ 0) :
-    (fsO1 k σ N).φ i (projPt σ v) = Real.log (∑ a, ‖v.1 a / v.1 i‖ ^ 2) := by
-  refine (Weight.fsBasis_φ _ _ _ _ _ _ _).trans (congrArg _ (Finset.sum_congr rfl fun a _ => ?_))
-  simp only [Matrix.one_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ,
-    if_true]
-  rw [div_eq_mul_inv, ← Ring.inverse_eq_inv, ← valR_pt_ratio σ v.1 v.2 hi.isUnit a]
-  rfl
 
 variable (K : CanonLB (PSpace.str k N) N)
 

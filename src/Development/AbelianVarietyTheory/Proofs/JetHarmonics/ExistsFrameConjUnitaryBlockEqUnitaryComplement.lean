@@ -129,8 +129,8 @@ lemma exists_isFrameW (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hT : 
   set u : Fin (2 * r + k + 1) → ℂ := ((Real.sqrt T : ℝ) : ℂ) • bvec (wI k r (Fin.last k)) with hu
   have hw : Formalism.QuantumDeterminants.herm (Hpk k r) (bvec (wI k r (Fin.last k))) (bvec (wI k r (Fin.last k))) = -1 := by
     have hp : piI k r (wI k r (Fin.last k)) = wI k r (Fin.last k) := by
-      unfold piI; rw [if_pos (by simp [wI])]
-    rw [herm_right_bvec, hp, bvec_apply, if_pos rfl]
+      unfold piI; rw [ite_eq_left (by simp [wI])]
+    rw [herm_right_bvec, hp, bvec_apply, ite_eq_left rfl]
     simp [epsI, wI]
   have huu : Formalism.QuantumDeterminants.herm (Hpk k r) u u = -(T : ℂ) := by
     rw [hu, herm_smul_left, herm_smul_right, hw]
@@ -147,7 +147,7 @@ lemma exists_isFrameW (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hT : 
     exact (Complex.conj_eq_iff_re.mp h1).symm
   have huW : inWb k r u := by
     intro i hi
-    rw [hu, Pi.smul_apply, bvec_apply, if_neg, smul_zero]
+    rw [hu, Pi.smul_apply, bvec_apply, ite_eq_right, smul_zero]
     rintro rfl
     simp [wI] at hi
   obtain ⟨g, h1, h2, h3⟩ := exists_isometry (Hpk k r) Hpk_conjTranspose u z (huu.trans hzz.symm) (by
@@ -165,7 +165,7 @@ lemma blockW_fix (x : Matrix (Fin k) (Fin k) ℂ) {j : Fin (2 * r + k + 1)} (hj 
   funext i
   rw [mulVec_bvec_apply, bvec_apply]
   by_cases hi : InB k r i
-  · rw [blockW_in_out _ hi hj, if_neg (ne_of_inB hi hj)]
+  · rw [blockW_in_out _ hi hj, ite_eq_right (ne_of_inB hi hj)]
   · rw [blockW_out _ hi]
 
 lemma blockW_mem_UH {x : Matrix (Fin k) (Fin k) ℂ} (hx : x ∈ UJset (allPos k)) :

@@ -38,7 +38,7 @@ theorem cohomologyMapAlong_restrictNormalHom_two_injective :
       (InfiniteGalois.restrictNormalHom_continuous M) (unitsRestrictHom M) 2).hom := by
   have : Algebra.IsSeparable k M := Algebra.isSeparable_tower_bot_of_isSeparable k M L
   have : IsGalois k M := ⟨⟩
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨E, y, rfl⟩ := exists_unitsInflation_eq (K := k) (L := M) 2 x
   let E₀ : IntermediateField k M := E.toIntermediateField
@@ -133,7 +133,7 @@ theorem gsRestrict_comp_galToFixing :
 
 
 theorem gsBrauerInfl_injective : Function.Injective (gsBrauerInfl K S 2).hom := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨x', rfl⟩ :=
     (cohomologyULiftIntAddEquiv (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) 2).surjective x
@@ -229,7 +229,7 @@ theorem gsToQuotient_comp (hE : ∀ x ∈ E.1, x ∈ maxUnramifiedOutside K.1 �
 
 theorem continuous_gsToQuotient (hE : ∀ x ∈ E.1, x ∈ maxUnramifiedOutside K.1 ℚ̄ S) :
     Continuous (gsToQuotient K S hE) := by
-  have : T2Space (galUnramifiedOutside K.1 ℚ̄ S) := galois_t2Space K.1 (maxUnramifiedOutside K.1 ℚ̄ S)
+  have : T2Space (galUnramifiedOutside K.1 ℚ̄ S) := krullTopology_t2 (K := K.1) (L := maxUnramifiedOutside K.1 ℚ̄ S)
   have hq : Topology.IsQuotientMap (gsRestrict K S) :=
     ((continuous_gsRestrict K S).isClosedMap).isQuotientMap (continuous_gsRestrict K S)
       (gsRestrict_gsLift K S).surjective
@@ -370,27 +370,23 @@ theorem rootsOfUnityField_pow_le {ℓ : ℕ} {a b : ℕ} (hab : a ≤ b) :
   obtain ⟨c, hc⟩ := pow_dvd_pow ℓ hab
   rw [hc, pow_mul, hy, one_pow]
 
-end Split
-
-theorem exists_gsBrauerInfl_eq (ℓ : ℕ) (hℓ : ℓ.Prime)
-    (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
-    (x : cohomology (unitsLimitRep K) 2) (k : ℕ) (hx : ℓ ^ k • x = 0) :
-    ∃ y, (gsBrauerInfl K S 2).hom y = x := by
+theorem exists_unitsResField_eq_zero_of_pow_nsmul (L : FiniteSubfield) {ℓ : ℕ} (hℓ : ℓ.Prime)
+    (x : cohomology (unitsLimitRep L) 2) (k : ℕ) (hx : ℓ ^ k • x = 0) :
+    ∃ (E : FiniteSubfield) (_ : Fact (L ≤ E)) (b : ℕ),
+      E.1 = L.1 ⊔ Cyclotomic.rootsOfUnityField (ℓ ^ b) ∧ (unitsResField L E 2).hom x = 0 := by
   classical
   have hℓ2 : 2 < ℓ ^ 2 := by nlinarith [hℓ.two_le]
   have : NeZero (ℓ ^ 2) := ⟨pow_ne_zero _ hℓ.ne_zero⟩
-
   let F₂ : FiniteSubfield := ⟨Cyclotomic.rootsOfUnityField (ℓ ^ 2), inferInstance⟩
-  let K' : FiniteSubfield := CyclotomicSymbol.compositum K F₂
+  let K' : FiniteSubfield := CyclotomicSymbol.compositum L F₂
   have : Fact ℓ.Prime := ⟨hℓ⟩
-  have : Fact (F₂ ≤ K') := CyclotomicSymbol.fact_le_compositum_right K F₂
+  have : Fact (F₂ ≤ K') := CyclotomicSymbol.fact_le_compositum_right L F₂
   have : IsTotallyComplex F₂.1 := IsCyclotomicExtension.Rat.isTotallyComplex (n := ℓ ^ 2) F₂.1 hℓ2
   let _ : Algebra F₂.1 K'.1 := FiniteSubfield.algebraOfLE (Fact.out : F₂ ≤ K')
   have : IsTotallyComplex K'.1 := NumberField.isTotallyComplex_of_algebra (F := F₂.1) K'.1
   obtain ⟨ι'⟩ := nonempty_localEmbeddings K'
-  set x' := (unitsResField K K' 2).hom x with hx'
+  set x' := (unitsResField L K' 2).hom x with hx'
   have hm : (ℓ ^ k) • x' = 0 := by rw [hx', ← map_nsmul, hx, map_zero]
-
   let T : Finset (HeightOneSpectrum (𝓞 K'.1)) :=
     (brauerLocal ι' x').support.preimage Sum.inr Sum.inr_injective.injOn
   obtain ⟨r, ⟨N, hr⟩, hdeg⟩ :=
@@ -401,12 +397,11 @@ theorem exists_gsBrauerInfl_eq (ℓ : ℕ) (hℓ : ℓ.Prime)
     · have := subsingleton_cohomology_two_of_isComplex v (IsTotallyComplex.isComplex v)
       exact Subsingleton.elim (α := cohomology (galUnitsZ v.Completion (AlgebraicClosure v.Completion)) 2) _ _
     · exact hdeg v (by rw [Finset.mem_preimage, DFinsupp.mem_support_iff]; exact hv) w
-
   let a := k * (N + 1)
   let b := a + Cyclotomic.unitsLevel ℓ + 2
   have : NeZero (ℓ ^ b) := ⟨pow_ne_zero _ hℓ.ne_zero⟩
   let F : FiniteSubfield := ⟨Cyclotomic.rootsOfUnityField (ℓ ^ b), inferInstance⟩
-  let E : FiniteSubfield := CyclotomicSymbol.compositum K F
+  let E : FiniteSubfield := CyclotomicSymbol.compositum L F
   have hrq : r = Cyclotomic.primePowPNat ℓ a := by
     apply PNat.eq
     rw [hr, Cyclotomic.coe_primePowPNat, ← pow_mul]
@@ -416,19 +411,32 @@ theorem exists_gsBrauerInfl_eq (ℓ : ℕ) (hℓ : ℓ.Prime)
     exact (CyclotomicLayer.zhatLayerField_le_rootsOfUnityField ⟨ℓ, hℓ⟩ a).trans
       (rootsOfUnityField_pow_le (a := a + Cyclotomic.unitsLevel ℓ) (b := b) (by omega))
   have hE'E : E' ≤ E := by
-    change (K.1 ⊔ F₂.1) ⊔ (CyclotomicLayer.zhatLayer r).1 ≤ K.1 ⊔ F.1
+    change (L.1 ⊔ F₂.1) ⊔ (CyclotomicLayer.zhatLayer r).1 ≤ L.1 ⊔ F.1
     exact sup_le (sup_le le_sup_left (hF₂F.trans le_sup_right)) (hZF.trans le_sup_right)
   have : Fact (E' ≤ E) := ⟨hE'E⟩
-  have hKE : ∀ y ∈ E.1, y ∈ maxUnramifiedOutside K.1 ℚ̄ S :=
-    mem_maxUnramifiedOutside_of_mem_compositum
-      (mem_maxUnramifiedOutside_of_mem_rootsOfUnityField hℓ hS b)
-  have hres : (unitsResField K E 2).hom x = 0 := by
-    have hKE' : Fact (K ≤ E') := ⟨(Fact.out : K ≤ K').trans (Fact.out : K' ≤ E')⟩
-    have h1 := unitsResField_comp_unitsResField (K := K) (E := E') (M := E) 2
-    have h2 := unitsResField_comp_unitsResField (K := K) (E := K') (M := E') 2
+  have hres : (unitsResField L E 2).hom x = 0 := by
+    have hKE' : Fact (L ≤ E') := ⟨(Fact.out : L ≤ K').trans (Fact.out : K' ≤ E')⟩
+    have h1 := unitsResField_comp_unitsResField (K := L) (E := E') (M := E) 2
+    have h2 := unitsResField_comp_unitsResField (K := L) (E := K') (M := E') 2
     rw [← h1, ConcreteCategory.comp_apply, ← h2, ConcreteCategory.comp_apply]
     change (unitsResField E' E 2).hom ((unitsResField K' E' 2).hom x') = 0
     rw [hsplit, map_zero]
+  exact ⟨E, inferInstance, b, rfl, hres⟩
+
+end Split
+
+theorem exists_gsBrauerInfl_eq (ℓ : ℕ) (hℓ : ℓ.Prime)
+    (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
+    (x : cohomology (unitsLimitRep K) 2) (k : ℕ) (hx : ℓ ^ k • x = 0) :
+    ∃ y, (gsBrauerInfl K S 2).hom y = x := by
+  obtain ⟨E, _, b, hEb, hres⟩ := exists_unitsResField_eq_zero_of_pow_nsmul K hℓ x k hx
+  have : NeZero (ℓ ^ b) := ⟨pow_ne_zero _ hℓ.ne_zero⟩
+  let F : FiniteSubfield := ⟨Cyclotomic.rootsOfUnityField (ℓ ^ b), inferInstance⟩
+  have hEE : E = CyclotomicSymbol.compositum K F := Subtype.ext hEb
+  subst hEE
+  have hKE : ∀ y ∈ (CyclotomicSymbol.compositum K F).1, y ∈ maxUnramifiedOutside K.1 ℚ̄ S :=
+    mem_maxUnramifiedOutside_of_mem_compositum
+      (mem_maxUnramifiedOutside_of_mem_rootsOfUnityField hℓ hS b)
   exact exists_gsBrauerInfl_eq_of_unitsResField_eq_zero K S hKE x hres
 
 end

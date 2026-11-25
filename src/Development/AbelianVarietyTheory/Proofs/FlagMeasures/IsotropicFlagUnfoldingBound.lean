@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.KirillovVanishingOfLimit
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DefClassNum
 public import Formalism.HermitianLattices.StatementMass
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsTraceOne
@@ -666,14 +667,9 @@ namespace GlobalTheory.FlagMeas.SatModel
 
 open Formalism.MainNotions.S GlobalTheory.Count
 
-theorem volU_pos (i : ℕ) : 0 < volU i := by
-  unfold volU sphV
-  have := Real.pi_pos
-  refine mul_pos (Finset.prod_pos fun l _ => by positivity) (by positivity)
-
 theorem cIw_pos (p q : ℕ) {a : ℕ} (j : Fin a → ℕ) : 0 < cIw p q j := by
   unfold cIw
-  have := volU_pos
+  have := GlobalTheory.UnitaryVolume.volU_pos
   refine div_pos (mul_pos (by positivity) (mul_pos (this _) (this _)))
     (mul_pos (mul_pos (Finset.prod_pos fun i _ => mul_pos (this _) (by positivity)) (this _)) (this _))
 
@@ -1478,7 +1474,7 @@ theorem bound : ∀ (I I₀ : AutInst) (e : I₀.E ≃+* I.E) (xf : I.Gf) (a : �
     rw [this, mul_zero]
     exact zero_le
   obtain ⟨g₀, hg₀⟩ := Set.nonempty_iff_ne_empty.2 hA
-  have hsat := _root_.GlobalTheory.FlagBase.AdSat.isSatFlag_of_isAdapted I I₀ e xf a j S Λ x₀ T T' T₀ hj had
+  have hsat := _root_.GlobalTheory.FlagBase.AdSat.isSatFlag_of_isAdapted I I₀ e xf a j S Λ x₀ T T' T₀ had
   have hiso := _root_.GlobalTheory.FlagMeas.isIsoFlag_flagAt_of_isSatFlag I _ a j S hsat
   obtain ⟨-, hrd, hrd1, hf, hcard, -⟩ := _root_.GlobalTheory.FlagMeas.instance_numbers I
   have hf0 : I.f ≠ 0 := by omega
@@ -1639,15 +1635,7 @@ namespace GlobalTheory.FlagUnfold
 
 theorem tsum_pi_prod_le {ι : Type} [Fintype ι] {α : ι → Type} (f : ∀ i, α i → ENNReal) :
     ∑' t : ∀ i, α i, ∏ i, f i (t i) ≤ ∏ i, ∑' x, f i x := by
-  classical
-  rw [ENNReal.tsum_eq_iSup_sum]
-  refine iSup_le fun s => ?_
-  calc ∑ t ∈ s, ∏ i, f i (t i)
-      ≤ ∑ t ∈ Fintype.piFinset (fun i => s.image (fun t => t i)), ∏ i, f i (t i) := by
-        refine Finset.sum_le_sum_of_subset fun t ht => ?_
-        exact Fintype.mem_piFinset.2 fun i => Finset.mem_image_of_mem _ ht
-    _ = ∏ i, ∑ x ∈ s.image (fun t => t i), f i x := (Finset.prod_univ_sum _ _).symm
-    _ ≤ _ := Finset.prod_le_prod' fun i _ => ENNReal.sum_le_tsum _
+  apply _root_.GlobalTheory.JR.HeightSquareIntegrable.tsum_pi_prod_le' <;> assumption
 
 abbrev latRel (E : Type) [Field E] [NumberField E] (j : ℕ) :
     {Λ : Submodule (𝓞 E) (Fin j → E) // Submodule.IsFullLattice E Λ} →

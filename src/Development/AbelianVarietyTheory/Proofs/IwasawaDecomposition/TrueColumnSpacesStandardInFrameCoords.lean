@@ -43,7 +43,6 @@ import Mathlib.Tactic.ReduceModChar
 @[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -118,10 +117,10 @@ theorem incl_co {S S' : Formalism.BasicNotions.HSpace E} {n : ℕ} (hn : S.rank 
   · rw [Finset.sum_eq_single ⟨j.1, h⟩]
     · simp
     · intro a _ ha
-      rw [if_neg (fun h2 => ha (Fin.ext h2)), mul_zero]
+      rw [ite_eq_right (fun h2 => ha (Fin.ext h2)), mul_zero]
     · simp
   · refine Finset.sum_eq_zero fun a _ => ?_
-    rw [if_neg (fun h2 : a.1 = j.1 => h (h2 ▸ a.2)), mul_zero]
+    rw [ite_eq_right (fun h2 : a.1 = j.1 => h (h2 ▸ a.2)), mul_zero]
 
 end Gen
 

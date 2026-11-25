@@ -23,8 +23,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.PointUniformity
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Minor
 
 variable {D : D7}

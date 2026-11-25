@@ -30,12 +30,6 @@ namespace GroundTheory.Automorphic
 
 open Module TensorProduct
 
-section QuadAlg
-
-variable {R : Type*} [CommRing R]
-
-end QuadAlg
-
 section BaseChange
 
 variable {L : Type*} [Field L] (d : L) (R : Type*) [CommRing R] [Algebra L R]
@@ -115,27 +109,6 @@ theorem quadTensorEquiv_tmul (r : R) (z : QuadraticAlgebra L d 0) :
 
 end BaseChange
 
-section Bridge
-
-open NumberField IsDedekindDomain GroundTheory.Global GroundTheory.Global.SemiLocal
-open scoped NumberField.LiesOver
-
-variable {L : Type*} [Field L] [NumberField L] (d : L) [Fact (∀ r : L, r ^ 2 ≠ d + 0 * r)]
-
-
-
-end Bridge
-
-section HasseNorm
-
-open NumberField IsDedekindDomain GroundTheory.Global GroundTheory.Global.SemiLocal Filter
-
-universe u
-
-variable {L : Type u} [Field L] [NumberField L]
-
-end HasseNorm
-
 end GroundTheory.Automorphic
 end -- clump:auto
 end -- clump:auto
@@ -151,12 +124,6 @@ noncomputable section
 namespace GroundTheory.Automorphic
 
 open Module Matrix TensorProduct
-
-section QuadConj
-
-variable {F : Type*} [Field F] (a : F)
-
-end QuadConj
 
 section Coordinates
 
@@ -189,7 +156,7 @@ theorem exists_algEquiv_quadraticAlgebra (h2 : (2 : K) ≠ 0) :
     intro z
     simp [f, Algebra.smul_def]
   have hinj : Function.Injective f := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro z hz
     rw [hf] at hz
     by_cases him : z.im = 0
@@ -258,27 +225,6 @@ theorem tensorQuadEquiv_conjBase (hψ : ∀ x, ψ (conj K E x) = star (ψ x)) (z
 
 end BaseChange
 
-section Congr
-
-variable {A : Type*} [CommRing A] (s : A →+* A) {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-variable {s}
-
-end Congr
-
-section Bridge
-
-variable {F A : Type*} [Field F] [Field A] [Algebra F A] [Algebra.IsQuadraticExtension F A]
-variable {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-end Bridge
-
-section LocalQuad
-
-variable {F : Type*} [Field F] (d : F) {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-end LocalQuad
-
 end GroundTheory.Automorphic
 end -- clump:auto
 end -- clump:auto
@@ -296,12 +242,6 @@ namespace GroundTheory.Automorphic
 
 open NumberField IsDedekindDomain GroundTheory.Global Filter
 
-section Algebra
-
-variable {K : Type*} [Field K]
-
-end Algebra
-
 section Archimedean
 
 open NumberField.InfinitePlace.Completion
@@ -317,25 +257,6 @@ theorem continuous_ringEquivRealOfIsReal (hv : v.IsReal) :
   exact (isometry_extensionEmbeddingOfIsReal hv).continuous
 
 end Archimedean
-
-section Main
-
-open NumberField.InfinitePlace.Completion
-
-universe u
-
-variable {K : Type u} [Field K] [NumberField K]
-
-section AtL
-
-open scoped NumberField.LiesOver
-open GroundTheory.Global.SemiLocal GroundTheory.Global.AdeleBaseChange
-
-variable {γ t : K} [Fact (∀ r : K, r ^ 2 ≠ -γ + t * r)]
-
-end AtL
-
-end Main
 
 end GroundTheory.Automorphic
 end -- clump:auto
@@ -564,22 +485,6 @@ theorem continuous_realPlaceEquiv_symm : Continuous (realPlaceEquiv hw hE).symm 
   exact LinearMap.continuous_of_finiteDimensional L
 
 end Phi
-
-section Unitary
-
-variable {K E : Type*} [Field K] [Field E] [Algebra K E] [Algebra.IsQuadraticExtension K E]
-variable {w : InfinitePlace K} (hw : w.IsReal) (hE : IsNonsplitAt E w)
-variable {ι : Type*} [Fintype ι] [DecidableEq ι] (H : Matrix ι ι E)
-
-attribute [local instance] tensorTopology isModuleTopology_tensor isTopologicalRing_tensor
-
-variable {H}
-
-end Unitary
-
-section Example
-
-end Example
 
 end GroundTheory.Heights₂.Theta
 end -- clump:auto

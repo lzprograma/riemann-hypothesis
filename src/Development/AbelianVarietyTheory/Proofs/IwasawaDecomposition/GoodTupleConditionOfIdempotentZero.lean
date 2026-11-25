@@ -1,5 +1,8 @@
 module
 
+
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqOfStabilizerTrivial
+import Formalism.LocalRingCardinality.SpanPowerMembership.PlacesOverNcardOfSplitInj
 public import Formalism.CyclotomicNorms.StatementT
 public import Mathlib.Algebra.Algebra.ZMod
 public import Mathlib.Data.Nat.Prime.Int
@@ -66,7 +69,6 @@ import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 import Std.Tactic.BVDecide.Normalize.Prop
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRingHomOfIsIntegral, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GoodTupleConditionOfIdempotentZero
 
@@ -178,19 +180,7 @@ theorem conj_mul_conj (H : Host R) : H.conj * H.conj = 1 := by
   rfl
 
 theorem conj_ne_one (H : Host R) : H.conj ≠ 1 := by
-  intro h
-  have h1 := H.conjE_apply H.φ₀ H.sqrtMinusD
-  have h2 : H.φ₀ H.sqrtMinusD ^ 2 = -(H.d : ℂ) := by
-    rw [← map_pow, Host.sqrtMinusD, H.sqd_sq]
-    simp
-  have h3 : H.φ₀ H.sqrtMinusD = starRingEnd ℂ (H.φ₀ H.sqrtMinusD) := by
-    rw [← h1]
-    exact congrArg H.φ₀ (AlgEquiv.congr_fun h H.sqrtMinusD).symm
-  obtain ⟨r, hr⟩ := Complex.conj_eq_iff_real.1 h3.symm
-  rw [hr] at h2
-  have h4 : r ^ 2 = -(H.d : ℝ) := by exact_mod_cast h2
-  have h5 : (0 : ℝ) < H.d := by exact_mod_cast H.hyp.2.1.pos
-  nlinarith [sq_nonneg r]
+  first | exact _root_.GlobalTheory.TypePlace.conj_ne_one | exact @_root_.GlobalTheory.TypePlace.conj_ne_one | apply _root_.GlobalTheory.TypePlace.conj_ne_one <;> assumption
 
 theorem exists_transversal {S : Type} [Fintype S] (c : S → S) (hc : ∀ x, c (c x) = x) (hne : ∀ x, c x ≠ x)
     {n : ℕ} (hn : Fintype.card S = 2 * n) :
@@ -223,47 +213,7 @@ theorem exists_places (H : Host R) {p : ℕ} (hp : p.Prime)
     (hs : (placesOver H.E p).ncard = Module.finrank ℚ H.E) :
     ∃ e : Fin R.f → PlE H, (∀ i, e i ∈ placesOver H.E p) ∧ Function.Injective e ∧
       ∀ i j, ¬ IsConjPl H (e i) (e j) := by
-  classical
-  have : Fact p.Prime := ⟨hp⟩
-  have hG : IsGalois ℚ H.E := H.galois
-  have := Formalism.FrobeniusOrbits.SplitK.span_prime p
-  have : IsGaloisGroup (H.E ≃ₐ[ℚ] H.E) ℤ (𝓞 H.E) := IsGaloisGroup.of_isFractionRing _ _ _ ℚ H.E
-  have hp0 : Ideal.span {(p : ℤ)} ≠ ⊥ := by
-    rw [Ne, Ideal.span_singleton_eq_bot]
-    exact_mod_cast hp.ne_zero
-  obtain ⟨⟨P, hP1, hP2⟩⟩ := (inferInstance : Nonempty (Ideal.primesOver (Ideal.span {(p : ℤ)}) (𝓞 H.E)))
-  have hr : Set.range (fun σ : H.E ≃ₐ[ℚ] H.E => σ • P) = Ideal.primesOver (Ideal.span {(p : ℤ)}) (𝓞 H.E) := by
-    ext Q
-    constructor
-    · rintro ⟨σ, rfl⟩
-      exact ⟨inferInstance, inferInstance⟩
-    · rintro ⟨hQ1, hQ2⟩
-      exact Ideal.exists_smul_eq_of_isGaloisGroup (Ideal.span {(p : ℤ)}) P Q (H.E ≃ₐ[ℚ] H.E)
-  have hinj : Function.Injective (fun σ : H.E ≃ₐ[ℚ] H.E => σ • P) := by
-    rw [GlobalTheory.HostSplit.ncard_placesOver H.E hp, ← hr, ← IsGalois.card_aut_eq_finrank, ← Set.image_univ,
-      ← Set.ncard_univ] at hs
-    exact Set.injOn_univ.1 (Set.injOn_of_ncard_image_eq hs)
-  have hcard : Fintype.card (H.E ≃ₐ[ℚ] H.E) = 2 * R.f := by
-    rw [← Nat.card_eq_fintype_card, IsGalois.card_aut_eq_finrank,
-      H.finrank_cmField, Ranks.f, Ranks.n]
-    ring
-  obtain ⟨e, he, he'⟩ := exists_transversal (fun σ => H.conj * σ)
-    (fun σ => by rw [← mul_assoc, conj_mul_conj, one_mul])
-    (fun σ h => conj_ne_one H (mul_eq_right.1 h)) hcard
-  refine ⟨fun i => ⟨e i • P, inferInstance, Ideal.ne_bot_of_liesOver_of_ne_bot hp0 _⟩, fun i => ?_,
-    fun i j h => he (hinj (congrArg HeightOneSpectrum.asIdeal h)), fun i j h => he' i j (hinj ?_)⟩
-  · have h3 : (p : ℤ) ∈ (e i • P).under ℤ := by
-      rw [← Ideal.over_def (e i • P) (Ideal.span {(p : ℤ)})]
-      exact Ideal.mem_span_singleton_self _
-    have h4 : algebraMap ℤ (𝓞 H.E) ((p : ℕ) : ℤ) ∈ e i • P := h3
-    rw [map_natCast] at h4
-    exact h4
-  · ext y
-    show y ∈ (H.conj * e i) • P ↔ y ∈ e j • P
-    have := h (H.conj⁻¹ • y) y (by
-      rw [← Formalism.TwoAdicCyclotomicDecomposition.odd_coe_smul, smul_inv_smul])
-    rw [mul_smul, Ideal.mem_pointwise_smul_iff_inv_smul_mem]
-    exact this
+  first | exact _root_.Formalism.BasicNotions.Examples₂.exists_halfPlaces | exact @_root_.Formalism.BasicNotions.Examples₂.exists_halfPlaces | apply _root_.Formalism.BasicNotions.Examples₂.exists_halfPlaces <;> assumption
 
 theorem finrank_K (H : Host R) : Module.finrank ℚ H.K = 2 :=
   Formalism.FrobeniusOrbits.SplitK.finrank_K H.hyp.2.1.pos (H.sqd_sq)
@@ -905,12 +855,12 @@ theorem unipSer_sum (K : Type) [Field K] [Finite K] (r : ℕ) (A : Type) [Ring A
       ⟨_, Formalism.CyclotomicNorms.Sqf.monicOf_coeffs f hf.1 hf.2.1⟩
   refine ⟨hfin.toFinset, fun f => hfin.mem_toFinset, ?_⟩
   unfold unipSer
-  rw [Finset.sum_ite_eq', if_pos]
+  rw [Finset.sum_ite_eq', ite_eq_left]
   exact hfin.mem_toFinset.2 ⟨(monic_unip r).1, (monic_unip r).2, unip_coeff_zero K r⟩
 
 theorem unipSer_of_squarefree {K : Type} [Field K] {r : ℕ} (hr : 2 ≤ r) (A : Type) [Ring A] {f : K[X]}
     (hf : Squarefree f) : unipSer K r A f = 0 := by
-  refine if_neg fun h => ?_
+  refine ite_eq_right fun h => ?_
   have h1 : IsUnit (X - 1 : K[X]) := hf _ (by rw [h, ← sq]; exact pow_dvd_pow _ hr)
   have h2 := natDegree_eq_zero_of_isUnit h1
   have h3 := (monic_unip (K := K) 1).2
@@ -981,7 +931,7 @@ def nTypes (N : NData R H what₂) [IsEmpty N.Loc] (pl : ∀ k, N.PlG k → PlE 
     all_goals simp
   eSer_zero := fun k f h => by
     haveI : Fact (H.g k).Prime := ⟨H.g_prime k⟩
-    refine if_neg fun h0 => h ?_
+    refine ite_eq_right fun h0 => h ?_
     rw [h0]
     exact ⟨(monic_unip _).1, (monic_unip _).2, unip_coeff_zero _ _⟩
   eSer_sum := fun k => haveI : Fact (H.g k).Prime := ⟨H.g_prime k⟩; unipSer_sum _ _ _

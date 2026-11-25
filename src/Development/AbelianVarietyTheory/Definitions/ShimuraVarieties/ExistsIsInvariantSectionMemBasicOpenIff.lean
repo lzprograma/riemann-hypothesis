@@ -2,48 +2,7 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsDomainAndIsIntegrallyClosedLocalizationOfIsInv
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRingKrullDimQuotientMvPolynomialEqNat
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -74,7 +33,7 @@ theorem exists_basicOpen_le_of_finite {U : X.Opens} (hU : IsAffineOpen U) (O : X
     fun y ↦ hU.exists_basicOpen_le ⟨y, hsO y.2⟩ (hsU y.2)
   choose g hgO hyg using hloc
   let P : X → Ideal Γ(X, U) := fun y ↦ if h : y ∈ U then (hU.primeIdealOf ⟨y, h⟩).asIdeal else ⊤
-  have hP : ∀ y (h : y ∈ U), P y = (hU.primeIdealOf ⟨y, h⟩).asIdeal := fun y h ↦ dif_pos h
+  have hP : ∀ y (h : y ∈ U), P y = (hU.primeIdealOf ⟨y, h⟩).asIdeal := fun y h ↦ dite_eq_left h
   have hnot : ¬ ((Ideal.span (Set.range g) : Set Γ(X, U)) ⊆ ⋃ i ∈ (↑hs.toFinset : Set X), P i) := by
     rw [Ideal.subset_union_prime y₀ y₀ (fun i hi _ _ ↦ by
       rw [hP i (hsU (hs.mem_toFinset.1 hi))]; infer_instance)]
@@ -91,7 +50,7 @@ theorem exists_basicOpen_le_of_finite {U : X.Opens} (hU : IsAffineOpen U) (O : X
   · have hz' : ¬ ∀ g' ∈ (Ideal.span (Set.range g) : Set Γ(X, U)), z ∉ X.basicOpen g' :=
       fun h ↦ h f hfJ hz
     rw [← Scheme.mem_zeroLocus_iff, Scheme.zeroLocus_span, Scheme.mem_zeroLocus_iff] at hz'
-    push_neg at hz'
+    push Not at hz'
     obtain ⟨_, ⟨i, rfl⟩, hzi⟩ := hz'
     exact hgO i hzi
 

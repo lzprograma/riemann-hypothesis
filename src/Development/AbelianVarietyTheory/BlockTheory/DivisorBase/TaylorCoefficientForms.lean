@@ -73,10 +73,6 @@ def taylorCoeff (F : (κ → ℂ) → ℂ) (e : κ → ℕ) : ℂ :=
 
 end Calculus
 
-def lineForm (ξ D D' : ℂ) : ℂ := 2 * (‖ξ‖ : ℂ) * (D * conj D')
-
-def period (ξ D : ℂ) : ℝ := 1 / (π * (lineForm ξ D D).re)
-
 section OnePlace
 
 variable {A B : Type} [NormedAddCommGroup A] [InnerProductSpace ℂ A] [FiniteDimensional ℂ A]

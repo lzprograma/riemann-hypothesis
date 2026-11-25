@@ -164,8 +164,7 @@ private lemma exists_ofSL_mul_upperTriangular (A : _root_.GlobalTheory.KZ.GQ) :
   set x₀ : ℤ := q.num * p.den with hx₀
   set y₀ : ℤ := -(p.num * q.den) with hy₀
   have hne : x₀ ≠ 0 ∨ y₀ ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hp0 : p = 0 := by
       have : p.num * q.den = 0 := by simpa [hy₀] using hcon.2
       rcases mul_eq_zero.1 this with h | h

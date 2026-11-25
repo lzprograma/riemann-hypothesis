@@ -65,6 +65,7 @@ import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
 import Mathlib.Analysis.Convex.Contractible
+import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralWeierstrassChartXyUnitSeries
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.JetHarmonics.CmLatticeWeylOperatorEqThetaRootOfUnityShift, Development.AbelianVarietyTheory.Proofs.JetHarmonics.WeilOperatorThetaTranslateShiftPrimeToQ
@@ -83,14 +84,7 @@ variable {q : ℕ} [Fact q.Prime]
 
 theorem hat_pow (ι : ℂ ≃+* ℂ_[q]) (ℓ : ℂ_[q]⟦X⟧) (hℓ : constantCoeff ℓ = 0) (F : ℂ → ℂ)
     (hF : AnalyticAt ℂ F 0) (m : ℕ) : hat ι ℓ (fun z => F z ^ m) = hat ι ℓ F ^ m := by
-  obtain ⟨h1, h2, -⟩ := GlobalTheory.MomOne.TaylorRead.hat_laws q ι ℓ hℓ
-  induction m with
-  | zero => simpa using h2 1
-  | succ k ih =>
-    have hk : AnalyticAt ℂ (fun z => F z ^ k) 0 := hF.pow k
-    have := (h1 _ F hk hF).2.1
-    simp only [pow_succ]
-    rw [this, ih]
+  apply _root_.GlobalTheory.MomOne.ChartXY.hat_pow <;> assumption
 
 theorem hat_funEq (ι : ℂ ≃+* ℂ_[q]) (ω : ℂ_[q]) (F G : ℂ → ℂ) (hF : AnalyticAt ℂ F 0)
     (hG : AnalyticAt ℂ G 0) (α : ℂ) (a : ℤ_[q]) (ha : ι α = zc a) (m : ℕ)
@@ -108,14 +102,7 @@ theorem hat_funEq (ι : ℂ ≃+* ℂ_[q]) (ω : ℂ_[q]) (F G : ℂ → ℂ) (h
   exact (h1 _ _ hα (hk.mul hG)).2.2.1 h
 
 theorem bd_pow (f : ℂ_[q]⟦X⟧) (hf : Bd 1 f) (m : ℕ) : Bd 1 (f ^ m) := by
-  induction m with
-  | zero =>
-    intro n
-    rw [pow_zero, coeff_one]
-    split_ifs <;> simp
-  | succ k ih =>
-    have := ((GlobalTheory.MomOne.sup_norm_laws q).1 _ _ _ _ ih hf).2
-    simpa [pow_succ] using this
+  apply _root_.GlobalTheory.MomOne.FeUniq.intSer_pow <;> assumption
 
 theorem shift_pow (ζ : ℂ_[q]) (hζ : ‖ζ - 1‖ < 1) (f : ℂ_[q]⟦X⟧) (hf : Bd 1 f) (m : ℕ) :
     shiftS ζ (f ^ m) = shiftS ζ f ^ m := by
@@ -125,13 +112,11 @@ theorem shift_pow (ζ : ℂ_[q]) (hζ : ‖ζ - 1‖ < 1) (f : ℂ_[q]⟦X⟧) (
   | succ k ih =>
     rw [pow_succ, (h2 _ _ ⟨1, bd_pow f hf k⟩ ⟨1, hf⟩).2, ih, pow_succ]
 
-alias zc_natCast := _root_.GlobalTheory.MomOne.ShiftComp.zc_natCast
-
 theorem zc_sub_one (a : ℤ_[q]) : zc (a - 1) = zc a - 1 := by simp [zc]
 
 theorem coprime_pred (m : ℕ) (hm : 1 ≤ m) (h : ‖(m : ℂ_[q])‖ < 1) : Nat.Coprime (m - 1) q := by
   have hn := (GlobalTheory.MomOne.MulSeries.mulS_laws q).2.2.2.2.2
-  rw [← zc_natCast, hn] at h
+  rw [← GlobalTheory.MomOne.ShiftComp.zc_natCast, hn] at h
   have h1 : (q : ℤ) ∣ (m : ℤ) := by
     rw [← PadicInt.norm_int_lt_one_iff_dvd]; simpa using h
   have h2 : q ∣ m := by exact_mod_cast h1
@@ -355,9 +340,6 @@ theorem norm_natCast_eq_one {s : ℕ} (h : Nat.Coprime s q) : ‖(s : ℤ_[q])�
   rw [PadicInt.norm_natCast_eq_one_iff]
   exact h.symm
 
-theorem hasSubst_mulS (a : ℤ_[q]) : HasSubst (mulS a : ℂ_[q]⟦X⟧) :=
-  HasSubst.of_constantCoeff_zero' ((MulSeries.mulS_laws q).1 a).2.1
-
 theorem subst_mulS_cancel {a : ℤ_[q]} (ha : ‖a‖ = 1) {f g : ℂ_[q]⟦X⟧}
     (h : f.subst (mulS a : ℂ_[q]⟦X⟧) = g.subst (mulS a : ℂ_[q]⟦X⟧)) : f = g := by
   obtain ⟨u, rfl⟩ := PadicInt.isUnit_iff.mpr ha
@@ -449,7 +431,7 @@ theorem main : ∀ (d q : ℕ) [Fact q.Prime] (M : Mdl q) (ω : ℂ_[q]) (θ : �
     simp only [U1]
     field_simp
   rw [(hring _ _ hψa hWs).2.1, hψh, hscale _ (hWd.analyticAt 0), hscale _ (hWUd.analyticAt 0),
-    ← subst_mul (hasSubst_mulS _)] at hprod
+    ← subst_mul (GlobalTheory.MomOne.MulSeries.hasSubst_mulS _)] at hprod
   rw [← subst_mulS_cancel hsn hprod, _root_.GlobalTheory.MomOne.ThShift.theta_shift d q M ω θ hd hd16 hsp hOK hM hθ hgood n y hg,
     ← ((Shift.shift_laws q _ hAt.2.1).2.1 _ _ hfb hθb).2, ← (hring _ _ hfa (hθd.analyticAt 0)).2.1]
   congr 1

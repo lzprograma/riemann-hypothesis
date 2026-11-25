@@ -321,8 +321,7 @@ theorem UpperTheory.V.Z.Kato.Sym.kumUn :
   have hTex : ∃ T : Finset X.K, ∀ φ' : Kb X →+* Kb X,
       (∀ x, B.valuation x ≤ 1 → B.valuation (φ' x - x) < 1) →
       (∀ t ∈ T, φ' (algebraMap X.K (Kb X) t) = algebraMap X.K (Kb X) t) → φ' θ = θ := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     choose φ' hin hfx hne using hcon
     obtain ⟨ψ, hψ⟩ := exists_limit φ' hfx
     let h : RingAut (Kb X) := ψ.toRingEquiv

@@ -59,8 +59,6 @@ open scoped TensorProduct Topology
 
 namespace GlobalTheory.VolHeckeCompare
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem infEmb_unique {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (τ : E →+* ℂ) (θ θ' : Ainf F ⊗[F] E →+* ℂ) (h : IsInfEmb τ θ) (h' : IsInfEmb τ θ') :
     θ = θ' :=

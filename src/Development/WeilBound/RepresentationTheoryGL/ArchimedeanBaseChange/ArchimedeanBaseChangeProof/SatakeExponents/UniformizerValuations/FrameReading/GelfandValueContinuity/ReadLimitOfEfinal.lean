@@ -18,54 +18,9 @@ public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.ConvTest
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.Imports
 import Aesop.Main
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.Finsupp.Pointwise
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Topology.MetricSpace.Sequences
 import GroundTheory.AutomorphicForms.AdelicGLn
 import GroundTheory.GlobalFields.Adele.Topology
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Separation.Connected
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.TotallySplit
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.EntryLeOfLg
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.WdValAppend
 
@@ -132,10 +87,10 @@ theorem finHecke : FinHecke := by
     simp only
     rw [Finset.sum_eq_single i.1 (fun p _ hp => by
       refine Finset.sum_eq_zero fun z _ => ?_
-      rw [if_neg (Ne.symm hp)]
+      rw [ite_eq_right (Ne.symm hp)]
       simp) (by simp)]
     refine Finset.sum_congr rfl fun z _ => ?_
-    simp only [if_true]
+    simp only [ite_true]
     rw [← Finsupp.sum_finsetSum_index (fun _ => by simp) (fun _ _ _ => by ring)]
     set Φ : Hf E a b → ℂ := fun h => ψ i.2 z h * f (i.1, z) (X * finH h) with hΦ
     have hΦU : ∀ h, ∀ u ∈ U, Φ (h * u) = Φ h := by
@@ -240,7 +195,7 @@ theorem coef_conv (m : ℕ) (x : ℕ → Fin (m + 1) → ℂ) (t : ℕ → ℂ)
         let c : ℕ → ℂ := fun l => if h : ∃ c, Tendsto (fun k => (cq m (x k)).coeff l) atTop (𝓝 c) then h.choose else 0
         have hc : ∀ l ∈ Ioc i (m + 1), Tendsto (fun k => (cq m (x k)).coeff l) atTop (𝓝 (c l)) := fun l hl => by
           have h := ih l (by simp only [mem_Ioc] at hl; omega)
-          simp only [c, dif_pos h]
+          simp only [c, dite_eq_left h]
           exact h.choose_spec
         let Q₀ : ℂ[X] := ∑ l ∈ Ioc i (m + 1), Polynomial.C (c l) * X ^ l
         have h1 : CoefTo (fun k => Hi i (m + 1) (cq m (x k))) Q₀ := by
@@ -325,9 +280,6 @@ namespace PositivityTheory.Rg.BcB.F.Rd.B
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-theorem finH_mul {a b : ℕ} (g h : Hf E a b) : finH (g * h) = finH g * finH h := by
-  simp only [finH, Prod.fst_mul, Prod.snd_mul, map_mul, Prod.mk_mul_mk]
-
 section Level
 
 variable (B : Block E) (K₁ : Subgroup (GL (Fin B.a) (Af E))) (K₂ : Subgroup (GL (Fin B.b) (Af E)))
@@ -361,14 +313,14 @@ theorem convF_idem (hK₁o : IsOpen (K₁ : Set (GL (Fin B.a) (Af E)))) (hK₂o 
       funext h
       rw [hψ₀]
       by_cases hh : h ∈ (K₁.prod K₂ : Subgroup (Hf E B.a B.b))
-      · rw [Set.indicator_of_mem (SetLike.mem_coe.2 hh), if_pos ⟨rfl, hh⟩, Prod.mk.eta, hf i h hh x]
-      · rw [Set.indicator_of_notMem (fun h' => hh (SetLike.mem_coe.1 h')), if_neg (fun h' => hh h'.2), zero_mul]
+      · rw [Set.indicator_of_mem (SetLike.mem_coe.2 hh), ite_eq_left ⟨rfl, hh⟩, Prod.mk.eta, hf i h hh x]
+      · rw [Set.indicator_of_notMem (fun h' => hh (SetLike.mem_coe.1 h')), ite_eq_right (fun h' => hh h'.2), zero_mul]
     rw [e, integral_indicator_const _ hKo.measurableSet, Complex.real_smul, ← mul_assoc,
       mul_comm ((_ : ℝ) : ℂ) cK, hcK, one_mul]
   · intro z _ hz
     have e : (fun h => ψ₀ i.2 z h * f (i.1, z) (x * finH h)) = fun _ => 0 := by
       funext h
-      rw [hψ₀, if_neg (fun h' => hz h'.1.symm), zero_mul]
+      rw [hψ₀, ite_eq_right (fun h' => hz h'.1.symm), zero_mul]
     rw [e, integral_zero]
   · intro h; exact absurd (Finset.mem_univ _) h
 
@@ -416,11 +368,11 @@ theorem convF_mulF_idem (hK₁o : IsOpen (K₁ : Set (GL (Fin B.a) (Af E))))
       simp only [hφdef, hιdef]
       rw [hψ₀]
       by_cases hh : h⁻¹ * g ∈ K
-      · rw [if_pos ⟨rfl, hh⟩, Set.indicator_of_mem (SetLike.mem_coe.2 hh)]
-      · rw [if_neg (fun h' => hh h'.2), Set.indicator_of_notMem (fun h' => hh (SetLike.mem_coe.1 h'))]
+      · rw [ite_eq_left ⟨rfl, hh⟩, Set.indicator_of_mem (SetLike.mem_coe.2 hh)]
+      · rw [ite_eq_right (fun h' => hh h'.2), Set.indicator_of_notMem (fun h' => hh (SetLike.mem_coe.1 h'))]
     · intro w _ hw
       have e : (fun h => ψ i.2 w h * ψ₀ w z (h⁻¹ * g)) = fun _ => 0 := by
-        funext h; rw [hψ₀, if_neg (fun h' => hw h'.1), mul_zero]
+        funext h; rw [hψ₀, ite_eq_right (fun h' => hw h'.1), mul_zero]
       rw [e, integral_zero]
     · intro h; exact absurd (Finset.mem_univ _) h
   have e1 : ∀ g, mulF B.ν ψ ψ₀ i.2 z g * f (i.1, z) (x * finH g) = ∫ h, φ h * ι (h⁻¹ * g) * F g ∂B.ν := fun g => by
@@ -549,7 +501,6 @@ theorem ok_of_inr {t : PT B} {y : Γ} (hok : ∀ x, (g x).Ok) (hy : g y = Sum.in
   rw [hy] at this
   exact this
 
-
 theorem realise_commuting_family (hE2 : E2) (hTM : TensMul) (hBO : BlockOperatorsProductAdjoint) (hBW : BlockWordOperators) (hBS : BlockLinearCombinations) (hAW : AdjWords)
     [Countable Γ] (a₀ : Γ) (tX : PT B) (χ : ChAlg g X →⋆ₐ[ℂ] ℂ)
     (hok : ∀ x, (g x).Ok) (htX : tX.Ok) (hXe : X = tX.op) (ha₀ : g a₀ = Sum.inr t₀)
@@ -664,8 +615,6 @@ namespace PositivityTheory.Rg.BcB.F.Rd.B
 
 open PositivityTheory.Rg.BcB.F PositivityTheory.Rg.BcB.F.Rd
 
-
-
 theorem hecke_setup (hFH : FinHecke) (hBO : BlockOperatorsProductAdjoint) (hFin : FinSt) {E : Type} [Field E] [NumberField E] [IsCMField E]
     (B : Block E) (K₁ : Subgroup (GL (Fin B.a) (Af E))) (K₂ : Subgroup (GL (Fin B.b) (Af E)))
     (o₁ : IsOpen (K₁ : Set (GL (Fin B.a) (Af E)))) (c₁ : IsCompact (K₁ : Set (GL (Fin B.a) (Af E))))
@@ -712,11 +661,11 @@ theorem hecke_setup (hFH : FinHecke) (hBO : BlockOperatorsProductAdjoint) (hFin 
   let lam₀ : HeckeM E B.a B.b B.I → ℂ := fun h => if hh : ∃ l, hm l = h then r₀ hh.choose else 0
   have hlam : ∀ l k, lam k (hm l) = r l k := fun l k => by
     have hh : ∃ l', hm l' = hm l := ⟨l, rfl⟩
-    simp only [lam, dif_pos hh]
+    simp only [lam, dite_eq_left hh]
     exact hcons _ _ hh.choose_spec k
   have hlam₀ : ∀ l, lam₀ (hm l) = r₀ l := fun l => by
     have hh : ∃ l', hm l' = hm l := ⟨l, rfl⟩
-    simp only [lam₀, dif_pos hh]
+    simp only [lam₀, dite_eq_left hh]
     exact hcons₀ _ _ hh.choose_spec
   refine ⟨hm, lam, lam₀, ?_, ?_, fun l F hF => ⟨hact l F hF, hlam₀ l⟩⟩
   · rintro k _ ⟨l, rfl⟩
@@ -735,7 +684,6 @@ theorem val_tendsto (hVC : ValCont) {E : Type} [Field E] [NumberField E] [IsCMFi
   refine Tendsto.mul (tendsto_finsetProd _ fun v _ => ?_) (tendsto_finsetProd _ fun v _ => ?_)
   · exact hVC B.a B.μa (B.Ma v) (t.ka v) (t.va v) t.T (fun k => χak k v) (χa v) (ht.ka v) (hA v)
   · exact hVC B.b B.μb (B.Mb v) (t.kb v) (t.vb v) t.T (fun k => χbk k v) (χb v) (ht.kb v) (hB v)
-
 
 theorem blockOut_lim (hFH : FinHecke) (hVC : ValCont) (hIC : InfConv) (hIL : InfLim) (hRE : ReproEx) (hBO : BlockOperatorsProductAdjoint)
     (hFin : FinSt) {E : Type} [Field E] [NumberField E] [IsCMField E] (B : Block E)
@@ -763,8 +711,8 @@ theorem blockOut_lim (hFH : FinHecke) (hVC : ValCont) (hIC : InfConv) (hIL : Inf
 
   choose χa hχa using fun v s => hIL B.a (fun k => χak k v s) _ (hgA v s)
   choose χb hχb using fun v s => hIL B.b (fun k => χbk k v s) _ (hgB v s)
-  obtain ⟨hRa, hRb, hGap⟩ := hreg χa χb (fun v s m h1 h2 => by rw [hχa, if_pos ⟨h1, h2⟩])
-    (fun v s m h1 h2 => by rw [hχb, if_pos ⟨h1, h2⟩])
+  obtain ⟨hRa, hRb, hGap⟩ := hreg χa χb (fun v s m h1 h2 => by rw [hχa, ite_eq_left ⟨h1, h2⟩])
+    (fun v s m h1 h2 => by rw [hχb, ite_eq_left ⟨h1, h2⟩])
   have cA : ∀ v s m, Tendsto (fun k => GlobalTheory.Dec.gelfVal (χak k v s) m) atTop (𝓝 (GlobalTheory.Dec.gelfVal (χa v s) m)) :=
     fun v s m => by rw [hχa]; exact hgA v s m
   have cB : ∀ v s m, Tendsto (fun k => GlobalTheory.Dec.gelfVal (χbk k v s) m) atTop (𝓝 (GlobalTheory.Dec.gelfVal (χb v s) m)) :=
@@ -852,8 +800,6 @@ namespace PositivityTheory.Rg.BcB.F.Rd.B
 
 open PositivityTheory.Rg.BcB.F PositivityTheory.Rg.BcB.F.Rd
 
-
-
 theorem packK (hBO : BlockOperatorsProductAdjoint) {E : Type} [Field E] [NumberField E] [IsCMField E] (B : Block E)
     (W₁ : Submodule ℂ (Kinf E B.a → ℂ)) (W₂ : Submodule ℂ (Kinf E B.b → ℂ))
     (K₁ : Subgroup (GL (Fin B.a) (Af E))) (K₂ : Subgroup (GL (Fin B.b) (Af E)))
@@ -899,39 +845,39 @@ theorem packK (hBO : BlockOperatorsProductAdjoint) {E : Type} [Field E] [NumberF
   have hkerA : ∀ s m v, IsKer B.μa (B.Ma v) [(s, m)] bump (ka' s m v) := by
     intro s m v
     by_cases h : 1 ≤ m ∧ 0 < B.a
-    · have e1 : ka' s m v = (ta v s m h.1 h.2).ka v := dif_pos h
+    · have e1 : ka' s m v = (ta v s m h.1 h.2).ka v := dite_eq_left h
       rw [e1]; exact (hta v s m h.1 h.2).2.2.2.1
     · by_cases hm : m = 0
       · have e1 : ka' s m v = (B.a : ℂ) • t₀.ka v := by
           show (if h : 1 ≤ m ∧ 0 < B.a then _ else _) = _
-          rw [dite_eq_right h, if_pos hm]
+          rw [dite_eq_right h, ite_eq_left hm]
         rw [e1, hm]; exact isKer_smul_rank _ _ _ _ s (hka0 v)
       · have e1 : ka' s m v = 0 := by
           show (if h : 1 ≤ m ∧ 0 < B.a then _ else _) = _
-          rw [dite_eq_right h, if_neg hm]
+          rw [dite_eq_right h, ite_eq_right hm]
         have ha : B.a = 0 := by omega
         rw [e1]; exact isKer_zero_rank ha _ _ _ s m
   have hkerB : ∀ s m v, IsKer B.μb (B.Mb v) [(s, m)] bump (kb' s m v) := by
     intro s m v
     by_cases h : 1 ≤ m ∧ 0 < B.b
-    · have e1 : kb' s m v = (tb v s m h.1 h.2).kb v := dif_pos h
+    · have e1 : kb' s m v = (tb v s m h.1 h.2).kb v := dite_eq_left h
       rw [e1]; exact (htb v s m h.1 h.2).2.2.2.1
     · by_cases hm : m = 0
       · have e1 : kb' s m v = (B.b : ℂ) • t₀.kb v := by
           show (if h : 1 ≤ m ∧ 0 < B.b then _ else _) = _
-          rw [dite_eq_right h, if_pos hm]
+          rw [dite_eq_right h, ite_eq_left hm]
         rw [e1, hm]; exact isKer_smul_rank _ _ _ _ s (hkb0 v)
       · have e1 : kb' s m v = 0 := by
           show (if h : 1 ≤ m ∧ 0 < B.b then _ else _) = _
-          rw [dite_eq_right h, if_neg hm]
+          rw [dite_eq_right h, ite_eq_right hm]
         have hb : B.b = 0 := by omega
         rw [e1]; exact isKer_zero_rank hb _ _ _ s m
   have hderA' : ∀ v s m, PositivityTheory.Rg.BcB.E.conv B.D.μ (tens (Function.update t₀.ka v (ka' s m v)) t₀.kb t₀.ψ) f =
       ca v s m • f := by
     intro v s m
     by_cases h : 1 ≤ m ∧ 0 < B.a
-    · have e1 : ka' s m v = (ta v s m h.1 h.2).ka v := dif_pos h
-      have e2 : ca v s m = σ (der v s m).1 := if_pos h
+    · have e1 : ka' s m v = (ta v s m h.1 h.2).ka v := dite_eq_left h
+      have e2 : ca v s m = σ (der v s m).1 := ite_eq_left h
       obtain ⟨h1, h3, h4, -, h5⟩ := hta v s m h.1 h.2
       have hu : Function.update t₀.ka v ((ta v s m h.1 h.2).ka v) = (ta v s m h.1 h.2).ka := by
         funext v'
@@ -943,24 +889,24 @@ theorem packK (hBO : BlockOperatorsProductAdjoint) {E : Type} [Field E] [NumberF
     · by_cases hm : m = 0
       · have e1 : ka' s m v = (B.a : ℂ) • t₀.ka v := by
           show (if h : 1 ≤ m ∧ 0 < B.a then _ else _) = _
-          rw [dite_eq_right h, if_pos hm]
+          rw [dite_eq_right h, ite_eq_left hm]
         have e2 : ca v s m = (B.a : ℂ) * c := by
           show (if 1 ≤ m ∧ 0 < B.a then _ else _) = _
-          rw [if_neg h, if_pos hm]
+          rw [ite_eq_right h, ite_eq_left hm]
         rw [e1, e2, tens_update_smul, conv_smulM, show tens t₀.ka t₀.kb t₀.ψ = t₀.Φ from rfl, h0, smul_smul]
       · have e1 : ka' s m v = 0 := by
           show (if h : 1 ≤ m ∧ 0 < B.a then _ else _) = _
-          rw [dite_eq_right h, if_neg hm]
+          rw [dite_eq_right h, ite_eq_right hm]
         have e2 : ca v s m = 0 := by
           show (if 1 ≤ m ∧ 0 < B.a then _ else _) = _
-          rw [if_neg h, if_neg hm]
+          rw [ite_eq_right h, ite_eq_right hm]
         rw [e1, e2, tens_update_zero, conv_zeroM, zero_smul]
   have hderB' : ∀ v s m, PositivityTheory.Rg.BcB.E.conv B.D.μ (tens t₀.ka (Function.update t₀.kb v (kb' s m v)) t₀.ψ) f =
       cb v s m • f := by
     intro v s m
     by_cases h : 1 ≤ m ∧ 0 < B.b
-    · have e1 : kb' s m v = (tb v s m h.1 h.2).kb v := dif_pos h
-      have e2 : cb v s m = σ (der v s m).2 := if_pos h
+    · have e1 : kb' s m v = (tb v s m h.1 h.2).kb v := dite_eq_left h
+      have e2 : cb v s m = σ (der v s m).2 := ite_eq_left h
       obtain ⟨h1, h3, h4, -, h5⟩ := htb v s m h.1 h.2
       have hu : Function.update t₀.kb v ((tb v s m h.1 h.2).kb v) = (tb v s m h.1 h.2).kb := by
         funext v'
@@ -972,17 +918,17 @@ theorem packK (hBO : BlockOperatorsProductAdjoint) {E : Type} [Field E] [NumberF
     · by_cases hm : m = 0
       · have e1 : kb' s m v = (B.b : ℂ) • t₀.kb v := by
           show (if h : 1 ≤ m ∧ 0 < B.b then _ else _) = _
-          rw [dite_eq_right h, if_pos hm]
+          rw [dite_eq_right h, ite_eq_left hm]
         have e2 : cb v s m = (B.b : ℂ) * c := by
           show (if 1 ≤ m ∧ 0 < B.b then _ else _) = _
-          rw [if_neg h, if_pos hm]
+          rw [ite_eq_right h, ite_eq_left hm]
         rw [e1, e2, tens_update_smul_b, conv_smulM, show tens t₀.ka t₀.kb t₀.ψ = t₀.Φ from rfl, h0, smul_smul]
       · have e1 : kb' s m v = 0 := by
           show (if h : 1 ≤ m ∧ 0 < B.b then _ else _) = _
-          rw [dite_eq_right h, if_neg hm]
+          rw [dite_eq_right h, ite_eq_right hm]
         have e2 : cb v s m = 0 := by
           show (if 1 ≤ m ∧ 0 < B.b then _ else _) = _
-          rw [if_neg h, if_neg hm]
+          rw [ite_eq_right h, ite_eq_right hm]
         rw [e1, e2, tens_update_zero_b, conv_zeroM, zero_smul]
   have hψl : ∀ x y, ∀ u₁ ∈ K₁, ∀ u₂ ∈ K₂, ∀ h, t₀.ψ x y ((u₁, u₂) * h) = t₀.ψ x y h := by
     intro x y u₁ hu₁ u₂ hu₂ h
@@ -1017,7 +963,6 @@ attribute [local instance] PositivityTheory.Rg.BcB.F.borelG PositivityTheory.Rg.
 namespace PositivityTheory.Rg.BcB.F.Rd.B
 
 open PositivityTheory.Rg.BcB.F PositivityTheory.Rg.BcB.F.Rd
-
 
 theorem perK (hAV : ActVal) (hBO : BlockOperatorsProductAdjoint) (hCM : ConvMulSt) (hFin : FinSt) (hReal : RealiseSt)
     {E : Type} [Field E] [NumberField E] [IsCMField E] (B : Block E)
@@ -1125,26 +1070,26 @@ theorem perK (hAV : ActVal) (hBO : BlockOperatorsProductAdjoint) (hCM : ConvMulS
     intro v s m
     refine Tendsto.congr (fun k => (hgA k v s m).symm) ?_
     by_cases h : 1 ≤ m ∧ 0 < B.a
-    · simp only [if_pos h]
+    · simp only [ite_eq_left h]
       exact (hsg _).div (hsg a₀) hχ0
     · by_cases hm : m = 0
-      · simp only [if_neg h, if_pos hm]
+      · simp only [ite_eq_right h, ite_eq_left hm]
         refine tendsto_const_nhds.congr (fun k => ?_)
         field_simp [hc k]
-      · simp only [if_neg h, if_neg hm, zero_div]
+      · simp only [ite_eq_right h, ite_eq_right hm, zero_div]
         exact tendsto_const_nhds
   have hlimB : ∀ v s m, Tendsto (fun k => GlobalTheory.Dec.gelfVal (χbk k v s) m) atTop
       (𝓝 (if 1 ≤ m ∧ 0 < B.b then χ (genE g X (der v s m).2) / χ (genE g X a₀) else if m = 0 then (B.b : ℂ) else 0)) := by
     intro v s m
     refine Tendsto.congr (fun k => (hgB k v s m).symm) ?_
     by_cases h : 1 ≤ m ∧ 0 < B.b
-    · simp only [if_pos h]
+    · simp only [ite_eq_left h]
       exact (hsg _).div (hsg a₀) hχ0
     · by_cases hm : m = 0
-      · simp only [if_neg h, if_pos hm]
+      · simp only [ite_eq_right h, ite_eq_left hm]
         refine tendsto_const_nhds.congr (fun k => ?_)
         field_simp [hc k]
-      · simp only [if_neg h, if_neg hm, zero_div]
+      · simp only [ite_eq_right h, ite_eq_right hm, zero_div]
         exact tendsto_const_nhds
   exact ⟨M, sk, f, χak, χbk, hsg, hsX, hlimA, hlimB, fun k => ⟨hc k, hcont k, hne k, (hk k).2.2.2.1,
     (hk k).2.2.2.2.1, hTy k, hS₁ k, hS₂ k, hAu₁ k, hAu₂ k, hI₁ k, hI₂ k, hFinK k, hXK k, hArchK k⟩⟩
@@ -1191,7 +1136,6 @@ theorem kTypes_insert {E : Type} [Field E] [NumberField E] [IsCMField E] {Ω : �
   · infer_instance
   · exact (h M).2 W hW
 
-
 theorem readLimit_main (hPack : Pack) (hEF : EFinal) (hAV : ActVal) (hFH : FinHecke) (hVC : ValCont) (hIC : InfConv)
     (hIL : InfLim) (hRE : ReproEx) (hBO : BlockOperatorsProductAdjoint) (hCM : ConvMulSt) (hFin : FinSt) (hReal : RealiseSt) : ReadLimit := by
   intro E _ _ _
@@ -1216,10 +1160,10 @@ theorem readLimit_main (hPack : Pack) (hEF : EFinal) (hAV : ActVal) (hFH : FinHe
       (hEr a b Ma Mb K₁ K₂ h.1 h.2).choose_spec.choose else fun _ => ∅
   have hΘ₁ : ∀ a b Ma Mb (K₁ : Subgroup (GL (Fin a) (Af E))) (K₂ : Subgroup (GL (Fin b) (Af E)))
       (o₁ : IsOpen (K₁ : Set (GL (Fin a) (Af E)))) (o₂ : IsOpen (K₂ : Set (GL (Fin b) (Af E)))),
-      Θf₁ a b Ma Mb K₁ K₂ = (hEr a b Ma Mb K₁ K₂ o₁ o₂).choose := fun a b Ma Mb K₁ K₂ o₁ o₂ => dif_pos ⟨o₁, o₂⟩
+      Θf₁ a b Ma Mb K₁ K₂ = (hEr a b Ma Mb K₁ K₂ o₁ o₂).choose := fun a b Ma Mb K₁ K₂ o₁ o₂ => dite_eq_left ⟨o₁, o₂⟩
   have hΘ₂ : ∀ a b Ma Mb (K₁ : Subgroup (GL (Fin a) (Af E))) (K₂ : Subgroup (GL (Fin b) (Af E)))
       (o₁ : IsOpen (K₁ : Set (GL (Fin a) (Af E)))) (o₂ : IsOpen (K₂ : Set (GL (Fin b) (Af E)))),
-      Θf₂ a b Ma Mb K₁ K₂ = (hEr a b Ma Mb K₁ K₂ o₁ o₂).choose_spec.choose := fun a b Ma Mb K₁ K₂ o₁ o₂ => dif_pos ⟨o₁, o₂⟩
+      Θf₂ a b Ma Mb K₁ K₂ = (hEr a b Ma Mb K₁ K₂ o₁ o₂).choose_spec.choose := fun a b Ma Mb K₁ K₂ o₁ o₂ => dite_eq_left ⟨o₁, o₂⟩
   refine ⟨V₁, V₂, fun a b Ma Mb M => insert ⊥ (Ωf₁ a b Ma Mb M), fun a b Ma Mb M => insert ⊥ (Ωf₂ a b Ma Mb M),
     Θf₁, Θf₂, fun a b Ma Mb => ⟨hV₁ a b Ma Mb, hV₂ a b Ma Mb, kTypes_insert (hΩ₁ a b Ma Mb),
       kTypes_insert (hΩ₂ a b Ma Mb), fun M => ⟨⟨⊥, Set.mem_insert _ _⟩, ⟨⊥, Set.mem_insert _ _⟩⟩,

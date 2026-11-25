@@ -131,14 +131,12 @@ theorem valued_compAt_conjP {SB : Finset (HeightOneSpectrum (𝓞 E))} (hs : ∀
   rw [valued_compAt_detIdl, valued_compAt_detIdl, ← WithZero.exp_add, WithZero.exp_inj, CharValCompare.conjP_conjP,
     ordSub_conjP]
   by_cases h : w ∈ SB
-  · rw [if_pos h, if_neg (hs w h), if_pos h]
+  · rw [ite_eq_left h, ite_eq_right (hs w h), ite_eq_left h]
     omega
-  · rw [if_neg h, if_neg h]
+  · rw [ite_eq_right h, ite_eq_right h]
     split_ifs <;> omega
 
 end General
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem toDtQ_detPt : ∀ (R : Ranks) (H : Formalism.BasicNotions.Host R) (n : ℕ) (ST SG Q SQ : Finset (HeightOneSpectrum (𝓞 H.E)))
     (h : Q ⊆ SQ) (p : DecoF H.E n ST SG Q), LevOk H SG SQ → toDtQ H h (detPt H SQ p) = detPt H Q p := by
@@ -161,12 +159,12 @@ theorem toDtQ_detPt : ∀ (R : Ranks) (H : Formalism.BasicNotions.Host R) (n : �
   · have e1 : compAt P (ptIdl H SQ p / ptIdl H Q p) = 1 := by
       rw [map_div, div_eq_one_iff_eq (h0 _ _)]
       unfold ptIdl
-      rw [compAt_detIdl _ p.deco.2.lat, compAt_detIdl _ p.deco.2.lat, if_pos hP, if_pos (hsub hP)]
+      rw [compAt_detIdl _ p.deco.2.lat, compAt_detIdl _ p.deco.2.lat, ite_eq_left hP, ite_eq_left (hsub hP)]
     have e2 : compAt (conjPrime₂ P) (ptIdl H SQ p / ptIdl H Q p) = 1 := by
       rw [map_div, div_eq_one_iff_eq (h0 _ _)]
       unfold ptIdl
-      rw [compAt_detIdl _ p.deco.2.lat, compAt_detIdl _ p.deco.2.lat, if_neg (hL.split P (hsub hP)),
-        if_neg (hL'.split P hP), CharValCompare.conjP_conjP, if_pos hP, if_pos (hsub hP)]
+      rw [compAt_detIdl _ p.deco.2.lat, compAt_detIdl _ p.deco.2.lat, ite_eq_right (hL.split P (hsub hP)),
+        ite_eq_right (hL'.split P hP), CharValCompare.conjP_conjP, ite_eq_left hP, ite_eq_left (hsub hP)]
     have e3 := valued_sigR (host_cmData R H) P ((finAf H.F H.E (ptIdl H SQ p / ptIdl H Q p) : AfE H.F H.E) - 1)
     rw [map_sub (adAt _ _), adAt_finAf, e2, map_one (adAt _ _), sub_self, map_zero, Valuation.zero_iff,
       map_sub (Formalism.UG.sigR _ _), map_one (Formalism.UG.sigR _ _), map_sub (adAt _ _), map_one (adAt _ _), sub_eq_zero] at e3

@@ -33,58 +33,8 @@ public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RootsChar
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteEmb
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaDeRham
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaWDUnr
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
 import Mathlib.LinearAlgebra.JordanChevalley
@@ -221,8 +171,7 @@ private theorem exists_root_near_of_aeval_small (l : ℕ) [Fact l.Prime] (g : �
     apply Multiset.map_congr rfl
     intro b _
     simp
-  by_contra hno
-  push_neg at hno
+  by_contra! hno
   have hle : δ ^ n ≤ ‖aeval α g‖ := by
     rw [hev]
     show δ ^ n ≤ (normHom : Om l →*₀ ℝ) _
@@ -478,63 +427,8 @@ theorem UpperTheory.Reformulated.B.Qh8.isCM_of_conj :
     ∀ (K : Type) [inst : Field K] [inst_1 : NumberField K]
     [NumberField.IsTotallyComplex K],
     (∀ (x : K), ∃ (y : K), ∀ (φ : K →+* ℂ), (φ : K → ℂ) y = (starRingEnd ℂ : ℂ → ℂ) ((φ : K → ℂ) x)) →
-      NumberField.IsCMField K := by
-  intro K _ _ _ h
-  choose c hc using h
-  let φ₀ : K →+* ℂ := Classical.choice (inferInstance : Nonempty _)
-  obtain ⟨x, hx⟩ : ∃ x : K, starRingEnd ℂ (φ₀ x) ≠ φ₀ x := by
-    by_contra hne
-    apply NumberField.IsTotallyComplex.complexEmbedding_not_isReal φ₀
-    rw [NumberField.ComplexEmbedding.isReal_iff]
-    ext z
-    rw [NumberField.ComplexEmbedding.conjugate_coe_eq]
-    by_contra hz
-    exact hne ⟨z, hz⟩
-  have hanti : ∀ (z : K) (φ : K →+* ℂ), starRingEnd ℂ (φ (z - c z)) = -φ (z - c z) := by
-    intro z φ
-    simp [hc]
-  obtain ⟨d, hd0, hd⟩ : ∃ d : K, d ≠ 0 ∧ ∀ φ : K →+* ℂ, starRingEnd ℂ (φ d) = -φ d := by
-    refine ⟨x - c x, fun h0 => hx ?_, hanti x⟩
-    rw [← hc, ← sub_eq_zero.mp h0]
-  have hli : LinearIndependent (NumberField.maximalRealSubfield K) ![(1 : K), d] := by
-    rw [LinearIndependent.pair_iff]
-    rintro ⟨s, hs⟩ ⟨t, ht⟩ hst
-    have h1 : s * 1 + t * d = 0 := hst
-    have h2 := congrArg φ₀ h1
-    have h3 := congrArg (starRingEnd ℂ) h2
-    have hs' : starRingEnd ℂ (φ₀ s) = φ₀ s := hs φ₀
-    have ht' : starRingEnd ℂ (φ₀ t) = φ₀ t := ht φ₀
-    simp only [map_add (f := _), map_mul, map_one, map_zero, hs', ht', hd] at h2 h3
-    have hs0 : s = 0 := by
-      apply φ₀.injective
-      rw [map_zero]
-      linear_combination (h2 + h3) / 2
-    have ht0 : t = 0 := by
-      rw [hs0, zero_mul, zero_add] at h1
-      exact (mul_eq_zero.mp h1).resolve_right hd0
-    exact ⟨Subtype.ext hs0, Subtype.ext ht0⟩
-  have hsp : ⊤ ≤ Submodule.span (NumberField.maximalRealSubfield K)
-      (Set.range ![(1 : K), d]) := by
-    intro z _
-    have ha : (z + c z) / 2 ∈ NumberField.maximalRealSubfield K := by
-      intro φ
-      change starRingEnd ℂ _ = _
-      simp [hc, add_comm, map_ofNat]
-    have hb : (z - c z) / (2 * d) ∈ NumberField.maximalRealSubfield K := by
-      intro φ
-      change starRingEnd ℂ _ = _
-      rw [map_div₀, map_div₀, hanti, map_mul, map_mul, hd, map_ofNat, map_ofNat, mul_neg,
-        neg_div_neg_eq]
-    rw [Matrix.range_cons_cons_empty, Submodule.mem_span_pair]
-    refine ⟨⟨_, ha⟩, ⟨_, hb⟩, ?_⟩
-    change (z + c z) / 2 * 1 + (z - c z) / (2 * d) * d = z
-    field_simp
-    ring
-  have hfin : Module.finrank (NumberField.maximalRealSubfield K) K = 2 := by
-    rw [Module.finrank_eq_card_basis (Module.Basis.mk hli hsp), Fintype.card_fin]
-  haveI : Algebra.IsQuadraticExtension (NumberField.maximalRealSubfield K) K :=
-    { finrank_eq_two' := hfin }
-  exact ⟨⟩
+      NumberField.IsCMField K :=
+  _root_.UpperTheory.Reformulated.B.Qh9.isCM_of_conj
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsCMOfConj =====
@@ -699,7 +593,6 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 
 section SlopeTestRemainingChoices
 open Neutral.B1 Formalism.L2.Host Formalism.MainNotions.N Polynomial GlobalTheory.Pst UpperTheory.V
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 private theorem wdAt_of_model {l : ℕ} [Fact l.Prime] (P : LocPrime l) (ι : Om l ≃+* ℂ)
     {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
@@ -1046,7 +939,6 @@ section -- clump:auto
 @[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.WeilDeligne GlobalTheory.GalOfCusp GlobalTheory.HeckeGal GlobalTheory.LocLanglands GlobalTheory.Published UpperTheory.V.W
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 theorem UpperTheory.V.Loc.ltAll :
     GlobalArtinReciprocity → HeckeLAdicCharacter → HeckeLAdicCharacterDeRham → AlgebraicCharacterWD → DeRhamPotSemistable → ∀ {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] {l : ℕ} [Fact l.Prime] {A : ValuationSubring Ω} {w : Plc F} (h : IsPlaceOver A w) {O : Type} [CommRing O] [Algebra ℤ_[l] O] [TopologicalSpace O] (Bw : LocBridge l F Ω (Dec (F := F) A) O) (hj : GlobalTheory.Pst.Induces Bw) (ι : Qbar l ≃+* ℂ) (wt : Emb l w → ℤ) (a : Weil h →* (w.adicCompletion F)ˣ), IsLocalArtin h a → UpperTheory.V.Loc.HasLT h Bw hj ι wt a := by

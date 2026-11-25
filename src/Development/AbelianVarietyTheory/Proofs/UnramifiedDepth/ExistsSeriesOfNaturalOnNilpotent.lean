@@ -53,7 +53,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.Cha
 
 open TensorProduct IsLocalRing Matrix CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Be2 ReciprocityTheory.ChartRestriction.G.Chart
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory
 
@@ -66,7 +65,7 @@ private lemma serNat_coeff {R₀ κ : Type} [CommRing R₀] [DecidableEq κ] {N 
   refine Submodule.span_induction ?_ ?_ ?_ ?_ hq
   · rintro _ ⟨j, rfl⟩ m hm
     simp only [MvPolynomial.coeff_X_pow]
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro rfl
     simpa using hm j
   · intro m _; simp
@@ -99,10 +98,10 @@ private lemma serNat_aeval {R₀ κ : Type} [CommRing R₀] [Fintype κ] [Decida
     rw [MvPolynomial.aeval_monomial, Finsupp.prod_fintype _ _ (fun i => pow_zero _)]
     by_cases hm : ∀ j, m j < N
     · rw [Finset.sum_eq_single (fun j => (⟨m j, hm j⟩ : Fin N))]
-      · rw [MvPolynomial.coeff_monomial, if_pos]
+      · rw [MvPolynomial.coeff_monomial, ite_eq_left]
         ext j; simp
       · intro e _ he
-        rw [MvPolynomial.coeff_monomial, if_neg, map_zero, zero_mul]
+        rw [MvPolynomial.coeff_monomial, ite_eq_right, map_zero, zero_mul]
         intro h
         apply he
         funext j
@@ -115,7 +114,7 @@ private lemma serNat_aeval {R₀ κ : Type} [CommRing R₀] [Fintype κ] [Decida
         rw [Finset.prod_eq_zero (f := fun i => a i ^ m i) (Finset.mem_univ j)
           (pow_eq_zero_of_le hj (ha j)), mul_zero]
       · intro e _
-        rw [MvPolynomial.coeff_monomial, if_neg, map_zero, zero_mul]
+        rw [MvPolynomial.coeff_monomial, ite_eq_right, map_zero, zero_mul]
         intro h
         apply hm
         intro j

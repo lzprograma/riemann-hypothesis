@@ -327,7 +327,7 @@ theorem measurePreserving_mul {n : Type} [Fintype n] [Fintype {rs // S rs}]
       obtain rfl : (j x).1 = r := congrArg Prod.fst hx
       obtain rfl : (j x).2 = s := congrArg Prod.snd hx
       have hne : (j x).1 ≠ (j x).2 := fun h => absurd (hjb x) (by rw [h]; exact lt_irrefl _)
-      rw [if_neg (hjS x), ext_pos (S := S') _ (hjb x), Matrix.sub_apply, Matrix.one_apply_ne hne, sub_zero, hE]
+      rw [ite_eq_right (hjS x), ext_pos (S := S') _ (hjb x), Matrix.sub_apply, Matrix.one_apply_ne hne, sub_zero, hE]
       exact h1 x
     · rw [Matrix.sub_apply, hE' β r s fun x h => hx ⟨x, h⟩, sub_self]
       split_ifs with h

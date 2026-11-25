@@ -36,54 +36,11 @@ import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamDieudonn
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinExt
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndependentOfInvariant
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonemptyThetaDeRhamFilZeroConcretePeriod
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalAdjoinRange
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
 import GroundTheory.LocalFields.PadicLogSeries
-import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Topology.Algebra.Valued.WithZeroMulInt
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
@@ -103,6 +60,14 @@ open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.Bas
 noncomputable section
 
 section GenMat
+
+private theorem tmap_smul {Q B V : Type} [Field Q] [CommRing B] [Algebra Q B] [AddCommGroup V] [Module Q V]
+    (a : B →ₐ[Q] B) (r : V →ₗ[Q] V) (b : B) (x : B ⊗[Q] V) :
+    TensorProduct.map a.toLinearMap r (b • x) = a b • TensorProduct.map a.toLinearMap r x := by
+  induction x using TensorProduct.induction_on with
+  | zero => simp
+  | tmul c v => simp [TensorProduct.smul_tmul']
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
 
 private theorem genMat {Q B G V : Type} [Field Q] [CommRing B] [IsDomain B] [Algebra Q B] [AddCommGroup V]
     [Module Q V] (a : G → B →ₐ[Q] B) (r : G → V →ₗ[Q] V) (hr : ∀ g, LinearMap.det (r g) ≠ 0)
@@ -129,19 +94,12 @@ private theorem genMat {Q B G V : Type} [Field Q] [CommRing B] [IsDomain B] [Alg
     smul_eq_mul, map_zero, Finsupp.zero_apply]
     rw [← this]
     exact Finset.sum_congr rfl fun k _ => mul_comm _ _
-  have hs : ∀ g (b : B) (x : B ⊗[Q] V), TensorProduct.map (a g).toLinearMap (r g) (b • x) =
-      a g b • TensorProduct.map (a g).toLinearMap (r g) x := by
-    intro g b x
-    induction x using TensorProduct.induction_on with
-    | zero => simp
-    | tmul c v => simp [TensorProduct.smul_tmul']
-    | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
   have hrep : ∀ g (x : B ⊗[Q] V) k, e.repr (TensorProduct.map (a g).toLinearMap (r g) x) k =
       ∑ j, algebraMap Q B (v.repr (r g (v j)) k) * a g (e.repr x j) := by
     intro g x k
     conv_lhs => rw [← e.sum_repr x]
 
-    simp only [map_sum, hs, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
+    simp only [map_sum, tmap_smul, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
     smul_eq_mul]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [mul_comm]
@@ -253,13 +211,6 @@ private theorem drMat (hF : IsField BdR) (ρ : Representation Qp G V)
   rw [finrank_eq_card_basis v, Fintype.card_fin] at hr
   let e := Module.finBasisOfFinrankEq K _ hr
   let a : G → BdR →ₐ[Qp] BdR := fun g => (PD.actdR g).toAlgHom.restrictScalars Qp
-  have hσ : ∀ g (b : BdR) (w : BdR ⊗[Qp] V), TensorProduct.map (a g).toLinearMap (ρ g) (b • w) =
-      a g b • TensorProduct.map (a g).toLinearMap (ρ g) w := by
-    intro g b w
-    induction w using TensorProduct.induction_on with
-    | zero => simp
-    | tmul c v => simp [TensorProduct.smul_tmul']
-    | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
   have hc : ∀ g x, TensorProduct.map (a g).toLinearMap (ρ g) (TensorProduct.comm Qp V BdR x) =
       TensorProduct.comm Qp V BdR (actVdR PD ρ g x) := by
     intro g x
@@ -278,7 +229,8 @@ private theorem drMat (hF : IsField BdR) (ρ : Representation Qp G V)
   have hi : LinearIndependent BdR fun k => (e k : BdR ⊗[Qp] V) := by
     letI := hF.toField
     exact GlobalTheory.Per.linearIndependent_of_invariant _ _ _ _ (fun g => (a g : BdR →+* BdR))
-      (fun g => (TensorProduct.map (a g).toLinearMap (ρ g)).toAddMonoidHom) hσ _ hw
+      (fun g => (TensorProduct.map (a g).toLinearMap (ρ g)).toAddMonoidHom)
+      (fun g => tmap_smul (a g) (ρ g)) _ hw
       (fun c hcg hsum k => by
         choose x hx using fun p => PD.invdR (c p) fun g => hcg g p
         have h1 : ∑ i, x i • e i = 0 := by
@@ -674,8 +626,6 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 namespace UpperTheory.V.Loc.LaConv
 
 open GlobalTheory.Pst GlobalTheory.TripleGal Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Topology
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 section Char
 

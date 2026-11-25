@@ -60,7 +60,6 @@ import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 
@@ -101,14 +100,14 @@ theorem finsum_doubleCoset_restr {X V : Type} {Y : V → Type} [Group X] [Topolo
     let t' : ∀ v, Y v := fun v => if pf v x ∈ K v ∧ pf v y ∈ K v then 1 else t v
     have ht'T : ∀ v, t' v ∈ Tv v := fun v => by
       by_cases c : pf v x ∈ K v ∧ pf v y ∈ K v
-      · simp only [t', if_pos c]; exact one_mem _
-      · simp only [t', if_neg c]; exact ht v
+      · simp only [t', ite_eq_left c]; exact one_mem _
+      · simp only [t', ite_eq_right c]; exact ht v
     have ht'K : ∀ v, (pf v x)⁻¹ * (t' v)⁻¹ * pf v y ∈ K v := fun v => by
       by_cases c : pf v x ∈ K v ∧ pf v y ∈ K v
-      · simp only [t', if_pos c, inv_one, mul_one]; exact mul_mem (inv_mem c.1) c.2
-      · simp only [t', if_neg c]; rw [e v]; simpa [mul_assoc] using hk v
+      · simp only [t', ite_eq_left c, inv_one, mul_one]; exact mul_mem (inv_mem c.1) c.2
+      · simp only [t', ite_eq_right c]; rw [e v]; simpa [mul_assoc] using hk v
     have hev' : ∀ᶠ v in cofinite, t' v ∈ K v := ((hX.eventually_mem x).and (hX.eventually_mem y)).mono
-      fun v c => by simp only [t', if_pos c]; exact one_mem _
+      fun v c => by simp only [t', ite_eq_left c]; exact one_mem _
     obtain ⟨g, -, hg⟩ := hX.exists_eq isEmptyElim t' hev'
     refine (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨g, (hT g).2 fun v => hg v ▸ ht'T v, x⁻¹ * g⁻¹ * y,
       (memKg _).2 fun v => by simpa [hg v] using ht'K v, by group⟩
@@ -165,7 +164,7 @@ theorem finsum_doubleCoset_restr {X V : Type} {Y : V → Type} [Group X] [Topolo
     · have hb' := hH b hb
       let y : ∀ v, Y v := fun v => if h : v ∈ S0 then Quotient.out (b ⟨v, h⟩) else 1
       obtain ⟨x, -, hx⟩ := hX.exists_eq isEmptyElim y
-        (eventually_of_finset S0 fun v hv => by simp only [y, dif_neg hv]; exact one_mem _)
+        (eventually_of_finset S0 fun v hv => by simp only [y, dite_eq_right hv]; exact one_mem _)
       have hq := L1 _ _ (DoubleCoset.out_eq' (DoubleCoset.mk T Kg x))
       have hxS : ∀ v : S0, DoubleCoset.mk (Tv v.1) (K v.1) (pf v.1 x) = b v := fun v => by
         rw [hx, show y v.1 = Quotient.out (b v) by simp [y, v.2]]
@@ -174,11 +173,11 @@ theorem finsum_doubleCoset_restr {X V : Type} {Y : V → Type} [Group X] [Topolo
       refine ⟨DoubleCoset.mk T Kg x, ?_, hΦ⟩
       show F _ ≠ 0
       have hne : ∀ v ∉ S0, Fv v (pf v (Quotient.out (DoubleCoset.mk T Kg x))) ≠ 0 := fun v hv => by
-        rw [L0 v _ _ (hq v), hx]; simp only [y, dif_neg hv, (hS0 v hv).1]; exact one_ne_zero
+        rw [L0 v _ _ (hq v), hx]; simp only [y, dite_eq_right hv, (hS0 v hv).1]; exact one_ne_zero
       rw [DegreeKernelLowerBound _ hne, Finset.prod_ne_zero_iff]
       intro v hv
       rw [L0 v _ _ (hq v), hx]
-      simp only [y, dif_pos hv]
+      simp only [y, dite_eq_left hv]
       exact hb' ⟨v, hv⟩
   refine ((finsum_mem_support _).symm.trans ((finsum_mem_eq_of_bijOn Φ hbij fun q hq => hval q hq).trans
     (finsum_mem_support H))).trans ?_

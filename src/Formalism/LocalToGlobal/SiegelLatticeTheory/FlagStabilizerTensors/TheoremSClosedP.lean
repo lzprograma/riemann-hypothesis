@@ -26,8 +26,6 @@ open Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Valuat
 
 namespace Formalism.L2.SG.PoincareAmplitudeLowerBounds
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.DataInst Formalism.L2.SG.CntLocal Formalism.L2.SG.RowsConc Formalism.L2.SG.RealObj
 
 

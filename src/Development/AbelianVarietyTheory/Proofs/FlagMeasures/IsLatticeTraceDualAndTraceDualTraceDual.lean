@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TranslatedLatticeAtInfinityFullCovolumeDual
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableSetDetNormPos
 import Mathlib.Algebra.Module.StablyFree.Basic
 import Mathlib.Algebra.Order.Floor.Extended
@@ -101,41 +102,9 @@ theorem restrict_trDual (Λ : Submodule (𝓞 E) (Fin j → E)) :
     rw [dotProduct_comm]
     linarith
 
-private theorem smul_mem_span_rat_restrictScalars (Λ : Submodule (𝓞 E) (Fin j → E)) (a : E) {x : Fin j → E}
-    (hx : x ∈ Submodule.span ℚ ((Λ.restrictScalars ℤ : Submodule ℤ (Fin j → E)) : Set (Fin j → E))) :
-    a • x ∈ Submodule.span ℚ ((Λ.restrictScalars ℤ : Submodule ℤ (Fin j → E)) : Set (Fin j → E)) := by
-  obtain ⟨m, s, hm, hms⟩ :=
-    (IsFractionRing.isAlgebraic_iff ℤ ℚ E |>.mpr (.of_finite ℚ a)).exists_nsmul_eq (𝓞 E)
-  induction hx using Submodule.span_induction with
-  | mem y hy =>
-    have hsy : s • y ∈ Λ := Λ.smul_mem s hy
-    have key : a • y = (m : ℚ)⁻¹ • (s • y) := by
-      rw [← algebraMap_smul E s y, ← hms, smul_assoc, ← Nat.cast_smul_eq_nsmul ℚ,
-        inv_smul_smul₀ (by exact_mod_cast hm)]
-    rw [key]
-    exact Submodule.smul_mem _ _ (Submodule.subset_span hsy)
-  | zero => simp
-  | add y z _ _ hy hz =>
-    rw [smul_add]
-    exact add_mem hy hz
-  | smul q y _ hy =>
-    rw [smul_comm]
-    exact Submodule.smul_mem _ _ hy
-
 theorem isLattice_restrict (Λ : Submodule (𝓞 E) (Fin j → E)) (h : Submodule.IsFullLattice E Λ) :
     Submodule.IsFullLattice ℚ (Λ.restrictScalars ℤ) := by
-  refine { toIsLattice := Submodule.IsLattice.of_fg ℚ
-             (Submodule.FG.restrictScalars (Submodule.IsLattice.fg E Λ)),
-           span_eq_top := ?_ }
-  refine Submodule.eq_top_iff'.mpr fun v => ?_
-  have hv : v ∈ Submodule.span E (Λ : Set (Fin j → E)) := by
-    rw [h.span_eq_top]
-    trivial
-  induction hv using Submodule.span_induction with
-  | mem y hy => exact Submodule.subset_span hy
-  | zero => exact zero_mem _
-  | add y z _ _ hy hz => exact add_mem hy hz
-  | smul a y _ hy => exact smul_mem_span_rat_restrictScalars E j Λ a hy
+  first | exact _root_.GlobalTheory.LatFacts.isLattice_int | exact @_root_.GlobalTheory.LatFacts.isLattice_int | apply _root_.GlobalTheory.LatFacts.isLattice_int <;> assumption
 
 theorem exists_basis (Λ : Submodule (𝓞 E) (Fin j → E)) (h : Submodule.IsFullLattice E Λ) :
     ∃ (n : ℕ) (b : Module.Basis (Fin n) ℚ (Fin j → E)),

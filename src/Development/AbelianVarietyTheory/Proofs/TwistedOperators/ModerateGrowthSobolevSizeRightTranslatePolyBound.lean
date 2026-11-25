@@ -53,8 +53,6 @@ open scoped ENNReal NNReal
 
 namespace GlobalTheory.Size.Translate
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem wordSum_succ {ι X : Type} [Fintype ι] (A : ι → X → X) (p : X → ℝ≥0∞) (d : ℕ) (x : X) :
     wordSum A p (d + 1) x = p x + ∑ i, wordSum A p d (A i x) := by
   classical

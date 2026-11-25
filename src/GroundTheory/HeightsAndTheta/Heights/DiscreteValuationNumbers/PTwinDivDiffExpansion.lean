@@ -63,7 +63,7 @@ theorem term_eq {r : ℕ} (μ : Fin r →₀ ℕ) (l : Fin r) :
     intro k hk
     refine Finset.prod_congr rfl fun j hj => ?_
     have hj' : (j : ℕ) < l := Fin.lt_def.mp (Finset.mem_filter.mp hj).2
-    rw [if_pos (by omega)]
+    rw [ite_eq_left (by omega)]
   have hhi : ∀ k : ℕ, k ≤ (l : ℕ) + 1 →
       ∏ j ∈ Finset.univ.filter (fun j => l < j),
           (X (if (j : ℕ) < k then Sum.inr j else Sum.inl j) : MvPolynomial (Fin r ⊕ Fin r) ℤ) ^ μ j =
@@ -71,11 +71,11 @@ theorem term_eq {r : ℕ} (μ : Fin r →₀ ℕ) (l : Fin r) :
     intro k hk
     refine Finset.prod_congr rfl fun j hj => ?_
     have hj' : (l : ℕ) < j := Fin.lt_def.mp (Finset.mem_filter.mp hj).2
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
   unfold stair
   rw [prod_split l, prod_split l (fun j => (X (if (j : ℕ) < (l : ℕ) + 1 then Sum.inr j else Sum.inl j) :
       MvPolynomial (Fin r ⊕ Fin r) ℤ) ^ μ j), hlo l le_rfl, hlo (l + 1) (by omega),
-    hhi l (by omega), hhi (l + 1) le_rfl, if_neg (lt_irrefl _), if_pos (Nat.lt_succ_self _)]
+    hhi l (by omega), hhi (l + 1) le_rfl, ite_eq_right (lt_irrefl _), ite_eq_left (Nat.lt_succ_self _)]
   linear_combination
     ((∏ j ∈ Finset.univ.filter (fun j => j < l), (X (Sum.inr j) : MvPolynomial (Fin r ⊕ Fin r) ℤ) ^ μ j) *
       ∏ j ∈ Finset.univ.filter (fun j => l < j), X (Sum.inl j) ^ μ j) * hg

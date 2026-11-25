@@ -5,6 +5,7 @@ import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.MeasureTheory.Function.StronglyMeasurable.Inner
 import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.TypeStar
+import ReciprocityTheory.L2DbarEstimates.HormanderEstimate.ExistsLintegralCompactLe
 
 @[expose] public section
 
@@ -149,23 +150,6 @@ theorem closIneq_continuous_form {M : Type*} [TopologicalSpace M] {n : ℕ} (z :
   funext x
   exact ((EuclideanSpace.equiv (Fin n) ℂ).symm_apply_apply (g x)).symm
 
-private lemma continuous_of_smoothR' {M : Type*} [TopologicalSpace M] {n : ℕ} {z : M → V n}
-    (hz : IsLocalHomeomorph z) {f : M → ℝ} (hf : SmoothR n z f) : Continuous f := by
-  have hc : Continuous fun x => (f x : ℂ) := by
-    refine continuous_iff_continuousAt.mpr fun x => ?_
-    obtain ⟨e, hxe, hze⟩ := hz x
-    have hch : IsChart n z e := fun y _ => congrFun hze y
-    have hC := (hf e hch).continuousOn
-    have h1 : ContinuousAt ((fun x => (f x : ℂ)) ∘ e.symm) (e x) :=
-      hC.continuousAt (e.open_target.mem_nhds (e.map_source hxe))
-    refine (h1.comp (e.continuousAt hxe)).congr ?_
-    filter_upwards [e.open_source.mem_nhds hxe] with y hy
-    simp [e.left_inv hy]
-  have h := Complex.continuous_re.comp hc
-  convert h using 1
-  funext x
-  simp
-
 private lemma ofReal_norm_ipV_sq_le_mul_nV {M : Type*} [MeasurableSpace M] {n : ℕ} (z : M → V n) (φ : M → ℝ)
     (hφ : Measurable φ) (v h : M → V n) (hv : AEStronglyMeasurable v (vol n z))
     (hh : AEStronglyMeasurable h (vol n z)) :
@@ -203,8 +187,8 @@ private lemma lintegral_weighted_norm_add_sq_le {M : Type*} [MeasurableSpace M] 
 theorem closureIneq (n : ℕ) (M : Type*) [TopologicalSpace M] [T2Space M]
     [SecondCountableTopology M] [MeasurableSpace M] [BorelSpace M] (hDens : DensStatement n M) : ClosureIneqStatement n M := by
   intro z hz e ph ψ v B ε he hph hψ hcut hv hB hε hineq f w hf hw hadj hS
-  have hphm := (continuous_of_smoothR' hz hph).measurable
-  have hψm := (continuous_of_smoothR' hz hψ).measurable
+  have hphm := (continuous_of_smoothR n z hz ph hph).measurable
+  have hψm := (continuous_of_smoothR n z hz ψ hψ).measurable
   have hw2m : Measurable (w2 ph ψ) := hphm.sub hψm
   have hw1m : Measurable (w1 ph ψ) := hphm.sub (hψm.const_mul 2)
   have h0 : MemWeightedL2TwoForm n z 0 ph := ⟨aestronglyMeasurable_const, by unfold n2; simp [sq2]⟩

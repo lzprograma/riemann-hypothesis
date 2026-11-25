@@ -1,54 +1,17 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SymmetricLiftOddOrderExistsUnique
+import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SectionLinCombFiberProductSeparatedStatement
+import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CoordOfHasWeight
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigIsoCongr
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBPull
+import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsSemiAbelianOfCharts
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
 
 @[expose] public section
 
@@ -75,16 +38,8 @@ private theorem mem_wchart_lemma {A B : Scheme.{0}} {Idx : Type} [Fintype Idx] (
 private theorem gm_res_pullU_lemma_2 {A B C : Scheme.{0}} (f : B ⟶ A) (U : A.Opens) (V : B.Opens)
     (h : V ≤ f ⁻¹ᵁ U) (r : C ⟶ B) (c : C) (hc : r c ∈ V) (s : Γ(A, U)ˣ) :
     gm r c V (res h (pullU f U s)) = gm (r ≫ f) c U s := by
-  have hc' : (r ≫ f) c ∈ U := by simpa using h hc
-  unfold gm
-  rw [dif_pos hc, dif_pos hc']
-  have hc2 : c ∈ r ⁻¹ᵁ V := hc
-  have hc3 : c ∈ r ⁻¹ᵁ f ⁻¹ᵁ U := hc'
-  have key : f.app U ≫ B.presheaf.map (homOfLE h).op ≫ r.app V ≫ C.presheaf.germ (r ⁻¹ᵁ V) c hc2 =
-      f.app U ≫ r.app (f ⁻¹ᵁ U) ≫ C.presheaf.germ (r ⁻¹ᵁ f ⁻¹ᵁ U) c hc3 := by
-    rw [Scheme.Hom.naturality_assoc, TopCat.Presheaf.germ_res]
-  ext
-  exact congrArg (fun φ => CommRingCat.Hom.hom φ (s : Γ(A, U))) key
+  intros
+  apply _root_.GlobalTheory.GtBaseChange.gm_res_pullU <;> assumption
 
 theorem pw_trans {w : LB.Iso L' (L.pull F)} (hw : PGen w) (φ' : K → (Y ⟶ X')) (ε : K → ℤ) (r : Z ⟶ Y) (z : Z)
     {p p' : K → L.ι} {q q' : K → L'.ι} (hp : r z ∈ LB.wchart L (fun k => φ' k ≫ F) p)
@@ -117,76 +72,31 @@ theorem exists_pw (w : LB.Iso L' (L.pull F)) (φ' : K → (Y ⟶ X')) (ε : K �
 
 theorem trF_self {M : LB X} (hM : M.IsLB) (φ : K → (Y ⟶ X)) (ε : K → ℤ) (r : Z ⟶ Y) (z : Z) {j : K → M.ι}
     (hj : r z ∈ LB.wchart M φ j) : trF φ ε r z j j = 1 := by
-  have hg : ∀ i, M.g i i = 1 := by
-    intro i
-    have h1 := hM.g_self i
-    have h2 : ∀ g : Γ(X, M.U i ⊓ M.U i)ˣ, g = res (inf_le_left : M.U i ⊓ M.U i ≤ M.U i)
-        (res (le_inf le_rfl le_rfl : M.U i ≤ M.U i ⊓ M.U i) g) := by
-      intro g
-      have e : X.presheaf.map (homOfLE (le_inf le_rfl le_rfl : M.U i ≤ M.U i ⊓ M.U i)).op ≫
-          X.presheaf.map (homOfLE (inf_le_left : M.U i ⊓ M.U i ≤ M.U i)).op = 𝟙 _ := by
-        rw [← Functor.map_comp]
-        exact X.presheaf.map_id _
-      ext
-      exact (congrArg (fun φ => CommRingCat.Hom.hom φ (g : Γ(X, M.U i ⊓ M.U i))) e).symm
-    rw [h2 (M.g i i), h1, map_one]
-  simp only [trF, hg, map_one, one_zpow, Finset.prod_const_one]
+  intros
+  apply _root_.GlobalTheory.SectionsProduct.trF_same <;> assumption
 
 private theorem units_ext_gm_lemma_3 {A : Scheme.{0}} {V : A.Opens} (a b : Γ(A, V)ˣ)
     (H : ∀ (y : A) (hy : y ∈ V), gm (𝟙 A) y V a = gm (𝟙 A) y V b) : a = b := by
-  have key : ∀ (y : A) (hy : y ∈ V) (s : Γ(A, V)ˣ),
-      ((gm (𝟙 A) y V s : A.presheaf.stalk y)) = A.presheaf.germ V y hy (s : Γ(A, V)) := by
-    intro y hy s
-    have hy1 : (𝟙 A) y ∈ V := by simpa using hy
-    simp only [gm, dif_pos hy1]
-    first
-    | rfl
-  ext
-  refine TopCat.Presheaf.section_ext A.sheaf V _ _ fun y hy => ?_
-  have h := congrArg Units.val (H y hy)
-  rw [key y hy, key y hy] at h
-  exact h
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.unit_ext
+    | apply _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.unit_ext <;> first | assumption | rfl | infer_instance
 
 private theorem gm_res_lemma_4 {B C : Scheme.{0}} {U V : B.Opens} (h : V ≤ U) (r : C ⟶ B) (c : C)
     (hc : r c ∈ V) (s : Γ(B, U)ˣ) : gm r c V (res h s) = gm r c U s := by
-  have hc' : r c ∈ U := h hc
-  unfold gm
-  rw [dif_pos hc, dif_pos hc']
-  have hc2 : c ∈ r ⁻¹ᵁ V := hc
-  have hc3 : c ∈ r ⁻¹ᵁ U := hc'
-  have key : B.presheaf.map (homOfLE h).op ≫ r.app V ≫ C.presheaf.germ (r ⁻¹ᵁ V) c hc2 =
-      r.app U ≫ C.presheaf.germ (r ⁻¹ᵁ U) c hc3 := by
-    rw [Scheme.Hom.naturality_assoc, TopCat.Presheaf.germ_res]
-  ext
-  exact congrArg (fun φ => CommRingCat.Hom.hom φ (s : Γ(B, U))) key
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.gm_res
+    | apply _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.gm_res <;> first | assumption | rfl | infer_instance
 
 theorem isGen_of_gm {M : LB X} {φ : K → (Y ⟶ X)} {ε : K → ℤ} (t : LB.Gen (LB.LinComb M φ ε))
     (h : ∀ (y : Y) (j j' : K → M.ι), y ∈ LB.wchart M φ j → y ∈ LB.wchart M φ j' →
       gm (𝟙 Y) y (LB.wchart M φ j) (t.s j) = trF φ ε (𝟙 Y) y j j' * gm (𝟙 Y) y (LB.wchart M φ j') (t.s j')) : t.IsGen := by
-  intro i j
-  apply units_ext_gm_lemma_3
-  intro y hy
-  have hi : y ∈ LB.wchart M φ i := hy.1
-  have hj : y ∈ LB.wchart M φ j := hy.2
-  have hk : ∀ k, LB.wchart M φ i ⊓ LB.wchart M φ j ≤ φ k ⁻¹ᵁ (M.U (i k) ⊓ M.U (j k)) :=
-    fun k => le_inf (inf_le_left.trans (LB.wchart_le M φ i k)) (inf_le_right.trans (LB.wchart_le M φ j k))
-  have eg : gm (𝟙 Y) y (LB.wchart M φ i ⊓ LB.wchart M φ j)
-      (∏ k, res (hk k) (pullU (φ k) (M.U (i k) ⊓ M.U (j k)) (M.g (i k) (j k))) ^ ε k) =
-        trF φ ε (𝟙 Y) y i j := by
-    simp only [trF, map_prod, map_zpow]
-    refine Finset.prod_congr rfl fun k _ => ?_
-    exact congrArg (· ^ ε k) (gm_res_pullU_lemma_2 (φ k) _ _ (hk k) (𝟙 Y) y hy _)
-  have e1 : gm (𝟙 Y) y (LB.wchart M φ i ⊓ LB.wchart M φ j) (res inf_le_left (t.s i)) =
-      gm (𝟙 Y) y (LB.wchart M φ i) (t.s i) := gm_res_lemma_4 inf_le_left (𝟙 Y) y hy (t.s i)
-  have e2 : gm (𝟙 Y) y (LB.wchart M φ i ⊓ LB.wchart M φ j) (res inf_le_right (t.s j)) =
-      gm (𝟙 Y) y (LB.wchart M φ j) (t.s j) := gm_res_lemma_4 inf_le_right (𝟙 Y) y hy (t.s j)
-  rw [map_mul]
-  exact e1.trans ((h y i j hi hj).trans (congrArg₂ (· * ·) eg.symm e2.symm))
+  intros
+  apply _root_.GlobalTheory.SymLiftOdd.isGen_of_gm <;> assumption
 
 private theorem gm_id_lemma_6 {A : Scheme.{0}} (V : A.Opens) (y : A) (hy : y ∈ V) (s : Γ(A, V)ˣ) :
     ((gm (𝟙 A) y V s : A.presheaf.stalk y)) = A.presheaf.germ V y hy (s : Γ(A, V)) := by
   have hy1 : (𝟙 A) y ∈ V := by simpa using hy
-  simp only [gm, dif_pos hy1]
+  simp only [gm, dite_eq_left hy1]
   first
   | rfl
 
@@ -460,18 +370,9 @@ end Transport
 
 theorem isMonHom_of_mul {S : Scheme.{0}} {G₁ G₂ : Over S} [GrpObj G₁] [GrpObj G₂] (e : G₁ ⟶ G₂)
     (mul : ∀ (T : Over S) (x y : T ⟶ G₁), (x * y) ≫ e = (x ≫ e) * (y ≫ e)) : IsMonHom e := by
-  have hμ : μ ≫ e = (e ⊗ₘ e) ≫ μ := by
-    have h := mul _ (fst G₁ G₁) (snd G₁ G₁)
-    simp only [Hom.mul_def, lift_fst_snd, Category.id_comp] at h
-    rw [h]
-    congr 1
-  have h1 : (1 : 𝟙_ (Over S) ⟶ G₁) ≫ e = 1 := by
-    have h := mul _ (1 : 𝟙_ (Over S) ⟶ G₁) 1
-    rw [_root_.mul_one] at h
-    exact mul_left_cancel (a := (1 : 𝟙_ (Over S) ⟶ G₁) ≫ e) (by rw [_root_.mul_one, ← h])
-  have hu : toUnit (𝟙_ (Over S)) = 𝟙 _ := toUnit_unique _ _
-  simp only [Hom.one_def, hu, Category.id_comp] at h1
-  exact ⟨h1, hμ⟩
+  first
+    | exact _root_.GlobalTheory.GroupGlue.isMonHom_of_points
+    | apply _root_.GlobalTheory.GroupGlue.isMonHom_of_points <;> first | assumption | rfl | infer_instance
 
 theorem polOActPull : PolOActPullSt := by
   intro S S' f P P' g hg hw O _ _ o

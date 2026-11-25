@@ -62,7 +62,7 @@ theorem contDiff_integral_param {P E V : Type} [NormedAddCommGroup P] [NormedSpa
   · rw [χ.one_of_mem_closedBall (by simpa using hR ht), one_smul]
   · rw [image_eq_zero_of_notMem_tsupport ht, zero_smul, zero_smul]
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ} {H : Type} [NormedAddCommGroup H] [NormedSpace ℂ H] [CompleteSpace H]
   {G : Set (Mat n)} {σ : Mat n → (H →L[ℂ] H)} {hG : IsMatGroup G}

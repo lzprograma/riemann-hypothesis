@@ -12,50 +12,6 @@ public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.Topology.MetricSpace.Ultra.Basic
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.UltrametricDetNormLe
 public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.NormLeOneOfIntegralInt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -96,7 +52,7 @@ theorem exists_inverse {E : Type} [Field E] [NumberField E] [IsCMField E] (H : H
     ∃ (C : Matrix I I E) (N : ℕ), (∀ a b, ∃ t : 𝓞 E, C a b = t) ∧
       ((δ : E) • gramE D x) * C = (N : E) • (1 : Matrix I I E) ∧ ∃ n₀ : ℕ, ¬ ℓ ∣ n₀ ∧ N = n₀ * n₀ * n₁ := by
   obtain ⟨hli, n₀, hn₀, hspan⟩ := hx
-  obtain ⟨-, hadd1, hadd2, hsm1, hsm2, -, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.Sesq.form_of_datum E H D
+  obtain ⟨-, hadd1, hadd2, hsm1, hsm2, -, -⟩ := _root_.PositivityTheory.Xgf.sesq_sesquilinear_skew_hermitian E H D
   obtain ⟨-, hdual⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.unimodularity_sesq E H D
   have hδE : (δ : E) ≠ 0 := by simpa using hδ0
   let S := Submodule.span (𝓞 E) (Set.range x)
@@ -157,9 +113,9 @@ theorem exists_inverse {E : Type} [Field E] [NumberField E] [IsCMField E] (H : H
 theorem log_norm_det_gramE : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (I : Type) [Fintype I] [DecidableEq I] (x : I → D.La) (ℓ : Nat.Primes), IsLocBasis (𝓞 E) ℓ x → ∀ j : E →+* ℂ_[ℓ], Real.log ‖j (gramE D x).det‖ = -(Fintype.card I : ℝ) * logIdeal (j.comp (algebraMap (𝓞 E) E)) (differentIdeal ℤ (𝓞 E)) := by
   intro E _ _ _ H D I _ _ x ℓ hx j
   obtain ⟨δ, hδ, hδ0, ⟨n₁, hn₁, hgen⟩, hnorm⟩ :=
-    _root_.GlobalTheory.CompanionTheory.Ar.Fl.ideal_local_generator E (differentIdeal ℤ (𝓞 E)) ℓ differentIdeal_ne_bot
+    _root_.PositivityTheory.Xgf.ideal_padic_generator_log_norm E (differentIdeal ℤ (𝓞 E)) ℓ differentIdeal_ne_bot
   obtain ⟨C, N, hC, hmul, n₀, hn₀, rfl⟩ := exists_inverse H D x ℓ hx δ hδ0 n₁ hgen
-  obtain ⟨-, -, -, -, -, -, hint⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Fl.Sesq.form_of_datum E H D
+  obtain ⟨-, -, -, -, -, -, hint⟩ := _root_.PositivityTheory.Xgf.sesq_sesquilinear_skew_hermitian E H D
   have hM : ‖j ((δ : E) • gramE D x).det‖ ≤ 1 := norm_det_le_one j _ fun a b => by
     obtain ⟨t, ht⟩ := hint δ hδ (x a) (x b)
     exact ⟨t, by simpa [gramE] using ht⟩

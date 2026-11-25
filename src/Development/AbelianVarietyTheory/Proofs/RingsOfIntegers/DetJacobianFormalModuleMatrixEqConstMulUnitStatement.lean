@@ -54,8 +54,6 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB IsLocalRing
@@ -277,9 +275,9 @@ theorem const_blockJ {z : Fin n → Pt R n d} (hz : ∀ b i, constantCoeff (z b 
   unfold blockJ
   rw [Matrix.of_apply]
   by_cases h : p.1 = q.1
-  · rw [if_pos h, const_invJ G (hz p.1)]
+  · rw [ite_eq_left h, const_invJ G (hz p.1)]
     simp [Prod.ext_iff, h]
-  · rw [if_neg h, map_zero, if_neg (fun e => h (congrArg Prod.fst e))]
+  · rw [ite_eq_right h, map_zero, ite_eq_right (fun e => h (congrArg Prod.fst e))]
 
 theorem det_jac_of_inv (ψ : Fin n → Pt R n d) (hψ : ∀ b, Inv G (ψ b)) :
     ∃ U : (PS R n d)ˣ, Matrix.det (Matrix.of fun i j : Fin n × Fin d => pderiv (R := R) j (ψ i.1 i.2)) =
@@ -311,7 +309,7 @@ theorem det_jac_of_inv (ψ : Fin n → Pt R n d) (hψ : ∀ b, Inv G (ψ b)) :
       · subst h
         simp [hUm]
       · simp [h]
-    simp only [e1, e2, Finset.sum_ite_eq', Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [e1, e2, Finset.sum_ite_eq', Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     rw [← hu]
     rfl
   have hUpt : IsUnit (blockJ G (fun b => pt R d b)).det :=
@@ -406,11 +404,8 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ GlobalTheory.PtTie
 open ReciprocityTheory.ChartRestriction.G.TB (dAct dLin)
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.PlaceInt
 
-theorem _root_.GlobalTheory.T.det_jacobian_formal_module_matrix_eq_const_mul_unit : ∀ (V : Type) [CommRing V] [IsDomain V] [IsDiscreteValuationRing V] [IsAdicComplete (maximalIdeal V) V] [CharZero V] (d : ℕ) (O : Type) [CommRing O] [StarRing O] (B : FB V d O) (n : ℕ) (p : Matrix (Fin n) (Fin n) O), ∃ U : (PS V n d)ˣ, Matrix.det (Matrix.of fun i j : Fin n × Fin d => MvPowerSeries.pderiv (R := V) j (matV B p (fun j => pt V (n := n) d j) i.1 i.2)) = MvPowerSeries.C (jacM B p) * (U : PS V n d) := by
-  first | exact @GlobalTheory.PlaceInt.MatJac.det_jacobian_matV
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.DetJacobianFormalModuleMatrixEqConstMulUnitStatement =====

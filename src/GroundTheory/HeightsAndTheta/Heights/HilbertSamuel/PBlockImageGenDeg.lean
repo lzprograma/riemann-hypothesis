@@ -64,13 +64,9 @@ def lineRestr {K : Type*} [DecidableEq K] (p : MvPolynomial K ℚ) (k₀ : K) (m
 
 theorem eval_lineRestr {K : Type*} [DecidableEq K] (p : MvPolynomial K ℚ) (k₀ : K) (m : K → ℚ) (t : ℚ) :
     (lineRestr p k₀ m).eval t = MvPolynomial.eval (fun k => if k = k₀ then t else m k) p := by
-  induction p using MvPolynomial.induction_on with
-  | C a => simp [lineRestr]
-  | add p q hp hq => simp only [lineRestr, map_add (f := _), Polynomial.eval_add] at *; rw [hp, hq]
-  | mul_X p k hp =>
-    simp only [lineRestr, map_mul, Polynomial.eval_mul] at *
-    rw [hp]
-    by_cases hk : k = k₀ <;> simp [hk]
+  rw [lineRestr, ← Polynomial.coe_aeval_eq_eval, MvPolynomial.comp_aeval_apply,
+    MvPolynomial.aeval_eq_eval]
+  exact congrArg (MvPolynomial.eval · p) (funext fun k => by split_ifs <;> simp)
 
 theorem natDegree_lineRestr_le {K : Type*} [DecidableEq K] (p : MvPolynomial K ℚ) (k₀ : K) (m : K → ℚ) :
     (lineRestr p k₀ m).natDegree ≤ p.totalDegree := by

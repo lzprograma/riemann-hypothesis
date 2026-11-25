@@ -85,7 +85,7 @@ theorem matH_hOne (L : PeriodPair) (z w : n → ℂ) :
     matH (hOne L n) z w = (∑ τ, z τ * conj (w τ)) / ((Formalism.L2.Th1.F.area L : ℝ) : ℂ) := by
   show (∑ i, ∑ j, z i * hOne L n i j * conj (w j)) = _
   simp only [hOne, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true, Finset.sum_div]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true, Finset.sum_div]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [div_eq_mul_inv]; ring
 

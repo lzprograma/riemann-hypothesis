@@ -24,8 +24,6 @@ noncomputable section
 
 namespace Formalism.L2.SG.Pf.Cnt.DualityBasisChange
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7} {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep}
   {δ : ∀ p : PlF D, (D.s.atP p).Fp}
 
@@ -191,13 +189,13 @@ theorem typed_cases (hA : ∀ p, Agree δ M p) (p : PlF D) {g : Loc.SplitG (M p)
       exact Nat.mul_div_cancel' (dvd_mul_right _ _)
     · simp only [gj, Lat.gS, h, Nat.mul_div_cancel_left _ h0.pos]
       exact fun hd => hne ((Nat.prime_dvd_prime_iff_eq h0 h1).1 hd)
-    · simp only [gpart, h, if_true]
+    · simp only [gpart, h, ite_true]
   · refine ⟨?_, ?_, ?_⟩
     · simp only [gj, Lat.gS, h]
       exact Nat.mul_div_cancel' (dvd_mul_left _ _)
     · simp only [gj, Lat.gS, h, Nat.mul_div_cancel _ h1.pos]
       exact fun hd => hne ((Nat.prime_dvd_prime_iff_eq h1 h0).1 hd).symm
-    · simp only [gpart, h, if_neg (Ne.symm hne), if_true]
+    · simp only [gpart, h, ite_eq_right (Ne.symm hne), ite_true]
 
 theorem q_gS_inv_mem (hA : ∀ p, Agree δ M p) (p : PlF D) {g : Loc.SplitG (M p).L} (hs : (M p).split = some g) :
     (D.s.atP p).ιE (((Lat.gS D : ℕ) : D.host.E))⁻¹ * algebraMap (D.s.atP p).Fp (D.s.atP p).Ep (g.q : (D.s.atP p).Fp)
@@ -304,7 +302,7 @@ theorem amat_inl (p : PlF D) (g : Loc.SplitG (M p).L) {V : Type} [AddCommGroup V
     ∑ d, amat p g d (Sum.inl a) • v d = v (Sum.inl a) := by
   simp only [amat, Fintype.sum_sum_type, Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₂₁,
     Matrix.zero_apply, zero_smul, Finset.sum_const_zero, add_zero, Matrix.one_apply, ite_smul, one_smul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem amat_inr (p : PlF D) (g : Loc.SplitG (M p).L) {V : Type} [AddCommGroup V] [Module (D.s.atP p).Ep V]
     (v : Fin (D.R.rS + 1) ⊕ Fin (D.R.rS + 1) → V) (a : Fin (D.R.rS + 1)) :

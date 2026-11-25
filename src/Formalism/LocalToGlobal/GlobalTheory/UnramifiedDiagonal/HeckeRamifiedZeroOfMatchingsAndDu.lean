@@ -10,47 +10,8 @@ public import Formalism.LocalToGlobal.GroupLattices.DownNaturalLevelZero
 public import Formalism.LocalToGlobal.GlobalTheory.EqGlobOfHat
 public import Formalism.LocalToGlobal.GlobalTheory.UnramifiedDiagonal.TrpDia
 public import Formalism.SharpRestriction.GlobalSchurBounds.LemmaBSecondBranchOfLength
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GlobalSchurBounds.IntegralityOfRationalityLocal
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.TotallySplit
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Formalism.LocalToGlobal.GlobalTheory.GL6.PRLocW
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -93,8 +54,145 @@ variable {D : D7} {u : D.what₂.Word}
 
 
 
-theorem dn_match_one (T : Forms0 D u) (v v' : (D.mem u).A.vT) (hvv : v ≠ v') (k : ℤ) (δ : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F))
-    (hδ : IsDia T.cls0.lev (T.atT.eV v').1 (T.atT.eV v').2 k δ) (c c2 c1 c3 : (D.mem u).C.cls 0)
+theorem dnk_latP_smul (T : Forms0 D u) (v : (D.mem u).A.vT) (c c1 c2 : (D.mem u).C.cls 0)
+    (g : Module.Dual ((D.mem u).A.Fv v) ((D.fm u).lk 0 v c)) (μ : (D.mem u).A.Fv v) (hμ : μ ≠ 0)
+    (γ γ' : GL (Fin (D.R.N 0)) D.host.E)
+    (hl : Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat (γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Ld D u 0 (Nat.zero_le _) c1)) =
+      Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (clsCrd D u 0 (Nat.zero_le _) c))
+    (hfun : ∀ (x : ↥(Ld D u 0 (Nat.zero_le _) c1)) (hx : (γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ x.1 ∈ Lk T.atT 0 (Nat.zero_le _) v c),
+      (D.fm u).fv 0 v c1 (T.lv0.pr v c1 x) = g (T.lv0.prk v c ⟨_, hx⟩))
+    (hl' : Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat (γ' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Ld D u 0 (Nat.zero_le _) c2)) =
+      Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (clsCrd D u 0 (Nat.zero_le _) c))
+    (hfun' : ∀ (x : ↥(Ld D u 0 (Nat.zero_le _) c2)) (hx : (γ' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ x.1 ∈ Lk T.atT 0 (Nat.zero_le _) v c),
+      (D.fm u).fv 0 v c2 (T.lv0.pr v c2 x) = μ • g (T.lv0.prk v c ⟨_, hx⟩)) :
+    Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat ((γ⁻¹ * γ' : GL (Fin (D.R.N 0)) D.host.E) : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E)
+      (clsCrd D u 0 (Nat.zero_le _) c2)) =
+      Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (clsCrd D u 0 (Nat.zero_le _) c1) := by
+  have hfun2 : ∀ (x : ↥(Ld D u 0 (Nat.zero_le _) c2)) (hx : (γ' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ x.1 ∈ Lk T.atT 0 (Nat.zero_le _) v c),
+      (D.fm u).fv 0 v c2 (T.lv0.pr v c2 x) = (μ • g) (T.lv0.prk v c ⟨_, hx⟩) := fun x hx =>
+    (hfun' x hx).trans (LinearMap.smul_apply μ g _).symm
+  have eq1 : Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat (γ' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Lk T.atT 0 (Nat.zero_le _) v c2)) =
+      Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat (γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Lk T.atT 0 (Nat.zero_le _) v c1)) := by
+    ext y
+    rw [dnk_char T v c c2 (μ • g) γ' hl' hfun2 y, dnk_char T v c c1 g γ hl hfun y]
+    simp only [LinearMap.smul_apply, smul_eq_zero, hμ, false_or]
+  have L1 : Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (Lk T.atT 0 (Nat.zero_le _) v c1) =
+      Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (clsCrd D u 0 (Nat.zero_le _) c1) :=
+    le_antisymm (dnk_lk_locP T v c1) (localization_mono₂ _ le_sup_left)
+  have L2 : Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (Lk T.atT 0 (Nat.zero_le _) v c2) =
+      Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (clsCrd D u 0 (Nat.zero_le _) c2) :=
+    le_antisymm (dnk_lk_locP T v c2) (localization_mono₂ _ le_sup_left)
+  have M1 : Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat (γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Lk T.atT 0 (Nat.zero_le _) v c1)) =
+      Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat (γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (clsCrd D u 0 (Nat.zero_le _) c1)) :=
+    le_antisymm (rlv_locP_mulLat_le _ _ L1.le) (rlv_locP_mulLat_le _ _ L1.ge)
+  have M2 : Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat (γ' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Lk T.atT 0 (Nat.zero_le _) v c2)) =
+      Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat (γ' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (clsCrd D u 0 (Nat.zero_le _) c2)) :=
+    le_antisymm (rlv_locP_mulLat_le _ _ L2.le) (rlv_locP_mulLat_le _ _ L2.ge)
+  rw [M1, M2] at eq1
+  exact localization_smul_cancel _ γ γ' eq1
+
+theorem dn_match_core (T : Forms0 D u) (v : (D.mem u).A.vT) (μ : (D.mem u).A.Fv v) (hμ : μ ≠ 0)
+    (c c2 c1 c3 : (D.mem u).C.cls 0)
+    (γd : GL (Fin (D.R.N 0)) D.host.E) (hγd : γd ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _)))
+    (hLc : mulLat (γd : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (clsCrd D u 0 (Nat.zero_le _) c2) = clsCrd D u 0 (Nat.zero_le _) c)
+    (hLd : mulLat (γd : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Ld D u 0 (Nat.zero_le _) c2) = Ld D u 0 (Nat.zero_le _) c)
+    (x : Module.Dual ((D.mem u).A.Fv v) ((D.fm u).lk 0 v c)) (x2 : Module.Dual ((D.mem u).A.Fv v) ((D.fm u).lk 0 v c2))
+    (hxy : ∀ w, x2 w = μ • x (dniEquiv T v c2 c γd hLc hLd w))
+    (γ γ2 : UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _)))
+    (hl1 : Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat γ.1.1 (Ld D u 0 (Nat.zero_le _) c1)) = Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (clsCrd D u 0 (Nat.zero_le _) c))
+    (hl2 : Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat γ2.1.1 (Ld D u 0 (Nat.zero_le _) c3)) = Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (clsCrd D u 0 (Nat.zero_le _) c2))
+    (hf1 : ∀ (w : ↥(Ld D u 0 (Nat.zero_le _) c1)) (hw : γ.1.1 *ᵥ w.1 ∈ Lk T.atT 0 (Nat.zero_le _) v c),
+      (D.fm u).fv 0 v c1 (T.lv0.pr v c1 w) = x (T.lv0.prk v c ⟨_, hw⟩))
+    (hf2 : ∀ (w : ↥(Ld D u 0 (Nat.zero_le _) c3)) (hw : γ2.1.1 *ᵥ w.1 ∈ Lk T.atT 0 (Nat.zero_le _) v c2),
+      (D.fm u).fv 0 v c3 (T.lv0.pr v c3 w) = x2 (T.lv0.prk v c2 ⟨_, hw⟩)) :
+    Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat ((γ2.1⁻¹ * γd⁻¹ * γ.1 : GL (Fin (D.R.N 0)) D.host.E) : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (clsCrd D u 0 (Nat.zero_le _) c1)) =
+      Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (clsCrd D u 0 (Nat.zero_le _) c3) ∧
+    Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat ((γ2.1⁻¹ * γd⁻¹ * γ.1 : GL (Fin (D.R.N 0)) D.host.E) : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Ld D u 0 (Nat.zero_le _) c1)) =
+      Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (Ld D u 0 (Nat.zero_le _) c3) ∧
+    ∀ z (hz : z ∈ Ld D u 0 (Nat.zero_le _) c1), ∃ r : 𝓞 D.host.F, r ∉ (T.atT.eV v).1.asIdeal ∧
+      ∃ h : (algebraMap (𝓞 D.host.F) (𝓞 D.host.E) r) • (((γ2.1⁻¹ * γd⁻¹ * γ.1 : GL (Fin (D.R.N 0)) D.host.E) : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ z) ∈ Ld D u 0 (Nat.zero_le _) c3,
+        (D.fm u).fv 0 v c3 (T.lv0.pr v c3 ⟨_, h⟩) =
+          μ • (D.fm u).fv 0 v c1 (T.lv0.pr v c1 ⟨(algebraMap (𝓞 D.host.F) (𝓞 D.host.E) r) • z,
+            Submodule.smul_mem _ _ hz⟩) := by
+  classical
+  set g' : GL (Fin (D.R.N 0)) D.host.E := γd * γ2.1 with hg'
+  have hl' : Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat (g' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Ld D u 0 (Nat.zero_le _) c3)) = Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (clsCrd D u 0 (Nat.zero_le _) c) := by
+    rw [hg', Units.val_mul]
+    exact rlv_chainP _ _ _ (by rw [hLc]) hl2
+  have hLkinv : mulLat ((γd⁻¹ : GL (Fin (D.R.N 0)) D.host.E) : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Lk T.atT 0 (Nat.zero_le _) v c) = Lk T.atT 0 (Nat.zero_le _) v c2 :=
+    dni_inv_eq γd (dni_lk T v c2 c _ hLc hLd)
+  have hf' : ∀ (w : ↥(Ld D u 0 (Nat.zero_le _) c3)) (hw : (g' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ w.1 ∈ Lk T.atT 0 (Nat.zero_le _) v c),
+      (D.fm u).fv 0 v c3 (T.lv0.pr v c3 w) = μ • x (T.lv0.prk v c ⟨_, hw⟩) := by
+    intro w hw
+    have e1 : ((γd⁻¹ : GL (Fin (D.R.N 0)) D.host.E) : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ ((g' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ w.1) = γ2.1.1 *ᵥ w.1 := by
+      rw [hg', Matrix.mulVec_mulVec, ← Units.val_mul, ← mul_assoc, inv_mul_cancel, one_mul]
+    have hw2 : γ2.1.1 *ᵥ w.1 ∈ Lk T.atT 0 (Nat.zero_le _) v c2 := by
+      rw [← e1]; exact dni_mem_of _ hLkinv hw
+    rw [hf2 w hw2, hxy, dniEquiv_prk]
+    refine congrArg (fun t => μ • x (T.lv0.prk v c t)) (Subtype.ext ?_)
+    show (γd : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ (γ2.1.1 *ᵥ w.1) = (g' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ w.1
+    rw [hg', Units.val_mul, Matrix.mulVec_mulVec]
+  have hPc := dnk_latP_smul T v c c1 c3 x μ hμ γ.1 g' hl1 hf1 hl' hf'
+  set Γ : GL (Fin (D.R.N 0)) D.host.E := γ2.1⁻¹ * γd⁻¹ * γ.1 with hΓdef
+  have hPΓ : Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat (Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (clsCrd D u 0 (Nat.zero_le _) c1)) = Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (clsCrd D u 0 (Nat.zero_le _) c3) := by
+    have e2 : (γ.1⁻¹ * g')⁻¹ = Γ := by rw [hg', hΓdef]; group
+    have := localization_inv_smul_eq _ (γ.1⁻¹ * g') hPc
+    rwa [e2] at this
+  have hPdΓ : Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat (Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Ld D u 0 (Nat.zero_le _) c1)) = Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (Ld D u 0 (Nat.zero_le _) c3) := by
+    have e3 : g'⁻¹ * γ.1 = Γ := by rw [hg', hΓdef]; group
+    have := localization_smul_cancel _ g' γ.1 (hl1.trans hl'.symm)
+    rwa [e3] at this
+  have hΓU : Γ ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _)) := mul_mem (mul_mem (inv_mem γ2.2) (inv_mem hγd)) γ.2
+  have hQd : Formalism.HermitianLatticesTheory.localization₂ (rlvQ T.atT v) (mulLat (Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Ld D u 0 (Nat.zero_le _) c1)) =
+      Formalism.HermitianLatticesTheory.localization₂ (rlvQ T.atT v) (Ld D u 0 (Nat.zero_le _) c3) :=
+    local_dual_Q_eq_of_P T.atT v c3 c1 Γ hΓU hPΓ
+  have eΓ : ∀ z, (g' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ ((Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ z) = γ.1.1 *ᵥ z := by
+    intro z
+    have e4 : g' * Γ = γ.1 := by rw [hg', hΓdef]; group
+    rw [Matrix.mulVec_mulVec, ← Units.val_mul, e4]
+  refine ⟨hPΓ, hPdΓ, fun z hz => ?_⟩
+  obtain ⟨b, hbP, hbQ, hb⟩ := rlv_two (T.atT.Pv v) (rlvQ T.atT v) hPdΓ.le hQd.le
+    (x := (Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ z) ⟨z, hz, rfl⟩
+  obtain ⟨r, hr, b', hb'⟩ := rlv_norm T.atT v b hbP hbQ
+  have hmem : (algebraMap (𝓞 D.host.F) (𝓞 D.host.E) r) • ((Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ z) ∈ Ld D u 0 (Nat.zero_le _) c3 := by
+    rw [hb', mul_smul]; exact Submodule.smul_mem _ _ hb
+  refine ⟨r, hr, hmem, ?_⟩
+  have hγz : γ.1.1 *ᵥ z ∈ Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (clsCrd D u 0 (Nat.zero_le _) c) := by
+    rw [← hl1]; exact mem_localization_of_mem₂ _ ⟨z, hz, rfl⟩
+  obtain ⟨s, hs, hsz⟩ := (rlv_mem_locP _ _ _).1 hγz
+  set R := algebraMap (𝓞 D.host.F) (𝓞 D.host.E) r with hR
+  have e4 : (g' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ (s • (R • ((Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ z))) = R • (s • (γ.1.1 *ᵥ z)) := by
+    rw [Matrix.mulVec_smul, Matrix.mulVec_smul, eΓ, smul_comm]
+  have e5 : γ.1.1 *ᵥ (s • (R • z)) = R • (s • (γ.1.1 *ᵥ z)) := by
+    rw [Matrix.mulVec_smul, Matrix.mulVec_smul, smul_comm]
+  have hin : R • (s • (γ.1.1 *ᵥ z)) ∈ Lk T.atT 0 (Nat.zero_le _) v c := Submodule.mem_sup_left (Submodule.smul_mem _ R hsz)
+  have hRz : R • z ∈ Ld D u 0 (Nat.zero_le _) c1 := Submodule.smul_mem _ _ hz
+  obtain ⟨w3, hw3def⟩ : ∃ w3 : ↥(Ld D u 0 (Nat.zero_le _) c3), w3.1 = s • (R • ((Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ z)) :=
+    ⟨s • (⟨_, hmem⟩ : ↥(Ld D u 0 (Nat.zero_le _) c3)), rfl⟩
+  obtain ⟨w1, hw1def⟩ : ∃ w1 : ↥(Ld D u 0 (Nat.zero_le _) c1), w1.1 = s • (R • z) :=
+    ⟨s • (⟨R • z, hRz⟩ : ↥(Ld D u 0 (Nat.zero_le _) c1)), rfl⟩
+  have hw3 : (g' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ w3.1 ∈ Lk T.atT 0 (Nat.zero_le _) v c := by rw [hw3def, e4]; exact hin
+  have hw1 : γ.1.1 *ᵥ w1.1 ∈ Lk T.atT 0 (Nat.zero_le _) v c := by rw [hw1def, e5]; exact hin
+  have hA := hf' w3 hw3
+  have hB := hf1 w1 hw1
+  have ew3 : w3 = s • (⟨_, hmem⟩ : ↥(Ld D u 0 (Nat.zero_le _) c3)) := Subtype.ext hw3def
+  have ew1 : w1 = s • (⟨R • z, hRz⟩ : ↥(Ld D u 0 (Nat.zero_le _) c1)) := Subtype.ext hw1def
+  have pA : T.lv0.pr v c3 w3 = T.atT.res v s • T.lv0.pr v c3 ⟨_, hmem⟩ := by rw [ew3, T.lv0.pr_smul]
+  have pB : T.lv0.pr v c1 w1 = T.atT.res v s • T.lv0.pr v c1 ⟨R • z, hRz⟩ := by rw [ew1, T.lv0.pr_smul]
+  rw [pA, map_smul] at hA
+  rw [pB, map_smul] at hB
+  have hres : T.atT.res v s ≠ 0 := fun h0 => hs (RingHom.mem_ker.2 h0)
+  have key : T.atT.res v s • (D.fm u).fv 0 v c3 (T.lv0.pr v c3 ⟨_, hmem⟩) =
+      T.atT.res v s • (μ • (D.fm u).fv 0 v c1 (T.lv0.pr v c1 ⟨R • z, hRz⟩)) := by
+    rw [smul_comm (T.atT.res v s) μ, hB]
+    refine hA.trans ?_
+    refine congrArg (fun t => μ • x (T.lv0.prk v c t)) (Subtype.ext ?_)
+    show (g' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ w3.1 = γ.1.1 *ᵥ w1.1
+    rw [hw3def, hw1def, e4, e5]
+  exact smul_right_injective _ hres key
+
+theorem dn_match_one (T : Forms0 D u) (v : (D.mem u).A.vT) (δ : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F))
+    (hδv : bc (prV (E := D.host.E) (T.atT.eV v).1) δ.1 = 1) (c c2 c1 c3 : (D.mem u).C.cls 0)
     (γd : GL (Fin (D.R.N 0)) D.host.E) (hγd : γd ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _))) (κd : T.cls0.lev.U)
     (hrel : (T.cls0.y c).1 * δ.1 = bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γd * (T.cls0.y c2).1 * κd.1)
     (hLc : mulLat (γd : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (clsCrd D u 0 (Nat.zero_le _) c2) = clsCrd D u 0 (Nat.zero_le _) c)
@@ -113,94 +211,20 @@ theorem dn_match_one (T : Forms0 D u) (v v' : (D.mem u).A.vT) (hvv : v ≠ v') (
     (hf2 : ∀ (w : ↥(Ld D u 0 (Nat.zero_le _) c3)) (hw : γ2.1.1 *ᵥ w.1 ∈ Lk T.atT 0 (Nat.zero_le _) v c2),
       (D.fm u).fv 0 v c3 (T.lv0.pr v c3 w) = x2 (T.lv0.prk v c2 ⟨_, hw⟩)) :
     η2.1⁻¹ * κd.1 * η.1 ∈ T.cls0.lev.U := by
-  classical
-  have hne : (T.atT.eV v).1 ≠ (T.atT.eV v').1 := fun e => hvv (T.atT.eV.injective (Subtype.ext e))
-  have hδv : bc (prV (E := D.host.E) (T.atT.eV v).1) δ.1 = 1 := hδ.1 _ hne
-  set g' : GL (Fin (D.R.N 0)) D.host.E := γd * γ2.1 with hg'
-  have hl' : Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat (g' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Ld D u 0 (Nat.zero_le _) c3)) = Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (clsCrd D u 0 (Nat.zero_le _) c) := by
-    rw [hg', Units.val_mul]
-    exact rlv_chainP _ _ _ (by rw [hLc]) hl2
-  have hLkinv : mulLat ((γd⁻¹ : GL (Fin (D.R.N 0)) D.host.E) : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Lk T.atT 0 (Nat.zero_le _) v c) = Lk T.atT 0 (Nat.zero_le _) v c2 :=
-    dni_inv_eq γd (dni_lk T v c2 c _ hLc hLd)
-  have hf' : ∀ (w : ↥(Ld D u 0 (Nat.zero_le _) c3)) (hw : (g' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ w.1 ∈ Lk T.atT 0 (Nat.zero_le _) v c),
-      (D.fm u).fv 0 v c3 (T.lv0.pr v c3 w) = x (T.lv0.prk v c ⟨_, hw⟩) := by
-    intro w hw
-    have e1 : ((γd⁻¹ : GL (Fin (D.R.N 0)) D.host.E) : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ ((g' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ w.1) = γ2.1.1 *ᵥ w.1 := by
-      rw [hg', Matrix.mulVec_mulVec, ← Units.val_mul, ← mul_assoc, inv_mul_cancel, one_mul]
-    have hw2 : γ2.1.1 *ᵥ w.1 ∈ Lk T.atT 0 (Nat.zero_le _) v c2 := by
-      rw [← e1]; exact dni_mem_of _ hLkinv hw
-    rw [hf2 w hw2, hxy, dniEquiv_prk]
-    refine congrArg x (congrArg (T.lv0.prk v c) (Subtype.ext ?_))
-    show (γd : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ (γ2.1.1 *ᵥ w.1) = (g' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ w.1
-    rw [hg', Units.val_mul, Matrix.mulVec_mulVec]
-  have hPc := dnk_latP T v c c1 c3 x γ.1 g' hl1 hf1 hl' hf'
-  set Γ : GL (Fin (D.R.N 0)) D.host.E := γ2.1⁻¹ * γd⁻¹ * γ.1 with hΓdef
-  have hPΓ : Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat (Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (clsCrd D u 0 (Nat.zero_le _) c1)) = Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (clsCrd D u 0 (Nat.zero_le _) c3) := by
-    have e2 : (γ.1⁻¹ * g')⁻¹ = Γ := by rw [hg', hΓdef]; group
-    have := localization_inv_smul_eq _ (γ.1⁻¹ * g') hPc
-    rwa [e2] at this
-  have hPdΓ : Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (mulLat (Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Ld D u 0 (Nat.zero_le _) c1)) = Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (Ld D u 0 (Nat.zero_le _) c3) := by
-    have e3 : g'⁻¹ * γ.1 = Γ := by rw [hg', hΓdef]; group
-    have := localization_smul_cancel _ g' γ.1 (hl1.trans hl'.symm)
-    rwa [e3] at this
-  have hΓU : Γ ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _)) := mul_mem (mul_mem (inv_mem γ2.2) (inv_mem hγd)) γ.2
+  obtain ⟨hPΓ, hPdΓ, hF⟩ := dn_match_core T v 1 one_ne_zero c c2 c1 c3 γd hγd hLc hLd x x2
+    (fun w => by rw [one_smul]; exact hxy w) γ γ2 hl1 hl2 hf1 hf2
+  have hΓU : (γ2.1⁻¹ * γd⁻¹ * γ.1 : GL (Fin (D.R.N 0)) D.host.E) ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _)) :=
+    mul_mem (mul_mem (inv_mem γ2.2) (inv_mem hγd)) γ.2
   have hUΓ := matching_unitary_eq T.cls0 c c1 c2 c3 γ.1 γ2.1 γd η η2 δ κ κ2 κd h1 h2 hrel
-  have hQd : Formalism.HermitianLatticesTheory.localization₂ (rlvQ T.atT v) (mulLat (Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Ld D u 0 (Nat.zero_le _) c1)) =
-      Formalism.HermitianLatticesTheory.localization₂ (rlvQ T.atT v) (Ld D u 0 (Nat.zero_le _) c3) :=
-    local_dual_Q_eq_of_P T.atT v c3 c1 Γ hΓU hPΓ
-  have eΓ : ∀ z, (g' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ ((Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ z) = γ.1.1 *ᵥ z := by
-    intro z
-    have e4 : g' * Γ = γ.1 := by rw [hg', hΓdef]; group
-    rw [Matrix.mulVec_mulVec, ← Units.val_mul, e4]
-  have hF : ∀ z (hz : z ∈ Ld D u 0 (Nat.zero_le _) c1), ∃ a : 𝓞 D.host.F, a ∉ (T.atT.eV v).1.asIdeal ∧
-      ∃ h : (algebraMap (𝓞 D.host.F) (𝓞 D.host.E) a) • ((Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ z) ∈ Ld D u 0 (Nat.zero_le _) c3,
+  have hF1 : ∀ z (hz : z ∈ Ld D u 0 (Nat.zero_le _) c1), ∃ a : 𝓞 D.host.F, a ∉ (T.atT.eV v).1.asIdeal ∧
+      ∃ h : (algebraMap (𝓞 D.host.F) (𝓞 D.host.E) a) • (((γ2.1⁻¹ * γd⁻¹ * γ.1 : GL (Fin (D.R.N 0)) D.host.E) : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ z) ∈ Ld D u 0 (Nat.zero_le _) c3,
         (D.fm u).fv 0 v c3 (T.lv0.pr v c3 ⟨_, h⟩) =
           (D.fm u).fv 0 v c1 (T.lv0.pr v c1 ⟨(algebraMap (𝓞 D.host.F) (𝓞 D.host.E) a) • z,
-            Submodule.smul_mem _ _ hz⟩) := by
-    intro z hz
-    obtain ⟨b, hbP, hbQ, hb⟩ := rlv_two (T.atT.Pv v) (rlvQ T.atT v) hPdΓ.le hQd.le
-      (x := (Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ z) ⟨z, hz, rfl⟩
-    obtain ⟨r, hr, b', hb'⟩ := rlv_norm T.atT v b hbP hbQ
-    have hmem : (algebraMap (𝓞 D.host.F) (𝓞 D.host.E) r) • ((Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ z) ∈ Ld D u 0 (Nat.zero_le _) c3 := by
-      rw [hb', mul_smul]; exact Submodule.smul_mem _ _ hb
-    refine ⟨r, hr, hmem, ?_⟩
-    have hγz : γ.1.1 *ᵥ z ∈ Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (clsCrd D u 0 (Nat.zero_le _) c) := by
-      rw [← hl1]; exact mem_localization_of_mem₂ _ ⟨z, hz, rfl⟩
-    obtain ⟨s, hs, hsz⟩ := (rlv_mem_locP _ _ _).1 hγz
-    set R := algebraMap (𝓞 D.host.F) (𝓞 D.host.E) r with hR
-    have e4 : (g' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ (s • (R • ((Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ z))) = R • (s • (γ.1.1 *ᵥ z)) := by
-      rw [Matrix.mulVec_smul, Matrix.mulVec_smul, eΓ, smul_comm]
-    have e5 : γ.1.1 *ᵥ (s • (R • z)) = R • (s • (γ.1.1 *ᵥ z)) := by
-      rw [Matrix.mulVec_smul, Matrix.mulVec_smul, smul_comm]
-    have hin : R • (s • (γ.1.1 *ᵥ z)) ∈ Lk T.atT 0 (Nat.zero_le _) v c := Submodule.mem_sup_left (Submodule.smul_mem _ R hsz)
-    have hRz : R • z ∈ Ld D u 0 (Nat.zero_le _) c1 := Submodule.smul_mem _ _ hz
-    obtain ⟨w3, hw3def⟩ : ∃ w3 : ↥(Ld D u 0 (Nat.zero_le _) c3), w3.1 = s • (R • ((Γ : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ z)) :=
-      ⟨s • (⟨_, hmem⟩ : ↥(Ld D u 0 (Nat.zero_le _) c3)), rfl⟩
-    obtain ⟨w1, hw1def⟩ : ∃ w1 : ↥(Ld D u 0 (Nat.zero_le _) c1), w1.1 = s • (R • z) :=
-      ⟨s • (⟨R • z, hRz⟩ : ↥(Ld D u 0 (Nat.zero_le _) c1)), rfl⟩
-    have hw3 : (g' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ w3.1 ∈ Lk T.atT 0 (Nat.zero_le _) v c := by rw [hw3def, e4]; exact hin
-    have hw1 : γ.1.1 *ᵥ w1.1 ∈ Lk T.atT 0 (Nat.zero_le _) v c := by rw [hw1def, e5]; exact hin
-    have hA := hf' w3 hw3
-    have hB := hf1 w1 hw1
-    have ew3 : w3 = s • (⟨_, hmem⟩ : ↥(Ld D u 0 (Nat.zero_le _) c3)) := Subtype.ext hw3def
-    have ew1 : w1 = s • (⟨R • z, hRz⟩ : ↥(Ld D u 0 (Nat.zero_le _) c1)) := Subtype.ext hw1def
-    have pA : T.lv0.pr v c3 w3 = T.atT.res v s • T.lv0.pr v c3 ⟨_, hmem⟩ := by rw [ew3, T.lv0.pr_smul]
-    have pB : T.lv0.pr v c1 w1 = T.atT.res v s • T.lv0.pr v c1 ⟨R • z, hRz⟩ := by rw [ew1, T.lv0.pr_smul]
-    rw [pA, map_smul] at hA
-    rw [pB, map_smul] at hB
-    have hres : T.atT.res v s ≠ 0 := fun h0 => hs (RingHom.mem_ker.2 h0)
-    have key : T.atT.res v s • (D.fm u).fv 0 v c3 (T.lv0.pr v c3 ⟨_, hmem⟩) =
-        T.atT.res v s • (D.fm u).fv 0 v c1 (T.lv0.pr v c1 ⟨R • z, hRz⟩) := by
-      refine hA.trans (Eq.trans ?_ hB.symm)
-      refine congrArg x (congrArg (T.lv0.prk v c) (Subtype.ext ?_))
-      show (g' : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ w3.1 = γ.1.1 *ᵥ w1.1
-      rw [hw3def, hw1def, e4, e5]
-    exact smul_right_injective _ hres key
-  have hloc := local_unitary_of_matching_zero T v c3 c1 Γ hΓU hUΓ hPΓ hPdΓ hF
+            Submodule.smul_mem _ _ hz⟩) := fun z hz => by
+    obtain ⟨r, hr, hmem, hval⟩ := hF z hz
+    exact ⟨r, hr, hmem, by rwa [one_smul] at hval⟩
+  have hloc := local_unitary_of_matching_zero T v c3 c1 _ hΓU hUΓ hPΓ hPdΓ hF1
   exact matching_move_mem_level_zero T v c c1 c2 c3 γ.1 γ2.1 γd η η2 δ κ κ2 κd hs1 hs2 hδv h1 h2 hrel hloc
-
-
-
 
 theorem dnDiaMatch0F_holds (T : Forms0 D u) : DnDiaMatch0F T := by
   intro v v' hvv a k hk δ hδ c γd hγd κd hrel
@@ -236,7 +260,7 @@ theorem dnDiaMatch0F_holds (T : Forms0 D u) : DnDiaMatch0F T := by
   · funext s
     rw [ht2 x h s _ (is_translate_inverse T (γ2 x) s), Units.val_inv_eq_inv_val]
     rfl
-  · exact dn_match_one T v v' hvv k δ hδ c _ _ _ γd hγd κd hrel hLc hLd x.1 _
+  · exact dn_match_one T v δ (hδ.1 _ fun e => hvv (T.atT.eV.injective (Subtype.ext e))) c _ _ _ γd hγd κd hrel hLc hLd x.1 _
       (fun w => dualSigma_apply _ _ _ hte x w) (γ1 x) (γ2 _) (η1 x) (η2 _) (κ1 x) (κ2 _) (hs1 x) (hs2 _)
       (hr1 x) (hr2 _) (hl1 x) (hl2 _) (hf1 x) (hf2 _)
 
@@ -266,14 +290,13 @@ variable {D : D7} {u : D.what₂.Word}
 
 
 
-theorem upF (T : Forms0 D u) (v v' : (D.mem u).A.vT) (hvv : v ≠ v') (k : ℤ)
-    (δ : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F))
-    (hδ : IsDia T.cls0.lev (T.atT.eV v').1 (T.atT.eV v').2 k δ)
+theorem upF (T : Forms0 D u) (v : (D.mem u).A.vT) (k : ℤ)
     (c c1 c2 c3 : (D.mem u).C.cls 0)
     (γd : GL (Fin (D.R.N 0)) D.host.E) (hγd : γd ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _)))
-    (κd : T.cls0.lev.U)
-    (hx : (T.cls0.y c * δ).1 = bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γd *
-      (T.cls0.y c2).1 * κd.1)
+    (hLd : mulLat (γd : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (Ld D u 0 (Nat.zero_le _) c2) = Ld D u 0 (Nat.zero_le _) c)
+    (hfun : ∀ y (hy : y ∈ Ld D u 0 (Nat.zero_le _) c)
+      (hy2 : ((γd⁻¹ : GL (Fin (D.R.N 0)) D.host.E) : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ y ∈ Ld D u 0 (Nat.zero_le _) c2),
+      (D.fm u).fv 0 v c2 (T.lv0.pr v c2 ⟨_, hy2⟩) = k • (D.fm u).fv 0 v c (T.lv0.pr v c ⟨y, hy⟩))
     (γ γ2 : GL (Fin (D.R.N 0)) D.host.E) (hγ : γ ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _)))
     (hγ2 : γ2 ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _)))
     (z : Fin (D.R.N 0) → D.host.E) (hz : z ∈ Ld D u 0 (Nat.zero_le _) c)
@@ -297,17 +320,16 @@ theorem upF (T : Forms0 D u) (v v' : (D.mem u).A.vT) (hvv : v ≠ v') (k : ℤ)
           (((γ2⁻¹ * γd⁻¹ * γ : GL (Fin (D.R.N 0)) D.host.E) : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ w) ∈
           Ld D u 0 (Nat.zero_le _) c3,
         (D.fm u).fv 0 v c3 (T.lv0.pr v c3 ⟨_, h⟩) =
-          (D.fm u).fv 0 v c1 (T.lv0.pr v c1 ⟨(algebraMap (𝓞 D.host.F) (𝓞 D.host.E) a) • w,
+          k • (D.fm u).fv 0 v c1 (T.lv0.pr v c1 ⟨(algebraMap (𝓞 D.host.F) (𝓞 D.host.E) a) • w,
             Submodule.smul_mem _ _ hw⟩) := by
   intro w hw
   have hT0 : (((D.mem u).A.T : ℕ) : D.host.E) ≠ 0 := Nat.cast_ne_zero.2 (D.mem u).A.T_prime.ne_zero
   obtain ⟨hdd, hfg, hH⟩ := rlv_coordFacts (D := D) (u := u) 0 (Nat.zero_le _)
-  have hLat := diamond_lattice_transport T v' k δ hδ c c2 γd hγd κd hx
   have memInv : ∀ y ∈ Ld D u 0 (Nat.zero_le _) c,
       ((γd⁻¹ : GL (Fin (D.R.N 0)) D.host.E) : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ y ∈
         Ld D u 0 (Nat.zero_le _) c2 := by
     intro y hy
-    rw [← hLat.2, mem_mul_lattice_iff] at hy
+    rw [← hLd, mem_mul_lattice_iff] at hy
     exact hy
   have hΓU : (γ2⁻¹ * γd⁻¹ * γ : GL (Fin (D.R.N 0)) D.host.E) ∈
       UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _)) :=
@@ -385,10 +407,11 @@ theorem upF (T : Forms0 D u) (v v' : (D.mem u).A.vT) (hvv : v ≠ v') (k : ℤ)
   calc (D.fm u).fv 0 v c3 (T.lv0.pr v c3 ⟨_, m1⟩)
       = (D.fm u).fv 0 v c2 (T.lv0.pr v c2 ⟨_, hA⟩) := g5 ⟨_, m1⟩ hA
     _ = (D.fm u).fv 0 v c2 (T.lv0.pr v c2 ⟨_, memInv _ m2⟩) := congrArg _ (pr_congr T v c2 ⟨_, hA⟩ ⟨_, memInv _ m2⟩ eV2)
-    _ = (D.fm u).fv 0 v c (T.lv0.pr v c ⟨_, m2⟩) :=
-        diamond_class_function T v v' hvv k δ hδ c c2 γd κd hx _ m2 (memInv _ m2)
-    _ = (D.fm u).fv 0 v c (T.lv0.pr v c ⟨_, hB⟩) := congrArg _ (pr_congr T v c ⟨_, m2⟩ ⟨_, hB⟩ eV1.symm)
-    _ = _ := (h5 ⟨_, Submodule.smul_mem _ _ hw⟩ hB).symm
+    _ = k • (D.fm u).fv 0 v c (T.lv0.pr v c ⟨_, m2⟩) :=
+        hfun _ m2 (memInv _ m2)
+    _ = k • (D.fm u).fv 0 v c (T.lv0.pr v c ⟨_, hB⟩) := by
+        rw [pr_congr T v c ⟨_, m2⟩ ⟨_, hB⟩ eV1.symm]
+    _ = _ := congrArg (fun t => k • t) (h5 ⟨_, Submodule.smul_mem _ _ hw⟩ hB).symm
 
 end CrossDiaZero
 
@@ -536,8 +559,19 @@ theorem upMatch (T : Forms0 D u) : UpDiaMatch0F T := by
         (Ld D u 0 (Nat.zero_le _) ((D.fm u).up 0 v c (T.lv0.pr v c (zf x))))) =
         Formalism.HermitianLatticesTheory.localization₂ (T.atT.Pv v) (Ld D u 0 (Nat.zero_le _) ((D.fm u).up 0 v c2 (T.lv0.pr v c2 (z2 x)))) := by
       rw [eΓ]; exact ch2'
-    have hF := upF T v v' hvv k δ hδ c _ c2 _ γd hγd κd hx (γ x).1 (γ2 x).1 (γ x).2 (γ2 x).2 (zf x).1 (zf x).2
-      (h3 x) (h4 x) (h5 x) (g5 x) hP hPd
+    have hF1 := upF T v 1 c _ c2 _ γd hγd hLat.2
+      (fun y hy hy2 => by rw [one_zsmul]; exact diamond_class_function T v v' hvv k δ hδ c c2 γd κd hx y hy hy2)
+      (γ x).1 (γ2 x).1 (γ x).2 (γ2 x).2 (zf x).1 (zf x).2 (h3 x) (h4 x) (h5 x) (g5 x) hP hPd
+    have hF : ∀ w (hw : w ∈ Ld D u 0 (Nat.zero_le _) ((D.fm u).up 0 v c (T.lv0.pr v c (zf x)))),
+        ∃ a : 𝓞 D.host.F, a ∉ (T.atT.eV v).1.asIdeal ∧
+          ∃ h : (algebraMap (𝓞 D.host.F) (𝓞 D.host.E) a) •
+              ((((γ2 x).1⁻¹ * γd⁻¹ * (γ x).1 : GL (Fin (D.R.N 0)) D.host.E) : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ w) ∈
+              Ld D u 0 (Nat.zero_le _) ((D.fm u).up 0 v c2 (T.lv0.pr v c2 (z2 x))),
+            (D.fm u).fv 0 v _ (T.lv0.pr v _ ⟨_, h⟩) =
+              (D.fm u).fv 0 v _ (T.lv0.pr v _ ⟨(algebraMap (𝓞 D.host.F) (𝓞 D.host.E) a) • w,
+                Submodule.smul_mem _ _ hw⟩) := fun w hw => by
+      obtain ⟨a, ha, hmem, hval⟩ := hF1 w hw
+      exact ⟨a, ha, hmem, by rwa [one_zsmul] at hval⟩
     have hU := matching_unitary_eq T.cls0 c _ c2 _ (γ x).1 (γ2 x).1 γd (η x) (η2 x) δ (κ x) (κ2 x) κd (h2 x) (g2 x) h3d
     exact matching_move_mem_level_zero T v c _ c2 _ (γ x).1 (γ2 x).1 γd (η x) (η2 x) δ (κ x) (κ2 x) κd (h1 x) (g1 x) hδv
       (h2 x) (g2 x) h3d (local_unitary_of_matching_zero T v _ _ _ hΓU hU hP hPd hF)

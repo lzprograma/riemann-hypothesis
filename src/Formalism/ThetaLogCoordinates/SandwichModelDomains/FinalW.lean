@@ -16,62 +16,13 @@ public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.HasLatBasis
 public import Formalism.PolynomialDimension.MultinomialDepth.MonoCount
 public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.DischargeHeightBound
 public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.FinalP
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import Formalism.MahlerMeasure.MahlerMeasureProofs.FreezeBij
 import Formalism.MahlerMeasure.MahlerMeasureProofs.FreezeInto
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDbasisLemmas
-import Mathlib.Tactic.Lemma
 import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.LatData
 import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.ZpClosedToAddSubgroup
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.HaveILetI
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -385,13 +336,6 @@ theorem rgl_support_swp (f : MvPolynomial (Fin r × Fin n) R) :
       f.support.image (Finsupp.mapDomain (Equiv.prodComm (Fin r) (Fin n))) := by
   rw [rgl_swp_apply, support_rename_of_injective (Equiv.injective _)]
 
-theorem rgl_weight_colW (m : Fin r × Fin n →₀ ℕ) (s : Fin n) :
-    Finsupp.weight (colW r n) m s = ∑ a : Fin r, m (a, s) := by
-  classical
-  rw [Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by simp), Finset.sum_apply, Fintype.sum_prod_type]
-  refine Finset.sum_congr rfl fun a _ => ?_
-  simp [colW, Pi.single_apply]
-
 end general
 
 variable {p : ℕ} [Fact p.Prime] {r n : ℕ}
@@ -400,7 +344,7 @@ theorem rgl_E (ν : Fin n → ℕ) (a b : Fin r) : (GR p r ν).E a b = glAct p (
 
 theorem rgl_glAct_X (ν : Fin n → ℕ) (a b c : Fin r) (s : Fin n) :
     glAct p (vecL ν) n a b (X (s, c)) = if c = b then X (s, a) else 0 := by
-  rw [glAct_X_gen, if_pos s.isLt]
+  rw [glAct_X_gen, ite_eq_left s.isLt]
   rfl
 
 theorem rgl_wt (ν : Fin n → ℕ) (a : Fin r) (m : Fin r × Fin n →₀ ℕ) :
@@ -408,7 +352,7 @@ theorem rgl_wt (ν : Fin n → ℕ) (a : Fin r) (m : Fin r × Fin n →₀ ℕ) 
   unfold wt rowDeg
   push_cast
   refine Finset.sum_congr rfl fun s _ => ?_
-  rw [if_pos s.isLt, rgl_mapDomain_apply]
+  rw [ite_eq_left s.isLt, rgl_mapDomain_apply]
   rfl
 
 theorem rgl_div_X (ν : Fin n → ℕ) (a b : Fin r) (hab : a ≠ b) (k : ℕ) (v : Fin r × Fin n) :
@@ -478,7 +422,7 @@ theorem swap_polynomial_compat : SwpPol := by
   obtain ⟨m, hm, rfl⟩ := Finset.mem_image.mp (Finset.mem_coe.mp hm')
   have hw : Finsupp.weight (colW r n) m = ν := hf (mem_support_iff.mp hm)
   simp only [rgl_mapDomain_apply]
-  rw [← rgl_weight_colW, hw]
+  rw [← Formalism.GradedWeylDivisibility.lhwline_weight_col, hw]
   rfl
 
 theorem swpInt_statement : SwpInt := by
@@ -529,7 +473,7 @@ lemma spr_count_le {r s : ℕ} (I : Fin s → Fin r) (hI : Function.Injective I)
     · simp [h, Ne.symm h]
   rw [h1]
   by_cases hs : 0 < s
-  · rw [if_pos hs, Finset.card_le_one]
+  · rw [ite_eq_left hs, Finset.card_le_one]
     intro x hx y hy
     exact hI ((Finset.mem_filter.mp hx).2.trans (Finset.mem_filter.mp hy).2.symm)
   · have hs0 : s = 0 := by omega
@@ -574,9 +518,9 @@ lemma spr_le_bidet (R : Type*) [CommRing R] {n K : ℕ} (sz : Fin K → ℕ) (hs
   rw [Finset.card_filter]
   refine Finset.sum_le_sum fun k _ => ?_
   by_cases hk : n - 1 < sz k
-  · rw [if_pos hk]
+  · rw [ite_eq_left hk]
     exact spr_one_le_count (I k) (hI k) (by have := hsz k; omega) a
-  · rw [if_neg hk]
+  · rw [ite_eq_right hk]
     exact Nat.zero_le _
 
 lemma spr_support_induction (R : Type) [CommRing R] [IsDomain R] (r n : ℕ) (ν : Fin n → ℕ)

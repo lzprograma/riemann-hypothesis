@@ -54,16 +54,12 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDesc
 @[expose] public section
 
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.Reg.ChartInhab
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Reg
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
 
@@ -421,10 +417,3 @@ theorem integral_of_frMap (T : CDVR) [Algebra c.F T.V] (io : c.F →+* T.Fr) : l
         hσ' _ (𝟙 _) p i k hi hk, tri _ (𝟙 _) p _ i k hp' hi hk, Units.val_mul, _root_.mul_assoc]
 
 end GlobalTheory.Reg.ChartInhab
-
-namespace GlobalTheory.Reg
-
-open AlgebraicGeometry CategoryTheory Limits NumberField IsDedekindDomain
-open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Reg
-
-end GlobalTheory.Reg

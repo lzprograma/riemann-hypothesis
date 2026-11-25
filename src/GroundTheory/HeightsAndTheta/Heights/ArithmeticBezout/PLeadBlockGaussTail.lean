@@ -241,7 +241,7 @@ theorem integrand_le {m k : ℕ} (hm : 0 < m) (r : ℝ) (π : Fin m → Fin (m +
       rw [Finset.prod_eq_single (Fin.castAdd k (σ i)) (fun j _ hj => by simp [hj]) (by simp)]
       simp
     · refine Finset.prod_congr rfl fun i _ => ?_
-      rw [Finset.prod_eq_single (Fin.castAdd k ⟨0, hm⟩) (fun j _ hj => by simp only [if_neg hj, ballInd_zero])
+      rw [Finset.prod_eq_single (Fin.castAdd k ⟨0, hm⟩) (fun j _ hj => by simp only [ite_eq_right hj, ballInd_zero])
         (by simp)]
       simp
   simp_rw [hrow]
@@ -267,7 +267,7 @@ theorem prod_entry_eq {m k : ℕ} (hm : 0 < m) (K r : ℝ) (σ : Equiv.Perm (Fin
         ((if j = Fin.castAdd k (σ i) then 1 else 0) + 1) =
       (1 + r ^ 2) ^ ((if Fin.castAdd k (⟨0, hm⟩ : Fin m) = Fin.castAdd k (σ i) then 1 else 0) + 1) := by
     intro i
-    rw [Finset.prod_eq_single (Fin.castAdd k ⟨0, hm⟩) (fun j _ hj => by simp only [if_neg hj]; simp)
+    rw [Finset.prod_eq_single (Fin.castAdd k ⟨0, hm⟩) (fun j _ hj => by simp only [ite_eq_right hj]; simp)
       (by simp)]
     simp
   have hsum : ∑ i : Fin m,

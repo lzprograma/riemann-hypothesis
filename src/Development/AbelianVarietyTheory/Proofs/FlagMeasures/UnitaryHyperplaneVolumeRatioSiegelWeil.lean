@@ -256,7 +256,6 @@ theorem glueTup_proj (X : Fin n → Fin M → AF F ⊗[F] E) :
 
 end GlobalTheory.ProdCont
 
-
 open GlobalTheory.ProdCont in
 theorem GlobalTheory.prod_continuous_hasCompactSupport : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (M n : ℕ) (Φ : (Fin n → Fin M → AF F ⊗[F] E) → ℂ) (Φi : (Fin n → Fin M → Ainf F ⊗[F] E) → ℂ) (Φf : (Fin n → Fin M → Af F ⊗[F] E) → ℂ), Continuous Φi → HasCompactSupport Φi → Continuous Φf → HasCompactSupport Φf → IsProdInfFin Φ Φi Φf → Continuous Φ ∧ HasCompactSupport Φ := by
   intro F E _ _ _ _ _ M n Φ Φi Φf hci hki hcf hkf hΦ
@@ -360,8 +359,6 @@ section -- clump:auto
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct ENNReal
 
-theorem _root_.GlobalTheory.T.meanL_tsum_ofReal_eq_ofReal_re_meanC : ∀ (G : Type) [MeasurableSpace G] (μ : Measure G) (𝓕 : Set G) (ι : Type) [Countable ι] (f : ι → G → ℝ), (∀ i, Measurable (f i)) → (∀ i h, 0 ≤ f i h) → μ 𝓕 < ⊤ → ∫⁻ h in 𝓕, ∑' i, ‖((f i h : ℝ) : ℂ)‖ₑ ∂μ < ⊤ → meanL μ 𝓕 (fun h => ∑' i, ENNReal.ofReal (f i h)) = ENNReal.ofReal (meanC μ 𝓕 (fun h => ∑' i, ((f i h : ℝ) : ℂ))).re := by
-  first | exact @GlobalTheory.meanL_eq_ofReal_meanC_re
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeanLEqOfRealMeanCReStatement =====
@@ -475,9 +472,6 @@ theorem multipliable_ofReal_re_of_complex (ι : Type) (c : ι → ℂ) (hc : Mul
     rw [ENNReal.ofReal_prod_of_nonneg (fun i _ => (hcr i).2)]
   exact ⟨h2.multipliable, by rw [h2.tprod_eq, ha.tprod_eq]⟩
 
-theorem multipliable_ofReal_re_of_complex' : ∀ (ι : Type) (c : ι → ℂ), Multipliable c → (∀ i, (c i).im = 0 ∧ 0 ≤ (c i).re) → Multipliable (fun i => ENNReal.ofReal (c i).re) ∧ ∏' i, ENNReal.ofReal (c i).re = ENNReal.ofReal (∏' i, c i).re :=
-  multipliable_ofReal_re_of_complex
-
 end GlobalTheory
 end -- clump:auto
 end -- clump:auto
@@ -567,7 +561,7 @@ theorem sw1b2_of_cc : GlobalTheory.GaussMean.OneVectorCc → ∀ (F E : Type) [F
     have e : (fun v => ∫⁻ X, ENNReal.ofReal (Φv v X).re ∂(fv v (algebraMap F (Fv F v) β))) =
         fun v => ENNReal.ofReal (Fl v (algebraMap F (Fv F v) β)).re := funext fun v => (hdensV Fl hFl v).2
     rw [e]
-    exact _root_.GlobalTheory.multipliable_ofReal_re_of_complex' _ _ hm fun v => by
+    exact _root_.GlobalTheory.multipliable_ofReal_re_of_complex _ _ hm fun v => by
       rw [(hdensV Fl hFl v).1]
       exact ⟨by simp, by simpa using integral_nonneg fun X => (hreal v X).1⟩
   refine ⟨(hFlR Fl0 hFl0 hmul0).1, ?_⟩
@@ -677,7 +671,7 @@ theorem sw1b2_of_cc : GlobalTheory.GaussMean.OneVectorCc → ∀ (F E : Type) [F
       refine lt_of_eq_of_lt ?_ hint
       refine lintegral_congr fun h => tsum_congr fun x => ?_
       rw [← hΦ'f]
-    have hL := GlobalTheory.T.meanL_tsum_ofReal_eq_ofReal_re_meanC (HA (AF F) σ J) μ 𝓕 T f hfm hf0 hfin hint'
+    have hL := GlobalTheory.meanL_eq_ofReal_meanC_re (HA (AF F) σ J) μ 𝓕 T f hfm hf0 hfin hint'
     rw [hm₁ (fun y => ENNReal.ofReal (φ y)) (ENNReal.measurable_ofReal.comp hφc.measurable),
       hm₂ (fun y => ENNReal.ofReal (φ y)) (ENNReal.measurable_ofReal.comp hφc.measurable)]
     have e1 : (μ 𝓕)⁻¹ * ∫⁻ h in 𝓕, ∑' x : T, ENNReal.ofReal (φ (a x h)) * w x h ∂μ =

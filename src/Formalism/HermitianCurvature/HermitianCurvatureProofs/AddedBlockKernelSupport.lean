@@ -1,52 +1,11 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.ColumnOperationTripleForm
 public import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
 public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.MulInvBlockDiagApplySameBlock
 public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.IsIntOfLatOfLe
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -59,23 +18,11 @@ section Supp
 variable {K : Type} [CommRing K] (R : Subring K)
 
 theorem blk_app (l : List ℕ) (s : ℕ) (hs : 1 ≤ s) : blk (l ++ [s]) l.sum = l.length := by
-  induction l with
-  | nil => simp only [List.nil_append, List.sum_nil, List.length_nil, blk]; simp [Nat.lt_of_lt_of_le Nat.zero_lt_one hs]
-  | cons a l ih =>
-    rw [List.cons_append, List.sum_cons, List.length_cons]
-    simp only [blk]
-    rw [if_neg (by omega), Nat.add_sub_cancel_left, ih]
-    omega
+  apply _root_.Formalism.FourierDecayAlt.P.A5x2.blk_app <;> assumption
 
 theorem revIn_app (l : List ℕ) (s : ℕ) (hs : 1 ≤ s) :
     revIn (l ++ [s]) l.sum = l.sum + (s - 1) := by
-  induction l with
-  | nil => simp only [List.nil_append, List.sum_nil, revIn]; simp [Nat.lt_of_lt_of_le Nat.zero_lt_one hs]
-  | cons a l ih =>
-    rw [List.cons_append, List.sum_cons]
-    simp only [revIn]
-    rw [if_neg (by omega), Nat.add_sub_cancel_left, ih]
-    omega
+  apply _root_.Formalism.FourierDecayAlt.P.A5x2.revIn_app <;> assumption
 
 theorem blk_app_lt (s : ℕ) : ∀ (l : List ℕ) (j : ℕ), j < l.sum → blk (l ++ [s]) j = blk l j
   | [], j, h => by simp at h
@@ -103,15 +50,8 @@ theorem blk_lt_length : ∀ (l : List ℕ) (j : ℕ), j < l.sum → blk l j < l.
       omega
 
 theorem sum_sub {k n : ℕ} (e : Fin k → Fin n) (he : Function.Injective e) (f : Fin n → K)
-    (hf : ∀ b, b ∉ Set.range e → f b = 0) : ∑ b, f b = ∑ i, f (e i) := by
-  classical
-  rw [← Finset.sum_image (s := Finset.univ) (g := e) (f := f) (fun x _ y _ h => he h)]
-  symm
-  apply Finset.sum_subset (Finset.subset_univ _)
-  intro b _ hb
-  apply hf
-  rintro ⟨i, rfl⟩
-  exact hb (Finset.mem_image_of_mem e (Finset.mem_univ i))
+    (hf : ∀ b, b ∉ Set.range e → f b = 0) : ∑ b, f b = ∑ i, f (e i) :=
+  (Fintype.sum_of_injective e he (fun i => f (e i)) f hf fun _ => rfl).symm
 
 theorem det_sub_mem {k n : ℕ} {Z : Matrix (Fin n) (Fin n) K} (hZ : IsInt R Z)
     (r c : Fin k → Fin n) : (Z.submatrix r c).det ∈ R := by
@@ -150,8 +90,7 @@ theorem minor_lemma {n m : ℕ} (hmn : m < n) (x w y : Matrix (Fin n) (Fin n) K)
     show ∑ k, x (r i) k * (w * y) k (c j) = ∑ k, x (r i) (r k) * (w * y) (r k) (c j)
     refine sum_sub r hr (fun k => x (r i) k * (w * y) k (c j)) (fun k hk => ?_)
     have hkm : m < k.val := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact hk (Set.mem_range.2 ⟨⟨k.val, Nat.lt_succ_of_le hc⟩, Fin.ext rfl⟩)
     have hlt : r i < k := by
       show i.val < k.val
@@ -238,17 +177,17 @@ theorem supp_one (h : Point K) (s : ℕ) (hs : 1 ≤ s) (t : Kˣ)
     show (if (b : ℕ) = revIn (h.1 ++ [s]) a then
         ((Function.update h.2 h.1.length t (blk (h.1 ++ [s]) a) : Kˣ) : K) else 0) = _
     rw [revIn_app_lt s h.1 a.val ha, blk_app_lt s h.1 a.val ha, Function.update_apply,
-      if_neg (ne_of_lt (blk_lt_length h.1 a.val ha))]
+      ite_eq_right (ne_of_lt (blk_lt_length h.1 a.val ha))]
     by_cases hb : b.val < h.1.sum
     · rw [dite_eq_left hb]
       rfl
     · have hne : ¬ ((b : ℕ) = revIn h.1 a) := fun hc => hb (by rw [hc]; exact hrev)
-      rw [dite_eq_right hb, if_neg hne]
+      rw [dite_eq_right hb, ite_eq_right hne]
   · intro a b ha
     show (if (b : ℕ) = revIn (h.1 ++ [s]) a then
         ((Function.update h.2 h.1.length t (blk (h.1 ++ [s]) a) : Kˣ) : K) else 0) =
       if (b : ℕ) + 1 = (h.1 ++ [s]).sum then (t : K) else 0
-    rw [ha, revIn_app h.1 s hs, blk_app h.1 s hs, Function.update_apply, if_pos rfl]
+    rw [ha, revIn_app h.1 s hs, blk_app h.1 s hs, Function.update_apply, ite_eq_left rfl]
     split_ifs <;> first | rfl | omega
 
 end Supp
@@ -263,8 +202,7 @@ theorem Formalism.FourierDecayAlt.P.added_block_kernel_support : Formalism.Fouri
     unfold Ns
     rw [h0, mul_zero]
   obtain ⟨q, hq⟩ : ∃ q, pairTerm R ψ (addBlock h s t) (addBlock h' s t') q ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     apply hK
     unfold Kp
     simp only [hc, finsum_zero]
@@ -273,7 +211,7 @@ theorem Formalism.FourierDecayAlt.P.added_block_kernel_support : Formalism.Fouri
     by_contra hc
     apply hq
     unfold pairTerm
-    rw [if_neg hc, zero_mul, zero_mul]
+    rw [ite_eq_right hc, zero_mul, zero_mul]
   exact ⟨supp_one R h s hs t _ hc.1, supp_one R h' s hs t' _ hc.2⟩
 
 namespace Formalism.FourierDecayAlt.P.A5x7
@@ -315,7 +253,7 @@ theorem lu_int {n : ℕ} {h u : Matrix (Fin n) (Fin n) K} (hh : IsLowUni h) (hu 
         exact R.zero_mem
       · rw [Fin.ext heq, hhD j]
         exact R.one_mem
-    · push_neg at hij
+    · push Not at hij
       have hterm : ∀ k ∈ Finset.univ.erase j, h i k * u k j ∈ R := by
         intro k hk
         have hkj : k ≠ j := Finset.ne_of_mem_erase hk
@@ -513,7 +451,7 @@ theorem Formalism.FourierDecayAlt.P.zero_kernel_all_ones : Formalism.FourierDeca
     obtain ⟨i2, j2, k2⟩ := orb_of_int R h' hh' _ b1 b2
     unfold pairTerm
     dsimp only
-    rw [if_pos ⟨i1, i2⟩, card_iso_one R j1 k1 j2 k2, phase_one R ψ hψ h _ a1 a2,
+    rw [ite_eq_left ⟨i1, i2⟩, card_iso_one R j1 k1 j2 k2, phase_one R ψ hψ h _ a1 a2,
       phase_one R ψ hψ h' _ b1 b2]
     simp
   · rintro ⟨q1, q2⟩ hq
@@ -522,7 +460,7 @@ theorem Formalism.FourierDecayAlt.P.zero_kernel_all_ones : Formalism.FourierDeca
       exact hq (by rw [(int_iff R h hh q1).1 c1, (int_iff R h' hh' q2).1 c2])
     unfold pairTerm
     dsimp only
-    rw [if_neg hnc, zero_mul, zero_mul]
+    rw [ite_eq_right hnc, zero_mul, zero_mul]
 
 namespace Formalism.FourierDecayAlt.P.A5x7
 

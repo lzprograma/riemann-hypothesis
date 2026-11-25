@@ -3,50 +3,8 @@ module
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EtaleLocalizationAtPrimeTensorOfLowHeight
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.InjectiveOfIsCptGen
 public import Mathlib.RingTheory.LocalRing.LocalSubring
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -119,10 +77,6 @@ structure NormAt (ξ' : Spec (CommRingCat.of Ω') ⟶ X') {ξ : Spec (CommRingCa
 
 def genFib (ξ : Spec (CommRingCat.of Ω) ⟶ X) : Set (Cpt ξ) := {p | ∀ n : ℕ, 0 < n → unitAt ξ p (n : Ω)}
 
-def locFib (ξ : Spec (CommRingCat.of Ω) ⟶ X) (q : ℕ) : Set (Cpt ξ) := {p | ∀ n : ℕ, n.Coprime q → unitAt ξ p (n : Ω)}
-
-def invFib (ξ : Spec (CommRingCat.of Ω) ⟶ X) (m : ℕ) : Set (Cpt ξ) := {p | unitAt ξ p (m : Ω)}
-
 
 def Lat.predualIn {ξ : Spec (CommRingCat.of Ω) ⟶ X} (L : Lat ξ (Module.Dual Ω E)) (V : Submodule Ω E) : Lat ξ E :=
   fun p =>
@@ -146,25 +100,6 @@ theorem IsCtrOf.refl (p : Cpt ξ) : IsCtrOf (RingHom.id Ω) p p := ⟨fun _ h =>
 theorem IsCtrOf.unitAt_iff {i : Ω →+* Ω'} {p : Cpt ξ} {p' : Cpt ξ'} (h : IsCtrOf i p p') {a : Ω}
     (ha : a ∈ regAt ξ p) : unitAt ξ' p' (i a) ↔ unitAt ξ p a :=
   ⟨h.2 a ha, fun hu => ⟨(map_ne_zero i).2 hu.1, h.1 _ hu.2.1, by rw [← map_inv₀]; exact h.1 _ hu.2.2⟩⟩
-
-theorem IsCtrOf.unitAt_spec {R : Type} [CommRing R] {φ : R →+* Ω} (hφ : Function.Injective φ)
-    (p : Cpt (CptModel.pt φ)) (a : R) : unitAt (CptModel.pt φ) p (φ a) ↔ a ∉ p.1.asIdeal := by
-  constructor
-  · rintro ⟨h0, -, h⟩ hc
-    obtain ⟨r, s, hs, -, e⟩ := (CptModel.mem_regAt_iff φ p _).1 h
-    have : s = a * r := hφ (by rw [map_mul, ← e, mul_inv_cancel_left₀ h0])
-    exact hs (this ▸ Ideal.mul_mem_right _ _ hc)
-  · intro hc
-    have h0 : φ a ≠ 0 := (map_ne_zero_iff _ hφ).2 fun h => hc (h ▸ Ideal.zero_mem _)
-    exact ⟨h0, ⟨_, CptModel.genMap_toStalk φ p a⟩,
-      (CptModel.mem_regAt_iff φ p _).2 ⟨1, a, hc, h0, by rw [map_one, inv_mul_cancel₀ h0]⟩⟩
-
-theorem IsCtrOf.unique_spec {R : Type} [CommRing R] {φ : R →+* Ω} (hφ : Function.Injective φ) {i : Ω →+* Ω'}
-    {p q : Cpt (CptModel.pt φ)} {p' : Cpt ξ'} (hp : IsCtrOf i p p') (hq : IsCtrOf i q p') : p = q := by
-  refine Subtype.ext (PrimeSpectrum.ext (Ideal.ext fun a => not_iff_not.1 ?_))
-  exact ((IsCtrOf.unitAt_spec hφ p a).symm.trans
-    ((hp.unitAt_iff ⟨_, CptModel.genMap_toStalk φ p a⟩).symm.trans
-      (hq.unitAt_iff ⟨_, CptModel.genMap_toStalk φ q a⟩))).trans (IsCtrOf.unitAt_spec hφ q a)
 
 theorem Lat.pullLoc_eq_span_of_ctr {L : Lat ξ E} {i : Ω →+* Ω'} (j : E →+ F) {p₀ : Cpt ξ} {p' : Cpt ξ'}
     (h : IsCtrOf i p₀ p') (hu : ∀ p : Cpt ξ, IsCtrOf i p p' → ∀ e ∈ L p, e ∈ L p₀) :
@@ -194,57 +129,6 @@ theorem NormAt.ofPrime_of_isLocalRing (A : Subring Ω) [IsLocalRing A] (P : Idea
   have : a = (u : Ω) * v := by rw [← e', mul_assoc, hv', mul_one]
   rw [this]
   exact A.mul_mem u.2 v.2
-
-theorem NormAt.of_unique {f : X' ⟶ X} {i : Ω →+* Ω'} {p : Cpt ξ} (hd : Dominates ξ' ξ f i) (p₀ : Cpt ξ')
-    (h₀ : f p₀.1 = p.1) (hu : ∀ q : Cpt ξ', f q.1 = p.1 → q = p₀)
-    (e : (integralClosure ((regAt ξ p).map i) Ω').toSubring = regAt ξ' p₀) : NormAt ξ' f i p := by
-  have loc : IsLocalRing (integralClosure ((regAt ξ p).map i) Ω').toSubring := by
-    rw [e]
-    exact NormAt.isLocalRing_regAt p₀
-  refine ⟨fun q hq => ?_, fun P hP => ⟨p₀, ⟨h₀, ((NormAt.ofPrime_of_isLocalRing _ P hP).trans e).symm⟩,
-    fun q hq => hu q hq.1⟩, hd⟩
-  rw [hu q hq]
-  exact ⟨_, IsLocalRing.maximalIdeal.isMaximal _,
-    ((NormAt.ofPrime_of_isLocalRing _ _ (IsLocalRing.maximalIdeal.isMaximal _)).trans e).symm⟩
-
-theorem NormAt.regAt_field (p : Cpt (CptModel.pt (RingHom.id Ω))) : regAt _ p = ⊤ :=
-  eq_top_iff.2 fun a _ => ⟨_, CptModel.genMap_toStalk (RingHom.id Ω) p a⟩
-
-theorem NormAt.dominates_field_iff (φ i : Ω →+* Ω') :
-    Dominates (CptModel.pt (RingHom.id Ω')) (CptModel.pt (RingHom.id Ω)) (CptModel.pt φ) i ↔ φ = i := by
-  unfold Dominates
-  rw [← Spec.map_comp, ← Spec.map_comp, Spec.map_inj]
-  exact ⟨fun h => congrArg CommRingCat.Hom.hom h, fun h => h ▸ rfl⟩
-
-theorem NormAt.of_isAlgebraic [Algebra Ω Ω'] [Algebra.IsAlgebraic Ω Ω'] (p : Cpt (CptModel.pt (RingHom.id Ω))) :
-    NormAt (CptModel.pt (RingHom.id Ω')) (CptModel.pt (algebraMap Ω Ω')) (algebraMap Ω Ω') p := by
-  refine NormAt.of_unique ((NormAt.dominates_field_iff _ _).2 rfl) (CptModel.self _)
-    (Subsingleton.elim (α := PrimeSpectrum Ω) _ _)
-    (fun q _ => Subtype.ext (Subsingleton.elim (α := PrimeSpectrum Ω') _ _)) ?_
-  rw [NormAt.regAt_field, NormAt.regAt_field, eq_top_iff]
-  intro a _
-  let g : Ω →+* (⊤ : Subring Ω).map (algebraMap Ω Ω') :=
-    (algebraMap Ω Ω').codRestrict _ fun b => ⟨b, trivial, rfl⟩
-  have h : IsIntegral Ω a := Algebra.IsIntegral.isIntegral a
-  exact IsIntegral.map_of_comp_eq g (RingHom.id Ω') (RingHom.ext fun _ => rfl) h
-
-theorem IsoAt.field_iff (φ i : Ω →+* Ω') (p : Cpt (CptModel.pt (RingHom.id Ω))) :
-    IsoAt (CptModel.pt (RingHom.id Ω')) (CptModel.pt φ) i p ↔ φ = i ∧ Function.Surjective i := by
-  constructor
-  · intro h
-    refine ⟨(NormAt.dominates_field_iff _ _).1 h.dom, fun a => ?_⟩
-    have e := h.regAt_eq (CptModel.self _) (Subsingleton.elim (α := PrimeSpectrum Ω) _ _)
-    rw [NormAt.regAt_field] at e
-    obtain ⟨b, -, hb⟩ : a ∈ (regAt _ p).map i := e ▸ Subring.mem_top a
-    exact ⟨b, hb⟩
-  · rintro ⟨h, hs⟩
-    refine ⟨⟨CptModel.self _, Subsingleton.elim (α := PrimeSpectrum Ω) _ _,
-      fun q _ => Subtype.ext (Subsingleton.elim (α := PrimeSpectrum Ω') _ _)⟩, fun q _ => ?_,
-      (NormAt.dominates_field_iff _ _).2 h⟩
-    rw [NormAt.regAt_field, NormAt.regAt_field, eq_comm, eq_top_iff]
-    intro a _
-    obtain ⟨b, rfl⟩ := hs a
-    exact ⟨b, trivial, rfl⟩
 
 theorem Lat.IsCohOn.of_isVBOn {L : Lat ξ E} {T : Set (Cpt ξ)} {r : ℕ} {V : Submodule Ω E} (h : L.IsVBOn T r V) :
     L.IsCohOn T := fun p hp => by

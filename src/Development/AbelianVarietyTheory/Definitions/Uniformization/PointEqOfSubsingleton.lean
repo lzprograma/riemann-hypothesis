@@ -4,65 +4,15 @@ public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.Exi
 public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap
 public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubicalSymmetryTransport
 public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.WeilIsGrpPullbackIff
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
-import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBPull
 
 @[expose] public section
 
-set_option autoImplicit false
-
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 namespace GlobalTheory.UU
@@ -715,11 +665,6 @@ theorem exists_isLevelCP {R : Type} [CommRing R] [IsDomain R] (I : Ideal R) (e :
   obtain ⟨P', w, H⟩ := exists_pull P (toBase_mul_pullback G (thick R I e))
   exact ⟨P', w, H⟩
 
-theorem isLevelCP_triv {R : Type} [CommRing R] [IsDomain R] (I : Ideal R) (e : ℕ)
-    (G : Over (Spec (CommRingCat.of R))) [GrpObj G] [IsCommMonObj G] :
-    IsLevelCP I e (CP.triv (thickObj R I e G)) (CP.triv G) :=
-  ⟨_, IsCPMap.triv (toBase_mul_pullback G (thick R I e))⟩
-
 section Abelian
 variable {G : Over S} [GrpObj G] [IsCommMonObj G]
 
@@ -1004,44 +949,6 @@ theorem CubTriv.val_twist {L : RigLB G} {c : CubicalStr G L} (σ : CubTriv c i) 
   show val (scaleGen (charUnit S X χ) σ.s) x.left z J = _
   rw [val_scaleGen _ _ _ hJ, gm_charUnit]
 
-theorem CubTriv.twist_even_iff {P : CP G} {σ : CubTriv P.c i} (hσ : σ.Even) (χ : X) :
-    (σ.twist χ).Even ↔ ∀ (T : Over S) (t : T ⟶ splitTorus S X), chV t (χ + χ) = 1 := by
-  constructor
-  · intro htw T t
-    apply unit_ext
-    intro z _
-    obtain ⟨J, hJ⟩ := exists_good_pt P.L.isLB z
-    have h1 := htw T t z J hJ
-    have h0 := hσ T t z J hJ
-    rw [CubTriv.val_twist _ _ _ hJ, CubTriv.val_twist _ _ _ hJ, h0, chV_inv, map_inv] at h1
-    have h2 : (gm (𝟙 T.left) z ⊤ (chV t χ))⁻¹ = gm (𝟙 T.left) z ⊤ (chV t χ) :=
-      mul_right_cancel (b := val P.sym (t ≫ i).left z J * val σ.s t.left z J) (by rw [h1, mul_left_comm])
-    rw [chV_add, map_mul, map_one]
-    have h3 := mul_inv_cancel (gm (𝟙 T.left) z ⊤ (chV t χ))
-    rwa [h2] at h3
-  · intro h T x z J hJ
-    have hc : (chV x χ)⁻¹ = chV x χ := inv_eq_of_mul_eq_one_right (by rw [← chV_add]; exact h T x)
-    rw [CubTriv.val_twist _ _ _ hJ, CubTriv.val_twist _ _ _ hJ, hσ T x z J hJ, chV_inv, hc, mul_left_comm]
-
-def CP.twistSym (P : CP (splitTorus S X)) (χ : X) : CP (splitTorus S X) where
-  L := P.L
-  c := P.c
-  sym := scaleGen (charUnit S X χ) P.sym
-  sym_gen := scaleGen_isGen _ P.sym_gen
-  sym_rig := corr_of_val P.L.isLB fun y J hJ => by
-    have e := (val_scaleGen (charUnit S X χ) P.sym (1 : 𝟙_ (Over S) ⟶ splitTorus S X).left hJ).trans
-      (congrArg₂ (· * ·) (gm_charUnit _ y χ) (P.val_sym_one hJ))
-    have o : chV (1 : 𝟙_ (Over S) ⟶ splitTorus S X) χ = 1 := by rw [chV, map_one]; rfl
-    rw [o, map_one, _root_.one_mul, one_left] at e
-    exact (val_pull hJ _ _ _).trans (e.trans (val_one _).symm)
-  sym_cub T x y u z J hJ := by
-    have e := P.sym_cub T x y u z J hJ
-    simp only [val_scaleGen _ _ _ hJ, gm_charUnit, chV_mul, map_mul]
-    apply Additive.ofMul.injective
-    have e' := congrArg Additive.ofMul e
-    simp only [ofMul_mul] at e' ⊢
-    linear_combination (norm := abel) e'
-
 end Twist
 
 section Wt
@@ -1170,31 +1077,9 @@ def TQ.Desc.triv {G : Over S} [GrpObj G] [IsCommMonObj G] (Q : TQ G X) : Q.Desc 
   w := ⟨fun _ => 1⟩
   map := IsCPMap.triv (have := Q.q_hom; toBase_mul_of_isMonHom Q.q _)
 
-theorem TQ.genWt_triv {G : Over S} [GrpObj G] (Q : TQ G X) (u : Γ(G.left, ⊤)ˣ) {χ : X} (hu : IsWt Q.i ⊤ u.val χ) :
-    Q.GenWt (Inh.trivLB _) (scaleGen u (unitGen _ _)) χ := by
-  refine ⟨scaleGen_isGen u (unitGen_isGen _ _), fun j => ?_⟩
-  show IsWt Q.i _ (res le_top u * 1).val χ
-  rw [_root_.mul_one]
-  exact hu.res le_top
-
 end Torus
 
 section Basic₂
-
-theorem exists_point_two : ∃ t : 𝟙_ (Over (Spec (CommRingCat.of ℚ))) ⟶ splitTorus (Spec (CommRingCat.of ℚ)) ℤ,
-    ∀ n : ℤ, chV t n = 1 → n = 0 := by
-  let e : ℚ ≃+* Γ(Spec (CommRingCat.of ℚ), ⊤) := (Scheme.ΓSpecIso (CommRingCat.of ℚ)).symm.commRingCatIsoToRingEquiv
-  let u : Γ(Spec (CommRingCat.of ℚ), ⊤)ˣ := Units.map e.toMonoidHom (Units.mk0 2 two_ne_zero)
-  refine ⟨(splitTorusPointsEquiv _ ℤ _).symm (zpowersHom _ u), fun n hn => ?_⟩
-  have h1 : u ^ n = 1 := by
-    simpa only [chV, MulEquiv.apply_symm_apply, zpowersHom_apply, toAdd_ofAdd] using hn
-  have h2 : (Units.mk0 (2:ℚ) two_ne_zero) ^ n = 1 := by
-    have hu : Units.map e.symm.toMonoidHom u = Units.mk0 2 two_ne_zero := Units.ext (by simp [u])
-    rw [← hu, ← map_zpow, h1, map_one]
-  have h3 : (2:ℚ) ^ n = 1 := by
-    have h4 := congrArg Units.val h2
-    rwa [Units.val_zpow_eq_zpow_val, Units.val_mk0, Units.val_one] at h4
-  exact zpow_right_injective₀ (by norm_num : (0:ℚ) < 2) (by norm_num) (h3.trans (zpow_zero (2:ℚ)).symm)
 
 end Basic₂
 

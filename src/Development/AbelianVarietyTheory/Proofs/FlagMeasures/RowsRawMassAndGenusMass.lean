@@ -316,7 +316,7 @@ theorem exists_adapted {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hn : 
       (h3 (Submodule.subset_span (Or.inl (Or.inr ⟨a, b, hb, rfl⟩))))
 
     simp only [map_sum, sm, star_star, hfe, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
-    if_true] at this
+    ite_true] at this
     rw [mul_comm]
     exact (FractionalIdeal.mem_one_iff _).2 (Submodule.mem_one.1 this)
   · rintro _ ⟨a, x, hx, rfl⟩
@@ -427,8 +427,6 @@ open scoped ENNReal Classical
 namespace GlobalTheory.Mass.RowsRawMass
 
 open Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt Formalism.MainNotions.BridgeLemma₂
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem rowsLift (D : D7) (u : D.what₂.Word) : LiftsConjugateUnderStabilizer D u := by
   intro hp h3 hs F0 he hz

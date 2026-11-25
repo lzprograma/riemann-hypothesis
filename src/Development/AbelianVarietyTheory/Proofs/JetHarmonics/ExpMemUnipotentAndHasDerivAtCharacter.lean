@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.CellDataExists
 public import Formalism.HermitianCurvature.BesselNonvanishingReduction
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ChainRuleSmooth.ExpIntertwine
@@ -91,8 +92,6 @@ theorem exp_apply_of_pattern {n : ℕ} (P : Fin n → Fin n → Prop)
   rw [h2.unique h3]
   simp [Matrix.one_apply]
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 theorem hasDerivAt_exp_apply {k r : ℕ} (X : Mx k r) (i j : Fin (2 * r + k + 1)) :
     HasDerivAt (fun t : ℝ => NormedSpace.exp ((t : ℂ) • X) i j) (X i j) 0 := by
   have hγ := Formalism.REAL.hasDerivAt_mul_exp_smul_zero (1 : Mx k r) X
@@ -105,22 +104,14 @@ theorem hasDerivAt_ell {k r : ℕ} (z : Fin (2 * r + k + 1) → ℂ) (X : Mx k r
   unfold Formalism.QuantumDeterminants.ell
   refine HasDerivAt.fun_sum fun a _ => ?_
   by_cases h : a.val + 1 < r
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     exact hasDerivAt_exp_apply X _ _
-  · simp only [dif_neg h, Matrix.mulVec, dotProduct]
+  · simp only [dite_eq_right h, Matrix.mulVec, dotProduct]
     exact HasDerivAt.fun_sum fun j _ => (hasDerivAt_exp_apply X _ _).mul_const _
 
 theorem ell_one {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} (hz : Formalism.QuantumDeterminants.inWb k r z) :
     Formalism.QuantumDeterminants.ell k r z 1 = 0 := by
-  unfold Formalism.QuantumDeterminants.ell
-  refine Finset.sum_eq_zero fun a _ => ?_
-  split_ifs with h
-  · refine Matrix.one_apply_ne ?_
-    intro e
-    have := congrArg Fin.val e
-    simp [Formalism.QuantumDeterminants.eI] at this
-  · rw [Matrix.one_mulVec]
-    exact hz _ (Or.inl a.isLt)
+  apply _root_.GlobalTheory.CellAmp.Model.ell_one <;> assumption
 
 theorem exp_mem_and_deriv : ∀ (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (X : Mx k r), Formalism.QuantumDeterminants.inWb k r z → PI.UpqRep.InLieHpk k r X → (∀ i j : Fin (2 * r + k + 1), ¬ (i < j ∧ ¬ (r ≤ i.val ∧ j.val ≤ r + k)) → X i j = 0) → (∀ t : ℝ, NormedSpace.exp ((t : ℂ) • X) ∈ Formalism.QuantumDeterminants.Nset k r) ∧ HasDerivAt (fun t : ℝ => Formalism.QuantumDeterminants.psi k r z Formalism.QuantumDeterminants.cStd (NormedSpace.exp ((t : ℂ) • X))) (Formalism.QuantumDeterminants.ell k r z X - star (Formalism.QuantumDeterminants.ell k r z X)) 0 := by
   intro k r z X hz hX hP

@@ -51,8 +51,8 @@ theorem pr_val (i : Fin (2 * r + k + 1)) :
     (pr k r i).val = if i.val ≤ r ∨ r + k ≤ i.val then 2 * r + k - i.val else i.val := by
   unfold pr
   by_cases h : outer k r i
-  · rw [if_pos h, if_pos (show i.val ≤ r ∨ r + k ≤ i.val from h)]
-  · rw [if_neg h, if_neg (show ¬ (i.val ≤ r ∨ r + k ≤ i.val) from h)]
+  · rw [ite_eq_left h, ite_eq_left (show i.val ≤ r ∨ r + k ≤ i.val from h)]
+  · rw [ite_eq_right h, ite_eq_right (show ¬ (i.val ≤ r ∨ r + k ≤ i.val) from h)]
 
 theorem pr_pr (i : Fin (2 * r + k + 1)) : pr k r (pr k r i) = i := by
   apply Fin.ext
@@ -87,10 +87,10 @@ def mask {n : ℕ} (p : Fin n → Fin n → Prop) (X : Matrix (Fin n) (Fin n) �
   fun i j => by classical exact if p i j then X i j else 0
 
 theorem mask_pos {n : ℕ} {p : Fin n → Fin n → Prop} {X : Matrix (Fin n) (Fin n) ℂ} {i j : Fin n} (h : p i j) :
-    mask p X i j = X i j := if_pos h
+    mask p X i j = X i j := ite_eq_left h
 
 theorem mask_neg {n : ℕ} {p : Fin n → Fin n → Prop} {X : Matrix (Fin n) (Fin n) ℂ} {i j : Fin n} (h : ¬ p i j) :
-    mask p X i j = 0 := if_neg h
+    mask p X i j = 0 := ite_eq_right h
 
 theorem lie_mask {p : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → Prop}
     (hp : ∀ i j, p (pr k r j) i → p (pr k r i) j) {X : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
@@ -170,7 +170,7 @@ theorem span_hq (hk : 1 ≤ k) {Y : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k
         · have : pr k r i = i := by
             apply Fin.ext
             simp only [wI, Fin.ext_iff, Fin.val_zero, Fin.val_last] at h0 h1
-            rw [pr_val, if_neg (by omega)]
+            rw [pr_val, ite_eq_right (by omega)]
           rw [this]; simp [h0, h1]
     · rw [hB, mask_neg (fun h => hi h.1), mask_neg (fun h => hi h.1)]
   · rw [Matrix.sub_apply, Matrix.sub_apply]
@@ -221,17 +221,17 @@ theorem spanG : SpanG := by
       by_cases hl : a.val ≤ l.val
       · rw [hA l _ (fun h => by have := h.1.1; simp only [eI, Fin.lt_def] at this; omega)]; simp
       · have : i ≠ l := by rintro rfl; exact hl hi
-        rw [(bP l (Or.inl (by omega)) i).1, if_neg this]; simp
-    · rw [(bQ (eI k r a) (Or.inl ha) p).1, if_neg hp]; simp
+        rw [(bP l (Or.inl (by omega)) i).1, ite_eq_right this]; simp
+    · rw [(bQ (eI k r a) (Or.inl ha) p).1, ite_eq_right hp]; simp
   · rw [key]
     refine Finset.sum_eq_zero fun p _ => Finset.sum_eq_zero fun l _ => ?_
     by_cases hp : p.val < r ∨ r + k < p.val
     · have : j ≠ p := by rintro rfl; omega
-      rw [(bQ p hp j).2, if_neg this]; simp
+      rw [(bQ p hp j).2, ite_eq_right this]; simp
     · by_cases hl : r ≤ l.val
       · rw [hA l p (fun h => h.2 (by have := h.1.1; simp only [blk, Fin.lt_def] at *; omega))]; simp
       · have : i ≠ l := by rintro rfl; exact hl hi
-        rw [(bP l (Or.inl (by omega)) i).1, if_neg this]; simp
+        rw [(bP l (Or.inl (by omega)) i).1, ite_eq_right this]; simp
   · have : P⁻¹ * (P * C * Q) * P = C := by
       rw [hinv]
       simp only [← Matrix.mul_assoc]

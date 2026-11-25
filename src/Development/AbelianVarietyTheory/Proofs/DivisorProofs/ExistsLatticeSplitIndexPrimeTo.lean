@@ -186,7 +186,7 @@ theorem not_forall_pos : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
     refine Finset.sum_nonpos fun a _ => ?_
     by_cases h : (a : ℕ) < p
     · have := congrFun h0 ⟨a, h⟩
-      simp only [res, LinearMap.pi_apply, a.2, dif_pos, LinearMap.proj_apply, Pi.zero_apply] at this
+      simp only [res, LinearMap.pi_apply, a.2, dite_eq_left, LinearMap.proj_apply, Pi.zero_apply] at this
       rw [this]
       simp
     · simp [FD.sgn, h, Complex.normSq_nonneg]
@@ -376,12 +376,10 @@ theorem eventually_pos (A B C : ℝ) (hC : 0 < C) {q : ℕ} (hq : 0 < q) :
     exact_mod_cast ht.trans (Nat.le_mul_of_pos_left t hq)
   generalize ((q * t : ℕ) : ℝ) = s at h1
   push_cast at h1
-  have h2 : (0 : ℝ) ≤ T := Nat.cast_nonneg T
   have h3 : |A| + |B| < s * C := by nlinarith
   have h4 := neg_abs_le A
   have h5 := neg_abs_le B
   have h6 := abs_nonneg A
-  have h7 : s * (|A| + |B|) < s * (s * C) := mul_lt_mul_of_pos_left h3 (by linarith)
   nlinarith
 
 variable [IsCMField E] {M : Type} [AddCommGroup M] [Module (𝓞 E) M] [Module.Finite (𝓞 E) M]
@@ -542,7 +540,6 @@ theorem exists_split_prime_to : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
           simp only [hξdef, map_div₀, map_mul, map_pow, map_intCast, map_natCast, hτ]
           push_cast
           ring
-        have hΔR : (discr E : ℝ) ≠ 0 := by exact_mod_cast hΔ
         rw [e, Complex.im_ofReal_mul, div_mul_eq_mul_div]
         exact div_neg_of_neg_of_pos hεi (by positivity))
     intro τ
@@ -645,8 +642,6 @@ theorem exists_split_prime_to : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
   obtain ⟨π, e, π1, -, -⟩ := exists_proj h v m N (map_natCast σ N) ho hm
   have hval : ∀ a, ∃ c : ℝ, 0 < c ∧ H.rt0.im * D.EF (H.w0 • a) a =
       c * ∑ τ : E →ₐ[ℚ] ℂ, ((τ : E →+* ℂ) (h a a : E)).re := fun a => by
-    have hΔR : (discr E : ℝ) ≠ 0 := by exact_mod_cast hΔ
-    have hΔQ : (discr E : ℚ) ≠ 0 := by exact_mod_cast hΔ
     have h1 : D.EF ((2 * H.w0) • a) a = D.EF ((1 + H.rt) • a) a := by rw [H.two_weight_eq_one_add_root]
     rw [two_mul, add_smul, add_smul, one_smul, map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply,
       D.alt, zero_add] at h1

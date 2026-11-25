@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarLieNilpotentEqLebesgue
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.InnerEq
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfinitesimalCharacterQuantumDet
 public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.UnitaryCurves.StarMulOfPlaces
@@ -93,22 +94,7 @@ private theorem along_eq (w : InfinitePlace E) (k : Un n) (φ : GA E n → ℂ) 
 
 private theorem exp_entry (X : Matrix (Fin n) (Fin n) ℂ) (i j : Fin n) :
     HasDerivAt (fun t : ℝ => (NormedSpace.exp ((t : ℂ) • X) : Matrix (Fin n) (Fin n) ℂ) i j) (X i j) 0 := by
-  letI : NormedRing (Matrix (Fin n) (Fin n) ℂ) := Matrix.linftyOpNormedRing
-  let _ : NormedAlgebra ℝ (Matrix (Fin n) (Fin n) ℂ) := Matrix.linftyOpNormedAlgebra
-  let _ : NormedAlgebra ℚ (Matrix (Fin n) (Fin n) ℂ) := NormedAlgebra.restrictScalars ℚ ℝ _
-  have h := hasDerivAt_exp_smul_const (𝕂 := ℝ) X (0 : ℝ)
-  simp only [zero_smul, NormedSpace.exp_zero, one_mul] at h
-  let L : Matrix (Fin n) (Fin n) ℂ →L[ℝ] ℂ :=
-    LinearMap.toContinuousLinearMap
-      { toFun := fun M => M i j, map_add' := fun _ _ => rfl, map_smul' := fun _ _ => rfl }
-  have h2 := L.hasFDerivAt.comp_hasDerivAt (0 : ℝ) h
-  have e : (fun t : ℝ => (NormedSpace.exp ((t : ℂ) • X) : Matrix (Fin n) (Fin n) ℂ) i j) =
-      (L ∘ fun t : ℝ => NormedSpace.exp (t • X)) := by
-    funext t
-    simp only [Function.comp, Complex.coe_smul]
-    rfl
-  rw [e]
-  exact h2
+  apply _root_.GlobalTheory.Amp.NLie.deriv_exp <;> assumption
 
 private theorem skew_of_curve (X : Matrix (Fin n) (Fin n) ℂ) (γ : ℝ → Un n)
     (hγ : ∀ t : ℝ, (γ t).1 = NormedSpace.exp ((t : ℂ) • X)) : Xᴴ = -X := by
@@ -126,9 +112,9 @@ private theorem skew_of_curve (X : Matrix (Fin n) (Fin n) ℂ) (γ : ℝ → Un 
   rw [hconst] at hs
   have h := hs.unique (hasDerivAt_const _ _)
   simp only [h0, Matrix.one_apply, mul_ite, mul_one, mul_zero, Finset.sum_add_distrib,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
   have e : ∑ x, star (if x = i then (1 : ℂ) else 0) * X x j = X i j := by
-    simp only [apply_ite star, star_one, star_zero, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [apply_ite star, star_one, star_zero, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [e] at h
   show star (X j i) = -X i j
   exact eq_neg_of_add_eq_zero_left h
@@ -309,9 +295,9 @@ private theorem curve_deriv (X : Matrix (Fin n) (Fin n) ℂ) (γ : ℝ → Un n)
   rw [atEmb_apply]
   by_cases hv : v = w
   · subst hv
-    simp only [atW, InfinitePlace.mk_embedding, if_true]
+    simp only [atW, InfinitePlace.mk_embedding, ite_true]
     simpa only [hγ] using exp_entry X i j
-  · simp only [atW, InfinitePlace.mk_embedding, if_neg hv]
+  · simp only [atW, InfinitePlace.mk_embedding, ite_eq_right hv]
     exact hasDerivAt_const _ _
 
 private theorem deriv_σ (v : D.U) (X : Matrix (Fin n) (Fin n) ℂ) (γ : ℝ → Un n)

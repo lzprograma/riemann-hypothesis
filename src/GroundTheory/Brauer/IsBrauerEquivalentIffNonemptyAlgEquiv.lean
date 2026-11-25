@@ -47,34 +47,4 @@ theorem mulLeftRight_bijective : Function.Bijective (AlgHom.mulLeftRight K A) :=
 
 end Azumaya
 
-section Equivalence
-
-variable {K : Type u} [Field K]
-
-
-end Equivalence
-
-section Group
-
-variable (K : Type u) [Field K]
-
-variable {K}
-
-end Group
-
-section DivisionPart
-
-variable {K : Type u} [Field K]
-
-section ColumnIdeal
-
-variable {R : Type v} [Ring R] [Algebra K R] {D : Type w} [DivisionRing D] [Algebra K D]
-  {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-variable (e : R ≃ₐ[K] Matrix ι ι D) (i₀ : ι)
-
-end ColumnIdeal
-
-end DivisionPart
-
 end GroundTheory.Brauer

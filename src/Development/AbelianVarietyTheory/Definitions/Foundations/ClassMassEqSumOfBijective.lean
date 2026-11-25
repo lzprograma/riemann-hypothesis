@@ -10,44 +10,7 @@ import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitar
 public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Ipindep
 import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Adelstab
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Transport
@@ -112,14 +75,6 @@ theorem FiniteClasses.inv_card_le (h : FiniteClasses Γ K) (g : G) :
 
 theorem FiniteClasses.classMass_pos (h : FiniteClasses Γ K) : 0 < classMass Γ K :=
   lt_of_lt_of_le (inv_pos.2 (by exact_mod_cast h.stabOrder_pos (DoubleCoset.mk Γ K 1))) (h.inv_card_le 1)
-
-theorem classMass_of_isNeat [Finite (ClassSet Γ K)] (h : IsNeat Γ K) :
-    classMass Γ K = Nat.card (ClassSet Γ K) := by
-  haveI := Fintype.ofFinite (ClassSet Γ K)
-  have : ∀ c, stabOrder Γ K c = 1 := fun c => by
-    induction c using Quotient.inductionOn' with
-    | h g => change Nat.card (stabAt Γ K g) = 1; rw [h g]; simp
-  simp [classMass_eq_sum, this]
 
 theorem FiniteClasses.of_le (h : FiniteClasses Γ K) (hle : K' ≤ K) (hi : K'.relIndex K ≠ 0) :
     FiniteClasses Γ K' := by
@@ -606,22 +561,6 @@ theorem IsFinProj.measure_toReal (h : IsFinProj σ J π) (hσ : IsCMExt F E σ) 
   exact hf.measure_toReal μ (ho.preimage h.continuous).measurableSet hK1 h𝓕
 
 end Adelic
-
-theorem classMass_top_top (G : Type) [Group G] :
-    classMass (⊤ : Subgroup G) ⊤ = ((Nat.card G : ℝ))⁻¹ := by
-  rw [classMass_eq_sum_of_bijective (ι := Unit) (fun _ => 1) ⟨fun _ _ _ => rfl, fun c => ?_⟩]
-  · have : stabAt (⊤ : Subgroup G) ⊤ 1 = Set.univ := Set.eq_univ_of_forall fun _ => Subgroup.mem_top _
-    simp [this]
-  · induction c using Quotient.inductionOn' with
-    | h g => exact ⟨(), (@DoubleCoset.eq _ _ ⊤ ⊤ _ _).2 ⟨g, trivial, 1, trivial, by simp⟩⟩
-
-theorem classMass_bot {G : Type} [Group G] (K : Subgroup G) [K.FiniteIndex] :
-    classMass (⊥ : Subgroup G) K = K.index := by
-  have e : ClassSet (⊥ : Subgroup G) K = (G ⧸ K) := DoubleCoset.left_bot_eq_left_quot K
-  haveI : Finite (ClassSet (⊥ : Subgroup G) K) := by rw [e]; infer_instance
-  rw [classMass_of_isNeat fun g => Set.eq_singleton_iff_unique_mem.2
-    ⟨one_mem_stabAt _ _ _, fun _ _ => Subsingleton.elim _ _⟩, e]
-  rfl
 
 
 end GlobalTheory.Mass

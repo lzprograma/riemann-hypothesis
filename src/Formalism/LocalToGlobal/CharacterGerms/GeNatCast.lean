@@ -117,8 +117,6 @@ def Vpow (s : ℕ) (x : ℕ → N → C) : ℕ → N → C := fun i n => if i < 
 
 def Fs (l : ℕ) (x : ℕ → N → C) : ℕ → N → C := fun i n => (l : C) * x (i + 1) n
 
-def sumV (y : ℕ → ℕ → N → C) : ℕ → N → C := fun i n => ∑ s ∈ range (i + 1), y s (i - s) n
-
 def const0 (h : N → C) : ℕ → N → C := fun i n => if i = 0 then h n else 0
 
 end Ops
@@ -130,7 +128,6 @@ structure Cart (V : VF C) (d : ℕ) (I J : Type*) where
   teich_mem : ∀ c, V.Ge 0 c → ∀ x ∈ Ty, teich V.l c x ∈ Ty
   V_mem : ∀ x ∈ Ty, Vpow 1 x ∈ Ty
   F_mem : ∀ x ∈ Ty, Fs V.l x ∈ Ty
-  sumV_mem : ∀ y : ℕ → ℕ → I ⊕ J → C, (∀ s, y s ∈ Ty) → sumV y ∈ Ty
 
   t2 : ∀ x ∈ Ty, ∀ s, (∀ i < s, x i = 0) → ∀ n, V.Ge 0 (x s n)
 

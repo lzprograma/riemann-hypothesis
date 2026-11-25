@@ -1,10 +1,9 @@
 module
 
 public import Mathlib.Analysis.Complex.Norm
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Normed.Ring.Basic
 public import Mathlib.Basic.Complex.BigOperators
+import Mathlib.Analysis.Complex.Basic
 
 @[expose] public section
 
@@ -14,22 +13,10 @@ open scoped ComplexConjugate
 
 theorem norm_sq_le_split (A B : ℂ) (ep : ℝ) (hep : 0 < ep) :
     ‖A‖ ^ 2 ≤ (1 + ep) * ‖A + B‖ ^ 2 + (1 + 1 / ep) * ‖B‖ ^ 2 := by
-  have h1 : ‖A‖ ≤ ‖A + B‖ + ‖B‖ := by
-    have := norm_sub_le (A + B) B
-    simpa using this
-  set x := ‖A + B‖ with hx
-  set y := ‖B‖ with hy
-  set t := 1 / ep with htdef
-  have ht : ep * t = 1 := by rw [htdef]; field_simp
-  have hx0 : 0 ≤ x := norm_nonneg _
-  have hy0 : 0 ≤ y := norm_nonneg _
-  have key : 2 * x * y ≤ ep * x ^ 2 + t * y ^ 2 := by
-    have h := mul_nonneg hep.le (sq_nonneg (x - t * y))
-    have e1 : ep * t * x * y = x * y := by rw [ht]; ring
-    have e2 : ep * t * t * y ^ 2 = t * y ^ 2 := by rw [ht]; ring
-    nlinarith [h, e1, e2]
-  have h2 : ‖A‖ ^ 2 ≤ (x + y) ^ 2 := pow_le_pow_left₀ (norm_nonneg _) h1 2
-  nlinarith [h2, key]
+  have h1 := pow_le_pow_left₀ (norm_nonneg A) (norm_le_add_norm_add A B) 2
+  have h2 := two_mul_le_add_mul_sq (a := ‖A + B‖) (b := ‖B‖) hep
+  simp only [one_div]
+  nlinarith
 
 theorem norm_sum_mul_sq_le {n : ℕ} (a c : Fin n → ℂ) :
     ‖∑ j, a j * c j‖ ^ 2 ≤ (∑ j, ‖c j‖ ^ 2) * ∑ j, ‖a j‖ ^ 2 := by
@@ -44,8 +31,7 @@ theorem norm_sum_mul_sq_le {n : ℕ} (a c : Fin n → ℂ) :
 theorem norm_sum_sq_eq {n : ℕ} (a : Fin n → ℂ) :
     ‖∑ j, a j‖ ^ 2 = (∑ j, ∑ k, a j * conj (a k)).re := by
   have h : (∑ j, ∑ k, a j * conj (a k)) = (∑ j, a j) * conj (∑ j, a j) := by
-    set_option synthInstance.maxHeartbeats 100000 in
-      rw [map_sum, Finset.sum_mul_sum]
+    rw [map_sum, Finset.sum_mul_sum]
   rw [h, Complex.mul_conj, Complex.ofReal_re, Complex.normSq_eq_norm_sq]
 
 theorem half_sum_norm_sub_sq {n : ℕ} (a : Fin n → Fin n → ℂ) :

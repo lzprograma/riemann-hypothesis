@@ -50,8 +50,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace GlobalTheory.TypeAsm.HostArith
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7)
 
 theorem places : GlobalTheory.DegVol.IsPlaces (embS D) := by
@@ -124,16 +122,9 @@ theorem places : GlobalTheory.DegVol.IsPlaces (embS D) := by
   obtain ⟨τ, hτ⟩ := hex
   exact ⟨τ, hτ, fun τ' hτ' => key τ' τ (hτ'.trans hτ.symm)⟩
 
-theorem finrank_eq : Module.finrank ℚ D.host.E = 2 * D.R.f := by
-  rw [D.host.toHostAx.finrank_cmField]
-  simp only [Formalism.BasicNotions.Ranks.f, Formalism.BasicNotions.Ranks.n]
-  ring
-
 end GlobalTheory.TypeAsm.HostArith
 
 namespace GlobalTheory.TypeAsm.HostArith
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable (D : D7)
 
@@ -163,7 +154,7 @@ private theorem one_le_host_v : 1 ≤ D.host.v := by
 theorem absNorm_dI (hd : NumberField.discr D.host.E = NumberField.discr D.host.F ^ 2) :
     (Ideal.absNorm (dI D) : ℝ) = (2 * D.host.v) ^ (2 * D.R.f) := by
   rw [absNorm_dI_eq_abs_discr_of_discr_eq_sq D hd]
-  have h2 := GlobalTheory.TypeAsm.HostArith.finrank_eq D
+  have h2 := Formalism.MainNotions.StandardLattice.finrank_host D
   have hf : (0 : ℝ) < ((2 * D.R.f : ℕ) : ℝ) := by
     rw [← h2]; exact_mod_cast Module.finrank_pos
   have hv : 2 * D.host.v = D.host.rdE := by unfold Formalism.BasicNotions.Host.v; ring
@@ -213,8 +204,6 @@ end GlobalTheory.TypeAsm.HostArith
 
 namespace GlobalTheory.TypeAsm
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem hostC : HostC := by
   intro D large₂ hStd
   obtain ⟨C', Cl, Cg, cb, Cw, cT, CT, C0, hK⟩ := hStd
@@ -222,7 +211,7 @@ theorem hostC : HostC := by
   obtain ⟨-, -, -, -, -, -, -, -, hsplit, -⟩ := hD0
   have hd : NumberField.discr D.host.E = NumberField.discr D.host.F ^ 2 := D.host.toHostAx.der.discr_sq
   exact ⟨D.sp.cm.cmUnram, HostArith.places D, _root_.Formalism.MainNotions.StandardLattice.vInv_host D, HostArith.one_le_host_v D,
-    _root_.Formalism.MainNotions.StandardLattice.fDeg_host D, _root_.Formalism.MainNotions.BridgeLemma.szf_card_Tau D, HostArith.finrank_eq D, HostArith.dI_ne_bot D hd,
+    _root_.Formalism.MainNotions.StandardLattice.fDeg_host D, _root_.Formalism.MainNotions.BridgeLemma.szf_card_Tau D, Formalism.MainNotions.StandardLattice.finrank_host D, HostArith.dI_ne_bot D hd,
     HostArith.dI_star D, HostArith.absNorm_dI D hd, HostArith.rank_VS D, HostArith.two_le_gS D,
     fun u => ⟨(D.mem u).A.T_prime, (hsplit u).1⟩⟩
 

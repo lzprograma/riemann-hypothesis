@@ -52,8 +52,6 @@ open AlgebraicGeometry CategoryTheory CategoryTheory.Limits TopologicalSpace Opp
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Sp spMap PSpace resG)
 open GlobalTheory.QCoh.Qcqs GlobalTheory.Cartier
 
-attribute [local instance] MvPolynomial.gradedAlgebra
-
 namespace GlobalTheory.ProjSpace
 
 variable {R : Type} [CommRing R] {N : ℕ} {Y Z : Scheme.{0}}

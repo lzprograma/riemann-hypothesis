@@ -76,23 +76,10 @@ theorem ringKrullDim_quotient_add_one_eq {P W : Ideal (MvPolynomial (Fin n) F)} 
   have hform := GroundTheory.Arith.Abelian.Jacobian.height_add_ringKrullDim_quotient (k := F) W'
   have hdrop := GroundTheory.Arith.Abelian.Jacobian.ringKrullDim_quotient_add_one_le W' hW'ne
   rw [hquot] at hform hdrop
-  obtain ⟨m, hm⟩ := exists_ringKrullDim_quotient_eq W
-  obtain ⟨k, hk⟩ := exists_ringKrullDim_quotient_eq P
-  change ringKrullDim B = _ at hk
-  rw [hm, hk] at hform hdrop
-  rw [hm]
-  change _ = ringKrullDim B
-  rw [hk]
-  have hne : W'.height ≠ ⊤ := ne_top_of_le_ne_top ENat.one_ne_top hht
-  obtain ⟨h, hh⟩ := ENat.ne_top_iff_exists.mp hne
-  rw [← hh] at hform hht
-  have h1 : h ≤ 1 := by exact_mod_cast hht
-  have h2 : h + m = k := by exact_mod_cast hform
-  have h3 : m + 1 ≤ k := by exact_mod_cast hdrop
-  have : m + 1 = k := by omega
-  rw [← this]
-  push_cast
-  rfl
+  refine le_antisymm hdrop ?_
+  change ringKrullDim B ≤ _
+  rw [← hform, add_comm (W'.height : WithBot ℕ∞), ← WithBot.coe_one]
+  exact add_le_add le_rfl (WithBot.coe_le_coe.mpr hht)
 
 end SectionComponents
 

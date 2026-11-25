@@ -124,10 +124,10 @@ theorem sum_sInt_from {n : ℕ} (lam : Fin n → ℝ) (l : Fin n) :
     intro i
     by_cases h : l ≤ i
     · have h' : l.val ≤ i.val := h
-      rw [if_pos h, max_eq_left h', max_eq_left (by omega : l.val ≤ i.val + 1)]
-      simp only [m, sInt, dif_pos i.isLt]
+      rw [ite_eq_left h, max_eq_left h', max_eq_left (by omega : l.val ≤ i.val + 1)]
+      simp only [m, sInt, dite_eq_left i.isLt]
     · have h' : i.val < l.val := by simpa using h
-      rw [if_neg h, max_eq_right h'.le, max_eq_right (by omega : i.val + 1 ≤ l.val), sub_self]
+      rw [ite_eq_right h, max_eq_right h'.le, max_eq_right (by omega : i.val + 1 ≤ l.val), sub_self]
   simp only [h1]
   rw [Fin.sum_univ_eq_sum_range (fun k => m (max k l.val) - m (max (k + 1) l.val)) n,
     Finset.sum_range_sub' (fun k => m (max k l.val)) n, max_eq_right (Nat.zero_le _),
@@ -138,11 +138,11 @@ theorem prod_castLE_succ {n : ℕ} (d : Fin n → ℂ) (i : Fin n) :
     ∏ j : Fin (i.val + 1), d (Fin.castLE i.isLt j) = ∏ l : Fin n, if l ≤ i then d l else 1 := by
   refine Finset.prod_of_injOn (Fin.castLE i.isLt) ((Fin.castLE_injective _).injOn) (by simp) ?_ ?_
   · intro k _ hk
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hk ⟨⟨k.val, Nat.lt_succ_of_le h⟩, by simp, rfl⟩
   · intro j _
-    rw [if_pos]
+    rw [ite_eq_left]
     exact Nat.le_of_lt_succ j.isLt
 
 theorem zpow_finset_sum {ι : Type} (s : Finset ι) (f : ι → ℤ) {a : ℂ} (ha : a ≠ 0) :

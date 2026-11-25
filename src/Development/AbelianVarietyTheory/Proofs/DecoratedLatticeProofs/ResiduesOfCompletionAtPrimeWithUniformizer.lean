@@ -121,8 +121,7 @@ theorem mem_P_iff (h : IsCompl P q ι ϖ) (hu : GlobalTheory.IndefiniteRowSideFu
     · intro a b hab
       rw [mem_vI, mem_vI, ← hu, ← hu] at *
       rw [coe_mul', map_mul, map_mul] at hab
-      by_contra hn
-      push_neg at hn
+      by_contra! hn
       have ha : valuation k (ι (a : E)) = 1 := le_antisymm (v_int_le_one h a) hn.1
       have hb : valuation k (ι (b : E)) = 1 := le_antisymm (v_int_le_one h b) hn.2
       rw [ha, hb, one_mul] at hab; exact lt_irrefl _ hab
@@ -164,23 +163,7 @@ theorem q_not_mem_sq (h : IsCompl P q ι ϖ) (hu : GlobalTheory.IndefiniteRowSid
 
 theorem reduction_spec {a : E} {r s : 𝓞 E} (hs : s ∉ P.asIdeal) (hsa : algebraMap (𝓞 E) E s * a = algebraMap (𝓞 E) E r) :
     Ideal.Quotient.mk P.asIdeal s * redP P a = Ideal.Quotient.mk P.asIdeal r := by
-  haveI := P.isMaximal
-  letI := Ideal.Quotient.field P.asIdeal
-  have hs0 : Ideal.Quotient.mk P.asIdeal s ≠ 0 := by rwa [Ne, Ideal.Quotient.eq_zero_iff_mem]
-  have hex : ∃ c r s, s ∉ P.asIdeal ∧ algebraMap (𝓞 E) E s * a = algebraMap (𝓞 E) E r ∧
-      Ideal.Quotient.mk P.asIdeal s * c = Ideal.Quotient.mk P.asIdeal r :=
-    ⟨Ideal.Quotient.mk P.asIdeal r * (Ideal.Quotient.mk P.asIdeal s)⁻¹, r, s, hs, hsa, by field_simp⟩
-  unfold redP
-  rw [dite_eq_left hex]
-  obtain ⟨r', s', hs', h1, h2⟩ := hex.choose_spec
-  have hs0' : Ideal.Quotient.mk P.asIdeal s' ≠ 0 := by rwa [Ne, Ideal.Quotient.eq_zero_iff_mem]
-  have hrr : s * r' = s' * r := by
-    apply FaithfulSMul.algebraMap_injective (𝓞 E) E
-    rw [map_mul, map_mul, ← h1, ← hsa]; ring
-  have := congrArg (Ideal.Quotient.mk P.asIdeal) hrr
-  rw [map_mul, map_mul, ← h2] at this
-  apply mul_left_cancel₀ hs0'
-  rw [← this]; ring
+  exact Formalism.L2.Col.reduction_spec P hs hsa
 
 theorem v_div_q (h : IsCompl P q ι ϖ) (hu : GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum.IsUnif ϖ) (a : E) :
     valuation k (ι a) < 1 ↔ IntAt P (a / (q : E)) := by

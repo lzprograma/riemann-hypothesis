@@ -53,7 +53,6 @@ import Mathlib.Tactic.ReduceModChar
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel IsLocalRing GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V UpperTheory.V.Hi
 open UpperTheory.V.HV (Coef)
 open UpperTheory.V.Z.Desc.V0
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace UpperTheory.V.Hi.Sp
 
@@ -165,7 +164,7 @@ private theorem absSpec2 {A O Ω : Type} [CommRing A] [IsCNL A] [CommRing O] [Is
     intro f K F hF hcF
     have h : ∃ F, ∃ K, F ∈ X.ClOrd W ((Matrix.GeneralLinearGroup.map (algebraMap A Ω)).comp τ) (U K) c
         ((Units.map (algebraMap O Ω : O →* Ω)).comp φ) ∧ X.ctrl m W F = X.mapFn (B := Ω) f := ⟨F, K, hF, hcF⟩
-    simp only [dif_pos h]
+    simp only [dite_eq_left h]
     obtain ⟨K2, hK2, hc2⟩ := h.choose_spec
     exact huniq K2 K _ F hK2 hF (hc2.trans hcF.symm)
   have hgood : ∀ K, ∀ f ∈ X.Ord τ θ (U K),
@@ -329,9 +328,6 @@ private theorem ctrl_tr {O Ω : Type} [CommRing O] [IsLocalRing O] [Field Ω] [A
   simp [Frame.ctrl, trE, rtr, LinearMap.funLeft_apply, LinearMap.compLeft_apply]
 
 end UpperTheory.V.Hi.Sp
-
-attribute [local instance 2000] UpperTheory.V.W.coefLocal
-
 
 theorem UpperTheory.V.Z.Desc.V0.spec2 :
     Spec2 := by

@@ -101,8 +101,8 @@ theorem existsUnique_isContr [CompleteSpace H₁] {Tm : H₁ →ₗ[ℂ] H₂ �
 end Hilbert
 
 theorem contrHilbert : ContrHilbert := by
-  intro H₁ H₂ FF _ _ _ _ _ _ _ _ _ G₁ G₂ _ _ π₁ π₂ ρ Tm hI hE
-  exact ⟨existsUnique_isContr hI, fun It hC => contrProps_of hI hE hC⟩
+  intro H₁ H₂ FF _ _ _ _ _ _ _ _ _ G₁ G₂ _ _ π₁ π₂ ρ Tm hI _
+  exact existsUnique_isContr hI
 
 section Tensor
 

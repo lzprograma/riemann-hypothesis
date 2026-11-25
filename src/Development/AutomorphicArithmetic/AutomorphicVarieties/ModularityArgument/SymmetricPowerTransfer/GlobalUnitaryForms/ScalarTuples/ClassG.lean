@@ -161,39 +161,6 @@ private theorem mul_one_sub_add_psi_eq_of_conj {R A : Type} [CommRing R] [Ring A
   simp only [Psi, mul_add, add_mul, mul_sub, sub_mul, mul_one, one_mul, mul_smul_comm,
     smul_mul_assoc, hXE, hXME]
 
-private theorem lintegral_mul_wt_eq_lintegral_mul_wt_conj (X Y : Matrix (Fin 3) (Fin 3) L) :
-    (X * Y).map star = X.map star * Y.map star := by
-  ext i j
-  simp [Matrix.mul_apply, star_sum, star_mul']
-
-private theorem sub_map_star_fin_three (X Y : Matrix (Fin 3) (Fin 3) L) :
-    (X - Y).map star = X.map star - Y.map star := by
-  ext i j
-  simp
-
-private theorem add_map_star_fin_three (X Y : Matrix (Fin 3) (Fin 3) L) :
-    (X + Y).map star = X.map star + Y.map star := by
-  ext i j
-  simp
-
-private theorem smul_map_star_fin_three (a : L) (X : Matrix (Fin 3) (Fin 3) L) :
-    (a • X).map star = star a • X.map star := by
-  ext i j
-  simp [star_mul']
-
-private theorem one_map_star_fin_three : (1 : Matrix (Fin 3) (Fin 3) L).map star = 1 := by
-  ext i j
-  rw [Matrix.map_apply]
-  by_cases h : i = j <;> simp [Matrix.one_apply, h]
-
-private theorem zero_map_star_fin_three : (0 : Matrix (Fin 3) (Fin 3) L).map star = 0 := by
-  ext i j
-  simp
-
-private theorem map_star_map_star_fin_three (X : Matrix (Fin 3) (Fin 3) L) : (X.map star).map star = X := by
-  ext i j
-  simp
-
 private theorem core (t c : L) (ht : star t = t) (hc' : star c = c) (hc : c * (2 - t) = 1)
     (d u : Etau L t) (hdu : d * u = 1)
     (hu : u * (⟨star u.re, star u.im⟩ : Etau L t) * QuadraticAlgebra.omega = 1)
@@ -206,20 +173,31 @@ private theorem core (t c : L) (ht : star t = t) (hc' : star c = c) (hc : c * (2
   obtain ⟨E, hE⟩ : ∃ E : Matrix (Fin 3) (Fin 3) L, E = 1 - c • (N * N - t • N + 1) := ⟨_, rfl⟩
   obtain ⟨Eb, hEb⟩ : ∃ E : Matrix (Fin 3) (Fin 3) L,
       E = 1 - c • (N.map star * N.map star - t • N.map star + 1) := ⟨_, rfl⟩
-  have hNb : N.map star = D.map star * D := by rw [hN, lintegral_mul_wt_eq_lintegral_mul_wt_conj, map_star_map_star_fin_three]
+  have hm : ∀ X : Matrix (Fin 3) (Fin 3) L, X.map star = (starRingEnd L).mapMatrix X :=
+    fun _ => rfl
+  have hsm : ∀ (a : L) (X : Matrix (Fin 3) (Fin 3) L),
+      (starRingEnd L).mapMatrix (a • X) = star a • (starRingEnd L).mapMatrix X :=
+    fun a X => by ext i j; simp; rfl
+  have hss : ∀ X : Matrix (Fin 3) (Fin 3) L, (X.map star).map star = X :=
+    fun X => by ext i j; simp
+  have hNb : N.map star = D.map star * D := by rw [hN, hm, map_mul, ← hm, ← hm, hss]
   have hN' : D * D.map star = N := hN.symm
   have hCHb : (N.map star - 1) * (N.map star * N.map star - t • N.map star + 1) = 0 := by
-    have h := congrArg (fun X => X.map star) hCH
-    simp only [lintegral_mul_wt_eq_lintegral_mul_wt_conj, sub_map_star_fin_three, add_map_star_fin_three, smul_map_star_fin_three, one_map_star_fin_three, zero_map_star_fin_three, ht] at h
+    have h := congrArg (starRingEnd L).mapMatrix hCH
+    simp only [map_mul, map_sub, map_add, hsm, map_one, map_zero, ht] at h
+    simp only [← hm] at h
     exact h
   obtain ⟨hee, hc1, hn, hM1⟩ := core_lemma hc hCH hE
   obtain ⟨heeb, hcb, hnb, hM1b⟩ := core_lemma hc hCHb hEb
   have hEstar : Eb.map star = E := by
-    rw [hEb, hE]
-    simp only [lintegral_mul_wt_eq_lintegral_mul_wt_conj, sub_map_star_fin_three, add_map_star_fin_three, smul_map_star_fin_three, one_map_star_fin_three, map_star_map_star_fin_three, hc', ht]
+    rw [hEb, hE, hm]
+    simp only [map_sub, map_one, hsm, map_add, map_mul, hc', ht]
+    simp only [← hm, hss]
   have hFstar : ((1 - Eb) + Psi t (N.map star) Eb u).map star =
       (1 - E) + Psi t N E ⟨star u.re, star u.im⟩ := by
-    simp only [Psi, lintegral_mul_wt_eq_lintegral_mul_wt_conj, sub_map_star_fin_three, add_map_star_fin_three, smul_map_star_fin_three, one_map_star_fin_three, map_star_map_star_fin_three, hEstar]
+    rw [hm]
+    simp only [Psi, map_add, map_sub, map_one, hsm, map_mul]
+    simp only [← hm, hss, hEstar]
   have hDNb : D * N.map star = N * D := by rw [hNb, ← mul_assoc, hN']
   have hDbN : D.map star * N = N.map star * D.map star := by rw [hNb, mul_assoc, hN']
   have hu' : QuadraticAlgebra.omega * (u * (⟨star u.re, star u.im⟩ : Etau L t)) = 1 := by
@@ -227,7 +205,7 @@ private theorem core (t c : L) (ht : star t = t) (hc' : star c = c) (hc : c * (2
     ring
   refine ⟨D * ((1 - Eb) + Psi t (N.map star) Eb u), ?_, ?_, ?_⟩
   · have h5 := mul_one_sub_add_psi_eq_of_conj hDbN hE hEb u
-    rw [lintegral_mul_wt_eq_lintegral_mul_wt_conj, hFstar]
+    rw [hm (D * _), map_mul, ← hm, ← hm, hFstar]
     calc _ = D * (((1 - Eb) + Psi t (N.map star) Eb u) * D.map star) *
           ((1 - E) + Psi t N E ⟨star u.re, star u.im⟩) := by simp only [mul_assoc]
       _ = D * (D.map star * ((1 - E) + Psi t N E u)) *

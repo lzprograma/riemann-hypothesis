@@ -48,13 +48,11 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim GlobalTheory.FlipRun
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
 noncomputable section
 
 namespace GlobalTheory.OppConv
 
-open GlobalTheory.FlipRun GlobalTheory.RowClaim
 
 variable {D : D7} {T : Type}
 
@@ -193,7 +191,7 @@ theorem pathArgs_zero : ∀ {Y : Node} (p : Path T X Y) (x : ArgT G p) (e : Glob
   | _, .snoc a p, x, e, he => by
       rw [edges_snoc, List.mem_append, List.mem_singleton, not_or] at he
       show argAt B t w a x.2 e (pathArgs B t w p x.1 e) = 0
-      rw [argAt, dif_neg (Ne.symm he.2)]
+      rw [argAt, dite_eq_right (Ne.symm he.2)]
       exact pathArgs_zero p x.1 e he.1
 
 theorem pathArgs_comp (p : Path T X Y) (x : ArgT G p) (e : GlobalTheory.SplitFlip.Edge) : ∀ {Z : Node} (q : Path T Y Z) (y : ArgT G q),
@@ -208,8 +206,8 @@ theorem pathArgs_comp (p : Path T X Y) (x : ArgT G p) (e : GlobalTheory.SplitFli
       rw [hl, hr, edges_snoc]
       by_cases h : edgeOf a = e
       · refine ⟨fun _ => ?_, fun h' => absurd (List.mem_append_right _ (List.mem_singleton.2 h.symm)) h'⟩
-        simp only [argAt, dif_pos h]
-      · simp only [argAt, dif_neg h]
+        simp only [argAt, dite_eq_left h]
+      · simp only [argAt, dite_eq_right h]
         refine ⟨fun h' => ih.1 ?_, fun h' => ih.2 ?_⟩
         · rcases List.mem_append.1 h' with h'' | h''
           · exact h''
@@ -226,8 +224,8 @@ theorem pathArgs_row (j : ℕ) : ∀ (n : ℕ) (x : ∀ i : Fin n, WO (G.pS (Arr
       by_cases hi : i = n
       · subst hi
         rw [argAt]
-        exact dif_pos rfl
-      · rw [argAt, dif_neg (by simp only [edgeOf, ne_eq, GlobalTheory.SplitFlip.Edge.ex.injEq, not_and]; intro h'; exact absurd h'.symm hi)]
+        exact dite_eq_left rfl
+      · rw [argAt, dite_eq_right (by simp only [edgeOf, ne_eq, GlobalTheory.SplitFlip.Edge.ex.injEq, not_and]; intro h'; exact absurd h'.symm hi)]
         exact pathArgs_row j n (fun i => x i.castSucc) i (by omega)
 
 theorem pathArgs_down (i : ℕ) : ∀ (n : ℕ) (y : ∀ j : Fin n, WO (G.pS (Arrow.down t i j).pair) (G.pT (Arrow.down t i j).pair))
@@ -467,7 +465,7 @@ theorem pathArgs_opp (B : Frames G) (w : Pl D.host.E) (x y) :
         cases hk'
       refine (hc.2 h1).trans ?_
       rw [pathArgs_zero B t w _ _ _ h2]
-      simp only [oppArgs, dif_neg h]
+      simp only [oppArgs, dite_eq_right h]
   | ex i j =>
     have h1 : GlobalTheory.SplitFlip.Edge.ex i j ∉ edges (downPath t D.R.m D.R.m) := by
       rw [mem_edges_down]
@@ -485,7 +483,7 @@ theorem pathArgs_opp (B : Frames G) (w : Pl D.host.E) (x y) :
         simp only [GlobalTheory.SplitFlip.Edge.ex.injEq] at hk'
         exact h ⟨hk'.1 ▸ hk, hk'.2⟩
       rw [pathArgs_zero B t w _ _ _ h2]
-      simp only [oppArgs, dif_neg h]
+      simp only [oppArgs, dite_eq_right h]
 
 theorem zip_opp (W : G.Weil) (P : PolE G) (d : SchRow G × SchDown G t) :
     Path.Fam.zip (fun a (f : Sch G a) Q => W.fock a.pair f Q) (oppFam t d) (restrictPol P (oppPath t D.R.m)) =

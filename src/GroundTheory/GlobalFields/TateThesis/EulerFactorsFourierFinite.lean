@@ -3,49 +3,6 @@ module
 public import GroundTheory.GlobalFields.TateThesis.EulerFactorsFinite
 import GroundTheory.GlobalFields.TateThesis.AdeleScaling
 public import GroundTheory.GlobalFields.TateThesis.EulerFactorsInverse
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -89,9 +46,9 @@ theorem multiplicity_finprod_asIdeal_pow {R : Type*} [CommRing R] [IsDedekindDom
     by_cases hw : w = v
     · rw [hw]
       show a v + (if v = v then 1 else 0) ≤ _
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       omega
-    · simp only [b, if_neg hw, add_zero]
+    · simp only [b, ite_eq_right hw, add_zero]
       exact (finprod_asIdeal_pow_dvd_iff ha hI).1 dvd_rfl w
   have hfa : Function.HasFiniteMulSupport fun w : HeightOneSpectrum R ↦ w.asIdeal ^ a w := by
     rw [Function.HasFiniteMulSupport, mulSupport_asIdeal_pow]; exact ha
@@ -104,7 +61,7 @@ theorem multiplicity_finprod_asIdeal_pow {R : Type*} [CommRing R] [IsDedekindDom
     simp only [b, pow_add]
     rw [finprod_mul_distrib hfa hfv]
     congr 1
-    rw [finprod_eq_single _ v fun w hw ↦ by simp [hw], if_pos rfl, pow_one]
+    rw [finprod_eq_single _ v fun w hw ↦ by simp [hw], ite_eq_left rfl, pow_one]
   rw [hsplit] at hdvd
   have h1' : I * v.asIdeal ∣ I * 1 := by rwa [mul_one]
   have hv1 := (mul_dvd_mul_iff_left (show I ≠ 0 from hI)).1 h1'
@@ -202,7 +159,7 @@ theorem finiteTest_mul {v : HeightOneSpectrum (𝓞 K)} (u : (v.adicCompletion K
         χ.finiteTest v x := by
   have hv' : Valued.v ((u : v.adicCompletion K) * x) = Valued.v x := by rw [map_mul, hu, one_mul]
   by_cases hv : v.asIdeal ∣ χ.conductor
-  · rw [if_pos hv]
+  · rw [ite_eq_left hv]
     by_cases hx : Valued.v x = 1
     · have hx0 : x ≠ 0 := fun h0 ↦ by simp [h0] at hx
       have e1 := χ.finiteTest_of_dvd hv (u * Units.mk0 x hx0) (by
@@ -212,9 +169,9 @@ theorem finiteTest_mul {v : HeightOneSpectrum (𝓞 K)} (u : (v.adicCompletion K
       rw [e1, e2, map_mul, Circle.coe_mul, mul_inv]
     · rw [χ.finiteTest_eq_zero_of_dvd hv hx, χ.finiteTest_eq_zero_of_dvd hv (by rwa [hv']),
         mul_zero]
-  · rw [if_neg hv, one_mul]
+  · rw [ite_eq_right hv, one_mul]
     unfold finiteTest
-    simp only [if_neg hv, hv']
+    simp only [ite_eq_right hv, hv']
 
 theorem finiteTestFun_units_mul (u : (FiniteAdeleRing (𝓞 K) K)ˣ)
     (hu : ∀ v, Valued.v ((u : FiniteAdeleRing (𝓞 K) K) v) = 1) (x : FiniteAdeleRing (𝓞 K) K) :
@@ -230,15 +187,15 @@ theorem finiteTestFun_units_mul (u : (FiniteAdeleRing (𝓞 K) K)ˣ)
   have hfc : Function.HasFiniteMulSupport c :=
     χ.finite_setOf_dvd_conductor.subset fun v hv ↦ by
       by_contra h
-      exact hv (if_neg h)
+      exact hv (ite_eq_right h)
   rw [finiteTestFun, finprod_congr hc, finprod_mul_distrib hfc (χ.hasFiniteMulSupport_finiteTest x),
     conductorChar, ← Finset.prod_inv_distrib]
   congr 1
   rw [finprod_eq_prod_of_mulSupport_subset _ (s := χ.conductorPrimes)]
-  · exact Finset.prod_congr rfl fun v hv ↦ if_pos (χ.mem_conductorPrimes.1 hv)
+  · exact Finset.prod_congr rfl fun v hv ↦ ite_eq_left (χ.mem_conductorPrimes.1 hv)
   · intro v hv
     by_contra h
-    exact hv (if_neg fun h' ↦ h (χ.mem_conductorPrimes.2 h'))
+    exact hv (ite_eq_right fun h' ↦ h (χ.mem_conductorPrimes.2 h'))
 
 theorem map_units_mul_finiteAdeleMeasure (u : (FiniteAdeleRing (𝓞 K) K)ˣ)
     (hu : ∀ v, Valued.v ((u : FiniteAdeleRing (𝓞 K) K) v) = 1) :
@@ -472,7 +429,7 @@ theorem finiteFourier_finiteTestFun (δ : (FiniteAdeleRing (𝓞 K) K)ˣ)
         exact hb v hv'
       have e := (χ⁻¹).finiteTest_of_dvd (by rw [hcond]; exact hv') _ h1
       rw [coe_unitOrOne (hz0 v hv)] at e
-      rw [e, localComponent_inv, Circle.coe_inv, inv_inv, hcomp, if_pos hv]
+      rw [e, localComponent_inv, Circle.coe_inv, inv_inv, hcomp, ite_eq_left hv]
     · intro v hv
       by_contra hvD
       have hv' : ¬ v.asIdeal ∣ (χ⁻¹).conductor := by

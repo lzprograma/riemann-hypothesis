@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.UnivLift
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DPoly
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
@@ -343,8 +344,7 @@ private theorem frat (l : ℕ) [Fact l.Prime] {G : Type} [Group G] [TopologicalS
   by_contra hne
   have hne' : Multiplicative.toAdd (ψ v) ≠ 0 := fun h0 => hne (by simpa using congrArg Multiplicative.ofAdd h0)
   have hf : ∃ f : M →ₗ[ZMod l] ZMod l, f (Multiplicative.toAdd (ψ v)) ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hne' (dual_zero (ZMod l) M _ hc)
   obtain ⟨f, hf⟩ := hf
   let φ : H →* Multiplicative (ZMod l) := (AddMonoidHom.toMultiplicative f.toAddMonoidHom).comp ψ
@@ -387,7 +387,7 @@ private theorem lev_open {k G : Type} [CommRing k] [Group G] [TopologicalSpace G
       intro N
       rw [TwoSidedIdeal.mem_iInf]
       exact hall N
-    push_neg at hx1
+    push Not at hx1
     obtain ⟨N, H, hN⟩ := hx1
     refine ⟨(N, H), fun x hx hxmem => hN ?_⟩
     have hd : x - x0 ∈ closureIdeal I S := (mk_eq _ _).1 (by rw [map_sub, hx, sub_self])
@@ -822,15 +822,7 @@ private theorem mem_pow_map (f : A →ₐ[O] A') (N : ℕ) {x : A} (hx : x ∈ m
 
 private theorem map_pow_max (f : A →ₐ[O] A') (hf : Function.Surjective f) (N : ℕ) :
     (maximalIdeal A ^ N).map (f : A →+* A') = maximalIdeal A' ^ N := by
-  rw [Ideal.map_pow]
-  congr 1
-  apply le_antisymm
-  · rw [Ideal.map_le_iff_le_comap]
-    intro x hx
-    exact (mem_max_map f).2 hx
-  · intro y hy
-    obtain ⟨x, rfl⟩ := hf y
-    exact Ideal.mem_map_of_mem _ ((mem_max_map f).1 hy)
+  apply _root_.map_pow_max <;> assumption
 
 private theorem fin_quot (O A : Type) [CommRing O] [IsLocalRing O] [Finite (ResidueField O)] [CommRing A]
     [Algebra O A] [IsCO O A] (N : ℕ) : Finite (A ⧸ maximalIdeal A ^ N) := by

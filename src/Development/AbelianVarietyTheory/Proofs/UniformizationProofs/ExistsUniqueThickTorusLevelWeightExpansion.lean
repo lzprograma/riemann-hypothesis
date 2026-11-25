@@ -59,7 +59,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRin
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.UU
 
 noncomputable section
@@ -409,10 +408,10 @@ theorem existsUnique_level_expansion : (∀ (R : Type) [CommRing R] [IsDomain R]
     g.isKernel D.P.isLB σ
   choose d hd using fun α => exists_coeff g k α (τ α) (h₁ α)
   refine existsUnique_of_exists_of_unique ⟨fun α => if α ∈ s then d α else DVR.SecOps.secZero, s,
-    fun α hα j => by beta_reduce; rw [if_neg hα]; rfl, fun z J hJ => ?_⟩ ?_
+    fun α hα j => by beta_reduce; rw [ite_eq_right hα]; rfl, fun z J hJ => ?_⟩ ?_
   · refine (h₂ _ (𝟙 _) z J hJ).trans (Finset.sum_congr rfl fun α hα => ?_)
     beta_reduce
-    rw [if_pos hα]
+    rw [ite_eq_left hα]
     exact hd α z J hJ
   · rintro f f' ⟨s₁, a₁, b₁⟩ ⟨s₂, a₂, b₂⟩
     exact coeff_unique g k f f' s₁ s₂ a₁ a₂ fun z J hJ => (b₁ z J hJ).symm.trans (b₂ z J hJ)

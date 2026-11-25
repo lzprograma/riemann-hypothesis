@@ -67,8 +67,7 @@ theorem exists_injective_rows_leadingMinors_not_mem (R : Type) [CommRing R] (p :
     have hsum := T.det_succ_column (Fin.last n)
     obtain ⟨i, hi⟩ : ∃ i : Fin (n+1), (-1) ^ ((i : ℕ) + (Fin.last n : ℕ)) * T i (Fin.last n) *
         (T.submatrix i.succAbove (Fin.last n).succAbove).det ∉ p := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hT (hsum ▸ p.sum_mem fun i _ => h i)
     have hM : (T.submatrix i.succAbove Fin.castSucc).det ∉ p := by
       intro hm
@@ -113,8 +112,6 @@ theorem exists_injective_rows_leadingMinors_not_mem (R : Type) [CommRing R] (p :
       have hmat : (Matrix.of fun a b : Fin (n+1) => T (f (Fin.castLE hk a)) (Fin.castLE hk b)) =
           T.submatrix σ id := by
         ext a b
-        have e1 : Fin.castLE hk a = a := Fin.ext rfl
-        have e2 : Fin.castLE hk b = b := Fin.ext rfl
         simp [σ]
       rw [hmat, Matrix.det_permute]
       intro hm

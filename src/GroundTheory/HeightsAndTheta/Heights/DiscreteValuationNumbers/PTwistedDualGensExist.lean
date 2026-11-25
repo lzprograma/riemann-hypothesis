@@ -323,24 +323,24 @@ theorem TwistedDualGensExist.proof : TwistedDualGensExist.Statement := by
       intro c ψ d
       rw [hU, hΦ]
       by_cases h : c = c'' ∧ d = c'
-      · rw [if_pos h, if_pos h]
+      · rw [ite_eq_left h, ite_eq_left h]
         obtain ⟨h1, h2⟩ := h
         rw [h1, h2]
         split_ifs with hψ
         · rw [smul_smul, mul_assoc, hYX, mul_one]
         · rw [smul_zero]
-      · rw [if_neg h, if_neg h, zero_mul, zero_smul]
+      · rw [ite_eq_right h, ite_eq_right h, zero_mul, zero_smul]
     have hre := Equiv.sum_comp e.symm (fun i => (U i * ∏ k, y ⟨k, c' k⟩ ^ (-a k)) • Φ i)
     refine Eq.trans ?_ hre.symm
     rw [Fintype.sum_prod_type, Fintype.sum_eq_single c'']
     · rw [Fintype.sum_prod_type]
-      simp only [hterm, true_and, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      simp only [hterm, true_and, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
       rw [Finset.sum_coe_sort T (fun ψ => if ψ ∈ G c'' then u ψ • ψ else 0), Finset.sum_ite_mem,
         Finset.inter_eq_right.2 (Finset.subset_biUnion_of_mem G (Finset.mem_univ c'')), hsum]
     · intro c hc
       refine Finset.sum_eq_zero fun p _ => ?_
       obtain ⟨ψ, d⟩ := p
-      rw [hterm, if_neg fun h => hc h.1]
+      rw [hterm, ite_eq_right fun h => hc h.1]
 
 end Segre
 

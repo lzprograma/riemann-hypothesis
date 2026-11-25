@@ -227,7 +227,7 @@ theorem ratio_moment : HypsG → ∀ (k r : ℕ) (Wp : Type) [NormedAddCommGroup
         (hE ν hν).1 _ hx a v) hdg.le
     simp only [Finset.mul_sum] at h1
     linarith
-  · have h1 := _root_.GlobalTheory.T.unitaryGlModule_level_sum_norm_sq_le _ _ _ _ _ k i bv b v hMod (hsh ν hν).2.1 hbv hi hv
+  · have h1 := _root_.GlobalTheory.lev_gl_size _ _ _ _ _ k i bv b v hMod (hsh ν hν).2.1 hbv hi hv
     linarith [show (b ^ 2) ^ 2 = b ^ 4 by ring]
 
 end GlobalTheory.RatioMoment

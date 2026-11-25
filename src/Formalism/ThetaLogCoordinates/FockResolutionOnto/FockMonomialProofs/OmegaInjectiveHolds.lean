@@ -6,58 +6,9 @@ public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProof
 public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.RaisingKeepsEarlyLetters
 public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.TypesLELeYcondC
 public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.FirstWeightLeOfSupport
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Formalism.MahlerMeasure.MahlerMeasureProofs.LevelAct
 import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.MulEarlyLettersHolds
 import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.ResInto
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.TotallySplit
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -375,7 +326,7 @@ def phiW {r : ℕ} (γ : Fin r → ℤ) : ℤ := ∑ c : Fin r, ((c : ℕ) : ℤ
 
 theorem phiW_shift (γ : Fin r → ℤ) (c d : Fin r) : phiW (shiftW γ c d) = phiW γ + ((c : ℕ) : ℤ) - ((d : ℕ) : ℤ) := by
   simp only [phiW, shiftW, mul_add, mul_sub, Finset.sum_add_distrib, Finset.sum_sub_distrib, mul_ite, mul_one, mul_zero,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 theorem exists_top (x : MvPolynomial (Fin (K + 1) × Fin r) ℚ_[p]) (hx : x ≠ 0) :
     ∃ β : Fin r → ℤ, cw p K β x ≠ 0 ∧ (∀ γ, phiW β < phiW γ → cw p K γ x = 0) ∧ ∃ m ∈ x.support, wp K m = β := by
@@ -386,7 +337,7 @@ theorem exists_top (x : MvPolynomial (Fin (K + 1) × Fin r) ℚ_[p]) (hx : x ≠
   refine ⟨wp K m, ?_, ?_, m, hm, rfl⟩
   · intro h0
     have := congrArg (AddMonoidAlgebra.coeff · m) h0
-    rw [cw, coeff_compL, if_pos rfl, AddMonoidAlgebra.coeff_zero] at this
+    rw [cw, coeff_compL, ite_eq_left rfl, AddMonoidAlgebra.coeff_zero] at this
     exact (mem_support_iff.mp hm) this
   · intro γ hγ
     ext m'
@@ -458,9 +409,9 @@ theorem eW_pow_ne (a a' : Fin r) (haa : a ≠ a') : ∀ (i : ℕ) (γ : Fin r �
     intro γ z hz hz0 h1 h2
     rw [pow_succ, Module.End.mul_apply]
     refine ih (shiftW γ a a') _ (eW_mem γ a a' z hz) (eW_ne γ a a' haa z hz hz0 (by push_cast at h1; omega) h2) ?_ ?_
-    · simp only [shiftW, if_neg haa, if_true]
+    · simp only [shiftW, ite_eq_right haa, ite_true]
       push_cast at h1; omega
-    · simp only [shiftW, if_neg (Ne.symm haa), if_true]
+    · simp only [shiftW, ite_eq_right (Ne.symm haa), ite_true]
       omega
 
 def shiftN {r : ℕ} (γ : Fin r → ℤ) (c d : Fin r) (i : ℤ) : Fin r → ℤ :=
@@ -548,13 +499,13 @@ theorem glAct_nil {N : ℕ} (LL : Letters N) (j : ℕ) (c d : Fin r) (hcd : c �
     refine glAct_keep LL j c d _ _ ?_ ?_
     · intro i hi hv m hm hb
       refine ⟨by rw [sum_shift m _ _ hb]; exact hm.1, ?_⟩
-      rw [(wt_shift LL j c d c i hi m).1 hv hb, if_pos rfl, if_neg (Ne.symm hcd)]
+      rw [(wt_shift LL j c d c i hi m).1 hv hb, ite_eq_left rfl, ite_eq_right (Ne.symm hcd)]
       have := hm.2
       push_cast
       linarith
     · intro i hi hv m hm hb
       refine ⟨by rw [sum_shift m _ _ hb]; exact hm.1, ?_⟩
-      rw [(wt_shift LL j c d c i hi m).2 hv hb, if_pos rfl, if_neg (Ne.symm hcd)]
+      rw [(wt_shift LL j c d c i hi m).2 hv hb, ite_eq_left rfl, ite_eq_right (Ne.symm hcd)]
       have := hm.2
       push_cast
       linarith
@@ -607,7 +558,7 @@ theorem strip_le (LL : Letters (K + 1)) (hv : LL.vec (Fin.last K) = true) (Cs : 
       (((th a - β a - k) - (th a' - β a' + k) : ℤ) : ℚ_[p]) • u := by
     rw [LinearMap.sub_apply, hu, hd1, hd2, ← sub_smul]
     congr 1
-    simp only [shiftN, if_neg hne, if_neg (Ne.symm hne), if_true]
+    simp only [shiftN, ite_eq_right hne, ite_eq_right (Ne.symm hne), ite_true]
     push_cast
     ring
   refine hu0 (sl2_injectivity_holds ℚ_[p] _ (glAct p LL K a a') (glAct p LL K a' a) (glAct p LL K a a - glAct p LL K a' a')
@@ -615,22 +566,22 @@ theorem strip_le (LL : Letters (K + 1)) (hv : LL.vec (Fin.last K) = true) (Cs : 
   · intro z
     have h1 := glAct_comm LL K a a a a' z
     have h2 := glAct_comm LL K a' a' a a' z
-    rw [if_pos rfl, if_neg (Ne.symm hne)] at h1
-    rw [if_neg (Ne.symm hne), if_pos rfl] at h2
+    rw [ite_eq_left rfl, ite_eq_right (Ne.symm hne)] at h1
+    rw [ite_eq_right (Ne.symm hne), ite_eq_left rfl] at h2
     simp only [LinearMap.sub_apply, map_sub]
     rw [two_smul]
     linear_combination (exp := 1) h1 - h2
   · intro z
     have h1 := glAct_comm LL K a a a' a z
     have h2 := glAct_comm LL K a' a' a' a z
-    rw [if_neg hne, if_pos rfl] at h1
-    rw [if_pos rfl, if_neg hne] at h2
+    rw [ite_eq_right hne, ite_eq_left rfl] at h1
+    rw [ite_eq_left rfl, ite_eq_right hne] at h2
     simp only [LinearMap.sub_apply, map_sub]
     rw [two_smul]
     linear_combination (exp := 1) h1 - h2
   · intro z
     have h1 := glAct_comm LL K a a' a' a z
-    rw [if_pos rfl, if_pos rfl] at h1
+    rw [ite_eq_left rfl, ite_eq_left rfl] at h1
     rw [LinearMap.sub_apply]
     exact h1
 
@@ -715,7 +666,7 @@ theorem omega_top (LL : Letters (K + 1)) (hv : LL.vec (Fin.last K) = true) (ρ :
     intro a ha b hb
     rw [eW_apply, cw_WD, cw_glAct]
     rcases lt_trichotomy a b with hab | hab | hab
-    · rw [eJ_cw_lt LL hv _ th x hx a b ha hb hab, if_neg (ne_of_lt hab), if_pos hab]
+    · rw [eJ_cw_lt LL hv _ th x hx a b ha hb hab, ite_eq_right (ne_of_lt hab), ite_eq_left hab]
       have e1 : shiftW (shiftW β a b) b a = β := by funext c'; simp only [shiftW]; ring
       have hne : ((Fin.last K, a) : Fin (K + 1) × Fin r) ≠ (Fin.last K, b) :=
         fun h => (ne_of_lt hab) (Prod.mk.inj h).2
@@ -726,14 +677,14 @@ theorem omega_top (LL : Letters (K + 1)) (hv : LL.vec (Fin.last K) = true) (ρ :
       ring
     · subst hab
       rw [shiftW_self, eJ_cw_diag LL hv _ th x hx a ha, Derivation.map_smul, mul_smul_comm,
-        WS_eig β _ (cw_mem β x) a, smul_smul, if_pos rfl, if_neg (lt_irrefl a)]
+        WS_eig β _ (cw_mem β x) a, smul_smul, ite_eq_left rfl, ite_eq_right (lt_irrefl a)]
       congr 1
       push_cast
       ring
     · rw [htop (shiftW β a b) (by
         rw [phiW_shift]
         have : ((b : ℕ) : ℤ) < ((a : ℕ) : ℤ) := by exact_mod_cast hab
-        omega), map_zero, map_zero, mul_zero, if_neg (ne_of_gt hab), if_neg (not_lt_of_gt hab)]
+        omega), map_zero, map_zero, mul_zero, ite_eq_right (ne_of_gt hab), ite_eq_right (not_lt_of_gt hab)]
       simp
 
   rw [omega_formula LL ρ c o x hP hF, map_sub, map_smul, map_sum]
@@ -766,9 +717,9 @@ theorem enum_pos {r : ℕ} [NeZero r] (ρ : Fin r) (hr : 2 ≤ r) (hρ : (ρ : �
   classical
   let ka : ℕ → ℤ := fun i => if h : i < r then th ⟨i, h⟩ - β ⟨i, h⟩ else 0
   let bN : ℕ → ℕ := fun i => if h : i < r then (β ⟨i, h⟩).toNat else 0
-  have hka : ∀ a : Fin r, ka (a : ℕ) = th a - β a := fun a => by simp only [ka, dif_pos a.isLt, Fin.eta]
+  have hka : ∀ a : Fin r, ka (a : ℕ) = th a - β a := fun a => by simp only [ka, dite_eq_left a.isLt, Fin.eta]
   have hbN : ∀ a : Fin r, ((bN (a : ℕ) : ℕ) : ℤ) = β a := fun a => by
-    simp only [bN, dif_pos a.isLt, Fin.eta]; exact Int.toNat_of_nonneg (hβ a)
+    simp only [bN, dite_eq_left a.isLt, Fin.eta]; exact Int.toNat_of_nonneg (hβ a)
   have hmem : ∀ i, (h : i < r - 1) → (⟨i, by omega⟩ : Fin r) ∈ univ.erase ρ := by
     intro i h
     refine Finset.mem_erase.mpr ⟨fun he => ?_, Finset.mem_univ _⟩
@@ -808,7 +759,7 @@ theorem enum_pos {r : ℕ} [NeZero r] (ρ : Fin r) (hr : 2 ≤ r) (hρ : (ρ : �
     have h3 : ∑ a ∈ univ.erase ρ, ∑ b ∈ univ.erase ρ, (if a = b then β a * (th a - β a) else 0) =
         ∑ a ∈ univ.erase ρ, β a * (th a - β a) := by
       refine Finset.sum_congr rfl fun a ha => ?_
-      rw [Finset.sum_ite_eq, if_pos ha]
+      rw [Finset.sum_ite_eq, ite_eq_left ha]
     rw [h3]
     have e2 : (c - ((o : ℤ) + 1) + 1) * ((o : ℤ) + 1) = (c - o) * (o + 1) := by ring
     rw [e2] at key
@@ -858,7 +809,7 @@ theorem omega_comm (LL : Letters (K + 1)) (hv : LL.vec (Fin.last K) = true) (ρ 
 
   rw [LinearMap.sum_apply, LinearMap.sum_apply, map_sum]
   simp only [LinearMap.comp_apply, hterm]
-  rw [Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.sum_ite_eq, if_pos hs, if_pos ht]
+  rw [Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.sum_ite_eq, ite_eq_left hs, ite_eq_left ht]
   abel
 
 theorem glAct_free {N : ℕ} (LL : Letters N) (j : ℕ) (s t : Fin r) (v : Fin N × Fin r) (hs : s ≠ v.2) (ht : t ≠ v.2) :

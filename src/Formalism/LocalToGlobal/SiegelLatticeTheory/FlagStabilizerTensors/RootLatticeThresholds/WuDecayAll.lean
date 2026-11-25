@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.BunExists
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.WuDecayPf
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.GgExistsAddCharNeOne
 public import Formalism.SharpRestriction.CuspSpanNormBounds.ThresholdCubicInequalitySignPattern
@@ -49,36 +50,7 @@ theorem dimS (D : D7) : 2 * D.R.rS + D.R.k + 1 = D.R.r := dimS_eq D.R
 
 theorem gapBig_of_gapHyp (D : D7) (hG : Formalism.L2.SG.ConcreteSettingExists.GapHyp D) (τ : D.what₂.Tau) :
     Formalism.MainNotions.CayleySignature.GapBig D.R.k D.R.rS (Formalism.MainNotions.b48 D τ) := by
-  obtain ⟨hr, hgap⟩ := hG
-  have hdim := dimS D
-  have hm := Formalism.MainNotions.two_rS_add_two D
-  have hk := D.R.m_add_three_le_k
-  refine ⟨D.R.r + 6, ?_, ?_, ?_, ?_⟩
-  · obtain ⟨c, hc⟩ := r_odd D
-    exact ⟨c + 3, by omega⟩
-  · simp only [Formalism.MainNotions.CayleySignature.rk48]; omega
-  · simp only [Formalism.MainNotions.CayleySignature.rk48]; omega
-  · intro j hj
-    have hN : (6 : ℝ) ≤ (D.R.r : ℝ) := by exact_mod_cast (by omega : 6 ≤ D.R.r)
-    have hmN : ((2 * D.R.rS + 2 : ℕ) : ℝ) ≤ (D.R.r : ℝ) := by exact_mod_cast (by omega : 2 * D.R.rS + 2 ≤ D.R.r)
-    have key := Formalism.MainNotions.numNV (D.R.r : ℝ) ((2 * D.R.rS + 2 : ℕ) : ℝ) ((D.R.r + 6 : ℕ) : ℝ) hN hmN (by positivity)
-      (by push_cast; ring)
-    have hrk : Formalism.MainNotions.CayleySignature.rk48 D.R.k D.R.rS = D.R.r := by simp only [Formalism.MainNotions.CayleySignature.rk48]; omega
-    have hcast : (((Formalism.MainNotions.CayleySignature.rk48 D.R.k D.R.rS + (2 * D.R.rS + 2) * (D.R.r + 6) : ℕ)) : ℝ) =
-        (D.R.r : ℝ) + ((2 * D.R.rS + 2 : ℕ) : ℝ) * ((D.R.r + 6 : ℕ) : ℝ) := by
-      rw [hrk]; push_cast; ring
-    rw [hcast]
-    have hj' : (Fin.cast hm j).1 + 1 < D.R.m := by simp; omega
-    have hg := hgap τ (Fin.cast hm j) hj'
-    have hgR : (16 : ℝ) * (D.R.r : ℝ) ^ 19 ≤ Formalism.MainNotions.b48 D τ ⟨j.val + 1, hj⟩ - Formalism.MainNotions.b48 D τ j := by
-      have : Formalism.MainNotions.b48 D τ ⟨j.val + 1, hj⟩ - Formalism.MainNotions.b48 D τ j =
-          (((D.hc τ).b ⟨(Fin.cast hm j).1 + 1, hj'⟩ - (D.hc τ).b (Fin.cast hm j) : ℚ) : ℝ) := by
-        simp only [Formalism.MainNotions.b48]; push_cast; rfl
-      rw [this]
-      exact_mod_cast hg
-    have hpos : (0 : ℝ) < (D.R.r : ℝ) ^ 19 := by positivity
-    push_cast at key ⊢
-    linarith
+  apply _root_.Formalism.L2.SG.Pf.BunD.gapBig_of <;> assumption
 
 theorem coefW_cast (hC : CoefWeightedLoc) {k r : ℕ} {v : Fin (k - 1) → ℝ} {b : Fin (2 * r + 2) → ℝ}
     (hl : Formalism.QuantumDeterminants.IsHCParam (Formalism.MainNotions.CayleySignature.lam48 k r v b)) (hg : Formalism.MainNotions.CayleySignature.GapBig k r b) {n : ℕ}
@@ -558,7 +530,7 @@ theorem rootCoord_one (v : InfinitePlace X.B.I.F) (a : Fin D.R.rS) :
   rw [Matrix.one_mulVec]
   split_ifs with h
   · show hJ _ (rv X.B.I v (X.crd (X.fY a))) (rv X.B.I v (X.crd (X.eX ⟨a.1 + 1, h⟩))) = 0
-    rw [Formalism.L2.SG.PoincareInHH.Cut.hJ_crd, Formalism.L2.SG.PoincareInHH.Cut.hT_f_e, if_neg, map_zero]
+    rw [Formalism.L2.SG.PoincareInHH.Cut.hJ_crd, Formalism.L2.SG.PoincareInHH.Cut.hT_f_e, ite_eq_right, map_zero]
     exact fun hc => Nat.succ_ne_self a.1 (congrArg Fin.val hc)
   · show hJ _ (rv X.B.I v (X.crd (X.fY a))) (rv X.B.I v (X.crd (X.zu u))) = 0
     rw [Formalism.L2.SG.PoincareInHH.Cut.hJ_crd, (X.zu_orth u a).2, map_zero]
@@ -695,14 +667,6 @@ def LocUniqStep : Prop :=
       (μS νl : ∀ v, Measure (Formalism.REAL.UJ (X.B.I.ε v))) (C : ℝ≥0∞), QuotWit X u μS νl C →
       ∀ v (W : Formalism.REAL.UJ (X.B.I.ε v) → X.Vloc u v), Continuous W → LocEquivW X u v W → LocReprodW X u v W →
         ∫⁻ y, ‖W y‖ₑ ^ 2 ∂(νl v) ≠ 0 → ∫⁻ y, ‖W y‖ₑ ^ 2 ∂(νl v) ≠ ⊤ → LocConcl X u v (νl v) W
-
-theorem locDecayStep_of (hB : BesselNVGap) (hC : CoefWeightedLoc) (hW : WlocExists)
-    (hBW : Formalism.L2.SG.LocWSOf.BesselOfW) (hM1 : Formalism.L2.SG.LitS.BesselMultOne)
-    (hR : LocReprodStep) (hU : LocUniqStep) : LocDecayStep := by
-  intro D hG X u μS νl C hQ v
-  exact hU hB hC hW hBW hM1 D hG X u μS νl C hQ v (X.Wloc u v) (X.Wloc_cont u v)
-    (fun m hm h hh x => locEquiv X u v m hm h hh x) (hR D hG X u μS νl C hQ v)
-    (localRepresentationL2 X u hQ v).1 (localRepresentationL2 X u hQ v).2
 
 theorem wuDecayOfGap_of_steps (hC : CoefWeightedLoc) (hQ : QuotAll) (hL : LocDecayStep) :
     Formalism.L2.SG.Pf.WuDecayOfGap := by
@@ -1015,9 +979,3 @@ theorem locReprodStep_of (hS : LocScalarStep) : LocReprodStep := by
   exact fun xv => ⟨(hc xv).1, by rw [(hc xv).2, h1, one_smul]⟩
 
 end Formalism.L2.SG.Pf.WuDec
-
-namespace Formalism.L2.SG.Pf
-
-open Formalism.L2.SG.SplitPrimeNormLemmas Formalism.L2.SG.Pf.WuDec
-
-end Formalism.L2.SG.Pf

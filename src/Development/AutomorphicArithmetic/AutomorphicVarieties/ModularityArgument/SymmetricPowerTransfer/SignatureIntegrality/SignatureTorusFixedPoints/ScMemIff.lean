@@ -178,9 +178,9 @@ theorem UpperTheory.V.Z.Sym.Sig.eqZ :
           convert hc using 1
           rw [map_mul]
           group), map_mul, mul_inv, Units.val_mul]
-      · have h0 : V.fZ ω d g = 0 := dif_neg h
+      · have h0 : V.fZ ω d g = 0 := dite_eq_right h
         have h1 : V.fZ ω d (GeneralLinearGroup.scalar (Fin n) z * g) = 0 :=
-          dif_neg (fun ⟨c, hc⟩ => h ⟨z⁻¹ * c, by
+          dite_eq_right (fun ⟨c, hc⟩ => h ⟨z⁻¹ * c, by
             convert hc using 1
             rw [map_mul, map_inv]
             group⟩)
@@ -189,8 +189,8 @@ theorem UpperTheory.V.Z.Sym.Sig.eqZ :
       by_cases h : ∃ c : kˣ, (GeneralLinearGroup.scalar (Fin n) c)⁻¹ * g ∈ V.DC d
       · obtain ⟨c, hc⟩ := h
         rw [fZ_eq V ω hω hn hd hc, fZ_eq V ω hω hn hd (dc_tr V hu hu' hc)]
-      · have h0 : V.fZ ω d g = 0 := dif_neg h
-        have h1 : V.fZ ω d (u * g * u') = 0 := dif_neg (fun ⟨c, hc⟩ => h ⟨c, by
+      · have h0 : V.fZ ω d g = 0 := dite_eq_right h
+        have h1 : V.fZ ω d (u * g * u') = 0 := dite_eq_right (fun ⟨c, hc⟩ => h ⟨c, by
           have h2 := dc_tr V (inv_mem hu) (inv_mem hu') hc
           have e : u⁻¹ * (u * g * u') * u'⁻¹ = g := by group
           rwa [e] at h2⟩)
@@ -201,7 +201,7 @@ theorem UpperTheory.V.Z.Sym.Sig.eqZ :
       intro y hy
       have hex : ∃ c : kˣ, (GeneralLinearGroup.scalar (Fin n) c)⁻¹ * y.out ∈ V.DC d := by
         by_contra h
-        exact hy (dif_neg h)
+        exact hy (dite_eq_right h)
       obtain ⟨c, a, ha, b, hb, e⟩ := hex
       obtain ⟨j, hj⟩ := QuotientGroup.mk_out_eq_mul (V.J n) (a * dg d)
       refine ⟨((a * dg d : GL (Fin n) k) : GL (Fin n) k ⧸ V.J n), ⟨⟨a, ha⟩, rfl⟩, ?_⟩

@@ -59,8 +59,6 @@ open scoped Classical
 
 namespace UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi
 
-attribute [local instance] PositivityTheory.Rg.BcB.E.borelH borelG borelF borelA
-
 section SlopeTestRemainingChoices
 
 private def rtRep {X Γ : Type} [Group X] [Group Γ] (τ : Γ →* X) (F : Submodule ℂ (X → ℂ))

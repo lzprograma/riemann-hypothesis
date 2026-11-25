@@ -24,7 +24,7 @@ def holSub0 {Comp : Type} (X : Comp → Data E r) (la : ∀ k, ReciprocityTheory
 
 variable {Xo c} in
 theorem rdU_mem_offZero {σ : c.F →+* ℂ} (V : Unf Xo c σ r) (f : Rul Xo c) : rdU V f ∈ offZero V.X :=
-  fun _ _ hx => dif_neg hx
+  fun _ _ hx => dite_eq_right hx
 
 
 end Formalism.L2.Pj

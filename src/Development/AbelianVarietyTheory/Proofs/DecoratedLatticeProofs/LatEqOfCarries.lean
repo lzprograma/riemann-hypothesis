@@ -47,7 +47,6 @@ import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Forms Formalism.UG
 open NumberField IsDedekindDomain Matrix MeasureTheory GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.MixPer GlobalTheory.Core.Rk GlobalTheory.AdForm
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 namespace GlobalTheory.BaseCosetPt
@@ -99,7 +98,7 @@ theorem cosetIn_eq_of {u : Pr.Word} {j : ℕ} (r : PtAt R sel mu cst u j) (P : r
   classical
   apply Set.ext
   intro z
-  simp only [cosetIn, if_pos hP, pow_zero, inv_one, one_smul, Set.mem_setOf_eq, hY]
+  simp only [cosetIn, ite_eq_left hP, pow_zero, inv_one, one_smul, Set.mem_setOf_eq, hY]
   constructor
   · rintro ⟨y', hy', hz⟩
     have h1 : y' - y ∈ Formalism.HermitianLatticesTheory.localization₂ P.1.asIdeal r.1.1.deco.1.N := by
@@ -111,11 +110,5 @@ theorem cosetIn_eq_of {u : Pr.Word} {j : ℕ} (r : PtAt R sel mu cst u j) (P : r
     exact ⟨y, by simp, hz⟩
 
 end Pt
-
-end GlobalTheory.BaseCosetPt
-
-namespace GlobalTheory.BaseCosetPt
-
-open Formalism.L2.Col Formalism.MainNotions Formalism.L2.DIV
 
 end GlobalTheory.BaseCosetPt

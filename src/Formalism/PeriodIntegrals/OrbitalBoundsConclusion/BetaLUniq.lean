@@ -9,49 +9,9 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.F
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.WAniso
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.EqZeroOfNormLtOne
 public import Formalism.PeriodIntegrals.BetaLUniq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Linter.Style
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Module.StablyFree.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.AgreeOnH, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.LineReduce, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.BetaLUniqOfAnisoEigen, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.CMNorm, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.EigenvalueLastLineOne, Formalism.PeriodIntegrals.OrbitalBoundsConclusion.BetaLUniq
@@ -220,14 +180,6 @@ theorem finrank_Xsp {r : ℕ} {T : E} (F : LFlag S r T) : finrank E (Xsp F) = r 
   show finrank E (Submodule.span E (Set.range F.fl.e)) = r
   rw [finrank_span_eq_card F.fl.e_indep]; simp
 
-theorem Xflag_r {r : ℕ} {T : E} (F : LFlag S r T) : Xflag F r = Xsp F := by
-  show Submodule.span E (F.fl.e '' {i | i.1 < r}) = Submodule.span E (Set.range F.fl.e)
-  congr 1
-  rw [← Set.image_univ]
-  congr 1
-  ext i
-  simp
-
 theorem inf_span_eq_bot {P : Submodule E S.V} {v : S.V} (hv : v ∉ P) :
     P ⊓ Submodule.span E {v} = ⊥ := by
   rw [Submodule.eq_bot_iff]
@@ -362,9 +314,9 @@ theorem line_reduction_holds : LineReduce' := by
       omega
 
   have hX'' : Xsp F'' = X'.map (β₁ : S.V →ₗ[E] S.V) := by
-    rw [← Xflag_r F'', ← hf1 r, Xflag_r F']
+    rw [← PI.UnitaryGroupMassFormula.BetaLUniq.EigB.Xflag_r F'', ← hf1 r, PI.UnitaryGroupMassFormula.BetaLUniq.EigB.Xflag_r F']
   have hX''2 : Xsp F'' = X'.map (β₂ : S.V →ₗ[E] S.V) := by
-    rw [← Xflag_r F'', ← hf2 r, Xflag_r F']
+    rw [← PI.UnitaryGroupMassFormula.BetaLUniq.EigB.Xflag_r F'', ← hf2 r, PI.UnitaryGroupMassFormula.BetaLUniq.EigB.Xflag_r F']
   have hγX : ∀ x ∈ X', β₁.symm (β₂ x) ∈ X' := by
     intro x hx
     have : β₂ x ∈ Xsp F'' := by rw [hX''2]; exact Submodule.mem_map_of_mem hx
@@ -439,8 +391,6 @@ section D7
 
 open PI.BetaLUniq
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem betaLUniq_of' (h1 : GramNondeg) (h2 : AgreeOnH) (h3 : WAniso) (h4 : LineReduce')
     (h5 : EigenvalueLastLineOne) : PI.BetaLUniq := by
   intro D u u' Λ F F' F'' β₁ β₂ hF hT' hT'' hG' hG'' hP1 hP2 hs1 hs2
@@ -494,8 +444,6 @@ noncomputable section
 open NumberField Formalism.BasicNotions
 
 namespace PI.UnitaryGroupMassFormula.BetaLUniq
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem cm_norm_eq_one (D : D7) (μ : D.host.E) (h : star μ * μ = 1) (φ : D.host.E →+* ℂ) :
     ‖φ μ‖ = 1 := by
@@ -693,8 +641,6 @@ end Gen
 section D7
 
 open PI.BetaLUniq
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem gS_ge_three (D : D7) : 3 ≤ gS D := by
   have h0 := (D.host.g_prime 0).two_le

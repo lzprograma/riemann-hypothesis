@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LintegralFintypeProd
 public import Mathlib.MeasureTheory.Constructions.Pi
 public import Mathlib.Algebra.BigOperators.Fin
 
@@ -40,19 +41,6 @@ theorem lintegral_fin_prod : ∀ (m : ℕ) {α : Fin m → Type} [∀ i, Measura
 theorem lintegral_pi_prod {ι : Type} [Fintype ι] {α : ι → Type} [∀ i, MeasurableSpace (α i)] (μ : ∀ i, Measure (α i))
     [∀ i, SigmaFinite (μ i)] (f : ∀ i, α i → ℝ≥0∞) (hf : ∀ i, Measurable (f i)) :
     ∫⁻ x, ∏ i, f i (x i) ∂Measure.pi μ = ∏ i, ∫⁻ x, f i x ∂μ i := by
-  let e := (Fintype.equivFin ι).symm
-  have hmp := measurePreserving_piCongrLeft μ e
-  rw [← hmp.lintegral_comp_emb (MeasurableEquiv.measurableEmbedding _)]
-  have h1 : ∀ g : (∀ i', α (e i')), ∏ i, f i ((MeasurableEquiv.piCongrLeft α e g) i) =
-      ∏ i', f (e i') (g i') := by
-    intro g
-    rw [← Fintype.prod_equiv e (fun i' => f (e i') (MeasurableEquiv.piCongrLeft α e g (e i')))
-      (fun i => f i (MeasurableEquiv.piCongrLeft α e g i)) (fun _ => rfl)]
-    congr 1
-    funext i'
-    rw [MeasurableEquiv.piCongrLeft_apply_apply]
-  simp only [h1]
-  rw [lintegral_fin_prod _ (fun i' => μ (e i')) (fun i' => f (e i')) (fun i' => hf _)]
-  exact Fintype.prod_equiv e _ _ (fun _ => rfl)
+  apply _root_.GlobalTheory.SnMass.Push.lintegral_fintype_prod <;> assumption
 
 end Formalism.L2.SG.RealObj.InfCut.ProductExactness.PiM

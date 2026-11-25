@@ -14,8 +14,6 @@ namespace Formalism.L2.SG.Pf.RegroupPf
 
 open Formalism.L2.SG.FoldBound Formalism.L2.SG.PoincareSeriesSquareIntegrable NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermOp
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.TermOp.KExpCut Formalism.L2.SG.Full
 
 section OrbitAlgSec
@@ -67,7 +65,7 @@ theorem ptL_spec {n : (VS D).V ≃ₗ[D.host.E] (VS D).V} (hn : n ∈ Formalism.
     RatLink X (ptL (X := X) n) n := by
   have h : ∃ x : X.B.I.GA, RatLink X x n := Formalism.L2.SG.Pf.ratPt_holds D X n hn
   unfold ptL
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem grel_equiv (u u' : D.what₂.Word) (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E))
@@ -103,7 +101,7 @@ def liftN (ρ : (Y.cs u).Cl) (y : X.B.I.Ginf) : X.B.I.GA :=
 
 theorem liftN_spec (ρ : (Y.cs u).Cl) {y : X.B.I.Ginf} (h : y ∈ NOcol (X.Fu u) (Y.cs u) ρ) :
     ∃ n, RatLink X (liftN Y u ρ y) n ∧ y = (liftN Y u ρ y).1 ∧ n ∈ NLam ((Y.cs u).lamOf ρ) (lf D (X.Fu u)) := by
-  have e : liftN Y u ρ y = h.choose := dif_pos h
+  have e : liftN Y u ρ y = h.choose := dite_eq_left h
   rw [e]
   exact h.choose_spec
 

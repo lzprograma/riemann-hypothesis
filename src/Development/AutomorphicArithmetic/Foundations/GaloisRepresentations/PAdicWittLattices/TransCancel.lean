@@ -42,8 +42,6 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -335,13 +333,6 @@ def TwFEt : Prop := ∀ {B : Scheme.{0}} {G : Type} [Group G] (X : Tower B G) (i
 
 def SigmaFEt : Prop := ∀ {Y Z : Scheme.{0}} (s : Y ⟶ Z) (d : ℕ) (I : Type) [Finite I], FEt s d →
   FEt (Sigma.desc fun _ : I => s) (Nat.card I * d)
-
-def MemOp : Prop := ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : Link D G) (R : Type) [Field R] [Algebra ℚ R]
-  (gb : GBase D.toG R) (k : ℕ) (T : KS L gb k) (N : Lv p) (J : Type) (g : J → Mem L N) (j : J) (F : Type) [Field F] [CharZero F]
-  (Θ : Th.{u} (Sp R) F), Θ.Good → ∀ f : G.GAf → F,
-  (∀ y, f y = (Nat.card {k : (g j).K ⧸ (L.KN (g j).M.1).subgroupOf (g j).K // (g j).h * (k.out : G.GAf) * y ∈ L.KN N.1} : ℕ)) →
-  T.X.IsFn (T.lev N) f ∧ ∀ tr, Θ.IsTr (T.tower N g).q ((T.tower N g).s j ≫ (T.tower N g).q) ((T.tower N g).s j) tr →
-    tr ∘ₗ Θ.pull ((T.tower N g).t j) ((T.tower N g).comm j) = T.X.hecke Θ (T.lev N) f
 
 end UpperTheory.Gal.G3
 

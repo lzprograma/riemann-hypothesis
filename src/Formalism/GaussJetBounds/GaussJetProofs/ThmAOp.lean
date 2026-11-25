@@ -4,54 +4,7 @@ public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.RingTheory.MvPolynomial.Basic
 public import Formalism.GaussJetBounds.StatementI
 public import Formalism.GaussJetBounds.MonoShapeTop
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.GaussJetBounds.GaussJetProofs.MinorProductSupportTop, Formalism.GaussJetBounds.GaussJetProofs.ThmAOp
@@ -167,8 +120,7 @@ lemma shape_minor {R : Type u} [CommRing R] {J : Type} [Fintype J] [DecidableEq 
     · exact Or.inr hd
     · left
       refine ⟨τ, hinj, ?_, rfl⟩
-      by_contra hno
-      push_neg at hno
+      by_contra! hno
       apply hd
       rw [Matrix.det_apply]
       refine Finset.sum_eq_zero fun π _ => ?_
@@ -264,11 +216,11 @@ lemma opA_top {K : Type u} [Field K] {d N0 : ℕ} (TT : Finset (ZMod d))
     (h : opA TT T s i k ≠ 0) : i.val = 0 ↔ k.val = 0 := by
   unfold opA at h
   by_cases hi : i.val = 0
-  · rw [if_pos ⟨hs, hi⟩] at h
+  · rw [ite_eq_left ⟨hs, hi⟩] at h
     by_cases hk : k = i
     · simp [hi, hk]
     · simp [hk] at h
-  · rw [if_neg (fun hh => hi hh.2)] at h
+  · rw [ite_eq_right (fun hh => hi hh.2)] at h
     by_cases hk : k.val = 0
     · simp [hs, hk] at h
     · exact ⟨fun hh => absurd hh hi, fun hh => absurd hh hk⟩
@@ -315,10 +267,10 @@ lemma rowDeg_shape {d N0 N1 p : ℕ} (s s' : ZMod d) (k : Fin N0) (τ : Fin p �
   rw [Finset.sum_comm]
   by_cases hs : s' = s
   · subst hs
-    rw [if_pos rfl, Finset.card_filter]
+    rw [ite_eq_left rfl, Finset.card_filter]
     refine Finset.sum_congr rfl fun i _ => ?_
     by_cases h : τ i = k <;> simp [h]
-  · rw [if_neg hs]
+  · rw [ite_eq_right hs]
     simp [Ne.symm hs]
 
 lemma op_minor_mem {K : Type u} [Field K] {d N0 N1 p : ℕ} (s : ZMod d) (A : Fin p → Fin N0 → K)
@@ -360,8 +312,8 @@ lemma op_minor_shape {K : Type u} [Field K] {d N0 N1 p : ℕ} (TT : Finset (ZMod
   simp only [rowOp_eq] at hm
   obtain ⟨τ, hτ, ⟨π, hπ⟩, rfl⟩ := op_minor_mem s
     (fun (r : Fin p) j => opA TT T s ⟨r.val, lt_of_lt_of_le r.isLt hp⟩ j) I mono hm
-  simp only [rowDeg_shape, if_true]
-  refine ⟨fun s' k hs => if_neg hs, shape_count_total τ, fun k => shape_count_le_one τ hτ k, ?_⟩
+  simp only [rowDeg_shape, ite_true]
+  refine ⟨fun s' k hs => ite_eq_right hs, shape_count_total τ, fun k => shape_count_le_one τ hτ k, ?_⟩
   intro hs hp1 k0 hk0
   have hiff : ∀ i, (π i).val = 0 ↔ τ i = k0 := by
     intro i
@@ -440,9 +392,9 @@ lemma op_prod_shape {K : Type u} [Field K] {d N0 N1 : ℕ} [NeZero d] (TT : Fins
       (fun s' _ m hm => by
         by_cases h : s' = s
         · subst h
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl]
           exact (hG s' m hm).2.1
-        · rw [if_neg h]
+        · rw [ite_eq_right h]
           exact Finset.sum_eq_zero fun k _ => (hG s' m hm).1 s k (Ne.symm h)) κ hκ
     simpa using this
   · have := shape_prod_le (R := K) (rowDeg s k) (rowDeg_zero _ _) (rowDeg_add _ _) _
@@ -450,9 +402,9 @@ lemma op_prod_shape {K : Type u} [Field K] {d N0 N1 : ℕ} [NeZero d] (TT : Fins
       (fun s' _ m hm => by
         by_cases h : s' = s
         · subst h
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl]
           exact (hG s' m hm).2.2.1 k
-        · rw [if_neg h]
+        · rw [ite_eq_right h]
           exact le_of_eq ((hG s' m hm).1 s k (Ne.symm h))) κ hκ
     simpa using this
   · have := shape_prod_eq (R := K) (rowDeg s k0) (rowDeg_zero _ _) (rowDeg_add _ _) _
@@ -460,9 +412,9 @@ lemma op_prod_shape {K : Type u} [Field K] {d N0 N1 : ℕ} [NeZero d] (TT : Fins
       (fun s' _ m hm => by
         by_cases h : s' = s
         · subst h
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl]
           exact ((hG s' m hm).2.2.2 hs (hp1 s') k0 hk0).1
-        · rw [if_neg h]
+        · rw [ite_eq_right h]
           exact (hG s' m hm).1 s k0 (Ne.symm h)) κ hκ
     simpa using this
   · have := shape_prod_le (R := K) (rowDeg s k) (rowDeg_zero _ _) (rowDeg_add _ _) _
@@ -470,9 +422,9 @@ lemma op_prod_shape {K : Type u} [Field K] {d N0 N1 : ℕ} [NeZero d] (TT : Fins
       (fun s' _ m hm => by
         by_cases h : s' = s
         · subst h
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl]
           exact ((hG s' m hm).2.2.2 hs (hp1 s') k0 hk0).2 k hk
-        · rw [if_neg h]
+        · rw [ite_eq_right h]
           exact le_of_eq ((hG s' m hm).1 s k (Ne.symm h))) κ hκ
     simpa using this
 
@@ -548,11 +500,11 @@ theorem thmAOp : ThmAOp.{u} := by
             if (s = s ∧ ¬ (s ∈ TT ∧ k.val = 0)) then rowDeg s k κ else 0) =
             ∑ k ∈ Finset.univ.erase (⟨0, h0⟩ : Fin N0), rowDeg s k κ := by
           refine Finset.sum_congr rfl fun k hk => ?_
-          rw [if_pos]
+          rw [ite_eq_left]
           refine ⟨rfl, fun hh => ?_⟩
           exact (Finset.mem_erase.mp hk).1 (Fin.ext hh.2)
         simp only at hrest ⊢
-        rw [hrest, if_neg (by simp [hs])]
+        rw [hrest, ite_eq_right (by simp [hs])]
         omega
       · rw [← htot]
         refine Finset.sum_congr rfl fun k _ => ?_

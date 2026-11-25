@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsLogAExtends
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
 public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfForallXiPowDvd
@@ -54,17 +55,7 @@ open scoped Formalism.Per
 namespace GlobalTheory.MemLoc
 
 theorem exists_isEps_for_inj (l : ℕ) [Fact l.Prime] : ∃ e : Per.Fl l, IsEps e := by
-  obtain ⟨ζ, ε, h0, -, h1, h⟩ := GlobalTheory.MemLoc.exists_zeta_eps l
-  refine ⟨ε, ?_, ?_⟩
-  · have := h 0
-    rw [h0, map_one] at this
-    exact Subtype.ext this
-  · intro hh
-    have := h 1
-    apply h1
-    apply (algebraMap (Om l) ℂ_[l]).injective
-    rw [← this, map_one]
-    exact congrArg Subtype.val hh
+  first | exact _root_.GlobalTheory.MemLoc.Model.exists_isEps | exact @_root_.GlobalTheory.MemLoc.Model.exists_isEps | apply _root_.GlobalTheory.MemLoc.Model.exists_isEps <;> assumption
 
 theorem eq_zero_of_mem_span_pow_away {A B : Type*} [CommRing A] [CommRing B] [Algebra A B] (r ξ : A)
     [IsLocalization.Away r B] (hs : ∀ n : ℕ, ∀ a : A, ξ ^ n ∣ r * a → ξ ^ n ∣ a)

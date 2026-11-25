@@ -58,9 +58,9 @@ theorem lead_zero_of_sg (δ : ∀ p, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF D) (w
     leadM (modMat δ T T' p w) D.R.rS = 0 ∧ Dmin w D.R.rS = 0 := by
   constructor
   · exact leadM_zero_row _ (sgF w (Fin.last _)) h fun b hb => by
-      rw [modMat_apply', if_neg (by rw [sgF_sgF]; exact hb)]
+      rw [modMat_apply', ite_eq_right (by rw [sgF_sgF]; exact hb)]
   · exact leadM_zero_row (ptMat w) (sgF w (Fin.last _)) h fun b hb => by
-      rw [ptMat_apply', if_neg (by rw [sgF_sgF]; exact hb)]
+      rw [ptMat_apply', ite_eq_right (by rw [sgF_sgF]; exact hb)]
 
 theorem shape_of_sg (δ : ∀ p, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF D) (w : Point D.host.E (D.R.rS + 1))
     (h : sgF w (Fin.last D.R.rS) = Fin.last D.R.rS) :
@@ -84,14 +84,14 @@ theorem shape_of_sg (δ : ∀ p, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF D) (w : P
   rw [hsum] at h5'
   rw [hp] at h3
   refine ⟨fun a => ⟨?_, ?_⟩, fun a => ⟨?_, ?_⟩, ?_, ?_⟩
-  · rw [modMat_apply', if_neg (hne' a)]
-  · rw [modMat_apply', if_neg (hne a)]
-  · rw [ptMat_apply', if_neg (hne' a)]
-  · rw [ptMat_apply', if_neg (hne a)]
-  · rw [modMat_apply', if_pos h.symm]
+  · rw [modMat_apply', ite_eq_right (hne' a)]
+  · rw [modMat_apply', ite_eq_right (hne a)]
+  · rw [ptMat_apply', ite_eq_right (hne' a)]
+  · rw [ptMat_apply', ite_eq_right (hne a)]
+  · rw [modMat_apply', ite_eq_left h.symm]
     simp only [Fin.val_last]
     rw [show 1 + pSt w.1 D.R.rS = D.R.rS + 1 by omega, show pSz w.1 D.R.rS = 1 by omega]
-  · rw [ptMat_apply', if_pos h.symm]
+  · rw [ptMat_apply', ite_eq_left h.symm]
     simp only [Fin.val_last]
 
 variable (Zd : LocDat D)
@@ -118,9 +118,6 @@ theorem modKind_of (hU : ModUnits Zd) : ModKind Zd := by
     · exact hn
   · obtain ⟨h1, h2⟩ := lead_zero_of_sg Zd.δ T T' p w hs
     exact ⟨fun _ => h1, fun h => absurd h2 h⟩
-
-theorem partnerCount_of_modUnits (hT2 : Formalism.MainNotions.ThinScalesBound.T2 D) (hI : IntGenP Zd) (hU : ModUnits Zd) (hB : BridgeBA) : PartnerIsomorphismCount Zd :=
-  partnerIsomorphismCount_of_bounds Zd hT2 hI (leadZZ_holds Zd) (modKind_of Zd hU) hB
 
 end ModShape
 
@@ -157,11 +154,11 @@ theorem isUnit_det_monomial {m : ℕ} (σ : Fin m → Fin m) (hσ : ∀ a, σ (�
     ext a c
     simp only [P, Matrix.mul_apply, Matrix.of_apply, Matrix.one_apply, ite_mul, one_mul, zero_mul]
     rw [Finset.sum_eq_single (σ a)]
-    · simp only [if_true, hσ]
+    · simp only [ite_true, hσ]
       by_cases h : c = a
-      · rw [if_pos h, if_pos h.symm]
-      · rw [if_neg h, if_neg (fun h' => h h'.symm)]
-    · intro b _ hb; rw [if_neg hb]
+      · rw [ite_eq_left h, ite_eq_left h.symm]
+      · rw [ite_eq_right h, ite_eq_right (fun h' => h h'.symm)]
+    · intro b _ hb; rw [ite_eq_right hb]
     · intro h; exact absurd (Finset.mem_univ _) h
   have hP : IsUnit P.det := isUnit_iff_exists_inv.2 ⟨P.det, by rw [← Matrix.det_mul, hPP, Matrix.det_one]⟩
   rw [hAP, Matrix.det_mul, Matrix.det_diagonal]
@@ -189,8 +186,8 @@ theorem isUnit_lead_monomial {r : ℕ} (σ : Fin (r + 1) → Fin (r + 1)) (hσ :
   · simp only [Matrix.submatrix_apply]
     rw [hA]
     by_cases h : b = σ' a
-    · rw [if_pos h, if_pos (by rw [h, hcast])]
-    · rw [if_neg h, if_neg (fun h' => h (Fin.castLE_injective _ (h'.trans (hcast a).symm)))]
+    · rw [ite_eq_left h, ite_eq_left (by rw [h, hcast])]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h (Fin.castLE_injective _ (h'.trans (hcast a).symm)))]
 
 end Mono
 
@@ -220,7 +217,7 @@ variable (Zd : LocDat D)
 theorem blkMod_isUnit (T T' : ℕ) (p : PlF D) (w : Point D.host.E (D.R.rS + 1)) (a : Fin (D.R.rS + 1))
     (ha : a ≠ Fin.last D.R.rS) :
     IsUnit (blkMod Zd.δ T T' p (1 + pSt w.1 a.val) (pSz w.1 a.val) (pTau w.1 a.val)) := by
-  rw [modMat_blk Zd T T' p w a, if_neg (fun h => ha h.1), sub_zero]
+  rw [modMat_blk Zd T T' p w a, ite_eq_right (fun h => ha h.1), sub_zero]
   have hy := yP_ne Zd p
   have hcf : ∀ b, cf Zd p b ≠ 0 := fun b => pow_ne_zero _ (inv_ne_zero hy)
   refine ((isUnit_iff_ne_zero.2 (mul_ne_zero (hcf a) (hcf _))).map _).mul ?_ |>.mul ?_
@@ -247,9 +244,6 @@ theorem modUnits_of (hS : ShUnit D) : ModUnits Zd := by
   · exact isUnit_lead_monomial (sgF w) (sgF_sgF w) hl _
       (fun a => blkMod_isUnit Zd T T' p w a.castSucc (Fin.castSucc_ne_last a)) _ (modMat_apply' Zd.δ T T' p w)
 
-theorem partnerCount_of_shUnit (hT2 : Formalism.MainNotions.ThinScalesBound.T2 D) (hI : IntGenP Zd) (hS : ShUnit D) (hB : BridgeBA) : PartnerIsomorphismCount Zd :=
-  partnerCount_of_modUnits Zd hT2 hI (modUnits_of Zd hS) hB
-
 end Units
 
 end Formalism.L2.SG.Pf.PCount
@@ -271,9 +265,9 @@ open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Loca
 
 theorem shUnit_holds (D : Formalism.BasicNotions.D7) : ShUnit D := by
   intro p c
-  haveI : CharZero (D.s.atP p).Fp := (D.s.atP p).char0
-  haveI : Module.Free (D.s.atP p).Fp (D.s.atP p).Ep := (D.s.atP p).free
-  haveI : FiniteDimensional (D.s.atP p).Fp (D.s.atP p).Ep :=
+  have : CharZero (D.s.atP p).Fp := (D.s.atP p).char0
+  have : Module.Free (D.s.atP p).Fp (D.s.atP p).Ep := (D.s.atP p).free
+  have : FiniteDimensional (D.s.atP p).Fp (D.s.atP p).Ep :=
     Module.finite_of_finrank_pos (by rw [(D.s.atP p).rank]; norm_num)
   by_contra hcon
   simp only [not_exists] at hcon
@@ -303,10 +297,6 @@ theorem shUnit_holds (D : Formalism.BasicNotions.D7) : ShUnit D := by
   rw [Fintype.card_fin, (D.s.atP p).rank] at hc
   omega
 
-theorem partnerCount_of_integral {D : Formalism.BasicNotions.D7} (Zd : LocDat D) (hT2 : Formalism.MainNotions.ThinScalesBound.T2 D) (hI : IntGenP Zd)
-    (hB : BridgeBA) : PartnerIsomorphismCount Zd :=
-  partnerCount_of_shUnit Zd hT2 hI (shUnit_holds D) hB
-
 end Formalism.L2.SG.Pf.PCount
 end -- clump:auto
 end -- clump:auto
@@ -323,22 +313,6 @@ noncomputable section
 namespace Formalism.L2.SG.Pf.PCount
 
 open Formalism.MainNotions.S Formalism.L2.SG.Pf.AtPt
-
-def BridgeIso : Prop :=
-  ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
-    {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E]
-    (M : Loc.Model F E) (m : ℕ) (n s : E) (P₁ P₂ X₁ X₂ L₁ U₁ L₂ U₂ : Matrix (Fin (m + 1)) (Fin (m + 1)) E),
-    IsLo L₁ → IsUp U₁ → IsLo L₂ → IsUp U₂ → P₁ = L₁ * X₁ * U₁ → P₂ = L₂ * X₂ * U₂ →
-    (∀ a : Fin m, X₁ a.castSucc (Fin.last m) = 0 ∧ X₁ (Fin.last m) a.castSucc = 0 ∧
-      X₂ a.castSucc (Fin.last m) = 0 ∧ X₂ (Fin.last m) a.castSucc = 0) →
-    X₁ (Fin.last m) (Fin.last m) = s → X₂ (Fin.last m) (Fin.last m) = s → IsUnit (s + n) → n ∈ M.R →
-    ∀ (Y₁ Y₂ : M.Mat m) (be₁ be₂ al₁ al₂ : Fin m → M.R),
-      (∀ a b : Fin m, (Y₁.Z a b : E) = P₁ a.castSucc b.castSucc ∧ (Y₂.Z a b : E) = P₂ a.castSucc b.castSucc) →
-      (∀ a : Fin m, (be₁ a : E) = P₁ a.castSucc (Fin.last m) ∧ (be₂ a : E) = P₂ a.castSucc (Fin.last m) ∧
-        (al₁ a : E) = P₁ (Fin.last m) a.castSucc ∧ (al₂ a : E) = P₂ (Fin.last m) a.castSucc) →
-      (∀ a b, P₁ a b ∈ M.R) → (∀ a b, P₂ a b ∈ M.R) →
-      ∀ Z₁ Z₂ : M.Mat (m + 1), Z₁.Z.map M.R.subtype = P₁ + n • Ecorner m →
-        Z₂.Z.map M.R.subtype = P₂ + n • Ecorner m → M.nIsoBA Y₁ Y₂ be₁ be₂ al₁ al₂ = M.nIso Z₁ Z₂
 
 section Det
 
@@ -357,48 +331,6 @@ theorem det_shift {n s : K} {P X L U : Matrix (Fin (m + 1)) (Fin (m + 1)) K} (hL
   simp [Ecorner, hs]
 
 end Det
-
-section Model
-
-variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
-  {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E]
-
-theorem lead_eq_head (M : Loc.Model F E) {m : ℕ} (P : Matrix (Fin (m + 1)) (Fin (m + 1)) E) (Y : M.Mat m)
-    (hY : ∀ a b : Fin m, (Y.Z a b : E) = P a.castSucc b.castSucc) : leadM P m = (Y.Z.map M.R.subtype).det := by
-  unfold leadM
-  rw [dite_eq_left (Nat.le_succ m)]
-  congr 1
-  ext a b
-  exact (hY a b).symm
-
-end Model
-
-theorem bridgeBA_of (hI : BridgeIso) : BridgeBA := by
-  intro F _ _ _ E _ _ _ _ M m n s P₁ P₂ X₁ X₂ L₁ U₁ L₂ U₂ hL₁ hU₁ hL₂ hU₂ hP₁ hP₂ hX h₁ h₂ hsn hn Y₁ Y₂
-    be₁ be₂ al₁ al₂ hY hba hi₁ hi₂
-  have hX₁ : ∀ a : Fin m, X₁ a.castSucc (Fin.last m) = 0 ∧ X₁ (Fin.last m) a.castSucc = 0 :=
-    fun a => ⟨(hX a).1, (hX a).2.1⟩
-  have hX₂ : ∀ a : Fin m, X₂ a.castSucc (Fin.last m) = 0 ∧ X₂ (Fin.last m) a.castSucc = 0 :=
-    fun a => ⟨(hX a).2.2.1, (hX a).2.2.2⟩
-  have hu₁ : IsUnit (P₁ + n • Ecorner m).det := by
-    rw [det_shift hL₁ hU₁ hP₁ hX₁ h₁, lead_eq_head M P₁ Y₁ fun a b => (hY a b).1]
-    exact hsn.mul Y₁.unit
-  have hu₂ : IsUnit (P₂ + n • Ecorner m).det := by
-    rw [det_shift hL₂ hU₂ hP₂ hX₂ h₂, lead_eq_head M P₂ Y₂ fun a b => (hY a b).2]
-    exact hsn.mul Y₂.unit
-  have hint : ∀ {P : Matrix (Fin (m + 1)) (Fin (m + 1)) E}, (∀ a b, P a b ∈ M.R) →
-      ∀ a b, (P + n • Ecorner m : Matrix (Fin (m + 1)) (Fin (m + 1)) E) a b ∈ M.R := fun hP a b => by
-    simp only [Matrix.add_apply, Matrix.smul_apply, Ecorner, Matrix.of_apply, smul_eq_mul]
-    split_ifs
-    · exact M.R.add_mem (hP a b) (by rw [mul_one]; exact hn)
-    · rw [mul_zero, add_zero]; exact hP a b
-  refine ⟨mkMat M _ (hint hi₁) hu₁, mkMat M _ (hint hi₂) hu₂, rfl, rfl, ?_⟩
-  exact hI M m n s P₁ P₂ X₁ X₂ L₁ U₁ L₂ U₂ hL₁ hU₁ hL₂ hU₂ hP₁ hP₂ hX h₁ h₂ hsn hn Y₁ Y₂ be₁ be₂ al₁ al₂ hY hba
-    hi₁ hi₂ _ _ rfl rfl
-
-theorem partnerCount_of_iso {D : Formalism.BasicNotions.D7} (Zd : Formalism.L2.SG.TermLoc.LocDat D) (hT2 : Formalism.MainNotions.ThinScalesBound.T2 D)
-    (hI : IntGenP Zd) (hB : BridgeIso) : PartnerIsomorphismCount Zd :=
-  partnerCount_of_integral Zd hT2 hI (bridgeBA_of hB)
 
 end Formalism.L2.SG.Pf.PCount
 end -- clump:auto

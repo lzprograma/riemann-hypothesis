@@ -40,8 +40,6 @@ open CategoryTheory MonoidalCategory
 
 universe u
 
-attribute [local instance 2000] Rep.hV2
-
 variable {G : Type u} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   {ι : Type u} {Hv : ι → Type u} [∀ v, Group (Hv v)] [∀ v, TopologicalSpace (Hv v)]
   [∀ v, IsTopologicalGroup (Hv v)] (φ : ∀ v, Hv v →ₜ* G) [Fintype ι]
@@ -264,12 +262,6 @@ theorem sha (hM : ∀ m : M, n • m = 0) :
 
 end PoitouTateDualityHypotheses
 
-namespace PoitouTateHypotheses
-
-variable {φ D t inv}
-
-end PoitouTateHypotheses
-
 end GroundTheory.ProfCoh
 end -- clump:auto
 end -- clump:auto
@@ -290,8 +282,6 @@ namespace GroundTheory.ProfCoh
 open CategoryTheory MonoidalCategory
 
 universe u
-
-attribute [local instance 2000] Rep.hV2
 
 section Dual
 
@@ -463,16 +453,6 @@ variable {N : ℕ} [NeZero N] (D : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep D]
   (tp : ∀ p, compactCohomologyRes φ (Dp p) 3 →+ ZMod (p ^ N.factorization p))
   (jp : ∀ p, Dp p ⟶ D)
 
-end Primary
-
-section Primary
-
-variable {N : ℕ} [NeZero N] (D : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep D]
-  (t : compactCohomologyRes φ D 3 →+ ZMod N)
-  (Dp : ℕ → Rep.{u} (ULift.{u} ℤ) G) [∀ p, IsDiscreteRep (Dp p)]
-  (tp : ∀ p, compactCohomologyRes φ (Dp p) 3 →+ ZMod (p ^ N.factorization p))
-  (jp : ∀ p, Dp p ⟶ D)
-
 theorem bijective_compactDualityMap_of_primePow (hD : Nonempty (D ≃+ ZMod N))
     (hDp : ∀ p ∈ N.primeFactors, Nonempty (Dp p ≃+ ZMod (p ^ N.factorization p)))
     (hjp : ∀ p ∈ N.primeFactors, Function.Injective (jp p).hom)
@@ -613,8 +593,6 @@ noncomputable section
 namespace GroundTheory.ProfCoh
 
 open IsDedekindDomain NumberField CategoryTheory MonoidalCategory GroundTheory.Global
-
-attribute [local instance 2000] Rep.hV2
 
 theorem natCast_mem_of_natCard_mem {R : Type*} [CommRing R] {P : Ideal R} (hP : P.IsPrime)
     {A : Type*} [AddCommGroup A] [Finite A] {n : ℕ} (hA : ∀ a : A, n • a = 0)

@@ -121,33 +121,11 @@ theorem GenericDimBound.proof (hmax : MaximalIdealHeightFG.Statement.{u}) :
       rw [← h, hlastN, constantCoeff_C] at hC
       exact hϖ.ne_zero hC
 
-  have key : ∀ n : ℕ, (n : ℕ∞) ≤ m.height →
-      ((n + 1 : ℕ) : WithBot ℕ∞) ≤ Order.krullDim (PrimeSpectrum.zeroLocus (R := S) (P : Set S)) := by
-    intro n hn
-    rw [show m.height = Order.height (⟨m, hm.isPrime⟩ : PrimeSpectrum A) from
-      PrimeSpectrum.height_eq_orderHeight ⟨m, hm.isPrime⟩] at hn
-    obtain ⟨p, hplast, hplen⟩ :=
-      Order.exists_series_of_le_height (⟨m, hm.isPrime⟩ : PrimeSpectrum A) hn
-    have hlt : (p.map g hg).last < top := by
-      rw [LTSeries.last_map, hplast]
-      exact htop
-    have := Order.LTSeries.length_le_krullDim ((p.map g hg).snoc top hlt)
-    simpa [hplen] using this
-
-  rw [← hht, ringKrullDim_quotient P]
-  have h1 := key 0 (by simp)
-  have hne : Order.krullDim (PrimeSpectrum.zeroLocus (R := S) (P : Set S)) ≠ ⊥ := fun h => by
-    rw [h] at h1; simp at h1
-  obtain ⟨d, hd⟩ := WithBot.ne_bot_iff_exists.mp hne
-  rw [← hd] at key ⊢
-  rw [← WithBot.coe_one, ← WithBot.coe_add, WithBot.coe_le_coe]
-  refine ENat.forall_natCast_le_iff_le.mp fun a ha => ?_
-  rcases a with _ | k
-  · simp
-  · have hk : (k : ℕ∞) ≤ m.height := by
-      have : (k : ℕ∞) + 1 ≤ m.height + 1 := by exact_mod_cast ha
-      exact (ENat.add_le_add_iff_right ENat.one_ne_top).mp this
-    have := key k hk
-    exact_mod_cast this
+  rw [← hht, ringKrullDim_quotient P, PrimeSpectrum.height_eq_orderHeight ⟨m, hm.isPrime⟩,
+    ← WithBot.coe_one, ← WithBot.coe_add]
+  have h1 : Order.height (⟨m, hm.isPrime⟩ : PrimeSpectrum A) + 1 ≤ Order.height top :=
+    (add_le_add (Order.height_le_height_apply_of_strictMono g hg ⟨m, hm.isPrime⟩) le_rfl).trans
+      (Order.height_add_one_le htop)
+  exact (WithBot.coe_le_coe.mpr h1).trans (Order.height_le_krullDim top)
 
 end GroundTheory.Heights₂.Heights.NumbersDVR

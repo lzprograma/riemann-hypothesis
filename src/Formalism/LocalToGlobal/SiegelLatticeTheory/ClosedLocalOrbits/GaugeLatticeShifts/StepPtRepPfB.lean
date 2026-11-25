@@ -1,6 +1,7 @@
 module
 
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StepPtRepPfA
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Lemma
@@ -85,25 +86,19 @@ theorem star_cz : star (-(F.T : ℂ)⁻¹) = -(F.T : ℂ)⁻¹ := by
 
 def zd : Fin n → ℂ := (-(F.T : ℂ)⁻¹) • F.z
 
-private lemma hJ_smul_left_eq_star_mul (c : ℂ) (x y : Fin n → ℂ) : hJ ε (c • x) y = star c * hJ ε x y := by
-  simp only [hJ, star_smul, smul_dotProduct, smul_eq_mul]
-
-private lemma hJ_smul_right_gauge_lattice_shifts (c : ℂ) (x y : Fin n → ℂ) : hJ ε x (c • y) = c * hJ ε x y := by
-  simp only [hJ, Matrix.mulVec_smul, dotProduct_smul, smul_eq_mul]
-
 theorem frame_dual_z_pairing_one : hJ ε F.zd F.z = 1 := by
-  rw [zd, hJ_smul_left_eq_star_mul, F.star_cz, F.zz]
+  rw [zd, hJ_smul_left ε, F.star_cz, F.zz]
   field_simp [F.T_ne]
 
 theorem zd_zd : hJ ε F.zd F.zd = -(F.T : ℂ)⁻¹ := by
-  rw [zd, hJ_smul_left_eq_star_mul, hJ_smul_right_gauge_lattice_shifts, F.star_cz, F.zz]
+  rw [zd, hJ_smul_left ε, hJ_smul_right ε, F.star_cz, F.zz]
   field_simp [F.T_ne]
 
 theorem zd_left (y : Fin n → ℂ) : hJ ε F.zd y = -(F.T : ℂ)⁻¹ * hJ ε F.z y := by
-  rw [zd, hJ_smul_left_eq_star_mul, F.star_cz]
+  rw [zd, hJ_smul_left ε, F.star_cz]
 
 theorem zd_right (y : Fin n → ℂ) : hJ ε y F.zd = -(F.T : ℂ)⁻¹ * hJ ε y F.z := by
-  rw [zd, hJ_smul_right_gauge_lattice_shifts]
+  rw [zd, hJ_smul_right ε]
 
 theorem zd_e (a : Fin r) : hJ ε F.zd (F.e a) = 0 := by
   rw [F.zd_left, F.ze, mul_zero]
@@ -134,21 +129,13 @@ theorem dual (j i : Ix r k) : hJ ε (F.dv j) (F.bv i) = if j = i then 1 else 0 :
     simp [dv, bv, F.fe, F.ff, F.fz, F.fw, F.ee, F.ef, F.ez, F.ew, F.zd_e, F.zd_f, F.frame_dual_z_pairing_one, F.zd_w,
       F.we, F.wf, F.wz, F.ww]
 
-private lemma hJ_finset_sum_left' {ι : Type*} (s : Finset ι) (f : ι → Fin n → ℂ) (y : Fin n → ℂ) :
-    hJ ε (∑ a ∈ s, f a) y = ∑ a ∈ s, hJ ε (f a) y := by
-  simp only [hJ, star_sum, sum_dotProduct]
-
-private lemma hJ_finset_sum_right_eq_sum {ι : Type*} (s : Finset ι) (x : Fin n → ℂ) (f : ι → Fin n → ℂ) :
-    hJ ε x (∑ a ∈ s, f a) = ∑ a ∈ s, hJ ε x (f a) := by
-  simp only [hJ, Matrix.mulVec_sum, dotProduct_sum]
-
 theorem pair (w y : Fin n → ℂ) (hw : ∀ a, hJ ε (F.e a) w = 0) (hy : ∀ a, hJ ε (F.e a) y = 0) :
     hJ ε w y = -(F.T : ℂ)⁻¹ * hJ ε F.z y * star (hJ ε F.z w) +
       ∑ i, hJ ε (F.wb i) y * star (hJ ε (F.wb i) w) := by
   have hcoef : ∀ (g : Ix r k → ℂ) (j : Ix r k), hJ ε (F.dv j) (∑ i, g i • F.bv i) = g j := by
     intro g j
-    rw [hJ_finset_sum_right_eq_sum]
-    simp only [hJ_smul_right_gauge_lattice_shifts, F.dual, mul_ite, mul_one, mul_zero]
+    rw [hJ_sum_right ε]
+    simp only [hJ_smul_right ε, F.dual, mul_ite, mul_one, mul_zero]
     simp [Finset.sum_ite_eq]
   have hli : LinearIndependent ℂ F.bv := by
     rw [Fintype.linearIndependent_iff]
@@ -163,8 +150,8 @@ theorem pair (w y : Fin n → ℂ) (hw : ∀ a, hJ ε (F.e a) w = 0) (hy : ∀ a
     trivial
   obtain ⟨g, hg⟩ := (Submodule.mem_span_range_iff_exists_fun ℂ).1 hwm
   have hgj : ∀ j, g j = hJ ε (F.dv j) w := fun j => by rw [← hg, hcoef]
-  conv_lhs => rw [← hg, hJ_finset_sum_left']
-  simp only [hJ_smul_left_eq_star_mul, hgj]
+  conv_lhs => rw [← hg, hJ_sum_left ε]
+  simp only [hJ_smul_left ε, hgj]
   rw [Fintype.sum_sum_type, Fintype.sum_sum_type, Fintype.sum_sum_type]
   simp only [bv, dv, Sum.elim_inl, Sum.elim_inr, hy, hw, mul_zero, star_zero, zero_mul,
     Finset.sum_const_zero, zero_add, Fintype.univ_unit, Finset.sum_singleton]
@@ -212,15 +199,12 @@ def yv (i0 : Fin k) (Z Aα : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) (t : Fin (r
 
 variable (i0 : Fin k) (Z Aα : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) (t : Fin (r + 1) → ℂ)
 
-private lemma hJ_add_right_gauge_lattice_shifts (x y y' : Fin n → ℂ) : hJ ε x (y + y') = hJ ε x y + hJ ε x y' := by
-  simp only [hJ, Matrix.mulVec_add, dotProduct_add]
-
 theorem pair_yv (x : Fin n → ℂ) (b : Fin (r + 1)) :
     hJ ε x (F.yv i0 Z Aα t b) =
       ∑ a, Z a b * hJ ε x (F.Fv a) + ∑ a, Aα a b * hJ ε x (F.E0 a) + t b * hJ ε x (F.wb i0) := by
   unfold yv
-  rw [hJ_add_right_gauge_lattice_shifts, hJ_add_right_gauge_lattice_shifts, _root_.Formalism.L2.SG.RealObj.InfCut.PtRepPf.Fr.hJ_finset_sum_right_eq_sum, _root_.Formalism.L2.SG.RealObj.InfCut.PtRepPf.Fr.hJ_finset_sum_right_eq_sum, hJ_smul_right_gauge_lattice_shifts]
-  simp only [hJ_smul_right_gauge_lattice_shifts]
+  rw [hJ_add_right ε, hJ_add_right ε, hJ_sum_right ε, hJ_sum_right ε, hJ_smul_right ε]
+  simp only [hJ_smul_right ε]
 
 theorem p1 (a b : Fin (r + 1)) : hJ ε (fam F.e F.z a) (F.yv i0 Z Aα t b) = Z a b := by
   rw [F.pair_yv]
@@ -302,7 +286,7 @@ theorem gram (hA : ∀ j, Aα (Fin.last r) j = 0) (b c : Fin (r + 1)) :
     hJ ε (F.yv i0 Z Aα t b) (F.yv i0 Z Aα t c) =
       -(F.T : ℂ)⁻¹ * (star (Z (Fin.last r) b) * Z (Fin.last r) c) + (Zᴴ * Aα) b c + (Aαᴴ * Z) b c +
         star (t b) * t c := by
-  rw [hJ_yv_left_eq_sum, F.p4 i0 Z Aα t i0 c, if_pos rfl]
+  rw [hJ_yv_left_eq_sum, F.p4 i0 Z Aα t i0 c, ite_eq_left rfl]
   simp only [F.p2 i0 Z Aα t hA, F.p3 i0 Z Aα t]
   have hAZ : ∑ a, star (Aα a b) * (if a = Fin.last r then 0 else Z a c) = ∑ a, star (Aα a b) * Z a c := by
     refine Finset.sum_congr rfl fun a _ => ?_
@@ -312,7 +296,7 @@ theorem gram (hA : ∀ j, Aα (Fin.last r) j = 0) (b c : Fin (r + 1)) :
     · simp [ha]
   rw [hAZ, Matrix.mul_apply, Matrix.mul_apply]
   simp only [Matrix.conjTranspose_apply, mul_add, Finset.sum_add_distrib, mul_ite, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   ring
 
 end Fr

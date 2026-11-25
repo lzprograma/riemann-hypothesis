@@ -9,6 +9,7 @@ import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
+import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
 
 @[expose] public section
 
@@ -25,12 +26,8 @@ noncomputable section
 namespace RiemannExtensionAnalytic
 
 theorem analyticOnNhd_of_differentiableOn {k : ℕ} {O : Set (Fin k → ℂ)} {f : (Fin k → ℂ) → ℂ}
-    (hO : IsOpen O) (hf : DifferentiableOn ℂ f O) : AnalyticOnNhd ℂ f O := by
-  refine analyticOnNhd_of_continuousOn_of_separately hO hf.continuousOn fun z hz i => ?_
-  have h1 : DifferentiableAt ℂ f (Function.update z i (z i)) := by
-    rw [Function.update_eq_self]
-    exact hf.differentiableAt (hO.mem_nhds hz)
-  exact h1.comp (z i) (hasFDerivAt_update z (z i)).differentiableAt
+    (hO : IsOpen O) (hf : DifferentiableOn ℂ f O) : AnalyticOnNhd ℂ f O :=
+  _root_.ReciprocityTheory.AnForm.Osgood.osgood k O f hO hf
 
 theorem circleIntegral_inv_smul_eq {ρ : ℝ} (hρ : ρ ≠ 0) (h : ℂ → ℂ) :
     (∮ z in C(0, ρ), z⁻¹ • h z) = I * ∫ θ in (0 : ℝ)..2 * π, h (circleMap 0 ρ θ) := by

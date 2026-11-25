@@ -167,35 +167,4 @@ theorem measure_le_of_isFundamentalDomain_of_ae_covers {D' : Set X}
 
 end Multiplicity
 
-section Subgroup
-
-variable {G X : Type*} [Group G] [MulAction G X] [MeasurableSpace X] {μ : Measure X}
-  [MeasurableConstSMul G X] [SMulInvariantMeasure G X μ] [Countable G] {D D' : Set X}
-  {K : Subgroup G}
-
-variable {E : Type*} [NormedAddCommGroup E]
-
-variable [NormedSpace ℝ E]
-
-end Subgroup
-
-section Kernel
-
-variable {G H X : Type*} [Group G] [Group H] [MulAction G X] [MulAction H X] [MeasurableSpace X]
-  {μ : Measure X} {B D D' : Set X} {φ : G →* H}
-
-variable [MeasurableConstSMul G X] [SMulInvariantMeasure G X μ] [Countable G]
-
-variable {K : Subgroup G} {H' : Type*} [Group H'] [MulAction H' X] {φ' : K →* H'}
-
-end Kernel
-
-section Image
-
-variable {G X : Type*} [Group G] [MulAction G X] [MeasurableSpace X] {μ : Measure X}
-  [MeasurableConstSMul G X] [SMulInvariantMeasure G X μ] [Countable G] {B D D' : Set X}
-  {K : Subgroup G}
-
-end Image
-
 end GlobalTheory

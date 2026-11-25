@@ -1,127 +1,623 @@
 module
 
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsIntAddConjEqOneOfBaseGoodKAlt
-public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.EventuallySelfDualLatticeIndicatorIsVacuum
-public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.StandardAddCharSymplecticLocalLatticeEqOne
-public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.AddCharHalfTraceTensorLatticeHeisenbergCocycle
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIntegerAddConjEqOneOfFormallyUnramified
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
+public import Development.WeilBound.ThetaLifts.FrameEstimates.BlockForm
+public import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.GrowDef
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.GrowFinal
+public import Development.WeilBound.ThetaLifts.TowerModels.DetHerm
+public import Development.WeilBound.ThetaLifts.TowerModels.ExistsHaarOfIsCompact
+public import Development.WeilBound.ThetaLifts.TowerModels.LeviAd
+public import Development.WeilBound.ThetaLifts.TowerModels.StabCpt
+public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.AddCharHalfTraceTensorLatticeHeisenbergCocycle
 public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.AdelicSchrodingerTensorEqLocalOfSupportedAt
 public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.ContinuousAddCharSymplecticSelfPairingPlaceCoord
 public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.EqAdeleSupportedAtFinitePlaceOfSupportedAt
+public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.EventuallySelfDualLatticeIndicatorIsVacuum
+public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.ExistsRationalDarbouxHermitianTensorAdeles
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSchroedingerEigenvectorCompactCocycle
+public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.StandardAddCharSymplecticLocalLatticeEqOne
 public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.StandardTraceAdelicAddCharLocalComponentNeOne
 public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.TensorLatticeAtFinitePlaceEqIntegralSpanGenerato
-public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.ExistsRationalDarbouxHermitianTensorAdeles
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThkTowStmt
-public import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
-public import Development.WeilBound.ThetaLifts.TowerModels.DetHerm
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzMemL2
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousOfMemSchA
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartz
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoMulInvOf
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.DCdE
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.Mfac
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
 
--- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EventuallyIsVacIndicatorK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PsiSympLatAtVKAlt, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PsiHalfSympAddK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsIsVacAnyDarbouxK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsRationalDarbouxK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsRationalDarbouxOfIsGoodK, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThkTowModel
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EventuallyIsVacIndicatorK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EventuallyIsVacIndicatorK", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsIntAddConjEqOneOfBaseGoodKAlt\npublic import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.EventuallySelfDualLatticeIndicatorIsVacuum\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
+/-! # ThkTowModel: Consolidated global theta-kernel definitions and proofs (ThkTowModel). -/
 @[expose] public section
 
-
-
-section
-open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open IsDedekindDomain NumberField MeasureTheory Matrix
-open Classical
+open UpperTheory.TP.W (GoodK)
 open scoped TensorProduct ComplexConjugate GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model HasExp SplitsFully Chars)
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-open GlobalTheory.AdelicU GlobalTheory.WeilM GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels Filter Topology
-namespace Tw.VacIndic
+open scoped ComplexConjugate GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels TensorProduct
 open _root_.GlobalTheory
-variable {F : Type} [Field F] [NumberField F]
-end Tw.VacIndic
-namespace Tw.VacIndic
-open _root_.GlobalTheory
-variable {F : Type} [Field F] [NumberField F]
-end Tw.VacIndic
-namespace Tw.VacIndic
-open _root_.GlobalTheory
-variable {F : Type} [Field F] [NumberField F]
-end Tw.VacIndic
-namespace Tw.VacIndic
-open _root_.GlobalTheory
-variable {F : Type} [Field F] [NumberField F]
-section AtLemmas
-variable {v : HeightOneSpectrum (𝓞 F)}
-end AtLemmas
-end Tw.VacIndic
-namespace Tw.VacIndic
-open _root_.GlobalTheory
+open scoped TensorProduct ComplexConjugate GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.VacAny
+open scoped TensorProduct NNReal Matrix
+open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (At cA incM)
+open GlobalTheory.WeilM (Darboux symp)
+
+section
+namespace Tw
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain
+  NumberField MeasureTheory Matrix Classical _root_.GlobalTheory
+theorem exists_int_add_conj_eq_one_of_base_good_k : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E]
+  [Algebra F E] {σ : E →ₐ[F] E}
+    (B : Base F E), GoodK σ B → ∃ θ : 𝓞 E, (θ : E) + σ θ = 1 := by
+  intro F E _ _ _ _ _ σ B hB
+  have := hB.unram
+  exact exists_integer_add_conj_eq_one_of_formallyUnramified F E σ hB.cm inferInstance
+end Tw
+end
+
+noncomputable section
+open Classical Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes IsDedekindDomain Matrix MeasureTheory
+  NumberField
+open GlobalTheory in
+theorem Tw.RatDarboux.exists_rational_darboux_k : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E]
+  [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E)
+    {n d : ℕ} (X : Spc F E n) (Y : Spc F E d) (r s r' s' : ℕ), GoodK σ B → X.IsHerm σ B r s →
+      Y.IsSkew σ B r' s' →
+    ∃ co : Darboux (symp (R := AF F)
+      (cA σ) (-1)
+      (incM F X.J)
+      (incM F Y.J)) (Fin n × Fin d),
+      ∀ x : Matrix (Fin n) (Fin d) E, ∃ y z : Fin n × Fin d → F,
+        co.e (incM F x) = (fun k => algebraMap F (AF F) (y k),
+          fun k => algebraMap F (AF F) (z k)) := by
+  intro F E _ _ _ _ _ σ B n d X Y r s r' s' hB hX hY
+  obtain ⟨w⟩ : Nonempty (InfinitePlace F) := inferInstance
+  have hσ : ∀ x, σ (σ x) = x := fun x => by
+    apply ((B.emb w).1 : E →+* ℂ).injective
+    rw [hB.cm.2.2.2, hB.cm.2.2.2, star_star]
+  have hX' : X.J.det ≠ 0 := fun h0 => by
+    apply Tw.RatDarboux.det_ne_zero_of_isCartan (hX.cartan w)
+    have := ((B.emb w).1 : E →+* ℂ).map_det X.J
+    rw [h0, map_zero] at this
+    exact this.symm
+  have hY' : Y.J.det ≠ 0 := fun h0 => by
+    apply Tw.RatDarboux.det_ne_zero_of_isCartan (hY.cartan w)
+    have := ((B.emb w).1 : E →+* ℂ).map_det Y.J
+    rw [h0, map_zero] at this
+    rw [Matrix.det_smul]
+    exact mul_eq_zero_of_right _ this.symm
+  exact Tw.RatDarboux.exists_darboux (AF F) hB.cm.2.2.1 σ hσ hX.herm hY.skew hX' hY'
+end
+
+section
+open Classical Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes IsDedekindDomain Matrix MeasureTheory
+  NumberField
+theorem Tw.RatDarboux.exists_rational_darboux_of_isGood_k : ∀ {F E : Type} [Field F] [NumberField F] [Field E]
+  [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
+    (B : Base F E), GoodK σ B → ∀ {n d : ℕ} (X : Spc F E n) (Y : Spc F E d) (r s r' s' : ℕ),
+    X.IsHerm σ B r s → Y.IsSkew σ B r' s' → ∃ co : Darboux (symp (R :=
+      AF F) (cA σ) (-1)
+      (incM F X.J)
+      (incM F Y.J)) (Fin n × Fin d),
+      ∀ x : Matrix (Fin n) (Fin d) E, ∃ y z : Fin n × Fin d → F, co.e
+      (incM F x) = (fun k => algebraMap F (AF F) (y k),
+      fun k => algebraMap F (AF F) (z k)) :=
+  fun B hB _ _ X Y r s r' s' hX hY => _root_.Tw.RatDarboux.exists_rational_darboux_k _ B X Y r s r' s' hB hX hY
+end
+
+section
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain
+  NumberField MeasureTheory Matrix Classical
+noncomputable section
+namespace Tw.LatVacArith
+section Final
+open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-variable {n d : ℕ}
-end Tw.VacIndic
-namespace Tw.VacIndic
-open _root_.GlobalTheory
-section SympAdd
-variable {R E' : Type} [CommRing R] [CommRing E'] [Algebra R E'] (c : E' →ₐ[R] E') (ξ : E')
-  {α β : Type} [Fintype α] [Fintype β] (JA : Matrix α α E') (JB : Matrix β β E')
-end SympAdd
+theorem psi_symp_latAtV_k : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
+    (σ : E →ₐ[F] E) (B : Base F E) {n d : ℕ} (X :
+      Spc F E n)
+    (Y : Spc F E d) (r s r' s' : ℕ),
+    GoodK σ B → X.IsHerm σ B r s → Y.IsSkew σ B r' s' → ∀ (v :
+      Pl (F := F)) (θ : 𝓞 E) (b : AF F),
+    GlobalTheory.AdelicU.evFin F v b ∈ v.adicCompletionIntegers F →
+    ∀ γ ∈ latAtV X Y v,
+      ∀ γ' ∈ latAtV X Y v,
+      B.ψ (b * symp (R := AF F) (cA σ)
+        (inclR (AF F) (θ : E))
+        (incM F X.J)
+          (incM F Y.J) γ γ') = 1 := by
+  intro F E _ _ _ _ _ σ B n d X Y r s r' s' hB hX hY v θ b hb γ hγ γ' hγ'
+  have step : ∀ z' ∈ {z | ∃ a : AF F,
+    At (GlobalTheory.AdelicU.evFin F v) a ∧ GlobalTheory.AdelicU.evFin F v a ∈ v.adicCompletionIntegers F ∧
+      ∃ x ∈ X.L, ∃ y ∈ Y.L,
+        z = a • incM F (Matrix.vecMulVec x y)},
+      ∀ γ ∈ latAtV X Y v,
+        B.ψ (b * symp (R := AF F) (cA σ)
+        (inclR (AF F) (θ : E))
+        (incM F X.J)
+          (incM F Y.J) γ z') = 1 := by
+    intro z' hz' γ hγ
+    obtain ⟨a', -, ha', x', hx', y', hy', rfl⟩ := hz'
+    induction hγ using AddSubgroup.closure_induction with
+    | mem z hz =>
+      obtain ⟨a, ha, hav, x, hx, y, hy, rfl⟩ := hz
+      exact psi_gen σ B X Y hX hY hB.std v θ b hb ha hav ha' hx hx' hy hy'
+    | zero => rw [symp_zero_left, mul_zero, AddChar.map_zero_eq_one]
+    | add x y _ _ hx hy =>
+      rw [symp_add_left, mul_add, AddChar.map_add_eq_mul, hx, hy, one_mul]
+    | neg x _ hx =>
+      rw [symp_neg_left, mul_neg, AddChar.map_neg_eq_inv, hx, inv_one]
+  induction hγ' using AddSubgroup.closure_induction with
+  | mem z hz => exact step z hz γ hγ
+  | zero => rw [symp_zero_right, mul_zero, AddChar.map_zero_eq_one]
+  | add x y _ _ hx hy =>
+    rw [symp_add_right, mul_add, AddChar.map_add_eq_mul, hx, hy, one_mul]
+  | neg x _ hx =>
+    rw [symp_neg_right, mul_neg, AddChar.map_neg_eq_inv, hx, inv_one]
+end Final
+end Tw.LatVacArith
+end
+end
+
+section
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain
+  NumberField MeasureTheory Matrix Classical
+noncomputable section
+namespace Tw.VacCocycle
+theorem psi_half_symp_add_k : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E
+  →ₐ[F] E}
+    (B : Base F E), GoodK σ B → ∀ {n d : ℕ} (X : Spc F E n) (Y : Spc F E d) (r s r' s' : ℕ),
+    X.IsHerm σ B r s → Y.IsSkew σ B r' s' → ∀ θ : 𝓞 E,
+      (θ : E) + σ θ = 1 → ∀ v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F),
+    ∀ γ ∈ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.latAtV X Y v,
+      ∀ γ' ∈ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.latAtV X Y v,
+      B.ψ (⅟(2 : AF F) * GlobalTheory.WeilM.symp (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (inclR
+        (F := F) (AF F) (θ : E))
+          (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J)
+            (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J) (γ + γ') (γ + γ')) =
+        B.ψ (⅟(2 : AF F) * GlobalTheory.WeilM.symp (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ)
+          (inclR (F := F) (AF F) (θ : E))
+            (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J)
+              (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J) γ γ) *
+          B.ψ (⅟(2 : AF F) * GlobalTheory.WeilM.symp (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ)
+            (inclR (F := F) (AF F) (θ : E))
+            (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J)
+              (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J) γ' γ') *
+          B.ψ (-(⅟(2 : AF F) * GlobalTheory.WeilM.symp (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ)
+            (-1)
+            (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J)
+              (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J) γ γ')) := by
+  intro F E _ _ _ _ _ σ B hB n d X Y r s r' s' hX hY θ hθ v γ hγ γ' hγ'
+  have hσ : ∀ x : E, σ (σ x) = x := fun x => by
+    obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance
+    apply τ.injective
+    rw [hB.cm.2.2.2, hB.cm.2.2.2, star_star]
+  have hc : ∀ z,
+    GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ
+    (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ z) = z := fun z => by
+    induction z using TensorProduct.induction_on with
+    | zero => simp
+    | tmul a e => simp [GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA, hσ]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
+  have hi : ∀ e : E,
+    GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ (inclR (F := F) (AF F) e) = inclR (F := F) (AF F) (σ
+    e) := fun e => rfl
+  have hsw := symp_swap (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) hc (JA :=
+    GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J) (JB :=
+    GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J)
+    (fun i j => by simp
+      only [GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM, Matrix.map_apply, hi, hX.herm])
+    (fun i j => by simp
+      only [GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM, Matrix.map_apply, hi, hY.skew, map_neg])
+    (ξ := inclR (F := F) (AF F) (θ : E)) (by rw [hi, ← map_add (f := _), hθ, map_one]) γ γ'
+  have h1 := _root_.Tw.LatVacArith.psi_symp_latAtV_k σ B X Y r s r' s' hB hX hY v θ 1
+    (by rw [map_one]; exact one_mem _) γ hγ γ' hγ'
+  have h2 := _root_.Tw.LatVacArith.psi_symp_latAtV_k σ B X Y r s r' s' hB hX hY v (-1) 1
+    (by rw [map_one]; exact one_mem _) γ hγ γ' hγ'
+  have hm : inclR (F := F) (AF F) ((-1 : 𝓞 E) : E) = -1 := by
+    rw [show ((-1 : 𝓞 E) : E) = -1 by simp, map_neg, map_one]
+  rw [hm] at h2
+  rw [Tw.LatVacArith.symp_add_left, Tw.LatVacArith.symp_add_right, Tw.LatVacArith.symp_add_right, hsw,
+    ← mul_one (_ * _ * _), ← h1, ← mul_one (_ * _ * _ * _), ← h2]
+  simp only [← AddChar.map_add_eq_mul]
+  congr 1
+  have h : (⅟(2 : AF F)) * 2 = 1 := invOf_mul_self _
+  generalize (⅟(2 : AF F)) = t at h ⊢
+  linear_combination (GlobalTheory.WeilM.symp (R := AF F) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA
+    σ) (inclR (F := F) (AF F) (θ : E))
+      (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J)
+        (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J) γ γ' +
+    GlobalTheory.WeilM.symp (R := AF F) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (-1)
+      (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J)
+        (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J) γ γ') * h
+end Tw.VacCocycle
+end
+end
+
+noncomputable section
+namespace GlobalTheory.ThK
+open NumberField IsDedekindDomain MeasureTheory Filter Topology
+  Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
+  GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
+open GlobalTheory.Doubling (absE)
+variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
+section Pair
+variable {n d n₁ d₁ : ℕ} {X : Spc F E n} {W : Spc F E d} {X₁ : Spc F E n₁} {W₁ : Spc F E d₁}
+structure IsPair_k (B : Base F E) (M : Model σ X W) (χX χW : Chr F E) (om : Rep σ X W) (r s r' s' : ℕ) : Prop where
+  base : GoodK σ B
+  herm : X.IsHerm σ B r s
+  skew : W.IsSkew σ B r' s'
+  good : M.IsGood B.ψ
+  hX : IsHecke F E χX
+  hW : IsHecke F E χW
+  resX : ResEtaPow (Units.map (algebraMap F (AF F)).toMonoidHom).range χX n
+  resW : ResEtaPow (Units.map (algebraMap F (AF F)).toMonoidHom).range χW d
+  weil : M.IsWeil B.ψ χX χW om
+end Pair
+variable {a a' : ℕ}
+def ThetaBasic_k : Prop :=
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (n d :
+    ℕ) (X : Spc F E n) (W : Spc F E d)
+    (M : Model σ X W) (χX χW : Chr F E) (om : Rep σ X W) (r s r' s' : ℕ), IsPair_k B M χX χW om
+      r s r' s' →
+    (∀ Φ ∈ schA F _, Continuous (fun x : UA σ X.J × UA σ W.J => theta om Φ x.1 x.2) ∧
+      (∀ γ ∈ ratU σ X.J, ∀ γ' ∈ ratU σ W.J, ∀ g h, theta om Φ (γ * g) (γ' * h) = theta om Φ g h) ∧
+      ∃ (C : ℝ) (k : ℕ), ∀ g h, ‖theta om Φ g h‖ ≤ C * ((ht g : ℝ) * ht h) ^ k) ∧
+    ∀ φ ∈ SB (Fin n × Fin d → Af F), ∀ g h, Continuous fun f : SInf F (Fin n × Fin d) => theta om (pureA F f φ) g h
+def StabEx_k : Prop :=
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (n :
+    ℕ) (X : Spc F E n) (r s : ℕ), GoodK σ B → X.IsHerm σ B r s →
+    ∃ (K : Subgroup (UA σ X.J)) (μK : Measure K) (μ : Measure (AE F E)ˣ), IsStab B K ∧ IsCompact (K : Set (UA σ X.J)) ∧
+      μK.IsHaarMeasure ∧ μ.IsHaarMeasure
+def ActsEx_k : Prop :=
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (n d :
+    ℕ) (X : Spc F E n) (W : Spc F E d)
+    (M : Model σ X W) (χX χW : Chr F E) (om : Rep σ X W) (r s r' s' : ℕ), IsPair_k B M χX χW om
+      r s r' s' → ∀ v : Pl F,
+    (∀ g ∈ UAt σ X (evFin F v), ∀ h ∈ UAt σ W (evFin F v), ∀ φ ∈ SB (Fin n × Fin d → Fv F v),
+      ∃! φ₁, φ₁ ∈ SB (Fin n × Fin d → Fv F v) ∧ Acts (evFin F v) (om (g, h)) φ φ₁) ∧
+    (∀ u, At (evFin F v) u → ∀ φ ∈ SB (Fin n × Fin d → Fv F v),
+      ∃! φ₁, φ₁ ∈ SB (Fin n × Fin d → Fv F v) ∧ Acts (evFin F v) (M.co.rho B.ψ u) φ φ₁) ∧
+    ∀ φ ∈ SB (Fin n × Fin d → Fv F v), ∃ U ∈ 𝓝 (1 : UA σ X.J × UA σ W.J), ∀ x ∈ U, x.1 ∈ UAt σ X (evFin F v) →
+      x.2 ∈ UAt σ W (evFin F v) → Acts (evFin F v) (om x) φ φ
+end GlobalTheory.ThK
+end
+
+noncomputable section
+namespace Tw.VacAny
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain
+  NumberField MeasureTheory Matrix Classical _root_.GlobalTheory _root_.GlobalTheory.VacAny
+
+theorem exists_isVac_any_darboux_k : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ
+  : E →ₐ[F] E}
+    (B : Base F E), GoodK σ B → ∀ {n d : ℕ} (X : Spc F E n) (Y : Spc F E d) (r s r' s' : ℕ),
+    X.IsHerm σ B r s → Y.IsSkew σ B r' s' → ∀ (co : GlobalTheory.WeilM.Darboux (GlobalTheory.WeilM.symp (R :=
+      AF F) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (-1)
+      (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J)
+      (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J)) (Fin n × Fin d)) (v :
+      GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)),
+    ∃ φ, Model.IsVac (Model.mk (σ := σ) (X := X) (W := Y) co (fun _ => 0) 0 ∅) B.ψ v φ := by
+  intro F E _ _ _ _ _ σ B hB n d X Y r s r' s' hX hY co v
+  obtain ⟨θ, hθ⟩ := _root_.Tw.exists_int_add_conj_eq_one_of_base_good_k B hB
+  obtain ⟨M, _, g, hΓ⟩ := Tw.LatParam.latAtV_param X Y hX.lat.toIsLattice hY.lat.toIsLattice v
+  let γf : (M → v.adicCompletionIntegers F) → Matrix (Fin n) (Fin d)
+    (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :=
+    fun a => ∑ m, GlobalTheory.EmbChart.atPlace v (a m : Fv F v) •
+      GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F (g m)
+  let u : M → (Fin n × Fin d → Fv F v) × (Fin n × Fin d → Fv F v) := fun m =>
+    (fun i => GlobalTheory.AdelicU.evFin F v ((co.e (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F (g
+      m))).1 i),
+     fun i => GlobalTheory.AdelicU.evFin F v ((co.e (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F (g
+       m))).2 i))
+  let χ : (M → v.adicCompletionIntegers F) → ℂ := fun a => B.ψ (⅟(2 : AF F) *
+    GlobalTheory.WeilM.symp (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (inclR (F :=
+      F) (AF F) (θ : E)) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J)
+      (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J) (γf a) (γf a))
+  have he : ∀ a, co.e (γf a) =
+      ∑ m, GlobalTheory.EmbChart.atPlace v (a m : Fv F v) • co.e
+        (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F (g m)) := by
+    intro a
+
+    simp only [γf, map_sum, map_smul]
+  have hcomp : ∀ a i, (co.e (γf a)).1 i =
+      ∑ m, GlobalTheory.EmbChart.atPlace v (a m : Fv F v) * (co.e
+        (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F (g m))).1 i ∧
+      (co.e (γf a)).2 i =
+      ∑ m, GlobalTheory.EmbChart.atPlace v (a m : Fv F v) * (co.e
+        (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F (g m))).2 i := by
+    intro a i
+    rw [he]
+    simp [Prod.fst_sum, Prod.snd_sum, Finset.sum_apply, smul_eq_mul]
+  have hAt : ∀ a i, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) ((co.e
+    (γf a)).1 i) ∧
+      GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) ((co.e (γf a)).2 i)
+        := by
+    intro a i
+    rw [(hcomp a i).1, (hcomp a i).2]
+    exact ⟨GlobalTheory.VacAny.at_sum _ fun m _ => GlobalTheory.VacAny.at_mul_right (GlobalTheory.VacAny.at_atPlace _) _,
+      GlobalTheory.VacAny.at_sum _ fun m _ => GlobalTheory.VacAny.at_mul_right (GlobalTheory.VacAny.at_atPlace _) _⟩
+  have hev : ∀ a, ((fun i => GlobalTheory.AdelicU.evFin F v ((co.e (γf a)).1 i)),
+      (fun i => GlobalTheory.AdelicU.evFin F v ((co.e (γf a)).2 i))) = ∑ m, (a m : Fv F v) • u m := by
+    intro a
+    refine Prod.ext (funext fun i => ?_) (funext fun i => ?_)
+
+    · simp [(hcomp a i).1, map_sum, map_mul, GlobalTheory.EmbChart.evFin_atPlace, Prod.fst_sum, Finset.sum_apply, u]
+
+    · simp [(hcomp a i).2, map_sum, map_mul, GlobalTheory.EmbChart.evFin_atPlace, Prod.snd_sum, Finset.sum_apply, u]
+  have hψ : ∀ z : AF F, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) z →
+      B.ψ z = GlobalTheory.VacAny.psiV B.ψ v (GlobalTheory.AdelicU.evFin F v z) := fun z hz => by
+    rw [GlobalTheory.VacAny.psiV_apply, ← eq_atPlace_of_at v z hz]
+  have hzero : ∀ a, ∑ m, (a m : Fv F v) • u m = 0 → γf a = 0 := by
+    intro a h
+    rw [← hev a] at h
+    have h1 : co.e (γf a) = 0 := by
+      refine Prod.ext (funext fun i => ?_) (funext fun i => ?_)
+      · rw [eq_atPlace_of_at v _ (hAt a i).1, show GlobalTheory.AdelicU.evFin F v ((co.e (γf a)).1 i) = 0 from
+          congrFun (congrArg Prod.fst h) i, map_zero]
+        rfl
+      · rw [eq_atPlace_of_at v _ (hAt a i).2, show GlobalTheory.AdelicU.evFin F v ((co.e (γf a)).2 i) = 0 from
+          congrFun (congrArg Prod.snd h) i, map_zero]
+        rfl
+    exact co.e.map_eq_zero_iff.1 h1
+  have hker : ∀ a, ∑ m, (a m : Fv F v) • u m = 0 → χ a = 1 := by
+    intro a h
+    simp only [χ, hzero a h]
+    simp [GlobalTheory.WeilM.symp, GlobalTheory.WeilM.hTens]
+  have hadd : ∀ a b, γf (a + b) = γf a + γf b := by
+    intro a b
+    simp only [γf]
+    rw [← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl fun m _ => ?_
+    rw [show (((a + b) m : v.adicCompletionIntegers F) : Fv F v) = (a m : Fv F v) + b m from rfl, map_add (f := _),
+      add_smul]
+  have hmem : ∀ a, γf a ∈ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.latAtV X Y v := fun a => (hΓ _).2 ⟨a,
+    rfl⟩
+  have hdot : ∀ a b, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) ((co.e
+    (γf a)).1 ⬝ᵥ (co.e (γf b)).2) ∧
+      GlobalTheory.AdelicU.evFin F v ((co.e (γf a)).1 ⬝ᵥ (co.e (γf b)).2) =
+        (∑ m, (a m : Fv F v) • u m).1 ⬝ᵥ (∑ m, (b m : Fv F v) • u m).2 := by
+    intro a b
+    refine ⟨GlobalTheory.VacAny.at_sum _ fun i _ => GlobalTheory.VacAny.at_mul_right (hAt a i).1 _, ?_⟩
+    rw [← hev a, ← hev b]
+
+    simp only [dotProduct, map_sum, map_mul]
+  have hcoc : ∀ a b, χ (a + b) = χ a * χ b * GlobalTheory.VacAny.psiV B.ψ v
+      (-(⅟(2 : Fv F v) * ((∑ m, (a m : Fv F v) • u m).1 ⬝ᵥ (∑ m, (b m : Fv F v) • u m).2 -
+        (∑ m, (b m : Fv F v) • u m).1 ⬝ᵥ (∑ m, (a m : Fv F v) • u m).2))) := by
+    intro a b
+    simp only [χ]
+    rw [hadd, _root_.Tw.VacCocycle.psi_half_symp_add_k B hB X Y r s r' s' hX hY θ hθ v _ (hmem a) _ (hmem b), co.form]
+    congr 1
+    have hz := GlobalTheory.VacAny.at_neg (GlobalTheory.VacAny.at_mul_left (⅟(2 : AF F))
+      (GlobalTheory.VacAny.at_sub (hdot a b).1 (hdot b a).1))
+    rw [hψ _ hz, map_neg, map_mul, map_sub, (hdot a b).2, (hdot b a).2, GlobalTheory.VacAny.evFin_invOf_two]
+  obtain ⟨φ, hφSB, hφ0, hφ⟩ := GlobalTheory.VacLoc.exists_schr_eigen v (GlobalTheory.VacAny.psiV B.ψ v)
+    (GlobalTheory.VacAny.continuous_psiV hB.std.1 v)
+    (Tw.PsiNontriv.psiV_ne_one B.ψ hB.std v) u χ (Tw.ContSymp.continuous_psi_symp_atPlace σ B.ψ hB.std.1 X.J Y.J (θ : E)
+      v g) hker hcoc
+  refine ⟨φ, hφSB, hφ0, θ, hθ, ?_⟩
+  intro γ hγ
+  obtain ⟨a, rfl⟩ := (hΓ γ).1 hγ
+  intro rr hrr
+  show GlobalTheory.WeilM.schr B.ψ (co.e (γf a)) _ = _
+  rw [Tw.SchrLoc.schr_tens_of_at B.ψ v (co.e (γf a)) (fun i => (hAt a i).1) (fun i => (hAt a i).2) φ rr hrr.1, hev a,
+    hφ a]
+end Tw.VacAny
+end
+
+noncomputable section
+namespace PositivityTheory.ThKF0.Grow
+open scoped Matrix NNReal ENNReal Classical
+open NumberField IsDedekindDomain MeasureTheory Filter Topology GlobalTheory.WeilM GlobalTheory.AdelicU
+  GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open GlobalTheory.LFun GlobalTheory.ThK in
+variable {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ] {ψ : AddChar (AF F) ℂ}
+theorem schwartz_decay_uniform (hA : HtBd) (hF : FinInv) (hS : Sob) (hT : TrBd) : ∀ (F E :
+  Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (n d : ℕ) (X :
+  Spc F E n) (W : Spc F E d) (M : Model σ X W) (χX χW : Chr F E) (om : Rep σ X W) (r s r' s' : ℕ),
+  GlobalTheory.ThK.IsPair_k B M χX χW om r s r' s' → ∀ Φ ∈ schA F (Fin n × Fin d), ∀ N : ℕ, ∃ (C : ℝ) (k : ℕ),
+  ∀ g h (x : Fin n × Fin d → AF F),
+    ‖om (g, h) Φ x‖ * (1 + ‖fun i => evI F (x i)‖) ^ N ≤ C * ((ht g : ℝ) * ht h) ^ k := by
+  intro F E _ _ _ _ _ σ B n d X W M χX χW om r s r' s' hP Φ hΦ N
+  obtain ⟨C, -, hC⟩ := hA F E σ n d X W M
+  obtain ⟨C', k, -, h⟩ := weighted hF hS hT hP.base.std hΦ N
+  refine ⟨C' * C ^ k, k, fun g g' x => ?_⟩
+  obtain ⟨m, h1, h2, h3⟩ := hC g g'
+  rw [mul_assoc, ← mul_pow]
+  exact h _ _ m _ h1 h2 (impl_sOf hP.weil g g') h3 x
+end PositivityTheory.ThKF0.Grow
+end
+
+noncomputable section
+section
+open scoped TensorProduct Matrix
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
+open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
+open Formalism.IndefR.DatumF
+noncomputable section
+namespace PositivityTheory.ThKW.AdelicSchwartzProperties
+open PositivityTheory.ThKW.ModulusFactorDefinition PositivityTheory.ThKW.ModulusDerivativeNormalisation
+  GlobalTheory.ThetaTransform
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-end Tw.VacIndic
+theorem schA_facts_k {B : Base F E} {σ : E →ₐ[F] E} (hB : GoodK σ B) (N : ℕ) (μN : Measure (Fin
+  N → AF F))
+    (hμN : μN.IsAddHaarMeasure) (Φ : (Fin N → AF F) → ℂ) (hΦ : Φ ∈ schA F (Fin N)) :
+    Continuous Φ ∧ Integrable (fun x => Φ x * starRingEnd ℂ (Φ x)) μN ∧
+      ∀ b : Fin N → AF F, (fun x => B.ψ (x ⬝ᵥ b) * Φ x) ∈ schA F (Fin N) := by
+  refine ⟨GlobalTheory.ThKOp.continuous_of_mem_schA hΦ, ?_, fun b => ?_⟩
+  · have : SecondCountableTopology (AF F) := GlobalTheory.AdelicUnitaryTop.secondCountable_adele F
+    have : BorelSpace (AF F) := ⟨rfl⟩
+    have hb : (MeasurableSpace.pi : MeasurableSpace (Fin N → AF F)) = borel _ := BorelSpace.measurable_eq
+    have key : ∀ (m : MeasurableSpace (Fin N → AF F)), m = borel _ → ∀ μ : @Measure _ m,
+        @Measure.IsAddHaarMeasure _ _ _ m μ → Integrable (fun x => Φ x * starRingEnd ℂ (Φ x)) μ := by
+      rintro m rfl μ hμ
+      have hm := schA_memLp_two F (Fin N) μ hμ Φ hΦ
+      have hi := (hm.integrable_norm_pow two_ne_zero).ofReal (𝕜 := ℂ)
+      refine hi.congr (Filter.Eventually.of_forall fun x => ?_)
+      simp only [Complex.mul_conj, Complex.normSq_eq_norm_sq]
+      push_cast; rfl
+    exact key _ hb μN hμN
+  · have h := GlobalTheory.WeylFour.SchrKeep.schr_mem_schA F B.ψ hB.std (Fin N) (0, b) Φ hΦ
+    convert h using 1
+    funext x
+    simp [schr]
+end PositivityTheory.ThKW.AdelicSchwartzProperties
+end
+end
+
+namespace PositivityTheory.ThKEst
+open scoped TensorProduct NNReal ENNReal Matrix
+open NumberField IsDedekindDomain MeasureTheory Filter Topology
+  Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
+  GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
+variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
+def EpsOf_k : Prop :=
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E),
+    GoodK σ B → ∀ (n : ℕ) (X : Spc F E n) (r s : ℕ),
+    (X.IsHerm σ B r s ∨ X.IsSkew σ B r s) → EpsHerm σ X.J ∧ r + s = n ∧ ∀ fr : Frame σ X.J, fr.IsGood → fr.r ≤ min r s
+def CoefEq_k : Prop :=
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (n d :
+    ℕ) (X : Spc F E n) (W : Spc F E d) (M : Model σ X W) χX χW om r s r' s',
+    GlobalTheory.ThK.IsPair_k B M χX χW om r s r' s' → ∀ μ : Measure (Fin n × Fin d → AF F),
+    μ.IsAddHaarMeasure → ∀ Φ₁ ∈ schA F (Fin n × Fin d), ∀ Φ₂ ∈ schA F (Fin n × Fin d),
+    ∀ (g : UA σ X.J) (h : UA σ W.J) (z : Ten F E n d), coef F B.ψ μ (om (g, h) Φ₁) (om (g,
+    h) Φ₂) (M.co.e z) = coef F B.ψ μ Φ₁ Φ₂ (M.co.e (mat g⁻¹ * z * (mat h⁻¹)ᵀ))
+def CoefBd_k : Prop :=
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (n d :
+    ℕ) (X : Spc F E n) (W : Spc F E d) (M : Model σ X W) χX χW om r s r' s',
+    GlobalTheory.ThK.IsPair_k B M χX χW om r s r' s' → ∀ μ : Measure (Fin n × Fin d → AF F),
+    μ.IsAddHaarMeasure → ∀ φ₁ ∈ SB (Fin n × Fin d → Af F), ∀ φ₂ ∈ SB (Fin n × Fin d → Af F), ∀ N : ℕ,
+    ∃ (p : Seminorm ℂ (SInf F (Fin n × Fin d))) (C : Set (Ten F E n d)),
+    Continuous p ∧ IsCompact C ∧ ∀ (f₁ f₂ : SInf F (Fin n × Fin d)) (z : Ten F E n d),
+    ‖coef F B.ψ μ (pureA F f₁ φ₁) (pureA F f₂ φ₂) (M.co.e z)‖ ≤ p f₁ * p f₂ * maj B.emb C N z
+end PositivityTheory.ThKEst
+
+namespace PositivityTheory.ThKEst
+open scoped Matrix
+open NumberField Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
+  GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
+theorem epsOf_of_k : EpsOf_k := by
+  intro F E _ _ _ _ _ σ B hB n X r s hX
+  obtain ⟨w⟩ : Nonempty (InfinitePlace F) := inferInstance
+  have hτ := hB.cm.2.2.2 (B.emb w).1
+  rcases hX with hX | hX
+  · have := SignatureOfHermitianForm.of_sig σ _ hτ X.J 1 one_ne_zero
+      (by rw [one_smul]; exact hX.sig w)
+    exact ⟨⟨Or.inl hX.herm, this.1⟩, this.2⟩
+  · have := SignatureOfHermitianForm.of_sig σ _ hτ X.J Complex.I Complex.I_ne_zero (hX.sig w)
+    exact ⟨⟨Or.inr hX.skew, this.1⟩, this.2⟩
+end PositivityTheory.ThKEst
+end
+
+noncomputable section
+namespace PositivityTheory.ThKG.Tow.Stab
+open scoped TensorProduct Matrix Pointwise RestrictedProduct
+open NumberField IsDedekindDomain Topology Filter GlobalTheory.WeilM GlobalTheory.AdelicU
+  GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
+  Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {n : ℕ}
+attribute [local instance] ae_ring ae_t2 ae_smul
+theorem exists_compact_mat_k {B : Base F E} {X : Spc F E n} {r s : ℕ} (hB : GoodK σ B) (hX :
+  X.IsHerm σ B r s) :
+    ∃ S : Set (Matrix (Fin n) (Fin n) (AE F E)), IsCompact S ∧ ∀ k ∈ stabK (σ := σ) B X, mat k ∈ S := by
+  obtain ⟨Φ, hΦ, eΦ⟩ := exists_section hB.cm B.emb
+  choose C hC h using fin_bound X hX.lat
+  choose R hR using fun w => cartan_bound (hX.cartan w)
+  have hD : IsCompact (Φ '' Set.univ.pi fun w => Metric.closedBall (0 : ℂ) (R w)) :=
+    (isCompact_univ_pi fun w => isCompact_closedBall _ _).image hΦ
+  refine ⟨Set.univ.pi fun i => Set.univ.pi fun j => (Φ '' Set.univ.pi fun w => Metric.closedBall (0 : ℂ) (R w)) + C i j,
+    isCompact_univ_pi fun i => isCompact_univ_pi fun j => hD.add (hC i j), fun k hk i _ j _ => ?_⟩
+  rw [eΦ (mat k i j)]
+  refine Set.add_mem_add ⟨_, fun w _ => ?_, rfl⟩ (h i j _ fun y hy => (hk.2 y hy).1)
+  rw [mem_closedBall_zero_iff]
+  refine hR w ((mat k).map (piInf (B.emb w))) ?_ (hk.1 w) i j
+  rw [← Levi.iso_map_piInf (σ := σ) (fun τ z => Levi.piInf_cA hB.cm τ z)]
+  have e : (mat k)ᵀ * incM F X.J * (mat k).map (cA σ) = incM F X.J := k.2
+  rw [e]
+  exact Matrix.ext fun i j => Levi.piInf_incl _ _
+theorem isCompact_stabK_k {B : Base F E} {X : Spc F E n} {r s : ℕ} (hB : GoodK σ B) (hX :
+  X.IsHerm σ B r s) :
+    IsCompact ((stabK B X : Subgroup (UA σ X.J)) : Set (UA σ X.J)) := by
+  obtain ⟨S, hS, h⟩ := exists_compact_mat_k hB hX
+  have hc := IsModuleTopology.continuous_of_linearMap (cA (F := F) σ).toLinearMap
+  have hU : IsClosed ((UG (cA σ) (incM F X.J) : Subgroup (GL (Fin n) (AE F E))) : Set (GL (Fin n) (AE F E))) :=
+    isClosed_eq (((Units.continuous_val.matrix_transpose).matrix_mul continuous_const).matrix_mul
+      (Units.continuous_val.matrix_map hc)) continuous_const
+  exact isCompact_of_units _ hU _ (isClosed_stabK B X (isCompact_latHat X hX.lat.fg).isClosed) S hS
+    fun k hk => ⟨h k hk, h _ (inv_mem hk)⟩
+end PositivityTheory.ThKG.Tow.Stab
+
+namespace PositivityTheory.ThKG.Tow
+open NumberField IsDedekindDomain MeasureTheory Filter Topology
+  Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
+  GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
+theorem stabEx_k : GlobalTheory.ThK.StabEx_k := by
+  intro F E _ _ _ _ _ σ B n X r s hB hX
+  have hc := Stab.isCompact_stabK_k hB hX
+  obtain ⟨μK, hμK⟩ := Stab.exists_haar_of_isCompact _ hc
+  obtain ⟨μ, hμ⟩ := Stab.exists_haar_idele (F := F) (E := E)
+  exact ⟨Stab.stabK B X, μK, μ, Stab.isStab_stabK B X, hc, hμK, hμ⟩
+end PositivityTheory.ThKG.Tow
+end
+
+noncomputable section
+namespace PositivityTheory.ThKG.Tow
+open NumberField IsDedekindDomain MeasureTheory Filter Topology
+  Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
+  GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
+def ModelEx_k : Prop :=
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E)
+    (B : Base F E), GoodK σ B → ∀ (n d : ℕ) (X : Spc F E n) (W : Spc F E d) (r s r' s' : ℕ),
+    X.IsHerm σ B r s → W.IsSkew σ B r' s' → ∃ M : Model σ X W, M.IsGood B.ψ
+def WeilEx_k : Prop :=
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E)
+    (B : Base F E), GoodK σ B → ∀ (n d : ℕ) (X : Spc F E n) (W : Spc F E d) (r s r' s' : ℕ),
+    X.IsHerm σ B r s → W.IsSkew σ B r' s' → ∀ M : Model σ X W, M.IsGood B.ψ →
+    ∀ χX χW : Chr F E, IsHecke F E χX → IsHecke F E χW →
+      ResEtaPow (Units.map (algebraMap F (AF F)).toMonoidHom).range χX n →
+      ResEtaPow (Units.map (algebraMap F (AF F)).toMonoidHom).range χW d → ∃ om, M.IsWeil B.ψ χX χW om
+def PairEx_k : Prop :=
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E)
+    (B : Base F E), GoodK σ B → ∀ (n d : ℕ) (X : Spc F E n) (W : Spc F E d) (r s r' s' : ℕ),
+    X.IsHerm σ B r s → W.IsSkew σ B r' s' → (∃ M : Model σ X W, M.IsGood B.ψ) ∧
+    ∀ χX χW : Chr F E, IsHecke F E χX → IsHecke F E χW →
+      ResEtaPow (Units.map (algebraMap F (AF F)).toMonoidHom).range χX n →
+      ResEtaPow (Units.map (algebraMap F (AF F)).toMonoidHom).range χW d →
+      ∀ M : Model σ X W, M.IsGood B.ψ → ∃ om, GlobalTheory.ThK.IsPair_k B M χX χW om r s r' s'
+theorem pairEx_of_k (h₁ : ModelEx_k) (h₂ : WeilEx_k) : PairEx_k := by
+  intro F E _ _ _ _ _ σ B hB n d X W r s r' s' hX hW
+  refine ⟨h₁ F E σ B hB n d X W r s r' s' hX hW, fun χX χW a b c e M hM => ?_⟩
+  obtain ⟨om, hom⟩ := h₂ F E σ B hB n d X W r s r' s' hX hW M hM χX χW a b c e
+  exact ⟨om, hB, hX, hW, hM, a, b, c, e, hom⟩
+end PositivityTheory.ThKG.Tow
+end
+
+section
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes IsDedekindDomain NumberField MeasureTheory Matrix
+  Classical GlobalTheory.AdelicU GlobalTheory.WeilM GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels Filter
+  Topology
 namespace Tw.VacIndic
-open _root_.GlobalTheory
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-variable {n d : ℕ}
-end Tw.VacIndic
-namespace Tw.VacIndic
-open _root_.GlobalTheory
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-theorem isVac_indicator_of_theta_k {σ : E →ₐ[F] E} (B : Base F E) (hB : _root_.UpperTheory.TP.W.GoodK σ B) {n d : ℕ} (X : Spc F E n)
+theorem isVac_indicator_of_theta_k {σ : E →ₐ[F] E} (B : Base F E) (hB : GoodK σ B) {n d : ℕ} (X
+  : Spc F E n)
     (Y : Spc F E d) (r s r' s' : ℕ) (hX : X.IsHerm σ B r s) (hY : Y.IsSkew σ B r' s')
-    (co : GlobalTheory.WeilM.Darboux (GlobalTheory.WeilM.symp (R := AF F) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (-1) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J)
-      (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J)) (Fin n × Fin d))
+    (co : Darboux (symp (R := AF F)
+      (cA σ) (-1)
+      (incM F X.J)
+      (incM F Y.J)) (Fin n × Fin d))
     (hrat : ∀ x : Matrix (Fin n) (Fin d) E, ∃ y z : Fin n × Fin d → F,
-      co.e (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F x) = (fun k => algebraMap F (AF F) (y k), fun k => algebraMap F (AF F) (z k)))
+      co.e (incM F x) = (fun k => algebraMap F (AF F) (y k),
+        fun k => algebraMap F (AF F) (z k)))
     (hθ : ∃ θ : 𝓞 E, (θ : E) + σ θ = 1) :
-    ∀ᶠ v in Filter.cofinite, Model.IsVac (Model.mk (σ := σ) (X := X) (W := Y) co (fun _ => 0) 0 ∅) B.ψ v
+    ∀ᶠ v in Filter.cofinite, Model.IsVac (Model.mk (W := Y) co (fun _ => 0) 0 ∅) B.ψ v
       (Set.indicator {x | ∀ k, x k ∈ v.adicCompletionIntegers F} 1) := by
   classical
   obtain ⟨θ, hθ⟩ := hθ
@@ -164,7 +660,7 @@ theorem isVac_indicator_of_theta_k {σ : E →ₐ[F] E} (B : Base F E) (hB : _ro
       intro k
       simp only [map_neg, Prod.fst_neg, Prod.snd_neg, Pi.neg_apply]
       exact ⟨at_neg (h k).1, at_neg (h k).2.1, neg_mem (h k).2.2.1, neg_mem (h k).2.2.2⟩
-  set S := symp (cA σ) (inclR (F := F) (AF F) (θ : E)) (incM F X.J) (incM F Y.J) with hS
+  set S := symp (cA σ) (inclR (AF F) (θ : E)) (incM F X.J) (incM F Y.J) with hS
   have hB1 : ∀ z ∈ T, ∀ z' ∈ AddSubgroup.closure T, At (evFin F v) (S z z') ∧ evFin F v (S z z') ∈ O := by
     intro z hz z' hz'
     obtain ⟨a, ha, hai, g, hg, rfl⟩ := hz
@@ -197,427 +693,35 @@ theorem isVac_indicator_of_theta_k {σ : E →ₐ[F] E} (B : Base F E) (hB : _ro
     (fun k => (hA γ hγ' k).2.2.1) (fun k => (hA γ hγ' k).2.2.2)
 end Tw.VacIndic
 namespace Tw.VacIndic
-open _root_.GlobalTheory
-theorem eventually_isVac_indicator_k : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-    (B : Base F E), _root_.UpperTheory.TP.W.GoodK σ B → ∀ {n d : ℕ} (X : Spc F E n) (Y : Spc F E d) (r s r' s' : ℕ),
-    X.IsHerm σ B r s → Y.IsSkew σ B r' s' → ∀ (co : GlobalTheory.WeilM.Darboux (GlobalTheory.WeilM.symp (R := AF F) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (-1) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J)) (Fin n × Fin d)), (∀ x : Matrix (Fin n) (Fin d) E, ∃ y z : Fin n × Fin d → F, co.e (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F x) = (fun k => algebraMap F (AF F) (y k), fun k => algebraMap F (AF F) (z k))) →
-    ∀ᶠ v in Filter.cofinite, Model.IsVac (Model.mk (σ := σ) (X := X) (W := Y) co (fun _ => 0) 0 ∅) B.ψ v
+theorem eventually_isVac_indicator_k : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
+  {σ : E →ₐ[F] E}
+    (B : Base F E), GoodK σ B → ∀ {n d : ℕ} (X : Spc F E n) (Y : Spc F E d) (r s r' s' : ℕ),
+    X.IsHerm σ B r s → Y.IsSkew σ B r' s' → ∀ (co : Darboux (symp (R := AF F)
+      (cA σ) (-1)
+      (incM F X.J)
+      (incM F Y.J)) (Fin n × Fin d)),
+      (∀ x : Matrix (Fin n) (Fin d) E, ∃ y z : Fin n × Fin d → F,
+      co.e (incM F x) = (fun k => algebraMap F (AF F) (y k),
+      fun k => algebraMap F (AF F) (z k))) →
+    ∀ᶠ v in Filter.cofinite, Model.IsVac (Model.mk (W := Y) co (fun _ => 0) 0 ∅) B.ψ v
       (Set.indicator {x | ∀ k, x k ∈ v.adicCompletionIntegers F} 1) := by
   intro F E _ _ _ _ _ σ B hB n d X Y r s r' s' hX hY co hrat
-  exact _root_.Tw.VacIndic.isVac_indicator_of_theta_k B hB X Y r s r' s' hX hY co hrat (_root_.Tw.exists_int_add_conj_eq_one_of_base_good_k B hB)
+  exact isVac_indicator_of_theta_k B hB X Y r s r' s' hX hY co hrat (_root_.Tw.exists_int_add_conj_eq_one_of_base_good_k
+    B hB)
 end Tw.VacIndic
 end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EventuallyIsVacIndicatorK =====
 
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PsiSympLatAtVKAlt =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PsiSympLatAtVKAlt", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab\npublic import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.StandardAddCharSymplecticLocalLatticeEqOne\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice
-open IsDedekindDomain NumberField MeasureTheory Matrix
-open Classical
-open scoped TensorProduct ComplexConjugate GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model HasExp SplitsFully Chars)
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-noncomputable section
-namespace Tw.LatVacArith
-open _root_.GlobalTheory
-open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-variable {F : Type} [Field F] [NumberField F]
-section Gen
-variable {E : Type} [Field E] [NumberField E] [Algebra F E]
-end Gen
-section Main
-variable {E : Type} [Field E] [NumberField E] [Algebra F E]
-end Main
-end Tw.LatVacArith
-namespace Tw.LatVacArith
-open _root_.GlobalTheory
-section Final
-open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-theorem psi_symp_latAtV_k : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    (σ : E →ₐ[F] E) (B : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base F E) {n d : ℕ} (X : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Spc F E n)
-    (Y : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Spc F E d) (r s r' s' : ℕ),
-    _root_.UpperTheory.TP.W.GoodK σ B → X.IsHerm σ B r s → Y.IsSkew σ B r' s' → ∀ (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)) (θ : 𝓞 E) (b : AF F),
-    GlobalTheory.AdelicU.evFin F v b ∈ v.adicCompletionIntegers F →
-    ∀ γ ∈ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.latAtV X Y v, ∀ γ' ∈ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.latAtV X Y v,
-      B.ψ (b * GlobalTheory.WeilM.symp (R := AF F) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (inclR (F := F) (AF F) (θ : E))
-        (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J) γ γ') = 1 := by
-  intro F E _ _ _ _ _ σ B n d X Y r s r' s' hB hX hY v θ b hb γ hγ γ' hγ'
-  have step : ∀ z' ∈ {z | ∃ a : AF F, At (GlobalTheory.AdelicU.evFin F v) a ∧ GlobalTheory.AdelicU.evFin F v a ∈ v.adicCompletionIntegers F ∧
-      ∃ x ∈ X.L, ∃ y ∈ Y.L, z = a • GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F (Matrix.vecMulVec x y)},
-      ∀ γ ∈ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.latAtV X Y v, B.ψ (b * GlobalTheory.WeilM.symp (R := AF F) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (inclR (F := F) (AF F) (θ : E))
-        (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J) γ z') = 1 := by
-    intro z' hz' γ hγ
-    obtain ⟨a', -, ha', x', hx', y', hy', rfl⟩ := hz'
-    induction hγ using AddSubgroup.closure_induction with
-    | mem z hz =>
-      obtain ⟨a, ha, hav, x, hx, y, hy, rfl⟩ := hz
-      exact psi_gen σ B X Y hX hY hB.std v θ b hb ha hav ha' hx hx' hy hy'
-    | zero => rw [symp_zero_left, mul_zero, AddChar.map_zero_eq_one]
-    | add x y _ _ hx hy =>
-      rw [symp_add_left, mul_add, AddChar.map_add_eq_mul, hx, hy, one_mul]
-    | neg x _ hx =>
-      rw [symp_neg_left, mul_neg, AddChar.map_neg_eq_inv, hx, inv_one]
-  induction hγ' using AddSubgroup.closure_induction with
-  | mem z hz => exact step z hz γ hγ
-  | zero => rw [symp_zero_right, mul_zero, AddChar.map_zero_eq_one]
-  | add x y _ _ hx hy =>
-    rw [symp_add_right, mul_add, AddChar.map_add_eq_mul, hx, hy, one_mul]
-  | neg x _ hx =>
-    rw [symp_neg_right, mul_neg, AddChar.map_neg_eq_inv, hx, inv_one]
-end Final
-end Tw.LatVacArith
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PsiSympLatAtVKAlt =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PsiHalfSympAddK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PsiHalfSympAddK", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PsiSympLatAtVKAlt\npublic import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.AddCharHalfTraceTensorLatticeHeisenbergCocycle\nimport Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.StandardAddCharSymplecticLocalLatticeEqOne\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice
-open IsDedekindDomain NumberField MeasureTheory Matrix
-open Classical
-open scoped TensorProduct ComplexConjugate GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model HasExp SplitsFully Chars)
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-open scoped GlobalTheory.VacAny
-noncomputable section
-namespace Tw.VacCocycle
-open _root_.GlobalTheory
-section General
-variable {R A : Type} [CommRing R] [CommRing A] [Algebra R A] (c : A →ₐ[R] A)
-  {α β : Type} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
-end General
-theorem psi_half_symp_add_k : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-    (B : Base F E), _root_.UpperTheory.TP.W.GoodK σ B → ∀ {n d : ℕ} (X : Spc F E n) (Y : Spc F E d) (r s r' s' : ℕ),
-    X.IsHerm σ B r s → Y.IsSkew σ B r' s' → ∀ θ : 𝓞 E, (θ : E) + σ θ = 1 → ∀ v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F),
-    ∀ γ ∈ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.latAtV X Y v, ∀ γ' ∈ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.latAtV X Y v,
-      B.ψ (⅟(2 : AF F) * GlobalTheory.WeilM.symp (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (inclR (F := F) (AF F) (θ : E))
-          (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J) (γ + γ') (γ + γ')) =
-        B.ψ (⅟(2 : AF F) * GlobalTheory.WeilM.symp (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (inclR (F := F) (AF F) (θ : E))
-            (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J) γ γ) *
-          B.ψ (⅟(2 : AF F) * GlobalTheory.WeilM.symp (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (inclR (F := F) (AF F) (θ : E))
-            (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J) γ' γ') *
-          B.ψ (-(⅟(2 : AF F) * GlobalTheory.WeilM.symp (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (-1)
-            (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J) γ γ')) := by
-  intro F E _ _ _ _ _ σ B hB n d X Y r s r' s' hX hY θ hθ v γ hγ γ' hγ'
-  have hσ : ∀ x : E, σ (σ x) = x := fun x => by
-    obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance
-    apply τ.injective
-    rw [hB.cm.2.2.2, hB.cm.2.2.2, star_star]
-  have hc : ∀ z, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ z) = z := fun z => by
-    induction z using TensorProduct.induction_on with
-    | zero => simp
-    | tmul a e => simp [GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA, hσ]
-    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
-  have hi : ∀ e : E, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ (inclR (F := F) (AF F) e) = inclR (F := F) (AF F) (σ e) := fun e => rfl
-  have hsw := symp_swap (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) hc (JA := GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J) (JB := GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J)
-    (fun i j => by simp only [GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM, Matrix.map_apply, hi, hX.herm])
-    (fun i j => by simp only [GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM, Matrix.map_apply, hi, hY.skew, map_neg])
-    (ξ := inclR (F := F) (AF F) (θ : E)) (by rw [hi, ← map_add (f := _), hθ, map_one]) γ γ'
-  have h1 := _root_.Tw.LatVacArith.psi_symp_latAtV_k σ B X Y r s r' s' hB hX hY v θ 1
-    (by rw [map_one]; exact one_mem _) γ hγ γ' hγ'
-  have h2 := _root_.Tw.LatVacArith.psi_symp_latAtV_k σ B X Y r s r' s' hB hX hY v (-1) 1
-    (by rw [map_one]; exact one_mem _) γ hγ γ' hγ'
-  have hm : inclR (F := F) (AF F) ((-1 : 𝓞 E) : E) = -1 := by
-    rw [show ((-1 : 𝓞 E) : E) = -1 by simp, map_neg, map_one]
-  rw [hm] at h2
-  rw [Tw.LatVacArith.symp_add_left, Tw.LatVacArith.symp_add_right, Tw.LatVacArith.symp_add_right, hsw,
-    ← mul_one (_ * _ * _), ← h1, ← mul_one (_ * _ * _ * _), ← h2]
-  simp only [← AddChar.map_add_eq_mul]
-  congr 1
-  have h : (⅟(2 : AF F)) * 2 = 1 := invOf_mul_self _
-  generalize (⅟(2 : AF F)) = t at h ⊢
-  linear_combination (GlobalTheory.WeilM.symp (R := AF F) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (inclR (F := F) (AF F) (θ : E))
-      (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J) γ γ' +
-    GlobalTheory.WeilM.symp (R := AF F) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (-1)
-      (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J) γ γ') * h
-end Tw.VacCocycle
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PsiHalfSympAddK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsIsVacAnyDarbouxK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsIsVacAnyDarbouxK", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsIntAddConjEqOneOfBaseGoodKAlt\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.PsiHalfSympAddK\npublic import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.AdelicSchrodingerTensorEqLocalOfSupportedAt\npublic import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.ContinuousAddCharSymplecticSelfPairingPlaceCoord\npublic import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.EqAdeleSupportedAtFinitePlaceOfSupportedAt\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSchroedingerEigenvectorCompactCocycle\npublic import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.StandardTraceAdelicAddCharLocalComponentNeOne\npublic import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.TensorLatticeAtFinitePlaceEqIntegralSpanGenerato\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice
-open IsDedekindDomain NumberField MeasureTheory Matrix
-open Classical
-open scoped TensorProduct ComplexConjugate GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model HasExp SplitsFully Chars)
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-open scoped GlobalTheory.VacAny
-noncomputable section
-namespace Tw.VacAny
-open _root_.GlobalTheory _root_.GlobalTheory.VacAny
-
-private theorem supported_sum {F : Type} [Field F] [NumberField F]
-    {v : HeightOneSpectrum (𝓞 F)} {ι : Type} (s : Finset ι) {f : ι → AF F}
-    (h : ∀ i ∈ s, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) (f i)) :
-    GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) (∑ i ∈ s, f i) := by
-  intro u hu
-  rw [Finset.smul_sum]
-  exact Finset.sum_eq_zero fun i hi => h i hi u hu
-
-private theorem supported_neg {F : Type} [Field F] [NumberField F]
-    {v : HeightOneSpectrum (𝓞 F)} {x : AF F}
-    (h : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) x) :
-    GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) (-x) := by
-  intro u hu
-  rw [smul_neg, h u hu, neg_zero]
-private theorem supported_atPlace {F : Type} [Field F] [NumberField F]
-    {v : HeightOneSpectrum (𝓞 F)} (t : Fv F v) :
-    GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) (GlobalTheory.EmbChart.atPlace v t) := by
-  intro u hu
-  rw [smul_eq_mul, mul_comm, GlobalTheory.EmbChart.atPlace_mul_right, hu, mul_zero, map_zero]
-
-private theorem supported_sub {F : Type} [Field F] [NumberField F]
-    {v : HeightOneSpectrum (𝓞 F)} {x y : AF F}
-    (hx : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) x)
-    (hy : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) y) :
-    GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) (x - y) := by
-  intro u hu
-  rw [smul_sub, hx u hu, hy u hu, sub_self]
-
-private theorem evFin_invOf_two_local {F : Type} [Field F] [NumberField F]
-    {v : HeightOneSpectrum (𝓞 F)} :
-    GlobalTheory.AdelicU.evFin F v (⅟(2 : AF F)) = ⅟(2 : Fv F v) := by
-  refine (invOf_eq_right_inv ?_).symm
-  have h : GlobalTheory.AdelicU.evFin F v (2 * ⅟(2 : AF F)) = 1 := by
-    rw [mul_invOf_self, map_one]
-  rwa [map_mul, map_ofNat] at h
-
-private theorem supported_mul_right {F : Type} [Field F] [NumberField F]
-    {v : HeightOneSpectrum (𝓞 F)} {x : AF F}
-    (hx : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) x) (y : AF F) :
-    GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) (x * y) := by
-  intro u hu
-  rw [smul_eq_mul, ← mul_assoc, show u * x = 0 from hx u hu, zero_mul]
-
-private theorem supported_mul_left {F : Type} [Field F] [NumberField F]
-    {v : HeightOneSpectrum (𝓞 F)} (x : AF F) {y : AF F}
-    (hy : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) y) :
-    GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) (x * y) := by
-  rw [mul_comm]
-  exact supported_mul_right hy x
-
-theorem exists_isVac_any_darboux_k : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-    (B : Base F E), _root_.UpperTheory.TP.W.GoodK σ B → ∀ {n d : ℕ} (X : Spc F E n) (Y : Spc F E d) (r s r' s' : ℕ),
-    X.IsHerm σ B r s → Y.IsSkew σ B r' s' → ∀ (co : GlobalTheory.WeilM.Darboux (GlobalTheory.WeilM.symp (R := AF F) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (-1) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J)) (Fin n × Fin d)) (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)),
-    ∃ φ, Model.IsVac (Model.mk (σ := σ) (X := X) (W := Y) co (fun _ => 0) 0 ∅) B.ψ v φ := by
-  intro F E _ _ _ _ _ σ B hB n d X Y r s r' s' hX hY co v
-  obtain ⟨θ, hθ⟩ := _root_.Tw.exists_int_add_conj_eq_one_of_base_good_k B hB
-  obtain ⟨M, _, g, hΓ⟩ := Tw.LatParam.latAtV_param X Y hX.lat.toIsLattice hY.lat.toIsLattice v
-  let γf : (M → v.adicCompletionIntegers F) → Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :=
-    fun a => ∑ m, GlobalTheory.EmbChart.atPlace v (a m : Fv F v) • GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F (g m)
-  let u : M → (Fin n × Fin d → Fv F v) × (Fin n × Fin d → Fv F v) := fun m =>
-    (fun i => GlobalTheory.AdelicU.evFin F v ((co.e (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F (g m))).1 i),
-     fun i => GlobalTheory.AdelicU.evFin F v ((co.e (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F (g m))).2 i))
-  let χ : (M → v.adicCompletionIntegers F) → ℂ := fun a => B.ψ (⅟(2 : AF F) *
-    GlobalTheory.WeilM.symp (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (inclR (F := F) (AF F) (θ : E)) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J)
-      (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J) (γf a) (γf a))
-  have he : ∀ a, co.e (γf a) =
-      ∑ m, GlobalTheory.EmbChart.atPlace v (a m : Fv F v) • co.e (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F (g m)) := by
-    intro a
-
-    simp only [γf, map_sum, map_smul]
-  have hcomp : ∀ a i, (co.e (γf a)).1 i =
-      ∑ m, GlobalTheory.EmbChart.atPlace v (a m : Fv F v) * (co.e (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F (g m))).1 i ∧
-      (co.e (γf a)).2 i =
-      ∑ m, GlobalTheory.EmbChart.atPlace v (a m : Fv F v) * (co.e (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F (g m))).2 i := by
-    intro a i
-    rw [he]
-    simp [Prod.fst_sum, Prod.snd_sum, Finset.sum_apply, smul_eq_mul]
-  have hAt : ∀ a i, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) ((co.e (γf a)).1 i) ∧
-      GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) ((co.e (γf a)).2 i) := by
-    intro a i
-    rw [(hcomp a i).1, (hcomp a i).2]
-    exact ⟨supported_sum _ fun m _ => supported_mul_right (supported_atPlace _) _,
-      supported_sum _ fun m _ => supported_mul_right (supported_atPlace _) _⟩
-  have hev : ∀ a, ((fun i => GlobalTheory.AdelicU.evFin F v ((co.e (γf a)).1 i)),
-      (fun i => GlobalTheory.AdelicU.evFin F v ((co.e (γf a)).2 i))) = ∑ m, (a m : Fv F v) • u m := by
-    intro a
-    refine Prod.ext (funext fun i => ?_) (funext fun i => ?_)
-
-    · simp [(hcomp a i).1, map_sum, map_mul, GlobalTheory.EmbChart.evFin_atPlace, Prod.fst_sum, Finset.sum_apply, u]
-
-    · simp [(hcomp a i).2, map_sum, map_mul, GlobalTheory.EmbChart.evFin_atPlace, Prod.snd_sum, Finset.sum_apply, u]
-  have hψ : ∀ z : AF F, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) z →
-      B.ψ z = GlobalTheory.VacAny.psiV B.ψ v (GlobalTheory.AdelicU.evFin F v z) := fun z hz => by
-    rw [GlobalTheory.VacAny.psiV_apply, ← Tw.VacAny.eq_atPlace_of_at v z hz]
-  have hzero : ∀ a, ∑ m, (a m : Fv F v) • u m = 0 → γf a = 0 := by
-    intro a h
-    rw [← hev a] at h
-    have h1 : co.e (γf a) = 0 := by
-      refine Prod.ext (funext fun i => ?_) (funext fun i => ?_)
-      · rw [Tw.VacAny.eq_atPlace_of_at v _ (hAt a i).1, show GlobalTheory.AdelicU.evFin F v ((co.e (γf a)).1 i) = 0 from
-          congrFun (congrArg Prod.fst h) i, map_zero]
-        rfl
-      · rw [Tw.VacAny.eq_atPlace_of_at v _ (hAt a i).2, show GlobalTheory.AdelicU.evFin F v ((co.e (γf a)).2 i) = 0 from
-          congrFun (congrArg Prod.snd h) i, map_zero]
-        rfl
-    exact co.e.map_eq_zero_iff.1 h1
-  have hker : ∀ a, ∑ m, (a m : Fv F v) • u m = 0 → χ a = 1 := by
-    intro a h
-    simp only [χ, hzero a h]
-    simp [GlobalTheory.WeilM.symp, GlobalTheory.WeilM.hTens]
-  have hadd : ∀ a b, γf (a + b) = γf a + γf b := by
-    intro a b
-    simp only [γf]
-    rw [← Finset.sum_add_distrib]
-    refine Finset.sum_congr rfl fun m _ => ?_
-    rw [show (((a + b) m : v.adicCompletionIntegers F) : Fv F v) = (a m : Fv F v) + b m from rfl, map_add (f := _), add_smul]
-  have hmem : ∀ a, γf a ∈ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.latAtV X Y v := fun a => (hΓ _).2 ⟨a, rfl⟩
-  have hdot : ∀ a b, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F v) ((co.e (γf a)).1 ⬝ᵥ (co.e (γf b)).2) ∧
-      GlobalTheory.AdelicU.evFin F v ((co.e (γf a)).1 ⬝ᵥ (co.e (γf b)).2) =
-        (∑ m, (a m : Fv F v) • u m).1 ⬝ᵥ (∑ m, (b m : Fv F v) • u m).2 := by
-    intro a b
-    refine ⟨supported_sum _ fun i _ => supported_mul_right (hAt a i).1 _, ?_⟩
-    rw [← hev a, ← hev b]
-
-    simp only [dotProduct, map_sum, map_mul]
-  have hcoc : ∀ a b, χ (a + b) = χ a * χ b * GlobalTheory.VacAny.psiV B.ψ v
-      (-(⅟(2 : Fv F v) * ((∑ m, (a m : Fv F v) • u m).1 ⬝ᵥ (∑ m, (b m : Fv F v) • u m).2 -
-        (∑ m, (b m : Fv F v) • u m).1 ⬝ᵥ (∑ m, (a m : Fv F v) • u m).2))) := by
-    intro a b
-    simp only [χ]
-    rw [hadd, _root_.Tw.VacCocycle.psi_half_symp_add_k B hB X Y r s r' s' hX hY θ hθ v _ (hmem a) _ (hmem b), co.form]
-    congr 1
-    have hz := supported_neg (supported_mul_left (⅟(2 : AF F))
-      (supported_sub (hdot a b).1 (hdot b a).1))
-    rw [hψ _ hz, map_neg, map_mul, map_sub, (hdot a b).2, (hdot b a).2, evFin_invOf_two_local]
-  obtain ⟨φ, hφSB, hφ0, hφ⟩ := GlobalTheory.VacLoc.exists_schr_eigen v (GlobalTheory.VacAny.psiV B.ψ v) (GlobalTheory.VacAny.continuous_psiV hB.std.1 v)
-    (Tw.PsiNontriv.psiV_ne_one B.ψ hB.std v) u χ (Tw.ContSymp.continuous_psi_symp_atPlace σ B.ψ hB.std.1 X.J Y.J (θ : E) v g) hker hcoc
-  refine ⟨φ, hφSB, hφ0, θ, hθ, ?_⟩
-  intro γ hγ
-  obtain ⟨a, rfl⟩ := (hΓ γ).1 hγ
-  intro rr hrr
-  show GlobalTheory.WeilM.schr B.ψ (co.e (γf a)) _ = _
-  rw [Tw.SchrLoc.schr_tens_of_at B.ψ v (co.e (γf a)) (fun i => (hAt a i).1) (fun i => (hAt a i).2) φ rr hrr.1, hev a, hφ a]
-end Tw.VacAny
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsIsVacAnyDarbouxK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsRationalDarbouxK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsRationalDarbouxK", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab\npublic import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.ExistsRationalDarbouxHermitianTensorAdeles\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-noncomputable section
-namespace Tw.RatDarboux
-open _root_.GlobalTheory
-section General
-open scoped TensorProduct
-open Matrix Module GlobalTheory.WeilM
-variable {α β : Type} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
-variable {F E : Type} [Field F] [Field E] [Algebra F E] [FiniteDimensional F E]
-variable (R : Type) [CommRing R] [Algebra F R]
-end General
-end Tw.RatDarboux
-open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open IsDedekindDomain NumberField MeasureTheory Matrix
-open Classical
-open scoped TensorProduct ComplexConjugate GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model HasExp SplitsFully Chars)
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-open GlobalTheory in
-theorem Tw.RatDarboux.exists_rational_darboux_k : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E)
-    {n d : ℕ} (X : Spc F E n) (Y : Spc F E d) (r s r' s' : ℕ), _root_.UpperTheory.TP.W.GoodK σ B → X.IsHerm σ B r s → Y.IsSkew σ B r' s' →
-    ∃ co : GlobalTheory.WeilM.Darboux (GlobalTheory.WeilM.symp (R := AF F) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (-1) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J)) (Fin n × Fin d),
-      ∀ x : Matrix (Fin n) (Fin d) E, ∃ y z : Fin n × Fin d → F,
-        co.e (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F x) = (fun k => algebraMap F (AF F) (y k), fun k => algebraMap F (AF F) (z k)) := by
-  intro F E _ _ _ _ _ σ B n d X Y r s r' s' hB hX hY
-  obtain ⟨w⟩ : Nonempty (InfinitePlace F) := inferInstance
-  have hσ : ∀ x, σ (σ x) = x := fun x => by
-    apply ((B.emb w).1 : E →+* ℂ).injective
-    rw [hB.cm.2.2.2, hB.cm.2.2.2, star_star]
-  have hX' : X.J.det ≠ 0 := fun h0 => by
-    apply Tw.RatDarboux.det_ne_zero_of_isCartan (hX.cartan w)
-    have := ((B.emb w).1 : E →+* ℂ).map_det X.J
-    rw [h0, map_zero] at this
-    exact this.symm
-  have hY' : Y.J.det ≠ 0 := fun h0 => by
-    apply Tw.RatDarboux.det_ne_zero_of_isCartan (hY.cartan w)
-    have := ((B.emb w).1 : E →+* ℂ).map_det Y.J
-    rw [h0, map_zero] at this
-    rw [Matrix.det_smul]
-    exact mul_eq_zero_of_right _ this.symm
-  exact Tw.RatDarboux.exists_darboux (AF F) hB.cm.2.2.1 σ hσ hX.herm hY.skew hX' hY'
-end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsRationalDarbouxK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsRationalDarbouxOfIsGoodK =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsRationalDarbouxOfIsGoodK", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsRationalDarbouxK\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
-open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open IsDedekindDomain NumberField MeasureTheory Matrix
-open Classical
-open scoped TensorProduct ComplexConjugate GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model HasExp SplitsFully Chars)
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-theorem Tw.RatDarboux.exists_rational_darboux_of_isGood_k : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-    (B : Base F E), _root_.UpperTheory.TP.W.GoodK σ B → ∀ {n d : ℕ} (X : Spc F E n) (Y : Spc F E d) (r s r' s' : ℕ),
-    X.IsHerm σ B r s → Y.IsSkew σ B r' s' → ∃ co : GlobalTheory.WeilM.Darboux (GlobalTheory.WeilM.symp (R := AF F) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (-1) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F X.J) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F Y.J)) (Fin n × Fin d), ∀ x : Matrix (Fin n) (Fin d) E, ∃ y z : Fin n × Fin d → F, co.e (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F x) = (fun k => algebraMap F (AF F) (y k), fun k => algebraMap F (AF F) (z k)) :=
-  fun B hB _ _ X Y r s r' s' hX hY => _root_.Tw.RatDarboux.exists_rational_darboux_k _ B X Y r s r' s' hB hX hY
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsRationalDarbouxOfIsGoodK =====
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThkTowModel =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThkTowModel", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThkTowStmt\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EventuallyIsVacIndicatorK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsIsVacAnyDarbouxK\npublic import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsRationalDarbouxOfIsGoodK\npublic import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod\npublic import Development.WeilBound.ThetaLifts.TowerModels.DetHerm\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts\n\n"}
-section -- clump:auto
-@[expose] public section
-
-
-
-section
 noncomputable section
 namespace PositivityTheory.ThKG.Tow
-open scoped TensorProduct NNReal Matrix
-open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
-theorem modelEx_k : _root_.PositivityTheory.ThKG.Tow.ModelEx_k := by
+open NumberField IsDedekindDomain MeasureTheory Filter Topology
+  Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
+  GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
+theorem modelEx_k : ModelEx_k := by
   intro F E _ _ _ _ _ σ B hB n d X W r s r' s' hX hW
   classical
   obtain ⟨co, hco⟩ := _root_.Tw.RatDarboux.exists_rational_darboux_of_isGood_k B hB X W r s r' s' hX hW
-  obtain ⟨-, ⟨μ, 𝓕, hμ, h𝓕⟩, -⟩ := PositivityTheory.ThKF.unimodularity_holds F E σ hB.cm n X.J 1 (by simpa using hX.herm) (det_herm hX)
+  obtain ⟨-, ⟨μ, 𝓕, hμ, h𝓕⟩, -⟩ := PositivityTheory.ThKF.unimodularity_holds F E σ hB.cm n X.J 1
+    (by simpa using hX.herm) (det_herm hX)
   have hS := _root_.Tw.VacIndic.eventually_isVac_indicator_k B hB X W r s r' s' hX hW co hco
   have hA := _root_.Tw.VacAny.exists_isVac_any_darboux_k B hB X W r s r' s' hX hW co
   let M₀ : Model σ X W := ⟨co, fun _ => 0, 0, ∅⟩
@@ -628,14 +732,10 @@ theorem modelEx_k : _root_.PositivityTheory.ThKG.Tow.ModelEx_k := by
   refine ⟨⟨co, vac, μ, 𝓕⟩, ⟨hco, fun v => ?_, ?_, hμ, h𝓕⟩⟩
   · show M₀.IsVac B.ψ v (vac v)
     by_cases h : M₀.IsVac B.ψ v (ind v)
-    · simp only [vac, if_pos h]; exact h
-    · simp only [vac, if_neg h]; exact (hA v).choose_spec
+    · simp only [vac, ite_eq_left h]; exact h
+    · simp only [vac, ite_eq_right h]; exact (hA v).choose_spec
   · filter_upwards [hS] with v hv
     show vac v = ind v
-    exact if_pos hv
+    exact ite_eq_left hv
 end PositivityTheory.ThKG.Tow
 end
-end
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThkTowModel =====

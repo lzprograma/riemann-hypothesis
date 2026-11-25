@@ -12,39 +12,6 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsCovBySubmo
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEquivPiExteriorTensorBlockLevi
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PrincipalSeriesSubquotientOfCharacters
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.CuspidalSupport2
 public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.JacquetFiniteLength2
 public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.PSpCount
@@ -187,18 +154,6 @@ namespace Grp
 section
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {n : ℕ} (G : Grp k n)
 
-def StepL_jacFin : Prop :=
-  UpperTheory.Gal.TypesAndIwahori.LocN → ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin n) k) V),
-    IsSmooth π → π.IsIrreducible → IsSmooth (jacU G.e π) ∧ HasFiniteLength (jacU G.e π)
-
-def StepL_tensor : Prop :=
-  UpperTheory.Gal.TypesAndIwahori.LocN → ∀ (X : Type) [AddCommGroup X] [Module ℂ X] (σ : Representation ℂ (Levi k fun a : Fin G.s => Fin (G.d a)) X),
-    IsSmooth σ → σ.IsIrreducible → G.HasEtaVec σ →
-    ∃ (Y : Fin G.s → Type) (_ : ∀ a, AddCommGroup (Y a)) (_ : ∀ a, Module ℂ (Y a))
-      (τ : ∀ a, Representation ℂ (GL (Fin (G.d a)) k) (Y a)),
-      (∀ a, IsSmooth (τ a)) ∧ (∀ a, (τ a).IsIrreducible) ∧ (∀ a, HasDetVec (τ a) (G.μ a)) ∧
-        Nonempty (σ.Equiv (piTensor τ))
-
 def StepL_suppProd : Prop :=
   UpperTheory.Gal.TypesAndIwahori.LocN → ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin n) k) V),
     IsSmooth π → π.IsIrreducible →
@@ -206,47 +161,34 @@ def StepL_suppProd : Prop :=
       (∀ a, IsSmooth (τ a)) → (∀ a, (τ a).IsIrreducible) → (∀ a, HasDetVec (τ a) (G.μ a)) →
       IsSubquotient (piTensor τ) (jacU G.e π) → IsTwSphProd π G.d G.hd G.μ
 
-def StepL_spCount : Prop :=
-  UpperTheory.Gal.TypesAndIwahori.LocN → ∀ c : Fin n → kˣ →* ℂˣ, (∀ i, IsSmoothChar (c i)) → (∀ i, res (c i) = res (G.chi i)) →
-    FiniteDimensional ℂ ↥(G.etaSp (jacU G.e (prinSeries c))) ∧
-      Module.finrank ℂ ↥(G.etaSp (jacU G.e (prinSeries c))) ≤ 1
-
 def StepL_spOrd : Prop :=
-  UpperTheory.Gal.TypesAndIwahori.LocN → ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin n) k) V),
+  ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin n) k) V),
     IsSmooth π → π.IsIrreducible → ∀ c : Fin n → kˣ →* ℂˣ, (∀ i, IsSmoothChar (c i)) →
     ∀ σ : Equiv.Perm (Fin n), IsSubquotient π (prinSeries (fun i => c (σ i))) → IsSubquotient π (prinSeries c)
-
-def StepL_spPiSub : Prop :=
-  StepL_spOrd (k := k) (n := n) → UpperTheory.Gal.TypesAndIwahori.LocN →
-  ∀ (Y : Fin G.s → Type) [∀ a, AddCommGroup (Y a)] [∀ a, Module ℂ (Y a)] (τ : ∀ a, Representation ℂ (GL (Fin (G.d a)) k) (Y a)),
-    (∀ a, IsSmooth (τ a)) → (∀ a, (τ a).IsIrreducible) →
-    ∀ ν : ∀ a, Fin (G.d a) → kˣ →* ℂˣ, (∀ a j, IsSmoothChar (ν a j)) →
-    (∀ a, IsCuspSupport (τ a) (fun _ : Fin (G.d a) => 1) (fun j => detRep (Fin 1) (ν a j))) →
-    (multiProd G.e (G.twD τ)).IsIrreducible →
-    IsSubquotient (multiProd G.e (G.twD τ)) (prinSeries (G.cOf ν))
-
-def StepL_spSupp : Prop :=
-  StepL_spOrd (k := k) (n := n) → UpperTheory.Gal.TypesAndIwahori.LocN →
-  ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin n) k) V), IsSmooth π → π.IsIrreducible →
-    ∀ (Y : Fin G.s → Type) [∀ a, AddCommGroup (Y a)] [∀ a, Module ℂ (Y a)] (τ : ∀ a, Representation ℂ (GL (Fin (G.d a)) k) (Y a)),
-      (∀ a, IsSmooth (τ a)) → (∀ a, (τ a).IsIrreducible) →
-      ∀ ν : ∀ a, Fin (G.d a) → kˣ →* ℂˣ, (∀ a j, IsSmoothChar (ν a j)) →
-      (∀ a, IsCuspSupport (τ a) (fun _ : Fin (G.d a) => 1) (fun j => detRep (Fin 1) (ν a j))) →
-      IsSubquotient (piTensor τ) (jacU G.e π) → IsSubquotient π (prinSeries (G.cOf ν))
 
 end
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem stepL_jacFin {n : ℕ} (G : Grp k n) : G.StepL_jacFin := by
-  intro L V _ _ π hπ hirr
+theorem stepL_jacFin {n : ℕ} (G : Grp k n)
+    (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness) :
+    ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin n) k) V),
+      IsSmooth π → π.IsIrreducible → IsSmooth (jacU G.e π) ∧ HasFiniteLength (jacU G.e π) := by
+  intro V _ _ π hπ hirr
   exact ⟨isSmooth_jacU G.e hπ,
-    JacquetFiniteLength₂.hasFiniteLength_jacU G L.loc.bz π hπ (hasFiniteLength_of_isIrreducible hirr)⟩
+    JacquetFiniteLength₂.hasFiniteLength_jacU G hBZ π hπ (hasFiniteLength_of_isIrreducible hirr)⟩
 
-theorem stepL_tensor {n : ℕ} (G : Grp k n) : G.StepL_tensor := by
-  intro hN X _ _ σ hs hirr hη
+theorem stepL_tensor {n : ℕ} (G : Grp k n)
+    (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness) :
+    ∀ (X : Type) [AddCommGroup X] [Module ℂ X] (σ : Representation ℂ (Levi k fun a : Fin G.s => Fin (G.d a)) X),
+      IsSmooth σ → σ.IsIrreducible → G.HasEtaVec σ →
+      ∃ (Y : Fin G.s → Type) (_ : ∀ a, AddCommGroup (Y a)) (_ : ∀ a, Module ℂ (Y a))
+        (τ : ∀ a, Representation ℂ (GL (Fin (G.d a)) k) (Y a)),
+        (∀ a, IsSmooth (τ a)) ∧ (∀ a, (τ a).IsIrreducible) ∧ (∀ a, HasDetVec (τ a) (G.μ a)) ∧
+          Nonempty (σ.Equiv (piTensor τ)) := by
+  intro X _ _ σ hs hirr hη
   obtain ⟨y, hy0, hy⟩ := hη
-  obtain ⟨s, ⟨E⟩⟩ := GlobalTheory.LeviFactor.exists_equiv_piTensor_levi hN.loc.bz k (Fin G.s)
+  obtain ⟨s, ⟨E⟩⟩ := GlobalTheory.LeviFactor.exists_equiv_piTensor_levi hBZ k (Fin G.s)
     (fun a => Fin (G.d a)) { V := X, ρ := σ, smooth := hs, irr := hirr }
   refine ⟨fun a => (s a).V, fun a => inferInstance, fun a => inferInstance, fun a => (s a).ρ,
     fun a => (s a).smooth, fun a => (s a).irr, fun a => ?_, ⟨E⟩⟩
@@ -279,12 +221,16 @@ theorem stepL_tensor {n : ℕ} (G : Grp k n) : G.StepL_tensor := by
 
 open P_spCount in
 
-theorem stepL_spCount {n : ℕ} (G : Grp k n) : G.StepL_spCount := by
-  intro hL c hc hres
+theorem stepL_spCount {n : ℕ} (G : Grp k n)
+    (hG : GlobalTheory.Published.GeometricLemma) :
+    ∀ c : Fin n → kˣ →* ℂˣ, (∀ i, IsSmoothChar (c i)) → (∀ i, res (c i) = res (G.chi i)) →
+      FiniteDimensional ℂ ↥(G.etaSp (jacU G.e (prinSeries c))) ∧
+        Module.finrank ℂ ↥(G.etaSp (jacU G.e (prinSeries c))) ≤ 1 := by
+  intro c hc hres
   have hE : G.etaSp (jacU G.e (prinSeries c)) =
       eS (leviK k (fun a : Fin G.s => Fin (G.d a))) G.eta (jac G.e (parInd (points (Fin n)) (ρc c))) :=
     eS_jacU_eq G.e (parInd (points (Fin n)) (ρc c)) G.eta
-  obtain ⟨N, b, hb⟩ := (hL.loc.geo k).1 (Fin n) (Fin G.s) (Fin n) (fun _ => Unit)
+  obtain ⟨N, b, hb⟩ := (hG k).1 (Fin n) (Fin G.s) (Fin n) (fun _ => Unit)
     (fun a => Fin (G.d a)) (points (Fin n)) G.e
   obtain ⟨S, hmono, h0, hN, hS⟩ := hb ℂ (ρc c) (isSmooth_ρc c hc)
   obtain ⟨fr⟩ : Nonempty (∀ t : Fin N, ∀ i, (Σ j, Fin ((b t).1 i j)) ≃ (fun _ : Fin n => Unit) i) :=
@@ -342,8 +288,16 @@ theorem stepL_spCount {n : ℕ} (G : Grp k n) : G.StepL_spCount := by
   exact ⟨hfin, hfr⟩
 
 open P_spPiSub in
-theorem stepL_spPiSub {n : ℕ} (G : Grp k n) : G.StepL_spPiSub := by
-  intro hOrd hL Y _ _ τ _ _ ν hν hc hI
+theorem stepL_spPiSub {n : ℕ} (G : Grp k n)
+    (hOrd : StepL_spOrd (k := k) (n := n))
+    (hZ : GlobalTheory.Published.ZelevinskyPolynomialRing) :
+    ∀ (Y : Fin G.s → Type) [∀ a, AddCommGroup (Y a)] [∀ a, Module ℂ (Y a)] (τ : ∀ a, Representation ℂ (GL (Fin (G.d a)) k) (Y a)),
+      (∀ a, IsSmooth (τ a)) → (∀ a, (τ a).IsIrreducible) →
+      ∀ ν : ∀ a, Fin (G.d a) → kˣ →* ℂˣ, (∀ a j, IsSmoothChar (ν a j)) →
+      (∀ a, IsCuspSupport (τ a) (fun _ : Fin (G.d a) => 1) (fun j => detRep (Fin 1) (ν a j))) →
+      (multiProd G.e (G.twD τ)).IsIrreducible →
+      IsSubquotient (multiProd G.e (G.twD τ)) (prinSeries (G.cOf ν)) := by
+  intro Y _ _ τ _ _ ν hν hc hI
   let χ : Fin G.s → kˣ →* ℂˣ := fun a => absPow k (-((modExp (fun b : Fin G.s => Fin (G.d b)) a : ℂ) / 2))
   have hχ : ∀ a, IsSmoothChar (χ a) := fun a => isSmoothChar_absPow _
   have hsupp : ∀ a, HasSupport (G.twD τ a)
@@ -356,7 +310,7 @@ theorem stepL_spPiSub {n : ℕ} (G : Grp k n) : G.StepL_spPiSub := by
     · rename_i j _
       exact (IrrGL.tw_ofChar (ν a j) (χ a) (hν a j) (hχ a)).symm
   have hcOf : ∀ i, IsSmoothChar (G.cOf ν i) := fun i => (hν _ _).mul (isSmoothChar_absPow _)
-  have hS := SupportRing.hasSupport_multiProd hL.loc.zel G.hd (G.twD τ) (fun a => (hsupp a).isSmooth)
+  have hS := SupportRing.hasSupport_multiProd hZ G.hd (G.twD τ) (fun a => (hsupp a).isSmooth)
     (fun a => (hsupp a).isIrreducible) hsupp hI
   have hsum : (∑ a, Finset.univ.val.map fun j => IrrGL.ofChar (ν a j * χ a) ((hν a j).mul (hχ a))) =
       Finset.univ.val.map fun i => IrrGL.ofChar (G.cOf ν i) (hcOf i) :=
@@ -372,14 +326,16 @@ theorem stepL_spPiSub {n : ℕ} (G : Grp k n) : G.StepL_spPiSub := by
   have hsq : IsSubquotient (multiProd G.e (G.twD τ)) (prinSeries fun b => G.cOf ν (σ b)) :=
     (he.trans (.of_injective φ.toIntertwiningMap φ.toLinearEquiv.injective)).trans
       (GlobalTheory.PermPrin.isSubquotient_multiProd_prinSeries e' _)
-  exact hOrd hL _ _ (isSmooth_parInd _ _) hI _ hcOf σ hsq
+  exact hOrd _ _ (isSmooth_parInd _ _) hI _ hcOf σ hsq
 
 variable {n : ℕ}
 
 open UpperTheory.TNZ.Grp.P_spOrd GlobalTheory.LocGL.SupportRing in
-theorem stepL_spOrd : StepL_spOrd (k := k) (n := n) := by
-  intro hL V _ _ π hs hi c hc σ h
-  obtain ⟨Z, Ψ, -, hΨ, -⟩ := hL.loc.zel k
+theorem stepL_spOrd
+    (hZ : GlobalTheory.Published.ZelevinskyPolynomialRing) :
+    StepL_spOrd (k := k) (n := n) := by
+  intro V _ _ π hs hi c hc σ h
+  obtain ⟨Z, Ψ, -, hΨ, -⟩ := hZ k
   obtain ⟨hp1, e1⟩ := multiProd_cls (Ψ := Ψ) hΨ (d := fun _ : Fin n => 1) (X := fun _ => ℂ) (sum_one n)
     (fun i => detRep (Fin 1) (c (σ i))) (fun i => isSmooth_detRep1 (hc (σ i)))
     (fun i => hasFiniteLength_detRep1 (c (σ i)))
@@ -397,11 +353,17 @@ theorem stepL_spOrd : StepL_spOrd (k := k) (n := n) := by
     (GlobalTheory.PermPrin.isSubquotient_multiProd_prinSeries _ c)
 
 open P_spSupp in
-theorem stepL_spSupp (G : Grp k n) : G.StepL_spSupp := by
-  intro hOrd hLit V _ _ π hπs hπi Y _ _ τ hτs hτi ν hν hcs hjac
-  have hG := hLit.loc.geo
-  have hZ := hLit.loc.zel
-  have hBZ := hLit.loc.bz
+theorem stepL_spSupp (G : Grp k n)
+    (hOrd : StepL_spOrd (k := k) (n := n))
+    (hG : GlobalTheory.Published.GeometricLemma) (hZ : GlobalTheory.Published.ZelevinskyPolynomialRing)
+    (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness) :
+    ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin n) k) V), IsSmooth π → π.IsIrreducible →
+      ∀ (Y : Fin G.s → Type) [∀ a, AddCommGroup (Y a)] [∀ a, Module ℂ (Y a)] (τ : ∀ a, Representation ℂ (GL (Fin (G.d a)) k) (Y a)),
+        (∀ a, IsSmooth (τ a)) → (∀ a, (τ a).IsIrreducible) →
+        ∀ ν : ∀ a, Fin (G.d a) → kˣ →* ℂˣ, (∀ a j, IsSmoothChar (ν a j)) →
+        (∀ a, IsCuspSupport (τ a) (fun _ : Fin (G.d a) => 1) (fun j => detRep (Fin 1) (ν a j))) →
+        IsSubquotient (piTensor τ) (jacU G.e π) → IsSubquotient π (prinSeries (G.cOf ν)) := by
+  intro V _ _ π hπs hπi Y _ _ τ hτs hτi ν hν hcs hjac
   have hs' : ∀ a, IsSmooth (G.twD τ a) := fun a =>
     isSmooth_twist (hτs a) (isSmoothChar_absPow _).detChar
   have hi' : ∀ a, (G.twD τ a).IsIrreducible := fun a => GlobalTheory.LocGL.isIrreducible_twist (hτi a) _
@@ -454,23 +416,23 @@ theorem stepL_spSupp (G : Grp k n) : G.StepL_spSupp := by
   have h1 : IsSubquotient π (multiProd e fun a => detRep (Fin 1) (G.cOf ν (σ a))) :=
     he.trans (.of_injective φ.toIntertwiningMap φ.toLinearEquiv.injective)
   have h2 := h1.trans (GlobalTheory.PermPrin.isSubquotient_multiProd_prinSeries e fun a => G.cOf ν (σ a))
-  exact hOrd hLit V π hπs hπi (G.cOf ν) hc σ h2
+  exact hOrd V π hπs hπi (G.cOf ν) hc σ h2
 
 theorem stepL_suppProd (G : Grp k n) : G.StepL_suppProd := by
+  intro L V _ _ π hπs hπi Y iY mY τ hτs hτi hτd hsub
   have hLat := UpperTheory.TNZ.step_spLat
   have hUniq := step_spUniq G
-  have hCount := stepL_spCount G
+  have hCount := stepL_spCount G L.loc.geo
   have hLift := step_spLift G
   have hTw := step_spTwBasic G
   have hRes := step_spRes G
   have hPiEta := step_spPiEta G
-  have hOrd := stepL_spOrd (k := k) (n := n)
-  have hPiSub := stepL_spPiSub G
-  have hSupp := stepL_spSupp G
+  have hOrd := stepL_spOrd (k := k) (n := n) L.loc.zel
+  have hPiSub := stepL_spPiSub G hOrd L.loc.zel
+  have hSupp := stepL_spSupp G hOrd L.loc.geo L.loc.zel L.loc.bz
   have hCusp := UpperTheory.TNZ.stepL_cuspSupp
   have hProd := UpperTheory.TNZ.stepL_prodIrr
   have hTen := UpperTheory.TNZ.step_tensorVec
-  intro L V _ _ π hπs hπi Y iY mY τ hτs hτi hτd hsub
   have hc : ∀ a, ∃ μ' : Fin (G.d a) → kˣ →* ℂˣ,
       (∀ j, IsSmoothChar (μ' j) ∧ ∀ u : kˣ, valuation k (u : k) = 1 → μ' j u = G.μ a u) ∧
         IsCuspSupport (τ a) (fun _ => 1) (fun j => detRep (Fin 1) (μ' j)) :=
@@ -482,9 +444,9 @@ theorem stepL_suppProd (G : Grp k n) : G.StepL_suppProd := by
   have hPi : (multiProd G.e (G.twD τ)).IsIrreducible :=
     hProd hCusp L.loc k G.s n G.d G.hd Y (G.twD τ) (fun a => (htw a).1) (fun a => (htw a).2.1) G.μ G.smooth
       (fun a => (htw a).2.2) (fun b c hbc => P_spTop.exists_unit_ne (G.dist b c hbc))
-  have hπI := hSupp hOrd L V π hπs hπi Y τ hτs hτi ν hνs hνc hsub
-  have hPI := hPiSub hOrd L Y τ hτs hτi ν hνs hνc hPi
-  obtain ⟨hfd, hle⟩ := hCount L (G.cOf ν) (P_spTop.isSmoothChar_cOf G ν hνs) (hRes ν hνr)
+  have hπI := hSupp V π hπs hπi Y τ hτs hτi ν hνs hνc hsub
+  have hPI := hPiSub Y τ hτs hτi ν hνs hνc hPi
+  obtain ⟨hfd, hle⟩ := hCount (G.cOf ν) (P_spTop.isSmoothChar_cOf G ν hνs) (hRes ν hνr)
   have hπη : G.HasEtaVec (jacU G.e π) := by
     obtain ⟨v, hv0, hv⟩ := hTen k G.s G.d Y τ G.μ hτd
     refine hLift _ _ (jacU G.e π) (piTensor τ) (isSmooth_jacU G.e hπs) hsub ⟨v, hv0, fun m hm => ?_⟩
@@ -506,9 +468,9 @@ open UpperTheory.TNZ UpperTheory.TNZ.Grp
 
 theorem jacProd (L : Loc) : JacProd := by
   intro k _ _ _ _ N G V _ _ π hs hirr hy
-  obtain ⟨hsm, hfl⟩ := stepL_jacFin G ⟨L⟩ V π hs hirr
+  obtain ⟨hsm, hfl⟩ := stepL_jacFin G L.bz V π hs hirr
   obtain ⟨X, _, _, σ, hσs, hσi, hsq, hση⟩ := step_subq G _ (jacU G.e π) hsm hfl hy
-  obtain ⟨Y, _, _, τ, hτs, hτi, hτd, ⟨eqv⟩⟩ := stepL_tensor G ⟨L⟩ X σ hσs hσi hση
+  obtain ⟨Y, _, _, τ, hτs, hτi, hτd, ⟨eqv⟩⟩ := stepL_tensor G L.bz X σ hσs hσi hση
   refine stepL_suppProd G ⟨L⟩ V π hs hirr Y τ hτs hτi hτd ?_
   obtain ⟨S, f, hf⟩ := hsq
   exact ⟨S, (eqv.toIntertwiningMap).comp f, eqv.toLinearEquiv.surjective.comp hf⟩

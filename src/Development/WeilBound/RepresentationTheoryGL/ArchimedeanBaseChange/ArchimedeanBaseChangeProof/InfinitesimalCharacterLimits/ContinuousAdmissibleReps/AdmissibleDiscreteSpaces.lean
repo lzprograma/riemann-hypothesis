@@ -2,51 +2,9 @@ module
 
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.AllLeaves
 public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PPrAdm
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.StableLevelDecomposition
+import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdmissibleDiscreteSpaces
 
 @[expose] public section
 
@@ -173,36 +131,8 @@ end AdmDiscPf
 
 
 open AdmDiscPf in
-theorem admissible_discrete_spaces : AdmDisc := by
-  intro E _ _ _ M K' W' hK' hW' V hV
-  obtain ⟨φ₀, hφ₀, h0⟩ := (Submodule.ne_bot_iff _).1 hV.ne_bot
-  have hA : PrAdm.SupSpansPsiPart V φ₀ = V := by
-    rcases hV.irred _ (PrAdm.admissible_span_le V φ₀) (PrAdm.isStable_admissible_span hV.stable φ₀) with h | h
-    · exact absurd ((Submodule.mem_bot ℂ).1 (h ▸ PrAdm.mem_admissible_span_self hφ₀)) h0
-    · exact h
-  have : FiniteDimensional ℂ (W' ⊓ contK E M : Submodule ℂ (Kinf E M → ℂ)) :=
-    Submodule.finiteDimensional_of_le inf_le_left
-  have : FiniteDimensional ℂ (rS (lI (W' ⊓ contK E M))) := fd_rS_lI _
-  have hU : ∀ u ∈ rS (lI (W' ⊓ contK E M)), ∀ k, (fun x => u (x * k)) ∈ rS (lI (W' ⊓ contK E M)) :=
-    fun u hu k => rS_right hu k
-  have hfd := PrAdm.finiteDimensional_admissible_isotypic hV.aut (hV.aut φ₀ hφ₀) hK' (rR _ hU) (isContRep_rR _ hU (cont_rS W'))
-  refine Submodule.finiteDimensional_of_le
-    (S₂ := PrAdm.SupSpansPsiPart V φ₀ ⊓ typePart K' (rR (rS (lI (W' ⊓ contK E M))) hU)) (Submodule.span_le.2 ?_)
-  rintro φ ⟨hφV, hT⟩
-  refine ⟨hA.symm ▸ hφV, fun k hk => Subtype.ext (funext fun g => hT.1 k hk g), fun g => ?_⟩
-  have hf : (fun k : Kinf E M => (cptRep E M k φ).1 g) ∈ lI (W' ⊓ contK E M) := by
-    refine mem_lI.2 fun k₀ => ⟨?_, ?_⟩
-    · show (fun k => φ.1 (g * infGL E M (Unitary.toUnits (k₀ * k)))) ∈ W'
-      have := hT.2 (g * infGL E M (Unitary.toUnits k₀))
-      simpa only [map_mul, mul_assoc] using this
-    · show Continuous fun k => φ.1 (g * infGL E M (Unitary.toUnits (k₀ * k)))
-      have := cont_K φ (g * infGL E M (Unitary.toUnits k₀))
-      simpa only [map_mul, mul_assoc] using this
-  have hfU := le_rS _ hf
-  refine Submodule.subset_span ⟨(LinearMap.proj 1 : (Kinf E M → ℂ) →ₗ[ℂ] ℂ).comp
-    (rS (lI (W' ⊓ contK E M))).subtype, ⟨_, hfU⟩, funext fun k => ?_⟩
-  change (cptRep E M k φ).1 g = (cptRep E M (1 * k) φ).1 g
-  rw [one_mul]
+theorem admissible_discrete_spaces : AdmDisc :=
+  _root_.GlobalTheory.CompanionTheory.AdmDiscFin.admissible_discrete_spaces
 
 end PositivityTheory.Rg.BcB.SpectralAccumulation
 

@@ -65,8 +65,6 @@ namespace Formalism.L2.SG.Pf.Carrier.CarPinTor
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.LocWSOf Formalism.BasicNotions Formalism.MainNotions.S
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {θ : ℝ} (C : Choice X θ)
 
 def HaarFields {k r : ℕ} (U : Set (Formalism.FourierDecayAlt.B.Mat k r)) (μ : Measure (Formalism.QuantumDeterminants.Mt k r)) : Prop :=

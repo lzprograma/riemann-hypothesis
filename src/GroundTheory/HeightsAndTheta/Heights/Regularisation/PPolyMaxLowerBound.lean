@@ -52,12 +52,12 @@ theorem PolyMaxLowerBound.exists_far_point {D : ℕ} (z : Fin D → ℂ) {t : �
   · rw [mem_closedBall, dist_pi_le_iff ht.le]
     intro i
     by_cases h : t / 2 ≤ ‖z i‖
-    · simp only [if_pos h, dist_self]; exact ht.le
-    · simp only [if_neg h, dist_eq_norm, add_sub_cancel_left, Complex.norm_real, Real.norm_eq_abs,
+    · simp only [ite_eq_left h, dist_self]; exact ht.le
+    · simp only [ite_eq_right h, dist_eq_norm, add_sub_cancel_left, Complex.norm_real, Real.norm_eq_abs,
         abs_of_pos ht, le_refl]
   · by_cases h : t / 2 ≤ ‖z i‖
-    · simp only [if_pos h]; exact h
-    · simp only [if_neg h]
+    · simp only [ite_eq_left h]; exact h
+    · simp only [ite_eq_right h]
       replace h := not_le.mp h
       have h1 : ‖((t : ℝ) : ℂ)‖ ≤ ‖z i + (t : ℂ)‖ + ‖z i‖ := by
         calc ‖((t : ℝ) : ℂ)‖ = ‖(z i + (t : ℂ)) - z i‖ := by ring_nf
@@ -170,7 +170,7 @@ theorem PolyMaxLowerBound.proof : PolyMaxLowerBound.Statement := by
     rw [hCdef]
     nlinarith
   have htr : R.trunc K j y = max (R.u j y) (-K) := by
-    simp only [RegChartData.trunc, limsupExt, if_neg hyD]
+    simp only [RegChartData.trunc, limsupExt, ite_eq_right hyD]
 
   unfold polyMax
   by_cases hb : BddAbove (R.trunc K j '' closedBall (R.chart j x) t)

@@ -80,8 +80,7 @@ theorem norm_pow_sub_one_of_not_dvd (x : ℤ_[l]) (hx : ‖x - 1‖ < 1) (n : �
   rw [add_sub_cancel] at hz
   have hn1 : ‖(n : ℤ_[l])‖ = 1 := by
     apply le_antisymm (PadicInt.norm_le_one _)
-    by_contra h
-    push_neg at h
+    by_contra! h
     have h' : ‖((n : ℤ) : ℤ_[l])‖ < 1 := by simpa using h
     rw [PadicInt.norm_int_lt_one_iff_dvd] at h'
     exact hn (Int.natCast_dvd_natCast.mp h')
@@ -136,8 +135,7 @@ theorem norm_pow_nat_sub_one (n : ℕ) (hn : n ≠ 0) : ∀ (x : ℤ_[l]), ‖x 
         Nat.cast_mul, norm_mul, mul_assoc]
     · have hn1 : ‖(n : ℤ_[l])‖ = 1 := by
         apply le_antisymm (PadicInt.norm_le_one _)
-        by_contra h
-        push_neg at h
+        by_contra! h
         have h' : ‖((n : ℤ) : ℤ_[l])‖ < 1 := by simpa using h
         rw [PadicInt.norm_int_lt_one_iff_dvd] at h'
         exact hd (Int.natCast_dvd_natCast.mp h')

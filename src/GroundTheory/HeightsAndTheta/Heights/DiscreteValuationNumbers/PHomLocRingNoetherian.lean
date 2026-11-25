@@ -26,13 +26,9 @@ theorem component_form_mul {s : MRing ι R} {e : K → ℕ} (hs : IsMultiHomog s
       s * weightedHomogeneousComponent (blockWeight ι) d h := by
   classical
   let _ := weightedGradedAlgebra R (blockWeight ι)
-  have hmem : s ∈ weightedHomogeneousSubmodule R (blockWeight ι) e :=
-    (mem_weightedHomogeneousSubmodule _ _ _ _).mpr hs
-  have := DirectSum.coe_decompose_mul_add_of_left_mem
-    (𝒜 := weightedHomogeneousSubmodule R (blockWeight ι)) (j := d) (b := h) hmem
-  rw [← weightedDecomposition.decompose'_apply R (blockWeight ι) (s * h) (e + d),
-    ← weightedDecomposition.decompose'_apply R (blockWeight ι) h d]
-  exact this
+  simp_rw [← weightedDecomposition.decompose'_apply]
+  exact DirectSum.coe_decompose_mul_add_of_left_mem (weightedHomogeneousSubmodule R (blockWeight ι))
+    (j := d) (b := h) ((mem_weightedHomogeneousSubmodule _ _ _ _).mpr hs)
 
 variable (P : Ideal (MRing ι R)) [P.IsPrime]
 

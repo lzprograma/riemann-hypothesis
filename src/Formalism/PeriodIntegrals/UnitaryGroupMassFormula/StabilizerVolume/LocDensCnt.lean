@@ -1,5 +1,6 @@
 module
 
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.LocDensCntRes
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.UnifVSpec
 public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensFF
@@ -8,57 +9,11 @@ public import Mathlib.FieldTheory.KummerPolynomial
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensHL
 public import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EventuallyLocalDensityStandardLatticeBound
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.WeilBound.ThetaLifts.TowerModels.PlaneIso
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.TotallySplit
@@ -69,7 +24,7 @@ import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TopoAF
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensCntRes, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensCntL, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensCntD, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensCntQ, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensCnt
 
 -- ===== clump member: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensCntRes =====
--- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensCntRes", "h": "module\n\nimport Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EventuallyLocalDensityStandardLatticeBound\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.UnifVSpec\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensCntRes", "h": "module\n\nimport Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EventuallyLocalDensityStandardLatticeBound\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.LocDensCntRes\npublic import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.UnifVSpec\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -85,134 +40,13 @@ variable {F : Type} [Field F] [NumberField F] (v : HeightOneSpectrum (𝓞 F))
 
 abbrev iO (a : 𝓞 F) : Fv F v := algebraMap F (Fv F v) (algebraMap (𝓞 F) F a)
 
-theorem vcoe (x : F) : Valued.v (algebraMap F (Fv F v) x) = v.valuation F x := by
-  exact IsDedekindDomain.HeightOneSpectrum.valuedAdicCompletion_eq_valuation' v x
+export PI.VolStabSW (vcoe)
 
-theorem lt_one_iff_le_expm1 (g : WithZero (Multiplicative ℤ)) : g < 1 ↔ g ≤ WithZero.exp (-1 : ℤ) := by
-  rcases eq_or_ne g 0 with rfl | hg
-  · simp
-  · rw [← WithZero.exp_log hg, ← WithZero.exp_zero, WithZero.exp_lt_exp, WithZero.exp_le_exp]
-    omega
+export PI.VolStabSW (v_iO_le v_iO_lt_iff exists_appr)
 
-theorem v_iO_le (a : 𝓞 F) : Valued.v (iO v a) ≤ 1 := by
-  rw [vcoe]
-  exact IsDedekindDomain.HeightOneSpectrum.valuation_le_one v a
+export PI.VolStabSW (appr appr_spec)
 
-theorem v_iO_lt_iff (a : 𝓞 F) : Valued.v (iO v a) < 1 ↔ a ∈ v.asIdeal := by
-  rw [vcoe]
-  exact IsDedekindDomain.HeightOneSpectrum.valuation_lt_one_iff_mem v a
-
-theorem exists_appr {x : Fv F v} (hx : x ∈ v.adicCompletionIntegers F) :
-    ∃ a : 𝓞 F, Valued.v (x - iO v a) < 1 := by
-  have hx1 : Valued.v x ≤ 1 := (IsDedekindDomain.HeightOneSpectrum.mem_adicCompletionIntegers (𝓞 F) F v).mp hx
-  have hd := IsDedekindDomain.HeightOneSpectrum.denseRange_algebraMap (R := 𝓞 F) F v
-  have hnhds : {y : Fv F v | Valued.v (y - x) < 1} ∈ 𝓝 x :=
-    Valued.mem_nhds.mpr ⟨1, fun y hy => by simpa using hy⟩
-  obtain ⟨_, hy, k, rfl⟩ := mem_closure_iff_nhds.mp (hd x) _ hnhds
-  simp only [Set.mem_setOf_eq] at hy
-  have hk' : Valued.v (algebraMap F (Fv F v) k) ≤ 1 := by
-    have e : algebraMap F (Fv F v) k = (algebraMap F (Fv F v) k - x) + x := by ring
-    rw [e]
-    exact le_trans (Valuation.map_add _ _ _) (max_le hy.le hx1)
-  have hk : v.valuation F k ≤ 1 := by rw [← vcoe]; exact hk'
-  obtain ⟨a, ha⟩ := IsDedekindDomain.HeightOneSpectrum.exists_valuation_sub_lt_of_integer v hk 1
-  refine ⟨a, ?_⟩
-  have e : x - iO v a = (x - algebraMap F (Fv F v) k) + -(iO v a - algebraMap F (Fv F v) k) := by ring
-  have e2 : iO v a - algebraMap F (Fv F v) k = algebraMap F (Fv F v) (algebraMap (𝓞 F) F a - k) := by
-    simp [iO, map_sub]
-  rw [e]
-  refine lt_of_le_of_lt (Valuation.map_add _ _ _) (max_lt ?_ ?_)
-  · rw [Valuation.map_sub_swap]
-    exact hy
-  · rw [Valuation.map_neg, e2, vcoe]
-    simpa using ha
-
-
-open Classical in
-def appr (x : Fv F v) : 𝓞 F :=
-  if h : ∃ a : 𝓞 F, Valued.v (x - iO v a) < 1 then h.choose else 0
-
-theorem appr_spec {x : Fv F v} (hx : x ∈ v.adicCompletionIntegers F) :
-    Valued.v (x - iO v (appr v x)) < 1 := by
-  have h := exists_appr v hx
-  unfold appr
-  rw [dite_eq_left h]
-  exact h.choose_spec
-
-def red (x : Fv F v) : 𝓞 F ⧸ v.asIdeal := Ideal.Quotient.mk _ (appr v x)
-
-theorem red_eq_mk_iff {x : Fv F v} (hx : x ∈ v.adicCompletionIntegers F) (a : 𝓞 F) :
-    red v x = Ideal.Quotient.mk _ a ↔ Valued.v (x - iO v a) < 1 := by
-  have hs := appr_spec v hx
-  unfold red
-  rw [Ideal.Quotient.eq, ← v_iO_lt_iff]
-  have e : iO v (appr v x - a) = (x - iO v a) - (x - iO v (appr v x)) := by
-    simp only [iO, map_sub]
-    ring
-  rw [e]
-  constructor
-  · intro h
-    have e2 : x - iO v a = (x - iO v (appr v x)) + ((x - iO v a) - (x - iO v (appr v x))) := by ring
-    rw [e2]
-    exact lt_of_le_of_lt (Valuation.map_add _ _ _) (max_lt hs h)
-  · intro h
-    exact lt_of_le_of_lt (Valuation.map_sub _ _ _) (max_lt h hs)
-
-theorem mem_O_iO (a : 𝓞 F) : iO v a ∈ v.adicCompletionIntegers F := by
-  exact (IsDedekindDomain.HeightOneSpectrum.mem_adicCompletionIntegers (𝓞 F) F v).mpr (v_iO_le v a)
-
-theorem red_iO (a : 𝓞 F) : red v (iO v a) = Ideal.Quotient.mk _ a := by
-  refine (red_eq_mk_iff v (mem_O_iO v a) a).mpr ?_
-  rw [sub_self, map_zero]
-  exact zero_lt_one
-
-theorem red_add {x y : Fv F v} (hx : x ∈ v.adicCompletionIntegers F)
-    (hy : y ∈ v.adicCompletionIntegers F) : red v (x + y) = red v x + red v y := by
-  have hxy : x + y ∈ v.adicCompletionIntegers F := add_mem hx hy
-  have e1 : red v x + red v y = Ideal.Quotient.mk _ (appr v x + appr v y) := by
-    simp only [red, map_add (f := _)]
-  rw [e1, red_eq_mk_iff v hxy]
-  have e : x + y - iO v (appr v x + appr v y) = (x - iO v (appr v x)) + (y - iO v (appr v y)) := by
-    simp only [iO, map_add (f := _)]
-    ring
-  rw [e]
-  exact lt_of_le_of_lt (Valuation.map_add _ _ _) (max_lt (appr_spec v hx) (appr_spec v hy))
-
-theorem red_mul {x y : Fv F v} (hx : x ∈ v.adicCompletionIntegers F)
-    (hy : y ∈ v.adicCompletionIntegers F) : red v (x * y) = red v x * red v y := by
-  have hxy : x * y ∈ v.adicCompletionIntegers F := mul_mem hx hy
-  have e1 : red v x * red v y = Ideal.Quotient.mk _ (appr v x * appr v y) := by
-    simp only [red, map_mul]
-  rw [e1, red_eq_mk_iff v hxy]
-  have e : x * y - iO v (appr v x * appr v y) =
-      (x - iO v (appr v x)) * y + iO v (appr v x) * (y - iO v (appr v y)) := by
-    simp only [iO, map_mul]
-    ring
-  rw [e]
-  have hy1 : Valued.v y ≤ 1 := (IsDedekindDomain.HeightOneSpectrum.mem_adicCompletionIntegers (𝓞 F) F v).mp hy
-  have ha1 : Valued.v (iO v (appr v x)) ≤ 1 := v_iO_le v _
-  apply lt_of_le_of_lt (Valuation.map_add _ _ _)
-  apply max_lt
-  · rw [map_mul]
-    calc Valued.v (x - iO v (appr v x)) * Valued.v y ≤ Valued.v (x - iO v (appr v x)) * 1 := by gcongr
-      _ < 1 := by rw [mul_one]; exact appr_spec v hx
-  · rw [map_mul]
-    calc Valued.v (iO v (appr v x)) * Valued.v (y - iO v (appr v y)) ≤ 1 * Valued.v (y - iO v (appr v y)) := by
-          gcongr
-      _ < 1 := by rw [one_mul]; exact appr_spec v hy
-
-theorem red_one : red v 1 = 1 := by
-  have h := (red_eq_mk_iff v (one_mem _) 1).mpr (by simp [iO])
-  rw [h, map_one]
-
-theorem red_eq_zero_iff {x : Fv F v} (hx : x ∈ v.adicCompletionIntegers F) :
-    red v x = 0 ↔ Valued.v x < 1 := by
-  rw [← map_zero (Ideal.Quotient.mk v.asIdeal), red_eq_mk_iff v hx]
-  simp [iO]
-
-theorem red_zero : red v 0 = 0 := by
-  have h := (red_eq_mk_iff v (zero_mem _) 0).mpr (by simp [iO])
-  rw [h, map_zero]
+export PI.VolStabSW (red red_eq_mk_iff mem_O_iO red_iO red_add red_mul red_one red_eq_zero_iff red_zero)
 
 theorem red_neg {x : Fv F v} (hx : x ∈ v.adicCompletionIntegers F) : red v (-x) = -red v x := by
   have hn : -x ∈ v.adicCompletionIntegers F := neg_mem hx
@@ -225,14 +59,12 @@ theorem red_neg {x : Fv F v} (hx : x ∈ v.adicCompletionIntegers F) : red v (-x
   rw [e, Valuation.map_neg]
   exact appr_spec v hx
 
-theorem red_surj (t : 𝓞 F ⧸ v.asIdeal) : ∃ x ∈ v.adicCompletionIntegers F, red v x = t := by
-  obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective t
-  exact ⟨iO v a, mem_O_iO v a, red_iO v a⟩
+export PI.VolStabSW (red_surj)
 
 theorem lt_one_iff_unif (x : Fv F v) :
     Valued.v x < 1 ↔ Valued.v ((unifV v)⁻¹ * x) ≤ 1 := by
   have hne : (WithZero.exp (-1 : ℤ) : WithZero (Multiplicative ℤ)) ≠ 0 := WithZero.exp_ne_zero
-  rw [map_mul, map_inv₀, unifV_val, lt_one_iff_le_expm1]
+  rw [map_mul, map_inv₀, unifV_val, GlobalTheory.HaarLatticeScale.lt_one_iff_le_exp]
   constructor
   · intro h
     calc (WithZero.exp (-1 : ℤ))⁻¹ * Valued.v x ≤ (WithZero.exp (-1 : ℤ))⁻¹ * WithZero.exp (-1 : ℤ) :=
@@ -515,7 +347,6 @@ theorem coe_sigC (z : lamC v A hD) : (sigC v A hD z : Fv F v ⊗[F] E) = sigR (F
 
 variable {K : Type} [CommRing K] [Algebra (𝓞 F ⧸ v.asIdeal) K] (r : K)
   (hr : r * r = algebraMap _ K (red v (algebraMap F (Fv F v) A.D0)))
-
 
 include hr in
 def rho : lamC v A hD →+* K where
@@ -946,7 +777,7 @@ theorem cnt_meas [Finite K] (hσ : ∀ x, σ (σ x) = x) {M a d : ℕ} [Measurab
   have rsu := rho_surj v A hD r hr hbij
   generalize rho v A hD r hr = ρ at rs rz rsu ⊢
   obtain ⟨rT, rT_eq⟩ : ∃ f : Fv F v ⊗[F] E → K, ∀ z (h : z ∈ lamC v A hD), f z = ρ ⟨z, h⟩ :=
-    ⟨fun z => if h : z ∈ lamC v A hD then ρ ⟨z, h⟩ else 0, fun z h => dif_pos h⟩
+    ⟨fun z => if h : z ∈ lamC v A hD then ρ ⟨z, h⟩ else 0, fun z h => dite_eq_left h⟩
   have memL : ∀ Y, Y ∈ latSub b v a M ↔ ∀ i p, Y i p ∈ lamC v A hD := by
     intro Y
     show (∀ i p k, _ ∈ _) ↔ _

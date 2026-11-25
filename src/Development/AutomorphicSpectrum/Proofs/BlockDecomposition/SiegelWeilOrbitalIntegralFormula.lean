@@ -8,43 +8,8 @@ public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SiegelWeilConvergentRangeStatement
 import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ContinuousIntegrableOfIsSchwartzBruhat
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TensTop
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GramNear
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TrMMemFramesEIff
 import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilSiegelTheta.BigCellDefs
@@ -56,72 +21,26 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC GlobalTheory.CompanionTheory.SiegelND
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.CompanionTheory.WeilSiegel.Frame GlobalTheory.CompanionTheory.WhitFree
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.CompanionTheory.SiegelND.CoefSum
 
 open GlobalTheory.Published.SiegelOneVector
 
 def flat (S : Type) [AddCommGroup S] [TopologicalSpace S] (n M : ℕ) :
-    (Fin n → Fin M → S) ≃ₜ+ (Fin 1 → Fin (n * M) → S) where
-  toFun X _ k := X (finProdFinEquiv.symm k).1 (finProdFinEquiv.symm k).2
-  invFun Y a i := Y 0 (finProdFinEquiv (a, i))
-  left_inv X := by
-    funext a i
-    simp
-  right_inv Y := by
-    funext a k
-    rw [Subsingleton.elim a 0]
-    show Y 0 (finProdFinEquiv ((finProdFinEquiv.symm k).1, (finProdFinEquiv.symm k).2)) = Y 0 k
-    rw [Prod.mk.eta, Equiv.apply_symm_apply]
-  map_add' X Y := by
-    funext a k
-    simp
-  continuous_toFun := continuous_pi fun _ => continuous_pi fun k =>
-    (continuous_apply _).comp (continuous_apply _)
-  continuous_invFun := continuous_pi fun a => continuous_pi fun i =>
-    (continuous_apply _).comp (continuous_apply 0)
+    (Fin n → Fin M → S) ≃ₜ+ (Fin 1 → Fin (n * M) → S) :=
+  Integ.Phase.flat S n M
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E]
 
 theorem isSchwartzBruhat_flat {n M : ℕ} {Φ : (Fin n → Fin M → AF F ⊗[F] E) → ℂ}
-    (hΦ : IsSchwartzBruhat Φ) : IsSchwartzBruhat (Φ ∘ (flat (AF F ⊗[F] E) n M).symm) := by
-  obtain ⟨k, Φinf, Φf, hi, hf, hs⟩ := hΦ
-  refine ⟨k, fun i => Φinf i ∘ (flat (Ainf F ⊗[F] E) n M).symm,
-    fun i => Φf i ∘ (flat (Af F ⊗[F] E) n M).symm, fun i => ?_, fun i => ?_, fun Y => ?_⟩
-  · obtain ⟨N, e, c1, c2, f, hfe⟩ := hi i
-    let a : (Fin 1 → Fin (n * M) → Ainf F ⊗[F] E) ≃+ (Fin n → Fin M → Ainf F ⊗[F] E) :=
-      (flat (Ainf F ⊗[F] E) n M).symm
-    exact ⟨N, a.trans e, c1.comp (flat (Ainf F ⊗[F] E) n M).symm.continuous,
-      (flat (Ainf F ⊗[F] E) n M).continuous.comp c2, f, fun X => hfe _⟩
-  · exact ⟨(hf i).1.comp_continuous (flat (Af F ⊗[F] E) n M).symm.continuous,
-      (hf i).2.comp_homeomorph (flat (Af F ⊗[F] E) n M).symm.toHomeomorph⟩
-  · exact hs _
+    (hΦ : IsSchwartzBruhat Φ) : IsSchwartzBruhat (Φ ∘ (flat (AF F ⊗[F] E) n M).symm) :=
+  Integ.Phase.isSchwartzBruhat_flat hΦ
 
 theorem continuous_integrable_tuple (σ : E →ₐ[F] E) [NumberField E] (hCM : IsCMExt F E σ) (M n : ℕ)
     (dx : Measure (Fin n → Fin M → AF F ⊗[F] E)) (hdx : dx.IsAddHaarMeasure)
     (Φ : (Fin n → Fin M → AF F ⊗[F] E) → ℂ) (hΦ : IsSchwartzBruhat Φ) :
-    Continuous Φ ∧ Integrable Φ dx := by
-  obtain ⟨⟨_, _, _⟩, -⟩ := _root_.GlobalTheory.CompanionTheory.AdeleTop.adele_top F
-  obtain ⟨_, _, _, _, -, -, -, hB, -, -⟩ := _root_.GlobalTheory.CompanionTheory.SW.TopK.topTens_props F E σ hCM (AF F)
-  haveI := hB n M
-  haveI := hB 1 (n * M)
-  let c := flat (AF F ⊗[F] E) n M
-  haveI : (dx.map c).IsAddHaarMeasure :=
-    Measure.isAddHaarMeasure_map _
-      (c : (Fin n → Fin M → AF F ⊗[F] E) ≃+ (Fin 1 → Fin (n * M) → AF F ⊗[F] E)).toAddMonoidHom
-      c.continuous c.surjective
-      c.toHomeomorph.isClosedEmbedding.tendsto_cocompact
-  obtain ⟨h1, h2⟩ := GlobalTheory.CompanionTheory.Hypotheses₂.OneV.PoiInt.continuous_integrable_of_isSchwartzBruhat F E σ hCM
-    (n * M) (dx.map c) inferInstance _ (isSchwartzBruhat_flat hΦ)
-  have hcomp : (Φ ∘ c.symm) ∘ c = Φ := by
-    funext X
-    simp
-  refine ⟨?_, ?_⟩
-  · have h : Continuous ((Φ ∘ c.symm) ∘ c) := h1.comp c.continuous
-    rwa [hcomp] at h
-  · have h := (c.toHomeomorph.measurableEmbedding.integrable_map_iff).1 h2
-    rwa [show (Φ ∘ c.symm) ∘ c.toHomeomorph = Φ from hcomp] at h
+    Continuous Φ ∧ Integrable Φ dx :=
+  Integ.Phase.continuous_integrable σ hCM dx hdx hΦ
 
 theorem coefN_finset_sum : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (M : ℕ) (J : Matrix (Fin M) (Fin M) E), IsHermND σ J → ∀ n : ℕ, 0 < n → 2 * n < M → ∀ ψ : AddChar (AF F) ℂ, IsCharAF F ψ → ∀ dx : Measure (Fin n → Fin M → AF F ⊗[F] E), SdW F E σ M J (AF F) ψ n dx → ∀ db : Measure (HermR (AF F) σ n), SdHerm F E σ (AF F) ψ n db → ∀ (T : Matrix (Fin n) (Fin n) E) (k : ℕ) (Φ : Fin k → (Fin n → Fin M → AF F ⊗[F] E) → ℂ), (∀ i, GlobalTheory.Published.SiegelOneVector.IsSchwartzBruhat (Φ i)) → coefN σ J ψ dx db (fun X => ∑ i, Φ i X) T = ∑ i, coefN σ J ψ dx db (Φ i) T := by
   intro F E _ _ _ _ _ σ hCM M J hJ n _ hM ψ hψ dx hdx db hdb T k Φ hΦ

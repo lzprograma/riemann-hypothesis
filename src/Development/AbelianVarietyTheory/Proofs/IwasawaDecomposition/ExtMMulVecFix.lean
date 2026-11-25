@@ -49,7 +49,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 @[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -77,7 +76,7 @@ theorem extM_mul_incl (g : Matrix (Fin n) (Fin n) A) (M : Matrix (Fin N) (Fin n)
   rw [e1]
   refine Fin.lastCases ?_ (fun i => ?_) b
   · have h3 : ∀ l : Fin n, Fin.last n ≠ Br.iC (rfl : n + 1 = n + 1) l := fun l => (Fin.castSucc_lt_last l).ne'
-    simp only [hM, h3, if_false, zero_mul, Finset.sum_const_zero]
+    simp only [hM, h3, ite_false, zero_mul, Finset.sum_const_zero]
     exact extM_last_castSucc g j
   · have h3 : ∀ l : Fin n, (i.castSucc = Br.iC (rfl : n + 1 = n + 1) l) ↔ i = l := fun l => Fin.castSucc_inj
     simp only [hM, h3]
@@ -187,113 +186,6 @@ theorem exists_ka_tw (u : B.Word) (a : I.ι) {Ch : Type} {chOf : (I.stp u a B.R.
   · rw [map_inv, inv_inv]
     exact hchr
 
-theorem til_lat_eq_tw (hI : I.Ok) (l : I.Laws) (Z : TC.Later B (I.cols l))
-    (hiX : ∀ x j, iXc (I.rec7 l Z) x j = if h : j.1 < B.R.N B.R.m - 1 then x ⟨j.1, h⟩ else 0) (u : B.Word) (a : I.ι) (c : (I.stX a).Cl) :
-    Formalism.L2.Forms.mulLat (((I.stp u a B.R.m).gam _ ((I.stp u a B.R.m).mv (I.perIn u a).b0 ((I.perIn u a).tilPt c)) : GL _ _) : Matrix _ _ _)
-      ((I.stp u a B.R.m).rep ((I.perIn u a).tilC c)).1.1.deco.1.L =
-    (((I.stX a).rep c).1.1.deco.1.N).map ((iXc (I.rec7 l Z)).restrictScalars (𝓞 (I.rec7 l Z).host.E)) ⊔
-      Submodule.span (𝓞 (I.rec7 l Z).host.E) {z0v B X u} := by
-  have hPr := (base_fields_primes_ok B X).2.1
-  have hm := (I.stp u a B.R.m).mv_smul (I.perIn u a).b0 ((I.perIn u a).tilPt c)
-  obtain ⟨m, hmm⟩ : ∃ m, m = (I.stp u a B.R.m).mv (I.perIn u a).b0 ((I.perIn u a).tilPt c) := ⟨_, rfl⟩
-  rw [← hmm] at hm ⊢
-  have e0 : ((I.perIn u a).tilPt c).1.1.deco = DecoSet.tilH (N_m_succ B.R) ((B.primes X).piT u) ((I.stX a).rep c).1.1.deco :=
-    PerLaw.til_deco hI u a _ _
-  have e1 : ((I.perIn u a).tilPt c).1.1.deco.1 =
-      ((I.stp u a B.R.m).rep ((I.perIn u a).tilC c)).1.1.deco.1.act m.1.1 m.2.1.1 := by
-    have := congrArg (fun d : (I.stp u a B.R.m).D (I.perIn u a).b0 => d.1.1.deco.1) hm
-    exact this.symm
-  have e2 := L_act ((I.stp u a B.R.m).rep ((I.perIn u a).tilC c)).1.1.deco.2 m.1.2 m.2.1.1
-  rw [← e1, e0, til_L_eq (N_m_succ B.R) (conj_piT_notMem hPr u) (piT_notMem_vGs hPr u) (fun P => decoFin_mem_of_mem_divs P.2)
-    (piT_dvd_of_mem (base_fields_primes_ok B X).1 hPr u) _ (iXc (I.rec7 l Z)) hiX (z0v B X u) (fun j => rfl)] at e2
-  exact (mulLat_toGLm m.1.1 _).trans e2.symm
-
-
-theorem til_fv_eq_tw (hI : I.Ok) (l : I.Laws) (Z : TC.Later B (I.cols l))
-    (hg : gramN (I.rec7 l Z) B.R.m le_rfl = 1) (u : B.Word) (a : I.ι)
-    {lat : (I.stp u a B.R.m).Cl → Submodule (𝓞 B.host.E) (Fin (B.R.N B.R.m) → B.host.E)}
-    (hsu : ∀ c, lat c = ((I.stp u a B.R.m).rep c).1.1.deco.1.L)
-    {res : ∀ v : (I.atT l u a).vT, 𝓞 B.host.E →+* (I.atT l u a).Fv v}
-    (L : LevelCompatibleLattices (D := I.rec7 l Z) (I.fm l u a) (B.T u) res B.R.m le_rfl lat) (hres : res = I.resT l u a)
-    (hL : ∀ v c (z : LdG (I.rec7 l Z) B.R.m le_rfl (lat c)) (h : z.1 ∈ ((I.stp u a B.R.m).rep c).1.1.deco.1.N),
-      L.pr v c z = Submodule.Quotient.mk ⟨z.1, h⟩)
-    (v : (I.atT l u a).vT) (c : (I.stX a).Cl) (x : ↥(LdG (I.rec7 l Z) B.R.m le_rfl (lat ((I.fm l u a).til c))))
-    (r : 𝓞 (I.rec7 l Z).host.E)
-    (hr : (r : (I.rec7 l Z).host.E) = hform (sigD (I.rec7 l Z) : (I.rec7 l Z).host.E →+* (I.rec7 l Z).host.E) (gramN (I.rec7 l Z) B.R.m le_rfl) (z0v B X u)
-      (((I.stp u a B.R.m).gam _ ((I.stp u a B.R.m).mv (I.perIn u a).b0 ((I.perIn u a).tilPt c))).1 *ᵥ x.1)) :
-    (I.fm l u a).fv B.R.m v ((I.fm l u a).til c) (L.pr v _ x) = res v r := by
-  have hPr := (base_fields_primes_ok B X).2.1
-  have hm := (I.stp u a B.R.m).mv_smul (I.perIn u a).b0 ((I.perIn u a).tilPt c)
-  obtain ⟨m, hmm⟩ : ∃ m, m = (I.stp u a B.R.m).mv (I.perIn u a).b0 ((I.perIn u a).tilPt c) := ⟨_, rfl⟩
-  rw [← hmm] at hm hr
-  have hx1 : x.1 ∈ ((I.stp u a B.R.m).rep ((I.perIn u a).tilC c)).1.1.deco.1.Lsh := by
-    have h1 := x.2
-    have h2 : x.1 ∈ dualL (sigD (I.rec7 l Z) : (I.rec7 l Z).host.E →+* (I.rec7 l Z).host.E) (gramN (I.rec7 l Z) B.R.m le_rfl)
-      (lat ((I.fm l u a).til c)) := h1
-    rw [hg] at h2
-    have h3 := Eq.mp (congrArg (fun M => x.1 ∈ dualL (sigD (I.rec7 l Z) : (I.rec7 l Z).host.E →+* (I.rec7 l Z).host.E) 1 M)
-      (hsu ((I.fm l u a).til c))) h2
-    exact dualL_le_Lsh (E := B.host.E) _ (fun _ => rfl) _ h3
-  obtain ⟨xv, hxv⟩ : ∃ xv : Sp B.fields.E (B.R.N B.R.m), xv = x.1 := ⟨_, rfl⟩
-  obtain ⟨s, hs⟩ : ∃ s : 𝓞 B.fields.E, s = cO B.fields.E ((B.primes X).piT u) := ⟨_, rfl⟩
-  have hsN : s • xv ∈ ((I.stp u a B.R.m).rep ((I.perIn u a).tilC c)).1.1.deco.1.N := by
-    refine ((I.stp u a B.R.m).rep ((I.perIn u a).tilC c)).1.1.deco.2.smul_Lsh_mem_N (fun P => ?_) (hxv ▸ hx1)
-    rw [hs, cO_cO]
-    exact decoFin_mem_of_mem_divs P.2
-  have h0 : ((show 𝓞 (I.rec7 l Z).host.E from s) • x).1 = s • xv := by rw [hxv]; rfl
-  have h1 := hL v _ ((show 𝓞 (I.rec7 l Z).host.E from s) • x) (h0 ▸ hsN)
-  have h2 := L.pr_smul v _ (show 𝓞 (I.rec7 l Z).host.E from s) x
-  have hne := ((l.fmL u a).lev B.R.m).fv_ne v ((I.perIn u a).tilC c)
-  have h3 := TDat.fv_mk ((I.atIn u a).A B.R.m) v ((I.perIn u a).tilC c) hne ⟨s • xv, hsN⟩
-  have hlev := (l.lev u a).lev B.R.m
-  have h4 := hlev.f_act (I.perIn u a).b0 m ((I.stp u a B.R.m).rep ((I.perIn u a).tilC c)) v (s • xv)
-  have h5 := (hlev.N_act (I.perIn u a).b0 m ((I.stp u a B.R.m).rep ((I.perIn u a).tilC c)) (s • xv)).2 hsN
-  have h4' := congrArg (fun d => ((I.atIn u a).A B.R.m).f (I.perIn u a).b0 d v
-    (((I.stp u a B.R.m).gam (I.perIn u a).b0 m).1 *ᵥ (s • xv))) hm
-  have h5' := Eq.mp (congrArg (fun d => ((I.stp u a B.R.m).gam (I.perIn u a).b0 m).1 *ᵥ (s • xv) ∈
-    ((I.atIn u a).A B.R.m).N (I.perIn u a).b0 d) hm) h5
-  have h6 := (l.ovr u a).f_til c.1 ((I.stX a).rep c) v _ h5'
-  obtain ⟨rv, hrv⟩ : ∃ rv : 𝓞 B.fields.E, rv = r := ⟨_, rfl⟩
-  have hr' : algebraMap (𝓞 B.fields.E) B.fields.E rv = star (((B.primes X).piT u : 𝓞 B.fields.E) : B.fields.E) *
-      (((I.stp u a B.R.m).gam (I.perIn u a).b0 m).1 *ᵥ xv) (Br.iL (N_m_succ B.R)) := by
-    rw [hg, lastCoordinateUniformizerVector_eq_single] at hr
-    rw [hrv, hxv]
-    refine hr.trans ((hform_one_single (A := B.host.E) (ι := Fin (B.R.N B.R.m)) _ (Br.iL (N_m_succ B.R)) _ _).trans ?_)
-    rfl
-  have h7 : ((I.perIn u a).tz * (((I.stp u a B.R.m).gam (I.perIn u a).b0 m).1 *ᵥ (s • xv)) (Br.iL (N_m_succ B.R))) =
-      algebraMap (𝓞 B.fields.E) B.fields.E (s * rv) := by
-    have e1 : (((I.stp u a B.R.m).gam (I.perIn u a).b0 m).1 *ᵥ (s • xv)) (Br.iL (N_m_succ B.R)) =
-        algebraMap (𝓞 B.fields.E) B.fields.E s * (((I.stp u a B.R.m).gam (I.perIn u a).b0 m).1 *ᵥ xv) (Br.iL (N_m_succ B.R)) := by
-      rw [Matrix.mulVec_smul, Pi.smul_apply, Algebra.smul_def]
-    rw [e1, map_mul, hr']
-    show star (((B.primes X).piT u : 𝓞 B.fields.E) : B.fields.E) * _ = _
-    ring
-  have h8 : ((I.atIn u a).A B.R.m).f (I.perIn u a).b0 ((I.stp u a B.R.m).rep ((I.perIn u a).tilC c)) v (s • xv) =
-      Ideal.Quotient.mk v.1.asIdeal (s * rv) := by
-    refine h4.symm.trans (h4'.trans (h6.trans ?_))
-    rw [h7]
-    exact reduction_coe _ _
-  have hresv : res v = Ideal.Quotient.mk v.1.asIdeal := congrFun hres v
-  subst hxv hrv
-  have hs0 : Ideal.Quotient.mk v.1.asIdeal s ≠ 0 := by
-    rw [Ne, Ideal.Quotient.eq_zero_iff_mem, hs]
-    exact conj_piT_notMem hPr u v
-  obtain ⟨pv, hpv⟩ : ∃ pv : ((I.atIn u a).A B.R.m).lv v ((I.perIn u a).tilC c), pv = L.pr v _ x := ⟨_, rfl⟩
-  have h2' : (L.pr v _ ((show 𝓞 (I.rec7 l Z).host.E from s) • x) : ((I.atIn u a).A B.R.m).lv v ((I.perIn u a).tilC c)) =
-      (Ideal.Quotient.mk v.1.asIdeal s : Res v.1) • pv := by
-    rw [hpv]
-    have h2a := h2
-    rw [hresv] at h2a
-    exact h2a
-  have h9 : ((I.atIn u a).A B.R.m).fv v ((I.perIn u a).tilC c) ((Ideal.Quotient.mk v.1.asIdeal s : Res v.1) • pv) =
-      Ideal.Quotient.mk v.1.asIdeal (s * rv) := by
-    exact (congrArg (fun w => ((I.atIn u a).A B.R.m).fv v ((I.perIn u a).tilC c) w) (h2'.symm.trans h1)).trans (h3.trans h8)
-  rw [map_smul, smul_eq_mul, map_mul] at h9
-  rw [hresv, ← hpv]
-  exact mul_left_cancel₀ (M₀ := Res v.1) hs0 h9
-
-
-
 theorem til_tw (hI : I.Ok) (hP : TC.Pins B X) (l : I.Laws) (Z : TC.Later B (I.cols l)) {l0 : I.Law0 l} {inQ : I.ι → HeightOneSpectrum (𝓞 (I.rec7 l Z).host.F) → Prop} {H : Formalism.L2.Herm.HermColsCh (I.rec7 l Z)}
     {F : ∀ u, FormsTiedSym (I.rec7 l Z) u (H.Ch u) (H.chOf u)} {T : Formalism.L2.Herm.TwChTied (I.rec7 l Z) inQ} {J : Formalism.L2.Herm.TwChJointS T H}
     {W : TwFormsTiedS (I.rec7 l Z) (I.tw l l0 Z) T J F} {Lv : SymmetricTwistedLevelData W}
@@ -316,10 +208,8 @@ theorem til_tw (hI : I.Ok) (hP : TC.Pins B X) (l : I.Laws) (Z : TC.Later B (I.co
           ((((W.ch u a ha B.R.m h1 le_rfl (T.chOf u a B.R.m ((I.fm l u a).til c))).lev.chi (Tl.ka c))⁻¹ : ℂˣ) : ℂ) *
             φ ((I.fm l u a).til c) s' := by
   obtain ⟨-, -, hiX, hsp⟩ := GlobalTheory.T.trueColumn_spaces_standard_in_frameCoords I hI hP l Z
-  obtain ⟨hg, -, hsu⟩ := hsp B.R.m le_rfl
-  have hcls := (hsu u a).1
+  obtain ⟨hg, -, -⟩ := hsp B.R.m le_rfl
   have hN := N_m_succ B.R
-  have hPr := (base_fields_primes_ok B X).2.1
   have hga : ∀ c, (I.stp u a B.R.m).gam _ ((I.stp u a B.R.m).mv (I.perIn u a).b0 ((I.perIn u a).tilPt c)) ∈
       UJ (sigD (I.rec7 l Z) : (I.rec7 l Z).host.E →+* (I.rec7 l Z).host.E) (gramN (I.rec7 l Z) B.R.m le_rfl) := by
     intro c
@@ -327,79 +217,27 @@ theorem til_tw (hI : I.Ok) (hP : TC.Pins B X) (l : I.Laws) (Z : TC.Later B (I.co
     show cT _ _ * 1 * _ = 1
     rw [mul_one]
     exact ((l.ch u a).step B.R.m).unit _ _
-  have hpi0 : ((X.piT u : 𝓞 B.host.E) : B.host.E) ≠ 0 := by
-    intro h0
-    have h1 : X.piT u = 0 := RingOfIntegers.ext h0
-    have h2 := hPr.piT_norm u
-    have h3 : (B.primes X).piT u = 0 := h1
-    rw [h3, zero_mul] at h2
-    exact (hPr.T_prime u).ne_zero (by exact_mod_cast h2.symm)
   have hext : ∀ (R' : Type) [CommRing R'] (φ : (I.rec7 l Z).host.E →+* R') (g' : Matrix (Fin (B.R.N B.R.m - 1)) (Fin (B.R.N B.R.m - 1)) R'),
       IsExt (I.rec7 l Z) (z0 X u) φ g' (extM hN g') := by
     intro R' _ φ g'
     refine ⟨extM_mul_incl hN g' _ fun b j => ?_, extM_mulVec_fix hN g' _ fun b hb => ?_⟩
     · refine (congrArg φ (TilX.iXm_apply hiX hN b j)).trans ?_
       by_cases h : b = Br.iC hN j
-      · rw [if_pos h]
-        exact (congrArg φ (if_pos h)).trans φ.map_one
-      · rw [if_neg h]
-        exact (congrArg φ (if_neg h)).trans φ.map_zero
+      · rw [ite_eq_left h]
+        exact (congrArg φ (ite_eq_left h)).trans φ.map_one
+      · rw [ite_eq_right h]
+        exact (congrArg φ (ite_eq_right h)).trans φ.map_zero
     · show φ (TC.z0 X u b) = 0
       have e : TC.z0 X u = z0v B X u := rfl
       rw [e, lastCoordinateUniformizerVector_eq_single, Pi.single_eq_of_ne hb]
       exact φ.map_zero
   have hka := fun c => exists_ka_tw I u a hR c (y' := (K.y c).1)
     (hT _ _ _ _ (hK.pt c) (hext _ _ _))
-  choose ka hka1 hka2 using hka
-  have hsu' : ∀ c, latCrd (I.rec7 l Z) B.R.m le_rfl (T.lat u a B.R.m c) = ((I.stp u a B.R.m).rep c).1.1.deco.1.L := fun c => by
-    rw [hW.lat u a B.R.m]
-    exact hcls c
-  have hres : (W.atT u a).res (F u).atT = I.resT l u a := funext fun v => RingHom.ext (hW.eFv u a v)
-  have hgamX : ∀ c (s : (I.stX a).Stab c), (((I.stp u a B.R.m).gam (I.perIn u a).b0 ((I.perIn u a).ext c.1 s.1) : GL _ _) : Matrix _ _ _) =
-      extM hN (((I.stX a).gam c.1 s.1 : GL _ _) : Matrix _ _ _) := fun c s =>
-    eq_extM_of_laws hN _ _ (fun x => (l.per u a).gam_ini c.1 s.1 x) (fun x => (l.per u a).gam_last c.1 s.1 x)
+  choose ka _ hka2 using hka
   let Tl : SymmetricTwistedTiltedData Lv u a ha h1 K :=
     { z0 := z0v B X u
-      lastCoordinateUniformizerVector_spans_orthogonal_line := TilX.lastCoordinateUniformizerVector_spans_orthogonal_line I l Z hg hiX u
-      hermitianForm_lastCoordinateUniformizerVector_self := TilX.hermitianForm_lastCoordinateUniformizerVector_self I l Z hg u
       ga := fun c => ⟨_, hga c⟩
-      til_lat := fun c => (congrArg (Formalism.L2.Forms.mulLat _) (hsu' ((I.perIn u a).tilC c))).trans
-          ((til_lat_eq_tw I hI l Z hiX u a c).trans (by rw [hK.lat c]; rfl))
-      til_fv := fun v c x r hr => (til_fv_eq_tw I hI l Z hg u a hsu' (Lv.lv u a ha B.R.m h1 le_rfl) hres
-        (hLv u a ha B.R.m h1 le_rfl).1 v c x r hr)
-      stabMap := fun c s => by
-        have e1 := hK.stab c s
-        have e2 := hR.stab ((I.perIn u a).tilC c) ((I.perIn u a).stabMap (l.per u a) c s)
-        have e3 : ((I.stp u a B.R.m).gam (I.perIn u a).b0 ((I.perIn u a).stabMap (l.per u a) c s).1 : GL _ _) =
-            ((I.stp u a B.R.m).gam (I.perIn u a).b0 ((I.stp u a B.R.m).mv (I.perIn u a).b0 ((I.perIn u a).tilPt c)))⁻¹ *
-              (I.stp u a B.R.m).gam (I.perIn u a).b0 ((I.perIn u a).ext c.1 s.1) *
-              (I.stp u a B.R.m).gam (I.perIn u a).b0 ((I.stp u a B.R.m).mv (I.perIn u a).b0 ((I.perIn u a).tilPt c)) := by
-          show (I.stp u a B.R.m).gam (I.perIn u a).b0 (((I.stp u a B.R.m).mv (I.perIn u a).b0 ((I.perIn u a).tilPt c))⁻¹ *
-            (I.perIn u a).ext c.1 s.1 * (I.stp u a B.R.m).mv (I.perIn u a).b0 ((I.perIn u a).tilPt c)) = _
-          rw [_root_.map_mul, _root_.map_mul, _root_.map_inv]
-        have e4 : ∀ (A M : GL (Fin (B.R.N B.R.m)) B.host.E), A.1 * (A⁻¹ * M * A).1 * (A⁻¹).1 = M.1 := by
-          intro A M
-          rw [← Units.val_mul, ← Units.val_mul]
-          congr 1
-          group
-        have e5 := hext B.host.E (RingHom.id _) ((I.stX a).gam c.1 s.1).1
-        have e6 := hgamX c s
-        have e7 : ((K.stabI c s).1).1 = ((I.stX a).gam c.1 s.1).1 := congrArg Units.val e1
-        have e8 := congrArg (fun M : GL (Fin (B.R.N B.R.m)) B.host.E =>
-          ((I.stp u a B.R.m).gam (I.perIn u a).b0 ((I.stp u a B.R.m).mv (I.perIn u a).b0 ((I.perIn u a).tilPt c))).1 * M.1 *
-            (((I.stp u a B.R.m).gam (I.perIn u a).b0 ((I.stp u a B.R.m).mv (I.perIn u a).b0 ((I.perIn u a).tilPt c)))⁻¹).1) (e2.trans e3)
-        exact Eq.mpr (congrArg₂ (fun p q => IsExt (I.rec7 l Z) (z0v B X u) (RingHom.id _) p q) e7 (e8.trans ((e4 _ _).trans e6))) e5
-      ka := ka
-      til_ad := fun c g hg' => by
-        have e : g.1 = extM hN (K.y c).1.1 := by
-          refine TilX.eq_extM_of_ext hN (inclE (F := B.host.F) (FiniteAdeleRing (𝓞 B.host.F) B.host.F)) hpi0
-            (TilX.iXm_apply hiX hN) hg'.1 ?_
-          have h2 := hg'.2
-          rw [show (z0v B X u) = _ from lastCoordinateUniformizerVector_eq_single u] at h2
-          exact h2
-        have e' : g = extGL hN (K.y c).1 := Units.ext e
-        rw [e']
-        exact hka1 c }
+      ka := ka }
   refine ⟨Tl, rfl, ?_⟩
   intro φ c s s' hs
   have hyS : ∀ s, (twYS T F u a B.R.m le_rfl s).1 = s.1 := fun s => by

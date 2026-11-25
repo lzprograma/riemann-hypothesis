@@ -2,47 +2,8 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
 public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.HigherDirectImagesVanishOfIsAffineHom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
-
-set_option autoImplicit false
 
 open CategoryTheory AlgebraicGeometry Opposite ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
@@ -222,49 +183,11 @@ section Zero
 
 variable {B : Type} [CommRing B] [Algebra k B]
 
-theorem coe_eq_algebraMap_zeroEquiv (x : Om k B 0) :
-    (x : DR k B) = algebraMap B (DR k B) (exteriorPower.zeroEquiv B Ω[B⁄k] x) := by
-  conv_lhs => rw [← (exteriorPower.zeroEquiv B Ω[B⁄k]).symm_apply_apply x]
-  generalize exteriorPower.zeroEquiv B Ω[B⁄k] x = b
-  rw [exteriorPower.zeroEquiv_symm_apply, Submodule.coe_smul, exteriorPower.ιMulti_apply_coe,
-    ExteriorAlgebra.ιMulti_zero_apply, Algebra.algebraMap_eq_smul_one]
-
-theorem zeroEquiv_mOm {k' B' : Type} [CommRing k'] [CommRing B'] [Algebra k' B'] {σ : k →+* k'}
-    {α : B →+* B'} (h : SemiHom σ α) (x : Om k B 0) :
-    exteriorPower.zeroEquiv B' Ω[B'⁄k'] (h.mOm 0 x) = α (exteriorPower.zeroEquiv B Ω[B⁄k] x) := by
-  rw [← LinearEquiv.eq_symm_apply]
-  apply Subtype.ext
-  rw [SemiHom.coe_mOm, coe_eq_algebraMap_zeroEquiv x, SemiHom.mDR_algebraMap,
-    coe_eq_algebraMap_zeroEquiv (k := k') ((exteriorPower.zeroEquiv B' Ω[B'⁄k']).symm _),
-    LinearEquiv.apply_symm_apply]
-
 end Zero
 
 section Zero2
 
 variable (s : X ⟶ Sp k)
-
-def formsZeroEquiv (U : X.Opensᵒᵖ) : (formsPre s 0).obj U ≃ₗ[X.ringCatSheaf.obj.obj U]
-    ((SheafOfModules.forget _ ⋙ PresheafOfModules.restrictScalars (𝟙 X.ringCatSheaf.obj)).obj
-      (structureModule X)).obj U :=
-  exteriorPower.zeroEquiv (Sec s U.unop) Ω[Sec s U.unop⁄k]
-
-def formsPreZeroIso : formsPre s 0 ≅
-    (SheafOfModules.forget _ ⋙ PresheafOfModules.restrictScalars (𝟙 X.ringCatSheaf.obj)).obj
-      (structureModule X) :=
-  PresheafOfModules.isoMk (fun U ↦ (formsZeroEquiv s U).toModuleIso)
-    (fun U V i ↦ by
-      ext x
-      exact zeroEquiv_mOm (SemiHom.of_algHom (Sec.res s (leOfHom i.unop))) x)
-
-def omegaZeroIso : Omega s 0 ≅ structureModule X :=
-  (PresheafOfModules.sheafification (𝟙 X.ringCatSheaf.obj)).mapIso (formsPreZeroIso s) ≪≫
-    (asIso (PresheafOfModules.sheafificationAdjunction (𝟙 X.ringCatSheaf.obj)).counit).app
-      (structureModule X)
-
-def hodgeZeroZeroEquiv : letI := algΓ s; hodgeH s 0 0 ≃ₗ[k] Γ(X, ⊤) :=
-  letI := algΓ s
-  (cohOn.mapIso k ⊤ 0 (omegaZeroIso s)).trans ((coh.zeroUnitEquiv X).restrictScalars k)
 
 end Zero2
 

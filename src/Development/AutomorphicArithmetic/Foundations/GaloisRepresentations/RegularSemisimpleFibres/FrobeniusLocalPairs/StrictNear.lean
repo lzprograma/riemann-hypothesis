@@ -4,55 +4,7 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedL
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.MatchSmulAlt
 public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.BallSub
 public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.StrictNormal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IwahoriDoubleCosets
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
 
@@ -122,7 +74,6 @@ private theorem fixB {ι : Type} [Fintype ι] (r c : ValueGroupWithZero E) (hc :
     rw [e]
     exact Valuation.map_sub_lt _ (Valuation.map_add_lt _ h3 (hm1 j)) h2
   exact lt_irrefl _ this
-
 
 omit [TopologicalSpace E] [IsNonarchimedeanLocalField E] in
 private theorem boundB {n : ℕ} {r : ValueGroupWithZero E} (hr : r < 1) (M : Matrix (Fin n) (Fin n) E)
@@ -244,10 +195,10 @@ private theorem gridInteriorVertexDecompTransport {n : ℕ} {σ : E ≃+* E} (h�
           · rw [← mul_sub, map_mul]; exact (mul_le_mul' ha1 (hρ j)).trans (one_mul _).le)
   refine ⟨u, w u, hu, hw u hu, fun _ => rfl, fun j h => ?_, fun j h => ?_⟩
   · have := congrFun hfix j
-    simp only [if_pos h] at this
+    simp only [ite_eq_left h] at this
     exact (σ.symm_apply_eq.1 this).symm
   · have := congrFun hfix j
-    simp only [if_neg h] at this
+    simp only [ite_eq_right h] at this
     exact this.symm
 
 private theorem rowB {n : ℕ} {σ : E ≃+* E} (hσ : Isom σ) {t : Fin n → Eˣ} (ht : Strict t)
@@ -261,12 +212,12 @@ private theorem rowB {n : ℕ} {σ : E ≃+* E} (hσ : Isom σ) {t : Fin n → E
     rw [le_uniformizer_iff, map_div₀, div_lt_one₀ (zero_lt_iff.2 (by simp))]
     exact ht p q h
   have hα : ∀ j, ¬ j < i → valuation E (α j) ≤ uniformizer E := fun j h => by
-    simp only [α, if_neg h]
+    simp only [α, ite_eq_right h]
     split_ifs with h'
     · simp
     · exact hq _ _ (by omega)
   have hβ : ∀ j, j < i → valuation E (β j) ≤ uniformizer E := fun j h => by
-    simp only [β, if_pos h]
+    simp only [β, ite_eq_left h]
     exact hq _ _ h
   have hα1 : ∀ j, valuation E (α j) ≤ 1 := fun j => by
     by_cases h : j < i
@@ -275,7 +226,7 @@ private theorem rowB {n : ℕ} {σ : E ≃+* E} (hσ : Isom σ) {t : Fin n → E
   have hβ1 : ∀ j, valuation E (β j) ≤ 1 := fun j => by
     by_cases h : j < i
     · exact (hβ j h).trans uniformizer_lt_one.le
-    · simp only [β, if_neg h]
+    · simp only [β, ite_eq_right h]
       split_ifs <;> simp
   have hαβ : ∀ j, α j * t j = t i * β j := fun j => by
     simp only [α, β]
@@ -299,7 +250,7 @@ private theorem rowB {n : ℕ} {σ : E ≃+* E} (hσ : Isom σ) {t : Fin n → E
         (1 : Matrix (Fin n) (Fin n) E) i j + β j * u j + w j := by
       rw [hw' j]
       simp only [Matrix.sub_apply, mul_sub, Finset.sum_sub_distrib, Matrix.one_apply (i := _) (j := j), mul_ite, mul_one,
-        mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+        mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
       ring
     simp only [e1, mul_assoc]
     rw [← Finset.mul_sum, e2]
@@ -403,21 +354,6 @@ private theorem strict_near {r : ValueGroupWithZero E} (hr : r < 1) {t s : Fin n
   rw [key, key]
   exact ht i j hij
 
-private theorem ball_sg {r : ValueGroupWithZero E} {σ : E ≃+* E} (hσ : Isom σ) {a : GL (Fin n) E}
-    (ha : a ∈ ball n r) : sg σ a ∈ ball n r := by
-  simp only [ball, Set.mem_setOf_eq] at ha ⊢
-  intro i j
-  have h : ((sg σ a : GL (Fin n) E) : Matrix (Fin n) (Fin n) E) i j - (1 : Matrix (Fin n) (Fin n) E) i j
-      = σ ((a : Matrix (Fin n) (Fin n) E) i j - (1 : Matrix (Fin n) (Fin n) E) i j) := by
-    rw [sg, GeneralLinearGroup.map_apply, map_sub]
-    congr 1
-    by_cases hij : i = j
-    · subst hij
-      simp
-    · simp [Matrix.one_apply_ne hij]
-  rw [h, hσ]
-  exact ha i j
-
 private theorem diag_ball {r : ValueGroupWithZero E} {s : Fin n → Eˣ} (hs : Near r s) :
     diagT E (Fin n) s ∈ ball n r := by
   intro i j
@@ -500,7 +436,7 @@ theorem UpperTheory.Gal.InertialTypesAlt.L.suppE :
         rw [← hy]
         group
       refine ⟨κ⁻¹, binv κ hκ, diagT E (Fin n) (d * UpperTheory.Gal.InertialTypesAlt.L.sgT σ u / u / t) * sg σ κ,
-        bmul _ (UpperTheory.Gal.InertialTypesAlt.L.diag_ball hs) _ (UpperTheory.Gal.InertialTypesAlt.L.ball_sg hσ hκ), t, ht, ?_⟩
+        bmul _ (UpperTheory.Gal.InertialTypesAlt.L.diag_ball hs) _ (UpperTheory.ConvolutionTheory.Loc.ball_sgB hσ hκ), t, ht, ?_⟩
       rw [hδ]
       calc (y * diagT E (Fin n) u * κ)⁻¹ * (y * diagT E (Fin n) d * (sg σ y)⁻¹)
             * sg σ (y * diagT E (Fin n) u * κ)

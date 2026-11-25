@@ -9,6 +9,8 @@ import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QuotSetU
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
 import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.TopsChoicePartA
 import Mathlib.Topology.Algebra.Group.Units
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstPf
+import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuBesselLoc
 
 @[expose] public section
 
@@ -24,34 +26,7 @@ variable {k r : ℕ}
 theorem trG_closedEmb {n : ℕ} (hn : n = 2 * r + k + 1) (ε : Fin n → Bool) {Q : Matrix (Fin n) (Fin (2 * r + k + 1)) ℂ}
     {Qi : Matrix (Fin (2 * r + k + 1)) (Fin n) ℂ} (h2 : Q * Qi = 1) :
     Topology.IsClosedEmbedding (fun γ : Formalism.REAL.UJ ε => (Matrix.of.symm (Formalism.L2.SG.RealObj.trG Q Qi γ) : Mt k r)) := by
-  subst hn
-  have h1 : Qi * Q = 1 := mul_eq_one_comm.mp h2
-  obtain ⟨hemb, -⟩ := Formalism.REAL.isClosedEmbeddingMatrix (2 * r + k + 1) ε
-  let L : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ ≃ₜ Mt k r :=
-    { toFun := fun M => Matrix.of.symm (Qi * M * Q)
-      invFun := fun M => Q * Matrix.of M * Qi
-      left_inv := fun M => by
-        show Q * Matrix.of (Matrix.of.symm (Qi * M * Q)) * Qi = M
-        rw [Equiv.apply_symm_apply, ← Matrix.mul_assoc, ← Matrix.mul_assoc, h2, Matrix.one_mul,
-          Matrix.mul_assoc, h2, Matrix.mul_one]
-      right_inv := fun M => by
-        show Matrix.of.symm (Qi * (Q * Matrix.of M * Qi) * Q) = M
-        rw [← Matrix.mul_assoc, ← Matrix.mul_assoc, h1, Matrix.one_mul, Matrix.mul_assoc, h1, Matrix.mul_one]
-        rfl
-      continuous_toFun := (continuous_const.matrix_mul continuous_id).matrix_mul continuous_const
-      continuous_invFun := (continuous_const.matrix_mul continuous_id).matrix_mul continuous_const }
-  exact L.isClosedEmbedding.comp hemb
-
-private theorem isUnit_det_of_mem_UH_Hpk {g : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
-    (hg : g ∈ UH (Hpk k r)) : IsUnit g.det := by
-  have h : gᴴ * Hpk k r * g = Hpk k r := hg
-  have hd := congrArg Matrix.det h
-  rw [Matrix.det_mul, Matrix.det_mul] at hd
-  have hH : (Hpk k r).det ≠ 0 := (Formalism.FourierDecayAlt.P.B2x2.hpk_unit k r).ne_zero
-  rw [isUnit_iff_ne_zero]
-  intro h0
-  rw [h0, mul_zero] at hd
-  exact hH hd.symm
+  apply _root_.Formalism.L2.SG.Pf.WuBL.trG_closedEmb' <;> assumption
 
 private theorem measurable_inv_apply (i j : Fin (2 * r + k + 1)) :
     Measurable fun x : Mt k r => (Matrix.of x)⁻¹ i j := by
@@ -115,7 +90,7 @@ theorem muS_swap {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0 < T
     _ = Formalism.MainNotions.S.muS μW μN := by
         unfold Formalism.MainNotions.S.muS
         refine Measure.map_congr (hae.mono fun p hp => ?_)
-        have hu := isUnit_det_of_mem_UH_Hpk hp.1
+        have hu := _root_.Formalism.L2.SG.Pf.Jac.unit_of_UH hp.1
         funext i j
         show ((Matrix.of p.1 * Matrix.of p.2 * (Matrix.of p.1)⁻¹) * Matrix.of p.1) i j =
           (Matrix.of p.1 * Matrix.of p.2) i j
@@ -148,7 +123,7 @@ theorem muS_loc {n : ℕ} (hn : n = 2 * r + k + 1) (ε : Fin n → Bool) {Q : Ma
   have hUHrange : ∀ M : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ, M ∈ UH (Hpk k r) →
       ∃ γ : Formalism.REAL.UJ ε, Formalism.L2.SG.RealObj.trG Q Qi γ = M := by
     intro M hM
-    have hMd := isUnit_det_of_mem_UH_Hpk hM
+    have hMd := _root_.Formalism.L2.SG.Pf.Jac.unit_of_UH hM
     have hQd : IsUnit (Q.det * Qi.det) := by
       rw [← Matrix.det_mul, h2, Matrix.det_one]
       exact isUnit_one
@@ -234,15 +209,7 @@ theorem haarG_B {n : ℕ} (hn : n = 2 * r + k + 1) (ε : Fin n → Bool) {Q : Ma
     {Qi : Matrix (Fin (2 * r + k + 1)) (Fin n) ℂ} (h2 : Q * Qi = 1) (hg : Qᴴ * Formalism.REAL.Jm ε * Q = Hpk k r) :
     Formalism.FourierDecayAlt.B.IsHaarOn (Formalism.FourierDecayAlt.B.GV k r)
       ((Formalism.REAL.muG ε).map (fun γ => (Matrix.of.symm (Formalism.L2.SG.RealObj.trG Q Qi γ) : Mt k r))) := by
-  have hSK := Formalism.L2.SG.Pf.Choice.haar_tr hn ε Q Qi h2 hg
-  have hce := trG_closedEmb hn ε h2
-  obtain ⟨hz, hT1⟩ := Formalism.FourierDecayAlt.P.base_vector_exists k r
-  have hT0 : 0 < Tz k r (bvec (wI k r (Fin.last k))) := by rw [hT1]; exact one_pos
-  have hright := (quotient_measure_unitary_group k r _ hz hT0).2.2.2.1 _ hSK
-  obtain ⟨hsf, hne, hcon, hleft⟩ := hSK
-  refine ⟨hcon, hleft, hright, fun K hK => ?_, hne⟩
-  rw [Measure.map_apply hce.measurable hK.isClosed.measurableSet]
-  exact (hce.isCompact_preimage hK).measure_lt_top
+  apply _root_.Formalism.L2.SG.Pf.WuBL.haarG_B' <;> assumption
 
 theorem sec_exists (hk : 1 ≤ k) (z z' : Fin (2 * r + k + 1) → ℂ) (hT : 0 < Tz k r z) (hT' : 0 < Tz k r z')
     (hf : ∃ g, Formalism.MainNotions.S.IsFrameW k r z g) (hf' : ∃ g, Formalism.MainNotions.S.IsFrameW k r z' g) :

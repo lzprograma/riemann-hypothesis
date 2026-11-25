@@ -49,8 +49,7 @@ theorem jPred_iff (kk s : ℕ) {N g : ℕ} (hN : N = kk + 2 * s + 1) (M : Matrix
     refine ⟨fun i j hij => ?_, fun i => (hU i i).2 rfl, fun i j _ hji => (hU i j).1 hji,
       fun i j hj hij hbi => ?_⟩
     · have hji : j < i := by
-        by_contra h
-        push_neg at h
+        by_contra! h
         have := blk_mono s kk (Fin.le_def.1 h)
         omega
       exact (hU i j).1 hji
@@ -165,7 +164,7 @@ abbrev concreteLevelAdelicSubset : Subgroup X.B.I.Gf := levelSubgroupOfCharacter
 
 theorem le1 : KgSub X ≤ KSub X.B.I := fun _ hx => hx.1
 theorem le2 : KgSub X ≤ concreteLevelAdelicSubset X := fun x hx => ((Formalism.L2.SG.Closed.level_subgroup_properties X).1 x hx).1
-theorem le3 : concreteLevelAdelicSubset X ≤ KSub X.B.I := fun x hx => Formalism.L2.SG.Count.level_set_le_compact X hx
+theorem le3 : concreteLevelAdelicSubset X ≤ KSub X.B.I := fun _ hx => Formalism.L2.SG.Count.level_set_le_compact X hx
 
 def rho2 : concreteLevelAdelicSubset X →* G0g D.nd := (rhoX X).comp (Subgroup.inclusion (le3 X))
 

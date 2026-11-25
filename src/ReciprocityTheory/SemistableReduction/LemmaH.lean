@@ -57,9 +57,9 @@ private theorem P_ite_mul_eq_prod_triChar_mul {ι : Type} [Fintype ι] [Decidabl
     have hy : ∀ t, ((fun t => if t ∈ S then k t * b t else k t) t).det ≠ 0 := by
       intro t
       by_cases ht : t ∈ S
-      · simp only [ht, if_true, Matrix.det_mul]
+      · simp only [ht, ite_true, Matrix.det_mul]
         exact mul_ne_zero (hk t) (hb t)
-      · simp only [ht, if_false]
+      · simp only [ht, ite_false]
         exact hk t
     have heq : (fun t => if t ∈ insert s S then k t * b t else k t) =
         Function.update (fun t => if t ∈ S then k t * b t else k t) s

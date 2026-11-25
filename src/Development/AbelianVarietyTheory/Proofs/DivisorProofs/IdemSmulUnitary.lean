@@ -66,8 +66,8 @@ def idemUnit (ε : AF F) (hε : ε * ε = ε) : (AE F E)ˣ →* (AE F E)ˣ where
   toFun l := ⟨ε • l.1 + (1 - ε) • 1, ε • (l⁻¹ : (AE F E)ˣ).1 + (1 - ε) • 1,
     by rw [idem_smul_mul hε, Units.mul_inv, ← add_smul, add_sub_cancel, one_smul],
     by rw [idem_smul_mul hε, Units.inv_mul, ← add_smul, add_sub_cancel, one_smul]⟩
-  map_one' := Units.ext (by simp only [Units.val_one, Units.val_mk]; rw [← add_smul, add_sub_cancel, one_smul])
-  map_mul' a b := Units.ext (by simp only [Units.val_mul, Units.val_mk]; rw [idem_smul_mul hε])
+  map_one' := Units.ext (by simp only [Units.val_one]; rw [← add_smul, add_sub_cancel, one_smul])
+  map_mul' a b := Units.ext (by simp only [Units.val_mul]; rw [idem_smul_mul hε])
 
 
 def eFin (v : Pl F) : AF F := GlobalTheory.LatVac.liftV v 1

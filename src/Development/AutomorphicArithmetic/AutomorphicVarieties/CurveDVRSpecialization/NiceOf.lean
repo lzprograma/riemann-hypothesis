@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CharacteristicPolynomials.CharpolyPow
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.SecondThirdPrimeConditionTransferAlt
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.NiceSep
 public import Mathlib.LinearAlgebra.Matrix.Charpoly.Basic
@@ -14,6 +15,7 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpe
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.NiceIrr
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.NiceIrrE
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RegCoset
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RegCoset
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.StrongIrrOfOpen
 public import Mathlib.Topology.Algebra.ClopenNhdofOne
 import Mathlib.Algebra.Order.Floor.Extended
@@ -156,40 +158,7 @@ namespace UpperTheory.V.Pr
 
 private lemma strongIrr_conjE {G κ : Type} [Group G] [Field κ] {n : ℕ} (r : G →* GL (Fin n) κ) (h : StrongIrr r)
     (P : GL (Fin n) κ) : StrongIrr ((MulAut.conj P⁻¹).toMonoidHom.comp r) := by
-  intro W S hS hW
-  set A : Matrix (Fin n) (Fin n) κ := (P : Matrix (Fin n) (Fin n) κ) with hA
-  set B : Matrix (Fin n) (Fin n) κ := ((P⁻¹ : GL (Fin n) κ) : Matrix (Fin n) (Fin n) κ) with hB
-  have hAB : ∀ v, A *ᵥ (B *ᵥ v) = v := fun v => by rw [mulVec_mulVec, hA, hB, Units.mul_inv, one_mulVec]
-  have hBA : ∀ v, B *ᵥ (A *ᵥ v) = v := fun v => by rw [mulVec_mulVec, hA, hB, Units.inv_mul, one_mulVec]
-  have hg : ∀ g v, gm ((MulAut.conj P⁻¹).toMonoidHom.comp r) g *ᵥ v = B *ᵥ (gm r g *ᵥ (A *ᵥ v)) := by
-    intro g v
-    rw [mulVec_mulVec, mulVec_mulVec]
-    rfl
-  have hm : ∀ v, v ∈ W.comap (Matrix.toLin' B) ↔ B *ᵥ v ∈ W := fun v => by
-    rw [Submodule.mem_comap, toLin'_apply]
-  have key := h (W.comap (Matrix.toLin' B)) S hS (by
-    intro g
-    rw [hW g]
-    constructor
-    · intro h1 v hv
-      have := h1 _ ((hm v).1 hv)
-      rw [hg, hAB] at this
-      exact (hm _).2 this
-    · intro h1 v hv
-      rw [hg, ← hm]
-      exact h1 _ (by rw [hm, hBA]; exact hv))
-  rcases key with key | key
-  · left
-    rw [eq_bot_iff]
-    intro v hv
-    have : A *ᵥ v ∈ W.comap (Matrix.toLin' B) := by rw [hm, hBA]; exact hv
-    rw [key, Submodule.mem_bot] at this
-    rw [Submodule.mem_bot, ← hBA v, this, mulVec_zero]
-  · right
-    rw [eq_top_iff]
-    intro v _
-    have : A *ᵥ v ∈ W.comap (Matrix.toLin' B) := by rw [key]; trivial
-    rwa [hm, hBA] at this
+  apply _root_.UpperTheory.V.Pr.strongIrr_conj <;> assumption
 
 private def blkE {κ : Type} [Field κ] (M : Matrix (Fin 2) (Fin 2) κ) (w : κ) : Matrix (Fin 3) (Fin 3) κ :=
   !![M 0 0, M 0 1, 0; M 1 0, M 1 1, 0; 0, 0, w]
@@ -217,13 +186,13 @@ private lemma minor_neE {κ : Type} [Field κ] {n : ℕ} (Y : Matrix (Fin n) (Fi
     have h1 := congrFun hv' ⟨i, hi⟩
     simp only [mulVec, dotProduct, submatrix_apply, Pi.zero_apply] at h1 ⊢
     refine Eq.trans ?_ h1
-    rw [← Finset.sum_subset (Finset.subset_univ S) (by intro x _ hx; rw [dif_neg hx, mul_zero]),
+    rw [← Finset.sum_subset (Finset.subset_univ S) (by intro x _ hx; rw [dite_eq_right hx, mul_zero]),
       ← Finset.sum_coe_sort S]
-    exact Finset.sum_congr rfl fun x _ => by rw [dif_pos x.2]) (by intro i hi; exact dif_neg hi)
+    exact Finset.sum_congr rfl fun x _ => by rw [dite_eq_left x.2]) (by intro i hi; exact dite_eq_right hi)
   apply hv
   ext ⟨j, hj⟩
   have h3 := congrFun this j
-  simp only [dif_pos hj] at h3
+  simp only [dite_eq_left hj] at h3
   exact h3
 
 private lemma minor_blkE {κ : Type} [Field κ] (M : Matrix (Fin 2) (Fin 2) κ) (w : κ) (h0 : M 0 0 ≠ 0) (h1 : M 1 1 ≠ 0)
@@ -354,19 +323,7 @@ private lemma strong_of {G κ : Type} [Group G] [TopologicalSpace G] [IsTopologi
     (r : G →* GL (Fin m) κ) (hc : LinClosed (gm r))
     (hirr : ∀ U : Subgroup G, IsOpen (U : Set G) → MatIrr (U ⊓ G') (gm r)) :
     StrongIrr (r.comp (V ⊓ G').subtype) := by
-  refine strongIrrOfOpen _ κ m _ (fun f => (hc f).preimage continuous_subtype_val) ?_
-  intro U hU W hW
-  obtain ⟨O, hO, hOU⟩ := isOpen_induced_iff.1 hU
-  have h1 : (1 : G) ∈ O := by
-    have : (1 : ↥(V ⊓ G')) ∈ (U : Set ↥(V ⊓ G')) := U.one_mem
-    rw [← hOU] at this
-    exact this
-  obtain ⟨V', hV', hsub⟩ := open_basis (O ∩ V) (hO.inter hV) ⟨h1, V.one_mem⟩
-  refine hirr V' hV' W fun g hg => ?_
-  have h2 := hsub hg.1
-  have h3 : (⟨g, h2.2, hg.2⟩ : ↥(V ⊓ G')) ∈ (U : Set ↥(V ⊓ G')) := by
-    rw [← hOU]; exact h2.1
-  exact hW _ h3
+  apply _root_.UpperTheory.V.Th.Det.strong_of <;> assumption
 
 private lemma coset_in {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
     [TotallyDisconnectedSpace G] (U : Set G) (hU : IsOpen U) (s : G) (hs : s ∈ U) :

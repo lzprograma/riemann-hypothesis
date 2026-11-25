@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.BorCard
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.DualPair
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.OmFacts
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.PairOLin
@@ -141,20 +142,7 @@ private theorem card_lt' (n : ℕ) : Fintype.card {p : Fin n × Fin n // p.1 < p
   simpa using this
 
 private theorem card_le' (n : ℕ) : Fintype.card {p : Fin n × Fin n // p.1 ≤ p.2} = n + n.choose 2 := by
-  rw [← card_lt' n]
-  have e : {p : Fin n × Fin n // p.1 ≤ p.2} ≃ Fin n ⊕ {p : Fin n × Fin n // p.1 < p.2} :=
-    { toFun := fun p => if h : p.1.1 < p.1.2 then .inr ⟨p.1, h⟩ else .inl p.1.1
-      invFun := Sum.elim (fun i => ⟨(i, i), le_rfl⟩) fun p => ⟨p.1, p.2.le⟩
-      left_inv := fun p => by
-        by_cases h : p.1.1 < p.1.2
-        · simp [h]
-        · simp only [h, dite_false, Sum.elim_inl]
-          exact Subtype.ext (Prod.ext rfl (le_antisymm p.2 (not_lt.1 h)))
-      right_inv := by
-        rintro (i | p)
-        · simp
-        · simp [p.2] }
-  rw [Fintype.card_congr e, Fintype.card_sum, Fintype.card_fin]
+  apply _root_.card_le' <;> assumption
 
 private theorem red_mul {O : Type} [CommRing O] [IsLocalRing O] {n : ℕ} (m : ℕ) (A B : Matrix (Fin n) (Fin n) O) :
     red m (A * B) = red m A * red m B := Matrix.map_mul

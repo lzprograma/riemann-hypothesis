@@ -93,7 +93,7 @@ private lemma tch_poly (n : ℕ) (R : Type) [CommRing R] {X : Type} (s : Finset 
   rw [MvPolynomial.coeff_sum, Finset.sum_eq_single j] at h4
   · simpa using h4
   · intro k hk hkj
-    rw [MvPolynomial.coeff_monomial, if_neg]
+    rw [MvPolynomial.coeff_monomial, ite_eq_right]
     intro hh
     exact hkj (he hk hj hh)
   · intro h; exact absurd hj h

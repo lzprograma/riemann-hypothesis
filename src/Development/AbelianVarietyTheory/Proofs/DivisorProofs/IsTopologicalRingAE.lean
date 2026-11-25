@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergOperatorFPreservesIsThetaFunction
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfPartFPlaceIdem
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralNormSqEqToL2
 import Mathlib.Algebra.Order.Floor.Extended
@@ -65,18 +66,7 @@ theorem isTopologicalRing_AE : IsTopologicalRing (AF F ⊗[F] E) := by
 instance instTopRingAE : IsTopologicalRing (AF F ⊗[F] E) := isTopologicalRing_AE F E
 
 theorem continuous_cAF (σ : E →ₐ[F] E) : Continuous (cAF (F := F) σ) := by
-  haveI : FiniteDimensional F E := Module.Finite.of_restrictScalars_finite ℚ F E
-  haveI := isModuleTopology_AE F E
-  let l : (AF F ⊗[F] E) →ₗ[AF F] (AF F ⊗[F] E) :=
-    (Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ).toLinearMap
-  have e : (cAF (F := F) σ : AF F ⊗[F] E → AF F ⊗[F] E) = l := by
-    funext z
-    induction z using TensorProduct.induction_on with
-    | zero => simp
-    | tmul a e => rfl
-    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
-  rw [e]
-  exact IsModuleTopology.continuous_of_linearMap l
+  apply _root_.GlobalTheory.HeisKeepF.continuous_cAF <;> assumption
 
 variable (σ : E →ₐ[F] E) {nS nT : ℕ} (JS : Matrix (Fin nS) (Fin nS) E) (JT : Matrix (Fin nT) (Fin nT) E) (xi0 : E)
 
@@ -270,7 +260,7 @@ noncomputable def toBF (f : WOF F E nS nT → ℂ) (hc : Continuous f) (hb : ∃
 
 theorem continuous_iotaVF {θ : InfinitePlace F → (Ainf F ⊗[F] E →+* ℂ)} {ι : (InfinitePlace F → ℂ) →+ AEF F E}
     (hι : IsChartF θ ι) : Continuous (iotaVF (nS := nS) (nT := nT) ι) :=
-  continuous_pi fun i => continuous_pi fun j => hι.cont.comp (continuous_pi fun w => continuous_apply _)
+  continuous_pi fun _ => continuous_pi fun _ => hι.cont.comp (continuous_pi fun _ => continuous_apply _)
 
 theorem real_iotaVF {θ : InfinitePlace F → (Ainf F ⊗[F] E →+* ℂ)} {ι : (InfinitePlace F → ℂ) →+ AEF F E}
     (hι : IsChartF θ ι) (v : IxF F nS nT → ℂ) : (iotaVF ι v).map (finPartF F E) = 0 := by

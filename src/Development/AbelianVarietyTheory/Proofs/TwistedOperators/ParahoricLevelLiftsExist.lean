@@ -61,7 +61,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.IndefR
 open scoped TensorProduct InnerProductSpace Matrix
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.ParahoricLift
 
@@ -101,7 +100,7 @@ theorem diagOne_mem (hr : r ≤ n) (t : ℕ) (g : GL (Fin r) κ) : diagOne hr g 
   unfold diagMat
   rw [Matrix.submatrix_apply, Equiv.symm_apply_apply, Equiv.symm_apply_apply]
   rcases a with a | a
-  · have : blkOf r t (splitIx hr (Sum.inl a)) = 0 := if_pos a.2
+  · have : blkOf r t (splitIx hr (Sum.inl a)) = 0 := ite_eq_left a.2
     have h2 : blkOf r t (splitIx hr b) < blkOf r t (splitIx hr (Sum.inl a)) := hij
     omega
   · rcases b with b | b

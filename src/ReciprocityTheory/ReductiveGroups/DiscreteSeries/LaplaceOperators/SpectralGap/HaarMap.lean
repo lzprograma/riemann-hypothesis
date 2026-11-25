@@ -1,5 +1,7 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.SmoothMatrixMaps.ContinuousSecondMatrix
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.Transport
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.ClosedSubgroupsStatement
 
 @[expose] public section
@@ -78,35 +80,11 @@ theorem phi_closedEmb (ε : Fin (2 * r + k + 1) → Bool) (P : Mat k r) (hP : Is
 
 theorem phi_mem (ε : Fin (2 * r + k + 1) → Bool) (P : Mat k r) (hC : Formalism.MainNotions.S.IsCayley k r ε P)
     (g : Mat k r) (hg : Formalism.REAL.inUJ ε g) : P⁻¹ * g * P ∈ UH (Hpk k r) := by
-  obtain ⟨hPu, hPJ⟩ := hC
-  have hd : IsUnit P.det := (Matrix.isUnit_iff_isUnit_det P).mp hPu
-  have h1 : P * P⁻¹ = 1 := Matrix.mul_nonsing_inv P hd
-  have h2 : (P⁻¹)ᴴ * Pᴴ = 1 := by
-    rw [← Matrix.conjTranspose_mul, h1, Matrix.conjTranspose_one]
-  have hg' : gᴴ * Formalism.REAL.Jm ε * g = Formalism.REAL.Jm ε := hg
-  show (P⁻¹ * g * P)ᴴ * Hpk k r * (P⁻¹ * g * P) = Hpk k r
-  rw [← hPJ]
-  calc (P⁻¹ * g * P)ᴴ * (Pᴴ * Formalism.REAL.Jm ε * P) * (P⁻¹ * g * P)
-      = Pᴴ * ((gᴴ * ((P⁻¹)ᴴ * Pᴴ) * Formalism.REAL.Jm ε * (P * P⁻¹) * g)) * P := by
-        simp only [Matrix.conjTranspose_mul, Matrix.mul_assoc]
-    _ = Pᴴ * Formalism.REAL.Jm ε * P := by
-        rw [h1, h2, Matrix.mul_one, Matrix.mul_one, hg', Matrix.mul_assoc]
+  apply ReciprocityTheory.ChartRestriction.DS.Lap.Transport.conj_mem_uh <;> assumption
 
 theorem conj_mem (ε : Fin (2 * r + k + 1) → Bool) (P : Mat k r) (hC : Formalism.MainNotions.S.IsCayley k r ε P)
     (s : Mat k r) (hs : s ∈ UH (Hpk k r)) : Formalism.REAL.inUJ ε (P * s * P⁻¹) := by
-  obtain ⟨hPu, hPJ⟩ := hC
-  have hd : IsUnit P.det := (Matrix.isUnit_iff_isUnit_det P).mp hPu
-  have h1 : P * P⁻¹ = 1 := Matrix.mul_nonsing_inv P hd
-  have h2 : (P⁻¹)ᴴ * Pᴴ = 1 := by
-    rw [← Matrix.conjTranspose_mul, h1, Matrix.conjTranspose_one]
-  have hs' : sᴴ * Hpk k r * s = Hpk k r := hs
-  show (P * s * P⁻¹)ᴴ * Formalism.REAL.Jm ε * (P * s * P⁻¹) = Formalism.REAL.Jm ε
-  calc (P * s * P⁻¹)ᴴ * Formalism.REAL.Jm ε * (P * s * P⁻¹)
-      = (P⁻¹)ᴴ * (sᴴ * (Pᴴ * Formalism.REAL.Jm ε * P) * s) * P⁻¹ := by
-        simp only [Matrix.conjTranspose_mul, Matrix.mul_assoc]
-    _ = (P⁻¹)ᴴ * (Pᴴ * Formalism.REAL.Jm ε * P) * P⁻¹ := by rw [hPJ, hs']
-    _ = ((P⁻¹)ᴴ * Pᴴ) * Formalism.REAL.Jm ε * (P * P⁻¹) := by simp only [Matrix.mul_assoc]
-    _ = Formalism.REAL.Jm ε := by rw [h1, h2, Matrix.one_mul, Matrix.mul_one]
+  apply ReciprocityTheory.ChartRestriction.DS.Lap.CurveContinuity.inUJ_conj <;> assumption
 
 end ConjugationHaarMap
 

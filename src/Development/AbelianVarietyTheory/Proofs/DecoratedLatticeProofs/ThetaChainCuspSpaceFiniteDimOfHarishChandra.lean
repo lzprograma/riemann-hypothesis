@@ -49,8 +49,6 @@ open scoped TensorProduct InnerProductSpace ComplexConjugate
 
 namespace GlobalTheory.ChainOnto
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem finDim_of_levFacts : GlobalTheory.Published.HarishChandraFinite → ∀ D : D7, LevFacts D → FinDim D := by
   intro hP D hL c hc j hj s hs
   have h1 := (hL c hc j hj s hs).1

@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsSmoothHermTrivLine
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PartialFlagBlocks
 public import GroundTheory.HeightsAndTheta.Heights.Intersections.ProjLineRankTwoPushforwardHypotheses
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SumSqCompBlockMap
@@ -49,61 +50,10 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MCoordIdealCom
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SingularWeightMonotoneRegularization
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SmoothFunctionAsDegreeZeroMetric
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncAdaptedAtlasProjection
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.HeightsAndTheta.Heights.Intersections.IsSmoothHermFubiniStudyO1
 import Development.WeilBound.CoreStatements.CentralCharts.TraceMulReNonneg
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Matrix.PosDef
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.NumberTheory.Height.NumberField
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.InFlagDomainOne
-import Mathlib.Tactic.TypeStar
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsValueAtOfTorus
 import Development.WeilBound.CoreStatements.PluriharmonicCharts.XCGradAtlas
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.GenericFibreKerTarget
@@ -111,8 +61,8 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersecti
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionFunctorialHolomorphic
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.SamePotBlock
-import Mathlib.Topology.OpenPartialHomeomorph.Composition
 import Std.Tactic.BVDecide.Normalize.Prop
+import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeInhab
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.MetricProofs.IsSmoothHermPullHerm, Development.AutomorphicSpectrum.Proofs.MetricProofs.NotMemMcPtsTop, Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagGapHolomorphicPullbackFourth, Development.WeilBound.CoreStatements.PluriharmonicCharts.XGramSize, Development.AutomorphicSpectrum.Proofs.MetricProofs.LogDetGramSubharmonic, Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagGapHolomorphicPullbackThird, Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagGapPullbackSecond, Development.AutomorphicSpectrum.Proofs.MetricProofs.PartialFlagBundleMetricLine, Development.AutomorphicSpectrum.Proofs.MetricProofs.SingWeightRegFamilyTransport, Development.AutomorphicSpectrum.Proofs.MetricProofs.WeightDescendsOfSameOrbit, Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelAnalyticDataExists
@@ -138,19 +88,8 @@ theorem pullDeg_zero {K K' : Type} (κ : K → K') : pullDeg κ (0 : K → ℤ) 
 theorem isSmoothHerm_pullHerm {K K' : Type} [Fintype K] [Fintype K'] {ι : K → Type} {ι' : K' → Type}
     [∀ k, Fintype (ι k)] [∀ k, Fintype (ι' k)] {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')}
     (hv : IsBlockMap κ v) {B : HermLine ι} (hB : IsSmoothHerm B) : IsSmoothHerm (pullHerm hv B) := by
-  have hlin : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun z : (Σ k', ι' k') → ℂ => fun q => z (v q)) :=
-    contDiff_pi.2 fun q => contDiff_apply ℝ (fun _ => ℂ) (v q)
-  show ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (B.h ∘ fun z : (Σ k', ι' k') → ℂ => fun q => z (v q))
-    {z | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0}
-  refine ContDiffOn.comp hB hlin.contDiffOn ?_
-  intro z hz k
-  obtain ⟨i', hi'⟩ := hz (κ k)
-  obtain ⟨q, hq⟩ := hv.2.2.2 ⟨κ k, i'⟩ ⟨k, rfl⟩
-  have h2 : q.1 = k := hv.1 (by rw [← hv.2.2.1 q, hq])
-  obtain ⟨k₀, m⟩ := q
-  simp only at h2
-  subst h2
-  exact ⟨m, by simpa [hq] using hi'⟩
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.Ar.Chg.isSmoothHerm_pull <;> assumption
 
 theorem exists_stepLine : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (Φ : Type) [Field Φ]
     (y : (Σ k, ι k) → Φ) (Ψ : Type) (N j : ℕ) (M : FlagModel y Ψ N j) (p : Ψ × Fin N)
@@ -164,7 +103,7 @@ theorem exists_stepLine : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, F
     · exact ⟨⟨k, Or.inl h⟩, rfl⟩
     · by_cases h' : M.blk p = some k
       · exact ⟨⟨k, Or.inr h'⟩, rfl⟩
-      · exact absurd (show M.dy p k = 0 by unfold FlagModel.dy; rw [dite_eq_right h, if_neg h']) hk
+      · exact absurd (show M.dy p k = 0 by unfold FlagModel.dy; rw [dite_eq_right h, ite_eq_right h']) hk
   refine ⟨(fsHerm ι (M.dy p)).tensor (pullHerm (isBlockMap_stepV M p) B), ?_, ?_, ?_, ?_⟩
   · show M.dy p + pullDeg _ B.a = M.dy p
     rw [hB, pullDeg_zero, add_zero]
@@ -204,23 +143,6 @@ noncomputable section
 
 namespace GlobalTheory.CompanionTheory.Ar.PB.FA.StepMap
 
-theorem orbit_symm {K : Type} {ι : K → Type} {z z' : (Σ k, ι k) → ℂ} (h : SameOrbit z z') :
-    SameOrbit z' z := by
-  obtain ⟨c, hc, rfl⟩ := h
-  refine ⟨fun k => (c k)⁻¹, fun k => inv_ne_zero (hc k), ?_⟩
-  funext q
-  show z' q = (c q.1)⁻¹ * (c q.1 * z' q)
-  rw [← mul_assoc, inv_mul_cancel₀ (hc q.1), one_mul]
-
-theorem orbit_trans {K : Type} {ι : K → Type} {z z' z'' : (Σ k, ι k) → ℂ} (h : SameOrbit z z')
-    (h' : SameOrbit z' z'') : SameOrbit z z'' := by
-  obtain ⟨c, hc, rfl⟩ := h
-  obtain ⟨c', hc', rfl⟩ := h'
-  refine ⟨fun k => c k * c' k, fun k => mul_ne_zero (hc k) (hc' k), ?_⟩
-  funext q
-  show c q.1 * (c' q.1 * z'' q) = c q.1 * c' q.1 * z'' q
-  rw [mul_assoc]
-
 theorem not_mem_mcPts_top {K : Type} {ι : K → Type} [∀ k, Fintype (ι k)] (z : (Σ k, ι k) → ℂ) :
     z ∉ mcPts (⊤ : Ideal (MRing ι)) := by
   intro hz
@@ -251,12 +173,12 @@ theorem factor : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (�
       rw [hz1]
       exact H3 x
     exact Rb.inj _ _ (not_mem_mcPts_top _)
-      (orbit_trans (orbit_trans (orbit_symm hz2) (hb _ _ o1)) (H1 x))
+      (GlobalTheory.CompanionTheory.Ar.PB.FA.Flat.sameOrbit_trans (GlobalTheory.CompanionTheory.Ar.PB.FA.Flat.sameOrbit_trans (GlobalTheory.CompanionTheory.Ar.PB.FA.Flat.sameOrbit_symm hz2) (hb _ _ o1)) (H1 x))
   · apply Rp.inj _ _ (not_mem_mcPts_top _)
-    refine orbit_trans (H3 x) (orbit_trans ?_ (orbit_symm (H3 x')))
+    refine GlobalTheory.CompanionTheory.Ar.PB.FA.Flat.sameOrbit_trans (H3 x) (GlobalTheory.CompanionTheory.Ar.PB.FA.Flat.sameOrbit_trans ?_ (GlobalTheory.CompanionTheory.Ar.PB.FA.Flat.sameOrbit_symm (H3 x')))
     have h1' := H1 x'
     rw [← hpr] at h1'
-    obtain ⟨cb, hcb, hbeq⟩ := orbit_trans (H1 x) (orbit_symm h1')
+    obtain ⟨cb, hcb, hbeq⟩ := GlobalTheory.CompanionTheory.Ar.PB.FA.Flat.sameOrbit_trans (H1 x) (GlobalTheory.CompanionTheory.Ar.PB.FA.Flat.sameOrbit_symm h1')
     refine ⟨fun k => if hk : (∀ p', M.blk p' ≠ some k.1) then cb ⟨k.1, hk⟩
       else (hsc k.1 (k.2.resolve_left hk)).choose, fun k => ?_, ?_⟩
     · dsimp only
@@ -698,8 +620,8 @@ theorem ite_term {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] (c : Prop
     DifferentiableAt ℝ (fun y => if c then t y else 0) u ∧
       ‖fderiv ℝ (fun y => if c then t y else 0) u‖ ≤ T := by
   by_cases hc : c
-  · simpa only [if_pos hc] using h hc
-  · simp only [if_neg hc]
+  · simpa only [ite_eq_left hc] using h hc
+  · simp only [ite_eq_right hc]
     exact ⟨differentiableAt_const _, by simpa using hT⟩
 
 theorem stepPh_grad_local : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (Φ : Type) [Field Φ] (y : (Σ k, ι k) → Φ) (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N j : ℕ) (M : FlagModel y Ψ N j) (n : ℕ) (BM : BaseMetric M n) (p : Ψ × Fin N) (Kk : Type) [Fintype Kk] (ιk : Kk → Type) [∀ k, Fintype (ιk k)] (κ : Kk → K) (v : (Σ k, ιk k) → (Σ k, ι k)) (e : ℕ) (R : AnLogRes (mCoordIdeal (y ∘ v)) ⊤ e) (pr : R.X → BM.Rb.X) (hp : HoloMap R.A BM.Rb.A pr), HasStepCharts M BM p κ v R pr → IsPotential R.A (potOf R (fsHerm ιk fun k => M.dy p (κ k))) → ∀ x, ∃ (ψ : OpenPartialHomeomorph R.X (Fin e → ℂ)) (V : Set R.X) (c : ℝ), IsCompatChart R.A ψ ∧ IsOpen V ∧ x ∈ V ∧ V ⊆ ψ.source ∧ ∀ x' ∈ V, x' ∉ bdry (fun x y => BM.s (pr x) (pr y)) → ‖fderiv ℝ (stepPh M BM p v R pr ∘ ψ.symm) (ψ x')‖ ≤ c * rW (BM.L.pullback pr hp.1) (fun x y => BM.s (pr x) (pr y)) x' ^ c * Real.exp (rW (BM.L.pullback pr hp.1) (fun x y => BM.s (pr x) (pr y)) x' / 2) := by
@@ -984,7 +906,7 @@ theorem gram_one_pos {h : Matrix (Fin N) (Fin N) ℂ} (hd : h.det ≠ 0) (S : Fi
 
 theorem continuous_gram (S : Finset (Fin N)) :
     Continuous fun h : Matrix (Fin N) (Fin N) ℂ => (minorIJ (hᴴ * 1 * h) S S).re := by
-  simp only [minorIJ, dif_pos]
+  simp only [minorIJ, dite_eq_left]
   refine Complex.continuous_re.comp (Continuous.matrix_det ?_)
   refine Continuous.matrix_submatrix ?_ _ _
   fun_prop
@@ -1158,12 +1080,12 @@ theorem stepGap_eq {M : FlagModel y Ψ N j} [Fintype Ψ] [DecidableEq Ψ] {BM : 
   rw [← h1]
   refine _root_.GlobalTheory.CompanionTheory.Ar.PB.StepW.stepGap_eq_of_base_block K ι Φ y Ψ N j M n BM p (pr x) z _ hb hzm (hT.2 hz'm).1 so ?_ ?_
   · funext q
-    have : c q.1.1 = cb q.1 := dif_pos q.1.2
+    have : c q.1.1 = cb q.1 := dite_eq_left q.1.2
     show basePart M.blk z q = c q.1.1 * z' ⟨q.1.1, q.2⟩
     rw [this, hcbq]
     rfl
   · intro k hk m
-    have : c k = a := (dif_neg fun h => h p hk).trans (if_pos hk)
+    have : c k = a := (dite_eq_right fun h => h p hk).trans (ite_eq_left hk)
     show z ⟨k, m⟩ = c k * z' ⟨k, m⟩
     rw [this, ha k hk]
 
@@ -1171,13 +1093,13 @@ theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι 
   intro K _ ι _ Φ _ y Ψ _ _ N j M n BM p Kk _ ιk _ κ v e R pr hS x x' hpr hblk
   by_cases hb : pr x ∈ bdry BM.s
   · have hb' : pr x' ∈ bdry BM.s := hpr ▸ hb
-    rw [stepPh, stepPh, dif_neg fun h => h.1 hb, dif_neg fun h => h.1 hb']
+    rw [stepPh, stepPh, dite_eq_right fun h => h.1 hb, dite_eq_right fun h => h.1 hb']
   · have hb' : pr x' ∉ bdry BM.s := hpr ▸ hb
     obtain ⟨z₁, hz₁, hv₁, -⟩ := hS.2.2.2 x
     obtain ⟨z₂, hz₂, hv₂, -⟩ := hS.2.2.2 x'
     have h1 : pr x ∉ bdry BM.s ∧ ∃ z ∈ mcPts (mCoordIdeal y), z ∘ v = R.lift x x := ⟨hb, z₁, hz₁, hv₁⟩
     have h2 : pr x' ∉ bdry BM.s ∧ ∃ z ∈ mcPts (mCoordIdeal y), z ∘ v = R.lift x' x' := ⟨hb', z₂, hz₂, hv₂⟩
-    rw [stepPh, stepPh, dif_pos h1, dif_pos h2]
+    rw [stepPh, stepPh, dite_eq_left h1, dite_eq_left h2]
     exact stepGap_eq hS hpr hb hblk h1.2.choose_spec.1 h2.2.choose_spec.1 h1.2.choose_spec.2 h2.2.choose_spec.2
 
 end GlobalTheory.CompanionTheory.Ar.PB.StepW.WeightProp
@@ -1210,7 +1132,7 @@ theorem stepWeight_exists : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k,
   have hgr := _root_.GlobalTheory.CompanionTheory.Ar.PB.StepW.GradLoc.stepPh_grad_local K ι Φ y Ψ N j M n BM p Kk ιk κ v e R pr hp hc hfs
   obtain ⟨C₂, hC₂⟩ := _root_.GlobalTheory.CompanionTheory.Ar.PB.isSingWeight_of_logGrowth e R.X R.A (BM.L.pullback pr hp.1) (fun x y => BM.s (pr x) (pr y)) BM.nb BM.m
     (fun k => pr ⁻¹' BM.W k) hpot hsec hsnc hnorm _ (stepPh M BM p v R pr) C₁ hfs hsm hps hC₁
-  obtain ⟨C₃, hC₃⟩ := _root_.GlobalTheory.CompanionTheory.Ar.PB.gradBound_of_local_bounds e R.X R.A B (BM.L.pullback pr hp.1) (fun x y => BM.s (pr x) (pr y)) BM.nb BM.m
+  obtain ⟨C₃, hC₃⟩ := _root_.PositivityTheory.Xgp.t_c_grad_atlas e R.X R.A B (BM.L.pullback pr hp.1) (fun x y => BM.s (pr x) (pr y)) BM.nb BM.m
     (fun k => pr ⁻¹' BM.W k) hpot hsec hsnc hnorm had (stepPh M BM p v R pr) hsm hgr
   refine ⟨stepPh M BM p v R pr, max C₂ C₃, ?_, ?_, ?_, hC₃ _ (le_max_right _ _)⟩
   · intro x hx z hz hzv
@@ -1493,9 +1415,9 @@ theorem weight_descends_of_sameOrbit : ∀ (K : Type) [Fintype K] (ι : K → Ty
   have hc'0 : ∀ k, c' k ≠ 0 := by
     intro k
     by_cases hk : ((∀ p' : Ψ × Fin N, M.blk p' ≠ Option.some k) ∨ M.blk p = Option.some k)
-    · simp only [c', dif_pos hk]
+    · simp only [c', dite_eq_left hk]
       exact hc0 _
-    · simp only [c', dif_neg hk]
+    · simp only [c', dite_eq_right hk]
       exact one_ne_zero
   let z : (Σ k, ι k) → ℂ := fun r => c' r.1 * R.lift x x r
   have hzstep : z ∘ stepV M p = Rp.lift (h x) (h x) := by
@@ -1504,7 +1426,7 @@ theorem weight_descends_of_sameOrbit : ∀ (K : Type) [Fintype K] (ι : K → Ty
     have hq : (∀ p' : Ψ × Fin N, M.blk p' ≠ Option.some q.1.1) ∨ M.blk p = Option.some q.1.1 := q.1.2
     show c' q.1.1 * R.lift x x ⟨q.1.1, q.2⟩ = c q.1 * R.lift x x ⟨q.1.1, q.2⟩
     congr 1
-    simp only [c', dif_pos hq]
+    simp only [c', dite_eq_left hq]
   have hzmem : z ∈ mcPts (mCoordIdeal y) := by
     refine ⟨fun k => ?_, fun f hf => ?_⟩
     · obtain ⟨i, hi⟩ := hwmem.1 k
@@ -1582,7 +1504,7 @@ theorem dy_eq_zero (M : FlagModel y Ψ N j) (p : Ψ × Fin N) (k : K)
   have h1 : ¬ ∀ p', M.blk p' ≠ some k := fun h => hk ⟨⟨k, Or.inl h⟩, rfl⟩
   have h2 : M.blk p ≠ some k := fun h => hk ⟨⟨k, Or.inr h⟩, rfl⟩
   unfold FlagModel.dy
-  rw [dite_eq_right h1, if_neg h2]
+  rw [dite_eq_right h1, ite_eq_right h2]
 
 theorem step_member (hR : RegGlobalStatement) (hP : PullbackStatement) [Fintype Ψ] [DecidableEq Ψ]
     (M : FlagModel y Ψ N j) {n e : ℕ} (BM : BaseMetric M n) (R : AnLogRes (mCoordIdeal y) ⊤ e)
@@ -1691,27 +1613,7 @@ theorem step_member (hR : RegGlobalStatement) (hP : PullbackStatement) [Fintype 
 open scoped ContDiff
 
 theorem degree_id_self {e : ℕ} {X : Type} [TopologicalSpace X] (A : FinHolAtlas e X) : IsDegreeOff A A id 1 ∅ := by
-  have hA : A.IsAnalyticSubset ∅ := fun x =>
-    ⟨Set.univ, isOpen_univ, trivial, 1, fun _ _ => 1, fun _ _ _ _ => analyticAt_const, by ext; simp⟩
-  refine ⟨hA, interior_empty, hA, interior_empty, fun x _ => by simp, fun j k y hy _ hk => ?_⟩
-  set E := (A.chart j).symm.trans (A.chart k) with he
-  have hs : y ∈ E.source := ⟨hy, hk⟩
-  have hf : DifferentiableAt ℂ (A.chart k ∘ (A.chart j).symm) y := (A.holo j k y ⟨hy, hk⟩).differentiableAt
-  have ht := E.map_source hs
-  have hg : DifferentiableAt ℂ (A.chart j ∘ (A.chart k).symm) ((A.chart k ∘ (A.chart j).symm) y) :=
-    (A.holo k j _ ⟨ht.1, ht.2⟩).differentiableAt
-  have hc := fderiv_comp y hg hf
-  have hid : (A.chart j ∘ (A.chart k).symm) ∘ (A.chart k ∘ (A.chart j).symm) =ᶠ[𝓝 y] id := by
-    filter_upwards [E.open_source.mem_nhds hs] with w hw
-    exact E.left_inv hw
-  rw [hid.fderiv_eq, fderiv_id] at hc
-  intro h0
-  have := congrArg (fun L : (Fin e → ℂ) →L[ℂ] (Fin e → ℂ) => LinearMap.det (L : (Fin e → ℂ) →ₗ[ℂ] (Fin e → ℂ))) hc
-  simp only [ContinuousLinearMap.coe_id, LinearMap.det_id] at this
-  erw [ContinuousLinearMap.toLinearMap_comp, LinearMap.det_comp] at this
-  have h0' : LinearMap.det (fderiv ℂ (A.chart k ∘ (A.chart j).symm) y : (Fin e → ℂ) →ₗ[ℂ] (Fin e → ℂ)) = 0 := h0
-  rw [h0', mul_zero] at this
-  exact one_ne_zero this
+  apply _root_.ReciprocityTheory.AnForm.M.isDegreeOff_id <;> assumption
 
 theorem common_bound {σ : Type} [Finite σ] (f : σ → ℝ) : ∃ M : ℝ, ∀ a, f a ≤ M := by
   obtain ⟨M, hM⟩ := (Set.finite_range f).bddAbove
@@ -1875,7 +1777,7 @@ theorem flagAn_exists : Inputs → ∀ (K : Type) [Fintype K] (ι : K → Type) 
     isBlockMap_id (fun k => ⟨fun _ => by
       by_cases h : ∀ p', M.blk p' ≠ some k
       · exact Or.inl h
-      · push_neg at h
+      · push Not at h
         obtain ⟨p, hp⟩ := h
         exact Or.inr ⟨p, trivial, hp⟩, fun _ => ⟨k, rfl⟩⟩)
   obtain rfl := he fun _ => trivial

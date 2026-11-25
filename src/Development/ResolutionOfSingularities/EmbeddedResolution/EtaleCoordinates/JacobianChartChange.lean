@@ -5,50 +5,7 @@ import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates
 import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateSubscheme
 import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.FormallyEtaleCoordinates
 import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothCenterChart
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -306,17 +263,17 @@ private theorem chartPartialDeriv_coord (hV : IsAffineOpen V) (c : EtaleChart p 
     simp
   · have hup : (ULift.up i : ULift.{u} (Fin n)) ≠ ULift.up j :=
       fun h => hij (congrArg ULift.down h)
-    rw [if_neg hup, if_neg hij]
+    rw [ite_eq_right hup, ite_eq_right hij]
 
 omit [AlgebraicGeometry.Smooth p] in
 private theorem chartPartialDeriv_coord_self (hV : IsAffineOpen V) (c : EtaleChart p V n)
     (j : Fin n) : chartPartialDeriv hV c j (c.coord j) = 1 := by
-  rw [chartPartialDeriv_coord, if_pos rfl]
+  rw [chartPartialDeriv_coord, ite_eq_left rfl]
 
 omit [AlgebraicGeometry.Smooth p] in
 private theorem chartPartialDeriv_coord_of_ne (hV : IsAffineOpen V) (c : EtaleChart p V n)
     (j i : Fin n) (h : j ≠ i) : chartPartialDeriv hV c j (c.coord i) = 0 := by
-  rw [chartPartialDeriv_coord, if_neg h.symm]
+  rw [chartPartialDeriv_coord, ite_eq_right h.symm]
 
 omit [AlgebraicGeometry.Smooth p] in
 private theorem chartPartialDeriv_add_algebraMap_mul (hV : IsAffineOpen V) (c : EtaleChart p V n)
@@ -367,14 +324,14 @@ theorem exists_etaleChart_coord_add_smul (hV : IsAffineOpen V) (c : EtaleChart p
     refine ⟨Function.update (fun i : ULift.{u} (Fin n) => c.coord i.down) (ULift.up j₂)
       (c.coord j₂ + sectionsAlgebraMap k p V t * c.coord j₁), ?_, fun j hjne => ?_, ?_⟩
     · rw [Function.update_apply]
-      exact if_pos rfl
+      exact ite_eq_left rfl
     · rw [Function.update_apply]
-      exact if_neg (fun hcon : ULift.up j = ULift.up j₂ => hjne (congrArg ULift.down hcon))
+      exact ite_eq_right (fun hcon : ULift.up j = ULift.up j₂ => hjne (congrArg ULift.down hcon))
     · funext i
       rw [Function.update_apply, Function.update_apply]
       by_cases hi : i = ULift.up j₂
-      · rw [if_pos hi, if_pos hi]
-      · rw [if_neg hi, if_neg hi]
+      · rw [ite_eq_left hi, ite_eq_left hi]
+      · rw [ite_eq_right hi, ite_eq_right hi]
         exact (basisKaehler_apply_eq_D_coord c hk hcr i.down).symm
   have hdet : IsUnit ((EtaleCoordinates.basisKaehler k (ULift.{u} (Fin n)) Γ(X, V)).det
       fun i : ULift.{u} (Fin n) => KaehlerDifferential.D k Γ(X, V) (w i)) := by
@@ -414,14 +371,14 @@ theorem exists_etaleChart_update_coord_of_partialDeriv_notMem
     refine ⟨Function.update (fun i : ULift.{u} (Fin n) => c.coord i.down) (ULift.up j₁) x',
       ?_, fun j hjne => ?_, ?_⟩
     · rw [Function.update_apply]
-      exact if_pos rfl
+      exact ite_eq_left rfl
     · rw [Function.update_apply]
-      exact if_neg (fun hcon : ULift.up j = ULift.up j₁ => hjne (congrArg ULift.down hcon))
+      exact ite_eq_right (fun hcon : ULift.up j = ULift.up j₁ => hjne (congrArg ULift.down hcon))
     · funext i
       rw [Function.update_apply, Function.update_apply]
       by_cases hi : i = ULift.up j₁
-      · rw [if_pos hi, if_pos hi]
-      · rw [if_neg hi, if_neg hi]
+      · rw [ite_eq_left hi, ite_eq_left hi]
+      · rw [ite_eq_right hi, ite_eq_right hi]
         exact (basisKaehler_apply_eq_D_coord c hk hcr i.down).symm
   have hdet : ((EtaleCoordinates.basisKaehler k (ULift.{u} (Fin n)) Γ(X, V)).det
       fun i : ULift.{u} (Fin n) => KaehlerDifferential.D k Γ(X, V) (w i)) ∉
@@ -504,7 +461,7 @@ theorem exists_etaleChart_coord_add_smul_chartPartialDeriv (hV : IsAffineOpen V)
       by_cases hjj : j = j₁
       · simp [hjj]
       · simp [hjj, Ne.symm hjj]
-    · rw [← h2 i hi, chartPartialDeriv_coord hV c' j i, if_neg hi, sub_zero]
+    · rw [← h2 i hi, chartPartialDeriv_coord hV c' j i, ite_eq_right hi, sub_zero]
   refine ⟨c', h1, h2, ?_, ?_⟩
   · intro f
     rw [chartPartialDeriv_chainRule_of_same_rank hV c c' j₁ f]
@@ -528,7 +485,7 @@ theorem exists_etaleChart_coord_add_smul_chartPartialDeriv (hV : IsAffineOpen V)
         chartPartialDeriv hV c' j (c.coord i) * chartPartialDeriv hV c i f =
           (if i = j then chartPartialDeriv hV c j f else 0) := by
       intro i
-      rw [hgen j i, if_neg hjne, ite_self, sub_zero]
+      rw [hgen j i, ite_eq_right hjne, ite_self, sub_zero]
       by_cases hi : i = j
       · simp [hi]
       · simp [hi]
@@ -619,7 +576,7 @@ omit [AlgebraicGeometry.Smooth p] in
 theorem exists_unlabeled_index_partialDeriv_notMem_primeIdealOf
     (hV : IsAffineOpen V) (c : EtaleChart p V n) {x : X} (hx : x ∈ V)
     (N : List X.IdealSheafData) (γ : ℕ → Option (Fin n)) (H : X.IdealSheafData)
-    (g : Γ(X, V)) (hγ : IsCoordLabeling c γ N) (_hinj : LabelingInjective γ N.length)
+    (g : Γ(X, V)) (hγ : IsCoordLabeling c γ N)
     (hsnc : InStrictNormalCrossingPositionAt p (H :: N) x) (hg : H.ideal ⟨V, hV⟩ = Ideal.span {g})
     (hxH : x ∈ H.support)
     (hxN : ∀ i : ℕ, ∀ hi : i < N.length, ∀ j : Fin n,

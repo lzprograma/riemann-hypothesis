@@ -1,46 +1,6 @@
 module
 
 public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.AffineSpaceCoordinates
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -66,39 +26,26 @@ def globalSectionsToMvPolynomial (k : Type u) [Field k] (v : Type u) :
   ((Scheme.ΓSpecIso (CommRingCat.of (MvPolynomial v k))).hom).hom.comp
     ((affineSpaceIsoSpecMvPolynomial k v).inv.appTop).hom
 
-private theorem appTop_inv_hom_apply {X Y : Scheme.{u}} (e : X ≅ Y) (s : Γ(Y, ⊤)) :
-    e.inv.appTop (e.hom.appTop s) = s := by
-  rw [← CommRingCat.comp_apply, ← Scheme.Hom.comp_appTop, e.inv_hom_id]
-  simp
-
-private theorem appTop_hom_inv_apply {X Y : Scheme.{u}} (e : X ≅ Y) (s : Γ(X, ⊤)) :
-    e.hom.appTop (e.inv.appTop s) = s := by
-  rw [← CommRingCat.comp_apply, ← Scheme.Hom.comp_appTop, e.hom_inv_id]
-  simp
-
-private theorem mvPolynomialToGlobalSections_apply (k : Type u) [Field k] (v : Type u)
-    (p : MvPolynomial v k) :
-    mvPolynomialToGlobalSections k v p =
-      (affineSpaceIsoSpecMvPolynomial k v).hom.appTop
-        ((Scheme.ΓSpecIso (CommRingCat.of (MvPolynomial v k))).inv p) := rfl
-
-private theorem globalSectionsToMvPolynomial_apply (k : Type u) [Field k] (v : Type u)
-    (s : Γ(affineSpaceIndexedBy k v, ⊤)) :
-    globalSectionsToMvPolynomial k v s =
-      (Scheme.ΓSpecIso (CommRingCat.of (MvPolynomial v k))).hom
-        ((affineSpaceIsoSpecMvPolynomial k v).inv.appTop s) := rfl
-
 theorem leftInverse_globalSectionsToMvPolynomial (k : Type u) [Field k] (v : Type u) :
     Function.LeftInverse ⇑(globalSectionsToMvPolynomial k v) ⇑(mvPolynomialToGlobalSections k v) := by
   intro p
-  rw [mvPolynomialToGlobalSections_apply, globalSectionsToMvPolynomial_apply, appTop_inv_hom_apply]
+  simp only [mvPolynomialToGlobalSections, globalSectionsToMvPolynomial, RingHom.comp_apply]
+  have h : (affineSpaceIsoSpecMvPolynomial k v).inv.appTop
+      ((affineSpaceIsoSpecMvPolynomial k v).hom.appTop
+        ((Scheme.ΓSpecIso (CommRingCat.of (MvPolynomial v k))).inv p)) =
+      (Scheme.ΓSpecIso (CommRingCat.of (MvPolynomial v k))).inv p := by
+    rw [← CommRingCat.comp_apply, ← Scheme.Hom.comp_appTop, Iso.inv_hom_id]
+    simp
+  rw [h]
   simp
 
 theorem rightInverse_globalSectionsToMvPolynomial (k : Type u) [Field k] (v : Type u) :
     Function.RightInverse ⇑(globalSectionsToMvPolynomial k v) ⇑(mvPolynomialToGlobalSections k v) := by
   intro s
-  rw [globalSectionsToMvPolynomial_apply, mvPolynomialToGlobalSections_apply, Iso.hom_inv_id_apply,
-    appTop_hom_inv_apply]
+  simp only [mvPolynomialToGlobalSections, globalSectionsToMvPolynomial, RingHom.comp_apply,
+    Iso.hom_inv_id_apply]
+  rw [← CommRingCat.comp_apply, ← Scheme.Hom.comp_appTop, Iso.hom_inv_id]
+  simp
 
 def mvPolynomialEquivGlobalSections (k : Type u) [Field k] (v : Type u) :
     MvPolynomial v k ≃+* Γ(affineSpaceIndexedBy k v, ⊤) where
@@ -120,15 +67,13 @@ theorem mvPolynomialEquivGlobalSections_symm_apply (k : Type u) [Field k] (v : T
       (Scheme.ΓSpecIso (CommRingCat.of (MvPolynomial v k))).hom
         ((affineSpaceIsoSpecMvPolynomial k v).inv.appTop s) := rfl
 
-private theorem affineSpaceIsoSpecMvPolynomial_inv_appTop_coord (k : Type u) [Field k] (v : Type u) (i : v) :
-    (affineSpaceIsoSpecMvPolynomial k v).inv.appTop (AffineSpace.coord (Spec (CommRingCat.of k)) i) =
-      (Scheme.ΓSpecIso (CommRingCat.of (MvPolynomial v k))).inv (MvPolynomial.X i) := by
-  rw [AlgebraicGeometry.AffineSpace.SpecIso_inv_appTop_coord]
-
 @[simp]
 theorem mvPolynomialEquivGlobalSections_X (k : Type u) [Field k] (v : Type u) (i : v) :
     mvPolynomialEquivGlobalSections k v (MvPolynomial.X i) = AffineSpace.coord (Spec (CommRingCat.of k)) i := by
-  rw [mvPolynomialEquivGlobalSections_apply, ← affineSpaceIsoSpecMvPolynomial_inv_appTop_coord k v i, appTop_hom_inv_apply]
+  rw [mvPolynomialEquivGlobalSections_apply,
+    ← AffineSpace.SpecIso_inv_appTop_coord (CommRingCat.of k) i,
+    ← CommRingCat.comp_apply, ← Scheme.Hom.comp_appTop, Iso.hom_inv_id]
+  simp
 
 @[simp]
 theorem mvPolynomialEquivGlobalSections_symm_coord (k : Type u) [Field k] (v : Type u) (i : v) :
@@ -152,7 +97,8 @@ theorem mvPolynomialEquivGlobalSections_C (k : Type u) [Field k] (v : Type u) (c
     simp
     rw [← CommRingCat.comp_apply, ← h2, CommRingCat.comp_apply]
     simp
-  rw [← key, appTop_hom_inv_apply]
+  rw [← key, ← CommRingCat.comp_apply, ← Scheme.Hom.comp_appTop, Iso.hom_inv_id]
+  simp
 
 theorem mvPolynomialEquivGlobalSections_basicOpen (k : Type u) [Field k] (v : Type u) (p : MvPolynomial v k) :
     (affineSpaceIndexedBy k v).basicOpen (mvPolynomialEquivGlobalSections k v p) =

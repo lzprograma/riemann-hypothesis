@@ -4,57 +4,8 @@ public import Formalism.SatakeDualWeyl.StatementF
 public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
 public import Mathlib.MeasureTheory.Measure.Haar.MulEquivHaarChar
 public import Mathlib.Topology.Algebra.Group.Units
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.UniformSpace.Uniformizable
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.RingTheory.Valuation.Discrete.RankOne
 
@@ -244,18 +195,6 @@ def comap {G' : Type} [Group G'] [TopologicalSpace G'] (e : G' ≃ₜ* G) : Levi
   closed_Q := P.closed_Q.preimage e.continuous
   leviSection_continuous := e.symm.continuous.comp P.leviSection_continuous
   cont_p := P.cont_p.comp ((e.continuous.comp continuous_subtype_val).subtype_mk _)
-
-def reparam {M' : Type} [Group M'] [TopologicalSpace M'] (e : M' ≃ₜ* M) : LeviDatum G M' where
-  Q := P.Q
-  s := P.s.comp e.toMulEquiv.toMonoidHom
-  p := e.symm.toMulEquiv.toMonoidHom.comp P.p
-  s_mem m := P.s_mem _
-  p_s m := by
-    show e.symm (P.p ⟨P.s (e m), _⟩) = m
-    rw [P.p_s, e.symm_apply_apply]
-  closed_Q := P.closed_Q
-  leviSection_continuous := P.leviSection_continuous.comp e.continuous
-  cont_p := e.symm.continuous.comp P.cont_p
 
 variable [IsTopologicalGroup G] [LocallyCompactSpace G] [T1Space M]
 
@@ -584,13 +523,6 @@ def parU (σ : L →+* L) {n : ℕ} {b : Fin n → α} (hb : SelfDualBlocks b) :
 
 def lineBlocks (n : ℕ) (i : Fin n) : ℤ := (if i.val + 1 = n then 1 else 0) - (if i.val = 0 then 1 else 0)
 
-theorem selfDualBlocks_line (n : ℕ) : SelfDualBlocks (lineBlocks n) := by
-  intro i j
-  have hi := i.2
-  have hj := j.2
-  simp only [lineBlocks, Fin.val_rev]
-  split_ifs <;> omega
-
 abbrev torusU (σ : L →+* L) (n : ℕ) : Subgroup (Fin n → Lˣ) := (GU σ n).comap (diagHom L (Fin n))
 
 def borelU (σ : L →+* L) (n : ℕ) : LeviDatum (GU σ n) (torusU σ n) :=
@@ -677,13 +609,6 @@ theorem locallyCompact_GU_of_unram [CompleteSpace L] {ϖ : L} {σ : L →+* L} {
 
 end Examples
 
-section Coinv
-variable {A G H V W : Type} [Group A] [Group G] [Group H] [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
-
-variable [TopologicalSpace G] [IsTopologicalGroup G]
-
-end Coinv
-
 namespace LeviDatum
 variable {G M : Type} [Group G] [TopologicalSpace G] [Group M] [TopologicalSpace M] (P : LeviDatum G M)
 
@@ -717,9 +642,6 @@ def midIdx (i : Fin n) : Fin (n + 2) := i.castSucc.succ
 
 @[simp] theorem midIdx_val (i : Fin n) : (midIdx i).val = i.val + 1 := rfl
 
-theorem lineCases {p : Fin (n + 2) → Prop} (h0 : p 0) (hm : ∀ i, p (midIdx i)) (hl : p (Fin.last (n + 1))) (i) : p i :=
-  Fin.cases h0 (fun j => Fin.lastCases hl hm j) i
-
 theorem sum_line {M : Type} [AddCommMonoid M] (f : Fin (n + 2) → M) :
     ∑ i, f i = f 0 + ∑ i, f (midIdx i) + f (Fin.last (n + 1)) := by
   rw [Fin.sum_univ_succ, Fin.sum_univ_castSucc]; exact (add_assoc _ _ _).symm
@@ -743,7 +665,7 @@ theorem sum_line {M : Type} [AddCommMonoid M] (f : Fin (n + 2) → M) :
 
 @[simp] theorem lineBlocks_mid (i : Fin n) : lineBlocks (n + 2) (midIdx i) = 0 := by
   have := i.2
-  rw [lineBlocks, midIdx_val, if_neg (by omega), if_neg (by omega), sub_zero]
+  rw [lineBlocks, midIdx_val, ite_eq_right (by omega), ite_eq_right (by omega), sub_zero]
 
 @[simp] theorem lineBlocks_last : lineBlocks (n + 2) (Fin.last (n + 1)) = 1 := by simp [lineBlocks]
 
@@ -778,152 +700,19 @@ variable (a d : L) (h : Matrix (Fin n) (Fin n) L)
 @[simp] theorem lineMat_last_mid (j : Fin n) : lineMat a h d (Fin.last (n + 1)) (midIdx j) = 0 := by
   simp [lineMat, midIdx, ← Fin.succ_last]
 
-theorem lineMat_mul (a' d' : L) (h' : Matrix (Fin n) (Fin n) L) :
-    lineMat a h d * lineMat a' h' d' = lineMat (a * a') (h * h') (d * d') := by
-  ext i j
-  induction i using lineCases <;> induction j using lineCases <;> simp [Matrix.mul_apply, sum_line]
-
-theorem lineMat_one : lineMat (1 : L) (1 : Matrix (Fin n) (Fin n) L) 1 = 1 := by
-  ext i j
-  induction i using lineCases <;> induction j using lineCases <;>
-    simp [Matrix.one_apply]
-
-def lineEmb (L : Type) [Field L] (n : ℕ) : Lˣ × GL (Fin n) L × Lˣ →* GL (Fin (n + 2)) L :=
-  MonoidHom.toHomUnits
-    { toFun := fun x => lineMat (x.1 : L) x.2.1.val (x.2.2 : L)
-      map_one' := lineMat_one
-      map_mul' := fun _ _ => (lineMat_mul _ _ _ _ _ _).symm }
-
-theorem lineEmb_val (x : Lˣ × GL (Fin n) L × Lˣ) : (lineEmb L n x).val = lineMat (x.1 : L) x.2.1.val (x.2.2 : L) := rfl
-
-theorem lineEmb_mem (x : Lˣ × GL (Fin n) L × Lˣ) : lineEmb L n x ∈ blockL L (lineBlocks (n + 2)) := by
-  intro i j
-  induction i using lineCases <;> induction j using lineCases <;> simp [lineEmb_val]
-
-def lineFirst (L : Type) [Field L] (n : ℕ) : blockL L (lineBlocks (n + 2)) →* Lˣ :=
-  MonoidHom.toHomUnits
-    { toFun := fun g => g.1.val 0 0
-      map_one' := by simp
-      map_mul' := fun x y => by
-        change (x.1.val * y.1.val : Matrix (Fin (n + 2)) (Fin (n + 2)) L) 0 0 = _
-        simp [Matrix.mul_apply, sum_line, x.2 0 (midIdx _), x.2 0 (Fin.last (n + 1))] }
-
-def lineMid (L : Type) [Field L] (n : ℕ) : blockL L (lineBlocks (n + 2)) →* GL (Fin n) L :=
-  MonoidHom.toHomUnits
-    { toFun := fun g => g.1.val.submatrix midIdx midIdx
-      map_one' := by ext i j; simp [Matrix.one_apply]
-      map_mul' := fun x y => by
-        ext i j
-        change (x.1.val * y.1.val : Matrix (Fin (n + 2)) (Fin (n + 2)) L)
-          (midIdx i) (midIdx j) = _
-        simp [Matrix.mul_apply, sum_line, x.2 (midIdx _) 0, x.2 (midIdx _) (Fin.last (n + 1))] }
-
 variable {σ : L →+* L}
-
-theorem lineEmb_mem_GU [Valued L (WithZero (Multiplicative ℤ))] (hσ : ∀ x, σ (σ x) = x) (u : Lˣ) (h : GU σ n) :
-    lineEmb L n (u, h.1, (Units.map σ.toMonoidHom u)⁻¹) ∈ GU σ (n + 2) := by
-  rw [mem_GU_iff, ← map_inv]
-  have hh := (mem_GU_iff σ n h.1).1 h.2
-  intro i j
-  induction i using lineCases <;> induction j using lineCases <;> simp [lineEmb_val, hσ, ← hh]
 
 end Mat
 
 variable {L : Type} [Field L] [Valued L (WithZero (Multiplicative ℤ))]
 
-def lineSec (σ : L →+* L) (hσ : ∀ x, σ (σ x) = x) (n : ℕ) : Lˣ × GU σ n →* GU σ (n + 2) where
-  toFun x := ⟨_, lineEmb_mem_GU hσ x.1 x.2⟩
-  map_one' := Subtype.ext (by
-    show lineEmb L n _ = 1
-    rw [← map_one (lineEmb L n)]; simp [Prod.one_eq_mk])
-  map_mul' x y := Subtype.ext (by
-    show lineEmb L n _ = lineEmb L n _ * lineEmb L n _
-    rw [← map_mul]; simp [mul_comm])
-
-theorem lineSec_val (σ : L →+* L) (hσ : ∀ x, σ (σ x) = x) (x : Lˣ × GU σ n) :
-    (lineSec σ hσ n x).1.val = lineMat (x.1 : L) x.2.1.val (σ x.1)⁻¹ := by
-  simp [lineSec, lineEmb_val]
-
-def lineLevi (σ : L →+* L) (hσ : ∀ x, σ (σ x) = x) (hc : Continuous σ) (n : ℕ) :
-    (Lˣ × GU σ n) ≃ₜ* (GU σ (n + 2) ⊓ blockL L (lineBlocks (n + 2)) : Subgroup (GL (Fin (n + 2)) L)) where
-  toFun x := ⟨(lineSec σ hσ n x).1, (lineSec σ hσ n x).2, lineEmb_mem _⟩
-  invFun g := (lineFirst L n ⟨g.1, g.2.2⟩, ⟨lineMid L n ⟨g.1, g.2.2⟩, by
-    rw [mem_GU_iff, ← map_inv]
-    intro i j
-    have := (mem_GU_iff σ _ g.1).1 g.2.1 (midIdx i) (midIdx j)
-    rw [rev_midIdx, rev_midIdx] at this
-    exact this⟩)
-  left_inv x := Prod.ext (Units.ext rfl) (Subtype.ext (Units.ext (Matrix.ext fun i j =>
-    (congrFun (congrFun (lineSec_val σ hσ x) (midIdx i)) (midIdx j)).trans (lineMat_mid_mid _ _ _ i j))))
-  right_inv g := by
-    refine Subtype.ext (Units.ext ?_)
-    refine (lineSec_val σ hσ _).trans (Matrix.ext fun i j => ?_)
-    have hl : g.1.val (Fin.last (n + 1)) (Fin.last (n + 1)) = (σ (g.1.val 0 0))⁻¹ := by
-      have h1 := (mem_GU_iff σ _ g.1).1 g.2.1 0 0
-      have h2 : (g.1⁻¹).val 0 0 = (g.1.val 0 0)⁻¹ :=
-        (congrArg Units.val (map_inv (lineFirst L n) (⟨g.1, g.2.2⟩ : blockL L (lineBlocks (n + 2))))).trans
-          (Units.val_inv_eq_inv_val _)
-      rw [Fin.rev_zero, h2] at h1
-      rw [← map_inv₀, h1, hσ]
-    induction i using lineCases <;> induction j using lineCases <;>
-      first
-      | rfl
-      | (refine Eq.trans (by simp) (g.2.2 _ _ ?_).symm; simp; done)
-      | exact lineMat_mid_mid _ _ _ _ _
-      | exact (lineMat_last_last _ _ _).trans hl.symm
-  map_mul' x y := Subtype.ext (by simp only [map_mul]; rfl)
-  continuous_toFun := by
-    refine Continuous.subtype_mk ?_ _
-    refine continuous_toHomUnits ((Units.coeHom _).comp ((GU σ (n + 2)).subtype.comp (lineSec σ hσ n)))
-      (continuous_matrix fun i j => ?_)
-    show Continuous fun x => (lineSec σ hσ n x).1.val i j
-    simp only [lineSec_val]
-    induction i using lineCases <;> induction j using lineCases <;>
-      simp only [lineMat_zero_zero, lineMat_mid_mid, lineMat_last_last, lineMat_zero_mid, lineMat_zero_last,
-        lineMat_mid_zero, lineMat_last_zero, lineMat_mid_last, lineMat_last_mid, continuous_const]
-    · exact Units.continuous_val.comp continuous_fst
-    · exact (continuous_entry _ _).comp (continuous_subtype_val.comp continuous_snd)
-    · simp only [← map_inv₀, ← Units.val_inv_eq_inv_val]
-      exact hc.comp (Units.continuous_coe_inv.comp continuous_fst)
-  continuous_invFun := by
-    have h0 : Continuous fun g : (GU σ (n + 2) ⊓ blockL L (lineBlocks (n + 2)) : Subgroup (GL (Fin (n + 2)) L)) =>
-        (⟨g.1, g.2.2⟩ : blockL L (lineBlocks (n + 2))) := continuous_subtype_val.subtype_mk _
-    refine Continuous.prodMk ((continuous_toHomUnits _ ?_).comp h0)
-      (((continuous_toHomUnits _ (continuous_matrix fun i j => ?_)).comp h0).subtype_mk _)
-    · exact (continuous_entry _ _).comp continuous_subtype_val
-    · exact (continuous_entry _ _).comp continuous_subtype_val
-
 variable (σ : L →+* L) (hσ : ∀ x, σ (σ x) = x) (hc : Continuous σ)
-
-def lineParU (n : ℕ) : LeviDatum (GU σ (n + 2)) (Lˣ × GU σ n) :=
-  (parU σ (selfDualBlocks_line (n + 2))).reparam (lineLevi σ hσ hc n)
 
 
 omit σ hσ hc
 
 def unrL (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))] (z : ℂˣ) : Lˣ →* ℂˣ :=
   unrChar (Valued.v : Valuation L (WithZero (Multiplicative ℤ))).toMonoidWithZeroHom z
-
-def stringParam (q : ℂˣ) (t : ℤ) : Multiset ℂˣ :=
-  (Multiset.range t.toNat).map fun i : ℕ => q ^ (2 * (i : ℤ) + 1 - t)
-
-theorem stringParam_of_nonpos (q : ℂˣ) {t : ℤ} (h : t ≤ 0) : stringParam q t = 0 := by
-  simp [stringParam, Int.toNat_of_nonpos h]
-
-theorem stringParam_add_two (q : ℂˣ) {t : ℤ} (h : 0 ≤ t) :
-    stringParam q (t + 2) = stringParam q t + {q ^ (-(t + 1)), q ^ (t + 1)} := by
-  obtain ⟨m, rfl⟩ := Int.eq_ofNat_of_zero_le h
-  have e : ((m : ℤ) + 2).toNat = (m + 1) + 1 := by omega
-  have r : Multiset.range (m + 1) = 0 ::ₘ (Multiset.range m).map (· + 1) := by
-    simp only [Multiset.range, List.range_succ_eq_map, Multiset.map_coe, Multiset.cons_coe]
-  rw [stringParam, stringParam, e, Multiset.range_succ, r, Int.toNat_natCast]
-  simp only [Multiset.map_map, Function.comp_def, Multiset.insert_eq_cons, ← Multiset.singleton_add,
-    Multiset.map_add, Multiset.map_singleton]
-  have h1 : 2 * (((m + 1 : ℕ) : ℕ) : ℤ) + 1 - (m + 2) = m + 1 := by push_cast; ring
-  have h2 : 2 * ((0 : ℕ) : ℤ) + 1 - (m + 2) = -(m + 1) := by push_cast; ring
-  have h3 : ∀ i : ℕ, 2 * ((i + 1 : ℕ) : ℤ) + 1 - (m + 2) = 2 * i + 1 - m := fun i => by push_cast; ring
-  simp only [h1, h2, h3]
-  abel
 
 variable {ϖ : L} {σ : L →+* L} {q : ℕ}
 

@@ -485,7 +485,7 @@ theorem frShFin_of_divFin_of_finset : ∀ (E : Type) [Field E] [NumberField E] [
     rcases hcase with ⟨la, hla, -⟩ | ⟨ht, -⟩
     · exact Or.inl ⟨la, hla⟩
     · exact Or.inr ht
-  push_neg at hnot
+  push Not at hnot
   obtain ⟨s, hs, hvs⟩ := hnot
   exact Set.mem_biUnion (Finset.mem_coe.mpr hs) ⟨hadm, hvs⟩
 

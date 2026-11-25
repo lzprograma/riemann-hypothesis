@@ -18,56 +18,8 @@ public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.Analysis.Complex.Trigonometric
 public import Mathlib.CategoryTheory.Category.Basic
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TCCalc
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.TypeStar
 import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TCMatA
-import Mathlib.RingTheory.PiTensorProduct
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TopCompC, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TCBlockC, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TCBlock, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TopCompB, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TopComp
@@ -85,8 +37,6 @@ open scoped ContDiff
 namespace PositivityTheory.Rg.Sw.LVs.TC
 
 open PositivityTheory.Rg.Sw PositivityTheory.Rg.Sw.LVs
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {n : ℕ}
 
@@ -155,13 +105,13 @@ theorem block_part_single (s t : Finset (Fin n)) (r u : Fin n) :
     matrixBlockRestriction s t (single r u (1 : ℂ)) = if r ∈ s ∧ u ∈ t then single r u 1 else 0 := by
   ext a b
   by_cases h : r ∈ s ∧ u ∈ t
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     simp only [matrixBlockRestriction, Matrix.single_apply]
     by_cases hab : r = a ∧ u = b
     · obtain ⟨rfl, rfl⟩ := hab
       simp [h]
     · simp [hab]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     simp only [matrixBlockRestriction, Matrix.single_apply, Matrix.zero_apply]
     by_cases hab : r = a ∧ u = b
     · obtain ⟨rfl, rfl⟩ := hab
@@ -313,7 +263,7 @@ theorem lhs_eq (hA : IterAffine) (j : ℕ) (c c' : ℂ) (ψ : Matrix (Fin n) (Fi
         simp [hr, hr', blkB]
     rw [hprod, prod_coef, smul_eq_mul]
     ring
-  · push_neg at hp
+  · push Not at hp
     obtain ⟨r, hr⟩ := hp
     have hz : (∏ r : Fin n, if r ∈ blkA (n := n) j ∧ σ r ∈ blkA (n := n) j then c
         else if r ∈ blkB (n := n) j ∧ σ r ∈ blkB (n := n) j then c' else 0) = 0 := by
@@ -328,41 +278,32 @@ theorem append_eq (j : ℕ) (σA : Equiv.Perm (blkA (n := n) j)) (τ : Equiv.Per
         (σA ((Fintype.equivFin (blkA (n := n) j)).symm i)) (1 : ℂ)))
       (fun i => embL (blkB (n := n) j) (single ((Fintype.equivFin (blkB (n := n) j)).symm i)
         (τ ((Fintype.equivFin (blkB (n := n) j)).symm i)) (1 : ℂ))) = vv (piP j σA τ) ∘ epsE j := by
+  have hvv : ∀ {S : Finset (Fin n)} (x y : S), piP j σA τ x = (y : Fin n) →
+      embL S (single x y (1 : ℂ)) = vv (piP j σA τ) x := by
+    intro S x y hp
+    ext p q
+    simp only [vv, hp, embL, embOn, Matrix.single_apply,
+      LinearMap.coe_toContinuousLinearMap', LinearMap.coe_mk, AddHom.coe_mk]
+    by_cases hpq : (x : Fin n) = p ∧ (y : Fin n) = q
+    · obtain ⟨rfl, rfl⟩ := hpq
+      simp
+    · rw [ite_eq_right hpq]
+      split_ifs with h1 h2
+      · exact absurd ⟨by rw [h2.1], by rw [h2.2]⟩ hpq
+      · rfl
+      · rfl
   funext i
   refine Fin.addCases (fun i => ?_) (fun i => ?_) i
   · simp only [Fin.append_left, Function.comp_apply, epsE_left]
     generalize (Fintype.equivFin (blkA (n := n) j)).symm i = a
-    have hp : piP j σA τ a = σA a := by
-      simp [piP, Equiv.Perm.subtypeCongr.left_apply _ _ a.2]
-    ext p q
-    simp only [vv, hp, embL]
-    simp only [embOn, Matrix.single_apply, LinearMap.coe_toContinuousLinearMap', LinearMap.coe_mk, AddHom.coe_mk]
-    by_cases hpq : (a : Fin n) = p ∧ (σA a : Fin n) = q
-    · obtain ⟨rfl, rfl⟩ := hpq
-      simp
-    · rw [if_neg hpq]
-      split_ifs with h1 h2
-      · exact absurd ⟨by rw [h2.1], by rw [h2.2]⟩ hpq
-      · rfl
-      · rfl
+    exact hvv a (σA a) (by simp [piP, Equiv.Perm.subtypeCongr.left_apply _ _ a.2])
   · simp only [Fin.append_right, Function.comp_apply, epsE_right]
     generalize (Fintype.equivFin (blkB (n := n) j)).symm i = b
-    have hp : piP j σA τ b = τ b := by
-      have hb : (b : Fin n) ∉ blkA (n := n) j := by
-        have := b.2; simpa [blkB] using this
-      simp [piP, Equiv.Perm.subtypeCongr.right_apply _ _ hb, eBq]
-      exact Subtype.ext rfl
-    ext p q
-    simp only [vv, hp, embL]
-    simp only [embOn, Matrix.single_apply, LinearMap.coe_toContinuousLinearMap', LinearMap.coe_mk, AddHom.coe_mk]
-    by_cases hpq : (b : Fin n) = p ∧ (τ b : Fin n) = q
-    · obtain ⟨rfl, rfl⟩ := hpq
-      simp
-    · rw [if_neg hpq]
-      split_ifs with h1 h2
-      · exact absurd ⟨by rw [h2.1], by rw [h2.2]⟩ hpq
-      · rfl
-      · rfl
+    refine hvv b (τ b) ?_
+    have hb : (b : Fin n) ∉ blkA (n := n) j := by
+      have := b.2; simpa [blkB] using this
+    simp [piP, Equiv.Perm.subtypeCongr.right_apply _ _ hb, eBq]
+    exact Subtype.ext rfl
 
 private theorem iteratedFDeriv_comp_equiv_eq_of_contDiffOn (hS : IterSymm) {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V]
     (ψ : V → ℂ) (Ω : Set V) (hΩ : IsOpen Ω) (hψ : ContDiffOn ℂ ∞ ψ Ω) (c : V) (hc : c ∈ Ω)
@@ -573,9 +514,9 @@ theorem top_vanish {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V] {k : �
   congr 1
   rw [Finset.sum_eq_single (fun _ => 2)]
   · simp only [Fin.isValue, Fin.val_two, Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
-    rw [if_pos (by ring), mul_one]
+    rw [ite_eq_left (by ring), mul_one]
   · intro f _ hf
-    rw [if_neg, mul_zero]
+    rw [ite_eq_right, mul_zero]
     intro h2
     exact hf (funext (sum_eq_top f h2.symm))
   · simp
@@ -687,7 +628,7 @@ theorem supp_smul {s t : Finset (Fin n)} (c : ℂ) (x : Matrix (Fin n) (Fin n) �
   intro a b h
   by_contra hn
   apply h
-  simp only [Matrix.smul_apply, matrixBlockRestriction, if_neg hn, smul_zero]
+  simp only [Matrix.smul_apply, matrixBlockRestriction, ite_eq_right hn, smul_zero]
 
 private theorem eq_mul_mX_mul_mX_blockEntries (g : M2 n) (j : ℕ) (t : Matrix (Fin n) (Fin n) ℂ) :
     g + topL g j t = g * mX 1 ((2 * Complex.I)⁻¹ • matrixBlockRestriction (blkA j) (blkA j) t)

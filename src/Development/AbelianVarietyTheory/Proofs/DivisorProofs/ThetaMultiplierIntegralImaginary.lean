@@ -65,8 +65,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory
@@ -74,8 +72,6 @@ open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.RealMult GlobalTheory.TorusRM
 
 open scoped nonZeroDivisors
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.ThetaLiouville
 
@@ -149,13 +145,8 @@ theorem im_form_mem_int (g : ℕ) (Λ : Submodule ℤ (Fin g → ℂ))
 
   obtain ⟨s, b, hfin, hbΛ⟩ := exists_basis_in Λ hΛ
   haveI : Fintype s := Fintype.ofFinite s
-  have hspan : ∀ x ∈ Submodule.span ℤ (Set.range b), x ∈ Λ := by
-    intro x hx
-    induction hx using Submodule.span_induction with
-    | mem x hx => obtain ⟨i, rfl⟩ := hx; exact hbΛ i
-    | zero => exact Λ.zero_mem
-    | add x y _ _ hx hy => exact Λ.add_mem hx hy
-    | smul n x _ hx => exact Λ.toAddSubgroup.zsmul_mem hx n
+  have hspan : Submodule.span ℤ (Set.range b) ≤ Λ :=
+    Submodule.span_le.2 (Set.range_subset_iff.2 hbΛ)
   have hcpt : IsCompact (closure (ZSpan.fundamentalDomain b)) :=
     (ZSpan.fundamentalDomain_isBounded b).isCompact_closure
   obtain ⟨C, hC⟩ := hcpt.exists_bound_of_continuousOn hψ.continuous.continuousOn
@@ -165,7 +156,7 @@ theorem im_form_mem_int (g : ℕ) (Λ : Submodule ℤ (Fin g → ℂ))
     rintro _ ⟨z, rfl⟩
     have hz : z = ZSpan.fract b z + (ZSpan.floor b z : Fin g → ℂ) := by
       rw [ZSpan.fract_apply]; abel
-    rw [hz, hnorm _ (hspan _ (ZSpan.floor b z).2)]
+    rw [hz, hnorm _ (hspan (ZSpan.floor b z).2)]
     exact hC _ (subset_closure (ZSpan.fract_mem_fundamentalDomain b z))
   intro l hl
   have hconst : ψ (0 + l) = ψ 0 := hψ.apply_eq_apply_of_bounded hbd _ _

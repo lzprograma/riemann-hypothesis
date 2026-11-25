@@ -103,7 +103,7 @@ theorem extFun_mul {σ : Representation ℂ P W} {J : Subgroup G} {φ : G → W}
 
 omit [TopologicalSpace G] [IsTopologicalGroup G] in
 theorem extFun_zero (σ : Representation ℂ P W) {J : Subgroup G} (φ : G → W) {g : G}
-    (h : g ∉ cell P J) : extFun σ J φ g = 0 := dif_neg h
+    (h : g ∉ cell P J) : extFun σ J φ g = 0 := dite_eq_right h
 
 omit [TopologicalSpace G] [IsTopologicalGroup G] in
 theorem extFun_right {σ : Representation ℂ P W} {J : Subgroup G} {φ : G → W}

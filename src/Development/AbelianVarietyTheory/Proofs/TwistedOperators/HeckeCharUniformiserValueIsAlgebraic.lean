@@ -70,10 +70,10 @@ theorem heckeChar_val_isAlgebraic : ∀ (L : Type) [Field L] [NumberField L] (χ
 
   obtain ⟨h, hpos, hk⟩ := (classPow : ClassPow L)
   obtain ⟨k, hk⟩ := hk w
-  have hkw : ordF w k = (h : ℤ) := by rw [hk w, if_pos rfl]
+  have hkw : ordF w k = (h : ℤ) := by rw [hk w, ite_eq_left rfl]
   have hout : ∀ v, v ∉ ({w} : Finset (HeightOneSpectrum (𝓞 L))) → ordF v k = 0 := by
     intro v hv
-    rw [hk v, if_neg (by simpa using hv)]
+    rw [hk v, ite_eq_right (by simpa using hv)]
   obtain ⟨r, hr, hdec⟩ := (decomp : Decomp L) k {w} hout
   rw [Finset.prod_singleton] at hdec
   have hrel : χ.inf k * χ.loc w (atFin w k) * χ.1 r = 1 := by

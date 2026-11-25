@@ -2,45 +2,6 @@ module
 
 public import GroundTheory.ProfiniteCohomology.CyclicCupProf
 public import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbol
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 public import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
 
 @[expose] public section
@@ -51,7 +12,7 @@ namespace GroundTheory.ProfCoh
 
 open CategoryTheory groupCohomology IntermediateField GroundTheory.GroupCoh
 
-attribute [local instance 2000] Rep.hV2 Submodule.module Submodule.Quotient.module
+attribute [local instance 2000] Submodule.module Submodule.Quotient.module
 
 section Comparison
 
@@ -293,7 +254,7 @@ noncomputable def quadraticChar (h2 : Module.finrank F Ω ≤ 2) : Additive Gal(
       omega
     have hxy : Additive.toMul (x + y) = 1 := by
       rw [toMul_add, ← eq_of_ne_one_of_card_eq_two hcard hx hy, ← sq, ← hcard, pow_card_eq_one]
-    simp only [hxy, hx, hy, if_true, if_false]
+    simp only [hxy, hx, hy, ite_true, ite_false]
     exact QZ.mk_half_add_mk_half.symm
   continuous_toFun := continuous_of_discreteTopology
 
@@ -305,7 +266,7 @@ theorem quadraticChar_injective (h2 : Module.finrank F Ω ≤ 2) :
   by_contra hne
   have h1 : Additive.toMul x ≠ 1 := fun h => hne (by rw [show x = Additive.ofMul 1 from h ▸ rfl, ofMul_one])
   change (if Additive.toMul x = 1 then 0 else QZ.mk (1 / 2)) = 0 at hx
-  rw [if_neg h1] at hx
+  rw [ite_eq_right h1] at hx
   exact QZ.mk_half_ne_zero hx
 
 noncomputable def quadraticInv (h2 : Module.finrank F Ω ≤ 2)

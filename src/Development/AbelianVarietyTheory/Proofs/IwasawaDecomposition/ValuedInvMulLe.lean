@@ -46,7 +46,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 @[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -228,7 +227,7 @@ theorem exists_splice : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
 
   refine ⟨h⁻¹ * g, mul_mem (inv_mem hh.uni) hg, fun w hw hw' i j => ?_, ?_⟩
   · have e : ((h⁻¹ * g : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)).map (adAt F w) = 1 := by
-      rw [Units.val_mul, Matrix.map_mul, hGw, if_neg (hnear w hw hw'), ← Matrix.map_mul, ← Units.val_mul, inv_mul_cancel,
+      rw [Units.val_mul, Matrix.map_mul, hGw, ite_eq_right (hnear w hw hw'), ← Matrix.map_mul, ← Units.val_mul, inv_mul_cancel,
         Units.val_one, Matrix.map_one _ (map_zero _) (map_one _)]
     have := congrFun (congrFun e i) j
     rw [Matrix.map_apply, Matrix.one_apply] at this
@@ -241,7 +240,7 @@ theorem exists_splice : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
     rw [← adAt_apply]
     by_cases hw : w = P.1 ∨ conjPrime₂ w = P.1
     · have e : ((g⁻¹ * h0 : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)).map (adAt F w) = 1 := by
-        rw [Units.val_mul, Matrix.map_mul, hGw', if_pos hw, ← Matrix.map_mul, ← Units.val_mul, inv_mul_cancel,
+        rw [Units.val_mul, Matrix.map_mul, hGw', ite_eq_left hw, ← Matrix.map_mul, ← Units.val_mul, inv_mul_cancel,
           Units.val_one, Matrix.map_one _ (map_zero _) (map_one _)]
       have := congrFun (congrFun e i) j
       rw [Matrix.map_apply, Matrix.one_apply] at this
@@ -249,7 +248,7 @@ theorem exists_splice : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
       split_ifs <;> simp
     · have e : ((g⁻¹ * h0 : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)).map (adAt F w) =
           ((h⁻¹ * h0 : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)).map (adAt F w) := by
-        rw [Units.val_mul, Matrix.map_mul, hGw', if_neg hw, ← Matrix.map_mul, ← Units.val_mul]
+        rw [Units.val_mul, Matrix.map_mul, hGw', ite_eq_right hw, ← Matrix.map_mul, ← Units.val_mul]
       have := congrFun (congrFun e i) j
       rw [Matrix.map_apply, Matrix.map_apply] at this
       rw [this]
@@ -260,7 +259,7 @@ theorem exists_splice : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
     rw [← adAt_apply]
     by_cases hw : w = P.1 ∨ conjPrime₂ w = P.1
     · have e : ((h0⁻¹ * g : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)).map (adAt F w) = 1 := by
-        rw [Units.val_mul, Matrix.map_mul, hGw, if_pos hw, ← Matrix.map_mul, ← Units.val_mul, inv_mul_cancel,
+        rw [Units.val_mul, Matrix.map_mul, hGw, ite_eq_left hw, ← Matrix.map_mul, ← Units.val_mul, inv_mul_cancel,
           Units.val_one, Matrix.map_one _ (map_zero _) (map_one _)]
       have := congrFun (congrFun e i) j
       rw [Matrix.map_apply, Matrix.one_apply] at this
@@ -268,7 +267,7 @@ theorem exists_splice : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
       split_ifs <;> simp
     · have e : ((h0⁻¹ * g : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)).map (adAt F w) =
           ((h0⁻¹ * h : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)).map (adAt F w) := by
-        rw [Units.val_mul, Matrix.map_mul, hGw, if_neg hw, ← Matrix.map_mul, ← Units.val_mul]
+        rw [Units.val_mul, Matrix.map_mul, hGw, ite_eq_right hw, ← Matrix.map_mul, ← Units.val_mul]
       have := congrFun (congrFun e i) j
       rw [Matrix.map_apply, Matrix.map_apply] at this
       rw [this]
@@ -281,14 +280,14 @@ theorem exists_splice : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
     rwa [Matrix.mulVec_mulVec, ← Units.val_mul, mul_inv_cancel_right] at this
   · by_cases hPP : P' = P
     · subst hPP
-      rw [adAt_pullV_congr (k := h0) (by rw [hGw', if_pos (Or.inl rfl)])]
+      rw [adAt_pullV_congr (k := h0) (by rw [hGw', ite_eq_left (Or.inl rfl)])]
       exact hh0.f P' x hx i hi
     · have hne : P'.1 ≠ P.1 := fun e => hPP (Subtype.ext e)
       have hn : ¬(P'.1 = P.1 ∨ conjPrime₂ P'.1 = P.1) := by
         rintro (e | e)
         · exact hne e
         · exact (h4 P'.1 (Or.inl P'.2)).1 (by rw [e]; exact P.2)
-      rw [adAt_pullV_congr (k := h) (by rw [hGw', if_neg hn]), hf P' hPP]
+      rw [adAt_pullV_congr (k := h) (by rw [hGw', ite_eq_right hn]), hf P' hPP]
       have hx' : x ∈ Formalism.HermitianLatticesTheory.localization₂ P'.1.asIdeal X.deco.1.N := by
         rw [← hloc P'.1 (hfar _ hn).1 (hfar _ hn).2]
         exact le_locP _ _ hx
@@ -300,7 +299,7 @@ theorem exists_splice : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
       rintro (e | e)
       · exact Finset.disjoint_left.1 h1 P.2 (by rw [← e]; exact w.2)
       · exact (h4 w.1 (Or.inr (Or.inl w.2))).1 (by rw [e]; exact P.2)
-    rw [adAt_pullV_congr (k := h) (by rw [hGw', if_neg hn]), hbe]
+    rw [adAt_pullV_congr (k := h) (by rw [hGw', ite_eq_right hn]), hbe]
     have hx' : x ∈ Formalism.HermitianLatticesTheory.localization₂ w.1.asIdeal X.deco.1.N := by
       rw [← hloc w.1 (hfar _ hn).1 (hfar _ hn).2]
       exact le_locP _ _ hx
@@ -313,7 +312,7 @@ theorem exists_splice : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
       · exact Finset.disjoint_left.1 h2 P.2 (by rw [← e]; exact P''.2)
       · exact (h4 P''.1 (Or.inr (Or.inr P''.2))).1 (by rw [e]; exact P.2)
     have := congrFun (congrFun (hGw P''.1) i) j
-    rw [if_neg hn, Matrix.map_apply, Matrix.map_apply] at this
+    rw [ite_eq_right hn, Matrix.map_apply, Matrix.map_apply] at this
     rw [this, hh.fr P'' i j, hfr]
 
 end GlobalTheory.Mem.Col2.Splice

@@ -120,21 +120,21 @@ theorem kRel_resE (hE : IsGlRep E) : KRel ε (resE E V hst) := by
   simp only [LinearMap.sub_apply, Module.End.mul_apply] at h ⊢
   by_cases h1 : b = c <;> by_cases h2 : d = a
   · subst h1; subst h2
-    rw [if_pos rfl, if_pos rfl] at h ⊢
+    rw [ite_eq_left rfl, ite_eq_left rfl] at h ⊢
     simp only [Submodule.coe_sub, coe_resE hab, coe_resE hcd, coe_resE (rfl : ε d = ε d),
       coe_resE (rfl : ε b = ε b)]
     exact h
   · subst h1
-    rw [if_pos rfl, if_neg h2] at h ⊢
+    rw [ite_eq_left rfl, ite_eq_right h2] at h ⊢
     simp only [LinearMap.zero_apply, Submodule.coe_sub, Submodule.coe_zero, coe_resE hab, coe_resE hcd,
       coe_resE (hab.trans hcd)] at h ⊢
     exact h
   · subst h2
-    rw [if_neg h1, if_pos rfl] at h ⊢
+    rw [ite_eq_right h1, ite_eq_left rfl] at h ⊢
     simp only [LinearMap.zero_apply, Submodule.coe_sub, Submodule.coe_zero, coe_resE hab, coe_resE hcd,
       coe_resE (hcd.trans hab)] at h ⊢
     exact h
-  · rw [if_neg h1, if_neg h2] at h ⊢
+  · rw [ite_eq_right h1, ite_eq_right h2] at h ⊢
     simp only [LinearMap.zero_apply, Submodule.coe_sub, Submodule.coe_zero, coe_resE hab,
       coe_resE hcd] at h ⊢
     exact h

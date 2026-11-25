@@ -7,34 +7,17 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDesc
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj
   AlgebraicGeometry
 open scoped CategoryTheory.Obj
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace ReciprocityTheory.ChartRestriction.G.Out.OLinPf
 
 open ReciprocityTheory.ChartRestriction.G.Out Semi
 
 variable {R R' : Type} [CommRing R] [IsDomain R] [CommRing R'] [IsDomain R']
-
-namespace ILin
-
-section Base
-
-variable {I : Ideal R} {I' : Ideal R'} (φ : R →+* R')
-  {G : Over (Spec (CommRingCat.of R))} [GrpObj G]
-  {G' : Over (Spec (CommRingCat.of R'))} [GrpObj G']
-  (bc : G' ≅ (Over.pullback (specOf φ)).obj G)
-
-end Base
-
-end ILin
 
 section ILin
 

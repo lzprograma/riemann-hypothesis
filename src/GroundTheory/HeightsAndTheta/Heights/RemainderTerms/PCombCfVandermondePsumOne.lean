@@ -5,8 +5,6 @@ import Mathlib.RingTheory.PiTensorProduct
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 open MvPolynomial Finset Equiv Comb
@@ -27,7 +25,7 @@ theorem CombCfVandermondePsumOne.proof (h1 : CombCfMonomialPsumOne.Statement)
     have hsum : ∑ i, l i = ∑ i, (stair m ∘ σ.symm) i + n := by
       rw [hl, Function.comp_def, Equiv.sum_comp σ.symm (stair m)]
     by_cases hle : ∀ i, (stair m ∘ σ.symm) i ≤ l i
-    · rw [if_pos ⟨hle, hsum⟩]
+    · rw [ite_eq_left ⟨hle, hsum⟩]
       have hd : ∀ i, ((l i).descFactorial (stair m (σ.symm i)) : ℚ) =
           ((l i).factorial : ℚ) / ((l i - stair m (σ.symm i)).factorial : ℚ) := by
         intro i
@@ -39,7 +37,7 @@ theorem CombCfVandermondePsumOne.proof (h1 : CombCfMonomialPsumOne.Statement)
       have hq : (∏ i, ((l i - stair m (σ.symm i)).factorial : ℚ)) ≠ 0 :=
         Finset.prod_ne_zero_iff.mpr fun i _ => by positivity
       field_simp
-    · rw [if_neg (fun h => hle h.1)]
+    · rw [ite_eq_right (fun h => hle h.1)]
       push Not at hle
       obtain ⟨i, hi⟩ := hle
       simp only [Function.comp_apply] at hi

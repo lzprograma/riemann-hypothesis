@@ -1,5 +1,7 @@
 module
 
+import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.RCombine
+import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PLogNormHolo
 public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
 public import ReciprocityTheory.AnalyticForms.LeviForms.TailCutA
 public import ReciprocityTheory.AnalyticForms.LeviForms.UnifInt
@@ -21,62 +23,16 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Integral.IntegrableOn
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ConvergenceStatementHoldsStatement
 public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.OfListTailLog
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.Basify
 import ReciprocityTheory.AnalyticForms.LeviForms.TailBoundA
 import ReciprocityTheory.AnalyticForms.LeviForms.TailCut
 import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
 import ReciprocityTheory.AnalyticForms.PotentialTheory.LogInt
 import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasure
-import Mathlib.Tactic.ENatToNat
 import ReciprocityTheory.AnalyticForms.MaIntEmpty
 import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.TailBoundStatementHolds
-import Mathlib.Topology.Separation.Connected
 import ReciprocityTheory.AnalyticForms.PotentialTheory.AnalyticSubsetChartLocal
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -128,16 +84,8 @@ variable {X : Type} [TopologicalSpace X]
 
 theorem holoOn_continuousOn {e : ℕ} (A : FinHolAtlas e X) {U : Set X} {g : X → ℂ}
     (hg : A.HoloOn U g) (hU : IsOpen U) : ContinuousOn g U := by
-  intro x hx
-  obtain ⟨j, hj⟩ := A.cover x
-  have hy : A.chart j x ∈ (A.chart j).target ∩ (A.chart j).symm ⁻¹' U :=
-    ⟨(A.chart j).map_source hj, by simpa [(A.chart j).left_inv hj] using hx⟩
-  have h1 : ContinuousAt (g ∘ (A.chart j).symm) (A.chart j x) := (hg j _ hy).continuousAt
-  have h2 : ContinuousAt ((g ∘ (A.chart j).symm) ∘ (A.chart j)) x :=
-    ContinuousAt.comp h1 ((A.chart j).continuousAt hj)
-  refine (h2.congr ?_).continuousWithinAt
-  filter_upwards [(A.chart j).open_source.mem_nhds hj] with y hy
-  simp [(A.chart j).left_inv hy]
+  intros
+  apply _root_.GroundTheory.Heights₂.Heights.AnalyticLimit.continuousOn_of_holoOn <;> assumption
 
 theorem holoOn_comp {e e' : ℕ} {Y : Type} [TopologicalSpace Y] (B : FinHolAtlas e' Y)
     (A : FinHolAtlas e X) {h : Y → X} (hh : HoloMap B A h) {U : Set X} {g : X → ℂ}
@@ -585,18 +533,8 @@ theorem isSection_pull {e' : ℕ} {X' : Type} [TopologicalSpace X'] {A : FinHolA
     {A' : FinHolAtlas e' X'} {h : X' → X} (hh : HoloMap A' A h) {L : LocPot X} {s : X → X → ℂ}
     (hs : IsSection A L s) :
     IsSection A' (L.pullback h hh.1) (fun x y => s (h x) (h y)) := by
-  refine ⟨fun x j t ht => ?_, fun x x' y hy => hs.2 _ _ _ hy⟩
-  obtain ⟨k, hk⟩ := A.cover (h ((A'.chart j).symm t))
-  obtain ⟨hz, hs'⟩ := chart_image_mem (A := A) (A' := A') (h := h) j k hk
-  have hzU : (A.chart k).symm ((A.chart k ∘ h ∘ (A'.chart j).symm) t) ∈ L.U (h x) := by
-    rw [hs']; exact ht.2
-  have h1 : AnalyticAt ℂ (s (h x) ∘ (A.chart k).symm) ((A.chart k ∘ h ∘ (A'.chart j).symm) t) :=
-    hs.1 (h x) k _ ⟨hz, hzU⟩
-  have h2 := hh.2 j k t ⟨ht.1, hk⟩
-  have h3 := h1.comp h2
-  refine h3.congr ?_
-  filter_upwards [holoMap_preimage_mem_nhds hh j k ht.1 hk] with t' ht'
-  simp only [Function.comp_apply, (A.chart k).left_inv ht'.2]
+  intros
+  apply _root_.PositivityTheory.UnitarySelfGeneration.RC.section_pull <;> assumption
 
 theorem hessC_sub_const {D : ℕ} (F : (Fin D → ℂ) → ℝ) (c : ℝ) (z : Fin D → ℂ) :
     hessC (fun y => F y - c) z = hessC F z := by
@@ -698,9 +636,9 @@ theorem tail_mixed (hTB : TailBoundStatement) {n : ℕ} {Y : Type} [TopologicalS
       exact ⟨this, le_rfl⟩
   · intro i x y
     by_cases hi : (i : ℕ) < b
-    · simp only [hi, if_true]
+    · simp only [hi, ite_true]
       exact h1 i hi x y
-    · simp only [hi, if_false, add_zero]
+    · simp only [hi, ite_false, add_zero]
       exact h2 i hi x y
 
 end Tail
@@ -896,11 +834,11 @@ theorem green_small_core (hUI : GroundTheory.Heights₂.Heights.AnalyticLimit.Un
             (fun i => (hfam i t ht htt).2.1)
             (fun i y hy => ⟨(hfam i t ht htt).2.2.2 y hy, (hfam i t ht htt).2.2.1 y⟩) ?_ ?_)
         · intro i hi x y
-          have : mixedForms Om.pot (curForms thS uS t) b i = curForms thS uS t i := if_pos hi
+          have : mixedForms Om.pot (curForms thS uS t) b i = curForms thS uS t i := ite_eq_left hi
           rw [this]
           rfl
         · intro i hi x y
-          have : mixedForms Om.pot (curForms thS uS t) b i = Om.pot := if_neg hi
+          have : mixedForms Om.pot (curForms thS uS t) b i = Om.pot := ite_eq_right hi
           rw [this]
       tailComp := fun k b hb t ht hl => by
         have htt := le_of_ell_le ht₁ ht hl
@@ -916,12 +854,12 @@ theorem green_small_core (hUI : GroundTheory.Heights₂.Heights.AnalyticLimit.Un
               (isPotential_ofFun A _ (hfam _ t ht htt).1)) (hfam _ t ht htt).2.1)
         · intro i hi x y
           have : restForms Om.pot (curForms thS uS t) b i = curForms thS uS t i.castSucc :=
-            if_pos hi
+            ite_eq_left hi
           show (restForms Om.pot (curForms thS uS t) b i).φ x.1 y.1 = _
           rw [this]
           rfl
         · intro i hi x y
-          have : restForms Om.pot (curForms thS uS t) b i = Om.pot := if_neg hi
+          have : restForms Om.pot (curForms thS uS t) b i = Om.pot := ite_eq_right hi
           show (restForms Om.pot (curForms thS uS t) b i).φ x.1 y.1 = _
           rw [this]
           rfl }

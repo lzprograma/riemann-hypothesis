@@ -11,8 +11,6 @@ import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights
 
 namespace RestTerms
@@ -32,7 +30,7 @@ theorem injective_of_surjective_endo {R : Type*} [CommRing R] [IsNoetherianRing 
   have hsurj : ∀ n, Function.Surjective (φ^[n]) := fun n => hφ.iterate n
   obtain ⟨n, hn⟩ := (monotone_stabilizes_iff_noetherian (R := R) (M := R)).mpr
     (isNoetherianRing_iff.mp inferInstance) K
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨y, rfl⟩ := hsurj n x
   have hy : y ∈ K (n + 1) := by

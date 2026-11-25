@@ -1,53 +1,11 @@
 module
 
+import Formalism.PieriBlockIdeals.PieriColumnMinors.LowerTriangularIntegral
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadAATopOfParts
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAlgebraFacts
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -59,7 +17,7 @@ namespace Formalism.FourierDecayAlt.P.PBN
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section cell
 
@@ -78,14 +36,14 @@ theorem glev_row {g : B.Mat k r} (hg : g ∈ Q.Glev k r (Fin.last r)) (a : Fin r
   have hrow : ∀ b, (gᴴ * Hpk k r) (esI k r a) b = if b = eI k r a then 1 else 0 := by
     intro b
     rw [Matrix.mul_apply, Finset.sum_eq_single (esI k r a)]
-    · rw [Matrix.conjTranspose_apply, hcol, if_pos rfl, star_one, one_mul, Formalism.FourierDecayAlt.P.Qx3.hpk_row_es]
+    · rw [Matrix.conjTranspose_apply, hcol, ite_eq_left rfl, star_one, one_mul, Formalism.FourierDecayAlt.P.Qx3.hpk_row_es]
     · intro i _ hi
-      rw [Matrix.conjTranspose_apply, hcol, if_neg hi, star_zero, zero_mul]
+      rw [Matrix.conjTranspose_apply, hcol, ite_eq_right hi, star_zero, zero_mul]
     · intro h; exact absurd (Finset.mem_univ _) h
   rw [← e1, Matrix.mul_apply, Finset.sum_eq_single (eI k r a)]
-  · rw [hrow, if_pos rfl, one_mul]
+  · rw [hrow, ite_eq_left rfl, one_mul]
   · intro b _ hb
-    rw [hrow, if_neg hb, zero_mul]
+    rw [hrow, ite_eq_right hb, zero_mul]
   · intro h; exact absurd (Finset.mem_univ _) h
 
 theorem xi_cell (c : Fin r → ℂ) {g : B.Mat k r} (hg : g ∈ Q.Glev k r (Fin.last r)) (a : Fin r)
@@ -112,18 +70,7 @@ theorem xi_cell (c : Fin r → ℂ) {g : B.Mat k r} (hg : g ∈ Q.Glev k r (Fin.
   · intro h; exact absurd (Finset.mem_univ _) h
 
 theorem mono_ge {n : ℕ} {C : Fin r → Fin n} (hC : StrictMono C) : ∀ l : Fin r, l.val ≤ (C l).val := by
-  have key : ∀ m, ∀ l : Fin r, l.val = m → m ≤ (C l).val := by
-    intro m
-    induction m with
-    | zero => intro l _; exact Nat.zero_le _
-    | succ m ih =>
-      intro l hl
-      have hm : m < r := by have := l.isLt; omega
-      have h1 := ih ⟨m, hm⟩ rfl
-      have h2 : C ⟨m, hm⟩ < C l := hC (by rw [Fin.lt_def]; simp; omega)
-      rw [Fin.lt_def] at h2
-      omega
-  exact fun l => key l.val l rfl
+  apply +allowSynthFailures _root_.Formalism.CohomologicalDescent.LR.lre_le_apply <;> assumption
 
 theorem mono_le {n : ℕ} {C : Fin r → Fin n} (hC : StrictMono C) (hb : ∀ l, (C l).val < r) :
     ∀ l : Fin r, (C l).val ≤ l.val := by
@@ -198,7 +145,7 @@ theorem radSide_chain (X : Q.ActualOps k r z z' π π') (L : R.LevelData (Q.Pr (
     set product_zeroth_terms := ((Formalism.FourierDecayAlt.P.JCx2.rma_pref L Y n) 0 0).1 Ψ with hP00
     set product_first_zeroth_parts := ((Formalism.FourierDecayAlt.P.JCx2.rma_pref L Y n) 1 0).1 Ψ with hP10
     have eT : Formalism.FourierDecayAlt.P.JCx2.rma_pref L Y (n + 1) = Wd.Ts (P5.site L ⟨n, hnr⟩) Y * Formalism.FourierDecayAlt.P.JCx2.rma_pref L Y n := by
-      rw [Formalism.FourierDecayAlt.P.JCx2.rma_pref, dif_pos hnr]
+      rw [Formalism.FourierDecayAlt.P.JCx2.rma_pref, dite_eq_left hnr]
     have e0 : ((Formalism.FourierDecayAlt.P.JCx2.rma_pref L Y (n + 1)) 0 0).1 Ψ = Y • product_zeroth_terms + X.op ⟨n, hnr⟩ 0 product_zeroth_terms - X.op ⟨n, hnr⟩ 1 product_first_zeroth_parts := by
       rw [eT]
       change Formalism.FourierDecayAlt.P.JCx2.rma_fst _ ((Wd.Ts (P5.site L ⟨n, hnr⟩) Y * Formalism.FourierDecayAlt.P.JCx2.rma_pref L Y n) 0 0) Ψ = _
@@ -220,7 +167,7 @@ theorem radSide_chain (X : Q.ActualOps k r z z' π π') (L : R.LevelData (Q.Pr (
       simp only [map_mul, zero_mul, add_zero, Module.End.mul_apply]
       rfl
     rw [e0, e1]
-    simp only [Q.vAB, dif_pos hnr, Q.crd]
+    simp only [Q.vAB, dite_eq_left hnr, Q.crd]
     simp only [Submodule.coe_add, Submodule.coe_sub, Submodule.coe_smul, Pi.add_apply, Pi.sub_apply, Pi.smul_apply]
     rw [X.op_apply, X.op_apply, X.op_apply]
     simp only [Q.crd, Formalism.QuantumDeterminants.opL]
@@ -256,7 +203,7 @@ theorem raising_cell : PBN.AACell := by
   intro k r E _ _ f u c g hg
   unfold C3.AAop
   rw [Finset.sum_eq_single (C3.xR k r r le_rfl)]
-  · rw [if_pos xR_mono]
+  · rw [ite_eq_left xR_mono]
     congr 1
     have hM : (Matrix.of fun a l : Fin r => herm (Hpk k r) ((Q.wCell k r (Fin.last r) c * g) *ᵥ
         bvec (C3.xR k r r le_rfl l)) (bvec (eI k r (Fin.castLE le_rfl a)))) = Matrix.diagonal c := by
@@ -270,7 +217,7 @@ theorem raising_cell : PBN.AACell := by
           have := congrArg Fin.val e
           simp [C3.xR, eI] at this
           exact Fin.ext this.symm
-        simp only [h', h, if_false]
+        simp only [h', h, ite_false]
     rw [hM, Matrix.det_diagonal]
   · intro C _ hC
     split_ifs with hm
@@ -281,7 +228,7 @@ theorem raising_cell : PBN.AACell := by
       obtain ⟨l0, hl0⟩ := hex
       rw [Matrix.det_eq_zero_of_column_eq_zero l0, zero_smul]
       intro a
-      rw [Matrix.of_apply, xi_cell c hg, if_neg]
+      rw [Matrix.of_apply, xi_cell c hg, ite_eq_right]
       intro h
       rw [h] at hl0
       simp [eI] at hl0

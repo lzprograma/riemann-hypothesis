@@ -10,12 +10,9 @@ noncomputable section
 
 open GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult Zc Zc.M Zc.Cos
 
-
-
 namespace CompanionTheory.Groth
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-
 
 open Classical in
 def cl0 {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V) : GrothGL k :=
@@ -73,7 +70,6 @@ def JCls : Prop := ∀ (W : List (IrrGL (k := k))) (N : ℕ) (V : Type) [AddComm
 def JSeg : Prop := ∀ Z : ∀ Δ : Segment k, IrrCl (GL (Fin (Δ.len * Δ.d)) k), IsSegmentClass k Z → ∀ Δ : Segment k,
   jmL (List.ofFn Δ.term) (IrrGL.rep (⟨Δ.len * Δ.d, Z Δ⟩ : IrrGL (k := k))) = 1 ∧
     ∀ S ∈ vSets Δ, S ≠ ∅ → jmL (vWord Δ S) (IrrGL.rep (⟨Δ.len * Δ.d, Z Δ⟩ : IrrGL (k := k))) = 0
-
 
 open Classical in
 def AltSum : Prop := ∀ (Δ : Segment k) (h : ℕ) (Γ : Fin h → Segment k),

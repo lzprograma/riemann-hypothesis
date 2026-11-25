@@ -1,51 +1,6 @@
 module
 
 public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.RingTheory.Flat.Basic
 
@@ -60,18 +15,8 @@ variable {k L A : Type} [Field k] [Field L] [Algebra k L] [CommRing A] [Algebra 
 private lemma map_val_injective (R : Subalgebra k L) :
     Function.Injective
       (Algebra.TensorProduct.map R.val (AlgHom.id k A) : R ⊗[k] A →ₐ[k] L ⊗[k] A) := by
-  have h := Module.Flat.rTensor_preserves_injective_linearMap (M := A)
-    (R.val.toLinearMap) Subtype.val_injective
-  have e : ∀ z : R ⊗[k] A, LinearMap.rTensor A R.val.toLinearMap z =
-      Algebra.TensorProduct.map R.val (AlgHom.id k A) z := by
-    intro z
-    induction z using TensorProduct.induction_on with
-    | zero => simp
-    | tmul r a => simp
-    | add x y hx hy => simp only [map_add (f := _), hx, hy]
-  intro x y hxy
-  apply h
-  rw [e, e, hxy]
+  exact Module.Flat.rTensor_preserves_injective_linearMap (M := A)
+    R.val.toLinearMap Subtype.val_injective
 
 private lemma spz_add {R : Subalgebra k L} {φ : R →ₐ[k] k} {y y' : L ⊗[k] A} {a a' : A}
     (h : Spz R φ y a) (h' : Spz R φ y' a') : Spz R φ (y + y') (a + a') := by
@@ -125,10 +70,8 @@ theorem UpperTheory.specialization_tensor_ring_hom_properties :
       exact ⟨u - v, by rw [map_sub, hu, hv], by simp only [map_sub]⟩
   · rintro A' _ _ g y a ⟨u, rfl, rfl⟩
     refine ⟨Algebra.TensorProduct.map (AlgHom.id k R) g u, ?_, ?_⟩
-    · induction u using TensorProduct.induction_on with
-      | zero => simp
-      | tmul r b => simp
-      | add x y hx hy => simp only [map_add (f := _), hx, hy]
+    · simp only [← AlgHom.comp_apply, ← Algebra.TensorProduct.map_comp,
+        AlgHom.comp_id, AlgHom.id_comp]
     · induction u using TensorProduct.induction_on with
       | zero => simp
       | tmul r b => simp

@@ -12,7 +12,6 @@ public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCoh
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.TeichmullerCongruence
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.FrobeniusNormBounds.ResiduePadicIntegersToIntegers
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusFactorisation.PhiAIter
-public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.FrobeniusNormBounds.MapFrobW
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.FrobeniusNormBounds.NormLLtOne
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.MuNu
 public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.Final
@@ -109,8 +108,6 @@ section -- clump:auto
 
 
 
-set_option backward.isDefEq.respectTransparency false
-
 noncomputable section
 
 open CategoryTheory Limits AlgebraicGeometry GroundTheory.PAdicHodge CrystallineSemistableComparison
@@ -145,8 +142,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.TeichmullerRootsUnity.EndExOf", "h": "module\n\npublic import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.TeichmullerRootsUnity.TUnit\npublic import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.AtlasGroupActions.EtaleMapFirstChern\npublic import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.AtlasGroupActions.FirstChernClassUnique\npublic import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.AtlasGroupActions.FirstChernCompatGlue\npublic import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.CstSmoothOfP\nimport Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.TranscendentalPeriodUnits.IsUOfIsUnit\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option backward.isDefEq.respectTransparency false
 
 
 
@@ -186,8 +181,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.TeichmullerRootsUnity.RootsUnityPullback.MmPull", "h": "module\n\npublic import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.TeichmullerRootsUnity.TUnit\npublic import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusFactorisation.PullT\nimport Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.FaceMapCompSuccAboveCastSucc\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option backward.isDefEq.respectTransparency false
 
 
 noncomputable section
@@ -276,8 +269,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option backward.isDefEq.respectTransparency false
-
 noncomputable section
 
 open CategoryTheory Limits AlgebraicGeometry TensorProduct GroundTheory.PAdicHodge
@@ -355,7 +346,7 @@ theorem PinP.pin_lev (r : Res l K) {N : ℕ} (hT : Pb.Mid.TeichmullerCongruence 
 theorem PinP.pin_fixed (r : Res l K) [FiniteDimensional ℚ_[l] K] (f : ℕ) (hf : 0 < f) :
     ∃ N : ℕ, f ∣ N ∧ Pb.Mid.TeichmullerCongruence r N ∧ ∃ F : Pb.Fac r N, ∀ M : Model l K, M.Sm → ∀ j, Pin F M j := by
   obtain ⟨N, hfN, hT⟩ := PinP.teich_dvd r f hf
-  obtain ⟨F, hF⟩ := Pb.fac_ex r hT (fun M n j x => _root_.CrystallineSemistableComparison.Pb.Mid.frobenius_mu_nu_iterate r N hT M n j x) (Pb.G3.w_phi r) (fun g w => Pb.G3.w_fix r g w)
+  obtain ⟨F, hF⟩ := Pb.fac_ex r hT (fun M n j x => _root_.CrystallineSemistableComparison.Pb.Mid.frobenius_mu_nu_iterate r N hT M n j x) (fun g w => Pb.G3.w_fix r g w)
   exact ⟨N, hfN, hT, F, fun M hM j => PinP.pin_of r hT F M j fun y n => PinP.pin_lev r hT F hF M hM j y n⟩
 
 theorem pinEx : PinEx := fun _ _ _ _ r f hf => PinP.pin_fixed r f hf
@@ -448,9 +439,6 @@ private structure IsVal (e : EMap G D) (b : BMap G D) (p : PMap G D) {M : Model 
   spec : ∀ (c : R.A) (v : M.T n) (x : (D.H a).N n), b.β a n x = c • e.e a n v →
     ∀ φ, p.κ a n x φ = R.i c * C (M.toV n v) φ
 
-private theorem tB_pow_ne (hF : R.Facts) (m : ℕ) : R.i (R.t ^ m) ≠ 0 := by
-  rw [map_pow]; exact pow_ne_zero _ hF.t_ne
-
 private theorem exists_val (hF : R.Facts) (e : EMap G D) (b : BMap G D) (p : PMap G D) {M : Model l K} (hM : G M)
     (a : D.Ch M) (n : ℕ) : ∃ C, IsVal e b p a n C := by
   obtain ⟨N, hN⟩ := b.surj a hM n
@@ -462,8 +450,8 @@ private theorem exists_val (hF : R.Facts) (e : EMap G D) (b : BMap G D) (p : PMa
     have h1 := hm (x - x') (by rw [map_sub, h, sub_self])
     have h2 := congrArg (fun y => p.κ a n y φ) h1
     simp only [p.lin a hM, map_zero, AddMonoidHom.zero_apply, map_sub, AddMonoidHom.sub_apply] at h2
-    exact sub_eq_zero.mp ((mul_eq_zero.mp h2).resolve_left (tB_pow_ne hF m))
-  have hu := tB_pow_ne hF (R := R) N
+    exact sub_eq_zero.mp ((mul_eq_zero.mp h2).resolve_left (CrystallineSemistableComparison.t_pow_ne hF m))
+  have hu := CrystallineSemistableComparison.t_pow_ne hF (R := R) N
   let c0 : M.T n → Module.Dual K (HdR M.q n) → R.B := fun v φ => (R.i (R.t ^ N))⁻¹ * p.κ a n (xs v) φ
   have spec0 : ∀ (c : R.A) (v : M.T n) (x : (D.H a).N n), b.β a n x = c • e.e a n v →
       ∀ φ, p.κ a n x φ = R.i c * c0 v φ := by
@@ -541,7 +529,7 @@ private theorem IsVal.equi {n : ℕ} {C : M.V n →+ (Module.Dual K (HdR M.q n) 
     have h1 := hC.spec (R.σA σ (R.t ^ N)) (M.actT n σ v) ((D.H a).act n σ x) (by
       rw [b.act a hM, hx, hL.act_smul, e.act a hM]) φ
     rw [p.act a hM, hC.spec _ _ _ hx, map_mul, hF.i_σ] at h1
-    exact (mul_left_cancel₀ ((map_ne_zero _).mpr (tB_pow_ne hF N)) h1).symm
+    exact (mul_left_cancel₀ ((map_ne_zero _).mpr (CrystallineSemistableComparison.t_pow_ne hF N)) h1).symm
   · intro x y hx hy
     rw [map_add (f := _), map_add (f := _), Pi.add_apply, hx, hy, map_add (f := _), Pi.add_apply, map_add (f := _)]
 
@@ -564,7 +552,7 @@ private theorem IsVal.cup {i j : ℕ} {Ci : M.V i →+ (Module.Dual K (HdR M.q i
   rw [hij.spec _ _ _ h2] at h3
   simp only [hi.spec _ _ _ hX, hj.spec _ _ _ hY] at h3
   rw [map_mul] at h3
-  refine mul_left_cancel₀ (mul_ne_zero (tB_pow_ne hF N) (tB_pow_ne hF N')) (h3.trans ?_)
+  refine mul_left_cancel₀ (mul_ne_zero (CrystallineSemistableComparison.t_pow_ne hF N) (CrystallineSemistableComparison.t_pow_ne hF N')) (h3.trans ?_)
   simp only [Finset.mul_sum]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
 
@@ -616,11 +604,11 @@ private theorem IsVal.van {n : ℕ} {C : M.V n →+ (Module.Dual K (HdR M.q n) �
     exact map_sum ({ toFun := fun f => f ψ, map_zero' := rfl, map_add' := fun _ _ => rfl } : (Module.Dual K (HdR M.q n) →+ R.B) →+ R.B) _ _
   rw [heval] at h2
   simp only [p.lin a hM, hC.spec _ _ _ (hxs _)] at h2
-  have h3 := (mul_eq_zero.mp ((mul_eq_zero.mp h2).resolve_left (tB_pow_ne hF m))).resolve_left (tB_pow_ne hF u)
+  have h3 := (mul_eq_zero.mp ((mul_eq_zero.mp h2).resolve_left (CrystallineSemistableComparison.t_pow_ne hF m))).resolve_left (CrystallineSemistableComparison.t_pow_ne hF u)
   have h4 : R.i (R.t ^ N) * ∑ k, R.i (c k) * C (M.toV n (v k)) ψ = 0 := by
     rw [Finset.mul_sum, ← h3]
     exact Finset.sum_congr rfl fun _ _ => by ring
-  exact (mul_eq_zero.mp h4).resolve_left (tB_pow_ne hF N)
+  exact (mul_eq_zero.mp h4).resolve_left (CrystallineSemistableComparison.t_pow_ne hF N)
 
 private theorem inj_conn (hF : R.Facts) (hS : EtSide G) (hL : D.Laws G) (e : EMap G D) (b : BMap G D) (p : PMap G D)
     {M : Model l K} (hM : G M) {d : ℕ} (hd : M.Conn d) (a : D.Ch M) (j : ℕ) {ι : Type} [Fintype ι]
@@ -638,8 +626,7 @@ private theorem inj_conn (hF : R.Facts) (hS : EtSide G) (hL : D.Laws G) (e : EMa
     rintro _ rfl; exact (hC _).top hF hS hL hM hd
   obtain ⟨w, φ, hw⟩ := htop _ hj'
   have hg : ∃ s, C (j + j') (g s) φ ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hw' : w ∈ Submodule.span ℚ_[l] (Set.range g) := by rw [hspan]; trivial
     refine hw (Submodule.span_induction (p := fun w _ => C (j + j') w φ = 0) ?_ (by simp) ?_ ?_ hw')
     · rintro _ ⟨s, rfl⟩; exact hcon s
@@ -652,8 +639,8 @@ private theorem inj_conn (hF : R.Facts) (hS : EtSide G) (hL : D.Laws G) (e : EMa
     have h1 := (hC _).equi hF hL hM σ (g s) φ
     rw [hact, (hC _).smul, h0, map_zero] at h1
     exact (mul_ne_zero ((map_ne_zero _).mpr hz) hs₀) h1
-  haveI := (p.fin M hM j).1
-  haveI := (p.fin M hM j').1
+  have := (p.fin M hM j).1
+  have := (p.fin M hM j').1
   let bb := Module.finBasis K (HdR M.q j)
   let bb' := Module.finBasis K (HdR M.q j')
   have hf : f ∈ Submodule.span ℚ_[l] {f : Module.Dual ℚ_[l] (M.V j) | ∃ (s : Fin r) (y : M.T j'),
@@ -723,10 +710,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option synthInstance.maxHeartbeats 200000
-set_option maxHeartbeats 1000000
-set_option backward.isDefEq.respectTransparency false
-
 noncomputable section
 
 open CategoryTheory Limits AlgebraicGeometry GroundTheory.PAdicHodge CrystallineSemistableComparison TensorProduct
@@ -775,7 +758,6 @@ theorem UpperTheory.Ru.crystallineComparison.injOf :
     UpperTheory.Ru.crystallineComparison.InjOf := by
   intro l _ K B₀ ι hι hc hq G Amp hF hE hL e e' hB hP hcomp M hM j κ _ v c u hu
   refine (hL.ch M hM).elim fun a => ?_
-  set_option synthInstance.maxHeartbeats 2000000 in
   have h0 : (per l K).t ^ u • ∑ k, (show (per l K).A from c k) • e'.e a j (v k) = 0 :=
     UpperTheory.Ru.crystallineComparison.submodule_pi_smul_sum_eq_zero (S := (M.MS j).lim)
       (UpperTheory.Ru.crystallineComparison.tA l ^ u) c (fun k => e'.e a j (v k))
@@ -849,9 +831,9 @@ private theorem exists_lift {A C E : Type} [CommRing A] [CommRing C] [Field E] (
     (i : A →+* E) (hu : IsUnit (c t)) (loc : ∀ x : C, ∃ (r : ℕ) (a : A), c t ^ r * x = c a)
     (ker : ∀ a : A, c a = 0 → ∃ r : ℕ, t ^ r * a = 0) (hi : Function.Injective i) (ht : i t ≠ 0) :
     ∃ ι : C →+* E, Function.Injective ι ∧ ∀ a, ι (c a) = i a := by
-  letI : Algebra A C := c.toAlgebra
+  let : Algebra A C := c.toAlgebra
   have hc : ∀ a, algebraMap A C a = c a := fun _ => rfl
-  haveI : IsLocalization (Submonoid.powers t) C :=
+  have : IsLocalization (Submonoid.powers t) C :=
     { map_units := by
         rintro ⟨_, r, rfl⟩
         rw [hc, map_pow]
@@ -926,8 +908,6 @@ section -- clump:auto
 @[expose] public section
 
 set_option maxSynthPendingDepth 1
-set_option maxHeartbeats 1600000
-set_option synthInstance.maxHeartbeats 400000
 
 noncomputable section
 
@@ -938,8 +918,6 @@ namespace UpperTheory.Ru.crystallineComparison.PBI
 variable {l : ℕ} [Fact l.Prime] {K : IntermediateField ℚ_[l] (PadicAlgCl l)}
 
 section
-
-set_option backward.isDefEq.respectTransparency false
 
 private theorem coe_sub_oc (a b : OC l) : ((a - b : OC l) : ℂ_[l]) = (a : ℂ_[l]) - (b : ℂ_[l]) := rfl
 
@@ -1310,7 +1288,7 @@ open UpperTheory.Gal.crystallineComparison
 theorem UpperTheory.Gal.crystallineComparison.affFin_of :
     AffFinProj := by
   intro R _ Y f hf s
-  haveI : GlobalTheory.FiniteSubsetsInAffineOpens Y := GlobalTheory.FiniteSubsetsInAffineOpens.of_isProjOver hf
+  have : GlobalTheory.FiniteSubsetsInAffineOpens Y := GlobalTheory.FiniteSubsetsInAffineOpens.of_isProjOver hf
   obtain ⟨U, hU, hsub⟩ :=
     GlobalTheory.FiniteSubsetsInAffineOpens.exists_isAffineOpen (X := Y) (s : Set Y) s.finite_toSet
   exact ⟨U, hU, fun x hx => hsub (Finset.mem_coe.mpr hx)⟩
@@ -1324,8 +1302,6 @@ section -- clump:auto
 @[expose] public section
 
 
-
-set_option backward.isDefEq.respectTransparency false
 
 open CategoryTheory AlgebraicGeometry CrystallineSemistableComparison UpperTheory.Ru.crystallineComparison
 
@@ -1366,8 +1342,6 @@ section -- clump:auto
 
 
 
-set_option backward.isDefEq.respectTransparency false
-
 open CrystallineSemistableComparison UpperTheory.Ru.crystallineComparison
 
 theorem UpperTheory.Ru.crystallineComparison.finAll_of :
@@ -1403,7 +1377,7 @@ namespace UpperTheory.Ru.crystallineComparison
 
 theorem finAll : UpperTheory.Gal.crystallineComparison.Br.FinAll := finAll_of fun l _ K _ r f hf => cIn l K r f hf
 
-theorem smoothModel_crystalline : CrystallineSemistableComparison.SmoothModelCrystalline := (CrystallineSemistableComparison.cstSmooth_of_side fun l _ K _ => UpperTheory.Gal.KunnethLefschetz.Top.etSide_sm_holds l K).1
+theorem smoothModel_crystalline : CrystallineSemistableComparison.SmoothModelCrystalline := CrystallineSemistableComparison.cstSmooth_of_side fun l _ K _ => UpperTheory.Gal.KunnethLefschetz.Top.etSide_sm_holds l K
 
 theorem phiStep : UpperTheory.Gal.Int.Geo.PhiStep := phiStep_of (UpperTheory.Gal.Int.Geo.geoSide_of finAll smoothModel_crystalline)
 

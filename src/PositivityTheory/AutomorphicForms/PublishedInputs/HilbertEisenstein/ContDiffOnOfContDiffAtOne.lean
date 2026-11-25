@@ -11,6 +11,7 @@ import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.Sigma
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
 import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
+import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.InvMulVecScalarMul
 
 @[expose] public section
 
@@ -213,7 +214,7 @@ theorem contDiffAt_chart_one (hP : SPois) (χ : HChar F) (c : HeightOneSpectrum 
       rw [invL_one]
       exact hI2.contDiffAt (hU.mem_nhds h1U)
   have hdl := (contDiff_dl (F := F) g).contDiffAt (x := UpperTheory.V.TR.oneL F 2)
-  have hdl0 : dl g (UpperTheory.V.TR.oneL F 2) ≠ 0 := by rw [dl_one]; exact (absD_pos g).ne'
+  have hdl0 : dl g (UpperTheory.V.TR.oneL F 2) ≠ 0 := by rw [dl_one]; exact (EisensteinIntegrability.absD_pos g).ne'
   have hD : ContDiffAt ℝ ∞ (fun x => ((dl g x ^ ((1 : ℝ) / 2) : ℝ) : ℂ)) (UpperTheory.V.TR.oneL F 2) :=
     (Complex.ofRealCLM.contDiff.contDiffAt).comp _ (hdl.rpow_const_of_ne hdl0)
   have hA : ContDiffAt ℝ ∞ (fun x => (((dl g x)⁻¹ : ℝ) : ℂ)) (UpperTheory.V.TR.oneL F 2) :=

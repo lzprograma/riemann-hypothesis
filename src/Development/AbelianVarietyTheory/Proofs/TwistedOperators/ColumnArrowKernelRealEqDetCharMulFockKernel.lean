@@ -7,46 +7,9 @@ import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFockFrameChangeLastColumnDefinitePair
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasInfExpOfOrder
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TendstoInfMulProd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ClassFunctionSumIntegral
-import Mathlib.Tactic.Basify
 
 @[expose] public section
 
@@ -54,13 +17,11 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim GlobalTheory.DefStep
 open GlobalTheory.IndefiniteRowSideFullHecke.ClassFunctionSumIntegral (IsOpenCompactLevel)
 open scoped ComplexOrder Matrix
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.FockFrameChange GlobalTheory.FockReal
 
 noncomputable section
 
 namespace GlobalTheory.ColKer
-
 
 open GlobalTheory.Chain.StepVac in
 theorem mu_exp {D : D7} {T : Type} {L : LevCh D T} {μ₀ : T} (hL : L.Is μ₀) (t : T) (j : ℕ) (hj : j < D.R.m)
@@ -160,107 +121,7 @@ theorem realSubst_top {μ₀ : T} (hL : L.Is μ₀) (W : G.Weil) {U : Set T} (N 
   · rw [hid, Matrix.map_id, coe_realIn]
     exact (transp_frame (Matrix.nonsingInvUnit _ (hO _ hn.1 τ)) (frGL N.fr _ τ) (GlobalTheory.CoefModel.realGL W.θ (G.V (.top j)) k τ)).symm
 
-
 open GlobalTheory.SignedHC
-
-section GridBounds
-
-open Finset
-
-variable (D : D7) (C : ℝ) (τ : D.what₂.Tau)
-
-private theorem num_e {l : ℕ} (h1 : 1 ≤ l) (h2 : l ≤ D.R.m) : (((num D C τ).e l : ℤ) : ℚ) = (D.hc τ).e ⟨l - 1, by omega⟩ := by
-  obtain ⟨l, rfl⟩ : ∃ l', l = l' + 1 := ⟨l - 1, by omega⟩
-  exact GridData.extend_cast 1 (D.hc τ).e_int ⟨l, by omega⟩
-
-private theorem num_b {l : ℕ} (h1 : 1 ≤ l) (h2 : l ≤ D.R.m) : (((num D C τ).b l : ℤ) : ℚ) = (D.hc τ).b ⟨l - 1, by omega⟩ := by
-  obtain ⟨l, rfl⟩ : ∃ l', l = l' + 1 := ⟨l - 1, by omega⟩
-  exact GridData.extend_cast 1 (D.hc τ).b_int ⟨l, by omega⟩
-
-private theorem num_v {i : ℕ} (h1 : 2 ≤ i) (h2 : i ≤ D.R.k) : (((num D C τ).v i : ℤ) : ℚ) = (D.hc τ).v ⟨i - 2, by omega⟩ := by
-  obtain ⟨i, rfl⟩ : ∃ i', i = i' + 2 := ⟨i - 2, by omega⟩
-  exact GridData.extend_cast 2 (D.hc τ).v_int ⟨i, by omega⟩
-
-private theorem num_be {l : ℕ} (h1 : 1 ≤ l) (h2 : l ≤ D.R.m) : ((D.R.t : ℚ) + 3) / 2 ≤ ((num D C τ).e l : ℚ) - (num D C τ).b l := by
-  rw [num_e D C τ h1 h2, num_b D C τ h1 h2]
-  exact (D.hc τ).gap_be _
-
-private theorem num_eb {l : ℕ} (h1 : 1 ≤ l) (h2 : l + 1 ≤ D.R.m) : ((D.R.t : ℚ) + 3) / 2 ≤ ((num D C τ).b (l + 1) : ℚ) - (num D C τ).e l := by
-  rw [num_e D C τ h1 (by omega), num_b D C τ (by omega) h2]
-  obtain ⟨l, rfl⟩ : ∃ l', l = l' + 1 := ⟨l - 1, by omega⟩
-  exact (D.hc τ).gap_eb ⟨l, by omega⟩ (by simpa using (by omega : l + 1 < D.R.m))
-
-private theorem num_e_lt {l l' : ℕ} (h1 : 1 ≤ l) (h : l < l') (h2 : l' ≤ D.R.m) : (D.R.t : ℚ) + 3 + (num D C τ).e l ≤ (num D C τ).e l' := by
-  induction l', h using Nat.le_induction with
-  | base =>
-    linarith [num_be D C τ (l := l + 1) (by omega) h2, num_eb D C τ h1 h2]
-  | succ n hn ih =>
-    have := ih (by omega)
-    have e1 := num_be D C τ (l := n + 1) (by omega) h2
-    have e2 := num_eb D C τ (l := n) (by omega) h2
-    have : (0 : ℚ) ≤ D.R.t := by positivity
-    linarith
-
-private theorem num_cloud {i : ℕ} (h1 : 2 ≤ i) (h2 : i ≤ D.R.k) : -((num D C τ).b 1 : ℚ) + 1 ≤ (num D C τ).v i := by
-  have hm : 1 ≤ D.R.m := by have := D.R.two_le_m; omega
-  have hk : 2 ≤ D.R.k := by omega
-  have base : -((num D C τ).b 1 : ℚ) < (num D C τ).v D.R.k := by
-    rw [num_v D C τ hk le_rfl, num_b D C τ le_rfl hm]
-    have e1 := (D.hc τ).u_last_gt (by omega) (by omega)
-    have e2 := (D.hc τ).v_gt_u ⟨D.R.k - 2, by omega⟩
-    have e3 : (⟨D.R.k - 2 + 1, by omega⟩ : Fin D.R.k) = ⟨D.R.k - 1, by omega⟩ := Fin.ext (by simp only; omega)
-    simp only [e3] at e2
-    exact e1.trans e2
-  have base' : -((num D C τ).b 1) < (num D C τ).v D.R.k := by exact_mod_cast base
-  have step : (num D C τ).v D.R.k ≤ (num D C τ).v i := by
-    rcases h2.eq_or_lt with rfl | h
-    · exact le_rfl
-    · exact ((num D C τ).v_anti i D.R.k h1 h le_rfl).le
-  have : -((num D C τ).b 1) + 1 ≤ (num D C τ).v i := by omega
-  exact_mod_cast this
-
-private theorem blockMPlus_bd {l : ℕ} {x : ℚ} (h : x ∈ (num D C τ).blockMPlus l) :
-    -((num D C τ).e l : ℚ) - (D.R.t : ℚ) / 2 ≤ x ∧ x ≤ -((num D C τ).e l : ℚ) + (D.R.t : ℚ) / 2 := by
-  have := abs_le.1 (abs_sub_le_of_mem_block h)
-  have e : (((num D C τ).t + 1 : ℕ) : ℚ) = D.R.t + 1 := by push_cast; rfl
-  rw [e] at this
-  constructor <;> linarith [this.1, this.2]
-
-private theorem a_le {i j : ℕ} (h : i ≤ j) : (num D C τ).a j ≤ (num D C τ).a i := by
-  rcases h.eq_or_lt with rfl | h
-  · exact le_rfl
-  · have : (0 : ℚ) ≤ (num D C τ).ga := by positivity
-    linarith [a_add_le (G := num D C τ) h]
-
-private theorem weightX_above {j : ℕ} (hj : j + 1 ≤ D.R.m) {x y : ℚ} (hx : x ∈ (num D C τ).weightX j) (hy : y ∈ (num D C τ).blockMPlus (j + 1)) : y < x := by
-  have hm : 1 ≤ D.R.m := by omega
-  have hk : 2 ≤ D.R.k := by have := D.R.m_add_three_le_k; omega
-  have ht : (0 : ℚ) ≤ D.R.t := by positivity
-  have hg : (0 : ℚ) ≤ (num D C τ).ga := by positivity
-  obtain ⟨y1, y2⟩ := blockMPlus_bd D C τ hy
-  have hbe := num_be D C τ (l := 1) le_rfl hm
-  have he1 : ((num D C τ).e 1 : ℚ) ≤ (num D C τ).e (j + 1) := by
-    rcases Nat.eq_zero_or_pos j with rfl | h
-    · exact le_rfl
-    · linarith [num_e_lt D C τ (l := 1) (l' := j + 1) le_rfl (by omega) hj]
-  have hlow : y < -((num D C τ).b 1 : ℚ) := by linarith
-  have hc2 := num_cloud D C τ (i := 2) le_rfl hk
-  have ham : (num D C τ).a (num D C τ).m = (num D C τ).v 2 + (num D C τ).ga + 1 / 2 := (num D C τ).a_m
-  rcases GridData.mem_weightX.1 hx with h | h | ⟨i, h1, h2, h⟩ | ⟨l, h1, h2, h⟩
-  · obtain ⟨i, hi, rfl⟩ := GridData.mem_tops.1 h
-    linarith [a_le D C τ hi]
-  · obtain ⟨i, h1, h2, rfl⟩ := GridData.mem_cloudHalf.1 h
-    have := num_cloud D C τ h1 h2
-    simp only [GridData.vHalf]
-    linarith
-  · have := (blockC'_between (num_nearMid D C τ) (odd_sLen D).pos (sLen_lt_gap D C) h1 h2 h).1
-    linarith [a_le D C τ h2]
-  · have := num_e_lt D C τ h1 (by omega : l < j + 1) hj
-    have := (blockMPlus_bd D C τ h).1
-    linarith
-
-
-end GridBounds
 
 theorem detShift_top (G : GridData L sc) (t : T) (j : ℕ) (hj : j < D.R.m) (τ : D.what₂.Tau) :
     (((wt G (.top (j + 1)) τ).detShift : ℤ) : ℚ) = -((D.hc τ).e ⟨j, hj⟩ : ℚ) + ((G.V (.top j)).rank : ℚ) / 2 ∧

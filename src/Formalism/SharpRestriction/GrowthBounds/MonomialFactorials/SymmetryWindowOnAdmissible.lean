@@ -9,55 +9,12 @@ public import Formalism.MahlerMeasure.MahlerMeasureProofs.SSDirect
 public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BePhiSmulRight
 public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestSumSpan
 public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SumFinrankLeOfIndep
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.MahlerMeasure.MahlerMeasureProofs.TheoremM
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Linter.Style
 import Formalism.PolynomialDimension.MultinomialDepth.PartnerM
 import Mathlib.RingTheory.Etale.Weakly
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfCoefficientFunction, Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestLjjFinProved, Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SymmetryWindowLevelDimOnAdmissible, Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LiRenameMon, Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LvlDimGen, Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LvlDimCondition, Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SymmetryWindowOnAdmissible
@@ -110,7 +67,7 @@ theorem mem_xiMons_of (n : ℕ) (m : Formalism.GM.M.BVar N r G.T.t →₀ ℕ)
     rw [Finset.sum_eq_single c]
     · simp
     · intro d _ hd
-      rw [Finsupp.single_apply, if_neg]
+      rw [Finsupp.single_apply, ite_eq_right]
       intro h
       exact hd (xiVar_inj G h)
     · intro h; exact absurd (Finset.mem_univ c) h
@@ -119,7 +76,7 @@ theorem mem_xiMons_of (n : ℕ) (m : Formalism.GM.M.BVar N r G.T.t →₀ ℕ)
       exact hv (hsupp v (Finsupp.mem_support_iff.2 hne))
     rw [h0]
     refine Finset.sum_eq_zero fun c _ => ?_
-    rw [Finsupp.single_apply, if_neg]
+    rw [Finsupp.single_apply, ite_eq_right]
     intro h
     exact hv ⟨c, h.symm⟩
 
@@ -272,7 +229,7 @@ theorem decode_gen (M : Finset (σ →₀ ℕ)) (hM : ∀ β ∈ M, ∀ x, β (e
   by_cases h : γ = β
   · subst h
     simp
-  · rw [if_neg h, if_neg (fun h' => h (Subtype.ext h'.symm))]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h (Subtype.ext h'.symm))]
     exact zero_smul K y
 
 include he in
@@ -409,7 +366,7 @@ theorem preF_ne_zero (j : Fin G.T.t → ℕ) (jp : ℕ) : preF (p := p) (r := r)
     intro h0
     rw [h0, zero_sub] at hs2
     have hmem : s ∈ (-(monomial s (1 : ℚ_[p]))).support := by
-      rw [support_neg, support_monomial, if_neg one_ne_zero]
+      rw [support_neg, support_monomial, ite_eq_right one_ne_zero]
       exact Finset.mem_singleton_self s
     exact (hs2 s hmem).2 hs1
   have e : preF (p := p) (r := r) G j jp =
@@ -439,17 +396,8 @@ theorem xiMons_free (n : ℕ) : ∀ β ∈ xiMons (r := r) G n, ∀ x, β (Forma
   simp only [Formalism.GM.M.chainEmb, Formalism.GM.M.xiVar, Sum.inl.injEq, Prod.mk.injEq] at hc
   exact Fin.castSucc_ne_last _ hc.1
 
-theorem xiMons_mem (n : ℕ) : ∀ β ∈ xiMons (r := r) G n, (monomial β (1 : ℚ_[p])) ∈ Formalism.GM.M.XiPolZ p N r G.T.t n := by
-  classical
-  intro β hβ
-  obtain ⟨h1, h2, -⟩ := xiMons_spec G n β hβ
-  refine ⟨?_, Formalism.GM.M.intPol_monomial' β⟩
-  show monomial β (1 : ℚ_[p]) ∈ MvPolynomial.restrictSupport ℚ_[p] _
-  rw [MvPolynomial.mem_restrictSupport_iff, support_monomial, if_neg one_ne_zero]
-  intro m hm
-  rw [Finset.coe_singleton, Set.mem_singleton_iff] at hm
-  subst hm
-  exact ⟨h1, h2⟩
+theorem xiMons_mem (n : ℕ) : ∀ β ∈ xiMons (r := r) G n, (monomial β (1 : ℚ_[p])) ∈ Formalism.GM.M.XiPolZ p N r G.T.t n :=
+  by intros; apply _root_.Formalism.MainNotions.G.SymmetricFormBlocks.mono_mem_xiPolZ; assumption
 
 end Gen
 

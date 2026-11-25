@@ -159,8 +159,8 @@ theorem step (H : LeviStep) {L : Type} [Field L] [Valued L (WithZero (Multiplica
         simp [f1, f2, e, hci, h1, h2]
       · have f1 : ¬ i.val + j.val < m := by omega
         have f2 : ¬ n - m ≤ i.val + j.val := by omega
-        rw [if_neg h1, if_neg h2, mul_zero]
-        simp only [f1, f2, if_false]
+        rw [ite_eq_right h1, ite_eq_right h2, mul_zero]
+        simp only [f1, f2, ite_false]
   rw [tMat_eq] at ht ht'
   have := H L ϖ σ q n r (mid i.val r hn) _ γ b _ _ Q (-a i) t t' h hU (blockDatum hn γ hγ) ?_ ?_
     (expo_rev hm _) (expo_rev hm _) ?_ ?_ ht ht' hQ hI ?_ hh

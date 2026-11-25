@@ -145,7 +145,7 @@ theorem ConeSheetGramLintegral.proof (hPar : ConeSliceSheetParam.Statement)
     have hex : ∃ γ, IsSheetAt (J ⊔ Ideal.span {linForm ℓ - 1}) A (s k j y) γ := ⟨s k j, hsh j⟩
     have hch : sheetThrough (J ⊔ Ideal.span {linForm ℓ - 1}) A (s k j y) =ᶠ[𝓝 y] s k j := by
       have h1 : sheetThrough (J ⊔ Ideal.span {linForm ℓ - 1}) A (s k j y) = hex.choose := by
-        simp only [sheetThrough, dif_pos hex]
+        simp only [sheetThrough, dite_eq_left hex]
       have h2 := hex.choose_spec.eventuallyEq (hsh j)
       rw [hAy] at h2
       rw [h1]

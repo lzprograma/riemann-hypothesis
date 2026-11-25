@@ -146,11 +146,6 @@ private theorem hh_mul (s s' : PS 𝔸[K]) : hh (s * s') = hh s + hh s' := by
   unfold hh
   rw [map_mul, map_mul, Positive.val_mul, Real.log_mul (detModule K 2 _).2.ne' (detModule K 2 _).2.ne']
 
-private theorem hh_one : hh (1 : PS 𝔸[K]) = 0 := by
-  have := hh_mul (1 : PS 𝔸[K]) 1
-  rw [mul_one] at this
-  linarith
-
 private theorem hh_le (s : PS 𝔸[K]) (hs : s.1 ∈ (maxCompact : Subgroup (AdelicGLn.AdelicGL K (2 + 2)))) : hh s ≤ 0 :=
   Real.log_nonpos (detModule K 2 _).2.le
     ((subDet (2 + 2) s.1 hs _ _ (Fin.castAdd_injective 2 2) (Fin.castAdd_injective 2 2)).2.2 (top s) rfl)
@@ -256,7 +251,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.hpSpec :
     obtain ⟨s, hs, ht⟩ := coord X m₁ m₂ t
     rw [hp_mul _ s hs, ht]
   have h2 : ∀ k ∈ KG K (2 + 2), HH k = 0 := fun k hk =>
-    (hp_eq k 1 hk (one_mul _).symm).trans hh_one
+    (hp_eq k 1 hk (one_mul _).symm).trans (by unfold hh; rw [map_one, map_one]; simp)
   refine ⟨h1, fun k hk => ⟨h2 k hk, fun g => ?_⟩, fun γ hγ g => ?_, cont_hp, fun C hC => ?_⟩
   · obtain ⟨X, m₁, m₂, t, k', hk', rfl⟩ := iwa g
     rw [mul_assoc _ k' k, h1, h1, h2 _ hk', h2 _ (mul_mem hk' hk)]

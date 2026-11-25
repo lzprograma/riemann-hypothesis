@@ -2,51 +2,7 @@ module
 
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadicalUnipotentFirstBasisEqOne
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -111,7 +67,7 @@ private theorem blk3_mulVec_eB_inr_eq_zero_of_inWb {n ρ' : ℕ} (A12 : Matrix (
   rw [← (U.eB k n ρ').sum_comp]
   simp only [Ux3.block3_apply, Fintype.sum_sum_type, Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂, Matrix.fromRows_apply_inl, Matrix.fromRows_apply_inr, Matrix.fromCols_apply_inl, Matrix.fromCols_apply_inr, Matrix.zero_apply, zero_mul,
     Finset.sum_const_zero, zero_add, hS, mul_zero, add_zero, Matrix.one_apply, ite_mul, one_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   exact hz _ (Or.inl (by simp [U.eB] <;> omega))
 
 private theorem blk3_mulVec_eB_inl_eq_mulVec_lowV {n ρ' : ℕ} (A12 : Matrix (Fin n) (Fin (2 * ρ' + k + 1)) ℂ) (A13 : Matrix (Fin n) (Fin n) ℂ)
@@ -205,7 +161,7 @@ theorem ell_Rj (x : U.RC k j (1 + ρ)) (z : Fin (2 * (j + (1 + ρ)) + k + 1) →
   · rw [dite_eq_left hj, dite_eq_left hj, dite_eq_left (show 0 < 1 + ρ by omega)]
     rw [Matrix.neg_apply, neg_inj]
     simp only [Matrix.mul_apply, G.wMat, Matrix.of_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true, Matrix.conjTranspose_apply, hpk_apply_zero_col, mul_ite, mul_one, mul_zero]
+      Finset.mem_univ, ite_true, Matrix.conjTranspose_apply, hpk_apply_zero_col, mul_ite, mul_one, mul_zero]
     simp only [cb]
     rw [show (⟨2 * (1 + ρ) + k, by omega⟩ : Fin (2 * (1 + ρ) + k + 1)) = U.eB k 1 ρ (Sum.inr 0) from
         Fin.ext (by simp [U.eB] <;> omega),
@@ -217,7 +173,7 @@ private theorem wMat_mul_conjTranspose_mul_apply_last {N m : ℕ} (w : Fin N →
     (G.wMat (m + 1) * (Matrix.of w)ᴴ * H) i c = Matrix.vecMul (star (fun d => w d 0)) H c := by
   have hr : i.rev = 0 := Fin.ext (by simp [Fin.val_rev] <;> omega)
   simp only [Matrix.mul_apply, G.wMat, Matrix.of_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true, Matrix.conjTranspose_apply, hr, Matrix.vecMul, dotProduct, Pi.star_apply]
+    Finset.mem_univ, ite_true, Matrix.conjTranspose_apply, hr, Matrix.vecMul, dotProduct, Pi.star_apply]
 
 theorem ell_RX (x : U.RC k j (1 + ρ)) (y : U.RC k 1 ρ) (z : Fin (2 * (j + 1 + ρ) + k + 1) → ℂ)
     (hz : inWb k (j + 1 + ρ) z) :

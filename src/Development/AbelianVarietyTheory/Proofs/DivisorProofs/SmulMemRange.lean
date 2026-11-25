@@ -56,12 +56,6 @@ open ReciprocityTheory.PGsh.Up GlobalTheory.Sandwich Matrix
 
 namespace GlobalTheory.Sandwich.HodgeTateBound
 
-section General
-
-variable {A O : Type} [CommRing A] [CommRing O] {h : ℕ}
-
-end General
-
 open Matrix in
 variable {R : Type*} [CommRing R] {n : Type*} [Fintype n] [DecidableEq n] in
 private lemma mul_eq_smul_one_of_mul_eq_smul_one [IsDomain R] {A B : Matrix n n R} {c : R}

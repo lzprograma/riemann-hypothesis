@@ -87,54 +87,11 @@ public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentation
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.SNOf
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.TTSymmApply
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorObjectPullbackComp
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompEqOneOfTransl
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PerCApply
-import Mathlib.Tactic.TypeStar
 import Mathlib.Tactic.Linter.Style
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.TraceIntegralBasis
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Algebra.Order.Star.Real
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitSectionDivisorEq
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -952,8 +909,7 @@ theorem UpperTheory.Gal.W2.lineBasis_of :
     UpperTheory.Gal.W2.LineBasis := by
   intro n M z _ hpos
   have hz : ∃ i, z i ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have : z = 0 := funext h
     subst this
     simp [hv] at hpos
@@ -1132,15 +1088,6 @@ private theorem congOne_of_dvd {p : ℕ} [Fact p.Prime] {D : Datum p} {G : HTGro
   obtain ⟨w, hw, hv'⟩ := h v hv
   exact ⟨k • w, (LaHat D).nsmul_mem hw k, by rw [hv', smul_smul]⟩
 
-private theorem coordA_of_dvd {p : ℕ} [Fact p.Prime] {D : Datum p} {G : HTGroup p} (L : Link D G)
-    {x : (AfP p ⊗[ℚ] G.C)ˣ} {N N' : ℕ} (hd : N ∣ N') {D' : PLat D.O D.inv} {t : D.La → D'.La}
-    {j : D'.La →+ VQ D} {h₁ : G.GAf} (h : IsCoordA L x N' D' t j h₁) : IsCoordA L x N D' t j h₁ := by
-  obtain ⟨k, rfl⟩ := hd
-  obtain ⟨h1, h2⟩ := h
-  refine ⟨h1, fun a => ?_⟩
-  obtain ⟨w, hw, e⟩ := h2 a
-  exact ⟨k • w, (LaHat D).nsmul_mem hw k, by rw [e, smul_smul]⟩
-
 theorem UpperTheory.Gal.W2.oneAt_of :
     UpperTheory.Gal.W2.HeckeCoord → UpperTheory.Gal.W2.LatIso → UpperTheory.Gal.W2.OneAt := by
   intro hk li p _ D G L gb N N' h hlev X X' c₁ hX hL hX' hL' ρ hF B PD D' t hcls j a hpl hco hloc P x e hU
@@ -1153,7 +1100,7 @@ theorem UpperTheory.Gal.W2.oneAt_of :
   have hco₁ : IsCoordA L (trivX B) N D'' t'' j'' a.1 := by simpa using hco''
   have hpos : 0 < N := by omega
   obtain ⟨w, hmk, hw⟩ := (li p D G L B PD N hpos hcop D' t D'' t'' j j'' a a N' N t t'' hcls hcls'' hpl hpl''
-    (coordA_of_dvd L hdvd hco) hco₁ hloc hloc'' 1).1 ⟨by simp, by simp⟩
+    (isCoordA_of_dvd L hdvd hco) hco₁ hloc hloc'' 1).1 ⟨by simp, by simp⟩
   have hw1 : ∀ u, j (w u) = j'' u := fun u => by
     rw [hw u]
     simp [actY]
@@ -1415,14 +1362,14 @@ theorem UpperTheory.Gal.W2.placeT_of :
       have hx : ∀ x, v.embedding (L.e x) = t₀ x := fun x => by rw [h]; exact hφ x
       refine ⟨?_, hx⟩
       unfold sgnV
-      rw [if_pos (by rw [hx, hρ])]
+      rw [ite_eq_left (by rw [hx, hρ])]
     · right
       have hx : ∀ x, v.embedding (L.e x) = (starRingEnd ℂ) (t₀ x) := fun x => by
         rw [h, ComplexEmbedding.conjugate_coe_eq, hφ]
       have hω : v.embedding (L.e (D.ω : D.F)) ≠ D.ρc := by rw [hx, hρ]; exact hne
       refine ⟨?_, fun hall => hω (by rw [hall, hρ]), fun x => by rw [hx, Complex.conj_conj]⟩
       unfold sgnV
-      rw [if_neg hω]
+      rw [ite_eq_right hω]
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PPlaceT =====

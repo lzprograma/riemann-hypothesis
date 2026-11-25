@@ -58,13 +58,6 @@ open IsLocalRing
 
 namespace GlobalTheory
 
-section Local
-
-variable (R S X : Type*) [CommRing R] [CommRing S] [IsLocalRing R] [IsLocalRing S] [Algebra R S]
-  [IsLocalHom (algebraMap R S)] [AddCommGroup X] [Module R X] [Module S X] [IsScalarTower R S X]
-
-end Local
-
 section Localized
 
 variable {S : Type*} [CommRing S]

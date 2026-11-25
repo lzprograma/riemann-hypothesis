@@ -83,20 +83,24 @@ theorem frob_inverse {R : Type} [CommRing R] [IsDomain R] {d : ℕ} (Φ : R →+
   exact (mul_eq_zero.1 h5).resolve_left hdet
 
 theorem radius_mem (l : ℕ) [hl : Fact l.Prime] (K : FinExt l) (bk : BK K) : 0 < bk.ρ₀ ∧ bk.ρ₀ < 1 := by
-  have h1 : (1 : ℝ≥0) < (l : ℝ≥0) := by exact_mod_cast hl.out.one_lt
-  have h2 : (0 : ℝ) < (bk.Ep.natDegree : ℝ) := by exact_mod_cast bk.deg_pos
-  refine ⟨NNReal.rpow_pos (lt_trans zero_lt_one h1), ?_⟩
-  exact NNReal.rpow_lt_one_of_one_lt_of_neg h1 (neg_lt_zero.2 (one_div_pos.2 h2))
+  exact GlobalTheory.BSP.ρ₀_pos_lt_one bk
 
 end GlobalTheory.BSP.crystallineLattice_frobenius_inverse_matrix
 
-theorem GlobalTheory.BSP.seed_frob_inverse : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (τ : Ainf l) (hτ : bk.IsPer τ) (d : ℕ) (ρ : ↥(GK K) → Matrix (Fin d) (Fin d) ℤ_[l]) (hρ : ∀ g, IsUnit (ρ g)) (s : Seed bk d ρ τ), ∀ Φ : bk.DA bk.ρ₀ →+* bk.DA bk.ρ₀, IsDiscMap (l := _) (u := _) (ρ := _) WittVector.frobenius Φ → (s.X' * s.F.map (C : Wq l bk.a →+* bk.S) * s.X.map (frobS l bk.a)).map bk.iS * s.W'.map Φ = (((l : bk.DA bk.ρ₀) ^ (s.c₁ + s.c₂) * bk.iS (frobS l bk.a bk.E) ^ s.N) * bk.iS bk.E ^ (2 * s.N)) • s.W' := by
-  intro l _ K bk τ hτ d ρ hρ s Φ hΦ
+theorem GlobalTheory.BSP.disc_frob_inverse (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K)
+    (τ : Ainf l) (hτ : bk.IsPer τ) {d : ℕ}
+    (W W' : Matrix (Fin d) (Fin d) (bk.DA bk.ρ₀)) (M : Matrix (Fin d) (Fin d) bk.S) (c N : ℕ)
+    (hW_mul : W * W' = bk.iA τ ^ (2 * N) • (1 : Matrix (Fin d) (Fin d) (bk.DA bk.ρ₀)))
+    (Φ : bk.DA bk.ρ₀ →+* bk.DA bk.ρ₀)
+    (hΦ : IsDiscMap (l := _) (u := _) (ρ := _) WittVector.frobenius Φ)
+    (hphi : ((l : bk.DA bk.ρ₀) ^ c * bk.iS (frobS l bk.a bk.E) ^ N) • W.map Φ = W * M.map bk.iS) :
+    M.map bk.iS * W'.map Φ =
+      (((l : bk.DA bk.ρ₀) ^ c * bk.iS (frobS l bk.a bk.E) ^ N) * bk.iS bk.E ^ (2 * N)) • W' := by
   obtain ⟨h0, h1⟩ := GlobalTheory.BSP.crystallineLattice_frobenius_inverse_matrix.radius_mem l K bk
-  haveI := (_root_.GlobalTheory.BSP.discAinf_isDomain l K bk bk.ρ₀ h0 h1).1
+  have := (_root_.GlobalTheory.BSP.discAinf_isDomain l K bk bk.ρ₀ h0 h1).1
   have hτ0 := (_root_.GlobalTheory.BSP.isUnit_inclW_of_isPer l K bk τ hτ).2.1
-  refine GlobalTheory.BSP.crystallineLattice_frobenius_inverse_matrix.frob_inverse Φ s.W s.W' _ (bk.iA τ ^ (2 * s.N)) _ _ (pow_ne_zero _ hτ0) s.W_mul
-    (_root_.GlobalTheory.BSP.Seed.crystallineDiscPeriods_frobenius_eq_mul l K bk τ hτ d ρ hρ s Φ hΦ) ?_
+  refine GlobalTheory.BSP.crystallineLattice_frobenius_inverse_matrix.frob_inverse Φ W W' _ (bk.iA τ ^ (2 * N)) _ _
+    (pow_ne_zero _ hτ0) hW_mul hphi ?_
   have h2 : Φ (bk.iA τ) = bk.iS bk.E * bk.iA τ := by
     have h3 := hΦ.ext τ
     rw [hτ.1, map_mul] at h3

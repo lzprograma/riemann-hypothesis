@@ -57,8 +57,6 @@ open scoped TensorProduct nonZeroDivisors Pointwise
 
 namespace GlobalTheory.ChiGrid
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem cmHost_imaginaryGenerator_ne_zero : D.host.xi0 ≠ 0 := by
@@ -232,7 +230,7 @@ theorem isIsoSub_iso (ρ : ℕ) (h : 2 * ρ ≤ c) : IsIsoSub B (d.iso ρ h) := 
     refine Matrix.ext fun p q => ?_
     have := p.2; have := q.2
     simp only [submatrix_apply, antiDiagonalSignGramMatrix, Fin.val_castLE, Matrix.zero_apply]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
 
 def besDat (hε : ε ≠ 0) (ρ : ℕ) (h : c = 2 * ρ + 1) : BesDat A B d.ι where
   ρ := ρ
@@ -252,11 +250,11 @@ def besDat (hε : ε ≠ 0) (ρ : ℕ) (h : c = 2 * ρ + 1) : BesDat A B d.ι wh
     refine h1.trans ?_
     have := i.2
     simp only [antiDiagonalSignGramMatrix, Fin.val_castLE, Pi.zero_apply]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
   z_ne := by
     have h1 := congrFun (congrFun d.gram ⟨ρ, by omega⟩) ⟨ρ, by omega⟩
-    simp only [antiDiagonalSignGramMatrix, if_true] at h1
-    rw [if_pos (by omega)] at h1
+    simp only [antiDiagonalSignGramMatrix, ite_true] at h1
+    rw [ite_eq_left (by omega)] at h1
     intro h0
     apply hε
     rw [← h1, ← h0, Formalism.UG.hform, Finset.sum_comm]

@@ -1,5 +1,6 @@
 module
 
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntAEMulMem
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatticeLocalEqIntegralAlmostAll
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
@@ -43,12 +44,12 @@ import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Init
+import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ConjMemCompletedLatticeIffDualSplitPlace
 
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel ValuativeRel Matrix NumberField
 open scoped Pointwise TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 namespace GlobalTheory.FinPl.FrameLat
@@ -57,7 +58,7 @@ section General
 
 variable {D : D7}
 
-alias mul_mem_intAE := _root_.GlobalTheory.IdemPrime.mul_mem_int
+alias mul_mem_intAE := GlobalTheory.IntegralAdeleProducts.intAE_mul_mem
 
 theorem finPart_cA (x : AE D) : finPart D (cA D x) = sigR (Af D.host.F) D.sp.cm.sig (finPart D x) := by
   induction x using TensorProduct.induction_on with
@@ -67,14 +68,7 @@ theorem finPart_cA (x : AE D) : finPart D (cA D x) = sigR (Af D.host.F) D.sp.cm.
 
 theorem sigR_mem_intAE {z : Af D.host.F ⊗[D.host.F] D.host.E} (hz : z ∈ intAE D) :
     sigR (Af D.host.F) D.sp.cm.sig z ∈ intAE D := by
-  induction hz using AddSubgroup.closure_induction with
-  | mem w hw =>
-    obtain ⟨a, ha, o, rfl⟩ := hw
-    exact AddSubgroup.subset_closure ⟨a, ha, ⟨D.sp.cm.sig (o : D.host.E),
-      (show IsIntegral ℤ (o : D.host.E) from o.2).map (D.sp.cm.sig : D.host.E →+* D.host.E).toIntAlgHom⟩, rfl⟩
-  | zero => rw [RingHom.map_zero]; exact zero_mem _
-  | add x y _ _ hx hy => rw [RingHom.map_add (f := _)]; exact add_mem hx hy
-  | neg x _ hx => rw [RingHom.map_neg]; exact neg_mem hx
+  apply _root_.GlobalTheory.SplitDualLat.sigR_mem_intAE <;> assumption
 
 theorem cA_int_iff (a : AE D) : finPart D (cA D a) ∈ intAE D ↔ finPart D a ∈ intAE D := by
   refine ⟨fun h => ?_, fun h => by rw [finPart_cA]; exact sigR_mem_intAE h⟩
@@ -164,7 +158,7 @@ theorem exists_expansion (hL : IsSelfDualC S L) :
     · rw [RingHom.map_zero, zero_mul]
   simp only [pairing, Finset.sum_mul]
   rw [Finset.sum_comm]
-  simp only [h1, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [h1, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 theorem mem_of_pairing (hL : IsSelfDualC S L) {v : Pl D} {y : Fin S.rank → AE D} (hy : ∀ i, y i ∈ idAt D (· = v))
     (h : ∀ s ∈ L, finPart D (pairing S s y) ∈ intAE D) : y ∈ latV S L (· = v) := by

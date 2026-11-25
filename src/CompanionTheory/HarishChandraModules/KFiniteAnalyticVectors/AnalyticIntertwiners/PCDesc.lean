@@ -168,7 +168,7 @@ theorem sigC_eq {j : ℕ} {z : T.G} (hz : T.cov z = 1 ∧ T.sq z = -1) (hP : πU
     unfold liftC; rw [dite_eq_left hex]; exact hex.choose_spec
   have hc : T.cov (liftC (T := T) (rx (covC T x))) = T.cov x := Units.ext (rx_injC hl)
   unfold sigC
-  rw [if_pos hex]
+  rw [ite_eq_left hex]
   set y := liftC (T := T) (rx (covC T x))
   rcases sq_or_negC T hc with h | h
   · rw [eq_of_covC T hc h]

@@ -63,9 +63,9 @@ theorem gap_lt (R : Ranks) (P : HCParam R)
   have hb : b.val < R.r := by have := b.isLt; omega
   have hab' : a.val < b.val := hab
   by_cases hak : a.val < R.k - 1 <;> by_cases hbk : b.val < R.k - 1
-  · rw [if_pos hak, if_pos hbk] at he
+  · rw [ite_eq_left hak, ite_eq_left hbk] at he
     exact absurd rfl he
-  · rw [if_pos hak, if_neg hbk] at he
+  · rw [ite_eq_left hak, ite_eq_right hbk] at he
     have hjb : b.val - (R.k - 1) < R.m := by omega
     have hodd : (b.val - (R.k - 1)) % 2 ≠ 0 := by
       intro h
@@ -80,7 +80,7 @@ theorem gap_lt (R : Ranks) (P : HCParam R)
     push_cast at hq'
     linarith
   · omega
-  · rw [if_neg hak, if_neg hbk] at he
+  · rw [ite_eq_right hak, ite_eq_right hbk] at he
     have hja : a.val - (R.k - 1) < R.m := by omega
     have hjb : b.val - (R.k - 1) < R.m := by omega
     have hne : a.val - (R.k - 1) ≠ b.val - (R.k - 1) := by

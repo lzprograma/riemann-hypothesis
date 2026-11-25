@@ -219,11 +219,11 @@ theorem integral_after_scaling : ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Field
   have hX : ∀ q (h : ((l : ℕ) : 𝓞 ℚ) ∉ q.asIdeal), ∀ s ∈ Ine (F := ℚ) (B q h), z s = mat W s *ᵥ X q - X q := by
     intro q h s hs
     by_cases hq : q ∈ S
-    · simp only [X, dif_pos h, if_pos hq]
+    · simp only [X, dite_eq_left h, ite_eq_left hq]
       exact hx q h s hs
     · have h1 : W s = 1 := hWunr q hq (B q h) (hB q h) hs
       have hm : mat W s = 1 := by simp [mat, h1]
-      simp only [X, dif_pos h, if_neg hq]
+      simp only [X, dite_eq_left h, ite_eq_right hq]
       rw [hx q h s hs, hm]
       simp
   have hXS : ∀ q, q ∉ S → X q = 0 := by
@@ -304,7 +304,7 @@ theorem integral_after_scaling : ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Field
       rw [h, Matrix.mulVec_smul, smul_sub]
   · intro hT
     have hxT : ∀ s ∈ Dec (F := ℚ) A, z s = mat W s *ᵥ xT - xT := by
-      simp only [xT, dif_pos hT]
+      simp only [xT, dite_eq_left hT]
       exact hT.choose_spec
     refine ⟨((l : ℕ) : Qbar l) ^ k • xT, fun i => ?_, fun s hs => ?_⟩
     · rw [Pi.smul_apply, smul_eq_mul]
@@ -312,7 +312,7 @@ theorem integral_after_scaling : ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Field
     · rw [hxT s hs, Matrix.mulVec_smul, smul_sub]
   · intro hG
     have hxG : ∀ s ∈ Dec (F := ℚ) A, z s 1 = mat W s 1 1 * xG - xG := by
-      simp only [xG, dif_pos hG]
+      simp only [xG, dite_eq_left hG]
       exact hG.choose_spec
     refine ⟨((l : ℕ) : Qbar l) ^ k * xG, key _ (hfE (Sum.inr ())) ((hfM (Sum.inr ())).trans hMN), fun s hs => ?_⟩
     rw [hxG s hs]

@@ -75,7 +75,7 @@ theorem hat_e_eq (P : G0g D.nd) (ψ : ∀ kv : (Σ k : Fin 2, D.nd.PlG k), AddCh
     have hJ' : ∀ kv : (Σ k : Fin 2, D.nd.PlG k), PJ D.R.k (D.R.m / 2 - 1)
         (((P kv)⁻¹ * γ kv * P kv : GL (Fin D.R.r) (ZMod (D.host.g kv.1))) :
           Matrix (Fin D.R.r) (Fin D.R.r) (ZMod (D.host.g kv.1))) := hJ
-    rw [if_pos hxK', Finset.prod_congr rfl (fun kv _ => if_pos (hJ' kv))]
+    rw [ite_eq_left hxK', Finset.prod_congr rfl (fun kv _ => ite_eq_left (hJ' kv))]
     have hc := hchi _ hxK
     rw [hx] at hc
     have hv : (X.B.μf (K2set X.B.I X.B.g X.e0 X.z0 X.bw)).toReal =
@@ -97,12 +97,12 @@ theorem hat_e_eq (P : G0g D.nd) (ψ : ∀ kv : (Σ k : Fin 2, D.nd.PlG k), AddCh
     push Not at hJ
     obtain ⟨kv, hkv⟩ := hJ
     have hxK' : ((sec hS γ : KSub X.B.I) : X.B.I.Gf) ∉ K2set X.B.I X.B.g X.e0 X.z0 X.bw := hxK
-    rw [if_neg hxK', mul_zero]
+    rw [ite_eq_right hxK', mul_zero]
     symm
     have hkv' : ¬ PJ D.R.k (D.R.m / 2 - 1)
         (((P kv)⁻¹ * γ kv * P kv : GL (Fin D.R.r) (ZMod (D.host.g kv.1))) :
           Matrix (Fin D.R.r) (Fin D.R.r) (ZMod (D.host.g kv.1))) := hkv
-    exact Finset.prod_eq_zero (Finset.mem_univ kv) (if_neg hkv')
+    exact Finset.prod_eq_zero (Finset.mem_univ kv) (ite_eq_right hkv')
 
 theorem conjP_coeff {G : Type} [Group G] (P γ : G) (a : MonoidAlgebra ℂ G) :
     (MonoidAlgebra.single P 1 * a * MonoidAlgebra.single P⁻¹ 1).coeff γ = a.coeff (P⁻¹ * γ * P) := by
@@ -183,14 +183,14 @@ theorem sum_N_single (k : Fin 2) (f : Polynomial (ZMod (D.host.g k))) :
   by_cases hf : f.Monic ∧ f.natDegree = D.R.r
   · have hc0 := Formalism.L2.SG.Pf.RowDictPf.monicOf_coeff hf.1 hf.2
     rw [Finset.sum_eq_single (fun i : Fin D.R.r => f.coeff i)]
-    · rw [if_pos hc0, hc0]
+    · rw [ite_eq_left hc0, hc0]
     · intro c _ hc
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       apply hc
       exact monicOf_inj (h.trans hc0.symm)
     · intro h; exact absurd (Finset.mem_univ _) h
-  · rw [Finset.sum_eq_zero fun c _ => if_neg fun (h : Formalism.CyclotomicNorms.monicOf c = f) => hf (h ▸ Formalism.L2.SG.Pf.RowDictPf.monicOf_monic c)]
+  · rw [Finset.sum_eq_zero fun c _ => ite_eq_right fun (h : Formalism.CyclotomicNorms.monicOf c = f) => hf (h ▸ Formalism.L2.SG.Pf.RowDictPf.monicOf_monic c)]
     unfold Nc
     rw [D.ntypes.eSer_zero k f (fun h => hf ⟨h.1, h.2.1⟩), mul_zero]
     rfl
@@ -235,8 +235,8 @@ theorem sum_cyl (k : Fin 2) (S : Finset (Tup D k)) :
           Nc ψ₀ kv.1 (Formalism.CyclotomicNorms.monicOf (a kv)) else 0 := by
       intro kv
       by_cases hk : kv.1 = k
-      · simp only [hG, hk, if_true, true_implies]
-      · simp only [hG, hk, if_false, false_implies, if_true]
+      · simp only [hG, hk, ite_true, true_implies]
+      · simp only [hG, hk, ite_false, false_implies, ite_true]
     rw [Finset.prod_congr rfl fun kv _ => hG' kv, Finset.prod_ite_zero]
     congr 1
     apply propext
@@ -256,11 +256,11 @@ theorem sum_cyl (k : Fin 2) (S : Finset (Tup D k)) :
   rw [← Fintype.prod_sum]
   refine Finset.prod_congr rfl fun kv _ => ?_
   by_cases hk : kv.1 = k
-  · rw [if_pos hk]
-    simp only [hG, hk, if_true]
+  · rw [ite_eq_left hk]
+    simp only [hG, hk, ite_true]
     exact sum_N_single ψ₀ kv.1 _
-  · rw [if_neg hk]
-    simp only [hG, hk, if_false]
+  · rw [ite_eq_right hk]
+    simp only [hG, hk, ite_false]
     exact sum_N_all ψ₀ kv.1
 
 end Cyl
@@ -286,7 +286,7 @@ theorem Zc_eq (k : Fin 2) : Zc ψ₀ k = (((cJ D (D.host.g k) : ℝ)⁻¹ : ℝ)
   classical
   unfold Zc
   show (eJ (D.host.g k) D.R.r D.R.k (D.R.m / 2 - 1) (ψ₀ k)).coeff 1 = _
-  rw [eJ_coeff, if_pos (by rw [Units.val_one]; exact jPred_one _ _), card_PJ, Units.val_one, phiJ_one',
+  rw [eJ_coeff, ite_eq_left (by rw [Units.val_one]; exact jPred_one _ _), card_PJ, Units.val_one, phiJ_one',
     AddChar.map_zero_eq_one, inv_one]
   push_cast
   ring
@@ -329,7 +329,7 @@ theorem etOne_of (hK : KppShape X) (ψ₀ : ∀ k : Fin 2, AddChar (ZMod (D.host
   have hV := V_pos X
   have hVc : (V X : ℂ) ≠ 0 := V_ne X
   obtain rfl | rfl : k = 0 ∨ k = 1 := by fin_cases k <;> simp
-  · simp only [split_prod, if_true, if_neg (show (1 : Fin 2) ≠ 0 by decide), Function.update_self,
+  · simp only [split_prod, ite_true, ite_eq_right (show (1 : Fin 2) ≠ 0 by decide), Function.update_self,
       Finset.prod_const, Finset.card_univ, D.nd.card_PlG, hZ]
     have e1 : ∑ x ∈ S, (∏ v, Nc ψ₀ 0 (x v)) * ((((cJ D (D.host.g 1) : ℝ)⁻¹ : ℝ) : ℂ)) ^ D.R.f =
         ((∑ x ∈ S, (∏ v, (Nc ψ₀ 0 (x v)).re) * ((cJ D (D.host.g 1) : ℝ)⁻¹) ^ D.R.f : ℝ) : ℂ) := by
@@ -347,7 +347,7 @@ theorem etOne_of (hK : KppShape X) (ψ₀ : ∀ k : Fin 2, AddChar (ZMod (D.host
     have h1' := hzpos 1
     field_simp
     rw [mul_div_assoc, div_self (pow_ne_zero _ (one_div_ne_zero (by exact_mod_cast (cJ_pos D 0).ne'))), mul_one]
-  · simp only [split_prod, if_true, if_neg (show (0 : Fin 2) ≠ 1 by decide), Function.update_self,
+  · simp only [split_prod, ite_true, ite_eq_right (show (0 : Fin 2) ≠ 1 by decide), Function.update_self,
       Finset.prod_const, Finset.card_univ, D.nd.card_PlG, hZ]
     have e1 : ∑ x ∈ S, ((((cJ D (D.host.g 0) : ℝ)⁻¹ : ℝ) : ℂ)) ^ D.R.f * (∏ v, Nc ψ₀ 1 (x v)) =
         ((∑ x ∈ S, ((cJ D (D.host.g 0) : ℝ)⁻¹) ^ D.R.f * (∏ v, (Nc ψ₀ 1 (x v)).re) : ℝ) : ℂ) := by

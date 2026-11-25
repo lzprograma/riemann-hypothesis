@@ -115,7 +115,7 @@ theorem algebraMap_end_eq (c : O) :
   simp [Module.algebraMap_end_apply, algebraMap_smul]
 
 theorem pt_injective {T : Subalgebra O (End K V)} (hinj : Function.Injective (algebraMap O K)) :
-    Function.Injective (pt : (T →ₐ[O] O) → T → K) := fun ψ ψ' h =>
+    Function.Injective (pt : (T →ₐ[O] O) → T → K) := fun _ _ h =>
   AlgHom.ext fun t => hinj (congrFun h t)
 
 variable [IsLocalRing O]

@@ -103,14 +103,14 @@ theorem card_roots_ΨSq_le_of_odd (hodd : p ≠ 2) :
     rw [Int.even_coe_nat]
     exact fun h => hodd ((Nat.Prime.even_iff hp.out).mp h)
   have hΨ : E.ΨSq p = E.preΨ p ^ 2 := by
-    rw [ΨSq, if_neg hpodd, mul_one]
+    rw [ΨSq, ite_eq_right hpodd, mul_one]
   have hne : E.ΨSq p ≠ 0 := ΨSq_ne_zero_of_ne_zero E (by exact_mod_cast hp.out.ne_zero)
   have hpre : E.preΨ p ≠ 0 := fun h => hne (by rw [hΨ, h]; ring)
   rw [hΨ, roots_toFinset_sq]
   refine (Multiset.toFinset_card_le _).trans ((card_roots' _).trans ?_)
   have hle := E.natDegree_preΨ_le p
   have hco := E.coeff_preΨ p
-  simp only [Int.natAbs_natCast, if_neg hpodd] at hle hco
+  simp only [Int.natAbs_natCast, ite_eq_right hpodd] at hle hco
   have hc0 : (E.preΨ p).coeff ((p ^ 2 - 1) / 2) = 0 := by
     rw [hco]; exact_mod_cast CharP.cast_eq_zero F p
   have hlt : (E.preΨ p).natDegree ≠ (p ^ 2 - 1) / 2 := by

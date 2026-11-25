@@ -28,51 +28,8 @@ public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.FaceMapCompSuccAboveCastSucc
 import GroundTheory.AutomorphicForms.AutomorphicFormSpaces
 import GroundTheory.GlobalFields.Adele.Topology
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.CategoryTheory.Countable
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Compactness.Paracompact
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermAutomorphicCriterion
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
 import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ClozelPurity.EopV
@@ -251,10 +208,8 @@ open PositivityTheory.Rg.Rs.JExpNegGlue in
 theorem locNonPosGlue_holds : LocNonPosGlue := by
   intro hSize E _ _ _ N φ hA hLoc r hr0 hrN c hc
   have : LocallyCompactSpace (GA E N) := by
-    set_option synthInstance.maxHeartbeats 400000 in
       exact inferInstance
   have : T2Space (GA E N) := by
-    set_option synthInstance.maxHeartbeats 400000 in
       exact inferInstance
   obtain ⟨haR, -, -, hct⟩ := dict_holds E N
   have hctn := (hct φ hA r hr0 hrN).2
@@ -271,10 +226,8 @@ theorem locNonPosGlue_holds : LocNonPosGlue := by
     have hdec_ctn : Dec μ (An.rho E N r + ε) a (An.ctn r φ.1) := by
       have hctc : Continuous (An.ctn r φ.1) := by
         have : SecondCountableTopology (GA E N) := by
-          set_option synthInstance.maxHeartbeats 400000 in
             exact inferInstance
         have : FirstCountableTopology (GA E N) := by
-          set_option synthInstance.maxHeartbeats 400000 in
             exact inferInstance
         obtain ⟨C, hC, hDC⟩ := GroundTheory.Automorphic.AutomorphicForm.exists_isCompact_superset_unipFundamentalDomain (K := E) (n := N) (r := r)
         have : IsFiniteMeasure ((GroundTheory.Automorphic.AutomorphicForm.unipMeasure E N r).restrict (GroundTheory.Automorphic.AutomorphicForm.unipFundamentalDomain E N r)) :=
@@ -341,8 +294,7 @@ theorem exists_finset_separating {Y : Type} (Ψ : Submodule ℂ (Y → ℂ)) [Fi
   refine ⟨Function.argmin f, fun ψ hψ h0 => ?_⟩
   by_contra hne
   obtain ⟨y, hy⟩ : ∃ y, ψ y ≠ 0 := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     exact hne (funext hall)
   set t := Function.argmin f with ht
   have hlt : K (insert y t) < K t := by
@@ -1024,15 +976,13 @@ theorem lintegral_translate [MeasurableSpace (GA E N)] [BorelSpace (GA E N)] (μ
   ring
 
 theorem centReGlue_holds : CentReGlue := by
-  set_option synthInstance.maxHeartbeats 200000 in
   intro hS hM E _ _ _ N φ z hφ hne hL hz
   letI : MeasurableSpace (GA E N) := borel _
   haveI : BorelSpace (GA E N) := ⟨rfl⟩
   obtain ⟨C, M, hC⟩ := hL Measure.haar inferInstance
   by_contra ha
   obtain ⟨x₀, hx₀⟩ : ∃ x, φ x ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hne (funext hcon)
   obtain ⟨Q, hQ, hQn⟩ := exists_compact_mem_nhds x₀
   obtain ⟨n, hn⟩ := hM E N Q hQ

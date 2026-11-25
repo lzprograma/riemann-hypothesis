@@ -95,11 +95,6 @@ private theorem under_eq {p : HeightOneSpectrum (𝓞 K)} (w : PlacesOver L p) :
   rw [HeightOneSpectrum.under_asIdeal]
   exact w.2.over.symm
 
-private theorem nonempty_over (p : HeightOneSpectrum (𝓞 K)) : Nonempty (PlacesOver L p) := by
-  haveI := p.isMaximal
-  obtain ⟨P, hPm, hP⟩ := Ideal.exists_maximal_ideal_liesOver_of_isIntegral (S := 𝓞 L) p.asIdeal
-  exact ⟨⟨⟨P, hPm.isPrime, Ideal.ne_bot_of_liesOver_of_ne_bot p.ne_bot P⟩, hP⟩⟩
-
 private theorem core (d : ℕ) (MainNotions : Set (HeightOneSpectrum (𝓞 K))) (SL : Set (HeightOneSpectrum (𝓞 L)))
     (BK : HeightOneSpectrum (𝓞 K) → Multiset ℂ) (BL : HeightOneSpectrum (𝓞 L) → Multiset ℂ)
     (e : HeightOneSpectrum (𝓞 K) → ℂ) (c₀ : ℝ) (r : ℕ) (hd : 0 < d)
@@ -133,7 +128,7 @@ private theorem core (d : ℕ) (MainNotions : Set (HeightOneSpectrum (𝓞 K))) 
     refine GlobalTheory.HenQ.Regroup.multipliable_E K MainNotions (fun p => (BK p).map (· * e p ^ j)) c₀ r ?_ s hs
     intro p hp
     obtain ⟨h1, h2, h3⟩ := h _ hp
-    obtain ⟨w⟩ := nonempty_over (L := L) p
+    obtain ⟨w⟩ := GroundTheory.Global.nonempty_placesOver L p
     have he : ‖e p‖ = 1 := (h3 w).1.norm'_eq_one (hf p hp w).ne'
     refine ⟨by rw [Multiset.card_map]; exact h1, fun b hb => ?_⟩
     obtain ⟨a, ha, rfl⟩ := Multiset.mem_map.mp hb
@@ -156,7 +151,7 @@ private theorem core (d : ℕ) (MainNotions : Set (HeightOneSpectrum (𝓞 K))) 
   rw [← Multipliable.tprod_finsetProd hK]
   refine (h2.sigma ?_).tprod_eq
   rintro ⟨p, hp⟩
-  obtain ⟨w₀⟩ := nonempty_over (L := L) p
+  obtain ⟨w₀⟩ := GroundTheory.Global.nonempty_placesOver L p
   obtain ⟨-, -, h3⟩ := h p hp
   have hcard : 0 < Fintype.card (PlacesOver L p) := Fintype.card_pos_iff.mpr ⟨w₀⟩
   have hff : ∀ w : PlacesOver L p, fdeg w = fdeg w₀ := fun w =>

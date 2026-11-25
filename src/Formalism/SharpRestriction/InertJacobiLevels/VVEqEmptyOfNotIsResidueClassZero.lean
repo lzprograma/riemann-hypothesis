@@ -1,46 +1,7 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Formalism.LocalRingCardinality.DataForced
 public import Formalism.SharpRestriction.InertJacobiLevels.ExtraVal
@@ -98,12 +59,6 @@ theorem resChar_conj (w : D.what₂.places.Pl) :
   exact_mod_cast D.what₂.places.ramIdx_pos w
 
 end Places
-
-section Base
-
-variable {N : ℕ} [NeZero N]
-
-end Base
 
 theorem scale_b'_nonneg (sc : Scale) : 0 ≤ sc.b' := by
   have hx : 0 < sc.x := by linarith [sc.one_lt_alt]
@@ -212,10 +167,6 @@ alias ord_nsmul_A := _root_.Formalism.MainNotions.Inhab.ord_nsmul_eq_zero
 end BaseA
 
 
-open Classical in
-def offC (D : D7) (sc : Scale) (_j : ℕ) (z : Bool × G.HH D) : ℝ :=
-  if G.IsTopPl D z then sc.b' / sc.x else if G.IsThickPl D z then sc.b else sc.w'' D.R.n
-
 section InstW
 
 variable (D : D7)
@@ -267,33 +218,6 @@ end InstW
 section Comparison₂
 
 variable {D : D7} (L0 : SizeData₂ D) (X0 : G.Inst D L0) (K : G.Consts)
-
-theorem one_le_fill (hw : 1 ≤ L0.sc.w'' D.R.n) (j : ℕ) (z : Bool × G.HH D) :
-    1 ≤ G.fill X0 (G.bL L0) j z := by
-  have hs := scale_w''_le L0.sc D.R.n (ranks_one_le_n D.R)
-  have hb' := scale_b'_nonneg L0.sc
-  unfold G.fill
-  by_cases htop : G.IsTopPl D z
-  · have ho := (X0.off_top j z htop).1
-    have hc : z.1 = false ∧ z.2 ∈ D.host.TT := htop
-    rw [if_pos hc]
-    have hbl : (0 : ℝ) ≤ (G.bL L0 z.2 : ℝ) := by
-      unfold G.bL
-      rw [dite_eq_left hc.2]
-      exact hb'.trans (L0.bT_ge _)
-    linarith [hs.1]
-  · have hc : ¬ (z.1 = false ∧ z.2 ∈ D.host.TT) := htop
-    rw [if_neg hc, zero_add]
-    by_cases hthick : G.IsThickPl D z
-    · linarith [(X0.off_thick j z hthick).1, hs.2]
-    · linarith [(X0.off_thin j z ⟨htop, hthick⟩).1]
-
-theorem TTP_subset (a b : G.HH D → ℤ) (p : ℕ) : ∀ t ∈ G.TTP X0 K a b p, t ∈ D.host.TT := by
-  intro t ht
-  unfold G.TTP at ht
-  split at ht
-  · exact ht
-  · exact (Finset.mem_filter.1 ht).1
 
 
 

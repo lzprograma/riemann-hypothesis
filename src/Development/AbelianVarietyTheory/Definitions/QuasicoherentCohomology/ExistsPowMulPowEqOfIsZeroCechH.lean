@@ -3,47 +3,7 @@ module
 public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.HdimEqZeroOfSubsingleton
 public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.IsIsoCechComplexMapPresheafCubeRes
 public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CubeComplexExactAtOfIsLocalizedModuleRes
-import Mathlib.Algebra.Module.LocalizedModule.Away
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -126,20 +86,6 @@ theorem cechH_def (n : ℕ) : cechH R F V U n = (cech R F V U).homology n := rfl
 theorem cech_X (p : ℕ) : (cech R F V U).X p = ModuleCat.of R
     (∀ s : {s : Finset ι // s.card = p + 1}, sectionsOn F (V ⊓ ⨅ i ∈ s.1, U i)) := rfl
 
-theorem cech_d (p : ℕ) :
-    (cech R F V U).d p (p + 1) = ModuleCat.ofHom (Cube.d (cechCube R F V U) (p + 1)) :=
-  cechComplex_d _ p
-
-theorem cech_d_apply (p : ℕ)
-    (x : ∀ s : {s : Finset ι // s.card = p + 1}, sectionsOn F (cechOpen V U s.1))
-    (t : {s : Finset ι // s.card = p + 1 + 1}) :
-    (show ∀ s : {s : Finset ι // s.card = p + 1 + 1}, sectionsOn F (cechOpen V U s.1) from
-      ((cech R F V U).d p (p + 1)).hom x) t = ∑ i : t.1, cubeSign t.1 i.1 •
-        sectionsOn.res R F (cechOpen_anti V U (Finset.erase_subset i.1 t.1))
-          (x (Cube.eraseIdx t i)) := by
-  rw [cech_d]
-  exact Cube.d_apply (cechCube R F V U) (p + 1) x t
-
 
 variable {F} in
 def cechMap (φ : F ⟶ G) : cech R F V U ⟶ cech R G V U := cechComplexMap (cechCubeMap R V U φ)
@@ -157,20 +103,10 @@ def cechModulesFunctor : X.Modules ⥤ CochainComplex (ModuleCat.{u} R) ℕ wher
 instance cechModulesFunctor_additive : (cechModulesFunctor R V U).Additive where
   map_add := rfl
 
-def cechHFunctor (n : ℕ) : X.Modules ⥤ ModuleCat.{u} R where
-  obj F := cechH R F V U n
-  map φ := cechHMap R V U φ n
-  map_id F := (cechModulesFunctor R V U ⋙ HomologicalComplex.homologyFunctor _ _ n).map_id F
-  map_comp := (cechModulesFunctor R V U ⋙ HomologicalComplex.homologyFunctor _ _ n).map_comp
 
 
 
 
-
-
-variable {F} in
-def cechHMapIso (e : F ≅ G) (n : ℕ) : cechH R F V U n ≅ cechH R G V U n :=
-  (cechHFunctor R V U n).mapIso e
 
 
 theorem cechHMap_smulHom_apply (r : R) (n : ℕ) (x : cechH R F V U n) :
@@ -246,30 +182,7 @@ def cechAbCubeToCube :
 
 variable (S : Type t) [CommRing S] [Algebra S Γ(X, ⊤)] [Algebra R S] [IsScalarTower R S Γ(X, ⊤)]
 
-def cechCubeScalars : Cube.SemiHom (algebraMap R S) (cechCube R F V U) (cechCube S F V U) where
-  app s :=
-    { toFun := fun x => x
-      map_add' := fun _ _ => rfl
-      map_smul' := fun r (x : sectionsOn F (cechOpen V U s)) => (algebraMap_smul S r x).symm }
-  app_res _ _ := rfl
-
-def cechCubeRestrictScalarsIso :
-    cechCube R F V U ≅ cechCube S F V U ⋙ ModuleCat.restrictScalars (algebraMap R S) :=
-  Cube.isoMk (fun s =>
-    { toFun := fun x => x
-      invFun := fun x => x
-      left_inv := fun _ => rfl
-      right_inv := fun _ => rfl
-      map_add' := fun _ _ => rfl
-      map_smul' := fun r (x : sectionsOn F (cechOpen V U s)) => (algebraMap_smul S r x).symm })
-    fun _ _ => rfl
-
 variable [LinearOrder ι]
-
-def cechHScalarsEquiv (n : ℕ) : cechH R F V U n ≃+ cechH S F V U n :=
-  AddEquiv.ofBijective ((cechCubeScalars R F V U S).homology n).toAddMonoidHom
-    ((cechCubeScalars R F V U S).homology_bijective (fun _ _ => Function.bijective_id) n)
-
 
 def cechAbHEquiv (n : ℕ) : cechAbH F.presheaf V U n ≃+ cechH R F V U n :=
   AddEquiv.ofBijective ((cechAbCubeToCube R F V U).homology n).toAddMonoidHom
@@ -364,36 +277,6 @@ section Two
 variable (R : Type v) [CommRing R] [Algebra R Γ(X, ⊤)] (F : X.Modules) (V : X.Opens)
   (U : Fin 2 → X.Opens)
 
-def cechTwoXZero :
-    (cech R F V U).X 0 ≃ₗ[R] sectionsOn F (V ⊓ U 0) × sectionsOn F (V ⊓ U 1) :=
-  Cube.termOneFinTwo (cechCube R F V U) ≪≫ₗ
-    (sectionsOn.congrOpens R F (cechOpen_singleton V U 0)).prodCongr
-      (sectionsOn.congrOpens R F (cechOpen_singleton V U 1))
-
-def cechTwoXOne : (cech R F V U).X 1 ≃ₗ[R] sectionsOn F (V ⊓ (U 0 ⊓ U 1)) :=
-  Cube.termTwoFinTwo (cechCube R F V U) ≪≫ₗ sectionsOn.congrOpens R F (cechOpen_pair V U 0 1)
-
-theorem cechTwo_d (x : (cech R F V U).X 0) :
-    cechTwoXOne R F V U (((cech R F V U).d 0 1).hom x) =
-      sectionsOn.res R F (inf_le_inf_left V inf_le_right) (cechTwoXZero R F V U x).2 -
-        sectionsOn.res R F (inf_le_inf_left V inf_le_left) (cechTwoXZero R F V U x).1 := by
-  rw [cech_d R F V U 0]
-  refine (congrArg (sectionsOn.congrOpens R F (cechOpen_pair V U 0 1))
-    (Cube.d_one_finTwo (cechCube R F V U) x)).trans ((map_sub _ _ _).trans ?_)
-  exact congrArg₂ (· - ·)
-    ((sectionsOn.res_res R F _ _ _).trans
-      (sectionsOn.res_res R F (cechOpen_singleton V U 1).ge _ _).symm)
-    ((sectionsOn.res_res R F _ _ _).trans
-      (sectionsOn.res_res R F (cechOpen_singleton V U 0).ge _ _).symm)
-
-theorem isZero_cechH_one_iff_surjective :
-    IsZero (cechH R F V U 1) ↔ Function.Surjective ((cech R F V U).d 0 1).hom := by
-  haveI := Cube.subsingleton_term (cechCube R F V U) (p := 0 + 2 + 1) (by simp)
-  rw [cech_d R F V U 0]
-  refine (HomologicalComplex.exactAt_iff_isZero_homology _ _).symm.trans
-    ((cechComplex_exactAt_succ_iff (cechCube R F V U) 0).trans (forall_congr' fun x => ?_))
-  exact ⟨fun h => h.1 (Subsingleton.elim _ _), fun h => ⟨fun _ => h, fun _ => Subsingleton.elim _ _⟩⟩
-
 end Two
 
 section Affine
@@ -407,8 +290,6 @@ def tildeToSections (W : (Spec A).Opens) : M →ₗ[A] sectionsOn (tilde M) W :=
 theorem res_tildeToSections {W W' : (Spec A).Opens} (h : W' ≤ W) (m : M) :
     sectionsOn.res A (tilde M) h (tildeToSections M W m) = tildeToSections M W' m := rfl
 
-def basicOpenFamily (f : ι → A) : ι → (Spec A).Opens := fun i => PrimeSpectrum.basicOpen (f i)
-
 theorem isLocalizedModule_tildeToSections (f : A) {W : (Spec A).Opens}
     (h : W = PrimeSpectrum.basicOpen f) : IsLocalizedModule.Away f (tildeToSections M W) := by
   have h₀ : IsLocalizedModule.Away f (tilde.toOpen M W).hom := by
@@ -416,40 +297,6 @@ theorem isLocalizedModule_tildeToSections (f : A) {W : (Spec A).Opens}
     infer_instance
   exact IsLocalizedModule.of_linearEquiv (.powers f)
     (tilde.toOpen M W).hom (sectionsOn.specEquiv (tilde M) W).symm
-
-theorem cechOpen_basicOpenFamily (f : ι → A) (s : Finset ι) :
-    cechOpen ⊤ (basicOpenFamily f) s = PrimeSpectrum.basicOpen (∏ i ∈ s, f i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty =>
-    rw [cechOpen_empty, Finset.prod_empty]
-    exact PrimeSpectrum.basicOpen_one.symm
-  | insert a s ha ih =>
-    rw [cechOpen_insert, ih, Finset.prod_insert ha]
-    exact (PrimeSpectrum.basicOpen_mul _ _).symm
-
-theorem iSup_basicOpenFamily_eq_top_iff (f : ι → A) :
-    ⨆ i, basicOpenFamily f i = ⊤ ↔ Ideal.span (Set.range f) = ⊤ :=
-  PrimeSpectrum.iSup_basicOpen_eq_top_iff
-
-theorem cechCube_tilde_exactAt [LinearOrder ι] [Finite ι] {f : ι → A}
-    (hf : Ideal.span (Set.range f) = ⊤) (p : ℕ) :
-    (cubeComplex (cechCube A (tilde M) ⊤ (basicOpenFamily f))).ExactAt p :=
-  cubeComplex_exactAt_of_isLocalizedModule _ f
-    (fun s => tildeToSections M (cechOpen ⊤ (basicOpenFamily f) s))
-    (fun s => isLocalizedModule_tildeToSections M _ (cechOpen_basicOpenFamily f s))
-    (fun h m => res_tildeToSections M (cechOpen_anti _ _ h) m) hf p
-
-theorem isZero_cechH_tilde_succ [LinearOrder ι] [Finite ι] {f : ι → A}
-    (hf : Ideal.span (Set.range f) = ⊤) (p : ℕ) :
-    IsZero (cechH A (tilde M) ⊤ (basicOpenFamily f) (p + 1)) :=
-  (HomologicalComplex.exactAt_iff_isZero_homology _ _).1
-    ((cechComplex_exactAt_succ_iff_cube _ p).2 (cechCube_tilde_exactAt M hf (p + 2)))
-
-def cechHZeroTildeEquiv [LinearOrder ι] {f : ι → A} (hf : Ideal.span (Set.range f) = ⊤) :
-    cechH A (tilde M) ⊤ (basicOpenFamily f) 0 ≃ₗ[A] M :=
-  cechHZeroEquiv A (tilde M) ((iSup_basicOpenFamily_eq_top_iff f).2 hf).ge ≪≫ₗ
-    sectionsOn.specEquiv (tilde M) ⊤ ≪≫ₗ (tilde.isoTop M).toLinearEquiv.symm
 
 def awayTransition {a b : A} (h : a ∣ b) :
     LocalizedModule (.powers a) M →ₗ[A] LocalizedModule (.powers b) M :=
@@ -473,104 +320,7 @@ theorem sectionsAwayEquiv_tildeToSections (f : A) {W : (Spec A).Opens}
   haveI := isLocalizedModule_tildeToSections M f h
   IsLocalizedModule.linearEquiv_apply (.powers f) _ _ m
 
-theorem sectionsAwayEquiv_res {a b : A} (hab : a ∣ b) {W W' : (Spec A).Opens}
-    (h : W = PrimeSpectrum.basicOpen a) (h' : W' = PrimeSpectrum.basicOpen b) (hW : W' ≤ W)
-    (x : sectionsOn (tilde M) W) :
-    sectionsAwayEquiv M b h' (sectionsOn.res A (tilde M) hW x) =
-      awayTransition M hab (sectionsAwayEquiv M a h x) := by
-  haveI := isLocalizedModule_tildeToSections M a h
-  have := IsLocalizedModule.ext (.powers a) (tildeToSections M W)
-    (isUnit_powers_of_dvd hab (LocalizedModule.mkLinearMap _ M))
-    (j := (sectionsAwayEquiv M b h').toLinearMap ∘ₗ sectionsOn.res A (tilde M) hW)
-    (k := awayTransition M hab ∘ₗ (sectionsAwayEquiv M a h).toLinearMap) (by ext m; simp)
-  exact congr($this x)
-
 variable (f g : A)
-
-abbrev twoCharts : Fin 2 → (Spec A).Opens := basicOpenFamily ![f, g]
-
-theorem twoCharts_inf : ⊤ ⊓ (twoCharts f g 0 ⊓ twoCharts f g 1) = PrimeSpectrum.basicOpen (f * g) :=
-  (top_inf_eq _).trans (PrimeSpectrum.basicOpen_mul f g).symm
-
-def twoChartsXZero : (cech A (tilde M) ⊤ (twoCharts f g)).X 0 ≃ₗ[A]
-    LocalizedModule (.powers f) M × LocalizedModule (.powers g) M :=
-  cechTwoXZero A (tilde M) ⊤ (twoCharts f g) ≪≫ₗ
-    (sectionsAwayEquiv M f (top_inf_eq _)).prodCongr (sectionsAwayEquiv M g (top_inf_eq _))
-
-def twoChartsXOne :
-    (cech A (tilde M) ⊤ (twoCharts f g)).X 1 ≃ₗ[A] LocalizedModule (.powers (f * g)) M :=
-  cechTwoXOne A (tilde M) ⊤ (twoCharts f g) ≪≫ₗ sectionsAwayEquiv M (f * g) (twoCharts_inf f g)
-
-theorem twoCharts_d (x : (cech A (tilde M) ⊤ (twoCharts f g)).X 0) :
-    twoChartsXOne M f g (((cech A (tilde M) ⊤ (twoCharts f g)).d 0 1).hom x) =
-      awayTransition M (dvd_mul_left g f) (twoChartsXZero M f g x).2 -
-        awayTransition M (dvd_mul_right f g) (twoChartsXZero M f g x).1 :=
-  (congrArg (sectionsAwayEquiv M (f * g) (twoCharts_inf f g))
-    (cechTwo_d A (tilde M) ⊤ (twoCharts f g) x)).trans ((map_sub _ _ _).trans (congrArg₂ (· - ·)
-      (sectionsAwayEquiv_res M _ (top_inf_eq _) _ _ _)
-      (sectionsAwayEquiv_res M _ (top_inf_eq _) _ _ _)))
-
-theorem isZero_cechH_twoCharts_one_iff : IsZero (cechH A (tilde M) ⊤ (twoCharts f g) 1) ↔
-    ∀ z, ∃ a b, awayTransition M (dvd_mul_left g f) b - awayTransition M (dvd_mul_right f g) a =
-      z := by
-  rw [isZero_cechH_one_iff_surjective]
-  constructor
-  · intro h z
-    obtain ⟨x, hx⟩ := h ((twoChartsXOne M f g).symm z)
-    exact ⟨_, _, by rw [← twoCharts_d, hx, LinearEquiv.apply_symm_apply]⟩
-  · intro h z
-    obtain ⟨a, b, hab⟩ := h (twoChartsXOne M f g z)
-    refine ⟨(twoChartsXZero M f g).symm (a, b), (twoChartsXOne M f g).injective ?_⟩
-    rw [twoCharts_d, LinearEquiv.apply_symm_apply, hab]
-
-theorem span_range_pair_one_sub : Ideal.span (Set.range ![f, 1 - f]) = ⊤ :=
-  (Ideal.eq_top_iff_one _).2 (by
-    simpa using Ideal.add_mem _ (Ideal.subset_span (s := Set.range ![f, 1 - f]) ⟨0, rfl⟩)
-      (Ideal.subset_span ⟨1, rfl⟩))
-
-def cechHZeroTwoChartsEquiv : cechH A (tilde M) ⊤ (twoCharts f (1 - f)) 0 ≃ₗ[A] M :=
-  cechHZeroTildeEquiv M (span_range_pair_one_sub f)
-
-theorem isZero_cechH_twoCharts_succ (p : ℕ) :
-    IsZero (cechH A (tilde M) ⊤ (twoCharts f (1 - f)) (p + 1)) :=
-  isZero_cechH_tilde_succ M (span_range_pair_one_sub f) p
-
-def cechHZeroStructureTwoChartsEquiv :
-    cechH A (structureModule (Spec A)) ⊤ (twoCharts f (1 - f)) 0 ≃ₗ[A] A :=
-  (cechHMapIso A ⊤ (twoCharts f (1 - f)) tildeSelf 0).toLinearEquiv.symm ≪≫ₗ
-    cechHZeroTwoChartsEquiv (ModuleCat.of A A) f
-
-theorem isZero_cechH_structure_twoCharts_succ (p : ℕ) :
-    IsZero (cechH A (structureModule (Spec A)) ⊤ (twoCharts f (1 - f)) (p + 1)) :=
-  (isZero_cechH_twoCharts_succ (ModuleCat.of A A) f p).of_iso
-    (cechHMapIso A ⊤ (twoCharts f (1 - f)) tildeSelf (p + 1)).symm
-
-theorem exists_pow_mul_pow_eq_of_isZero_cechH
-    (h : IsZero (cechH A (structureModule (Spec A)) ⊤ (twoCharts f g) 1)) :
-    ∃ (n k : ℕ) (a b : A), f ^ n * g ^ k = f ^ (n + 1) * b + g ^ (k + 1) * a := by
-  obtain ⟨a, b, hab⟩ := (isZero_cechH_twoCharts_one_iff (ModuleCat.of A A) f g).1
-    (h.of_iso (cechHMapIso A ⊤ (twoCharts f g) tildeSelf 1))
-    (LocalizedModule.mk (1 : A) ⟨f * g, 1, pow_one _⟩)
-  obtain ⟨n, a', ha⟩ := IsLocalizedModule.Away.surj (LocalizedModule.mkLinearMap _ _) f a
-  obtain ⟨k, b', hb⟩ := IsLocalizedModule.Away.surj (LocalizedModule.mkLinearMap _ _) g b
-  let l : A →ₗ[A] LocalizedModule (.powers (f * g)) A := LocalizedModule.mkLinearMap _ _
-  have h₁ : f ^ n • awayTransition (ModuleCat.of A A) (dvd_mul_right f g) a = l a' := by
-    rw [← map_smul, ha]; exact awayTransition_mk_one (ModuleCat.of A A) _ a'
-  have h₂ : g ^ k • awayTransition (ModuleCat.of A A) (dvd_mul_left g f) b = l b' := by
-    rw [← map_smul, hb]; exact awayTransition_mk_one (ModuleCat.of A A) _ b'
-  have h₃ : (f * g) • LocalizedModule.mk (1 : A) (⟨f * g, 1, pow_one _⟩ : Submonoid.powers (f * g)) =
-      l 1 := by
-    rw [LocalizedModule.smul'_mk]
-    exact LocalizedModule.mk_cancel (⟨f * g, 1, pow_one _⟩ : Submonoid.powers (f * g)) (1 : A)
-  have h₄ : l ((f ^ n * g ^ k) • (1 : A)) =
-      l ((f ^ n * (f * g)) • b' - (g ^ k * (f * g)) • a') := by
-    rw [map_sub, map_smul, map_smul, map_smul, ← h₁, ← h₂, ← h₃, ← hab]
-    simp only [smul_sub, smul_smul]
-    congr 2 <;> ring
-  obtain ⟨m, hm⟩ := IsLocalizedModule.Away.exists_of_eq (f * g) h₄
-  refine ⟨n + m, k + m, -(f ^ (m + 1) * a'), g ^ (m + 1) * b', ?_⟩
-  simp only [smul_eq_mul, mul_pow] at hm
-  linear_combination hm
 
 end Affine
 

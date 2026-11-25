@@ -6,45 +6,6 @@ public import Mathlib.Analysis.Complex.Exponential
 public import Mathlib.Analysis.Normed.Group.AddTorsor
 public import Mathlib.Analysis.Normed.Operator.NormedSpace
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -210,7 +171,7 @@ def Cross : Prop := ForRep fun {G} _ _ {W} _ _ K ρ => ∀ (Γ Q P P' : Subgroup
   ∀ l ∈ tube Ω, l.1.re < -R → Conv Γ P' (fun g => β g - l.1.re * η' g + l.2.re * ξ g) → ∀ g (w : L),
     outer Γ (Γ ⊓ Q) ξ H l g w = eis Γ K P' c ρ (fun x => β x - l.1 * η' x + l.2 * ξ x) g (Op l.1 w)
 
-def Gallery : Prop := ForRep fun {G} _ _ {W} _ _ K ρ => FirstCountableTopology G →
+def Gallery : Prop := ForRep fun {G} _ _ {_} _ _ K ρ => FirstCountableTopology G →
   ∀ (Γ S A B Q₁ Q₂ : Subgroup G) (c : G → ℂ) (h a b : G → ℝ) (N : ℝ), A ≤ S → B ≤ S → A ≤ Q₁ → B ≤ Q₂ →
   IsPar Γ K S c → IsPar Γ K A c → IsPar Γ K B c → IsHt Γ K S h → IsHt Γ K Q₁ a → IsHt Γ K Q₂ (fun g => h g + b g) →
   (∃ R : ℝ, (∀ y : ℝ, R < y → Conv Γ S fun g => y * h g) ∧
@@ -246,7 +207,7 @@ def PullHt {G' : Type} [Group G'] (K Q : Subgroup G) (π : Q →* G') (η : G �
 def AllRep (K : Subgroup G) (Q : ∀ {W : Type} [NormedAddCommGroup W] [NormedSpace ℂ W], (K →* (W →L[ℂ] W)) → Prop) : Prop :=
   ∀ (W : Type) [NormedAddCommGroup W] [NormedSpace ℂ W] [FiniteDimensional ℂ W] (ρ : K →* (W →L[ℂ] W)), Continuous ρ → Q ρ
 
-def Transfer : Prop := ForRep fun {G} _ _ {W} _ _ K ρ => ∀ (G' : Type) [Group G'] [TopologicalSpace G']
+def Transfer : Prop := ForRep fun {G} _ _ {_} _ _ K ρ => ∀ (G' : Type) [Group G'] [TopologicalSpace G']
   [IsTopologicalGroup G'] [T2Space G'] [LocallyCompactSpace G'] (Γ Q S P₁ P₂ : Subgroup G) (Γ' K' S' P₁' P₂' : Subgroup G')
   (π : Q →* G') (ι : G' →* Q) (c₀ c : G → ℂ) (c' : G' → ℂ) (η₁ η₂ β ξ : G → ℝ) (η₁' η₂' β' ξ' : G' → ℝ) (N : ℝ),
   IsCompact (K' : Set G') → IsLevi Γ K Q Γ' K' π ι c₀ → IsPull Q S S' π c₀ c c' → IsPull Q P₁ P₁' π c₀ c c' →

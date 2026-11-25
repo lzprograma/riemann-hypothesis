@@ -479,7 +479,6 @@ section -- clump:auto
 
 open scoped Classical ENNReal Pointwise
 open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.LatticeGluingRadicals GlobalTheory.TypeAsm
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.TypeAsm.StabRat
 open Formalism.HermitianLatticeCounting.S6
@@ -746,7 +745,6 @@ section -- clump:auto
 
 open scoped Classical ENNReal Pointwise
 open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.LatticeGluingRadicals GlobalTheory.TypeAsm
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 noncomputable section
 namespace GlobalTheory.CovFund
 
@@ -881,7 +879,6 @@ section -- clump:auto
 
 open scoped Classical ENNReal Pointwise
 open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.LatticeGluingRadicals GlobalTheory.TypeAsm
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -917,8 +914,6 @@ open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotio
   Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.LatticeGluingRadicals
 
 namespace GlobalTheory.TypeAsm
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem covTC_holds : CovTC := by
   intro D large₂ X Y u C hStd t N hAd μ K hμ hK
@@ -1122,7 +1117,6 @@ open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotio
   Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.KappaEndpoints Formalism.L2.SG.RowsConc
 
 namespace GlobalTheory.TypeAsm.CompatibleChartOperations
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 open GlobalTheory.Amp in
@@ -1257,7 +1251,6 @@ end GlobalTheory.TypeAsm.CompatibleChartOperations
 
 namespace GlobalTheory.TypeAsm
 open GlobalTheory.TypeAsm.CompatibleChartOperations
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem prodC_holds : ProdC := by
   intro Cs hCs
@@ -1358,7 +1351,7 @@ theorem prodC_holds : ProdC := by
         unfold GlobalTheory.Amp.sgV
         refine (Finset.le_fold_max _).2 (Or.inr ⟨⟨l, hlr⟩, Finset.mem_univ _, le_of_eq ?_⟩)
         rw [← hDm, hgram τ ⟨l, hlr⟩]
-        simp only [labT, if_pos hlj]
+        simp only [labT, ite_eq_left hlj]
   have hA : 0 ≤ (16 * Real.pi * Real.exp 1 / D.R.k) ^ (jT t * (D.R.k - 1 - jT t) * D.R.f) * (P ^ (D.R.k - 1 - jT t))⁻¹ *
       (8 * D.R.rS * H1C large₂ CH) ^ (80 * D.R.rS ^ 4 * D.R.f) := by
     have := hP.le
@@ -1380,7 +1373,6 @@ section -- clump:auto
 noncomputable section
 open MeasureTheory Formalism.BasicNotions Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full
 namespace GlobalTheory.TypeAsm
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem fundC_holds : FundC := by
   intro D X Y u t
@@ -1410,8 +1402,6 @@ open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotio
   Formalism.L2.SG.LocWSOf Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.KappaEndpoints GlobalTheory.TypeAsm
 
 namespace GlobalTheory.TypeAsm.AmpTerms
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem prod_sqrt {ι : Type} [Fintype ι] (f : ι → ℝ) (hf : ∀ i, 0 ≤ f i) :
     ∏ i, Real.sqrt (f i) = Real.sqrt (∏ i, f i) := by

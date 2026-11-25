@@ -66,7 +66,7 @@ theorem ker_linSubst (ℓ : σ → Fin n → Φ) (ν : Fin n → σ → Φ)
       · simp only [sub_mul, Finset.sum_sub_distrib, Finset.sum_mul, mul_assoc]
         rw [Finset.sum_comm]
         simp only [← Finset.mul_sum, hν, ite_mul, one_mul, zero_mul, mul_ite, mul_one, mul_zero,
-          Finset.sum_ite_eq', Finset.mem_univ, if_true]
+          Finset.sum_ite_eq', Finset.mem_univ, ite_true]
         simp
       · simp [sub_mul, Finset.sum_sub_distrib, apply_ite C, ite_mul]
     have h2 := congrArg (fun φ => φ f) hρ
@@ -82,23 +82,5 @@ theorem ker_linSubst (ℓ : σ → Fin n → Φ) (ν : Fin n → σ → Φ)
     simp [hμ]
 
 end LinSubst
-
-section Main
-
-variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
-
-
-
-
-end Main
-
-section Fibre
-
-variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
-
-
-
-
-end Fibre
 
 end GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Inter

@@ -21,10 +21,6 @@ def PiecesAdditive.Statement : Prop :=
     ptsIntegral P (pot L) (fun z => ∑ i, c i * (S i).indicator (fun _ => (1 : ℝ)) z) =
       ∑ i, c i * ptsIntegral P (pot L) ((S i).indicator fun _ => (1 : ℝ))
 
-section Inhabitants
-
-end Inhabitants
-
 end
 
 end GroundTheory.Heights₂.Heights.HilbertSamuel

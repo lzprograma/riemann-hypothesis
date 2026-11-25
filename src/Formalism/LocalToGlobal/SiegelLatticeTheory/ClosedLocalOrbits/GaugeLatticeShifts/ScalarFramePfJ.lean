@@ -16,8 +16,6 @@ namespace Formalism.L2.SG.Pf.ScalarFramePf
 open NumberField IsDedekindDomain Module Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc
 open PI.ScalarPairDr.W (mem_orth hT_swap orth_orth fvec_castSucc fvec_last mem_orth_Xplus hT_smul_left)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Scal
 
 variable {D : D7} (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E}
@@ -84,10 +82,10 @@ theorem scal_dir (F : LFlag (D.sp.Y 0) D.R.rS T) (F₁ F₂ : LFlag (D.sp.Y 0) D
     rw [Xplus, mem_orth_Xplus]
     refine ⟨fun a => ?_, ?_⟩
     · have h1 := p2 a.castSucc
-      rw [if_neg (Fin.castSucc_ne_last a), hfc] at h1
+      rw [ite_eq_right (Fin.castSucc_ne_last a), hfc] at h1
       rw [hu2, map_add (f := _), map_smul, h1, F.fl.z_orth a, smul_zero, add_zero]
     · have h1 := p2 (Fin.last _)
-      rw [if_pos rfl, hfl] at h1
+      rw [ite_eq_left rfl, hfl] at h1
       rw [hu2, map_add (f := _), map_smul, h1, hzz, smul_eq_mul]
       field_simp
       ring
@@ -114,10 +112,10 @@ theorem scal_dir (F : LFlag (D.sp.Y 0) D.R.rS T) (F₁ F₂ : LFlag (D.sp.Y 0) D
     rw [map_sub, map_smul, map_smul, map_sub, p1, p2, smul_eq_mul, smul_eq_mul]
     induction a using Fin.lastCases with
     | last =>
-      rw [if_pos rfl, if_pos rfl, hfl, hT_z_X F.fl hxX]
+      rw [ite_eq_left rfl, ite_eq_left rfl, hfl, hT_z_X F.fl hxX]
       ring
     | cast a =>
-      rw [if_neg (Fin.castSucc_ne_last a), if_neg (Fin.castSucc_ne_last a), hfc,
+      rw [ite_eq_right (Fin.castSucc_ne_last a), ite_eq_right (Fin.castSucc_ne_last a), hfc,
         hT_X_X F.fl (Submodule.subset_span ⟨a, rfl⟩) hxX]
       ring
   refine ⟨⟨x, hx, (sub_eq_zero.1 hq0).symm⟩, ?_⟩

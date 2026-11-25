@@ -47,8 +47,6 @@ open UpperTheory.V.Z.J.D UpperTheory.V.Hi
 open UpperTheory.V.HV (Coef)
 open Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N GlobalTheory.SmGL
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 
 
 namespace UpperTheory.V.Z.J.D
@@ -229,13 +227,13 @@ theorem UpperTheory.V.Z.J.D.zEq :
           rw [alV, al_zero]
           exact Pi.mulSingle_one v
         have hl : H.lowVal ι lam v 0 = 1 := by simp [HSet.lowVal]
-        have he : e v 0 = 1 := dif_neg (by omega)
+        have he : e v 0 = 1 := dite_eq_right (by omega)
         rw [h0, hl, he, one_mul, Module.End.mem_maxGenEigenspace]
         refine ⟨1, ?_⟩
         rw [pow_one, LinearMap.sub_apply, one_smul, Module.End.one_apply,
           (uOpMul _ H.X.I ℂ _ (H.X.rpF ℂ d H.m) 1 1 (one_mem _) (one_mem _) F hF).2.2.1, sub_self]
       · have hj' : j < n := by omega
-        have he : e v (j + 1) = ev (Sum.inr (v, ⟨j, hj'⟩)) := dif_pos ⟨Nat.succ_pos j, by omega⟩
+        have he : e v (j + 1) = ev (Sum.inr (v, ⟨j, hj'⟩)) := dite_eq_left ⟨Nat.succ_pos j, by omega⟩
         rw [he]
         exact hU v ⟨j, hj'⟩
     have h2 : ∀ v ∈ Finset.univ.toList, ((List.range n).map (alV n H.Sl v)).prod ∈ H.X.I.P ∧

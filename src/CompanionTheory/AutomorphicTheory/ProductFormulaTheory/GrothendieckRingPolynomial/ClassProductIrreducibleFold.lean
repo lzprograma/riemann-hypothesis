@@ -11,8 +11,6 @@ noncomputable section
 
 open GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult
 
-
-
 namespace CompanionTheory.Groth
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
@@ -105,7 +103,6 @@ theorem class_product_irreducible_fold (hM : MulCls k) : ∀ (h N : ℕ) (x : Fi
     refine ⟨hcast.1.1 H.1, hcast.2.symm.trans (H.2.trans ?_)⟩
     rw [H2.2, List.ofFn_succ, List.foldr_cons]
     rfl
-
 
 variable (k) in
 theorem prodList (h : MulCls k) : ProdList k :=

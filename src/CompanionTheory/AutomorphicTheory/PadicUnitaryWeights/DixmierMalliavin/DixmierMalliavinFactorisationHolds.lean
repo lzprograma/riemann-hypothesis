@@ -12,6 +12,7 @@ public import Mathlib.Analysis.Calculus.ContDiff.Defs
 public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GlueSmoothOfCompactSupport
+import GroundTheory.AutomorphicForms.DixmierMalliavin
 import GroundTheory.AutomorphicForms.DixmierMalliavinHaarCoord
 import GroundTheory.AutomorphicForms.GKModules.SmoothVectors
 import Mathlib.Algebra.Order.Star.Real
@@ -37,62 +38,6 @@ open NormedSpace Set MeasureTheory Metric
 variable {𝔸 : Type*} [NormedRing 𝔸] [NormedAlgebra ℝ 𝔸] [CompleteSpace 𝔸] [FiniteDimensional ℝ 𝔸]
   {G : Subgroup 𝔸ˣ} {𝔤 : Submodule ℝ 𝔸} (h : IsExpLieAlgebra G 𝔤)
 
-theorem decomp_direction {f : G → ℂ}
-    (hf : letI := h.chartedSpace; ContMDiff 𝓘(ℝ, 𝔤) 𝓘(ℝ, ℂ) ∞ f)
-    (hfc : HasCompactSupport f) (X : 𝔤) {ε : ℝ} (hε : 0 < ε) :
-    ∃ f₁ : G → ℂ, (letI := h.chartedSpace; ContMDiff 𝓘(ℝ, 𝔤) 𝓘(ℝ, ℂ) ∞ f₁) ∧
-      tsupport f₁ ⊆ tsupport f ∧
-      ∃ g k : ℝ → ℂ, ContDiff ℝ ∞ g ∧ ContDiff ℝ ∞ k ∧ tsupport g ⊆ Icc (-ε) ε ∧
-        tsupport k ⊆ Icc (-ε) ε ∧
-        ∀ x, f x = (∫ t, g t * f₁ (h.expG (t • X) * x)) + ∫ t, k t * f (h.expG (t • X) * x) := by
-  obtain ⟨M, hM, hser⟩ := h.exists_bound_dirDeriv hf hfc X
-  obtain ⟨c, g, k, hg, hk, hgs, hks, hc, hid⟩ := exists_dixmierMalliavin_line M hε
-  obtain ⟨hf₁, -⟩ := hser c hc
-  refine ⟨_, hf₁, closure_minimal (fun x hx => by_contra fun hx' => hx (by
-    simp [h.dirDeriv_eq_zero_of_notMem X _ hx'])) (isClosed_tsupport f), g, k, hg, hk, hgs, hks, fun x => ?_⟩
-  set F : ℝ → ℂ := fun t => f (h.expG (t • X) * x) with hFdef
-  have hF : ContDiff ℝ ∞ F := h.contDiff_comp_expG_smul_mul hf X x
-  have hD : ∀ p t, iteratedDeriv p F t = h.dirDeriv X p f (h.expG (t • X) * x) :=
-    fun p t => h.iteratedDeriv_comp_expG_mul X p f x t
-  have key := hid F hF (fun p t _ => by rw [hD]; exact hM p _)
-  have hF0 : F 0 = f x := by
-    simp only [hFdef, zero_smul]; rw [h.expG_zero, one_mul]
-  rw [hF0] at key
-  rw [key]
-  congr 1
-  · have hgc : HasCompactSupport g := isCompact_Icc.of_isClosed_subset (isClosed_tsupport g) hgs
-    have hcont : ∀ p, Continuous (fun t => iteratedDeriv p F t) := fun p =>
-      hF.continuous_iteratedDeriv p (by exact_mod_cast le_top)
-    let T : ℕ → ℝ → ℂ := fun p t => (c p : ℂ) * (iteratedDeriv p F t * g t)
-    have hTi : ∀ p, Integrable (T p) := fun p =>
-      (((hcont p).mul hg.continuous).integrable_of_hasCompactSupport hgc.mul_left).const_mul _
-    have hTb : ∀ p t, ‖T p t‖ ≤ |c p| * M p * ‖g t‖ := by
-      intro p t
-      simp only [T, norm_mul, Complex.norm_real, Real.norm_eq_abs]
-      rw [mul_assoc (|c p|)]
-      refine mul_le_mul_of_nonneg_left ?_ (abs_nonneg (c p))
-      have : ‖iteratedDeriv p F t‖ ≤ M p := by rw [hD]; exact hM p _
-      exact mul_le_mul_of_nonneg_right this (norm_nonneg _)
-    have hgi : Integrable (fun t => ‖g t‖) :=
-      (hg.continuous.integrable_of_hasCompactSupport hgc).norm
-    have hsum : Summable fun p => ∫ t, ‖T p t‖ := by
-      refine Summable.of_nonneg_of_le (fun p => integral_nonneg fun t => norm_nonneg _)
-        (fun p => ?_) (hc.mul_right (∫ t, ‖g t‖))
-      rw [← integral_const_mul]
-      exact integral_mono (hTi p).norm (hgi.const_mul _) (fun t => hTb p t)
-    have e1 : ∀ p, (c p : ℂ) * ∫ t, iteratedDeriv p F t * g t = ∫ t, T p t := fun p =>
-      (integral_const_mul _ _).symm
-    simp_rw [e1]
-    rw [integral_tsum_of_summable_integral_norm hTi hsum]
-    congr 1
-    funext t
-    rw [← tsum_mul_left]
-    congr 1
-    funext p
-    simp only [T, hD]
-    ring
-  · congr 1; funext t; rw [mul_comm]
-
 theorem decomp_iter {ε : ℝ} (hε : 0 < ε) : ∀ {d : ℕ} (X : Fin d → 𝔤) (f : G → ℂ),
     (letI := h.chartedSpace; ContMDiff 𝓘(ℝ, 𝔤) 𝓘(ℝ, ℂ) ∞ f) → HasCompactSupport f →
     ∃ (m : ℕ) (F : Fin m → G → ℂ) (K : Fin m → (Fin d → ℝ) → ℂ),
@@ -115,7 +60,7 @@ theorem decomp_iter {ε : ℝ} (hε : 0 < ε) : ∀ {d : ℕ} (X : Fin d → �
     intro X f hf hfc
     let := h.chartedSpace
     obtain ⟨f₁, hf₁, hf₁c, g, k, hg, hk, hgs, hks, hdec⟩ :=
-      decomp_direction h hf hfc (X 0) hε
+      h.exists_decomp_direction hf hfc (X 0) hε
     obtain ⟨m₁, F₁, K₁, hF₁, hK₁, hd₁⟩ :=
       ih (Fin.tail X) f₁ hf₁ (hfc.of_isClosed_subset (isClosed_tsupport _) hf₁c)
     obtain ⟨m₂, F₂, K₂, hF₂, hK₂, hd₂⟩ := ih (Fin.tail X) f hf hfc

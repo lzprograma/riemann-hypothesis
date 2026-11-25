@@ -76,8 +76,10 @@ theorem awayW_inv_mem (h : IsBase l A) {y : WL l A.A} (hy : y ∈ A.Acr0) :
   | mem y hy =>
     obtain ⟨k, rfl⟩ := hy
     have e := awayW_dpw (invS A h) k (A.isUnit_natCast k.factorial_ne_zero) A.xi
-    rw [map_xi_invS] at e
-    exact Set.mem_of_eq_of_mem e (ACris.dpow_mem xi0_mem k)
+    rw [map_xi_invS, ← dpow_eq_dpw] at e
+    change awayW (invS A h) (dpw k A.xi) ∈ _
+    rw [e]
+    exact ACris.dpow_mem xi0_mem k
   | algebraMap x => rw [awayW_algebraMap]; exact Subalgebra.algebraMap_mem _ _
   | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
   | mul x y _ _ hx hy => rw [map_mul]; exact mul_mem hx hy
@@ -143,8 +145,8 @@ theorem ker_cris (h : IsBase l A) (n : ℕ) :
   · intro a ha
     obtain ⟨y, hy⟩ := Ideal.Quotient.mk_surjective (AdicCompletion.evalₐ (Ideal.span {(l : Acris0 l)}) n a)
     have e : A.cris n a = A.mkAcr n (A.cris0 y) := by
-      simp only [cris, RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, ← hy,
-        Ideal.Quotient.lift_mk]
+      simp only [cris, RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe]
+      exact (congrArg (Ideal.Quotient.lift _ ((A.mkAcr n).comp A.cris0) _) hy).symm
     rw [RingHom.mem_ker, e] at ha
     have hm : A.cris0 y ∈ Ideal.span {(l : A.Acr0) ^ n} := Ideal.Quotient.eq_zero_iff_mem.1 ha
     obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.1 hm

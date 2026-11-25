@@ -49,46 +49,12 @@ import Mathlib.Tactic.NormNum.RealSqrt
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.UU
 
 noncomputable section
 namespace GlobalTheory.UU
 
 variable {S S' : Scheme.{0}} {f : S' ⟶ S}
-
-private theorem comp_mul_of_isGrpPullback_lift {G H : Over S} {G' H' : Over S'} [GrpObj G] [GrpObj H]
-    [GrpObj G'] [GrpObj H'] {φ : G'.left ⟶ G.left} {ψ : H'.left ⟶ H.left} (hφ : IsGrpPullback G' G f φ)
-    (hψ : IsGrpPullback H' H f ψ) (a : G ⟶ H) [IsMonHom a] (a' : G' ⟶ H') (h : a'.left ≫ ψ = φ ≫ a.left)
-    {T : Over S'} (x y : T ⟶ G') : (x * y) ≫ a' = (x ≫ a') * (y ≫ a') := by
-  apply Over.OverMorphism.ext
-  apply hψ.1.hom_ext
-  · let x₀ : Over.mk (T.hom ≫ f) ⟶ G := Over.homMk (x.left ≫ φ) (by
-      show (x.left ≫ φ) ≫ G.hom = T.hom ≫ f
-      rw [Category.assoc, hφ.1.w, ← Category.assoc, Over.w])
-    let y₀ : Over.mk (T.hom ≫ f) ⟶ G := Over.homMk (y.left ≫ φ) (by
-      show (y.left ≫ φ) ≫ G.hom = T.hom ≫ f
-      rw [Category.assoc, hφ.1.w, ← Category.assoc, Over.w])
-    let x₁ : Over.mk (T.hom ≫ f) ⟶ H := Over.homMk ((x ≫ a').left ≫ ψ) (by
-      show ((x ≫ a').left ≫ ψ) ≫ H.hom = T.hom ≫ f
-      rw [Category.assoc, hψ.1.w, ← Category.assoc, Over.w])
-    let y₁ : Over.mk (T.hom ≫ f) ⟶ H := Over.homMk ((y ≫ a').left ≫ ψ) (by
-      show ((y ≫ a').left ≫ ψ) ≫ H.hom = T.hom ≫ f
-      rw [Category.assoc, hψ.1.w, ← Category.assoc, Over.w])
-    have e1 := hφ.2 T x y x₀ y₀ rfl rfl
-    have e2 := hψ.2 T (x ≫ a') (y ≫ a') x₁ y₁ rfl rfl
-    have e3 : x₁ = x₀ ≫ a := by
-      apply Over.OverMorphism.ext
-      simp only [x₁, x₀, Over.comp_left, Over.homMk_left, Category.assoc, h]
-    have e4 : y₁ = y₀ ≫ a := by
-      apply Over.OverMorphism.ext
-      simp only [y₁, y₀, Over.comp_left, Over.homMk_left, Category.assoc, h]
-    calc ((x * y) ≫ a').left ≫ ψ = (x * y).left ≫ φ ≫ a.left := by
-          rw [Over.comp_left, Category.assoc, h]
-      _ = ((x₀ * y₀) ≫ a).left := by rw [← Category.assoc, ← e1, Over.comp_left]
-      _ = (x₁ * y₁).left := by rw [MonObj.mul_comp, e3, e4]
-      _ = ((x ≫ a') * (y ≫ a')).left ≫ ψ := e2
-  · rw [Over.w, Over.w]
 
 theorem isMonHom_of_over_isMonHom {G H : Over S} {G' H' : Over S'} [GrpObj G] [GrpObj H] [GrpObj G'] [GrpObj H']
     {φ : G'.left ⟶ G.left} {ψ : H'.left ⟶ H.left} (hφ : IsGrpPullback G' G f φ) (hψ : IsGrpPullback H' H f ψ)

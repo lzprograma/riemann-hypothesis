@@ -105,7 +105,7 @@ def sd (M : Matrix (Fin n) (Fin n) A) : A := ∑ i ∈ Finset.range (n - 1), ent
 theorem entN_mul_super {M N : Matrix (Fin n) (Fin n) A} (hM : IsUniUp M) (hN : IsUniUp N) {i : ℕ} (hi : i + 1 < n) :
     entN (M * N) i (i + 1) = entN M i (i + 1) + entN N i (i + 1) := by
   have h0 : i < n := by omega
-  simp only [entN, dif_pos (And.intro h0 hi)]
+  simp only [entN, dite_eq_left (And.intro h0 hi)]
   rw [Matrix.mul_apply, Fintype.sum_eq_add (⟨i, h0⟩ : Fin n) ⟨i + 1, hi⟩]
   · rw [(hM _ _).2 rfl, (hN _ _).2 rfl, one_mul, mul_one, add_comm]
   · simp [Fin.ext_iff]

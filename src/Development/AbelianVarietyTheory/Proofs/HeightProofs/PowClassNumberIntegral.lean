@@ -256,10 +256,3 @@ theorem mem_of_pow_eq_one {K : IntermediateField ℚ ℂ} {m : ℕ} (hm : 0 < m)
   exact pow_mem h i
 
 end GlobalTheory.NormOneChar
-
-namespace GlobalTheory.NormOneChar
-
-open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj Formalism.L2.Theta GlobalTheory.FinalJoin
-open scoped TensorProduct
-
-end GlobalTheory.NormOneChar

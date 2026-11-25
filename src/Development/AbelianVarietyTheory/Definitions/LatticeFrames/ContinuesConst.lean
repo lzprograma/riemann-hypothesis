@@ -44,8 +44,6 @@ noncomputable section
 open scoped NNReal
 open Set Metric Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.RegSW
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.EisCont
 
 variable {D : D7}

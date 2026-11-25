@@ -119,11 +119,11 @@ theorem locRootHaar (k r : ℕ) (hk : 1 ≤ k) (z z' : Fin (2 * r + k + 1) → �
     simp only [Formalism.FourierDecayAlt.C2.monoP, Matrix.of_apply]
     by_cases hai : a = w i
     · have hia : i = w a := by rw [hai, wPt_invol]
-      rw [if_pos hai, if_pos hia]
+      rw [ite_eq_left hai, ite_eq_left hia]
       simp only [d, star_mul', star_pow, star_neg, star_one]
       rw [← hia]
     · have hia : ¬ i = w a := fun h => hai (by rw [h, wPt_invol])
-      rw [if_neg hai, if_neg hia, mul_zero, star_zero]
+      rw [ite_eq_right hai, ite_eq_right hia, mul_zero, star_zero]
   have hH := Formalism.FourierDecayAlt.P.radial_measure_is_haar (k0 + 1) r ℂ ℂ Ds g₀⁻¹ w d hgi hd hZ'
   have hset : Formalism.FourierDecayAlt.C6.Rset g₀⁻¹ = Formalism.MainNotions.S.Rset (k0 + 1) r g₀ := by
     ext x

@@ -77,26 +77,13 @@ theorem hessC_isHermitian' (φ : (Fin D → ℂ) → ℝ) (z : Fin D → ℂ) (h
 
 theorem leviC_add_right (H : (Fin D → ℂ) →L[ℝ] (Fin D → ℂ) →L[ℝ] ℝ) (a b b' : Fin D → ℂ) :
     leviC H a (b + b') = leviC H a b + leviC H a b' := by
-  simp only [leviC, smul_add, map_add (f := _)]
-  push_cast
-  ring
+  simpa only [map_add, conj_leviC_flip] using
+    congrArg (starRingEnd ℂ) (leviC_add H.flip b b' a)
 
 theorem leviC_smul_right (H : (Fin D → ℂ) →L[ℝ] (Fin D → ℂ) →L[ℝ] ℝ) (c : ℂ) (a b : Fin D → ℂ) :
     leviC H a (c • b) = starRingEnd ℂ c * leviC H a b := by
-  have h1 : c • b = c.re • b + c.im • (Complex.I • b) := by
-    ext k
-    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, Complex.real_smul]
-    conv_lhs => rw [← Complex.re_add_im c]
-    ring
-  have h2 : Complex.I • (c • b) = c.re • (Complex.I • b) - c.im • b := by
-    ext k
-    simp only [Pi.sub_apply, Pi.smul_apply, smul_eq_mul, Complex.real_smul]
-    conv_lhs => rw [← Complex.re_add_im c]
-    linear_combination ((c.im : ℂ) * b k) * Complex.I_sq
-  unfold leviC
-  rw [h2, h1]
-  simp only [map_add (f := _), map_sub, map_smul, smul_eq_mul]
-  apply Complex.ext <;> simp <;> ring
+  simpa only [map_mul, conj_leviC_flip] using
+    congrArg (starRingEnd ℂ) (leviC_smul H.flip c b a)
 
 theorem sum_leviC_right (H : (Fin D → ℂ) →L[ℝ] (Fin D → ℂ) →L[ℝ] ℝ) (a x : Fin D → ℂ) :
     ∑ j, leviC H a (Pi.single j 1) * x j = leviC H a (star x) := by

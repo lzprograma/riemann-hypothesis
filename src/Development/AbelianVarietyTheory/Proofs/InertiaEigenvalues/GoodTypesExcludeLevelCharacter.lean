@@ -82,7 +82,7 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricLevelLi
 -- Members: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIdempotentMulMirabolicDetAverageEqZero, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DefiniteSpaceFormsFunctionalPrincipalType, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DefiniteSpaceFormsFunctionalPrincipalTypeStatement, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConvolutionSingleFactorGoodProjectorEqZero, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConvolutionSingleFactorGoodProjectorEqZeroStatement, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevelCharacterTeichmullerLabelOfGoodTypes, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevelCharacterTeichmullerLabelOfGoodTypesStatement, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MirabolicAverageEqCoeffSinglePlaceElement, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MirabolicAverageEqCoeffSinglePlaceElementStatement, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodProjectorConvMirabolicAvgEqZero, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodProjectorConvMirabolicAvgEqZeroStatement, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TraceMirabolicDetAverageEqHarishChandraRestricti, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodTypesExcludeLevelCharacter
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIdempotentMulMirabolicDetAverageEqZero =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIdempotentMulMirabolicDetAverageEqZero", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SeriesKillsAvg\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIdempotentOfIrrCharacterOrthogonalCentral\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.GroupTheory.Nilpotent\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Etale.Weakly\nimport Mathlib.RingTheory.Finiteness.ModuleFinitePresentation\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.TotallySplit\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIdempotentMulMirabolicDetAverageEqZero", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SeriesKillsAvg\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIdempotentOfIrrCharacterOrthogonalCentral\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.GroupTheory.Nilpotent\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Etale.Weakly\nimport Mathlib.RingTheory.Finiteness.ModuleFinitePresentation\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.TotallySplit\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTypesIdempotentCoefficients\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -119,11 +119,6 @@ theorem coeff_sum_single (F : G → ℂ) (x : G) :
   classical
   simp [MonoidAlgebra.coeff_sum, Finset.sum_apply', Finsupp.single_apply]
 
-theorem coeff_mul' (a b : MonoidAlgebra ℂ G) (x : G) :
-    (a * b).coeff x = ∑ q, a.coeff q * b.coeff (q⁻¹ * x) := by
-  rw [MonoidAlgebra.coeff_mul_apply_left, Finsupp.sum_fintype]
-  intro q; simp
-
 def avg (P : G → Prop) [DecidablePred P] (χ : G →* ℂ) : MonoidAlgebra ℂ G :=
   ∑ h : G, MonoidAlgebra.single h (if P h then χ h else 0)
 
@@ -135,22 +130,22 @@ theorem avg_mul_self (P : G → Prop) [DecidablePred P] (χ : G →* ℂ)
     (hm : ∀ x y, P x → P y → P (x * y)) (hi : ∀ x, P x → P x⁻¹) :
     avg P χ * avg P χ = ((Finset.univ.filter P).card : ℂ) • avg P χ := by
   ext x
-  rw [coeff_mul', MonoidAlgebra.coeff_smul_apply, avg_coeff, smul_eq_mul]
+  rw [GlobalTheory.MemN.TypesInhab.coeff_mul_sum, MonoidAlgebra.coeff_smul_apply, avg_coeff, smul_eq_mul]
   have key : ∀ q, (avg P χ).coeff q * (avg P χ).coeff (q⁻¹ * x) = if P q then (if P x then χ x else 0) else 0 := by
     intro q
     simp only [avg_coeff]
     by_cases hq : P q
     · have hiff : P (q⁻¹ * x) ↔ P x := ⟨fun h => by simpa using hm _ _ hq h, fun h => hm _ _ (hi _ hq) h⟩
       by_cases hx : P x
-      · rw [if_pos hq, if_pos (hiff.2 hx), if_pos hq, if_pos hx, ← map_mul, mul_inv_cancel_left]
-      · rw [if_pos hq, if_neg (fun h => hx (hiff.1 h)), if_pos hq, if_neg hx, mul_zero]
-    · rw [if_neg hq, if_neg hq, zero_mul]
+      · rw [ite_eq_left hq, ite_eq_left (hiff.2 hx), ite_eq_left hq, ite_eq_left hx, ← map_mul, mul_inv_cancel_left]
+      · rw [ite_eq_left hq, ite_eq_right (fun h => hx (hiff.1 h)), ite_eq_left hq, ite_eq_right hx, mul_zero]
+    · rw [ite_eq_right hq, ite_eq_right hq, zero_mul]
   simp only [key]
   rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul]
 
 theorem coeff_one_zOf_mul (ψ : G → ℂ) (a : MonoidAlgebra ℂ G) :
     (zOf ψ * a).coeff 1 = ψ 1 / (Fintype.card G : ℂ) * tr a ψ := by
-  rw [coeff_mul', tr, Finset.mul_sum]
+  rw [GlobalTheory.MemN.TypesInhab.coeff_mul_sum, tr, Finset.mul_sum]
   refine Fintype.sum_equiv (Equiv.inv G) _ _ fun q => ?_
   rw [zOf, coeff_sum_single]
   simp only [Equiv.inv_apply, mul_one]
@@ -160,7 +155,7 @@ theorem zOf_mul_avg_eq_zero (ψ : G → ℂ) (hψ : IsIrr ψ) (P : G → Prop) [
     (hm : ∀ x y, P x → P y → P (x * y)) (hi : ∀ x, P x → P x⁻¹) (htr : tr (avg P χ) ψ = 0) :
     zOf ψ * avg P χ = 0 := by
   obtain ⟨hid, hcen, -⟩ := GlobalTheory.GLq.ZOrth.zorth G ψ ψ hψ hψ
-  rw [if_pos rfl] at hid
+  rw [ite_eq_left rfl] at hid
   set m := avg P χ with hmdef
   set n : ℂ := ((Finset.univ.filter P).card : ℂ) with hn
   have hn0 : n ≠ 0 := by
@@ -194,10 +189,10 @@ theorem mirSet_mul {g : ℕ} [Fact g.Prime] {r : ℕ} (a : Fin r → ZMod g) (b 
     (hh : mirSet a b h) (hh' : mirSet a b h') : mirSet a b (h * h') := by
   cases b
   · intro x hx
-    simp only [mirSet, Bool.false_eq_true, if_false] at hh hh'
+    simp only [mirSet, Bool.false_eq_true, ite_false] at hh hh'
     rw [Units.val_mul, ← Matrix.mulVec_mulVec, hh' x hx, hh x hx]
   · intro x
-    simp only [mirSet, if_true] at hh hh'
+    simp only [mirSet, ite_true] at hh hh'
     obtain ⟨c₂, hc₂⟩ := hh' x
     obtain ⟨c₁, hc₁⟩ := hh ((h' : Mt g r).mulVec x)
     refine ⟨c₁ + c₂, ?_⟩
@@ -214,11 +209,11 @@ theorem mirSet_inv {g : ℕ} [Fact g.Prime] {r : ℕ} (a : Fin r → ZMod g) (b 
     rw [Matrix.mulVec_mulVec, ← Units.val_mul, inv_mul_cancel, Units.val_one, Matrix.one_mulVec]
   cases b
   · intro x hx
-    simp only [mirSet, Bool.false_eq_true, if_false] at hh
+    simp only [mirSet, Bool.false_eq_true, ite_false] at hh
     conv_lhs => rw [← hh x hx]
     exact hih x
   · intro x
-    simp only [mirSet, if_true] at hh
+    simp only [mirSet, ite_true] at hh
     obtain ⟨c, hc⟩ := hh (((h⁻¹ : Gn g r) : Mt g r).mulVec x)
     refine ⟨-c, ?_⟩
     rw [hhi x] at hc
@@ -253,7 +248,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DownLift
 
 namespace GlobalTheory.DefiniteType
@@ -318,7 +312,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DownLift
 
 theorem _root_.GlobalTheory.T.definiteSpace_forms_functional_principalType : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T : Type) (A : FamIn D.what₂.LL G Pl0 T D.R.m) (Ks : Type)
@@ -339,7 +332,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DownLift
 
 namespace GlobalTheory.DownLift
@@ -361,7 +353,7 @@ theorem conv_single_prod_eq_zero {ι : Type} [Fintype ι] {Γ : ι → Type} [�
     rw [hM, Finsupp.sum_fintype _ _ (by simp)] at h
     rw [← h]; simp
   · intro y hy
-    rw [if_neg, zero_mul]
+    rw [ite_eq_right, zero_mul]
     intro h
     apply hy
     refine ⟨eR y i0, ?_⟩
@@ -372,7 +364,7 @@ theorem conv_single_prod_eq_zero {ι : Type} [Fintype ι] {Γ : ι → Type} [�
     · subst hi; simp
     · rw [Pi.mulSingle_eq_of_ne hi, h i hi]
   · intro z
-    rw [if_pos, ← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ i0), mul_assoc]
+    rw [ite_eq_left, ← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ i0), mul_assoc]
     · congr 1
       · simp
       · congr 1
@@ -428,7 +420,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DownLift
 
 end -- clump:auto
@@ -444,7 +435,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DownLift
 
 noncomputable section
@@ -519,7 +509,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DownLift
 
 end -- clump:auto
@@ -535,7 +524,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DownLift
 
 noncomputable section
@@ -581,7 +569,7 @@ theorem mirSet_iff_bc {g : ℕ} [Fact g.Prime] {r : ℕ} {K' : Type} [CommRing K
     fun x => ⟨fun j => e.symm (x j), by funext j; simp⟩
   cases b with
   | true =>
-    simp only [mirSet, if_true]
+    simp only [mirSet, ite_true]
     rw [hs.forall]
     refine forall_congr' fun x => ?_
     rw [bc_ringEquiv_mulVec, e.surjective.exists]
@@ -590,7 +578,7 @@ theorem mirSet_iff_bc {g : ℕ} [Fact g.Prime] {r : ℕ} {K' : Type} [CommRing K
     refine forall_congr' fun j => ?_
     rw [← e.injective.eq_iff (a := _ - _), map_sub, map_mul, e.apply_symm_apply]
   | false =>
-    simp only [mirSet, Bool.false_eq_true, if_false]
+    simp only [mirSet, Bool.false_eq_true, ite_false]
     rw [hs.forall]
     refine forall_congr' fun x => ?_
     rw [bc_ringEquiv_mulVec]
@@ -623,12 +611,12 @@ theorem mirC_eq_coeff_mirEl : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0
   rw [mirEl_coeff]
   unfold GlobalTheory.DownLift.mirC
   by_cases hA : ∀ kv, kv ≠ kv0 → eR y kv = 1
-  · rw [if_pos hA]
+  · rw [ite_eq_left hA]
     by_cases hB : mirSet (fun j => (iso kv0).symm (a j)) b (eR y kv0)
-    · rw [if_pos hB, if_pos ⟨h1.2 hA, h2.2 hB⟩, h3]
+    · rw [ite_eq_left hB, ite_eq_left ⟨h1.2 hA, h2.2 hB⟩, h3]
       rfl
-    · rw [if_neg hB, if_neg fun H => hB (h2.1 H.2)]
-  · rw [if_neg hA, if_neg fun H => hA (h1.1 H.1)]
+    · rw [ite_eq_right hB, ite_eq_right fun H => hB (h2.1 H.2)]
+  · rw [ite_eq_right hA, ite_eq_right fun H => hA (h1.1 H.1)]
 
 end GlobalTheory.MirAvg
 
@@ -646,7 +634,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DownLift
 
 end -- clump:auto
@@ -662,7 +649,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DownLift
 
 noncomputable section
@@ -734,7 +720,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DownLift
 
 end -- clump:auto
@@ -766,7 +751,7 @@ theorem sum_gl1 (M : Mt g 1) (d : (ZMod g)ˣ) (hM : M.det = d) (F : (ZMod g)ˣ �
     rw [Units.ext_iff, IsUnit.unit_spec]
     exact eq_comm
   simp_rw [key]
-  rw [Finset.sum_ite_eq' Finset.univ hU.unit, if_pos (Finset.mem_univ _)]
+  rw [Finset.sum_ite_eq' Finset.univ hU.unit, ite_eq_left (Finset.mem_univ _)]
   congr 1
   ext
   rw [Matrix.GeneralLinearGroup.val_det_apply, IsUnit.unit_spec, hM]
@@ -803,17 +788,17 @@ theorem mulVec_of_id {N : ℕ} (M : Mt g N) (x : Fin N → ZMod g) (i : Fin N)
   rw [Finset.sum_eq_single i]
   · by_cases hx : x i = 0
     · rw [hx, mul_zero]
-    · rw [h i hx, if_pos rfl, one_mul]
+    · rw [h i hx, ite_eq_left rfl, one_mul]
   · intro j _ hji
     by_cases hx : x j = 0
     · rw [hx, mul_zero]
-    · rw [h j hx, if_neg (Ne.symm hji), zero_mul]
+    · rw [h j hx, ite_eq_right (Ne.symm hji), zero_mul]
   · intro hi; exact absurd (Finset.mem_univ i) hi
 
 theorem mirSet_last_iff {n : ℕ} (h : Gn g (n + 1)) :
     mirSet (Pi.single (Fin.last n) 1) false h ↔ ColsId (h : Mt g (n + 1)) := by
   unfold mirSet
-  simp only [Bool.false_eq_true, if_false]
+  simp only [Bool.false_eq_true, ite_false]
   constructor
   · intro H i j hj
     have := congrFun (H (Pi.single j 1) (by simp [single_dotProduct, Pi.single_apply, Ne.symm hj])) i
@@ -829,7 +814,7 @@ theorem mirSet_last_iff {n : ℕ} (h : Gn g (n + 1)) :
 theorem mirSet_zero_iff {n : ℕ} (h : Gn g (n + 1)) :
     mirSet (Pi.single 0 1) true h ↔ RowsId (h : Mt g (n + 1)) := by
   unfold mirSet
-  simp only [if_true]
+  simp only [ite_true]
   constructor
   · intro H i j hi
     obtain ⟨c, hc⟩ := H (Pi.single j 1)
@@ -852,7 +837,7 @@ theorem parTl_iff {n : ℕ} (M : Mt g (n + 1)) : (InPar n M ∧ tl n M = 1) ↔ 
     obtain ⟨j, rfl⟩ := Fin.exists_castSucc_eq.2 hj
     induction i using Fin.lastCases with
     | last =>
-      rw [if_neg (Fin.castSucc_ne_last j).symm]
+      rw [ite_eq_right (Fin.castSucc_ne_last j).symm]
       exact hP _ _ (by simp) (by simp)
     | cast i =>
       have := congrFun (congrFun hT i) j
@@ -862,7 +847,7 @@ theorem parTl_iff {n : ℕ} (M : Mt g (n + 1)) : (InPar n M ∧ tl n M = 1) ↔ 
   · intro H
     refine ⟨fun i j hj hi => ?_, ?_⟩
     · have hne : j ≠ Fin.last n := fun e => by rw [e] at hj; simp at hj
-      rw [H i j hne, if_neg]
+      rw [H i j hne, ite_eq_right]
       intro e; rw [e] at hi; omega
     · ext i j
       rw [tl_last, H _ _ (Fin.castSucc_ne_last j), Matrix.one_apply]
@@ -874,7 +859,7 @@ theorem parBr_iff {n : ℕ} (M : Mt g (n + 1)) : (InPar 1 M ∧ br 1 n M = 1) �
     obtain ⟨i, rfl⟩ := Fin.exists_succ_eq.2 hi
     induction j using Fin.cases with
     | zero =>
-      rw [if_neg (Fin.succ_ne_zero i)]
+      rw [ite_eq_right (Fin.succ_ne_zero i)]
       exact hP _ _ (by simp) (by simp)
     | succ j =>
       have := congrFun (congrFun hB i) j
@@ -884,7 +869,7 @@ theorem parBr_iff {n : ℕ} (M : Mt g (n + 1)) : (InPar 1 M ∧ br 1 n M = 1) �
   · intro H
     refine ⟨fun i j hj hi => ?_, ?_⟩
     · have hne : i ≠ 0 := fun e => by rw [e] at hi; simp at hi
-      rw [H i j hne, if_neg]
+      rw [H i j hne, ite_eq_right]
       intro e; rw [e] at hi; omega
     · ext i j
       rw [br_succ, H _ _ (Fin.succ_ne_zero i), Matrix.one_apply]
@@ -896,11 +881,11 @@ theorem det_colsId {n : ℕ} (M : Mt g (n + 1)) (H : ColsId M) : M.det = M (Fin.
     have hj : j ≠ Fin.last n := fun e => by
       rw [e] at hij; exact absurd hij (not_lt.2 (Fin.le_last i))
     simp only [id] at hij
-    rw [H i j hj, if_neg (ne_of_gt hij)]
+    rw [H i j hj, ite_eq_right (ne_of_gt hij)]
   rw [Matrix.det_of_upperTriangular hT, Fin.prod_univ_castSucc]
   rw [Finset.prod_eq_one, one_mul]
   intro i _
-  rw [H _ _ (Fin.castSucc_ne_last i), if_pos rfl]
+  rw [H _ _ (Fin.castSucc_ne_last i), ite_eq_left rfl]
 
 theorem det_rowsId {n : ℕ} (M : Mt g (n + 1)) (H : RowsId M) : M.det = M 0 0 := by
   have hT : M.BlockTriangular id := by
@@ -908,11 +893,11 @@ theorem det_rowsId {n : ℕ} (M : Mt g (n + 1)) (H : RowsId M) : M.det = M 0 0 :
     have hi : i ≠ 0 := fun e => by
       rw [e] at hij; exact absurd hij (not_lt.2 (Fin.zero_le j))
     simp only [id] at hij
-    rw [H i j hi, if_neg (ne_of_gt hij)]
+    rw [H i j hi, ite_eq_right (ne_of_gt hij)]
   rw [Matrix.det_of_upperTriangular hT, Fin.prod_univ_succ]
   rw [Finset.prod_eq_one, mul_one]
   intro i _
-  rw [H _ _ (Fin.succ_ne_zero i), if_pos rfl]
+  rw [H _ _ (Fin.succ_ne_zero i), ite_eq_left rfl]
 
 theorem det_br_last {n : ℕ} (h : Gn g (n + 1)) (H : ColsId (h : Mt g (n + 1))) :
     (br n 1 (h : Mt g (n + 1))).det = ((Matrix.GeneralLinearGroup.det h : (ZMod g)ˣ) : ZMod g) := by
@@ -939,24 +924,24 @@ theorem trace_mir (g : ℕ) [Fact g.Prime] (n : ℕ) (ψ : Gn g (n + 1) → ℂ)
     refine Finset.sum_congr rfl (fun h _ => ?_)
     by_cases H : ColsId (h : Mt g (n + 1))
     · obtain ⟨hP, hT⟩ := (parTl_iff _).2 H
-      rw [if_pos ((mirSet_last_iff h).2 H)]
+      rw [ite_eq_left ((mirSet_last_iff h).2 H)]
       simp only [Units.val_one, hP, hT, true_and, mul_ite, mul_zero]
       rw [sum_gl1 _ _ (det_br_last h H) (fun d => ((θ d : ℂˣ) : ℂ) * ψ h)]
-    · rw [if_neg (fun e => H ((mirSet_last_iff h).1 e)), zero_mul]
+    · rw [ite_eq_right (fun e => H ((mirSet_last_iff h).1 e)), zero_mul]
       refine (Finset.sum_eq_zero (fun x _ => ?_)).symm
-      rw [if_neg (fun e => H ((parTl_iff _).1 ⟨e.1, by simpa using e.2.1⟩)), mul_zero]
+      rw [ite_eq_right (fun e => H ((parTl_iff _).1 ⟨e.1, by simpa using e.2.1⟩)), mul_zero]
   · unfold tr res
     simp_rw [coeff_mirEl, one_mul, Finset.mul_sum, hc]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl (fun h _ => ?_)
     by_cases H : RowsId (h : Mt g (n + 1))
     · obtain ⟨hP, hB⟩ := (parBr_iff _).2 H
-      rw [if_pos ((mirSet_zero_iff h).2 H)]
+      rw [ite_eq_left ((mirSet_zero_iff h).2 H)]
       simp only [Units.val_one, hP, hB, true_and, and_true, mul_ite, mul_zero]
       rw [sum_gl1 _ _ (det_tl_zero h H) (fun d => ((θ d : ℂˣ) : ℂ) * ψ h)]
-    · rw [if_neg (fun e => H ((mirSet_zero_iff h).1 e)), zero_mul]
+    · rw [ite_eq_right (fun e => H ((mirSet_zero_iff h).1 e)), zero_mul]
       refine (Finset.sum_eq_zero (fun x _ => ?_)).symm
-      rw [if_neg (fun e => H ((parBr_iff _).1 ⟨e.1, by simpa using e.2.2⟩)), mul_zero]
+      rw [ite_eq_right (fun e => H ((parBr_iff _).1 ⟨e.1, by simpa using e.2.2⟩)), mul_zero]
 end GlobalTheory.ResTr
 end -- clump:auto
 end -- clump:auto
@@ -971,7 +956,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DownLift
 
 noncomputable section
@@ -1019,12 +1003,6 @@ theorem p_lifts : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T : Type) (
     exact GlobalTheory.LevelRamif.not_two_primes PP' hq (D.host.g_prime k) (hne k) hm
       (GlobalTheory.LevelRamif.natCast_mem_conj hc (GlobalTheory.LevelRamif.typePrime_mem hk))
 
-theorem isClass_irr {G : Type} [Group G] {χ : G → ℂ} (h : IsIrr χ) : IsClass χ := by
-  obtain ⟨V, -, hV⟩ := h
-  intro x y
-  rw [← hV, ← hV]
-  exact FDRep.char_conj V x y
-
 theorem charLab_inv {g : ℕ} [Fact g.Prime] {L : LabelDatum g} {θ : (ZMod g)ˣ →* ℂˣ} {c : ZMod g}
     (h : GlobalTheory.GLp.IsCharLab L θ c) : GlobalTheory.GLp.IsCharLab L θ⁻¹ c⁻¹ := by
   obtain ⟨hc, hv⟩ := h
@@ -1050,15 +1028,15 @@ theorem seriesKillsAvg : SeriesKillsAvg := by
   simp only [Finset.mem_filter, Set.Finite.mem_toFinset, Set.mem_setOf_eq] at hψ
   obtain ⟨hirr, hlab⟩ := hψ
   apply _root_.GlobalTheory.MirAvg.zOf_mul_mirEl_eq_zero g (n + 1) ψ hirr θ a b
-  rw [_root_.GlobalTheory.MirAvg.tr_mirEl_indep g n ψ (isClass_irr hirr) θ a ha b]
+  rw [_root_.GlobalTheory.MirAvg.tr_mirEl_indep g n ψ (GlobalTheory.GLq.ResCuspProd.isClass_of_isIrr hirr) θ a ha b]
   have hinv := charLab_inv hc
   cases b
-  · simp only [Bool.false_eq_true, if_false]
+  · simp only [Bool.false_eq_true, ite_false]
     rw [(_root_.GlobalTheory.ResTr.trace_mir g n ψ θ).1]
     by_contra hne
     obtain ⟨σ, hσ, hip⟩ := (_root_.GlobalTheory.GLq.HCFrobWeight.exists_irr_hc_thetaInv g n ψ hirr θ).1 (right_ne_zero_of_mul hne)
     exact hf' ((_root_.GlobalTheory.GLq.DetRoot.root_of_hc_det g L n ψ f hirr hlab σ hσ θ⁻¹ c⁻¹ hinv).1 hip)
-  · simp only [if_true]
+  · simp only [ite_true]
     rw [(_root_.GlobalTheory.ResTr.trace_mir g n ψ θ).2]
     by_contra hne
     obtain ⟨σ, hσ, hip⟩ := (_root_.GlobalTheory.GLq.HCFrobWeight.exists_irr_hc_thetaInv g n ψ hirr θ).2 (right_ne_zero_of_mul hne)

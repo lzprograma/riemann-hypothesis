@@ -4,55 +4,8 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.Commutative
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointMemSp4
 public import Mathlib.RingTheory.Filtration
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.ContConjAlt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.MapRepApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedIdeal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SgnMulSelf
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
+import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ObsClass
+import Mathlib.Tactic.NoncommRing
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.CoefEx, Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.ExistsStrictHenselianAbsolutelyClosedLocalRing, Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.MapAdjAlg, Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.ObWeak
@@ -65,67 +18,8 @@ section -- clump:auto
 open IsLocalRing UpperTheory.V UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
 theorem UpperTheory.V.Ws.X1.coefEx :
-    ∀ {Λ : Type} [CommRing Λ] [IsLocalRing Λ] {A : Type} [CommRing A] [Algebra Λ A] [IsCO Λ A] (K : Ideal A), maximalIdeal A * K = ⊥ → ∀ (κ : Type) [Fintype κ] (ε : κ → A), K = Ideal.span (Set.range ε) → (∀ c : κ → Λ, ∑ u, c u • ε u = 0 → ∀ u, c u ∈ maximalIdeal Λ) → ∃ co : κ → A → ResidueField Λ, (∀ u, ∀ x ∈ K, ∀ y ∈ K, co u (x + y) = co u x + co u y) ∧ (∀ u (a : A), ∀ x ∈ K, co u (a * x) = res Λ A a * co u x) ∧ ∀ x ∈ K, ∃ a : κ → Λ, (∀ u, residue Λ (a u) = co u x) ∧ x = ∑ u, a u • ε u := by
-  intro Λ _ _ A _ _ _ K hK κ _ ε hspan hind
-  classical
-  have hkill : ∀ m ∈ maximalIdeal A, ∀ e ∈ K, m * e = 0 := by
-    intro m hm e he
-    have h := Ideal.mul_mem_mul hm he
-    rw [hK] at h
-    exact (Submodule.mem_bot A).mp h
-  have hsc : ∀ b : A, ∃ l : Λ, b - algebraMap Λ A l ∈ maximalIdeal A := fun b => IsCO.res_surj (O := Λ) b
-  have hact : ∀ b : A, ∀ l : Λ, b - algebraMap Λ A l ∈ maximalIdeal A → ∀ e ∈ K, b * e = l • e := by
-    intro b l hb e he
-    have h := hkill _ hb e he
-    rw [sub_mul] at h
-    rw [Algebra.smul_def]
-    exact sub_eq_zero.mp h
-  have hres : ∀ b : A, ∀ l : Λ, b - algebraMap Λ A l ∈ maximalIdeal A → res Λ A b = residue Λ l := by
-    intro b l hb
-    have h := (res_eq_zero_iff Λ A _).mpr hb
-    rw [map_sub, AlgHom.commutes, sub_eq_zero] at h
-    rw [h]
-    rfl
-  have hex : ∀ x ∈ K, ∃ a : κ → Λ, x = ∑ u, a u • ε u := by
-    intro x hx
-    have hx' := hx
-    rw [hspan] at hx'
-    obtain ⟨b, hb⟩ := (Submodule.mem_span_range_iff_exists_fun A).mp hx'
-    choose l hl using fun u => hsc (b u)
-    refine ⟨l, ?_⟩
-    rw [← hb]
-    refine Finset.sum_congr rfl fun u _ => ?_
-    rw [smul_eq_mul]
-    refine hact _ _ (hl u) _ ?_
-    rw [hspan]
-    exact Ideal.subset_span ⟨u, rfl⟩
-  have huniq : ∀ a a' : κ → Λ, ∑ u, a u • ε u = ∑ u, a' u • ε u →
-      ∀ u, residue Λ (a u) = residue Λ (a' u) := by
-    intro a a' h u
-    have h0 := hind (a - a') (by simp only [Pi.sub_apply, sub_smul, Finset.sum_sub_distrib, h, sub_self]) u
-    rw [← sub_eq_zero, ← map_sub]
-    exact (residue_eq_zero_iff _).mpr h0
-  let co : κ → A → ResidueField Λ := fun u x => if h : x ∈ K then residue Λ ((hex x h).choose u) else 0
-  have hco : ∀ x (h : x ∈ K) (a : κ → Λ), x = ∑ u, a u • ε u → ∀ u, co u x = residue Λ (a u) := by
-    intro x h a hx u
-    simp only [co, dif_pos h]
-    exact huniq _ _ ((hex x h).choose_spec.symm.trans hx) u
-  refine ⟨co, ?_, ?_, ?_⟩
-  · intro u x hx y hy
-    obtain ⟨a, ha⟩ := hex x hx
-    obtain ⟨b, hb⟩ := hex y hy
-    rw [hco x hx a ha, hco y hy b hb, hco (x + y) (K.add_mem hx hy) (a + b)
-      (by rw [ha, hb, ← Finset.sum_add_distrib]; simp [add_smul]), Pi.add_apply, map_add (f := _)]
-  · intro u c x hx
-    obtain ⟨a, ha⟩ := hex x hx
-    obtain ⟨l, hl⟩ := hsc c
-    rw [hco x hx a ha, hco (c * x) (K.mul_mem_left c hx) (l • a) ?_, hres c l hl, Pi.smul_apply, smul_eq_mul,
-      map_mul]
-    rw [hact c l hl x hx, ha, Finset.smul_sum]
-    simp [smul_smul]
-  · intro x hx
-    obtain ⟨a, ha⟩ := hex x hx
-    exact ⟨a, fun u => (hco x hx a ha u).symm, ha⟩
+    ∀ {Λ : Type} [CommRing Λ] [IsLocalRing Λ] {A : Type} [CommRing A] [Algebra Λ A] [IsCO Λ A] (K : Ideal A), maximalIdeal A * K = ⊥ → ∀ (κ : Type) [Fintype κ] (ε : κ → A), K = Ideal.span (Set.range ε) → (∀ c : κ → Λ, ∑ u, c u • ε u = 0 → ∀ u, c u ∈ maximalIdeal Λ) → ∃ co : κ → A → ResidueField Λ, (∀ u, ∀ x ∈ K, ∀ y ∈ K, co u (x + y) = co u x + co u y) ∧ (∀ u (a : A), ∀ x ∈ K, co u (a * x) = res Λ A a * co u x) ∧ ∀ x ∈ K, ∃ a : κ → Λ, (∀ u, residue Λ (a u) = co u x) ∧ x = ∑ u, a u • ε u :=
+  fun K hK κ _ ε hspan hind => UpperTheory.V.Alg.ker_coef_base K hK κ ε hspan hind
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.CoefEx =====
@@ -137,26 +31,7 @@ section -- clump:auto
 
 open IsLocalRing UpperTheory.V UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
-private theorem exists_strictHenselian_absolutely_closed_local_ring {k A : Type} [CommRing k] [CommRing A] (π : A → k) (μ : k → A)
-    (h1 : ∀ c d, μ (c + d) = μ c + μ d) (h2 : ∀ (a : A) c, μ (π a * c) = a * μ c) :
-    ∃ T : M4 k →+ M4 A, (∀ Y, Y.map μ = T Y) ∧
-      (∀ (M : M4 A) Y, M * T Y = T (M.map π * Y)) ∧
-      (∀ (M : M4 A) Y, T Y * M = T (Y * M.map π)) ∧ (∀ Y, adj (T Y) = T (adj Y)) ∧
-      ∀ Y, IsUp Y → IsUp (T Y) := by
-  let m : k →+ A := AddMonoidHom.mk' μ h1
-  have h3 : ∀ (a : A) c, m (π a * c) = a * m c := h2
-  refine ⟨m.mapMatrix, fun Y => rfl, fun M Y => ?_, fun M Y => ?_, fun Y => ?_, fun Y hY i j h => ?_⟩
-  · ext a b
 
-    simp only [AddMonoidHom.mapMatrix_apply, Matrix.map_apply, Matrix.mul_apply, map_sum, h3]
-  · ext a b
-
-    simp only [AddMonoidHom.mapMatrix_apply, Matrix.map_apply, Matrix.mul_apply, map_sum]
-    refine Finset.sum_congr rfl fun c _ => ?_
-    rw [mul_comm (Y a c), h3, mul_comm]
-  · ext a b
-    simp only [AddMonoidHom.mapMatrix_apply, Matrix.map_apply, adj_apply, map_zsmul]
-  · simp only [AddMonoidHom.mapMatrix_apply, Matrix.map_apply, hY i j h, map_zero]
 
 private theorem isUp_mul {k : Type} [CommRing k] {X Y : M4 k} (hX : IsUp X) (hY : IsUp Y) : IsUp (X * Y) := by
   intro i j h
@@ -176,28 +51,21 @@ private theorem alg_id {S : Type} [Ring S] (a n B g y : S) (h : n * a = 1) :
   rw [this, h]
   noncomm_ring
 
-private theorem rb_lc {Λ : Type} [CommRing Λ] [IsLocalRing Λ] {Γ : Type} [TopologicalSpace Γ]
-    {R : Type} [CommRing R] [Algebra Λ R] [IsCO Λ R] (r : Γ → M4 R) (rb : Γ → M4 (ResidueField Λ))
-    (hc : ∀ i j, AdicCont (maximalIdeal R) fun g => r g i j) (hr : ∀ g, (r g).map (res Λ R) = rb g) :
-    IsLocallyConstant rb := by
-  rw [IsLocallyConstant.iff_eventually_eq]
-  intro s
-  have : ∀ a b, ∀ᶠ t in nhds s, rb t a b = rb s a b := fun a b => by
-    filter_upwards [(hc a b 1).eventually_eq s] with t ht
-    rw [Ideal.Quotient.eq, pow_one, ← res_eq_zero_iff Λ, map_sub, sub_eq_zero] at ht
-    rw [← hr, ← hr]
-    exact ht
-  filter_upwards [Filter.eventually_all.2 fun a => Filter.eventually_all.2 (this a)] with t ht
-  ext a b
-  exact ht a b
+
 
 theorem UpperTheory.V.Ws.X1.obCor :
     ∀ {Λ : Type} [CommRing Λ] [IsLocalRing Λ] [IsNoetherianRing Λ] [IsAdicComplete (maximalIdeal Λ) Λ] {Γ V : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] {Gv : V → Type} [∀ v, Group (Gv v)] [∀ v, TopologicalSpace (Gv v)] [∀ v, IsTopologicalGroup (Gv v)] (loc : ∀ v, Gv v →* Γ), (∀ v, Continuous (loc v)) → ∀ {A R : Type} [CommRing A] [Algebra Λ A] [IsCO Λ A] [CommRing R] [Algebra Λ R] [IsCO Λ R] (p : A →ₐ[Λ] R), Function.Surjective p → maximalIdeal A * RingHom.ker p = ⊥ → ∀ (ν : Γ →* Λˣ) (r : Γ →* M4 R) (n : V → M4 R), AdicCont (maximalIdeal Λ) (fun g => (ν g : Λ)) → WP loc (fun g => algebraMap Λ R (ν g)) r n → (∀ i j, AdicCont (maximalIdeal R) fun g => r g i j) → ∀ (rb : Γ →* M4 (ResidueField Λ)) (nb : V → M4 (ResidueField Λ)) (hb : ∀ g, ∃ x, IsGSp x (rb g)), (∀ g, (r g).map (res Λ R) = rb g) → (∀ v, (n v).map (res Λ R) = nb v) → ∀ (D : SL loc ν r n p) (μ : ResidueField Λ → A), (∀ c d, μ (c + d) = μ c + μ d) → (∀ (a : A) c, μ (res Λ A a * c) = a * μ c) → (∀ c, p (μ c) = 0) → ∀ x ∈ Fr.continuousCoboundaries2 loc (adSp rb hb) (fun v => bor (nb v)), (∀ s t, D.om s t = ((x.1 (s, t)).1 * rb (s * t)).map μ) → (∀ v s, D.de v s = ((x.2 v s).1 * rb (loc v s)).map μ) → WLift loc ν r n p := by
   intro Λ _ _ _ _ Γ V _ _ _ Gv _ _ _ loc hloc A R _ _ _ _ _ _ p hp hs ν r n hν hW hc rb nb hb hr hn D μ m1 m2 m3
     x hx x1 x2
-  obtain ⟨T, T0, Tl, Tr, Ta, Tu⟩ := exists_strictHenselian_absolutely_closed_local_ring (res Λ A) μ m1 m2
+  obtain ⟨T, T0, Tl, Tr⟩ := ObsUtil.matrix_lift (ι := Fin 4) (res Λ A) μ m1 m2
+  have Ta : ∀ Y, adj (T Y) = T (adj Y) := fun Y => Matrix.ext fun i j => by
+    have hm : ∀ (n : ℤ) c, μ (n • c) = n • μ c := (AddMonoidHom.mk' μ m1).map_zsmul
+    rw [← T0, ← T0, Matrix.map_apply, adj_apply, adj_apply, Matrix.map_apply, hm]
+  have Tu : ∀ Y, IsUp Y → IsUp (T Y) := fun Y hY i j h => by
+    have h0 : μ 0 = 0 := (AddMonoidHom.mk' μ m1).map_zero
+    rw [← T0, Matrix.map_apply, hY i j h, h0]
   simp only [T0, SL.om, SL.de] at x1 x2
-  have lc := rb_lc r rb hc hr
+  have lc := ObsUtil.rb_lc r rb hc hr
   obtain ⟨h, y, b1, b3, b4⟩ := hx
   obtain ⟨class_group_mod_eq_torsion, -, gA3, -, -, gA6, -⟩ := grp A
   obtain ⟨gR1, -, -, -, -, gR6, -⟩ := grp R
@@ -235,18 +103,9 @@ theorem UpperTheory.V.Ws.X1.obCor :
     have := pert _ _ _ (D.rt_mult s) (-h s).2
     rw [rtres, Submodule.coe_neg, neg_mul, map_neg, ← sub_eq_add_neg] at this
     exact this
-  have fmul : ∀ s t, f (s * t) = f s * f t := fun s t => by
-    have e := x1 s t
-    rw [b3, sub_eq_iff_eq_add] at e
-    have e' : ((dOne (adSp rb hb) h (s, t)).1 : M4 _) * rb (s * t) =
-        (h s).1 * rb s * rb t + rb s * ((h t).1 * rb t) - (h (s * t)).1 * rb (s * t) := by
-      show ((h s).1 + rb s * (h t).1 * rb s⁻¹ - (h (s * t)).1) * rb (s * t) = _
-      rw [sub_mul, add_mul, map_mul, mul_assoc (rb s * (h t).1), ← mul_assoc (rb s⁻¹), inv2, one_mul]
-      simp only [mul_assoc]
-    rw [hf]
-    simp only
-    rw [sub_mul, mul_sub, mul_sub, TT, Tl, Tr, rtres, rtres, e, e', map_sub, map_add (f := _)]
-    abel
+  have fmul : ∀ s t, f (s * t) = f s * f t := fun s t =>
+    ObsUtil.coboundary_mul (res Λ A) T Tl Tr TT D.rt rb rtres (fun g => (h g).1)
+      (by have e := x1 s t; rw [b3] at e; exact e)
   have fone : f 1 = 1 := by
     have hu : adj (f 1) * f 1 = 1 := by
       have := fH 1
@@ -328,112 +187,16 @@ section -- clump:auto
 
 open IsLocalRing UpperTheory.V UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
-section Co
+open UpperTheory.V.Alg.ObsUtil
 
-variable {A k ι : Type} [CommRing A] [CommRing k] [Fintype ι] [DecidableEq ι] {K : Ideal A} {σ co : A → k}
-
-private theorem co_zero (h1 : ∀ x ∈ K, ∀ y ∈ K, co (x + y) = co x + co y) : co 0 = 0 := by
-  have := h1 0 K.zero_mem 0 K.zero_mem
-  rw [add_zero] at this
-  exact left_eq_add.1 this
-
-private theorem co_sum (h1 : ∀ x ∈ K, ∀ y ∈ K, co (x + y) = co x + co y) (S : Finset ι) (f : ι → A)
-    (hf : ∀ c, f c ∈ K) : co (∑ c ∈ S, f c) = ∑ c ∈ S, co (f c) := by
-  induction S using Finset.induction_on with
-  | empty => simpa using co_zero h1
-  | insert c S hc ih =>
-    rw [Finset.sum_insert hc, Finset.sum_insert hc, h1 _ (hf c) _ (K.sum_mem fun c _ => hf c), ih]
-
-omit [DecidableEq ι] in
-private theorem mem_left (M : Matrix ι ι A) {Z : Matrix ι ι A} (hZ : ∀ a b, Z a b ∈ K) (a b : ι) : (M * Z) a b ∈ K := by
-  rw [Matrix.mul_apply]
-  exact K.sum_mem fun c _ => K.mul_mem_left _ (hZ _ _)
-
-omit [DecidableEq ι] in
-private theorem mem_right (M : Matrix ι ι A) {Z : Matrix ι ι A} (hZ : ∀ a b, Z a b ∈ K) (a b : ι) :
-    (Z * M) a b ∈ K := by
-  rw [Matrix.mul_apply]
-  exact K.sum_mem fun c _ => K.mul_mem_right _ (hZ _ _)
-
-private theorem co_left (h1 : ∀ x ∈ K, ∀ y ∈ K, co (x + y) = co x + co y) (h2 : ∀ a, ∀ x ∈ K, co (a * x) = σ a * co x)
-    (M : Matrix ι ι A) {Z : Matrix ι ι A} (hZ : ∀ a b, Z a b ∈ K) : (M * Z).map co = M.map σ * Z.map co := by
-  ext a b
-  simp only [Matrix.map_apply, Matrix.mul_apply]
-  rw [co_sum h1 _ _ fun c => K.mul_mem_left _ (hZ _ _)]
-  exact Finset.sum_congr rfl fun c _ => h2 _ _ (hZ _ _)
-
-private theorem co_right (h1 : ∀ x ∈ K, ∀ y ∈ K, co (x + y) = co x + co y) (h2 : ∀ a, ∀ x ∈ K, co (a * x) = σ a * co x)
-    (M : Matrix ι ι A) {Z : Matrix ι ι A} (hZ : ∀ a b, Z a b ∈ K) : (Z * M).map co = Z.map co * M.map σ := by
-  ext a b
-  simp only [Matrix.map_apply, Matrix.mul_apply]
-  rw [co_sum h1 _ _ fun c => K.mul_mem_right _ (hZ _ _)]
-  exact Finset.sum_congr rfl fun c _ => by rw [mul_comm, h2 _ _ (hZ _ _), mul_comm]
-
-omit [Fintype ι] [DecidableEq ι] in
-private theorem co_add (h1 : ∀ x ∈ K, ∀ y ∈ K, co (x + y) = co x + co y)
-    {Z Z' : Matrix ι ι A} (hZ : ∀ a b, Z a b ∈ K) (hZ' : ∀ a b, Z' a b ∈ K) :
-    (Z + Z').map co = Z.map co + Z'.map co := by
-  ext a b
-  exact h1 _ (hZ _ _) _ (hZ' _ _)
-
-end Co
-
-section LC
-
-variable {T A ι : Type} [TopologicalSpace T] [CommRing A] [Fintype ι] [DecidableEq ι]
-
-omit [DecidableEq ι] in
-private theorem lc_matrix {B : Type} {f : T → Matrix ι ι B} (h : ∀ a b, IsLocallyConstant fun s => f s a b) :
-    IsLocallyConstant f := by
-  rw [IsLocallyConstant.iff_eventually_eq]
-  intro x
-  have : ∀ᶠ y in nhds x, ∀ a b, f y a b = f x a b :=
-    Filter.eventually_all.2 fun a => Filter.eventually_all.2 fun b => (h a b).eventually_eq x
-  exact this.mono fun y hy => Matrix.ext hy
-
-omit [DecidableEq ι] in
-private theorem lc_ac {I : Ideal A} {f : T → Matrix ι ι A} (h : ∀ a b, AdicCont I fun s => f s a b) (N : ℕ) :
-    IsLocallyConstant fun s => (f s).map (Ideal.Quotient.mk (I ^ N)) :=
-  lc_matrix fun a b => h a b N
-
-omit [Fintype ι] [DecidableEq ι] in
-private theorem lc_ker [IsNoetherianRing A] {I K : Ideal A} (hs : I * K = ⊥) {f : T → Matrix ι ι A}
-    (hf : ∀ s a b, f s a b ∈ K) (h : ∀ N, IsLocallyConstant fun s => (f s).map (Ideal.Quotient.mk (I ^ N))) :
-    IsLocallyConstant f := by
-  obtain ⟨n, hn⟩ := Ideal.exists_pow_inf_eq_pow_smul I (K : Submodule A A)
-  have e := hn (n + 1) (Nat.le_succ n)
-  have e2 : ∀ x ∈ K, x ∈ I ^ (n + 1) → x = 0 := fun x hx hx' => by
-    have m : x ∈ (I ^ (n + 1) • (⊤ : Submodule A A)) ⊓ K := ⟨by simpa using hx', hx⟩
-    rw [e, Nat.add_sub_cancel_left, pow_one] at m
-    have : x ∈ I * K := Submodule.smul_mono le_rfl inf_le_right m
-    rwa [hs, Ideal.mem_bot] at this
-  rw [IsLocallyConstant.iff_eventually_eq]
-  intro x
-  refine ((h (n + 1)).eventually_eq x).mono fun y hy => ?_
-  ext a b
-  have := congrFun (congrFun hy a) b
-  exact sub_eq_zero.1 (e2 _ (K.sub_mem (hf _ _ _) (hf _ _ _)) (Ideal.Quotient.eq.1 this))
-
-end LC
-
-section G
-
-private theorem map_mul_alg {O R S ι : Type} [CommRing O] [CommRing R] [CommRing S] [Algebra O R] [Algebra O S]
-    [Fintype ι] [DecidableEq ι] (f : R →ₐ[O] S) (A B : Matrix ι ι R) : (A * B).map f = A.map f * B.map f :=
-  Matrix.map_mul (f := (f : R →+* S))
+private theorem map_mul_alg {O R S ι : Type} [CommRing O] [CommRing R] [CommRing S] [Algebra O R] [Algebra O S] [Fintype ι] [DecidableEq ι] (f : R →ₐ[O] S) (A B : Matrix ι ι R) : (A * B).map f = A.map f * B.map f := Matrix.map_mul (f := (f : R →+* S))
 
 private theorem map_adj_alg {O R S : Type} [CommRing O] [CommRing R] [CommRing S] [Algebra O R] [Algebra O S]
     (f : R →ₐ[O] S) (X : M4 R) : (adj X).map f = adj (X.map f) := by
   ext i j
   simp only [adj_apply, Matrix.map_apply, map_zsmul]
 
-private theorem up_mul {R : Type} [CommRing R] {X Y : M4 R} (hX : IsUp X) (hY : IsUp Y) : IsUp (X * Y) := by
-  intro i j h
-  rw [Matrix.mul_apply]
-  refine Finset.sum_eq_zero fun c _ => ?_
-  rcases lt_or_ge c i with hc | hc
-  · rw [hX i c hc, zero_mul]
-  · rw [hY c j (lt_of_lt_of_le h hc), mul_zero]
+
 
 private theorem sp_inv {R : Type} [CommRing R] {X : M4 R} (h : IsGSp 1 X) : adj X * X = 1 ∧ X * adj X = 1 := by
   have e : adj X * X = 1 := by
@@ -473,7 +236,6 @@ private theorem key_sp {A k : Type} [CommRing A] [CommRing k] {K : Ideal A} (σ 
   rw [hmul]
   exact eq_neg_of_add_eq_zero_left e3
 
-end G
 
 theorem UpperTheory.V.Ws.X1.obCoc :
     ∀ {Λ : Type} [CommRing Λ] [IsLocalRing Λ] [IsNoetherianRing Λ] [IsAdicComplete (maximalIdeal Λ) Λ] {Γ V : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] {Gv : V → Type} [∀ v, Group (Gv v)] [∀ v, TopologicalSpace (Gv v)] [∀ v, IsTopologicalGroup (Gv v)] (loc : ∀ v, Gv v →* Γ), (∀ v, Continuous (loc v)) → ∀ {A R : Type} [CommRing A] [Algebra Λ A] [IsCO Λ A] [CommRing R] [Algebra Λ R] [IsCO Λ R] (p : A →ₐ[Λ] R), Function.Surjective p → maximalIdeal A * RingHom.ker p = ⊥ → ∀ (ν : Γ →* Λˣ) (r : Γ →* M4 R) (n : V → M4 R), AdicCont (maximalIdeal Λ) (fun g => (ν g : Λ)) → WP loc (fun g => algebraMap Λ R (ν g)) r n → (∀ i j, AdicCont (maximalIdeal R) fun g => r g i j) → ∀ (rb : Γ →* M4 (ResidueField Λ)) (nb : V → M4 (ResidueField Λ)) (hb : ∀ g, ∃ x, IsGSp x (rb g)), (∀ g, (r g).map (res Λ R) = rb g) → (∀ v, (n v).map (res Λ R) = nb v) → ∀ (D : SL loc ν r n p) (co : A → ResidueField Λ), (∀ x ∈ RingHom.ker p, ∀ y ∈ RingHom.ker p, co (x + y) = co x + co y) → (∀ (a : A), ∀ x ∈ RingHom.ker p, co (a * x) = res Λ A a * co x) → ∃ z ∈ Fr.continuousCocycles2 loc (adSp rb hb) (fun v => bor (nb v)), (∀ s t, (z.1 (s, t)).1 * rb (s * t) = (D.om s t).map co) ∧ ∀ v s, (z.2 v s).1 * rb (loc v s) = (D.de v s).map co := by
@@ -495,14 +257,7 @@ theorem UpperTheory.V.Ws.X1.obCoc :
     intro s Z Z' k1 k2 e1 e2
     exact key_sp (res Λ A : A →+* ResidueField Λ) c1 c2 k1 k2 (hker (e1.trans e2.symm))
       ((resp Z).trans (by rw [e1, hrb])) ((resp Z').trans (by rw [e2, hrb])) (rinv' s)
-  have lcbar : IsLocallyConstant rb := by
-    refine lc_matrix fun a b => ?_
-    have := (hr a b 1).comp (Ideal.Quotient.lift (maximalIdeal R ^ 1) (res Λ R : R →+* ResidueField Λ)
-      fun x hx => (res_eq_zero_iff Λ R x).2 (by rwa [pow_one] at hx))
-    convert this using 1
-    funext s
-    rw [← hrb]
-    rfl
+  have lcbar : IsLocallyConstant rb := rb_lc r rb hr hrb
   have lcinv : IsLocallyConstant fun s : Γ => rb s⁻¹ := lcbar.comp_continuous continuous_inv
   have lct := lc_ac D.rt_cont
   have t4 : ∀ s t, (D.rt s * D.rt t).map p = r (s * t) := fun s t => by
@@ -543,22 +298,7 @@ theorem UpperTheory.V.Ws.X1.obCoc :
       exact ((lct N).comp_continuous (hloc v)).sub
         (((IsLocallyConstant.const _).mul (lc_ac (D.t_cont v) N)).mul (IsLocallyConstant.const _))
     exact (l1.comp (fun M => M.map co)).mul (lcinv.comp_continuous (hloc v))
-  · have e : D.rt s * D.om t u + D.om s (t * u) = D.om (s * t) u + D.om s t * D.rt u := by
-      simp only [SL.om]
-      rw [mul_assoc s t u]
-      noncomm_ring
-    have e' := congrArg (fun M : M4 A => M.map co) e
-    rw [co_add c1 (mem_left _ (k4 _ _)) (k4 _ _), co_add c1 (k4 _ _) (mem_right _ (k4 _ _)),
-      co_left c1 c2 _ (k4 _ _), co_right c1 c2 _ (k4 _ _), rtres, rtres] at e'
-    show rb s * ((D.om t u).map co * rb (t * u)⁻¹) * rb s⁻¹ + (D.om s (t * u)).map co * rb (s * (t * u))⁻¹ =
-      (D.om (s * t) u).map co * rb (s * t * u)⁻¹ + (D.om s t).map co * rb (s * t)⁻¹
-    have e2 := congrArg (fun M => M * rb (s * t * u)⁻¹) e'
-    simp only [add_mul, mul_assoc, ← map_mul] at e2 ⊢
-    have n1 : (t * u)⁻¹ * s⁻¹ = (s * (t * u))⁻¹ := by group
-    have n2 : u * (s * (t * u))⁻¹ = (s * t)⁻¹ := by group
-    rw [n2] at e2
-    rw [n1]
-    exact e2
+  · exact cocycle_id c1 c2 D.rt rb rtres k4 s t u
   · have k6 : ∀ a b, (D.t v s * D.t v t - D.t v (s * t)) a b ∈ RingHom.ker p := by
       refine hker ?_
       rw [map_mul_alg, D.t_map, D.t_map, D.t_map, map_mul, map_mul]
@@ -586,7 +326,7 @@ theorem UpperTheory.V.Ws.X1.obCoc :
       rw [← ntres, ← map_adj_alg, ← map_mul_alg, (sp_inv (D.nt_sp v)).1]
       exact Matrix.map_one _ (map_zero _) (map_one _)
     have up1 : IsUp ((D.t v s * D.t v t - D.t v (s * t)).map co) := fun i j h => by
-      rw [Matrix.map_apply, Matrix.sub_apply, up_mul (D.t_up v s) (D.t_up v t) i j h, D.t_up v _ i j h, sub_zero,
+      rw [Matrix.map_apply, Matrix.sub_apply, isUp_mul (D.t_up v s) (D.t_up v t) i j h, D.t_up v _ i j h, sub_zero,
         co_zero c1]
     have up2 : IsUp (adj (nb v) * rb (loc v (s * t))⁻¹ * nb v) := fun i j h => by
       rw [← map_inv, ← hnb, ← hrb, ← map_adj_alg, ← map_mul_alg, ← map_mul_alg, Matrix.map_apply,
@@ -594,7 +334,7 @@ theorem UpperTheory.V.Ws.X1.obCoc :
     show IsUp (adj (nb v) * ((D.om (loc v s) (loc v t)).map co * rb (loc v s * loc v t)⁻¹ -
       ((D.de v s).map co * rb (loc v s)⁻¹ + rb (loc v s) * ((D.de v t).map co * rb (loc v t)⁻¹) * rb (loc v s)⁻¹ -
         (D.de v (s * t)).map co * rb (loc v (s * t))⁻¹)) * nb v)
-    convert up_mul up1 up2 using 1
+    convert isUp_mul up1 up2 using 1
     rw [eq_sub_of_add_eq e', map_mul (loc v) s t, mul_inv_rev, map_mul rb]
     simp only [add_mul, sub_mul, mul_add, mul_sub, mul_assoc]
     rw [← mul_assoc (rb (loc v t)), rinv', one_mul, ← mul_assoc (adj (nb v)) (nb v), nbi, one_mul]
@@ -614,42 +354,9 @@ section -- clump:auto
 
 open IsLocalRing UpperTheory.V UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
-private theorem ex_mu {O A : Type} [CommRing O] [IsLocalRing O] [CommRing A] [Algebra O A] [IsCO O A] (η : A)
-    (hη : ∀ x ∈ maximalIdeal A, x * η = 0) :
-    ∃ μ : ResidueField O →+ A, (∀ a : O, μ (residue O a) = a • η) ∧ ∀ (a : A) c, μ (res O A a * c) = a * μ c := by
-  have k : ∀ a b : O, residue O a = residue O b → a • η = b • η := fun a b h => by
-    rw [← sub_eq_zero, ← sub_smul, Algebra.smul_def]
-    refine hη _ ?_
-    rw [← res_eq_zero_iff O, AlgHom.commutes, ResidueField.algebraMap_eq, map_sub, h, sub_self]
-  choose s hs using residue_surjective (R := O)
-  have k2 : ∀ a : O, s (residue O a) • η = a • η := fun a => k _ _ (hs _)
-  refine ⟨AddMonoidHom.mk' (fun c => s c • η) fun c d => ?_, k2, fun a c => ?_⟩
-  · rw [← add_smul]
-    exact k _ _ (by rw [map_add (f := _), hs, hs, hs])
-  · obtain ⟨b, hb⟩ := IsCO.res_surj (O := O) a
-    have e : res O A a = residue O b := by
-      have := (res_eq_zero_iff O A _).2 hb
-      rwa [map_sub, AlgHom.commutes, sub_eq_zero] at this
-    have e2 : a * η = b • η := by
-      have := hη _ hb
-      rwa [sub_mul, sub_eq_zero, ← Algebra.smul_def] at this
-    show s _ • η = a * (s c • η)
-    rw [mul_smul_comm, e2, smul_smul]
-    exact k _ _ (by rw [map_mul, hs, hs, e, mul_comm])
-
-private theorem mmap {O R S : Type} [CommRing O] [CommRing R] [CommRing S] [Algebra O R] [Algebra O S]
-    (f : R →ₐ[O] S) (A B : M4 R) : (A * B).map f = A.map f * B.map f :=
-  Matrix.map_mul (f := (f : R →+* S))
-
 private theorem smap {O R S : Type} [CommRing O] [CommRing R] [CommRing S] [Algebra O R] [Algebra O S]
     (f : R →ₐ[O] S) (A B : M4 R) : (A - B).map f = A.map f - B.map f := by
-  ext i j
-  simp
-
-private theorem amap {O R S : Type} [CommRing O] [CommRing R] [CommRing S] [Algebra O R] [Algebra O S]
-    (f : R →ₐ[O] S) (A : M4 R) : (adj A).map f = adj (A.map f) := by
-  ext i j
-  rw [Matrix.map_apply, adj_apply, adj_apply, map_zsmul, Matrix.map_apply]
+  ext i j; simp
 
 theorem UpperTheory.V.Ws.X1.obWeak :
     ∀ {Λ : Type} [CommRing Λ] [IsLocalRing Λ] [IsNoetherianRing Λ] [IsAdicComplete (maximalIdeal Λ) Λ], IsUnit (2 : Λ) → ∀ {Γ V : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] {Gv : V → Type} [∀ v, Group (Gv v)] [∀ v, TopologicalSpace (Gv v)] [∀ v, IsTopologicalGroup (Gv v)] (loc : ∀ v, Gv v →* Γ), (∀ v, Continuous (loc v)) → ∀ {R : Type} [CommRing R] [Algebra Λ R] [IsCO Λ R], ∀ (ν : Γ →* Λˣ) (r : Γ →* M4 R) (n : V → M4 R), AdicCont (maximalIdeal Λ) (fun g => (ν g : Λ)) → WP loc (fun g => algebraMap Λ R (ν g)) r n → (∀ i j, AdicCont (maximalIdeal R) fun g => r g i j) → ∀ (rb : Γ →* M4 (ResidueField Λ)) (nb : V → M4 (ResidueField Λ)) (hb : ∀ g, ∃ x, IsGSp x (rb g)), (∀ g, (r g).map (res Λ R) = rb g) → (∀ v, (n v).map (res Λ R) = nb v) → Obs Λ R (Fr.coneH2 loc (adSp rb hb) fun v => bor (nb v)) fun A' _ _ _ q => Function.Surjective q ∧ maximalIdeal A' * RingHom.ker q = ⊥ ∧ WLift loc ν r n q := by
@@ -660,14 +367,14 @@ theorem UpperTheory.V.Ws.X1.obWeak :
   choose z z0 z1 z2 using fun u : κ =>
     X1.obCoc loc hloc p hp hs ν r n hν hw hr rb nb hb hrb hnb D (co u) (k1 u) (k2 u)
   have d1 : ∀ s t, (D.om s t).map p = 0 := fun s t => by
-    rw [SL.om, smap, mmap, D.rt_map, D.rt_map, D.rt_map, map_mul, sub_self]
+    rw [SL.om, smap, map_mul_alg, D.rt_map, D.rt_map, D.rt_map, map_mul, sub_self]
   have d2 : ∀ v s, (D.de v s).map p = 0 := fun v s => by
     have e1 : adj (n v) * n v = 1 := by
       have := hw.sp v
       rwa [IsGSp, one_smul] at this
     have e2 : n v * adj (n v) = 1 := mul_eq_one_comm.1 e1
-    rw [SL.de, smap, mmap, mmap, amap, D.rt_map, D.nt_map, D.t_map, ← mul_assoc, ← mul_assoc, e2, one_mul,
-      mul_assoc, e2, mul_one, sub_self]
+    rw [SL.de, smap, map_mul_alg, map_mul_alg, map_adj_alg, D.rt_map, D.nt_map, D.t_map,
+      ← mul_assoc, ← mul_assoc, e2, one_mul, mul_assoc, e2, mul_one, sub_self]
   refine ⟨fun u => Submodule.Quotient.mk ⟨z u, z0 u⟩, ?_⟩
   intro c hc A' _ _ _ p' p'' η hp' hpp hη hη0 e1
   have hx : ∑ u, residue O (c u) • z u ∈ Fr.continuousCoboundaries2 loc (adSp rb hb) (fun v => bor (nb v)) := by
@@ -680,7 +387,7 @@ theorem UpperTheory.V.Ws.X1.obWeak :
 
     rw [Submodule.Quotient.mk_eq_zero, Submodule.mem_comap, map_sum] at h1
     exact h1
-  obtain ⟨μ, m1, m2⟩ := ex_mu (O := O) η hη
+  obtain ⟨μ, m1, m2⟩ := ObsUtil.ex_mu (O := O) η hη
   have pp : ∀ x, p'' (p' x) = p x := fun x => DFunLike.congr_fun hpp x
   have key : ∀ x, p x = 0 → p' x = μ (∑ u, residue O (c u) * co u x) := fun x hx => by
     obtain ⟨a, ha, hxa⟩ := k4 x hx

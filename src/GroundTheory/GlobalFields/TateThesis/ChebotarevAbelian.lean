@@ -489,8 +489,8 @@ theorem card_mul_primeIdealZetaSum_uniformizerClass_eq (c : G) {s : ℝ} (hs : 1
         ((Ideal.absNorm v.asIdeal : ℂ) ^ (s : ℂ))⁻¹ := by
       rw [Complex.ofReal_cpow hN, Complex.ofReal_neg, Complex.cpow_neg, Complex.ofReal_natCast]
     by_cases hc : uniformizerClass q v = c
-    · rw [indicator_of_mem (show v ∈ S from ⟨hv, hc⟩), if_pos hc, hcard, hpow]
-    · rw [indicator_of_notMem (show v ∉ S from fun h ↦ hc h.2), if_neg hc]
+    · rw [indicator_of_mem (show v ∈ S from ⟨hv, hc⟩), ite_eq_left hc, hcard, hpow]
+    · rw [indicator_of_notMem (show v ∉ S from fun h ↦ hc h.2), ite_eq_right hc]
       simp
 
 theorem exists_norm_tsum_goodTerm_le (hqs : Function.Surjective q) {φ : AddChar (Additive G) ℂ}
@@ -687,15 +687,6 @@ theorem finite_setOf_exists_ramificationIdx_ne_one :
   exact hw.over.symm
 
 end Ramified
-
-section Chebotarev
-
-variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
-  [IsGalois K L] [IsMulCommutative Gal(L/K)]
-
-attribute [local instance] galCommGroup
-
-end Chebotarev
 
 section ChebotarevDensity
 

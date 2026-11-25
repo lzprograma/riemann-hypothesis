@@ -2,51 +2,12 @@ module
 
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.LinearAlgebra.FreeModule.PID
 
 @[expose] public section
@@ -55,15 +16,6 @@ open Matrix Filter Topology
 open scoped BigOperators ComplexOrder
 
 namespace GlobalTheory.CompanionTheory.ToricBasis
-
-private theorem transpose_mul_mul_apply_eq_dot_product_mul_vec {m n R : Type*} [Fintype m]
-    [CommSemiring R] (P : Matrix m n R) (A : Matrix m m R) (x y : n) :
-    (Pᵀ * A * P) x y = Pᵀ x ⬝ᵥ A *ᵥ Pᵀ y := by
-  simp only [Matrix.mul_apply, Matrix.transpose_apply, dotProduct, Matrix.mulVec, Finset.sum_mul,
-    Finset.mul_sum]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => ?_
-  ring
 
 theorem exists_isCompl_ker {g : ℕ} (f : (Fin g → ℤ) →ₗ[ℤ] (Fin g → ℤ)) :
     ∃ M : Submodule ℤ (Fin g → ℤ), IsCompl M (LinearMap.ker f) := by
@@ -185,7 +137,7 @@ theorem exists_adapted_unimodular :
   have hentry : ∀ (X : Matrix (Fin g) (Fin g) ℤ) (α β : Fin r ⊕ Fin s),
       ((Qᵀ * X * Q).submatrix e e) α β = b α ⬝ᵥ X *ᵥ b β := by
     intro X α β
-    rw [Matrix.submatrix_apply, transpose_mul_mul_apply_eq_dot_product_mul_vec, hcol, hcol]
+    rw [Matrix.submatrix_apply, Matrix.mul_mul_apply, hcol, hcol]
   have hBk : ∀ j k, B j *ᵥ b (Sum.inr k) = 0 := by
     intro j k
     have hSk : S *ᵥ b (Sum.inr k) = 0 := by
@@ -210,7 +162,7 @@ theorem exists_adapted_unimodular :
       rw [Matrix.transpose_apply, hC]
     have hMC : ((Qᵀ * S * Q).submatrix e e).toBlocks₁₁ = Cᵀ * S * C := by
       ext a a'
-      rw [transpose_mul_mul_apply_eq_dot_product_mul_vec, hCt, hCt, ← hentry]
+      rw [Matrix.mul_mul_apply, hCt, hCt, ← hentry]
       rfl
     rw [hMC]
     have hN : (Cᵀ * S * C).map (fun x : ℤ => (x : ℝ)) =

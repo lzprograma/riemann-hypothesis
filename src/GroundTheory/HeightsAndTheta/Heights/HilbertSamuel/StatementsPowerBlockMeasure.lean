@@ -31,12 +31,6 @@ def PowerBlockMeasure.Statement : Prop :=
               ∫ x, (‖eval (conjPt (R.lift x x)) (map (Int.castRingHom ℂ) F)‖ /
                 B.h (conjPt (R.lift x x)) ^ q) ^ 2 ∂dV))
 
-namespace PowerBlockDiag
-
-open ProjLine PowerBlockProjectiveLine
-
-end PowerBlockDiag
-
 end
 
 end GroundTheory.Heights₂.Heights.HilbertSamuel

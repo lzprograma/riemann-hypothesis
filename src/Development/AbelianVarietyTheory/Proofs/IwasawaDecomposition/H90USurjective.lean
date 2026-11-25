@@ -270,7 +270,7 @@ theorem exists_locF_mul {a : Ideles E} {b : FiniteAdeleRing (𝓞 F) F} (hab : (
         locMap F w (algebraMap F _ (k (w.under (𝓞 F)) : F)) := by
       rw [locMap_algebraMap]
       rfl
-    rw [map_mul, hc, if_pos hw, e, ha, ← map_mul, ← map_one (locMap F w), ← map_sub]
+    rw [map_mul, hc, ite_eq_left hw, e, ha, ← map_mul, ← map_one (locMap F w), ← map_sub]
     exact (locMap_valued w 1 _ (hk _ hb)).trans_lt hlt
   have hmem : ∀ w, w ∈ T ∪ {v | IdlFact.valAt v a ≠ 1} → w.under (𝓞 F) ∈ S := fun w hw =>
     Finset.mem_image_of_mem _ (hfin.mem_toFinset.2 hw)
@@ -280,7 +280,7 @@ theorem exists_locF_mul {a : Ideles E} {b : FiniteAdeleRing (𝓞 F) F} (hab : (
   · have h := Valuation.map_eq_of_sub_lt (Valued.v) (x := (1 : w.adicCompletion E)) (y := compAt w (P * a))
       (by rw [map_one]; exact h1 w hw)
     rw [h, map_one]
-  · rw [map_mul, hc, if_neg hw, one_mul]
+  · rw [map_mul, hc, ite_eq_right hw, one_mul]
     by_contra hne
     exact hw (hmem w (Or.inr hne))
 

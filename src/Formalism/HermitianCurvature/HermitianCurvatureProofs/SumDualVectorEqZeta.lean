@@ -1,5 +1,6 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvCharA
 public import Formalism.HermitianCurvature.StatementQ
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
@@ -9,52 +10,7 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedP
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexifiedDerivativeCommutator
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -68,7 +24,7 @@ namespace Formalism.FourierDecayAlt.P
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 namespace Qx2
 
@@ -213,24 +169,7 @@ theorem unit_col' {i : Fin (r + 1)} {a b p : Fin (2 * r + k + 1)} (ha : inV k r 
 theorem hpart_lev (i : Fin (r + 1)) (a b : Fin (mdim k r i)) :
     inLieLev k r i (hpart1 (Hpk k r) (Matrix.single (posL k r i a) (posL k r i b) 1)) ∧
       inLieLev k r i (hpart2 (Hpk k r) (Matrix.single (posL k r i a) (posL k r i b) 1)) := by
-  have hb := inV_posL i b
-  have ha' := inV_posL i a
-  have hs : ∀ (c : ℂ) (A : Mx k r) (v : Fin (2 * r + k + 1) → ℂ), (c • A) *ᵥ v = c • (A *ᵥ v) :=
-    fun c A v => by
-      ext q
-      simp [Matrix.mulVec, dotProduct, Finset.mul_sum, mul_assoc]
-  have e1 : ∀ p, ¬ inV k r i p →
-      hpart1 (Hpk k r) (Matrix.single (posL k r i a) (posL k r i b) 1) *ᵥ bvec p = 0 := by
-    intro p hp
-    rw [hpart1, hpk_inv, hs, Matrix.sub_mulVec, unit_col hb hp, unit_col' ha' hp,
-      sub_zero, smul_zero]
-  have e2 : ∀ p, ¬ inV k r i p →
-      hpart2 (Hpk k r) (Matrix.single (posL k r i a) (posL k r i b) 1) *ᵥ bvec p = 0 := by
-    intro p hp
-    rw [hpart2, hpk_inv, hs, Matrix.add_mulVec, unit_col hb hp, unit_col' ha' hp,
-      add_zero, smul_zero]
-  exact ⟨⟨hpart1_lie _, fun c hc => ⟨e1 _ (not_inV_eI hc), e1 _ (not_inV_esI hc)⟩⟩,
-    ⟨hpart2_lie _, fun c hc => ⟨e2 _ (not_inV_eI hc), e2 _ (not_inV_esI hc)⟩⟩⟩
+  apply _root_.Formalism.FourierDecayAlt.P.Qx8.hpart_lie <;> assumption
 
 def evalV (v : Fin (2 * r + k + 1) → ℂ) : Mx k r →L[ℝ] (Fin (2 * r + k + 1) → ℂ) :=
   LinearMap.toContinuousLinearMap
@@ -242,16 +181,7 @@ def evalV (v : Fin (2 * r + k + 1) → ℂ) : Mx k r →L[ℝ] (Fin (2 * r + k +
 
 theorem exp_fix {X : Mx k r} {v : Fin (2 * r + k + 1) → ℂ} (hX : X *ᵥ v = 0) (t : ℝ) :
     NormedSpace.exp ((t : ℂ) • X) *ᵥ v = v := by
-  have hd : ∀ t₀ : ℝ, HasDerivAt (fun t : ℝ => evalV v (1 * NormedSpace.exp ((t : ℂ) • X))) 0 t₀ := by
-    intro t₀
-    have h := (evalV v).hasFDerivAt.comp_hasDerivAt t₀ (B5.curve_hasDerivAt (1 : Mx k r) X t₀)
-    have e : evalV v (1 * NormedSpace.exp ((t₀ : ℂ) • X) * X) = 0 := by
-      show (1 * NormedSpace.exp ((t₀ : ℂ) • X) * X) *ᵥ v = 0
-      rw [← Matrix.mulVec_mulVec, hX, Matrix.mulVec_zero]
-    exact h.congr_deriv e
-  have hc := is_const_of_deriv_eq_zero (fun t₀ => (hd t₀).differentiableAt) (fun t₀ => (hd t₀).deriv) t 0
-  have hc' : (1 * NormedSpace.exp ((t : ℂ) • X)) *ᵥ v = (1 * NormedSpace.exp (((0 : ℝ) : ℂ) • X)) *ᵥ v := hc
-  simpa [NormedSpace.exp_zero] using hc'
+  apply _root_.Formalism.FourierDecayAlt.P.Qx8.exp_fix <;> assumption
 
 theorem curve_lev {i : Fin (r + 1)} {g X : Mx k r} (hg : g ∈ Glev k r i) (hX : inLieLev k r i X) (t : ℝ) :
     g * NormedSpace.exp ((t : ℂ) • X) ∈ Glev k r i := by
@@ -382,9 +312,9 @@ theorem good_top (hD : IsOpen D) (u : ℂ) (a b : Fin (mdim k r i)) :
   have hI : Good k r i D (fun (f : Mx k r → E) (g : Mx k r) =>
       if posL k r i a = posL k r i b then u • f g else 0) := by
     by_cases hc : posL k r i a = posL k r i b
-    · simp only [if_pos hc]
+    · simp only [ite_eq_left hc]
       exact Good.smul good_id u
-    · simp only [if_neg hc]
+    · simp only [ite_eq_right hc]
       exact good_zero
   exact Good.add hI hE
 
@@ -515,13 +445,13 @@ theorem PolyFam.succ {N : ℕ} {h : ℂ → Mx k r → E} (H : PolyFam k r i D N
   obtain ⟨c, hc, he⟩ := H
   refine ⟨fun j x => if j < N then c j x else 0, fun j => ?_, fun Y x hx => ?_⟩
   · by_cases hj : j < N
-    · simp only [if_pos hj]
+    · simp only [ite_eq_left hj]
       exact hc j
-    · simp only [if_neg hj]
+    · simp only [ite_eq_right hj]
       exact smooth_zero
   · rw [he Y x hx, Finset.sum_range_succ]
     simp only [lt_self_iff_false, ↓reduceIte, smul_zero, add_zero]
-    exact Finset.sum_congr rfl fun j hj => by rw [if_pos (Finset.mem_range.mp hj)]
+    exact Finset.sum_congr rfl fun j hj => by rw [ite_eq_left (Finset.mem_range.mp hj)]
 
 theorem PolyFam.add {N : ℕ} {h h' : ℂ → Mx k r → E} (H : PolyFam k r i D N h) (H' : PolyFam k r i D N h') :
     PolyFam k r i D N (fun Y x => h Y x + h' Y x) := by
@@ -545,9 +475,9 @@ theorem PolyFam.mulY {N : ℕ} {h : ℂ → Mx k r → E} (H : PolyFam k r i D N
   obtain ⟨c, hc, he⟩ := H
   refine ⟨fun j x => if j = 0 then 0 else c (j - 1) x, fun j => ?_, fun Y x hx => ?_⟩
   · by_cases hj : j = 0
-    · simp only [if_pos hj]
+    · simp only [ite_eq_left hj]
       exact smooth_zero
-    · simp only [if_neg hj]
+    · simp only [ite_eq_right hj]
       exact hc (j - 1)
   · try dsimp only
     rw [he Y x hx, Finset.sum_range_succ', Finset.smul_sum]
@@ -558,9 +488,9 @@ theorem polyFam_monomial {f : Mx k r → E} (hf : SmoothLev k r i D f) (N : ℕ)
     PolyFam k r i D (N + 1) (fun Y x => Y ^ N • f x) := by
   refine ⟨fun j x => if j = N then f x else 0, fun j => ?_, fun Y x hx => ?_⟩
   · by_cases hj : j = N
-    · simp only [if_pos hj]
+    · simp only [ite_eq_left hj]
       exact hf
-    · simp only [if_neg hj]
+    · simp only [ite_eq_right hj]
       exact smooth_zero
   · simp [smul_ite, Finset.sum_ite_eq']
 
@@ -683,7 +613,7 @@ theorem PolyAt.succ {N : ℕ} {φ : ℂ → E} (H : PolyAt N φ) : PolyAt (N + 1
   refine ⟨fun j => if j < N then c j else 0, fun Y => ?_⟩
   rw [hc Y, Finset.sum_range_succ]
   simp only [lt_self_iff_false, ↓reduceIte, smul_zero, add_zero]
-  exact Finset.sum_congr rfl fun j hj => by rw [if_pos (Finset.mem_range.mp hj)]
+  exact Finset.sum_congr rfl fun j hj => by rw [ite_eq_left (Finset.mem_range.mp hj)]
 
 theorem polyAt_monomial (N : ℕ) (e : E) : PolyAt (N + 1) (fun Y => Y ^ N • e) := by
   refine ⟨fun j => if j = N then e else 0, fun Y => ?_⟩
@@ -737,10 +667,9 @@ theorem lc_self {t : ℕ} (a : Fin t → Fin (mdim k r i)) (ha : Function.Inject
   · simp
   · intro σ _ hσ
     obtain ⟨l, hl⟩ : ∃ l, σ l ≠ l := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact hσ (Equiv.ext hc)
-    rw [Finset.prod_eq_zero (Finset.mem_univ l) (if_neg fun e => hl (ha (posL_inj i e))), mul_zero]
+    rw [Finset.prod_eq_zero (Finset.mem_univ l) (ite_eq_right fun e => hl (ha (posL_inj i e))), mul_zero]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -748,7 +677,7 @@ theorem lc_miss {t : ℕ} (a b : Fin t → Fin (mdim k r i)) (l₀ : Fin t) (h :
     lc k r i a b = 0 := by
   unfold lc
   exact Finset.sum_eq_zero fun σ _ => by
-    rw [Finset.prod_eq_zero (Finset.mem_univ l₀) (if_neg fun e => h (σ l₀) (posL_inj i e)), mul_zero]
+    rw [Finset.prod_eq_zero (Finset.mem_univ l₀) (ite_eq_right fun e => h (σ l₀) (posL_inj i e)), mul_zero]
 
 theorem skip_one_injective {t : ℕ} (a : Fin t) : Function.Injective (skip1 a) := by
   intro x y e
@@ -786,7 +715,7 @@ theorem fvec_out {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) {p : Fin (2
   unfold fvec
   split_ifs with h
   · simp only [bvec]
-    rw [Pi.single_apply, if_neg]
+    rw [Pi.single_apply, ite_eq_right]
     intro e
     apply hp
     rw [e]
@@ -812,15 +741,7 @@ theorem herm_expand (M : Mx k r) (v w : Fin (2 * r + k + 1) → ℂ) :
   rfl
 
 theorem herm_star (v w : Fin (2 * r + k + 1) → ℂ) : star (herm (Hpk k r) v w) = herm (Hpk k r) w v := by
-  have hH : ∀ a b, star (Hpk k r a b) = Hpk k r b a := fun a b => by
-    have h := congrFun (congrFun (hpk_h (k := k) (r := r)) b) a
-    rw [Matrix.conjTranspose_apply] at h
-    exact h
-  simp only [herm, dotProduct, Matrix.mulVec, star_sum, star_mul', Pi.star_apply, star_star,
-    Finset.mul_sum, hH]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
-  ring
+  apply _root_.Formalism.FourierDecayAlt.P.Qx8.herm_conj <;> assumption
 
 theorem herm_uh {g : Mx k r} (hg : g ∈ UH (Hpk k r)) (x y : Fin (2 * r + k + 1) → ℂ) :
     herm (Hpk k r) (g *ᵥ x) (g *ᵥ y) = herm (Hpk k r) x y := by
@@ -891,7 +812,7 @@ theorem chat_poly (hD : IsOpen D) {f : Mx k r → E} (hf : SmoothLev k r i D f) 
         (Y ^ (mdim k r i - 1) • (lc k r i (skip1 p) (skip1 q) • f x))) =
       Y ^ (mdim k r i - 1) • ((∑ j, β x j * a x j) • f x) := fun Y => by
     simp only [lc_skip1, ite_smul, one_smul, zero_smul, smul_ite, smul_zero, Finset.sum_ite_eq,
-      Finset.mem_univ, if_true, hc, one_mul]
+      Finset.mem_univ, ite_true, hc, one_mul]
     rw [Finset.sum_smul, Finset.smul_sum]
     exact Finset.sum_congr rfl fun p _ => smul_comm _ _ _
   refine H.congr fun Y => ?_
@@ -906,13 +827,13 @@ theorem capelli_two_polynomial (hD : IsOpen D) {f : Mx k r → E} (hf : SmoothLe
   refine polyAt_sum _ _ fun p _ => polyAt_sum _ _ fun p' _ => polyAt_sum _ _ fun q _ =>
     polyAt_sum _ _ fun q' _ => ?_
   by_cases hc : p < p' ∧ q < q'
-  · simp only [if_pos hc]
+  · simp only [ite_eq_left hc]
     have h1 : p.val < p'.val := hc.1
     have h2 := p'.isLt
     have hm : mdim k r i - 2 + 1 = mdim k r i - 1 := by omega
     rw [← hm]
     exact (qminor_poly' hD hf hx (skip2 p p') (skip2 q q') s).smul _
-  · simp only [if_neg hc]
+  · simp only [ite_eq_right hc]
     exact polyAt_zero _
 
 

@@ -34,8 +34,7 @@ theorem intAlg_smul (a : 𝓞 c.F) {f : Rul Xo c} (hf : IntAlg f) : IntAlg (a �
   have e : (a • f : Rul Xo c) = (a : c.F) • f := rfl
   rw [e]
   by_cases ha : (a : c.F) = 0
-  · set_option synthInstance.maxHeartbeats 200000 in
-      rw [ha, zero_smul, (isVal_valSet la v hv).zero]
+  · rw [ha, zero_smul, (isVal_valSet la v hv).zero]
     exact le_top
   · rw [(isVal_valSet la v hv).smul _ _ ha]
     exact add_nonneg (by exact_mod_cast vAdd_int_nonneg la ha) (hf la v hv)
@@ -74,23 +73,6 @@ variable (h : GenFrEx Xo c) (δ : ∀ Z : Comp Xo c, AddValuation (Om Z) (WithTo
   (cls : ∀ (T : CDVR) (ι : c.F →+* T.Fr), IntFr Xo c T ι → Prop) (PY : HeightOneSpectrum (𝓞 c.F) → Type)
   (lies : ∀ la (T : CDVR) (ι : c.F →+* T.Fr), IntFr Xo c T ι → PY la → Prop)
 
-theorem ord_nonneg_of [Nonempty (HeightOneSpectrum (𝓞 c.F))]
-    (hT : OrdTie h δ cls PY lies) (hTQ : OrdTieQ h δ) (hR1 : RegularityR1ValuedPoints Xo c C cls PY lies) (hR1Q : RegularityR1Quotient Xo c C)
-    {a : (E →+* ℂ) × ℕ → ℕ} {n : ℕ} {F : Rul Xo c} (hFs : F ∈ sec Xo c a n) (hFC : F ∈ C a n) (hF : IntAlg F)
-    {Z : Comp Xo c} {v : AddValuation (Om Z) (WithTop ℤ)} (hd : IsNormDiscrete v)
-    (hv : (∃ la, IsOver (K := c.F) v la) ∨ IsTrivOn c.F v) (hne : evC h Z F ≠ 0) :
-    0 ≤ ordC (δ Z v) v (wtZ a n) (valC h a n F Z) := by
-  have key : (0 : EReal) ≤ (((ordC (δ Z v) v (wtZ a n) (valC h a n F Z) : ℤ) : ℝ) : EReal) := by
-    rcases hv with ⟨la, ho⟩ | ht
-    · obtain ⟨y, hy⟩ := hT Z v la hd ho
-      rw [hy a n F hFs hne]
-      exact mul_nonneg (by exact_mod_cast ramIdx_nonneg ho) (hR1 a n F hFC hF la y)
-    · obtain ⟨q, hq⟩ := hTQ Z v hd ht
-      rw [hq a n F hFs hne]
-      obtain ⟨la⟩ := ‹Nonempty (HeightOneSpectrum (𝓞 c.F))›
-      exact hR1Q a n F hFC ⟨la, hF la⟩ q
-  exact_mod_cast key
-
 theorem mem_of_mem_span_int (S : Submodule c.F (Rul Xo c)) {s : Set (Rul Xo c)} (hs : s ⊆ S) {F : Rul Xo c}
     (hF : F ∈ Submodule.span (𝓞 c.F) s) : F ∈ S := by
   induction hF using Submodule.span_induction with
@@ -121,20 +103,5 @@ theorem exists_of_mem_span_valG {u : WtR E} {ι : Type} {R : ι → Rul Xo c} {x
     refine (Algebra.smul_def a (valG h u F Z)).trans ?_
     rw [IsScalarTower.algebraMap_apply (𝓞 c.F) c.F (AC Z)]
     exact (valC_smul_ct h u.1 u.2 (a : c.F) F Z).symm
-
-section LawA2Of
-
-variable [Fintype (Comp Xo c)]
-    (fn : ∀ σ : c.F →+* ℂ, FrPt Xo c (CAt σ) → Ix Dw → ℝ)
-    (yP : ∀ Z : Comp Xo c, ∀ P : Om Z →+* ℂ, FrPt Xo c (CAt (sgOf P)))
-    (Dd N T i g0 : ℕ) (cc : ℝ) (uL uF uka ude uet uta1 uta2 : WtR E)
-    (wR : Fin (N + 1) → Rul Xo c) (jc : Comp Xo c → Fin (N + 1))
-    (np : ℕ) (thpR : Fin np → Rul Xo c) (n0 : ℕ) (th0R : Fin n0 → Rul Xo c) (uF0 : WtR E)
-    (nk : ℕ) (thkR : Fin nk → Rul Xo c) (MR : Set (Rul Xo c)) (etR ta1R ta2R : Rul Xo c)
-    (nu : HeightOneSpectrum (𝓞 c.F) → ℝ)
-    (ip : (c.F →+* ℂ) → (∀ Z : Comp Xo c, AC Z) → (∀ Z : Comp Xo c, AC Z) → ℂ)
-    (wsize : WTZ E → ℝ) (DF PN PQ tableDegreeThreeBase PP0' Pd Gc PI4 Pet tableLineDegreeFive tableLineDegreeTwo Prw PO f r : ℝ)
-
-end LawA2Of
 
 end Formalism.L2.Pj

@@ -1,50 +1,7 @@
 module
 
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -105,10 +62,10 @@ theorem expo_cast {q p : ℕ} (hp : p.Prime) (hd : p - 1 ∣ q) :
   unfold expo
   by_cases h : p = 2
   · subst h
-    simp only [if_true]
+    simp only [ite_true]
     push_cast
     ring
-  · rw [if_neg h, if_neg h]
+  · rw [ite_eq_right h, ite_eq_right h]
     have hne : ((p - 1 : ℕ) : ℝ) ≠ 0 := by
       have h2 : 2 ≤ p := hp.two_le
       have h3 : p - 1 ≠ 0 := by omega
@@ -122,19 +79,19 @@ theorem pow_expo_eq {Ω : Type} [Field Ω] (W : ValuationSubring Ω) {p q : ℕ}
   unfold HT.IsCp at hκ
   by_cases h2 : p = 2
   · subst h2
-    rw [if_pos rfl] at hκ
+    rw [ite_eq_left rfl] at hκ
     refine ⟨1, W.one_mem, ?_⟩
     have he : expo q 2 = 2 * q := by simp [expo]
     rw [hκ, one_mul, he, pow_mul]
     norm_num
-  · rw [if_neg h2] at hκ
+  · rw [ite_eq_right h2] at hκ
     obtain ⟨ζ, hζ, rfl⟩ := hκ
     obtain ⟨r, rfl⟩ := hd
     obtain ⟨w₀, hw₀, hpw⟩ := prime_eq_mul_pow W hp hζ
     have hpos : 0 < p - 1 := by have := hp.two_le; omega
     refine ⟨w₀ ^ r, pow_mem hw₀ r, ?_⟩
     have he : expo ((p - 1) * r) p = r := by
-      simp only [expo, if_neg h2]
+      simp only [expo, ite_eq_right h2]
       exact Nat.mul_div_cancel_left r hpos
     rw [he, Nat.cast_pow, hpw, mul_pow, ← pow_mul]
 

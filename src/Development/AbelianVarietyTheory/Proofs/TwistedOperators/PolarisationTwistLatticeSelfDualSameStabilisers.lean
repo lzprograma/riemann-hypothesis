@@ -48,7 +48,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.Grow
 open GlobalTheory.IndefiniteRowSideFullHecke.LevelPlusSubgroup (coefPlus Cols SizeRows)
 open GlobalTheory.SepRows GlobalTheory.CoreOnto
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open scoped TensorProduct nonZeroDivisors
 
 noncomputable section
@@ -179,7 +178,7 @@ section Pass
 
 theorem pass_id {E : Type} [Field E] [NumberField E] {n : ℕ} :
     ScalarsPass (RingHom.id E) (fun N : Submodule (𝓞 E) (Fin n → E) => N.toAddSubgroup) :=
-  fun _ _ c hc y hy => hc y hy
+  fun _ _ _ hc y hy => hc y hy
 
 theorem pass_latLoc {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {n : ℕ}
     (v : IsDedekindDomain.HeightOneSpectrum (𝓞 F)) :
@@ -242,22 +241,7 @@ namespace GlobalTheory.ScaleSelfDual
 
 open Matrix
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Dual
-
-theorem mem_span_of {E : Type} [Field E] [NumberField E] {n : ℕ} {𝔟 : FractionalIdeal (𝓞 E)⁰ E} (h𝔟 : 𝔟 ≠ 0)
-    {Λ M : Submodule (𝓞 E) (Fin n → E)} (h : ∀ a ∈ 𝔟, ∀ x ∈ Λ, a • x ∈ M) :
-    ∀ x ∈ Λ, x ∈ Submodule.span E (M : Set (Fin n → E)) := by
-  intro x hx
-  have h1m : (1 : E) ∈ 𝔟⁻¹ * 𝔟 := by rw [inv_mul_cancel₀ h𝔟]; exact FractionalIdeal.one_mem_one _
-  have key : (1 : E) • x ∈ Submodule.span E (M : Set (Fin n → E)) := by
-    refine FractionalIdeal.mul_induction_on (C := fun e => e • x ∈ Submodule.span E (M : Set (Fin n → E))) h1m
-      (fun c _ a ha => ?_) (fun e e' he he' => ?_)
-    · rw [mul_smul]
-      exact Submodule.smul_mem _ c (Submodule.subset_span (h a ha x hx))
-    · rw [add_smul]; exact add_mem he he'
-  rwa [one_smul] at key
 
 theorem fg_of_le_fg' {E : Type} [Field E] [NumberField E] {n : ℕ} {N P : Submodule (𝓞 E) (Fin n → E)} (hP : P.FG)
     (hle : N ≤ P) : N.FG := by
@@ -351,8 +335,6 @@ noncomputable section
 namespace GlobalTheory.ScaleSelfDual
 
 open Matrix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem conjFI_twist (D : D7) (i : ℕ) :
     GlobalTheory.SeeSaw.conjFI D ((D.host.AAbar * D.host.AA⁻¹) ^ i) = ((D.host.AAbar * D.host.AA⁻¹) ^ i)⁻¹ := by

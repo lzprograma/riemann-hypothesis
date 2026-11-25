@@ -19,65 +19,15 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryRankO
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ShellMeasure
 import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawa
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasBoundedSumsOne
-import Mathlib.Algebra.Order.Star.Real
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdealWeight
-import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
 import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.LeviEmbMemNormalizerLower
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenIsCompactUnitaryIntegralPoints
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Cartan
-import Mathlib.Topology.Algebra.Group.Units
 import Formalism.SatakeDualWeyl.KpqSubgroupCompact
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -272,7 +222,7 @@ theorem hasSum_series : ∀ (q : ℕ), 2 ≤ q → ∀ z : ℂ, ‖z‖ < 1 →
     funext j
     rcases j with _ | n
     · simp [ha, hb]
-    · simp only [ha, hb, Nat.succ_ne_zero, if_false, Nat.add_sub_cancel]
+    · simp only [ha, hb, Nat.succ_ne_zero, ite_false, Nat.add_sub_cancel]
       rw [pow_succ]; ring
   rw [hfun]
   have h1 : (1 : ℂ) - z ^ 2 ≠ 0 := by
@@ -319,7 +269,7 @@ theorem level_sets {X : Type} [MeasurableSpace X] (μ : Measure X) (f : X → �
     · have hsub : {x | f x ≤ i} ⊆ {x | f x ≤ i + 1} := fun x hx => by
         simp only [Set.mem_setOf_eq] at hx ⊢; omega
       rw [hset, measure_diff hsub (hmeas i).nullMeasurableSet (by rw [hV]; exact ENNReal.ofReal_ne_top),
-        hV, hV, if_neg (Nat.succ_ne_zero i), Nat.add_sub_cancel, ENNReal.ofReal_sub _ (hV0 i)]
+        hV, hV, ite_eq_right (Nat.succ_ne_zero i), Nat.add_sub_cancel, ENNReal.ofReal_sub _ (hV0 i)]
 
 theorem sums_over_levels {X : Type} [MeasurableSpace X] (μ : Measure X) (f : X → ℕ) (hf : Measurable f)
     (w : ℕ → ℝ) (hw0 : ∀ j, 0 ≤ w j) (hw : ∀ j, μ (f ⁻¹' {j}) = ENNReal.ofReal (w j))
@@ -830,7 +780,7 @@ theorem transv_mem_GU (σ : L →+* L) {n : ℕ} (i j : Fin n) (hij : i ≠ j) (
   · obtain ⟨rfl, rfl⟩ := h
     simp [hij, hij.symm, hc, sub_eq_add_neg]
   · have h' : ¬ (r = j ∧ p = i) := fun h' => h ⟨h'.2.symm, h'.1.symm⟩
-    rw [if_neg h, if_neg h']
+    rw [ite_eq_right h, ite_eq_right h']
     by_cases hpr : p = r
     · subst hpr; simp
     · simp [hpr, Ne.symm hpr]
@@ -926,13 +876,13 @@ theorem value_rankOne : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplica
     by_cases h : i = a ∧ j = a'
     · obtain ⟨rfl, rfl⟩ := h
       simp [haa', hb]
-    · rw [hu i j h, Matrix.add_apply, Matrix.single_apply, if_neg (fun h' => h ⟨h'.1.symm, h'.2.symm⟩), add_zero]
+    · rw [hu i j h, Matrix.add_apply, Matrix.single_apply, ite_eq_right (fun h' => h ⟨h'.1.symm, h'.2.symm⟩), add_zero]
   have hσb : σ b = -b := by
     have h := (GlobalTheory.LGrp.mem_GU_iff σ n (u : GL (Fin n) L)).1 u.2 a a'
     rw [hra, ← ha', ← hb, hU, transv_inv_val] at h
     simpa [Matrix.single_apply, haa'] using h.symm
   by_cases hv : Valued.v b ≤ 1
-  · rw [if_pos hv]
+  · rw [ite_eq_left hv]
     have huK : u ∈ KU σ n := by
       rw [← SetLike.mem_coe, GlobalTheory.LFun.IntPtsUnitary.coe_KU]
       show (u : GL (Fin n) L) ∈ GLint (Fin n) (intL L)
@@ -940,8 +890,8 @@ theorem value_rankOne : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplica
     have h := hφ 1 1 (y⁻¹ * u) (isBorelU_one σ n) (mul_mem (inv_mem hy) huK)
     rw [one_mul, one_mul] at h
     rw [h, chiDeltaU_one, hφ1, one_mul]
-  · rw [if_neg hv]
-    push_neg at hv
+  · rw [ite_eq_right hv]
+    push Not at hv
     have hb0 : b ≠ 0 := fun h => by rw [h, map_zero] at hv; exact not_lt_of_ge zero_le' hv
     set c := b⁻¹ with hc
     have hvc : Valued.v c ≤ 1 := ((Valuation.one_lt_val_iff _ hb0).1 hv).le
@@ -955,7 +905,7 @@ theorem value_rankOne : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplica
     have e : Pb * 1 * κ = y⁻¹ * u := by rw [hPb]; group
     have hyK : (y : GL (Fin n) L) ∈ GLint (Fin n) (intL L) := hy.2
     have hyiw := IsWeylRep.inv hyw
-    have hs : simpleU k = Equiv.swap a a' := by unfold simpleU; rw [if_neg hk]
+    have hs : simpleU k = Equiv.swap a a' := by unfold simpleU; rw [ite_eq_right hk]
     set M : Matrix (Fin n) (Fin n) L := (1 + Matrix.single a a' b) * (1 - Matrix.single a' a c) with hMdef
     have hM : ∀ l j, M l j = (1 : Matrix (Fin n) (Fin n) L) l j + (if a = l ∧ a' = j then b else 0)
         - (if a' = l ∧ a = j then c else 0) - (if a = l ∧ a = j then 1 else 0) := by
@@ -987,20 +937,20 @@ theorem value_rankOne : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplica
         ordL ((((Pb : GU σ n) : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) i i) = 0 := by
       intro i h1 h2
       rw [hP, Equiv.swap_apply_of_ne_of_ne h1 h2, hM]
-      simp only [Matrix.one_apply_eq, if_neg (fun h : a = i ∧ a' = i => h1 h.1.symm),
-        if_neg (fun h : a' = i ∧ a = i => h2 h.1.symm), if_neg (fun h : a = i ∧ a = i => h1 h.1.symm)]
+      simp only [Matrix.one_apply_eq, ite_eq_right (fun h : a = i ∧ a' = i => h1 h.1.symm),
+        ite_eq_right (fun h : a' = i ∧ a = i => h2 h.1.symm), ite_eq_right (fun h : a = i ∧ a = i => h1 h.1.symm)]
       have := hunit i
       rw [Equiv.swap_apply_of_ne_of_ne h1 h2] at this
       simpa using this
     have hdiag_a : ordL ((((Pb : GU σ n) : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) a a) = -ordL b := by
       rw [hP, Equiv.swap_apply_left, hM]
-      simp only [Matrix.one_apply, if_neg haa'.symm, if_neg (fun h : a = a' ∧ a' = a => haa' h.1)]
+      simp only [Matrix.one_apply, ite_eq_right haa'.symm, ite_eq_right (fun h : a = a' ∧ a' = a => haa' h.1)]
       have hy0 : (((y : GL (Fin n) L)⁻¹ : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) a a' ≠ 0 := by
         have := monomial_entry_ne_zero hyiw a
         rwa [inv_inv, hs, Equiv.swap_apply_left] at this
       have hc0 : c ≠ 0 := inv_ne_zero hb0
       have e2 : ((0 : L) + 0 - if True ∧ True then c else 0) - (if a = a' ∧ True then 1 else 0) = -c := by
-        rw [if_pos ⟨trivial, trivial⟩, if_neg (fun h => haa' h.1)]; ring
+        rw [ite_eq_left ⟨trivial, trivial⟩, ite_eq_right (fun h => haa' h.1)]; ring
       rw [e2, P.fIwasawa_ordL_mul _ _ hy0 (neg_ne_zero.2 hc0), ordL_neg, hc, ordL_inv hb0]
       have := hunit a
       rw [Equiv.swap_apply_left] at this
@@ -1228,7 +1178,7 @@ theorem value_point : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicati
     omega
   show φ (y⁻¹ * u) = (α k / (q : ℂ) ^ 2) ^ depthU k u
   unfold depthU cornerU
-  have hs : simpleU k = Equiv.swap (lo k) (lo k).rev := by unfold simpleU; rw [if_neg hk]
+  have hs : simpleU k = Equiv.swap (lo k) (lo k).rev := by unfold simpleU; rw [ite_eq_right hk]
   set a : Fin n := lo k with ha
   set a' : Fin n := a.rev with ha'
   have hav : a.val = k.val := rfl
@@ -1254,14 +1204,14 @@ theorem value_point : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicati
     by_cases h3 : a = i ∧ a' = j
     · obtain ⟨rfl, rfl⟩ := h3
       simp [ham.symm, hma', haa', hc]
-    rw [if_neg h1, if_neg h2, if_neg h3, add_zero, add_zero, add_zero]
+    rw [ite_eq_right h1, ite_eq_right h2, ite_eq_right h3, add_zero, add_zero, add_zero]
     rcases lt_trichotomy i j with h | rfl | h
-    · rw [if_neg h.ne]
+    · rw [ite_eq_right h.ne]
       refine hu3 i j h ?_
       simp only [Fin.lt_iff_val_lt_val, Fin.ext_iff] at h h1 h2 h3 ⊢
       omega
-    · rw [if_pos rfl]; exact hu2 i
-    · rw [if_neg h.ne']; exact hu1 i j h
+    · rw [ite_eq_left rfl]; exact hu2 i
+    · rw [ite_eq_right h.ne']; exact hu1 i j h
   obtain ⟨hσd, hσb, hσc⟩ := (heis_mem_GU_iff σ ham hma' haa' ha'.symm hrm b d c).1 (hU ▸ u.2)
   obtain ⟨hvd, hvb⟩ := v_sq_le hσ hσb hσc
   clear_value b d c
@@ -1541,7 +1491,7 @@ theorem spherical_even (h : IsUnramInv ϖ σ q) (k : Fin (n / 2)) (hk : ¬ k.val
     _root_.GlobalTheory.GKUnitaryRankOne.value_rankOne L ϖ σ q h n k hk hn (fun i => (α i : ℂ)) φ hφ hφ1 y hyK hy u (hshape u)
   have hF0 : ∀ x ∈ H 0, φ (y⁻¹ * x) = 1 := by
     intro x hx
-    rw [hval x, if_pos]
+    rw [hval x, ite_eq_left]
     simpa [H] using hx
   have hF : ∀ j x, x ∈ H (j + 1) → x ∉ H j → φ (y⁻¹ * x) = ((α k : ℂ) / q) ^ (j + 1) := by
     intro j x hx1 hx0
@@ -1566,7 +1516,7 @@ theorem spherical_even (h : IsUnramInv ϖ σ q) (k : Fin (n / 2)) (hk : ¬ k.val
       rw [hv, ← WithZero.coe_one, WithZero.coe_le_coe]
       show ¬ (((j + 1 : ℕ) : ℤ) ≤ 0)
       omega
-    rw [hval x, if_neg hnot, hord, neg_neg, zpow_natCast, zpow_neg, zpow_natCast, div_pow, div_eq_mul_inv]
+    rw [hval x, ite_eq_right hnot, hord, neg_neg, zpow_natCast, zpow_neg, zpow_natCast, div_pow, div_eq_mul_inv]
   obtain ⟨hInt1, hI1, -⟩ := _root_.GlobalTheory.integral_geometric_shells μ q hq2 (α k : ℂ) hαk H hHm hmono hcov hHμ (fun x => φ (y⁻¹ * x)) hF0 hF
   refine ⟨hInt1, ?_⟩
   rw [hI1]
@@ -1614,7 +1564,7 @@ theorem cSimpleU_ne_zero (hq : 2 ≤ q) (k : Fin (n / 2)) (hk : ¬ k.val + 1 < n
   have hq2n : ‖((q : ℂ) ^ 2)⁻¹‖ ≤ 1 := by
     rw [norm_inv, norm_pow, hnq]
     exact inv_le_one_of_one_le₀ (one_le_pow₀ hq1.le)
-  simp only [cSimpleU, dif_neg hk]
+  simp only [cSimpleU, dite_eq_right hk]
   split_ifs with hn
   · exact div_ne_zero (key _ (hmul _ hqn)) (key _ hαk)
   · refine div_ne_zero (mul_ne_zero (key _ (hmul _ hq2n)) ?_) (key _ hz2)

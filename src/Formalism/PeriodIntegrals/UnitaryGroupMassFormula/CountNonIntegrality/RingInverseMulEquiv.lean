@@ -1,43 +1,7 @@
 module
 
 public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalGroupInFamilyNontrivial
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.CntLocal
 
 @[expose] public section
@@ -49,8 +13,6 @@ namespace PI.CntNotIntW
 open NumberField Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.CntLocal
 open Classical
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def LocGen : Prop :=
   ∀ (D : Formalism.BasicNotions.D7) (δ : ∀ p : PlF D, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep),
     (∀ p, Agree δ M p) → ∀ (p : PlF D) (m : ℕ), ∃ x : D.host.E,
@@ -58,21 +20,6 @@ def LocGen : Prop :=
       ∃ w ∈ (D.s.atP p).O,
         Ring.inverse ((algebraMap (D.s.atP p).Fp (D.s.atP p).Ep (δ p) * (D.s.atP p).ιE (uP p : D.host.E)) ^ m) =
           w * (D.s.atP p).ιE x
-
-theorem ringInverse_mulEquiv {R S : Type*} [MonoidWithZero R] [MonoidWithZero S] (f : R ≃* S) (x : R) :
-    f (Ring.inverse x) = Ring.inverse (f x) := by
-  have f0 : f 0 = 0 := by
-    calc f 0 = f (0 * f.symm 0) := by rw [zero_mul]
-      _ = f 0 * f (f.symm 0) := map_mul f _ _
-      _ = 0 := by rw [f.apply_symm_apply, mul_zero]
-  by_cases h : IsUnit x
-  · obtain ⟨u, rfl⟩ := h
-    have e : f u = ((Units.map f.toMonoidHom u : Sˣ) : S) := rfl
-    rw [Ring.inverse_unit, e, Ring.inverse_unit]
-    rfl
-  · have hf : ¬ IsUnit (f x) := fun hu => h (by simpa using hu.map f.symm)
-    rw [Ring.inverse_non_unit x h, Ring.inverse_non_unit _ hf]
-    exact f0
 
 theorem iE_mem_O (D : Formalism.BasicNotions.D7) (p : PlF D) (o : 𝓞 D.host.E) : (D.s.atP p).ιE (o : D.host.E) ∈ (D.s.atP p).O := by
   rw [(D.s.atP p).O_def]
@@ -84,7 +31,7 @@ theorem cj_frFac (D : Formalism.BasicNotions.D7) (δ : ∀ p : PlF D, (D.s.atP p
     (D.s.atP p).cj (frFac δ p a) = frFac δ p a := by
   unfold frFac
   rw [show ∀ x, (D.s.atP p).cj (Ring.inverse x) = Ring.inverse ((D.s.atP p).cj x) from
-    fun x => ringInverse_mulEquiv (D.s.atP p).cj.toMulEquiv x]
+    fun x => map_ringInverse (D.s.atP p).cj.toMulEquiv x]
   rw [map_pow, map_mul, AlgEquiv.commutes, (D.s.atP p).cj_ιE, map_ratCast]
 
 theorem frame_mem {D : Formalism.BasicNotions.D7} {T : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS D).V)

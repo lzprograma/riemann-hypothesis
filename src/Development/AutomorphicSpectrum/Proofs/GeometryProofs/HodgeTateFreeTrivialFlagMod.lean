@@ -23,65 +23,15 @@ public import Development.WeilBound.CoreStatements.HodgeTatePoints.Famproj
 public import Development.WeilBound.CoreStatements.HodgeTatePoints.FinrankDualEqOfProjective
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFreeFlagLatticeLower
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PointHTOfFarguesHodgeTate
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
-import Mathlib.Topology.Sheaves.Presheaf
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.NumberTheory.Height.NumberField
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Algebra.Module.StablyFree.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Henselian
 import Development.WeilBound.CoreStatements.HodgeTatePoints.GaSurj
 import Development.WeilBound.CoreStatements.HodgeTatePoints.Hcptgen
+import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ImaginaryRootConj
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartRingMemAfterMonomialScaling, Development.AutomorphicSpectrum.Proofs.GeometryProofs.CpElementDividesPrimeSq, Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeChartTransitionIntegral, Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeComponentIntegralAtPrimeInS, Development.AutomorphicSpectrum.Proofs.GeometryProofs.NumberFieldIntegersInIntegrallyClosed, Development.WeilBound.CoreStatements.HodgeTatePoints.FlagbAlg, Development.WeilBound.CoreStatements.HodgeTatePoints.FlagbGeo, Development.WeilBound.CoreStatements.HodgeTatePoints.FlagbLoc, Development.WeilBound.CoreStatements.HodgeTatePoints.ChartMonNeZero, Development.WeilBound.CoreStatements.HodgeTatePoints.FrameExpandLoc, Development.WeilBound.CoreStatements.HodgeTatePoints.GeTriv, Development.WeilBound.CoreStatements.HodgeTatePoints.TrivFlagModOfHodgeTateFreeOfRootLines, Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFreeTrivialFlagMod
@@ -251,8 +201,7 @@ theorem pow_smul_mem_om_of_overlap : ∀ (E : Type) [Field E] [NumberField E] [I
     obtain ⟨r, hr⟩ := (ho ((b : Ω))⁻¹).2 ⟨1, b, hb, by simp⟩
     rw [← hr]
     exact Subalgebra.algebraMap_mem _ r
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   let I : Ideal (chartRing ℤ (mseg y) t.1) :=
     { carrier := {a | (a : Ω) • w ∈ (Dc t).om}
       add_mem' := fun {u v} hu hv => by
@@ -938,15 +887,7 @@ theorem eigProj_eq_comp (ρΩ : 𝓞 E →+* Module.End Ω (Module.Dual Ω 𝔐.
 
 theorem span_flag (Fl : 𝔐.Flag) (s : CMType H ⊕ CMType H) :
     Submodule.span Ω (Set.range (Fl.b s)) = 𝔐.Vgen s := by
-  let q : Cpt 𝔐.ξ := ⟨genPt 𝔐.ξ, specializes_rfl⟩
-  obtain ⟨U, hU, b, hF, hb⟩ := Fl.sub s q trivial
-  obtain ⟨U', hU', b', hV, hb'⟩ := 𝔐.vb s q trivial
-  have h1 := (hb q trivial hU).2
-  have h2 : 𝔐.V s q = _ := (hb' q trivial hU').2
-  have h3 := congrArg (fun N : Submodule (regAt 𝔐.ξ q) 𝔐.Li => Submodule.span Ω (N : Set 𝔐.Li)) (h1.symm.trans h2)
-  simp only [Submodule.span_span_of_tower] at h3
-  rw [← flagStep_top, ← hF, flagStep_top, h3]
-  exact hV
+  apply _root_.GlobalTheory.CompanionTheory.Ar.HodgeCptTest.flag_span <;> assumption
 
 theorem li_flag (Fl : 𝔐.Flag) (s : CMType H ⊕ CMType H) : LinearIndependent Ω (Fl.b s) := by
   obtain ⟨_, _, -, -, -, h, -⟩ := Fl.generic
@@ -1218,7 +1159,7 @@ theorem chartMon_ne_zero {t : ∀ k, J k} (ht : mseg y t ≠ 0) (a : K → ℤ) 
   Finset.prod_ne_zero_iff.2 fun k hk => zpow_ne_zero _ (Finset.prod_ne_zero_iff.1 ht k hk)
 
 theorem rootIdx_left (τ : CMType H) (a : Fin D.p) :
-    HodgeCpt.rootIdx D (τ, Fin.castAdd D.q a) = ⟨.inl τ, a⟩ := dif_pos a.2
+    HodgeCpt.rootIdx D (τ, Fin.castAdd D.q a) = ⟨.inl τ, a⟩ := dite_eq_left a.2
 
 theorem rootIdx_right (τ : CMType H) (a : Fin D.q) :
     HodgeCpt.rootIdx D (τ, Fin.natAdd D.p a.rev) = ⟨.inr τ, a⟩ := by
@@ -1260,7 +1201,7 @@ theorem chart_flag_bases : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
       fun x => (off_facts hds (chart_le hp.out ho hq hz) hz hf).2 _⟩)
     (fun q hq (a : Fin D.p) u hu => by
       have h1 := (hroot (τ, Fin.castAdd D.q a)).2 q trivial t.1 hq
-      have h2 : HodgeCpt.rootSgn D (τ, Fin.castAdd D.q a) = 1 := if_pos a.2
+      have h2 : HodgeCpt.rootSgn D (τ, Fin.castAdd D.q a) = 1 := ite_eq_left a.2
       unfold HodgeCpt.Flag.rootLat at h1
       rw [rootIdx_left, h2] at h1
       have h3 := tens_gen _ q 1 (Or.inl rfl) u _ hu h1
@@ -1274,7 +1215,7 @@ theorem chart_flag_bases : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
       (off_facts hds (chart_le hp.out ho hq hz) hz hf).2⟩)
     (fun q hq (a : Fin D.q) u hu => by
       have h1 := (hroot (τ, Fin.natAdd D.p a.rev)).2 q trivial t.1 hq
-      have h2 : HodgeCpt.rootSgn D (τ, Fin.natAdd D.p a.rev) = -1 := if_neg (by simp)
+      have h2 : HodgeCpt.rootSgn D (τ, Fin.natAdd D.p a.rev) = -1 := ite_eq_right (by simp)
       unfold HodgeCpt.Flag.rootLat at h1
       rw [rootIdx_right, h2] at h1
       have h3 := tens_gen _ q (-1) (Or.inr rfl) u _ hu h1
@@ -1611,7 +1552,7 @@ theorem trivflag_charts : ∀ (o : Type) [CommRing o] (Ω : Type) [Field Ω] [Al
   refine ⟨fun s => if h : mseg y s ≠ 0 then
     ((g ⟨s, h⟩).map (fun a => (a : Ω))).submatrix id finSumFinEquiv.symm else 0, fun s hs => ?_,
     fun s t hs ht => ?_⟩
-  · simp only [dif_pos hs]
+  · simp only [dite_eq_left hs]
     refine ⟨fun a a' => (g ⟨s, hs⟩ _ _).2, ?_⟩
     obtain ⟨h, r, e⟩ := (hfe ⟨s, hs⟩).2 _ (hg ⟨s, hs⟩)
     refine ⟨h, h.2, r, r.2, ?_⟩
@@ -1619,7 +1560,7 @@ theorem trivflag_charts : ∀ (o : Type) [CommRing o] (Ω : Type) [Field Ω] [Al
     rw [map_mul, AlgHom.map_det] at this
     rw [hϖ, Matrix.submatrix_map]
     simpa using this
-  · simp only [dif_pos hs, dif_pos ht, hϖ]
+  · simp only [dite_eq_left hs, dite_eq_left ht, hϖ]
     haveI := hfr ⟨t, ht⟩
     have hu := div_mem_chartRing (o := o) (mseg y) t s
     have hu0 : mseg y s / mseg y t ≠ 0 := div_ne_zero hs ht

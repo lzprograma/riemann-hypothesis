@@ -414,12 +414,6 @@ theorem valR_cocycle (hL : L.IsLB) (x : Sp R ⟶ Z) {i j k : L.ι} (hi : ⊤ ≤
     FormalValue.toStkA_valR_eq_gs x (L.U i ⊓ L.U k) _ (fun _ hz => ⟨hi hz, hk hz⟩) _, gs_unit x (cpt R) (L.U i ⊓ L.U k) ⟨hi trivial, hk trivial⟩ (L.g i k), ← Units.val_mul,
     gm_cocycle hL x _ (hi trivial) (hj trivial) (hk trivial)]
 
-theorem valR_self (hL : L.IsLB) (x : Sp R ⟶ Z) {j : L.ι} (h : ⊤ ≤ x ⁻¹ᵁ L.U j) :
-    valR x (L.U j ⊓ L.U j) (L.g j j).val = 1 := by
-  apply toStkA_injective
-  rw [FormalValue.toStkA_valR_eq_gs x (L.U j ⊓ L.U j) _ (fun _ hz => ⟨h hz, h hz⟩) _, gs_unit x (cpt R) (L.U j ⊓ L.U j) ⟨h trivial, h trivial⟩ (L.g j j), map_one]
-  exact congrArg Units.val (gm_self hL x _ (h trivial))
-
 theorem isFrm_spread (hL : L.IsLB) (x : Sp R ⟶ Z) {k : L.ι} (hk : ⊤ ≤ x ⁻¹ᵁ L.U k) {a : R} (ha : IsUnit a) :
     IsFrm L x (fun j => valR x (L.U j ⊓ L.U k) (L.g j k).val * a) := by
   refine ⟨fun j hj => (FormalValue.isUnit_valR x (L.U j ⊓ L.U k) (fun _ hz => ⟨hj hz, hk hz⟩) _).mul ha,
@@ -512,7 +506,7 @@ theorem isTan_of_sections : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
     rw [_root_.mul_assoc] at key
     have hu : IsUnit (TrivSqZeroExt.inl (HahnSeries.single (m : ℤ) (1 : ℂ)) : DualNumber ℂ⸨X⸩) :=
       TrivSqZeroExt.isUnit_iff_isUnit_fst.2 (Ne.isUnit (by simp))
-    rw [valR_self t.PP.isLB _ hK, _root_.one_mul]
+    rw [GlobalTheory.ConstPoint.valR_g_self t.PP.isLB _ hK, _root_.one_mul]
     exact (hu.mul_left_cancel key).symm
 
 end GlobalTheory.GenericTan
@@ -786,13 +780,6 @@ section Dual
 
 variable {R R' : Type} [CommRing R] [CommRing R']
 
-theorem eq_dualMapR (φ : R →+* R') (ρ : DualNumber R →+* DualNumber R') (h : ∀ r, ρ (inl r) = inl (φ r))
-    (he : ρ DualNumber.eps = DualNumber.eps) : ρ = dualMapR φ := by
-  refine RingHom.ext fun a => ?_
-  have e : a = inl a.fst + inl a.snd * DualNumber.eps := by ext <;> simp
-  rw [e, map_add (f := _), map_mul, h, h, he]
-  ext <;> simp [dualMapR]
-
 theorem dualMapR_add (φ : R →+* R') (a b : R) : dualMapR φ (inl a + inr b) = inl (φ a) + inr (φ b) := by
   ext <;> simp [dualMapR]
 
@@ -949,8 +936,8 @@ theorem spec_tangent : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [Numb
       rw [fst_add, fst_inl, fst_inr, add_zero]
       exact Γ.unit w _ (by rwa [Γ.ev_eq]))⟩
   refine ⟨x ≫ (o.t.G.hom ⁻¹ᵁ C.U).ι, (Category.assoc _ _ _).trans x1, fun ρ h he => ?_, fun ρ h he => ?_⟩
-  · rw [eq_dualMapR (Γ.R w).val.toRingHom ρ h he, reassoc_of% x2, eν]
-  obtain rfl := eq_dualMapR (Γ.ev w).toRingHom ρ h he
+  · rw [GlobalTheory.ConstTan.eq_dualMapR (Γ.R w).val.toRingHom ρ h he, reassoc_of% x2, eν]
+  obtain rfl := GlobalTheory.ConstTan.eq_dualMapR (Γ.ev w).toRingHom ρ h he
   choose p hp using fun v => exists_lift_open (Ψ.pi w v).left (o.t.G.hom ⁻¹ᵁ C.U) (by
     rw [← Scheme.Hom.comp_preimage, Over.w]
     exact hy)

@@ -11,58 +11,7 @@ public import Formalism.HermitianLattices.HermitianLatticesProofs.LocBasic
 public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.ThreeForms
 public import Formalism.LocalToGlobal.IndefiniteForms.IndefSide
 public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.ExampleSatisfiesConditionsAtFive
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.IdxRules
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -298,7 +247,6 @@ end
 
 section
 
-open Module NumberField IsDedekindDomain
 
 noncomputable section
 
@@ -383,7 +331,6 @@ end
 
 section
 
-open Module NumberField IsDedekindDomain
 
 noncomputable section
 
@@ -826,7 +773,6 @@ end
 
 section
 
-open Module NumberField IsDedekindDomain
 
 noncomputable section
 
@@ -901,7 +847,6 @@ end
 
 section
 
-open Module NumberField IsDedekindDomain
 
 noncomputable section
 
@@ -1072,7 +1017,6 @@ end
 
 section
 
-open Module NumberField IsDedekindDomain
 
 noncomputable section
 
@@ -1182,7 +1126,6 @@ end
 
 section
 
-open Module NumberField IsDedekindDomain
 
 noncomputable section
 
@@ -1212,7 +1155,7 @@ theorem span_of_fin {R K V : Type} [CommRing R] [IsDedekindDomain R] [Field K] [
     by_contra hc
     push Not at hc
     apply hni
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro d hd
     by_contra h0
     exact hc d h0 hd
@@ -1322,7 +1265,6 @@ end
 
 section
 
-open Module NumberField IsDedekindDomain
 
 noncomputable section
 
@@ -1466,76 +1408,6 @@ end
 
 end
 
-section
-
-open Module NumberField IsDedekindDomain
-
-noncomputable section
-
-namespace Formalism.MainNotions.Gaps.LocalGlobalPassage
-
-open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Indef Formalism.L2.Indef.Tree
-open Formalism.DivisionValues (vw conjPl)
-open Formalism.EigenvalueLevelCeiling (lix cut sc IsLatIn plc)
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K]
-variable {Bs : DefBase K} {Df : DefSide Bs} {S : IndefData Df} {P' : Type} [Group P'] [Finite P'] {c : OnConst}
-
-end Formalism.MainNotions.Gaps.LocalGlobalPassage
-
-end
-
-end
-
-section
-
-open Module NumberField IsDedekindDomain
-
-noncomputable section
-
-namespace Formalism.MainNotions.Gaps.LocalGlobalPassage
-
-open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Indef Formalism.L2.Indef.Tree
-open Formalism.DivisionValues (vw conjPl)
-open Formalism.EigenvalueLevelCeiling (lix cut sc IsLatIn plc)
-
-section Rem
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {n : ℕ}
-
-end Rem
-
-section Exp
-
-variable {K0 K : Type} [Field K0] [NumberField K0] [Field K] [NumberField K] [Algebra K0 K]
-
-end Exp
-
-end Formalism.MainNotions.Gaps.LocalGlobalPassage
-
-end
-
-end
-
-section
-
-open Module NumberField IsDedekindDomain
-
-noncomputable section
-
-namespace Formalism.MainNotions.Gaps.LocalGlobalPassage
-
-open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Indef Formalism.L2.Indef.Tree
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K]
-variable {Bs : DefBase K} {Df : DefSide Bs} {S : IndefData Df} {P' : Type} [Group P'] [Finite P'] {c : OnConst}
-  {O : OnObj S P' c} {D : D7} {B : WeightFamilies.Prov D} {P : ModuliIntegralCharts.Prov D} [Algebra B.KO K]
-
-end Formalism.MainNotions.Gaps.LocalGlobalPassage
-
-end
-
-end
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightParameterMemUnitInterval =====

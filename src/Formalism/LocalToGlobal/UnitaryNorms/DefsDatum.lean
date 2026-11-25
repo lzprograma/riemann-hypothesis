@@ -25,15 +25,10 @@ structure PlacesOverCommonPrime where
   pK : HeightOneSpectrum (𝓞 H.K)
 
   pK' : HeightOneSpectrum (𝓞 H.K)
-  pK_over : ((H.pde : ℕ) : 𝓞 H.K) ∈ pK.asIdeal
-  pK'_over : ((H.pde' : ℕ) : 𝓞 H.K) ∈ pK'.asIdeal
 
   P : ∀ v : HeightOneSpectrum (𝓞 H.F), OverPF H H.pde v → HeightOneSpectrum (𝓞 H.E)
 
   P' : ∀ v : HeightOneSpectrum (𝓞 H.F), OverPF H H.pde' v → HeightOneSpectrum (𝓞 H.E)
-
-  P_mem : ∀ v hv, P v hv ∈ PvSet H pK v
-  P'_mem : ∀ v hv, P' v hv ∈ PvSet H pK' v
 
 structure ClsRepK where
   rep : ClassGroup (𝓞 H.K) → (nonZeroDivisors (Ideal (𝓞 H.K)))

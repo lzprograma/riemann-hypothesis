@@ -131,7 +131,6 @@ theorem rowE_eq_rowDiv (R : Type) [CommRing R] (r n : ℕ) (a b : Fin r) (P : Mv
 theorem map_rowE {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (r n : ℕ) (a b : Fin r)
     (f : MvPolynomial (Fin r × Fin n) R) :
     map φ (rowE R r n a b f) = rowE S r n a b (map φ f) := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp only [rowE_apply, map_sum, map_mul, map_X, pderiv_map]
 
 theorem map_rowE_pow {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (r n k : ℕ) (a b : Fin r)
@@ -142,13 +141,11 @@ theorem map_rowE_pow {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (r 
     simp only [pow_zero, Matrix.one_apply]
     split_ifs <;> simp
   | succ k ih =>
-    set_option synthInstance.maxHeartbeats 100000 in
       simp only [pow_succ, Matrix.mul_apply, LinearMap.sum_apply, Module.End.mul_apply, map_sum, ih, map_rowE]
 
 theorem map_gel {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (r n k : ℕ)
     (f : MvPolynomial (Fin r × Fin n) R) :
     map φ (gel R r n k f) = gel S r n k (map φ f) := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp only [gel, Matrix.trace, Matrix.diag, LinearMap.sum_apply, map_sum, map_rowE_pow]
 
 theorem rowOperators_main : ∀ (R : Type) [CommRing R] (r n : ℕ), GlRel (rowE R r n) ∧

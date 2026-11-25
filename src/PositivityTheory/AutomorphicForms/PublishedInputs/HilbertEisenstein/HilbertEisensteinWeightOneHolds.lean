@@ -1092,10 +1092,10 @@ theorem phi_eq {c : HeightOneSpectrum (𝓞 F) → ℕ} (hc : {w | c w ≠ 0}.Fi
   have h1 := mem_nId_iff hc (pFin F (x 1) - 1)
   simp only [map_sub, map_one] at h1
   by_cases a : (x 0).2 ∈ idealFiniteAdeles (nId c) <;> by_cases b : (x 1).2 - 1 ∈ idealFiniteAdeles (nId c)
-  · rw [if_pos fun w => ⟨h0.2 a w, h1.2 b w⟩, if_pos a, if_pos b, mul_one]
-  · rw [if_neg (fun h => b (h1.1 fun w => (h w).2)), if_neg b, mul_zero]
-  · rw [if_neg (fun h => a (h0.1 fun w => (h w).1)), if_neg a, zero_mul]
-  · rw [if_neg (fun h => a (h0.1 fun w => (h w).1)), if_neg a, zero_mul]
+  · rw [ite_eq_left fun w => ⟨h0.2 a w, h1.2 b w⟩, ite_eq_left a, ite_eq_left b, mul_one]
+  · rw [ite_eq_right (fun h => b (h1.1 fun w => (h w).2)), ite_eq_right b, mul_zero]
+  · rw [ite_eq_right (fun h => a (h0.1 fun w => (h w).1)), ite_eq_right a, zero_mul]
+  · rw [ite_eq_right (fun h => a (h0.1 fun w => (h w).1)), ite_eq_right a, zero_mul]
 
 def cst (c : HeightOneSpectrum (𝓞 F) → ℕ) : ℂ :=
   (-Complex.I) ^ Fintype.card (InfinitePlace F) *
@@ -1122,17 +1122,17 @@ theorem fourier_phi {c : HeightOneSpectrum (𝓞 F) → ℕ} (hc : {w | c w ≠ 
   rw [show pFin F (y 1) = (y 1).2 from rfl]
   by_cases a : (y 0).2 ∈ idealFiniteAdeles (traceDualIdeal F (nId c)) <;>
     by_cases b : (y 1).2 ∈ idealFiniteAdeles (traceDualIdeal F (nId c))
-  · rw [if_pos fun w => ⟨h0.2 a w, h1.2 b w⟩]
-    simp only [Set.indicator_apply, SetLike.mem_coe, a, b, if_true, Pi.one_apply]
+  · rw [ite_eq_left fun w => ⟨h0.2 a w, h1.2 b w⟩]
+    simp only [Set.indicator_apply, SetLike.mem_coe, a, b, ite_true, Pi.one_apply]
     ring
-  · rw [if_neg (fun h => b (h1.1 fun w => (h w).2))]
-    simp only [Set.indicator_apply, SetLike.mem_coe, a, b, if_true, if_false, Pi.one_apply]
+  · rw [ite_eq_right (fun h => b (h1.1 fun w => (h w).2))]
+    simp only [Set.indicator_apply, SetLike.mem_coe, a, b, ite_true, ite_false, Pi.one_apply]
     ring
-  · rw [if_neg (fun h => a (h0.1 fun w => (h w).1))]
-    simp only [Set.indicator_apply, SetLike.mem_coe, a, b, if_true, if_false, Pi.one_apply]
+  · rw [ite_eq_right (fun h => a (h0.1 fun w => (h w).1))]
+    simp only [Set.indicator_apply, SetLike.mem_coe, a, b, ite_true, ite_false, Pi.one_apply]
     ring
-  · rw [if_neg (fun h => a (h0.1 fun w => (h w).1))]
-    simp only [Set.indicator_apply, SetLike.mem_coe, a, b, if_false, Pi.one_apply]
+  · rw [ite_eq_right (fun h => a (h0.1 fun w => (h w).1))]
+    simp only [Set.indicator_apply, SetLike.mem_coe, a, b, ite_false, Pi.one_apply]
     ring
 
 theorem rowA_zero : rowA (0 : Fin 2 → F) = 0 := by

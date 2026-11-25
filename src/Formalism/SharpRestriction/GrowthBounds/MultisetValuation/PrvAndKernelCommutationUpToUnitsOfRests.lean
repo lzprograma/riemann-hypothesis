@@ -20,53 +20,11 @@ public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.CommonEi
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.FirstTheoremPlaceBound
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.SmulPsiGUp
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.AuxUOfFirstTheoremPlaceBound
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.Style
 import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.GaussElementarySymmetric
-import Mathlib.Tactic.ReduceModChar
 import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.TheoremOfAlternateForm
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ENatToNat
 import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NatCastInvMemRp
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Rat
 import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.RelativePresentationOfD7
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -158,12 +116,6 @@ theorem eb_phi_inj (v : X.Pl) (j : ℕ) : Function.Injective (eb_phi X v j) := b
   obtain ⟨h1, h2, h3⟩ := h
   rw [h1, Fin.ext h2, h3]
 
-theorem eb_eps_inj (v : X.Pl) (j : ℕ) : Function.Injective (ea_eps X v j) := by
-  rintro ⟨a1, a2, a3⟩ ⟨b1, b2, b3⟩ h
-  simp only [ea_eps, Sigma.mk.injEq, heq_eq_eq, true_and, Prod.mk.injEq, EmbeddingLike.apply_eq_iff_eq] at h
-  obtain ⟨h1, h2, h3⟩ := h
-  rw [h1, h2, h3]
-
 theorem eb_fac (v : X.Pl) (j : ℕ) (K' : Type) [Field K'] (I : X.ColCh j) (s : ea_S X v) (c : Fin (ea_colN X v j s)) :
     MvPolynomial.rename (ea_eps X v j) (MvPolynomial.map
       (MvPolynomial.rename (eb_phi X v j) : MvPolynomial _ K' →ₐ[K'] MvPolynomial _ K').toRingHom
@@ -232,7 +184,7 @@ theorem eb_poly (v : X.Pl) (j : ℕ) (K' : Type) [Field K'] (I : X.ColCh j) :
 theorem eb_jet (v : X.Pl) (j : ℕ) (K' : Type) [Field K'] (F : MvPowerSeries (X.ZA j) K') (I : X.ColCh j) :
     applyD (X.PIv j I v) F = MvPolynomial.rename (eb_phi X v j)
       (Formalism.DworkPowerSeriesWeights.frameJet (ea_colN X v j) (ea_hts X v j) (ea_hp X v j) (ea_Ic X v j I) (resV (ea_eps X v j) F)) := by
-  rw [eb_applyD, eb_poly, eb_J_rename _ (eb_eps_inj X v j), eb_J_map]
+  rw [eb_applyD, eb_poly, eb_J_rename _ (Formalism.MainNotions.FormalGroupSystem.Pf.ea_eps_inj X v j), eb_J_map]
   rfl
 
 theorem eb_brJet : ea_BrJet X := by
@@ -752,8 +704,8 @@ theorem main_ind {Y : Pend X} (hfr : IsFractionRing X.G.O X.G.Kf) (hp : (p : X.G
     rw [e4, e5, ZL_smul hL]
     have hb := ZL_bound hfr hL hF hE u m m' hj hu (fun v => hc0 v m' hj) (fun v => hcr v m' hj) B hBnd
       (fun v => if v ∈ B then Gn v (m' + 1) else G0n v (m' + 1))
-      (fun v hv => by simp only [hv, if_true]; exact h1 v (List.mem_of_mem_filter hv) m' hj)
-      (fun v hv => by simp only [hv, if_false]; exact h2 v m' hj) G' hG'
+      (fun v hv => by simp only [hv, ite_true]; exact h1 v (List.mem_of_mem_filter hv) m' hj)
+      (fun v hv => by simp only [hv, ite_false]; exact h2 v m' hj) G' hG'
     have h3 := vGe_smul X hfr (vGeK_ppow X hfr (-(PrS X (m' + 1) B))) (vGe_smul X hfr (vGeK_vsc (∑ j ∈ range m', bbJ X Lv Gn G0n Q j)) hb)
     rw [Finset.sum_range_succ]
     refine vGe_mono X hfr (le_of_eq ?_) h3
@@ -1049,15 +1001,7 @@ def RestWeylEdge : Prop :=
 theorem latTup_update {L : P.Tup} (hL : P.IsLatTup L) {v : Fin P.nV}
     {A : Submodule (P.W v) (Fin (P.m + 1) → P.Qq v)} (hA : IsLattice (P.W v) A) :
     P.IsLatTup (Function.update L v A) := by
-  intro u
-  by_cases h : u = v
-  · subst h
-    have e : Function.update (β := fun v => Submodule (P.W v) (Fin (P.m + 1) → P.Qq v)) L u A u = A :=
-      Function.update_self u A L
-    exact e.symm ▸ hA
-  · have e : Function.update (β := fun v => Submodule (P.W v) (Fin (P.m + 1) → P.Qq v)) L v A u = L u :=
-      Function.update_of_ne h A L
-    exact e.symm ▸ hL u
+  apply _root_.Formalism.MainNotions.FormalGroupSystem.Pf.hk_latTup_update <;> assumption
 
 theorem Tminus_mem (h : RestWeylEdge P) (v : Fin P.nV) (i : ℕ) (F : P.Tup → P.Xsp)
     (hF : ∀ L, P.IsLatTup L → F L ∈ P.HtupW L) (L : P.Tup) (hL : P.IsLatTup L) :
@@ -1124,7 +1068,7 @@ theorem Ar_lift_le (h : Std p n' k1 t m c r TT a b lam0 w) (j i : ℕ) (hj : j +
     · intro x hx
       rw [mem_filter] at hx
       unfold lamAt
-      rw [if_pos he]
+      rw [ite_eq_left he]
       show liftWt t k1 (lam0 s) (fun l => w l s) (j + 1) x = _
       unfold liftWt
       rw [dite_eq_left (by omega : x.val < k1 + 1)]
@@ -1146,7 +1090,7 @@ theorem Ar_lift_le (h : Std p n' k1 t m c r TT a b lam0 w) (j i : ℕ) (hj : j +
         (univ.filter fun x : Fin (k1 + (j + 1) * (t + 1) + 1) => x.val < i).card • w (j + 1) s := by
       refine Finset.sum_le_card_nsmul _ _ _ fun x _ => ?_
       unfold lamAt
-      rw [if_neg he]
+      rw [ite_eq_right he]
       exact neg_liftWt_le h s j hj x.rev
     refine le_trans h1 ?_
     rw [nsmul_eq_mul]
@@ -1186,7 +1130,7 @@ theorem restricted_hecke_integral_of_edges (h : ∀ j, RestWeylEdge (X.Pj j)) : 
   rw [mem_Icc] at hi
   have hp := p_ne_zero X v
   unfold Sys.Tt
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
   have h1 := TmInt X (h (j + 1)) v i hF
   have hle : Ar i ((X.Pj (j + 1)).lam0 (X.vJ (j + 1) v)) ≤ Nprime (X.G.P.lam0 v) (X.w v) (j + 1) i :=
     Ar_lift_le (X.std v) j i hj (by have := (X.std v).two_r; omega)

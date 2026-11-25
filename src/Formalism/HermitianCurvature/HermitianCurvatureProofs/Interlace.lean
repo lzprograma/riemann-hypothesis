@@ -1,48 +1,8 @@
 module
 
 public import Formalism.HermitianCurvature.StatementI
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
@@ -107,29 +67,36 @@ theorem interlaceSign : InterlaceSign := by
   · exact sign_core k u u' ρ l Y hl1 hlk h hA e he'
   · exact sign_core k u' u ρ l Y hl1 hlk (interlaces_swap h) hB e he'
 
+/-- All paired factors away from the cut index are positive when the cut pair straddles zero. -/
+lemma prod_erase_pos {k l : ℕ} {u u' ρ : ℕ → ℝ} {x : ℝ} (hl : l ∈ Icc 1 k)
+    (h : Interlaces k u u' ρ) (hx : x + u l < 0 ∧ 0 < x + u' l) :
+    0 < ∏ i ∈ (Icc 1 k).erase l, ((x + u i) * (x + u' i)) := by
+  obtain ⟨hl1, hlk⟩ := mem_Icc.mp hl
+  obtain ⟨hx₁, hx₂⟩ := hx
+  have hu := antitone_on (u_step h)
+  have hu' := antitone_on (u_step (interlaces_swap h))
+  apply prod_pos
+  intro i hi
+  obtain ⟨hne, hi⟩ := mem_erase.mp hi
+  obtain ⟨hi1, hik⟩ := mem_Icc.mp hi
+  rcases lt_or_gt_of_ne hne with hil | hil
+  · obtain ⟨a, b, c, d⟩ := h i (mem_Icc.2 ⟨hi1, by lia⟩)
+    have h1 := hu' (i + 1) l (by lia) (by lia) hlk
+    have h2 := hu' i l hi1 hil.le hlk
+    apply mul_pos <;> linarith
+  · obtain ⟨j, rfl⟩ : ∃ j, i = j + 1 := ⟨i - 1, by lia⟩
+    obtain ⟨a, b, c, d⟩ := h j (mem_Icc.2 ⟨by lia, by lia⟩)
+    have h1 := hu l (j + 1) hl1 hil.le hik
+    have h2 := hu l j hl1 (by lia) (by lia)
+    apply mul_pos_of_neg_of_neg <;> linarith
+
 lemma q_core (k : ℕ) (u u' ρ : ℕ → ℝ) (l : ℕ) (Y : ℝ) (hl1 : 1 ≤ l) (hlk : l ≤ k)
     (h : Interlaces k u u' ρ) (hA : u l + 2 ≤ -Y ∧ -Y ≤ u' l - 2) :
     ∏ i ∈ Icc 1 k, ((Y + 1/2 + u i) * (Y + 1/2 + u' i)) < 0 := by
-  have hu := antitone_on (u_step h)
-  have hu' := antitone_on (u_step (interlaces_swap h))
   have hl : l ∈ Icc 1 k := mem_Icc.2 ⟨hl1, hlk⟩
+  have hx : Y + 1/2 + u l < 0 ∧ 0 < Y + 1/2 + u' l := by constructor <;> linarith
   rw [← mul_prod_erase _ _ hl]
-  apply mul_neg_of_neg_of_pos
-  · apply mul_neg_of_neg_of_pos <;> linarith
-  · apply prod_pos
-    intro i hi
-    have hne := ne_of_mem_erase hi
-    have hi' := mem_Icc.1 (mem_of_mem_erase hi)
-    rcases lt_or_gt_of_ne hne with hil | hil
-    · obtain ⟨a, b, c, d⟩ := h i (mem_Icc.2 ⟨hi'.1, by omega⟩)
-      have h1 := hu' (i + 1) l (by omega) (by omega) hlk
-      have h2 := hu' i l hi'.1 (by omega) hlk
-      apply mul_pos <;> linarith
-    · obtain ⟨j, rfl⟩ : ∃ j, i = j + 1 := ⟨i - 1, by omega⟩
-      obtain ⟨a, b, c, d⟩ := h j (mem_Icc.2 ⟨by omega, by omega⟩)
-      have h1 := hu l (j + 1) hl1 (by omega) hi'.2
-      have h2 := hu l j hl1 (by omega) (by omega)
-      apply mul_pos_of_neg_of_neg <;> linarith
+  exact mul_neg_of_neg_of_pos (mul_neg_of_neg_of_pos hx.1 hx.2) (prod_erase_pos hl h hx)
 
 theorem qPositive : QPositive := by
   intro k u u' ρ l Y T T' hl1 hlk h hc hT hT'

@@ -27,10 +27,6 @@ theorem Smooth.add {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (f
     Smooth n z (fun x => f x + g x) := by
   exact fun e he => (hf e he).add (hg e he)
 
-theorem Smooth.sub {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (f g : M → ℂ) (hf : Smooth n z f) (hg : Smooth n z g) :
-    Smooth n z (fun x => f x - g x) := by
-  exact fun e he => (hf e he).sub (hg e he)
-
 theorem Smooth.mul {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (f g : M → ℂ) (hf : Smooth n z f) (hg : Smooth n z g) :
     Smooth n z (fun x => f x * g x) := by
   exact fun e he => (hf e he).mul (hg e he)
@@ -41,11 +37,6 @@ theorem Smooth.conj {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (
   have h1 := Complex.conjCLE.contDiff.comp_contDiffOn (hf e he)
   refine h1.congr (fun w _ => ?_)
   simp
-
-theorem Smooth.cexp {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (f : M → ℂ) (hf : Smooth n z f) :
-    Smooth n z (fun x => Complex.exp (f x)) := by
-  intro e he
-  exact Complex.contDiff_exp.comp_contDiffOn (hf e he)
 
 theorem SmoothR.comp {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (k : ℝ → ℝ) (hk : ContDiff ℝ ∞ k) (f : M → ℝ) (hf : SmoothR n z f) :
     SmoothR n z (fun x => k (f x)) := by
@@ -74,10 +65,6 @@ theorem Holo.const {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (c
 theorem Holo.add {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (f g : M → ℂ) (hf : Holo n z f) (hg : Holo n z g) :
     Holo n z (fun x => f x + g x) := by
   exact fun e he => (hf e he).add (hg e he)
-
-theorem Holo.sub {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (f g : M → ℂ) (hf : Holo n z f) (hg : Holo n z g) :
-    Holo n z (fun x => f x - g x) := by
-  exact fun e he => (hf e he).sub (hg e he)
 
 theorem Holo.mul {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (f g : M → ℂ) (hf : Holo n z f) (hg : Holo n z g) :
     Holo n z (fun x => f x * g x) := by
@@ -123,12 +110,12 @@ private theorem isChart_choose_and_symm_apply {M : Type*} [TopologicalSpace M] (
 private theorem d_eq_wd_comp_chosen_chart_symm {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (j : Fin n)
     (f : M → ℂ) (x : M) (h : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source) :
     d n z j f x = wd n j (f ∘ (Classical.choose h).symm) (z x) := by
-  simp only [d, dif_pos h]
+  simp only [d, dite_eq_left h]
 
 private theorem db_eq_wdb_comp_chosen_chart_symm {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (j : Fin n)
     (f : M → ℂ) (x : M) (h : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source) :
     db n z j f x = wdb n j (f ∘ (Classical.choose h).symm) (z x) := by
-  simp only [db, dif_pos h]
+  simp only [db, dite_eq_left h]
 
 private theorem differentiableAt_comp_chart_symm_of_mem_target {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (f : M → ℂ)
     (hf : Ck n z 1 f) (e : OpenPartialHomeomorph M (V n)) (he : IsChart n z e) (w : V n)

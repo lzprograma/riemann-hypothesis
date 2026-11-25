@@ -3,41 +3,6 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Foundations.MemL2OfBoundedContinuousInvariant
 public import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
 public import Development.AbelianVarietyTheory.Definitions.Foundations.ForallEventuallyFinLocIff
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -52,8 +17,6 @@ open scoped TensorProduct ComplexConjugate InnerProductSpace
 
 namespace GlobalTheory.AutMult
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (V : HSp D) {H X W : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [NormedAddCommGroup X]
   [InnerProductSpace ℂ X] [AddCommGroup W] [Module ℂ W] {S : D.what₂.Tau → SPar}
 
@@ -64,33 +27,13 @@ variable {Y Z : Type} [AddCommGroup Y] [Module ℂ Y] [AddCommGroup Z] [Module �
 
 variable {V}
 
-def LocContains (τ : Representation ℂ (Kv V v) Z) (σv : Representation ℂ (Gv V v) Y) : Prop :=
-  Contains τ (σv.comp (Kv V v).subtype)
-
-def ContainsAt (τ : Representation ℂ (Kv V v) Z) (σ : Representation ℂ (GfC V) W) : Prop :=
-  LocContains τ (σ.comp (locFin V v))
-
-
-variable (v) in
-def IsSphericalAt (σ : Representation ℂ (GfC V) W) : Prop := LGrp.IsSpherical (σ.comp (locFin V v)) (Kv V v)
-
-def IsSphericalOff (S : Finset (HeightOneSpectrum (𝓞 D.host.F))) (σ : Representation ℂ (GfC V) W) : Prop :=
-  ∀ v ∉ S, IsSphericalAt v σ
-
 variable {σ : Representation ℂ (GfC V) W} {σv : Representation ℂ (Gv V v) Y} {τ : Representation ℂ (Kv V v) Z}
-
-theorem isSphericalOff_of_fixed {S : Finset (HeightOneSpectrum (𝓞 D.host.F))} (h : LGrp.IsSpherical σ (KOff V S)) :
-    IsSphericalOff S σ := fun _ hv =>
-  let ⟨x, hx, h0⟩ := (Submodule.ne_bot_iff _).1 h
-  (Submodule.ne_bot_iff _).2 ⟨x, LGrp.mem_fixed.2 fun _ hk => LGrp.mem_fixed.1 hx _ (emb_mem_levelOff hv hk), h0⟩
 
 end Types
 
 section Mult
 
 variable (μ : Measure (GA D V)) [μ.IsHaarMeasure] [μ.IsMulRightInvariant]
-
-def mDisc (π : GA D V →* (H →L[ℂ] H)) : Cardinal := multIn π (RG V μ) (L2discG V μ)
 
 def mCusp (π : GA D V →* (H →L[ℂ] H)) : Cardinal := multIn π (RG V μ) (L2cusp V μ)
 
@@ -155,12 +98,6 @@ variable {ι ι' : finVec V θ A π →ₗ[ℂ] (GA D V → ℂ)}
 
 
 end Forms
-
-section Examples
-
-variable (μ : Measure (GA D V)) [μ.IsHaarMeasure] [μ.IsMulRightInvariant]
-
-end Examples
 
 end GlobalTheory.AutMult
 

@@ -1,53 +1,9 @@
 module
 
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawaC
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawaD, Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawaE
@@ -76,17 +32,15 @@ theorem fIwasawa_exists_max_pivot (hσv : ∀ x, Valued.v (σ x) = Valued.v x) (
     Finset.mem_filter.2 ⟨Finset.mem_univ _, h1, h2⟩
   have hout : ∀ i, i ∉ W → i < ρ ∨ Fin.rev ρ < i := by
     intro i hi
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hi (hmem i h.1 h.2)
   have hρW : ρ ∈ W := hmem ρ le_rfl hρ.le
   have hcz := fIwasawa_col_zero σ M hM r hT ρ hρr hρ
 
   have hex : ∃ j ∈ W, M j ρ ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hgram := fIwasawa_gram_un σ M hM (Fin.rev ρ) ρ
-    rw [if_pos (Fin.rev_rev ρ).symm] at hgram
+    rw [ite_eq_left (Fin.rev_rev ρ).symm] at hgram
     have h0 : ∑ j, σ (M (Fin.rev j) (Fin.rev ρ)) * M j ρ = 0 := by
       refine Finset.sum_eq_zero fun j _ => ?_
       by_cases hj1 : j < ρ
@@ -113,8 +67,7 @@ theorem fIwasawa_exists_max_pivot (hσv : ∀ x, Valued.v (σ x) = Valued.v x) (
   obtain ⟨a, haW, hamax, hne⟩ : ∃ a ∈ W, (∀ i ∈ W, Valued.v (M i ρ) ≤ Valued.v (M a ρ)) ∧
       a ≠ Fin.rev a := by
     by_cases h₀ : a₀ = Fin.rev a₀
-    · by_contra hcon
-      push_neg at hcon
+    · by_contra! hcon
       have hlt : ∀ i ∈ W, i ≠ a₀ → Valued.v (M i ρ) < Valued.v (M a₀ ρ) := by
         intro i hi hia
         refine lt_of_le_of_ne (ha₀max i hi) fun heq => ?_
@@ -244,7 +197,7 @@ theorem fIwasawa_tri_succ_of_max_pivot (hσ : ∀ x, σ (σ x) = x) (hσv : ∀ 
   have hzout : ∀ t, ¬(ρ < t ∧ t < Fin.rev ρ) → z t = 0 := by
     intro t ht
     rw [hzeq]
-    exact if_neg ht
+    exact ite_eq_right ht
   have hzsupp : ∀ t, z t ≠ 0 → ρ < t ∧ t < Fin.rev ρ := by
     intro t ht
     by_contra h
@@ -253,7 +206,7 @@ theorem fIwasawa_tri_succ_of_max_pivot (hσ : ∀ x, σ (σ x) = x) (hσv : ∀ 
     intro t h1 h2
     rw [hzeq]
     dsimp only
-    rw [if_pos (And.intro h1 h2), neg_mul_neg_div_self _ _ hp]
+    rw [ite_eq_left (And.intro h1 h2), neg_mul_neg_div_self _ _ hp]
   have hrevmid : ∀ j, ρ < Fin.rev j ∧ Fin.rev j < Fin.rev ρ → ρ < j ∧ j < Fin.rev ρ := by
     intro j h
     have h' := fin_rev_between_of_between ρ (Fin.rev j) h.1 h.2
@@ -283,20 +236,20 @@ theorem fIwasawa_tri_succ_of_max_pivot (hσ : ∀ x, σ (σ x) = x) (hσv : ∀ 
     intro j
     rcases lt_trichotomy j ρ with h1 | h1 | h1
     · rw [hcz (Fin.rev j) (Fin.rev_lt_rev.mpr h1), map_zero σ, hzout j (fun h => lt_asymm h1 h.1),
-        if_neg (ne_of_lt h1), if_neg (ne_of_lt (lt_trans h1 hρ))]
+        ite_eq_right (ne_of_lt h1), ite_eq_right (ne_of_lt (lt_trans h1 hρ))]
       ring
-    · rw [h1, if_pos (rfl : ρ = ρ), if_neg hne, hzout ρ (fun h => lt_irrefl ρ h.1)]
+    · rw [h1, ite_eq_left (rfl : ρ = ρ), ite_eq_right hne, hzout ρ (fun h => lt_irrefl ρ h.1)]
       ring
     · rcases lt_trichotomy j (Fin.rev ρ) with h2 | h2 | h2
       · have hm := fin_rev_between_of_between ρ j h1 h2
-        rw [hMz j h1 h2, hMz (Fin.rev j) hm.1 hm.2, if_neg (ne_of_gt h1), if_neg (ne_of_lt h2),
+        rw [hMz j h1 h2, hMz (Fin.rev j) hm.1 hm.2, ite_eq_right (ne_of_gt h1), ite_eq_right (ne_of_lt h2),
           map_mul σ, map_neg σ]
         ring
-      · rw [h2, Fin.rev_rev, if_neg hne.symm, if_pos (rfl : Fin.rev ρ = Fin.rev ρ),
+      · rw [h2, Fin.rev_rev, ite_eq_right hne.symm, ite_eq_left (rfl : Fin.rev ρ = Fin.rev ρ),
           hzout (Fin.rev ρ) (fun h => lt_irrefl (Fin.rev ρ) h.2)]
         ring
-      · rw [hcz j h2, hzout j (fun h => lt_asymm h2 h.2), if_neg (ne_of_gt h1),
-          if_neg (ne_of_gt h2)]
+      · rw [hcz j h2, hzout j (fun h => lt_asymm h2 h.2), ite_eq_right (ne_of_gt h1),
+          ite_eq_right (ne_of_gt h2)]
         ring
   have hA : σ (M (Fin.rev ρ) ρ) * M ρ ρ + σ (M ρ ρ) * M (Fin.rev ρ) ρ +
       σ (M ρ ρ) * M ρ ρ * S = 0 := by

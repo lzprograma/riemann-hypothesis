@@ -68,7 +68,7 @@ private lemma key {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
         simp only [← mul_assoc, mul_div_cancel_right₀ _ hρ.ne']
 
 theorem goal1 :
-  ∀ {n : Nat} {F : Type u_1} [inst : NormedAddCommGroup.{u_1} F] [inst_1 : NormedSpace.{0, u_1} Complex F]
+  ∀ {n : Nat} {F : Type u_1} [NormedAddCommGroup.{u_1} F] [NormedSpace.{0, u_1} Complex F]
   {f : ReciprocityTheory.L2DbarEstimates.V n → F} {U : Set.{0} (ReciprocityTheory.L2DbarEstimates.V n)} {x : ReciprocityTheory.L2DbarEstimates.V n},
   IsOpen.{0} U →
     Membership.mem.{0, 0} U x →

@@ -70,25 +70,8 @@ theorem isDiv_complex_circle : IsDiv ℂˣ ∧ IsDiv Circle := by
 
 theorem IsDiv.exists_extension {G A : Type*} [CommGroup G] [CommGroup A] (hA : IsDiv A)
     (H : Subgroup G) (f : H →* A) : ∃ F : G →* A, ∀ h : H, F h = f h := by
-  have hsurj : ∀ {n : ℤ}, n ≠ 0 → Function.Surjective fun a : Additive A => n • a := by
-    intro n hn x
-    obtain ⟨y, hy⟩ := hA n.natAbs (Int.natAbs_ne_zero.mpr hn) (Additive.toMul x)
-    rcases Int.natAbs_eq n with h | h
-    · refine ⟨Additive.ofMul y, ?_⟩
-      rw [h]
-      change Additive.ofMul (y ^ ((n.natAbs : ℕ) : ℤ)) = x
-      rw [zpow_natCast]
-      simp only at hy
-      rw [hy]
-      rfl
-    · refine ⟨Additive.ofMul y⁻¹, ?_⟩
-      rw [h]
-      change Additive.ofMul (y⁻¹ ^ (-((n.natAbs : ℕ) : ℤ))) = x
-      rw [inv_zpow', neg_neg, zpow_natCast]
-      simp only at hy
-      rw [hy]
-      rfl
-  letI : DivisibleBy (Additive A) ℤ := divisibleByOfSMulRightSurj _ _ hsurj
+  letI : DivisibleBy (Additive A) ℕ := divisibleByOfSMulRightSurj _ _ fun hn => hA _ hn
+  letI : DivisibleBy (Additive A) ℤ := AddGroup.divisibleByIntOfDivisibleByNat _
   obtain ⟨h, hh⟩ := (Module.Baer.of_divisible (Additive A)).extension_property_addMonoidHom
     (MonoidHom.toAdditive H.subtype) Subtype.val_injective (MonoidHom.toAdditive f)
   refine ⟨MonoidHom.toAdditive.symm h, fun x => ?_⟩

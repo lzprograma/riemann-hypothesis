@@ -1,5 +1,6 @@
 module
 
+import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.AdaptExists
 public import Formalism.FormalDegreeBessel.StatementG
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddSSn
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepDatumUnit
@@ -30,66 +31,18 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutRegFF
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoExists
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GaugeConstructionHolds
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SsnRepOfOpen2
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.StatementI
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameEntries
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.FormalDegreeBessel.FinalG
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.ENatToNat
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKapNrmW
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LieBracketMultiplication
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeA
-import Mathlib.Algebra.Order.Star.Real
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSAdjH
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSLMat
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSTr
@@ -129,14 +82,7 @@ theorem herm_bvec_bvec (i j : Fin (2 * r + k + 1)) : herm (Hpk k r) (bvec i) (bv
 
 theorem herm_bvec_w {i : Fin (2 * r + k + 1)} (hi : i.val < r ∨ r + k < i.val) {w : Fin (2 * r + k + 1) → ℂ}
     (hw : inWb k r w) : herm (Hpk k r) (bvec i) w = 0 := by
-  have hc : ∀ l, (Hpk k r *ᵥ bvec i) l = Hpk k r l i := fun l => by
-    simp [bvec, Matrix.mulVec, dotProduct, Pi.single_apply]
-  simp only [herm, dotProduct, hc]
-  apply Finset.sum_eq_zero
-  intro l _
-  by_cases hl : r ≤ l.val ∧ l.val ≤ r + k
-  · rw [(hpk_out_in hi hl).2, mul_zero]
-  · rw [Pi.star_apply, hw l (by omega), star_zero, zero_mul]
+  apply _root_.GlobalTheory.CompanionTheory.BmuAdapt.herm_outer <;> assumption
 
 theorem herm_w_bvec {i : Fin (2 * r + k + 1)} (hi : i.val < r ∨ r + k < i.val) {w : Fin (2 * r + k + 1) → ℂ}
     (hw : inWb k r w) : herm (Hpk k r) w (bvec i) = 0 := by
@@ -228,28 +174,28 @@ theorem three_part_frame_orthonormal (hk : 2 ≤ k) {v0 zz : Fin (2 * r + k + 1)
     by_cases ha0 : a.val = 0
     · rw [three_part_frame_zero ha0]
       by_cases hb0 : b.val = 0
-      · rw [three_part_frame_zero hb0, h00, if_pos (Fin.ext (by omega)), if_neg (by omega)]
-      · rw [if_neg (fun h => hb0 (by rw [← h]; exact ha0))]
+      · rw [three_part_frame_zero hb0, h00, ite_eq_left (Fin.ext (by omega)), ite_eq_right (by omega)]
+      · rw [ite_eq_right (fun h => hb0 (by rw [← h]; exact ha0))]
         by_cases hbl : b.val = k
         · rw [three_part_frame_last (by omega) hbl, h0z]
         · rw [three_part_frame_middle hb0 hbl, h0F]
     · by_cases hal : a.val = k
       · rw [three_part_frame_last (by omega) hal]
         by_cases hb0 : b.val = 0
-        · rw [three_part_frame_zero hb0, hz0, if_neg (fun h => ha0 (by rw [h]; exact hb0))]
+        · rw [three_part_frame_zero hb0, hz0, ite_eq_right (fun h => ha0 (by rw [h]; exact hb0))]
         · by_cases hbl : b.val = k
-          · rw [three_part_frame_last (by omega) hbl, hzz1, if_pos (Fin.ext (by omega)), if_pos hal]
-          · rw [three_part_frame_middle hb0 hbl, hzF, if_neg (fun h => hbl (by rw [← h]; exact hal))]
+          · rw [three_part_frame_last (by omega) hbl, hzz1, ite_eq_left (Fin.ext (by omega)), ite_eq_left hal]
+          · rw [three_part_frame_middle hb0 hbl, hzF, ite_eq_right (fun h => hbl (by rw [← h]; exact hal))]
       · rw [three_part_frame_middle ha0 hal]
         by_cases hb0 : b.val = 0
-        · rw [three_part_frame_zero hb0, hF0, if_neg (fun h => ha0 (by rw [h]; exact hb0))]
+        · rw [three_part_frame_zero hb0, hF0, ite_eq_right (fun h => ha0 (by rw [h]; exact hb0))]
         · by_cases hbl : b.val = k
-          · rw [three_part_frame_last (by omega) hbl, hFz, if_neg (fun h => hal (by rw [h]; exact hbl))]
+          · rw [three_part_frame_last (by omega) hbl, hFz, ite_eq_right (fun h => hal (by rw [h]; exact hbl))]
           · rw [three_part_frame_middle hb0 hbl, hFF]
             by_cases hab : a = b
-            · subst hab; rw [if_pos rfl, if_pos rfl, if_neg hal]
+            · subst hab; rw [ite_eq_left rfl, ite_eq_left rfl, ite_eq_right hal]
             · have hv : a.val ≠ b.val := fun h => hab (Fin.ext h)
-              rw [if_neg (fun h => hv (by have := congrArg Fin.val h; simp at this; omega)), if_neg hab]
+              rw [ite_eq_right (fun h => hv (by have := congrArg Fin.val h; simp at this; omega)), ite_eq_right hab]
 
 section pt
 
@@ -314,13 +260,13 @@ theorem mu_frame (hz : inWb k r z) (hz' : inWb k r z') (hT : 0 < Tz k r z) (hT' 
       rcases mul_eq_zero.1 h1 with h | h
       · exact absurd ((map_eq_zero (starRingEnd ℂ)).1 h) ht0
       · exact h
-    rw [DU.prWv_of hyi, DU.hadd_r, DU.hsmul_r, hFz' j, mul_zero, add_zero] at h2
+    rw [DU.prWv_of hyi, Formalism.FourierDecayAlt.P.Qx8.herm_add_right', DU.hsmul_r, hFz' j, mul_zero, add_zero] at h2
     exact h2
   refine ⟨fun j => Qx8.inWb_mulVec hG (hFr.1 j), fun i j => by rw [Qx2.herm_uh hU]; exact hFr.2.1 i j, hz0, ?_⟩
   intro j
   set s : ℂ := (((Real.sqrt (herm (Hpk k r) (SSn.prWv k r z (μ *ᵥ z')) (SSn.prWv k r z (μ *ᵥ z'))).re)⁻¹ : ℝ) : ℂ)
   have hν : SSn.nu0 k r z z' μsec ζ = s • SSn.prWv k r z (μ *ᵥ z') := rfl
-  rw [hν, DU.hsmul_r, DU.prWv_of hy, DU.hadd_r, DU.hsmul_r, hz0 j, Qx2.herm_uh hU, hFz' j]
+  rw [hν, DU.hsmul_r, DU.prWv_of hy, Formalism.FourierDecayAlt.P.Qx8.herm_add_right', DU.hsmul_r, hz0 j, Qx2.herm_uh hU, hFz' j]
   simp
 
 theorem frame'_exists (hk : 2 ≤ k) (hz : inWb k r z) (hz' : inWb k r z') (hT : 0 < Tz k r z) (hT' : 0 < Tz k r z')
@@ -463,7 +409,7 @@ theorem blockProjection_basisVector_eq_zero {i : Fin (2 * r + k + 1)} (hi : i.va
   funext p
   unfold SSn.wbP bvec
   split_ifs with hp
-  · rw [Pi.single_apply, if_neg (by rintro rfl; omega)]; rfl
+  · rw [Pi.single_apply, ite_eq_right (by rintro rfl; omega)]; rfl
   · rfl
 
 theorem prWv_bvec_out (z' : Fin (2 * r + k + 1) → ℂ) {i : Fin (2 * r + k + 1)} (hi : i.val < r ∨ r + k < i.val) :
@@ -515,7 +461,7 @@ theorem cz_facts {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0 < T
     (((Real.sqrt (Tz k r z))⁻¹ : ℝ) : ℂ) ≠ 0 := by
   have hs : 0 < Real.sqrt (Tz k r z) := Real.sqrt_pos.2 hT
   refine ⟨Qx8.inWb_smul hz _, ?_, by exact_mod_cast (inv_pos.2 hs).ne'⟩
-  rw [DU.hsmul_l, DU.hsmul_r, FrameEntries.herm_self, Complex.conj_ofReal]
+  rw [Formalism.FourierDecayAlt.P.Qx8.herm_smul_left', DU.hsmul_r, FrameEntries.herm_self, Complex.conj_ofReal]
   have hsq : Real.sqrt (Tz k r z) ^ 2 = Tz k r z := Real.sq_sqrt hT.le
   have hsq' : ((Real.sqrt (Tz k r z) : ℝ) : ℂ) ^ 2 = ((Tz k r z : ℝ) : ℂ) := by exact_mod_cast hsq
   have hne : ((Real.sqrt (Tz k r z) : ℝ) : ℂ) ≠ 0 := by exact_mod_cast hs.ne'
@@ -528,9 +474,6 @@ end
 end Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.MC.DT
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.MC
-
-open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
-open scoped ComplexConjugate Matrix
 
 noncomputable section
 
@@ -1195,7 +1138,7 @@ noncomputable section
 
 theorem sum_ite_smul {ι V : Type} [Fintype ι] [DecidableEq ι] [AddCommGroup V] [Module ℂ V] (σ : ι) (Q : ι → V) :
     (∑ ρ, (if ρ = σ then (1 : ℂ) else 0) • Q ρ) = Q σ := by
-  simp only [ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem cross_section_at_point : AtCSec := by
   intro Wp Wq _ _ _ _ _ _ P Bs hk hcs X d hA l hl Pr hPr π ζ hζ X0 hX0
@@ -1270,13 +1213,13 @@ theorem cross_section_at_point : AtCSec := by
       have h2 := SSAdjH.kap_pt P Bs hpl hk e he d hkF (fun ρ => if ρ = σ then (1 : ℂ) else 0) (Ψ σ) ρ q
       rw [hraw, hrawΨ] at h2
       by_cases hρ : ρ = σ
-      · rw [if_pos hρ] at h2 ⊢
+      · rw [ite_eq_left hρ] at h2 ⊢
         apply mul_left_cancel₀ hw
         rw [h2]; ring
-      · rw [if_neg hρ] at h2 ⊢
+      · rw [ite_eq_right hρ] at h2 ⊢
         apply mul_left_cancel₀ hw
         rw [h2]; ring
-    simp only [hc, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [hc, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
   set a : M.Ty P → ℂ := fun σ => inner ℂ (B.hsVec (e σ ζ)) (B.hsVec X0) with hadef
   let Φ : Q.RadSp P.k P.r Bs.z Bs.z' Bs.π Bs.π' := ∑ σ, a σ • Ψ σ
@@ -1300,14 +1243,14 @@ theorem cross_section_at_point : AtCSec := by
     have h1 := hκpt (fun ρ => if ρ = π then (1 : ℂ) else 0) Φ
     rw [sum_ite_smul, hΦv, hXQ] at h1
     have h2 := SSAdjH.kap_pt P Bs hpl hk e he d hkF (fun ρ => if ρ = π then (1 : ℂ) else 0) Φ σ q
-    rw [hraw, h1, hrawΦ, if_neg hσ, zero_mul] at h2
+    rw [hraw, h1, hrawΦ, ite_eq_right hσ, zero_mul] at h2
     exact (mul_eq_zero.1 h2).resolve_left hw
 
   have hSSΨ : ∀ σ, rawR P Bs.μsec e ((((d.SS l).1 (Ψ π) : Q.RadSp P.k P.r Bs.z Bs.z' Bs.π Bs.π')) :
       Q.Fn P.k P.r (Wq →L[ℂ] Wp)) σ q = s l σ π ζ * w := by
     intro σ
     rw [(SSAdjH.ss_pt P Bs hpl hk e he d s t hst hSL hl (Ψ π) σ q).1]
-    simp only [hrawΨ, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [hrawΨ, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rfl
 
   have hK2 : ∀ ρ', ¬ M.Up P l π ρ' → s l ρ' π ζ = 0 := by
@@ -1318,9 +1261,9 @@ theorem cross_section_at_point : AtCSec := by
       dsimp only
       by_cases hρ : ρ = π
       · subst hρ
-        rw [if_pos hU, if_pos rfl]
+        rw [ite_eq_left hU, ite_eq_left rfl]
       · have hn2 : ¬ M.Up P l π ρ'' := fun h2 => hρ (up_relation_source_unique hU h2)
-        rw [if_neg hn2, if_neg hρ]
+        rw [ite_eq_right hn2, ite_eq_right hρ]
     have heq := hRel.2.2.2.1 l _ _ hcond
     have hz := congrArg (fun A : Q.Pr (Q.RadSp P.k P.r Bs.z Bs.z' Bs.π Bs.π') => A.1 (Ψ π)) heq
     simp only [hmulapply] at hz
@@ -1330,16 +1273,16 @@ theorem cross_section_at_point : AtCSec := by
     rw [SSAdjH.kap_pt P Bs hpl hk e he d hkF, hSSΨ,
       (SSAdjH.ss_pt P Bs hpl hk e he d s t hst hSL hl _ ρ' q).1] at h3
     try dsimp only at h3
-    rw [if_neg hn, zero_mul] at h3
+    rw [ite_eq_right hn, zero_mul] at h3
     rw [Finset.sum_eq_single π (fun b _ hb => by
         rw [SSAdjH.kap_pt P Bs hpl hk e he d hkF, hrawΨ]; try dsimp only
-        rw [if_neg hb]; ring)
+        rw [ite_eq_right hb]; ring)
       (fun h => absurd (Finset.mem_univ π) h)] at h3
     rw [SSAdjH.kap_pt P Bs hpl hk e he d hkF, hrawΨ] at h3
     try dsimp only at h3
     have h4 : s l ρ' π ζ * w = 0 := by
       have h5 : (0 : ℂ) = s l ρ' π ζ * ((if π = π then (1 : ℂ) else 0) * (w * if π = π then (1 : ℂ) else 0)) := h3
-      rw [if_pos rfl] at h5
+      rw [ite_eq_left rfl] at h5
       linear_combination -h5
     exact (mul_eq_zero.1 h4).resolve_right hw
 
@@ -1353,7 +1296,7 @@ theorem cross_section_at_point : AtCSec := by
     rw [(SSAdjH.ss_pt P Bs hpl hk e he d s t hst hSL hl _ π q).2, SSAdjH.kap_pt P Bs hpl hk e he d hkF,
       hrawΨ] at h3
     try dsimp only at h3
-    rw [if_pos rfl] at h3
+    rw [ite_eq_left rfl] at h3
     have h4 : ∀ σ, t l π σ q.1.2 * rawR P Bs.μsec e ((((d.SS l).1 (Ψ π) : Q.RadSp P.k P.r Bs.z Bs.z' Bs.π Bs.π')) :
         Q.Fn P.k P.r (Wq →L[ℂ] Wp)) σ q = (star (s l σ π ζ) * s l σ π ζ) * w := by
       intro σ

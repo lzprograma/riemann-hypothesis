@@ -5,50 +5,8 @@ public import Mathlib.Algebra.MvPolynomial.Eval
 public import GroundTheory.AutomorphicForms.HarishChandraCentre.MemCenterOfCommuteE
 public import GroundTheory.AutomorphicForms.HarishChandraCentre.RepBase
 public import Mathlib.RingTheory.Derivation.Lie
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Analysis.CStarAlgebra.Classes
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Polynomial.Basic
@@ -179,7 +137,7 @@ theorem e_diag_commute (i j : Fin n) : e (i, i) * e (j, j) = e (j, j) * e (i, i)
   have h := e_mul_sub_mul (i, i) (j, j)
   by_cases hij : i = j
   · subst hij; rfl
-  · simp only [hij, Ne.symm hij, if_false, sub_self] at h
+  · simp only [hij, Ne.symm hij, ite_false, sub_self] at h
     exact sub_eq_zero.1 h
 
 theorem cartanSet_commute : ∀ a ∈ cartanSet n, ∀ b ∈ cartanSet n, a * b = b * a := by
@@ -218,7 +176,7 @@ theorem word_blockW_diagL (m : Fin n × Fin n →₀ ℕ) :
   have hg : ∀ a ∈ diagL n, ((g a : cartanSub n) : U n) = e a ^ m a := by
     intro a ha
     have h : a.1 = a.2 := mem_diagL.1 ha
-    simp only [g, dif_pos h, SubmonoidClass.coe_pow]
+    simp only [g, dite_eq_left h, SubmonoidClass.coe_pow]
     congr 2
     exact Prod.ext rfl h
   have hnodup : (diagL n).Nodup := nodup_allL.filter _
@@ -536,7 +494,7 @@ theorem geDeg_anti {t t' : ℕ} (h : t' ≤ t) : (geDeg t : Submodule ℂ (Poly 
 theorem monomial_mem_geDeg {t : ℕ} (s : Fin n × Fin n →₀ ℕ) (c : ℂ) (h : t ≤ s.degree) :
     (monomial s c : Poly n) ∈ geDeg t := by
   intro s' hs'
-  rw [coeff_monomial, if_neg]
+  rw [coeff_monomial, ite_eq_right]
   rintro rfl
   omega
 
@@ -720,7 +678,7 @@ theorem constantCoeff_rho_one_word_monomial (w : List (Fin n × Fin n))
     · exact le_antisymm (hiff.1 hne) (tsub_eq_zero_iff_le.1 h0)
     · exact absurd rfl hne
   · rintro rfl
-    rw [tsub_self, if_pos rfl]
+    rw [tsub_self, ite_eq_left rfl]
     exact hiff.2 le_rfl
 
 end GroundTheory.Automorphic.HarishChandra
@@ -857,11 +815,11 @@ noncomputable def hcProjLin : U n →ₗ[ℂ] MvPolynomial (Fin n) ℂ :=
 
 theorem hcProjLin_canon_of_isDiagExp {m : Fin n × Fin n →₀ ℕ} (h : IsDiagExp m) :
     hcProjLin (canon m) = monomial (diagExp m) 1 := by
-  rw [hcProjLin, ← pbw_apply, Module.Basis.constr_basis, if_pos h]
+  rw [hcProjLin, ← pbw_apply, Module.Basis.constr_basis, ite_eq_left h]
 
 theorem hcProjLin_canon_of_not {m : Fin n × Fin n →₀ ℕ} (h : ¬ IsDiagExp m) :
     hcProjLin (canon m) = 0 := by
-  rw [hcProjLin, ← pbw_apply, Module.Basis.constr_basis, if_neg h]
+  rw [hcProjLin, ← pbw_apply, Module.Basis.constr_basis, ite_eq_right h]
 
 theorem canon_of_isDiagExp {m : Fin n × Fin n →₀ ℕ} (h : IsDiagExp m) :
     canon m = hcEmb (monomial (diagExp m) 1) := by
@@ -916,7 +874,7 @@ theorem hcProjLin_eq_zero_of_mem_nPlusU {x : U n} (hx : x ∈ nPlusU n) : hcProj
 theorem sum_mul_rootAt (a : Fin n × Fin n) :
     ∑ k : Fin n, (k : ℤ) * rootAt a k = (a.1 : ℤ) - a.2 := by
   simp only [rootAt, mul_sub, mul_ite, mul_one, mul_zero, Finset.sum_sub_distrib,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem sum_mul_wt (m : Fin n × Fin n →₀ ℕ) :
     ∑ k : Fin n, (k : ℤ) * wt m k = m.sum fun a c => (c : ℤ) * ((a.1 : ℤ) - a.2) := by

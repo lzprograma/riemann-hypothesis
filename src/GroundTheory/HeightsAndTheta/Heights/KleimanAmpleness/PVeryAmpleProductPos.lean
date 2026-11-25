@@ -54,7 +54,7 @@ theorem VeryAmpleProductPos.proof (hR : GenericPointSectionInput.Statement.{u, w
     · refine (Ideal.finite_minimalPrimes_of_isNoetherianRing _
         (pp ⊔ zeroIdeal (L (Fin.last n)).toSubSystem s)).subset fun qq hqq => ?_
       by_contra hn
-      exact hqq (dif_neg fun h => hn h.1)
+      exact hqq (dite_eq_right fun h => hn h.1)
     · intro qq
       split_ifs with h
       · exact (hterm qq h.1 h.2).le

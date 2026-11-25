@@ -6,50 +6,12 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SignAtBasePl
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EasyInputs
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PrimeToHostCore
 public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GEqTie
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 
@@ -58,7 +20,6 @@ namespace GlobalTheory.ThetaRead
 open MeasureTheory Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.RecTie
   Formalism.IndefR.Lev Formalism.IndefR.Datum GlobalTheory.ThetaTri
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Pair
 
@@ -140,8 +101,6 @@ theorem integral_zero_right (μ : Measure (GA D V)) (𝓕 : Set (GA D V)) (T U :
 
 end Unit
 
-alias lift_post := _root_.GlobalTheory.ThetaFireLift.lift_postOn
-
 section Row
 
 variable {D : D7} {cf : CharFrame D} {nch : NChoice D} {tp : TupTied D cf nch} (X : GlobalTheory.NJoin.RealAt D cf nch tp)
@@ -168,7 +127,7 @@ theorem ipM_theta {μ : D.what₂.Tup} (hμ : Used0 D μ) (j : Fin D.R.m) (x : D
   have hT'U : T' = postOn (X.R.MW j (sg0 D X.A)) (X.R.eWf j (sg0 D X.A)) U := by
     apply PiTensorProduct.lift.injective
     rw [hT', hth, ← hUw']
-    exact (lift_post (X.R.MW j (sg0 D X.A)) _ U).symm
+    exact (GlobalTheory.ThetaFireLift.lift_postOn (X.R.MW j (sg0 D X.A)) _ U).symm
   have hin : ∀ g, (∫ h in X.R.fdV j (X.tupT μ), thetaKO (X.R.ωP j (X.tupT μ)) h g
       (X.R.ptP j (X.tupT μ) (X.R.ioP j (kUnit (X.R.MW j (sg0 D X.A))) (X.fn hμ j x h))) ∂(X.R.νV j (X.tupT μ))) =
       PiTensorProduct.lift U (emb _ (kUnit (X.R.MW j (sg0 D X.A)))) g := by
@@ -239,13 +198,6 @@ theorem ext_real_cast (hV : X.R.models_cV) (A : GlobalTheory.NJoin.Agree X M rep
   exact ext_real hV A hμ j x
 
 end Forms
-
-section Canon
-
-variable {hL : GlobalTheory.Published.LocalLanglandsGL} {D : D7} {P : Pin hL D} (X : GlobalTheory.NJoin.RealAt D P.cf P.C P.tp)
-
-
-end Canon
 
 end GlobalTheory.ThetaRead
 

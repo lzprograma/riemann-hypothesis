@@ -133,7 +133,7 @@ theorem subsingleton_supp (A : Cube.{v} ι R) (hP : P.OrdConnected) {s : Finset 
 theorem suppEquiv_res {s t : Finset ι} (h : s ⊆ t) (hs : s ∈ P) (ht : t ∈ P)
     (x : (supp A P hP).obj s) :
     suppEquiv A hP ht (res (supp A P hP) h x) = res A h (suppEquiv A hP hs x) :=
-  congrArg (fun g : (supp A P hP).obj s →ₗ[R] A.obj t => g x) (dif_pos hs)
+  congrArg (fun g : (supp A P hP).obj s →ₗ[R] A.obj t => g x) (dite_eq_left hs)
 
 theorem supp_ext {s : Finset ι} {x y : (supp A P hP).obj s}
     (h : ∀ hs : s ∈ P, suppEquiv A hP hs x = suppEquiv A hP hs y) : x = y :=
@@ -158,7 +158,7 @@ noncomputable def suppMapApp (φ : A ⟶ B) (hP : P.OrdConnected) (hP' : P'.OrdC
 theorem suppEquiv_suppMapApp (φ : A ⟶ B) {s : Finset ι} (hs : s ∈ P) (hs' : s ∈ P')
     (x : (supp A P hP).obj s) :
     suppEquiv B hP' hs' (suppMapApp φ hP hP' s x) = (φ.app s).hom (suppEquiv A hP hs x) :=
-  congrArg (fun g : (supp A P hP).obj s →ₗ[R] B.obj s => g x) (dif_pos hs)
+  congrArg (fun g : (supp A P hP).obj s →ₗ[R] B.obj s => g x) (dite_eq_left hs)
 
 noncomputable def suppMap (φ : A ⟶ B) (hP : P.OrdConnected) (hP' : P'.OrdConnected)
     (h : ∀ ⦃s t : Finset ι⦄, s ⊆ t → s ∈ P → t ∈ P' → (t ∈ P ↔ s ∈ P')) :
@@ -214,7 +214,7 @@ noncomputable def suppIncl (A : Cube.{v} ι R) (hP : P.OrdConnected) (hU : IsUpp
   intro s t hst x
   by_cases hs : s ∈ P
   · have ht : t ∈ P := hU hst hs
-    simp only [dif_pos hs, dif_pos ht, LinearEquiv.coe_coe]
+    simp only [dite_eq_left hs, dite_eq_left ht, LinearEquiv.coe_coe]
     exact suppEquiv_res hst hs ht x
   · have := subsingleton_supp A hP hs
     rw [Subsingleton.elim x 0]
@@ -222,7 +222,7 @@ noncomputable def suppIncl (A : Cube.{v} ι R) (hP : P.OrdConnected) (hU : IsUpp
 
 theorem suppIncl_app (A : Cube.{v} ι R) (hP : P.OrdConnected) (hU : IsUpperSet P) {s : Finset ι}
     (hs : s ∈ P) : ((suppIncl A hP hU).app s).hom = (suppEquiv A hP hs).toLinearMap :=
-  dif_pos hs
+  dite_eq_left hs
 
 variable {P₁ P₂ : Set (Finset ι)}
 
@@ -309,7 +309,7 @@ theorem isIso_cubeLowerProj_of_subsingleton (e : κ ↪o ι) (A : Cube.{v} ι R)
       funext ⟨t, ht⟩
       by_cases h' : ∃ j ∈ t, j ∉ Set.range e
       · exact (h t h').elim _ _
-      · push_neg at h'
+      · push Not at h'
         obtain ⟨s, rfl⟩ : ∃ s : Finset κ, t = s.map e.toEmbedding := by
           refine ⟨Cube.part e t, Finset.ext fun j => ?_⟩
           simp only [Finset.mem_map, Cube.mem_part]
@@ -988,9 +988,5 @@ noncomputable def trunc₃HomologyIsoDropFirst [Finite κ] [Finite ν]
     exact hA _ _ hu.1 hu.2) n
 
 end Three
-
-section Examples
-
-end Examples
 
 end GlobalTheory

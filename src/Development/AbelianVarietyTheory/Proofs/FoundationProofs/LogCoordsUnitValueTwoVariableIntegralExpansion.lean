@@ -135,7 +135,6 @@ theorem deriv_sum' {n N M : ℕ} (J : Ideal (On p n)) (D : Derivation (O0 p) (On
   congr 1
   ring
 
-set_option synthInstance.maxHeartbeats 100000 in
 theorem coef {N M : ℕ} (m : ℕ) (a : Fin N → Fin M → O0 p) (w α β : On p (m + 1))
     (hsum : w = ∑ i : Fin N, ∑ j : Fin M,
       algebraMap (O0 p) (On p (m + 1)) (a i j) * xn p (m + 1) ^ (i : ℕ) * yn p (m + 1) ^ (j : ℕ))
@@ -313,7 +312,7 @@ theorem psi_part {T : GlobalTheory.K5.Tower p Ω} {n : ℕ} {ψ : O0 p →+* Ω}
     exact this
   have hpos : (0 : ℤ) < (p : ℤ) ^ n := pow_pos (by exact_mod_cast hp.out.pos) n
   have hs := hψ.sub (EvTwist.contr ((p : ℤ) ^ n) hpos B) B (fun _ => rfl) (fun r hr => by
-    rw [hBc, hc, EvTwist.part_coeff, if_neg]
+    rw [hBc, hc, EvTwist.part_coeff, ite_eq_right]
     intro h
     apply hr
     have := Int.emod_add_mul_ediv (r + i) ((p ^ n : ℕ) : ℤ)
@@ -412,79 +411,6 @@ theorem cong_val (hc : IsClo p Ω) {T : GlobalTheory.K5.Tower p Ω} {L : ℕ} {�
   · by_cases h : θ k r = 0
     · simp [h]
     · exact Dvd.dvd.mul_right (hv k r h) _
-
-theorem local_coords : ∀ (p : ℕ) [Fact p.Prime] (Ωl : Type) [Field Ωl] [Algebra (O0 p) Ωl], IsClo p Ωl → ∀ (T : GlobalTheory.K5.Tower p Ωl) (L : ℕ) (ψ : O0 p →+* Ωl) (ι : On p L →ₐ[O0 p] Ωl), 1 ≤ L → IsReb T L ψ → IsEmb T L ι →
-  ∀ (A₁ g : ℤ) (θ : ℤ → ℤ → ℤ) (cU cE : ℤ → Ωl) (x x' : Ωl),
-  (∀ r : ℤ, ∃ B : ℕ, ∀ k : ℤ, (B : ℤ) < |k| → θ k r = 0) →
-  (∃ r0 : ℤ, ∀ k r : ℤ, r < r0 → θ k r = 0) →
-  (∀ k r : ℤ, θ k r ≠ 0 → (p : ℤ) ^ L ∣ r - A₁ * k) →
-  (∀ r : ℤ, cU r = ∑ᶠ k : ℤ, (θ k r : Ωl) * T.ζ L ^ (g * k)) →
-  (∀ r : ℤ, ∑ᶠ k : ℤ, ((k * θ k r : ℤ) : Ωl) * T.ζ L ^ (g * k) = -∑ᶠ i : ℤ, cE i * cU (r - i)) →
-  (∀ r : ℤ, r < 0 → cE r = 0) → (∀ r : ℤ, cE r ∈ Subring.closure {T.ζ L}) →
-  Ev ψ cU x x' → x ≠ 0 → IsInt (p := p) x⁻¹ →
-  ∃ (w : (On p L)ˣ) (α β : On p L) (z z' : Ωl), IsDlog p L (w : On p L) α β ∧ ι w = x ∧ Ev ψ cE z z' ∧
-    Cong (p := p) L (ι α) (-(A₁ : Ωl) * z) ∧ Cong (p := p) L ((p : Ωl) * ι β) (-(p : Ωl) * (g : Ωl) * z) := by
-  intro p hp Ω _ _ hc T L ψ ι hL hψ hι A₁ g θ cU cE x x' hB ⟨r0, h0⟩ hdiv hU hE hE0 hEm hx hx0 hxi
-  obtain ⟨m, rfl⟩ : ∃ m, L = m + 1 := ⟨L - 1, by omega⟩
-  choose B hB using hB
-  let S : ℤ → Finset ℤ := fun r => Finset.Icc (-(B r : ℤ)) (B r)
-  have hS : ∀ (r : ℤ) (f : ℤ → Ω), (∀ k, θ k r = 0 → f k = 0) → ∑ᶠ k, f k = ∑ k ∈ S r, f k := fun r f hf =>
-    finsum_eq_sum_of_support_subset _ fun k hk => by
-      rw [Finset.mem_coe, Finset.mem_Icc, ← abs_le]
-      exact not_lt.1 fun h => hk (hf k (hB r k h))
-  have hE' : ∀ r, ∑ k ∈ S r, ((k * θ k r : ℤ) : Ω) * T.ζ (m + 1) ^ (g * k) = -∑ᶠ i : ℤ, cE i * cU (r - i) := fun r => by
-    rw [← hE r, hS r _ fun k hk => by simp [hk]]
-  obtain ⟨z, z', hz⟩ := ev_cyc T (m + 1) ψ cE hE0 hEm
-  obtain ⟨a, ha⟩ := rep hψ g θ S r0 h0
-  obtain ⟨y0, e0⟩ := ha fun _ _ => 1
-  obtain ⟨y1, e1⟩ := ha fun _ j => j
-  obtain ⟨y2, e2⟩ := ha fun i _ => i
-  have hN : (0 : ℤ) < ((p ^ (m + 1) : ℕ) : ℤ) := by exact_mod_cast pow_pos hp.out.pos _
-  have hmod : ∀ r : ℤ, (p : ℤ) ^ (m + 1) ∣ ((r % ((p ^ (m + 1) : ℕ) : ℤ)).toNat : ℤ) - r := fun r => by
-    rw [Int.toNat_of_nonneg (Int.emod_nonneg r hN.ne')]
-    have := Int.emod_add_mul_ediv r ((p ^ (m + 1) : ℕ) : ℤ)
-    push_cast at this ⊢
-    exact ⟨-(r / (p : ℤ) ^ (m + 1)), by linarith⟩
-  obtain ⟨c1, hc1, k1⟩ := cong_val hc hψ g A₁ θ (fun _ r => ((r % ((p ^ (m + 1) : ℕ) : ℤ)).toNat : ℤ)) S cU cE x x' z z' _ _
-    (fun k r h => by simpa using dvd_add (hmod r) (hdiv k r h)) hE' hx hz e1
-  obtain ⟨c2, hc2, k2⟩ := cong_val hc hψ g g θ (fun k _ => ((g * k % ((p ^ (m + 1) : ℕ) : ℤ)).toNat : ℤ)) S cU cE x x' z z' _ _
-    (fun k r _ => hmod _) hE' hx hz e2
-  have hcU : cU = fun r => ∑ k ∈ S r, ((1 : ℤ) : Ω) * (θ k r : Ω) * T.ζ (m + 1) ^ (g * k) := funext fun r => by
-    rw [hU r, hS r _ fun k hk => by simp [hk]]
-    simp
-  rw [← hcU] at e0
-  have hxe := (_root_.GlobalTheory.EvUniq.ev_unique p Ω hc T (m + 1) ψ hψ _ _ _ _ _ hx e0).1
-  set w0 : On p (m + 1) := ∑ i : Fin (p ^ (m + 1)), ∑ j : Fin (p ^ (m + 1)),
-    algebraMap (O0 p) (On p (m + 1)) (a i j) * xn p (m + 1) ^ (i : ℕ) * yn p (m + 1) ^ (j : ℕ) with hw0
-  have hw : ι w0 = x := by
-    rw [hxe, hw0]
-
-    simp only [map_sum, map_mul, map_pow, AlgHom.commutes, hι.1, hι.2, Int.cast_one, one_mul]
-  obtain ⟨w, hwu⟩ := isUnit_of_inv ι (_root_.GlobalTheory.K5.LevEmb.emb_inj_range p Ω hc T (m + 1) hL ι hι).1 w0 (hw ▸ hx0) (hw ▸ hxi)
-  obtain ⟨α, β, hd⟩ := GlobalTheory.K5.exists_isDlog p (m + 1) w
-  obtain ⟨d1, d2⟩ := coef m a w α β (hwu.trans hw0) hd
-  obtain ⟨f1, d1⟩ := Ideal.mem_span_singleton'.1 d1
-  obtain ⟨f2, d2⟩ := Ideal.mem_span_singleton'.1 d2
-  replace d1 := congrArg ι d1
-  replace d2 := congrArg ι d2
-
-  simp only [map_sum, map_mul, map_pow, map_sub, map_natCast, map_one, AlgHom.commutes, hι.1, hι.2, hwu, hw, zeta_one] at d1 d2
-  simp only [Int.cast_natCast] at k1 k2
-  have hinv : x * x⁻¹ = 1 := mul_inv_cancel₀ hx0
-  refine ⟨w, α, β, z, z', hd, hwu ▸ hw, hz, ⟨(ι f1 + c1) * x⁻¹,
-    IsIntegral.mul (IsIntegral.add (emb_int _ ι _) hc1) hxi, ?_⟩, ?_⟩
-  · linear_combination x⁻¹ * k1 - x⁻¹ * d1 - (ι α + A₁ * z) * hinv
-  · have hζ1 : T.ζ 1 - 1 ≠ 0 := sub_ne_zero.2 ((T.prim 1).ne_one (by simpa using hp.out.one_lt))
-    have hpd := GlobalTheory.T.isInt_prime_div_rootOfUnity_sub_one_pow p Ω T 1 1 le_rfl (Nat.totient_pos.2 (pow_pos hp.out.pos _))
-    rw [pow_one, div_eq_mul_inv] at hpd
-    have hinv2 : (T.ζ 1 - 1) * (T.ζ 1 - 1)⁻¹ = 1 := mul_inv_cancel₀ hζ1
-    have hpi : IsInt (p := p) (p : Ω) := by simpa using Basic.isInt_intCast (p := p) (Ω := Ω) (p : ℤ)
-    refine ⟨(ι f2 * ((p : Ω) * (T.ζ 1 - 1)⁻¹) + p * c2) * x⁻¹,
-      IsIntegral.mul (IsIntegral.add (IsIntegral.mul (emb_int _ ι _) hpd) (IsIntegral.mul hpi hc2)) hxi, ?_⟩
-    generalize (∑ i : Fin (p ^ (m + 1)), ∑ j : Fin (p ^ (m + 1)),
-      ((i : ℕ) : Ω) * algebraMap (O0 p) Ω (a i j) * T.ζ (m + 1) ^ (i : ℕ) * T.qq (m + 1) ^ (j : ℕ)) = Y at k2 d2
-    linear_combination (p * x⁻¹) * k2 - (p * x⁻¹ * (T.ζ 1 - 1)⁻¹) * d2 - (p * x⁻¹ * (x * ι β - Y)) * hinv2
-      - (p * (ι β + g * z)) * hinv
 
 end GlobalTheory.Glue.SiegLoc
 end -- clump:auto

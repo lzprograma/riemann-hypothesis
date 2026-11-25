@@ -33,7 +33,7 @@ theorem isClosed_of_isAnalyticSubset (A : FinHolAtlas e X) {S : Set X}
       rw [hSW]
       exact ⟨hxW, hz⟩
     exact hx hmem.1
-  push_neg at hxz
+  push Not at hxz
   obtain ⟨i, hi⟩ := hxz
   have hcont : ContinuousAt (f i) x := by
     have hxt : A.chart j x ∈ (A.chart j).target ∩ (A.chart j).symm ⁻¹' W := by

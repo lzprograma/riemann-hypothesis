@@ -27,8 +27,6 @@ open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.MainNoti
 
 section Fun
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {u : D.what₂.Word} (CV : ColVal D u)
 
 theorem bc_sum_repr (c : (D.mem u).C.cls 0) (τ : D.what₂.Tau) (z : (D.sp.X 0).V) :
@@ -123,8 +121,6 @@ noncomputable section
 namespace Formalism.L2.GlobalTheoryTheory.TraceIntegrality
 
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.HN Formalism.MainNotions.flipTwoThree Formalism.L2.DIV Formalism.L2.GlobalTheoryTheory.HLatOps Formalism.L2.Col Formalism.BasicNotions.SkeletonIndexLemmas
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section G
 

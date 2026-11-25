@@ -59,8 +59,6 @@ open Matrix Filter Topology
 
 namespace GlobalTheory.UnitaryLog
 
-attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra
-
 open Matrix Filter Topology in
 attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra in
 private lemma linftyOp_norm_le_mul_of_entry_le {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) (δ : ℝ)
@@ -78,19 +76,6 @@ private lemma linftyOp_norm_le_mul_of_entry_le {n : ℕ} (A : Matrix (Fin n) (Fi
     simpa using this
   have := (NNReal.coe_le_coe.2 key)
   simpa [nsmul_eq_mul] using this
-
-open Matrix Filter Topology in
-attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra in
-private lemma norm_entry_le_linftyOp_norm {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) (i j : Fin n) :
-    ‖A i j‖ ≤ ‖A‖ := by
-  rw [linfty_opNorm_def]
-  calc ‖A i j‖ = ((‖A i j‖₊ : NNReal) : ℝ) := rfl
-    _ ≤ ((∑ k, ‖A i k‖₊ : NNReal) : ℝ) := by
-      exact_mod_cast Finset.single_le_sum (f := fun k => ‖A i k‖₊)
-        (fun _ _ => by positivity) (Finset.mem_univ j)
-    _ ≤ _ := by
-      exact_mod_cast Finset.le_sup (f := fun i => ∑ k, ‖A i k‖₊) (Finset.mem_univ i)
-
 
 open Matrix Filter Topology in
 attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra in
@@ -153,7 +138,7 @@ theorem _root_.GlobalTheory.UnitaryLog.exists_log_unitary (n : ℕ)
             Matrix.one_mul]
       _ = 0 := by rw [heq, Matrix.mul_neg, neg_add_cancel]
   · intro i j
-    calc ‖L u i j‖ ≤ ‖L u‖ := norm_entry_le_linftyOp_norm _ i j
+    calc ‖L u i j‖ ≤ ‖L u‖ := Matrix.norm_apply_le_linfty_opNorm _ i j
       _ = dist (L u) (L 1) := by rw [hL1, dist_zero_right]
       _ ≤ K * dist u 1 := hK.dist_le_mul u hus 1 hs1
       _ ≤ K * (n * δ) := by

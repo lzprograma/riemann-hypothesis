@@ -15,8 +15,6 @@ set_option linter.dupNamespace false
 
 namespace Formalism.L2.SG.Pf.MainEqSteps
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Abs
 
 variable {τ Rw I H H₁ : Type} [Fintype I] [NormedAddCommGroup H] [InnerProductSpace ℂ H]
@@ -178,9 +176,3 @@ theorem g_ge_three {Cg cb Cw cT CT C0 C' Cl : ℝ} {D : D7} {large₂ : SizeData
   · exact_mod_cast hkb.trans h14
 
 end Formalism.L2.SG.Pf.MainEqSteps
-
-namespace Formalism.L2.SG.Pf
-
-open Formalism.L2.SG.Pf.MainEqSteps
-
-end Formalism.L2.SG.Pf

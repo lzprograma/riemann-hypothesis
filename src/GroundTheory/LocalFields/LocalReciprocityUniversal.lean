@@ -416,12 +416,6 @@ namespace GroundTheory.LocalField
 
 open Abstract ValuativeRel
 
-section Group
-
-variable {G : Type*} [Group G] {M : Type*} [Group M] [IsMulCommutative M]
-
-end Group
-
 variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
   {Ω : Type*} [Field Ω] [Algebra K Ω] [IsSepClosure K Ω]
 
@@ -722,10 +716,6 @@ theorem abelianRestrict_localReciprocityLimit (x : Kˣ) :
   rw [of_abelianRestrict_localReciprocityLimit, of_localReciprocityAbelian_symm]
 
 end Abelian
-
-section Absolute
-
-end Absolute
 
 end GroundTheory.LocalField
 end -- clump:auto

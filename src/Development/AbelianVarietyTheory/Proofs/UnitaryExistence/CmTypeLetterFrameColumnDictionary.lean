@@ -121,8 +121,8 @@ theorem letter_column_dictionary : ∀ (E : Type) [Field E] [NumberField E] [IsC
     ComplexEmbedding.involutive_conjugate E τ
   refine ⟨?_, hp0.trans hq.symm, by rw [hp, hq]; exact hB.rank, ?_, ?_, ?_⟩
   · obtain ⟨f, hf⟩ := exists_letter_equiv (M.X k).Ψ (M.X k).cmType Dw.p Dw.q r hB.rank (relab c σ) hbij Dw.mult
-      (fun τ h => by unfold Datum.mult; rw [if_pos ((hrt τ).1 ((hty _).1 h))])
-      (fun τ h => by unfold Datum.mult; rw [if_neg (fun h' => h ((hty _).2 ((hrt τ).2 h')))])
+      (fun τ h => by unfold Datum.mult; rw [ite_eq_left ((hrt τ).1 ((hty _).1 h))])
+      (fun τ h => by unfold Datum.mult; rw [ite_eq_right (fun h' => h ((hty _).2 ((hrt τ).2 h')))])
     obtain ⟨idx, hi⟩ : ∃ idx : Fin g ≃ (M.X k).Ψ × Fin r, ∀ j,
         (relab c σ (e j).1 ∈ (M.X k).Ψ ∧ (idx j).1.1 = relab c σ (e j).1 ∧ ((idx j).2 : ℕ) = Dw.q + (e j).2) ∨
         (relab c σ (e j).1 ∉ (M.X k).Ψ ∧ (idx j).1.1 = ComplexEmbedding.conjugate (relab c σ (e j).1) ∧
@@ -130,21 +130,21 @@ theorem letter_column_dictionary : ∀ (E : Type) [Field E] [NumberField E] [IsC
     rw [hq]
     refine ⟨idx, fun j => ?_, fun j => ?_, fun x v j => ?_⟩
     · rcases hi j with ⟨a, b, c'⟩ | ⟨a, b, c', d⟩
-      · rw [if_neg (by omega), b]
-      · rw [if_pos (by omega), b, hcc]
+      · rw [ite_eq_right (by omega), b]
+      · rw [ite_eq_left (by omega), b, hcc]
     · rcases hi j with ⟨a, b, c'⟩ | ⟨a, b, c', d⟩
-      · rw [if_neg (by omega), c']
-      · rw [if_pos (by omega), c']
+      · rw [ite_eq_right (by omega), c']
+      · rw [ite_eq_left (by omega), c']
     · have h := hi j
       generalize idx j = t at h ⊢
       obtain ⟨⟨τ, hτ⟩, ⟨n, hn⟩⟩ := t
       dsimp only at h ⊢
       rw [← hp0] at h ⊢
       rcases h with ⟨a, rfl, rfl⟩ | ⟨a, rfl, rfl, d⟩
-      · rw [if_neg (by omega)]
+      · rw [ite_eq_right (by omega)]
         unfold perFr
         rw [dite_eq_left a, dite_eq_left hn]
-      · rw [if_pos (by omega)]
+      · rw [ite_eq_left (by omega)]
         unfold perFr
         rw [dite_eq_right a, dite_eq_left (show conjEmb (relab c σ (e j).1) ∈ (M.X k).Ψ from hτ), dite_eq_left hn]
         rfl

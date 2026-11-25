@@ -38,7 +38,7 @@ theorem sDeg_eq_sum (ε : Fin n → Bool) :
   have h1 : ∀ a ∈ plusIdx ε, (rhoHol ε - rhoN ε) a =
       ((univ.filter fun b => ε b = false ∧ b < a).card : ℝ) := by
     intro a ha
-    rw [lf_rhoHol_sub_rhoN, if_pos (by simpa [plusIdx] using ha)]
+    rw [lf_rhoHol_sub_rhoN, ite_eq_left (by simpa [plusIdx] using ha)]
   rw [Finset.sum_congr rfl h1]
   unfold sDeg sModes
   simp only [Finset.card_filter, Nat.cast_sum, Nat.cast_ite, Nat.cast_one, Nat.cast_zero, plusIdx,

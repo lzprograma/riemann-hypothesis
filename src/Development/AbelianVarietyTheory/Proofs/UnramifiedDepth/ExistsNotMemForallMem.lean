@@ -2,49 +2,12 @@ module
 
 public import Formalism.LocalToGlobal.CharacterGerms.RowTieFB
 public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.LinEig
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.Eigenspace.Pi
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -297,8 +260,7 @@ theorem hom_eq_of_ker {O k ι : Type} [CommRing O] [CommRing k] [IsDomain k] [Fi
     (hq : ∀ x, e i0 x ^ l ^ Nat.card ι = e i0 x) (hk : ∀ i x, e i0 x = 0 → e i x = 0)
     (ψ : O →+* k) (hψ : ∀ x, e i0 x = 0 → ψ x = 0) : ∃ i, ψ = e i := by
   classical
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   haveI : Nonempty ι := ⟨i0⟩
   let f : Option ι → O →+* k := fun o => o.elim ψ e
   have hf : Function.Injective f := by
@@ -443,31 +405,6 @@ theorem exists_idem_seq {O : Type} [CommRing O] (l ε : O) (hε : ∃ y, ε * ε
       obtain ⟨z, hz⟩ := h2 n
       exact ⟨y + l ^ n * z, by linear_combination hy + hz⟩
 
-
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ Formalism.MainNotions.ModuliIntegralCharts.H1.LinEig in
-theorem exists_linHom {C : Type} [Field C] {O : Type} [CommRing O] {dd : ℕ} (G : FGLaw C dd) (A : OAct O G) :
-    ∃ ρ : O →+* Matrix (Fin dd) (Fin dd) C,
-      (∀ a i j, ρ a i j = MvPowerSeries.coeff (Finsupp.single ((0 : Fin 1), j) 1) (A.act a i)) ∧
-      ∀ a v, linAct (A.act a) v = ρ a *ᵥ v := by
-  let f : O → Matrix (Fin dd) (Fin dd) C := fun a =>
-    Matrix.of fun i j => MvPowerSeries.coeff (Finsupp.single ((0 : Fin 1), j) 1) (A.act a i)
-  have hadd : ∀ a b, f (a + b) = f a + f b := by
-    intro a b
-    ext i j
-    simp only [f, Matrix.of_apply, Matrix.add_apply, A.add_act, FGLaw.add, addOf, ev]
-    rw [coeff_single_subst' _ (by rintro ⟨k, l⟩; fin_cases k <;> simp [A.const])]
-    simp [Fintype.sum_prod_type, Fin.sum_univ_two, law_coeff]
-  have hmul : ∀ a b, f (a * b) = f a * f b := by
-    intro a b
-    ext i j
-    simp only [f, Matrix.of_apply, Matrix.mul_apply, A.mul_act, comp1, ev]
-    rw [coeff_single_subst' _ (by rintro ⟨k, l⟩; fin_cases k; simp [A.const])]
-    simp [Fintype.sum_prod_type]
-  have hone : f 1 = 1 := by
-    ext i j
-    simp only [f, Matrix.of_apply, A.one_act, pt, MvPowerSeries.coeff_X, Matrix.one_apply]
-    simp [Finsupp.single_left_inj, eq_comm]
-  exact ⟨RingHom.mk' ⟨⟨f, hone⟩, hmul⟩ hadd, fun _ _ _ => rfl, fun _ _ => rfl⟩
 
 section Limit
 

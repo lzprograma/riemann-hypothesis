@@ -19,60 +19,11 @@ public import Mathlib.RingTheory.LaurentSeries
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalSquaringPathsRigidOfFibre
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvalSectionAtRingPointGenericInjectiveFraction
 public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.InterNumDetNonposSplitTorus
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.RingTheory.Henselian
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Algebra.Order.Star.Int
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FunctionFieldOneVariableTranscendentalFiniteAndE
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFunctionFieldOfOneVariableOfGenericPointOfCurv
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.AlgebraicGeometry.ValuativeCriterion
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
 import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
@@ -84,8 +35,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.T
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTangentOfSingleAffineChart", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatPath\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvalSectionAtRingPointSpMapCompRestrictStalk\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -226,8 +175,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory GlobalTheory.VB GlobalTheory.LieVB GlobalTheory.QCoh GlobalTheory.CechPic GlobalTheory.NeronCurve GlobalTheory.Nef
 open GlobalTheory.Twist (resM)
 open scoped CategoryTheory.Obj RatFunc
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -564,7 +511,6 @@ theorem hankel_integral : ∀ (O F : Type) [CommRing O] [Field F] (ι : O →+* 
     · intro i j hij
       have hij' : i < j := hij
       have h1 : ¬ j ≤ i := not_le.mpr hij'
-      have h2 : ¬ ((j : ℕ) ≤ i) := h1
       simp [T, h1]
   refine ⟨N.det, ?_⟩
   rw [RingHom.map_det, RingHom.mapMatrix_apply, hent, Matrix.det_mul, Matrix.det_mul, Matrix.det_transpose, hT]
@@ -583,8 +529,6 @@ section -- clump:auto
 
 open scoped IntermediateField Polynomial RatFunc
 open GlobalTheory.Nef
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -662,16 +606,14 @@ theorem exists_annihilator (N : ℕ) (hN : ∀ n, N ≤ n → hankel c n = 0) :
     · rw [show q0 * C (q0.leadingCoeff)⁻¹ * X ^ j = (q0.leadingCoeff)⁻¹ • (q0 * X ^ j) by
         rw [smul_eq_C_mul]; ring, map_smul, smul_eq_mul]
   refine ⟨q, hqm.ne_zero, ?_⟩
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   have hs : ev c (q * X ^ Nat.find hne) ≠ 0 := Nat.find_spec hne
   have hlt : ∀ j < Nat.find hne, ev c (q * X ^ j) = 0 := fun j hj => by
     by_contra h; exact Nat.find_min hne hj h
   generalize Nat.find hne = s at hs hlt
   generalize Nat.find hex = d at hmin hqd hdN
   have hNs : N < s := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     apply hs
     rw [hqe, hq0 s h, mul_zero]
   obtain ⟨r, hr0, hrd, hr⟩ := exists_kill c s (hN s hNs.le)
@@ -728,11 +670,11 @@ theorem isRat_of_ann (φ : PowerSeries F) (q : F[X]) (hq : q ≠ 0)
     have := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p 0) h0
     simp only [R, Polynomial.finsetSum_coeff, coeff_C_mul_X_pow, coeff_zero] at this
     rw [Finset.sum_eq_single q.natDegree] at this
-    · simp only [Nat.sub_self, if_true] at this
+    · simp only [Nat.sub_self, ite_true] at this
       exact hq (leadingCoeff_eq_zero.1 this)
     · intro k hk hkd
       have := Finset.mem_range.1 hk
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
     · intro hk; exact absurd (Finset.self_mem_range_succ _) hk
   · ext n
     rw [Polynomial.coeff_coe, PowerSeries.coeff_trunc]
@@ -749,7 +691,7 @@ theorem isRat_of_ann (φ : PowerSeries F) (q : F[X]) (hq : q ≠ 0)
       rw [hR, Finset.sum_mul, map_sum, ← h m, ev_X_pow_mul]
       refine Finset.sum_congr rfl fun k hk => ?_
       have hk' := Finset.mem_range.1 hk
-      rw [mul_assoc, PowerSeries.coeff_C_mul, PowerSeries.coeff_X_pow_mul', if_pos (by omega)]
+      rw [mul_assoc, PowerSeries.coeff_C_mul, PowerSeries.coeff_X_pow_mul', ite_eq_left (by omega)]
       rw [show m + q.natDegree - (q.natDegree - k) = m + k by omega]
 
 end GlobalTheory.Nef.Kron
@@ -775,8 +717,6 @@ section -- clump:auto
 
 open scoped IntermediateField Polynomial RatFunc
 open GlobalTheory.Nef
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -902,12 +842,9 @@ theorem isRat_of_adelic : ∀ (k F : Type) [Field k] [IsAlgClosed k] [CharZero k
   have hn' : 2 * δ + 1 ≤ (n : ℤ) := by
     have := Int.self_le_toNat (2 * δ)
     omega
-  have hD1 : 1 ≤ D := hdeg
   push_cast at hsum
-  have h6 : (n + 1 : ℤ) * (n * D - 2 * δ) ≤ 0 := by linarith [hsum]
   have h7 : (n : ℤ) * D - 2 * δ ≤ 0 := by
-    by_contra h8
-    push_neg at h8
+    by_contra! h8
     have : (0 : ℤ) < (n + 1 : ℤ) * (n * D - 2 * δ) := mul_pos (by positivity) h8
     linarith
   have h9 : (n : ℤ) ≤ n * D := by nlinarith [(Nat.cast_nonneg n : (0 : ℤ) ≤ n)]
@@ -929,8 +866,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory GlobalTheory.VB GlobalTheory.LieVB GlobalTheory.QCoh GlobalTheory.CechPic GlobalTheory.NeronCurve GlobalTheory.Nef
 open GlobalTheory.Twist (resM)
 open scoped CategoryTheory.Obj RatFunc
-
-set_option autoImplicit false
 
 namespace GlobalTheory.Nef
 
@@ -960,8 +895,7 @@ theorem isRatPath_of_integral_at_places : ∀ (k K E : Type) [Field k] [IsAlgClo
   choose b ζ hb hpath hξ using hloc
   have hFF : IsFF k E := (_root_.GlobalTheory.Nef.isFF_main k K (_root_.GlobalTheory.Nef.CurveFF.isFF_of_isGenOver k K C x hx)).2 E
   obtain ⟨p₀, -⟩ : ∃ p, ord p (u p) ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     rw [finsum_eq_zero_of_forall_eq_zero hc] at hpos
     exact lt_irrefl _ hpos
   apply _root_.GlobalTheory.Nef.isRatPath_of_isRat E G.left ξ
@@ -1255,8 +1189,6 @@ open GlobalTheory GlobalTheory.VB GlobalTheory.LieVB GlobalTheory.QCoh GlobalThe
 open GlobalTheory.Twist (resM)
 open scoped CategoryTheory.Obj RatFunc
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.Nef
@@ -1264,13 +1196,6 @@ namespace GlobalTheory.Nef
 theorem comp_grpMul {S : Scheme.{0}} {G T T' : Over S} [GrpObj G] (x : T' ⟶ T) (f g : T ⟶ G) :
     x ≫ (f * g) = (x ≫ f) * (x ≫ g) := by
   rw [Hom.mul_def, Hom.mul_def, ← Category.assoc, comp_lift]
-
-theorem unitSec_comp_sqr {S : Scheme.{0}} (G : Over S) [GrpObj G] : unitSec G ≫ sqr G = unitSec G := by
-  have h1 : (η[G] : 𝟙_ (Over S) ⟶ G) = 1 := by
-    rw [Hom.one_def, Subsingleton.elim (toUnit (𝟙_ (Over S))) (𝟙 _), Category.id_comp]
-  have : (η[G] : 𝟙_ (Over S) ⟶ G) ≫ (𝟙 G * 𝟙 G) = η[G] := by
-    rw [comp_grpMul, Category.comp_id, h1, _root_.one_mul]
-  exact congrArg (·.left) this
 
 theorem triv_isPath {S : Scheme.{0}} (G : Over S) [GrpObj G] {R : Type} [CommRing R] (c : R) (b : Sp R ⟶ S) :
     IsPath G c b (triv G b) := by
@@ -1538,8 +1463,6 @@ open GlobalTheory.Twist (resM)
 open scoped CategoryTheory.Obj RatFunc
 open ReciprocityTheory.ChartRestriction.G.Semi.Rosenlicht
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.Nef
@@ -1619,25 +1542,9 @@ open GlobalTheory GlobalTheory.VB GlobalTheory.LieVB GlobalTheory.QCoh GlobalThe
 open GlobalTheory.Twist (resM)
 open scoped CategoryTheory.Obj RatFunc
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.Nef.TorExt
-
-theorem algebraMap_comp_C (Ω : Type) [Field Ω] :
-    (algebraMap (RatFunc Ω) (LaurentSeries Ω)).comp RatFunc.C =
-      (algebraMap (PowerSeries Ω) (LaurentSeries Ω)).comp PowerSeries.C := by
-  refine RingHom.ext fun c => ?_
-  simp only [RingHom.comp_apply]
-  rw [← RatFunc.algebraMap_C]
-  have := RatFunc.coe_coe (Polynomial.C c)
-  simp only [Polynomial.coe_C] at this
-  exact this.symm
-
-theorem unitSec_comp {S : Scheme.{0}} {G H : Over S} [GrpObj G] [GrpObj H] (f : G ⟶ H) [IsMonHom f] :
-    unitSec G ≫ f.left = unitSec H := by
-  rw [unitSec, unitSec, sec, sec, ← Over.comp_left, IsMonHom.one_hom]
 
 theorem isLocalHom_field {K L : Type} [Field K] [Field L] (φ : K →+* L) : IsLocalHom φ :=
   ⟨fun x hx => by
@@ -1691,7 +1598,7 @@ theorem ratRigid_of_torusExtension : ∀ (Ω : Type) [Field Ω] [CharZero Ω] (G
   set ι₀ := algebraMap (PowerSeries Ω) (LaurentSeries Ω)
   have ha : Function.Injective a := a.injective
   have hC : spMap a ≫ spMap RatFunc.C = spMap ι₀ ≫ spMap (PowerSeries.C (R := Ω)) := by
-    rw [← Geo.Tor.spMap_comp, ← Geo.Tor.spMap_comp, algebraMap_comp_C]
+    rw [← Geo.Tor.spMap_comp, ← Geo.Tor.spMap_comp, GlobalTheory.Nef.ratFunc_C_laurent]
   have hq : ξ ≫ E.q.left = spMap (PowerSeries.C (R := Ω)) ≫ unitSec E.B := by
     have := _root_.GlobalTheory.Nef.ratRigid_of_isProper_of_charZero Ω E.B inferInstance (ξ ≫ E.q.left) ((bc2 _ G E.B E.q Ω 2 (𝟙 _) ξ).1 hξ)
       ⟨β ≫ E.q.left, by rw [← Category.assoc, hβ, Category.assoc]⟩
@@ -1760,8 +1667,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory GlobalTheory.VB GlobalTheory.LieVB GlobalTheory.QCoh GlobalTheory.CechPic GlobalTheory.NeronCurve GlobalTheory.Nef
 open GlobalTheory.Twist (resM)
 open scoped CategoryTheory.Obj RatFunc
-
-set_option autoImplicit false
 
 namespace GlobalTheory.Nef
 
@@ -1854,8 +1759,7 @@ theorem linesLE_zero_of_sub_lie : ∀ (k K : Type) [Field k] [IsAlgClosed k] [Ch
   intro k K _ _ _ _ _ C _ x hx G _ hG W r i hi V₀ s g hV₀ hs hg hloc
   intro E _ _ _ _ _ ρ hρ w hw
   simp only [zero_mul]
-  by_contra hpos
-  push_neg at hpos
+  by_contra! hpos
   have hpos' : 0 < degLine (pullAd ρ g) w := by exact_mod_cast hpos
   haveI : CharZero E := charZero_of_injective_algebraMap (algebraMap k E).injective
   letI : Algebra ℚ E := DivisionRing.toRatAlgebra

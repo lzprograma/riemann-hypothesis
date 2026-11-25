@@ -144,13 +144,13 @@ theorem one_add_le_lminor_sq {n p : ℕ} (h : p ≤ n) (g : Matrix (Fin n) (Fin 
       rw [e, Matrix.one_apply]
       by_cases hab : a = b
       · subst hab; simp [sgn]
-      · rw [if_neg hab, if_neg hab]
+      · rw [ite_eq_right hab, ite_eq_right hab]
     have e2 : (Aᴴ * A) a b = ∑ k : Fin n, if (k : ℕ) < p then
         starRingEnd ℂ (g k (Fin.castLE h a)) * g k (Fin.castLE h b) else 0 := by
       rw [Matrix.mul_apply]
       refine Fintype.sum_of_injective (Fin.castLE h) (Fin.castLE_injective h) _ _ (fun k hk => ?_)
         (fun k => ?_)
-      · rw [if_neg]
+      · rw [ite_eq_right]
         intro hlt
         exact hk ⟨⟨k, hlt⟩, Fin.ext rfl⟩
       · simp [hA, Matrix.conjTranspose_apply]
@@ -314,8 +314,3 @@ end GlobalTheory.Up.BallExPf
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up
 open scoped Matrix
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
-
-namespace GlobalTheory.Up
-open BallExPf
-
-end GlobalTheory.Up

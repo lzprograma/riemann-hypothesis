@@ -4,54 +4,6 @@ public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Obje
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
 public import Mathlib.FieldTheory.RatFunc.AsPolynomial
 public import Mathlib.Order.CompletePartialOrder
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -432,7 +384,7 @@ theorem coneGen_homogeneousComponent {σ : Type*} (y : σ → Ω) {g : MvPolynom
         coneGen_of_isHomogeneous y (homogeneousComponent_isHomogeneous i g)
     have hc := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p d) hsum
     simp only [hg, Polynomial.coeff_zero, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow,
-      Finset.sum_ite_eq, Finset.mem_range, hd, if_true] at hc
+      Finset.sum_ite_eq, Finset.mem_range, hd, ite_true] at hc
     rw [← hc, map_zero, zero_mul]
   · rw [homogeneousComponent_eq_zero d g (by omega), map_zero, map_zero, zero_mul]
 
@@ -458,7 +410,7 @@ theorem mem_primeOf_of_isHomogeneous {f : Poly S N} {d : ℕ} (hf : f.IsHomogene
   constructor
   · intro h
     have := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p d) h
-    simpa only [Polynomial.coeff_C_mul_X_pow, if_true, Polynomial.coeff_zero] using this
+    simpa only [Polynomial.coeff_C_mul_X_pow, ite_true, Polynomial.coeff_zero] using this
   · intro h; rw [h, map_zero, zero_mul]
 
 theorem homogeneousComponent_mem_primeOf {f : Poly S N} (hf : f ∈ primeOf x) (d : ℕ) :
@@ -928,20 +880,6 @@ theorem mem_secs_twistBundle_one (j : Fin (N + 1)) : x j ∈ (twistBundle S x 1)
   exact mem_twistMod_one I j
 
 end Inhabitants
-
-section Line
-
-variable (k : Type u) [Field k]
-
-def lineX : Fin (1 + 1) → RatFunc k := ![1, RatFunc.X]
-
-end Line
-
-section Generic
-
-variable (k : Type u) [Field k] (N : ℕ)
-
-end Generic
 
 section AmpleExample
 

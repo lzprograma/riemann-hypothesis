@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.CuspSpanNormBounds.StarVecMulDM
 public import Formalism.HermitianCurvature.StatementQ
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursionFromSingleDescent
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpPTop
@@ -10,50 +11,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightDerivat
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellMulVecBasis
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -64,8 +21,6 @@ noncomputable section
 namespace Formalism.FourierDecayAlt.P.CutMP.StepB
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.P.Qx3 Formalism.FourierDecayAlt.P.WeylCellAction
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {k r : ℕ}
 
@@ -94,13 +49,7 @@ theorem tailW (c : Fin r → ℂ) (hc : ∀ a, c a ≠ 0) (b : Fin r) : ∀ n : 
       rw [← Matrix.mulVec_mulVec, Formalism.FourierDecayAlt.P.CutMP.unipotent_fixes_anisotropic_vector l _ v hv, hTv v hv]
 
 theorem bvec_wI_inWb (v : Fin (k + 1)) : inWb k r (bvec (wI k r v)) := by
-  intro i hi
-  simp only [bvec, Pi.single_apply]
-  rw [if_neg]
-  intro h
-  have := congrArg Fin.val h
-  simp [wI] at this
-  omega
+  apply _root_.Formalism.MainNotions.FrameBoundFromBesselTorus.inWb_bvec_wI <;> assumption
 
 section rules
 
@@ -129,9 +78,9 @@ theorem rightRuleB (z' : Fin (2 * r + k + 1) → ℂ) (D : Set (Mx k r)) (f : Mx
   rw [h]
   have hx : xv k r z' a.succ ⟨r + w.val - a.val - 1, hjlt⟩ = 0 := by
     simp only [xv, fvec, hpos]
-    rw [dif_pos (show (a.succ : Fin (r + 1)).val < r by simp; omega)]
+    rw [dite_eq_left (show (a.succ : Fin (r + 1)).val < r by simp; omega)]
     simp only [bvec, Pi.single_apply]
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h'
     have := congrArg Fin.val h'
     simp [wI, eI] at this
@@ -194,7 +143,7 @@ theorem leftRuleB (z : Fin (2 * r + k + 1) → ℂ) (D : Set (Mx k r)) (f : Mx k
   rw [h]
   have hb1 : (b.succ : Fin (r + 1)).val < r := by simp; omega
   have hy : ybv k r z b.succ (T * g) ⟨r + v.val - b.val - 1, hjlt⟩ = 0 := by
-    simp only [ybv, hpos, fvec, dif_pos hb1]
+    simp only [ybv, hpos, fvec, dite_eq_left hb1]
     rw [Formalism.FourierDecayAlt.P.SignAntidiagonal.herm_bvec_eI, ← Matrix.mulVec_mulVec]
     have hgw : inWb k r (g *ᵥ bvec (wI k r v)) :=
       Formalism.FourierDecayAlt.P.NFRadRedLocSec.inWb_uwb (Formalism.FourierDecayAlt.P5.Rad.glev_last_uwb hg) (bvec_wI_inWb v)
@@ -269,13 +218,13 @@ theorem stepB_ring {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fin n → 
       have hbm : b' m.succ = b ⟨m.val + 2, by omega⟩ := rfl
       rw [hlast, hbm]
       unfold Tm
-      rw [if_neg (Ne.symm (hbR ⟨m.val + 2, by omega⟩ (by simp))), zero_add, ← mul_assoc, ← mul_assoc]
+      rw [ite_eq_right (Ne.symm (hbR ⟨m.val + 2, by omega⟩ (by simp))), zero_add, ← mul_assoc, ← mul_assoc]
       exact hR0 ⟨m.val + 2, by omega⟩ (by simp) _
     rw [Finset.sum_eq_zero (fun m _ => hrest m), add_zero, hlast]
     have hb0' : b' 0 = p1 := by simp only [hb', Function.comp_apply]; exact hb1
     rw [hb0']
     unfold Tm
-    rw [if_neg h01, zero_add, ← mul_assoc, ← mul_assoc, hR1, Fin.succAbove_zero, hcs, hbs, hsg, ← Int.cast_mul]
+    rw [ite_eq_right h01, zero_add, ← mul_assoc, ← mul_assoc, hR1, Fin.succAbove_zero, hcs, hbs, hsg, ← Int.cast_mul]
     have h11 : ((-1 : ℤ) ^ t * (-1) ^ (t + ((0 : Fin (t + 1)) : ℕ))) = 1 := by
       rw [Fin.val_zero, add_zero, ← pow_add, ← two_mul, pow_mul]
       norm_num
@@ -288,7 +237,7 @@ theorem stepB_ring {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fin n → 
     intro m
     rw [hb0]
     unfold Tm
-    rw [if_neg (haR _ (by simp)), zero_add, zcomm]
+    rw [ite_eq_right (haR _ (by simp)), zero_add, zcomm]
     exact hL0 _ (by simp) _
   rw [Finset.sum_eq_zero (fun m _ => hrest m), add_zero]
   have h1 : Λ ((((-1 : ℤ) ^ (((0 : Fin (t + 1)).succ : Fin (t + 2)) : ℕ) : ℤ) : A) *
@@ -297,7 +246,7 @@ theorem stepB_ring {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fin n → 
     have ha1' : a (0 : Fin (t + 1)).succ = p1 := ha1
     rw [ha1', hb0]
     unfold Tm
-    rw [if_neg (Ne.symm h01), zero_add, zcomm, hL1, zmul, map_smul]
+    rw [ite_eq_right (Ne.symm h01), zero_add, zcomm, hL1, zmul, map_smul]
     simp <;> rfl
   rw [h1, hQ']
   simp only [Fin.val_zero, pow_zero, Int.cast_one, one_mul, Fin.succAbove_zero, hb0, ha0]

@@ -104,7 +104,7 @@ theorem trace_eq_of_pos {W : Type} [AddCommGroup W] [Module ℝ W] [FiniteDimens
     (hA : J ∘ₗ A = A ∘ₗ J) (hA' : J' ∘ₗ A = A ∘ₗ J') :
     LinearMap.trace ℝ W (J ∘ₗ A) = LinearMap.trace ℝ W (J' ∘ₗ A) := by
   have hinj : Function.Injective (J + J') := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     by_contra h0
     have h1 := hp x h0
@@ -237,7 +237,7 @@ theorem isPeriod_of_presents {D : Datum H} {g : ℕ} {ty : Fin g → (E →+* �
   refine ⟨fun a x i => ?_, ?_, ?_, ?_, ?_⟩
   · rw [← hP, ← hP]
     exact congrFun (heρ a (1 ⊗ₜ x)) i
-  · set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  · rw [injective_iff_map_eq_zero]
     intro x hx
     rw [← hP, e.map_eq_zero_iff] at hx
     apply b.ext_elem
@@ -278,25 +278,5 @@ theorem isTypeFn_of_isPeriod {D : Datum H} {g : ℕ} {ty : Fin g → (E →+* �
   exact (isTypeFn_iff D ty).2 (isTypeFn_of_sum D ty fun a => (trace_of_presents hP a).symm.trans (hJ.2.2.2.2 a))
 
 end Period
-
-section Hol
-
-variable {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] {X : Scheme.{0}}
-
-
-end Hol
-
-section Theta
-
-variable {S : Scheme.{0}} {G : Over S} [GrpObj G] {g m : ℕ}
-
-end Theta
-
-section Family
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {D : Datum H} {l : Level H} {Xo : Moduli D l}
-  {σ : KA l →+* ℂ} {g : ℕ} {ty : Fin g → (E →+* ℂ)} (Fu : FamilyUnif Xo σ ty) (i : Fin Fu.n)
-
-end Family
 
 end GlobalTheory.PeriodCompare

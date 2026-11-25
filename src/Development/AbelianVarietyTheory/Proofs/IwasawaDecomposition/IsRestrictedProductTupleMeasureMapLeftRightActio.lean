@@ -143,7 +143,7 @@ theorem abstract_transport {ι X Xi : Type*} {Xv : ι → Type*} [MeasurableSpac
     by_cases hx : x ∈ B
     · have e2 : ∏ v ∈ (S ∪ S₀) \ S, gv v (pv v x) = 1 :=
         Finset.prod_eq_one fun v hv => by
-          simp only [gv, if_neg (Finset.mem_sdiff.1 hv).2]
+          simp only [gv, ite_eq_right (Finset.mem_sdiff.1 hv).2]
           exact Set.indicator_of_mem (hx v hv) _
       rw [Set.indicator_of_mem hx, e2, one_mul, hci]; rfl
     · rw [Set.indicator_of_notMem hx]
@@ -151,7 +151,7 @@ theorem abstract_transport {ι X Xi : Type*} {Xv : ι → Type*} [MeasurableSpac
       obtain ⟨v, hv, hv'⟩ := hx
       have e2 : ∏ v ∈ (S ∪ S₀) \ S, gv v (pv v x) = 0 :=
         Finset.prod_eq_zero hv (by
-          simp only [gv, if_neg (Finset.mem_sdiff.1 hv).2]
+          simp only [gv, ite_eq_right (Finset.mem_sdiff.1 hv).2]
           exact Set.indicator_of_notMem hv' _)
       rw [e2, zero_mul, mul_zero]
   rw [hl, key, tprod_tail_split _ hsum S (S ∪ S₀) hsub, ← Finset.prod_sdiff hsub,
@@ -163,7 +163,7 @@ theorem abstract_transport {ι X Xi : Type*} {Xv : ι → Type*} [MeasurableSpac
   have e2 : ∏ v ∈ (S ∪ S₀) \ S, ∫⁻ y, gv v y ∂(mv v) =
       ∏ v ∈ (S ∪ S₀) \ S, ENNReal.ofReal ((mv v).map (Tv v) (L v)).toReal :=
     Finset.prod_congr rfl fun v hv => by
-      simp only [gv, if_neg (Finset.mem_sdiff.1 hv).2]
+      simp only [gv, ite_eq_right (Finset.mem_sdiff.1 hv).2]
       rw [lintegral_indicator_one (hTL v), Measure.map_apply (hTv v) (hL v),
         ENNReal.ofReal_toReal (hfin v)]
   have e3 : ∏' v : {v // v ∉ S ∪ S₀}, (mv v.1 (L v.1)).toReal =

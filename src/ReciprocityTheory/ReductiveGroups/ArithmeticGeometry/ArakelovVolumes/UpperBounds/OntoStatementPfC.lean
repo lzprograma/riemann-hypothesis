@@ -242,12 +242,12 @@ theorem measurable_densF : Measurable fun z => ENNReal.ofReal (densF X x0 z) := 
   have hn : Continuous (nmat X) := by
     refine continuous_pi fun τ => continuous_pi fun a => continuous_pi fun b => ?_
     by_cases h : b < a
-    · simp only [nmat, dif_pos h]
+    · simp only [nmat, dite_eq_left h]
       fun_prop
     · by_cases h' : a = b
-      · simp only [nmat, dif_neg h, if_pos h']
+      · simp only [nmat, dite_eq_right h, ite_eq_left h']
         exact continuous_const
-      · simp only [nmat, dif_neg h, if_neg h']
+      · simp only [nmat, dite_eq_right h, ite_eq_right h']
         exact continuous_const
   have hc : ∀ τ i, Continuous fun z => dmin X.Gm (cpt X x0 z) τ i := by
     intro τ i
@@ -285,13 +285,13 @@ theorem dbar_ka (bb : ℝ) {f0 : Frame X.Ψ r → ℂ} (hf0 : DifferentiableOn �
   have hn : ∀ τ a b, Differentiable ℂ fun z : V (nd X) => nmat X z τ a b := by
     intro τ a b
     by_cases h : b < a
-    · simp only [nmat, dif_pos h]
+    · simp only [nmat, dite_eq_left h]
       first
         | fun_prop
     · by_cases h' : a = b
-      · simp only [nmat, dif_neg h, if_pos h']
+      · simp only [nmat, dite_eq_right h, ite_eq_left h']
         exact differentiable_const _
-      · simp only [nmat, dif_neg h, if_neg h']
+      · simp only [nmat, dite_eq_right h, ite_eq_right h']
         exact differentiable_const _
   have hcpt : Differentiable ℂ (cpt X x0) := by
     refine differentiable_pi.2 fun τ => differentiable_pi.2 fun a => differentiable_pi.2 fun b => ?_

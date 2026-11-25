@@ -63,7 +63,6 @@ theorem algebraMap_acrisZero_algebraMap (w : AInf K p) :
   rfl
 
 
-set_option maxHeartbeats 4000000 in
 theorem false_of_dominant (hp0 : ‖(p : K)‖ ≤ ρ) (hρ1 : ρ < 1) {a b : ACris K p} {Na Nb : ℕ}
     {Fa Fb : ℝ}
     (hsa : ∀ N ≥ Na, ∀ c : ACrisZero K p,
@@ -95,7 +94,6 @@ theorem false_of_dominant (hp0 : ‖(p : K)‖ ≤ ρ) (hρ1 : ρ < 1) {a b : AC
     have eS : algebraMap (ACrisZero K p) (ACris K p) S = ∑ i ∈ Finset.range (d + 1),
         algebraMap (AInf K p) (ACris K p) (x i) * algebraMap (ACrisZero K p) (ACris K p) ca ^ i *
           algebraMap (ACrisZero K p) (ACris K p) cb ^ (d - i) := by
-      set_option synthInstance.maxHeartbeats 100000 in
         simp only [S, T, map_sum, map_mul, map_pow, algebraMap_acrisZero_algebraMap]
     have key := sum_sub_sum_mem (Ideal.span {(p : ACris K p) ^ N}) d
       (fun i => algebraMap (AInf K p) (ACris K p) (x i)) hca hcb
@@ -258,7 +256,6 @@ open _root_.WittVector Laurent Polynomial WittTilt
 variable {p : ℕ} [hp : Fact p.Prime]
 
 
-set_option maxHeartbeats 4000000 in
 theorem exists_norm_eq_zpow_of_iota_eq {y : PadicAlgCl p} (hy : y ≠ 0) {a b : ACris ℂ_[p] p}
     (hb : b ≠ 0) (h : iota ℂ_[p] p a = algClToBdR p y * iota ℂ_[p] p b) :
     ∃ D : ℤ, ‖y‖ = ‖(p : PadicAlgCl p)‖ ^ D := by
@@ -564,7 +561,7 @@ theorem norm_sub_pow_sub_le {F : Type*} [NormedField F] [IsUltrametricDist F] (h
     have h2 := congrArg norm h1
     rw [norm_mul, norm_one] at h2
     have h3 : ‖(((u⁻¹ : Oˣ) : O) : F)‖ ≤ 1 := mem_normInteger.1 (u⁻¹ : Oˣ).val.2
-    nlinarith [norm_nonneg ((p : F))]
+    nlinarith only [hpF, h2, h3, norm_nonneg ((p : F))]
   haveI := CharP.quotient O p hnu
   have h := sub_pow_char_pow (p := p) (n := k) (Ideal.Quotient.mk (Ideal.span {(p : O)}) a')
     (Ideal.Quotient.mk (Ideal.span {(p : O)}) b')

@@ -4,50 +4,6 @@ public import Mathlib.AlgebraicGeometry.Morphisms.Etale
 public import Mathlib.Combinatorics.Quiver.ReflQuiver
 public import Mathlib.Order.CompletePartialOrder
 public import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeMorphismProperties
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.QuasiAffine
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -83,14 +39,9 @@ private theorem isReduced_of_ringEquiv
     _root_.IsReduced A :=
   ⟨fun _ hx => e.injective (((hx.map e).eq_zero).trans (map_zero e).symm)⟩
 
-private theorem isReduced_of_forall_isReduced_stalk (X : Scheme.{u})
-    (h : ∀ x : X, _root_.IsReduced (X.presheaf.stalk x)) : IsReduced X := by
-  have := h
-  exact isReduced_of_isReduced_stalk X
-
 theorem isReduced_sigmaOpens (Y : Scheme.{u}) [IsReduced Y] {ι : Type u} (U : ι → Y.Opens) :
     IsReduced (sigmaOpens Y U) := by
-  refine isReduced_of_forall_isReduced_stalk _ ?_
+  refine @AlgebraicGeometry.isReduced_of_isReduced_stalk _ ?_
   intro x
   obtain ⟨⟨i, y⟩, hx⟩ := (sigmaMk fun i => (U i).toScheme).surjective x
   have hx' : (Sigma.ι (fun i => (U i).toScheme) i).base y = x := by simpa using hx
@@ -170,7 +121,6 @@ theorem exists_affine_etale_cover_of_isReduced {k : Type u} [Field k] (Y : Schem
       IsAffine W ∧ IsReduced W ∧ LocallyOfFiniteType q ∧ QuasiCompact q ∧
         Etale g ∧ Surjective g ∧ g ≫ p = q := by
   have hsub : Subsingleton ↥(Spec (CommRingCat.of k)) := subsingleton_spec_of_field k
-  have hcs : CompactSpace ↥(Spec (CommRingCat.of k)) := inferInstance
   have hcY : CompactSpace ↥Y := by
     constructor
     have h := (‹QuasiCompact p›).isCompact_preimage Set.univ isOpen_univ isCompact_univ
@@ -178,7 +128,6 @@ theorem exists_affine_etale_cover_of_isReduced {k : Type u} [Field k] (Y : Schem
   obtain ⟨ι, hι, U, hUaff, hUsup⟩ := exists_finite_affine_cover Y
   have : Finite ι := hι
   have hW : IsAffine (sigmaOpens Y U) := isAffine_sigmaOpens Y U hUaff
-  have : CompactSpace ↥(sigmaOpens Y U) := inferInstance
   refine ⟨sigmaOpens Y U, sigmaOpensDesc Y U ≫ p, sigmaOpensDesc Y U, hW,
     isReduced_sigmaOpens Y U, ?_, ?_, etale_sigmaOpensDesc Y U,
     surjective_sigmaOpensDesc Y U hUsup, rfl⟩

@@ -94,9 +94,9 @@ theorem subst_invF_actS (X : Sys p) (Kc : Type) [Field Kc] [Algebra (Formalism.M
   unfold Pi
   try dsimp only [frmMove]
   by_cases ho : IsOddPos s
-  · simp only [if_pos ho]
+  · simp only [ite_eq_left ho]
     rw [Units.val_mul, hm, Matrix.mul_apply]
-  · simp only [if_neg ho, Matrix.transpose_apply]
+  · simp only [ite_eq_right ho, Matrix.transpose_apply]
     rw [mul_inv_rev, inv_inv, Units.val_mul, hm, Matrix.mul_apply]
     exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
 

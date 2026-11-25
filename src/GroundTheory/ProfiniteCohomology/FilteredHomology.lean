@@ -29,27 +29,11 @@ theorem exists_iCycles_eq {i : ι} (x : K.X i) (hx : (K.d i (c.next i)).hom x = 
 
 theorem shortComplex_homologyπ_eq_zero_iff (S : ShortComplex (ModuleCat.{u} R)) (z : S.cycles) :
     S.homologyπ.hom z = 0 ↔ ∃ w : S.X₁, S.f.hom w = S.iCycles.hom z := by
-  have hinj : Function.Injective S.moduleCatHomologyIso.hom.hom :=
-    (ModuleCat.mono_iff_injective _).1 inferInstance
-  have h1 : S.moduleCatHomologyIso.hom.hom (S.homologyπ.hom z) =
-      S.moduleCatLeftHomologyData.π.hom (S.moduleCatCyclesIso.hom.hom z) :=
-    ShortComplex.π_moduleCatCyclesIso_hom_apply S z
-  have h2 : S.moduleCatLeftHomologyData.i.hom (S.moduleCatCyclesIso.hom.hom z) =
-      S.iCycles.hom z :=
-    ShortComplex.moduleCatCyclesIso_hom_i_apply S z
-  have h0 : S.homologyπ.hom z = 0 ↔ S.moduleCatHomologyIso.hom.hom (S.homologyπ.hom z) = 0 :=
-    ⟨fun h => by rw [h, map_zero], fun h => hinj (h.trans (map_zero _).symm)⟩
-  rw [h0, h1]
-  change Submodule.Quotient.mk (p := LinearMap.range S.moduleCatToCycles)
-    (S.moduleCatCyclesIso.hom.hom z) = 0 ↔ _
-  refine (Submodule.Quotient.mk_eq_zero (LinearMap.range S.moduleCatToCycles)
-    (x := (S.moduleCatCyclesIso.hom.hom z : LinearMap.ker S.g.hom))).trans ?_
-  constructor
-  · rintro ⟨w, hw⟩
-    exact ⟨w, (congrArg S.moduleCatLeftHomologyData.i.hom hw).trans h2⟩
-  · rintro ⟨w, hw⟩
-    exact ⟨w, (ModuleCat.mono_iff_injective S.moduleCatLeftHomologyData.i).1 inferInstance
-      (hw.trans h2.symm)⟩
+  rw [← map_eq_zero_iff S.homologyι.hom
+    ((ModuleCat.mono_iff_injective _).1 inferInstance)]
+  change (S.homologyπ ≫ S.homologyι) z = 0 ↔ _
+  rw [S.homology_π_ι, ModuleCat.comp_apply, S.moduleCat_pOpcycles_eq_zero_iff]
+  rfl
 
 theorem homologyπ_eq_zero_iff {i : ι} (z : K.cycles i) :
     (K.homologyπ i).hom z = 0 ↔

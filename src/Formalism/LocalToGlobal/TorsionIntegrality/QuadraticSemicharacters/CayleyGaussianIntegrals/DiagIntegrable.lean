@@ -187,8 +187,7 @@ theorem diagonalIntegral : DiagIntegral := by
 
 theorem KerPNonzero_of (hD : DiagIntegral) : KerPNonzero := by
   intro V _ _ _ H Λ α hH hPos hL hS hC
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   letI : MeasurableSpace V := borel V
   haveI : BorelSpace V := ⟨rfl⟩
   obtain ⟨D, hD1, hD2, hD3, -⟩ :=
@@ -787,11 +786,11 @@ theorem const_value {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] [Finit
     (fun y => ∫ z in D', α y * opU H y (fun v => kerP H α Λ v z) z * (wt H z : ℂ) ∂μ)
     (fun y hy hyΛ => by
       have := hdiag y (hS₂.1 y hy)
-      rw [if_neg hyΛ] at this
+      rw [ite_eq_right hyΛ] at this
       exact this)
   rw [hsum]
   have := hdiag y₀ (hS₂.1 y₀ hy₀)
-  rw [if_pos hy₀Λ] at this
+  rw [ite_eq_left hy₀Λ] at this
   rw [this]
 
 end UC

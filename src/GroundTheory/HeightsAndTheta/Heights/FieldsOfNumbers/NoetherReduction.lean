@@ -19,14 +19,14 @@ open scoped nonZeroDivisors
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
 
-universe u
+universe u v w z
 
 theorem finite_integralClosure_of_forall_mvPolynomial
-    (k A : Type u) [Field k] [CommRing A] [IsDomain A] [Algebra k A] [Algebra.FiniteType k A]
-    (K : Type u) [Field K] [Algebra A K] [IsFractionRing A K]
-    (L : Type u) [Field L] [Algebra K L] [FiniteDimensional K L] [Algebra A L]
+    (k : Type u) (A : Type v) [Field k] [CommRing A] [IsDomain A] [Algebra k A] [Algebra.FiniteType k A]
+    (K : Type w) [Field K] [Algebra A K] [IsFractionRing A K]
+    (L : Type z) [Field L] [Algebra K L] [FiniteDimensional K L] [Algebra A L]
     [IsScalarTower A K L]
-    (hpoly : ∀ (s : ℕ) (L' : Type u) [Field L'] [Algebra (FractionRing (MvPolynomial (Fin s) k)) L']
+    (hpoly : ∀ (s : ℕ) (L' : Type z) [Field L'] [Algebra (FractionRing (MvPolynomial (Fin s) k)) L']
       [FiniteDimensional (FractionRing (MvPolynomial (Fin s) k)) L']
       [Algebra (MvPolynomial (Fin s) k) L']
       [IsScalarTower (MvPolynomial (Fin s) k) (FractionRing (MvPolynomial (Fin s) k)) L'],

@@ -70,15 +70,6 @@ def mapdR {V' : Type} [AddCommGroup V'] [Module LL V'] [Module Qp V'] [IsScalarT
     (f : V →ₗ[LL] V') : V ⊗[Qp] BdR →ₗ[LL] V' ⊗[Qp] BdR :=
   AlgebraTensorModule.map f (LinearMap.id : BdR →ₗ[Qp] BdR)
 
-def tdR : BdRˣ := (PD.t_unit.map PD.ι).unit
-
-variable (ρ : Representation LL G V)
-
-def filDdR (a : ℤ) : Submodule LL (V ⊗[Qp] BdR) := DdR PD ρ ⊓ FilV PD (LL := LL) (V := V) a
-
-def jumpMult (τ : K →ₐ[Qp] LL) (a : ℤ) : ℕ :=
-  Module.finrank LL (↥(FildR PD ρ τ a) ⧸ (FildR PD ρ τ (a + 1)).comap (FildR PD ρ τ a).subtype)
-
 end Ops
 
 variable [TopologicalSpace G] (LL O : Type) [Field LL] [Algebra Qp LL] [CommRing O] [Algebra O LL]
@@ -86,11 +77,6 @@ variable [TopologicalSpace G] (LL O : Type) [Field LL] [Algebra Qp LL] [CommRing
 
 def CrysDeRhamCore : Prop :=
   ∀ T : LocLat G Qp LL O, IsCrys PD T.ρ → IsDR PD T.ρ
-
-def SpanCore : Prop :=
-  ∀ T : LocLat G Qp LL O, IsCrys PD T.ρ →
-    DdR PD T.ρ = ⨆ c : K, ((Dcris PD T.ρ).map (ιV PD (LL := LL) (V := T.V))).map
-      (mulVdR (Qp := Qp) (LL := LL) (V := T.V) (BdR := BdR) c)
 
 def StrictCore : Prop :=
   ∀ (T₀ T₁ T₂ : LocLat G Qp LL O) (f : T₀.V →ₗ[LL] T₁.V) (g : T₁.V →ₗ[LL] T₂.V),

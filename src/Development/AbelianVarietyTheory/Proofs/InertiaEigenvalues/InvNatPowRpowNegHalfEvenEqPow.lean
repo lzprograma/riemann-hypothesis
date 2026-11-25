@@ -91,7 +91,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum IsDedekindDomain NumberField Matrix GlobalTheory.ExportSeries
 open Formalism.L2.NTheta (IsIdemAt IsHeckeElt)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem _root_.GlobalTheory.T.splitPlaceChart_finiteAdeleTensor_levels : ∀ (D : D7) (e : AE D) (P : Pl D.host.E) (v : HeightOneSpectrum (𝓞 D.host.F)) (π : AE D →+* Fv D.host.F v), IsIdemAt e P → GlobalTheory.SplitHecke.Chart e v π → ∃ φ : Datum.EAf D →+* Fv D.host.F v, (∀ a, φ (toEAf D a) = π a) ∧ (∀ N : Datum.EAf D, toEAf D e * N ∈ Formalism.L2.Herm.intAf D.host.F D.host.E ↔ GlobalTheory.SplitHecke.IsInt (GlobalTheory.SplitHecke.Ov D v) (φ N)) ∧ (∀ (m n : ℕ) (N : Matrix (Fin m) (Fin n) (Datum.EAf D)), IsIntM N → ∀ z : Matrix (Fin m) (Fin n) (GlobalTheory.SplitHecke.Ov D v), z.map (algebraMap (GlobalTheory.SplitHecke.Ov D v) (Fv D.host.F v)) = N.map φ → prim (redM P N) = prim (z.map (IsLocalRing.residue (GlobalTheory.SplitHecke.Ov D v)))) ∧ ∀ (V : HSp D) (β : GL (Fin V.rank) (Datum.EAf D)) (Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)), Lev.IsBaseFrame V β Λ 1 → GlobalTheory.SplitHecke.Frame V e π (Matrix.GeneralLinearGroup.map φ β) := by
   first | exact @GlobalTheory.ChartLevels.chart_levels
@@ -322,9 +321,9 @@ theorem sum_hecke_indicator_eq_prim : ∀ (O K : Type) [CommRing O] [IsDomain O]
   rw [e1, ← Finset.sum_subset (Finset.range_subset_range.2 (show c + 1 ≤ r + 1 by omega)) (fun k hk hk' => ?_)]
   · refine Eq.trans (GlobalTheory.GaussSubspace.sum_card_subspaces (ResidueField O) c ℂ 1) ?_
     rcases Nat.eq_zero_or_pos c with h0 | h0
-    · rw [prim, if_pos (hli.2 h0), h0, Finset.prod_range_zero]
+    · rw [prim, ite_eq_left (hli.2 h0), h0, Finset.prod_range_zero]
       simp
-    · rw [prim, if_neg (fun H => by have := hli.1 H; omega)]
+    · rw [prim, ite_eq_right (fun H => by have := hli.1 H; omega)]
       obtain ⟨m, hm⟩ : ∃ m, c = m + 1 := ⟨c - 1, by omega⟩
       rw [hm, Finset.prod_range_succ', pow_zero, one_mul, sub_self, mul_zero]
       simp
@@ -345,7 +344,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum IsDedekindDomain NumberField Matrix GlobalTheory.ExportSeries
 open Formalism.L2.NTheta (IsIdemAt IsHeckeElt)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 noncomputable section
@@ -374,13 +372,13 @@ theorem datumFn_prim (B : Base S T) (Q : Finset (Pl D.host.E)) {P : Pl D.host.E}
     have h1 : ∀ PP : ↥Q, (if PP.1 = P then ((prim (y PP.1) : ℚ) : ℂ) else φ PP.1 (y PP.1)) =
         if PP = ⟨P, hP⟩ then ((prim (y P) : ℚ) : ℂ) else φ PP.1 (y PP.1) := fun PP => by
       by_cases h : PP.1 = P
-      · rw [if_pos h, if_pos (Subtype.ext h), h]
-      · rw [if_neg h, if_neg fun e => h (congrArg Subtype.val e)]
+      · rw [ite_eq_left h, ite_eq_left (Subtype.ext h), h]
+      · rw [ite_eq_right h, ite_eq_right fun e => h (congrArg Subtype.val e)]
     have h2 : ∀ PP : ↥Q, (if PP.1 = P then (1 : ℂ) else φ PP.1 (y PP.1)) =
         if PP = ⟨P, hP⟩ then 1 else φ PP.1 (y PP.1) := fun PP => by
       by_cases h : PP.1 = P
-      · rw [if_pos h, if_pos (Subtype.ext h)]
-      · rw [if_neg h, if_neg fun e => h (congrArg Subtype.val e)]
+      · rw [ite_eq_left h, ite_eq_left (Subtype.ext h)]
+      · rw [ite_eq_right h, ite_eq_right fun e => h (congrArg Subtype.val e)]
     simp only [h1, h2]
     rw [mul_assoc]
     congr 1
@@ -492,8 +490,8 @@ theorem halfInd_smul {m n : ℕ} {e : AE D} (he : e * e = e) (Λ : AddSubgroup (
     halfInd e Λ (e • y) = if e • y ∈ Λ then 1 else 0 := by
   unfold halfInd
   by_cases h : e • y ∈ Λ
-  · rw [if_pos ⟨h, isHalf_smul he y⟩, if_pos h]
-  · rw [if_neg fun h' => h h'.1, if_neg h]
+  · rw [ite_eq_left ⟨h, isHalf_smul he y⟩, ite_eq_left h]
+  · rw [ite_eq_right fun h' => h h'.1, ite_eq_right h]
 
 end GlobalTheory.DistRel
 
@@ -538,8 +536,8 @@ theorem datum_rel (B : Base S T) (hB : B.Good) {Q : Finset (Pl D.host.E)} (hQ : 
     · refine Finset.prod_congr rfl fun PP _ => ?_
       dsimp only
       by_cases h : PP.1 = P
-      · rw [if_pos h, if_pos h]
-      · rw [if_neg h, if_neg h, hy PP.1 (Finset.mem_union_right _ (Finset.mem_erase.2 ⟨h, PP.2⟩))]
+      · rw [ite_eq_left h, ite_eq_left h]
+      · rw [ite_eq_right h, ite_eq_right h, hy PP.1 (Finset.mem_union_right _ (Finset.mem_erase.2 ⟨h, PP.2⟩))]
   have hR := datumFn_eq_restrict hB.frame hQ.1 hsub hdep
   rw [hid] at hR
   set a' := halfIdem B.G.Pg (B.de.Q ∪ Q.erase P)
@@ -584,7 +582,7 @@ theorem datum_rel (B : Base S T) (hB : B.Good) {Q : Finset (Pl D.host.E)} (hQ : 
     have hm := _root_.GlobalTheory.HeckeMobius.sum_hecke_indicator_eq_prim (Ov D v) (Fv D.host.F v) p hp T.rank S.rank (GA D T) (fun k => rho T π β' (α k)) R (rho T π β')
       hHk z
     rw [hz] at hm
-    rw [if_pos hY0, mul_one]
+    rw [ite_eq_left hY0, mul_one]
     have e2 : C + ∑ k ∈ Finset.Icc 1 T.rank, (-1 : ℂ) ^ k * (Nat.card (IsLocalRing.ResidueField (Ov D v)) : ℂ) ^ (k * (k - 1) / 2) *
         (C * (Nat.card {γ : GA D T // γ ∈ R k ∧ IntM (Ov D v) (((rho T π β' γ)⁻¹).1 * Y)} : ℂ)) =
         C * ((prim (z.map (IsLocalRing.residue (Ov D v))) : ℚ) : ℂ) := by
@@ -596,13 +594,13 @@ theorem datum_rel (B : Base S T) (hB : B.Good) {Q : Finset (Pl D.host.E)} (hQ : 
     by_cases hC0 : C = 0
     · rw [hC0, zero_mul, zero_mul]
     · congr 1
-      have hd : B.F.datumFn B.G (B.de.Q ∪ Q) ω1 x ≠ 0 := by rw [key0, if_pos hY0, mul_one]; exact hC0
+      have hd : B.F.datumFn B.G (B.de.Q ∪ Q) ω1 x ≠ 0 := by rw [key0, ite_eq_left hY0, mul_one]; exact hC0
       have hI : IsIntM (frMapO S T B.F.βS B.F.βT x) := by
         by_contra hn
         apply hd
-        simp only [Frame.datumFn, hn, and_false, if_false, mul_zero]
+        simp only [Frame.datumFn, hn, and_false, ite_false, mul_zero]
       exact_mod_cast hφ3 _ _ _ hI z hz
-  · rw [if_neg hY0, mul_zero, zero_mul, zero_add]
+  · rw [ite_eq_right hY0, mul_zero, zero_mul, zero_add]
     refine (Finset.sum_eq_zero fun k hk => ?_).symm
     have h0 : Nat.card {γ : GA D T // γ ∈ R k ∧ IntM (Ov D v) (((rho T π β' γ)⁻¹).1 * Y)} = 0 := by
       refine Nat.card_eq_zero.2 (Or.inl ⟨fun ⟨γ, hγ, h⟩ => hY0 ?_⟩)

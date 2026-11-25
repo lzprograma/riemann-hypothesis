@@ -13,8 +13,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.SG.PoincareInHH.Cut
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace LatticeCoordinateLemmas
 
 variable {D : D7} (X : HidaSetting D)

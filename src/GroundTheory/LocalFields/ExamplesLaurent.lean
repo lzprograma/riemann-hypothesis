@@ -46,10 +46,6 @@ instance : IsLinearTopology 𝒪[K] 𝒪[K] :=
 
 variable (p : ℕ) [Fact p.Prime] [CharP K p]
 
-section Uniform
-
-end Uniform
-
 
 end EqualChar
 

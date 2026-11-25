@@ -7,45 +7,7 @@ public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MixedMode
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArchimedeanMultiplierTemperate
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.OpGenB
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.OpGenC
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -56,8 +18,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 
@@ -105,7 +65,7 @@ theorem mat_iota_nU {θ : InfFam D} (hθ : IsInfFam θ) {τ : D.what₂.Tau} {n 
       rfl
     · rw [h2 τ' h, e2 τ' h, one_eq_block_matrix]
 
-theorem theta_half (θ : InfFam D) (_hθ : IsInfFam θ) (ρ : D.what₂.Tau) :
+theorem theta_half (θ : InfFam D) (ρ : D.what₂.Tau) :
     θ ρ (algebraMap D.host.F (Ainf D.host.F) (1 / 2) ⊗ₜ[D.host.F] (1 : D.host.E)) = 1 / 2 := by
   have h2 : θ ρ (algebraMap D.host.F (Ainf D.host.F) 2 ⊗ₜ[D.host.F] (1 : D.host.E)) = 2 := by
     have : (algebraMap D.host.F (Ainf D.host.F) 2 ⊗ₜ[D.host.F] (1 : D.host.E)) = 2 := by
@@ -171,7 +131,7 @@ theorem psi_unip {θ : InfFam D} (hθ : IsInfFam θ) {ψ : AddChar (AF D.host.F)
     rw [show ((algebraMap D.host.F (Ainf D.host.F) (1 / 2) * fstA D.host.F (Algebra.trace (AF D.host.F) (AE D) z)) ⊗ₜ[D.host.F]
         (1 : D.host.E)) = (algebraMap D.host.F (Ainf D.host.F) (1 / 2) ⊗ₜ[D.host.F] (1 : D.host.E)) *
         (fstA D.host.F (Algebra.trace (AF D.host.F) (AE D) z) ⊗ₜ[D.host.F] (1 : D.host.E)) by
-      rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one], map_mul, theta_half θ hθ, GlobalTheory.PhaseReal.theta_trace θ hθ]
+      rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one], map_mul, theta_half θ, GlobalTheory.PhaseReal.theta_trace θ hθ]
     push_cast
     ring
   simp only [hterm]

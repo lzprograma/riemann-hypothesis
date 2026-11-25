@@ -10,8 +10,6 @@ import Mathlib.Topology.Sheaves.Presheaf
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open IsDedekindDomain NumberField
@@ -182,7 +180,7 @@ lemma nrmOf_smul {a : K} (ha : a ≠ 0) {v : EReal} (hv : v ≠ ⊥) :
   by_cases ht : v = ⊤
   · subst ht; simp [nrmOf]
   lift v to ℝ using ⟨ht, hv⟩
-  simp only [nrmOf, ← EReal.coe_add, EReal.coe_ne_top, if_false, EReal.toReal_coe]
+  simp only [nrmOf, ← EReal.coe_add, EReal.coe_ne_top, ite_false, EReal.toReal_coe]
   rw [neg_add, Real.rpow_add (by linarith [one_lt_absNorm_real la]), ← Real.rpow_intCast]
   push_cast; ring_nf
 

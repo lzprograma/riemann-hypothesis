@@ -62,13 +62,13 @@ private lemma dualTens_casimir_sum {M : Type} [NormedAddCommGroup M] [InnerProdu
       = E a b (E b a (x i)) - (if i = a then E a b (x b) else 0)
         - (if i = b then E b a (x a) else 0) + (if i = b then x b else 0) := by
     intro a b
-    simp only [dualTens, map_sub, if_true]
+    simp only [dualTens, map_sub, ite_true]
     split_ifs <;> (try simp only [map_zero]) <;> abel
   simp only [Finset.sum_apply, h1, Finset.sum_add_distrib, Finset.sum_sub_distrib,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true, Pi.add_apply, Pi.smul_apply, splitCas, Cas,
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true, Pi.add_apply, Pi.smul_apply, splitCas, Cas,
     LinearMap.sum_apply, Module.End.mul_apply]
   rw [Finset.sum_comm (f := fun a b => if i = a then E a b (x b) else 0)]
-  simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true, Finset.sum_const, Finset.card_univ,
+  simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true, Finset.sum_const, Finset.card_univ,
     Fintype.card_fin, Nat.cast_smul_eq_nsmul, two_smul]
   abel
 
@@ -80,13 +80,12 @@ private lemma casG_sub_single {n : ℕ} (μ : Fin n → ℝ) (s : Fin n) :
     by_cases h : s = a
     · subst h; simp; ring
     · simp [h, Ne.symm h]
-  simp only [this, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [this, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   ring
 
 theorem splitCas_eigenvalue_summand : ∀ (M : Type) [NormedAddCommGroup M] [InnerProductSpace ℂ M] (n : ℕ) (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ M) (N : Fin n → Type) [∀ s, NormedAddCommGroup (N s)] [∀ s, InnerProductSpace ℂ (N s)] (F : ∀ s, Fin n → Fin n → Module.End ℂ (N s)) (io : ∀ s, N s →ₗ[ℂ] (Fin n → M)) (pr : ∀ s, (Fin n → M) →ₗ[ℂ] N s) (μ : Fin n → ℝ), IsMod ε E μ → (∀ s, IsMod ε (F s) (μ - Pi.single s 1)) → AlgTens ε E N F io pr → ∀ s (y : N s), splitCas E (io s y) = ((-μ s + (1 - (n : ℝ)) / 2 : ℝ) : ℂ) • io s y := by
   intro M _ _ n ε E N _ _ F io pr μ hE hF hT s y
   have h1 : io s (Cas (F s) y) = ∑ a, ∑ b, dualTens E a b (dualTens E b a (io s y)) := by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp only [Cas, LinearMap.sum_apply, Module.End.mul_apply, map_sum, hT.io_comm]
   rw [dualTens_casimir_sum, (hF s).2.2, map_smul, casG_sub_single] at h1
   have h2 : (fun i => Cas E (io s y i)) = (casG μ : ℂ) • io s y := by

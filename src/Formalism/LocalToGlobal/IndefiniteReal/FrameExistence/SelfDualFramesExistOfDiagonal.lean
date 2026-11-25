@@ -15,8 +15,6 @@ open scoped TensorProduct
 
 namespace Formalism.IndefR.Seed.FrmP
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def coordMap (V : HSp D) : (Fin V.rank → D.host.E) →ₗ[𝓞 D.host.E] V.V :=

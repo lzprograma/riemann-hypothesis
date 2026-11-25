@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdicCompletionValuationRingCompleteValuationDoma
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
 public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
 public import Formalism.LocalRingCardinality.AdicCompletionLocal.InstIsAdicCompleteOCSpanSingletonSetCast
@@ -58,15 +59,7 @@ variable {R : Type} [CommRing R] {I : Ideal R} {a : R}
 
 theorem evalₐ_eq_zero_iff (h : I = Ideal.span {a}) (n : ℕ) (y : AdicCompletion I R) :
     AdicCompletion.evalₐ I n y = 0 ↔ algebraMap R (AdicCompletion I R) a ^ n ∣ y := by
-  have hfg : I.FG := ⟨{a}, by simp [h]⟩
-  have e : (I ^ n).map (algebraMap R (AdicCompletion I R)) =
-      Ideal.span {algebraMap R (AdicCompletion I R) a ^ n} := by
-    have : I ^ n = Ideal.span {a ^ n} := by rw [h, Ideal.span_singleton_pow]
-    rw [this, Ideal.map_span, Set.image_singleton, map_pow]
-  rw [← Ideal.mem_span_singleton, ← e, ← Submodule.restrictScalars_mem R,
-    ← Ideal.smul_top_eq_map, AdicCompletion.pow_smul_top_eq_ker_eval hfg, LinearMap.mem_ker]
-  have h' : (I ^ n • ⊤ : Ideal R) = I ^ n := by ext x; simp
-  exact map_eq_zero_iff _ (Ideal.quotientEquivAlgOfEq R h').injective
+  apply _root_.GlobalTheory.ValCompletion.evalₐ_eq_zero_iff <;> assumption
 
 theorem evalₐ_algebraMap (n : ℕ) (r : R) :
     AdicCompletion.evalₐ I n (algebraMap R (AdicCompletion I R) r) = Ideal.Quotient.mk _ r := by

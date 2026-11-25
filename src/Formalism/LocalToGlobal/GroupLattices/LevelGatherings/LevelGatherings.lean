@@ -13,8 +13,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.G
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem k_pred (R : Ranks) : R.k - 1 + 1 = R.k := by
   have := R.m_add_three_le_k
   omega

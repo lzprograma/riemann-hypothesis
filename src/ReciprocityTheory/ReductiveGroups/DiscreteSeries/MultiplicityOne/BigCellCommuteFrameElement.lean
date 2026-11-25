@@ -1,56 +1,11 @@
 module
 
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
 public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDefs
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvCCA
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvGroupA
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.MulVecApplyOfRow, ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.BigCellCommuteFrameElement
@@ -66,220 +21,15 @@ noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.DS.Mult1.SymA
 
-open Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2
+open Formalism.QuantumDeterminants WeylGroupFacts Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2
 
 variable {k r : ℕ}
-
-def block (k r : ℕ) (g : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) : Prop :=
-  (∀ i j : Fin (2 * r + k + 1), (j.val < r ∨ r + k < j.val) → g i j = if i = j then 1 else 0) ∧
-  (∀ i j : Fin (2 * r + k + 1), (i.val < r ∨ r + k < i.val) → g i j = if i = j then 1 else 0)
-
-def tau (k r : ℕ) (i : Fin (2 * r + k + 1)) : Fin (2 * r + k + 1) :=
-  ⟨if i.val < r ∨ r + k < i.val then 2 * r + k - i.val else i.val, by split_ifs <;> omega⟩
-
-def sgn (k r : ℕ) (i : Fin (2 * r + k + 1)) : ℂ := if i.val = r + k then -1 else 1
-
-theorem hpk_row (i m : Fin (2 * r + k + 1)) :
-    Hpk k r i m = if m = tau k r i then sgn k r i else 0 := by
-  unfold Hpk tau sgn
-  simp only [Fin.ext_iff]
-  split_ifs <;> first | rfl | (exfalso; omega)
-
-theorem hpk_mul_apply (A : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)
-    (i j : Fin (2 * r + k + 1)) : (Hpk k r * A) i j = sgn k r i * A (tau k r i) j := by
-  rw [Matrix.mul_apply, Finset.sum_eq_single (tau k r i)]
-  · rw [hpk_row, if_pos rfl]
-  · intro m _ hm
-    rw [hpk_row, if_neg hm, zero_mul]
-  · intro h
-    exact absurd (Finset.mem_univ _) h
-
-theorem tau_tau (i : Fin (2 * r + k + 1)) : tau k r (tau k r i) = i := by
-  unfold tau
-  apply Fin.ext
-  simp only
-  split_ifs <;> omega
-
-theorem sgn_tau (i : Fin (2 * r + k + 1)) : sgn k r (tau k r i) = sgn k r i := by
-  unfold sgn tau
-  simp only
-  split_ifs <;> first | rfl | (exfalso; omega)
-
-theorem sgn_mul_self (i : Fin (2 * r + k + 1)) : sgn k r i * sgn k r i = 1 := by
-  unfold sgn
-  split_ifs <;> norm_num
-
-theorem hpk_sq : Hpk k r * Hpk k r = 1 := by
-  ext i j
-  rw [hpk_mul_apply, hpk_row, tau_tau, sgn_tau, Matrix.one_apply]
-  by_cases h : j = i
-  · rw [if_pos h, if_pos h.symm, sgn_mul_self]
-  · rw [if_neg h, if_neg (Ne.symm h), mul_zero]
-
-theorem isUnit_of_uh {g : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
-    (hg : g ∈ UH (Hpk k r)) : IsUnit g.det := by
-  apply Matrix.isUnit_det_of_left_inverse (B := Hpk k r * gᴴ * Hpk k r)
-  have hg' : gᴴ * Hpk k r * g = Hpk k r := hg
-  calc Hpk k r * gᴴ * Hpk k r * g = Hpk k r * (gᴴ * Hpk k r * g) := by
-        simp only [Matrix.mul_assoc]
-    _ = 1 := by rw [hg', hpk_sq]
-
-theorem uh_mul {g h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
-    (hg : g ∈ UH (Hpk k r)) (hh : h ∈ UH (Hpk k r)) : g * h ∈ UH (Hpk k r) := by
-  have hg' : gᴴ * Hpk k r * g = Hpk k r := hg
-  have hh' : hᴴ * Hpk k r * h = Hpk k r := hh
-  show (g * h)ᴴ * Hpk k r * (g * h) = Hpk k r
-  rw [conjTranspose_mul]
-  calc hᴴ * gᴴ * Hpk k r * (g * h) = hᴴ * (gᴴ * Hpk k r * g) * h := by
-        simp only [Matrix.mul_assoc]
-    _ = Hpk k r := by rw [hg', hh']
-
-theorem uh_inv {g : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
-    (hg : g ∈ UH (Hpk k r)) : g⁻¹ ∈ UH (Hpk k r) := by
-  have hg' : gᴴ * Hpk k r * g = Hpk k r := hg
-  have hu := isUnit_of_uh hg
-  show (g⁻¹)ᴴ * Hpk k r * g⁻¹ = Hpk k r
-  calc (g⁻¹)ᴴ * Hpk k r * g⁻¹ = (g⁻¹)ᴴ * (gᴴ * Hpk k r * g) * g⁻¹ := by rw [hg']
-    _ = (g * g⁻¹)ᴴ * Hpk k r * (g * g⁻¹) := by
-        rw [conjTranspose_mul]; simp only [Matrix.mul_assoc]
-    _ = Hpk k r := by
-        rw [Matrix.mul_nonsing_inv _ hu, conjTranspose_one, Matrix.one_mul, Matrix.mul_one]
-
-theorem col_of_fix {h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
-    {c : Fin (2 * r + k + 1)} (hc : h *ᵥ bvec c = bvec c) (p : Fin (2 * r + k + 1)) :
-    h p c = if p = c then 1 else 0 := by
-  have := congrFun hc p
-  simp only [bvec, Matrix.mulVec, dotProduct_single, mul_one, Pi.single_apply] at this
-  exact this
-
-theorem row_of_fixed_col {h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
-    (hU : h ∈ UH (Hpk k r)) (c : Fin (2 * r + k + 1))
-    (hc : ∀ p, h p c = if p = c then 1 else 0) (j : Fin (2 * r + k + 1)) :
-    h (tau k r c) j = if tau k r c = j then 1 else 0 := by
-  have hU' : hᴴ * Hpk k r * h = Hpk k r := hU
-  have e := congrFun (congrFun hU' c) j
-  rw [Matrix.mul_assoc, Matrix.mul_apply, Finset.sum_eq_single c] at e
-  · rw [conjTranspose_apply, hc c, if_pos rfl, star_one, one_mul, hpk_mul_apply, hpk_row] at e
-    have hs : sgn k r c ≠ 0 := by
-      intro h0
-      have := sgn_mul_self (k := k) (r := r) c
-      rw [h0, zero_mul] at this
-      exact zero_ne_one this
-    by_cases hj : j = tau k r c
-    · rw [if_pos hj] at e
-      rw [if_pos hj.symm]
-      exact mul_left_cancel₀ hs (e.trans (mul_one _).symm)
-    · rw [if_neg hj] at e
-      rw [if_neg (Ne.symm hj)]
-      exact (mul_eq_zero.1 e).resolve_left hs
-  · intro p _ hp
-    rw [conjTranspose_apply, hc p, if_neg hp, star_zero, zero_mul]
-  · intro h'
-    exact absurd (Finset.mem_univ _) h'
-
-theorem uw_fixed_col {z : Fin (2 * r + k + 1) → ℂ}
-    {h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hh : h ∈ UWset k r z)
-    (c : Fin (2 * r + k + 1)) (hc : c.val < r ∨ r + k < c.val) (p : Fin (2 * r + k + 1)) :
-    h p c = if p = c then 1 else 0 := by
-  by_cases hcr : c.val < r
-  · have e : eI k r ⟨c.val, hcr⟩ = c := Fin.ext rfl
-    have := (hh.2.1 ⟨c.val, hcr⟩).1
-    rw [e] at this
-    exact col_of_fix this p
-  · have ha : 2 * r + k - c.val < r := by omega
-    have e : esI k r ⟨2 * r + k - c.val, ha⟩ = c := by
-      apply Fin.ext
-      simp only [esI]
-      omega
-    have := (hh.2.1 ⟨2 * r + k - c.val, ha⟩).2
-    rw [e] at this
-    exact col_of_fix this p
-
-theorem tau_out (i : Fin (2 * r + k + 1)) (hi : i.val < r ∨ r + k < i.val) :
-    (tau k r i).val < r ∨ r + k < (tau k r i).val := by
-  unfold tau
-  simp only
-  split_ifs
-  omega
-
-theorem uw_block {z : Fin (2 * r + k + 1) → ℂ}
-    {h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hh : h ∈ UWset k r z) :
-    block k r h := by
-  refine ⟨fun i j hj => uw_fixed_col hh j hj i, fun i j hi => ?_⟩
-  have := row_of_fixed_col hh.1 (tau k r i) (uw_fixed_col hh _ (tau_out i hi)) j
-  rw [tau_tau] at this
-  exact this
-
-theorem uw_inv {z : Fin (2 * r + k + 1) → ℂ}
-    {h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hh : h ∈ UWset k r z) :
-    h⁻¹ ∈ UWset k r z := by
-  have hu := isUnit_of_uh hh.1
-  have fix : ∀ v : Fin (2 * r + k + 1) → ℂ, h *ᵥ v = v → h⁻¹ *ᵥ v = v := by
-    intro v hv
-    conv_lhs => rw [← hv]
-    rw [Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul _ hu, Matrix.one_mulVec]
-  exact ⟨uh_inv hh.1, fun a => ⟨fix _ (hh.2.1 a).1, fix _ (hh.2.1 a).2⟩, fix _ hh.2.2⟩
-
-theorem uw_mul {z : Fin (2 * r + k + 1) → ℂ}
-    {h h' : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hh : h ∈ UWset k r z)
-    (hh' : h' ∈ UWset k r z) : h * h' ∈ UWset k r z := by
-  refine ⟨uh_mul hh.1 hh'.1, fun a => ⟨?_, ?_⟩, ?_⟩
-  · rw [← Matrix.mulVec_mulVec, (hh'.2.1 a).1, (hh.2.1 a).1]
-  · rw [← Matrix.mulVec_mulVec, (hh'.2.1 a).2, (hh.2.1 a).2]
-  · rw [← Matrix.mulVec_mulVec, hh'.2.2, hh.2.2]
-
-theorem mul_apply_of_row {h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
-    (M : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) (i j : Fin (2 * r + k + 1))
-    (hrow : ∀ p, h i p = if i = p then 1 else 0) : (h * M) i j = M i j := by
-  rw [Matrix.mul_apply, Finset.sum_eq_single i]
-  · rw [hrow, if_pos rfl, one_mul]
-  · intro p _ hp
-    rw [hrow, if_neg (Ne.symm hp), zero_mul]
-  · intro h'
-    exact absurd (Finset.mem_univ _) h'
-
-theorem mul_apply_of_col {h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
-    (M : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) (i j : Fin (2 * r + k + 1))
-    (hcol : ∀ q, h q j = if q = j then 1 else 0) : (M * h) i j = M i j := by
-  rw [Matrix.mul_apply, Finset.sum_eq_single j]
-  · rw [hcol, if_pos rfl, mul_one]
-  · intro q _ hq
-    rw [hcol, if_neg hq, mul_zero]
-  · intro h'
-    exact absurd (Finset.mem_univ _) h'
-
-theorem mulVec_apply_of_row {h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
-    (v : Fin (2 * r + k + 1) → ℂ) (i : Fin (2 * r + k + 1))
-    (hrow : ∀ p, h i p = if i = p then 1 else 0) : (h *ᵥ v) i = v i := by
-  simp only [Matrix.mulVec, dotProduct]
-  rw [Finset.sum_eq_single i]
-  · rw [hrow, if_pos rfl, one_mul]
-  · intro p _ hp
-    rw [hrow, if_neg (Ne.symm hp), zero_mul]
-  · intro h'
-    exact absurd (Finset.mem_univ _) h'
-
-theorem ell_conj (z : Fin (2 * r + k + 1) → ℂ)
-    {h h' g : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
-    (hh : block k r h) (hh' : block k r h') (hz : h' *ᵥ z = z) :
-    ell k r z (h * g * h') = ell k r z g := by
-  unfold ell
-  apply Finset.sum_congr rfl
-  intro a _
-  have hrow : ∀ p, h (eI k r a) p = if eI k r a = p then 1 else 0 :=
-    fun p => hh.2 _ p (by simp only [eI]; omega)
-  by_cases ha : a.val + 1 < r
-  · rw [dite_eq_left ha, dite_eq_left ha, mul_apply_of_col _ _ _ (fun q => hh'.1 q _ (by simp only [eI]; omega)),
-      mul_apply_of_row _ _ _ hrow]
-  · rw [dite_eq_right ha, dite_eq_right ha, ← Matrix.mulVec_mulVec, hz, ← Matrix.mulVec_mulVec,
-      mulVec_apply_of_row _ _ hrow]
 
 abbrev mid (k r : ℕ) (i : Fin (2 * r + k + 1)) : Prop := r ≤ i.val ∧ i.val ≤ r + k
 
 def midx {i : Fin (2 * r + k + 1)} (hi : mid k r i) : Fin (k + 1) := ⟨i.val - r, by have := hi; omega⟩
 
 lemma wI_midx {i : Fin (2 * r + k + 1)} (hi : mid k r i) : wI k r (midx hi) = i := by
-  have := hi
   apply Fin.ext
   simp only [wI, midx]
   omega
@@ -298,16 +48,16 @@ lemma emb_out_col (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * 
   unfold embWb
   rw [dite_eq_right (fun h => hj h.2)]
   by_cases h : q = j
-  · subst h; rw [if_pos ⟨rfl, hj⟩, if_pos rfl]
-  · rw [if_neg (fun h' => h h'.1), if_neg h]
+  · subst h; rw [ite_eq_left ⟨rfl, hj⟩, ite_eq_left rfl]
+  · rw [ite_eq_right (fun h' => h h'.1), ite_eq_right h]
 
 lemma emb_out_row (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * r + k + 1)) (hq : ¬ mid k r q) :
     embWb k r μ q j = if q = j then 1 else 0 := by
   unfold embWb
   rw [dite_eq_right (fun h => hq h.1)]
   by_cases h : q = j
-  · rw [if_pos ⟨h, hq⟩, if_pos h]
-  · rw [if_neg (fun h' => h h'.1), if_neg h]
+  · rw [ite_eq_left ⟨h, hq⟩, ite_eq_left h]
+  · rw [ite_eq_right (fun h' => h h'.1), ite_eq_right h]
 
 lemma emb_mid (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * r + k + 1)) (hq : mid k r q) (hj : mid k r j) :
     embWb k r μ q j = μ (midx hq) (midx hj) := by
@@ -319,36 +69,73 @@ def Em (k r : ℕ) : Matrix (Fin (2 * r + k + 1)) (Fin (k + 1)) ℂ := fun i m =
 
 lemma Em_mul_mid {X : Type*} (A : Matrix (Fin (k + 1)) X ℂ) (i : Fin (2 * r + k + 1)) (x : X) (hi : mid k r i) :
     (Em k r * A) i x = A (midx hi) x := by
-  apply Formalism.FourierDecayAlt.P.B2x3.Em_mul_mid <;> assumption
+  rw [Matrix.mul_apply, Finset.sum_eq_single (midx hi)]
+  · rw [Em, ite_eq_left (wI_midx hi).symm, one_mul]
+  · intro b _ hb
+    rw [Em, ite_eq_right, zero_mul]
+    intro h
+    apply hb
+    apply wI_inj (r := r)
+    rw [wI_midx hi, h]
+  · intro h; exact absurd (Finset.mem_univ _) h
 
 lemma Em_mul_out {X : Type*} (A : Matrix (Fin (k + 1)) X ℂ) (i : Fin (2 * r + k + 1)) (x : X) (hi : ¬ mid k r i) :
     (Em k r * A) i x = 0 := by
   rw [Matrix.mul_apply]
   apply Finset.sum_eq_zero
   intro b _
-  rw [Em, if_neg, zero_mul]
+  rw [Em, ite_eq_right, zero_mul]
   intro h
   exact hi (h ▸ mid_wI b)
 
 lemma mul_EmT_mid {X : Type*} [Fintype X] (A : Matrix X (Fin (k + 1)) ℂ) (j : Fin (2 * r + k + 1)) (x : X) (hj : mid k r j) :
     (A * (Em k r)ᵀ) x j = A x (midx hj) := by
-  apply Formalism.FourierDecayAlt.P.B2x3.mul_EmT_mid <;> assumption
+  rw [Matrix.mul_apply, Finset.sum_eq_single (midx hj)]
+  · rw [Matrix.transpose_apply, Em, ite_eq_left (wI_midx hj).symm, mul_one]
+  · intro b _ hb
+    rw [Matrix.transpose_apply, Em, ite_eq_right, mul_zero]
+    intro h
+    apply hb
+    apply wI_inj (r := r)
+    rw [wI_midx hj, h]
+  · intro h; exact absurd (Finset.mem_univ _) h
 
 lemma mul_EmT_out {X : Type*} [Fintype X] (A : Matrix X (Fin (k + 1)) ℂ) (j : Fin (2 * r + k + 1)) (x : X) (hj : ¬ mid k r j) :
     (A * (Em k r)ᵀ) x j = 0 := by
   rw [Matrix.mul_apply]
   apply Finset.sum_eq_zero
   intro b _
-  rw [Matrix.transpose_apply, Em, if_neg, mul_zero]
+  rw [Matrix.transpose_apply, Em, ite_eq_right, mul_zero]
   intro h
   exact hj (h ▸ mid_wI b)
 
 lemma EmT_Em : (Em k r)ᵀ * Em k r = 1 := by
-  apply Formalism.FourierDecayAlt.P.B2x3.EmT_Em
+  ext a b
+  rw [Matrix.mul_apply, Finset.sum_eq_single (wI k r a)]
+  · simp only [Matrix.transpose_apply, Em, ite_true, Matrix.one_apply]
+    by_cases hab : a = b
+    · subst hab; simp
+    · rw [ite_eq_right (fun h => hab (wI_inj h)), ite_eq_right hab, mul_zero]
+  · intro i _ hi
+    simp only [Matrix.transpose_apply, Em]
+    rw [ite_eq_right hi (c := i = wI k r a), zero_mul]
+  · intro h; exact absurd (Finset.mem_univ _) h
 
 lemma emb_eq (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) :
     embWb k r μ = Em k r * μ * (Em k r)ᵀ + (1 - Em k r * (Em k r)ᵀ) := by
-  apply Formalism.FourierDecayAlt.P.B2x3.emb_eq
+  ext i j
+  rw [Matrix.add_apply, Matrix.sub_apply, Matrix.one_apply]
+  by_cases hj : mid k r j
+  · rw [mul_EmT_mid _ j i hj, mul_EmT_mid _ j i hj]
+    by_cases hi : mid k r i
+    · rw [Em_mul_mid _ i _ hi, emb_mid μ i j hi hj]
+      have : Em k r i (midx hj) = if i = j then 1 else 0 := by rw [Em, wI_midx hj]
+      rw [this, sub_self, add_zero]
+    · rw [Em_mul_out _ i _ hi, emb_out_row μ i j hi]
+      have : Em k r i (midx hj) = if i = j then 1 else 0 := by rw [Em, wI_midx hj]
+      rw [this, sub_self, add_zero, ite_eq_right (fun h => hi (by rw [h]; exact hj))]
+  · rw [mul_EmT_out _ j i hj, mul_EmT_out _ j i hj, emb_out_col μ i j hj]
+    ring
 
 lemma EmT_Q : (Em k r)ᵀ * (1 - Em k r * (Em k r)ᵀ) = 0 := by
   rw [Matrix.mul_sub, Matrix.mul_one, ← Matrix.mul_assoc, EmT_Em, Matrix.one_mul, sub_self]
@@ -360,7 +147,22 @@ lemma sandwich (a b N : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (M : Mat k r)
     (h1 : M * Em k r = Em k r * N) (h2 : (Em k r)ᵀ * M = N * (Em k r)ᵀ) :
     embWb k r a * M * embWb k r b =
       Em k r * (a * N * b) * (Em k r)ᵀ + (1 - Em k r * (Em k r)ᵀ) * M * (1 - Em k r * (Em k r)ᵀ) := by
-  apply Formalism.FourierDecayAlt.P.B2x3.sandwich <;> assumption
+  rw [emb_eq, emb_eq]
+  set E := Em k r with hE
+  set Q := 1 - E * Eᵀ with hQ
+  have t1 : E * a * Eᵀ * M * (E * b * Eᵀ) = E * (a * N * b) * Eᵀ := by
+    calc E * a * Eᵀ * M * (E * b * Eᵀ) = E * a * (Eᵀ * M) * E * b * Eᵀ := by simp only [Matrix.mul_assoc]
+      _ = E * a * N * (Eᵀ * E) * b * Eᵀ := by rw [h2]; simp only [Matrix.mul_assoc]
+      _ = E * (a * N * b) * Eᵀ := by rw [EmT_Em]; simp only [Matrix.mul_assoc, Matrix.one_mul]
+  have t2 : E * a * Eᵀ * M * Q = 0 := by
+    calc E * a * Eᵀ * M * Q = E * a * (Eᵀ * M) * Q := by simp only [Matrix.mul_assoc]
+      _ = E * a * N * (Eᵀ * Q) := by rw [h2]; simp only [Matrix.mul_assoc]
+      _ = 0 := by rw [EmT_Q, Matrix.mul_zero]
+  have t3 : Q * M * (E * b * Eᵀ) = 0 := by
+    calc Q * M * (E * b * Eᵀ) = Q * (M * E) * b * Eᵀ := by simp only [Matrix.mul_assoc]
+      _ = (Q * E) * N * b * Eᵀ := by rw [h1]; simp only [Matrix.mul_assoc]
+      _ = 0 := by rw [Q_Em]; simp only [Matrix.zero_mul]
+  rw [Matrix.add_mul, Matrix.add_mul, Matrix.mul_add, Matrix.mul_add, t1, t2, t3, add_zero, zero_add]
 
 lemma emb_one : embWb k r 1 = 1 := by
   rw [emb_eq, Matrix.mul_one, add_sub_cancel]
@@ -390,7 +192,7 @@ noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.DS.Mult1.SymA
 
-open Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2
+open Formalism.QuantumDeterminants WeylGroupFacts Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2
 
 variable {k r : ℕ}
 
@@ -483,7 +285,7 @@ lemma emb_mud_off (d : ℂ) (i j : Fin (2 * r + k + 1))
     · rw [emb_mid _ i j hi hj, mud_off]
       · by_cases e : i = j
         · subst e; simp
-        · rw [if_neg e, if_neg (fun h' => e (by rw [← wI_midx hi, ← wI_midx hj, h']))]
+        · rw [ite_eq_right e, ite_eq_right (fun h' => e (by rw [← wI_midx hi, ← wI_midx hj, h']))]
       · rcases h with ⟨h1, h2⟩ | ⟨h1, h2⟩
         · left
           exact ⟨fun h' => h1 (by rw [← wI_midx hi, h']), fun h' => h2 (by rw [← wI_midx hi, h'])⟩
@@ -521,19 +323,19 @@ lemma comm_mud (hk : 1 ≤ k) {R : Mat k r} (hR : R ∈ UH (Hpk k r))
     rw [Matrix.mul_apply, Fintype.sum_eq_add a b hne (fun l hl => by rw [hP l j (Or.inl hl), mul_zero]),
       c0, cL]
     by_cases ha : i = a
-    · subst ha; rw [if_pos rfl, if_neg hne, one_mul, zero_mul, add_zero]
+    · subst ha; rw [ite_eq_left rfl, ite_eq_right hne, one_mul, zero_mul, add_zero]
     · by_cases hb : i = b
-      · subst hb; rw [if_neg (Ne.symm hne), if_pos rfl, one_mul, zero_mul, zero_add]
-      · rw [if_neg ha, if_neg hb, zero_mul, zero_mul, add_zero, hP i j (Or.inl ⟨ha, hb⟩)]
+      · subst hb; rw [ite_eq_right (Ne.symm hne), ite_eq_left rfl, one_mul, zero_mul, zero_add]
+      · rw [ite_eq_right ha, ite_eq_right hb, zero_mul, zero_mul, add_zero, hP i j (Or.inl ⟨ha, hb⟩)]
   have PR : P * R = P := by
     ext i j
     rw [Matrix.mul_apply, Fintype.sum_eq_add a b hne (fun l hl => by rw [hP i l (Or.inr hl), zero_mul]),
       r0, rL]
     by_cases ha : j = a
-    · subst ha; rw [if_pos rfl, if_neg (Ne.symm hne), mul_one, mul_zero, add_zero]
+    · subst ha; rw [ite_eq_left rfl, ite_eq_right (Ne.symm hne), mul_one, mul_zero, add_zero]
     · by_cases hb : j = b
-      · subst hb; rw [if_neg hne, if_pos rfl, mul_one, mul_zero, zero_add]
-      · rw [if_neg (Ne.symm ha), if_neg (Ne.symm hb), mul_zero, mul_zero, add_zero, hP i j (Or.inr ⟨ha, hb⟩)]
+      · subst hb; rw [ite_eq_right hne, ite_eq_left rfl, mul_one, mul_zero, zero_add]
+      · rw [ite_eq_right (Ne.symm ha), ite_eq_right (Ne.symm hb), mul_zero, mul_zero, add_zero, hP i j (Or.inr ⟨ha, hb⟩)]
   rw [hM, Matrix.mul_add, Matrix.add_mul, Matrix.mul_one, Matrix.one_mul, RP, PR]
 
 lemma big_cell_commute_frame_element (hBCF : BigCellFactor) (hUWb : UWbFacts) (hk : 1 ≤ k) {z : Fin (2 * r + k + 1) → ℂ}

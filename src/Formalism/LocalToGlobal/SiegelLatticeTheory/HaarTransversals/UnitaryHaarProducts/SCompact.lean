@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.CoefWeightedLocHolds
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.IUnfold
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHAlg
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
@@ -149,12 +150,12 @@ private theorem frame_expand_lemma {p k : ℕ} (e f : Fin p → Fin n → ℂ) (
   have ex1 : ∀ c (x1 x2 : Fin p → ℂ) (x3 : ℂ) (x4 : Fin k → ℂ),
       hJ ε (f c) (∑ a, x1 a • e a + ∑ a, x2 a • f a + x3 • z + ∑ b, x4 b • w b) = x1 c := by
     intro c x1 x2 x3 x4
-    simp only [hadd, hsmul, hsum, hfe, hff, hfz, hfw, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true, Finset.sum_const_zero, add_zero]
+    simp only [hadd, hsmul, hsum, hfe, hff, hfz, hfw, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Finset.sum_const_zero, add_zero]
   have ex2 : ∀ c (x1 x2 : Fin p → ℂ) (x3 : ℂ) (x4 : Fin k → ℂ),
       hJ ε (e c) (∑ a, x1 a • e a + ∑ a, x2 a • f a + x3 • z + ∑ b, x4 b • w b) = x2 c := by
     intro c x1 x2 x3 x4
     simp only [hadd, hsmul, hsum, hee, hef, hez, hew, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq,
-      Finset.mem_univ, if_true, Finset.sum_const_zero, add_zero, zero_add]
+      Finset.mem_univ, ite_true, Finset.sum_const_zero, add_zero, zero_add]
   have ex3 : ∀ (x1 x2 : Fin p → ℂ) (x3 : ℂ) (x4 : Fin k → ℂ),
       hJ ε z (∑ a, x1 a • e a + ∑ a, x2 a • f a + x3 • z + ∑ b, x4 b • w b) = x3 * hJ ε z z := by
     intro x1 x2 x3 x4
@@ -163,7 +164,7 @@ private theorem frame_expand_lemma {p k : ℕ} (e f : Fin p → Fin n → ℂ) (
       hJ ε (w c) (∑ a, x1 a • e a + ∑ a, x2 a • f a + x3 • z + ∑ b, x4 b • w b) = x4 c := by
     intro c x1 x2 x3 x4
     simp only [hadd, hsmul, hsum, hwe, hwf, hwz, hww, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq,
-      Finset.mem_univ, if_true, Finset.sum_const_zero, add_zero, zero_add]
+      Finset.mem_univ, ite_true, Finset.sum_const_zero, add_zero, zero_add]
   let Ψ : ((Fin p → ℂ) × (Fin p → ℂ) × ℂ × (Fin k → ℂ)) →ₗ[ℂ] (Fin n → ℂ) :=
     { toFun := fun x => ∑ a, x.1 a • e a + ∑ a, x.2.1 a • f a + x.2.2.1 • z + ∑ b, x.2.2.2 b • w b
       map_add' := by
@@ -219,7 +220,7 @@ theorem frame_bounded {p k : ℕ} (e f : Fin p → Fin n → ℂ) (z : Fin n →
     simp only [h1, h2, h3, zero_smul, Finset.sum_const_zero, zero_div, zero_add] at hexp
     have hnorm : ∑ c, hJ ε (w c) (g *ᵥ w b) * starRingEnd ℂ (hJ ε (w c) (g *ᵥ w b)) = 1 := by
       have h := hJ_inUJ ε hg (w b) (w b)
-      rw [hww b b, if_pos rfl] at h
+      rw [hww b b, ite_eq_left rfl] at h
       rw [← h]
       conv_rhs => arg 3; rw [hexp]
       rw [hJ_sum_right']
@@ -293,24 +294,7 @@ end PureH
 
 theorem hJ_rv_sc (I : AutInst) (v : InfinitePlace I.F) (x y : Fin I.n → I.E) :
     hJ (I.ε v) (rv I v x) (rv I v y) = I.φ v (Formalism.UG.hform (starRingEnd I.E) I.J x y) := by
-  have hP : IsUnit (I.P v).det := (Matrix.isUnit_iff_isUnit_det _).mp (I.P_unit v)
-  have key : Formalism.REAL.Jm (I.ε v) *ᵥ rv I v y =
-      (I.P v)ᴴ *ᵥ ((I.J.map (I.φ v)) *ᵥ fun i => I.φ v (y i)) := by
-    rw [← I.P_spec v]
-    unfold rv
-    simp only [Matrix.mulVec_mulVec, Matrix.mul_assoc, Matrix.mul_nonsing_inv _ hP, Matrix.mul_one]
-  have hx : star (rv I v x) ᵥ* (I.P v)ᴴ = star fun i => I.φ v (x i) := by
-    rw [← Matrix.star_mulVec]
-    unfold rv
-    rw [Matrix.mulVec_mulVec, Matrix.mul_nonsing_inv _ hP, Matrix.one_mulVec]
-  unfold hJ
-  rw [key, dotProduct_mulVec, hx]
-  unfold Formalism.UG.hform
-
-  simp only [map_sum, map_mul, dotProduct, Matrix.mulVec, Pi.star_apply, Matrix.map_apply,
-  starRingEnd_apply, PI.UnitaryGroupMassFormula.LCG.ap_star, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  ring
+  apply _root_.PI.ScPiBuildW.Rv.hJ_rv <;> assumption
 
 section HFin
 

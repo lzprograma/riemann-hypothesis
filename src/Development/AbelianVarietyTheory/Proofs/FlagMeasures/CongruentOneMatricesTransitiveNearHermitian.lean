@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CongruenceSubgroupLatticeStabilizer
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermLat
 public import Mathlib.RingTheory.RegularLocalRing.Defs
 public import Mathlib.RingTheory.SimpleRing.Principal
@@ -320,15 +321,7 @@ theorem exists_solution {ϖ : 𝒪[F]} (hϖ : Irreducible ϖ) {m i : ℕ} (hi : 
 omit [CharZero F] in
 theorem exists_pow_mul_mem {ϖ : 𝒪[F]} (hϖ : Irreducible ϖ) (x : E) :
     ∃ c : ℕ, algebraMap F E ϖ ^ c * x ∈ L.O := by
-  have : Module.Finite F E := Module.finite_of_finrank_pos (by rw [L.rank]; omega)
-  have hal : IsAlgebraic 𝒪[F] x :=
-    (IsFractionRing.isAlgebraic_iff 𝒪[F] F E).2 (Algebra.IsAlgebraic.isAlgebraic x)
-  obtain ⟨y, hy0, hy⟩ := hal.exists_integral_multiple
-  obtain ⟨k, u, rfl⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible hy0 hϖ
-  refine ⟨k, (L.O_def _).2 ?_⟩
-  have := hy.smul ((u⁻¹ : (𝒪[F])ˣ) : 𝒪[F])
-  rw [smul_smul, ← mul_assoc, Units.inv_mul, one_mul, Algebra.smul_def, map_pow] at this
-  exact this
+  apply GlobalTheory.HL.CongFin.exists_pow_mul_mem <;> assumption
 
 end GlobalTheory.CongTrans
 

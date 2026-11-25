@@ -26,46 +26,7 @@ public import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.ComplexMultip
 import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonal
 import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
 public import Formalism.LocalToGlobal.ProjectiveLattices.HostSize
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CoefficientConvolutionHolds
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ModerateCoefficientPositivityHolds
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.SiegelSpaceAlgebraHolds
@@ -347,7 +308,7 @@ theorem exists_sec_ne_zero (Xo : Moduli Dw l) (c : Coeff l) : ∃ m : ℕ, ∀ (
   have hv := (GlobalTheory.EtaForm.etaValAt_evR_of_fromTest E H Dw l Xo c 3 hR _ _ _ _ f hrule (CAt σ) (U.un k ⟨x₀, hx₀⟩)
     (hT _ _)).1
   have h0 := hne 0 _ hv
-  have e1 : rdU U f k x₀ = toC (evR Xo c f (U.un k ⟨x₀, hx₀⟩)) := dif_pos hx₀
+  have e1 : rdU U f k x₀ = toC (evR Xo c f (U.un k ⟨x₀, hx₀⟩)) := dite_eq_left hx₀
   rw [e1]
   exact h0
 
@@ -404,7 +365,7 @@ theorem la_shift {σ : c.F →+* ℂ} {U : Unf Xo c σ r} (hσ : GoodEmb c σ) (
     have := (hp _).2 h
     rw [Function.invFun_eq (hb.2 _), ← (hU.2.1 j).2] at this
     exact ((U.X j).cmType τ.1).1 τ.2 this
-  simp only [laU, shift, Pi.add_apply, h1, h2, if_pos p1, if_neg p2]
+  simp only [laU, shift, Pi.add_apply, h1, h2, ite_eq_left p1, ite_eq_right p2]
   split_ifs with h
   · have := ha _ p1 (i - (U.X j).p0) (by have := hU.1; have := (hU.2.1 j).1; have := i.2; omega)
     push_cast [this]
@@ -466,18 +427,18 @@ theorem mem_cusp_of_span (hf : 1 < Module.finrank ℚ E / 2) (U : ∀ σ : c.F �
   have eW : Even nW := eA.add ((even_two_mul _).mul_left _)
   have e2 : ∀ {n'}, Even n' → Even (n' + 2 * k) := fun h => h.add (even_two_mul _)
   have hAge : ∀ τ, InPsi H τ → ∀ i < Dw.p, 2 * k + 1 ≤ A (τ, i) := fun τ hτ i hi => by
-    have hmu : Dw.mult τ = Dw.p := if_pos hτ
+    have hmu : Dw.mult τ = Dw.p := ite_eq_left hτ
     have h1 := hl τ hτ (by omega)
     have h2 : a (τ, Dw.mult τ - 1) ≤ a (τ, i) := hd.1 τ (by omega : i ≤ Dw.mult τ - 1)
     exact Nat.le_mul_of_pos_right _ (by omega)
   have lA : LastPos Dw A := fun τ hτ h => by
-    have hmu : Dw.mult τ = Dw.p := if_pos hτ
+    have hmu : Dw.mult τ = Dw.p := ite_eq_left hτ
     have := hAge τ hτ (Dw.mult τ - 1) (by omega)
     omega
   have lS : LastPos Dw (shift H k A) := fun τ hτ h => by
-    have hmu : Dw.mult τ = Dw.p := if_pos hτ
+    have hmu : Dw.mult τ = Dw.p := ite_eq_left hτ
     have := hAge τ hτ (Dw.mult τ - 1) (by omega)
-    simp only [shift, if_pos hτ]
+    simp only [shift, ite_eq_left hτ]
     omega
   have dS : ∀ n', Even n' → Dom (shift H k A) (n' + 2 * k) := fun n' h => dom_shift (dA _ h) (e2 h) k
   have hdet : ∀ (r : ℕ) (X : Data E r), ∀ γ ∈ X.Γ, (γ : Matrix (Fin r) (Fin r) E).det ^ (k : ℤ) = 1 :=
@@ -605,7 +566,6 @@ end Geometric
 open NumberField IsDedekindDomain
 open scoped TensorProduct
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.IndefR.FWT Formalism.L2.Pj GlobalTheory.CoverRead
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 set_option maxHeartbeats 1000000 in

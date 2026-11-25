@@ -9,47 +9,12 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdempo
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationLeOneOfMem
 import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FactPrincipalDatum
 import Formalism.LocalToGlobal.ProjectiveLattices.HostInt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SepRows GlobalTheory.Asc
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.FinPl (Lat idAt idOff intAt grpAt grpOff MxAt latV latA InK MonoAt OrthAt PrimAt ColsAt)
 open scoped nonZeroDivisors ContDiff
 open GlobalTheory.AscFin
@@ -181,9 +146,9 @@ theorem coef_mem (p : Fin c) (hp : p.rev ≠ p) {y : Fin B.rank → D.host.E} (h
   have e : (antiDiagonalSignGramMatrix c ε *ᵥ u) p.rev = u p := by
     have := p.2
     rw [mulVec, dotProduct, Finset.sum_eq_single p]
-    · rw [antiDiagonalSignGramMatrix, if_pos (by rw [Fin.val_rev]; omega), if_neg hp, one_mul]
+    · rw [antiDiagonalSignGramMatrix, ite_eq_left (by rw [Fin.val_rev]; omega), ite_eq_right hp, one_mul]
     · intro q _ hq
-      rw [antiDiagonalSignGramMatrix, if_neg, zero_mul]
+      rw [antiDiagonalSignGramMatrix, ite_eq_right, zero_mul]
       rw [Fin.val_rev]
       intro h
       exact hq (Fin.ext (by omega))
@@ -213,7 +178,7 @@ theorem qX_apply {A B B₀ : HSp D} {c ρ : ℕ} (d : HermitianOrthogonalExtensi
       have := congrFun (congrFun h1 (Fin.castLE (by omega) i : Fin c).rev) (Fin.castLE (by omega) i)
       refine Eq.trans this ?_
       have := i.2
-      rw [antiDiagonalSignGramMatrix, if_pos (by rw [Fin.val_rev, Fin.val_castLE]; omega), if_neg]
+      rw [antiDiagonalSignGramMatrix, ite_eq_left (by rw [Fin.val_rev, Fin.val_castLE]; omega), ite_eq_right]
       intro h
       have := congrArg Fin.val h
       rw [Fin.val_rev, Fin.val_castLE] at this
@@ -353,19 +318,8 @@ theorem exists_AA {μ₀ : T} (hL : L.Is μ₀) (hq : OffQ D) (G : GridData L sc
     (Finset.mem_union_left _ hQ)
   refine ⟨((Ideal.absNorm D.host.ccK : ℕ) : 𝓞 D.host.E), ?_,
     fun h => hb (GlobalTheory.HalfCompare.mem_of_dvd h (Dvd.intro_left _ rfl))⟩
-  have h1 : ((Ideal.absNorm D.host.ccK : ℕ) : 𝓞 D.host.E) ∈ D.host.ccE := by
-    have := Ideal.mem_map_of_mem (algebraMap (𝓞 D.host.K) (𝓞 D.host.E)) (Ideal.absNorm_mem D.host.ccK)
-    rwa [map_natCast] at this
-  have h0 : ((D.host.𝔟 : Ideal (𝓞 D.host.E)) : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) ≠ 0 := fun h => by
-    apply (ideals_ne D).2.1
-    rw [Host.AA, Host.AA0, h, _root_.inv_zero, mul_zero]
-  have h2 : (1 : D.host.E) ∈ D.host.AA0 := by
-    rw [Host.AA0, FractionalIdeal.mem_inv_iff h0]
-    intro y hy
-    rw [one_mul]
-    exact FractionalIdeal.coeIdeal_le_one hy
-  have h3 := FractionalIdeal.mul_mem_mul (FractionalIdeal.mem_coeIdeal_of_mem (𝓞 D.host.E)⁰ h1) h2
-  rwa [mul_one] at h3
+  rw [map_natCast]
+  exact Formalism.L2.Pj.normK_mem_AA D
 
 
 
@@ -382,9 +336,9 @@ theorem ychar : OnStd fun {D} _ _ {sc} {G} W F => ∀ ρ (h : 2 * ρ + 2 ≤ D.R
   have e : ell D ρ ⬝ᵥ ((F.dJ ρ h).pX ⬝ (u ⬝ (F.dB ρ h).j0)) *ᵥ ratV (vecB (F.oB ρ h) (F.ζ (ρ + 1))) =
       ratV r ⬝ᵥ (show Mx D _ _ from u) *ᵥ ratV z := by
     rw [hz, ratV_mulVec, ← mulVec_mulVec, ← mulVec_mulVec, dotProduct, Finset.sum_eq_single i]
-    · rw [ell, if_pos hi, one_mul]; rfl
+    · rw [ell, ite_eq_left hi, one_mul]; rfl
     · intro j _ hj
-      rw [ell, if_neg fun e => hj (Fin.ext (by omega)), zero_mul]
+      rw [ell, ite_eq_right fun e => hj (Fin.ext (by omega)), zero_mul]
     · exact fun h => absurd (Finset.mem_univ i) h
   rw [e]
   obtain ⟨n0, n1, n2⟩ := ideals_ne D

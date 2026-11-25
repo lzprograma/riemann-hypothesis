@@ -27,8 +27,6 @@ namespace GroundTheory.ProfCoh
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.Global FiniteSubfield
 
-attribute [local instance 2000] Rep.hV2
-
 section Fixed
 
 variable {k G : Type*} [CommRing k] [Group G] [TopologicalSpace G]
@@ -76,15 +74,6 @@ theorem finite_cohomology_of_addEquiv_of_trivial {H : Type} [Group H] [Topologic
   rw [← ModuleCat.comp_apply, ← ModuleCat.comp_apply, ← cohomologyMap_comp, hff',
     cohomologyMap_id] at h
   exact h
-
-theorem finite_cohomology_of_trivial_of_cyclic {H : Type} [Group H] [TopologicalSpace H]
-    [IsTopologicalGroup H] (n r : ℕ)
-    (hcyc : ∀ (C : Rep.{0} (ULift.{0} ℤ) H) [IsDiscreteRep C] [Finite C] [IsAddCyclic C],
-      (∀ (g : H) (c : C), C.ρ g c = c) → (∀ c : C, n • c = 0) → Finite (cohomology C r))
-    (A : Rep.{0} (ULift.{0} ℤ) H) [IsDiscreteRep A] [Finite A]
-    (htriv : ∀ (g : H) (a : A), A.ρ g a = a) (hA : ∀ a : A, n • a = 0) :
-    Finite (cohomology A r) :=
-  _root_.UpperTheory.Reformulated.B.Gua5.finite_cohomology_of_trivial_of_cyclic n r hcyc A htriv hA
 
 theorem finite_cohomology_of_res_top {H : Type} [Group H] [TopologicalSpace H] [IsTopologicalGroup H]
     (A : Rep.{0} (ULift.{0} ℤ) H) [IsDiscreteRep A] (r : ℕ)

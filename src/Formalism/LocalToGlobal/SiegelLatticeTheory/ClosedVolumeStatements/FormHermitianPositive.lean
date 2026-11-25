@@ -12,8 +12,6 @@ namespace Formalism.L2.SG.Closed
 
 section Cols
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what₂.Word}
   {F0 : FlagG (VS D) D.R.rS ((Lat.Tu D u : ℕ) : D.host.E)} {F0' : FlagG (VS D) D.R.rS ((Lat.Tu D u' : ℕ) : D.host.E)}
   {what₂ rows' : Finset (Submodule (NumberField.RingOfIntegers D.host.E) (VS D).V)}

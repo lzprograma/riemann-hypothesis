@@ -1092,9 +1092,6 @@ theorem cast_add' {q : ℕ} {E : Spc} {n i n' i' : ℤ} (hn : n = n') (hi : i = 
 theorem cast_nsmul' {q : ℕ} {E : Spc} {n i n' i' : ℤ} (hn : n = n') (hi : i = i') (m : ℕ) (x : Ht q E n i) :
     (m • x).cast hn hi = m • x.cast hn hi := by subst hn; subst hi; rfl
 
-theorem red_cast (Q q : ℕ) {E : Spc} {n i n' i' : ℤ} (hn : n = n') (hi : i = i') (x : Ht Q E n i) :
-    red Q q E n' i' (x.cast hn hi) = (red Q q E n i x).cast hn hi := by subst hn; subst hi; rfl
-
 theorem ext_add (q : ℕ) {X Y S : Scheme.{0}} (pX : X ⟶ S) (pY : Y ⟶ S) (a n i : ℤ) (x : Ht q (sch.obj X) a i)
     (y y' : Ht q (sch.obj Y) (n - a) 0) : ext q pX pY a n i x (y + y') = ext q pX pY a n i x y + ext q pX pY a n i x y' := by
   unfold LateralTheory.KummerTheory.ext; rw [map_add (f := _), map_add (f := _), cast_add']
@@ -1102,12 +1099,6 @@ theorem ext_add (q : ℕ) {X Y S : Scheme.{0}} (pX : X ⟶ S) (pY : Y ⟶ S) (a 
 theorem ext_nsmul (q : ℕ) {X Y S : Scheme.{0}} (pX : X ⟶ S) (pY : Y ⟶ S) (a n i : ℤ) (x : Ht q (sch.obj X) a i)
     (m : ℕ) (y : Ht q (sch.obj Y) (n - a) 0) : ext q pX pY a n i x (m • y) = m • ext q pX pY a n i x y := by
   unfold LateralTheory.KummerTheory.ext; rw [map_nsmul, map_nsmul, cast_nsmul']
-
-theorem red_ext (hA : A11) (Q q : ℕ) [NeZero Q] (hq : q ∣ Q) {X Y S : Scheme.{0}} (pX : X ⟶ S) (pY : Y ⟶ S) (a n i : ℤ)
-    (x : Ht Q (sch.obj X) a i) (y : Ht Q (sch.obj Y) (n - a) 0) :
-    red Q q _ n i (ext Q pX pY a n i x y) = ext q pX pY a n i (red Q q _ a i x) (red Q q _ (n - a) 0 y) := by
-  unfold LateralTheory.KummerTheory.ext
-  rw [red_cast, (hA Q q hq _).1, ← pull_red, ← pull_red]
 
 theorem lh_add (q : ℕ) {X Y S : Scheme.{0}} (pX : X ⟶ S) (pY : Y ⟶ S) (i : ℤ) (r : ℕ → ℕ)
     (c : ∀ a : ℕ, Fin (r a) → Ht q (sch.obj X) a i) (M : ℕ) (n : ℤ)
@@ -1143,7 +1134,7 @@ theorem red_lh (hA : A11) (Q q : ℕ) [NeZero Q] (hq : q ∣ Q) {X Y S : Scheme.
 
   rw [map_sum]
   refine Finset.sum_congr rfl fun s _ => ?_
-  exact red_ext hA Q q hq _ _ _ _ _ _ _
+  exact LateralTheory.KummerTheory.lex_ext_red hA Q q hq _ _ _ _ _ _ _
 
 theorem lev_red (l : ℕ) [Fact l.Prime] {E : Spc} {n i : ℤ} (x : Hl l E n i) (k : ℕ) :
     red (l ^ (k + 1)) (l ^ k) E n i (lev l x (k + 1)) = lev l x k := x.2 k
@@ -1364,14 +1355,6 @@ theorem twGen_res {q : ℕ} (i : ℤ) {V U : Scheme.{0}} (f : V ⟶ U) (ζ : Pri
   rw [← Finsupp.mapDomain_single]
   exact h2.symm
 
-theorem twGen_zero_eq {q : ℕ} {V : Scheme.{0}} (ζ ξ : Prim q Γ(V, ⊤)) (a : (ZMod q)ˣ)
-    (h : ξ.1 = ζ.1 ^ (a : ZMod q).val) : twGen 0 ξ = twGen 0 ζ := by
-  unfold twGen
-  congr 1
-  refine (Submodule.Quotient.eq _).2 (Submodule.subset_span ⟨ζ, ξ, a, h, ?_⟩)
-  simp
-  rfl
-
 theorem prim_pow {q : ℕ} {A : Type} [CommRing A] (ζ : Prim q A) : ζ.1 ^ q = 1 := by
   obtain ⟨c, hc⟩ := cyclotomic.dvd_X_pow_sub_one q ℤ
   have h := congrArg (aeval ζ.1) hc
@@ -1445,7 +1428,7 @@ theorem twGen_zero_indep {q : ℕ} [NeZero q] {U : Scheme.{0}} (ζ ξ : Prim q �
   · refine eq_top_iff.2 fun y _ => ?_
     exact TopologicalSpace.Opens.mem_iSup.2 ⟨y, hx y⟩
   rw [twGen_res, twGen_res]
-  apply twGen_zero_eq _ _ (a x)
+  apply LateralTheory.EtaleTrace.tz_twGen_eq_of_pow _ _ (a x)
   change (U.basicOpen (h x)).ι.appTop.hom ξ.1 = (U.basicOpen (h x)).ι.appTop.hom ζ.1 ^ _
   rw [← map_pow, ← sub_eq_zero, ← map_sub]
   have hu : IsUnit ((U.basicOpen (h x)).ι.appTop.hom (h x)) := by
@@ -1478,12 +1461,6 @@ open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComp
 
 namespace LateralTheory.KummerTheory.DegreeZeroClassRestriction
 
-theorem res_neg_zero (R : Type) [CommRing R] (F : Shv R) (s : ℤ) (hs : s < 0) : IsZero ((res R F).X s) := by
-  apply HomologicalComplex.isZero_extend_X
-  intro i hi
-  have h' : ((i : ℕ) : ℤ) = s := hi
-  omega
-
 def asHom {X U : Scheme.{0}} (x : Sx (sch.obj X) 0 U) : U ⟶ X := by
   unfold sch at x; exact x
 
@@ -1511,7 +1488,7 @@ theorem cochain_eq (R : Type) [CommRing R] (F : Shv R) (X : Scheme.{0})
     exact congrArg _ h
   | succ k =>
     have hs : s < 0 := by omega
-    rw [LateralTheory.KummerTheory.AW.ev_eq, LateralTheory.KummerTheory.AW.ev_eq, (res_neg_zero R F s hs).eq_of_tgt
+    rw [LateralTheory.KummerTheory.AW.ev_eq, LateralTheory.KummerTheory.AW.ev_eq, (LateralTheory.E.CechFiltPf.res_isZero R F s hs).eq_of_tgt
       ((chainsXIso R (sch.obj X) (k + 1)).inv ≫ α.v _ _ hp) ((chainsXIso R (sch.obj X) (k + 1)).inv ≫ β.v _ _ hp)]
 
 end LateralTheory.KummerTheory.DegreeZeroClassRestriction

@@ -102,7 +102,7 @@ theorem re_shift (s : ℂ) : (s + ((n : ℂ) - 1) / 2).re = s.re + ((n : ℝ) - 
 
 theorem exists_zeta_rat [π.IsIrreducible] (hπ : IsAdmissible π) (μ : Measure (GL (Fin n) F))
     [μ.IsHaarMeasure] :
-    ∃ s₀ : ℝ, ∃ D : ℂ[X], D.eval 0 = 1 ∧ (∀ s : ℂ, s₀ < s.re → D.eval (qs F s) ≠ 0) ∧
+    ∃ s₀ : ℝ, ∃ D : ℂ[X], D.eval 0 = 1 ∧ D.natDegree ≤ n ∧ (∀ s : ℂ, s₀ < s.re → D.eval (qs F s) ≠ 0) ∧
       ∀ Φ : Matrix (Fin n) (Fin n) F → ℂ, IsSchwartzBruhat Φ → ∀ (v : V) (ℓ : Module.Dual ℂ V),
         ℓ ∈ smoothVectors (Representation.dual π) →
         (∀ s : ℂ, s₀ < s.re → Integrable (fun g : GL (Fin n) F =>
@@ -112,7 +112,7 @@ theorem exists_zeta_rat [π.IsIrreducible] (hπ : IsAdmissible π) (μ : Measure
           zetaIntegral μ Φ (matrixCoeff π v ℓ) s =
             (algebraMap ℂ[X] (RatFunc ℂ) P / algebraMap ℂ[X] (RatFunc ℂ) (X ^ N * D)).eval
               (RingHom.id ℂ) (qs F s) := by
-  obtain ⟨s₀, D, hD0, hcore⟩ := exists_zeta_core hπ μ
+  obtain ⟨s₀, D, hD0, hDn, hcore⟩ := exists_zeta_core hπ μ
   set c : ℂ := qs F (((n : ℂ) - 1) / 2) with hcdef
   have hc : c ≠ 0 := qs_ne_zero _
   set D' : ℂ[X] := D.comp (C c * X) with hD'def
@@ -127,7 +127,12 @@ theorem exists_zeta_rat [π.IsIrreducible] (hπ : IsAdmissible π) (μ : Measure
     linarith
   have hDs : ∀ s : ℂ, max (s₀ - ((n : ℝ) - 1) / 2) s₁ < s.re → D'.eval (qs F s) ≠ 0 :=
     fun s hs => hεD _ (qs_ne_zero s) (hs₁ s ((le_max_right _ _).trans_lt hs))
-  refine ⟨max (s₀ - ((n : ℝ) - 1) / 2) s₁, D', hD'0, hDs, fun Φ hΦ v ℓ hℓ => ?_⟩
+  have hD'n : D'.natDegree ≤ n := by
+    refine natDegree_comp_le.trans ?_
+    calc D.natDegree * (C c * X).natDegree ≤ D.natDegree * 1 :=
+          Nat.mul_le_mul_left _ ((natDegree_C_mul_le c X).trans natDegree_X_le)
+      _ ≤ n := by rw [mul_one]; exact hDn
+  refine ⟨max (s₀ - ((n : ℝ) - 1) / 2) s₁, D', hD'0, hD'n, hDs, fun Φ hΦ v ℓ hℓ => ?_⟩
   obtain ⟨hint, N, P, hP⟩ := hcore Φ hΦ v ℓ hℓ
   refine ⟨fun s hs => hint _ (hre s hs), N, C (c ^ N)⁻¹ * P.comp (C c * X), fun s hs => ?_⟩
   have hx : qs F s ≠ 0 := qs_ne_zero s
@@ -154,7 +159,7 @@ theorem exists_integrable_zetaIntegral [π.IsIrreducible] (hπ : IsAdmissible π
       ℓ ∈ smoothVectors (Representation.dual π) → ∀ s : ℂ, s₀ < s.re →
         Integrable (fun g : GL (Fin n) F => Φ (g : Matrix (Fin n) (Fin n) F) * matrixCoeff π v ℓ g *
           detPow g (s + ((n : ℂ) - 1) / 2)) μ := by
-  obtain ⟨s₀, _, _, _, h⟩ := exists_zeta_rat hπ μ
+  obtain ⟨s₀, _, _, _, _, h⟩ := exists_zeta_rat hπ μ
   exact ⟨s₀, fun Φ hΦ v ℓ hℓ => (h Φ hΦ v ℓ hℓ).1⟩
 
 theorem zetaIntegral_translate (μ : Measure (GL (Fin n) F)) [μ.IsHaarMeasure] (a : GL (Fin n) F)
@@ -267,10 +272,10 @@ theorem X_inv_mul_mem_zetaIdeal [NeZero n] (μ : Measure (GL (Fin n) F)) [μ.IsH
 
 theorem exists_zetaSet_eq [π.IsIrreducible] (hπ : IsAdmissible π) (μ : Measure (GL (Fin n) F))
     [μ.IsHaarMeasure] :
-    ∃ D : ℂ[X], D.eval 0 = 1 ∧ ∀ R ∈ zetaSet π μ, ∃ (N : ℕ) (P : ℂ[X]),
+    ∃ D : ℂ[X], D.eval 0 = 1 ∧ D.natDegree ≤ n ∧ ∀ R ∈ zetaSet π μ, ∃ (N : ℕ) (P : ℂ[X]),
       R = algebraMap ℂ[X] (RatFunc ℂ) P / algebraMap ℂ[X] (RatFunc ℂ) (X ^ N * D) := by
-  obtain ⟨s₀, D, hD0, -, h⟩ := exists_zeta_rat hπ μ
-  refine ⟨D, hD0, fun R hR => ?_⟩
+  obtain ⟨s₀, D, hD0, hDn, -, h⟩ := exists_zeta_rat hπ μ
+  refine ⟨D, hD0, hDn, fun R hR => ?_⟩
   obtain ⟨Φ, v, ℓ, hΦ, hℓ, s₁, hZ⟩ := hR
   obtain ⟨-, N, P, hP⟩ := h Φ hΦ v ℓ hℓ
   refine ⟨N, P, ?_⟩
@@ -281,15 +286,15 @@ theorem exists_zetaSet_eq [π.IsIrreducible] (hπ : IsAdmissible π) (μ : Measu
 
 theorem exists_denominator_zetaIdeal [π.IsIrreducible] (hπ : IsAdmissible π)
     (μ : Measure (GL (Fin n) F)) [μ.IsHaarMeasure] :
-    ∃ D : ℂ[X], D.eval 0 = 1 ∧
+    ∃ D : ℂ[X], D.eval 0 = 1 ∧ D.natDegree ≤ n ∧
       ∀ R ∈ zetaIdeal π μ, algebraMap ℂ[X] (RatFunc ℂ) D * R ∈ laurentSubalgebra := by
-  obtain ⟨D, hD0, hD⟩ := exists_zetaSet_eq hπ μ
+  obtain ⟨D, hD0, hDn, hD⟩ := exists_zetaSet_eq hπ μ
   have hDne : algebraMap ℂ[X] (RatFunc ℂ) D ≠ 0 := by
     rw [Ne, map_eq_zero_iff _ (IsFractionRing.injective ℂ[X] (RatFunc ℂ))]
     intro h
     rw [h, eval_zero] at hD0
     exact zero_ne_one hD0
-  refine ⟨D, hD0, fun R hR => ?_⟩
+  refine ⟨D, hD0, hDn, fun R hR => ?_⟩
   refine Submodule.span_induction
     (p := fun R _ => algebraMap ℂ[X] (RatFunc ℂ) D * R ∈ laurentSubalgebra) ?_ ?_ ?_ ?_ hR
   · intro R hR
@@ -386,7 +391,7 @@ theorem existsUnique_zetaIdeal_eq [NeZero n] [π.IsIrreducible] (hπ : IsAdmissi
       ∃ L ∈ laurentSubalgebra, R = L / algebraMap ℂ[X] (RatFunc ℂ) P := by
   obtain ⟨v, hv⟩ := exists_ne_zero_of_isIrreducible (ρ := π)
   have : Nontrivial V := ⟨⟨v, 0, hv⟩⟩
-  obtain ⟨D, hD0, hD⟩ := exists_denominator_zetaIdeal hπ μ
+  obtain ⟨D, hD0, -, hD⟩ := exists_denominator_zetaIdeal hπ μ
   refine existsUnique_eq_laurent_div _ (fun R hR => X_mul_mem_zetaIdeal μ hR)
     (fun R hR => X_inv_mul_mem_zetaIdeal μ hR) (one_mem_zetaIdeal μ hπ.1) ⟨D, ?_, hD⟩
   intro h

@@ -55,7 +55,7 @@ theorem plOf_bijective_card (D : D7) :
   · rintro ⟨a, s⟩ ⟨b, t⟩ h
     have h' := congrArg Subtype.val h
     cases a <;> cases b <;>
-      simp only [Formalism.HC.Frame.tau1, Formalism.HC.Frame.tau2, Bool.false_eq_true, if_true, if_false, Prod.mk.injEq] at h'
+      simp only [Formalism.HC.Frame.tau1, Formalism.HC.Frame.tau2, Bool.false_eq_true, ite_true, ite_false, Prod.mk.injEq] at h'
     · exact Prod.ext rfl (hb.1 h'.2)
     · exact absurd h'.1.1 (by decide)
     · exact absurd h'.1.1 (by decide)

@@ -85,7 +85,7 @@ theorem intInd_zero (n d : ℕ) : intInd k n d 0 = 1 :=
     fun _ _ => zero_mem _) _
 
 theorem det_diagAt {n : ℕ} (x : kˣ) (i0 : Fin n) : Matrix.GeneralLinearGroup.det (diagAt x i0) = x := by
-  rw [diagAt, SplitFlip.det_diagGL, Fintype.prod_eq_single i0 (fun i hi => if_neg hi), if_pos rfl]
+  rw [diagAt, SplitFlip.det_diagGL, Fintype.prod_eq_single i0 (fun i hi => ite_eq_right hi), ite_eq_left rfl]
 
 theorem diagAt_val {n : ℕ} (x : kˣ) (i0 : Fin n) :
     (diagAt x i0).val = Matrix.diagonal fun i => if i = i0 then (x : k) else 1 := by

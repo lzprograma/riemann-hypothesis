@@ -83,8 +83,6 @@ theorem totalDegree_aeval_le_of_linear {κ : Type} (f : κ → MvPolynomial κ �
   refine hprod.trans ?_
   exact Finset.le_sup (f := fun s : κ →₀ ℕ => s.sum fun _ e => e) hs
 
-alias main := _root_.GlobalTheory.AevalTotalDegreeLinear.totalDegree_aeval_le_of_linear
-
 end GlobalTheory.AevalTotalDegreeLinear
 end -- clump:auto
 end -- clump:auto
@@ -117,11 +115,9 @@ theorem subst2_X (h : Matrix (Fin N) (Fin N) ℂ) (g : Matrix (Fin n) (Fin n) �
 theorem substF_X (h : ι → Matrix (Fin N) (Fin N) ℂ) (g : ι → Matrix (Fin n) (Fin n) ℂ) (p : ι × Fin N × Fin n) :
     substF h g (X p) = ∑ k, ∑ l, C (h p.1 k p.2.1 * g p.1 l p.2.2) * X (p.1, k, l) := aeval_X _ _
 
-alias totalDegree_aeval_le := _root_.GlobalTheory.AevalTotalDegreeLinear.totalDegree_aeval_le_of_linear
-
 theorem totalDegree_substF_le (h : ι → Matrix (Fin N) (Fin N) ℂ) (g : ι → Matrix (Fin n) (Fin n) ℂ)
     (P : MvPolynomial (ι × Fin N × Fin n) ℂ) : (substF h g P).totalDegree ≤ P.totalDegree :=
-  totalDegree_aeval_le _ (fun _ => totalDegree_finsetSum_le fun _ _ => totalDegree_finsetSum_le fun _ _ =>
+  GlobalTheory.AevalTotalDegreeLinear.totalDegree_aeval_le_of_linear _ (fun _ => totalDegree_finsetSum_le fun _ _ => totalDegree_finsetSum_le fun _ _ =>
     (totalDegree_mul _ _).trans (by rw [totalDegree_C, totalDegree_X])) P
 
 theorem subst2_mul (h h' : Matrix (Fin N) (Fin N) ℂ) (g g' : Matrix (Fin n) (Fin n) ℂ)

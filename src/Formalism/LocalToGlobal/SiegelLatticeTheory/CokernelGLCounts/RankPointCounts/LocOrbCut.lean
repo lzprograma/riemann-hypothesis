@@ -233,7 +233,7 @@ theorem orbFin_of (M : Loc.Model F E) (hOK : M.OK) {m : ℕ} (a : Loc.Pt E (m + 
       push Not at hno
       apply hw
       rw [(hW O hO).2]
-      exact finsum_eq_zero_of_forall_eq_zero fun q => if_neg (hno q)
+      exact finsum_eq_zero_of_forall_eq_zero fun q => ite_eq_right (hno q)
     have hxyO := isZO_eq M hO hxy
     have hv := hV q xy (int_of_bb M a c xy hF) (hxyO ▸ hq)
     apply hOS
@@ -254,7 +254,7 @@ theorem orbFin_of (M : Loc.Model F E) (hOK : M.OK) {m : ℕ} (a : Loc.Pt E (m + 
         obtain ⟨q0, hq0, hOe⟩ := Finset.mem_image.1 hO
         have hZO : IsZO M a O := hOe ▸ hR q0 (int_of_valQ M a c q0 ((memT q0).1 hq0))
         rw [Finset.sum_eq_single O]
-        · rw [if_pos hqO, mul_one]
+        · rw [ite_eq_left hqO, mul_one]
           have hgO := hg O hO
           refine (hV q (g O) (isZO_int M hZO hgO) ?_).symm
           rw [isZO_eq M hZO hgO]
@@ -262,13 +262,13 @@ theorem orbFin_of (M : Loc.Model F E) (hOK : M.OK) {m : ℕ} (a : Loc.Pt E (m + 
         · intro O' hO' hne
           obtain ⟨q1, hq1, hOe'⟩ := Finset.mem_image.1 hO'
           have hZO' : IsZO M a O' := hOe' ▸ hR q1 (int_of_valQ M a c q1 ((memT q1).1 hq1))
-          rw [if_neg, mul_zero]
+          rw [ite_eq_right, mul_zero]
           intro hqO'
           exact hne ((isZO_eq M hZO' hqO').symm.trans (isZO_eq M hZO hqO))
         · intro h
           exact absurd hO h
       · push Not at hex
-        rw [Finset.sum_eq_zero fun O hO => by rw [if_neg (hex O hO), mul_zero]]
+        rw [Finset.sum_eq_zero fun O hO => by rw [ite_eq_right (hex O hO), mul_zero]]
         by_contra hne
         exact hex _ (Finset.mem_image.2 ⟨q, (memT q).2 (Ne.symm hne), rfl⟩) (mem_orbR M _)
     · intro O hO
@@ -456,6 +456,7 @@ theorem mem_iff_orb (M : Loc.Model F E) {n : ℕ} (Z0 : Matrix (Fin n) (Fin n) E
     rw [← orbR_eq M h]
     exact ⟨l, ρ, hl, hρ, rfl⟩
 
+open scoped Formalism.DoubleCosetMeasures in
 theorem wt_gen (M : Loc.Model F E) (hOK : M.OK) {m : ℕ} (a : Loc.Pt E (m + 1)) (Z0 : Matrix (Fin (m + 1)) (Fin (m + 1)) E)
     (hZ0 : ∀ i j, Z0 i j ∈ M.R) :
     (Function.support (fun q : Formalism.FourierDecayAlt.A5.Cos M.R (Formalism.MainNotions.LocalModelPeriodLattices.tr a) =>
@@ -491,7 +492,7 @@ theorem wt_gen (M : Loc.Model F E) (hOK : M.OK) {m : ℕ} (a : Loc.Pt E (m + 1))
     obtain ⟨hK, hKc⟩ := isCompact_intLocus E M.R hD.isCompact (Formalism.MainNotions.LocalModelPeriodLattices.tr a).1 (Formalism.MainNotions.LocalModelPeriodLattices.tr a).2
     refine HasCompactSupport.intro' hK hKc fun p hp => ?_
     simp only [f]
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hpO
     apply hp
     intro i j

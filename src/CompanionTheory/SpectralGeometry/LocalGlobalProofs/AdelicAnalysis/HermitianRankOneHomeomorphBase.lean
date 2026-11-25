@@ -31,8 +31,7 @@ theorem exists_sig_ne (hcm : IsCMExt F E σ) : ∃ x : E, σ x ≠ x := by
   let τ : E →+* ℂ := (inferInstance : Nonempty (E →+* ℂ)).some
   have hc : (InfinitePlace.mk τ).IsComplex := htc.isComplex _
   rw [InfinitePlace.isComplex_mk_iff] at hc
-  by_contra hall
-  push_neg at hall
+  by_contra! hall
   apply hc
   rw [ComplexEmbedding.isReal_iff]
   ext x

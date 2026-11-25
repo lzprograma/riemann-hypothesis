@@ -183,8 +183,6 @@ section Record
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.NTheta Formalism.IndefR.Mult Formalism.MainNotions.StandardLattice
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {V : HSp D} {v : HeightOneSpectrum (𝓞 D.host.F)} {w : HeightOneSpectrum (𝓞 D.host.E)}
 
 theorem mem_intAE_iff_compAt (z : Af D.host.F ⊗[D.host.F] D.host.E) :

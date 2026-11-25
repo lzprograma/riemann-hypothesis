@@ -2,42 +2,6 @@ module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.DualPair
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.OmFacts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -110,16 +74,6 @@ private theorem count_fix [Finite R] {A B : Matrix (Fin n) (Fin n) R} (h1 : A * 
 
 end Count
 
-private theorem red_mul {O : Type} [CommRing O] [IsLocalRing O] {n : ℕ} (m : ℕ) (X Y : Matrix (Fin n) (Fin n) O) :
-    red m X * red m Y = red m (X * Y) := (Matrix.map_mul (f := Ideal.Quotient.mk (maximalIdeal O ^ m))).symm
-
-private theorem red_one {O : Type} [CommRing O] [IsLocalRing O] {n : ℕ} (m : ℕ) :
-    red m (1 : Matrix (Fin n) (Fin n) O) = 1 := Matrix.map_one _ (map_zero _) (map_one _)
-
-private theorem red_inv {O : Type} [CommRing O] [IsLocalRing O] {n : ℕ} (m : ℕ) (X : GL (Fin n) O) :
-    red m (X : Matrix (Fin n) (Fin n) O) * red m ((X⁻¹ : GL (Fin n) O) : Matrix (Fin n) (Fin n) O) = 1 := by
-  rw [red_mul, Units.mul_inv, red_one]
-
 theorem UpperTheory.V.Th.pow_choose_two_le_card_fixed_ad0_of_odd_involution :
     ∀ (l : ℕ) [Fact l.Prime] (L : Loc) (G G0 : Glob l L) (h : G.Hom G0) (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsCoef l O] [Algebra ℤ_[l] O] (n : ℕ) (y : Pt G0.frame O n) (m : ℕ) (rep : Representation O G.Γ (Mm O n m)) (c' : G.Γ), l ≠ 2 → IsAd0 h y m rep → c' * c' = 1 → G.η c' = -1 → Nat.card (ResidueField O) ^ (m * n.choose 2) ≤ Nat.card {Z : Mm O n m // rep c' Z = Z} := by
   intro l _ L G G0 h O _ _ _ _ _ n y m rep c' _ hA hc hη
@@ -127,10 +81,14 @@ theorem UpperTheory.V.Th.pow_choose_two_le_card_fixed_ad0_of_odd_involution :
   haveI := f1
   let g : G.G₀ := ⟨c' * G.c⁻¹, by rw [MonoidHom.mem_ker, map_mul, map_inv, hη, G.η_c, mul_inv_cancel]⟩
   have hg : c' = (g : G.Γ) * G.c := by simp [g]
-  have p1 := red_inv m y.P
+  have hred (X : GL (Fin n) O) : red m (X : Matrix (Fin n) (Fin n) O) *
+      red m ((X⁻¹ : GL (Fin n) O) : Matrix (Fin n) (Fin n) O) = 1 :=
+    (Matrix.map_mul (f := Ideal.Quotient.mk (maximalIdeal O ^ m))).symm.trans
+      (by rw [Units.mul_inv]; exact Matrix.map_one _ (map_zero _) (map_one _))
+  have p1 := hred y.P
   have p2 := mul_eq_one_comm.1 p1
   have r1 : y.ρm h m g * y.ρm h m g⁻¹ = 1 := by
-    have := red_inv m (y.ρ (h.p₀ g))
+    have := hred (y.ρ (h.p₀ g))
     rw [← map_inv, ← map_inv] at this
     exact this
   rw [pow_mul, ← f2]

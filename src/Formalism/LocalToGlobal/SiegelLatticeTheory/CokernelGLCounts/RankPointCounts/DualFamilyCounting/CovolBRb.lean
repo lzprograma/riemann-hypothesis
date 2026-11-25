@@ -8,63 +8,11 @@ public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankP
 public import Mathlib.Algebra.AffineMonoid.Basic
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.BaseLatticeLe
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.EmbVHomInjective
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.InWLeft
 import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeGluingRadicals
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.NumberTheory.NumberField.Discriminant.Different
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.CovolIdxK, Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.CovolBRb
@@ -88,8 +36,7 @@ theorem exists_prim {m : ℕ} (c : Fin m → 𝓞 K) (hc : c ≠ 0) (𝔭 : Idea
   classical
   obtain ⟨𝔪, h𝔪, hp𝔪⟩ := Ideal.exists_le_maximal 𝔭 h𝔭
   obtain ⟨j, hj⟩ : ∃ j, c j ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hc (funext h)
   have hJ0 : Ideal.span (Set.range c) ≠ ⊥ := by
     intro h
@@ -98,8 +45,7 @@ theorem exists_prim {m : ℕ} (c : Fin m → 𝓞 K) (hc : c ≠ 0) (𝔭 : Idea
     exact hj hmem
   have hJF : ((Ideal.span (Set.range c) : Ideal (𝓞 K)) : FractionalIdeal (𝓞 K)⁰ K) ≠ 0 :=
     FractionalIdeal.coeIdeal_ne_zero.mpr hJ0
-  by_contra H
-  push_neg at H
+  by_contra! H
   have hle : ((Ideal.span (Set.range c) : Ideal (𝓞 K)) : FractionalIdeal (𝓞 K)⁰ K) *
       ((Ideal.span (Set.range c) : Ideal (𝓞 K)) : FractionalIdeal (𝓞 K)⁰ K)⁻¹ ≤
       ((𝔪 : Ideal (𝓞 K)) : FractionalIdeal (𝓞 K)⁰ K) := by
@@ -142,26 +88,12 @@ section Bound
 
 variable {M : Type} [AddCommGroup M] [Module (𝓞 K) M] [Module.Finite (𝓞 K) M] [NoZeroSMulDivisors (𝓞 K) M]
 
-private theorem absNorm_eq_card_quotient (I : Ideal (𝓞 K)) : Ideal.absNorm I = Nat.card (𝓞 K ⧸ I) := by
-  first
-  | rw [Ideal.absNorm_apply, Submodule.cardQuot_apply]
-
-private theorem finite_quotient_of_ne_bot (I : Ideal (𝓞 K)) (hI : I ≠ ⊥) : Finite (𝓞 K ⧸ I) := by
-  first
-  | exact Nat.finite_of_card_ne_zero (by
-      rw [← absNorm_eq_card_quotient]; exact fun h => hI (Ideal.absNorm_eq_zero_iff.mp h))
-
-private theorem ringOfIntegers_coe_injective : Function.Injective (fun x : 𝓞 K => (x : K)) := by
-  first
-  | exact RingOfIntegers.coe_injective
-
 private theorem card_le_card_pow_of_not_linearIndependent {k V : Type*} [Field k] [Finite k] [AddCommGroup V] [Module k V]
     [Module.Finite k V] (n : ℕ) (h : ∀ v : Fin (n + 1) → V, LinearIndependent k v → False) :
     Nat.card V ≤ Nat.card k ^ n := by
   classical
   have hd : Module.finrank k V ≤ n := by
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     exact h (Module.finBasis k V ∘ Fin.castLE hlt)
       ((Module.finBasis k V).linearIndependent.comp _ (Fin.castLE_injective hlt))
   rw [Nat.card_congr (Module.finBasis k V).equivFun.toEquiv, Nat.card_fun]
@@ -177,7 +109,7 @@ theorem card_quot_le (𝔭 : Ideal (𝓞 K)) [h𝔭 : 𝔭.IsMaximal] (n : ℕ)
   have hbot : 𝔭 ≠ ⊥ := by
     first
     | exact Ring.ne_bot_of_isMaximal_of_not_isField h𝔭 (NumberField.RingOfIntegers.not_isField K)
-  haveI : Finite (𝓞 K ⧸ 𝔭) := finite_quotient_of_ne_bot 𝔭 hbot
+  haveI : Finite (𝓞 K ⧸ 𝔭) := Ring.HasFiniteQuotients.finiteQuotient hbot
   haveI : Module.Finite (𝓞 K ⧸ 𝔭) (M ⧸ 𝔭 • (⊤ : Submodule (𝓞 K) M)) :=
     Module.Finite.of_restrictScalars_finite (𝓞 K) _ _
   refine card_le_card_pow_of_not_linearIndependent n ?_
@@ -187,12 +119,11 @@ theorem card_quot_le (𝔭 : Ideal (𝓞 K)) [h𝔭 : 𝔭.IsMaximal] (n : ℕ)
   obtain ⟨t, ht, i₀, hi₀⟩ := exists_prim c hc0 𝔭 h𝔭.ne_top
   choose o ho using ht
   obtain ⟨j, hj⟩ : ∃ j, c j ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hc0 (funext h)
   have hoc : ∀ i, o i * c j = o j * c i := by
     intro i
-    apply ringOfIntegers_coe_injective
+    apply RingOfIntegers.coe_injective
     first
     | (show (o i : K) * (c j : K) = (o j : K) * (c i : K)
        rw [ho, ho]; ring)
@@ -235,11 +166,6 @@ theorem smul_inj (π : 𝓞 K) (hπ : π ≠ 0) : Function.Injective (DistribSMu
   intro x y h
   exact smul_right_injective M hπ (by simpa using h)
 
-private theorem card_quotient_eq_index {R N : Type*} [Ring R] [AddCommGroup N] [Module R N]
-    (S : Submodule R N) : Nat.card (N ⧸ S) = S.toAddSubgroup.index := by
-  first
-  | rfl
-
 private theorem mem_smul_univ_iff_coe_mem_smul (I : Ideal (𝓞 K)) (N : Submodule (𝓞 K) M) (x : N) :
     x ∈ I • (⊤ : Submodule (𝓞 K) N) ↔ (x : M) ∈ I • N := by
   first
@@ -265,7 +191,8 @@ private theorem relIndex_smul_eq_card_quotient_smul (I : Ideal (𝓞 K)) (N : Su
     rw [AddSubgroup.mem_comap, Submodule.mem_toAddSubgroup, Submodule.mem_toAddSubgroup, mem_smul_univ_iff_coe_mem_smul]
     first
     | rfl
-  rw [← hmap, ← AddSubgroup.relIndex_comap, AddSubgroup.relIndex_top_right, hc, card_quotient_eq_index]
+  rw [← hmap, ← AddSubgroup.relIndex_comap, AddSubgroup.relIndex_top_right, hc]
+  rfl
 
 theorem relIndex_smul_ne_zero (N : Submodule (𝓞 K) M) (hN : N.FG) (d : 𝓞 K) (hd : d ≠ 0) :
     (Ideal.span {d} • N).toAddSubgroup.relIndex N.toAddSubgroup ≠ 0 := by
@@ -273,20 +200,12 @@ theorem relIndex_smul_ne_zero (N : Submodule (𝓞 K) M) (hN : N.FG) (d : 𝓞 K
   haveI : Module.Finite (𝓞 K) N := Module.Finite.iff_fg.mpr hN
   have hb : Ideal.span {d} ≠ ⊥ := by
     rwa [Ne, Ideal.span_singleton_eq_bot]
-  haveI : Finite (𝓞 K ⧸ Ideal.span {d}) := finite_quotient_of_ne_bot _ hb
+  haveI : Finite (𝓞 K ⧸ Ideal.span {d}) := Ring.HasFiniteQuotients.finiteQuotient hb
   haveI : Module.Finite (𝓞 K ⧸ Ideal.span {d}) (N ⧸ Ideal.span {d} • (⊤ : Submodule (𝓞 K) N)) :=
     Module.Finite.of_restrictScalars_finite (𝓞 K) _ _
   haveI : Finite (N ⧸ Ideal.span {d} • (⊤ : Submodule (𝓞 K) N)) :=
     Module.finite_of_finite (𝓞 K ⧸ Ideal.span {d})
   exact Nat.card_pos.ne'
-
-private theorem absNorm_eq_index_dual_family_counting (I : Ideal (𝓞 K)) : Ideal.absNorm I = I.toAddSubgroup.index := by
-  rw [absNorm_eq_card_quotient, card_quotient_eq_index]
-
-private theorem relIndex_mul_relIndex_of_le_of_le {G : Type*} [AddGroup G] {H J L : AddSubgroup G} (h1 : H ≤ J) (h2 : J ≤ L) :
-    H.relIndex J * J.relIndex L = H.relIndex L := by
-  first
-  | exact AddSubgroup.relIndex_mul_relIndex H J L h1 h2
 
 theorem relIndex_principal (N : Submodule (𝓞 K) M) (hN : N.FG) (n : ℕ) (ι : (Fin n → 𝓞 K) →ₗ[𝓞 K] M)
     (hι : Function.Injective ι) (hιN : LinearMap.range ι ≤ N) (d : 𝓞 K) (hd : d ≠ 0)
@@ -301,8 +220,8 @@ theorem relIndex_principal (N : Submodule (𝓞 K) M) (hN : N.FG) (n : ℕ) (ι 
     first
     | exact Submodule.smul_mono le_rfl hιN hx
   have hAB : (Ideal.span {π} • N).toAddSubgroup ≤ N.toAddSubgroup := fun x hx => Submodule.smul_le_right hx
-  have e1 := relIndex_mul_relIndex_of_le_of_le hDC hCB
-  have e2 := relIndex_mul_relIndex_of_le_of_le hDA hAB
+  have e1 := AddSubgroup.relIndex_mul_relIndex _ _ _ hDC hCB
+  have e2 := AddSubgroup.relIndex_mul_relIndex _ _ _ hDA hAB
   have e3 : (Ideal.span {π} • LinearMap.range ι).toAddSubgroup.relIndex (Ideal.span {π} • N).toAddSubgroup =
       (LinearMap.range ι).toAddSubgroup.relIndex N.toAddSubgroup := by
     rw [smul_toAddSubgroup π (LinearMap.range ι), smul_toAddSubgroup π N,
@@ -311,7 +230,7 @@ theorem relIndex_principal (N : Submodule (𝓞 K) M) (hN : N.FG) (n : ℕ) (ι 
     | rw [AddSubgroup.comap_map_eq_self_of_injective (smul_inj π hπ)]
   have hCB0 : (LinearMap.range ι).toAddSubgroup.relIndex N.toAddSubgroup ≠ 0 := by
     have hdC : (Ideal.span {d} • N).toAddSubgroup ≤ (LinearMap.range ι).toAddSubgroup := fun x hx => hdN hx
-    have e4 := relIndex_mul_relIndex_of_le_of_le hdC hCB
+    have e4 := AddSubgroup.relIndex_mul_relIndex _ _ _ hdC hCB
     intro h0
     rw [h0, mul_zero] at e4
     exact relIndex_smul_ne_zero N hN d hd e4.symm
@@ -343,7 +262,8 @@ theorem relIndex_principal (N : Submodule (𝓞 K) M) (hN : N.FG) (n : ℕ) (ι 
       rw [Pi.smul_apply, smul_eq_mul, mul_comm]
       exact hy i
   rw [← hmap, ← AddSubgroup.relIndex_comap, AddSubgroup.relIndex_top_right, hcomap, AddSubgroup.index_pi,
-    Finset.prod_const, Finset.card_univ, Fintype.card_fin, ← absNorm_eq_index_dual_family_counting, Ideal.absNorm_span_singleton]
+    Finset.prod_const, Finset.card_univ, Fintype.card_fin, ← Ideal.absNorm_eq_index,
+      Ideal.absNorm_span_singleton]
 
 end Principal
 
@@ -376,12 +296,9 @@ theorem relIndex_prime_le (𝔭 : Ideal (𝓞 K)) [𝔭.IsMaximal] (n : ℕ) (N 
     refine ⟨c, hc, ?_⟩
     apply Subtype.ext
     simpa using hs
-  rw [_root_.Formalism.L2.SG.Pf.NcReal.JX.CovB.IdxK.relIndex_smul_eq_card_quotient_smul, absNorm_eq_card_quotient]
+  rw [_root_.Formalism.L2.SG.Pf.NcReal.JX.CovB.IdxK.relIndex_smul_eq_card_quotient_smul,
+    Ideal.absNorm_eq_natCard]
   exact card_quot_le 𝔭 n hdep
-
-private theorem ideal_mul_smul_submodule (I J : Ideal (𝓞 K)) (N : Submodule (𝓞 K) M) : (I * J) • N = I • J • N := by
-  first
-  | exact Submodule.mul_smul I J N
 
 private theorem relIndex_smul_le_absNorm_pow_of_hDep (n k : ℕ) : ∀ (𝔞 : Ideal (𝓞 K)), Ideal.absNorm 𝔞 ≤ k → 𝔞 ≠ ⊥ →
     ∀ (N : Submodule (𝓞 K) M), N.FG → HDep n N →
@@ -419,10 +336,10 @@ private theorem relIndex_smul_le_absNorm_pow_of_hDep (n k : ℕ) : ∀ (𝔞 : I
       have hbk : Ideal.absNorm 𝔟 ≤ k := by
         have hb1 : 1 ≤ Ideal.absNorm 𝔟 := Nat.pos_of_ne_zero hb0
         nlinarith
-      rw [ideal_mul_smul_submodule 𝔭 𝔟 N]
+      rw [Submodule.mul_smul 𝔭 𝔟 N]
       have hle1 : (𝔭 • 𝔟 • N).toAddSubgroup ≤ (𝔟 • N).toAddSubgroup := fun x hx => Submodule.smul_le_right hx
       have hle2 : (𝔟 • N).toAddSubgroup ≤ N.toAddSubgroup := fun x hx => Submodule.smul_le_right hx
-      rw [← relIndex_mul_relIndex_of_le_of_le hle1 hle2, mul_pow]
+      rw [← AddSubgroup.relIndex_mul_relIndex _ _ _ hle1 hle2, mul_pow]
       exact Nat.mul_le_mul
         (relIndex_prime_le 𝔭 n (𝔟 • N) (fg_smul 𝔟 N hN) (hD.mono Submodule.smul_le_right))
         (ih 𝔟 hbk h𝔟0 N hN hD)
@@ -451,7 +368,7 @@ theorem relIndex_eq (n : ℕ) (𝔞 : Ideal (𝓞 K)) (h𝔞 : 𝔞 ≠ ⊥) (N 
   have hle2 : (𝔞 • N).toAddSubgroup ≤ N.toAddSubgroup := fun x hx => Submodule.smul_le_right hx
   have hprod : (𝔟 • 𝔞 • N).toAddSubgroup.relIndex (𝔞 • N).toAddSubgroup *
       (𝔞 • N).toAddSubgroup.relIndex N.toAddSubgroup = Ideal.absNorm 𝔟 ^ n * Ideal.absNorm 𝔞 ^ n := by
-    rw [relIndex_mul_relIndex_of_le_of_le hle1 hle2, ← ideal_mul_smul_submodule, ← h𝔟',
+    rw [AddSubgroup.relIndex_mul_relIndex _ _ _ hle1 hle2, ← Submodule.mul_smul, ← h𝔟',
       relIndex_principal N hN n ι hι hιN d hd hdN π hπ0, ← Ideal.absNorm_span_singleton, h𝔟',
       map_mul, mul_pow]
   have hB : 0 < Ideal.absNorm 𝔟 ^ n :=
@@ -485,8 +402,6 @@ open scoped nonZeroDivisors
 namespace Formalism.L2.SG.Pf.NcReal.JX.CovB.TrD
 
 open Formalism.L2.SG.HidaSetting Formalism.MainNotions.S Formalism.L2.SG.Pf.NcReal.JX Formalism.L2.SG.Pf.NcReal.JX.CovB.CovolumeSpans
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 

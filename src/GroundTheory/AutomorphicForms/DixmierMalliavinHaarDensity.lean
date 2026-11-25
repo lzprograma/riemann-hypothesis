@@ -25,10 +25,10 @@ namespace IsExpLieAlgebra
 variable (h : IsExpLieAlgebra G 𝔤) [MeasurableSpace G] [BorelSpace G] (μ : Measure G)
   [μ.IsHaarMeasure]
 
-theorem exists_smooth_density_prodExp {d : ℕ} (b : Module.Basis (Fin d) ℝ 𝔤) :
+theorem exists_smooth_density_prodExp_tsupport {d : ℕ} (b : Module.Basis (Fin d) ℝ 𝔤) :
     ∃ ε > 0, ∀ K : (Fin d → ℝ) → ℂ, ContDiff ℝ ∞ K → tsupport K ⊆ closedBall 0 ε →
       ∃ κ : G → ℂ, (letI := h.chartedSpace; ContMDiff 𝓘(ℝ, 𝔤) 𝓘(ℝ, ℂ) ∞ κ) ∧
-        HasCompactSupport κ ∧
+        HasCompactSupport κ ∧ tsupport κ ⊆ h.prodExp (⇑b) '' tsupport K ∧
         ∀ φ : G → ℂ, Continuous φ → ∫ y, κ y * φ y ∂μ = ∫ t, K t * φ (h.prodExp (⇑b) t) := by
   obtain ⟨r, ρ, c, W, hr, hρ, hρpos, hW, hPW, hcP, hc, hint⟩ := h.exists_haar_density_prodExp μ b
   set P := h.prodExp (⇑b) with hPdef
@@ -48,6 +48,15 @@ theorem exists_smooth_density_prodExp {d : ℕ} (b : Module.Basis (Fin d) ℝ �
     · simp [κ, indicator_of_notMem hyW]
   have hκsupp : tsupport κ ⊆ C :=
     closure_minimal (fun y hy => by_contra fun h' => hy (hκC y h')) hCc.isClosed
+  have hKc : IsCompact (tsupport K) :=
+    (isCompact_closedBall _ _).of_isClosed_subset (isClosed_tsupport _) hKs
+  have hκsupp' : tsupport κ ⊆ P '' tsupport K := by
+    refine closure_minimal (fun y hy => ?_) (hKc.image hPc).isClosed
+    by_cases hyW : y ∈ W
+    · have hK0 : K (c y) ≠ 0 := by
+        intro h0; apply hy; simp [κ, indicator_of_mem hyW, h0]
+      exact ⟨c y, subset_tsupport _ hK0, hcP y hyW⟩
+    · exact absurd (by simp [κ, indicator_of_notMem hyW]) hy
   have hκW : ∀ z ∈ ball (0 : Fin d → ℝ) r, κ (P z) * (ρ z : ℂ) = K z := by
     intro z hz
     obtain ⟨hzW, hcz⟩ := hPW z hz
@@ -89,7 +98,7 @@ theorem exists_smooth_density_prodExp {d : ℕ} (b : Module.Basis (Fin d) ℝ �
   have hκc : Continuous κ := by
     let := h.chartedSpace
     exact hsmooth.continuous
-  refine ⟨κ, hsmooth, HasCompactSupport.intro hCc hκC, fun φ hφ => ?_⟩
+  refine ⟨κ, hsmooth, HasCompactSupport.intro hCc hκC, hκsupp', fun φ hφ => ?_⟩
   have hψ₀s : tsupport (fun y => κ y * φ y) ⊆ P '' ball 0 r :=
     (tsupport_mul_subset_left).trans (hκsupp.trans (image_mono hεr))
   rw [hint (fun y => κ y * φ y) (hκc.mul hφ)
@@ -100,6 +109,16 @@ theorem exists_smooth_density_prodExp {d : ℕ} (b : Module.Basis (Fin d) ℝ �
       simp [this]]
   refine setIntegral_congr_fun measurableSet_ball fun z hz => ?_
   rw [mul_right_comm, hκW z hz]
+
+theorem exists_smooth_density_prodExp {d : ℕ} (b : Module.Basis (Fin d) ℝ 𝔤) :
+    ∃ ε > 0, ∀ K : (Fin d → ℝ) → ℂ, ContDiff ℝ ∞ K → tsupport K ⊆ closedBall 0 ε →
+      ∃ κ : G → ℂ, (letI := h.chartedSpace; ContMDiff 𝓘(ℝ, 𝔤) 𝓘(ℝ, ℂ) ∞ κ) ∧
+        HasCompactSupport κ ∧
+        ∀ φ : G → ℂ, Continuous φ → ∫ y, κ y * φ y ∂μ = ∫ t, K t * φ (h.prodExp (⇑b) t) := by
+  obtain ⟨ε, hε, hdens⟩ := h.exists_smooth_density_prodExp_tsupport μ b
+  refine ⟨ε, hε, fun K hK hKs => ?_⟩
+  obtain ⟨κ, hsm, hcs, -, hint⟩ := hdens K hK hKs
+  exact ⟨κ, hsm, hcs, hint⟩
 
 end IsExpLieAlgebra
 

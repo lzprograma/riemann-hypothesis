@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.FormsFinite
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.AlgebraicModuleOfVanishingBlock
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.BlockEmbeddingFiniteAdelicGLCompatContinuous
@@ -69,15 +70,7 @@ private theorem left_slSp {a n : ℕ} (e : Fin a ↪ Fin n) (Γ : Set (AdelicGLn
     (S : Submodule ℂ (archSmooth K n))
     (h : ∀ ψ ∈ S, ∀ g ∈ Γ, ∀ γ m, ψ.1 (g * emb e (AdelicGLn.diagonal K a γ * m)) = ψ.1 (g * emb e m)) :
     ∀ f ∈ slSp e Γ S, IsLeftInvariant f.1 := by
-  intro f hf
-  induction hf using Submodule.span_induction with
-  | mem f hf =>
-    obtain ⟨ψ, hψ, g, hg, hf⟩ := hf
-    intro γ m
-    rw [hf, hf, h ψ hψ g hg]
-  | zero => exact isLeftInvariant_zero
-  | add x y _ _ hx hy => exact hx.add hy
-  | smul c x _ hx => exact hx.smul c
+  apply _root_.UpperTheory.V.Af.Fin.slLeft <;> assumption
 
 private theorem bdd_slices {r s : ℕ} {S : Submodule ℂ (archSmooth K (r + s))} (hS : Bdd S) (hK : Sat S) :
     Bdd (slSp (e1 r s) (Set.range (emb (e2 r s))) (ctSp r S)) ∧

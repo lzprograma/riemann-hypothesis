@@ -2,51 +2,8 @@ module
 
 public import Formalism.RealPlaceAnalysis.StatementE
 public import Mathlib.GroupTheory.Perm.Fin
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -82,8 +39,8 @@ theorem prod_ofFn_update_ite {A : Type*} [Ring A] {t : ℕ} (F : Fin t → A) (k
     (List.ofFn (Function.update F k (if p then x else 0))).prod =
       if p then (List.ofFn (Function.update F k x)).prod else 0 := by
   by_cases hp : p
-  · simp only [if_pos hp]
-  · simp only [if_neg hp]
+  · simp only [ite_eq_left hp]
+  · simp only [ite_eq_right hp]
     obtain ⟨L, R, h⟩ := prod_ofFn_update_eq_mul F k
     rw [h, mul_zero, zero_mul]
 
@@ -118,9 +75,9 @@ theorem shiftedGenerator_commutator {A : Type*} [Ring A] [Algebra ℂ A] {n : �
   have hcomm : E c d * (if a = b then algebraMap ℂ A v else 0) =
       (if a = b then algebraMap ℂ A v else 0) * E c d := by
     by_cases hab : a = b
-    · simp only [if_pos hab]
+    · simp only [ite_eq_left hab]
       exact (Algebra.commutes v (E c d)).symm
-    · simp only [if_neg hab, mul_zero, zero_mul]
+    · simp only [ite_eq_right hab, mul_zero, zero_mul]
   have key : E c d * Tm E v a b - Tm E v a b * E c d =
       E c d * E a b - E a b * E c d := by
     unfold Tm
@@ -150,11 +107,11 @@ theorem comp_swap_of_eq {α β : Type*} [DecidableEq α] (f : α → β) (p q : 
   funext x
   rw [Function.comp_apply, Equiv.swap_apply_def]
   by_cases h1 : x = p
-  · rw [if_pos h1, h1]; exact h.symm
-  · rw [if_neg h1]
+  · rw [ite_eq_left h1, h1]; exact h.symm
+  · rw [ite_eq_right h1]
     by_cases h2 : x = q
-    · rw [if_pos h2, h2]; exact h
-    · rw [if_neg h2]
+    · rw [ite_eq_left h2, h2]; exact h
+    · rw [ite_eq_right h2]
 
 theorem quantumMinor_eq_zero_of_row_eq (hr : QSkewRow) {A : Type} [Ring A] [Algebra ℂ A] {n t : ℕ}
     (E : Fin n → Fin n → A) (a b : Fin t → Fin n) (u : ℂ) (p q : Fin t) (hpq : p ≠ q)
@@ -189,31 +146,31 @@ theorem generator_commutator_quantumDet {A : Type*} [Ring A] [Algebra ℂ A] {n 
     Finset.sum_sub_distrib, id_eq]
   congr 1
   · rw [Finset.sum_eq_single (σ.symm d)]
-    · rw [if_pos (σ.apply_symm_apply d).symm]
+    · rw [ite_eq_left (σ.apply_symm_apply d).symm]
       congr 1
       congr 1
       funext k
       rw [Function.update_apply, Function.update_apply]
       by_cases hk : k = σ.symm d
-      · rw [if_pos hk, if_pos (show σ k = d by rw [hk, Equiv.apply_symm_apply])]
+      · rw [ite_eq_left hk, ite_eq_left (show σ k = d by rw [hk, Equiv.apply_symm_apply])]
         subst hk
         rfl
-      · rw [if_neg hk, if_neg (show ¬ σ k = d from fun h => hk (by rw [← h, Equiv.symm_apply_apply]))]
+      · rw [ite_eq_right hk, ite_eq_right (show ¬ σ k = d from fun h => hk (by rw [← h, Equiv.symm_apply_apply]))]
         try rfl
     · intro b _ hb
-      rw [if_neg (show ¬ d = σ b from fun h => hb (by rw [h, Equiv.symm_apply_apply]))]
+      rw [ite_eq_right (show ¬ d = σ b from fun h => hb (by rw [h, Equiv.symm_apply_apply]))]
     · intro h
       exact absurd (Finset.mem_univ _) h
-  · simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  · simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     congr 1
     congr 1
     funext k
     rw [Function.update_apply, Function.update_apply]
     by_cases hk : k = c
-    · rw [if_pos hk, if_pos hk]
+    · rw [ite_eq_left hk, ite_eq_left hk]
       subst hk
       rfl
-    · rw [if_neg hk, if_neg hk]
+    · rw [ite_eq_right hk, ite_eq_right hk]
       try rfl
 
 theorem qDetCentral_of (hr : QSkewRow) (hc : QSkewCol) : QDetCentral := by
@@ -335,7 +292,7 @@ theorem qComatrix_of (hr : QSkewRow) (hc : QSkewCol) : QComatrix := by
     simp only [hsign j, Int.cast_mul, mul_assoc]
   rw [hL]
   by_cases hil : i = l
-  · rw [if_pos hil, qdet]
+  · rw [ite_eq_left hil, qdet]
     have hb : b' = id ∘ (cycleToLast m i) := by
       funext x
       refine Fin.lastCases ?_ (fun k => ?_) x
@@ -344,7 +301,7 @@ theorem qComatrix_of (hr : QSkewRow) (hc : QSkewCol) : QComatrix := by
     rw [hb, hc A (m + 1) (m + 1) E hE id id (cycleToLast m i) u, sign_cycleToLast,
       Units.val_pow_eq_pow_val, Units.val_neg, Units.val_one, ← mul_assoc, ← Int.cast_mul, ← mul_pow,
       neg_one_mul, neg_neg, one_pow, Int.cast_one, one_mul]
-  · rw [if_neg hil]
+  · rw [ite_eq_right hil]
     obtain ⟨z, hz⟩ := Fin.exists_succAbove_eq (Ne.symm hil)
     rw [quantumMinor_eq_zero_of_col_eq hc E hE id b' u z.castSucc (Fin.last m) (Fin.castSucc_lt_last z).ne
       (by rw [hbc, hbl, hz]), mul_zero]

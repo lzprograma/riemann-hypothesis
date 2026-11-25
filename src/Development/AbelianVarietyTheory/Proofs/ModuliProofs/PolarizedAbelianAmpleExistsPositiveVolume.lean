@@ -75,7 +75,7 @@ theorem tendsto_eval_div_pow (Q : Polynomial ℚ) {k : ℕ} (h : Q.natDegree ≤
       (𝓝 (∑ i ∈ Finset.range (k + 1), (Q.coeff i : ℝ) * (if i = k then 1 else 0))) :=
     tendsto_finsetSum _ fun i hi =>
       (tendsto_pow_div_pow (Nat.lt_succ_iff.1 (Finset.mem_range.1 hi))).const_mul _
-  simp only [mul_ite, _root_.mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_range, Nat.lt_succ_self, if_true] at h1
+  simp only [mul_ite, _root_.mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_range, Nat.lt_succ_self, ite_true] at h1
   refine h1.congr fun e => ?_
   rw [Polynomial.eval_eq_sum_range' (Nat.lt_succ_of_le h)]
   push_cast
@@ -145,7 +145,7 @@ theorem exists_vol : Out.Laws → Out.Laws2 → ∀ (K : Type) [Field K] [IsAlgC
     push Not at hlt
     obtain ⟨c, hc⟩ := dom P.L M P.isLB hM P.ample
     have h1 := hc _ _ _ (volM _ le_rfl) (volL _ hlt.le)
-    rw [if_neg hlt.ne, mul_zero] at h1
+    rw [ite_eq_right hlt.ne, mul_zero] at h1
     have h2 := le_antisymm h1 (vol_nonneg (volM _ le_rfl))
     rw [div_eq_zero_iff] at h2
     rcases h2 with h2 | h2
@@ -157,7 +157,7 @@ theorem exists_vol : Out.Laws → Out.Laws2 → ∀ (K : Type) [Field K] [IsAlgC
   refine ⟨_, ?_, volM _ hdeg⟩
   obtain ⟨c, hc⟩ := dom M P.L hM P.isLB hA
   have h1 := hc _ _ _ (volL _ le_rfl) (volM _ hdeg)
-  rw [if_pos rfl] at h1
+  rw [ite_eq_left rfl] at h1
   refine lt_of_le_of_ne (vol_nonneg (volM _ hdeg)) fun h => ?_
   rw [← h, mul_zero] at h1
   exact absurd h1 (by norm_num)

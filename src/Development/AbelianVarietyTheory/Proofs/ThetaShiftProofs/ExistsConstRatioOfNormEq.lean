@@ -69,7 +69,7 @@ theorem exists_const_ratio_of_norm_eq :
   by_cases h0 : ∀ i w, T < w.im → g i w = 0
   · refine ⟨K, by simp [abs_of_pos hK], fun i w hw => ?_⟩
     rw [(h i w hw).1, h0 i w hw]; simp
-  push_neg at h0
+  push Not at h0
   obtain ⟨i₀, w₀, hw₀, hg₀⟩ := h0
   have hU : IsOpen {w : ℂ | T < w.im} := isOpen_lt continuous_const Complex.continuous_im
   have hUc : IsPreconnected {w : ℂ | T < w.im} := (convex_halfSpace_im_gt T).isPreconnected

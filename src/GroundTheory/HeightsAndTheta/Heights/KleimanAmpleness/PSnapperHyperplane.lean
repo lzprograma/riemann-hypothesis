@@ -72,15 +72,11 @@ theorem sup_span_X_homogeneous {R : Type u} [CommRing R] {N : ℕ} (pp : Ideal (
     (hh : ∀ f ∈ pp, ∀ d : ℕ, homogeneousComponent d f ∈ pp) (i : Fin (N + 1)) :
     ∀ f ∈ pp ⊔ Ideal.span {(X i : Poly R N)}, ∀ d : ℕ,
       homogeneousComponent d f ∈ pp ⊔ Ideal.span {(X i : Poly R N)} := by
-  intro f hf d
-  obtain ⟨g, hg, y, hy, rfl⟩ := Submodule.mem_sup.mp hf
-  obtain ⟨r, rfl⟩ := Ideal.mem_span_singleton'.mp hy
-  rw [map_add (f := _)]
-  refine Ideal.add_mem _ (Ideal.mem_sup_left (hh g hg d)) (Ideal.mem_sup_right ?_)
-  have hspan := IdealTwistFamily.homogeneousComponent_mul_form r (X i) (isHomogeneous_X R i) d
-  refine (Submodule.span_le.mpr ?_ : _ ≤ (Ideal.span {(X i : Poly R N)}).restrictScalars R) hspan
-  rintro _ ⟨z, d', -, -, rfl⟩
-  exact Ideal.mul_mem_left _ _ (Ideal.mem_span_singleton_self _)
+  let _ := MvPolynomial.gradedAlgebra (σ := Fin (N + 1)) (R := R)
+  have hpp : pp.IsHomogeneous (homogeneousSubmodule (Fin (N + 1)) R) := fun d f hf => by
+    have := hh f hf d; rwa [← decomposition.decompose'_apply] at this
+  exact fun f hf d => homogeneousComponent_mem_of_mem
+    (hpp.sup (Ideal.homogeneous_span _ _ (by rintro _ rfl; exact ⟨1, isHomogeneous_X R i⟩))) hf d
 
 theorem SnapperHyperplane.proof (hA : SnapperQuotAdd.Statement.{u, w, w})
     (hD : SnapperQuotDevissage.Statement.{u, w, w}) (hM : SnapperHyperplaneMid.Statement.{u, w}) :

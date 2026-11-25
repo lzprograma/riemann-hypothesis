@@ -3,48 +3,9 @@ module
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormInverseCounting.AlgDefs
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormInverseCounting.AlgInj
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormPairAlgebra.BRawHeadColsRight
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.ModularBoundZeroHolds
 
 @[expose] public section
 
@@ -145,6 +106,24 @@ def adjV (hO : ∀ x ∈ O, cj x ∈ O) (hu₁ : IsUnit (Z₁.map O.subtype).det
 variable (hcj : ∀ x, cj (cj x) = x) (hO : ∀ x ∈ O, cj x ∈ O)
   (hu₁ : IsUnit (Z₁.map O.subtype).det) (hu₂ : IsUnit (Z₂.map O.subtype).det)
 
+include hcj in
+theorem adjV_headCols (γ : MbMod Z₁ ≃ₗ[O] MbMod Z₂) (hb : γ (bCls Z₁) = bCls Z₂)
+    (he : γ (eCl Z₁) = eCl Z₂) {y' : Fin (r + 1) → O} (hy : y' ∈ headCols (cjT O cj hO Z₁)) :
+    adjV O cj hO hu₁ γ hb he y' ∈ headCols (cjT O cj hO Z₂) := by
+  have hw : ∀ a, adjW O cj γ y' a ∈ O := fun a => hO _ (bRaw_headCols_right O cj hcj hO Z₁ hu₁ _ hy)
+  let w : Fin (r + 1) → O := fun a => ⟨adjW O cj γ y' a, hw a⟩
+  have hlast : w (Fin.last r) = 0 := by
+    apply Subtype.ext
+    show adjW O cj γ y' (Fin.last r) = 0
+    rw [adjW, uLift_last, cj_bRaw_single O cj hcj, lamS_headCols O cj hO Z₁ hu₁ hy]
+  have heq : adjV O cj hO hu₁ γ hb he y' = (cjT O cj hO Z₂).mulVec w := by
+    funext b
+    apply Subtype.ext
+    rw [cjT_mulVec_coe]
+    rfl
+  rw [heq]
+  exact mulVec_mem_headCols (Z := cjT O cj hO Z₂) (w := w) (hw := hlast)
+
 include hcj hO hu₁ hu₂
 
 theorem lamS_adjV (γ : MbMod Z₁ ≃ₗ[O] MbMod Z₂) (hb : γ (bCls Z₁) = bCls Z₂)
@@ -169,35 +148,6 @@ theorem bRaw_adjV (γ : MbMod Z₁ ≃ₗ[O] MbMod Z₂) (hb : γ (bCls Z₁) = 
   rw [h1, ← bRaw_sub_left]
   exact bRaw_mem_of_mk O cj hO Z₁ hu₁ h2 y'
 
-private theorem mulVec_mem_headCols_of_last_eq_zero {R : Type} [CommRing R] {k : ℕ}
-    (Z : Matrix (Fin (k + 1)) (Fin (k + 1)) R) (w : Fin (k + 1) → R) (hw : w (Fin.last k) = 0) :
-    Z.mulVec w ∈ headCols Z := by
-  have hsum : Z.mulVec w = ∑ a : Fin k, w a.castSucc • (fun i => Z i a.castSucc) := by
-    funext i
-    simp only [Matrix.mulVec, dotProduct, Fin.sum_univ_castSucc, hw, mul_zero, add_zero,
-      Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
-    exact Finset.sum_congr rfl fun a _ => mul_comm _ _
-  rw [hsum]
-  exact Submodule.sum_mem _ fun a _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨a, rfl⟩)
-
-theorem adjV_headCols (γ : MbMod Z₁ ≃ₗ[O] MbMod Z₂) (hb : γ (bCls Z₁) = bCls Z₂)
-    (he : γ (eCl Z₁) = eCl Z₂) {y' : Fin (r + 1) → O} (hy : y' ∈ headCols (cjT O cj hO Z₁)) :
-    adjV O cj hO hu₁ γ hb he y' ∈ headCols (cjT O cj hO Z₂) := by
-  have hw : ∀ a, adjW O cj γ y' a ∈ O := fun a => hO _ (bRaw_headCols_right O cj hcj hO Z₁ hu₁ _ hy)
-  let w : Fin (r + 1) → O := fun a => ⟨adjW O cj γ y' a, hw a⟩
-  have hlast : w (Fin.last r) = 0 := by
-    apply Subtype.ext
-    show adjW O cj γ y' (Fin.last r) = 0
-    rw [adjW, uLift_last, cj_bRaw_single O cj hcj, lamS_headCols O cj hO Z₁ hu₁ hy]
-  have heq : adjV O cj hO hu₁ γ hb he y' = (cjT O cj hO Z₂).mulVec w := by
-    funext b
-    apply Subtype.ext
-    rw [cjT_mulVec_coe]
-    rfl
-  rw [heq]
-  exact mulVec_mem_headCols_of_last_eq_zero (O := O) (cj := cj) (hcj := hcj) (hO := hO) (hu₁ := hu₁) (hu₂ := hu₂)
-    (Z := cjT O cj hO Z₂) (w := w) (hw := hlast)
-
 def adjL (γ : MbMod Z₁ ≃ₗ[O] MbMod Z₂) (hb : γ (bCls Z₁) = bCls Z₂) (he : γ (eCl Z₁) = eCl Z₂) :
     (Fin (r + 1) → O) →ₗ[O] (Fin (r + 1) → O) where
   toFun := adjV O cj hO hu₁ γ hb he
@@ -216,7 +166,7 @@ def adjQ (γ : MbMod Z₁ ≃ₗ[O] MbMod Z₂) (hb : γ (bCls Z₁) = bCls Z₂
     ((headCols (cjT O cj hO Z₂)).mkQ ∘ₗ adjL O cj hcj hO hu₁ γ hb he)
     (fun y' hy => by
       rw [LinearMap.mem_ker, LinearMap.comp_apply, Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
-      exact adjV_headCols O cj hcj hO hu₁ hu₂ γ hb he hy)
+      exact adjV_headCols O cj hcj hO hu₁ γ hb he hy)
 
 theorem adjV_comp (γ : MbMod Z₁ ≃ₗ[O] MbMod Z₂) (hb : γ (bCls Z₁) = bCls Z₂)
     (he : γ (eCl Z₁) = eCl Z₂) (δ : MbMod Z₂ ≃ₗ[O] MbMod Z₁) (hb' : δ (bCls Z₂) = bCls Z₁)
@@ -293,14 +243,13 @@ theorem adjV_comp (γ : MbMod Z₁ ≃ₗ[O] MbMod Z₂) (hb : γ (bCls Z₁) = 
     simp only [m]
     ring
   rw [Submodule.Quotient.eq, hdiff]
-  exact mulVec_mem_headCols_of_last_eq_zero (O := O) (cj := cj) (hcj := hcj) (hO := hO) (hu₁ := hu₁) (hu₂ := hu₂)
-    (Z := cjT O cj hO Z₁) (w := m) (hw := hmlast)
+  exact mulVec_mem_headCols (Z := cjT O cj hO Z₁) (w := m) (hw := hmlast)
 
 def adjEquiv (γ : MbMod Z₁ ≃ₗ[O] MbMod Z₂) (hb : γ (bCls Z₁) = bCls Z₂) (he : γ (eCl Z₁) = eCl Z₂) :
     MbMod (cjT O cj hO Z₁) ≃ₗ[O] MbMod (cjT O cj hO Z₂) :=
   have hb' : γ.symm (bCls Z₂) = bCls Z₁ := by rw [LinearEquiv.symm_apply_eq]; exact hb.symm
   have he' : γ.symm (eCl Z₂) = eCl Z₁ := by rw [LinearEquiv.symm_apply_eq]; exact he.symm
-  LinearEquiv.ofLinear (adjQ O cj hcj hO hu₁ hu₂ γ hb he) (adjQ O cj hcj hO hu₂ hu₁ γ.symm hb' he')
+  LinearEquiv.ofLinearMap (adjQ O cj hcj hO hu₁ γ hb he) (adjQ O cj hcj hO hu₂ γ.symm hb' he')
     (by
       refine LinearMap.ext fun m => ?_
       obtain ⟨y', rfl⟩ := Submodule.Quotient.mk_surjective _ m
@@ -348,9 +297,5 @@ def StepAdjG : Prop :=
 theorem stepAdjG : StepAdjG := by
   intro E _ O cj hcj hO r Z₁ Z₂ hu₁ hu₂
   exact projP_surjective O cj hcj hO hu₁ hu₂
-
-theorem stepAdj : StepAdj := by
-  intro E _ O cj hcj hO r Z₁ Z₂ hu₁ hu₂ _ _
-  exact stepAdjG E O cj hcj hO r Z₁ Z₂ hu₁ hu₂
 
 end Formalism.L2.SG.LocalCountModules.UnramifiedPairingLinear

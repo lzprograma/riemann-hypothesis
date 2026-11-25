@@ -284,19 +284,6 @@ def SolveOnto : Prop :=
 variable {K F : Type} [Field K] [NumberField K] [StarRing K] [Field F] [NumberField F] [Algebra F K]
   [Fact (IsFixF K F)] {m : ℕ}
 
-private theorem star_algebraMap_ringOfIntegers (x : 𝓞 F) :
-    star (algebraMap (𝓞 F) (𝓞 K) x) = algebraMap (𝓞 F) (𝓞 K) x := by
-  have h := Formalism.HermitianLattices.Ext.L3.localizedQuotients.star_ι (K := K) (F := F) Fact.out x
-  exact FaithfulSMul.algebraMap_injective (𝓞 K) K h
-
-theorem diagQ_conjTranspose (𝔭 : Ideal (𝓞 F)) (k : ℕ) (a : Fin m → 𝓞 F) :
-    (diagQ K 𝔭 k a)ᴴ = diagQ K 𝔭 k a := by
-  unfold diagQ
-  rw [Matrix.diagonal_conjTranspose]
-  congr 1
-  funext i
-  rw [Pi.star_apply, star_mk, star_algebraMap_ringOfIntegers]
-
 theorem hom_shift {𝔭 : Ideal (𝓞 F)} {k : ℕ} {a : Fin m → 𝓞 F}
     {Y P : Matrix (Fin m) (Fin m) (𝓞 K ⧸ extP K 𝔭 ^ k)}
     (hPY : P * diagQ K 𝔭 k a = diagQ K 𝔭 k a * Y) (Z : Matrix (Fin m) (Fin m) (𝓞 K ⧸ extP K 𝔭 ^ k)) :
@@ -310,7 +297,7 @@ theorem form_shift {𝔭 : Ideal (𝓞 F)} {k : ℕ} {a : Fin m → 𝓞 F}
     (Z : Matrix (Fin m) (Fin m) (𝓞 K ⧸ extP K 𝔭 ^ k)) :
     (Y + Z * diagQ K 𝔭 k a)ᴴ * diagQ K 𝔭 k a * (Y + Z * diagQ K 𝔭 k a) - diagQ K 𝔭 k a =
       diagQ K 𝔭 k a * (W + Pᴴ * Z + Zᴴ * P + Zᴴ * diagQ K 𝔭 k a * Z) * diagQ K 𝔭 k a := by
-  have hH := diagQ_conjTranspose (K := K) 𝔭 k a
+  have hH := Formalism.L2.SG.Pf.LocalizedFibreSets.diagQ_herm (K := K) 𝔭 k a
   have h1 : Yᴴ * diagQ K 𝔭 k a = diagQ K 𝔭 k a * Pᴴ := by
     have h := congrArg Matrix.conjTranspose hPY
     rw [conjTranspose_mul, conjTranspose_mul, hH] at h
@@ -431,7 +418,7 @@ private theorem exists_add_conj_sub_one_mem_extP (hK : Formalism.HermitianLattic
     have e2 : b * a - 1 = -c := by linear_combination hbc
     rw [e1, e2, map_neg]
     exact (extP K 𝔭).neg_mem (Ideal.mem_map_of_mem _ hc)
-  · push_neg at h
+  · push Not at h
     have h1 : (1 : 𝓞 K) ∈ extP K 𝔭 := by
       apply BallB.mem_of_unram hK
       intro θ
@@ -606,7 +593,6 @@ namespace Formalism.L2.SG.Pf.discriminantNormShapes
 
 open Formalism.HermitianLattices.Ext.L3 Formalism.HermitianLattices.Ext.L3.idealPowerSpanBounds Formalism.HermitianLattices.Ext.L3.reductionMapsOfForms Formalism.L2.SG.Pf.Cnt Formalism.L2.SG.Pf.G5
 
-
 open Classical in
 def eQ (K : Type) {F : Type} [Field K] [Field F] [Algebra F K] {m : ℕ} (𝔭 : Ideal (𝓞 F)) (k : ℕ)
     (a : Fin m → 𝓞 F) : Matrix (Fin m) (Fin m) (𝓞 K ⧸ extP K 𝔭 ^ k) :=
@@ -651,7 +637,7 @@ theorem solveOnto_of_norm (hN : NormOnto) : SolveOnto := by
   intro K F _ _ _ _ _ _ _ hK 𝔭 h𝔭 m a ha k hk Y
   obtain ⟨Y', P, W, Z₀, hY, hPY, hW, hWh, hEW, hEP1, hEP2, hdet⟩ := hN K F hK 𝔭 h𝔭 m a ha k hk Y
   have hEh := eQ_conjTranspose (K := K) 𝔭 k a
-  have hH := diagQ_conjTranspose (K := K) 𝔭 k a
+  have hH := Formalism.L2.SG.Pf.LocalizedFibreSets.diagQ_herm (K := K) 𝔭 k a
 
   have h2 : P * eQ K 𝔭 k a = eQ K 𝔭 k a * P := hEP2.trans hEP1.symm
   have h1 : Pᴴ * eQ K 𝔭 k a = eQ K 𝔭 k a * Pᴴ := by
@@ -731,24 +717,6 @@ variable {K F : Type} [Field K] [NumberField K] [StarRing K] [Field F] [NumberFi
 
 local notation "ι" => algebraMap (𝓞 F) (𝓞 K)
 
-private theorem mem_pow_vF_not_mem_pow_vF_succ {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {x : 𝓞 F} (hx : x ≠ 0) :
-    x ∈ 𝔭 ^ vF 𝔭 x ∧ x ∉ 𝔭 ^ (vF 𝔭 x + 1) := by
-  have hbdd : BddAbove {e : ℕ | x ∈ 𝔭 ^ e} := by
-    have h0 : x ∉ ⨅ n : ℕ, 𝔭 ^ n := by
-      rw [Ideal.iInf_pow_eq_bot_of_isDomain 𝔭 h𝔭.ne_top]
-      simpa using hx
-    simp only [Submodule.mem_iInf, not_forall] at h0
-    obtain ⟨n, hn⟩ := h0
-    refine ⟨n, fun e he => ?_⟩
-    by_contra hlt
-    push_neg at hlt
-    exact hn (Ideal.pow_le_pow_right hlt.le he)
-  refine ⟨?_, fun h => ?_⟩
-  · have h1 := Nat.sSup_mem (s := {e : ℕ | x ∈ 𝔭 ^ e}) ⟨0, by simp⟩ hbdd
-    exact h1
-  · have h2 : vF 𝔭 x + 1 ≤ vF 𝔭 x := le_csSup hbdd h
-    omega
-
 private theorem mem_extP_pow_sub_of_mul_mem {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {a : 𝓞 F} {e k : ℕ}
     (ha : a ∈ 𝔭 ^ e) (ha' : a ∉ 𝔭 ^ (e + 1)) (hek : e ≤ k) {w : 𝓞 K}
     (hw : w * ι a ∈ extP K 𝔭 ^ k) : w ∈ extP K 𝔭 ^ (k - e) := by
@@ -812,7 +780,8 @@ private theorem mem_extP_pow_sub_sum_vF_of_mul_prod_mem {𝔭 : Ideal (𝓞 F)} 
     intro k hk
     rw [Finset.prod_insert hi] at hk
     rw [Finset.sum_insert hi]
-    obtain ⟨h1, h2⟩ := mem_pow_vF_not_mem_pow_vF_succ h𝔭 (ha i)
+    have h1 := mem_pow_vF h𝔭 (ha i)
+    have h2 := notMem_pow_vF h𝔭 (ha i)
     by_cases hle : vF 𝔭 (a i) ≤ k
     · have h3 : (w * ∏ j ∈ s, ι (a j)) * ι (a i) ∈ extP K 𝔭 ^ k := by
         convert hk using 1
@@ -941,7 +910,6 @@ theorem exists_inv_unit {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {b : �
     rw [← map_mul, ← map_mul, eq_sub_iff_add_eq, ← map_add (f := _), ← map_add (f := _), hyi, map_one, map_one]
   rw [mul_assoc, h, ← hu, Units.inv_mul]
 
-
 open Classical in
 def gQ (K : Type) {F : Type} [Field K] [NumberField K] [StarRing K] [Field F] [NumberField F]
     [Algebra F K] [Fact (IsFixF K F)] {m : ℕ} {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) (k : ℕ)
@@ -956,7 +924,7 @@ theorem gQ_mul_diagQ {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) (k : ℕ) 
   funext j
   by_cases h : a j ∈ 𝔭
   · simp [h]
-  · rw [dite_eq_right h, if_neg h, sub_zero]
+  · rw [dite_eq_right h, ite_eq_right h, sub_zero]
     exact (exists_inv_unit (K := K) h𝔭 h k).choose_spec
 
 theorem diag_comm {R : Type*} [CommRing R] {n : Type*} [Fintype n] [DecidableEq n] (d d' : n → R) :
@@ -981,7 +949,7 @@ theorem norm_shape_holds : NormShape := by
   have hE : Eᴴ = E := eQ_conjTranspose 𝔭 k a
   have hEE' : ∀ M : Matrix (Fin m) (Fin m) (𝓞 K ⧸ extP K 𝔭 ^ k), E * (E * M) = E * M :=
     fun M => by rw [← Matrix.mul_assoc, hEE]
-  have hHh : Hᴴ = H := diagQ_conjTranspose 𝔭 k a
+  have hHh : Hᴴ = H := Formalism.L2.SG.Pf.LocalizedFibreSets.diagQ_herm 𝔭 k a
   have hE0E : (1 - E) * E = 0 := by rw [Matrix.sub_mul, Matrix.one_mul, hEE, sub_self]
   have hEE0 : E * (1 - E) = 0 := by rw [Matrix.mul_sub, Matrix.mul_one, hEE, sub_self]
   have hE0E0 : (1 - E) * (1 - E) = 1 - E := by rw [Matrix.sub_mul, Matrix.one_mul, hEE0, sub_zero]

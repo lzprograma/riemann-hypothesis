@@ -4,56 +4,7 @@ public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsCh
 public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.RenameProdMapMul
 public import GroundTheory.HeightsAndTheta.Heights.ChowForms.Assembly
 import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormBirational
-import Mathlib.Algebra.AffineMonoid.UniqueSums
 import Mathlib.Algebra.MvPolynomial.NoZeroDivisors
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -64,28 +15,6 @@ namespace GroundTheory.Heights₂.Heights
 open MvPolynomial
 
 noncomputable section
-
-theorem not_dvd_pderiv_of_pderiv_ne_zero {F σ : Type*} [Field F] {g : MvPolynomial σ F}
-    (hg : g ≠ 0) {i : σ} (hne : pderiv i g ≠ 0) : ¬ g ∣ pderiv i g := by
-  classical
-  rintro ⟨q, hq⟩
-  have hi : 0 < degreeOf i g := by
-    obtain ⟨m, hm⟩ := support_nonempty.2 hne
-    rw [mem_support_iff, coeff_pderiv] at hm
-    have h1 : m + Finsupp.single i 1 ∈ g.support := mem_support_iff.2 (left_ne_zero_of_mul hm)
-    have := monomial_le_degreeOf i h1
-    simp only [Finsupp.add_apply, Finsupp.single_eq_same] at this
-    omega
-  have hlt : degreeOf i (pderiv i g) < degreeOf i g := by
-    rw [degreeOf_lt_iff hi]
-    intro m hm
-    rw [mem_support_iff, coeff_pderiv] at hm
-    have h1 : m + Finsupp.single i 1 ∈ g.support := mem_support_iff.2 (left_ne_zero_of_mul hm)
-    have := monomial_le_degreeOf i h1
-    simp only [Finsupp.add_apply, Finsupp.single_eq_same] at this
-    omega
-  rw [hq, degreeOf_mul_eq hg (right_ne_zero_of_mul (hq ▸ hne))] at hlt
-  omega
 
 theorem IsChowForm.exists_pderiv_ne_zero {F : Type} [Field F] [IsAlgClosed F] {p : ℕ} [hp : Fact p.Prime]
     [CharP F p] {n k : ℕ} {P : Ideal (MvPolynomial (Fin n) F)} (hP : IsProjPrime P)
@@ -162,45 +91,8 @@ theorem ChowFormBirationalAlgClosed.proof : ChowFormBirationalAlgClosed.Statemen
   intro F _ _ n k P g c hP hg hc
   obtain _ | ⟨p, hp, hch⟩ := CharP.exists' F
   · exact ChowFormBirational.full F n k P g c hP hg hc
-  have := hP.isPrime
-  classical
-
-  have hmem : ∀ h, h ∈ incIdeal P (k + 1) ↔ g ∣ h := by
-    intro h
-    rw [← hg.2 h, incIdeal]
-    simp only [Submodule.mem_iInf, RingHom.mem_ker]
-  have hg0 : aeval (genSubst (genPt P) c) g = 0 :=
-    (IncidenceGeneric.full F n (k + 1) P c hc g).1 ((hmem g).2 dvd_rfl)
-
-  have hA : ∀ m, aeval (genSubst (genPt P) c) (pderiv (0, m) g) =
-      C (genPt P m) * ∑ l, aeval (genSubst (genPt P) c) (pderiv (0, l) g) * C (c l) := by
-    intro m
-    have h := pderiv_aeval_eq_sum (genSubst (genPt P) c) (0, m) g
-    rw [hg0, map_zero] at h
-    simp only [pderiv_genSubst, mul_sub, Finset.sum_sub_distrib, mul_ite, mul_one, mul_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true, Fintype.sum_prod_type, Fin.sum_univ_succ,
-      Fin.succ_ne_zero, if_false, Finset.sum_const_zero, add_zero] at h
-    rw [eq_comm, sub_eq_zero] at h
-    rw [h, Finset.mul_sum]
-    exact Finset.sum_congr rfl fun l _ => by ring
-  obtain ⟨ρ, hρ⟩ : ∃ ρ, ∀ m, aeval (genSubst (genPt P) c) (pderiv (0, m) g) = C (genPt P m) * ρ :=
-    ⟨_, hA⟩
-
   obtain ⟨l, hl⟩ := IsChowForm.exists_pderiv_ne_zero (p := p) hP hg
-  refine ⟨Pi.single l 1, ?_, fun m => ?_⟩
-  · have hsum : (∑ l', C ((Pi.single l (1 : F) : Fin n → F) l') * pderiv (0, l') g) =
-        pderiv (0, l) g := by
-      rw [Finset.sum_eq_single l]
-      · simp
-      · intro b _ hb; simp [hb]
-      · simp
-    rw [hsum, hmem]
-    exact not_dvd_pderiv_of_pderiv_ne_zero hg.1 hl
-  set_option synthInstance.maxHeartbeats 100000 in
-    · simp only [map_sum, map_mul, aeval_C, MvPolynomial.algebraMap_apply, hρ]
-      simp only [Finset.sum_mul, Finset.mul_sum]
-      refine Finset.sum_congr rfl fun l' _ => ?_
-      ring
+  exact chowFormBirational_of_exists_pderiv_ne_zero IncidenceGeneric.full hP hg hc hl
 
 end
 

@@ -13,8 +13,6 @@ namespace Formalism.L2.SG.Pf.ScalarFramePf
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc ValuativeRel
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Assembly
 
 variable {D : D7} (Z : LocDat D) (p : PlF D)

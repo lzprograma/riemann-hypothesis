@@ -51,7 +51,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.PlaceModel
 
@@ -247,8 +246,8 @@ theorem halfInd_eq_ind (e : AE D) (Λ : AddSubgroup (WO S T)) : halfInd e Λ = i
   funext t
   unfold halfInd ind
   by_cases h : t ∈ Λ ⊓ half S T e
-  · rw [if_pos h, if_pos ⟨h.1, (isHalf_iff S T).2 h.2⟩]
-  · rw [if_neg h, if_neg fun h' => h ⟨h'.1, (isHalf_iff S T).1 h'.2⟩]
+  · rw [ite_eq_left h, ite_eq_left ⟨h.1, (isHalf_iff S T).2 h.2⟩]
+  · rw [ite_eq_right h, ite_eq_right fun h' => h ⟨h'.1, (isHalf_iff S T).1 h'.2⟩]
 
 theorem exists_placeModel (ψ : AddChar (AF D.host.F) ℂ) {e : AE D} (hec : e * cA D e = 0) (Λ : AddSubgroup (WO S T))
     (hLL' : ∀ u ∈ Λ ⊓ half S T e, ∀ y ∈ Λ ⊓ half S T (cA D e), ψ (symplO S T u y) = 1)

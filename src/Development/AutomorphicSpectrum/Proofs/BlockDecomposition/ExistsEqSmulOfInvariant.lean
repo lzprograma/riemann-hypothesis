@@ -56,8 +56,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC PositivityTheory.PfSWUS
 open PositivityTheory.Rg.Rsw PositivityTheory.Rg.Rsw.L
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.CompanionTheory.OrbUniq
 
 theorem exists_eq_smul_of_invariant {Γ Y : Type*} [MeasurableSpace Γ] [MeasurableSpace Y]
@@ -153,9 +151,6 @@ theorem mx_facts (D : D7) (a b : ℕ) : LocallyCompactSpace (Mx D a b) ∧ Secon
     inferInstanceAs (T2Space (Fin a → Fin b → AE D)),
     inferInstanceAs (IsTopologicalAddGroup (Fin a → Fin b → AE D)), ⟨rfl⟩⟩
 
-theorem mt_mul (V : HSp D) (g h : GA D V) : Formalism.L2.Theta.mt V (g * h) = Formalism.L2.Theta.mt V g * Formalism.L2.Theta.mt V h := by
-  simp [Formalism.L2.Theta.mt, map_mul]
-
 theorem mt_one (V : HSp D) : Formalism.L2.Theta.mt V 1 = 1 := by
   simp [Formalism.L2.Theta.mt, map_one]
 
@@ -176,7 +171,7 @@ def gS (V : HSp D) (e : AE D) : Subgroup (GA D V) where
   mul_mem' := by
     intro g h hg hh
     change e • (Formalism.L2.Theta.mt V (g * h) - 1) = Formalism.L2.Theta.mt V (g * h) - 1
-    rw [mt_mul]
+    rw [GlobalTheory.BesselCompare.mt_mul]
     exact smul_sub_one_mul e _ _ hg hh
   one_mem' := by
     change e • (Formalism.L2.Theta.mt V 1 - 1) = Formalism.L2.Theta.mt V 1 - 1
@@ -184,7 +179,7 @@ def gS (V : HSp D) (e : AE D) : Subgroup (GA D V) where
   inv_mem' := by
     intro h hh
     change e • (Formalism.L2.Theta.mt V h⁻¹ - 1) = Formalism.L2.Theta.mt V h⁻¹ - 1
-    exact smul_sub_one_inv e (Formalism.L2.Theta.mt V h) _ (by rw [← mt_mul, inv_mul_cancel, mt_one]) hh
+    exact smul_sub_one_inv e (Formalism.L2.Theta.mt V h) _ (by rw [← GlobalTheory.BesselCompare.mt_mul, inv_mul_cancel, mt_one]) hh
 
 theorem isClosed_gS (V : HSp D) (e : AE D) : IsClosed (gS V e : Set (GA D V)) := by
   obtain ⟨h1, h2, h3, h4, h5⟩ := mx_facts D V.rank V.rank
@@ -263,8 +258,6 @@ theorem qmp_prodMap {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y] {μ : 
 end GlobalTheory.CompanionTheory.OrbUniq
 
 namespace GlobalTheory.CompanionTheory.OrbUniq
-
-
 
 theorem uniq_of_trans : IdemEx → NullSing → Trans → Uniq := by
   intro hI hN hT D r t V b₀ hb S e he ν ν' hν hν' hne

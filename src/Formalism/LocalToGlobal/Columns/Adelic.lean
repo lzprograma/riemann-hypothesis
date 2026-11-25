@@ -55,22 +55,22 @@ def mirab (κ : Type) [CommRing κ] (n : ℕ) [NeZero n] : Subgroup (GL (Fin n) 
     intro x y hx hy j
     show ((x : Matrix (Fin n) (Fin n) κ) * (y : Matrix (Fin n) (Fin n) κ)) (lastIdx n) j = _
     rw [Matrix.mul_apply, Finset.sum_eq_single (lastIdx n)]
-    · rw [hx (lastIdx n), if_pos rfl, one_mul, hy j]
+    · rw [hx (lastIdx n), ite_eq_left rfl, one_mul, hy j]
     · intro l _ hl
-      rw [hx l, if_neg hl, zero_mul]
+      rw [hx l, ite_eq_right hl, zero_mul]
     · intro h; exact absurd (Finset.mem_univ _) h
   inv_mem' := by
     intro x hx j
     have h1 : ((x * x⁻¹ : GL (Fin n) κ) : Matrix (Fin n) (Fin n) κ) (lastIdx n) j =
         (1 : Matrix (Fin n) (Fin n) κ) (lastIdx n) j := by rw [mul_inv_cancel]; rfl
     rw [Units.val_mul, Matrix.mul_apply, Finset.sum_eq_single (lastIdx n)] at h1
-    · rw [hx (lastIdx n), if_pos rfl, one_mul] at h1
+    · rw [hx (lastIdx n), ite_eq_left rfl, one_mul] at h1
       rw [h1, Matrix.one_apply]
       by_cases h : j = lastIdx n
       · simp [h]
       · simp [h, Ne.symm h]
     · intro l _ hl
-      rw [hx l, if_neg hl, zero_mul]
+      rw [hx l, ite_eq_right hl, zero_mul]
     · intro h; exact absurd (Finset.mem_univ _) h
 
 variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ)

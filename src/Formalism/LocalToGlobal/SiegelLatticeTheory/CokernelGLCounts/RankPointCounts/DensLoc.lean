@@ -254,8 +254,8 @@ theorem fvec_eq (F : FlagG S r (T : E)) (F' : FlagG S r (T' : E)) (b : Fin (r + 
     rw [zp_eq F F', add_comm]
     simp [kk]
   | cast b =>
-    simp only [Um, Matrix.of_apply, FlagG.fvec, Fin.snoc_castSucc, if_neg (Fin.castSucc_ne_last b),
-      ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true, gv]
+    simp only [Um, Matrix.of_apply, FlagG.fvec, Fin.snoc_castSucc, ite_eq_right (Fin.castSucc_ne_last b),
+      ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, gv]
 
 theorem zhat_eq_mul (F : FlagG S r (T : E)) (F' : FlagG S r (T' : E)) :
     Zhat F F' = (Matrix.of fun a b => S.hT (F.fvec a) (gv F F' b)) * Um F F' := by
@@ -358,7 +358,7 @@ theorem gflag_pos (F : FlagG S r (T : E)) (F' : FlagG S r (T' : E)) (τ : E →+
       intro i j hij
       rcases i with a | bi <;> rcases j with b | bj
       · have hab : a ≠ b := fun h => hij (by rw [h])
-        simp only [w, Sum.elim_inl, h_v_v F F' hP, if_neg hab]
+        simp only [w, Sum.elim_inl, h_v_v F F' hP, ite_eq_right hab]
       · cases bj
         · simp only [w, Sum.elim_inl, Sum.elim_inr]; exact h_v_zt F F' hP a
         · simp only [w, Sum.elim_inl, Sum.elim_inr]; exact hermForm_vector_orth_second F F' hP a
@@ -416,8 +416,6 @@ namespace PI.CntNotPosW
 open NumberField Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.CntLocal
 open Classical
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem totPos_of_flags (D : Formalism.BasicNotions.D7) {T T' : ℕ} (F : FlagG (VS D) D.R.rS (T : D.host.E))
     (F' : FlagG (VS D) D.R.rS (T' : D.host.E)) (hG : Gflag F F' ≠ 0) : TotPos (Gflag F F') := by
   unfold TotPos
@@ -446,8 +444,6 @@ namespace Formalism.L2.SG.Pf.DensLoc
 open NumberField Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.CntLocal Formalism.L2.SG.DataCut Formalism.L2.SG.DataInst
 open Formalism.HermitianLattices.Ext.L3
 open Classical ValuativeRel
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem prod_lower_third {x : ℝ} (hx0 : 0 ≤ x) (hx : x ≤ 1 / 3) {η : ℝ} (hη : η = 1 ∨ η = -1) (a b : ℕ)
     (ha : 1 ≤ a) : Real.exp (-(3 * x ^ a)) ≤ ∏ i ∈ Finset.Icc a b, (1 - η ^ i * x ^ i) := by
@@ -618,8 +614,7 @@ theorem densLocBound_at {D : Formalism.BasicNotions.D7} (h5 : DensAllAt D) : Den
       _ ≤ Real.exp (4 * y) * alpD u u' p := mul_le_mul_of_nonneg_left hαl (Real.exp_pos _).le
   · refine (qP_lt_three_finite D).subset fun p hp => ?_
     simp only [Set.mem_setOf_eq] at hp ⊢
-    by_contra h3
-    push_neg at h3
+    by_contra! h3
     obtain ⟨-, -, hlo⟩ := key p
     obtain ⟨hαl, hαu⟩ := hα p
     have hαpos : 0 < alpD u u' p := lt_of_lt_of_le (Real.exp_pos _) hαl

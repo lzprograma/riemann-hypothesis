@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierJacobiInvariantFunctionIntegrable
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
 public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EncardSmulMemLeEncardSmulInterNonempty
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WeilRepresentationContinuous
@@ -52,7 +53,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf
 
 namespace GlobalTheory.Unf.EvalCont
@@ -106,15 +106,7 @@ end General
 variable {D : D7} {ψ : AddChar (AF D.host.F) ℂ}
 
 theorem vol_lt_top {V : HSp D} (hV : CoCpt V) (v : Vol V) : v.μ v.𝓕 < ⊤ := by
-  obtain ⟨i1, i2, i3, i4, i5, i6, i7⟩ := GlobalTheory.Mem.AdelicGroupTop.adelic_unitary_topology D V
-  obtain ⟨K, hK, hc⟩ := hV
-  have := v.haar
-  have := Formalism.L2.GlobalTheoryTheory.GenusMassVolumes.Unfold.measurableConstSMul_subgroup (GQ V)
-  have := Formalism.L2.GlobalTheoryTheory.GenusMassVolumes.Unfold.smulInvariant_subgroup (GQ V) v.μ
-  refine lt_of_le_of_lt (GlobalTheory.measure_le_of_isFundamentalDomain_of_ae_covers v.fund (.of_forall fun g => ?_))
-    hK.measure_lt_top
-  obtain ⟨γ, hγ, h⟩ := hc g
-  exact ⟨⟨γ, hγ⟩, h⟩
+  apply _root_.GlobalTheory.Unf.vol_fund_lt_top <;> assumption
 
 theorem bounded_of_contAut {V : HSp D} (hV : CoCpt V) {φ : GA D V → ℂ} (hφ : IsContAut V φ) : ∃ C : ℝ, ∀ g, ‖φ g‖ ≤ C := by
   obtain ⟨K, hK, hc⟩ := hV

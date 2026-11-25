@@ -92,7 +92,7 @@ theorem inv_one_sub_C_mul_X (c : ℂ) :
   | zero => simp
   | succ n =>
     rw [map_sub, PowerSeries.coeff_C_mul, PowerSeries.coeff_succ_mul_X, PowerSeries.coeff_mk,
-      PowerSeries.coeff_mk, PowerSeries.coeff_one, if_neg (Nat.succ_ne_zero n), pow_succ]
+      PowerSeries.coeff_mk, PowerSeries.coeff_one, ite_eq_right (Nat.succ_ne_zero n), pow_succ]
     ring
 
 theorem resSeries_eq_sum {n : ℕ} {a : Fin n → ℂ} (ha : Function.Injective a) :
@@ -187,7 +187,7 @@ theorem ratioVd_add_single_mul {μ : Fin n → ℝ} (s : Fin n) (hμ : Function.
     apply hμs
     simp [hne]
     linarith
-  simp only [Pi.add_apply, Pi.single_eq_same, Pi.single_apply, hne, if_false, add_zero]
+  simp only [Pi.add_apply, Pi.single_eq_same, Pi.single_apply, hne, ite_false, add_zero]
   rw [show μ s + 1 - 1 - μ s' = μ s - μ s' by ring]
   field_simp
 

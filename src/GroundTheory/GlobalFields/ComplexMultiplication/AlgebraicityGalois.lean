@@ -125,11 +125,5 @@ theorem galClassOf_apply_j (τ : M ≃ₐ[K] M) (y : ELL K) :
 
 end Field
 
-section Adjoin
-
-variable (x : ELL K)
-
-end Adjoin
-
 end Elliptic
 end GroundTheory.Global

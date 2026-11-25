@@ -39,58 +39,12 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormFockLSqL
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormalisedFamilyNonzeroThetaVectorsNumberField
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormalisedFamilyNormBoundAbsoluteConstant
 import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsClassFam
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTwoTorsionCMPointAllConjugates
 import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IndexExponentDegree
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.SelfDualComap
-import Mathlib.RingTheory.PiTensorProduct
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalToGlobal.KernelLattices.LateralTheory
 import Formalism.LocalToGlobal.KernelLattices.ThDistC
@@ -333,7 +287,7 @@ theorem exists_weights : ∀ (K : Type) [Field K] [NumberField K] [_root_.Number
     exact hw (by simp [hne])
   · intro ρ
     rw [← Finset.sum_mul, Finset.sum_ite_eq]
-    simp only [Finset.mem_univ, if_true]
+    simp only [Finset.mem_univ, ite_true]
     field_simp
 
 end GlobalTheory.PlaceWeights
@@ -505,12 +459,10 @@ open GlobalTheory.ColNorms GlobalTheory.ColNorms.NumMean
 
 theorem exists_le_wtSum {α : Type} [Fintype α] (w f : α → ℝ) (h0 : ∀ a, 0 ≤ w a) (h1 : ∑ a, w a = 1) :
     ∃ a, w a ≠ 0 ∧ f a ≤ ∑ b, w b * f b := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   have h2 : ∑ a, w a * (∑ b, w b * f b) < ∑ a, w a * f a := by
     obtain ⟨a, ha⟩ : ∃ a, w a ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       simp [h] at h1
     refine Finset.sum_lt_sum (fun b _ => ?_) ⟨a, Finset.mem_univ _, ?_⟩
     · by_cases hb : w b = 0
@@ -575,7 +527,6 @@ theorem sum_filter_ge {J : Type} [Fintype J] {m : ℕ} (hm : 2 ≤ m) (eJ : J �
     simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert, Finset.mem_singleton]
     constructor
     · intro h
-      have h2 := (eJ l).2
       rcases (by omega : (eJ l).1 = m - 2 ∨ (eJ l).1 = m - 1) with h3 | h3
       · left
         rw [Equiv.eq_symm_apply]
@@ -848,9 +799,7 @@ theorem kerSide_of_meansS {J Emb α : Type} [Fintype J] [Fintype Emb] [Fintype �
   have hLL := L_le_La N
   have hg0 : (1 : ℝ) ≤ N.g 0 := by exact_mod_cast (N.g_prime 0).one_lt.le
   have hg1 : (1 : ℝ) ≤ N.g 1 := by exact_mod_cast (N.g_prime 1).one_lt.le
-  have hT1 : (1 : ℝ) ≤ T := by exact_mod_cast (by omega : 1 ≤ T)
   have hlg0 : 0 ≤ Real.log ((N.g 0 : ℝ) * N.g 1) := Real.log_nonneg (one_le_mul_of_one_le_of_one_le hg0 hg1)
-  have hlT0 : 0 ≤ Real.log (T : ℝ) := Real.log_nonneg hT1
   have hlog : Real.log ((N.g 0 : ℝ) * N.g 1 * T) = Real.log ((N.g 0 : ℝ) * N.g 1) + Real.log (T : ℝ) :=
     Real.log_mul (by positivity) (by positivity)
   have hU0 : 0 ≤ errUnit N T := by
@@ -858,7 +807,6 @@ theorem kerSide_of_meansS {J Emb α : Type} [Fintype J] [Fintype Emb] [Fintype �
     rw [hlog]
     positivity
   set C : ℝ := CK + 2 * E + 2 * Ct + 20 + 2 * max CY 0 with hC
-  have hC0 : 0 ≤ C := by positivity
   have hX0 : 0 ≤ E * errUnit N T := mul_nonneg hE hU0
   unfold KerSide
   refine ⟨fun l => (N.R.N (eJ l).1 : ℝ) * (N.R.N ((eJ l).1 + 1) : ℝ),
@@ -925,7 +873,6 @@ theorem kerSide_of_meansS {J Emb α : Type} [Fintype J] [Fintype Emb] [Fintype �
     have b1 := (hS.2.1 1).2
     have h6 : 2 * max CY 0 + 2 ≤ C := by rw [hC]; linarith
     have c0 : CY * N.sc.L ≤ max CY 0 * N.sc.L := mul_le_mul_of_nonneg_right (le_max_left _ _) (by linarith)
-    have c1 : 2 ≤ 2 * N.sc.L := by linarith
     calc _ ≤ (2 * max CY 0 + 2) * N.sc.L := by linarith
       _ ≤ C * N.sc.L := mul_le_mul_of_nonneg_right h6 (by linarith)
   · refine hP _ fun l v => ?_

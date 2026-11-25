@@ -2,49 +2,6 @@ module
 
 public import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
 public import GroundTheory.ProfiniteCohomology.RestrictedRamification.ClassFieldGSDefs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -110,12 +67,12 @@ def divisorExponent (D : sDivisor S) (v : HeightOneSpectrum (𝓞 K)) : ℤ :=
 omit [NumberField K] in
 theorem divisorExponent_of_not_mem (D : sDivisor S) {v : HeightOneSpectrum (𝓞 K)} (h : v ∉ S) :
     divisorExponent D v = D ⟨v, h⟩ :=
-  dif_neg h
+  dite_eq_right h
 
 omit [NumberField K] in
 theorem divisorExponent_of_mem (D : sDivisor S) {v : HeightOneSpectrum (𝓞 K)} (h : v ∈ S) :
     divisorExponent D v = 0 :=
-  dif_pos h
+  dite_eq_left h
 
 omit [NumberField K] in
 theorem divisorExponent_add (D₁ D₂ : sDivisor S) (v : HeightOneSpectrum (𝓞 K)) :
@@ -139,7 +96,7 @@ theorem finiteProj_divisorIdele (D : sDivisor S) (v : HeightOneSpectrum (𝓞 K)
     · rw [finiteProj_finiteEmbedding_of_ne h, one_zpow]
       by_cases hS : v ∈ S
       · rw [divisorExponent_of_mem _ hS, zpow_zero]
-      · rw [divisorExponent_of_not_mem _ hS, Finsupp.single_apply, if_neg, zpow_zero]
+      · rw [divisorExponent_of_not_mem _ hS, Finsupp.single_apply, ite_eq_right, zpow_zero]
         intro e
         exact h (congrArg Subtype.val e).symm
 
@@ -166,9 +123,9 @@ theorem sPresentation_surjective [Finite S] : Surjective (sPresentation S) := by
   rw [sPresentation_apply]
   apply (QuotientGroup.eq (s := sIdeleSubgroup S)).2
   refine Subgroup.mem_sup_right (mem_unitsOutside.2 ⟨fun v hv ↦ ?_, fun v hv ↦ ?_⟩)
-  · rw [map_mul, map_inv, map_mul, finiteProj_placesIdele, dif_pos hv, toAdd_ofAdd,
+  · rw [map_mul, map_inv, map_mul, finiteProj_placesIdele, dite_eq_left hv, toAdd_ofAdd,
       finiteProj_divisorIdele, divisorExponent_of_mem _ hv, zpow_zero, mul_one, inv_mul_cancel]
-  · rw [mem_unitsLevel_zero_iff, map_mul, map_inv, map_mul, finiteProj_placesIdele, dif_neg hv,
+  · rw [mem_unitsLevel_zero_iff, map_mul, map_inv, map_mul, finiteProj_placesIdele, dite_eq_right hv,
       toAdd_ofAdd, finiteProj_divisorIdele, divisorExponent_of_not_mem _ hv, hD, one_mul,
       Units.val_mul, map_mul, Units.val_inv_eq_inv_val, map_inv₀, valued_localUniformizer_zpow,
       valued_finiteProj]
@@ -184,14 +141,14 @@ theorem ker_sPresentation [Finite S] : (sPresentation S).ker = (principalPresent
     obtain ⟨hS, hout⟩ := mem_unitsOutside.1 hu
     refine ⟨x, Prod.ext (funext fun w ↦ ?_) ?_⟩
     · have e := congrArg (finiteProj w.1) hxu
-      rw [map_mul, hS w.1 w.2, mul_one, map_mul, finiteProj_placesIdele, dif_pos w.2,
+      rw [map_mul, hS w.1 w.2, mul_one, map_mul, finiteProj_placesIdele, dite_eq_left w.2,
         finiteProj_divisorIdele, divisorExponent_of_mem _ w.2, zpow_zero, mul_one] at e
       exact e
     · apply Multiplicative.toAdd.injective
       ext v
       have e := congrArg (fun y ↦ Valued.v ((finiteProj v.1 y : (v.1.adicCompletion K)ˣ) :
         v.1.adicCompletion K)) hxu
-      simp only [map_mul, Units.val_mul, finiteProj_placesIdele, dif_neg v.2,
+      simp only [map_mul, Units.val_mul, finiteProj_placesIdele, dite_eq_right v.2,
         one_mul, finiteProj_divisorIdele, divisorExponent_of_not_mem _ v.2,
         valued_localUniformizer_zpow, valued_diagonal] at e
       rw [(mem_unitsLevel_zero_iff.1 (hout v.1 v.2)), mul_one, WithZero.exp_inj, neg_inj] at e
@@ -207,9 +164,9 @@ theorem ker_sPresentation [Finite S] : (sPresentation S).ker = (principalPresent
     have hu : (diagonal K x)⁻¹ * (placesIdele S (fun w ↦ finiteProj w.1 (diagonal K x)) *
         Additive.toMul (divisorIdele S (divS S (Additive.ofMul x)))) ∈ unitsOutside S := by
       refine mem_unitsOutside.2 ⟨fun v hv ↦ ?_, fun v hv ↦ ?_⟩
-      · rw [map_mul, map_mul, map_inv, finiteProj_placesIdele, dif_pos hv, finiteProj_divisorIdele,
+      · rw [map_mul, map_mul, map_inv, finiteProj_placesIdele, dite_eq_left hv, finiteProj_divisorIdele,
           divisorExponent_of_mem _ hv, zpow_zero, mul_one, inv_mul_cancel]
-      · rw [mem_unitsLevel_zero_iff, map_mul, map_mul, map_inv, finiteProj_placesIdele, dif_neg hv,
+      · rw [mem_unitsLevel_zero_iff, map_mul, map_mul, map_inv, finiteProj_placesIdele, dite_eq_right hv,
           one_mul, finiteProj_divisorIdele, divisorExponent_of_not_mem _ hv, Units.val_mul, map_mul,
           Units.val_inv_eq_inv_val, map_inv₀, valued_diagonal, valued_localUniformizer_zpow]
         exact inv_mul_cancel₀ WithZero.exp_ne_zero

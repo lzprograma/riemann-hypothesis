@@ -92,7 +92,7 @@ theorem Ft_commute {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (ε₀ �
     have := hE c c d d rfl rfl
     by_cases hcd : c = d
     · subst hcd; rfl
-    · rw [if_neg hcd, if_neg (Ne.symm hcd), sub_zero, sub_eq_zero] at this
+    · rw [ite_eq_right hcd, ite_eq_right (Ne.symm hcd), sub_zero, sub_eq_zero] at this
       exact this
   refine LinearMap.ext fun x => funext fun A => ?_
   have h' : E c c (E d d (x A)) = E d d (E c c (x A)) := LinearMap.congr_fun h (x A)

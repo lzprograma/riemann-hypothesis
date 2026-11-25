@@ -47,7 +47,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.JointHarm
 open scoped TensorProduct InnerProductSpace Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.JointHarm
 
@@ -93,7 +92,7 @@ theorem weights_of_minors : ∀ (D : D7) (i : Fin D.R.m) (σ : D.what₂.LL →+
         exact_mod_cast this
       rw [h2]
       unfold wtK
-      rw [if_pos (by simp)]
+      rw [ite_eq_left (by simp)]
       simp
     · have h1 := A.kap_minus c
       rw [hsq, eS, he] at h1
@@ -104,7 +103,7 @@ theorem weights_of_minors : ∀ (D : D7) (i : Fin D.R.m) (σ : D.what₂.LL →+
         exact_mod_cast this
       rw [h2]
       unfold wtK
-      rw [if_neg (by simp)]
+      rw [ite_eq_right (by simp)]
       have h3 : (Wc D i).rank - 1 - ((Fin.cast hn (finSumFinEquiv (Sum.inr c)) : Fin (Wc D i).rank) : ℕ) =
           qS D i τ - 1 - c := by
         simp only [finSumFinEquiv_apply_right, Fin.val_cast, Fin.val_natAdd]
@@ -123,13 +122,13 @@ theorem weights_of_minors : ∀ (D : D7) (i : Fin D.R.m) (σ : D.what₂.LL →+
     simp only [pS, qS] at hpq ⊢
     by_cases c1 : (j : ℕ) < ((Wc D i).sig (tauE D τ)).1
     · have ht := D.R.three_m_lt_t
-      rw [if_pos c1, if_pos c1, if_neg (by omega)]
+      rw [ite_eq_left c1, ite_eq_left c1, ite_eq_right (by omega)]
       ring
-    · rw [if_neg c1, if_neg c1]
+    · rw [ite_eq_right c1, ite_eq_right c1]
       by_cases c2 : (j : ℕ) < ((Wc D i).sig (tauE D τ)).1 + D.R.t
-      · rw [if_pos c2, if_neg (by omega)]
+      · rw [ite_eq_left c2, ite_eq_right (by omega)]
         ring
-      · rw [if_neg c2, if_pos (by omega)]
+      · rw [ite_eq_right c2, ite_eq_left (by omega)]
         have h3 : (Vc D i).rank - 1 - (j : ℕ) = ((Wc D i).sig (tauE D τ)).2 - 1 - (j - (((Wc D i).sig (tauE D τ)).1 + D.R.t)) := by
           omega
         rw [h3]

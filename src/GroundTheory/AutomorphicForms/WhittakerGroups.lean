@@ -104,11 +104,11 @@ theorem mul_apply_of_val_eq_succ {u v : GL (Fin n) F} (hu : u ∈ Iwasawa.unipot
     intro k
     by_cases hki : k = i
     · subst hki
-      rw [if_pos rfl, if_neg hne, hu.2 k, one_mul, add_zero]
+      rw [ite_eq_left rfl, ite_eq_right hne, hu.2 k, one_mul, add_zero]
     by_cases hkj : k = j
     · subst hkj
-      rw [if_neg hki, if_pos rfl, hv.2 k, mul_one, zero_add]
-    rw [if_neg hki, if_neg hkj, add_zero]
+      rw [ite_eq_right hki, ite_eq_left rfl, hv.2 k, mul_one, zero_add]
+    rw [ite_eq_right hki, ite_eq_right hkj, add_zero]
     rcases lt_or_gt_of_ne hki with hlt | hgt
     · rw [hu.1 hlt, zero_mul]
     · have : j < k := by
@@ -118,7 +118,7 @@ theorem mul_apply_of_val_eq_succ {u v : GL (Fin n) F} (hu : u ∈ Iwasawa.unipot
         omega
       rw [hv.1 this, mul_zero]
   rw [Finset.sum_congr rfl fun k _ => key k, Finset.sum_add_distrib, Finset.sum_ite_eq',
-    Finset.sum_ite_eq', if_pos (Finset.mem_univ _), if_pos (Finset.mem_univ _), add_comm]
+    Finset.sum_ite_eq', ite_eq_left (Finset.mem_univ _), ite_eq_left (Finset.mem_univ _), add_comm]
 
 theorem superdiagSum_mul {u v : GL (Fin n) F} (hu : u ∈ Iwasawa.unipotent F n)
     (hv : v ∈ Iwasawa.unipotent F n) :
@@ -190,7 +190,7 @@ theorem sigmaMat_one : sigmaMat (1 : Matrix (Fin n) (Fin n) F) = 1 := by
   simp only [sigmaMat_apply, Matrix.one_apply, Fin.rev_inj]
   by_cases h : i = j
   · simp [h]
-  · rw [if_neg (Ne.symm h), if_neg h]
+  · rw [ite_eq_right (Ne.symm h), ite_eq_right h]
 
 omit [Field F] in
 theorem sigmaMat_sigmaMat (M : Matrix (Fin n) (Fin n) F) : sigmaMat (sigmaMat M) = M := by
@@ -218,8 +218,8 @@ theorem superdiagSum_sigmaMat (M : Matrix (Fin n) (Fin n) F) :
     have := b.isLt
     omega
   by_cases h : b.val = a.val + 1
-  · rw [if_pos (hiff.2 h), if_pos h]
-  · rw [if_neg (fun h' => h (hiff.1 h')), if_neg h]
+  · rw [ite_eq_left (hiff.2 h), ite_eq_left h]
+  · rw [ite_eq_right (fun h' => h (hiff.1 h')), ite_eq_right h]
 
 def sigma (g : GL (Fin n) F) : GL (Fin n) F :=
   ⟨sigmaMat (g : Matrix (Fin n) (Fin n) F), sigmaMat ((g⁻¹ : GL (Fin n) F) : Matrix (Fin n) (Fin n) F),
@@ -324,8 +324,8 @@ theorem sigma_permGL (w : Equiv.Perm (Fin n)) :
       rw [h]
       simp
   by_cases h : Fin.rev j = w (Fin.rev i)
-  · rw [if_pos h, if_pos (hiff.1 h)]
-  · rw [if_neg h, if_neg (fun h' => h (hiff.2 h'))]
+  · rw [ite_eq_left h, ite_eq_left (hiff.1 h)]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h (hiff.2 h'))]
 
 theorem sigma_mem_doubleCoset_permGL {g : GL (Fin n) F} {w : Equiv.Perm (Fin n)}
     (hg : g ∈ doubleCoset (permGL F w) (borel n F : Set (GL (Fin n) F)) (borel n F)) :
@@ -350,8 +350,8 @@ theorem sigma_diag_mul_permGL_eq (t : Fin n → Fˣ) (w : Equiv.Perm (Fin n))
     · intro h
       rw [h, hw j]
   by_cases h : i = w j
-  · rw [if_pos (hiff.2 h), if_pos h, h, ht j]
-  · rw [if_neg (fun h' => h (hiff.1 h')), if_neg h]
+  · rw [ite_eq_left (hiff.2 h), ite_eq_left h, h, ht j]
+  · rw [ite_eq_right (fun h' => h (hiff.1 h')), ite_eq_right h]
 
 theorem single_mul_single_self_of_ne {i j : Fin n} (h : i ≠ j) (a b : F) :
     Matrix.single i j a * Matrix.single i j b = 0 :=
@@ -400,10 +400,10 @@ theorem rootElt_mem_unipotent {i j : Fin n} (h : i < j) (a : F) :
   have hne : i ≠ j := ne_of_lt h
   refine ⟨fun r c hrc => ?_, fun r => ?_⟩
   · rw [rootElt_apply hne, Matrix.one_apply_ne (ne_of_gt (show c < r from hrc)), zero_add]
-    refine if_neg fun e => ?_
+    refine ite_eq_right fun e => ?_
     rw [← e.1, ← e.2] at hrc
     exact lt_asymm h hrc
-  · rw [rootElt_apply hne, Matrix.one_apply_eq, if_neg fun e => hne (e.1.trans e.2.symm), add_zero]
+  · rw [rootElt_apply hne, Matrix.one_apply_eq, ite_eq_right fun e => hne (e.1.trans e.2.symm), add_zero]
 
 theorem superdiagSum_add (M M' : Matrix (Fin n) (Fin n) F) :
     superdiagSum (M + M') = superdiagSum M + superdiagSum M' := by
@@ -447,7 +447,7 @@ theorem diag_mul_permGL_mul_single (t : Fin n → Fˣ) (w : Equiv.Perm (Fin n)) 
     by_cases hr : r = w i
     · subst hr
       simp
-    · rw [if_neg hr, if_neg (fun e => hr (e.1.symm)), zero_mul]
+    · rw [ite_eq_right hr, ite_eq_right (fun e => hr (e.1.symm)), zero_mul]
   · rw [Matrix.mul_single_apply_of_ne _ _ _ _ _ hc, Matrix.single_apply_of_col_ne _ _ (Ne.symm hc)]
 
 theorem single_mul_diag_mul_permGL (t : Fin n → Fˣ) (w : Equiv.Perm (Fin n)) (k j : Fin n)
@@ -462,7 +462,7 @@ theorem single_mul_diag_mul_permGL (t : Fin n → Fˣ) (w : Equiv.Perm (Fin n)) 
     by_cases hc : c = j
     · subst hc
       simp
-    · rw [if_neg (fun e => hc (w.injective e).symm), if_neg (fun e => hc e.2.symm), mul_zero]
+    · rw [ite_eq_right (fun e => hc (w.injective e).symm), ite_eq_right (fun e => hc e.2.symm), mul_zero]
   · rw [Matrix.single_mul_apply_of_ne _ _ _ _ _ hr, Matrix.single_apply_of_row_ne (Ne.symm hr)]
 
 theorem conj_rootElt (t : Fin n → Fˣ) (w : Equiv.Perm (Fin n)) (i j : Fin n) (a : F) :

@@ -1,48 +1,8 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstKernelPropertiesOfHypotheses
 public import Formalism.HermitianCurvature.StatementJ
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -83,25 +43,8 @@ theorem psd_sum {ι : Type} {F : Finset α} (s : Finset ι) (k : ι → α → �
 
 theorem pull [DecidableEq X] (η : α → X) (F : Finset α) (k : X → X → ℂ) (h : A5.IsPSD (F.image η) k) :
     A5.IsPSD F (fun x y => k (η x) (η y)) := by
-  intro a
-  set b : X → ℂ := fun x' => ∑ x ∈ F with η x = x', a x with hb
-  have inner : ∀ (c : ℂ) (x' : X), ∑ y' ∈ F.image η, c * conj (b y') * k x' y' =
-      ∑ y ∈ F, c * conj (a y) * k x' (η y) := by
-    intro c x'
-    apply Finset.sum_image'
-    intro i _
-
-    simp only [hb, map_sum, mul_sum, sum_mul]
-    exact sum_congr rfl fun j hj => by rw [(mem_filter.1 hj).2]
-  have key : ∑ x' ∈ F.image η, ∑ y' ∈ F.image η, b x' * conj (b y') * k x' y' =
-      ∑ x ∈ F, ∑ y ∈ F, a x * conj (a y) * k (η x) (η y) := by
-    apply Finset.sum_image'
-    intro i _
-    rw [inner]
-    simp only [hb, sum_mul]
-    rw [sum_comm]
-    exact sum_congr rfl fun j hj => by rw [(mem_filter.1 hj).2]
-  rw [← key]; exact h b
+  intros
+  apply _root_.Formalism.FourierDecayAlt.P.A5x6.psd_comap <;> assumption
 
 end gen
 
@@ -194,7 +137,7 @@ theorem local_pullback : LocalPullback := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
   ·
     intro t t' ht ht' h hh h' hh' hne
-    simp only [pullSys, dif_pos (And.intro ht ht')] at hne
+    simp only [pullSys, dite_eq_left (And.intro ht ht')] at hne
     have := hA2.2 K R ψ hD s hs (η h) (η h') _ _ (by rw [hm h hh, hm h' hh']) hne
     rw [hτi, hτi] at this
     show t⁻¹ - t'⁻¹ ∈ R.toAddSubgroup.comap
@@ -213,7 +156,7 @@ theorem local_pullback : LocalPullback := by
     have h2 := Jx9.pull (fun h => (η h, u * Units.map (σ : E →* K) (Units.mk0 t ht))) F _ h1
     refine Jx9.psd_congr h2 ?_
     intro x _ y _
-    simp only [pullSys, dif_pos (And.intro ht ht)]
+    simp only [pullSys, dite_eq_left (And.intro ht ht)]
   ·
     intro t t' htt h _ h' _
     show Θ ((u : K) * σ t) (η h) (η h') = Θ ((u : K) * σ t') (η h) (η h')
@@ -229,7 +172,7 @@ theorem local_pullback : LocalPullback := by
     have h2 := Jx9.pull η F _ (p4 (u * Units.map (σ : E →* K) (Units.mk0 t ht)))
     refine Jx9.psd_congr h2 ?_
     intro x _ y _
-    simp only [pullSys, dif_pos (And.intro ht ht), hτ]
+    simp only [pullSys, dite_eq_left (And.intro ht ht), hτ]
   ·
     intro R0 hR0
     apply tb
@@ -281,7 +224,7 @@ theorem local_unit_heads : LocalUnitHeads := by
   have h0 : A5.N0 R ψ (η x) (η y) = 1 :=
     hN0 K R ψ hψ _ _ (by rw [hm x hx, hm y hy]) (hG x hx) (hG y hy)
   simp only [hmem, h0, hτ]
-  simp only [pullSys, dif_pos (And.intro ht ht)]
+  simp only [pullSys, dite_eq_left (And.intro ht ht)]
   ring
 
 open Classical in
@@ -296,7 +239,7 @@ theorem top_pullback : TopPullback := by
     have htt : t = t' := by
       by_contra hn
       apply hne
-      simp only [topSys, if_neg hn]
+      simp only [topSys, ite_eq_right hn]
     show t⁻¹ - t'⁻¹ ∈ (⊥ : AddSubgroup E)
     rw [htt, sub_self]; exact AddSubgroup.zero_mem _
   ·
@@ -304,7 +247,7 @@ theorem top_pullback : TopPullback := by
     apply tb
     refine Jx9.psd_congr (Jx9.pull η F _ (p2 ((u : K) * σ t - τ₀))) ?_
     intro x _ y _
-    simp only [topSys, if_true]
+    simp only [topSys, ite_true]
   ·
     intro t t' htt h _ h' _
     show Θ ((u : K) * σ t - τ₀) (η h) (η h') = Θ ((u : K) * σ t' - τ₀) (η h) (η h')
@@ -320,7 +263,7 @@ theorem top_pullback : TopPullback := by
     apply tb
     refine Jx9.psd_congr (Jx9.psd_zero F) ?_
     intro x _ y _
-    simp only [topSys, if_true, sub_self]
+    simp only [topSys, ite_true, sub_self]
   ·
     intro R0 hR0
     apply tb

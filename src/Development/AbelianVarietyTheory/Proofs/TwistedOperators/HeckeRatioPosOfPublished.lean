@@ -1,5 +1,8 @@
 module
 
+
+import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsPrimeIdemOfComp
+import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaAdjointScalarParts
 public import Mathlib.NumberTheory.NumberField.InfinitePlace.TotallyRealComplex
 public import Mathlib.RingTheory.Flat.Basic
 public import Formalism.UnipotentAdelicQuotients.ThmBInHecke
@@ -65,7 +68,6 @@ import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.TypeStar
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OneSubRePosOfNormLeHalf
 import Std.Tactic.BVDecide.Normalize.Prop
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeAlgebraMapOfConjFixed, Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CmCharacterConjugateInverse, Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CmCharacterConjugationSymmetry, Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsPrimeIdempotentCMField, Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PrimeIdempotentEqIndicatorPrime, Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CmLocalCharacterValueBounded, Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealPosAtOneOfRight, Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeRatioPosOfPublished
 
@@ -217,16 +219,7 @@ namespace GlobalTheory.PrimeIdemExists
 
 theorem exists_indicator (K : Type) [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K)) :
     ∃ a : FiniteAdeleRing (𝓞 K) K, a v = 1 ∧ ∀ w, w ≠ v → a w = 0 := by
-  refine ⟨(⟨fun w => if w = v then 1 else 0, ?_⟩ :
-    RestrictedProduct (fun w : HeightOneSpectrum (𝓞 K) => w.adicCompletion K)
-      (fun w => (w.adicCompletionIntegers K : Set (w.adicCompletion K))) Filter.cofinite), ?_, ?_⟩
-  · refine Filter.Eventually.of_forall fun w => ?_
-    beta_reduce
-    by_cases h : w = v
-    · rw [if_pos h]; exact one_mem (w.adicCompletionIntegers K)
-    · rw [if_neg h]; exact zero_mem (w.adicCompletionIntegers K)
-  · exact if_pos rfl
-  · intro w hw; exact if_neg hw
+  first | exact _root_.GlobalTheory.CMPrimeIdele.exists_single | exact @_root_.GlobalTheory.CMPrimeIdele.exists_single | apply _root_.GlobalTheory.CMPrimeIdele.exists_single <;> assumption
 
 theorem cA_algebraMap {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (σ : E →ₐ[F] E) (ε : AF F) :
@@ -272,8 +265,8 @@ theorem exists_isPrimeIdem : ∀ (F E : Type) [Field F] [NumberField F] [Field E
       · rw [mulap, hη3]; split_ifs <;> simp
     refine ⟨η, η, Or.inr ⟨rfl, ⟨_, ε, hε, rfl⟩, ?_⟩⟩
     refine (crit η P _ ε hε hηη hηη).2 ⟨hη1, ?_, fun Q hQ => ?_⟩
-    · rw [hη3, if_pos (Or.inl rfl)]
-    · rw [hη3, if_neg]
+    · rw [hη3, ite_eq_left (Or.inl rfl)]
+    · rw [hη3, ite_eq_right]
       rw [hP]; simpa using hQ
   · obtain ⟨β, hβ1, hβ0⟩ := exists_indicator E P
     set e : AE F E := Φ.symm (0, β) with he
@@ -297,7 +290,7 @@ theorem exists_isPrimeIdem : ∀ (F E : Type) [Field F] [NumberField F] [Field E
       · rw [Prod.fst_mul, he1, zero_mul]
       · rw [mulap]
         by_cases hQ : Q = P
-        · rw [hη3, if_pos (Or.inl hQ), mul_one]
+        · rw [hη3, ite_eq_left (Or.inl hQ), mul_one]
         · rw [he0 Q hQ, zero_mul]
     have hcr := (crit e P _ ε hε hee heη).2 ⟨he1, heP, he0⟩
     have hσσ : ∀ x : E, σ (σ x) = x := by
@@ -340,11 +333,11 @@ theorem exists_isPrimeIdem : ∀ (F E : Type) [Field F] [NumberField F] [Field E
       · rw [addap, hη3]
         by_cases hQ : Q = P
         · subst hQ
-          rw [heP, hc0 _ (fun h => hP h.symm), add_zero, if_pos (Or.inl rfl)]
+          rw [heP, hc0 _ (fun h => hP h.symm), add_zero, ite_eq_left (Or.inl rfl)]
         · by_cases hQ' : Q = c P
           · subst hQ'
-            rw [he0 _ hQ, hcP, zero_add, if_pos (Or.inr rfl)]
-          · rw [he0 _ hQ, hc0 _ hQ', add_zero, if_neg (by tauto)]
+            rw [he0 _ hQ, hcP, zero_add, ite_eq_left (Or.inr rfl)]
+          · rw [he0 _ hQ, hc0 _ hQ', add_zero, ite_eq_right (by tauto)]
 
 end GlobalTheory.PrimeIdemExists
 end -- clump:auto
@@ -691,17 +684,7 @@ variable {D : D7}
 
 theorem offS_iff (S : Finset (HeightOneSpectrum (𝓞 D.host.F))) (w : HeightOneSpectrum (𝓞 D.host.E)) :
     OffS D S w ↔ w.under (𝓞 D.host.F) ∉ S := by
-  constructor
-  · intro h hw
-    obtain ⟨x, hx, hy⟩ := h _ hw
-    exact hy (algebraMap _ _ x) rfl hx
-  · intro h u hu
-    have : ¬ u.asIdeal ≤ (w.under (𝓞 D.host.F)).asIdeal := fun hle =>
-      h (HeightOneSpectrum.ext (u.isMaximal.eq_of_le (w.under _).isPrime.ne_top hle) ▸ hu)
-    obtain ⟨x, hx, hx'⟩ := SetLike.not_le_iff_exists.1 this
-    refine ⟨x, hx, fun y hy hw => hx' ?_⟩
-    obtain rfl : y = algebraMap _ _ x := RingOfIntegers.ext hy
-    exact hw
+  first | exact _root_.GlobalTheory.IndefiniteRowSideFullHecke.ThetaAdjointScalarOnComponents.offS_iff | exact @_root_.GlobalTheory.IndefiniteRowSideFullHecke.ThetaAdjointScalarOnComponents.offS_iff | apply _root_.GlobalTheory.IndefiniteRowSideFullHecke.ThetaAdjointScalarOnComponents.offS_iff <;> assumption
 
 theorem isPrimeIdem_eq : IsPrimeIdem (D := D) = HeckeCharacterZeroLocus.ThmBIn.IsPrimeIdem D.sp.cm.sig := rfl
 

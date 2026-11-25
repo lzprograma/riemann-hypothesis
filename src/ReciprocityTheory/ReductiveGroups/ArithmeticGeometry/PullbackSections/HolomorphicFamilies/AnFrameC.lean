@@ -10,8 +10,6 @@ import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.PullbackSections.AnFrameC
@@ -125,12 +123,5 @@ theorem hermForm_act (hP : IsPeriod D ty P) (hc1 : ∀ x y, (hermForm Hm (P x) (
   · exact im_hermForm_act Hm D ty P hP hc1 a u v
 
 end Compat
-
-section Frame
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
-  {Xo : Moduli Dw l} {c : Coeff l} {σ : c.F →+* ℂ} {r : ℕ}
-
-end Frame
 
 end ReciprocityTheory.ChartRestriction.G.PullbackSections.AnFrameC

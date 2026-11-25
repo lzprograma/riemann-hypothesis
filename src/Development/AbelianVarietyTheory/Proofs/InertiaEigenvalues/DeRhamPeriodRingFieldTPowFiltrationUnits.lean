@@ -160,8 +160,7 @@ theorem exact_deg (x : P.R.BdR) (hx : x ≠ 0) : ∃ a : ℤ, x ∈ Fil P a ∧ 
   classical
   obtain ⟨a₀, ha₀⟩ := (P.PD (botExt l)).Fil_exh x
   have hc : ∃ c, x ∉ Fil P c := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hx ((P.PD (botExt l)).Fil_sep x h)
   obtain ⟨c, hc⟩ := hc
   have hbd : ∀ z : ℤ, x ∈ Fil P z → z ≤ c := fun z hz => by

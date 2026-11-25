@@ -20,8 +20,6 @@ open Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Valuat
 
 namespace Formalism.L2.SG.PoincareAmplitudeLowerBounds
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open Formalism.L2.SG.DataInst Formalism.L2.SG.CntLocal Formalism.L2.SG.RowsConc Formalism.L2.SG.RealObj
 
 def KernelExponentAgreement : Prop :=
@@ -39,15 +37,15 @@ def ChoicesC : Prop :=
   ∀ (D : D7) (T : STies D) (u u' : D.what₂.Word), u ≠ u' → Formalism.MainNotions.S.Cnt.Stand D u u' →
     (D.mem u).A.T ≡ (D.mem u').A.T [MOD (Formalism.MainNotions.S.Lat.gS D) ^ 2] → 2 * D.R.rS + 2 + D.R.f + 5 ≤ D.R.k →
     ∃ (i0 i0' : ∀ _ : InfinitePlace T.X.B.I.F, Fin D.R.k) (νq : T.X.B.I.Ginf → Measure T.X.B.I.Ginf)
-      (X0 : Fin (2 * D.R.rS + 2) → Fin T.X.B.I.n → T.X.B.I.E) (Lsp : LocSp D T.Y.M)
+      (X0 : Fin (2 * D.R.rS + 2) → Fin T.X.B.I.n → T.X.B.I.E) (_ : LocSp D T.Y.M)
       (ϖ : ∀ p : PlF D, 𝒪[(D.s.atP p).Fp]) (κ : Formalism.L2.SG.TermDef.Term D u u' (T.X.Fu u) (T.Y.what₂ u) → ℕ)
-      (Q : Formalism.L2.SG.PairVal.PairSys D u u' (T.X.Fu u) (T.Y.what₂ u)),
+      (_ : Formalism.L2.SG.PairVal.PairSys D u u' (T.X.Fu u) (T.Y.what₂ u)),
       (∀ v, i0 v = i0' v) ∧ PtRepExists T.X u u' 1 i0 i0' ∧ NuQPin T.X u u' νq ∧
       (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.gramE T.X.B.I.cm.sig T.X.B.I.J X0).det ≠ 0 ∧ (∀ p, Irreducible (ϖ p)) ∧ RowLabel κ
 
 def RowsSumC : Prop :=
   ∀ (D : D7) (T : STies D) (u u' : D.what₂.Word) (i0 i0' : ∀ _ : InfinitePlace T.X.B.I.F, Fin D.R.k)
-    (νq : T.X.B.I.Ginf → Measure T.X.B.I.Ginf) (Lsp : LocSp D T.Y.M)
+    (νq : T.X.B.I.Ginf → Measure T.X.B.I.Ginf) (_ : LocSp D T.Y.M)
     (κ : Formalism.L2.SG.TermDef.Term D u u' (T.X.Fu u) (T.Y.what₂ u) → ℕ),
     u ≠ u' → Formalism.MainNotions.S.Cnt.Stand D u u' → ConcTie T.X T.Y → (∀ i, 3 ≤ D.host.g i) → 2 * D.R.rS + 2 + D.R.f + 5 ≤ D.R.k →
     (D.mem u).A.T ≡ (D.mem u').A.T [MOD (Formalism.MainNotions.S.Lat.gS D) ^ 2] →

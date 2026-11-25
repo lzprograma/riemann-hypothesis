@@ -356,16 +356,16 @@ theorem lamC_sum (lam : TaylorLogMetric.Qbar →+* ℂ_[p]) {κ : Type} (s : Fin
     TaylorLogMetric.lamC lam (∑ i ∈ s, f i) = ∑ i ∈ s, TaylorLogMetric.lamC lam (f i) := by
   classical
   induction s using Finset.induction_on with
-  | empty => rw [Finset.sum_empty, Finset.sum_empty, TaylorLogMetric.lamC, dif_pos (zero_mem _)]; exact map_zero lam
+  | empty => rw [Finset.sum_empty, Finset.sum_empty, TaylorLogMetric.lamC, dite_eq_left (zero_mem _)]; exact map_zero lam
   | insert k s hk ih =>
     have h1 := h k (Finset.mem_insert_self _ _)
     have h2 : ∀ i ∈ s, f i ∈ TaylorLogMetric.Qbar := fun j hj => h j (Finset.mem_insert_of_mem hj)
     have h3 := sum_mem h2
     rw [Finset.sum_insert hk, Finset.sum_insert hk, ← ih h2]
-    simp only [TaylorLogMetric.lamC, dif_pos h1, dif_pos h3, dif_pos (add_mem h1 h3), ← map_add (f := _)]; rfl
+    simp only [TaylorLogMetric.lamC, dite_eq_left h1, dite_eq_left h3, dite_eq_left (add_mem h1 h3), ← map_add (f := _)]; rfl
 
 theorem lamC_nat (lam : TaylorLogMetric.Qbar →+* ℂ_[p]) (n : ℕ) : TaylorLogMetric.lamC lam (n : ℂ) = n := by
-  simp only [TaylorLogMetric.lamC, dif_pos (natCast_mem TaylorLogMetric.Qbar n)]; exact map_natCast lam n
+  simp only [TaylorLogMetric.lamC, dite_eq_left (natCast_mem TaylorLogMetric.Qbar n)]; exact map_natCast lam n
 
 theorem norm_nat_le (n : ℕ) : ‖(n : ℂ_[p])‖ ≤ 1 := IsUltrametricDist.norm_natCast_le_one _ n
 
@@ -509,14 +509,6 @@ theorem Wx_mul (x : HomE X.E a b) (c : ℂ) (F : VCx X.Tau a b → ℂ) (z : VCx
     Wx A x (fun z => c * F z) z = c * Wx A x F z := by
   simp only [Wx, opU]; ring
 
-theorem Wx_add {x y : HomE X.E a b} (h : ∃ n : ℤ, coc A x y = n) (F : VCx X.Tau a b → ℂ) :
-    Wx A x (Wx A y F) = Wx A (x + y) F := by
-  obtain ⟨n, hn⟩ := h
-  rw [(_root_.GlobalTheory.MomT.Heis.calculus X A a b).1, hn]
-  have : Complex.exp (-(2 * (Real.pi : ℂ)) * Complex.I * (((n : ℝ)) : ℂ)) = 1 :=
-    Complex.exp_eq_one_iff.2 ⟨-n, by push_cast; ring⟩
-  rw [this]; simp
-
 theorem charsum (e : VCx X.Tau a b → ℂ) (M B Z C B' : AddSubgroup (HomE X.E a b)) [DecidablePred (· ∈ B')]
     (hfix : ∀ y ∈ M, Wx A y e = e)
     (hCM : C ≤ M) (hCZ : ∀ j ∈ C, j ∈ Z → j ∈ B) (hB : ∀ x ∈ B, ∀ y ∈ B, ∃ n : ℤ, imH A x y = n)
@@ -559,12 +551,6 @@ theorem prodsum (e e'' : VCx X.Tau a b → ℂ) (c : ℂ) (M B' B₁ B₂ : AddS
   rw [← Wx_mul, ← funext he, Wx_sum']
   refine Finset.sum_congr rfl fun y₁ h₁ => ?_
   rw [_root_.GlobalTheory.MomT.ThShape.Wx_mul A (hB _ (l2 (hR₂.1 _ h₂)) _ (l1 (hR₁.1 _ h₁))), add_comm]
-
-theorem coc_nsmul (n : ℕ) (x y : HomE X.E a b) : coc A ((n : X.E) • x) y = n * coc A x y := by
-  have h4 := (_root_.GlobalTheory.MomT.Heis.calculus X A a b).2.2.2.1
-  induction n with
-  | zero => have := (h4 0 0 y).1; simp only [add_zero] at this; simp only [Nat.cast_zero, zero_smul]; linarith
-  | succ n ih => rw [Nat.cast_succ, add_smul, one_smul, (h4 _ _ _).1, ih]; push_cast; ring
 
 end An
 

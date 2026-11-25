@@ -10,53 +10,10 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConj
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.QNFAsm
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SignedCoordinateEqSignSmul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexifiedDerivativeCommutator
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.CutFP, Formalism.HermitianCurvature.HermitianCurvatureProofs.HasDerivAtRightDerivativeCurve, Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothGOfSf, Formalism.HermitianCurvature.HermitianCurvatureProofs.GoodAlt, Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameParameterRegularity
@@ -169,8 +126,6 @@ open scoped ContDiff
 noncomputable section
 
 namespace Formalism.FourierDecayAlt.P.ParameterFamilyAlgebra
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 section RdV
 
@@ -430,8 +385,8 @@ theorem parOK_chat2L (u : ℂ) (a a' β β' : Mx k ρ → Fin (mdim k ρ (Fin.la
       (smoothG_const ((-1 : ℂ) ^ ((i₁ : ℕ) + (i₂ : ℕ) + (j₁ : ℕ) + (j₂ : ℕ))))
       (smoothG_sub (smoothG_mul (hβ i₁) (hβ' i₂)) (smoothG_mul (hβ i₂) (hβ' i₁))))
       (smoothG_sub (smoothG_mul (ha j₁) (ha' j₂)) (smoothG_mul (ha j₂) (ha' j₁)))) (parOK_qminor (skip2 i₁ i₂) (skip2 j₁ j₂) u))
-      (fun f g => by simp only [if_pos hc])
-  · exact parOK_congr parOK_zero (fun f g => by simp only [if_neg hc])
+      (fun f g => by simp only [ite_eq_left hc])
+  · exact parOK_congr parOK_zero (fun f g => by simp only [ite_eq_right hc])
 
 theorem parOK_tL (z z' : Fin (2 * ρ + k + 1) → ℂ) (Y : ℂ) (p q : Fin 2) :
     ParOK k ρ (E := E) (tL k ρ z z' (Fin.last ρ) Y p q) := by
@@ -504,9 +459,9 @@ theorem good_fn (hT : 0 ≤ Tz k ρ z * Tz k ρ z') (X : Q.ActualOps k ρ z z' �
   refine ⟨Φf, fun Z c y hG => ?_, ?_, fun K hK q hq hG hqK => ?_, ?_⟩
   · by_cases hpos : 0 < Q.GGl k ρ z z' (Matrix.of y)
     · rw [key (Ψ Z) c y hG hpos, hR Z c y hG, hΦf]
-      simp only [if_pos hpos]
+      simp only [ite_eq_left hpos]
     · rw [key0 (Ψ Z) c y hpos, hΦf]
-      simp only [if_neg hpos]
+      simp only [ite_eq_right hpos]
   · intro q₀ hq hG
     obtain ⟨U, F, hU, hqU, hFs, hfF⟩ := hF q₀ hq hG
     have hfn := Formalism.FourierDecayAlt.P.Qx5.fnVal_contDiffOn (z := z) (z' := z') (k := k) (r := ρ) hT j
@@ -520,23 +475,23 @@ theorem good_fn (hT : 0 ≤ Tz k ρ z * Tz k ρ z') (X : Q.ActualOps k ρ z z' �
       have hpos : 0 < Q.GGl k ρ z z' (Matrix.of q.2) := (hUpos hq'.2).2
       show Φf q.1 q.2 = _
       rw [hΦf]
-      simp only [if_pos hpos]
+      simp only [ite_eq_left hpos]
       rw [show Ψf q.1 q.2 = F q from hfF q hq'.1 hG']
   · have hpos : 0 < Q.GGl k ρ z z' (Matrix.of q.2) := (hUpos hq).2
     rw [hΦf]
-    simp only [if_pos hpos]
+    simp only [ite_eq_left hpos]
     rw [hK q hG (fun h => hqK (subset_closure h)), smul_zero]
   · intro ν _ Kp hKp hν Ψi y V hV hyV hyG hKV hi c
     by_cases hpos : 0 < Q.GGl k ρ z z' (Matrix.of y)
     · rw [key Ψi c y hyG hpos, hi c y hyV hyG, ← integral_smul]
       refine integral_congr_ae (ae_of_all _ fun Z => ?_)
       rw [hΦf]
-      simp only [if_pos hpos]
+      simp only [ite_eq_left hpos]
     · rw [key0 Ψi c y hpos]
       have : (fun Z => Φf Z y) = fun _ => 0 := by
         funext Z
         rw [hΦf]
-        simp only [if_neg hpos]
+        simp only [ite_eq_right hpos]
       rw [this, integral_zero]
 
 theorem good_alt_bis (hOm : ∀ c : Fin ρ → ℂ, c ∈ OmX ρ) (hS : ∀ c c' : Fin ρ → ℂ, c = c')
@@ -563,18 +518,18 @@ theorem good_alt_bis (hOm : ∀ c : Fin ρ → ℂ, c ∈ OmX ρ) (hS : ∀ c c'
   · rw [hS c c₁]
     by_cases hpos : 0 < Q.GGl k ρ z z' (Matrix.of y)
     · rw [key (Ψ Z) y hG hpos, hΦf]
-      simp only [if_pos hpos]
+      simp only [ite_eq_left hpos]
       rfl
     · rw [key0 (Ψ Z) c₁ y hpos, hΦf]
-      simp only [if_neg hpos]
+      simp only [ite_eq_right hpos]
   · exact parFam_congr a1 (fun q hq _ => by
       have hpos : 0 < Q.GGl k ρ z z' (Matrix.of q.2) := (hUpos hq).2
       show _ = Φf q.1 q.2
       rw [hΦf]
-      simp only [if_pos hpos]) hU₀
+      simp only [ite_eq_left hpos]) hU₀
   · have hpos : 0 < Q.GGl k ρ z z' (Matrix.of q.2) := (hUpos hq).2
     rw [hΦf]
-    simp only [if_pos hpos]
+    simp only [ite_eq_left hpos]
     refine b1 q hq hG (closure K)ᶜ isClosed_closure.isOpen_compl hqK (fun q' hq' hG' => ?_)
     show (Ψ q'.1 : Q.Fn k ρ (Wq →L[ℂ] Wp)) c₁ (Matrix.of q'.2) = 0
     rw [hR q'.1 c₁ q'.2 hG']
@@ -590,12 +545,12 @@ theorem good_alt_bis (hOm : ∀ c : Fin ρ → ℂ, c ∈ OmX ρ) (hS : ∀ c c'
       refine integral_congr_ae (ae_of_all _ fun Z => ?_)
       show _ = Φf Z y
       rw [hΦf]
-      simp only [if_pos hpos]
+      simp only [ite_eq_left hpos]
     · rw [key0 Ψi c₁ y hpos]
       have : (fun Z => Φf Z y) = fun _ => 0 := by
         funext Z
         rw [hΦf]
-        simp only [if_neg hpos]
+        simp only [ite_eq_right hpos]
       rw [this, integral_zero]
 
 end Act

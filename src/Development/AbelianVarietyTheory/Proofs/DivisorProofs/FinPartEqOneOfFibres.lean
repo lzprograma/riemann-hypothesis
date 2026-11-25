@@ -65,8 +65,8 @@ theorem tendsto_of_cut (a : Af E) (g : Finset (HeightOneSpectrum (𝓞 E)) → A
     rw [Filter.eventually_principal]
     intro w hw
     by_cases h : w ∈ T
-    · simp only [h, if_true]; exact hw
-    · simp only [h, if_false]; exact one_mem _⟩
+    · simp only [h, ite_true]; exact hw
+    · simp only [h, ite_false]; exact one_mem _⟩
   let a' : P := ⟨fun v => a v, by rw [Filter.eventually_principal]; exact fun w hw => hw⟩
   have hf : Filter.Tendsto f Filter.atTop (nhds a') := by
     rw [RestrictedProduct.isEmbedding_coe_of_principal.tendsto_nhds_iff, tendsto_pi_nhds]
@@ -75,7 +75,7 @@ theorem tendsto_of_cut (a : Af E) (g : Finset (HeightOneSpectrum (𝓞 E)) → A
     filter_upwards [Filter.eventually_ge_atTop ({v} : Finset _)] with T hT
     have : v ∈ T := hT (Finset.mem_singleton_self v)
     change a v = if v ∈ T then a v else 1
-    rw [if_pos this]
+    rw [ite_eq_left this]
   have h2 := ((RestrictedProduct.continuous_inclusion hle).tendsto a').comp hf
   have h3 : g = (RestrictedProduct.inclusion _ _ hle) ∘ f :=
     funext fun T => Subtype.ext (funext fun v => hg T v)
@@ -87,14 +87,14 @@ open Classical in
 theorem prod_single_apply (y : (Af E)ˣ) (T : Finset (HeightOneSpectrum (𝓞 E))) (v : HeightOneSpectrum (𝓞 E)) :
     ((∏ P ∈ T, single P (coord P y) : (Af E)ˣ) : Af E) v = if v ∈ T then (y : Af E) v else 1 := by
   induction T using Finset.induction_on with
-  | empty => rw [Finset.prod_empty, if_neg (Finset.notMem_empty v)]; rfl
+  | empty => rw [Finset.prod_empty, ite_eq_right (Finset.notMem_empty v)]; rfl
   | insert u T hu ih =>
     rw [Finset.prod_insert hu, Units.val_mul]
     change (single u (coord u y) : Af E) v * ((∏ P ∈ T, single P (coord P y) : (Af E)ˣ) : Af E) v = _
     rw [ih]
     by_cases h : v = u
     · subst h
-      rw [single_self, if_neg hu, if_pos (Finset.mem_insert_self _ _), mul_one, coe_coord]
+      rw [single_self, ite_eq_right hu, ite_eq_left (Finset.mem_insert_self _ _), mul_one, coe_coord]
     · rw [suppAt_single u _ v h, one_mul]; simp [h]
 
 theorem coord_inv' (P : HeightOneSpectrum (𝓞 E)) (y : (Af E)ˣ) : coord P y⁻¹ = (coord P y)⁻¹ := Units.ext rfl

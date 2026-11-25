@@ -179,7 +179,6 @@ section Anticomm
 variable {E : ShortComplex (Rep.{u} k G)} (hE : E.ShortExact)
 
 
-set_option backward.isDefEq.respectTransparency false in
 theorem tateRightIso_tδ (B : Rep.{u} k G) (hEB : (E.map (tensorRight B)).ShortExact) (r : ℤ)
     (z : tateCohomology (E.X₃ ⊗ B) r) :
     (tateRightIso E.X₁ B (r + 1)).hom.hom ((tδ hEB r (r + 1) rfl).hom z) =
@@ -193,7 +192,6 @@ theorem tateRightIso_tδ (B : Rep.{u} k G) (hEB : (E.map (tensorRight B)).ShortE
   exact e
 
 
-set_option backward.isDefEq.respectTransparency false in
 theorem tateLeftIso_tδ (B : Rep.{u} k G) (hEB : (E.map (tensorRight B)).ShortExact) (r : ℤ)
     (z : tateCohomology (E.X₃ ⊗ B) r) :
     (tateLeftIso E.X₁ B (r + 1)).hom.hom ((tδ hEB r (r + 1) rfl).hom z) =
@@ -208,7 +206,6 @@ theorem tateLeftIso_tδ (B : Rep.{u} k G) (hEB : (E.map (tensorRight B)).ShortEx
   exact e
 
 
-set_option backward.isDefEq.respectTransparency false in
 theorem augShiftδ_tδ (p : ℤ) (a : tateCohomology E.X₃ p) :
     (augShiftδ E.X₁ (p + 1)).hom ((tδ hE p (p + 1) rfl).hom a) =
       -(tδ (shortExact_tensorLeft_of_flat hE (augIdeal k G)) (p + 1) (p + 1 + 1) rfl).hom
@@ -221,7 +218,6 @@ theorem augShiftδ_tδ (p : ℤ) (a : tateCohomology E.X₃ p) :
   exact e
 
 
-set_option backward.isDefEq.respectTransparency false in
 theorem tateLeftIso_tδ' (A : Rep.{u} k G) (hAE : (E.map (tensorLeft A)).ShortExact) (r : ℤ)
     (z : tateCohomology (A ⊗ E.X₃) r) :
     (tateLeftIso A E.X₁ (r + 1)).hom.hom ((tδ hAE r (r + 1) rfl).hom z) =
@@ -236,7 +232,6 @@ theorem tateLeftIso_tδ' (A : Rep.{u} k G) (hAE : (E.map (tensorLeft A)).ShortEx
   exact (neg_eq_iff_eq_neg.mpr e).symm
 
 
-set_option backward.isDefEq.respectTransparency false in
 theorem tateRightIso_tδ' (A : Rep.{u} k G) (hAE : (E.map (tensorLeft A)).ShortExact) (r : ℤ)
     (z : tateCohomology (A ⊗ E.X₃) r) :
     (tateRightIso A E.X₁ (r + 1)).hom.hom ((tδ hAE r (r + 1) rfl).hom z) =
@@ -386,7 +381,6 @@ theorem tateCup_connecting_right (m : ℕ) : ∀ (p q : ℤ), (1 - p).toNat + (1
     exact e5.symm
 
 
-set_option backward.isDefEq.respectTransparency false in
 theorem tateIsoH_tδ_homologyπ {S : ShortComplex (Rep.{u} k G)} (hS : S.ShortExact) (n : ℕ)
     (z : (tateComplex S.X₃).cycles n) :
     (tateIsoH S.X₁ (n + 1) (n + 1) (Nat.cast_succ n).symm).hom.hom

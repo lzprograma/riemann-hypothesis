@@ -14,8 +14,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.FrameGlobalPatching
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem card_pi_of_unique {ι : Type*} {α : ι → Type*} (T : Finset ι) (h : ∀ i ∉ T, Nonempty (Unique (α i))) :
     Nat.card (∀ i, α i) = ∏ᶠ i, Nat.card (α i) := by
   haveI : ∀ i : {i // i ∉ T}, Unique (α i) := fun i => (h i.1 i.2).some

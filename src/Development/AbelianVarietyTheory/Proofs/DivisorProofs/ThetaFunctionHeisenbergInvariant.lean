@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilRepresentationIntegralAction
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
 public import Formalism.LocalToGlobal.IndefiniteReal.DatumF
@@ -215,16 +216,7 @@ theorem nonarch_pi {ι : Type} {G : ι → Type} [∀ i, AddGroup (G i)] [∀ i,
 
 variable (F) in
 theorem nonarch_Af : NonarchimedeanAddGroup (Af F) := by
-  haveI : ∀ v : HeightOneSpectrum (𝓞 F), NonarchimedeanAddGroup (v.adicCompletionIntegers F) := fun v =>
-    nonarch_of_isInducing (v.adicCompletionIntegers F).subtype.toAddMonoidHom Topology.IsInducing.subtypeVal
-  haveI := nonarch_pi (G := fun v : HeightOneSpectrum (𝓞 F) => v.adicCompletionIntegers F)
-  let f : (∀ v : HeightOneSpectrum (𝓞 F), v.adicCompletionIntegers F) →+ FiniteAdeleRing (𝓞 F) F :=
-    { toFun := RestrictedProduct.structureMap (fun v : HeightOneSpectrum (𝓞 F) => v.adicCompletion F)
-        (fun v => (v.adicCompletionIntegers F : Set (v.adicCompletion F))) Filter.cofinite
-      map_zero' := rfl
-      map_add' := fun _ _ => rfl }
-  exact NonarchimedeanAddGroup.nonarchimedean_of_emb f
-    (RestrictedProduct.isOpenEmbedding_structureMap (fun v => Valued.isOpen_integer _))
+  apply _root_.GlobalTheory.HeisSchA.nonarch_finiteAdeleRing <;> assumption
 
 theorem exists_openAddSubgroup_psi_fin (ψ : AddChar (AF F) ℂ) (hψ : Continuous ψ) :
     ∃ K : OpenAddSubgroup (Af F), ∀ y ∈ K, ψ (pairA F 0 y) = 1 := by

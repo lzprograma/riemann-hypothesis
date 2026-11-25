@@ -157,7 +157,6 @@ open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions F
 
 set_option autoImplicit false
 
-
 noncomputable section
 
 namespace GlobalTheory.CovHt.KeySection
@@ -168,7 +167,6 @@ section Free
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H}
   {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {r : ℕ}
-
 
 variable (Dw) in
 theorem wtZ_zero_eq (m : ℕ) : wtZ (0 : (E →+* ℂ) × ℕ → ℕ) (2 * m) = wtOf Dw (weightOf Dw 0 m) m := by
@@ -257,8 +255,6 @@ theorem exists_twist {U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r} {x om : ℝ} (h
 
 end Free
 
-
-
 theorem exists_section {D : D7} {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E} {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l}
     {c : Coeff l} {r : ℕ} (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (x : ℝ) (V : (c.F →+* ℂ) → HSp D)
     (dict : ∀ σ, GA D (V σ) → Σ k, Frame ((U σ).X k).Ψ r) (hL : GlobalTheory.FlatCore.Laws U x) (hM : 5 ^ 4 ∣ l.M) (Z : Comp Xo c)
@@ -325,7 +321,7 @@ theorem exists_section {D : D7} {H : ReciprocityTheory.ChartRestriction.G.Geo.To
     have h1 := fun z hz => S.homN_mul_sig (G := (11 + 1) • wtZ 0 (2 * (Dw.p + Dw.q)) +
       wtOf Dw 0 (-(4 * ((3 * (Dw.p + Dw.q) : ℕ) : ℤ)))) (hev'.add K.even) ((f ^ 2) ^ (11 + 1) * K.sig) (σ := σ) (z := z) hz
     have h2 := fun z hz => K.homN_mul_sig hev' ((f ^ 2) ^ (11 + 1)) (σ := σ) (z := z) hz
-    rw [show goodOf c σ = σ from if_pos hσ] at h1 h2
+    rw [show goodOf c σ = σ from ite_eq_left hσ] at h1 h2
     intro z hz
     rw [← hG, ← homN_pow (U σ) x hev _ z hz.1, ← h2 z hz]
     exact h1 z hz
@@ -423,7 +419,6 @@ theorem twist_cost_le {f r p q L om PP : ℝ} (hf : 1 ≤ f) (hr : 1 ≤ r) (hL 
   have h6 := mul_le_mul_of_nonneg_left h2 (show 0 ≤ f * r by positivity)
   nlinarith
 
-
 end GlobalTheory.CovHt.KeySection
 
 end
@@ -438,7 +433,6 @@ section -- clump:auto
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj GlobalTheory.EtaForm GlobalTheory.EtaAn GlobalTheory.ArcQ
-attribute [local instance] Over.cartesianMonoidalCategory
 
 set_option autoImplicit false
 
@@ -492,7 +486,7 @@ theorem norm_pow_le_at_unit_frame (E : Type) [Field E] [NumberField E] [IsCMFiel
   haveI : IsAlgClosed (CAt σ) := inferInstanceAs (IsAlgClosed ℂ)
   obtain ⟨ev, hevL⟩ := GlobalTheory.ThetaConst.exists_isLevOf_geometric Xo c hval₀.dvd (U.un k x).x
   have hev : IsFullLev Xo (R ^ 4) (U.un k x).x ev := hevL.2.1
-  obtain ⟨a, ha, hgen⟩ := GlobalTheory.T.fullLinearLevel_eq_exp_periods_complexPoint E H Dw l Xo c σ _ _ Uw.F (Uw.ik k) (Uw.Pm k x) (U.un k x) hP hy (R ^ 4) hR4 ev hev
+  obtain ⟨a, ha, hgen⟩ := _root_.GlobalTheory.fullLevel_eq_exp_periods E H Dw l Xo c σ _ _ Uw.F (Uw.ik k) (Uw.Pm k x) (U.un k x) hP hy (R ^ 4) hR4 ev hev
   have hR2 : Odd (R ^ 2) := hR.pow
   have htors : ∀ q, ev q ^ ((R ^ 2) ^ 2) = 1 := fun q => by rw [← pow_mul]; exact (ha q).2
   choose w hw using fun q =>
@@ -512,7 +506,7 @@ theorem norm_pow_le_at_unit_frame (E : Type) [Field E] [NumberField E] [IsCMFiel
   have hwn : ∀ q, ‖Formalism.L2.PjFree.toC (w q)‖ =
       Real.sqrt (T.ptN2 1 (fun v : Fin 1 → I2.Vsp T.dim => θ (ψ.symm (v 0))) (fun _ => ψ (z q))) := fun q => by
     rw [hpt]
-    exact GlobalTheory.T.norm_nullVal_eq_norm_theta_alt E H Dw l Xo c σ _ _ Uw.F (Uw.ik k) (Uw.Pm k x) Hm χl fr θ (U.un k x) hP hAH hy hfn (R ^ 2) hR2
+    exact _root_.GlobalTheory.norm_nullVal_eq_norm_theta E H Dw l Xo c σ _ _ Uw.F (Uw.ik k) (Uw.Pm k x) Hm χl fr θ (U.un k x) hP hAH hy hfn (R ^ 2) hR2
       (ev q) _ (w q) (htors q) (ha q).1 (hw q)
 
   have hval : evR Xo c f (U.un k x) = ∏ b, w (xs b) := by
@@ -569,7 +563,7 @@ theorem normSq_thetaConst_le_exp : ∀ (E : Type) [Field E] [NumberField E] [IsC
     rwa [sq]
   have hS : (U.X k).IsSec (laU U 0 (2 * (Dw.p + Dw.q)) k) (rdU U (f ^ 2) k) :=
     hU.2.2.2.2.1 0 _ ⟨fun _ => antitone_const, even_two_mul _⟩ (f ^ 2) hsec k
-  obtain ⟨b, -, hb, hun, -, hphi, hp⟩ := GlobalTheory.T.exists_borel_orthonormal_flag_frame E _ (U.X k) y hz
+  obtain ⟨b, -, hb, hun, -, hphi, hp⟩ := _root_.GlobalTheory.EtaAn.exists_unit_frame E _ (U.X k) y hz
   have hN : homN U x (wtZ 0 (2 * (Dw.p + Dw.q))) (f ^ 2) ⟨k, y⟩ = ‖rdU U f k (rmul y b)‖ ^ 2 := by
     have h1 : lieFacZ Dw x (wtZ 0 (2 * (Dw.p + Dw.q))) = 1 := by simp [lieFacZ, wtZ]
     unfold homN ptN
@@ -578,7 +572,7 @@ theorem normSq_thetaConst_le_exp : ∀ (E : Type) [Field E] [NumberField E] [IsC
     rw [hp _ _ hS, sq f, GlobalTheory.AllWt.rdU_mul, Pi.mul_apply, Pi.mul_apply, norm_mul, sq]
   rw [hN, ← hphi _]
   have hv : rdU U f k (rmul y b) =
-      Formalism.L2.PjFree.toC (evR Xo c f ((Formalism.L2.PjFree.Unf.ofPj U).un k ⟨rmul y b, hb⟩)) := dif_pos hb
+      Formalism.L2.PjFree.toC (evR Xo c f ((Formalism.L2.PjFree.Unf.ofPj U).un k ⟨rmul y b, hb⟩)) := dite_eq_left hb
   have key := ArchBound.norm_pow_le_at_unit_frame E H Dw l Xo c σ _ (Formalism.L2.PjFree.Unf.ofPj U) hσ
     ((Formalism.L2.PjFree.isUnf_ofPj U).2 hU) hA R hR h1R xs f hsp hf DF q m R0 hrun hm k ⟨rmul y b, hb⟩ hun
   rw [hv]
@@ -609,16 +603,6 @@ namespace GlobalTheory.ThinBerg
 
 open MeasureTheory
 open scoped ENNReal
-
-theorem pnorm_pos' {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : Data E r) (la : Wt X.Ψ r)
-    {P : Frame X.Ψ r → ℂ} {x : Frame X.Ψ r} (hx : x ∈ X.dom) (hP : P x ≠ 0) : 0 < X.pnorm la P x := by
-  have hd : ∀ τ i, dmin X.Gm x τ i ≠ 0 := fun τ i h => by
-    have := (hx τ).2 i
-    rw [h] at this
-    simp at this
-  unfold Data.pnorm
-  exact mul_pos (norm_pos_iff.2 hP) (Finset.prod_pos fun τ _ => Finset.prod_pos fun i _ =>
-    Real.rpow_pos_of_pos (norm_pos_iff.2 (div_ne_zero (hd _ _) (hd _ _))) _)
 
 theorem le_bergOn_of_ratio {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E}
     {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {r : ℕ} {σ : c.F →+* ℂ} (U : Unf Xo c σ r)
@@ -651,11 +635,6 @@ theorem le_bergOn_of_ratio {E : Type} [Field E] [NumberField E] [IsCMField E] {H
 
 end GlobalTheory.ThinBerg
 
-namespace GlobalTheory.ThinBerg
-
-open MeasureTheory
-
-end GlobalTheory.ThinBerg
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrameExponentialVolumeLarge =====
@@ -676,8 +655,6 @@ section Level
 variable {D : D7} {j : ℕ} {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E} {Dw : Datum H} {l : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H}
   {Xo : Moduli Dw l} {c : Coeff l} {U : ∀ σ : c.F →+* ℂ, Unf Xo c σ D.R.r}
   {dict : ∀ σ : c.F →+* ℂ, GA D (D.sp.W j) → Σ k, Frame ((U σ).X k).Ψ D.R.r}
-
-
 
 theorem theta_sup_le (hLw : Laws D j Xo c U dict) {σ : c.F →+* ℂ} (hσ : GoodEmb c σ) {a : (D.host.E →+* ℂ) × ℕ → ℕ} {n : ℕ}
     (hDom : Dom a n) [StarRing (𝓞 D.host.E)] {nab : NabV Xo c} (hnab : IsNab Xo c nab) {xx : Fin n → Dw.La}
@@ -753,7 +730,7 @@ theorem theta_sup_le (hLw : Laws D j Xo c U dict) {σ : c.F →+* ℂ} (hσ : Go
     (Formalism.L2.PjFree.Unf.ofPj (U σ)) hσ (hLw.unf σ hσ) hr1 (2 * xiR D) (by linarith)
     (fun k τ => congrArg (2 * ·) (hLw.xiAbs σ hσ k τ.1)) a n hDom _ nab hnab xx P hP f hf k xf hort _ (by positivity) hlam
   rw [hfd] at hv
-  have hrdv : rdU (U σ) f k xf.1 = Formalism.L2.PjFree.toC (evR Xo c f ((U σ).un k xf)) := dif_pos xf.2
+  have hrdv : rdU (U σ) f k xf.1 = Formalism.L2.PjFree.toC (evR Xo c f ((U σ).un k xf)) := dite_eq_left xf.2
   rw [hrdv] at hhalf
   have key := numbers D.R.f D.R.r n _ 1 L _ _ _ 1 _ ρ _ _ hL hf1 hr1 hrn hdκ hnκ hsz hfr hrd1 hrdL (by linarith)
     zero_le_one (Finset.sum_nonneg fun _ _ => norm_nonneg _) hρ0 (Nat.one_le_pow _ _ (Nat.succ_pos _))
@@ -784,8 +761,6 @@ theorem exists_large {ι : Type} [Fintype ι] [Nonempty ι] (u : ι → ℝ) (hu
     rw [← Nat.cast_add, Real.exp_nat_mul, Real.exp_log hM0]
   rw [neg_add, Real.exp_add, Real.exp_neg ((d + N) * _), h4, mul_inv_le_iff₀' (by positivity)]
   exact h3.trans h2
-
-
 
 theorem theta_lower (hLw : Laws D j Xo c U dict) {σ : c.F →+* ℂ} (hσ : GoodEmb c σ) {a : (D.host.E →+* ℂ) × ℕ → ℕ} {n : ℕ}
     (hDom : Dom a n) [StarRing (𝓞 D.host.E)] {nab : NabV Xo c} (hnab : IsNab Xo c nab) (α : 𝓞 D.host.E)
@@ -828,7 +803,7 @@ theorem theta_lower (hLw : Laws D j Xo c U dict) {σ : c.F →+* ℂ} (hσ : Goo
     push_cast
     ring
   have hval : ∀ q, ptN (laU (U σ) a n) (rdU (U σ) (g q)) ⟨k, x⟩ = ‖toC (evR Xo c (g q) ((U σ).un k ⟨_, hbd⟩))‖ :=
-    fun q => (hpn _ _ (hUn.2.2.2.2.1 a n hDom (g q) (hs q) k)).trans (congrArg norm (dif_pos hbd))
+    fun q => (hpn _ _ (hUn.2.2.2.2.1 a n hDom (g q) (hs q) k)).trans (congrArg norm (dite_eq_left hbd))
   have hkey : (Real.pi⁻¹) ^ P.totalDegree * Pr.Jbound n ≤
       (l.M : ℝ) ^ Formalism.L2.Pj.DF Dw a * ∑ q, (lie * ptN (laU (U σ) a n) (rdU (U σ) (g q)) ⟨k, x⟩) ^ 2 := by
     simp only [hval, mul_pow, hl]
@@ -901,8 +876,6 @@ theorem loss_le {b φ d N lM z : ℝ} (hb : 1000 ≤ b) (hφ : b ^ 14 ≤ φ) (h
   have h7 : (1000 : ℝ) ^ 8 * b ^ 6 ≤ b ^ 8 * b ^ 6 := by gcongr
   have h8 : 0 ≤ b ^ 6 := by positivity
   nlinarith
-
-
 
 theorem core_ratio (hLw : Laws D j Xo c U dict) (α : 𝓞 D.host.E) (hα : α * H.bar α = (l.M : 𝓞 D.host.E))
     (hMb : l.Mb = Ideal.span {H.bar α}) {a : (D.host.E →+* ℂ) × ℕ → ℕ} {n : ℕ} (hDom : Dom a n) (hLP : LastPos Dw a)
@@ -1018,7 +991,6 @@ noncomputable section
 
 namespace UpperTheory.Dv.Thin
 
-
 open AlgebraicGeometry CategoryTheory in
 
 theorem over_comp_lat : ∀ (D : D7) (j : ℕ) (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E) (Dw : Datum H) (l : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H) (Xo : Moduli Dw l) (c : Coeff l) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ D.R.r) (dict : ∀ σ : c.F →+* ℂ, GA D (D.sp.W j) → Σ k, Frame ((U σ).X k).Ψ D.R.r) (d : DeltaDat Xo c 0) (U₂ : ∀ σ : d.c₂.F →+* ℂ, Unf d.Xo₂ d.c₂ σ D.R.r) (dict₂ : ∀ σ : d.c₂.F →+* ℂ, GA D (D.sp.W j) → Σ k, Frame ((U₂ σ).X k).Ψ D.R.r), Laws D j Xo c U dict → Laws D j d.Xo₂ d.c₂ U₂ dict₂ → d.IsLev → ∀ σ₂, GoodEmb d.c₂ σ₂ → ∀ k₂ : (U₂ σ₂).Comp, ∃ (k : (U (σ₂.comp (d.eF : c.F →+* d.c₂.F))).Comp) (δ : GL (Fin D.R.r) D.host.E), ((U₂ σ₂).X k₂).Gm = ((U (σ₂.comp (d.eF : c.F →+* d.c₂.F))).X k).Gm ∧ (∀ v w, herm ((U₂ σ₂).X k₂).Gm ((δ : Matrix (Fin D.R.r) (Fin D.R.r) D.host.E).mulVec v) ((δ : Matrix (Fin D.R.r) (Fin D.R.r) D.host.E).mulVec w) = herm ((U₂ σ₂).X k₂).Gm v w) ∧ (∀ v, v ∈ ((U₂ σ₂).X k₂).Λ ↔ (δ : Matrix (Fin D.R.r) (Fin D.R.r) D.host.E).mulVec v ∈ ((U (σ₂.comp (d.eF : c.F →+* d.c₂.F))).X k).Λ) ∧ GlobalTheory.LevModel.Over d σ₂ (U (σ₂.comp (d.eF : c.F →+* d.c₂.F))) (U₂ σ₂) k₂ k δ := by
@@ -1119,7 +1091,6 @@ theorem over_comp_lat : ∀ (D : D7) (j : ℕ) (H : ReciprocityTheory.ChartRestr
   · have e' : genScal (Dw := Dw) (S := CAt σ₂) t = fun i => Option.elim i t (fun _ => 1) := genScal_eq _
     exact e'.symm ▸ ht
 
-
 open scoped Matrix in
 theorem firstMinimumSq_eq_of_rationalIsometry_lattice {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X X₂ : Data E r)
     (hΨ : ∀ τ, τ ∈ X₂.Ψ ↔ τ ∈ X.Ψ) (γ : GL (Fin r) E)
@@ -1145,8 +1116,6 @@ theorem firstMinimumSq_eq_of_rationalIsometry_lattice {E : Type} [Field E] [Numb
   · rintro ⟨w, hw, hw0, rfl⟩
     refine ⟨(γ : Matrix (Fin r) (Fin r) E) *ᵥ w, (hΛ _).1 hw, fun h0 => hw0 ?_, (hre w).symm⟩
     rw [← e₁ w, h0, Matrix.mulVec_zero]
-
-
 
 theorem level_transport (D : D7) (j : ℕ) (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E) (Dw : Datum H)
     (l : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H) (Xo : Moduli Dw l) (c : Coeff l) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ D.R.r)
@@ -1196,8 +1165,6 @@ theorem level_transport (D : D7) (j : ℕ) (H : ReciprocityTheory.ChartRestricti
       (fun ρ h₂ h₁ i => by simp only [modelWt, hp0 y.1, GlobalTheory.LevPullNorm.relab_eF]) _ _ _ _ (hmv y.1 y.2) _ hn hv, ?_⟩
     rw [hv, mul_ne_zero_iff_left (norm_ne_zero_iff.1 (by rw [hn]; exact one_ne_zero))]
 
-
-
 theorem cover_transport (D : D7) (T : CoreJ D) (j : ℕ) (Y : Deep T.toCore j) (e : ℕ) (o : ℝ) (hT : LawsJ T)
     (hj : InR D j) (hG : Y.Good e o) (a : (D.host.E →+* ℂ) × ℕ → ℕ) (n : ℕ) (ha : Dom a n)
     (σ : Y.d.c₂.F →+* ℂ) (hσ : GoodEmb Y.d.c₂ σ) :
@@ -1228,11 +1195,11 @@ theorem cover_transport (D : D7) (T : CoreJ D) (j : ℕ) (Y : Deep T.toCore j) (
       rdU (T.U j (Y.resEmb σ)) f := by
     funext k x
     by_cases hx : x ∈ ((T.U j (Y.resEmb σ)).X k).dom
-    · refine (dif_pos hx).trans (Eq.trans ?_ (dif_pos hx).symm)
+    · refine (dite_eq_left hx).trans (Eq.trans ?_ (dite_eq_left hx).symm)
       letI : Algebra T.Q.c.F (CAt (σ.comp (Y.d.eF : Y.c'.F →+* Y.d.c₂.F))) := (Y.resEmb σ).toAlgebra
       exact hV.2 (CAt (σ.comp (Y.d.eF : Y.c'.F →+* Y.d.c₂.F))) (fun _ => rfl) _
-    · have e₂ : rdU (T.U j (Y.resEmb σ)) f k x = 0 := dif_neg hx
-      exact (dif_neg hx).trans e₂.symm
+    · have e₂ : rdU (T.U j (Y.resEmb σ)) f k x = 0 := dite_eq_right hx
+      exact (dite_eq_right hx).trans e₂.symm
   refine ⟨g, hg, fun y hy => ?_⟩
   have h3 := h2 _ hV.1 g hgs ((hP a n f hs g).1 hgP) y hy
   rw [hrd] at h3
@@ -1248,8 +1215,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CardMulSuccLeTwoMulNcolCopy", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.EightDvdNCol\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.ToKnownTheoremsOf\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LiftLambdaBound\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.SemiposAtOfPositive\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaBoundLengthUnit\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JetNumberQuotientBounds\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormPhiHatIndPhi\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaExponentsDominantLastEntryOneDegree\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightAntitoneBoundary\nimport Development.AbelianVarietyTheory.Proofs.JetHarmonics.HalfPrincipalAndSplit\npublic import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FourMulQLeCondN\npublic import Development.AutomorphicArithmetic.LocalEmbeddings.ThinCore\npublic import Development.AutomorphicArithmetic.LocalEmbeddings.ThinCover\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HostN\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.QuoShape\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RunParams\nimport Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.WtNZ\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MinimumGrowthBounds\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.QuoIff\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.UnifOfSpaceEq\n\n"}
 section -- clump:auto
 @[expose] public section
-
-
 
 section
 section
@@ -1279,13 +1244,13 @@ private theorem card_mul_succ_le_two_mul_ncol_copy {E : Type} [Field E] [NumberF
   simp only [h1]
   rw [GlobalTheory.RawThetaSup.sum_emb_eq H, Finset.mul_sum, mul_assoc, ← Finset.card_univ, ← smul_eq_mul, ← Finset.sum_const]
   refine Finset.sum_le_sum fun τ _ => ?_
-  rw [Datum.mult, if_pos τ.2, Datum.mult, if_neg (conj_not_mem τ)]
+  rw [Datum.mult, ite_eq_left τ.2, Datum.mult, ite_eq_right (conj_not_mem τ)]
   nlinarith [sq_nonneg ((Dw.p : ℤ) - Dw.q)]
 private theorem one_le_dimension_function_copy {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} (Dw : Datum H)
     (hp : 1 ≤ Dw.p) (hne : 0 < Fintype.card (Psi H)) {a : (E →+* ℂ) × ℕ → ℕ} (h : LastPos Dw a) :
     1 ≤ Formalism.L2.Pj.DF Dw a := by
   obtain ⟨τ⟩ := Fintype.card_pos_iff.1 hne
-  have hm : 0 < Dw.mult τ.1 := by rw [Datum.mult, if_pos τ.2]; exact hp
+  have hm : 0 < Dw.mult τ.1 := by rw [Datum.mult, ite_eq_left τ.2]; exact hp
   refine (h τ.1 τ.2 hm).trans_le ?_
   unfold Formalism.L2.Pj.DF
   refine le_trans ?_ (Finset.single_le_sum (f := fun τ : E →+* ℂ => ∑ i : Fin (Dw.mult τ), a (τ, i))
@@ -1431,7 +1396,6 @@ section -- clump:auto
 section
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj Formalism.BasicNotions.TH Formalism.L2.Theta ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.AllWt GlobalTheory.CompHt GlobalTheory.CovTop GlobalTheory.BigTop GlobalTheory.CovHt
 
-
 noncomputable section
 namespace GlobalTheory.ThinTwist
 open GlobalTheory.FlatTw GlobalTheory.FlatLine in
@@ -1465,7 +1429,7 @@ theorem exists_constant_twist_of_thin_divisor (hP : _root_.GlobalTheory.CovTop.P
   have key : ∀ z ∈ framesOn (Y.U (goodOf Y.d.c₂ σ)) Z,
       homN (Y.U (goodOf Y.d.c₂ σ)) (xiR D) (G + (wtOf (T.Q.Dw j) u 0 - G)) (f * tw.sig) z =
         homN (Y.U (goodOf Y.d.c₂ σ)) (xiR D) G f z * tw.cInf σ := fun z hz => tw.homN_mul_sig hB f hz
-  have e : goodOf Y.d.c₂ σ = σ := if_pos hσ
+  have e : goodOf Y.d.c₂ σ = σ := ite_eq_left hσ
   rw [e, hGG] at key
   have hl := lieFacZ_pos (Dw := T.Q.Dw j) (xiR D) (wtOf (T.Q.Dw j) u 0)
   refine ⟨f * tw.sig, hmem, lieFacZ (T.Q.Dw j) (xiR D) G * tw.cInf σ / lieFacZ (T.Q.Dw j) (xiR D) (wtOf (T.Q.Dw j) u 0),
@@ -1486,12 +1450,9 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 section
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj Formalism.BasicNotions.TH Formalism.L2.Theta ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.AllWt GlobalTheory.CompHt GlobalTheory.CovTop GlobalTheory.BigTop GlobalTheory.CovHt
-
 
 noncomputable section
 namespace GlobalTheory.ThinTwist
@@ -1526,13 +1487,9 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 section
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj Formalism.BasicNotions.TH Formalism.L2.Theta ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.AllWt GlobalTheory.CompHt GlobalTheory.CovTop GlobalTheory.BigTop GlobalTheory.CovHt
-namespace GlobalTheory.ThinBerg
-end GlobalTheory.ThinBerg
 namespace GlobalTheory.ThinBerg
 open MeasureTheory
 theorem bergman_kernel_bound_thin_part_alt : _root_.GlobalTheory.CovTop.PublishedHodgeBundleTheorems → _root_.GlobalTheory.CovTop.DeepGoodness → _root_.GlobalTheory.CovTop.SizeCondition → _root_.GlobalTheory.CovTop.FlatDegreeCondition → _root_.GlobalTheory.CovTop.CoversCondition fun Fm x _ ι p i Y PP _ => ∀ u1, Quo p i PP u1 → ∀ (Z : Comp Y.d.Xo₂ Y.d.c₂) (σ : Y.d.c₂.F →+* ℂ), GoodEmb Y.d.c₂ σ → ∀ y : FPt (Y.U σ).X, (⟨y.1, y.2.1⟩ : Σ k, Frame ((Y.U σ).X k).Ψ (Fm.D x ι).R.r) ∈ framesOn (Y.U σ) Z → (Y.d.l₂.M : ℝ) * ((Y.U σ).X y.1).firstMinimumSq y.2.1 < (Fm.L x ι).sc.b → ENNReal.ofReal (Real.exp (-(2 * (ReciprocityTheory.ChartRestriction.G.I2.PT.f (Fm.D x ι).host.E : ℝ) / (ReciprocityTheory.ChartRestriction.G.I2.PT.rd (Fm.D x ι).host.E ^ 2 * ((Y.U σ).X y.1).la1 y.2.1 ^ 2) / 625))) ≤ bergOn (Y.U σ) ((Fm.D x ι).sp.W ((i : ℕ) + 1)) (Y.dict σ) Z (wtOf (dat p i) u1 0) y := by
@@ -1555,7 +1512,7 @@ theorem bergman_kernel_bound_thin_part_alt : _root_.GlobalTheory.CovTop.Publishe
   have hgS : g ∈ suppOn Z := (Submodule.mem_inf.1 hg).2
   have hP := (mem_cuspW.1 hgW).2 σ hσ
   have hfy' : 0 < ptN (modelWt (Y.U σ) (GlobalTheory.RefSum.GOf p i u1)) (rdU (Y.U σ) f) ⟨y.1, y.2.1⟩ :=
-    pnorm_pos' _ _ y.2.2 hfy
+    GlobalTheory.BergLower.pnorm_pos _ _ y.2.2 hfy
   have hgy : ptN (modelWt (Y.U σ) (wtOf (dat p i) u1 0)) (rdU (Y.U σ) g) ⟨y.1, y.2.1⟩ =
       K * ptN (modelWt (Y.U σ) (GlobalTheory.RefSum.GOf p i u1)) (rdU (Y.U σ) f) ⟨y.1, y.2.1⟩ := hgK _ hyZ
   refine le_bergOn_of_ratio (Y.U σ) _ (Y.dict σ) hd Z _ y _ hP (Real.exp_pos _) ?_ ?_
@@ -1582,8 +1539,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RunParamsStatement =====
@@ -1593,12 +1548,9 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 section
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj Formalism.BasicNotions.TH Formalism.L2.Theta ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.AllWt GlobalTheory.CompHt GlobalTheory.CovTop GlobalTheory.BigTop GlobalTheory.CovHt
-set_option autoImplicit false
 
 noncomputable section
 namespace GlobalTheory.CovHt.KeySection
@@ -1650,7 +1602,7 @@ theorem theta_function_le_bergman_kernel_alt : _root_.GlobalTheory.CovTop.Publis
   have d0 : a ≤ Real.exp (P / 625) := d.trans (Real.exp_le_exp.2 (by split_ifs <;> push_cast <;> linarith))
   refine ⟨d0.trans (Real.exp_le_exp.2 (by linarith)), ?_⟩
   rcases lt_or_ge ((Y.d.l₂.M : ℝ) * ((Y.U σ).X y.1).firstMinimumSq y.2.1) (Fm.L x ι).sc.b with h | h
-  · rw [if_pos (e4 h)] at d
+  · rw [ite_eq_left (e4 h)] at d
     exact key _ _ d (by push_cast; linarith) (e2 h)
   · exact key _ _ d0 (by linarith) (e3 h)
 

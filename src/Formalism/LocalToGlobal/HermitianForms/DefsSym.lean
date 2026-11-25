@@ -31,11 +31,11 @@ theorem posSym_lt {k rS x : ℕ} (hx : x < rSym k rS) : posSym k rS x < rSym k r
 
 theorem lvSym_of_lt {k rS t x : ℕ} (hx : x < rSym k rS) : lvSym k rS t x = posSym k rS x := by
   unfold lvSym
-  rw [if_pos hx]
+  rw [ite_eq_left hx]
 
 theorem lvSym_of_ge {k rS t x : ℕ} (hx : ¬ x < rSym k rS) : rSym k rS ≤ lvSym k rS t x := by
   unfold lvSym
-  rw [if_neg hx]
+  rw [ite_eq_right hx]
   exact Nat.le_add_right _ _
 
 theorem posSym_inj {k rS x z : ℕ} (hx : x < rSym k rS) (hz : z < rSym k rS) (h : posSym k rS z = posSym k rS x) : z = x := by
@@ -104,15 +104,15 @@ theorem InJSym_mul {k rS t : ℕ} {zl : Bool} {M N : Matrix (Fin n) (Fin n) κ} 
     have h4N := hN4 hzl
     constructor
     · rw [Matrix.mul_apply, Finset.sum_eq_single y]
-      · rw [(h4N y y hy).1, if_pos rfl, mul_one, (h4M x y hy).1]
+      · rw [(h4N y y hy).1, ite_eq_left rfl, mul_one, (h4M x y hy).1]
       · intro z _ hzy
-        rw [(h4N z y hy).1, if_neg hzy, mul_zero]
+        rw [(h4N z y hy).1, ite_eq_right hzy, mul_zero]
       · intro h
         exact absurd (Finset.mem_univ y) h
     · rw [Matrix.mul_apply, Finset.sum_eq_single y]
-      · rw [(h4M y y hy).2, if_pos rfl, one_mul, (h4N x y hy).2]
+      · rw [(h4M y y hy).2, ite_eq_left rfl, one_mul, (h4N x y hy).2]
       · intro z _ hzy
-        rw [(h4M z y hy).2, if_neg hzy, zero_mul]
+        rw [(h4M z y hy).2, ite_eq_right hzy, zero_mul]
       · intro h
         exact absurd (Finset.mem_univ y) h
 
@@ -136,7 +136,7 @@ theorem InJSym_one (k rS t : ℕ) (zl : Bool) : InJSym k rS t zl (1 : Matrix (Fi
     rcases eq_or_ne x y with h | h
     · subst h
       simp
-    · rw [if_neg (Ne.symm h), if_neg h]
+    · rw [ite_eq_right (Ne.symm h), ite_eq_right h]
 
 variable (κ n)
 
@@ -191,9 +191,6 @@ def HX (N k rS t c : ℕ) (hk : k ≤ N) : Subgroup (GL (Fin N) κ) :=
   (JSymG κ (N + c) k rS t false).comap (Units.map (extMon κ N k c hk))
 
 variable {κ}
-
-def lamX (ψ : AddChar κ ℂ) (χ : ℕ → MulChar κ ℂ) (N k rS t c nb : ℕ) (hk : k ≤ N) (M : Matrix (Fin N) (Fin N) κ) : ℂ :=
-  lamSym ψ χ k rS t nb (extMon κ N k c hk M)
 
 end Ext
 

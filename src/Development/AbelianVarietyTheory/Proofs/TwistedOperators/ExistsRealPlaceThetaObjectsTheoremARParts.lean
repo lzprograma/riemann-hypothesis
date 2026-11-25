@@ -146,7 +146,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestLeastDegreeMirror =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaCorrespondenceFockDsUniqueness =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaCorrespondenceFockDsUniqueness", "h": "module\n\npublic import Formalism.SharpRestriction.Divisibility.SchurIrreducible\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData\npublic import Formalism.LocalRingCardinality.DataTheta\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryHarishChandraDiscreteSeries\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDerivedActionsTensorMembers\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockMinimalKTypeSecondMember\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeights\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JointShapeUniqueAndDegWEq\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdjointIntertwinerDiscreteSeriesDescends\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CasimirNumberIdentityDualPair\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EmbedsOfLowestType\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFiniteDimensionalForallMapMem\npublic import Mathlib.Analysis.CStarAlgebra.Module.Constructions\npublic import Mathlib.LinearAlgebra.FiniteDimensional.Defs\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsLinearMapTensorOfPairing\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockKsetPreservesHomogeneousDegree\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockModelDualPairCasimirApply\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockPolynomialKFiniteBothMembers\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestKTypesJointHarmonicShape\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestLeastDegreeMirror\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommute\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.MinFirst\nimport Mathlib.Algebra.Module.StablyFree.Basic\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Coalgebra.CoassocSimps\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaCorrespondenceFockDsUniqueness", "h": "module\n\npublic import Formalism.SharpRestriction.Divisibility.SchurIrreducible\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData\npublic import Formalism.LocalRingCardinality.DataTheta\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryHarishChandraDiscreteSeries\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDerivedActionsTensorMembers\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockMinimalKTypeSecondMember\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeights\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JointShapeUniqueAndDegWEq\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdjointIntertwinerDiscreteSeriesDescends\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CasimirNumberIdentityDualPair\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EmbedsOfLowestType\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFiniteDimensionalForallMapMem\npublic import Mathlib.Analysis.CStarAlgebra.Module.Constructions\npublic import Mathlib.LinearAlgebra.FiniteDimensional.Defs\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsLinearMapTensorOfPairing\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockKsetPreservesHomogeneousDegree\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockModelDualPairCasimirApply\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockPolynomialKFiniteBothMembers\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestKTypesJointHarmonicShape\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestLeastDegreeMirror\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommute\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.MinFirst\nimport Mathlib.Algebra.Module.StablyFree.Basic\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Coalgebra.CoassocSimps\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.NoIntertwinerSmallerFockToDiscreteSeries\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockSpaceContainsDiscreteSeriesTensor\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -197,21 +197,6 @@ def quotMod (M : GKMod p q) (N : Submodule ℂ M.V) (hN : ∀ Z, ∀ y ∈ N, M.
       exact add_mem hx hy
 
 variable {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
-
-theorem map_hwSub {a : Mat p q →ₗ[ℂ] Module.End ℂ V} {b : Mat p q →ₗ[ℂ] Module.End ℂ W}
-    (g : V →ₗ[ℂ] W) (hg : ∀ Z v, g (a Z v) = b Z (g v)) {μ : Ix p q → ℚ} {v : V}
-    (hv : v ∈ hwSub a μ) : g v ∈ hwSub b μ := by
-  simp only [hwSub, wtSub, Submodule.mem_inf, Submodule.mem_iInf, LinearMap.mem_ker,
-    LinearMap.sub_apply, LinearMap.smul_apply, LinearMap.id_apply, sub_eq_zero] at hv ⊢
-  refine ⟨fun c => ?_, fun c d h => ?_⟩
-  · rw [← hg, hv.1, map_smul]
-  · rw [← hg, hv.2 c d h, map_zero]
-
-theorem map_casimir {a : Mat p q →ₗ[ℂ] Module.End ℂ V} {b : Mat p q →ₗ[ℂ] Module.End ℂ W}
-    (g : V →ₗ[ℂ] W) (hg : ∀ Z v, g (a Z v) = b Z (g v)) (v : V) :
-    g (casimir a v) = casimir b (g v) := by
-  set_option synthInstance.maxHeartbeats 100000 in
-    simp [casimir, LinearMap.sum_apply, map_sum, hg]
 
 theorem eq_zero_of_contract {z : V ⊗[ℂ] W}
     (h : ∀ φ : W →ₗ[ℂ] ℂ, TensorProduct.rid ℂ V (LinearMap.lTensor V φ z) = 0) : z = 0 := by
@@ -280,19 +265,19 @@ theorem image_eq_tmul (M₁ : GKMod p q) (M₂ : GKMod r s) {Λ : Ix p q → ℚ
     simp only [g, LinearMap.comp_apply, LinearEquiv.coe_coe, this, lid_rTensor_map]
   have hfΦ : f Φ = v ⊗ₜ g Φ := by
     refine eq_tmul_of_contract h1 hv.2 ψ hψ fun φ => ?_
-    refine map_hwSub (a := a₁)
+    refine GlobalTheory.FockTensor.map_mem_hwSub (a := a₁)
       ((TensorProduct.rid ℂ M₁.V).toLinearMap ∘ₗ LinearMap.lTensor M₁.V φ ∘ₗ f) (fun Z w => ?_) hΦ₁
     have := LinearMap.congr_fun (hf₁ Z) w
     simp only [LinearMap.comp_apply] at this
     simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, this, rid_lTensor_map]
-  refine ⟨g Φ, map_hwSub g hg hΦ₂, hfΦ, ?_⟩
+  refine ⟨g Φ, GlobalTheory.FockTensor.map_mem_hwSub g hg hΦ₂, hfΦ, ?_⟩
   have h3 : f (casimir a₁ Φ) = c • f Φ := by
-    rw [map_casimir (b := (LinearMap.rTensorHom M₂.V).comp M₁.act) f
+    rw [GlobalTheory.FockTensor.map_casimir (b := (LinearMap.rTensorHom M₂.V).comp M₁.act) f
       (fun Z w => LinearMap.congr_fun (hf₁ Z) w), hfΦ, TensorProduct.smul_tmul', ← hc]
     simp [casimir, LinearMap.sum_apply, TensorProduct.sum_tmul, -Fintype.sum_sum_type]
   have h4 : g (casimir a₁ Φ) = c • g Φ := by
     simp only [g, LinearMap.comp_apply, h3, map_smul]
-  rw [← map_casimir g hg, hcas, map_sub, h4, map_smul, sub_smul]
+  rw [← GlobalTheory.FockTensor.map_casimir g hg, hcas, map_sub, h4, map_smul, sub_smul]
 
 theorem range_eq (M₁ : GKMod p q) (hI : IrrGK M₁) (M₂ B : GKMod r s) (hB : IrrGK B) {Φ : V}
     (key : ∀ (M : GKMod r s) (f : V →ₗ[ℂ] M₁.V ⊗[ℂ] M.V),
@@ -432,11 +417,6 @@ theorem exists_isHW {p q : ℕ} (M : GKMod p q) {Λ : Ix p q → ℚ}
   obtain ⟨v, hv, -⟩ := finrank_eq_one_iff'.1 h
   exact ⟨v, fun h0 => hv (Subtype.ext h0), v.2⟩
 
-theorem discrete_series_gk_admissible_irreducible (X : ProvA) (h5 : admQ5 X) {p q : ℕ} (hn : 1 ≤ p + q) (lam : Ix p q → ℚ) :
-    AdmGK (X.ds p q lam).HK ∧ IrrGK (X.ds p q lam).HK :=
-  ((h5 p q hn).1 (X.ds p q lam).U ⟨(X.ds p q lam).nontriv, (X.ds p q lam).irred⟩).2.2 _ (X.ds p q lam).ι
-    ⟨(X.ds p q lam).ι_inj, (X.ds p q lam).ι_range, (X.ds p q lam).der⟩
-
 theorem jointHW_shape (X : ProvA) (h2 : admH2 X) {p q r s : ℕ} {μ : Ix p q → ℚ} {μ' : Ix r s → ℚ}
     {P : Pol p q r s} (hJ : P ∈ jointHarm p q r s) (h : IsHW (fockAct1 p q r s) μ P)
     (h' : IsHW (fockAct2 p q r s) μ' P) : JointShape p q r s μ μ' := by
@@ -467,8 +447,8 @@ theorem general (X : ProvA) (h2 : admH2 X) (hD : DiscreteSeriesBlattner X) (h5 :
       ((p + q : ℕ) : ℚ) * ((r + s : ℕ) : ℚ) * (((r + s : ℕ) : ℚ) - ((p + q : ℕ) : ℚ)) / 4)
     (hi : ARi X lam lam') (hii : ARii X lam lam') :
     ARiiiUp X lam lam' ∧ ARiiiDown X lam lam' ∧ ARiiiLine X lam lam' := by
-  obtain ⟨hA, hI⟩ := discrete_series_gk_admissible_irreducible X h5 hn lam
-  obtain ⟨hA', hI'⟩ := discrete_series_gk_admissible_irreducible X h5 hM lam'
+  obtain ⟨hA, hI⟩ := GlobalTheory.SmallerSource.discrete_series_gk_admissible_irreducible X h5 hn lam
+  obtain ⟨hA', hI'⟩ := GlobalTheory.SmallerSource.discrete_series_gk_admissible_irreducible X h5 hM lam'
   obtain ⟨hr, hc, -⟩ := hD p q lam hp
   obtain ⟨hr', hc', -⟩ := hD r s lam' hp'
   obtain ⟨v, hv⟩ := exists_isHW _ hr

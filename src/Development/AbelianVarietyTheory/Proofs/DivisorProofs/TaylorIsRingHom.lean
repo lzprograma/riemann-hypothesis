@@ -222,9 +222,9 @@ theorem iterOp_one {A : Type} [CommRing A] : ∀ {n : ℕ} (ds : Fin n → Deriv
           (⇑(ds 0))^[β 0] (iterOp (fun i => ⇑(ds i.succ)) β.tail x) := fun β x => iterOp_succ _ β x
       rw [hs, ih]
       by_cases ht : α.tail = 0
-      · rw [if_pos ht, iterate_one]
+      · rw [ite_eq_left ht, iterate_one]
         simp [eq_zero_iff_succ α, ht]
-      · rw [if_neg ht, ← iterHom_apply, map_zero]
+      · rw [ite_eq_right ht, ← iterHom_apply, map_zero]
         simp [eq_zero_iff_succ α, ht]
 
 theorem iterOp_add {A : Type} [CommRing A] {n : ℕ} (ds : Fin n → Derivation ℤ A A) (α : Fin n →₀ ℕ) (f g : A) :

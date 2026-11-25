@@ -43,8 +43,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Set Filter Topology MeasureTheory
@@ -250,8 +248,6 @@ theorem cycleHeights_of_arCalc (H : ArCalc) : CycleHeights :=
   ⟨H.arExists, H.arMix, heightProjection_of_arProj H.arProj⟩
 
 namespace CycleHeights
-
-theorem heightProjection (H : CycleHeights) : HeightProjection := H.2.2
 
 variable {k : Type} [CommRing k] {X Y : Scheme.{0}} {p : X ⟶ Sp k} {q : Y ⟶ Sp k} {D e : ℕ}
 

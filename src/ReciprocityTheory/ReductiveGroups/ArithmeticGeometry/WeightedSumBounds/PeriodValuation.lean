@@ -33,22 +33,22 @@ theorem coeff_pow_gap (f : PowerSeries K) (M : ℕ) (hM : 2 ≤ M) (a : K)
     rw [map_sub, coeff_C]
     rcases Nat.eq_zero_or_pos m with rfl | hm0
     · simp [hg0]
-    · rw [if_neg hm0.ne', sub_zero, ← coeff_succ_X_mul]
+    · rw [ite_eq_right hm0.ne', sub_zero, ← coeff_succ_X_mul]
       exact hg (m + 1) (by omega) (by omega)
   have hdn : (X : PowerSeries K) ^ (M - 1) ∣ g ^ n - C a ^ n :=
     dvd_trans hd (sub_dvd_pow_sub_pow _ _ n)
   rw [mul_pow, coeff_X_pow_mul']
   by_cases hle : n ≤ M
-  · rw [if_pos hle]
+  · rw [ite_eq_left hle]
     by_cases heq : n = M
     · subst heq
-      rw [if_pos rfl, Nat.sub_self, coeff_zero_eq_constantCoeff_apply, map_pow,
+      rw [ite_eq_left rfl, Nat.sub_self, coeff_zero_eq_constantCoeff_apply, map_pow,
         ← coeff_zero_eq_constantCoeff_apply, hg0]
-    · rw [if_neg heq]
+    · rw [ite_eq_right heq]
       have h1' := (X_pow_dvd_iff.mp hdn) (M - n) (by omega)
-      rw [map_sub, ← map_pow, coeff_C, if_neg (by omega), sub_zero] at h1'
+      rw [map_sub, ← map_pow, coeff_C, ite_eq_right (by omega), sub_zero] at h1'
       exact h1'
-  · rw [if_neg hle, if_neg (by omega)]
+  · rw [ite_eq_right hle, ite_eq_right (by omega)]
 
 theorem coeff_subst_gap (lg P : PowerSeries K) (M : ℕ) (hM : 2 ≤ M) (b : K)
     (hl0 : coeff 0 lg = 0) (hl1 : coeff 1 lg = 1) (hlg : ∀ j, 2 ≤ j → j < M → coeff j lg = 0)
@@ -64,10 +64,10 @@ theorem coeff_subst_gap (lg P : PowerSeries K) (M : ℕ) (hM : 2 ≤ M) (b : K)
     by_contra hlt
     apply hd
     simp only
-    rw [coeff_pow_gap P M hM b hP0 hP1 hPg d (by omega), if_neg (by omega), smul_zero]
+    rw [coeff_pow_gap P M hM b hP0 hP1 hPg d (by omega), ite_eq_right (by omega), smul_zero]
   rw [finsum_eq_sum_of_support_subset _ hsupp, Finset.sum_range_succ,
     Finset.sum_eq_single 1]
-  · rw [coeff_pow_gap P M hM b hP0 hP1 hPg M hM, if_pos rfl]
+  · rw [coeff_pow_gap P M hM b hP0 hP1 hPg M hM, ite_eq_left rfl]
     simp [hl1]
   · intro d hd hd1
     rcases Nat.lt_or_ge d 2 with h | h
@@ -81,7 +81,7 @@ theorem coeff_expComp_gap [CharZero K] (Ω : K) (lg : PowerSeries K) (M : ℕ) (
     (hlg : ∀ j, 2 ≤ j → j < M → coeff j lg = 0) :
     coeff M (expComp Ω lg) = Ω * coeff M lg + Ω ^ M / (M.factorial : K) := by
   rw [expComp, coeff_mk, Finset.sum_range_succ, Finset.sum_eq_single 1]
-  · rw [coeff_pow_gap lg M hM 1 hl0 hl1 hlg M hM, if_pos rfl]
+  · rw [coeff_pow_gap lg M hM 1 hl0 hl1 hlg M hM, ite_eq_left rfl]
     simp
   · intro d hd hd1
     rcases Nat.lt_or_ge d 2 with h | h
@@ -89,7 +89,7 @@ theorem coeff_expComp_gap [CharZero K] (Ω : K) (lg : PowerSeries K) (M : ℕ) (
       have hM0 : M ≠ 0 := by omega
       subst this; simp [coeff_one, hM0]
     · rw [coeff_pow_gap lg M hM 1 hl0 hl1 hlg d h,
-        if_neg (by have := Finset.mem_range.mp hd; omega), mul_zero]
+        ite_eq_right (by have := Finset.mem_range.mp hd; omega), mul_zero]
   · intro h; exact absurd (Finset.mem_range.mpr (by omega)) h
 
 end Coeff
@@ -169,12 +169,6 @@ theorem div_eq_coe {x y : K} (hy : y ≠ 0) {A B : ℝ} (hx : v x = A) (hyv : v 
   linarith
 
 end Val
-
-section ZetaNonvanishing₂
-
-variable {K : Type*} [Field K] (v : AddValuation K (WithTop ℝ))
-
-end ZetaNonvanishing₂
 
 end
 

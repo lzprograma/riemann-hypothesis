@@ -2,47 +2,7 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
 public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsAbsoluteValueOfIsDiscreteValuationRing
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.PowerSeries.Inverse
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.Valuation.LocalSubring
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
 import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ToMatrixTrFormBaseChange
 import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ModuliModelUltrametricPoints
@@ -53,7 +13,6 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open scoped CategoryTheory.Obj BigOperators
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.ToricData GlobalTheory.HostModel GlobalTheory.HostModel.ConjDual GlobalTheory.Ex.ValInh
-attribute [local instance] Over.cartesianMonoidalCategory
 noncomputable section
 namespace GlobalTheory.Ex
 
@@ -115,44 +74,6 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {D : Da
 end Valued
 
 namespace StepInh
-section Series
-variable {k K X : Type} [CommRing k] [Field K] (i : PowerSeries k →+* K)
-
-end Series
-
-section Terms
-variable {F : Type} [Field F]
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} (l : Geo.Tor.Level H)
-
-variable (k : Type) [CommRing k] [IsDomain k] [Algebra (FractionRing k) F]
-
-end Terms
-
-section ToricLift
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {l : Geo.Tor.Level H}
-  (c : Coeff l) (k : Type) [CommRing k] [IsDomain k] (bF : c.F →+* k) {O : Type} [CommRing O] (β : O →+* c.F)
-  {F : Type} [Field F] [IsAlgClosed F] [Algebra (FractionRing k) F] (ζ : ℕ → Fˣ)
-  (hp : ∀ n, 0 < n → IsPrimitiveRoot (ζ n) n) (hc : ∀ n m, 0 < n → 0 < m → ζ (n * m) ^ m = ζ n)
-  (hζ : ∀ n, 0 < n → ∀ z : c.F, (z : ℂ) = zeta n → (ζ n : F) = algebraMap (FractionRing k) F (algebraMap k _ (bF z)))
-
-
-end ToricLift
-
-section ToricSer
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {l : Geo.Tor.Level H}
-  {k : Type} [Field k] {K : Type} [Field K] (i : PowerSeries k →+* K) {ζ r : ℕ → Kˣ}
-  (hp : ∀ n, 0 < n → IsPrimitiveRoot (ζ n) n) (hr : ∀ n, 0 < n → (r n : K) ^ n = i PowerSeries.X)
-
-
-
-
-end ToricSer
-
-section SerInh
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {l : Geo.Tor.Level H}
-
-end SerInh
 
 section Settings
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
@@ -171,18 +92,7 @@ theorem exists_cExt (W : Type) [CommRing W] [IsDomain W] [IsLocalRing W] (h : CD
   rw [map_mul, map_mul, norm_mul, h2]
   linarith
 
-section Tate
-variable {R : Type} [CommRing R] [IsDomain R] (q : (FractionRing R)ˣ) (F : Type) [Field F] [Algebra (FractionRing R) F]
-
-end Tate
-
 end Settings
-
-section GoodMdl
-open UnifModel
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {D : Datum H}
-
-end GoodMdl
 
 end StepInh
 end GlobalTheory.Ex

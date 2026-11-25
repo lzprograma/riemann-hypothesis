@@ -35,7 +35,7 @@ theorem divCycle_eq_ite {P : Ideal (MRing ι)} [P.IsPrime] {s u : MRing ι} (hu 
     (W : Ideal (MRing ι)) :
     divCycle P s W = if W ∈ divSupp P (s * u) then multAt (P ⊔ Ideal.span {s}) W else 0 := by
   by_cases hW : W ∈ divSupp P (s * u)
-  · rw [if_pos hW]
+  · rw [ite_eq_left hW]
     by_cases hWs : W ∈ divSupp P s
     · exact divCycle_of_mem hWs
     rw [divCycle_of_not_mem hWs]
@@ -51,7 +51,7 @@ theorem divCycle_eq_ite {P : Ideal (MRing ι)} [P.IsPrime] {s u : MRing ι} (hu 
       rw [dite_eq_left hWp, Module.length_eq_zero_iff.mpr
         (NumbersDVR.localizedQuot_subsingleton_of_not_le _ W hnle)]
       rfl
-  · rw [if_neg hW]
+  · rw [ite_eq_right hW]
     refine divCycle_of_not_mem fun hWs => hW ⟨?_, hWs.2⟩
     exact NumbersDVR.mem_minimalPrimes_sup_span_mul hu hWs.1
 

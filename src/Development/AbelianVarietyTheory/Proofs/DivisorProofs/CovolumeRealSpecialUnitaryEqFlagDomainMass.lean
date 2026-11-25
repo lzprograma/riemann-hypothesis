@@ -11,56 +11,9 @@ import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsContinuous
 import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MeasureStatements
 import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MuFLtTopOfIsCompact
 import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.UpperTriangularPreservesDiagonalIff
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Algebra.Group.Units
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpCStatementPfA
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.KaUnfoldPfB
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -152,9 +105,9 @@ theorem exists_haar_lying_over : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
   have htUc : Continuous tU := by
     refine continuous_pi fun τ => continuous_pi fun a => ?_
     by_cases ha : (a : ℕ) = 0
-    · simp only [tU, ha, if_true]
+    · simp only [tU, ha, ite_true]
       exact ((continuous_apply τ).comp hdCc).inv
-    · simp only [tU, ha, if_false]
+    · simp only [tU, ha, ite_false]
       exact continuous_const
   have hcTc : Continuous cT := by
     refine hιc.comp_continuous ?_ fun t => horthT t
@@ -169,10 +122,10 @@ theorem exists_haar_lying_over : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
     have e3 : (mat (diagF X (tU g)) τ).det = ((M g.1 τ).det)⁻¹ := by
       show (Matrix.diagonal fun a => ((tU g τ a : Circle) : ℂ)).det = _
       rw [Matrix.det_diagonal, Finset.prod_eq_single (⟨0, hr⟩ : Fin r)]
-      · simp only [tU, if_true, Circle.coe_inv, hdC]
+      · simp only [tU, ite_true, Circle.coe_inv, hdC]
       · intro b _ hb
         have : (b : ℕ) ≠ 0 := fun h => hb (Fin.ext h)
-        simp only [tU, this, if_false, Circle.coe_one]
+        simp only [tU, this, ite_false, Circle.coe_one]
       · simp
     have hx0 := UnitaryFrames.det_ne_zero_of_isOrth X hx τ
     have hg0 : (M g.1 τ).det ≠ 0 := by
@@ -291,9 +244,6 @@ noncomputable section
 namespace GlobalTheory.SUCovol
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ}
-
-theorem countable_numberField : Countable E :=
-  (Module.finBasis ℚ E).equivFun.injective.countable
 
 def idF (Ψ : Finset (E →+* ℂ)) (r : ℕ) : Frame Ψ r := fun _ => (1 : Matrix (Fin r) (Fin r) ℂ)
 

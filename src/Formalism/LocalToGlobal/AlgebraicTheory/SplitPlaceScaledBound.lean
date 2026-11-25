@@ -146,7 +146,7 @@ theorem CapelliMinorMembership.key_term {X : Fields} (A : Amb X) {a b : ℕ} {p 
     by_cases hβ : β = β₁
     · subst hβ
       by_cases h' : β = β' ∧ α = α'
-      · simp only [vecE, h', and_self, if_true]
+      · simp only [vecE, h', and_self, ite_true]
         rw [map_mul, map_natCast]
         field_simp
         simp only [RingEquiv.coe_toRingHom]
@@ -188,18 +188,18 @@ theorem kerFrame_of (h : EigenFrameDual) : KerFrame := by
     simp only [CapelliMinorMembership.key_term A ι hn0 r]
     refine (CapelliMinorMembership.collapse _ β₁ α₁).trans ?_
     by_cases hc : β₁ = β' ∧ α₁ = α'
-    · refine (Finset.sum_congr rfl (fun i _ => if_pos hc)).trans ?_
+    · refine (Finset.sum_congr rfl (fun i _ => ite_eq_left hc)).trans ?_
       rw [← Finset.mul_sum, hr2 τ (X.embC A.σ₀ τ₁)]
       obtain ⟨rfl, rfl⟩ := hc
       by_cases ht : τ₁ = τ
       · subst ht
         simp
       · have hne : X.embC A.σ₀ τ₁ ≠ X.embC A.σ₀ τ := fun e => ht (hinj e)
-        rw [if_neg hne, mul_zero, if_neg]
+        rw [ite_eq_right hne, mul_zero, ite_eq_right]
         intro he
         exact ht (Prod.mk.inj he).1
-    · refine (Finset.sum_congr rfl (fun i _ => if_neg hc)).trans ?_
-      rw [Finset.sum_const_zero, if_neg]
+    · refine (Finset.sum_congr rfl (fun i _ => ite_eq_right hc)).trans ?_
+      rw [Finset.sum_const_zero, ite_eq_right]
       intro he
       have h2 := (Prod.mk.inj he).2
       exact hc ⟨(Prod.mk.inj h2).1, (Prod.mk.inj h2).2⟩
@@ -631,7 +631,7 @@ private theorem exists_unitAt_prod_pow {K : Type} [NormedField K] [IsUltrametric
 private theorem eq_and_eq_one_of_C_mul_X_pow_eq {K : Type} [Field K] {E n : ℕ} {b : K} {h : K⟦X⟧}
     (hh : constantCoeff h = 1) (heq : C b * X ^ n = X ^ E * h) : E = n ∧ b = 1 := by
   have h1 := congrArg (coeff E) heq
-  rw [coeff_C_mul_X_pow, coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self,
+  rw [coeff_C_mul_X_pow, coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self,
     coeff_zero_eq_constantCoeff_apply, hh] at h1
   split_ifs at h1 with hE
   · exact ⟨hE, h1⟩
@@ -1113,16 +1113,16 @@ theorem gauss_roots {ι : Type} [Fintype ι] (A : PowerSeries K) (hA0 : constant
   have hG1 : ∀ P, GaussOne (g P) := by
     intro P
     by_cases h : ‖c P‖ ≤ 1
-    · have hdP : d P = 1 := by simp only [hd]; rw [if_pos h]
+    · have hdP : d P = 1 := by simp only [hd]; rw [ite_eq_left h]
       refine ⟨fun n => ?_, 0, ?_⟩
       · rw [hgc, hdP, inv_one, one_mul]
         apply _root_.Formalism.InvariantFactorPaths.G7.LemTwo.norm_sub_le_one (hA n)
         split_ifs
         · exact h
         · simp
-      · rw [hgc, hdP, inv_one, one_mul, if_neg (by norm_num), sub_zero, coeff_zero_eq_constantCoeff_apply, hA0,
+      · rw [hgc, hdP, inv_one, one_mul, ite_eq_right (by norm_num), sub_zero, coeff_zero_eq_constantCoeff_apply, hA0,
           norm_one]
-    · have hdP : d P = c P := by simp only [hd]; rw [if_neg h]
+    · have hdP : d P = c P := by simp only [hd]; rw [ite_eq_right h]
       have hc1 : 1 < ‖c P‖ := not_le.1 h
       have hc0 : c P ≠ 0 := by
         intro h0
@@ -1147,7 +1147,7 @@ theorem gauss_roots {ι : Type} [Fintype ι] (A : PowerSeries K) (hA0 : constant
       · rw [e]
         apply _root_.Formalism.InvariantFactorPaths.G7.LemTwo.norm_sub_le_one (hsmall n).le
         split_ifs <;> simp
-      · rw [e, if_pos rfl]
+      · rw [e, ite_eq_left rfl]
         apply norm_one_of_close (b := -1)
         · rw [sub_neg_eq_add, sub_add_cancel]
           exact hsmall 2
@@ -1165,7 +1165,7 @@ theorem gauss_roots {ι : Type} [Fintype ι] (A : PowerSeries K) (hA0 : constant
   rw [hfac, coeff_C_mul, norm_mul, hn, mul_one, norm_prod] at hc
   intro P
   by_contra hP
-  have hdP : d P = c P := by simp only [hd]; rw [if_neg hP]
+  have hdP : d P = c P := by simp only [hd]; rw [ite_eq_right hP]
   have hrest : (1 : ℝ) ≤ ∏ Q ∈ Finset.univ.erase P, ‖d Q‖ := by
     calc (1 : ℝ) = ∏ Q ∈ Finset.univ.erase P, (1 : ℝ) := by rw [Finset.prod_const_one]
       _ ≤ ∏ Q ∈ Finset.univ.erase P, ‖d Q‖ :=

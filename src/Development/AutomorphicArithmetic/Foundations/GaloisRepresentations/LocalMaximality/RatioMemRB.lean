@@ -53,21 +53,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
-private lemma omB_smul_mem {K : Type} [Field K] [Algebra ℂ K] (B : Subalgebra ℂ K) (q : ℕ) {b : K} (hb : b ∈ B)
-    {y : DR ℂ K} (hy : y ∈ omB ℂ K B q) : b • y ∈ omB ℂ K B q := by
-  induction hy using Submodule.span_induction with
-  | mem z hz =>
-    obtain ⟨b', hb', v, hv, rfl⟩ := hz
-    apply Submodule.subset_span
-    exact ⟨b * b', B.mul_mem hb hb', v, hv, by rw [smul_smul]⟩
-  | zero => simp
-  | add u w _ _ hu hw =>
-    rw [smul_add]
-    exact Submodule.add_mem _ hu hw
-  | smul c u _ hu =>
-    rw [smul_comm]
-    exact Submodule.smul_mem _ c hu
-
 private lemma ratio_mem_rB {F : Type} (K : Type) [Field F] [Field K] [Algebra ℂ F] [Algebra ℂ K] [Algebra F K]
     [IsScalarTower ℂ F K] {d : ℕ} (x : Fin (d + 1) → F) (i j : Fin (d + 1)) :
     algebraMap F K (x j / x i) ∈ rB ℂ K x {i} := by
@@ -130,9 +115,9 @@ private lemma key {F K : Type} [Field F] [Field K] [Algebra ℂ F] [Algebra ℂ 
         omB ℂ K (rB ℂ K (xv x) {i}) (d - a) := by
       have e : N + d + 1 = (N + d + 1 - N1) + N1 := by omega
       rw [e, pow_add, ← smul_smul]
-      exact omB_smul_mem _ _ (pow_mem hu _) hN1'
+      exact smul_mem_omB _ _ _ (pow_mem hu _) _ hN1'
     have h2 : algebraMap F K ((x i : F) / x j) ^ N • z ∈ omB ℂ K (rB ℂ K (xv x) {j}) a :=
-      omB_smul_mem _ _ (pow_mem hv _) hz
+      smul_mem_omB _ _ _ (pow_mem hv _) _ hz
     exact Submodule.apply_mem_map₂ _ h1 h2
   unfold MZ at hm
   rw [Submodule.map₂_eq_span_image2] at hm

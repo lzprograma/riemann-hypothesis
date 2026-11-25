@@ -6,60 +6,10 @@ public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 public import Mathlib.Algebra.Module.ZLattice.Basic
 public import Mathlib.MeasureTheory.Group.GeometryOfNumbers
 public import Mathlib.Analysis.Matrix.PosDef
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Lemma
-import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Data.Pi.Interval
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
 import Mathlib.Tactic.Linter.Style
-import Mathlib.RingTheory.PiTensorProduct
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -85,7 +35,6 @@ theorem set_eq_preimage {ι : Type} [Fintype ι] [DecidableEq ι] (A : Matrix ι
   simp [abs_lt]
 
 end PSymplBoxVolume
-
 
 open PSymplBoxVolume in
 theorem SymplBoxVolume.proof : SymplBoxVolume.Statement := by
@@ -134,7 +83,6 @@ theorem symplOmega_eq_sum {R : Type*} [CommRing R] {l : Type*} [Fintype l] [Deci
   ring
 
 end PSymplCons
-
 
 open PSymplCons in
 theorem SymplCons.proof : SymplCons.Statement := by
@@ -239,7 +187,6 @@ theorem clearCol_mul_succ {n : ℕ} (A : Matrix (Fin (n + 1)) (Fin (n + 1)) ℝ)
 
 end PSymplDetSchur
 
-
 open PSymplDetSchur in
 theorem SymplDetSchur.proof : SymplDetSchur.Statement := by
   intro n A ha
@@ -298,7 +245,6 @@ lemma row_inr (i : Fin n) :
     symplExt α β γ δ Q (Sum.inr i.succ) = symplCons 0 0 (Q (Sum.inr i)) := rfl
 
 end PSymplExtMem
-
 
 open PSymplExtMem in
 theorem SymplExtMem.proof (h1 : SymplOmegaMem.Statement) (h2 : SymplCons.Statement) :
@@ -461,7 +407,6 @@ lemma gram_diag {l : Type*} [Fintype l] (P : Matrix l l ℤ) (G : Matrix l l ℝ
   rfl
 
 end PSymplGramMem
-
 
 open PSymplGramMem in
 theorem SymplGramMem.proof : SymplGramMem.Statement := by
@@ -713,7 +658,6 @@ theorem volume_fundamentalDomain_basisFun (ι : Type) [Fintype ι] :
 
 end PSymplMinkowskiBox
 
-
 open PSymplMinkowskiBox in
 theorem SymplMinkowskiBox.proof (h1 : SymplBoxVolume.Statement) : SymplMinkowskiBox.Statement := by
   intro ι _ _ A a hdet ha hprod
@@ -820,7 +764,6 @@ theorem symplCons_one_zero {R : Type*} [CommRing R] {n : ℕ} :
     simp [symplCons, Fin.succ_ne_zero]
 
 end PSymplOrbit
-
 
 open PSymplOrbit in
 theorem SymplOrbit.proof (h1 : SymplExtMem.Statement) (h2 : SymplExtVecMul.Statement)
@@ -970,7 +913,6 @@ theorem entry {l : Type*} [Fintype l] (E H : Matrix l l ℝ) (x y : l) :
 
 end PSymplReduceConj
 
-
 open PSymplReduceConj in
 theorem SymplReduceConj.proof : SymplReduceConj.Statement := by
   intro n H Q
@@ -1068,7 +1010,6 @@ theorem reduce_row {n : ℕ} (H : Matrix (Fin (n + 1) ⊕ Fin (n + 1)) (Fin (n +
 
 end PSymplReduceMem
 
-
 open PSymplReduceMem in
 theorem SymplReduceMem.proof (h1 : SymplOmegaMem.Statement) (h2 : SymplCons.Statement) :
     SymplReduceMem.Statement := by
@@ -1108,7 +1049,6 @@ theorem sum_mul_symplCons {n : ℕ} (c : ℝ) (x : Fin n ⊕ Fin n → ℝ)
   ring
 
 end PSymplReducePosDef
-
 
 open PSymplReducePosDef in
 theorem SymplReducePosDef.proof : SymplReducePosDef.Statement := by
@@ -1255,13 +1195,7 @@ lemma intVec_smul {ι : Type} (m : ℤ) (w : ι → ℤ) : intVec (m • w) = (m
   funext i
   simp [intVec]
 
-lemma qf_smul {ι : Type} [Fintype ι] (Y : Matrix ι ι ℝ) (c : ℝ) (x : ι → ℝ) :
-    qf Y (c • x) = c ^ 2 * qf Y x := by
-  simp only [qf, mulVec_smul, dotProduct_smul, smul_dotProduct, smul_eq_mul]
-  ring
-
 end PSymplShortPrim
-
 
 open PSymplShortPrim in
 theorem SymplShortPrim.proof : SymplShortPrim.Statement := by
@@ -1282,7 +1216,7 @@ theorem SymplShortPrim.proof : SymplShortPrim.Statement := by
     have := hG.dotProduct_mulVec_pos hwR
     simpa [qf] using this
   have hle := hmin w hw
-  rw [hvw, intVec_smul, qf_smul] at hle
+  rw [hvw, intVec_smul, GroundTheory.Heights₂.Heights.PSymplMinExists.qf_smul] at hle
   have hm2 : ((m : ℝ)) ^ 2 ≤ 1 := by
     by_contra h
     rw [not_le] at h
@@ -1387,7 +1321,6 @@ theorem twoBlock_mul_transpose {n : ℕ} {c d x y : ℤ} (h : x * c + y * d = 1)
   first | linarith | (split_ifs <;> simp_all [Fin.ext_iff]) | simp [Fin.ext_iff]
 
 end PSymplTwoRow
-
 
 open PSymplTwoRow in
 theorem SymplTwoRow.proof : SymplTwoRow.Statement := by

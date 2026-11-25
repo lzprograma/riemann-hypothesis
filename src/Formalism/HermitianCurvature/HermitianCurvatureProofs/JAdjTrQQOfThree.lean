@@ -26,72 +26,25 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddOp
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABStar
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAIsAdj
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStable
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDJDJComm
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveOrbitOpen
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LUFactorOrbitBounds
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
-import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Calculus.ContDiff.Bounds
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.BXiAsm
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnTrSmooth
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocAlg
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SquareIntegrableGammaZetabarInv
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.BoundedOperatorsSquareIntegrable
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDCCLower
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatBdd
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutAsm
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SeminormCompletion
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Topology.Sheaves.Presheaf
-import Std.Tactic.BVDecide.Normalize.BitVec
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.Development
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -242,8 +195,6 @@ noncomputable section
 namespace Formalism.FourierDecayAlt.P.CutMP.JA
 
 open NumberField Formalism.FourierDecayAlt.P.CutMP
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem locAdd_thr (k r : ℕ) {A : ℝ} (hA : 10 * ((r : ℝ) + 1) * nDim k r ^ 2 ≤ A) : JF.TransportedAlt k r A 0 := by
   unfold JF.TransportedAlt
@@ -451,8 +402,6 @@ namespace Formalism.FourierDecayAlt.P.CutMP.JA
 
 open Formalism.FourierDecayAlt.P.CutMP
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 theorem local_square_integrable_transfer : LocalSquareIntegrableTransfer := by
   refine ⟨3, ?_⟩
   intro E _ _ _ Wp Wq _ _ _ _ _ _ S T f χ ν' m₀ top Cb A₀ hB v Bg A ε J e hFr hBg hε hA hJ π
@@ -535,7 +484,7 @@ theorem local_square_integrable_transfer : LocalSquareIntegrableTransfer := by
       have hle : Tz S.G.k S.G.r Db.z * Tz S.G.k S.G.r Db.z' ≤ Complex.normSq x.2 := by
         rw [hTT]; exact le_of_lt hx.2
       unfold bcWeight
-      rw [if_pos hle]
+      rw [ite_eq_left hle]
       unfold Formalism.FourierDecayAlt.P.MAx2.Adj.dR MA.wq
       rw [hTT, ← mul_assoc, ← Finset.prod_mul_distrib]
       congr 1
@@ -601,8 +550,6 @@ open scoped ContDiff
 noncomputable section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.LT
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 section op
 
@@ -915,12 +862,6 @@ theorem opApply_van {Wp' Wq' : Type} [NormedAddCommGroup Wp'] [InnerProductSpace
 
 end van
 
-theorem list_sum_flatMap {α M : Type} [AddCommMonoid M] (l : List α) (f : α → List M) :
-    (l.flatMap f).sum = (l.map fun a => (f a).sum).sum := by
-  induction l with
-  | nil => simp
-  | cons a l ih => simp [List.flatMap_cons, List.sum_append, ih]
-
 theorem list_sum_map_flatMap {α β M : Type} [AddCommMonoid M] (l : List α) (f : α → List β) (g : β → M) :
     ((l.flatMap f).map g).sum = (l.map fun a => ((f a).map g).sum).sum := by
   induction l with
@@ -1109,8 +1050,6 @@ theorem ja_arith (Cj Cl Cgr Sg R n N A AB : ℝ) (hCj : 0 ≤ Cj) (hSg : 0 ≤ S
   have f3 : (R + 1) * n ≤ W := hY _ _ hX0 hn0 hX4 hn3
   have f4 : R * n ≤ W := hY _ _ hR hn0 (by linarith) hn3
   have f5 : R + 1 ≤ W := by have := hY _ _ hX0 (by norm_num : (0:ℝ) ≤ 1) hX4 h1n3; linarith
-  have f6 : 1 ≤ W := le_trans hX f5
-  have f8 : R ≤ W := by linarith
   have f7 : (N + 1) * ((R + 1) * n) ≤ W := by
     have h1' : N * n ≤ N * n ^ 2 := mul_le_mul_of_nonneg_left hn2 hN
     have h2' : (R + 1) * (N * n + n) ≤ (R + 1) ^ 4 * (N * n ^ 2 + n ^ 3) :=
@@ -1132,7 +1071,6 @@ theorem ja_arith (Cj Cl Cgr Sg R n N A AB : ℝ) (hCj : 0 ≤ Cj) (hSg : 0 ≤ S
   have g4 : Cj * ((R + 1) * n) ≤ Cj * W := mul_le_mul_of_nonneg_left f3 hCj
   have g5 : Sg * Cj * ((R + 1) * n) ≤ Sg * Cj * W := mul_le_mul_of_nonneg_left f3 (by positivity)
   have g6 : Sg * (R + 1) ≤ Sg * W := mul_le_mul_of_nonneg_left f5 hSg
-  have g7 : n * (R + 1) ≤ W := by linarith
   have hAbs : 0 ≤ |Cl| + |Cgr| := by positivity
   have hK : (40 + |Cl| + |Cgr| + 10 * Cj + 10 * Sg + 10 * Cj * Sg) * W ≤
       200 * (1 + |Cl| + |Cgr|) * (1 + Cj) * (1 + Sg) * W := by
@@ -1148,8 +1086,6 @@ theorem ja_arith (Cj Cl Cgr Sg R n N A AB : ℝ) (hCj : 0 ≤ Cj) (hSg : 0 ≤ S
     have : 0 ≤ |Cl| + |Cgr| := hAbs
     linarith
   have hA' : (40 + |Cl| + |Cgr| + 10 * Cj + 10 * Sg + 10 * Cj * Sg) * W ≤ A := le_trans hK (by rw [hW] at hA ⊢; linarith)
-  have hAbs1 : 0 ≤ |Cl| := abs_nonneg _
-  have hAbs2 : 0 ≤ |Cgr| := abs_nonneg _
   have hCjW : 0 ≤ Cj * W := by positivity
   have hSgW : 0 ≤ Sg * W := by positivity
   have hCSW : 0 ≤ Cj * Sg * W := by positivity
@@ -1164,8 +1100,6 @@ theorem ja_arith (Cj Cl Cgr Sg R n N A AB : ℝ) (hCj : 0 ≤ Cj) (hSg : 0 ≤ S
         AB + Cgr * ((R + 1) * n ^ 2) + 6 * (Cj * (R * n)) + 30 * R + Cj * ((R + 1) * n) +
           2 * (Sg * Cj * ((R + 1) * n)) + 10 * (Sg * (R + 1)) := by ring
     rw [e]
-    have hABW : AB ≤ 3 * W := by linarith
-    have h30 : 30 * R ≤ 30 * W := by linarith
     linarith
   · have e : Cl * (R + 1) ^ 2 * n + 5 * (Sg * (R + 1)) = Cl * ((R + 1) ^ 2 * n) + 5 * (Sg * (R + 1)) := by ring
     rw [e]; linarith
@@ -1360,7 +1294,7 @@ theorem Rz_hat
       ∀ J ∈ smoothFormsPositiveCone S T v, MA.actA (D.parOf S v) t.1 (trJ S T v e J) =
         ((tsb t).map fun s => s.1 • trJ S T v e (applyL S v s.2 J)).sum := by
     intro t ht
-    simp only [tsb, dif_pos ht]
+    simp only [tsb, dite_eq_left ht]
     exact Classical.choose_spec (hb t ht)
   refine ⟨ts0.flatMap (fun t => (tsb t).map (fun s => (s.1, s.2 ++ [t.2]))), ?_, ?_⟩
   · intro u hu
@@ -1465,13 +1399,13 @@ theorem one_op {Θ : OpT S v} (hΘ : Good S T v c.Bg c.Dh c.Oh Θ) :
   · refine ⟨0, le_rfl, hL.2, ?_, ?_, ?_⟩
     · rw [hL.1]; unfold Top; push_cast; linarith [mul_nonneg hR hOh, mul_nonneg hBg hOh]
     · rw [hL.1]; unfold Tga; push_cast; linarith [mul_nonneg hR hOh, mul_nonneg hBg hOh]
-    · rw [if_pos hL, hL.1]; simp
+    · rw [ite_eq_left hL, hL.1]; simp
   · rcases hΘ.2 with h | ⟨hc, ho⟩
     · exact absurd h hL
     · refine ⟨c.Dh, hDh, hc, ?_, ?_, ?_⟩
       · unfold Top; linarith [mul_le_mul_of_nonneg_left ho hR, mul_le_mul_of_nonneg_left ho hBg]
       · unfold Tga; linarith [mul_le_mul_of_nonneg_left ho hR, mul_le_mul_of_nonneg_left ho hBg]
-      · rw [if_neg hL]; unfold Ch; linarith [mul_le_mul_of_nonneg_left ho hBg]
+      · rw [ite_eq_right hL]; unfold Ch; linarith [mul_le_mul_of_nonneg_left ho hBg]
 
 theorem applyL_loc : ∀ (l : List (OpT S v)), (∀ Θ ∈ l, Good S T v c.Bg c.Dh c.Oh Θ) →
     ∀ (A : ℝ) (J : GFn S v), LocCC S T v A c.Bg J → J ∈ smoothFormsPositiveCone S T v → c.Top ≤ A - heavy S T v c.Bg l * c.Ch →
@@ -1489,11 +1423,11 @@ theorem applyL_loc : ∀ (l : List (OpT S v)), (∀ Θ ∈ l, Good S T v c.Bg c.
       apply_list_preserves_smooth_forms c.hFF l (fun Θ' h => (hl' Θ' h).1) hJF
     rw [heavy_cons] at hA ⊢
     by_cases hL : Lt S T v c.Bg Θ
-    · simp only [if_pos hL, add_zero, zero_mul] at hA hcost ⊢
+    · simp only [ite_eq_left hL, add_zero, zero_mul] at hA hcost ⊢
       have h1 := ih hl' A J hJ hJF hA
       have h2 := c.hOp Θ d _ _ hd hΘ.1 hc (le_trans hT hA) h1 (c.hFF Θ hΘ.1 _ (hF1 A hA)).1
       exact c.hMono _ _ _ (by linarith) h2
-    · simp only [if_neg hL, one_mul, Nat.cast_add, Nat.cast_one] at hA hcost ⊢
+    · simp only [ite_eq_right hL, one_mul, Nat.cast_add, Nat.cast_one] at hA hcost ⊢
       have e1 : ((heavy S T v c.Bg l : ℝ) + 1) * c.Ch = (heavy S T v c.Bg l : ℝ) * c.Ch + c.Ch := by ring
       rw [e1] at hA ⊢
       have hA' : c.Top ≤ A - heavy S T v c.Bg l * c.Ch := by linarith
@@ -1519,12 +1453,12 @@ theorem adjL_loc : ∀ (l : List (OpT S v)), (∀ Θ ∈ l, Good S T v c.Bg c.Dh
     rw [heavy_cons] at hA ⊢
     rw [adjL_cons]
     by_cases hL : Lt S T v c.Bg Θ
-    · simp only [if_pos hL, add_zero, zero_mul] at hA hcost ⊢
+    · simp only [ite_eq_left hL, add_zero, zero_mul] at hA hcost ⊢
       have hAT : c.Top ≤ A := by linarith
       have h1 := c.hAdj Θ d A J hd hΘ.1 hc (le_trans hT hAT) hJ hF2
       have h1' : LocCC S T v A c.Bg (B.opAdj Θ J) := c.hMono _ _ _ (by linarith) h1
       exact ih hl' A _ h1' hF2 hA
-    · simp only [if_neg hL, one_mul, Nat.cast_add, Nat.cast_one] at hA hcost ⊢
+    · simp only [ite_eq_right hL, one_mul, Nat.cast_add, Nat.cast_one] at hA hcost ⊢
       have e1 : ((heavy S T v c.Bg l : ℝ) + 1) * c.Ch = (heavy S T v c.Bg l : ℝ) * c.Ch + c.Ch := by ring
       rw [e1] at hA ⊢
       have hAT : c.Top ≤ A := by linarith
@@ -1558,14 +1492,14 @@ theorem chain {ε : ℝ} (hε : 0 < ε) : ∀ (l : List (OpT S v)), (∀ Θ ∈ 
     show MA.ipA (D.parOf S v) (trJ S T v e (B.opApply Θ (applyL S v l K))) (trJ S T v e J₂) =
       MA.ipA (D.parOf S v) (trJ S T v e K) (trJ S T v e (adjL S v l (B.opAdj Θ J₂)))
     by_cases hL : Lt S T v c.Bg Θ
-    · simp only [if_pos hL, add_zero, zero_mul] at h1T h1G h2T h2G hcost
+    · simp only [ite_eq_left hL, add_zero, zero_mul] at h1T h1G h2T h2G hcost
       have hL1 := c.applyL_loc l hl' A₁ K hK hKF h1T
       have hstep := c.hGA Θ d hd hΘ.1 hc ε hε (applyL S v l K) J₂ (c.hMono _ _ _ (le_trans hG h1G) hL1)
         (c.hMono _ _ _ (by linarith) hJ) (fun x _ hx => hv1 _ hx) (c.hFF Θ hΘ.1 _ hF1).1 hF2
       rw [hstep]
       have h2 := c.hAdj Θ d A₂ J₂ hd hΘ.1 hc (le_trans hT (by linarith)) hJ hF2
       exact ih hl' A₁ A₂ K _ hK hKF hKv (c.hMono _ _ _ (by linarith) h2) hF2 h1T h1G h2T h2G
-    · simp only [if_neg hL, one_mul, Nat.cast_add, Nat.cast_one] at h1T h1G h2T h2G hcost
+    · simp only [ite_eq_right hL, one_mul, Nat.cast_add, Nat.cast_one] at h1T h1G h2T h2G hcost
       have e1 : ((heavy S T v c.Bg l : ℝ) + 1) * c.Ch = (heavy S T v c.Bg l : ℝ) * c.Ch + c.Ch := by ring
       rw [e1] at h1T h1G h2T h2G
       have hL1 := c.applyL_loc l hl' A₁ K hK hKF (by linarith)

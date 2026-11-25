@@ -12,47 +12,7 @@ public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.Discriminant
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.GoodPathWeight
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DistAddTwoLeOfSameVec
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DiscriminantNonzeroModUniformiser
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DomOfStripDown, Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ProdFromSelfEqOne, Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ProdIccOneEqProdRange, Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TypOfTypical, Formalism.SharpRestriction.GrowthBounds.SegmentDegree.GoodPathWeightOfTopCount, Formalism.SharpRestriction.GrowthBounds.SegmentDegree.GoodPathWeightAlt
@@ -213,7 +173,6 @@ theorem tau_count (D : Formalism.BasicNotions.D7) (h3 : admB3 D) (h4 : ColumnFam
         rw [hν]; exact hla _
       have hd' : Dominant (glueT (r := r) t (beA n0 B : ℤ) τ) := by
         intro m m' hmm
-        have hmm' : m.val ≤ m'.val := hmm
         by_cases h1 : m'.val < r - t
         · rw [glueT_lt t _ _ m' h1, glueT_lt t _ _ m (by omega)]
         · rw [glueT_ge t (by omega) _ _ m' (by omega)]
@@ -293,19 +252,19 @@ theorem prodFrom_succ (n0 : ℕ) (B : Fin N → ℕ) (s : ℕ) (hs : s < N) (hsn
     intro i
     by_cases he : i = ⟨s, hs⟩
     · subst he
-      rw [if_pos ⟨le_rfl, hsn⟩, if_pos rfl, if_neg (by simp), mul_one]
+      rw [ite_eq_left ⟨le_rfl, hsn⟩, ite_eq_left rfl, ite_eq_right (by simp), mul_one]
     · have hne : i.val ≠ s := fun h => he (Fin.ext h)
-      rw [if_neg he, one_mul]
+      rw [ite_eq_right he, one_mul]
       by_cases h1 : s ≤ i.val ∧ i.val < n0
-      · rw [if_pos h1, if_pos ⟨by omega, h1.2⟩]
-      · rw [if_neg h1, if_neg (by omega)]
+      · rw [ite_eq_left h1, ite_eq_left ⟨by omega, h1.2⟩]
+      · rw [ite_eq_right h1, ite_eq_right (by omega)]
   rw [Finset.prod_congr rfl fun i _ => hpt i, Finset.prod_mul_distrib, Finset.prod_ite_eq' ]
   simp
 
 theorem prodFrom_self_eq_one (n0 : ℕ) (B : Fin N → ℕ) : prodFrom r K n0 B n0 = 1 := by
   unfold prodFrom
   refine Finset.prod_eq_one fun i _ => ?_
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 section
 variable {n0 : ℕ} {LL : Letters (Fin N)} {B : Fin N → ℕ} {od : Fin N → Fin N} {bb : Fin N → ℝ} {a La : ℝ} {p : ℕ}
@@ -344,7 +303,7 @@ theorem pre_count (D : Formalism.BasicNotions.D7) (h3 : admB3 D) (h4 : ColumnFam
       · refine Finset.sum_congr rfl fun la' hla' => ?_
         rw [Finset.mem_filter] at hla'
         have hst : StepOK LL n0 B ⟨s, hs⟩ (μ0 (⟨s, hs⟩ : Fin N).castSucc) la' :=
-          ⟨fun _ => by rw [if_pos hvec]; exact hla'.2, fun h => absurd h (by simp only; omega)⟩
+          ⟨fun _ => by rw [ite_eq_left hvec]; exact hla'.2, fun h => absurd h (by simp only; omega)⟩
         have hv' := vp_update hs hv la' (dom_of_strip_up hla'.2 hlad) hst
         rw [ih (s + 1) (by omega) _ hv']
         congr 2
@@ -353,7 +312,7 @@ theorem pre_count (D : Formalism.BasicNotions.D7) (h3 : admB3 D) (h4 : ColumnFam
       · intro q hq
         obtain ⟨_, hstq⟩ := Af_step H hfin s hs μ0 q hq
         have hS := hstq.1 hsn
-        rw [if_pos hvec] at hS
+        rw [ite_eq_left hvec] at hS
         rw [Finset.mem_filter, Fintype.mem_piFinset]
         exact ⟨fun x => Finset.mem_Icc.mpr ⟨hS.1 x, strip_le_add hS x⟩, hS⟩
     | false =>
@@ -362,7 +321,7 @@ theorem pre_count (D : Formalism.BasicNotions.D7) (h3 : admB3 D) (h4 : ColumnFam
       · refine Finset.sum_congr rfl fun la' hla' => ?_
         rw [Finset.mem_filter] at hla'
         have hst : StepOK LL n0 B ⟨s, hs⟩ (μ0 (⟨s, hs⟩ : Fin N).castSucc) la' :=
-          ⟨fun _ => by rw [if_neg (by simp [hvec])]; exact hla'.2, fun h => absurd h (by simp only; omega)⟩
+          ⟨fun _ => by rw [ite_eq_right (by simp [hvec])]; exact hla'.2, fun h => absurd h (by simp only; omega)⟩
         have hv' := vp_update hs hv la' (dom_of_strip_down hla'.2 hlad) hst
         rw [ih (s + 1) (by omega) _ hv']
         congr 2
@@ -371,7 +330,7 @@ theorem pre_count (D : Formalism.BasicNotions.D7) (h3 : admB3 D) (h4 : ColumnFam
       · intro q hq
         obtain ⟨_, hstq⟩ := Af_step H hfin s hs μ0 q hq
         have hS := hstq.1 hsn
-        rw [if_neg (by simp [hvec])] at hS
+        rw [ite_eq_right (by simp [hvec])] at hS
         rw [Finset.mem_filter, Fintype.mem_piFinset]
         refine ⟨fun x => Finset.mem_Icc.mpr ⟨?_, hS.1 x⟩, hS⟩
         have := strip_le_add hS x
@@ -425,11 +384,11 @@ variable {N r K : ℕ}
 theorem entry_eq_of_lt (LL : Letters (Fin N)) (B : Fin N → ℕ) (μ : Fin (N + 1) → Fin (r + K) → ℤ) (s m : ℕ)
     (hs : s < N + 1) (hm : m < r + K) :
     BranchingDimensions.Letters.ent (D := toL r K LL B) μ s m = μ ⟨s, hs⟩ ⟨m, hm⟩ :=
-  dif_pos (⟨hs, hm⟩ : s < N + 1 ∧ m < r + K)
+  dite_eq_left (⟨hs, hm⟩ : s < N + 1 ∧ m < r + K)
 
 theorem entry_eq_zero_of_ge (LL : Letters (Fin N)) (B : Fin N → ℕ) (μ : Fin (N + 1) → Fin (r + K) → ℤ) (s m : ℕ)
     (hm : ¬ m < r + K) : BranchingDimensions.Letters.ent (D := toL r K LL B) μ s m = 0 :=
-  dif_neg (fun h : s < N + 1 ∧ m < r + K => hm h.2)
+  dite_eq_right (fun h : s < N + 1 ∧ m < r + K => hm h.2)
 
 theorem sum_Icc_one_eq_sum_range {M : Type} [AddCommMonoid M] (f : ℕ → M) (n : ℕ) :
     ∑ i ∈ Finset.Icc 1 n, f i = ∑ m ∈ Finset.range n, f (m + 1) := by
@@ -448,18 +407,18 @@ theorem prod_fin_ite_lt_eq {M : Type} [CommMonoid M] (n j : ℕ) (hj : j ≤ n) 
   rw [Fin.prod_univ_eq_prod_range (fun m => if m < j then h m else 1) n]
   rw [← Finset.prod_subset (Finset.range_subset_range.mpr hj)]
   · refine Finset.prod_congr rfl fun m hm => ?_
-    rw [if_pos (Finset.mem_range.mp hm)]
+    rw [ite_eq_left (Finset.mem_range.mp hm)]
   · intro m _ hm
-    rw [if_neg (by simpa using hm)]
+    rw [ite_eq_right (by simpa using hm)]
 
 theorem sum_fin_ite_lt_eq {M : Type} [AddCommMonoid M] (n j : ℕ) (hj : j ≤ n) (h : ℕ → M) :
     ∑ i : Fin n, (if i.val < j then h i.val else 0) = ∑ i ∈ Finset.range j, h i := by
   rw [Fin.sum_univ_eq_sum_range (fun m => if m < j then h m else 0) n]
   rw [← Finset.sum_subset (Finset.range_subset_range.mpr hj)]
   · refine Finset.sum_congr rfl fun m hm => ?_
-    rw [if_pos (Finset.mem_range.mp hm)]
+    rw [ite_eq_left (Finset.mem_range.mp hm)]
   · intro m _ hm
-    rw [if_neg (by simpa using hm)]
+    rw [ite_eq_right (by simpa using hm)]
 
 theorem beta_eq_sum_thresholds (LL : Letters (Fin N)) (B : Fin N → ℕ) (n0 : ℕ) (hn : n0 ≤ N) :
     ∑ i ∈ Finset.Icc 1 n0, (toL r K LL B).B i = beA n0 B := by
@@ -467,9 +426,9 @@ theorem beta_eq_sum_thresholds (LL : Letters (Fin N)) (B : Fin N → ℕ) (n0 : 
   rw [sum_Icc_one_eq_sum_range, ← sum_fin_ite_lt_eq N n0 hn (fun m => (toL r K LL B).B (m + 1))]
   refine Finset.sum_congr rfl fun i _ => ?_
   by_cases hi : i.val < n0
-  · rw [if_pos hi, if_pos hi, toL_B LL B (i.val + 1) ⟨by omega, by have := i.2; omega⟩]
+  · rw [ite_eq_left hi, ite_eq_left hi, toL_B LL B (i.val + 1) ⟨by omega, by have := i.2; omega⟩]
     congr 1
-  · rw [if_neg hi, if_neg hi]
+  · rw [ite_eq_right hi, ite_eq_right hi]
 
 theorem rank_eq_prod_choose (LL : Letters (Fin N)) (B : Fin N → ℕ) (n0 : ℕ) (hn : n0 ≤ N) :
     ∏ i ∈ Finset.Icc 1 n0, ((toL r K LL B).B i + (r + K) - 1).choose (r + K - 1) = rkA r K n0 B := by
@@ -477,9 +436,9 @@ theorem rank_eq_prod_choose (LL : Letters (Fin N)) (B : Fin N → ℕ) (n0 : ℕ
   rw [prod_Icc_one_eq_prod_range, ← prod_fin_ite_lt_eq N n0 hn (fun m => ((toL r K LL B).B (m + 1) + (r + K) - 1).choose (r + K - 1))]
   refine Finset.prod_congr rfl fun i _ => ?_
   by_cases hi : i.val < n0
-  · rw [if_pos hi, if_pos hi, toL_B LL B (i.val + 1) ⟨by omega, by have := i.2; omega⟩]
+  · rw [ite_eq_left hi, ite_eq_left hi, toL_B LL B (i.val + 1) ⟨by omega, by have := i.2; omega⟩]
     congr 3
-  · rw [if_neg hi, if_neg hi]
+  · rw [ite_eq_right hi, ite_eq_right hi]
 
 theorem entry_weight_eq_sum (LL : Letters (Fin N)) (B : Fin N → ℕ) (μ : Fin (N + 1) → Fin (r + K) → ℤ) (s : ℕ) (hs : s < N + 1) :
     BranchingDimensions.wsize (r + K) (BranchingDimensions.Letters.ent (D := toL r K LL B) μ s) = ∑ m : Fin (r + K), μ ⟨s, hs⟩ m := by
@@ -591,11 +550,11 @@ theorem toL_wt (D : Formalism.BasicNotions.D7) (h3 : admB3 D) (μ : Fin (N + 1) 
   refine Finset.prod_congr rfl fun i _ => ?_
   by_cases hij : i < j
   · have hij' : i.val < j.val := hij
-    rw [if_pos hij, if_pos hij', hka i, hka j]
+    rw [ite_eq_left hij, ite_eq_left hij', hka i, hka j]
     push_cast
     ring
   · have hij' : ¬ i.val < j.val := hij
-    rw [if_neg hij, if_neg hij']
+    rw [ite_eq_right hij, ite_eq_right hij']
     simp
 
 end
@@ -695,7 +654,7 @@ theorem vcount_tau_eq_add (H : HypT N n0 r K LL B od bb a La p) (t : ℕ) (ht : 
   | base => intro _; simp
   | succ s hs ih =>
     intro hsN
-    rw [vcount_succ LL t s (by omega) (by omega), ih (by omega), if_pos (H.vec_true_of_late ⟨s, by omega⟩ (by simp only; omega))]
+    rw [vcount_succ LL t s (by omega) (by omega), ih (by omega), ite_eq_left (H.vec_true_of_late ⟨s, by omega⟩ (by simp only; omega))]
     omega
 
 theorem oldest_threshold_eq (H : HypT N n0 r K LL B od bb a La p) (i : Fin N) (hi : r ≤ i.val) :
@@ -722,7 +681,6 @@ theorem oldest_threshold_eq (H : HypT N n0 r K LL B od bb a La p) (i : Fin N) (h
     · rw [Nat.min_eq_left h, hvc]; have := H.r1; omega
     · rw [Nat.min_eq_right h]
       have := vcount_tau_eq_add H (od i).val (by omega) i.val h (by omega)
-      have hi2 := i.2
       omega
   obtain ⟨he, hel⟩ := latest_list_get_of_count _ _ _ _ hx hc
   rw [List.getD_eq_getElem _ _ (by simpa using he), List.getElem_map, hel, toL_B LL B _ ⟨by omega, by omega⟩]
@@ -733,9 +691,6 @@ theorem threshold_letter_eq_Xi (H : HypT N n0 r K LL B od bb a La p) (i : Fin N)
   have hp0 : (0 : ℝ) < p := by
     have : (13 : ℝ) ≤ (p : ℝ) := by exact_mod_cast H.p13
     linarith
-  have hk0 : (0 : ℝ) < ((r + K : ℕ) : ℝ) := by
-    have : 0 < r + K := by have := H.r1; omega
-    exact_mod_cast this
   unfold BranchingDimensions.Letters.XT toB Xi
   rw [dite_eq_left ⟨by omega, by have := i.2; omega⟩]
   show La * (13 * bb ⟨i.val + 1 - 1, _⟩ / (p : ℝ)) / (((13 : ℕ) : ℝ) * ((r + K : ℕ) : ℝ)) = _

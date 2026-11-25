@@ -9,58 +9,9 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InitMinor
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntertwiningGlOfUnitary
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIrreducibleSmallRepUnitary
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyDirectSumEquivOfFinrankLe
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LCassemLemmas
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Mathlib.Tactic.ReduceModChar
 import Formalism.GradedWeylDivisibility.FinalD
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.TotallySplit
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinrankIntertwiningMapDirectSum, Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSsIdxInjective, Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinrankLeFinrankDirectSumBelow, Development.AbelianVarietyTheory.Proofs.FoundationProofs.BranchesAlongOfIrreducible
@@ -208,7 +159,7 @@ theorem ps_succ {r k : ℕ} (m : Fin r × Fin k →₀ ℕ) (a : Fin r) (t : Fin
   by_cases h : b = a
   · subst h; simp
   · have h' : b.val ≠ a.val := fun e => h (Fin.ext e)
-    rw [if_neg h]
+    rw [ite_eq_right h]
     split_ifs <;> omega
 
 theorem ps_top {r k : ℕ} (m : Fin r × Fin k →₀ ℕ) (t : Fin k) : ps m r t = ∑ b, m (b, t) := by
@@ -276,9 +227,9 @@ theorem ps_subDiag {n : ℕ} (m : Fin n × Fin n →₀ ℕ) (c : ℕ) (hc : ∀
   have := subDiag_add m c hc b t
   by_cases h : b = t
   · subst h
-    simp only [if_true] at this ⊢
+    simp only [ite_true] at this ⊢
     split_ifs <;> omega
-  · simp only [if_neg h] at this ⊢
+  · simp only [ite_eq_right h] at this ⊢
     split_ifs <;> omega
 
 theorem subDiag_interlaced {n : ℕ} (m : Fin n × Fin n →₀ ℕ) (c : ℕ) (hc : ∀ t, c ≤ m (t, t))
@@ -294,7 +245,7 @@ theorem natW_cast {N : ℕ} (lam : DomWeight N) (t : Fin N) :
     (lam.natW t : ℤ) = lam.w t - lam.detShift := by
   have h0 : 0 < N := t.pos
   have := lam.anti (show t ≤ ⟨N - 1, by omega⟩ from Fin.le_def.2 (by have := t.2; simp only; omega))
-  simp only [DomWeight.natW, DomWeight.detShift, dif_pos h0]
+  simp only [DomWeight.natW, DomWeight.detShift, dite_eq_left h0]
   omega
 
 theorem exists_image (n : ℕ) (lam : DomWeight (n + 1)) (m : ssIdx (n + 1) (n + 1) lam.natW) :
@@ -329,7 +280,7 @@ theorem exists_image (n : ℕ) (lam : DomWeight (n + 1)) (m : ssIdx (n + 1) (n +
     have h2 := ps_diag (res m) hr (n - 1) (by omega)
     have h3 := ps_res m n le_rfl ⟨n - 1, by omega⟩
     have h4 : mu.detShift = lam.detShift + ps m n (Fin.castSucc ⟨n - 1, by omega⟩) := by
-      simp only [DomWeight.detShift, dif_pos h0, mu]
+      simp only [DomWeight.detShift, dite_eq_left h0, mu]
     have h5 : n - 1 + 1 = n := by omega
     simp only [h5] at h1
     omega
@@ -340,7 +291,7 @@ theorem exists_image (n : ℕ) (lam : DomWeight (n + 1)) (m : ssIdx (n + 1) (n +
   refine ⟨⟨⟨mu, hI⟩, subDiag (res m) _, subDiag_interlaced _ _ hc hr, fun t => ?_⟩, fun _ => rfl,
     fun a t => subDiag_add _ _ hc a t⟩
   have h1 := ps_subDiag _ _ hc n t
-  rw [if_pos t.2, ps_top, ps_res m n le_rfl] at h1
+  rw [ite_eq_left t.2, ps_top, ps_res m n le_rfl] at h1
   have h2 := natW_cast mu t
   have h3 : mu.w t = lam.detShift + ps m n t.castSucc := rfl
   have h4 := hc' t.pos

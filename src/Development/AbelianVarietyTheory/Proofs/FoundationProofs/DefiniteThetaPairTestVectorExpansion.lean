@@ -362,62 +362,48 @@ section Theta
 
 variable {T : Tor D} {N N' : ℕ}
 
-theorem Hf_add_left (x y w : VC D N N') : Hf D T (x + y) w = Hf D T x w + Hf D T y w := by
-  simp only [Hf, Pi.add_apply, add_mul, Finset.sum_add_distrib, add_div]
+theorem Hf_smul_left (c : ℂ) (x w : VC D N N') : Hf D T (c • x) w = c * Hf D T x w :=
+  RatExtend.Hf_smul_left c x w
 
-theorem Hf_smul_left (c : ℂ) (x w : VC D N N') : Hf D T (c • x) w = c * Hf D T x w := by
-  simp only [Hf, Pi.smul_apply, smul_eq_mul, mul_assoc, ← Finset.mul_sum, mul_div_assoc]
+theorem Hf_conj (x w : VC D N N') : Hf D T w x = (starRingEnd ℂ) (Hf D T x w) :=
+  RatExtend.Hf_conj x w
 
-theorem Hf_conj (x w : VC D N N') : Hf D T w x = (starRingEnd ℂ) (Hf D T x w) := by
-  set_option synthInstance.maxHeartbeats 100000 in
-    simp only [Hf, map_div₀, map_sum, map_mul, Complex.conj_conj, Complex.conj_ofReal, mul_comm]
+theorem Hf_nsmul_left (n : ℕ) (x w : VC D N N') : Hf D T (n • x) w = n * Hf D T x w :=
+  RatExtend.Hf_nsmul_left n x w
 
-theorem Hf_nsmul_left (n : ℕ) (x w : VC D N N') : Hf D T (n • x) w = n * Hf D T x w := by
-  rw [← Nat.cast_smul_eq_nsmul ℂ, Hf_smul_left]
-
-theorem Hf_nsmul_right (n : ℕ) (x w : VC D N N') : Hf D T x (n • w) = n * Hf D T x w := by
-  rw [Hf_conj, Hf_nsmul_left, map_mul, ← Hf_conj, map_natCast]
+theorem Hf_nsmul_right (n : ℕ) (x w : VC D N N') : Hf D T x (n • w) = n * Hf D T x w :=
+  RatExtend.Hf_nsmul_right n x w
 
 theorem qH_nsmul (n : ℕ) (x : VC D N N') : qH D T (n • x) = n ^ 2 * qH D T x := by
   rw [qH, qH, Hf_nsmul_left, Hf_nsmul_right, ← mul_assoc, ← Nat.cast_mul, ← Complex.ofReal_natCast,
     Complex.re_ofReal_mul]
   push_cast; ring
 
-theorem Hf_diff (x : VC D N N') : Differentiable ℂ (fun z : VC D N N' => Hf D T z x) := by
-  unfold Hf
-  fun_prop
+theorem Hf_diff (x : VC D N N') : Differentiable ℂ (fun z : VC D N N' => Hf D T z x) :=
+  RatExtend.Hf_diff x
 
 theorem Wd_diff (x : VC D N N') {F : VC D N N' → ℂ} (hF : Differentiable ℂ F) :
-    Differentiable ℂ (Wd D T x F) := by
-  have h := Hf_diff (T := T) x
-  unfold Wd U
-  fun_prop
+    Differentiable ℂ (Wd D T x F) :=
+  RatExtend.Wd_diff x hF
 
 theorem Wd_comm (a x : VC D N N') (m : ℤ) (h : (Hf D T a x).im = m) (F : VC D N N' → ℂ) :
-    Wd D T a (Wd D T x F) = Wd D T x (Wd D T a F) := by
-  apply _root_.GlobalTheory.NormSum.RatExtend.Wd_comm <;> assumption
+    Wd D T a (Wd D T x F) = Wd D T x (Wd D T a F) :=
+  RatExtend.Wd_comm a x m h F
 
-theorem Wd_add (x : VC D N N') (F G : VC D N N' → ℂ) : Wd D T x (F + G) = Wd D T x F + Wd D T x G := by
-  funext z; simp only [Wd, U, Pi.add_apply]; ring
+theorem Wd_add (x : VC D N N') (F G : VC D N N' → ℂ) : Wd D T x (F + G) = Wd D T x F + Wd D T x G :=
+  RatExtend.Wd_add x F G
 
-theorem Wd_smul (x : VC D N N') (c : ℂ) (F : VC D N N' → ℂ) : Wd D T x (c • F) = c • Wd D T x F := by
-  funext z; simp only [Wd, U, Pi.smul_apply, smul_eq_mul]; ring
+theorem Wd_smul (x : VC D N N') (c : ℂ) (F : VC D N N' → ℂ) : Wd D T x (c • F) = c • Wd D T x F :=
+  RatExtend.Wd_smul x c F
 
-theorem TT_add {F G : VC D N N' → ℂ} (hF : F ∈ TT D T N N') (hG : G ∈ TT D T N N') : F + G ∈ TT D T N N' := by
-  obtain ⟨d, m, hm, h⟩ := hF
-  obtain ⟨d', m', hm', h'⟩ := hG
-  refine ⟨d.add d', m * m', by positivity, fun x hx => ?_⟩
-  rw [Wd_add]
-  congr 1
-  · rw [mul_nsmul']; exact h _ (nsmul_mem hx _)
-  · rw [mul_nsmul]; exact h' _ (nsmul_mem hx _)
+theorem TT_add {F G : VC D N N' → ℂ} (hF : F ∈ TT D T N N') (hG : G ∈ TT D T N N') : F + G ∈ TT D T N N' :=
+  RatExtend.TT_add hF hG
 
-theorem TT_smul (c : ℂ) {F : VC D N N' → ℂ} (hF : F ∈ TT D T N N') : c • F ∈ TT D T N N' := by
-  obtain ⟨d, m, hm, h⟩ := hF
-  exact ⟨d.const_smul c, m, hm, fun x hx => by rw [Wd_smul, h x hx]⟩
+theorem TT_smul (c : ℂ) {F : VC D N N' → ℂ} (hF : F ∈ TT D T N N') : c • F ∈ TT D T N N' :=
+  RatExtend.TT_smul c hF
 
 theorem TT_zero : (0 : VC D N N' → ℂ) ∈ TT D T N N' :=
-  ⟨differentiable_const 0, 1, one_pos, fun x _ => by funext z; simp [Wd, U]⟩
+  RatExtend.TT_zero
 
 end Theta
 
@@ -425,16 +411,8 @@ theorem Om_sum {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} {N N' : ℕ} {e0 : VC D N
     (g : GA D N) (g' : GA D N') {κ : Type} (s : Finset κ) (r : κ → ℂ) (F : κ → VC D N N' → ℂ)
     (hF : ∀ i, F i ∈ TT D (tor0 D cc δ) N N') :
     (∑ i ∈ s, r i • F i) ∈ TT D (tor0 D cc δ) N N' ∧
-      W.Om g g' (∑ i ∈ s, r i • F i) = ∑ i ∈ s, r i • W.Om g g' (F i) := by
-  induction s using Finset.induction_on with
-  | empty =>
-    refine ⟨by simpa using TT_zero, ?_⟩
-    have := W.smul g g' 0 0 TT_zero
-    simpa using this
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha, Finset.sum_insert ha]
-    refine ⟨TT_add (TT_smul _ (hF a)) ih.1, ?_⟩
-    rw [W.add g g' _ (TT_smul _ (hF a)) _ ih.1, W.smul g g' _ _ (hF a), ih.2]
+      W.Om g g' (∑ i ∈ s, r i • F i) = ∑ i ∈ s, r i • W.Om g g' (F i) :=
+  RatExtend.Om_sum W g g' s r F hF
 
 theorem root_unity {ζ : ℂ} {n : ℕ} (hn : 0 < n) (h : ζ ^ n = 1) :
     ∃ u : Qbar, (u : ℂ) = ζ ∧ IsIntegral ℤ u ∧ ∀ ρ : Qbar →+* ℂ, ‖ρ u‖ = 1 := by

@@ -39,7 +39,7 @@ theorem comp_symm_eqOn (f : V n → ℂ) {e : OpenPartialHomeomorph U (V n)}
   rw [symm_val he hy]
 
 theorem smooth_val {f : V n → ℂ} (hf : ContDiffOn ℝ ∞ f U) :
-    Smooth n (Subtype.val : U → V n) (fun x => f x.1) := fun e he =>
+    Smooth n (Subtype.val : U → V n) (fun x => f x.1) := fun _ he =>
   (hf.mono (target_sub he)).congr (comp_symm_eqOn f he)
 
 theorem smoothR_val {f : V n → ℝ} (hf : ContDiffOn ℝ ∞ f U) :

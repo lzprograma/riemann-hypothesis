@@ -126,7 +126,7 @@ theorem SegreFlagClosureCut.proof (hC3 : CutByEffectiveDivisor.Statement.{0})
           (X (Sum.inl ζi) - X (Sum.inr ζi)) * rename Sum.inl A + (X (Sum.inl xi) - X (Sum.inr xi)) * rename Sum.inl A +
             y' * ∑ i, (X (Sum.inl i) - X (Sum.inr i)) * Bs₀ i := by
         simp only [hE1, hE2, Pi.add_apply, mul_add, Finset.sum_add_distrib, Pi.single_apply, mul_ite, mul_zero,
-          Finset.sum_ite_eq', Finset.mem_univ, if_true, Finset.mul_sum]
+          Finset.sum_ite_eq', Finset.mem_univ, ite_true, Finset.mul_sum]
         congr 1
         refine Finset.sum_congr rfl fun i _ => ?_
         ring
@@ -315,13 +315,13 @@ theorem SegreFlagClosureCut.proof (hC3 : CutByEffectiveDivisor.Statement.{0})
       cycEval n' (ratDiv (pointIdeal O pt1) sT hT) := by
     refine cycEval_congr_support fun W hW => ?_
     by_cases hϖW : (C ϖ : MRing (bundleIdx (bundleIdx ι M) M') O) ∈ W
-    · simp only [hn', if_pos hϖW]
+    · simp only [hn', ite_eq_left hϖW]
       exact hnA0 W hϖW hW
-    · simp only [hn', if_neg hϖW]
+    · simp only [hn', ite_eq_right hϖW]
   have e1b : cycEval n' (ratDiv (pointIdeal O pt1) sT hT) = cycEval n' (ratDiv (pointIdeal O pt1) s h) := by
     refine cycEval_congr_cycle fun W => ?_
     by_cases hϖW : (C ϖ : MRing (bundleIdx (bundleIdx ι M) M') O) ∈ W
-    · simp only [hn', if_pos hϖW, mul_zero]
+    · simp only [hn', ite_eq_left hϖW, mul_zero]
     · have h3 : ratDiv (pointIdeal O pt1) f₃ g₃ W = 0 := by
         by_contra hne
         exact hϖW (hv₃.vertical W hne)
@@ -340,29 +340,29 @@ theorem SegreFlagClosureCut.proof (hC3 : CutByEffectiveDivisor.Statement.{0})
     refine cycEval_congr_support fun W hW => ?_
     by_cases hϖW : (C ϖ : MRing (bundleIdx (bundleIdx ι M) M') O) ∈ W
     · rw [hn', hG]
-      simp only [if_pos hϖW]
+      simp only [ite_eq_left hϖW]
       have := hnA'0 W hϖW hW
       linarith
     · rw [hn', hG]
-      simp only [if_neg hϖW]
+      simp only [ite_eq_right hϖW]
       ring
   rw [e2]
 
   unfold cycEval
   rw [finsum_eq_single _ (pointIdeal O pt0) ?_]
   · by_cases hk0 : k = 0
-    · rw [if_pos hk0]
+    · rw [ite_eq_left hk0]
       by_cases hϖ0 : (C ϖ : MRing (bundleIdx (bundleIdx ι M) M') O) ∈ pointIdeal O pt0
-      · simp only [hG, if_pos hϖ0, mul_zero]
-      · rw [hdiv _ hϖ0, if_neg (by omega), zero_mul]
+      · simp only [hG, ite_eq_left hϖ0, mul_zero]
+      · rw [hdiv _ hϖ0, ite_eq_right (by omega), zero_mul]
     · have hk0' : 0 < k := Nat.pos_of_ne_zero hk0
       have hM0 : IsModelOver (pointIdeal O pt0) (d + (k - 1)) := (hModk k hk0' hk.le).1
       have hϖ0 : (C ϖ : MRing (bundleIdx (bundleIdx ι M) M') O) ∉ pointIdeal O pt0 := fun h' => by
         have h'' : ϖ ∈ (pointIdeal O pt0).comap (C : O →+* MRing (bundleIdx (bundleIdx ι M) M') O) := h'
         rw [hM0.noTorsion, Ideal.mem_bot] at h''
         exact hϖ.ne_zero h''
-      rw [if_neg hk0, hdiv _ hϖ0, if_pos ⟨hk0', rfl⟩, one_mul, hG]
-      simp only [if_neg hϖ0]
+      rw [ite_eq_right hk0, hdiv _ hϖ0, ite_eq_left ⟨hk0', rfl⟩, one_mul, hG]
+      simp only [ite_eq_right hϖ0]
       have hPr0 : (pointIdeal O pt0).IsPrime := hM0.multiProj.isPrime
       obtain ⟨hv₂, hg₂⟩ := h₂ hk0'
       obtain ⟨hf30, hg30, hval30⟩ := h₃0 hk0'
@@ -391,8 +391,8 @@ theorem SegreFlagClosureCut.proof (hC3 : CutByEffectiveDivisor.Statement.{0})
   · intro W hW
     by_cases hϖW : (C ϖ : MRing (bundleIdx (bundleIdx ι M) M') O) ∈ W
     · rw [hG]
-      simp only [if_pos hϖW, mul_zero]
-    · rw [hdiv W hϖW, if_neg (fun h' => hW h'.2), zero_mul]
+      simp only [ite_eq_left hϖW, mul_zero]
+    · rw [hdiv W hϖW, ite_eq_right (fun h' => hW h'.2), zero_mul]
 
 end
 

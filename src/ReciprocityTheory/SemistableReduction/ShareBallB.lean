@@ -148,8 +148,7 @@ private theorem two_mul_one_add_mul_le_of_le_mul (a b c d s : ℝ) (ha : 0 ≤ a
     have e2 : 0 ≤ 2 * a * d * ((d - c) * (s * d - c)) :=
       mul_nonneg (mul_nonneg (mul_nonneg zero_le_two ha) hd) (mul_nonneg hdc hsdc)
     have hd2 : 0 < d ^ 2 := pow_pos hdpos 2
-    by_contra hneg
-    push_neg at hneg
+    by_contra! hneg
     have e3 := mul_lt_mul_of_pos_left hneg hd2
     nlinarith
 

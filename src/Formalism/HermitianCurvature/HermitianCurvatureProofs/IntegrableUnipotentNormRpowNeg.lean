@@ -13,54 +13,11 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingV
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SectionDecomposition
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceLastLevel
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.ZhatNormLinearBound
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 import Mathlib.CategoryTheory.Countable
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -204,12 +161,12 @@ theorem uMap_entry_le_matrix_norm (z : Fin (2 * r + k + 1) → ℂ) (a b : Fin (
   by_cases h : a.val < r
   · refine ⟨∑ i, ‖bvec (esI k r ⟨a.val, h⟩) i‖ * ∑ j, ‖Hpk k r i j‖ * ∑ l, ‖fvec k r z b l‖,
       by positivity, fun g => ?_⟩
-    simp only [C2.uMap, dif_pos h]
+    simp only [C2.uMap, dite_eq_left h]
     rw [mul_comm _ (B.gN g)]
     exact a_herm_le _ g _ _
   · refine ⟨(∑ i, ‖z i‖ * ∑ j, ‖Hpk k r i j‖ * ∑ l, ‖fvec k r z b l‖) / ‖herm (Hpk k r) z z‖,
       by positivity, fun g => ?_⟩
-    simp only [C2.uMap, dif_neg h]
+    simp only [C2.uMap, dite_eq_right h]
     rw [norm_div, div_mul_eq_mul_div, mul_comm _ (B.gN g)]
     gcongr
     exact a_herm_le _ g _ _
@@ -608,10 +565,22 @@ theorem geom (D : B.RealPlaceData k r Wp Wq) {γ : B.Mat k r} (hγ : γ ∈ B.GV
 
 end geom
 
-theorem d_orbJConv : Formalism.FourierDecayAlt.D.OrbJConv := by
-  obtain ⟨c₁, hPP⟩ := Formalism.FourierDecayAlt.P.polynomial_map_proper
-  refine ⟨16 * ((c₁ : ℝ) + 1), ?_⟩
-  intro k r Wp Wq _ _ _ _ D γ w d A F hγ _hrel hd hZ hpos hA hF
+theorem conv0 {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
+    [InnerProductSpace ℂ Wq] (D : B.RealPlaceData k r Wp Wq) (γ : B.Mat k r) (w : Equiv.Perm (Fin (r + 1)))
+    (d : Fin (r + 1) → ℂ) (A : ℝ) (F : B.Mat k r → (Wq →L[ℂ] Wp)) (c₁ : ℕ)
+    (hPP : ∀ (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (γ : B.Mat k r), C2.Std k r z z' → C2.PosPt k r z z' γ →
+      C2.IsMonomial (Zhat k r z z' γ) → ∃ C : ℝ,
+        (∀ σ ∈ C2.Sg k r z z' γ, ∀ s' ∈ Sset k r z',
+          B.gN σ + B.gN s' ≤ C * B.gN (σ⁻¹ * γ * s') ^ (c₁ * (r + 1) ^ 2)) ∧
+        (∀ s ∈ Sset k r z, ∀ σ' ∈ C2.Sg' k r z z' γ,
+          B.gN s + B.gN σ' ≤ C * B.gN (s⁻¹ * γ * σ') ^ (c₁ * (r + 1) ^ 2)))
+    (hγ : γ ∈ B.GV k r) (hd : ∀ a, d a ≠ 0) (hZ : Zhat k r D.z D.z' γ = C2.monoP w d)
+    (hpos : 0 < Gf k r D.z D.z' γ)
+    (hA : 16 * ((c₁ : ℝ) + 1) * ((r : ℝ) + 1) ^ 2 * ((r : ℝ) * ((2 * r + k + 1 : ℕ) : ℝ) + 1) ≤ A)
+    (hFc : ContinuousOn F (B.GV k r)) (sharpFunctionalExponent : ℝ)
+    (hb : ∀ g ∈ B.GV k r, B.gN g ^ A * ‖F g‖ ≤ sharpFunctionalExponent) :
+    ∃ θ, Formalism.FourierDecayAlt.D.IsNormCut D γ (Formalism.FourierDecayAlt.D.muR D γ w) θ ∧
+      Integrable (fun p => θ p • Formalism.FourierDecayAlt.D.orbIntegrand D γ F p) D.μSS := by
   set nn : ℝ := ((2 * r + k + 1 : ℕ) : ℝ) with hnn
   set bN : ℝ := 4 * ((r : ℝ) * nn + 1) with hbN
   set c : ℕ := (c₁ + 1) * (r + 1) ^ 2 with hc
@@ -659,20 +628,16 @@ theorem d_orbJConv : Formalism.FourierDecayAlt.D.OrbJConv := by
     have := om_pos hR hM0 hI hone
     simpa only [Om, Equiv.apply_symm_apply, Matrix.mul_one, ← hcRdef] using this
 
-  obtain ⟨sharpFunctionalExponent, hCC⟩ := hF
   set cF := max sharpFunctionalExponent 0 with hcF
   have hFb : ∀ g ∈ B.GV k r, ‖F g‖ ≤ cF * B.gN g ^ (-A) := by
     intro g hg
-    have h0 := hCC.2 [] [] (by simp) (by simp) (by simp) g hg
-    have e : B.dLR [] [] F g = F g := rfl
-    rw [e] at h0
+    have h0 := hb g hg
     have hg1 : 1 ≤ B.gN g := P.BetaSesquilinearity.gN_ge_one hg
     have hpw : 0 < B.gN g ^ A := Real.rpow_pos_of_pos (by linarith) _
     rw [Real.rpow_neg (by linarith), ← div_eq_mul_inv, le_div_iff₀ hpw]
     calc ‖F g‖ * B.gN g ^ A = B.gN g ^ A * ‖F g‖ := by ring
       _ ≤ sharpFunctionalExponent := h0
       _ ≤ cF := le_max_left _ _
-  have hFc : ContinuousOn F (B.GV k r) := P.B5.ckOn_continuousOn hCC.1
 
   obtain ⟨KW, hKW1, hKW⟩ := UW_bound D.z D.z_mem D.T_pos
   obtain ⟨KW', hKW1', hKW'⟩ := UW_bound D.z' D.z'_mem D.T'_pos
@@ -747,6 +712,14 @@ theorem d_orbJConv : Formalism.FourierDecayAlt.D.OrbJConv := by
   unfold Formalism.FourierDecayAlt.D.orbIntegrand
   rw [norm_smul, P.B7.norm_xi, one_mul]
   exact hkey
+
+theorem d_orbJConv : Formalism.FourierDecayAlt.D.OrbJConv := by
+  obtain ⟨c₁, hPP⟩ := Formalism.FourierDecayAlt.P.polynomial_map_proper
+  refine ⟨16 * ((c₁ : ℝ) + 1), ?_⟩
+  intro k r Wp Wq _ _ _ _ D γ w d A F hγ _hrel hd hZ hpos hA hF
+  obtain ⟨sharpFunctionalExponent, hCC⟩ := hF
+  exact conv0 D γ w d A F c₁ hPP hγ hd hZ hpos hA (P.B5.ckOn_continuousOn hCC.1) sharpFunctionalExponent
+    fun g hg => hCC.2 [] [] (by simp) (by simp) (by simp) g hg
 
 end Formalism.FourierDecayAlt.P.Dx3
 

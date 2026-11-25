@@ -6,6 +6,7 @@ public import Mathlib.Data.Finsupp.Interval
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
+import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
 
 @[expose] public section
 
@@ -25,31 +26,18 @@ def blockSum (γ : (Σ k, ι k) →₀ ℕ) : K → ℕ := fun k => ∑ i, γ �
 
 omit [Fintype K] in
 theorem isMultiHomog_monomial {γ : (Σ k, ι k) →₀ ℕ} {a : K → ℕ} (h : blockSum γ = a) (r : ℤ) :
-    IsMultiHomog (monomial γ r : MRing ι) a := by
-  intro m hm k
-  rw [Finset.mem_singleton.mp (support_monomial_subset hm)]
-  exact congrFun h k
+    IsMultiHomog (monomial γ r : MRing ι) a :=
+  h ▸ GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_monomial γ r
 
 omit [Fintype K] in
 theorem isMultiHomog_mul {f g : MRing ι} {a b c : K → ℕ} (hf : IsMultiHomog f a) (hg : IsMultiHomog g b)
-    (habc : a + b = c) : IsMultiHomog (f * g) c := by
-  classical
-  intro m hm k
-  obtain ⟨m₁, hm₁, m₂, hm₂, rfl⟩ := Finset.mem_add.mp (support_mul f g hm)
-  simp only [Finsupp.add_apply, Finset.sum_add_distrib, hf m₁ hm₁ k, hg m₂ hm₂ k, ← habc, Pi.add_apply]
+    (habc : a + b = c) : IsMultiHomog (f * g) c :=
+  habc ▸ GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_mul hf hg
 
 omit [Fintype K] in
 theorem isMultiHomog_prod {J : Type} (s : Finset J) (f : J → MRing ι) (d : J → K → ℕ)
-    (h : ∀ j ∈ s, IsMultiHomog (f j) (d j)) : IsMultiHomog (∏ j ∈ s, f j) (∑ j ∈ s, d j) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty =>
-    have h1 := isMultiHomog_monomial (ι := ι) (γ := 0) (a := 0) (by funext k; simp [blockSum]) 1
-    simpa using h1
-  | insert j s hj ih =>
-    rw [Finset.prod_insert hj, Finset.sum_insert hj]
-    exact isMultiHomog_mul (h j (Finset.mem_insert_self j s))
-      (ih fun j' hj' => h j' (Finset.mem_insert_of_mem hj')) rfl
+    (h : ∀ j ∈ s, IsMultiHomog (f j) (d j)) : IsMultiHomog (∏ j ∈ s, f j) (∑ j ∈ s, d j) :=
+  GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_prod s f d h
 
 
 open Classical in
@@ -179,7 +167,7 @@ theorem BlockBirationalHilbert.proof (hV : HilbFnValueSpan.Statement) : BlockBir
         (isMultiHomog_prod _ _ (fun a => blockDeg k₀ (c a.1 a.2)) fun a _ => hh a.1 a.2) ?_, ?_⟩
     · funext k
       by_cases hk : k = k₀
-      · simp only [Pi.add_apply, Finset.sum_apply, blockDeg, hk, if_true]
+      · simp only [Pi.add_apply, Finset.sum_apply, blockDeg, hk, ite_true]
         rw [← Finset.add_sum_erase _ _ hmem]
         ring
       · simp [blockDeg, hk, Finset.sum_apply]

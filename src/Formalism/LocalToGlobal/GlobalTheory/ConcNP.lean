@@ -261,18 +261,6 @@ theorem epsilon_bound_large_x : EpsilonBoundLargeX := by
   have hp : 0 < Real.exp (-1) := Real.exp_pos _
   linarith [mul_le_mul_of_nonneg_left he hp.le]
 
-section Rec
-
-open Formalism.BasicNotions Formalism.MainNotions
-
-end Rec
-
-section Inputs
-
-open Formalism.BasicNotions Formalism.MainNotions
-
-end Inputs
-
 section AllRowsIn
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.ArithmeticCylinders

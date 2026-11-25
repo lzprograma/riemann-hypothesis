@@ -37,9 +37,9 @@ theorem logNormSec_eq_indicator {e : ℕ} {X : Type} [TopologicalSpace X] {A : F
   by_cases h0 : s x p = 0
   · unfold logNormSec
     rw [hS.2 p x p ⟨L.mem_U p, hp⟩, Set.indicator_apply,
-      if_pos (show p ∈ {q | s x q = 0} from h0), h0]
+      ite_eq_left (show p ∈ {q | s x q = 0} from h0), h0]
     simp
-  · rw [Set.indicator_apply, if_neg (show p ∉ {q | s x q = 0} from h0),
+  · rw [Set.indicator_apply, ite_eq_right (show p ∉ {q | s x q = 0} from h0),
       logNormSecLocal A L s x p hS hp h0]
     ring
 

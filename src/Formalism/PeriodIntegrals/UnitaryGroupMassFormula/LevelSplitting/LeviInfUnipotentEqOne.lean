@@ -4,51 +4,7 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.NCDefs
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.ProjHA
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.ToMatrixLin
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.RatVMemSpan
-import Mathlib.Tactic.Basify
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.LevLSubPerp, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.ModVec, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.LeviInfUnipotentEqOne
@@ -76,28 +32,16 @@ private theorem h_sum_lemma_6 (D : Dat A n r) (v : n → A) (t : Fin r → A) (w
   rw [← hL_apply_lemma, map_sum]
   simp only [map_smul, smul_eq_mul, hL_apply_lemma]
 
-private theorem h_swap_lemma_7 (D : Dat A n r) (H : D.Hyp) (x y : n → A) :
-    D.h y x = D.σA (D.h x y) := by
-  show (∑ i, ∑ j, D.σA (y i) * D.JA i j * x j) = D.σA (∑ i, ∑ j, D.σA (x i) * D.JA i j * y j)
-
-  simp only [map_sum, map_mul, H.σσ, H.herm]
-  rw [Finset.sum_comm]
-  exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-
 private theorem h_fe_lemma_8 (D : Dat A n r) (H : D.Hyp) (a b : Fin r) :
     D.h (D.f a) (D.e b) = if b = a then 1 else 0 := by
-  rw [h_swap_lemma_7 D H, H.ef]
+  rw [D.h_symm H, H.ef]
   split_ifs <;> simp
-
-private theorem h_add_left_lemma_9 (D : Dat A n r) (H : D.Hyp) (x x' y : n → A) :
-    D.h (x + x') y = D.h x y + D.h x' y := by
-  rw [h_swap_lemma_7 D H, _root_.PI.VolSemiDirect.W.PG.Dat.h_add_right, map_add (f := _), ← h_swap_lemma_7 D H, ← h_swap_lemma_7 D H]
 
 private theorem h_sum_left_lemma_10 (D : Dat A n r) (H : D.Hyp) (t : Fin r → A) (w : Fin r → n → A)
     (y : n → A) : D.h (∑ a, t a • w a) y = ∑ a, D.σA (t a) * D.h (w a) y := by
 
-  rw [h_swap_lemma_7 D H, h_sum_lemma_6, map_sum]
-  simp only [map_mul, ← h_swap_lemma_7 D H]
+  rw [D.h_symm H, h_sum_lemma_6, map_sum]
+  simp only [map_mul, ← D.h_symm H]
 
 theorem pV_apply (D : Dat A n r) (x : n → A) : pV D x = x - D.pX x - D.pXv x := rfl
 
@@ -218,17 +162,17 @@ theorem levL_sub_perp (U W : Matrix (Fin r) (Fin r) A) {v : n → A} (he : ∀ b
     (Submodule.sum_mem _ fun a _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨a, rfl⟩))
 
 private theorem h_pV_e_lemma_11 (x : n → A) (a : Fin r) : D.h (pV D x) (D.e a) = 0 := by
-  rw [h_swap_lemma_7 D H, h_e_pV H, map_zero]
+  rw [D.h_symm H, h_e_pV H, map_zero]
 
 private theorem h_pV_f_lemma_12 (x : n → A) (a : Fin r) : D.h (pV D x) (D.f a) = 0 := by
-  rw [h_swap_lemma_7 D H, h_f_pV H, map_zero]
+  rw [D.h_symm H, h_f_pV H, map_zero]
 
 theorem h_decomp (x y : n → A) :
     D.h x y = D.h (pV D x) (pV D y) + ∑ a, D.σA (D.h (D.f a) x) * D.h (D.e a) y +
       ∑ a, D.σA (D.h (D.e a) x) * D.h (D.f a) y := by
   have hx : D.h x y = D.h (pV D x) y + D.h (D.pX x) y + D.h (D.pXv x) y := by
     conv_lhs => rw [decomp D x]
-    rw [h_add_left_lemma_9 D H, h_add_left_lemma_9 D H]
+    rw [D.h_add_left, D.h_add_left]
   have hy : D.h (pV D x) y = D.h (pV D x) (pV D y) := by
     conv_lhs => rw [decomp D y]
     rw [_root_.PI.VolSemiDirect.W.PG.Dat.h_add_right, _root_.PI.VolSemiDirect.W.PG.Dat.h_add_right, _root_.PI.VolSemiDirect.W.PG.Dat.pX_apply, _root_.PI.VolSemiDirect.W.PG.Dat.pXv_apply, h_sum_lemma_6, h_sum_lemma_6]
@@ -338,7 +282,7 @@ theorem det_uT (g : HA R σ J) : (uT R σ J P g).det = 1 := by
   · intro i j hji
     have h : j < i := hji
     simp only [uT, Matrix.of_apply]
-    rw [if_neg (lt_asymm h), if_neg (ne_of_gt h)]
+    rw [ite_eq_right (lt_asymm h), ite_eq_right (ne_of_gt h)]
 
 def uI (g : HA R σ J) : Matrix (Fin r) (Fin r) (R ⊗[F] E) := (uT R σ J P g).adjugate
 
@@ -489,7 +433,7 @@ theorem spanE_f_zero (H : (datR R σ J P T).Hyp) {s : Set (Fin r)} {x : Fin M �
   | mem y hy =>
     obtain ⟨c, hc, rfl⟩ := hy
     show (datR R σ J P T).h ((datR R σ J P T).f a) ((datR R σ J P T).e c) = 0
-    rw [PG.Dat.fe H, if_neg]
+    rw [PG.Dat.fe H, ite_eq_right]
     rintro rfl
     exact ha hc
   | zero => exact PG.Dat.h_zero_right _ _
@@ -602,8 +546,8 @@ theorem levG_e (n : HA R σ J) (hn : n ∈ Nsub R σ J P) (b : Fin r) :
   congr 1
   rw [uT_apply]
   by_cases h1 : a < b
-  · rw [if_pos h1]; rfl
-  · rw [if_neg h1]
+  · rw [ite_eq_left h1]; rfl
+  · rw [ite_eq_right h1]
     have h0 := spanE_f_zero (T := T) H (hn1 b) (a := a) (fun h => h1 h)
     have hfe : (datR R σ J P T).h ((datR R σ J P T).f a) (ratV (F := F) R (P.e b)) =
         if a = b then 1 else 0 := PG.Dat.fe H a b
@@ -633,7 +577,7 @@ theorem levi_inf_unipotent_eq_one (u : HA R σ J) (hu : u ∈ Asub R σ J P) (hu
       show hR R σ J (ratV (F := F) R (P.e d)) (lin R σ J u (ratV (F := F) R (P.f b))) = _
       rw [← hS d, hR_lin]
       exact H.ef d b
-    simp only [hc, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [hc, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rfl
   apply PI.LevelKSplit.W.SemiA.ext_lin
   intro x

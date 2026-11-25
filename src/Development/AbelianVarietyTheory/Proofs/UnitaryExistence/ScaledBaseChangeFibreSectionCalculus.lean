@@ -111,13 +111,7 @@ theorem pm_exists {S T : Type} [CommRing S] [CommRing T] (φ : S →+* T) {x : S
     (hx : x' = spMap φ ≫ x) : ∃ pm : Gx x' ⟶ Gx x,
       pm ≫ (snd (Over.mk x) Xo.univ.t.G).left = (snd (Over.mk x') Xo.univ.t.G).left ∧
       pm ≫ (fst (Over.mk x) Xo.univ.t.G).left = (fst (Over.mk x') Xo.univ.t.G).left ≫ spMap φ :=
-  ⟨pullback.lift (pullback.fst (Over.mk x').hom Xo.univ.t.G.hom ≫ spMap φ)
-      (pullback.snd (Over.mk x').hom Xo.univ.t.G.hom)
-      (by
-        show pullback.fst (Over.mk x').hom Xo.univ.t.G.hom ≫ spMap φ ≫ x =
-          pullback.snd (Over.mk x').hom Xo.univ.t.G.hom ≫ Xo.univ.t.G.hom
-        rw [← hx]
-        exact pullback.condition), pullback.lift_snd _ _ _, pullback.lift_fst _ _ _⟩
+  GlobalTheory.Frames.ChgBC.can_exists φ hx
 
 theorem secBC_iff {S T : Type} [CommRing S] [CommRing T] (φ : S →+* T) (a : S) {x : Sp S ⟶ Xo.X}
     {x' : Sp T ⟶ Xo.X} (pm : Gx x' ⟶ Gx x)

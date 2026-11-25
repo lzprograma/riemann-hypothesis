@@ -58,8 +58,8 @@ lemma Lv_p (Z : X.Coord) (τ : X.Ψ) (v : Fin r → ℂ) (a : Fin X.p0) :
       if Fin.castLE X.p0_le a = j then 1 else 0 := by
     intro j
     simp only [Data.lowBlock, Matrix.of_apply]
-    rw [dif_neg (fun hh => absurd hh.1 (not_le.mpr (by simp))), add_zero]
-  simp only [hL, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    rw [dite_eq_right (fun hh => absurd hh.1 (not_le.mpr (by simp))), add_zero]
+  simp only [hL, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 lemma Lv_n (Z : X.Coord) (τ : X.Ψ) (v : Fin r → ℂ) (m : Fin (r - X.p0)) :
     ∑ j, X.lowBlock Z τ (nI X m) j * v j = Nv X Z τ v m := by
@@ -69,19 +69,19 @@ lemma Lv_n (Z : X.Coord) (τ : X.Ψ) (v : Fin r → ℂ) (m : Fin (r - X.p0)) :
     simp only [Data.lowBlock, Matrix.of_apply]
     congr 1
     by_cases h : (j : ℕ) < X.p0
-    · rw [dif_pos ⟨(by simp [nI] : X.p0 ≤ ((nI X m : Fin r) : ℕ)), h⟩, dif_pos h]
+    · rw [dite_eq_left ⟨(by simp [nI] : X.p0 ≤ ((nI X m : Fin r) : ℕ)), h⟩, dite_eq_left h]
       exact congrFun (congrArg (Z τ) (Fin.ext (by simp [nI]))) _
-    · rw [dif_neg (fun hh => h hh.2), dif_neg h]
+    · rw [dite_eq_right (fun hh => h hh.2), dite_eq_right h]
   simp only [hL, add_mul, Finset.sum_add_distrib, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
   simp only [Nv]
   congr 1
   rw [sum_eq_sum_castLE_p0_of_vanish_above X]
   · refine Finset.sum_congr rfl fun c _ => ?_
-    rw [dif_pos (by simp)]
+    rw [dite_eq_left (by simp)]
     first | rfl
   · intro j hj
-    rw [dif_neg (not_lt.mpr hj), zero_mul]
+    rw [dite_eq_right (not_lt.mpr hj), zero_mul]
 
 lemma Bf_coord (Z : X.Coord) (τ : X.Ψ) (v w : Fin r → ℂ) :
     Bf X Z τ v w = ∑ a, Pv X v a * conj (Pv X w a) - ∑ m, Nv X Z τ v m * conj (Nv X Z τ w m) := by
@@ -145,8 +145,7 @@ private lemma sum_eq_add_sum_castLE_of_vanish_above {n : ℕ} (k : Fin n) (f : F
     omega
   calc ∑ j, f j = ∑ j ∈ insert k (Finset.univ.map e), f j := by
         refine (Finset.sum_subset (Finset.subset_univ _) fun j _ hj => hf j ?_).symm
-        by_contra hle
-        push_neg at hle
+        by_contra! hle
         rcases lt_or_eq_of_le hle with hlt | heq
         · exact hj (Finset.mem_insert_of_mem
             (Finset.mem_map.mpr ⟨⟨(j : ℕ), hlt⟩, Finset.mem_univ _, Fin.ext rfl⟩))
@@ -168,7 +167,7 @@ lemma Bf_gv_zero (Z : X.Coord) (τ : X.Ψ) (hdet : ∀ c : Fin r, (blk (Gp X Z �
   intro b _
   by_cases hb : k ≤ b
   · simp [ht b hb]
-  · push_neg at hb
+  · push Not at hb
     rw [← Finset.sum_mul]
     have hcol : ∑ c : Fin k, (Matrix.vecMul (rowc (Gp X Z τ) k) (blk (Gp X Z τ) k)⁻¹) c *
         Gp X Z τ (Fin.castLE k.isLt.le c) b = Gp X Z τ k b := congrFun hw ⟨(b : ℕ), hb⟩
@@ -182,7 +181,7 @@ lemma Bf_gv_zero (Z : X.Coord) (τ : X.Ψ) (hdet : ∀ c : Fin r, (blk (Gp X Z �
         simp only [Fin.coe_castLE] at h1
         omega
       have hlt : Fin.castLE k.isLt.le c < k := Fin.lt_iff_val_lt_val.mpr (by simp)
-      simp only [uMat, Matrix.of_apply, if_neg hne, dif_pos hlt]
+      simp only [uMat, Matrix.of_apply, ite_eq_right hne, dite_eq_left hlt]
       try rfl
     have hsum : ∑ a, uMat (Gp X Z τ) a k * Gp X Z τ a b = 0 := by
       rw [sum_eq_add_sum_castLE_of_vanish_above k]
@@ -191,7 +190,7 @@ lemma Bf_gv_zero (Z : X.Coord) (τ : X.Ψ) (hdet : ∀ c : Fin r, (blk (Gp X Z �
         rw [hcol]
         ring
       · intro j hj
-        simp only [uMat, Matrix.of_apply, if_neg (ne_of_gt hj), dif_neg (not_lt.mpr hj.le), zero_mul]
+        simp only [uMat, Matrix.of_apply, ite_eq_right (ne_of_gt hj), dite_eq_right (not_lt.mpr hj.le), zero_mul]
     rw [hsum, zero_mul]
 
 lemma Bf_self_re (Z : X.Coord) (τ : X.Ψ) (v : Fin r → ℂ) :
@@ -314,7 +313,7 @@ lemma pivot_pos {x : Frame X.Ψ r} (hx : x ∈ X.dom) (ho : X.IsOrtho x) {Z : X.
   have hnsqt : 0 ≤ nsq (Pv X t) := Finset.sum_nonneg fun j _ => by positivity
   have hGkk : (Gp X Z τ k k).re ≤ 1 := by
     rw [← hkk, Gp_pp]
-    simp only [if_true, Complex.sub_re, Complex.one_re, Complex.re_sum]
+    simp only [ite_true, Complex.sub_re, Complex.one_re, Complex.re_sum]
     have : 0 ≤ ∑ m, (Z τ m ⟨k, hk⟩ * conj (Z τ m ⟨k, hk⟩)).re :=
       Finset.sum_nonneg fun m _ => by
         rw [Complex.mul_conj]
@@ -406,7 +405,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : Data 
 lemma norm_dOf {y : Frame X.Ψ r} (hy : y ∈ X.dom) (τ : X.Ψ) (k : Fin r) :
     ‖dOf X y τ k‖ = |(dOf X y τ k).re| := by
   have h : dOf X y τ k = ((dOf X y τ k).re : ℂ) := by
-    apply Complex.ext <;> simp [dOf_real X hy τ k]
+    apply Complex.ext <;> simp [dOf_real X (x := y) τ k]
   rw [h, Complex.norm_real, Real.norm_eq_abs, Complex.ofReal_re]
 
 lemma ratio_eq {y : Frame X.Ψ r} (hy : y ∈ X.dom) (τ : X.Ψ) (k : Fin r) :
@@ -531,17 +530,17 @@ theorem nfac_xZ {x : Frame X.Ψ r} (hx : x ∈ X.dom) (ho : X.IsOrtho x) {ρ : �
       rw [← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun k _ => ?_
       by_cases hk : (k : ℕ) < X.p0
-      · rw [if_pos hk, abs_of_nonpos (log_dOf_pos_bound X hx ho hZ1 τ k hk).1]
+      · rw [ite_eq_left hk, abs_of_nonpos (log_dOf_pos_bound X hx ho hZ1 τ k hk).1]
         ring
-      · rw [if_neg hk, abs_of_nonneg (log_dOf_neg X hx ho hZ1 τ k (not_lt.1 hk)), zero_add]
+      · rw [ite_eq_right hk, abs_of_nonneg (log_dOf_neg X hx ho hZ1 τ k (not_lt.1 hk)), zero_add]
     rw [hsplit, sum_log_dOf X hx ho hZ1 τ, add_zero]
     calc ∑ k : Fin r, (if (k : ℕ) < X.p0 then -2 * Real.log ‖dOf X (X.xZ x Z) τ k‖ else 0)
         ≤ ∑ _k : Fin r, 2 * (2 * s ^ 2) := Finset.sum_le_sum fun k _ => by
           by_cases hk : (k : ℕ) < X.p0
-          · rw [if_pos hk]
+          · rw [ite_eq_left hk]
             have := (log_dOf_pos_bound X hx ho hZ1 τ k hk).2
             nlinarith
-          · rw [if_neg hk]; positivity
+          · rw [ite_eq_right hk]; positivity
       _ = 4 * r * s ^ 2 := by simp [Finset.card_univ]; ring
   have hsum : |∑ τ, ∑ k : Fin r, (-(la τ k : ℝ) / 2) * Real.log ‖dOf X (X.xZ x Z) τ k‖| ≤
       ∑ τ, X.spread la τ * (4 * r * s ^ 2) / 2 := by

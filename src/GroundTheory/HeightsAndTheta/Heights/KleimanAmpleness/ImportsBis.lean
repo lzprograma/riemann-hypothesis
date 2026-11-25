@@ -67,7 +67,7 @@ theorem BlockGenOfModel.proof : BlockGenOfModel.Statement := by
           exact hdb a
         · simp only [Pi.single_eq_of_ne h, mul_zero]
           exact Subalgebra.zero_mem _
-      · simp only [Pi.single_apply, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      · simp only [Pi.single_apply, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
         field_simp
     | zero => exact ⟨0, fun _ _ => by simp, by simp⟩
     | add s t _ _ hs ht =>

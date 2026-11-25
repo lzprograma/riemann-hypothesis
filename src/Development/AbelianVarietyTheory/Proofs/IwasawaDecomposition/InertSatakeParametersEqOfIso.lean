@@ -76,18 +76,18 @@ theorem heckeFunI_eq_sum {L : Type} [Field L] [NumberField L] [IsCMField L] {n :
   · rw [Finset.sum_apply]
     refine Finset.sum_congr rfl fun c _ => ?_
     by_cases hc : ∃ x : GAf L n, (x : GAf L n ⧸ U) = c ∧ TrivOutside {v} x
-    · simp only [dif_pos hc]
+    · simp only [dite_eq_left hc]
       rfl
-    · simp only [dif_neg hc, zero_smul]
+    · simp only [dite_eq_right hc, zero_smul]
       rfl
   · intro c hc0
     rw [Function.mem_support] at hc0
     by_cases hc : ∃ x : GAf L n, (x : GAf L n ⧸ U) = c ∧ TrivOutside {v} x
-    · rw [dif_pos hc] at hc0
+    · rw [dite_eq_left hc] at hc0
       rw [Set.Finite.coe_toFinset]
       refine ⟨hc.choose, hc.choose_spec.1, hc.choose_spec.2, fun h0 => hc0 ?_⟩
       rw [h0, zero_smul]
-    · exact absurd (dif_neg hc) hc0
+    · exact absurd (dite_eq_right hc) hc0
 
 theorem satAt_of_iso (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ) (π π' : NG.AutRep L n)
     (hiso : π.Iso π') (v : HeightOneSpectrum (𝓞 (maximalRealSubfield L))) (w : HeightOneSpectrum (𝓞 L))

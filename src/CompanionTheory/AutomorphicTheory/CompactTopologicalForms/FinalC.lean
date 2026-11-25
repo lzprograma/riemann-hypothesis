@@ -111,23 +111,10 @@ theorem blockGrowthBound_apx_cutF (hA : P5.ThmPActualCpt) {P : M.Par} {Wp Wq : T
     ∀ ε : ℝ, 0 < ε → ∀ n : ℕ, TBB.BlockGrowthBound p nn (apx (D.cutF p.T.base χ F ε) n) Y K N := fun _ hε n =>
   block_growth_bound_of_compact_coefCpt hA p nn _ Y K N Cb hCb (cptCoef_apx P p.T.base hχ hF hε n) hnn
 
-
-
 end
 
 end Formalism.FourierDecayAlt.P.CutBP.CompactFormNormalFormDomination
 
-namespace Formalism.FourierDecayAlt.P.CutBPEq.CompactFormNormalFormDomination
-
-open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.TBB Formalism.QuantumDeterminants Formalism.FourierDecayAlt.P.CutBP Formalism.FourierDecayAlt.P.CutBP2 Formalism.FourierDecayAlt.P.CutBP.CompactFormNormalFormDomination MeasureTheory
-open scoped ENNReal
-
-noncomputable section
-
-
-end
-
-end Formalism.FourierDecayAlt.P.CutBPEq.CompactFormNormalFormDomination
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: CompanionTheory.AutomorphicTheory.CompactTopologicalForms.FinalS =====
@@ -597,36 +584,13 @@ noncomputable section
 
 open Classical
 
-theorem uInv_at_zero {X : Type} [AddCommGroup X] [Module ℂ X] :
-    ∀ (w : List C.Letter) (x : Wd.Ix (Fin w.length) → X), KB.uInv 0 w x = x
-  | [], _ => rfl
-  | l :: w, x => by
-    funext e
-    simp only [KB.uInv, uInv_at_zero w, map_zero, ite_self, zero_smul, add_zero]
-    split_ifs with h
-    · congr 1
-      funext a
-      induction a using Fin.cases with
-      | zero => exact h.symm
-      | succ i => rfl
-    · congr 1
-      funext a
-      induction a using Fin.cases with
-      | zero =>
-        have h1 : e (0 : Fin (w.length + 1)) = 1 := by
-          rcases Fin.exists_fin_two.1 ⟨e (0 : Fin (w.length + 1)), rfl⟩ with h0 | h0
-          · exact absurd h0 h
-          · exact h0
-        exact h1.symm
-      | succ i => rfl
-
 variable {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
 
 theorem waveG_at_zero {k r : ℕ} (Bs : B.RealPlaceData k r Wp Wq) (w : List C.Letter)
     (x : Wd.Ix (Fin w.length) → B.Mat k r → (Wq →L[ℂ] Wp)) : KB.waveG Bs 0 w x = x := by
   funext e g
-  simp [KB.waveG, P5.fsv, uInv_at_zero]
+  simp [KB.waveG, P5.fsv, Formalism.FourierDecayAlt.P.PBASM.uInv_zero_eq_self]
 
 theorem ew_snoc (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (w : List C.Letter) {j : ℕ} (hj : j ≤ P.r)
     {h : C.LPt} (hh : D.IsLocPt h j) (c : ℂ) :
@@ -661,13 +625,13 @@ theorem ew_snoc (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (w
           KB.levW P (P.r + 1) c := by
         rw [hlast, hTT]
         rw [hT, hT'] at hc2
-        simp only [C.nAux, KB.levW, B2.zWeight, if_pos hc2.le]
-        rw [if_pos ⟨by omega, trivial⟩]
+        simp only [C.nAux, KB.levW, B2.zWeight, ite_eq_left hc2.le]
+        rw [ite_eq_left ⟨by omega, trivial⟩]
         simp
       have hlev : 0 ≤ KB.levW P (P.r + 1) c := by
         rw [← hfac, hlast]
         simp only [C.nAux]
-        rw [if_pos ⟨by omega, trivial⟩]
+        rw [ite_eq_left ⟨by omega, trivial⟩]
         have : 0 ≤ Complex.normSq c - TBB.TTp p := by
           unfold TBB.TTp; linarith
         simpa using pow_nonneg this _
@@ -676,7 +640,7 @@ theorem ew_snoc (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (w
   · have hfac : C.nAux P.k P.r (D.ptGG (TBB.TTp p) (h ++ [(1, c)])) (fun _ _ => 1) (1 + j) [(1, c)] =
         KB.levW P (j + 1) c := by
       simp only [C.nAux, KB.levW]
-      rw [if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega)]
       have e : 1 + j + 1 - 1 = j + 1 := by omega
       rw [e]
       simp only [one_mul, mul_one, Nat.cast_one]
@@ -684,7 +648,7 @@ theorem ew_snoc (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (w
       ring
     have hlev : 0 ≤ KB.levW P (j + 1) c := by
       simp only [KB.levW]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       exact zpow_nonneg (norm_nonneg _) _
     rw [hfac, Real.mul_self_sqrt (mul_nonneg hA hlev)]
     ring
@@ -1229,7 +1193,6 @@ theorem nfTopIdAll_of_dom (h3 : NFTopDomAll) : NFTopIdAll :=
 theorem nfTopDomAll_of_tieC (hT : CompanionTheory.NFCpt.NFTieHatC) : NFTopDomAll :=
   CompanionTheory.NFCpt.nfTopDomAll_of_C hT LimitNormalForms.normal_form_hat_product_bessel LimitNormalForms.normal_form_jacobi_cutoff
 
-
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 theorem thmBpAt_dom (h3 : NFTopDomAll)
     (Cb C₃ CΛ C₀ : ℝ) (hC₃ : 0 ≤ C₃) (hCΛ : 0 ≤ CΛ) (hC₀ : 1 / 2 ≤ C₀) :
@@ -1274,7 +1237,6 @@ open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.TBB Formalism.QuantumDe
 open scoped ENNReal
 
 noncomputable section
-
 
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 theorem thmBpAt_eqR_dom (h3 : NFTopDomAll)

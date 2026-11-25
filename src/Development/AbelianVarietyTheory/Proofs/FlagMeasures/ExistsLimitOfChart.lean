@@ -62,14 +62,8 @@ noncomputable section
 namespace GlobalTheory.GaugeConst
 
 theorem tendsto_mul_nhdsGT {s : ℝ} (hs : 0 < s) :
-    Tendsto (fun r : ℝ => s * r) (𝓝[>] 0) (𝓝[>] 0) := by
-  refine tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within _ ?_ ?_
-  · have : Tendsto (fun r : ℝ => s * r) (𝓝 0) (𝓝 (s * 0)) :=
-      (continuous_const.mul continuous_id).tendsto 0
-    rw [mul_zero] at this
-    exact this.mono_left nhdsWithin_le_nhds
-  · filter_upwards [self_mem_nhdsWithin] with r hr
-    exact mul_pos hs hr
+    Tendsto (fun r : ℝ => s * r) (𝓝[>] 0) (𝓝[>] 0) :=
+  tendsto_iff_comap.2 (comap_mulLeft_nhdsGT_zero hs).ge
 
 theorem tendsto_scaled {h : ℝ → ℝ} {d : ℕ} {L s : ℝ} (hs : 0 < s)
     (hh : Tendsto (fun r => h r / r ^ d) (𝓝[>] 0) (𝓝 L)) :

@@ -20,68 +20,13 @@ public import Mathlib.RingTheory.Etale.Kaehler
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsGaloisCover
 public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.EFam
 public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.IsIntegralRBIff
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CoeEqAlgebraMapZeroEquiv
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.FieldTheory.PurelyInseparable.Exponent
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Development.AbelianVarietyTheory.Definitions.Divisors.CupPair
 import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Edge1
 import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsAddEquivOfSurjectiveOfKerIff
-import Mathlib.Topology.Sheaves.Presheaf
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
-import Mathlib.Algebra.DualNumber
-import Mathlib.Tactic.Lemma
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsFiniteQCOmega, Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsCotangentMapDualBasisOfParameters, Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsCotangentMapLocalizationAway, Development.AutomorphicArithmetic.CommutativeAlgebra.FiniteFiberOfFiniteTypeParameterRing, Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.ExistsUnitMulMemSpanOfReducedIsolatedZero, Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.FiniteEtaleFunctionFieldGermCompatOfSmooth, Development.AutomorphicArithmetic.KaehlerVanishing.DerivationEqOfFormallyEtaleOfEvaluationEq, Development.AutomorphicArithmetic.KaehlerVanishing.KaehlerFunctionalVanishingOfLocalizationAtPrime, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.TanConjEt, Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCorrespondenceLocalParametersStatement
@@ -92,8 +37,6 @@ section -- clump:auto
 @[expose] public section
 
 open CategoryTheory AlgebraicGeometry Module ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.HodgeCoh
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -211,7 +154,7 @@ open KaehlerDifferential
 theorem UpperTheory.exists_cotangent_map_localization_away :
     ∀ {R S : Type} [CommRing R] [CommRing S] [Algebra ℂ R] [Algebra ℂ S] [Algebra R S] [IsScalarTower ℂ R S] (f : R) [IsLocalization.Away f S] (ev : S →+* ℂ) {d : ℕ} (ψ : Ω[R⁄ℂ] →ₗ[ℂ] (Fin d → ℂ)), (∀ (b : R) (ω : Ω[R⁄ℂ]), ψ (b • ω) = ev (algebraMap R S b) • ψ ω) → (∀ ω : Ω[R⁄ℂ], ψ ω = 0 → ∃ (m : ℕ) (b : Fin m → R) (ω' : Fin m → Ω[R⁄ℂ]), (∀ i, ev (algebraMap R S (b i)) = 0) ∧ ω = ∑ i, b i • ω' i) → ∃ ψ' : Ω[S⁄ℂ] →ₗ[ℂ] (Fin d → ℂ), (∀ (b : S) (ω : Ω[S⁄ℂ]), ψ' (b • ω) = ev b • ψ' ω) ∧ (∀ ω : Ω[R⁄ℂ], ψ' (KaehlerDifferential.map ℂ ℂ R S ω) = ψ ω) ∧ (∀ ω : Ω[S⁄ℂ], ψ' ω = 0 → ∃ (m : ℕ) (b : Fin m → S) (ω' : Fin m → Ω[S⁄ℂ]), (∀ i, ev (b i) = 0) ∧ ω = ∑ i, b i • ω' i) := by
   intro R S _ _ _ _ _ _ f _ ev d ψ h1 h2
-  letI : Module R (Fin d → ℂ) := Module.compHom (Fin d → ℂ) (ev.comp (algebraMap R S))
+  let : Module R (Fin d → ℂ) := Module.compHom (Fin d → ℂ) (ev.comp (algebraMap R S))
   have hu : ∀ x : Submonoid.powers f, ev (algebraMap R S x) ≠ 0 := fun x =>
     ((IsLocalization.map_units S x).map ev).ne_zero
   have hunit : ∀ x : Submonoid.powers f,
@@ -282,13 +225,7 @@ section -- clump:auto
 
 open GlobalTheory GlobalTheory.PD
 
-set_option autoImplicit false
-
 noncomputable section
-
-namespace UpperTheory
-
-end UpperTheory
 
 theorem UpperTheory.finite_fiber_of_finiteType_parameter_ring :
     ∀ (F K : Type) [Field F] [Field K] [Algebra ℂ F] [Algebra ℂ K] [Algebra F K] [IsScalarTower ℂ F K]
@@ -375,8 +312,8 @@ open scoped TensorProduct
 
 private theorem exists_algHom_complex_ker_eq_maximal (A : Type) [CommRing A] [Algebra ℂ A] [Algebra.FiniteType ℂ A]
     (m : Ideal A) [m.IsMaximal] : ∃ e : A →ₐ[ℂ] ℂ, ∀ x, e x = 0 ↔ x ∈ m := by
-  letI := Ideal.Quotient.field m
-  haveI : Module.Finite ℂ (A ⧸ m) := finite_of_finite_type_of_isJacobsonRing ℂ (A ⧸ m)
+  let := Ideal.Quotient.field m
+  have : Module.Finite ℂ (A ⧸ m) := finite_of_finite_type_of_isJacobsonRing ℂ (A ⧸ m)
   have hb := IsAlgClosed.algebraMap_bijective_of_isIntegral (k := ℂ) (K := A ⧸ m)
   let φ := AlgEquiv.ofBijective (Algebra.ofId ℂ (A ⧸ m)) hb
   refine ⟨φ.symm.toAlgHom.comp (Ideal.Quotient.mkₐ ℂ m), fun x => ?_⟩
@@ -386,16 +323,16 @@ private theorem exists_algHom_complex_ker_eq_maximal (A : Type) [CommRing A] [Al
 private theorem mem_of_reduced_vanishing_on_zeros (A : Type) [CommRing A] [Algebra ℂ A] [Algebra.FiniteType ℂ A]
     (J : Ideal A) (hred : IsReduced (A ⧸ J)) (x : A)
     (hx : ∀ e : A →ₐ[ℂ] ℂ, (∀ y ∈ J, e y = 0) → e x = 0) : x ∈ J := by
-  haveI : IsJacobsonRing A := isJacobsonRing_of_finiteType (A := ℂ)
+  have : IsJacobsonRing A := isJacobsonRing_of_finiteType (A := ℂ)
   have hj : x ∈ J.jacobson := by
     rw [Ideal.jacobson, Submodule.mem_sInf]
     rintro m ⟨hJm, hm⟩
-    haveI := hm
+    have := hm
     obtain ⟨e, he⟩ := exists_algHom_complex_ker_eq_maximal A m
     exact (he x).1 (hx e fun y hy => (he y).2 (hJm hy))
   rw [← Ideal.radical_eq_jacobson] at hj
   obtain ⟨n, hn⟩ := hj
-  haveI := hred
+  have := hred
   have hnil : IsNilpotent (Ideal.Quotient.mk J x) :=
     ⟨n, by rw [← map_pow, Ideal.Quotient.eq_zero_iff_mem]; exact hn⟩
   exact Ideal.Quotient.eq_zero_iff_mem.1 hnil.eq_zero
@@ -409,8 +346,7 @@ theorem UpperTheory.Cb.exists_unit_mul_mem_span_of_reduced_isolated_zero :
     by_cases hs : s.1 = e
     · exact ⟨1, by simp, fun h => absurd hs h⟩
     · obtain ⟨y, hy⟩ : ∃ y, e y ≠ s.1 y := by
-        by_contra hcon
-        push_neg at hcon
+        by_contra! hcon
         exact hs (AlgHom.ext fun y => (hcon y).symm)
       refine ⟨y - algebraMap ℂ A (s.1 y), ?_, fun _ => ?_⟩
       · rw [map_sub, AlgHom.commutes]
@@ -418,7 +354,7 @@ theorem UpperTheory.Cb.exists_unit_mul_mem_span_of_reduced_isolated_zero :
       · rw [map_sub, AlgHom.commutes]
         exact sub_self _
   choose f hf using key
-  haveI := Fintype.ofFinite {e' : A →ₐ[ℂ] ℂ // ∀ j, e' (t j) = 0}
+  have := Fintype.ofFinite {e' : A →ₐ[ℂ] ℂ // ∀ j, e' (t j) = 0}
   refine ⟨∏ s, f s, ?_⟩
   have hmem : (∏ s, f s) * b ∈ Ideal.span (Set.range t) := by
     apply mem_of_reduced_vanishing_on_zeros A _ hred
@@ -452,17 +388,16 @@ private theorem reduced_of_etale_proj (R S : Type) [CommRing R] [CommRing S] [Al
   refine ⟨fun s hs => ?_⟩
   by_contra hne
   obtain ⟨φ, hφ⟩ : ∃ φ : Module.Dual R S, φ s ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hne ((Module.forall_dual_apply_eq_zero_iff R s).1 h)
   have hnil : φ s ∉ nilradical R := by
     rw [nilradical_eq_zero]; simpa using hφ
   rw [nilradical_eq_sInf, Ideal.mem_sInf] at hnil
-  push_neg at hnil
+  push Not at hnil
   obtain ⟨p, hp, hsp⟩ := hnil
-  haveI : p.IsPrime := hp
+  have : p.IsPrime := hp
   let κ := p.ResidueField
-  haveI : IsReduced (κ ⊗[R] S) := Algebra.FormallyUnramified.isReduced_of_field κ (κ ⊗[R] S)
+  have : IsReduced (κ ⊗[R] S) := Algebra.FormallyUnramified.isReduced_of_field κ (κ ⊗[R] S)
   have h0 : (1 : κ) ⊗ₜ[R] s = 0 := by
     have : IsNilpotent ((Algebra.TensorProduct.includeRight : S →ₐ[R] κ ⊗[R] S) s) := hs.map _
     simpa using this.eq_zero
@@ -473,9 +408,9 @@ private theorem reduced_of_etale_proj (R S : Type) [CommRing R] [CommRing S] [Al
 
 private theorem reduced_quot (B B' : Type) [CommRing B] [CommRing B'] [Algebra B B'] [Algebra.Etale B B']
     [Module.Projective B B'] (I : Ideal B) [IsReduced (B ⧸ I)] : IsReduced (B' ⧸ I.map (algebraMap B B')) := by
-  haveI : IsReduced ((B ⧸ I) ⊗[B] B') := reduced_of_etale_proj (B ⧸ I) ((B ⧸ I) ⊗[B] B')
+  have : IsReduced ((B ⧸ I) ⊗[B] B') := reduced_of_etale_proj (B ⧸ I) ((B ⧸ I) ⊗[B] B')
   have e := Algebra.TensorProduct.quotIdealMapEquivTensorQuot B' I
-  haveI : IsReduced (B' ⊗[B] (B ⧸ I)) := isReduced_of_injective (Algebra.TensorProduct.comm B B' (B ⧸ I)).toRingEquiv (Algebra.TensorProduct.comm B B' (B ⧸ I)).injective
+  have : IsReduced (B' ⊗[B] (B ⧸ I)) := isReduced_of_injective (Algebra.TensorProduct.comm B B' (B ⧸ I)).toRingEquiv (Algebra.TensorProduct.comm B B' (B ⧸ I)).injective
   exact isReduced_of_injective e.toRingEquiv e.injective
 
 private theorem transfer {A A' B B' ι : Type} [CommRing A] [CommRing A'] [CommRing B] [CommRing B'] [Algebra A A']
@@ -489,8 +424,8 @@ private theorem transfer {A A' B B' ι : Type} [CommRing A] [CommRing A'] [CommR
     ext j
     simp
   have eq1 : (A ⧸ J) ≃+* (B ⧸ Ideal.span (Set.range t)) := Ideal.quotientEquiv J _ eA hJ
-  haveI : IsReduced (A ⧸ J) := isReduced_of_injective eq1 eq1.injective
-  haveI := reduced_quot A A' J
+  have : IsReduced (A ⧸ J) := isReduced_of_injective eq1 eq1.injective
+  have := reduced_quot A A' J
   have hJ' : Ideal.span (Set.range t') = (J.map (algebraMap A A')).map (eA' : A' →+* B') := by
     simp only [J, Ideal.map_span, ← Set.range_comp]
     congr 2
@@ -518,7 +453,7 @@ private noncomputable def chartEquiv {k : Type} [Field k] {X : Scheme.{0}} [IsIn
     (((X.presheaf.germ V (genericPoint X) hg).hom).codRestrict B fun f => (h _).2 ⟨f, rfl⟩)
     (by
       refine ⟨fun a b e => ?_, fun y => ?_⟩
-      · haveI : Nonempty V := ⟨⟨_, hg⟩⟩
+      · have : Nonempty V := ⟨⟨_, hg⟩⟩
         exact germ_injective_of_isIntegral X _ hg (congrArg Subtype.val e)
       · obtain ⟨f, hf⟩ := (h y.1).1 y.2
         exact ⟨f, Subtype.ext hf⟩)
@@ -530,10 +465,10 @@ theorem UpperTheory.Cb.finite_etale_function_field_germ_compat_of_smooth :
   intro d Z Y _ _ s s' _ _ c1 hc hfin het inst inst' _ _ _ _ hcomp F _ _ _ _ _ _ _ x U _ hZ hY hred
   obtain ⟨hW, hg, hring⟩ := cover_ring hZ 0
   obtain ⟨-, hg', hring'⟩ := cover_ring hY 0
-  letI : Algebra Γ(Z, U 0) Γ(Y, c1 ⁻¹ᵁ U 0) := (c1.app (U 0)).hom.toAlgebra
-  haveI : Module.Finite Γ(Z, U 0) Γ(Y, c1 ⁻¹ᵁ U 0) := sec_finite (s := s) (s' := s') (f := c1) hW
-  haveI : Algebra.Etale Γ(Z, U 0) Γ(Y, c1 ⁻¹ᵁ U 0) := sec_etale (s := s) (s' := s') (f := c1) hW
-  haveI := projective_of_etale Γ(Z, U 0) Γ(Y, c1 ⁻¹ᵁ U 0)
+  let : Algebra Γ(Z, U 0) Γ(Y, c1 ⁻¹ᵁ U 0) := (c1.app (U 0)).hom.toAlgebra
+  have : Module.Finite Γ(Z, U 0) Γ(Y, c1 ⁻¹ᵁ U 0) := sec_finite (s := s) (s' := s') (f := c1) hW
+  have : Algebra.Etale Γ(Z, U 0) Γ(Y, c1 ⁻¹ᵁ U 0) := sec_etale (s := s) (s' := s') (f := c1) hW
+  have := projective_of_etale Γ(Z, U 0) Γ(Y, c1 ⁻¹ᵁ U 0)
   let eZ := chartEquiv (U 0) hg _ hring
   let eY := chartEquiv (c1 ⁻¹ᵁ U 0) hg' _ hring'
   refine transfer eZ eY _ _ (fun j => ?_) hred
@@ -597,8 +532,8 @@ private theorem exists_point_derivation_eq_on_image {A S : Type} [CommRing A] [C
   let T : S →+* TrivSqZeroExt ℂ ℂ := UpperTheory.EtaleExpansion.tw ev η hη
   let χ : A →+* TrivSqZeroExt ℂ ℂ := T.comp a2.toRingHom
   let fs : TrivSqZeroExt ℂ ℂ →+* ℂ := (TrivSqZeroExt.fstHom ℂ ℂ ℂ).toRingHom
-  letI iD : Algebra A (TrivSqZeroExt ℂ ℂ) := χ.toAlgebra
-  letI iC : Algebra A ℂ := (fs.comp χ).toAlgebra
+  let iD : Algebra A (TrivSqZeroExt ℂ ℂ) := χ.toAlgebra
+  let iC : Algebra A ℂ := (fs.comp χ).toAlgebra
   have hT1 : ∀ s, (T s).fst = ev s := fun s => UpperTheory.EtaleExpansion.tw_fst ev η hη s
   have hT2 : ∀ s, (T s).snd = η s := fun s => UpperTheory.EtaleExpansion.tw_snd ev η hη s
   let f : S →ₐ[A] ℂ :=
@@ -723,13 +658,13 @@ open KaehlerDifferential
 theorem UpperTheory.kaehler_functional_vanishing_of_localization_at_prime :
     ∀ {B S : Type} [CommRing B] [CommRing S] [Algebra ℂ B] [Algebra ℂ S] [Algebra B S] [IsScalarTower ℂ B S] (p : Ideal B) [p.IsPrime] [IsLocalization.AtPrime S p] (ev : S →ₐ[ℂ] ℂ), (∀ b : B, b ∈ p ↔ ev (algebraMap B S b) = 0) → ∀ (d : ℕ) (φ : Ω[B⁄ℂ] →ₗ[ℂ] (Fin d → ℂ)), (∀ (b : B) (ω : Ω[B⁄ℂ]), φ (b • ω) = ev (algebraMap B S b) • φ ω) → (∀ ω : Ω[B⁄ℂ], φ ω = 0 → ∃ (m : ℕ) (b : Fin m → B) (ω' : Fin m → Ω[B⁄ℂ]), (∀ i, ev (algebraMap B S (b i)) = 0) ∧ ω = ∑ i, b i • ω' i) → ∃ δ : S →ₗ[ℂ] (Fin d → ℂ), (∀ a b : S, δ (a * b) = ev a • δ b + ev b • δ a) ∧ (∀ b : B, δ (algebraMap B S b) = φ (KaehlerDifferential.D ℂ B b)) ∧ ∀ η : S →ₗ[ℂ] ℂ, (∀ a b : S, η (a * b) = ev a * η b + ev b * η a) → ∃ r : (Fin d → ℂ) →ₗ[ℂ] ℂ, ∀ a, η a = r (δ a) := by
   intro B S _ _ _ _ _ _ p _ _ ev hp d φ hφ hker
-  haveI : Algebra.FormallyEtale B S := Algebra.FormallyEtale.of_isLocalization (Rₘ := S) p.primeCompl
+  have : Algebra.FormallyEtale B S := Algebra.FormallyEtale.of_isLocalization (Rₘ := S) p.primeCompl
   have hL : ∀ η : S →ₗ[ℂ] ℂ, (∀ a b : S, η (a * b) = ev a * η b + ev b * η a) →
       ∃ L : Ω[B⁄ℂ] →ₗ[ℂ] ℂ, (∀ b : B, L (KaehlerDifferential.D ℂ B b) = η (algebraMap B S b)) ∧
         ∀ (b : B) (ω : Ω[B⁄ℂ]), L (b • ω) = ev (algebraMap B S b) * L ω := by
     intro η hη
-    letI : Module B ℂ := Module.compHom ℂ ((ev.toRingHom).comp (algebraMap B S))
-    haveI : IsScalarTower ℂ B ℂ := ⟨fun c b z => by
+    let : Module B ℂ := Module.compHom ℂ ((ev.toRingHom).comp (algebraMap B S))
+    have : IsScalarTower ℂ B ℂ := ⟨fun c b z => by
       change ev (algebraMap B S (c • b)) * z = c * (ev (algebraMap B S b) * z)
       rw [Algebra.smul_def c b, map_mul, map_mul, ← IsScalarTower.algebraMap_apply, AlgHom.commutes]
       simp [mul_assoc]⟩
@@ -750,10 +685,10 @@ theorem UpperTheory.kaehler_functional_vanishing_of_localization_at_prime :
     · simp only [LinearMap.coe_restrictScalars, map_smul]
       rfl
   let e := KaehlerDifferential.tensorKaehlerEquivOfFormallyEtale ℂ B S
-  letI iS : Module S (Fin d → ℂ) := Module.compHom (Fin d → ℂ) ev.toRingHom
-  letI iB : Module B (Fin d → ℂ) :=
+  let iS : Module S (Fin d → ℂ) := Module.compHom (Fin d → ℂ) ev.toRingHom
+  let iB : Module B (Fin d → ℂ) :=
     Module.compHom (Fin d → ℂ) ((ev.toRingHom).comp (algebraMap B S))
-  haveI : IsScalarTower B S (Fin d → ℂ) := ⟨fun b s v => by
+  have : IsScalarTower B S (Fin d → ℂ) := ⟨fun b s v => by
     change ev (b • s) • v = ev (algebraMap B S b) • (ev s • v)
     rw [Algebra.smul_def b s, map_mul, mul_smul]⟩
   let g : Ω[B⁄ℂ] →ₗ[B] (Fin d → ℂ) :=
@@ -851,7 +786,7 @@ private theorem exists_stalk {Y : Scheme.{0}} (s' : Y ⟶ Sp ℂ) (y : CxPts s' 
     rw [← Scheme.Hom.appLE_map (i := (homOfLE le_top).op), CommRingCat.comp_apply,
       TopCat.Presheaf.germ_res_apply]
     exact le_top
-  letI alg : Algebra ℂ (Y.presheaf.stalk (y.1 (IsLocalRing.closedPoint ℂ))) :=
+  let alg : Algebra ℂ (Y.presheaf.stalk (y.1 (IsLocalRing.closedPoint ℂ))) :=
     ((Y.presheaf.germ ⊤ _ trivial).hom.comp (secMap s' ⊤).hom).toAlgebra
   have hev : ∀ c : ℂ, (Scheme.stalkClosedPointTo y.1).hom (algebraMap ℂ _ c) = c := by
     intro c
@@ -886,12 +821,12 @@ private theorem exists_der {Y : Scheme.{0}} (s' : Y ⟶ Sp ℂ) (y0 : Y)
       (∀ b : Sec s' V, δ ((Y.presheaf.germ V y0 h).hom b) = φ (KaehlerDifferential.D ℂ (Sec s' V) b)) ∧
       ∀ η : (Y.presheaf.stalk y0) →ₗ[ℂ] ℂ, (∀ a b, η (a * b) = ev a * η b + ev b * η a) →
         ∃ r : (Fin d → ℂ) →ₗ[ℂ] ℂ, ∀ a, η a = r (δ a) := by
-  letI : Algebra (Sec s' V) (Y.presheaf.stalk y0) := (Y.presheaf.germ V y0 h).hom.toAlgebra
-  haveI : IsScalarTower ℂ (Sec s' V) (Y.presheaf.stalk y0) :=
+  let : Algebra (Sec s' V) (Y.presheaf.stalk y0) := (Y.presheaf.germ V y0 h).hom.toAlgebra
+  have : IsScalarTower ℂ (Sec s' V) (Y.presheaf.stalk y0) :=
     IsScalarTower.of_algebraMap_eq (fun c => (halg c).symm)
   let p : Ideal (Sec s' V) := (hV.primeIdealOf ⟨y0, h⟩).asIdeal
-  haveI : p.IsPrime := (hV.primeIdealOf ⟨y0, h⟩).isPrime
-  haveI : IsLocalization.AtPrime (Y.presheaf.stalk y0) p := hV.isLocalization_stalk ⟨y0, h⟩
+  have : p.IsPrime := (hV.primeIdealOf ⟨y0, h⟩).isPrime
+  have : IsLocalization.AtPrime (Y.presheaf.stalk y0) p := hV.isLocalization_stalk ⟨y0, h⟩
   have hp : ∀ b : Sec s' V, b ∈ p ↔ ev (algebraMap (Sec s' V) _ b) = 0 := by
     intro b
     exact (IsLocalization.AtPrime.to_map_mem_maximal_iff (Y.presheaf.stalk y0) p b).symm.trans
@@ -936,8 +871,8 @@ private theorem pb_etale {Z Y : Scheme.{0}} (c : Y ⟶ Z) (hc : Etale c) (U : Z.
   apply RingHom.FormallyEtale.comp
   · have := HasRingHomProperty.appLE @Etale c hc ⟨U, hU⟩ ⟨V, hVa⟩ e
     exact this.formallyEtale
-  · letI := (Y.presheaf.germ V y0 hV).hom.toAlgebra
-    haveI := (show IsAffineOpen V from hVa).isLocalization_stalk ⟨y0, hV⟩
+  · let := (Y.presheaf.germ V y0 hV).hom.toAlgebra
+    have := (show IsAffineOpen V from hVa).isLocalization_stalk ⟨y0, hV⟩
     exact Algebra.FormallyEtale.of_isLocalization ((show IsAffineOpen V from hVa).primeIdealOf ⟨y0, hV⟩).asIdeal.primeCompl
 
 end UpperTheory.Gal.productCup_of_system
@@ -960,11 +895,11 @@ theorem UpperTheory.Gal.productCup_of_system.tanConj_etale :
     show c2 (y.1 (IsLocalRing.closedPoint ℂ)) ∈ U0
     rw [hpt]
     exact hmem
-  letI : Algebra (Sec s U0) (Y.presheaf.stalk (y.1 (IsLocalRing.closedPoint ℂ))) :=
+  let : Algebra (Sec s U0) (Y.presheaf.stalk (y.1 (IsLocalRing.closedPoint ℂ))) :=
     (pb c1 U0 _ h1').toAlgebra
-  haveI : Algebra.FormallyEtale (Sec s U0) (Y.presheaf.stalk (y.1 (IsLocalRing.closedPoint ℂ))) :=
+  have : Algebra.FormallyEtale (Sec s U0) (Y.presheaf.stalk (y.1 (IsLocalRing.closedPoint ℂ))) :=
     pb_etale c1 hc U0 hU0a _ h1'
-  haveI : IsScalarTower ℂ (Sec s U0) (Y.presheaf.stalk (y.1 (IsLocalRing.closedPoint ℂ))) :=
+  have : IsScalarTower ℂ (Sec s U0) (Y.presheaf.stalk (y.1 (IsLocalRing.closedPoint ℂ))) :=
     IsScalarTower.of_algebraMap_eq (fun r => (pb_const c1 h1 U0 _ h1' halg r).symm)
   let a2 : Sec s U0 →ₐ[ℂ] Y.presheaf.stalk (y.1 (IsLocalRing.closedPoint ℂ)) :=
     { toRingHom := pb c2 U0 _ h2', commutes' := pb_const c2 h2 U0 _ h2' halg }
@@ -1012,7 +947,6 @@ section -- clump:auto
 
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.HodgeCoh GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 KaehlerDifferential
 open scoped TensorProduct
-set_option autoImplicit false
 
 namespace UpperTheory.EvaluationRestriction
 
@@ -1084,10 +1018,10 @@ private def Pd (d : ℕ) (y : CxPts s' (RingHom.id ℂ)) (V : Y.Opens) : Prop :=
 private theorem pd_step {d : ℕ} {V : Y.Opens} (hV : IsAffineOpen V) (f : Γ(Y, V))
     (hy : y ∈ CxPts.ptsIn s' (RingHom.id ℂ) (Y.basicOpen f)) (H : Pd d y V) : Pd d y (Y.basicOpen f) := by
   obtain ⟨φ, h1, h2, h3⟩ := H
-  letI : Algebra (Sec s' V) (Sec s' (Y.basicOpen f)) := (Sec.res s' (Y.basicOpen_le f)).toRingHom.toAlgebra
-  haveI : IsScalarTower ℂ (Sec s' V) (Sec s' (Y.basicOpen f)) :=
+  let : Algebra (Sec s' V) (Sec s' (Y.basicOpen f)) := (Sec.res s' (Y.basicOpen_le f)).toRingHom.toAlgebra
+  have : IsScalarTower ℂ (Sec s' V) (Sec s' (Y.basicOpen f)) :=
     .of_algebraMap_eq fun r => ((Sec.res s' (Y.basicOpen_le f)).commutes r).symm
-  haveI : IsLocalization.Away (show Sec s' V from f) (Sec s' (Y.basicOpen f)) := hV.isLocalization_basicOpen f
+  have : IsLocalization.Away (show Sec s' V from f) (Sec s' (Y.basicOpen f)) := hV.isLocalization_basicOpen f
   have hal : ∀ b : Sec s' V, CxPts.ev s' (RingHom.id ℂ) V b y =
       (evA hy).toRingHom (algebraMap (Sec s' V) (Sec s' (Y.basicOpen f)) b) := fun b => by
     change _ = evA hy (Sec.res s' (Y.basicOpen_le f) b)
@@ -1185,8 +1119,8 @@ theorem UpperTheory.etaleCorrespondence_local_parameters_statement :
     exact congrArg e (Subtype.ext (germT l))
 
   have hftB : Algebra.FiniteType ℂ (rB ℂ Y.functionField x {0}) := by
-    haveI : Smooth s' := SmoothOfRelativeDimension.smooth d s'
-    haveI := GlobalTheory.HodgeFin.finiteType_sec s' hV0
+    have : Smooth s' := SmoothOfRelativeDimension.smooth d s'
+    have := GlobalTheory.HodgeFin.finiteType_sec s' hV0
     let gA : Sec s' (c1 ⁻¹ᵁ U 0) →ₐ[ℂ] rB ℂ Y.functionField x {0} :=
       { toFun := fun f => ⟨gm s' hgY f, memB f⟩
         map_one' := Subtype.ext (map_one _)
@@ -1276,8 +1210,7 @@ theorem UpperTheory.etaleCorrespondence_local_parameters_statement :
     refine ⟨c * p, q, ?_, ?_⟩
     · rw [← hy0W, map_mul, map_mul, hy0W, hy0W]
       exact mul_ne_zero hc hp
-    · set_option synthInstance.maxHeartbeats 100000 in
-        rw [map_mul, mul_assoc, ← hap, ← map_mul, hcq, map_sum, ht]
+    · rw [map_mul, mul_assoc, ← hap, ← map_mul, hcq, map_sum, ht]
       simp only [map_mul]
   obtain ⟨ψ, p1, p2, p3⟩ := pdW
   obtain ⟨φ, q1, q2, q3, q4⟩ := UpperTheory.exists_cotangent_map_dual_basis_of_parameters (evA hW) t ψ (fun b ω => by rw [p1, evA_apply]) p2 evt

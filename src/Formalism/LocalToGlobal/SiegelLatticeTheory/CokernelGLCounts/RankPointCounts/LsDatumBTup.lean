@@ -38,7 +38,7 @@ theorem base_factors {p : PlF D} {w : Point D.host.E (D.R.rS + 1)} {θ : Option 
     hL M δ T T' p w (x0L M δ T T' p w) = 1 ∧ kL M δ T T' p w θ (x0L M δ T T' p w) = 1 ∧
       eL M δ T T' p w θ (x0L M δ T T' p w) = 1 := by
   have g1 := hg θ (x0L M δ T T' p w)
-  rw [if_pos ⟨rfl, rfl⟩, gL_eq] at g1
+  rw [ite_eq_left ⟨rfl, rfl⟩, gL_eq] at g1
   have he : eL M δ T T' p w θ (x0L M δ T T' p w) = 1 := by
     rcases eL_zero_or_one (M := M) (δ := δ) (T := T) (T' := T') p w θ (x0L M δ T T' p w) with h | h
     · rw [h, mul_zero] at g1
@@ -46,7 +46,7 @@ theorem base_factors {p : PlF D} {w : Point D.host.E (D.R.rS + 1)} {θ : Option 
     · exact h
   rw [he, mul_one] at g1
   have f1 := hf θ (x0L M δ T T' p w)
-  rw [if_pos ⟨rfl, rfl⟩, fL_eq, g1, one_mul] at f1
+  rw [ite_eq_left ⟨rfl, rfl⟩, fL_eq, g1, one_mul] at f1
   exact ⟨g1, f1, he⟩
 
 variable {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}

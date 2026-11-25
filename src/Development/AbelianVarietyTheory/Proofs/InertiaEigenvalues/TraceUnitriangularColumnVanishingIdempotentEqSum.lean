@@ -8,55 +8,15 @@ public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsMirabolicCo
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MirabolicClassFunBlockDiagonalEqSumDerivatives
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GelfandGraevCharacterGLnNormAndReciprocity
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraInductionRestrictionIsClassFunction
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WhittakerDimensionHarishChandraInductionMul
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsUnitOfIsUniUp, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TraceUnitriangularColumnVanishingIdempotentEqSum
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsUnitOfIsUniUp =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsUnitOfIsUniUp", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsUnitOfIsUniUp", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\nimport Development.AbelianVarietyTheory.Proofs.FlagMeasures.GgOneAndIsClass\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -68,11 +28,6 @@ open Polynomial Formalism.MainNotions.ArithmeticCylinders GlobalTheory.GLq Globa
 open scoped Classical
 
 variable {g : ℕ} [Fact g.Prime]
-
-theorem isUnit_of_isUniUp {n : ℕ} {M : Mt g n} (h : IsUniUp M) : IsUnit M := by
-  rw [Matrix.isUnit_iff_isUnit_det, Matrix.det_of_upperTriangular (fun a b hab => (h a b).1 hab)]
-  rw [Finset.prod_eq_one (fun a _ => (h a a).2 rfl)]
-  exact isUnit_one
 
 theorem val_toG {n : ℕ} {M : Mt g n} (h : IsUnit M) : ((toG M : Gn g n) : Mt g n) = M := by
   simp [toG, h]
@@ -105,23 +60,23 @@ theorem card_uniUp (N : ℕ) (S : ℕ → Prop) :
         rcases lt_trichotomy a b with hab | hab | hab
         · have hS : S b := by tauto
           have := h2 b hS a hab
-          simp only [entN, a.2, b.2, and_self, dif_pos] at this
+          simp only [entN, a.2, b.2, and_self, dite_eq_left] at this
           rw [Matrix.one_apply_ne hab.ne]; exact this
         · subst hab; rw [(h1 a a).2 rfl, Matrix.one_apply_eq]
         · rw [(h1 a b).1 hab, Matrix.one_apply_ne hab.ne']
     · intro h
       refine ⟨fun a b => ⟨fun hab => ?_, fun hab => ?_⟩, fun b hb a hab => ?_⟩
       · have := h a b
-        rw [if_neg (fun h' => lt_asymm hab h'.1), Finset.mem_singleton] at this
+        rw [ite_eq_right (fun h' => lt_asymm hab h'.1), Finset.mem_singleton] at this
         rw [this, Matrix.one_apply_ne hab.ne']
       · subst hab
         have := h a a
-        rw [if_neg (fun h' => lt_irrefl _ h'.1), Finset.mem_singleton] at this
+        rw [ite_eq_right (fun h' => lt_irrefl _ h'.1), Finset.mem_singleton] at this
         rw [this, Matrix.one_apply_eq]
       · unfold entN
         split_ifs with hN
         · have := h ⟨a, hN.1⟩ ⟨b, hN.2⟩
-          rw [if_neg (fun h' => h'.2 hb), Finset.mem_singleton] at this
+          rw [ite_eq_right (fun h' => h'.2 hb), Finset.mem_singleton] at this
           rw [this, Matrix.one_apply_ne (by intro h'; simp at h'; omega)]
         · rfl
   have h1 : (Finset.univ.filter fun u : Gn g N => IsUniUp (u : Mt g N) ∧
@@ -132,7 +87,7 @@ theorem card_uniUp (N : ℕ) (S : ℕ → Prop) :
     · exact Fintype.mem_piFinset.2 fun a => Fintype.mem_piFinset.2 fun b =>
         (key _).1 (Finset.mem_filter.1 hu).2 a b
     · have := (key M).2 fun a b => Fintype.mem_piFinset.1 (Fintype.mem_piFinset.1 hM a) b
-      have hu := isUnit_of_isUniUp this.1
+      have hu := GlobalTheory.GLq.GGDeg.isUnit_of_isUniUp this.1
       refine ⟨toG M, ?_, val_toG hu⟩
       rw [Finset.mem_filter, val_toG hu]
       exact ⟨Finset.mem_univ _, this⟩
@@ -145,7 +100,7 @@ theorem card_uniUp (N : ℕ) (S : ℕ → Prop) :
   · have : ∀ a, (T a b).card = if a < b then g else 1 := by
       intro a
       by_cases hab : a < b <;> simp [T, hb, hab]
-    simp only [this, hb, if_false]
+    simp only [this, hb, ite_false]
     rw [Finset.prod_ite, Finset.prod_const, Finset.prod_const_one, mul_one]
     congr 1
     rw [show Finset.univ.filter (fun a => a < b) = Finset.Iio b by ext; simp]
@@ -155,16 +110,16 @@ theorem val_diag1 {k : ℕ} (n : ℕ) (u : Gn g k) (hu : IsUniUp (u : Mt g k)) :
     ((diag1 u n : Gn g n) : Mt g n) = fun i j : Fin n =>
       if (i : ℕ) < k ∧ (j : ℕ) < k then entN (u : Mt g k) i j else (1 : Mt g n) i j := by
   unfold diag1
-  refine val_toG (isUnit_of_isUniUp fun a b => ⟨fun hab => ?_, fun hab => ?_⟩)
+  refine val_toG (GlobalTheory.GLq.GGDeg.isUnit_of_isUniUp fun a b => ⟨fun hab => ?_, fun hab => ?_⟩)
   · show (if (a : ℕ) < k ∧ (b : ℕ) < k then entN (u : Mt g k) a b else (1 : Mt g n) a b) = 0
     split_ifs with h
-    · simp only [entN, h, and_self, dif_pos]
+    · simp only [entN, h, and_self, dite_eq_left]
       exact (hu _ _).1 hab
     · exact Matrix.one_apply_ne hab.ne'
   · subst hab
     show (if (a : ℕ) < k ∧ (a : ℕ) < k then entN (u : Mt g k) a a else (1 : Mt g n) a a) = 1
     split_ifs with h
-    · simp only [entN, h, and_self, dif_pos]
+    · simp only [entN, h, and_self, dite_eq_left]
       exact (hu _ _).2 rfl
     · exact Matrix.one_apply_eq _
 
@@ -172,21 +127,21 @@ theorem isUniUp_iff {n : ℕ} (M : Mt g n) : IsUniUp M ↔
     ∀ a b, a < n → b < n → (b < a → entN M a b = 0) ∧ (a = b → entN M a b = 1) := by
   constructor
   · intro h a b ha hb
-    simp only [entN, ha, hb, and_self, dif_pos]
+    simp only [entN, ha, hb, and_self, dite_eq_left]
     exact ⟨fun hab => (h _ _).1 hab, fun hab => (h _ _).2 (Fin.ext hab)⟩
   · intro h a b
     have := h a b a.2 b.2
-    simp only [entN, a.2, b.2, and_self, dif_pos] at this
+    simp only [entN, a.2, b.2, and_self, dite_eq_left] at this
     exact ⟨fun hab => this.1 hab, fun hab => this.2 (congrArg _ hab)⟩
 
 theorem entN_tl {n : ℕ} (k : ℕ) (M : Mt g n) {a b : ℕ} (ha : a < k) (hb : b < k) :
     entN (tl k M) a b = entN M a b := by
-  conv_lhs => simp only [entN, ha, hb, and_self, dif_pos]
+  conv_lhs => simp only [entN, ha, hb, and_self, dite_eq_left]
   rfl
 
 theorem entN_br {n : ℕ} (k r : ℕ) (M : Mt g n) {a b : ℕ} (ha : a < r) (hb : b < r) :
     entN (br k r M) a b = entN M (k + a) (k + b) := by
-  conv_lhs => simp only [entN, ha, hb, and_self, dif_pos]
+  conv_lhs => simp only [entN, ha, hb, and_self, dite_eq_left]
   rfl
 
 theorem entN_fin {n : ℕ} (M : Mt g n) (a b : Fin n) : entN M a b = M a b := by
@@ -220,9 +175,9 @@ theorem fibre_iff {N k : ℕ} (hk : k < N) (x : Mt g N) (u : Gn g k) :
           rw [entN_br _ _ _ (by omega) (by omega), show k + 1 + (a - (k + 1)) = a by omega,
             show k + 1 + (b - (k + 1)) = b by omega] at this
           exact ⟨fun h => this.1 (by omega), fun h => this.2 (by omega)⟩
-    · rw [ht' a k (by omega) (by omega), if_neg (by omega), if_neg (by omega)]
+    · rw [ht' a k (by omega) (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
     · ext a b
-      rw [tl, ht' a b (by omega) (by omega), if_pos ⟨a.2, b.2⟩, entN_fin]
+      rw [tl, ht' a b (by omega) (by omega), ite_eq_left ⟨a.2, b.2⟩, entN_fin]
   · rintro ⟨⟨hx, h0⟩, hu⟩
     have hx' := (isUniUp_iff x).1 hx
     have hu1 : IsUniUp (u : Mt g k) := by
@@ -266,12 +221,12 @@ theorem sup_split {N k : ℕ} (hk : k < N) (x : Mt g N) (h0 : ∀ a, a < k → e
 theorem exp_split (k r : ℕ) :
     (∑ b ∈ Finset.range (k + 1 + r), if b = k then 0 else b) =
       (∑ b ∈ Finset.range k, if False then 0 else b) + ((k + 1) * r + r * (r - 1) / 2) := by
-  rw [Finset.sum_range_add, Finset.sum_range_succ, if_pos rfl, add_zero, ← Finset.sum_range_id r]
+  rw [Finset.sum_range_add, Finset.sum_range_succ, ite_eq_left rfl, add_zero, ← Finset.sum_range_id r]
   congr 1
   · refine Finset.sum_congr rfl fun i hi => ?_
     rw [Finset.mem_range] at hi
-    rw [if_neg (by omega), if_neg id]
-  · rw [Finset.sum_congr rfl fun i _ => if_neg (show k + 1 + i ≠ k by omega), Finset.sum_add_distrib]
+    rw [ite_eq_right (by omega), ite_eq_right id]
+  · rw [Finset.sum_congr rfl fun i _ => ite_eq_right (show k + 1 + i ≠ k by omega), Finset.sum_add_distrib]
     simp [mul_comm]
 
 end GlobalTheory.GLm.TraceTail
@@ -311,7 +266,7 @@ theorem tr_eJ'_eq_wh_tail (g : ℕ) [Fact g.Prime] (ψ : AddChar (ZMod g) ℂ) (
         c * ∑ x, if A ∧ B x then d * f x else 0 := by
     intro c A _ B _ f d
     by_cases hA : A
-    · simp only [hA, if_true, true_and, Finset.mul_sum]
+    · simp only [hA, ite_true, true_and, Finset.mul_sum]
       refine Finset.sum_congr rfl fun x _ => ?_
       split_ifs <;> ring
     · simp [hA]
@@ -323,14 +278,14 @@ theorem tr_eJ'_eq_wh_tail (g : ℕ) [Fact g.Prime] (ψ : AddChar (ZMod g) ℂ) (
   split_ifs with hx
   · have hx' := (isUniUp_iff _).1 hx.1
     have hU : IsUnit (tl k (x : Mt g (k + 1 + r))) := by
-      refine isUnit_of_isUniUp ((isUniUp_iff _).2 fun a b ha hb => ?_)
+      refine GlobalTheory.GLq.GGDeg.isUnit_of_isUniUp ((isUniUp_iff _).2 fun a b ha hb => ?_)
       rw [entN_tl _ _ ha hb]
       exact hx' a b (by omega) (by omega)
     rw [Finset.sum_eq_single (toG (tl k (x : Mt g (k + 1 + r))))]
-    · rw [if_pos ⟨hx, val_toG hU⟩, val_toG hU, sup_split hk _ hx.2, AddChar.map_add_eq_mul, mul_inv]
+    · rw [ite_eq_left ⟨hx, val_toG hU⟩, val_toG hU, sup_split hk _ hx.2, AddChar.map_add_eq_mul, mul_inv]
       ring
     · intro u _ hu
-      exact if_neg fun h => hu (Units.ext (h.2.trans (val_toG hU).symm))
+      exact ite_eq_right fun h => hu (Units.ext (h.2.trans (val_toG hU).symm))
     · simp
   · simp [hx]
 

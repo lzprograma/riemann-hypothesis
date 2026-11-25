@@ -1,52 +1,7 @@
 module
 
 public import Formalism.HermitianCurvature.FiniteOrderIntersectionInSmooth
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerParabolicCoordinates
 
 @[expose] public section
@@ -117,13 +72,13 @@ lemma inv_step (w : Equiv.Perm (Fin m)) (l : Matrix (Fin m) (Fin m) ℂ) (hl : l
     · have hv : ¬ i.val = j.val + n + 1 := by
         rw [Fin.lt_iff_val_lt_val] at h
         omega
-      rw [hA', hB', if_neg hv, if_neg hv]
+      rw [hA', hB', ite_eq_right hv, ite_eq_right hv]
       exact hup i j h
     · have hv : ¬ i.val = i.val + n + 1 := by omega
-      rw [hA', hB', if_neg hv, if_neg hv]
+      rw [hA', hB', ite_eq_right hv, ite_eq_right hv]
       exact hdiag i
     · have hv : ¬ i.val = j.val + n + 1 := by omega
-      rw [hA', hB', if_neg hv, if_neg hv]
+      rw [hA', hB', ite_eq_right hv, ite_eq_right hv]
       exact hfar i j (by omega)
     · rw [hA']
       split_ifs with hv
@@ -146,20 +101,20 @@ lemma inv_step (w : Equiv.Perm (Fin m)) (l : Matrix (Fin m) (Fin m) ℂ) (hl : l
           by_cases hkj : k = j
           · subst hkj
             have hv : ¬ k.val = k.val + n + 1 := by omega
-            rw [hB' k k, if_neg hv, (hdiag k).2, hAij, if_pos rfl, if_neg hji]
+            rw [hB' k k, ite_eq_right hv, (hdiag k).2, hAij, ite_eq_left rfl, ite_eq_right hji]
             simp
           by_cases hki : k = i
           · subst hki
             have hv : ¬ k.val = k.val + n + 1 := by omega
-            rw [hA' k k, if_neg hv, (hdiag k).1, hBij, if_neg hkj, if_pos rfl]
+            rw [hA' k k, ite_eq_right hv, (hdiag k).1, hBij, ite_eq_right hkj, ite_eq_left rfl]
             simp
           have hv1 : ¬ i.val = k.val + n + 1 := fun e => hkj (Fin.ext (by omega))
           have hv2 : ¬ k.val = j.val + n + 1 := fun e => hki (Fin.ext (by omega))
-          rw [hA' i k, hB' k j, if_neg hv1, if_neg hv2, if_neg hkj, if_neg hki]
+          rw [hA' i k, hB' k j, ite_eq_right hv1, ite_eq_right hv2, ite_eq_right hkj, ite_eq_right hki]
           simp
         rw [Finset.sum_congr rfl fun k _ => hterm k, Finset.sum_add_distrib, Finset.sum_add_distrib,
-          Finset.sum_ite_eq' Finset.univ j, Finset.sum_ite_eq' Finset.univ i, if_pos (Finset.mem_univ _),
-          if_pos (Finset.mem_univ _), ← Matrix.mul_apply, hA', hB', if_pos hgap, if_pos hgap]
+          Finset.sum_ite_eq' Finset.univ j, Finset.sum_ite_eq' Finset.univ i, ite_eq_left (Finset.mem_univ _),
+          ite_eq_left (Finset.mem_univ _), ← Matrix.mul_apply, hA', hB', ite_eq_left hgap, ite_eq_left hgap]
         split_ifs <;> ring
       ·
         have hle : i.val ≤ j.val + n := by omega
@@ -170,16 +125,16 @@ lemma inv_step (w : Equiv.Perm (Fin m)) (l : Matrix (Fin m) (Fin m) ℂ) (hl : l
             rw [Fin.lt_iff_val_lt_val]
             omega
           have hv2 : ¬ k.val = j.val + n + 1 := by omega
-          rw [hB' k j, if_neg hv2, (hup k j hkj).2]
+          rw [hB' k j, ite_eq_right hv2, (hup k j hkj).2]
           simp
-        · rw [hA' i k, if_neg hk1]
+        · rw [hA' i k, ite_eq_right hk1]
           by_cases hk2 : k.val = j.val + n + 1
           · have hik : i < k := by
               rw [Fin.lt_iff_val_lt_val]
               omega
             rw [(hup i k hik).1]
             simp
-          · rw [hB' k j, if_neg hk2]
+          · rw [hB' k j, ite_eq_right hk2]
 
 end InverseSplitting
 
@@ -201,7 +156,7 @@ theorem lower_triangular_splitting : C2.LowSplit := by
     ext a b
     rw [Matrix.mul_apply]
     simp only [hQ, C2.monoP, Matrix.of_apply, ite_mul, zero_mul, mul_ite, mul_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     by_cases hab : a = b
     · subst hab
       simp [hd a]
@@ -213,7 +168,7 @@ theorem lower_triangular_splitting : C2.LowSplit := by
     intro X a b
     rw [hPinv, Matrix.mul_apply]
     simp only [Matrix.mul_apply, hQ, C2.monoP, Matrix.of_apply, ite_mul, zero_mul, mul_ite,
-      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have I := inv_step w l hl m
   set A := (lsStep w l m).1 with hAdef
   set B := (lsStep w l m).2 with hBdef

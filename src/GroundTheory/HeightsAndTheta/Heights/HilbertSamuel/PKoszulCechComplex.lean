@@ -116,8 +116,8 @@ theorem cechD_pair {M : Type*} [AddCommGroup M] [Module (MRingOver S ι) M] (E :
   refine ⟨KH.faceSign E.1 k₀ b, by unfold KH.faceSign; exact neg_one_pow_eq_or ℤ _, fun f => ?_⟩
   change (∑ k : K, ∑ i ∈ E.1 k, _ :
     KH.CechC S ι M 0 →ₗ[MRingOver S ι] LocalizedModule (KH.cellMon S E.1) M) f = _
-  rw [Finset.sum_eq_single k₀, Finset.sum_eq_add_of_mem a b ha hb hab, dif_pos (hface a ha),
-    dif_pos (hface b hb)]
+  rw [Finset.sum_eq_single k₀, Finset.sum_eq_add_of_mem a b ha hb hab, dite_eq_left (hface a ha),
+    dite_eq_left (hface b hb)]
   · rw [hsign, LinearMap.add_apply]
     change (-KH.faceSign E.1 k₀ b) • KH.cellRes S M _ E.1 (f ⟨_, hface a ha⟩) +
       KH.faceSign E.1 k₀ b • KH.cellRes S M _ E.1 (f ⟨_, hface b hb⟩) = _
@@ -132,7 +132,7 @@ theorem cechD_pair {M : Type*} [AddCommGroup M] [Module (MRingOver S ι) M] (E :
     have : i = a ∨ i = b := by rw [hE] at hi; simpa using hi
     tauto
   · intro l _ hl
-    refine Finset.sum_eq_zero fun i hi => dif_neg fun h => ?_
+    refine Finset.sum_eq_zero fun i hi => dite_eq_right fun h => ?_
     have := (h.1 l)
     rw [Function.update_self, ← Finset.card_pos, Finset.card_erase_of_mem hi, hother l hl] at this
     omega
@@ -247,7 +247,7 @@ def kosExt {V : Ideal (MRingOver S ι)} {R q n : ℕ} (φ : KosC S ι V R q n) (
 
 theorem kosExt_of_card {V : Ideal (MRingOver S ι)} {R q n : ℕ} (φ : KosC S ι V R q n) {T : Finset (Fin R)}
     (h : T.card = q) : kosExt φ T = φ ⟨T, h⟩ :=
-  dif_pos h
+  dite_eq_left h
 
 theorem kosD_apply {V : Ideal (MRingOver S ι)} {R : ℕ} (z : Fin R → KH.CechC S ι (MRingOver S ι ⧸ V) 0) (p n : ℕ)
     (φ : KosC S ι V R (p + 1) n) (J : {J : Finset (Fin R) // J.card = p}) (I : KH.Cell K ι n) :
@@ -257,8 +257,8 @@ theorem kosD_apply {V : Ideal (MRingOver S ι)} {R : ℕ} (z : Fin R → KH.Cech
   change (∑ j : Fin R, _) = _
   refine Finset.sum_congr rfl fun j _ => ?_
   by_cases h : j ∈ J.1
-  · rw [dif_pos h, if_pos h]
-  · rw [dif_neg h, if_neg h, kosExt_of_card φ (by rw [Finset.card_insert_of_notMem h, J.2])]
+  · rw [dite_eq_left h, ite_eq_left h]
+  · rw [dite_eq_right h, ite_eq_right h, kosExt_of_card φ (by rw [Finset.card_insert_of_notMem h, J.2])]
 
 theorem kosExt_kosCech {V : Ideal (MRingOver S ι)} {R q n : ℕ} (φ : KosC S ι V R q n) (T : Finset (Fin R)) :
     kosExt (kosCech S ι V R q n φ) T = KH.cechD S ι (MRingOver S ι ⧸ V) n (kosExt φ T) := by
@@ -319,14 +319,14 @@ theorem kosCech_kosD {V : Ideal (MRingOver S ι)} {R : ℕ} {z : Fin R → KH.Ce
 theorem kosSign_insert_lt {R : ℕ} {J : Finset (Fin R)} {a b : Fin R} (ha : a ∉ J) (hab : a < b) :
     kosSign (insert a J) b = -kosSign J b := by
   unfold kosSign
-  rw [Finset.filter_insert, if_pos hab,
+  rw [Finset.filter_insert, ite_eq_left hab,
     Finset.card_insert_of_notMem (fun h => ha (Finset.mem_filter.mp h).1), pow_succ]
   ring
 
 theorem kosSign_insert_gt {R : ℕ} {J : Finset (Fin R)} {a b : Fin R} (hab : b < a) :
     kosSign (insert a J) b = kosSign J b := by
   unfold kosSign
-  rw [Finset.filter_insert, if_neg (not_lt.mpr hab.le)]
+  rw [Finset.filter_insert, ite_eq_right (not_lt.mpr hab.le)]
 
 theorem kosSign_swap {R : ℕ} {J : Finset (Fin R)} {j j' : Fin R} (hj : j ∉ J) (hj' : j' ∉ J) (hne : j ≠ j') :
     kosSign J j * kosSign (insert j J) j' = -(kosSign J j' * kosSign (insert j' J) j) := by
@@ -355,19 +355,19 @@ theorem kosD_kosD {V : Ideal (MRingOver S ι)} {R : ℕ} (z : Fin R → KH.CechC
         (restrict0 (z j) I * kosExt (kosD z (p + 1) n φ) (insert j J.1) I)) = ∑ j', G j j' := by
     intro j
     by_cases hj : j ∈ J.1
-    · rw [if_pos hj]; exact (Finset.sum_eq_zero fun j' _ => (hG j j').trans (if_pos hj)).symm
-    · rw [if_neg hj, kosExt_of_card _ (by rw [Finset.card_insert_of_notMem hj, J.2]), kosD_apply, hms, hms]
+    · rw [ite_eq_left hj]; exact (Finset.sum_eq_zero fun j' _ => (hG j j').trans (ite_eq_left hj)).symm
+    · rw [ite_eq_right hj, kosExt_of_card _ (by rw [Finset.card_insert_of_notMem hj, J.2]), kosD_apply, hms, hms]
       refine Finset.sum_congr rfl fun j' _ => ?_
       dsimp only
       by_cases hj' : j' ∈ insert j J.1
-      · rw [if_pos hj', hm0, hG, if_neg hj, if_pos hj']
-      · rw [if_neg hj', hG, if_neg hj, if_neg hj']
+      · rw [ite_eq_left hj', hm0, hG, ite_eq_right hj, ite_eq_left hj']
+      · rw [ite_eq_right hj', hG, ite_eq_right hj, ite_eq_right hj']
   have hG0 : ∀ j j', (j ∈ J.1 ∨ j' ∈ J.1 ∨ j = j') → G j j' = 0 := by
     intro j j' h
     rw [hG]
     by_cases hj : j ∈ J.1
-    · rw [if_pos hj]
-    · rw [if_neg hj, if_pos]
+    · rw [ite_eq_left hj]
+    · rw [ite_eq_right hj, ite_eq_left]
       rcases h with h | h | h
       · exact absurd h hj
       · exact Finset.mem_insert_of_mem h
@@ -392,8 +392,8 @@ theorem kosD_kosD {V : Ideal (MRingOver S ι)} {R : ℕ} (z : Fin R → KH.CechC
             (a : A) * (b : A) = -((c : A) * (d : A)) := by
           intro A _ a b c d h; exact_mod_cast congrArg (fun x : ℤ => (x : A)) h
         exact cast (A := LocalizedModule (KH.cellMon S I.1) (MRingOver S ι ⧸ V)) _ _ _ _ hs
-      rw [hG, hG, if_neg hj, if_neg hj', if_neg (by simp [Finset.mem_insert, hne.symm, hj']),
-        if_neg (by simp [Finset.mem_insert, hne, hj]), Finset.insert_comm j j' J.1]
+      rw [hG, hG, ite_eq_right hj, ite_eq_right hj', ite_eq_right (by simp [Finset.mem_insert, hne.symm, hj']),
+        ite_eq_right (by simp [Finset.mem_insert, hne, hj]), Finset.insert_comm j j' J.1]
       linear_combination (restrict0 (z j) I * restrict0 (z j') I *
         kosExt φ (insert j' (insert j J.1)) I) * hs'
   · rintro ⟨j, j'⟩ _ hne heq

@@ -26,8 +26,8 @@ theorem Data.fj_flow_real (X : Data E r) (la : Wt X.Ψ r) (ξ : Fin r → E) (h�
   unfold Data.fj
   by_cases hc : ∀ p ∈ X.periods la, ∃ k : ℤ, 2 * ∑ τ, ν τ * p τ = k
   swap
-  · rw [if_neg hc, if_neg hc, mul_zero]
-  rw [if_pos hc, if_pos hc]
+  · rw [ite_eq_right hc, ite_eq_right hc, mul_zero]
+  rw [ite_eq_left hc, ite_eq_left hc]
   by_cases hD : ∃ D : Set (X.Ψ → ℝ), MeasurableSet D ∧ IsAddFundamentalDomain (X.periods la) D volume ∧
       0 < volume D ∧ volume D < ⊤
   swap

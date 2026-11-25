@@ -125,8 +125,7 @@ theorem kummer_generator_of_char : ∀ (K Ω : Type) [Field K] [CharZero K] [Fie
     exact DFunLike.congr_fun hij x
   have hli := (linearIndependent_monoidHom F Ω).comp v hv
   obtain ⟨c, hc⟩ : ∃ c : F, ∑ i, w i * i.1 c ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hz : ∑ i, w i • ((v i : F →* Ω) : F → Ω) = 0 := by
       funext x
       simpa [Finset.sum_apply, v] using hcon x

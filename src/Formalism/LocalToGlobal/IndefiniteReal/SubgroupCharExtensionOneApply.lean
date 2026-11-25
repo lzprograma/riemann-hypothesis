@@ -12,8 +12,6 @@ open scoped TensorProduct
 
 namespace Formalism.IndefR.Lev
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 abbrev EAf (D : D7) : Type := D.host.E ⊗[D.host.F] Formalism.L2.Herm.Af D.host.F
 
 def swapAE (D : D7) : Af D.host.F ⊗[D.host.F] D.host.E →+* EAf D :=
@@ -193,7 +191,7 @@ theorem level_action_spec {g0 : Formalism.L2.DIV.G0 L.Pg L.r} {F : GA D V → �
     (hex : ∃ κ, IsLevelLift V β L g0 κ) : IsLevelActionImage V β L g0 F (actG0 V β L g0 F) := by
   unfold IsLevelActionImage actG0
   intro κ hκ h
-  simp only [dif_pos hex]
+  simp only [dite_eq_left hex]
   have hκ0 : IsLevelLift V β L g0 hex.choose := hex.choose_spec
   have hd := lift_div_mem hκ0 hκ
   have hF1 := hF _ hd (h * hex.choose)
@@ -236,7 +234,7 @@ theorem IsPLevel.hasType {P : Formalism.L2.DIV.LevelP L.Pg L.r ℂ} {F : GA D V 
   have n := levChi_ne_zero (V := V) (β := β) (flagL L) κ
   have hc : levChi V β (withP L P) κ = ((P.chi ⟨_, hl'.2⟩ : ℂˣ) : ℂ) * levChi V β (flagL L) κ := by
     have he : Formalism.L2.DIV.ext1 P.H P.chi (Formalism.L2.DIV.rTup β L (finE V κ)) = P.chi ⟨_, hl'.2⟩ :=
-      dif_pos hl'.2
+      dite_eq_left hl'.2
     unfold levChi
     rw [levFn_withP, Units.val_mul, he]
   have key : F (h * κ) = levChi V β (flagL L) κ * (((P.chi ⟨_, hl'.2⟩ : ℂˣ) : ℂ) * F h) := by

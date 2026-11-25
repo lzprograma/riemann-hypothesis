@@ -302,7 +302,7 @@ theorem unitary_zariski_dense : ∀ {ι : Type} [Fintype ι] {a : ℕ} (Q : MvPo
     by_cases h : ∀ τ, (1 + famOf x τ).det ≠ 0
     · have : eval x Q = 0 := hQg (famOf x) h
       rw [this, zero_mul]
-    · push_neg at h
+    · push Not at h
       obtain ⟨τ, hτ⟩ := h
       rw [Finset.prod_eq_zero (Finset.mem_univ τ) hτ, mul_zero]
   have hden : (denom (ι := ι) (a := a)) ≠ 0 := by

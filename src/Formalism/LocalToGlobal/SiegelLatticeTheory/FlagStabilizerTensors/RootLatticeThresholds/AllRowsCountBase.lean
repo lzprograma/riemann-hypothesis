@@ -73,12 +73,4 @@ theorem countBase_of (hT : AutTie D X.B X.pl) {large₂ : SizeData₂ D} {n0 : �
     rw [hT.Dstar_eq] at h
     exact h
 
-section Fam
-
-open Formalism.MainNotions.S.CountE Formalism.MainNotions.PlaceDegreeData Formalism.L2.SG.ThmSOwn
-
-variable {eps : ℝ} (Fm : FamP eps)
-
-end Fam
-
 end Formalism.L2.SG.Pf.AllRowsCountBase

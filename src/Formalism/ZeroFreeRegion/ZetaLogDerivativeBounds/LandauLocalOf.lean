@@ -1,48 +1,7 @@
 module
 
 public import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Analysis.Complex.AbsMax
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -61,15 +20,22 @@ lemma landauLocal_logDeriv_prod (Z : Finset ℂ) (m : ℂ → ℕ) (z : ℂ)
   rw [logDeriv_fun_pow (f := fun w : ℂ => w - ρ) (by fun_prop) (m ρ)]
   simp [logDeriv_apply, div_eq_mul_inv]
 
-theorem localZeroExpansionOfFactorization : LandauLocalOf := by
-  intro hfac hlog f z₀ r M hr hM hf hf0 hbound
-  classical
+/-- Bounds for the zero multiplicities and the logarithmic derivative of a function
+factored on a closed ball. -/
+theorem localZeroExpansion_bounds (hlog : LogDerivBound) {f h : ℂ → ℂ} {z₀ : ℂ}
+    {r M : ℝ} (hr : 0 < r) (hM : 1 ≤ M) {Z : Finset ℂ} {m : ℂ → ℕ}
+    (hZ : ∀ ρ : ℂ, ρ ∈ Z ↔ ρ ∈ closedBall z₀ (r / 3) ∧ f ρ = 0)
+    (hh : DifferentiableOn ℂ h (closedBall z₀ r)) (hh0 : ∀ z ∈ closedBall z₀ (r / 3), h z ≠ 0)
+    (hfeq : ∀ z ∈ closedBall z₀ r, f z = (∏ ρ ∈ Z, (z - ρ) ^ m ρ) * h z)
+    (hbound : ∀ z ∈ closedBall z₀ r, ‖f z‖ ≤ M * ‖f z₀‖) :
+    ((∑ ρ ∈ Z, m ρ : ℕ) : ℝ) ≤ Real.log M / Real.log 2 ∧
+      ∀ z ∈ closedBall z₀ (r / 6), f z ≠ 0 →
+        ‖deriv f z / f z - ∑ ρ ∈ Z, (m ρ : ℂ) / (z - ρ)‖ ≤ 72 * Real.log M / r := by
   have hr3 : 0 < r / 3 := by positivity
-  obtain ⟨Z, m, h, hZ, hm, hh, hh0, hfeq⟩ := hfac f z₀ r (r / 3) hr3 (by linarith) hf hf0
   have hZball : ∀ ρ ∈ Z, ‖ρ - z₀‖ ≤ r / 3 := fun ρ hρ => by
     simpa [mem_closedBall, dist_eq_norm] using ((hZ ρ).1 hρ).1
   have hfz₀ := hfeq z₀ (mem_closedBall_self hr.le)
-  have hhz₀ : h z₀ ≠ 0 := fun h0 => hf0 (by rw [hfz₀, h0, mul_zero])
+  have hhz₀ : h z₀ ≠ 0 := hh0 z₀ (mem_closedBall_self hr3.le)
   have hPz₀le : ‖∏ ρ ∈ Z, (z₀ - ρ) ^ m ρ‖ ≤ (r / 3) ^ (∑ ρ ∈ Z, m ρ) := by
     rw [norm_prod, ← Finset.prod_pow_eq_pow_sum]
     exact Finset.prod_le_prod₀ (fun _ _ => by positivity) fun ρ hρ => by
@@ -109,7 +75,7 @@ theorem localZeroExpansionOfFactorization : LandauLocalOf := by
     (hmax z (closedBall_subset_closedBall (by linarith) hz)).trans
       (div_le_self (mul_nonneg (by linarith) (norm_nonneg _)) (one_le_pow₀ one_le_two))
   have hlogb := hlog h z₀ (r / 3) M hr3 hM (hh.mono (closedBall_subset_closedBall (by linarith))) hh0 hhb
-  refine ⟨Z, m, hZ, hm, hsum, fun z hz hfz => ?_⟩
+  refine ⟨hsum, fun z hz hfz => ?_⟩
   have hzr : z ∈ ball z₀ r := by rw [mem_ball]; linarith [mem_closedBall.mp hz]
   have hnhds : closedBall z₀ r ∈ 𝓝 z := Filter.mem_of_superset (isOpen_ball.mem_nhds hzr) ball_subset_closedBall
   have hfeqz := hfeq z (ball_subset_closedBall hzr)
@@ -122,5 +88,11 @@ theorem localZeroExpansionOfFactorization : LandauLocalOf := by
     rw [heq, logDeriv_fun_mul z hPz hhz (by fun_prop) (hh.differentiableAt hnhds),
       landauLocal_logDeriv_prod Z m z hzρ, add_sub_cancel_left]]
   exact (hlogb z (by rw [mem_closedBall] at hz ⊢; linarith)).trans_eq (by rw [div_div_eq_mul_div]; ring)
+
+theorem localZeroExpansionOfFactorization : LandauLocalOf := by
+  intro hfac hlog f z₀ r M hr hM hf hf0 hbound
+  have hr3 : 0 < r / 3 := by positivity
+  obtain ⟨Z, m, h, hZ, hm, hh, hh0, hfeq⟩ := hfac f z₀ r (r / 3) hr3 (by linarith) hf hf0
+  exact ⟨Z, m, hZ, hm, localZeroExpansion_bounds hlog hr hM hZ hh hh0 hfeq hbound⟩
 
 end Formalism.ZF

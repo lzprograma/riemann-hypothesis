@@ -82,12 +82,12 @@ theorem scale_conditions_iff (hW : IsShortForm W) (w : F) :
       rcases hW.a₄_ne_zero_or_a₆_ne_zero with h | h
       · exact h
       · exact absurd h6 h
-    simp only [h6, mul_zero, and_true, if_true]
+    simp only [h6, mul_zero, and_true, ite_true]
     exact key 4 _ h4
   by_cases h4 : W.a₄ = 0
-  · simp only [h4, h6, mul_zero, true_and, if_false, if_true]
+  · simp only [h4, h6, mul_zero, true_and, ite_false, ite_true]
     exact key 6 _ h6
-  · simp only [h4, h6, if_false, key 4 _ h4, key 6 _ h6]
+  · simp only [h4, h6, ite_false, key 4 _ h4, key 6 _ h6]
     constructor
     · rintro ⟨a, b⟩
       have : w ^ 6 = w ^ 4 * w ^ 2 := by ring

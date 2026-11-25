@@ -92,8 +92,6 @@ theorem span_valuation_le {L : Type} [Field L] [NumberField L] {S : Set L}
         ≤ 1 * γ := mul_le_mul' (HeightOneSpectrum.valuation_le_one w a) hy
       _ = γ := one_mul γ
 
-alias main := _root_.GlobalTheory.SpanValuationBound.span_valuation_le
-
 end GlobalTheory.SpanValuationBound
 end -- clump:auto
 end -- clump:auto
@@ -622,8 +620,6 @@ end Host
 section Record
 
 open Formalism.MainNotions.TaylorLogMetric Formalism.L2.Herm Formalism.UG
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem detId_eq (D : D7) {N : ℕ} (L L' : SDLat D.host.E N) : detId D L.1 L'.1 =
     ((detFI L'.1 L'.2.1 * (detFI L.1 L.2.1)⁻¹ : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) : IdE D) :=

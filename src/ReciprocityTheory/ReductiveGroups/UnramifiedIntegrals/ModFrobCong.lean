@@ -144,15 +144,15 @@ theorem ks_xp_xp {R : Type*} [CommRing R] {k : ℕ} (hk : k ≠ 0) (f : PowerSer
   have hk0 : 0 < k := Nat.pos_of_ne_zero hk
   by_cases h1 : k ∣ n
   · obtain ⟨m, rfl⟩ := h1
-    rw [if_pos (dvd_mul_right k m), Nat.mul_div_cancel_left m hk0]
+    rw [ite_eq_left (dvd_mul_right k m), Nat.mul_div_cancel_left m hk0]
     by_cases h2 : k ∣ m
     · obtain ⟨j, rfl⟩ := h2
-      rw [if_pos (dvd_mul_right k j), if_pos ⟨j, by ring⟩, Nat.mul_div_cancel_left j hk0,
+      rw [ite_eq_left (dvd_mul_right k j), ite_eq_left ⟨j, by ring⟩, Nat.mul_div_cancel_left j hk0,
         show k * (k * j) = k ^ 2 * j by ring, Nat.mul_div_cancel_left j (by positivity)]
-    · rw [if_neg h2, if_neg]
+    · rw [ite_eq_right h2, ite_eq_right]
       rintro ⟨j, hj⟩
       exact h2 ⟨j, Nat.eq_of_mul_eq_mul_left hk0 (by rw [hj]; ring)⟩
-  · rw [if_neg h1, if_neg]
+  · rw [ite_eq_right h1, ite_eq_right]
     exact fun h => h1 (dvd_trans (dvd_pow_self k two_ne_zero) h)
 
 theorem Tm_prime {p : ℕ} (hp : p.Prime) :

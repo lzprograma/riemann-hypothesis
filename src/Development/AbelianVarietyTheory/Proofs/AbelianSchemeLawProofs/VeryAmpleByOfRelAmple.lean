@@ -3,44 +3,6 @@ module
 public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocal
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.OneCSt
@@ -53,7 +15,6 @@ open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCate
 open TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.H1
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.AbLaw
 
@@ -70,14 +31,20 @@ def chartPullPw {X : Scheme.{0}} (H : LB X) (N : ℕ) :
       simp only [zpow_one, Finset.prod_const, Finset.card_univ, Fintype.card_fin, zpow_natCast,
         Category.id_comp] }
 
-theorem veryAmpleBy_of_relAmple {R : Type} [CommRing R] {A : Over (Spec (CommRingCat.of R))}
-    {L : LB A.left} (hL : L.IsLB) (hA : RelAmple A L) {X : Scheme.{0}} (e : X ⟶ A.left) [IsIso e]
+theorem veryAmpleBy_of_powOver {R : Type} [CommRing R] {A : Over (Spec (CommRingCat.of R))}
+    {L : LB A.left} (hL : L.IsLB) {N : ℕ}
+    (hA : ∃ (M : ℕ) (s : Fin (M + 1) → LB.Sec (powOver A L ⊤ N)),
+      (⨆ i, nonzeroLocus (s i)) = ⊤ ∧
+      ∀ i, IsAffineOpen (nonzeroLocus (s i)) ∧
+        ∃ r : Fin (M + 1) → Γ((A.hom ⁻¹ᵁ ⊤).toScheme, nonzeroLocus (s i)),
+          (∀ j k, rs _ inf_le_right ((s j).f k) = rs _ inf_le_left (r j) * rs _ inf_le_right ((s i).f k)) ∧
+          Function.Surjective (MvPolynomial.eval₂Hom ((A.hom ∣_ ⊤).appLE ⊤ (nonzeroLocus (s i)) le_top).hom r))
+    {X : Scheme.{0}} (e : X ⟶ A.left) [IsIso e]
     {f : X ⟶ Spec (CommRingCat.of R)} (hf : e ≫ A.hom = f) {H : LB X} (hH : H.IsLB)
     (hw : LBIso H (L.pull e)) :
-    ∃ N : ℕ, 1 ≤ N ∧ ∃ (m : ℕ) (s : Fin (m + 1) → LB.Sec (pw H N)),
-      (pw H N).IsLB ∧ VeryAmpleBy f (pw H N) s := by
+    ∃ (m : ℕ) (s : Fin (m + 1) → LB.Sec (pw H N)), VeryAmpleBy f (pw H N) s := by
   obtain ⟨w, hw⟩ := hw
-  obtain ⟨N, hN, M, s, hcov, hs⟩ := hA ⊤ (isAffineOpen_top _)
+  obtain ⟨M, s, hcov, hs⟩ := hA
   have : IsIso (A.hom ⁻¹ᵁ ⊤).ι := inferInstanceAs (IsIso A.left.topIso.hom)
   obtain ⟨ψ, hiso, hψ⟩ : ∃ ψ : X ⟶ (A.hom ⁻¹ᵁ ⊤).toScheme, IsIso ψ ∧ ψ ≫ (A.hom ⁻¹ᵁ ⊤).ι = e :=
     ⟨e ≫ inv (A.hom ⁻¹ᵁ ⊤).ι, inferInstance, by simp⟩
@@ -102,7 +69,7 @@ theorem veryAmpleBy_of_relAmple {R : Type} [CommRing R] {A : Over (Spec (CommRin
       rw [Category.id_comp] at e
       exact ⟨k, hk, isUnit_of_mul_isUnit_right
         ((congrArg IsUnit ((gs_stalkMap ψ y _ hj _).symm.trans e)).mp (u.map _))⟩
-  refine ⟨N, hN, M, s', hP', ?_, fun i => ?_⟩
+  refine ⟨M, s', ?_, fun i => ?_⟩
   · refine top_le_iff.1 fun y _ => ?_
     obtain ⟨i, hi⟩ := Opens.mem_iSup.1 (show ψ y ∈ ⨆ i, nonzeroLocus (s i) by rw [hcov]; trivial)
     exact Opens.mem_iSup.2 ⟨i, by rw [loc]; exact hi⟩
@@ -153,6 +120,16 @@ theorem veryAmpleBy_of_relAmple {R : Type} [CommRing R] {A : Over (Spec (CommRin
     refine ⟨p, ?_⟩
     rw [hc, MvPolynomial.eval₂Hom_map_hom]
     exact (MvPolynomial.map_eval₂Hom _ _ _ p).symm
+
+theorem veryAmpleBy_of_relAmple {R : Type} [CommRing R] {A : Over (Spec (CommRingCat.of R))}
+    {L : LB A.left} (hL : L.IsLB) (hA : RelAmple A L) {X : Scheme.{0}} (e : X ⟶ A.left) [IsIso e]
+    {f : X ⟶ Spec (CommRingCat.of R)} (hf : e ≫ A.hom = f) {H : LB X} (hH : H.IsLB)
+    (hw : LBIso H (L.pull e)) :
+    ∃ N : ℕ, 1 ≤ N ∧ ∃ (m : ℕ) (s : Fin (m + 1) → LB.Sec (pw H N)),
+      (pw H N).IsLB ∧ VeryAmpleBy f (pw H N) s := by
+  obtain ⟨N, hN, hpow⟩ := hA ⊤ (isAffineOpen_top _)
+  obtain ⟨m, s, hs⟩ := veryAmpleBy_of_powOver hL hpow e hf hH hw
+  exact ⟨N, hN, m, s, isLB_pw hH N, hs⟩
 
 theorem polAV_veryAmpleBy : PolBaseChangeSt → ∀ (S : Scheme.{0}) (P : PolAV S) (R : Type) [CommRing R] (t : Spec (CommRingCat.of R) ⟶ S) (X : Scheme.{0}) (π : X ⟶ P.A.left) (f : X ⟶ Spec (CommRingCat.of R)), IsPullback π f P.A.hom t → ∃ N : ℕ, 1 ≤ N ∧ ∃ (m : ℕ) (s : Fin (m + 1) → LB.Sec (pw (P.L.pull π) N)), (pw (P.L.pull π) N).IsLB ∧ VeryAmpleBy f (pw (P.L.pull π) N) s := by
   intro hBC S P R _ t X π f h

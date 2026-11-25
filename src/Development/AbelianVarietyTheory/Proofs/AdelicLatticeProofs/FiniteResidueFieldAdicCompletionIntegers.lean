@@ -868,7 +868,7 @@ theorem one_genus_of_modular (h𝔟 : 𝔟 ≠ 0) (hc : ∀ z ∈ 𝔟, cc z ∈
   classical
   choose γ hγ using exists_isLocalIsometry_of_modular h𝔟 hc hG hG hd hd hL hL' hmod hmod'
   refine ⟨fun v => if locLattice v L' = locLattice v L then 1 else γ v, fun v => ?_,
-    (finite_setOf_locLattice_ne hL' hL).subset fun v hv h => hv (if_pos h)⟩
+    (finite_setOf_locLattice_ne hL' hL).subset fun v hv h => hv (ite_eq_left h)⟩
   beta_reduce
   split_ifs with h
   exacts [(isLocalIsometry_one_iff v).2 h, hγ v]

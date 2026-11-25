@@ -34,12 +34,7 @@ theorem analyticAt_of_isSheetAt {J : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matr
   refine analyticAt_pi_iff.2 fun j => ?_
   have hdj : DifferentiableOn ℂ (fun y => s y j) U := fun y hy =>
     (differentiableAt_pi.1 ((hd y hy).differentiableAt (hU.mem_nhds hy)) j).differentiableWithinAt
-  refine IndefiniteRowSideFullHecke.ComplexSets.analyticOnNhd_of_continuousOn_of_separately hU hdj.continuousOn
-    (fun z hz i => ?_) _ hxU
-  have hu : Function.update z i (z i) = z := Function.update_eq_self i z
-  have hdz : DifferentiableAt ℂ (fun y => s y j) (Function.update z i (z i)) := by
-    rw [hu]; exact hdj.differentiableAt (hU.mem_nhds hz)
-  exact hdz.comp (z i) (hasFDerivAt_update z (z i)).differentiableAt
+  exact ReciprocityTheory.AnForm.Osgood.osgood d U _ hU hdj _ hxU
 
 theorem maDens_cons_eq_zero {D : ℕ} (f : (Fin (D + 1) → ℂ) → ℝ) (ψ : Fin D → (Fin (D + 1) → ℂ) → ℝ)
     (y : Fin (D + 1) → ℂ) (h : f =ᶠ[𝓝 y] fun _ => 0) : maDens (Fin.cons f ψ) y = 0 := by

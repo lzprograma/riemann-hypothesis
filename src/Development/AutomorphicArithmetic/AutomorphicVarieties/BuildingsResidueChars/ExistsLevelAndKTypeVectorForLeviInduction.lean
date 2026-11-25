@@ -7,57 +7,15 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityA
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MaximalCompactUniqueArchFiniteDecomposition
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.CoLaws
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.LocHeckeInert
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import GroundTheory.AutomorphicForms.ArchimedeanWhittaker.ComplexWhittaker.ExpEqOfHasDerivAt
 import Development.AbelianVarietyTheory.Definitions.Foundations.MeasurePreservingRmulQuotMeas
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilStabilizerVolume.TopoAF
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilStabilizerVolume.UnfoldAbs
 import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SmoothingFinite
 import Mathlib.Topology.Compactness.Paracompact
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CompactGroupIntegrability.InstCompactUG
 import GroundTheory.AutomorphicForms.RealIwasawaIntegration
-import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Algebra.Star.Unitary
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -167,6 +125,10 @@ private theorem finite_projection_integral_coe {K : Type} [Field K] [NumberField
     ((fin1 u : G1 K n) : AdelicGLn.AdelicGL K n) = finEmb K n u :=
   congrArg Subtype.val (MultiplicityOne.finProj_of_mem (maxCompact_le_normOneGL (finEmb_mem_maxCompact hu)))
 
+private theorem zt00 {K : Type} [Field K] [NumberField K] : zt K 0 = 1 := by
+  rw [zt, ← map_one (centralSection K 2)]
+  exact congrArg _ (Subtype.ext Real.exp_zero)
+
 private theorem block_mem {K : Type} [Field K] [NumberField K] (S : Finset (Pl K)) {V : ∀ w : Pl K, Subgroup (Gw 2 w)}
     (m : Pl K → ℕ) (hV : ∀ w, GLnLocal.congruenceSubgroup (w.adicCompletion K) 2 (m w) ≤ V w)
     {d : FA K 2} (hd : d ∈ AdelicGLn.integralFiniteGL K 2) {u : FA K (2 + 2)} (f : Fin 2 → Fin (2 + 2)) (hf : Function.Injective f)
@@ -180,10 +142,10 @@ private theorem block_mem {K : Type} [Field K] [NumberField K] (S : Finset (Pl K
   change ∀ v, finAt v (finEmb K 2 d) ∈ (if v ∈ S then V v else GLnLocal.integralGL (v.adicCompletion K) 2)
   intro v
   by_cases hv : v ∈ S
-  · rw [if_pos hv]
+  · rw [ite_eq_left hv]
     refine hV v ((GLnLocal.mem_congruenceSubgroup_iff _ _).2 ⟨hint v, fun i j => ?_⟩)
     have h1 := hu' v
-    rw [if_pos hv] at h1
+    rw [ite_eq_left hv] at h1
     have h2 := ((GLnLocal.mem_congruenceSubgroup_iff _ _).1 h1).2 (f i) (f j)
     have h3 : finAt v (finEmb K (2 + 2) u) (f i) (f j) = finAt v (finEmb K 2 d) i j := by
       simp only [finAt_apply, he]
@@ -192,7 +154,7 @@ private theorem block_mem {K : Type} [Field K] [NumberField K] (S : Finset (Pl K
         (1 : Matrix (Fin 2) (Fin 2) (v.adicCompletion K)) i j := by
       simp [Matrix.one_apply, hf.eq_iff]
     rwa [h4] at h2
-  · rw [if_neg hv]
+  · rw [ite_eq_right hv]
     exact hint v
 
 theorem UpperTheory.exists_level_indicator_unipotent_invariant :
@@ -235,9 +197,9 @@ theorem UpperTheory.exists_level_indicator_unipotent_invariant :
     have := hχR x _ hy
     rwa [mul_inv_cancel_left] at this
   · by_cases hp : P h
-    · exact Or.inr (if_pos hp)
-    · exact Or.inl (if_neg hp)
-  · refine if_pos ⟨0, 1, one_mem _, ?_⟩
+    · exact Or.inr (ite_eq_left hp)
+    · exact Or.inl (ite_eq_right hp)
+  · refine ite_eq_left ⟨0, 1, one_mem _, ?_⟩
     rw [show nn (0 : UPos (2 + 2) 2 → 𝔸[K]) = 1 from unipOne_zero 2]
     simp
   · intro h₀ h X e
@@ -245,17 +207,14 @@ theorem UpperTheory.exists_level_indicator_unipotent_invariant :
   · intro d₁ d₂ h e hne
     have hP : P h := by
       by_contra hn
-      exact hne (if_neg hn)
+      exact hne (ite_eq_right hn)
     obtain ⟨X, u, hu, e'⟩ := hP
     have key : blk (finEmb K 2 d₁) (finEmb K 2 d₂) = unipGL X * finEmb K (2 + 2) u := by
       have a1 := congrArg Subtype.val e
       have a2 := congrArg Subtype.val e'
       rw [blkLaws.1, finite_projection_integral_coe d₁.2, finite_projection_integral_coe d₂.2] at a1
       rw [Subgroup.coe_mul, finite_projection_integral_coe (hle hu)] at a2
-      have z0 : zt K 0 = 1 := by
-        rw [zt, ← map_one (centralSection K 2)]
-        exact congrArg _ (Subtype.ext Real.exp_zero)
-      rw [neg_zero, z0, mul_one, mul_one] at a1
+      rw [neg_zero, zt00, mul_one, mul_one] at a1
       exact a1.symm.trans a2
     have hb := blocks_read (x := (finEmb K 2 d₁).val) (y := (finEmb K 2 d₂).val) (X := X) (A := (finEmb K (2 + 2) u).val)
       (congrArg Units.val key)
@@ -296,7 +255,6 @@ private theorem map_right_inv {A H C : Type} [Group A] [Group H] [Group C] [Meas
 
 theorem UpperTheory.haar_decomposition_norm_one_gl2 :
     ∀ {K : Type} [Field K] [NumberField K] (κ₂ : Measure (archCompact K 2)), IsHaarK κ₂ → ∃ (ν : Measure (AdelicGLn.integralFiniteGL K 2)) (ρ : Measure (KG K 2)), IsProbabilityMeasure ν ∧ ν.IsOpenPosMeasure ∧ IsProbabilityMeasure ρ ∧ (∀ u : KG K 2, MeasurePreserving (· * u) ρ ρ) ∧ ∀ F : G1 K 2 → ℂ, (Continuous fun k : KG K 2 => F k) → ∫ v, F (v : G1 K 2) ∂ρ = ∫ a, ∫ d, F (arc1 a * fin1 (d : FA K 2)) ∂ν ∂κ₂ := by
-  set_option synthInstance.maxHeartbeats 200000 in
     intro K _ _ κ₂ hκ
     haveI := hκ.prob
     obtain ⟨α, β, -, -, hdec, -, hA, hF⟩ := UpperTheory.maximalCompact_unique_arch_finite_decomposition (K := K) 2
@@ -373,11 +331,7 @@ private theorem off_diag_zero {E : Type} [NormedField E] {n : ℕ} (k : Matrix (
     rw [← Finset.sum_pair (f := fun l => ‖k i l‖ ^ 2) hij]
     exact Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _) fun _ _ _ => sq_nonneg _
   rw [h2, hii, norm_one] at h3
-  have h4 : ‖k i j‖ ^ 2 ≤ 0 := by linarith
-  have h5 : ‖k i j‖ = 0 := by
-    have := sq_nonneg ‖k i j‖
-    exact pow_eq_zero_iff (two_ne_zero) |>.1 (le_antisymm h4 this)
-  exact norm_eq_zero.1 h5
+  exact norm_eq_zero.1 (pow_eq_zero_iff two_ne_zero |>.1 (by nlinarith [sq_nonneg ‖k i j‖]))
 
 theorem UpperTheory.unipotent_mem_maximalCompact_finite_integral :
     ∀ {K : Type} [Field K] [NumberField K] (X : UPos (2 + 2) 2 → NumberField.AdeleRing (𝓞 K) K), nn X ∈ KG K (2 + 2) → ∃ h : AdelicGLn.integralFiniteGL K (2 + 2), nn X = fin1 (h : FA K (2 + 2)) := by
@@ -456,10 +410,6 @@ private theorem arcV {n : ℕ} (a : archCompact K n) :
   congrArg Subtype.val (archProj_of_mem (A := ((a : archGroup K n) : ArchUnits K n))
     (maxCompact_le_normOneGL a.2))
 
-private theorem finV {n : ℕ} (h : AdelicGLn.integralFiniteGL K n) :
-    ((fin1 (h : FA K n) : G1 K n) : AdelicGLn.AdelicGL K n) = finEmb K n (h : FA K n) :=
-  congrArg Subtype.val (MultiplicityOne.finProj_of_mem (maxCompact_le_normOneGL (finEmb_mem_maxCompact h.2)))
-
 private theorem cm {n : ℕ} (a : archCompact K n) (h : FA K n) : Commute (arc1 a) (fin1 h) :=
   (MultiplicityOne.finProj_mul_archProj_comm h _).symm
 
@@ -475,10 +425,6 @@ private theorem fin1M {n : ℕ} (a b : FA K n) : (fin1 (a * b) : G1 K n) = fin1 
 private theorem finite_projection_one {n : ℕ} : (fin1 (1 : FA K n) : G1 K n) = 1 := map_one (MultiplicityOne.finProj K n)
 
 private theorem archimedean_projection_one {n : ℕ} : (arc1 (1 : archCompact K n) : G1 K n) = 1 := map_one (archP K n)
-
-private theorem zt00 : zt K 0 = 1 := by
-  rw [zt, ← map_one (centralSection K 2)]
-  exact congrArg _ (Subtype.ext Real.exp_zero)
 
 private theorem fin_fst {n : ℕ} (y : FA K n) (a b : Fin n) :
     (finEmb K n y a b).1 = (1 : Matrix (Fin n) (Fin n) (InfiniteAdeleRing K)) a b := by
@@ -511,9 +457,10 @@ private theorem lv_fin (d₁ d₂ : AdelicGLn.integralFiniteGL K 2) :
   simp only at e
   have e1 : ((lv (fin1 (d₁ : FA K 2)) (fin1 (d₂ : FA K 2)) 0 : G1 K (2 + 2)) : AdelicGLn.AdelicGL K (2 + 2)) =
       blk (finEmb K 2 (d₁ : FA K 2)) (finEmb K 2 (d₂ : FA K 2)) := by
-    rw [(blkLaws (K := K)).1, neg_zero, zt00, mul_one, mul_one, finV, finV]
+    rw [(blkLaws (K := K)).1, neg_zero, zt00, mul_one, mul_one, finite_projection_integral_coe d₁.2,
+      finite_projection_integral_coe d₂.2]
   have e2 := congrArg (fun g : G1 K (2 + 2) => (AdelicGLn.prodEquiv K (2 + 2) (g : AdelicGLn.AdelicGL K (2 + 2))).1) e
-  simp only [e1, blk_fst, Subgroup.coe_mul, arcV, finV, map_mul, prodEquiv_infEmb, prodEquiv_finEmb, Prod.fst_mul, mul_one] at e2
+  simp only [e1, blk_fst, Subgroup.coe_mul, arcV, finite_projection_integral_coe (β ⟨_, hmem⟩).2, map_mul, prodEquiv_infEmb, prodEquiv_finEmb, Prod.fst_mul, mul_one] at e2
   have e3 : α ⟨_, hmem⟩ = 1 := by
     apply Subtype.ext
     have := congrArg (archEquiv K (2 + 2)) e2

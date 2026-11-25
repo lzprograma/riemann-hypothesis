@@ -292,8 +292,8 @@ theorem gen_nat (h0 : ϖ ≠ 0) (hu : IsUnifV E P ϖ) (A : Submodule ℂ (GL (Fi
   · convert ha using 3
     funext i
     have := hdk i
-    rw [if_neg (by rw [← this, hz i]; simp), hz i]; rfl
-  push_neg at hz
+    rw [ite_eq_right (by rw [← this, hz i]; simp), hz i]; rfl
+  push Not at hz
   obtain ⟨i₀, hi₀⟩ := hz
   have hlt : ∑ i, (d i - 1) < s := by
     rw [← hs]

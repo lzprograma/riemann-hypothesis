@@ -370,7 +370,7 @@ theorem encard_overlattices_le : ∀ {F : Type} [Field F] [ValuativeRel F] [Topo
       rw [Finset.sum_comm]
       simp only [← Finset.sum_smul, mul_comm (B⁻¹ _ _), ← Matrix.mul_apply,
         Matrix.mul_nonsing_inv B hBu, Matrix.one_apply, ite_smul, one_smul, zero_smul,
-        Finset.sum_ite_eq', Finset.mem_univ, if_true]
+        Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     refine sup_le (Submodule.span_le.2 ?_) (Submodule.span_le.2 ?_)
     · rintro _ ⟨i, -, rfl⟩; exact hv (Sum.inr i)
     · rintro _ ⟨i, -, rfl⟩; exact hv (Sum.inl i)

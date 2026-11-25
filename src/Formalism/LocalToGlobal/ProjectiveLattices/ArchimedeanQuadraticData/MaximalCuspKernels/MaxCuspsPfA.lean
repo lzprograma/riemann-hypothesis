@@ -1,12 +1,11 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MmatMulVec
 public import Formalism.LocalToGlobal.ProjectiveLattices.IntegrableOnIntegrand
 public import Formalism.LocalToGlobal.ProjectiveLattices.RdOrbIntOfLatZ
 import Mathlib.RingTheory.SimpleRing.Principal
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -158,11 +157,6 @@ theorem maxCuspsA_flowMat (X : Data E r) (cu : CuspFD X ρ) (η : Fin ρ → E) 
   ring
 
 theorem maxCuspsA_kappa_cc (X : Data E r) : cc X.κ0 = -X.κ0 := by
-  have h2 : cc (2 : E) = 2 := by simp [cc]
-  have hm : ∀ x y : E, cc (x * y) = cc x * cc y := fun x y => by simp [cc]
-  have hn : ∀ x : E, cc (-x) = -cc x := fun x => by simp [cc]
-  rcases X.κ0_xi with h | h
-  · rw [h, hm, h2, X.ξ0_im, mul_neg]
-  · rw [h, hn, hm, h2, X.ξ0_im, mul_neg]
+  apply _root_.ReciprocityTheory.ChartRestriction.G.FD.Data.cc_kappa0 <;> assumption
 
 end Formalism.L2.Pj.QAt

@@ -24,19 +24,9 @@ theorem LocalDimDomain.proof : LocalDimDomain.Statement := by
       (by rw [Ideal.mk_ker]; exact hJM)
   have hsub : Algebra.algebraMapSubmonoid (MvPolynomial (Fin n) ℂ ⧸ J) M.primeCompl =
       m.primeCompl := by
-    ext x
-    obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective x
-    constructor
-    · rintro ⟨z, hz, hzy⟩
-      change Ideal.Quotient.mk J y ∉ m
-      rw [← hzy]
-      change Ideal.Quotient.mk J z ∉ M.map (Ideal.Quotient.mk J)
-      rw [Ideal.mem_quotient_iff_mem hJM]
-      exact hz
-    · intro h
-      change Ideal.Quotient.mk J y ∉ M.map (Ideal.Quotient.mk J) at h
-      rw [Ideal.mem_quotient_iff_mem hJM] at h
-      exact ⟨y, h, rfl⟩
+    have hM : m.comap (Ideal.Quotient.mk J) = M := Ideal.comap_map_mk hJM
+    simpa only [Algebra.algebraMapSubmonoid, Ideal.Quotient.algebraMap_eq, hM] using
+      Ideal.map_primeCompl_comap_of_surjective (Ideal.Quotient.mk J) Ideal.Quotient.mk_surjective m
   have : m.IsPrime := hm.isPrime
   have : IsLocalization.AtPrime (localRingAt J q) m := by
     unfold IsLocalization.AtPrime

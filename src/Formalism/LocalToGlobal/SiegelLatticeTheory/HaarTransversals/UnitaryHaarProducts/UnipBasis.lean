@@ -335,7 +335,7 @@ theorem JB'_graded : Graded (lvk X) (2 * D.R.rS + 2) (JB' X) := by
       · simp [hj]
       · have := hG i j hj
         have hc : lvk X j + lvk X k = 2 * D.R.rS + 2 := by omega
-        rw [hK'def, if_pos hc]
+        rw [hK'def, ite_eq_left hc]
     · have hne : i ≠ k := fun h => hik (by rw [h])
       rw [Matrix.one_apply_ne hne]
       refine Finset.sum_eq_zero fun j _ => ?_
@@ -343,13 +343,13 @@ theorem JB'_graded : Graded (lvk X) (2 * D.R.rS + 2) (JB' X) := by
       · simp [hj]
       · have := hG i j hj
         have hc : ¬ (lvk X j + lvk X k = 2 * D.R.rS + 2) := by omega
-        rw [hK'def, if_neg hc, mul_zero]
+        rw [hK'def, ite_eq_right hc, mul_zero]
   have hK : K' = JB' X :=
     (Matrix.inv_eq_right_inv hmul).symm.trans (Matrix.inv_eq_right_inv (JB_mul_JB' X))
   intro i k h
   rw [← hK] at h
   by_contra hc
-  exact h (by rw [hK'def, if_neg hc])
+  exact h (by rw [hK'def, ite_eq_right hc])
 
 theorem JB'_herm : (JB' X)ᴴ = JB' X := by
   rw [JB'_eq_inv, Matrix.conjTranspose_nonsing_inv, JB_herm]

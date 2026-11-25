@@ -2,44 +2,8 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SymbolRealisableBound
 public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.NumericProductInequality
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -83,7 +47,7 @@ theorem flW_dom {n' m : ℕ} (d : Fin n' → ℕ) : IsDominant (flW (m := m) d) 
     have hi : i = 0 := le_antisymm hij (Fin.zero_le _)
     subst hi
     exact le_refl _
-  · rw [if_neg hj]
+  · rw [ite_eq_right hj]
     split_ifs <;> positivity
 
 theorem restW_dom {n' m : ℕ} (hm : 1 ≤ m) (TT : Finset (Fin n')) (lam0 : Fin n' → Fin (m + 1) → ℤ)
@@ -108,14 +72,14 @@ theorem restW_dom {n' m : ℕ} (hm : 1 ≤ m) (TT : Finset (Fin n')) (lam0 : Fin
       rw [Fin.le_def, h1v]
       have : j.val ≠ 0 := fun h0 => hj (Fin.ext h0)
       omega
-    rw [if_neg hj]
+    rw [ite_eq_right hj]
     by_cases hi : i = 0
     · subst hi
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       split_ifs
       · linarith [hA h1j]
       · linarith [hA (Fin.zero_le j)]
-    · rw [if_neg hi]
+    · rw [ite_eq_right hi]
       linarith [hA hij]
 
 theorem lambda_zero_eq_product {n' m : ℕ} (TT : Finset (Fin n')) (lam0 : Fin n' → Fin (m + 1) → ℤ) :
@@ -196,8 +160,6 @@ theorem level_lower_bound_terms (Cdeg CLa C Ct0 : ℝ) (h1 : |Cdeg| ≤ Ct0) (h3
       (k : ℝ) * (p : ℝ) ^ G') ≤ t0 C Ct0 p N N₁ L₁ G' k a := by
   unfold t0 tableLineDegreeFive.La
   have hlog : 0 ≤ Real.log a := Real.log_nonneg ha
-  have hp0 : (0 : ℝ) < p := by exact_mod_cast hp
-  have hk0 : (0 : ℝ) < k := by exact_mod_cast hk
   have hNs' : (Ns : ℝ) ^ 2 ≤ (N₁ : ℝ) ^ 2 := by
     have : (Ns : ℝ) ≤ N₁ := by exact_mod_cast hNs
     exact pow_le_pow_left₀ (Nat.cast_nonneg _) this 2

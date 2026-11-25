@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramPosSemidefOfIntForm
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
 public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.StarInvMulVecDotProductMulVecInvMulVec
 import Mathlib.Algebra.Order.Floor.Extended
@@ -108,17 +109,8 @@ open Matrix in
 theorem gram_posSemidef {s : ℕ} {X : Type} [AddCommGroup X] (β : LinearMap.BilinForm ℤ X)
     (hsym : ∀ a b, β a b = β b a) (hβ : ∀ y, 0 ≤ β y y) (y : Fin s → X) :
     (Matrix.of fun u v => (β (y u) (y v) : ℝ)).PosSemidef := by
-  refine PosSemidef.of_dotProduct_mulVec_nonneg ?_ fun x => ?_
-  · ext u v
-    simp [conjTranspose_apply, hsym (y u) (y v)]
-  · have hcl : IsClosed {x : Fin s → ℝ | 0 ≤ ∑ u, ∑ v, x u * (β (y u) (y v) : ℝ) * x v} :=
-      isClosed_le continuous_const (by fun_prop)
-    have hx : 0 ≤ ∑ u, ∑ v, x u * (β (y u) (y v) : ℝ) * x v :=
-      (DenseRange.piMap fun _ => Rat.denseRange_cast (𝕜 := ℝ)).induction_on x hcl
-        fun q => gram_nonneg_rat β hβ y q
-    simp only [star_trivial, dotProduct, mulVec, Matrix.of_apply, Finset.mul_sum]
-    refine le_of_le_of_eq hx (Finset.sum_congr rfl fun u _ => Finset.sum_congr rfl fun v _ => ?_)
-    ring
+  intros
+  apply _root_.GlobalTheory.gram_posSemidef_of_int_form <;> assumption
 
 open Matrix in
 theorem qW_ge : ∀ (s : ℕ) (W : Matrix (Fin s) (Fin s) ℤ), PosW W → ∃ c : ℝ, 0 < c ∧ ∀ (X : Type) [AddCommGroup X] (β : LinearMap.BilinForm ℤ X), (∀ a b, β a b = β b a) → (∀ y, 0 ≤ β y y) → ∀ y : Fin s → X, c * (∑ u, β (y u) (y u) : ℤ) ≤ (qW W β y : ℤ) := by

@@ -124,7 +124,7 @@ theorem finsum_sigma_of_finite {ι : Type} {β : ι → Type} [∀ i, Finite (β
   have h2 : (support fun i => ∑ᶠ b, h ⟨i, b⟩) ⊆ (I : Set ι) := by
     intro i hi
     obtain ⟨b, hb⟩ : ∃ b, h ⟨i, b⟩ ≠ 0 := by
-      by_contra hc; push_neg at hc
+      by_contra hc; push Not at hc
       exact hi (finsum_eq_zero_of_forall_eq_zero hc)
     simp only [Finset.mem_coe, I, Finset.mem_image]
     exact ⟨⟨i, b⟩, hh.mem_toFinset.2 hb, rfl⟩

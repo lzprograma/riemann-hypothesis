@@ -63,13 +63,10 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
 
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.PeriodExists
 
-set_option autoImplicit false in
 open MvPowerSeries in
 private lemma dIn_univ_of_forall_pderiv_integral {B Q : Type} [CommRing B] [CommRing Q]
     [Algebra B Q] {d : ℕ} (f : MvPowerSeries (Fin d) Q)
@@ -87,7 +84,6 @@ private lemma dIn_univ_of_forall_pderiv_integral {B Q : Type} [CommRing B] [Comm
     rw [this]
     simp [mul_comm]
 
-set_option autoImplicit false in
 open MvPowerSeries in
 private lemma subst_pderiv_inr_cob1_eq_sum_sub_C {R : Type} [CommRing R] {d : ℕ}
     {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R} (hμ : ∀ i, constantCoeff (μ i) = 0)
@@ -100,8 +96,6 @@ private lemma subst_pderiv_inr_cob1_eq_sum_sub_C {R : Type} [CommRing R] {d : �
   have hE : HasSubst (Sum.elim (X : Fin d → MvPowerSeries (Fin d) R) (0 : Fin d → MvPowerSeries (Fin d) R)) :=
     hasSubst_of_constantCoeff_zero (by rintro (i | i) <;> simp)
   have hM : HasSubst μ := hasSubst_of_constantCoeff_zero hμ
-  have hL : HasSubst (fun i : Fin d => (X (Sum.inl i) : MvPowerSeries (Fin d ⊕ Fin d) R)) :=
-    hasSubst_of_constantCoeff_zero (by simp)
   have hR : HasSubst (fun i : Fin d => (X (Sum.inr i) : MvPowerSeries (Fin d ⊕ Fin d) R)) :=
     hasSubst_of_constantCoeff_zero (by simp)
   unfold _root_.GlobalTheory.Katz.cob1 _root_.GlobalTheory.Katz.inL _root_.GlobalTheory.Katz.inR
@@ -116,7 +110,7 @@ private lemma subst_pderiv_inr_cob1_eq_sum_sub_C {R : Type} [CommRing R] {d : �
 
   simp only [map_sub, map_sum, map_mul, mul_zero, Finset.sum_const_zero, sub_zero,
   apply_ite, mul_one, Finset.sum_ite_eq',
-  Finset.mem_univ, if_true]
+  Finset.mem_univ, ite_true]
   simp only [coe_substAlgHom]
   have h1 : (fun s => subst (Sum.elim (X : Fin d → MvPowerSeries (Fin d) R) (0 : Fin d → MvPowerSeries (Fin d) R)) (μ s)) = X :=
     funext hadd
@@ -127,7 +121,6 @@ private lemma subst_pderiv_inr_cob1_eq_sum_sub_C {R : Type} [CommRing R] {d : �
     id_eq, subst_zero_eq_C_constantCoeff]
   congr 1
 
-set_option autoImplicit false in
 open MvPowerSeries in
 private lemma exists_integral_pderiv_of_integral_cob1_lin {B Q : Type} [CommRing B] [CommRing Q] [Algebra B Q] {d : ℕ}
     {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) B} (hμ : ∀ i, constantCoeff (μ i) = 0)
@@ -196,7 +189,6 @@ private lemma exists_integral_pderiv_of_integral_cob1_lin {B Q : Type} [CommRing
     _ = pderiv (R := Q) i f := by
         rw [hMN]; simp [Matrix.one_apply]
 
-set_option autoImplicit false in
 open MvPowerSeries in
 private lemma coeff_single_inr_eq_ite_of_add_id_of_symm {R : Type} [CommRing R] {d : ℕ}
     {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R}
@@ -222,11 +214,10 @@ private lemma coeff_single_inr_eq_ite_of_add_id_of_symm {R : Type} [CommRing R] 
   rw [← h]
   by_cases hkj : k = j
   · subst hkj; simp
-  · rw [if_neg, if_neg hkj]
+  · rw [ite_eq_right, ite_eq_right hkj]
     intro h'
     exact hkj (Finsupp.single_left_injective one_ne_zero h').symm
 
-set_option autoImplicit false in
 open MvPowerSeries in
 private lemma subst_at2_eq_subst_add_self_add_subst_cob1 {R : Type} [CommRing R] {d : ℕ}
     {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R} (hμ : ∀ i, constantCoeff (μ i) = 0)
@@ -249,7 +240,6 @@ private lemma subst_at2_eq_subst_add_self_add_subst_cob1 {R : Type} [CommRing R]
   rw [subst_self]
   simp
 
-set_option autoImplicit false in
 open MvPowerSeries in
 private lemma exists_integral_defect_of_integral_cob1 {B Q : Type} [CommRing B] [CommRing Q]
     [Algebra B Q] {d : ℕ} {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) B}
@@ -304,7 +294,6 @@ private lemma exists_integral_defect_of_integral_cob1 {B Q : Type} [CommRing B] 
     rw [add_smul, one_smul]
     ring
 
-set_option autoImplicit false in
 open MvPowerSeries in
 private lemma theta_eval_eq_tate_pt_ev_of_isEval {p : ℕ} {O B : Type} [CommRing O] [CommRing B]
     [IsAdicComplete (Ideal.span {(p : O)}) O] [IsAdicComplete (Ideal.span {(p : B)}) B]
@@ -325,7 +314,6 @@ private lemma theta_eval_eq_tate_pt_ev_of_isEval {p : ℕ} {O B : Type} [CommRin
     O O θ θ _ (fun b => by simp) hE' s
 
 
-set_option autoImplicit false in
 open MvPowerSeries in
 theorem _root_.GlobalTheory.PeriodExists.main : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C] [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O] [IsDomain O], v.Integers O → ∀ (ε : PreTilt O p) (hε : _root_.GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta.IsPrimitiveSystem ε), ∀ F : _root_.GlobalTheory.QLog.BFrame ε, ∀ (G : _root_.GlobalTheory.PDivGroup p O) (d : ℕ) (c : _root_.GlobalTheory.QLog.Chart G d) (μ' : Fin d → MvPowerSeries (Fin d ⊕ Fin d) F.B), _root_.GlobalTheory.QLog.IsLift F.θ μ' → (∀ i, map F.θ (μ' i) = c.μ i) → ∀ (f : MvPowerSeries (Fin d) F.Q) (t : G.Tate), _root_.GlobalTheory.QLog.QL μ' ⊤ f → ∃! y : F.B, c.HasPeriod F.θ t f y := by
   intro p _ C _ _ _ v O _ _ _ _ _ hv ε hε F G d c μ' hlift hmap f t hf

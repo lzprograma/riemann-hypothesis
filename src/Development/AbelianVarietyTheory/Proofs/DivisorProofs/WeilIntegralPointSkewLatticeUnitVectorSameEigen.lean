@@ -102,11 +102,8 @@ theorem coprime_rep (D : D7) (𝔪 : Ideal (𝓞 D.host.E)) (h𝔪 : 𝔪 ≠ �
       · have hnot : ¬ D.host.conj • n ≤ p := fun h => hdiv (by
           have := conj_smul_mono D h
           rwa [conj_smul_smul] at this)
-        have c1 : IsCoprime p (D.host.conj • p) := by
-          rw [Ideal.isCoprime_iff_sup_eq]
-          by_contra hne
-          have h3 : p = p ⊔ D.host.conj • p := hpM.eq_of_le hne le_sup_left
-          exact hfix (hsM.eq_of_le hpM.ne_top (le_sup_right.trans h3.ge))
+        have c1 : IsCoprime p (D.host.conj • p) :=
+          Ideal.isCoprime_iff_sup_eq.2 (hpM.coprime_of_ne hsM (Ne.symm hfix))
         have c2 : IsCoprime p (D.host.conj • n) := by
           rw [Ideal.isCoprime_iff_sup_eq]
           by_contra hne

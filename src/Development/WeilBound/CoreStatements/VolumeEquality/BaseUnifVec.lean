@@ -9,43 +9,7 @@ import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TorsionEqAndWeilIsOf
 import Development.AbelianVarietyTheory.Proofs.ModuliProofs.VerticalDerivativeInCoordinates
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FamilyPeriodRiemannLattice
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeTangentVectorsAffineOpen
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
 import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsDifferentiableOnTransfer
 
@@ -58,17 +22,6 @@ namespace SheetDecomposition
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp GlobalTheory.VerticalDeriv GlobalTheory.FibreDeriv
-
-theorem vecHolPre {V V' : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] [NormedAddCommGroup V'] [NormedSpace ℂ V']
-    {X : Scheme.{0}} {B : Set V} {C : Set V'} {y : V → (Sp ℂ ⟶ X)} {φ : V' → V} (h : IsHolTo B y)
-    (hC : IsOpen C) (hφ : DifferentiableOn ℂ φ C) (hm : Set.MapsTo φ C B) : IsHolTo C (fun c => y (φ c)) := by
-  intro U f
-  have hs : {c ∈ C | ⊤ ≤ y (φ c) ⁻¹ᵁ U} = C ∩ φ ⁻¹' {b ∈ B | ⊤ ≤ y b ⁻¹ᵁ U} := by
-    ext c
-    exact ⟨fun hc => ⟨hc.1, hm hc.1, hc.2⟩, fun hc => ⟨hc.1, hc.2.2⟩⟩
-  refine ⟨?_, ?_⟩
-  · rw [hs]; exact hφ.continuousOn.isOpen_inter_preimage hC (h U f).1
-  · exact (h U f).2.comp (hφ.mono fun c hc => hc.1) fun c hc => ⟨hm hc.1, hc.2⟩
 
 theorem vecDetAn {n g : ℕ} {h : (Fin n → ℂ) → Matrix (Fin g) (Fin g) ℂ} {t₀ : Fin n → ℂ}
     (hh : ∀ a b, AnalyticAt ℂ (fun t => h t a b) t₀) : AnalyticAt ℂ (fun t => (h t).det) t₀ := by
@@ -111,7 +64,7 @@ theorem vecSlice {n g : ℕ} {V : Set (Fin n → ℂ)} {Z : Scheme.{0}} {e : (Fi
 
 theorem vecMono {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] {X : Scheme.{0}} {B C : Set V} {y : V → (Sp ℂ ⟶ X)}
     (h : IsHolTo B y) (hC : IsOpen C) (hm : C ⊆ B) : IsHolTo C y := by
-  have k := vecHolPre (φ := id) h hC differentiableOn_id hm
+  have k := GlobalTheory.HolPeriods.isHolTo_comp (φ := id) h hC differentiableOn_id hm
   exact k
 
 theorem liftFam {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {X X' : Scheme.{0}} {t : SAB H X}
@@ -163,10 +116,10 @@ theorem vecAt_of_goodExp (HC : HolCoord) {E : Type} [Field E] [NumberField E] [I
   let ψ : (Fin n → ℂ) → (Γ(𝔐.X, W) →+* ℂ) := fun t =>
     if k : ⊤ ≤ z t ⁻¹ᵁ W then Flat.BdryModel.evalHom _ W k else Flat.BdryModel.evalHom _ W hW0
   have hψ : ∀ a, DifferentiableOn ℂ (fun t => ψ t a) B := fun a => (hz W a).2.congr fun t ht => by
-    simp only [ψ, valAt', dif_pos ht.2]
+    simp only [ψ, valAt', dite_eq_left ht.2]
     rfl
   have hψz : ∀ t ∈ B, spMap (ψ t) ≫ hW.fromSpec = z t := fun t ht => by
-    simp only [ψ, dif_pos ht.2]
+    simp only [ψ, dite_eq_left ht.2]
     exact Flat.BdryModel.spMap_evalHom _ _ _ _
   have hco : ∀ a, ∀ t ∈ B, ∃ w, IsDerivAt0 (e₂ t) w (spMap (dualMap (ψ t)) ≫ (v a).left) := fun a t ht => by
     obtain ⟨u, hu, e⟩ := hval (ψ t) (z t) (hψz t ht) (𝔐.all _) a

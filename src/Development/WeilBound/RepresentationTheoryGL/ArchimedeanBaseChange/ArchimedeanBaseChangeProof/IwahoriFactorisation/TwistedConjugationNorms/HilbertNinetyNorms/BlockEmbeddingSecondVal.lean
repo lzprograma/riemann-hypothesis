@@ -3,45 +3,8 @@ module
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.OneCoset
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalConjugationInvolutiveValuationPreservingStatement
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryRankOneSphericalIntegrandDiagonalTorusFac
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.HilbertNinetyNorms.InertDeltaFirstCaseEqPower
 
 @[expose] public section
 
@@ -50,8 +13,6 @@ noncomputable section
 open NumberField IsDedekindDomain Polynomial Matrix
 open GlobalTheory.BCT GlobalTheory.UnitaryBC Formalism.UG
 open scoped Classical
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.Rg.Bc.ArchbcB.B.M4
 
@@ -99,19 +60,7 @@ theorem prod_emb {n m : ℕ} {M : Type*} [CommMonoid M] (S : Finset (Fin n)) (h 
 
 theorem symIdx_rev (n : ℕ) (mid : Prop) [Decidable mid] (s : Finset (Fin (n / 2))) (i : Fin n)
     (hi : i ∈ symIdx n mid s) : i.rev ∈ symIdx n mid s := by
-  have hlt := i.isLt
-  simp only [symIdx, Finset.mem_filter, Finset.mem_univ, true_and, Fin.val_rev] at hi ⊢
-  rcases hi with ⟨h, hs⟩ | ⟨h, hs⟩ | ⟨hm, ho, he⟩
-  · right; left
-    refine ⟨by omega, ?_⟩
-    convert hs using 2
-    omega
-  · left
-    refine ⟨by omega, ?_⟩
-    convert hs using 2
-    omega
-  · right; right
-    exact ⟨hm, ho, by omega⟩
+  apply _root_.PositivityTheory.Rg.Bc.ArchbcB.B.M4.V1.mem_rev <;> assumption
 
 theorem symIdx_congr (n : ℕ) (mid mid' : Prop) [Decidable mid] [Decidable mid'] (hm : mid ↔ mid')
     (s : Finset (Fin (n / 2))) : symIdx n mid s = symIdx n mid' s := by
@@ -271,9 +220,9 @@ theorem prod_of_hasVals {w : Pl E} {n m : ℕ} (x : Fin n → ℤ) (S : Finset (
     have hm := Finset.orderEmbOfFin_mem S h j
     have hk : (S.orderIsoOfFin h).symm ⟨S.orderEmbOfFin h j, hm⟩ = j :=
       (S.orderIsoOfFin h).symm_apply_eq.mpr (Subtype.ext (Finset.coe_orderIsoOfFin_apply S h j).symm)
-    simp only [dif_pos hm, hk]
+    simp only [dite_eq_left hm, hk]
   · intro i hi
-    simp only [dif_pos hi]
+    simp only [dite_eq_left hi]
     have hk : S.orderEmbOfFin h ((S.orderIsoOfFin h).symm ⟨i, hi⟩) = i := by
       rw [← Finset.coe_orderIsoOfFin_apply, OrderIso.apply_symm_apply]
     refine ⟨(hv _).1, ?_⟩
@@ -326,17 +275,17 @@ theorem combine_caseA_pf (w : Pl E) (hw : ¬ IsSplitAt w) (n a : ℕ) (ha : a �
       _ = Q₁ * Q₂ := by
         rw [hQ₁, hQ₂]
         congr 1
-        · exact Finset.prod_congr rfl fun i hi => by simp only [if_pos hi]
-        · exact Finset.prod_congr rfl fun i hi => by simp only [if_neg (Finset.disjoint_right.mp hD hi)]
+        · exact Finset.prod_congr rfl fun i hi => by simp only [ite_eq_left hi]
+        · exact Finset.prod_congr rfl fun i hi => by simp only [ite_eq_right (Finset.disjoint_right.mp hD hi)]
   · intro i
     by_cases hi : i ∈ S₁
-    · simp only [if_pos hi]
+    · simp only [ite_eq_left hi]
       exact hu₁ i hi
     · have hi2 : i ∈ S₂ := by
         have := Finset.mem_univ i
         rw [← hU, Finset.mem_union] at this
         exact this.resolve_left hi
-      simp only [if_neg hi]
+      simp only [ite_eq_right hi]
       exact hu₂ i hi2
 
 theorem split_caseA_pf (w : Pl E) (hw : ¬ IsSplitAt w) (n a : ℕ) (ha : a ≤ n) (x : Fin n → ℤ) (hx : StrictAnti x)
@@ -454,15 +403,15 @@ theorem split_caseA_pf (w : Pl E) (hw : ¬ IsSplitAt w) (n a : ℕ) (ha : a ≤ 
     by_cases hp1 : ∃ j ∈ T, j.val = n / 2 ∧ n % 2 = 1 <;> by_cases hp2 : ∃ j ∈ Tᶜ, j.val = n / 2 ∧ n % 2 = 1
     · exact absurd ⟨hp1, hp2⟩ hex
     · have ho : n % 2 = 1 := by obtain ⟨_, _, _, ho⟩ := hp1; exact ho
-      rw [if_pos ⟨hp1, ho⟩] at cT
-      rw [if_neg fun h => hp2 h.1] at cTc
+      rw [ite_eq_left ⟨hp1, ho⟩] at cT
+      rw [ite_eq_right fun h => hp2 h.1] at cTc
       exact ⟨iff_of_true (by omega) hp1, iff_of_false (by omega) hp2, by omega, by omega, by omega⟩
     · have ho : n % 2 = 1 := by obtain ⟨_, _, _, ho⟩ := hp2; exact ho
-      rw [if_neg fun h => hp1 h.1] at cT
-      rw [if_pos ⟨hp2, ho⟩] at cTc
+      rw [ite_eq_right fun h => hp1 h.1] at cT
+      rw [ite_eq_left ⟨hp2, ho⟩] at cTc
       exact ⟨iff_of_false (by omega) hp1, iff_of_true (by omega) hp2, by omega, by omega, by omega⟩
-    · rw [if_neg fun h => hp1 h.1] at cT
-      rw [if_neg fun h => hp2 h.1] at cTc
+    · rw [ite_eq_right fun h => hp1 h.1] at cT
+      rw [ite_eq_right fun h => hp2 h.1] at cTc
       exact ⟨iff_of_false (by omega) hp1, iff_of_false (by omega) hp2, by omega, by omega, by omega⟩
   obtain ⟨hm1, hm2, hsc1, hsc2, hpar⟩ := hcases
   have hS₁ : symIdx n (a % 2 = 1) (half T) = T := by

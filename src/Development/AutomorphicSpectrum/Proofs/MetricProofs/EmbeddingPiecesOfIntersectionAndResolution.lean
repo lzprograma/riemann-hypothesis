@@ -27,60 +27,11 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEmbeddingPieces
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PointsIntegrableOfResolutionStatement
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PEmbeddingPieces
-import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.WeilBound.CoreStatements.FlagImmersions.PointsIntegralSectionSnoc
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ProjDefs
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Tactic.TypeStar
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PEmbeddingWeight
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithModel
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.Style
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.LengthLocQuotEqZero
 import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsAntisym
@@ -98,7 +49,6 @@ section -- clump:auto
 open NumberField
 
 namespace GlobalTheory.CompanionTheory.Ar.Giv
-
 
 open NumberField.InfinitePlace NumberField.Units NumberField.Units.dirichletUnitTheorem in
 theorem const_of_orthogonal_log_units : ∀ (F : Type) [Field F] [NumberField F] (m : (F →+* ℂ) → ℝ),
@@ -183,10 +133,6 @@ open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.Cha
 
 namespace GlobalTheory.CompanionTheory.Ar.Giv
 
-theorem mixedDisc_eq_zero_of_eq_zero {D : ℕ} (A : Fin D → Matrix (Fin D) (Fin D) ℂ) (j : Fin D)
-    (hA : A j = 0) : mixedDisc A = 0 := by
-  apply RootFieldNumerics.mixedDisc_eq_zero <;> assumption
-
 theorem cxHessian_zero {D : ℕ} (z : Fin D → ℂ) : cxHessian (fun _ => (0 : ℝ)) z = 0 := by
   have h : fderiv ℝ (fderiv ℝ (fun _ : Fin D → ℂ => (0 : ℝ))) z = 0 := by
     have h1 : fderiv ℝ (fun _ : Fin D → ℂ => (0 : ℝ)) = fun _ => 0 := by
@@ -206,7 +152,7 @@ theorem sheetDensity_update_zero {K : Type} [Fintype K] {ι : K → Type} [∀ k
   split_ifs with hγ
   · have hm : mixedDisc (fun k => cxHessian
         (fun y' => Function.update φ j 0 k (hγ.choose y')) y) = 0 := by
-      refine mixedDisc_eq_zero_of_eq_zero _ j ?_
+      refine RootFieldNumerics.mixedDisc_eq_zero _ j ?_
       simpa using cxHessian_zero y
     simp [maDensity, hm]
   · rfl
@@ -642,7 +588,6 @@ theorem isSectionOn_one_of_degree_zero {P : Ideal (MRing ι)} {d : ℕ} {A : Her
     simp [hm0]
   · exact (Ideal.ne_top_iff_one P).1 hP.2.1.1.ne_top
 
-
 open Classical in
 theorem logNorm_one_eq_indicator {Ω F : Type} [Field Ω] [Field F] [Algebra F Ω] {y : (Σ k, ι k) → Ω}
     {P : Ideal (MRing ι)} {tg : F →+* ℂ} {B : HermLine ι}
@@ -657,9 +602,9 @@ theorem logNorm_one_eq_indicator {Ω F : Type} [Field Ω] [Field F] [Algebra F �
   rw [hone, hB z hz s hs]
   by_cases hst : s = tg
   · subst hst
-    rw [Set.indicator_of_mem (show z ∈ {z | LiesOver y s z} from hs), if_pos rfl, one_div,
+    rw [Set.indicator_of_mem (show z ∈ {z | LiesOver y s z} from hs), ite_eq_left rfl, one_div,
       Real.log_inv, Real.log_exp, neg_neg]
-  · rw [Set.indicator_of_notMem (fun h => hst (hs' tg h).symm), if_neg hst]
+  · rw [Set.indicator_of_notMem (fun h => hst (hs' tg h).symm), ite_eq_right hst]
     simp
 
 end SlopeTestRemainingChoices

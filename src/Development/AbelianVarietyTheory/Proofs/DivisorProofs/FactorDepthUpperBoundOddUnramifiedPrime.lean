@@ -67,8 +67,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 namespace GlobalTheory.ConjugateNegativeSquare
 
 open NumberField
@@ -413,8 +411,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.TypedPartSplitPrimes (IsIntHom IsOr
 open GlobalTheory.IndefiniteRowSideFullHecke.BigBlockCharacters (HasChars)
 open GlobalTheory.IndefiniteRowSideFullHecke.FactorDepthInertBounds (boundAll boundInert boundFine)
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.FacUpOdd
@@ -454,10 +450,10 @@ theorem inPsi_conj_iff (H : Host E) (τ : E →+* ℂ) :
   · rw [h, map_neg, hc, neg_neg]; simp [h3]
 
 theorem mult_of_inPsi {H : Host E} (Dw : Datum H) {τ : E →+* ℂ} (h : InPsi H τ) : Dw.mult τ = Dw.p := by
-  unfold Datum.mult; rw [if_pos (show τ (H.rt : E) = H.rt0 from h)]
+  unfold Datum.mult; rw [ite_eq_left (show τ (H.rt : E) = H.rt0 from h)]
 
 theorem mult_of_not_inPsi {H : Host E} (Dw : Datum H) {τ : E →+* ℂ} (h : ¬ InPsi H τ) : Dw.mult τ = Dw.q := by
-  unfold Datum.mult; rw [if_neg (show ¬ τ (H.rt : E) = H.rt0 from h)]
+  unfold Datum.mult; rw [ite_eq_right (show ¬ τ (H.rt : E) = H.rt0 from h)]
 
 theorem rpow_neg_succ (p : ℕ) (hp : 0 < p) (i : ℕ) :
     (p : ℝ) ^ (-((i : ℝ) + 1)) = ((p : ℝ)⁻¹) ^ (i + 1) := by
@@ -489,17 +485,16 @@ theorem tsum_alt (p : ℕ) (hp : 1 < p) (a b : ℝ) :
   have ge : (fun k => g (2 * k)) = fun k => (r ^ 2) ^ k * (r * a) := by
     funext k
     simp only [hg]
-    rw [rpow_neg_succ p (by omega), if_pos (even_two_mul k), ← hr, pow_succ, pow_mul]; ring
+    rw [rpow_neg_succ p (by omega), ite_eq_left (even_two_mul k), ← hr, pow_succ, pow_mul]; ring
   have go : (fun k => g (2 * k + 1)) = fun k => (r ^ 2) ^ k * (r ^ 2 * b) := by
     funext k
     simp only [hg]
-    rw [rpow_neg_succ p (by omega), if_neg (Nat.not_even_iff_odd.2 (odd_two_mul_add_one k)), ← hr,
+    rw [rpow_neg_succ p (by omega), ite_eq_right (Nat.not_even_iff_odd.2 (odd_two_mul_add_one k)), ← hr,
       show 2 * k + 1 + 1 = 2 * k + 2 by ring, pow_add, pow_mul]; ring
   have hs := summable_geometric_of_lt_one r0 r1
   rw [← tsum_even_add_odd (by rw [ge]; exact hs.mul_right _) (by rw [go]; exact hs.mul_right _), ge, go,
     tsum_mul_right, tsum_mul_right, tsum_geometric_of_lt_one r0 r1]
   have h2 : (p : ℝ) ^ 2 - 1 ≠ 0 := by nlinarith
-  have h3 : (1 : ℝ) - r ^ 2 ≠ 0 := by linarith
   have hp0 : (p : ℝ) ≠ 0 := by linarith
   rw [hr]
   field_simp
@@ -548,11 +543,11 @@ theorem nuFac_le_odd_unram : ∀ (E : Type) [Field E] [NumberField E] [IsCMField
       intro n
       rw [zero_add]
       by_cases hn : Even n
-      · rw [if_pos hn, mult_of_inPsi Dw ((inPsi_conj_iff H _).2 (fun h' => ?_))]
+      · rw [ite_eq_left hn, mult_of_inPsi Dw ((inPsi_conj_iff H _).2 (fun h' => ?_))]
         have := (halt (n + 1)).1 h'
         rw [Nat.even_add_one] at this
         exact this hn
-      · rw [if_neg hn, mult_of_not_inPsi Dw (fun h' => ?_)]
+      · rw [ite_eq_right hn, mult_of_not_inPsi Dw (fun h' => ?_)]
         have := (inPsi_conj_iff H _).1 h'
         rw [halt, Nat.even_add_one, not_not] at this
         exact hn this

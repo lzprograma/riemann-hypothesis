@@ -84,8 +84,6 @@ theorem main {R α β : Type} [AddCommMonoid R] [Fintype α] [Fintype β]
         refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun e _ => ?_
         exact Finset.sum_comm
 
-alias target := _root_.GlobalTheory.TargetEquivalence.main
-
 end GlobalTheory.TargetEquivalence
 end -- clump:auto
 end -- clump:auto
@@ -100,8 +98,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open IsDedekindDomain NumberField MeasureTheory Matrix
 open scoped TensorProduct
 open GlobalTheory.FunObj GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StdFrames Formalism.L2.DIV
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
 open ValuativeRel

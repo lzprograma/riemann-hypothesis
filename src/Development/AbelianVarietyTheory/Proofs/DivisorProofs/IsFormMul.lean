@@ -46,8 +46,6 @@ open Set Matrix MeasureTheory
 open GlobalTheory.HermFrame
 open scoped ComplexOrder
 
-set_option autoImplicit false
-
 open scoped ContDiff
 
 namespace GlobalTheory.CxForm.FormMul

@@ -11,8 +11,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.Theta
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def ratV {n : ℕ} (x : Fin n → D.host.E) : Fin n → AE D := fun i => incA D (x i)

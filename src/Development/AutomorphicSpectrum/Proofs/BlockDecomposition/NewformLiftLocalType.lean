@@ -3,49 +3,6 @@ module
 public import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.AdFormOf
 public import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
 public import GroundTheory.GlobalFields.CompletionAtPlace.Integers
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Henselian
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeSum, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NewformLiftLocalType
@@ -125,13 +82,13 @@ theorem hecke_sum (k N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N)
     · convert h1 using 1
       funext m
       simp only [Function.comp_apply]
-      rw [if_pos (dvd_mul_right p m)]
+      rw [ite_eq_left (dvd_mul_right p m)]
       congr 3
       rw [eq_div_iff (Nat.cast_ne_zero.mpr hp.ne_zero)]
       push_cast
       ring
     · intro x hx
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨m, rfl⟩
       exact hx ⟨m, rfl⟩
   have h2 : HasSum ((fun m : ℕ => if p ∣ m then
@@ -140,7 +97,7 @@ theorem hecke_sum (k N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N)
     convert hf.exp w' using 1
     funext n
     simp only [Function.comp_apply]
-    rw [if_pos (dvd_mul_right p n), Nat.mul_div_cancel_left n hp.pos, hw']
+    rw [ite_eq_left (dvd_mul_right p n), Nat.mul_div_cancel_left n hp.pos, hw']
     congr 2
     push_cast
     ring
@@ -149,7 +106,7 @@ theorem hecke_sum (k N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N)
       ((f : ℍ → ℂ) w') := by
     refine (hinj.hasSum_iff ?_).mp h2
     intro x hx
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨m, rfl⟩
     exact hx ⟨m, rfl⟩
   have hR := ((hf.exp z).mul_left (a p)).sub (hw's.mul_left (χ p * (p : ℂ) ^ (k - 1)))
@@ -158,9 +115,9 @@ theorem hecke_sum (k N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N)
     intro m
     have h := he.2.2 p m hp
     by_cases hm : p ∣ m
-    · rw [if_pos hm] at h ⊢
+    · rw [ite_eq_left hm] at h ⊢
       linear_combination (Complex.exp (2 * (Real.pi : ℂ) * Complex.I * (m : ℂ) * (z : ℂ))) * h
-    · rw [if_neg hm] at h ⊢
+    · rw [ite_eq_right hm] at h ⊢
       linear_combination (Complex.exp (2 * (Real.pi : ℂ) * Complex.I * (m : ℂ) * (z : ℂ))) * h
   simp only [key] at hR
   exact hLm.unique (hR.mul_left (p : ℂ))
@@ -619,9 +576,9 @@ theorem f3a : Ad3.R.B0 → Ad3.R.HeckeSumLocalTranslates := by
       rw [ZMod.isUnit_iff_coprime]
       intro hc
       exact hpr.one_lt.ne' (Nat.eq_one_of_dvd_coprimes hc dvd_rfl hN)
-    rw [if_pos hN, hχ0]
+    rw [ite_eq_left hN, hχ0]
     ring
-  · rw [if_neg hN, phi_dg h0 hω hL hϖ hP hN ht' x]
+  · rw [ite_eq_right hN, phi_dg h0 hω hL hϖ hP hN ht' x]
     have hdet : 0 < (δ' * x).det.val := by
       rw [map_mul, Units.val_mul]; exact mul_pos hd2 hx
     rw [hL.real _ hdet, archLift_tri k f hd2 hx hδ'.2.1, hδ'.2.2.1, hδ'.1]

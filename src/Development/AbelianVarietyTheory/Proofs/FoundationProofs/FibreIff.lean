@@ -45,8 +45,6 @@ import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
@@ -81,10 +79,8 @@ theorem fibre_iff (h : IsGrpPullback A G x φ) {v : Fin m → (epsR R ⟶ A)} {u
       spMap (algebraMap R (DualNumber R)) := fun c => by
     refine (Spec.map_comp _ _).symm.trans (congrArg Spec.map ?_)
     ext a <;> simp [epsScaleR, TrivSqZeroExt.algebraMap_eq_inl]
-  have fs : spMap (TrivSqZeroExt.fstHom R R R).toRingHom ≫ spMap (algebraMap R (DualNumber R)) = 𝟙 _ := by
-    refine (Spec.map_comp _ _).symm.trans ((congrArg Spec.map ?_).trans (Spec.map_id _))
-    ext a
-    simp
+  have fs : spMap (TrivSqZeroExt.fstHom R R R).toRingHom ≫ spMap (algebraMap R (DualNumber R)) = 𝟙 _ :=
+    GlobalTheory.Diag.fstHom_base
   have hR : ∀ (c : R) (u v : epsR R ⟶ A), u.left = spMap (epsScaleR c) ≫ v.left ↔
       (e u).left = spMap (epsScaleR c) ≫ (e v).left := fun c u v => by
     rw [he, he]

@@ -188,7 +188,7 @@ theorem glue_points (hM : M.IsLB) {R : Type} [CommRing R] (s : X ⟶ Sp R) {T : 
   refine ⟨g, ⟨𝒰.hom_ext _ _ fun (k : σ) => ?_, ?_⟩, fun y hy => 𝒰.hom_ext _ _ fun (k : σ) => ?_⟩
   · change spMap (algebraMap T (Localization.Away (w k))) ≫ _ = spMap (algebraMap T (Localization.Away (w k))) ≫ _
     rw [← Category.assoc, hg, (hx k).1, spc]
-  · refine _root_.GlobalTheory.ZM.secCoord_of_locally X M σ th T _ w hM hw fun p => ?_
+  · refine _root_.GlobalTheory.ZM.secCoord_of_locally X M σ th T _ w hw fun p => ?_
     obtain ⟨k, hk⟩ : ∃ k : σ, p ∈ Set.range (spMap (algebraMap T (Localization.Away (w k)))) := 𝒰.exists_eq p
     refine ⟨Localization.Away (w k), inferInstance, algebraMap _ _, inferInstance, hk, ?_⟩
     rw [hg]
@@ -267,13 +267,13 @@ theorem col_row (hH : H.IsLB) (hK : K.IsLB) {T : Type} [CommRing T] (x : Sp T �
     (k : σ₁ × σ₂) (hk : IsUnit (w k)) :
     SecCoord H s (x ≫ p) (fun i => w (i, k.2)) ∧ SecCoord K t (x ≫ q) (fun j => w (k.1, j)) := by
   constructor
-  · refine _root_.GlobalTheory.ZM.secCoord_of_locally X H σ₁ s T _ _ hH (Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span ⟨k.1, rfl⟩) hk) fun z => ?_
+  · refine _root_.GlobalTheory.ZM.secCoord_of_locally X H σ₁ s T _ _ (Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span ⟨k.1, rfl⟩) hk) fun z => ?_
     obtain ⟨T', _, φ, h1, h2, a, b, ha, hb, e⟩ := split_near p q s t hH hK x w hw z
     refine ⟨T', _, φ, h1, h2, ?_⟩
     have hu : IsUnit (b k.2) := isUnit_of_mul_isUnit_right (e k ▸ hk.map φ)
     convert scale hH ha hu.unit using 2 with i
     rw [e, IsUnit.unit_spec, _root_.mul_comm]
-  · refine _root_.GlobalTheory.ZM.secCoord_of_locally Y K σ₂ t T _ _ hK (Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span ⟨k.2, rfl⟩) hk) fun z => ?_
+  · refine _root_.GlobalTheory.ZM.secCoord_of_locally Y K σ₂ t T _ _ (Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span ⟨k.2, rfl⟩) hk) fun z => ?_
     obtain ⟨T', _, φ, h1, h2, a, b, ha, hb, e⟩ := split_near p q s t hH hK x w hw z
     refine ⟨T', _, φ, h1, h2, ?_⟩
     have hu : IsUnit (a k.1) := isUnit_of_mul_isUnit_left (e k ▸ hk.map φ)

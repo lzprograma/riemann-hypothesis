@@ -59,7 +59,7 @@ theorem cM_mul {n : ℕ} {A B : Matrix (Fin n) (Fin n) ℂ} (h : Aᵀ * B = 1) :
   have := congrFun (congrFun h c) d
   simp only [Matrix.mul_apply, Matrix.one_apply, transpose_apply] at this
   simp only [Matrix.mul_apply, cM, Fintype.sum_prod_type, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true, kroneckerMap_apply, this]
+    Finset.mem_univ, ite_true, kroneckerMap_apply, this]
 
 theorem cM_hom (hM : MatHom) (b : Bool) (B : URep k r) :
     IsHom ((vr k r b).tens (vr k r (!b)), B) (one B) (mAct (cM _)) := by

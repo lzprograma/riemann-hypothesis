@@ -20,10 +20,6 @@ def DvrConeDimTrdeg.Statement : Prop :=
       ringKrullDim (MRing ι O ⧸ P) =
         (((Algebra.trdeg O (MRing ι O ⧸ P)).toENat + 1 : ℕ∞) : WithBot ℕ∞)
 
-section Examples
-
-end Examples
-
 end
 
 end GroundTheory.Heights₂.Heights.NumbersDVR

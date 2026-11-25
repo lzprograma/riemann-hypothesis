@@ -8,54 +8,8 @@ public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Formalism.SubspaceCounting.SubspaceCountingProofs.SubspaceCount
 public import Formalism.SubspaceCounting.SubspaceCountingProofs.TypeIIDown
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.BitVec
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -223,7 +177,7 @@ theorem lp_single (y : Fin V → Module.End R X) (v : Fin V) (l : List (Fin V)) 
 theorem lp_finRange_single (y : Fin V → Module.End R X) (v : Fin V) :
     lp y (List.finRange V) (fun u => if u = v then 1 else 0) = y v := by
 
-  rw [lp_single y v _ (List.nodup_finRange V), if_pos (List.mem_finRange v)]
+  rw [lp_single y v _ (List.nodup_finRange V), ite_eq_left (List.mem_finRange v)]
 
 theorem lp_mem (y : Fin V → Module.End R X) (M : Submodule R X) (hM : ∀ u, ∀ x ∈ M, y u x ∈ M)
     (l : List (Fin V)) (e : Fin V → ℕ) : ∀ x ∈ M, lp y l e x ∈ M := by
@@ -414,8 +368,8 @@ theorem card_idx {V : ℕ} (m : ℕ) (B : Finset (Fin V)) : (idx m B).card = m ^
         refine Finset.prod_congr rfl fun u _ => ?_
         split_ifs <;> simp
     _ = ∏ u ∈ B, (if u ∈ B then m else 1) :=
-        (Finset.prod_subset (Finset.subset_univ B) fun u _ hu => if_neg hu).symm
-    _ = ∏ u ∈ B, m := Finset.prod_congr rfl fun u hu => if_pos hu
+        (Finset.prod_subset (Finset.subset_univ B) fun u _ hu => ite_eq_right hu).symm
+    _ = ∏ u ∈ B, m := Finset.prod_congr rfl fun u hu => ite_eq_left hu
     _ = m ^ B.card := Finset.prod_const m
 
 theorem expo_step {V : ℕ} (m : ℕ) {B : Finset (Fin V)} (i : Fin V → ℕ) {v : Fin V}
@@ -508,9 +462,9 @@ theorem walkCostTerm_add_le {V : ℕ} (a b c : Fin V → ℕ) (m c₀ : ℕ) {B 
     have e1 : i u * c u ≤ (m - 1) * c u := Nat.mul_le_mul_right _ (by omega)
     have e2 : (i u + 1) * c₀ ≤ m * c₀ := Nat.mul_le_mul_right _ (by omega)
     rw [Nat.add_mul, one_mul] at e2
-    rw [h, if_pos rfl, Nat.mul_add]
+    rw [h, ite_eq_left rfl, Nat.mul_add]
     omega
-  · rw [if_neg hut, add_zero]
+  · rw [ite_eq_right hut, add_zero]
     exact accT_le a b c m c₀ hi u
 
 theorem accT_stop_le {V : ℕ} (a b c : Fin V → ℕ) (m c₀ : ℕ) {B : Finset (Fin V)}
@@ -522,12 +476,12 @@ theorem accT_stop_le {V : ℕ} (a b c : Fin V → ℕ) (m c₀ : ℕ) {B : Finse
   by_cases huv : u = v
   · subst v
     have h : accT a b c m c₀ B i u = b u + i u * (c u + c₀) := by simp [accT, hv]
-    rw [h, if_pos rfl]
+    rw [h, ite_eq_left rfl]
     subst m
     rw [Nat.add_sub_cancel]
     apply le_of_eq
     ring
-  · rw [if_neg huv, add_zero]
+  · rw [ite_eq_right huv, add_zero]
     exact accT_le a b c m c₀ hi u
 
 theorem sum_add_ite {V : ℕ} (f : Fin V → ℕ) (t : Fin V) (K : ℕ) :
@@ -670,9 +624,9 @@ theorem main : WalkSharp := by
             by_cases huv : u = v
             · subst u
               refine ⟨fun _ => ?_, fun h => absurd hv h⟩
-              rw [Function.update_apply, if_pos rfl]
+              rw [Function.update_apply, ite_eq_left rfl]
               exact hlt
-            · rw [Function.update_apply, if_neg huv]
+            · rw [Function.update_apply, ite_eq_right huv]
               exact mem_idx.mp hi u
           have hz2 : π ^ c v • zv ∈ L (vertexLabel B) := by
             have := hcb _ v zv hzv
@@ -702,16 +656,16 @@ theorem main : WalkSharp := by
           have hwB2 : w ∉ B.erase v := fun h => hwB (Finset.mem_of_mem_erase h)
           have hiw : i w = 0 := (mem_idx.mp hi w).2 hwB
           have hB2 : (insert w (B.erase v)).card = β + 1 := by
-            rw [Finset.card_insert_eq_ite, if_neg hwB2, Finset.card_erase_of_mem hv, hB]
+            rw [Finset.card_insert_eq_ite, ite_eq_right hwB2, Finset.card_erase_of_mem hv, hB]
             omega
           have hi2 : Function.update i v 0 ∈ idx m (insert w (B.erase v)) := by
             rw [mem_idx]
             intro u
             by_cases huv : u = v
             · subst u
-              rw [Function.update_apply, if_pos rfl]
+              rw [Function.update_apply, ite_eq_left rfl]
               exact ⟨fun _ => by omega, fun _ => rfl⟩
-            · rw [Function.update_apply, if_neg huv]
+            · rw [Function.update_apply, ite_eq_right huv]
               constructor
               · intro h
                 rcases Finset.mem_insert.mp h with h | h
@@ -787,10 +741,10 @@ theorem main : WalkSharp := by
               calc ∑ u ∈ B.erase v, Sv u =
                     ∑ u ∈ B.erase v, (if decide (u ∉ B.erase v) = true then 0 else Sv u) :=
                     Finset.sum_congr rfl fun u hu =>
-                      (if_neg (by rw [decide_eq_true_eq, not_not]; exact hu)).symm
+                      (ite_eq_right (by rw [decide_eq_true_eq, not_not]; exact hu)).symm
                 _ = ∑ u, (if decide (u ∉ B.erase v) = true then 0 else Sv u) :=
                     Finset.sum_subset (Finset.subset_univ _) fun u _ hu =>
-                      if_pos (by rw [decide_eq_true_eq]; exact hu)
+                      ite_eq_left (by rw [decide_eq_true_eq]; exact hu)
             rw [h1]
             calc ∑ u ∈ B.erase v, Sv u ≤ (B.erase v).card • S :=
                   Finset.sum_le_card_nsmul _ _ _ fun u _ => hS u
@@ -864,9 +818,9 @@ theorem main : WalkSharp := by
     rw [Finset.sum_congr rfl fun u _ => h1 u]
     symm
     calc ∑ u ∈ B₀, b u = ∑ u ∈ B₀, (if u ∈ B₀ then b u else 0) :=
-          Finset.sum_congr rfl fun u hu => (if_pos hu).symm
+          Finset.sum_congr rfl fun u hu => (ite_eq_left hu).symm
       _ = ∑ u, (if u ∈ B₀ then b u else 0) :=
-          Finset.sum_subset (Finset.subset_univ B₀) fun u _ hu => if_neg hu
+          Finset.sum_subset (Finset.subset_univ B₀) fun u _ hu => ite_eq_right hu
   have hle0 : ∑ u ∈ B₀, b u ≤ E := by
     rw [← hacc0, hE]
     have := hbnd B₀ (fun _ => 0) (fun u _ => show 0 < m by omega)

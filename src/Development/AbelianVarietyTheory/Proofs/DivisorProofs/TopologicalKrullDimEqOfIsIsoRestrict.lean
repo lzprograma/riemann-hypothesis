@@ -56,8 +56,6 @@ import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.OpenDim
@@ -97,10 +95,7 @@ theorem topologicalKrullDim_open (F : Type) [Field F] {Y : Scheme.{0}} [IsIntegr
   let := (Spec.preimage (Y.fromSpecStalk (genericPoint Y) ≫ f)).hom.toAlgebra
 
   have chart : ∀ (V : Y.Opens) (x : Y), x ∈ V → ∃ U : Y.Opens, IsAffineOpen U ∧ x ∈ U ∧ U ≤ V :=
-    fun V x hx ↦ by
-      obtain ⟨_, ⟨U, hU, rfl⟩, hxU, hUV⟩ :=
-        Y.isBasis_affineOpens.exists_subset_of_mem_open hx V.isOpen
-      exact ⟨U, hU, hxU, hUV⟩
+    fun _ _ hx ↦ exists_isAffineOpen_mem_and_subset hx
   obtain ⟨x₀, hx₀⟩ := hne
   obtain ⟨U₀, hU₀, hx₀U₀, -⟩ := chart V x₀ hx₀
   obtain ⟨d₀, -, hd₀⟩ := ringKrullDim_affineOpen F f hU₀ ⟨x₀, hx₀U₀⟩

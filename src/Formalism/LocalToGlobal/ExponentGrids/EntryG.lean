@@ -19,7 +19,6 @@ section -- clump:auto
 open Module NumberField IsDedekindDomain Finset
 open Formalism.DivisionValues (vw conjPl PlOver)
 open Formalism.L2.Indef (DefBase DefSide DefCols SPer IndefNum IndefCore)
-open Formalism.L2.GlobalTheoryTheory (Arith.Cst Arith.Lev Arith.Lev.admitted Arith.sg Arith.elt Arith.eltBar Arith.pOf Arith.EatT)
 
 noncomputable section
 

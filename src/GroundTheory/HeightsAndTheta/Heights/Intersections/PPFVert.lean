@@ -37,38 +37,12 @@ theorem geoNum_mixed_eq_zero
     (hWd : ringKrullDim (MRing ι' ⧸ W) = ((d + r + Fintype.card K' : ℕ) : WithBot ℕ∞))
     (L : Fin d → K → ℤ) (N : Fin r → K' → ℤ) :
     geoNum (d + r) W (Fin.append (fun j => pullDeg κ (L j)) N) = 0 := by
-  set p := charOf W with hpdef
-  have : Fact p.Prime := ⟨hpr⟩
-  have hpW : ((p : ℕ) : MRing ι') ∈ W := ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.natCast_mem_of_charOf W
-  have hWp : IsProjVarF (W.map (red p)) (d + r) :=
-    ⟨isMultiProjPrime_red p hWm hpW, by rw [ringKrullDim_red p hpW, hWd]⟩
-  have hImm : IsMultiProjPrime (imageZ v W) := isMultiProjPrime_imageZ hv hWm
-  have hpI : ((p : ℕ) : MRing ι) ∈ imageZ v W := by
-    show rename v ((p : ℕ) : MRing ι) ∈ W
-    simpa using hpW
-  have hVm := isMultiProjPrime_red p hImm hpI
-  obtain ⟨D, hKD, hD⟩ := exists_dim_F p _ hVm
-  obtain ⟨-, ⟨hQp, -, -⟩, hQh, hQd⟩ := hP
-  have := hQp
-  have hle : imageZ v P' ≤ imageZ v W := Ideal.comap_mono hPW
-  have hpQ : ((p : ℕ) : MRing ι) ∉ imageZ v P' := by
-    intro h
-    have h2 : ((p : ℕ) : ℤ) ∈ (imageZ v P').comap (C : ℤ →+* MRing ι) := by
-      rw [Ideal.mem_comap, map_natCast]
-      exact h
-    rw [hQh, Ideal.mem_bot] at h2
-    exact hpr.ne_zero (by exact_mod_cast h2)
-  have hdim := krullDim_quot_add_one_le hle hpI hpQ
-  rw [← ringKrullDim_red p hpI, hD, hQd] at hdim
-  have hD' : D + 1 ≤ d + Fintype.card K := by exact_mod_cast hdim
-  have hVi : IsProjVarF (imageVar (ZMod p) v (W.map (red p))) (D - Fintype.card K) := by
-    rw [imageVar_red p v hpW]
-    refine ⟨hVm, ?_⟩
-    rw [hD, Nat.sub_add_cancel hKD]
-  obtain ⟨I, hI, -⟩ := hR4 (ZMod p) K' ι'
-  rw [hGeo K' ι' p I hI W (d + r) _ hWm hpW hWp]
+  have : Fact (charOf W).Prime := ⟨hpr⟩
+  obtain ⟨hpW, hWp, m, hmd, hVi⟩ := exists_red_projVarF hv hP hPW hWm hpr hWd
+  obtain ⟨I, hI, -⟩ := hR4 (ZMod (charOf W)) K' ι'
+  rw [hGeo K' ι' (charOf W) I hI W (d + r) _ hWm hpW hWp]
   unfold ContractMixedFieldStatement at hCMF
-  exact hCMF (ZMod p) K ι K' ι' I hI κ v _ (D - Fintype.card K) d r L N hv hWp hVi (by omega)
+  exact hCMF (ZMod (charOf W)) K ι K' ι' I hI κ v _ m d r L N hv hWp hVi hmd
 
 end ProjectionFormulaVertical
 

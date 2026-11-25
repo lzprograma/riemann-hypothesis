@@ -905,7 +905,7 @@ theorem exists_equiv_pi_range_of_matrixUnits {R M n : Type} [CommRing R] [AddCom
       rw [hf]
       obtain ⟨z, hz⟩ := (y u).2
 
-      simp only [map_sum, hpq, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      simp only [map_sum, hpq, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
       rw [← hz, hP]
   exact ⟨LinearEquiv.ofBijective f hb, hf, fun x => (hs x).symm⟩
 
@@ -925,8 +925,8 @@ theorem matrixUnits_apply {La : Type} [AddCommGroup La]
       simp only [Matrix.single_mul_single_same, Matrix.sum_apply, Matrix.single_apply, Matrix.one_apply]
       by_cases hij : i = j
       · subst hij; simp
-      · rw [if_neg hij]
-        refine Finset.sum_eq_zero fun u _ => if_neg ?_
+      · rw [ite_eq_right hij]
+        refine Finset.sum_eq_zero fun u _ => ite_eq_right ?_
         rintro ⟨rfl, rfl⟩; exact hij rfl
     simp only [← Module.End.mul_apply, ← map_mul]
 
@@ -1709,7 +1709,7 @@ theorem goodClass_sharpClass : Out.Laws → Out.Laws2 → (∀ (S : Scheme.{0}) 
       show ∑ v, a w u v • x v + ∑ v, a w' u v • x v = x u
       rw [← Finset.sum_add_distrib]
       simp only [← add_smul, h1, Matrix.one_apply, ite_smul, one_smul, zero_smul,
-        Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     · intro x y
       rw [hEF, hEF]
       exact tensor_form_adjoint _ _ _ hadj x y

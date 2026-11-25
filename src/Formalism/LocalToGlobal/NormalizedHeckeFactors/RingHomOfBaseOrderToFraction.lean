@@ -263,8 +263,4 @@ structure NExpTied (D : D7) where
 
 attribute [instance] NExpTied.acgWt NExpTied.modWt NExpTied.fdWt
 
-namespace NX
-
-end NX
-
 end Formalism.L2

@@ -208,7 +208,7 @@ theorem wh_congr (ψ : AddChar (ZMod g) ℂ) {α β : Gn g b → ℂ} (h : ∀ u
         Finsupp.smul_apply, Finsupp.finsetSum_apply]
       rw [Finset.sum_eq_zero, smul_zero]
       intro v hv
-      rw [Finsupp.single_apply, if_neg]
+      rw [Finsupp.single_apply, ite_eq_right]
       rintro rfl
       exact hu (Finset.mem_filter.1 hv).2
     rw [this, zero_mul, zero_mul]
@@ -367,7 +367,7 @@ theorem uni_iff {b : ℕ} (hb : b = 1) (M : Mt g b) : IsUniUp M ↔ M = 1 := by
   constructor
   · intro h
     ext i j
-    rw [(h i j).2 (Subsingleton.elim _ _), Matrix.one_apply, if_pos (Subsingleton.elim _ _)]
+    rw [(h i j).2 (Subsingleton.elim _ _), Matrix.one_apply, ite_eq_left (Subsingleton.elim _ _)]
   · rintro rfl a b
     obtain rfl : a = b := Subsingleton.elim _ _
     simp
@@ -401,7 +401,7 @@ theorem inR_iff (M : Mt g (m + 1)) : InR m M ↔ InMir M := by
       ext i j
       have hi := i.2
       have hj := j.2
-      rw [this, h, Matrix.one_apply, if_pos (Fin.ext (by omega))]
+      rw [this, h, Matrix.one_apply, ite_eq_left (Fin.ext (by omega))]
   rw [hb]
   constructor
   · rintro ⟨h1, h2⟩ i j hi
@@ -471,7 +471,7 @@ theorem inversion {ψ : AddChar (ZMod g) ℂ} (hψ : ψ ≠ 1) (F : Gn g (m + 1)
   simp_rw [this]
   rw [← Finset.mul_sum, Finset.sum_comm]
   simp_rw [← Finset.mul_sum, orth hψ, sub_eq_zero]
-  simp only [mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   have := q_ne_zero (g := g) (m := m)
   field_simp
 
@@ -514,7 +514,7 @@ theorem fc_eq_zero {ψ : AddChar (ZMod g) ℂ} (hψ : ψ ≠ 1) {F : Gn g (m + 1
 theorem sum_fib (Φ : Gn g (m + 1) → ℂ) (h : Gn g m) :
     (∑ x : Gn g (m + 1), if InR m (x : Mt g (m + 1)) ∧ tl m (x : Mt g (m + 1)) = (h : Mt g m) then Φ x else 0) =
       ∑ v, Φ (E h v) := by
-  rw [sum_mir _ fun y hy => if_neg fun hh => hy ((inR_iff _).1 hh.1)]
+  rw [sum_mir _ fun y hy => ite_eq_right fun hh => hy ((inR_iff _).1 hh.1)]
   simp only [E_coe, inR_iff, inMir_Em, tl_Em, true_and, Units.val_inj]
   rw [Finset.sum_comm]
   simp
@@ -553,10 +553,10 @@ theorem tail_eq (l : Fin m) (hl : (l : ℕ) + 1 = m) (ψ : AddChar (ZMod g) ℂ)
 theorem indR_eq (ψ : AddChar (ZMod g) ℂ) {F : Gn g (m + 1) → ℂ} (hF : IsMirClass F) (h : Gn g m) (v) :
     indR ψ m (m + 1) (der ψ m F) (E h v) = fc ψ F h 0 := by
   unfold indR
-  rw [Finset.natCast_card_filter, sum_mir _ fun y hy => if_neg fun hh => hy ((inR_iff _).1 hh),
-    sum_mir _ fun y hy => if_neg fun hh => hy hh.1]
+  rw [Finset.natCast_card_filter, sum_mir _ fun y hy => ite_eq_right fun hh => hy ((inR_iff _).1 hh),
+    sum_mir _ fun y hy => ite_eq_right fun hh => hy hh.1]
   simp only [E_conj]
-  simp only [E_coe, inR_iff, inMir_Em, tl_Em, true_and, if_true, toG_coe, der_eq, fc_conj ψ hF,
+  simp only [E_coe, inR_iff, inMir_Em, tl_Em, true_and, ite_true, toG_coe, der_eq, fc_conj ψ hF,
     supFrom, Nat.add_sub_cancel, Finset.Ico_self, Finset.sum_empty, AddChar.map_zero_eq_one, mul_one,
     Matrix.zero_vecMul, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
   have h1 : (Fintype.card (Gn g m) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
@@ -586,18 +586,18 @@ theorem sum_rows (l : Fin m) (hl : (l : ℕ) + 1 = m) (φ : (Fin m → ZMod g) �
       have := congrArg (fun v => v ᵥ* ((k₀⁻¹ : Gn g m) : Mt g m)) e
       simpa only [Matrix.vecMul_vecMul, Units.mul_inv, Matrix.vecMul_one, mul_assoc, mul_one] using this
     by_cases hk : InMir (k : Mt g m)
-    · refine (if_pos (this.2 hk)).trans ?_
-      rw [if_pos hk, one_mul]
+    · refine (ite_eq_left (this.2 hk)).trans ?_
+      rw [ite_eq_left hk, one_mul]
       exact congrArg φ (this.2 hk)
-    · refine (if_neg (fun e => hk (this.1 e))).trans ?_
-      rw [if_neg hk, zero_mul]
+    · refine (ite_eq_right (fun e => hk (this.1 e))).trans ?_
+      rw [ite_eq_right hk, zero_mul]
 
 theorem indV_eq (l : Fin m) (hl : (l : ℕ) + 1 = m) {ψ : AddChar (ZMod g) ℂ} (hψ : ψ ≠ 1)
     {F : Gn g (m + 1) → ℂ} (hF : IsMirClass F) (h : Gn g m) (v) :
     indV ψ m (tail ψ m F) (E h v) = ∑ r, if r = 0 then 0 else fc ψ F h r * ψ (r ⬝ᵥ v) := by
   unfold indV
-  rw [Finset.natCast_card_filter, sum_mir _ fun y hy => if_neg fun hh => hy hh.1,
-    sum_mir _ fun y hy => if_neg fun hh => hy hh.1]
+  rw [Finset.natCast_card_filter, sum_mir _ fun y hy => ite_eq_right fun hh => hy hh.1,
+    sum_mir _ fun y hy => ite_eq_right fun hh => hy hh.1]
   simp only [E_conj]
   simp only [E_coe, inMir_Em, tl_Em, true_and, toG_coe, tail_eq l hl, fc_conj ψ hF, entN_Em l hl]
   have key : ∀ (k : Gn g m) (w : Fin m → ZMod g),
@@ -706,22 +706,22 @@ theorem stages {G G' : Type} [Group G] [Group G'] [Fintype G] [Fintype G'] (P : 
   by_cases hy : y ∈ P
   · have hz : y⁻¹ * x * y ∈ P := P.mul_mem (P.mul_mem (P.inv_mem hy) hx) hy
     generalize y⁻¹ * x * y = z at hz
-    simp only [hy, if_true, true_and]
+    simp only [hy, ite_true, true_and]
     have hw : ∀ q ∈ P, q⁻¹ * z * q ∈ P := fun q hq => P.mul_mem (P.mul_mem (P.inv_mem hq) hz) hq
     by_cases hz' : π z ∈ P'
-    · rw [if_pos hz', ← mul_assoc, ← fib, Finset.sum_filter, Finset.sum_mul]
+    · rw [ite_eq_left hz', ← mul_assoc, ← fib, Finset.sum_filter, Finset.sum_mul]
       refine Finset.sum_congr rfl fun q _ => ?_
       by_cases hq : q ∈ P
       · by_cases hq' : π q ∈ P'
-        · simp only [hq, hq', if_true, and_self]
-          rw [hF _ (hw q hq), hconj q hq z hz, if_pos (P'.mul_mem (P'.mul_mem (P'.inv_mem hq') hz') hq'),
+        · simp only [hq, hq', ite_true, and_self]
+          rw [hF _ (hw q hq), hconj q hq z hz, ite_eq_left (P'.mul_mem (P'.mul_mem (P'.inv_mem hq') hz') hq'),
             hθ q hq hq' z hz hz']
         · simp [hq, hq']
       · simp [hq]
-    · rw [if_neg hz', mul_zero]
+    · rw [ite_eq_right hz', mul_zero]
       refine Finset.sum_eq_zero fun q hq => ?_
       obtain ⟨hq, hq'⟩ := (Finset.mem_filter.1 hq).2
-      rw [hF _ (hw q hq), hconj q hq z hz, if_neg]
+      rw [hF _ (hw q hq), hconj q hq z hz, ite_eq_right]
       rw [P'.mul_mem_cancel_right hq', P'.mul_mem_cancel_left (P'.inv_mem hq')]
       exact hz'
   · simp [hy]
@@ -743,10 +743,7 @@ def mir (g n : ℕ) [Fact g.Prime] : Subgroup (Gn g n) where
 theorem mem_mir {n : ℕ} (p : Gn g n) : p ∈ mir g n ↔ InMir (p : Mt g n) := Iff.rfl
 
 theorem tl_apply {m : ℕ} (A : Mt g (m + 1)) (i j : Fin m) : tl m A i j = A i.castSucc j.castSucc := by
-  have h1 : (i : ℕ) < m + 1 := by omega
-  have h2 : (j : ℕ) < m + 1 := by omega
-  simp only [tl, entN, h1, h2, and_self, dif_pos]
-  rfl
+  apply _root_.GlobalTheory.GLm.MirStep.tl_apply <;> assumption
 
 theorem tl_mul {m : ℕ} (A : Mt g (m + 1)) {B : Mt g (m + 1)} (hB : InMir B) : tl m (A * B) = tl m A * tl m B := by
   ext i j
@@ -759,7 +756,7 @@ theorem tl_one {m : ℕ} : tl m (1 : Mt g (m + 1)) = 1 := by
   simp [tl_apply, Matrix.one_apply]
 
 theorem coe_toG {n : ℕ} {M : Mt g n} (h : IsUnit M) : ((toG M : Gn g n) : Mt g n) = M := by
-  unfold toG; rw [dif_pos h]; rfl
+  unfold toG; rw [dite_eq_left h]; rfl
 
 theorem coe_toG_tl {m : ℕ} {w : Gn g (m + 1)} (hw : w ∈ mir g (m + 1)) :
     ((toG (tl m (w : Mt g (m + 1))) : Gn g m) : Mt g m) = tl m (w : Mt g (m + 1)) := by
@@ -803,7 +800,7 @@ theorem corner_mul {m : ℕ} (hm : 0 < m) {A B : Mt g (m + 1)} (hA : InMir (tl m
     entN (A * B) (m - 1) m = entN A (m - 1) m + entN B (m - 1) m := by
   have e : ∀ C : Mt g (m + 1), entN C (m - 1) m = C (Fin.castSucc ⟨m - 1, by omega⟩) (Fin.last m) := fun C => by
     have h1 : m - 1 < m + 1 := by omega
-    simp only [entN, h1, Nat.lt_succ_self, and_self, dif_pos]
+    simp only [entN, h1, Nat.lt_succ_self, and_self, dite_eq_left]
     rfl
   rw [e, e, e, Matrix.mul_apply, Fin.sum_univ_castSucc, hB (Fin.last m) _ rfl, Matrix.one_apply_eq, mul_one,
     add_comm]
@@ -916,7 +913,7 @@ theorem indV_indR (g : ℕ) [Fact g.Prime] (ψ : AddChar (ZMod g) ℂ) (i m : �
     (fun w hw => by
       simp only [mem_mir (toG _), coe_toG_tl hw, ← inR_succ hw, tl_tl him.le]
       by_cases h : InR i (w : Mt g (m + 1))
-      · rw [if_pos h, if_pos h, if_pos (inMir_of_inR him ((inR_succ hw).1 h)), supFrom_succ him,
+      · rw [ite_eq_left h, ite_eq_left h, ite_eq_left (inMir_of_inR him ((inR_succ hw).1 h)), supFrom_succ him,
           AddChar.map_add_eq_mul, mul_assoc]
       · simp [h]) x hx
   have hR := fib fun y => if InR i (y : Mt g m) then 1 else 0
@@ -927,8 +924,8 @@ theorem indV_indR (g : ℕ) [Fact g.Prime] (ψ : AddChar (ZMod g) ℂ) (i m : �
     rw [← hR]
     refine Finset.sum_congr rfl fun p _ => ?_
     by_cases hp : p ∈ mir g (m + 1)
-    · simp only [hp, if_true, coe_toG_tl hp, ← inR_succ hp]
-    · rw [if_neg hp, if_neg fun h => hp (inMir_of_inR (by omega) h)]
+    · simp only [hp, ite_true, coe_toG_tl hp, ← inR_succ hp]
+    · rw [ite_eq_right hp, ite_eq_right fun h => hp (inMir_of_inR (by omega) h)]
   have hQ : (Finset.univ.filter fun p : Gn g (m + 1) =>
       p ∈ mir g (m + 1) ∧ toG (tl m (p : Mt g (m + 1))) ∈ mir g m) = Finset.univ.filter fun p : Gn g (m + 1) =>
       InMir (p : Mt g (m + 1)) ∧ InMir (tl m (p : Mt g (m + 1))) := by
@@ -1043,7 +1040,7 @@ theorem res_one (F : Gn g 1 → ℂ) (h : Gn g 0) (u : Gn g 1) : res 0 1 F h u =
     rw [br_one]
     exact ⟨fun hx => Units.ext hx.2.2, fun hx => ⟨inPar_zero _, by ext i j; exact i.elim0, by rw [hx]⟩⟩
   unfold res
-  simp only [key, Finset.sum_ite_eq', Finset.mem_univ, if_true, zero_mul, pow_zero, inv_one, one_mul]
+  simp only [key, Finset.sum_ite_eq', Finset.mem_univ, ite_true, zero_mul, pow_zero, inv_one, one_mul]
 
 theorem eU_one (ψ : AddChar (ZMod g) ℂ) : eU g 1 ψ = MonoidAlgebra.single 1 1 := by
   have hf : (Finset.univ.filter fun u : Gn g 1 => IsUniUp (u : Mt g 1)) = {1} := by
@@ -1072,7 +1069,7 @@ theorem base (ψ : AddChar (ZMod g) ℂ) (F : Gn g 1 → ℂ) : F 1 = indR ψ 0 
     simp
   unfold indR
   simp only [hc, hs, Finset.card_singleton, Nat.cast_one, inv_one, one_mul, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true, der_one, supFrom]
+    Finset.mem_univ, ite_true, der_one, supFrom]
   simp
 
 theorem eq_sum_indR_der : ∀ (g : ℕ) [Fact g.Prime] (ψ : AddChar (ZMod g) ℂ) , ψ ≠ 1 → ∀ (n : ℕ) (F : Gn g n → ℂ), 1 ≤ n → IsMirClass F → ∀ p : Gn g n, InMir (p : Mt g n) → F p = ∑ i ∈ Finset.range n, indR ψ i n (der ψ i F) p := by
@@ -1123,7 +1120,7 @@ alias coe_toG := _root_.GlobalTheory.GLm.ParBasic.toG_val
 
 theorem toG_coe {n : ℕ} (x : Gn g n) : toG (x : Mt g n) = x := by
   unfold toG
-  rw [dif_pos x.isUnit]
+  rw [dite_eq_left x.isUnit]
   exact Units.ext rfl
 
 theorem sum_par (a b n : ℕ) (hn : n = a + b) (Φ : Gn g a → Gn g b → ℂ) :
@@ -1137,13 +1134,13 @@ theorem sum_par (a b n : ℕ) (hn : n = a + b) (Φ : Gn g a → Gn g b → ℂ) 
         br a b (x : Mt g n) = (h₂ : Mt g b)) then Φ h₁ h₂ else 0 := by
     intro x
     by_cases hx : InPar a (x : Mt g n)
-    · rw [if_pos hx]
+    · rw [ite_eq_left hx]
       obtain ⟨u1, u2⟩ := hU x hx
       rw [Finset.sum_eq_single (toG (tl a (x : Mt g n)))]
       · rw [Finset.sum_eq_single (toG (br a b (x : Mt g n)))]
-        · rw [if_pos ⟨hx, (coe_toG u1).symm, (coe_toG u2).symm⟩]
+        · rw [ite_eq_left ⟨hx, (coe_toG u1).symm, (coe_toG u2).symm⟩]
         · intro h₂ _ hne
-          rw [if_neg]
+          rw [ite_eq_right]
           rintro ⟨-, -, hb⟩
           apply hne
           rw [hb, toG_coe]
@@ -1151,18 +1148,18 @@ theorem sum_par (a b n : ℕ) (hn : n = a + b) (Φ : Gn g a → Gn g b → ℂ) 
       · intro h₁ _ hne
         apply Finset.sum_eq_zero
         intro h₂ _
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨-, ht, -⟩
         apply hne
         rw [ht, toG_coe]
       · intro hh; exact absurd (Finset.mem_univ _) hh
-    · rw [if_neg hx]
+    · rw [ite_eq_right hx]
       symm
       apply Finset.sum_eq_zero
       intro h₁ _
       apply Finset.sum_eq_zero
       intro h₂ _
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨hp, -⟩
       exact hx hp
   rw [Finset.sum_congr rfl (fun x _ => key x)]
@@ -1246,7 +1243,7 @@ theorem supFrom_eq (i n : ℕ) (M : Mt g n) :
   rw [Finset.mem_range] at hj
   have h1 : j < n - i := by omega
   have h2 : j + 1 < n - i := by omega
-  rw [show entN (br i (n - i) M) j (j + 1) = br i (n - i) M ⟨j, h1⟩ ⟨j + 1, h2⟩ from dif_pos ⟨h1, h2⟩]
+  rw [show entN (br i (n - i) M) j (j + 1) = br i (n - i) M ⟨j, h1⟩ ⟨j + 1, h2⟩ from dite_eq_left ⟨h1, h2⟩]
   simp only [br, Nat.add_assoc]
 
 theorem fR_eq (ψ : AddChar (ZMod g) ℂ) (i n : ℕ) (hi : i ≤ n) (ρ : Gn g i → ℂ) (z : Gn g n) :
@@ -1255,11 +1252,11 @@ theorem fR_eq (ψ : AddChar (ZMod g) ℂ) (i n : ℕ) (hi : i ≤ n) (ρ : Gn g 
   obtain ⟨-, -, hU, -, -, -⟩ := _root_.GlobalTheory.GLm.ParBasic.par_basic g i (n - i) n (by omega)
   unfold fR fU InR
   by_cases hp : InPar i (z : Mt g n)
-  · rw [if_pos hp, coe_toG (hU z hp).2, supFrom_eq]
+  · rw [ite_eq_left hp, coe_toG (hU z hp).2, supFrom_eq]
     by_cases hu : IsUniUp (br i (n - i) (z : Mt g n))
-    · rw [if_pos ⟨hp, hu⟩, if_pos hu]
-    · rw [if_neg (fun hh => hu hh.2), if_neg hu, mul_zero]
-  · rw [if_neg (fun hh => hp hh.1), if_neg hp]
+    · rw [ite_eq_left ⟨hp, hu⟩, ite_eq_left hu]
+    · rw [ite_eq_right (fun hh => hu hh.2), ite_eq_right hu, mul_zero]
+  · rw [ite_eq_right (fun hh => hp hh.1), ite_eq_right hp]
 
 theorem sum_conj_fR (ψ : AddChar (ZMod g) ℂ) (i n : ℕ) (hi : i ≤ n) (ρ : Gn g i → ℂ) (hρ : IsClass ρ)
     (z : Gn g n) :
@@ -1274,24 +1271,24 @@ theorem sum_conj_fR (ψ : AddChar (ZMod g) ℂ) (i n : ℕ) (hi : i ≤ n) (ρ :
           toG (br i (n - i) (p : Mt g n))) else 0) else 0 := by
     intro p
     by_cases hp : InPar i (p : Mt g n)
-    · rw [if_pos hp, if_pos hp, fR_eq ψ i n hi]
+    · rw [ite_eq_left hp, ite_eq_left hp, fR_eq ψ i n hi]
       obtain ⟨hiff, hbl⟩ := conj_par i (n - i) n hn p z hp
       by_cases hz : InPar i (z : Mt g n)
       · obtain ⟨e1, e2⟩ := hbl hz
-        rw [if_pos (hiff.2 hz), if_pos hz, e1, e2]
+        rw [ite_eq_left (hiff.2 hz), ite_eq_left hz, e1, e2]
         congr 1
         have := hρ (toG (tl i (z : Mt g n))) (toG (tl i (p : Mt g n)))⁻¹
         rw [inv_inv] at this
         exact this
-      · rw [if_neg (fun hh => hz (hiff.1 hh)), if_neg hz]
-    · rw [if_neg hp, if_neg hp]
+      · rw [ite_eq_right (fun hh => hz (hiff.1 hh)), ite_eq_right hz]
+    · rw [ite_eq_right hp, ite_eq_right hp]
   rw [Finset.sum_congr rfl (fun p _ => key p), sum_par i (n - i) n hn (fun (_ : Gn g i) (h₂ : Gn g (n - i)) =>
     if InPar i (z : Mt g n) then ρ (toG (tl i (z : Mt g n))) *
       fU ψ (h₂⁻¹ * toG (br i (n - i) (z : Mt g n)) * h₂) else 0)]
   by_cases hz : InPar i (z : Mt g n)
-  · simp only [if_pos hz, ← Finset.mul_sum, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+  · simp only [ite_eq_left hz, ← Finset.mul_sum, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
     ring
-  · simp only [if_neg hz, Finset.sum_const_zero, mul_zero]
+  · simp only [ite_eq_right hz, Finset.sum_const_zero, mul_zero]
 
 theorem card_inR (i n : ℕ) (hi : i ≤ n) :
     ((Finset.univ.filter fun p : Gn g n => InR i (p : Mt g n)).card : ℂ) =
@@ -1306,12 +1303,12 @@ theorem card_inR (i n : ℕ) (hi : i ≤ n) :
         else 0 := by
     refine Finset.sum_congr rfl fun x _ => ?_
     by_cases hp : InPar i (x : Mt g n)
-    · rw [if_pos hp, coe_toG (hU x hp).2]
+    · rw [ite_eq_left hp, coe_toG (hU x hp).2]
       unfold InR
       simp only [hp, true_and]
-    · rw [if_neg hp]
+    · rw [ite_eq_right hp]
       unfold InR
-      simp only [hp, false_and, if_false]
+      simp only [hp, false_and, ite_false]
   simp only [Finset.card_filter, Nat.cast_sum, Nat.cast_ite, Nat.cast_one, Nat.cast_zero]
   rw [e, h]
   simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
@@ -1361,16 +1358,16 @@ theorem stages (ψ : AddChar (ZMod g) ℂ) (i n : ℕ) (hi : i ≤ n) (ρ : Gn g
         ∑ y : Gn g n, (if InPar i (p : Mt g n) then fR ψ i ρ (p⁻¹ * (y⁻¹ * h * y) * p) else 0) := by
       intro p
       by_cases hp : InPar i (p : Mt g n)
-      · simp only [if_pos hp]
+      · simp only [ite_eq_left hp]
         exact e2 p
-      · simp only [if_neg hp, Finset.sum_const_zero]
+      · simp only [ite_eq_right hp, Finset.sum_const_zero]
     rw [e1, Finset.sum_congr rfl (fun p _ => e3 p), Finset.sum_comm, Finset.mul_sum]
     refine Finset.sum_congr rfl fun y _ => ?_
     rw [sum_conj_fR ψ i n hi ρ hρ (y⁻¹ * h * y)]
     by_cases hz : InPar i ((y⁻¹ * h * y : Gn g n) : Mt g n)
-    · rw [if_pos hz, if_pos hz, hgg]
+    · rw [ite_eq_left hz, ite_eq_left hz, hgg]
       ring
-    · rw [if_neg hz, if_neg hz]
+    · rw [ite_eq_right hz, ite_eq_right hz]
       ring
   have hK := card_inR (g := g) i n hi
   have hKne : (g : ℂ) ^ (i * (n - i)) * Fintype.card (Gn g i) *
@@ -1393,13 +1390,13 @@ theorem stages (ψ : AddChar (ZMod g) ℂ) (i n : ℕ) (hi : i ≤ n) (ρ : Gn g
 theorem entN_tl {k n : ℕ} (M : Mt g n) {a b : ℕ} (ha : a < k) (hb : b < k) :
     entN (tl k M) a b = entN M a b := by
   show (if hh : a < k ∧ b < k then tl k M ⟨a, hh.1⟩ ⟨b, hh.2⟩ else 0) = _
-  rw [dif_pos ⟨ha, hb⟩]
+  rw [dite_eq_left ⟨ha, hb⟩]
   rfl
 
 theorem tl_apply_succ {k : ℕ} (M : Mt g (k + 1)) (a b : Fin k) :
     tl k M a b = M a.castSucc b.castSucc := by
   show entN M a b = _
-  rw [entN, dif_pos ⟨Nat.lt_succ_of_lt a.2, Nat.lt_succ_of_lt b.2⟩]
+  rw [entN, dite_eq_left ⟨Nat.lt_succ_of_lt a.2, Nat.lt_succ_of_lt b.2⟩]
   rfl
 
 theorem inMir_iff {k : ℕ} (M : Mt g (k + 1)) :
@@ -1418,7 +1415,7 @@ theorem inMir_iff {k : ℕ} (M : Mt g (k + 1)) :
 
 private theorem br_one_zero_zero_eq_last {k : ℕ} (M : Mt g (k + 1)) : br k 1 M 0 0 = M (Fin.last k) (Fin.last k) := by
   show entN M (k + ((0 : Fin 1) : ℕ)) (k + ((0 : Fin 1) : ℕ)) = _
-  rw [entN, dif_pos ⟨by simp, by simp⟩]
+  rw [entN, dite_eq_left ⟨by simp, by simp⟩]
   congr 1
 
 theorem inMir_iff' {k : ℕ} (M : Mt g (k + 1)) : InMir M ↔ InPar k M ∧ br k 1 M = 1 := by
@@ -1449,32 +1446,32 @@ theorem sum_mir (k : ℕ) (f : Gn g k → ℂ) :
     rw [inMir_iff']
     by_cases hp : InPar k (x : Mt g (k + 1))
     · rw [coe_toG (hU x hp).2]
-      simp only [hp, true_and, if_true]
-    · simp only [hp, false_and, if_false]
+      simp only [hp, true_and, ite_true]
+    · simp only [hp, false_and, ite_false]
   rw [Finset.sum_congr rfl fun x _ => e x, h, mul_one]
   congr 1
   refine Finset.sum_congr rfl fun h₁ _ => ?_
-  simp only [Units.val_eq_one, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Units.val_eq_one, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 def dM {k : ℕ} (h : Mt g k) : Mt g (k + 1) := fun i j =>
   if (i : ℕ) < k ∧ (j : ℕ) < k then entN h i j else (1 : Mt g (k + 1)) i j
 
 theorem dM_cc {k : ℕ} (h : Mt g k) (a b : Fin k) : dM h a.castSucc b.castSucc = h a b := by
   unfold dM
-  rw [if_pos ⟨by simp, by simp⟩]
+  rw [ite_eq_left ⟨by simp, by simp⟩]
   simp [entN]
 
 theorem dM_cl {k : ℕ} (h : Mt g k) (a : Fin k) : dM h a.castSucc (Fin.last k) = 0 := by
   unfold dM
-  rw [if_neg (by simp), Matrix.one_apply_ne (Fin.castSucc_lt_last a).ne]
+  rw [ite_eq_right (by simp), Matrix.one_apply_ne (Fin.castSucc_lt_last a).ne]
 
 theorem dM_lc {k : ℕ} (h : Mt g k) (a : Fin k) : dM h (Fin.last k) a.castSucc = 0 := by
   unfold dM
-  rw [if_neg (by simp), Matrix.one_apply_ne (Fin.castSucc_lt_last a).ne']
+  rw [ite_eq_right (by simp), Matrix.one_apply_ne (Fin.castSucc_lt_last a).ne']
 
 theorem dM_ll {k : ℕ} (h : Mt g k) : dM h (Fin.last k) (Fin.last k) = 1 := by
   unfold dM
-  rw [if_neg (by simp), Matrix.one_apply_eq]
+  rw [ite_eq_right (by simp), Matrix.one_apply_eq]
 
 private theorem dM_mul_flag_measures {k : ℕ} (A B : Mt g k) : dM A * dM B = dM (A * B) := by
   ext r c
@@ -1532,7 +1529,7 @@ theorem inR_iff_ent {i n : ℕ} (M : Mt g n) :
   · rintro ⟨hA, hB⟩
     refine ⟨fun r c hc hr => ?_, fun a b => ⟨fun hba => ?_, fun hab => ?_⟩⟩
     · have := hA r c hc hr
-      rwa [entN, dif_pos ⟨r.2, c.2⟩] at this
+      rwa [entN, dite_eq_left ⟨r.2, c.2⟩] at this
     · have ha := a.isLt
       have hb := b.isLt
       rw [Fin.lt_iff_val_lt_val] at hba
@@ -1542,29 +1539,19 @@ theorem inR_iff_ent {i n : ℕ} (M : Mt g n) :
       exact (hB (i + a) (i + a) (by omega) (by omega)).2 rfl
 
 theorem inMir_of_inR {i n : ℕ} (hi : i < n) {M : Mt g n} (h : InR i M) : InMir M := by
-  rw [inR_iff_ent] at h
-  intro r c hr
-  have hM : M r c = entN M r c := by rw [entN, dif_pos ⟨r.2, c.2⟩]
-  rw [hM]
-  rcases lt_or_ge (c : ℕ) i with hc | hc
-  · rw [h.1 r c hc (by omega), Matrix.one_apply_ne (Fin.ne_of_val_ne (by omega))]
-  · rcases lt_or_eq_of_le (show (c : ℕ) ≤ r by omega) with hcr | hcr
-    · rw [(h.2 r c hc r.2).1 hcr, Matrix.one_apply_ne (Fin.ne_of_val_ne (by omega))]
-    · have e : c = r := Fin.ext hcr
-      rw [e, Matrix.one_apply_eq]
-      exact (h.2 r r (by omega) r.2).2 rfl
+  apply _root_.GlobalTheory.GLm.Stages.inMir_of_inR <;> assumption
 
 private theorem entN_tl' {k n : ℕ} (M : Mt g n) (a b : ℕ) :
     entN (tl k M) a b = if a < k ∧ b < k then entN M a b else 0 := by
   by_cases hh : a < k ∧ b < k
-  · rw [if_pos hh, entN_tl M hh.1 hh.2]
-  · rw [if_neg hh, entN, dite_eq_right hh]
+  · rw [ite_eq_left hh, entN_tl M hh.1 hh.2]
+  · rw [ite_eq_right hh, entN, dite_eq_right hh]
 
 private theorem entN_last_of_inMir {k : ℕ} {M : Mt g (k + 1)} (hM : InMir M) (b : ℕ) :
     entN M k b = if b = k then 1 else 0 := by
   unfold entN
   split_ifs with h1 h2 h2
-  · rw [hM ⟨k, h1.1⟩ ⟨b, h1.2⟩ rfl, Matrix.one_apply, if_pos (Fin.ext h2.symm)]
+  · rw [hM ⟨k, h1.1⟩ ⟨b, h1.2⟩ rfl, Matrix.one_apply, ite_eq_left (Fin.ext h2.symm)]
   · rw [hM ⟨k, h1.1⟩ ⟨b, h1.2⟩ rfl, Matrix.one_apply_ne (Fin.ne_of_val_ne (by show k ≠ b; omega))]
   · exact absurd ⟨by omega, by omega⟩ h1
   · rfl
@@ -1579,28 +1566,28 @@ theorem inR_iff_tl {i k : ℕ} (hi : i ≤ k) {M : Mt g (k + 1)} (hM : InMir M) 
     · split_ifs
       · exact hA a b hb ha
       · rfl
-    · rw [if_pos ⟨ha, by omega⟩]
+    · rw [ite_eq_left ⟨ha, by omega⟩]
       exact (hB a b hb (by omega)).1 hba
-    · rw [if_pos ⟨ha, by omega⟩]
+    · rw [ite_eq_left ⟨ha, by omega⟩]
       exact (hB a b hb (by omega)).2 hab
   · rintro ⟨hA, hB⟩
     refine ⟨fun a b hb ha => ?_, fun a b hb ha => ?_⟩
     · rcases lt_trichotomy a k with hh | hh | hh
       · have := hA a b hb ha
-        rwa [if_pos ⟨hh, by omega⟩] at this
+        rwa [ite_eq_left ⟨hh, by omega⟩] at this
       · subst hh
-        rw [entN_last_of_inMir hM, if_neg (by omega)]
+        rw [entN_last_of_inMir hM, ite_eq_right (by omega)]
       · rw [entN, dite_eq_right (by omega)]
     · rcases lt_or_eq_of_le (Nat.lt_succ_iff.1 ha) with hh | hh
       · have h2 := hB a b hb hh
         refine ⟨fun hba => ?_, fun hab => ?_⟩
         · have := h2.1 hba
-          rwa [if_pos ⟨hh, by omega⟩] at this
+          rwa [ite_eq_left ⟨hh, by omega⟩] at this
         · have := h2.2 hab
-          rwa [if_pos ⟨hh, by omega⟩] at this
+          rwa [ite_eq_left ⟨hh, by omega⟩] at this
       · subst hh
         rw [entN_last_of_inMir hM]
-        exact ⟨fun hba => if_neg (by omega), fun hab => if_pos hab.symm⟩
+        exact ⟨fun hba => ite_eq_right (by omega), fun hab => ite_eq_left hab.symm⟩
 
 theorem tl_tl {i k n : ℕ} (hi : i ≤ k) (M : Mt g n) : tl i (tl k M) = tl i M := by
   ext a b
@@ -1618,7 +1605,7 @@ private theorem entN_eq_zero_of_mul_eq_of_inR {k i : ℕ} (hik : i < k) (X Yi Dm
     intro c
     have hc := c.isLt
     have hX : X ⟨k - 1, by omega⟩ c.castSucc = entN X (k - 1) c := by
-      rw [entN, dif_pos ⟨by omega, by omega⟩]
+      rw [entN, dite_eq_left ⟨by omega, by omega⟩]
       rfl
     rw [hX]
     split_ifs with hck
@@ -1631,14 +1618,14 @@ private theorem entN_eq_zero_of_mul_eq_of_inR {k i : ℕ} (hik : i < k) (X Yi Dm
   have hs : (∑ c : Fin k, if (c : ℕ) = k - 1 then Yi c.castSucc (Fin.last k) else 0) =
       Yi ⟨k - 1, by omega⟩ (Fin.last k) := by
     rw [Finset.sum_eq_single ⟨k - 1, by omega⟩]
-    · rw [if_pos rfl]
+    · rw [ite_eq_left rfl]
       rfl
     · intro c _ hc
-      rw [if_neg (fun hh => hc (Fin.ext hh))]
+      rw [ite_eq_right (fun hh => hc (Fin.ext hh))]
     · intro hh
       exact absurd (Finset.mem_univ _) hh
   rw [hs] at e
-  rw [entN, dif_pos ⟨by omega, by omega⟩]
+  rw [entN, dite_eq_left ⟨by omega, by omega⟩]
   show X ⟨k - 1, by omega⟩ (Fin.last k) = 0
   linear_combination e
 
@@ -1716,8 +1703,8 @@ theorem card_inR_succ (i k : ℕ) (hi : i ≤ k) :
   rw [← h]
   refine Finset.sum_congr rfl fun x _ => ?_
   by_cases hm : InMir (x : Mt g (k + 1))
-  · rw [if_pos hm, coe_toG (hU x ((inMir_iff' _).1 hm).1).1, ← inR_iff_tl hi hm]
-  · rw [if_neg hm, if_neg (fun hr => hm (inMir_of_inR (by omega) hr))]
+  · rw [ite_eq_left hm, coe_toG (hU x ((inMir_iff' _).1 hm).1).1, ← inR_iff_tl hi hm]
+  · rw [ite_eq_right hm, ite_eq_right (fun hr => hm (inMir_of_inR (by omega) hr))]
 
 end GlobalTheory.GLm.ResInd
 
@@ -1737,9 +1724,9 @@ theorem indR_diag1_eq_hc_gg (g : ℕ) [Fact g.Prime] (ψ : AddChar (ZMod g) ℂ)
         fR ψ i ρ ((toG (tl k (y : Mt g (k + 1))))⁻¹ * h * toG (tl k (y : Mt g (k + 1)))) else 0 := by
     intro y
     by_cases hy : InMir (y : Mt g (k + 1))
-    · rw [if_pos hy, ← fR_conj_diag1 ψ i k hi ρ h y hy, fR]
+    · rw [ite_eq_left hy, ← fR_conj_diag1 ψ i k hi ρ h y hy, fR]
       simp only [hy, true_and]
-    · rw [if_neg hy, if_neg (fun hh => hy hh.1)]
+    · rw [ite_eq_right hy, ite_eq_right (fun hh => hy hh.1)]
   have hg : (g : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (Fact.out : g.Prime).ne_zero
   unfold indR
   rw [Finset.sum_congr rfl fun y _ => e1 y, sum_mir k (fun t => fR ψ i ρ (t⁻¹ * h * t)),

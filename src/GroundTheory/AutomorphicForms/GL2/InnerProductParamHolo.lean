@@ -33,13 +33,8 @@ theorem differentiableOn_integral_of_bound {α : Type*} [MeasurableSpace α] {μ
   obtain ⟨ε, hε, hsub, B, hB, hle⟩ := hbound s₀ hs₀
   set r := ε / 2 with hr
   have hr0 : 0 < r := by rw [hr]; linarith
-  have hball : ∀ s ∈ ball s₀ r, closedBall s r ⊆ closedBall s₀ ε := by
-    intro s hs z hz
-    rw [mem_closedBall] at hz ⊢
-    rw [mem_ball] at hs
-    calc dist z s₀ ≤ dist z s + dist s s₀ := dist_triangle _ _ _
-      _ ≤ r + r := add_le_add hz hs.le
-      _ = ε := by rw [hr]; ring
+  have hball : ∀ s ∈ ball s₀ r, closedBall s r ⊆ closedBall s₀ ε := fun s hs =>
+    closedBall_subset_closedBall' (by linarith [mem_ball.1 hs])
   have hderiv : ∀ x, ∀ s ∈ U, HasDerivAt (fun z => F z x) (deriv (fun z => F z x) s) s :=
     fun x s hs => ((hF x).differentiableAt (hU.mem_nhds hs)).hasDerivAt
 
@@ -66,7 +61,7 @@ theorem differentiableOn_integral_of_bound {α : Type*} [MeasurableSpace α] {μ
           exact_mod_cast Nat.succ_ne_zero n
       refine (hsl.comp hseq).congr' ?_
       filter_upwards [hev] with n hn
-      simp only [hq, Function.comp_apply, if_pos hn, slope, vsub_eq_sub, add_sub_cancel_left,
+      simp only [hq, Function.comp_apply, ite_eq_left hn, slope, vsub_eq_sub, add_sub_cancel_left,
         inv_inv, smul_eq_mul]
   have key := hasDerivAt_integral_of_dominated_loc_of_deriv_le (μ := μ) (x₀ := s₀)
     (F := F) (F' := fun s x => deriv (fun z => F z x) s) (bound := fun x => B x / r)

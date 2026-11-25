@@ -41,15 +41,15 @@ open Formalism.MainNotions.S.Loc
 section FG
 
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
-variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E]
+variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E]
 
 private theorem isNoetherianRing_locE_O' (L : LocE F E) [IsNonarchimedeanLocalField F] [CharZero F] :
     IsNoetherianRing L.O := by
   classical
-  haveI : IsReduced E := L.reduced
-  haveI : Module.Free F E := L.free
-  haveI : Module.Finite F E := Module.finite_of_finrank_eq_succ L.rank
-  haveI : Nontrivial E := Module.nontrivial_of_finrank_eq_succ L.rank
+  have : IsReduced E := L.reduced
+  have : Module.Free F E := L.free
+  have : Module.Finite F E := Module.finite_of_finrank_eq_succ L.rank
+  have : Nontrivial E := Module.nontrivial_of_finrank_eq_succ L.rank
   have hA : ∀ a : 𝒪[F], algebraMap 𝒪[F] E a = algebraMap F E (a : F) := fun a =>
     IsScalarTower.algebraMap_apply 𝒪[F] F E a
   have hcjA : ∀ (a : F) (w : E), L.cj (algebraMap F E a * w) = algebraMap F E a * L.cj w := by
@@ -85,15 +85,15 @@ private theorem isNoetherianRing_locE_O' (L : LocE F E) [IsNonarchimedeanLocalFi
   let b := Module.finBasisOfFinrankEq F E L.rank
   have hsc : ∀ i, ∃ c : F, c ≠ 0 ∧ algebraMap F E c * b i ∈ L.O := by
     intro i
-    haveI : Algebra.IsAlgebraic 𝒪[F] F := IsLocalization.isAlgebraic F (nonZeroDivisors 𝒪[F])
-    haveI : Algebra.IsAlgebraic 𝒪[F] E := Algebra.IsAlgebraic.trans 𝒪[F] F E
+    have : Algebra.IsAlgebraic 𝒪[F] F := IsLocalization.isAlgebraic F (nonZeroDivisors 𝒪[F])
+    have : Algebra.IsAlgebraic 𝒪[F] E := Algebra.IsAlgebraic.trans 𝒪[F] F E
     obtain ⟨c, hc, hci⟩ := (Algebra.IsAlgebraic.isAlgebraic (R := 𝒪[F]) (b i)).exists_integral_multiple
     refine ⟨(c : F), by exact_mod_cast hc, (L.O_def _).2 ?_⟩
     rwa [Algebra.smul_def, hA] at hci
   choose c hc0 hcO using hsc
   let φ : 𝒪[F] →+* L.O :=
     (algebraMap 𝒪[F] E).codRestrict L.O (fun a => (L.O_def _).2 isIntegral_algebraMap)
-  letI : Algebra 𝒪[F] L.O := φ.toAlgebra
+  let : Algebra 𝒪[F] L.O := φ.toAlgebra
   have hsm : ∀ (a : 𝒪[F]) (x : L.O), ((a • x : L.O) : E) = algebraMap F E (a : F) * x := by
     intro a x
     rw [Algebra.smul_def, Subring.coe_mul, ← hA]
@@ -114,7 +114,7 @@ private theorem isNoetherianRing_locE_O' (L : LocE F E) [IsNonarchimedeanLocalFi
         simp only [mul_assoc, hcjA, mul_add] }
   let N : Submodule 𝒪[F] (Fin 2 → E) :=
     Submodule.span 𝒪[F] (Set.range fun i : Fin 2 => Pi.single i (1 : E))
-  haveI : IsNoetherian 𝒪[F] N := isNoetherian_span_of_finite 𝒪[F] (Set.finite_range _)
+  have : IsNoetherian 𝒪[F] N := isNoetherian_span_of_finite 𝒪[F] (Set.finite_range _)
   have hgN : ∀ x, g x ∈ N := by
     intro x
     have hx : ∀ i, ∃ a : 𝒪[F], algebraMap 𝒪[F] E a = (x : E) * B i + L.cj ((x : E) * B i) :=
@@ -147,18 +147,20 @@ private theorem isNoetherianRing_locE_O' (L : LocE F E) [IsNonarchimedeanLocalFi
       have hτ : τ = 0 := b.ext (fun i => by simpa [τ] using hb i)
       simpa [τ] using LinearMap.congr_fun hτ w
     exact Subtype.ext (sub_eq_zero.1 (hnd _ hall))
-  haveI : IsNoetherian 𝒪[F] L.O := isNoetherian_of_injective (g.codRestrict N hgN) hinj
+  have : IsNoetherian 𝒪[F] L.O := isNoetherian_of_injective (g.codRestrict N hgN) hinj
   exact isNoetherianRing_iff.2 (isNoetherian_of_tower 𝒪[F] this)
+
+variable [MeasurableSpace E]
 
 theorem thFG_at (M : Model F E) (r : ℕ) (hM : M.OK) : ThFG M r := by
   intro V _ _ H t ht
-  haveI := hM.loc
-  haveI := hM.char0
-  haveI : IsNoetherianRing M.L.O := isNoetherianRing_locE_O' M.L
+  have := hM.loc
+  have := hM.char0
+  have : IsNoetherianRing M.L.O := isNoetherianRing_locE_O' M.L
   have hfg : t.abelian₂.FG := ht.1.1.1
-  haveI : IsNoetherian M.L.O t.abelian₂ := isNoetherian_of_fg_of_noetherian _ hfg
+  have : IsNoetherian M.L.O t.abelian₂ := isNoetherian_of_fg_of_noetherian _ hfg
   have hle : ThL H t ≤ t.abelian₂ := inf_le_left
-  haveI := isNoetherian_of_le hle
+  have := isNoetherian_of_le hle
   exact Module.Finite.iff_fg.1 inferInstance
 
 end FG
@@ -381,19 +383,6 @@ theorem latSide_at' (M : Model F E) (r n : ℕ) (hM : M.OK) (hE : GlueEta M r) (
     (hP : GenOfPrim M r n) (hR : ClaimR M r n) : LatSide M r n :=
   latSide_at M r n hM hE hV hP (gramMM_holds M r n) (thFG_at M r hM) (thSpan_at M r hM) hR
 
-theorem localCount_of_glue (M : Model F E) (r n : ℕ) (hM : M.OK) (hE : GlueEta M r) (hV : GlueConv M r)
-    (hP : GenOfPrim M r n) (hR : ClaimR M r n) (h0 : ModSide0 M r n M.split.isSome)
-    (hU : ModSideU M r n M.split.isSome) : Formalism.MainNotions.ThinScalesBound.FamilyLocalModel M r n := by
-  intro V _ _ H hn t₁ hg f₂ f₂' φ φ' hF hF' hI hs hs'
-  have hT : LocalCountHypotheses H t₁ f₂ f₂' φ φ' := ⟨hg, hF, hF', hI, hs, hs'⟩
-  have hL := latSide_at' M r n hM hE hV hP hR V H hn t₁ f₂ f₂' φ φ' hT
-  dsimp only
-  refine ⟨fun hz Z₁ Z₂ h₁ h₂ => ?_, fun hu Y₁ Y₂ be₁ be₂ al₁ al₂ hY hb => ?_⟩
-  · rw [hL]
-    exact h0 rfl V H hn t₁ f₂ f₂' φ φ' hT hz Z₁ Z₂ h₁ h₂
-  · rw [hL]
-    exact hU rfl V H hn t₁ f₂ f₂' φ φ' hT hu Y₁ Y₂ be₁ be₂ al₁ al₂ hY hb
-
 end Top2
 
 end Formalism.L2.SG.LsDatumA
@@ -449,7 +438,7 @@ theorem prim_comp {M : Model F E} {V : Type} [AddCommGroup V] [Module E V] (H : 
     rw [hcoef i]
     apply Finset.sum_eq_zero
     intro j _
-    rw [if_neg (fun h => hi ⟨j, h⟩)]
+    rw [ite_eq_right (fun h => hi ⟨j, h⟩)]
   rw [Submodule.mem_span_range_iff_exists_fun]
   refine ⟨fun j => a (e j), ?_⟩
   rw [← ha]
@@ -1563,16 +1552,9 @@ theorem claimRG_at (M : Model F E) (r n : ℕ) (hM : M.OK) : ClaimRG M r n := by
 theorem claimR_at (M : Model F E) (r n : ℕ) (hM : M.OK) : ClaimR M r n :=
   claimR_of_modes M r n (claimRL_at M r n hM) (claimRG_at M r n hM)
 
-theorem localCount_of_module (M : Model F E) (r n : ℕ) (hM : M.OK) (h0 : ModSide0 M r n M.split.isSome)
-    (hU : ModSideU M r n M.split.isSome) : Formalism.MainNotions.ThinScalesBound.FamilyLocalModel M r n :=
-  localCount_of_glue M r n hM (PI.LocCntLat.GE.glueEta_holds M r) (PI.LocCntLat.GC.glueConv_holds M r)
-    (genOfPrim_holds M r n) (claimR_at M r n hM) h0 hU
-
-theorem globalCount_of_module (D : Formalism.BasicNotions.D7)
-    (h0 : Formalism.MainNotions.ThinScalesBound.AllLoc (fun M => ModSide0 M D.R.rS D.R.r M.split.isSome))
-    (hU : Formalism.MainNotions.ThinScalesBound.AllLoc (fun M => ModSideU M D.R.rS D.R.r M.split.isSome)) : Formalism.MainNotions.ThinScalesBound.T2 D := by
-  intro F _ _ _ E _ _ _ _ M hM
-  exact localCount_of_module M D.R.rS D.R.r hM (h0 F E M hM) (hU F E M hM)
+theorem latSide_holds (M : Model F E) (r n : ℕ) (hM : M.OK) : LatSide M r n :=
+  latSide_at' M r n hM (PI.LocCntLat.GE.glueEta_holds M r) (PI.LocCntLat.GC.glueConv_holds M r)
+    (genOfPrim_holds M r n) (claimR_at M r n hM)
 
 end RG8
 

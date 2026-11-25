@@ -244,7 +244,7 @@ theorem localFourier_localFourier {f : K → ℂ} (hf : f ∈ schwartzBruhat K) 
     · have ht : IsTrivialOn (ψ.mulShift (x + z)) (addCharConductor ψ - N) := by
         rw [isTrivialOn_mulShift_iff_mem hψ hψ1]
         simpa using hxz
-      rw [if_pos ht, Set.indicator_of_mem (show x + z ∈ (valBall K N : Set K) from hxz)]
+      rw [ite_eq_left ht, Set.indicator_of_mem (show x + z ∈ (valBall K N : Set K) from hxz)]
       have : f x = f (-z) := by
         have := hN (-z) (x + z) hxz
         rw [show -z + (x + z) = x by ring] at this
@@ -253,7 +253,7 @@ theorem localFourier_localFourier {f : K → ℂ} (hf : f ∈ schwartzBruhat K) 
     · have ht : ¬ IsTrivialOn (ψ.mulShift (x + z)) (addCharConductor ψ - N) := by
         rw [isTrivialOn_mulShift_iff_mem hψ hψ1]
         simpa using hxz
-      rw [if_neg ht, Set.indicator_of_notMem (show x + z ∉ (valBall K N : Set K) from hxz),
+      rw [ite_eq_right ht, Set.indicator_of_notMem (show x + z ∉ (valBall K N : Set K) from hxz),
         mul_zero]
   rw [hA, hB, integral_integral_swap hG]
   simp only [hinner]

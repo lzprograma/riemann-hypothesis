@@ -4,45 +4,7 @@ public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.MemColRangeO
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LeIffLtColH
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ScaleSCoeffZero
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DplusLeBeS
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.PsiCutSupported
 import Mathlib.Tactic.Linter.Style
 
@@ -93,7 +55,6 @@ theorem riseA_filter (n0 : ℕ) (ν : Fin (N + 1) → Fin r → ℤ) (c : ℤ) (
   · rintro ⟨⟨h1, h2⟩, h3⟩
     refine ⟨⟨h1, h2⟩, ?_⟩
     by_contra h4
-    have h5 : t.val < m.val := not_le.mp h4
     exact h3 (by omega) h2
 
 theorem riseA_mono (n0 : ℕ) (ν : Fin (N + 1) → Fin r → ℤ) (c : ℤ) {s t : ℕ} (h : s ≤ t) :
@@ -138,22 +99,22 @@ theorem isSt_cut [NeZero r] {n0 : ℕ} (hN : n0 + r = N) {be : ℤ} {ν : Fin (N
     intro c
     rw [pEnd_cut (by omega), Icut_eq H]
     by_cases h1 : 1 ≤ c
-    · rw [if_pos h1]
+    · rw [ite_eq_left h1]
       by_cases h2 : c ≤ be
-      · rw [if_pos ⟨h1, h2⟩, Finset.card_sdiff_of_subset (Finset.subset_univ _), Finset.card_univ, Fintype.card_fin]
+      · rw [ite_eq_left ⟨h1, h2⟩, Finset.card_sdiff_of_subset (Finset.subset_univ _), Finset.card_univ, Fintype.card_fin]
         have h3 := card_riseA H c r le_rfl
         have hNr : colH (stg ν N) c = r := colH_all fun m => by rw [H.fin]; exact h2
         rw [hN, hNr] at h3
         omega
-      · rw [if_neg fun h => h2 h.2, Finset.card_empty,
+      · rw [ite_eq_right fun h => h2 h.2, Finset.card_empty,
           colH_none fun m => lt_of_le_of_lt (H.rng n0 (by omega) m).2 (by omega)]
-    · rw [if_neg h1, if_neg fun h => h1 h.1, Finset.card_empty,
+    · rw [ite_eq_right h1, ite_eq_right fun h => h1 h.1, Finset.card_empty,
         colH_all fun m => le_trans (by omega) (H.rng n0 (by omega) m).1]
       omega
   refine ⟨?_, hcard, ?_⟩
   · intro c hc
     by_cases h : 1 ≤ c ∧ c ≤ be
-    · rw [← Finset.card_eq_zero, hcard c, if_pos h.1, pEnd_cut (by omega)]
+    · rw [← Finset.card_eq_zero, hcard c, ite_eq_left h.1, pEnd_cut (by omega)]
       apply colH_none
       intro m
       by_contra hge
@@ -161,21 +122,21 @@ theorem isSt_cut [NeZero r] {n0 : ℕ} (hN : n0 + r = N) {be : ℤ} {ν : Fin (N
       refine mem_colRange_of_le_entry (cutPath n0 ν) ⟨n0, by omega⟩ m (by omega) ?_
       have : cutPath n0 ν ⟨n0, by omega⟩ m = stg ν n0 m := by simp [cutPath]
       rw [this]; omega
-    · rw [Icut_eq H, if_neg h]
+    · rw [Icut_eq H, ite_eq_right h]
   · intro c t
     unfold tabCol
     by_cases h1 : 1 ≤ c
-    · rw [if_pos h1, if_pos (by omega : (1 : ℤ) ≤ c + 1), Icut_eq H, Icut_eq H]
+    · rw [ite_eq_left h1, ite_eq_left (by omega : (1 : ℤ) ≤ c + 1), Icut_eq H, Icut_eq H]
       by_cases h2 : c + 1 ≤ be
-      · rw [if_pos ⟨by omega, h2⟩, if_pos ⟨h1, by omega⟩]
+      · rw [ite_eq_left ⟨by omega, h2⟩, ite_eq_left ⟨h1, by omega⟩]
         have e1 := card_Icut_filter hN H (c + 1) ⟨by omega, h2⟩ t
         have e2 := card_Icut_filter hN H c ⟨h1, by omega⟩ t
         have e3 := colH_anti (stg ν (n0 + (r - 1 - t.val))) (by omega : c ≤ c + 1)
         omega
-      · rw [if_neg fun h => h2 h.2]
+      · rw [ite_eq_right fun h => h2 h.2]
         simp
-    · rw [if_neg h1]
-      have hc0 : Icut n0 ν c = ∅ := by rw [Icut_eq H, if_neg fun h => h1 h.1]
+    · rw [ite_eq_right h1]
+      have hc0 : Icut n0 ν c = ∅ := by rw [Icut_eq H, ite_eq_right fun h => h1 h.1]
       rw [hc0, Finset.sdiff_empty]
       exact Finset.card_le_card (Finset.filter_subset_filter _ (Finset.subset_univ _))
 
@@ -212,7 +173,7 @@ theorem path_eq_of_cut [NeZero r] {n0 : ℕ} (hN : n0 + r = N) {be : ℤ} {ν ν
   have hrise : ∀ c, 1 ≤ c ∧ c ≤ be → riseA n0 ν c r = riseA n0 ν' c r := by
     intro c hc
     have h1 := congrFun hI c
-    rw [Icut_eq H, Icut_eq H', if_pos hc, if_pos hc] at h1
+    rw [Icut_eq H, Icut_eq H', ite_eq_left hc, ite_eq_left hc] at h1
     have := congrArg (fun s => Finset.univ \ s) h1
     simpa [Finset.sdiff_sdiff_eq_self (Finset.subset_univ _)] using this
   funext i
@@ -220,7 +181,6 @@ theorem path_eq_of_cut [NeZero r] {n0 : ℕ} (hN : n0 + r = N) {be : ℤ} {ν ν
   by_cases hi : i.val ≤ n0
   · exact hlow i.val hi
   · obtain ⟨t, ht⟩ : ∃ t, i.val = n0 + t := ⟨i.val - n0, by omega⟩
-    have hi' := i.isLt
     have htr : t ≤ r := by omega
     apply eq_of_colH
     · rw [← stg_eq ν i.val i.isLt]; exact hd i
@@ -267,9 +227,9 @@ theorem kill_rename {R σ τ : Type} [CommRing R] (f : σ → τ) (S : Set τ) (
     simp only [AlgHom.comp_apply, rename_X, kill, aeval_X]
     by_cases h1 : f i ∈ S
     · have h2 : i ∈ f ⁻¹' S := h1
-      rw [if_pos h1, if_pos h2, map_zero]
+      rw [ite_eq_left h1, ite_eq_left h2, map_zero]
     · have h2 : i ∉ f ⁻¹' S := h1
-      rw [if_neg h1, if_neg h2, rename_X]
+      rw [ite_eq_right h1, ite_eq_right h2, rename_X]
   exact AlgHom.congr_fun h P
 
 theorem kill_of_empty {R σ : Type} [CommRing R] (S : Set σ) (hS : S = ∅) (P : MvPolynomial σ R) : kill S P = P := by
@@ -311,21 +271,21 @@ theorem li_mono_words {R σ ι α : Type} [CommRing R] [IsDomain R] (Tset : Set 
       · ext v
         rw [Finsupp.filter_apply, Finsupp.add_apply]
         by_cases hv : v ∈ Tset
-        · rw [if_pos hv]
+        · rw [ite_eq_left hv]
           have : n v = 0 := by
             by_contra h
             exact hnv v h hv
           rw [this, add_zero]
-        · rw [if_neg hv]
+        · rw [ite_eq_right hv]
           by_contra h
           exact hv (hM q v (Ne.symm h))
       · ext v
         rw [Finsupp.filter_apply, Finsupp.add_apply]
         by_cases hv : v ∈ Tset
-        · rw [if_neg (not_not.2 hv)]
+        · rw [ite_eq_right (not_not.2 hv)]
           by_contra h
           exact hnv v (Ne.symm h) hv
-        · rw [if_pos hv]
+        · rw [ite_eq_left hv]
           have : M q v = 0 := by
             by_contra h
             exact hv (hM q v h)
@@ -337,9 +297,9 @@ theorem li_mono_words {R σ ι α : Type} [CommRing R] [IsDomain R] (Tset : Set 
     split_ifs with hMq
     · conv_rhs => rw [(w (x q)).as_sum]
       refine Finset.sum_congr rfl fun n hn => ?_
-      rw [(hT n hn).1, (hT n hn).2, if_pos hMq]
+      rw [(hT n hn).1, (hT n hn).2, ite_eq_left hMq]
     · refine Finset.sum_eq_zero fun n hn => ?_
-      rw [(hT n hn).1, if_neg hMq]
+      rw [(hT n hn).1, ite_eq_right hMq]
   have hxinj : Function.Injective (fun q : {q // M q = M q₀} => x q.1) := by
     intro a b h
     exact Subtype.ext (hinj a.1 b.1 (a.2.trans b.2.symm) h)
@@ -393,7 +353,7 @@ theorem sum_single_apply_zero {σ ι : Type} (s : Finset ι) (a : ι → σ) (k 
   classical
   rw [Finsupp.finsetSum_apply]
   refine Finset.sum_eq_zero fun i hi => ?_
-  rw [Finsupp.single_apply, if_neg (h i hi)]
+  rw [Finsupp.single_apply, ite_eq_right (h i hi)]
 
 section Fin7
 
@@ -497,7 +457,7 @@ theorem monTau_apply {L₁ N₁ : ℕ} (hV : X.F.Valid L₁ N₁) (j : ℤ) (u :
   rw [Finsupp.finsetSum_apply, Finset.sum_eq_single (t, c)]
   · simp
   · intro v _ hv
-    rw [Finsupp.single_apply, if_neg]
+    rw [Finsupp.single_apply, ite_eq_right]
     intro h
     simp only [Prod.mk.injEq] at h
     exact hv (Prod.ext (fr_injective X.F hV j h.1) (Fin.castAdd_injective _ _ h.2))

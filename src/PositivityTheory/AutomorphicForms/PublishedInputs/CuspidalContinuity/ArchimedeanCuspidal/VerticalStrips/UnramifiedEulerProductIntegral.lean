@@ -44,18 +44,15 @@ def B0 : Prop := (∀ v : Pl, IsStd (localAdelicChar ℚ v) ∧ residueCard (Qv 
     adelicChar ℚ x' = localAdelicChar ℚ v x ∧ (a = d → a' = d') ∧
     ∀ c : HeckeCharacter ℚ, (c.toIdele a' : ℂ) = localChar c v a ∧ (c.toIdele d' : ℂ) = localChar c v d
 
-def D0 : Prop := ∃ 𝓓 : Set Jd, MeasurableSet 𝓓 ∧ (∀ a : Jd, ∃! α : ℚˣ, pri α * a ∈ 𝓓) ∧
-  ∀ (τ : ℝ) (M : ℕ), 0 < τ → τ < M → ∫⁻ a in 𝓓, ENNReal.ofReal (min 1 (md a)⁻¹ ^ M * md a ^ τ) ∂ideleMeasure ℚ < ∞
+def G0 : Prop := ∃ μ 𝓕, Set0 μ 𝓕
 
-def G0 : Prop := ∃ μ 𝓕 mK 𝓓, Set0 μ 𝓕 mK 𝓓
-
-def G1a : Prop := ∀ μ 𝓕 mK 𝓓, Set0 μ 𝓕 mK 𝓓 → μ {g | Dt g = 1} = 0 ∧
+def G1a : Prop := ∀ μ 𝓕, Set0 μ 𝓕 → μ {g | Dt g = 1} = 0 ∧
   (∀ r : ℝ, 0 < r → ∃ z : Jd, md z ^ 2 = r ∧ ∀ c : HeckeCharacter ℚ, IsOfFinOrder c → c.toIdele z = 1) ∧
   ∀ T : G2 → G2, (T = inv2 ∨ (∃ h, T = fun g => g * h) ∨ ∃ z : Jd, T = fun g => dg2 z z * g) →
     (∀ F : G2 → ℝ≥0∞, Measurable F → LInv F → ∫⁻ g in 𝓕, F (T g) ∂μ = ∫⁻ g in 𝓕, F g ∂μ) ∧
     ∀ F : G2 → ℂ, Measurable F → LInv F → ∫ g in 𝓕, F (T g) ∂μ = ∫ g in 𝓕, F g ∂μ
 
-def G1 : Prop := ∀ μ 𝓕 mK 𝓓, Set0 μ 𝓕 mK 𝓓 → ∀ F : G2 → ℂ, Continuous F → (∃ C, ∀ g, ‖F g‖ ≤ C) → LInv F →
+def G1 : Prop := ∀ μ 𝓕, Set0 μ 𝓕 → ∀ F : G2 → ℂ, Continuous F → (∃ C, ∀ g, ‖F g‖ ≤ C) → LInv F →
   (CInv F → ∀ h, ∫ g in 𝓕 ∩ band, F (g * h) ∂μ = ∫ g in 𝓕 ∩ band, F g ∂μ) ∧
   (∀ (η : HeckeCharacter ℚ), IsOfFinOrder η → (∀ (z : Jd) g, F (dg2 z z * g) = (η.toIdele z : ℂ) * F g) → η ≠ 1 →
     ∫ g in 𝓕 ∩ band, F g ∂μ = 0) ∧

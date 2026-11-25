@@ -9,51 +9,8 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockBoundUniformiser
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.CountingStatementReduction
 import Formalism.SharpRestriction.GrowthBounds.FlipOneThree
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BoxOfFibres, Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LettersExt
@@ -73,7 +30,6 @@ section Comb
 
 variable {s t : ℕ} (u : Fin t → Fin s)
 
-
 open Classical in
 def ovr (a : Fin s → ℕ) (n : Fin t → ℕ) : Fin s → ℕ :=
   fun l => if h : ∃ i, u i = l then n (Classical.choose h) else a l
@@ -84,7 +40,7 @@ theorem ovr_u (hu : Function.Injective u) (a : Fin s → ℕ) (n : Fin t → ℕ
   rw [dite_eq_left h]
   exact congrArg n (hu (Classical.choose_spec h))
 
-theorem ovr_not (a : Fin s → ℕ) (n : Fin t → ℕ) (l : Fin s) (h : ¬ ∃ i, u i = l) : ovr u a n l = a l := dif_neg h
+theorem ovr_not (a : Fin s → ℕ) (n : Fin t → ℕ) (l : Fin s) (h : ¬ ∃ i, u i = l) : ovr u a n l = a l := dite_eq_right h
 
 theorem ovr_ovr (hu : Function.Injective u) (a : Fin s → ℕ) (n : Fin t → ℕ) :
     ovr u (ovr u a n) (fun i => a (u i)) = a := by
@@ -211,9 +167,6 @@ section Letters
 
 variable (C0 CE1 CE2 : ℝ) (X : flipOneThree.Inst)
 
-theorem letters_ext {N : ℕ} (L L' : Formalism.GM.M.Letters N) (h1 : L.vec = L'.vec) (h2 : L.deg = L'.deg) : L = L' := by
-  cases L; cases L'; simp_all
-
 theorem uTop_inj : Function.Injective (uTop (X.S C0 CE1 CE2)) := by
   intro i j h
   have h' := congrArg Fin.val h
@@ -238,15 +191,15 @@ theorem deg_eta (aTop : Fin X.s → ℕ) (b : SegBlock X.s X.r) (x : Lv C0 CE1 C
   have hu : ¬ q = ⟨2 * X.s, by omega⟩ := by
     intro h
     exact h1 (by rw [h])
-  rw [dif_neg h1, if_neg hodd, htop, if_neg hnl]
-  simp only [hu, if_false, Nat.sub_zero]
+  rw [dite_eq_right h1, ite_eq_right hodd, htop, ite_eq_right hnl]
+  simp only [hu, ite_false, Nat.sub_zero]
   congr 1
   simp only [← List.sum_toFinset _ (List.nodup_finRange _), List.toFinset_finRange]
   apply Eq.trans (Finset.sum_eq_single i ?_ ?_)
-  · exact if_pos (Or.inr (show (q : ℕ) = 2 * ((X.S C0 CE1 CE2).sigma + (i : ℕ)) + 1 from hq))
+  · exact ite_eq_left (Or.inr (show (q : ℕ) = 2 * ((X.S C0 CE1 CE2).sigma + (i : ℕ)) + 1 from hq))
   · intro j _ hj
     have hj' : (j : ℕ) ≠ (i : ℕ) := fun h => hj (Fin.ext h)
-    apply if_neg
+    apply ite_eq_right
     show ¬ ((q : ℕ) = 2 * ((X.S C0 CE1 CE2).sigma + (j : ℕ)) ∨ (q : ℕ) = 2 * ((X.S C0 CE1 CE2).sigma + (j : ℕ)) + 1)
     omega
   · intro h
@@ -259,8 +212,8 @@ theorem deg_other (aTop aTop' : Fin X.s → ℕ) (b : SegBlock X.s X.r) (x : Lv 
   have hLL : (gB C0 CE1 CE2 X aTop 0 b).LL.deg q = (gB C0 CE1 CE2 X aTop' 0 b).LL.deg q := by
     simp only [gB, gmB, gmL, blockData, BlockData.withMargin, blockBase, segChain]
     by_cases h : (q : ℕ) = 2 * X.s
-    · rw [dif_pos h, dif_pos h]
-    · rw [dif_neg h, dif_neg h]
+    · rw [dite_eq_left h, dite_eq_left h]
+    · rw [dite_eq_right h, dite_eq_right h]
       have hv : ((topOf q h : Fin X.s) : ℕ) = (q : ℕ) / 2 := rfl
       have hlt : (q : ℕ) / 2 < X.s := by
         have := (topOf q h).2
@@ -286,7 +239,7 @@ theorem lLL_ovr (a : Fin X.s → ℕ) (n : Fin (X.S C0 CE1 CE2).t → ℕ) (b : 
       (lLL C0 CE1 CE2 X a b x).setTies (gT C0 CE1 CE2 X b)
         (fun i : Fin (X.S C0 CE1 CE2).t =>
           (n i - ∑ c, b.ry (uTop (X.S C0 CE1 CE2) i) c) / (X.S C0 CE1 CE2).P X.p (uTop (X.S C0 CE1 CE2) i) - x.1 i) := by
-  apply letters_ext
+  apply Formalism.GM.TM.letters_ext
   · rfl
   · funext q
     simp only [Formalism.GM.M.Letters.setTies]
@@ -298,7 +251,7 @@ theorem lLL_ovr (a : Fin X.s → ℕ) (n : Fin (X.S C0 CE1 CE2).t → ℕ) (b : 
       rw [deg_eta C0 CE1 CE2 X _ b x _ q hjq]
       have he : ∃ i, uTop (X.S C0 CE1 CE2) i = uTop (X.S C0 CE1 CE2) (Classical.choose h) := ⟨_, rfl⟩
       have hov : ovr (uTop (X.S C0 CE1 CE2)) a n (uTop (X.S C0 CE1 CE2) (Classical.choose h)) = n (Classical.choose h) := by
-        simp only [ovr, dif_pos he]
+        simp only [ovr, dite_eq_left he]
         rw [uTop_inj C0 CE1 CE2 X (Classical.choose_spec he)]
       simp only [coarseC, hov]
       rfl
@@ -308,7 +261,7 @@ theorem lLL_ovr (a : Fin X.s → ℕ) (n : Fin (X.S C0 CE1 CE2).t → ℕ) (b : 
           rintro ⟨i, rfl⟩
           simp only [uTop] at hl
           omega
-        simp only [ovr, dif_neg hne]
+        simp only [ovr, dite_eq_right hne]
       · rintro ⟨i, hi⟩
         exact h ⟨i, hi⟩
 

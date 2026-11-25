@@ -254,7 +254,7 @@ theorem genericHomAt_relation (hd : d.AxH 𝒜) (c : ι) (j0 : Fin (d.N + 1)) (h
         (fun k => MvPolynomial.X (Sum.inr (i, k))) j) := by
     intro j
     rw [← hTdef]
-    simp only [Data.sH, sHom, MvPolynomial.aeval_X, sImg, if_neg hi]
+    simp only [Data.sH, sHom, MvPolynomial.aeval_X, sImg, ite_eq_right hi]
   have hCr : ∀ a : Ω c, algebraMap (MvPolynomial (SVar d.D d.N) (Ω c)) (OmS (Ω c) d.D d.N) (MvPolynomial.C a) =
       algebraMap (Ω c) (OmS (Ω c) d.D d.N) a := by
     intro a

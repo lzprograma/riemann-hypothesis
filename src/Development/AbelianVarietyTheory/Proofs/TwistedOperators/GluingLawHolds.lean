@@ -91,8 +91,6 @@ open scoped TensorProduct InnerProductSpace
 
 namespace GlobalTheory.Chain.RealIt.GlueProof
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {a b : ℕ}
 
 
@@ -158,18 +156,18 @@ theorem rai_ins (τ : D.what₂.Tau) (P : D.what₂.Tau → LPol b a) (ε : Fin 
     (i : Fin b) (j : Fin a) (p : LPol b a) : raiO τ ε ε' i j (ins τ P p) = ins τ P (rai ε ε' i j p) := by
   unfold raiO rai
   by_cases h : ε' i = ε j
-  · simp only [h, if_true, LinearMap.smul_apply, LinearMap.mulLeft_apply, map_smul]
+  · simp only [h, ite_true, LinearMap.smul_apply, LinearMap.mulLeft_apply, map_smul]
     rw [← mul_ins]
-  · simp only [h, if_false, LinearMap.smul_apply, LinearMap.neg_apply, map_smul, map_neg, Derivation.coeFn_coe]
+  · simp only [h, ite_false, LinearMap.smul_apply, LinearMap.neg_apply, map_smul, map_neg, Derivation.coeFn_coe]
     rw [← pderiv_ins]
 
 theorem low_ins (τ : D.what₂.Tau) (P : D.what₂.Tau → LPol b a) (ε : Fin a → Bool) (ε' : Fin b → Bool)
     (i : Fin b) (j : Fin a) (p : LPol b a) : lowO τ ε ε' i j (ins τ P p) = ins τ P (low ε ε' i j p) := by
   unfold lowO low
   by_cases h : ε' i = ε j
-  · simp only [h, if_true, LinearMap.smul_apply, map_smul, Derivation.coeFn_coe]
+  · simp only [h, ite_true, LinearMap.smul_apply, map_smul, Derivation.coeFn_coe]
     rw [← pderiv_ins]
-  · simp only [h, if_false, LinearMap.smul_apply, LinearMap.mulLeft_apply, map_smul]
+  · simp only [h, ite_false, LinearMap.smul_apply, LinearMap.mulLeft_apply, map_smul]
     rw [← mul_ins]
 
 theorem fockS_ins (τ : D.what₂.Tau) (P : D.what₂.Tau → LPol b a) (ε : Fin a → Bool) (ε' : Fin b → Bool)

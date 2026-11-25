@@ -152,7 +152,7 @@ theorem secM_le_chartLat {y : (Σ k, ι k) → Ω} {a : K → ℤ} {m N : ℕ} {
         exfalso
         apply hk
         have h0 := hg α hα (some k)
-        simp only [blockDeg, reduceCtorEq, if_false] at h0
+        simp only [blockDeg, reduceCtorEq, ite_false] at h0
         exact (Finset.sum_eq_zero_iff.mp h0) i (Finset.mem_univ i)
   | zero => exact zero_mem _
   | add x x' _ _ hx hx' => exact add_mem hx hx'

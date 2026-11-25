@@ -57,7 +57,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.T
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj BigOperators
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory GlobalTheory.Ex GlobalTheory.ThetaPtMove GlobalTheory.ConstFam
 open GlobalTheory.Ex.OneGen GlobalTheory.UT
 
@@ -120,8 +119,7 @@ def nonnegSubring {F K : Type} [Field F] [Field K] (v : AddValuation F (WithTop 
     simp only [Set.mem_setOf_eq]
     by_cases hx : x = 0
     · left; simp [hx]
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have h1 : v (e x) + v (e x⁻¹) = 0 := by
       rw [← AddValuation.map_mul, ← map_mul, mul_inv_cancel₀ hx, map_one, AddValuation.map_one]
     have h2 : v (e x) + v (e x⁻¹) < 0 := by

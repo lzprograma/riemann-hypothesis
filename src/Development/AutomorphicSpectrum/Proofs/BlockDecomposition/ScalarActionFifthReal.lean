@@ -3,51 +3,8 @@ module
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.LeviCommutantWordReduction
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ShiftedCapelliDeterminantSubleadingCoeffTrace
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommutingHeckeCapelliOperators
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -91,24 +48,22 @@ theorem qdetNext : ∀ (A : Type) [Ring A] [Algebra ℂ A] (m : ℕ) (E : Fin (m
       simp
     · intro σ _ hσ
       obtain ⟨k, hk⟩ : ∃ k, σ k ≠ k := by
-        by_contra hne
-        push_neg at hne
+        by_contra! hne
         exact hσ (Equiv.ext hne)
-      rw [hc1 σ, Finset.prod_eq_zero (mem_univ k) (if_neg hk), zero_smul, mul_zero]
+      rw [hc1 σ, Finset.prod_eq_zero (mem_univ k) (ite_eq_right hk), zero_smul, mul_zero]
     · intro h1
       exact absurd (mem_univ _) h1
   · simp only
     rw [Finset.sum_eq_single (1 : Equiv.Perm (Fin (m + 1)))]
     · rw [hc0 1]
       simp only [Equiv.Perm.sign_one, Units.val_one, Int.cast_one, one_mul, Equiv.Perm.coe_one,
-        id_eq, if_true, ite_self, prod_const_one, one_smul]
+        id_eq, ite_true, ite_self, prod_const_one, one_smul]
       rw [sum_add_distrib, add_comm]
       congr 1
       simp only [Algebra.algebraMap_eq_smul_one, ← sum_smul]
     · intro σ _ hσ
       obtain ⟨k₀, hk₀⟩ : ∃ k, σ k ≠ k := by
-        by_contra hne
-        push_neg at hne
+        by_contra! hne
         exact hσ (Equiv.ext hne)
       rw [hc0 σ]
       have hz : ∀ k, (∏ j, (if j = k then (1 : ℂ) else (if σ j = j then (1 : ℂ) else 0))) = 0 := by
@@ -203,7 +158,7 @@ theorem coeff_prod_top {A : Type} [CommRing A] [Nontrivial A] {κ : Type} (S : F
   have hd : (∏ a ∈ S, (X + C (f a))).natDegree = S.card := by
     rw [natDegree_prod_of_monic _ _ hm]; simp
   have hc : S.card ≠ 0 := (Finset.card_pos.2 hS).ne'
-  rw [nextCoeff, if_neg (by rw [hd]; exact hc), hd] at h1
+  rw [nextCoeff, ite_eq_right (by rw [hd]; exact hc), hd] at h1
   rw [h1]
   exact Finset.sum_congr rfl fun a _ => nextCoeff_X_add_C _
 
@@ -310,7 +265,7 @@ theorem splitLocal : ∀ (A : Type) [CommRing A] [IsLocalRing A] (κ : Type) [De
     refine ⟨fun a => if a ∈ S1 then j else π0 a, fun a ha => ?_, fun i hi => ?_⟩
     · by_cases haS : a ∈ S1
       · simp [haS]
-      · simp only [haS, if_false]
+      · simp only [haS, ite_false]
         exact mem_insert_of_mem (h1 a (Finset.mem_sdiff.2 ⟨ha, haS⟩))
     · rcases Finset.mem_insert.1 hi with rfl | hiJ
       · have : S.filter (fun a => (if a ∈ S1 then i else π0 a) = i) = S1 := by
@@ -319,7 +274,7 @@ theorem splitLocal : ∀ (A : Type) [CommRing A] [IsLocalRing A] (κ : Type) [De
           constructor
           · rintro ⟨haS, hq⟩
             by_contra hn
-            simp only [hn, if_false] at hq
+            simp only [hn, ite_false] at hq
             exact hj (hq ▸ h1 a (Finset.mem_sdiff.2 ⟨haS, hn⟩))
           · intro ha
             exact ⟨hs ha, by simp [ha]⟩
@@ -535,7 +490,7 @@ theorem capPoly {R : Type} [CommRing R] [Nontrivial R] [Algebra ℂ R] {A : Type
   have hdeg : r.degree < t := by
     rw [degree_lt_iff_coeff_zero]
     intro m hm
-    rw [hcoef, if_neg (by omega)]
+    rw [hcoef, ite_eq_right (by omega)]
   refine ⟨X ^ t + r, monic_X_pow_add hdeg, by rw [natDegree_add_eq_left_of_degree_lt (by rwa [degree_X_pow]), natDegree_X_pow], fun u => ?_, fun k hk => ?_⟩
   · rw [hq u, Finset.sum_range_succ, h1, eval_add, eval_pow, eval_X, map_add (f := _), map_pow, add_comm]
     congr 1
@@ -714,7 +669,7 @@ theorem capComm : ∀ (n : ℕ) (lev : Fin n → ℕ) (H : Type) [AddCommGroup H
         have := congrArg lev e; rwa [lev_blkE lev, lev_blkE lev] at this)
       have hne2 : blkE lev j' d ≠ blkE lev j a := fun e => hjj (by
         have := congrArg lev e; rw [lev_blkE lev, lev_blkE lev] at this; exact this.symm)
-      rw [if_neg hne1, if_neg hne2, sub_zero] at h
+      rw [ite_eq_right hne1, ite_eq_right hne2, sub_zero] at h
       exact sub_eq_zero.1 h
   refine ⟨same F1 fun a b c d h1 h2 => (hF a b c d h1 h2).1, same F2 fun a b c d h1 h2 => (hF a b c d h1 h2).2.1, ?_⟩
   rw [capS_eq, capS_eq]

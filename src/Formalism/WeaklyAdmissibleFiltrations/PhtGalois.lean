@@ -4,53 +4,9 @@ public import Formalism.WeaklyAdmissibleFiltrations.CocyclesFunctorial
 public import Formalism.WeaklyAdmissibleFiltrations.CrystallineStableLifts.ExLattice
 public import Formalism.WeaklyAdmissibleFiltrations.CrystallineStableLifts.Galois
 public import Formalism.WeaklyAdmissibleFiltrations.CrystallineStableLifts.TrivCrys
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.WeaklyAdmissibleFiltrations.CrystallineStableLifts.ExistsPeriodRingDataHolds, Formalism.WeaklyAdmissibleFiltrations.CrystallineStableLifts.WachCol, Formalism.WeaklyAdmissibleFiltrations.PhtGalois
@@ -95,7 +51,7 @@ lemma lpScale_coeff (c : ℚˣ) (f : LaurentPolynomial ℚ) (m : ℤ) :
       AddMonoidAlgebra.coeff_smul_apply, T_apply, smul_eq_mul, smul_eq_mul]
     by_cases h : n = m
     · subst h
-      simp only [if_true]
+      simp only [ite_true]
       ring
     · simp [h]
 
@@ -131,8 +87,8 @@ lemma lpTwo_fix (f : LaurentPolynomial ℚ) (h : lpScaleE lpTwo f = f) :
   refine LaurentPolynomial.ext fun a => ?_
   rw [← C_eq_algebraMap, C_apply]
   by_cases ha : a = 0
-  · rw [if_pos ha, ha]
-  · rw [if_neg ha]
+  · rw [ite_eq_left ha, ha]
+  · rw [ite_eq_right ha]
     have h' := congrArg (fun g : LaurentPolynomial ℚ => g.coeff a) h
     simp only [lpScaleE_coeff, lpTwo_zpow] at h'
     have h2 : (2 : ℚ) ^ a ≠ 1 := fun h1 => ha ((zpow_eq_one_iff_right₀ (by norm_num) (by norm_num)).mp h1)
@@ -154,7 +110,7 @@ lemma lpFil_mul (a b : ℤ) (x y : LaurentPolynomial ℚ) (hx : x ∈ lpFil a) (
   rw [AddMonoidAlgebra.coeff_mul]
   simp only [Finsupp.sum]
   refine Finset.sum_eq_zero fun i hi => Finset.sum_eq_zero fun j hj => ?_
-  rw [if_neg]
+  rw [ite_eq_right]
   intro hij
   have hi' : ¬ i < a := fun h => (Finsupp.mem_support_iff.mp hi) (hx i h)
   have hj' : ¬ j < b := fun h => (Finsupp.mem_support_iff.mp hj) (hy j h)
@@ -197,7 +153,7 @@ theorem existsPeriodRingData_holds : ExPD := by
     ι_comm := fun _ _ => rfl
     Fil := lpFil
     Fil_anti := fun a f hf m hm => hf m (by omega)
-    one_mem := fun m hm => by rw [← T_zero, T_apply, if_neg (by omega)]
+    one_mem := fun m hm => by rw [← T_zero, T_apply, ite_eq_right (by omega)]
     Fil_mul := lpFil_mul
     Fil_exh := fun x => by
       refine ⟨-(∑ i ∈ x.coeff.support, |i|), fun m hm => ?_⟩
@@ -226,10 +182,10 @@ theorem existsPeriodRingData_holds : ExPD := by
       · subst h
         norm_num
       · simp [h]
-    mem_filtration_one := fun m hm => by rw [AlgHom.id_apply, T_apply, if_neg (by omega)]
+    mem_filtration_one := fun m hm => by rw [AlgHom.id_apply, T_apply, ite_eq_right (by omega)]
     not_mem_filtration_two := fun h => by
       have h1 := h 1 (by norm_num)
-      rw [AlgHom.id_apply, T_apply, if_pos rfl] at h1
+      rw [AlgHom.id_apply, T_apply, ite_eq_left rfl] at h1
       exact one_ne_zero h1
     fund := fun b hb _ => ⟨b.coeff 0, lpTwo_fix b hb⟩ }⟩
 

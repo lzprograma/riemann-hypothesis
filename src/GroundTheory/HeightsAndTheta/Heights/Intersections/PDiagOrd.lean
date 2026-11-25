@@ -52,15 +52,6 @@ theorem multAt_sup_span_eq {P W : Ideal (MRing ι)} [P.IsPrime] (hW : W.IsPrime)
 
 end Orders
 
-section Diagonal
-
-variable {Ω : Type} [Field Ω] {ι ν κ : Type} [Fintype ι] [Fintype ν] [Fintype κ] {E : Type} [AddCommGroup E]
-  [Module Ω E] {Φ : Type} [Field Φ] [Algebra Ω Φ]
-
-
-
-end Diagonal
-
 end DiagonalOrder
 
 

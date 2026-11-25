@@ -4,8 +4,6 @@ public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsComb
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 open Finset Comb
@@ -17,25 +15,21 @@ theorem CombTableEqWords.proof (h1 : CombCardYoungCells.Statement)
     CombTableEqWords.Statement := by
   intro m lam hlam
   classical
-  let e : {T : youngCells lam ≃ Fin (youngCells lam).card // IsStandard T} ≃
+  let toWord (T : {T : youngCells lam ≃ Fin (youngCells lam).card // IsStandard T}) :
       latticeWords (youngCells lam).card lam :=
-    { toFun := fun T => ⟨rowWord T.1, (h2 m lam hlam T.1 T.2).1⟩
-      invFun := fun w => ⟨Classical.choose (h3 m lam hlam w.1 w.2),
-        (Classical.choose_spec (h3 m lam hlam w.1 w.2)).1⟩
-      left_inv := by
-        rintro ⟨T, hT⟩
-        have hs := Classical.choose_spec (h3 m lam hlam (rowWord T) (h2 m lam hlam T hT).1)
-        apply Subtype.ext
-        have k1 := (h2 m lam hlam _ hs.1).2
-        have k2 := (h2 m lam hlam T hT).2
-        have hsymm : (Classical.choose
-            (h3 m lam hlam (rowWord T) (h2 m lam hlam T hT).1)).symm = T.symm := by
-          refine Equiv.ext fun t => Subtype.ext ?_
-          rw [← k1 t, ← k2 t, hs.2]
-        simpa using congrArg Equiv.symm hsymm
-      right_inv := by
-        rintro ⟨w, hw⟩
-        exact Subtype.ext (Classical.choose_spec (h3 m lam hlam w hw)).2 }
+    ⟨rowWord T.1, (h2 m lam hlam T.1 T.2).1⟩
+  have hbij : Function.Bijective toWord := by
+    refine ⟨?_, fun w => ?_⟩
+    · intro T U hTU
+      apply Subtype.ext
+      have hsymm : T.1.symm = U.1.symm := by
+        refine Equiv.ext fun t => Subtype.ext ?_
+        rw [← (h2 m lam hlam T.1 T.2).2 t, ← (h2 m lam hlam U.1 U.2).2 t]
+        exact congrArg (fun w => cellOfWord w.1 t) hTU
+      simpa using congrArg Equiv.symm hsymm
+    · obtain ⟨T, hT, hw⟩ := h3 m lam hlam w.1 w.2
+      exact ⟨⟨T, hT⟩, Subtype.ext hw⟩
+  let e := Equiv.ofBijective toWord hbij
   show Nat.card {T : youngCells lam ≃ Fin (youngCells lam).card // IsStandard T} = _
   rw [Nat.card_congr e, Nat.card_eq_fintype_card, Fintype.card_coe, h1 m lam]
 

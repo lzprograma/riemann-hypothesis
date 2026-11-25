@@ -4,41 +4,6 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.Intersection
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.CyclicBaseChangeC
 public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.LocHeckeInert
 public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SummandFactor
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
 
 @[expose] public section
@@ -117,19 +82,6 @@ def bor {F₀ : Type} [Field F₀] {n : ℕ} (θ : Fin n → (F₀ˣ →* ℂˣ)
 
 def borCard (F₀ : Type) [Field F₀] (n : ℕ) : ℕ :=
   Nat.card {g : GL (Fin n) F₀ // (g : Matrix (Fin n) (Fin n) F₀).BlockTriangular id}
-
-def indBor {F₀ : Type} [Field F₀] {n : ℕ} (t : GL (Fin n) F₀ →* GL (Fin n) F₀) (θ : Fin n → (F₀ˣ →* ℂˣ)) (g : GL (Fin n) F₀) : ℂ :=
-  (borCard F₀ n : ℂ)⁻¹ * ∑ᶠ x : GL (Fin n) F₀, bor θ (x⁻¹ * g * t x)
-
-def TorFin : Prop :=
-  ∀ (F₀ : Type) [Field F₀] [Fintype F₀] (n : ℕ) (θ : Fin n → (F₀ˣ →* ℂˣ)) (W : Type) [AddCommGroup W] [Module ℂ W]
-    [FiniteDimensional ℂ W] (r : Representation ℂ (GL (Fin n) F₀) W),
-    (∀ a b, indBor (MonoidHom.id _) θ (b⁻¹ * a * b) = indBor (MonoidHom.id _) θ a) ∧
-    ((∃ x : W, x ≠ 0 ∧ ∀ g, bor θ g ≠ 0 → r g x = bor θ g • x) →
-      LinearMap.trace ℂ W (∑ᶠ g, indBor (MonoidHom.id _) (fun i => (θ i)⁻¹) g • r g) ≠ 0) ∧
-    ∀ (t : GL (Fin n) F₀ →* GL (Fin n) F₀) (A : W →ₗ[ℂ] W), (∀ g, r (t g) ∘ₗ A = A ∘ₗ r g) →
-      LinearMap.trace ℂ W (∑ᶠ g, indBor t (fun i => (θ i)⁻¹) g • (r g ∘ₗ A)) ≠ 0 →
-      ∃ x : W, x ≠ 0 ∧ ∀ g, bor θ g ≠ 0 → r g x = bor θ g • x
 
 def FinAct : Prop :=
   ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (F₀ : Type) [Field F₀] [Fintype F₀]

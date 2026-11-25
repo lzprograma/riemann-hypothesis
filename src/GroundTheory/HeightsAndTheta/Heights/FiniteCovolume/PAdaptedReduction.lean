@@ -4,7 +4,6 @@ public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsAdap
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsHyperbolicPairs
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StLineNormalForm
 public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StComplementLattice
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 

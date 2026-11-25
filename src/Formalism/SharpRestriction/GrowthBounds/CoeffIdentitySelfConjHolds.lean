@@ -27,57 +27,11 @@ public import Formalism.LocalToGlobal.CharacterGerms.RowTieDefs
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import Formalism.LocalToGlobal.CharacterGerms.SubstSubst
 import Formalism.SharpRestriction.GrowthBounds.CoeffIdentityPlainChartOfThree
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Lemma
 import Mathlib.Topology.Sheaves.Presheaf
 import Formalism.LocalToGlobal.CharacterGerms.RowTieJet
 import Formalism.LocalToGlobal.CharacterGerms.TripleSubstSecondCoordinate
 import Mathlib.Algebra.Order.Star.Int
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.CoeffGaugeSquareLowDegree, Formalism.LocalToGlobal.CharacterGerms.CoeffPowCharFrobenius, Formalism.LocalToGlobal.CharacterGerms.CoeffFirstPairingLinear, Formalism.LocalToGlobal.CharacterGerms.FrobPowSmul, Formalism.LocalToGlobal.CharacterGerms.MmMulSeries, Formalism.SharpRestriction.GrowthBounds.ConstantCoeffUnshiftLogarithm, Formalism.SharpRestriction.GrowthBounds.R1sExpLowHolds, Formalism.SharpRestriction.GrowthBounds.SumRescaleTySTwo, Formalism.SharpRestriction.GrowthBounds.CoeffIdentitySelfConjOfFourOpen, Formalism.SharpRestriction.GrowthBounds.RescaleInV, Formalism.SharpRestriction.GrowthBounds.CoeffIdentitySelfConjOfTwo, Formalism.SharpRestriction.GrowthBounds.GenIntSPsubst, Formalism.SharpRestriction.GrowthBounds.CoeffIdentitySelfConjHolds
@@ -125,7 +79,7 @@ theorem zdeg_single1 (i : κ) (k : ℕ) : zdeg (Finsupp.single ((1 : Fin 2), i) 
   rw [Finset.sum_eq_single i]
   · simp
   · intro b _ hb
-    rw [Finsupp.single_apply, if_neg]
+    rw [Finsupp.single_apply, ite_eq_right]
     intro h
     exact hb (Prod.mk.inj h).2.symm
   · intro h
@@ -152,7 +106,7 @@ theorem Kd_prod {a : Fin 2 × κ → MvPowerSeries (Fin 2) C} {m : ℕ} (ha : �
         unfold zdeg
         apply Finset.sum_eq_zero
         intro b _
-        rw [Finsupp.single_apply, if_neg]
+        rw [Finsupp.single_apply, ite_eq_right]
         intro h
         exact hg (Prod.mk.inj h).1
       rw [this, mul_zero]
@@ -199,14 +153,14 @@ theorem coeff_embedFirstVar (a b : ℕ) (f : PowerSeries C) :
   rw [PowerSeries.coeff_subst (PowerSeries.HasSubst.of_constantCoeff_zero (constantCoeff_X 0))]
   simp only [coeff_X_pow, ee_eq_single0]
   by_cases hb : b = 0
-  · rw [if_pos hb, finsum_eq_single _ a]
+  · rw [ite_eq_left hb, finsum_eq_single _ a]
     · simp [hb]
     · intro k hk
-      rw [if_neg (fun h => hk h.1.symm), smul_zero]
-  · rw [if_neg hb]
+      rw [ite_eq_right (fun h => hk h.1.symm), smul_zero]
+  · rw [ite_eq_right hb]
     apply finsum_eq_zero_of_forall_eq_zero
     intro k
-    rw [if_neg (fun h => hb h.2), smul_zero]
+    rw [ite_eq_right (fun h => hb h.2), smul_zero]
 
 theorem coeff_embedSecondVar (a b : ℕ) (f : PowerSeries C) :
     coeff (ee a b) (inV 1 f) = if a = 0 then PowerSeries.coeff b f else 0 := by
@@ -214,19 +168,19 @@ theorem coeff_embedSecondVar (a b : ℕ) (f : PowerSeries C) :
   rw [PowerSeries.coeff_subst (PowerSeries.HasSubst.of_constantCoeff_zero (constantCoeff_X 1))]
   simp only [coeff_X_pow, ee_eq_single1]
   by_cases ha : a = 0
-  · rw [if_pos ha, finsum_eq_single _ b]
+  · rw [ite_eq_left ha, finsum_eq_single _ b]
     · simp [ha]
     · intro k hk
-      rw [if_neg (fun h => hk h.2.symm), smul_zero]
-  · rw [if_neg ha]
+      rw [ite_eq_right (fun h => hk h.2.symm), smul_zero]
+  · rw [ite_eq_right ha]
     apply finsum_eq_zero_of_forall_eq_zero
     intro k
-    rw [if_neg (fun h => ha h.1), smul_zero]
+    rw [ite_eq_right (fun h => ha h.1), smul_zero]
 
 theorem coeff_inV_mul (n j : ℕ) (P Q : PowerSeries C) :
     coeff (ee n j) (inV 1 P * inV 0 Q) = PowerSeries.coeff j P * PowerSeries.coeff n Q := by
   rw [MvPowerSeries.coeff_mul, Finset.sum_eq_single (ee 0 j, ee n 0)]
-  · rw [coeff_embedSecondVar, coeff_embedFirstVar, if_pos rfl, if_pos rfl]
+  · rw [coeff_embedSecondVar, coeff_embedFirstVar, ite_eq_left rfl, ite_eq_left rfl]
   · rintro ⟨p, q⟩ hpq hne
     have e := Finset.HasAntidiagonal.mem_antidiagonal.1 hpq
     have e0 : p 0 + q 0 = n := by
@@ -245,8 +199,8 @@ theorem coeff_inV_mul (n j : ℕ) (P Q : PowerSeries C) :
         have h1 : p 1 = j := by omega
         have h2 : q 0 = n := by omega
         rw [h1, h2]
-      · rw [if_neg hq, mul_zero]
-    · rw [if_neg hp, zero_mul]
+      · rw [ite_eq_right hq, mul_zero]
+    · rw [ite_eq_right hp, zero_mul]
   · intro h
     exfalso
     apply h
@@ -264,7 +218,7 @@ theorem iota_inj : Function.Injective (fun x : κ => ((0 : Fin 2), x)) := fun _ 
 
 theorem coeff_X_mul_rho (i : κ) (F : MvPowerSeries κ C) (e : Fin 2 × κ →₀ ℕ) (h : e (1, i) = 0) :
     coeff e (MvPowerSeries.X ((1 : Fin 2), i) * rho F) = 0 := by
-  rw [X_def, coeff_monomial_mul, if_neg]
+  rw [X_def, coeff_monomial_mul, ite_eq_right]
   intro hle
   have := hle (1, i)
   rw [Finsupp.single_eq_same, h] at this
@@ -297,8 +251,8 @@ theorem coeff_gaugeSquare_low_degree (X : RawChart C d I κ)
       intro s
       by_cases hs : s = (1, i0)
       · subst hs; rw [Finsupp.single_eq_same, h1]
-      · rw [Finsupp.single_apply, if_neg (fun h => hs h.symm)]; exact Nat.zero_le _
-    rw [X_def, coeff_monomial_mul, if_pos hle, one_mul]
+      · rw [Finsupp.single_apply, ite_eq_right (fun h => hs h.symm)]; exact Nat.zero_le _
+    rw [X_def, coeff_monomial_mul, ite_eq_left hle, one_mul]
     set e' := e - Finsupp.single ((1 : Fin 2), i0) 1 with he'
     have hee : e' + Finsupp.single ((1 : Fin 2), i0) 1 = e := tsub_add_cancel_of_le hle
     have hran : (↑e'.support : Set (Fin 2 × κ)) ⊆ Set.range (fun x : κ => ((0 : Fin 2), x)) := by
@@ -333,9 +287,9 @@ theorem r1sHLin_holds : GaugeLeadingTermLinear := by
     rw [← coeff_zero_eq_constantCoeff_apply, ← ee_00]
     fin_cases j
     · show coeff (ee 0 0) (inV 0 f) = 0
-      rw [coeff_embedFirstVar, if_pos rfl, PowerSeries.coeff_zero_eq_constantCoeff_apply, hf]
+      rw [coeff_embedFirstVar, ite_eq_left rfl, PowerSeries.coeff_zero_eq_constantCoeff_apply, hf]
     · show coeff (ee 0 0) (inV 1 f) = 0
-      rw [coeff_embedSecondVar, if_pos rfl, PowerSeries.coeff_zero_eq_constantCoeff_apply, hf]
+      rw [coeff_embedSecondVar, ite_eq_left rfl, PowerSeries.coeff_zero_eq_constantCoeff_apply, hf]
   have ha0 : ∀ s, constantCoeff (a s) = 0 := by
     rintro ⟨g, i⟩
     rcases fin_two_eq_zero_or_eq_one g with rfl | rfl
@@ -409,12 +363,6 @@ open Classical
 namespace Formalism.L2.FormalSeriesBounds
 
 open ValuationNonnegativity
-
-namespace FrobP
-
-variable {C : Type} [Field C] {V : VF C}
-
-end FrobP
 
 
 namespace FrobP
@@ -517,7 +465,7 @@ theorem frobPowMv {σ : Type} (F : MvPowerSeries σ C) (hF : IntS V F) (α : σ 
 
         rw [map_sub, sub_eq_zero, hPdef, map_sum]
         simp only [coeff_monomial]
-        rw [Finset.sum_ite_eq, if_pos (Finset.mem_Iic.2 hx1)]
+        rw [Finset.sum_ite_eq, ite_eq_left (Finset.mem_Iic.2 hx1)]
       rw [hc, zero_mul]
     rwa [map_sub, sub_eq_zero] at h0
   have e2 := frob_sum (Finset.Iic α) (fun β => monomial β (coeff β F)) hmon α
@@ -531,9 +479,9 @@ theorem frobPowMv {σ : Type} (F : MvPowerSeries σ C) (hF : IntS V F) (α : σ 
         ext t
         rw [Finsupp.smul_apply, smul_eq_mul, divL_apply, Nat.mul_div_cancel' (hdiv t)]
       rw [Finset.sum_eq_single (divL V.l α)]
-      · rw [if_pos hβ]
+      · rw [ite_eq_left hβ]
       · intro b _ hb
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h
         apply hb
         ext t
@@ -548,7 +496,7 @@ theorem frobPowMv {σ : Type} (F : MvPowerSeries σ C) (hF : IntS V F) (α : σ 
         rw [divL_apply]
         exact Nat.div_le_self _ _
     · refine Finset.sum_eq_zero fun b _ => ?_
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       apply hdiv
       intro t
@@ -558,19 +506,6 @@ theorem frobPowMv {σ : Type} (F : MvPowerSeries σ C) (hF : IntS V F) (α : σ 
   exact e2
 
 end Gen
-
-section Slice
-
-variable {C : Type} [Field C] [CharZero C] {dd : ℕ}
-
-end Slice
-
-section FBs
-
-variable {C : Type} [Field C] [CharZero C] {V : VF C} {O : Type} [CommRing O] [StarRing O] {dd : ℕ}
-  (Y : FBChart C V O dd)
-
-end FBs
 
 end PhPowP
 
@@ -598,7 +533,7 @@ theorem frobPow_smul : ∀ (C : Type) [Field C] (V : VF C) (σ : Type) (f : MvPo
   have hdl : PhPowP.divL V.l (V.l • μ) = μ := by
     ext t
     rw [PhPowP.divL_apply, Finsupp.smul_apply, smul_eq_mul, Nat.mul_div_cancel_left _ hl]
-  rw [if_pos hdiv, hdl] at h
+  rw [ite_eq_left hdiv, hdl] at h
   exact h
 
 end Formalism.L2.FormalSeriesBounds
@@ -622,10 +557,6 @@ namespace Formalism.L2.FormalSeriesBounds
 namespace RootsP
 
 variable {C : Type} [Field C] {V : VF C}
-
-private lemma ge0_zero_lemma_2 : V.Ge 0 (0 : C) := by
-  simp only [VF.Ge, AddValuation.map_zero]
-  exact le_top
 
 private lemma ge0_add_lemma_4 {x y : C} (hx : V.Ge 0 x) (hy : V.Ge 0 y) : V.Ge 0 (x + y) := by
   simp only [VF.Ge] at hx hy ⊢
@@ -1345,8 +1276,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators
@@ -1635,7 +1564,7 @@ theorem hAt_subst (X : RawChart C d I κ) {τ ρ : Type} [Finite τ] {c b : κ �
 theorem gen_van_X (i : κ) :
     Van (Set.range (Sum.inl : κ → κ ⊕ Unit)) (MvPowerSeries.X (Sum.inl i) : MvPowerSeries (κ ⊕ Unit) C) := by
   intro ν hν
-  rw [MvPowerSeries.coeff_X, if_neg]
+  rw [MvPowerSeries.coeff_X, ite_eq_right]
   rintro rfl
   exact hν (Sum.inl i) (by simp) ⟨i, rfl⟩
 
@@ -1652,7 +1581,7 @@ theorem gen_van_hAt (X : RawChart C d I κ)
     · exact hb _
   · intro q hq
     unfold pairSubst
-    rw [if_pos (show q.1 = 0 from hq)]
+    rw [ite_eq_left (show q.1 = 0 from hq)]
     exact gen_van_X _
   · intro e he
     exact h0 e fun s hs => he s hs

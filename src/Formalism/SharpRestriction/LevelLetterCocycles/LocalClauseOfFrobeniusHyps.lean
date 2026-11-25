@@ -7,47 +7,10 @@ import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.GoodOf
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HodgeFontaineExactness.OneNotMemFilOne
 public import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusIterateUniformizerUnitProducts
 public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkFilLetter
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 public import Mathlib.RingTheory.PowerSeries.Inverse
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVOfNotJump
+import Formalism.SharpRestriction.LevelLetterCocycles.KillerLevCoreOf
 
 @[expose] public section
 
@@ -74,36 +37,11 @@ theorem fildR_succ_le (τ : K →ₐ[Qp] LL) (a : ℤ) : FildR PD ρ τ (a + 1) 
 
 theorem jumps_bdd (τ : K →ₐ[Qp] LL) [FiniteDimensional LL ↥(DdRE PD ρ τ)] :
     ∃ h : ℕ, ∀ a : ℤ, IsJumpV PD ρ τ a → a ≤ h := by
-  classical
-  have hfd : ∀ a, FiniteDimensional LL ↥(FildR PD ρ τ a) := fun a =>
-    Module.Finite.of_injective (Submodule.inclusion (inf_le_left : FildR PD ρ τ a ≤ DdRE PD ρ τ))
-      (Submodule.inclusion_injective _)
-  let f : ℤ → ℕ := fun a => finrank LL ↥(FildR PD ρ τ a)
-  have hanti : Antitone fun a => FildR PD ρ τ a := antitone_int_of_succ_le (fildR_succ_le PD ρ τ)
-  have hmono : ∀ a b : ℤ, a ≤ b → f b ≤ f a := fun a b hab =>
-    LinearMap.finrank_le_finrank_of_injective (Submodule.inclusion_injective (hanti hab))
-  have hlt : ∀ a, IsJumpV PD ρ τ a → f (a + 1) < f a := fun a ha =>
-    Submodule.finrank_lt_finrank_of_lt (lt_of_le_of_ne (fildR_succ_le PD ρ τ a) ha)
-  have hinj : Set.InjOn f {a | IsJumpV PD ρ τ a} := by
-    intro a ha b hb hab
-    rcases lt_trichotomy a b with h | h | h
-    · have := hmono (a + 1) b (by omega)
-      have := hlt a ha
-      simp only [f] at *
-      omega
-    · exact h
-    · have := hmono (b + 1) a (by omega)
-      have := hlt b hb
-      simp only [f] at *
-      omega
-  have himg : f '' {a | IsJumpV PD ρ τ a} ⊆ Set.Iic (finrank LL ↥(DdRE PD ρ τ)) := by
-    rintro _ ⟨a, -, rfl⟩
-    exact LinearMap.finrank_le_finrank_of_injective
-      (Submodule.inclusion_injective (inf_le_left : FildR PD ρ τ a ≤ DdRE PD ρ τ))
-  have hfin : {a | IsJumpV PD ρ τ a}.Finite :=
-    Set.Finite.of_finite_image ((Set.finite_Iic _).subset himg) hinj
-  obtain ⟨M, hM⟩ := hfin.bddAbove
-  exact ⟨M.toNat, fun a ha => (hM ha).trans (Int.self_le_toNat M)⟩
+  obtain ⟨hi, hhi⟩ := Formalism.MainNotions.N.Pv.LocalLengthBound.rk_fildR_hi PD ρ τ
+  refine ⟨hi.toNat, fun a ha => ?_⟩
+  by_contra! h
+  have hle : hi ≤ a := (Int.self_le_toNat hi).trans h.le
+  exact ha ((hhi _ (by lia)).trans (hhi _ hle).symm)
 
 end Jumps
 
@@ -138,7 +76,7 @@ theorem exists_ub (W : LocWach PD LL O v n) (hbij : Function.Bijective (algebraM
   intro i τ hτ a ha
   have hex : ∃ τ, Formalism.MainNotions.LiftingTheory.Over W τ i := ⟨τ, hτ⟩
   have he : hex.choose = τ := over_unique W hbij hex.choose_spec hτ
-  simp only [dif_pos hex]
+  simp only [dite_eq_left hex]
   have := hH τ a ha
   rw [← he] at this
   exact this
@@ -207,8 +145,7 @@ theorem Frobenius_divisibility_unique_solution [IsDomain O] (hR : RingA W) (hs :
       simpa [Formalism.ExponentWindows.E.Lat.dφ, t] using this
     refine ⟨∑ i, (z i).d, ⟨?_, ?_⟩, ?_⟩
     · exact mul_mem_sum T _ _ hzd
-    · set_option synthInstance.maxHeartbeats 100000 in
-        rw [map_sum, ← sum_shift (fun i => W.φD T (z i).d), ← Finset.sum_sub_distrib]
+    · rw [map_sum, ← sum_shift (fun i => W.φD T (z i).d), ← Finset.sum_sub_distrib]
       rw [Finset.sum_congr rfl fun i _ => hdzi i, sum_letE_smul]
     · rintro Z ⟨⟨yZ, hyZ, rfl⟩, hZ⟩
       let z' : ZMod n → DV I T := fun i => toDV I ((letE i : LetA O n) • (W.π₀ ^ M • yZ))
@@ -286,17 +223,7 @@ theorem UPi_γA (g : W.Gam) {a : LetA O n} (ha : UPi PD.p a) : UPi PD.p (W.γA g
   ring
 
 theorem φpow_AΔ {a : LetA O n} (ha : a ∈ W.AΔ) (j : ℕ) : (W.φA ^ j) a ∈ W.AΔ := by
-  have step : ∀ b : LetA O n, b ∈ W.AΔ → W.φA b ∈ W.AΔ := by
-    intro b hb
-    show ∀ δ ∈ W.DelF, W.γA δ (W.φA b) = W.φA b
-    intro δ hδ
-    have hb' : W.γA δ b = b := hb δ hδ
-    rw [← W.φA_γA, hb']
-  induction j with
-  | zero => exact ha
-  | succ j ih =>
-    rw [pow_succ']
-    exact step _ ih
+  apply _root_.Formalism.MainNotions.UnusedSlot80.KL.φA_mem <;> assumption
 
 theorem γA_AΔ {a : LetA O n} (ha : a ∈ W.AΔ) (g : W.Gam) : W.γA g a ∈ W.AΔ := by
   intro δ hδ
@@ -720,7 +647,7 @@ theorem mem_π₀_of_const [IsDomain O] (hR : RingA W) {T : LocLat G Qp LL O} (h
       have h0 : PowerSeries.coeff m ((algebraMap O (LetA O n) c * a j) i) = 0 := by
         rw [hii, hw']
         simp only [Pi.mul_apply, Pi.pow_apply, letπ]
-        rw [mul_comm ((w' : LetA O n) i), mul_assoc, PowerSeries.coeff_X_pow_mul', if_neg (by omega)]
+        rw [mul_comm ((w' : LetA O n) i), mul_assoc, PowerSeries.coeff_X_pow_mul', ite_eq_right (by omega)]
       have h1 : PowerSeries.coeff m ((algebraMap O (LetA O n) c * a j) i) =
           c * PowerSeries.coeff m (a j i) := by
         simp [Pi.mul_apply, PowerSeries.coeff_C_mul]
@@ -906,7 +833,7 @@ theorem FTool_of (W : LocWach PD LL O v n)
     intro c hc x hx hlet
     have hmem : x ∈ W.Nl T (c + 1 - 1) := by rw [add_sub_cancel_right]; exact ⟨x, hx, hlet⟩
     have := qP_pow_mem hA.2.1 hR (W.N T) (h5T'.1 (c + 1) _ hmem)
-    simp only [Mi', add_sub_cancel_right, hc, if_true] at this
+    simp only [Mi', add_sub_cancel_right, hc, ite_true] at this
     exact this
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · intro i x hx hDL
@@ -944,7 +871,7 @@ theorem FTool_of (W : LocWach PD LL O v n)
         have hmem : (letE c : LetA O n) • y0 ∈ W.Nl T (c + 1 - 1) := by
           rw [add_sub_cancel_right]; exact ⟨y0, hy0, rfl⟩
         have := qP_pow_mem hA.2.1 hR (W.N T) (h5T'.1 (c + 1) _ hmem)
-        simp only [Mi', add_sub_cancel_right, hc, if_true] at this
+        simp only [Mi', add_sub_cancel_right, hc, ite_true] at this
         rw [e]
         exact this
       | zero => rw [smul_zero, smul_zero]; exact Submodule.zero_mem _

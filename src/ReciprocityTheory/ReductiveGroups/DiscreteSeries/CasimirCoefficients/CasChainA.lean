@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
 public import Mathlib.Analysis.SpecialFunctions.Complex.CircleMap
@@ -186,18 +187,8 @@ theorem cca_differentiableOn_fderiv_apply [FiniteDimensional ℂ X] [CompleteSpa
 
 theorem cca_contDiffOn_nat [FiniteDimensional ℂ X] [CompleteSpace E] {U : Set X} (hU : IsOpen U) :
     ∀ (k : ℕ) {F : X → E}, DifferentiableOn ℂ F U → ContDiffOn ℂ k F U := by
-  intro k
-  induction k with
-  | zero => intro F hF; exact contDiffOn_zero.2 hF.continuousOn
-  | succ k ih =>
-    intro F hF
-    have hk : ContDiffOn ℂ k (fderiv ℂ F) U := by
-      rw [contDiffOn_clm_apply]
-      intro u
-      exact ih (cca_differentiableOn_fderiv_apply hU hF u)
-    rw [Nat.cast_succ, contDiffOn_succ_iff_fderiv_of_isOpen hU]
-    first
-      | exact ⟨hF, fun h => absurd h (by simp), hk⟩
+  intros
+  apply _root_.GlobalTheory.SCV.contDiffOn_nat <;> assumption
 
 theorem cca_contDiffOn [FiniteDimensional ℂ X] [CompleteSpace E] {F : X → E} {U : Set X}
     (hU : IsOpen U) (hF : DifferentiableOn ℂ F U) : ContDiffOn ℂ ∞ F U := contDiffOn_infty.2 fun k => cca_contDiffOn_nat hU k hF

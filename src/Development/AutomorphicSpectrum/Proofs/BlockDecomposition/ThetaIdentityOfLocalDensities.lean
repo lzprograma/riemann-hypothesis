@@ -14,45 +14,7 @@ import Formalism.UnipotentAdelicQuotients.SWXSDefs
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TensTop
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TopoAF
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -236,7 +198,7 @@ theorem rv_unit (v : HeightOneSpectrum (𝓞 F)) (e : ℝ) {s : Fv F v} (hs : Va
   rw [tsum_eq_single 0]
   · simp [h0, hs]
   · intro i hi
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨-, h⟩
     rw [hs] at h
     have h3 : (1 : WithZero (Multiplicative ℤ)) = ((Multiplicative.ofAdd (0 : ℤ) : Multiplicative ℤ) : WithZero (Multiplicative ℤ)) := rfl
@@ -276,8 +238,7 @@ theorem exists_of_fib_ne {R : Type} [CommRing R] [Algebra F R] [TopologicalSpace
     {m : HermR R σ 1 → Measure (Fin 1 → Fin 1 → R ⊗[F] E)} (h : IsGramFib R σ J 1 μ ν m) (s : HermR R σ 1)
     {U : Set (Fin 1 → Fin 1 → R ⊗[F] E)} (hU : m s U ≠ 0) :
     ∃ X ∈ U, gramR R σ J X = (s : Matrix (Fin 1) (Fin 1) (R ⊗[F] E)) := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   refine hU (measure_mono_null (fun X hX => ?_) (h.1 s))
   intro h2
   exact hc X hX h2.1
@@ -367,10 +328,6 @@ section Term
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
   {J : Matrix (Fin 1) (Fin 1) E} {d : ℕ} {b : Module.Basis (Fin d) F E}
 
-theorem smul_apply' {α : Type} [MeasurableSpace α] (c : ℝ≥0) (ν : Measure α) (B : Set α) :
-    (c • ν) B = (c : ℝ≥0∞) * ν B := by
-  rw [Measure.smul_apply, ENNReal.smul_def, smul_eq_mul]
-
 theorem idele_ne (a : (AF F)ˣ) (v : HeightOneSpectrum (𝓞 F)) : (a : AF F).2 v ≠ 0 :=
   (IsUnit.map ((evalV F v).comp (sndA F)) a.isUnit).ne_zero
 
@@ -458,14 +415,14 @@ theorem term_eq (hS : Scal) (hcm : IsCMExt F E σ) (hJ : IsHermND σ J) {li : Me
       (fun v => cfac E v • m v (hermScal (Fv F v) σ (algebraMap F _ (t : F)))) := hEP
   obtain ⟨-, e⟩ := _root_.GlobalTheory.CompanionTheory.SW.EulerBox.euler_box F E σ hcm d b 1 1 _ κ _ _ hEu _ A' hφinf (fun v => (hloc v).1)
     (fun v => by
-      rw [smul_apply', (hloc v).2.1]
+      rw [MeasureTheory.Measure.coe_nnreal_smul_apply, (hloc v).2.1]
       exact ENNReal.mul_lt_top ENNReal.coe_lt_top (hloc v).2.2) hcof
   have hfv : ∀ v, v ∉ S → gv m A v ((a : AF F).2 v) = rv v (eR E v) ((a : AF F).2 v) := fun v hv => by
     rw [gv, hAo v hv]
     exact hL v hv _ (idele_ne a v)
   have hg : ∀ v, ((cfac E v • m v (hermScal (Fv F v) σ (algebraMap F _ (t : F)))) (A' v)).toReal =
       gv m A v ((a : AF F).2 v) := fun v => by
-    rw [smul_apply', (hloc v).2.1, ENNReal.toReal_mul, ENNReal.coe_toReal]
+    rw [MeasureTheory.Measure.coe_nnreal_smul_apply, (hloc v).2.1, ENNReal.toReal_mul, ENNReal.coe_toReal]
     rfl
   have hfin : (Function.mulSupport fun v => gv m A v ((a : AF F).2 v)).Finite := by
     have h1 : ∀ᶠ v in cofinite, gv m A v ((a : AF F).2 v) = 1 := by

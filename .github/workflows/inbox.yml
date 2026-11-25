@@ -4,7 +4,8 @@ name: inbox
 # A pull request goes into the inbox when it is opened, reopened or marked ready for review, and
 # when `awaiting-author` comes off it again. It comes out as soon as someone with triage access
 # comments on it (`batch` included), reviews it or changes its labels, and when it is turned back
-# into a draft, queued for a batch, labelled `awaiting-author` or closed. Batches never go in.
+# into a draft, queued for a batch, labelled `awaiting-author` or closed. Batches never go in: a
+# batch is a pull request from a `batch/...` branch of this repository, not of a fork.
 # `scripts/inbox-sync.py` has the exact rules.
 #
 # An author takes `awaiting-author` off by commenting `ready` (see batch-queue.yml). That label

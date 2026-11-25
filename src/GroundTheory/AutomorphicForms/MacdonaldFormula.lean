@@ -186,7 +186,7 @@ theorem casselman_shalika (ψ₀ : AddChar F ℂ) (hψ₀ : ∀ x ∈ 𝒪[F], �
       · left
         obtain ⟨i, j, hij, hmij, hiS, hjS⟩ := exists_ascent hm hant
         have hasc : (m + lamS S) j = (m + lamS S) i + 1 := by
-          simp only [Pi.add_apply, lamS_apply, hiS, hjS, if_true, if_false, hmij]
+          simp only [Pi.add_apply, lamS_apply, hiS, hjS, ite_true, ite_false, hmij]
           ring
         simp only [hf]
         rw [eq_zero_of_not_antitone hψ₁ hWN hWK hant, schur_eq_zero_of_ascent hij hasc, map_zero,

@@ -1,44 +1,6 @@
 module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.DimFormCOfSteps
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -48,8 +10,6 @@ open scoped Classical
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.TermOp
 
 namespace PI.UnitaryDimensionFormula
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem orbitCount : OrbitCount := by
   intro G _ Γ K n t A N hA hAN hK hΓ
@@ -71,7 +31,7 @@ theorem orbitCount : OrbitCount := by
               ((Finset.mem_filter.mp (Finset.mem_coe.mp hj)).2).symm
             obtain ⟨hγ, κ, hκ, he⟩ := (key j i0 hj').choose_spec
             rw [Finset.mem_coe, Set.Finite.mem_toFinset]
-            simp only [g, dif_pos hj']
+            simp only [g, dite_eq_left hj']
             exact hΓ i0 j _ hγ κ hκ he
           · intro j hj j' hj' hgg
             have h1 : DoubleCoset.mk Γ K (t i0) = DoubleCoset.mk Γ K (t j) :=
@@ -80,7 +40,7 @@ theorem orbitCount : OrbitCount := by
               ((Finset.mem_filter.mp (Finset.mem_coe.mp hj')).2).symm
             obtain ⟨-, κ, hκ, he⟩ := (key j i0 h1).choose_spec
             obtain ⟨-, κ', hκ', he'⟩ := (key j' i0 h2).choose_spec
-            simp only [g, dif_pos h1, dif_pos h2] at hgg
+            simp only [g, dite_eq_left h1, dite_eq_left h2] at hgg
             apply hK
             rw [he, he', hgg]
             have e1 : ((key j' i0 h2).choose * t i0 * κ)⁻¹ * ((key j' i0 h2).choose * t i0 * κ') = κ⁻¹ * κ' := by

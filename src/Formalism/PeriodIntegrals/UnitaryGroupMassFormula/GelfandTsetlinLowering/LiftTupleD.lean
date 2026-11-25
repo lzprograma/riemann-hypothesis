@@ -1,46 +1,6 @@
 module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftTupleM
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalRingCardinality.Params
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftTupleA
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftTupleC
@@ -58,15 +18,15 @@ theorem sum_ite_val {n : ℕ} (f : Fin n → ℕ) (j : ℕ) :
   split_ifs with hj
   · rw [Finset.sum_eq_single ⟨j, hj⟩]
     · simp
-    · intro i _ hi; rw [if_neg]; intro h'; exact hi (Fin.ext h')
+    · intro i _ hi; rw [ite_eq_right]; intro h'; exact hi (Fin.ext h')
     · intro h'; exact absurd (Finset.mem_univ _) h'
-  · apply Finset.sum_eq_zero; intro i _; rw [if_neg]; intro h'; exact hj (h' ▸ i.2)
+  · apply Finset.sum_eq_zero; intro i _; rw [ite_eq_right]; intro h'; exact hj (h' ▸ i.2)
 
 theorem natW_sg_val {n : ℕ} (sg : DomWeight n) (i : Fin n) :
     ((sg.natW i : ℕ) : ℤ) = sg.w i - sg.w ⟨n - 1, by have := i.2; omega⟩ := by
   have hle : i ≤ ⟨n - 1, by have := i.2; omega⟩ := by rw [Fin.le_def]; simp; have := i.2; omega
   have := sg.anti hle
-  simp only [DomWeight.natW, DomWeight.detShift, dif_pos (show 0 < n by have := i.2; omega)]
+  simp only [DomWeight.natW, DomWeight.detShift, dite_eq_left (show 0 < n by have := i.2; omega)]
   rw [Int.toNat_of_nonneg (by omega)]
 
 theorem card_lt_sz {n K : ℕ} (sg : DomWeight n) (sz : Fin K → ℕ) (hshape : shapeDeg sz = sg.natW)
@@ -80,7 +40,7 @@ theorem sz_lt {n K : ℕ} (sg : DomWeight n) (sz : Fin K → ℕ) (hsz : ∀ k, 
   · left
     have h1 := card_lt_sz sg sz hshape ⟨n - 1, by omega⟩
     have h0 : sg.natW ⟨n - 1, by omega⟩ = 0 := by
-      simp [DomWeight.natW, DomWeight.detShift, dif_pos hn]
+      simp [DomWeight.natW, DomWeight.detShift, dite_eq_left hn]
     rw [h0, Finset.card_eq_zero, Finset.filter_eq_empty_iff] at h1
     have hk := h1 (Finset.mem_univ k)
     simp only [not_lt] at hk
@@ -130,7 +90,7 @@ theorem goodL_exists {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWe
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hs
     by_cases hi0 : i.1 = 0
     · have hc := (hT i).2
-      rw [if_pos hi0, Finset.card_eq_zero] at hc
+      rw [ite_eq_left hi0, Finset.card_eq_zero] at hc
       rw [hc] at hki; exact absurd hki (Finset.notMem_empty k)
     · omega
   · intro i

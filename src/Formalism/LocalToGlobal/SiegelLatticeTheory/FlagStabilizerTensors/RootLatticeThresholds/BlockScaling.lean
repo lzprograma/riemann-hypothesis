@@ -50,8 +50,6 @@ namespace Formalism.L2.SG.Pf.Carrier
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj.InfCut Formalism.L2.SG.Pf.Carrier.JointQuot
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
-
 theorem bSt_pos {κ : ℝ} (hκ : 0 < κ) (p : Formalism.FourierDecayAlt.C.LPt) : 0 < Formalism.FourierDecayAlt.D.bSt κ p := by
   unfold Formalism.FourierDecayAlt.D.bSt
   refine List.prod_pos fun x hx => ?_
@@ -71,9 +69,8 @@ variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what
   (m₀ : Fin (nfE D) → Formalism.FourierDecayAlt.B.Mat D.R.k D.R.rS)
   (top : ∀ j : Fin (nfE D), (Formalism.FourierDecayAlt.B.Mat D.R.k D.R.rS → (X.Vloc u' (tauE X e j) →L[ℂ] X.Vloc u (tauE X e j))) →
     List Formalism.FourierDecayAlt.C.Letter → Formalism.FourierDecayAlt.C.LPt → Formalism.FourierDecayAlt.C.LPt → ℂ) (A₀ : ℝ)
-  (Mo : ModelsFor (sOf (carrierInOf X u u' e he hv C CA de de' l grid grid1 T hT fc χ sg ν' m₀ top A₀)))
 
-local notation "PP" => CarrierOf (carrierInOf X u u' e he hv C CA de de' l grid grid1 T hT fc χ sg ν' m₀ top A₀) Mo
+local notation "PP" => CarrierOf (carrierInOf X u u' e he hv C CA de de' l grid grid1 T hT fc χ sg ν' m₀ top A₀)
 
 def MeasPinAt (sc : ℝ) (i0 i0' : ∀ _ : InfinitePlace X.B.I.F, Fin D.R.k) : Prop :=
   ∀ (p : Formalism.FourierDecayAlt.TB.Pt D.host.E) (w : Formalism.MainNotions.S.Point D.host.E (D.R.rS + 1)),
@@ -93,7 +90,7 @@ def MeasPinAt (sc : ℝ) (i0 i0' : ∀ _ : InfinitePlace X.B.I.F, Fin D.R.k) : P
 theorem orbVecAt_carrierOf (sc : ℝ) (i0 i0' : ∀ _ : InfinitePlace X.B.I.F, Fin D.R.k)
     (hbase : ∀ v, Formalism.FourierDecayAlt.D.IsBaseFrame ((PP).T ((PP).τ.symm v)).base ((PP).ν' ((PP).τ.symm v))
       ((PP).m₀ ((PP).τ.symm v)))
-    (hMP : MeasPinAt X u u' e he hv C CA de de' l grid grid1 T hT fc χ sg ν' m₀ top A₀ Mo sc i0 i0') :
+    (hMP : MeasPinAt X u u' e he hv C CA de de' l grid grid1 T hT fc χ sg ν' m₀ top A₀ sc i0 i0') :
     0 < sc → (PP).FromX → (PP).Base i0 i0' → (∀ j x, (PP).S.emb j (X.ιE x) = X.B.I.φ ((PP).τ j) x) →
     ∀ (p : Formalism.FourierDecayAlt.TB.Pt D.host.E) (w : Formalism.MainNotions.S.Point D.host.E (D.R.rS + 1)),
       ptOfL (D := D) (D.R.rS + 1) p = some w → OkPt X u u' w →
@@ -111,180 +108,8 @@ theorem orbVecAt_carrierOf (sc : ℝ) (i0 i0' : ∀ _ : InfinitePlace X.B.I.F, F
             Formalism.FourierDecayAlt.D.vecV ((PP).T ((PP).τ.symm v)).base ((PP).ν' ((PP).τ.symm v)) ((PP).m₀ ((PP).τ.symm v)) F
               (Formalism.FourierDecayAlt.D.toStd (PP).S.G.r (PP).S.g 1 (Formalism.FourierDecayAlt.C.loc ((PP).S.emb ((PP).τ.symm v)) p)) := by
   intro hsc hFX hB hemb p w hp hw h h' hD v μRv hH hpin F
-  have hData :
-      Formalism.QuantumDeterminants.Zhat D.R.k D.R.rS ((PP).T ((PP).τ.symm v)).base.z ((PP).T ((PP).τ.symm v)).base.z'
-                (trG ((PP).Q v) ((PP).Qi v) ((h v)⁻¹ * (gamW X u u' w) v * h' v)) =
-                Formalism.FourierDecayAlt.D.ptMatN (Formalism.FourierDecayAlt.D.toStd (PP).S.G.r (PP).S.g 1
-                  (Formalism.FourierDecayAlt.C.loc ((PP).S.emb ((PP).τ.symm v)) p)) (D.R.rS + 1) ∧
-        0 < Formalism.FourierDecayAlt.D.ptG (Formalism.QuantumDeterminants.Tz D.R.k D.R.rS ((PP).T ((PP).τ.symm v)).base.z *
-          Formalism.QuantumDeterminants.Tz D.R.k D.R.rS ((PP).T ((PP).τ.symm v)).base.z') D.R.rS
-          (Formalism.FourierDecayAlt.D.toStd (PP).S.G.r (PP).S.g 1 (Formalism.FourierDecayAlt.C.loc ((PP).S.emb ((PP).τ.symm v)) p)) ∧
-        Formalism.FourierDecayAlt.D.IsLocPt (Formalism.FourierDecayAlt.D.toStd (PP).S.G.r (PP).S.g 1
-          (Formalism.FourierDecayAlt.C.loc ((PP).S.emb ((PP).τ.symm v)) p)) (D.R.rS + 1) ∧
-        trG ((PP).Q v) ((PP).Qi v) ((h v)⁻¹ * (gamW X u u' w) v * h' v) ∈ Formalism.FourierDecayAlt.B.GV D.R.k D.R.rS := by
-    set j := (tauE X e).symm v with hj
-    obtain ⟨hQ, hz, hz', -⟩ := hFX v
-    have hz2 : (T j).base.z = Formalism.L2.SG.LocWSOf.Qics C (X.pl v) *ᵥ rv X.B.I v (X.zR u) := hz
-    have hz2' : (T j).base.z' = Formalism.L2.SG.LocWSOf.Qics C (X.pl v) *ᵥ rv X.B.I v (X.zR u') := hz'
-    set Qm := Formalism.L2.SG.LocWSOf.Qcs C (X.pl v) with hQm
-    set Qim := Formalism.L2.SG.LocWSOf.Qics C (X.pl v) with hQim
-    set gg : ℕ := D.host.g 0 * D.host.g 1
-    have hgg0 : (0 : ℝ) < gg := by
-      exact_mod_cast Nat.mul_pos (Formalism.L2.SG.Pf.CarrierSz.g_pos D).1 (Formalism.L2.SG.Pf.CarrierSz.g_pos D).2
-    set κ : ℂ := -Complex.I * (((gg : ℝ) / (2 * Real.pi) : ℝ) : ℂ) with hκ
-    have hc : ∀ a : Fin D.R.rS, cTor (gg : ℝ) D.R.rS a = κ ^ (D.R.rS - a.val) := by
-      intro a; unfold cTor; congr 1; rw [hκ]; push_cast; field_simp
-    have hκstar : star κ = -κ := by
-      rw [hκ, star_mul', star_neg, Complex.star_def, Complex.conj_I, Complex.conj_ofReal]; ring
-    have hκ0 : κ ≠ 0 := by
-      rw [hκ]; refine mul_ne_zero (neg_ne_zero.mpr Complex.I_ne_zero) ?_
-      exact_mod_cast (div_pos hgg0 (by positivity)).ne'
-    have hTr : Bridge.TrHyp (PtRepPf.frU X u v) Qm Qim (fun a => cTor (gg : ℝ) D.R.rS a) :=
-      ⟨hQ.1, hQ.2.1, hQ.2.2.1, fun a => (hQ.2.2.2 a a rfl).1, fun a => (hQ.2.2.2 a a rfl).2⟩
-    have hTr' : Bridge.TrHyp (PtRepPf.frU X u' v) Qm Qim (fun a => cTor (gg : ℝ) D.R.rS a) :=
-      ⟨hQ.1, hQ.2.1, hQ.2.2.1, fun a => (hQ.2.2.2 a a rfl).1, fun a => (hQ.2.2.2 a a rfl).2⟩
-    have hfix : ∀ (w : D.what₂.Word) (s : X.B.I.Ginf), s ∈ HsetU X w →
-        (∀ a, Formalism.MainNotions.S.uMat (s v) *ᵥ (PtRepPf.frU X w v).e a = (PtRepPf.frU X w v).e a) ∧
-        Formalism.MainNotions.S.uMat (s v) *ᵥ (PtRepPf.frU X w v).z = (PtRepPf.frU X w v).z := by
-      intro w s hs
-      exact ⟨fun a => hs v _ (Or.inl (Or.inl ⟨a, rfl⟩)), hs v _ (Or.inr rfl)⟩
-    obtain ⟨hHe, hHz⟩ := hfix u h hD.1
-    obtain ⟨hH'e, hH'z⟩ := hfix u' h' hD.2.1
-    set γ := gamW X u u' w
-    have hrep : IsPtRep X u u' w γ := by
-      show IsPtRep X u u' w (gamW X u u' w)
-      unfold gamW; rw [dite_eq_left hw.1]; exact hw.1.choose_spec
-    set σ : D.host.E →+* ℂ := (X.B.I.φ v).comp X.ιE.symm.toRingHom
-
-    have hpt := hp
-    unfold ptOfL Formalism.L2.SG.DataInst.ptOfList at hpt
-    split_ifs at hpt with hPtL
-    have hw1 : w.1 = (Formalism.L2.SG.DataInst.signPt D.R.rS p).map Prod.swap := by
-      rw [← Option.some_inj.mp hpt]; rfl
-    have hfst : (Formalism.L2.SG.DataInst.signPt D.R.rS p).map Prod.fst = p.map Prod.fst :=
-      Formalism.L2.SG.DataInst.sign_list_fst D.R.rS 1 p
-    have hblk : ∀ b ∈ p, 1 ≤ b.1 := by
-      intro b hb
-      have : b.1 ∈ (Formalism.L2.SG.DataInst.signPt D.R.rS p).map Prod.fst := by
-        rw [hfst]; exact List.mem_map_of_mem hb
-      obtain ⟨b', hb', hbb⟩ := List.mem_map.mp this
-      rw [← hbb]; exact (hPtL.2 b' hb').1
-    have hsum : 0 + (p.map Prod.fst).sum ≤ D.R.rS + 1 := by rw [← hfst, hPtL.1]; omega
-    have hlt := Bridge.lptOf_toStd σ D.R.rS (gg : ℝ) p 0 hblk hsum
-    have hloceq : Formalism.FourierDecayAlt.C.loc ((PP).S.emb j) p = Formalism.FourierDecayAlt.C.loc σ p := by
-      unfold Formalism.FourierDecayAlt.C.loc
-      refine List.map_congr_left fun b _ => ?_
-      congr 1
-      have := hemb j (X.ιE.symm b.2)
-      rw [RingEquiv.apply_symm_apply] at this
-      rw [this]
-      show X.B.I.φ ((tauE X e) j) (X.ιE.symm b.2) = X.B.I.φ v (X.ιE.symm b.2)
-      rw [hj, Equiv.apply_symm_apply]
-    have hstd : Formalism.FourierDecayAlt.D.toStd (PP).S.G.r (PP).S.g 1 (Formalism.FourierDecayAlt.C.loc ((PP).S.emb j) p) =
-        Bridge.lptOf σ κ D.R.rS 0 w.1 := by
-      rw [hloceq, hw1]
-      exact hlt.symm
-
-    have hA := Formalism.L2.SG.Pf.CarrierTop.zhatO_eq_mul (ZX X u u' 1 γ v)
-    rw [hrep v] at hA
-    have hM : Formalism.FourierDecayAlt.D.ptMatN (Bridge.lptOf σ κ D.R.rS 0 w.1) (D.R.rS + 1) =
-        Matrix.diagonal (fun a : Fin (D.R.rS + 1) => Bridge.Af κ D.R.rS a * 1) * ZX X u u' 1 γ v *
-          Matrix.diagonal (fun b : Fin (D.R.rS + 1) => Formalism.L2.SG.Pf.CarrierTop.sgnV D.R.rS b * Bridge.Bf κ D.R.rS b) := by
-      rw [Bridge.ptMatN_lptOf σ κ D.R.rS hκstar w]
-      show Matrix.diagonal _ * ptC X v w * Matrix.diagonal _ = _
-      rw [hA]
-      ext a b
-      simp only [Matrix.diagonal_mul, Matrix.mul_diagonal]
-      ring
-
-    have h1 := Bridge.zhat_cs hTr hTr' (sc := sc) hsc.ne' (Formalism.MainNotions.S.uMat ((h v)⁻¹ * γ v * h' v))
-    have h2 : RealObj.Zhat (X.B.I.ε v) (frm X u sc v) (frm X u' sc v) (Formalism.MainNotions.S.uMat ((h v)⁻¹ * γ v * h' v)) =
-        ZX X u u' sc γ v :=
-      zhat_conj_frames (uMat_unitary (h v)) (uMat_mul_inv (h v))
-        (Bridge.fix_famSc (PtRepPf.frU X u v).e (PtRepPf.frU X u v).z hHe hHz sc)
-        (Bridge.fix_famSc (PtRepPf.frU X u' v).e (PtRepPf.frU X u' v).z hH'e hH'z sc)
-    have hZ : Formalism.QuantumDeterminants.Zhat D.R.k D.R.rS (T j).base.z (T j).base.z'
-        (trG Qm Qim ((h v)⁻¹ * γ v * h' v)) = Formalism.FourierDecayAlt.D.ptMatN (Bridge.lptOf σ κ D.R.rS 0 w.1) (D.R.rS + 1) := by
-      rw [hz2, hz2']
-      have h1' : Formalism.QuantumDeterminants.Zhat D.R.k D.R.rS (Qim *ᵥ rv X.B.I v (X.zR u)) (Qim *ᵥ rv X.B.I v (X.zR u'))
-          (trG Qm Qim ((h v)⁻¹ * γ v * h' v)) =
-          Matrix.diagonal (fun a => star (Bridge.lam (fun a => cTor (gg : ℝ) D.R.rS a) sc a)) *
-            RealObj.Zhat (X.B.I.ε v) (frm X u sc v) (frm X u' sc v) (Formalism.MainNotions.S.uMat ((h v)⁻¹ * γ v * h' v)) *
-            Matrix.diagonal (Bridge.lam (fun a => cTor (gg : ℝ) D.R.rS a) sc) := h1
-      rw [h1', h2, Formalism.L2.SG.Pf.CarrierTop.zx_sc, hM]
-      ext a b
-      simp only [Matrix.diagonal_mul, Matrix.mul_diagonal]
-      have ha := (Bridge.cS_lam hc hsc.ne' a).2
-      have hb := (Bridge.cS_lam hc hsc.ne' b).1
-      calc star (Bridge.lam _ sc a) * (Formalism.L2.SG.Pf.CarrierTop.cS D.R.rS sc a * ZX X u u' 1 γ v a b *
-            Formalism.L2.SG.Pf.CarrierTop.cS D.R.rS sc b) * Bridge.lam _ sc b
-          = (star (Bridge.lam (fun a => cTor (gg : ℝ) D.R.rS a) sc a) * Formalism.L2.SG.Pf.CarrierTop.cS D.R.rS sc a) *
-              ZX X u u' 1 γ v a b *
-              (Formalism.L2.SG.Pf.CarrierTop.cS D.R.rS sc b * Bridge.lam (fun a => cTor (gg : ℝ) D.R.rS a) sc b) := by ring
-        _ = _ := by
-          rw [ha, hb]
-          simp only [Bridge.Af, Bridge.Bf, Formalism.L2.SG.Pf.CarrierTop.sgnV]
-          have : ((-1 : ℂ) ^ (D.R.rS - b.val)) * ((-1 : ℂ) ^ (D.R.rS - b.val)) = 1 := by
-            rw [← pow_add, ← two_mul, pow_mul]; norm_num
-          linear_combination (star (κ ^ (D.R.rS - a.val)) * ZX X u u' 1 γ v a b * κ ^ (D.R.rS - b.val)) * this.symm
-
-    have hG1 : 0 < ‖RealObj.Dl (ZX X u u' 1 γ v) (D.R.rS + 1)‖ ^ 2 -
-        Tw (D := D) u * Tw (D := D) u' * ‖RealObj.Dl (ZX X u u' 1 γ v) D.R.rS‖ ^ 2 := by
-      have hGX := hw.2 v
-      change 0 < Gv (Tw (D := D) u) (Tw (D := D) u') (ZX X u u' D.host.rdE γ v) at hGX
-      unfold Gv at hGX
-      have hcl : Formalism.L2.SG.Pf.CarrierTop.cS D.R.rS D.host.rdE (Fin.last D.R.rS) = 1 := by
-        simp [Formalism.L2.SG.Pf.CarrierTop.cS]
-      have hGd := Bridge.G_diag D.R.rS (ZX X u u' 1 γ v) (Formalism.L2.SG.Pf.CarrierTop.cS D.R.rS D.host.rdE)
-        (Formalism.L2.SG.Pf.CarrierTop.cS D.R.rS D.host.rdE) (Tw (D := D) u * Tw (D := D) u') (by rw [hcl]; simp)
-      rw [Formalism.L2.SG.Pf.CarrierTop.zx_sc, hGd] at hGX
-      by_contra hle
-      push Not at hle
-      have : (‖∏ i : Fin D.R.rS, Formalism.L2.SG.Pf.CarrierTop.cS D.R.rS D.host.rdE (Fin.castLE (Nat.le_succ D.R.rS) i)‖ *
-          ‖∏ i : Fin D.R.rS, Formalism.L2.SG.Pf.CarrierTop.cS D.R.rS D.host.rdE (Fin.castLE (Nat.le_succ D.R.rS) i)‖) ^ 2 *
-          (‖RealObj.Dl (ZX X u u' 1 γ v) (D.R.rS + 1)‖ ^ 2 -
-            Tw (D := D) u * Tw (D := D) u' * ‖RealObj.Dl (ZX X u u' 1 γ v) D.R.rS‖ ^ 2) ≤ 0 :=
-        mul_nonpos_of_nonneg_of_nonpos (sq_nonneg _) hle
-      linarith
-    have hG : 0 < Formalism.FourierDecayAlt.D.ptG (Formalism.QuantumDeterminants.Tz D.R.k D.R.rS (T j).base.z * Formalism.QuantumDeterminants.Tz D.R.k D.R.rS (T j).base.z')
-        D.R.rS (Bridge.lptOf σ κ D.R.rS 0 w.1) := by
-      rw [(hT j).1, (hT j).2]
-      have hdet1 : (Formalism.FourierDecayAlt.D.ptMatN (Bridge.lptOf σ κ D.R.rS 0 w.1) (D.R.rS + 1)).det =
-          RealObj.Dl (Formalism.FourierDecayAlt.D.ptMatN (Bridge.lptOf σ κ D.R.rS 0 w.1) (D.R.rS + 1)) (D.R.rS + 1) :=
-        (Bridge.dl_top' _).symm
-      have hdet2 : (Formalism.FourierDecayAlt.D.ptMatN (Bridge.lptOf σ κ D.R.rS 0 w.1) D.R.rS).det =
-          RealObj.Dl (Formalism.FourierDecayAlt.D.ptMatN (Bridge.lptOf σ κ D.R.rS 0 w.1) (D.R.rS + 1)) D.R.rS := by
-        unfold RealObj.Dl; rw [dite_eq_left (Nat.le_succ _)]; rfl
-      unfold Formalism.FourierDecayAlt.D.ptG
-      have hGd := Bridge.G_diag D.R.rS (ZX X u u' 1 γ v) (fun a : Fin (D.R.rS + 1) => Bridge.Af κ D.R.rS a * 1)
-        (fun b : Fin (D.R.rS + 1) => Formalism.L2.SG.Pf.CarrierTop.sgnV D.R.rS b * Bridge.Bf κ D.R.rS b)
-        (((D.mem u).A.T : ℝ) * ((D.mem u').A.T : ℝ))
-        (by simp [Bridge.Af, Bridge.Bf, Formalism.L2.SG.Pf.CarrierTop.sgnV])
-      rw [hdet1, hdet2, Complex.normSq_eq_norm_sq, Complex.normSq_eq_norm_sq, hM, hGd]
-      have hne1 : (∏ i : Fin D.R.rS, Bridge.Af κ D.R.rS (Fin.castLE (Nat.le_succ D.R.rS) i) * 1) ≠ 0 :=
-        Finset.prod_ne_zero_iff.mpr fun i _ => by
-          simp [Bridge.Af, hκ0]
-      have hne2 : (∏ i : Fin D.R.rS, Formalism.L2.SG.Pf.CarrierTop.sgnV D.R.rS (Fin.castLE (Nat.le_succ D.R.rS) i) *
-          Bridge.Bf κ D.R.rS (Fin.castLE (Nat.le_succ D.R.rS) i)) ≠ 0 :=
-        Finset.prod_ne_zero_iff.mpr fun i _ => by
-          simp [Bridge.Bf, Formalism.L2.SG.Pf.CarrierTop.sgnV, hκ0]
-      have hpos : 0 < (‖∏ i : Fin D.R.rS, Bridge.Af κ D.R.rS (Fin.castLE (Nat.le_succ D.R.rS) i) * 1‖ *
-          ‖∏ i : Fin D.R.rS, Formalism.L2.SG.Pf.CarrierTop.sgnV D.R.rS (Fin.castLE (Nat.le_succ D.R.rS) i) *
-            Bridge.Bf κ D.R.rS (Fin.castLE (Nat.le_succ D.R.rS) i)‖) ^ 2 :=
-        pow_pos (mul_pos (norm_pos_iff.mpr hne1) (norm_pos_iff.mpr hne2)) 2
-      unfold Tw at hG1
-      exact mul_pos hpos hG1
-    have hGV := Bridge.delta_GV hTr (uMat_unitary ((h v)⁻¹ * γ v * h' v))
-    have hZ' : Formalism.QuantumDeterminants.Zhat D.R.k D.R.rS (T j).base.z (T j).base.z' (trG Qm Qim ((h v)⁻¹ * γ v * h' v)) =
-        Formalism.FourierDecayAlt.D.ptMatN (Formalism.FourierDecayAlt.D.toStd (PP).S.G.r (PP).S.g 1 (Formalism.FourierDecayAlt.C.loc ((PP).S.emb j) p)) (D.R.rS + 1) := by
-      rw [hstd]; exact hZ
-    have hGpos : 0 < Formalism.FourierDecayAlt.D.ptG (Formalism.QuantumDeterminants.Tz D.R.k D.R.rS (T j).base.z * Formalism.QuantumDeterminants.Tz D.R.k D.R.rS (T j).base.z')
-        D.R.rS (Formalism.FourierDecayAlt.D.toStd (PP).S.G.r (PP).S.g 1 (Formalism.FourierDecayAlt.C.loc ((PP).S.emb j) p)) := by
-      rw [hstd]; exact hG
-    refine ⟨hZ', hGpos, ?_, hGV⟩
-    rw [show (Formalism.FourierDecayAlt.D.toStd (PP).S.G.r (PP).S.g 1 (Formalism.FourierDecayAlt.C.loc ((PP).S.emb ((PP).τ.symm v)) p)) =
-      Bridge.lptOf σ κ D.R.rS 0 w.1 from hstd]
-    exact Bridge.isLocPt_lptOf σ κ D.R.rS hκ0 w
+  have hData := orbVec_data X u u' e he hv C CA de de' l grid grid1 T hT fc χ sg ν' m₀ top A₀ sc hsc
+    i0 i0' hFX hB hemb hbase p w hp hw h h' hD v
   obtain ⟨hZ, hG, hloc, hGV⟩ := hData
   have hloc' : Formalism.FourierDecayAlt.D.IsLocPt (Formalism.FourierDecayAlt.D.toStd (PP).S.G.r (PP).S.g 1
       (Formalism.FourierDecayAlt.C.loc ((PP).S.emb ((PP).τ.symm v)) p)) ((PP).S.G.r + 1) := hloc
@@ -306,7 +131,7 @@ theorem orbVecAt_carrierOf (sc : ℝ) (i0 i0' : ∀ _ : InfinitePlace X.B.I.F, F
       (Formalism.FourierDecayAlt.D.muR ((PP).T ((PP).τ.symm v)).base
         (trG ((PP).Q v) ((PP).Qi v) ((h v)⁻¹ * (gamW X u u' w) v * h' v)) (hloc'.2 ▸ Formalism.FourierDecayAlt.D.ptPerm _)) := hHaar
   refine (Bridge.orbJ_smul _ _ _ F hrel hHaar' hb).trans ?_
-  have hDF := dFrameBridge_carrierOf X u u' e he hv C CA de de' l grid grid1 T hT fc χ sg ν' m₀ top A₀ Mo sc
+  have hDF := dFrameBridge_carrierOf X u u' e he hv C CA de de' l grid grid1 T hT fc χ sg ν' m₀ top A₀ sc
     hsc.ne' i0 i0' hFX hB (gamW X u u' w) h h' hD v
   have hVec := Formalism.FourierDecayAlt.P.isotropic_vectors_linear_indep D.R.k D.R.rS _ _
     ((PP).T ((PP).τ.symm v)).base ((PP).ν' ((PP).τ.symm v)) ((PP).m₀ ((PP).τ.symm v)) F _ hloc'
@@ -475,8 +300,6 @@ open Formalism.MainNotions.BigCellDensity Formalism.FourierDecayAlt.P.Dx2.Rad
 variable {r : ℕ} (pN : Formalism.MainNotions.S.Point ℂ (r + 1))
 
 local notation "W" => wPt pN
-
-theorem w_symm (x : Fin (r + 1)) : (W).symm x = W x := wPt_symm pN x
 
 def sw (q : Formalism.FourierDecayAlt.C2.Lstidx W) : Formalism.FourierDecayAlt.C2.Lstidx W :=
   ⟨(W q.1.2, W q.1.1), by
@@ -753,24 +576,13 @@ theorem M_dep (n : ℕ) : ∀ (y y' : Formalism.FourierDecayAlt.C2.Lstidx w → 
 
 def linv (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ := fun q => M w y q.1.1 q.1.2
 
-theorem low_cont : Continuous (low w) := by
-  have e : low w = fun y => Matrix.of fun i j =>
-      (1 : Matrix (Fin m) (Fin m) ℂ) i j + if h : j < i ∧ w.symm i < w.symm j then y ⟨(i, j), h⟩ else 0 := by
-    funext y; ext i j; exact low_apply w y i j
-  rw [e]
-  refine continuous_pi fun i => continuous_pi fun j => ?_
-  simp only [Matrix.of_apply]
-  split_ifs
-  · exact continuous_const.add (continuous_apply _)
-  · exact continuous_const
-
 theorem M_cont : Continuous (fun y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ => M w y) := by
   have e : (fun y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ => M w y) = fun y => (low w y).adjugate := by
     funext y
     show (low w y)⁻¹ = _
     rw [Matrix.inv_def, low_det, Ring.inverse_one, one_smul]
   rw [e]
-  exact (low_cont w).matrix_adjugate
+  exact (Formalism.FourierDecayAlt.P.Dx2.Rad.cont_low w).matrix_adjugate
 
 theorem linv_mp : MeasurePreserving (linv w) volume volume := by
   set τ : ∀ q : Formalism.FourierDecayAlt.C2.Lstidx w, (Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) → ℂ := fun q y => -(M w y q.1.1 q.1.2 + y q) with hτ
@@ -862,10 +674,10 @@ theorem mp_model {k0 : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProduct
     simp only [Formalism.FourierDecayAlt.C2.monoP, Matrix.of_apply, hd'def]
     by_cases hai : a = W i
     · have hia : i = W a := by rw [hai, wPt_invol]
-      rw [if_pos hai, if_pos hia]
+      rw [ite_eq_left hai, ite_eq_left hia]
       all_goals (try (rw [hai, wPt_invol]))
     · have hia : ¬ i = W a := fun h => hai (by rw [h, wPt_invol])
-      rw [if_neg hai, if_neg hia, star_zero]
+      rw [ite_eq_right hai, ite_eq_right hia, star_zero]
   have hG' := good_of Ds' hδi hd' hZ'
 
   set φ : Mt (k0 + 1) r → Formalism.FourierDecayAlt.C2.Lstidx W → ℂ := phi0 Ds W with hφ
@@ -1019,8 +831,6 @@ open MeasureTheory NumberField Matrix Formalism.BasicNotions Formalism.MainNotio
 
 namespace Formalism.L2.SG.QuotientSpan
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : HidaSetting D} (v : InfinitePlace X.B.I.F) {lam : ℂ} (hl : lam ≠ 0)
   {Q : Matrix (Fin X.B.I.n) (Fin (2 * D.R.rS + D.R.k + 1)) ℂ} {Qi : Matrix (Fin (2 * D.R.rS + D.R.k + 1)) (Fin X.B.I.n) ℂ}
   (hT : IsTranspC X v lam D.R.k D.R.rS Q Qi)
@@ -1030,151 +840,33 @@ abbrev eV (a : Fin D.R.rS) : Fin X.B.I.n → ℂ := rv X.B.I v (X.eR a)
 include hT in
 theorem Q_e (a : Fin D.R.rS) :
     Q *ᵥ Pi.single (Formalism.QuantumDeterminants.eI D.R.k D.R.rS a) 1 = lam ^ (D.R.rS - a.val) • eV v a :=
-  (hT.2.2.2 a a rfl).1
+  Formalism.L2.SG.RootCoordinatesIndex.Q_e_of v hT a
 
 include hT hl in
 theorem Qi_e (a : Fin D.R.rS) :
-    Qi *ᵥ eV v a = (lam ^ (D.R.rS - a.val))⁻¹ • Pi.single (Formalism.QuantumDeterminants.eI D.R.k D.R.rS a) 1 := by
-  have h := congrArg (fun x => Qi *ᵥ x) (Q_e v hT a)
-  simp only [Matrix.mulVec_mulVec, hT.1, Matrix.one_mulVec, Matrix.mulVec_smul] at h
-  rw [h, smul_smul, inv_mul_cancel₀ (pow_ne_zero _ hl), one_smul]
+    Qi *ᵥ eV v a = (lam ^ (D.R.rS - a.val))⁻¹ • Pi.single (Formalism.QuantumDeterminants.eI D.R.k D.R.rS a) 1 :=
+  Formalism.L2.SG.RootCoordinatesIndex.Qi_e_of v hl hT a
 
 include hT hl in
 theorem Qi_spanLt (a : ℕ) (x : Fin X.B.I.n → ℂ) (hx : x ∈ spanLt (eV (X := X) v) a) (i : Fin (2 * D.R.rS + D.R.k + 1))
-    (hi : a ≤ i.val) : (Qi *ᵥ x) i = 0 := by
-  induction hx using Submodule.span_induction with
-  | mem x hx' =>
-    obtain ⟨b, hb, rfl⟩ := hx'
-    rw [Qi_e v hl hT, Pi.smul_apply, Pi.single_apply, if_neg, smul_zero]
-    intro h
-    have := congrArg Fin.val h
-    simp only [Formalism.QuantumDeterminants.eI] at this
-    simp only [Set.mem_setOf_eq] at hb
-    omega
-  | zero => simp
-  | add x y _ _ hx hy => rw [Matrix.mulVec_add, Pi.add_apply, hx, hy, add_zero]
-  | smul c x _ hx => rw [Matrix.mulVec_smul, Pi.smul_apply, hx, smul_zero]
+    (hi : a ≤ i.val) : (Qi *ᵥ x) i = 0 :=
+  Formalism.L2.SG.RootCoordinatesIndex.Qi_spanLt_of v hl hT a x hx i hi
 
 include hT in
 theorem Q_spanLt (a : ℕ) (ha : a ≤ D.R.rS) (w : Fin (2 * D.R.rS + D.R.k + 1) → ℂ)
-    (hw : ∀ i : Fin (2 * D.R.rS + D.R.k + 1), a ≤ i.val → w i = 0) : Q *ᵥ w ∈ spanLt (eV (X := X) v) a := by
-  have hw' : w = ∑ i, w i • Pi.single i (1 : ℂ) := by
-    ext j
-    simp [Finset.sum_apply, Pi.single_apply]
-  rw [hw', Matrix.mulVec_sum]
-  refine Submodule.sum_mem _ fun i _ => ?_
-  by_cases hi : a ≤ i.val
-  · rw [hw i hi, zero_smul, Matrix.mulVec_zero]
-    exact Submodule.zero_mem _
-  · have hir : i.val < D.R.rS := by omega
-    have e : i = Formalism.QuantumDeterminants.eI D.R.k D.R.rS ⟨i.val, hir⟩ := Fin.ext rfl
-    rw [Matrix.mulVec_smul, e, Q_e v hT]
-    refine Submodule.smul_mem _ _ (Submodule.smul_mem _ _ (Submodule.subset_span ⟨⟨i.val, hir⟩, ?_, rfl⟩))
-    simp only [Set.mem_setOf_eq]
-    omega
+    (hw : ∀ i : Fin (2 * D.R.rS + D.R.k + 1), a ≤ i.val → w i = 0) : Q *ᵥ w ∈ spanLt (eV (X := X) v) a :=
+  Formalism.L2.SG.RootCoordinatesIndex.Q_spanLt_of v hT a ha w hw
 
 include hT hl in
 theorem hJ_e (a : Fin D.R.rS) (y : Fin X.B.I.n → ℂ) :
-    hJ (X.B.I.ε v) (eV v a) y = star ((lam ^ (D.R.rS - a.val))⁻¹) * (Qi *ᵥ y) (Formalism.QuantumDeterminants.esI D.R.k D.R.rS a) := by
-  obtain ⟨_, hQQi, hH, _⟩ := hT
-  have he : eV v a = (lam ^ (D.R.rS - a.val))⁻¹ • (Q *ᵥ Pi.single (Formalism.QuantumDeterminants.eI D.R.k D.R.rS a) 1) := by
-    rw [Q_e v ⟨‹_›, hQQi, hH, ‹_›⟩, smul_smul, inv_mul_cancel₀ (pow_ne_zero _ hl), one_smul]
-  have hy : y = Q *ᵥ (Qi *ᵥ y) := by rw [Matrix.mulVec_mulVec, hQQi, Matrix.one_mulVec]
-  conv_lhs => rw [he, hy]
-  unfold hJ
-  rw [star_smul, smul_dotProduct, ← Formalism.L2.SG.Pf.LTL.star_dot_conjT, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, hH,
-    Pi.star_single, star_one, single_dotProduct, one_mul, Formalism.L2.SG.RootCoordinatesIndex.hpk_eI, smul_eq_mul]
-
+    hJ (X.B.I.ε v) (eV v a) y = star ((lam ^ (D.R.rS - a.val))⁻¹) * (Qi *ᵥ y) (Formalism.QuantumDeterminants.esI D.R.k D.R.rS a) :=
+  Formalism.L2.SG.RootCoordinatesIndex.hJ_e_of v hl hT a y
 
 include hT hl in
 theorem inN_iff (z : Fin X.B.I.n → ℂ) (hz : Formalism.QuantumDeterminants.inWb D.R.k D.R.rS (Qi *ᵥ z))
     (g : Matrix (Fin X.B.I.n) (Fin X.B.I.n) ℂ) (hg : gᴴ * Formalism.REAL.Jm (X.B.I.ε v) * g = Formalism.REAL.Jm (X.B.I.ε v)) :
-    InN (X.B.I.ε v) (eV v) z g ↔ Qi * g * Q ∈ Formalism.QuantumDeterminants.Nset D.R.k D.R.rS := by
-  have hQiQ := hT.1
-  have hQQi := hT.2.1
-  have hH := hT.2.2.1
-  have hstar_ne : ∀ a : Fin D.R.rS, star ((lam ^ (D.R.rS - a.val))⁻¹) ≠ 0 := fun a =>
-    star_ne_zero.2 (inv_ne_zero (pow_ne_zero _ (hl)))
-  have hcol : ∀ (M : Matrix (Fin (2 * D.R.rS + D.R.k + 1)) (Fin (2 * D.R.rS + D.R.k + 1)) ℂ) i j,
-      M i j = (M *ᵥ Pi.single j 1) i := fun M i j => by rw [Matrix.mulVec_single_one]; rfl
-  constructor
-  · rintro ⟨⟨hIe, hIz⟩, hperp⟩
-    refine ⟨?_, fun a i hai => ?_, fun i j hj1 hj2 hi => ?_⟩
-    ·
-      show (Qi * g * Q)ᴴ * Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS * (Qi * g * Q) = Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS
-      have hQiQ' : (Qi)ᴴ * (Q)ᴴ = 1 := by rw [← Matrix.conjTranspose_mul, hQQi, Matrix.conjTranspose_one]
-      rw [← hH]
-      calc (Qi * g * Q)ᴴ * ((Q)ᴴ * Formalism.REAL.Jm (X.B.I.ε v) * Q) * (Qi * g * Q)
-          = (Q)ᴴ * (gᴴ * ((Qi)ᴴ * (Q)ᴴ) * Formalism.REAL.Jm (X.B.I.ε v) * ((Q * Qi) * g)) *
-              Q := by simp only [Matrix.conjTranspose_mul, Matrix.mul_assoc]
-        _ = _ := by rw [hQiQ', hQQi, Matrix.mul_one, Matrix.one_mul, hg]
-    ·
-      rw [hcol (Qi * g * Q) i (Formalism.QuantumDeterminants.eI D.R.k D.R.rS a)]
-      have h1 : (Qi * g * Q) *ᵥ Pi.single (Formalism.QuantumDeterminants.eI D.R.k D.R.rS a) 1 =
-          Pi.single (Formalism.QuantumDeterminants.eI D.R.k D.R.rS a) 1 +
-            lam ^ (D.R.rS - a.val) • (Qi *ᵥ ((g - 1) *ᵥ eV v a)) := by
-        rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, Q_e v hT, Matrix.mulVec_smul, Matrix.mulVec_smul,
-          Matrix.sub_mulVec, Matrix.one_mulVec, Matrix.mulVec_sub, Qi_e v hl hT, smul_sub, smul_smul,
-          mul_inv_cancel₀ (pow_ne_zero _ (hl)), one_smul]
-        abel
-      rw [h1, Pi.add_apply, Pi.smul_apply, Qi_spanLt v hl hT a.val _ (hIe a) i hai, smul_zero, add_zero, Pi.single_apply]
-    ·
-      rw [hcol (Qi * g * Q) i j]
-      have horth : ∀ b : Fin D.R.rS, hJ (X.B.I.ε v) (eV v b) (Q *ᵥ Pi.single j 1) = 0 := by
-        intro b
-        rw [hJ_e v hl hT, Matrix.mulVec_mulVec, hQiQ, Matrix.one_mulVec, Pi.single_apply, if_neg, mul_zero]
-        intro h
-        have := congrArg Fin.val h
-        simp only [Formalism.QuantumDeterminants.esI] at this
-        have := b.isLt
-        omega
-      have h1 : (Qi * g * Q) *ᵥ Pi.single j 1 =
-          Pi.single j 1 + Qi *ᵥ ((g - 1) *ᵥ (Q *ᵥ Pi.single j 1)) := by
-        rw [Matrix.sub_mulVec, Matrix.one_mulVec, Matrix.mulVec_sub]
-        simp only [Matrix.mulVec_mulVec, hQiQ, Matrix.one_mulVec, Matrix.mul_assoc]
-        abel
-      rw [h1, Pi.add_apply, Qi_spanLt v hl hT D.R.rS _ (hperp _ horth) i hi, add_zero, Pi.single_apply]
-  · rintro ⟨_, hce, hcw⟩
-    have hg' : g = Q * (Qi * g * Q) * Qi := by
-      simp only [← Matrix.mul_assoc]
-      rw [hQQi, Matrix.one_mul, Matrix.mul_assoc, hQQi, Matrix.mul_one]
-    set m := Qi * g * Q with hm
-    have key : ∀ x, (g - 1) *ᵥ x = Q *ᵥ ((m - 1) *ᵥ (Qi *ᵥ x)) := by
-      intro x
-      conv_lhs => rw [hg']
-      rw [Matrix.sub_mulVec, Matrix.sub_mulVec, Matrix.one_mulVec, Matrix.one_mulVec, Matrix.mulVec_sub,
-        Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, hQQi, Matrix.one_mulVec]
-
-    have hmW : ∀ x : Fin (2 * D.R.rS + D.R.k + 1) → ℂ, (∀ a, x (Formalism.QuantumDeterminants.esI D.R.k D.R.rS a) = 0) →
-        ∀ i : Fin (2 * D.R.rS + D.R.k + 1), D.R.rS ≤ i.val → ((m - 1) *ᵥ x) i = 0 := by
-      intro x hx i hi
-      simp only [Matrix.mulVec, dotProduct]
-      refine Finset.sum_eq_zero fun j _ => ?_
-      by_cases hj1 : j.val < D.R.rS
-      · have e : j = Formalism.QuantumDeterminants.eI D.R.k D.R.rS ⟨j.val, hj1⟩ := Fin.ext rfl
-        have := hce ⟨j.val, hj1⟩ i (by simp only; omega)
-        rw [Matrix.sub_apply, e, this, Matrix.one_apply, sub_self, zero_mul]
-      · by_cases hj2 : j.val ≤ D.R.rS + D.R.k
-        · rw [Matrix.sub_apply, hcw i j (by omega) hj2 hi, Matrix.one_apply, sub_self, zero_mul]
-        · have hjr : 2 * D.R.rS + D.R.k - j.val < D.R.rS := by have := j.isLt; omega
-          have e : j = Formalism.QuantumDeterminants.esI D.R.k D.R.rS ⟨2 * D.R.rS + D.R.k - j.val, hjr⟩ := by
-            ext; simp only [Formalism.QuantumDeterminants.esI]; have := j.isLt; omega
-          rw [e, hx, mul_zero]
-    refine ⟨⟨fun a => ?_, ?_⟩, fun y hy => ?_⟩
-    · rw [key, Qi_e v hl hT, Matrix.mulVec_smul, Matrix.mulVec_smul]
-      refine Submodule.smul_mem _ _ (Q_spanLt v hT a.val a.isLt.le _ fun i hi => ?_)
-      rw [Matrix.sub_mulVec, Matrix.one_mulVec, Pi.sub_apply, ← hcol m i (Formalism.QuantumDeterminants.eI D.R.k D.R.rS a), hce a i hi,
-        Pi.single_apply, sub_self]
-    · rw [key]
-      refine Q_spanLt v hT D.R.rS le_rfl _ (hmW _ (fun a => hz _ (Or.inr ?_)))
-      simp only [Formalism.QuantumDeterminants.esI]
-      have := a.isLt
-      omega
-    · rw [key]
-      refine Q_spanLt v hT D.R.rS le_rfl _ (hmW _ fun a => ?_)
-      have h1 := hy a
-      rw [hJ_e v hl hT] at h1
-      exact (mul_eq_zero.1 h1).resolve_left (hstar_ne a)
+    InN (X.B.I.ε v) (eV v) z g ↔ Qi * g * Q ∈ Formalism.QuantumDeterminants.Nset D.R.k D.R.rS :=
+  Formalism.L2.SG.RootCoordinatesIndex.inN_iff_of v hl hT z hz g hg
 
 theorem inN_conj {n r' : ℕ} {ε : Fin n → Bool} {e : Fin r' → Fin n → ℂ} {z : Fin n → ℂ}
     {g hh : Matrix (Fin n) (Fin n) ℂ} (hhU : hhᴴ * Formalism.REAL.Jm ε * hh = Formalism.REAL.Jm ε) (hu : IsUnit hh.det)
@@ -1231,12 +923,9 @@ open MeasureTheory NumberField Matrix Formalism.BasicNotions Formalism.MainNotio
 
 namespace Formalism.L2.SG.StandardCoordinates
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : HidaSetting D} (v : InfinitePlace X.B.I.F) {lam : ℂ} (hl : lam ≠ 0)
   {Q : Matrix (Fin X.B.I.n) (Fin (2 * D.R.rS + D.R.k + 1)) ℂ} {Qi : Matrix (Fin (2 * D.R.rS + D.R.k + 1)) (Fin X.B.I.n) ℂ}
   (hT : IsTranspC X v lam D.R.k D.R.rS Q Qi) (u' : D.what₂.Word)
-
 
 include hT in
 theorem fam_eq (hl : lam ≠ 0) (b : Fin (D.R.rS + 1)) :
@@ -1252,9 +941,8 @@ theorem fam_eq (hl : lam ≠ 0) (b : Fin (D.R.rS + 1)) :
   · rw [Fin.snoc_castSucc]
     have h1 := (hT.2.2.2 c c rfl).1
     unfold Formalism.QuantumDeterminants.fvec Formalism.QuantumDeterminants.bvec
-    simp only [Fin.coe_castSucc, Fin.is_lt, dif_pos, Fin.eta]
+    simp only [Fin.coe_castSucc, Fin.is_lt, dite_eq_left, Fin.eta]
     rw [h1, smul_smul, inv_mul_cancel₀ (pow_ne_zero _ hl), one_smul]
-
 
 include hT hl in
 theorem stCoordV_gen (w : Point D.host.E (D.R.rS + 1)) (γ : X.B.I.Ginf) (y : Formalism.REAL.UJ (X.B.I.ε v))
@@ -1298,7 +986,6 @@ theorem stCoordV_gen (w : Point D.host.E (D.R.rS + 1)) (γ : X.B.I.Ginf) (y : Fo
   have h2 : ((D.host.rdE : ℂ) ^ (D.R.rS - p.1.2.val)) ≠ 0 := pow_ne_zero _ hrd
   rw [mul_pow, mul_pow]
   field_simp
-
 
 include hT hl in
 theorem coord_conj (M H : Matrix (Fin X.B.I.n) (Fin X.B.I.n) ℂ)
@@ -1393,7 +1080,7 @@ theorem scal_partner : ∀ (l : List (ℕ × ℂ)) (a : ℕ), Formalism.FourierD
     · have hp : Formalism.FourierDecayAlt.D.ptPartner ((s, t) :: l) a = s + Formalism.FourierDecayAlt.D.ptPartner l (a - s) := by
         simp [Formalism.FourierDecayAlt.D.ptPartner, ha]
       rw [hp]
-      simp only [Formalism.FourierDecayAlt.D.ptScal, if_neg ha, if_neg (show ¬ (s + Formalism.FourierDecayAlt.D.ptPartner l (a - s) < s) by omega),
+      simp only [Formalism.FourierDecayAlt.D.ptScal, ite_eq_right ha, ite_eq_right (show ¬ (s + Formalism.FourierDecayAlt.D.ptPartner l (a - s) < s) by omega),
         Nat.add_sub_cancel_left]
       exact scal_partner l _
 
@@ -1468,7 +1155,6 @@ theorem conj_trG {n N : ℕ} {ε : Fin n → Bool} {Q : Matrix (Fin n) (Fin N) �
       rw [hQQi, Matrix.mul_one, Matrix.mul_one]
       rfl
 
-
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.LocWSOf in
 theorem rset_of_stV {D : D7} {X : HidaSetting D} (v : InfinitePlace X.B.I.F) {lam : ℂ} (hl : lam ≠ 0)
     {Q : Matrix (Fin X.B.I.n) (Fin (2 * D.R.rS + D.R.k + 1)) ℂ} {Qi : Matrix (Fin (2 * D.R.rS + D.R.k + 1)) (Fin X.B.I.n) ℂ}
@@ -1533,8 +1219,6 @@ namespace Formalism.L2.SG.Pf.Carrier
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj.InfCut Formalism.L2.SG.Pf.Carrier.JointQuot
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
-
 section ZsMq
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word) (e : InfinitePlace D.host.E ≃ D.what₂.Tau)
@@ -1548,18 +1232,17 @@ variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what
   (m₀ : Fin (nfE D) → Formalism.FourierDecayAlt.B.Mat D.R.k D.R.rS)
   (top : ∀ j : Fin (nfE D), (Formalism.FourierDecayAlt.B.Mat D.R.k D.R.rS → (X.Vloc u' (tauE X e j) →L[ℂ] X.Vloc u (tauE X e j))) →
     List Formalism.FourierDecayAlt.C.Letter → Formalism.FourierDecayAlt.C.LPt → Formalism.FourierDecayAlt.C.LPt → ℂ) (A₀ : ℝ)
-  (Mo : ModelsFor (sOf (carrierInOf X u u' e he hv C CA de de' l grid grid1 T hT fc χ sg ν' m₀ top A₀)))
 
-local notation "PP" => CarrierOf (carrierInOf X u u' e he hv C CA de de' l grid grid1 T hT fc χ sg ν' m₀ top A₀) Mo
+local notation "PP" => CarrierOf (carrierInOf X u u' e he hv C CA de de' l grid grid1 T hT fc χ sg ν' m₀ top A₀)
 
 theorem measPinAt_of (sc : ℝ) (hsc : 0 < sc) (i0 i0' : ∀ _ : InfinitePlace X.B.I.F, Fin D.R.k)
     (hFX : (PP).FromX) (hB : (PP).Base i0 i0')
     (hemb : ∀ j x, (PP).S.emb j (X.ιE x) = X.B.I.φ ((PP).τ j) x)
     (hbase : ∀ v, Formalism.FourierDecayAlt.D.IsBaseFrame ((PP).T ((PP).τ.symm v)).base ((PP).ν' ((PP).τ.symm v))
       ((PP).m₀ ((PP).τ.symm v))) :
-    MeasPinAt X u u' e he hv C CA de de' l grid grid1 T hT fc χ sg ν' m₀ top A₀ Mo sc i0 i0' := by
+    MeasPinAt X u u' e he hv C CA de de' l grid grid1 T hT fc χ sg ν' m₀ top A₀ sc i0 i0' := by
   intro p w hp hw h h' hD v μRv hHaar hpin hloc
-  obtain ⟨hZp, -, -, hδG⟩ := orbVec_data X u u' e he hv C CA de de' l grid grid1 T hT fc χ sg ν' m₀ top A₀ Mo sc hsc
+  obtain ⟨hZp, -, -, hδG⟩ := orbVec_data X u u' e he hv C CA de de' l grid grid1 T hT fc χ sg ν' m₀ top A₀ sc hsc
     i0 i0' hFX hB hemb hbase p w hp hw h h' hD v
   obtain ⟨hQ, hz, hz', -⟩ := hFX v
   set p' := Formalism.FourierDecayAlt.D.toStd (PP).S.G.r (PP).S.g 1 (Formalism.FourierDecayAlt.C.loc ((PP).S.emb ((PP).τ.symm v)) p) with hp'

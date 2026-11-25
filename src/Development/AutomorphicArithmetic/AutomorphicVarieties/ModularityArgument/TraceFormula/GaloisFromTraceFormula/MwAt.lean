@@ -59,7 +59,7 @@ theorem UpperTheory.V.Z.Tf.GaloisFromTraceFormula.mwAt :
     rw [InfinitePlace.mk_conjugate_eq, InfinitePlace.mk_embedding]
   constructor
   · unfold mW PositivityTheory.Rg.BcB.CG.mOf infOfWeight PositivityTheory.RgBcC.infOf
-    simp only [InfinitePlace.mk_embedding, decide_true, if_true, one_mul]
+    simp only [InfinitePlace.mk_embedding, decide_true, ite_true, one_mul]
     congr 1
     funext k
     rw [add_sub_assoc]

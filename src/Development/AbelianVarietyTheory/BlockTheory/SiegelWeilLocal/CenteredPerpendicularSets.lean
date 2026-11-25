@@ -93,7 +93,4 @@ def diagEmb (Y : Matrix (Fin I.n) (Fin I.n) I.E) : InfinitePlace I.F → Matrix 
 def normAt (x : I.GA) (Y : InfinitePlace I.F → Matrix (Fin I.n) (Fin I.n) ℂ) : ℝ :=
   Real.sqrt (∑ v, Formalism.REAL.hs (uMat (x.1 v)⁻¹ * (I.P v)⁻¹ * Y v * I.P v * uMat (x.1 v)))
 
-def nextSize {a : ℕ} (τ : Fin a → ℝ) (i : Fin a) : ℝ :=
-  if h : (i : ℕ) + 1 < a then τ ⟨(i : ℕ) + 1, h⟩ else 1 / 2
-
 end GlobalTheory.IndefiniteRowSideFullHecke.CenteredPerpendicularSets

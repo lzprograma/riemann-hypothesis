@@ -39,7 +39,7 @@ theorem isSFiniteKernel_of_forall_univ_lt_top {α β : Type} [MeasurableSpace α
         simpa [g, hj] using this
       have h2 : η a Set.univ = ENNReal.ofReal (η a Set.univ).toReal :=
         (ENNReal.ofReal_toReal (h a).ne).symm
-      simp only [ηs, Kernel.piecewise_apply, if_pos ha]
+      simp only [ηs, Kernel.piecewise_apply, ite_eq_left ha]
       rw [h2]
       refine ENNReal.ofReal_le_of_le_toReal ?_
       rw [ENNReal.toReal_add (by simp) (by simp)]

@@ -37,7 +37,7 @@ theorem ellA_frame {z : Fin (2 * r + k + 1) → ℂ} {g₀ : Mat k r} (hg : Form
   have hM := hc.midM hg.1
   have hrow : ∀ v : Fin (2 * r + k + 1) → ℂ, (g₀ *ᵥ v) (eI k r p) = v (eI k r p) := fun v => by
     simp only [Matrix.mulVec, dotProduct, fun j => hM (eI k r p) j (Or.inl (Or.inl p.isLt)), ite_mul,
-      one_mul, zero_mul, sum_ite_eq, mem_univ, if_true]
+      one_mul, zero_mul, sum_ite_eq, mem_univ, ite_true]
   have hs : (((Real.sqrt (Tz k r z) : ℝ) : ℂ))⁻¹ ≠ 0 :=
     inv_ne_zero (by exact_mod_cast (Real.sqrt_pos.mpr hT).ne')
   unfold Formalism.MainNotions.S.ellA kap nxt

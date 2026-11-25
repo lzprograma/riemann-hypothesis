@@ -76,7 +76,7 @@ theorem _root_.GlobalTheory.sq_sum_eq_sum_sq_add_two_mul_sum_lt (a : ℕ) (j : F
     _ = _ := by
         simp only [Finset.sum_add_distrib]
         rw [Finset.sum_comm (f := fun i k => if k < i then j k * j i else 0)]
-        simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
         ring
 
 

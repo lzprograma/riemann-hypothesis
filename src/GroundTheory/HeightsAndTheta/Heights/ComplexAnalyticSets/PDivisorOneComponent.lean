@@ -40,17 +40,7 @@ theorem exists_bound (d : ℕ) : ∃ N : WithBot ℕ∞, N < (d : WithBot ℕ∞
       have : y + 1 ≤ 0 := by exact_mod_cast hx
       simp at this
   · refine ⟨(k : WithBot ℕ∞), by exact_mod_cast Nat.lt_succ_self k, fun x hx => ?_⟩
-    cases x using WithBot.recBotCoe with
-    | bot => exact bot_le
-    | coe y =>
-      have h1 : y + 1 ≤ ((k + 1 : ℕ) : ℕ∞) := by exact_mod_cast hx
-      have h2 : y ≤ (k : ℕ∞) := by
-        cases y using ENat.recTopCoe with
-        | top => simp at h1
-        | coe y =>
-          have h3 : y + 1 ≤ k + 1 := by exact_mod_cast h1
-          exact_mod_cast (by omega : y ≤ k)
-      exact_mod_cast h2
+    exact ENat.WithBot.add_le_add_one_right_iff.mp (by simpa [Nat.cast_add, Nat.cast_one] using hx)
 
 theorem dim_sup_add_one_le {n d : ℕ} {J W W' : Ideal (MvPolynomial (Fin n) ℂ)} [J.IsPrime] {u : Fin n → ℂ}
     (hu : linForm u ∉ J) (hdim : ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) = ((d + 1 : ℕ) : WithBot ℕ∞))

@@ -18,7 +18,7 @@ namespace GroundTheory.ProfCoh
 
 open CategoryTheory MonoidalCategory
 
-attribute [local instance 2000] Rep.hV2 Submodule.module Submodule.Quotient.module
+attribute [local instance 2000] Submodule.module Submodule.Quotient.module
 
 section Comp
 

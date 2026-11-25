@@ -15,8 +15,6 @@ open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor R
 open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 structure Core (D : D7) : Type 1 where
   Q : Par D
   U : ∀ j (σ : Q.c.F →+* ℂ), Unf (Q.Xo j) Q.c σ D.R.r
@@ -80,7 +78,7 @@ theorem nrmM_le_one_iff (j : ℕ) (la : HeightOneSpectrum (𝓞 T.Q.c.F)) (y : T
   rw [key]
   by_cases hz : evI y' f = 0
   · simp [hz]
-  · simp only [hz, if_false, EReal.coe_ne_top, EReal.toReal_coe, EReal.coe_nonneg]
+  · simp only [hz, ite_false, EReal.coe_ne_top, EReal.toReal_coe, EReal.coe_nonneg]
     constructor
     · intro h
       by_contra hneg

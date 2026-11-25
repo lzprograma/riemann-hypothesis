@@ -279,8 +279,6 @@ section -- clump:auto
 
 open GlobalTheory.InertZeta
 
-theorem _root_.GlobalTheory.T.leviRadicalProductLength_of_lattice_steps : AddVec → Dual → SpanEq → Heis → Pointwise := by
-  first | exact @GlobalTheory.InertZeta.pointwise_of_steps
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeviRadicalProductLengthOfLatticeStepsStatement =====

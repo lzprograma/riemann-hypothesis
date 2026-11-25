@@ -67,8 +67,8 @@ theorem _root_.GlobalTheory.dedekindZeta_eulerProduct_mul_sub_one_entire (K : Ty
       Complex.exp (∑' P : HeightOneSpectrum (𝓞 K),
         -Complex.log (1 - 1 * ((Ideal.absNorm P.asIdeal : ℕ) : ℂ) ^ (-s))) := by
   let X : Ideal (𝓞 K) → ℂ := fun I => if I = ⊥ then 0 else 1
-  have hXbot : X ⊥ = 0 := if_pos rfl
-  have hXne : ∀ I, I ≠ ⊥ → X I = 1 := fun I hI => if_neg hI
+  have hXbot : X ⊥ = 0 := ite_eq_left rfl
+  have hXne : ∀ I, I ≠ ⊥ → X I = 1 := fun I hI => ite_eq_right hI
   have hXmul : ∀ I J, X (I * J) = X I * X J := by
     intro I J
     by_cases hI : I = ⊥

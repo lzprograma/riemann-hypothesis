@@ -157,8 +157,8 @@ theorem latVac_image : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [Topol
     show halfInd p.e Λ' (t + x) = halfInd p.e Λ' t
     unfold halfInd
     by_cases h : t ∈ Λ' ∧ IsHalf p.e t
-    · rw [if_pos (hc.2 h), if_pos h]
-    · rw [if_neg (fun h' => h (hc.1 h')), if_neg h]
+    · rw [ite_eq_left (hc.2 h), ite_eq_left h]
+    · rw [ite_eq_right (fun h' => h (hc.1 h')), ite_eq_right h]
   have hY : ∀ y ∈ Λ', IsHalf (cA D p.e) y → heisO ψ S T y (Tm (halfInd p.e Λ')) = Tm (halfInd p.e Λ') := by
     intro y hy hh
     rw [← hTm.modul _ hΦ₀ y hh]

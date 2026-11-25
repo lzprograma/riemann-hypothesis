@@ -6,8 +6,6 @@ import Mathlib.RingTheory.PiTensorProduct
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MeasureTheory
@@ -69,14 +67,14 @@ def coefL (act : (Fin N → ℝ) → Ω → Ω) (S : Set Ω) (ph : Fin N → ℝ
   map_add' P Q := by
     funext x
     by_cases hx : x ∈ S
-    · simp only [hx, if_true, coefFn, Submodule.coe_add, Pi.add_apply]
+    · simp only [hx, ite_true, coefFn, Submodule.coe_add, Pi.add_apply]
       rw [integrand_add]
       exact integral_add (P.2 ph x hx) (Q.2 ph x hx)
     · simp [hx]
   map_smul' a P := by
     funext x
     by_cases hx : x ∈ S
-    · simp only [hx, if_true, coefFn, Submodule.coe_smul, RingHom.id_apply, Pi.smul_apply, smul_eq_mul]
+    · simp only [hx, ite_true, coefFn, Submodule.coe_smul, RingHom.id_apply, Pi.smul_apply, smul_eq_mul]
       rw [integrand_smul]
       exact integral_const_mul a _
     · simp [hx]

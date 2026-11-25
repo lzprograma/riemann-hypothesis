@@ -67,7 +67,6 @@ import Std.Tactic.BVDecide.Normalize.BitVec
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.JointHarm
 open scoped TensorProduct InnerProductSpace Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -216,10 +215,10 @@ theorem exists_io_poly (D : D7) (V W : HSp D) (θ : InfFam D) (Sp : D.what₂.Ta
             io (PiTensorProduct.tprod ℂ (Function.update v τ u)) w) ∧
       ∃ (v : ∀ ρ, lowT M ρ) (w : c.W), (∀ ρ, ‖((v ρ : M.sm ρ) : M.H ρ)‖ = 1) ∧ ‖w‖ = 1 ∧
         io (PiTensorProduct.tprod ℂ v) w = fact M.ε x₁ x₂ x₃ k₀ 1 (delta p q ap am) := by
-  obtain ⟨hhK, hhU⟩ := GlobalTheory.T.fockActions_isHolomorphicProductKRepFamily D W.rank V.rank M.ε x₁ x₂ x₃
-  obtain ⟨κ, Δ', hκ, hΔ, hbK, hbU⟩ := GlobalTheory.T.exists_minorProduct_translate_jointLowestWeight D W.rank V.rank M.ε p q ap am x₁ x₂ x₃ hr hpq hε hap ham
-  obtain ⟨m, hm1, hm2, hm3⟩ := GlobalTheory.T.holomorphic_family_low_lie_action D W Sp M _ _ _ hhK
-  obtain ⟨hv1', hv2', hv3, hv4⟩ := GlobalTheory.T.frameFunctionAction_holomorphic_extremal_lowest D.what₂.Tau V.rank lam
+  obtain ⟨hhK, hhU⟩ := _root_.GlobalTheory.FockHol.main D W.rank V.rank M.ε x₁ x₂ x₃
+  obtain ⟨κ, Δ', hκ, hΔ, hbK, hbU⟩ := _root_.GlobalTheory.JointHarm.MinorBottom.exists_joint_bottom D W.rank V.rank M.ε p q ap am x₁ x₂ x₃ hr hpq hε hap ham
+  obtain ⟨m, hm1, hm2, hm3⟩ := _root_.GlobalTheory.JointHarm.MultiOp.lowest_types_act D W Sp M _ _ _ hhK
+  obtain ⟨hv1', hv2', hv3, hv4⟩ := _root_.GlobalTheory.JointHarm.vact_isHolFam_isBotFam D.what₂.Tau V.rank lam
   obtain ⟨ϖ, hϖ⟩ : ∃ ϖ : (D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ) → Module.End ℂ (Pol ℂ D.what₂.Tau V.rank),
       ϖ = fun u => vact lam fun ρ => u (l.symm ρ) := ⟨_, rfl⟩
   have hv1 := isHolFam_relabel l hv1'
@@ -233,13 +232,13 @@ theorem exists_io_poly (D : D7) (V W : HSp D) (θ : InfFam D) (Sp : D.what₂.Ta
     funext τ j; rw [hU]; push_cast; rfl
   rw [eK] at hbK
   rw [eU] at hbU
-  obtain ⟨ψ, hψ⟩ := GlobalTheory.T.lowest_weight_vector_transfer _ _ _ _ _ _ _ _ _ _ _ _ hhU hv1 hbU hv2 hv3
+  obtain ⟨ψ, hψ⟩ := _root_.GlobalTheory.JointHarm.OrbitMap.exists_orbit_map _ _ _ _ _ _ _ _ _ _ _ _ hhU hv1 hbU hv2 hv3
   have key : ∀ F ∈ VV ℂ lam,
       ψ F ∈ botSub M.ε (factK V.rank M.ε x₁ x₂ x₃) (fun τ => -Formalism.QuantumDeterminants.lowK (M.ε τ) (M.lam τ)) ∧
       ∀ u : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ, (∀ τ, u τ ∈ Formalism.REAL.Kset (allPos V.rank)) →
         ψ (ϖ u F) = factU M.ε x₁ x₂ x₃ u (ψ F) := by
     intro F hF
-    have hF' := GlobalTheory.T.coefficientSpace_le_span_unitary_orbit_extremal D.what₂.Tau V.rank lam hF
+    have hF' := _root_.GlobalTheory.JointHarm.VV_le_span_vact_extremal D.what₂.Tau V.rank lam hF
     clear hF
     induction hF' using Submodule.span_induction with
     | mem F h =>
@@ -250,10 +249,10 @@ theorem exists_io_poly (D : D7) (V W : HSp D) (θ : InfFam D) (Sp : D.what₂.Ta
       rw [e]
       refine ⟨?_, fun u' hu' => ?_⟩
       · rw [hψ u hu]
-        exact hbK.map_of_commute fun g hg => commute_factU_factK _ _ _ _ (fun τ => (mem_KC_of_K (hu τ)).1) hg
-      · rw [← Module.End.mul_apply, ← hv1.2.2.1 u' u (fun τ => mem_KC_of_K (hu' τ)) (fun τ => mem_KC_of_K (hu τ)),
+        exact hbK.map_of_commute fun g hg => commute_factU_factK _ _ _ _ (fun τ => (GlobalTheory.Dec.FormF.K_KC (hu τ)).1) hg
+      · rw [← Module.End.mul_apply, ← hv1.2.2.1 u' u (fun τ => GlobalTheory.Dec.FormF.K_KC (hu' τ)) (fun τ => GlobalTheory.Dec.FormF.K_KC (hu τ)),
           hψ (u' * u) (fun τ => K_mul (hu' τ) (hu τ)), hψ u hu,
-          hhU.2.2.1 u' u (fun τ => mem_KC_of_K (hu' τ)) (fun τ => mem_KC_of_K (hu τ)), Module.End.mul_apply]
+          hhU.2.2.1 u' u (fun τ => GlobalTheory.Dec.FormF.K_KC (hu' τ)) (fun τ => GlobalTheory.Dec.FormF.K_KC (hu τ)), Module.End.mul_apply]
     | zero => exact ⟨by rw [map_zero]; exact zero_mem _, fun u _ => by simp only [map_zero]⟩
     | add a b _ _ ha hb =>
       exact ⟨by rw [map_add]; exact add_mem ha.1 hb.1, fun u hu => by simp only [map_add, ha.2 u hu, hb.2 u hu]⟩
@@ -283,8 +282,8 @@ theorem exists_io_poly (D : D7) (V W : HSp D) (θ : InfFam D) (Sp : D.what₂.Ta
   · rw [hio, hio, map_smul]
     refine congrArg (HSMul.hSMul _) ?_
     have hcm := hm1 (factU M.ε x₁ x₂ x₃ fun τ => (BS τ)⁻¹ * compAt θ τ (Formalism.L2.Theta.mt V u) * BS τ)
-      (fun k hk => commute_factU_factK _ _ _ _ (fun τ => (mem_KC_of_K (mem_K_allPos (hun τ))).1)
-        fun τ => mem_KC_of_K (hk τ)) x
+      (fun k hk => commute_factU_factK _ _ _ _ (fun τ => (GlobalTheory.Dec.FormF.K_KC (mem_K_allPos (hun τ))).1)
+        fun τ => GlobalTheory.Dec.FormF.K_KC (hk τ)) x
     have h2 : j (c.ρ u w) = ϖ (fun τ => (BS τ)⁻¹ * compAt θ τ (Formalism.L2.Theta.mt V u) * BS τ) (j w) := by
       rw [hϖ]; exact hj2 u hu w
     rw [h2, (key _ (hjm w)).2 _ fun τ => mem_K_allPos (hun τ)]
@@ -305,8 +304,8 @@ theorem exists_io_poly (D : D7) (V W : HSp D) (θ : InfFam D) (Sp : D.what₂.Ta
   · rw [MultilinearMap.map_smul_univ]
     rw [map_smul, map_smul, LinearMap.smul_apply, hio, smul_smul, smul_smul, hψ0, hmv _ hbK, factK]
     have : (fun τ => ((((k₀ * κ) τ).map star)⁻¹)ᵀ) = k₀ * κ := funext fun τ => invT_conj (hκ' τ).1
-    have hm := (_root_.GlobalTheory.JointHarm.fact_one_mul_adj D W.rank V.rank M.ε x₁ x₂ x₃).2.1 k₀ κ 1 1 (fun τ => mem_KC_of_K (hk₀ τ))
-      (fun τ => mem_KC_of_K (hκ τ)) (fun _ => isUnit_one) (fun _ => isUnit_one)
+    have hm := (_root_.GlobalTheory.JointHarm.fact_one_mul_adj D W.rank V.rank M.ε x₁ x₂ x₃).2.1 k₀ κ 1 1 (fun τ => GlobalTheory.Dec.FormF.K_KC (hk₀ τ))
+      (fun τ => GlobalTheory.Dec.FormF.K_KC (hκ τ)) (fun _ => isUnit_one) (fun _ => isUnit_one)
     rw [mul_one] at hm
     rw [this, hm, Module.End.mul_apply, hΔ]
     simp only [RingHom.id_apply, Finset.prod_inv_distrib]
@@ -365,7 +364,7 @@ theorem weights_label (D : D7) (i : Fin D.R.m) (τ : D.what₂.Tau) (p q : ℕ) 
         exact_mod_cast this
       rw [h2]
       unfold wtK
-      rw [if_pos (by simp)]
+      rw [ite_eq_left (by simp)]
       simp
     · have h1 := A.kap_minus c
       rw [hsq, eS, he] at h1
@@ -376,7 +375,7 @@ theorem weights_label (D : D7) (i : Fin D.R.m) (τ : D.what₂.Tau) (p q : ℕ) 
         exact_mod_cast this
       rw [h2]
       unfold wtK
-      rw [if_neg (by simp)]
+      rw [ite_eq_right (by simp)]
       have h3 : (Wc D i).rank - 1 - ((Fin.cast hn (finSumFinEquiv (Sum.inr c)) : Fin (Wc D i).rank) : ℕ) =
           qS D i τ - 1 - c := by
         simp only [finSumFinEquiv_apply_right, Fin.val_cast, Fin.val_natAdd]
@@ -392,13 +391,13 @@ theorem weights_label (D : D7) (i : Fin D.R.m) (τ : D.what₂.Tau) (p q : ℕ) 
     unfold wtU thetaWt
     by_cases c1 : (j : ℕ) < pS D i τ
     · have ht := D.R.three_m_lt_t
-      rw [if_pos c1, if_pos c1, if_neg (by omega)]
+      rw [ite_eq_left c1, ite_eq_left c1, ite_eq_right (by omega)]
       ring
-    · rw [if_neg c1, if_neg c1]
+    · rw [ite_eq_right c1, ite_eq_right c1]
       by_cases c2 : (j : ℕ) < pS D i τ + D.R.t
-      · rw [if_pos c2, if_neg (by omega)]
+      · rw [ite_eq_left c2, ite_eq_right (by omega)]
         ring
-      · rw [if_neg c2, if_pos (by omega)]
+      · rw [ite_eq_right c2, ite_eq_left (by omega)]
         have h3 : (Vc D i).rank - 1 - (j : ℕ) = qS D i τ - 1 - (j - (pS D i τ + D.R.t)) := by
           omega
         rw [h3]
@@ -453,8 +452,8 @@ theorem fact_mul_cancel {D : D7} {m n : ℕ} (ε : D.what₂.Tau → Fin m → B
     (hk' : ∀ τ, k' τ ∈ Formalism.REAL.Kset (ε τ)) (h : k * k' = 1) (P : PolF D m n) :
     fact ε x₁ x₂ x₃ k 1 (fact ε x₁ x₂ x₃ k' 1 P) = P := by
   have H := _root_.GlobalTheory.JointHarm.fact_one_mul_adj D m n ε x₁ x₂ x₃
-  have hm := H.2.1 k k' 1 1 (fun τ => mem_KC_of_K (hk τ))
-    (fun τ => mem_KC_of_K (hk' τ)) (fun _ => isUnit_one) (fun _ => isUnit_one)
+  have hm := H.2.1 k k' 1 1 (fun τ => GlobalTheory.Dec.FormF.K_KC (hk τ))
+    (fun τ => GlobalTheory.Dec.FormF.K_KC (hk' τ)) (fun _ => isUnit_one) (fun _ => isUnit_one)
   rw [mul_one, h, H.1] at hm
   rw [← Module.End.mul_apply, ← hm, Module.End.one_apply]
 

@@ -53,7 +53,6 @@ namespace GlobalTheory.EtC.ChernSpec
 
 open GlobalTheory.EtC.ClsSpec
 
-set_option backward.isDefEq.respectTransparency false
 
 theorem sec_neg {R : Type} [CommRing R] (F : Shv R) (s : ℤ) (hs : s < 0) {U : Scheme.{0}}
     (a b : Sec ((res R F).X s) U) : a = b := by
@@ -149,7 +148,6 @@ end GlobalTheory.EtC.ChernSpec
 
 namespace GlobalTheory.EtC.ChernSpec
 open GlobalTheory.EtC.ClsSpec
-set_option backward.isDefEq.respectTransparency false
 
 theorem isOneCochain_add (q : ℕ) [NeZero q] {E : Spc} (L M N : E ⟶ ofCat (glCat 1)) (hE : Inv q E)
     (hN : ∀ (U : Scheme.{0}) (x : Sx E 1 U), lineUnit N x = lineUnit L x * lineUnit M x) :

@@ -8,47 +8,6 @@ import GroundTheory.ProfiniteCohomology.FilteredHomology
 import GroundTheory.ProfiniteCohomology.GaloisCohomology.BrauerInflation
 public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleCohomology.Unramified
 public import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolUnramified
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.FieldTheory.Galois.Profinite
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -184,61 +143,6 @@ variable {K : FiniteSubfield} {v : HeightOneSpectrum (𝓞 K.1)}
   (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure (v.adicCompletion K.1))
   (F : FiniteSubfield) [Fact (K ≤ F)] [Normal K.1 F.1]
 
-theorem decompHom_smul_placeOfEmbedding'
-    (σ : Gal(AlgebraicClosure (v.adicCompletion K.1)/v.adicCompletion K.1)) :
-    decompHom (v.adicCompletion K.1) (embedLevel ι F) σ • placeOfEmbedding ι F =
-      placeOfEmbedding ι F := by
-  set τ := decompHom (v.adicCompletion K.1) (embedLevel ι F) σ
-  set w₀ := placeOfEmbedding ι F
-  have hu : w₀.1 = τ • (τ⁻¹ • w₀).1 := eq_smul_inv_smul v τ w₀
-  let j := σ.symm.toAlgHom.comp
-    ((completionEmbedding ι F).comp (galEquiv v τ (τ⁻¹ • w₀).1 w₀.1 hu).toAlgHom)
-  have hj : ∀ x : F.1, j (algebraMap F.1 _ x) = ι x := by
-    intro x
-    change σ.symm (completionEmbedding ι F (galEquiv v τ (τ⁻¹ • w₀).1 w₀.1 hu
-      (algebraMap F.1 _ x))) = ι x
-    rw [galEquiv_algebraMap, completionEmbedding_algebraMap]
-    have h := decompHom_apply (Kv := v.adicCompletion K.1) (embedLevel ι F) σ x
-    rw [embedLevel_apply, embedLevel_apply] at h
-    rw [h, AlgEquiv.symm_apply_apply]
-  have h := eq_placeOfEmbedding ι F j hj
-  calc τ • w₀ = τ • (τ⁻¹ • w₀) := by rw [h]
-    _ = w₀ := smul_inv_smul τ w₀
-
-def placeDecompHom :
-    Gal(AlgebraicClosure (v.adicCompletion K.1)/v.adicCompletion K.1) →*
-      MulAction.stabilizer Gal(F.1/K.1) (placeOfEmbedding ι F).1.asIdeal :=
-  (decompHom (v.adicCompletion K.1) (embedLevel ι F)).codRestrict _ fun σ ↦
-    MulAction.mem_stabilizer_iff.2
-      (congrArg (fun u : PlacesOver F.1 v ↦ u.1.asIdeal) (decompHom_smul_placeOfEmbedding' ι F σ))
-
-theorem coe_placeDecompHom (σ : Gal(AlgebraicClosure (v.adicCompletion K.1)/v.adicCompletion K.1)) :
-    (placeDecompHom ι F σ : Gal(F.1/K.1)) = decompHom (v.adicCompletion K.1) (embedLevel ι F) σ :=
-  rfl
-
-theorem ι_placeDecompHom_apply
-    (σ : Gal(AlgebraicClosure (v.adicCompletion K.1)/v.adicCompletion K.1)) (x : F.1) :
-    ι ((placeDecompHom ι F σ : Gal(F.1/K.1)) x : F.1) = σ (ι x) :=
-  decompHom_apply (Kv := v.adicCompletion K.1) (embedLevel ι F) σ x
-
-theorem continuous_placeDecompHom : Continuous (placeDecompHom ι F) :=
-  (continuous_decompHom (embedLevel ι F)).subtype_mk _
-
-theorem completionEmbedding_placeDecompHom_smul
-    (σ : Gal(AlgebraicClosure (v.adicCompletion K.1)/v.adicCompletion K.1))
-    (y : (placeOfEmbedding ι F).1.adicCompletion F.1) :
-    completionEmbedding ι F (placeDecompHom ι F σ • y) = σ (completionEmbedding ι F y) := by
-  have : (completionEmbedding ι F).comp
-      (decompositionAlgEquiv v (placeOfEmbedding ι F).1 (placeDecompHom ι F σ)).toAlgHom =
-      σ.toAlgHom.comp (completionEmbedding ι F) := by
-    apply algHom_ext_adicCompletion
-    intro x
-    change completionEmbedding ι F (decompositionAlgEquiv v (placeOfEmbedding ι F).1
-      (placeDecompHom ι F σ) (algebraMap F.1 _ x)) = σ (completionEmbedding ι F (algebraMap F.1 _ x))
-    rw [decompositionAlgEquiv_algebraMap, completionEmbedding_algebraMap,
-      completionEmbedding_algebraMap, ι_placeDecompHom_apply]
-  exact DFunLike.congr_fun this y
-
 section CompField
 
 @[irreducible]
@@ -247,7 +151,8 @@ def compField : IntermediateField (v.adicCompletion K.1) (AlgebraicClosure (v.ad
 
 omit [Normal K.1 F.1] in
 theorem compField_def : compField ι F = (completionEmbedding ι F).fieldRange := by
-  with_unfolding_all rfl
+  unfold compField
+  rfl
 
 def compEquiv : (placeOfEmbedding ι F).1.adicCompletion F.1 ≃ₐ[v.adicCompletion K.1] compField ι F :=
   (AlgEquiv.ofInjectiveField (completionEmbedding ι F)).trans
@@ -531,7 +436,7 @@ theorem exists_mulCoboundary_of_ord (he : (placeOfEmbedding ι F).1.asIdeal.rami
           (c (decompHom (v.adicCompletion K.1) (embedLevel ι F) σ,
             decompHom (v.adicCompletion K.1) (embedLevel ι F) τ)) := by
   have : CompactSpace Gal(AlgebraicClosure (v.adicCompletion K.1)/v.adicCompletion K.1) :=
-    galois_compactSpace _ _
+    InfiniteGalois.instCompactSpaceAlgEquivOfIsGalois _ _
 
   obtain ⟨g, hg⟩ := exists_int_coboundary_of_surjective (placeDecompHom ι F)
     (placeDecompHom_surjective ι F)

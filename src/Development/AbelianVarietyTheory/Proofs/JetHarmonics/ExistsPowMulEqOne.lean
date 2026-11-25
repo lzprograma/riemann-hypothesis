@@ -49,13 +49,10 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.PhiP
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.H1
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.ThetaFinOrd
 
@@ -182,11 +179,8 @@ theorem finOrd_criteria : Laws → ∀ (V : Type) [CommRing V] [IsDomain V] [IsD
   · obtain ⟨c, hc⟩ := exists_pow_scalar hG hk p w hw Φ hΦ
     have e : ((ζ • Φ : Module.End F (Fam D.toPre F k)) ^ M) ^ k = ((ζ ^ k * c) ^ M) • 1 := by
       rw [← pow_mul, mul_comm M k, pow_mul, smul_pow, hc, smul_smul, smul_pow, one_pow]
-    have f : ∀ n : ℕ, (((ζ • Φ : Module.End F (Fam D.toPre F k)) ^ M) ^ n) s = s := by
-      intro n
-      induction n with
-      | zero => rfl
-      | succ n ih => rw [pow_succ, Module.End.mul_apply, hfix, ih]
+    have f : ∀ n : ℕ, (((ζ • Φ : Module.End F (Fam D.toPre F k)) ^ M) ^ n) s = s := fun n => by
+      rw [pow_apply_eq_iterate]; exact Function.IsFixedPt.iterate hfix n
     have g := f k
     rw [e, LinearMap.smul_apply, Module.End.one_apply] at g
     have g' : (ζ ^ k * c) ^ M = 1 := by

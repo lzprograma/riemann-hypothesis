@@ -1,5 +1,7 @@
 module
 
+import Formalism.SharpRestriction.LevelLetterCocycles.InvariantLetterIdempotentOfFixed
+import Formalism.SharpRestriction.LevelLetterCocycles.UniformizerClauseOfAdmitted
 public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingInputs
 public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
 public import Formalism.SharpRestriction.LevelLetterCocycles.ElementDenominator
@@ -33,61 +35,13 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisi
 public import Formalism.SharpRestriction.LevelLetterCocycles.SecondLiftOfHypotheses
 public import Formalism.SharpRestriction.LevelLetterCocycles.TruncationClauseOfLatticeHypotheses
 public import Formalism.SharpRestriction.LevelLetterCocycles.IsTruncIff
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Star.Rat
-import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.Polynomial.Basic
 import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVOfNotJump
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Algebra.Order.Star.Real
 import Formalism.SharpRestriction.LevelLetterCocycles.WachFrobeniusLatticeUnramifiedFunctor
 import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.SmulSDivMem
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusMemPullbackOfInvariant, Formalism.SharpRestriction.LevelLetterCocycles.ExtDataOneMapSmulO, Formalism.SharpRestriction.LevelLetterCocycles.ExtDataExtTool, Formalism.SharpRestriction.LevelLetterCocycles.Step1KillXList, Formalism.SharpRestriction.LevelLetterCocycles.InvariantLetterIdempotentSmul, Formalism.SharpRestriction.LevelLetterCocycles.MultVNonneg, Formalism.SharpRestriction.LevelLetterCocycles.PadicValNatFactorialSucc, Formalism.SharpRestriction.LevelLetterCocycles.FirstLiftOfHypotheses, Formalism.SharpRestriction.LevelLetterCocycles.FirstLiftOfUniformizerClause, Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.LemKD, Formalism.SharpRestriction.LevelLetterCocycles.UniformizerClauseOfAdmittedAlt
 
@@ -110,17 +64,9 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {PD : PeriodData G Qp K₀ K B BdR} {LL O : Type} [Field LL] [Algebra Qp LL] [TopologicalSpace LL]
     [CommRing O] [Algebra O LL] {v : AddValuation LL (WithTop ℚ)} {n : ℕ}
 
-theorem letE_mul_self_eq (i : ZMod n) : (letE i : LetA O n) * letE i = letE i := by
-  unfold letE
-  rw [← Pi.single_mul, mul_one]
-
 theorem idempotent_smul_smul (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZMod n)
     (x : W.DD T) : (letE i : LetA O n) • (letE i : LetA O n) • x = (letE i : LetA O n) • x := by
-  rw [smul_smul, letE_mul_self_eq]
-
-private theorem phiD_letA_smul_eq_phiA_smul_phiD (W : LocWach PD LL O v n) (T : LocLat G Qp LL O)
-    (a : LetA O n) (x : W.DD T) : W.φD T (a • x) = W.φA a • W.φD T x := by
-  rw [← algebraMap_smul W.EE a x, W.φD_smul, W.φE_ext, algebraMap_smul] <;> rfl
+  rw [smul_smul, Formalism.MainNotions.WachCoordinates.Br.letE_mul_self]
 
 private theorem phiA_letE_sub_one_eq_letE (W : LocWach PD LL O v n) (i : ZMod n) :
     W.φA (letE (i - 1) : LetA O n) = letE i := by
@@ -134,7 +80,7 @@ private theorem phiA_letE_sub_one_eq_letE (W : LocWach PD LL O v n) (i : ZMod n)
 
 theorem frobenius_idempotent_shift (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZMod n) (x : W.DD T) :
     W.φD T ((letE (i - 1) : LetA O n) • x) = (letE i : LetA O n) • W.φD T x := by
-  rw [phiD_letA_smul_eq_phiA_smul_phiD, phiA_letE_sub_one_eq_letE]
+  rw [Formalism.MainNotions.LiftingTheory.wmap_φD_smul, phiA_letE_sub_one_eq_letE]
 
 private theorem letGamma_letE_eq_letE (W : LocWach PD LL O v n) (g : W.Gam) (i : ZMod n) :
     letγ (W.γ₀ g) (letE i : LetA O n) = letE i := by
@@ -229,7 +175,7 @@ theorem frobenius_mem_pullback_of_invariant (W : LocWach PD LL O v n) (T : LocLa
 
   rw [ht', map_sum]
   refine Submodule.sum_mem _ fun j _ => ?_
-  rw [phiD_letA_smul_eq_phiA_smul_phiD]
+  rw [Formalism.MainNotions.LiftingTheory.wmap_φD_smul]
   apply Submodule.smul_mem
   unfold pullJ
   apply Submodule.subset_span
@@ -237,10 +183,6 @@ theorem frobenius_mem_pullback_of_invariant (W : LocWach PD LL O v n) (T : LocLa
     ⟨(W.N T).smul_mem _ (hb j).1, idempotent_smul_smul W T (i - 1) (b j), fun δ hδ => ?_⟩, ?_⟩
   · rw [gammaD_idempotent_smul, (hb j).2 δ hδ]
   · simp
-
-private theorem locWach_map_letA_smul_comm (W : LocWach PD LL O v n) {T Y : LocLat G Qp LL O}
-    (f : LatHom T.L Y.L) (a : LetA O n) (x : W.DD T) : W.map f (a • x) = a • W.map f x := by
-  rw [← algebraMap_smul W.EE a x, map_smul, algebraMap_smul]
 
 theorem pullback_span_of_exact (W : LocWach PD LL O v n) {T Y : LocLat G Qp LL O} (ι : LatHom T.L Y.L)
     (π : LatHom Y.L W.one.L) (hY : IsCrys PD Y.ρ) (hO : IsCrys PD W.one.ρ)
@@ -272,12 +214,12 @@ theorem pullback_span_of_exact (W : LocWach PD LL O v n) {T Y : LocLat G Qp LL O
         obtain ⟨c, hc⟩ := Submodule.mem_span_singleton.mp hπz
         exact ⟨c, hc, fun h => (he h).elim⟩
     have hπlet : W.map π z = (letE (i - 1) : LetA O n) • W.map π z := by
-      rw [← locWach_map_letA_smul_comm, hz_idem]
+      rw [← Formalism.MainNotions.LiftingTheory.wmap_map_smul, hz_idem]
     have hce : c • e' = ((letE (i - 1) : LetA O n) * c) • e' := by
       rw [← smul_smul, hc]
       exact hπlet
     have hw : W.map π (((PD.p : ℕ) : LetA O n) ^ N • z - c • ε) = 0 := by
-      rw [map_sub, locWach_map_letA_smul_comm W π _ z, locWach_map_letA_smul_comm W π c ε, hεπ, ← hc, hce]
+      rw [map_sub, Formalism.MainNotions.LiftingTheory.wmap_map_smul W π _ z, Formalism.MainNotions.LiftingTheory.wmap_map_smul W π c ε, hεπ, ← hc, hce]
       simp only [smul_smul]
       rw [sub_eq_zero]
       congr 1
@@ -285,7 +227,7 @@ theorem pullback_span_of_exact (W : LocWach PD LL O v n) {T Y : LocLat G Qp LL O
     obtain ⟨y', hy'⟩ := (hker _).mp hw
     have hι : W.map ι ((letE (i - 1) : LetA O n) • y') =
         ((PD.p : ℕ) : LetA O n) ^ N • z - c • ((letE (i - 1) : LetA O n) • ε) := by
-      rw [locWach_map_letA_smul_comm, hy', smul_sub, smul_comm (letE (i - 1) : LetA O n) _ z, hz_idem,
+      rw [Formalism.MainNotions.LiftingTheory.wmap_map_smul, hy', smul_sub, smul_comm (letE (i - 1) : LetA O n) _ z, hz_idem,
         smul_comm (letE (i - 1) : LetA O n) c ε]
     have hyN : (letE (i - 1) : LetA O n) • y' ∈ W.N T := by
       apply hsat
@@ -293,10 +235,10 @@ theorem pullback_span_of_exact (W : LocWach PD LL O v n) {T Y : LocLat G Qp LL O
       exact sub_mem ((W.N Y).smul_mem _ hzN) ((W.N Y).smul_mem _ ((W.N Y).smul_mem _ hεN))
     have hp := frobenius_mem_pullback_of_invariant W T π' hmT i _ hyN (idempotent_smul_smul W T (i - 1) y')
     have e1 : W.φD Y (((PD.p : ℕ) : LetA O n) ^ N • z) = ((PD.p : ℕ) : LetA O n) ^ N • W.φD Y z := by
-      rw [phiD_letA_smul_eq_phiA_smul_phiD, frobeniusA_natCast_pow]
+      rw [Formalism.MainNotions.LiftingTheory.wmap_φD_smul, frobeniusA_natCast_pow]
     have e2 : W.φD Y (c • (letE (i - 1) : LetA O n) • ε) =
         (W.φA c * (letE i : LetA O n)) • W.φD Y ε := by
-      rw [phiD_letA_smul_eq_phiA_smul_phiD, frobenius_idempotent_shift, smul_smul]
+      rw [Formalism.MainNotions.LiftingTheory.wmap_φD_smul, frobenius_idempotent_shift, smul_smul]
     refine ⟨_, hp, W.φA c * (letE i : LetA O n), ?_, fun h => by rw [hc0 h, map_zero, zero_mul]⟩
     rw [W.map_φ, hι, map_sub, e1, e2, sub_add_cancel]
   | zero => exact ⟨0, Submodule.zero_mem _, 0, by simp, fun _ => rfl⟩
@@ -309,7 +251,7 @@ theorem pullback_span_of_exact (W : LocWach PD LL O v n) {T Y : LocLat G Qp LL O
   | smul c a _ ha =>
     obtain ⟨q, hq, β, h1, h2⟩ := ha
     refine ⟨c • q, Submodule.smul_mem _ _ hq, c * β, ?_, fun h => by rw [h2 h, mul_zero]⟩
-    rw [smul_comm, h1, smul_add, locWach_map_letA_smul_comm, smul_smul]
+    rw [smul_comm, h1, smul_add, Formalism.MainNotions.LiftingTheory.wmap_map_smul, smul_smul]
 
 end Formalism.MainNotions.RamifiedCoefficientChains.Sh
 
@@ -962,13 +904,7 @@ theorem delta_fixes_cocycle_second (x : ↥(W.wachCocyclesDelta T)) (δ : W.Gam)
 theorem mem_of_natCast_pow_smul_mem [NeZero n] (hB : Sh.BasTool W) (hA : Formalism.MainNotions.LiftingTheory.CaseA W) (hT : IsCrys PD T.ρ)
     (c : ZMod n) {w : W.DD T} (k : ℕ) (hw : Formalism.MainNotions.CrystallineLiftingInputs.DL W T c w)
     (hN : ((PD.p : ℕ) : O) ^ k • w ∈ W.N T) : w ∈ W.N T := by
-  obtain ⟨e, he⟩ := (hB hA T hT c).1
-  have hmem : ((PD.p : ℕ) : O) ^ k • w ∈ Formalism.MainNotions.CrystallineLiftingInputs.pullJ W T c 0 :=
-    Submodule.subset_span ⟨_, ⟨hN, dl_smul W T _ hw⟩, by simp⟩
-  have h := ((hB hA T hT c).2 _ e he 0).2 w k hmem
-  refine Submodule.span_le.2 ?_ h
-  rintro _ ⟨x, ⟨hx, -⟩, rfl⟩
-  simpa using hx
+  apply _root_.Formalism.MainNotions.RamifiedCoefficientChains.S9.ExtensionLemmaAlt.Step2L.mem_of_natCast_pow_smul_mem' <;> assumption
 
 theorem exists_embedding_over_letter [NeZero n] (hA : Formalism.MainNotions.LiftingTheory.CaseA W) (c : ZMod n) :
     ∃ τ : K →ₐ[Qp] LL, Formalism.MainNotions.LiftingTheory.Over W τ c := by
@@ -1204,7 +1140,7 @@ theorem sum_multV_le [NeZero n] (hFD : Sh.FilDim W) {d : ℕ} {T₁ T₂ : LocLa
       by_contra hnj
       exact hne (Formalism.MainNotions.N.Pv.LocalLengthBound.rk_multV_of_not_jump PD T₂.ρ τ k hnj)
     have hw := hjump k hj
-    simp only [Formalism.MainNotions.RamifiedCoefficientChains.JumpWinS, hev, if_true, Set.mem_union, Set.mem_Icc] at hw
+    simp only [Formalism.MainNotions.RamifiedCoefficientChains.JumpWinS, hev, ite_true, Set.mem_union, Set.mem_Icc] at hw
     have hk' := Finset.mem_Ico.1 hk
     simp only [Finset.mem_Icc]
     omega
@@ -1505,7 +1441,7 @@ theorem first_lift_of_hypotheses [NeZero n] (W : LocWach PD LL O v n) (hV : Form
     simp only [Finset.mem_filter] at hu
     obtain ⟨-, τ, hτ, hjmp⟩ := hu
     have hw := hjw c τ hτ p.1 hjmp
-    simp only [JumpWinS, hev, if_true, Set.mem_union, Set.mem_Icc] at hw
+    simp only [JumpWinS, hev, ite_true, Set.mem_union, Set.mem_Icc] at hw
     refine ⟨hx0, ?_⟩
     push_cast at hj1 hj2 ⊢
     omega
@@ -1673,7 +1609,6 @@ namespace Formalism.MainNotions.N.Pv.LocalLengthBound
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 
-
 set_option maxHeartbeats 800000 in
 theorem lemK_D (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW)
     (Cm : CmpOf D.loc D.locA HW F) (CR CA CB CK : ℝ) (hA : Formalism.MainNotions.RamifiedCoefficientChains.admitted D HW F Cm CR CA CB CK)
@@ -1718,13 +1653,7 @@ variable {CR CA CB CK : ℝ}
 
 theorem caseA_loc' {l : ℕ} [Fact l.Prime] {K LL : Loc.FinExt l} (hg : Loc.Good K 1 LL)
     (hCA : Formalism.MainNotions.LiftingTheory.CaseA ((HW l).W K 1 LL hg)) : Loc.CaseA K LL := by
-  have hpl : ((D.loc l).PD K).p = l := (D.loc l).PD_p K
-  refine ⟨fun x hx => ?_, by rw [← hpl]; exact hCA.2.2, hg⟩
-  obtain ⟨y, hy⟩ := hCA.1.2 ⟨x, hx⟩
-  have h2 := y.2.2
-  have : ((y : ↥(K0 K)) : Om l) = x := congrArg Subtype.val hy
-  rw [this] at h2
-  exact h2
+  apply _root_.Formalism.MainNotions.RamifiedCoefficientChains.S9.bigCellDetWeightedEnergyIntegral.caseA_loc' <;> assumption
 
 theorem laurent_clause_of_admitted' (hA : admitted D HW F Cm CR CA CB CK) : Formalism.MainNotions.DeltaInvariantLattices.P4 D HW F Cm :=
   fun l _ K s LL h => (hA.1 l K s LL h).2.2.2.1
@@ -1735,8 +1664,6 @@ theorem uniformizer_clause_of_admitted (hA : admitted D HW F Cm CR CA CB CK) : F
 theorem level_tools_of_admitted' (hA : admitted D HW F Cm CR CA CB CK) : Formalism.MainNotions.WachCoordinates.adm7 D HW F Cm :=
   Formalism.MainNotions.UnusedSlot80.tools_unramified_statement D HW F Cm ⟨fun l _ K s LL h => (hA.1 l K s LL h).2.2.1, laurent_clause_of_admitted' D HW F Cm hA,
     uniformizer_clause_of_admitted D HW F Cm hA⟩
-
-
 
 theorem local_lemmas_of_literature (hA : admitted D HW F Cm CR CA CB CK) (h23 : Formalism.MainNotions.LiftingTheory.adm23 D HW F)
     (hHerr : Formalism.MainNotions.ElementDenominator.HerrClassNaturalExtension D.loc D.locA HW F) (a22 : Formalism.MainNotions.CrystallineLiftingBounds.adm22 D HW F)

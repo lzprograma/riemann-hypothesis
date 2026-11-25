@@ -80,9 +80,9 @@ theorem eq_planePt (b : Module.Basis T ℤ (dualLattice F))
     funext ⟨τ, j⟩
     by_cases hτ : τ = σ
     · subst hτ
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       rfl
-    · rw [if_neg hτ]
+    · rw [ite_eq_right hτ]
       exact hσ τ hτ j
   have h1 := (dualRecover b hb).injective hW
   funext ⟨u, t⟩
@@ -101,7 +101,7 @@ theorem h_planePt (b : Module.Basis T ℤ (dualLattice F))
     simp
   · intro τ _ hτ
     rw [recover_planePt]
-    simp only [hτ, if_false]
+    simp only [hτ, ite_false]
     show (star (0 : Fin (D + 1) → ℂ) ⬝ᵥ (F.metric τ *ᵥ (0 : Fin (D + 1) → ℂ))).re = 0
     simp
   · simp
@@ -154,18 +154,24 @@ theorem restr_bijective (hOf : DualPtsOfPlane.Statement) (b : Module.Basis T ℤ
     exact hΨ _ (hOf K (D + 1) F T b hb σ v h0) hv
   exact ⟨hinj, LinearMap.injective_iff_surjective.mp hinj⟩
 
-theorem atProj (hOn : DualPtsOnPlane.Statement) (hOf : DualPtsOfPlane.Statement)
-    (hInt : ChartDensityIntegrable.Statement) (b : Module.Basis T ℤ (dualLattice F))
+private theorem chartMat_spec (hOn : DualPtsOnPlane.Statement) (hOf : DualPtsOfPlane.Statement)
+    (b : Module.Basis T ℤ (dualLattice F))
     (hb : Function.Bijective (Matrix.mulVecLin (dualEmbMatrix b)))
-    (Ψ : (((k : Unit) → dualBlocks T k) → ℂ) →ₗ[ℂ] (Fin (D + 1) → ℂ)) (hΨ : IsGoodProj (dualIdeal b) Ψ) :
-    ∃ A : (K →+* ℂ) → Matrix (Fin (D + 1)) (Fin (D + 1)) ℂ, (∀ σ, Function.Bijective (A σ).mulVec) ∧
-      ptsIntegralAt (e := D) (dualIdeal b) Ψ (fun _ z => Real.log ((dualLine F b hb).h z)) (fun _ => 1) =
-        ∑ σ : K →+* ℂ, chartMass ((A σ)ᴴ * F.metric σ * A σ) := by
+    {Ψ : (((k : Unit) → dualBlocks T k) → ℂ) →ₗ[ℂ] (Fin (D + 1) → ℂ)}
+    (hΨ : IsGoodProj (dualIdeal b) Ψ)
+    {A : (K →+* ℂ) → Matrix (Fin (D + 1)) (Fin (D + 1)) ℂ}
+    (hAv : ∀ σ v, A σ *ᵥ v = (LinearEquiv.ofBijective _ (restr_bijective hOf b hb hΨ σ)).symm v) :
+    (∀ σ, Function.Bijective (A σ).mulVec) ∧
+    (∀ σ v c, Ψ (segre (ι := dualBlocks T) (dualPlanePt b σ v)) = c → v = A σ *ᵥ c) ∧
+    (∀ σ (y : Fin D → ℂ), A σ *ᵥ Fin.cons 1 y ≠ 0) ∧
+    (∀ y : Fin D → ℂ, fibre (dualIdeal b) Ψ y =
+      Set.range fun σ : K →+* ℂ =>
+        segre (ι := dualBlocks T) (dualPlanePt b σ (A σ *ᵥ Fin.cons 1 y))) ∧
+    (∀ σ (y : Fin D → ℂ), IsSheet (dualIdeal b) Ψ y
+      (segre (ι := dualBlocks T) (dualPlanePt b σ (A σ *ᵥ Fin.cons 1 y)))
+      (fun y' => dualPlanePt b σ (A σ *ᵥ Fin.cons 1 y'))) := by
   let E : (K →+* ℂ) → (Fin (D + 1) → ℂ) ≃ₗ[ℂ] (Fin (D + 1) → ℂ) := fun σ =>
     LinearEquiv.ofBijective _ (restr_bijective hOf b hb hΨ σ)
-  let A : (K →+* ℂ) → Matrix (Fin (D + 1)) (Fin (D + 1)) ℂ := fun σ =>
-    LinearMap.toMatrix' (E σ).symm.toLinearMap
-  have hAv : ∀ σ v, A σ *ᵥ v = (E σ).symm v := fun σ v => LinearMap.toMatrix'_mulVec _ v
   have hAbij : ∀ σ, Function.Bijective (A σ).mulVec := fun σ => by
     have : (A σ).mulVec = (E σ).symm := funext (hAv σ)
     rw [this]
@@ -210,6 +216,23 @@ theorem atProj (hOn : DualPtsOnPlane.Statement) (hOf : DualPtsOfPlane.Statement)
     simp only [dualPlanePt, Matrix.mulVec, dotProduct]
     exact Differentiable.fun_sum fun j _ =>
       (Differentiable.fun_sum fun k _ => (differentiable_pi.mp hc k).const_mul _).const_mul _
+  exact ⟨hAbij, huniq, hne, hfib, hsheet⟩
+
+theorem atProj (hOn : DualPtsOnPlane.Statement) (hOf : DualPtsOfPlane.Statement)
+    (hInt : ChartDensityIntegrable.Statement) (b : Module.Basis T ℤ (dualLattice F))
+    (hb : Function.Bijective (Matrix.mulVecLin (dualEmbMatrix b)))
+    (Ψ : (((k : Unit) → dualBlocks T k) → ℂ) →ₗ[ℂ] (Fin (D + 1) → ℂ))
+    (hΨ : IsGoodProj (dualIdeal b) Ψ) :
+    ∃ A : (K →+* ℂ) → Matrix (Fin (D + 1)) (Fin (D + 1)) ℂ,
+      (∀ σ, Function.Bijective (A σ).mulVec) ∧
+      ptsIntegralAt (e := D) (dualIdeal b) Ψ (fun _ z => Real.log ((dualLine F b hb).h z))
+        (fun _ => 1) = ∑ σ : K →+* ℂ, chartMass ((A σ)ᴴ * F.metric σ * A σ) := by
+  let A : (K →+* ℂ) → Matrix (Fin (D + 1)) (Fin (D + 1)) ℂ := fun σ =>
+    LinearMap.toMatrix' (LinearEquiv.ofBijective _ (restr_bijective hOf b hb hΨ σ)).symm.toLinearMap
+  have hAv : ∀ σ v, A σ *ᵥ v =
+      (LinearEquiv.ofBijective _ (restr_bijective hOf b hb hΨ σ)).symm v :=
+    fun σ v => LinearMap.toMatrix'_mulVec _ v
+  obtain ⟨hAbij, huniq, hne, hfib, hsheet⟩ := chartMat_spec hOn hOf b hb hΨ hAv
   have hdens : ∀ σ (y : Fin D → ℂ), sheetDensity (dualIdeal b) Ψ
       (fun _ z => Real.log ((dualLine F b hb).h z)) (fun _ => 1) y
       (segre (ι := dualBlocks T) (dualPlanePt b σ (A σ *ᵥ Fin.cons 1 y))) =
@@ -327,53 +350,11 @@ theorem atProj (hOn : DualPtsOnPlane.Statement) (hOf : DualPtsOfPlane.Statement)
         ∑ σ : K →+* ℂ, chartMixedEnergy ((chartMat hOf b hb hΨ σ)ᴴ * F.metric σ * chartMat hOf b hb hΨ σ)
           ((chartMat hOf b hb hΨ σ)ᴴ * chartMat hOf b hb hΨ σ) k := by
   set A := chartMat hOf b hb hΨ with hAdef
-  let E : (K →+* ℂ) → (Fin (D + 1) → ℂ) ≃ₗ[ℂ] (Fin (D + 1) → ℂ) := fun σ =>
-    LinearEquiv.ofBijective _ (restr_bijective hOf b hb hΨ σ)
-  have hAv : ∀ σ v, A σ *ᵥ v = (E σ).symm v := fun σ v => LinearMap.toMatrix'_mulVec _ v
-  have hAbij : ∀ σ, Function.Bijective (A σ).mulVec := fun σ => by
-    have : (A σ).mulVec = (E σ).symm := funext (hAv σ)
-    rw [this]
-    exact (E σ).symm.bijective
-  have hΨA : ∀ σ v, Ψ (segre (ι := dualBlocks T) (dualPlanePt b σ (A σ *ᵥ v))) = v := fun σ v => by
-    rw [hAv]
-    exact (E σ).apply_symm_apply v
-  have huniq : ∀ σ v c, Ψ (segre (ι := dualBlocks T) (dualPlanePt b σ v)) = c → v = A σ *ᵥ c :=
-    fun σ v c h => (E σ).injective (by
-      show Ψ (segre (ι := dualBlocks T) (dualPlanePt b σ v)) =
-        Ψ (segre (ι := dualBlocks T) (dualPlanePt b σ (A σ *ᵥ c)))
-      rw [h, hΨA])
-  have hne : ∀ σ (y : Fin D → ℂ), A σ *ᵥ Fin.cons 1 y ≠ 0 := fun σ y h0 => by
-    have h1 : Fin.cons 1 y = (0 : Fin (D + 1) → ℂ) := (hAbij σ).1 (h0.trans (Matrix.mulVec_zero _).symm)
-    simpa using congrFun h1 0
-  have hfib : ∀ y : Fin D → ℂ, fibre (dualIdeal b) Ψ y =
-      Set.range fun σ : K →+* ℂ => segre (ι := dualBlocks T) (dualPlanePt b σ (A σ *ᵥ Fin.cons 1 y)) := by
-    intro y
-    ext w
-    constructor
-    · rintro ⟨z, hz, rfl, hΨz⟩
-      obtain ⟨σ, hσ⟩ := hOn K (D + 1) F T b hb z hz
-      have hz' := eq_planePt b hb hσ
-      have hv : recLin b hb σ z = A σ *ᵥ Fin.cons 1 y := huniq σ _ _ (by rw [← hz']; exact hΨz)
-      refine ⟨σ, ?_⟩
-      show segre (ι := dualBlocks T) (dualPlanePt b σ (A σ *ᵥ Fin.cons 1 y)) = segre z
-      rw [← hv, ← hz']
-    · rintro ⟨σ, rfl⟩
-      exact ⟨_, hOf K (D + 1) F T b hb σ _ (hne σ y), rfl, hΨA σ _⟩
-  have hsheet : ∀ σ (y : Fin D → ℂ), IsSheet (dualIdeal b) Ψ y
-      (segre (ι := dualBlocks T) (dualPlanePt b σ (A σ *ᵥ Fin.cons 1 y)))
-      (fun y' => dualPlanePt b σ (A σ *ᵥ Fin.cons 1 y')) := by
-    intro σ y
-    have hc : Differentiable ℂ (fun y' : Fin D → ℂ => (Fin.cons 1 y' : Fin (D + 1) → ℂ)) := by
-      rw [differentiable_pi]
-      intro j
-      refine Fin.cases ?_ (fun k => ?_) j
-      · simp
-      · simpa using differentiable_apply (𝕜 := ℂ) k
-    refine ⟨rfl, Filter.Eventually.of_forall fun y' => ⟨?_, hOf K (D + 1) F T b hb σ _ (hne σ y'), hΨA σ _⟩⟩
-    refine (differentiable_pi.mpr fun p => ?_) y'
-    simp only [dualPlanePt, Matrix.mulVec, dotProduct]
-    exact Differentiable.fun_sum fun j _ =>
-      (Differentiable.fun_sum fun k _ => (differentiable_pi.mp hc k).const_mul _).const_mul _
+  have hAv : ∀ σ v, A σ *ᵥ v =
+      (LinearEquiv.ofBijective _ (restr_bijective hOf b hb hΨ σ)).symm v :=
+    fun σ v => LinearMap.toMatrix'_mulVec _ v
+  obtain ⟨hAbij, huniq, hne, hfib, hsheet⟩ :=
+    DualGeometricDegreeCharts.chartMat_spec hOn hOf b hb hΨ hAv
 
   have hnear : ∀ σ (y : Fin D → ℂ) γ, IsSheet (dualIdeal b) Ψ y
       (segre (ι := dualBlocks T) (dualPlanePt b σ (A σ *ᵥ Fin.cons 1 y))) γ →

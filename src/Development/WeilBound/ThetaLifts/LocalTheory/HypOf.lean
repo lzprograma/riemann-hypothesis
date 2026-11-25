@@ -14,46 +14,6 @@ public import Development.WeilBound.ThetaLifts.LeviDeterminants.ActsEx
 public import Development.WeilBound.ThetaLifts.TowerModels.LeviEx
 public import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsBeta
 import Development.WeilBound.ThetaLifts.CartanFactorisation.TensOfEval
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -97,19 +57,8 @@ theorem inj_add (hp : IsPair B M χX χW om r s r' s') {𝓒} (hc : Cls0 M om �
 
 theorem inj_smul (c : ℂ) (Φ : Fn F n d) : M.I om (c • Φ) = c • M.I om Φ := funext fun h => PositivityTheory.ThKG.I_smul M om c Φ h
 
-theorem inj_right (Φ : Fn F n d) (h₀ h : UA σ W.J) : M.I om (om (1, h₀) Φ) h = M.I om Φ (h * h₀) := by
-  simp only [Model.I, theta, ← Module.End.mul_apply, ← map_mul, Prod.mk_mul_mk, mul_one]
-
-theorem inj_at {m : ℕ} {Y : Spc F E m} {R : Type} [Zero R] (ev : AF F → R) : (1 : UA σ Y.J) ∈ UAt σ Y ev :=
-  fun u _ => by simp [mat]
-
-theorem inj_kinf {m : ℕ} {Y : Spc F E m} (τ) : (1 : UA σ Y.J) ∈ KInf σ Y τ :=
-  ⟨inj_at _, fun w => by
-    have : (mat (1 : UA σ Y.J)).map (piInf (τ w)) = 1 := by simp [mat]
-    rw [this]; exact Commute.one_left _⟩
-
 theorem inj_line {m : ℕ} {Y : Spc F E m} : (1 : Multiplicative ℝ →* UA σ Y.J) ∈ Lines σ Y :=
-  ⟨continuous_const, fun _ => inj_at _⟩
+  ⟨continuous_const, fun _ => PositivityTheory.ThKF.one_at' _⟩
 
 theorem upd_mem {κ : Type} {S : ∀ v : Pl F, Submodule ℂ ((κ → Fv F v) → ℂ)} {φ : ∀ u : Pl F, (κ → Fv F u) → ℂ}
     (h : ∀ u, φ u ∈ S u) {v : Pl F} {x} (hx : x ∈ S v) (u) : Function.update φ v x u ∈ S u := by
@@ -176,7 +125,7 @@ theorem injGen (hO : ArchOp) (hLie : ArchLie) (hQ : ArchUniq) (hp : IsPair B M �
       have e' : om (1, h) (pure f (Function.update χ v x)) = pure f (Function.update χ v x₁) :=
         e.trans (congrArg (pure f) (Function.update_idem ..))
       funext g
-      rw [← e', inj_right, ((mem_kerIn hk hx).1 hN).2]; rfl⟩) with hb | hb
+      rw [← e', PositivityTheory.ThKF.I_right, ((mem_kerIn hk hx).1 hN).2]; rfl⟩) with hb | hb
     · exfalso
       have : pf v (χ v) ∈ kerIn (S v) (pf v) K := (mem_kerIn hk (c1 v)).2 ⟨c1 v, by rwa [Function.update_eq_self]⟩
       rw [hb] at this
@@ -217,9 +166,9 @@ theorem injGen (hO : ArchOp) (hLie : ArchLie) (hQ : ArchUniq) (hp : IsPair B M �
   have mK : ∀ x, x ∈ K ↔ ∀ h, L h x = 0 := fun x => by simp [K, Submodule.mem_iInf]
   have mK' : ∀ x, x ∈ K ↔ M.I om (pure x ψ) = 0 := fun x => by rw [mK, eξ]; exact ⟨fun h => funext h, fun h g => congrFun h g⟩
   have hk : ∀ x ∈ M.Pol B.ψ B.emb, p x = 0 → x ∈ K := fun x hx e => (mK' x).2 (kill x hx ψ k1 k2 (Or.inl e))
-  choose op hop hopP using hO F E σ B n d X W M χX χW om r s r' s' hp 1 (inj_at _)
+  choose op hop hopP using hO F E σ B n d X W M χX χW om r s r' s' hp 1 (PositivityTheory.ThKF.one_at' _)
   have LW : ∀ h hh g x, L g (op h hh x) = L (g * h) x := fun h hh g x => by
-    rw [hL, hL, ← (hop h hh).1 x ξ hξ, inj_right]
+    rw [hL, hL, ← (hop h hh).1 x ξ hξ, PositivityTheory.ThKF.I_right]
   rcases irrI (kerIn (M.Pol B.ψ B.emb) p K) (fun γ hγ x hx x₁ ha hN => by
       obtain ⟨y, h3, h4, h5⟩ := hLie F E σ B n d X W M χX χW om r s r' s' hp 1 inj_line γ hγ (fun t => op _ (hγ.2 _))
         (fun t => hop _ _) x hx
@@ -228,7 +177,7 @@ theorem injGen (hO : ArchOp) (hLie : ArchLie) (hQ : ArchUniq) (hp : IsPair B M �
       simp only [LW, (mK x).1 ((mem_kerIn hk hx).1 hN)]
       exact hasDerivAt_const _ _) (fun k hk' x hx x₁ ha hN => by
       obtain rfl : x₁ = op k hk'.1 x := (hQ F _ x x₁ _).1 _ ha ((hop k _).2 x)
-      refine (mem_kerIn hk (hopP k _ (inj_kinf _) hk' x hx)).2 ((mK _).2 fun g => ?_)
+      refine (mem_kerIn hk (hopP k _ (PositivityTheory.ThKF.kinf_one _) hk' x hx)).2 ((mK _).2 fun g => ?_)
       rw [LW]; exact (mK x).1 ((mem_kerIn hk hx).1 hN) _) with hb | hb
   · exfalso
     have : p f ∈ kerIn (M.Pol B.ψ B.emb) p K := (mem_kerIn hk hf).2 ((mK' f).2 hψ0)
@@ -339,8 +288,8 @@ theorem injPure_of (hO : ArchOp) (hLie : ArchLie) (hQ : ArchUniq) (hA : ActsEx) 
     rintro _ ⟨g, hg, ψ, c1, c2, rfl⟩
     exact ⟨sch hp.good g ψ c1 c2, key g hg ψ c1 c2⟩
   obtain ⟨Φ, hΦ, hne⟩ := hnz.2
-  have ex := fun v => (hA F E σ B _ _ _ _ _ _ _ om' _ _ _ _ hp' v).1 1 (inj_at _)
-  choose op hop hopP using hO F E σ B _ _ _ _ _ _ _ om' _ _ _ _ hp' 1 (inj_at _)
+  have ex := fun v => (hA F E σ B _ _ _ _ _ _ _ om' _ _ _ _ hp' v).1 1 (PositivityTheory.ThKF.one_at' _)
+  choose op hop hopP using hO F E σ B _ _ _ _ _ _ _ om' _ _ _ _ hp' 1 (PositivityTheory.ThKF.one_at' _)
   have irrI : ∀ N : Submodule ℂ R.Pi,
       (∀ γ ∈ Lines σ G.W, ∀ f ∈ G.M'.Pol B.ψ B.emb, ∀ f₁ : SInf F _,
         ActsD (evI F) (fun t => om' (1, γ (Multiplicative.ofAdd t))) f f₁ → R.p' f ∈ N → R.p' f₁ ∈ N) →

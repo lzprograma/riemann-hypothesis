@@ -306,8 +306,8 @@ theorem UpperTheory.V.Z.Tf.Orb.quotFubini :
   obtain ⟨Y, C, hY, hC, hsupp⟩ := hsupp
   by_cases hex : ∃ ρ, IsQuotNormaliser H μ ρ
   swap
-  · simp only [quotIntegral, dif_neg hex, integral_zero]
-  simp only [quotIntegral, dif_pos hex]
+  · simp only [quotIntegral, dite_eq_right hex, integral_zero]
+  simp only [quotIntegral, dite_eq_left hex]
   have hρ := hex.choose_spec
   generalize hex.choose = ρ at hρ ⊢
   obtain ⟨hS, hfin⟩ := (hM G μG hμG H hH μ hμ hinv ρ hρ).2 C hC
@@ -579,7 +579,7 @@ theorem UpperTheory.V.Z.Tf.Orb.quotRight :
       hI G μG hμG H μ hs hinv (fun g => F (g * y)) (hF.comp (measurable_mul_const y))
         (fun h hh g => by rw [mul_assoc, hFH h hh]) _ hρ']
     exact integral_mul_right_eq_self (fun g => F g * ((ρ g).toReal : ℂ)) y
-  · simp only [quotIntegral, dif_neg hex]
+  · simp only [quotIntegral, dite_eq_right hex]
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.TwistedOrbitalIntegrals.QuotRight =====
@@ -652,7 +652,7 @@ theorem UpperTheory.V.Z.Tf.Orb.twOrbLin :
     · simp
   · obtain ⟨h, p, -⟩ := hT k E σ hσ n μE hμE φ a1 a2 δ hδ μ hμ
     obtain ⟨-, q, -⟩ := hT k E σ hσ n μE hμE ψ b1 b2 δ hδ μ hμ
-    simp only [twOrbIntegralC, quotIntegral, dif_pos h, Pi.add_apply, add_mul]
+    simp only [twOrbIntegralC, quotIntegral, dite_eq_left h, Pi.add_apply, add_mul]
     exact integral_add (p _ h.choose_spec) (q _ h.choose_spec)
 end -- clump:auto
 end -- clump:auto

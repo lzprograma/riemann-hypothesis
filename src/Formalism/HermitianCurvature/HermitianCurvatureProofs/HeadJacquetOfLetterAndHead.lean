@@ -11,48 +11,6 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WordInduction.Wo
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MemLevelZeroOfMemGroup
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActOneVariableSmul
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocOfSmoothOnH
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
@@ -60,7 +18,6 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.EHcChange
 import Mathlib.Analysis.Normed.Algebra.MatrixExponential
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.Block3MulBlocks
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Mathlib.Tactic.ENatToNat
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateSizesOfHypotheses
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.SubsetUpperHessenberg
@@ -70,7 +27,6 @@ import Mathlib.Algebra.Order.Archimedean.Real.Hom
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Linter.Style
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsAdmissibleSplittingCharPairMulTwist
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -142,7 +98,7 @@ theorem mul_w_apply {d : ℕ} {ι : Type*} [Fintype ι] (M : Matrix ι (Fin d) �
   simp only [G.wMat, Matrix.mul_apply, Matrix.of_apply, mul_ite, mul_one, mul_zero]
   rw [Finset.sum_eq_single b.rev]
   · simp
-  · intro c _ hc; rw [if_neg]; intro h; apply hc; rw [h, Fin.rev_rev]
+  · intro c _ hc; rw [ite_eq_right]; intro h; apply hc; rw [h, Fin.rev_rev]
   · simp
 
 theorem xcongr {j : ℕ} (x : MJ j) {a a' b b' : Fin j} (ha : a.val = a'.val) (hb : b.val = b'.val) :
@@ -360,12 +316,6 @@ namespace Formalism.FourierDecayAlt.P.WirtingerOperators.XiPf
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.P.LevelPointCoordinates
 
-theorem fsym (m n : ℕ) (i : Fin (m + n)) : finSumFinEquiv.symm i =
-    if h : i.val < m then Sum.inl ⟨i, h⟩ else Sum.inr ⟨i - m, by omega⟩ := by
-  split_ifs with h
-  · rw [Equiv.symm_apply_eq]; ext; simp
-  · rw [Equiv.symm_apply_eq]; ext; simp; omega
-
 theorem castM_apply' {k a b : ℕ} (h : a = b) (g : B.Mat k a) (p q : Fin (2 * b + k + 1)) :
     D.castM h g p q = g (Fin.cast (by omega) p) (Fin.cast (by omega) q) := by
   subst h; simp [D.castM, Matrix.reindex_apply]
@@ -373,7 +323,7 @@ theorem castM_apply' {k a b : ℕ} (h : a = b) (g : B.Mat k a) (p q : Fin (2 * b
 theorem zfull_apply {j : ℕ} (Z : Matrix (Fin j) (Fin j) ℂ) (τ : ℂ) (c d : Fin (j + 1)) :
     zfull Z τ c d = if hc : c.val < j then (if hd : d.val < j then Z ⟨c.val, hc⟩ ⟨d.val, hd⟩ else 0)
       else (if d.val < j then 0 else τ) := by
-  simp only [zfull, U.blk2, Matrix.reindex_apply, Matrix.submatrix_apply, fsym]
+  simp only [zfull, U.blk2, Matrix.reindex_apply, Matrix.submatrix_apply, Formalism.FourierDecayAlt.P.WirtingerOperators.LeviExponential.fsym]
   split_ifs <;> simp [Matrix.fromBlocks]
 
 theorem det_zfull {j : ℕ} (Z : Matrix (Fin j) (Fin j) ℂ) (τ : ℂ) : (zfull Z τ).det = Z.det * τ := by
@@ -415,11 +365,6 @@ theorem level_point_first_lines (k r j : ℕ) (hj : j + 1 ≤ r) (Z : Matrix (Fi
     simp only [Matrix.fromBlocks_apply₂₂, Matrix.zero_apply]
     rw [dite_eq_right (by omega)]
 
-theorem Hpk_eI_col (k r : ℕ) (a : Fin r) (s : Fin (2 * r + k + 1)) :
-    Hpk k r s (eI k r a) = if s = esI k r a then 1 else 0 := by
-  simp only [Hpk, eI, esI, Fin.ext_iff, Fin.val_mk]
-  split_ifs <;> first | rfl | (exfalso; omega)
-
 theorem Hpk_low (k r : ℕ) (p s : Fin (2 * r + k + 1)) (hs : s.val < r) :
     Hpk k r p s = if p.val + s.val = 2 * r + k then 1 else 0 := by
   simp only [Hpk, Fin.ext_iff]
@@ -432,7 +377,7 @@ theorem xiCoef : XiCoef := by
     intro v
     simp [herm, bvec, dotProduct, Matrix.mulVec, Pi.single_apply]
   rw [h1]
-  simp only [_root_.AAInvW.lf_H_eI, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [_root_.AAInvW.lf_H_eI, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   simp only [bvec, Matrix.mulVec_single_one]
   exact level_point_first_lines k r j hj Z τ γ a p
 
@@ -452,7 +397,7 @@ theorem xiCoefV : XiCoefV := by
   rw [hinv, ← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec]
   have hH : Hpk k r *ᵥ bvec (eI k r (Fin.castLE (by omega) a)) = bvec (esI k r (Fin.castLE (by omega) a)) := by
     ext s
-    simp only [bvec, Matrix.mulVec_single_one, Matrix.col_apply, Hpk_eI_col, Pi.single_apply]
+    simp only [bvec, Matrix.mulVec_single_one, Matrix.col_apply, Formalism.FourierDecayAlt.P.Qx3.hpk_col_e, Pi.single_apply]
   rw [hH]
   simp only [bvec, Matrix.mulVec_single_one]
   simp only [Matrix.mulVec, dotProduct]
@@ -460,21 +405,21 @@ theorem xiCoefV : XiCoefV := by
   split_ifs with hp
   · rw [Fintype.sum_eq_single ⟨2 * r + k - p.val, by omega⟩]
     · have hH1 : Hpk k r p ⟨2 * r + k - p.val, by omega⟩ = 1 := by
-        rw [Hpk_low _ _ _ _ (by simp only [Fin.val_mk]; omega), if_pos (by simp only [Fin.val_mk]; omega)]
+        rw [Hpk_low _ _ _ _ (by simp only [Fin.val_mk]; omega), ite_eq_left (by simp only [Fin.val_mk]; omega)]
       rw [hH1, one_mul, dite_eq_left (by simp only [Fin.val_mk]; omega)]
       rfl
     · intro s hs
       by_cases h : s.val < j
       · rw [dite_eq_left h]
         have : Hpk k r p s = 0 := by
-          rw [Hpk_low _ _ _ _ (by omega), if_neg (by intro h'; apply hs; ext; simp only [Fin.val_mk]; omega)]
+          rw [Hpk_low _ _ _ _ (by omega), ite_eq_right (by intro h'; apply hs; ext; simp only [Fin.val_mk]; omega)]
         rw [this, zero_mul]
       · rw [dite_eq_right h, star_zero, mul_zero]
   · refine Finset.sum_eq_zero fun s _ => ?_
     by_cases h : s.val < j
     · rw [dite_eq_left h]
       have : Hpk k r p s = 0 := by
-        rw [Hpk_low _ _ _ _ (by omega), if_neg (by omega)]
+        rw [Hpk_low _ _ _ _ (by omega), ite_eq_right (by omega)]
       rw [this, zero_mul]
     · rw [dite_eq_right h, star_zero, mul_zero]
 
@@ -803,7 +748,6 @@ def cZ {j N : ℕ} (Z : MJ j) (p : Fin N) (a : Fin j) : ℂ := if hp : p.val < j
 def cvZ (k r : ℕ) {j : ℕ} (Z : MJ j) (p : Fin (2 * r + k + 1)) (a : Fin j) : ℂ :=
   if hp : 2 * r + k < p.val + j then conj (Z a ⟨2 * r + k - p.val, by omega⟩) else 0
 
-
 open scoped Classical in
 def AZ (k r j m : ℕ) (hm : m ≤ r) (hmj : m ≤ j) (u : ℂ) (h : MJ j → E) : MJ j → E := fun Z =>
   ∑ c : Fin m → Fin (2 * r + k + 1),
@@ -811,7 +755,6 @@ def AZ (k r j m : ℕ) (hm : m ≤ r) (hmj : m ≤ j) (u : ℂ) (h : MJ j → E)
       (Matrix.of fun a l : Fin m => cZ Z (c l) (Fin.castLE hmj a)).det •
         qminG (EopZ (E := E) k r j) (C3.xR k r m hm) c u h Z
     else 0
-
 
 open scoped Classical in
 def AvZ (k r j m : ℕ) (hm : m ≤ r) (hmj : m ≤ j) (ell : ℂ) (h : MJ j → E) : MJ j → E := fun Z =>
@@ -983,7 +926,7 @@ theorem EopZ_es (a b : Fin j) :
   unfold EopZ
   have ha := a.isLt
   have hb := b.isLt
-  rw [dite_eq_right (by simp [esI]; omega), dif_pos (by simp [esI]; omega), dif_pos (by simp [esI]; omega)]
+  rw [dite_eq_right (by simp [esI]; omega), dite_eq_left (by simp [esI]; omega), dite_eq_left (by simp [esI]; omega)]
   congr 1 <;> ext <;> simp [esI] <;> omega
 
 theorem eab_pull (hC : CurveLevi) (hH : HpartLevi) (p q : Fin (2 * r + k + 1)) (hpq : Good k r j p q)
@@ -1106,7 +1049,7 @@ theorem Dmin_pull (hXC : XiCoef) (z z' : Fin (2 * r + k + 1) → ℂ) (Z : MJ j)
   have ha := a.isLt
   have hb := b.isLt
   simp only [Matrix.submatrix_apply, Zhat, fvec]
-  rw [dif_pos (by simp; omega), dif_pos (by simp; omega)]
+  rw [dite_eq_left (by simp; omega), dite_eq_left (by simp; omega)]
   have := hXC k r j hj Z τ γ a (eI k r ⟨b.val, by omega⟩)
   simp only [eI] at this ⊢
   simpa [hb] using this
@@ -1153,7 +1096,7 @@ def linOf {T : (MJ j → E) → MJ j → E} (hT : ZOp T) : (MJ j → E) →ₗ[�
 
 theorem linOf_eq {T : (MJ j → E) → MJ j → E} (hT : ZOp T) {Z : MJ j} (hZ : Z.det ≠ 0) {h : MJ j → E}
     (hh : h ∈ W E Z) : linOf hT h Z = T h Z := by
-  simp only [linOf, LinearMap.pi_apply, dif_pos hZ]
+  simp only [linOf, LinearMap.pi_apply, dite_eq_left hZ]
   have := Classical.choose_spec (LinearMap.exists_extend (fW hT Z hZ))
   exact congrArg (fun L : W E Z →ₗ[ℂ] E => L ⟨h, hh⟩) this
 
@@ -1279,7 +1222,7 @@ theorem paramComm_local {A : (Matrix (Fin j) (Fin j) ℂ → E) →ₗ[ℂ] (Mat
     have : τ ≠ 0 := hτ
     simp [hc, this]
   have := tendsto_nhds_unique t1 t2
-  simp only [hc, if_true, one_smul] at this
+  simp only [hc, ite_true, one_smul] at this
   have e : A h (Matrix.of Z) = A f (Matrix.of Z) - A g (Matrix.of Z) := by
     rw [hh, map_sub]; rfl
   rw [← sub_eq_zero, ← e, this]
@@ -1341,7 +1284,7 @@ theorem row_family (κ : ℂ) (pl : Bool) (Y : ℂ) {U : Set (ℂ × (Fin j → 
   have h3 : ContDiffOn ℝ ∞ (fun q : ℂ × (Fin j → Fin j → ℂ) => q.1⁻¹) U := cd_inv.comp contDiffOn_fst hm
   have h4 : ContDiffOn ℝ ∞ (fun q : ℂ × (Fin j → Fin j → ℂ) => (conj q.1)⁻¹) U := cd_conjinv.comp contDiffOn_fst hm
   unfold row
-  rcases _root_.Formalism.FourierDecayAlt.P.MAx3.NF.fin2 s with hs | hs <;> cases pl <;> simp only [hs, if_true, Bool.false_eq_true, if_false, one_ne_zero]
+  rcases _root_.Formalism.FourierDecayAlt.P.MAx3.NF.fin2 s with hs | hs <;> cases pl <;> simp only [hs, ite_true, Bool.false_eq_true, ite_false, one_ne_zero]
   · exact ((contDiffOn_const.smul ha).sub (h2.smul hdzb)).sub (h2.smul hb)
   · exact ((contDiffOn_const.smul ha).add (h1.smul hdz)).sub (h1.smul hb)
   · exact h4.smul ha
@@ -1357,7 +1300,7 @@ theorem row_comm {A : (Matrix (Fin j) (Fin j) ℂ → E) →ₗ[ℂ] (Matrix (Fi
   obtain ⟨-, hc⟩ := hA U Fa hU hUd ha
   obtain ⟨hz, hzb⟩ := hc q hq
   unfold row
-  rcases _root_.Formalism.FourierDecayAlt.P.MAx3.NF.fin2 s with hs | hs <;> cases pl <;> simp only [hs, if_true, Bool.false_eq_true, if_false, one_ne_zero]
+  rcases _root_.Formalism.FourierDecayAlt.P.MAx3.NF.fin2 s with hs | hs <;> cases pl <;> simp only [hs, ite_true, Bool.false_eq_true, ite_false, one_ne_zero]
   · rw [linM A _ _ _ (Fa q.1) (fun Z => PBP.dzb (fun τ => Fa τ Z) q.1) (Fb q.1)]
     simp only [Pi.sub_apply, Pi.smul_apply, hzb]
   · rw [linP A _ _ _ (Fa q.1) (fun Z => PBP.dz (fun τ => Fa τ Z) q.1) (Fb q.1)]
@@ -1542,7 +1485,7 @@ theorem core (hH : HeadLetter) (hZ : ZOnly) (hR : RulesClosed) (hX : BasePointSm
     rw [← row_congr κ pl (Y : ℂ) hV (key 0) (key 1) (e 0) hq']
     unfold row
     rcases _root_.Formalism.FourierDecayAlt.P.MAx3.NF.fin2 (e 0) with h | h <;> cases pl <;>
-      simp only [h, if_true, Bool.false_eq_true, if_false, one_ne_zero, Complex.conj_ofReal] <;>
+      simp only [h, ite_true, Bool.false_eq_true, ite_false, one_ne_zero, Complex.conj_ofReal] <;>
       (try simp only [hκ]) <;> first | exact hHL.2.2.1 | exact hHL.1 | exact hHL.2.2.2 | exact hHL.2.1
 
 theorem wordIndOfParts_of (hX : BasePointSmoothAndMem) : WordIndOfParts := by
@@ -1656,9 +1599,6 @@ section x0
 
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
-theorem det_zfull {j : ℕ} (Z : Matrix (Fin j) (Fin j) ℂ) (τ : ℂ) : (zfull Z τ).det = Z.det * τ := by
-  simp [zfull, U.blk2, Matrix.det_fromBlocks_zero₂₁]
-
 theorem es_zfull (j : ℕ) (s : Set (ℂ × (Fin j → Fin j → ℂ))) :
     ES (fun q : ℂ × (Fin j → Fin j → ℂ) => zfull (Matrix.of q.2) q.1) s := by
   have h1 : ES (fun q : ℂ × (Fin j → Fin j → ℂ) => Matrix.of q.2) s := fun a b => by
@@ -1693,7 +1633,7 @@ theorem base_point_facts_holds : BasePointSmoothAndMem := by
     have hdet : ∀ q ∈ {q : ℂ × (Fin j → Fin j → ℂ) | q.1 ≠ 0 ∧ (Matrix.of q.2).det ≠ 0},
         (zfull (Matrix.of q.2) q.1)ᴴ.det ≠ 0 := by
       rintro q ⟨h1, h2⟩
-      rw [Matrix.det_conjTranspose, det_zfull]
+      rw [Matrix.det_conjTranspose, Formalism.FourierDecayAlt.P.WirtingerOperators.XiPf.det_zfull]
       exact star_ne_zero.mpr (mul_ne_zero h2 h1)
     have hI := es_inv (es_conjTranspose hZ) hdet
     have hM : ES (fun q : ℂ × (Fin j → Fin j → ℂ) => U.mMap k (j + 1) (r - (j + 1)) (zfull (Matrix.of q.2) q.1) γ)
@@ -1711,7 +1651,7 @@ theorem base_point_facts_holds : BasePointSmoothAndMem := by
     simp only [x0]
     apply _root_.Formalism.FourierDecayAlt.P.PBE.castM_GV
     apply mMap_mem_GV _ _ hγ
-    rw [det_zfull]
+    rw [Formalism.FourierDecayAlt.P.WirtingerOperators.XiPf.det_zfull]
     exact mul_ne_zero h2 h1
 
 end x0

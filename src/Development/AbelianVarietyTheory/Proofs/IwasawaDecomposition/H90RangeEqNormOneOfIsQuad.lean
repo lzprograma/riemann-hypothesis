@@ -263,14 +263,14 @@ theorem exists_locF_approx (a : Ideles L) (T₀ : Set (HeightOneSpectrum (𝓞 L
     intro P hP
     obtain ⟨h, h'⟩ := div_sub_one_lt _ (h1 P hP)
     have hk0 : k ≠ 0 := fun h0 => h (by rw [h0, map_zero, map_zero])
-    rw [map_div, compAt_prod_locF, if_pos hP, hu hk0]
+    rw [map_div, compAt_prod_locF, ite_eq_left hP, hu hk0]
     exact h'
   have h3 : ∀ P, Valued.v (compAt P (a / ∏ v ∈ S, locF F v u)) = 1 := by
     intro P
     by_cases hP : P.under (𝓞 F) ∈ S
     · have := Valuation.map_one_add_of_lt _ (h2 P hP)
       rwa [add_sub_cancel] at this
-    · rw [map_div, compAt_prod_locF, if_neg hP, div_one]
+    · rw [map_div, compAt_prod_locF, ite_eq_right hP, div_one]
       by_contra h
       exact hP (hS P (Or.inr h))
   exact ⟨S, u, a / ∏ v ∈ S, locF F v u, (div_mul_cancel _ _).symm, h3,

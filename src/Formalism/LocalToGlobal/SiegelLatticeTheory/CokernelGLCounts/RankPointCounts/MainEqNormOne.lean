@@ -17,8 +17,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.NGCut.LeadingMinorIntegrality.Gen
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.FourierDecayAlt Formalism.L2.SG.NGData Formalism.L2.SG.NGCut in
 theorem stepNormOneG_of

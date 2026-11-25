@@ -7,6 +7,7 @@ import Mathlib.Tactic.TypeStar
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ABridgeStB
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.SectionModuleEqSpanPow
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.LemCone
+import Mathlib.RingTheory.MvPolynomial.Localization
 
 @[expose] public section
 
@@ -33,22 +34,14 @@ theorem sec_eq_span (o : Type*) [CommRing o] {Ω : Type*} [CommRing Ω] [Algebra
 
 theorem exists_int_multiple {ι : Type*} (f : MvPolynomial ι ℚ) :
     ∃ N : ℕ, 0 < N ∧ ∃ p : MvPolynomial ι ℤ, map (Int.castRingHom ℚ) p = (N : ℚ) • f := by
-  induction f using MvPolynomial.induction_on with
-  | C q =>
-    refine ⟨q.den, q.pos, C q.num, ?_⟩
-    rw [map_C, smul_eq_C_mul, ← C_mul, Rat.den_mul_eq_num]
-    rfl
-  | add f g hf hg =>
-    obtain ⟨a, ha, p, hp⟩ := hf
-    obtain ⟨b, hb, r, hr⟩ := hg
-    refine ⟨a * b, Nat.mul_pos ha hb, (b : ℤ) • p + (a : ℤ) • r, ?_⟩
-    rw [map_add (f := _), smul_eq_C_mul, smul_eq_C_mul, map_mul, map_mul, hp, hr, map_C, map_C]
-    simp only [smul_eq_C_mul, eq_intCast, Int.cast_natCast, Nat.cast_mul, map_mul]
-    ring
-  | mul_X f i hf =>
-    obtain ⟨a, ha, p, hp⟩ := hf
-    refine ⟨a, ha, p * X i, ?_⟩
-    rw [map_mul, hp, map_X, smul_mul_assoc]
+  let := MvPolynomial.algebraMvPolynomial (R := ℤ) (S := ℚ) (σ := ι)
+  obtain ⟨⟨p, _, ⟨d, hd, rfl⟩⟩, h⟩ := IsLocalization.surj ((nonZeroDivisors ℤ).map (C : ℤ →+* MvPolynomial ι ℤ)) f
+  have h' : map (Int.castRingHom ℚ) p = (d : ℚ) • f := by
+    rw [MvPolynomial.algebraMap_def, algebraMap_int_eq, map_C, mul_comm, ← smul_eq_C_mul] at h; exact h.symm
+  rcases Int.natAbs_eq d with h0 | h0
+  · exact ⟨d.natAbs, Int.natAbs_pos.mpr (nonZeroDivisors.ne_zero hd), p, by rw [h', ← Int.cast_natCast, ← h0]⟩
+  · exact ⟨d.natAbs, Int.natAbs_pos.mpr (nonZeroDivisors.ne_zero hd), -p, by
+      rw [map_neg, h', ← Int.cast_natCast, neg_eq_iff_eq_neg.mp h0.symm, Int.cast_neg, neg_smul]⟩
 
 variable {Ω : Type} [Field Ω] [CharZero Ω] {J : Type}
 
@@ -141,7 +134,7 @@ theorem SectionsRank.proof : SectionsRank.Statement := by
     unfold GroundTheory.Heights₂.Heights.NumbersDVR.gradedPiece
     rw [hV]
   unfold GroundTheory.Heights₂.Heights.NumbersDVR.hilbFn
-  rw [if_pos (fun _ => Int.natCast_nonneg n), hg _ (by funext; simp), finrank_sec_int]
+  rw [ite_eq_left (fun _ => Int.natCast_nonneg n), hg _ (by funext; simp), finrank_sec_int]
   congr 1
   refine finrank_map_eq _ _ _ fun f hf => ?_
   rw [AlgHom.toLinearMap_apply, Ideal.Quotient.mkₐ_eq_mk, Ideal.Quotient.eq_zero_iff_mem,

@@ -124,20 +124,6 @@ section Adelic
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem adelic_ext {n : ℕ} (g h : GL (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F))
-    (H : ∀ v : HeightOneSpectrum (𝓞 F), bc (prV (E := E) v) g = bc (prV (E := E) v) h) : g = h := by
-  apply Units.ext
-  ext i j
-  rw [← sub_eq_zero]
-  apply Formalism.UG.P.afsplit_inj
-  intro w
-  rw [map_sub]
-  have h1 := congrArg Units.val (H w)
-  rw [Formalism.UG.P.afsplit_coe_bc_prV, Formalism.UG.P.afsplit_coe_bc_prV] at h1
-  have := congrFun (congrFun h1 i) j
-  simp only [Matrix.map_apply] at this
-  rw [this, sub_self]
-
 theorem exists_trivial_on {n : ℕ} (σ : E →ₐ[F] E) (J : Matrix (Fin n) (Fin n) E) (s : Finset (HeightOneSpectrum (𝓞 F)))
     (g : GL (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) (hg : g ∈ UPts σ J (FiniteAdeleRing (𝓞 F) F)) :
     ∃ k ∈ UPts σ J (FiniteAdeleRing (𝓞 F) F), (∀ v ∈ s, bc (prV (E := E) v) k = 1) ∧
@@ -245,7 +231,7 @@ theorem exists_psiTied {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {T f : ℕ} {bad
       (∀ w : HeightOneSpectrum (𝓞 F), ((p : ℕ) : 𝓞 F) ∉ w.asIdeal →
         bc (prV (E := E) w) k.1 = bc (prV (E := E) w) (reGL hk _ a.1)) → κ a = k := by
     intro a k k1 k2
-    refine Subtype.ext (adelic_ext _ _ fun v => ?_)
+    refine Subtype.ext (Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.S0.adelic_GL_ext_local _ _ fun v => ?_)
     by_cases hv : ((p : ℕ) : 𝓞 F) ∈ v.asIdeal
     · rw [h1 a v hv, k1 v hv]
     · rw [h2 a v hv, k2 v hv]
@@ -259,7 +245,7 @@ theorem exists_psiTied {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {T f : ℕ} {bad
 
 end Gen
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar Formalism.BasicNotions.factResChar
+attribute [local instance] Formalism.BasicNotions.factResChar
 
 
 
@@ -297,7 +283,7 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formal
 
 namespace GlobalTheory.Mem.LocalPack
 
-attribute [local instance] Formalism.BasicNotions.factResChar Formalism.BasicNotions.Host.cmStar
+attribute [local instance] Formalism.BasicNotions.factResChar
 
 section Ext
 
@@ -308,16 +294,6 @@ variable {Os Ks O Kf O' Kf' : Type} [CommRing Os] [Field Ks] [Algebra Os Ks] [Co
 end Ext
 
 section Ties
-
-abbrev RingTie := @Formalism.L2.G.RingCompatibleAt
-
-abbrev LocalIs := @Formalism.L2.G.GatIs
-
-alias standardSub_of_ringTie := Formalism.L2.G.stdSubAt_of_ring
-
-alias localIs_of_hyperspecial := Formalism.L2.G.gatIs_recG
-
-alias ringTie_record := Formalism.L2.G.ringTied_recC
 
 end Ties
 
@@ -351,8 +327,6 @@ variable (D : D7) (sc : Scale) (Ce : ℝ)
     (epSc D.R sc Ce (D.what₂.places.resChar w))).d = Module.finrank ℂ (D.mem u).A.Mu0)
 
 end Record
-
-abbrev IsConcrete := @Formalism.L2.G.IsRecC
 
 end GlobalTheory.Mem.LocalPack
 end -- clump:auto
@@ -472,7 +446,7 @@ def evalReps (Hv : P.Tup → Submodule O P.Xsp) {ι : Type} {rep : ι → P.Tup}
 
 theorem evalReps_injective (Hv : P.Tup → Submodule O P.Xsp) {ι : Type} {rep : ι → P.Tup} (hr : IsReps C rep) :
     Function.Injective (evalReps C Hv hr) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro F hF
   obtain ⟨-, h0, hγ⟩ := (mem_funMod_iff C Hv F.1).1 F.2
   apply Subtype.ext
@@ -498,7 +472,7 @@ theorem evalReps_surjective (Hv : P.Tup → Submodule O P.Xsp)
     intro i γ
     have h := isLatTup_smul C γ (hr.lat i)
     have e := hgam _ h
-    simp only [F, dif_pos h]
+    simp only [F, dite_eq_left h]
     generalize idx _ h = j at e ⊢
     generalize gam _ h = δ at e ⊢
     have e' : C.smul (δ⁻¹ * γ) (rep i) = rep j := by
@@ -506,7 +480,7 @@ theorem evalReps_surjective (Hv : P.Tup → Submodule O P.Xsp)
     obtain rfl := hr.inj _ _ _ e'
     obtain rfl : δ = γ := inv_mul_eq_one.1 (htriv _ _ (hr.lat i) e')
     rfl
-  refine ⟨⟨F, (mem_funMod_iff C Hv F).2 ⟨fun L hL => ?_, fun L hL => dif_neg hL, fun γ L => ?_⟩⟩, ?_⟩
+  refine ⟨⟨F, (mem_funMod_iff C Hv F).2 ⟨fun L hL => ?_, fun L hL => dite_eq_right hL, fun γ L => ?_⟩⟩, ?_⟩
   · obtain ⟨i, γ, rfl⟩ := hr.surj L hL
     rw [key, ← hact γ _ (hr.lat i)]
     exact Submodule.smul_mem _ _ ⟨_, (x i).2, rfl⟩
@@ -515,8 +489,8 @@ theorem evalReps_surjective (Hv : P.Tup → Submodule O P.Xsp)
       rw [← smul_mul, key, key, map_mul, Units.val_mul, mul_smul, actX_mul]
       congr 1
       exact (((C.actX γ).restrictScalars O).map_smul _ _).symm
-    · have h1 : F L = 0 := dif_neg hL
-      have h2 : F (C.smul γ L) = 0 := dif_neg (fun h => hL ((isLatTup_smul_iff C γ L).1 h))
+    · have h1 : F L = 0 := dite_eq_right hL
+      have h2 : F (C.smul γ L) = 0 := dite_eq_right (fun h => hL ((isLatTup_smul_iff C γ L).1 h))
       rw [h1, h2, map_zero, smul_zero]
   · funext i
     apply Subtype.ext
@@ -689,7 +663,7 @@ theorem exists_basis_HtupW (G : GAtP p) [IsFractionRing G.O G.Kf] [CharZero G.Kf
     exists_basis_Dl0 hinj G.P.m (lamAt (G.P.lam0 v) s) (lamAt_antitone' _ (G.P.dom v) s) _
       (LatticeSystems.je_extO_lat G v s.val (L v) (hL v))
   choose B b1 b2 using hB
-  have := LatticeSystems.jr_KK G.Kf
+  have := instIsFractionRing (R := G.Kf)
   obtain ⟨hli, -⟩ := tensorBasis G.Kf G.Kf (Σ v : Fin G.P.nV, Fin (G.P.n' v)) (G.P.m + 1) (G.P.m + 1) _
     (fun x => Submodule.span G.Kf (Set.range (B x.1 x.2))) (fun x => B x.1 x.2) (fun x => b1 x.1 x.2) (fun _ => rfl)
   have hli2 := hli.map' (rename (LatticeSystems.jr_psi G) : _ →ₐ[G.Kf] G.P.Xsp).toLinearMap
@@ -787,7 +761,7 @@ theorem card_ssIdx_natW {N m : ℕ} (h : m + 1 = N) (lam : Formalism.BasicNotion
   subst h
   have : nuOf l = lam.natW := by
     funext t
-    simp only [nuOf, Formalism.BasicNotions.DomWeight.natW, Formalism.BasicNotions.DomWeight.detShift, hl, dif_pos (Nat.succ_pos m)]
+    simp only [nuOf, Formalism.BasicNotions.DomWeight.natW, Formalism.BasicNotions.DomWeight.detShift, hl, dite_eq_left (Nat.succ_pos m)]
     rfl
   rw [this]
 
@@ -797,7 +771,7 @@ section Record
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.G Formalism.L2.Forms GlobalTheory.Mem.LocalPack
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar Formalism.BasicNotions.factResChar
+attribute [local instance] Formalism.BasicNotions.factResChar
 
 
 
@@ -1126,8 +1100,6 @@ end General
 
 section Host
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {R : Ranks} {H : Host R} {p n : ℕ} [hp : Fact p.Prime] {h : R.MA}
 
 theorem sigmaOf_mul (g g' : R.GG) (x : H.E) : H.sigmaOf (g * g') x = H.sigmaOf g (H.sigmaOf g' x) := by
@@ -1364,8 +1336,6 @@ theorem exists_locId_of_completions {R : Ranks} {F E : Type} [Field F] [NumberFi
   exact ⟨⟨pl, eQ, heW, spl, hs1, hs2, fr, hfr⟩, rfl, fun v x =>
     (eQ v).symm_apply_eq.2 (eq_of_heq (hs3 _ (pl v).2 v rfl x))⟩
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem exists_locId_host {R : Ranks} {H : Host R} {p : ℕ} [hp : Fact p.Prime] {h : R.MA}
     (hun : ∀ Q : HeightOneSpectrum (𝓞 H.E), (p : 𝓞 H.E) ∈ Q.asIdeal → Algebra.IsUnramifiedAt ℤ Q.asIdeal)
     (hfr : ∀ Q : HeightOneSpectrum (𝓞 H.E), (p : 𝓞 H.E) ∈ Q.asIdeal → ∀ σ : H.E ≃ₐ[ℚ] H.E, IsArithFrobAt ℤ σ Q.asIdeal →
@@ -1493,7 +1463,7 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formal
 
 namespace GlobalTheory.Mem.ConcreteRecord
 
-attribute [local instance] Formalism.BasicNotions.factResChar Formalism.BasicNotions.Host.cmStar
+attribute [local instance] Formalism.BasicNotions.factResChar
 
 variable (D : D7) (L0 : LevelData D)
 
@@ -1524,11 +1494,6 @@ def embAlg (u : D.what₂.Word) (w : D.what₂.places.Pl) (hg : GIdx D.host (D.m
 theorem embK_embAlg (u : D.what₂.Word) (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w))
     (z : D.what₂.LL) : embK D L0 u w hg (embRec D w (nFr D (D.what₂.places.resChar w)) z) = lamV (embAlg D L0 u w hg) (D.what₂.embLL z) :=
   (Classical.choose_spec (Classical.choose_spec (Classical.choose_spec (GlobalTheory.PlaceOrbit.exists_locId D u (L0 u) w hg)))).1 z
-
-def awayChar (T : ∀ u : D.what₂.Word, Forms0 D u) (hJ : ∀ u, Joint0 L0 u (T u)) (hψ : ∀ u, LevelZeroCharacterRational T u) (u : D.what₂.Word)
-    (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) :
-    Formalism.L2.Herm.awayFrom₂ (L0 u) (D.what₂.places.resChar w) →* (ORec D w (nFr D (D.what₂.places.resChar w)))ˣ :=
-  Classical.choose (GlobalTheory.Mem.AwayChar.exists_psi D L0 T hJ hψ u w hg)
 
 def gatOf (I : ∀ u (w : D.what₂.places.Pl), GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w) →
       LocId (L0 u) (D.what₂.places.resChar w) (nOrb (zH D.R.toFrame (hP D (D.what₂.places.resChar w))))

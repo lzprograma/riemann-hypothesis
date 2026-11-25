@@ -49,9 +49,6 @@ import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.NonemptyIsLimi
 open AlgebraicGeometry CategoryTheory Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.LogKS Formalism.L2.Pj
 open MonoidalCategory CartesianMonoidalCategory MonObj
-attribute [local instance] Over.cartesianMonoidalCategory
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -169,7 +166,6 @@ theorem valR_mul_comb : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
   rw [hmain, Over.comp_left]
   show ⊤ ≤ (spMap ρ ≫ _) ⁻¹ᵁ O ∧ valR (spMap ρ ≫ _) O f = _
   refine ⟨GlobalTheory.TanDeriv.comp_top_le ρ _ O hQ, ?_⟩
-  have hOg : ⊤ ≤ g₀ ⁻¹ᵁ O := hO
   rw [GlobalTheory.KSLin.valR_spMap_comp ρ _ O hQ f, evalSq_apply, hP1.2]
   conv_rhs => rw [← hfst, GlobalTheory.KSLin.valR_spMap_comp _ _ O hQ f]
   simp only [hwb, hφs, TrivSqZeroExt.algebraMap_eq_inl]

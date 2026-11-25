@@ -48,6 +48,7 @@ import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Init
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CuspidalFrame
 
 @[expose] public section
 
@@ -60,43 +61,7 @@ namespace GlobalTheory.RowCusp
 
 theorem level_comp_Re (B : RowsAut) (k : B.I.Gf) (hk : k ∈ B.I.Kg B.g) (hg : 1 ≤ B.g) :
     (B.R (1, k)).comp B.Re = B.Re := by
-  obtain ⟨hR1, hRmul, hRnorm, -, -⟩ := GlobalTheory.RightRegFund.rightReg_unitary_continuous B
-
-  have hπ1 : (fun a : B.I.Gf => B.R (1, a)) 1 = 1 := hR1
-  have hπmul : ∀ a b : B.I.Gf, (fun a : B.I.Gf => B.R (1, a)) (a * b) =
-      (fun a : B.I.Gf => B.R (1, a)) a * (fun a : B.I.Gf => B.R (1, a)) b := by
-    intro a b
-    have hab : ((1 : B.I.Ginf), a * b) = ((1 : B.I.Ginf), a) * (1, b) := by
-      simp [Prod.mk_mul_mk]
-    simp only
-    rw [hab, hRmul]
-  have hadj : ∀ (a : B.I.Gf) (u v : B.I.L2 B.μf B.fund),
-      ⟪u, B.R (1, a) v⟫_ℂ = ⟪B.R (1, a⁻¹) u, v⟫_ℂ :=
-    GlobalTheory.IdemProj.inner_rep (fun a : B.I.Gf => B.R (1, a)) hπ1 hπmul (fun a v => hRnorm _ v)
-
-  have hone : (1 : B.I.Gf) ∈ B.I.Kg B.g := by
-    refine ⟨?_, fun y _ => ⟨0, Submodule.zero_mem _, ?_⟩⟩
-    · show ((1 : B.I.Gf) : GL (Fin B.I.n) (TensorProduct B.I.F B.I.E (Af B.I.F))) ∈ Formalism.UG.stabGL B.I.Lf
-      simpa using (Formalism.UG.stabGL B.I.Lf).one_mem
-    · simp [AutInst.fmat]
-  have he : ∀ x, B.e (k * x) = B.e x := by
-    intro x
-    have h' := B.e_adm.2.2.2.2.2.1 x k hk 1 hone
-    rwa [mul_one] at h'
-  refine ContinuousLinearMap.ext (fun y => ext_inner_left ℂ (fun x => ?_))
-  rw [ContinuousLinearMap.comp_apply, hadj, B.Re_spec.2, B.Re_spec.2]
-  have hshift : ∀ g, B.e g * ⟪B.R (1, k⁻¹) x, B.R (1, g) y⟫_ℂ =
-      (fun g => B.e g * ⟪x, B.R (1, g) y⟫_ℂ) (k * g) := by
-    intro g
-    simp only
-    rw [he, ← inv_inv k, ← hadj, inv_inv, ← ContinuousLinearMap.mul_apply, ← hπmul]
-  calc ∫ g, B.e g * ⟪B.R (1, k⁻¹) x, B.R (1, g) y⟫_ℂ ∂B.μf
-      = ∫ g, (fun g => B.e g * ⟪x, B.R (1, g) y⟫_ℂ) (k * g) ∂B.μf := by
-        congr 1
-        funext g
-        exact hshift g
-    _ = ∫ g, B.e g * ⟪x, B.R (1, g) y⟫_ℂ ∂B.μf :=
-        integral_mul_left_eq_self (μ := B.μf) (fun g => B.e g * ⟪x, B.R (1, g) y⟫_ℂ) k
+  apply _root_.GlobalTheory.Dec.CuspFrame.re_fixed <;> assumption
 
 theorem integrable_ph (B : RowsAut) (d : InfinitePlace B.I.F → ℝ) (h : ℝ) (hd : IsDSData B d) (hn : 1 ≤ B.I.n)
     (hh : ∀ v, 120 * (B.I.n : ℝ) * ((rkR (B.I.ε v) : ℕ) : ℝ) ^ ((3 : ℝ) / 2) ≤ h) (hl : LocDec B h) :

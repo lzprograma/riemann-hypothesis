@@ -2,52 +2,9 @@ module
 
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
 public import GroundTheory.AutomorphicForms.HermitianOrthogonal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
+import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsTranslatedRiemannLattice
 
 @[expose] public section
 
@@ -119,7 +76,7 @@ theorem emb_bij {Ψ : Type} {σ : Ψ → (𝓞 E →+* ℂ)} (h : IsCMFam σ) :
     rw [RingHom.comp_assoc, hres]
   constructor
   · rintro ⟨τ, b⟩ ⟨τ', b'⟩ e
-    cases b <;> cases b' <;> simp only [Bool.false_eq_true, if_true, if_false, hconj] at e
+    cases b <;> cases b' <;> simp only [Bool.false_eq_true, ite_true, ite_false, hconj] at e
     · rw [h.1 (embOf_injective e)]
     · exact absurd ⟨τ, embOf_injective e⟩ ((h.2 (σ τ')).1 ⟨τ', rfl⟩)
     · exact absurd ⟨τ', (embOf_injective e).symm⟩ ((h.2 (σ τ)).1 ⟨τ, rfl⟩)
@@ -141,20 +98,11 @@ theorem emb_bij {Ψ : Type} {σ : Ψ → (𝓞 E →+* ℂ)} (h : IsCMFam σ) :
       have e : (starRingEnd ℂ).comp ((starRingEnd ℂ).comp (φ.comp (algebraMap (𝓞 E) E))) =
           φ.comp (algebraMap (𝓞 E) E) := by
         ext a; simp
-      simp only [if_true, hconj, hτ, e, embOf_of_comp]
+      simp only [ite_true, hconj, hτ, e, embOf_of_comp]
 
 theorem trace_eq {Ψ : Type} [Fintype Ψ] {σ : Ψ → (𝓞 E →+* ℂ)} (h : IsCMFam σ) (x : E) :
     ((Algebra.trace ℚ E x : ℚ) : ℝ) = ∑ τ, 2 * (embOf (σ τ) x).re := by
-  classical
-  have h1 := trace_eq_sum_embeddings ℂ (K := ℚ) (L := E) (x := x)
-  rw [← (RingHom.equivRatAlgHom (R := E) (S := ℂ)).sum_comp, ← (Equiv.ofBijective _ (emb_bij h)).sum_comp,
-    Fintype.sum_prod_type] at h1
-  have h2 := congrArg Complex.re h1
-  rw [eq_ratCast, Complex.ratCast_re, Complex.re_sum] at h2
-  rw [h2]
-  refine Finset.sum_congr rfl fun v _ => ?_
-  rw [Fintype.sum_bool]
-  simp [two_mul]
+  apply _root_.GlobalTheory.CompanionTheory.Ar.Cusp.Dict.Rotate.trace_eq_sum_re <;> assumption
 
 end Field
 

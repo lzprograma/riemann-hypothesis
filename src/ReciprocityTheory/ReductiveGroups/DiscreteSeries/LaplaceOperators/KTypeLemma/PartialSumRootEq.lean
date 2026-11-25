@@ -171,7 +171,7 @@ theorem not_rootCone_of_ne {ε : Fin n → Bool} (ν : Fin n → ℝ) :
       simp [kirrPs, kirrWt, Finset.sum_add_distrib, Finset.sum_sub_distrib]
     rw [e, partialSum_root_eq] at h1
     have : (p.2 : ℕ) < p.1 := hp
-    rw [if_neg (by omega), if_pos (by omega)] at h1
+    rw [ite_eq_right (by omega), ite_eq_left (by omega)] at h1
     linarith
 
 end Cone

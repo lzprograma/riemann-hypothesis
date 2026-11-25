@@ -148,14 +148,11 @@ theorem extend_of_locallyCauchy : ∀ (l : ℕ) [Fact l.Prime] (Γ J : Type) [To
   have hLc : IsComplete (L : Set (PadicAlgCl l)) := by
     haveI : FiniteDimensional ℚ_[l] (Subalgebra.toSubmodule L.toSubalgebra) := hL
     exact Submodule.complete_of_finiteDimensional (Subalgebra.toSubmodule L.toSubalgebra)
-  have hnb : ∀ g : Γ, (comap x (𝓝 g)).NeBot := by
-    intro g
-    refine comap_neBot_iff.2 fun t ht => ?_
-    obtain ⟨_, hyt, j, rfl⟩ := mem_closure_iff_nhds.1 (hx g) t ht
-    exact ⟨j, hyt⟩
+  letI : TopologicalSpace J := TopologicalSpace.induced x inferInstance
+  have hx' : IsDenseInducing x := ⟨⟨rfl⟩, hx⟩
   have hex : ∀ g : Γ, ∃ t : PadicAlgCl l, Tendsto θ (comap x (𝓝 g)) (𝓝 t) := by
     intro g
-    haveI : (comap x (𝓝 g)).NeBot := hnb g
+    have := hx'.comap_nhds_neBot g
     have hcau : Cauchy (map θ (comap x (𝓝 g))) := by
       rw [Metric.cauchy_iff]
       refine ⟨inferInstance, fun ε hε => ?_⟩
@@ -168,34 +165,7 @@ theorem extend_of_locallyCauchy : ∀ (l : ℕ) [Fact l.Prime] (Γ J : Type) [To
       le_principal_iff.2 (mem_map.2 (univ_mem' fun j => hθL j))
     obtain ⟨t, -, ht⟩ := hLc _ hcau hle
     exact ⟨t, ht⟩
-  choose T hT using hex
-  refine ⟨T, ?_, ?_⟩
-  · refine continuous_iff_continuousAt.2 fun g => ?_
-    rw [ContinuousAt, Metric.tendsto_nhds]
-    intro ε hε
-    obtain ⟨V, hV, hVc⟩ := hC (ε / 2) (by positivity) g
-    filter_upwards [interior_mem_nhds.2 hV] with g' hg'
-    have hV' : V ∈ 𝓝 g' := mem_interior_iff_mem_nhds.1 hg'
-    haveI : (comap x (𝓝 g')).NeBot := hnb g'
-    haveI : (comap x (𝓝 g)).NeBot := hnb g
-    have hlim : Tendsto (fun p : J × J => dist (θ p.1) (θ p.2))
-        (comap x (𝓝 g') ×ˢ comap x (𝓝 g)) (𝓝 (dist (T g') (T g))) :=
-      ((hT g').comp tendsto_fst).dist ((hT g).comp tendsto_snd)
-    have hev : ∀ᶠ p : J × J in comap x (𝓝 g') ×ˢ comap x (𝓝 g), dist (θ p.1) (θ p.2) ≤ ε / 2 := by
-      filter_upwards [prod_mem_prod (preimage_mem_comap hV') (preimage_mem_comap hV)] with p hp
-      rw [dist_eq_norm]
-      exact hVc p.1 p.2 hp.1 hp.2
-    have := le_of_tendsto hlim hev
-    linarith
-  · intro j
-    haveI : (comap x (𝓝 (x j))).NeBot := hnb (x j)
-    refine tendsto_nhds_unique (hT (x j)) ?_
-    rw [Metric.tendsto_nhds]
-    intro ε hε
-    obtain ⟨V, hV, hVc⟩ := hC (ε / 2) (by positivity) (x j)
-    filter_upwards [preimage_mem_comap hV] with i hi
-    rw [dist_eq_norm]
-    exact lt_of_le_of_lt (hVc i j hi (mem_of_mem_nhds hV)) (by linarith)
+  exact ⟨hx'.extend θ, hx'.continuous_extend hex, hx'.extend_eq' hex⟩
 
 end GlobalTheory.Cong
 end -- clump:auto
@@ -260,7 +230,7 @@ private theorem alt_cons_cons_lemma_5 {M A : Type*} [Monoid M] [CommRing A] (T :
     refine Finset.sum_congr rfl fun l _ => ?_
     by_cases hl : l = i
     · subst hl; simp [mul_assoc]
-    · rw [if_neg hl, if_neg hl, zero_add, Function.update_of_ne hl]
+    · rw [ite_eq_right hl, ite_eq_right hl, zero_add, Function.update_of_ne hl]
   simp only [← Fin.cons_update, pseudo_character_sum_cons_expand, Finset.sum_sub_distrib]
   simp only [hin, Finset.sum_add_distrib, ← Finset.mul_sum]
   ring
@@ -278,7 +248,7 @@ private theorem pseudo_character_sum_swap_head_pair {M A : Type*} [Monoid M] [Co
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun l _ => ?_
     by_cases hl : l = i
     · simp [hl]
-    · rw [if_neg (Ne.symm hl), if_neg hl, Function.update_comm (Ne.symm hl)]
+    · rw [ite_eq_right (Ne.symm hl), ite_eq_right hl, Function.update_comm (Ne.symm hl)]
   rw [hoff]
   ring
 
@@ -409,13 +379,13 @@ theorem _root_.GlobalTheory.PsChar.cayleyHamilton (k R : Type) [Field k] [CharZe
       refine ⟨fun j => if j = 0 then _root_.GlobalTheory.PsChar.alt (fun r : R => T r) (m + 1)
         (fun _ => x) else -((m : k) + 1) * c (j - 1), fun y => ?_, ?_⟩
       · rw [hrec, hc1, Finset.sum_range_succ' _ (m + 1)]
-        simp only [Nat.add_one_ne_zero, if_false, if_true, Nat.add_sub_cancel, pow_zero, mul_one,
+        simp only [Nat.add_one_ne_zero, ite_false, ite_true, Nat.add_sub_cancel, pow_zero, mul_one,
           pow_succ', ← mul_assoc, Finset.mul_sum]
         rw [sub_eq_add_neg, add_comm, ← Finset.sum_neg_distrib]
         congr 1
         · exact Finset.sum_congr rfl fun j _ => by ring
         · ring
-      · simp only [Nat.add_one_ne_zero, if_false, Nat.add_sub_cancel, hc2, Nat.factorial_succ]
+      · simp only [Nat.add_one_ne_zero, ite_false, Nat.add_sub_cancel, hc2, Nat.factorial_succ]
         push_cast
         ring
   obtain ⟨c, hc1, hc2⟩ := hcoef d
@@ -491,7 +461,7 @@ theorem linearForm_matrix_eq_smul_trace_of_comm (k : Type) [Field k] (m : ℕ)
     conv_lhs => rw [hx]
 
     simp only [map_sum, map_smul, key, smul_eq_mul, mul_ite, mul_zero, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
     rw [trace, Finset.mul_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     simp [mul_comm]
@@ -1187,7 +1157,6 @@ theorem finite_semisimple (k R : Type) [Field k] [CharZero k] [IsAlgClosed k] [R
     choose a ha1 ha using hv
     obtain ⟨⟨s, hs, hsT⟩, -⟩ := _root_.GlobalTheory.PsChar.isPsChar_idempotent k R d T h (∑ i, e i) he.isIdempotentElem_sum
     have h1 : ((∑ i, a i : ℕ) : k) = s := by
-      set_option synthInstance.maxHeartbeats 100000 in
         rw [← hsT, map_sum]; push_cast; exact Finset.sum_congr rfl fun i _ => (ha i).symm
     have h2 : ∑ i, a i = s := by exact_mod_cast h1
     calc m = ∑ _i : Fin m, 1 := by simp

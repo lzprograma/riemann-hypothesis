@@ -14,10 +14,6 @@ open NumberField IsDedekindDomain Formalism.UG Classical Matrix Formalism.BasicN
 
 abbrev IsLocalDiamond := @LocalLatticeBases.IsLocalDiamond
 
-theorem subgroup_prime_card_eq_top {G : Type} [AddCommGroup G] {p : ℕ} (hp : p.Prime) (hG : Nat.card G = p)
-    (H : AddSubgroup G) {y : G} (hy : y ∈ H) (hy0 : y ≠ 0) : H = ⊤ :=
-  LocalLatticeBases.subgroup_prime_card_eq_top hp hG H hy hy0
-
 section Tied
 
 variable {D : D7} {u : D.what₂.Word}

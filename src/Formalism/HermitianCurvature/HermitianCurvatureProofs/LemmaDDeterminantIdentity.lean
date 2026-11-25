@@ -22,53 +22,8 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ConjugateTranspo
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylConjugationFixedColumn.ReflectionScalarDualIsotropic
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExponentialFirstColumn.FirstColumnSplitBijective
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RowExpansionMinor.FirstColumnSplitBijective
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -284,7 +239,7 @@ theorem scalar (z : Fin 2 × Fin 2 → Fin 2 × Fin 2 → ℂ) (Y Y' : ℂ) (hY 
       refine (mul_eq_zero.mp ?_).resolve_left hne
       rw [← h]
       simp only [nine, Fintype.sum_prod_type, Fin.sum_univ_two, Prod.mk.injEq, Fin.isValue,
-        Fin.val_zero, Fin.val_one, zero_ne_one, one_ne_zero, and_true, and_false, if_true, if_false, add_zero, zero_add]
+        Fin.val_zero, Fin.val_one, zero_ne_one, one_ne_zero, and_true, and_false, ite_true, ite_false, add_zero, zero_add]
       ring)
   obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9⟩ := h9
   exact ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9⟩
@@ -345,8 +300,7 @@ theorem coefB {n : ℕ} (γ γ' : Fin (n + 2) → ℂ) (hγ : ∀ j : Fin (n + 2
     (i i' : Fin (n + 2)) (h : i < i') (hne : ¬ (i = 0 ∧ i' = 1)) :
     γ i * γ' i' - γ i' * γ' i = 0 := by
   have hi' : 2 ≤ i'.val := by
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     apply hne
     have h1 : i.val < i'.val := h
     refine ⟨Fin.ext ?_, Fin.ext ?_⟩ <;> simp only [Fin.val_zero, Fin.val_one] <;> omega
@@ -367,22 +321,22 @@ theorem second_capelli_minor_standard_basis {A : Type*} [Ring A] [Algebra ℂ A]
       if j' = 1 ∧ j = 0 ∧ i' = 1 ∧ i = 0 then (γ 0 * γ' 1 - γ 1 * γ' 0) • qminor E (skip2 0 1) (skip2 0 1) u else 0 := by
     intro i i' j j'
     by_cases h : i < i' ∧ j < j'
-    · rw [if_pos h, coefA j j' h.2]
+    · rw [ite_eq_left h, coefA j j' h.2]
       by_cases hii : i = 0 ∧ i' = 1
       · by_cases hjj : j = 0 ∧ j' = 1
         · obtain ⟨rfl, rfl⟩ := hii
           obtain ⟨rfl, rfl⟩ := hjj
           norm_num
-        · rw [if_neg hjj, if_neg (show ¬(j' = 1 ∧ j = 0 ∧ i' = 1 ∧ i = 0) from fun h' => hjj ⟨h'.2.1, h'.1⟩),
+        · rw [ite_eq_right hjj, ite_eq_right (show ¬(j' = 1 ∧ j = 0 ∧ i' = 1 ∧ i = 0) from fun h' => hjj ⟨h'.2.1, h'.1⟩),
             mul_zero, zero_smul]
       · rw [coefB γ γ' hγ i i' h.1 hii,
-          if_neg (show ¬(j' = 1 ∧ j = 0 ∧ i' = 1 ∧ i = 0) from fun h' => hii ⟨h'.2.2.2, h'.2.2.1⟩),
+          ite_eq_right (show ¬(j' = 1 ∧ j = 0 ∧ i' = 1 ∧ i = 0) from fun h' => hii ⟨h'.2.2.2, h'.2.2.1⟩),
           mul_zero, zero_mul, zero_smul]
-    · rw [if_neg h, if_neg]
+    · rw [ite_eq_right h, ite_eq_right]
       rintro ⟨rfl, rfl, rfl, rfl⟩
       exact h ⟨by simp, by simp⟩
   simp only [key]
-  simp only [ite_and, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [ite_and, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem chatAdapted_of (hcov : ContractionsCovariant) : ChatAdapted := by
   intro A _ _ n E P Q hE hQP hPQ u β hβ
@@ -423,9 +377,9 @@ namespace PI.QmSkipWork
 theorem val_succAbove {n : ℕ} (p : Fin (n + 1)) (k : Fin n) :
     (p.succAbove k).val = if k.val < p.val then k.val else k.val + 1 := by
   by_cases h : k.val < p.val
-  · rw [if_pos h, Fin.succAbove_of_castSucc_lt p k (by simpa [Fin.lt_def] using h)]
+  · rw [ite_eq_left h, Fin.succAbove_of_castSucc_lt p k (by simpa [Fin.lt_def] using h)]
     simp
-  · rw [if_neg h, Fin.succAbove_of_le_castSucc p k (by simp [Fin.le_def]; omega)]
+  · rw [ite_eq_right h, Fin.succAbove_of_le_castSucc p k (by simp [Fin.le_def]; omega)]
     simp
 
 theorem skipSucc : PI.SkipSucc := by
@@ -439,7 +393,7 @@ theorem skipSucc2 : PI.SkipSucc2 := by
   unfold PI.SkipSucc2
   intro t i i' j hii'
   have hb : (i.succAbove i').val = i'.val + 1 := by
-    rw [PI.QmSkipWork.val_succAbove, if_neg (by omega)]
+    rw [PI.QmSkipWork.val_succAbove, ite_eq_right (by omega)]
   apply Fin.ext
   simp only [PI.QmSkipWork.val_succAbove]
   unfold PI.skip2

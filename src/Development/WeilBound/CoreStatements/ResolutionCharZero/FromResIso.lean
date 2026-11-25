@@ -4,45 +4,6 @@ public import Development.ResolutionOfSingularities.Statements
 public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
 public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupCoproduct
 import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupOpenCover
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -53,12 +14,6 @@ open AlgebraicGeometry CategoryTheory Limits TopologicalSpace Opposite
 namespace PositivityTheory.ResPlug.FromRes
 
 open FunctorialResolution
-
-private theorem isIso_restrict_comp' {X Y Z : Scheme.{0}} (f : X ⟶ Y) (g : Y ⟶ Z) (V : Z.Opens)
-    (h1 : IsIso (f ∣_ (g ⁻¹ᵁ V))) (h2 : IsIso (g ∣_ V)) : IsIso ((f ≫ g) ∣_ V) := by
-  have h : IsIso (f ∣_ (g ⁻¹ᵁ V) ≫ g ∣_ V) := @IsIso.comp_isIso _ _ _ _ _ _ _ h1 h2
-  rw [morphismRestrict_comp]
-  exact h
 
 private theorem structMap_zero' {X : Scheme.{0}} (s : BlowupSequence X) : s.structMap 0 = s.isoZero.hom := by
   simp only [BlowupSequence.structMap, BlowupSequence.down]
@@ -114,10 +69,8 @@ theorem isIso_topMap_restrict_of_isPrincipalizingSequence {k : Type} [Field k] {
         exact hxV h1
       rw [htop] at hres
       have h1 : IsIso (s.blowupMap i ∣_ (s.structMap i ⁻¹ᵁ I.support.compl)) := hres.isIso_of_top
-      have key := isIso_restrict_comp' (s.blowupMap i) (s.structMap i) I.support.compl h1 h2
-      have hcomp : s.blowupMap i ≫ s.structMap i = s.structMap (i + 1) := s.structMap_down (Nat.le_succ i)
-      rw [hcomp] at key
-      exact key
+      rw [← s.structMap_down (Nat.le_succ i), morphismRestrict_comp]
+      exact @IsIso.comp_isIso _ _ _ _ _ _ _ h1 h2
   exact hiso s.length le_rfl
 
 end PositivityTheory.ResPlug.FromRes

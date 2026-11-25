@@ -144,7 +144,7 @@ private theorem uhE_lemma_4 (g : Mx k r) (i j : Fin (2 * r + k + 1)) :
         ∑ a : Fin r, star (g (posE k r (Sum.inr (Sum.inr a))) i) * g (posE k r (Sum.inl a)) j) := by
   rw [Matrix.mul_assoc, Matrix.mul_apply, ← (posE k r).sum_comp]
   simp only [Fintype.sum_sum_type, Matrix.conjTranspose_apply, Matrix.mul_apply, hpkE_lemma, hpkW_lemma_2, hpkS_lemma_3,
-    ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem uh_mk (h2 : Aᴴ * F = 1) (h3 : E = -(dD k * (Bᴴ * F)))
     (h4 : Fᴴ * C + (Fᴴ * C)ᴴ + Eᴴ * dD k * E = 0) : mkM A B C E F ∈ UH (Hpk k r) := by
@@ -283,14 +283,14 @@ def psiR (g : Mx k r) : Fin r → ℝ := fun a => (mof g a a).im
 
 theorem lowId_cA (x : CI k r → ℂ) : LowId (cA x) := by
   intro a b hba
-  simp only [cA, dif_neg (not_lt.mpr hba)]
+  simp only [cA, dite_eq_right (not_lt.mpr hba)]
 
 theorem det_of_lowId {A : Matrix (Fin r) (Fin r) ℂ} (hA : LowId A) : A.det = 1 := by
   have ht : A.BlockTriangular id := fun i j hij => by
     have hij' : j < i := hij
-    rw [hA i j hij'.le, if_neg (ne_of_gt hij')]
+    rw [hA i j hij'.le, ite_eq_right (ne_of_gt hij')]
   rw [Matrix.det_of_upperTriangular ht]
-  exact Finset.prod_eq_one fun a _ => by rw [hA a a le_rfl, if_pos rfl]
+  exact Finset.prod_eq_one fun a _ => by rw [hA a a le_rfl, ite_eq_left rfl]
 
 theorem cF_cA (x : CI k r → ℂ) : (cF x)ᴴ * cA x = 1 := by
   unfold cF
@@ -361,7 +361,7 @@ theorem nilpotent_chart_right_inverse (x : CI k r → ℂ) (s : Fin r → ℝ) :
     · show phi0 x s (eI k r a) (eI k r b) = x (Sum.inl ⟨(a, b), hab⟩)
       unfold phi0
       rw [mk_ee]
-      simp only [cA, dif_pos hab]
+      simp only [cA, dite_eq_left hab]
     · show phi0 x s (eI k r a) (wI k r j) = x (Sum.inr (Sum.inl (a, j)))
       unfold phi0
       rw [mk_ew]
@@ -369,7 +369,7 @@ theorem nilpotent_chart_right_inverse (x : CI k r → ℂ) (s : Fin r → ℝ) :
     · show (mof (phi0 x s) a b - star (mof (phi0 x s) b a)) / 2 = x (Sum.inr (Sum.inr ⟨(a, b), hab⟩))
       rw [hm]
       simp only [cM, Matrix.sub_apply, Matrix.smul_apply, smul_eq_mul, star_sub, star_mul', hXs, hh]
-      simp only [cK, dif_pos hab, dif_neg (not_lt.mpr hab.le), star_neg, star_star]
+      simp only [cK, dite_eq_left hab, dite_eq_right (not_lt.mpr hab.le), star_neg, star_star]
       ring
   · funext a
     show (mof (phi0 x s) a a).im = s a
@@ -398,33 +398,18 @@ theorem mk_blocks {g : Mx k r} (hc : ColB g) : mkM (bA g) (bB g) (bC g) (bE g) (
 theorem cA_psi {g : Mx k r} (hc : ColB g) : cA (psiC g) = bA g := by
   ext a b
   by_cases h : a < b
-  · simp only [cA, dif_pos h]
+  · simp only [cA, dite_eq_left h]
     all_goals rfl
-  · simp only [cA, dif_neg h]
+  · simp only [cA, dite_eq_right h]
     exact (hc.aa a b (not_lt.mp h)).symm
 
 theorem cB_psi (g : Mx k r) : cB (psiC g) = bB g := by
   rfl
 
 theorem adj_eq {g : Mx k r} (hc : ColB g) (hu : g ∈ UH (Hpk k r)) : (bA g).adjugate = (bF g)ᴴ := by
-  have hu' : gᴴ * Hpk k r * g = Hpk k r := hu
-  have hAF : (bA g)ᴴ * bF g = 1 := by
-    ext a b
-    have h := congrFun (congrFun hu' (posE k r (Sum.inl a))) (posE k r (Sum.inr (Sum.inr b)))
-    rw [uhE_lemma_4, hpkE_lemma] at h
-    have hw : ∀ j, g (posE k r (Sum.inr (Sum.inl j))) (posE k r (Sum.inl a)) = 0 := fun j => hc.wa j a
-    have hs : ∀ c, g (posE k r (Sum.inr (Sum.inr c))) (posE k r (Sum.inl a)) = 0 := fun c => hc.sa c a
-    simp only [hw, hs, star_zero, zero_mul, Finset.sum_const_zero, add_zero, (posE k r).apply_eq_iff_eq,
-      Sum.inr.injEq, @eq_comm _ b a] at h
-    rw [Matrix.mul_apply, Matrix.one_apply]
-    simp only [Matrix.conjTranspose_apply]
-    exact h
-  have hFA : (bF g)ᴴ * bA g = 1 := by
-    have := congrArg Matrix.conjTranspose hAF
-    rwa [Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, Matrix.conjTranspose_one] at this
-  have hdet : (bA g).det = 1 := det_of_lowId (fun a b hba => hc.aa a b hba)
-  calc (bA g).adjugate = (bF g)ᴴ * bA g * (bA g).adjugate := by rw [hFA, Matrix.one_mul]
-    _ = (bF g)ᴴ := by rw [Matrix.mul_assoc, Matrix.mul_adjugate, hdet, one_smul, Matrix.mul_one]
+  calc (bA g).adjugate = (bF g)ᴴ * bA g * (bA g).adjugate := by rw [rel_F hc hu, Matrix.one_mul]
+    _ = (bF g)ᴴ := by
+      rw [Matrix.mul_assoc, Matrix.mul_adjugate, bA_det hc, one_smul, Matrix.mul_one]
 
 theorem cF_psi {g : Mx k r} (hc : ColB g) (hu : g ∈ UH (Hpk k r)) : cF (psiC g) = bF g := by
   unfold cF
@@ -463,15 +448,15 @@ theorem cE_psi {g : Mx k r} (hc : ColB g) (hu : g ∈ UH (Hpk k r)) : cE (psiC g
 theorem cK_psi (g : Mx k r) : cK (psiC g) (psiR g) = kof g := by
   ext a b
   rcases lt_trichotomy a b with h | rfl | h
-  · simp only [cK, dif_pos h]
+  · simp only [cK, dite_eq_left h]
     all_goals rfl
-  · simp only [cK, dif_neg (lt_irrefl a)]
+  · simp only [cK, dite_eq_right (lt_irrefl a)]
     show ((psiR g a : ℝ) : ℂ) * Complex.I = (mof g a a - star (mof g a a)) / 2
     unfold psiR
     rw [Complex.star_def, Complex.sub_conj]
     push_cast
     ring
-  · simp only [cK, dif_neg (not_lt.mpr h.le), dif_pos h]
+  · simp only [cK, dite_eq_right (not_lt.mpr h.le), dite_eq_left h]
     show -star (kof g b a) = kof g a b
     unfold kof
     rw [Complex.star_def, map_div₀, map_sub, Complex.conj_conj, map_ofNat]
@@ -505,48 +490,20 @@ theorem cC_psi {g : Mx k r} (hc : ColB g) (hu : g ∈ UH (Hpk k r)) : cC (psiC g
   unfold cC
   rw [cA_psi hc, cM_psi hc hu]
   unfold mof
-  have hdet : (bA g).det = 1 := det_of_lowId (fun a b hba => hc.aa a b hba)
-  rw [← Matrix.mul_assoc, ← adj_eq hc hu, Matrix.mul_adjugate, hdet, one_smul, Matrix.one_mul]
+  rw [← Matrix.mul_assoc, ← adj_eq hc hu, Matrix.mul_adjugate, bA_det hc, one_smul, Matrix.one_mul]
 
 theorem nilpotent_chart_left_inverse {g : Mx k r} (hg : g ∈ Nset k r) : phi0 (psiC g) (psiR g) = g := by
-  obtain ⟨hu, h1, h2⟩ := hg
-  have hc : ColB g := by
-    refine ⟨fun a b hba => ?_, fun j b => ?_, fun a b => ?_, fun j c => ?_, fun a j => ?_⟩
-    · rw [h1 b (eI k r a) hba]
-      simp only [show (eI k r a = eI k r b) = (posE k r (Sum.inl a) = posE k r (Sum.inl b)) from rfl,
-        (posE k r).apply_eq_iff_eq, Sum.inl.injEq]
-    · have hb := b.isLt
-      rw [h1 b (wI k r j) (by show (b : ℕ) ≤ r + j; omega)]
-      simp only [show (wI k r j = eI k r b) = (posE k r (Sum.inr (Sum.inl j)) = posE k r (Sum.inl b)) from rfl,
-        (posE k r).apply_eq_iff_eq, reduceCtorEq, ↓reduceIte]
-    · have ha := a.isLt
-      have hb := b.isLt
-      rw [h1 b (esI k r a) (by show (b : ℕ) ≤ 2 * r + k - a; omega)]
-      simp only [show (esI k r a = eI k r b) = (posE k r (Sum.inr (Sum.inr a)) = posE k r (Sum.inl b)) from rfl,
-        (posE k r).apply_eq_iff_eq, reduceCtorEq, ↓reduceIte]
-    · have hc' := c.isLt
-      rw [h2 (wI k r j) (wI k r c) (by show r ≤ r + (c : ℕ); omega) (by show r + (c : ℕ) ≤ r + k; omega)
-        (by show r ≤ r + (j : ℕ); omega)]
-      simp only [show (wI k r j = wI k r c) =
-        (posE k r (Sum.inr (Sum.inl j)) = posE k r (Sum.inr (Sum.inl c))) from rfl,
-        (posE k r).apply_eq_iff_eq, Sum.inr.injEq, Sum.inl.injEq]
-    · have ha := a.isLt
-      have hj := j.isLt
-      rw [h2 (esI k r a) (wI k r j) (by show r ≤ r + (j : ℕ); omega) (by show r + (j : ℕ) ≤ r + k; omega)
-        (by show r ≤ 2 * r + k - a; omega)]
-      simp only [show (esI k r a = wI k r j) =
-        (posE k r (Sum.inr (Sum.inr a)) = posE k r (Sum.inr (Sum.inl j))) from rfl,
-        (posE k r).apply_eq_iff_eq, Sum.inr.injEq, reduceCtorEq, ↓reduceIte]
+  have hc : ColB g := colB_of_mem hg
   unfold phi0
-  rw [cA_psi hc, cB_psi, cC_psi hc hu, cE_psi hc hu, cF_psi hc hu]
+  rw [cA_psi hc, cB_psi, cC_psi hc hg.1, cE_psi hc hg.1, cF_psi hc hg.1]
   exact mk_blocks hc
 
 theorem continuous_cA : Continuous (cA (k := k) (r := r)) := by
   refine continuous_matrix fun a b => ?_
   by_cases h : a < b
-  · simp only [cA, dif_pos h]
+  · simp only [cA, dite_eq_left h]
     exact continuous_apply _
-  · simp only [cA, dif_neg h]
+  · simp only [cA, dite_eq_right h]
     exact continuous_const
 
 theorem continuous_cB : Continuous (cB (k := k) (r := r)) := by
@@ -565,12 +522,12 @@ theorem continuous_cE : Continuous (cE (k := k) (r := r)) := by
 theorem continuous_cK : Continuous fun t : (CI k r → ℂ) × (Fin r → ℝ) => cK t.1 t.2 := by
   refine continuous_matrix fun a b => ?_
   by_cases h : a < b
-  · simp only [cK, dif_pos h]
+  · simp only [cK, dite_eq_left h]
     fun_prop
   · by_cases h' : b < a
-    · simp only [cK, dif_neg h, dif_pos h']
+    · simp only [cK, dite_eq_right h, dite_eq_left h']
       fun_prop
-    · simp only [cK, dif_neg h, dif_neg h']
+    · simp only [cK, dite_eq_right h, dite_eq_right h']
       fun_prop
 
 private theorem contMk_lemma {A : (CI k r → ℂ) × (Fin r → ℝ) → Matrix (Fin r) (Fin r) ℂ}

@@ -127,8 +127,6 @@ theorem rWord_coef (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E) {
 
 end Coef
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 def evZ (μ : Fin n → ℤ) (z : Matrix (Fin n) (Fin n) ℂ) : MMT μ →ₗ[ℂ] ℂ :=
   (LinearMap.proj z : (Matrix (Fin n) (Fin n) ℂ → ℂ) →ₗ[ℂ] ℂ) ∘ₗ (cOm n).subtype ∘ₗ (mmSub μ).subtype
 

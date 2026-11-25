@@ -25,7 +25,7 @@ variable {F : Type} [Field F] {Ω : Type} [Field Ω] [Algebra F Ω] {K' : Type} 
 open Classical in
 def RestrictGen.resid (a : Ω) : K' := if h : a ∈ R then σ ⟨a, h⟩ else 0
 
-theorem RestrictGen.resid_of_mem {a : Ω} (h : a ∈ R) : RestrictGen.resid R σ a = σ ⟨a, h⟩ := dif_pos h
+theorem RestrictGen.resid_of_mem {a : Ω} (h : a ∈ R) : RestrictGen.resid R σ a = σ ⟨a, h⟩ := dite_eq_left h
 
 theorem RestrictGen.resid_zero : RestrictGen.resid R σ 0 = 0 := by
   rw [RestrictGen.resid_of_mem R σ (zero_mem R)]

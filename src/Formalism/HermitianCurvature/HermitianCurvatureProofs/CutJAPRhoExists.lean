@@ -10,50 +10,7 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRho
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoFrameLoc
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnGeomAtGq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LieListProducts
 import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
 import Mathlib.Tactic.TypeStar
@@ -267,7 +224,7 @@ theorem rho_projection_assembly : Assembly := by
       constructor
       · intro i hi
         simp only [SSn.prWv, SSn.wbP, Pi.add_apply, Pi.smul_apply, hz i hi, smul_eq_mul, mul_zero, add_zero]
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
       · unfold SSn.prWv
         rw [Qx8.herm_add_left', Qx8.herm_smul_left', hzzT]
         have hT0 : ((Tz P.k P.r Bs.z : ℝ) : ℂ) ≠ 0 := by exact_mod_cast hT.ne'
@@ -296,7 +253,7 @@ theorem rho_projection_assembly : Assembly := by
     rw [hLag Wp Bs.z (c • b) Bs.π hz hT hπ he1 he2 he3 (Fr a) hfe (C (Fr a)) hCv ρ]
     show PrDef P Bs.z Bs.π ρ a = _
     unfold PrDef
-    rw [if_pos ha]
+    rw [ite_eq_left ha]
     exact sp_congr (K_smul hc0 _ _).symm
   ·
     intro h hh ρ a
@@ -315,17 +272,17 @@ theorem rho_projection_assembly : Assembly := by
         rw [nrmW_smul]; exact mul_pos (Complex.normSq_pos.2 hc) ha
       show PrDef P Bs.z Bs.π ρ (c • a) = PrDef P Bs.z Bs.π ρ a
       unfold PrDef
-      rw [if_pos hpos, if_pos ha]
+      rw [ite_eq_left hpos, ite_eq_left ha]
       exact sp_congr (by rw [SSn.Geom.prWv_eq, SSn.Geom.prW_smul, ← SSn.Geom.prWv_eq]; exact K_smul hc _ _)
     · intro ρ x y
       show inner ℂ (PrDef P Bs.z Bs.π ρ a x) y = inner ℂ x (PrDef P Bs.z Bs.π ρ a y)
       unfold PrDef
-      rw [if_pos ha]
+      rw [ite_eq_left ha]
       exact Submodule.inner_starProjection_left_eq_right _ x y
     · intro ρ ρ'
       show (PrDef P Bs.z Bs.π ρ a).comp (PrDef P Bs.z Bs.π ρ' a) = if ρ = ρ' then PrDef P Bs.z Bs.π ρ a else 0
       unfold PrDef
-      rw [if_pos ha, if_pos ha]
+      rw [ite_eq_left ha, ite_eq_left ha]
       split_ifs with hρ
       · subst hρ
         ext x
@@ -345,7 +302,7 @@ theorem rho_projection_assembly : Assembly := by
     · intro ρ x
       show PrDef P Bs.z Bs.π ρ a x = x ↔ _
       unfold PrDef
-      rw [if_pos ha, Submodule.starProjection_eq_self_iff, mem_K hrep hcont]
+      rw [ite_eq_left ha, Submodule.starProjection_eq_self_iff, mem_K hrep hcont]
       exact Iff.rfl
 
 end Formalism.FourierDecayAlt.P.CutMP.JA.PRhoCut
@@ -483,19 +440,13 @@ namespace EigenvectorOrthogonality
 
 variable {k r : ℕ}
 
-private theorem herm_mulVec_of_conjTranspose_mul_H_mul_eq {n : ℕ} {H g : Matrix (Fin n) (Fin n) ℂ} (hg : gᴴ * H * g = H)
-    (v w : Fin n → ℂ) : herm H (g *ᵥ v) (g *ᵥ w) = herm H v w := by
-  unfold herm
-  rw [Matrix.star_mulVec, ← Matrix.dotProduct_mulVec]
-  simp only [Matrix.mulVec_mulVec, ← Matrix.mul_assoc, hg]
-
 theorem frame_move {z e : Fin (2 * r + k + 1) → ℂ} {h : Mx k r} (hh : h ∈ UWset k r z) (he : h *ᵥ e = e) {m : ℕ}
     {F : Fin m → Fin (2 * r + k + 1) → ℂ} (hF : IsFrameOf k r [z, e] F) :
     IsFrameOf k r [z, e] (fun p => h *ᵥ F p) := by
   have hG : h ∈ Glev k r (Fin.last r) := ⟨hh.1, fun a _ => hh.2.1 a⟩
   have hU : hᴴ * Hpk k r * h = Hpk k r := hh.1
   refine ⟨fun a => (Formalism.FourierDecayAlt.Q.LieAlgebraWeightVectors.glev_inWb hG (hF.1 a)).1, fun a b => ?_, fun a v hv => ?_⟩
-  · rw [herm_mulVec_of_conjTranspose_mul_H_mul_eq hU]
+  · rw [PI.StabSplit.UnipW.herm_inv hU]
     exact hF.2.1 a b
   · have hv' : h *ᵥ v = v := by
       rcases List.mem_cons.1 hv with rfl | hv2
@@ -504,7 +455,7 @@ theorem frame_move {z e : Fin (2 * r + k + 1) → ℂ} {h : Mx k r} (hh : h ∈ 
         · exact he
         · simp at hv3
     calc herm (Hpk k r) (h *ᵥ F a) v = herm (Hpk k r) (h *ᵥ F a) (h *ᵥ v) := by rw [hv']
-      _ = 0 := by rw [herm_mulVec_of_conjTranspose_mul_H_mul_eq hU]; exact hF.2.2 a v hv
+      _ = 0 := by rw [PI.StabSplit.UnipW.herm_inv hU]; exact hF.2.2 a v hv
 
 theorem frame_swap {z e : Fin (2 * r + k + 1) → ℂ} {m : ℕ} {F : Fin m → Fin (2 * r + k + 1) → ℂ}
     (hF : IsFrameOf k r [z, e] F) : IsFrameOf k r [e, z] F :=
@@ -676,8 +627,7 @@ theorem generic (P : M.Par) : ∃ Y : ℂ, ∀ (ρ : M.Ty P) (σ : M.Ty (Qx8.P2 
     · exact one_ne_zero
     · exact sub_ne_zero.mpr h
   obtain ⟨Y, hY⟩ : ∃ Y, D.eval Y ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hD (Polynomial.funext fun y => by rw [hcon y, Polynomial.eval_zero])
   refine ⟨Y, fun ρ σ hex hEq => ?_⟩
   obtain ⟨Y', hY'⟩ := hex
@@ -687,7 +637,7 @@ theorem generic (P : M.Par) : ∃ Y : ℂ, ∀ (ρ : M.Ty P) (σ : M.Ty (Qx8.P2 
   refine Finset.prod_eq_zero (Finset.mem_univ ρ) ?_
   rw [Polynomial.eval_prod]
   refine Finset.prod_eq_zero (Finset.mem_univ σ) ?_
-  rw [if_neg hne, Polynomial.eval_sub, eval_qP, eval_qP, hEq, sub_self]
+  rw [ite_eq_right hne, Polynomial.eval_sub, eval_qP, eval_qP, hEq, sub_self]
 
 end LagrangeInterpolation
 
@@ -731,8 +681,7 @@ theorem lagrange_annihilation : Lagrange := by
       v ∈ K P.k P.r z e π (fun w' => M.xC P ρ (w' - ((P.k : ℂ) - 2) / 2)) := by
     intro σ heq v hv
     have hfun : ∀ Y', M.xC (Qx8.P2 P) σ Y' = M.xC P ρ Y' := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact hY ρ σ hc heq
     refine Submodule.subset_span (fun Fr' hFr' w' => ?_)
     show capRep P.k P.r π Fr' w' v = M.xC P ρ (w' - ((P.k : ℂ) - 2) / 2) • v

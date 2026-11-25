@@ -6,6 +6,7 @@ public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsUnitOfNumM
 public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotMemOfNonZeroDivisor
 public import GroundTheory.HeightsAndTheta.Heights.Intersections.PHorizNotMem
 public import GroundTheory.HeightsAndTheta.Heights.Intersections.PLocRingFrac
+import GroundTheory.HeightsAndTheta.Heights.Intersections.CardLeRingKrullDim
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
@@ -113,26 +114,11 @@ theorem card_add_two_le [CharZero E] (ψ : MRing ι →+* E) (j : ∀ k, ι k) (
       rw [hmem, huniv, MvPolynomial.C_eq_zero, Int.cast_eq_zero, hc2] at h
       exact two_ne_zero h
 
-  have chain : ∀ S : Finset K, (S.card : WithBot ℕ∞) + ringKrullDim (MRing ι ⧸ Q S) ≤
-      ringKrullDim (MRing ι ⧸ Q ∅) := by
-    intro S
-    induction S using Finset.induction_on with
-    | empty => simp
-    | @insert k S hk ih =>
-      have : (Q S).IsPrime := hQp S
-      have : (Q (insert k S)).IsPrime := hQp _
-      have h1 := HorizNotMem.ringKrullDim_quotient_add_one_le (hstep S k hk)
-      rw [Finset.card_insert_of_notMem hk]
-      calc (((S.card + 1 : ℕ)) : WithBot ℕ∞) + ringKrullDim (MRing ι ⧸ Q (insert k S))
-          = (S.card : WithBot ℕ∞) + (ringKrullDim (MRing ι ⧸ Q (insert k S)) + 1) := by
-            push_cast; abel
-        _ ≤ (S.card : WithBot ℕ∞) + ringKrullDim (MRing ι ⧸ Q S) := by gcongr
-        _ ≤ _ := ih
   have : (Q ∅).IsPrime := hQp _
   have : (Q Finset.univ).IsPrime := hQp _
   have h0 := HorizNotMem.ringKrullDim_quotient_add_one_le hPQ
   have h2 := HorizNotMem.ringKrullDim_quotient_add_one_le hlast
-  have hc := chain Finset.univ
+  have hc := RegularityRelativeClosedPoint.finset_card_add_ringKrullDim_le Q hQp hstep Finset.univ
   have : IsDomain (MRing ι ⧸ Qt) := Ideal.Quotient.isDomain _
   have h3 : (0 : WithBot ℕ∞) ≤ ringKrullDim (MRing ι ⧸ Qt) := ringKrullDim_nonneg_of_nontrivial
   rw [Finset.card_univ] at hc

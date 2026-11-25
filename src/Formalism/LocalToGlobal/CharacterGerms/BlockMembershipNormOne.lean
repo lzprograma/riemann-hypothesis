@@ -28,13 +28,4 @@ def blkProd (X : ∀ o, RowData C V d (I o) (J o)) (F : ∀ o, Flag (X o)) (n : 
 
 end Defs
 
-section Mem
-
-variable {C : Type} [Field C] {V : VF C} {d : ℕ} [NeZero d] {T : Type} (r : T → ℕ) (cc : T → T) (isX : T → Prop)
-  (a : T → ℕ → ℕ) {Orb : Type} [Fintype Orb] (tau : Orb → Fin 2 → ZMod d → T) (O : Subring C) (n : ℕ)
-
-variable {J : Orb → Fin 2 → Type} [∀ o g, Fintype (J o g)]
-
-end Mem
-
 end Formalism.L2.FormalSeriesBounds.RF

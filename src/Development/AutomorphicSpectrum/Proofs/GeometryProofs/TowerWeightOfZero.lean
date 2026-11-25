@@ -110,7 +110,7 @@ theorem gap_reW {Dw : Datum H} (u : GlobalTheory.AllWt.Weight Dw) (τ : CMType H
     Top.gap Dw.p (reW u) τ = (u τ ⟨Dw.p - 1, by omega⟩ : ℝ) - u τ ⟨Dw.p, by omega⟩ := by
   have h1 : Dw.p - 1 < Dw.p + Dw.q := by omega
   have h2 : Dw.p < Dw.p + Dw.q := by omega
-  simp only [Top.gap, Top.ent, dif_pos h1, dif_pos h2, reW]
+  simp only [Top.gap, Top.ent, dite_eq_left h1, dite_eq_left h2, reW]
 
 theorem regDominant_reW {Dw : Datum H} (u : GlobalTheory.AllWt.Weight Dw) (h : ∀ τ, StrictAnti (u τ)) :
     Top.RegDominant (reW u) := fun τ _ _ hab => by
@@ -147,7 +147,7 @@ theorem weightHyp_reW_of_wtGap {Dw : Datum H} (u : GlobalTheory.AllWt.Weight Dw)
     exact h1
   · have ha' : Dw.p ≤ (a : ℕ) := by
       have hn : ¬ Dw.p ≤ Dw.p + Dw.q - Dw.p := by omega
-      simpa only [Top.InSmall, if_neg hn] using ha
+      simpa only [Top.InSmall, ite_eq_right hn] using ha
     exact hdist τ a b ha' hab
 
 theorem bound_eq_root_weight_bound {Dw : Datum H} (u : GlobalTheory.AllWt.Weight Dw) (g : ℝ) :

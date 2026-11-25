@@ -306,7 +306,7 @@ theorem momInt_iff_norm_mahler_le : ∀ (q : ℕ) [Fact q.Prime] (ι : ℂ ≃+*
       · simp [GlobalTheory.MultiMahler.fwdDiff_binomC, c, Function.comp_assoc]
       · intro m hm
         obtain ⟨i, hi⟩ := Function.ne_iff.mp hm
-        rw [Finset.prod_eq_zero (Finset.mem_univ i) (by rw [GlobalTheory.MultiMahler.fwdDiff_binomC, if_neg (by simpa using hi)]), mul_zero]
+        rw [Finset.prod_eq_zero (Finset.mem_univ i) (by rw [GlobalTheory.MultiMahler.fwdDiff_binomC, ite_eq_right (by simpa using hi)]), mul_zero]
     have hP := eq_of_mem_span ι (v := v) (G := G) (T.mkContinuous 1 hT) (fun n => by
       rw [Bp_eq, evalFn_smul, map_smul, hB, mahler_eq_jetL, map_smul, smul_eq_mul, smul_eq_mul, map_mul])
     intro k j f hf

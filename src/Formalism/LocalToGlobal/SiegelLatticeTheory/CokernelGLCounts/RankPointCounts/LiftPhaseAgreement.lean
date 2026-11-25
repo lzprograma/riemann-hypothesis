@@ -20,6 +20,7 @@ import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLattic
 import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NilradicalLatticeZMemSpan
 import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictK
 import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHDef
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RealDecompL
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.UnitriangularPhases, Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FinitePhaseSimp, Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PhaseLiftCell, Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LiftPhaseAgreement
@@ -45,14 +46,8 @@ def epsConj (M : Matrix (Fin (r + 1)) (Fin (r + 1)) E) : Matrix (Fin (r + 1)) (F
   fun c b => (-1) ^ (r - c.val) * M c b * (-1) ^ (r - b.val)
 
 theorem zhatOM_mul (A Z M : Matrix (Fin (r + 1)) (Fin (r + 1)) E) :
-    ZhatOM (A * Z * M) = A * ZhatOM Z * epsConj M := by
-  ext a b
-  simp only [ZhatOM, epsConj, Matrix.mul_apply, Finset.mul_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun c _ => ?_
-  refine Finset.sum_congr rfl fun d _ => ?_
-  have h : ((-1 : E) ^ (r - c.val)) * (-1) ^ (r - c.val) = 1 := by
-    rw [← pow_add, ← two_mul, pow_mul]; simp
-  linear_combination (-(A a d * Z d c * M c b * (-1 : E) ^ (r - b.val))) * h
+    ZhatOM (A * Z * M) = A * ZhatOM Z * epsConj M :=
+  Formalism.L2.SG.Pf.zhatOM_mul A Z M
 
 theorem isUpUni_epsConj {M : Matrix (Fin (r + 1)) (Fin (r + 1)) E} (h : IsUpUni M) : IsUpUni (epsConj M) := by
   intro i j
@@ -152,8 +147,6 @@ namespace Formalism.L2.SG.Pf.FinitePhaseConjugation
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp
   Formalism.L2.SG.TermOp.Vanish Formalism.L2.SG.PairVal
 open Matrix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Conj
 
@@ -385,37 +378,12 @@ noncomputable section
 
 namespace Formalism.L2.SG.Pf.PhaseLiftCell
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem realLink' {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word)
     {what₂ rows' : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
     (s : Formalism.L2.SG.TermOp.GTerm X u u' (X.Fu u) (X.Fu u') what₂ rows') (v : InfinitePlace X.B.I.F) :
     Formalism.L2.SG.RealObj.ZhatO (Formalism.L2.SG.RealObj.ZX X u u' 1 s.pt.1 v) =
       (ZhatOM (ZhatL (lf D (X.Fu u)) s.frame)).map (fun x => X.B.I.φ v (X.ιE.symm x)) := by
-  obtain ⟨M, _, hM1, _, hM3⟩ := s.rep.2.1
-  have hiso : s.lin ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT := s.rep.2.2.1
-  have hfam : ∀ (w : D.what₂.Word) (a : Fin (D.R.rS + 1)),
-      Formalism.L2.SG.RealObj.fam (fun a => rv X.B.I v (X.eR a)) (rv X.B.I v (X.zR w)) a =
-        rv X.B.I v (X.crd ((X.Fu w).fvec a)) := by
-    intro w a
-    refine Fin.lastCases ?_ (fun i => ?_) a
-    · simp [Formalism.L2.SG.RealObj.fam, FlagG.fvec, X.flagZVector w, HidaSetting.zR]
-    · simp [Formalism.L2.SG.RealObj.fam, FlagG.fvec, X.Fu_e w, HidaSetting.eR]
-  ext a b
-  simp only [Formalism.L2.SG.RealObj.ZhatO, ZhatOM, Formalism.L2.SG.RealObj.ZX, Formalism.L2.SG.RealObj.Zhat,
-    Formalism.L2.SG.RealObj.frm, Formalism.L2.SG.RealObj.famSc, Matrix.map_apply, Complex.ofReal_one, one_pow, inv_one,
-    one_smul]
-  rw [hfam u a, hfam u' b]
-  have h1 : Formalism.MainNotions.S.uMat (s.pt.1 v) = (X.B.I.P v)⁻¹ * (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E).map (X.B.I.φ v) *
-      X.B.I.P v := hM1 v
-  rw [h1, Formalism.L2.SG.Pf.Level.rv_mulVec, ← hM3, Formalism.L2.SG.PoincareInHH.Cut.hJ_crd]
-  have h2 : ZhatL (lf D (X.Fu u)) s.frame a b = (VS D).hT ((X.Fu u).fvec a) (s.lin ((X.Fu u').fvec b)) := by
-    rw [← Formalism.L2.SG.Pf.Act.frame_mapLF hiso (X.Fu u') b]
-    rfl
-  rw [h2, map_mul, map_mul]
-  simp only [map_pow, map_neg, map_one]
-  rw [X.φ_eq, RingEquiv.apply_symm_apply]
-  rfl
+  apply _root_.Formalism.L2.SG.Pf.RowForm.RealDecompL.zhatO_rat <;> assumption
 
 theorem liftCell_of_atSome {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (Y : Formalism.L2.SG.Full.Full X) (u u' : D.what₂.Word)
     (κ : Formalism.L2.SG.TermDef.Term D u u' (X.Fu u) (Y.what₂ u) → ℕ)

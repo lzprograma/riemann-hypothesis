@@ -1,52 +1,9 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.AveragedVectorChoices
 public import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelNonzeroModulusDeterminantEq
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralLatticeRefinementIdentity
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -525,16 +482,7 @@ theorem loc_count (hd : LocalDatum K R ψ) (hn : ∀ n : ℕ, n ≠ 0 → IsUnit
 
 theorem finite_cosets {B : AddSubgroup K} (hB : IsOpen (B : Set K)) {Om : Set K}
     (hOm : IsCompact Om) : {w : K ⧸ B | (Quotient.out w : K) ∈ Om}.Finite := by
-  have : DiscreteTopology (K ⧸ B) := QuotientAddGroup.discreteTopology hB
-  obtain ⟨T, hT⟩ := hOm.elim_finite_subcover (fun w : K ⧸ B => {z : K | (z : K ⧸ B) = w})
-    (fun w => (isOpen_discrete ({w} : Set (K ⧸ B))).preimage continuous_quot_mk)
-    (fun z _ => Set.mem_iUnion.2 ⟨(z : K ⧸ B), rfl⟩)
-  refine T.finite_toSet.subset ?_
-  intro w hw
-  obtain ⟨w', hw', h⟩ := Set.mem_iUnion₂.1 (hT hw)
-  have h : ((Quotient.out w : K) : K ⧸ B) = w' := h
-  rw [QuotientAddGroup.out_eq'] at h
-  rwa [h]
+  apply _root_.Formalism.FourierDecayAlt.P.PositiveSemidefiniteClosure.finite_cosets <;> assumption
 
 theorem out_sub_mem' {B : AddSubgroup K} (z : K) :
     (Quotient.out ((z : K) : K ⧸ B) : K) - z ∈ B := by
@@ -778,7 +726,7 @@ theorem padic_change_of_variables : Formalism.FourierDecayAlt.A6.ChangeVar := by
       ∑ᶠ z : Kˣ, (fun p : (K ⧸ R.toAddSubgroup) × Kˣ => if p ∈ S then f (p.2 : K) else 0) (x, z) := by
     intro x
     by_cases hc : (cr x : K) ∈ cutSet m Om t
-    · rw [if_pos hc]
+    · rw [ite_eq_left hc]
       refine finsum_congr fun z => ?_
       refine if_congr ?_ rfl rfl
       constructor
@@ -796,9 +744,9 @@ theorem padic_change_of_variables : Formalism.FourierDecayAlt.A6.ChangeVar := by
         rw [← Units.val_mul, inv_mul_cancel_right] at h3
         exact h3
       · exact fun h => h.2
-    · rw [if_neg hc]
+    · rw [ite_eq_right hc]
       symm
-      refine finsum_eq_zero_of_forall_eq_zero fun z => if_neg ?_
+      refine finsum_eq_zero_of_forall_eq_zero fun z => ite_eq_right ?_
       rintro ⟨h1, h2⟩
       refine hc ⟨_, h1, ?_⟩
       rw [← Units.val_pow_eq_pow_val, h2, Units.val_mul, hTv]
@@ -808,7 +756,7 @@ theorem padic_change_of_variables : Formalism.FourierDecayAlt.A6.ChangeVar := by
     intro p hp
     rw [Set.Finite.coe_toFinset]
     by_contra h
-    exact hp (if_neg h)
+    exact hp (ite_eq_right h)
   rw [finsum_congr step1, ← finsum_curry _ (hSfin.toFinset.finite_toSet.subset hsupp),
     finsum_eq_sum_of_support_subset _ hsupp,
     ← Finset.sum_fiberwise_of_maps_to (t := hW.toFinset)
@@ -829,12 +777,12 @@ theorem padic_change_of_variables : Formalism.FourierDecayAlt.A6.ChangeVar := by
     intro y hy
     rw [Set.Finite.coe_toFinset]
     by_contra h
-    exact hy (if_neg h)
+    exact hy (ite_eq_right h)
   rw [finsum_eq_sum_of_support_subset _ hsupp2, Finset.mul_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun w hw => ?_
   rw [Set.Finite.mem_toFinset] at hw
   have hw : (Quotient.out w : K) ∈ Om := hw
-  rw [if_pos hw]
+  rw [ite_eq_left hw]
   have hset : ((hSfin.toFinset.filter
       (fun p : (K ⧸ R.toAddSubgroup) × Kˣ => (((p.2 : Kˣ) : K) : K ⧸ B) = w) : Finset _) : Set _) =
       {p : (K ⧸ R.toAddSubgroup) × Kˣ | (p.2 : K) - (Quotient.out w : K) ∈ B ∧
@@ -847,7 +795,7 @@ theorem padic_change_of_variables : Formalism.FourierDecayAlt.A6.ChangeVar := by
       (if p ∈ S then f (p.2 : K) else 0) = f (Quotient.out w : K) := by
     intro p hp
     rw [Finset.mem_filter, Set.Finite.mem_toFinset] at hp
-    rw [if_pos hp.1]
+    rw [ite_eq_left hp.1]
     have h1 := ((hfib w hw p).1 hp).1
     have h2 := hf _ hw _ (hBΛ h1)
     rwa [add_sub_cancel] at h2
@@ -878,7 +826,7 @@ theorem gram_equality_of_vectors : Formalism.FourierDecayAlt.A6.UGramEq := by
     intro x; simp [Ns, pt2]
   simp only [e1] at h2
   unfold uGram
-  simp only [Set.mem_univ, if_true]
+  simp only [Set.mem_univ, ite_true]
   rw [h2, hC K R ψ hD h m t, hC K R ψ hD h' m t']
   unfold Ns N0
   obtain ⟨ha, hab⟩ := hM K R ψ hD t t'

@@ -2,57 +2,12 @@ module
 
 public import Formalism.PolynomialDimension.StatementHar
 public import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.PolynomialDimension.MultinomialDepth.HarmonicDecompositionHolds
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Linter.Style
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PolynomialDimension.MultinomialDepth.DiagLaplacianDivPowMemSqrtFockLattice, Formalism.PolynomialDimension.MultinomialDepth.SqrtFockGaussLatticeComparisonHolds
@@ -181,7 +136,7 @@ theorem xFactorial_add_diagExponent (m : XY k →₀ ℕ) (i : Fin k) (n : ℕ) 
     have : i ≠ j := (Finset.ne_of_mem_erase hj).symm
     simp [diagExponent_inl, this]
   rw [h1]
-  simp only [Finsupp.add_apply, diagExponent_inl, if_true]
+  simp only [Finsupp.add_apply, diagExponent_inl, ite_true]
   rw [factorial_add_eq_descFactorial_mul, mul_assoc]
 
 def h3e (K : Type) [Field K] {k : ℕ} (i : Fin k) : Module.End K (PolXY K k) :=
@@ -609,15 +564,14 @@ theorem glAct_hXY {K : Type} [Field K] {k : ℕ} (g : GL (Fin k) K) : glAct g (h
         rw [map_sum, Finset.sum_mul]
         exact Finset.sum_congr rfl fun i _ => by rw [map_mul]; ring
     _ = ∑ i : Fin k, X (Sum.inl i) * X (Sum.inr i) := by
-        simp only [hm, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+        simp only [hm, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem glAct_inv_glAct {K : Type} [Field K] {k : ℕ} (g : GL (Fin k) K) (f : PolXY K k) :
     glAct g⁻¹ (glAct g f) = f := by
   have key : (glAct g⁻¹).comp (glAct g) = AlgHom.id K (PolXY K k) := by
     apply MvPolynomial.algHom_ext
     rintro (i | i)
-    · set_option synthInstance.maxHeartbeats 100000 in
-        simp only [AlgHom.comp_apply, AlgHom.id_apply, glAct_X_inl, map_sum, map_mul,
+    · simp only [AlgHom.comp_apply, AlgHom.id_apply, glAct_X_inl, map_sum, map_mul,
         MvPolynomial.algHom_C, MvPolynomial.algebraMap_eq]
       have hm : ∀ l : Fin k, C (∑ j : Fin k, (g : Matrix (Fin k) (Fin k) K) i j *
           ((g⁻¹ : GL (Fin k) K) : Matrix (Fin k) (Fin k) K) j l) = (if i = l then 1 else 0 : PolXY K k) := by
@@ -632,7 +586,7 @@ theorem glAct_inv_glAct {K : Type} [Field K] {k : ℕ} (g : GL (Fin k) K) (f : P
             simp only [map_sum, Finset.sum_mul, map_mul, mul_assoc, Finset.mul_sum]
             rw [Finset.sum_comm]
         _ = X (Sum.inl i) := by
-          simp only [hm, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+          simp only [hm, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     · set_option synthInstance.maxHeartbeats 100000 in
         simp only [AlgHom.comp_apply, AlgHom.id_apply, glAct_X_inr, map_sum, map_mul,
         MvPolynomial.algHom_C, MvPolynomial.algebraMap_eq, inv_inv]
@@ -656,7 +610,7 @@ theorem glAct_inv_glAct {K : Type} [Field K] {k : ℕ} (g : GL (Fin k) K) (f : P
             simp only [map_sum, Finset.sum_mul, map_mul, mul_assoc, Finset.mul_sum]
             rw [Finset.sum_comm]
         _ = X (Sum.inr i) := by
-          simp only [hm, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+          simp only [hm, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   have h2 := congrArg (fun φ => φ f) key
   simpa using h2
 
@@ -752,7 +706,7 @@ theorem multinomial_factorization_le (p : ℕ) {ι : Type} [DecidableEq ι] (s :
     rcases s.eq_empty_or_nonempty with hs | hs
     · subst hs
       simp [Nat.multinomial_singleton]
-    · rw [Nat.multinomial_insert ha, Finset.sum_insert ha, Finset.card_insert_eq_ite, if_neg ha]
+    · rw [Nat.multinomial_insert ha, Finset.sum_insert ha, Finset.card_insert_eq_ite, ite_eq_right ha]
       have hc : (f a + ∑ i ∈ s, f i).choose (f a) ≠ 0 := (Nat.choose_pos (Nat.le_add_right _ _)).ne'
       have hm : Nat.multinomial s f ≠ 0 := (Nat.multinomial_pos _ _).ne'
       rw [Nat.factorization_mul hc hm, Finsupp.add_apply]
@@ -943,54 +897,8 @@ theorem isotypicLattice_holds : LevelLattice := by
     rw [map_mul, map_pow, glAct_hXY]
     exact h_pow_mul_mem_gauss O.toSubring j _ hwl
 
-theorem xDeg_single_inl {k : ℕ} (i : Fin k) (n : ℕ) : xDeg (Finsupp.single (Sum.inl i : XY k) n) = n := by
-  simp [xDeg, Finsupp.single_apply]
-theorem xDeg_single_inr {k : ℕ} (i : Fin k) (n : ℕ) : xDeg (Finsupp.single (Sum.inr i : XY k) n) = 0 := by
-  simp [xDeg]
-theorem yDeg_single_inl {k : ℕ} (i : Fin k) (n : ℕ) : yDeg (Finsupp.single (Sum.inl i : XY k) n) = 0 := by
-  simp [yDeg]
-theorem yDeg_single_inr {k : ℕ} (i : Fin k) (n : ℕ) : yDeg (Finsupp.single (Sum.inr i : XY k) n) = n := by
-  simp [yDeg, Finsupp.single_apply]
-
 section deg
 variable {K : Type} [Field K] {k : ℕ}
-
-private theorem coeff_pderiv_eq_coeff_add_single_mul_multinomial_depth (v : XY k) (F : PolXY K k) (m : XY k →₀ ℕ) :
-    AddMonoidAlgebra.coeff (pderiv v F) m = AddMonoidAlgebra.coeff F (m + Finsupp.single v 1) * ((m v : K) + 1) := by
-  refine MvPolynomial.induction_on' F ?_ ?_
-  · intro s a
-    rw [MvPolynomial.pderiv_monomial, MvPolynomial.coeff_monomial, MvPolynomial.coeff_monomial]
-    by_cases hs : s = m + Finsupp.single v 1
-    · subst hs
-      simp
-    · rw [if_neg hs, zero_mul]
-      split_ifs with h
-      · have hsv : s v = 0 := by
-          by_contra hne
-          apply hs
-          rw [← h]
-          ext u
-          simp only [Finsupp.coe_add, Finsupp.coe_tsub, Pi.add_apply, Pi.sub_apply, Finsupp.single_apply]
-          split_ifs with hu
-          · subst hu
-            omega
-          · omega
-        simp [hsv]
-      · rfl
-  · intro p q hp hq
-    rw [map_add (f := _), MvPolynomial.coeff_add, hp, hq, MvPolynomial.coeff_add, add_mul]
-
-theorem coeff_ctrF (f : PolXY K k) (m : XY k →₀ ℕ) :
-    AddMonoidAlgebra.coeff (ctrF K k f) m = ∑ i : Fin k,
-      AddMonoidAlgebra.coeff f (m + Finsupp.single (Sum.inl i) 1 + Finsupp.single (Sum.inr i) 1) *
-        ((m (Sum.inr i) : K) + 1) * ((m (Sum.inl i) : K) + 1) := by
-  unfold ctrF
-  rw [LinearMap.sum_apply, MvPolynomial.coeff_sum]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [LinearMap.comp_apply]
-  show AddMonoidAlgebra.coeff (pderiv (R := K) (Sum.inl i : XY k) (pderiv (R := K) (Sum.inr i : XY k) f)) m = _
-  rw [coeff_pderiv_eq_coeff_add_single_mul_multinomial_depth, coeff_pderiv_eq_coeff_add_single_mul_multinomial_depth, Finsupp.add_apply, Finsupp.single_apply, if_neg Sum.inl_ne_inr,
-    add_zero]
 
 theorem hXY_mem_PolAB : hXY K k ∈ PolAB K k 1 1 := by
   rw [mem_PolAB_iff]
@@ -1149,12 +1057,12 @@ theorem h_mul_eq_zero_of_deg {K : Type} [Field K] {k A B : ℕ} (hAB : A = 0 ∨
     · have hle : m (Sum.inl i) ≤ xDeg m :=
         Finset.single_le_sum (f := fun j => m (Sum.inl j)) (fun _ _ => Nat.zero_le _) (Finset.mem_univ i)
       have hmi : m (Sum.inl i) = 0 := by omega
-      rw [mul_assoc, MvPolynomial.coeff_X_mul', if_neg (by simpa [Finsupp.mem_support_iff] using hmi)]
+      rw [mul_assoc, MvPolynomial.coeff_X_mul', ite_eq_right (by simpa [Finsupp.mem_support_iff] using hmi)]
     · have hle : m (Sum.inr i) ≤ yDeg m :=
         Finset.single_le_sum (f := fun j => m (Sum.inr j)) (fun _ _ => Nat.zero_le _) (Finset.mem_univ i)
       have hmi : m (Sum.inr i) = 0 := by omega
       rw [mul_comm (X (Sum.inl i)) (X (Sum.inr i)), mul_assoc, MvPolynomial.coeff_X_mul',
-        if_neg (by simpa [Finsupp.mem_support_iff] using hmi)]
+        ite_eq_right (by simpa [Finsupp.mem_support_iff] using hmi)]
 
 theorem harQuot_of (H1 : HarProj) (H2 : GaussProj) : HarQuot := by
   intro K _ _ k A B p O g hk hp hR

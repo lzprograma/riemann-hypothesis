@@ -13,8 +13,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.StabIntSh
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable (D : D7)
 
 abbrev FI : Type := FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E

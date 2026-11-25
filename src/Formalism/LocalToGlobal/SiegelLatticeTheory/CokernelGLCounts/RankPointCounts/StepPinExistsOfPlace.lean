@@ -221,8 +221,6 @@ section St
 open Formalism.L2.SG.RealObj Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj.InfCut
 open Matrix
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 theorem ninf_eq (u : D.what₂.Word) : (ProductExactness.NinfG X u : Set X.B.I.Ginf) = X.NinfU u := ProductExactness.NinfG_coe X u
@@ -321,16 +319,16 @@ theorem ptEntry_inj {K : Type*} [Zero K] : ∀ (bs cs : List (K × ℕ)) (i : �
     have e0 := he 0 (s - 1) (by omega) (by omega)
     rw [ptEntry_cons, ptEntry_cons] at e0
     have hl : (0 < s ∧ s - 1 < s) := ⟨by omega, by omega⟩
-    rw [if_pos hl, if_pos (by omega : 0 + (s - 1) + 1 = s)] at e0
+    rw [ite_eq_left hl, ite_eq_left (by omega : 0 + (s - 1) + 1 = s)] at e0
     have hss : s = s' ∧ t = t' := by
       by_cases h1 : 0 < s' ∧ s - 1 < s'
-      · rw [if_pos h1] at e0
+      · rw [ite_eq_left h1] at e0
         by_cases h2 : 0 + (s - 1) + 1 = s'
-        · rw [if_pos h2] at e0
+        · rw [ite_eq_left h2] at e0
           exact ⟨by omega, e0⟩
-        · rw [if_neg h2] at e0
+        · rw [ite_eq_right h2] at e0
           exact absurd e0 ht.1
-      · rw [if_neg h1, if_neg (by omega)] at e0
+      · rw [ite_eq_right h1, ite_eq_right (by omega)] at e0
         exact absurd e0 ht.1
     rcases hss with ⟨hs, htEq⟩
     subst s'
@@ -339,7 +337,7 @@ theorem ptEntry_inj {K : Type*} [Zero K] : ∀ (bs cs : List (K × ℕ)) (i : �
     refine ptEntry_inj bs cs (i - s) (fun b hb' => hb b (List.mem_cons_of_mem _ hb')) (by omega)
       (fun b hb' => hc b (List.mem_cons_of_mem _ hb')) (by omega) (fun a b ha hb2 => ?_)
     have := he (a + s) (b + s) (by omega) (by omega)
-    rw [ptEntry_cons, ptEntry_cons, if_neg (by omega), if_pos (by omega), if_neg (by omega), if_pos (by omega),
+    rw [ptEntry_cons, ptEntry_cons, ite_eq_right (by omega), ite_eq_left (by omega), ite_eq_right (by omega), ite_eq_left (by omega),
       Nat.add_sub_cancel, Nat.add_sub_cancel] at this
     exact this
 
@@ -352,8 +350,6 @@ section Pin
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.HidaSetting
 open Matrix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def PinHaarEx : Prop :=
   ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)),
@@ -464,8 +460,6 @@ section Assembly
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.HidaSetting
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word)
 
 theorem muInf_map (h : X.B.I.Ginf) :
@@ -550,8 +544,6 @@ section Places
 open Formalism.L2.SG.RealObj Formalism.L2.SG.HidaSetting
 open Matrix
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 def StV (u u' : D.what₂.Word) (γ : X.B.I.Ginf) (v : InfinitePlace X.B.I.F) : Set (Formalism.REAL.UJ (X.B.I.ε v)) :=
@@ -611,21 +603,6 @@ theorem muStab_eq (w : Point D.host.E (D.R.rS + 1)) :
   simp_rw [hin]
   exact pi_smul _ _
 
-private theorem pi_map_lemma_3 {ι : Type*} [Fintype ι] {α β : ι → Type*} [∀ i, MeasurableSpace (α i)]
-    [∀ i, MeasurableSpace (β i)] (μ : ∀ i, Measure (α i)) [∀ i, SigmaFinite (μ i)] (ν : ∀ i, Measure (β i))
-    [∀ i, SigmaFinite (ν i)] (f : ∀ i, α i → β i) (hf : ∀ i, AEMeasurable (f i) (μ i))
-    (h : ∀ i, (μ i).map (f i) = ν i) : (Measure.pi μ).map (fun x i => f i (x i)) = Measure.pi ν := by
-  have hF : AEMeasurable (fun x : ∀ i, α i => fun i => f i (x i)) (Measure.pi μ) :=
-    AEMeasurable.of_eval fun i => (hf i).comp_quasiMeasurePreserving (Measure.quasiMeasurePreserving_eval μ i)
-  symm
-  refine Measure.pi_eq fun s hs => ?_
-  rw [Measure.map_apply_of_aemeasurable hF (MeasurableSet.univ_pi hs)]
-  have e : (fun x : ∀ i, α i => fun i => f i (x i)) ⁻¹' Set.univ.pi s = Set.univ.pi (fun i => f i ⁻¹' s i) := by
-    ext x; simp [Set.mem_pi]
-  rw [e, Measure.pi_pi]
-  refine Finset.prod_congr rfl fun i _ => ?_
-  rw [← h i, Measure.map_apply_of_aemeasurable (hf i) (hs i)]
-
 theorem pinHaarEx_of_place (hP : PlaceHaar) : PinHaarEx := by
   intro D X u u' w hw
   set γ := gamW X u u' w with hγ
@@ -638,8 +615,11 @@ theorem pinHaarEx_of_place (hP : PlaceHaar) : PinHaarEx := by
   have hsf2 : ∀ v, SigmaFinite (cv v • Measure.pi (fun _ : FreeE w => (volume : Measure ℂ))) :=
     fun v => sf_smul _ (hct v)
   have e1 : (Measure.pi μv).map (stCoord X u' w γ) =
-      Measure.pi (fun v => cv v • Measure.pi (fun _ : FreeE w => (volume : Measure ℂ))) :=
-    pi_map_lemma_3 μv _ (fun v => stCoordV X u' w γ v) hae hmap
+      Measure.pi (fun v => cv v • Measure.pi (fun _ : FreeE w => (volume : Measure ℂ))) := by
+    have : ∀ v, SigmaFinite ((μv v).map (stCoordV X u' w γ v)) :=
+      fun v => (hmap v).symm ▸ hsf2 v
+    rw [stCoord_eq]
+    exact (Measure.pi_map_pi hae).trans (by simp_rw [hmap])
   refine ⟨Measure.pi μv, (∏ v, cv v) * K⁻¹, ⟨inferInstance, ?_, ?_, ?_⟩, ?_, ?_, ?_⟩
   · rw [← Measure.measure_univ_ne_zero, Measure.pi_univ]
     exact Finset.prod_ne_zero_iff.2 fun v _ => Measure.measure_univ_ne_zero.2 (hH v).2.1
@@ -650,8 +630,11 @@ theorem pinHaarEx_of_place (hP : PlaceHaar) : PinHaarEx := by
     exact measure_iUnion_null fun v => Measure.pi_eval_preimage_null (μ := μv) (hH v).2.2.1
   · intro s hs
     rw [stInf_eq_pi X u u' γ] at hs
-    exact pi_map_lemma_3 μv μv (fun v x => s v * x) (fun v => (measurable_const_mul (s v)).aemeasurable)
-      (fun v => (hH v).2.2.2 (s v) (hs v (Set.mem_univ v)))
+    have hinv : ∀ v, (μv v).map (fun x => s v * x) = μv v :=
+      fun v => (hH v).2.2.2 (s v) (hs v (Set.mem_univ v))
+    have : ∀ v, SigmaFinite ((μv v).map (fun x => s v * x)) := fun v => (hinv v).symm ▸ hsf v
+    exact (Measure.pi_map_pi fun v => (measurable_const_mul (s v)).aemeasurable).trans
+      (by simp_rw [hinv])
   · exact mul_ne_zero (Finset.prod_ne_zero_iff.2 fun v _ => hc0 v) (ENNReal.inv_ne_zero.2 hKt)
   · exact ENNReal.mul_ne_top (ENNReal.prod_ne_top fun v _ => hct v) (ENNReal.inv_ne_top.2 hK0)
   · rw [e1, pi_smul, hK, smul_smul, mul_assoc, ENNReal.inv_mul_cancel hK0 hKt, mul_one]

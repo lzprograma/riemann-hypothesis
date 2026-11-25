@@ -11,6 +11,7 @@ import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
+import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPowerBlockArith
 
 @[expose] public section
 
@@ -110,33 +111,10 @@ theorem const_tensorPowH {I : AllFam} (hI : I.IsFamily) {P : Ideal (MRing ι)} {
 
 omit [∀ k, Fintype (ι k)] in
 theorem blockFnField_addBlock {Ω : Type} [Field Ω] [CharZero Ω] {y : (Σ k, ι k) → Ω}
-    {A : ReciprocityTheory.ChartRestriction.G.Geo.HermLine ι} {m N : ℕ} {v : Fin N → Ω} (c : ∀ k, ι k) (hc : ∀ k, y ⟨k, c k⟩ ≠ 0)
-    (hv : ∀ j, v j ∈ chartLat y A.a m) : blockFnField (addBlock y v) = blockFnField y := by
-  have hZ : ∀ s ∈ chartRingZ y c, s ∈ blockFnField y := by
-    intro s hs
-    have : chartRingZ y c ≤ (blockFnField y).toSubalgebra.restrictScalars ℤ := by
-      refine Algebra.adjoin_le ?_
-      rintro _ ⟨p, rfl⟩
-      exact IntermediateField.subset_adjoin ℚ _ ⟨p, ⟨p.1, c p.1⟩, rfl, rfl⟩
-    exact this hs
-  apply le_antisymm
-  · rw [blockFnField, IntermediateField.adjoin_le_iff]
-    rintro t ⟨⟨_ | k, i⟩, ⟨_ | k', i'⟩, hpq, rfl⟩
-    · have hP0 : (∏ k, y ⟨k, c k⟩ ^ (-((m : ℤ) * A.a k))) ≠ 0 :=
-        Finset.prod_ne_zero_iff.mpr fun k _ => zpow_ne_zero _ (hc k)
-      have e : addBlock y v ⟨none, i⟩ / addBlock y v ⟨none, i'⟩ =
-          (v i * ∏ k, y ⟨k, c k⟩ ^ (-((m : ℤ) * A.a k))) / (v i' * ∏ k, y ⟨k, c k⟩ ^ (-((m : ℤ) * A.a k))) := by
-        rw [mul_div_mul_right _ _ hP0]
-        rfl
-      rw [e]
-      exact div_mem (hZ _ (hv i c hc)) (hZ _ (hv i' c hc))
-    · exact absurd hpq (by simp)
-    · exact absurd hpq (by simp)
-    · obtain rfl : k = k' := Option.some_injective _ hpq
-      exact IntermediateField.subset_adjoin ℚ _ ⟨⟨k, i⟩, ⟨k, i'⟩, rfl, rfl⟩
-  · rw [blockFnField, IntermediateField.adjoin_le_iff]
-    rintro t ⟨p, q, hpq, rfl⟩
-    exact IntermediateField.subset_adjoin ℚ _ ⟨oldV N p, oldV N q, by simp [oldV, hpq], rfl⟩
+    {A : ReciprocityTheory.ChartRestriction.G.Geo.HermLine ι} {m N : ℕ} {v : Fin N → Ω}
+    (c : ∀ k, ι k) (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) (hv : ∀ j, v j ∈ chartLat y A.a m) :
+    blockFnField (addBlock y v) = blockFnField y :=
+  PowerBlockArith.blockFnField_addBlock c hc hv
 
 end PowerBlockTop
 

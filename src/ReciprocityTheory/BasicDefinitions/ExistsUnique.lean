@@ -27,12 +27,6 @@ structure Pattern (n : ℕ) where
   refl : ∀ i, rel i i
   trans : ∀ i j l, rel i j → rel j l → rel i l
 
-namespace Pattern
-
-variable {n : ℕ}
-
-end Pattern
-
 section Lift
 
 variable (O : Type u) [CommRing O] [IsLocalRing O]

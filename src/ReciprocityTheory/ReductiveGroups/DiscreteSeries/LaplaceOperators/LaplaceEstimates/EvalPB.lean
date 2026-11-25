@@ -67,8 +67,6 @@ end ReciprocityTheory.ChartRestriction.DS.Lap
 
 noncomputable section
 
-open Matrix MeasureTheory
-open scoped InnerProductSpace
 
 namespace ReciprocityTheory.ChartRestriction.DS.Lap
 
@@ -96,7 +94,7 @@ theorem per_add {Vp : Type*} [NormedAddCommGroup Vp] [InnerProductSpace ℂ Vp] 
 theorem hpk_mulVec (i : Fin (2 * r + k + 1)) (u : Fin (2 * r + k + 1) → ℂ) :
     (Formalism.QuantumDeterminants.Hpk k r *ᵥ u) i = (if i.val = r + k then -1 else 1) * u (ExponentialSlopeDerivatives.sg k r i) := by
   simp only [Matrix.mulVec, dotProduct, ExponentialSlopeDerivatives.hpk_apply, ite_mul, zero_mul, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
 
 theorem beta_formula (ε : Fin (2 * r + k + 1) → Bool) (P : Mat k r)
     (hP : Pᴴ * Formalism.REAL.Jm ε * P = Formalism.QuantumDeterminants.Hpk k r) (z : Fin (2 * r + k + 1) → ℂ)
@@ -120,7 +118,7 @@ theorem beta_formula (ε : Fin (2 * r + k + 1) → Bool) (P : Mat k r)
       exact (Real.sqrt_pos.mpr hTz).ne'
     · have hx : g₀ *ᵥ (((Real.sqrt (Formalism.QuantumDeterminants.Tz k r z) : ℝ) : ℂ) •
           Formalism.QuantumDeterminants.bvec (Formalism.QuantumDeterminants.wI k r (Fin.last k))) = xOne k r z := by
-        rw [hg₀.2.2]; unfold xOne; rw [if_pos hr]
+        rw [hg₀.2.2]; unfold xOne; rw [ite_eq_left hr]
       rw [key _ hx]
       have hw : Formalism.QuantumDeterminants.wI k r (Fin.last k) = Fin.last (2 * r + k) := Fin.ext (by simp [Formalism.QuantumDeterminants.wI]; omega)
       have hsg : ExponentialSlopeDerivatives.sg k r (Fin.last (2 * r + k)) = Fin.last (2 * r + k) := by
@@ -129,20 +127,20 @@ theorem beta_formula (ε : Fin (2 * r + k + 1) → Bool) (P : Mat k r)
           ((Real.sqrt (Formalism.QuantumDeterminants.Tz k r z) : ℝ) : ℂ) • Formalism.QuantumDeterminants.bvec (Fin.last (2 * r + k)) := by
         funext i; by_cases hi : i = Fin.last (2 * r + k) <;> simp [Formalism.QuantumDeterminants.bvec, hi]
       rw [hw, hst, smul_dotProduct, Formalism.QuantumDeterminants.bvec, single_dotProduct, one_mul, hpk_mulVec, hsg,
-        if_pos (by simp; omega), hQe, smul_eq_mul]
+        ite_eq_left (by simp; omega), hQe, smul_eq_mul]
       ring
   · refine ⟨1, one_ne_zero, fun d => ?_⟩
     have hx : g₀ *ᵥ Pi.single (⟨0, by omega⟩ : Fin (2 * r + k + 1)) 1 = xOne k r z := by
       have := (hg₀.2.1 ⟨0, by omega⟩).1
       unfold xOne
-      rw [if_neg hr]
+      rw [ite_eq_right hr]
       exact this
     have hsg : ExponentialSlopeDerivatives.sg k r ⟨0, by omega⟩ = Fin.last (2 * r + k) := by
       apply Fin.ext; rw [ExponentialSlopeDerivatives.sg_val]; simp only [Fin.val_last]; split_ifs <;> omega
     have hst : star (Pi.single (⟨0, by omega⟩ : Fin (2 * r + k + 1)) (1 : ℂ) : Fin (2 * r + k + 1) → ℂ) =
         (Pi.single (⟨0, by omega⟩ : Fin (2 * r + k + 1)) (1 : ℂ) : Fin (2 * r + k + 1) → ℂ) := by
       funext i; simp [Pi.single_apply]
-    rw [key _ hx, hst, single_dotProduct, one_mul, hpk_mulVec, hsg, if_neg (by simp; omega), hQe]
+    rw [key _ hx, hst, single_dotProduct, one_mul, hpk_mulVec, hsg, ite_eq_right (by simp; omega), hQe]
 
 end CapelliMinorRestriction
 

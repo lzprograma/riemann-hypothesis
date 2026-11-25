@@ -55,8 +55,6 @@ open Formalism.L2.Host (HChar)
 open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTheory.RowTest
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 noncomputable section
 
 namespace GlobalTheory.SndFrames
@@ -151,11 +149,8 @@ private theorem idem_mul {R : Type} [CommRing R] {E a b : R} (hE : E * E = E) :
     (1 - E + E * a) * (1 - E + E * b) = 1 - E + E * (a * b) := by
   linear_combination (1 - a - b + a * b) * hE
 
-private theorem det_mem {k : ℕ} {N : Matrix (Fin k) (Fin k) (EAf D)} (h : IsIntM N) : N.det ∈ OO := by
-  let A : Matrix (Fin k) (Fin k) OO := fun i j => ⟨N i j, h i j⟩
-  have : N = (OO).subtype.mapMatrix A := rfl
-  rw [this, ← RingHom.map_det]
-  exact (A.det).2
+private theorem det_mem {k : ℕ} {N : Matrix (Fin k) (Fin k) (EAf D)} (h : IsIntM N) : N.det ∈ OO :=
+  GlobalTheory.Harm.det_mem_of_forall_mem _ _ h
 
 private theorem exists_unitFactor {e : AE D} (hE : toEAf D e * toEAf D e = toEAf D e) {k : ℕ} (κ : GL (Fin k) (EAf D)) :
     ∃ x : (AE D)ˣ, infPart D (x : AE D) = 1 ∧ toEAf D (x : AE D) = 1 - toEAf D e + toEAf D e * κ.1.det ∧
@@ -278,10 +273,10 @@ private theorem stdSnd_frames : ∀ {D : D7} (ν : (AE D)ˣ →* Circle) (e : AE
         fun H i j hj => inId_mul hκ (fun l => H l j hj) i⟩
     by_cases hc : IsIntM (dualCoord A' WW βA' βW' y) ∧
         ∀ i j, j.1 < a → InId I (dualCoord A' WW βA' βW' y i j)
-    · rw [if_pos ⟨hy, hc⟩, if_pos ⟨hh.2 hy, (hint _).2 hc.1, (hid _).2 hc.2⟩, rightBlock_mul]
+    · rw [ite_eq_left ⟨hy, hc⟩, ite_eq_left ⟨hh.2 hy, (hint _).2 hc.1, (hid _).2 hc.2⟩, rightBlock_mul]
       exact unitChar_mul ν hE (βA⁻¹ * βA') x h1 h2 h3 hxI hxI' _
-    · rw [if_neg (fun h => hc h.2), if_neg (fun h => hc ⟨(hint _).1 h.2.1, (hid _).1 h.2.2⟩), mul_zero]
-  · rw [if_neg (fun h => hy h.1), if_neg (fun h => hy (hh.1 h.1)), mul_zero]
+    · rw [ite_eq_right (fun h => hc h.2), ite_eq_right (fun h => hc ⟨(hint _).1 h.2.1, (hid _).1 h.2.2⟩), mul_zero]
+  · rw [ite_eq_right (fun h => hy h.1), ite_eq_right (fun h => hy (hh.1 h.1)), mul_zero]
 
 end GlobalTheory.SndFrames
 

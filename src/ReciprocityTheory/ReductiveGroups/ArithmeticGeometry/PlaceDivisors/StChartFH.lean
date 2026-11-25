@@ -4,7 +4,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors
 
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 open MvPowerSeries
 
@@ -23,8 +22,6 @@ section Forms
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor IsLocalRing TensorProduct
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 def FHSt (p : ℕ) [Fact p.Prime] : Prop :=
   ∀ (T : Type) [CommRing T] [IsDomain T] [IsLocalRing T] [IsNoetherianRing T] [CharZero T]

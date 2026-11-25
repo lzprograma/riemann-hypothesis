@@ -12,49 +12,9 @@ public import Development.AutomorphicArithmetic.PrimeDiscriminants.RamDiscr
 import Development.AutomorphicArithmetic.PrimitiveCosets.ToEBij
 public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
 import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
 public import Mathlib.Analysis.Calculus.Deriv.Star
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.KrullDimension.PID
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -206,7 +166,7 @@ theorem jnt_ramEK (D : D7) (𝔭 : Ideal (𝓞 D.host.K)) (h𝔭 : 𝔭.IsPrime)
     ((D.host.QS * D.host.q : ℕ) : 𝓞 D.host.K) ∈ 𝔭 := by
   have hex : ∃ P : Ideal (𝓞 D.host.E), P.IsPrime ∧ P.LiesOver 𝔭 := by
     by_contra hn
-    rw [Ideal.ramificationIdxIn, dif_neg hn] at hr
+    rw [Ideal.ramificationIdxIn, dite_eq_right hn] at hr
     omega
   rw [Ideal.ramificationIdxIn, dite_eq_left hex] at hr
   obtain ⟨hP, hlo⟩ := hex.choose_spec
@@ -563,15 +523,9 @@ theorem jnt_isCharED_one (D : D7) : IsCharED D (1 : DirichletCharacter ℂ ((1 :
 theorem jnt_prim_isCharED (D : D7) (ψ : ZetaZeroFreeRegion.Chr D) : IsCharED D (ZetaZeroFreeRegion.prim D ψ).2 := by
   by_cases h : ∃ χ, ZetaZeroFreeRegion.Reads D ψ χ
   · exact jnt_isCharED_of_reads D ψ _ (jnt_prim_reads D ψ h)
-  · have key : ZetaZeroFreeRegion.prim D ψ = ⟨1, 1⟩ := dif_neg h
+  · have key : ZetaZeroFreeRegion.prim D ψ = ⟨1, 1⟩ := dite_eq_right h
     rw [key]
     exact jnt_isCharED_one D
-
-section Analysis
-
-open MeasureTheory Set Filter Topology
-
-end Analysis
 
 def LL (D : D7) : ℕ := D.host.QS * D.host.q * D.host.d
 

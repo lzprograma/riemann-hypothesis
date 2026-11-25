@@ -1,48 +1,7 @@
 module
 
 public import Formalism.GradedWeylDivisibility.StatementA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -80,27 +39,6 @@ theorem isWH_algHom (φ : MvPolynomial σ R →ₐ[R] MvPolynomial τ R) (w : σ
   have h := isWH_algHom_monomial φ w w' hφ s (AddMonoidAlgebra.coeff f s)
   rwa [hf (mem_support_iff.mp hs)] at h
 
-private theorem weightedHomogeneousComponent_self_of_isWH {w : σ → M} {p : MvPolynomial σ R} {m : M}
-    (hp : IsWeightedHomogeneous w p m) : weightedHomogeneousComponent w m p = p := by
-  classical
-  ext d
-  rw [coeff_weightedHomogeneousComponent]
-  split_ifs with h
-  · rfl
-  · by_contra hd
-    exact h (hp (Ne.symm hd))
-
-private theorem weightedHomogeneousComponent_eq_zero_of_isWH_ne {w : σ → M} {p : MvPolynomial σ R} {m μ : M}
-    (hne : m ≠ μ) (hp : IsWeightedHomogeneous w p m) : weightedHomogeneousComponent w μ p = 0 := by
-  classical
-  ext d
-  rw [coeff_weightedHomogeneousComponent]
-  simp only [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
-  split_ifs with h
-  · by_contra hd
-    exact hne ((hp hd).symm.trans h)
-  · rfl
-
 theorem algHom_weightedHomogeneousComponent (φ : MvPolynomial σ R →ₐ[R] MvPolynomial τ R)
     (w : σ → M) (w' : τ → M) (hφ : ∀ v, IsWeightedHomogeneous w' (φ (X v)) (w v)) (μ : M)
     (f : MvPolynomial σ R) :
@@ -115,9 +53,9 @@ theorem algHom_weightedHomogeneousComponent (φ : MvPolynomial σ R →ₐ[R] Mv
     isWeightedHomogeneous_monomial w s (AddMonoidAlgebra.coeff f s) rfl
   by_cases h : Finsupp.weight w s = μ
   · subst h
-    rw [weightedHomogeneousComponent_self_of_isWH hm, weightedHomogeneousComponent_self_of_isWH hs]
-  · rw [weightedHomogeneousComponent_eq_zero_of_isWH_ne h hm, weightedHomogeneousComponent_eq_zero_of_isWH_ne h hs,
-      map_zero]
+    rw [hm.weightedHomogeneousComponent_same, hs.weightedHomogeneousComponent_same]
+  · rw [hm.weightedHomogeneousComponent_ne μ (Ne.symm h),
+      hs.weightedHomogeneousComponent_ne μ (Ne.symm h), map_zero]
 
 end General
 
@@ -143,7 +81,7 @@ theorem colAddGen_rowAct {R : Type*} [CommRing R] {r n : ℕ} (g : Matrix (Fin r
     simp only [AlgHom.comp_apply, colAddGen, rowAct, rowActO, aeval_X, map_sum,
     map_mul, aeval_C, MvPolynomial.algebraMap_eq]
     by_cases h : t = j
-    · simp only [h, if_true, aeval_X, map_add (f := _), map_mul, Option.elim]
+    · simp only [h, ite_true, aeval_X, map_add (f := _), map_mul, Option.elim]
       rw [Finset.mul_sum, ← Finset.sum_add_distrib]
       exact Finset.sum_congr rfl fun b _ => by ring
     · simp [h]

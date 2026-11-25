@@ -98,11 +98,11 @@ def nfMat {r : ℕ} {k : Type} [CommRing k] (c : Fin (r + 1) → k) : Matrix (Fi
 
 theorem nfMat_mulVec_castSucc {r : ℕ} {k : Type} [CommRing k] (c : Fin (r + 1) → k) (v : Fin (r + 1) → k)
     (i : Fin r) : (nfMat c *ᵥ v) (Fin.castSucc i) = v i.succ := by
-  simp only [Matrix.mulVec, dotProduct, nfMat, Matrix.of_apply, Fin.castSucc_ne_last, if_false]
+  simp only [Matrix.mulVec, dotProduct, nfMat, Matrix.of_apply, Fin.castSucc_ne_last, ite_false]
   rw [Finset.sum_eq_single i.succ]
   · simp
   · intro j _ hj
-    rw [if_neg]; · simp
+    rw [ite_eq_right]; · simp
     intro h; apply hj; ext; simp [h]
   · simp
 
@@ -224,18 +224,13 @@ end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BorderedConjugationDiagOneLiftBlockMatrix =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormSubLeMaxUltra =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormSubLeMaxUltra", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Henselian\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\npublic import Mathlib.Analysis.Normed.Group.Ultra\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormSubLeMaxUltra", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Henselian\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\npublic import Mathlib.Analysis.Normed.Group.Ultra\nimport Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedQuadraticIntegralTraceFormPerfect\n\n"}
 section -- clump:auto
 @[expose] public section
 
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 namespace GlobalTheory.LatL
-
-theorem norm_sub_le_max_ultra' {K : Type} [NormedField K] [IsUltrametricDist K] (x y : K) :
-    ‖x - y‖ ≤ max ‖x‖ ‖y‖ := by
-  rw [sub_eq_add_neg, ← norm_neg y]
-  exact IsUltrametricDist.norm_add_le_max _ _
 
 theorem exists_glO_pair {F : Type} [NormedField F] [IsUltrametricDist F] (r : ℕ)
     (v w : Fin (r + 1) → F) (hv : ∀ i, ‖v i‖ ≤ 1) (hw : ∀ i, ‖w i‖ ≤ 1) (hwv : w ⬝ᵥ v = 1) :
@@ -277,7 +272,7 @@ theorem exists_glO_pair {F : Type} [NormedField F] [IsUltrametricDist F] (r : �
       | cast c' =>
         simp only [row, col, Fin.lastCases_castSucc, ρ, sub_dotProduct, smul_dotProduct,
           single_dotProduct, hwu, smul_eq_mul, mul_zero, sub_zero, one_mul, u, Pi.sub_apply,
-          Pi.smul_apply, Pi.single_apply, hs c, if_false, mul_zero, sub_zero, Matrix.one_apply,
+          Pi.smul_apply, Pi.single_apply, hs c, ite_false, mul_zero, sub_zero, Matrix.one_apply,
           Fin.castSucc_inj]
         by_cases h : c = c'
         · subst h; simp
@@ -299,7 +294,7 @@ theorem exists_glO_pair {F : Type} [NormedField F] [IsUltrametricDist F] (r : �
     | last => simpa [col] using hv a
     | cast c =>
       simp only [col, Fin.lastCases_castSucc, u, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
-      refine (norm_sub_le_max_ultra' _ _).trans (max_le (hsingle _ _) ?_)
+      refine (GlobalTheory.NTr.um_sub _ _).trans (max_le (hsingle _ _) ?_)
       rw [norm_mul]
       exact mul_le_one₀ (hratio _) (norm_nonneg _) (hsingle _ _)
   have hrow : ∀ a b, ‖row a b‖ ≤ 1 := by
@@ -308,7 +303,7 @@ theorem exists_glO_pair {F : Type} [NormedField F] [IsUltrametricDist F] (r : �
     | last => simpa [row] using hw b
     | cast c =>
       simp only [row, Fin.lastCases_castSucc, ρ, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
-      refine (norm_sub_le_max_ultra' _ _).trans (max_le (hsingle _ _) ?_)
+      refine (GlobalTheory.NTr.um_sub _ _).trans (max_le (hsingle _ _) ?_)
       rw [norm_mul]
       exact mul_le_one₀ (hv _) (norm_nonneg _) (hw _)
   refine ⟨k, fun i j => ⟨by simpa [k, K] using hcol j i, by simpa [k, L] using hrow i j⟩, ?_, ?_⟩
@@ -659,8 +654,7 @@ theorem omega_act (F : Type) [NontriviallyNormedField F] [IsUltrametricDist F] (
     rw [← norm_mul, ← Matrix.det_mul, ← Units.val_mul, mul_inv_cancel, Units.val_one, Matrix.det_one, norm_one]
   have hkinv : ‖((k⁻¹ : GL (Fin n) F) : Matrix (Fin n) (Fin n) F).det‖ = 1 := by
     apply le_antisymm hb
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have : ‖(k : Matrix (Fin n) (Fin n) F).det‖ * ‖((k⁻¹ : GL (Fin n) F) : Matrix (Fin n) (Fin n) F).det‖ < 1 :=
       lt_of_le_of_lt (mul_le_of_le_one_left (norm_nonneg _) ha) hlt
     linarith
@@ -819,13 +813,7 @@ namespace GlobalTheory.JR.UnitGLift
 
 variable {k : Type} [CommRing k] {r : ℕ}
 
-theorem full_apply_cc (Y : Gl r k) (a b : Fin r) : full Y (Fin.castSucc a) (Fin.castSucc b) = Y.1 a b := by
-  simp [full, Matrix.reindex_apply, Matrix.submatrix_apply]
-
 theorem full_apply_cl (Y : Gl r k) (a : Fin r) : full Y (Fin.castSucc a) (Fin.last r) = Y.2.1 a := by
-  simp [full, Matrix.reindex_apply, Matrix.submatrix_apply]
-
-theorem full_apply_lc (Y : Gl r k) (b : Fin r) : full Y (Fin.last r) (Fin.castSucc b) = Y.2.2.1 b := by
   simp [full, Matrix.reindex_apply, Matrix.submatrix_apply]
 
 theorem full_apply_ll (Y : Gl r k) : full Y (Fin.last r) (Fin.last r) = Y.2.2.2 := by
@@ -841,20 +829,20 @@ theorem norm_full_le_one_iff {F : Type} [NormedField F] {r : ℕ} (Z : Gl r F) :
   constructor
   · intro h
     refine ⟨fun i j => ?_, fun i => ?_, fun j => ?_, ?_⟩
-    · simpa [full_apply_cc] using h (Fin.castSucc i) (Fin.castSucc j)
+    · simpa [GlobalTheory.JR.TransferFactor.full_cc] using h (Fin.castSucc i) (Fin.castSucc j)
     · simpa [full_apply_cl] using h (Fin.castSucc i) (Fin.last r)
-    · simpa [full_apply_lc] using h (Fin.last r) (Fin.castSucc j)
+    · simpa [GlobalTheory.JR.TransferFactor.full_lc] using h (Fin.last r) (Fin.castSucc j)
     · simpa [full_apply_ll] using h (Fin.last r) (Fin.last r)
   · rintro ⟨h1, h2, h3, h4⟩ i j
     induction i using Fin.lastCases with
     | last =>
       induction j using Fin.lastCases with
       | last => simpa [full_apply_ll] using h4
-      | cast j => simpa [full_apply_lc] using h3 j
+      | cast j => simpa [GlobalTheory.JR.TransferFactor.full_lc] using h3 j
     | cast i =>
       induction j using Fin.lastCases with
       | last => simpa [full_apply_cl] using h2 i
-      | cast j => simpa [full_apply_cc] using h1 i j
+      | cast j => simpa [GlobalTheory.JR.TransferFactor.full_cc] using h1 i j
 
 theorem norm_eL_le_one {F : Type} [NormedField F] {r : ℕ} (i : Fin (r + 1)) :
     ‖GlobalTheory.JR.Step.eL r F i‖ ≤ 1 := by
@@ -879,9 +867,9 @@ theorem unitG_lift : ∀ (F : Type) [NormedField F] (r : ℕ) (Z : Gl r F) (μ l
   unfold unitG
   by_cases hZ : Z ∈ {Y : Gl r F | (∀ i j, ‖Y.1 i j‖ ≤ 1) ∧ (∀ i, ‖Y.2.1 i‖ ≤ 1) ∧ (∀ i, ‖Y.2.2.1 i‖ ≤ 1) ∧ ‖Y.2.2.2‖ ≤ 1}
   · by_cases hl : ‖l‖ ≤ 1
-    · rw [Set.indicator_of_mem (hmem.2 ⟨hZ, hl⟩), Set.indicator_of_mem hZ, if_pos hl]
+    · rw [Set.indicator_of_mem (hmem.2 ⟨hZ, hl⟩), Set.indicator_of_mem hZ, ite_eq_left hl]
       simp
-    · rw [Set.indicator_of_notMem (fun h => hl (hmem.1 h).2), if_neg hl, zero_mul]
+    · rw [Set.indicator_of_notMem (fun h => hl (hmem.1 h).2), ite_eq_right hl, zero_mul]
   · rw [Set.indicator_of_notMem (fun h => hZ (hmem.1 h).1), Set.indicator_of_notMem hZ, mul_zero]
 
 end GlobalTheory.JR.UnitGLift
@@ -1092,7 +1080,7 @@ theorem hasInv_of_lift : ∀ (F E : Type) [NontriviallyNormedField F] [Nontrivia
   have ecL : ∀ a : Fin r, G (Fin.castSucc a) (Fin.last r) = 0 := by
     intro a
     have := hcol (Fin.castSucc a)
-    simp only [eL, Pi.single_apply, Fin.castSucc_ne_last, if_false, mul_zero] at this
+    simp only [eL, Pi.single_apply, Fin.castSucc_ne_last, ite_false, mul_zero] at this
     exact (mul_eq_zero.mp this).resolve_right hμ'
   set H : Matrix (Fin (r + 1)) (Fin (r + 1)) E := star ν • G with hH
   set h' : Matrix (Fin r) (Fin r) E := H.submatrix Fin.castSucc Fin.castSucc with hh'
@@ -1435,10 +1423,6 @@ theorem entryBall_compact_open (K : Type) [NontriviallyNormedField K] [IsUltrame
     isOpen_set_pi Set.finite_univ fun _ _ => isOpen_set_pi Set.finite_univ fun _ _ =>
       IsUltrametricDist.isOpen_closedBall _ one_ne_zero⟩
 
-theorem norm_one_entry_le (K : Type) [NormedField K] (i j : Fin r) :
-    ‖(1 : Matrix (Fin r) (Fin r) K) i j‖ ≤ 1 := by
-  rw [Matrix.one_apply]; split_ifs <;> simp
-
 theorem glO_isCompact_isOpen (K : Type) [NontriviallyNormedField K] [IsUltrametricDist K] [LocallyCompactSpace K] :
     IsCompact (glO r K) ∧ IsOpen (glO r K) ∧ (glO r K).Nonempty := by
   obtain ⟨hc, ho⟩ := entryBall_compact_open r K
@@ -1446,7 +1430,7 @@ theorem glO_isCompact_isOpen (K : Type) [NontriviallyNormedField K] [IsUltrametr
       (MulOpposite.unop ⁻¹' {A : Matrix (Fin r) (Fin r) K | ∀ i j, ‖A i j‖ ≤ 1})) := by
     ext g
     exact ⟨fun h => ⟨fun i j => (h i j).1, fun i j => (h i j).2⟩, fun h i j => ⟨h.1 i j, h.2 i j⟩⟩
-  refine ⟨?_, ?_, 1, fun i j => ⟨norm_one_entry_le r K i j, by rw [inv_one]; exact norm_one_entry_le r K i j⟩⟩
+  refine ⟨?_, ?_, 1, fun i j => ⟨GlobalTheory.JR.MeasExist.one_mem_intMatrix r K i j, by rw [inv_one]; exact GlobalTheory.JR.MeasExist.one_mem_intMatrix r K i j⟩⟩
   · rw [e]
     exact Units.isClosedEmbedding_embedProduct.isCompact_preimage
       (hc.prod (MulOpposite.opHomeomorph.symm.isClosedEmbedding.isCompact_preimage hc))
@@ -1465,7 +1449,7 @@ theorem uO_isCompact_isOpen (E : Type) [NontriviallyNormedField E] [StarRing E] 
     (isClosed_eq (continuous_star.mul continuous_id) continuous_const).inter
       (isClosed_eq (continuous_id.mul continuous_star) continuous_const)
   exact ⟨hcl.isClosedEmbedding_subtypeVal.isCompact_preimage hc, ho.preimage continuous_subtype_val,
-    1, fun i j => norm_one_entry_le r E i j⟩
+    1, fun i j => GlobalTheory.JR.MeasExist.one_mem_intMatrix r E i j⟩
 
 def positiveCompactsOf {X : Type} [TopologicalSpace X] (s : Set X) (h : IsCompact s ∧ IsOpen s ∧ s.Nonempty) :
     TopologicalSpace.PositiveCompacts X :=

@@ -8,46 +8,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTra
 public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.StrictNormalCrossingsBlowup
 public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.StrictTransformChart
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
 public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
 public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupChart
@@ -63,18 +24,13 @@ noncomputable section
 
 namespace FunctorialResolution.EmbeddedResolution
 
-private theorem surjective_hom_iso_inv {A B : CommRingCat.{u}} (e : A ≅ B) :
-    Function.Surjective (CommRingCat.Hom.hom e.inv) := by
-  intro a
-  refine ⟨CommRingCat.Hom.hom e.hom a, ?_⟩
-  simp
-
 private theorem surjective_subschemeι_app {Y : Scheme.{u}} (I : Y.IdealSheafData)
     (U : Y.affineOpens) :
     Function.Surjective (CommRingCat.Hom.hom (I.subschemeι.app (U : Y.Opens))) := by
   rw [Scheme.IdealSheafData.subschemeι_app, CommRingCat.hom_comp, CommRingCat.hom_ofHom,
     RingHom.coe_comp]
-  exact (surjective_hom_iso_inv (I.subschemeObjIso U)).comp Ideal.Quotient.mk_surjective
+  exact ((I.subschemeObjIso U).commRingCatIsoToRingEquiv.symm.surjective.comp
+    Ideal.Quotient.mk_surjective)
 
 theorem isLocallyNoetherian_subscheme {Y : Scheme.{u}} [IsLocallyNoetherian Y]
     (I : Y.IdealSheafData) : IsLocallyNoetherian I.subscheme := by
@@ -106,17 +62,6 @@ private theorem ideal_eq_of_map_eq_of_comp_eq_id {R S : CommRingCat.{u}} (f : R 
     rw [Ideal.map_map, ← CommRingCat.hom_comp, hfg, CommRingCat.hom_id, Ideal.map_id]
   rw [← key I, hIJ, key J]
 
-private theorem presheaf_map_eq_id {Y : Scheme.{u}} {P : (Y.Opens)ᵒᵖ} (f : P ⟶ P) :
-    Y.presheaf.map f = 𝟙 (Y.presheaf.obj P) := by
-  have hf : f = 𝟙 P := Quiver.Hom.unop_inj (Subsingleton.elim _ _)
-  rw [hf, CategoryTheory.Functor.map_id]
-
-private theorem presheaf_map_comp_comp_eq_id {Y : Scheme.{u}} {P Q R : (Y.Opens)ᵒᵖ}
-    (f : P ⟶ Q) (g : Q ⟶ R) (h : R ⟶ P) :
-    (Y.presheaf.map f ≫ Y.presheaf.map g) ≫ Y.presheaf.map h = 𝟙 (Y.presheaf.obj P) := by
-  rw [← Y.presheaf.map_comp, ← Y.presheaf.map_comp]
-  exact presheaf_map_eq_id _
-
 theorem ideal_eq_of_restrictIdeal_eq {Y : Scheme.{u}} (A B : Y.IdealSheafData)
     (V : Y.affineOpens) (h : restrictIdeal A (V : Y.Opens) = restrictIdeal B (V : Y.Opens)) :
     A.ideal V = B.ideal V := by
@@ -136,25 +81,12 @@ theorem ideal_eq_of_restrictIdeal_eq {Y : Scheme.{u}} (A B : Y.IdealSheafData)
     (Scheme.Hom.appLE (Scheme.Opens.ι (V : Y.Opens)) (V : Y.Opens) ⊤ e)
     (Scheme.Opens.topIso (V : Y.Opens)).hom ?_ (hB.symm.trans hA)).symm
   simp [AlgebraicGeometry.Scheme.Hom.appLE]
-  exact presheaf_map_comp_comp_eq_id _ _ _
-
-private def colonSpanSingleton {R : Type*} [CommRing R] (J : Ideal R) (x : R) : Ideal R where
-  carrier := {r | r * x ∈ J}
-  add_mem' := fun {a b} ha hb => by
-    show (a + b) * x ∈ J
-    rw [add_mul]
-    exact J.add_mem ha hb
-  zero_mem' := by
-    show (0 : R) * x ∈ J
-    rw [zero_mul]
-    exact J.zero_mem
-  smul_mem' := fun c a ha => by
-    show (c • a) * x ∈ J
-    rw [smul_eq_mul, mul_assoc]
-    exact J.mul_mem_left c ha
-
-private theorem mem_colonSpanSingleton {R : Type*} [CommRing R] (J : Ideal R) (x r : R) :
-    r ∈ colonSpanSingleton J x ↔ r * x ∈ J := Iff.rfl
+  refine (show ∀ {P Q R : (Y.Opens)ᵒᵖ} (f : P ⟶ Q) (g : Q ⟶ R) (k : R ⟶ P),
+      (Y.presheaf.map f ≫ Y.presheaf.map g) ≫ Y.presheaf.map k = 𝟙 _
+      from fun f g k => ?_) _ _ _
+  rw [← Y.presheaf.map_comp, ← Y.presheaf.map_comp]
+  exact (congrArg Y.presheaf.map (Quiver.Hom.unop_inj (Subsingleton.elim _ _))).trans
+    (Y.presheaf.map_id _)
 
 private theorem exists_pow_mul_mem_of_algebraMap_mem_map_of_isLocalizationAway {R S : Type*} [CommRing R] [CommRing S]
     [Algebra R S] (f : R) [IsLocalization.Away f S] (J : Ideal R) (x : R)
@@ -180,7 +112,7 @@ private theorem ideal_le_of_restrictIdeal_eq_of_iSup_eq_top {Y : Scheme.{u}} {ι
   obtain ⟨T, hT⟩ :
       ∃ T : Ideal ↑(Y.presheaf.obj (Opposite.op (V : Y.Opens))),
         ∀ r, r ∈ T ↔ r * x ∈ B.ideal V :=
-    ⟨colonSpanSingleton (B.ideal V) x, mem_colonSpanSingleton (B.ideal V) x⟩
+    ⟨(B.ideal V).colon {x}, fun _ => by simp [smul_eq_mul]⟩
   have hcover : (V : Y.Opens) ≤
       ⨆ g : (T : Set ↑(Y.presheaf.obj (Opposite.op (V : Y.Opens)))),
         Y.basicOpen (g : ↑(Y.presheaf.obj (Opposite.op (V : Y.Opens)))) := by
@@ -336,11 +268,6 @@ theorem isBlowupAlongIdealSheaf_strictTransformSubschemeLift {X X₁ : Scheme.{u
     (AlgebraicGeometry.Scheme.IdealSheafData.ker_subschemeι H) hπ
     (strictTransformSubschemeLift π Z H) (strictTransformSubschemeLift_comp_subschemeι π Z H)
 
-private theorem subschemeι_base_mem_support {X : Scheme.{u}} (I : X.IdealSheafData)
-    (x : I.subscheme) : I.subschemeι.base x ∈ (I.support : Set X) := by
-  rw [← AlgebraicGeometry.Scheme.IdealSheafData.range_subschemeι]
-  exact Set.mem_range_self x
-
 private theorem coordIdeal_eq_of_map_eq {X : Scheme.{u}} {k : Type u} [Field k]
     {p₁ p₂ : X ⟶ Spec (CommRingCat.of k)} {U : X.Opens} {m : ℕ}
     (c₁ : EtaleChart p₁ U m) (c₂ : EtaleChart p₂ U m) (h : c₁.map = c₂.map) (T : Finset (Fin m)) :
@@ -413,7 +340,7 @@ private theorem false_of_mem_preimage_of_restrictIdeal_eq_top {X X₁ : Scheme.{
   exact notMem_support_of_restrictIdeal_eq_top (Blowup.strictTransform π Z H)
     (blowupChartOfIsBlowup π c S hπ hZ s hs).domain
     ((Blowup.strictTransform π Z H).subschemeι.base x) hmem htop
-    (subschemeι_base_mem_support (Blowup.strictTransform π Z H) x)
+    ((AlgebraicGeometry.Scheme.IdealSheafData.range_subschemeι _).le (Set.mem_range_self x))
 
 private theorem exists_restrictIdeal_eq_of_notMem_support {X X₁ : Scheme.{u}} (π : X₁ ⟶ X)
     [IsLocallyNoetherian X₁] (Z H : X.IdealSheafData)
@@ -527,13 +454,13 @@ private theorem restrictIdeal_comap_strictTransform_eq_of_blowupChart {X X₁ : 
           ((Blowup.strictTransform π Z H).subschemeι ⁻¹ᵁ B.domain) = ⊤ := by
         refine restrictIdeal_comap_subschemeι_eq_top (Blowup.strictTransform π Z H) B.domain
           (Blowup.strictTransform π Z D) ?_
-        rw [B.restrictIdeal_strictTransform_coordIdeal Z D hs hZ b hDb, if_pos hbs]
+        rw [B.restrictIdeal_strictTransform_coordIdeal Z D hs hZ b hDb, ite_eq_left hbs]
       have hR : restrictIdeal (Blowup.strictTransform q (Z.comap H.subschemeι) (D.comap H.subschemeι))
           ((Blowup.strictTransform π Z H).subschemeι ⁻¹ᵁ B.domain) = ⊤ := by
         have h := (B.restrictToStrictTransform hU hB Z H hs hZ a ha has hH s'
             hs' q hq).restrictIdeal_strictTransform_coordIdeal (Z.comap H.subschemeι)
             (D.comap H.subschemeι) hs'S hZ' b' hRD
-        rw [if_pos (hiff.mp hbs)] at h
+        rw [ite_eq_left (hiff.mp hbs)] at h
         exact h
       rw [hL, hR]
     · have hL : restrictIdeal ((Blowup.strictTransform π Z D).comap (Blowup.strictTransform π Z H).subschemeι)
@@ -541,7 +468,7 @@ private theorem restrictIdeal_comap_strictTransform_eq_of_blowupChart {X X₁ : 
           = (B.chart.restrictToSubscheme hB (Blowup.strictTransform π Z H) {a} hFa).coordIdeal {b'} := by
         refine EtaleChart.restrictToSubscheme_coordIdeal_singleton B.chart hB
           (Blowup.strictTransform π Z H) {a} hFa b' (Blowup.strictTransform π Z D) ?_
-        rw [B.restrictIdeal_strictTransform_coordIdeal Z D hs hZ b hDb, if_neg hbs, hb']
+        rw [B.restrictIdeal_strictTransform_coordIdeal Z D hs hZ b hDb, ite_eq_right hbs, hb']
       have hR : restrictIdeal (Blowup.strictTransform q (Z.comap H.subschemeι) (D.comap H.subschemeι))
           ((Blowup.strictTransform π Z H).subschemeι ⁻¹ᵁ B.domain)
           = (B.restrictToStrictTransform hU hB Z H hs hZ a ha has hH s'
@@ -549,7 +476,7 @@ private theorem restrictIdeal_comap_strictTransform_eq_of_blowupChart {X X₁ : 
         have h := (B.restrictToStrictTransform hU hB Z H hs hZ a ha has hH s'
             hs' q hq).restrictIdeal_strictTransform_coordIdeal (Z.comap H.subschemeι)
             (D.comap H.subschemeι) hs'S hZ' b' hRD
-        rw [if_neg (fun hxx => hbs (hiff.mpr hxx))] at h
+        rw [ite_eq_right (fun hxx => hbs (hiff.mpr hxx))] at h
         exact h
       rw [hL, hR]
       exact coordIdeal_eq_of_map_eq

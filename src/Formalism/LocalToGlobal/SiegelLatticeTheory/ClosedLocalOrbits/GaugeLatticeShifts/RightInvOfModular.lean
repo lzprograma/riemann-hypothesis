@@ -24,14 +24,7 @@ theorem inS_pres {g : Matrix (Fin n) (Fin n) ℂ} (hg : InS e z g) (a : ℕ) :
   apply Formalism.L2.SG.RealObj.InfCut.JacobianCoordinates.JL.HC.spanLt_pres <;> assumption
 
 theorem inS_mul {g h : Matrix (Fin n) (Fin n) ℂ} (hg : InS e z g) (hh : InS e z h) : InS e z (g * h) := by
-  have key : ∀ v : Fin n → ℂ, (g * h - 1) *ᵥ v = g *ᵥ ((h - 1) *ᵥ v) + (g - 1) *ᵥ v := fun v => by
-    simp only [Matrix.sub_mulVec, Matrix.one_mulVec, Matrix.mulVec_sub, Matrix.mulVec_mulVec]
-    abel
-  refine ⟨fun a => ?_, ?_⟩
-  · rw [key]
-    exact Submodule.add_mem _ (inS_pres e z hg a.1 _ (hh.1 a)) (hg.1 a)
-  · rw [key]
-    exact Submodule.add_mem _ (inS_pres e z hg r _ hh.2) hg.2
+  apply _root_.Formalism.L2.SG.RealObj.InfCut.JacobianCoordinates.JL.HC.inS_mul <;> assumption
 
 theorem inS_one : InS e z (1 : Matrix (Fin n) (Fin n) ℂ) :=
   ⟨fun a => by rw [sub_self, Matrix.zero_mulVec]; exact Submodule.zero_mem _,
@@ -61,11 +54,5 @@ theorem SG_closed : IsClosed (SG ε e z : Set (Formalism.REAL.UJ ε)) := by
   rw [e1]
   exact (isClosed_iInter fun a => (Submodule.closed_of_finiteDimensional _).preimage (hc _)).inter
     ((Submodule.closed_of_finiteDimensional _).preimage (hc _))
-
-section Sub
-
-variable {ε e z}
-
-end Sub
 
 end Formalism.L2.SG.RealObj.InfCut.UnitaryIsometries.RI

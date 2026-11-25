@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdTransfer
 public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
 public import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
 public import Mathlib.RingTheory.Flat.TorsionFree
@@ -117,24 +118,7 @@ variable [Algebra.IsAlgebraic F Ω]
 
 theorem continuous_restrict :
     Continuous (AlgEquiv.restrictScalarsHom F : (Ω ≃ₐ[K] Ω) →* (Ω ≃ₐ[F] Ω)) := by
-  apply continuous_of_continuousAt_one
-  rw [ContinuousAt, map_one]
-  intro U hU
-  rw [Filter.mem_map]
-  obtain ⟨E, hE, hEU⟩ := (krullTopology_mem_nhds_one_iff F Ω U).1 hU
-  obtain ⟨S, hS⟩ : E.FG := IntermediateField.fg_of_fg_toSubalgebra _
-    (Subalgebra.fg_of_fg_toSubmodule ((Submodule.fg_iff_finiteDimensional _).2 hE))
-  haveI : Algebra.IsAlgebraic K Ω := Algebra.IsAlgebraic.tower_top (K := F) K
-  have hfd : FiniteDimensional K (IntermediateField.adjoin K (S : Set Ω)) :=
-    IntermediateField.finiteDimensional_adjoin fun x _ => (Algebra.IsIntegral.isIntegral x)
-  refine Filter.mem_of_superset ((IntermediateField.adjoin K (S : Set Ω)).fixingSubgroup_isOpen.mem_nhds
-    (Subgroup.one_mem _)) ?_
-  intro g hg
-  apply hEU
-  rw [← hS]
-  apply mem_fixingSubgroup_adjoin_of
-  intro x hx
-  exact (IntermediateField.mem_fixingSubgroup_iff _ _).1 hg x (IntermediateField.subset_adjoin _ _ hx)
+  apply _root_.UpperTheory.V.Af.continuous_restrictScalarsHom <;> assumption
 
 theorem continuous_symm : Continuous (equiv F K Ω).symm := by
   apply continuous_of_continuousAt_one (equiv F K Ω).symm
@@ -310,7 +294,7 @@ theorem thmA_on_open_geo : GlobalTheory.NeedB.ThmA → ∀ (k F Ω : Type) [Fiel
       (hint hαK hαi hαi').1 (hint hαK hαi hαi').2 (hint hβK hβi hβi').1 (hint hβK hβi hβi').2 rfl rfl
   obtain ⟨η₀, hη₀⟩ : ∃ η₀ : (Ω ≃ₐ[F] Ω) → ZMod N,
       ∀ g (hg : g ∈ GlobalTheory.K4.geo F K' Ω), η₀ g = η (e'.symm ⟨g, hg⟩) :=
-    ⟨fun g => if hg : g ∈ GlobalTheory.K4.geo F K' Ω then η (e'.symm ⟨g, hg⟩) else 0, fun g hg => dif_pos hg⟩
+    ⟨fun g => if hg : g ∈ GlobalTheory.K4.geo F K' Ω then η (e'.symm ⟨g, hg⟩) else 0, fun g hg => dite_eq_left hg⟩
   refine ⟨η₀, ?_, ?_, ?_⟩
   · have hfun : (fun g : ↥(GlobalTheory.K4.geo F (RatFunc k) Ω ⊓ U) => η₀ g) =
         η ∘ e'.symm ∘ (fun g : ↥(GlobalTheory.K4.geo F (RatFunc k) Ω ⊓ U) => (⟨g.1, hsub _ g.2⟩ : GlobalTheory.K4.geo F K' Ω)) := by
@@ -646,7 +630,7 @@ private theorem etaEx_of (hS : FinalTheorems) (hA : Alg) (hI : Integ) (hL : LcFi
     intro g G hG x hx0 hxm
     obtain ⟨i, hi, huniq⟩ := existsUnique_eq_primitiveRoot_pow_mul_of_pow_eq (c := g x) hζ hx0 (by rw [← map_pow, hxm])
     unfold ka lg GlobalTheory.NeedB.kum
-    rw [hG, dif_pos ⟨i, hi⟩]
+    rw [hG, dite_eq_left ⟨i, hi⟩]
     exact (huniq _ (Classical.epsilon_spec (p := fun j : ZMod m => g x = zt X m ^ j.val * x) ⟨i, hi⟩)).trans
       (huniq _ (Exists.choose_spec (⟨i, hi⟩ : ∃ j : ZMod m, g x = zt X m ^ j.val * x))).symm
   classical
@@ -665,7 +649,7 @@ private theorem etaEx_of (hS : FinalTheorems) (hA : Alg) (hI : Integ) (hL : LcFi
         AlgEquiv.ofRingEquiv (f := g) cg * AlgEquiv.ofRingEquiv (f := h) ch := by
       ext x
       rfl
-    simp only [dif_pos cg, dif_pos ch, dif_pos cgh]
+    simp only [dite_eq_left cg, dite_eq_left ch, dite_eq_left cgh]
     rw [hGH, hk g (AlgEquiv.ofRingEquiv (f := g) cg) (fun _ => rfl) a ha0 (by rw [ha]; exact g3),
       hk h (AlgEquiv.ofRingEquiv (f := h) ch) (fun _ => rfl) b hb0 (by rw [hb]; exact h4)]
     exact hcoc _ (hmem _ g3 g4) _ (hmem _ h3 h4)
@@ -675,14 +659,14 @@ private theorem etaEx_of (hS : FinalTheorems) (hA : Alg) (hI : Integ) (hL : LcFi
     unfold InD at hh hh'
     have ch := hcomm h (fun c => hh _) (hh _)
     have ch' := hcomm h' (fun c => hh' _) (hh' _)
-    simp only [dif_pos ch, dif_pos ch']
+    simp only [dite_eq_left ch, dite_eq_left ch']
     exact hB _ (hmem _ (hh u) (hh v)) _ (hmem _ (hh' u) (hh' v)) hBB
   · unfold Unr
     intro B h hY hh hin
     unfold InD at hh
     unfold Tower.OverY at hY
     have ch := hcomm h (fun c => hh _) (hh _)
-    simp only [dif_pos ch]
+    simp only [dite_eq_left ch]
     refine (hunr (AlgEquiv.ofRingEquiv (f := h) ch) (hmem _ (hh u) (hh v)) B ?_ hin).1
     intro p
     show io X (Polynomial.aeval X.jK p) ∈ B

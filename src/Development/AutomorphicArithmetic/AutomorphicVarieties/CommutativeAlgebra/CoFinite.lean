@@ -58,12 +58,6 @@ noncomputable section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
-private theorem isPrecomplete_finite {R M : Type} [CommRing R] [AddCommGroup M] [Module R M]
-    [Module.Finite R M] (I : Ideal R) [IsPrecomplete I R] : IsPrecomplete I M := by
-  first
-  | exact _root_.Formalism.SharedLemmas.isPrecomplete_of_moduleFinite
-  | (apply _root_.Formalism.SharedLemmas.isPrecomplete_of_moduleFinite <;> assumption)
-
 private theorem prec_cofinal {R : Type*} [CommRing R] {I J : Ideal R} (hJI : J ≤ I) {e : ℕ}
     (he : I ^ e ≤ J) (hJ : IsPrecomplete J R) : IsPrecomplete I R := by
   have hsm : ∀ (K : Ideal R) (x : R), x ∈ (K • (⊤ : Submodule R R)) ↔ x ∈ K := by
@@ -126,7 +120,7 @@ theorem UpperTheory.V.Alg.co_finite :
     obtain ⟨hJP, hPp⟩ := hP
     rw [hcomap P hPp (Ideal.map_le_iff_le_comap.1 hJP)]
   obtain ⟨e, he⟩ := Ideal.exists_pow_le_of_le_radical_of_fg hrad (IsNoetherian.noetherian _)
-  haveI : IsPrecomplete (maximalIdeal R) R' := isPrecomplete_finite (R := R) (M := R') (maximalIdeal R)
+  haveI : IsPrecomplete (maximalIdeal R) R' := Formalism.SharedLemmas.isPrecomplete_of_moduleFinite (R := R) (M := R') (maximalIdeal R)
   have hJp : IsPrecomplete J R' := by
     rw [hJdef]
     exact IsPrecomplete.map_algebraMap_iff.2 this

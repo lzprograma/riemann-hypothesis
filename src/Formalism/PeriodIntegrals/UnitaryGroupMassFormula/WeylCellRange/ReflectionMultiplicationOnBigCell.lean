@@ -1,51 +1,7 @@
 module
 
 public import Formalism.HermitianCurvature.StatementQ
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -106,19 +62,19 @@ theorem weyl_cell_mul_apply (k r : ℕ) (l : Fin r) (d : ℂ) (M : Mx k r) (p q 
   rw [Matrix.mul_apply]
   by_cases h1 : p = esI k r l
   · subst h1
-    rw [if_pos rfl, Finset.sum_eq_single (eI k r l)]
+    rw [ite_eq_left rfl, Finset.sum_eq_single (eI k r l)]
     · simp [w1]
     · intro x _ hx
       simp [w1, hx, Ne.symm hne]
     · intro h; exact absurd (Finset.mem_univ _) h
   · by_cases h2 : p = eI k r l
     · subst h2
-      rw [if_neg h1, if_pos rfl, Finset.sum_eq_single (esI k r l)]
+      rw [ite_eq_right h1, ite_eq_left rfl, Finset.sum_eq_single (esI k r l)]
       · simp [w1, hne]
       · intro x _ hx
         simp [w1, hx, hne]
       · intro h; exact absurd (Finset.mem_univ _) h
-    · rw [if_neg h1, if_neg h2, Finset.sum_eq_single p]
+    · rw [ite_eq_right h1, ite_eq_right h2, Finset.sum_eq_single p]
       · simp [w1, h1, h2]
       · intro x _ hx
         simp [w1, h1, h2, Ne.symm hx]
@@ -141,11 +97,11 @@ theorem reflection_mul_weyl_cell (k r : ℕ) (S : Finset ℕ) (c : Fin r → ℂ
   have vS : (esI k r a).val = 2 * r + k - a.val := rfl
   simp only [Wm, Finset.mem_insert]
   by_cases h1 : q.val = a.val
-  · simp only [h1, ha, or_false, if_true, if_false]
+  · simp only [h1, ha, or_false, ite_true, ite_false]
     split_ifs <;> (try simp only [Fin.ext_iff, vE, vS] at *) <;> first | rfl | (exfalso; omega) | (simp; done)
   · by_cases h2 : q.val = 2 * r + k - a.val
     · have e2 : 2 * r + k - (2 * r + k - a.val) = a.val := by omega
-      simp only [h2, e2, ha, or_false, if_true, if_false]
+      simp only [h2, e2, ha, or_false, ite_true, ite_false]
       split_ifs <;> (try simp only [Fin.ext_iff, vE, vS] at *) <;> first | rfl | (exfalso; omega) | (simp; done)
     · have h3 : 2 * r + k - q.val ≠ a.val := by omega
       simp only [h1, h3, false_or]
@@ -207,21 +163,21 @@ theorem bigCell_apply (k r : ℕ) (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1))
   have hq := q.isLt
   simp only [bigCell]
   by_cases h1 : q.val < r
-  · rw [dite_eq_left h1, if_pos h1, cN_mk r c q.val h1]
+  · rw [dite_eq_left h1, ite_eq_left h1, cN_mk r c q.val h1]
     have e : (p = esI k r ⟨q.val, h1⟩) ↔ p.val = 2 * r + k - q.val := by
       rw [Fin.ext_iff]
       rfl
     by_cases h : p.val = 2 * r + k - q.val
-    · rw [if_pos (e.mpr h), if_pos h]
-    · rw [if_neg (mt e.mp h), if_neg h]
-  · rw [dite_eq_right h1, if_neg h1]
+    · rw [ite_eq_left (e.mpr h), ite_eq_left h]
+    · rw [ite_eq_right (mt e.mp h), ite_eq_right h]
+  · rw [dite_eq_right h1, ite_eq_right h1]
     by_cases h2 : q.val ≤ r + k
-    · rw [dite_eq_left h2, if_pos h2]
+    · rw [dite_eq_left h2, ite_eq_left h2]
       by_cases h3 : r ≤ p.val ∧ p.val ≤ r + k
-      · rw [dite_eq_left h3, if_pos h3]
+      · rw [dite_eq_left h3, ite_eq_left h3]
         exact μE_mk μ _ _ _ _
-      · rw [dite_eq_right h3, if_neg h3]
-    · rw [dite_eq_right h2, if_neg h2]
+      · rw [dite_eq_right h3, ite_eq_right h3]
+    · rw [dite_eq_right h2, ite_eq_right h2]
       have h4 : 2 * r + k - q.val < r := by omega
       rw [cN_mk r c _ h4]
 

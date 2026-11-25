@@ -13,58 +13,8 @@ public import Formalism.PadicSubsetSums.StableGradedCounts.IRRTypeCountExact
 public import Mathlib.FieldTheory.Finite.Extension
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Algebra.Order.Group.Indicator
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.TypeStar
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.SpecialFunctions.RegularizedHypergeometric
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PadicSubsetSums.StableGradedCounts.IRRCycleProbPrime, Formalism.PadicSubsetSums.StableGradedCounts.IRRJoints, Formalism.PadicSubsetSums.StableGradedCounts.IRRCycleProbSum, Formalism.PadicSubsetSums.StableGradedCounts.IRRCycleTypeProb, Formalism.PadicSubsetSums.StableGradedCounts.IRRDivisorDegreeSubSum, Formalism.PadicSubsetSums.StableGradedCounts.IRRLemmaP, Formalism.PadicSubsetSums.StableGradedCounts.LocalEstimateIVOfTypeSetWeight
@@ -307,11 +257,11 @@ private theorem typeMultiset_fact (s : Finset ℕ) (n : ℕ → ℕ) :
   classical
   rw [Finset.prod_subset (s₁ := (typeMultiset s n).toFinset) (s₂ := s) ?_ ?_]
   · refine Finset.prod_congr rfl fun d hd => ?_
-    rw [typeMultiset_count, if_pos hd]
+    rw [typeMultiset_count, ite_eq_left hd]
   · intro a ha
     rw [Multiset.mem_toFinset, ← Multiset.count_pos, typeMultiset_count] at ha
     by_contra h
-    rw [if_neg h] at ha
+    rw [ite_eq_right h] at ha
     exact lt_irrefl 0 ha
   · intro a _ ha
     rw [Multiset.mem_toFinset, ← Multiset.count_eq_zero] at ha
@@ -331,7 +281,7 @@ theorem cycle_type_probability : CycleTypeProb := by
     · exact (Finset.mem_Icc.1 h).1
     · exact absurd ha (lt_irrefl 0)
   have key := Equiv.Perm.card_of_cycleType_mul_eq (Fin N) (typeMultiset (Finset.Icc 2 N) n)
-  rw [if_pos ⟨by simpa using hsumle, htwo⟩, Fintype.card_fin, typeMultiset_prod, typeMultiset_fact] at key
+  rw [ite_eq_left ⟨by simpa using hsumle, htwo⟩, Fintype.card_fin, typeMultiset_prod, typeMultiset_fact] at key
   have hprod : ∏ d ∈ Finset.Icc 1 N, (d ^ n d * (n d).factorial) =
       (N - (typeMultiset (Finset.Icc 2 N) n).sum).factorial * (∏ d ∈ Finset.Icc 2 N, d ^ n d) *
         ∏ d ∈ Finset.Icc 2 N, (n d).factorial := by
@@ -363,7 +313,7 @@ theorem cycle_type_probability : CycleTypeProb := by
         _ ≤ Fintype.card (Fin N) := Finset.card_le_univ _
         _ = N := Fintype.card_fin N
   · intro h d hd
-    rw [h, typeMultiset_count, if_pos hd]
+    rw [h, typeMultiset_count, ite_eq_left hd]
 
 end Formalism.IrreducibleCountingLemmas.GaloisIrreducibility
 end -- clump:auto
@@ -1412,7 +1362,7 @@ theorem type_weight_le (K : Type) [Field K] [Fintype K] (N : ℕ) (m : Multiset 
       (by rw [σ.partition.parts_sum, Fintype.card_fin]) hm1 hm
     intro d hd
     rw [Equiv.Perm.parts_partition, Multiset.count_add, hS' σ hσ d hd,
-      Multiset.count_replicate, if_neg (by have := (Finset.mem_Icc.mp hd).1; omega), add_zero]
+      Multiset.count_replicate, ite_eq_right (by have := (Finset.mem_Icc.mp hd).1; omega), add_zero]
   calc _ ≤ ∑ c ∈ S, sqWeight (monicOf c) := step1
     _ = _ := hSsum
     _ ≤ _ := step2
@@ -1605,11 +1555,11 @@ theorem wtOf_pi (P : Ω → ℝ) (S : ι → Set Ω) :
   by_cases h : ∀ v, x v ∈ S v
   · rw [Set.indicator_of_mem (show x ∈ {x : ι → Ω | ∀ v, x v ∈ S v} from h)]
     exact Finset.prod_congr rfl (fun v _ => (Set.indicator_of_mem (h v) P).symm)
-  · push_neg at h
+  · push Not at h
     obtain ⟨v, hv⟩ := h
     have h0 : x ∉ {x : ι → Ω | ∀ v, x v ∈ S v} := fun hx => hv (hx v)
     have h1 : Set.indicator (S v) P (x v) = 0 := by simp [Set.indicator, hv]
-    rw [Set.indicator_apply, if_neg h0, Finset.prod_eq_zero (Finset.mem_univ v) h1]
+    rw [Set.indicator_apply, ite_eq_right h0, Finset.prod_eq_zero (Finset.mem_univ v) h1]
 
 theorem wtOf_one_place (P : Ω → ℝ) (hP : ∑ c, P c = 1) (S : Set Ω) (v₀ : ι) :
     wtOf (fun x : ι → Ω => ∏ v, P (x v)) {x | x v₀ ∈ S} = wtOf P S := by

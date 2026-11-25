@@ -10,8 +10,6 @@ open MeasureTheory Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.Ma
   IsDedekindDomain NumberField Formalism.IndefR.PHeisFC
 open scoped TensorProduct ContDiff
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace Formalism.IndefR.PHeisTh
 
 section Tens

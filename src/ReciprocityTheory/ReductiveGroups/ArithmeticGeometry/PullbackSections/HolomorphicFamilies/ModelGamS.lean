@@ -4,8 +4,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDo
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.PullbackSections
@@ -72,9 +70,9 @@ theorem scalar_step {Ψ : Finset (E →+* ℂ)} (τ₀ : Ψ) (g : Matrix (Fin r)
   have hfr : Continuous fr := by
     refine continuous_pi fun τ => continuous_pi fun a => continuous_pi fun c => ?_
     by_cases h : τ = τ₀ ∧ c = i0
-    · simp only [fr, if_pos h]
+    · simp only [fr, ite_eq_left h]
       exact continuous_apply a
-    · simp only [fr, if_neg h]
+    · simp only [fr, ite_eq_right h]
       exact continuous_const
   have hfr0 : fr v₀ = y := by
     funext τ a c

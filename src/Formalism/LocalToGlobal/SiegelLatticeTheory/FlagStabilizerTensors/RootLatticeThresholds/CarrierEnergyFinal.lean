@@ -18,8 +18,6 @@ namespace Formalism.L2.SG.Pf.Carrier.EnergyFinal
 open Formalism.L2.SG.RealObj Formalism.L2.SG.RealObj.EnergyCut Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.Carrier.EnergyPf
   Formalism.L2.SG.Pf.Carrier.EnergyPlace Formalism.L2.SG.AdBridge Formalism.L2.SG.SpectralTiesReal
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {X : HidaSetting D} {u u' : D.what₂.Word}
 
 def PlaceNormG (P : Parts X u u') (hr : P.S.G.r = D.R.rS) : Prop :=

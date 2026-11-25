@@ -162,12 +162,12 @@ theorem exists_isSplitBasis_plane_of_indep : ∀ (F E : Type) [Field F] [NumberF
     by_cases h0 : i.1 = i₀
     · convert hunit x hx using 1; funext r; simp [hM, colMat, h0]
     by_cases h1 : i.1 = i₁
-    · convert hunit y hy using 1; funext r; simp only [hM, colMat, if_neg h0, if_pos h1]
+    · convert hunit y hy using 1; funext r; simp only [hM, colMat, ite_eq_right h0, ite_eq_left h1]
     by_cases h2 : unskip i₀ i₁ i.1 < n₁
     · have : (fun r => M r i) = ι.map τ *ᵥ (β₁.1 *ᵥ Pi.single ⟨_, h2⟩ 1) := by
         funext r
         rw [Matrix.mulVec_mulVec, Matrix.mulVec_single_one]
-        simp only [hM, colMat, if_neg h0, if_neg h1, dif_pos h2]
+        simp only [hM, colMat, ite_eq_right h0, ite_eq_right h1, dite_eq_left h2]
         rfl
       rw [this]
       refine hImg _ ((hβ₁ _).1 fun k => ?_)

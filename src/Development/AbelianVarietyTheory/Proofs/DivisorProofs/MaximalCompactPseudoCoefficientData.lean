@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolyCoeffVectorsLieInFiniteDimensionalSmooth
 public import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.IsPhysSet
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.AdMatConjTranspose
@@ -34,45 +35,6 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvConjTransp
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IrrepAveragesFinDimSmoothOfKTypesAndPolyAverages
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolyCoefIrrepHasDerivedAction
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeylFormulaCompactTorusIdentityOfIngredients
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CsqDdPt
@@ -82,17 +44,12 @@ import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.BridgeExpK
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.ExistsKhwGenSubOfKType
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.PropsEquiv
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.RingTheory.Finiteness.Lattice
 import Std.Tactic.BVDecide.Normalize.Prop
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.MulMulSubMulMulEqAdd
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.CFCoreA
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.MemHighestWeightSubIff
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.ProdModeCharExp
-import Mathlib.Tactic.Lemma
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Analysis.InnerProductSpace.Trace
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactHaarRightInvariantInst
@@ -779,19 +736,19 @@ theorem intertwiner_preserves_highestWeight : HWVec := by
     by_cases hca : c = a
     · subst hca
       have hcb : ¬ b = c := fun h => (ne_of_lt hab) h.symm
-      simp only [if_neg hcb, sub_zero, Pi.add_apply, root, Pi.sub_apply, Pi.single_eq_same, ↓reduceIte]
+      simp only [ite_eq_right hcb, sub_zero, Pi.add_apply, root, Pi.sub_apply, Pi.single_eq_same, ↓reduceIte]
       rw [Pi.single_eq_of_ne (ne_of_lt hab)]
       simp only [sub_zero, Complex.ofReal_add, Complex.ofReal_one, add_smul, one_smul]
       rfl
     · by_cases hcb : b = c
       · subst hcb
-        simp only [if_neg hca, zero_sub, Pi.add_apply, root, Pi.sub_apply, Pi.single_eq_same,
+        simp only [ite_eq_right hca, zero_sub, Pi.add_apply, root, Pi.sub_apply, Pi.single_eq_same,
           LinearMap.neg_apply, ↓reduceIte]
         rw [Pi.single_eq_of_ne hca]
         simp only [zero_sub, Complex.ofReal_add, Complex.ofReal_neg, Complex.ofReal_one, add_smul, neg_smul,
           one_smul]
         rfl
-      · simp only [if_neg hca, if_neg hcb, sub_zero, LinearMap.zero_apply, add_zero, Pi.add_apply, root,
+      · simp only [ite_eq_right hca, ite_eq_right hcb, sub_zero, LinearMap.zero_apply, add_zero, Pi.add_apply, root,
           Pi.sub_apply]
         rw [Pi.single_eq_of_ne hca, Pi.single_eq_of_ne (Ne.symm hcb)]
         simp
@@ -838,7 +795,7 @@ lemma offdiag {ε : Fin n → Bool} {k : Mat n} (hk : k ∈ Formalism.REAL.Kset 
     k a b = 0 := by
   have h := congrFun (congrFun hk.2 a) b
   simp only [Formalism.REAL.Jm, mul_diagonal, diagonal_mul] at h
-  cases ha : ε a <;> cases hb : ε b <;> simp only [ha, hb, Bool.false_eq_true, if_false, if_true] at h hab
+  cases ha : ε a <;> cases hb : ε b <;> simp only [ha, hb, Bool.false_eq_true, ite_false, ite_true] at h hab
   · exact absurd rfl hab
   · linear_combination (1 / 2 : ℂ) * h
   · linear_combination (-1 / 2 : ℂ) * h
@@ -985,13 +942,7 @@ lemma ev_OmP (ε : Fin n → Bool) (k : Mat n) (x y : Mode ε) :
 
 lemma K_block {ε : Fin n → Bool} {k : Mat n} (hk : k ∈ Formalism.REAL.Kset ε) {i j : Fin n} (h : ε i ≠ ε j) :
     k i j = 0 := by
-  have := congrFun (congrFun hk.2 i) j
-  simp only [Formalism.REAL.Jm, Matrix.mul_diagonal, Matrix.diagonal_mul] at this
-  cases hi : ε i <;> cases hj : ε j <;> simp only [hi, hj, ↓reduceIte, Bool.false_eq_true] at this h
-  · exact absurd rfl h
-  · linear_combination (1 / 2 : ℂ) * this
-  · linear_combination (-1 / 2 : ℂ) * this
-  · exact absurd rfl h
+  apply _root_.GlobalTheory.PsCo.PcEF.BlockEvaluationOffDiagonal.offdiag <;> assumption
 
 lemma K_unit {ε : Fin n → Bool} {k : Mat n} (hk : k ∈ Formalism.REAL.Kset ε) (i l : Fin n) :
     ∑ j, k i j * star (k l j) = if i = l then 1 else 0 := by
@@ -1028,10 +979,10 @@ lemma entry {ε : Fin n → Bool} {k : Mat n} (hk : k ∈ Formalism.REAL.Kset ε
     · simp
   rw [Finset.sum_congr rfl (fun j _ => h1 j)]
   simp only [mul_sub, Finset.sum_sub_distrib, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
-    if_true]
+    ite_true]
   by_cases had : a = d
   · subst had
-    simp only [if_true, K_unit hk]
+    simp only [ite_true, K_unit hk]
     by_cases hil : i = l
     · subst hil; simp
     · simp [hil]
@@ -1082,28 +1033,7 @@ variable {H : Type} [Group H] [TopologicalSpace H]
   {V U : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V] [FiniteDimensional ℂ V]
   [NormedAddCommGroup U] [InnerProductSpace ℂ U] {D : H →* (V →L[ℂ] V)} {π : H →* (U →L[ℂ] U)}
 
-theorem continuous_trace_rep (hD : IsUnitaryRep D) :
-    Continuous fun g => LinearMap.trace ℂ V (D g : V →ₗ[ℂ] V) := by
-  simp only [LinearMap.trace_eq_sum_inner _ (stdOrthonormalBasis ℂ V)]
-  exact continuous_finsetSum _ fun i _ => continuous_const.inner (hD.continuous_apply _)
-
-
-omit [TopologicalSpace H] in
-theorem trace_rep_conj (x s : H) :
-    LinearMap.trace ℂ V (D (x⁻¹ * s * x) : V →ₗ[ℂ] V) = LinearMap.trace ℂ V (D s : V →ₗ[ℂ] V) := by
-  have h := Representation.char_conj (ContinuousLinearMap.toLinearMapRingHom.toMonoidHom.comp D) s x⁻¹
-  rwa [inv_inv] at h
-
 variable [MeasurableSpace H] [BorelSpace H] {μ : Measure H}
-
-theorem hasTrace_repOp_of_finiteDimensional [CompleteSpace V] [IsFiniteMeasureOnCompacts μ] (hD : IsUnitaryRep D)
-    {f : H → ℂ} (hf : Continuous f) (hc : HasCompactSupport f) :
-    HasTrace (repOp D μ f) (∫ g, f g * LinearMap.trace ℂ V (D g : V →ₗ[ℂ] V) ∂μ) := by
-  refine ⟨isTraceClass_of_finiteDimensional _, ?_⟩
-  simp only [trace_eq_linearMap_trace, LinearMap.trace_eq_sum_inner _ (stdOrthonormalBasis ℂ V), Finset.mul_sum,
-    ContinuousLinearMap.coe_coe, hD.inner_repOp hf hc]
-  exact (integral_finsetSum _ fun i _ => (hf.mul (continuous_const.inner
-    (hD.continuous_apply _))).integrable_of_hasCompactSupport hc.mul_right).symm
 
 variable [IsTopologicalGroup H] [CompactSpace H] [μ.IsHaarMeasure]
 
@@ -1120,73 +1050,6 @@ theorem integral_conj_trace_mul_trace (hD : IsUnitaryRep D) (hi : IsTopIrreducib
   conv_lhs => rw [eq_smul_haarProb μ]
   rw [integral_smul_measure]
   exact (congrArg _ h).trans (by simp [Measure.real])
-
-theorem integral_inner_smul_eq_zero [CompleteSpace V] [CompleteSpace U] (hD : IsUnitaryRep D) (hi : IsTopIrreducible D)
-    (hπ : IsUnitaryRep π) (hi' : IsTopIrreducible π) (hne : ¬ IsUnitEquiv π D) (e x : V) (v : U) :
-    ∫ g, ⟪D g e, x⟫_ℂ • π g v ∂μ = 0 := by
-  have hI : ∀ z : V, Integrable (fun g => ⟪D g e, z⟫_ℂ • π g v) μ := fun z =>
-    integrable_of_continuous_of_compactSpace μ
-      (((hD.continuous_apply e).inner continuous_const).smul (hπ.continuous_apply v))
-  let T : V →ₗ[ℂ] U :=
-    { toFun := fun x => ∫ g, ⟪D g e, x⟫_ℂ • π g v ∂μ
-      map_add' := fun x y => by
-        rw [← integral_add (hI x) (hI y)]
-        simp [add_smul]
-      map_smul' := fun c x => by simp [mul_smul, integral_smul] }
-  have hT : LinearMap.toContinuousLinearMap T ∈ AutMult.homIn D π ⊤ := AutMult.mem_homIn_top.2 fun g x => by
-    change ∫ k, ⟪D k e, D g x⟫_ℂ • π k v ∂μ = π g (∫ k, ⟪D k e, x⟫_ℂ • π k v ∂μ)
-    rw [← integral_mul_left_eq_self _ g, ← (π g).integral_comp_comm (hI x)]
-    simp only [map_mul, ContinuousLinearMap.mul_apply, AutMult.inner_map_map hD, map_smul]
-  have h0 : AutMult.homIn D π ⊤ = ⊥ := AutMult.multIn_eq_zero_iff.1 (by_contra fun h =>
-    hne (AutMult.uEquiv_of_multIn_ne_zero ⟨‹_›, hD, hi⟩ ⟨‹_›, hπ, hi'⟩ h).symm)
-  rw [h0, Submodule.mem_bot] at hT
-  exact DFunLike.congr_fun hT x
-
-theorem repOp_conj_trace_eq_zero [CompleteSpace V] [CompleteSpace U] (hD : IsUnitaryRep D) (hi : IsTopIrreducible D)
-    (hπ : IsUnitaryRep π) (hi' : IsTopIrreducible π) (hne : ¬ IsUnitEquiv π D) (c : ℂ) :
-    repOp π μ (fun g => conj (LinearMap.trace ℂ V (D g : V →ₗ[ℂ] V)) / c) = 0 := by
-  ext v
-  rw [hπ.repOp_apply (f := fun g => conj (LinearMap.trace ℂ V (D g : V →ₗ[ℂ] V)) / c)
-    ((Complex.continuous_conj.comp (continuous_trace_rep hD)).div_const c)
-    (HasCompactSupport.of_compactSpace _)]
-
-  simp only [LinearMap.trace_eq_sum_inner _ (stdOrthonormalBasis ℂ V), map_sum, inner_conj_symm, div_eq_inv_mul,
-  mul_smul, integral_smul, Finset.sum_smul, ContinuousLinearMap.coe_coe]
-  have hI : ∀ e : V, Integrable (fun g => ⟪D g e, e⟫_ℂ • π g v) μ := fun e =>
-    integrable_of_continuous_of_compactSpace μ
-      (((hD.continuous_apply e).inner continuous_const).smul (hπ.continuous_apply v))
-  rw [integral_finsetSum _ fun i _ => hI _]
-  simp [integral_inner_smul_eq_zero hD hi hπ hi' hne]
-
-theorem isCharFn_and_isPseudoCoeff_of_compact [T2Space H] [SecondCountableTopology H] [CompleteSpace V]
-    {n : Type} [Fintype n] [DecidableEq n] {ι : H →* Matrix n n ℂ} (hι : Continuous (matCoord ι))
-    (hD : IsUnitaryRep D) (hi : IsTopIrreducible D)
-    (hχ : (fun g => conj (LinearMap.trace ℂ V (D g : V →ₗ[ℂ] V))) ∈ CcMat ι) :
-    IsCharFn ι μ D (fun g => LinearMap.trace ℂ V (D g : V →ₗ[ℂ] V)) ∧
-      IsPseudoCoeff ι μ D fun g => conj (LinearMap.trace ℂ V (D g : V →ₗ[ℂ] V)) / μ.real univ := by
-  have h0 : (μ.real univ : ℂ) ≠ 0 := by
-    exact_mod_cast ENNReal.toReal_ne_zero.2 ⟨(isOpen_univ.measure_pos μ univ_nonempty).ne', measure_ne_top _ _⟩
-  have hc := continuous_trace_rep hD
-  have hf : Continuous fun g => conj (LinearMap.trace ℂ V (D g : V →ₗ[ℂ] V)) / μ.real univ :=
-    (Complex.continuous_conj.comp hc).div_const _
-  have hΘ : IsCharFn ι μ D (fun g => LinearMap.trace ℂ V (D g : V →ₗ[ℂ] V)) :=
-    ⟨hc.locallyIntegrable, fun s _ => hc.continuousAt, fun f hf' =>
-      hasTrace_repOp_of_finiteDimensional hD (continuous_of_mem_ccSmooth hι hf') hf'.1⟩
-  refine ⟨hΘ, ?_, ?_, fun U _ _ _ π hπ hirr _ hne => ?_, fun s _ hT => absurd (isClosed_cent s).isCompact hT,
-    _, hΘ, fun s _ hT dt _ _ => ?_⟩
-  · simp only [div_eq_inv_mul]
-    exact (CcMat ι).smul_mem (μ.real univ : ℂ)⁻¹ hχ
-  · convert hasTrace_repOp_of_finiteDimensional (μ := μ) hD hf (HasCompactSupport.of_compactSpace _) using 1
-    simp only [div_mul_eq_mul_div, integral_div, integral_conj_trace_mul_trace hD hi, div_self h0]
-  · rw [repOp_conj_trace_eq_zero hD hi hπ hirr hne]
-    exact ⟨isTraceClass_zero, trace_zero⟩
-  · haveI : CompactSpace (cent s) := isCompact_iff_compactSpace.1 hT
-    convert hasOrbInt_of_finite (dh := μ) (dt := dt)
-      (f := fun g => conj (LinearMap.trace ℂ V (D g : V →ₗ[ℂ] V)) / μ.real univ)
-      ((hf.comp (f := fun x => x⁻¹ * s * x) (by fun_prop)).integrable_of_hasCompactSupport
-        (HasCompactSupport.of_compactSpace _)) using 2
-    simp only [trace_rep_conj, integral_const, Complex.real_smul]
-    field_simp
 
 end GlobalTheory.Orb
 end -- clump:auto
@@ -1357,7 +1220,7 @@ theorem StrIdx_proof2 : StrIdx := by
     rintro k _ ⟨y, hy, rfl⟩
     exact ⟨sigD hD (hφK k) y, hLK _ (hφK k) y hy, rfl⟩
   have hAc : ∀ v, Continuous fun k : KG ε => σ (toMK k) v := fun v =>
-    (hσ.2.2 v).comp_continuous hφc fun g => kset_mem_UJset (hφK g)
+    (hσ.2.2 v).comp_continuous hφc fun g => ReciprocityTheory.ChartRestriction.DS.closure_inUJ_of_mem_Kset (hφK g)
   have hcont : Continuous fun k : KG ε => ev (toMK k) P * physDet ε (toMK k) := by
     have := hent (P * Q)
     simpa only [map_mul, hQ] using this
@@ -1415,7 +1278,6 @@ open GlobalTheory.PsCo.Pc1 (Mat)
 namespace GlobalTheory.PsCo.PcEF
 
 open GlobalTheory.PsCo.PcEG
-
 
 theorem supertrace_carriedBy_diracKernel : StrKer := by
   intro n ε H _ _ σ D E hσ hD Y _ hY hG hK
@@ -1804,23 +1666,8 @@ variable {n : ℕ} (ε : Fin n → Bool) {X : Type} [NormedAddCommGroup X] [Inne
 abbrev mat (g : Formalism.REAL.UJ ε) : Matrix (Fin n) (Fin n) ℂ :=
   ((g : (Matrix (Fin n) (Fin n) ℂ)ˣ) : Matrix (Fin n) (Fin n) ℂ)
 
-theorem mat_injective : Function.Injective (mat ε) := fun _ _ h => Subtype.ext (Units.ext h)
-
 def rep (π : Formalism.REAL.UJ ε →* (X →L[ℂ] X)) (x : Matrix (Fin n) (Fin n) ℂ) : X →L[ℂ] X := by
   classical exact if h : ∃ g, mat ε g = x then π h.choose else 1
-
-theorem rep_mat (π : Formalism.REAL.UJ ε →* (X →L[ℂ] X)) (g : Formalism.REAL.UJ ε) : rep ε π (mat ε g) = π g := by
-  have h : ∃ g', mat ε g' = mat ε g := ⟨g, rfl⟩
-  rw [rep, dite_eq_left h, mat_injective ε h.choose_spec]
-
-theorem range_mat : Set.range (mat ε) = Formalism.MainNotions.S.UJset ε := (Formalism.REAL.isClosedEmbeddingMatrix n ε).2
-
-theorem mat_mem (g : Formalism.REAL.UJ ε) : mat ε g ∈ Formalism.MainNotions.S.UJset ε := range_mat ε ▸ ⟨g, rfl⟩
-
-theorem exists_mat {x : Matrix (Fin n) (Fin n) ℂ} (hx : x ∈ Formalism.MainNotions.S.UJset ε) : ∃ g, mat ε g = x := by
-  rw [← range_mat ε] at hx; exact hx
-
-theorem isEmbedding_mat : Topology.IsEmbedding (mat ε) := (Formalism.REAL.isClosedEmbeddingMatrix n ε).1.isEmbedding
 
 end GlobalTheory.PsCo.PcEF.MatrixRepresentation
 
@@ -1829,29 +1676,8 @@ namespace GlobalTheory.PsCo.PcEF
 open GlobalTheory.PsCo.PcEF.MatrixRepresentation
 
 theorem unitaryRep_upq_matrixFunction : MatRep := by
-  intro n ε U _ _ π hπ hi
-  refine ⟨rep ε π, ⟨⟨?_, fun a ha b hb => ?_⟩, fun a ha v => ?_, fun v => ?_⟩, fun S hS hinv => ?_, fun g => rep_mat ε π g⟩
-  · have h1 : mat ε 1 = 1 := rfl
-    rw [← h1, rep_mat, map_one]
-  · obtain ⟨g, rfl⟩ := exists_mat ε ha
-    obtain ⟨h, rfl⟩ := exists_mat ε hb
-    have hm : mat ε g * mat ε h = mat ε (g * h) := rfl
-    rw [hm, rep_mat, rep_mat, rep_mat, map_mul]
-    rfl
-  · obtain ⟨g, rfl⟩ := exists_mat ε ha
-    rw [rep_mat]
-    exact hπ.norm_apply g v
-  · have hr : Formalism.MainNotions.S.UJset ε = Set.range (mat ε) := (range_mat ε).symm
-    show ContinuousOn (fun g => rep ε π g v) (Formalism.MainNotions.S.UJset ε)
-    rw [hr, continuousOn_iff_continuous_domRestrict]
-    let E := (isEmbedding_mat ε).toHomeomorph
-    have hE : ∀ y, (fun g => π g v) (E.symm y) = rep ε π (y : Matrix (Fin n) (Fin n) ℂ) v := by
-      intro y
-      obtain ⟨g, rfl⟩ := E.surjective y
-      show π (E.symm (E g)) v = rep ε π (mat ε g) v
-      rw [E.symm_apply_apply, rep_mat]
-    exact ((hπ.continuous_apply v).comp E.symm.continuous).congr hE
-  · exact hi.2 S ⟨hS, fun g v hv => by simpa [rep_mat] using hinv _ (mat_mem ε g) v hv⟩
+  intros
+  apply _root_.GlobalTheory.PsCo.PcEF.UF.unitaryRep_upq_matrixFunction <;> assumption
 
 end GlobalTheory.PsCo.PcEF
 
@@ -1879,7 +1705,7 @@ theorem maximalCompact_pseudoCoefficientData' : StKData :=
     GlobalTheory.PsCo.PcEF.casimirScalar_stableSumSpace GlobalTheory.PsCo.PcEF.supertrace_carriedBy_diracKernel GlobalTheory.PsCo.PcEF.StrIdx_proof2
     GlobalTheory.PsCo.PcEF.intertwiner_preserves_highestWeight GlobalTheory.PsCo.PcEF.fockCoordinates_span_finiteDimensional GlobalTheory.PsCo.PcEF.casimirValue_highestWeightCoordinates
     GlobalTheory.PsCo.PcEF.highestWeightKernel_lowestType GlobalTheory.PsCo.PcEF.eq_discreteSeries_of_lowestKType_casimir GlobalTheory.PsCo.PcEF.compactDiscreteSeries_ownType
-    GlobalTheory.PsCo.PcEF.gapConditions_of_largeGaps GlobalTheory.PsCo.PcEF.unitaryRep_upq_matrixFunction GlobalTheory.HcPort.casimirActsByScalar_indefUnitary
+    GlobalTheory.PsCo.PcEF.gapConditions_of_largeGaps GlobalTheory.PsCo.PcEF.unitaryRep_upq_matrixFunction CompanionTheory.D.gk.HC.casimirActsByScalar_indefUnitary
 
 end GlobalTheory.PsCo.Pc1
 end -- clump:auto

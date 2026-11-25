@@ -66,12 +66,12 @@ section -- clump:auto
     fun (F : Type) [Field F] ↦ IsDedekindDomain.HeightOneSpectrum (NumberField.RingOfIntegers F)
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.NormIndexQuadratic.Kv :
-    {F : Type} → [inst : Field F] → [NumberField F] → UpperTheory.Reformulated.B.NormIndexQuadratic.Pl F → Type :=
+    {F : Type} → [Field F] → [NumberField F] → UpperTheory.Reformulated.B.NormIndexQuadratic.Pl F → Type :=
     fun {F : Type} [Field F] [NumberField F] (v : UpperTheory.Reformulated.B.NormIndexQuadratic.Pl F) ↦
       IsDedekindDomain.HeightOneSpectrum.adicCompletion F v
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.NormIndexQuadratic.cv :
-    {F : Type} → [inst : Field F] → [inst_1 : NumberField F] → (v : UpperTheory.Reformulated.B.NormIndexQuadratic.Pl F) → F →+* UpperTheory.Reformulated.B.NormIndexQuadratic.Kv v :=
+    {F : Type} → [Field F] → [NumberField F] → (v : UpperTheory.Reformulated.B.NormIndexQuadratic.Pl F) → F →+* UpperTheory.Reformulated.B.NormIndexQuadratic.Kv v :=
     fun {F : Type} [Field F] [NumberField F] (v : UpperTheory.Reformulated.B.NormIndexQuadratic.Pl F) ↦ Algebra.algebraMap F (UpperTheory.Reformulated.B.NormIndexQuadratic.Kv v)
 
 open IsDedekindDomain NumberField Module
@@ -97,13 +97,13 @@ private lemma exists_quad {K : Type} [Field K] [NumberField K] {θ : K} (h : ¬ 
 end UpperTheory.Reformulated.B.NormIndexQuadratic
 
 theorem UpperTheory.Reformulated.B.NormIndexQuadratic.glob_neg_one :
-    ∀ {F : Type} [inst : Field F] [inst_1 : NumberField F] {Δ d : F},
+    ∀ {F : Type} [Field F] [NumberField F] {Δ d : F},
       Δ ≠ (0 : F) →
         (∀ (v : UpperTheory.Reformulated.B.NormIndexQuadratic.Pl F),
             ∃ (a : UpperTheory.Reformulated.B.NormIndexQuadratic.Kv v) (b : UpperTheory.Reformulated.B.NormIndexQuadratic.Kv v),
               (-1 : UpperTheory.Reformulated.B.NormIndexQuadratic.Kv v) =
                 a ^ (2 : ℕ) - (UpperTheory.Reformulated.B.NormIndexQuadratic.cv v : F → UpperTheory.Reformulated.B.NormIndexQuadratic.Kv v) Δ * b ^ (2 : ℕ)) →
-          ∀ (σ₀ : F →+* ℝ),
+          ∀ (_ : F →+* ℝ),
             (∀ (σ : F →+* ℝ), (σ : F → ℝ) d < (0 : ℝ)) →
               ∃ (p₀ : F) (p₁ : F) (q₀ : F) (q₁ : F),
                 p₀ ^ (2 : ℕ) + d * p₁ ^ (2 : ℕ) - Δ * (q₀ ^ (2 : ℕ) + d * q₁ ^ (2 : ℕ)) = (-1 : F) ∧ p₀ * p₁ = Δ * q₀ * q₁ := by

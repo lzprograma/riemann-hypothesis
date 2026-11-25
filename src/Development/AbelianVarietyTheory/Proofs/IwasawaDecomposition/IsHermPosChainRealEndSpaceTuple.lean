@@ -56,8 +56,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.HilbertLevels
 
 section Gen
@@ -192,7 +190,7 @@ theorem lev_datY_zero {r : ℕ} (hn : n ≤ r) (t : ℕ) (hr : r ≤ n) (Pg Q : 
       simp
     unfold levFn
     rw [h1, h1', blockDiagonalExtendByOnePrimeField_one, blockDiagonalExtendByOnePrimeField_one]
-    simp only [datY, if_true, Finset.range_zero, Finset.prod_empty, Finset.prod_const_one, mul_one, one_mul]
+    simp only [datY, ite_true, Finset.range_zero, Finset.prod_empty, Finset.prod_const_one, mul_one, one_mul]
     exact Finset.prod_eq_one fun PP hP => by rw [hd PP hP, map_one]
 
 end Gen
@@ -270,13 +268,13 @@ theorem cc_eq (b : Bool) (μ : D.what₂.Tup) {j : ℕ} (hj : j < D.R.m) :
     (toChainReal R F tupT hm hTop).CC b μ j = MultT R.θ (R.MY j) (levS _ (R.βY j) (R.datYt (tupT μ) j R.triv))
       (levChi _ (R.βY j) (R.datYt (tupT μ) j R.triv)) := by
   show MultT R.θ (R.MY j) (if j < D.R.m then _ else Set.univ) (if j < D.R.m then _ else 0) = _
-  rw [if_pos hj, if_pos hj]
+  rw [ite_eq_left hj, ite_eq_left hj]
 
 theorem ccp_eq (b : Bool) (μ : D.what₂.Tup) {j : ℕ} (hj : j < D.R.m) :
     (toChainReal R F tupT hm hTop).CCP b μ j = MultT R.θ (R.MY j) (levS _ (R.βY j) (R.datYt (tupT μ) j (R.levR F b)))
       (levChi _ (R.βY j) (R.datYt (tupT μ) j (R.levR F b))) := by
   show MultT R.θ (R.MY j) (if j < D.R.m then _ else Set.univ) (if j < D.R.m then _ else 0) = _
-  rw [if_pos hj, if_pos hj]
+  rw [ite_eq_left hj, ite_eq_left hj]
 
 theorem eec_le (b : Bool) : (toChainReal R F tupT hm hTop).EEc b ≤
     MultT R.θ (R.MY 0) (levS _ (R.βY 0) (R.dat0 (R.levR F b))) (levChi _ (R.βY 0) (R.dat0 (R.levR F b))) :=
@@ -371,7 +369,7 @@ theorem holW (i : Fin D.R.m) :
   rw [e]
   funext ρ
   unfold parAt Mult.parW
-  rw [GlobalTheory.ThetaFiresProbe.lab_fixed, if_pos (GlobalTheory.ThetaFiresProbe.labE_fixed ρ)]
+  rw [GlobalTheory.ThetaFiresProbe.lab_fixed, ite_eq_left (GlobalTheory.ThetaFiresProbe.labE_fixed ρ)]
 
 theorem hermW (hI : Inputs D) (hB : R.BaseW F) (i : Fin D.R.m) :
     IsHermPos ((toLiftReal R F tupT hm hTop hinj).Wc i) ((toLiftReal R F tupT hm hTop hinj).ipWc i) := by

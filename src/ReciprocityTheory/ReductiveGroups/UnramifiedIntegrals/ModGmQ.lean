@@ -127,7 +127,7 @@ theorem gmQ_xp {m : ℕ} (hm : 0 < m) : xp m (qExpansion 1 (Gm m)) = prodSer m :
 theorem gmQ_coeffIn {m : ℕ} (hm : 0 < m) : CoeffIn (Rm m) (qExpansion 1 (Gm m)) := by
   intro n
   have h := congrArg (PowerSeries.coeff (m * n)) (gmQ_xp hm)
-  simp only [xp, PowerSeries.coeff_mk, dvd_mul_right, if_true, Nat.mul_div_cancel_left n hm] at h
+  simp only [xp, PowerSeries.coeff_mk, dvd_mul_right, ite_true, Nat.mul_div_cancel_left n hm] at h
   rw [h]
   exact prodSer_coeffIn hm (m * n)
 
@@ -141,14 +141,14 @@ theorem gmQ_low {m : ℕ} (hm : 0 < m) (hsq : ¬ IsSquare m) :
     simp [xp]
   have hdvd : m ∣ n0 := by
     by_contra h
-    rw [hc, if_neg h] at hn0
+    rw [hc, ite_eq_right h] at hn0
     exact hu3 hn0.symm
   obtain ⟨k, rfl⟩ := hdvd
   refine ⟨k, u, hu1, hu2, hu3, fun j hj => ?_, ?_⟩
   · have h2 := hlow (m * j) (by nlinarith)
-    rw [hc, if_pos (dvd_mul_right m j), Nat.mul_div_cancel_left j hm] at h2
+    rw [hc, ite_eq_left (dvd_mul_right m j), Nat.mul_div_cancel_left j hm] at h2
     exact h2
-  · rw [hc, if_pos (dvd_mul_right m k), Nat.mul_div_cancel_left k hm] at hn0
+  · rw [hc, ite_eq_left (dvd_mul_right m k), Nat.mul_div_cancel_left k hm] at hn0
     exact hn0
 
 end ReciprocityTheory.ChartRestriction.L1

@@ -471,22 +471,4 @@ theorem flat_injective_basis_of_finiteReduction (φ : MvPowerSeries τ R →ₐ[
 
 end Free
 
-section Solve
-
-variable (R : Type*) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
-  (K : Type*) [Field K] [Algebra R K] [IsFractionRing R K]
-  (Ω : Type*) [Field Ω] [IsAlgClosed Ω] [Algebra K Ω] [Algebra R Ω] [IsScalarTower R K Ω]
-
-variable {R} [IsAdicComplete (maximalIdeal R) R] {σ τ : Type*} [Finite σ] [Finite τ]
-
-end Solve
-
-section FormalGroup
-
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB
-
-variable {R : Type} [CommRing R] {d : ℕ}
-
-end FormalGroup
-
 end GlobalTheory.FormalIsogeny

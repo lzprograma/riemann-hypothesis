@@ -171,10 +171,10 @@ theorem UpperTheory.V.Alg.eigen_mem :
       (fun i _ => hf' i (W.π (wcomp O W.wt i g)) ⟨_, wcomp_mem O W.wt i g, rfl⟩), map_sub, map_sum] at h2
       simp only [map_mul, hq, hf, map_C] at h2
       simp only [map_sub, mul_sub, Finset.sum_sub_distrib, apply_ite C, map_zero, mul_ite, mul_zero,
-        Finset.sum_ite_eq', if_pos hjs]
+        Finset.sum_ite_eq', ite_eq_left hjs]
       rw [← neg_eq_zero, neg_sub]
       exact h2) j hjs
-  simp only [if_true] at h3
+  simp only [ite_true] at h3
   rwa [← map_sub, Ideal.Quotient.eq_zero_iff_mem] at h3
 end -- clump:auto
 end -- clump:auto
@@ -305,14 +305,14 @@ private theorem hos_art {O : Type} [CommRing O] [IsLocalRing O] {X : Type} [AddC
       _ = f' x := by
           rw [hE]
           refine Finset.sum_congr rfl fun d hd => ?_
-          rw [Finset.sum_ite_eq, if_pos (Finset.mem_image_of_mem _ hd)]
+          rw [Finset.sum_ite_eq, ite_eq_left (Finset.mem_image_of_mem _ hd)]
       _ = 0 := h0
   by_cases hj : j ∈ s
   · exact hz j hj
   · rw [hT]
     apply Finset.sum_eq_zero
     intro d hd
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hj (h ▸ Finset.mem_image_of_mem _ hd)
 

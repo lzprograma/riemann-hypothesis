@@ -1,50 +1,7 @@
 module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockRaisingLowering.SameSign
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -63,10 +20,10 @@ theorem fockInner_eq_support (P Q : MvPolynomial σ ℂ) :
   unfold FockH1Action.fockInner
   refine Finset.sum_congr rfl (fun α _ => ?_)
   rw [Finset.sum_eq_single α]
-  · rw [if_pos rfl]
+  · rw [ite_eq_left rfl]
     rfl
   · intro β _ hβ
-    rw [if_neg (Ne.symm hβ), mul_zero]
+    rw [ite_eq_right (Ne.symm hβ), mul_zero]
   · intro hα
     have h : AddMonoidAlgebra.coeff Q α = 0 := by simpa [MvPolynomial.mem_support_iff] using hα
     rw [h]
@@ -211,7 +168,7 @@ theorem wt_single_add (l : σ) (α : σ →₀ ℕ) :
     by_cases h : i = l
     · rw [h]
       exact hl
-    · rw [Finsupp.single_apply, if_neg (Ne.symm h), zero_add] at hi
+    · rw [Finsupp.single_apply, ite_eq_right (Ne.symm h), zero_add] at hi
       exact Finset.mem_insert_of_mem (Finsupp.mem_support_iff.mpr hi)
   have hsub2 : α.support ⊆ insert l α.support := fun i hi => Finset.mem_insert_of_mem hi
   unfold wt
@@ -226,7 +183,7 @@ theorem wt_single_add (l : σ) (α : σ →₀ ℕ) :
       ∏ x ∈ (insert l α.support).erase l, ((α x).factorial : ℂ) := by
     refine Finset.prod_congr rfl (fun i hi => ?_)
     have hil : i ≠ l := Finset.ne_of_mem_erase hi
-    rw [Finsupp.add_apply, Finsupp.single_apply, if_neg (Ne.symm hil), zero_add]
+    rw [Finsupp.add_apply, Finsupp.single_apply, ite_eq_right (Ne.symm hil), zero_add]
   rw [hrest, Finsupp.add_apply, Finsupp.single_eq_same,
     show (1 + α l).factorial = (α l + 1) * (α l).factorial from by
       rw [add_comm]
@@ -242,12 +199,12 @@ theorem fockInner_X_mul (l : σ) (P Q : MvPolynomial σ ℂ) :
       fockInner_eq_sum_right (X l * P) (monomial β b) {β} support_monomial_subset,
       fockInner_eq_sum_right P (monomial (β - Finsupp.single l 1) (b * (β l : ℂ)))
         {β - Finsupp.single l 1} support_monomial_subset,
-      Finset.sum_singleton, Finset.sum_singleton, coeff_monomial, coeff_monomial, if_pos rfl, if_pos rfl]
+      Finset.sum_singleton, Finset.sum_singleton, coeff_monomial, coeff_monomial, ite_eq_left rfl, ite_eq_left rfl]
     by_cases h : β l = 0
     · have hl : l ∉ β.support := by
         rw [Finsupp.mem_support_iff, not_not]
         exact h
-      rw [coeff_X_mul', if_neg hl, h]
+      rw [coeff_X_mul', ite_eq_right hl, h]
       simp
     · have hβ : β = Finsupp.single l 1 + (β - Finsupp.single l 1) := by
         ext i

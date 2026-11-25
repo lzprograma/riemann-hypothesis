@@ -57,28 +57,11 @@ import Mathlib.Tactic.Linter.Style
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB
 
 namespace GlobalTheory.FourierChainCompare
-
-section Duality
-
-variable {A B K : Type} [AddCommGroup A] [AddCommGroup B] [Field K]
-
-variable [Fintype A] [Fintype B]
-
-
-end Duality
-
-section Fourier
-
-variable {A B K : Type} [AddCommGroup A] [AddCommGroup B] [Field K] [Fintype A] [Fintype B]
-
-end Fourier
 
 section Chain
 
@@ -126,7 +109,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 open IsLocalRing ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB.WickVanishing
 

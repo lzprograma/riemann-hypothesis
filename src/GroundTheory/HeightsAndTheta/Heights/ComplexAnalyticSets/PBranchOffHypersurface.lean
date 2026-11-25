@@ -48,14 +48,6 @@ theorem ringKrullDim_sup_span_add_one_le {R : Type*} [CommRing R] {Q : Ideal R} 
   obtain ⟨c', rfl⟩ := Ideal.Quotient.mk_surjective c
   simp only [Ideal.Quotient.factor_mk, Ideal.Quotient.eq_zero_iff_mem.2 hx, mul_zero]
 
-theorem eval_comp_pullback {n d : ℕ} (A : Matrix (Fin d) (Fin n) ℂ) (x : Fin n → ℂ) :
-    (eval x).comp (GroundTheory.Heights₂.Heights.ComplexSets.pullback A).toRingHom = eval (A.mulVec x) := by
-  apply MvPolynomial.ringHom_ext
-  · intro a; simp [GroundTheory.Heights₂.Heights.ComplexSets.pullback]
-  · intro i
-    simp [GroundTheory.Heights₂.Heights.ComplexSets.pullback, GroundTheory.Heights₂.Heights.ComplexSets.linPoly,
-      Matrix.mulVec, dotProduct]
-
 theorem fibre_finite {n d : ℕ} (I : Ideal (MvPolynomial (Fin n) ℂ)) (A : Matrix (Fin d) (Fin n) ℂ)
     (hA : GroundTheory.Heights₂.Heights.ComplexSets.IsFiniteProjection I A) (y : Fin d → ℂ) :
     {x : Fin n → ℂ | (∀ q ∈ I, eval x q = 0) ∧ A.mulVec x = y}.Finite :=

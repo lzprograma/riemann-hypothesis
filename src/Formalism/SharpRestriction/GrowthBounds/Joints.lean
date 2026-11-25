@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.GrowthBounds.CountingStatementReduction
 public import Formalism.SharpRestriction.GrowthBounds.TableLineDegreeFive
 public import Formalism.SharpRestriction.GrowthBounds.SourceCleaning
 public import Formalism.SharpRestriction.GrowthBounds.Lemma5aAt
@@ -9,50 +10,11 @@ public import Formalism.LocalRingCardinality.ColumnWeightSpreadOffTop
 public import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
 public import Formalism.SharpRestriction.GrowthBounds.TopChoiceBounds
 import Mathlib.Algebra.NoZeroSMulDivisors.Pi
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -294,27 +256,7 @@ theorem mq_top_of_irr {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationR
 
 theorem weight_condition_of_integral_form (D : Formalism.BasicNotions.D7) (X : Formalism.MainNotions.flipOneThree.Inst) (h : Formalism.MainNotions.CovariantDegrees.NablaDeltaComparisonField D) :
     Formalism.MainNotions.flipOneThree.adm2 D X := by
-  intro n V _ _ _ _ E lam v hn _ hirr hl
-  obtain ⟨hA, hB⟩ := h X.p X.L.n' X.O X.setting X.instance_ring_standard (n + 1) lam V E v hirr
-  refine ⟨fun x hx => ?_, fun M hM hv hwt => ?_⟩
-  · have hx' := hA x hx
-    have hle := integral_form_exponent_le_ceil X.p X.L.a X.r n hn (ellWt lam) hl
-    obtain ⟨k, hk⟩ := Nat.exists_eq_add_of_le hle
-    have : ((X.p : KK X.O) ^ ⌈Formalism.MainNotions.flipOneThree.kappaOneExponent X.p X.L.a X.r⌉₊) • x =
-        ((X.p : X.O) ^ k) • (((X.p : X.O) ^ (N0 (n + 1) * deF X.p (n + 1) (ellWt lam))) • x) := by
-      rw [hk, smul_smul, ← pow_add, add_comm, ← algebraMap_smul (KK X.O) (((X.p : X.O)) ^ _ )]
-      simp
-    rw [this]
-    exact Submodule.smul_mem _ _ hx'
-  · apply hB M hM (mq_top_of_irr E lam v hirr M hM hv)
-    intro x
-    constructor
-    · rintro ⟨hxM, hxw⟩
-      exact hwt x hxM hxw
-    · rintro ⟨c, rfl⟩
-      refine ⟨M.smul_mem c hv, ?_⟩
-      rw [← algebraMap_smul (KK X.O) c v]
-      exact Submodule.smul_mem _ _ hirr.2.2.1.2.1
+  apply _root_.Formalism.MainNotions.G.CountingStatementReduction.weight_condition_from_integral_form <;> assumption
 
 theorem isotypic_multiplicity_of_reducibility (D : Formalism.BasicNotions.D7) (hV : Formalism.MainNotions.CovariantDegrees.ValuationLemmaField D) (hdec : _root_.Formalism.MainNotions.G.Joints.PolIsoDecompB) :
     Formalism.MainNotions.PlaneGramData.adm1 D := by
@@ -366,7 +308,7 @@ theorem valS_one (R : Type) [Field R] {ι : Type} {n : ℕ} [NeZero n] (LL : Let
 
 theorem divDer_zero {R : Type} [CommSemiring R] {σ : Type} (F : MvPolynomial σ R) : divDer 0 F = F := by
   unfold divDer
-  simp only [zero_le, if_true, tsub_zero, Finsupp.prod_zero_index, Nat.cast_one, mul_one]
+  simp only [zero_le, ite_true, tsub_zero, Finsupp.prod_zero_index, Nat.cast_one, mul_one]
   exact (MvPolynomial.as_sum F).symm
 
 theorem valuation_of_letters_clauses (D : Formalism.BasicNotions.D7) (hL : Formalism.MainNotions.CovariantDegrees.DerivativeValuationBound D) (K : Type) [Field K] (ι : Type) [Fintype ι]
@@ -390,7 +332,7 @@ theorem valuation_of_letters_clauses (D : Formalism.BasicNotions.D7) (hL : Forma
     refine ⟨fun hvec k hk => ?_, fun _ k hk => ?_⟩
     · rw [hk] at h
       have : ¬ (i ∈ S ∧ LL.vec i = false) := fun h' => by simp [hvec] at h'
-      rw [if_neg this] at h
+      rw [ite_eq_right this] at h
       simp at h
       exact_mod_cast h
     · rw [hk] at h
@@ -851,7 +793,7 @@ theorem badShare_spec {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuation
     have hb : badShare p be L D = ((Module.finrank O L : ℝ) -
         ((sSup {n : ℕ | ∃ L₁ : Submodule O V, GoodSub p be L L₁ D ∧ Module.finrank O L₁ = n} : ℕ) : ℝ)) /
           (Module.finrank O L : ℝ) := by
-      simp only [badShare, hr0, if_false]
+      simp only [badShare, hr0, ite_false]
     have hrpos : (0 : ℝ) < Module.finrank O L := by exact_mod_cast Nat.pos_of_ne_zero hr0
     have hle' : ((sSup {n : ℕ | ∃ L₁ : Submodule O V, GoodSub p be L L₁ D ∧ Module.finrank O L₁ = n} : ℕ) : ℝ)
         ≤ Module.finrank O L := by exact_mod_cast hle
@@ -958,7 +900,7 @@ theorem nearestEven {n' : ℕ} (TT : Finset (Fin n')) (y : Fin n') (hy : ¬ IsTy
       rw [this, Nat.add_mod_right, Nat.mod_eq_of_lt hyl]
     have := (posAdd_iff x0 y d0 hd0pos hd0lt.le).1 hpx
     rw [this]; exact ⟨hx0, hx0e⟩
-  have hdM : dMinus TT y = Nat.find hS := by unfold dMinus; rw [dif_pos hS]
+  have hdM : dMinus TT y = Nat.find hS := by unfold dMinus; rw [dite_eq_left hS]
   obtain ⟨hm1, hmn, hmT, hmV⟩ := Nat.find_spec hS
   have hmlt : Nat.find hS < n' := by
     rcases lt_or_eq_of_le hmn with h | h
@@ -1009,7 +951,7 @@ theorem sum_boxLoc {n' : ℕ} (TT : Finset (Fin n')) (W : Finset ℤ) (f : (TT �
     by_cases h : i ∈ TT
     · simp [h]
     · have hi := ha i
-      simp only [h, if_false, Finset.mem_singleton] at hi
+      simp only [h, ite_false, Finset.mem_singleton] at hi
       simp [h, hi]
   · intro aa _
     funext t
@@ -1034,7 +976,6 @@ theorem meanLoc_eq (D : Formalism.BasicNotions.D7) (K : Consts) (s : Formalism.B
   refine Finset.sum_congr rfl fun aw _ => ?_
   exact sum_boxLoc TT (Formalism.MainNotions.flipOneThree.IbZ bl bu) (fun bb => κ (fun t => aw t) bb)
 
-open Formalism.MainNotions.G Formalism.BasicNotions
 
 def ibW (D : D7) (K : Consts) (s : Scale) : ℝ := Nstar D s * s.x ^ s.eps * La K s * s.b' / D.R.k
 
@@ -1224,7 +1165,7 @@ theorem tI_le_tIf (D : D7) (L : SizeData₂ D) (K : Consts) (C : ℝ) (hK : K.No
           min (b y : ℝ) ((a (posAdd y (n' - dMinus TT y)) : ℝ) / (p : ℝ) ^ dMinus TT y)) := by
     refine Finset.sum_congr rfl fun y hy => ?_
     obtain ⟨hne, hd, hyp⟩ := nearestEven TT y (Finset.mem_filter.1 hy).2 hE
-    rw [if_neg hne, hd, hyp]
+    rw [ite_eq_right hne, hd, hyp]
   unfold Formalism.MainNotions.flipOneThree.tI tIf
   dsimp only
   rw [hsum, hkR]
@@ -1341,11 +1282,11 @@ theorem type_one_hypothesis_of_segments (D : D7) (L : SizeData₂ D) (X : Inst D
     refine hLP W Qq O Kf ι σ j w hS a b lam0 ⟨hbase, hdom, fun s hs => ⟨?_, ?_⟩⟩ _ ?_
     · classical
       have := (Fintype.mem_piFinset.1 ha) s
-      simp only [if_pos hs] at this
+      simp only [ite_eq_left hs] at this
       rw [← hWA]; exact this
     · classical
       have := (Fintype.mem_piFinset.1 hb) s
-      simp only [if_pos hs] at this
+      simp only [ite_eq_left hs] at this
       rw [← hWB]; exact this
     · exact (tI_le_tIf D L K C hK hC0 hCt1 hCt2 hc p n' TT a b hseg.1 hp1 hpb hk
         hH.2.2.2.2.2.2.2.2.2.2.2.2.1).trans (Nat.le_ceil _)
@@ -1389,8 +1330,7 @@ theorem padicGe_sum {p : ℕ} [Fact p.Prime] {ι : Type*} (s : Finset ι) (f : �
 
 theorem padicValNat_lt_of_lt_pow {p : ℕ} [hp : Fact p.Prime] {y t : ℕ} (hy : 1 ≤ y) (hlt : y < p ^ (t + 1)) :
     padicValNat p y ≤ t := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   have h1 : p ^ (t + 1) ∣ y := (pow_dvd_pow p (Nat.succ_le_of_lt hc)).trans (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
   have h2 := Nat.le_of_dvd hy h1
   omega
@@ -1413,7 +1353,6 @@ theorem logVal_clause1 (p : ℕ) (hp : p.Prime) (t s : ℕ) :
     exact_mod_cast padicValNat_lt_of_lt_pow hy.1 hy.2
   push_cast
   have hmul := mul_le_mul_of_nonneg_left hv (Nat.cast_nonneg s : (0 : ℝ) ≤ s)
-  have hcomm : (s : ℝ) * ((padicValRat p (y : ℚ) : ℤ) : ℝ) = ((padicValRat p (y : ℚ) : ℤ) : ℝ) * s := mul_comm _ _
   linarith
 
 theorem logVal_holds : Formalism.MainNotions.ColumnSystems.logVal := by
@@ -1448,7 +1387,6 @@ theorem logVal_holds : Formalism.MainNotions.ColumnSystems.logVal := by
   have hp4 : 1 / ((p : ℝ) - 1) ≤ 1 / 4 := by
     have : (5 : ℝ) ≤ p := by exact_mod_cast hp5
     apply one_div_le_one_div_of_le (by norm_num); linarith
-  have hs1 : (1 : ℝ) ≤ s := by exact_mod_cast hs
   push_cast
   rw [hps]
   linarith
@@ -1589,7 +1527,7 @@ theorem weylSandwich_of_model (D : D7) (h : ModelSandwichG D) : WeylSandwichG D 
   by_cases hlam : Antitone lam
   · obtain ⟨h1, h2⟩ := h u w hg m lam hlam
     unfold H0 Dl0
-    rw [if_pos hlam, if_pos hlam]
+    rw [ite_eq_left hlam, ite_eq_left hlam]
     constructor
     · intro x hx
       rw [Submodule.mem_iInf] at hx ⊢
@@ -1618,12 +1556,11 @@ theorem weylSandwich_of_model (D : D7) (h : ModelSandwichG D) : WeylSandwichG D 
       rw [SetLike.mem_coe, Submodule.mem_comap]
       exact h2 (Submodule.mem_comap.1 hy)
   · unfold H0 Dl0
-    rw [if_neg hlam, if_neg hlam]
+    rw [ite_eq_right hlam, ite_eq_right hlam]
     refine ⟨fun x hx => ?_, le_rfl⟩
     rw [(Submodule.mem_bot _).1 hx, smul_zero]
     exact Submodule.zero_mem _
 
-open Formalism.MainNotions.G Formalism.BasicNotions
 
 theorem foldr_map_comp {α β : Type*} (f : α → β → β) (l : List α) (x : β) :
     (l.map f).foldr (fun g h => g ∘ h) id x = l.foldr (fun a y => f a y) x := by
@@ -1663,7 +1600,6 @@ theorem type_one_hypothesis_of_bounds (D : D7) (L : SizeData₂ D) (X : Inst D L
 theorem isotypic_multiplicity_of_reducibility_alt (D : Formalism.BasicNotions.D7) (h : Formalism.MainNotions.CovariantDegrees.ValuationLemmaField D) (h2 : Formalism.MainNotions.CovariantDegrees.adm2 D) : Formalism.MainNotions.PlaneGramData.adm1 D :=
   isotypic_multiplicity_of_reducibility D h (polIsoDecompB_of D h2)
 
-open Formalism.MainNotions.G Formalism.BasicNotions
 
 theorem expBound_of (D : D7) (L : SizeData₂ D) (X : Inst D L) (Ce : ℝ) (hCe : 1 ≤ Ce) (hEp : EpDef X Ce)
     (P : ParameterChoice' D L) (T : GatTies D) : ExpBoundG D X := by
@@ -1680,7 +1616,6 @@ theorem expBound_of (D : D7) (L : SizeData₂ D) (X : Inst D L) (Ce : ℝ) (hCe 
     have hprime : (D.what₂.places.resChar w).Prime := ((D.gat u w hg).P.setting v).prime
     have hp1 : (1 : ℝ) < (D.what₂.places.resChar w : ℝ) := by exact_mod_cast hprime.one_lt
     have hl := gat_ellWt_lamAt_le P T u w hg v s
-    have hloga : 0 ≤ Real.logb (D.what₂.places.resChar w) L.sc.a := Real.logb_nonneg hp1 (by linarith)
     unfold wExp deF N0
     set kk := (D.gat u w hg).P.m + 1 with hkk_def
     have hkk : (kk : ℝ) = D.R.k := by exact_mod_cast hk
@@ -1747,7 +1682,6 @@ theorem expBound_of (D : D7) (L : SizeData₂ D) (X : Inst D L) (Ce : ℝ) (hCe 
         mul_le_mul_of_nonneg_right hCe hx
     _ = _ := by ring
 
-open Formalism.MainNotions.G Formalism.BasicNotions
 
 theorem LPprime_cast {W Qq O Kf : Type*} [CommRing W] [Field Qq] [Algebra W Qq] [CommRing O] [Field Kf]
     [Algebra O Kf] {p : ℕ} {ι : Qq →+* Kf} {σ : Qq ≃+* Qq} {w : O} {r t Dd : ℕ} {κ : ℝ} {cStar : ℕ}
@@ -1869,28 +1803,28 @@ theorem linear_programming_input_of_hypotheses (D : D7) (L : SizeData₂ D) (X :
   have hnP : nP D (D.what₂.places.resChar w) = addOrderOf (hP D (D.what₂.places.resChar w)) := _root_.Formalism.MainNotions.G.TopChoiceBounds.period_eq_addOrderOf hc0
   by_cases hp0 : ((D.what₂.places.resChar w : ℕ) : ℝ) < L.sc.p0 D.R.k
   · obtain ⟨h1, h2, h3, h4, hwin, hbnd, h13, hr2, hN1, hrY, hpL, h256, hk3, hkLa, hsz⟩ := hII _ hcand hp0 t0 hgood
-    have hrr : (D.gat u w hg).P.r = rG L.sc := by rw [hr, if_pos hp0]
+    have hrr : (D.gat u w hg).P.r = rG L.sc := by rw [hr, ite_eq_left hp0]
     rw [hrr]
     have htv : tv X K (aL L) (bL L) (D.what₂.places.resChar w) t0 = tIIf K L (D.what₂.places.resChar w) (addOrderOf (hP D (D.what₂.places.resChar w))) (topsPos D (D.what₂.places.resChar w) t0).card := by
-      unfold tv; rw [if_pos hp0, hnP, hNv]
-    have hDp : Dp K L (D.what₂.places.resChar w) = DIIf K L (D.what₂.places.resChar w) (addOrderOf (hP D (D.what₂.places.resChar w))) := by unfold Dp; rw [if_pos hp0, hnP]
+      unfold tv; rw [ite_eq_left hp0, hnP, hNv]
+    have hDp : Dp K L (D.what₂.places.resChar w) = DIIf K L (D.what₂.places.resChar w) (addOrderOf (hP D (D.what₂.places.resChar w))) := by unfold Dp; rw [ite_eq_left hp0, hnP]
     have hkap : kapv X K (aL L) (bL L) (D.what₂.places.resChar w) t0 = kapIIf K L (topsPos D (D.what₂.places.resChar w) t0).card := by
-      unfold kapv kapLoc; rw [if_pos hp0]
+      unfold kapv kapLoc; rw [ite_eq_left hp0]
     rw [htv, hDp, hkap]
     exact h6 (D.what₂.places.resChar w) (addOrderOf (hP D (D.what₂.places.resChar w))) ((D.gat u w hg).P.W v) ((D.gat u w hg).P.Qq v) Os Ks ιs ((D.gat u w hg).P.σ v) js ws hSet
       (topsPos D (D.what₂.places.resChar w) t0) hGood h1 h2 h3 h4 hp0 (wPos D (D.what₂.places.resChar w) t0 (aL L)) (wPos D (D.what₂.places.resChar w) t0 (bL L)) hwin hbnd _ hbase hdom
       h13 hr2 hN1 hrY hpL h256 hk3 hkLa hsz
   · have hp0' : L.sc.p0 D.R.k ≤ ((D.what₂.places.resChar w : ℕ) : ℝ) := le_of_not_gt hp0
     obtain ⟨h2, h3, hHI, hwin⟩ := hI _ hcand hp0' t0 hgood
-    have hrr : (D.gat u w hg).P.r = 1 := by rw [hr, if_neg hp0]
+    have hrr : (D.gat u w hg).P.r = 1 := by rw [hr, ite_eq_right hp0]
     rw [hrr]
     have htv : tv X K (aL L) (bL L) (D.what₂.places.resChar w) t0 =
         tIf K L (D.what₂.places.resChar w) (addOrderOf (hP D (D.what₂.places.resChar w))) (topsPos D (D.what₂.places.resChar w) t0) (wPos D (D.what₂.places.resChar w) t0 (aL L)) (wPos D (D.what₂.places.resChar w) t0 (bL L)) := by
-      unfold tv; rw [if_neg hp0]
-    have hDp : Dp K L (D.what₂.places.resChar w) = DIf K L (D.what₂.places.resChar w) (addOrderOf (hP D (D.what₂.places.resChar w))) := by unfold Dp; rw [if_neg hp0, hnP]
+      unfold tv; rw [ite_eq_right hp0]
+    have hDp : Dp K L (D.what₂.places.resChar w) = DIf K L (D.what₂.places.resChar w) (addOrderOf (hP D (D.what₂.places.resChar w))) := by unfold Dp; rw [ite_eq_right hp0, hnP]
     have hkap : kapv X K (aL L) (bL L) (D.what₂.places.resChar w) t0 =
         X.kapI (D.what₂.places.resChar w) (addOrderOf (hP D (D.what₂.places.resChar w))) (topsPos D (D.what₂.places.resChar w) t0) (wPos D (D.what₂.places.resChar w) t0 (aL L)) (wPos D (D.what₂.places.resChar w) t0 (bL L)) := by
-      unfold kapv kapLoc; rw [if_neg hp0]
+      unfold kapv kapLoc; rw [ite_eq_right hp0]
     rw [htv, hDp, hkap]
     exact h7 (D.what₂.places.resChar w) (addOrderOf (hP D (D.what₂.places.resChar w))) ((D.gat u w hg).P.W v) ((D.gat u w hg).P.Qq v) Os Ks ιs ((D.gat u w hg).P.σ v) js ws hSet
       (topsPos D (D.what₂.places.resChar w) t0) hGood h2 h3 hp0' hcand.2.1 (fun h0 => hcand.2.2.2.2 hp0' (inBand_of_inBand0 hrho h0)) hHI (wPos D (D.what₂.places.resChar w) t0 (aL L))

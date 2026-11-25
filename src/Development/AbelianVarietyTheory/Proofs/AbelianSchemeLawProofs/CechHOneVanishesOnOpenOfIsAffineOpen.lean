@@ -47,7 +47,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
-attribute [local instance] Over.cartesianMonoidalCategory
 noncomputable section
 namespace GlobalTheory.AbLaw.CechOne
 open SecOn
@@ -496,11 +495,11 @@ theorem exactAt_of_isCoboundary
       -restrict M (le_pair D inf_le_right inf_le_left) (comp M D f x {b, a} (Finset.card_pair h.ne))
     else 0
   have hlt : ∀ a b (h : a < b), φ a b = restrict M (le_pair D inf_le_left inf_le_right)
-      (comp M D f x {a, b} (Finset.card_pair h.ne)) := fun a b h => dif_pos h
+      (comp M D f x {a, b} (Finset.card_pair h.ne)) := fun a b h => dite_eq_left h
   have hgt : ∀ a b (h : b < a), φ a b = -restrict M (le_pair D inf_le_right inf_le_left)
       (comp M D f x {b, a} (Finset.card_pair h.ne)) := fun a b h =>
-    (dif_neg h.not_gt).trans (dif_pos h)
-  have h0 : ∀ a, φ a a = 0 := fun a => (dif_neg (lt_irrefl a)).trans (dif_neg (lt_irrefl a))
+    (dite_eq_right h.not_gt).trans (dite_eq_left h)
+  have h0 : ∀ a, φ a a = 0 := fun a => (dite_eq_right (lt_irrefl a)).trans (dite_eq_right (lt_irrefl a))
   obtain ⟨ψ, hψ⟩ := h φ (by
     intro a b d W ha hb hd
     refine add_eq_of_ordered (κ := {i // W ≤ D i})

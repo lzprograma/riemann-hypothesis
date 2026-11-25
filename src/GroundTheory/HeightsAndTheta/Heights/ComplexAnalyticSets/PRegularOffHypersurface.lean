@@ -27,25 +27,17 @@ theorem exists_ringKrullDim_quotient_eq_nat {n : ℕ} (J : Ideal (MvPolynomial (
     refine (ringKrullDim_quotient_le J).trans ?_
     rw [MvPolynomial.ringKrullDim_of_isNoetherianRing_of_finite, ringKrullDim_eq_zero_of_field, Nat.card_eq_fintype_card,
       Fintype.card_fin, zero_add]
-  generalize ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) = x at hge hle
-  induction x using WithBot.recBotCoe with
-  | bot => exact absurd hge (by simp)
-  | coe m =>
-    induction m using ENat.recTopCoe with
-    | top => exact absurd hle (by norm_cast)
-    | coe d => exact ⟨d, rfl⟩
+  obtain ⟨m, hm⟩ := WithBot.ne_bot_iff_exists.mp
+    (ne_bot_of_gt (lt_of_lt_of_le (WithBot.bot_lt_coe 0) hge))
+  have hmn : m ≤ (n : ℕ∞) := by exact_mod_cast (hm ▸ hle)
+  obtain ⟨d, rfl⟩ := ENat.ne_top_iff_exists.mp (lt_of_le_of_lt hmn (ENat.natCast_lt_top n)).ne
+  exact ⟨d, by exact_mod_cast hm.symm⟩
 
 theorem analyticOnNhd_of_differentiableOn_fin {d : ℕ} {σ : Type} [Fintype σ] {U : Set (Fin d → ℂ)}
-    {G : (Fin d → ℂ) → σ → ℂ} (hU : IsOpen U) (hG : DifferentiableOn ℂ G U) : AnalyticOnNhd ℂ G U := by
-  intro y hy
-  refine AnalyticAt.pi fun s => ?_
-  have hs : DifferentiableOn ℂ (fun x => G x s) U :=
-    (ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : σ => ℂ) s).differentiable.comp_differentiableOn hG
-  refine analyticOnNhd_of_continuousOn_of_separately hU hs.continuousOn (fun z hz i => ?_) y hy
-  have h1 : DifferentiableAt ℂ (fun x => G x s) (Function.update z i (z i)) := by
-    rw [Function.update_eq_self]
-    exact hs.differentiableAt (hU.mem_nhds hz)
-  exact h1.comp (z i) (hasFDerivAt_update (𝕜 := ℂ) z (z i)).differentiableAt
+    {G : (Fin d → ℂ) → σ → ℂ} (hU : IsOpen U) (hG : DifferentiableOn ℂ G U) : AnalyticOnNhd ℂ G U :=
+  fun _ hy => AnalyticAt.pi fun s => ReciprocityTheory.AnForm.Osgood.osgood d U (fun x => G x s)
+    hU ((ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : σ => ℂ)
+      s).differentiable.comp_differentiableOn hG) _ hy
 
 theorem RegularOffHypersurface.proof (hG : FrameGraphGeneric.Statement) : RegularOffHypersurface.Statement := by
   intro σ _ I hI

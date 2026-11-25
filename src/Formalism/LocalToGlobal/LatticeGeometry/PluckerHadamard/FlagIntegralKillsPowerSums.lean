@@ -113,12 +113,6 @@ structure ExtensionData (U : ShimU D G jC ng w) where
 
   fdeg : ℝ
 
-section Props
-
-variable (U : ShimU D G jC ng w) (X : ExtensionData U)
-
-end Props
-
 section Assembly
 
 variable (U : ShimU D G jC ng w)

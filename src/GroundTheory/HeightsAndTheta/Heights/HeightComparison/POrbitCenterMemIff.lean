@@ -23,30 +23,10 @@ theorem weightedHomogeneousComponent_X_mul (j : Coord n) (G : MvPolynomial (Coor
       if coordDeg n j ≤ e then X j * weightedHomogeneousComponent (coordDeg n) (e - coordDeg n j) G
       else 0 := by
   classical
-  ext m
-  by_cases hj : j ∈ m.support
-  · have hw : Finsupp.weight (coordDeg n) m =
-        Finsupp.weight (coordDeg n) (m - Finsupp.single j 1) + coordDeg n j := by
-      conv_lhs => rw [← tsub_add_cancel_of_le (Finsupp.single_le_iff.mpr
-        (Nat.one_le_iff_ne_zero.mpr (Finsupp.mem_support_iff.mp hj)))]
-      rw [map_add (f := _), Finsupp.weight_single, one_smul]
-    rw [coeff_weightedHomogeneousComponent, coeff_X_mul', ite_eq_left hj]
-    by_cases h2 : coordDeg n j ≤ e
-    · rw [ite_eq_left h2, coeff_X_mul', ite_eq_left hj, coeff_weightedHomogeneousComponent]
-      by_cases h1 : Finsupp.weight (coordDeg n) m = e
-      · rw [ite_eq_left h1, ite_eq_left (by rw [← h1, hw, add_tsub_cancel_right])]
-      · rw [ite_eq_right h1, ite_eq_right]
-        intro h3
-        exact h1 (by rw [hw, h3, tsub_add_cancel_of_le h2])
-    · rw [ite_eq_right h2, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, ite_eq_right]
-      intro h1
-      apply h2
-      rw [← h1, hw]
-      exact le_add_self
-  · rw [coeff_weightedHomogeneousComponent, coeff_X_mul', ite_eq_right hj, ite_self]
-    by_cases h2 : coordDeg n j ≤ e
-    · rw [ite_eq_left h2, coeff_X_mul', ite_eq_right hj]
-    · rw [ite_eq_right h2, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
+  let _ := MvPolynomial.weightedGradedAlgebra ℤ (coordDeg n)
+  simp_rw [← weightedDecomposition.decompose'_apply]
+  exact DirectSum.coe_decompose_mul_of_left_mem (weightedHomogeneousSubmodule ℤ (coordDeg n)) e
+    (b := G) ((mem_weightedHomogeneousSubmodule _ _ _ _).mpr (isWeightedHomogeneous_X ℤ (coordDeg n) j))
 
 end OrbitCenterMemIff
 

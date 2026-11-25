@@ -80,10 +80,10 @@ theorem exists_monomial {E : Type} [CommRing E] (bs : List (Eˣ × ℕ+)) :
     generalize (s : ℕ) = m at *
     by_cases h1 : a < m
     · have h2 : m - 1 - a < m := by omega
-      simp only [h1, h2, if_true]
+      simp only [h1, h2, ite_true]
       refine ⟨by omega, by omega, trivial, fun b hb => ?_⟩
       by_cases h3 : b < m
-      · simp only [h3, if_true]
+      · simp only [h3, ite_true]
         refine ⟨by simp, by simp, fun _ => by omega, ?_⟩
         have : a + b + 1 = m ↔ b = m - 1 - a := by omega
         simp [this]
@@ -93,7 +93,7 @@ theorem exists_monomial {E : Type} [CommRing E] (bs : List (Eˣ × ℕ+)) :
     · obtain ⟨e1, e2, e3, e4⟩ := h (a - m) (by omega)
       have h2 : ¬ σ (a - m) + m < m := by omega
       have h4 : m ≤ a := by omega
-      simp only [h1, h2, if_false, Nat.add_sub_cancel, e2, e3]
+      simp only [h1, h2, ite_false, Nat.add_sub_cancel, e2, e3]
       refine ⟨by omega, by omega, trivial, fun b hb => ?_⟩
       by_cases h3 : b < m
       · have h5 : ¬ m ≤ b := by omega
@@ -103,7 +103,7 @@ theorem exists_monomial {E : Type} [CommRing E] (bs : List (Eˣ × ℕ+)) :
       · obtain ⟨f1, f2, f3, f4⟩ := e4 (b - m) (by omega)
         have h5 : m ≤ b := by omega
         have h6 : b = σ (a - m) + m ↔ b - m = σ (a - m) := by omega
-        simp only [h3, h4, h5, if_false, h6, f4]
+        simp only [h3, h4, h5, ite_false, h6, f4]
         refine ⟨by simp [f1], fun hab => ?_, fun hab => ?_, by simp⟩
         · have := f2 (by omega); omega
         · have := f3 (by omega); omega

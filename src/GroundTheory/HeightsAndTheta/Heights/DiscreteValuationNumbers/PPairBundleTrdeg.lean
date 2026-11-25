@@ -16,22 +16,36 @@ open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo
 
 noncomputable section
 
-theorem PairBundleTrdeg.proof (hadd : AdjoinTrdegAdd.Statement) (hind : PairConeLinesIndep.Statement)
-    (halg : PairConeAlg.Statement) : PairBundleTrdeg.Statement := by
-  intro O _ _ _ ϖ hϖ Ω _ _ K _ _ ι _ y d hV N hN E _ _ B B' hB M M' a₀ a₀' φ φ' hφ hφ' Φ _ _ _ _ e t ht
-  obtain ⟨l, m', hl, hm', hal⟩ :=
-    halg O ϖ hϖ Ω K ι y d hV N hN E B B' hB M M' a₀ a₀' φ φ' hφ hφ' Φ e t ht
-
+theorem trdeg_pointIdeal_bundle_eq {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
+    {Ω : Type} [Field Ω] [Algebra O Ω] {K : Type} [Fintype K] [DecidableEq K]
+    {ι : K → Type} [∀ k, Fintype (ι k)] {y : (Σ k, ι k) → Ω} {d : ℕ}
+    (hV : IsModelOver (pointIdeal O y) d) {M M' r : ℕ}
+    {Φ : Type} [Field Φ] [Algebra Ω Φ] [Algebra O Φ] [IsScalarTower O Ω Φ]
+    {z : (Σ o, bundleIdx (bundleIdx ι M) M' o) → Φ}
+    (hzV : ∀ q : Σ k, ι k, z ⟨some (some q.1), q.2⟩ = algebraMap Ω Φ (y q))
+    {l : Fin r → Fin M} {m' : Fin M'}
+    (hadd : AdjoinTrdegAdd.Statement)
+    (hind' : AlgebraicIndependent
+      (Algebra.adjoin Ω (Set.range fun k : K => (X (some (some k)) : MvPolynomial (Option (Option K)) Φ)))
+      (Sum.elim (fun i : Fin r => C (z ⟨some none, l i⟩) * X (some none))
+        (fun _ : Unit => (C (z ⟨none, m'⟩) * X none : MvPolynomial (Option (Option K)) Φ))))
+    (hal : ∀ p : Σ o, bundleIdx (bundleIdx ι M) M' o,
+      IsAlgebraic (Algebra.adjoin O (Set.range (fun q : Σ k, ι k =>
+        (C (algebraMap Ω Φ (y q)) * X (some (some q.1)) : MvPolynomial (Option (Option K)) Φ)) ∪
+        Set.range (Sum.elim (fun i : Fin r => C (z ⟨some none, l i⟩) * X (some none))
+          (fun _ : Unit => (C (z ⟨none, m'⟩) * X none : MvPolynomial (Option (Option K)) Φ)))))
+        (C (z p) * X p.1)) :
+    Algebra.trdeg O (MRing (bundleIdx (bundleIdx ι M) M') O ⧸ pointIdeal O z) =
+      Algebra.trdeg O (MRing ι O ⧸ pointIdeal O y) + ((r + 1 : ℕ) : Cardinal) := by
   let gV : (Σ k, ι k) → MvPolynomial (Option (Option K)) Φ :=
     fun q => C (algebraMap Ω Φ (y q)) * X (some (some q.1))
   let gZ : (Σ o, bundleIdx (bundleIdx ι M) M' o) → MvPolynomial (Option (Option K)) Φ :=
-    fun p => C (pairProjCoord y e φ φ' t p) * X p.1
-  let x : Fin N ⊕ Unit → MvPolynomial (Option (Option K)) Φ :=
-    Sum.elim (fun i : Fin N => C (pairProjCoord y e φ φ' t ⟨some none, l i⟩) * X (some none))
-      (fun _ : Unit => C (pairProjCoord y e φ φ' t ⟨none, m'⟩) * X none)
-
+    fun p => C (z p) * X p.1
+  let xs : Fin r ⊕ Unit → MvPolynomial (Option (Option K)) Φ :=
+    Sum.elim (fun i : Fin r => C (z ⟨some none, l i⟩) * X (some none))
+      (fun _ : Unit => C (z ⟨none, m'⟩) * X none)
   have hOΩ : Function.Injective (algebraMap O Ω) := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro a ha
     have hmem : a ∈ (pointIdeal O y).comap (C : O →+* MRing ι O) := by
       rw [Ideal.mem_comap, pointIdeal, RingHom.mem_ker, pointConeMap, aeval_C, MvPolynomial.algebraMap_apply, ha,
@@ -42,15 +56,12 @@ theorem PairBundleTrdeg.proof (hadd : AdjoinTrdegAdd.Statement) (hind : PairCone
     rw [IsScalarTower.algebraMap_eq O Φ (MvPolynomial (Option (Option K)) Φ), IsScalarTower.algebraMap_eq O Ω Φ,
       MvPolynomial.algebraMap_eq]
     exact (C_injective _ _).comp ((algebraMap Ω Φ).injective.comp hOΩ)
-
-  have hZ : Algebra.trdeg O (MRing (bundleIdx (bundleIdx ι M) M') O ⧸ pointIdeal O (pairProjCoord y e φ φ' t)) =
+  have hZ : Algebra.trdeg O (MRing (bundleIdx (bundleIdx ι M) M') O ⧸ pointIdeal O z) =
       Algebra.trdeg O (Algebra.adjoin O (Set.range gZ)) := by
-    have e1 := (Ideal.quotientKerEquivRange (pointConeMap O (pairProjCoord y e φ φ' t))).trdeg_eq
-    have e2 : (pointConeMap O (pairProjCoord y e φ φ' t)).range = Algebra.adjoin O (Set.range gZ) :=
-      aeval_range _
+    have e1 := (Ideal.quotientKerEquivRange (pointConeMap O z)).trdeg_eq
+    have e2 : (pointConeMap O z).range = Algebra.adjoin O (Set.range gZ) := aeval_range _
     rw [e2] at e1
     exact e1
-
   have hw : AlgebraicIndependent Ω (fun k : K => (X (some (some k)) : MvPolynomial (Option (Option K)) Φ)) :=
     ((algebraicIndependent_X (Option (Option K)) Φ).restrictScalars (algebraMap Ω Φ).injective).comp _
       ((Option.some_injective _).comp (Option.some_injective _))
@@ -65,16 +76,13 @@ theorem PairBundleTrdeg.proof (hadd : AdjoinTrdegAdd.Statement) (hind : PairCone
     have e2 := ((pointConeMap O y).range.equivMapOfInjective j hw).trdeg_eq
     rw [← AlgHom.range_comp, hjc, aeval_range] at e2
     exact e1.trans e2
-
   have hVZ : Set.range gV ⊆ Set.range gZ := by
     rintro _ ⟨q, rfl⟩
-    exact ⟨⟨some (some q.1), q.2⟩, rfl⟩
-  have hxZ : Set.range x ⊆ Set.range gZ := by
+    exact ⟨⟨some (some q.1), q.2⟩, by simp [gZ, gV, hzV q]⟩
+  have hxZ : Set.range xs ⊆ Set.range gZ := by
     rintro _ ⟨i | _, rfl⟩
     · exact ⟨⟨some none, l i⟩, rfl⟩
     · exact ⟨⟨none, m'⟩, rfl⟩
-
-  have hind' := hind Ω Φ K N E e (φ ∘ l) hl t ht _ hm'
   have hle : ∀ a ∈ Algebra.adjoin O (Set.range gV),
       a ∈ Algebra.adjoin Ω (Set.range fun k : K => (X (some (some k)) : MvPolynomial (Option (Option K)) Φ)) := by
     intro a ha
@@ -101,14 +109,21 @@ theorem PairBundleTrdeg.proof (hadd : AdjoinTrdegAdd.Statement) (hind : PairCone
       (Algebra.adjoin Ω (Set.range fun k : K => (X (some (some k)) : MvPolynomial (Option (Option K)) Φ)))
       (MvPolynomial (Option (Option K)) Φ) :=
     IsScalarTower.of_algebraMap_eq fun _ => rfl
-  have hxind : AlgebraicIndependent (Algebra.adjoin O (Set.range gV)) x :=
+  have hxind : AlgebraicIndependent (Algebra.adjoin O (Set.range gV)) xs :=
     hind'.restrictScalars (K := Algebra.adjoin Ω (Set.range fun k : K =>
       (X (some (some k)) : MvPolynomial (Option (Option K)) Φ))) fun a b h => Subtype.ext (congrArg Subtype.val h :)
-
-  have key := hadd O (MvPolynomial (Option (Option K)) Φ) hOL (Set.range gV) (Set.range gZ) (Fin N ⊕ Unit) x hxZ
+  have key := hadd O (MvPolynomial (Option (Option K)) Φ) hOL (Set.range gV) (Set.range gZ) (Fin r ⊕ Unit) xs hxZ
     hxind (by rintro _ ⟨p, rfl⟩; exact hal p)
   rw [Set.union_eq_right.mpr hVZ] at key
   rw [hZ, hV', key, Fintype.card_sum, Fintype.card_fin, Fintype.card_unit]
+
+theorem PairBundleTrdeg.proof (hadd : AdjoinTrdegAdd.Statement) (hind : PairConeLinesIndep.Statement)
+    (halg : PairConeAlg.Statement) : PairBundleTrdeg.Statement := by
+  intro O _ _ _ ϖ hϖ Ω _ _ K _ _ ι _ y d hV N hN E _ _ B B' hB M M' a₀ a₀' φ φ' hφ hφ' Φ _ _ _ _ e t ht
+  obtain ⟨l, m', hl, hm', hal⟩ :=
+    halg O ϖ hϖ Ω K ι y d hV N hN E B B' hB M M' a₀ a₀' φ φ' hφ hφ' Φ e t ht
+  exact trdeg_pointIdeal_bundle_eq (z := pairProjCoord y e φ φ' t) hV (fun _ => rfl) hadd
+    (hind Ω Φ K N E e (φ ∘ l) hl t ht _ hm') hal
 
 end
 

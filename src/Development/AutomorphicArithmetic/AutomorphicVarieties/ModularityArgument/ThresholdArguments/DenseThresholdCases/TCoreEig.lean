@@ -59,7 +59,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel IsLocalRing GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V UpperTheory.V.Hi
 open UpperTheory.V.HV (Coef)
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 private theorem eig_cont {Γ R K : Type} [TopologicalSpace Γ] [CommRing R] [NormedField K] (I : Ideal R) (y : R →+* K) (a : ℝ)
     (h1 : a < 1) (h0 : 0 ≤ a) (hy : ∀ N, ∀ x ∈ I ^ N, ‖y x‖ ≤ a ^ N) {f : Γ → R} (hf : Alg.AdicCont I f) :
     Continuous fun g => y (f g) := by

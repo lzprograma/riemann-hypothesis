@@ -58,7 +58,8 @@ theorem frameLieBC_loc {S : Type} [CommRing S] (G : Over (Spec (CommRingCat.of S
   apply pullback.hom_ext
   · rw [Category.assoc, pullback.lift_fst, hu' i, Category.assoc, ← pushR_left, pushR_resP, ← hφ,
       dualMapR_comp, Geo.Tor.spMap_comp, Category.assoc]
-    rfl
+    rw [Over.comp_left, spMap_left]; congr 2; show Spec.map _ = Spec.map _; congr 2
+    ext x <;> simp [dualMapS_fst, dualMapS_snd, dualMapR, TrivSqZeroExt.algebraMap_eq_inl']
   · rw [Category.assoc, pullback.lift_snd, ← Category.assoc, Over.w (u' i), Category.assoc,
       show (resP p (u i)).left ≫ pullback.snd G.hom (fB S (Localization.AtPrime p)) = _ from
         Over.w (resP p (u i))]
@@ -152,7 +153,8 @@ theorem frameLieBCR {S : Type} [CommRing S] (G : Over (Spec (CommRingCat.of S)))
   have e := congrArg (fun q => Over.Hom.left q) (pushR_resP (G := G') p (u' i))
   simp only [pushR_left, Over.comp_left] at e
   rw [← Category.assoc, e, Category.assoc, hu', ← Category.assoc, dualMapR_comp, Geo.Tor.spMap_comp]
-  rfl
+  rw [spMap_left]; congr 2; show Spec.map _ = Spec.map _; congr 2
+  ext x <;> simp [dualMapS_fst, dualMapS_snd, dualMapR, TrivSqZeroExt.algebraMap_eq_inl']
 
 end ReciprocityTheory.ChartRestriction.G.Chart
 

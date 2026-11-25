@@ -55,7 +55,6 @@ open GlobalTheory.Chain (signed)
 open GlobalTheory.Chain.RealIt (LPol locS locT IsPolyIso)
 open MeasureTheory Matrix
 open scoped TensorProduct InnerProductSpace ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.ArchRec
 
 namespace GlobalTheory.ArchRec.PairTensor
@@ -86,20 +85,6 @@ theorem ext_ctr (U : Type) [AddCommGroup U] [Module ℂ U] (z w : R.HK.V ⊗[ℂ
     (h : ∀ v, ctr R U v z = ctr R U v w) : z = w := by
   rw [← sub_eq_zero]
   exact eq_zero_of_ctr R U _ fun v => by rw [map_sub, h, sub_self]
-
-theorem ctr_add (U : Type) [AddCommGroup U] [Module ℂ U] (v w : R.HK.V) (z : R.HK.V ⊗[ℂ] U) :
-    ctr R U (v + w) z = ctr R U v z + ctr R U w z := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a b => simp only [ctr_tmul, map_add (f := _), inner_add_left, add_smul]
-  | add x y hx hy => simp only [map_add (f := _), hx, hy]; abel
-
-theorem ctr_smul (U : Type) [AddCommGroup U] [Module ℂ U] (c : ℂ) (v : R.HK.V)
-    (z : R.HK.V ⊗[ℂ] U) : ctr R U (c • v) z = (starRingEnd ℂ) c • ctr R U v z := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a b => simp only [ctr_tmul, map_smul, inner_smul_left, mul_smul]
-  | add x y hx hy => simp only [map_add (f := _), hx, hy, smul_add]
 
 theorem ctr_act (U : Type) [AddCommGroup U] [Module ℂ U] {X : Mat p q} (hX : X ∈ upq p q)
     (v : R.HK.V) (z : R.HK.V ⊗[ℂ] U) :
@@ -160,22 +145,6 @@ theorem exists_finiteDimensional_kill (ha : IsGK a) (hA : AdmGK R.HK)
       hreal X hX (hK hZ).1, hreal Y hY (hK hZ).2]
   rw [← hR P y hyF]
   exact hy _ (hE' φ heq P hP)
-
-theorem exists_pairing (f : W →ₗ[ℂ] R.HK.V ⊗[ℂ] U)
-    (hf : ∀ Z, f ∘ₗ a Z = TensorProduct.map (R.HK.act Z) LinearMap.id ∘ₗ f) :
-    ∃ B : W →ₗ[ℂ] R.HK.V →ₛₗ[starRingEnd ℂ] U, PInv a R B ∧ ∀ P v, B P v = ctr R U v (f P) := by
-  let B : W →ₗ[ℂ] R.HK.V →ₛₗ[starRingEnd ℂ] U :=
-    { toFun := fun P =>
-        { toFun := fun v => ctr R U v (f P)
-          map_add' := fun v w => ctr_add R U v w _
-          map_smul' := fun c v => ctr_smul R U c v _ }
-      map_add' := fun P Q => by ext v; simp
-      map_smul' := fun c P => by ext v; simp }
-  refine ⟨B, fun Z hZ P v => ?_, fun _ _ => rfl⟩
-  change ctr R U v (f (a Z P)) + ctr R U (R.HK.act Z v) (f P) = 0
-  have := LinearMap.congr_fun (hf Z) P
-  rw [LinearMap.comp_apply, LinearMap.comp_apply] at this
-  rw [this, ctr_act R U hZ, neg_add_cancel]
 
 theorem exists_map (ha : IsGK a) (hA : AdmGK R.HK)
     (B : W →ₗ[ℂ] R.HK.V →ₛₗ[starRingEnd ℂ] U) (hB : PInv a R B) :

@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.HeckeFixedLevelSpaces.SpIntMulVec
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IwMemMul
@@ -9,62 +10,11 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebr
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.OrdBCMapOrd
 public import Mathlib.RingTheory.TensorProduct.IsBaseChangeFree
 import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.UOpSum
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.FnIndep
 import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.UOpMul
 import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.UOpNat
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -512,8 +462,8 @@ private theorem wtRep_inv_mulVec_zero_eq_chi_inv {O Ω : Type} [Field Ω] [CommR
     rw [← map_inv, _root_.mul_inv_rev, map_mul]; rfl
   rw [h1, Units.val_mul, ← Matrix.mulVec_mulVec]
   simp only [Matrix.mulVec, dotProduct]
-  simp only [W.torusAction, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
-  simp only [W.row_N _ (X.I.Nf.inv_mem hx), ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [W.torusAction, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
+  simp only [W.row_N _ (X.I.Nf.inv_mem hx), ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   simp [map_inv]
 
 private theorem ctrl_UF_eq_U_ctrl {O Ω : Type} [Field Ω] [CommRing O] [IsLocalRing O] [Algebra O Ω]
@@ -566,34 +516,8 @@ private theorem UF_maps_clOrd_of_maps_cl {O Ω : Type} [Field Ω] [CommRing O] [
     (W : WtRep X.I O Ω) {m : ℕ} (τ : X.Ub →* GL (Fin m) Ω) (U : Subgroup X.Ub) (e : ℕ) (φ : X.I.T →* Ωˣ)
     (hCl : ∀ a : X.I.P, ∀ F ∈ X.Cl τ W.ξ U e φ, X.UF m W a F ∈ X.Cl τ W.ξ U e φ) (a : X.I.P) :
     ∀ F ∈ X.ClOrd W τ U e φ, X.UF m W a F ∈ X.ClOrd W τ U e φ := by
-  have hN : ∀ F ∈ X.Cl τ W.ξ U e φ, F ∈ fixd (X.rpF Ω (W.d + 1) m) X.I.N := fun F hF => hF.2.1
-  intro F hF
-  induction hF using Submodule.iSup_induction' with
-  | mem μ x hx =>
-    obtain ⟨hx1, hx2⟩ := Submodule.mem_inf.mp hx
-    refine Submodule.mem_iSup_of_mem μ (Submodule.mem_inf.mpr ⟨hCl a x hx1, ?_⟩)
-    rw [Module.End.mem_maxGenEigenspace] at hx2 ⊢
-    obtain ⟨k, hk⟩ := hx2
-    refine ⟨k, ?_⟩
-    have key : ∀ n : ℕ, ∀ y ∈ X.Cl τ W.ξ U e φ,
-        ((X.UF m W ⟨X.I.z, X.I.z_mem⟩ - (μ : Ω) • 1) ^ n) (X.UF m W a y) =
-          X.UF m W a (((X.UF m W ⟨X.I.z, X.I.z_mem⟩ - (μ : Ω) • 1) ^ n) y) := by
-      intro n
-      induction n with
-      | zero => intro y _; simp
-      | succ n ih =>
-        intro y hy
-        rw [pow_succ, Module.End.mul_apply, Module.End.mul_apply]
-        have hy' : (X.UF m W ⟨X.I.z, X.I.z_mem⟩ - (μ : Ω) • 1) y ∈ X.Cl τ W.ξ U e φ := by
-          simp only [LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply]
-          exact Submodule.sub_mem _ (hCl _ y hy) (Submodule.smul_mem _ _ hy)
-        rw [← ih _ hy']
-        congr 1
-        simp only [LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply, map_sub, map_smul]
-        rw [UF_comm_on_N_fixed X W _ _ y (hN y hy)]
-    rw [key k x hx1, hk, map_zero]
-  | zero => simp
-  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
+  intros
+  apply _root_.UpperTheory.V.Hi.Sp.uf_clOrd <;> assumption
 
 private theorem sum_raF_rpF_comm {Ω : Type} [Field Ω] (d : ℕ) {m : ℕ} (τ : X.Ub →* GL (Fin m) Ω)
     (κ : Type) [Fintype κ] (u : κ → X.Ub) (b : Gp) (F : Fin m → X.Fn Ω d) :
@@ -621,34 +545,8 @@ private theorem sum_raF_maps_clOrd_of_maps_fixd {O Ω : Type} [Field Ω] [CommRi
     (κ : Type) [Fintype κ] (u : κ → X.Ub)
     (hS : ∀ F ∈ fixd (X.raF (W.d + 1) τ) U, (∑ q, X.raF (W.d + 1) τ (u q)) F ∈ fixd (X.raF (W.d + 1) τ) U') :
     ∀ F ∈ X.ClOrd W τ U e φ, (∑ q, X.raF (W.d + 1) τ (u q)) F ∈ X.ClOrd W τ U' e φ := by
-  set S := ∑ q, X.raF (W.d + 1) τ (u q) with hSe
-  have hcomm : ∀ b F, S (X.rpF Ω (W.d + 1) m b F) = X.rpF Ω (W.d + 1) m b (S F) :=
-    fun b F => sum_raF_rpF_comm X (W.d + 1) τ κ u b F
-  have hCl : ∀ F ∈ X.Cl τ W.ξ U e φ, S F ∈ X.Cl τ W.ξ U' e φ := by
-    intro F hF
-    simp only [Frame.Cl, Submodule.mem_inf] at hF ⊢
-    obtain ⟨⟨h1, h2⟩, h3⟩ := hF
-    refine ⟨⟨?_, hS F h2⟩, ?_⟩
-    · rw [hSe, LinearMap.sum_apply]
-      exact Submodule.sum_mem _ fun q _ => raF_mem_pi_AF X τ W.ξ (u q) F h1
-    · refine ⟨fun y hy => ?_, fun y hy => ?_, fun t => ?_⟩
-      · rw [← hcomm, h3.1 y hy]
-      · rw [← hcomm, h3.2.1 y hy]
-      · rw [← hcomm, h3.2.2 t, map_smul]
-  have hUF : Commute (X.UF m W ⟨X.I.z, X.I.z_mem⟩) S := by
-    refine LinearMap.ext fun F => ?_
-    simp only [Module.End.mul_apply, Frame.UF, LinearMap.smul_apply, map_smul]
-    congr 1
-    exact (uOpNat Gp X.I Ω _ (X.rpF Ω (W.d + 1) m) Ω _ (X.rpF Ω (W.d + 1) m) S.toAddMonoidHom X.I.z X.I.z_mem F
-      (fun v _ => hcomm _ F)).symm
-  intro F hF
-  induction hF using Submodule.iSup_induction' with
-  | mem μ x hx =>
-    obtain ⟨hx1, hx2⟩ := Submodule.mem_inf.mp hx
-    exact Submodule.mem_iSup_of_mem μ (Submodule.mem_inf.mpr
-      ⟨hCl x hx1, Module.End.mapsTo_maxGenEigenspace_of_comm hUF μ hx2⟩)
-  | zero => simp
-  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
+  intros
+  apply _root_.UpperTheory.V.Hi.Sp.sum_clOrd <;> assumption
 
 theorem absSpec {A O Ω : Type} [CommRing A] [IsCNL A] [CommRing O] [IsDomain O] [IsCNL O] [Field Ω] [IsAlgClosed Ω]
     [Algebra A O] [Algebra O Ω] [Algebra A Ω] [IsScalarTower A O Ω] [IsLocalHom (algebraMap A O)]
@@ -734,7 +632,7 @@ theorem absSpec {A O Ω : Type} [CommRing A] [IsCNL A] [CommRing O] [IsDomain O]
   have hsp : ∀ F f, Good F f → sp f = F := by
     intro F f hG
     have h : ∃ F, Good F f := ⟨F, hG⟩
-    simp only [sp, dif_pos h]
+    simp only [sp, dite_eq_left h]
     exact huniq _ _ _ h.choose_spec hG
   have hspec : ∀ K e, c ≤ e → ∀ f ∈ X.Ord τ θ (U K),
       sp f ∈ X.ClOrd W τ' (U K) e φ' ∧ X.ctrl m W (sp f) = X.mapFn (B := Ω) f := by

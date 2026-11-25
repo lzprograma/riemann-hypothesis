@@ -71,7 +71,6 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.DivisionValues Forma
 open Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField IsDedekindDomain
 open Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowDict Formalism.L2.SG.PoincareInHH.PoincareSetting
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.MiS GlobalTheory.Core.Mi
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.SeeSaw GlobalTheory.Fam Matrix ValuativeRel IsLocalRing GlobalTheory.LocMod
 
 namespace GlobalTheory.MiTop
@@ -94,22 +93,9 @@ variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotio
   {Yd : DivX D} {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc Yd cX} {W : RealPack ex} {u : D.what₂.Word} (f : FamCh W u)
   (B : SBes W.S.X W.Q.instEq u W.Q.Rl.ψ (D.sp.X 0))
 
-def InPlace : Prop := Placed f B ∧ Framed B
-
 variable {f B}
 
 variable (f B)
-
-theorem shift_tOf (a₀ a : GA D (D.sp.X 0)) :
-    (iotaX W.S.X W.Q.instEq).symm (1, W.S.X.xu u) * tOf f B a₀ a =
-      embA B.d B.o (a₀ * a) * (show GA D (D.sp.Y 0) from f.g.b 0) := by
-  unfold tOf
-  rw [mul_assoc, mul_inv_cancel_left]
-
-theorem tOf_eq_iff (a₀ a : GA D (D.sp.X 0)) (t : GA D (D.sp.Y 0)) :
-    tOf f B a₀ a = t ↔ embA B.d B.o (a₀ * a) * (show GA D (D.sp.Y 0) from f.g.b 0) =
-      (iotaX W.S.X W.Q.instEq).symm (1, W.S.X.xu u) * t := by
-  rw [← shift_tOf, mul_right_inj]
 
 end GlobalTheory.MiTop
 
@@ -127,7 +113,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum NumberField Matrix GlobalTheory.MixModel GlobalTheory.MixPer
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 
@@ -155,7 +140,7 @@ theorem first_col {K : Type} [CommRing K] {σ : ℕ} (T S : Matrix (Fin (σ + 1)
   have tri : ∀ j : Fin (σ + 1), ∀ b, j < b → T b j = 0 := fun j => by
     induction j using Fin.reverseInduction with
     | last => exact fun b hb => absurd (Fin.le_last b) (not_le.2 hb)
-    | cast j ih => exact fun b hb => by rw [key j.castSucc j.succ rfl ih b hb.le, if_neg hb.ne']
+    | cast j ih => exact fun b hb => by rw [key j.castSucc j.succ rfl ih b hb.le, ite_eq_right hb.ne']
   have triS : S.BlockTriangular id := by
     letI := invertibleOfLeftInverse T S h
     rw [← Matrix.inv_eq_left_inv h]
@@ -165,9 +150,9 @@ theorem first_col {K : Type} [CommRing K] {σ : ℕ} (T S : Matrix (Fin (σ + 1)
     | last => exact hl
     | cast j ih =>
       have h1 := hs j.castSucc j.succ rfl
-      rw [Finset.sum_eq_single j.castSucc, Finset.sum_eq_single j.succ, if_pos (show j.succ.1 = j.castSucc.1 + 1 from rfl)] at h1
-      · rw [key j.castSucc j.succ rfl (tri _) _ le_rfl, if_pos rfl, h1, ih, one_mul]
-      · exact fun b _ hb => if_neg fun e => hb (Fin.ext e)
+      rw [Finset.sum_eq_single j.castSucc, Finset.sum_eq_single j.succ, ite_eq_left (show j.succ.1 = j.castSucc.1 + 1 from rfl)] at h1
+      · rw [key j.castSucc j.succ rfl (tri _) _ le_rfl, ite_eq_left rfl, h1, ih, one_mul]
+      · exact fun b _ hb => ite_eq_right fun e => hb (Fin.ext e)
       · exact fun h => absurd (Finset.mem_univ _) h
       · intro a _ ha
         refine Finset.sum_eq_zero fun b _ => ?_
@@ -267,7 +252,7 @@ theorem first_eq {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) {�
     rw [dotProduct, Finset.sum_eq_single (Fin.last σ)]
     · simp [ell]
     · intro b _ hb
-      rw [ell, if_neg fun e => hb (Fin.ext (by simpa using e)), zero_mul]
+      rw [ell, ite_eq_right fun e => hb (Fin.ext (by simpa using e)), zero_mul]
     · exact fun h => absurd (Finset.mem_univ _) h
   have hA : ∀ (j j' : Fin (σ + 1)) (t : AE D), j'.1 = j.1 + 1 → ∃ u ∈ UX D (σ + 1), u.1 = 1 + Matrix.single j j' t ∧
       blockX d (d'.levi u) = 1 + Matrix.of fun a b => t * incA D (T a j * S' j' b) := fun j j' t e => by
@@ -286,7 +271,7 @@ theorem first_eq {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) {�
     · exact fun h => absurd (Finset.mem_univ _) h
   have H := first_col T S' hST ?_ ?_ ?_
   · rw [e1, Matrix.mul_apply]
-    simp only [H, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [H, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   · refine eq_of_psiE hne fun t => ?_
     obtain ⟨b, hb⟩ := exists_b hz' (Fin.last σ) t
     have h1 := hc _ ((hN _).2 (d'.nB_mem_NFlag b))
@@ -322,8 +307,8 @@ theorem first_eq {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) {�
         · rw [Matrix.add_apply, Matrix.one_apply_ne (by rintro rfl; omega), zero_add]
         · rfl
     have h5 : upSum (Matrix.single j j' t : Mx D (σ + 1) (σ + 1)) = t := by
-      rw [upSum, Finset.sum_eq_single j, Finset.sum_eq_single j', if_pos e, Matrix.single_apply_same]
-      · exact fun b _ hb => if_neg fun e' => hb (Fin.ext (e'.trans e.symm))
+      rw [upSum, Finset.sum_eq_single j, Finset.sum_eq_single j', ite_eq_left e, Matrix.single_apply_same]
+      · exact fun b _ hb => ite_eq_right fun e' => hb (Fin.ext (e'.trans e.symm))
       · exact fun h => absurd (Finset.mem_univ _) h
       · exact fun a _ ha => Finset.sum_eq_zero fun b _ => by
           rw [Matrix.single_apply_of_row_ne ha.symm, ite_self]
@@ -359,7 +344,6 @@ section Loc
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.FinPl GlobalTheory.FinPlLoc NumberField GlobalTheory.AdelicU
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem int_of_loc {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (y : Af F ⊗[F] E)
     (h : ∀ w, Algebra.TensorProduct.map (evalV F w) (AlgHom.id F E) y ∈ intLoc F E w) :
@@ -436,7 +420,6 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.DivisionValues Forma
 open Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField IsDedekindDomain
 open Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowDict Formalism.L2.SG.PoincareInHH.PoincareSetting
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.MiS GlobalTheory.Core.Mi
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.MiTop GlobalTheory.SeeSaw GlobalTheory.Fam ValuativeRel IsLocalRing GlobalTheory.FinPl
 open Matrix GlobalTheory.GoodPos
 
@@ -474,9 +457,6 @@ theorem first_vec (F₀ : Formalism.L2.Forms.Forms0 D u) (tr : Formalism.L2.SG.C
   · exact ⟨(-1) ^ D.R.rS, neg_one_pow_eq_or _ _, fun k => by rw [h1, he, hr, Nat.sub_zero, neg_pow]; ring⟩
 
 end Word
-
-variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D} {Kc : Formalism.MainNotions.G.Consts}
-  {Yd : DivX D} {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc Yd cX}
 
 end GlobalTheory.LineIdeal
 

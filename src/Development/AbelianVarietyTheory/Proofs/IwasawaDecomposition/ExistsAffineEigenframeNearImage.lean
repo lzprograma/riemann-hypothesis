@@ -47,8 +47,6 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits NumberField
@@ -93,7 +91,7 @@ theorem block_basis (hs : Splits χ) {m : ι → ℕ} (u : (Σ τ, Fin (m τ)) �
   obtain ⟨a, ha, -⟩ := hb w
   have e := (hs R M ρ).2 (fun τ' => ∑ i, a ⟨τ', i⟩ • u ⟨τ', i⟩) (Pi.single τ w)
     (fun τ' => eig_comb (fun i => hu ⟨τ', i⟩) _) (eig_single hw)
-    (by rw [Finset.sum_pi_single', if_pos (Finset.mem_univ _), ← ha, Fintype.sum_sigma])
+    (by rw [Finset.sum_pi_single', ite_eq_left (Finset.mem_univ _), ← ha, Fintype.sum_sigma])
   have e' := congrFun e τ
   rw [Pi.single_eq_same] at e'
   refine ⟨_, e', fun b hb' => ?_⟩
@@ -121,20 +119,9 @@ variable {S N : Type} [CommRing S] [Algebra K S] [AddCommGroup N] [Module S N] {
 
 end Alg
 
-section Lift
-
-variable {K O ι : Type} [Field K] [CommRing O] [Fintype ι] {χ : ι → O →+* K}
-  {R M : Type} [CommRing R] [Algebra K R] [AddCommGroup M] [Module R M] {ρ : O →+* Module.End R M}
-  {k N : Type} [Field k] [Algebra K k] [AddCommGroup N] [Module k N] {ρ' : O →+* Module.End k N}
-  {φ : R →+* k} (f : M →ₛₗ[φ] N)
-
-end Lift
-
 section Geo
 
 open GlobalTheory.FrameTangent MonObj
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {X : Scheme.{0}}
   {t : SAB H X} {R S : Type} [CommRing R] [CommRing S] {x : Sp R ⟶ X} {x' : Sp S ⟶ X}

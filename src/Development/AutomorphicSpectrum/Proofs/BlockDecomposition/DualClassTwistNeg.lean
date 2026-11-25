@@ -4,44 +4,7 @@ public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.
 public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmoothContragredientIrreducibleAndReflexive
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitarisableOfSquareIntegrable
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -133,56 +96,8 @@ theorem nonempty_equiv_contra_twist (hA : GlobalTheory.Published.IrreducibleAdmi
              simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, LinearEquiv.coe_ofEq_apply, htw,
                LinearMap.smul_apply, contra_apply, htw2, map_smul, smul_eq_mul, hinv] }⟩
 
-private theorem comp_intertwiningMap_mem_smoothPart_dual {G V W : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-    [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
-    {ρ : Representation ℂ G V} {σ : Representation ℂ G W} (f : ρ.IntertwiningMap σ)
-    (l : Module.Dual ℂ W) (hl : l ∈ smoothPart σ.dual) : l ∘ₗ f.toLinearMap ∈ smoothPart ρ.dual := by
-  apply mem_smoothPart_of_nhds
-  refine Filter.mem_of_superset (IsOpen.mem_nhds hl (by
-    show σ.dual 1 l = l
-    rw [map_one]
-    rfl)) ?_
-  intro g hg
-  have h : σ.dual g l = l := hg
-  show ρ.dual g (l ∘ₗ f.toLinearMap) = l ∘ₗ f.toLinearMap
-  refine LinearMap.ext fun v => ?_
-  calc (ρ.dual g (l ∘ₗ f.toLinearMap)) v = l (f.toLinearMap (ρ g⁻¹ v)) := rfl
-    _ = l (σ g⁻¹ (f v)) := by
-      rw [Representation.IntertwiningMap.toLinearMap_apply, Representation.IntertwiningMap.isIntertwining]
-    _ = σ.dual g l (f v) := rfl
-    _ = (l ∘ₗ f.toLinearMap) v := by
-      rw [h, LinearMap.comp_apply, Representation.IntertwiningMap.toLinearMap_apply]
-
-private theorem nonempty_contra_equiv_of_equiv {G V W : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-    [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
-    {ρ : Representation ℂ G V} {σ : Representation ℂ G W} (e : ρ.Equiv σ) :
-    Nonempty ((contra σ).Equiv (contra ρ)) := by
-  refine ⟨{ toFun := fun l => ⟨l.1 ∘ₗ e.toIntertwiningMap.toLinearMap,
-              comp_intertwiningMap_mem_smoothPart_dual e.toIntertwiningMap l.1 l.2⟩
-            map_add' := fun _ _ => rfl
-            map_smul' := fun _ _ => rfl
-            invFun := fun l => ⟨l.1 ∘ₗ e.symm.toIntertwiningMap.toLinearMap,
-              comp_intertwiningMap_mem_smoothPart_dual e.symm.toIntertwiningMap l.1 l.2⟩
-            left_inv := fun l => Subtype.ext (LinearMap.ext fun w => by
-              show l.1 (e.toIntertwiningMap.toLinearMap (e.symm.toIntertwiningMap.toLinearMap w)) = l.1 w
-              simp only [Representation.IntertwiningMap.toLinearMap_apply,
-                Representation.Equiv.coe_toIntertwiningMap, Representation.Equiv.apply_symm_apply])
-            right_inv := fun l => Subtype.ext (LinearMap.ext fun v => by
-              show l.1 (e.symm.toIntertwiningMap.toLinearMap (e.toIntertwiningMap.toLinearMap v)) = l.1 v
-              simp only [Representation.IntertwiningMap.toLinearMap_apply,
-                Representation.Equiv.coe_toIntertwiningMap, Representation.Equiv.symm_apply_apply])
-            isIntertwining' := fun g => by
-              apply LinearMap.ext
-              intro l
-              apply Subtype.ext
-              apply LinearMap.ext
-              intro v
-              simp only [LinearMap.comp_apply, LinearMap.coe_mk, AddHom.coe_mk, contra_apply,
-                Representation.IntertwiningMap.toLinearMap_apply,
-                Representation.IntertwiningMap.isIntertwining] }⟩
-
 theorem dualCl_nu : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (x : IrrGL (k := k)) (s : ℂ), dualCl (x.nu s) = (dualCl x).nu (-s) := by
+    (_ : GlobalTheory.Published.IrreducibleAdmissibleGL) (x : IrrGL (k := k)) (s : ℂ), dualCl (x.nu s) = (dualCl x).nu (-s) := by
   intro k _ _ _ _ hA x s
   have hs' : IsSmoothChar (absPow k s) := isSmoothChar_of_isUnram (isUnram_absPow k s)
   have hn' : IsSmoothChar (absPow k (-s)) := isSmoothChar_of_isUnram (isUnram_absPow k (-s))
@@ -192,7 +107,7 @@ theorem dualCl_nu : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace 
   have hψn : IsSmoothChar (detChar (Fin x.fst) (absPow k (-s))) := hn'.detChar
   obtain ⟨e1⟩ : Nonempty ((x.nu s).rep.Equiv (twist x.rep (detChar (Fin x.fst) (absPow k s)))) :=
     IrrRep.nonempty_equiv_rep (irrTwist x.snd.rep (detChar (Fin x.fst) (absPow k s)) hψ)
-  obtain ⟨e2⟩ := nonempty_contra_equiv_of_equiv e1
+  let e2 := GlobalTheory.ContraRefl.contraEquiv e1
   obtain ⟨e3⟩ := nonempty_equiv_contra_twist hA x.rep x.2.rep.smooth x.2.rep.irr hs' hn' hmul
   have hc := isIrreducible_contra hA _ x.2.rep.smooth x.2.rep.irr
   obtain ⟨e4⟩ := IrrRep.nonempty_equiv_rep

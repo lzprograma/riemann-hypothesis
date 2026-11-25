@@ -97,7 +97,7 @@ theorem exists_orth_proj : ∀ (C : Type) [Field C] [CharZero C] (V : VF C) (O :
         rw [MvPowerSeries.coeff_X]
         by_cases h : p = q
         · simp [h]
-        · rw [if_neg, if_neg h]
+        · rw [ite_eq_right, ite_eq_right h]
           intro h'
           exact h (Finsupp.single_left_injective one_ne_zero h')
       have hX2 : ∀ (p q : Fin 2 × Fin dd), MvPowerSeries.coeff (Finsupp.single p 1)
@@ -106,7 +106,7 @@ theorem exists_orth_proj : ∀ (C : Type) [Field C] [CharZero C] (V : VF C) (O :
         rw [MvPowerSeries.coeff_X]
         by_cases h : p = q
         · simp [h]
-        · rw [if_neg, if_neg h]
+        · rw [ite_eq_right, ite_eq_right h]
           intro h'
           exact h (Finsupp.single_left_injective one_ne_zero h')
 

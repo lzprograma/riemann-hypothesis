@@ -113,7 +113,7 @@ theorem exists_pow_of_mem_cellSec (y : (Σ k, ι k) → Ω) (k₀ : K) {N : ℕ}
     · rw [Function.update_of_ne hk, Finset.mem_singleton] at hi
       subst hi; exact hc k
   unfold cellSec at hz
-  rw [if_pos hmeet] at hz
+  rw [ite_eq_left hmeet] at hz
   set u := ratioPt y c with hu
   set xJ := ∏ j ∈ J.1, u ⟨k₀, e.symm j⟩ with hxJdef
   have hxJ : xJ ∈ chartRingOver S y c :=

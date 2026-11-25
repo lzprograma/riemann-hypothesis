@@ -40,12 +40,6 @@ theorem continuous_cycCharacter : Continuous cycCharacter := by
   rw [hq.continuous_iff]
   exact continuous_character.congr fun σ ↦ (cycCharacter_cycRestrict σ).symm
 
-def cycCharacterHomeomorph : Gal(maxCyclotomic/ℚ) ≃ₜ* ℤ̂ˣ where
-  toMulEquiv := cycCharacter
-  continuous_toFun := continuous_cycCharacter
-  continuous_invFun :=
-    (continuous_cycCharacter.homeoOfEquivCompactToT2 (f := cycCharacter.toEquiv)).symm.continuous
-
 def unitsPadicHomeomorph : (Π q : Nat.Primes, ℤ_[q])ˣ ≃ₜ* ℤ̂ˣ :=
   unitsContinuousMulEquiv padicEquiv.symm.toMulEquiv continuous_ofPadics continuous_toPadics
 

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermOverRelationUniqueness
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramesCommonStabiliserEqPairingMatrixStabiliser
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetFrameClassProperties
@@ -70,18 +71,7 @@ def UpU (s : Matrix (Fin n) (Fin n) E) : Prop := (∀ i j, j < i → s i j = 0) 
 def UnitIn (O : Subring E) (x : E) : Prop := x ∈ O ∧ ∃ y ∈ O, x * y = 1
 
 theorem UpU.mul {s t : Matrix (Fin n) (Fin n) E} (hs : UpU s) (ht : UpU t) : UpU (s * t) := by
-  refine ⟨fun i j h => ?_, fun i => ?_⟩
-  · rw [Matrix.mul_apply]
-    refine Finset.sum_eq_zero fun c _ => ?_
-    rcases lt_or_ge c i with h1 | h1
-    · rw [hs.1 i c h1, zero_mul]
-    · rw [ht.1 c j (lt_of_lt_of_le h h1), mul_zero]
-  · rw [Matrix.mul_apply, Finset.sum_eq_single i, hs.2, ht.2, one_mul]
-    · intro c _ hc
-      rcases lt_or_gt_of_ne hc with h1 | h1
-      · rw [hs.1 i c h1, zero_mul]
-      · rw [ht.1 c i h1, mul_zero]
-    · simp
+  apply _root_.GlobalTheory.HL.PairingClass.UT.mul <;> assumption
 
 theorem UpU.det {s : Matrix (Fin n) (Fin n) E} (hs : UpU s) : s.det = 1 := by
   rw [Matrix.det_of_upperTriangular (M := s) (fun i j h => hs.1 i j h)]

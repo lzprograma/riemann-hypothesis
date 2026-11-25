@@ -57,7 +57,6 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doublin
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.IndefiniteRowSideFullHecke.SphericalVolumeLift (RealMat IsFockVec)
 open GlobalTheory.IndefiniteRowSideFullHecke.SphericalZero (swSec sZero)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 namespace GlobalTheory.StdUnn
@@ -86,7 +85,7 @@ theorem exists_unique_of_comp_finPart : ∀ (D : D7) (θ : InfFam D), IsInfFam �
   · set_option synthInstance.maxHeartbeats 100000 in
       rw [hC, map_add (f := _), map_sum, ← hC]
     simp_rw [← hC, (hL _ _).2.2 1 τ]
-    rw [Finset.sum_eq_single τ (fun b _ hb => if_neg (Ne.symm hb)) (by simp), if_pos rfl, Complex.ofReal_one, one_smul]
+    rw [Finset.sum_eq_single τ (fun b _ hb => ite_eq_right (Ne.symm hb)) (by simp), ite_eq_left rfl, Complex.ofReal_one, one_smul]
     abel
   · set_option synthInstance.maxHeartbeats 100000 in
       rw [hP, hP, map_add (f := _), map_sum]
@@ -98,7 +97,7 @@ theorem exists_unique_of_comp_finPart : ∀ (D : D7) (θ : InfFam D), IsInfFam �
 
       rw [hy1, hC, map_add (f := _), map_sum, ← hC]
       simp_rw [← hC, (hL _ _).2.2 1 τ]
-      rw [Finset.sum_eq_single τ (fun b _ hb => if_neg (Ne.symm hb)) (by simp), if_pos rfl, Complex.ofReal_one, one_smul]
+      rw [Finset.sum_eq_single τ (fun b _ hb => ite_eq_right (Ne.symm hb)) (by simp), ite_eq_left rfl, Complex.ofReal_one, one_smul]
       abel
     · set_option synthInstance.maxHeartbeats 100000 in
         rw [hy2, hP, hP, map_add (f := _), map_sum]

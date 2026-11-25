@@ -33,12 +33,12 @@ theorem coarse_eq_zero {a : ℕ} {bl : List ℕ} {i : ℕ} : coarse a bl i = 0 �
 
 theorem fine_lt_right {a : ℕ} {bl : List ℕ} {i l : ℕ} (hi : i < a) : fine a bl l < fine a bl i ↔ l < i := by
   unfold fine
-  rw [if_pos hi]
+  rw [ite_eq_left hi]
   split_ifs <;> omega
 
 theorem fine_lt_left {a : ℕ} {bl : List ℕ} {j l : ℕ} (hj : j < a) : fine a bl j < fine a bl l ↔ j < l := by
   unfold fine
-  rw [if_pos hj]
+  rw [ite_eq_left hj]
   split_ifs <;> omega
 
 theorem fine_lt_of_coarse_lt {a : ℕ} {bl : List ℕ} {i j : ℕ} (h : coarse a bl j < coarse a bl i) :
@@ -52,7 +52,7 @@ theorem fine_lt_of_coarse_lt {a : ℕ} {bl : List ℕ} {i j : ℕ} (h : coarse a
   · rw [fine_lt_left hj]; omega
   · rw [coarse_of_le (Nat.not_lt.mp hj)] at h
     unfold fine
-    rw [if_neg hj, if_neg (Nat.not_lt.mpr hi)]
+    rw [ite_eq_right hj, ite_eq_right (Nat.not_lt.mpr hi)]
     omega
 
 theorem blkIdx_replicate {t : ℕ} (ht : 0 < t) (j i : ℕ) (h : i < j * t) : blkIdx (List.replicate j t) i = i / t := by
@@ -166,7 +166,7 @@ theorem mem_uniUT {a : ℕ} {bl : List ℕ} {M : GL (Fin n) κ} :
       · rw [coarse_of_le (Nat.not_lt.mp hj)]
         have : fine a bl j.val < fine a bl i.val := hij
         unfold fine at this
-        rw [if_neg hi, if_neg hj] at this
+        rw [ite_eq_right hi, ite_eq_right hj] at this
         omega
 
 theorem uniUT_le_blockUT (n : ℕ) (κ : Type) [CommRing κ] (a : ℕ) (bl : List ℕ) : uniUT n κ a bl ≤ blockUT n κ a bl :=
@@ -238,13 +238,13 @@ def diagMat (r n : ℕ) (g : Matrix (Fin r) (Fin r) κ) : Matrix (Fin n) (Fin n)
   fun i j => if h : i.val < r ∧ j.val < r then g ⟨i.val, h.1⟩ ⟨j.val, h.2⟩ else (1 : Matrix (Fin n) (Fin n) κ) i j
 
 theorem diagMat_of_lt {r : ℕ} (g : Matrix (Fin r) (Fin r) κ) {i j : Fin n} (hi : i.val < r) (hj : j.val < r) :
-    diagMat r n g i j = g ⟨i.val, hi⟩ ⟨j.val, hj⟩ := dif_pos ⟨hi, hj⟩
+    diagMat r n g i j = g ⟨i.val, hi⟩ ⟨j.val, hj⟩ := dite_eq_left ⟨hi, hj⟩
 
 theorem diagMat_of_not_left {r : ℕ} (g : Matrix (Fin r) (Fin r) κ) {i : Fin n} (j : Fin n) (hi : ¬ i.val < r) :
-    diagMat r n g i j = (1 : Matrix (Fin n) (Fin n) κ) i j := dif_neg fun h => hi h.1
+    diagMat r n g i j = (1 : Matrix (Fin n) (Fin n) κ) i j := dite_eq_right fun h => hi h.1
 
 theorem diagMat_of_not_right {r : ℕ} (g : Matrix (Fin r) (Fin r) κ) (i : Fin n) {j : Fin n} (hj : ¬ j.val < r) :
-    diagMat r n g i j = (1 : Matrix (Fin n) (Fin n) κ) i j := dif_neg fun h => hj h.2
+    diagMat r n g i j = (1 : Matrix (Fin n) (Fin n) κ) i j := dite_eq_right fun h => hj h.2
 
 theorem diagMat_one (r : ℕ) : diagMat r n (1 : Matrix (Fin r) (Fin r) κ) = 1 := by
   ext i j

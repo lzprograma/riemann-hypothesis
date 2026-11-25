@@ -15,8 +15,6 @@ open scoped TensorProduct InnerProductSpace
 
 namespace Formalism.IndefR.RecTie
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Gen
 
 variable {X : Type*} [NormedAddCommGroup X] [InnerProductSpace ℂ X] {N : Type*} [AddCommGroup N] [Module ℂ N]

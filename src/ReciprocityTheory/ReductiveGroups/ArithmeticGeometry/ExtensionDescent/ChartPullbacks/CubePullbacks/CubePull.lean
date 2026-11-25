@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleIdentityIso
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegProd
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.SiegelPullbackTransfer.ExistsGenTransfer
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.GeneratorPullback.PullAlong
@@ -11,6 +12,7 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDesc
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.CubePullbacks.SubAddEqZeroOfEqAdd
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.SiegelPullbackTransfer.AdelicGL2ExtOfLocalComponents
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBTransport
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.CubePullbacks.Transfer, ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.CubePullbacks.CubePull
@@ -44,25 +46,9 @@ theorem prod_sameSum {M : Type} [CommGroup M] {Y X : Scheme.{0}} {K K' : Type} [
     [Fintype K'] (B : (Y ⟶ X) → M) (ψ : K → (Y ⟶ X)) (ψ' : K' → (Y ⟶ X)) (ε : K → ℤ)
     (ε' : K' → ℤ) (hS : LB.SameSum ψ ε ψ' ε') :
     ∏ k, B (ψ k) ^ ε k = ∏ k', B (ψ' k') ^ ε' k' := by
-  classical
-  have key : ∀ {L : Type} [Fintype L] (g : L → (Y ⟶ X)) (e : L → ℤ) (S : Finset (Y ⟶ X)),
-      (∀ k, g k ∈ S) → ∏ k, B (g k) ^ e k = ∏ φ ∈ S, B φ ^ (∑ k, if g k = φ then e k else 0) := by
-    intro L _ g e S hS
-    rw [← Finset.prod_fiberwise_of_maps_to (g := g) (t := S) (fun k _ => hS k)]
-    refine Finset.prod_congr rfl (fun φ _ => ?_)
-    rw [zpow_sum', Finset.prod_filter]
-    refine Finset.prod_congr rfl (fun k _ => ?_)
-    split_ifs with hk
-    · rw [hk]
-    · simp
-  rw [key ψ ε (Finset.univ.image ψ ∪ Finset.univ.image ψ')
-      (fun k => Finset.mem_union_left _ (Finset.mem_image_of_mem _ (Finset.mem_univ _))),
-    key ψ' ε' (Finset.univ.image ψ ∪ Finset.univ.image ψ')
-      (fun k => Finset.mem_union_right _ (Finset.mem_image_of_mem _ (Finset.mem_univ _)))]
-  refine Finset.prod_congr rfl (fun φ _ => ?_)
-  congr 1
   first
-  | exact hS φ
+    | exact _root_.ReciprocityTheory.ChartRestriction.G.DVR.prod_zpow_of_sameSum
+    | apply _root_.ReciprocityTheory.ChartRestriction.G.DVR.prod_zpow_of_sameSum <;> first | assumption | rfl | infer_instance
 
 
 open ReciprocityTheory.ChartRestriction.G.Pdiv.PullbackComparison (gU unit_ext gU_res gU_pullU gU_pullU_congr base_eq) in
@@ -214,22 +200,7 @@ variable {X : Scheme.{0}}
 def idIsoL (L : LB X) : LB.Iso L L := ⟨fun p => L.g p.1 p.2⟩
 
 theorem idIsoL_isGen {L : LB X} (hL : L.IsLB) : (idIsoL L).IsGen := by
-  rintro ⟨p₁, p₂⟩ ⟨q₁, q₂⟩
-  apply unit_ext
-  intro x hx
-  have h11 : x ∈ L.U p₁ := hx.1.1
-  have h12 : x ∈ L.U p₂ := hx.1.2
-  have h21 : x ∈ L.U q₁ := hx.2.1
-  have h22 : x ∈ L.U q₂ := hx.2.2
-  rw [map_mul, gU_res, gU_res]
-  erw [Transport.gU_div L L (p₁, p₂) (q₁, q₂) x hx.1 hx.2]
-  have c1 := Transport.gU_cocycle hL x h11 h21 h22
-  have c2 := Transport.gU_cocycle hL x h11 h12 h22
-  show gU x (⟨h11, h12⟩ : x ∈ L.U p₁ ⊓ L.U p₂) (L.g p₁ p₂) =
-    gU x (⟨h11, h21⟩ : x ∈ L.U p₁ ⊓ L.U q₁) (L.g p₁ q₁) *
-      (gU x (⟨h12, h22⟩ : x ∈ L.U p₂ ⊓ L.U q₂) (L.g p₂ q₂))⁻¹ *
-      gU x (⟨h21, h22⟩ : x ∈ L.U q₁ ⊓ L.U q₂) (L.g q₁ q₂)
-  rw [eq_mul_inv_of_mul_eq c2, ← c1, mul_right_comm]
+  apply _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.idIso_isGen <;> assumption
 
 end IdIso
 

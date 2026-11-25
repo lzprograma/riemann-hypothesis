@@ -105,7 +105,7 @@ theorem detSub_isFractional {m : ℕ} (L : MLat K m) (hM : L.M.FG) : IsFractiona
 
 theorem detIdeal_coe {m : ℕ} (L : MLat K m) (h : IsFractional (𝓞 K)⁰ L.detSub) :
     (L.detIdeal : Submodule (𝓞 K) K) = L.detSub := by
-  have e : L.detIdeal = ⟨L.detSub, h⟩ := dif_pos h
+  have e : L.detIdeal = ⟨L.detSub, h⟩ := dite_eq_left h
   rw [e]
   rfl
 
@@ -127,11 +127,6 @@ theorem exists_det_ne {m : ℕ} (M : Submodule (𝓞 K) (Fin m → K))
 
 end A2
 
-
-namespace A2
-variable {K : Type} [Field K] [NumberField K]
-
-end A2
 
 
 namespace A2
@@ -250,12 +245,6 @@ theorem hadamardInequality : HadamardPD := by
   calc (∏ i, ev i) * ∏ i, (A i i).re ≤ 1 * ∏ i, (A i i).re :=
         mul_le_mul_of_nonneg_right hprod (Finset.prod_nonneg fun i _ => (hdpos i).le)
     _ = _ := one_mul _
-
-namespace A2
-variable {K : Type} [Field K] [NumberField K]
-open scoped Pointwise
-
-end A2
 
 
 end Formalism.L2.LamCM

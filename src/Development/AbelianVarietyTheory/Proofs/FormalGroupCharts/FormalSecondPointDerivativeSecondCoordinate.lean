@@ -53,8 +53,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB ReciprocityTheory.ChartRestriction.G.TB.WickVanishing
@@ -159,7 +157,7 @@ theorem formalSecondPointDerivative_second_coordinate (v : Fin d → k) (i : Fin
   rw [Finset.sum_eq_single i]
   · simp
   · intro b _ hb
-    rw [if_neg (Ne.symm hb), gt_ev_zero _ hX0, mul_zero]
+    rw [ite_eq_right (Ne.symm hb), gt_ev_zero _ hX0, mul_zero]
   · simp
 
 theorem formalSecondPointDerivative_subst_first_point (v : Fin d → k) (f : PS k 1 d) : dy v (ev (n := 2) ![pt k d 0] f) = 0 := by
@@ -258,7 +256,7 @@ theorem sum_pt_self {m n : ℕ} (V : Fin m → Pt k n d) (hV : ∀ j, GP (V j)) 
   rw [Finset.sum_eq_single i]
   · simp [pderiv_pt_self]
   · intro b _ hb
-    rw [pderiv_pt_self, if_neg hb, gt_ev_zero _ hV, mul_zero]
+    rw [pderiv_pt_self, ite_eq_right hb, gt_ev_zero _ hV, mul_zero]
   · simp
 
 theorem dz_right (g : PS k 2 d) (a : Pt k 2 d) (ha : GP a) (i : Fin d) :

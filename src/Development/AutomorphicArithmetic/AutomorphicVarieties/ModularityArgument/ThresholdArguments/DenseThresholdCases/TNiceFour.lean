@@ -1,5 +1,7 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.ProjectiveLineFlags.LevEps
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.NiceOf
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicPointGalois
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.MonomialRepresentations.RegCosetFour
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
@@ -58,34 +60,7 @@ section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing Polynomial Matrix UpperTheory.V UpperTheory.V.HV UpperTheory.V.Alg GlobalTheory.GalOfCusp
 private theorem exists_place_above_prime_alt (K : Type) [Field K] [NumberField K] (l : ℕ) [hl : Fact l.Prime] :
     ∃ v : HeightOneSpectrum (𝓞 K), ((l : ℕ) : 𝓞 K) ∈ v.asIdeal := by
-  have hp : Prime (l : ℤ) := Nat.prime_iff_prime_int.1 hl.out
-  haveI : (Ideal.span {(l : ℤ)}).IsPrime := (Ideal.span_singleton_prime hp.ne_zero).2 hp
-  obtain ⟨Q, hQ, hc⟩ := Ideal.exists_ideal_over_prime_of_isIntegral_of_isDomain (S := 𝓞 K) (Ideal.span {(l : ℤ)})
-    (by rw [(RingHom.injective_iff_ker_eq_bot (algebraMap ℤ (𝓞 K))).1 (RingHom.injective_int _)]; exact bot_le)
-  have hm : ((l : ℕ) : 𝓞 K) ∈ Q := by
-    have : (l : ℤ) ∈ Q.comap (algebraMap ℤ (𝓞 K)) := by
-      change (l : ℤ) ∈ Ideal.under ℤ Q
-      rw [hc]
-      exact Ideal.mem_span_singleton_self _
-    simpa using this
-  refine ⟨⟨Q, hQ, fun h => ?_⟩, hm⟩
-  rw [h, Ideal.mem_bot] at hm
-  exact hl.out.ne_zero (by exact_mod_cast hm)
-private theorem charpoly_eq_prod_flag_characters {H k : Type} [Group H] [CommRing k] {n : ℕ} (r : H →* GL (Fin n) k)
-    (κ : Fin n → H →* kˣ) (h : W.HasFlag r κ) (s : H) :
-    (W.mat r s).charpoly = ∏ i, ((X : Polynomial k) - C ((κ i s : kˣ) : k)) := by
-  obtain ⟨g, hg⟩ := h
-  have h1 := Matrix.charpoly_units_conj g (W.mat r s)
-  have h2 : ((g * r s * g⁻¹ : GL (Fin n) k) : Matrix (Fin n) (Fin n) k).BlockTriangular id :=
-    fun i j hij => (hg s).1 i j hij
-  have h3 := Matrix.charpoly_of_upperTriangular _ h2
-  rw [← h1]
-  simp only [Units.val_mul, Matrix.coe_units_inv] at h3
-  refine h3.trans ?_
-  refine Finset.prod_congr rfl fun i _ => ?_
-  have h4 := (hg s).2 i
-  simp only [Units.val_mul, Matrix.coe_units_inv] at h4
-  rw [h4]
+  apply _root_.exists_plc_over <;> assumption
 private theorem continuous_linear_closed {G κ : Type} [TopologicalSpace G] [Field κ] [TopologicalSpace κ] [IsTopologicalRing κ] [T1Space κ] {n : ℕ}
     (a : G → Matrix (Fin n) (Fin n) κ) (ha : Continuous a) : Pr.LinClosed a := by
   intro f
@@ -179,6 +154,6 @@ theorem UpperTheory.V.Th.nice0four_alt :
   obtain ⟨g, hg, hfr⟩ := hF w
   obtain ⟨-, A, _, j, φ, hj, hred, -⟩ := Th.Det.redB x ρ hA.rep
   obtain ⟨h1, h2⟩ := absolute_irreducible_rank_four l s.odd V.frame c.O two r.chib (Qbar l) two_ne_zero ρ hA.cont hb A j φ hj hred _ hg _
-    (charpoly_eq_prod_flag_characters _ _ (hA.flag w) g) hfr hc hd
+    (_root_.UpperTheory.V.Pr.charpoly_flag _ _ (hA.flag w) g) hfr hc hd
   exact ⟨hA, hF, h1, h2⟩
 end

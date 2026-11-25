@@ -22,7 +22,7 @@ theorem X_dvd_one_add_X_pow_sub_one {R : Type*} [CommRing R] (q : ℕ) :
 theorem coeff_one_add_X_pow_sub_one_pow_of_lt {R : Type*} [CommRing R] (q : ℕ) {m n : ℕ}
     (h : m < n) : (((1 + Polynomial.X : Polynomial R) ^ q - 1) ^ n).coeff m = 0 := by
   obtain ⟨g, hg⟩ := pow_dvd_pow_of_dvd (X_dvd_one_add_X_pow_sub_one (R := R) q) n
-  rw [hg, Polynomial.coeff_X_pow_mul', if_neg (not_le.2 h)]
+  rw [hg, Polynomial.coeff_X_pow_mul', ite_eq_right (not_le.2 h)]
 
 theorem one_add_X_mul_mk_neg_one_pow :
     (1 + X : ℚ⟦X⟧) * mk (fun n => algebraMap ℚ ℚ ((-1 : ℚ) ^ n)) = 1 := by
@@ -30,7 +30,7 @@ theorem one_add_X_mul_mk_neg_one_pow :
   rw [add_mul, one_mul, map_add (f := _)]
   rcases n with _ | n
   · simp
-  · rw [coeff_succ_X_mul, coeff_mk, coeff_mk, coeff_one, if_neg n.succ_ne_zero]
+  · rw [coeff_succ_X_mul, coeff_mk, coeff_mk, coeff_one, ite_eq_right n.succ_ne_zero]
     simp [pow_succ]
 
 theorem hasSubst_one_add_X_pow_sub_one (q : ℕ) : HasSubst ((1 + X : ℚ⟦X⟧) ^ q - 1) :=
@@ -88,14 +88,14 @@ theorem sum_coeff_one_add_X_pow_sub_one_pow (q : ℕ) {m : ℕ} (hm : 1 ≤ m) :
   rw [finsum_eq_sum_of_support_subset _ (s := Finset.Icc 1 m) ?_] at h
   · have hr : coeff m ((q : ℚ⟦X⟧) * log ℚ) = q * ((-1) ^ (m - 1) / m) := by
       rw [show (q : ℚ⟦X⟧) = C (q : ℚ) from (map_natCast C q).symm, coeff_C_mul, coeff_log,
-        if_neg (by omega), Algebra.algebraMap_self, RingHom.id_apply]
+        ite_eq_right (by omega), Algebra.algebraMap_self, RingHom.id_apply]
       congr 2
       rw [show m + 1 = (m - 1) + 2 by omega, pow_add]; simp
     rw [hr] at h
     rw [show (-1 : ℚ) ^ (m - 1) * q / m = q * ((-1) ^ (m - 1) / m) by ring, ← h]
     refine Finset.sum_congr rfl fun n hn => ?_
     have hn1 : n ≠ 0 := by have := (Finset.mem_Icc.1 hn).1; omega
-    rw [coeff_log, if_neg hn1, Algebra.algebraMap_self, RingHom.id_apply,
+    rw [coeff_log, ite_eq_right hn1, Algebra.algebraMap_self, RingHom.id_apply,
       show n + 1 = (n - 1) + 2 by omega, pow_add]
     simp
   · intro n hn

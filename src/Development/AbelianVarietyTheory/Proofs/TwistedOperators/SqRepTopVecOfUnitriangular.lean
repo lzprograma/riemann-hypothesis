@@ -11,43 +11,6 @@ public import Mathlib.RepresentationTheory.Intertwining
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyDirectSumEquivOfFinrankLe
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleOuterTprod
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIrreducibleSmallRepUnitary
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Algebra.Order.Star.Int
 import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
 import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LFocksLemmas
@@ -56,17 +19,11 @@ import Mathlib.RingTheory.Etale.Weakly
 import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
 import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
 import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LCassemLemmas
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Analysis.SpecialFunctions.Bernstein
 import Mathlib.Tactic.Linter.Style
 import Formalism.GradedWeylDivisibility.FinalB
 
@@ -272,7 +229,6 @@ private theorem totalDegree_sum_C_mul_X_le_one {σ : Type} [Fintype σ] (A : Mat
 theorem totalDegree_linSub_le {σ : Type} [Fintype σ] (A : Matrix σ σ ℂ) (P : MvPolynomial σ ℂ) :
     (sub A P).totalDegree ≤ P.totalDegree := by
   classical
-  set_option synthInstance.maxHeartbeats 100000 in
     conv_lhs => rw [P.as_sum, map_sum]
   refine (totalDegree_finsetSum _ _).trans (Finset.sup_le fun m hm => ?_)
   rw [sub, aeval_monomial, algebraMap_eq]
@@ -360,8 +316,7 @@ theorem exists_stable_disjoint (n n' : ℕ) (M : Submodule ℂ (MvPolynomial (Fi
       ∀ p : GL (Fin n) ℂ × GL (Fin n') ℂ, ∀ v ∈ N, matRep n n' p v ∈ N := by
   classical
   obtain ⟨p, hp⟩ : ∃ p, p ∉ M := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact hM (eq_top_iff.2 fun x _ => hc x)
 
   let U := restrictTotalDegree (Fin n' × Fin n) ℂ p.totalDegree
@@ -691,7 +646,7 @@ theorem pairLmul_hw {n n' k : ℕ} (hn : k ≤ n) (hn' : k ≤ n') (ν : Fin k �
   rw [Finset.sum_eq_single (Fin.castLE (by have := s.2; omega) p)]
   · simp
   · intro b _ hb
-    rw [if_neg]
+    rw [ite_eq_right]
     · simp
     · intro e
       exact hb (Fin.ext (by simpa using e.symm))
@@ -743,7 +698,7 @@ private theorem rowGen_eval_C_eq_rowAct_transvection {n n' : ℕ} (a b : Fin n')
       · subst h
         simp [rowGen, rowAct, Matrix.transvection, Matrix.single, Matrix.one_apply, add_mul,
           Finset.sum_add_distrib, ite_and, add_comm]
-        rw [Finset.sum_eq_single a (fun x _ hx => by simp [Ne.symm hx]) (by simp), if_pos rfl, mul_comm]
+        rw [Finset.sum_eq_single a (fun x _ hx => by simp [Ne.symm hx]) (by simp), ite_eq_left rfl, mul_comm]
       · simp [rowGen, rowAct, Matrix.transvection, Matrix.single, Matrix.one_apply, add_mul,
           Finset.sum_add_distrib, h, Ne.symm h]
   exact RingHom.congr_fun key f
@@ -782,7 +737,7 @@ theorem rowDiv_eq_zero_of_matRep_unipotent_fixed : ∀ (n n' : ℕ) (v : MvPolyn
     rintro _ ⟨t, rfl⟩
     simp [Polynomial.IsRoot, hroot t]
   show (rowGen ℂ a b v).coeff k = 0
-  rw [hconst, Polynomial.coeff_C, if_neg (by omega)]
+  rw [hconst, Polynomial.coeff_C, ite_eq_right (by omega)]
 
 end GlobalTheory.GLDuality
 end -- clump:auto
@@ -1127,12 +1082,12 @@ theorem colAdd_matRep_diag {n n' : ℕ} (t : Fin n → ℂˣ) (l j : Fin n) (c :
     rw [AlgHom.comp_apply, AlgHom.comp_apply, hX]
     by_cases hs : s = j
     · subst hs
-      simp only [colAdd, map_mul, algHom_C, aeval_X, if_true, map_add (f := _), hX, algebraMap_eq]
+      simp only [colAdd, map_mul, algHom_C, aeval_X, ite_true, map_add (f := _), hX, algebraMap_eq]
       have : (C ((t l)⁻¹ : ℂ) : MvPolynomial (Fin n' × Fin n) ℂ) * C (t l : ℂ) = 1 := by
         rw [← map_mul]; simp
       simp only [Units.val_inv_eq_inv_val] at this ⊢
       linear_combination (-(C c * C (t s : ℂ) * X (a, l))) * this
-    · simp only [colAdd, map_mul, algHom_C, aeval_X, if_neg hs, hX, algebraMap_eq]
+    · simp only [colAdd, map_mul, algHom_C, aeval_X, ite_eq_right hs, hX, algebraMap_eq]
   exact DFunLike.congr_fun e v
 
 theorem exists_mem_dualWeyl_of_stable (n n' : ℕ) (N : Submodule ℂ (MvPolynomial (Fin n' × Fin n) ℂ)) (hN : N ≠ ⊥)
@@ -1151,7 +1106,7 @@ theorem exists_mem_dualWeyl_of_stable (n n' : ℕ) (N : Submodule ℂ (MvPolynom
   have hw := GlobalTheory.GLDuality.weightedHomogeneousComponent_colW_mem n n' M hM (Finsupp.weight (colW n' n) d) v ⟨hv, hf⟩
   refine ⟨_, _, hw.1, ne_zero_iff.2 ⟨d, ?_⟩, (dualWeylPoint ℂ n' n _ _).2
     ⟨weightedHomogeneousComponent_isWeightedHomogeneous _ _, hw.2⟩⟩
-  rwa [coeff_weightedHomogeneousComponent, if_pos rfl]
+  rwa [coeff_weightedHomogeneousComponent, ite_eq_left rfl]
 
 theorem exists_highest_of_stable (n n' : ℕ) (N : Submodule ℂ (MvPolynomial (Fin n' × Fin n) ℂ)) (hN : N ≠ ⊥)
     (hst : ∀ p : GL (Fin n) ℂ × GL (Fin n') ℂ, ∀ v ∈ N, matRep n n' p v ∈ N) :
@@ -1199,7 +1154,7 @@ theorem nonempty_equiv_polyRep (n n' : ℕ) :
   have hΦ : ∀ i v, Φ (DirectSum.lof ℂ _ _ i v) = φ i v := fun i v =>
     DirectSum.toModule_lof ℂ (φ := fun i => (φ i).toLinearMap) i v
   have hinj : Function.Injective Φ.toLinearMap := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     refine GlobalTheory.directSum_eq_zero_of_toModule_eq_zero _ _ hirr hdis Φ ?_ (DFinsupp.support x) x
       (fun j hj => DFinsupp.notMem_support_iff.1 hj) hx

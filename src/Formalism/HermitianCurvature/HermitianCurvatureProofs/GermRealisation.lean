@@ -1,43 +1,6 @@
 module
 
 public import Formalism.HermitianCurvature.StatementKB
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -91,18 +54,18 @@ theorem blockPSD_gramL {ι : Type} (μ : Measure ℂ) (Y : Finset ι) (U A : ι 
   rcases x with p | q <;> rcases y with p' | q'
   · have h1 := (hmem p (Finset.inl_mem_disjSum.mp hx)).1
     have h2 := (hmem p' (Finset.inl_mem_disjSum.mp hy)).1
-    simp only [Matrix.of_apply, Matrix.gram, v, Sum.elim_inl, dif_pos h1, dif_pos h2, inner_toLp h1 h2, gramL]
+    simp only [Matrix.of_apply, Matrix.gram, v, Sum.elim_inl, dite_eq_left h1, dite_eq_left h2, inner_toLp h1 h2, gramL]
   · have h1 := (hmem p (Finset.inl_mem_disjSum.mp hx)).1
     have h2 := (hmem q' (Finset.inr_mem_disjSum.mp hy)).2
-    simp only [Matrix.of_apply, Matrix.gram, v, Sum.elim_inl, Sum.elim_inr, dif_pos h1, dif_pos h2,
+    simp only [Matrix.of_apply, Matrix.gram, v, Sum.elim_inl, Sum.elim_inr, dite_eq_left h1, dite_eq_left h2,
       inner_toLp h1 h2, gramL]
   · have h1 := (hmem q (Finset.inr_mem_disjSum.mp hx)).2
     have h2 := (hmem p' (Finset.inl_mem_disjSum.mp hy)).1
-    simp only [Matrix.of_apply, Matrix.gram, v, Sum.elim_inl, Sum.elim_inr, dif_pos h1, dif_pos h2, gramL]
+    simp only [Matrix.of_apply, Matrix.gram, v, Sum.elim_inl, Sum.elim_inr, dite_eq_left h1, dite_eq_left h2, gramL]
     rw [← inner_conj_symm, inner_toLp h2 h1]
   · have h1 := (hmem q (Finset.inr_mem_disjSum.mp hx)).2
     have h2 := (hmem q' (Finset.inr_mem_disjSum.mp hy)).2
-    simp only [Matrix.of_apply, Matrix.gram, v, Sum.elim_inr, dif_pos h1, dif_pos h2, inner_toLp h1 h2, gramL]
+    simp only [Matrix.of_apply, Matrix.gram, v, Sum.elim_inr, dite_eq_left h1, dite_eq_left h2, inner_toLp h1 h2, gramL]
 
 end L2
 

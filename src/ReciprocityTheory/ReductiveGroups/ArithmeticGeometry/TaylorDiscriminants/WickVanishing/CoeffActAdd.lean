@@ -6,10 +6,9 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscrim
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeBilinearTermEqNegDoubleSum
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.IntegralFamilyFirstZeroSecond
+import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FormalGroupLawCompMulNZero
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -19,16 +18,9 @@ namespace ReciprocityTheory.ChartRestriction.G.TB.WickVanishing.Nab
 
 theorem coeff_single_zero_F_eq_ite {K : Type} [CommRing K] {d : ℕ} (G : FGLaw K d) (c i : Fin d) :
     coeff (Finsupp.single ((0 : Fin 2), i) 1) (G.F c) = if c = i then 1 else 0 := by
-  classical
-  have h := congrArg (coeff (Finsupp.single ((0 : Fin 1), i) 1)) (formalGroupLaw_ev_x_zero G c)
-  rw [coeff_ev_zero_right, Finsupp.embDomain_single] at h
-  rw [show (eXv d) ((0 : Fin 1), i) = ((0 : Fin 2), i) from rfl] at h
-  rw [h, coeff_X]
-  by_cases hci : c = i
-  · subst hci; simp
-  · rw [if_neg, if_neg hci]
-    intro he
-    exact hci (congrArg Prod.snd (Finsupp.single_left_injective one_ne_zero he)).symm
+  first
+    | exact _root_.GlobalTheory.FormalMulN.lin_F_left
+    | apply _root_.GlobalTheory.FormalMulN.lin_F_left <;> first | assumption | rfl | infer_instance
 
 variable {R : Type} [CommRing R] {d : ℕ} {O : Type} [CommRing O] [StarRing O]
 
@@ -41,7 +33,7 @@ theorem coeff_act_add (B : FB R d O) (a b : O) (i j : Fin d) :
   rw [← cc_pderiv', ← cc_pderiv' (B.A.act a i), ← cc_pderiv' (B.A.act b i), d2 hab]
 
   simp only [map_add (f := _), map_sum, map_mul, cc_ev' hab, cc_pderiv', coeff_single_zero_F_eq_ite, coeff_F_y, ite_mul, one_mul, zero_mul,
-  Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 variable {k : Type} [CommRing k] [Algebra ℚ k] [Algebra R k]
 

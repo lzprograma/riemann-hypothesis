@@ -648,14 +648,14 @@ section Parametrix
 variable {n : ℕ}
 
 theorem exists_parametrix {m : ℕ} (hn : 0 < n) (hm : 1 ≤ m) (hnm : n < 2 * m)
-    {Ω : Set (EuclideanSpace ℝ (Fin n))} (hΩ : IsOpen Ω) {A : Finset (Fin n → ℕ)}
+    {Ω : Set (EuclideanSpace ℝ (Fin n))} {A : Finset (Fin n → ℕ)}
     {a : (Fin n → ℕ) → EuclideanSpace ℝ (Fin n) → ℂ}
     (hA : ∀ α ∈ A, mabs α ≤ m) (ha : ∀ α ∈ A, ContDiffOn ℝ ∞ (a α) Ω)
     (hell : ∀ x ∈ Ω, ∀ ξ : EuclideanSpace ℝ (Fin n), ξ ≠ 0 → prinSymbol A a m x ξ ≠ 0)
     {x₀ : EuclideanSpace ℝ (Fin n)} {U : Set (EuclideanSpace ℝ (Fin n))} (hU : IsOpen U)
     (hx₀U : x₀ ∈ U) (hUΩ : U ⊆ Ω) :
-    ∃ E β : EuclideanSpace ℝ (Fin n) → ℂ, Integrable E ∧ HasCompactSupport E ∧ tsupport E ⊆ U ∧
-      ContDiffOn ℝ ∞ E {x₀}ᶜ ∧ ContDiff ℝ ∞ β ∧ HasCompactSupport β ∧ tsupport β ⊆ U ∧
+    ∃ E β : EuclideanSpace ℝ (Fin n) → ℂ, tsupport E ⊆ U ∧
+      ContDiff ℝ ∞ β ∧ tsupport β ⊆ U ∧
       ∀ φ : EuclideanSpace ℝ (Fin n) → ℂ, ContDiffOn ℝ ∞ φ U →
         ∫ x, E x * diffOp A a φ x = φ x₀ - ∫ x, β x * φ x := by
   have : Nontrivial (EuclideanSpace ℝ (Fin n)) :=
@@ -740,8 +740,6 @@ theorem exists_parametrix {m : ℕ} (hn : 0 < n) (hm : 1 ≤ m) (hnm : n < 2 * m
   set E : EuclideanSpace ℝ (Fin n) → ℂ := fun x ↦ θ x * g x
   have hEs : tsupport E ⊆ Metric.closedBall x₀ (ρ / 2) :=
     (tsupport_mul_subset_left).trans hθs
-  have hEc : HasCompactSupport E :=
-    IsCompact.of_isClosed_subset (isCompact_closedBall x₀ _) (isClosed_tsupport _) hEs
   have hEe : E =ᵐ[volume] fun x ↦ θ x * e x := by
     have hx₀ : ∀ᵐ x : EuclideanSpace ℝ (Fin n), x ≠ x₀ := by
       rw [ae_iff]; simp only [not_not, Set.ofPred_eq_eq_singleton]; exact measure_singleton x₀
@@ -751,18 +749,6 @@ theorem exists_parametrix {m : ℕ} (hn : 0 < n) (hm : 1 ≤ m) (hnm : n < 2 * m
     · have : x ∉ Metric.closedBall x₀ (ρ / 2) := by
         intro h; apply hxb; rw [Metric.mem_closedBall] at h; rw [Metric.mem_ball]; linarith
       simp only [E, hθ0 x this, zero_mul]
-  have hEint : Integrable E := by
-    have h := (θ.memLp 2 volume).integrable_mul (Lp.memLp e)
-    exact h.congr hEe.symm
-  have hEsmooth : ContDiffOn ℝ ∞ E {x₀}ᶜ := by
-    refine contDiffOn_of_locally_contDiffOn fun x hx ↦ ?_
-    by_cases hxb : x ∈ Metric.ball x₀ ρ
-    · refine ⟨Ω', hΩ', ⟨hxb, hx⟩, ?_⟩
-      exact (θ.smooth'.contDiffOn.mul hg).mono Set.inter_subset_right
-    · refine ⟨(Metric.closedBall x₀ (ρ / 2))ᶜ, Metric.isClosed_closedBall.isOpen_compl, ?_, ?_⟩
-      · intro h; apply hxb; rw [Metric.mem_closedBall] at h; rw [Metric.mem_ball]; linarith
-      · refine (contDiffOn_const (c := (0 : ℂ))).congr fun y hy ↦ ?_
-        simp only [E, hθ0 y hy.2, zero_mul]
 
   have hT'loc : IsLocal (opST A b) := (hell' x₀ hx₀r).isLocal
   have hZ1 : Distribution.IsVanishingOn (comm (opST A b) θ E₀) (Metric.ball x₀ (ρ / 4)) := by
@@ -819,10 +805,7 @@ theorem exists_parametrix {m : ℕ} (hn : 0 < n) (hm : 1 ≤ m) (hnm : n < 2 * m
       rw [map_sub, sub_eq_zero, smulLeftCLM_delta, hθx₀, one_smul] at h0
       exact h0
     rw [comm_apply, h1]; abel
-  refine ⟨E, fun x ↦ -β' x, hEint, hEc, hEs.trans hhalfU, hEsmooth, hβ'.neg, ?_, ?_, fun φ hφ ↦ ?_⟩
-  · refine IsCompact.of_isClosed_subset (isCompact_closedBall x₀ (ρ / 2)) (isClosed_tsupport _) ?_
-    show tsupport (-β') ⊆ _
-    rw [tsupport_neg]; exact hβ's
+  refine ⟨E, fun x ↦ -β' x, hEs.trans hhalfU, hβ'.neg, ?_, fun φ hφ ↦ ?_⟩
   · show tsupport (-β') ⊆ _
     rw [tsupport_neg]; exact hβ's.trans hhalfU
 

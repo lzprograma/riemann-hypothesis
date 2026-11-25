@@ -1,5 +1,8 @@
 module
 
+
+import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.DualWByLettersExtended
+import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowUniformizerFactorisation
 public import Formalism.SharpRestriction.LevelLetterCocycles.LemmaGsOfLemGAB
 public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.RingTheory.Ideal.Span
@@ -7,52 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import Formalism.SharpRestriction.LevelLetterCocycles.LetterConditionGlobal
 public import Formalism.SharpRestriction.LevelLetterCocycles.LevelClauseOfOpenTool
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Tactic.TypeStar
 import Mathlib.Algebra.Order.Star.Real
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.ExistsInvariantPreimageAverage, Formalism.SharpRestriction.LevelLetterCocycles.ExistsMemMapEqSmul, Formalism.SharpRestriction.LevelLetterCocycles.SumSubEqSumIocOfSub, Formalism.SharpRestriction.LevelLetterCocycles.DerivativeProdSubEval
 
@@ -408,32 +367,11 @@ theorem sum_Ioc_zero_eq_factorial (y : ℕ) :
 
 theorem padicValNat_factorial_le_div_sub_one (y : ℕ) :
     ((padicValNat l y.factorial : ℕ) : ℝ) ≤ (y : ℝ) / ((l : ℝ) - 1) := by
-  have h1 : 1 < l := hl.out.one_lt
-  have hc : (0:ℝ) < (l:ℝ) - 1 := by
-    have : (1:ℝ) < l := by exact_mod_cast h1
-    linarith
-  have key : (l - 1) * padicValNat l y.factorial ≤ y := by
-    rw [Nat.padicValNat_def, hl.out.sub_one_mul_multiplicity_factorial]; exact Nat.sub_le _ _
-  have key' : (((l - 1 : ℕ) : ℝ)) * (padicValNat l y.factorial : ℝ) ≤ y := by
-    exact_mod_cast key
-  rw [Nat.cast_sub h1.le, Nat.cast_one] at key'
-  rw [le_div_iff₀ hc]; linarith
+  apply _root_.Formalism.RepresentationBoundsCohomology.N2.SumVal.val_factorial_le <;> assumption
 
 theorem padicValNat_choose_le_logb' (k n : ℕ) :
     ((padicValNat l (k.choose n) : ℕ) : ℝ) ≤ Real.logb l k := by
-  have h1 : padicValNat l (k.choose n) ≤ Nat.log l k := by
-    rw [Nat.padicValNat_def, ← Nat.factorization_def _ hl.out]
-    exact Nat.factorization_choose_le_log
-  have h2 : ((Nat.log l k : ℕ) : ℝ) ≤ Real.logb l k := by
-    first
-    | exact Real.natLog_le_logb k l
-    | rcases Nat.eq_zero_or_pos k with hk | hk
-      · subst hk; simp
-      · have hl1 : (1:ℝ) < l := by exact_mod_cast hl.out.one_lt
-        rw [Real.le_logb_iff_rpow_le hl1 (by exact_mod_cast hk), Real.rpow_natCast]
-        exact_mod_cast Nat.pow_log_le_self l hk.ne'
-  calc ((padicValNat l (k.choose n) : ℕ) : ℝ) ≤ ((Nat.log l k : ℕ) : ℝ) := by exact_mod_cast h1
-    _ ≤ Real.logb l k := h2
+  apply _root_.Formalism.RepresentationBoundsCohomology.N2.SumVal.val_choose_le <;> assumption
 
 theorem sum_Ioc_padicValNat_le_div_sub_one_add_logb (k0 k1 : ℕ) (h : k0 ≤ k1) :
     ((∑ m ∈ Ioc k0 k1, padicValNat l m : ℕ) : ℝ) ≤
@@ -627,13 +565,7 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
 theorem derivative_prod_sub_eval {R : Type} [CommRing R] (S₀ : Finset ℤ) (c : ℤ → R) (a : ℤ)
     (ha : a ∈ S₀) :
     (derivative (∏ b ∈ S₀, (X - C (c b)))).eval (c a) = ∏ b ∈ S₀.erase a, (c a - c b) := by
-  classical
-  have h1 : (∏ b ∈ S₀, (X - C (c b))) = (Multiset.map (fun x => X - C x) (S₀.val.map c)).prod := by
-    rw [Finset.prod_eq_multiset_prod, Multiset.map_map]
-    rfl
-  rw [h1, eval_multiset_prod_X_sub_C_derivative (Multiset.mem_map_of_mem c ha),
-    ← Multiset.map_erase_of_mem c S₀.val ha, Multiset.map_map, Finset.prod_eq_multiset_prod, Finset.erase_val]
-  rfl
+  apply _root_.Formalism.MainNotions.LiftingTheory.lag_deriv_eval <;> assumption
 
 theorem addValuation_prod (w : AddValuation LL (WithTop ℚ)) {ι : Type} (S₀ : Finset ι) (f : ι → LL) :
     w (∏ b ∈ S₀, f b) = ∑ b ∈ S₀, w (f b) := by
@@ -776,7 +708,7 @@ theorem lemGB_of [NeZero n] (W : LocWach PD LL O v n) (hQ : Formalism.MainNotion
     intro τ u j hτ hu hj1 hj2
     have h1 := hjump i τ hτ u hu
     unfold JumpWinS at h1
-    rw [if_neg (by omega)] at h1
+    rw [ite_eq_right (by omega)] at h1
     simp only [Set.mem_union, Set.mem_Icc, Finset.mem_union, Finset.mem_Icc] at h1 ⊢
     omega
   have hC := hC4 hA T₁ hsur.1 i a ha1 dop₁ hd₁ cc hcc _ hX (qi ^ a • y₂) (by

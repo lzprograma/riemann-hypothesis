@@ -26,17 +26,6 @@ open scoped TensorProduct
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-def parameterOfRecord (D : D7) (hF : OFull D) (hz : OZeta D)
-    (hDat : ∀ j, InR D j → ∃ hI : DatInt D j, DatLaws D j hI) (hN : N1ab) : Par D where
-  H := hostOf D (unramBridge D.host.E (cmUnram_conj D))
-  l := levelG D (hU := unramBridge D.host.E (cmUnram_conj D))
-  c := coeffFieldOfRecord D (hU := unramBridge D.host.E (cmUnram_conj D)) hz
-  Dw := datumAtLift D (unramBridge D.host.E (cmUnram_conj D)) hDat
-  Xo := fun j => Classical.choice (hN D.host.E (hostOf D (unramBridge D.host.E (cmUnram_conj D)))
-    (datumAtLift D (unramBridge D.host.E (cmUnram_conj D)) hDat j) (levelG D (hU := unramBridge D.host.E (cmUnram_conj D)))
-    (datumAtLift_pq_pos D (unramBridge D.host.E (cmUnram_conj D)) hDat j))
-  eO := eOf D hF
-
 variable {D : D7}
 
 def levSet (V : HSp D) (N : ℕ) : Set (GA D V) :=

@@ -43,7 +43,6 @@ import Development.AbelianVarietyTheory.Definitions.LatticeFrames.JointSmooth
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.SeeSaw ValuativeRel IsLocalRing Matrix
 open GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData (lastKer InDual)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FinPl.ExtZero
 
@@ -106,11 +105,11 @@ theorem extFun_tensCol_sum (D : D7) (k : Type) [Field k] [ValuativeRel k] [Topol
   have key : IsHalf p.e t ↔ IsHalf p.e (o.resS T t).1 ∧ IsHalf p.e (o.resS T t).2 := isHalf_resS_iff o p.e t
   by_cases h : IsHalf p.e t
   · obtain ⟨hA, hL⟩ := key.1 h
-    rw [if_pos h, if_pos hA, if_pos hL, tensCol, rd_sum_inl o ζ α α₀ β hs, rd_sum_inr o ζ α α₀ β hs]
+    rw [ite_eq_left h, ite_eq_left hA, ite_eq_left hL, tensCol, rd_sum_inl o ζ α α₀ β hs, rd_sum_inr o ζ α α₀ β hs]
     rfl
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     by_cases hA : IsHalf p.e (o.resS T t).1
-    · rw [if_neg fun hL => h (key.2 ⟨hA, hL⟩), mul_zero]
-    · rw [if_neg hA, zero_mul]
+    · rw [ite_eq_right fun hL => h (key.2 ⟨hA, hL⟩), mul_zero]
+    · rw [ite_eq_right hA, zero_mul]
 
 end GlobalTheory.FinPl.ExtZero

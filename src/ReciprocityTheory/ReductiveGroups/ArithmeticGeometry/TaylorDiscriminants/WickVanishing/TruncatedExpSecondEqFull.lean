@@ -7,8 +7,6 @@ import Mathlib.Tactic.Lemma
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPolynomial Finset ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
@@ -51,7 +49,7 @@ theorem lamL_apply (W : (σ →₀ ℕ) → k) (R : MvPolynomial σ k) : lamL W 
 theorem lam_monomial (W : (σ →₀ ℕ) → k) (m : σ →₀ ℕ) (r : k) : lam W (monomial m r) = r * W m := by
   classical
   rw [lam_eq W _ {m} MvPolynomial.support_monomial_subset, Finset.sum_singleton,
-    MvPolynomial.coeff_monomial, if_pos rfl]
+    MvPolynomial.coeff_monomial, ite_eq_left rfl]
 
 end abelian₂
 
@@ -159,7 +157,7 @@ private lemma totalDegree_pderiv_le_of_le_succ {σ : Type} (l : σ) (q : MvPolyn
           simp only [Finsupp.coe_add, Finsupp.coe_tsub, Pi.add_apply, Pi.sub_apply, Finsupp.single_eq_same]
           omega
         · simp only [Finsupp.coe_add, Finsupp.coe_tsub, Pi.add_apply, Pi.sub_apply, Finsupp.single_apply,
-            if_neg hx]
+            ite_eq_right hx]
           omega
       have hsum : (s.sum fun _ e => e) = ((s - Finsupp.single l 1).sum fun _ e => e) + 1 := by
         conv_lhs => rw [hsplit]
@@ -271,7 +269,7 @@ theorem gauge_second_columns_of_exp (hG : GaugeExpSt) : GaugeIndependenceColumns
     rw [prod_congr rfl fun b _ => h1 b, ← lam_prodQ V (fun b => E1 c t N (monomial (colM mo b) 1))]
     have hE := exp_cols c t N (fun b => (monomial (colM mo b) (1 : k)).totalDegree) (hsum mo hmo) univ
       (fun b => monomial (colM mo b) 1) (fun _ => le_rfl)
-    simp only [mem_univ, if_true] at hE
+    simp only [mem_univ, ite_true] at hE
     have hmoN : (monomial mo (1 : k)).totalDegree ≤ N :=
       (totalDegree_monomial_le _ _).trans (le_totalDegree hmo)
     rw [← hE, cS_univ, prodQ_monomial, glue_colM, exp_opA_apply _ _ _ _ hmoN, TL_apply]

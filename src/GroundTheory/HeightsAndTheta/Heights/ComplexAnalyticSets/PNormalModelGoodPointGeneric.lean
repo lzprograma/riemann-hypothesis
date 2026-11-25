@@ -35,36 +35,19 @@ theorem ringKrullDim_quotient_minimalPrime_add_one_of_fintype {σ : Type} [Finty
     {f : MvPolynomial σ ℂ} (hf : f ∉ V) (hW : W ∈ (V ⊔ Ideal.span {f}).minimalPrimes)
     (hfin : ringKrullDim (MvPolynomial σ ℂ ⧸ V) ≠ ⊤) :
     ringKrullDim (MvPolynomial σ ℂ ⧸ W) + 1 = ringKrullDim (MvPolynomial σ ℂ ⧸ V) := by
-  have hPW : V ≤ W := le_sup_left.trans hW.1.2
-  have hfW : f ∈ W := hW.1.2 (Ideal.mem_sup_right (Ideal.mem_span_singleton_self f))
-  have hq : W.map (Ideal.Quotient.mk V) ∈ (Ideal.span {Ideal.Quotient.mk V f}).minimalPrimes := by
-    have e : Ideal.span {Ideal.Quotient.mk V f} = (Ideal.span {f}).map (Ideal.Quotient.mk V) := by
-      rw [Ideal.map_span, Set.image_singleton]
-    rw [e, Ideal.minimalPrimes_map_of_surjective Ideal.Quotient.mk_surjective, Ideal.mk_ker, sup_comm]
+  let e := (MvPolynomial.renameEquiv ℂ (Fintype.equivFin σ)).toRingEquiv
+  have hqV := ringKrullDim_eq_of_ringEquiv (Ideal.quotientEquiv V (V.map e.toRingHom) e rfl)
+  have hqW := ringKrullDim_eq_of_ringEquiv (Ideal.quotientEquiv W (W.map e.toRingHom) e rfl)
+  rw [hqV, hqW]
+  have : (V.map e.toRingHom).IsPrime := Ideal.map_isPrime_of_equiv e
+  have hf' : e.toRingHom f ∉ V.map e.toRingHom := by simpa [Ideal.map_comap_of_equiv] using hf
+  have hW' :
+      W.map e.toRingHom ∈ (V.map e.toRingHom ⊔ Ideal.span {e.toRingHom f}).minimalPrimes := by
+    rw [← Set.image_singleton, ← Ideal.map_span, ← Ideal.map_sup,
+      Ideal.minimalPrimes_map_of_surjective (f := e.toRingHom) e.surjective,
+      (RingHom.injective_iff_ker_eq_bot e.toRingHom).1 e.injective, sup_bot_eq]
     exact ⟨W, hW, rfl⟩
-  have : (W.map (Ideal.Quotient.mk V)).IsPrime := hq.1.1
-  have : (Ideal.span {Ideal.Quotient.mk V f}).IsPrincipal := ⟨⟨_, rfl⟩⟩
-  have hh : (W.map (Ideal.Quotient.mk V)).height = 1 := by
-    refine le_antisymm (Ideal.height_le_one_of_isPrincipal_of_mem_minimalPrimes _ _ hq) ?_
-    rw [Order.one_le_iff_ne_zero, Ne, Ideal.height_eq_zero_iff_eq_bot]
-    intro h0
-    have : Ideal.Quotient.mk V f ∈ W.map (Ideal.Quotient.mk V) := Ideal.mem_map_of_mem _ hfW
-    rw [h0, Ideal.mem_bot, Ideal.Quotient.eq_zero_iff_mem] at this
-    exact hf this
-  have : IsDomain (MvPolynomial σ ℂ ⧸ V) := Ideal.Quotient.isDomain V
-  have : Algebra.FiniteType ℂ (MvPolynomial σ ℂ ⧸ V) :=
-    Algebra.FiniteType.of_surjective (Ideal.Quotient.mkₐ ℂ V) (Ideal.Quotient.mkₐ_surjective ℂ V)
-  have : IsNoetherianRing (MvPolynomial σ ℂ ⧸ V) := Algebra.FiniteType.isNoetherianRing ℂ _
-  have : FiniteRingKrullDim (MvPolynomial σ ℂ ⧸ V) :=
-    finiteRingKrullDim_iff_ne_bot_and_top.mpr ⟨fun h ↦ by
-      have h0 := ringKrullDim_nonneg_of_nontrivial (R := MvPolynomial σ ℂ ⧸ V)
-      rw [h] at h0
-      exact absurd h0 (by simp), hfin⟩
-  obtain ⟨s, hs⟩ := ReciprocityTheory.ChartRestriction.G.Geo.DimF.exists_height_of_isMaximal_of_field ℂ (MvPolynomial σ ℂ ⧸ V)
-  have key := ReciprocityTheory.ChartRestriction.G.Geo.DimF.dim_quot_add_height (A := MvPolynomial σ ℂ ⧸ V)
-    (fun M N hM hN ↦ (hs M hM).trans (hs N hN).symm) (W.map (Ideal.Quotient.mk V))
-  rw [hh, ringKrullDim_eq_of_ringEquiv (DoubleQuot.quotQuotEquivQuotOfLE hPW)] at key
-  exact_mod_cast key
+  exact ringKrullDim_quotient_minimalPrime_add_one hf' hW' (hqV ▸ hfin)
 
 theorem NormalModelGoodPointGeneric.proof (h₁ : NormalCodimOneCompleteIntersection.Statement)
     (h₂ : NormalCodimOneUniformiser.Statement) (h₃ : JacobianRankOffHypersurface.Statement)

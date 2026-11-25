@@ -1,5 +1,7 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmPureTensorOOfFinite
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockVectorsOfThetaDatumInjective
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ComplexEmbeddingHermitianQuadrupleSum
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsInverseChart
@@ -58,7 +60,6 @@ import Formalism.LocalToGlobal.IndefiniteReal.FockTheta.RealPlaceImaginaryGenera
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum NumberField Matrix Complex
 open scoped Real Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FockIndep
 
@@ -67,25 +68,16 @@ section Generic
 variable {ι X : Type} {A : ι → (X → ℂ) → (X → ℂ)} {P : (X → ℂ) → Prop}
 
 theorem foldr_mem (hA : ∀ i f, P f → P (A i f)) {f : X → ℂ} (hf : P f) (l : List ι) :
-    P (l.foldr (fun i g => A i g) f) := by
-  induction l with
-  | nil => exact hf
-  | cons i l ih => exact hA i _ ih
+    P (l.foldr (fun i g => A i g) f) := GlobalTheory.FockInj.foldr_mem hA hf l
 
 theorem foldr_perm (hA : ∀ i f, P f → P (A i f)) (hc : ∀ i j f, P f → A i (A j f) = A j (A i f))
     {f : X → ℂ} (hf : P f) {l l' : List ι} (h : l.Perm l') :
     l.foldr (fun i g => A i g) f = l'.foldr (fun i g => A i g) f := by
-  induction h with
-  | nil => rfl
-  | cons i _ ih => simp only [List.foldr_cons, ih]
-  | swap i j l => exact hc _ _ _ (foldr_mem hA hf l)
-  | trans _ _ ih ih' => exact ih.trans ih'
+  exact GlobalTheory.FockInj.foldr_perm hA hc hf h
 
 theorem pure_monomial (f : X → ℂ) (k : ι →₀ ℕ) (c : ℂ) :
     pureTensorL A f (MvPolynomial.monomial k c) = c • opPow A k f := by
-  have h : MvPolynomial.monomial k c = c • MvPolynomial.basisMonomials ι ℂ k := by
-    rw [MvPolynomial.coe_basisMonomials, MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
-  rw [h, map_smul, pureTensorL, Module.Basis.constr_basis]
+  exact GlobalTheory.FockInj.pure_monomial f k c
 
 theorem pure_one (f : X → ℂ) : pureTensorL A f 1 = f := by
   rw [MvPolynomial.one_def, pure_monomial, one_smul]
@@ -93,9 +85,7 @@ theorem pure_one (f : X → ℂ) : pureTensorL A f 1 = f := by
 
 theorem pure_mem (hadd : ∀ f f', P f → P f' → P (f + f')) (hsm : ∀ (a : ℂ) f, P f → P (a • f))
     (hA : ∀ i f, P f → P (A i f)) {f : X → ℂ} (hf : P f) (Q : MvPolynomial ι ℂ) : P (pureTensorL A f Q) := by
-  induction Q using MvPolynomial.induction_on' with
-  | monomial k c => rw [pure_monomial]; exact hsm _ _ (foldr_mem hA hf _)
-  | add p q hp hq => rw [map_add (f := _)]; exact hadd _ _ hp hq
+  exact GlobalTheory.FockInj.pure_mem hadd hsm hA hf Q
 
 theorem pure_X_mul (hadd : ∀ f f', P f → P f' → P (f + f')) (hsm : ∀ (a : ℂ) f, P f → P (a • f))
     (hA : ∀ i f, P f → P (A i f)) (hc : ∀ i j f, P f → A i (A j f) = A j (A i f))
@@ -103,16 +93,7 @@ theorem pure_X_mul (hadd : ∀ f f', P f → P f' → P (f + f')) (hsm : ∀ (a 
     (Asm : ∀ i (a : ℂ) f, P f → A i (a • f) = a • A i f)
     {f : X → ℂ} (hf : P f) (Q : MvPolynomial ι ℂ) (v : ι) :
     pureTensorL A f (MvPolynomial.X v * Q) = A v (pureTensorL A f Q) := by
-  induction Q using MvPolynomial.induction_on' with
-  | monomial k c =>
-    rw [MvPolynomial.X, MvPolynomial.monomial_mul, one_mul, pure_monomial, pure_monomial,
-      Asm _ _ (opPow A k f) (foldr_mem hA hf _)]
-    congr 1
-    refine foldr_perm hA hc hf (l' := v :: (Finsupp.toMultiset k).toList) ?_
-    rw [← Multiset.coe_eq_coe, ← Multiset.cons_coe, Multiset.coe_toList, Multiset.coe_toList, map_add (f := _),
-      Finsupp.toMultiset_single, one_smul, Multiset.singleton_add]
-  | add p q hp hq =>
-    rw [mul_add, map_add (f := _), map_add (f := _), hp, hq, Aadd _ _ _ (pure_mem hadd hsm hA hf _) (pure_mem hadd hsm hA hf _)]
+  apply _root_.GlobalTheory.FockInj.pure_X_mul <;> assumption
 
 theorem eq_zero_of_pderiv_stable {K : MvPolynomial ι ℂ → Prop} (hd : ∀ Q i, K Q → K (MvPolynomial.pderiv i Q))
     (hc : ∀ a, K (MvPolynomial.C a) → a = 0) (Q : MvPolynomial ι ℂ) (hQ : K Q) : Q = 0 := by
@@ -150,31 +131,8 @@ theorem pure_injective {B : ι → (X → ℂ) → (X → ℂ)} {c : ι → ℂ}
     (Bsm : ∀ i (a : ℂ) f, P f → B i (a • f) = a • B i f)
     (hBA : ∀ i j f, P f → B i (A j f) = A j (B i f) + (if i = j then c i else 0) • f) (hc0 : ∀ i, c i ≠ 0)
     {f : X → ℂ} (hf : P f) (f0 : f ≠ 0) (hv : ∀ i, B i f = 0) : Function.Injective (pureTensorL A f) := by
-  have hC : ∀ a, pureTensorL A f (MvPolynomial.C a) = a • f := fun a => by
-    rw [← mul_one (MvPolynomial.C a), MvPolynomial.C_mul', map_smul, pure_one]
-  have hm := pure_mem hadd hsm hA hf
-  have hX := pure_X_mul hadd hsm hA hc Aadd Asm hf
-  have key : ∀ i Q, B i (pureTensorL A f Q) = c i • pureTensorL A f (MvPolynomial.pderiv i Q) := by
-    intro i Q
-    induction Q using MvPolynomial.induction_on with
-    | C a => rw [hC, Bsm _ _ _ hf, hv, MvPolynomial.pderiv_C, map_zero, smul_zero, smul_zero]
-    | add p q hp hq => rw [map_add (f := _), Badd _ _ _ (hm _) (hm _), hp, hq, map_add (f := _), map_add (f := _), smul_add]
-    | mul_X p j hp =>
-      rw [mul_comm, hX, hBA _ _ _ (hm _), hp, Asm _ _ _ (hm _), MvPolynomial.pderiv_mul, map_add (f := _), hX,
-        MvPolynomial.pderiv_X, add_comm, smul_add]
-      congr 1
-      by_cases h : i = j
-      · subst h; simp
-      · simp [h, Ne.symm h]
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
-  refine eq_zero_of_pderiv_stable (K := fun Q => pureTensorL A f Q = 0) (fun Q i h => ?_) fun a h => ?_
-  · have h1 := key i Q
-    have h2 := Bsm i 0 f hf
-    rw [zero_smul, zero_smul] at h2
-    rw [h, h2] at h1
-    exact (smul_eq_zero.1 h1.symm).resolve_left (hc0 i)
-  · rw [hC] at h
-    exact (smul_eq_zero.1 h).resolve_right f0
+  intros
+  apply _root_.GlobalTheory.FockInj.pure_injective <;> assumption
 
 end Generic
 
@@ -184,9 +142,7 @@ variable {D : D7} {S T : HSp D} {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D}
 
 theorem piW_lineAt (hθ : IsInfFam θ) (τ : D.what₂.Tau) (z : Matrix (Fin T.rank) (Fin S.rank) ℂ) :
     piW θ T S (lineAt θ τ z 1) = (Pi.single τ z : D.what₂.Tau → Matrix (Fin T.rank) (Fin S.rank) ℂ) := by
-  funext τ'
-  refine ((isLineAt_lineAt hθ τ z).2.2 1 τ').trans ?_
-  rw [Pi.single_apply, Complex.ofReal_one, one_smul]
+  exact GlobalTheory.FockInj.pi_lineAt hθ τ z
 
 noncomputable def omDir (S T : HSp D) (τ : D.what₂.Tau) (z : Matrix (Fin T.rank) (Fin S.rank) ℂ) (τ' : D.what₂.Tau)
     (z' : Matrix (Fin T.rank) (Fin S.rank) ℂ) : ℝ :=
@@ -231,21 +187,8 @@ theorem dRho_add (τ : D.what₂.Tau) (z : Matrix (Fin T.rank) (Fin S.rank) ℂ)
 theorem dRho_smul (τ : D.what₂.Tau) (z : Matrix (Fin T.rank) (Fin S.rank) ℂ) (a : ℂ) {f : WO S T → ℂ}
     (hf : IsThetaFunO ψ S T f) :
     dRho (heisO ψ S T) θ τ z (a • f) = a • dRho (heisO ψ S T) θ τ z f := by
-  have theta_smul : ∀ (c : ℂ) {f : WO S T → ℂ}, IsThetaFunO ψ S T f → IsThetaFunO ψ S T (c • f) :=
-    fun c {f} hf => Formalism.IndefR.Fock.CCR.theta_smul hf c
-  obtain ⟨σ, h⟩ := GlobalTheory.RealLineAt.exists_inverse_chart hθ
-  have hE : ∀ g, Formalism.IndefR.Datum.dRho (heisO ψ S T) θ τ z g =
-      FockCompare.hD (iotaW σ T S) (piW θ T S) (omO S T) (piW θ T S (lineAt θ τ z 1)) g := fun g =>
-    dLine_eq_hD h hψ (isRealDir_lineAt hθ τ z) g
-  have hd : ∀ {g}, IsThetaFunO ψ S T g → ∀ w, DifferentiableAt ℝ (fun x : RW T S => g (w + iotaW σ T S x)) 0 :=
-    fun hg w => ((theta_sm h hg w).differentiable (by simp)).differentiableAt
-  funext w
-  rw [Pi.smul_apply, hE, hE, hD_eq_fderiv _ _ _ _ (theta_sm h (theta_smul a hf)), hD_eq_fderiv _ _ _ _ (theta_sm h hf)]
-  have e : (fun x : RW T S => (a • f) (w + iotaW σ T S x)) =
-      fun x : RW T S => a • f (w + iotaW σ T S x) := rfl
-  rw [e, fderiv_fun_const_smul (hd hf w), ContinuousLinearMap.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul,
-    smul_eq_mul]
-  ring
+  intros
+  apply _root_.GlobalTheory.FiniteFock.dRho_smul <;> assumption
 
 theorem dRho_comm (τ : D.what₂.Tau) (z : Matrix (Fin T.rank) (Fin S.rank) ℂ) (τ' : D.what₂.Tau)
     (z' : Matrix (Fin T.rank) (Fin S.rank) ℂ) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) :

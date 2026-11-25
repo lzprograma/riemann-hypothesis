@@ -148,13 +148,13 @@ theorem sgE_comm {cp cm : Fin n → Fin n → Module.End ℂ W} (hC : IsCAR cp c
     have hd : ε d = false := by rw [← hcd]; exact hc
     have hbc : b ≠ c := fun h => by simp [h, hc] at hb
     have hda : d ≠ a := fun h => by simp [h, ha] at hd
-    rw [if_neg hbc, if_neg hda, sub_zero, sgE_eq_sum_minusIdx_of_true ε cp cm ha hb,
+    rw [ite_eq_right hbc, ite_eq_right hda, sub_zero, sgE_eq_sum_minusIdx_of_true ε cp cm ha hb,
       sgE_eq_neg_sum_plusIdx_of_false ε cp cm hc hd]
     have e1 : ∑ x ∈ minusIdx ε, ∑ i ∈ plusIdx ε,
         (if b = i ∧ x = d then cp a x * cm i c else 0) = cp a d * cm b c := by
       refine (sum_sum_eq_apply_of_eq_zero_off_point _ _ d b (mem_minusIdx_iff_eq_false.mpr hd) (mem_plusIdx_iff_eq_true.mpr hb) _ ?_).trans ?_
       · intro x _ i _ hne
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨rfl, rfl⟩
         simp at hne
       · simp
@@ -162,7 +162,7 @@ theorem sgE_comm {cp cm : Fin n → Fin n → Module.End ℂ W} (hC : IsCAR cp c
         (if i = a ∧ c = x then cp i d * cm b x else 0) = cp a d * cm b c := by
       refine (sum_sum_eq_apply_of_eq_zero_off_point _ _ c a (mem_minusIdx_iff_eq_false.mpr hc) (mem_plusIdx_iff_eq_true.mpr ha) _ ?_).trans ?_
       · intro x _ i _ hne
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨rfl, rfl⟩
         simp at hne
       · simp
@@ -192,7 +192,7 @@ theorem sgE_comm {cp cm : Fin n → Fin n → Module.End ℂ W} (hC : IsCAR cp c
     have hbc : b ≠ c := fun h => by simp [h, hc] at hb
     have hda : d ≠ a := fun h => by simp [h, ha'] at hd
     have h := cross c d a b hcd hab hc ha'
-    rw [if_neg hbc, if_neg hda, sub_zero] at h ⊢
+    rw [ite_eq_right hbc, ite_eq_right hda, sub_zero] at h ⊢
     rw [sub_eq_zero] at h ⊢
     exact h.symm
   · have ha' : ε a = false := by simpa using ha

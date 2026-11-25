@@ -159,7 +159,7 @@ theorem integral_weights : IntWts := by
     simp only [LinearMap.sub_apply, Module.End.mul_apply] at h
     by_cases hab : a = b
     · subst hab; rfl
-    · rw [if_neg hab, if_neg (Ne.symm hab), sub_self] at h
+    · rw [ite_eq_right hab, ite_eq_right (Ne.symm hab), sub_self] at h
       exact sub_eq_zero.1 h
   have htop := LinearMap.IsSymmetric.iSup_iInf_eq_top_of_commute hT hC
   set G : Set (smD ε σ) := {w | w ∈ KF ε σ ∧ ∃ μ : Fin n → ℤ, ∀ a, smE ε σ a a w = (μ a : ℂ) • w}

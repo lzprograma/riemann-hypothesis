@@ -98,7 +98,7 @@ theorem ordGe_pow {w : τ → ℕ} {F : MvPowerSeries τ C} (hF : F ∈ ordGe C 
 theorem ordGe_X {w : τ → ℕ} (s : τ) : (X s : MvPowerSeries τ C) ∈ ordGe C w (w s) := by
   classical
   intro e he
-  rw [coeff_X, if_neg]
+  rw [coeff_X, ite_eq_right]
   rintro rfl
   simp [Finsupp.weight_single] at he
 
@@ -137,7 +137,7 @@ theorem coeff_mvExp_weight_one {w : τ → ℕ} {G : MvPowerSeries τ C} (hG : G
   · simp
   · intro k _ hk
     by_cases h0 : k = 0
-    · rw [h0, pow_zero, coeff_one, if_neg hne, zero_div]
+    · rw [h0, pow_zero, coeff_one, ite_eq_right hne, zero_div]
     · rw [ordGe_pow hG k e (by omega), zero_div]
   · intro h
     exfalso
@@ -251,10 +251,10 @@ theorem dz_X_mul [DecidableEq κ] (i j : κ) (f : MvPowerSeries κ C) :
   rw [coeff_dz, X, coeff_monomial_mul, one_mul]
   by_cases hij : i = j
   · subst hij
-    rw [if_pos (by unfold em; exact le_add_self), if_pos rfl]
+    rw [ite_eq_left (by unfold em; exact le_add_self), ite_eq_left rfl]
     unfold em
     rw [add_tsub_cancel_right, coeff_embDomain_rename]
-  · rw [if_neg hij, if_neg, map_zero]
+  · rw [ite_eq_right hij, ite_eq_right, map_zero]
     rw [Finsupp.single_le_iff]
     simp [em, emb_one, hij]
 

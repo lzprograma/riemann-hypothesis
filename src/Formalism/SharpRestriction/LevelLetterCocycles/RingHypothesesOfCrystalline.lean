@@ -1,51 +1,11 @@
 module
 
+import Formalism.SharpRestriction.LevelLetterCocycles.InvariantLetterIdempotentOfFixed
 public import Formalism.SharpRestriction.LevelLetterCocycles.ExpRules
 public import Formalism.SharpRestriction.LevelLetterCocycles.CoordHomMapTrace
 public import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowUniformizerFactorisation
 public import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PowerSeries.Inverse
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -77,13 +37,7 @@ theorem φA_letE' (i : ZMod n) : W.φA (letE i : LetA O n) = letE (i + 1) := by
   rwa [add_sub_cancel_right] at this
 
 theorem dl_φ {i : ZMod n} {x : W.DD T} (h : DL W T i x) : DL W T (i + 1) (W.φD T x) := by
-  obtain ⟨h1, h2⟩ := h
-  have e1 : W.φD T x = (letE (i + 1) : LetA O n) • W.φD T x := by
-    conv_lhs => rw [← h1]
-    rw [Formalism.MainNotions.WachCoordinates.Br.φD_smulA, φA_letE']
-  refine ⟨?_, fun δ hδ => ?_⟩
-  · rw [e1, smul_smul, Formalism.MainNotions.WachCoordinates.Br.letE_mul_self]
-  · rw [← W.φγ_comm, h2 δ hδ]
+  apply _root_.Formalism.MainNotions.RamifiedCoefficientChains.S9.ExtensionLemmaAlt.Step2L.invariantLetter_frobenius_succ <;> assumption
 
 theorem dl_φpow {i : ZMod n} {x : W.DD T} (h : DL W T i x) (j : ℕ) :
     DL W T (i + (j : ZMod n)) (((W.φD T) ^ j) x) := by
@@ -266,9 +220,9 @@ theorem conv_delta (f : PowerSeries LL) (C : M) (r : ℤ) :
   simp only [conv]
   split_ifs with hr
   · refine finsum_eq_zero_of_forall_eq_zero fun j => ?_
-    rw [if_neg (by omega), smul_zero]
-  · rw [finsum_eq_single _ r.toNat (fun j hj => by rw [if_neg (by omega), smul_zero])]
-    rw [if_pos (by omega)]
+    rw [ite_eq_right (by omega), smul_zero]
+  · rw [finsum_eq_single _ r.toNat (fun j hj => by rw [ite_eq_right (by omega), smul_zero])]
+    rw [ite_eq_left (by omega)]
 
 theorem conv_cancel (L U : PowerSeries LL) (Kk Xx : ℕ) (hL : L = PowerSeries.X ^ Kk * U)
     (hU : PowerSeries.constantCoeff U ≠ 0) {e : ℤ → M} {m : ℤ} (he : ∀ k < m, e k = 0)
@@ -289,14 +243,14 @@ theorem conv_cancel (L U : PowerSeries LL) (Kk Xx : ℕ) (hL : L = PowerSeries.X
   have hcs := hc (m + (Nat.find hP : ℤ) + Kk) (by have := ht₀.2; omega)
   simp only [conv] at hcs
   rw [finsum_eq_single _ Kk] at hcs
-  · rw [hL, PowerSeries.coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self,
+  · rw [hL, PowerSeries.coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self,
       PowerSeries.coeff_zero_eq_constantCoeff_apply] at hcs
     have h2 : m + (Nat.find hP : ℤ) + Kk - (Kk : ℤ) = m + (Nat.find hP : ℤ) := by ring
     rw [h2] at hcs
     exact ht₀.1 ((smul_eq_zero.1 hcs).resolve_left hU)
   · intro j hj
     rcases lt_or_gt_of_ne hj with hlt | hgt
-    · rw [hL, PowerSeries.coeff_X_pow_mul', if_neg (by omega), zero_smul]
+    · rw [hL, PowerSeries.coeff_X_pow_mul', ite_eq_right (by omega), zero_smul]
     · by_cases hlow : m + (Nat.find hP : ℤ) + Kk - j < m
       · rw [he _ hlow, smul_zero]
       · have ht : (m + (Nat.find hP : ℤ) + Kk - j - m).toNat < Nat.find hP := by omega
@@ -312,7 +266,6 @@ end Conv
 
 end Formalism.MainNotions.RamifiedCoefficientChains.Sh.ZT
 
-open Classical
 
 namespace Formalism.MainNotions.RamifiedCoefficientChains.Sh.ZT
 
@@ -470,8 +423,8 @@ theorem const_coord [IsDomain O] (hR9 : R9 W T) (hO : ∀ c : O, ((PD.p : ℕ) :
   obtain ⟨b, hb⟩ := (hU x' hx'J hx'D).exists
   have hs : ∑ m, (algebraMap O (LetA O n) (if m = k then ((PD.p : ℕ) : O) ^ σ else 0)) • vv m =
       ((PD.p : ℕ) : O) ^ σ • vv k := by
-    rw [Finset.sum_eq_single k (fun m _ hm => by rw [if_neg hm, map_zero, zero_smul]) (by simp),
-      if_pos rfl, algebraMap_smul]
+    rw [Finset.sum_eq_single k (fun m _ hm => by rw [ite_eq_right hm, map_zero, zero_smul]) (by simp),
+      ite_eq_left rfl, algebraMap_smul]
   have e1 : ((PD.p : ℕ) : O) ^ E • (((PD.p : ℕ) : O) ^ σ • vv k - zk) =
       ∑ m, at0 W (PowerSeries.C (((PD.p : ℕ) : O) ^ E) *
         (PowerSeries.C (if m = k then ((PD.p : ℕ) : O) ^ σ else 0) - FinalFormK m)) • vv m := by
@@ -521,7 +474,7 @@ theorem clear_pullJ (hR9 : R9 W T) (hs1 : W.s = 1) {i : ZMod n} {j : ℕ} (hj : 
     · obtain ⟨k, hk⟩ := qp_pow_φ hR9 hs1 hy
       refine ⟨k, fun K hK => ?_⟩
       have e1 : (qp W ^ K * b ^ K) = qp W ^ (K - k) * qp W ^ k := by
-        simp only [b, if_pos rfl, one_pow, mul_one]; rw [← pow_add, Nat.sub_add_cancel hK]
+        simp only [b, ite_eq_left rfl, one_pow, mul_one]; rw [← pow_add, Nat.sub_add_cancel hK]
       rw [e1, ← smul_smul, pow_one]
       exact (W.N T).smul_mem _ hk
     · obtain ⟨k, hk⟩ := qp_pow_φ hR9 hs1 hy
@@ -529,7 +482,7 @@ theorem clear_pullJ (hR9 : R9 W T) (hs1 : W.s = 1) {i : ZMod n} {j : ℕ} (hj : 
       refine ⟨max k k', fun K hK => ?_⟩
       rw [Formalism.MainNotions.WachCoordinates.Br.φD_smulA, smul_smul] at hk'
       have e1 : (qp W ^ K * b ^ K) = (qp W ^ (K - k') * pk W 1 ^ (K - k)) * (qp W ^ k' * W.φA (qp W ^ k)) := by
-        simp only [b, if_neg (by norm_num : (2 : ℕ) ≠ 1), map_pow, Formalism.MainNotions.LiftingTheory.pk, pow_one]
+        simp only [b, ite_eq_right (by norm_num : (2 : ℕ) ≠ 1), map_pow, Formalism.MainNotions.LiftingTheory.pk, pow_one]
         rw [mul_mul_mul_comm, ← pow_add, ← pow_add, Nat.sub_add_cancel (le_of_max_le_right hK),
           Nat.sub_add_cancel (le_of_max_le_left hK)]
       rw [e1, ← smul_smul, pow_two, Module.End.mul_apply]
@@ -561,10 +514,10 @@ theorem exp_const (hA : CaseA W) (hR : Formalism.MainNotions.RamifiedCoefficient
     rw [this, map_one, conv_one]
   have heq := (hRR.1 (a • z) 1 h1x (by rw [map_one]; exact one_ne_zero)).unique hd2 hd3
   obtain ⟨md, hmd⟩ := hd.1
-  have hδ : ∀ k < (0 : ℤ), (fun k : ℤ => if k = 0 then C else 0) k = 0 := fun k hk => if_neg (by omega)
+  have hδ : ∀ k < (0 : ℤ), (fun k : ℤ => if k = 0 then C else 0) k = 0 := fun k hk => ite_eq_right (by omega)
   have hcc : PowerSeries.constantCoeff U ≠ 0 := (hU.map PowerSeries.constantCoeff).ne_zero
   have key := conv_cancel (W.lev i ζ a) U K X hlev hcc (e := d - fun k : ℤ => if k = 0 then C else 0)
-    (m := min md 0) (fun k hk => by simp only [Pi.sub_apply]; rw [hmd k (by omega), if_neg (by omega), sub_self])
+    (m := min md 0) (fun k hk => by simp only [Pi.sub_apply]; rw [hmd k (by omega), ite_eq_right (by omega), sub_self])
     (fun r hr => by
       rw [conv_sub (W.lev i ζ a) hmd hδ, conv_delta, show conv (W.lev i ζ a) d r = W.levN T i ζ ⟨a • z, hx⟩ r from
         congrFun heq r]
@@ -767,8 +720,8 @@ theorem inv_col [IsDomain O] (hR9 : R9 W T) (hΔ : IsUnit ((W.DelF.card : ℕ) :
   have hs : ∑ m', (at0 W (PowerSeries.C (if m' = m then ((PD.p : ℕ) : O) ^ (2 * σ) else 0))) • vv m' =
       ((PD.p : ℕ) : O) ^ (2 * σ) • vv m := by
     simp only [evalZero_C]
-    rw [Finset.sum_eq_single m (fun m' _ hm => by rw [if_neg hm, map_zero, zero_smul]) (by simp),
-      if_pos rfl, algebraMap_smul]
+    rw [Finset.sum_eq_single m (fun m' _ hm => by rw [ite_eq_right hm, map_zero, zero_smul]) (by simp),
+      ite_eq_left rfl, algebraMap_smul]
   have hexp : ((PD.p : ℕ) : O) ^ (2 * σ) • vv m = ∑ m', at0 W (∑ k, Z m' k * g k +
       PowerSeries.X * (PowerSeries.X + ((PD.p : ℕ) : PowerSeries O)) ^ X * Pc m') • vv m' := by
     rw [hav3, Finset.sum_congr rfl fun k _ => hterm k, frobeniusPoly_eq_evalZero hR9 X, hPc, Finset.smul_sum]

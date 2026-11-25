@@ -315,10 +315,10 @@ theorem UpperTheory.V.Z.Kato.used_of_alt :
     intro g
     rw [hW, Wfun, hθ0, h.mult g]
     rcases Int.units_eq_one_or (D.η g) with hg | hg
-    · rw [hg, if_pos rfl, Matrix.trace_fin_two]
+    · rw [hg, ite_eq_left rfl, Matrix.trace_fin_two]
       show (r g).mat 0 0 + (r g).mat 2 2 = _
       simp
-    · rw [hg, if_neg (by decide), Matrix.trace_fin_two, Matrix.mul_diagonal, Matrix.mul_diagonal]
+    · rw [hg, ite_eq_right (by decide), Matrix.trace_fin_two, Matrix.mul_diagonal, Matrix.mul_diagonal]
       show (r g).mat 0 0 * (-1) + (r g).mat 2 2 * 1 = _
       simp
   refine
@@ -953,7 +953,7 @@ theorem UpperTheory.V.Z.Kato.WeilSphericalRecords.bloch_kato_selmer_vanishes_of_
   have hWcc : (W D.cc).val = !![-1, 0; 0, 1] := by
     have hx' : (r D.cc).mat = !![1, 0, 0; 0, 1, 0; 0, 0, 1] := by
       rw [h.norm.atc]; ext i j; fin_cases i <;> fin_cases j <;> simp
-    rw [hW', wOf_eq hx', if_neg (by rw [hrc]; decide), neg_zero]
+    rw [hW', wOf_eq hx', ite_eq_right (by rw [hrc]; decide), neg_zero]
   have hA : Af.BlochKatoSelmerVanishes l (repA r hblk) := by
     refine hR W hWc hext hWd (hmod W hext) θ hθ0 _ ⟨D.cc, Jgl _ 2, D.conj, fun s s' hs => ?_, fun s X => ?_, fun X => ?_⟩
     · have e1 : W (s'.restrictScalars ℚ) = W D.cc * W (s.restrictScalars ℚ) * W D.cc := by

@@ -80,8 +80,7 @@ theorem one_le_rkR_of_isIsoC {n : ℕ} {ε : Fin n → Bool} {W : Submodule ℂ 
 
   have hall : ∀ b : Bool, ∃ i, ε i = b := by
     intro b
-    by_contra hno
-    push_neg at hno
+    by_contra! hno
     have hb : ∀ i, ε i = !b := fun i => by
       have h' := hno i
       cases hε : ε i <;> cases b <;> simp_all

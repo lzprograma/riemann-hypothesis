@@ -8,51 +8,7 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExi
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerBlockPoint
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StrictUpperNeg
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -74,14 +30,8 @@ theorem embedded_group_measure_preserving : EmbGMuP := by
   intro k p ρ y q
   simp only [U.muP, U.embG, Ux5.block3_mul_blocks, Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add, Matrix.mul_one, Matrix.one_mul]
 
-private theorem wMat_mul_self_eq_one (d : ℕ) : G.wMat d * G.wMat d = 1 := by
-  ext i j
-  simp only [G.wMat, Matrix.mul_apply, Matrix.of_apply, Matrix.one_apply, ite_mul, one_mul, zero_mul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true, Fin.rev_rev]
-  split_ifs <;> simp_all
-
 private theorem wMat_mul_wMat_mul' (d : ℕ) {m : Type*} (X : Matrix (Fin d) m ℂ) : G.wMat d * (G.wMat d * X) = X := by
-  rw [← Matrix.mul_assoc, wMat_mul_self_eq_one, Matrix.one_mul]
+  rw [← Matrix.mul_assoc, Formalism.FourierDecayAlt.P.Ux5.wMat_mul_self, Matrix.one_mul]
 
 theorem embedding_map_lower_unipotent : MMapLZU := by
   intro k p ρ l Z u γ hl
@@ -105,10 +55,7 @@ private theorem wP_inv_mul_wP_eq_one {p : ℕ} (σ : Equiv.Perm (Fin p)) : U.wP 
   ext a c
   have h : σ (σ⁻¹ a) = a := σ.apply_symm_apply a
   simp only [U.wP, Matrix.mul_apply, Matrix.of_apply, Matrix.one_apply, ite_mul, one_mul, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true, h]
-
-private theorem isUnit_det_wP {p : ℕ} (σ : Equiv.Perm (Fin p)) : IsUnit (U.wP σ).det :=
-  Matrix.isUnit_det_of_left_inverse (wP_inv_mul_wP_eq_one σ)
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true, h]
 
 theorem lh_lower {p : ℕ} (σ : Equiv.Perm (Fin p)) (v : U.LW σ → ℂ) : G.IsLowerUni (lhOf σ v) := by
   have hinv : (U.wP σ)⁻¹ = U.wP σ⁻¹ := Matrix.inv_eq_left_inv (wP_inv_mul_wP_eq_one σ)
@@ -116,7 +63,7 @@ theorem lh_lower {p : ℕ} (σ : Equiv.Perm (Fin p)) (v : U.LW σ → ℂ) : G.I
     intro a b
     rw [lhOf, hinv]
     simp only [Matrix.mul_apply, U.wP, Matrix.of_apply, ite_mul, one_mul, zero_mul, mul_ite, mul_one,
-      mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true, Equiv.Perm.inv_eq_iff_eq, Finset.sum_ite_eq']
+      mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true, Equiv.Perm.inv_eq_iff_eq, Finset.sum_ite_eq']
   refine ⟨fun i => ?_, fun i j hij => ?_⟩
   · simp only [Matrix.transpose_apply, hentry]
     simp [U.lowW]
@@ -129,7 +76,7 @@ theorem head_hermitian_eq : HeadHEq := by
   intro p σ d v u
   refine ⟨?_, lh_lower σ v⟩
   simp only [U.headH, lhOf, U.hMat, Matrix.mul_assoc]
-  rw [← Matrix.mul_assoc (U.wP σ)⁻¹ (U.wP σ), Matrix.nonsing_inv_mul _ (isUnit_det_wP σ), Matrix.one_mul]
+  rw [← Matrix.mul_assoc (U.wP σ)⁻¹ (U.wP σ), Matrix.nonsing_inv_mul _ (Formalism.FourierDecayAlt.P.Dx2.SL.isUnit_wP σ), Matrix.one_mul]
 
 private theorem blk2_fin_zero_eq {p : ℕ} (A : Matrix (Fin p) (Fin p) ℂ) (B' : Matrix (Fin p) (Fin 0) ℂ)
     (C : Matrix (Fin 0) (Fin p) ℂ) (D : Matrix (Fin 0) (Fin 0) ℂ) : U.blk2 A B' C D = A := by
@@ -155,7 +102,7 @@ theorem lh_unit {p : ℕ} (σ : Equiv.Perm (Fin p)) (v : U.LW σ → ℂ) : IsUn
       have h2 : ¬ j < i := not_lt.mpr h1.le
       simp [U.lowW, ne_of_lt h1, h2]
   simp only [lhOf, Matrix.det_mul, hL, mul_one]
-  exact (isUnit_det_wP σ).mul (Matrix.isUnit_nonsing_inv_det _ (isUnit_det_wP σ))
+  exact (Formalism.FourierDecayAlt.P.Dx2.SL.isUnit_wP σ).mul (Matrix.isUnit_nonsing_inv_det _ (Formalism.FourierDecayAlt.P.Dx2.SL.isUnit_wP σ))
 
 theorem gamma_xi_split : GaXiSplit := by
   intro k p ρ σ d ξ Z h ν h' ν' g hh hν hh'

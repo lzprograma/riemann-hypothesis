@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.AnnihilatorMulRelativeDifferent
 public import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
 import Formalism.LocalRingCardinality.ConjSqrtMinusD
 public import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
@@ -25,22 +26,7 @@ theorem sqrtMinusD_mem_K : D.host.sqrtMinusD ∈ D.host.K :=
   IntermediateField.mem_adjoin_simple_self ℚ _
 
 theorem finrank_K : Module.finrank ℚ D.host.K = 2 := by
-  have hb : D.host.sqrtMinusD ^ 2 = -(D.host.d : D.host.E) := D.host.sqrtMinusD_sq
-  have hd : (0 : ℚ) < D.host.d := by exact_mod_cast D.host.hyp.2.1.pos
-  have hmon : (X ^ 2 + C (D.host.d : ℚ)).Monic := by monicity!
-  have hroot : aeval D.host.sqrtMinusD (X ^ 2 + C (D.host.d : ℚ)) = 0 := by simp [hb]
-  have hirr : Irreducible (X ^ 2 + C (D.host.d : ℚ)) := by
-    apply Polynomial.irreducible_of_degree_le_three_of_not_isRoot
-    · rw [natDegree_X_pow_add_C]; simp
-    · intro x hx
-      simp only [IsRoot, eval_add, eval_pow, eval_X, eval_C] at hx
-      nlinarith [sq_nonneg x]
-  have hint : IsIntegral ℚ D.host.sqrtMinusD := ⟨_, hmon, by simpa [aeval_def] using hroot⟩
-  have hmin : minpoly ℚ D.host.sqrtMinusD = X ^ 2 + C (D.host.d : ℚ) :=
-    (minpoly.eq_of_irreducible_of_monic hirr hroot hmon).symm
-  have h := IntermediateField.adjoin.finrank hint
-  rw [hmin, natDegree_X_pow_add_C] at h
-  exact h
+  apply _root_.Formalism.MainNotions.DIV.Bridge.LogAbsNormDifferent.finrank_K <;> assumption
 
 theorem half_one_add_sqrt_mem_K : ((1 + D.host.sqrtMinusD) / 2 : D.host.E) ∈ D.host.K := by
   have h2 : (2 : D.host.E) ∈ D.host.K := by

@@ -20,63 +20,8 @@ open MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G OrbitChartMax
 theorem OrbitCenterChart.proof : OrbitCenterChart.Statement := by
   classical
   intro ι _ _ _ n A x s hx hs V hV c hc v
-  obtain ⟨hVmin, -⟩ := hV
-  have : V.IsPrime := hVmin.1.1
-  have hPV : orbitIdeal x ≤ V := le_sup_left.trans hVmin.1.2
-  obtain ⟨a, -, hsa, -⟩ := hs
-  have hsa' : IsWeightedHomogeneous (coordDeg n) s a := (geoMultiHomog_iff s a).mp hsa
-
-  have hVh : ∀ f ∈ V, ∀ b, weightedHomogeneousComponent (coordDeg n) b f ∈ V := by
-    have hJ : NumbersDVR.IsMultiHomogIdeal (ι := blockIdx n) (orbitIdeal x ⊔ Ideal.span {s}) := by
-      intro f hf b
-      obtain ⟨p, hp, t, ht, rfl⟩ := Submodule.mem_sup.mp hf
-      rw [map_add (f := _)]
-      exact Submodule.add_mem_sup (OrbitCurve.weightedHomogeneousComponent_mem_orbitIdeal x hp b)
-        (NumbersDVR.isMultiHomogIdeal_span_singleton (e := a) hsa' t ht b)
-    exact NumbersDVR.MinimalPrimeMultiHomog.proof ℤ ι (blockIdx n) _ V hJ hVmin
-
-  have hxc : ∀ k, flatCone x ⟨k, c k⟩ ≠ 0 := by
-    intro k h0
-    refine hc k (hPV ?_)
-    rw [orbitIdeal, Geo.mCoordIdeal, RingHom.mem_ker, Geo.mConeMap, aeval_X]
-    simp [h0]
-  have hyc : ∀ k, genPt V ⟨k, c k⟩ ≠ 0 := fun k ↦ genPt_ne_zero V (hc k)
-
-  have hVzero : ∀ f ∈ V, aeval (dehomCoords (genPt V) c) f = 0 := by
-    intro f hf
-
-    rw [← sum_weightedHomogeneousComponent (w := coordDeg n) f,
-    finsum_eq_sum _ (weightedHomogeneousComponent_finsupp f), map_sum]
-    refine Finset.sum_eq_zero fun b _ ↦ ?_
-    exact (aeval_dehomCoords_of_homog (genPt V) c
-      (weightedHomogeneousComponent_isWeightedHomogeneous b f)).trans
-      (mul_eq_zero_of_left ((aeval_genPt_eq_zero_iff V _).mpr (hVh f hf b)) _)
-  have hker : ∀ F, chartEval x c F = 0 → aeval (dehomCoords (genPt V) c) F = 0 := by
-    intro F hF
-    rw [chartEval_eq_zero_iff] at hF
-    have hF' := (aeval_dehomCoords (flatCone x) c hxc F).symm.trans hF
-    have hH := (mul_eq_zero.mp hF').resolve_right (prod_inv_pow_ne_zero _ c hxc _)
-    have hHV : homogenize c F ∈ V :=
-      hPV (mem_orbitIdeal_of_aeval_eq_zero x (isWeightedHomogeneous_homogenize c F) hH)
-    exact (aeval_dehomCoords (genPt V) c hyc F).trans
-      (mul_eq_zero_of_left ((aeval_genPt_eq_zero_iff V _).mpr hHV) _)
-  have hmem : ∀ F, chartEval x c F ∈ chartPoint x c V ↔
-      aeval (dehomCoords (genPt V) c) F = 0 := by
-    intro F
-    constructor
-    · intro hF
-      obtain ⟨g, hg, hgF⟩ :=
-        (Ideal.mem_map_iff_of_surjective _ (chartEval_surjective x c)).mp hF
-      have h1 := hker (F - g) (by rw [map_sub, hgF, sub_self])
-      rwa [map_sub, hVzero g hg, sub_zero] at h1
-    · intro hF
-      have hF' := (aeval_dehomCoords (genPt V) c hyc F).symm.trans hF
-      have hH := (aeval_genPt_eq_zero_iff V _).mp
-        ((mul_eq_zero.mp hF').resolve_right (prod_inv_pow_ne_zero _ c hyc _))
-      have e : chartEval x c (homogenize c F) = chartEval x c F :=
-        map_homogenize c (chartEval x c).toRingHom (chartEval_X_chart x c hxc) F
-      rw [← e]
-      exact Ideal.mem_map_of_mem _ hH
+  have : V.IsPrime := hV.1.1.1
+  obtain ⟨hVh, hxc, hyc, hmem⟩ := mem_chartPoint_iff hs hV c hc
 
   have hformV : ∀ G D, IsWeightedHomogeneous (coordDeg n) G D →
       (chartEval x c G ∈ chartPoint x c V ↔ G ∈ V) := fun G D hG ↦ by

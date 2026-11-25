@@ -41,6 +41,7 @@ import Mathlib.Tactic.NormNum.Parity
 import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Sheaves.Init
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointMajorantFramesGiveMajorants
 
 @[expose] public section
 
@@ -238,18 +239,7 @@ section Rational
 variable (I : AutInst) (x a : I.GA) (γ : GL (Fin I.n) I.E)
 
 theorem frm_det (w : InfinitePlace I.E) : IsUnit (frm I x w).det := by
-  have h1 : IsUnit (I.P (w.comap (algebraMap I.F I.E)) * uMat (x.1 (w.comap (algebraMap I.F I.E)))).det := by
-    rw [Matrix.det_mul]
-    exact ((Matrix.isUnit_iff_isUnit_det _).1 (I.P_unit _)).mul
-      ((Matrix.isUnit_iff_isUnit_det _).1 (Units.isUnit _))
-  simp only [frm]
-  split_ifs
-  · exact h1
-  · have e := RingHom.map_det (starRingEnd ℂ)
-      (I.P (w.comap (algebraMap I.F I.E)) * uMat (x.1 (w.comap (algebraMap I.F I.E))))
-    rw [RingHom.mapMatrix_apply] at e
-    rw [← e]
-    exact h1.map _
+  apply _root_.GlobalTheory.Count.FrameMajorant.frm_unit <;> assumption
 
 theorem frm_mul (k : I.GA) (w : InfinitePlace I.E) :
     frm I (x * k) w = frm I x w * uMat (k.1 (w.comap (algebraMap I.F I.E))) ∨
@@ -259,9 +249,9 @@ theorem frm_mul (k : I.GA) (w : InfinitePlace I.E) :
   simp only [frm]
   by_cases h : w.embedding = I.φ (w.comap (algebraMap I.F I.E))
   · left
-    rw [if_pos h, if_pos h, hm, Matrix.mul_assoc]
+    rw [ite_eq_left h, ite_eq_left h, hm, Matrix.mul_assoc]
   · right
-    rw [if_neg h, if_neg h, hm, ← Matrix.mul_assoc, Matrix.map_mul]
+    rw [ite_eq_right h, ite_eq_right h, hm, ← Matrix.mul_assoc, Matrix.map_mul]
 
 theorem frm_rat
     (h : ∀ v, uMat (a.1 v) = (I.P v)⁻¹ * (γ : Matrix (Fin I.n) (Fin I.n) I.E).map (I.φ v) * I.P v)
@@ -278,9 +268,9 @@ theorem frm_rat
     simp only [← Matrix.mul_assoc, hP, Matrix.one_mul]
   simp only [frm]
   by_cases h' : w.embedding = I.φ (w.comap (algebraMap I.F I.E))
-  · rw [if_pos h', if_pos h', key, h']
+  · rw [ite_eq_left h', ite_eq_left h', key, h']
   · have he := (embedding_eq I w).resolve_left h'
-    rw [if_neg h', if_neg h', key, Matrix.map_mul, he, Matrix.map_map]
+    rw [ite_eq_right h', ite_eq_right h', key, Matrix.map_mul, he, Matrix.map_map]
     rfl
 
 theorem fcoord_rat

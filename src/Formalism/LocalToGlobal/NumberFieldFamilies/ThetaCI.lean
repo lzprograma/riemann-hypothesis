@@ -16,8 +16,6 @@ namespace Formalism.L2.Fam.ThC
 
 open Formalism.L2.Theta
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Gen
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
@@ -42,15 +40,9 @@ variable {D : D7}
 theorem sqrt_d_pos (D : D7) : 0 < Real.sqrt D.host.d :=
   Real.sqrt_pos.2 (Nat.cast_pos.2 (Nat.pos_of_ne_zero D.host.hyp.2.1.ne_zero))
 
-theorem delta_ne (D : D7) : D.host.sqrtMinusD ≠ 0 := by
-  intro h0
-  have h : D.host.φ₀ D.host.sqrtMinusD = Complex.I * (Real.sqrt D.host.d : ℂ) := D.host.φ₀_mem
-  rw [h0, map_zero] at h
-  exact mul_ne_zero Complex.I_ne_zero (Complex.ofReal_ne_zero.2 (sqrt_d_pos D).ne') h.symm
-
 theorem decompE (x : D.host.E) : ∃ a b : D.host.F,
     x = algebraMap D.host.F D.host.E a + algebraMap D.host.F D.host.E b * D.host.sqrtMinusD := by
-  have hd := delta_ne D
+  have hd := Formalism.L2.Fam.ThC.sd_ne D
   obtain ⟨a, ha⟩ := (D.sp.cm.fixed ((x + star x) / 2)).1 (by
     rw [star_div₀, star_add, star_star, add_comm]; simp)
   obtain ⟨b, hb⟩ := (D.sp.cm.fixed ((x - star x) / (2 * D.host.sqrtMinusD))).1 (by
@@ -213,8 +205,8 @@ theorem expU (D : D7) : ExpU D := by
   have hn1 : ‖u‖ = 1 := Complex.norm_exp_ofReal_mul_I _
   let x := mkU (D := D) (fun τ' => if τ' = τ then u else 1) (fun τ' => by split_ifs; exacts [hu, one_ne_zero])
   have h1 : finPart D (x : AE D) = 1 := finPart_mkAE _ _
-  have h2 : ∀ τ', τ' ≠ τ → th0 D τ' (infPart D (x : AE D)) = 1 := fun τ' h => (cmpAt_mkAE _ _ τ').trans (if_neg h)
-  have h3 : th0 D τ (infPart D (x : AE D)) = u := (cmpAt_mkAE _ _ τ).trans (if_pos rfl)
+  have h2 : ∀ τ', τ' ≠ τ → th0 D τ' (infPart D (x : AE D)) = 1 := fun τ' h => (cmpAt_mkAE _ _ τ').trans (ite_eq_right h)
+  have h3 : th0 D τ (infPart D (x : AE D)) = u := (cmpAt_mkAE _ _ τ).trans (ite_eq_left rfl)
   have a1 := allSome_fam.1 e x h1 h2
   have a2 := allSome_fam.1 e' x h1 h2
   rw [a1, h3, hn1, Complex.ofReal_one, div_one] at a2

@@ -13,55 +13,13 @@ public import Mathlib.RingTheory.MvPolynomial.Symmetric.FundamentalTheorem
 public import Mathlib.RingTheory.MvPolynomial.Symmetric.NewtonIdentities
 public import Mathlib.Algebra.MvPolynomial.CommRing
 public import GroundTheory.AutomorphicForms.HarishChandraCentre.VermaCoordEqZeroOfMemNPlusU
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
 import Mathlib.Tactic.Linter.Style
 import Mathlib.Tactic.TypeStar
@@ -91,12 +49,12 @@ theorem rowOp_X (i j b c : Fin n) :
   rw [rowOp_apply]
   by_cases hb : b = j
   · subst hb
-    rw [if_pos rfl, Finset.sum_eq_single c]
+    rw [ite_eq_left rfl, Finset.sum_eq_single c]
     · rw [pderiv_X_self, mul_one]
     · intro k _ hk
       rw [pderiv_X_of_ne (by intro h; exact hk (Prod.ext_iff.1 h).2.symm), mul_zero]
     · simp
-  · rw [if_neg hb]
+  · rw [ite_eq_right hb]
     refine Finset.sum_eq_zero fun k _ => ?_
     rw [pderiv_X_of_ne (by intro h; exact hb (Prod.ext_iff.1 h).1), mul_zero]
 
@@ -170,7 +128,7 @@ noncomputable def wtProj (μ : Fin n → ℕ) : Module.End ℂ (Poly n) where
     ext m
     simp only [coeff_sum, coeff_monomial, MvPolynomial.coeff_add]
     simp only [Finset.sum_ite_eq', Finset.mem_filter, MvPolynomial.mem_support_iff, MvPolynomial.coeff_add]
-    by_cases hm : rowWt m = μ <;> simp only [hm, and_true, and_false, if_false]
+    by_cases hm : rowWt m = μ <;> simp only [hm, and_true, and_false, ite_false]
     · by_cases h1 : AddMonoidAlgebra.coeff f m = 0 <;> by_cases h2 : AddMonoidAlgebra.coeff g m = 0 <;> by_cases h3 : AddMonoidAlgebra.coeff f m + AddMonoidAlgebra.coeff g m = 0 <;>
         simp_all
     · simp
@@ -180,7 +138,7 @@ noncomputable def wtProj (μ : Fin n → ℕ) : Module.End ℂ (Poly n) where
     simp only [coeff_sum, coeff_monomial, MvPolynomial.coeff_smul, smul_eq_mul, RingHom.id_apply]
     simp only [Finset.sum_ite_eq', Finset.mem_filter, MvPolynomial.mem_support_iff, MvPolynomial.coeff_smul,
       smul_eq_mul]
-    by_cases hm : rowWt m = μ <;> simp only [hm, and_true, and_false, if_false]
+    by_cases hm : rowWt m = μ <;> simp only [hm, and_true, and_false, ite_false]
     · by_cases h1 : AddMonoidAlgebra.coeff f m = 0 <;> by_cases h2 : c * AddMonoidAlgebra.coeff f m = 0 <;> simp_all
     · simp
 
@@ -200,7 +158,7 @@ theorem wtProj_eq_self_iff (μ : Fin n → ℕ) (f : Poly n) :
   · intro h m hm
     by_contra hne
     have := congrArg (AddMonoidAlgebra.coeff · m) h
-    rw [coeff_wtProj, if_neg hne] at this
+    rw [coeff_wtProj, ite_eq_right hne] at this
     exact MvPolynomial.mem_support_iff.1 hm this.symm
   · intro h
     ext m
@@ -214,11 +172,11 @@ theorem wtProj_wtProj (μ ν : Fin n → ℕ) (f : Poly n) :
     wtProj μ (wtProj ν f) = if μ = ν then wtProj ν f else 0 := by
   by_cases h : μ = ν
   · subst h
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     ext m
     rw [coeff_wtProj, coeff_wtProj]
     split_ifs <;> rfl
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     ext m
     rw [coeff_wtProj, coeff_wtProj, MvPolynomial.coeff_zero]
     split_ifs with h1 h2
@@ -272,13 +230,13 @@ theorem wtProj_comm {T : Module.End ℂ (Poly n)} (hT : ∀ a, T * rowOp a a = r
     wtProj_eq_self_of_eigen ν fun a => by
       have h1 := congrArg (fun S : Module.End ℂ (Poly n) => S (wtProj ν f)) (hT a)
       simp only [mul_apply_eq_comp] at h1
-      rw [← h1, rowOp_self_of_wtProj ν _ a (by rw [wtProj_wtProj, if_pos rfl]), map_smul]
+      rw [← h1, rowOp_self_of_wtProj ν _ a (by rw [wtProj_wtProj, ite_eq_left rfl]), map_smul]
 
   conv_lhs => rw [← sum_wtProj f, map_sum, map_sum]
   rw [Finset.sum_eq_single μ]
   · exact hν μ
   · intro ν _ hne
-    rw [← hν ν, wtProj_wtProj, if_neg (Ne.symm hne)]
+    rw [← hν ν, wtProj_wtProj, ite_eq_right (Ne.symm hne)]
   · intro hμ
     have h0 : wtProj μ f = 0 := by
       ext m
@@ -384,7 +342,7 @@ theorem eq_zero_of_forall_highestWeight (T T' : Module.End ℂ (Poly n))
   have hμ₀ : wtProj μ₀ g ≠ 0 := by
     intro h
     have := congrArg (AddMonoidAlgebra.coeff · m₀) h
-    rw [coeff_wtProj, if_pos rfl, MvPolynomial.coeff_zero] at this
+    rw [coeff_wtProj, ite_eq_left rfl, MvPolynomial.coeff_zero] at this
     exact MvPolynomial.mem_support_iff.1 hm₀ this
   set d := ∑ a, μ₀ a
   set W : Finset (Fin n → ℕ) :=
@@ -401,7 +359,7 @@ theorem eq_zero_of_forall_highestWeight (T T' : Module.End ℂ (Poly n))
   obtain ⟨hμsum, s, hs, hvne⟩ := (Finset.mem_filter.1 hμW).2
   set v := wtProj μ s
   have hvS : v ∈ S := hS2 μ s hs
-  have hvv : wtProj μ v = v := by rw [wtProj_wtProj, if_pos rfl]
+  have hvv : wtProj μ v = v := by rw [wtProj_wtProj, ite_eq_left rfl]
   have hhwv : ∀ i j, i < j → rowOp i j v = 0 := by
     intro i j hij
     by_contra hne
@@ -421,8 +379,6 @@ section -- clump:auto
 @[expose] public section
 
 namespace GroundTheory.Automorphic.HarishChandra
-
-attribute [local instance 100] LieRing.ofAssociativeRing
 
 open MvPolynomial
 
@@ -503,8 +459,6 @@ section -- clump:auto
 @[expose] public section
 
 namespace GroundTheory.Automorphic.HarishChandra
-
-attribute [local instance 100] LieRing.ofAssociativeRing
 
 open MvPolynomial
 
@@ -591,7 +545,7 @@ theorem hcProjLin_word_sub_mem (w : List (Fin n × Fin n)) :
           rw [Multiset.toFinsupp_apply]
           exact Multiset.count_eq_zero.2 (fun hm => h' (Multiset.mem_coe.1 hm))
         exact hw a this
-      rw [hcProjLin_canon_of_isDiagExp hd, monomial_diagExp_toFinsupp w hw, diagMain, if_pos hw]
+      rw [hcProjLin_canon_of_isDiagExp hd, monomial_diagExp_toFinsupp w hw, diagMain, ite_eq_left hw]
     · have hd : ¬ IsDiagExp M := by
         push Not at hw
         obtain ⟨a, ha, hne⟩ := hw
@@ -599,7 +553,7 @@ theorem hcProjLin_word_sub_mem (w : List (Fin n × Fin n)) :
         refine hne (hd a ?_)
         rw [Multiset.toFinsupp_apply]
         exact (Multiset.count_pos.2 (Multiset.mem_coe.2 ha)).ne'
-      rw [hcProjLin_canon_of_not hd, diagMain, if_neg hw]
+      rw [hcProjLin_canon_of_not hd, diagMain, ite_eq_right hw]
   rwa [h2] at h1
 
 theorem const_of_forall_rotate {k : ℕ} {i : Fin (k + 1) → Fin n}
@@ -622,12 +576,12 @@ theorem diagMain_capelliWord {k : ℕ} (i : Fin (k + 1) → Fin n) :
       intro a ha
       obtain ⟨t, rfl⟩ := List.mem_ofFn.1 ha
       exact h t
-    rw [diagMain, if_pos hall, List.map_ofFn, List.prod_ofFn]
+    rw [diagMain, ite_eq_left hall, List.map_ofFn, List.prod_ofFn]
     rw [Finset.sum_eq_single (i 0)]
-    · rw [if_pos (funext hc)]
+    · rw [ite_eq_left (funext hc)]
       simp only [Function.comp_apply, hc, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     · intro c _ hc'
-      rw [if_neg]
+      rw [ite_eq_right]
       intro he
       exact hc' (by rw [he])
     · simp
@@ -635,9 +589,9 @@ theorem diagMain_capelliWord {k : ℕ} (i : Fin (k + 1) → Fin n) :
         a.1 = a.2 := by
       intro hall
       exact h fun t => hall _ (List.mem_ofFn.2 ⟨t, rfl⟩)
-    rw [diagMain, if_neg hnot]
+    rw [diagMain, ite_eq_right hnot]
     refine (Finset.sum_eq_zero fun c _ => ?_).symm
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro rfl
     exact h fun t => rfl
 
@@ -649,7 +603,7 @@ theorem sum_diagMain_capelliWord (k : ℕ) :
   simp_rw [diagMain_capelliWord]
   rw [Finset.sum_comm, psum]
   refine Finset.sum_congr rfl fun c _ => ?_
-  rw [Finset.sum_ite_eq' Finset.univ (fun _ => c), if_pos (Finset.mem_univ _)]
+  rw [Finset.sum_ite_eq' Finset.univ (fun _ => c), ite_eq_left (Finset.mem_univ _)]
 
 theorem hcProjLin_capelli_sub_mem (k : ℕ) :
     hcProjLin (capelli (n := n) (k + 1)) - psum (Fin n) ℂ (k + 1) ∈ polyLE n k := by
@@ -932,8 +886,8 @@ theorem symmetric_le_adjoin (q : Fin n → MvPolynomial (Fin n) ℂ) (hq : ∀ k
       refine sum_congr rfl fun c _ => ?_
       rw [map_smul, homogeneousComponent_of_mem (hPhom c)]
       by_cases h : psumWt c = d + 1
-      · rw [if_pos h.symm, if_pos h]
-      · rw [if_neg (Ne.symm h), if_neg h, smul_zero]
+      · rw [ite_eq_left h.symm, ite_eq_left h]
+      · rw [ite_eq_right (Ne.symm h), ite_eq_right h, smul_zero]
     have hlow : (aeval psumFin F - homogeneousComponent (d + 1) (aeval psumFin F)).totalDegree ≤ d := by
       set p := aeval psumFin F
       rw [totalDegree, Finset.sup_le_iff]
@@ -943,7 +897,7 @@ theorem symmetric_le_adjoin (q : Fin n → MvPolynomial (Fin n) ℂ) (hq : ∀ k
         rw [mem_support_iff]; intro h0; rw [h0] at hm; simp at hm
       have h1 := le_totalDegree hm'
       by_cases hd : m.degree = d + 1
-      · rw [if_pos hd, sub_self] at hm; exact absurd rfl hm
+      · rw [ite_eq_left hd, sub_self] at hm; exact absurd rfl hm
       · have : (m.sum fun _ e => e) = m.degree := by
           rfl
         rw [this] at h1 ⊢
@@ -987,8 +941,6 @@ section -- clump:auto
 @[expose] public section
 
 namespace GroundTheory.Automorphic.HarishChandra
-
-attribute [local instance 100] LieRing.ofAssociativeRing
 
 open MvPolynomial
 

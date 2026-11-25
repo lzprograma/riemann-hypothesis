@@ -206,12 +206,12 @@ theorem exists_auxiliaryWeights_at_runWeights : ∀ (D : D7) (B : WeightFamilies
       (hFP τ) (hgP τ) ?_ ?_
     · intro i hi
       have hl := hLP τ i
-      rw [if_pos hi] at hl
+      rw [ite_eq_left hi] at hl
       exact hl
     · intro i hi
       have hn : ¬ (i.1 + 1 < (D.R.sigW j).1) := by omega
       have hl := hLP τ i
-      rw [if_neg hn] at hl
+      rw [ite_eq_right hn] at hl
       unfold gapZ at hl
       rw [dite_eq_right hn] at hl
       have hk := le_mul_fdiv_sub_of_sq_le (ka.aP τ i) (((WeightFamilies.dimY D j : ℤ) + 2) * nW + 2 * D.R.r) Tn
@@ -227,12 +227,12 @@ theorem exists_auxiliaryWeights_at_runWeights : ∀ (D : D7) (B : WeightFamilies
       (hFM τ) (hgM τ) ?_ ?_
     · intro i hi
       have hl := hLM τ i
-      rw [if_pos hi] at hl
+      rw [ite_eq_left hi] at hl
       exact hl
     · intro i hi
       have hn : ¬ (i.1 + 1 < (D.R.sigW j).2) := by omega
       have hl := hLM τ i
-      rw [if_neg hn] at hl
+      rw [ite_eq_right hn] at hl
       unfold gapZ at hl
       rw [dite_eq_right hn] at hl
       have hk := le_mul_fdiv_sub_of_sq_le (ka.aM τ i) 0 Tn (WeightFamilies.dimY D j) (by positivity) h40z
@@ -274,8 +274,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.NoBaseComponentShortPolynomialGenerator", "h": "module\n\npublic import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.ThetaWeightBounds\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HarmAMemSpanShort\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.NoCommonZeroSt\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaGeneratorsNoCommonZeroOfChartIndependence\npublic import Formalism.LocalToGlobal.ProjectiveLattices.RulInst\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaRulesLinearAndLevelCongruence\npublic import Formalism.LocalToGlobal.ProjectiveLattices.HostSize\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.SumSingleEmbeddingExtendLe\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -335,8 +333,7 @@ theorem noBase : Formalism.MainNotions.ModuliIntegralCharts.H1.ChartIndepSt2 →
     have e1 : WeightAlgebra.DF w + 2 ≤ D.host.g 1 := le_trans hDF (min_le_right _ _)
     nlinarith [Nat.mul_le_mul e0 e1]
   obtain ⟨f, ⟨x, P, hP, hfP⟩, hf0⟩ := _root_.GlobalTheory.noCommonZero_of_chartIndep hC D T h j hj w hr hlast hM hα σ hσ k x0 hx0
-  by_contra hno
-  push_neg at hno
+  by_contra! hno
   obtain ⟨N, cf, g, hsum⟩ := Submodule.mem_span_set'.1 (mem_span_short D T h large₂ j hj w hrows hL hr P hP)
   choose gi hgi using fun i => (existsUnique_thRule _ _ _ hT x (g i).2.1).exists
   have hlin := (_root_.GlobalTheory.ThetaRule.isThRule_linear_and_congr hC D.host.E T.Q.H (T.Q.Dw j) T.Q.l (T.Q.Xo j) T.Q.c (T.nab j) hnab (wtA w) w.n).1
@@ -501,7 +498,7 @@ theorem exists_integral_theta_nonzero_on_components : Formalism.MainNotions.Modu
     exact Submodule.subset_span (hfth (e.symm i))
   have hsupF : ∀ σ i, Real.log ((recB h.toLawsCore).supN j w σ (Fc i)) ≤ 400 * Zb D large₂ * w.size := by
     intro σ i
-    simp only [Formalism.L2.Pj.cutN, if_pos hj]
+    simp only [Formalism.L2.Pj.cutN, ite_eq_left hj]
     exact hsupb σ (e.symm i)
   obtain ⟨th, hth, hρ, hsup⟩ := exists_mem_Mlat_ne_zero (recPJ h j hj) hinj EX w hInt _ Fc hmem
     (400 * Zb D large₂ * w.size) hb hsupF T.σ₀
@@ -548,7 +545,7 @@ theorem auxiliaryWeights_last_entry_pos {D : D7} {B : WeightFamilies.Prov D} {P 
     intro τ i hi
     have hg := hLP τ i
     have hlt : ¬ (i.1 + 1 < (D.R.sigW j).1) := by omega
-    simp only [gapZ, hlt, dif_neg, if_neg, not_false_eq_true] at hg
+    simp only [gapZ, hlt, dite_eq_right, ite_eq_right, not_false_eq_true] at hg
     have ha : 2 * (Tn : ℝ) ^ 2 ≤ (ka.aP τ i : ℝ) := by
       have := h6 τ i hi
       linarith

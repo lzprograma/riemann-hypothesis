@@ -105,7 +105,7 @@ lemma hermC_orthonormal_coordinates {x : Frame X.Ψ r} (ho : X.IsOrtho x) (τ : 
     have := congrFun (congrFun (ho τ) i) j
     simpa [gram, Matrix.diagonal_apply] using this
   rw [hM p, hM q, hermC_bilin]
-  simp only [hij, mul_ite, ite_mul, mul_zero, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [hij, mul_ite, ite_mul, mul_zero, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   rw [sum_fin_eq_sum_castLE_add_sum_shift X.p0_le]
   simp only [mjip, mjpa, mjpb, sub_eq_add_neg, ← Finset.sum_neg_distrib]
   congr 1
@@ -140,7 +140,7 @@ lemma mjg_pb (Z : X.Coord) (τ : X.Ψ) (δ : Fin X.p0 → ℂ) :
     simp at this
     omega
   have hlt : X.p0 ≤ X.p0 + (m : ℕ) ∧ ((Fin.castLE X.p0_le c : Fin r) : ℕ) < X.p0 := ⟨by omega, by simp⟩
-  rw [if_neg hne, dite_eq_left hlt, zero_add, mul_comm]
+  rw [ite_eq_right hne, dite_eq_left hlt, zero_add, mul_comm]
   congr 2 <;> ext <;> simp
 
 lemma mj_sum_colP (x : Frame X.Ψ r) (Z : X.Coord) (τ : X.Ψ) (δ : Fin X.p0 → ℂ) :

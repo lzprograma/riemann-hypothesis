@@ -98,7 +98,7 @@ theorem cob_of_res_zcl_eq_zero {μ : GS Ω (S : Set Pl) →* (ZMod (l ^ n))ˣ}
     have : (Set.domRestrict (Dec (F := ℚ) (Av v) : Set (G ℚ Ω))
         fun s => if hs : s ∈ Dec (F := ℚ) (Av v) then lft c n (fun i => ci i ⟨s, hs⟩) else 0) =
         fun g => lft c n (fun i => ci i g) := by
-      funext g; exact dif_pos g.2
+      funext g; exact dite_eq_left g.2
     rw [this]
     exact Continuous.comp (g := lft c n) (f := fun g i => ci i g) continuous_of_discreteTopology
       (continuous_pi fun i => hci i)
@@ -109,7 +109,7 @@ theorem cob_of_res_zcl_eq_zero {μ : GS Ω (S : Set Pl) →* (ZMod (l ^ n))ˣ}
     · exact c.O.zero_mem
   · intro s hs t ht
     dsimp only
-    rw [dif_pos ht, dif_pos ((Dec (F := ℚ) (Av v)).mul_mem hs ht), dif_pos hs]
+    rw [dite_eq_left ht, dite_eq_left ((Dec (F := ℚ) (Av v)).mul_mem hs ht), dite_eq_left hs]
     have hm : ∀ a, lft c n a ∈ c.O := lft_mem n
     refine (cg_iff (hξ.int s t) (c.O.add_mem (c.O.sub_mem (algebraMap_mul_mem _ (hm _)) (hm _)) (hm _))).2
       fun i => ?_
@@ -147,8 +147,8 @@ theorem reciprocity : GlobalTheory.Mem.LiteralAutomorphy.LitCoh → ∀ (l : ℕ
   have hAv : ∀ v, IsPlaceOver (Av v) v.1 := by
     intro v
     by_cases h : v.1 = v₀
-    · simp only [Av, dif_pos h]; rw [h]; exact hB
-    · simp only [Av, dif_neg h]; exact (Classical.choose_spec (hloc v.1 v.2 h)).1
+    · simp only [Av, dite_eq_left h]; rw [h]; exact hB
+    · simp only [Av, dite_eq_right h]; exact (Classical.choose_spec (hloc v.1 v.2 h)).1
   obtain ⟨μ, hμ⟩ := exists_lift_cycMod (F := ℚ) (Ω := Ω) (r := n) hS
   have hNT := (hPT S hS Av hAv μ hμ (ZMod (l ^ n)) (charRep μ) (contAction_charRep hμ)).1
   have hres : ∀ i, resH2 (charRep μ) (locFam S Av ⟨v₀, hv₀⟩) (continuous_locFam S Av _)
@@ -162,11 +162,11 @@ theorem reciprocity : GlobalTheory.Mem.LiteralAutomorphy.LitCoh → ∀ (l : ℕ
     · intro v _ hv
       have hne : v.1 ≠ v₀ := fun h => hv (Subtype.ext h)
       have hcob : Cob2 c n (Dec (F := ℚ) (Av v)) ξ := by
-        simp only [Av, dif_neg hne]; exact (Classical.choose_spec (hloc v.1 v.2 hne)).2
+        simp only [Av, dite_eq_right hne]; exact (Classical.choose_spec (hloc v.1 v.2 hne)).2
       rw [res_zcl_eq_zero hμ hξ Av v hcob i, map_zero]
     · intro h; exact absurd (Finset.mem_univ _) h
   have hcob := cob_of_res_zcl_eq_zero hμ hξ Av ⟨v₀, hv₀⟩ hres
-  have hA : Av ⟨v₀, hv₀⟩ = B := dif_pos rfl
+  have hA : Av ⟨v₀, hv₀⟩ = B := dite_eq_left rfl
   rw [hA] at hcob
   exact hcob
 

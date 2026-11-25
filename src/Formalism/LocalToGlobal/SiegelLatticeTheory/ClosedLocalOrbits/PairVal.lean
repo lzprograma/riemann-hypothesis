@@ -17,8 +17,6 @@ namespace Formalism.L2.SG.PairVal
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef MeasureTheory
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Mass
 
 variable (D : D7) {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T)

@@ -14,59 +14,13 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.Spherica
 public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
 public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.PolyMem
 import GroundTheory.LocalFields.LocalFourierHaar
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.AutomorphicForms.CompactFormulaCountable
-import Mathlib.RingTheory.Henselian
-import Mathlib.Tactic.Basify
 import GroundTheory.AutomorphicForms.Satake
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
 import GroundTheory.GlobalFields.CompletionAtPlace.Integers
 import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
 import GroundTheory.GlobalFields.LocalAtPlace
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -530,19 +484,8 @@ theorem UpperTheory.ConvolutionTheory.H.sphIndep :
       GM.IsSph w p h → ∀ [MeasurableSpace (GL (Fin n) (w.adicCompletion K))] [BorelSpace (GL (Fin n) (w.adicCompletion K))]
         (m : Measure (GL (Fin n) (w.adicCompletion K))) [m.IsHaarMeasure], m (GLnLocal.integralGL (w.adicCompletion K) n) = 1 →
         ∃ H : SphericalHecke m (F := w.adicCompletion K) (n := n), (∀ x, (H : HeckeAlgebra m) x = h x) ∧ satakeTransform m H = polyEmb (n := n) (MvPolynomial.aeval (fun i : Fin n => MvPolynomial.esymm (Fin n) ℂ (i + 1)) p) := by
-  intro K _ _ n w p h hs inst instB m instH hm
-  obtain ⟨i', b', m', h', hm', H, hH⟩ := hs
-  have e : i' = inst := (@BorelSpace.measurable_eq _ _ i' b').trans (@BorelSpace.measurable_eq _ _ inst instB).symm
-  subst e
-  have hmm : m' = m := by
-    have h1 := Measure.isMulLeftInvariant_eq_smul m' m
-    have h2 := congrArg (fun μ : Measure (GL (Fin n) (w.adicCompletion K)) => μ (GLnLocal.integralGL (w.adicCompletion K) n)) h1
-    simp only [smul_apply, hm, hm'] at h2
-    have h3 : Measure.haarScalarFactor m' m = 1 := by
-      simpa [ENNReal.smul_def] using h2.symm
-    rw [h1, h3, one_smul]
-  subst hmm
-  exact ⟨H, hH⟩
+  intro _ _ _ _ _ _ _ hs _ _ m instH hm
+  exact UpperTheory.ConvolutionTheory.L1.sph_at m instH hm hs
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SphIndep =====
@@ -553,16 +496,6 @@ section -- clump:auto
 @[expose] public section
 
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.Spherical UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.H
-
-private theorem haar_eq {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [LocallyCompactSpace G]
-    [SecondCountableTopology G] [MeasurableSpace G] [BorelSpace G] (m m' : Measure G) [m.IsHaarMeasure] [m'.IsHaarMeasure]
-    {A : Set G} (hm : m A = 1) (hm' : m' A = 1) : m' = m := by
-  have h1 := Measure.isMulLeftInvariant_eq_smul m' m
-  have h2 := congrArg (fun μ : Measure G => μ A) h1
-  simp only [Measure.smul_apply, hm, hm'] at h2
-  have h3 : Measure.haarScalarFactor m' m = 1 := by
-    simpa [ENNReal.smul_def] using h2.symm
-  rw [h1, h3, one_smul]
 
 private theorem haar_ex {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     [MeasurableSpace G] [BorelSpace G] (K : Subgroup G) (hc : IsCompact (K : Set G)) (ho : IsOpen (K : Set G)) :
@@ -609,9 +542,11 @@ theorem UpperTheory.ConvolutionTheory.H.locHeckeInert :
   obtain ⟨hH, hPl⟩ := @placeOfLocal_holds F E _ _ _ _ _ _ σ hσ v w hw i1 i2 i3 i4 s hs hr h1 h2 n _ _ _ _ mE mF hE hF _ _
   have hc : Continuous (mapGL n (Pi.evalRingHom (fun w : PlacesOver E v => w.1.adicCompletion E) w)) :=
     Continuous.units_map _ (continuous_id.matrix_map (continuous_apply w))
-  have eE := haar_eq μE (mE.map (mapGL n (Pi.evalRingHom (fun w : PlacesOver E v => w.1.adicCompletion E) w))) vE
-    (by rw [Measure.map_apply hc.measurable (unitSB_holds _ n).1.measurableSet, ← placeInt_holds.2 F E v w hw n, wE])
-  have eF := haar_eq μF mF vF (by rw [placeInt_holds.1 F v n, wF])
+  have eE := UpperTheory.ConvolutionTheory.L1.haar_uniq hμE hH vE
+    (by rw [Measure.map_apply hc.measurable (unitSB_holds _ n).1.measurableSet,
+      ← placeInt_holds.2 F E v w hw n, wE])
+  have eF := UpperTheory.ConvolutionTheory.L1.haar_uniq hμF hF vF
+    (by rw [placeInt_holds.1 F v n, wF])
   obtain ⟨HE, hE1, hE2⟩ := sphIndep E n w.1 _ h hh μE (by rw [← placeInt_holds.1 E w.1 n, vE])
   obtain ⟨HF, hF1, hF2⟩ := sphIndep F n v _ f hf μF (by rw [← placeInt_holds.1 F v n, vF])
   have hm := H _ (hPD p hpD) HE HF (by rw [hE2, map_mul, map_mul]) (by rw [hF2, hr, ← a3, map_mul, map_mul])
@@ -619,7 +554,7 @@ theorem UpperTheory.ConvolutionTheory.H.locHeckeInert :
   have e2 : (fun x => (HF : HeckeAlgebra μF) x) = f := funext hF1
   have m1 := (HE : HeckeAlgebra μE).mem
   have m2 := (HF : HeckeAlgebra μF).mem
-  rw [e1, e2, ← eE, ← eF] at hm
+  rw [e1, e2, eE, eF] at hm
   rw [show ((HE : HeckeAlgebra μE) : _ → ℂ) = h from e1] at m1
   rw [show ((HF : HeckeAlgebra μF) : _ → ℂ) = f from e2] at m2
   exact hPl h m1 f m2 hm
@@ -639,25 +574,6 @@ open GroundTheory.Global GroundTheory.Global.SemiLocal GroundTheory.Automorphic.
 open UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.GM
 
 namespace UpperTheory.ConvolutionTheory.GM.LocalAllPlaces
-
-private theorem sph_unique {K : Type} [Field K] [NumberField K] {n : ℕ} (w : Pl K) (p : MvPolynomial (Fin n) ℂ)
-    (h h' : GL (Fin n) (w.adicCompletion K) → ℂ) (a : IsSph w p h) (b : IsSph w p h') : h = h' := by
-  obtain ⟨m1, b1, μ1, h1, hμ1, H1, e1, s1⟩ := a
-  obtain ⟨m2, b2, μ2, h2, hμ2, H2, e2, s2⟩ := b
-  obtain rfl : m1 = m2 := b1.measurable_eq.trans b2.measurable_eq.symm
-  obtain rfl : μ1 = μ2 := by
-    have h := Measure.isMulLeftInvariant_eq_smul μ1 μ2
-    have h3 := congrArg (fun m : Measure _ => m (GLnLocal.integralGL (w.adicCompletion K) n)) h
-    simp only [Measure.smul_apply, hμ1, hμ2] at h3
-    have h4 : Measure.haarScalarFactor μ1 μ2 = 1 := by
-      have : ((Measure.haarScalarFactor μ1 μ2 : NNReal) : ENNReal) = 1 := by
-        rw [h3]; simp [ENNReal.smul_def]
-      exact_mod_cast this
-    rw [h4, one_smul] at h
-    exact h
-  obtain rfl : H1 = H2 := satakeTransform_injective (s1.trans s2.symm)
-  funext x
-  rw [← e1, ← e2]
 
 private theorem powE_one {n : ℕ} (i : Fin n) : powE 1 i = X i := by
   unfold powE
@@ -736,8 +652,8 @@ theorem UpperTheory.ConvolutionTheory.GM.locAll :
   · refine UpperTheory.ConvolutionTheory.L1.locHeckeSplit F E σ hσ hp n hn v hs (fun w => if w.1 ∈ κ then γ w.1 * p w.1 else 1)
       (fun w => h w.1) f (fun w => ?_) ?_
     · by_cases hw : w.1 ∈ κ
-      · simpa only [if_pos hw] using hh _ hw
-      · simp only [if_neg hw, hh' _ hw]
+      · simpa only [ite_eq_left hw] using hh _ hw
+      · simp only [ite_eq_right hw, hh' _ hw]
         exact (sphEx E n hn w.1).2.1
     · rw [finprod_eq_prod_of_fintype]
       convert hf using 2 with w
@@ -750,10 +666,11 @@ theorem UpperTheory.ConvolutionTheory.GM.locAll :
       exact finprod_eq_single _ w fun b hb => absurd (hw b) hb
     rw [e]
     by_cases hk : w.1 ∈ κ
-    · rw [if_pos hk, resDeg_inert v hv w hw] at hf
+    · rw [ite_eq_left hk, resDeg_inert v hv w hw] at hf
       exact hγ2 w.1 hk v w.2 hs (p w.1) (hpD _ hk) _ f (hh _ hk) hf
-    · rw [if_neg hk] at hf
-      rw [sph_unique v 1 _ _ hf (sphEx F n hn v).2.1, hh' _ hk]
+    · rw [ite_eq_right hk] at hf
+      rw [(UpperTheory.ConvolutionTheory.L1.sphLaws.2 F n v).2.1 1 _ _ hf (sphEx F n hn v).2.1,
+        hh' _ hk]
       have e2 : (fun g => (GLnLocal.integralGL (w.1.adicCompletion E) n : Set _).indicator
           (1 : GL (Fin n) (w.1.adicCompletion E) → ℂ) (cmp w g)) =
           (unitSet E n v).indicator 1 := by

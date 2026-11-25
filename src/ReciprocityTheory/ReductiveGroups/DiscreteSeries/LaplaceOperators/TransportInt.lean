@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.ToL2EqZeroOfEqZeroOnUJset
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.Transport
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.IfaceSt
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.ReproducingKernels.ReproCoreStatement
@@ -28,35 +29,7 @@ theorem cayley_signature {k r : ℕ} {ε : Fin (2 * r + k + 1) → Bool} {P : Ma
 
 theorem frob_conj_ge {k r : ℕ} {P : Mat k r} (hP : IsUnit P.det) :
     ∃ c : ℝ, 0 < c ∧ ∀ g : Mat k r, c * Formalism.FourierDecayAlt.B.gN g ≤ frob (P * g * P⁻¹) := by
-  letI : SeminormedAddCommGroup (Mat k r) := Matrix.frobeniusSeminormedAddCommGroup
-  have hF : ∀ A : Mat k r, frob A = ‖A‖ := by
-    intro A
-    unfold frob
-    rw [Matrix.frobenius_norm_def]
-    simp only [Real.sqrt_eq_rpow, Real.rpow_two]
-  have hG : ∀ A : Mat k r, Formalism.FourierDecayAlt.B.gN A = ‖A‖ := by
-    intro A
-    rw [← hF]
-    unfold Formalism.FourierDecayAlt.B.gN frob
-    simp only [Complex.normSq_eq_norm_sq]
-  have hinv2 : P⁻¹ * P = 1 := Matrix.nonsing_inv_mul P hP
-  have hK0 : 0 ≤ ‖P⁻¹‖ * ‖P‖ := mul_nonneg (norm_nonneg _) (norm_nonneg _)
-  have hK1 : (0 : ℝ) < ‖P⁻¹‖ * ‖P‖ + 1 := by linarith
-  refine ⟨1 / (‖P⁻¹‖ * ‖P‖ + 1), div_pos one_pos hK1, fun g => ?_⟩
-  rw [hG, hF]
-  have hg : P⁻¹ * (P * g * P⁻¹) * P = g := by
-    rw [← Matrix.mul_assoc, ← Matrix.mul_assoc, hinv2, Matrix.one_mul, Matrix.mul_assoc, hinv2,
-      Matrix.mul_one]
-  have hle : ‖g‖ ≤ ‖P⁻¹‖ * ‖P‖ * ‖P * g * P⁻¹‖ := by
-    calc ‖g‖ = ‖P⁻¹ * (P * g * P⁻¹) * P‖ := by rw [hg]
-      _ ≤ ‖P⁻¹ * (P * g * P⁻¹)‖ * ‖P‖ := Matrix.frobenius_norm_mul _ _
-      _ ≤ ‖P⁻¹‖ * ‖P * g * P⁻¹‖ * ‖P‖ := by
-          gcongr
-          exact Matrix.frobenius_norm_mul _ _
-      _ = ‖P⁻¹‖ * ‖P‖ * ‖P * g * P⁻¹‖ := by ring
-  have hX : 0 ≤ ‖P * g * P⁻¹‖ := norm_nonneg _
-  rw [div_mul_eq_mul_div, one_mul, div_le_iff₀ hK1]
-  nlinarith
+  apply ReciprocityTheory.ChartRestriction.DS.Lap.finB_frob_conj_ge <;> assumption
 
 theorem pi_isometry {k r : ℕ} {u : Fin k → ℝ} {Vp : Type*} [NormedAddCommGroup Vp] [InnerProductSpace ℂ Vp]
     {z : Fin (2 * r + k + 1) → ℂ} {π : Mat k r → (Vp →L[ℂ] Vp)} (hz : inWb k r z) (hT : 0 < Tz k r z)
@@ -139,9 +112,9 @@ theorem integrand_aesm {k r : ℕ} {ε : Fin (2 * r + k + 1) → Bool} {lam : Fi
     refine Complex.continuous_exp.comp (continuous_const.mul (Complex.continuous_ofReal.comp
       (Complex.continuous_re.comp (continuous_finsetSum _ fun a _ => continuous_const.mul ?_))))
     by_cases hcond : a.val + 1 < r
-    · simp only [Formalism.MainNotions.S.ellA, dif_pos hcond]
+    · simp only [Formalism.MainNotions.S.ellA, dite_eq_left hcond]
       exact (continuous_apply _).comp (continuous_apply _)
-    · simp only [Formalism.MainNotions.S.ellA, dif_neg hcond]
+    · simp only [Formalism.MainNotions.S.ellA, dite_eq_right hcond]
       exact (continuous_apply (Formalism.QuantumDeterminants.eI k r a)).comp
         (continuous_id.matrix_mulVec (continuous_const (y := z)))
   have hinvc : ContinuousOn (fun p : Mt k r × Mt k r => (Matrix.of p.1 : Mat k r)⁻¹) A := by

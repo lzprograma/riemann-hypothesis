@@ -114,8 +114,7 @@ theorem lin_mem_span {n : ℕ} (X : Fin n → V) (c : Fin n → E) :
 theorem exists_norm_ne_zero (B : V →ₛₗ[σ] V →ₗ[E] E) (hB : ∀ x y, σ (B x y) = B y x)
     (h2 : (2 : E) ≠ 0) {n : ℕ} (X : Fin n → V) (hX : ¬ ∀ a b, B (X a) (X b) = 0) :
     ∃ c : Fin n → E, B (lin X c) (lin X c) ≠ 0 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   apply hX
   intro a b
   by_contra hs

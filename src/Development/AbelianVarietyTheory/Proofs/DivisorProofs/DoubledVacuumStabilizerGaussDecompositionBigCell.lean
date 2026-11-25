@@ -1,47 +1,8 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledVacuumLatticeStabilizerBigCellFactorizati
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockOfMatrix
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OneEqSumPlaceIdempotentsOverTwoAddTwoMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -57,31 +18,11 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
 theorem evFin_invOf_two_mem (v : Pl (F := F)) (h : (2 : 𝓞 F) ∉ v.asIdeal) :
     evFin F v (⅟(2 : AF F)) ∈ v.adicCompletionIntegers F := by
-  have e : evFin F v (⅟(2 : AF F)) = algebraMap F (Fv F v) (2 : F)⁻¹ := by
-    have h1 : evFin F v (⅟(2 : AF F)) * 2 = 1 := by
-      have := congrArg (evFin F v) (invOf_mul_self (2 : AF F))
-      rwa [map_mul, map_ofNat, map_one] at this
-    have h2 : algebraMap F (Fv F v) (2 : F)⁻¹ * 2 = 1 := by
-      rw [← map_ofNat (algebraMap F (Fv F v)) 2, ← map_mul, inv_mul_cancel₀ two_ne_zero, map_one]
-    have h20 : (2 : Fv F v) ≠ 0 := by
-      intro h0; rw [h0, mul_zero] at h1; exact zero_ne_one h1
-    exact mul_right_cancel₀ h20 (h1.trans h2.symm)
-  rw [e]
-  exact GlobalTheory.LatVac.half_mem_adicCompletionIntegers F v h
+  apply _root_.GlobalTheory.DblVacFactor.evFin_half_mem <;> assumption
 
 theorem invOf_two_smul_mem_latAt {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) (h : (2 : 𝓞 F) ∉ v.asIdeal)
     {z : Fin d → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)} (hz : z ∈ GlobalTheory.InertSph.latAt W v) : (⅟(2 : AF F)) • z ∈ GlobalTheory.InertSph.latAt W v := by
-  induction hz using AddSubgroup.closure_induction with
-  | mem x hx =>
-    obtain ⟨a, ha, hai, y, hy, rfl⟩ := hx
-    refine AddSubgroup.subset_closure ⟨⅟(2 : AF F) * a, fun u hu => ?_, ?_, y, hy, by rw [mul_smul]⟩
-    · have := ha u hu
-      simp only [smul_eq_mul] at this ⊢
-      rw [mul_left_comm, this, mul_zero]
-    · rw [map_mul]; exact mul_mem (evFin_invOf_two_mem v h) hai
-  | zero => rw [smul_zero]; exact zero_mem _
-  | add x y _ _ hx hy => rw [smul_add]; exact add_mem hx hy
-  | neg x _ hx => rw [smul_neg]; exact neg_mem hx
+  apply _root_.GlobalTheory.DblVacFactor.half_smul_mem <;> assumption
 
 section Grp
 
@@ -134,8 +75,6 @@ theorem nb_unitary {J : Matrix (Fin d) (Fin d) (AE F E)} {Z : Matrix (Fin d) (Fi
 end Blocks
 
 section Elt
-
-attribute [-instance] CStarMatrix.instHMulOfFintypeOfMulOfAddCommMonoid
 
 theorem fromBlocks_mul_fromRows' {d : ℕ} (A B C D X Y : Matrix (Fin d) (Fin d) (AE F E)) :
     Matrix.fromBlocks A B C D * Matrix.fromRows X Y = Matrix.fromRows (A * X + B * Y) (C * X + D * Y) := by
@@ -196,8 +135,6 @@ theorem nbU_mem_PAnti (Z : Matrix (Fin d) (Fin d) (AE F E))
 end Elt
 
 section Main
-
-attribute [-instance] CStarMatrix.instHMulOfFintypeOfMulOfAddCommMonoid
 
 theorem invOf_two_smul_add_self {M : Type} [AddCommGroup M] [Module (AF F) M] (x : M) :
     ⅟(2 : AF F) • x + ⅟(2 : AF F) • x = x := by

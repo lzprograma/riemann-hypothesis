@@ -47,8 +47,6 @@ import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators
@@ -114,11 +112,11 @@ theorem cMat_rowShift [Fintype Ty] (τ : Ty) (s : ℕ) (hs : s ≤ r τ) (B : Fi
         · subst hp
           have hc : Fin.castLE hs i0 = i := Fin.ext rfl
           have hc1 : Fin.castLE hs i1 = i' := Fin.ext rfl
-          simp only [hc, hc1, if_true, smul_eq_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
+          simp only [hc, hc1, ite_true, smul_eq_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
           exact Finset.sum_congr rfl fun b _ => by ring
-        · rw [if_neg hp]
+        · rw [ite_eq_right hp]
           refine Finset.sum_congr rfl fun b _ => ?_
-          rw [if_neg]
+          rw [ite_eq_right]
           intro h
           apply hp
           apply Fin.ext
@@ -133,7 +131,7 @@ theorem cMat_rowShift [Fintype Ty] (τ : Ty) (s : ℕ) (hs : s ≤ r τ) (B : Fi
         simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, cMat, Matrix.of_apply, map_sum, map_mul,
         algHom_C, algebraMap_eq, rowShift, aeval_X, crSig_iff]
         refine Finset.sum_congr rfl fun b _ => ?_
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h
         have := congrArg Fin.val h
         simp only [Fin.val_castLE] at this
@@ -145,7 +143,7 @@ theorem cMat_rowShift [Fintype Ty] (τ : Ty) (s : ℕ) (hs : s ≤ r τ) (B : Fi
       simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, cMat, Matrix.of_apply, map_sum, map_mul,
       algHom_C, algebraMap_eq, rowShift, aeval_X]
       refine Finset.sum_congr rfl fun b _ => ?_
-      rw [if_neg (crSig_ne hτ)]
+      rw [ite_eq_right (crSig_ne hτ)]
     rw [hmat]
 
 theorem cMat_hom [Fintype Ty] (τ : Ty) (s : ℕ) (hs : s ≤ r τ) (B : Fin s → Fin n → k) (σ : Ty) (i0 : ℕ) :

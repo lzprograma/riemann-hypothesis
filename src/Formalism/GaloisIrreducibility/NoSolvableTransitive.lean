@@ -11,59 +11,9 @@ public import Mathlib.LinearAlgebra.FreeModule.PID
 public import Mathlib.RingTheory.Flat.TorsionFree
 public import Formalism.GaloisIrreducibility.GaloisIrreducibilityProofs.PowerPCycle
 public import Formalism.GaloisIrreducibility.GaloisIrreducibilityProofs.RestrictRoots
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.GroupTheory.SpecificGroups.ZGroup
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Lemma
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.TypeStar
-import Mathlib.Order.CompletePartialOrder
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.GaloisIrreducibility.GaloisIrreducibilityProofs.AltNotSolvable, Formalism.GaloisIrreducibility.GaloisIrreducibilityProofs.IrredOf, Formalism.GaloisIrreducibility.GaloisIrreducibilityProofs.JordanPrime, Formalism.GaloisIrreducibility.GaloisIrreducibilityProofs.LemmaAOf, Formalism.GaloisIrreducibility.GaloisIrreducibilityProofs.NoSolvableOf, Formalism.GaloisIrreducibility.GaloisIrreducibilityProofs.OrbitSubSum, Formalism.GaloisIrreducibility.GaloisIrreducibilityProofs.PermSubSumInv, Formalism.GaloisIrreducibility.GaloisIrreducibilityProofs.PrimitiveOfPCycle, Formalism.GaloisIrreducibility.NoSolvableTransitive
@@ -121,8 +71,7 @@ theorem irreducible_of_galois_conditions : IrredOf := by
     rw [finrank_top] at hJeq
     rw [hJeq]
     exact isSubSum_of_subset _ _ _ hJ
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   obtain ⟨h0, h1⟩ := hne
   have hd0 : 0 < Module.finrank K W :=
     Nat.pos_of_ne_zero fun h => h0 (Submodule.finrank_eq_zero.mp h)
@@ -814,12 +763,10 @@ theorem primitive_of_p_cycle : PrimitiveOfPCycle := by
   rw [not_or] at hcon
   obtain ⟨hns, hnt⟩ := hcon
   obtain ⟨b, hb, c, hc, hbc⟩ : ∃ b ∈ B, ∃ c ∈ B, b ≠ c := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hns (fun u hu v hv => h u hu v hv)
   obtain ⟨z, hz⟩ : ∃ z, z ∉ B := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hnt (Set.eq_univ_of_forall h)
   have hσp : σ ^ p = 1 := by
     rw [← hsupp, ← hcyc.orderOf]; exact pow_orderOf_eq_one σ

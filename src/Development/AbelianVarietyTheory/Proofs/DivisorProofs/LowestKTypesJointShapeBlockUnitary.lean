@@ -1,47 +1,7 @@
 module
 
 public import Formalism.LocalRingCardinality.DataTheta
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
 import Formalism.SharpRestriction.Divisibility.SchurIrreducible
@@ -87,7 +47,7 @@ theorem below_all {l : List ℚ} {v : ℚ} (h : ∀ e ∈ l, e < v) : below l v 
   induction l with
   | nil => simp [below]
   | cons e l ih =>
-    rw [below_cons, ih fun x hx => h x (List.mem_cons_of_mem _ hx), if_pos (h e List.mem_cons_self)]
+    rw [below_cons, ih fun x hx => h x (List.mem_cons_of_mem _ hx), ite_eq_left (h e List.mem_cons_self)]
     simp; ring
 
 theorem below_none {l : List ℚ} {v : ℚ} (h : ∀ e ∈ l, v ≤ e) : below l v = 0 := by
@@ -95,7 +55,7 @@ theorem below_none {l : List ℚ} {v : ℚ} (h : ∀ e ∈ l, v ≤ e) : below l
   | nil => simp [below]
   | cons e l ih =>
     rw [below_cons, ih fun x hx => h x (List.mem_cons_of_mem _ hx),
-      if_neg (not_lt.2 (h e List.mem_cons_self))]
+      ite_eq_right (not_lt.2 (h e List.mem_cons_self))]
     simp
 
 theorem below_mono (l : List ℚ) {u v : ℚ} (h : u ≤ v) : below l u ≤ below l v := by
@@ -195,7 +155,7 @@ theorem shiftNu_blattner {p q : ℕ} {l₁ l₂ : List ℚ} (h₁ : l₁.length 
     rw [List.count_eq_one_of_mem n1 hm, h₁] at a1
     rw [List.count_eq_zero_of_not_mem (fun h => n3 _ hm _ h rfl), h₂] at a2
     simp only [shiftNu, blattner, rhoNC, Finset.card_filter, Fintype.sum_sum_type]
-    simp only [sameBlock, ofBlocks, getD_map' h₁, not_true, not_false_iff, true_and, false_and, if_false]
+    simp only [sameBlock, ofBlocks, getD_map' h₁, not_true, not_false_iff, true_and, false_and, ite_false]
     push_cast
     rw [e1, e2, e3, e4]
     simp only [below, above] at a1 a2 ⊢
@@ -208,7 +168,7 @@ theorem shiftNu_blattner {p q : ℕ} {l₁ l₂ : List ℚ} (h₁ : l₁.length 
     rw [List.count_eq_one_of_mem n2 hm, h₂] at a2
     rw [List.count_eq_zero_of_not_mem (fun h => n3 _ h _ hm rfl), h₁] at a1
     simp only [shiftNu, blattner, rhoNC, Finset.card_filter, Fintype.sum_sum_type]
-    simp only [sameBlock, ofBlocks, getD_map' h₂, not_true, not_false_iff, true_and, false_and, if_false]
+    simp only [sameBlock, ofBlocks, getD_map' h₂, not_true, not_false_iff, true_and, false_and, ite_false]
     push_cast
     rw [e1, e2, e3, e4]
     simp only [below, above] at a1 a2 ⊢
@@ -367,7 +327,6 @@ theorem mem_block {t : ℕ} {v : ℚ} (h : v ∈ block t) :
   simp only [block_eq, List.mem_map, List.mem_range] at h
   obtain ⟨m, hm, rfl⟩ := h
   have h1 : (m : ℚ) + 1 ≤ t := by exact_mod_cast hm
-  have h2 : (0 : ℚ) ≤ m := Nat.cast_nonneg m
   exact ⟨by linarith, by linarith, -1 - m, by push_cast; ring⟩
 
 theorem block_pairwise (t : ℕ) : (block t).Pairwise (· > ·) := by

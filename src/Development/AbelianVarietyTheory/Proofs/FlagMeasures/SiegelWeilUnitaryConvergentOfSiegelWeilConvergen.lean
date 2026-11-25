@@ -65,21 +65,7 @@ theorem exists_coord_Ainf (F : Type) [Field F] [NumberField F] [IsTotallyReal F]
 theorem exists_coord_tens (F E : Type) [Field F] [NumberField F] [IsTotallyReal F] [Field E]
     [NumberField E] [Algebra F E] :
     ∃ (k : ℕ) (e : Ainf F ⊗[F] E ≃ₜ (Fin k → ℝ)), ∀ x y, e (x + y) = e x + e y := by
-  classical
-  let R := Ainf F
-  let b := Module.Free.chooseBasis R (R ⊗[F] E)
-  let eL : (R ⊗[F] E) ≃ₗ[R] (Module.Free.ChooseBasisIndex R (R ⊗[F] E) → R) := b.equivFun
-  haveI : IsModuleTopology R (R ⊗[F] E) := ⟨rfl⟩
-  haveI : ContinuousAdd (R ⊗[F] E) := IsModuleTopology.toContinuousAdd R (R ⊗[F] E)
-  let e0 : R ⊗[F] E ≃ₜ (Module.Free.ChooseBasisIndex R (R ⊗[F] E) → R) :=
-    { toEquiv := eL.toEquiv
-      continuous_toFun := IsModuleTopology.continuous_of_linearMap eL.toLinearMap
-      continuous_invFun := IsModuleTopology.continuous_of_linearMap eL.symm.toLinearMap }
-  obtain ⟨k0, eA, hA⟩ := exists_coord_Ainf F
-  obtain ⟨k, e1, h1⟩ := PI.AprimeInfW.sq_coord_pi eA hA (Module.Free.ChooseBasisIndex R (R ⊗[F] E))
-  refine ⟨k, e0.trans e1, fun x y => ?_⟩
-  show e1 (e0 (x + y)) = e1 (e0 x) + e1 (e0 y)
-  rw [show e0 (x + y) = e0 x + e0 y from eL.map_add x y, h1]
+  apply _root_.PI.AprimeInfW.sq_coord_tens <;> assumption
 
 section Zero
 

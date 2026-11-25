@@ -19,6 +19,7 @@ import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.BridgeKType
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.VNormSqLowKSubRootLt
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.DataClosGenEqTop
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.PropsAdm
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.PropsAdm, ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.CasOnSmoothOfCopies, ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.EquivSigLamOfIsDS
@@ -43,41 +44,10 @@ theorem data_admissible (hgap : StdGap ε lam) (hσ : IsURepOn (UJset ε) σ) (h
     (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
     (hVK : ∀ k ∈ Kset ε, ∀ v ∈ V, ∃ w ∈ V, (w : H) = σ k v) (μ : Fin n → ℝ) :
     FiniteDimensional ℂ
-      (sSup {S : Submodule ℂ H | S ≤ closGen E V ∧ Formalism.MainNotions.S.IsKTypeOf ε σ μ S} : Submodule ℂ H) := by
-  have hU := isInfUnitary_of_isDerivedOn hσ hD
-  have hE := hD.glRep
-  obtain ⟨k, hk⟩ := khw_mem_layer hE hU hV hc hgap μ
-  have hLf : FiniteDimensional ℂ (layer ε E V k) := finiteDimensional_layer hV.1 k
-  have hLK := kStable_of_isKStableSub hσ hD (layer ε E V k) hLf (layer_kStable hE hV.2.1 k)
-  have hMf : FiniteDimensional ℂ ((layer ε E V k).map D.subtype) := Module.Finite.map _ _
-  have hle : (sSup {S : Submodule ℂ H | S ≤ closGen E V ∧ Formalism.MainNotions.S.IsKTypeOf ε σ μ S} : Submodule ℂ H) ≤
-      (layer ε E V k).map D.subtype := by
-    refine sSup_le fun S hSmem => ?_
-    obtain ⟨hS, hST⟩ := hSmem
-    obtain ⟨hSf, hSK, hirr, -, -⟩ := id hST
-    have hSM := data_kfin_le hgap hσ hD hV hc hVK S hS hSf (fun g hg x hx => hSK g hg x hx)
-    have hSD : S ≤ D := hSM.trans (Submodule.map_subtype_le _ _)
-    obtain ⟨w, hwS, hw0, hwμ⟩ := exists_isKHWVec_of_isKTypeOf hσ hD hST hSD
-    have hwg : w ∈ genSub E V := by
-      obtain ⟨y, hy, hyw⟩ := Submodule.mem_map.1 (hSM hwS)
-      have : y = w := Subtype.ext hyw
-      exact this ▸ hy
-    have hwL := hk w hwg hwμ
-    have hS'K : Formalism.MainNotions.S.IsKStableOn ε σ (S ⊓ (layer ε E V k).map D.subtype) := by
-      intro g hg v hv
-      refine ⟨hSK g hg v hv.1, ?_⟩
-      obtain ⟨y, hy, rfl⟩ := Submodule.mem_map.1 hv.2
-      obtain ⟨z, hz, hzeq⟩ := hLK g hg y hy
-      exact Submodule.mem_map.2 ⟨z, hz, hzeq⟩
-    rcases hirr _ inf_le_left hS'K with h0 | hEq
-    · exfalso
-      have hmem : (w : H) ∈ S ⊓ (layer ε E V k).map D.subtype :=
-        ⟨hwS, Submodule.mem_map_of_mem hwL⟩
-      rw [h0, Submodule.mem_bot] at hmem
-      exact hw0 (Subtype.ext hmem)
-    · rw [← hEq]
-      exact inf_le_right
-  exact Submodule.finiteDimensional_of_le hle
+      (sSup {S : Submodule ℂ H | S ≤ closGen E V ∧ Formalism.MainNotions.S.IsKTypeOf ε σ μ S} : Submodule ℂ H) :=
+  DS.data_admissible_of hσ hD hV μ
+    (khw_mem_layer hD.glRep (isInfUnitary_of_isDerivedOn hσ hD) hV hc hgap μ)
+    (data_kfin_le hgap hσ hD hV hc hVK)
 
 end ReciprocityTheory.ChartRestriction.DS.G2
 end -- clump:auto
@@ -256,12 +226,6 @@ variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteS
 theorem casOnSmooth_of_isDS (hDS : Formalism.MainNotions.S.IsDS ε lam σ) (hgap : StdGap ε lam) : CasOnSmooth ε lam σ := by
   exact casOnSmooth_of_copies hDS hgap
     (fun V hV hVK => casOnDatum_of_isDS hDS hgap (isDerivedOn_smE hDS.2.2.1) hV hVK)
-
-theorem equiv_sigLam_of_isDS (hDS : Formalism.MainNotions.S.IsDS ε lam σ) (hgap : StdGap ε lam)
-    {T : S7.KType ε (lowK ε lam)} {Ψ : Matrix (Fin n) (Fin n) ℂ → (T.V →L[ℂ] T.V)} {v₀ : T.V}
-    (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) :
-    ∃ U : Hlam ε Ψ v₀ ≃ₗᵢ[ℂ] H, ∀ g ∈ UJset ε, ∀ x : Hlam ε Ψ v₀, U (sigLam ε Ψ v₀ g x) = σ g (U x) := by
-  exact equiv_sigLam_of_cas hDS hgap (casOnSmooth_of_isDS hDS hgap) hP hv₀
 
 end Arbitrary
 

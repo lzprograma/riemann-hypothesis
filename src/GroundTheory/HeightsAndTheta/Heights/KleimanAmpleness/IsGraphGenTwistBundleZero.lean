@@ -48,10 +48,9 @@ def mulMemIdeal (A : Subalgebra S Ω) (r : Ω) : Ideal A where
     intro c a ha
     simpa [smul_eq_mul, mul_assoc] using A.mul_mem c.2 ha
 
-theorem mem_span_of_div_mem (A : Subalgebra S Ω) (Q' : Submodule A Ω) {m : ℕ} (g : Fin m → Ω)
-    (hQQ : Submodule.span A (Set.range g) * Q' = 1) (R : Fin m → Subalgebra S Ω)
-    (hR : ∀ j, g j ≠ 0 → R j ≤ Algebra.adjoin S ((A : Set Ω) ∪ Set.range fun b => g b / g j))
-    (t : Ω) (ht : ∀ j, g j ≠ 0 → t / g j ∈ R j) : t ∈ Submodule.span A (Set.range g) := by
+theorem exists_sum_eq_one_of_mul_eq_one (A : Subalgebra S Ω) (Q' : Submodule A Ω) {m : ℕ} (g : Fin m → Ω)
+    (hQQ : Submodule.span A (Set.range g) * Q' = 1) :
+    ∃ w : Fin m → Ω, (∀ a b, g a * w b ∈ A) ∧ ∑ b, g b * w b = 1 := by
   classical
   have hone : (1 : Ω) ∈ Submodule.span A (Set.range g) * Q' := by
     rw [hQQ]; exact Submodule.mem_one.mpr ⟨1, map_one _⟩
@@ -69,14 +68,20 @@ theorem mem_span_of_div_mem (A : Subalgebra S Ω) (Q' : Submodule A Ω) {m : ℕ
       refine ⟨w + w', fun b => Q'.add_mem (hw b) (hw' b), ?_⟩
       rw [← Finset.sum_add_distrib]
       exact Finset.sum_congr rfl fun b _ => by simp [mul_add]
-  have hgA : ∀ a b, g a * w b ∈ A := by
-    intro a b
-    have h := Submodule.mul_mem_mul (Submodule.subset_span ⟨a, rfl⟩ : g a ∈ Submodule.span A (Set.range g))
-      (hwQ b)
-    rw [hQQ, Submodule.mem_one] at h
-    obtain ⟨y, hy⟩ := h
-    rw [← hy]
-    exact y.2
+  refine ⟨w, fun a b => ?_, hsum⟩
+  have h := Submodule.mul_mem_mul (Submodule.subset_span ⟨a, rfl⟩ : g a ∈ Submodule.span A (Set.range g))
+    (hwQ b)
+  rw [hQQ, Submodule.mem_one] at h
+  obtain ⟨y, hy⟩ := h
+  rw [← hy]
+  exact y.2
+
+theorem mem_span_of_div_mem (A : Subalgebra S Ω) (Q' : Submodule A Ω) {m : ℕ} (g : Fin m → Ω)
+    (hQQ : Submodule.span A (Set.range g) * Q' = 1) (R : Fin m → Subalgebra S Ω)
+    (hR : ∀ j, g j ≠ 0 → R j ≤ Algebra.adjoin S ((A : Set Ω) ∪ Set.range fun b => g b / g j))
+    (t : Ω) (ht : ∀ j, g j ≠ 0 → t / g j ∈ R j) : t ∈ Submodule.span A (Set.range g) := by
+  classical
+  obtain ⟨w, hgA, hsum⟩ := exists_sum_eq_one_of_mul_eq_one A Q' g hQQ
   have htw : ∀ b, t * w b ∈ A := by
     intro b
     have hM : ∀ j, ∃ M : ℕ, (g j * w j) ^ M * (t * w b) ∈ A := by

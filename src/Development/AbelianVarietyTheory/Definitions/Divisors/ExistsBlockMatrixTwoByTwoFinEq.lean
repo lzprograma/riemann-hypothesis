@@ -79,9 +79,6 @@ theorem cT_zero' (τ : A →+* A) : cT τ (0 : Matrix (Fin n) (Fin n) A) = 0 := 
 theorem cT_one' (τ : A →+* A) : cT τ (1 : Matrix (Fin n) (Fin n) A) = 1 := by
   ext i j; by_cases h : i = j <;> simp [cT, Matrix.one_apply, h, eq_comm]
 
-theorem cT_neg_one (τ : A →+* A) : cT τ (-1 : Matrix (Fin n) (Fin n) A) = -1 := by
-  ext i j; by_cases h : i = j <;> simp [cT, h, eq_comm]
-
 theorem upperLeft_blockMatrix (a b c d : Matrix (Fin n) (Fin n) A) : StdUnn.blkA (StdUnn.blk4 a b c d) = a := by
   simp [StdUnn.blkA, StdUnn.blk4, Matrix.submatrix_submatrix, Matrix.toBlocks_fromBlocks₁₁]
 
@@ -137,16 +134,7 @@ def nLoc (b : HermR R σ n) : HA R σ Q :=
     (by rw [JR_eq R hQ, cT_blk4, cT_one', cT_zero', cT_herm]
         simp [StdUnn.Model.submatrix_fromBlocks_mul])
 
-def wLoc : HA R σ Q :=
-  mkPt R σ (StdUnn.blk4 0 1 (-1) 0) (StdUnn.blk4 0 (-1) 1 0)
-    (by simp [StdUnn.Model.submatrix_fromBlocks_mul, StdUnn.Model.block_matrix_one])
-    (by simp [StdUnn.Model.submatrix_fromBlocks_mul, StdUnn.Model.block_matrix_one])
-    (by rw [JR_eq R hQ, cT_blk4, cT_one', cT_zero', cT_neg_one]
-        simp [StdUnn.Model.submatrix_fromBlocks_mul, StdUnn.Model.block_matrix_one])
-
 theorem mat_nLoc (b : HermR R σ n) : matR R σ (nLoc R σ hQ b) = StdUnn.blk4 1 b.1 0 1 := rfl
-
-theorem mat_wLoc : matR R σ (wLoc R σ hQ) = StdUnn.blk4 0 1 (-1) 0 := rfl
 
 @[simp] theorem nLoc_zero : nLoc R σ hQ (0 : HermR R σ n) = 1 :=
   ext_matR (by rw [mat_nLoc, matR_one]; simpa using StdUnn.Model.block_matrix_one)
@@ -221,24 +209,6 @@ section More
 variable {F E : Type} [Field F] [Field E] [Algebra F E] (R : Type) [CommRing R] [Algebra F R] (σ : E →ₐ[F] E) {n : ℕ}
   {Q : Matrix (Fin (n + n)) (Fin (n + n)) E}
 
-
-variable {R σ} in
-theorem cT_cT (hσ : ∀ x, σ (σ x) = x) (M : Matrix (Fin n) (Fin n) (R ⊗[F] E)) :
-    cT (sigR R σ) (cT (sigR R σ) M) = M := by
-  ext i j; simp [cT, sigR_invol hσ]
-
-def mLoc (hσ : ∀ x, σ (σ x) = x) (hQ : Q = StdUnn.blk4 0 1 (-1) 0) (a : GL (Fin n) (R ⊗[F] E)) : HA R σ Q :=
-  have e1 : cT (sigR R σ) a.1 * cT (sigR R σ) (a⁻¹).1 = 1 := by rw [← cT_mul, Units.inv_mul, cT_one']
-  have e2 : cT (sigR R σ) (a⁻¹).1 * cT (sigR R σ) a.1 = 1 := by rw [← cT_mul, Units.mul_inv, cT_one']
-  have e3 : cT (sigR R σ) (cT (sigR R σ) (a⁻¹).1) * a.1 = 1 := by rw [cT_cT hσ, Units.inv_mul]
-  mkPt R σ (StdUnn.blk4 a.1 0 0 (cT (sigR R σ) (a⁻¹).1)) (StdUnn.blk4 (a⁻¹).1 0 0 (cT (sigR R σ) a.1))
-    (by simp [StdUnn.Model.submatrix_fromBlocks_mul, StdUnn.Model.block_matrix_one, e2, -Matrix.coe_units_inv])
-    (by simp [StdUnn.Model.submatrix_fromBlocks_mul, StdUnn.Model.block_matrix_one, e1, -Matrix.coe_units_inv])
-    (by rw [JR_eq R hQ, cT_blk4, cT_zero']
-        simp [StdUnn.Model.submatrix_fromBlocks_mul, e1, e3, -Matrix.coe_units_inv])
-
-theorem mat_mLoc (hσ : ∀ x, σ (σ x) = x) (hQ : Q = StdUnn.blk4 0 1 (-1) 0) (a : GL (Fin n) (R ⊗[F] E)) :
-    matR R σ (mLoc R σ hσ hQ a) = StdUnn.blk4 a.1 0 0 (cT (sigR R σ) (a⁻¹).1) := rfl
 
 variable {R' : Type} [CommRing R'] [Algebra F R']
 
@@ -348,20 +318,8 @@ abbrev IsIwasawaUp : Prop := IsIwasawa (ν.comp (aUp R σ Q)) K
 
 def hgtUp : HA R σ Q → ℝ≥0 := iwAbs (ν.comp (aUp R σ Q)) K
 
-def psUp [TopologicalSpace R] (μ : (R ⊗[F] E)ˣ →* Circle) (s : ℂ) : Submodule ℂ (HA R σ Q → ℂ) :=
-  indSpace (ν.comp (aUp R σ Q)) K (μ.comp (aUp R σ Q)) (s + (n : ℂ) / 2)
-
 def sphUp (s : ℂ) : HA R σ Q → ℂ := fun g => npow (hgtUp R σ Q ν K g) (s + (n : ℂ) / 2)
 
-
-variable {Q} in
-def intwLoc [TopologicalSpace R] (hQ : Q = StdUnn.blk4 0 1 (-1) 0) (db : Measure (HermR R σ n)) (f : ℂ → HA R σ Q → ℂ)
-    (s : ℂ) (g : HA R σ Q) : ℂ := ∫ b, f s (wLoc R σ hQ * nLoc R σ hQ b * g) ∂db
-
-
-variable {Q} in
-def IntwConv [TopologicalSpace R] (hQ : Q = StdUnn.blk4 0 1 (-1) 0) (db : Measure (HermR R σ n)) (f : ℂ → HA R σ Q → ℂ)
-    (s : ℂ) (g : HA R σ Q) : Prop := Integrable (fun b => f s (wLoc R σ hQ * nLoc R σ hQ b * g)) db
 
 variable {R σ Q ν K}
 
@@ -498,13 +456,6 @@ theorem isIwasawaUp_fin (v : HeightOneSpectrum (𝓞 D.host.F)) :
 variable {D n}
 
 end Datum
-
-section Tests
-
-variable {F E : Type} [Field F] [Field E] [Algebra F E] (R : Type) [CommRing R] [Algebra F R] (σ : E →ₐ[F] E) {n : ℕ}
-  {Q : Matrix (Fin (n + n)) (Fin (n + n)) E} (hQ : Q = StdUnn.blk4 0 1 (-1) 0)
-
-end Tests
 
 end GlobalTheory.LocIntw
 

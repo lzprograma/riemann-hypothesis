@@ -5,43 +5,7 @@ import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsS
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinsumOutOfLe
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Heckecomm
 import GroundTheory.LocalFields.PadicLogSeries
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -50,8 +14,6 @@ noncomputable section
 open NumberField IsDedekindDomain Matrix Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.LFun PositivityTheory.Rg.BcB.F.F5 PositivityTheory.Rg.BcB.F.Eig PositivityTheory.Rg.BcB.G8 PositivityTheory.Rg.BcN.F2 PositivityTheory.Rg.BcB.F.Tail PositivityTheory.Rg.Bc.ArchbcB.B
 open scoped Classical
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.Rg.BcB.F
 
@@ -122,7 +84,7 @@ theorem idemAlg : IdemAlg := by
     obtain ⟨l, hl⟩ := QuotientGroup.mk_out_eq_mul L (1 : GLw a w × GLw b w)
     rw [hl, one_mul]
     exact l.2
-  refine ⟨⟨HasCompactSupport.intro' hLcpt hLc fun x hx => by rw [idem_apply, if_neg (fun h => hx (SetLike.mem_coe.2 h))], fun k hk x =>
+  refine ⟨⟨HasCompactSupport.intro' hLcpt hLc fun x hx => by rw [idem_apply, ite_eq_right (fun h => hx (SetLike.mem_coe.2 h))], fun k hk x =>
     ⟨by rw [idem_apply, idem_apply, L.mul_mem_cancel_left hk], by rw [idem_apply, idem_apply, L.mul_mem_cancel_right hk]⟩⟩,
     ?_, fun f hf => ⟨?_, ?_, ?_⟩⟩
   · funext y
@@ -136,12 +98,12 @@ theorem idemAlg : IdemAlg := by
       rw [idem_apply, idem_apply, L.mul_mem_cancel_right hk, _root_.mul_inv_rev, mul_assoc,
         (hf.2 k⁻¹ (L.inv_mem hk) _).1]
     rw [GlobalTheory.CompanionTheory.HintLevel.hint_eq_level _ (K2 a b w) L _ hLK hst hne, finsum_eq_single _ (((1 : GLw a w × GLw b w)) : _ ⧸ L)]
-    · rw [idem_apply, if_pos h1, (hf.2 _ (L.inv_mem h1) m).1, ← mul_assoc, inv_mul_cancel₀ hc, one_mul]
+    · rw [idem_apply, ite_eq_left h1, (hf.2 _ (L.inv_mem h1) m).1, ← mul_assoc, inv_mul_cancel₀ hc, one_mul]
     · intro q hq
       have : Quotient.out q ∉ L := fun h => hq (by
         rw [← QuotientGroup.out_eq' q]
         exact QuotientGroup.eq.2 (by rw [mul_one]; exact L.inv_mem h))
-      rw [idem_apply, if_neg this, zero_mul]
+      rw [idem_apply, ite_eq_right this, zero_mul]
   · funext m
     unfold mconv
     have hst : L ≤ rStab (fun m' => f m' * idem L (m'⁻¹ * m)) := by
@@ -155,12 +117,12 @@ theorem idemAlg : IdemAlg := by
       have hl' : (m * (l : GLw a w × GLw b w))⁻¹ * m ∈ L := by
         rw [_root_.mul_inv_rev, mul_assoc, inv_mul_cancel, mul_one]
         exact L.inv_mem l.2
-      rw [hl, (hf.2 l l.2 m).2, idem_apply, if_pos hl']
+      rw [hl, (hf.2 l l.2 m).2, idem_apply, ite_eq_left hl']
       field_simp
     · intro q hq
       have : (Quotient.out q)⁻¹ * m ∉ L := fun h =>
         hq (by rw [← QuotientGroup.out_eq' q]; exact QuotientGroup.eq.2 h)
-      rw [idem_apply, if_neg this, mul_zero]
+      rw [idem_apply, ite_eq_right this, mul_zero]
   · refine ⟨(hf.1.comp_homeomorph (Homeomorph.inv _)).comp_left (map_zero (starRingEnd ℂ)), fun k hk x => ⟨?_, ?_⟩⟩
     · simp only [lfStar, _root_.mul_inv_rev, (hf.2 _ (L.inv_mem hk) _).2]
     · simp only [lfStar, _root_.mul_inv_rev, (hf.2 _ (L.inv_mem hk) _).1]

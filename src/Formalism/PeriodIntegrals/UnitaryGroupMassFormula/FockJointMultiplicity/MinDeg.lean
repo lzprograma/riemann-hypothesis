@@ -6,49 +6,7 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.Ex
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.FockOperatorsKernel
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.KroneckerOneRightSwap
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.LoweringPartRightActionInlInr
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -82,14 +40,14 @@ theorem hc_shift (L : Module.End ℂ (MvPolynomial σ ℂ)) (k : ℕ)
   simp only [hterm]
   split_ifs with hkj
   · rw [Finset.sum_eq_single (j - k)]
-    · rw [if_pos (by omega)]
+    · rw [ite_eq_left (by omega)]
     · intro d _ hd
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
     · intro hm
-      rw [if_pos (by omega)]
+      rw [ite_eq_left (by omega)]
       rw [Finset.mem_range] at hm
       rw [homogeneousComponent_eq_zero _ _ (by omega), map_zero]
-  · exact Finset.sum_eq_zero fun d _ => if_neg (by omega)
+  · exact Finset.sum_eq_zero fun d _ => ite_eq_right (by omega)
 
 theorem hc_X (l : σ) (j : ℕ) (Q : MvPolynomial σ ℂ) :
     homogeneousComponent j (X l * Q) = if 1 ≤ j then X l * homogeneousComponent (j - 1) Q else 0 := by
@@ -121,7 +79,7 @@ theorem low_hc (L : Module.End ℂ (MvPolynomial σ ℂ))
     · simp
   ext m
   have h3 := congrArg (AddMonoidAlgebra.coeff · m) (hz (m.degree))
-  rw [coeff_homogeneousComponent, if_pos rfl] at h3
+  rw [coeff_homogeneousComponent, ite_eq_left rfl] at h3
   simpa using h3
 
 theorem low_sum {ι : Type*} (t : Finset ι) (L : ι → Module.End ℂ (MvPolynomial σ ℂ))
@@ -138,8 +96,7 @@ theorem exists_homog_of (P : MvPolynomial σ ℂ) (h0 : P ≠ 0) (D : ℚ)
     (h : ∀ e : ℕ, homogeneousComponent e P ≠ 0 → (e : ℚ) = D) :
     ∃ d : ℕ, (d : ℚ) = D ∧ P ∈ homog σ d := by
   have hex : ∃ e, homogeneousComponent e P ≠ 0 := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     apply h0
     rw [← sum_homogeneousComponent P]
     exact Finset.sum_eq_zero fun i _ => hall i
@@ -172,16 +129,16 @@ theorem hc_raiLow (l l' : Ln p q r s) (h : linePos l = linePos l') (e : ℕ) (Q 
   cases hl : linePos l with
   | true =>
     have hl' : linePos l' = true := by rw [← h, hl]
-    simp only [raiB, lowB, hl, hl', if_true, LinearMap.mulLeft_apply, Derivation.coeFn_coe]
+    simp only [raiB, lowB, hl, hl', ite_true, LinearMap.mulLeft_apply, Derivation.coeFn_coe]
     rw [hc_X]
     cases e with
     | zero => simp
     | succ k => simp [PI.WFJM.hc_pderiv]
   | false =>
     have hl' : linePos l' = false := by rw [← h, hl]
-    simp only [raiB, lowB, hl, hl', Bool.false_eq_true, if_false, LinearMap.mulLeft_apply,
+    simp only [raiB, lowB, hl, hl', Bool.false_eq_true, ite_false, LinearMap.mulLeft_apply,
       Derivation.coeFn_coe, LinearMap.neg_apply]
-    rw [map_neg, PI.WFJM.hc_pderiv, hc_X, if_pos (by omega)]
+    rw [map_neg, PI.WFJM.hc_pderiv, hc_X, ite_eq_left (by omega)]
     simp
 
 theorem sameBlock_linePos_first {a b : Ix p q} (hab : sameBlock a b) (c : Ix r s) :

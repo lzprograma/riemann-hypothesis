@@ -289,7 +289,7 @@ theorem exists_eq_smul (hH : Hm.PosDef) (Λ : AddSubgroup (Fin g → ℂ)) [hd :
         · exact ⟨hG, fun l z => by rw [pow_one, htr, htr]; exact hGt l l.2 z⟩) hli
     simp at this
   rw [LinearIndependent.pair_iff' h0] at hli
-  push_neg at hli
+  push Not at hli
   obtain ⟨a, ha⟩ := hli
   exact ⟨a, ha.symm⟩
 

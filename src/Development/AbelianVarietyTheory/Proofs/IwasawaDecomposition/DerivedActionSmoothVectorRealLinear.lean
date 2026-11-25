@@ -43,7 +43,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR.Mult GlobalTheory.SmVec MeasureTheory Matrix Filter
 open scoped TensorProduct ContDiff InnerProductSpace Topology
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.SmVecLinear
 
@@ -79,14 +78,14 @@ theorem dRep_linear : ∀ (n : ℕ) (ε : Fin n → Bool) (H : Type) [NormedAddC
   have hπ := isURepOn_trRep hP h hσ
   refine ⟨fun X hX Y hY => ?_, fun a X hX => ?_⟩
   · refine sub_eq_zero.1 (eq_zero_of_inner_gard hσ fun φ hφ v => ?_)
-    obtain ⟨ψ, hψ⟩ := GlobalTheory.T.gardingVector_derivative_eq_gardingVector n ε H σ P G hP h hσ φ hφ
+    obtain ⟨ψ, hψ⟩ := _root_.GlobalTheory.SmVec.dRep_gard n ε H σ P G hP h hσ φ hφ
     have hu := gard_mem hP h hσ hφ v
     rw [inner_sub_right, inner_add_right, inner_dRep hG hπ hu hw hX, inner_dRep hG hπ hu hw hY,
       inner_dRep hG hπ hu hw (lieG_add hX hY), (hψ X).2 hX, (hψ Y).2 hY, (hψ _).2 (lieG_add hX hY), map_add,
       gard_add hσ (hψ X).1 (hψ Y).1, inner_add_left]
     ring
   · refine sub_eq_zero.1 (eq_zero_of_inner_gard hσ fun φ hφ v => ?_)
-    obtain ⟨ψ, hψ⟩ := GlobalTheory.T.gardingVector_derivative_eq_gardingVector n ε H σ P G hP h hσ φ hφ
+    obtain ⟨ψ, hψ⟩ := _root_.GlobalTheory.SmVec.dRep_gard n ε H σ P G hP h hσ φ hφ
     have hu := gard_mem hP h hσ hφ v
     rw [inner_sub_right, inner_smul_right, inner_dRep hG hπ hu hw hX,
       inner_dRep hG hπ hu hw (lieG_smul a hX), (hψ X).2 hX, (hψ _).2 (lieG_smul a hX), map_smul,

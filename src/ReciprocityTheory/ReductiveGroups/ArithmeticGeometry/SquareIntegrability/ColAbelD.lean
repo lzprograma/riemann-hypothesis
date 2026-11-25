@@ -1,53 +1,7 @@
 module
 
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TranslationZeroModeLift
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 public import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitA
 
 @[expose] public section
@@ -70,53 +24,16 @@ def cabOut {I : Submodule ℤ (Vsp X.dim)} (c : Col.Qc X I) : X.L := Quotient.ou
 theorem cabOut_mk {I : Submodule ℤ (Vsp X.dim)} (c : Col.Qc X I) :
     (Submodule.Quotient.mk (cabOut c) : Col.Qc X I) = c := Quotient.out_eq c
 
-private theorem Hf_eq_inner_swap' {ι : Type} [Fintype ι] (v w : EuclideanSpace ℂ ι) :
-    Hf v w = inner ℂ w v := by
-  simp [Hf, PiLp.inner_apply, RCLike.inner_apply]
-
-private theorem im_Hf_sum_real_smul {ι κ : Type} [Fintype ι] [Fintype κ] (x : EuclideanSpace ℂ ι) (r : κ → ℝ)
-    (w : κ → EuclideanSpace ℂ ι) : (Hf x (∑ k, r k • w k)).im = ∑ k, r k * (Hf x (w k)).im := by
-  rw [Hf_eq_inner_swap', sum_inner, Complex.im_sum]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  rw [RCLike.real_smul_eq_coe_smul (K := ℂ), inner_smul_left, RCLike.conj_ofReal, ← Hf_eq_inner_swap']
-  first | simp
-
-private theorem sum_inner_ob_smul_e {ι : Type} [Fintype ι] (K : Submodule ℝ (EuclideanSpace ℂ ι)) (a : EuclideanSpace ℂ ι)
-    (ha : a ∈ K) : ∑ i, (inner ℝ ((Col.ob K) i) (⟨a, ha⟩ : K)) • (Col.e K i) = a := by
-  have h := congrArg (fun w : K => (w : EuclideanSpace ℂ ι)) ((Col.ob K).sum_repr' ⟨a, ha⟩)
-  simp only [Submodule.coe_sum, Submodule.coe_smul] at h
-  exact h
-
-private theorem im_Hf_eq_zero_of_z_im_eq_zero {ι : Type} [Fintype ι] {K : Submodule ℝ (EuclideanSpace ℂ ι)}
-    {x : EuclideanSpace ℂ ι} (h : ∀ k, (Col.z K k x).im = 0) : ∀ a ∈ K, (Hf x a).im = 0 := by
-  intro a ha
-  rw [← sum_inner_ob_smul_e K a ha, im_Hf_sum_real_smul]
-  exact Finset.sum_eq_zero fun k _ => by rw [show (Hf x (Col.e K k)).im = 0 from h k, mul_zero]
-
 theorem cab_mem_NIp {I : Submodule ℤ (Vsp X.dim)} {γ : X.L} (h : Col.uc (IR I) (γ : Vsp X.dim) = 0) :
-    γ ∈ Col.NIp X I := by
-  have hk : ∀ k, (Col.z (IR I) k (γ : Vsp X.dim)).im = 0 := by
-    intro k
-    simp only [Col.uc] at h
-    exact Fintype.linearIndependent_iff.mp (Col.ob (IR I)).orthonormal.linearIndependent
-      (fun k => (Col.z (IR I) k _).im) (Subtype.ext (by simpa [Col.e] using h)) k
-  have hall := im_Hf_eq_zero_of_z_im_eq_zero hk
-  have h2 : (γ : Vsp X.dim) ∈ X.L ∧ ∀ a ∈ I, (Hf (γ : Vsp X.dim) a).im = 0 :=
-    ⟨γ.2, fun a ha => hall a (Submodule.subset_span ha)⟩
-  exact h2
-
-private theorem uc_sub' {I : Submodule ℤ (Vsp X.dim)} (x y : Vsp X.dim) :
-    Col.uc (IR I) (x - y) = Col.uc (IR I) x - Col.uc (IR I) y := by
-  have h2 : Col.uc (IR I) (x - y + y) = Col.uc (IR I) (x - y) + Col.uc (IR I) y := Col.uc_add _ _
-  rw [sub_add_cancel] at h2
-  exact eq_sub_of_add_eq h2.symm
+    γ ∈ Col.NIp X I :=
+  ⟨γ.2, (Col.isU_uc (I := I) (γ : Vsp X.dim)).eq_zero_iff.mp h⟩
 
 theorem cab_uc_ne {I : Submodule ℤ (Vsp X.dim)} {c c' : Col.Qc X I} (hne : c ≠ c') :
     Col.uc (IR I) (cabOut c : Vsp X.dim) ≠ Col.uc (IR I) (cabOut c' : Vsp X.dim) := by
   intro heq
   apply hne
   have h1 : Col.uc (IR I) ((cabOut c - cabOut c' : X.L) : Vsp X.dim) = 0 := by
-    rw [Submodule.coe_sub, uc_sub', heq, sub_self]
+    rw [Submodule.coe_sub, Col.uc_sub (I := I), heq, sub_self]
   have h3 := (Submodule.Quotient.mk_eq_zero _).mpr (cab_mem_NIp h1)
   rw [Submodule.Quotient.mk_sub, sub_eq_zero, cabOut_mk, cabOut_mk] at h3
   exact h3
@@ -129,29 +46,15 @@ theorem columnVector_ne_zero {I : Submodule ℤ (Vsp X.dim)} {c : Col.Qc X I} (h
   rw [cabOut_mk] at h3
   exact h3
 
-private theorem isU_uc' {I : Submodule ℤ (Vsp X.dim)} (x : Vsp X.dim) : IsU I x (Col.uc (IR I) x) := by
-  refine ⟨?_, fun a ha => ?_⟩
-  · simp only [Col.uc]
-    exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (Col.ob (IR I) k).2
-  · conv_rhs => rw [← sum_inner_ob_smul_e (IR I) a ha]
-    rw [im_Hf_sum_real_smul]
-    simp only [Col.uc, sum_inner, real_inner_smul_left]
-    refine Finset.sum_congr rfl fun k _ => ?_
-    simp only [Submodule.coe_inner, Col.z, Col.e]
-    ring
-
-private theorem uc_mem_IR {I : Submodule ℤ (Vsp X.dim)} (x : Vsp X.dim) : Col.uc (IR I) x ∈ IR I :=
-  (isU_uc' x).1
-
 private theorem sqrt_b0_dist_of_ne_of_isSplit {DF : ℕ} {P : Par X DF} {I : Submodule ℤ (Vsp X.dim)} (hI : IsSplit P I)
     {c c' : Col.Qc X I} (h : c ≠ c') :
     Real.sqrt (b0 (E := E) P.q P.R0) ≤
       dist (Col.uc (IR I) (cabOut c : Vsp X.dim)) (Col.uc (IR I) (cabOut c' : Vsp X.dim)) := by
   have hne : Col.uc (IR I) ((cabOut c - cabOut c' : X.L) : Vsp X.dim) ≠ 0 := by
-    rw [Submodule.coe_sub, uc_sub']
+    rw [Submodule.coe_sub, Col.uc_sub (I := I)]
     exact sub_ne_zero.mpr (cab_uc_ne h)
-  have hs := hI.sep _ (cabOut c - cabOut c').2 _ (isU_uc' _) hne
-  rw [dist_eq_norm, ← uc_sub', ← Submodule.coe_sub]
+  have hs := hI.sep _ (cabOut c - cabOut c').2 _ (Col.isU_uc _) hne
+  rw [dist_eq_norm, ← Col.uc_sub (I := I), ← Submodule.coe_sub]
   calc Real.sqrt (b0 (E := E) P.q P.R0) ≤
         Real.sqrt (‖Col.uc (IR I) ((cabOut c - cabOut c' : X.L) : Vsp X.dim)‖ ^ 2) := Real.sqrt_le_sqrt hs
     _ = _ := Real.sqrt_sq (norm_nonneg _)
@@ -159,7 +62,7 @@ private theorem sqrt_b0_dist_of_ne_of_isSplit {DF : ℕ} {P : Par X DF} {I : Sub
 private theorem sqrt_b0_lower_bound_of_ne_zero {DF : ℕ} {P : Par X DF} {I : Submodule ℤ (Vsp X.dim)} (hI : IsSplit P I)
     {c : Col.Qc X I} (h : c ≠ 0) :
     Real.sqrt (b0 (E := E) P.q P.R0) ≤ ‖Col.uc (IR I) (cabOut c : Vsp X.dim)‖ := by
-  have hs := hI.sep _ (cabOut c).2 _ (isU_uc' _) (columnVector_ne_zero h)
+  have hs := hI.sep _ (cabOut c).2 _ (Col.isU_uc _) (columnVector_ne_zero h)
   calc Real.sqrt (b0 (E := E) P.q P.R0) ≤ Real.sqrt (‖Col.uc (IR I) (cabOut c : Vsp X.dim)‖ ^ 2) :=
         Real.sqrt_le_sqrt hs
     _ = _ := Real.sqrt_sq (norm_nonneg _)
@@ -226,7 +129,7 @@ theorem cab_sum_nz (hP : Ext.PackingCount) (hA : Ext.GaussianTailBound) {DF : �
         (S.card : ℝ) ≤ (3 * R / (4 * Real.sqrt (Real.pi / 2 * P.q * b0 (E := E) P.q P.R0))) ^ (2 * g) := by
     intro R hR S hS
     let φ : cabNZ X I → EuclideanSpace ℝ (Fin (Col.dK (IR I))) :=
-      fun i => (Col.ob (IR I)).repr ⟨Col.uc (IR I) (cabOut i.1 : Vsp X.dim), uc_mem_IR _⟩
+      fun i => (Col.ob (IR I)).repr ⟨Col.uc (IR I) (cabOut i.1 : Vsp X.dim), Col.uc_mem _ _⟩
     have hφ : Function.Injective φ := by
       intro i j hij
       have h1 : Col.uc (IR I) (cabOut i.1 : Vsp X.dim) = Col.uc (IR I) (cabOut j.1 : Vsp X.dim) :=
@@ -245,7 +148,7 @@ theorem cab_sum_nz (hP : Ext.PackingCount) (hA : Ext.GaussianTailBound) {DF : �
     have hnorm : ∀ x ∈ S.image φ, ‖x‖ ≤ R / (4 * Real.sqrt (Real.pi / 2 * P.q)) := by
       intro x hx
       obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hx
-      show ‖(Col.ob (IR I)).repr ⟨Col.uc (IR I) (cabOut i.1 : Vsp X.dim), uc_mem_IR _⟩‖ ≤ _
+      show ‖(Col.ob (IR I)).repr ⟨Col.uc (IR I) (cabOut i.1 : Vsp X.dim), Col.uc_mem _ _⟩‖ ≤ _
       rw [LinearIsometryEquiv.norm_map]
       show ‖Col.uc (IR I) (cabOut i.1 : Vsp X.dim)‖ ≤ _
       rw [le_div_iff₀ h4, mul_comm]
@@ -256,8 +159,8 @@ theorem cab_sum_nz (hP : Ext.PackingCount) (hA : Ext.GaussianTailBound) {DF : �
       obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hx
       obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp hy
       have hne : (i : Col.Qc X I) ≠ j := fun h0 => hxy (congrArg φ (Subtype.ext h0))
-      show _ ≤ dist ((Col.ob (IR I)).repr ⟨Col.uc (IR I) (cabOut i.1 : Vsp X.dim), uc_mem_IR _⟩)
-        ((Col.ob (IR I)).repr ⟨Col.uc (IR I) (cabOut j.1 : Vsp X.dim), uc_mem_IR _⟩)
+      show _ ≤ dist ((Col.ob (IR I)).repr ⟨Col.uc (IR I) (cabOut i.1 : Vsp X.dim), Col.uc_mem _ _⟩)
+        ((Col.ob (IR I)).repr ⟨Col.uc (IR I) (cabOut j.1 : Vsp X.dim), Col.uc_mem _ _⟩)
       rw [LinearIsometryEquiv.dist_map]
       exact sqrt_b0_dist_of_ne_of_isSplit hI hne
     have key := hP (Col.dK (IR I)) (S.image φ) (Real.sqrt (b0 (E := E) P.q P.R0))
@@ -303,15 +206,6 @@ noncomputable section
 variable {E : Type} [Field E] [NumberField E] {X : PT E} {DF : ℕ} {P : Par X DF}
   {I : Submodule ℤ (Vsp X.dim)}
 
-private theorem im_Hf_eq_zero_on_IR {I : Submodule ℤ (Vsp X.dim)} {x : Vsp X.dim}
-    (hx : ∀ a ∈ I, (Hf x a).im = 0) : ∀ a ∈ IR I, (Hf x a).im = 0 := by
-  intro a ha
-  induction ha using Submodule.span_induction with
-  | mem y hy => exact hx y hy
-  | zero => simp [Hf]
-  | add y w _ _ hy hw => rw [Col.Hf_add_r, Complex.add_im, hy, hw, add_zero]
-  | smul r y _ hy => simp [Col.Hf_rsmul_r, hy]
-
 theorem translate_zero_zeroModeLift (hI : IsSplit P I) (hP : Ext.PackingCount) (q : ℕ)
     {β : EuclideanSpace ℂ (Fin (Col.gB (IR I))) → ℂ} (hβ : β ∈ (Col.YB hI hP q).Sec q) :
     Col.Tc X I q β 0 = Col.F0 I q β := by
@@ -339,20 +233,7 @@ theorem cab_R (hI : IsSplit P I) (hP : Ext.PackingCount) (hA : Ext.GaussianTailB
     have := P.hq
     exact_mod_cast (by omega : 0 < P.q)
   obtain ⟨g', -, hs, -⟩ := cab_sum_nz hP hA hI
-  have huc : ‖Col.uc (IR I) v‖ ≤ ‖v‖ := by
-    have hU := isU_uc' (I := I) v
-    have h1 : ‖Col.uc (IR I) v‖ ^ 2 = (Hf v (Col.uc (IR I) v)).im := by
-      rw [← real_inner_self_eq_norm_sq]
-      exact hU.2 _ hU.1
-    have h2 : (Hf v (Col.uc (IR I) v)).im ≤ ‖v‖ * ‖Col.uc (IR I) v‖ := by
-      calc (Hf v (Col.uc (IR I) v)).im ≤ ‖Hf v (Col.uc (IR I) v)‖ := by
-            first
-              | exact Complex.im_le_norm _
-        _ ≤ ‖Col.uc (IR I) v‖ * ‖v‖ := by rw [Hf_eq_inner_swap']; exact norm_inner_le_norm _ _
-        _ = ‖v‖ * ‖Col.uc (IR I) v‖ := mul_comm _ _
-    rcases eq_or_lt_of_le (norm_nonneg (Col.uc (IR I) v)) with h0 | hpos
-    · rw [← h0]; exact norm_nonneg v
-    · exact le_of_mul_le_mul_right (by rw [← sq, h1]; exact h2) hpos
+  have huc : ‖Col.uc (IR I) v‖ ≤ ‖v‖ := Col.norm_uc_le hI.iso v
   have hterm : ∀ c : Col.Qc X I, ‖Col.Tc X I P.q β c v‖ ≤ B * Real.exp (P.q * Real.pi * ‖v‖ ^ 2 / 2 -
       P.q * Real.pi * ‖Col.uc (IR I) (cabOut c : Vsp X.dim)‖ ^ 2 + 2 * P.q * Real.pi * ‖v‖ * ‖Col.uc (IR I) (cabOut c : Vsp X.dim)‖) := by
     intro c
@@ -439,7 +320,7 @@ theorem cab_YB_abs (hI : IsSplit P I) (hP : Ext.PackingCount) (q : ℕ) :
   have hl : γ ∈ Col.GB X I := by rw [← Col.lat_bB hI hP]; exact hγ
   obtain ⟨x, hx, rfl⟩ := Col.mem_GB.1 hl
   have hx' : x ∈ X.L ∧ ∀ a ∈ I, (Hf x a).im = 0 := hx
-  have hreal : ∀ a ∈ IR I, (Hf x a).im = 0 := im_Hf_eq_zero_on_IR hx'.2
+  have hreal : ∀ a ∈ IR I, (Hf x a).im = 0 := Hf_im_span_right (I : Set (Vsp X.dim)) x hx'.2
   have hz : ∀ k, (Col.z (IR I) k x).im = 0 := fun k => hreal _ (Col.ob (IR I) k).2
   have hp1 : Col.p1 (IR I) x ∈ IR I := by
     have hsum : Col.p1 (IR I) x = ∑ k, (Col.z (IR I) k x).re • Col.e (IR I) k := by
@@ -458,17 +339,7 @@ theorem cab_YB_abs (hI : IsSplit P I) (hP : Ext.PackingCount) (q : ℕ) :
     intro hxI
     apply hne
     have hxK : x ∈ IR I := Submodule.subset_span hxI
-    have hp : Col.p1 (IR I) x = x := by
-      conv_rhs => rw [← sum_inner_ob_smul_e (IR I) x hxK]
-      simp only [Col.p1]
-      refine Finset.sum_congr rfl fun k _ => ?_
-      have hzk : Col.z (IR I) k x = ((inner ℝ ((Col.ob (IR I)) k) (⟨x, hxK⟩ : IR I) : ℝ) : ℂ) := by
-        apply Complex.ext
-        · simp only [Complex.ofReal_re, Submodule.coe_inner]
-          simp [Col.z, Col.e, Hf, real_inner_eq_re_inner, PiLp.inner_apply]
-        · simpa using hz k
-      rw [hzk, RCLike.real_smul_eq_coe_smul (K := ℂ)]
-      all_goals rfl
+    have hp : Col.p1 (IR I) x = x := Col.proj_one_of_mem (Col.hK_of hI) hxK
     have h0 : ‖Col.wmap (IR I) x‖ = 0 := by rw [hnorm, hp, sub_self, norm_zero]
     exact norm_eq_zero.mp h0
   have ht := hI.thick x hx'.1 hx'.2 hxI

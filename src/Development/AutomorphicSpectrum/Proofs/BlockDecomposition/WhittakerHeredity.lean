@@ -11,53 +11,8 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactO
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProjectionToTwistedEigenfunctionSupport
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OpenCellJacquetMapSurjectiveWhittaker
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistedJacquetTensorProductEquiv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import GroundTheory.AutomorphicForms.InductionParabolicGroups
 import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
 import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
@@ -366,8 +321,8 @@ theorem elemGL_apply {k : Type} [Field k] {N : ℕ} (i j : Fin N) (hij : i ≠ j
   rw [Matrix.transvection, Matrix.add_apply, Matrix.single_apply]
   congr 1
   by_cases h : a = i ∧ b = j
-  · rw [if_pos h, if_pos ⟨h.1.symm, h.2.symm⟩]
-  · rw [if_neg h, if_neg fun e => h ⟨e.1.symm, e.2.symm⟩]
+  · rw [ite_eq_left h, ite_eq_left ⟨h.1.symm, h.2.symm⟩]
+  · rw [ite_eq_right h, ite_eq_right fun e => h ⟨e.1.symm, e.2.symm⟩]
 
 theorem conj_pm_apply {k : Type} [Field k] {N : ℕ} (w : Equiv.Perm (Fin N)) (g : GL (Fin N) k) (a b : Fin N) :
     (GroundTheory.Automorphic.permGL k w * g * (GroundTheory.Automorphic.permGL k w)⁻¹).val a b = g.val (w⁻¹ a) (w⁻¹ b) := by
@@ -380,19 +335,19 @@ theorem exists_root_conj_mem_unipRad : ∀ (k : Type) [Field k] [ValuativeRel k]
   have hlt : i < j := Fin.lt_def.2 (by omega)
   have hu : elemGL i j hne t ∈ unipB k (Fin N) := by
     refine (mem_unipB k).2 ⟨fun a b hba => ?_, fun a => ?_⟩
-    · rw [elemGL_apply, Matrix.one_apply_ne hba.ne', if_neg fun e => ?_, add_zero]
+    · rw [elemGL_apply, Matrix.one_apply_ne hba.ne', ite_eq_right fun e => ?_, add_zero]
       rw [e.1, e.2] at hba
       exact absurd hba hlt.not_gt
-    · rw [elemGL_apply, Matrix.one_apply_eq, if_neg fun e => hne (e.1.symm.trans e.2), add_zero]
+    · rw [elemGL_apply, Matrix.one_apply_eq, ite_eq_right fun e => hne (e.1.symm.trans e.2), add_zero]
   refine ⟨elemGL i j hne t, hu, ?_, ?_⟩
   · show Circle.toUnits (ψ (∑ p : Fin N × Fin N with (p.2 : ℕ) = p.1 + 1, (elemGL i j hne t).val p.1 p.2)) = _
     congr 2
     rw [Finset.sum_eq_single_of_mem (i, j) (Finset.mem_filter.2 ⟨Finset.mem_univ _, hij⟩)]
-    · rw [elemGL_apply, Matrix.one_apply_ne hne, if_pos ⟨rfl, rfl⟩, zero_add]
+    · rw [elemGL_apply, Matrix.one_apply_ne hne, ite_eq_left ⟨rfl, rfl⟩, zero_add]
     · rintro ⟨a, b⟩ hp hpne
       have hab : (b : ℕ) = a + 1 := (Finset.mem_filter.1 hp).2
       have hne' : a ≠ b := fun e => by rw [e] at hab; omega
-      rw [elemGL_apply, Matrix.one_apply_ne hne', if_neg fun e => hpne (Prod.ext e.1 e.2), add_zero]
+      rw [elemGL_apply, Matrix.one_apply_ne hne', ite_eq_right fun e => hpne (Prod.ext e.1 e.2), add_zero]
   · have hent : ∀ a b : Fin N, (pm k w * elemGL i j hne t * (pm k w)⁻¹).val a b =
         (1 : Matrix (Fin N) (Fin N) k) a b + if a = w i ∧ b = w j then t else 0 := by
       intro a b
@@ -404,10 +359,10 @@ theorem exists_root_conj_mem_unipRad : ∀ (k : Type) [Field k] [ValuativeRel k]
       · simp only [Equiv.Perm.inv_eq_iff_eq]
     refine mem_unipRad.2 ⟨mem_parab.2 fun a b hab => ?_, fun c x y => ?_⟩
     · have hne' : a ≠ b := fun e => by rw [e] at hab; exact lt_irrefl _ hab
-      rw [hent, Matrix.one_apply_ne hne', if_neg fun e => ?_, add_zero]
+      rw [hent, Matrix.one_apply_ne hne', ite_eq_right fun e => ?_, add_zero]
       rw [e.1, e.2] at hab
       exact lt_asymm hab hb
-    · rw [hent, if_neg fun e => ?_, add_zero]
+    · rw [hent, ite_eq_right fun e => ?_, add_zero]
       · by_cases e : x = y
         · rw [e, Matrix.one_apply_eq, Matrix.one_apply_eq]
         · rw [Matrix.one_apply_ne e, Matrix.one_apply_ne fun e' => e (by simpa using (stdBlocks d hd).injective e')]

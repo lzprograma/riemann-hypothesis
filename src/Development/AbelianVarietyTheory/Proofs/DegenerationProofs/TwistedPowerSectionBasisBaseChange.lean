@@ -50,9 +50,7 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValua
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-attribute [local instance] Over.cartesianMonoidalCategory
 open ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.ZH
-attribute [local instance] SplitExt.free SplitExt.finite
 
 noncomputable section
 namespace GlobalTheory.ZH.BasisBaseChange
@@ -85,14 +83,14 @@ theorem basis_map_of_basis {φ : R →+* R'} (f : M →ₛₗ[φ] M') {I J : Typ
     refine Finset.sum_congr rfl fun i _ => ?_
 
     rw [← Finset.smul_sum, hu i, map_sum]
-    simp only [map_smulₛₗ, ← hu i]
+    simp only [map_smulₛₗ]
   have fb : ∀ c : J → R', ∑ j, c j • f (b j) = ∑ i, (∑ j, c j * φ (w j i)) • f (β i) := fun c => by
     simp only [Finset.sum_smul, mul_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => ?_
 
     rw [← Finset.smul_sum, hw j, map_sum]
-    simp only [map_smulₛₗ, ← hw j]
+    simp only [map_smulₛₗ]
   have back : ∀ (a : I → R') i', ∑ j, (∑ i, a i * φ (u i j)) * φ (w j i') = a i' := fun a i' => by
     simp only [Finset.sum_mul, _root_.mul_assoc, ← map_mul]
     rw [Finset.sum_comm]

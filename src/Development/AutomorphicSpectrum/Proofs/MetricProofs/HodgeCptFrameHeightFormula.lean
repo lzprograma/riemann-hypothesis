@@ -20,63 +20,15 @@ public import Mathlib.Algebra.Field.Defs
 public import Mathlib.Algebra.GroupWithZero.Units.Basic
 public import Mathlib.Algebra.Ring.Subring.Defs
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrGenOfIsFlagVBOn
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsVBOnDualAndBidual
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatRestrictComapSpan
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Tactic.TypeStar
 import Lemmata.GeneralBFact.Imports
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AutomorphicSpectrum.Proofs.MetricProofs.EqNegSumIicDifferences, Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptFrameTwistCompat, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsReversedTriangularFrameChange, Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptFrameTwistDegree, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CapelliComplements.GeneralBFact, Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorRatioRegularOfInverse, Development.AutomorphicSpectrum.Proofs.MetricProofs.ModelDyWeights, Development.AutomorphicSpectrum.Proofs.MetricProofs.ModelMonomialWeightProduct, Development.AutomorphicSpectrum.Proofs.MetricProofs.ProdIicBlockDiagDetFactors, Development.AutomorphicSpectrum.Proofs.MetricProofs.RatioSuccessiveNonzeroRegular, Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptFrameHeightFormula
+-- Members: Development.AutomorphicSpectrum.Proofs.MetricProofs.EqNegSumIicDifferences, Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptFrameTwistCompat, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsReversedTriangularFrameChange, Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptFrameTwistDegree, Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorRatioRegularOfInverse, Development.AutomorphicSpectrum.Proofs.MetricProofs.ModelDyWeights, Development.AutomorphicSpectrum.Proofs.MetricProofs.ModelMonomialWeightProduct, Development.AutomorphicSpectrum.Proofs.MetricProofs.ProdIicBlockDiagDetFactors, Development.AutomorphicSpectrum.Proofs.MetricProofs.RatioSuccessiveNonzeroRegular, Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptFrameHeightFormula
 
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.EqNegSumIicDifferences =====
 -- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.MetricProofs.EqNegSumIicDifferences", "h": "module\n\npublic import Mathlib.Algebra.BigOperators.Group.Finset.Defs\npublic import Mathlib.Order.Interval.Finset.Fin\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\npublic import Mathlib.Algebra.BigOperators.Group.Finset.Basic\n\n"}
@@ -471,7 +423,7 @@ private theorem linearIndependent_of_dual_pairing {Ω W : Type} [Field Ω] [AddC
   have h1 := congrArg (B a) hg
 
   simp only [map_sum, map_smul, hBv, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq,
-  Finset.mem_univ, if_true, map_zero] at h1
+  Finset.mem_univ, ite_true, map_zero] at h1
   exact h1
 
 
@@ -498,7 +450,7 @@ private theorem isFrameAt_of_dual_basis {X : Scheme.{0}} {Ω W : Type} [Field Ω
       conv_rhs => rw [← hs]
 
       simp only [map_sum, map_smul, hBv, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq,
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
     rw [← hs]
     refine Submodule.sum_mem _ fun b _ => ?_
     have e1 : bv.repr e b • v b = (⟨B b e, hc b⟩ : regAt ξ p) • v b := by rw [hco]; rfl
@@ -559,7 +511,7 @@ theorem adapted_frame_om : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
 
     simp only [colFrame, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, hv, smul_eq_mul,
     Matrix.transpose_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
     try exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
   have hLc := isFrameAt_of_dual_basis ((𝔐.V (.inr τ)).comap (𝔐.Vgen (.inr τ)).subtype) ⟨pr p'.1, hp⟩ hrank hbid
     (colFrame (bO τ) T) hom.2 (colFrame v Tᵀ⁻¹) hBv
@@ -621,21 +573,8 @@ end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptFrameTwistDegree =====
 
--- ===== clump member: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CapelliComplements.GeneralBFact =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CapelliComplements.GeneralBFact", "h": "module\n\npublic import Mathlib.LinearAlgebra.Matrix.Determinant.Basic\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.TypeStar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open Finset Matrix MeasureTheory
-open scoped InnerProductSpace
-
--- `Bl.general_b_fact.goal1` is provided by the imported `Lemmata.GeneralBFact.Imports`.
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CapelliComplements.GeneralBFact =====
-
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorRatioRegularOfInverse =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorRatioRegularOfInverse", "h": "module\n\npublic import Mathlib.LinearAlgebra.Matrix.Block\nimport Lemmata.GeneralBFact.Imports\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Henselian\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.TypeStar\nimport Mathlib.Topology.Sheaves.Init\npublic import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CapelliComplements.GeneralBFact\n\n"}
+-- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorRatioRegularOfInverse", "h": "module\n\npublic import Mathlib.LinearAlgebra.Matrix.Block\nimport Lemmata.GeneralBFact.Imports\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Henselian\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.TypeStar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -667,8 +606,7 @@ theorem mul_submatrix_castLE {Φ : Type*} [CommRing Φ] {n r a : ℕ} (ha : a �
   refine Finset.sum_subset (Finset.subset_univ _) ?_
   intro k _ hk
   have hka : a ≤ k.val := by
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     exact hk (Finset.mem_map.2 ⟨⟨k.val, hlt⟩, Finset.mem_univ _, by ext; simp⟩)
   have : U k (Fin.castLE ha y) = 0 := by
     apply hU
@@ -839,12 +777,12 @@ theorem dy_apply (h : ModelOK A x₀ m) (r : Ψ × Fin (p + q)) (k : K₀ ⊕ St
       if ∀ r', blkF Ψ p q K₀ r' ≠ some k then -twist m r k else if blkF Ψ p q K₀ r = some k then 1 else 0 := by
   delta FlagModel.dy
   by_cases hc : ∀ p', (model A x₀ m h).blk p' ≠ some k
-  · rw [dite_eq_left hc, if_pos (show ∀ r' : Ψ × Fin (p + q), blkF Ψ p q K₀ r' ≠ some k from hc)]
+  · rw [dite_eq_left hc, ite_eq_left (show ∀ r' : Ψ × Fin (p + q), blkF Ψ p q K₀ r' ≠ some k from hc)]
     rfl
-  · rw [dite_eq_right hc, if_neg (show ¬ ∀ r' : Ψ × Fin (p + q), blkF Ψ p q K₀ r' ≠ some k from hc)]
+  · rw [dite_eq_right hc, ite_eq_right (show ¬ ∀ r' : Ψ × Fin (p + q), blkF Ψ p q K₀ r' ≠ some k from hc)]
     by_cases hb : (model A x₀ m h).blk r = some k
-    · rw [if_pos hb, if_pos (show blkF Ψ p q K₀ r = some k from hb)]
-    · rw [if_neg hb, if_neg (show ¬ blkF Ψ p q K₀ r = some k from hb)]
+    · rw [ite_eq_left hb, ite_eq_left (show blkF Ψ p q K₀ r = some k from hb)]
+    · rw [ite_eq_right hb, ite_eq_right (show ¬ blkF Ψ p q K₀ r = some k from hb)]
 
 
 open Classical in
@@ -852,10 +790,10 @@ theorem twist_left (τ τ' : Ψ) (i : Fin (p + q)) (a : Fin (rk Ψ p q (.inl τ'
     twist (K₀ := K₀) m (τ, i) (.inr ⟨.inl τ', a⟩) = -(if τ' = τ ∧ p ≤ (i : ℕ) + 1 then 1 else 0) := by
   delta twist
   dsimp only
-  rw [if_neg (show ¬ ((Sum.inl τ' : Ψ ⊕ Ψ) = Sum.inr τ ∧ (a : ℕ) + 1 = q ∧ (i : ℕ) + 1 = p + q) from fun hh => Sum.inl_ne_inr hh.1), add_zero]
+  rw [ite_eq_right (show ¬ ((Sum.inl τ' : Ψ ⊕ Ψ) = Sum.inr τ ∧ (a : ℕ) + 1 = q ∧ (i : ℕ) + 1 = p + q) from fun hh => Sum.inl_ne_inr hh.1), add_zero]
   by_cases hc : τ' = τ ∧ p ≤ (i : ℕ) + 1
-  · rw [if_pos (show (Sum.inl τ' : Ψ ⊕ Ψ) = Sum.inl τ ∧ (a : ℕ) + 1 = p ∧ p ≤ (i : ℕ) + 1 from ⟨congrArg Sum.inl hc.1, ha, hc.2⟩), if_pos hc]
-  · rw [if_neg (show ¬ ((Sum.inl τ' : Ψ ⊕ Ψ) = Sum.inl τ ∧ (a : ℕ) + 1 = p ∧ p ≤ (i : ℕ) + 1) from fun hh => hc ⟨Sum.inl_injective hh.1, hh.2.2⟩), if_neg hc]
+  · rw [ite_eq_left (show (Sum.inl τ' : Ψ ⊕ Ψ) = Sum.inl τ ∧ (a : ℕ) + 1 = p ∧ p ≤ (i : ℕ) + 1 from ⟨congrArg Sum.inl hc.1, ha, hc.2⟩), ite_eq_left hc]
+  · rw [ite_eq_right (show ¬ ((Sum.inl τ' : Ψ ⊕ Ψ) = Sum.inl τ ∧ (a : ℕ) + 1 = p ∧ p ≤ (i : ℕ) + 1) from fun hh => hc ⟨Sum.inl_injective hh.1, hh.2.2⟩), ite_eq_right hc]
 
 
 open Classical in
@@ -863,10 +801,10 @@ theorem twist_right (τ τ' : Ψ) (i : Fin (p + q)) (a : Fin (rk Ψ p q (.inr τ
     twist (K₀ := K₀) m (τ, i) (.inr ⟨.inr τ', a⟩) = -(if τ' = τ ∧ (i : ℕ) + 1 = p + q then 1 else 0) := by
   delta twist
   dsimp only
-  rw [if_neg (show ¬ ((Sum.inr τ' : Ψ ⊕ Ψ) = Sum.inl τ ∧ (a : ℕ) + 1 = p ∧ p ≤ (i : ℕ) + 1) from fun hh => Sum.inr_ne_inl hh.1), zero_add]
+  rw [ite_eq_right (show ¬ ((Sum.inr τ' : Ψ ⊕ Ψ) = Sum.inl τ ∧ (a : ℕ) + 1 = p ∧ p ≤ (i : ℕ) + 1) from fun hh => Sum.inr_ne_inl hh.1), zero_add]
   by_cases hc : τ' = τ ∧ (i : ℕ) + 1 = p + q
-  · rw [if_pos (show (Sum.inr τ' : Ψ ⊕ Ψ) = Sum.inr τ ∧ (a : ℕ) + 1 = q ∧ (i : ℕ) + 1 = p + q from ⟨congrArg Sum.inr hc.1, ha, hc.2⟩), if_pos hc]
-  · rw [if_neg (show ¬ ((Sum.inr τ' : Ψ ⊕ Ψ) = Sum.inr τ ∧ (a : ℕ) + 1 = q ∧ (i : ℕ) + 1 = p + q) from fun hh => hc ⟨Sum.inr_injective hh.1, hh.2.2⟩), if_neg hc]
+  · rw [ite_eq_left (show (Sum.inr τ' : Ψ ⊕ Ψ) = Sum.inr τ ∧ (a : ℕ) + 1 = q ∧ (i : ℕ) + 1 = p + q from ⟨congrArg Sum.inr hc.1, ha, hc.2⟩), ite_eq_left hc]
+  · rw [ite_eq_right (show ¬ ((Sum.inr τ' : Ψ ⊕ Ψ) = Sum.inr τ ∧ (a : ℕ) + 1 = q ∧ (i : ℕ) + 1 = p + q) from fun hh => hc ⟨Sum.inr_injective hh.1, hh.2.2⟩), ite_eq_right hc]
 
 
 open Classical in
@@ -886,12 +824,12 @@ theorem dy_left (h : ModelOK A x₀ m) (τ τ' : Ψ) (i : Fin (p + q)) (a : Fin 
     · rintro ⟨h3, h4, h5⟩
       exact ⟨⟨by omega, by omega⟩, h3, h4⟩
   by_cases hp : (a : ℕ) + 1 = p
-  · rw [dy_apply h, if_pos (fun r' e => ((key r').1 e).2.2 hp), twist_left τ τ' i a hp, neg_neg]
+  · rw [dy_apply h, ite_eq_left (fun r' e => ((key r').1 e).2.2 hp), twist_left τ τ' i a hp, neg_neg]
     rcases eq_or_ne τ' τ with rfl | hne
     · simp only [true_and]
       split_ifs <;> omega
     · simp [hne, hne.symm]
-  · rw [dy_apply h, if_neg (fun H => H (τ', ⟨(a : ℕ), by omega⟩) ((key _).2 ⟨rfl, rfl, hp⟩))]
+  · rw [dy_apply h, ite_eq_right (fun H => H (τ', ⟨(a : ℕ), by omega⟩) ((key _).2 ⟨rfl, rfl, hp⟩))]
     simp only [key]
     rcases eq_or_ne τ τ' with rfl | hne
     · simp only [true_and]
@@ -915,12 +853,12 @@ theorem dy_right (h : ModelOK A x₀ m) (τ τ' : Ψ) (i : Fin (p + q)) (a : Fin
     · rintro ⟨h3, h4, h5⟩
       exact ⟨⟨by omega, by omega⟩, h3, h4⟩
   by_cases hq : (a : ℕ) + 1 = q
-  · rw [dy_apply h, if_pos (fun r' e => ((key r').1 e).2.2 hq), twist_right τ τ' i a hq, neg_neg]
+  · rw [dy_apply h, ite_eq_left (fun r' e => ((key r').1 e).2.2 hq), twist_right τ τ' i a hq, neg_neg]
     rcases eq_or_ne τ' τ with rfl | hne
     · simp only [true_and]
       split_ifs <;> omega
     · simp [hne, hne.symm]
-  · rw [dy_apply h, if_neg (fun H => H (τ', ⟨p + (a : ℕ), by omega⟩) ((key _).2 ⟨rfl, rfl, hq⟩))]
+  · rw [dy_apply h, ite_eq_right (fun H => H (τ', ⟨p + (a : ℕ), by omega⟩) ((key _).2 ⟨rfl, rfl, hq⟩))]
     simp only [key]
     rcases eq_or_ne τ τ' with rfl | hne
     · simp only [true_and]
@@ -934,7 +872,7 @@ open Classical in
 theorem dy_flag : ∀ (Ψ : Type) [Fintype Ψ] (p q : ℕ) (Ω : Type) [Field Ω] [CharZero Ω] (n : Ψ ⊕ Ψ → ℕ) (A : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω) (K₀ : Type) [Fintype K₀] (J₀ : K₀ → Type) [∀ k, Fintype (J₀ k)] (x₀ : (Σ k, J₀ k) → Ω) (m : Ψ ⊕ Ψ → ℕ) (h : ModelOK A x₀ m) (τ : Ψ) (i : Fin (p + q)), (∀ k, (model A x₀ m h).dy (τ, i) (.inl k) = -((rkW i * m (.inl τ) + rkO i * m (.inr τ) : ℕ) : ℤ)) ∧ ∀ t : StepIx Ψ p q, ((t = stepOf Ψ p q (τ, i) ∨ (t.1 = .inl τ ∧ (t.2 : ℕ) + 1 = p ∧ p ≤ (i : ℕ))) → (model A x₀ m h).dy (τ, i) (.inr t) = 1) ∧ (¬ (t = stepOf Ψ p q (τ, i) ∨ (t.1 = .inl τ ∧ (t.2 : ℕ) + 1 = p ∧ p ≤ (i : ℕ))) → (model A x₀ m h).dy (τ, i) (.inr t) = 0) := by
   intro Ψ _ p q Ω _ _ n A K₀ _ J₀ _ x₀ m h τ i
   refine ⟨fun k => ?_, fun t => ?_⟩
-  · rw [dy_apply h, if_pos (fun r' => blkF_ne_inl K₀ r' k)]
+  · rw [dy_apply h, ite_eq_left (fun r' => blkF_ne_inl K₀ r' k)]
     rfl
   · obtain ⟨s, a⟩ := t
     cases s with
@@ -953,8 +891,8 @@ theorem dy_flag : ∀ (Ψ : Type) [Fintype Ψ] (p q : ℕ) (Ω : Type) [Field Ω
           · exact Or.inl ⟨h1, h2⟩
           · exact Or.inr ⟨h1.symm, h2, h3⟩
       refine ⟨fun hc' => ?_, fun hn => ?_⟩
-      · rw [dy_left h, if_pos (hc.1 hc')]
-      · rw [dy_left h, if_neg (fun h' => hn (hc.2 h'))]
+      · rw [dy_left h, ite_eq_left (hc.1 hc')]
+      · rw [dy_left h, ite_eq_right (fun h' => hn (hc.2 h'))]
     | inr τ' =>
       have e := (eq_comm.trans (stepOf_eq_right τ τ' i a) :
         (⟨.inr τ', a⟩ : StepIx Ψ p q) = stepOf Ψ p q (τ, i) ↔ _)
@@ -969,8 +907,8 @@ theorem dy_flag : ∀ (Ψ : Type) [Fintype Ψ] (p q : ℕ) (Ω : Type) [Field Ω
         · intro h1
           exact Or.inl h1
       refine ⟨fun hc' => ?_, fun hn => ?_⟩
-      · rw [dy_right h, if_pos (hc.1 hc')]
-      · rw [dy_right h, if_neg (fun h' => hn (hc.2 h'))]
+      · rw [dy_right h, ite_eq_left (hc.1 hc')]
+      · rw [dy_right h, ite_eq_right (fun h' => hn (hc.2 h'))]
 
 end GlobalTheory.CompanionTheory.Ar.PB.FMX.Dy
 end -- clump:auto
@@ -1010,34 +948,34 @@ theorem step_monomial : ∀ (Ψ : Type) [Fintype Ψ] (p q : ℕ) (Ω : Type) [Fi
   refine ⟨fun h1 => ?_, fun h1 => ?_⟩
   · have hso : stepOf Ψ p q (τ, i) = ⟨.inl τ, ⟨i, h1⟩⟩ := by
       unfold stepOf
-      exact dif_pos h1
+      exact dite_eq_left h1
     have hW : rkW i = (i : ℕ) + 1 := by unfold rkW; omega
     have hO : rkO i = 0 := by unfold rkO; omega
     rw [hsplit, hW, hO, zero_mul, add_zero, Fintype.prod_eq_single (stepOf Ψ p q (τ, i)), hval,
-      if_pos (Or.inl rfl), hso, div_eq_mul_inv]
+      ite_eq_left (Or.inl rfl), hso, div_eq_mul_inv]
     intro t ht
-    rw [hval, if_neg]
+    rw [hval, ite_eq_right]
     rintro (h' | ⟨-, -, hp⟩)
     · exact ht h'
     · omega
   · have hso : stepOf Ψ p q (τ, i) = ⟨.inr τ, ⟨(i : ℕ) - p, by have := i.2; show _ < q; omega⟩⟩ := by
       unfold stepOf
-      exact dif_neg (not_lt.2 h1)
+      exact dite_eq_right (not_lt.2 h1)
     have hW : rkW i = p := by unfold rkW; omega
     have hO : rkO i = (i : ℕ) - p + 1 := by unfold rkO; omega
     rw [hsplit, hW, hO]
     by_cases hp0 : 0 < p
-    · rw [dif_pos hp0]
+    · rw [dite_eq_left hp0]
       have hne : stepOf Ψ p q (τ, i) ≠ ⟨.inl τ, ⟨p - 1, by show _ < p; omega⟩⟩ := by
         rw [hso]
         intro he
         exact Sum.inr_ne_inl (congrArg Sigma.fst he)
-      rw [Fintype.prod_eq_mul _ _ hne, hval, hval, if_pos (Or.inl rfl),
-        if_pos (Or.inr ⟨rfl, show p - 1 + 1 = p by omega, h1⟩), hso]
+      rw [Fintype.prod_eq_mul _ _ hne, hval, hval, ite_eq_left (Or.inl rfl),
+        ite_eq_left (Or.inr ⟨rfl, show p - 1 + 1 = p by omega, h1⟩), hso]
       · rw [div_eq_mul_inv, mul_inv]
         ring
       · rintro x ⟨hx1, hx2⟩
-        rw [hval, if_neg]
+        rw [hval, ite_eq_right]
         rintro (h' | ⟨hs, hj, -⟩)
         · exact hx1 h'
         · apply hx2
@@ -1045,10 +983,10 @@ theorem step_monomial : ∀ (Ψ : Type) [Fintype Ψ] (p q : ℕ) (Ω : Type) [Fi
           dsimp only at hs hj
           subst hs
           exact Sigma.ext rfl (heq_of_eq (Fin.ext (by dsimp; omega)))
-    · rw [dif_neg hp0, one_mul, Fintype.prod_eq_single (stepOf Ψ p q (τ, i)), hval, if_pos (Or.inl rfl), hso,
+    · rw [dite_eq_right hp0, one_mul, Fintype.prod_eq_single (stepOf Ψ p q (τ, i)), hval, ite_eq_left (Or.inl rfl), hso,
         div_eq_mul_inv]
       intro t ht
-      rw [hval, if_neg]
+      rw [hval, ite_eq_right]
       rintro (h' | ⟨-, hj, -⟩)
       · exact ht h'
       · omega
@@ -1150,8 +1088,8 @@ theorem consecutive_quotients_units :
         exact le_rfl
     have hi := hU i
     rw [hI, Finset.prod_singleton] at hi
-    simpa only [dif_pos h] using hi
-  · simp only [dif_neg h]
+    simpa only [dite_eq_left h] using hi
+  · simp only [dite_eq_right h]
     have hlt : (i : ℕ) - 1 < N := by have := i.2; omega
     generalize hj : (⟨(i : ℕ) - 1, hlt⟩ : Fin N) = j
     have hjv : (j : ℕ) = (i : ℕ) - 1 := by rw [← hj]
@@ -1318,9 +1256,9 @@ theorem point_gen {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E
       (hR (.inr ⟨.inr τ, t⟩))
   let G : Fin (D.p + D.q) → (GenField Ω (rk (CMType H) D.p D.q)) := fun i =>
     if h : (i : ℕ) < D.p then tW ⟨i, h⟩ else tO ⟨(i : ℕ) - D.p, by have := i.2; omega⟩
-  have hG1 : ∀ (i : Fin (D.p + D.q)) (h : (i : ℕ) < D.p), G i = tW ⟨i, h⟩ := fun i h => dif_pos h
+  have hG1 : ∀ (i : Fin (D.p + D.q)) (h : (i : ℕ) < D.p), G i = tW ⟨i, h⟩ := fun i h => dite_eq_left h
   have hG2 : ∀ (i : Fin (D.p + D.q)) (h : D.p ≤ (i : ℕ)), G i = tO ⟨(i : ℕ) - D.p, by have := i.2; omega⟩ :=
-    fun i h => dif_neg (not_lt.2 h)
+    fun i h => dite_eq_right (not_lt.2 h)
   let Ee : Fin (D.p + D.q) → (GenField Ω (rk (CMType H) D.p D.q)) := fun i => ∏ k, yc k ^ (-((model (aOf 𝔐 bW bO φ) x₀ m h).dy (τ, i) k))
   have hEe : ∀ i, Ee i ≠ 0 := fun i => Finset.prod_ne_zero_iff.2 fun k _ => zpow_ne_zero _ (hY _)
   have hDE : ∀ i, unitAt 𝔐'.ξ p' ((∏ k ∈ Finset.Iic i, G k) / Ee i) := by
@@ -1340,7 +1278,7 @@ theorem point_gen {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E
       have hl : (i : ℕ) - D.p < D.q := by have := i.2; omega
       refine _root_.GlobalTheory.CompanionTheory.Ar.Flat.ZUnit.mul ?_ (unitO ⟨(i : ℕ) - D.p, hl⟩)
       by_cases h0 : 0 < D.p
-      · rw [dif_pos h0]
+      · rw [dite_eq_left h0]
         have e1 : D.p - 1 + 1 = D.p := by omega
         have := unitW ⟨D.p - 1, by omega⟩
         have eP : (∏ l : Fin (D.p - 1 + 1), tW (Fin.castLE (by omega) l)) = ∏ l, tW l :=
@@ -1348,7 +1286,7 @@ theorem point_gen {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E
         have eX : (D.p - 1 + 1) * m (.inl τ) = D.p * m (.inl τ) := by rw [e1]
         simp only [eP, eX] at this
         exact this
-      · rw [dif_neg h0]
+      · rw [dite_eq_right h0]
         have hp0 : D.p = 0 := by omega
         have eX : D.p * m (.inl τ) = 0 := by rw [hp0, zero_mul]
         haveI : IsEmpty (Fin D.p) := by rw [hp0]; infer_instance
@@ -1360,9 +1298,9 @@ theorem point_gen {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E
           else (model (aOf 𝔐 bW bO φ) x₀ m h).dy (τ, ⟨(i : ℕ) - 1, by have := i.2; omega⟩) - (model (aOf 𝔐 bW bO φ) x₀ m h).dy (τ, i)) k) =
       if h0 : (i : ℕ) = 0 then Ee i else Ee i / Ee ⟨(i : ℕ) - 1, by have := i.2; omega⟩ := by
     by_cases h0 : (i : ℕ) = 0
-    · simp only [dif_pos h0]
+    · simp only [dite_eq_left h0]
       rfl
-    · simp only [dif_neg h0]
+    · simp only [dite_eq_right h0]
       show _ = (∏ k, yc k ^ (-((model (aOf 𝔐 bW bO φ) x₀ m h).dy (τ, i) k))) / ∏ k, yc k ^ (-((model (aOf 𝔐 bW bO φ) x₀ m h).dy (τ, ⟨(i : ℕ) - 1, by have := i.2; omega⟩) k))
       rw [← Finset.prod_div_distrib]
       refine Finset.prod_congr rfl fun k _ => ?_
@@ -1378,7 +1316,7 @@ theorem point_gen {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E
     · have hi' := not_lt.1 hi
       have hl : (i : ℕ) - D.p < D.q := by have := i.2; omega
       rw [rootLat_gen Fl (τ, i) p' (q := ⟨.inr τ, (⟨(i : ℕ) - D.p, hl⟩ : Fin D.q).rev⟩) (by
-        simp only [HodgeCpt.rootIdx, dif_neg hi]
+        simp only [HodgeCpt.rootIdx, dite_eq_right hi]
         congr 1
         apply Fin.ext
         simp [Fin.val_rev]

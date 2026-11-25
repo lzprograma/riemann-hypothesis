@@ -45,8 +45,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry
@@ -109,20 +107,5 @@ theorem psiIn_top {I : Ideal R} (D : DegData R I) (χ : D.toPre.X) : D.toPre.Psi
   by_cases h : χ = 0
   · subst h; exact (PsiZero.main R D.toPre).1 D.tau_bimult
   · exact (PsiZero.main R D.toPre).2 χ I ⊤ le_top (D.psi_pos χ h)
-
-section DVR
-
-variable [IsDiscreteValuationRing R]
-
-end DVR
-
-section At
-
-variable [IsLocalRing R] {C : Type} [NormedField C]
-
-
-variable {φ : FractionRing R →+* C}
-
-end At
 
 end GlobalTheory.PeriodFormCompare

@@ -47,8 +47,6 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
-set_option autoImplicit false
-
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.IndefiniteRowSideFullHecke GlobalTheory.IndefiniteRowSideFullHecke.HermitianCompactForm GlobalTheory.Toroidal GlobalTheory.ShFam GlobalTheory.ShFam.Pad GlobalTheory.ShFam.Hor GlobalTheory.DetLine
 
@@ -85,9 +83,6 @@ theorem exists_var : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H :
     rw [Scheme.Hom.comp_base, TopCat.coe_comp, Set.range_comp, Scheme.Opens.range_ι]
   let z : gen Z := π (Classical.arbitrary _)
   let V : (gen Z).Opens := ⟨connectedComponent z, (hcc z).2⟩
-  have hred : IsReduced (gen Z) := by
-    have := GlobalTheory.isNormalScheme_of_smooth (genStr Z)
-    exact GlobalTheory.IsNormalScheme.isReduced
   have hproj : IsProjOver (genStr Z) := (GlobalTheory.ProjSpace.points_and_stability (R := O) (N := 0)).2.2.1 c.F β Z.X Z.s Z.proj
   have : IrreducibleSpace V.toScheme := Subtype.irreducibleSpace (hcc z).1.1
   have hcl : IsClosedImmersion V.ι := IsClosedImmersion.of_isPreimmersion _ (by

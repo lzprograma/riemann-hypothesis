@@ -58,8 +58,7 @@ namespace GlobalTheory.ZH
 
 theorem quadraticMap_nonneg_of_tendsto_cofinite {X : Type} [AddCommGroup X] [Module.Free ℤ X]
     (q : QuadraticMap ℤ X ℝ) (hq : Filter.Tendsto q Filter.cofinite Filter.atTop) (x : X) : 0 ≤ q x := by
-  by_contra hneg
-  push_neg at hneg
+  by_contra! hneg
   have hx : x ≠ 0 := by
     rintro rfl
     simp at hneg

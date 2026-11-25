@@ -89,33 +89,8 @@ theorem preconnectedSpace_of_line {R F : Type} [CommRing R] [Field F]
     {f : X ⟶ Spec (CommRingCat.of R)} (P : Perf f (Inh.trivLB X)) {g : R →+* F} {π : X' ⟶ X}
     {f' : X' ⟶ Spec (CommRingCat.of F)} (h : IsPullback π f' f (Spec.map (CommRingCat.ofHom g)))
     (v : Fin P.a → F) (hv : ∀ w, (P.D₀.map g).mulVec w = 0 → ∃ c : F, w = c • v) :
-    PreconnectedSpace X' := by
-  obtain ⟨E, hE⟩ := P.sec F g X' π f' h
-  have key : ∀ s : Γ(X', ⊤), ∃ c : F, ∀ i,
-      rs X' (le_top : π ⁻¹ᵁ P.W i ≤ ⊤) s = GlobalTheory.AbLaw.cst f' _ c * loc P π f' v i := fun s => by
-    obtain ⟨w, hw⟩ := E.surjective (fnSec π s)
-    obtain ⟨c, hc⟩ := hv w.1 w.2
-    refine ⟨c, fun i => ?_⟩
-    have e := hE w i
-    rw [hw] at e
-    refine ((rs_rs _ _ s).symm.trans e).trans ?_
-    rw [← loc_smul, ← hc]
-    rfl
-  obtain ⟨c₁, h₁⟩ := key 1
-  have hu : ∀ i, IsUnit (loc P π f' v i) := fun i =>
-    isUnit_of_mul_isUnit_right (by rw [← h₁ i, map_one]; exact isUnit_one)
-  refine preconnectedSpace_of_functions X' fun s => ?_
-  obtain ⟨c, hc⟩ := key s
-  by_cases h0 : c = 0
-  · refine Or.inl (le_bot_iff.1 fun y hy => ?_)
-    obtain ⟨i, hi⟩ := exists_mem P (π y)
-    have := (mem_basicOpen_rs (le_top : π ⁻¹ᵁ P.W i ≤ ⊤) s hi).2 hy
-    rwa [hc, h0, map_zero, zero_mul, Scheme.basicOpen_zero] at this
-  · refine Or.inr (top_unique fun y _ => ?_)
-    obtain ⟨i, hi⟩ := exists_mem P (π y)
-    refine (mem_basicOpen_rs (le_top : π ⁻¹ᵁ P.W i ≤ ⊤) s hi).1 ?_
-    rw [hc]
-    exact mem_of_isUnit (((IsUnit.mk0 c h0).map _).mul (hu i)) hi
+    PreconnectedSpace X' :=
+  _root_.GlobalTheory.AlgGroup.preconnectedSpace_of_line P h v hv
 
 theorem exists_nonempty_fibre {R K : Type} [CommRing R] [Field K] {Z Z₀ : Scheme.{0}} (s : Z ⟶ Sp R)
     (hs : IsOpenMap s) (x : R →+* K) {π : Z₀ ⟶ Z} {q : Z₀ ⟶ Sp K} (h : π ≫ s = q ≫ spMap x) (z : Z₀) :

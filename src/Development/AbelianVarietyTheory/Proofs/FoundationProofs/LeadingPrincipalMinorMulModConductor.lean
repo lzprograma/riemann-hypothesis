@@ -124,7 +124,7 @@ theorem GlobalTheory.PsType.minor_mul_mod : ∀ (k : Type) [Field k] [ValuativeR
     intro a ha i j hi hj
     have hj' : m < j := not_le.1 hj
     have hlt : (m : ℕ) + 1 < n := lt_of_le_of_lt (Nat.succ_le_of_lt (Fin.lt_def.1 hj')) j.2
-    have hnx : nxt ψ m = ψ ⟨(m : ℕ) + 1, hlt⟩ := dif_pos hlt
+    have hnx : nxt ψ m = ψ ⟨(m : ℕ) + 1, hlt⟩ := dite_eq_left hlt
     have h1 := ha.2 i j (lt_of_le_of_lt hi hj')
     rw [hχ, hnx]
     exact hψ i m ⟨(m : ℕ) + 1, hlt⟩ j hi (Fin.le_def.2 (Nat.le_succ _))

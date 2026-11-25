@@ -12,18 +12,6 @@ namespace Formalism.L2.Pj.I2FramePointLemmas
 open ReciprocityTheory.ChartRestriction.G.I2 ReciprocityTheory.ChartRestriction.G.PullbackSections NumberField
 open scoped ContDiff
 
-section Deriv
-
-variable {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V]
-
-end Deriv
-
-section Pi
-
-variable {E : Type} [Field E] [NumberField E]
-
-end Pi
-
 section Log
 
 variable {E : Type} [Field E] [NumberField E]

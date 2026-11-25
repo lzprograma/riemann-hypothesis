@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCPX
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SigLamLeOfKTypes
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
@@ -20,7 +21,7 @@ open scoped ContDiff Convolution
 
 namespace ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ}
 
@@ -90,16 +91,8 @@ theorem arb_param_integral {E P V : Type*} [NormedAddCommGroup E] [NormedSpace �
     [NormedSpace ℂ V] [IsScalarTower ℝ ℂ V] {μ : Measure E} {f : E → V} (hf : LocallyIntegrable f μ)
     {Ψ : P → E → ℂ} {k : Set E} (hk : IsCompact k) (hΨ0 : ∀ p x, x ∉ k → Ψ p x = 0)
     (hΨ : ContDiff ℝ ∞ (Function.uncurry Ψ)) : ContDiff ℝ ∞ (fun p => ∫ y, Ψ p y • f y ∂μ) := by
-  have key := contDiffOn_convolution_right_with_param_comp (𝕜 := ℝ) (n := (⊤ : ℕ∞)) (μ := μ)
-    ((ContinuousLinearMap.lsmul ℝ ℂ : ℂ →L[ℝ] V →L[ℝ] V).flip) (s := (Set.univ : Set P))
-    (v := fun _ => (0 : E)) contDiffOn_const (f := f) (g := fun p x => Ψ p (-x))
-    (k := Set.image (fun x : E => -x) k) isOpen_univ (hk.image continuous_neg)
-    (fun p x _ hx => hΨ0 p (-x) (by simpa using hx)) hf
-    (hΨ.comp (contDiff_fst.prodMk contDiff_snd.neg)).contDiffOn
-  rw [contDiffOn_univ] at key
-  convert key using 1
-  funext p
-  simp [MeasureTheory.convolution]
+  intros
+  apply _root_.Formalism.MainNotions.BridgeCPX.contDiff_param_integral <;> assumption
 
 theorem opConv_smooth (hσ : IsURepOn (UJset ε) σ) (w : H) {α : Matrix (Fin n) (Fin n) ℂ → ℂ}
     (hα : ContDiff ℝ ∞ α) (hαc : HasCompactSupport α) : IsSmoothVecU ε σ (opConv ε σ α w) := by

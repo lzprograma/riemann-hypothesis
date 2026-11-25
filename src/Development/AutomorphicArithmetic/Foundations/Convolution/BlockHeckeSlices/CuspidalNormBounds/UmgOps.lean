@@ -4,44 +4,7 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHec
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfIsOpenStab
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ArchimedeanCompact.AutomorphicFormsLeSm
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -124,33 +87,23 @@ private theorem uc_left (h : GA E n) (u : UC E n) : ∀ φ : Sm E n, (∀ g, φ.
     rw [map_mul]
     exact ha _ (hb φ hφ) g
 
-private def stab (ψ : Sm E n) : Subgroup (GL (Fin n) (Af E)) where
-  carrier := {k | rt E n (finGL E n k) ψ = ψ}
-  one_mem' := by simp
-  mul_mem' := fun {x y} hx hy => by
-    simp only [Set.mem_setOf_eq] at hx hy ⊢
-    rw [map_mul, map_mul, Module.End.mul_apply, hy, hx]
-  inv_mem' := fun {x} hx => by
-    simp only [Set.mem_setOf_eq] at hx ⊢
-    conv_lhs => rw [← hx]
-    rw [← Module.End.mul_apply, ← map_mul, ← map_mul, inv_mul_cancel, map_one, map_one, Module.End.one_apply]
-
-private theorem lev_rt (g : GA E n) (ψ : Sm E n) (h : IsOpen (stab ψ : Set (GL (Fin n) (Af E)))) :
-    IsOpen (stab (rt E n g ψ) : Set (GL (Fin n) (Af E))) := by
+private theorem lev_rt (g : GA E n) (ψ : Sm E n) (h : IsOpen {k | finRep E n k ψ = ψ}) :
+    IsOpen {k | finRep E n k (rt E n g ψ) = rt E n g ψ} := by
   obtain ⟨y, l, rfl⟩ : ∃ y l, infGL E n y * finGL E n l = g := ⟨_, _, infGL_mul_finGL g⟩
   have hc : Continuous fun k : GL (Fin n) (Af E) => l⁻¹ * k * l := by fun_prop
-  have ho : IsOpen ((fun k : GL (Fin n) (Af E) => l⁻¹ * k * l) ⁻¹' (stab ψ : Set _)) :=
+  have ho : IsOpen ((fun k : GL (Fin n) (Af E) => l⁻¹ * k * l) ⁻¹' {k | finRep E n k ψ = ψ}) :=
     IsOpen.preimage hc h
-  refine Subgroup.isOpen_of_mem_nhds (stab (rt E n (infGL E n y * finGL E n l) ψ)) (g := 1)
-    (Filter.mem_of_superset (ho.mem_nhds ?_) fun k hk => ?_)
-  · simpa using (stab ψ).one_mem
-  · have hk' : rt E n (finGL E n (l⁻¹ * k * l)) ψ = ψ := hk
-    change rt E n (finGL E n k) (rt E n (infGL E n y * finGL E n l) ψ) = rt E n (infGL E n y * finGL E n l) ψ
-    have e : finGL E n k * (infGL E n y * finGL E n l) = infGL E n y * finGL E n l * finGL E n (l⁻¹ * k * l) := by
-      rw [← mul_assoc, ← infGL_comm, mul_assoc, mul_assoc (infGL E n y), ← map_mul, ← map_mul]
-      congr 2
-      group
-    rw [← Module.End.mul_apply, ← map_mul, e, map_mul, Module.End.mul_apply, hk']
+  refine isOpen_stab_of_mem_nhds (finRep E n) _
+    (Filter.mem_of_superset (ho.mem_nhds (by simp)) fun k hk => ?_)
+  have hk' : rt E n (finGL E n (l⁻¹ * k * l)) ψ = ψ := hk
+  change rt E n (finGL E n k) (rt E n (infGL E n y * finGL E n l) ψ) =
+    rt E n (infGL E n y * finGL E n l) ψ
+  have e : finGL E n k * (infGL E n y * finGL E n l) =
+      infGL E n y * finGL E n l * finGL E n (l⁻¹ * k * l) := by
+    rw [← mul_assoc, ← infGL_comm, mul_assoc, mul_assoc (infGL E n y), ← map_mul, ← map_mul]
+    congr 2
+    group
+  rw [← Module.End.mul_apply, ← map_mul, e, map_mul, Module.End.mul_apply, hk']
 
 private theorem umg_zero : Umg (0 : Sm E n) :=
   ⟨fun _ _ => rfl, by
@@ -161,7 +114,8 @@ private theorem umg_zero : Umg (0 : Sm E n) :=
 
 private theorem umg_add {φ ψ : Sm E n} (h : Umg φ) (h' : Umg ψ) : Umg (φ + ψ) := by
   refine ⟨fun γ g => congrArg₂ (· + ·) (h.left γ g) (h'.left γ g), ?_, ?_⟩
-  · refine Subgroup.isOpen_mono (H₁ := stab φ ⊓ stab ψ) (H₂ := stab (φ + ψ)) (fun k hk => ?_) (h.level.inter h'.level)
+  · refine isOpen_stab_of_mem_nhds (finRep E n) (φ + ψ) (Filter.mem_of_superset
+      ((h.level.inter h'.level).mem_nhds ⟨by simp, by simp⟩) fun k hk => ?_)
     exact (map_add _ _ _).trans (congrArg₂ (· + ·) hk.1 hk.2)
   · obtain ⟨N, hN⟩ := h.growth
     obtain ⟨M, hM⟩ := h'.growth
@@ -177,7 +131,8 @@ private theorem umg_add {φ ψ : Sm E n} (h : Umg φ) (h' : Umg ψ) : Umg (φ + 
 
 private theorem umg_uC {φ : Sm E n} (h : Umg φ) (u : UC E n) : Umg (uC E n u φ) := by
   refine ⟨fun γ g => uc_left _ u φ (h.left γ) g, ?_, ?_⟩
-  · refine Subgroup.isOpen_mono (H₁ := stab φ) (H₂ := stab (uC E n u φ)) (fun k hk => ?_) h.level
+  · refine isOpen_stab_of_mem_nhds (finRep E n) (uC E n u φ) (Filter.mem_of_superset
+      (h.level.mem_nhds (by simp)) fun k hk => ?_)
     exact (LinearMap.congr_fun (uc_fin u k).eq φ).symm.trans (congrArg (uC E n u) hk)
   · obtain ⟨N, hN⟩ := h.growth
     refine ⟨N, fun v => ?_⟩

@@ -77,16 +77,13 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.Unf.FB
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FinPl.HandInvPf
 
 variable {D : D7} {ψ : AddChar (AF D.host.F) ℂ}
 
-alias mul_star_psi := _root_.GlobalTheory.ThetaSchur.mul_star_psi
-
 theorem star_psi_neg (hψ : IsStdChar D ψ (-1)) (x : AF D.host.F) : star (ψ (-x)) = ψ x := by
-  have h1 := mul_star_psi hψ (-x)
+  have h1 := GlobalTheory.ThetaSchur.mul_star_psi hψ (-x)
   have h2 : ψ x * ψ (-x) = 1 := by rw [← AddChar.map_add_eq_mul, add_neg_cancel, AddChar.map_zero_eq_one]
   linear_combination ψ x * h1 - star (ψ (-x)) * h2
 
@@ -191,7 +188,7 @@ theorem flatFB_source {σ : ℕ} {J : JacLev D (σ + 1)} {B : BesLev D σ} (s : 
   have hmul : ∀ v : UX D (σ + 1), psiUni ψ (v * u').1 = psiUni ψ v.1 * psiUni ψ u := fun v => by
     rw [← ThLaws.psiFlag_levi ψ J.d, ← ThLaws.psiFlag_levi ψ J.d, ← ThLaws.psiFlag_levi ψ J.d, Subgroup.coe_mul, map_mul,
       psiFlag_mul J.d ψ (J.d.levi_mem_NFlag v.2) (J.d.levi_mem_NFlag hu)]
-  have hu1 : psiUni ψ u * star (psiUni ψ u) = 1 := mul_star_psi hψ _
+  have hu1 : psiUni ψ u * star (psiUni ψ u) = 1 := GlobalTheory.ThetaSchur.mul_star_psi hψ _
   funext w
   rw [hpt, hcen, hfl]
   simp only [Pi.smul_apply, smul_eq_mul, heisO]
@@ -275,14 +272,14 @@ theorem pairKer_heis {σ : ℕ} {J : JacLev D (σ + 1)} {B : BesLev D σ} (s : S
     have e1 : ratW B.L J.W₀ γ₁ = γ := hγ₁
     rw [e2, ← map_add (f := _), Prod.mk_add_mk, zero_add, hT] at q2
     rw [e1] at q1
-    rw [q2, q1, star_mul', mul_mul_mul_comm, mul_star_psi hψ, one_mul]
+    rw [q2, q1, star_mul', mul_mul_mul_comm, GlobalTheory.ThetaSchur.mul_star_psi hψ, one_mul]
   simp only [contractT, thPair]
   rw [← covolOne_integral_add vL.covol (fun w => F ((B.o.resT J.W₀).symm (0, w)) * star (Y (h₀ * h) w)) hper
     (p ⬝ mt J.W₀ h₀⁻¹)]
   congr 1
   funext w
   rw [hY', Pi.smul_apply, smul_eq_mul, heisO, hT, ← map_add (f := _), Prod.mk_add_mk, add_zero, star_mul', star_mul', star_star]
-  have h1 := mul_star_psi hψ (symplOH J.W₀ B.L w (p ⬝ mt J.W₀ h₀⁻¹))
+  have h1 := GlobalTheory.ThetaSchur.mul_star_psi hψ (symplOH J.W₀ B.L w (p ⬝ mt J.W₀ h₀⁻¹))
   generalize F _ = z
   generalize star (Y _ _) = y
   generalize star (ψ (symplOH J.W₀ B.L w (p ⬝ mt J.W₀ h₀⁻¹))) = t' at h1 ⊢
@@ -372,7 +369,7 @@ theorem handInv : ∀ D : D7, GlobalTheory.FinPl.HandInv D := by
       rw [← c, ← flatFB_source s₂ (s₂.weil.om_pres _ _ hΨ₂) hn, ← om_mul, ← om_mul, one_mul, one_mul]
     have hab : star (psiFlag ψ J.d n) * ψ (-cenS J.d B'.L (zl B') n) *
         (psiFlag ψ J.d n * ψ (cenS J.d B'.L (zl B') n)) = 1 := by
-      have b1 : psiFlag ψ J.d n * star (psiFlag ψ J.d n) = 1 := mul_star_psi hψ _
+      have b1 : psiFlag ψ J.d n * star (psiFlag ψ J.d n) = 1 := GlobalTheory.ThetaSchur.mul_star_psi hψ _
       rw [mul_mul_mul_comm, mul_comm (star _), b1, ← AddChar.map_add_eq_mul, neg_add_cancel, AddChar.map_zero_eq_one, one_mul]
     funext x
     unfold Chain.hand handFB

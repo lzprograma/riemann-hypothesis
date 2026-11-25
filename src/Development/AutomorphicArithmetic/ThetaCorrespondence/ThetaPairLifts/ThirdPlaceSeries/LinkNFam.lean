@@ -158,9 +158,9 @@ theorem GlobalTheory.NLink.admissible_table_of_conclusion : ∀ (D : D7) (L : Si
   · apply key _ (h23 i hi (Or.inl h2) π hπ)
     have hlen : (tab L X tf C).len i = fun _ => 0 := by
       funext lam
-      simp only [tab, if_pos h2]
+      simp only [tab, ite_eq_left h2]
     have hBB : (tab L X tf C).BB i = TwistedPlaces.sumOver D (D.nd.l i) (tf.len i) + tf.BB i := by
-      simp only [tab, if_pos h2]
+      simp only [tab, ite_eq_left h2]
     rw [hlen, hzero, hBB, zero_add]
   by_cases h3 : D.nd.l i = 3
   · apply key _ (h23 i hi (Or.inr h3) π hπ)
@@ -168,11 +168,11 @@ theorem GlobalTheory.NLink.admissible_table_of_conclusion : ∀ (D : D7) (L : Si
       have hq : ¬ (D.nd.l i = D.host.q ∨ D.nd.l i = D.host.d) := by
         rw [h3]; rintro (h | h) <;> [exact hq3 h.symm; exact hd3 h.symm]
       have hR : ¬ KillingConditions.RangeAD L X.exc (D.nd.l i) := fun h => h.1 (Or.inr h3)
-      simp only [tab, if_neg h2, if_neg hq, if_neg hR]
+      simp only [tab, ite_eq_right h2, ite_eq_right hq, ite_eq_right hR]
     have hlen : (tab L X tf C).len i =
         fun _ => (TwistedPlaces.sumOver D 3 (tf.len i) + tf.BB i) / ((placesOver D.host.E 3).ncard : ℝ) := by
       funext lam
-      simp only [tab, if_neg h2, if_pos h3]
+      simp only [tab, ite_eq_right h2, ite_eq_left h3]
     rw [hBB, hlen, h3, sumOver_const D 3 (by norm_num)]
     have hf3 := FamilyRepresentationConstants.placesOver_finite D.host.E 3 (by norm_num)
     have hpos : 0 < (placesOver D.host.E 3).ncard :=
@@ -184,9 +184,9 @@ theorem GlobalTheory.NLink.admissible_table_of_conclusion : ∀ (D : D7) (L : Si
     have hR : ¬ KillingConditions.RangeAD L X.exc (D.nd.l i) := fun h => h.2.1 hqd
     have hlen : (tab L X tf C).len i = fun _ => 0 := by
       funext lam
-      simp only [tab, if_neg h2, if_neg h3, if_neg hR]
+      simp only [tab, ite_eq_right h2, ite_eq_right h3, ite_eq_right hR]
     have hBB : (tab L X tf C).BB i = TwistedPlaces.midG L C (D.nd.l i) := by
-      simp only [tab, if_neg h2, if_pos hqd]
+      simp only [tab, ite_eq_right h2, ite_eq_left hqd]
     rw [hlen, hzero, hBB, zero_add]
   by_cases hR : KillingConditions.RangeAD L X.exc (D.nd.l i)
   · have hm := hC.mid i hi hg hR π hπ
@@ -196,9 +196,9 @@ theorem GlobalTheory.NLink.admissible_table_of_conclusion : ∀ (D : D7) (L : Si
     apply key _ hb
     have hlen : (tab L X tf C).len i = KillingConditions.lenR X.len0 i := by
       funext lam
-      simp only [tab, if_neg h2, if_neg h3, if_pos hR]
+      simp only [tab, ite_eq_right h2, ite_eq_right h3, ite_eq_left hR]
     have hBB : (tab L X tf C).BB i = KillingConditions.supZ i (X.errorBoundHub i) := by
-      simp only [tab, if_neg h2, if_neg hqd, if_pos hR]
+      simp only [tab, ite_eq_right h2, ite_eq_right hqd, ite_eq_left hR]
     rw [hlen, hBB]
     have h1 : TwistedPlaces.sumOver D (D.nd.l i) (X.len0 i π) ≤ TwistedPlaces.sumOver D (D.nd.l i) (KillingConditions.lenR X.len0 i) :=
       sumOver_mono D _ hl0 fun lam => le_supZ i (fun π => X.len0 i π lam) hπ
@@ -210,9 +210,9 @@ theorem GlobalTheory.NLink.admissible_table_of_conclusion : ∀ (D : D7) (L : Si
     apply key _ (hC.large i hi hlt.1 hg hlt.2 π hπ)
     have hlen : (tab L X tf C).len i = fun _ => 0 := by
       funext lam
-      simp only [tab, if_neg h2, if_neg h3, if_neg hR]
+      simp only [tab, ite_eq_right h2, ite_eq_right h3, ite_eq_right hR]
     have hBB : (tab L X tf C).BB i = 0 := by
-      simp only [tab, if_neg h2, if_neg hqd, if_neg hR]
+      simp only [tab, ite_eq_right h2, ite_eq_right hqd, ite_eq_right hR]
     rw [hlen, hzero, hBB, add_zero]
 
 end
@@ -261,9 +261,9 @@ theorem localBoundTableAllPrimes_conditionTwoThree : ∀ (D : D7) (L : SizeData�
   by_cases h2 : D.nd.l i ∈ D.host.small
   · have hlen : (tab L X tf C).len i = fun _ => 0 := by
       funext lam
-      simp only [tab, if_pos h2]
+      simp only [tab, ite_eq_left h2]
     have hBB : (tab L X tf C).BB i = TwistedPlaces.sumOver D (D.nd.l i) (tf.len i) + tf.BB i := by
-      simp only [tab, if_pos h2]
+      simp only [tab, ite_eq_left h2]
     show TwistedPlaces.sumOver D _ ((tab L X tf C).len i) + (tab L X tf C).BB i ≤ _
     rw [hlen, hBB]
     have h0 : TwistedPlaces.sumOver D (D.nd.l i) (fun _ => (0 : ℝ)) = 0 := by simp [TwistedPlaces.sumOver]
@@ -277,11 +277,11 @@ theorem localBoundTableAllPrimes_conditionTwoThree : ∀ (D : D7) (L : SizeData�
     have hlen : (tab L X tf C).len i =
         fun _ => (TwistedPlaces.sumOver D 3 (tf.len i) + tf.BB i) / ((placesOver D.host.E 3).ncard : ℝ) := by
       funext lam
-      simp only [tab, if_neg h2, if_pos h3]
+      simp only [tab, ite_eq_right h2, ite_eq_left h3]
     have hBB : (tab L X tf C).BB i = 0 := by
       have h1 : ¬ (D.nd.l i = D.host.q ∨ D.nd.l i = D.host.d) := by omega
       have hR : ¬ KillingConditions.RangeAD L X.exc (D.nd.l i) := fun hr => hr.1 (Or.inr h3)
-      simp only [tab, if_neg h2, if_neg h1, if_neg hR]
+      simp only [tab, ite_eq_right h2, ite_eq_right h1, ite_eq_right hR]
     show TwistedPlaces.sumOver D (D.nd.l i) ((tab L X tf C).len i) + (tab L X tf C).BB i ≤ _
     have hFi' : TwistedPlaces.sumOver D (D.nd.l i) (tf.len i) + tf.BB i ≤ _ := hFi
     rw [h3] at hFi'
@@ -316,9 +316,9 @@ theorem localBoundTableAllPrimes_ramified_typePrimes : ∀ (D : D7) (L : SizeDat
     have hR : ¬ KillingConditions.RangeAD L X.exc (D.nd.l i) := fun h => h.2.1 hl
     have hlen : (tab L X tf C).len i = fun _ => 0 := by
       funext lam
-      simp only [tab, h2, h3, hR, if_false]
+      simp only [tab, h2, h3, hR, ite_false]
     have hBB : (tab L X tf C).BB i = TwistedPlaces.midG L C (D.nd.l i) := by
-      simp only [tab, h2, hl, if_false, if_true]
+      simp only [tab, h2, hl, ite_false, ite_true]
     rw [hlen, hBB]
     simp [TwistedPlaces.sumOver]
   · intro j hj l hl
@@ -351,13 +351,13 @@ theorem localBoundTableAllPrimes_rowsAndBand : ∀ (D : D7) (L : SizeData₂ D) 
     have hs : D.nd.l i ∉ D.host.small := fun e => hr.1 (Or.inl e)
     show (if D.nd.l i ∈ D.host.small then (0 : ℝ) else if D.nd.l i = 3 then _
       else if KillingConditions.RangeAD L X.exc (D.nd.l i) then _ else 0) = _
-    rw [if_neg hs, if_neg h3, if_pos hr]; rfl
+    rw [ite_eq_right hs, ite_eq_right h3, ite_eq_left hr]; rfl
   have hN : ∀ i, D.nd.l i ≠ 3 → ¬ KillingConditions.RangeAD L X.exc (D.nd.l i) →
       (tab L X tf C).len i = fun _ => 0 := by
     intro i h3 hr; funext lam
     show (if D.nd.l i ∈ D.host.small then (0 : ℝ) else if D.nd.l i = 3 then _
       else if KillingConditions.RangeAD L X.exc (D.nd.l i) then _ else 0) = _
-    rw [if_neg h3, if_neg hr, ite_self]
+    rw [ite_eq_right h3, ite_eq_right hr, ite_self]
   have hx : 0 < L.sc.x := lt_trans one_pos L.sc.one_lt_alt
   have hb : 1 ≤ L.sc.b := Real.one_le_exp (Real.rpow_nonneg hx.le _)
   have hSc := L.Sc_pos
@@ -472,7 +472,7 @@ theorem adm5_tab : ∀ (D : D7) (L : SizeData₂ D) (P : ParameterChoice' D L) (
   show (if D.nd.l i ∈ D.host.small then TwistedPlaces.sumOver D (D.nd.l i) (tf.len i) + tf.BB i
     else if D.nd.l i = D.host.q ∨ D.nd.l i = D.host.d then TwistedPlaces.midG L C (D.nd.l i)
     else if KillingConditions.RangeAD L X.exc (D.nd.l i) then KillingConditions.supZ i (X.errorBoundHub i) else 0) ≤ _
-  rw [if_neg h2, if_neg hqd]
+  rw [ite_eq_right h2, ite_eq_right hqd]
   split_ifs with hR
   · unfold KillingConditions.supZ
     split_ifs with hne
@@ -542,9 +542,9 @@ theorem largePrimeLengthVanishing_and_exceptionalBounded_tab : ∀ (D : D7) (L :
       rintro he; rw [he] at hlt; linarith
     have hR : ¬ KillingConditions.RangeAD L X.exc (D.nd.l i) := fun hr => hr.2.2 ⟨hlt, hexc'⟩
     refine ⟨fun lam _ => ?_, ?_⟩
-    · simp only [tab, h2, h3', hR, if_false]
-    · simp only [tab, h2, hR, if_false]
-      rw [if_neg (by rintro (he | he) <;> contradiction)]
+    · simp only [tab, h2, h3', hR, ite_false]
+    · simp only [tab, h2, hR, ite_false]
+      rw [ite_eq_right (by rintro (he | he) <;> contradiction)]
   · exact h.exc.1
   · exact h.exc.2
 
@@ -643,8 +643,7 @@ variable {D : D7} (Λ : Raw D)
 
 @[reducible] def errTr (x : ErrX D) : ErrX Λ.rec' := { x with }
 
-open DivX (md) in
-@[reducible] def divTr (X : DivX D) : DivX Λ.rec' := { X with md := fun S κ p _ la z => { md X S κ p la z with } }
+@[reducible] def divTr (X : DivX D) : DivX Λ.rec' := { X with }
 section Local
 
 variable {L : SizeData₂ D} (X : G.Inst D L) (K : G.Consts) (a b : G.HH D → ℤ) (p j : ℕ)
@@ -1341,12 +1340,12 @@ theorem etaJ_le (h : c.Good) (j : ℕ) (w : D.what₂.places.Pl) (h1 : 1 ≤ j) 
     show ∑ i ∈ Finset.subtype c.keep (D.nd.locs j w), (cut D c).nd.etaLoc i = _
     have hF : ∀ i ∈ Finset.subtype c.keep (D.nd.locs j w), (cut D c).nd.etaLoc i = F i.1 := by
       intro i _
-      simp only [F, dif_pos i.2]
+      simp only [F, dite_eq_left i.2]
     rw [Finset.sum_congr rfl hF, Finset.sum_subtype_eq_sum_filter]
     refine Finset.sum_filter_of_ne ?_
     intro i _ hne
     by_contra hk
-    exact hne (dif_neg hk)
+    exact hne (dite_eq_right hk)
   have hD := D.etaJ_tie j w h1 h2
   have hpt : ∀ i ∈ D.nd.locs j w, D.nd.etaLoc i ≤ F i +
       (∑ π ∈ D.nd.Zgood i, (D.nd.mult i π : ℚ)) * (padicValNat (D.what₂.places.resChar w) D.what₂.restRowsFiniteGroupCard : ℚ) := by
@@ -1358,14 +1357,14 @@ theorem etaJ_le (h : c.Good) (j : ℕ) (w : D.what₂.places.Pl) (h1 : 1 ≤ j) 
     rw [hl]
     by_cases hk : c.keep i
     · have hb := eta_le h (⟨i, hk⟩ : (cut D c).nd.Loc)
-      simp only [F, dif_pos hk]
+      simp only [F, dite_eq_left hk]
       push_cast at hb
       exact hb
     · have hz : D.nd.Zgood i = ∅ := by
         rw [← Finset.not_nonempty_iff_eq_empty]
         exact fun hne => hk ((h.keep i).mpr hne)
       rw [eta_zero D.nd i hz]
-      simp only [F, dif_neg hk, zero_add]
+      simp only [F, dite_eq_right hk, zero_add]
       positivity
   have hQ : D.what₂.etaJ j w ≤ (cut D c).what₂.etaJ j w +
       (∑ i ∈ D.nd.locs j w, ∑ π ∈ D.nd.Zgood i, (D.nd.mult i π : ℚ)) *
@@ -1491,7 +1490,6 @@ noncomputable section
 namespace GlobalTheory.NRows.AtPt
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.MainNotions.Inhab Formalism.L2.Host GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl
   GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.Fc NumberField IsDedekindDomain
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 variable {hL : _root_.UpperTheory.Zero.LLC.RecTExists}
 def OverNEAlt (N : _root_.GlobalTheory.Mem.Top.Bl.NormChoiceExtension hL) : Prop :=
   ∀ K B f T w Z Wt p0 t nch n xd c, N K B f T w Z Wt p0 t nch n xd c → Nonempty (_root_.GlobalTheory.HeightCounting.defaultExtension hL K B f T w Z Wt p0 t nch n xd c)
@@ -1598,13 +1596,12 @@ noncomputable section
 namespace GlobalTheory.NLink.Final
 section Slot
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.Host GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl NumberField IsDedekindDomain
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.HeightCounting.Up GlobalTheory.Mem.SRe GlobalTheory.Mem.R3.Rw
 
 theorem slot_mv_extension_with_list_geo_cl (hL : _root_.UpperTheory.Zero.LLC.RecTExists) (cDep : ℝ) :
     PositionMv (_root_.GlobalTheory.Mem.Top.Bl.parametersOfExtension (_root_.GlobalTheory.HeightCounting.Up.extensionWithList hL cDep) SExt.none).s := by
   intro K B f T w Z O x N h O' hO' col n
-  have hrows := _root_.GlobalTheory.T.rows_pass_to_moved_divisionLatticesHeights
+  have hrows := _root_.GlobalTheory.Mem.R3.Rw.DivMv.rows_move_geo
     K B f T w Z x.Wt O x.what₂ N h O' hO'
   obtain ⟨t', hs, hgeo, hpk, hobj, hrx⟩ := hrows
   obtain ⟨nch', xd', -, hnx, -, -, hmv⟩ := _root_.GlobalTheory.LayerMove.exists_kept_nChoice_thData_upL hL K B f T w Z x.Wt Z.S N h O.nch O.xd
@@ -1616,7 +1613,7 @@ theorem slot_mv_extension_with_list_geo_cl (hL : _root_.UpperTheory.Zero.LLC.Rec
   have hlp := GlobalTheory.Mem.GridMove.listPin_rowsSame cDep K.s.b K B f T w Z x.Wt Z.S N h O.p0 x.what₂ (O.tr N h).p0 t' hs x.nx.2.2.down
   obtain ⟨c⟩ := hmv O.p0 x.what₂ x.n (O.tr N h).p0 t' n hs hgeo ⟨x.nx.1, x.nx.2.1⟩
   obtain ⟨s⟩ := GlobalTheory.T.spectralStageData_transfer_lattices_heights K B f T w Z x.Wt O.p0 x.what₂ x.col.toColT N h (O.tr N h).p0 t' col.toColT hpk ⟨x.sx.1⟩
-  obtain ⟨o⟩ := GlobalTheory.T.divisionGeometryScalars_transfer_setDivision K B f T w Z x.Wt N h O (O.tr N h) rfl x.what₂ t' hs x.ox
+  obtain ⟨o⟩ := _root_.GlobalTheory.Mem.OxMove.oAt_setDiv K B f T w Z x.Wt N h O (O.tr N h) rfl x.what₂ t' hs x.ox
   exact ⟨t', hobj x.obj, hrx ⟨x.rx⟩, ⟨⟨c.1, c.2, ⟨hlp⟩⟩⟩, ⟨⟨s, PUnit.unit⟩⟩, ⟨o⟩⟩
 end Slot
 end GlobalTheory.NLink.Final
@@ -1653,7 +1650,7 @@ theorem linkN_of_twGood_galoisPreconditions (hP : Hypotheses₂) (hG : _root_.Up
   have hFF : _root_.GlobalTheory.NLink.FactsFAlt (gd Fm c) C CT := fun x hx i =>
     ⟨(hc x i hx).2.1, hEx _ _ (hc x i hx).2.1 (hc x i hx).2.2⟩
   refine linkN_of_gd Fm c (fun x hx i => ⟨(hc x i hx).1, ?_, (hF x hx i).1.what₂.rank _⟩)
-    (_root_.GlobalTheory.LinkFam.main _ (_root_.GlobalTheory.T.conclF_of_family_facts_and_bound_at_two_three hP _ C CT hC (twGood_gd Fm c hTw) hFF (_root_.UpperTheory.N.at23_family_alt hP _)))
+    (_root_.GlobalTheory.LinkFam.main _ (_root_.GlobalTheory.NLinkClose.main_alt_alt hP _ C CT hC (twGood_gd Fm c hTw) hFF (_root_.UpperTheory.N.at23_family_alt hP _)))
   have p := (hF x hx i).1
   exact _root_.GlobalTheory.NLink.multLe_of_rank _ _ p.Conclusion1.2.2 p.z p.adm.2.2 p.c2
 theorem linkN_of_boundAtTwoThree_slot (hP : Hypotheses₂) (hG : _root_.UpperTheory.GalC.CutGivesAlt) (Q : GlobalTheory.Mem.Top.V4.Slot) (Lk : GlobalTheory.Fc.LkT _root_.GlobalTheory.Fc.BundleCondition)
@@ -1684,7 +1681,7 @@ theorem final_of_alt (hP : Hypotheses₂) (hG : _root_.UpperTheory.GalC.CutGives
     _root_.GlobalTheory.Fc.RL.LinkedAt (_root_.GlobalTheory.Mem.Top.Bl.parametersOfDependence hL cDep) (fun Q L => _root_.GlobalTheory.Fc.R1.SlotNormCondition Q L fun 𝒞 => Formalism.MainNotions.Closed 𝒞 fun Fm _ => Formalism.MainNotions.LinkN Fm) := by
   have hW : WitMv (_root_.GlobalTheory.Mem.Top.Bl.parametersOfDependence hL cDep).s :=
     GlobalTheory.T.witnesses_pass_along_set_division _ (_root_.GlobalTheory.NLink.Final.slot_mv_extension_with_list_geo_cl hL cDep)
-  have hTf := _root_.GlobalTheory.T.tieChi_at_members_of_depthZero hX.ht prN dzs hL
+  have hTf := _root_.GlobalTheory.TypePrimesFinished.locComp_of_isRc_classMapD_cenLoc hX.ht prN dzs hL
   have hTr := (_root_.GlobalTheory.Mem.AtPtTransport.atMem_at_wit_alt hL (_root_.GlobalTheory.HeightCounting.Up.extensionWithList hL cDep) SExt.none hW
     (fun _ _ _ _ _ _ _ _ _ _ _ _ _ e => ⟨e.1⟩)).2
   exact _root_.UpperTheory.GalC.linkedAt_linkN_of_boundAtTwoThree hP hG hL (_root_.GlobalTheory.Mem.Top.Bl.parametersOfDependence hL cDep)

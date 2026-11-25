@@ -83,10 +83,4 @@ theorem exists_open_eq_of_torsion_point : ∀ (S : Scheme.{0}) (A : Over S) [Grp
   · rw [← cancel_epi (equalizer.ι σ.left σ'.left).isoOpensRange.hom, ← Category.assoc, ← Category.assoc,
       Scheme.Hom.isoOpensRange_hom_ι, equalizer.condition]
 
-section
-variable {F : Type} [Field F] [NumberField F] [IsCMField F] {D : GlobalTheory.UPel.Datum F} {p N : ℕ} {S : Scheme.{0}}
-  {s : S ⟶ Sp (D.OEp p)} {o : GlobalTheory.UPel.Obj D p N s}
-
-end
-
 end GlobalTheory.UPel.LocSim

@@ -22,7 +22,7 @@ open scoped ContDiff
 
 namespace ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ}
 
@@ -40,21 +40,8 @@ theorem sum_sq_norm_eq_trace (A : Matrix (Fin n) (Fin n) ℂ) :
   ring
 
 theorem hsOne_conj {k : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Matrix.unitaryGroup (Fin n) ℂ)
-    (g : Matrix (Fin n) (Fin n) ℂ) : _root_.ReciprocityTheory.ChartRestriction.DS.hsdA (k * g * star k) = _root_.ReciprocityTheory.ChartRestriction.DS.hsdA g := by
-  have h1' : k * kᴴ = 1 := by
-    have := Matrix.mem_unitaryGroup_iff.1 hk
-    rwa [Matrix.star_eq_conjTranspose] at this
-  have h2 : kᴴ * k = 1 := by
-    have := Matrix.mem_unitaryGroup_iff'.1 hk
-    rwa [Matrix.star_eq_conjTranspose] at this
-  have e : k * g * star k - 1 = k * (g - 1) * kᴴ := by
-    rw [Matrix.star_eq_conjTranspose, Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_one, h1']
-  have e2 : (k * (g - 1) * kᴴ)ᴴ * (k * (g - 1) * kᴴ) = k * ((g - 1)ᴴ * (g - 1)) * kᴴ := by
-    simp only [Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, Matrix.mul_assoc]
-    rw [← Matrix.mul_assoc kᴴ k, h2, Matrix.one_mul]
-  unfold _root_.ReciprocityTheory.ChartRestriction.DS.hsdA
-  rw [sum_sq_norm_eq_trace, sum_sq_norm_eq_trace, e, e2, Matrix.trace_mul_comm, ← Matrix.mul_assoc, h2,
-    Matrix.one_mul]
+    (g : Matrix (Fin n) (Fin n) ℂ) : _root_.ReciprocityTheory.ChartRestriction.DS.hsdA (k * g * star k) = _root_.ReciprocityTheory.ChartRestriction.DS.hsdA g :=
+  by apply _root_.ReciprocityTheory.ChartRestriction.DS.hsdA_conj; assumption
 
 theorem contDiff_hsOne : ContDiff ℝ ∞ (_root_.ReciprocityTheory.ChartRestriction.DS.hsdA (n := n)) := by
   unfold _root_.ReciprocityTheory.ChartRestriction.DS.hsdA

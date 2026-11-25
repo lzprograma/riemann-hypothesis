@@ -7,54 +7,9 @@ public import Mathlib.Algebra.DualNumber
 public import Mathlib.RingTheory.DividedPowers.DPMorphism
 public import Mathlib.RingTheory.DividedPowers.RatAlgebra
 public import Mathlib.RingTheory.Ideal.Quotient.Operations
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -77,7 +32,7 @@ structure Base : Type 1 where
 
 attribute [instance] Base.ring
 
-structure LogFun (k : Type) [CommRing k] (τ : k) : Type 1 where
+structure LogFun (k : Type) [CommRing k] (_τ : k) : Type 1 where
 
   ι : Type
   [fin : Fintype ι]
@@ -93,17 +48,13 @@ structure LogFun (k : Type) [CommRing k] (τ : k) : Type 1 where
   in_map : ∀ {α} {B B' : CommRingCat.{0}} (φ : B ⟶ B') {y : Pt.obj B}, In α y → In α (Pt.map φ y)
 
   f : A → ι → ∀ {B : CommRingCat.{0}}, Pt.obj B → B
-  f_map : ∀ {α} (i) {B B' : CommRingCat.{0}} (φ : B ⟶ B') {y : Pt.obj B}, In α y → f α i (Pt.map φ y) = φ.hom (f α i y)
 
   g : A → A → ι → ∀ {B : CommRingCat.{0}}, Pt.obj B → Bˣ
   g_map : ∀ {α β} (i) {B B' : CommRingCat.{0}} (φ : B ⟶ B') {y : Pt.obj B}, In α y → In β y →
     g α β i (Pt.map φ y) = Units.map φ.hom.toMonoidHom (g α β i y)
-  f_eq : ∀ {α β} (i) {B : CommRingCat.{0}} {y : Pt.obj B}, In α y → In β y → f α i y = g α β i y * f β i y
   g_self : ∀ {α} (i) {B : CommRingCat.{0}} {y : Pt.obj B}, In α y → g α α i y = 1
   g_comp : ∀ {α β γ} (i) {B : CommRingCat.{0}} {y : Pt.obj B}, In α y → In β y → In γ y →
     g α β i y * g β γ i y = g α γ i y
-  prod_f : ∀ {α} {B : CommRingCat.{0}} {y : Pt.obj B}, In α y → ∏ i, f α i y = str y τ
-  prod_g : ∀ {α β} {B : CommRingCat.{0}} {y : Pt.obj B}, In α y → In β y → ∏ i, g α β i y = 1
 
 attribute [instance] LogFun.fin
 
@@ -447,14 +398,10 @@ abbrev node (k : Type) [CommRing k] (τ : k) : LogFun k τ where
   In _ _ _ := True
   in_map _ _ _ := trivial
   f _ i _ y := ![y.1.2.1, y.1.2.2] i
-  f_map i _ _ φ y _ := by fin_cases i <;> rfl
   g _ _ _ _ _ := 1
   g_map _ _ _ _ _ _ _ := by simp
-  f_eq _ _ _ _ _ := by simp
   g_self _ _ _ _ := rfl
   g_comp _ _ _ _ _ _ := by simp
-  prod_f {_ _ y} _ := by simpa [Fin.prod_univ_two] using y.2
-  prod_g _ _ := by simp
 
 abbrev nodeL : base.Fun := node _ _
 

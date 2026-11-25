@@ -1,45 +1,8 @@
 module
 
 public import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
+import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVOfNotJump
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.DistinguishedUnitIdeals.ExistsConstOfInvariantMod
 import Formalism.DistinguishedUnitIdeals.Statement
 import Formalism.SharpRestriction.LevelLetterCocycles.ArcParametersShiftInvariant
@@ -85,100 +48,25 @@ theorem jb_FilV_anti : Antitone (FilV PD (LL := LL) (V := V)) := by
   rw [e]
   exact LinearMap.range_comp_le_range _ _
 
-theorem jb_FilV_exh (y : V ⊗[Qp] BdR) : ∃ a, y ∈ FilV PD (LL := LL) (V := V) a := by
-  induction y using TensorProduct.induction_on with
-  | zero => exact ⟨0, zero_mem _⟩
-  | tmul v b =>
-    obtain ⟨a, ha⟩ := PD.Fil_exh b
-    exact ⟨a, ⟨v ⊗ₜ ⟨b, ha⟩, by simp⟩⟩
-  | add x y hx hy =>
-    obtain ⟨a, ha⟩ := hx
-    obtain ⟨b, hb⟩ := hy
-    exact ⟨min a b, add_mem (jb_FilV_anti PD (min_le_left a b) ha)
-      (jb_FilV_anti PD (min_le_right a b) hb)⟩
+theorem jb_FilV_exh (y : V ⊗[Qp] BdR) : ∃ a, y ∈ FilV PD (LL := LL) (V := V) a :=
+  Pv.LocalLengthBound.rk_filV_exh PD y
 
-theorem jb_FilV_sep (y : V ⊗[Qp] BdR) (hy : ∀ a, y ∈ FilV PD (LL := LL) (V := V) a) : y = 0 := by
-  classical
-  let bV := Module.Free.chooseBasis Qp V
-  let e := TensorProduct.equivFinsuppOfBasisLeft (N := BdR) bV
-  have hc : ∀ a, ∀ z ∈ FilV PD (LL := LL) (V := V) a, ∀ i, e z i ∈ PD.Fil a := by
-    intro a z hz i
-    obtain ⟨t, rfl⟩ := hz
-    induction t using TensorProduct.induction_on with
-    | zero => simp
-    | tmul v f =>
-      simp only [AlgebraTensorModule.map_tmul, LinearMap.id_apply, Submodule.subtype_apply, e,
-        TensorProduct.equivFinsuppOfBasisLeft_apply_tmul_apply]
-      exact (PD.Fil a).smul_of_tower_mem _ f.2
-    | add x y hx hy =>
-      rw [map_add (f := _), map_add (f := _), Finsupp.add_apply]
-      exact add_mem hx hy
-  have h0 : e y = 0 := by
-    ext i
-    exact PD.Fil_sep _ (fun a => hc a y (hy a) i)
-  exact e.injective (by rw [h0, map_zero])
+theorem jb_FilV_sep (y : V ⊗[Qp] BdR) (hy : ∀ a, y ∈ FilV PD (LL := LL) (V := V) a) : y = 0 :=
+  Pv.LocalLengthBound.rk_filV_sep PD y hy
 
 theorem jb_FildR_anti (ρ : Representation LL G V) (τ : K →ₐ[Qp] LL) : Antitone (FildR PD ρ τ) :=
   fun _ _ hab => inf_le_inf_left _ (jb_FilV_anti PD hab)
 
+open Formalism.MainNotions.N.Pv.LocalLengthBound in
 theorem jb_bound (ρ : Representation LL G V) (τ : K →ₐ[Qp] LL) (hfin : FiniteDimensional LL ↥(DdRE PD ρ τ)) :
     ∃ a₀ a₁ : ℤ, ∀ a, IsJumpV PD ρ τ a → a₀ ≤ a ∧ a ≤ a₁ := by
-  classical
-  set D := DdRE PD ρ τ with hD
-  have hFD : ∀ a, FildR PD ρ τ a ≤ D := fun a => inf_le_left
-
-  let bD := Module.finBasis LL ↥D
-  have hex : ∀ j, ∃ a, ((bD j : ↥D) : V ⊗[Qp] BdR) ∈ FilV PD (LL := LL) (V := V) a :=
-    fun j => jb_FilV_exh PD (LL := LL) (V := V) _
-  choose aj haj using hex
-  set a₀ : ℤ := -(∑ j, |aj j|) with ha₀
-  have ha₀j : ∀ j, a₀ ≤ aj j := by
-    intro j
-    have h1 : |aj j| ≤ ∑ k, |aj k| :=
-      Finset.single_le_sum (f := fun k => |aj k|) (fun k _ => abs_nonneg _) (Finset.mem_univ j)
-    have h2 := neg_abs_le (aj j)
-    linarith
-  have hlow : ∀ a, a ≤ a₀ → FildR PD ρ τ a = D := by
-    intro a ha
-    refine le_antisymm (hFD a) (le_inf le_rfl ?_)
-    have hspan : (Submodule.span LL (Set.range bD)).map D.subtype = D := by
-      rw [bD.span_eq, Submodule.map_top, Submodule.range_subtype]
-    rw [← hspan, Submodule.map_span, Submodule.span_le]
-    rintro _ ⟨_, ⟨j, rfl⟩, rfl⟩
-    exact jb_FilV_anti PD (ha.trans (ha₀j j)) (haj j)
-
-  let f : ℕ → ℕ := fun k => finrank LL ↥(FildR PD ρ τ (k : ℤ))
-  have hne : ∃ m, ∃ k, f k = m := ⟨_, 0, rfl⟩
-  let m := Nat.find hne
-  obtain ⟨k₀, hk₀⟩ := Nat.find_spec hne
-  have hmin : ∀ k, m ≤ f k := fun k => Nat.find_min' hne ⟨k, rfl⟩
-  have hfinF : ∀ a, FiniteDimensional LL ↥(FildR PD ρ τ a) :=
-    fun a => Submodule.finiteDimensional_of_le (hFD a)
-  have hstab : ∀ k : ℕ, k₀ ≤ k → FildR PD ρ τ (k : ℤ) = FildR PD ρ τ (k₀ : ℤ) := by
-    intro k hk
-    have hle : FildR PD ρ τ (k : ℤ) ≤ FildR PD ρ τ (k₀ : ℤ) := jb_FildR_anti PD ρ τ (by exact_mod_cast hk)
-    have hr1 : f k ≤ f k₀ := Submodule.finrank_mono hle
-    have hr2 := hmin k
-    exact Submodule.eq_of_le_of_finrank_eq hle (by show f k = f k₀; omega)
-  have hbot : FildR PD ρ τ (k₀ : ℤ) = ⊥ := by
-    rw [eq_bot_iff]
-    intro x hx
-    rw [Submodule.mem_bot]
-    apply jb_FilV_sep PD (LL := LL) (V := V) x
-    intro a
-    rcases le_total a (k₀ : ℤ) with h | h
-    · exact jb_FilV_anti PD (LL := LL) (V := V) h hx.2
-    · obtain ⟨k, rfl⟩ := Int.eq_ofNat_of_zero_le (le_trans (Int.natCast_nonneg k₀) h)
-      have hk : k₀ ≤ k := by exact_mod_cast h
-      rw [← hstab k hk] at hx
-      exact hx.2
-  have hhigh : ∀ a, (k₀ : ℤ) ≤ a → FildR PD ρ τ a = ⊥ := fun a ha =>
-    eq_bot_iff.mpr (hbot ▸ jb_FildR_anti PD ρ τ ha)
-  refine ⟨a₀, (k₀ : ℤ) - 1, fun a ha => ⟨?_, ?_⟩⟩
-  · by_contra hlt
-    exact ha (by rw [hlow a (by omega), hlow (a + 1) (by omega)])
-  · by_contra hlt
-    exact ha (by rw [hhigh a (by omega), hhigh (a + 1) (by omega)])
+  obtain ⟨lo, hlo⟩ := rk_fildR_lo PD ρ τ
+  obtain ⟨hi, hhi⟩ := rk_fildR_hi PD ρ τ
+  refine ⟨lo, hi - 1, fun a ha => ⟨?_, ?_⟩⟩
+  · by_contra! h
+    exact ha ((hlo _ (by lia)).trans (hlo _ h.le).symm)
+  · by_contra! h
+    exact ha ((hhi _ (by lia)).trans (hhi _ (by lia)).symm)
 
 end Period
 

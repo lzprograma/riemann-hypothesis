@@ -42,13 +42,6 @@ theorem gls_trace_mem (a : 𝓞 E) : ∃ b : 𝓞 F, algebraMap (𝓞 F) (𝓞 E
 
 end Tr
 
-section Ex
-
-variable {X : Fields} {Pr : Primes X} (hc : Formalism.BasicNotions.CMData X.F X.E) (hPr : Pr.Ok)
-
-
-end Ex
-
 end Formalism.L2.Col
 end -- clump:auto
 end -- clump:auto

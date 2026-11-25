@@ -155,7 +155,7 @@ theorem loc_kill {R : Type} [CommRing R] {P Q : PSh} (f : P ⟶ Q)
     intro x hx
     have hy : ∃ x' ∈ d.support, f.app (op W) x' = f.app (op W) x := ⟨x, hx, rfl⟩
     show _ = h (f.app (op W) x)
-    simp only [h, dif_pos hy]
+    simp only [h, dite_eq_left hy]
     exact hk (⟨x, hx⟩, ⟨hy.choose, hy.choose_spec.1⟩) hy.choose_spec.2.symm
   rw [e, Finsupp.mapDomain_comp, hd, Finsupp.mapDomain_zero]
 

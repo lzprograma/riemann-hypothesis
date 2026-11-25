@@ -109,9 +109,9 @@ private theorem pf_sing_twist (S : Set (Pl E)) (N : ∀ w : Pl E, Subgroup (GLw 
     rfl
   rw [q0, q1]
   by_cases hs : IsSplitAt v
-  · rw [if_pos hs, if_pos hs, sing_cross, sing_diag, mul_comm]
+  · rw [ite_eq_left hs, ite_eq_left hs, sing_cross, sing_diag, mul_comm]
   · have hv : v ≠ w := fun e => hs (e ▸ hw)
-    rw [if_neg hs, if_neg hs, mul_one, mul_one, sing_ne N w f false v false (by simp [hv]),
+    rw [ite_eq_right hs, ite_eq_right hs, mul_one, mul_one, sing_ne N w f false v false (by simp [hv]),
       sing_ne N w f true v false (by simp [hv]), hN v hs]
     have h := hin v hs g
     by_cases hm : qw n v false g ∈ KGL v (n := n)

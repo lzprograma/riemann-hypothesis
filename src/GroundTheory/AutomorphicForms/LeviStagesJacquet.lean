@@ -295,7 +295,7 @@ theorem mk_mk_apply_of_mem (h : Refines β γ) {u : GL (Fin n) F}
       split_ifs
       · exact huP hij
       · rfl
-    · rw [leviProj_apply, if_pos (h.eq_of_eq hij)]
+    · rw [leviProj_apply, ite_eq_left (h.eq_of_eq hij)]
       exact hu1 i j hij
   have hn' := leviProj_inv_mul_mem p
   have hu' : u = ((m : levi F n β) : GL (Fin n) F) *

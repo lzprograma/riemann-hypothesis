@@ -96,8 +96,6 @@ def tensFn {A B : Type} (X₁ : Submodule ℂ (A → ℂ)) (X₂ : Submodule ℂ
 
 section Global
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 variable {K : Type} [Field K] [NumberField K] {n r : ℕ}
 
 abbrev PW (w : Pl K) : Subgroup (Gw (2 + 2) w) := parab (w.adicCompletion K) (two (stdSum (rfl : 2 + 2 = 2 + 2)))

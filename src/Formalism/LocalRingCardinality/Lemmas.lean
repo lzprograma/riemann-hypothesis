@@ -168,12 +168,6 @@ theorem normAt_nonneg {K V ι : Type*} [Field K] [NumberField K] [StarRing K] [A
     (X : InfinitePlace K → Matrix ι ι ℂ) (v : InfinitePlace K) (x : V) : 0 ≤ Formalism.HermitianLatticesTheory.normAt b X v x :=
   Real.sqrt_nonneg _
 
-namespace D7
-
-variable (D : D7)
-
-end D7
-
 namespace FBC
 
 open TensorProduct IsLocalRing

@@ -1,51 +1,9 @@
 module
 
 public import Formalism.EllipticTorsion.FormalGroupPointsTorsionFree
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 public import Mathlib.Analysis.Normed.Ring.Ultra
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -105,8 +63,7 @@ lemma vy (hW : IntegralModel W) {x y : K} (h : W.toAffine.Equation x y) (hx : 1 
       rw [norm_pow]; exact hr.trans_lt (by rw [pow_succ]; exact lt_mul_of_one_lt_right (pow_pos (by linarith) 2) hx)
     rw [dom this, norm_pow]
   have hyx : ‖x‖ < ‖y‖ := by
-    by_contra hle
-    push_neg at hle
+    by_contra! hle
     have : ‖y ^ 2 + (W.a₁ * x + W.a₃) * y‖ ≤ ‖x‖ ^ 2 := by
       refine add_le ?_ ?_
       · rw [norm_pow]; exact pow_le_pow_left₀ (norm_nonneg _) hle 2
@@ -153,7 +110,7 @@ lemma lsq {l a b : K} {M : ℝ} (ha : ‖a‖ ≤ 1) (hb : ‖b‖ ≤ 1) (hM : 
     (h : ‖l ^ 2 + a * l - b‖ ≤ M) : ‖l‖ ^ 2 ≤ M := by
   by_cases hL : ‖l‖ ≤ 1
   · exact (pow_le_one₀ (norm_nonneg _) hL).trans hM
-  · push_neg at hL
+  · push Not at hL
     have h1 : ‖a * l - b‖ < ‖l ^ 2‖ := by
       have : ‖a * l - b‖ ≤ ‖l‖ := sub_le (mul_le_of_one ha) (hb.trans hL.le)
       rw [norm_pow]; exact this.trans_lt (by rw [sq]; exact lt_mul_of_one_lt_right (by linarith) hL)
@@ -173,14 +130,12 @@ lemma bigx3 (hW : IntegralModel W) {x1 x2 x3 y3 l v : K} (hX1 : 1 < ‖x1‖) (h
     (h3 : W.toAffine.Equation x3 y3) (hy3 : y3 = l * x3 + v)
     (e1 : l ^ 2 + W.a₁ * l - W.a₂ = x1 + x2 + x3)
     (e2 : W.a₄ - 2 * l * v - W.a₁ * v - W.a₃ * l = x1 * x2 + x3 * (x1 + x2)) : 1 < ‖x3‖ := by
-  by_contra hx3
-  push_neg at hx3
+  by_contra! hx3
   obtain ⟨h1, h2, h3', h4, h6⟩ := hW
   have hy3n : ‖y3‖ ≤ 1 := by
 
     rw [Affine.equation_iff] at h3
-    by_contra hy
-    push_neg at hy
+    by_contra! hy
     have key : y3 ^ 2 = -((W.a₁ * x3 + W.a₃) * y3) + (x3 ^ 3 + W.a₂ * x3 ^ 2 + W.a₄ * x3 + W.a₆) := by
       linear_combination h3
     have hA : ‖W.a₁ * x3 + W.a₃‖ ≤ 1 := add_le ((mul_le_of_one h1).trans hx3) h3'
@@ -277,7 +232,7 @@ lemma sumz (hW : IntegralModel W) {x1 x2 x3 y1 y2 y3 l v : K}
     have h12 : 1 < ‖x1‖ * ‖x2‖ := hX1.trans (lt_mul_of_one_lt_right (by linarith) hX2)
     exact h12.trans (lt_mul_of_one_lt_right (by linarith) hX3)
   have hV1 : 1 < ‖v‖ := by
-    by_contra hc; push_neg at hc
+    by_contra hc; push Not at hc
     have : ‖v ^ 2 + W.a₃ * v - W.a₆‖ ≤ 1 :=
       sub_le (add_le (by rw [norm_pow]; exact pow_le_one₀ (norm_nonneg _) hc)
         ((mul_le_of_one h3).trans hc)) h6

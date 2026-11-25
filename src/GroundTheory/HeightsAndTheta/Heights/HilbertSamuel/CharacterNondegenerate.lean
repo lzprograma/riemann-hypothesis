@@ -80,10 +80,6 @@ end Counts
 
 end NormCountBounded
 
-namespace NormCountBounded
-
-end NormCountBounded
-
 
 end
 

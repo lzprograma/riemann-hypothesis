@@ -13,8 +13,6 @@ open scoped TensorProduct
 
 namespace Formalism.IndefR.Fin
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem isSplitIdem_cA {e : AE D} (h : IsSplitIdem D e) : IsSplitIdem D (cA D e) := by
@@ -27,10 +25,6 @@ theorem psi_neg_one (ψ : AddChar (AF D.host.F) ℂ) {a : AF D.host.F} (h : ψ a
   exact this.symm
 
 variable (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D)
-
-theorem heisO_zero (f : WO S T → ℂ) : heisO ψ S T 0 f = f := by
-  funext w
-  simp [heisO, symplOH, symplO_zero_right]
 
 end Formalism.IndefR.Fin
 

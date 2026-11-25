@@ -124,7 +124,7 @@ theorem wt_prod (X : Set α) (Y : Set β) (p : α × β) :
     wt Γ (X ×ˢ Y) p = wt G X p.1 * wt G' Y p.2 := by
   unfold wt
   by_cases h1 : p.1 ∈ X <;> by_cases h2 : p.2 ∈ Y <;> simp only [Set.mem_prod, h1, h2, and_self,
-    and_true, and_false, if_true, if_false, mul_zero, zero_mul]
+    and_true, and_false, ite_true, ite_false, mul_zero, zero_mul]
   rw [ENat.card_congr (stabEquiv φ hφ p), ENat.card_prod, ENat.toENNReal_mul, ENNReal.mul_inv]
   · left
     exact_mod_cast (ENat.card_pos (α := MulAction.stabilizer G p.1)).ne'

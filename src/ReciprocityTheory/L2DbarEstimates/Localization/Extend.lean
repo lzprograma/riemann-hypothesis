@@ -70,9 +70,9 @@ theorem extend (n : ℕ) (M : Type*) [TopologicalSpace M] [T2Space M]
       · unfold wdb; rw [hev.fderiv_eq, hzx]
     have hex : ∃ e'' : OpenPartialHomeomorph M (V n), IsChart n z e'' ∧ x ∈ e''.source := ⟨e, he, hx⟩
     constructor
-    · simp only [d, dif_pos hex]
+    · simp only [d, dite_eq_left hex]
       exact (key _ (Classical.choose_spec hex).1 (Classical.choose_spec hex).2).1
-    · simp only [db, dif_pos hex]
+    · simp only [db, dite_eq_left hex]
       exact (key _ (Classical.choose_spec hex).1 (Classical.choose_spec hex).2).2
 
 end

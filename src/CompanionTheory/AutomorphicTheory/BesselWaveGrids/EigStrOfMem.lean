@@ -196,7 +196,7 @@ theorem shiftAtR_full (hW : WigExists) : ∃ Cb c₃ : ℝ, 0 ≤ Cb ∧ ∀ (P 
       Formalism.FourierDecayAlt.P.Dx2.dFrameExists P.k P.r Wp Wq p.T.base p.ν' p.m₀ γ p.hF hγ hG
     have hrep : ptRep p γ = hex.choose := by
       dsimp [ptRep]
-      exact dif_pos hex
+      exact dite_eq_left hex
     obtain ⟨hmem, hz, _⟩ := hex.choose_spec
     refine ⟨by rw [hrep]; exact hmem, ?_⟩
     rw [hrep, Formalism.FourierDecayAlt.P.TBBx2.Gf_of_Zhat _ _ _ γ hz]
@@ -224,7 +224,7 @@ theorem shiftAtR_full (hW : WigExists) : ∃ Cb c₃ : ℝ, 0 ≤ Cb ∧ ∀ (P 
         D.IsDFrame p.T.base p.ν' p.m₀ g
     · have hrep : ptRep p γ = hex.choose := by
         dsimp [ptRep]
-        exact dif_pos hex
+        exact dite_eq_left hex
       obtain ⟨hgGV, hZ, hF⟩ := hex.choose_spec
       rw [hrep]
       generalize hex.choose = g at hgGV hZ hF ⊢
@@ -258,9 +258,9 @@ theorem shiftAtR_full (hW : WigExists) : ∃ Cb c₃ : ℝ, 0 ≤ Cb ∧ ∀ (P 
         · rw [hν, hm] at hg3
           exact (isDFrame_swap p.T.base q.T.base hz hz' p.ν' p.m₀ g).1 hg3
       simp only [KB.Pl.V, D.vecV]
-      rw [dif_pos ⟨hγ, hGq⟩]
-      conv_rhs => rw [dif_pos ⟨hγ, hG'⟩, dif_neg hex, ContinuousLinearMap.zero_comp]
-      exact dif_neg h1
+      rw [dite_eq_left ⟨hγ, hGq⟩]
+      conv_rhs => rw [dite_eq_left ⟨hγ, hG'⟩, dite_eq_right hex, ContinuousLinearMap.zero_comp]
+      exact dite_eq_right h1
   obtain ⟨c₃, hC⟩ := hC
   refine ⟨Cb, c₃, hCb, ?_⟩
   intro P Wp Wq _ _ _ _ _ _ p f b n₀ l A₀ hu hl1 hlk hposition hb hub hA₀ hThr hf hf0 hJ
@@ -351,12 +351,12 @@ theorem pairData_plus (h : HypLam P.k P.r lam c g b) (hu : HypType P.k P.r lam P
                   · exact Or.inr ⟨by linarith, by linarith⟩)⟩ }
   refine (movedData_of_hyp (Q := shP P P.u (uPlus P.u l n₀)) h hu (by omega) hlk (fun i hi => ?_) ?_)
   · show uPlus P.u l n₀ i = P.u i
-    simp only [uPlus, if_neg hi]
+    simp only [uPlus, ite_eq_right hi]
   · show |uPlus P.u l n₀ (l + 1)| ≤ b
     have h1 := abs_le.1 (hu.u_le l hl1 hlk.le)
     have h2 := abs_le.1 (hu.u_le (l + 1) (by omega) hlk)
     have h3 : (0 : ℝ) ≤ n₀ := Nat.cast_nonneg _
-    simp only [uPlus, if_true]
+    simp only [uPlus, ite_true]
     rw [abs_le]
     constructor <;> linarith
 
@@ -384,12 +384,12 @@ theorem pairData_minus (h : HypLam P.k P.r lam c g b) (hu : HypType P.k P.r lam 
                   · exact Or.inr ⟨by linarith, by linarith⟩)⟩ }
   refine (movedData_of_hyp (Q := shP P P.u (uMinus P.u l n₀)) h hu hl1 hlk.le (fun i hi => ?_) ?_)
   · show uMinus P.u l n₀ i = P.u i
-    simp only [uMinus, if_neg hi]
+    simp only [uMinus, ite_eq_right hi]
   · show |uMinus P.u l n₀ l| ≤ b
     have h1 := abs_le.1 (hu.u_le l hl1 hlk.le)
     have h2 := abs_le.1 (hu.u_le (l + 1) (by omega) hlk)
     have h3 : (0 : ℝ) ≤ n₀ := Nat.cast_nonneg _
-    simp only [uMinus, if_true]
+    simp only [uMinus, ite_true]
     rw [abs_le]
     constructor <;> linarith
 
@@ -466,7 +466,7 @@ theorem grids_plus {up up' : ℕ → ℝ} (q : KB.Pl (shP P up up') Wp Wq) (lam 
   refine grids_PStar q lam c g b (by rw [e3]; exact pairData_plus h hu hl1 hlk hposition) ?_
   rw [e3]
   show _ ≤ |P.u (l + 1) - uPlus P.u l n₀ (l + 1)|
-  simp only [uPlus, if_true]
+  simp only [uPlus, ite_true]
   rw [show P.u (l + 1) - (P.u (l + 1) + n₀) = -(n₀ : ℝ) by ring, abs_neg, abs_of_nonneg (Nat.cast_nonneg _), hn₀R]
   exact len_le P.r
 
@@ -484,7 +484,7 @@ theorem grids_minus {um um' : ℕ → ℝ} (q : KB.Pl (shP P um um') Wp Wq) (lam
   refine grids_PStar q lam c g b (by rw [e3]; exact pairData_minus h hu hl1 hlk hposition) ?_
   rw [e3]
   show _ ≤ |P.u l - uMinus P.u l n₀ l|
-  simp only [uMinus, if_true]
+  simp only [uMinus, ite_true]
   rw [show P.u l - (P.u l - n₀) = (n₀ : ℝ) by ring, abs_of_nonneg (Nat.cast_nonneg _), hn₀R]
   exact len_le P.r
 

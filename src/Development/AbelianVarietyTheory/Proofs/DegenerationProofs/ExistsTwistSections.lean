@@ -69,7 +69,6 @@ section -- clump:auto
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-attribute [local instance] Over.cartesianMonoidalCategory
 open ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.ZH Classical
 
 namespace GlobalTheory.ThetaInvPart
@@ -94,21 +93,21 @@ theorem diag_eq [IsDomain o] {Q : Type} [AddCommGroup Q] [Fintype Q] (π : S.Gam
     obtain ⟨k, hk⟩ := key _ _ h
     by_contra hij
     have := hk j
-    rw [hce, hce, if_pos rfl, if_neg (Ne.symm hij), mul_zero] at this
+    rw [hce, hce, ite_eq_left rfl, ite_eq_right (Ne.symm hij), mul_zero] at this
     exact pow_ne_zero _ hζ this
   have surj := ((Fintype.bijective_iff_injective_and_card _).2 ⟨inj, hc⟩).2
   have zero : ∀ a i, π (c i) = π a → i ≠ i₀ → S.ρ a i₀ i₀ = 0 := fun a i h hi => by
     obtain ⟨k, hk⟩ := key _ _ h
-    rw [hk, hce, if_neg (Ne.symm hi), mul_zero]
+    rw [hk, hce, ite_eq_right (Ne.symm hi), mul_zero]
   split_ifs with ha
-  · rw [hfix a ha, if_pos rfl]
+  · rw [hfix a ha, ite_eq_left rfl]
   · obtain ⟨i, hi⟩ := surj (π a)
     refine zero a i hi fun h => ?_
     obtain ⟨j, hj⟩ := surj (π 0)
     by_cases h' : j = i₀
     · exact ha (by rw [← hi, h, ← h', hj, map_zero])
     · have := zero 0 j hj h'
-      rw [hfix 0 (map_zero π), if_pos rfl] at this
+      rw [hfix 0 (map_zero π), ite_eq_left rfl] at this
       exact one_ne_zero this
 
 theorem rho_fix (hG : GlobalFnsSt) (hi : Function.Injective (algebraMap o Ω)) (ρ : S.Real) (a : S.Gam)
@@ -197,9 +196,7 @@ section -- clump:auto
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-attribute [local instance] Over.cartesianMonoidalCategory
 open ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.ZH Classical
-attribute [local instance] SplitExt.free SplitExt.finite MvPolynomial.gradedAlgebra
 
 namespace GlobalTheory.ZH.ThetaFibre
 
@@ -271,7 +268,7 @@ theorem exists_mem_nonzeroLocus_fibre : GlobalTheory.UT.LL → ∀ (o Ω : Type)
       rw [hx] at hm
       rw [← hgx] at hm
       exact hm
-    · exact Finset.sum_eq_zero fun i _ => mul_eq_zero_of_right _ (dif_neg hj)
+    · exact Finset.sum_eq_zero fun i _ => mul_eq_zero_of_right _ (dite_eq_right hj)
   obtain ⟨j, hj⟩ := GlobalTheory.proj_zero_pullback_ne_zero hL o Ω S ρ K
     ((RatModel.valHom x z hx).comp (algebraMap o (M.O z))) _ (hB.free z).1
   refine hj (proj_col_eq_zero hB hz (RatModel.valHom x z hx) (Q.B l)
@@ -294,9 +291,7 @@ section -- clump:auto
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-attribute [local instance] Over.cartesianMonoidalCategory
 open ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.ZH Classical
-attribute [local instance] SplitExt.free SplitExt.finite MvPolynomial.gradedAlgebra
 
 theorem _root_.GlobalTheory.T.exists_theta_pullback_nonzero_on_closed_fibre : GlobalTheory.UT.LL → ∀ (o Ω : Type) [CommRing o] [Field Ω] [Algebra o Ω] [ArithBase o Ω] (S : ThetaSys o Ω) (ρ : S.Real) (M : RatModel o Ω) (U₀ : M.Z.Opens) (EE : M.Lat S.J), BaseFacts S M U₀ EE → ∀ (Q : Clos ρ M U₀ EE), S.Big → ρ.HasGeo → ∀ z : M.Z, IsClosed ({z} : Set M.Z) → ∃ x ∈ nonzeroLocus (Q.st ρ.i₀), x ∈ Q.G ∧ Q.P.hom x = z := by
   first | exact @GlobalTheory.ZH.ThetaFibre.exists_mem_nonzeroLocus_fibre
@@ -312,9 +307,7 @@ section -- clump:auto
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-attribute [local instance] Over.cartesianMonoidalCategory
 open ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.ZH Classical
-attribute [local instance] SplitExt.free SplitExt.finite MvPolynomial.gradedAlgebra
 
 noncomputable section
 namespace GlobalTheory.ZH.ThetaData

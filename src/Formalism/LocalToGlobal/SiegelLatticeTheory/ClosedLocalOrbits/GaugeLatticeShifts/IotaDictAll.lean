@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHGamUnipKu
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.IotaDictPf
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.IotaBridgeHalves
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.BridgeRat
@@ -25,8 +26,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
   Formalism.L2.SG.Pf.unitaryCongruence Formalism.L2.SG.NormCut
 
 namespace Formalism.L2.SG.Pf.BridgeAd
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
@@ -129,44 +128,18 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 
 namespace Formalism.L2.SG.Pf.BridgeAR
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 theorem Z_of_coprime {t : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F} (ht : t ∈ IntAf X.B.I.F X.B.I.E) {c : ℕ}
     (hc : Nat.Coprime c X.B.g) (hZ : ZMod' X.B.I X.B.g ((c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) * t)) :
     ZMod' X.B.I X.B.g t := by
-  obtain ⟨s, hs, hcs⟩ := hZ
-  have hb := Nat.gcd_eq_gcd_ab c X.B.g
-  rw [hc.gcd_eq_one, Nat.cast_one] at hb
-  have hb' : (1 : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) =
-      (c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) * (Nat.gcdA c X.B.g : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) +
-        (X.B.g : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) * (Nat.gcdB c X.B.g : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) := by
-    have h1 := congrArg (Int.cast : ℤ → X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) hb
-    push_cast at h1
-    exact h1
-  refine ⟨(Nat.gcdA c X.B.g : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) * s +
-    (Nat.gcdB c X.B.g : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) * t, ?_, ?_⟩
-  · exact (IntAf X.B.I.F X.B.I.E).add_mem
-      ((IntAf X.B.I.F X.B.I.E).mul_mem (intCast_mem _ _) hs)
-      ((IntAf X.B.I.F X.B.I.E).mul_mem (intCast_mem _ _) ht)
-  · calc t = 1 * t := (one_mul t).symm
-      _ = ((c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) * t) * (Nat.gcdA c X.B.g : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) +
-          (X.B.g : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) *
-            ((Nat.gcdB c X.B.g : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) * t) := by
-        rw [hb']
-        ring
-      _ = _ := by
-        rw [hcs]
-        ring
+  apply +allowSynthFailures _root_.Formalism.L2.SG.PoincareInHH.Cut.GU.zmod_cancel <;> assumption
 
 end Formalism.L2.SG.Pf.BridgeAR
 
 namespace Formalism.L2.SG.Pf
 
 open Formalism.L2.SG.Pf.BridgeAR
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem iotaBridgeARC_holds : IotaBridgeARC := by
   intro D X Y u Λ hΛ β b hb hK hN hT x hx
@@ -225,8 +198,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
   Formalism.L2.SG.NormCut
 
 namespace Formalism.L2.SG.Pf
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def IotaDictAllC : Prop :=
   ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (Y : Formalism.L2.SG.Full.Full X) (u u' : D.what₂.Word)

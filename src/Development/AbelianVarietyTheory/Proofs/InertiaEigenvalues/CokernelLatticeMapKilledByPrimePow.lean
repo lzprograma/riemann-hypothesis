@@ -263,47 +263,6 @@ theorem bounds_of_mem {e : ℕ} [NeZero e] {Sig : Finset (ZMod e)} {c : ZMod e} 
   have := ZMod.val_lt (c - c')
   constructor <;> nlinarith
 
-theorem rootPoly_monic (T : Finset ℕ) : (rootPoly T).Monic :=
-  Polynomial.monic_prod_of_monic _ _ fun _ _ => Polynomial.monic_X_sub_C _
-
-theorem mem_roots_rootPoly {T : Finset ℕ} {x : ℤ} (h : x ∈ (rootPoly T).roots) : ∃ i ∈ T, x = i := by
-  rw [Polynomial.mem_roots (rootPoly_monic T).ne_zero, Polynomial.IsRoot, rootPoly, Polynomial.eval_prod,
-    Finset.prod_eq_zero_iff] at h
-  obtain ⟨i, hi, h⟩ := h
-  exact ⟨i, hi, by simpa [sub_eq_zero] using h⟩
-
-theorem card_degrees_le {e : ℕ} (Sig : Finset (ZMod e)) (c : ZMod e) (m m' : ℕ) :
-    (degrees Sig c m m').card ≤ Sig.card * (m' - m) :=
-  Finset.card_image_le.trans (by simp [Finset.card_product])
-
-theorem degreeBounds {e : ℕ} [NeZero e] (Sig : Finset (ZMod e)) (c : ZMod e) (A' : ℕ) :
-    DegreeBounds Sig c A' := by
-  refine
-    { lt_of_mem₁ := ?_
-      mem_Ico₂ := ?_
-      monic₁ := rootPoly_monic _
-      monic₂ := rootPoly_monic _
-      disjoint_roots := ?_
-      card₁ := ?_
-      card₂ := ?_ }
-  · intro i hi
-    have := bounds_of_mem hi
-    nlinarith
-  · intro j hj
-    have := bounds_of_mem hj
-    constructor <;> nlinarith
-  ·
-    rw [Multiset.disjoint_left]
-    intro x h1 h2
-    obtain ⟨i, hi, rfl⟩ := mem_roots_rootPoly h1
-    obtain ⟨j, hj, hij⟩ := mem_roots_rootPoly h2
-    have := bounds_of_mem hi
-    have := bounds_of_mem hj
-    have : i = j := by exact_mod_cast hij
-    omega
-  · exact (card_degrees_le _ _ _ _).trans (by simp)
-  · exact (card_degrees_le _ _ _ _).trans (by rw [show 2 * A' - A' = A' by omega])
-
 theorem climb {R S V : Type} [Ring R] [Ring S] [AddCommGroup V] [Module R V] [Module S V]
     (f : Module.End S V) (W : ℕ → Submodule R V) (m : ℕ) :
     ∀ k (T : Finset ℕ), (∀ i ∈ T, ∀ x ∈ W i, f x - i • x ∈ W (i + 1)) →
@@ -397,8 +356,7 @@ theorem graded (D : BKDat O K l e a ι η H) (Sig : Finset (ZMod e))
   have hred : red y = 0 := by
     by_contra hne
     obtain ⟨τ, hτ⟩ : ∃ τ, red y τ ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hne (funext h)
     have hmem : c - (i : ZMod e) ∈ D.desc.chars τ := ⟨red y, hτ, fun ζ => actD_red D c i y hxW ζ τ⟩
     refine hi ⟨_, hch τ hmem, i / e, ?_⟩
@@ -463,7 +421,7 @@ theorem raisesDegree (hR : Reduction O K l e a) (Sig : Finset (ZMod e)) (c : ZMo
     refine (sup_le_sup (inf_le_left.trans (le_of_eq (vL_eq _ _).symm)) inf_le_left) h
 
 theorem degrees_of_reduction (hR : Reduction O K l e a) : Degrees O K l e a :=
-  fun Sig c A' hA => ⟨degreeBounds Sig c A', fun ι _ _ η H D hch => raisesDegree hR Sig c A' hA D hch⟩
+  fun Sig c A' hA ι _ _ η H D hch => raisesDegree hR Sig c A' hA D hch
 
 end Main
 
@@ -1153,15 +1111,15 @@ lemma phi_X : φ PowerSeries.X = PowerSeries.X ^ l := by
   rw [hφ, PowerSeries.coeff_X_pow]
   by_cases h1 : l ∣ m
   · obtain ⟨q, rfl⟩ := h1
-    rw [if_pos (dvd_mul_right l q), Nat.mul_div_cancel_left q (by omega), PowerSeries.coeff_X]
+    rw [ite_eq_left (dvd_mul_right l q), Nat.mul_div_cancel_left q (by omega), PowerSeries.coeff_X]
     by_cases hq : q = 1
     · subst hq; simp
-    · rw [if_neg hq, if_neg]
+    · rw [ite_eq_right hq, ite_eq_right]
       intro h2
       apply hq
       have : l * q = l * 1 := by simpa using h2
       exact Nat.eq_of_mul_eq_mul_left (by omega) this
-  · rw [if_neg h1, if_neg]
+  · rw [ite_eq_right h1, ite_eq_right]
     rintro rfl
     exact h1 dvd_rfl
 
@@ -1172,7 +1130,7 @@ lemma comps_X_pow (t : ℕ) :
       if j = (⟨t % l, Nat.mod_lt _ (Nat.lt_of_lt_of_le (by norm_num) hl)⟩ : Fin l) then PowerSeries.X ^ (t / l) else 0 := by
     apply comps_eq
     simp only [apply_ite φ, map_zero, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
-      if_true]
+      ite_true]
     rw [map_pow, phi_X l hl φ hφ, ← pow_mul, ← pow_add, Nat.mod_add_div]
   rw [this]; simp
 
@@ -1273,8 +1231,7 @@ theorem frobenius_ideal_degree_bound : ∀ {O : Type} [CommRing O] (l : ℕ), 2 
     have d := down τ0
     have m := hmax (τ0 + 1) (Finset.mem_univ _)
     rw [hn] at d
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     nlinarith
   intro τ
   have h1 := step (τ + 1) (s (τ + 1)) (hspec (τ + 1))
@@ -1494,7 +1451,7 @@ theorem isotypic_step : ∀ (O K : Type) [CommRing O] [NormedField K] [IsUltrame
   have hA : Polynomial.aeval D₂.conn (GlobalTheory.IndefiniteRowSideFullHecke.ImageStableDegreeBounds.P₁ Sig c A') y ∈ T := by
     rw [haeZ, hyd, map_add (f := _), map_smul, ← app_aeval, ← haeZ]
     refine add_mem ?_ ?_
-    · have hr := ((hdeg Sig c A' (by omega)).2 ι η H D₁ h₁).aeval₁ _ ⟨hy₁L, hy₁iso⟩
+    · have hr := (hdeg Sig c A' (by omega) ι η H D₁ h₁).aeval₁ _ ⟨hy₁L, hy₁iso⟩
       obtain ⟨u, hu, h, hh, hsum⟩ := Submodule.mem_sup.1 hr
       rw [← hsum, map_add (f := _)]
       obtain ⟨w, hw, rfl⟩ := GlobalTheory.IndefiniteRowSideFullHecke.ImageStableDegreeBounds.mem_mulL.1 hu
@@ -1513,7 +1470,7 @@ theorem isotypic_step : ∀ (O K : Type) [CommRing O] [NormedField K] [IsUltrame
       exact (GlobalTheory.IndefiniteRowSideFullHecke.ImageStableDegreeBounds.MMHigh D₂.toPhiMod).toAddSubmonoid.nsmul_mem hh.1 _
 
   have hB' : Polynomial.aeval D₂.conn (GlobalTheory.IndefiniteRowSideFullHecke.ImageStableDegreeBounds.P₂ Sig c A') y ∈ T := by
-    have hr := ((hdeg Sig c A' (by omega)).2 κ η H D₂ h₂).aeval₂ _ ⟨hy_v, hy_iso⟩
+    have hr := (hdeg Sig c A' (by omega) κ η H D₂ h₂).aeval₂ _ ⟨hy_v, hy_iso⟩
     obtain ⟨u, hu, h, hh, hsum⟩ := Submodule.mem_sup.1 hr
     rw [← hsum]
     refine add_mem ?_ (memT3 _ hh)
@@ -1703,7 +1660,7 @@ theorem psi_frob_mul (l : ℕ) [Fact l.Prime] (g h : K⟦X⟧) :
       ∑ p ∈ (Finset.HasAntidiagonal.antidiagonal n).map ⟨_, hinj⟩, coeff p.1 (frob K l g) * coeff p.2 h := by
     rw [Finset.sum_map]
     refine Finset.sum_congr rfl fun p _ => ?_
-    simp only [Function.Embedding.coeFn_mk, coeff_frob, coeff_psi, dvd_mul_right, if_true,
+    simp only [Function.Embedding.coeFn_mk, coeff_frob, coeff_psi, dvd_mul_right, ite_true,
       Nat.mul_div_cancel_left _ hl]
   rw [h1]
   refine (Finset.sum_subset ?_ ?_).symm
@@ -1714,7 +1671,7 @@ theorem psi_frob_mul (l : ℕ) [Fact l.Prime] (g h : K⟦X⟧) :
     simp only [Function.Embedding.coeFn_mk]
     rw [← mul_add, hq]
   · intro p hp hp'
-    rw [coeff_frob, if_neg, zero_mul]
+    rw [coeff_frob, ite_eq_right, zero_mul]
     rintro ⟨c, hc⟩
     apply hp'
     rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
@@ -1730,7 +1687,7 @@ theorem psi_frob_mul (l : ℕ) [Fact l.Prime] (g h : K⟦X⟧) :
 
 theorem psi_frob (l : ℕ) [Fact l.Prime] (g : K⟦X⟧) : psi l (frob K l g) = g := by
   ext n
-  rw [coeff_psi, coeff_frob, if_pos (dvd_mul_right _ _),
+  rw [coeff_psi, coeff_frob, ite_eq_left (dvd_mul_right _ _),
     Nat.mul_div_cancel_left _ (Fact.out : l.Prime).pos]
 
 theorem psi_mulVec {ι κ : Type} [Fintype ι] (l : ℕ) [Fact l.Prime] (Y : Matrix κ ι K⟦X⟧)

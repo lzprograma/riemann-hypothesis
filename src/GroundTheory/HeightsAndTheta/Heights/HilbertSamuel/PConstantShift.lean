@@ -108,13 +108,13 @@ theorem proof : ConstantShift.Statement := by
     have e0 : L n ∘ σ = Fin.snoc M A := by
       have h0 := Fin.snoc_init_self (q := L n ∘ σ)
       have hl : (L n ∘ σ) (Fin.last D) = A := by
-        simp only [Function.comp, hσl, hj, L, lt_irrefl, if_false]
+        simp only [Function.comp, hσl, hj, L, lt_irrefl, ite_false]
       rw [hl] at h0
       exact h0.symm
     have e1 : L (n + 1) ∘ σ = Fin.snoc M (HermLine.constShift A η) := by
       have h0 := Fin.snoc_init_self (q := L (n + 1) ∘ σ)
       have hl : (L (n + 1) ∘ σ) (Fin.last D) = HermLine.constShift A η := by
-        simp only [Function.comp, hσl, hj, L, lt_add_one, if_true]
+        simp only [Function.comp, hσl, hj, L, lt_add_one, ite_true]
       rw [hl, hM] at h0
       exact h0.symm
     have hMs : ∀ i, IsSmoothHerm (M i) := fun i => hLs n _

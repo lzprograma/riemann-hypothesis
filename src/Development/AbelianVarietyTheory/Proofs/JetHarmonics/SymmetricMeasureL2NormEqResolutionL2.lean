@@ -85,11 +85,6 @@ def IsHaarOn (U : Set (Mat k r)) (μ : Measure (Mt k r)) : Prop :=
   μ {x | Matrix.of x ∉ U} = 0 ∧ (∀ a ∈ U, μ.map (lmulM a) = μ) ∧
     (∀ C : Set (Mt k r), IsCompact C → (∀ x ∈ C, Matrix.of x ∈ U) → μ C < ⊤) ∧ μ ≠ 0
 
-def IsQuotRep (G : Set (Mat k r)) (μG μS ν : Measure (Mt k r)) : Prop :=
-  ν {x | Matrix.of x ∉ G} = 0 ∧
-    ∀ f : Mt k r → ℝ≥0∞, Measurable f →
-      ∫⁻ g, f g ∂μG = ∫⁻ g, (∫⁻ s, f (lmulM (Matrix.of s) g) ∂μS) ∂ν
-
 def leviW (k r : ℕ) (s : Mat k r) : Mat k r := fun i j =>
   if (r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k) then s i j
   else if i = j then 1 else 0
@@ -161,15 +156,15 @@ theorem leviW_mul {z : Fin (2 * r + k + 1) → ℂ} {h n : Mat k r} (hh : h ∈ 
     · intro l _ hl
       by_cases hr : r ≤ l.val
       · rw [hn.2.2 l j h1.2.1 h1.2.2 hr]; simp [hl]
-      · rw [col_out hh (j := l) (by omega) i, if_neg, zero_mul]
+      · rw [col_out hh (j := l) (by omega) i, ite_eq_right, zero_mul]
         rintro rfl
         omega
     · simp
   · subst h2
     rw [col_out hh (j := i) (by tauto) i]; simp
   · by_cases hj : r ≤ j.val ∧ j.val ≤ r + k
-    · rw [row_out hh (i := i) (by tauto) j, if_neg h2]
-    · rw [col_out hh hj i, if_neg h2]
+    · rw [row_out hh (i := i) (by tauto) j, ite_eq_right h2]
+    · rw [col_out hh hj i, ite_eq_right h2]
 
 theorem measurable_lmulM (a : Mat k r) : Measurable (lmulM a : Mt k r → Mt k r) := by
   apply Continuous.measurable

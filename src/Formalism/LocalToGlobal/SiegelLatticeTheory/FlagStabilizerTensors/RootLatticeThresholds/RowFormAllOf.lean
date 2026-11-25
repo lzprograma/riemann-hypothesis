@@ -41,6 +41,9 @@ import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCou
 import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictFinal
 import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
 import Mathlib.Algebra.AffineMonoid.Basic
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RatIota
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LiftPhaseAgreement
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TupOnto
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LemmaVLift, Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowFrameCoherence.GmapInvOf, Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LiftAtSome, Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PointRegroupPf, Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowFrameCoherence.LiftRowCohF, Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowFrameCoherence.LiftRowCohD, Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowFrameCoherence.Regroup, Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LiftMassCHolds, Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowFormAllOf
@@ -88,24 +91,18 @@ namespace Formalism.L2.SG.Pf.RowForm.ScalT
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Gen
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {r : ℕ}
 
-theorem gmap_inv_of {a : S.V ≃ₗ[E] S.V} {L L' : Submodule (𝓞 E) S.V} (h : Formalism.HermitianLatticesTheory.gmap a L' = L) :
-    Formalism.HermitianLatticesTheory.gmap a⁻¹ L = L' := by
-  rw [← h, ← _root_.PI.DCRelEquiv.UnitaryGroupMassFormula.gmap_mul', inv_mul_cancel, _root_.PI.DCRelEquiv.UnitaryGroupMassFormula.gmap_one']
-
 theorem xflag_mapLF {T : E} (γ : S.V ≃ₗ[E] S.V) (hγ : γ ∈ Formalism.HermitianLatticesTheory.isom S.hT) (F : LFlag S r T) (j : ℕ) :
     Xflag (mapLF γ F) j = (Xflag F j).map (γ : S.V →ₗ[E] S.V) := by
-  simp only [Xflag, mapLF, dif_pos hγ, Formalism.MainNotions.S.FlagG.Xa, mapFlag, Submodule.map_span, Set.image_image]
+  simp only [Xflag, mapLF, dite_eq_left hγ, Formalism.MainNotions.S.FlagG.Xa, mapFlag, Submodule.map_span, Set.image_image]
   rfl
 
 theorem z_mapLF {T : E} (γ : S.V ≃ₗ[E] S.V) (hγ : γ ∈ Formalism.HermitianLatticesTheory.isom S.hT) (F : LFlag S r T) :
     (mapLF γ F).fl.z = γ F.fl.z := by
-  simp only [mapLF, dif_pos hγ, mapFlag]
+  simp only [mapLF, dite_eq_left hγ, mapFlag]
 
 theorem isPair_quot {T T' : E} (Λ Λ' : Submodule (𝓞 E) S.V) (g : ℕ) (F : LFlag S r T) (F' : LFlag S r T')
     (γ₁ γ₂ : S.V ≃ₗ[E] S.V) (h₁ : γ₁ ∈ Formalism.HermitianLatticesTheory.isom S.hT) (h₂ : γ₂ ∈ Formalism.HermitianLatticesTheory.isom S.hT)
@@ -113,7 +110,7 @@ theorem isPair_quot {T T' : E} (Λ Λ' : Submodule (𝓞 E) S.V) (g : ℕ) (F : 
     (hι : IotaCompat Λ F (mapLF γ₁ F') (mapLF γ₂ F') (γ₂ * γ₁⁻¹) g) :
     IsPair Λ F (mapLF γ₁ F') (mapLF γ₂ F') (γ₂ * γ₁⁻¹) g := by
   refine ⟨⟨(Formalism.HermitianLatticesTheory.isom S.hT).mul_mem h₂ ((Formalism.HermitianLatticesTheory.isom S.hT).inv_mem h₁), ?_⟩, fun j => ?_, ?_, hι⟩
-  · rw [_root_.PI.DCRelEquiv.UnitaryGroupMassFormula.gmap_mul', gmap_inv_of hl₁, hl₂]
+  · rw [_root_.PI.DCRelEquiv.UnitaryGroupMassFormula.gmap_mul', Formalism.L2.SG.Pf.gmap_inv hl₁, hl₂]
   · rw [xflag_mapLF γ₁ h₁, xflag_mapLF γ₂ h₂, ← Submodule.map_comp]
     congr 1
     ext x
@@ -166,7 +163,7 @@ theorem scalTC_of (hκ : Formalism.L2.SG.DataInst.RowLabel κ) (hι : LiftIotaC 
   have hx₂ : Gval (lf D (X.Fu u)) x₂.1 ≠ 0 := by rw [← gv]; exact hG₂'
   have hs0 : s0T s₁ s₂ = Lat.s0 l₁ (lf D (X.Fu u)) s₁.frame s₂.frame (s₂.lin * s₁.lin⁻¹) D.R.k := by
     unfold s0T
-    exact if_pos ⟨rfl, rfl⟩
+    exact ite_eq_left ⟨rfl, rfl⟩
   have hsc : scalT s₁ s₂ ↔ (Lat.s0 l₁ (lf D (X.Fu u)) s₁.frame s₂.frame (s₂.lin * s₁.lin⁻¹) D.R.k = 1 ∧
       IsScalar l₁ (lf D (X.Fu u)) s₁.frame s₂.frame (s₂.lin * s₁.lin⁻¹)) := by
     unfold scalT
@@ -214,14 +211,7 @@ open Formalism.BasicNotions Formalism.L2.SG.HidaSetting Formalism.L2.SG.Pf.RowFo
 
 theorem liftAtSomeC_holds {D : D7} (X : HidaSetting D) (Y : Formalism.L2.SG.Full.Full X) (u u' : D.what₂.Word)
     (κ : Formalism.L2.SG.TermDef.Term D u u' (X.Fu u) (Y.what₂ u) → ℕ) : LiftAtSomeC X Y u u' κ := by
-  intro R ρ s hrel
-  have hG : s.1.toTerm.G ≠ 0 := by
-    intro h0
-    apply s.2.1
-    show Formalism.L2.SG.TermOp.Gt s.1 = 0
-    unfold Formalism.L2.SG.TermOp.Gt
-    exact if_pos h0
-  exact Formalism.L2.SG.LeadingMinorsNonvanishing.atSomeAll_holds D X Y u u' s.1.toTerm hG hrel
+  apply _root_.Formalism.L2.SG.Pf.LiftedPhaseAgreement.liftAtSomeC_holds <;> assumption
 
 theorem atPtRelevantC_holds {D : D7} (X : HidaSetting D) (Y : Formalism.L2.SG.Full.Full X) (u u' : D.what₂.Word) :
     AtPtRelevantC X Y u u' := fun t w h =>
@@ -252,8 +242,6 @@ noncomputable section
 namespace Formalism.L2.SG.WConst
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef MeasureTheory
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem signFlip_involutive {K : Type} [Ring K] (r : ℕ) : ∀ (b : ℕ) (x : Formalism.FourierDecayAlt.TB.Pt K),
     Formalism.L2.SG.DataInst.signAux r b (Formalism.L2.SG.DataInst.signAux r b x) = x
@@ -382,7 +370,7 @@ theorem pointRegroupC_of (hA : ClassAbsC X Y u u' vR i0 i0' νq κ) : PointRegro
       exact ⟨⟨w, t.1, t.2.1, t.2.2, hw⟩, rfl⟩
     · exfalso
       apply ht
-      simp only [hf, Formalism.L2.SG.PairVal.cTerm, dif_neg h, mul_zero, zero_smul]
+      simp only [hf, Formalism.L2.SG.PairVal.cTerm, dite_eq_right h, mul_zero, zero_smul]
   exact he.tsum_eq hsuppf
 
 end Regroup
@@ -422,18 +410,7 @@ theorem ff_swap {x y : S.V} (h : S.hT x y = 0) : S.hT y x = 0 := by
 
 theorem ff_iso_span {p : Fin r → S.V} (hp : ∀ a b, S.hT (p a) (p b) = 0) {x y : S.V}
     (hx : x ∈ Submodule.span E (Set.range p)) (hy : y ∈ Submodule.span E (Set.range p)) : S.hT x y = 0 := by
-  have h1 : ∀ a, ∀ z ∈ Submodule.span E (Set.range p), S.hT (p a) z = 0 := by
-    intro a z hz
-    have hle : Submodule.span E (Set.range p) ≤ LinearMap.ker (S.hT (p a)) := by
-      rw [Submodule.span_le]
-      rintro _ ⟨b, rfl⟩
-      exact LinearMap.mem_ker.2 (hp a b)
-    exact LinearMap.mem_ker.1 (hle hz)
-  have hle : Submodule.span E (Set.range p) ≤ LinearMap.ker (S.hT.flip y) := by
-    rw [Submodule.span_le]
-    rintro _ ⟨a, rfl⟩
-    exact LinearMap.mem_ker.2 (by simpa using h1 a y hy)
-  simpa using LinearMap.mem_ker.1 (hle hx)
+  apply _root_.Formalism.L2.SG.Pf.TupOnto.hT_span_span <;> assumption
 
 theorem ff_repr {e f : Fin r → S.V} (hfe : ∀ a b, S.hT (f a) (e b) = if a = b then 1 else 0) {x : S.V}
     (hx : x ∈ Submodule.span E (Set.range e)) : x = ∑ a, S.hT (f a) x • e a := by
@@ -576,19 +553,6 @@ theorem ff_det {x : Fin r → S.V} (hx : LinearIndependent E x) (hxe : ∀ b, x 
           rw [h, zero_smul]
   exact funext (Fintype.linearIndependent_iff.1 hx w hsum)
 
-theorem ff_gmap_latSpan (ν : S.V ≃ₗ[E] S.V) (aa : Fin r → FractionalIdeal (nonZeroDivisors (𝓞 E)) E)
-    (v : Fin r → S.V) : Formalism.HermitianLatticesTheory.gmap ν (latSpan aa v) = latSpan aa (fun a => ν (v a)) := by
-  unfold Formalism.HermitianLatticesTheory.gmap Formalism.L2.SG.Saturated.latSpan
-  rw [Submodule.map_span]
-  congr 1
-  ext y
-  simp only [Set.mem_image, Set.mem_setOf_eq]
-  constructor
-  · rintro ⟨z, ⟨a, c, hc, rfl⟩, rfl⟩
-    exact ⟨a, c, hc, by simp⟩
-  · rintro ⟨a, c, hc, rfl⟩
-    exact ⟨c • v a, ⟨a, c, hc, rfl⟩, by simp⟩
-
 theorem ff_gmap_inf (ν : S.V ≃ₗ[E] S.V) (A : Submodule (𝓞 E) S.V) (U : Submodule E S.V) :
     Formalism.HermitianLatticesTheory.gmap ν (A ⊓ toO S U) = Formalism.HermitianLatticesTheory.gmap ν A ⊓ toO S (U.map (ν : S.V →ₗ[E] S.V)) := by
   unfold Formalism.HermitianLatticesTheory.gmap
@@ -645,8 +609,6 @@ end Gen
 end LiftRowCohF
 
 open LiftRowCohF
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : HidaSetting D) (Y : Formalism.L2.SG.Full.Full X) (u u' : D.what₂.Word)
 
@@ -753,14 +715,14 @@ theorem frameCorrection_holds : FrameFixNeed X Y u u' := by
   have hMeXS : XLam s.lam' (lf D (X.Fu u')) = latSpan (aaS D) e := hRL'.2.2
   have hy' : XLam s.lam y.1 = latSpan (aaS D) y.1.fl.e := y.2.2.2.2
   have e1 : Formalism.HermitianLatticesTheory.gmap δ (latSpan (aaS D) x) = Formalism.HermitianLatticesTheory.gmap δ (latSpan (aaS D) e) := by
-    rw [ff_gmap_latSpan, show (fun b => δ (x b)) = y.1.fl.e from funext hxδ, ← hy', ← hMeXS]
+    rw [Formalism.L2.SG.Pf.Act.latSpan_gmap, show (fun b => δ (x b)) = y.1.fl.e from funext hxδ, ← hy', ← hMeXS]
     unfold XLam
     rw [ff_gmap_inf, hδΛ, hX2]
   have e2 : latSpan (aaS D) x = latSpan (aaS D) e :=
     Submodule.map_injective_of_injective (f := ((δ : (VS D).V →ₗ[D.host.E] (VS D).V).restrictScalars
       (𝓞 D.host.E))) δ.injective e1
   have hμMe : Formalism.HermitianLatticesTheory.gmap μ (latSpan (aaS D) e) = latSpan (aaS D) e := by
-    rw [ff_gmap_latSpan, show (fun b => μ (e b)) = x from funext hμe, e2]
+    rw [Formalism.L2.SG.Pf.Act.latSpan_gmap, show (fun b => μ (e b)) = x from funext hμe, e2]
   have h1 : ∀ v ∈ latSpan (aaS D) e, μ v ∈ latSpan (aaS D) e := fun v hv => liftT_maps hμMe hv
   have h2 : ∀ v ∈ latSpan (aaS D) e, μ.symm v ∈ latSpan (aaS D) e := by
     intro v hv
@@ -794,7 +756,7 @@ theorem frameCorrection_holds : FrameFixNeed X Y u u' := by
 
   have hδ'i : δ * μ ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT := mul_mem hδi hμi
   have hzs : s.frame.fl.z = s.lin (X.Fu u').z := by
-    simp [GTerm.frame, mapLF, dif_pos hγi, Formalism.L2.SG.TermOp.mapFlag]
+    simp [GTerm.frame, mapLF, dite_eq_left hγi, Formalism.L2.SG.TermOp.mapFlag]
   have hz : (δ * μ) (X.Fu u').z = y.1.fl.z := by
     show β (s.lin (μ (X.Fu u').z)) = _
     rw [hμL _ hzL, ← hzs]
@@ -802,7 +764,7 @@ theorem frameCorrection_holds : FrameFixNeed X Y u u' := by
   have hyz : y.1.zt = y.1.fl.z := y.2.1.2
   refine ⟨μ, hμi, hμΛ, hμX, hμo, 1, one_mem_NLam _ _, 1, one_mem_NLam _ _, ?_, ?_⟩
   · intro a
-    rw [mapLF, dif_pos hδ'i]
+    rw [mapLF, dite_eq_left hδ'i]
     refine Fin.lastCases ?_ (fun b => ?_) a
     · simp only [frame, FlagG.fvec, Fin.snoc_last]
       exact hz
@@ -810,7 +772,7 @@ theorem frameCorrection_holds : FrameFixNeed X Y u u' := by
       show (δ * μ) (e b) = y.1.fl.e b
       rw [show (δ * μ) (e b) = δ (μ (e b)) from rfl, hμe b]
       exact hxδ b
-  · rw [mapLF, dif_pos hδ'i]
+  · rw [mapLF, dite_eq_left hδ'i]
     show (δ * μ) (X.Fu u').z = y.1.zt
     rw [hyz]
     exact hz
@@ -833,8 +795,6 @@ open scoped Classical
 namespace Formalism.L2.SG.Pf.RowForm
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def IotaDictIff : Prop :=
   ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (Y : Formalism.L2.SG.Full.Full X) (u u' : D.what₂.Word)
@@ -930,8 +890,8 @@ theorem regroup (vec : ι → E) (hv : Summable fun t => ‖vec t‖) (P : ι �
         exact ⟨h1, hp1, hp2, h1.trans h2.symm⟩
     rw [Set.indicator_indicator, Set.indicator_apply, Set.indicator_apply]
     by_cases h : p ∈ A c ×ˢ A c
-    · rw [if_pos (Set.mem_inter_iff _ _ _ |>.2 (hm.2 h)), if_pos h]
-    · rw [if_neg (fun h' => h (hm.1 ((Set.mem_inter_iff _ _ _).1 h'))), if_neg h]
+    · rw [ite_eq_left (Set.mem_inter_iff _ _ _ |>.2 (hm.2 h)), ite_eq_left h]
+    · rw [ite_eq_right (fun h' => h (hm.1 ((Set.mem_inter_iff _ _ _).1 h'))), ite_eq_right h]
   refine ⟨hA1, hfib.summable.congr key, ?_⟩
   rw [← hfib.tsum_eq, tsum_congr key]
 
@@ -957,9 +917,6 @@ namespace Formalism.L2.SG.Pf
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef Formalism.L2.SG.HidaSetting Formalism.L2.SG.AdBridge Formalism.L2.SG.TypedSets
   Formalism.L2.SG.MassDataConc Formalism.L2.SG.MassDataForm Formalism.L2.SG.Pf.RowForm MeasureTheory
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 set_option linter.deprecated false in
 theorem rowRegroupC_of {D : D7} (X : HidaSetting D) (Y : Formalism.L2.SG.Full.Full X) (u u' : D.what₂.Word)
@@ -1061,8 +1018,6 @@ namespace Formalism.L2.SG.Pf
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef Formalism.L2.SG.HidaSetting Formalism.L2.SG.AdBridge Formalism.L2.SG.TypedSets
   Formalism.L2.SG.MassDataConc Formalism.L2.SG.MassDataForm Formalism.L2.SG.Pf.RowForm MeasureTheory
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem ampValLowerC_of {D : D7} (X : HidaSetting D) (Y : Formalism.L2.SG.Full.Full X) (u u' : D.what₂.Word)
     (vR : Term D u u' (X.Fu u) (Y.what₂ u) → ℝ)
     (i0 i0' : ∀ _ : NumberField.InfinitePlace X.B.I.F, Fin D.R.k) (νq : X.B.I.Ginf → Measure X.B.I.Ginf)
@@ -1075,7 +1030,7 @@ theorem ampValLowerC_of {D : D7} (X : HidaSetting D) (Y : Formalism.L2.SG.Full.F
   · have hGt : (Y.tO u u').G s ≠ 0 := by
       show Formalism.L2.SG.TermOp.Gt s ≠ 0
       unfold Formalism.L2.SG.TermOp.Gt
-      have e : (if s.G = 0 then (0 : ℝ) else 1) = 1 := if_neg hG
+      have e : (if s.G = 0 then (0 : ℝ) else 1) = 1 := ite_eq_right hG
       rw [e]
       exact one_ne_zero
     let s' : LiftT X Y u u' κ ((Y.tO u u').rowOf s) (κ s.toTerm) := ⟨s, hGt, hgen, rfl, rfl⟩
@@ -1214,8 +1169,6 @@ namespace Formalism.L2.SG.PoincareAmplitudeLowerBounds
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.FourierDecayAlt Formalism.L2.SG.HidaSetting Formalism.L2.SG.Full Formalism.L2.SG.PackageTie2
 open Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups ValuativeRel Formalism.L2.SG.SpectralTiesReal
 open Formalism.L2.SG.DataInst Formalism.L2.SG.CntLocal Formalism.L2.SG.RowsConc Formalism.L2.SG.RealObj
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def GUnramAll : Prop :=
   ∀ (D : D7) (u u' : D.what₂.Word), Formalism.MainNotions.S.Cnt.Stand D u u' → ∀ i : Fin 2, Formalism.L2.SG.LemmaN.Unram D.host.E (D.host.g i)

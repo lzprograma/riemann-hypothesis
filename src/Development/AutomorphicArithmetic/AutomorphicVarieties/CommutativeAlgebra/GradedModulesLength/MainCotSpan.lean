@@ -12,6 +12,7 @@ public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwi
 public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.UZGen
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.AdmissibleMonoIdeal
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.AdmissibleMonoIdeal
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.TwoSigned
 public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.RuleUB
 public import Formalism.FormalGroupWitt.FormalGroupWittProofs.SolveV
@@ -260,15 +261,7 @@ section
 variable {B A : Type} [CommRing B] [CommRing A] [Algebra B A] {k : ℕ} (N : Fin k → Submodule B A)
 
 private theorem coef_hom (J : Ideal A) : (GMod.self (reesGr N)).IsHomSub (coefIdeal N J) := by
-  classical
-  refine le_antisymm (fun p hp => ?_) (Submodule.span_le.2 fun x hx => hx.1)
-  rw [eq_sum_mono N p]
-  refine Submodule.sum_mem _ fun μ _ => Submodule.subset_span ⟨fun n => ?_, _, mono_mem N μ _ _⟩
-  show AddMonoidAlgebra.coeff (MvPolynomial.monomial μ _) n ∈ J
-  rw [MvPolynomial.coeff_monomial]
-  split_ifs
-  · exact hp μ
-  · exact J.zero_mem
+  apply _root_.coef_hom <;> assumption
 
 private theorem coeff_alg (b : B) (p : rees N) (n : Fin k →₀ ℕ) :
     AddMonoidAlgebra.coeff (algebraMap B (rees N) b * p).1 n =
@@ -506,7 +499,7 @@ theorem UpperTheory.V.Alg.M.ift_holds :
       simp only [Matrix.mul_apply, Matrix.of_apply, this, Matrix.one_apply, Subtype.ext_iff, eq_comm]
     · have := hX i.1
 
-      simp only [G, g, dif_pos i.2, map_sub, map_sum, map_smul] at this
+      simp only [G, g, dite_eq_left i.2, map_sub, map_sum, map_smul] at this
       simp only [Matrix.of_apply]
       linear_combination this
   · have := key f 0 (by simp)
@@ -518,7 +511,7 @@ theorem UpperTheory.V.Alg.M.ift_holds :
       simp only [G]
       split_ifs with h
       · simp
-      · rw [ift_coeff_X, if_neg (fun h' => hs (by rw [h'])), mul_zero]
+      · rw [ift_coeff_X, ite_eq_right (fun h' => hs (by rw [h'])), mul_zero]
     · simp
 end -- clump:auto
 end -- clump:auto
@@ -598,7 +591,7 @@ private theorem lin_span {O A τ : Type} [CommRing O] [IsDomain O] [CommRing A] 
   have hgl : ∀ i', MvPowerSeries.coeff (Finsupp.single i' 1) (φ g) =
       MvPowerSeries.coeff (Finsupp.single i' 1) (φ f0) := by
     intro i'
-    rw [hgdef, map_sub, map_sub, AlgHom.commutes, MvPowerSeries.algebraMap_apply, MvPowerSeries.coeff_C, if_neg (by simp),
+    rw [hgdef, map_sub, map_sub, AlgHom.commutes, MvPowerSeries.algebraMap_apply, MvPowerSeries.coeff_C, ite_eq_right (by simp),
       sub_zero]
   obtain ⟨c, hc, hs⟩ := hZ _ ⟨g, ⟨hg0, hgx⟩, rfl⟩
   obtain ⟨a, ha⟩ := (Submodule.mem_span_range_iff_exists_fun O).1 hs
@@ -621,8 +614,8 @@ private theorem lin_span {O A τ : Type} [CommRing O] [IsDomain O] [CommRing A] 
   rw [← Finset.mul_sum, h1, MvPowerSeries.coeff_X]
   by_cases hii : i' = i
   · subst hii
-    rw [if_pos rfl, hf0, lin_proj 𝒜 wt φ h.graded i' hi, inv_mul_cancel₀ (mul_ne_zero hc' hf)]
-  · rw [if_neg (fun h0 => hii (Finsupp.single_left_injective one_ne_zero h0))]
+    rw [ite_eq_left rfl, hf0, lin_proj 𝒜 wt φ h.graded i' hi, inv_mul_cancel₀ (mul_ne_zero hc' hf)]
+  · rw [ite_eq_right (fun h0 => hii (Finsupp.single_left_injective one_ne_zero h0))]
     have : MvPowerSeries.coeff (Finsupp.single i' 1) (φ f0) = 0 := by
       by_cases hw : wt i' = 0
       · rw [hf0, lin_proj 𝒜 wt φ h.graded i' hw, hf' i' hii]
@@ -675,8 +668,7 @@ private theorem UpperTheory.V.Alg.M.fin_gen {O A K : Type} [CommRing O] [CommRin
     (𝒜 : ℤ → Submodule O A) [GradedAlgebra 𝒜] [Field K] [Algebra O K] (ξ : A →ₐ[O] K) (j : ℤ) (s : Finset A)
     (hs : Submodule.span (𝒜 0) (s : Set A) = oz 𝒜 j) (h : ∃ f ∈ 𝒜 j, ξ f ≠ 0) : ∃ f ∈ s, ξ f ≠ 0 := by
   obtain ⟨f, hf, hξ⟩ := h
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   have hf' : f ∈ Submodule.span (𝒜 0) (s : Set A) := by
     rw [hs]
     exact (mem_oz 𝒜).2 hf

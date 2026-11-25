@@ -58,12 +58,6 @@ namespace GlobalTheory.DirichletTail
 
 open Filter Topology
 
-theorem norm_sum_range_le_totient_half {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    (hχ : χ ≠ 1) (m : ℕ) :
-    ‖∑ n ∈ Finset.range m, χ ((n + 1 : ℕ) : ZMod q)‖ ≤ (q.totient : ℝ) / 2 := by
-  simpa [← Finset.Ico_add_one_right_eq_Icc, Finset.sum_Ico_eq_sum_range, Nat.add_comm] using
-    GlobalTheory.LGrowth.norm_partialSum_le_totient_half q χ hχ m
-
 theorem norm_sum_range_le {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (m : ℕ) :
     ‖∑ n ∈ Finset.range m, χ ((n + 1 : ℕ) : ZMod q)‖ ≤ q := by
   apply GlobalTheory.LOneLower.char_sum_bound <;> assumption
@@ -285,15 +279,6 @@ theorem norm_LFunction_sub_sum_le_of_sum_bound :
         norm_sub_le _ _
     _ ≤ c * ((N + 1 : ℕ) : ℝ) ^ (-s.re) + B * ((N + 1 : ℕ) : ℝ) ^ (-s.re) := add_le_add htail hbd
     _ = B * (1 + ‖s‖ / s.re) * ((N + 1 : ℕ) : ℝ) ^ (-s.re) := by ring
-
-/-- A totient-sensitive tail estimate valid throughout the open right half-plane. -/
-theorem norm_LFunction_sub_sum_le_totient_half :
-    ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q), χ ≠ 1 → ∀ s : ℂ, 0 < s.re → ∀ N : ℕ,
-      ‖LFunction χ s - ∑ n ∈ Finset.Icc 1 N, χ (n : ZMod q) * (n : ℂ) ^ (-s)‖
-        ≤ (q.totient : ℝ) / 2 * (1 + ‖s‖ / s.re) * ((N + 1 : ℕ) : ℝ) ^ (-s.re) := by
-  intro q _ χ hχ s hs N
-  exact norm_LFunction_sub_sum_le_of_sum_bound q χ hχ _
-    (norm_sum_range_le_totient_half χ hχ) s hs N
 
 theorem norm_LFunction_sub_sum_le :
     ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q), χ ≠ 1 → ∀ s : ℂ, 0 < s.re → ∀ N : ℕ, 1 ≤ N →

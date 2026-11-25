@@ -7,58 +7,8 @@ public import Mathlib.MeasureTheory.Measure.Haar.Unique
 public import Formalism.SuccessiveMinima.StatementMink
 public import Formalism.SuccessiveMinima.SuccessiveMinimaProofs.SuccMin
 public import Formalism.HermitianLattices.DefsCS
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Dynamics.Ergodic.Action.Regular
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -153,8 +103,8 @@ theorem adapted_basis_exists : AdaptedBasis := by
       (N : ℝ) * B.repr x j = m := by
     intro j
     refine ⟨N, hN, v j, ⟨hvL j, fun k hk => ?_⟩, ?_⟩
-    · rw [← hBv, B.repr_self, Finsupp.single_apply, if_neg (ne_of_lt hk)]
-    · rw [← hBv, B.repr_self, Finsupp.single_apply, if_pos rfl, mul_one]
+    · rw [← hBv, B.repr_self, Finsupp.single_apply, ite_eq_right (ne_of_lt hk)]
+    · rw [← hBv, B.repr_self, Finsupp.single_apply, ite_eq_left rfl, mul_one]
   have hm := fun j => Nat.find_spec (hP j)
   have hmin := fun j (r : ℕ) (hr : r < Nat.find (hP j)) => Nat.find_min (hP j) hr
   choose b hbG hbj using fun j => (hm j).2
@@ -263,7 +213,7 @@ theorem adapted_basis_exists : AdaptedBasis := by
     rintro _ ⟨i, hi, rfl⟩
     rw [Set.mem_setOf_eq] at hi
     have hvi := hspan (j.val + 1) (v i) (hvL i) fun k hk => by
-      rw [← hBv, B.repr_self, Finsupp.single_apply, if_neg]
+      rw [← hBv, B.repr_self, Finsupp.single_apply, ite_eq_right]
       intro hik
       rw [hik, Fin.le_def] at hi
       omega
@@ -326,7 +276,7 @@ theorem partialBoxVolumeMonotoneStep : GjLevel := by
     intro m y hy
     obtain ⟨⟨hbox, hAk⟩, hfl⟩ := hy
     have hfl' : ⌊(y + (m : ℝ) • ej) jj⌋ = m := hfl
-    rw [hcoord, if_pos rfl, Int.floor_add_intCast] at hfl'
+    rw [hcoord, ite_eq_left rfl, Int.floor_add_intCast] at hfl'
     have h0 : ⌊y jj⌋ = 0 := by omega
     have hyj := Int.floor_eq_zero_iff.1 h0
     refine ⟨?_, ?_⟩
@@ -336,7 +286,7 @@ theorem partialBoxVolumeMonotoneStep : GjLevel := by
       · have hlt : (i : ℕ) < j :=
           lt_of_le_of_ne (Nat.lt_succ_iff.1 hi) (fun h => hij (Fin.ext (h.trans hjj.symm)))
         have hb : 0 ≤ (y + (m : ℝ) • ej) i ∧ (y + (m : ℝ) • ej) i < 1 := hbox i hlt
-        rw [hcoord, if_neg hij] at hb
+        rw [hcoord, ite_eq_right hij] at hb
         exact hb
     · obtain ⟨a, ha, k, hk, hak0⟩ := hAk
       have hak : a + k = y + (m : ℝ) • ej := hak0
@@ -375,8 +325,8 @@ theorem partialBoxVolumeMonotoneStep : GjLevel := by
     have hk0' : k' jj = 0 := hk'.2 jj hjj.ge
     have e1 := congrFun hak jj
     have e2 := congrFun hak' jj
-    rw [Pi.add_apply, hcoord, if_pos rfl, hk0, add_zero] at e1
-    rw [Pi.add_apply, hcoord, if_pos rfl, hk0', add_zero] at e2
+    rw [Pi.add_apply, hcoord, ite_eq_left rfl, hk0, add_zero] at e1
+    rw [Pi.add_apply, hcoord, ite_eq_left rfl, hk0', add_zero] at e2
     apply hmm'
     exact_mod_cast (by linarith : (m : ℝ) = m')
   have hcover : S ⊆ ⋃ m : ℤ, P m := fun x hx => Set.mem_iUnion.2 ⟨⌊x jj⌋, hx, rfl⟩
@@ -524,9 +474,9 @@ lemma continuous_emb_left (y : {i : Fin n // ¬ (i : ℕ) < j} → ℝ) :
     Continuous fun u => emb n j u y := by
   refine continuous_pi fun i => ?_
   by_cases h : (i : ℕ) < j
-  · simp only [emb, dif_pos h]
+  · simp only [emb, dite_eq_left h]
     exact continuous_apply _
-  · simp only [emb, dif_neg h]
+  · simp only [emb, dite_eq_right h]
     exact continuous_const
 
 lemma measurableSet_boxJ : MeasurableSet (boxJ n j) := by
@@ -545,33 +495,33 @@ lemma fib_set_eq (A : Set (Fin n → ℝ)) (y : {i : Fin n // ¬ (i : ℕ) < j} 
   constructor
   · rintro ⟨hbox, a, ha, k, hk, hak⟩
     refine ⟨fun i => ?_, fun i => a i, ?_, fun i => k i, fun i => hk.1 i, ?_⟩
-    · simpa only [emb, dif_pos i.2, Subtype.coe_eta] using hbox i.1 i.2
+    · simpa only [emb, dite_eq_left i.2, Subtype.coe_eta] using hbox i.1 i.2
     · show emb n j (fun i => a i) y ∈ A
       convert ha using 1
       funext i
       by_cases hi : (i : ℕ) < j
-      · simp only [emb, dif_pos hi]
+      · simp only [emb, dite_eq_left hi]
       · have h := congrFun hak i
-        simp only [emb, dif_neg hi, Pi.add_apply, hk.2 i (not_lt.mp hi), add_zero] at h
-        simp only [emb, dif_neg hi, h]
+        simp only [emb, dite_eq_right hi, Pi.add_apply, hk.2 i (not_lt.mp hi), add_zero] at h
+        simp only [emb, dite_eq_right hi, h]
     · funext i
       have h := congrFun hak i.1
-      simp only [emb, dif_pos i.2, Pi.add_apply, Subtype.coe_eta] at h
+      simp only [emb, dite_eq_left i.2, Pi.add_apply, Subtype.coe_eta] at h
       simpa only [Pi.add_apply] using h
   · rintro ⟨hcube, v, hv, w, hw, rfl⟩
     refine ⟨fun i hi => ?_, emb n j v y, hv, emb n j w 0,
       ⟨fun i => ?_, fun i hi => ?_⟩, ?_⟩
-    · simp only [emb, dif_pos hi]
+    · simp only [emb, dite_eq_left hi]
       exact hcube ⟨i, hi⟩
     · by_cases hi : (i : ℕ) < j
-      · simp only [emb, dif_pos hi]
+      · simp only [emb, dite_eq_left hi]
         exact hw ⟨i, hi⟩
-      · exact ⟨0, by simp only [emb, dif_neg hi, Pi.zero_apply, Int.cast_zero]⟩
-    · simp only [emb, dif_neg (not_lt.mpr hi), Pi.zero_apply]
+      · exact ⟨0, by simp only [emb, dite_eq_right hi, Pi.zero_apply, Int.cast_zero]⟩
+    · simp only [emb, dite_eq_right (not_lt.mpr hi), Pi.zero_apply]
     · funext i
       by_cases hi : (i : ℕ) < j
-      · simp only [emb, dif_pos hi, Pi.add_apply]
-      · simp only [emb, dif_neg hi, Pi.add_apply, Pi.zero_apply, add_zero]
+      · simp only [emb, dite_eq_left hi, Pi.add_apply]
+      · simp only [emb, dite_eq_right hi, Pi.add_apply, Pi.zero_apply, add_zero]
 
 private theorem measure_eq_of_measurePreserving_symm_preimage {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
     {μ : Measure α} {ν : Measure β} (e : α ≃ᵐ β) (he : MeasurePreserving e μ ν) (S : Set α) :
@@ -619,9 +569,9 @@ private theorem torusImageVolume_fib_le_smul {D : Set (Fin n → ℝ)} (hDo : Is
   · have hinv : s * s⁻¹ = 1 := mul_inv_cancel₀ hs0
     funext i
     by_cases hi : (i : ℕ) < j
-    · simp only [emb, dif_pos hi, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+    · simp only [emb, dite_eq_left hi, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
       linear_combination (u ⟨i, hi⟩ - w ⟨i, hi⟩) * hinv
-    · simp only [emb, dif_neg hi, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+    · simp only [emb, dite_eq_right hi, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
       ring
 
 lemma card_compl (hj : j ≤ n) : Fintype.card {i : Fin n // ¬ (i : ℕ) < j} = n - j := by

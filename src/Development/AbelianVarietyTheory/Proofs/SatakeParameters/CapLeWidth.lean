@@ -14,41 +14,6 @@ public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExcessMem
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ScaleOneLtA
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SumRangeSplit
 import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NotMemTopPlaces
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -209,7 +174,7 @@ theorem two_w_le_first_row : ∀ {eps : ℝ} (Fm : FamP eps), ∃ x0 : ℝ, ∀ 
     have := D.R.m_add_three_le_k
     unfold Ranks.N
     omega
-  rw [nuRowOK D u j hj z 0, if_pos hN, e1]
+  rw [nuRowOK D u j hj z 0, ite_eq_left hN, e1]
   rw [e2, hbb] at e3
   rw [ha]
   linarith
@@ -319,14 +284,14 @@ theorem cap_le_width : ∀ {eps : ℝ} (Fm : FamP eps), ∃ x0 : ℝ, ∀ x ≥ 
   have hS := (Fm.L x i).Sc_pos
   split_ifs with hz
   · have e := nuRowOK (Fm.D x i) u j hj z 1
-    rw [if_pos (by omega)] at e
+    rw [ite_eq_left (by omega)] at e
     have := ((hr 1 (by omega)).2 hz le_rfl (by omega)).2
     rw [e]
     linarith
   · have e := nuRowOK (Fm.D x i) u j hj z 0
-    rw [if_pos (by omega)] at e
+    rw [ite_eq_left (by omega)] at e
     have := ((hr 0 (by omega)).1 hz).2
-    rw [if_pos rfl] at this
+    rw [ite_eq_left rfl] at this
     rw [e]
     linarith
 

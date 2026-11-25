@@ -56,7 +56,6 @@ import Mathlib.Tactic.ReduceModChar
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SepRows GlobalTheory.Asc
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.FinPl (Lat idAt idOff intAt grpAt grpOff MxAt latV latA InK MonoAt OrthAt PrimAt ColsAt)
 open scoped nonZeroDivisors ContDiff
 open GlobalTheory.AscFin
@@ -124,21 +123,11 @@ open GlobalTheory.FunObj.Comparison₂ GlobalTheory.StdFrames Formalism.L2.DIV
 
 variable {D : D7} {S T : HSp D}
 
-theorem genMap_add (s : Fin S.rank → D.host.E) (t t' : Fin T.rank → D.host.E) :
-    GlobalTheory.LatVac.genMap S T 1 s (t + t') = GlobalTheory.LatVac.genMap S T 1 s t + GlobalTheory.LatVac.genMap S T 1 s t' := by
-  ext i j
-  simp only [GlobalTheory.LatVac.genMap, Matrix.of_apply, Matrix.add_apply, Pi.add_apply]
-  ring_nf
-
 theorem genMap_smul (s : Fin S.rank → D.host.E) (r : D.host.E) (t : Fin T.rank → D.host.E) :
     GlobalTheory.LatVac.genMap S T 1 s (r • t) = r • GlobalTheory.LatVac.genMap S T 1 s t := by
   ext i j
   simp only [GlobalTheory.LatVac.genMap, Matrix.of_apply, Matrix.smul_apply, Pi.smul_apply, smul_eq_mul]
   ring_nf
-
-theorem genMap_zero (s : Fin S.rank → D.host.E) : GlobalTheory.LatVac.genMap S T 1 s 0 = 0 := by
-  ext i j
-  simp [GlobalTheory.LatVac.genMap]
 
 end GlobalTheory.DepthBig
 
@@ -147,8 +136,6 @@ open GlobalTheory.FunObj.Comparison₂ GlobalTheory.StdFrames Formalism.L2.DIV G
 
 variable {D : D7} {S T : HSp D} {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)}
   {ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)}
-
-
 
 theorem v_le_of_mem_latO_idLat (hS : IsSelfDualC S ΛS) {βS : GL (Fin S.rank) (EAf D)} {βT : GL (Fin T.rank) (EAf D)}
     (hβS : IsFrame βS ΛS) (hβT : IsFrame βT ΛT) (w : Pl D.host.E)
@@ -187,11 +174,11 @@ theorem v_le_of_mem_latO_idLat (hS : IsSelfDualC S ΛS) {βS : GL (Fin S.rank) (
         show cpt (D := D) w (eToEAf D r) = algebraMap D.host.E (Kw w) r from Comparison₂.cpt_tmul w r]
       exact mul_le_of_le_of_le_one (hI r hr) h4
     · intro a b
-      rw [genMap_zero, Matrix.map_zero _ (eToEAf D).map_zero, show Comparison₂.fr βT βS (0 : Matrix (Fin T.rank) (Fin S.rank) (EAf D)) = 0 by
+      rw [GlobalTheory.LatVacFull.genMap_zero_right, Matrix.map_zero _ (eToEAf D).map_zero, show Comparison₂.fr βT βS (0 : Matrix (Fin T.rank) (Fin S.rank) (EAf D)) = 0 by
         rw [Comparison₂.fr, Matrix.mul_zero, Matrix.zero_mul]]
       simp
     · intro x y _ _ hx hy a b
-      rw [genMap_add, show (GlobalTheory.LatVac.genMap S T 1 s x + GlobalTheory.LatVac.genMap S T 1 s y).map (eToEAf D) = (GlobalTheory.LatVac.genMap S T 1 s x).map (eToEAf D) + (GlobalTheory.LatVac.genMap S T 1 s y).map (eToEAf D) from Matrix.ext fun i j => by simp only [Matrix.map_apply, Matrix.add_apply, map_add], Comparison₂.fr_add, Matrix.add_apply, RingHom.map_add (f := _)]
+      rw [GlobalTheory.LatVacFull.genMap_add_right, show (GlobalTheory.LatVac.genMap S T 1 s x + GlobalTheory.LatVac.genMap S T 1 s y).map (eToEAf D) = (GlobalTheory.LatVac.genMap S T 1 s x).map (eToEAf D) + (GlobalTheory.LatVac.genMap S T 1 s y).map (eToEAf D) from Matrix.ext fun i j => by simp only [Matrix.map_apply, Matrix.add_apply, map_add], Comparison₂.fr_add, Matrix.add_apply, RingHom.map_add (f := _)]
       exact Valuation.map_add_le _ (hx a b) (hy a b)
     · intro o x _ hx a b
       rw [show o • x = (algebraMap (𝓞 D.host.E) D.host.E o) • x from (algebraMap_smul _ _ _).symm, genMap_smul,
@@ -233,7 +220,6 @@ theorem v_le_of_mem_latO_idLat (hS : IsSelfDualC S ΛS) {βS : GL (Fin S.rank) (
 
 end GlobalTheory.DepthBig
 
-
 open GlobalTheory.FunObj.Comparison₂ GlobalTheory.StdFrames Formalism.L2.DIV GlobalTheory.DepthBig in
 theorem GlobalTheory.DepthBig.smul_mem_hatMx_of_mem_latBig : All fun {D} _ _ _ {G} _ _ => ∀ i, i < D.R.m →
     ∀ v : WO (G.V (.grid (i + 1) 0)) (G.V (.grid i 0)),
@@ -244,7 +230,7 @@ theorem GlobalTheory.DepthBig.smul_mem_hatMx_of_mem_latBig : All fun {D} _ _ _ {
   have hV : ∀ X : Node, X.InRange D.R.m → IsSelfDualC (G.V X) (G.Λ X) := fun X hX => by
     by_cases h0 : ∀ j, X ≠ .grid 0 j
     · exact (G.isV hX h0).sd
-    · push_neg at h0
+    · push Not at h0
       obtain ⟨j, rfl⟩ := h0
       exact (GlobalTheory.ChiGrid.colY_isV D T L μ0 hL j hX.2).sd
   have hS := hV (.grid (i + 1) 0) ⟨hi, Nat.zero_le _⟩

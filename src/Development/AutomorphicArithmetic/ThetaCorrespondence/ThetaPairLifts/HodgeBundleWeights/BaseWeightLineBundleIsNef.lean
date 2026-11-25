@@ -94,14 +94,12 @@ import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsPro
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLieBundleFramesChartsChangeBasis, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EigenDecompositionVectorBundle, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLocallyFreeSubsheafDetIso, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLBOfChartPull, Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeadWeightLineNef, Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.IsNefHodgeBundleHeadWeight, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BddAboveSubDegsOfJointlyMono, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivOfIsGrpPullback, Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsTangentEquiv, Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsNefPullLLStepEx, Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.IsNefHodgeBundleTailWeight, Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.BaseWeightLineBundleIsNef
+-- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLieBundleFramesChartsChangeBasis, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EigenDecompositionVectorBundle, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLocallyFreeSubsheafDetIso, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLBOfChartPull, Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeadWeightLineNef, Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.IsNefHodgeBundleHeadWeight, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivOfIsGrpPullback, Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsTangentEquiv, Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsNefPullLLStepEx, Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.IsNefHodgeBundleTailWeight, Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.BaseWeightLineBundleIsNef
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLieBundleFramesChartsChangeBasis =====
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLieBundleFramesChartsChangeBasis", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLatticeCoordinatesStep\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LbIsoDetAffDetOm\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -270,7 +268,6 @@ section -- clump:auto
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.LocM MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.ChartRestriction.G.PullbackSections GlobalTheory.LieMet GlobalTheory.Points GlobalTheory.GradedPieces GlobalTheory.LieVB GlobalTheory.VB
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.EigenFrames
 open GlobalTheory.Twist (resM resM_resM resM_self resM_smul app_resM sec_ext_of_cover)
@@ -324,7 +321,6 @@ open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.CechPic
 
-set_option autoImplicit false
 noncomputable section
 
 namespace GlobalTheory.SubGlue
@@ -507,8 +503,6 @@ open GlobalTheory GlobalTheory.CechPic GlobalTheory.CompHS GlobalTheory.CovTop
 open GlobalTheory.AllWt (Psi)
 open GlobalTheory.HSApp
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.NefHodge
@@ -651,11 +645,11 @@ theorem val_dual_LL_stepEx {j : ℕ} (hj : j ≤ Dw.mult σ) (k k' : F.J) :
     · have : NefStep.stepEx σ j ix = 0 := by
         rcases ix with _ | ⟨σ', i⟩
         · rfl
-        · refine if_neg ?_
+        · refine ite_eq_right ?_
           rintro ⟨rfl, hi⟩
           exact h ⟨⟨i, hi⟩, Finset.mem_coe.2 (Finset.mem_univ _), rfl⟩
       rw [this, neg_zero, zpow_zero, inv_one]
-    · have : NefStep.stepEx σ j (some ⟨σ, Fin.castLE hj i⟩ : Ix Dw) = 1 := if_pos ⟨rfl, i.2⟩
+    · have : NefStep.stepEx σ j (some ⟨σ, Fin.castLE hj i⟩ : Ix Dw) = 1 := ite_eq_left ⟨rfl, i.2⟩
       rw [this, zpow_neg_one, inv_inv]
   rw [e, Units.coe_prod]
   rfl
@@ -732,7 +726,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory GlobalTheory.CechPic GlobalTheory.CompHS GlobalTheory.CovTop
 open GlobalTheory.AllWt (Psi)
 open GlobalTheory.HSApp
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.NefHodge
 theorem isNef_hodgeBundle_headWeight : GlobalTheory.Published.SemiAbelianLieSeminegative → _root_.GlobalTheory.CovTop.Hypotheses'' → GlobalTheory.Published.NefNumerics → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (TF : TorFlag Xo c) (Z : Comp Xo c), FnAlgClosed (Xo := Xo) (c := c) → ∀ (τ : Psi H) (k : ℕ), k < Dw.p → letI := algebraΓOfHom (str₀ TF.X Z); IsNef c.F (L₀ TF.X Z (GlobalTheory.NefWt.headWt τ k)) := by
@@ -747,117 +740,10 @@ end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.IsNefHodgeBundleHeadWeight =====
 
--- ===== clump member: Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BddAboveSubDegsOfJointlyMono =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BddAboveSubDegsOfJointlyMono", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsionFreeOfForallExists\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.ToBidualNaturalityDualSheafTranspose\nimport Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallySubsingletonCohTwistZOfIsProjOver\nimport Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsGloballyGeneratedIffGeneratingSections\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
-section -- clump:auto
-@[expose] public section
-
-set_option autoImplicit false
-
-noncomputable section
-
-open CategoryTheory AlgebraicGeometry TopologicalSpace Limits
-open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-open GlobalTheory.QCoh (IsFiniteQC)
-
-namespace GlobalTheory.VB
-
-variable {k : Type} [Field k] {C : Scheme.{0}} [Algebra k Γ(C, ⊤)] [IsIntegral C]
-
-theorem IsProjCurve.bddAbove_subDegs_of_kernel (hC : IsProjCurve k C) {B Q : C.Modules}
-    [IsFiniteQC Q] (p : B ⟶ Q) (hK : BddAbove (subDegs k (kernel p)))
-    (hQ : BddAbove (subDegs k Q)) : BddAbove (subDegs k B) := by
-  have := hC.isNoetherian
-  obtain ⟨a, ha⟩ := hK
-  obtain ⟨b, hb⟩ := hQ
-  refine ⟨a + b, ?_⟩
-  rintro _ ⟨G, i, hi, rfl⟩
-  have := hi.mono
-  have := hi.isFiniteQC
-  let q : G ⟶ Q := i ≫ p
-  have hKG : IsFiniteQC (kernel q) := .of_mono (kernel.ι q)
-  have hm : Mono (Abelian.factorThruCoimage q) := inferInstance
-  have hc : IsFiniteQC (cokernel (kernel.ι q)) := .of_mono (Abelian.factorThruCoimage q)
-  let j : kernel q ⟶ kernel p := kernel.lift p (kernel.ι q ≫ i) (by
-    rw [Category.assoc]; exact kernel.condition q)
-  have hj : Mono j := mono_of_mono_fac (kernel.lift_ι p (kernel.ι q ≫ i) _)
-  have h₁ : deg k (kernel q) ≤ a := ha (IsCohSub.deg_mem (i := j) ⟨hj, hKG⟩)
-  have h₂ : deg k (cokernel (kernel.ι q)) ≤ b :=
-    hb (IsCohSub.deg_mem (i := Abelian.factorThruCoimage q) ⟨hm, hc⟩)
-  rw [hC.deg_cokernel] at h₂
-  omega
-
-theorem IsProjCurve.bddAbove_subDegs_of_jointly_mono (hC : IsProjCurve k C) {D : C.Modules}
-    [IsFiniteQC D] (hD : BddAbove (subDegs k D)) (n : ℕ) :
-    ∀ (Z : C.Modules) [IsFiniteQC Z] (ψ : Fin n → (Z ⟶ D)),
-      (∀ (W : C.Modules) (g : W ⟶ Z), (∀ j, g ≫ ψ j = 0) → g = 0) →
-      BddAbove (subDegs k Z) := by
-  have := hC.isNoetherian
-  induction n with
-  | zero =>
-    intro Z _ ψ h
-    have hZ : IsZero Z := (IsZero.iff_id_eq_zero Z).2 (h Z (𝟙 Z) fun j => j.elim0)
-    refine ⟨0, ?_⟩
-    rintro _ ⟨G, i, hi, rfl⟩
-    have := hi.mono
-    exact (deg_eq_zero_of_isZero k (hZ.of_mono i)).le
-  | succ n ih =>
-    intro Z _ ψ h
-    have : IsFiniteQC (kernel (ψ 0)) := .of_mono (kernel.ι (ψ 0))
-    refine hC.bddAbove_subDegs_of_kernel (ψ 0)
-      (ih (kernel (ψ 0)) (fun j => kernel.ι (ψ 0) ≫ ψ j.succ) fun W g hg => ?_) hD
-    have h0 : g ≫ kernel.ι (ψ 0) = 0 := h W _ fun j => by
-      refine Fin.cases ?_ (fun j => ?_) j
-      · rw [Category.assoc, kernel.condition, comp_zero]
-      · rw [Category.assoc]; exact hg j
-    exact (cancel_mono (kernel.ι (ψ 0))).1 (h0.trans (zero_comp).symm)
-
-theorem dualMap_sum {F G : C.Modules} {ι : Type} (s : Finset ι) (f : ι → (F ⟶ G)) :
-    dualMap (∑ j ∈ s, f j) = ∑ j ∈ s, dualMap (f j) :=
-  map_sum (AddMonoidHom.mk' (dualMap (F := F) (G := G)) dualMap_add) f s
-
-theorem bddAbove_subDegs_of_isVB : ∀ (k : Type) [Field k] (C : Scheme.{0}) [Algebra k Γ(C, ⊤)]
-    [IsIntegral C], IsProjCurve k C → ∀ (F : C.Modules) (r : ℕ), IsVB F r →
-    BddAbove (subDegs k F) := by
-  intro k _ C _ _ hC F r hF
-  obtain ⟨_, A, hA⟩ := isProper_and_exists_isAmpleLB_of_isProjOver hC.isProjOver
-  have := hF.isFiniteQC
-  have := hF.dual.isFiniteQC
-  obtain ⟨m, n, φ, hφ⟩ := (hA.eventually_exists_epi_sigma (dual F)).exists
-  have hL := Twist.isLB_lbZPow hA.isLB (-m)
-  have hT := isVB_toMod hL
-  let T := GlobalTheory.LB.toMod (lbZPow A (-m))
-  have hD : IsVB (dual T) 1 := hT.dual
-  have := hD.isFiniteQC
-  have := Abelian.hasFiniteBiproducts (C := C.Modules)
-  let φ' : (⨁ fun _ : Fin n => T) ⟶ dual F := (biproduct.isoCoproduct _).hom ≫ φ
-  have hφ' : Epi φ' := inferInstance
-  have hb := hF.isIso_toBidual_of_local_frames
-  refine hC.bddAbove_subDegs_of_jointly_mono (hC.isMaxSubDeg_of_rank_one hD).bddAbove n F
-    (fun j => cartierDualToBidual F ≫ dualMap (biproduct.ι (fun _ : Fin n => T) j ≫ φ')) fun W g hg => ?_
-  have h0 : (g ≫ cartierDualToBidual F) ≫ dualMap φ' = 0 := by
-    rw [← Category.comp_id ((g ≫ cartierDualToBidual F) ≫ dualMap φ'), ← dualMap_id,
-      ← biproduct.total, dualMap_sum, Preadditive.comp_sum]
-    refine Finset.sum_eq_zero fun j _ => ?_
-    have := hg j
-    rw [dualMap_comp, dualMap_comp] at *
-    simp only [Category.assoc] at *
-    rw [reassoc_of% this, zero_comp]
-  have h1 : g ≫ cartierDualToBidual F = 0 := (cancel_mono (dualMap φ')).1 (h0.trans zero_comp.symm)
-  exact (cancel_mono (cartierDualToBidual F)).1 (h1.trans zero_comp.symm)
-
-end GlobalTheory.VB
-end -- clump:auto
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BddAboveSubDegsOfJointlyMono =====
-
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivOfIsGrpPullback =====
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivOfIsGrpPullback", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EpsZeroCompOfIsTanAtG\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsBlockMetricDiagForm\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppLESecEpsZeroEpsFn\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoToBidualOfLocalFrames\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentSurjective\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.CategoryTheory.Monoidal.Opposite.Mon\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -869,8 +755,6 @@ open GlobalTheory.Twist (resM resM_self)
 open GlobalTheory.QCoh (pullbackSections)
 open ReciprocityTheory.ChartRestriction.G.Pdiv (specO ptMap LieG dualScale)
 open scoped CategoryTheory.Obj
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.LocM.TanPair
 
@@ -992,11 +876,9 @@ end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivOfIsGrpPullback =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsTangentEquiv =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsTangentEquiv", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LinearIndependentVec\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EpsZeroCompOfIsTanAtG\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppLESecEpsZeroEpsFn\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFrameOfProjective\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BddAboveSubDegsOfJointlyMono\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsBasisOfIntFrame\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivOfIsGrpPullback\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsCohSubDegEqSum\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsTotallyComplexOfI\nimport Development.AbelianVarietyTheory.Statements.PrincipalLattices.LogHermFormOfUnitDiscriminant\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Std.Tactic.BVDecide.Normalize.Prop\nimport Mathlib.CategoryTheory.Monoidal.Opposite.Mon\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsTangentEquiv", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LinearIndependentVec\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EpsZeroCompOfIsTanAtG\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppLESecEpsZeroEpsFn\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFrameOfProjective\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsBasisOfIntFrame\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivOfIsGrpPullback\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsCohSubDegEqSum\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsTotallyComplexOfI\nimport Development.AbelianVarietyTheory.Statements.PrincipalLattices.LogHermFormOfUnitDiscriminant\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Std.Tactic.BVDecide.Normalize.Prop\nimport Mathlib.CategoryTheory.Monoidal.Opposite.Mon\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -1109,199 +991,6 @@ variable {D : D7} {A : Amb D} {N j : ℕ} {S : Sig A N j} {κ : Lv A}
 
 end Inhabitants
 
-section Steps
-
-variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H}
-  {Xo : ∀ l : Level H, Moduli Dw l} {p : ℕ} {W : ValuationSubring ℂ} {Y : LocalSystem Xo p W} {i₀ : Idx H p}
-  {Z : Mdl Y i₀}
-
-theorem IntChart.left_vec_map (q : IntChart Z) {R R' : Type} [CommRing R] [CommRing R'] (ψ : R →+* R') {x : Sp R ⟶ Z.X}
-    {x' : Sp R' ⟶ Z.X} (hx : spMap ψ ≫ x = x') (h : ⊤ ≤ x ⁻¹ᵁ q.U) (h' : ⊤ ≤ x' ⁻¹ᵁ q.U) (σ : E →+* ℂ)
-    (a : Fin (Dw.mult σ)) : (tv (q.vec x' h' σ a)).left = spMap (dualMap ψ) ≫ (tv (q.vec x h σ a)).left := by
-  have e : spMap (ψ.comp (valMap x _ h).hom) ≫ q.aff.fromSpec = x' := by
-    rw [← hx, ← spMap_comp_spMap, Category.assoc, spMap_valMap]
-  rw [q.vec_eq _ e, IntChart.vec, left_tanOf, left_tanOf, Vecs.bc, Vecs.bc, dual_comp]
-
-theorem IntChart.exists_basis (q : IntChart Z) {R : Type} [CommRing R] (x : Sp R ⟶ Z.X) (h : ⊤ ≤ x ⁻¹ᵁ q.U)
-    (σ : E →+* ℂ) : ∃ (n : ℕ) (e : Fin (Dw.mult σ) ↪ Fin n) (b : Module.Basis (Fin n) R (TanM (x ≫ Z.π) (Y Z.i).t.G)),
-      ∀ a, b (e a) = q.vec x h σ a := by
-  obtain ⟨n, v, e, he, hv, hb⟩ := q.int.1 σ
-  have hx : spMap (valMap x _ h).hom ≫ q.aff.fromSpec ≫ Z.π = x ≫ Z.π := by rw [← Category.assoc, spMap_valMap]
-  have hv' := fun i => isTan_map _ hx (hv i)
-  have key (u : TanM (x ≫ Z.π) (Y Z.i).t.G) : ∃! cf : Fin n → R, ∑ i, cf i • tanOf (hv' i) = u := by
-    simpa only [comb_iff hv' _ (isTan_tv u), eq_comm (b := ∑ _, _), show tanOf (isTan_tv u) = u from tan_ext rfl] using
-      basis_map _ hx hv hb _ (isTan_tv u)
-  refine ⟨n, e, .mk (v := fun i => tanOf (hv' i)) (Fintype.linearIndependent_iffₛ.2 fun f g hfg =>
-    congrFun ((key _).unique hfg rfl)) fun u _ => (Submodule.mem_span_range_iff_exists_fun R).2 (key u).exists,
-    fun a => ?_⟩
-  rw [Module.Basis.mk_apply]
-  exact tan_ext (by rw [IntChart.vec, left_tanOf, left_tanOf, he a]; rfl)
-
-namespace Curve
-
-variable {k : Type} [Field k] (c : Curve k Z.X) (hZ : HasDR Z)
-
-theorem isAffineOpen_inf {T T' : c.C.Opens} (hT : IsAffineOpen T) (hT' : IsAffineOpen T') : IsAffineOpen (T ⊓ T') := by
-  have := c.isProjCurve.isProperCurve.isProper
-  have : IsSeparated (terminal.from c.C) := by
-    rw [← terminal.comp_from (strHom k c.C)]
-    infer_instance
-  exact hT.inf hT'
-
-theorem exists_subsheaf {α : Type} [Fintype α] (rk : α → ℕ) (σ : α → (E →+* ℂ)) (ix : ∀ a, Fin (Dw.mult (σ a))) (P : Prop)
-    (hb : ∀ (q : IntChart Z) (R : Type) [CommRing R] (x : Sp R ⟶ Z.X) (h : ⊤ ≤ x ⁻¹ᵁ q.U),
-      ∃ (κ : Type) (_ : Fintype κ) (e : α ↪ κ) (b : Module.Basis κ R (TanM (x ≫ Z.π) (Y Z.i).t.G)),
-        (P → Function.Surjective e) ∧ ∀ a, b (e a) = q.vec x h (σ a) (ix a))
-    (ht : ∀ (q q' : IntChart Z) (R : Type) [CommRing R] (x : Sp R ⟶ Z.X) (h : ⊤ ≤ x ⁻¹ᵁ q.U) (h' : ⊤ ≤ x ⁻¹ᵁ q'.U) (a : α),
-      ∃ cf : α → R, cf a = valR x _ (q'.chg q hZ (σ a) (ix a) (ix a)) ∧ (∀ b, b ≠ a → rk a ≤ rk b → cf b = 0) ∧
-        q'.vec x h' (σ a) (ix a) = ∑ b, cf b • q.vec x h (σ b) (ix b))
-    (S : Finset α) (hS : ∀ a ∈ S, ∀ b, rk b < rk a → b ∈ S) :
-    ∃ (G : c.C.Modules) (i : G ⟶ c.lie), IsCohSub i ∧ deg k G = ∑ a ∈ S, c.degStep hZ (σ a) (ix a) ∧
-      (P → S = Finset.univ → IsIso i) := by
-  obtain ⟨Ψ, hΨ⟩ := exists_tangent_equiv c.tMap
-  obtain ⟨g, hg⟩ := c.exists_isVB_lie
-  have := hg.isQuasicoherent
-  let J := {q : c.C.Opens × IntChart Z // CoordOpen c.t q.1 ∧ q.1 ≤ c.f ⁻¹ᵁ q.2.U}
-  have hin {T : c.C.Opens} (hT : IsAffineOpen T) {U : Z.X.Opens} (h : T ≤ c.f ⁻¹ᵁ U) : ⊤ ≤ (affPt hT ≫ c.f) ⁻¹ᵁ U :=
-    fun z hz => h (le_preimage_affPt hT hz)
-  have hc : ⨆ j : J, j.1.1 = ⊤ := top_unique fun x _ => by
-    obtain ⟨q, hq⟩ := hZ.exists_intChart (c.f x)
-    obtain ⟨T, hT, hx, hle⟩ := exists_coordOpen c.t (V := c.f ⁻¹ᵁ q.U) hq
-    exact Opens.mem_iSup.2 ⟨⟨(T, q), hT, hle⟩, hx⟩
-  choose κ _ e b hP hbe using fun j : J => hb j.1.2 _ (affPt j.2.1.1 ≫ c.f) (hin _ j.2.2)
-  let B (j : J) := (b j).map (Ψ _ j.2.1 _ (Category.assoc _ _ _).symm)
-  have hB (j : J) : VB.IsFrame (B j) := Summand.isFrame_of_affine_basis j.2.1.1 _
-  have hres (j : J) {T : c.C.Opens} (hT : CoordOpen c.t T) (h : T ≤ j.1.1) (a : α) : resM c.lie h (B j (e j a)) =
-      Ψ T hT _ (Category.assoc _ _ _).symm (j.1.2.vec _ (hin hT.1 (h.trans j.2.2)) (σ a) (ix a)) := by
-    rw [Module.Basis.map_apply, hbe]
-    exact (hΨ _ _ _ _ _ _ _ _ h _ _ (j.1.2.left_vec_map _ (by rw [← Category.assoc, spMap_affPt]) _ _ _ _)).symm
-  obtain ⟨G, i, hi, hd, hs⟩ := GlobalTheory.TriangularFrames.exists_isCohSub_deg_eq_sum k c.C c.isProjCurve c.lie J _ hc κ (fun j => B j) hB α rk e
-    (fun a => (grLB hZ (-oneAt Dw (σ a) (ix a))).pull c.f) (fun a => LB.isLB_pull (isLB_grLB hZ _) _)
-    (fun _ j _ => j.1.2) (fun a j => j.2.2.trans (GlobalTheory.LB.pull_U (L := grLB hZ _) c.f fun _ => j.1.2).ge)
-    (fun j j' a => by
-      have hT := j.2.1.mono (c.isAffineOpen_inf j.2.1.1 j'.2.1.1) inf_le_left
-      have h := hin hT.1 (inf_le_left.trans j.2.2)
-      have h' := hin hT.1 (inf_le_right.trans j'.2.2)
-      obtain ⟨cf, h₁, h₂, h₃⟩ := ht j.1.2 j'.1.2 _ _ h h' a
-      refine ⟨cf, h₁.trans (.symm ?_), h₂, ?_⟩
-      · refine (GlobalTheory.LB.resG_pull_g (L := grLB hZ _) c.f _ _ _).trans ((valR_affPt hT.1 _).symm.trans
-          ((valR_appLE _ _ _ (le_preimage_affPt hT.1) _).trans ?_))
-        exact (congrArg _ (IntChart.tr_neg_oneAt j.1.2 j'.1.2 hZ _ _)).trans (valR_res _ _ (le_preimage_inf h h') _)
-
-      · simp only [hres _ hT, h₃, map_sum, map_smul]) S hS
-  refine ⟨G, i, hi, hd, fun hp hS => ?_⟩
-  have := hi.mono
-  refine Twist.isIso_of_cover i hc fun j V hV => ⟨QCoh.injective_app_of_mono i V, fun x => (hs j V hV x).2 ?_⟩
-  refine Submodule.span_mono ?_ ((isFrame_iff.1 (hB j) V hV).2 Submodule.mem_top)
-  rintro _ ⟨m, rfl⟩
-  obtain ⟨a, rfl⟩ := hP j hp m
-  exact ⟨a, by simp [hS], rfl⟩
-
-theorem isMaxSubDeg_Pm : IsMaxSubDeg k c.lie c.Pm := by
-  obtain ⟨g, hg⟩ := c.exists_isVB_lie
-  obtain ⟨P, hP⟩ := exists_isMaxSubDeg_iff.2 (GlobalTheory.VB.bddAbove_subDegs_of_isVB k c.C c.isProjCurve _ g hg)
-  rwa [c.Pm_eq hP]
-
-theorem sum_degStep_mem (σ : E →+* ℂ) (n : ℕ) : ∑ m ∈ Finset.range n, c.degStep hZ σ m ∈ subDegs k c.lie := by
-  obtain ⟨G, i, hi, hd, -⟩ := c.exists_subsheaf hZ (α := Fin (Dw.mult σ)) Fin.val (fun _ => σ) id False
-    (fun q R _ x h => have ⟨_, e, b, hb⟩ := q.exists_basis x h σ; ⟨_, inferInstance, e, b, False.elim, hb⟩)
-    (fun q q' R _ x h h' a => ⟨_, rfl, fun b hb hab => by
-      rw [q'.chg_eq_zero q hZ σ (lt_of_le_of_ne hab hb.symm), valR_zero_fn], q'.vec_eq_sum q hZ x h' h σ a⟩)
-    (Finset.univ.filter fun a => a.val < n) (by simp only [Finset.mem_filter, Finset.mem_univ, true_and]; omega)
-  refine ⟨G, i, hi, hd.trans ?_⟩
-  refine Finset.sum_bij_ne_zero (fun a _ _ => a.val) (fun a ha _ => by simpa using ha)
-    (fun _ _ _ _ _ _ => Fin.ext) (fun m hm h0 => ?_) fun _ _ _ => rfl
-  have : m < Dw.mult σ := lt_of_not_ge fun h => h0 (c.degStep_eq_zero hZ h)
-  exact ⟨⟨m, this⟩, by simpa using hm, h0, rfl⟩
-
-theorem sum_degStep_le (σ : E →+* ℂ) (n : ℕ) : ∑ m ∈ Finset.range n, c.degStep hZ σ m ≤ c.Pm :=
-  c.isMaxSubDeg_Pm.2 (c.sum_degStep_mem hZ σ n)
-
-theorem deg_lie (hp : p.Prime) (hW : (p : ℂ) ∈ W.nonunits) (hu : ¬ p ∣ (discr E).natAbs) :
-    deg k c.lie = ∑ σ, ∑ m ∈ Finset.range (Dw.mult σ), c.degStep hZ σ m := by
-  classical
-  obtain ⟨G, i, -, hd, hi⟩ := c.exists_subsheaf hZ (α := Σ σ : E →+* ℂ, Fin (Dw.mult σ)) (fun a => a.2.val) Sigma.fst
-    Sigma.snd True
-    (fun q R _ x h => by
-      obtain ⟨b, hb⟩ := GlobalTheory.TotalFrame.exists_basis_of_intFrame E H Dw Xo p W hp hW hu Y i₀ Z q.U q.aff q.w q.int R _ x (spMap_valMap q.aff x h)
-      exact ⟨_, inferInstance, .refl _, b, fun _ => Function.surjective_id, fun a => tan_ext (hb a.1 a.2)⟩)
-    (fun q q' R _ x h h' ⟨σ, a⟩ => by
-      refine ⟨fun b => (Pi.single σ (fun b => valR x _ (q'.chg q hZ σ a b)) : ∀ σ, Fin (Dw.mult σ) → R) b.1 b.2,
-        by simp, fun ⟨σ', b⟩ hb hab => ?_, ?_⟩
-      · by_cases e : σ' = σ
-        · subst e
-          simp only [Pi.single_eq_same]
-          rw [q'.chg_eq_zero q hZ σ' (lt_of_le_of_ne hab fun e : a = b => hb (e ▸ rfl)), valR_zero_fn]
-        · simp [e]
-      · rw [Fintype.sum_sigma, Finset.sum_eq_single σ (fun σ' _ e => by simp [e]) (by simp)]
-        simpa only [Pi.single_eq_same] using q'.vec_eq_sum q hZ x h' h σ a)
-    Finset.univ (by simp)
-  have := hi trivial rfl
-  rw [← deg_congr k (asIso i), hd, Fintype.sum_sigma]
-  exact Finset.sum_congr rfl fun σ _ => Fin.sum_univ_eq_sum_range (c.degStep hZ σ) _
-
-end Curve
-
-end Steps
-
-section Place
-
-open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.ModuliIntegralCharts GlobalTheory.ShFam
-
-variable {D : D7} {A : Amb D} {N j : ℕ} {S : Sig A N j} {κ : Lv A} {p : ℕ}
-
-theorem sum_emb_eq (D : D7) (F : (D.host.E →+* ℂ) → ℤ) :
-    ∑ σ, F σ = ∑ᶠ τ : PsiT D, (F (embOf D τ) + F (conjEmb (embOf D τ))) := by
-  have := Fintype.ofEquiv _ D.eTau
-  have e (τ : PsiT D) : embOf D τ = D.host.emb τ := by rw [embOf, DV.tauEmb, Equiv.apply_symm_apply]
-  rw [finsum_eq_sum_of_fintype, Finset.sum_add_distrib]
-  refine (Fintype.sum_bijective _ (GlobalTheory.Mem.BaseEx.sum_emb_bijective D.host) _ _ ?_).symm.trans (Fintype.sum_sum_type
-    (Sum.elim (fun τ => F (embOf D τ)) fun τ => F (conjEmb (embOf D τ))))
-  rintro (τ | τ)
-  · exact congrArg F (e τ)
-  · exact congrArg (fun σ => F (conjEmb σ)) (e τ)
-
-namespace At
-
-variable (ct : At S κ p) {k : Type} [Field k] (c : Curve k ct.YY.X)
-
-theorem degLie_false (τ : PsiT D) : ct.degLie c τ false =
-    ∑ m ∈ Finset.range (S.Dw.mult (embOf D τ)), c.degStep ct.hasDR (embOf D τ) m := by
-  rw [mult_embOf]
-  exact ct.sum_degPiece_head c τ le_rfl
-
-theorem degLie_true (τ : PsiT D) : ct.degLie c τ true =
-    ∑ m ∈ Finset.range (S.Dw.mult (conjEmb (embOf D τ))), c.degStep ct.hasDR (conjEmb (embOf D τ)) m := by
-  rw [mult_conj_embOf]
-  exact ct.sum_degPiece_tail c τ le_rfl
-
-theorem eDeg_eq (hu : DV.UnramE D p) : c.eDeg = -∑ᶠ τ, (ct.degLie c τ false + ct.degLie c τ true) := by
-  simp only [degLie_false, degLie_true]
-  rw [Curve.eDeg, c.deg_lie ct.hasDR ct.hp ct.hW hu, sum_emb_eq]
-
-end At
-
-def crdTrue (ct : At S κ p) : CrDSt ct where
-  nefQ := ct.nefQ
-  Crv := ct.Crv
-  eDeg c := c.eDeg
-  Pm c := c.Pm
-  Pm_nonneg c := c.isMaxSubDeg_Pm.nonneg
-  degLie c := ct.degLie c
-  degLdR c := ct.degWt c
-  CrvQ := ct.CrvQ
-  degGrQ c := ct.degPiece c
-  nefQ_def _ := Iff.rfl
-  degGrD c := ct.degPiece c
-  degLdR_def _ _ := rfl
-  degLie_f _ _ := rfl
-  degLie_alt _ _ := rfl
-  eDeg_def hu c := ct.eDeg_eq c hu
-  Pm_head c τ _ _ h := (ct.sum_degPiece_head c τ h).trans_le (c.sum_degStep_le _ _ _)
-  Pm_tail c τ _ h _ := (ct.sum_degPiece_tail c τ h).trans_le (c.sum_degStep_le _ _ _)
-
-end Place
-
 end GlobalTheory.LocM
 end -- clump:auto
 end -- clump:auto
@@ -1312,8 +1001,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsNefPullLLStepEx", "h": "module\n\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.InterNumDetNonposSplitTorus\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsTangentEquiv\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExOfHeadWt\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothOfRelativeDimensionOne\nimport Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallySubsingletonCohTwistZOfIsProjOver\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFrameOfProjective\nimport Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AffineOpenChartCompStructureEqSpMap\nimport Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsCohSubDegEqSum\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LawsProved\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.GenBridgeA\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -1537,7 +1224,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory GlobalTheory.CechPic GlobalTheory.CompHS GlobalTheory.CovTop
 open GlobalTheory.AllWt (Psi)
 open GlobalTheory.HSApp
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.NefStep
 theorem isNef_hodgeBundle_tailWeight : GlobalTheory.Published.SemiAbelianLieSeminegative → _root_.GlobalTheory.CovTop.Hypotheses'' → GlobalTheory.Published.NefNumerics → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (TF : TorFlag Xo c) (Z : Comp Xo c), FnAlgClosed (Xo := Xo) (c := c) → ∀ (τ : Psi H) (k : ℕ), Dw.p ≤ k → k + 1 < Dw.p + Dw.q → letI := algebraΓOfHom (str₀ TF.X Z); IsNef c.F (L₀ TF.X Z (GlobalTheory.NefWt.tailWt τ k)) := by
@@ -1569,7 +1255,6 @@ open GlobalTheory.FlagMod (FlagCover)
 open GlobalTheory.FlagTan (dimFlag)
 open GlobalTheory.HSApp
 open scoped GlobalTheory.CompHt
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.NefWt
 theorem weight_line_bundle_isNef : _root_.GlobalTheory.CovTop.Hypotheses'' → GlobalTheory.Published.NefNumerics → GlobalTheory.Published.SemiAbelianLieSeminegative → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (TF : TorFlag Xo c) (Z : Comp Xo c), FnAlgClosed (Xo := Xo) (c := c) → ∀ la : AllWt.Weight Dw, GapGe 0 la → letI := algebraΓOfHom (str₀ TF.X Z); IsNef c.F (L₀ TF.X Z la) := by

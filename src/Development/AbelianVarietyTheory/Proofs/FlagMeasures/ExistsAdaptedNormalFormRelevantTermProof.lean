@@ -206,7 +206,7 @@ theorem exists_dual [FiniteDimensional K V] (G : FlagD H r) (b : Fin r) :
   have hn : G.e b.castSucc ∉ Submodule.span K ((fun a : Fin r => G.e a.castSucc) '' {b}ᶜ) :=
     G.indep.notMem_span_image (by simp)
   have h := mt (memOfOrthogonalOrthogonal K V H _ (G.e b.castSucc)) hn
-  push_neg at h
+  push Not at h
   obtain ⟨v, hv, hb⟩ := h
   refine ⟨star (H.B (G.e b.castSucc) v)⁻¹ • v, fun a => ?_⟩
   rw [map_smulₛₗ]
@@ -356,7 +356,7 @@ theorem entry_cb (bs : List (K × ℕ)) (hb : ∀ b ∈ bs, b.1 ≠ 0 ∧ 1 ≤ 
     obtain ⟨t, s⟩ := b
     have h := hb (t, s) (by simp)
     have ih' := ih (fun b hb' => hb b (by simp [hb']))
-    simp only [List.map_cons, cb, dif_pos h, Formalism.MainNotions.S.Loc.ptEntryL, Formalism.MainNotions.S.ptEntry, PNat.mk_coe, Units.val_mk0]
+    simp only [List.map_cons, cb, dite_eq_left h, Formalism.MainNotions.S.Loc.ptEntryL, Formalism.MainNotions.S.ptEntry, PNat.mk_coe, Units.val_mk0]
     simp only [ih', apply_ite star, star_zero]
     exact if_congr Iff.rfl (if_congr Iff.rfl rfl rfl) (if_congr Iff.rfl rfl rfl)
 
@@ -367,7 +367,7 @@ theorem size_cb (bs : List (K × ℕ)) (hb : ∀ b ∈ bs, b.1 ≠ 0 ∧ 1 ≤ b
   | cons b bs ih =>
     have h := hb b (by simp)
     have ih' := ih (fun b hb' => hb b (by simp [hb']))
-    simp only [List.map_cons, List.sum_cons, cb, dif_pos h, PNat.mk_coe, ih']
+    simp only [List.map_cons, List.sum_cons, cb, dite_eq_left h, PNat.mk_coe, ih']
 
 end Mat
 end GlobalTheory.TypeAsm.NFEx
@@ -439,8 +439,6 @@ namespace GlobalTheory.TypeAsm.NFEx
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.MainNotions.S.Cnt
   Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.KappaEndpoints Formalism.MainNotions.BridgeLemma Formalism.MainNotions.LatticeGluingRadicals
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem zhat_eq {D : D7} {X : HidaSetting D} {Y : Full X} {u : D.what₂.Word} (t : GTu Y u)
     (j : ℕ) (hj : j ≤ D.R.rS + 1) :
     (Formalism.HermitianLatticeCounting.S6.Zhat (F0 X u) (Ft t)).submatrix (Fin.castLE hj) (Fin.castLE hj) =
@@ -453,8 +451,6 @@ end GlobalTheory.TypeAsm.NFEx
 namespace GlobalTheory.TypeAsm.NFEx
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.MainNotions.S.Cnt
   Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.KappaEndpoints Formalism.MainNotions.BridgeLemma Formalism.MainNotions.LatticeGluingRadicals
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem nfExC (hHost : HostC) : NFExC := by
   intro D large₂ X Y u hStd t ht

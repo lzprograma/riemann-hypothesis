@@ -1,5 +1,7 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagAdjacentTwoFramesOrbit
+
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorIJMap
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockDiagonalMinorVanishing
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GenericBlockMatrixIsBlockDiag
@@ -11,55 +13,10 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockDiagFrame
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticFifth
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.Values
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticFirst
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.SameOrbitRefl
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.CoreStatements.PluriharmonicCharts.MinorSingle, Development.WeilBound.CoreStatements.PluriharmonicCharts.XCCovSelf, Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverDegreeOneRealisation
@@ -130,16 +87,7 @@ theorem val_prod {α : Type} (t : Finset α) (f : α → Ω) (v : α → ℂ) (h
 theorem reg_detFac (hz : z ∈ mcPts (mCoordIdeal x)) {N : ℕ} (j : ℕ) (i : Fin N) {A : Matrix (Fin N) (Fin N) Ω}
     (hA : ∀ a b, RegAt x (mCoordIdeal z) (A a b)) :
     RegAt x (mCoordIdeal z) (detFac j i A) ∧ valAt x (detFac j i A) z = detFac j i (valMat x z A) := by
-  have h1 := reg_minor hz hA (wIdx N j) (wIdx N j)
-  have h2 := reg_minor hz hA (omIdx N j) (omIdx N j)
-  have h0 := FV.valAt_one' hz
-  have r0 := ValRing.regAt_one x z
-  unfold detFac
-  split_ifs
-  · exact ⟨(reg_mul hz h1.1 h2.1).1, by rw [(reg_mul hz h1.1 h2.1).2, h1.2, h2.2]⟩
-  · simp only [mul_one]; exact h1
-  · simp only [one_mul]; exact h2
-  · simp only [mul_one]; exact ⟨r0, h0⟩
+  apply _root_.GlobalTheory.CompanionTheory.Ar.PB.WSq.Sec.Scal.reg_detFac <;> assumption
 
 end Val
 
@@ -185,10 +133,10 @@ theorem rel (h₁ : M.IsFrame F₁) (h₂ : M.IsFrame F₂) (c₁ : ∀ k, M.x �
   have hm : ∀ I, minorIJ ((F₁.T p.1)⁻¹ * F₂.T p.1 * FrameChange.unitCols I' (stepCols N j p.2) hI'.1) I
       (stepCols N j p.2) = minorIJ ((F₁.T p.1)⁻¹ * F₂.T p.1) I I' := fun I => by
     rw [MinorCalc.minorIJ_mul]
-    simp only [FrameChange.minor_unitCols, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [FrameChange.minor_unitCols, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have hr : ∑ I, F₂.u ⟨k, m⟩ I * minorIJ (FrameChange.unitCols I' (stepCols N j p.2) hI'.1) I (stepCols N j p.2) =
       F₂.u ⟨k, m⟩ I' := by
-    simp only [FrameChange.minor_unitCols, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [FrameChange.minor_unitCols, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   simp only [hm] at e1
   rw [hr, detFac_chg h₁ h₂, ← rho_mul (F₂ := F₂) c₁] at e2
   simp only [mul_assoc]
@@ -234,7 +182,7 @@ theorem step_mem (hz : zb ∈ mcPts (mCoordIdeal M.x)) (h₁ : M.IsFrame F₁) (
     have := ((_root_.GlobalTheory.CompanionTheory.Ar.PB.MinorCalc.minors_main M.Ω N j i M.j_le).2.1 _ I (hS.mul hE) hI).resolve_right (FV.stepCols_ne_empty i)
     rw [MinorCalc.minorIJ_mul] at this
     simpa only [FrameChange.minor_unitCols, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
-      if_true] using this
+      ite_true] using this
   have e : detFac j i S * minorIJ S I₀ I' = ∑ m : ι k, F₁.u' I₀ ⟨k, m⟩ * (rho M F₁ F₂ (τ, i) * F₂.u ⟨k, m⟩ I') := by
     have r := fun m => rel h₁ h₂ (x_chart_ne_zero_of_goodAt hz g₁) hk m I' h'
     simp only [← r, Finset.mul_sum]
@@ -281,7 +229,7 @@ theorem w_mem (hz : zb ∈ mcPts (mCoordIdeal M.x)) (h₁ : M.IsFrame F₁) (h�
       omega
     have := nonstep_mem hz h₁ h₂ g₁ g₂ τ i fun h => h.1 (by simp [i, h1])
     unfold detFac at this
-    rw [if_pos (by simp [i, h1]), hW, minor_single] at this
+    rw [ite_eq_left (by simp [i, h1]), hW, minor_single] at this
     split_ifs at this with h2
     · have hO : omIdx N j = ∅ := by
         ext c
@@ -296,14 +244,14 @@ theorem w_mem (hz : zb ∈ mcPts (mCoordIdeal M.x)) (h₁ : M.IsFrame F₁) (h�
       have hs : stepCols N j i = {⟨N - j, by omega⟩} := by
         ext c
         simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton, Fin.ext_iff, i]
-        rw [if_pos (by omega)]
+        rw [ite_eq_left (by omega)]
         omega
       refine ⟨by rw [hs]; rfl, ?_⟩
-      rw [if_pos (by simp only [i]; omega)]
+      rw [ite_eq_left (by simp only [i]; omega)]
       exact Finset.singleton_subset_iff.2 hc
     have := step_mem hz h₁ h₂ g₁ g₂ τ i ⟨by simp only [i]; omega, by simp only [i]; omega⟩ (hrow a ha) (hrow b hb)
     unfold detFac at this
-    rwa [if_neg (by simp only [i]; omega), if_neg (by simp only [i]; omega), one_mul, one_mul, minor_single] at this
+    rwa [ite_eq_right (by simp only [i]; omega), ite_eq_right (by simp only [i]; omega), one_mul, one_mul, minor_single] at this
 
 theorem all_mem (hz : zb ∈ mcPts (mCoordIdeal M.x)) (h₁ : M.IsFrame F₁) (h₂ : M.IsFrame F₂)
     (g₁ : M.GoodAt F₁ (mCoordIdeal zb)) (g₂ : M.GoodAt F₂ (mCoordIdeal zb)) (τ : Ψ) (a b : Fin N) :
@@ -339,20 +287,20 @@ theorem all_mem (hz : zb ∈ mcPts (mCoordIdeal M.x)) (h₁ : M.IsFrame F₁) (h
       omega
     have := nonstep_mem hz h₁ h₂ g₁ g₂ τ i fun h => h.2 h1
     unfold detFac at this
-    rwa [if_pos (by simp only [i]; omega), if_pos h1, hO, minor_single] at this
+    rwa [ite_eq_left (by simp only [i]; omega), ite_eq_left h1, hO, minor_single] at this
   · have hrow : ∀ c : Fin N, (c : ℕ) < N - j → IsStepRows N j i {c} := by
       intro c hc
       have hs : stepCols N j i = {⟨0, by omega⟩} := by
         ext c
         simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton, Fin.ext_iff, i]
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
         omega
       refine ⟨by rw [hs]; rfl, ?_⟩
-      rw [if_neg (by simp only [i]; omega)]
+      rw [ite_eq_right (by simp only [i]; omega)]
       exact Finset.singleton_subset_iff.2 (by simpa [omIdx] using hc)
     have := step_mem hz h₁ h₂ g₁ g₂ τ i ⟨by simp only [i]; omega, h1⟩ (hrow a ha) (hrow b hb)
     unfold detFac at this
-    rwa [if_pos (by simp only [i]; omega), if_neg h1, mul_one, minor_single] at this
+    rwa [ite_eq_left (by simp only [i]; omega), ite_eq_right h1, mul_one, minor_single] at this
 
 theorem relC (hz : zb ∈ mcPts (mCoordIdeal M.x)) (h₁ : M.IsFrame F₁) (h₂ : M.IsFrame F₂)
     (g₁ : M.GoodAt F₁ (mCoordIdeal zb)) (g₂ : M.GoodAt F₂ (mCoordIdeal zb)) {p : Ψ × Fin N} {k : K}
@@ -364,7 +312,7 @@ theorem relC (hz : zb ∈ mcPts (mCoordIdeal M.x)) (h₁ : M.IsFrame F₁) (h₂
   have hd := reg_detFac hz j p.2 hA
   have hstep : IsStepRows N j p.2 (stepCols N j p.2) := FV.isStepRows_stepCols p.2
   have hinv := h₂.2.2.1 p k hp _ _ hstep hstep
-  rw [if_pos rfl] at hinv
+  rw [ite_eq_left rfl] at hinv
   obtain ⟨-, hval⟩ := FV.reg_values hz p.2
     (fun (m : ι k) I => detFac j p.2 ((F₁.T p.1)⁻¹ * F₂.T p.1) * F₁.u ⟨k, m⟩ I)
     (fun (m : ι k) I => F₂.u ⟨k, m⟩ I) (fun m : ι k => F₂.u' (stepCols N j p.2) ⟨k, m⟩) _ (rho M F₁ F₂ p) _ hstep
@@ -476,12 +424,12 @@ theorem metric_self [Fintype Ψ] [DecidableEq Ψ] (M : FlagModel y Ψ N j) (z : 
   have e1 : refNorm (M.dy p) z₀ = refNorm (M.dy p) fun q => t q.1 * z q := by
     refine log_refNorm_congr fun k hk m => ?_
     by_cases hb : ∀ p', M.blk p' ≠ some k
-    · simp only [t, dif_pos hb]
+    · simp only [t, dite_eq_left hb]
       exact congrFun hco ⟨⟨k, hb⟩, m⟩
     · have hp : M.blk p = some k := by
         by_contra hp
-        exact hk (by simp only [FlagModel.dy, dif_neg hb, if_neg hp])
-      simp only [t, dif_neg hb, if_pos hp]
+        exact hk (by simp only [FlagModel.dy, dite_eq_right hb, ite_eq_right hp])
+      simp only [t, dite_eq_right hb, ite_eq_left hp]
       have r := relC hzb h h' g g' hp H hH m
       rw [e.2 k hp m, e'.2 k hp m]
       simp only [hval]
@@ -493,19 +441,19 @@ theorem metric_self [Fintype Ψ] [DecidableEq Ψ] (M : FlagModel y Ψ N j) (z : 
     congr 1
     · rw [hρc, norm_prod, ← Finset.prod_inv_distrib]
       refine Finset.prod_congr (by congr; exact Subsingleton.elim _ _) fun k _ => ?_
-      simp only [t, FlagModel.dy, dif_pos k.2, _root_.zpow_neg, norm_zpow]
+      simp only [t, FlagModel.dy, dite_eq_left k.2, _root_.zpow_neg, norm_zpow]
     · cases hp : M.blk p with
       | none =>
         refine Finset.prod_eq_one fun k _ => ?_
         have : M.blk p ≠ some k.1 := by rw [hp]; simp
-        simp only [FlagModel.dy, dif_neg k.2, if_neg this, _root_.zpow_zero]
+        simp only [FlagModel.dy, dite_eq_right k.2, ite_eq_right this, _root_.zpow_zero]
       | some k₀ =>
         have hk₀ : ¬ ∀ p', M.blk p' ≠ some k₀ := fun e => e p hp
         rw [Finset.prod_eq_single ⟨k₀, hk₀⟩]
-        · simp only [t, FlagModel.dy, dif_neg hk₀, if_pos hp, _root_.zpow_one, norm_div, Option.elim_some]
+        · simp only [t, FlagModel.dy, dite_eq_right hk₀, ite_eq_left hp, _root_.zpow_one, norm_div, Option.elim_some]
         · intro k _ hk
           have : M.blk p ≠ some k.1 := fun e => hk (Subtype.ext (Option.some.inj (e.symm.trans hp)))
-          simp only [FlagModel.dy, dif_neg k.2, if_neg this, _root_.zpow_zero]
+          simp only [FlagModel.dy, dite_eq_right k.2, ite_eq_right this, _root_.zpow_zero]
         · simp
   have e3 := (fsHerm ι (M.dy p)).smul t z ht
   have hpos := (fsHerm ι (M.dy p)).pos z hz.1
@@ -565,7 +513,7 @@ theorem PositivityTheory.Xgp.t_c_cov_self : ∀ (K : Type) [Fintype K] (ι : K �
   have hϖ : ∀ z x, SameOrbit (FA.Re.R.lift x x) z → ϖ z = FA.Re.π x := by
     intro z x hx
     have h : ∃ x, SameOrbit (FA.Re.R.lift x x) z := ⟨x, hx⟩
-    simp only [ϖ, dif_pos h]
+    simp only [ϖ, dite_eq_left h]
     rw [FA.Re.R.inj _ x (hJ _) (Cj.sameOrbit_trans h.choose_spec (Cj.sameOrbit_symm hx))]
   have hinj : Function.Injective FA.Re.π := by
     intro x x' hx

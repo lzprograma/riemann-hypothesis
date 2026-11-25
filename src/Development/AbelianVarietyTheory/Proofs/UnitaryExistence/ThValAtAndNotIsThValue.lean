@@ -44,8 +44,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
@@ -53,8 +51,6 @@ open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCate
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open GlobalTheory.VVRank (pullS isPullSec_pullS)
 open GlobalTheory.TwistBaseChange (eq_pullS_of_isPullSec)
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.ThetaRuleCompare
 
@@ -98,27 +94,5 @@ theorem pullS_comp {T T' T'' : Over S} (h' : T'' ⟶ T') (h : T' ⟶ T) (s : LB.
 end Descent
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Geo.Tor.Level H}
-
-section Auxiliary
-
-variable (Xo : Moduli Dw l) (c : Coeff l)
-
-variable {Xo c}
-
-end Auxiliary
-
-section Translates
-
-variable (Xo : Moduli Dw l)
-
-variable {Xo}
-
-end Translates
-
-section Values
-
-variable {Xo : Moduli Dw l} {c : Coeff l}
-
-end Values
 
 end GlobalTheory.ThetaRuleCompare

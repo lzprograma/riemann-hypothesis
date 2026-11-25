@@ -6,52 +6,8 @@ public import Development.AbelianVarietyTheory.Definitions.Foundations.SamePartI
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SquarefreeLabelTorusCardBoundsAndMul
 public import Mathlib.FieldTheory.Finite.Extension
 public import Mathlib.Algebra.BigOperators.Field
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -71,11 +27,11 @@ private lemma eq_filter_add_replicate (μ : Multiset ℕ) (h : ∀ d ∈ μ, 0 <
   ext d
   rw [Multiset.count_add, Multiset.count_filter, Multiset.count_replicate]
   by_cases h2 : 2 ≤ d
-  · rw [if_pos h2, if_neg (by omega)]; rfl
-  · rw [if_neg h2]
+  · rw [ite_eq_left h2, ite_eq_right (by omega)]; rfl
+  · rw [ite_eq_right h2]
     by_cases h1 : 1 = d
     · subst h1; simp
-    · rw [if_neg h1]
+    · rw [ite_eq_right h1]
       have : d ∉ μ := fun hd => by have := h d hd; omega
       simpa using this
 
@@ -91,7 +47,7 @@ theorem card_perm_partition_parts_mul :
     conv_rhs => rw [hμ]
     simp
   have key := Equiv.Perm.card_of_cycleType_mul_eq (Fin N) m
-  rw [if_pos ⟨by rw [Fintype.card_fin]; omega, fun a ha => (Multiset.mem_filter.1 ha).2⟩,
+  rw [ite_eq_left ⟨by rw [Fintype.card_fin]; omega, fun a ha => (Multiset.mem_filter.1 ha).2⟩,
     Fintype.card_fin] at key
   have hN : N - m.sum = μ.count 1 := by omega
   rw [hN] at key
@@ -125,7 +81,7 @@ theorem card_perm_partition_parts_mul :
     congr 1
     refine Finset.prod_congr rfl fun n hn => ?_
     have hn2 : 2 ≤ n := (Multiset.mem_filter.1 (Multiset.mem_toFinset.1 hn)).2
-    have : m.count n = μ.count n := by rw [hm, Multiset.count_filter, if_pos hn2]
+    have : m.count n = μ.count n := by rw [hm, Multiset.count_filter, ite_eq_left hn2]
     rw [this]
   rw [hset, hprod]
   convert key

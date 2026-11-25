@@ -1,50 +1,6 @@
 module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.IntegralityGoodReduction
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Analysis.Calculus.Deriv.Inv
 
@@ -56,41 +12,20 @@ open scoped ContDiff Topology
 
 namespace UpperTheory.V.Lit.Dr
 
-section
-
-variable {V F : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] [NormedAddCommGroup F] [NormedSpace ℝ F]
-
-end
-
 private theorem multilinear_apply_add_smul_of_vanishing {V F : Type} [NormedAddCommGroup V] [NormedSpace ℝ V]
     [NormedAddCommGroup F] [NormedSpace ℝ F] {q : ℕ} (A : V [⋀^Fin q]→L[ℝ] F) (z : V)
     (hA : ∀ (u : Fin q → V) (i : Fin q), u i = z → A u = 0) (u : Fin q → V) (a : Fin q → ℝ) :
     A (fun i => u i + a i • z) = A u := by
-  classical
-  suffices key : ∀ s : Finset (Fin q),
-      A (fun i => if i ∈ s then u i + a i • z else u i) = A u by
-    simpa using key Finset.univ
-  intro s
-  induction s using Finset.induction_on with
-  | empty => simp
-  | insert j s hj ih =>
-    have e1 : (fun i => if i ∈ insert j s then u i + a i • z else u i) =
-        Function.update (fun i => if i ∈ s then u i + a i • z else u i) j (u j + a j • z) := by
-      ext i
-      by_cases h : i = j
-      · subst h
-        simp
-      · simp [h]
-    have e2 : Function.update (fun i => if i ∈ s then u i + a i • z else u i) j (u j) =
-        fun i => if i ∈ s then u i + a i • z else u i := by
-      ext i
-      by_cases h : i = j
-      · subst h
-        simp [hj]
-      · simp [h]
-    rw [e1, ContinuousAlternatingMap.map_update_add, ContinuousAlternatingMap.map_update_smul,
-      hA (Function.update (fun i => if i ∈ s then u i + a i • z else u i) j z) j (by simp),
-      smul_zero, add_zero, e2, ih]
+  rw [show (fun i => u i + a i • z) = u + fun i => a i • z from rfl, A.map_add_univ,
+    Finset.sum_eq_single Finset.univ]
+  · rw [Finset.piecewise_univ]
+  · intro s _ hs
+    obtain ⟨j, hj⟩ := (Finset.compl_ne_univ_iff_nonempty sᶜ).1 (by simpa using hs)
+    have hupd : Function.update (s.piecewise u fun i => a i • z) j (a j • z) =
+        s.piecewise u fun i => a i • z :=
+      Function.update_eq_self_iff.2 (by simp [Finset.mem_compl.1 hj])
+    rw [← hupd, A.map_update_smul, hA _ j (by simp), smul_zero]
+  · simp
 
 theorem pullA : PullTranslates := by
   intro V F _ _ _ _ Y hY hC l hl q w

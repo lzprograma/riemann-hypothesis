@@ -238,14 +238,13 @@ lemma zc_eq : zc p q = ∑ i : Fin p, Eab (Sum.inl i) (Sum.inl i) := by
     simp [zc, Eab, Matrix.sum_apply, Matrix.single_apply, Matrix.diagonal_apply]
   by_cases h : a = b
   · subst h; simp [Finset.filter_eq']
-  · rw [if_neg h, eq_comm]
+  · rw [ite_eq_right h, eq_comm]
     simp only [Nat.cast_eq_zero, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
     rintro x - ⟨rfl, rfl⟩
     exact h rfl
 
 lemma act_zc (act : Mat p q →ₗ[ℂ] Module.End ℂ V) (x : V) :
     act (zc p q) x = ∑ i : Fin p, act (Eab (Sum.inl i) (Sum.inl i)) x := by
-  set_option synthInstance.maxHeartbeats 100000 in
     rw [zc_eq, map_sum, LinearMap.sum_apply]
 
 lemma zc_comm {X : Mat p q} (hX : IsKC X) : zc p q * X = X * zc p q := by

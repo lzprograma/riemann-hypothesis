@@ -326,7 +326,7 @@ theorem binom_poly {p : ℕ} (hp : p.Prime) :
     rw [Polynomial.X_dvd_iff]
     have := congrArg (fun f => _root_.AddMonoidAlgebra.coeff (M := ℕ) f 0) h1
     simp only [Polynomial.mul_coeff_zero, Polynomial.coeff_X_zero, zero_mul,
-      Polynomial.coeff_natCast_ite, if_true, mul_eq_zero] at this
+      Polynomial.coeff_natCast_ite, ite_true, mul_eq_zero] at this
     exact this.resolve_left (by simp; omega)
   obtain ⟨h, hh⟩ := h2
   refine ⟨h, ?_⟩

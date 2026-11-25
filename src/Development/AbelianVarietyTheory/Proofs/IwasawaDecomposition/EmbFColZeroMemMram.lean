@@ -470,7 +470,7 @@ variable (sel mu cst) in
 theorem ysAt_zero (N : Submodule (𝓞 X.E) (Sp X.E (R.N 0))) : (ysAt R sel mu cst 0).ys N = {∅} := by
   have h : ¬ (0 + 1 = R.m) := by have := R.two_le_m; omega
   unfold ysAt
-  rw [if_neg h]
+  rw [ite_eq_right h]
   rfl
 
 @[reducible] def idxUnique (hL : L.Ok Ch sel mu cst G m2) : Unique (Idx sel mu L 0) where

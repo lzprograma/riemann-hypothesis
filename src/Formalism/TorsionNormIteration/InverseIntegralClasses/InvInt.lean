@@ -2,50 +2,8 @@ module
 
 public import Formalism.TorsionNormIteration.InvIntegralOfClass
 public import Formalism.FormalGroupLog.FormalGroupLogProofs.ChainRule
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
+import Formalism.FormalGroupWitt.FormalGroupWittProofs.InvIntV
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Analysis.Normed.MulAction
 
 @[expose] public section
@@ -70,32 +28,9 @@ def Low (m : ℕ) (x : MvPowerSeries ι K) : Prop :=
 theorem Low.mono {m k : ℕ} {x : MvPowerSeries ι K} (h : Low m x) (hk : k ≤ m) : Low k x := by
   exact fun d hd => h d (lt_of_lt_of_le hd hk)
 
-theorem Low.mul {m k : ℕ} {x y : MvPowerSeries ι K} (hx : Low m x) (hy : Low k y) :
-    Low (m + k) (x * y) := by
-  classical
-  intro d hd
-  rw [MvPowerSeries.coeff_mul]
-  refine Finset.sum_eq_zero fun ab hab => ?_
-  have hab' : ab.1 + ab.2 = d := by simpa using hab
-  have hdeg : ab.1.degree + ab.2.degree = d.degree := by rw [← hab', map_add (f := _)]
-  by_cases h1 : ab.1.degree < m
-  · rw [hx _ h1, zero_mul]
-  · rw [hy _ (by omega), mul_zero]
-
-theorem Low.add {m : ℕ} {x y : MvPowerSeries ι K} (hx : Low m x) (hy : Low m y) :
-    Low m (x + y) := by
-  intro d hd
-  rw [map_add (f := _), hx d hd, hy d hd, add_zero]
-
 theorem low_zero (x : MvPowerSeries ι K) : Low 0 x := by
   intro d hd
   exact absurd hd (Nat.not_lt_zero _)
-
-theorem low_one {x : MvPowerSeries ι K} (hx : MvPowerSeries.constantCoeff x = 0) : Low 1 x := by
-  intro d hd
-  have h0 : d = 0 := (Finsupp.degree_eq_zero_iff d).1 (by omega)
-  subst h0
-  rw [MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hx]
 
 end Basic
 
@@ -159,7 +94,7 @@ theorem coeff_expand_low {K : Type u} [NormedField K] {ι : Type v} (q : ℕ) (h
       · omega
       · nlinarith
     rw [hdm, MvPowerSeries.coeff_expand_smul, MvPowerSeries.coeff_map, hlow m hmlt, map_zero]
-  · push_neg at hall
+  · push Not at hall
     obtain ⟨i, hi⟩ := hall
     exact MvPowerSeries.coeff_expand_of_not_dvd q hq _ hi
 
@@ -195,10 +130,6 @@ theorem agree_psubst [Finite ι] (g : PowerSeries K) {N : ℕ} {a b : MvPowerSer
   exact Agree.subst (f := g) (f' := g) (a := fun _ : Unit => a) (a' := fun _ : Unit => b)
     (fun _ => ha0) (fun _ => hb0) (fun _ _ => rfl) (fun _ => hab)
 
-theorem low_of_agree {N : ℕ} {a b : MvPowerSeries ι K} (hab : Agree N a b) : Low N (a - b) := by
-  intro d hd
-  rw [map_sub, hab d hd, sub_self]
-
 theorem key [Finite ι] (f : PowerSeries K) (h0 : constantCoeff f = 0) (h1 : coeff 1 f = 1)
     {N : ℕ} {a b : MvPowerSeries ι K}
     (ha0 : MvPowerSeries.constantCoeff a = 0) (hb0 : MvPowerSeries.constantCoeff b = 0)
@@ -207,13 +138,13 @@ theorem key [Finite ι] (f : PowerSeries K) (h0 : constantCoeff f = 0) (h1 : coe
   have e : a + a ^ 2 * (tail2 f).subst a - (b + b ^ 2 * (tail2 f).subst b) - (a - b) =
       (a - b) * (a + b) * (tail2 f).subst a + b ^ 2 * ((tail2 f).subst a - (tail2 f).subst b) := by ring
   rw [e]
-  have hd : Low N (a - b) := low_of_agree hab
-  have hs : Low 1 (a + b) := low_one (by simp [ha0, hb0])
+  have hd : Low N (a - b) := Formalism.FG.InvIntVAux.low_of_agree hab
+  have hs : Low 1 (a + b) := Formalism.FG.InvIntVAux.low_one (by simp [ha0, hb0])
   have hb2 : Low 2 (b ^ 2) := by
-    simpa [pow_two] using (low_one hb0).mul (low_one hb0)
-  refine Low.add ?_ ?_
-  · simpa using (hd.mul hs).mul (low_zero ((tail2 f).subst a))
-  · exact (hb2.mul (low_of_agree (agree_psubst _ ha0 hb0 hab))).mono (by omega)
+    rw [pow_two]; exact Formalism.FG.InvIntVAux.Low.mul (Formalism.FG.InvIntVAux.low_one hb0) (Formalism.FG.InvIntVAux.low_one hb0)
+  refine Formalism.FG.InvIntVAux.Low.add ?_ ?_
+  · simpa using Formalism.FG.InvIntVAux.Low.mul (Formalism.FG.InvIntVAux.Low.mul hd hs) (low_zero ((tail2 f).subst a))
+  · exact Low.mono (Formalism.FG.InvIntVAux.Low.mul hb2 (Formalism.FG.InvIntVAux.low_of_agree (agree_psubst _ ha0 hb0 hab))) (by lia)
 
 end Inv
 
@@ -258,12 +189,12 @@ theorem invIntegralOfClass (K : Type u) [NormedField K] [IsUltrametricDist K] (�
             · simp
           have hAg : Agree N h T := by
             intro e he
-            rw [hTc, if_pos he]
+            rw [hTc, ite_eq_left he]
           have hCD := hsub _ _ hCh (hP T hT0 hTint)
-          have hLowD : Low N (f.subst h - f.subst T) := low_of_agree (agree_psubst f hh0 hT0 hAg)
+          have hLowD : Low N (f.subst h - f.subst T) := Formalism.FG.InvIntVAux.low_of_agree (agree_psubst f hh0 hT0 hAg)
           have hk := key f h0 h1 hh0 hT0 hAg d (by omega)
           have hb := hlowC _ hCD N hNpos hLowD d heq
-          rw [map_sub, map_sub, map_sub, hTc, if_neg (by omega), sub_zero] at hk
+          rw [map_sub, map_sub, map_sub, hTc, ite_eq_right (by omega), sub_zero] at hk
           have hcd : MvPowerSeries.coeff d h = MvPowerSeries.coeff d (f.subst h - f.subst T) := by
             rw [map_sub]
             linear_combination -hk

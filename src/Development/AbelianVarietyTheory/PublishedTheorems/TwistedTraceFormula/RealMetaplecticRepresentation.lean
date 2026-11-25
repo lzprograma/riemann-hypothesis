@@ -81,13 +81,6 @@ symplectic form `sympl w w' = ⟨p, q'⟩ - ⟨q, p'⟩`.
 `L²(ℝⁿ)` by a strongly continuous unitary representation which intertwines `rho`, preserves
 Schwartz functions and has the operators `quad X` as infinitesimal generators. It is proved in
 `CompanionTheory.ThKR.realMetaplecticRepresentation_holds`.
-
-## References
-
-* [G. B. Folland, *Harmonic analysis in phase space* (Chapters 1 and 4)][folland1989]:
-  Chapter 1 treats the Heisenberg group and its representations, Chapter 4 the metaplectic
-  representation.
-* [A. Weil, *Sur certains groupes d'opérateurs unitaires*][weil1964]
 -/
 
 @[expose] public section
@@ -425,7 +418,7 @@ theorem quad_fromBlocks {A B C D : Matrix l l ℝ} (hX : fromBlocks A B C D ∈ 
     have t : (2 * π * I * (A.trace : ℝ) : ℂ) • (1 : Sch l →L[ℂ] Sch l) =
         ∑ j, ∑ k, (A j k : ℂ) • (2 * π * I * (if j = k then 1 else 0) : ℂ) • (1 : Sch l →L[ℂ] Sch l) := by
       simp only [Matrix.trace, diag_apply, ofReal_sum, Finset.mul_sum, Finset.sum_smul, smul_smul, mul_ite, mul_one,
-        mul_zero, ite_smul, zero_smul, smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        mul_zero, ite_smul, zero_smul, smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
       exact Finset.sum_congr rfl fun j _ => by rw [mul_comm]
     rw [t, Finset.sum_comm (f := fun j k => ((-A k j / 2 : ℝ) : ℂ) • _)]
     simp only [← Finset.sum_add_distrib, ← Finset.sum_sub_distrib]
@@ -475,9 +468,7 @@ topological group `G` and homomorphisms `pr : G →* Sp(2n, ℝ)`, `om` to the u
   `pr (γ t) = exp (t • X)`, and for a Schwartz function `f` the derivative of `t ↦ om (γ t) f`
   at `0` is `quad X f`.
 
-This is the Segal–Shale–Weil representation; see
-[G. B. Folland, *Harmonic analysis in phase space* (Chapter 4)][folland1989] and
-[A. Weil, *Sur certains groupes d'opérateurs unitaires*][weil1964]. It is proved in
+This is the Segal–Shale–Weil representation. It is proved in
 `CompanionTheory.ThKR.realMetaplecticRepresentation_holds`. -/
 def RealMetaplecticRepresentation : Prop :=
   ∀ (l : Type) [Fintype l] [DecidableEq l] [Nonempty l],

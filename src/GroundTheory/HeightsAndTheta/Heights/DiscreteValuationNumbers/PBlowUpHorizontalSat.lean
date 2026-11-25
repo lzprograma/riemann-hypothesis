@@ -73,15 +73,24 @@ theorem exists_pow_mul_mem_of_aeval_chartSubst_mem {P : Ideal (MRing ι R)} {u a
 
 end Saturation
 
-theorem BlowUpHorizontalSat.full : BlowUpHorizontalSat.Statement.{u} := by
-  intro O _ _ _ ϖ hϖ K _ _ ι _ J _ P n hP N u hu hex hloc c x hx hxP W hW hϖW F
+theorem exists_chartSubst_data_of_minimalPrime
+    {O : Type u} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {ϖ : O}
+    {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} [∀ k, Fintype (ι k)]
+    {J : Type} [Fintype J] {P : Ideal (MRing ι O)} (hPp : P.IsPrime)
+    {u : J → MRing ι O} (hex : ∃ j, u j ∉ P)
+    (hloc : ∀ Q : Ideal (MRing ι O), Q.IsPrime → P ≤ Q → IsRelevant Q → (C ϖ : MRing ι O) ∉ Q →
+      ∃ j₀ : J, ∀ j : J, ∃ v w : MRing ι O, v ∉ Q ∧ v * u j - w * u j₀ ∈ P)
+    {x : MRing ι O} {W : Ideal (MRing (extIdx ι J) O)}
+    (hmin : W ∈ (blowUpOf P u ⊔ Ideal.span {liftForm x}).minimalPrimes)
+    (hWrel : IsRelevant W) (hϖW : (C ϖ : MRing (extIdx ι J) O) ∉ W) :
+    let W₀ := W.comap (liftForm (ι := ι) (J := J) (R := O))
+    W₀.IsPrime ∧ P ≤ W₀ ∧
+      ∃ (j₀ : J) (u₀ : MRing ι O) (a : J → MRing ι O),
+        u j₀ ∉ P ∧ u₀ ∉ W₀ ∧ (∀ j, u₀ * u j - u j₀ * a j ∈ P) ∧ a j₀ ∉ W₀ ∧
+        (∀ j, newVar j * liftForm (a j₀) - newVar j₀ * liftForm (a j) ∈ blowUpOf P u) ∧
+        W = (Ideal.map (Polynomial.C : MRing ι O →+* Polynomial (MRing ι O)) W₀).comap
+          (aeval (R := O) (chartSubst a)).toRingHom := by
   classical
-  have hPp : P.IsPrime := hP.multiProj.isPrime
-
-  have hWsupp : W ∈ (blowUpOf P u ⊔ Ideal.span {liftForm x}).minimalPrimes ∧ IsRelevant W := by
-    by_contra h
-    exact hW (by rw [divCycle, dif_neg h])
-  obtain ⟨hmin, hWrel⟩ := hWsupp
   have hWp : W.IsPrime := hmin.1.1
   have hBW : blowUpOf P u ≤ W := le_sup_left.trans hmin.1.2
   set W₀ := W.comap (liftForm (ι := ι) (J := J) (R := O)) with hW₀
@@ -89,7 +98,6 @@ theorem BlowUpHorizontalSat.full : BlowUpHorizontalSat.Statement.{u} := by
   have hϖW₀ : (C ϖ : MRing ι O) ∉ W₀ := by rw [Ideal.mem_comap, liftForm_C]; exact hϖW
   obtain ⟨j₀, hj₀⟩ := hloc W₀ hW₀p hPW₀ hrel₀ hϖW₀
   choose v w hv hvw using hj₀
-
   have huj₀ : u j₀ ∉ P := by
     intro h
     obtain ⟨j, hj⟩ := hex
@@ -97,7 +105,6 @@ theorem BlowUpHorizontalSat.full : BlowUpHorizontalSat.Statement.{u} := by
       have := P.add_mem (hvw j) (P.mul_mem_left (w j) h)
       rwa [sub_add_cancel] at this
     exact hj ((hPp.mem_or_mem h1).resolve_left fun h' => hv j (hPW₀ h'))
-
   obtain ⟨u₀, a, hu₀W, hrelP⟩ : ∃ (u₀ : MRing ι O) (a : J → MRing ι O), u₀ ∉ W₀ ∧
       ∀ j, u₀ * u j - u j₀ * a j ∈ P := by
     have := hW₀p
@@ -116,7 +123,6 @@ theorem BlowUpHorizontalSat.full : BlowUpHorizontalSat.Statement.{u} := by
       rwa [show u₀ * u j₀ - u j₀ * a j₀ = u j₀ * (u₀ - a j₀) by ring] at this
     have h2 : u₀ - a j₀ ∈ W₀ := hPW₀ ((hPp.mem_or_mem h1).resolve_left huj₀)
     exact hu₀W (by simpa using W₀.add_mem h2 h)
-
   have hrelB : ∀ j, newVar j * liftForm (a j₀) - newVar j₀ * liftForm (a j) ∈ blowUpOf P u := by
     intro j
     apply mem_blowUpOf_of_sub
@@ -125,23 +131,35 @@ theorem BlowUpHorizontalSat.full : BlowUpHorizontalSat.Statement.{u} := by
     have h1 : u₀ * (u j * a j₀ - u j₀ * a j) ∈ P := by
       rw [e]; exact P.sub_mem (P.mul_mem_left _ (hrelP j)) (P.mul_mem_left _ (hrelP j₀))
     exact (hPp.mem_or_mem h1).resolve_left hu₀P
-
   have := hW₀p
   let Q' := (Ideal.map (Polynomial.C : MRing ι O →+* Polynomial (MRing ι O)) W₀).comap
-    (aeval (R := O) (chartSubst a))
+    (aeval (R := O) (chartSubst a)).toRingHom
   have hQ'p : Q'.IsPrime := Ideal.comap_isPrime _ _
   have hxW : liftForm x ∈ W := hmin.1.2 (Ideal.mem_sup_right (Ideal.mem_span_singleton_self _))
   have hBQ' : blowUpOf P u ⊔ Ideal.span {liftForm x} ≤ Q' := by
     refine sup_le (fun G hG => ?_) ((Ideal.span_singleton_le_iff_mem _).mpr ?_)
     · exact Ideal.map_mono hPW₀ (aeval_chartSubst_mem_of_mem_blowUpOf hPp huj₀ hrelP hG)
-    · rw [Ideal.mem_comap, aeval_chartSubst_liftForm]
+    · rw [Ideal.mem_comap, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom, aeval_chartSubst_liftForm]
       exact Ideal.mem_map_of_mem _ hxW
   have hQ'W : Q' ≤ W := fun G hG =>
     mem_of_aeval_chartSubst_mem hWp le_rfl j₀ ha₀ (fun j => hBW (hrelB j)) hG
-  have hWQ' : W ≤ Q' := hmin.2 ⟨hQ'p, hBQ'⟩ hQ'W
+  exact ⟨hW₀p, hPW₀, j₀, u₀, a, huj₀, hu₀W, hrelP, ha₀, hrelB,
+    le_antisymm (hmin.2 ⟨hQ'p, hBQ'⟩ hQ'W) hQ'W⟩
+
+theorem BlowUpHorizontalSat.full : BlowUpHorizontalSat.Statement.{u} := by
+  intro O _ _ _ ϖ hϖ K _ _ ι _ J _ P n hP N u hu hex hloc c x hx hxP W hW hϖW F
+  classical
+  have hWsupp : W ∈ (blowUpOf P u ⊔ Ideal.span {liftForm x}).minimalPrimes ∧ IsRelevant W := by
+    by_contra h
+    exact hW (by rw [divCycle, dif_neg h])
+  obtain ⟨hmin, hWrel⟩ := hWsupp
+  have hWp : W.IsPrime := hmin.1.1
+  have hBW : blowUpOf P u ≤ W := le_sup_left.trans hmin.1.2
+  obtain ⟨hW₀p, -, j₀, -, a, -, -, -, ha₀, hrelB, hWQ'⟩ :=
+    exists_chartSubst_data_of_minimalPrime hP.multiProj.isPrime hex hloc hmin hWrel hϖW
   constructor
   · intro hF
-    obtain ⟨m, hm⟩ := exists_pow_mul_mem_of_aeval_chartSubst_mem j₀ hrelB (hWQ' hF)
+    obtain ⟨m, hm⟩ := exists_pow_mul_mem_of_aeval_chartSubst_mem j₀ hrelB (hWQ'.le hF)
     exact ⟨a j₀ ^ m, fun h => ha₀ (hW₀p.mem_of_pow_mem _ h), hm⟩
   · rintro ⟨s, hs, hsF⟩
     have h1 : liftForm s * F ∈ W := sup_le hBW Ideal.map_comap_le hsF

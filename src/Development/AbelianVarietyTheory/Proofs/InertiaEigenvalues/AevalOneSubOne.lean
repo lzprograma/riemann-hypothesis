@@ -8,53 +8,6 @@ public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DvdTraceOfBal
 public import Mathlib.Combinatorics.Nullstellensatz
 public import Mathlib.RingTheory.MvPolynomial.Groebner
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSubgroupIsUnit
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsPlaceOverMoveValCc
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -216,8 +169,7 @@ theorem det_eq_mul_X_pow {k ι : Type} [Field k] (n r e : ℕ) (t : ℕ → Matr
 open Module in
 private theorem index_span_matrix_eq_val_det (O : Type) [CommRing O] [IsDomain O]
     [IsDiscreteValuationRing O] (W : Type) [AddCommGroup W] [Module O W] (l n : ℕ)
-    (bs : Fin n → W) (m : Matrix (Fin n) (Fin n) O) (hbs : LinearIndependent O bs)
-    (_hm : m.det ≠ 0) :
+    (bs : Fin n → W) (m : Matrix (Fin n) (Fin n) O) (hbs : LinearIndependent O bs) :
     Formalism.MainNotions.IntegralHeckeForms.sIdx l (Submodule.span O (Set.range bs))
       (Submodule.span O (Set.range fun a => ∑ c, m c a • bs c)) =
         Formalism.MainNotions.BlochKatoReduction.Gen.nval O l m.det := by
@@ -307,9 +259,9 @@ theorem sIdx_span_of_smul_eq {O : Type} [CommRing O] [IsDomain O] [IsDiscreteVal
     obtain ⟨c, hc, hcy⟩ := hL2.2.2 y hy
     exact ⟨c, hc, hle hcy⟩
   refine ⟨hL1, ?_⟩
-  have e1 := index_span_matrix_eq_val_det O W l n bs m hbs hd
+  have e1 := index_span_matrix_eq_val_det O W l n bs m hbs
   have hxd : (x • (1 : Matrix (Fin n) (Fin n) O)).det = x ^ n := by simp
-  have e2 := index_span_matrix_eq_val_det O W l n w (x • 1) hwi (by rw [hxd]; exact pow_ne_zero _ hx)
+  have e2 := index_span_matrix_eq_val_det O W l n w (x • 1) hwi
   have e3 : (fun a => ∑ c, (x • (1 : Matrix (Fin n) (Fin n) O)) c a • w c) = fun a => x • w a := by
     ext a; simp [Matrix.one_apply]
   rw [e3, hxd] at e2
@@ -455,7 +407,7 @@ theorem isUnit_det_of_eigen {O : Type} [CommRing O] [IsLocalRing O] [IsAlgClosed
   have hev : ∀ k p, good k p → ((t k p).map ρ).mulVec v = ρ (ev k p) • v := by
     intro k p hg
     have := hlam ⟨(k, p), hg⟩
-    simp only [ev, dif_pos hg, ρ, hlift]
+    simp only [ev, dite_eq_left hg, ρ, hlift]
     exact this
   have hu := h (φ x) (hφr ▸ LinearMap.mem_range_self φ x)
     (by
@@ -803,7 +755,7 @@ theorem exists_exponent {M R : ℕ} (hM : 1 ≤ M) {P : Fin R ⊕ Fin R → PlE 
     rw [Fintype.prod_sum_type, Finset.prod_eq_single a, hS.2 a a σ₀ h]
     · simp [hu, ZMod.val_one]
     · intro c _ hc
-      rw [hS.2 a c σ₀ h, if_neg hc.symm]; simp
+      rw [hS.2 a c σ₀ h, ite_eq_right hc.symm]; simp
     · simp
   have h1 : (∀ (B : Type) [CommGroup B] (u : Fin R ⊕ Fin R → B), (∀ q, u q ^ (X.l i ^ M) = 1) →
       (∀ a, u (.inr a) = 1) → (sgnProd sg u fun q => Multiplicative.toAdd (d q σ)) = u (.inl a)) ∨

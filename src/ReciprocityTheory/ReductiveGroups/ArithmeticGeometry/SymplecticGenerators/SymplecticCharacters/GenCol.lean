@@ -93,7 +93,7 @@ theorem spPJ_mul_inr (j : Fin g) (M : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g)
     Matrix.fromBlocks_apply₂₂, Matrix.sub_apply, Matrix.neg_apply, sub_mul, neg_mul,
     Finset.sum_sub_distrib, Finset.sum_neg_distrib, sum_eJ]
   simp only [Matrix.one_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ,
-    if_true]
+    ite_true]
   split_ifs with h
   · subst h
     ring
@@ -140,7 +140,7 @@ theorem spDiag_rk_mul_inr (u v : Fin g → ℤ) (h : v ⬝ᵥ u = 0)
   simp only [spDiag, rkU_inv_val, Matrix.mul_apply, Fintype.sum_sum_type, Matrix.fromBlocks_apply₂₁,
     Matrix.fromBlocks_apply₂₂, Matrix.zero_apply, zero_mul, Finset.sum_const_zero, zero_add,
     Matrix.transpose_apply, Matrix.sub_apply, Matrix.one_apply, Matrix.vecMulVec_apply, sub_mul,
-    Finset.sum_sub_distrib, ite_mul, one_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_sub_distrib, ite_mul, one_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [Finset.mul_sum]
   exact congrArg _ (Finset.sum_congr rfl fun l _ => by ring)
 
@@ -160,7 +160,7 @@ theorem phase1 (k : Fin g) (n : ℕ) : ∀ M ∈ symplecticGroup (Fin g) ℤ, Co
   intro M hM hF hn
   by_cases hb : ∀ j, M (Sum.inr j) (Sum.inl k) = 0
   · exact ⟨1, Submonoid.one_mem _, colsFixed_one _, fun j => by rw [Matrix.one_mul]; exact hb j⟩
-  push_neg at hb
+  push Not at hb
   obtain ⟨j0, hd⟩ := hb
   have hkj0 : (k : ℕ) ≤ (j0 : ℕ) := by
     by_contra hlt
@@ -191,7 +191,7 @@ theorem phase1 (k : Fin g) (n : ℕ) : ∀ M ∈ symplecticGroup (Fin g) ℤ, Co
     · congr 1
       have e : ∑ l, S j0 l * M (Sum.inr l) (Sum.inl k) = -(a / d) * d := by
         simp only [hS, Matrix.smul_apply, smul_eq_mul, mul_assoc]
-        rw [← Finset.mul_sum, sum_eJ, if_pos rfl]
+        rw [← Finset.mul_sum, sum_eJ, ite_eq_left rfl]
       rw [e, Int.emod_def]
       ring
     · rfl
@@ -206,7 +206,7 @@ theorem phase1 (k : Fin g) (n : ℕ) : ∀ M ∈ symplecticGroup (Fin g) ℤ, Co
         exact hkey.le
       · exact le_rfl
     · refine ⟨j0, Finset.mem_univ _, ?_⟩
-      rw [hrow j0, if_pos rfl, Int.natAbs_neg]
+      rw [hrow j0, ite_eq_left rfl, Int.natAbs_neg]
       exact hkey
   obtain ⟨O2, hO2, hF2, h2⟩ := ih _ hlt _ hM' hF' rfl
   refine ⟨O2 * (spPJ j0 * spTransl S), Submonoid.mul_mem _ hO2 hO1, colsFixed_mul hF2

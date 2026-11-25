@@ -104,96 +104,6 @@ section Cong
 
 variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] {P : HeightOneSpectrum (𝓞 E)} {q : ℕ}
 
-theorem ookLamGvS_congr (ψ₀ : AddChar (𝓞 E ⧸ P.asIdeal) K) (χ : ℕ → (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {k₀ r t j a : ℕ} (M M' : ℕ → ℕ → E)
-    (hkr : k₀ ≤ r) (hra : r ≤ a) (hja : r + j * t ≤ a)
-    (h : ∀ p p', p < a → p' < a → IntAt P (M p p') ∧ IntAt P (M' p p') ∧ redP P (M' p p') = redP P (M p p')) :
-    LocE.lamGvS ψ₀ χ k₀ r t j M' = LocE.lamGvS ψ₀ χ k₀ r t j M := by
-  unfold LocE.lamGvS
-  congr 1
-  · congr 1
-    have hb1 : ∀ i ∈ Finset.range (k₀ - 1), i < a ∧ i + 1 < a := fun i hi => by simp at hi; omega
-    have hb2 : ∀ i ∈ Finset.range (r - k₀ - 1), k₀ + i < a ∧ k₀ + i + 1 < a := fun i hi => by simp at hi; omega
-    rw [reduction_add (ciIntAt_sum _ _ fun i hi => (h i (i + 1) (hb1 i hi).1 (hb1 i hi).2).2.1)
-        (ciIntAt_sum _ _ fun i hi => (h (k₀ + i) (k₀ + i + 1) (hb2 i hi).1 (hb2 i hi).2).2.1),
-      reduction_add (ciIntAt_sum _ _ fun i hi => (h i (i + 1) (hb1 i hi).1 (hb1 i hi).2).1)
-        (ciIntAt_sum _ _ fun i hi => (h (k₀ + i) (k₀ + i + 1) (hb2 i hi).1 (hb2 i hi).2).1),
-      redP_sum _ _ (fun i hi => (h i (i + 1) (hb1 i hi).1 (hb1 i hi).2).2.1),
-      redP_sum _ _ (fun i hi => (h (k₀ + i) (k₀ + i + 1) (hb2 i hi).1 (hb2 i hi).2).2.1),
-      redP_sum _ _ (fun i hi => (h i (i + 1) (hb1 i hi).1 (hb1 i hi).2).1),
-      redP_sum _ _ (fun i hi => (h (k₀ + i) (k₀ + i + 1) (hb2 i hi).1 (hb2 i hi).2).1)]
-    exact congrArg₂ (· + ·) (Finset.sum_congr rfl fun i hi => (h i (i + 1) (hb1 i hi).1 (hb1 i hi).2).2.2)
-      (Finset.sum_congr rfl fun i hi => (h (k₀ + i) (k₀ + i + 1) (hb2 i hi).1 (hb2 i hi).2).2.2)
-  · refine Finset.prod_congr rfl fun i hi => ?_
-    have hi' : i < j := by simpa using hi
-    have hb : ∀ s : Fin t, r + i * t + s.1 < a := fun s => by
-      have h1 := s.2
-      have h2 : (i + 1) * t ≤ j * t := Nat.mul_le_mul_right _ hi'
-      nlinarith
-    apply ciUnitV_congr
-    rw [redP_det (Matrix.of fun s s' : Fin t => M' (r + i * t + s.1) (r + i * t + s'.1)) (fun s s' => (h _ _ (hb s) (hb s')).2.1),
-      redP_det (Matrix.of fun s s' : Fin t => M (r + i * t + s.1) (r + i * t + s'.1)) (fun s s' => (h _ _ (hb s) (hb s')).1)]
-    congr 1
-    ext s s'
-    exact (h _ _ (hb s) (hb s')).2.2
-
-
-open Classical in
-theorem ookPhiGS_congr (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hq0 : (q : E) ≠ 0) (ψ₀ : AddChar (𝓞 E ⧸ P.asIdeal) K)
-    (χ : ℕ → (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {k₀ rS r t j c' n' c n : ℕ} (x x' : HomE E (n' + c') (n + c))
-    (hkr : k₀ ≤ r) (han : r + (j - 1) * t ≤ n + c)
-    (hD : ∀ p p', p < n + c → p' < r + (j - 1) * t → ∃ d, IntAt P d ∧
-      LocE.entB q k₀ c' n' c n (fun i => i + 1) (fun i => i + 1) x' p p' =
-        LocE.entB q k₀ c' n' c n (fun i => i + 1) (fun i => i + 1) x p p' + q * d) :
-    LocE.PhiGS (P := P) q ψ₀ χ k₀ rS r t j c' n' c n x' = LocE.PhiGS (P := P) q ψ₀ χ k₀ rS r t j c' n' c n x := by
-  rw [phiGS_eq, phiGS_eq]
-  set M := LocE.entB q k₀ c' n' c n (fun i => i + 1) (fun i => i + 1) x with hM
-  set M' := LocE.entB q k₀ c' n' c n (fun i => i + 1) (fun i => i + 1) x' with hM'
-  set a := r + (j - 1) * t with ha
-  have hra : r ≤ a := Nat.le_add_right _ _
-  have k1 : ∀ p p', p < n + c → p' < a → (IntAt P (M' p p') ↔ IntAt P (M p p')) := by
-    intro p p' hp hp'
-    obtain ⟨d, hd, he⟩ := hD p p' hp hp'
-    rw [he]
-    exact ciIntAt_add_iff ((ciIntAt_q (q := q)).mul hd)
-  have k2 : ∀ p p', p < n + c → p' < a → (IntAt P (M' p p' / q) ↔ IntAt P (M p p' / q)) := by
-    intro p p' hp hp'
-    obtain ⟨d, hd, he⟩ := hD p p' hp hp'
-    rw [he, add_div, mul_div_cancel_left₀ _ hq0]
-    exact ciIntAt_add_iff hd
-  have k3 : ∀ p p', p < n + c → p' < a → redP P (M' p p') = redP P (M p p') := by
-    intro p p' hp hp'
-    obtain ⟨d, hd, he⟩ := hD p p' hp hp'
-    rw [he]
-    exact redP_add_natCast_mul hq hd
-  have hc : symPhiCond P q k₀ rS r t j c n M' ↔ symPhiCond P q k₀ rS r t j c n M := by
-    unfold symPhiCond
-    constructor
-    · rintro ⟨h1, h2, h3, h4⟩
-      refine ⟨fun p p' hp hp' => (k1 p p' hp hp').1 (h1 p p' hp hp'), fun p p' h0 hp hp' => (k2 p p' hp hp').1 (h2 p p' h0 hp hp'),
-        fun p' hp' => ⟨?_, fun p hp hne hc => ?_⟩, fun p p' h0 hp' hp hpp => ?_⟩
-      · rw [← k3 p' p' (by omega) (by omega)]; exact (h3 p' hp').1
-      · rw [← k3 p p' (by omega) (by omega)]; exact (h3 p' hp').2 p hp hne hc
-      · rw [← k3 p p' (by omega) hp']; exact h4 p p' h0 hp' hp hpp
-    · rintro ⟨h1, h2, h3, h4⟩
-      refine ⟨fun p p' hp hp' => (k1 p p' hp hp').2 (h1 p p' hp hp'), fun p p' h0 hp hp' => (k2 p p' hp hp').2 (h2 p p' h0 hp hp'),
-        fun p' hp' => ⟨?_, fun p hp hne hc => ?_⟩, fun p p' h0 hp' hp hpp => ?_⟩
-      · rw [k3 p' p' (by omega) (by omega)]; exact (h3 p' hp').1
-      · rw [k3 p p' (by omega) (by omega)]; exact (h3 p' hp').2 p hp hne hc
-      · rw [k3 p p' (by omega) hp']; exact h4 p p' h0 hp' hp hpp
-  by_cases hC : symPhiCond P q k₀ rS r t j c n M
-  · rw [if_pos (hc.2 hC), if_pos hC]
-    have htrip : ∀ p p', p < a → p' < a → IntAt P (M p p') ∧ IntAt P (M' p p') ∧ redP P (M' p p') = redP P (M p p') :=
-      fun p p' hp hp' => ⟨hC.1 p p' (by omega) hp', (hc.2 hC).1 p p' (by omega) hp', k3 p p' (by omega) hp'⟩
-    congr 1
-    · exact ookLamGvS_congr ψ₀ χ M M' hkr hra (le_refl _) htrip
-    · congr 1
-      apply ciUnitV_congr
-      rw [redP_det (Matrix.of fun s s' : Fin a => M' s.1 s'.1) (fun s s' => (htrip s.1 s'.1 s.2 s'.2).2.1),
-        redP_det (Matrix.of fun s s' : Fin a => M s.1 s'.1) (fun s s' => (htrip s.1 s'.1 s.2 s'.2).1)]
-      congr 1
-      ext s s'
-      exact (htrip s.1 s'.1 s.2 s'.2).2.2
-  · rw [if_neg (fun h => hC (hc.1 h)), if_neg hC]
 
 theorem ookEntB_joinX (q : ℕ) {k₀ n' c' n c : ℕ} (hc' : c' = 1) (hc : c = 0) (hk : k₀ ≤ n') (x₀ : HomE E n' n) (y' : Sp E n)
     {p s : ℕ} (hp : p < n) (hs : s < n') :
@@ -214,7 +124,7 @@ theorem ookEntB_joinX (q : ℕ) {k₀ n' c' n c : ℕ} (hc' : c' = 1) (hc : c = 
     simp only [Fin.val_castAdd, Pi.single_apply, Fin.ext_iff]
   have e2 : Loc.eN E (n' + 1) s ⟨n', by omega⟩ = 0 := by
     unfold Loc.eN
-    rw [if_neg (by simp; omega)]
+    rw [ite_eq_right (by simp; omega)]
   rw [e1, e2, zero_mul, add_zero, sub_zero, zpow_zero, mul_one]
 
 theorem ookFIdx_lt {k₀ c' n' p' : ℕ} (hc' : c' = 1) (hk : k₀ ≤ n') (hp' : p' < n' + c') (hne : p' ≠ k₀) :

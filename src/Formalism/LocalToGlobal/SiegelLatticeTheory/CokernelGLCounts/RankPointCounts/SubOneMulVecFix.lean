@@ -138,8 +138,6 @@ namespace PI.SchurPlaces.Geo
 
 open PI.SchurPlaces Formalism.L2.SG.KappaOffDiagonal
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Lin
 
 variable {n k : ℕ} (ε : Fin n → Bool)
@@ -473,7 +471,7 @@ theorem geomB_of (hL : LeviTens) (hW : WfrSpan) (hN : CplxNF) : GeomB := by
     · show hJ _ (rvc X v (X.fY a')) _ = 0
       rw [hexp]
       simp_rw [hfe]
-      simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true, sub_self]
+      simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true, sub_self]
     · show hJ _ (rvc X v (X.zu u)) _ = 0
       rw [hexp, yperp _ (hFXp hz)]
       simp [hze]

@@ -95,9 +95,9 @@ private theorem pv_psigma_eq_pv : ∀ (bs : List (K × ℕ)) (i : ℕ), i < (bs.
     simp only [List.map_cons, List.sum_cons] at h
     by_cases hi : i < s
     · have h1 : s - 1 - i < s := by omega
-      simp only [pσ, pv, hi, h1, if_true]
+      simp only [pσ, pv, hi, h1, ite_true]
     · have h1 : ¬ s + pσ bs (i - s) < s := by omega
-      simp only [pσ, pv, hi, h1, if_false, Nat.add_sub_cancel_left]
+      simp only [pσ, pv, hi, h1, ite_false, Nat.add_sub_cancel_left]
       exact ih (i - s) (by omega)
 
 theorem same_phiF (p : Point K N) {a : ℕ} (hs : _root_.Formalism.L2.SG.Pf.sameB p.1 N a) :
@@ -341,7 +341,7 @@ theorem expand_e (e fd : Fin r → Fin n → ℂ) (hfe : ∀ a b, hJ ε (fd a) (
   | mem x hx =>
     obtain ⟨b0, hb0, rfl⟩ := hx
     refine ⟨fun b hb => ?_, ?_⟩
-    · rw [hfe, if_neg]
+    · rw [hfe, ite_eq_right]
       intro h; subst h; exact absurd hb0 (by simp only [Set.mem_setOf_eq]; omega)
     · simp only [hfe, ite_smul, one_smul, zero_smul]
       simp
@@ -373,13 +373,13 @@ theorem frameMat_spec (e fd : Fin r → Fin n → ℂ) (z : Fin n → ℂ)
     | last =>
       refine ⟨fun hij => ?_, fun hij => ?_⟩
       · simp only [frameMat, Fin.lastCases_last]
-        rw [if_neg (ne_of_lt hij)]
+        rw [ite_eq_right (ne_of_lt hij)]
       · subst hij
         simp [frameMat]
     | cast b =>
       refine ⟨fun hij => ?_, fun hij => ?_⟩
       · simp only [frameMat, Fin.lastCases_castSucc]
-        rw [if_neg (ne_of_lt hij)]
+        rw [ite_eq_right (ne_of_lt hij)]
         have hi : i ≠ Fin.last r := fun h => by
           rw [h] at hij; exact absurd hij (not_lt.2 (Fin.le_last _))
         obtain ⟨a', rfl⟩ := Fin.exists_castSucc_eq.2 hi
@@ -399,14 +399,14 @@ theorem frameMat_spec (e fd : Fin r → Fin n → ℂ) (z : Fin n → ℂ)
       have hx := (expand_e ε e fd hfe hsp_l).2
       simp only [fam, Fin.snoc_castSucc, Fin.snoc_last] at hx ⊢
       have h0 : ∀ b : Fin r, (if Fin.last r = b.castSucc then e b else 0) = 0 := fun b => by
-        rw [if_neg (Fin.castSucc_lt_last b).ne']
+        rw [ite_eq_right (Fin.castSucc_lt_last b).ne']
       simp only [h0, Finset.sum_const_zero, zero_add]
       rw [← hx]
       simp [add_comm]
     | cast b0 =>
       have hx := (expand_e ε e fd hfe (hsp_cs b0)).2
       simp only [fam, Fin.snoc_castSucc, Fin.snoc_last] at hx ⊢
-      rw [if_neg (Fin.castSucc_lt_last b0).ne, add_zero]
+      rw [ite_eq_right (Fin.castSucc_lt_last b0).ne, add_zero]
       have h0 : ∑ b : Fin r, (if b0.castSucc = b.castSucc then e b else 0) = e b0 := by
         simp [Fin.castSucc_inj]
       rw [h0, ← hx]
@@ -460,8 +460,6 @@ theorem isUpUni_sgnT {P : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ} (h : IsLoUni P
 end Sums
 
 section Main
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
@@ -556,8 +554,6 @@ end Main
 
 section Main2
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 theorem realPhase (u u' : D.what₂.Word) {γ γw g g' : X.B.I.Ginf} (hg : g ∈ X.SinfU u) (hg' : g' ∈ X.SinfU u')
@@ -623,8 +619,6 @@ open Matrix
 namespace Formalism.L2.SG.RealObj.RealPointRepresentatives
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj.HermitianBlockSpans Formalism.L2.SG.RealObj.RootCoordinateFrames Formalism.L2.SG.RealObj.FormRegularity
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
@@ -709,8 +703,6 @@ open scoped Classical ComplexConjugate
 namespace Formalism.L2.SG.Pf.FinitePhase
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef Formalism.L2.SG.HidaSetting
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : HidaSetting D) (Y : Formalism.L2.SG.Full.Full X) (u u' : D.what₂.Word)
   (κ : Term D u u' (X.Fu u) (Y.what₂ u) → ℕ)

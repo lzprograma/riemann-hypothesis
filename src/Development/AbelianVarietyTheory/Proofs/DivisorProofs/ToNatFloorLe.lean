@@ -45,7 +45,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult
 open scoped TensorProduct InnerProductSpace
 open GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues GlobalTheory.AdelicScalar
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.AdelicScalar.SizeBounds
 
@@ -79,7 +78,6 @@ theorem lam_bounds (D : D7) (i : Fin D.R.m) (b : ℝ) (h : Sizes D i b) (τ : D.
       ((Formalism.L2.NTheta.lamAt (D.hc τ) n : ℚ) : ℝ) + (((D.hc τ).e i : ℚ) : ℝ) ≤ 3 * b := by
   unfold GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues.Sizes at h
   obtain ⟨he0, he2, hv, hb⟩ := h.1 τ
-  have hb0 : (0 : ℝ) ≤ b := by linarith
   unfold Formalism.L2.NTheta.lamAt
   split_ifs with h1 h2
   · obtain ⟨hv0, hv1⟩ := hv ⟨n, h1⟩
@@ -130,7 +128,6 @@ theorem aMi_le (D : D7) (i : Fin D.R.m) (b : ℝ) (h : Sizes D i b) (p q : ℕ) 
 
 theorem degAt_le (D : D7) (i : Fin D.R.m) (b : ℝ) (h : Sizes D i b) (σ : D.what₂.LL →+* ℂ) (ρ : D.what₂.Tau) :
     (degAt D i σ ρ : ℝ) ≤ 3 * (D.R.r : ℝ) * b := by
-  have hb1 := one_le_b D i b h
   have hi := i.isLt
   have hs := D.sp.W_sigval ((i : ℕ) + 1) (by omega) (by omega) (tauE D ρ)
   have hP : ∀ n, ((aPlAt D i σ ρ n : ℕ) : ℝ) ≤ 3 * b := fun n => aPl_le D i b h _ _ n
@@ -194,14 +191,9 @@ theorem sizes : ∀ (D : D7) (i : Fin D.R.m) (b : ℝ), Sizes D i b → (5.5 : �
   have hC : (1 : ℝ) ≤ b * D.host.rdE * ((D.host.g 0 : ℝ) * (D.host.g 1 : ℝ)) := by linarith
   have hD : (D.R.nV : ℝ) ≤ b * D.host.rdE * ((D.host.g 0 : ℝ) * (D.host.g 1 : ℝ)) * (D.R.nV : ℝ) :=
     le_mul_of_one_le_left (by positivity) hC
-  have hX : y ^ 8 ≤ b * D.host.rdE * ((D.host.g 0 : ℝ) * (D.host.g 1 : ℝ)) * (D.R.nV : ℝ) := by linarith
   have hL : Lp D b = Real.log (b * D.host.rdE * ((D.host.g 0 : ℝ) * (D.host.g 1 : ℝ)) * (D.R.nV : ℝ)) := rfl
-  have hXpos : 0 < b * D.host.rdE * ((D.host.g 0 : ℝ) * (D.host.g 1 : ℝ)) * (D.R.nV : ℝ) := by linarith
   have he6 : Real.exp (5.5 : ℝ) ≤ 729 := by
     have h1 : Real.exp (5.5 : ℝ) ≤ Real.exp 6 := Real.exp_le_exp.mpr (by norm_num)
-    have h2 : Real.exp 6 = Real.exp 1 ^ 6 := by
-      rw [← Real.exp_nat_mul]
-      norm_num
     have h3 : Real.exp 1 ^ 6 ≤ (3 : ℝ) ^ 6 :=
       pow_le_pow_left₀ (Real.exp_pos 1).le (by linarith [Real.exp_one_lt_d9]) 6
     norm_num at h3

@@ -82,16 +82,16 @@ theorem pair_diffOp [CharZero C] (B : σ →₀ ℕ) (P Q : MvPolynomial σ C) :
       AddMonoidAlgebra.coeff P m * AddMonoidAlgebra.coeff Q (B + m) * ((mfact (B + m) : C) / (mfact B : C)) := by
     intro m
     rw [coeff_sum, Finset.sum_eq_single (B + m)]
-    · rw [if_pos (le_add_self), coeff_monomial, add_tsub_cancel_right, if_pos rfl]
+    · rw [ite_eq_left (le_add_self), coeff_monomial, add_tsub_cancel_right, ite_eq_left rfl]
     · intro a _ ha
       split_ifs with hma
-      · rw [coeff_monomial, if_neg]
+      · rw [coeff_monomial, ite_eq_right]
         intro hB
         exact ha (by rw [← hB, tsub_add_cancel_of_le hma])
       · simp
     · intro hQ
       rw [notMem_support_iff] at hQ
-      rw [hQ, if_pos (le_add_self), coeff_monomial, add_tsub_cancel_right, if_pos rfl, mul_zero, zero_mul]
+      rw [hQ, ite_eq_left (le_add_self), coeff_monomial, add_tsub_cancel_right, ite_eq_left rfl, mul_zero, zero_mul]
   have hP : monomial B (1 : C) * P = ∑ m ∈ P.support, monomial (B + m) (AddMonoidAlgebra.coeff P m) := by
     conv_lhs => rw [P.as_sum]
     rw [Finset.mul_sum]

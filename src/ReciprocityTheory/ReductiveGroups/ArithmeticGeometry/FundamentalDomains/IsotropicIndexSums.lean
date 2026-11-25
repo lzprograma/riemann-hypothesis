@@ -46,7 +46,7 @@ lemma hC_comb_ortho {n p : ℕ} (f : Fin n → Fin r → ℂ)
     hermC τ G (∑ k, b k • f k) (∑ l, b l • f l) = ReciprocityTheory.MultiplicativeHeights.jForm p b b := by
   rw [hC_comb, ReciprocityTheory.MultiplicativeHeights.jForm]
   refine Finset.sum_congr rfl fun k _ => ?_
-  simp only [hf, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true, ReciprocityTheory.MultiplicativeHeights.sgn]
+  simp only [hf, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true, ReciprocityTheory.MultiplicativeHeights.sgn]
   split_ifs <;> ring
 
 lemma coeff_unique {n p : ℕ} (f : Fin n → Fin r → ℂ)
@@ -56,7 +56,7 @@ lemma coeff_unique {n p : ℕ} (f : Fin n → Fin r → ℂ)
       hermC τ G (∑ k, d k • f k) (f m) = d m * (if (m : ℕ) < p then 1 else -1) := by
     intro d m
     rw [_root_.ReciprocityTheory.ChartRestriction.G.FD.hC_sum_left]
-    simp only [_root_.ReciprocityTheory.ChartRestriction.G.FD.hermC_smul_left, hf, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [_root_.ReciprocityTheory.ChartRestriction.G.FD.hermC_smul_left, hf, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   funext m
   have e := congrArg (fun w => hermC τ G w (f m)) h
   simp only [key] at e
@@ -124,7 +124,7 @@ lemma isotropicIndex_bounds {ξ : Fin r → E} (hξ : herm X.Gm ξ ξ = 0) (hne 
     have e : ReciprocityTheory.MultiplicativeHeights.jForm X.p0 z z = -∑ a, z a * conj (z a) := by
       rw [ReciprocityTheory.MultiplicativeHeights.jForm, ← Finset.sum_neg_distrib]
       refine Finset.sum_congr rfl fun a _ => ?_
-      simp only [ReciprocityTheory.MultiplicativeHeights.sgn, hp, Nat.not_lt_zero, if_false]
+      simp only [ReciprocityTheory.MultiplicativeHeights.sgn, hp, Nat.not_lt_zero, ite_false]
       ring
     rw [e] at hj
     linear_combination hj
@@ -135,7 +135,7 @@ lemma isotropicIndex_bounds {ξ : Fin r → E} (hξ : herm X.Gm ξ ξ = 0) (hne 
     have e : ReciprocityTheory.MultiplicativeHeights.jForm X.p0 z z = ∑ a, z a * conj (z a) := by
       rw [ReciprocityTheory.MultiplicativeHeights.jForm]
       refine Finset.sum_congr rfl fun a _ => ?_
-      rw [ReciprocityTheory.MultiplicativeHeights.sgn, if_pos (lt_of_lt_of_le a.isLt hle)]
+      rw [ReciprocityTheory.MultiplicativeHeights.sgn, ite_eq_left (lt_of_lt_of_le a.isLt hle)]
       ring
     rw [e] at hj
     linear_combination -hj

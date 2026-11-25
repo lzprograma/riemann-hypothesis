@@ -5,51 +5,8 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.ChartMeasApp
 public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
 public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIsClosedEmbeddingOfAffine
 public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsHolomorphicSections
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -119,7 +76,7 @@ theorem ev_eq (h : y ∈ ptsIn p σ U) (f : Γ(Y, U)) : ev p σ U f y = evHom h 
 
 theorem evHom_eq_evalPt (h : y ∈ ptsIn p σ U) : evHom h = TangentOrigin.evalPt y.1 U h := rfl
 
-theorem ev_of_notMem (h : y ∉ ptsIn p σ U) (f : Γ(Y, U)) : ev p σ U f y = 0 := dif_neg h
+theorem ev_of_notMem (h : y ∉ ptsIn p σ U) (f : Γ(Y, U)) : ev p σ U f y = 0 := dite_eq_right h
 
 theorem ev_res (e : W ≤ U) (h : y ∈ ptsIn p σ W) (f : Γ(Y, U)) :
     ev p σ W (resG Y e f) y = ev p σ U f y := valR_res _ e h f
@@ -366,9 +323,9 @@ theorem exists_of_etale {U : Y.Opens} (hU : IsAffineOpen U) (x : Fin D → Γ(Y,
     (differentiable_const _).prodMk (EuclideanSpace.equiv (Fin D) ℂ).differentiable
   let s (v : V D) : CxPts p σ := if h : j v ∈ N then ofHom hU (τ (j v)) (hτ _ h).2.1 else y
   have hsU (v) (h : j v ∈ N) : s v ∈ ptsIn p σ U := by
-    simp only [s, dif_pos h]; exact ofHom_mem _ _ _
+    simp only [s, dite_eq_left h]; exact ofHom_mem _ _ _
   have hsv (v) (h : j v ∈ N) (a) : ev p σ U a (s v) = τ (j v) a := by
-    simp only [s, dif_pos h]; exact ev_ofHom _ _ _ a
+    simp only [s, dite_eq_left h]; exact ev_ofHom _ _ _ a
   obtain ⟨hc, hh⟩ := holo_of_affine hU (hN.preimage hj.continuous) hsU fun a =>
     ((hd a).comp hj.differentiableOn fun _ h => h).congr fun v hv => hsv v hv a
   let S : Set (CxPts p σ) :=

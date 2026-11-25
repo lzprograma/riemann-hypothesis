@@ -50,8 +50,6 @@ open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory
 open UpperTheory.V UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict UpperTheory.V.Z.Sym.Dict.Br UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob
 open UpperTheory.V.W (Plc Lp)
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace UpperTheory.V.Z.Sym.Dict.Br.UaF
 
 open Formalism.UG GlobalTheory.DefU GlobalTheory.SplitPts
@@ -120,16 +118,16 @@ private theorem cut (w : Plc L) (x : UA L n) (hx : x ∈ finU (E := L) (n := n))
     refine finGL_mem_UA _ fun u => ?_
     rw [GlobalTheory.EulerTwKU.pLoc_prjG, GlobalTheory.EulerTwKU.pLoc_prjG]
     by_cases hu : u ∈ T
-    · rw [if_pos hu, if_pos ((memC u).2 hu)]
+    · rw [ite_eq_left hu, ite_eq_left ((memC u).2 hu)]
       exact comp_eq x u
-    · rw [if_neg hu, if_neg (fun h => hu ((memC u).1 h))]
+    · rw [ite_eq_right hu, ite_eq_right (fun h => hu ((memC u).1 h))]
       simp
   have hc : ∀ u, cLoc u (⟨_, hU⟩ : UA L n) = if u ∈ T then cLoc u x else 1 := fun u => by
     rw [cLoc_finGL, GlobalTheory.EulerTwKU.pLoc_prjG, cLoc_eq]
   refine ⟨⟨_, hU⟩, Subgroup.mem_inf.2 ⟨pInf_finGL _, Subgroup.mem_iInf.2 fun u =>
     Subgroup.mem_iInf.2 fun hu => MonoidHom.mem_ker.2 ?_⟩, fun u hu => ?_⟩
-  · rw [hc, if_neg (fun h => hu ((memT u).1 h))]
-  · rw [hc, if_pos ((memT u).2 hu)]
+  · rw [hc, ite_eq_right (fun h => hu ((memT u).1 h))]
+  · rw [hc, ite_eq_left ((memT u).2 hu)]
 
 private theorem K_conj (x : UA L n) (u : Plc L) (h : cLoc (conjSrc (conjE L) u) x ∈ GlobalTheory.LFun.KGL (conjSrc (conjE L) u) (n := n)) :
     cLoc u x ∈ GlobalTheory.LFun.KGL u (n := n) := by

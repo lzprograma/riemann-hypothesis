@@ -2,44 +2,6 @@ module
 
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.DeRhamPotentiallySemistable.DeRhamTwists.ContinuousCyclotomicCharacter
 public import GroundTheory.PAdicHodge.WAKummerEps
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -53,8 +15,6 @@ open GroundTheory.PAdicHodge DeRhamPotentiallySemistable.DRPst Matrix
 variable (l : ℕ) [Fact l.Prime]
 
 abbrev GQ : Type := PadicAlgCl l ≃ₐ[ℚ_[l]] PadicAlgCl l
-
-abbrev Fld : Type := IntermediateField ℚ_[l] (PadicAlgCl l)
 
 abbrev B : Type := Bcris l
 
@@ -81,10 +41,6 @@ def qB : ℚ_[l] →+* B l := IsLocalization.lift (M := nonZeroDivisors ℤ_[l])
 
 def t : B l := cB l (tA l)
 
-def aB : AInf ℂ_[l] l →+* B l := (cB l).comp (algebraMap (AInf ℂ_[l] l) (ACris.ACris ℂ_[l] l))
-
-def Ainf' : Subring (B l) := Subring.closure (Set.range (aB l) ∪ {qB l ((l : ℚ_[l])⁻¹)})
-
 def Plus : Subring (BdR l) := (algebraMap (BdRp l) (BdR l)).range
 
 
@@ -98,11 +54,6 @@ def σB (g : GQ l) : B l →+* B l := Formalism.Per6.σB g
 def σC (g : GQ l) : ℂ_[l] ≃+* ℂ_[l] := galCp (toBot g)
 
 def χ (g : GQ l) : ℚ_[l] := ((DeRhamTwist.Twist.chi0 l g : ℤ_[l]) : ℚ_[l])
-
-def κ (g : GQ l) : ℚ_[l] :=
-  (kummerC (untilt_epsilon (p := l)) untilt_frobeniusEquiv_symm_epsilon_ne_one (toBot g) : ℤ_[l])
-
-def Eig (h : ℕ) (m : ℤ) (x : B l) : Prop := (φ l ^ h) x = qB l ((l : ℚ_[l]) ^ m) * x
 
 structure Base (l : ℕ) [Fact l.Prime] : Prop where
   ι_σ : ∀ (g : GQ l) x, ι l (σB g x) = σD g (ι l x)

@@ -47,7 +47,7 @@ private theorem tauFG_sH_X (c : ι) (b : Fin (d.D + 1)) (u : Kˣ) (v : TVar d.D 
     show (aeval (R := Ω c) (S₁ := MvPolynomial (SVar d.D d.N) (Ω c)) _) (X w) = _
     rw [aeval_X]
     try dsimp only
-    rw [if_pos hw]
+    rw [ite_eq_left hw]
     rfl
   have hTout : ∀ w : SVar d.D d.N, ¬ IsBaseBlockVar b w →
       tauPG (Ω := Ω c) (D := d.D) (N := d.N) b u (X w) = X w := by
@@ -55,7 +55,7 @@ private theorem tauFG_sH_X (c : ι) (b : Fin (d.D + 1)) (u : Kˣ) (v : TVar d.D 
     show (aeval (R := Ω c) (S₁ := MvPolynomial (SVar d.D d.N) (Ω c)) _) (X w) = _
     rw [aeval_X]
     try dsimp only
-    rw [if_neg hw]
+    rw [ite_eq_right hw]
   have hsX : ∀ w : TVar d.D d.N, d.sH c (X w) = sImg (d.jc c) (d.x c) w := fun w => by
     show aeval (sImg (d.jc c) (d.x c)) (X w) = _
     exact aeval_X _ _
@@ -67,7 +67,7 @@ private theorem tauFG_sH_X (c : ι) (b : Fin (d.D + 1)) (u : Kˣ) (v : TVar d.D 
         show (aeval (R := K) (S₁ := KTp K d.D d.N) _) (X (i, j)) = _
         rw [aeval_X]
         try dsimp only
-        rw [if_pos hib]
+        rw [ite_eq_left hib]
       rw [hs, map_mul, hsC, hsX, hKC]
       unfold sImg tauFG
       rw [IsFractionRing.ringEquivOfRingEquiv_algebraMap, ← map_mul]
@@ -91,7 +91,7 @@ private theorem tauFG_sH_X (c : ι) (b : Fin (d.D + 1)) (u : Kˣ) (v : TVar d.D 
         show (aeval (R := K) (S₁ := KTp K d.D d.N) _) (X (i, j)) = _
         rw [aeval_X]
         try dsimp only
-        rw [if_neg hib]
+        rw [ite_eq_right hib]
       rw [hs, hsX]
       unfold sImg tauFG
       rw [IsFractionRing.ringEquivOfRingEquiv_algebraMap]
@@ -209,15 +209,15 @@ theorem tauFG_w0rat (c : ι) (b : Fin (d.D + 1)) (u : Kˣ) :
       show (aeval (R := K) (S₁ := KTp K d.D d.N) _) (X (0, j)) = _
       rw [aeval_X]
       try dsimp only
-      rw [if_pos hb.symm]
-    rw [hs, map_mul, hsC, if_pos hb]
+      rw [ite_eq_left hb.symm]
+    rw [hs, map_mul, hsC, ite_eq_left hb]
     ring
   · have hs : sigP (K := K) (N := d.N) b u (X (0, j)) = X (0, j) := by
       show (aeval (R := K) (S₁ := KTp K d.D d.N) _) (X (0, j)) = _
       rw [aeval_X]
       try dsimp only
-      rw [if_neg (fun h0 => hb h0.symm)]
-    rw [hs, if_neg hb, map_one, one_mul]
+      rw [ite_eq_right (fun h0 => hb h0.symm)]
+    rw [hs, ite_eq_right hb, map_one, one_mul]
 
 theorem sigF_norm_w0rat (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (b : Fin (d.D + 1)) (u : Kˣ) :
     letI : Algebra (KTf K d.D d.N) (OmS (Ω c) d.D d.N) := (d.KTtoS h c).toAlgebra
@@ -289,8 +289,7 @@ theorem sigF_cMM (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (b : Fin (d.D + 1)) (u : 
     have hpH := hS p hp
     have hne : d.nPMM h c (d.w (d.jc c) c) p ≠ 0 := ((Set.Finite.mem_toFinset _).1 hp).2
     have hg : ∃ w, w ∈ d.GoodP c p := by
-      by_contra hno
-      push_neg at hno
+      by_contra! hno
       have hG : d.GoodP c p = ∅ := Set.eq_empty_iff_forall_notMem.mpr hno
       apply hne
       unfold nPMM
@@ -302,7 +301,7 @@ theorem sigF_cMM (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (b : Fin (d.D + 1)) (u : 
     congr 1
     by_cases hb : b = 0
     · simp [hb]
-    · simp only [hb, if_false]
+    · simp only [hb, ite_false]
       rw [← map_zpow₀, ← zpow_natCast, ← zpow_mul, mul_comm]
   rw [eC, map_prod, Finset.prod_congr rfl hfac, Finset.prod_mul_distrib, ← map_prod,
     prod_zpow_eq_zpow_sum_height _ _ _ (Units.ne_zero u)]
@@ -387,10 +386,10 @@ theorem F_degrees (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (F : KTp K d.D d.N)
     exact Nat.pow_right_injective (le_refl 2) (Nat.cast_injective h')
   refine ⟨fun s hs => ?_, fun b hb s hs => ?_⟩
   · have h0 := hdeg 0 s hs
-    rw [if_pos rfl, zpow_natCast] at h0
+    rw [ite_eq_left rfl, zpow_natCast] at h0
     exact inj _ _ h0
   · have h1 := hdeg b s hs
-    rw [if_neg hb, ← Int.toNat_of_nonneg (aMM_nonneg d hd h c), zpow_natCast] at h1
+    rw [ite_eq_right hb, ← Int.toNat_of_nonneg (aMM_nonneg d hd h c), zpow_natCast] at h1
     exact inj _ _ h1
 
 end Data

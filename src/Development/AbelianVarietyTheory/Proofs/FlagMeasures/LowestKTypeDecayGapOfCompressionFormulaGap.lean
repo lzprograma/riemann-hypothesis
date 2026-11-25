@@ -146,7 +146,7 @@ lemma norm_Phi_le {n : ℕ} {ε : Fin n → Bool} {lam : Fin n → ℝ} {h : ℝ
     congr 1
     have hi : (i.castSucc : ℕ) + 1 < m + 1 := by simp
     have e : (⟨(i.castSucc : ℕ) + 1, hi⟩ : Fin (m + 1)) = i.succ := Fin.ext (by simp)
-    simp only [GlobalTheory.Dec.sInt, dif_pos hi, e]
+    simp only [GlobalTheory.Dec.sInt, dite_eq_left hi, e]
     push_cast
     rw [muInt_cast hlam, muInt_cast hlam]
     simp only [Formalism.QuantumDeterminants.rhoStd, Fin.coe_castSucc, Fin.val_succ]

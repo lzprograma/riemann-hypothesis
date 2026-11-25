@@ -142,7 +142,7 @@ def segreQuotMap (q : Ideal (MRing ι F)) :
 
 omit [DecidableEq K] [∀ k, Fintype (ι k)] in
 theorem segreQuotMap_injective (q : Ideal (MRing ι F)) : Function.Injective (segreQuotMap F q) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro a ha
   obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective a
   change Ideal.Quotient.mk q (segreMap F x) = 0 at ha
@@ -164,9 +164,9 @@ theorem SegreHilb.proof : SegreHilb.Statement := by
   intro F _ K _ _ _ ι _ q n
   unfold hilbFn
   by_cases hn : 0 ≤ n
-  · rw [if_pos (fun _ => hn), if_pos (fun _ => hn)]
+  · rw [ite_eq_left (fun _ => hn), ite_eq_left (fun _ => hn)]
     exact congrArg (fun x : ℕ => (x : ℤ)) (segreGradedPieceEquiv F q n.toNat).finrank_eq
-  · rw [if_neg (fun h => hn (h ())), if_neg (fun h => hn (h (Classical.arbitrary K)))]
+  · rw [ite_eq_right (fun h => hn (h ())), ite_eq_right (fun h => hn (h (Classical.arbitrary K)))]
 
 end
 

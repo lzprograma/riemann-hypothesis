@@ -61,7 +61,7 @@ theorem extB_indep (σ : L →+* ℂ) {w : Fin n → H} (hw : LinearIndependent 
     (hx : LinearIndependent L x) : LinearIndependent ℂ fun k => extB σ w (x k) := by
   let _ : Algebra L ℂ := σ.toAlgebra
   have h1 : LinearIndependent ℂ fun k => algebraMap L ℂ ∘ x k := linearIndependent_algebraMap_comp_iff.2 hx
-  exact h1.map' _ (lc_ker hw)
+  exact h1.map' (Fintype.linearCombination ℂ w) (lc_ker hw)
 
 theorem extB_injective (σ : L →+* ℂ) {w : Fin n → H} (hw : LinearIndependent ℂ w) : Function.Injective (extB σ w) := by
   intro x y h
@@ -88,9 +88,9 @@ open Classical in
 variable (K C) in
 def bOr (n : ℕ) : Fin n → C := if h : HasB K C n then h.some else 0
 
-theorem crdOr_eq (h : HasB K C n) : crdOr K L C n = crd L h.some := dif_pos h
+theorem crdOr_eq (h : HasB K C n) : crdOr K L C n = crd L h.some := dite_eq_left h
 
-theorem bOr_eq (h : HasB K C n) : bOr K C n = h.some := dif_pos h
+theorem bOr_eq (h : HasB K C n) : bOr K C n = h.some := dite_eq_left h
 
 theorem crdOr_injective (h : HasB K C n) : Function.Injective (crdOr K L C n) := crdOr_eq (L := L) h ▸ crd_injective _
 
@@ -102,7 +102,7 @@ def secOr (n : ℕ) : LinearMap.range (crdOr K L C n) →ₗ[K] C :=
 
 theorem secOr_apply (h : HasB K C n) (f : C) :
     secOr K L C n (LinearEquiv.ofInjective _ (crdOr_injective h) f) = f := by
-  rw [secOr, dif_pos (crdOr_injective h)]
+  rw [secOr, dite_eq_left (crdOr_injective h)]
   exact LinearEquiv.symm_apply_apply _ f
 
 theorem extB_crdOr (h : HasB K C n) (σ : L →+* ℂ) (jK : C →ₛₗ[σ.comp (algebraMap K L)] H) (f : C) :
@@ -117,7 +117,7 @@ open Classical in
 def evOr (σ : K →+* ℂ) (ev : H → X) (φ : C → X) : C →ₛₗ[σ] H := if h : EvEx σ ev φ then h.choose else 0
 
 theorem evOr_spec {σ : K →+* ℂ} {ev : H → X} {φ : C → X} (h : EvEx σ ev φ) (f : C) : ev (evOr σ ev φ f) = φ f := by
-  rw [evOr, dif_pos h]
+  rw [evOr, dite_eq_left h]
   exact h.choose_spec f
 
 variable {G : Type} [Group G] {WL : Type} [AddCommGroup WL] [Module L WL]
@@ -142,7 +142,7 @@ def rhoOr (σ : L →+* ℂ) (j : WL →ₛₗ[σ] H) (e : H →ₗ[ℂ] X) (act
 
 theorem rhoOr_spec {σ : L →+* ℂ} {j : WL →ₛₗ[σ] H} {e : H →ₗ[ℂ] X} {act : G → X →ₗ[ℂ] X} {chi : G →* Lˣ}
     (h : ∃ ρ, RhoIs σ j e act chi ρ) : RhoIs σ j e act chi (rhoOr σ j e act chi) := by
-  rw [rhoOr, dif_pos h]
+  rw [rhoOr, dite_eq_left h]
   exact h.choose_spec
 
 theorem RhoIs.unique {σ : L →+* ℂ} {j : WL →ₛₗ[σ] H} {e : H →ₗ[ℂ] X} {act : G → X →ₗ[ℂ] X} {chi : G →* Lˣ}
@@ -263,7 +263,7 @@ theorem nrmOf_anti {v w : EReal} (hv : v ≠ ⊥) (h : v ≤ w) : nrmOf la w ≤
   by_cases hw : w = ⊤
   · rw [hw, nrmOf_top]; exact nrmOf_nonneg la v
   have hv' : v ≠ ⊤ := fun h' => hw (top_le_iff.1 (h' ▸ h))
-  simp only [nrmOf, if_neg hw, if_neg hv']
+  simp only [nrmOf, ite_eq_right hw, ite_eq_right hv']
   exact Real.rpow_le_rpow_of_exponent_le (one_lt_absNorm_real la).le (neg_le_neg (EReal.toReal_le_toReal h hv hw))
 
 end Nrm
@@ -386,7 +386,7 @@ theorem res_embLL (ha : AlgTie T) (h : T.Q.PinField) : res T D.what₂.embLL = T
 
 theorem good_resC {σ : D.what₂.LL →+* ℂ} (h : ¬ GoodEmb T.Q.c (res T σ)) : GoodEmb T.Q.c (resC T σ) := by
   have := goodEmb_goodOf T.Q.c (res T σ)
-  rwa [goodOf, if_neg h] at this
+  rwa [goodOf, ite_eq_right h] at this
 
 variable (R : RealDat D A T.Q.c.F) (κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1))
   (v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec)
@@ -426,24 +426,24 @@ def jTop (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ) : Cu T κ i →ₛₗ[res
 theorem jTop_good {i : Fin D.R.m} {σ : D.what₂.LL →+* ℂ} (hσ : GoodEmb T.Q.c (res T σ))
     (hV : T.V ((i : ℕ) + 1) (res T σ) = Wc D i) (h : JEvAt T R κ v₀ i σ hV) (f : Cu T κ i) :
     evAt R i σ (v₀ i σ) (jTop T R κ v₀ i σ f) = phiC T hV (wtA (κ i)) (f : T.R ((i : ℕ) + 1)) := by
-  rw [jTop, if_pos hσ, dif_pos hV]
+  rw [jTop, ite_eq_left hσ, dite_eq_left hV]
   exact evOr_spec h f
 
 theorem jTop_good0 {i : Fin D.R.m} {σ : D.what₂.LL →+* ℂ} (hσ : GoodEmb T.Q.c (res T σ))
     (hV : T.V ((i : ℕ) + 1) (res T σ) = Wc D i) (h : ¬ JEvAt T R κ v₀ i σ hV) : jTop T R κ v₀ i σ = 0 := by
-  rw [jTop, if_pos hσ, dif_pos hV]
-  exact dif_neg h
+  rw [jTop, ite_eq_left hσ, dite_eq_left hV]
+  exact dite_eq_right h
 
 theorem top_lift_vanishes_off_good_embeddings {i : Fin D.R.m} {σ : D.what₂.LL →+* ℂ} (hσ : ¬ GoodEmb T.Q.c (res T σ))
     (hV : T.V ((i : ℕ) + 1) (resC T σ) = Wc D i) (h : ¬ JEvBarAt T R κ i σ hV) : jTop T R κ v₀ i σ = 0 := by
-  rw [jTop, if_neg hσ, dif_neg fun h' => h h'.choose_spec]
+  rw [jTop, ite_eq_right hσ, dite_eq_right fun h' => h h'.choose_spec]
 
 theorem jTop_bar {i : Fin D.R.m} {σ : D.what₂.LL →+* ℂ} (hσ : ¬ GoodEmb T.Q.c (res T σ))
     (hV : T.V ((i : ℕ) + 1) (resC T σ) = Wc D i) (h : JEvBarAt T R κ i σ hV) :
     ∃ v : (R.MW i σ).Vec, IsUnitV v ∧ ∀ f, evAt R i σ v (jTop T R κ v₀ i σ f) = phiBar T κ hV f := by
   have h' : ∃ hV, JEvBarAt T R κ i σ hV := ⟨hV, h⟩
   refine ⟨h'.choose_spec.choose, h'.choose_spec.choose_spec.1, fun f => ?_⟩
-  rw [jTop, if_neg hσ, dif_pos h']
+  rw [jTop, ite_eq_right hσ, dite_eq_left h']
   exact evOr_spec h'.choose_spec.choose_spec.2 f
 
 def jL (i : Fin D.R.m) (n : ℕ) (σ : D.what₂.LL →+* ℂ) : (Fin n → D.what₂.LL) →ₛₗ[σ] (R.HW i σ).H :=
@@ -520,13 +520,13 @@ theorem kapDom : KapDom D := by
       have h2 := k'.2
       have h3 := Formalism.L2.NTheta.lamAt_add_add_le (D.hc τ) (k' - k) k (by omega)
       rw [show (k : ℕ) + (k' - k) = k' by omega, Nat.cast_sub h1] at h3
-      simp only [aPl, if_pos k.2, if_pos k'.2]
+      simp only [aPl, ite_eq_left k.2, ite_eq_left k'.2]
       exact Int.toNat_le_toNat (Int.floor_le_floor (by linarith))
     · have h1 : (k : ℕ) ≤ k' := hk
       have h2 := k'.2
       have h3 := Formalism.L2.NTheta.lamAt_add_add_le (D.hc τ) (k' - k) (p + (q - k') - 1) (by omega)
       rw [show p + (q - k') - 1 + ((k' : ℕ) - k) = p + (q - k) - 1 by omega, Nat.cast_sub h1] at h3
-      simp only [aMi, if_pos k.2, if_pos k'.2, Nat.cast_sub k.2.le, Nat.cast_sub k'.2.le]
+      simp only [aMi, ite_eq_left k.2, ite_eq_left k'.2, Nat.cast_sub k.2.le, Nat.cast_sub k'.2.le]
       exact Int.toNat_le_toNat (Int.floor_le_floor (by linarith))
   · obtain ⟨a, ha⟩ := D.R.k_even
     obtain ⟨b, hb⟩ := D.R.m_even

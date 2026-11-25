@@ -1,44 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LinearIndependentE
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.EllipticPartTestData
 import Development.AbelianVarietyTheory.Definitions.Divisors.HasTypeVec
@@ -54,7 +17,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formali
 open GlobalTheory.IndefiniteRowSideFullHecke.PlusPolynomialRoots (IsTestData PPol Tor Phi PhiOK PhiReal ellKernel Gap NoFixed IsLatticeConj GeomExpansion EllipticPart TraceEq)
 open GlobalTheory.PRep (IsAdmissible)
 open GlobalTheory.TrMult
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Chamber GlobalTheory.TruncKer GlobalTheory.Cusp
 open Polynomial
 
@@ -99,7 +61,7 @@ theorem hT_frame (Φ : WittFrame V) (i j : Fin (wittIndex V)) :
   rw [h]
   by_cases hij : i = j
   · subst hij; simp
-  · rw [if_neg (Ne.symm hij), if_neg hij, map_zero]
+  · rw [ite_eq_right (Ne.symm hij), ite_eq_right hij, map_zero]
 
 end GlobalTheory.Cusp.WeightCommute
 
@@ -125,15 +87,15 @@ theorem GlobalTheory.Cusp.WeightCommute.commute_of_weights : ∀ (D : D7) (V : H
     intro i hi
     rw [WittFrame.sub]
     rcases hs i hi with a | a
-    · rw [hxv, if_pos a]; exact Submodule.subset_span (Or.inl ⟨i, a, rfl⟩)
-    · rw [hxv, if_neg (by rw [a]; exact hne)]; exact Submodule.subset_span (Or.inr ⟨i, a, rfl⟩)
+    · rw [hxv, ite_eq_left a]; exact Submodule.subset_span (Or.inl ⟨i, a, rfl⟩)
+    · rw [hxv, ite_eq_right (by rw [a]; exact hne)]; exact Submodule.subset_span (Or.inr ⟨i, a, rfl⟩)
   have my : ∀ i ∈ S, yv i ∈ Φ.sub (-u) := by
     intro i hi
     rw [WittFrame.sub]
     rcases hs i hi with a | a
-    · rw [hyv, if_pos a]
+    · rw [hyv, ite_eq_left a]
       exact Submodule.subset_span (Or.inr ⟨i, show -(u i) = -1 by rw [a], rfl⟩)
-    · rw [hyv, if_neg (by rw [a]; exact hne)]
+    · rw [hyv, ite_eq_right (by rw [a]; exact hne)]
       exact Submodule.subset_span (Or.inl ⟨i, show -(u i) = 1 by rw [a]; rfl, rfl⟩)
 
   have genX : ∀ z, (∀ i ∈ S, V.hT (xv i) z = 0) → ∀ w ∈ Φ.sub u, V.hT w z = 0 := by
@@ -143,11 +105,11 @@ theorem GlobalTheory.Cusp.WeightCommute.commute_of_weights : ∀ (D : D7) (V : H
       rintro _ (⟨i, hi, rfl⟩ | ⟨i, hi, rfl⟩)
       · have hiS : i ∈ S := (hS i).2 (by rw [show u i = 1 from hi]; decide)
         have := hz i hiS
-        rw [hxv, if_pos (show u i = 1 from hi)] at this
+        rw [hxv, ite_eq_left (show u i = 1 from hi)] at this
         exact this
       · have hiS : i ∈ S := (hS i).2 (by rw [show u i = -1 from hi]; decide)
         have := hz i hiS
-        rw [hxv, if_neg (by rw [show u i = -1 from hi]; exact hne)] at this
+        rw [hxv, ite_eq_right (by rw [show u i = -1 from hi]; exact hne)] at this
         exact this
     exact hle hw
   have genY : ∀ z, (∀ i ∈ S, V.hT (yv i) z = 0) → ∀ w ∈ Φ.sub (-u), V.hT w z = 0 := by
@@ -158,44 +120,44 @@ theorem GlobalTheory.Cusp.WeightCommute.commute_of_weights : ∀ (D : D7) (V : H
       · have a : u i = -1 := neg_eq_iff_eq_neg.1 (show -(u i) = 1 from hi)
         have hiS : i ∈ S := (hS i).2 (by rw [a]; decide)
         have := hz i hiS
-        rw [hyv, if_neg (by rw [a]; exact hne)] at this
+        rw [hyv, ite_eq_right (by rw [a]; exact hne)] at this
         exact this
       · have a : u i = 1 := by
           have h' : -(u i) = -1 := hi
           simpa using h'
         have hiS : i ∈ S := (hS i).2 (by rw [a]; decide)
         have := hz i hiS
-        rw [hyv, if_pos a] at this
+        rw [hyv, ite_eq_left a] at this
         exact this
     exact hle hw
 
   have pxx : ∀ i ∈ S, ∀ j ∈ S, V.hT (xv j) (xv i) = 0 := by
     intro i hi j hj
-    rcases hs i hi with a | a <;> rcases hs j hj with b | b <;> simp only [hxv, a, b, if_true, if_neg hne]
+    rcases hs i hi with a | a <;> rcases hs j hj with b | b <;> simp only [hxv, a, b, ite_true, ite_eq_right hne]
     · exact (key i j).2.2.1
-    · rw [(key i j).1, if_neg (neq i j a b)]
-    · rw [(key i j).2.1, if_neg (neq j i b a).symm]
+    · rw [(key i j).1, ite_eq_right (neq i j a b)]
+    · rw [(key i j).2.1, ite_eq_right (neq j i b a).symm]
     · exact (key i j).2.2.2
   have pyy : ∀ i ∈ S, ∀ j ∈ S, V.hT (yv j) (yv i) = 0 := by
     intro i hi j hj
-    rcases hs i hi with a | a <;> rcases hs j hj with b | b <;> simp only [hyv, a, b, if_true, if_neg hne]
+    rcases hs i hi with a | a <;> rcases hs j hj with b | b <;> simp only [hyv, a, b, ite_true, ite_eq_right hne]
     · exact (key i j).2.2.2
-    · rw [(key i j).2.1, if_neg (neq i j a b)]
-    · rw [(key i j).1, if_neg (neq j i b a).symm]
+    · rw [(key i j).2.1, ite_eq_right (neq i j a b)]
+    · rw [(key i j).1, ite_eq_right (neq j i b a).symm]
     · exact (key i j).2.2.1
   have pyx : ∀ i ∈ S, ∀ j ∈ S, V.hT (yv j) (xv i) = if i = j then 1 else 0 := by
     intro i hi j hj
-    rcases hs i hi with a | a <;> rcases hs j hj with b | b <;> simp only [hxv, hyv, a, b, if_true, if_neg hne]
+    rcases hs i hi with a | a <;> rcases hs j hj with b | b <;> simp only [hxv, hyv, a, b, ite_true, ite_eq_right hne]
     · exact (key i j).1
-    · rw [(key i j).2.2.1, if_neg (neq i j a b)]
-    · rw [(key i j).2.2.2, if_neg (neq j i b a).symm]
+    · rw [(key i j).2.2.1, ite_eq_right (neq i j a b)]
+    · rw [(key i j).2.2.2, ite_eq_right (neq j i b a).symm]
     · exact (key i j).2.1
   have pxy : ∀ i ∈ S, ∀ j ∈ S, V.hT (xv j) (yv i) = if i = j then 1 else 0 := by
     intro i hi j hj
-    rcases hs i hi with a | a <;> rcases hs j hj with b | b <;> simp only [hxv, hyv, a, b, if_true, if_neg hne]
+    rcases hs i hi with a | a <;> rcases hs j hj with b | b <;> simp only [hxv, hyv, a, b, ite_true, ite_eq_right hne]
     · exact (key i j).2.1
-    · rw [(key i j).2.2.2, if_neg (neq i j a b)]
-    · rw [(key i j).2.2.1, if_neg (neq j i b a).symm]
+    · rw [(key i j).2.2.2, ite_eq_right (neq i j a b)]
+    · rw [(key i j).2.2.1, ite_eq_right (neq j i b a).symm]
     · exact (key i j).1
 
   have decomp : ∀ v : V.V, ∃ x ∈ Φ.sub u, ∃ y ∈ Φ.sub (-u), ∃ z, (∀ w ∈ Φ.sub u, V.hT w z = 0) ∧
@@ -208,17 +170,17 @@ theorem GlobalTheory.Cusp.WeightCommute.commute_of_weights : ∀ (D : D7) (V : H
 
       rw [map_sub, map_sub, map_sum, map_sum,
       Finset.sum_eq_zero (fun i hi => by rw [map_smul, pxx i hi j hj, smul_zero]),
-      Finset.sum_eq_single j (fun i hi hij => by rw [map_smul, pxy i hi j hj, if_neg hij, smul_zero])
+      Finset.sum_eq_single j (fun i hi hij => by rw [map_smul, pxy i hi j hj, ite_eq_right hij, smul_zero])
         (fun h => absurd hj h),
-      map_smul, pxy j hj j hj, if_pos rfl, smul_eq_mul, mul_one]
+      map_smul, pxy j hj j hj, ite_eq_left rfl, smul_eq_mul, mul_one]
       simp
     · intro j hj
 
       rw [map_sub, map_sub, map_sum, map_sum,
-      Finset.sum_eq_single j (fun i hi hij => by rw [map_smul, pyx i hi j hj, if_neg hij, smul_zero])
+      Finset.sum_eq_single j (fun i hi hij => by rw [map_smul, pyx i hi j hj, ite_eq_right hij, smul_zero])
         (fun h => absurd hj h),
       Finset.sum_eq_zero (fun i hi => by rw [map_smul, pyy i hi j hj, smul_zero]),
-      map_smul, pyx j hj j hj, if_pos rfl, smul_eq_mul, mul_one]
+      map_smul, pyx j hj j hj, ite_eq_left rfl, smul_eq_mul, mul_one]
       simp
 
   have inv_app : ∀ w, GlobalTheory.Cusp.ratAct D.sp.cm V γ (GlobalTheory.Cusp.ratAct D.sp.cm V γ⁻¹ w) = w := by

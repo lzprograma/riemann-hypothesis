@@ -14,7 +14,6 @@ public import Mathlib.LinearAlgebra.Vandermonde
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.EigenvectorLieDegree
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.AdelicDegreeTameRamification
 public import Mathlib.RingTheory.MvPolynomial.Homogeneous
-public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.TamagawaNumberSpecialUnitary
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEffCartierCompl
 public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.Hypotheses2
 public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.BaseWeightLineBundleIsNef
@@ -185,59 +184,6 @@ open GlobalTheory.Points CrdCalc
 variable {o Ω : Type} [CommRing o] [Field Ω] [Algebra o Ω] {N : RatModel o Ω} {X : Scheme.{0}} {a : N.Z ⟶ X}
   {H : LB X} {J : Type} {s : J → H.Sec} {t : J → Ω}
 
-theorem ratio_eq (ht : Crd H s (N.pt ≫ a) t) {k : J} {z : N.Z} (hz : a z ∈ nonzeroLocus (s k)) :
-    t k ≠ 0 ∧ ∀ (j : J) (r : Γ(X, nonzeroLocus (s k))), IsRatio (s j) (s k) _ r →
-      valF N.pt (a ⁻¹ᵁ nonzeroLocus (s k)) (a.app _ r) = t j / t k := by
-  have h : ⊤ ≤ (N.pt ≫ a) ⁻¹ᵁ nonzeroLocus (s k) :=
-    N.top_le_preimage_pt (U := a ⁻¹ᵁ nonzeroLocus (s k)) ⟨z, hz⟩
-  have hk : t k ≠ 0 := ((crd_isUnit_iff k ht).2 h).ne_zero
-  refine ⟨hk, fun j r hr => ?_⟩
-  rw [eq_div_iff hk, crd_ratio ht hr h, valR_comp]
-  rfl
-
-theorem div_of_mem (hH : H.IsLB) (ht : Crd H s (N.pt ≫ a) t) {k : J} {z : N.Z}
-    (hz : a z ∈ nonzeroLocus (s k)) : N.Div t k z := by
-  obtain ⟨hk, h⟩ := ratio_eq ht hz
-  refine ⟨hk, fun j => ?_⟩
-  obtain ⟨r, hr, -⟩ := GlobalTheory.SecRatio.existsUnique_isRatio hH (s j) (s k) _ le_rfl
-  exact ⟨a ⁻¹ᵁ nonzeroLocus (s k), a.app _ r, hz, h j r hr⟩
-
-theorem crd_eq_val_mul (hH : H.IsLB) (ht : Crd H s (N.pt ≫ a) t) {K : Type} [Field K] {x : Sp K ⟶ N.Z}
-    {v : J → K} {k : J} (hv : Crd H s (x ≫ a) v)
-    (hz : a (x (IsLocalRing.closedPoint K)) ∈ nonzeroLocus (s k)) :
-    v k ≠ 0 ∧ ∀ j, v j = N.val x (t j / t k) * v k := by
-  have hx : ⊤ ≤ x ⁻¹ᵁ (a ⁻¹ᵁ nonzeroLocus (s k)) := (le_preimage_iff x _).2 hz
-  have h : ⊤ ≤ (x ≫ a) ⁻¹ᵁ nonzeroLocus (s k) := hx
-  refine ⟨((crd_isUnit_iff k hv).2 h).ne_zero, fun j => ?_⟩
-  obtain ⟨r, hr, -⟩ := GlobalTheory.SecRatio.existsUnique_isRatio hH (s j) (s k) _ le_rfl
-  rw [RatModel.val_eq ((top_le_preimage_iff _ _).1 hx) ((ratio_eq ht hz).2 j r hr), crd_ratio hv hr h,
-    valR_comp]
-  rfl
-
-theorem mem_of_div_pt (hH : H.IsLB) (hs : ⨆ j, nonzeroLocus (s j) = ⊤) (ht : Crd H s (N.pt ≫ a) t)
-    {K : Type} [Field K] (x : Sp K ⟶ N.Z) {i : J} (hi : N.Div t i (x (IsLocalRing.closedPoint K))) :
-    a (x (IsLocalRing.closedPoint K)) ∈ nonzeroLocus (s i) := by
-  have hm : a (x (IsLocalRing.closedPoint K)) ∈ ⨆ j, nonzeroLocus (s j) := by rw [hs]; trivial
-  obtain ⟨k, hk⟩ := TopologicalSpace.Opens.mem_iSup.1 hm
-  obtain ⟨v, hv⟩ := crd_exists hH s (x ≫ a)
-  obtain ⟨h0, h1⟩ := crd_eq_val_mul hH ht hv hk
-  have hd := div_of_mem hH ht hk
-  have hu := (RatModel.val_ne_zero_iff (RatModel.range_eq_singleton x _) _).2 ((hd.div_iff_isUnit i).1 hi)
-  have hvi : IsUnit (v i) := isUnit_iff_ne_zero.2 (by rw [h1 i]; exact mul_ne_zero hu h0)
-  exact (le_preimage_iff (x ≫ a) _).1 ((crd_isUnit_iff i hv).1 hvi)
-
-theorem mem_of_div (hH : H.IsLB) (hs : ⨆ j, nonzeroLocus (s j) = ⊤) (ht : Crd H s (N.pt ≫ a) t)
-    {i : J} {z : N.Z} (hi : N.Div t i z) : a z ∈ nonzeroLocus (s i) := by
-  let x : Sp (N.Z.residueField z) ⟶ N.Z := N.Z.fromSpecResidueField z
-  have e : x (IsLocalRing.closedPoint (N.Z.residueField z)) = z := Scheme.fromSpecResidueField_apply _ _
-  have h := mem_of_div_pt hH hs ht x (i := i) (by rw [e]; exact hi)
-  rwa [e] at h
-
-theorem div_iff_mem_nonzeroLocus : ∀ (o Ω : Type) [CommRing o] [Field Ω] [Algebra o Ω] (N : RatModel o Ω) (X : Scheme.{0}) (a : N.Z ⟶ X) (H : LB X) (J : Type) (s : J → H.Sec) (t : J → Ω), H.IsLB → ⨆ j, nonzeroLocus (s j) = ⊤ → Crd H s (N.pt ≫ a) t → (∀ (i : J) (z : N.Z), N.Div t i z ↔ a z ∈ nonzeroLocus (s i)) ∧ ∀ (K : Type) [Field K] (x : Sp K ⟶ N.Z) (v : J → K) (k : J), Crd H s (x ≫ a) v → N.Div t k (x (IsLocalRing.closedPoint K)) → v k ≠ 0 ∧ ∀ j, v j = N.val x (t j / t k) * v k :=
-  fun _ _ _ _ _ _ _ _ _ _ _ _ hH hs ht =>
-    ⟨fun _ _ => ⟨mem_of_div hH hs ht, div_of_mem hH ht⟩,
-      fun _ _ x _ _ hv hk => crd_eq_val_mul hH ht hv (mem_of_div_pt hH hs ht x hk)⟩
-
 end GlobalTheory.ZH.DivCrd
 end -- clump:auto
 end -- clump:auto
@@ -266,7 +212,7 @@ private theorem coeff_linearForm_pow_eq_factorial_mul_prod {σ : Type} [Fintype 
   rw [Finset.sum_eq_single (⇑d)]
   · have hind : d = Finsupp.indicator univ (fun i _ => d i) := by
       ext i; simp
-    rw [if_pos hind, mul_one]
+    rw [ite_eq_left hind, mul_one]
     have hspec := Nat.multinomial_spec (univ : Finset σ) (⇑d)
     rw [hsum] at hspec
     have hpos : (∏ i, ((d i).factorial : ℝ)) ≠ 0 := by
@@ -275,7 +221,7 @@ private theorem coeff_linearForm_pow_eq_factorial_mul_prod {σ : Type} [Fintype 
     push_cast
     field_simp
   · intro k _ hk
-    rw [if_neg, mul_zero]
+    rw [ite_eq_right, mul_zero]
     intro h
     apply hk
     funext i
@@ -383,9 +329,6 @@ section Lie
 
 variable {k : Type} [Field k] [NumberField k] {t : SAB H (Sp k)} {m : ℕ} {x : Fin m → (epsR k ⟶ t.G)}
 
-theorem isEigBasis_iff (τ : E →+* k) : EigenvectorLieDegree.IsEigBasis t.act (τ.comp (algebraMap (𝓞 E) E)) x ↔
-    AdelicDegreeTameRamification.IsEigenBasis t (fun a => τ (a : E)) x := Iff.rfl
-
 
 end Lie
 
@@ -423,35 +366,13 @@ set_option autoImplicit false
 noncomputable section
 
 open MvPolynomial NumberField
-
-namespace GlobalTheory.ChowHt
-
-attribute [local instance] MvPolynomial.gradedAlgebra
-
-theorem aeval_smul_of_isHomogeneous {k K : Type} [Field k] [Field K] [Algebra k K] {N d : ℕ}
-    {g : MvPolynomial (Fin N) k} (hg : g.IsHomogeneous d) (t : K) (z : Fin N → K) :
-    aeval (t • z) g = t ^ d * aeval z g := by
-  classical
-  rw [aeval_def, aeval_def, eval₂_eq', eval₂_eq', Finset.mul_sum]
-  refine Finset.sum_congr rfl fun s hs => ?_
-  have h := hg (mem_support_iff.1 hs)
-  have hd : ∑ i, s i = d := by
-    rw [← h, Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by simp)]
-    simp
-  simp only [Pi.smul_apply, smul_eq_mul, mul_pow, Finset.prod_mul_distrib,
-    Finset.prod_pow_eq_pow_sum, hd]
-  ring
-
-
-
-end GlobalTheory.ChowHt
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.ForallAevalLineVanishingIdealIff =====
 
 -- ===== clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.ProportionalityOfLocalCharts =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.ProportionalityOfLocalCharts", "h": "module\n\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.TamagawaNumberSpecialUnitary\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEffCartierCompl\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.Hypotheses2\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.BaseWeightLineBundleIsNef\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonemptyRayDataOfNeZero\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ScaledTwistingSheafSpec\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ToroidalCompactificationData\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticOnNhdFinChartIff\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.BlockSphereMeanLinForm\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.DiagValExtTraceNonneg\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsFlagModelHermSum\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.FirstChernLeviEqConstant\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.GenRatios\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.HtValOnSubset\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.IsLatBasisHtLatIffSpanEq\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.Multiplier\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyCuspFrame\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.P22\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen\npublic import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CmHostRootComplexEqPmSqrt\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.CdScaleTieIff\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsBaseTwoWords\npublic import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv\npublic import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.LineDerivListEqIteratedFDeriv\npublic import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsEqNsmul\npublic import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.TateIsoExistsAlgClosed\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsIsotropicGroupLatticeClassRepresentatives\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HarmAMemSpanShort\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HarmonicValuesInvariantUniversalEndomorphism\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.InZhGeoInjStable\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsRawChartBaseChangeJetPoints\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ModuliUnivEtaKilled\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.NsmulApplyMemOfMemTensorLat\npublic import Development.AbelianVarietyTheory.Definitions.ThetaValues.LeCovCoeff\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RuleBaseChangeSectionValuesSemilinear\npublic import Development.AbelianVarietyTheory.Definitions.Degenerations.InducedModelMorphismCompStructureMap\npublic import Development.AbelianVarietyTheory.Definitions.Degenerations.PullChartIsLB\npublic import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DivIffMemNonzeroLocus\npublic import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn\npublic import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated\npublic import Mathlib.Analysis.Complex.Norm\npublic import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FrobeniusOnTorsion\npublic import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.UniformisationCompleteDvrOfLawsStatement\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspFormsExtendVanishCompactifiedFlagSpaceStatement\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbeddingSumDegreeFormula\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMemChart\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPinnedOfIsUnf\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagDegreeFormula\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatDegreeStatementOfDegreeTheorem\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ForallAevalLineVanishingIdealIff\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMetricOfIsOrtho\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.La1sqEqOfUnXEq\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModelExistsAfterBaseChange\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModificationLineBundleGlobalSectionsDimPullEq\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulBoundAtBaseChange\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuadraticSubfieldRootDiscriminant\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RamificationIndexValuationCompat\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RamificationWeightedLogNormSum\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnfoldingFrameDeltaChange\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanBdLeSpace\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.AdjointSeriesFramesPullback\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.CubeFramesMoveToPullbackTriple\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsFramesCoefficientRingBaseChange\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsIndexOfLocal\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FrameFirstPartialLawIffPullback\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FrameSymmetryIffPullback\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.IsFrameGCoefficientRingBaseChange\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.JetPointsUnitLawActionBaseChange\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.JetPointsUnitLawActionIffPullback\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.NuAlgLeOfCharts\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCovPinNotIsXiDet\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCoversOfHalves\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FlatSecInhabited\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsAbelianGaloisHost\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIntegrallyClosedInFractionFieldPowerSeries\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PrimeDvdAbsNormHalfDifferent\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProjPointIdealMemProjComponentsOfIsProjPureDim\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RankOneBaseWeightEqCmTheta\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.BddSecCuspCongr\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CabsDiagEqOneStatement\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsFramesOfHolPeriods\npublic import Development.AbelianVarietyTheory.Definitions.RegularCharts.Reframe\npublic import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsSectionOfGenericValuesRegularOnCharts\npublic import Development.AbelianVarietyTheory.Definitions.RegularCharts.BaseNorm\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsUnitGramFrameBorelChange\npublic import Formalism.LocalToGlobal.ProjectiveLattices.AxHSup\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameNormConjugatePointsEqPointwise\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameNormsContinuousOnSmoothChart\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NumericalConsequencesOfPins\npublic import Formalism.LocalToGlobal.ProjectiveLattices.NormsFree\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.PointwiseNormBddAboveISupEqCuspFormSupNorm\n\n"}
+-- clump-header: {"m": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.ProportionalityOfLocalCharts", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEffCartierCompl\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.Hypotheses2\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.BaseWeightLineBundleIsNef\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonemptyRayDataOfNeZero\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ScaledTwistingSheafSpec\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ToroidalCompactificationData\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticOnNhdFinChartIff\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.BlockSphereMeanLinForm\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.DiagValExtTraceNonneg\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsFlagModelHermSum\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.FirstChernLeviEqConstant\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.GenRatios\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.HtValOnSubset\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.IsLatBasisHtLatIffSpanEq\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.Multiplier\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyCuspFrame\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.P22\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen\npublic import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CmHostRootComplexEqPmSqrt\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.CdScaleTieIff\npublic import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsBaseTwoWords\npublic import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv\npublic import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.LineDerivListEqIteratedFDeriv\npublic import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsEqNsmul\npublic import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.TateIsoExistsAlgClosed\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsIsotropicGroupLatticeClassRepresentatives\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HarmAMemSpanShort\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HarmonicValuesInvariantUniversalEndomorphism\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.InZhGeoInjStable\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsRawChartBaseChangeJetPoints\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ModuliUnivEtaKilled\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.NsmulApplyMemOfMemTensorLat\npublic import Development.AbelianVarietyTheory.Definitions.ThetaValues.LeCovCoeff\npublic import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RuleBaseChangeSectionValuesSemilinear\npublic import Development.AbelianVarietyTheory.Definitions.Degenerations.InducedModelMorphismCompStructureMap\npublic import Development.AbelianVarietyTheory.Definitions.Degenerations.PullChartIsLB\npublic import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DivIffMemNonzeroLocus\npublic import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn\npublic import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated\npublic import Mathlib.Analysis.Complex.Norm\npublic import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FrobeniusOnTorsion\npublic import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.UniformisationCompleteDvrOfLawsStatement\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspFormsExtendVanishCompactifiedFlagSpaceStatement\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbeddingSumDegreeFormula\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMemChart\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPinnedOfIsUnf\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagDegreeFormula\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatDegreeStatementOfDegreeTheorem\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ForallAevalLineVanishingIdealIff\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMetricOfIsOrtho\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.La1sqEqOfUnXEq\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModelExistsAfterBaseChange\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModificationLineBundleGlobalSectionsDimPullEq\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulBoundAtBaseChange\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuadraticSubfieldRootDiscriminant\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RamificationIndexValuationCompat\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RamificationWeightedLogNormSum\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnfoldingFrameDeltaChange\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanBdLeSpace\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.AdjointSeriesFramesPullback\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.CubeFramesMoveToPullbackTriple\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsFramesCoefficientRingBaseChange\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsIndexOfLocal\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FrameFirstPartialLawIffPullback\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FrameSymmetryIffPullback\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.IsFrameGCoefficientRingBaseChange\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.JetPointsUnitLawActionBaseChange\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.JetPointsUnitLawActionIffPullback\npublic import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.NuAlgLeOfCharts\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCovPinNotIsXiDet\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCoversOfHalves\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FlatSecInhabited\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsAbelianGaloisHost\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIntegrallyClosedInFractionFieldPowerSeries\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PrimeDvdAbsNormHalfDifferent\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProjPointIdealMemProjComponentsOfIsProjPureDim\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RankOneBaseWeightEqCmTheta\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.BddSecCuspCongr\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CabsDiagEqOneStatement\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsFramesOfHolPeriods\npublic import Development.AbelianVarietyTheory.Definitions.RegularCharts.Reframe\npublic import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsSectionOfGenericValuesRegularOnCharts\npublic import Development.AbelianVarietyTheory.Definitions.RegularCharts.BaseNorm\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsUnitGramFrameBorelChange\npublic import Formalism.LocalToGlobal.ProjectiveLattices.AxHSup\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameNormConjugatePointsEqPointwise\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameNormsContinuousOnSmoothChart\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NumericalConsequencesOfPins\npublic import Formalism.LocalToGlobal.ProjectiveLattices.NormsFree\npublic import Development.AbelianVarietyTheory.Proofs.GenericRegularity.PointwiseNormBddAboveISupEqCuspFormSupNorm\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -498,7 +419,7 @@ theorem growth_eq_top_self_intersection (hP : _root_.GlobalTheory.CovTop.Hypothe
     (fun m => vanBd TF.X Z (m • la)) fun _ _ => Iff.rfl, CompHt.growthOn]
   congr 1
   funext m
-  have h1 := GlobalTheory.T.cuspForms_extend_vanish_compactifiedFlagSpace D T j Y e o hY hf Z TF (m • la)
+  have h1 := _root_.GlobalTheory.CompHS.cusp_extends_comp D T j Y e o hY hf Z TF (m • la)
   have h2 := le_antisymm h1.space_le (vanBd_le_space D T j Y e o hY hf Z TF (m • la))
   rw [CompHt.nsmul_wtOf, smul_zero, ← h2]
   exact congrArg _ h1.equiv.rank_eq

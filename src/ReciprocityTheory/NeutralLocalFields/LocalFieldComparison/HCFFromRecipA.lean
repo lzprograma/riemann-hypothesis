@@ -202,32 +202,6 @@ theorem classOf_eq_one_iff (a : Ideles K) :
     rw [h2, FractionalIdeal.coe_spanSingleton]
     exact ⟨⟨k, rfl⟩⟩
 
-private theorem isUnit_of_valued_eq_one (v : HeightOneSpectrum (𝓞 K)) (y : v.adicCompletionIntegers K)
-    (hy : Valued.v (y : v.adicCompletion K) = 1) : IsUnit y := by
-  have hy0 : (y : v.adicCompletion K) ≠ 0 := by
-    intro h
-    rw [h, map_zero] at hy
-    exact zero_ne_one hy
-  have hinv : (y : v.adicCompletion K)⁻¹ ∈ v.adicCompletionIntegers K := by
-    rw [HeightOneSpectrum.mem_adicCompletionIntegers, map_inv₀, hy, inv_one]
-  have h1 : y * ⟨_, hinv⟩ = 1 := Subtype.ext (mul_inv_cancel₀ hy0)
-  exact ⟨⟨y, ⟨_, hinv⟩, h1, by rw [mul_comm]; exact h1⟩, rfl⟩
-
-private theorem valued_eq_one_of_isUnit' (v : HeightOneSpectrum (𝓞 K)) (y : v.adicCompletionIntegers K)
-    (hy : IsUnit y) : Valued.v (y : v.adicCompletion K) = 1 := by
-  obtain ⟨u, rfl⟩ := hy
-  have h1 : Valued.v ((u : v.adicCompletionIntegers K) : v.adicCompletion K) ≤ 1 :=
-    (HeightOneSpectrum.mem_adicCompletionIntegers (𝓞 K) K v).mp (u : v.adicCompletionIntegers K).2
-  have h2 : Valued.v (((u⁻¹ : (v.adicCompletionIntegers K)ˣ) : v.adicCompletionIntegers K) : v.adicCompletion K) ≤ 1 :=
-    (HeightOneSpectrum.mem_adicCompletionIntegers (𝓞 K) K v).mp ((u⁻¹ : (v.adicCompletionIntegers K)ˣ) : v.adicCompletionIntegers K).2
-  have h3 : Valued.v ((u : v.adicCompletionIntegers K) : v.adicCompletion K) *
-      Valued.v (((u⁻¹ : (v.adicCompletionIntegers K)ˣ) : v.adicCompletionIntegers K) : v.adicCompletion K) = 1 := by
-    rw [← map_mul]
-    exact (congrArg (fun t : v.adicCompletionIntegers K => Valued.v (t : v.adicCompletion K)) u.mul_inv).trans (map_one _)
-  refine le_antisymm h1 ?_
-  calc (1 : _) = _ := h3.symm
-    _ ≤ _ := mul_le_of_le_one_right' h2
-
 theorem valued_eq_exp_of_isUniformiserAt (v : HeightOneSpectrum (𝓞 K)) (x : v.adicCompletion K)
     (hx : IsUniformiserAt K v x) : Valued.v x = WithZero.exp (-1 : ℤ) := by
   obtain ⟨hxO, hirr⟩ := hx
@@ -235,7 +209,7 @@ theorem valued_eq_exp_of_isUniformiserAt (v : HeightOneSpectrum (𝓞 K)) (x : v
   have hx0 : x ≠ 0 := by
     rintro rfl
     exact hirr.ne_zero (Subtype.ext rfl)
-  have hne1 : Valued.v x ≠ 1 := fun h => hirr.not_isUnit (isUnit_of_valued_eq_one K v _ h)
+  have hne1 : Valued.v x ≠ 1 := fun h => hirr.not_isUnit (IsDedekindDomain.HeightOneSpectrum.adicCompletionIntegers.isUnit_iff_valued_eq_one.mpr h)
   obtain ⟨π, hπ⟩ := IsDedekindDomain.HeightOneSpectrum.intValuation_exists_uniformizer v
   have hy' := IsDedekindDomain.HeightOneSpectrum.valuedAdicCompletion_eq_valuation (K := K) v π
   rw [IsDedekindDomain.HeightOneSpectrum.valuation_of_algebraMap, hπ] at hy'
@@ -267,12 +241,12 @@ theorem valued_eq_exp_of_isUniformiserAt (v : HeightOneSpectrum (𝓞 K)) (x : v
     show x = y * (x / y)
     field_simp
   rcases hirr.isUnit_or_isUnit hsplit with h | h
-  · have h1 := valued_eq_one_of_isUnit' K v _ h
+  · have h1 := IsDedekindDomain.HeightOneSpectrum.adicCompletionIntegers.isUnit_iff_valued_eq_one.mp h
     change Valued.v y = 1 at h1
     rw [hy] at h1
     have h2 := congrArg WithZero.log h1
     simp at h2
-  · have h1 := valued_eq_one_of_isUnit' K v _ h
+  · have h1 := IsDedekindDomain.HeightOneSpectrum.adicCompletionIntegers.isUnit_iff_valued_eq_one.mp h
     change Valued.v (x / y) = 1 at h1
     rw [map_div₀, hy, ← WithZero.exp_log hw0, ← WithZero.exp_sub] at h1
     have h2 := congrArg WithZero.log h1

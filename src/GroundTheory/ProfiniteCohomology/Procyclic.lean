@@ -238,29 +238,4 @@ theorem H1Eval_injective {σ : G} (hσ : IsTopologicalGenerator σ) :
 
 end H1
 
-section Iso
-
-variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-  (A : Rep.{u} k G) [IsDiscreteRep A] {σ : G}
-
-variable [CompactSpace G]
-
-end Iso
-
-section Vanishing
-
-variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-  [CompactSpace G]
-
-variable {σ : G}
-
-end Vanishing
-
-section Dimension
-
-variable {G : Type u} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
-  {σ : G}
-
-end Dimension
-
 end GroundTheory.ProfCoh

@@ -1,8 +1,6 @@
 module
 
 public import Mathlib.Topology.Algebra.OpenSubgroup
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.Order.CompletePartialOrder
 import Mathlib.Tactic.TypeStar
 
 @[expose] public section
@@ -11,7 +9,7 @@ noncomputable section
 
 namespace GroundTheory.Automorphic
 
-open Set Filter Topology MeasureTheory
+open Set Filter Topology
 open scoped Pointwise
 
 section Space
@@ -22,7 +20,7 @@ variable {X : Type*} [TopologicalSpace X] [LocallyCompactSpace X] [T2Space X]
 theorem exists_isCompact_isOpen_subset {x : X} {U : Set X} (hU : U ∈ 𝓝 x) :
     ∃ V : Set X, IsCompact V ∧ IsOpen V ∧ x ∈ V ∧ V ⊆ U := by
   obtain ⟨K, hK, hKU, hKc⟩ := local_compact_nhds hU
-  obtain ⟨V, hV, hxV, hVK⟩ := loc_compact_Haus_tot_disc_of_zero_dim.mem_nhds_iff.1 hK
+  obtain ⟨V, hV, hxV, hVK⟩ := isTopologicalBasis_isClopen.mem_nhds_iff.1 hK
   exact ⟨V, hKc.of_isClosed_subset hV.isClosed hVK, hV.isOpen, hxV, hVK.trans hKU⟩
 
 end Space

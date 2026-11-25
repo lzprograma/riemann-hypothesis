@@ -201,19 +201,11 @@ instance isSimpleRing_tensorProduct [Algebra.IsCentral K A] [IsSimpleRing A] [Is
   refine IsSimpleRing.of_eq_bot_or_eq_top fun I ↦ ?_
   refine or_iff_not_imp_left.mpr fun hI ↦ ?_
   obtain ⟨b, hb0, hbI⟩ := exists_one_tmul_mem_of_ne_bot I hI
-  let J : TwoSidedIdeal B := TwoSidedIdeal.mk' {c | (1 : A) ⊗ₜ[K] c ∈ I}
-    (by simp [I.zero_mem])
-    (fun hx hy ↦ by simpa [tmul_add] using I.add_mem hx hy)
-    (fun hx ↦ by simpa [tmul_neg] using I.neg_mem hx)
-    (fun {x _} hy ↦ by
-      simpa [Algebra.TensorProduct.tmul_mul_tmul] using I.mul_mem_left ((1 : A) ⊗ₜ[K] x) _ hy)
-    (fun {_ y} hx ↦ by
-      simpa [Algebra.TensorProduct.tmul_mul_tmul] using I.mul_mem_right _ ((1 : A) ⊗ₜ[K] y) hx)
+  let J := I.comap (includeRight : B →ₐ[K] A ⊗[K] B)
   have h1 : (1 : B) ∈ J := IsSimpleRing.one_mem_of_ne_zero_mem J hb0
-    ((TwoSidedIdeal.mem_mk' _ _ _ _ _ _ _).mpr hbI)
-  simp only [J, TwoSidedIdeal.mem_mk', Set.mem_ofPred_eq] at h1
-  rw [← Algebra.TensorProduct.one_def] at h1
-  exact (TwoSidedIdeal.one_mem_iff I).mp h1
+    ((TwoSidedIdeal.mem_comap _).mpr hbI)
+  exact (TwoSidedIdeal.one_mem_iff I).mp (by
+    simpa only [J, TwoSidedIdeal.mem_comap, map_one] using h1)
 
 instance isSimpleRing_tensorProduct_of_right [Algebra.IsCentral K A] [IsSimpleRing A]
     [IsSimpleRing B] : IsSimpleRing (B ⊗[K] A) :=
@@ -221,13 +213,5 @@ instance isSimpleRing_tensorProduct_of_right [Algebra.IsCentral K A] [IsSimpleRi
     isSimpleRing_tensorProduct
 
 end Simple
-
-section CSA
-
-universe u v
-
-variable {K : Type u} [Field K]
-
-end CSA
 
 end GroundTheory.Brauer

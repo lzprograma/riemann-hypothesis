@@ -50,7 +50,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.MixModel GlobalTheory.MixPer
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -228,7 +227,7 @@ theorem reduce : ∀ (D : D7) (ρ : ℕ), ∃ C : Set (AE D), IsCompact C ∧ �
     have hne : j ≠ i := hij.ne'
     have hS : δ i j = pick (∑ l : Fin ρ, if l < j then incA D (δ i l) * u.1.1 l j else 0) := by
       rw [hδ, row_eq]
-      simp only [hji, hne, if_false, hδ]
+      simp only [hji, hne, ite_false, hδ]
     rw [hS]
     exact hpick _
 

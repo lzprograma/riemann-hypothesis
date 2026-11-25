@@ -59,7 +59,7 @@ theorem IncIdealDim.proof (h₁ : IncidenceGeneric.Statement) (h₂ : GenericLin
       rw [C_neg, C_mul]
       ring
     rw [h2]
-    simp only [genSubst, c, if_pos rfl]
+    simp only [genSubst, c, ite_eq_left rfl]
     rw [Fin.sum_univ_succAbove _ j]
     linear_combination (-(X (i, j) : MvPolynomial (Fin k × Fin (n' + 1)) K)) * h1
   have hrange : Set.range (genSubst ξ c) = ψ '' G := by

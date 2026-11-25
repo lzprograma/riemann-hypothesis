@@ -169,8 +169,8 @@ theorem absorbs_pair (N : NF H r) {Λ : Submodule (𝓞 K) V}
   rw [pair' N a b ha hb, h4] at h0 ⊢
   have hab : a.val + b.val + 1 = l + (l + s) := by
     by_contra hc
-    exact h0 (by rw [if_neg hc, zero_mul])
-  rw [if_pos hab] at h0 ⊢
+    exact h0 (by rw [ite_eq_right hc, zero_mul])
+  rw [ite_eq_left hab] at h0 ⊢
   obtain ⟨ε₁, e1⟩ := Dl_eq N l (by omega)
   obtain ⟨ε₂, e2⟩ := Dl_eq N (l + s) h3
   have n1 := e1 ▸ mul_ne_zero (unit_ne (K := K) ε₁) h5
@@ -258,9 +258,9 @@ theorem kill_ideal_P0 (N : NF H r) {Λ : Submodule (𝓞 K) V}
     intro a b
     have := N.ist_e a b.1 b.2
     by_cases hab : a = b.1
-    · rw [if_pos hab] at this
+    · rw [ite_eq_left hab] at this
       exact absorbs_of_dvd (by simp [expo, hab]) 1 (fun _ _ => one_dvd _) (this.trans (by simp))
-    · rw [if_neg hab] at this
+    · rw [ite_eq_right hab] at this
       exact absorbs_zero this
   have hzz : H.B N.F.z N.F.z = -(N.T : K) := N.hT ▸ N.F.zz
   have hex : ∀ a : Fin r, a.val < N.j → ∃ b : Fin r, b.val < N.j ∧
@@ -306,7 +306,7 @@ theorem kill_ideal_P0 (N : NF H r) {Λ : Submodule (𝓞 K) V}
         refine ⟨.inr (.inr (.inr ⟨a, ha'⟩)), ?_, ?_⟩
         · exact (N.ist_e a a ha').trans_ne (by simp)
         · rintro (i | i | i | i) hi
-          · exact (N.ist_e i a ha').trans (if_neg fun h => hi (congrArg Sum.inl h))
+          · exact (N.ist_e i a ha').trans (ite_eq_right fun h => hi (congrArg Sum.inl h))
           · exact N.ist_e' i a i.2 ha'
           · exact N.normalForm_dual_orthogonal_last a ha'
           · exact N.ist_iso i a i.2 ha'
@@ -322,7 +322,7 @@ theorem kill_ideal_P0 (N : NF H r) {Λ : Submodule (𝓞 K) V}
           rw [entry_symm] at h3
           exact hi (congrArg (fun x => Sum.inr (Sum.inl x)) (Subtype.ext (Fin.ext (h2 _ h3))))
         · exact swap0 (N.F.zperp b)
-        · refine swap0 ((N.ist_e b i i.2).trans (if_neg fun h => ?_))
+        · refine swap0 ((N.ist_e b i i.2).trans (ite_eq_right fun h => ?_))
           have := i.2
           rw [← h] at this
           omega
@@ -340,7 +340,7 @@ theorem kill_ideal_P0 (N : NF H r) {Λ : Submodule (𝓞 K) V}
         · exact N.F.iso i a
         · exact swap0 (e_e'_high N a i a.2)
         · exact swap0 (N.F.zperp a)
-        · exact swap0 ((N.ist_e a i i.2).trans (if_neg fun h =>
+        · exact swap0 ((N.ist_e a i i.2).trans (ite_eq_right fun h =>
             hi (congrArg (fun x => Sum.inr (Sum.inr (Sum.inr x))) (Subtype.ext h.symm))))
 
 omit [NumberField K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in

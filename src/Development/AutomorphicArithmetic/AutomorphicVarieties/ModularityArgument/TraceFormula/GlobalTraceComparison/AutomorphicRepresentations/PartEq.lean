@@ -58,62 +58,12 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} {ι : Type
 
 private theorem row_int (D : Dom E n 0) {φ : H E n 0 → ℂ} (hφ : IsTestH φ) (w : Lp ℂ 2 D.ν) (x : H E n 0) :
     Integrable (fun y => kerH φ x y * (w : H E n 0 → ℂ) y) D.ν :=
-  by
-    let X : Ctx := by
-      haveI := CuspidalL2GL.t2Space_GA E n
-      haveI := CuspidalL2GL.t2Space_GA E 0
-      haveI := CuspidalL2GL.locallyCompactSpace_GA E n
-      haveI := CuspidalL2GL.locallyCompactSpace_GA E 0
-      haveI := CuspidalL2GL.secondCountableTopology_GA E n
-      haveI := CuspidalL2GL.secondCountableTopology_GA E 0
-      haveI := (ratProper_holds E n).2.1
-      haveI := (ratProper_holds E 0).2.1
-      refine { G := H E n 0
-               ms := borelH E n 0
-               bs := ⟨rfl⟩
-               μ := D.μ
-               haar := { toIsFiniteMeasureOnCompacts := @isFiniteMeasureOnCompacts_of_isLocallyFiniteMeasure _ _ _ D.μ D.haar.2.2.2, toIsMulLeftInvariant := D.haar.1, toIsOpenPosMeasure := D.haar.2.2.1 }
-               Γ := ratH E n 0
-               cn := (((ratGL E n).prodMap (ratGL E 0)).rangeRestrict_surjective).countable
-               proper := ?_
-               F := D.F
-               fd := D.fd }
-      intro C hC
-      have h1 := (ratProper_holds E n).2.2 _ (hC.image continuous_fst)
-      have h2 := (ratProper_holds E 0).2.2 _ (hC.image continuous_snd)
-      refine ((h1.prod h2).image ((ratGL E n).prodMap (ratGL E 0)).rangeRestrict).subset ?_
-      rintro ⟨_, γ, rfl⟩ hγ
-      exact ⟨γ, ⟨⟨_, hγ, rfl⟩, ⟨_, hγ, rfl⟩⟩, rfl⟩
-    exact MemLp.integrable_mul ((kernel_rows_columns_square_integrable X φ hφ).2 x) (Lp.memLp w)
+  MemLp.integrable_mul
+    ((kernel_rows_columns_square_integrable (ctx ratProper_holds D) φ hφ).2 x) (Lp.memLp w)
 
 private theorem ker_trM (D : Dom E n 0) {Φ : Matrix ι ι (H E n 0 → ℂ)} (hΦ : IsTestM Φ) (M : Matrix ι ι ℂ)
     (x y : H E n 0) : kerH (trM Φ M) x y = ∑ i, ∑ j, kerH (Φ i j) x y * M j i := by
-  let X : Ctx := by
-    haveI := CuspidalL2GL.t2Space_GA E n
-    haveI := CuspidalL2GL.t2Space_GA E 0
-    haveI := CuspidalL2GL.locallyCompactSpace_GA E n
-    haveI := CuspidalL2GL.locallyCompactSpace_GA E 0
-    haveI := CuspidalL2GL.secondCountableTopology_GA E n
-    haveI := CuspidalL2GL.secondCountableTopology_GA E 0
-    haveI := (ratProper_holds E n).2.1
-    haveI := (ratProper_holds E 0).2.1
-    refine { G := H E n 0
-             ms := borelH E n 0
-             bs := ⟨rfl⟩
-             μ := D.μ
-             haar := { toIsFiniteMeasureOnCompacts := @isFiniteMeasureOnCompacts_of_isLocallyFiniteMeasure _ _ _ D.μ D.haar.2.2.2, toIsMulLeftInvariant := D.haar.1, toIsOpenPosMeasure := D.haar.2.2.1 }
-             Γ := ratH E n 0
-             cn := (((ratGL E n).prodMap (ratGL E 0)).rangeRestrict_surjective).countable
-             proper := ?_
-             F := D.F
-             fd := D.fd }
-    intro C hC
-    have h1 := (ratProper_holds E n).2.2 _ (hC.image continuous_fst)
-    have h2 := (ratProper_holds E 0).2.2 _ (hC.image continuous_snd)
-    refine ((h1.prod h2).image ((ratGL E n).prodMap (ratGL E 0)).rangeRestrict).subset ?_
-    rintro ⟨_, γ, rfl⟩ hγ
-    exact ⟨γ, ⟨⟨_, hγ, rfl⟩, ⟨_, hγ, rfl⟩⟩, rfl⟩
-  have h := (kerLin X (ι × ι) (fun p => Φ p.1 p.2) (fun p => M p.2 p.1)
+  have h := (kerLin (ctx ratProper_holds D) (ι × ι) (fun p => Φ p.1 p.2) (fun p => M p.2 p.1)
     (fun p => hΦ p.1 p.2)).2 x y
   have e : trM Φ M = fun z => ∑ p : ι × ι, Φ p.1 p.2 z * M p.2 p.1 := by
     funext z

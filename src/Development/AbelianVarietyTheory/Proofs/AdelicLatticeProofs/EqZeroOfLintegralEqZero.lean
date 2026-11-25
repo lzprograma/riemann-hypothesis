@@ -55,8 +55,6 @@ open scoped TensorProduct ContDiff Topology Pointwise
 
 namespace GlobalTheory.OrientedHeis
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem taylor_bound {φ φ' φ'' : ℝ → ℂ} (h1 : ∀ s, HasDerivAt φ (φ' s) s) (h2 : ∀ s, HasDerivAt φ' (φ'' s) s) {C : ℝ}
     (hC : ∀ s, ‖φ'' s‖ ≤ C) {t : ℝ} (ht : 0 < t) : ‖(t : ℂ)⁻¹ * (φ t - φ 0) - φ' 0‖ ≤ C * t := by
   have hC0 : 0 ≤ C := (norm_nonneg _).trans (hC 0)

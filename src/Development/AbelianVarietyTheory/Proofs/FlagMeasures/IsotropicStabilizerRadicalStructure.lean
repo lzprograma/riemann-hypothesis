@@ -125,17 +125,17 @@ theorem pEl_ee : pEl k r B S (eI k r a) (eI k r b) = if a = b then 1 else 0 := b
   split_ifs <;> first | rfl | (exfalso; simp only [eI, Fin.ext_iff] at *; omega)
 theorem pEl_ew : pEl k r B S (eI k r a) (wI k r j) = -(star (B a j) * sg k j) := by
   have := a.2; have := j.2
-  unfold pEl; rw [if_neg (eI_ne_wI _ _), dite_eq_left (by simp only [eI, wI]; omega), herm_bvec]
+  unfold pEl; rw [ite_eq_right (eI_ne_wI _ _), dite_eq_left (by simp only [eI, wI]; omega), herm_bvec]
   simp [eI, wI]
 theorem pEl_es : pEl k r B S (eI k r a) (esI k r b) = S a b - herm (Hb k) (B b) (B a) / 2 := by
   have := a.2; have := b.2
   have hb : ∀ h, (⟨2 * r + k - (esI k r b).val, h⟩ : Fin r) = b := fun h => Fin.ext (by simp only [esI]; omega)
-  unfold pEl; rw [if_neg (eI_ne_esI _ _), dite_eq_right (by simp only [eI, esI]; omega),
+  unfold pEl; rw [ite_eq_right (eI_ne_esI _ _), dite_eq_right (by simp only [eI, esI]; omega),
     dite_eq_right (by simp only [eI, esI]; omega), dite_eq_left (by simp only [eI, esI]; omega)]
   simp only [hb]; rfl
 theorem pEl_we : pEl k r B S (wI k r i) (eI k r b) = 0 := by
   have := i.2; have := b.2
-  unfold pEl; rw [if_neg (wI_ne_eI _ _)]
+  unfold pEl; rw [ite_eq_right (wI_ne_eI _ _)]
   split_ifs <;> first | rfl | (exfalso; simp only [eI, wI] at *; omega)
 theorem pEl_ww : pEl k r B S (wI k r i) (wI k r j) = if i = j then 1 else 0 := by
   have := i.2; have := j.2
@@ -144,16 +144,16 @@ theorem pEl_ww : pEl k r B S (wI k r i) (wI k r j) = if i = j then 1 else 0 := b
 theorem pEl_ws : pEl k r B S (wI k r i) (esI k r b) = B b i := by
   have := i.2; have := b.2
   have hb : ∀ h, (⟨2 * r + k - (esI k r b).val, h⟩ : Fin r) = b := fun h => Fin.ext (by simp only [esI]; omega)
-  unfold pEl; rw [if_neg (wI_ne_esI _ _), dite_eq_right (by simp only [wI, esI]; omega),
+  unfold pEl; rw [ite_eq_right (wI_ne_esI _ _), dite_eq_right (by simp only [wI, esI]; omega),
     dite_eq_left (by simp only [wI, esI]; omega)]
   simp only [hb]; simp [wI]
 theorem pEl_se : pEl k r B S (esI k r a) (eI k r b) = 0 := by
   have := a.2; have := b.2
-  unfold pEl; rw [if_neg (esI_ne_eI _ _)]
+  unfold pEl; rw [ite_eq_right (esI_ne_eI _ _)]
   split_ifs <;> first | rfl | (exfalso; simp only [eI, esI] at *; omega)
 theorem pEl_sw : pEl k r B S (esI k r a) (wI k r j) = 0 := by
   have := a.2; have := j.2
-  unfold pEl; rw [if_neg (esI_ne_wI _ _)]
+  unfold pEl; rw [ite_eq_right (esI_ne_wI _ _)]
   split_ifs <;> first | rfl | (exfalso; simp only [wI, esI] at *; omega)
 theorem pEl_ss : pEl k r B S (esI k r a) (esI k r b) = if a = b then 1 else 0 := by
   have := a.2; have := b.2
@@ -210,10 +210,10 @@ theorem middleSpaceLeviEmbedding_apply_es_row (x : Fin (2 * r + k + 1)) : mEmb k
   unfold mEmb; rw [dite_eq_right (by simp only [esI]; omega)]
 theorem m_we : mEmb k r m (wI k r i) (eI k r b) = 0 := by
   have := b.2
-  unfold mEmb; rw [dite_eq_right (by simp only [eI]; omega), if_neg (wI_ne_eI _ _)]
+  unfold mEmb; rw [dite_eq_right (by simp only [eI]; omega), ite_eq_right (wI_ne_eI _ _)]
 theorem m_ws : mEmb k r m (wI k r i) (esI k r b) = 0 := by
   have := b.2
-  unfold mEmb; rw [dite_eq_right (by simp only [esI]; omega), if_neg (wI_ne_esI _ _)]
+  unfold mEmb; rw [dite_eq_right (by simp only [esI]; omega), ite_eq_right (wI_ne_esI _ _)]
 
 end entries
 
@@ -276,7 +276,7 @@ theorem pEl_mem_UH (B : Fin r → Fin (k + 1) → ℂ) (S : Matrix (Fin r) (Fin 
   · rename_i i j
     by_cases h : i = j
     · subst h; rfl
-    · rw [if_neg h, if_neg (Ne.symm h)]
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
   · rename_i j b
     have : (starRingEnd ℂ) (sg k j) = sg k j := star_sg j
     rw [this]; ring

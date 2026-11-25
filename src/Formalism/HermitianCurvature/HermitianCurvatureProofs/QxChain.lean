@@ -6,54 +6,8 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConj
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.WRWeyl
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFusionForms
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -177,13 +131,13 @@ def cut0 (i : Fin (r + 1)) (D : Set (Mx k r)) : (Mx k r → E) →ₗ[ℂ] (Mx k
   map_add' := fun f f' => by
     funext g
     by_cases h : g ∈ Glev k r i ∩ D
-    · simp only [Pi.add_apply, if_pos h]
-    · simp only [Pi.add_apply, if_neg h, add_zero]
+    · simp only [Pi.add_apply, ite_eq_left h]
+    · simp only [Pi.add_apply, ite_eq_right h, add_zero]
   map_smul' := fun s f => by
     funext g
     by_cases h : g ∈ Glev k r i ∩ D
-    · simp only [Pi.smul_apply, if_pos h, RingHom.id_apply]
-    · simp only [Pi.smul_apply, if_neg h, RingHom.id_apply, smul_zero]
+    · simp only [Pi.smul_apply, ite_eq_left h, RingHom.id_apply]
+    · simp only [Pi.smul_apply, ite_eq_right h, RingHom.id_apply, smul_zero]
 
 theorem level_restriction_apply_on (f : Mx k r → E) {g : Mx k r} (hg : g ∈ Glev k r i ∩ D) : cut0 i D f g = f g := by
   simp only [cut0, LinearMap.coe_mk, AddHom.coe_mk]
@@ -558,14 +512,14 @@ theorem pOp_smul (l : Fin r) {a : (Fin r → ℂ) → ℂ} {f : (Fin r → ℂ) 
     (ha : DifferentiableAt ℝ a c) (hf : DifferentiableAt ℝ f c) :
     pOp l (fun x => a x • f x) c = a c • pOp l f c + pOp l a c • f c := by
   unfold pOp
-  rw [if_pos hc, if_pos hc, if_pos hc, WirtingerDerivatives.wirt_eq, WirtingerDerivatives.wirt_eq, WirtingerDerivatives.wirt_eq,
+  rw [ite_eq_left hc, ite_eq_left hc, ite_eq_left hc, WirtingerDerivatives.wirt_eq, WirtingerDerivatives.wirt_eq, WirtingerDerivatives.wirt_eq,
     WirtingerDerivatives.Wc_smul ha hf, smul_add, smul_smul, smul_smul, smul_smul, smul_eq_mul, mul_comm (c l) (a c), add_comm]
 
 theorem pbOp_smul (l : Fin r) {a : (Fin r → ℂ) → ℂ} {f : (Fin r → ℂ) → E} {c : Fin r → ℂ} (hc : c ∈ OmX r)
     (ha : DifferentiableAt ℝ a c) (hf : DifferentiableAt ℝ f c) :
     pbOp l (fun x => a x • f x) c = a c • pbOp l f c + pbOp l a c • f c := by
   unfold pbOp
-  rw [if_pos hc, if_pos hc, if_pos hc, WirtingerDerivatives.wirtBar_eq, WirtingerDerivatives.wirtBar_eq, WirtingerDerivatives.wirtBar_eq,
+  rw [ite_eq_left hc, ite_eq_left hc, ite_eq_left hc, WirtingerDerivatives.wirtBar_eq, WirtingerDerivatives.wirtBar_eq, WirtingerDerivatives.wirtBar_eq,
     WirtingerDerivatives.Wc_smul ha hf, smul_add, smul_smul, smul_smul, smul_smul, smul_eq_mul, mul_comm (star (c l)) (a c),
     add_comm]
 
@@ -593,7 +547,7 @@ section Vals
 theorem pOp_coord (l : Fin r) {c : Fin r → ℂ} (hc : c ∈ OmX r) : pOp l (fun x : Fin r → ℂ => x l) c = c l := by
   have hd : fderiv ℝ (fun x : Fin r → ℂ => x l) c = ContinuousLinearMap.proj l :=
     (hasFDerivAt_apply (𝕜 := ℝ) (F' := fun _ : Fin r => ℂ) l c).fderiv
-  simp only [pOp, wirt, hc, if_true, hd, ContinuousLinearMap.proj_apply, Pi.single_eq_same, smul_eq_mul,
+  simp only [pOp, wirt, hc, ite_true, hd, ContinuousLinearMap.proj_apply, Pi.single_eq_same, smul_eq_mul,
     Complex.I_mul_I]
   ring
 
@@ -602,7 +556,7 @@ theorem pOp_coordBar (l : Fin r) {c : Fin r → ℂ} (hc : c ∈ OmX r) :
   have hd : fderiv ℝ (fun x : Fin r → ℂ => star (x l)) c =
       (Complex.conjCLE.toContinuousLinearMap).comp (ContinuousLinearMap.proj l) :=
     (Complex.conjCLE.hasFDerivAt.comp c (hasFDerivAt_apply (𝕜 := ℝ) (F' := fun _ : Fin r => ℂ) l c)).fderiv
-  simp only [pOp, wirt, hc, if_true, hd, ContinuousLinearMap.comp_apply, ContinuousLinearMap.proj_apply,
+  simp only [pOp, wirt, hc, ite_true, hd, ContinuousLinearMap.comp_apply, ContinuousLinearMap.proj_apply,
     Pi.single_eq_same, ContinuousLinearEquiv.coe_coe, Complex.conjCLE_apply, map_one, Complex.conj_I,
     smul_eq_mul, mul_neg, Complex.I_mul_I]
   ring
@@ -611,7 +565,7 @@ theorem pOp_cbi (l : Fin r) {c : Fin r → ℂ} (hc : c ∈ OmX r) :
     pOp l (fun x : Fin r → ℂ => (star (x l))⁻¹) c = 0 := by
   have := WirtingerDerivatives.wirt_coef hc l (k := l) 5
   unfold pOp
-  rw [if_pos hc]
+  rw [ite_eq_left hc]
   change wirt l (fun y : Fin r → ℂ => (star (y l))⁻¹) c = _ at this
   rw [this]
   simp
@@ -619,7 +573,7 @@ theorem pOp_cbi (l : Fin r) {c : Fin r → ℂ} (hc : c ∈ OmX r) :
 theorem pbOp_coord (l : Fin r) {c : Fin r → ℂ} (hc : c ∈ OmX r) : pbOp l (fun x : Fin r → ℂ => x l) c = 0 := by
   have hd : fderiv ℝ (fun x : Fin r → ℂ => x l) c = ContinuousLinearMap.proj l :=
     (hasFDerivAt_apply (𝕜 := ℝ) (F' := fun _ : Fin r => ℂ) l c).fderiv
-  simp only [pbOp, wirtBar, hc, if_true, hd, ContinuousLinearMap.proj_apply, Pi.single_eq_same, smul_eq_mul,
+  simp only [pbOp, wirtBar, hc, ite_true, hd, ContinuousLinearMap.proj_apply, Pi.single_eq_same, smul_eq_mul,
     Complex.I_mul_I]
   ring
 
@@ -628,7 +582,7 @@ theorem pbOp_coordBar (l : Fin r) {c : Fin r → ℂ} (hc : c ∈ OmX r) :
   have hd : fderiv ℝ (fun x : Fin r → ℂ => star (x l)) c =
       (Complex.conjCLE.toContinuousLinearMap).comp (ContinuousLinearMap.proj l) :=
     (Complex.conjCLE.hasFDerivAt.comp c (hasFDerivAt_apply (𝕜 := ℝ) (F' := fun _ : Fin r => ℂ) l c)).fderiv
-  simp only [pbOp, wirtBar, hc, if_true, hd, ContinuousLinearMap.comp_apply, ContinuousLinearMap.proj_apply,
+  simp only [pbOp, wirtBar, hc, ite_true, hd, ContinuousLinearMap.comp_apply, ContinuousLinearMap.proj_apply,
     Pi.single_eq_same, ContinuousLinearEquiv.coe_coe, Complex.conjCLE_apply, map_one, Complex.conj_I,
     smul_eq_mul, mul_neg, Complex.I_mul_I]
   ring
@@ -912,7 +866,7 @@ theorem skip_first_basis_eq_embedding : skip1 (e0 k l) = bS (v0 k l) (es0 k l) �
   have hn : ¬ (j.val < (e0 k l).val) := by
     show ¬ (j.val < 0)
     omega
-  simp only [skip1, if_neg hn]
+  simp only [skip1, ite_eq_right hn]
 
 theorem skip_last_basis_eq_embedding : skip1 (es0 k l) = bE (e0 k l) (v0 k l) ∘ Fin.cast (by rw [mdim_eq]; rfl) := by
   funext j
@@ -925,7 +879,7 @@ theorem skip_last_basis_eq_embedding : skip1 (es0 k l) = bE (e0 k l) (v0 k l) �
   have hlt : j.val < (es0 k l).val := by
     show j.val < mdim k r l.succ + 1
     exact hj
-  simp only [skip1, if_pos hlt]
+  simp only [skip1, ite_eq_left hlt]
 
 theorem double_skip_first_last_basis : skip2 (e0 k l) (es0 k l) = v0 k l ∘ Fin.cast (by rw [mdim_eq]; rfl) := by
   funext j
@@ -940,7 +894,7 @@ theorem double_skip_first_last_basis : skip2 (e0 k l) (es0 k l) = v0 k l ∘ Fin
   have hlt : j.val + 1 < (es0 k l).val := by
     show j.val + 1 < mdim k r l.succ + 1
     omega
-  simp only [Function.comp_apply, skip2, if_neg hn, if_pos hlt, v0, Fin.coe_cast]
+  simp only [Function.comp_apply, skip2, ite_eq_right hn, ite_eq_left hlt, v0, Fin.coe_cast]
 
 end Idx
 
@@ -1466,14 +1420,14 @@ theorem int_Tee (hW : WeylLevelElementFacts) (hEP : EabPres) (hT : RuleTorus) (h
       (bTee E l hD.1 u) := by
   have := (int_algebraMap (ρ := rho E hW l hD.1) (VL := VLeft z l.castSucc hD.1) u).add (int_ee hW hEP hT hD)
   rw [Algebra.algebraMap_eq_smul_one (A := Module.End ℂ (sfData E l.succ (ho1 l hD.1)).V)] at this
-  simpa only [Tm, if_true, bTee] using this
+  simpa only [Tm, ite_true, bTee] using this
 
 theorem int_Tss (hW : WeylLevelElementFacts) (hEP : EabPres) (hT : RuleTorus) (hD : IsDom k r z z' l.castSucc D) (u : ℂ) :
     IntQ (rho E hW l hD.1) (VLeft z l.castSucc hD.1) (Tm (E0 E l.castSucc hD.1) u (es0 k l) (es0 k l))
       (bTss E l hD.1 u) := by
   have := (int_algebraMap (ρ := rho E hW l hD.1) (VL := VLeft z l.castSucc hD.1) u).add (int_ss hW hEP hT hD)
   rw [Algebra.algebraMap_eq_smul_one (A := Module.End ℂ (sfData E l.succ (ho1 l hD.1)).V), ← sub_eq_add_neg] at this
-  simpa only [Tm, if_true, bTss] using this
+  simpa only [Tm, ite_true, bTss] using this
 
 theorem int_C (hW : WeylLevelElementFacts) (hEP : EabPres) (hQ : QMinorLeftH) (hD : IsDom k r z z' l.castSucc D) (u : ℂ) :
     IntQ (rho E hW l hD.1) (VLeft z l.castSucc hD.1) (qminor (E0 E l.castSucc hD.1) (v0 k l) (v0 k l) u)
@@ -1869,7 +1823,7 @@ theorem tL_cell {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {k r : �
         Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun j' _ => ?_
       simp only [cell_yv z l hc hg₁, cell_ybv z l c hg₁, cell_xv z' l, cell_xbv z' l]
       by_cases h : i < i' ∧ j < j'
-      · rw [if_pos h]
+      · rw [ite_eq_left h]
         have hi' : i' ≠ e0 k l := ne_first_basis_of_lt h.1
         have hj' : j' ≠ e0 k l := ne_first_basis_of_lt h.2
         by_cases hall : i = e0 k l ∧ i' = es0 k l ∧ j = e0 k l ∧ j' = es0 k l
@@ -1877,13 +1831,13 @@ theorem tL_cell {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {k r : �
           simp only [and_self, ↓reduceIte, hne, hne.symm, cell_neg_one_even]
           congr 1
           ring
-        · rw [if_neg hall]
+        · rw [ite_eq_right hall]
           by_cases a1 : i = e0 k l <;> by_cases a2 : i' = es0 k l <;> by_cases a3 : j = e0 k l <;>
             by_cases a4 : j' = es0 k l <;>
             first
             | (simp [a1, a2, a3, a4, hi', hj', hne, hne.symm]; done)
             | exact absurd ⟨a1, a2, a3, a4⟩ hall
-      · rw [if_neg h, if_neg]
+      · rw [ite_eq_right h, ite_eq_right]
         rintro ⟨rfl, rfl, rfl, rfl⟩
         exact h ⟨first_basis_lt_last_basis l, first_basis_lt_last_basis l⟩
 
@@ -1921,7 +1875,7 @@ theorem sign_pair_of_lt {m : ℕ} {i i' : Fin m} (h : i < i') :
     sg2 i i' = (-1) ^ (i.val + i'.val + 1) ∧ sg2 i' i = (-1) ^ (i.val + i'.val) := by
   have h' : i.val < i'.val := h
   have h1 : ¬ i'.val < i.val := by omega
-  refine ⟨by simp only [sg2, if_neg h1], by simp only [sg2, if_pos h', Nat.add_comm]⟩
+  refine ⟨by simp only [sg2, ite_eq_right h1], by simp only [sg2, ite_eq_left h', Nat.add_comm]⟩
 
 theorem double_sign_sum_reindex_ordered {R M : Type*} [CommRing R] [AddCommGroup M] {m : ℕ} (β β' a a' : Fin m → R)
     (Λ : Fin m → Fin m → Fin m → Fin m → R →+ M) :
@@ -1946,12 +1900,12 @@ theorem double_sign_sum_reindex_ordered {R M : Type*} [CommRing R] [AddCommGroup
   rw [sg_pairs (fun w w' => ∑ j, ∑ j', if j < j' then T w w' j j' + T w w' j' j else 0)]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun i' _ => ?_
   by_cases hi : i < i'
-  · rw [if_pos hi, ← Finset.sum_add_distrib]
+  · rw [ite_eq_left hi, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun j' _ => ?_
     by_cases hj : j < j'
-    · rw [if_pos hj, if_pos hj, if_pos ⟨hi, hj⟩]
+    · rw [ite_eq_left hj, ite_eq_left hj, ite_eq_left ⟨hi, hj⟩]
       obtain ⟨si1, si2⟩ := sign_pair_of_lt hi
       obtain ⟨sj1, sj2⟩ := sign_pair_of_lt hj
       simp only [hT, min_eq_left hi.le, max_eq_right hi.le, min_eq_right hi.le, max_eq_left hi.le,
@@ -1960,11 +1914,11 @@ theorem double_sign_sum_reindex_ordered {R M : Type*} [CommRing R] [AddCommGroup
       congr 1
       push_cast
       ring
-    · rw [if_neg hj, if_neg hj, if_neg (fun h => hj h.2)]
+    · rw [ite_eq_right hj, ite_eq_right hj, ite_eq_right (fun h => hj h.2)]
       simp
-  · rw [if_neg hi]
+  · rw [ite_eq_right hi]
     refine (Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun j' _ => ?_).symm
-    rw [if_neg (fun h => hi h.1)]
+    rw [ite_eq_right (fun h => hi h.1)]
 
 end Formalism.FourierDecayAlt.P.Qx6
 

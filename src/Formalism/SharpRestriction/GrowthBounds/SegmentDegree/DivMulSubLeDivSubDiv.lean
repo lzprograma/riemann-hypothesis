@@ -5,44 +5,7 @@ public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FrameZeroStr
 import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ReflectionMemGlevCastSucc
 import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.SumMemLaSet
 import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.SumPosOfPer
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FamilyDegreesAdmissible
 
 @[expose] public section
@@ -61,21 +24,17 @@ theorem div_mul_sub_le_div_sub_div (n s P Q ee kk rr : ℕ) (hP : 0 < P) (hQ : 0
     exact_mod_cast Nat.lt_div_mul_add hQ
   have hns : (n : ℤ) - s ≤ ((n - s : ℕ) : ℤ) := by omega
   have hue : (((n - s) / P : ℕ) : ℤ) - ee ≤ ((((n - s) / P - ee : ℕ)) : ℤ) := by omega
-  have hs' : (s : ℤ) < kk * P := by exact_mod_cast hs
-  have he' : (ee : ℤ) < rr * Q := by exact_mod_cast he
   have hP' : (0 : ℤ) < P := by exact_mod_cast hP
   have hQ' : (1 : ℤ) ≤ Q := by exact_mod_cast hQ
   set A : ℤ := ((n / (P * Q) : ℕ) : ℤ)
   set U : ℤ := (((n - s) / P : ℕ) : ℤ)
   set W : ℤ := ((((n - s) / P - ee) / Q : ℕ) : ℤ)
   have st1 : A * Q - kk < U + 1 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have := mul_le_mul_of_nonneg_left hc hP'.le
     nlinarith
   have st2 : A - rr - kk < W + 1 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have h1 := mul_le_mul_of_nonneg_left hc (by linarith : (0 : ℤ) ≤ Q)
     have hk0 : (0 : ℤ) ≤ kk := by positivity
     have h2 := mul_le_mul_of_nonneg_left hQ' hk0
@@ -111,7 +70,7 @@ theorem eZ_lt_mul_Qc (hX : X.Hyp p K) (la : Fin n' → Fin (r + K) → ℕ) (e :
   rw [hq] at hmem
   exact hmem.1
 
-theorem sum_la_lt (hX : X.Hyp p K) (la : Fin n' → Fin (r + K) → ℕ) (hla : la ∈ X.LA p K) (j x : ℤ)
+theorem sum_la_lt (la : Fin n' → Fin (r + K) → ℕ) (hla : la ∈ X.LA p K) (j x : ℤ)
     (hx : x ∈ X.toLate j) : ∑ c, la (posOf n' x) c < (r + K) * X.Pz p K j x := by
   classical
   have hmem := Fintype.mem_piFinset.1 hla (posOf n' x)
@@ -138,10 +97,10 @@ theorem restPad : RestPad 1088 := by
     have hval : X.bfam p K la e j (X.F.fr (j - 1) i) =
         (X.nz p K la (j - 1) (X.F.fr (j - 1) i) - X.eZ e (j - 1) ⟨i, hi⟩) / X.Qc p K (j - 1) := by
       unfold Dat.bfam
-      rw [if_pos hx, if_pos hW, Finset.sum_eq_single (⟨i, hi⟩ : Fin r)]
-      · rw [if_pos rfl]
+      rw [ite_eq_left hx, ite_eq_left hW, Finset.sum_eq_single (⟨i, hi⟩ : Fin r)]
+      · rw [ite_eq_left rfl]
       · intro b _ hb'
-        rw [if_neg]
+        rw [ite_eq_right]
         intro heq
         apply hb'
         apply Fin.ext
@@ -158,13 +117,13 @@ theorem restPad : RestPad 1088 := by
     rw [← hPQ]
     unfold Dat.nz
     exact div_mul_sub_le_div_sub_div _ _ _ _ _ (r + K) r (Pz_pos hp _ _) (by unfold Dat.Qc; exact pow_pos hp _)
-      (sum_la_lt hX la hla (j - 1) _ (sum_frlate X hV (j - 1) ⟨i, hi⟩)) (eZ_lt_mul_Qc hX la e he (j - 1) ⟨i, hi⟩)
+      (sum_la_lt la hla (j - 1) _ (sum_frlate X hV (j - 1) ⟨i, hi⟩)) (eZ_lt_mul_Qc hX la e he (j - 1) ⟨i, hi⟩)
   · intro x hx
     have hl := sum_LLsub X hV j x hx
     obtain ⟨h1, h2, -, -⟩ := sum_late_mem hl.1
     have hval : X.bfam p K la e j x = X.nz p K la j x := by
       unfold Dat.bfam
-      rw [if_pos h1, if_neg h2, if_neg (not_le.mpr hl.2)]
+      rw [ite_eq_left h1, ite_eq_right h2, ite_eq_right (not_le.mpr hl.2)]
     rw [hval]
     exact family_degrees_admissible hr hp (fun j x hx => (sum_LLsub X hV j x hx).1) la hla j x hx
 

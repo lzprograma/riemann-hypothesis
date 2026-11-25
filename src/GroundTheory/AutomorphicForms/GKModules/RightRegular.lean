@@ -213,8 +213,8 @@ noncomputable def rightDerivEnd (X : 𝔤) : Module.End ℂ (h.smoothFuns (F := 
 
 def rightTranslateEnd (a : G) : Module.End ℂ (h.smoothFuns (F := F)) where
   toFun f := ⟨rightTranslate a f, h.isSmoothFun_rightTranslate f.2 a⟩
-  map_add' f₁ f₂ := rfl
-  map_smul' c f := rfl
+  map_add' _ _ := rfl
+  map_smul' _ _ := rfl
 
 @[simp] theorem coe_rightTranslateEnd (a : G) (f : h.smoothFuns (F := F)) :
     ((h.rightTranslateEnd a f : h.smoothFuns (F := F)) : G → F) = rightTranslate a f := rfl

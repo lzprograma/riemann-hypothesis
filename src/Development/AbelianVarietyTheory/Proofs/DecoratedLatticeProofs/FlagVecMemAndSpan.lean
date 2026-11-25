@@ -87,7 +87,7 @@ theorem flagVec_mem_and_span (I : AutInst) (g : ℕ) {ρ k : ℕ} (e0 f0 : Fin �
         have h3 : ¬ (2 * ρ + k - a.val = ρ + k) := by omega
         have h4 : 2 * ρ + k - (2 * ρ + k - a.val) < ρ := by omega
         unfold flagVec at h
-        rw [dite_eq_right h1, dite_eq_right h2, if_neg h3, dite_eq_left h4] at h
+        rw [dite_eq_right h1, dite_eq_right h2, ite_eq_right h3, dite_eq_left h4] at h
         have e : (⟨2 * ρ + k - (2 * ρ + k - a.val), h4⟩ : Fin ρ) = a := by ext; simp; omega
         rwa [e] at h
       · rw [Set.mem_singleton_iff] at hv
@@ -96,7 +96,7 @@ theorem flagVec_mem_and_span (I : AutInst) (g : ℕ) {ρ k : ℕ} (e0 f0 : Fin �
         have h1 : ¬ (ρ + k < ρ) := by omega
         have h2 : ¬ (ρ + k - ρ < k) := by omega
         unfold flagVec at h
-        rwa [dite_eq_right h1, dite_eq_right h2, if_pos rfl] at h
+        rwa [dite_eq_right h1, dite_eq_right h2, ite_eq_left rfl] at h
       · have h := Submodule.smul_mem _ (⟨ew, hint⟩ : IntAf I.F I.E) (hcl l)
         rw [hc l] at h
         have e : ((⟨ew, hint⟩ : IntAf I.F I.E) • (bw l + bwd (Fin.rev l)) : VA I) = bw l := by

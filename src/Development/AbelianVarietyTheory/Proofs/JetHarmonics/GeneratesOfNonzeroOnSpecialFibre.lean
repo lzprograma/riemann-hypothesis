@@ -1,10 +1,10 @@
 module
 
-import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ValuationRamificationIndex
+import Mathlib.Algebra.Category.AlgCat.Monoidal
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Polynomial.Basic
+import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SecTieBaseChange
 public import Formalism.LocalToGlobal.ProjectiveLattices.ChartDirectionsIntegral
 public import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
 public import Formalism.LocalToGlobal.ProjectiveLattices.ArcTheta
@@ -31,77 +31,7 @@ noncomputable section
 
 namespace GlobalTheory.IntegralPull
 
-section Valuation
-
-open IsDedekindDomain Formalism.L2.Pj
-
-section Val
-
-variable {V K' : Type} [CommRing V] [IsDomain V] [IsDiscreteValuationRing V] [Field K'] [Algebra V K']
-  [IsFractionRing V K']
-
-theorem vV_unit (u : Vˣ) : vV V (algebraMap V K' u) = 0 := by
-  have : valV V (algebraMap V K' u) = 1 := by
-    rw [valV, HeightOneSpectrum.valuation_of_algebraMap, HeightOneSpectrum.intValuation_eq_one_iff]
-    exact fun h => (IsLocalRing.mem_maximalIdeal _).1 h u.isUnit
-  simp [vV, this]
-
-theorem vV_pow {x : K'} (hx : x ≠ 0) (n : ℕ) : vV V (x ^ n) = n * vV V x := by
-  simp [vV]
-
-theorem vV_pos {a : V} (ha : a ≠ 0) (hu : ¬ IsUnit a) : 0 < vV V (algebraMap V K' a) := by
-  have h0 : algebraMap V K' a ≠ 0 := by simpa using ha
-  have : valV V (algebraMap V K' a) < 1 := by
-    rw [valV, HeightOneSpectrum.valuation_lt_one_iff_mem]
-    exact hu
-  have := (WithZero.log_lt_log (valV_ne_zero (V := V) h0) one_ne_zero).2 this
-  simp only [vV]; simp at this; omega
-
-theorem vV_irr {a : V} (ha : Irreducible a) : vV V (algebraMap V K' a) = 1 := by
-  have : valV V (algebraMap V K' a) = WithZero.exp (-1 : ℤ) := by
-    rw [valV, HeightOneSpectrum.valuation_of_algebraMap]
-    exact HeightOneSpectrum.intValuation_singleton _ ha.ne_zero ha.maximalIdeal_eq
-  simp [vV, this]
-
-theorem exists_index {V' K'' : Type} [CommRing V'] [IsDomain V'] [IsDiscreteValuationRing V'] [Field K'']
-    [Algebra V' K''] [IsFractionRing V' K''] (j : V →+* V') [IsLocalHom j] (i : K' →+* K'')
-    (hi : ∀ v, i (algebraMap V K' v) = algebraMap V' K'' (j v)) :
-    ∃ r : ℕ, 0 < r ∧ ∀ x, vV V' (i x) = (r : ℤ) * vV V x := by
-  obtain ⟨p, hp⟩ := IsDiscreteValuationRing.exists_irreducible V
-  have inj : ∀ v, v ≠ 0 → algebraMap V' K'' (j v) ≠ 0 := fun v hv => by
-    rw [← hi]; simpa using hv
-  have pos : 0 < vV V' (algebraMap V' K'' (j p)) :=
-    vV_pos (fun h => inj p hp.ne_zero (by simp [h])) (fun h => hp.not_isUnit (isUnit_of_map_unit j p h))
-  obtain ⟨r, hr⟩ := Int.eq_ofNat_of_zero_le pos.le
-  have key : ∀ v : V, v ≠ 0 → vV V' (i (algebraMap V K' v)) = (r : ℤ) * vV V (algebraMap V K' v) := by
-    intro v hv
-    obtain ⟨n, u, rfl⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible hv hp
-    have h1 : algebraMap V K' p ≠ 0 := by simpa using hp.ne_zero
-    have h2 : algebraMap V K' u ≠ 0 := by simp
-    rw [hi, map_mul, map_mul, map_mul, map_pow, map_pow, map_pow,
-      vV_mul (inj _ u.ne_zero) (pow_ne_zero _ (inj p hp.ne_zero)), vV_mul h2 (pow_ne_zero _ h1),
-      vV_pow (inj p hp.ne_zero), vV_pow h1, vV_unit, vV_irr hp, hr]
-    have := vV_unit (K' := K'') (Units.map j.toMonoidHom u)
-    simp only [Units.coe_map, RingHom.toMonoidHom_eq_coe, MonoidHom.coe_coe] at this
-    rw [this]; ring
-  refine ⟨r, by omega, fun x => ?_⟩
-  by_cases hx : x = 0
-  · simp [hx, vV]
-  obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (A := V) x
-  have hb0 : b ≠ 0 := nonZeroDivisors.ne_zero hb
-  have ha0 : a ≠ 0 := by rintro rfl; simp at hx
-  have hb1 : algebraMap V K' b ≠ 0 := by simpa using hb0
-  have e : algebraMap V K' a / algebraMap V K' b * algebraMap V K' b = algebraMap V K' a := div_mul_cancel₀ _ hb1
-  have e1 := vV_mul (V := V) hx hb1
-  have e2 := vV_mul (V := V') ((map_ne_zero i).2 hx) ((map_ne_zero i).2 hb1)
-  rw [← map_mul, e, key a ha0, key b hb0] at e2
-  rw [e] at e1
-  rw [e1] at e2
-  linarith
-
-end Val
-
-end Valuation
+alias exists_index := GlobalTheory.PlaceExtField.exists_index
 
 section Coordinates
 
@@ -297,16 +227,7 @@ theorem isoMaps_iff {X X' : Scheme.{0}} {L : LB X} {L' : LB X'} {F : X' ⟶ X} (
     (σ : LB.Sec L') (s : LB.Sec (L.pull F)) :
     IsoMaps w σ s ↔ ∀ (Z : Scheme.{0}) (r : Z ⟶ X') (z : Z) (j : L.ι) (k : L'.ι), F (r z) ∈ L.U j → r z ∈ L'.U k →
       gs r z _ (s.f (fun _ => j)) = (gw w r z j k).val * gs r z _ (σ.f k) := by
-  constructor
-  · intro h Z r z j k hj hk
-    have hz : r z ∈ (L.pull F).U (fun _ => j) ⊓ L'.U k := ⟨mem_pull.2 hj, hk⟩
-    have a := congrArg (gs r z _) (h (fun _ => j) k)
-    exact (gs_res _ z _ hz _).symm.trans (a.trans ((gs_mul _ z _ hz _ _).trans
-        (congrArg₂ (· * ·) (gs_unit _ z _ hz _) (gs_res _ z _ hz _))))
-  · intro h (i : PUnit → L.ι) k
-    exact fn_ext fun p hp =>
-      (gs_res _ p _ hp _).trans ((h _ (𝟙 _) p (i PUnit.unit) k (mem_pull.1 hp.1) hp.2).trans
-        (Eq.symm ((gs_mul _ p _ hp _ _).trans (congrArg₂ (· * ·) (gs_unit (𝟙 _) p _ hp _) (gs_res _ p _ hp _)))))
+  apply _root_.GlobalTheory.LamT.TieCalc.isoMaps_iff <;> assumption
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
   {Xo : Moduli Dw l}
@@ -422,15 +343,6 @@ theorem flat_of_injective {A V : Type} [CommRing A] [IsDomain A] [IsPrincipalIde
   have : FaithfulSMul A V := (faithfulSMul_iff_algebraMap_injective A V).2 hf
   show Module.Flat A V
   infer_instance
-
-theorem isTan_iff_isTangent {V : Type} [CommRing V] {G : Over (Sp V)} [GrpObj G] (w : epsR V ⟶ G) :
-    IsTan (V := V) (R := V) (G := G) w ↔ IsTangent w := by
-  have : (1 : ptOver V V ⟶ G).left = η[G].left := by
-    show spMap (algebraMap V V) ≫ _ = _
-    rw [show spMap (algebraMap V V) = 𝟙 _ from Spec.map_id _]
-    exact Category.id_comp _
-  unfold IsTan IsTangent
-  rw [this]
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
 

@@ -90,7 +90,7 @@ private theorem lv_gen (hP : Loc.LocalPublishedTheorems) {v l : ℕ} [Fact v.Pri
     rw [MonoidHom.comp_apply, h2, hρ, ← smul_eq_mul, map_smul, smul_eq_mul, Units.val_one] at this
     by_contra h
     exact h1' (mul_right_cancel₀ h this)
-  rw [e2, z0, z2, if_neg hvl, finrank_bot, finrank_bot] at e1
+  rw [e2, z0, z2, ite_eq_right hvl, finrank_bot, finrank_bot] at e1
   haveI : Subsingleton (H1 (Loc.chRep κ)) := Module.finrank_zero_iff.1 e1
   have hz1 : z ∈ Z1 (Loc.chRep κ) := ⟨hz.continuous, hc⟩
   have : (Submodule.Quotient.mk ⟨z, hz1⟩ : H1 (Loc.chRep κ)) = 0 := Subsingleton.elim _ _

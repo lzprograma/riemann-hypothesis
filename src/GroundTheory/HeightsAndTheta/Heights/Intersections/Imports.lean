@@ -86,14 +86,14 @@ theorem ChartNormCount.proof (hSC : ChartSpecCount.Statement) (hNP : ChartNormPt
         intro p
         have h : (v p).1 ∈ Set.range κ := ⟨p.1, (hv.2.2.1 p).symm⟩
         have hc : (hv.2.2.2 (v p) h).choose = p := hv.2.1 (hv.2.2.2 (v p) h).choose_spec
-        simp only [z', dif_pos h, hc]
+        simp only [z', dite_eq_left h, hc]
       have hz1 : ∀ k : FibreBlock κ, z' ⟨k.1, j k⟩ = 1 := by
         intro k
-        simp only [z', dif_neg k.2]
+        simp only [z', dite_eq_right k.2]
         exact hy1 k
       have hres : res z' = y := by
         funext q
-        simp only [res, z', dif_neg q.1.2]
+        simp only [res, z', dite_eq_right q.1.2]
       refine ⟨z', ⟨(hiff z' hzw hz1).2 ?_, hzw, hz1⟩, hres⟩
       have : (fun q : Σ k : FibreBlock κ, ι' k.1 => z' ⟨q.1.1, q.2⟩) = y := hres
       rw [this]

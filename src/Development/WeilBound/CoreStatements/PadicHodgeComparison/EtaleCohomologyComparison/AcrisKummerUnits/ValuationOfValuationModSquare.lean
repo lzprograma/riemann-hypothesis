@@ -4,47 +4,8 @@ public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCoh
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.FiltrationSpanDividedPowers
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ValuationSquareOfValuationMod
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
-
-set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
 
@@ -70,15 +31,15 @@ theorem valuation_of_valuation_mod_square (ϖ : S) [IsAdicComplete (Ideal.span {
 
 theorem aic_of_mod (ϖ : S) [IsAdicComplete (Ideal.span {ϖ}) S] (h0 : ϖ ∈ nonZeroDivisors S) (hv : Val ϖ)
     (h : Aic (S ⧸ Ideal.span {ϖ ^ 2})) : Aic S := by
-  refine RL.aic_limit ϖ (RL.step_glob ϖ fun m hm => ?_) (RL.pow_dvd ϖ h0 hv)
-  refine RL.step_comp _ (mk_mem_jacobson (mem_jacobson_of_complete ϖ) _) ((RL.dich_comp ϖ m hm.isPrime).2 h0)
-    ((RL.dich_comp ϖ m hm.isPrime).1 hv) ((RL.surj_pass (Ideal.quotientMap _ (Ideal.Quotient.mk (compI m)) ?_) ?_).1 h)
+  refine _root_.GlobalTheory.CompanionTheory.AicLimit.aic_of_step ϖ (RL.step_glob ϖ fun m hm => ?_) (_root_.GlobalTheory.CompanionTheory.ValPowDvd.dvd_of_pow_mul_dvd_pow ϖ h0 hv)
+  refine GlobalTheory.CompanionTheory.NewtonStep.step_comp _ (mk_mem_jacobson (mem_jacobson_of_complete ϖ) _) ((RL.dich_comp ϖ m hm.isPrime).2 h0)
+    ((RL.dich_comp ϖ m hm.isPrime).1 hv) ((_root_.GlobalTheory.CompanionTheory.SurjPass.absolutely_closed_comparable_surjective (Ideal.quotientMap _ (Ideal.Quotient.mk (compI m)) ?_) ?_).1 h)
   · rw [Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe, Ideal.mem_comap, map_pow]
     exact Ideal.mem_span_singleton_self _
   · exact Ideal.quotientMap_surjective Ideal.Quotient.mk_surjective
 
 theorem splits (ha : Aic S) (hl : Loc S) : Splits (Spec (CommRingCat.of S)) := fun Y f he hs =>
-  (RL.sec_rules Y f).2.2 (RL.glue (SecOn f) (RL.sec_rules Y f).1 (fun e e' _ _ => (RL.sec_rules Y f).2.1 e e')
+  (_root_.GlobalTheory.CompanionTheory.SecRules.main Y f).2.2 (RL.glue (SecOn f) (_root_.GlobalTheory.CompanionTheory.SecRules.main Y f).1 (fun e e' _ _ => (_root_.GlobalTheory.CompanionTheory.SecRules.main Y f).2.1 e e')
     (RL.sec_add Y f) (RL.split_pt ha hl Y f he hs))
 
 end CrystallineSemistableComparison.R
@@ -89,12 +50,12 @@ variable {l : ℕ} [Fact l.Prime] (A : PAlg l)
 
 theorem l_mem_nzd_U : (l : A.U) ∈ nonZeroDivisors A.U := (RL.u_tf A).1
 
-instance completeU : IsAdicComplete (Ideal.span {(l : A.U)}) A.U := RL.u_complete A
+instance completeU : IsAdicComplete (Ideal.span {(l : A.U)}) A.U := _root_.GlobalTheory.CompanionTheory.Untilt.isAdicComplete_U A
 
 variable {A}
 
 theorem IsTest.val_aic (h : A.IsTest) : R.Val (l : A.U) ∧ R.Aic A.U := by
-  obtain ⟨ϖ, e, h0, h1⟩ := RL.untilt_valuation_mod_square A h
+  obtain ⟨ϖ, e, h0, h1⟩ := _root_.GlobalTheory.CompanionTheory.Untilt.untilt_mod_varpi_sq A h
   have hl := (Fact.out : l.Prime).ne_zero
   have : IsAdicComplete (Ideal.span {ϖ}) A.U := (RL.val_pow ϖ l hl).2 (e.symm ▸ A.completeU)
   have hv := R.valuation_of_valuation_mod_square ϖ h0
@@ -113,7 +74,7 @@ theorem IsTest.splitUg (h : A.IsTest) : R.Splits (Spec (CommRingCat.of A.Ug)) :=
   R.splits ((RL.loc_aic (l : A.U)).2 h.val_aic.2) ((RL.loc_aic (l : A.U)).1 h.val_aic.1).2
 
 theorem IsTest.intClosed (h : A.IsTest) (x : A.Ug) (hx : IsIntegral A.U x) : ∃ y, algebraMap A.U A.Ug y = x :=
-  RL.int_closed _ A.l_mem_nzd_U h.val_aic.1 x hx
+  _root_.GlobalTheory.CompanionTheory.ValIntClosed.exists_eq_of_isIntegral _ A.l_mem_nzd_U h.val_aic.1 x hx
 
 theorem algebraMap_Ug_injective (A : PAlg l) : Function.Injective (algebraMap A.U A.Ug) :=
   IsLocalization.injective _ (M := Submonoid.powers (l : A.U)) (Submonoid.powers_le.2 A.l_mem_nzd_U)
@@ -123,7 +84,7 @@ theorem IsTest.idem (h : A.IsTest) (e : A.Ug) (he : IsIdempotentElem e) :
   obtain ⟨y, rfl⟩ := h.intClosed e ⟨Polynomial.X ^ 2 - Polynomial.X, Polynomial.monic_X_pow_sub (Polynomial.degree_X_le.trans_lt (by decide)), by
     simp [pow_two, he.eq]⟩
   have hy : IsIdempotentElem y := A.algebraMap_Ug_injective (by rw [map_mul, he.eq])
-  obtain ⟨e₀, h₀, hu⟩ := RL.idem_au A y hy
+  obtain ⟨e₀, h₀, hu⟩ := _root_.GlobalTheory.CompanionTheory.Untilt.existsUnique_idempotent_sharp A y hy
   exact ⟨e₀, ⟨h₀.1, by rw [h₀.2]⟩, fun e₁ h₁ => hu e₁ ⟨h₁.1, A.algebraMap_Ug_injective h₁.2⟩⟩
 
 theorem IsTest.sharp_surjective (h : A.IsTest) : Function.Surjective A.sharp := fun f => by

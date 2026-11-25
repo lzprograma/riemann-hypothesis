@@ -21,51 +21,7 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightAverage
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothLevOfLoc
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothnessOnGoodSet
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.CategoryTheory.Countable
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableCsmul
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.AutomorphicInSphericalLevel
 
@@ -79,7 +35,7 @@ namespace Formalism.FourierDecayAlt.P.PartialBesselProperness
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section left
 
@@ -109,16 +65,16 @@ theorem pbF_eq_TI (Bj : B.RealPlaceData k ρ Wp Wq) (B0 : B.RealPlaceData k n Wp
 theorem isLowerUni_one {d : ℕ} : G.IsLowerUni (1 : Matrix (Fin d) (Fin d) ℂ) := by
   refine ⟨fun i => by simp, fun i j hij => ?_⟩
   simp only [Matrix.transpose_apply, Matrix.one_apply]
-  rw [if_neg (ne_of_lt hij)]
+  rw [ite_eq_right (ne_of_lt hij)]
 
 theorem leftFactor_mem (Bj : B.RealPlaceData k ρ Wp Wq) (x : PBQ.XP k p ρ) :
     PBQ.sP Bj x ∈ Sset k (p + ρ) (liftVec k p ρ Bj.z) := by
   by_cases hx : PBQ.GoodP Bj x
-  · rw [PBQ.sP, if_pos hx]
+  · rw [PBQ.sP, ite_eq_left hx]
     have h := Formalism.FourierDecayAlt.P.LeftFubiniLemmas.left_factor_mem k p ρ Bj.z (-x.2) 1 (Matrix.of x.1.1) (Matrix.of x.1.2) Bj.z_mem
       isLowerUni_one hx.1 hx.2
     rwa [Matrix.conjTranspose_one, inv_one, Formalism.FourierDecayAlt.P.PBH.muP_one', Matrix.mul_one] at h
-  · rw [PBQ.sP, if_neg hx]
+  · rw [PBQ.sP, ite_eq_right hx]
     exact Formalism.FourierDecayAlt.P.PBG.one_mem_Sset k (p + ρ) _
 
 theorem sP_GV (Bj : B.RealPlaceData k ρ Wp Wq) (x : PBQ.XP k p ρ) : PBQ.sP Bj x ∈ B.GV k (p + ρ) :=
@@ -152,7 +108,7 @@ theorem leftFactor_continuousOn (Bj : B.RealPlaceData k ρ Wp Wq) :
       U.embG k p ρ ((Matrix.of x.1.1 : B.Mat k ρ)⁻¹ * (Matrix.of x.1.2 : B.Mat k ρ)⁻¹)) {x | PBQ.GoodP Bj x} :=
     h1.continuousOn.mul ((Formalism.FourierDecayAlt.P.Dx2.SplitF.embg_cont (k := k) p ρ).comp_continuousOn (hi1.mul hi2))
   refine hf.congr (fun x hx => ?_)
-  simp only [PBQ.sP, if_pos (show PBQ.GoodP Bj x from hx)]
+  simp only [PBQ.sP, ite_eq_left (show PBQ.GoodP Bj x from hx)]
 
 theorem sE_contOn (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) :
     ContinuousOn (fun x : PBQ.XP k p ρ => sE Bj e x) {x | PBQ.GoodP Bj x} := by
@@ -331,7 +287,7 @@ theorem rdV_TI (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) {Ψ : B.Mat k 
       by_cases hx : PBQ.GoodP Bj x
       · exact (norm_gI_le Bj e _ x _).trans ((hM2 _ (hSmem x hxK hx _ (hmemKc t ht))).trans
           (le_trans (le_max_right _ _) (le_max_left _ _)))
-      · simp only [gI, if_neg hx, norm_zero]; exact le_max_right _ _
+      · simp only [gI, ite_eq_right hx, norm_zero]; exact le_max_right _ _
     · rw [hβdef, Set.indicator_of_notMem hxK]
       by_cases hx : PBQ.GoodP Bj x
       · have hz : RdV X Ψ (sE Bj e x * cv false X t y) = 0 :=
@@ -348,7 +304,7 @@ theorem rdV_TI (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) {Ψ : B.Mat k 
           have := hmemKc 0 (Metric.mem_ball_self hε2); rwa [cv_zero] at this
         exact (norm_gI_le Bj e Ψ x y).trans ((hM1 _ (hSmem x hxK hx y hyKc)).trans
           (le_trans (le_max_left _ _) (le_max_left _ _)))
-      · simp only [gI, if_neg hx, norm_zero]; exact le_max_right _ _
+      · simp only [gI, ite_eq_right hx, norm_zero]; exact le_max_right _ _
     · rw [hβdef, Set.indicator_of_notMem hxK]
       by_cases hx : PBQ.GoodP Bj x
       · simp [gI, hx, hvan y hyV hy x hx hxK]
@@ -387,7 +343,7 @@ theorem gI_top (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) (Ψ : B.Mat k 
       (if a = b then u • gI Bj e Ψ x g else 0) +
         (gI Bj e (RdV (Xa k n a b) Ψ) x g + Complex.I • gI Bj e (RdV (Xb k n a b) Ψ) x g) := by
   by_cases hx : PBQ.GoodP Bj x
-  · simp only [gI, if_pos hx, top_apply', EH_apply]
+  · simp only [gI, ite_eq_left hx, top_apply', EH_apply]
     split_ifs <;> simp [ContinuousLinearMap.comp_add]
   · simp [gI, hx]
 
@@ -408,12 +364,12 @@ theorem ckOn_top {Ψ : B.Mat k n → (Wq →L[ℂ] Wp)} (hΨ : CkOn ⊤ (GV k n)
   have hB : CkOn ⊤ (GV k n) (RdV (Xb k n a b) Ψ) := Formalism.FourierDecayAlt.P.B5.ckOn_RdV (Xb_unit a b).1 (by simpa using hΨ)
   by_cases hab : a = b
   · have e1 : Top (Q.EH k n) u a b Ψ = u • Ψ + (RdV (Xa k n a b) Ψ + Complex.I • RdV (Xb k n a b) Ψ) := by
-      funext g; rw [top_apply', EH_apply, if_pos hab]; rfl
+      funext g; rw [top_apply', EH_apply, ite_eq_left hab]; rfl
     rw [e1]
     exact Formalism.FourierDecayAlt.P.JCx2.ckOn_add' (Formalism.FourierDecayAlt.P.JCx2.ckOn_smul' _ hΨ)
       (Formalism.FourierDecayAlt.P.JCx2.ckOn_add' hA (Formalism.FourierDecayAlt.P.JCx2.ckOn_smul' _ hB))
   · have e1 : Top (Q.EH k n) u a b Ψ = RdV (Xa k n a b) Ψ + Complex.I • RdV (Xb k n a b) Ψ := by
-      funext g; rw [top_apply', EH_apply, if_neg hab, zero_add]; rfl
+      funext g; rw [top_apply', EH_apply, ite_eq_right hab, zero_add]; rfl
     rw [e1]
     exact Formalism.FourierDecayAlt.P.JCx2.ckOn_add' hA (Formalism.FourierDecayAlt.P.JCx2.ckOn_smul' _ hB)
 
@@ -449,7 +405,7 @@ theorem int_gI (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) {Ψ : B.Mat k 
   · rw [Set.indicator_of_mem hxK]
     by_cases hx : PBQ.GoodP Bj x
     · exact (norm_gI_le Bj e Ψ x y).trans ((hM1 _ (hSmem x hxK hx y (Set.mem_singleton y))).trans (le_max_left _ _))
-    · simp only [gI, if_neg hx, norm_zero]; exact le_max_right _ _
+    · simp only [gI, ite_eq_right hx, norm_zero]; exact le_max_right _ _
   · rw [Set.indicator_of_notMem hxK]
     by_cases hx : PBQ.GoodP Bj x
     · simp [gI, hx, hvan y hyV hy x hx hxK]
@@ -531,7 +487,7 @@ theorem gI_sum (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) {ι : Type*} (
     (F : ι → B.Mat k n → (Wq →L[ℂ] Wp)) (x : PBQ.XP k p ρ) (g : B.Mat k n) :
     gI Bj e (fun g' => ∑ i ∈ s, c i • F i g') x g = ∑ i ∈ s, c i • gI Bj e (F i) x g := by
   by_cases hx : PBQ.GoodP Bj x
-  · simp only [gI, if_pos hx]; exact comp_fsum _ s c _
+  · simp only [gI, ite_eq_left hx]; exact comp_fsum _ s c _
   · simp [gI, hx]
 
 theorem int_comb {α : Type*} [MeasurableSpace α] {μ : Measure α} {V : Type*} [NormedAddCommGroup V]
@@ -618,7 +574,7 @@ theorem AA_TI (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) {Ψ : B.Mat k n
         (PBQ.cP Bj x • gI Bj e (qminorOp (EabH (Hpk k n)) (C3.xR k n m hm) c u Ψ) x y) := by
     intro x
     by_cases hx : PBQ.GoodP Bj x
-    · rw [if_pos hx, AAop_sum, comp_fsum, one_smul, Finset.smul_sum]
+    · rw [ite_eq_left hx, AAop_sum, comp_fsum, one_smul, Finset.smul_sum]
       refine Finset.sum_congr rfl fun c _ => ?_
       rw [qminor_transl, smul_comm]
       simp [gI, hx]
@@ -643,7 +599,7 @@ theorem AAv_TI (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) {Ψ : B.Mat k 
         (PBQ.cP Bj x • gI Bj e (qminorOp (EabH (Hpk k n)) c (C3.sR k n m hm) (ell + (m : ℂ) - 1) Ψ) x y) := by
     intro x
     by_cases hx : PBQ.GoodP Bj x
-    · rw [if_pos hx, AAvop_sum, comp_fsum, one_smul, Finset.smul_sum]
+    · rw [ite_eq_left hx, AAvop_sum, comp_fsum, one_smul, Finset.smul_sum]
       refine Finset.sum_congr rfl fun c _ => ?_
       rw [qminor_transl, smul_comm]
       simp [gI, hx]
@@ -672,18 +628,18 @@ theorem vLet_TI (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) {Ψ : B.Mat k
   by_cases h0 : ε = 1 ∧ i = 0
   · simp [D.vLet, h0]
   · by_cases hl : l.1 = true
-    · simp only [D.vLet, h0, hl, if_false, if_true]
+    · simp only [D.vLet, h0, hl, ite_false, ite_true]
       rw [AA_TI Bj e hΨ hU hv _ _ _ hyU hy, ← integral_smul]
       refine integral_congr_ae (Eventually.of_forall fun x => ?_)
       by_cases hx : PBQ.GoodP Bj x
-      · simp only [if_pos hx]
+      · simp only [ite_eq_left hx]
         rw [ContinuousLinearMap.comp_smul, smul_comm]
       · simp [hx]
-    · simp only [D.vLet, h0, hl, if_false]
+    · simp only [D.vLet, h0, hl, ite_false]
       rw [AAv_TI Bj e hΨ hU hv _ _ _ hyU hy, ← integral_smul]
       refine integral_congr_ae (Eventually.of_forall fun x => ?_)
       by_cases hx : PBQ.GoodP Bj x
-      · simp only [if_pos hx, Bool.false_eq_true, if_false]
+      · simp only [ite_eq_left hx, Bool.false_eq_true, ite_false]
         rw [ContinuousLinearMap.comp_smul, smul_comm]
       · simp [hx]
 
@@ -719,7 +675,7 @@ theorem vLet_pb (Bj : B.RealPlaceData k ρ Wp Wq) (B0 : B.RealPlaceData k n Wp W
   unfold TI
   refine integral_congr_ae (Eventually.of_forall fun x => ?_)
   by_cases hx : PBQ.GoodP Bj x
-  · simp only [gI, if_pos hx]
+  · simp only [gI, ite_eq_left hx]
     have hs : sE Bj e x ∈ Sset k n B0.z := hzS ▸ sE_mem_S Bj e x
     have hs1 : (1 : B.Mat k n) ∈ Sset k n B0.z' := Formalism.FourierDecayAlt.P.PBG.one_mem_Sset k n B0.z'
     have hmem : sE Bj e x * y ∈ B.GV k n := Formalism.FourierDecayAlt.P.BetaSesquilinearity.gv_mul (sE_GV Bj e x) hy

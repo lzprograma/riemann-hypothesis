@@ -63,7 +63,7 @@ theorem ArithmeticIntersectionCycle.proof (hHor : ArithmeticIntersectionHorizont
         IsFieldIntersection J' ∧ E W' = J' (fibreIdeal κ G') 0 Fin.elim0 := by
     intro W' hW'
     have h := hex W' hW'
-    exact ⟨h.choose, h.choose_spec.choose, h.choose_spec.choose_spec, by simp only [E, dif_pos h]⟩
+    exact ⟨h.choose, h.choose_spec.choose, h.choose_spec.choose_spec, by simp only [E, dite_eq_left h]⟩
 
   let T : Ideal (MRing ι) → ℝ := fun W =>
     if IsHorizontal W then I K ι W n L else (geoNum n W (fun j => (L j).a) : ℝ) * Real.log (charOf W)
@@ -76,17 +76,17 @@ theorem ArithmeticIntersectionCycle.proof (hHor : ArithmeticIntersectionHorizont
     · have hh' : IsHorizontal (imageZ v W') := (ArithmeticIntersectionCycle.isHorizontal_imageZ_iff v W').2 hh
       rcases hHor I hI n hn K ι K' ι' κ v P' L L' s α W' hv hP' hP hL hLL' hs hsP hW' hh with
         ⟨hm, he⟩ | ⟨hm, h0⟩
-      · simp only [T', T, if_pos hh, if_pos hm, if_pos hh', he G' J' hJ', hEW]
-      · simp only [T', if_pos hh, if_neg hm, h0]
+      · simp only [T', T, ite_eq_left hh, ite_eq_left hm, ite_eq_left hh', he G' J' hJ', hEW]
+      · simp only [T', ite_eq_left hh, ite_eq_right hm, h0]
     · have hh' : ¬ IsHorizontal (imageZ v W') := fun h => hh ((ArithmeticIntersectionCycle.isHorizontal_imageZ_iff v W').1 h)
       have ha : (fun j => (L' j).a) = fun j => pullDeg κ (L j).a := funext fun j => (hLL' j).1
       rcases hVert K ι K' ι' κ v P' n (fun j => (L j).a) s α W' hv hP' hP hs hsP hW' hh with
         ⟨hm, he⟩ | ⟨hm, h0⟩
-      · simp only [T', T, if_neg hh, if_pos hm, if_neg hh', ArithmeticIntersectionCycle.charOf_imageZ]
+      · simp only [T', T, ite_eq_right hh, ite_eq_left hm, ite_eq_right hh', ArithmeticIntersectionCycle.charOf_imageZ]
         rw [ha, he G' J' hJ', hEW]
         push_cast
         ring
-      · simp only [T', if_neg hh, if_neg hm]
+      · simp only [T', ite_eq_right hh, ite_eq_right hm]
         rw [ha, h0]
         simp
 

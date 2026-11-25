@@ -36,14 +36,7 @@ theorem localizedQuot_nontrivial_of_le (J W : Ideal A) [W.IsPrime] (h : J ≤ W)
 
 theorem withBot_lt_natCast_of_add_one_le (x : WithBot ℕ∞) (N : ℕ) (h : x + 1 ≤ (N : WithBot ℕ∞)) :
     x < (N : WithBot ℕ∞) := by
-  induction x using WithBot.recBotCoe with
-  | bot => exact WithBot.bot_lt_coe _
-  | coe y =>
-    have h' : y + 1 ≤ (N : ℕ∞) := by exact_mod_cast h
-    have hy : y ≠ ⊤ := by
-      rintro rfl
-      simp at h'
-    exact_mod_cast (ENat.add_one_le_iff hy).mp h'
+  exact ENat.WithBot.add_one_le_natCast_iff.mp h
 
 end General
 

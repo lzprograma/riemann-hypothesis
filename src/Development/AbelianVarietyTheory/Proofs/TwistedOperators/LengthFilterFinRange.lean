@@ -97,9 +97,9 @@ theorem count_cons_map (a b : A) (x : List A) (s : Multiset (List A)) :
     (s.map (List.cons b)).count (a :: x) = if a = b then s.count x else 0 := by
   by_cases hab : a = b
   · subst hab
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     exact Multiset.count_map_eq_count' (List.cons a) s List.cons_injective x
-  · rw [if_neg hab, Multiset.count_eq_zero]
+  · rw [ite_eq_right hab, Multiset.count_eq_zero]
     intro hmem
     obtain ⟨y, -, hy⟩ := Multiset.mem_map.1 hmem
     exact hab (List.cons.inj hy).1.symm
@@ -150,7 +150,7 @@ theorem count_single (n : ℕ) : ∀ (w : Fin n → A) (u v : List A),
     intro w u v
     rw [sum_filter_sub_sum_filter_and_not_eq_sum, List.ofFn_succ]
     simp only [pos_cons, Fin.cons_zero, Fin.cons_succ, Bool.not_true, Bool.not_false,
-      Bool.false_eq_true, if_true, if_false, List.nil_append, List.singleton_append]
+      Bool.false_eq_true, ite_true, ite_false, List.nil_append, List.singleton_append]
     set w' : Fin n → A := fun j => w j.succ with hw'
     rcases u with _ | ⟨a, u⟩ <;> rcases v with _ | ⟨b, v⟩
     · simp
@@ -159,15 +159,15 @@ theorem count_single (n : ℕ) : ∀ (w : Fin n → A) (u v : List A),
       rw [Shuffle.shuffle_nil_left, count_cons_singleton_cons]
       simp only [count_cons_singleton_cons, count_cons_singleton_nil, zero_mul, add_zero]
       by_cases hc : w 0 = b
-      · simp only [if_pos hc, h]
-      · simp [if_neg hc]
+      · simp only [ite_eq_left hc, h]
+      · simp [ite_eq_right hc]
     · have h := ih w' u []
       rw [Shuffle.shuffle_nil_right] at h
       rw [Shuffle.shuffle_nil_right, count_cons_singleton_cons]
       simp only [count_cons_singleton_cons, count_cons_singleton_nil, mul_zero, zero_add]
       by_cases hc : w 0 = a
-      · simp only [if_pos hc, h]
-      · simp [if_neg hc]
+      · simp only [ite_eq_left hc, h]
+      · simp [ite_eq_right hc]
     · have h1 := ih w' u (b :: v)
       have h2 := ih w' (a :: u) v
       rw [Shuffle.shuffle_cons_cons, Multiset.count_add, count_cons_map, count_cons_map]
@@ -175,11 +175,11 @@ theorem count_single (n : ℕ) : ∀ (w : Fin n → A) (u v : List A),
       rw [add_comm]
       congr 1
       · by_cases hc : w 0 = b
-        · simp only [if_pos hc, h2]
-        · simp [if_neg hc]
+        · simp only [ite_eq_left hc, h2]
+        · simp [ite_eq_right hc]
       · by_cases hc : w 0 = a
-        · simp only [if_pos hc, h1]
-        · simp [if_neg hc]
+        · simp only [ite_eq_left hc, h1]
+        · simp [ite_eq_right hc]
 
 private theorem sum_map_count_singleton (X : List A) (s : Multiset (List A)) :
     (s.map fun v => ({v} : Multiset (List A)).count X).sum = s.count X := by
@@ -996,8 +996,8 @@ theorem wordMult_detRep (N : ℕ) (ψ : kˣ →* ℂˣ) (w : List ℂˣ) :
   obtain ⟨φ⟩ := nonempty_jacB_detRep N ψ
   by_cases hw : w.length = N
   swap
-  · rw [wordMult_of_ne _ hw, if_neg fun h => hw h.1]
-  rw [wordMult, if_pos hw, jhMult_congr_right _ φ]
+  · rw [wordMult_of_ne _ hw, ite_eq_right fun h => hw h.1]
+  rw [wordMult, ite_eq_left hw, jhMult_congr_right _ φ]
   split_ifs with h
   · rw [show (fun i : Fin N => unrChar k (w.getD i 1)) = _ from funext fun i => h.2 i i.2]
     exact jhMult_self (isIrreducible_ofChar _)
@@ -1049,7 +1049,7 @@ theorem wordMult_segment {ϖ : kˣ} (hϖ : valuation k (ϖ : k) = uniformizer k)
     simp only [this]
   by_cases hu : IsUnram χ
   swap
-  · refine Or.inr fun w => (key w).trans (if_neg fun h => hu ?_)
+  · refine Or.inr fun w => (key w).trans (ite_eq_right fun h => hu ?_)
     have := h.2 0 hl
     rw [Nat.cast_zero, absPow_zero, mul_one] at this
     exact this ▸ isUnram_unrChar k _
@@ -1075,8 +1075,8 @@ theorem wordMult_segment {ϖ : kˣ} (hϖ : valuation k (ϖ : k) = uniformizer k)
     · rintro rfl
       exact ⟨by simp [segWord], fun i hi => by simp [segWord, hi]⟩
   by_cases h : w = segWord (absPow k 1 ϖ) (χ ϖ) l
-  · rw [if_pos (this.2 h), if_pos h, Nat.cast_one]
-  · rw [if_neg fun h' => h (this.1 h'), if_neg h, Nat.cast_zero]
+  · rw [ite_eq_left (this.2 h), ite_eq_left h, Nat.cast_one]
+  · rw [ite_eq_right fun h' => h (this.1 h'), ite_eq_right h, Nat.cast_zero]
 
 def Realised [DecidableEq ℂˣ] (Ψ : GrothGL k ≃+ MvPolynomial (Segment k) ℤ)
     (P : MvPolynomial (Segment k) ℤ) (y : ShuffleAlgebra ℚ ℂˣ) : Prop :=
@@ -1235,7 +1235,7 @@ theorem exponentsSeparate (hG : Published.GeometricLemma) (hZ : Published.Zelevi
       exact ⟨{ℓ Δ}, h2, by simp [φ, h]⟩
     · exact ⟨0, by simpa using (wordMult_segment hϖ hZ Δ).resolve_left h, by simp [φ, h]⟩
   refine @_root_.GlobalTheory.ShuffleCount.separates_of_shuffle_count _ _ ℂˣ _ modArgOrder Ψ (fun x w => wordMult x.2.rep.ρ w) U ℓ φ ?_ ?_
-    (fun Δ h => if_neg h) (fun m => (Realised.monomial (hG k).1 (hG k).2 hΨ hR m).effective)
+    (fun Δ h => ite_eq_right h) (fun m => (Realised.monomial (hG k).1 (hG k).2 hΨ hR m).effective)
     n (fun i => ⟨r, (σ i).cl⟩) c ?_ ?_ ?_
   · intro Δ h Δ' h' e
     obtain ⟨z, l, hl, h1, h2, -⟩ := hℓ Δ h
@@ -1244,7 +1244,7 @@ theorem exponentsSeparate (hG : Published.GeometricLemma) (hZ : Published.Zelevi
     exact h1.trans h1'.symm
   · intro Δ h
     obtain ⟨z, l, hl, -, h2, -⟩ := hℓ Δ h
-    exact ⟨h2 ▸ isLyndon_segWord (norm_absPow_one_lt hϖ) z hl, if_pos h⟩
+    exact ⟨h2 ▸ isLyndon_segWord (norm_absPow_one_lt hϖ) z hl, ite_eq_left h⟩
   · intro i j h
     by_contra hij
     exact (hne i j hij).false (IrrRep.cl_eq_iff.1

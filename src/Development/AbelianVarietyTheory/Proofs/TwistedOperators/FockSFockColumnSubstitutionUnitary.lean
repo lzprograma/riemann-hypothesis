@@ -68,8 +68,8 @@ theorem colMat_conjTranspose {d a : ℕ} (g : ι → Matrix (Fin a) (Fin a) ℂ)
   ext w v
   simp only [colMat, conjTranspose_apply]
   by_cases h : v.1 = w.1 ∧ v.2.1 = w.2.1
-  · rw [if_pos h, if_pos ⟨h.1.symm, h.2.symm⟩, h.1]
-  · rw [if_neg h, if_neg fun h' => h ⟨h'.1.symm, h'.2.symm⟩, star_zero]
+  · rw [ite_eq_left h, ite_eq_left ⟨h.1.symm, h.2.symm⟩, h.1]
+  · rw [ite_eq_right h, ite_eq_right fun h' => h ⟨h'.1.symm, h'.2.symm⟩, star_zero]
 
 theorem colSub_comp {d a : ℕ} (h g : ι → Matrix (Fin a) (Fin a) ℂ) :
     (colSub h : Pol ι d a →ₐ[ℂ] Pol ι d a).comp (colSub g) = colSub fun τ => h τ * g τ := by

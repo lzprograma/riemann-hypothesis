@@ -53,7 +53,6 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FunKilled
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.RootEx GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.SplitWeil GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.StepData GlobalTheory.SymChain GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.MiTop GlobalTheory.Fam ValuativeRel
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -64,16 +63,8 @@ open GlobalTheory.FinPl
 variable {D : D7} {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
 theorem exists_not_int : ∃ x : k, x ∉ 𝒪[k] := by
-  obtain ⟨r, hr0, hr1⟩ := Valuation.IsNontrivial.exists_lt_one (v := valuation k)
-  refine ⟨r⁻¹, fun h => ?_⟩
-  have h1 : valuation k r⁻¹ ≤ 1 := h
-  have hr : r ≠ 0 := hr0
-  have : (1 : ValueGroupWithZero k) ≤ valuation k r := by
-    calc (1 : ValueGroupWithZero k) = valuation k (r * r⁻¹) := by rw [mul_inv_cancel₀ hr, map_one]
-      _ = valuation k r * valuation k r⁻¹ := map_mul _ _ _
-      _ ≤ valuation k r * 1 := by gcongr
-      _ = valuation k r := mul_one _
-  exact absurd hr1 (not_lt.2 this)
+  obtain ⟨x, hx⟩ := Valuation.IsNontrivial.exists_one_lt (v := valuation k)
+  exact ⟨x, fun h => not_le.2 hx h⟩
 
 theorem mul_sec' (q : SplitPt D k) (a : AE D) (b : k) : a * q.sec b = q.sec (q.pr a * b) := by
   rw [mul_comm, FrameLat.sec_mul_right, mul_comm]

@@ -162,7 +162,7 @@ theorem step4 (f : Fin 4 → (n → ℂ) → ℂ) (hf : ∀ a, Differentiable �
     (hf b _).hasFDerivAt.comp y (sl b).hasFDerivAt
   rw [(HasFDerivAt.finsetProd hd).fderiv, _root_.sum_apply, Finset.sum_eq_single a]
   · rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ a), Function.update_self, _root_.smul_apply,
-      ContinuousLinearMap.comp_apply, hw, if_pos rfl, smul_eq_mul, mul_comm]
+      ContinuousLinearMap.comp_apply, hw, ite_eq_left rfl, smul_eq_mul, mul_comm]
     congr 1
     exact Finset.prod_congr rfl fun b hb => by rw [Function.update_of_ne (Finset.ne_of_mem_erase hb)]
   · intro b _ hb
@@ -318,8 +318,6 @@ variable {N N' : ℕ}
 def TA (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (G : VC D N N' → ℂ) : Prop :=
   Differentiable ℂ G ∧ ∀ x ∈ sat (La D (tor0 D cc δ) (stdL D N) (stdL D N')), CoefIn D (U D (tor0 D cc δ) x G) Qbar
 
-alias differentiable_U := _root_.Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.IO.U_diff
-
 theorem TA.comb {α : Type} (s : Finset α) (c : α → ℂ) (F : α → VC D N N' → ℂ) (hc : ∀ a, c a ∈ Qbar) (h : ∀ a, TA cc δ (F a)) :
     TA cc δ fun z => ∑ a ∈ s, c a * F a z := by
   refine ⟨?_, fun x hx β => ?_⟩
@@ -327,17 +325,17 @@ theorem TA.comb {α : Type} (s : Finset α) (c : α → ℂ) (F : α → VC D N 
     fun_prop
   · have e : U D (tor0 D cc δ) x (fun z => ∑ a ∈ s, c a * F a z) = fun z => ∑ a ∈ s, c a * U D (tor0 D cc δ) x (F a) z := by
       funext z; simp only [U, Finset.sum_mul, mul_assoc]
-    rw [e, GlobalTheory.AlgTranslate.taylor_sum D s c _ fun a => differentiable_U _ _ (h a).1]
+    rw [e, GlobalTheory.AlgTranslate.taylor_sum D s c _ fun a => Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.IO.U_diff _ _ (h a).1]
     exact sum_mem fun a _ => mul_mem (hc a) ((h a).2 x hx β)
 
 theorem sd_std (D : D7) (N : ℕ) : SD D (stdL D N) := GlobalTheory.FourthRootStd.stdL_isSD D N
 
 theorem TA.transl (hC : Crv D cc δ) {G : VC D N N' → ℂ} (h : TA cc δ G) {t : VC D N N'}
     (ht : t ∈ sat (La D (tor0 D cc δ) (stdL D N) (stdL D N'))) : TA cc δ (U D (tor0 D cc δ) t G) := by
-  refine ⟨differentiable_U _ _ h.1, fun x hx β => ?_⟩
+  refine ⟨Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.IO.U_diff _ _ h.1, fun x hx β => ?_⟩
   obtain ⟨q, hq⟩ := ((GlobalTheory.RationalPoints.rational_points D cc δ hC N N' _ _ (sd_std D N) (sd_std D N')).2 x t hx ht).1
   rw [show U D (tor0 D cc δ) x (U D (tor0 D cc δ) t G) = _ from funext (U_U (tor0 D cc δ) x t G), hq,
-    GlobalTheory.ThetaConj.taylor_mul D _ (differentiable_U _ _ h.1)]
+    GlobalTheory.ThetaConj.taylor_mul D _ (Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.IO.U_diff _ _ h.1)]
   refine mul_mem ?_ (h.2 _ (add_mem hx ht) β)
   simpa using exp_rat_mem (-q)
 
@@ -395,7 +393,7 @@ theorem esmooth_jetAlg : ∀ (D : D7) (X : Fields) (s : Seam D X) (cc : Ideal (�
   have hI := indSmooth_of (ambOf s B χ cD) a b S M hsm N N' c x hR
   obtain ⟨k, r, y, hr, hy, -, hF⟩ :=
     GlobalTheory.ColNorms.IndPres.pres_thInd D X s cc δ B χ cD hX hs hC a b S N N' c x hR.1 hR.2.1 hR.2.2.1
-  have hU := fun i => differentiable_U B.tor (y i) hT.1
+  have hU := fun i => Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.IO.U_diff B.tor (y i) hT.1
   set F : TaylorLogMetric.VC D a b → ℂ := fun w => ∑ i, r i * TaylorLogMetric.U D B.tor (y i) (B.thMoved a b (s.lat N) (s.lat N')) w with hFdef
   have hdiff : Differentiable ℂ F := by fun_prop
   have hfun : (fun z => ((ambOf s B χ cD).chiF a b N N')⁻¹ * (ambOf s B χ cD).thInd S N N' c x z) =

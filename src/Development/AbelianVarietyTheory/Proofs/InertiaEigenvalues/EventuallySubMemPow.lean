@@ -12,46 +12,6 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Acris0Torsio
 import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FontaineThetaEqZeroIffFontaineXiElementDvd
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaBdRPlusSurjectiveKerUnitsEquivariant
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
 
@@ -67,16 +27,6 @@ namespace GlobalTheory.AcrisGal
 open Filter Topology
 
 variable {l : ℕ} [hl : Fact l.Prime]
-
-private theorem sigO_coe_pt (g : Per.Gq l) (y : Per.OC l) :
-    ((Per.σO g y : Per.OC l) : ℂ_[l]) = Per.σC g (y : ℂ_[l]) := by
-  apply GlobalTheory.RingIface.sigO_coe
-
-private theorem tower_pt (x : Per.Ainf l) : algebraMap (Per.Acris0 l) (Per.Acris l)
-    (algebraMap (Per.Ainf l) (Per.Acris0 l) x) = ainfToAcris l x := by
-  change _ = algebraMap (Per.Ainf l) (Per.Acris l) x
-  symm
-  apply GlobalTheory.RingIface.tower
 
 theorem eventually_norm_σC_sub_lt (y : ℂ_[l]) {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ g : GQ l in 𝓝 1, ‖Per.σC g y - y‖ < ε := by
@@ -107,7 +57,7 @@ theorem eventually_sub_mem_one (hξ : RingHom.ker (Per.θ l) = Ideal.span {ξ}) 
   filter_upwards [eventually_norm_σC_sub_lt ((Per.θ l y : Per.OC l) : ℂ_[l]) hl0] with g hg
   have h1 : Per.θ l (Per.σA g y - y) = Per.σO g (Per.θ l y) - Per.θ l y := by rw [map_sub, GlobalTheory.RingBasics.θ_σA]
   obtain ⟨c, hc⟩ := exists_eq_l_mul (Per.σO g (Per.θ l y) - Per.θ l y)
-    (by rw [AddSubgroupClass.coe_sub, sigO_coe_pt]; exact hg.le)
+    (by rw [AddSubgroupClass.coe_sub, GlobalTheory.RingIface.sigO_coe l]; exact hg.le)
   obtain ⟨c', rfl⟩ := GlobalTheory.MemLoc.ThetaD.θ_surj l c
   have hk : Per.σA g y - y - (l : Per.Ainf l) * c' ∈ RingHom.ker (Per.θ l) := by
     rw [RingHom.mem_ker, map_sub, h1, hc, map_mul, map_natCast, sub_self]
@@ -229,7 +179,7 @@ theorem algebraMap_mem_fixNear (s : Per.Acris0 l) :
       have h1 : (n.factorial : Per.Acris0 l) * ⟨y, hy0⟩ =
           algebraMap (Per.Ainf l) (Per.Acris0 l) (GlobalTheory.MemLoc.xi e) ^ n := Subtype.ext (by simpa using hn)
       have h2 := congrArg (algebraMap (Per.Acris0 l) (Per.Acris l)) h1
-      rw [map_mul, map_natCast, map_pow, tower_pt] at h2
+      rw [map_mul, map_natCast, map_pow, ← GlobalTheory.RingIface.tower l] at h2
       rw [eq_dpow hx h2]
       exact fun N => eventually_dvd_dpow hx n N
     | zero =>
@@ -248,7 +198,7 @@ theorem algebraMap_mem_fixNear (s : Per.Acris0 l) :
       have hy0 := (GlobalTheory.MemLoc.mem_Acris0_iff_span l e he y).2 hy
       have e0 : (⟨r • y, h0⟩ : Per.Acris0 l) = algebraMap (Per.Ainf l) (Per.Acris0 l) r * ⟨y, hy0⟩ :=
         Subtype.ext (Algebra.smul_def r y)
-      rw [e0, map_mul, tower_pt]
+      rw [e0, map_mul, ← GlobalTheory.RingIface.tower l]
       exact mul_mem (fun N => eventually_dvd_ainf N r) (ihy hy0)
   exact key s ((GlobalTheory.MemLoc.mem_Acris0_iff_span l e he s).1 hs) hs
 

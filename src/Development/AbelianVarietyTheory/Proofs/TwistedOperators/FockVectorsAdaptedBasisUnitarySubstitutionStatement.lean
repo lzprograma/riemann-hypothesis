@@ -68,7 +68,6 @@ open GlobalTheory.Chain (signed)
 open GlobalTheory.Chain.RealIt (LPol locS locT IsPolyIso)
 open MeasureTheory Matrix
 open scoped TensorProduct InnerProductSpace ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.ArchRec
 
 namespace GlobalTheory.ArchRec.BasisChange
@@ -130,18 +129,18 @@ theorem unitary_mix {N : Matrix σ σ ℂ} (h : N * Nᴴ = 1) (e e' : σ → Boo
   · cases hb : e w with
     | true =>
       have hb' : e w' = true := by rw [← hw]; exact hb
-      simp only [hb', if_true]
+      simp only [hb', ite_true]
       exact hww
     | false =>
       have hb' : e w' = false := by rw [← hw]; exact hb
-      simp only [hb', Bool.false_eq_true, if_false, star_star]
+      simp only [hb', Bool.false_eq_true, ite_false, star_star]
       have hs := congrArg star hww
       rw [star_sum] at hs
       simp only [star_mul', star_star] at hs
       rw [hs]
       split_ifs <;> simp
   · have hne : w ≠ w' := fun hh => hw (by rw [hh])
-    rw [if_neg hne]
+    rw [ite_eq_right hne]
     refine Finset.sum_eq_zero fun v _ => ?_
     by_cases h1 : N w v = 0
     · simp [h1]
@@ -213,7 +212,7 @@ theorem adapted_eq {G s fr B : Mn n} {ε : Fin n → Bool} (h : IsFrameOf G s ε
     have key := congrFun (congrFun hJu a) i
     unfold Formalism.REAL.Jm at key
     rw [Matrix.diagonal_mul, Matrix.mul_diagonal] at key
-    rcases h1 : ε a <;> rcases h2 : ε' i <;> simp only [h1, h2, Bool.false_eq_true, if_true, if_false] at key ⊢
+    rcases h1 : ε a <;> rcases h2 : ε' i <;> simp only [h1, h2, Bool.false_eq_true, ite_true, ite_false] at key ⊢
     all_goals first
       | exact absurd (by linear_combination -key / 2) hai
       | exact absurd (by linear_combination key / 2) hai
@@ -286,7 +285,7 @@ theorem aPlus_smul_dir (e : Bool) (c : ℂ) (z : Matrix (Fin T.rank) (Fin S.rank
     rw [Matrix.mul_smul, Matrix.smul_mul, smul_comm]
   have hre := Complex.re_add_im c
   cases e
-  · simp only [Bool.false_eq_true, if_false, mul_neg, mul_one] at hz ⊢
+  · simp only [Bool.false_eq_true, ite_false, mul_neg, mul_one] at hz ⊢
     have hst : star c = (c.re : ℂ) - (c.im : ℂ) * Complex.I := by
       apply Complex.ext <;> simp
     rw [GlobalTheory.FockSubst.aPlus_eq, GlobalTheory.FockSubst.aPlus_eq, hJc, hz, smul_smul,
@@ -300,7 +299,7 @@ theorem aPlus_smul_dir (e : Bool) (c : ℂ) (z : Matrix (Fin T.rank) (Fin S.rank
     generalize Datum.dRho (heisO ψ S T) θ τ (Complex.I • z) f x = B
     generalize ((fockScale D τ : ℂ))⁻¹ = k
     linear_combination (k * (c.im : ℂ) * B) * Complex.I_sq - (k * (A + Complex.I * B)) * hst
-  · simp only [if_true, mul_one] at hz ⊢
+  · simp only [ite_true, mul_one] at hz ⊢
     rw [GlobalTheory.FockSubst.aPlus_eq, GlobalTheory.FockSubst.aPlus_eq, hJc, hz, smul_smul,
       GlobalTheory.FockBasis.dRho_smul_dir hψ hθ τ hf c z, GlobalTheory.FockBasis.dRho_smul_dir hψ hθ τ hf (c * Complex.I) z]
     funext x
@@ -390,11 +389,11 @@ theorem aPlus_comm_at (hS : IsCartanInv (gramAt D S τ) sS) (hT : IsCartanInv (g
   have o1 : ((GlobalTheory.FockIndep.omDir S T τ (cplxO sS sT z) τ (cplxO sS sT z') : ℝ) : ℂ) =
       (GlobalTheory.FockIndep.omDir S T τ z τ z' : ℝ) := by
     unfold GlobalTheory.FockIndep.omDir
-    rw [if_pos rfl, if_pos rfl, tr1]
+    rw [ite_eq_left rfl, ite_eq_left rfl, tr1]
   have o2 : ((GlobalTheory.FockIndep.omDir S T τ z τ (cplxO sS sT z') : ℝ) : ℂ) =
       -((GlobalTheory.FockIndep.omDir S T τ (cplxO sS sT z) τ z' : ℝ) : ℂ) := by
     unfold GlobalTheory.FockIndep.omDir
-    rw [if_pos rfl, if_pos rfl, tr2, tr3, neg_mul, mul_neg, Complex.neg_re]
+    rw [ite_eq_left rfl, ite_eq_left rfl, tr2, tr3, neg_mul, mul_neg, Complex.neg_re]
     push_cast
     ring
   simp only [GlobalTheory.FockIndep.aPlus_eq]
@@ -565,7 +564,6 @@ open GlobalTheory.Chain (signed)
 open GlobalTheory.Chain.RealIt (LPol locS locT IsPolyIso)
 open MeasureTheory Matrix
 open scoped TensorProduct InnerProductSpace ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.ArchRec
 
 theorem _root_.GlobalTheory.T.fockVectors_adaptedBasis_unitary_substitution : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (S T : HSp D) (τ : D.what₂.Tau), IsStdChar D ψ (-1) → IsInfFam θ → ∀ (sS frS : Mn S.rank) (εS : Fin S.rank → Bool) (sT frT : Mn T.rank) (εT : Fin T.rank → Bool), IsFrameOf (gramAt D S τ) sS εS frS → IsFrameOf (gramAt D T τ) sT εT frT → ∀ BS BT, IsAdapted (gramAt D S τ) sS BS → IsAdapted (gramAt D T τ) sT BT → ∃ ς : LPol T.rank S.rank ≃ₗ[ℂ] LPol T.rank S.rank, Graded ς ∧ (∀ P Q, fockIp (ς P) (ς Q) = fockIp P Q) ∧ ∀ f, IsThetaFunO ψ S T f → ∀ P, ptAt ψ θ S T τ sS sT BS BT f P = ptAt ψ θ S T τ sS sT frS⁻¹ frT⁻¹ f (ς P) := by

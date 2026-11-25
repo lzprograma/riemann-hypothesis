@@ -159,7 +159,7 @@ theorem frame_tri {F E : Type} [Field F] [NumberField F] [Field E] [NumberField 
     (Finsupp.mem_supported' _ _).mp (hl j) i h
   refine ⟨Matrix.of fun i j => if i = j then 1 else l j i, ⟨fun i j hij => ?_, fun i => ?_⟩, fun j => ?_⟩
   · have hne : i ≠ j := fun h => by subst h; exact lt_irrefl _ hij
-    simp only [Matrix.of_apply, if_neg hne]
+    simp only [Matrix.of_apply, ite_eq_right hne]
     exact hz i j (by rw [Fin.lt_def] at hij; omega)
   · simp
   · have hjj : l j j = 0 := hz j j (lt_irrefl _)
@@ -171,7 +171,7 @@ theorem frame_tri {F E : Type} [Field F] [NumberField F] [Field E] [NumberField 
     have hlc := hl' j
     rw [Finsupp.linearCombination_apply, Finsupp.sum_fintype _ _ (by simp)] at hlc
     simp only [Matrix.of_apply, hsplit, add_smul, Finset.sum_add_distrib, ite_smul, one_smul, zero_smul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true, hlc]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true, hlc]
     abel
 
 theorem stab_unitriangular : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {sig : E →ₐ[F] E} (A : Places F E sig), ∀ (r k : ℕ) (G : GFrames A r k), ∀ x ∈ G.St, ∃ s s' : Matrix (Fin (r + 1)) (Fin (r + 1)) E, ((∀ i j, j < i → s i j = 0) ∧ (∀ i, s i i = 1)) ∧ ((∀ i j, j < i → s' i j = 0) ∧ (∀ i, s' i i = 1)) ∧ (∀ j, x (G.f j) = ∑ i, s i j • G.f i) ∧ ∀ j, x (G.f' j) = ∑ i, s' i j • G.f' i := by

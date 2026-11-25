@@ -162,7 +162,7 @@ def orbFun (w0 : O) (v : LinearMap.BilinForm ℤ X₀) : InvFun O where
   inv n m r hr B := by
     simp only [isOrbForm_comp_iff v _ hr]
   zero B := by
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨hv, σ, -, h⟩
     exact hv (eq_zero_of_isOrbForm_zero h)
 
@@ -183,7 +183,7 @@ theorem orbFun_eval_eq_zero_or_one (w0 : O) (v : LinearMap.BilinForm ℤ X₀) {
 theorem orbFun_evalZ_self (w0 : O) {v : LinearMap.BilinForm ℤ X₀} [Module.Finite O X₀] (hv : v ≠ 0)
     (hsym : ∀ y z, v y z = v z y) : (orbFun O w0 v).evalZ v = 1 := by
   obtain ⟨n, r, hr⟩ := Module.Finite.exists_fin' O X₀
-  rw [InvFun.evalZ, (orbFun O w0 v).eval_eq hr, orbFun_toFun, if_pos]
+  rw [InvFun.evalZ, (orbFun O w0 v).eval_eq hr, orbFun_toFun, ite_eq_left]
   refine ⟨hv, RingEquiv.refl O, rfl, (CarDim.orad v).mkQ ∘ₗ r, (Submodule.mkQ_surjective _).comp hr,
     fun a b x y hx hy => ?_⟩
   have hx' : x - r a ∈ (CarDim.orad v : Submodule O X₀) := (Submodule.Quotient.eq _).1 hx

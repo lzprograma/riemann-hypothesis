@@ -288,10 +288,7 @@ theorem compact_preimage (hN : IsClosed (N k n c p : Set (GL (n ⊕ Fin c) k))) 
   have hb : Continuous (fun g : GL (n ⊕ Fin c) k => g.val.toBlocks₁₁) := by
     refine continuous_matrix fun i j => ?_
     exact (Units.continuous_val.matrix_elem (Sum.inl i) (Sum.inl j))
-  haveI : T2Space k := by
-    letI := IsTopologicalAddGroup.rightUniformSpace k
-    haveI := isUniformAddGroup_of_addCommGroup (G := k)
-    infer_instance
+  haveI : T2Space k := GlobalTheory.SplitWeil.t2Space k
   have h1 := hC.image hb
   have h2 := hC.image (MulOpposite.continuous_op.comp (hb.comp continuous_inv))
   have h3 := (Units.isClosedEmbedding_embedProduct (α := Matrix n n k)).isCompact_preimage (h1.prod h2)

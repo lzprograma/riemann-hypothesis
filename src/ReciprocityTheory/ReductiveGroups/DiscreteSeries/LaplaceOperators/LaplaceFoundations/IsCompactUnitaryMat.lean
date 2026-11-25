@@ -48,7 +48,7 @@ theorem key {s : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hs : s
   have hst : ∀ x : Fin (2 * r + k + 1), star (if x = c then (1 : ℂ) else 0) = if x = c then 1 else 0 :=
     fun x => by split_ifs <;> simp
   simp only [Matrix.conjTranspose_apply, col_std hs hc, hst, ite_mul, one_mul,
-    zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem row_zero {s : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hs : s ∈ UWset k r (z0 k r))
     {i j : Fin (2 * r + k + 1)} (hi : ¬ bl k r i) (hj : bl k r j) : s i j = 0 := by
@@ -61,33 +61,33 @@ theorem row_zero {s : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (h
     set c : Fin (2 * r + k + 1) := ⟨2 * r + k - i.val, by omega⟩ with hcdef
     have hc : ¬ bl k r c := by simp only [bl, hcdef]; omega
     have e := key hs hc j
-    rw [H_blcol hj, if_neg (by rintro rfl; exact hc hj)] at e
+    rw [H_blcol hj, ite_eq_right (by rintro rfl; exact hc hj)] at e
     rw [Finset.sum_eq_single i] at e
-    · rw [H_hi (by simp only [hcdef]; omega), if_pos (by simp only [hcdef]; omega), one_mul] at e
+    · rw [H_hi (by simp only [hcdef]; omega), ite_eq_left (by simp only [hcdef]; omega), one_mul] at e
       exact e.symm
     · intro b _ hb
-      rw [H_hi (by simp only [hcdef]; omega), if_neg, zero_mul]
+      rw [H_hi (by simp only [hcdef]; omega), ite_eq_right, zero_mul]
       intro h; apply hb; ext; simp only [hcdef] at h; omega
     · simp
   · have hc : ¬ bl k r i := hi
     have e := key hs hc j
-    rw [H_blcol hj, if_neg (by rintro rfl; exact hc hj)] at e
+    rw [H_blcol hj, ite_eq_right (by rintro rfl; exact hc hj)] at e
     rw [Finset.sum_eq_single i] at e
-    · rw [H_mid h1, if_pos rfl] at e
+    · rw [H_mid h1, ite_eq_left rfl] at e
       have : s i j = -(-1 * s i j) := by ring
       rw [this, ← e, neg_zero]
     · intro b _ hb
-      rw [H_mid h1, if_neg (Ne.symm hb), zero_mul]
+      rw [H_mid h1, ite_eq_right (Ne.symm hb), zero_mul]
     · simp
   · set c : Fin (2 * r + k + 1) := ⟨2 * r + k - i.val, by omega⟩ with hcdef
     have hc : ¬ bl k r c := by simp only [bl, hcdef]; omega
     have e := key hs hc j
-    rw [H_blcol hj, if_neg (by rintro rfl; exact hc hj)] at e
+    rw [H_blcol hj, ite_eq_right (by rintro rfl; exact hc hj)] at e
     rw [Finset.sum_eq_single i] at e
-    · rw [H_lo (by simp only [hcdef]; omega), if_pos (by simp only [hcdef]; omega), one_mul] at e
+    · rw [H_lo (by simp only [hcdef]; omega), ite_eq_left (by simp only [hcdef]; omega), one_mul] at e
       exact e.symm
     · intro b _ hb
-      rw [H_lo (by simp only [hcdef]; omega), if_neg, zero_mul]
+      rw [H_lo (by simp only [hcdef]; omega), ite_eq_right, zero_mul]
       intro h; apply hb; ext; simp only [hcdef] at h; omega
     · simp
 
@@ -103,7 +103,7 @@ theorem blk_unitary {s : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
   rw [H_blrow (bl_eB q), Matrix.mul_apply] at e
   rw [sumB _ (fun p hp => by rw [row_zero hs hp (bl_eB q'), mul_zero])] at e
   simp only [Matrix.mul_apply, Matrix.conjTranspose_apply, H_blcol (bl_eB _), mul_ite, mul_one, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true] at e
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true] at e
   rw [Matrix.mul_apply, Matrix.one_apply]
   simp only [Matrix.star_apply, blk]
   rw [e]

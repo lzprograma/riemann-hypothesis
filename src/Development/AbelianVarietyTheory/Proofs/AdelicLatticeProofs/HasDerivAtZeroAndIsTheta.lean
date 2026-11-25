@@ -58,8 +58,6 @@ open scoped TensorProduct ContDiff Topology
 
 namespace GlobalTheory.WeilVacMove
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 open GlobalTheory.FockCompare
 
 section Abstract

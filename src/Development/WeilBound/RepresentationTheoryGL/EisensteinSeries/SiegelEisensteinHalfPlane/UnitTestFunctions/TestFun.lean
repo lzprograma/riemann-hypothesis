@@ -8,57 +8,8 @@ public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.Sieg
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsOfChiNeZero
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProdFunHasCompactSupport
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StandardSectionGood
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.UniformSpace.Uniformizable
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.Henselian
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BumpProfileEqZeroOfLtHalf, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousInfiniteIdeleInclusion, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfForallInM, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasCompactSupportSmallF, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IdeleModuleOfFiniteEq, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InfiniteModuleOfFinite, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemOHOfMemIntAd, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemStabOfInvCol, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NatCastFiniteAdeleApply, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RealComponentCoe, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ToIdeleMulSelf, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ValEqOneOfMulEq, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ZetaIntegrandTensor, Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.UnitTestFunctions.TestFun
@@ -589,7 +540,6 @@ lemma hasCompactSupport_smallF : HasCompactSupport smallF := by
 
 end GlobalTheory.CompanionTheory.TestBump
 
-
 open GlobalTheory.CompanionTheory.TestBump in
 theorem GlobalTheory.CompanionTheory.TestBump.cplxBump : CplxBump := by
   classical
@@ -668,8 +618,7 @@ theorem finiteModule_lt_one {b : (FiniteAdeleRing (𝓞 k) k)ˣ}
     finiteModule (ofFinite b) < 1 := by
   classical
   obtain ⟨v, hv⟩ : ∃ v : HeightOneSpectrum (𝓞 k), ‖(b : FiniteAdeleRing (𝓞 k) k) v‖ < 1 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     refine hu ((mem_finiteIntegralUnits k).2 fun v ↦ ⟨mem_integralFiniteAdeles.1 hb v, ?_⟩)
     have hv1 : ‖(b : FiniteAdeleRing (𝓞 k) k) v‖ = 1 :=
       le_antisymm (norm_le_one_of_mem_OH hb v) (hcon v)
@@ -741,7 +690,7 @@ theorem norm_integrand_le {g : (Unit → FiniteAdeleRing (𝓞 k) k) → ℂ} (�
   have hL : (b : FiniteAdeleRing (𝓞 k) k) ∈ idealFiniteAdeles (1 : (FractionalIdeal (𝓞 k)⁰ k)ˣ) := by
     rw [← SetLike.mem_coe, idealFiniteAdeles_one]
     exact hO
-  rw [finiteZetaBound, if_pos hL]
+  rw [finiteZetaBound, ite_eq_left hL]
   have hpow : finiteModule (ofFinite b) ^ (n : ℝ) ≤ finiteModule (ofFinite b) ^ (2 : ℝ) :=
     Real.rpow_le_rpow_of_exponent_ge (finiteModule_pos _) (finiteModule_le_one hO)
       (by exact_mod_cast hn)
@@ -816,17 +765,6 @@ namespace GlobalTheory.CompanionTheory.EisTestFun
 
 variable {k : Type} [Field k] [NumberField k]
 
-theorem infiniteModule_ofFinite (b : (FiniteAdeleRing (𝓞 k) k)ˣ) :
-    infiniteModule (ofFinite b) = 1 := by
-  have h : ((ofFinite b : IdeleGroup k) : AdeleRing (𝓞 k) k).1 = (1 : AdeleRing (𝓞 k) k).1 := rfl
-  unfold infiniteModule
-  refine Finset.prod_eq_one fun w _ => ?_
-  rw [h, adele_fst_one_apply, norm_one, one_pow]
-
-theorem ideleModule_ofFinite (b : (FiniteAdeleRing (𝓞 k) k)ˣ) :
-    (ideleModule k (ofFinite b) : ℝ) = finiteModule (ofFinite b) := by
-  rw [ideleModule_apply, infiniteModule_ofFinite, one_mul]
-
 theorem line_lc_cs {g : (Unit → FiniteAdeleRing (𝓞 k) k) → ℂ}
     (hg : g ∈ GJMatrix.finiteSchwartzBruhatPi k) :
     IsLocallyConstant (fun t : FiniteAdeleRing (𝓞 k) k => g fun _ => t) ∧
@@ -871,7 +809,7 @@ theorem zFinPos : ZFinPos := by
     have hc : ((1 : HeckeCharacter K).toIdele (ofFinite b) : ℂ) = 1 := by
       rw [HeckeCharacter.toIdele_apply]
       rfl
-    rw [hc, mul_one, ideleModule_ofFinite]
+    rw [hc, mul_one, GlobalTheory.CompanionTheory.EisTF.ideleModule_ofFinite_eq]
     simp only [F, G, finiteZetaBound]
     split_ifs with hb
     · obtain ⟨r, hr, hgr⟩ := hnn (b : FiniteAdeleRing (𝓞 K) K)
@@ -902,7 +840,7 @@ theorem zFinPos : ZFinPos := by
       rw [hgb] at h0
       exact hr0.ne' (by exact_mod_cast h0)
     rw [Function.mem_support]
-    simp only [F, G, finiteZetaBound, if_pos hmem, hgb, Complex.ofReal_re]
+    simp only [F, G, finiteZetaBound, ite_eq_left hmem, hgb, Complex.ofReal_re]
     exact (mul_pos hr0 (Real.rpow_pos_of_pos (finiteModule_pos _) _)).ne'
   have hpos : 0 < finiteIdeleMeasure K (Function.support F) :=
     (hUo.measure_pos _ ⟨1, h1U⟩).trans_le (measure_mono hUsub)
@@ -1098,20 +1036,6 @@ namespace GlobalTheory.CompanionTheory.RgEisSupp
 
 open PositivityTheory.RgEis PositivityTheory.RgEis.TF
 
-theorem inM_of_dvd {k : Type} [Field k] [NumberField k] {M N : ℕ} (h : M ∣ N)
-    {x : FiniteAdeleRing (𝓞 k) k} (hx : InM N x) : InM M x := by
-  obtain ⟨c, rfl⟩ := h
-  obtain ⟨y, hy, rfl⟩ := hx
-  refine ⟨(c : FiniteAdeleRing (𝓞 k) k) * y, (OH k).mul_mem (natCast_mem _ c) hy, ?_⟩
-  push_cast
-  ring
-
-theorem col_apply {k : Type} [Field k] [NumberField k] {ι : Type} [Fintype ι] [DecidableEq ι]
-    (i₀ : ι) (κ : GL ι 𝔸[k]) (r : ι) :
-    TF.col i₀ κ r = ((κ⁻¹ : GL ι 𝔸[k]) : Matrix ι ι 𝔸[k]) r i₀ := by
-  rw [TF.col, Matrix.mulVec_single_one]
-  rfl
-
 theorem mem_stab_of_inv_col {R : Type} [CommRing R] {ι : Type} [Fintype ι] [DecidableEq ι]
     (g : GL ι R) (i₀ : ι) (h : ∀ j, j ≠ i₀ → ((g⁻¹ : GL ι R) : Matrix ι ι R) j i₀ = 0) :
     g ∈ stab R ({i₀} : Set ι) := by
@@ -1175,7 +1099,7 @@ theorem supp : ColLaw → InMTop → Supp := by
       exact isClosed_le continuous_const c1
   have hanti : ∀ n, C (n + 1) ⊆ C n := by
     intro n κ hκ
-    refine ⟨fun j hj => inM_of_dvd (Nat.mul_dvd_mul_right (Nat.factorial_dvd_factorial (Nat.le_succ n)) M₀) (hκ.1 j hj), fun w => ?_⟩
+    refine ⟨fun j hj => GlobalTheory.CompanionTheory.RgEisFin.inM_dvd (Nat.mul_dvd_mul_right (Nat.factorial_dvd_factorial (Nat.le_succ n)) M₀) (hκ.1 j hj), fun w => ?_⟩
     refine le_trans ?_ (hκ.2 w)
     have : (1 : ℝ) / (((n + 1 : ℕ) : ℝ) + 1) ≤ 1 / ((n : ℝ) + 1) := by
       apply one_div_le_one_div_of_le (by positivity)
@@ -1183,8 +1107,7 @@ theorem supp : ColLaw → InMTop → Supp := by
       linarith
     linarith
   have hex : ∃ n, C n ⊆ O := by
-    by_contra hno
-    push_neg at hno
+    by_contra! hno
     obtain ⟨κ, hκ⟩ := IsCompact.nonempty_iInter_of_sequence_nonempty_isCompact_isClosed
       (fun n => C n \ O) (fun n => Set.diff_subset_diff_left (hanti n))
       (fun n => Set.nonempty_of_not_subset (hno n)) ((hCcl 0).sdiff hO).isCompact
@@ -1192,7 +1115,7 @@ theorem supp : ColLaw → InMTop → Supp := by
     have hall : ∀ n, κ ∈ C n := fun n => (Set.mem_iInter.1 hκ n).1
     have hκO : κ ∉ O := (Set.mem_iInter.1 hκ 0).2
     have hfin : ∀ j, j ≠ i₀ → (TF.col i₀ κ.1 j).2 = 0 := fun j hj =>
-      hzero _ fun M hM => inM_of_dvd
+      hzero _ fun M hM => GlobalTheory.CompanionTheory.RgEisFin.inM_dvd
         ((Nat.dvd_factorial (Nat.pos_of_ne_zero hM) le_rfl).mul_right M₀) ((hall M).1 j hj)
     have hone : ∀ w, 1 ≤ ‖(TF.col i₀ κ.1 i₀).1 w‖ ^ 2 := by
       intro w
@@ -1218,7 +1141,7 @@ theorem supp : ColLaw → InMTop → Supp := by
       exact norm_eq_zero.1 h1
     have hst : κ.1 ∈ stab 𝔸[k] ({i₀} : Set ι) := by
       refine mem_stab_of_inv_col κ.1 i₀ fun j hj => ?_
-      rw [← col_apply]
+      rw [← GlobalTheory.CompanionTheory.EisCol.col_apply]
       exact Prod.ext (hinf j hj) (hfin j hj)
     exact hκO ⟨κ, hst, 1, mem_interior_iff_mem_nhds.2 hU, (mul_one κ).symm⟩
   obtain ⟨n, hn⟩ := hex
@@ -1245,16 +1168,6 @@ open WithZero Multiplicative
 namespace GlobalTheory.CompanionTheory.EisTF
 
 variable {k : Type} [Field k] [NumberField k]
-
-theorem natCast_finiteAdele_apply (v : HeightOneSpectrum (𝓞 k)) (M : ℕ) :
-    ((M : FiniteAdeleRing (𝓞 k) k) v) = (M : v.adicCompletion k) := by
-  induction M with
-  | zero => simp only [Nat.cast_zero]; rfl
-  | succ m ih =>
-    simp only [Nat.cast_succ]
-    change ((m : FiniteAdeleRing (𝓞 k) k) v) + (1 : FiniteAdeleRing (𝓞 k) k) v = _
-    rw [ih]
-    rfl
 
 theorem valued_natCast_le_one (v : HeightOneSpectrum (𝓞 k)) (M : ℕ) :
     Valued.v (M : v.adicCompletion k) ≤ 1 := by
@@ -1319,7 +1232,7 @@ theorem condM : CondM := by
         have huv : ((u : FiniteAdeleRing (𝓞 k) k) v) - 1 =
             ((∏ w ∈ S, Ideal.absNorm w.asIdeal ^ n w : ℕ) : v.adicCompletion k) * y v := by
           have := congrArg (fun x : FiniteAdeleRing (𝓞 k) k => x v) huy
-          rw [← natCast_finiteAdele_apply]
+          rw [← GlobalTheory.CompanionTheory.RgEis.InMTopPf.natCast_apply']
           exact this
         rw [coe_finiteComponent, huv, map_mul]
         calc _ ≤ Valued.v ((∏ w ∈ S, Ideal.absNorm w.asIdeal ^ n w : ℕ) : v.adicCompletion k) * 1 :=
@@ -1347,7 +1260,6 @@ open NumberField NumberField.mixedEmbedding NumberField.InfinitePlace GroundTheo
 namespace GlobalTheory.CompanionTheory.RgEisSign
 
 variable {k : Type} [Field k] [NumberField k]
-
 
 open scoped Classical in
 def even_im_hermitian_sub (ω : HeckeCharacter k) (w : {w : InfinitePlace k // w.IsReal}) : ℕ :=
@@ -1673,16 +1585,16 @@ theorem liftUnit : LiftUnit := by
   have hf : ∀ v : HeightOneSpectrum (𝓞 k), f v ∈ v.adicCompletionIntegers k := by
     intro v
     by_cases hv : Valued.v (M : v.adicCompletion k) < 1
-    · simp only [f, if_pos hv]
+    · simp only [f, ite_eq_left hv]
       exact ha v
-    · simp only [f, if_neg hv]
+    · simp only [f, ite_eq_right hv]
       exact one_mem _
   have hg : ∀ v : HeightOneSpectrum (𝓞 k), g v ∈ v.adicCompletionIntegers k := by
     intro v
     by_cases hv : Valued.v (M : v.adicCompletion k) < 1
-    · simp only [g, if_pos hv]
+    · simp only [g, ite_eq_left hv]
       rw [HeightOneSpectrum.mem_adicCompletionIntegers (𝓞 k) k v, map_inv₀, hunit v hv, inv_one]
-    · simp only [g, if_neg hv]
+    · simp only [g, ite_eq_right hv]
       exact one_mem _
   let F : FiniteAdeleRing (𝓞 k) k := RestrictedProduct.mk f (Filter.Eventually.of_forall hf)
   let G : FiniteAdeleRing (𝓞 k) k := RestrictedProduct.mk g (Filter.Eventually.of_forall hg)
@@ -1690,12 +1602,12 @@ theorem liftUnit : LiftUnit := by
     refine RestrictedProduct.ext _ _ fun v => ?_
     show f v * g v = 1
     by_cases hv : Valued.v (M : v.adicCompletion k) < 1
-    · simp only [f, g, if_pos hv]
+    · simp only [f, g, ite_eq_left hv]
       refine mul_inv_cancel₀ fun h0 => ?_
       have h1 := hunit v hv
       rw [h0, map_zero] at h1
       exact zero_ne_one h1
-    · simp only [f, g, if_neg hv, mul_one]
+    · simp only [f, g, ite_eq_right hv, mul_one]
   have hGF : G * F = 1 := by
     rw [mul_comm]
     exact hFG
@@ -1709,9 +1621,9 @@ theorem liftUnit : LiftUnit := by
   have hY : ∀ v : HeightOneSpectrum (𝓞 k), Y v ∈ v.adicCompletionIntegers k := by
     intro v
     by_cases hv : Valued.v (M : v.adicCompletion k) < 1
-    · simp only [Y, if_pos hv]
+    · simp only [Y, ite_eq_left hv]
       exact zero_mem _
-    · simp only [Y, if_neg hv]
+    · simp only [Y, ite_eq_right hv]
       have hM1 : Valued.v (M : v.adicCompletion k) = 1 := le_antisymm (hMle v) (not_lt.mp hv)
       rw [HeightOneSpectrum.mem_adicCompletionIntegers (𝓞 k) k v, map_mul, map_inv₀, hM1, inv_one,
         mul_one]
@@ -1721,8 +1633,8 @@ theorem liftUnit : LiftUnit := by
   refine RestrictedProduct.ext _ _ fun v => ?_
   show a v - f v = (M : v.adicCompletion k) * Y v
   by_cases hv : Valued.v (M : v.adicCompletion k) < 1
-  · simp only [f, Y, if_pos hv, sub_self, mul_zero]
-  · simp only [f, Y, if_neg hv]
+  · simp only [f, Y, ite_eq_left hv, sub_self, mul_zero]
+  · simp only [f, Y, ite_eq_right hv]
     rw [mul_comm, mul_assoc, inv_mul_cancel₀ (hM0 v), mul_one]
 
 end GlobalTheory.CompanionTheory.EisTF

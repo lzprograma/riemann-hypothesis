@@ -139,32 +139,29 @@ private theorem core {F : Type} [Field F] (γ : GL (Fin (2 + 2)) F) (r : ℕ) (p
     by_cases hi : (i : ℕ) < r
     · rw [hq i hi, zero_mul]
     · rw [hp i (by omega), mul_zero]
+  have hB : Matrix.vecMulVec p q = Matrix.reindex finSumFinEquiv finSumFinEquiv (Matrix.fromBlocks
+      (Matrix.vecMulVec (fun i => p (Fin.castAdd 2 i)) fun i => q (Fin.castAdd 2 i))
+      (Matrix.vecMulVec (fun i => p (Fin.castAdd 2 i)) fun i => q (Fin.natAdd 2 i))
+      (Matrix.vecMulVec (fun i => p (Fin.natAdd 2 i)) fun i => q (Fin.castAdd 2 i))
+      (Matrix.vecMulVec (fun i => p (Fin.natAdd 2 i)) fun i => q (Fin.natAdd 2 i))) := by
+    ext i j
+    obtain ⟨i, rfl⟩ := finSumFinEquiv.surjective i
+    obtain ⟨j, rfl⟩ := finSumFinEquiv.surjective j
+    rw [Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_apply_apply, Equiv.symm_apply_apply]
+    rcases i with i | i <;> rcases j with j | j <;>
+      simp only [finSumFinEquiv_apply_left, finSumFinEquiv_apply_right, Matrix.vecMulVec_apply,
+        Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂]
   rw [dotProduct, Fin.sum_univ_add, Fin.sum_univ_two, Fin.sum_univ_two] at hdot
+  rw [hB] at hE
   rcases h with ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩
   · have h1' : ∀ i, q (Fin.castAdd 2 i) = 0 := congrFun h1
     obtain ⟨m, hm⟩ := rankOne _ _ h3 h2 (by simpa only [h1', zero_mul, zero_add] using hdot)
     refine ⟨_, m, Matrix.vecMulVec (fun i => p (Fin.castAdd 2 i)) (fun i => q (Fin.natAdd 2 i)), Or.inl (hE.trans ?_)⟩
-    rw [← hm]
-    ext i j
-    obtain ⟨i, rfl⟩ := finSumFinEquiv.surjective i
-    obtain ⟨j, rfl⟩ := finSumFinEquiv.surjective j
-    rw [Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_apply_apply, Equiv.symm_apply_apply]
-    rcases i with i | i <;> rcases j with j | j <;>
-      simp only [finSumFinEquiv_apply_left, finSumFinEquiv_apply_right, Matrix.vecMulVec_apply, h1', mul_zero,
-        Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂,
-        Matrix.zero_apply]
+    rw [h1, hm, Matrix.vecMulVec_zero, Matrix.vecMulVec_zero]
   · have h1' : ∀ i, p (Fin.natAdd 2 i) = 0 := congrFun h1
     obtain ⟨m, hm⟩ := rankOne _ _ h2 h3 (by simpa only [h1', mul_zero, add_zero] using hdot)
     refine ⟨_, m, Matrix.vecMulVec (fun i => p (Fin.castAdd 2 i)) (fun i => q (Fin.natAdd 2 i)), Or.inr (hE.trans ?_)⟩
-    rw [← hm]
-    ext i j
-    obtain ⟨i, rfl⟩ := finSumFinEquiv.surjective i
-    obtain ⟨j, rfl⟩ := finSumFinEquiv.surjective j
-    rw [Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_apply_apply, Equiv.symm_apply_apply]
-    rcases i with i | i <;> rcases j with j | j <;>
-      simp only [finSumFinEquiv_apply_left, finSumFinEquiv_apply_right, Matrix.vecMulVec_apply, h1', zero_mul,
-        Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂,
-        Matrix.zero_apply]
+    rw [h1, hm, Matrix.zero_vecMulVec, Matrix.zero_vecMulVec]
 
 private theorem perp {F : Type} [Field F] (a : Fin 2 → F) (ha : a ≠ 0) :
     ∃ c : Fin 2 → F, c ≠ 0 ∧ ∑ i, c i * a i = 0 := by
@@ -646,7 +643,7 @@ private theorem w_mul {R : Type} [CommRing R] (M : Matrix (Fin (2 + 2)) (Fin (2 
   rw [Matrix.mul_apply, Fin.sum_univ_add]
   simp only [wGL, Matrix.reindex_apply, Matrix.submatrix_apply, finSumFinEquiv_symm_apply_natAdd,
     finSumFinEquiv_symm_apply_castAdd, Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂, Matrix.zero_apply, zero_mul,
-    Finset.sum_const_zero, add_zero, Matrix.one_apply, ite_mul, one_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    Finset.sum_const_zero, add_zero, Matrix.one_apply, ite_mul, one_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 private theorem mul_w {R : Type} [CommRing R] (M : Matrix (Fin (2 + 2)) (Fin (2 + 2)) R) (j : Fin 2) (k : Fin (2 + 2)) :
     (M * ((wGL R)⁻¹).val) k (Fin.castAdd 2 j) = M k (Fin.natAdd 2 j) := by
@@ -654,7 +651,7 @@ private theorem mul_w {R : Type} [CommRing R] (M : Matrix (Fin (2 + 2)) (Fin (2 
   change (∑ i, _ * (wGL R).inv _ _) + (∑ i, _ * (wGL R).inv _ _) = _
   simp only [wGL, Matrix.reindex_apply, Matrix.submatrix_apply, finSumFinEquiv_symm_apply_natAdd,
     finSumFinEquiv_symm_apply_castAdd, Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₁₁, Matrix.zero_apply, mul_zero,
-    Finset.sum_const_zero, zero_add, Matrix.one_apply, mul_ite, mul_one, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_const_zero, zero_add, Matrix.one_apply, mul_ite, mul_one, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 private theorem swap_int {K : Type} [Field K] [NumberField K] (F : G1 K (2 + 2) → ℂ) (hF : Continuous F)
     (hfin : ∀ C : Set (G1 K (2 + 2)), IsCompact C → {q : Cos K | ∃ g ∈ C, F ((q.out : G1 K (2 + 2)) * g) ≠ 0}.Finite)
@@ -668,25 +665,18 @@ private theorem swap_int {K : Type} [Field K] [NumberField K] (F : G1 K (2 + 2) 
   obtain ⟨C, hC, hD⟩ := exists_isCompact_superset_unipFundamentalDomain (K := K) (n := 2 + 2) (r := 2)
   have hc : Continuous fun X : UPos (2 + 2) 2 → 𝔸[K] => unipOne 2 X * g := (continuous_unipOne 2).mul continuous_const
   have hQ := hfin _ (hC.image hc)
-  have hz : ∀ q : Cos K, q ∉ hQ.toFinset → ∀ X ∈ unipFundamentalDomain K (2 + 2) 2,
-      F ((q.out : G1 K (2 + 2)) * (unipOne 2 X * g)) = 0 := fun q hq X hX => by
-    by_contra h
-    exact hq (hQ.mem_toFinset.2 ⟨_, ⟨X, hD hX, rfl⟩, h⟩)
-  have hz' : ∀ q : Cos K, q ∉ hQ.toFinset → ∫ X in unipFundamentalDomain K (2 + 2) 2,
-      F ((q.out : G1 K (2 + 2)) * (unipOne 2 X * g)) ∂unipMeasure K (2 + 2) 2 = 0 := fun q hq =>
-    setIntegral_eq_zero_of_forall_eq_zero (hz q hq)
-  refine ⟨hQ.toFinset.finite_toSet.subset fun q hq => by_contra fun h => hq (hz' q h), fun S => ?_⟩
-  have e : ∀ f : Cos K → ℂ, (∀ q, q ∉ hQ.toFinset → f q = 0) → ∑ᶠ q ∈ S, f q = ∑ q ∈ hQ.toFinset.filter (· ∈ S), f q := by
-    intro f hf
-    refine finsum_mem_eq_sum_of_inter_support_eq _ ?_
-    ext q
-    simp only [mem_inter_iff, Function.mem_support, Finset.coe_filter, mem_setOf_eq]
-    exact ⟨fun h => ⟨⟨by_contra fun h' => h.2 (hf q h'), h.1⟩, h.2⟩, fun h => ⟨h.1.2, h.2⟩⟩
+  have hz : ∀ X ∈ unipFundamentalDomain K (2 + 2) 2, ∀ q : Cos K,
+      F ((q.out : G1 K (2 + 2)) * (unipOne 2 X * g)) ≠ 0 → q ∈ hQ.toFinset := fun X hX q h =>
+    hQ.mem_toFinset.2 ⟨_, ⟨X, hD hX, rfl⟩, h⟩
+  have hz' : ∀ q : Cos K, ∫ X in unipFundamentalDomain K (2 + 2) 2,
+      F ((q.out : G1 K (2 + 2)) * (unipOne 2 X * g)) ∂unipMeasure K (2 + 2) 2 ≠ 0 → q ∈ hQ.toFinset := fun q h =>
+    by_contra fun hq => h (setIntegral_eq_zero_of_forall_eq_zero fun X hX => by_contra fun h' => hq (hz X hX q h'))
+  refine ⟨hQ.toFinset.finite_toSet.subset hz', fun S => ?_⟩
   have hI : ∀ q : Cos K, Integrable (fun X => F ((q.out : G1 K (2 + 2)) * (unipOne 2 X * g)))
       ((unipMeasure K (2 + 2) 2).restrict (unipFundamentalDomain K (2 + 2) 2)) := fun q =>
     ((hF.comp (continuous_const.mul hc)).continuousOn.integrableOn_compact hC).mono_set hD
-  rw [e _ hz', ← integral_finsetSum _ fun q _ => hI q]
-  exact setIntegral_congr_fun measurableSet_unipFundamentalDomain fun X hX => e _ fun q hq => hz q hq X hX
+  rw [finsum_eq_sum_filter _ S _ hz', ← integral_finsetSum _ fun q _ => hI q]
+  exact setIntegral_congr_fun measurableSet_unipFundamentalDomain fun X hX => finsum_eq_sum_filter _ S _ (hz X hX)
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.thCt :
     ∀ {K : Type} [Field K] [NumberField K] (F : G1 K (2 + 2) → ℂ),

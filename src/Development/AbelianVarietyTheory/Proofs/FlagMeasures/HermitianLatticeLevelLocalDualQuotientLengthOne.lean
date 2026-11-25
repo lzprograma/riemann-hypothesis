@@ -389,12 +389,12 @@ theorem prod_relIndex_dvd {G ι : Type} [AddCommGroup G] {M : ι → Type} [∀ 
     choose r hr using fun i : S => QuotientAddGroup.mk_surjective (q i)
     obtain ⟨x, hx, h⟩ := hs (fun i => if hi : i ∈ S then (r ⟨i, hi⟩ : M i) else 0) (fun i => by
       by_cases hi : i ∈ S
-      · simp only [hi, dif_pos]; exact (r ⟨i, hi⟩).2
-      · simp only [hi, dif_neg, not_false_eq_true]; exact zero_mem _)
+      · simp only [hi, dite_eq_left]; exact (r ⟨i, hi⟩).2
+      · simp only [hi, dite_eq_right, not_false_eq_true]; exact zero_mem _)
     refine ⟨⟨x, hx⟩, funext fun i => ?_⟩
     rw [← hr i]
     have h1 := h i i.2
-    simp only [i.2, dif_pos] at h1
+    simp only [i.2, dite_eq_left] at h1
     show (QuotientAddGroup.mk (⟨φ i x, hA i x hx⟩ : K i) : K i ⧸ (H i).addSubgroupOf (K i)) = _
     rw [QuotientAddGroup.eq_iff_sub_mem, AddSubgroup.mem_addSubgroupOf]
     exact h1

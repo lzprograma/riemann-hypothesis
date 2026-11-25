@@ -2,50 +2,8 @@ module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.RhsWInvO
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.RhsWInvD
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.RadialDecompositionOfParts
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.RhsWInvF, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.RhsWInvOA, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.RhsWInvU, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.RhsWInvT
@@ -142,7 +100,7 @@ theorem herm_hb (x w : Fin (k + 1) → ℂ) :
     herm (Hb k) x w = (∑ j : Fin k, star (w (Fin.castSucc j)) * x (Fin.castSucc j)) - star (w (Fin.last k)) * x (Fin.last k) := by
   unfold herm Hb
   simp only [dotProduct, Matrix.mulVec_diagonal, Fin.sum_univ_castSucc, Pi.star_apply]
-  simp only [Fin.castSucc_ne_last, if_false, one_mul, if_true, neg_one_mul, mul_neg]
+  simp only [Fin.castSucc_ne_last, ite_false, one_mul, ite_true, neg_one_mul, mul_neg]
   ring
 
 theorem herm_self_hb (x : Fin (k + 1) → ℂ) :
@@ -199,20 +157,7 @@ theorem wb_posdef {z d : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0 
 
 theorem herm_e_wb {d : Fin (2 * r + k + 1) → ℂ} (hd : inWb k r d) {j : Fin (2 * r + k + 1)}
     (hj : j.val < r ∨ r + k < j.val) : herm (Hpk k r) (bvec j) d = 0 := by
-  unfold herm bvec
-  rw [Matrix.mulVec_single_one]
-  refine Finset.sum_eq_zero fun i _ => ?_
-  show star (d i) * Hpk k r i j = 0
-  rw [HU.hpk_row]
-  split_ifs with h
-  · by_cases hi : i.val < r ∨ r + k < i.val
-    · rw [hd i hi, star_zero, zero_mul]
-    · exfalso
-      rw [Fin.ext_iff] at h
-      unfold HU.tau at h
-      simp only [hi, if_false] at h
-      omega
-  · exact mul_zero _
+  apply _root_.Formalism.FourierDecayAlt.Q.LieAlgebraWeightVectors.sv_herm_out <;> assumption
 
 theorem uwset_one (z : Fin (2 * r + k + 1) → ℂ) : (1 : Mat k r) ∈ UWset k r z :=
   ⟨HU.uh_one, fun a => ⟨Matrix.one_mulVec _, Matrix.one_mulVec _⟩, Matrix.one_mulVec _⟩
@@ -329,9 +274,9 @@ theorem orbInv_of (hQ : HypQ) (hU : UnimodK) (hT : FibTrans) : OrbInv := by
       · have hlt : Complex.normSq ζ < Tz k r z * Tz k r z' := lt_of_le_of_ne h hζ
         have h0 : zWeight k (Tz k r z) (Tz k r z') ζ = 0 := by
           unfold zWeight
-          rw [if_neg (not_le.2 hlt)]
+          rw [ite_eq_right (not_le.2 hlt)]
         rw [h0, ENNReal.ofReal_zero, zero_mul]
-      · simp only [Set.indicator, Set.mem_ofPred_eq, h, if_false, mul_zero]
+      · simp only [Set.indicator, Set.mem_ofPred_eq, h, ite_false, mul_zero]
     rw [lintegral_congr_ae h2, Pi.zero_def, lintegral_zero, mul_zero]
   have key : ∀ F' : (Fin (2 * r + k + 1) → ℂ) → ℝ≥0∞, Measurable F' →
       c * rhsW k r z z' μW μW' μsec (fun x => F' (orbV k r z' x)) =
@@ -346,7 +291,7 @@ theorem orbInv_of (hQ : HypQ) (hU : UnimodK) (hT : FibTrans) : OrbInv := by
         rw [secP_eq h]
       · have h0 : zWeight k (Tz k r z) (Tz k r z') ζ = 0 := by
           unfold zWeight
-          rw [if_neg (not_le.2 (lt_of_le_of_ne (not_lt.1 h) hζ))]
+          rw [ite_eq_right (not_le.2 (lt_of_le_of_ne (not_lt.1 h) hζ))]
         rw [h0, ENNReal.ofReal_zero, zero_mul, zero_mul]
     have sB : ∫⁻ v, GhatF k r z z' μW μsec F' (herm (Hpk k r) v z) ∂Q = ∫⁻ v, Gf μW F' v ∂Q := by
       refine lintegral_congr_ae ?_

@@ -82,10 +82,10 @@ theorem maps_iff (hq : q ≠ 0) {N' N : ℕ} (e' e : ℕ → ℤ) (x : HomE E N'
       rw [mem_sclLat]
       intro i
       by_cases hi : i.1 = l'.1
-      · simp only [Pi.smul_apply, eN, hi, if_true, smul_eq_mul, mul_one]
+      · simp only [Pi.smul_apply, eN, hi, ite_true, smul_eq_mul, mul_one]
         rw [inv_mul_cancel₀ (zpow_ne_zero _ hq')]
         exact intAt_one P
-      · simp only [Pi.smul_apply, eN, hi, if_false, smul_eq_mul, mul_zero]
+      · simp only [Pi.smul_apply, eN, hi, ite_false, smul_eq_mul, mul_zero]
         exact intAt_zero P
     have h2 := (mem_sclLat P q _ _ _).1 (h _ h1) l
     rw [map_smul, Pi.smul_apply, smul_eq_mul] at h2

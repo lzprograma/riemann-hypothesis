@@ -84,7 +84,7 @@ lemma phi_x_grade (hS : HodgeTateSetting p v R O σ cp) (D : Lifts H U X) (k : I
     obtain ⟨u, hu⟩ := hunit
     have h3 := Submodule.smul_mem _ (↑u⁻¹ : R) h2
     rwa [← hu, smul_smul, Units.inv_mul, one_smul] at h3
-  · push_neg at hτκ
+  · push Not at hτκ
     rw [εL_eq_zero_of_r U (D.r_zero τ hτκ), Matrix.transpose_zero, Matrix.zero_mulVec]
     exact Submodule.zero_mem _
 

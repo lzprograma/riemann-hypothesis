@@ -151,7 +151,7 @@ variable {E : Spc} {U : Scheme.{0}}
 def cl {N : ℕ} (x : Sx E N U) (j l : ℕ) : Sx E l U :=
   if h : j + l ≤ N then x.sub j l h else x.along (SimplexCategory.const _ _ 0)
 
-theorem cl_eq {N : ℕ} (x : Sx E N U) (j l : ℕ) (h : j + l ≤ N) : cl x j l = x.sub j l h := dif_pos h
+theorem cl_eq {N : ℕ} (x : Sx E N U) (j l : ℕ) (h : j + l ≤ N) : cl x j l = x.sub j l h := dite_eq_left h
 
 def bdL {A : Type*} [AddCommGroup A] (φ : ∀ p r : ℕ, Sx E p U → Sx E r U → A) : ∀ p r : ℕ, Sx E p U → Sx E r U → A
   | 0, _, _, _ => 0
@@ -171,7 +171,7 @@ theorem pv_eq (a : Cochain ((chains R).obj E) I n) (b : Cochain ((chains R).obj 
     (z : Sx E r U) (s t : ℤ) (hs : -(p : ℤ) + n = s) (ht : -(r : ℤ) + m = t) (h : s + t = w) :
     pv μ a b w p r y z = μ.mul U s t w h (ev (R := R) a p s hs U y) (ev (R := R) b r t ht U z) := by
   subst hs ht
-  exact dif_pos h
+  exact dite_eq_left h
 
 theorem ev_aw {k : ℤ} {hk : n + m = k} {a : Cochain ((chains R).obj E) I n} {b : Cochain ((chains R).obj E) J m}
     {c : Cochain ((chains R).obj E) K k} (hc : μ.IsAW hk a b c) (N : ℕ) (w : ℤ) (h : -(N : ℤ) + k = w) (x : Sx E N U) :

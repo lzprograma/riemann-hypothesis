@@ -32,7 +32,7 @@ theorem ChartGram.det_eq_corner_mul_schur {K : Type*} [Field K] {e : ℕ}
   rw [← hdet, Matrix.det_succ_column_zero, Fin.sum_univ_succ]
   have hz : ∀ i : Fin e, B i.succ 0 = 0 := by
     intro i
-    simp only [hB, hc, Matrix.of_apply, Fin.succ_ne_zero, if_false]
+    simp only [hB, hc, Matrix.of_apply, Fin.succ_ne_zero, ite_false]
     field_simp
     ring
   simp only [hz, mul_zero, zero_mul, Finset.sum_const_zero, add_zero, Fin.val_zero, pow_zero,
@@ -41,7 +41,7 @@ theorem ChartGram.det_eq_corner_mul_schur {K : Type*} [Field K] {e : ℕ}
   · simp [hB, hc]
   · congr 1
     ext i j
-    simp only [hB, hc, Matrix.submatrix_apply, Matrix.of_apply, Fin.succ_ne_zero, if_false]
+    simp only [hB, hc, Matrix.submatrix_apply, Matrix.of_apply, Fin.succ_ne_zero, ite_false]
     ring
 
 end GroundTheory.Heights₂.Heights

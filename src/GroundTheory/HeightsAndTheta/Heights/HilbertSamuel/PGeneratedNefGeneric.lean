@@ -18,10 +18,6 @@ open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.Cha
 
 noncomputable section
 
-theorem GeneratedNefGeneric.eq_natCast_of_add_one_eq (d : ℕ) (x : WithBot ℕ∞)
-    (hform : x + 1 = ((d : ℕ) : WithBot ℕ∞) + 1) : x = d := by
-  apply GroundTheory.Heights₂.Heights.ObjectsChow.GenericFibreDim.eq_natCast_of_add_one_eq <;> assumption
-
 theorem GeneratedNefGeneric.isProjVarF_map {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
     {W : Ideal (MRing ι)} {d : ℕ} (hW : IsArithVar W (d + 1)) :
     IsProjVarF (W.map (MvPolynomial.map (Int.castRingHom ℚ))) d := by
@@ -47,7 +43,7 @@ theorem GeneratedNefGeneric.isProjVarF_map {K : Type} [Fintype K] {ι : K → Ty
     refine ⟨i, fun hX => hi ?_⟩
     rw [← hcomap, Ideal.mem_comap, map_X]
     exact hX
-  · refine GeneratedNefGeneric.eq_natCast_of_add_one_eq (d + Fintype.card K) _ ?_
+  · refine GroundTheory.Heights₂.Heights.ObjectsChow.GenericFibreDim.eq_natCast_of_add_one_eq (d + Fintype.card K) _ ?_
     rw [hform, hdim, show d + 1 + Fintype.card K = (d + Fintype.card K) + 1 by omega]
     push_cast
     rfl

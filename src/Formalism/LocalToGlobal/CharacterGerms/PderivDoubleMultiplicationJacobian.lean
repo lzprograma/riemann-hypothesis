@@ -3,49 +3,9 @@ module
 public import Formalism.LocalToGlobal.CharacterGerms.GermEvalOneStandardPointSelf
 public import Formalism.LocalToGlobal.CharacterGerms.ConstantZeroDoubleMultiplicationPair
 public import Formalism.LocalToGlobal.CharacterGerms.MaximalOfValuationGeOne
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -142,14 +102,14 @@ theorem constant_zero_lift_triple : Z0 (![P0, 0, P1] : Fin 3 → Pt C 2 dd) := f
 
 theorem pderiv_pt_ne {n : ℕ} (q : Fin n × Fin dd) (k : Fin n) (j : Fin dd) (h : k ≠ q.1) :
     pderiv (R := C) q (pt C dd k j) = 0 := by
-  rw [pderiv_pt, if_neg (fun h' => h (congrArg Prod.fst h'))]
+  rw [pderiv_pt, ite_eq_right (fun h' => h (congrArg Prod.fst h'))]
 
 theorem pderiv_pt_same {n : ℕ} (k : Fin n) (j i : Fin dd) :
     pderiv (R := C) (k, i) (pt C dd k j) = if j = i then 1 else 0 := by
   rw [pderiv_pt]
   by_cases h : j = i
   · subst h; simp
-  · rw [if_neg (fun h' => h (Prod.mk.inj h').2), if_neg h]
+  · rw [ite_eq_right (fun h' => h (Prod.mk.inj h').2), ite_eq_right h]
 
 theorem dh_eq (Y : FBChart C V O dd) (m : Fin dd) : Dh Y m = Az Y m - Pm Y m := by
   have hph : Y.B.ph1 = FB.expS C (ev (n := 3) ![pt C dd 0, pt C dd 2] Y.h +
@@ -182,9 +142,9 @@ theorem dh_eq (Y : FBChart C V O dd) (m : Fin dd) : Dh Y m = Az Y m - Pm Y m := 
     refine (congrArg₂ (· + ·) ?_ (Finset.sum_eq_zero fun j _ => ?_)).trans (add_zero _)
     · rw [Finset.sum_eq_single m (fun j _ hj => by
           show _ * pderiv (R := C) _ (pt C (n := 3) dd 1 j) = 0
-          rw [pderiv_pt_same, if_neg hj, mul_zero]) (fun h => absurd (Finset.mem_univ m) h)]
+          rw [pderiv_pt_same, ite_eq_right hj, mul_zero]) (fun h => absurd (Finset.mem_univ m) h)]
       show _ * pderiv (R := C) _ (pt C (n := 3) dd 1 m) = _
-      rw [pderiv_pt_same, if_pos rfl, mul_one]
+      rw [pderiv_pt_same, ite_eq_left rfl, mul_one]
       rfl
     · show _ * pderiv (R := C) _ (pt C (n := 3) dd 2 j) = 0
       rw [pderiv_pt_ne _ _ _ (by decide : (2 : Fin 3) ≠ 1), mul_zero]
@@ -198,9 +158,9 @@ theorem dh_eq (Y : FBChart C V O dd) (m : Fin dd) : Dh Y m = Az Y m - Pm Y m := 
       rw [pderiv_pt_ne _ _ _ (by decide : (0 : Fin 3) ≠ 1), mul_zero]
     · rw [Finset.sum_eq_single m (fun j _ hj => by
           show _ * pderiv (R := C) _ (pt C (n := 3) dd 1 j) = 0
-          rw [pderiv_pt_same, if_neg hj, mul_zero]) (fun h => absurd (Finset.mem_univ m) h)]
+          rw [pderiv_pt_same, ite_eq_right hj, mul_zero]) (fun h => absurd (Finset.mem_univ m) h)]
       show _ * pderiv (R := C) _ (pt C (n := 3) dd 1 m) = _
-      rw [pderiv_pt_same, if_pos rfl, mul_one]
+      rw [pderiv_pt_same, ite_eq_left rfl, mul_one]
   have dC : pderiv (R := C) ((1 : Fin 3), m) (ev (n := 3) ![addOf Y.B.G.F (pt C dd 0) (pt C dd 1), pt C dd 2] Y.h) =
       ∑ k, ev (n := 3) ![addOf Y.B.G.F (pt C dd 0) (pt C dd 1), pt C dd 2] (gk Y k) *
         ev (n := 3) ![pt C dd 0, pt C dd 1] (pderiv (R := C) ((1 : Fin 2), m) (Y.B.G.F k)) := by
@@ -296,9 +256,9 @@ theorem pderiv_double_multiplication_jacobian (Y : FBChart C V O dd) (n : ℕ) (
   show pderiv (R := C) ((0 : Fin 2), i) (ev ![(P0 : Pt C 2 dd)] (mulL Y.B.G.F n k)) = _
   rw [pderiv_eval_single (P := (P0 : Pt C 2 dd)) z0P0, Finset.sum_eq_single i (fun j _ hj => by
       show _ * pderiv (R := C) _ (pt C (n := 2) dd 0 j) = 0
-      rw [pderiv_pt_same, if_neg hj, mul_zero]) (fun h => absurd (Finset.mem_univ i) h)]
+      rw [pderiv_pt_same, ite_eq_right hj, mul_zero]) (fun h => absurd (Finset.mem_univ i) h)]
   show _ * pderiv (R := C) _ (pt C (n := 2) dd 0 i) = _
-  rw [pderiv_pt_same, if_pos rfl, mul_one]
+  rw [pderiv_pt_same, ite_eq_left rfl, mul_one]
   rfl
 
 theorem pderiv_double_multiplication (Y : FBChart C V O dd) (n : ℕ) (k i : Fin dd) :
@@ -316,8 +276,8 @@ theorem gk_eq (Y : FBChart C V O dd) (i : Fin dd) : gk Y i = ∑ m, Dh Y m * log
   simp only [Finset.sum_mul, mul_assoc]
   rw [Finset.sum_comm]
   simp only [← Finset.mul_sum, jacobian_mul_log_jacobian]
-  rw [Finset.sum_eq_single i (fun k _ hk => by rw [if_neg hk, mul_zero]) (fun h => absurd (Finset.mem_univ i) h),
-    if_pos rfl, mul_one]
+  rw [Finset.sum_eq_single i (fun k _ hk => by rw [ite_eq_right hk, mul_zero]) (fun h => absurd (Finset.mem_univ i) h),
+    ite_eq_left rfl, mul_one]
 
 theorem dE (Y : FBChart C V O dd) (i : Fin dd) :
     pderiv (R := C) ((0 : Fin 2), i) (evl Y V.l Y.h - (V.l : C) • Y.h) =

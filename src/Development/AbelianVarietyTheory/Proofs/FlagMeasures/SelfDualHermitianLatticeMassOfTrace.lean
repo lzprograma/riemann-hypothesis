@@ -428,26 +428,8 @@ omit [CharZero F] in
 theorem exists_conj_int (L : LocE F E) {ϖ : 𝒪[F]} (hϖ : Irreducible ϖ)
     {A : Matrix (Fin m) (Fin m) E} (hA : IsUnit A.det) :
     ∃ i0 : ℕ, ∀ i ≥ i0, ∀ B ∈ congK L ϖ m i, IsIntM L (A * B * A⁻¹) := by
-  obtain ⟨e, he⟩ := exists_pow_smul_int L hϖ A
-  obtain ⟨f, hf⟩ := exists_pow_smul_int L hϖ A⁻¹
-  refine ⟨e + f, fun i hi B hB => ?_⟩
-  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le hi
-  choose c hc hc' using hB
-  have hBc : B = 1 + algebraMap F E ((ϖ : F) ^ (e + f + k)) • Matrix.of c := by
-    ext a b
-    rw [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, Matrix.of_apply, ← hc']
-    ring
-  have : A * B * A⁻¹ = 1 + (algebraMap F E ((ϖ : F) ^ e) • A) *
-      (algebraMap F E ((ϖ : F) ^ k) • Matrix.of c) * (algebraMap F E ((ϖ : F) ^ f) • A⁻¹) := by
-    rw [hBc, mul_add, add_mul, mul_one, Matrix.mul_nonsing_inv _ hA]
-    simp only [Matrix.mul_smul, Matrix.smul_mul, smul_smul, pow_add, map_mul]
-    congr 2
-    ring
-  rw [this]
-  intro a b
-  refine L.O.add_mem ?_ (isIntM_mul (isIntM_mul he fun a b => ?_) hf a b)
-  · rw [Matrix.one_apply]; split_ifs; exacts [L.O.one_mem, L.O.zero_mem]
-  · exact L.O.mul_mem (pow_mem L ϖ k) (hc a b)
+  intros
+  apply _root_.GlobalTheory.PrimScale.exists_conj_int <;> assumption
 
 theorem exists_finite_classes (L : LocE F E) {ϖ : 𝒪[F]} (hϖ : Irreducible ϖ)
     {Λ : Submodule L.O (Fin n → E)} (hΛ : Λ.FG) (N : ℕ) :
@@ -467,7 +449,7 @@ theorem exists_finite_classes (L : LocE F E) {ϖ : 𝒪[F]} (hϖ : Irreducible �
     Submodule.finite_quotient_smul _ Module.Finite.fg_top
   refine ⟨Λ ⧸ (Ideal.span {p} • ⊤ : Submodule L.O Λ), this,
     fun v => if hv : v ∈ Λ then Submodule.Quotient.mk ⟨v, hv⟩ else 0, fun v hv v' hv' hf => ?_⟩
-  simp only [dif_pos hv, dif_pos hv'] at hf
+  simp only [dite_eq_left hv, dite_eq_left hv'] at hf
   have h2 := (Submodule.Quotient.eq _).1 hf.symm
   rw [Submodule.ideal_span_singleton_smul] at h2
   obtain ⟨w, -, hw⟩ := h2
@@ -687,7 +669,7 @@ theorem cont_mono {W : Type} [AddCommGroup W] (W0 : AddSubgroup W) {S T : Set W}
   have h2 : (⋃ i ∈ (Finset.univ : Finset Bool), if i then S else T \ S) = T := by
     ext x
     simp only [Finset.mem_univ, Set.iUnion_true, Set.mem_iUnion, Bool.exists_bool]
-    simp only [Bool.false_eq_true, if_false, if_true, Set.mem_diff]
+    simp only [Bool.false_eq_true, ite_false, ite_true, Set.mem_diff]
     have := @h x
     tauto
   rw [h2] at h1
@@ -713,13 +695,6 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E]
 
 alias cT_mul := _root_.GlobalTheory.CongTrans.cT_mul
-
-theorem rmul_rmul {n m : ℕ} (x : Fin m → Fin n → E) (A B : Matrix (Fin m) (Fin m) E) :
-    rmul (rmul x A) B = rmul x (A * B) := by
-  funext j
-  simp only [rmul, Matrix.mul_apply, Finset.smul_sum, Finset.sum_smul, smul_smul]
-  rw [Finset.sum_comm]
-  simp [mul_comm]
 
 end
 
@@ -821,13 +796,13 @@ theorem main : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [I
     rintro p hp _ ⟨_, ⟨y, hy, B, hB, rfl⟩, rfl⟩
     have : act (B * r p) Γ ∈ P (r p) := (memP _ _).2 ⟨B, hB, rfl⟩
     rw [(hr p hp).2] at this
-    simp only [rmul_rmul, _root_.GlobalTheory.HL.ContModel.gramT_rmul, hΩ y hy]
+    simp only [GlobalTheory.ThickOrbit.rmul_rmul, _root_.GlobalTheory.HL.ContModel.gramT_rmul, hΩ y hy]
     exact this
   have hU2 : (⋃ p ∈ hfin.toFinset, T p) = thick L ϖ Ω i := by
     apply Set.Subset.antisymm
     · refine Set.iUnion₂_subset fun p hp => ?_
       rintro _ ⟨_, ⟨y, hy, B, hB, rfl⟩, rfl⟩
-      exact ⟨y, hy, B * r p, hmul _ (hsub B hB) _ (hr p (hfin.mem_toFinset.1 hp)).1, rmul_rmul _ _ _⟩
+      exact ⟨y, hy, B * r p, hmul _ (hsub B hB) _ (hr p (hfin.mem_toFinset.1 hp)).1, GlobalTheory.ThickOrbit.rmul_rmul _ _ _⟩
     · rintro _ ⟨y, hy, A, hA, rfl⟩
       have hp : P A ∈ S := ⟨A, hA, rfl⟩
       refine Set.mem_iUnion₂.2 ⟨P A, hfin.mem_toFinset.2 hp, ?_⟩
@@ -844,7 +819,7 @@ theorem main : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [I
           split_ifs <;> simp
         simp only [act, this, Matrix.one_mul, Matrix.mul_one]
       refine ⟨_, ⟨_, hst y hy _ (hmul _ hA _ (hinv _ hBa)) h5, B, hB, rfl⟩, ?_⟩
-      simp only [rmul_rmul]
+      simp only [GlobalTheory.ThickOrbit.rmul_rmul]
       rw [Matrix.mul_assoc, Matrix.mul_assoc, Matrix.nonsing_inv_mul _ (hu _ hBa), Matrix.mul_one]
   have hc2 := (_root_.GlobalTheory.HL.cont_biUnion (tupLat L Λ m) hfin.toFinset T
     (fun p hp => (hT p (hfin.mem_toFinset.1 hp)).1)).2
@@ -883,16 +858,7 @@ theorem unif_pow_mem (L : LocE F E) (ϖ : 𝒪[F]) (e : ℕ) : algebraMap F E ((
 
 theorem exists_pow_mul (L : LocE F E) (ϖ : 𝒪[F]) (hϖ : Irreducible ϖ) (c : E) :
     ∃ e : ℕ, algebraMap F E ((ϖ : F) ^ e) * c ∈ L.O := by
-  have := L.free
-  have : Module.Finite F E := Module.finite_of_finrank_pos (by rw [L.rank]; omega)
-  have hx : IsAlgebraic 𝒪[F] c :=
-    (IsFractionRing.isAlgebraic_iff 𝒪[F] F E).2 (Algebra.IsAlgebraic.isAlgebraic c)
-  obtain ⟨d, hd0, hd⟩ := hx.exists_integral_multiple
-  obtain ⟨e, u, hu⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible hd0 hϖ
-  refine ⟨e, (L.O_def _).2 ?_⟩
-  have h1 := hd.smul (↑u⁻¹ : 𝒪[F])
-  rw [smul_smul, hu, Units.inv_mul_cancel_left, Algebra.smul_def] at h1
-  exact h1
+  apply _root_.GlobalTheory.PowMulMemOrder.exists_pow_mul_mem <;> assumption
 
 theorem pow_smul_mono (L : LocE F E) (ϖ : 𝒪[F]) {n : ℕ} (Λ : Submodule L.O (Fin n → E))
     {v : Fin n → E} {e e' : ℕ} (h : e ≤ e') (hv : algebraMap F E ((ϖ : F) ^ e) • v ∈ Λ) :
@@ -1171,10 +1137,10 @@ theorem sigMass_eq_sum (hH : IsHermND L Hm) {Λs : Submodule L.O (Fin n → E)} 
   · refine Finset.sum_congr rfl fun g hg => ?_
     obtain ⟨h, hh, e1⟩ := hout g
     have hsd := isSD_smul (h1 g hg).1 hs
-    rw [e1, if_pos ⟨isSD_smul hh.1 hsd, by rw [smul_inf_eq hh, (h1 g hg).2]⟩,
+    rw [e1, ite_eq_left ⟨isSD_smul hh.1 hsd, by rw [smul_inf_eq hh, (h1 g hg).2]⟩,
       GlobalTheory.HL.Unimod.unimodular L Hm hH m x hx Λ0 _ h0 hsd.1 h hh]
   · intro o ho
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨hsd, htr⟩
     obtain ⟨g, ⟨hg, h, hh, e⟩, -⟩ := h2 _ hsd htr
     refine ho (Finset.mem_image.2 ⟨g, hg, ?_⟩)
@@ -1320,7 +1286,7 @@ theorem index_rmul : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace
     rw [Finset.sum_comm]
     simp only [mul_comm]
   have hinj : Function.Injective (Fintype.linearCombination E y).toAddMonoidHom := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro v hv
     exact funext (Fintype.linearIndependent_iff.1 hy v hv)
   rw [span_eq_map, span_eq_map, ← hW0, hcomp, ← AddSubgroup.map_map,
@@ -1350,18 +1316,6 @@ namespace GlobalTheory.HL.FrameMass
 section
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E]
-
-theorem hf_sum_right (L : LocE F E) {n m : ℕ} (Hm : Matrix (Fin n) (Fin n) E)
-    (x : Fin m → Fin n → E) (c : Fin m → E) (y : Fin n → E) :
-    hf L Hm y (∑ i, c i • x i) = ∑ i, L.cj (c i) * hf L Hm y (x i) := by
-
-  simp only [hf, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, Finset.mul_sum]
-  symm
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun a _ => ?_
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun i _ => ?_
-  ring
 
 omit [TopologicalSpace E] in
 theorem span_rmul {n m : ℕ} (x : Fin m → Fin n → E) (B : Matrix (Fin m) (Fin m) E)

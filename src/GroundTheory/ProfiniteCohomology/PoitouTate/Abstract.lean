@@ -16,8 +16,6 @@ open CategoryTheory MonoidalCategory
 
 universe u
 
-attribute [local instance 2000] Rep.hV2
-
 section ExactTransport
 
 variable {A B X Y C : Type*} [AddCommGroup A] [AddCommGroup B] [AddCommGroup X] [AddCommGroup Y]
@@ -107,20 +105,5 @@ def ptDualToGlobal {r s : ℕ} (h : r + s = 3)
     (hψ : Function.Bijective (ptCompactDualMap φ D M t h)) :
     (cohomology (dualRep D M) s →+ QZ) →+ cohomology M r :=
   (ptCompactToGlobal φ M r).hom.toAddMonoidHom.comp (AddEquiv.ofBijective _ hψ).symm.toAddMonoidHom
-
-namespace PoitouTateHypotheses
-
-variable {φ D t inv} (P : PoitouTateHypotheses φ D t inv)
-
-
-
-
-
-
-
-
-
-
-end PoitouTateHypotheses
 
 end GroundTheory.ProfCoh

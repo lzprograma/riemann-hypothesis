@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.PxIsCont
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.Inertia
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.NormsAndPolarizations.CjApply
@@ -416,24 +417,7 @@ open UpperTheory.V.AlgebraTools.Det
 
 private theorem pairOfRep_cont {n : ℕ} {A G : Type} [CommRing A] [Group G] [TopologicalSpace G] (I : Ideal A)
     (ρ : G →* Matrix (Fin n) (Fin n) A) (h : ∀ a b, AdicCont I fun g => ρ g a b) : (GDet.ofRep ρ).IsCont I := by
-  intro i N
-  have hl : IsLocallyConstant (fun g : G => fun a b => Ideal.Quotient.mk (I ^ N) (ρ g a b)) := by
-    letI : TopologicalSpace (A ⧸ I ^ N) := ⊥
-    haveI : DiscreteTopology (A ⧸ I ^ N) := ⟨rfl⟩
-    rw [IsLocallyConstant.iff_continuous]
-    exact continuous_pi fun a => continuous_pi fun b => (IsLocallyConstant.iff_continuous _).1 (h a b N)
-  have key : (fun g => Ideal.Quotient.mk (I ^ N) ((GDet.ofRep ρ).lam i (MonoidAlgebra.single g 1))) =
-      (fun M : Fin n → Fin n → A ⧸ I ^ N =>
-        Ideal.Quotient.mk (I ^ N) ((-1 : A) ^ i) * (Matrix.of M).charpoly.coeff (n - i)) ∘
-        (fun g a b => Ideal.Quotient.mk (I ^ N) (ρ g a b)) := by
-    funext g
-    simp only [Function.comp_apply, GDet.lam, (repApi ρ).2.1, map_mul]
-    congr 1
-    rw [← Polynomial.coeff_map, ← Matrix.charpoly_map]
-    rfl
-  show IsLocallyConstant (fun g => Ideal.Quotient.mk (I ^ N) ((GDet.ofRep ρ).lam i (MonoidAlgebra.single g 1)))
-  rw [key]
-  exact hl.comp _
+  apply _root_.px_isCont <;> assumption
 
 private theorem pairOfRep_polar {l : ℕ} [Fact l.Prime] (F : GFrame l) (O : Type) [CommRing O] [Algebra ℤ_[l] O] (R : Type)
     [CommRing R] [Algebra O R] (n : ℕ) (r : F.G₀ →* GL (Fin n) R) (P : GL (Fin n) R) (h : F.IsForm O n r P) (i : ℕ)

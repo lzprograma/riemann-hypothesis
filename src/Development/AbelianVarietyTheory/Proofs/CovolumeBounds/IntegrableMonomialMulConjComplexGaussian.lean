@@ -105,17 +105,6 @@ theorem integrable_norm_pow_mul_exp_neg_mul_norm_sq (n : ℕ) {b : ℝ} (hb : 0 
 
 end General
 
-section Combinatorics
-
-end Combinatorics
-
-section Kernel
-
-variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
-  [MeasurableSpace E] [BorelSpace E]
-
-end Kernel
-
 section Monomials
 
 theorem finrank_real_euclideanSpace_complex (ι : Type*) [Fintype ι] :
@@ -149,9 +138,5 @@ theorem volume_preserving_ofLp_complex (ι : Type*) [Fintype ι] :
   rw [hc, show c = 1 by exact_mod_cast h2, one_smul]
 
 end Monomials
-
-section Fin
-
-end Fin
 
 end GlobalTheory

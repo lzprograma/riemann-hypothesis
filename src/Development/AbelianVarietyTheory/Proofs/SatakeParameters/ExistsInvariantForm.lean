@@ -12,47 +12,7 @@ public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OmVacu
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ThetaNormSqSumHeisenbergTranslatesDistinctChars
 import Development.AbelianVarietyTheory.Proofs.HeightProofs.CocompactTensor
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -60,7 +20,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.SplitHecke
 
@@ -128,17 +87,89 @@ theorem isHalf_actO {e : AE D} (g : GA D S) (h : GA D T) {u : WO S T} (hu : IsHa
 
 alias actO_inv_actO := _root_.GlobalTheory.WeilVacMove.actO_inv_actO
 
-theorem exists_count_form' {Λ : AddSubgroup (WO S T)} {e : AE D} (he : IsSplitIdem D e)
+def IsoIdem (e : AE D) : Prop := e * e = e ∧ e * cA D e = 0 ∧ infPart D e = 0 ∧ infPart D (cA D e) = 0
+
+theorem IsoIdem.conj {e : AE D} (he : IsoIdem e) : IsoIdem (cA D e) :=
+  ⟨by rw [← RingHom.map_mul, he.1], by rw [GlobalTheory.DualPairCheck.cA_cA, mul_comm, he.2.1],
+    he.2.2.2, by rw [GlobalTheory.DualPairCheck.cA_cA]; exact he.2.2.1⟩
+
+theorem infPart_of_isSplitIdem {e : AE D} (he : IsSplitIdem D e) : infPart D e = 0 := by
+  have h := congrFun (congrFun (half_fin he (isHalf_smul he.1 (1 : Mx D 1 1))) 0) 0
+  simpa [Matrix.map_apply, Matrix.smul_apply, smul_eq_mul] using h
+
+theorem isoIdem_of_isSplitIdem {e : AE D} (he : IsSplitIdem D e) : IsoIdem e :=
+  ⟨he.1, he.2.1, infPart_of_isSplitIdem he, infPart_of_isSplitIdem (isSplitIdem_conj he)⟩
+
+theorem half_fin_iso {m n : ℕ} {e : AE D} (he : IsoIdem e) {u : Mx D m n} (hu : IsHalf e u) :
+    u.map (infPart D) = 0 := by
+  ext i j
+  show infPart D (u i j) = 0
+  rw [← hu i j, RingHom.map_mul, he.2.2.1, zero_mul]
+
+def FormLaw (ψ : AddChar (AF D.host.F) ℂ) (om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)) (e : AE D)
+    (g : GA D S) (h : GA D T) (z : Circle) : Prop :=
+  ∃ r : ℝ, 0 < r ∧ ∀ ℓ : (WO S T → ℂ) →ₗ[ℂ] ℂ,
+    (∀ u : WO S T, IsHalf (cA D e) u → ∀ f, IsThetaFunO ψ S T f → ℓ (heisO ψ S T u f) = ℓ f) →
+      ∀ f, IsThetaFunO ψ S T f → ℓ (om (g, h) f) = (r : ℂ) * (z : ℂ) * ℓ f
+
+theorem half_orth_iso {e : AE D} (he : IsoIdem e) {x y : WO S T} (hx : IsHalf e x) (hy : IsHalf e y) :
+    symplO S T x y = 0 :=
+  symplO_eq_zero S T (by rw [mul_comm, he.2.1]) hx hy
+
+theorem heisL_add_half_iso {e : AE D} (he : IsoIdem e) {x y : WO S T} (hx : IsHalf e x) (hy : IsHalf e y) :
+    heisL ψ S T (x + y) = heisL ψ S T x * heisL ψ S T y :=
+  LinearMap.ext fun f => heisO_add_of_orth ψ S T (half_orth_iso he hx hy) f
+
+theorem heisL_commute_half_iso {e : AE D} (he : IsoIdem e) {x y : WO S T} (hx : IsHalf e x) (hy : IsHalf e y) :
+    Commute (heisL ψ S T x) (heisL ψ S T y) := by
+  rw [Commute, SemiconjBy, ← heisL_add_half_iso he hx hy, ← heisL_add_half_iso he hy hx, add_comm]
+
+theorem exists_dual_half_iso {Λ : AddSubgroup (WO S T)} {e : AE D} (he : IsoIdem e)
+    (hd : ∀ u : WO S T, u.map (infPart D) = 0 → (u ∈ Λ ↔ ∀ u' ∈ Λ, ψ (symplO S T u u') = 1))
+    (hst : ∀ u ∈ Λ, cA D e • u ∈ Λ) {y : WO S T} (hy : IsHalf e y) (hyΛ : y ∉ Λ) :
+    ∃ l ∈ Λ, IsHalf (cA D e) l ∧ ψ (symplO S T l y) ≠ 1 := by
+  rw [hd y (half_fin_iso he hy)] at hyΛ
+  push Not at hyΛ
+  obtain ⟨u, hu, h⟩ := hyΛ
+  refine ⟨cA D e • u, hst u hu, isHalf_smul he.conj.1 u, psi_skew_ne ?_⟩
+  rwa [← symplO_smul, (isHalf_iff _ _).1 hy]
+
+theorem sum_reps_invariant_iso {Λ Λ' : AddSubgroup (WO S T)} {e : AE D} (he : IsoIdem e) {R : Finset (WO S T)}
+    (hR : ∀ u ∈ R, u ∈ Λ' ∧ IsHalf e u) (hR' : ∀ u ∈ Λ', IsHalf e u → ∃! v, v ∈ R ∧ u - v ∈ Λ)
+    {G : WO S T → ℂ} (hG : ∀ d ∈ Λ, d ∈ Λ' → IsHalf e d → heisO ψ S T d G = G) {a : WO S T} (ha : a ∈ Λ')
+    (hae : IsHalf e a) :
+    heisO ψ S T a (∑ u ∈ R, heisO ψ S T u G) = ∑ u ∈ R, heisO ψ S T u G := by
+  have ex : ∀ u ∈ R, ∃! v, v ∈ R ∧ a + u - v ∈ Λ := fun u hu =>
+    hR' _ (add_mem ha (hR u hu).1) (isHalf_add hae (hR u hu).2)
+  choose σ hσ hσu using ex
+  rw [heisO_sum]
+  have hinj : ∀ u₁ h₁ u₂ h₂, σ u₁ h₁ = σ u₂ h₂ → u₁ = u₂ := by
+    intro u₁ h₁ u₂ h₂ h
+    refine (hR' u₁ (hR u₁ h₁).1 (hR u₁ h₁).2).unique ⟨h₁, by rw [sub_self]; exact zero_mem _⟩ ⟨h₂, ?_⟩
+    have := sub_mem (hσ u₁ h₁).2 (hσ u₂ h₂).2
+    rwa [h, sub_sub_sub_cancel_right, add_sub_add_left_eq_sub] at this
+  refine Finset.sum_bij σ (fun u hu => (hσ u hu).1) hinj
+    (fun v hv => ?_) fun u hu => ?_
+  · obtain ⟨u, hu, h⟩ := Finset.surj_on_of_inj_on_of_card_le σ (fun u hu => (hσ u hu).1)
+      (fun u₁ u₂ h₁ h₂ => hinj u₁ h₁ u₂ h₂) le_rfl v hv
+    exact ⟨u, hu, h.symm⟩
+  · have hv := hR _ (hσ u hu).1
+    have hd : IsHalf e (a + u - σ u hu) := isHalf_sub (isHalf_add hae (hR u hu).2) hv.2
+    rw [← heisO_add_of_orth ψ S T (half_orth_iso he hae (hR u hu).2)]
+    conv_rhs => rw [← hG _ (hσ u hu).2 (sub_mem (add_mem ha (hR u hu).1) hv.1) hd]
+    rw [← heisO_add_of_orth ψ S T (half_orth_iso he hv.2 hd), add_sub_cancel]
+
+theorem exists_count_form_iso {Λ : AddSubgroup (WO S T)} {e : AE D} (he : IsoIdem e)
     (hd : ∀ y, IsHalf e y → y ∉ Λ → ∃ l ∈ Λ, IsHalf (cA D e) l ∧ ψ (symplO S T l y) ≠ 1)
     {f : WO S T → ℂ} (hf0 : f ≠ 0) (hf1 : ∀ u ∈ Λ, IsHalf e u → heisO ψ S T u f = f)
     (hf2 : ∀ u ∈ Λ, IsHalf (cA D e) u → heisO ψ S T u f = f) :
     ∃ κ : (WO S T → ℂ) →ₗ[ℂ] ℂ, κ f = 1 ∧ ∀ y, IsHalf e y → 0 ≤ κ (heisO ψ S T y f) := by
-  have he' := isSplitIdem_conj he
+  have he' := he.conj
   have h : f ∉ Submodule.span ℂ {x | ∃ y, IsHalf e y ∧ y ∉ Λ ∧ x = heisO ψ S T y f} := by
     refine notMem_span_of_commute
       {g | ∃ l ∈ Λ, ∃ z : ℂ, IsHalf (cA D e) l ∧ z ≠ 1 ∧ g = heisL ψ S T l - z • 1} ?_ _ ?_ f ?_
     · rintro _ ⟨l, -, z, hl, -, rfl⟩ _ ⟨l', -, z', hl', -, rfl⟩
-      exact ((heisL_commute_half he' hl hl').sub_right ((Commute.one_right _).smul_right _)).sub_left
+      exact ((heisL_commute_half_iso he' hl hl').sub_right ((Commute.one_right _).smul_right _)).sub_left
         ((Commute.one_left _).smul_left _)
     · rintro _ ⟨y, hy, hyΛ, rfl⟩
       obtain ⟨l, hl, hl', hne⟩ := hd y hy hyΛ
@@ -174,33 +205,40 @@ theorem exists_count_form' {Λ : AddSubgroup (WO S T)} {e : AE D} (he : IsSplitI
       exact Submodule.mem_map_of_mem (Submodule.subset_span ⟨y, hy, hyΛ, rfl⟩)
     rw [LinearMap.smul_apply, this, smul_zero]
 
-theorem exists_invariant_form' {Λ : AddSubgroup (WO S T)} {e : AE D} (he : IsSplitIdem D e)
+theorem exists_count_form' {Λ : AddSubgroup (WO S T)} {e : AE D} (he : IsSplitIdem D e)
+    (hd : ∀ y, IsHalf e y → y ∉ Λ → ∃ l ∈ Λ, IsHalf (cA D e) l ∧ ψ (symplO S T l y) ≠ 1)
+    {f : WO S T → ℂ} (hf0 : f ≠ 0) (hf1 : ∀ u ∈ Λ, IsHalf e u → heisO ψ S T u f = f)
+    (hf2 : ∀ u ∈ Λ, IsHalf (cA D e) u → heisO ψ S T u f = f) :
+    ∃ κ : (WO S T → ℂ) →ₗ[ℂ] ℂ, κ f = 1 ∧ ∀ y, IsHalf e y → 0 ≤ κ (heisO ψ S T y f) :=
+  exists_count_form_iso (isoIdem_of_isSplitIdem he) hd hf0 hf1 hf2
+
+theorem exists_invariant_form_iso {Λ : AddSubgroup (WO S T)} {e : AE D} (he : IsoIdem e)
     (hd : ∀ y, IsHalf e y → y ∉ Λ → ∃ l ∈ Λ, IsHalf (cA D e) l ∧ ψ (symplO S T l y) ≠ 1)
     {f : WO S T → ℂ} (hf0 : f ≠ 0) (hf1 : ∀ u ∈ Λ, IsHalf e u → heisO ψ S T u f = f)
     (hf2 : ∀ u ∈ Λ, IsHalf (cA D e) u → heisO ψ S T u f = f) :
     ∃ ℓ : (WO S T → ℂ) →ₗ[ℂ] ℂ, ℓ f ≠ 0 ∧
       ∀ y, IsHalf e y → ∀ φ, IsThetaFunO ψ S T φ → ℓ (heisO ψ S T y φ) = ℓ φ := by
-  obtain ⟨κ, hκ1, hκ⟩ := exists_count_form' he hd hf0 hf1 hf2
+  obtain ⟨κ, hκ1, hκ⟩ := exists_count_form_iso he hd hf0 hf1 hf2
   have h : f ∉ Submodule.span ℂ
       {x | ∃ y φ, IsHalf e y ∧ IsThetaFunO ψ S T φ ∧ x = heisO ψ S T y φ - φ} := by
     refine notMem_span_of_commute
       {g | ∃ (y : WO S T) (N : ℕ), IsHalf e y ∧ g = ∑ k ∈ Finset.range (N + 1), heisL ψ S T (k • y)} ?_ _ ?_ f ?_
     · rintro _ ⟨y, N, hy, rfl⟩ _ ⟨y', N', hy', rfl⟩
       exact Commute.sum_left _ _ _ fun k _ => Commute.sum_right _ _ _ fun k' _ =>
-        heisL_commute_half he (isHalf_nsmul hy k) (isHalf_nsmul hy' k')
+        heisL_commute_half_iso he (isHalf_nsmul hy k) (isHalf_nsmul hy' k')
     · rintro _ ⟨y, φ, hy, hφ, rfl⟩
       obtain ⟨U, hU, hUφ⟩ := hφ.level
-      obtain ⟨N, hN, hNU⟩ := exists_nsmul_mem U hU (half_fin he hy)
+      obtain ⟨N, hN, hNU⟩ := exists_nsmul_mem U hU (half_fin_iso he hy)
       obtain ⟨N, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hN.ne'
       refine ⟨_, ⟨y, N, hy, rfl⟩, ?_⟩
       have e1 : ∀ k : ℕ, heisL ψ S T (k • y) (heisO ψ S T y φ - φ) =
           heisO ψ S T ((k + 1) • y) φ - heisO ψ S T (k • y) φ := by
         intro k
-        rw [map_sub, succ_nsmul, heisO_add_of_orth ψ S T (half_orth he (isHalf_nsmul hy k) hy)]
+        rw [map_sub, succ_nsmul, heisO_add_of_orth ψ S T (half_orth_iso he (isHalf_nsmul hy k) hy)]
         rfl
       rw [LinearMap.sum_apply, Finset.sum_congr rfl fun k _ => e1 k,
         Finset.sum_range_sub (fun k => heisO ψ S T (k • y) φ), zero_smul, heisO_zero,
-        hUφ _ hNU (half_fin he (isHalf_nsmul hy _)), sub_self]
+        hUφ _ hNU (half_fin_iso he (isHalf_nsmul hy _)), sub_self]
     · have : ∀ B ∈ Submonoid.closure
           {g | ∃ (y : WO S T) (N : ℕ), IsHalf e y ∧ g = ∑ k ∈ Finset.range (N + 1), heisL ψ S T (k • y)},
           (∀ y, IsHalf e y → 0 ≤ κ (B (heisO ψ S T y f))) ∧ 0 < κ (B f) := by
@@ -213,7 +251,7 @@ theorem exists_invariant_form' {Λ : AddSubgroup (WO S T)} {e : AE D} (he : IsSp
           · set_option synthInstance.maxHeartbeats 100000 in
             rw [Module.End.mul_apply, LinearMap.sum_apply, map_sum, map_sum]
             refine Finset.sum_nonneg fun k _ => ?_
-            rw [heisL_apply, ← heisO_add_of_orth ψ S T (half_orth he (isHalf_nsmul hy' k) hy)]
+            rw [heisL_apply, ← heisO_add_of_orth ψ S T (half_orth_iso he (isHalf_nsmul hy' k) hy)]
             exact ih.1 _ (isHalf_add (isHalf_nsmul hy' k) hy)
           · set_option synthInstance.maxHeartbeats 100000 in
             rw [Module.End.mul_apply, LinearMap.sum_apply, map_sum, map_sum]
@@ -229,21 +267,29 @@ theorem exists_invariant_form' {Λ : AddSubgroup (WO S T)} {e : AE D} (he : IsSp
   rw [← sub_eq_zero, ← map_sub, ← Submodule.mem_bot ℂ, ← hℓ']
   exact Submodule.mem_map_of_mem (Submodule.subset_span ⟨y, φ, hy, hφ, rfl⟩)
 
-theorem om_eq_smul_sum {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)}
-    (hW : IsWeilDatumO ψ S T χS χT om) {e : AE D} (he : IsSplitIdem D e) {Λ : AddSubgroup (WO S T)}
+theorem exists_invariant_form' {Λ : AddSubgroup (WO S T)} {e : AE D} (he : IsSplitIdem D e)
+    (hd : ∀ y, IsHalf e y → y ∉ Λ → ∃ l ∈ Λ, IsHalf (cA D e) l ∧ ψ (symplO S T l y) ≠ 1)
+    {f : WO S T → ℂ} (hf0 : f ≠ 0) (hf1 : ∀ u ∈ Λ, IsHalf e u → heisO ψ S T u f = f)
+    (hf2 : ∀ u ∈ Λ, IsHalf (cA D e) u → heisO ψ S T u f = f) :
+    ∃ ℓ : (WO S T → ℂ) →ₗ[ℂ] ℂ, ℓ f ≠ 0 ∧
+      ∀ y, IsHalf e y → ∀ φ, IsThetaFunO ψ S T φ → ℓ (heisO ψ S T y φ) = ℓ φ :=
+  exists_invariant_form_iso (isoIdem_of_isSplitIdem he) hd hf0 hf1 hf2
+
+theorem om_eq_smul_sum_iso {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)}
+    (hW : IsWeilDatumO ψ S T χS χT om) {e : AE D} (he : IsoIdem e) {Λ : AddSubgroup (WO S T)}
     (hdd : ∀ u ∈ Λ, ∀ u' ∈ Λ, ψ (symplO S T u u') = 1)
     (hd : ∀ y, IsHalf e y → y ∉ Λ → ∃ l ∈ Λ, IsHalf (cA D e) l ∧ ψ (symplO S T l y) ≠ 1)
     (hd' : ∀ y, IsHalf (cA D e) y → y ∉ Λ → ∃ l ∈ Λ, IsHalf e l ∧ ψ (symplO S T l y) ≠ 1)
-    {g : GA D S} {h : GA D T} (hg : SuppAt e S g) (hh : SuppAt e T h) {x y : (AE D)ˣ} (hx : IsDetAt e S g x)
-    (hy : IsDetAt e T h y) {R : Finset (WO S T)} (hR : ∀ u ∈ R, actO S T g⁻¹ h⁻¹ u ∈ Λ ∧ IsHalf e u)
+    {g : GA D S} {h : GA D T} {z : Circle} (hz : FormLaw ψ om e g h z) {R : Finset (WO S T)}
+    (hR : ∀ u ∈ R, actO S T g⁻¹ h⁻¹ u ∈ Λ ∧ IsHalf e u)
     (hRu : ∀ w, actO S T g⁻¹ h⁻¹ w ∈ Λ → IsHalf e w → ∃! v, v ∈ R ∧ w - v ∈ Λ)
     (hle : ∀ w ∈ Λ, IsHalf e w → actO S T g⁻¹ h⁻¹ w ∈ Λ) :
     ∃ r : ℝ, 0 < r ∧ ∀ f, IsThetaFunO ψ S T f → (∀ u ∈ Λ, IsHalf e u → heisO ψ S T u f = f) →
       (∀ u ∈ Λ, IsHalf (cA D e) u → heisO ψ S T u f = f) →
-      om (g, h) f = ((r : ℂ) * (splitFacO χS χT x y : ℂ)) • ∑ u ∈ R, heisO ψ S T u f := by
-  have he' := isSplitIdem_conj he
+      om (g, h) f = ((r : ℂ) * (z : ℂ)) • ∑ u ∈ R, heisO ψ S T u f := by
+  have he' := he.conj
   have hψ := hW.std.1
-  obtain ⟨r, hr, hrℓ⟩ := hW.om_split e he g h hg hh x y hx hy
+  obtain ⟨r, hr, hrℓ⟩ := hz
   refine ⟨r, hr, fun f hf hf1 hf2 => ?_⟩
   obtain ⟨Λ', hΛ'⟩ : ∃ Λ' : AddSubgroup (WO S T), ∀ w, w ∈ Λ' ↔ actO S T g⁻¹ h⁻¹ w ∈ Λ :=
     ⟨Λ.comap (actAdd S T g⁻¹ h⁻¹), fun _ => Iff.rfl⟩
@@ -259,7 +305,7 @@ theorem om_eq_smul_sum {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T �
     · rw [hf1 _ ((hΛ' _).1 hw) (isHalf_actO _ _ hwh)]
     · rw [hf2 _ ((hΛ' _).1 hw) (isHalf_actO _ _ hwh)]
   have hF1 : ∀ w ∈ Λ', IsHalf e w → heisO ψ S T w (∑ u ∈ R, heisO ψ S T u f) = ∑ u ∈ R, heisO ψ S T u f :=
-    fun w hw hwh => sum_reps_invariant (Λ := Λ) (Λ' := Λ') he (fun u hu => ⟨(hΛ' _).2 (hR u hu).1, (hR u hu).2⟩)
+    fun w hw hwh => sum_reps_invariant_iso (Λ := Λ) (Λ' := Λ') he (fun u hu => ⟨(hΛ' _).2 (hR u hu).1, (hR u hu).2⟩)
       (fun u hu => hRu u ((hΛ' _).1 hu)) (fun d hd _ => hf1 d hd) hw hwh
   have hF2 : ∀ w ∈ Λ', IsHalf (cA D e) w →
       heisO ψ S T w (∑ u ∈ R, heisO ψ S T u f) = ∑ u ∈ R, heisO ψ S T u f := by
@@ -273,7 +319,7 @@ theorem om_eq_smul_sum {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T �
     rw [heisO_comm, hdd' w hw u ((hΛ' _).2 (hR u hu).1), one_smul, hf2 w hwΛ hwh]
   rw [← sub_eq_zero]
   by_contra hne
-  obtain ⟨ℓ, hℓ0, hℓ⟩ := exists_invariant_form' (Λ := Λ') (ψ := ψ) he' (fun w hwh hw => by
+  obtain ⟨ℓ, hℓ0, hℓ⟩ := exists_invariant_form_iso (Λ := Λ') (ψ := ψ) he' (fun w hwh hw => by
       obtain ⟨l, hl, hlh, hne⟩ := hd' _ (isHalf_actO g⁻¹ h⁻¹ hwh) fun hh => hw ((hΛ' _).2 hh)
       refine ⟨actO S T g h l, (hΛ' _).2 (by rwa [actO_inv_actO]), ?_, ?_⟩
       · rw [GlobalTheory.DualPairCheck.cA_cA]
@@ -290,20 +336,33 @@ theorem om_eq_smul_sum {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T �
   obtain ⟨v₀, ⟨hv₀, hv₀Λ⟩, hv₀u⟩ := hRu 0 h0 (isHalf_zero e)
   have hv₀' : v₀ ∈ Λ := by rwa [zero_sub, neg_mem_iff] at hv₀Λ
   have hsum : ℓ (∑ u ∈ R, heisO ψ S T u f) = ℓ f := by
-
     rw [map_sum, Finset.sum_eq_single_of_mem v₀ hv₀, hf1 v₀ hv₀' (hR _ hv₀).2]
     intro u hu hne
     have huΛ : u ∉ Λ := fun huΛ => hne (hv₀u u ⟨hu, by rwa [zero_sub, neg_mem_iff]⟩)
     obtain ⟨l, hl, hlh, hlne⟩ := hd u (hR u hu).2 huΛ
     have hth : IsThetaFunO ψ S T (heisO ψ S T u f) := by
       have := GlobalTheory.FinTranslate.isTheta_sum_heisO_fin D ψ S T hψ f hf Unit {()} (fun _ => u) (fun _ => 1)
-        fun _ _ => half_fin he (hR u hu).2
+        fun _ _ => half_fin_iso he (hR u hu).2
       rwa [Finset.sum_singleton, one_smul] at this
     have h2 := hℓ l hlh _ hth
     rw [heisO_comm, hf2 l hl hlh, map_smul, smul_eq_mul] at h2
     have h3 : (ψ (symplO S T l u) - 1) * ℓ (heisO ψ S T u f) = 0 := by rw [sub_mul, h2, one_mul, sub_self]
     exact (mul_eq_zero.1 h3).resolve_left (sub_ne_zero.2 hlne)
   rw [map_sub, map_smul, hval, hsum, smul_eq_mul, sub_self]
+
+theorem om_eq_smul_sum {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)}
+    (hW : IsWeilDatumO ψ S T χS χT om) {e : AE D} (he : IsSplitIdem D e) {Λ : AddSubgroup (WO S T)}
+    (hdd : ∀ u ∈ Λ, ∀ u' ∈ Λ, ψ (symplO S T u u') = 1)
+    (hd : ∀ y, IsHalf e y → y ∉ Λ → ∃ l ∈ Λ, IsHalf (cA D e) l ∧ ψ (symplO S T l y) ≠ 1)
+    (hd' : ∀ y, IsHalf (cA D e) y → y ∉ Λ → ∃ l ∈ Λ, IsHalf e l ∧ ψ (symplO S T l y) ≠ 1)
+    {g : GA D S} {h : GA D T} (hg : SuppAt e S g) (hh : SuppAt e T h) {x y : (AE D)ˣ} (hx : IsDetAt e S g x)
+    (hy : IsDetAt e T h y) {R : Finset (WO S T)} (hR : ∀ u ∈ R, actO S T g⁻¹ h⁻¹ u ∈ Λ ∧ IsHalf e u)
+    (hRu : ∀ w, actO S T g⁻¹ h⁻¹ w ∈ Λ → IsHalf e w → ∃! v, v ∈ R ∧ w - v ∈ Λ)
+    (hle : ∀ w ∈ Λ, IsHalf e w → actO S T g⁻¹ h⁻¹ w ∈ Λ) :
+    ∃ r : ℝ, 0 < r ∧ ∀ f, IsThetaFunO ψ S T f → (∀ u ∈ Λ, IsHalf e u → heisO ψ S T u f = f) →
+      (∀ u ∈ Λ, IsHalf (cA D e) u → heisO ψ S T u f = f) →
+      om (g, h) f = ((r : ℂ) * (splitFacO χS χT x y : ℂ)) • ∑ u ∈ R, heisO ψ S T u f :=
+  om_eq_smul_sum_iso hW (isoIdem_of_isSplitIdem he) hdd hd hd' (hW.om_split e he g h hg hh x y hx hy) hR hRu hle
 
 theorem integral_normSq_eq {X : Type} [MeasurableSpace X] (ν : Measure X) {f : X → ℂ} (hf : Measurable f) :
     ∫ w, ‖f w‖ ^ 2 ∂ν = (∫⁻ w, ‖f w‖ₑ ^ 2 ∂ν).toReal := by
@@ -313,36 +372,35 @@ theorem integral_normSq_eq {X : Type} [MeasurableSpace X] (ν : Measure X) {f : 
   funext w
   rw [ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm_eq_enorm]
 
-theorem om_eq_sum {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)}
-    (hW : IsWeilDatumO ψ S T χS χT om) {e : AE D} (he : IsSplitIdem D e) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f)
-    (hfix : ∀ u ∈ latO S T (L0c D S) (L0c D T) (fun _ => True), IsHalf e u ∨ IsHalf (cA D e) u → heisO ψ S T u f = f)
-    {g : GA D S} {h : GA D T} (hg : SuppAt e S g) (hh : SuppAt e T h) {x y : (AE D)ˣ} (hx : IsDetAt e S g x)
-    (hy : IsDetAt e T h y) {R : Finset (WO S T)}
-    (hR : ∀ u ∈ R, actO S T g⁻¹ h⁻¹ u ∈ latO S T (L0c D S) (L0c D T) (fun _ => True) ∧ IsHalf e u)
-    (hRu : ∀ w, actO S T g⁻¹ h⁻¹ w ∈ latO S T (L0c D S) (L0c D T) (fun _ => True) → IsHalf e w →
-      ∃! v, v ∈ R ∧ w - v ∈ latO S T (L0c D S) (L0c D T) (fun _ => True))
-    (hle : ∀ w ∈ latO S T (L0c D S) (L0c D T) (fun _ => True), IsHalf e w →
-      actO S T g⁻¹ h⁻¹ w ∈ latO S T (L0c D S) (L0c D T) (fun _ => True)) :
-    om (g, h) f = ((splitFacO χS χT x y : ℂ) * ((Real.sqrt (R.card : ℝ) : ℝ) : ℂ)⁻¹) • ∑ u ∈ R, heisO ψ S T u f := by
+theorem om_eq_sum_iso {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)}
+    (hW : IsWeilDatumO ψ S T χS χT om)
+    {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)} {ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)}
+    (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) {e : AE D} (he : IsoIdem e) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f)
+    (hfix : ∀ u ∈ latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) (fun _ => True), IsHalf e u ∨ IsHalf (cA D e) u → heisO ψ S T u f = f)
+    {g : GA D S} {h : GA D T} {z : Circle} (hz : FormLaw ψ om e g h z) {R : Finset (WO S T)}
+    (hR : ∀ u ∈ R, actO S T g⁻¹ h⁻¹ u ∈ latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) (fun _ => True) ∧ IsHalf e u)
+    (hRu : ∀ w, actO S T g⁻¹ h⁻¹ w ∈ latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) (fun _ => True) → IsHalf e w →
+      ∃! v, v ∈ R ∧ w - v ∈ latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) (fun _ => True))
+    (hle : ∀ w ∈ latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) (fun _ => True), IsHalf e w →
+      actO S T g⁻¹ h⁻¹ w ∈ latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) (fun _ => True)) :
+    om (g, h) f = ((z : ℂ) * ((Real.sqrt (R.card : ℝ) : ℝ) : ℂ)⁻¹) • ∑ u ∈ R, heisO ψ S T u f := by
   by_cases hf0 : f = 0
   · subst hf0
     have : ∀ u, heisO ψ S T u 0 = 0 := fun u => (heisL ψ S T u).map_zero
     simp only [map_zero, this, Finset.sum_const_zero, smul_zero]
-  have he' := isSplitIdem_conj he
+  have he' := he.conj
   have hψ := hW.std.1
-  have hdual := (GlobalTheory.LatVac.latO_selfDual_approx_sign D ψ S T _ _ hW.std (GlobalTheory.PlaceModel.isSelfDualC_latFrame S)
-    (GlobalTheory.PlaceModel.isSelfDualC_latFrame T)).1
-  rw [GlobalTheory.PlaceModel.coe_latFrame, GlobalTheory.PlaceModel.coe_latFrame] at hdual
-  have hst := @idem_smul_mem D S T (L0c D S) (L0c D T) _ he.1
-  have hstc := @idem_smul_mem D S T (L0c D S) (L0c D T) _ he'.1
-  have hfin := @latO_fin D S T (L0c D S) (L0c D T)
-  generalize latO S T (L0c D S) (L0c D T) (fun _ => True) = Λ at *
+  have hdual := (GlobalTheory.LatVac.latO_selfDual_approx_sign D ψ S T _ _ hW.std hS hT).1
+  have hst := @idem_smul_mem D S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) _ he.1
+  have hstc := @idem_smul_mem D S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) _ he'.1
+  have hfin := @latO_fin D S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E))
+  generalize latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) (fun _ => True) = Λ at *
   have hd : ∀ y, IsHalf e y → y ∉ Λ → ∃ l ∈ Λ, IsHalf (cA D e) l ∧ ψ (symplO S T l y) ≠ 1 :=
-    fun y hy hn => exists_dual_half he hdual hstc hy hn
+    fun y hy hn => exists_dual_half_iso he hdual hstc hy hn
   have hd' : ∀ y, IsHalf (cA D e) y → y ∉ Λ → ∃ l ∈ Λ, IsHalf e l ∧ ψ (symplO S T l y) ≠ 1 := fun y hy hn => by
-    have := exists_dual_half he' hdual (by rw [GlobalTheory.DualPairCheck.cA_cA]; exact hst) hy hn
+    have := exists_dual_half_iso he' hdual (by rw [GlobalTheory.DualPairCheck.cA_cA]; exact hst) hy hn
     rwa [GlobalTheory.DualPairCheck.cA_cA] at this
-  obtain ⟨r, hr, hom⟩ := om_eq_smul_sum hW he (fun u hu => (hdual u (hfin hu)).1 hu) hd hd' hg hh hx hy hR hRu hle
+  obtain ⟨r, hr, hom⟩ := om_eq_smul_sum_iso hW he (fun u hu => (hdual u (hfin hu)).1 hu) hd hd' hz hR hRu hle
   obtain ⟨i1, i2, i3, i4, i5, K, hK, hKc⟩ := GlobalTheory.AdelicMatrixLattice.lattice D T S
   haveI : BorelSpace (WO S T) := ⟨rfl⟩
   obtain ⟨⟨μ, 𝓕, hμ⟩, c, hc⟩ := GlobalTheory.exists_normalise_meanSquare_of_cocompact (WO S T) (ratL T S) K hK hKc f hf.cont hf0
@@ -358,7 +416,7 @@ theorem om_eq_sum {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T →* M
     rw [← hn, nrm2, nrm2, integral_normSq_eq _ (hW.om_pres _ _ hcf).cont.measurable,
       integral_normSq_eq _ hcf.cont.measurable, hW.om_unit μ 𝓕 hμ.1 hμ.2.1 _ _ hcf]
   have h3 := GlobalTheory.HeisOrtho.thetaNormSq_sum_heisenbergTranslates_distinctChars D ψ S T hψ μ 𝓕 hμ _ hcf hn _ R (fun u => u)
-    (fun _ => (splitFacO χS χT x y : ℂ)) (fun _ _ => Circle.norm_coe _) (fun u hu u' hu' hne => by
+    (fun _ => (z : ℂ)) (fun _ _ => Circle.norm_coe _) (fun u hu u' hu' hne => by
       have hn : u - u' ∉ Λ := fun hm => hne ((hRu u (hR u hu).1 (hR u hu).2).unique
         ⟨hu, by rw [sub_self]; exact zero_mem _⟩ ⟨hu', hm⟩)
       obtain ⟨l, hl, hlh, hlne⟩ := hd _ (isHalf_sub (hR u hu).2 (hR u' hu').2) hn
@@ -368,6 +426,22 @@ theorem om_eq_sum {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T →* M
     rw [← Real.sqrt_inv, ← eq_inv_of_mul_eq_one_left h2, Real.sqrt_sq hr.le]
   rw [hom f hf (fun u hu hh => hfix u hu (Or.inl hh)) (fun u hu hh => hfix u hu (Or.inr hh)), h4, mul_comm,
     Complex.ofReal_inv]
+
+theorem om_eq_sum {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)}
+    (hW : IsWeilDatumO ψ S T χS χT om) {e : AE D} (he : IsSplitIdem D e) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f)
+    (hfix : ∀ u ∈ latO S T (L0c D S) (L0c D T) (fun _ => True), IsHalf e u ∨ IsHalf (cA D e) u → heisO ψ S T u f = f)
+    {g : GA D S} {h : GA D T} (hg : SuppAt e S g) (hh : SuppAt e T h) {x y : (AE D)ˣ} (hx : IsDetAt e S g x)
+    (hy : IsDetAt e T h y) {R : Finset (WO S T)}
+    (hR : ∀ u ∈ R, actO S T g⁻¹ h⁻¹ u ∈ latO S T (L0c D S) (L0c D T) (fun _ => True) ∧ IsHalf e u)
+    (hRu : ∀ w, actO S T g⁻¹ h⁻¹ w ∈ latO S T (L0c D S) (L0c D T) (fun _ => True) → IsHalf e w →
+      ∃! v, v ∈ R ∧ w - v ∈ latO S T (L0c D S) (L0c D T) (fun _ => True))
+    (hle : ∀ w ∈ latO S T (L0c D S) (L0c D T) (fun _ => True), IsHalf e w →
+      actO S T g⁻¹ h⁻¹ w ∈ latO S T (L0c D S) (L0c D T) (fun _ => True)) :
+    om (g, h) f = ((splitFacO χS χT x y : ℂ) * ((Real.sqrt (R.card : ℝ) : ℝ) : ℂ)⁻¹) • ∑ u ∈ R, heisO ψ S T u f := by
+  have hS := GlobalTheory.PlaceModel.isSelfDualC_latFrame S
+  have hT := GlobalTheory.PlaceModel.isSelfDualC_latFrame T
+  rw [← GlobalTheory.PlaceModel.coe_latFrame S, ← GlobalTheory.PlaceModel.coe_latFrame T] at hfix hR hRu hle
+  exact om_eq_sum_iso hW hS hT (isoIdem_of_isSplitIdem he) hf hfix (hW.om_split e he g h hg hh x y hx hy) hR hRu hle
 
 end GlobalTheory.SplitHecke
 

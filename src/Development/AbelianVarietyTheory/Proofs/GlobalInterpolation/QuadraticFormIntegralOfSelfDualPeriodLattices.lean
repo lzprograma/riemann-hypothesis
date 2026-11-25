@@ -87,7 +87,6 @@ theorem qIntAll_of_latAll : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ)
   obtain ⟨m, hm⟩ := hw' x hx
   have him : (TaylorLogMetric.Hf D B.tor x x).im = 0 := by
     have : starRingEnd ℂ (TaylorLogMetric.Hf D B.tor x x) = TaylorLogMetric.Hf D B.tor x x := by
-      set_option synthInstance.maxHeartbeats 100000 in
         simp only [TaylorLogMetric.Hf, map_div₀, map_sum, map_mul, Complex.conj_ofReal, Complex.conj_conj, mul_comm]
     exact Complex.conj_eq_iff_im.1 this
   have h1 : (StandardLatticesGL3.w0 D).re = 1 / 2 := by simp [StandardLatticesGL3.w0]

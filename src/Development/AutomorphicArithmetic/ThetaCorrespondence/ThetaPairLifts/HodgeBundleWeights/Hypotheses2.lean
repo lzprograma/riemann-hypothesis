@@ -6,7 +6,7 @@ public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForm
 public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
 public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
 public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
-public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.VolGe
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NefFibOfIsNef
 public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.VolHomog
 public import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.WeylDualWeylLatticesAgreeOfLowestAlcove
 public import Development.AbelianVarietyTheory.PublishedTheorems.Landherr₂.DimEqZero
@@ -59,16 +59,8 @@ structure Hypotheses'' : Prop where
   p4 : GlobalTheory.Published.ArCalc
   p5 : GlobalTheory.Published.AbelianDeRham
   p8 : GlobalTheory.Published.RayClassFieldSt
-  p12 : GlobalTheory.Published.SemistableReductionSt
-  p13 : GlobalTheory.Published.StrongApproxSU
-  p14 : GlobalTheory.Published.GreenSeriesSt
   p16 : GlobalTheory.Published.MumfordProportionality
   p18 : GlobalTheory.Published.FinitenessOfHermitianClasses
-  p19 : GlobalTheory.Published.LandherrSt
-  p20 : GlobalTheory.Published.HasseNormSt
   p22 : GlobalTheory.Published.SemiAbelianHomExtension
-  p23 : GlobalTheory.Published.InducedSimpleLowestAlcove
-  p25 : GlobalTheory.Published.principalPolarisationOneSection
-  p26 : GlobalTheory.Published.AbMulNSt
 end GlobalTheory.CovTop
 end

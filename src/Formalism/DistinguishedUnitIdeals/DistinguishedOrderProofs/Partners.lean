@@ -4,52 +4,6 @@ public import Formalism.DistinguishedUnitIdeals.GammaCongruentArcFromStart
 public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.GoodOf
 public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.Graded
 import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.RhoMapFunctorial
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PowerSeries.Inverse
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -252,7 +206,6 @@ end lev
 
 end XDivisibilityOfActions
 
-open XDivisibilityOfActions
 
 theorem partner_fourth_first_form : DivisibleIffOf := by
   intro O _ B n _ V _ _ L c ell hh H r S g h5 hH hM hU
@@ -531,7 +484,6 @@ end lev2
 
 end XDivisibilityOfActions
 
-open XDivisibilityOfActions
 
 theorem XDivisibilityOfActions.partner_gen {O : Type} [CommRing O] {B : Base O} {n : ℕ} {V : Type}
     [AddCommGroup V] [Module (PowerSeries O) V] {L : Lat B n V} {c : ZMod n} {ell : ℕ}
@@ -670,7 +622,7 @@ theorem fr_exists {u₁ : O} (hE : B.GammaXUnitShape u₁) (h9 : L.P9) (c : ZMod
         ∑ t ∈ Finset.Ico 1 (k + 1), (B.lc ^ b t * X ^ t) • d t := by
       refine Finset.sum_congr rfl fun t ht => ?_
       obtain ⟨h1, h2⟩ := Finset.mem_Ico.1 ht
-      rw [if_pos ⟨h1, by omega⟩]
+      rw [ite_eq_left ⟨h1, by omega⟩]
       have := (hbd t h1 (by omega)).1
       have e1 : hhA B.ℓ k - hhA B.ℓ t = b t := by omega
       rw [e1]
@@ -796,7 +748,6 @@ end hinv
 
 end XDivisibilityOfActions
 
-open XDivisibilityOfActions
 
 theorem height_inverse_holds : HinvOf := by
   intro O _ B u₁ n _ M V _ _ L i r e hℓ hE h9 he m₀
@@ -891,7 +842,7 @@ theorem height_inverse_holds : HinvOf := by
     have : δ m = -(B.lc ^ K • (D m - B.lc ^ K • e m)) -
         (X : PowerSeries O) • ∑ k₀, t k₀ • D k₀ := by
       simp only [hδ, hnn, ht, add_smul, Finset.sum_add_distrib, bv, mul_ite, mul_one, mul_zero,
-        ite_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true, Finset.smul_sum,
+        ite_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Finset.smul_sum,
         smul_smul, pow_add, smul_sub]
       abel
     rw [this]
@@ -965,7 +916,7 @@ theorem height_inverse_holds : HinvOf := by
       · simp [hhA, hK]
       · refine Finset.sum_congr rfl fun t ht => ?_
         have := (Finset.mem_Ico.1 ht).1
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
     simp only [hYe]
     have : B.lc ^ (K + (K + K')) • e m₀ - ∑ k₀, Y k₀ m₀ • B.lc ^ K' • D k₀ = B.lc ^ K' • δ m₀ := by
       simp only [hδ, hnn, smul_sub, Finset.smul_sum, smul_smul, ← pow_add]
@@ -1202,11 +1153,11 @@ theorem third_partner_orders : HeightLeTruncOrder := by
     split_ifs <;> omega
   | up =>
     obtain ⟨h8, h9⟩ := h7 (by rw [hk]; intro h; cases h)
-    simp only [HK, ordF, if_pos h9]
+    simp only [HK, ordF, ite_eq_left h9]
     omega
   | down =>
     obtain ⟨h8, h9⟩ := h7 (by rw [hk]; intro h; cases h)
-    simp only [HK, ordF, if_pos h9]
+    simp only [HK, ordF, ite_eq_left h9]
     omega
 
 theorem third_partner_estimate : FiltrationLeOf := by
@@ -1241,7 +1192,7 @@ theorem third_partner_estimate : FiltrationLeOf := by
         rw [hk] at hJ hord hHs
         simp only [HK] at hord hHs
         obtain ⟨h8, h9⟩ := h6 s hs (by rw [hk]; intro h; cases h)
-        have h10 : ordF ell j B.ℓ M g s = (B.ℓ - 1) * M := if_pos h9
+        have h10 : ordF ell j B.ℓ M g s = (B.ℓ - 1) * M := ite_eq_left h9
         rw [h10] at hord hi
         by_cases hc : R.η ≤ R.b s + Sz
         · refine fil_top _ hfil (-(R.b s : ℤ) - Sz) (fun u hu => ?_) _ (by omega)
@@ -1263,17 +1214,17 @@ theorem third_partner_estimate : FiltrationLeOf := by
         rw [hk] at hord hHs
         simp only [HK] at hord hHs
         simp only [NbK, NbThin]
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
       | up =>
         rw [hk] at hord hHs
         simp only [HK] at hord hHs
         simp only [NbK, NbUp]
-        rw [if_neg (by omega), if_neg (by omega)]
+        rw [ite_eq_right (by omega), ite_eq_right (by omega)]
       | down =>
         rw [hk] at hord hHs
         simp only [HK] at hord hHs
         simp only [NbK, NbDown]
-        rw [if_neg (by omega), if_neg (by omega)]
+        rw [ite_eq_right (by omega), ite_eq_right (by omega)]
     · exact bot_le
 
 theorem filtration_regular_holds : FlRegOf := by
@@ -1306,7 +1257,7 @@ theorem filtration_regular_holds : FlRegOf := by
     have h4 := h2 (m : ℤ)
     rw [cf_sum] at h4
     simp only [cf_smul_cst, Tw] at h4
-    rw [if_neg (by omega), Submodule.baseChange_bot, Submodule.mem_bot] at h4
+    rw [ite_eq_right (by omega), Submodule.baseChange_bot, Submodule.mem_bot] at h4
     have h5 := coeffs_zero lam hli _ h4 k
     rwa [HahnSeries.ofPowerSeries_apply_coeff] at h5
   choose N z hz using fun k => hC s hs (H s) (y k) (h3 k)
@@ -1335,11 +1286,11 @@ theorem filtration_shape_holds : FShapeOf := by
       (∏ x ∈ Finset.range k, B.p x ^ (B.ℓ - 1)) ^ M := by
     rw [← Finset.prod_pow]
     refine Finset.prod_congr rfl fun x hx => ?_
-    rw [ordF, if_pos (by have := Finset.mem_range.1 hx; omega), pow_mul]
+    rw [ordF, ite_eq_left (by have := Finset.mem_range.1 hx; omega), pow_mul]
   have h2 : ∏ x ∈ Finset.range j, B.p (k + x) ^ ordF (k + j) j B.ℓ M g (k + x) =
       ∏ s ∈ Finset.range j, B.p (k + s) ^ (3 * g) := by
     refine Finset.prod_congr rfl fun x _ => ?_
-    rw [ordF, if_neg (by omega)]
+    rw [ordF, ite_eq_right (by omega)]
   unfold E.Base.ff' E.Base.ff
   rw [Nat.add_sub_cancel, E.GoodPlacesAlt.it_mul, hA, hB, hu, Finset.prod_range_add, h1, h2, Units.val_pow_eq_pow_val]
   ring

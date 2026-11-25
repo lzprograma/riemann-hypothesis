@@ -403,7 +403,7 @@ theorem st_massIndep_of (hP : PartsStatement) : MassIndepStatement := by
           · simp [hi, Finset.mem_insert]
         have hstep := st_mass_step hP A (fun i => if i ∈ s then Φ i + LocPot.ofFun (u i) else Φ i)
           hpot a (u a) (hu a)
-        simp only [ha, if_false] at hstep
+        simp only [ha, ite_false] at hstep
         rw [hupd, hstep, ih]
     simpa using key Finset.univ
 

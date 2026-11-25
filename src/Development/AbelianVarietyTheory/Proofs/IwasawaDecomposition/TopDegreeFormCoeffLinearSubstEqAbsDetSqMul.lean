@@ -57,8 +57,6 @@ open GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts G
 open GlobalTheory.PointChern Filter Topology
 open scoped Matrix
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.GoodMetric
@@ -99,7 +97,7 @@ theorem topCoeff_prod_X_of_ne {k : ℕ} (hk : k ≠ n) (f : Fin k → Fin n × F
     topCoeff (∏ i, X (f i)) = 0 := by
   rw [topCoeff]
   refine Finset.sum_eq_zero fun w _ => ?_
-  rw [prod_X_eq_monomial', coeff_monomial, if_neg, mul_zero]
+  rw [prod_X_eq_monomial', coeff_monomial, ite_eq_right, mul_zero]
   intro h
   have : ∑ x, (∑ i, Finsupp.single (f i) 1 : Fin n × Fin n →₀ ℕ) x =
       ∑ x, (∑ a, Finsupp.single (a, w a) 1 : Fin n × Fin n →₀ ℕ) x := by rw [h]
@@ -119,7 +117,7 @@ theorem graph_eq_iff (g h : Fin n → Fin n) :
     have := DFunLike.congr_fun e (x, g x)
     rw [graph_apply, graph_apply] at this
     by_contra hne
-    rw [if_pos rfl, if_neg (Ne.symm hne)] at this
+    rw [ite_eq_left rfl, ite_eq_right (Ne.symm hne)] at this
     exact one_ne_zero this
   · rintro rfl
     rfl
@@ -172,11 +170,11 @@ theorem topCoeff_prod_X_pair (c d : Fin n → Fin n) :
         simp [τ]
       have hdτ' : rowSel d = rowSel ⇑τ := rfl
       rw [hdτ, hdτ', det_rowSel_perm]
-      simp only [DFunLike.coe_fn_eq, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      simp only [DFunLike.coe_fn_eq, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
       simp [Equiv.Perm.sign_trans, Equiv.Perm.sign_symm, mul_comm]
     · rw [det_rowSel_of_not_injective hd, mul_zero]
       refine Finset.sum_eq_zero fun w _ => ?_
-      rw [if_neg, mul_zero]
+      rw [ite_eq_right, mul_zero]
       intro h
       apply hd
       have : d = w ∘ σ := by
@@ -187,13 +185,13 @@ theorem topCoeff_prod_X_pair (c d : Fin n → Fin n) :
       exact w.injective.comp σ.injective
   · rw [det_rowSel_of_not_injective hc, zero_mul]
     refine Finset.sum_eq_zero fun w _ => ?_
-    rw [if_neg, mul_zero]
+    rw [ite_eq_right, mul_zero]
     intro h
     obtain ⟨x, hx⟩ : ∃ x, ∀ i, c i ≠ x := by
       have : ¬ Function.Surjective c := fun hs => hc (Finite.injective_iff_surjective.mpr hs)
       simpa [Function.Surjective] using this
     have h1 := DFunLike.congr_fun h (x, w x)
-    rw [graph_apply, if_pos rfl, Finsupp.finsetSum_apply] at h1
+    rw [graph_apply, ite_eq_left rfl, Finsupp.finsetSum_apply] at h1
     simp [hx] at h1
 
 theorem rowSel_mul_apply (c : Fin n → Fin n) (M : Matrix (Fin n) (Fin n) ℂ) (i b : Fin n) :

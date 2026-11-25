@@ -255,7 +255,7 @@ theorem rll_resS_one (P : Pl E) (i j : Fin n) :
     resS F P ((1 : Matrix (Fin n) (Fin n) (Formalism.L2.Herm.intAf F E)) i j) = if j = i then 1 else 0 := by
   rcases eq_or_ne j i with rfl | hji
   · simp
-  · rw [Matrix.one_apply_ne (Ne.symm hji), if_neg hji]
+  · rw [Matrix.one_apply_ne (Ne.symm hji), ite_eq_right hji]
     simp
 
 variable (h : BasePi ST π)

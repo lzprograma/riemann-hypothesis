@@ -13,8 +13,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.SG.EvalTIota
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def uM' (x : (Formalism.IndefR.RationalEmbedding.inst D).GA) (v : InfinitePlace D.host.F) :

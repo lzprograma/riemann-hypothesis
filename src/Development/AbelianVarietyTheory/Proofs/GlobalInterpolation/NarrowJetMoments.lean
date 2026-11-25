@@ -58,47 +58,6 @@ namespace GlobalTheory.Proof.NarrowJetMoments
 
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker GlobalTheory.IndefiniteRowSideFullHecke
 
-section Notions
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E] {a b : ℕ}
-
-
-variable {ST SG SG' : Finset (HeightOneSpectrum (𝓞 E))}
-
-end Notions
-
-section Closure
-
-variable {p : ℕ} [Fact p.Prime]
-
-variable {X : Fields} {a b : ℕ}
-
-end Closure
-
-section Data
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E] {a b : ℕ}
-  {N : Submodule (𝓞 E) (Sp E a)} {N' : Submodule (𝓞 E) (Sp E b)}
-
-end Data
-
-section Datum
-
-variable {X : Fields} {a b : ℕ} {SB Sall : Finset (HeightOneSpectrum (𝓞 X.E))} {T cA cB' : ℕ}
-  {N : Submodule (𝓞 X.E) (Sp X.E a)} {N' : Submodule (𝓞 X.E) (Sp X.E b)} {w : HeightOneSpectrum (𝓞 X.K)}
-
-variable (A : Amb X)
-
-end Datum
-
-section Clause
-
-variable {X : Fields} (A : Amb X) (Pr : Primes X) (u : Pr.Word) {p : ℕ} [Fact p.Prime] (w : HeightOneSpectrum (𝓞 X.K))
-  (ι : X.K →+* ℂ_[p]) (uu : X.Tau → ℂ_[p]) {a b : ℕ} (SB Sall : Finset (HeightOneSpectrum (𝓞 X.E)))
-  {SG SG' : Finset (HeightOneSpectrum (𝓞 X.E))} (d : DecoSet (E := X.E) (n := a) (ST := Pr.vT u) (SG := SG)) (d' : DecoSet (E := X.E) (n := b) (ST := Pr.vT u) (SG := SG'))
-
-end Clause
-
 section Bad
 
 variable {E : Type} [Field E] [NumberField E]

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelIndexComapPairOfDenseImage
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EntryAgree
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExtXCastAdd
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsColSpaceAutToLocalGLMemOpenDense
@@ -71,20 +72,7 @@ namespace GlobalTheory.VolBridge
 theorem relIndex_comap_of_dense_image {Γ G : Type} [Group Γ] [Group G] (φ : Γ →* G)
     (K U : Subgroup G) (h : ∀ g ∈ U, ∃ γ, (φ γ)⁻¹ * g ∈ K ⊓ U) :
     (K.comap φ).relIndex (U.comap φ) = K.relIndex U := by
-  let f : U.comap φ →* U := φ.subgroupComap U
-  have hc : (K.comap φ).subgroupOf (U.comap φ) = (K.subgroupOf U).comap f := by
-    ext x
-    exact Iff.rfl
-  have key := _root_.GlobalTheory.IndexComapCosets.index_comap_eq_of_cosets_hit f (K.subgroupOf U) (by
-    rintro ⟨b, hb⟩
-    obtain ⟨γ, hγK, hγU⟩ := h b hb
-    have hγ : φ γ ∈ U := by
-      have := U.mul_mem hb (U.inv_mem hγU)
-      simpa using this
-    refine ⟨⟨γ, hγ⟩, ?_⟩
-    exact hγK)
-  simp only [Subgroup.relIndex]
-  rw [hc, key]
+  apply _root_.GlobalTheory.HL.relIndex_comap_of_dense_image <;> assumption
 
 theorem vol_agree : ∀ (X : Fields) (Pr : Primes X) (R : Ranks) (Ch : Chars X Pr R.m) (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) (S₀ : Set ℕ) (mu : Tup X.F X.E X.K S₀) (cst : LocCst X (rowSG Pr sel mu)) (σ₀ : X.K →+* ℂ) (P : rowSG Pr sel mu) (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (ι : X.E →+* k) (s : ℕ) (W : TwData k) [MeasurableSpace k] [BorelSpace k] (ν : Measure k), IsUnitVol ν → cst.Ok → AtTwist (R := R) sel mu cst σ₀ P ι s W → VolAgree (R := R) sel mu cst σ₀ P ι s W ν := by
   intro X Pr R Ch sel S₀ mu cst σ₀ P k _ _ _ _ ι s W _ _ ν hν hok hat
@@ -113,7 +101,7 @@ theorem vol_agree : ∀ (X : Fields) (Pr : Primes X) (R : Ranks) (Ch : Chars X P
   have hN1 := _root_.GlobalTheory.UnipRead.mem_N1_iff_local_hom ι e hcc heR
   have hlam : lamYat (Pr := Pr) (R := R) j P.1 = stdAt X.E _ P.1 := by
     ext v
-    simp only [lamYat, if_neg hat.nmem, LocE.lamY, LocE.sclLat, Submodule.mem_comap]
+    simp only [lamYat, ite_eq_right hat.nmem, LocE.lamY, LocE.sclLat, Submodule.mem_comap]
     congr! 1
     funext l
     simp [LocE.scE]

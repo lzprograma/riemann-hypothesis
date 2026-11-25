@@ -98,10 +98,10 @@ theorem good_omPhi_two {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr
     rw [add_mul i]
     omega
   unfold lamYat at ha hb
-  rw [if_pos hP] at ha hb
+  rw [ite_eq_left hP] at ha hb
   refine good_om_two ?_ _ _ _ ha hb
   unfold PhiAt
-  rw [if_pos hP]
+  rw [ite_eq_left hP]
   split_ifs
   · exact good_PhiGS _ _ h1 h2 h3 h4
   · exact good_PhiG _ _ h1 h2 h3 h4

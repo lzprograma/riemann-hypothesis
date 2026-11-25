@@ -50,8 +50,6 @@ import Formalism.LocalToGlobal.Divisibility.Numbers
 
 @[expose] public section
 
-set_option autoImplicit false
-
 open Formalism.L2.FormalSeriesBounds Formalism.IncomingBounds Formalism.UnitaryBoundIntegral Formalism.L2.DIV Formalism.L2.Pj Formalism.BasicNotions GlobalTheory.GoodDepth NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
 namespace GlobalTheory.GoodDepth

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CanonicalLatticeFlagIsotropicSelfDual
 public import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.CenteredPerpendicularSets
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoveringRadiiIff
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
@@ -885,16 +886,7 @@ end Form
 
 theorem mem_perpIn_iff (I : AutInst) (x : I.GA) (S : Submodule (𝓞 I.E) (Fin I.n → I.E)) (y : Fin I.n → I.E) :
     y ∈ perpIn I x S ↔ y ∈ lamX I x ∧ ∀ s ∈ S, Formalism.UG.hform (starRingEnd I.E) I.J s y = 0 := by
-  refine ⟨fun h => ?_, fun h => Submodule.subset_span h⟩
-  induction h using Submodule.span_induction with
-  | mem y hy => exact hy
-  | zero => exact ⟨zero_mem _, fun s _ => by simp [form_eq]⟩
-  | add y z _ _ hy hz =>
-    exact ⟨add_mem hy.1 hz.1, fun s hs => by
-      rw [form_eq, Matrix.mulVec_add, dotProduct_add, ← form_eq, ← form_eq, hy.2 s hs, hz.2 s hs, add_zero]⟩
-  | smul c y _ hy =>
-    exact ⟨Submodule.smul_mem _ _ hy.1, fun s hs => by
-      rw [form_eq, Matrix.mulVec_smul, dotProduct_smul, ← form_eq, hy.2 s hs, smul_zero]⟩
+  apply _root_.GlobalTheory.FlagIso.mem_perpIn <;> assumption
 
 theorem exists_nilInt_lift : ∀ (I : AutInst) (x : I.GA) (R : Submodule (𝓞 I.E) (Fin I.n → I.E)), R ≤ perpIn I x R → ∀ Φ : Matrix (Fin I.n) (Fin I.n) I.E, (∀ y ∈ R, Φ *ᵥ y = 0) → (∀ y ∈ perpIn I x R, Φ *ᵥ y ∈ R) → ∃ Y ∈ nilInt I x R, ∀ y ∈ perpIn I x R, Y *ᵥ y = Φ *ᵥ y := by
   intro I x R hR Φ hΦ0 hΦ

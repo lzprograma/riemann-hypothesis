@@ -1,51 +1,13 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SepRows GlobalTheory.Asc
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.FinPl (Lat idAt idOff intAt grpAt grpOff MxAt latV latA InK MonoAt OrthAt PrimAt ColsAt)
 open scoped nonZeroDivisors ContDiff
 open GlobalTheory.AscFin
@@ -168,7 +130,7 @@ theorem sum_mem_sumLat {n k l : ℕ} (M : Matrix (Fin n) (Fin l) D.host.E) (Λ :
     simp only [Matrix.mulVec_zero, zero_add, Matrix.mulVec, dotProduct, Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun p _ => ?_
-    simp only [mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem antiDiagonalEpsilonGramMatrix_rev_castLE_apply (h : ρ ≤ c) (h2 : 2 * ρ ≤ c) (p : Fin ρ) (q : Fin c) :
     antiDiagonalSignGramMatrix c ε (Fin.castLE h p).rev q = if q = Fin.castLE h p then 1 else 0 := by
@@ -239,7 +201,7 @@ theorem coef_one (he : d.e = colsOf a.a (Fin.castLE h) fun p => (-D.host.xi0) ^ 
     simp only [Matrix.mul_apply, colsOf, Finset.mul_sum]
     exact Finset.sum_congr rfl fun k _ => by ring
   rw [h3, qX_mul_a a d h h2 s he', Matrix.one_apply_eq] at h1
-  simpa only [Matrix.of_apply, if_true, mul_one] using h1
+  simpa only [Matrix.of_apply, ite_true, mul_one] using h1
 
 theorem keepX (he : d.e = colsOf a.a (Fin.castLE h) fun p => (-D.host.xi0) ^ (p.1 + 1))
     (he' : d.e' = colsOf a.a (fun p => (Fin.castLE h p).rev) s) (Λ : Submodule (𝓞 D.host.E) (Fin A.rank → D.host.E))
@@ -254,7 +216,7 @@ theorem keepX (he : d.e = colsOf a.a (Fin.castLE h) fun p => (-D.host.xi0) ^ (p.
     refine Finset.sum_congr rfl fun p _ => ?_
     have hc := coef_one a d h h2 s he he' p
     simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [← mul_assoc ((-D.host.xi0) ^ (p.1 + 1)), hc, one_mul]
   rw [e1]
   exact sum_mem_sumLat _ Λ a.a 𝔟 _ u hu
@@ -273,7 +235,7 @@ theorem keepY (he : d.e = colsOf a.a (Fin.castLE h) fun p => (-D.host.xi0) ^ (p.
     have hc := congrArg star (coef_one a d h h2 s he he' p)
     rw [star_mul', star_star, star_one] at hc
     simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [← mul_assoc (s p), mul_comm (s p), hc, one_mul]
   rw [e1]
   exact sum_mem_sumLat _ Λ a.a 𝔟 _ u hu

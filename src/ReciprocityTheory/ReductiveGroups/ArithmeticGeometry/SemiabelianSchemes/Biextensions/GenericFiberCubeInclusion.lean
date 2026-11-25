@@ -17,8 +17,6 @@ open MonoidalCategory CartesianMonoidalCategory MonObj
 
 universe u
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 def LB.genPull {X Y : Scheme.{u}} (M : LB X) (c : LB.Gen M) (f : Y ⟶ X) : LB.Gen (M.pull f) where
   s := fun j => res (LB.wchart_le M (K := PUnit) (fun _ => f) j PUnit.unit) (pullU f _ (c.s (j PUnit.unit)))
 

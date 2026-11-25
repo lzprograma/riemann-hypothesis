@@ -3,43 +3,6 @@ module
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DilationDecomposition.Imports
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.GaussLaw
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Bool
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.DifferenceQuotientIsometryExchangeAlt
 import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.GaussA
@@ -108,15 +71,13 @@ theorem actZ_mul_K (y k : GR n) (hk : InK (mR k)) : actZ (y * k) (Complex.I • 
   rw [hmul, hK2, hYb, Matrix.fromBlocks_multiply]
   simp only [Matrix.toBlocks_fromBlocks₁₁, Matrix.toBlocks_fromBlocks₁₂, Matrix.toBlocks_fromBlocks₂₁,
     Matrix.toBlocks_fromBlocks₂₂]
-  have hN : (P * A + Q * -B) * (Complex.I • 1) + (P * B + Q * A) = (P * (Complex.I • 1) + Q) * M := by
+  have hblk (X Z : Matrix (Fin n) (Fin n) ℂ) :
+      (X * A + Z * -B) * (Complex.I • 1) + (X * B + Z * A) = (X * (Complex.I • 1) + Z) * M := by
     simp only [hMdef, Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_one, Matrix.add_mul,
       Matrix.mul_sub, Matrix.mul_neg]
     match_scalars <;> simp
-  have hDn : (R * A + S * -B) * (Complex.I • 1) + (R * B + S * A) = (R * (Complex.I • 1) + S) * M := by
-    simp only [hMdef, Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_one, Matrix.add_mul,
-      Matrix.mul_sub, Matrix.mul_neg]
-    match_scalars <;> simp
-  rw [hN, hDn, Matrix.mul_inv_rev, Matrix.mul_assoc, ← Matrix.mul_assoc M, hMM, Matrix.one_mul]
+  rw [hblk P Q, hblk R S, Matrix.mul_inv_rev, Matrix.mul_assoc, ← Matrix.mul_assoc M, hMM,
+    Matrix.one_mul]
 
 open PositivityTheory.Rg.Sw.Glob.GaussH in
 theorem gram_true_all {m : ℕ} (u : Fin m → Fin n → ℂ) :
@@ -170,35 +131,24 @@ theorem gzf_eval {m : ℕ} (s : ℤˣ) (b a : Matrix (Fin n) (Fin n) ℂ) (hb : 
       Complex.exp (-(((2 * Real.pi * ∑ i, ∑ j, ‖(Matrix.of u * a) i j‖ ^ 2 : ℝ)) : ℂ)) := by
     simp [fP, PositivityTheory.Rg.Sw.gs, PositivityTheory.Rg.Sw.evX]
   rw [hfP, ← Complex.exp_add]
+  unfold gZf
   rcases Int.units_eq_one_or s with hs | hs
   · subst hs
-    have he : PositivityTheory.Rg.Sw.Glob.epsT (2 * Real.pi * (((1 : ℤˣ) : ℤ) : ℝ)) (fun _ : Fin m => true) =
-        fun _ => true := by
-      funext x
-      simp [PositivityTheory.Rg.Sw.Glob.epsT, Real.pi_pos]
-    unfold gZf
+    have he : PositivityTheory.Rg.Sw.Glob.epsT (2 * Real.pi * (((1 : ℤˣ) : ℤ) : ℝ))
+        (fun _ : Fin m => true) = fun _ => true := by
+      funext x; simp [PositivityTheory.Rg.Sw.Glob.epsT, Real.pi_pos]
     rw [he, gram_true_all, gram_false_all, Matrix.mul_zero, Matrix.trace_zero, Matrix.add_mul,
       Matrix.trace_add, Matrix.smul_mul, Matrix.trace_smul, hG]
-    congr 1
-    push_cast
-    ring_nf
-    rw [Complex.I_sq]
-    ring
+    congr 1; push_cast; ring_nf; rw [Complex.I_sq]; ring
   · subst hs
-    have he : PositivityTheory.Rg.Sw.Glob.epsT (2 * Real.pi * (((-1 : ℤˣ) : ℤ) : ℝ)) (fun _ : Fin m => true) =
-        fun _ => false := by
-      funext x
-      simp [PositivityTheory.Rg.Sw.Glob.epsT, Real.pi_pos.le]
-    unfold gZf
-    rw [he, gramF_true, gramF_false, Matrix.mul_zero, Matrix.trace_zero, Matrix.conjTranspose_add, hb,
-      Matrix.conjTranspose_smul, Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose,
+    have he : PositivityTheory.Rg.Sw.Glob.epsT (2 * Real.pi * (((-1 : ℤˣ) : ℤ) : ℝ))
+        (fun _ : Fin m => true) = fun _ => false := by
+      funext x; simp [PositivityTheory.Rg.Sw.Glob.epsT, Real.pi_pos.le]
+    rw [he, gramF_true, gramF_false, Matrix.mul_zero, Matrix.trace_zero, Matrix.conjTranspose_add,
+      hb, Matrix.conjTranspose_smul, Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose,
       Matrix.add_mul, Matrix.trace_add, Matrix.smul_mul, Matrix.trace_smul, hG]
-    congr 1
-    simp only [Complex.star_def, Complex.conj_I, smul_eq_mul]
-    push_cast
-    ring_nf
-    rw [Complex.I_sq]
-    ring
+    congr 1; simp only [Complex.star_def, Complex.conj_I, smul_eq_mul]
+    push_cast; ring_nf; rw [Complex.I_sq]; ring
 
 theorem iteratedDeriv_const_mul' (f : ℂ → ℂ) (c : ℂ) :
     ∀ r : ℕ, iteratedDeriv r (fun z => c * f z) = fun z => c * iteratedDeriv r f z := by

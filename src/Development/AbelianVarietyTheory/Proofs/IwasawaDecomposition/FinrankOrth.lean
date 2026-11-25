@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.NumberFieldFamilies.ThetaCF
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ChainWideTwistTransport
 import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
@@ -55,8 +56,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open scoped TensorProduct
 
 namespace GlobalTheory.WittLow
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Lin
 
@@ -254,16 +253,7 @@ end Lat
 variable {D : D7}
 
 theorem exists_sig (V : HSp D) (τ : D.host.E →+* ℂ) : ∃ s : ℕ × ℕ, Formalism.UG.HasSignature (V.gram.map τ) s.1 s.2 := by
-  have hτ : ∀ a, τ (star a) = starRingEnd ℂ (τ a) := D.sp.cm.cmUnram.2.1 τ
-  obtain ⟨p, q, h⟩ := Formalism.UG.P.signature_exists _ (V.gram.map τ) (by
-    unfold Formalism.UG.IsHerm Formalism.UG.cT
-    ext a b
-    simp only [Matrix.transpose_apply, Matrix.map_apply, HSpace.gram]
-    rw [← hτ]
-    exact congrArg τ (V.herm.eq _ _)) (by
-    rw [← RingHom.mapMatrix_apply, ← RingHom.map_det, isUnit_iff_ne_zero]
-    exact (map_ne_zero _).2 (Formalism.L2.Theta.gram_det_ne V))
-  exact ⟨(p, q), h⟩
+  apply _root_.Formalism.L2.Fam.ThC.sig_ex <;> assumption
 
 theorem wittLowEx : ∀ D : D7, WittLowEx D := by
   rintro D V i ⟨C, hC⟩

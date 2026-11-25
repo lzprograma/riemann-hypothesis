@@ -233,8 +233,7 @@ theorem exists_discStep : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K
       exact absurd hρ' hρpos.ne
     · exact h0
   have hρ'1 : ρ' < 1 := by
-    by_contra hh
-    push_neg at hh
+    by_contra! hh
     have h2 := one_le_pow₀ hh (n := l)
     rw [hρ'] at h2
     exact absurd hρ1 (not_lt.2 h2)

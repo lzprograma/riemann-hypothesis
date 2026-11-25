@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsFdegFdegOfLowest
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowDict
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowDictCore
@@ -210,12 +211,12 @@ theorem coeff_monicOf {K : Type} [Field K] {N : ℕ} (a : Fin N → K) (i : Fin 
     (Formalism.CyclotomicNorms.monicOf a).coeff i = a i := by
   classical
   unfold Formalism.CyclotomicNorms.monicOf
-  rw [coeff_add, coeff_X_pow, if_neg (Nat.ne_of_lt i.isLt), zero_add, finsetSum_coeff]
+  rw [coeff_add, coeff_X_pow, ite_eq_right (Nat.ne_of_lt i.isLt), zero_add, finsetSum_coeff]
   simp_rw [coeff_C_mul_X_pow]
   rw [Finset.sum_eq_single i]
   · simp
   · intro j _ hj
-    rw [if_neg]
+    rw [ite_eq_right]
     exact fun h => hj (Fin.ext h).symm
   · simp
 
@@ -376,7 +377,6 @@ end Dstar
 
 section Schur
 
-open Formalism.MainNotions.S
 
 def DSSchurOrth : Prop :=
   ∀ (n : ℕ) (ε : Fin n → Bool) (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
@@ -385,15 +385,7 @@ def DSSchurOrth : Prop :=
 
 theorem fdeg_of_schur (hS : DSSchurOrth) (v : InfinitePlace X.B.I.F) :
     IsFdeg (Formalism.REAL.muG (X.B.I.ε v)) (X.B.σ v) (fdegOf (Formalism.REAL.muG (X.B.I.ε v)) (X.B.σ v) (X.B.w v)) := by
-  obtain ⟨hC, hN, hU, hIrr, hSq, -⟩ := X.ds v
-  obtain ⟨d, hd⟩ := hS _ _ (X.B.H v) (X.B.σ v) hN hU hIrr hSq
-  have hw : X.B.w v ≠ 0 := by
-    intro h0
-    have := (X.low v).1
-    rw [h0, norm_zero] at this
-    exact zero_ne_one this
-  rw [_root_.Formalism.MainNotions.LowestKTypeMultiplicity.fdegOf_of_isFdeg hd hw]
-  exact hd
+  apply _root_.GlobalTheory.LowestVectorDegree.isFdeg_fdegOf_lowest <;> assumption
 
 theorem finiteDimensional_HHX_of_hypotheses (hHC : Formalism.L2.SG.RowsDef.RowsFinDim) (hS : DSSchurOrth)
     (hint : ∀ v, Integrable (Formalism.L2.SG.ProjRows.phLoc (ε := X.B.I.ε v) (X.B.σ v) (X.B.w v)
@@ -421,7 +413,6 @@ end Formalism.L2.SG.Pf
 
 namespace Formalism.L2.SG.Pf.RowDictPf
 
-open Formalism.MainNotions.S
 
 theorem schur_orthogonality_discrete_series : DSSchurOrth := by
   intro n ε H _ _ _ σ hN hU hI hS

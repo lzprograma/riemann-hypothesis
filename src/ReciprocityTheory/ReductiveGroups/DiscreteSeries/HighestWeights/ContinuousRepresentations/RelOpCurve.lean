@@ -1,62 +1,14 @@
 module
 
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.DerivExistsAllPosStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 public import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Analysis.Calculus.Deriv.Comp
 public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.Calculus.Deriv.Shift
 public import Mathlib.Analysis.Calculus.MeanValue
 public import Mathlib.Analysis.Complex.RealDeriv
 public import Mathlib.Analysis.SpecialFunctions.Exponential
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.OneParam
 
 @[expose] public section
 
@@ -130,51 +82,7 @@ private theorem KRep.rel_op_curve {ε : Fin n → Bool} (R : KRep ε)
 
 private theorem exists_curve_toMK_eq_exp_smul_of_inK {ε : Fin n → Bool} {X : Matrix (Fin n) (Fin n) ℂ} (hX : inK ε X) :
     ∃ γ : ℝ → KG ε, ∀ t : ℝ, toMK (γ t) = NormedSpace.exp ((t : ℂ) • X) := by
-  obtain ⟨hG, hJ⟩ := hX
-  have hJJ : Jm ε * Jm ε = 1 := by
-    rw [Jm, Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    funext a
-    split_ifs <;> norm_num
-  have hskew : Xᴴ = -X := by
-    have h1 : Xᴴ * Jm ε = -(X * Jm ε) := by rw [hJ]; exact eq_neg_of_add_eq_zero_left hG
-    calc Xᴴ = Xᴴ * Jm ε * Jm ε := by rw [Matrix.mul_assoc, hJJ, Matrix.mul_one]
-      _ = -X := by rw [h1, Matrix.neg_mul, Matrix.mul_assoc, hJJ, Matrix.mul_one]
-  have hE : ∀ t : ℝ, (NormedSpace.exp ((t : ℂ) • X))ᴴ = NormedSpace.exp ((t : ℂ) • (-X)) := by
-    intro t
-    rw [← Matrix.exp_conjTranspose, Matrix.conjTranspose_smul, hskew, Complex.star_def, Complex.conj_ofReal]
-  have hinv1 : ∀ t : ℝ, NormedSpace.exp ((t : ℂ) • (-X)) * NormedSpace.exp ((t : ℂ) • X) = 1 := by
-    intro t
-    rw [← Matrix.exp_add_of_commute _ _ (((Commute.refl X).neg_left.smul_left _).smul_right _),
-      smul_neg, neg_add_cancel, NormedSpace.exp_zero]
-  have hinv2 : ∀ t : ℝ, NormedSpace.exp ((t : ℂ) • X) * NormedSpace.exp ((t : ℂ) • (-X)) = 1 := by
-    intro t
-    rw [← Matrix.exp_add_of_commute _ _ (((Commute.refl X).neg_right.smul_left _).smul_right _),
-      smul_neg, add_neg_cancel, NormedSpace.exp_zero]
-  have hcJ : ∀ t : ℝ, NormedSpace.exp ((t : ℂ) • X) * Jm ε = Jm ε * NormedSpace.exp ((t : ℂ) • X) := by
-    intro t
-    have hJi : (Jm ε)⁻¹ = Jm ε := Matrix.inv_eq_right_inv hJJ
-    have hJu : IsUnit (Jm ε) := ⟨⟨Jm ε, Jm ε, hJJ, hJJ⟩, rfl⟩
-    have hXc : Jm ε * ((t : ℂ) • X) * (Jm ε)⁻¹ = (t : ℂ) • X := by
-      rw [hJi, Matrix.mul_smul, Matrix.smul_mul, ← hJ, Matrix.mul_assoc, hJJ, Matrix.mul_one]
-    have h := Matrix.exp_conj (Jm ε) ((t : ℂ) • X) hJu
-    rw [hXc, hJi] at h
-    calc NormedSpace.exp ((t : ℂ) • X) * Jm ε
-        = Jm ε * NormedSpace.exp ((t : ℂ) • X) * Jm ε * Jm ε := by rw [← h]
-      _ = Jm ε * NormedSpace.exp ((t : ℂ) • X) := by rw [Matrix.mul_assoc _ (Jm ε), hJJ, Matrix.mul_one]
-  let u : ℝ → (Matrix (Fin n) (Fin n) ℂ)ˣ := fun t =>
-    ⟨NormedSpace.exp ((t : ℂ) • X), NormedSpace.exp ((t : ℂ) • (-X)), hinv2 t, hinv1 t⟩
-  have hU : ∀ t : ℝ, u t ∈ UJ ε := by
-    intro t
-    show (NormedSpace.exp ((t : ℂ) • X))ᴴ * Jm ε * NormedSpace.exp ((t : ℂ) • X) = Jm ε
-    rw [Matrix.mul_assoc, ← hcJ, ← Matrix.mul_assoc, hE, hinv1, Matrix.one_mul]
-  have hK : ∀ t : ℝ, (⟨u t, hU t⟩ : UJ ε) ∈ KG ε := by
-    intro t
-    refine ⟨?_, hcJ t⟩
-    rw [Matrix.mem_unitaryGroup_iff, Matrix.star_eq_conjTranspose]
-    show NormedSpace.exp ((t : ℂ) • X) * (NormedSpace.exp ((t : ℂ) • X))ᴴ = 1
-    rw [hE, hinv2]
-  exact ⟨fun t => ⟨⟨u t, hU t⟩, hK t⟩, fun t => rfl⟩
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.HW.exists_curve <;> assumption
 
 private theorem KRep.rel_star_dτ {ε : Fin n → Bool} (R : KRep ε)
     {X : Matrix (Fin n) (Fin n) ℂ} (hX : inK ε X) : star (R.dτ X) = -R.dτ X := by
@@ -466,7 +374,7 @@ theorem KRep.kRel_units {ε : Fin n → Bool} (R : KRep ε) : Formalism.REAL.KRe
   have h := R.rel_dτ_bracket_single hab hcd
   have key : Matrix.single a b (1 : ℂ) * Matrix.single c d 1 - Matrix.single c d 1 * Matrix.single a b 1 =
       (if b = c then Matrix.single a d 1 else 0) - (if d = a then Matrix.single c b 1 else 0) := by
-    by_cases hbc : b = c <;> by_cases hda : d = a <;> simp only [hbc, hda, if_true, if_false] <;>
+    by_cases hbc : b = c <;> by_cases hda : d = a <;> simp only [hbc, hda, ite_true, ite_false] <;>
       first
       | simp [Matrix.single_mul_single_same, Matrix.single_mul_single_of_ne, hbc, hda]
   have e : ∀ P Q : R.V →L[ℂ] R.V, ((P * Q - Q * P : R.V →L[ℂ] R.V) : Module.End ℂ R.V) =

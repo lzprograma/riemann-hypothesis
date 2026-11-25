@@ -96,8 +96,8 @@ theorem HasTypeAll.add {Lie Gs : Set (Mx n)} {f f' : Mx n → ℂ} (h : HasTypeA
   have sumAll : ∀ S', Words Lie S' → Summable (fun i => (if i % 2 = 0 then C (i / 2) else C' (i / 2)) *
       sobNorm σ S' (if i % 2 = 0 then v (i / 2) else v' (i / 2))) := fun S' hS' => by
     refine Summable.even_add_odd ?_ ?_
-    · simpa only [e1, e3, if_true] using a6 S' hS'
-    · simpa only [e2, e4, if_false] using b6 S' hS'
+    · simpa only [e1, e3, ite_true] using a6 S' hS'
+    · simpa only [e2, e4, ite_false] using b6 S' hS'
   refine ⟨S₀ ++ S₁, hS, ⟨fun g => |B₀ g| + |B₁ g|, (continuous_abs.comp hB₀).add (continuous_abs.comp hB₁),
     fun g hg w hw => ?_⟩, fun i => if i % 2 = 0 then v (i / 2) else v' (i / 2),
     fun i => if i % 2 = 0 then ℓ (i / 2) else ℓ' (i / 2), fun i => if i % 2 = 0 then C (i / 2) else C' (i / 2),
@@ -124,8 +124,8 @@ theorem HasTypeAll.add {Lie Gs : Set (Mx n)} {f f' : Mx n → ℂ} (h : HasTypeA
     · exact (a3 _ w hw).trans (mul_le_mul_of_nonneg_left (by linarith) (a2 _))
     · exact (b3 _ w hw).trans (mul_le_mul_of_nonneg_left (by linarith) (b2 _))
   · refine HasSum.even_add_odd ?_ ?_
-    · simpa only [e1, e3, if_true] using a5 g hg
-    · simpa only [e2, e4, if_false] using b5 g hg
+    · simpa only [e1, e3, ite_true] using a5 g hg
+    · simpa only [e2, e4, ite_false] using b5 g hg
 
 
 open GlobalTheory.TypeSum.Transport in
@@ -283,7 +283,6 @@ end Model
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta GlobalTheory.Mem.Th MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 end GlobalTheory.TypeSum
 

@@ -28,12 +28,12 @@ private theorem finsupp_prod_factorial_add_single_one (B : Fin ν × ι →₀ �
     by_cases hxv : x = v
     · exact Or.inl hxv
     · right
-      rwa [if_neg (Ne.symm hxv), add_zero] at hx
+      rwa [ite_eq_right (Ne.symm hxv), add_zero] at hx
   have h2 : B.support ⊆ insert v B.support := Finset.subset_insert v B.support
   have hrest : ∏ x ∈ (insert v B.support).erase v, ((B + Finsupp.single v 1 : Fin ν × ι →₀ ℕ) x).factorial
       = ∏ x ∈ (insert v B.support).erase v, (B x).factorial := by
     refine Finset.prod_congr rfl fun x hx => ?_
-    rw [Finsupp.add_apply, Finsupp.single_apply, if_neg (Finset.ne_of_mem_erase hx).symm, add_zero]
+    rw [Finsupp.add_apply, Finsupp.single_apply, ite_eq_right (Finset.ne_of_mem_erase hx).symm, add_zero]
   calc (B + Finsupp.single v 1).prod (fun _ e => e.factorial)
       = ∏ x ∈ insert v B.support, ((B + Finsupp.single v 1 : Fin ν × ι →₀ ℕ) x).factorial :=
         Finsupp.prod_of_support_subset _ h1 _ (fun _ _ => Nat.factorial_zero)
@@ -147,8 +147,8 @@ theorem fischer_C_left (c : ℂ) (Q : MvPolynomial (Fin ν × ι) ℂ) :
     rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_C] at hA
     rw [Finset.mem_singleton]
     by_contra h
-    exact hA (if_neg (fun e => h e.symm))
-  rw [fischer_eq_sum (C c) Q {0} hsub, Finset.sum_singleton, MvPolynomial.coeff_C, if_pos rfl]
+    exact hA (ite_eq_right (fun e => h e.symm))
+  rw [fischer_eq_sum (C c) Q {0} hsub, Finset.sum_singleton, MvPolynomial.coeff_C, ite_eq_left rfl]
   simp [fw]
 
 private theorem fischer_eq_sum_of_support_subset (P Q : MvPolynomial (Fin ν × ι) ℂ)
@@ -173,7 +173,7 @@ private theorem fischer_monomial_right (P : MvPolynomial (Fin ν × ι) ℂ)
     (m : Fin ν × ι →₀ ℕ) (b : ℂ) :
     fischer P (monomial m b) = AddMonoidAlgebra.coeff P m * starRingEnd ℂ b * fw m := by
   rw [fischer_eq_sum_of_support_subset P (monomial m b) {m} MvPolynomial.support_monomial_subset,
-    Finset.sum_singleton, MvPolynomial.coeff_monomial, if_pos rfl]
+    Finset.sum_singleton, MvPolynomial.coeff_monomial, ite_eq_left rfl]
 
 theorem fischer_mul_X (P Q : MvPolynomial (Fin ν × ι) ℂ) (v : Fin ν × ι) :
     fischer (P * X v) Q = fischer P (pderiv v Q) := by

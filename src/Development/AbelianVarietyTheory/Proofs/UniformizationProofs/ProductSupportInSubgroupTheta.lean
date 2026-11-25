@@ -55,7 +55,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomolo
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.UU
 
 namespace GlobalTheory.MulSupp
@@ -160,8 +159,8 @@ theorem level {A : PolAV (Spec (CommRingCat.of (FractionRing R)))} (U : PreU I D
     intro g p
     by_cases hp : p.1 + p.2 = g
     · subst hp
-      simpa only [if_true] using exists_prod D (𝟙_ _) k l p.1 p.2 (f p.1) (f' p.2)
-    · exact ⟨H1.SectionArithmetic.secZero _, fun Z r z J hJ => by rw [if_neg hp]; exact sval_eq_zero _ (fun _ => rfl) r z hJ⟩
+      simpa only [ite_true] using exists_prod D (𝟙_ _) k l p.1 p.2 (f p.1) (f' p.2)
+    · exact ⟨H1.SectionArithmetic.secZero _, fun Z r z J hJ => by rw [ite_eq_right hp]; exact sval_eq_zero _ (fun _ => rfl) r z hJ⟩
   choose q hq using ex
   choose d hd using fun g => exists_sub_sum (f'' g) (q g) (s ×ˢ s')
   let S : Finset D.X := s'' ∪ (s ×ˢ s').image (fun p => p.1 + p.2)
@@ -181,7 +180,7 @@ theorem level {A : PolAV (Spec (CommRingCat.of (FractionRing R)))} (U : PreU I D
         Finset.sum_comm]
       refine Finset.sum_congr rfl fun p hp => ?_
       simp only [ite_mul, zero_mul, Finset.sum_ite_eq]
-      rw [if_pos (Finset.mem_union_right _ (Finset.mem_image_of_mem (fun p : D.X × D.X => p.1 + p.2) hp)), hr,
+      rw [ite_eq_left (Finset.mem_union_right _ (Finset.mem_image_of_mem (fun p : D.X × D.X => p.1 + p.2) hp)), hr,
         _root_.mul_mul_mul_comm, ← Units.val_mul, ← val_coord_mul (U.gt e) p.1 p.2 x z hJ, Units.val_mul]
       ring) χ₀ hS Z x r hr z J hJ
   rw [hd χ₀ Z r z J hJ, Finset.sum_eq_zero, sub_zero] at H

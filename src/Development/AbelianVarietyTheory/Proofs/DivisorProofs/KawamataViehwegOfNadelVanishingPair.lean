@@ -24,49 +24,11 @@ public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.C
 public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
 public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.KawamataViehweg
 public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ThetaKeyRuleExistsOfAlgebraicInvariants
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
 import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
 import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsFiniteLengthOfIsArtinianRingAnnihilator
 import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFinsetIsProjOverDescends
 import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLineBundleDescentToSubfield
-import Mathlib.Tactic.Basify
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
 import Mathlib.AlgebraicGeometry.Morphisms.LocalFlatDescent
@@ -74,7 +36,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.T
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.DimSplitPf
 import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsQuasicoherentOfForallExistsAffine
 import Mathlib.AlgebraicGeometry.QuasiAffine
-import Mathlib.RingTheory.Henselian
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenConnectedComponentOfNoetherianSpace
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -84,8 +45,6 @@ import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenConnectedC
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBigLineBundlePullbackFieldExtensionIff", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyHomologyEquiv\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -100,8 +59,8 @@ theorem isBig_pull_iff : ∀ (k E : Type) [Field k] [Field E] [Algebra k E] (Y X
     topologicalKrullDim X = topologicalKrullDim Y → ∀ L : LB Y, L.IsLB →
     ((letI := algebraΓOfHom q; IsBig E (L.pull π)) ↔ (letI := algebraΓOfHom p; IsBig k L)) := by
   intro k E _ _ _ Y X p q π H hp hq hd L hL
-  letI := algebraΓOfHom p
-  letI := algebraΓOfHom q
+  let := algebraΓOfHom p
+  let := algebraΓOfHom q
   have : IsProper p := by
     obtain ⟨N, i, hi, e⟩ := hp
     have := isProper_str k N
@@ -137,8 +96,6 @@ open CategoryTheory AlgebraicGeometry TopologicalSpace Limits
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.CechPic GlobalTheory.QCoh
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.NefFieldDescent
@@ -156,8 +113,8 @@ theorem interNum_one_nonneg_of_isNef {k : Type} [Field k] {V : Scheme.{0}} [Alge
 
 theorem isNef_of_baseChange : ∀ (k E : Type) [Field k] [Field E] [Algebra k E] (Y X : Scheme.{0}) (p : Y ⟶ Sp k) (q : X ⟶ Sp E) (π : X ⟶ Y), IsPullback π q p (spMap (algebraMap k E)) → IsProjOver p → ∀ L : LB Y, L.IsLB → (letI := algebraΓOfHom q; IsNef E (L.pull π)) → (letI := algebraΓOfHom p; IsNef k L) := by
   intro k E _ _ _ Y X p q π H hp L hL hN
-  letI := algebraΓOfHom p
-  letI := algebraΓOfHom q
+  let := algebraΓOfHom p
+  let := algebraΓOfHom q
   refine ⟨hL, fun C hC => ?_⟩
   have H₁ : IsPullback (pullback.fst (redι C) π) (pullback.snd (redι C) π ≫ q) (redι C ≫ p)
       (spMap (algebraMap k E)) := (IsPullback.of_hasPullback (redι C) π).paste_vert H
@@ -169,7 +126,7 @@ theorem isNef_of_baseChange : ∀ (k E : Type) [Field k] [Field E] [Algebra k E]
       ((topologicalKrullDim_red C).trans hC.2).le
   have hLC := LB.isLB_pull hL (redι C)
   have key := FieldChangeInter.interNum_pull H₁ (isLB_vecOne hLC)
-  letI := algebraΓOfHom (pullback.snd (redι C) π ≫ q)
+  let := algebraΓOfHom (pullback.snd (redι C) π ≫ q)
   have hN' : IsNef E ((L.pull π).pull (pullback.snd (redι C) π)) :=
     hN.pull_of_isClosedImmersion _ fun _ => rfl
   have h0 := interNum_one_nonneg_of_isNef (k := E)
@@ -197,14 +154,13 @@ open CategoryTheory AlgebraicGeometry TopologicalSpace Limits
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.CechPic GlobalTheory.QCoh GlobalTheory.Cartier GlobalTheory.Discrepancy
 
-set_option autoImplicit false
 noncomputable section
 namespace GlobalTheory.NadelApp
 
 theorem isIso_idealModuleι_of_forall_notMem {X : Scheme.{0}} (I : X.IdealSheafData)
     (h : ∀ x, x ∉ I.support) : IsIso (idealModuleι I) := by
   have h0 : toSubscheme I = 0 := by
-    haveI : IsEmpty I.subscheme := ⟨fun z => h _ (I.range_subschemeι.le ⟨z, rfl⟩)⟩
+    have : IsEmpty I.subscheme := ⟨fun z => h _ (I.range_subschemeι.le ⟨z, rfl⟩)⟩
     ext V t
     have e : I.subschemeι ⁻¹ᵁ V = ⊥ := eq_bot_iff.2 fun z _ => isEmptyElim z
     have : Subsingleton Γ(I.subscheme, I.subschemeι ⁻¹ᵁ V) := by
@@ -225,13 +181,13 @@ theorem qWeil_zero {X : Scheme.{0}} [IsIntegral X] [IsLocallyNoetherian X] (m : 
 
 theorem kawamataViehweg_complex : GlobalTheory.Published.NadelVanishingPair → ∀ (X : Scheme.{0}) (p : X ⟶ Sp ℂ) (D : ℕ) [SmoothOfRelativeDimension D p], IsProjOver p → IsIntegral X → ∀ (K : CanonLB p D) (N : LB X), (letI := algebraΓOfHom p; IsNef ℂ N) → (letI := algebraΓOfHom p; IsBig ℂ N) → ∀ q : ℕ, 0 < q → Subsingleton (coh (twist (GlobalTheory.structureModule X) (tens K.bundle N)) q) := by
   intro hN X p D _ hproj _ K N hnef hbig q hq
-  letI := algebraΓOfHom p
-  haveI : AlgebraicGeometry.IsNoetherian X := isNoetherian_of_isProjOver hproj
+  let := algebraΓOfHom p
+  have : AlgebraicGeometry.IsNoetherian X := isNoetherian_of_isProjOver hproj
   obtain ⟨J, hJ, hv⟩ := nadel_canonical_add hN X p D hproj K N N hnef.isLB 0 1 1 one_pos one_pos
     CartierDiv.eff_zero hnef hbig (fun C _ => by
       rw [interNumRed_one_eq_zero (isLB_toLB 0) (by rw [← toPic_apply, map_zero])]
       simp)
-  haveI := isIso_idealModuleι_of_forall_notMem J fun x hx => (hJ x).1 hx (by
+  have := isIso_idealModuleι_of_forall_notMem J fun x hx => (hJ x).1 hx (by
     rw [qWeil_zero]
     exact kltAt_zero_of_smooth (topologicalKrullDim_eq_of_smooth X p D) x)
   exact @Function.Injective.subsingleton _ _ _ (cohOn.mapIso Γ(X, ⊤) ⊤ q
@@ -252,8 +208,6 @@ open CategoryTheory AlgebraicGeometry TopologicalSpace Limits
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.CechPic GlobalTheory.QCoh
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.VanishEmbedded
@@ -262,15 +216,15 @@ open GlobalTheory.HSCore.VanishNumberField
 
 theorem subsingleton_coh_canon_tens : GlobalTheory.Published.NefNumerics → GlobalTheory.Published.NadelVanishingPair → ∀ (F : Type) [Field F], Nonempty (F →+* ℂ) → ∀ (X : Scheme.{0}) (p : X ⟶ Sp F) (D : ℕ) [SmoothOfRelativeDimension D p], IsProjOver p → GeometricallyConnected p → ∀ (K : CanonLB p D) (N : LB X), (letI := algebraΓOfHom p; IsNef F N) → (letI := algebraΓOfHom p; IsBig F N) → ∀ q : ℕ, 0 < q → Subsingleton (coh (twist (GlobalTheory.structureModule X) (tens K.bundle N)) q) := by
   intro hNum hNad F _ ⟨σ⟩ X p D hsm hp hgc K N hnef hbig q hq
-  letI := σ.toAlgebra
+  let := σ.toAlgebra
   let X' := pullback p (spMap (algebraMap F ℂ))
   let π : X' ⟶ X := pullback.fst _ _
   let p' : X' ⟶ Sp ℂ := pullback.snd _ _
   have H : IsPullback π p' p (spMap (algebraMap F ℂ)) := IsPullback.of_hasPullback _ _
   obtain ⟨hI, -, hsm', hp', -⟩ := GlobalTheory.BaseChangeVariety.baseChange_props F ℂ X X' p p' π D H hp hgc
-  haveI : Nonempty X := ⟨π (Classical.arbitrary X')⟩
-  letI := algebraΓOfHom p
-  letI := algebraΓOfHom p'
+  have : Nonempty X := ⟨π (Classical.arbitrary X')⟩
+  let := algebraΓOfHom p
+  let := algebraΓOfHom p'
   obtain ⟨hprop, -⟩ := (isProjOver_iff_isProper_and_exists_isAmpleLB p).1 hp
   have hL := LB.isLB_pull hnef.isLB π
   have hnef' : IsNef ℂ (N.pull π) := GlobalTheory.NefFieldExt.isNef_baseChange hNum F ℂ X X' p p' π H hp N hnef
@@ -383,8 +337,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits TensorProduct
@@ -399,8 +351,8 @@ theorem subsingleton_coh_pull_iff {X X' : Scheme.{0}} {k E : Type} [Field k] [Fi
     (H : IsPullback π f' f (Spec.map (CommRingCat.ofHom (algebraMap k E)))) {M : LB X} (hM : M.IsLB) (n : ℕ) :
     Subsingleton (coh (twist (GlobalTheory.structureModule X') (M.pull π)) n) ↔
       Subsingleton (coh (twist (GlobalTheory.structureModule X) M) n) := by
-  letI := algebraΓOfHom f
-  letI := algebraΓOfHom f'
+  let := algebraΓOfHom f
+  let := algebraΓOfHom f'
   have : CompactSpace X := QuasiCompact.compactSpace_of_compactSpace f
   have := isAffineHom_diagonal_of_isSeparated f
   obtain ⟨m, D, hD, hc⟩ := exists_fin_affine_cover (X := X) (V := ⊤) isCompact_univ
@@ -434,8 +386,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.CechPic GlobalTheory.QCoh
@@ -449,7 +399,7 @@ theorem subsingleton_coh_twist (hN : GlobalTheory.Published.NefNumerics) (hV : G
     (h₂ : letI := algebraΓOfHom p; IsBig k N) (q : ℕ) (hq : 0 < q) :
     Subsingleton (coh (twist (GlobalTheory.structureModule X) (tens K.bundle N)) q) := by
   have hNl : N.IsLB := by
-    letI := algebraΓOfHom p
+    let := algebraΓOfHom p
     exact h₁.isLB
   obtain ⟨K₁, X₁, p₁, ψ, L₁, hc, hp₁, H, hL₁, e⟩ := _root_.GlobalTheory.ProjCountableDescent.projLB_descends_to_countable_subfield k X p hp N hNl
   have hsm : Smooth p := SmoothOfRelativeDimension.smooth D p
@@ -459,12 +409,12 @@ theorem subsingleton_coh_twist (hN : GlobalTheory.Published.NefNumerics) (hV : G
   have hP := LB.isLB_pull hL₁ ψ
   have ec : cls N hNl = cls (L₁.pull ψ) hP := (cls_eq_iff _ _).2 e
   have n₁ := _root_.GlobalTheory.NefFieldDescent.isNef_of_baseChange K₁ k X₁ X p₁ p ψ H hp₁ L₁ hL₁ (by
-    letI := algebraΓOfHom p
+    let := algebraΓOfHom p
     exact h₁.of_cls_eq hP ec.symm)
   have b₁ := (_root_.GlobalTheory.BigFieldChange.isBig_pull_iff K₁ k X₁ X p₁ p ψ H hp₁ hp
     ((GlobalTheory.HSCore.VanishNumberField.topologicalKrullDim_eq_of_smooth p D hs).trans
       (GlobalTheory.HSCore.VanishNumberField.topologicalKrullDim_eq_of_smooth p₁ D hs₁).symm) L₁ hL₁).1 (by
-    letI := algebraΓOfHom p
+    let := algebraΓOfHom p
     exact h₂.of_cls_eq hP ec.symm)
   let C : CanonLB p₁ D := CanonLB.all p₁ D
   have v₁ := _root_.GlobalTheory.VanishEmbedded.subsingleton_coh_canon_tens hN hV K₁ (GlobalTheory.KeyHouse.nonempty_ringHom_complex K₁) X₁ p₁ D hp₁ hg₁

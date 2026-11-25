@@ -7,45 +7,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrin
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IrreducibleComponentsAlongSequence
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.PrincipalizationCertificateMonotone
 import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeMorphismProperties
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -148,7 +110,6 @@ structure PushedBlowupSequenceProperties (hres : FunctorialResolution.Blowup.Str
           ⇑(DivisorReduction.embeddingIntoAmbient hres hno T j hj (DivisorReduction.lowerIdealAfterBlowup T j hj)
               (DivisorReduction.lowerBoundaryAfterBlowup T j hj) s hpr t) ⁻¹'
             ((DivisorReduction.prependedPushedMarkedSeq hres hno T j hj hb s hpr hmk).otherBoundaryLocus j (t + 1))
-  one_le_mult : ∀ T : MarkedIdealWithBoundary.{u}, T.IsAdmissible → 1 ≤ T.mult
   isSmoothDivisor_ker_top :
     ∀ (T : MarkedIdealWithBoundary.{u}) (hV : T.IsAdmissible), T.IsOrderBoundedByMult →
       T.IsBalanced hV.locallyOfFiniteType →
@@ -320,11 +281,6 @@ private theorem comap_imageIdealSheaf_eq_self_of_isClosedImmersion {X Y : Scheme
     (_root_.FunctorialResolution.Blowup.schemeImageIdeal f I).comap f = I :=
   Blowup.comap_map_of_isClosedImmersion f I
 
-private theorem orderAtLeastLocus_comap_iso_eq_empty {X Y : Scheme.{u}} (e : X ≅ Y)
-    (I : Y.IdealSheafData) (m : ℕ) (h : orderAtLeastLocus I m = (∅ : Set ↥Y)) :
-    orderAtLeastLocus (I.comap e.hom) m = (∅ : Set ↥X) := by
-  rw [orderAtLeastLocus_comap_iso_hom_eq_preimage, h, Set.preimage_empty]
-
 private theorem exists_principalizationCertificate_ker_of_isClosedImmersion {k : Type u} [Field k]
     {X Y : Scheme.{u}}
     (f : X ⟶ Y) [AlgebraicGeometry.IsClosedImmersion f]
@@ -397,7 +353,7 @@ private theorem divisorReductionShape_of_orderAtLeastLocus_empty {T : MarkedIdea
     exact absurd ht (Nat.not_lt_zero t)
   · have hz : orderAtLeastLocus (S.ideal 0) T.mult = (∅ : Set ↥(S.schemeAt 0)) := by
       rw [MarkedSequenceOfBlowups.ideal_zero]
-      exact orderAtLeastLocus_comap_iso_eq_empty S.isoZero T.ideal T.mult hcs
+      exact (orderAtLeastLocus_comap_iso_eq_empty_iff S.isoZero T.ideal T.mult).2 hcs
     rw [hz, Set.empty_inter]
   · intro t ht
     exact absurd ht (Nat.not_lt_zero t)

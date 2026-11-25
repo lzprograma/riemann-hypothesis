@@ -379,10 +379,10 @@ theorem xi0_embedding_im_pos (D : D7) (τ : D.host.E →+* ℂ) (hτ : τ ∈ cm
   rw [hxi]
   have hI' : ∀ r : ℝ, (Complex.I * (r : ℂ)).im = r := fun r => by simp
   by_cases hpos : 0 < (D.host.φ₀ D.host.sqrtMinusD).im
-  · rw [if_pos hpos, Int.cast_one, one_mul, hI']
+  · rw [ite_eq_left hpos, Int.cast_one, one_mul, hI']
     positivity
   · have hneg : (D.host.φ₀ D.host.sqrtMinusD).im < 0 := lt_of_le_of_ne (not_lt.1 hpos) hb
-    rw [if_neg hpos, Int.cast_neg, Int.cast_one, neg_one_mul, Complex.neg_im, hI']
+    rw [ite_eq_right hpos, Int.cast_neg, Int.cast_one, neg_one_mul, Complex.neg_im, hI']
     have : (1 : ℝ) / ((Ideal.absNorm D.host.ccK : ℝ) * (D.host.φ₀ D.host.sqrtMinusD).im) < 0 :=
       div_neg_of_pos_of_neg one_pos (mul_neg_of_pos_of_neg hnR hneg)
     linarith

@@ -94,13 +94,13 @@ theorem contractNth_suffix {m p q : ℕ} (op : α → α → α) (x : Fin (m + 1
   funext l
   simp only [Fin.contractNth, Fin.castSucc_mk, Fin.succ_mk, hj]
   by_cases h1 : (l : ℕ) < j'
-  · rw [if_pos (by omega), if_pos h1]
+  · rw [ite_eq_left (by omega), ite_eq_left h1]
     rfl
-  · rw [if_neg (by omega), if_neg h1]
+  · rw [ite_eq_right (by omega), ite_eq_right h1]
     by_cases h2 : (l : ℕ) = j'
-    · rw [if_pos (by omega), if_pos h2]
+    · rw [ite_eq_left (by omega), ite_eq_left h2]
       rfl
-    · rw [if_neg (by omega), if_neg h2]
+    · rw [ite_eq_right (by omega), ite_eq_right h2]
       rfl
 
 end Indices

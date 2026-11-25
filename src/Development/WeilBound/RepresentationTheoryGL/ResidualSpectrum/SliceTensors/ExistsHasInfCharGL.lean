@@ -4,44 +4,8 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CapelliL
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDiscreteUOfIsDiscrete
 public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.IsSliceMap
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiscreteSpectrumOfResidual
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiscreteAutomorphicRepGLExistsLocalComponent
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasInfCharInfCharOfCommute
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -55,34 +19,8 @@ namespace PositivityTheory.Rg.Rs.PInfInd2A
 variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem exists_scalar {N : ℕ} {V : Submodule ℂ (Sm E N)} (hV : IsDiscrete V) {z : Module.End ℂ (Sm E N)}
-    (hz : z ∈ Zalg E N) (hc : ∀ o : Op E N, Commute z (act o)) : ∃ c : ℂ, ∀ φ ∈ V, z φ = c • φ := by
-  obtain ⟨φ, hφ, h0⟩ := (Submodule.ne_bot_iff _).1 hV.ne_bot
-  set U := Submodule.span ℂ ((fun z : Module.End ℂ (Sm E N) => z φ) '' Zalg E N) with hU
-  have hfin : FiniteDimensional ℂ U := (hV.aut φ hφ).zfin
-  have hle : U ≤ V := Submodule.span_le.2 (by
-    rintro _ ⟨y, hy, rfl⟩
-    exact Zalg_stable (fun X => hV.stable (.lie X)) hy φ hφ)
-  have hst : ∀ x ∈ U, z x ∈ U := fun x hx => by
-    have : U ≤ U.comap z := Submodule.span_le.2 (by
-      rintro _ ⟨y, hy, rfl⟩
-      exact Submodule.subset_span ⟨z * y, mul_mem hz hy, rfl⟩)
-    exact this hx
-  have hφU : φ ∈ U := Submodule.subset_span ⟨1, one_mem _, rfl⟩
-  have : Nontrivial U := ⟨⟨φ, hφU⟩, 0, fun h => h0 (congrArg Subtype.val h)⟩
-  obtain ⟨c, hc'⟩ := Module.End.exists_eigenvalue (z.restrict hst)
-  obtain ⟨v, hv⟩ := hc'.exists_hasEigenvector
-  have hv1 : z v.1 = c • v.1 := congrArg Subtype.val hv.apply_eq_smul
-  refine ⟨c, fun ψ hψ => ?_⟩
-  rcases hV.irred (V ⊓ z.eigenspace c) inf_le_left (fun o x hx => ⟨hV.stable o x hx.1, by
-    have h1 : z x = c • x := Module.End.mem_eigenspace_iff.1 hx.2
-    refine Module.End.mem_eigenspace_iff.2 ?_
-    rw [← map_smul, ← h1]
-    exact LinearMap.congr_fun (hc o).eq x⟩) with h | h
-  · have : v.1 ∈ V ⊓ z.eigenspace c := ⟨hle v.2, Module.End.mem_eigenspace_iff.2 hv1⟩
-    rw [h] at this
-    exact absurd (Subtype.ext ((Submodule.mem_bot ℂ).1 this)) hv.2
-  · rw [← h] at hψ
-    exact Module.End.mem_eigenspace_iff.1 hψ.2
+    (hz : z ∈ Zalg E N) (hc : ∀ o : Op E N, Commute z (act o)) : ∃ c : ℂ, ∀ φ ∈ V, z φ = c • φ :=
+  _root_.GlobalTheory.DiscLocEx.exists_scalarD hV hz hc
 
 theorem exists_hasInfCharGL {N : ℕ} {V : Submodule ℂ (Sm E N)} (hV : IsDiscrete V) (τ : E →+* ℂ) :
     ∃ m, HasInfCharGL V τ m := by

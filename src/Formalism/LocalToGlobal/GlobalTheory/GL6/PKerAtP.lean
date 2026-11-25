@@ -32,18 +32,12 @@ theorem unramified_algebraic_weights (A : AtTTied u) (v : (D.mem u).A.vT) :
   have hPmax : (A.Pv v).IsMaximal := RingHom.ker_isMaximal_of_surjective (A.res v) (A.res_surj v)
   have hres_nat : ∀ s : ℕ, A.res v (s : 𝓞 D.host.E) = 0 ↔ (D.mem u).A.T ∣ s := by
     intro s; rw [map_natCast]; exact CharP.cast_eq_zero_iff _ (D.mem u).A.T s
-  have := Formalism.L2.Host.span_isPrime (D.mem u).A.T
-  have hlies : (A.Pv v).LiesOver (span {((D.mem u).A.T : ℤ)}) := by
-    refine ⟨?_⟩
-    have hle : span {((D.mem u).A.T : ℤ)} ≤ (A.Pv v).comap (algebraMap ℤ (𝓞 D.host.E)) := by
-      rw [Ideal.span_le, Set.singleton_subset_iff]
+  have hlies : (A.Pv v).LiesOver (span {((D.mem u).A.T : ℤ)}) :=
+    (Ideal.liesOver_span_iff hPmax.ne_top
+        (Nat.prime_iff_prime_int.mp (D.mem u).A.T_prime)).2 <| by
       show A.res v (algebraMap ℤ (𝓞 D.host.E) ((D.mem u).A.T : ℤ)) = 0
       rw [map_natCast]
       exact (hres_nat _).2 dvd_rfl
-    have hmax : (span {((D.mem u).A.T : ℤ)}).IsMaximal := by
-      refine this.isMaximal ?_
-      rw [Ne, Ideal.span_singleton_eq_bot]; exact_mod_cast (D.mem u).A.T_prime.ne_zero
-    exact hmax.eq_of_le (Ideal.comap_ne_top _ hPmax.ne_top) hle
   obtain ⟨I, hI, hIP⟩ := Formalism.L2.Host.map_eq_mul_coprime D.host (D.mem u).A.T (Formalism.L2.Host.T_ne A v) (A.Pv v)
   obtain ⟨s, hsI, hsP⟩ := Set.not_subset.mp hIP
   refine ⟨s, hsP, fun x hx => ?_⟩
@@ -90,14 +84,6 @@ theorem tld_isLat (i : ℕ) (hi : i ≤ D.R.m) (c : (D.mem u).C.cls i) :
     (Submodule.IsLattice.of_fg _ (hDualFG c))
 
 end TLd
-
-section TLdLoc
-
-open Matrix Formalism.UG
-
-variable {D : D7} {u : D.what₂.Word}
-
-end TLdLoc
 
 section SFGen
 

@@ -44,7 +44,6 @@ noncomputable section
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels Matrix
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.WeilM GlobalTheory.AdelicU
-open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (piInf)
 
 namespace GlobalTheory.VacDatum
 

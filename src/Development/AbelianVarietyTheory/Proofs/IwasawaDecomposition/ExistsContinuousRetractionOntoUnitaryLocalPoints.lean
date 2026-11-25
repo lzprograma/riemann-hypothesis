@@ -104,7 +104,7 @@ theorem pLoc_sIdem_of_eq {v : HeightOneSpectrum (𝓞 E)}
   change ((pLoc E v).comp (pFin E)) (idem w) * _ = _
   have : ((pLoc E v).comp (pFin E)) (idem w) = 1 := by
     change (idemF w).1 v = 1
-    simp only [idemF, if_pos hv]
+    simp only [idemF, ite_eq_left hv]
   rw [this, one_mul]
   rfl
 
@@ -114,7 +114,7 @@ theorem pLoc_sIdem_of_ne {v : HeightOneSpectrum (𝓞 E)}
   change ((pLoc E v).comp (pFin E)) (idem w) * _ = _
   have : ((pLoc E v).comp (pFin E)) (idem w) = 0 := by
     change (idemF w).1 v = 0
-    simp only [idemF, if_neg hv]
+    simp only [idemF, ite_eq_right hv]
   rw [this, zero_mul]
 
 theorem conjAd_idem : conjAd E (idem w) = idem w := by

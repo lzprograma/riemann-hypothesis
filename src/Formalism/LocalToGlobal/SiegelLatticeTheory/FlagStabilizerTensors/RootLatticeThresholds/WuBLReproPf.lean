@@ -1,6 +1,7 @@
 module
 
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuBesselLoc
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MapConjLebesgueCommonStabilizerNormalForm
 
 @[expose] public section
 
@@ -39,34 +40,6 @@ theorem meas_rmul (a : Formalism.FourierDecayAlt.B.Mat k r) : Measurable (Formal
   simp only [Formalism.FourierDecayAlt.B.rmulF, Matrix.mul_apply, Matrix.of_apply]
   fun_prop
 
-private theorem hpk_sq_lemma {k r : ℕ} : Hpk k r * Hpk k r = 1 := by
-  ext i j
-  rw [Matrix.mul_apply, Matrix.one_apply]
-  by_cases hm : r ≤ i.val ∧ i.val ≤ r + k
-  · rw [Finset.sum_eq_single i]
-    · simp only [Hpk]
-      split_ifs <;> (try simp only [Fin.ext_iff, and_true] at *) <;>
-        first | omega | (norm_num; done)
-    · intro l _ hl
-      have h0 : Hpk k r i l = 0 := by
-        simp only [Hpk]
-        split_ifs <;> (try simp only [Fin.ext_iff, ne_eq] at *) <;>
-        first | omega
-      rw [h0, zero_mul]
-    · simp
-  · have hlt : 2 * r + k - i.val < 2 * r + k + 1 := by omega
-    rw [Finset.sum_eq_single ⟨2 * r + k - i.val, hlt⟩]
-    · simp only [Hpk]
-      split_ifs <;> (try simp only [Fin.ext_iff] at *) <;>
-        first | omega | (norm_num; done)
-    · intro l _ hl
-      have h0 : Hpk k r i l = 0 := by
-        simp only [Hpk]
-        split_ifs <;> (try simp only [Fin.ext_iff, ne_eq] at *) <;>
-        first | omega
-      rw [h0, zero_mul]
-    · simp
-
 theorem reproduction_translation : ReproTr := by
   intro k r μG hμ H _ _ σ hσ hiso Vp _ _ W w y hy hrep x hx
   have hmulU : ∀ a ∈ UH (Hpk k r), ∀ b ∈ UH (Hpk k r), a * b ∈ UH (Hpk k r) := by
@@ -81,7 +54,7 @@ theorem reproduction_translation : ReproTr := by
   obtain ⟨yi, hyi⟩ : ∃ yi : Formalism.FourierDecayAlt.B.Mat k r, yi = Hpk k r * yᴴ * Hpk k r := ⟨_, rfl⟩
   have hy' : yᴴ * Hpk k r * y = Hpk k r := hy
   have hyiy : yi * y = 1 := by
-    rw [hyi, Matrix.mul_assoc, Matrix.mul_assoc, ← Matrix.mul_assoc yᴴ, hy', hpk_sq_lemma]
+    rw [hyi, Matrix.mul_assoc, Matrix.mul_assoc, ← Matrix.mul_assoc yᴴ, hy', _root_.GlobalTheory.Amp.RConj.H_sq]
   have hyyi : y * yi = 1 := mul_eq_one_comm.1 hyiy
   have hyiU : yi ∈ UH (Hpk k r) := by
     show yiᴴ * Hpk k r * yi = Hpk k r

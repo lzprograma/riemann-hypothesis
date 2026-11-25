@@ -1,50 +1,8 @@
 module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.IteratedHeckeBounds.HkIterContOn
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.TensorHomCubes.StabDirectedSystem
 
 @[expose] public section
@@ -191,27 +149,15 @@ theorem Hk_finv_emb {k : ℕ} (q : GK L N) {ω : Form (HS L N) k} (hω : ∀ γ,
   intro h hh
   rw [mn_compContinuousLinearMap_actL]
   simp only [pb_actL_compContinuousLinearMap_eq_pb_mul]
-  let σ : Quotient (QuotientGroup.rightRel (Sg q)) ≃ Quotient (QuotientGroup.rightRel (Sg q)) :=
-    { toFun := Quotient.map' (fun x => x * γ) (fun a b hab => by
-        rw [QuotientGroup.rightRel_apply] at hab ⊢
-        simpa [_root_.mul_inv_rev, mul_assoc] using hab)
-      invFun := Quotient.map' (fun x => x * γ⁻¹) (fun a b hab => by
-        rw [QuotientGroup.rightRel_apply] at hab ⊢
-        simpa [_root_.mul_inv_rev, mul_assoc] using hab)
-      left_inv := by
-        intro c
-        induction c using Quotient.inductionOn' with
-        | h a => simp only [Quotient.map'_mk'', mul_inv_cancel_right]
-      right_inv := by
-        intro c
-        induction c using Quotient.inductionOn' with
-        | h a => simp only [Quotient.map'_mk'', inv_mul_cancel_right] }
+  let e := QuotientGroup.quotientRightRelEquivQuotientLeftRel (Sg q)
+  let σ := e.trans ((MulAction.toPerm γ⁻¹).trans e.symm)
   have key : ∀ c, pb (toP L N (q * toK L N (σ c).out)) ω h =
       pb (toP L N (q * toK L N c.out) * emb L N γ) ω h := by
     intro c
     have e1 : σ c = Quotient.mk'' (c.out * γ) := by
       conv_lhs => rw [← Quotient.out_eq' c]
-      rfl
+      change Quotient.mk'' ((γ⁻¹ * c.out⁻¹)⁻¹) = Quotient.mk'' (c.out * γ)
+      simp
     have e2 : (Quotient.mk'' (σ c).out : Quotient (QuotientGroup.rightRel (Sg q))) =
         Quotient.mk'' (c.out * γ) := by
       rw [Quotient.out_eq', e1]
@@ -269,7 +215,6 @@ private instance pointwiseGKAction (k : ℕ) : MulAction (GK L N) (Fin (k + 2) �
     funext j
     simp [mul_assoc]
 
-set_option synthInstance.maxHeartbeats 200000 in
 theorem hecke_iter {k : ℕ} (q : GK L N) {ω : Form (HS L N) (k + 1)} (hω : ContinuousOn ω (Pos L N)) (r : ℕ)
     (y : Fin (k + 2) → GK L N) :
     (hecke (Y := Fin (k + 2) → GK L N) (E := ℝ) (toK L N) (MonoidHom.id (GK L N)) q)^[r]

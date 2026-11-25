@@ -28,11 +28,7 @@ variable (d : Data K ι Ω WT A)
 
 theorem x4v4_ratio_spec {Ω' V : Type*} [Field Ω'] [AddCommGroup V] [Module Ω' V] {f g : V}
     (hg : g ≠ 0) {a : Ω'} (hf : f = a • g) : ratio (Ω := Ω') f g = a := by
-  have hex : ∃ b : Ω', f = b • g := ⟨a, hf⟩
-  unfold ratio
-  rw [dite_eq_left hex]
-  have h2 : hex.choose • g = a • g := hex.choose_spec.symm.trans hf
-  exact smul_left_injective Ω' hg h2
+  apply ReciprocityTheory.ChartRestriction.G.T0.ValuationResidueLemmas.ratio_eq <;> assumption
 
 theorem x4v4_eq_smul (hd : d.AxH 𝒜) (c : ι) {f : A c} (hf : f ∈ 𝒜 c d.wL) :
     f = ratio (Ω := Ω c) f (d.w (d.jc c) c) • d.w (d.jc c) c := by

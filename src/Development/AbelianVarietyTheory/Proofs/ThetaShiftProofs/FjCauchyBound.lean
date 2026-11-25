@@ -256,7 +256,3 @@ theorem _root_.GlobalTheory.FjCauchy.fj_flow {la : _root_.ReciprocityTheory.Char
   exact hgI
 
 end GlobalTheory.FjCauchy
-
-namespace GlobalTheory
-
-end GlobalTheory

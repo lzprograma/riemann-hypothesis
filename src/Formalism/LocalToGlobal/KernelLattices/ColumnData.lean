@@ -647,12 +647,6 @@ open Formalism.L2.Ker.Base (Comm)
 open Formalism.L2.Th1.H (Sesq matH stdH stdLat alphaQ kernel4 tens4 StdData pow4 imgLat inter opU)
 open Formalism.MainNotions
 
-section Gen
-
-variable (L : PeriodPair) (ω₀ : ℂ) (c : ℝ) {n : Type} [Fintype n] [DecidableEq n]
-
-end Gen
-
 section Arith
 
 variable (D : Car)
@@ -786,7 +780,6 @@ end Base
 
 end Fam
 
-open Formalism.MainNotions
 
 section HostFacts
 
@@ -835,7 +828,6 @@ open IsDedekindDomain Formalism.HermitianLatticesTheory Formalism.L2.DIV Formali
 
 section Seam
 
-open Formalism.MainNotions
 
 structure Seam (D : Car) (X : Fields) where
   iE : X.E ≃+* D.host.E

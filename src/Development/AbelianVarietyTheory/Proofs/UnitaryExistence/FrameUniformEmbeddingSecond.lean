@@ -68,8 +68,6 @@ theorem AA_ne_zero (D : D7) : D.host.AA ≠ 0 := by
     rw [h, Ideal.bot_mul] at h1
     exact differentIdeal_ne_bot h1
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem latG_spec (D : D7) (V : HSp D) (g : GA D V) :
     (∀ v, v ∈ latG V g ↔ finVec V v ∈ latGHat V g) ∧
       ∀ z, z ∈ latGHat V g ↔ ∃ y ∈ latGHat V 1, (finHom V g).1 *ᵥ y = z := by

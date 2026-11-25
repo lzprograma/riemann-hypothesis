@@ -95,14 +95,14 @@ theorem rho_reorder_eq_rho : rho0 (N := N) = rho := by
     fun i => MeasurableEquiv.piCongrLeft_apply_apply (idx N) (β := fun _ => ℂ) _ i
   rcases lt_trichotomy a b with h | rfl | h
   · have k := key (Sum.inr (Sum.inr ⟨(a, b), h⟩))
-    simp only [rho, h.ne, not_lt.2 h.le, h, if_false, dif_neg, dif_pos, not_false_eq_true]
+    simp only [rho, h.ne, not_lt.2 h.le, h, ite_false, dite_eq_right, dite_eq_left, not_false_eq_true]
     exact k
   · have k := key (Sum.inl a)
-    simp only [rho, if_true]
+    simp only [rho, ite_true]
     refine k.trans ?_
     apply Complex.ext <;> simp <;> rfl
   · have k := key (Sum.inr (Sum.inl ⟨(a, b), h⟩))
-    simp only [rho, h.ne', h, if_false, dif_pos]
+    simp only [rho, h.ne', h, ite_false, dite_eq_left]
     exact k
 
 theorem mp_rho : MeasurePreserving (rho (N := N)) volume volume := by

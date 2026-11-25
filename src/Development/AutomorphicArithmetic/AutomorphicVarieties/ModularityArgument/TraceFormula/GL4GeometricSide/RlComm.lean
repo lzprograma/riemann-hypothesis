@@ -164,11 +164,11 @@ private theorem of_atW_inv (w : InfinitePlace E) {X Y : Matrix (Fin n) (Fin n) �
   ext a b v
   rw [of_atW_mul]
   by_cases hv : v = w
-  · simp only [if_pos hv, h]
+  · simp only [ite_eq_left hv, h]
     show _ = (1 : Matrix (Fin n) (Fin n) (Cinf E)) a b v
     simp only [Matrix.one_apply]
     split_ifs <;> rfl
-  · simp only [if_neg hv, mul_one]
+  · simp only [ite_eq_right hv, mul_one]
     show _ = (1 : Matrix (Fin n) (Fin n) (Cinf E)) a b v
     simp only [Matrix.one_apply]
     split_ifs <;> rfl
@@ -194,7 +194,7 @@ private theorem yAt_comm {w w' : InfinitePlace E} (h : w ≠ w') (k k' : Un n) :
 omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 private theorem coord_atW {τ : E →+* ℂ} {w : InfinitePlace E} (h : InfinitePlace.mk τ ≠ w) (X : Matrix (Fin n) (Fin n) ℂ)
     (a b : Fin n) : coord τ (atW w X a b) = (1 : Matrix (Fin n) (Fin n) ℂ) a b := by
-  rw [PositivityTheory.Rg.Cz.J.coord_eq, atW_val, if_neg h, Matrix.one_apply]
+  rw [PositivityTheory.Rg.Cz.J.coord_eq, atW_val, ite_eq_right h, Matrix.one_apply]
   split_ifs <;> simp
 
 private theorem commute_rt_Eop {τ : E →+* ℂ} {w : InfinitePlace E} (h : InfinitePlace.mk τ ≠ w) (k : Un n) (a b : Fin n) :
@@ -204,7 +204,7 @@ private theorem commute_rt_Eop {τ : E →+* ℂ} {w : InfinitePlace E} (h : Inf
   have c2 : ∀ p q, coord τ (((yAt w k)⁻¹ : GL (Fin n) (Cinf E)).val p q) = (1 : Matrix (Fin n) (Fin n) ℂ) p q :=
     coord_atW h (star k.1)
   simp only [c1, c2, Matrix.one_apply, mul_ite, mul_one, mul_zero, ite_smul, one_smul, zero_smul,
-    Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true] at e
+    Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at e
   exact e.symm
 
 private theorem commute_Eop_fin (τ : E →+* ℂ) (a b : Fin n) (g : GL (Fin n) (Af E)) :

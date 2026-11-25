@@ -2,55 +2,11 @@ module
 
 public import Formalism.HyperbolicPlaceProducts.Statement
 import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
 public import Mathlib.NumberTheory.RamificationInertia.Basic
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.FieldTheory.Finite.Basic
 public import Mathlib.RingTheory.DedekindDomain.Dvr
 public import Mathlib.RingTheory.Flat.TorsionFree
@@ -273,7 +229,7 @@ theorem hyp_count (P : Ideal R) [P.IsMaximal] [Finite (R ⧸ P)] {X : Type}
     if h : L ∈ hyp P X then Classical.choose (exists_hom_ker P L h.1 h.2) else 0
   have hF : ∀ L ∈ hyp P X, LinearMap.ker (F L) = L := by
     intro L hL
-    simp only [F, dif_pos hL]
+    simp only [F, dite_eq_left hL]
     exact Classical.choose_spec (exists_hom_ker P L hL.1 hL.2)
   have hinj : Set.InjOn F (hyp P X) := by
     intro L₁ h₁ L₂ h₂ h
@@ -420,7 +376,6 @@ end Mul
 
 section NF
 
-open NumberField
 
 variable (E : Type) [Field E] [NumberField E]
 
@@ -532,10 +487,10 @@ theorem count_prime_pow (k p : ℕ) (hp : p.Prime) (e : ℕ) :
     fun P => if h : P ∈ G then (hhyp P h).1.toFinset else ∅
   have hH : ∀ P ∈ G, ∀ L, L ∈ H P ↔ L ∈ hyp P X := by
     intro P hP L
-    simp only [H, dif_pos hP, Set.Finite.mem_toFinset]
+    simp only [H, dite_eq_left hP, Set.Finite.mem_toFinset]
   have hHc : ∀ P ∈ G, (H P).card ≤ (p ^ f P) ^ k := by
     intro P hP
-    simp only [H, dif_pos hP]
+    simp only [H, dite_eq_left hP]
     rw [← Set.ncard_eq_toFinset_card _ (hhyp P hP).1]
     exact (hhyp P hP).2
   have hcover : idxSet (𝓞 E) X (p ^ e) ⊆ ⋃ P ∈ G, ⋃ L ∈ H P, A P L := by

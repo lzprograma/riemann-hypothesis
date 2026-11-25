@@ -20,12 +20,10 @@ def lin {ι : Type*} [Fintype ι] (u : ι → S.V) (c : ι → E) : S.V := ∑ i
 
 theorem hT_lin_right {ι : Type*} [Fintype ι] (u : ι → S.V) (c : ι → E) (x : S.V) :
     S.hT x (lin u c) = ∑ i, c i * S.hT x (u i) := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp [lin, map_sum, map_smul, smul_eq_mul]
 
 theorem hT_lin_left {ι : Type*} [Fintype ι] (u : ι → S.V) (c : ι → E) (x : S.V) :
     S.hT (lin u c) x = ∑ i, star (c i) * S.hT (u i) x := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp only [lin, map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
     starRingEnd_apply]
 

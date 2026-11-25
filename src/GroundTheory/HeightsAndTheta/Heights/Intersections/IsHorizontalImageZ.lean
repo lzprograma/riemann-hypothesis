@@ -119,7 +119,7 @@ theorem isMultiHomog_rename {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k'
     · simp
   · rw [Function.extend_apply' _ _ _ h]
     refine (Finset.sum_eq_zero fun k _ => ?_).symm
-    rw [if_neg fun hk => h ⟨k, hk⟩]
+    rw [ite_eq_right fun hk => h ⟨k, hk⟩]
 
 end ArithmeticIntersectionHorizontal
 

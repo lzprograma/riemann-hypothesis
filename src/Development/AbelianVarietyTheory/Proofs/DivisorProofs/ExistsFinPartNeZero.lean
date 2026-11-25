@@ -1,42 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
 
 @[expose] public section
@@ -75,58 +40,5 @@ theorem finPart_add (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) (x z : �
     show Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F v (z i).2 = 0
     rw [snd_eq_zero_of_at z hz i, map_zero]
   rw [Pi.add_apply, map_add (f := _), h, add_zero]
-
-theorem exists_finPart_ne_zero (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) (h0 : ∀ v, φ v ≠ 0)
-    (hstd : ∀ᶠ v in cofinite, φ v = Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1) :
-    ∃ x₀ : κ → Af F, ∀ x : κ → AF F, (∀ i, (x i).2 = x₀ i) → finPart φ x ≠ 0 := by
-  classical
-  have hfin := Filter.eventually_cofinite.1 hstd
-  set S := hfin.toFinset with hS
-  have hy : ∀ v, ∃ y, φ v y ≠ 0 := fun v => by
-    by_contra h
-    push_neg at h
-    exact h0 v (funext h)
-  choose y hy using hy
-  refine ⟨fun i => ∑ v ∈ S, singleFin v (y v i), fun x hx => ?_⟩
-  have hev : ∀ w, (fun i => evFin F w (x i)) = if w ∈ S then y w else 0 := by
-    intro w
-    funext i
-    show Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F w (x i).2 = _
-
-    rw [hx i, map_sum]
-    by_cases hw : w ∈ S
-    · rw [Finset.sum_eq_single w (fun v _ hv => evalV_singleFin_ne (Ne.symm hv) _) (fun h => absurd hw h),
-        evalV_singleFin_self, if_pos hw]
-    · rw [Finset.sum_eq_zero (fun v hv => evalV_singleFin_ne (fun h => hw (by rw [h]; exact hv)) _), if_neg hw]
-      rfl
-  have hne : ∀ w, φ w (fun i => evFin F w (x i)) ≠ 0 := by
-    intro w
-    by_cases hw : w ∈ S
-    · rw [hev w, if_pos hw]; exact hy w
-    · rw [hev w, if_neg hw]
-      have hw' : φ w = Set.indicator {x | ∀ i, x i ∈ w.adicCompletionIntegers F} 1 := by
-        by_contra h
-        exact hw (by rw [hS, Set.Finite.mem_toFinset]; exact h)
-      rw [hw', Set.indicator_of_mem (show (0 : κ → Fv F w) ∈ {x : κ → Fv F w | ∀ i, x i ∈ w.adicCompletionIntegers F} from
-        fun i => zero_mem _)]
-      exact one_ne_zero
-  unfold finPart
-  rw [finprod_def]
-  split_ifs
-  · exact Finset.prod_ne_zero_iff.2 fun w _ => hne w
-  · exact one_ne_zero
-
-theorem eq_of_pure_eq (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) (h0 : ∀ v, φ v ≠ 0)
-    (hstd : ∀ᶠ v in cofinite, φ v = Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1)
-    (g g' : SInf F κ) (h : pure g φ = pure g' φ) : g = g' := by
-  obtain ⟨x₀, hx₀⟩ := exists_finPart_ne_zero φ h0 hstd
-  refine DFunLike.ext g g' fun y => ?_
-  let x : κ → AF F := fun i => Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.pairA F ((InfiniteAdeleRing.ringEquiv_mixedSpace F).symm (y i)) (x₀ i)
-  have hI : (fun i => evI F (x i)) = y :=
-    funext fun i => (InfiniteAdeleRing.ringEquiv_mixedSpace F).apply_symm_apply (y i)
-  have e := congrFun h x
-  change g (fun i => evI F (x i)) * finPart φ x = g' (fun i => evI F (x i)) * finPart φ x at e
-  rw [hI] at e
-  exact mul_right_cancel₀ (hx₀ x fun i => rfl) e
 
 end GlobalTheory.EvZeroInf

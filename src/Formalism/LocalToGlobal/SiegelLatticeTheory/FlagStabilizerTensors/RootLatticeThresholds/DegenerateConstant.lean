@@ -16,8 +16,6 @@ set_option linter.unusedVariables false
 
 namespace Formalism.L2.SG.RowsU
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 structure UC where
   c3 : ℝ
   cH : ℝ

@@ -112,7 +112,7 @@ theorem exists_finite_decomp :
         exact hu (by simp only [Set.mem_ofPred_eq] at h; simp [h])⟩
     refine ⟨_, funext fun w => (GlobalTheory.LFun.finAdEquiv_apply w.2 Y).symm.trans ?_⟩
     rw [hY]
-    exact dif_pos w.2
+    exact dite_eq_left w.2
   · simpa using GlobalTheory.LFun.complMap_mem w.2 ha
 
 
@@ -153,7 +153,7 @@ theorem exists_infinite_decomp :
         fun x => ⟨1 ⊗ₜ x, funext fun w => h1 v w x⟩
     have := key fun u => if h : u.comap (algebraMap F K) = v then z ⟨u, h⟩ else 0
     rwa [show (fun w : {w : InfinitePlace K // w.comap (algebraMap F K) = v} => _) = z from
-      funext fun w => dif_pos w.2] at this
+      funext fun w => dite_eq_left w.2] at this
   haveI : Module.Finite v.Completion
       (∀ w : {w : InfinitePlace K // w.comap (algebraMap F K) = v}, w.1.Completion) :=
     Module.Finite.of_surjective f hs

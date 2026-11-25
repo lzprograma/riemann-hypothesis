@@ -79,7 +79,6 @@ namespace UpperTheory.V.Aut
 structure BPrime_s (K : Type) [Field K] [NumberField K] [IsCMField K] {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω]
     {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (a : G ℚ Ω → Matrix (Fin 3) (Fin 3) (Qbar l)) : Prop where
   opens : ∀ U : Subgroup (G ℚ Ω), IsOpen (U : Set (G ℚ Ω)) → U ≤ (eta4 Ω).ker → MatIrr U a
-  cyc : MatIrr ((eta4 Ω).ker ⊓ (cycZ ℚ Ω l).ker) a
   aut : _root_.UpperTheory.V.Af.AutOnAlt K ι (-1) a
 def ThmS6_s : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] [IsCMField K], IsQi K →

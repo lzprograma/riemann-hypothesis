@@ -238,20 +238,8 @@ theorem part1 {I J K : Cx R} (τ : Pair I J K) (hτ : τ.IsTensor) {I' J' K' : C
     rw [hu', hc]
 
 theorem part3 {I J K K' : Cx R} (τ : Pair I J K) (u : K ⟶ K') : ∃ ν : Pair I J K', τ.Compat ν (𝟙 I) (𝟙 J) u := by
-  refine ⟨⟨fun U s t w h => (τ.mul U s t w h).compr₂ ((u.f w).hom.app (op U)).hom, ?_, ?_⟩, ?_⟩
-  · intro V U g s t w h a b
-    simp only [LinearMap.compr₂_apply]
-    exact (res_map (u.f w) g _).trans (congrArg _ (τ.nat g s t w h a b))
-  · intro U s t w h a b
-    simp only [LinearMap.compr₂_apply]
-    have hu : ∀ z : Sec (K.X w) U,
-        Sec.map (K'.d w (w + 1)) (Sec.map (u.f w) z) = Sec.map (u.f (w + 1)) (Sec.map (K.d w (w + 1)) z) := by
-      intro z
-      rw [← map_comp', ← map_comp', u.comm]
-    refine (hu _).trans ?_
-    rw [τ.leibniz, map_add', map_usmul]
-  · intro U s t w h a b
-    rfl
+  intros
+  apply _root_.LateralTheory.EtaleFoundations.TensUnivPf.part3 <;> assumption
 
 theorem sec_zero_of_isZero {F : Shv R} (hF : IsZero F) {U : Scheme.{0}} (a : Sec F U) : a = 0 := by
   have h := hF.eq_of_src (𝟙 F) (mkHom (fun _ => 0) (fun V U g y => by simp))

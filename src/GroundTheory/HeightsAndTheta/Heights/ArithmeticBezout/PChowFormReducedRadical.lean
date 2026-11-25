@@ -61,9 +61,9 @@ private theorem mem_support_fundCycle_iff {J : Ideal (MvPolynomial (Fin n) F)} (
   constructor
   · intro h
     by_contra h'
-    exact h (if_neg h')
+    exact h (ite_eq_right h')
   · intro h
-    rw [if_pos h, localMult_eq_one_of_isRadical hJ h.1]
+    rw [ite_eq_left h, localMult_eq_one_of_isRadical hJ h.1]
     exact one_ne_zero
 
 end Helpers

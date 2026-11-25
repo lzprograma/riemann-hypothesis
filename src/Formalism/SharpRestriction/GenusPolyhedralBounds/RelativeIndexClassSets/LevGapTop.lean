@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.GlobalTheory.GL5.LocalEndomorphismContinuous
 public import Formalism.SatakeDualWeyl.Statement
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
 import Mathlib.Algebra.Order.Floor.Extended
@@ -54,56 +55,12 @@ namespace Formalism.MainNotions.Gaps.LevGap
 open NumberField IsDedekindDomain Matrix Formalism.UG Formalism.BasicNotions
 open scoped TensorProduct
 
-section DefCong
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-  {n : Type} [Fintype n] [DecidableEq n]
-
-end DefCong
-
-section Gen
-
-variable {F E : Type} [Field F] [Field E] [Algebra F E]
-variable (R : Type) [CommRing R] [Algebra F R]
-
-attribute [local instance] Algebra.TensorProduct.rightAlgebra
-
-variable [TopologicalSpace R] [IsTopologicalRing R]
-
-variable [FiniteDimensional F E]
-
-end Gen
-
-section GLc
-
-variable {M : Type} [CommRing M] [TopologicalSpace M] [IsTopologicalRing M] [T2Space M]
-  {n : Type} [Fintype n] [DecidableEq n]
-
-end GLc
-
-section Dec
-
-variable {F E : Type} [Field F] [Field E] [NumberField E] [Algebra F E]
-variable {R : Type} [CommRing R] [Algebra F R] (O : Subring R)
-
-variable [NumberField F]
-
-variable {n : Type} [Fintype n] [DecidableEq n]
-
-end Dec
-
 section Adele
 
 variable {F : Type} [Field F] [NumberField F]
 
 theorem compact_Ov (v : HeightOneSpectrum (𝓞 F)) : CompactSpace (v.adicCompletionIntegers F) := by
-  have h1 : Finite (IsLocalRing.ResidueField (v.adicCompletionIntegers F)) :=
-    Formalism.UG.P.glint_finite_residueField v
-  have h2 : IsClosed ((v.adicCompletionIntegers F : Set (v.adicCompletion F))) :=
-    Valued.isClosed_valuationSubring _
-  have h3 : CompleteSpace (v.adicCompletionIntegers F) := h2.completeSpace_coe
-  exact Valued.integer.compactSpace_iff_completeSpace_and_isDiscreteValuationRing_and_finite_residueField.2
-    ⟨h3, (inferInstance : IsDiscreteValuationRing (v.adicCompletionIntegers F)), h1⟩
+  apply _root_.Formalism.L2.GlobalTheoryTheory.GenusMassVolumes.ProGW.compactOv <;> assumption
 
 theorem isCompact_intAd : IsCompact (intAd F : Set (FiniteAdeleRing (𝓞 F) F)) := by
   have : ∀ v : HeightOneSpectrum (𝓞 F), CompactSpace (v.adicCompletionIntegers F) := compact_Ov
@@ -127,43 +84,5 @@ theorem t2Space_adeleRing_numberField : T2Space (FiniteAdeleRing (𝓞 F) F) :=
 variable {E : Type} [Field E] [NumberField E] [Algebra F E]
 
 end Adele
-
-section Main
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-  {n : Type} [Fintype n] [DecidableEq n]
-
-attribute [local instance] Algebra.TensorProduct.rightAlgebra
-
-end Main
-
-section Bridge
-
-open Formalism.MainNotions.Gaps.LG
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-  {n : Type} [Fintype n] [DecidableEq n]
-
-section Loc
-
-variable (v : HeightOneSpectrum (𝓞 F))
-
-end Loc
-
-section ParSec
-
-variable {k : ℕ} (P : Par F E k) (v : HeightOneSpectrum (𝓞 F))
-
-end ParSec
-
-end Bridge
-
-section Facts
-
-open Formalism.MainNotions.Gaps.LG
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {k : ℕ}
-
-end Facts
 
 end Formalism.MainNotions.Gaps.LevGap

@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.PlacesQ
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDecompositionGroupCyclotomicCharacterZpowN
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.LineOfNotIrr
@@ -53,16 +54,7 @@ open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.Bas
 
 private theorem eisReg_place {Ω : Type} [Field Ω] [CharZero Ω] (p : ℕ) (hp : p.Prime) :
     ∃ A : ValuationSubring Ω, A.valuation (p : Ω) < 1 := by
-  let R : Subring Ω := (Int.castRingHom Ω).range
-  have hI : Ideal.span {((p : ℕ) : R)} ≠ ⊤ := by
-    rw [Ne, Ideal.span_singleton_eq_top, isUnit_iff_exists_inv]
-    rintro ⟨⟨_, k, rfl⟩, hk⟩
-    have h1 : ((p : ℕ) : Ω) * ((k : ℤ) : Ω) = 1 := congrArg Subtype.val hk
-    have h2 : ((p : ℕ) : ℤ) * k = 1 := by exact_mod_cast h1
-    have h3 : ((p : ℕ) : ℤ) = 1 := Int.eq_one_of_mul_eq_one_right (by positivity) h2
-    exact hp.one_lt.ne' (by exact_mod_cast h3)
-  obtain ⟨A, -, hA⟩ := Ideal.image_subset_nonunits_valuationSubring _ hI
-  exact ⟨A, A.mem_nonunits_iff.1 (hA ⟨((p : ℕ) : R), Ideal.mem_span_singleton_self _, by simp⟩)⟩
+  apply _root_.UpperTheory.V.Chr.RationalPlaces.exists_place <;> assumption
 
 private theorem eisReg_charpoly {K : Type} [Field K] (g r : GL (Fin 2) K) (a b : K)
     (h : ∀ i j, j < i → (g * r * g⁻¹ : GL (Fin 2) K) i j = 0)

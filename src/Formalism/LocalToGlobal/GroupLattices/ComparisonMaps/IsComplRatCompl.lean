@@ -43,7 +43,7 @@ theorem span_basis_eq (c0 : V0 →ₛₗ[e] W0) (b : Module.Basis ι LL V0) :
 
 theorem inj_of_li (c0 : V0 →ₛₗ[e] W0) (b : Module.Basis ι LL V0)
     (hli : LinearIndependent Kf fun i => c0 (b i)) : Function.Injective c0 := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   have h1 := linearIndependent_iff.1 hli _ ((lc_repr_lemma c0 b x).trans hx)
   have h2 : b.repr x = 0 := by
@@ -113,8 +113,8 @@ private theorem li_core_lemma_2 {κ : Type*} (c0 : V0 →ₛₗ[e] W0) (b : Modu
 
   rw [map_sum, map_zero] at h2
   simp only [map_smul, extK_apply] at h2
-  rw [Finset.sum_eq_single k (fun i _ hik => by rw [hφv, if_neg hik]; simp [c1])
-    (fun h => absurd hk h), hφv, if_pos rfl] at h2
+  rw [Finset.sum_eq_single k (fun i _ hik => by rw [hφv, ite_eq_right hik]; simp [c1])
+    (fun h => absurd hk h), hφv, ite_eq_left rfl] at h2
   simpa [c1] using h2
 
 theorem li_basis (c0 : V0 →ₛₗ[e] W0) (b : Module.Basis ι LL V0)

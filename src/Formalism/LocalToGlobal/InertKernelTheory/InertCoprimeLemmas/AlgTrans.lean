@@ -7,47 +7,7 @@ public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.Fourt
 import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.QuasiPeriodConstUnique
 import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
 public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -228,7 +188,7 @@ theorem gC_mat_mem (B : Ker.Base D cc δ) (i j : Fin 4 × D.what₂.Tau) :
 theorem kerTransAlg_of (B : Ker.Base D cc δ) (hcc : Formalism.MainNotions.TaylorLogMetric.IsCurveIdeal D cc)
     (hδ : Formalism.MainNotions.TaylorLogMetric.IsDiscriminantTwelfthRootOfIdealLattice D cc δ) (h1 : PeriodPairTranscendence B.L B.ω₀) : KerTransAlg B := by
   intro t ht
-  have hS : B.StdOK := Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.stdOK B hcc hδ
+  have hS : B.StdOK := GlobalTheory.FourthRootStd.stdOK B hcc hδ
   have sd := hS
   obtain ⟨S, hSr⟩ := (Formalism.L2.Th1.H.repsExist _ _ _ sd.idx₁).1
   have hshape := Formalism.L2.Th1.H.quadraticSemicharacter_identity_reformulated₂ B.L B.ω₀ D.what₂.Tau (Ker.hOne B.L D.what₂.Tau) B.lamM _ _ B.gC hS
@@ -260,7 +220,7 @@ theorem kerTransAlg_of (B : Ker.Base D cc δ) (hcc : Formalism.MainNotions.Taylo
     refine AddSubgroup.mem_map.2 ⟨(m : ℂ) • (fun w : Fin 4 × D.what₂.Tau => t w.2), fun a => hmt, ?_⟩
     show B.gC ((m : ℂ) • fun w : Fin 4 × D.what₂.Tau => t w.2) = (m : ℂ) • v
     rw [map_smul]
-  obtain ⟨N1, hN1, hup⟩ := Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SO.up B
+  obtain ⟨N1, hN1, hup⟩ := GlobalTheory.FourthRootStd.up B
   have htor : ∀ x ∈ S, ∀ w, ∃ N : ℕ, 0 < N ∧ (N : ℂ) * (v w + x w) ∈ B.L.lattice := by
     intro x hx w
     have ha := ((AddSubgroup.mem_pi Set.univ).1 (hup _ hmv)) w (Set.mem_univ _)
@@ -316,10 +276,10 @@ theorem kerTransAlg_of (B : Ker.Base D cc δ) (hcc : Formalism.MainNotions.Taylo
   have hMhf : ∀ x w, FiniteDimensional ℚ (Mh x w) := by
     intro x w
     by_cases h : ∃ N : ℕ, 0 < N ∧ (N : ℂ) * (v w + x w) ∈ B.L.lattice
-    · have e : Mh x w = (h1 _ h).choose := dif_pos h
+    · have e : Mh x w = (h1 _ h).choose := dite_eq_left h
       rw [e]
       exact (h1 _ h).choose_spec.1
-    · have e : Mh x w = ⊥ := dif_neg h
+    · have e : Mh x w = ⊥ := dite_eq_right h
       rw [e]
       infer_instance
   let M : IntermediateField ℚ ℂ := M0 ⊔ ⨆ x : {x // x ∈ S}, ⨆ w : Fin 4 × D.what₂.Tau, Mh x.1 w
@@ -334,7 +294,7 @@ theorem kerTransAlg_of (B : Ker.Base D cc δ) (hcc : Formalism.MainNotions.Taylo
   have hcoef : ∀ x ∈ S, ∀ w, CoefIn1 (f x w) M := by
     intro x hx w k
     have h := htor x hx w
-    have e : Mh x w = (h1 _ h).choose := dif_pos h
+    have e : Mh x w = (h1 _ h).choose := dite_eq_left h
     have hk := (h1 _ h).choose_spec.2 k
     rw [← e] at hk
     exact hMhle x hx w hk

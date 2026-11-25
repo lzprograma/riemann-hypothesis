@@ -46,8 +46,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.MixModel GlobalTheory.ChiGrid
 open IsDedekindDomain NumberField Matrix
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.IndefiniteRowSideFullHecke.ConjugateAdjointDagger
 
 variable {D : D7}
@@ -166,9 +164,6 @@ structure ConjAdjoint (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) : Prop wher
   theta_neg : ∀ f : WO S T → ℂ, (IsThetaFunO ψ S (negSp T) (cj id f) ↔ IsThetaFunO ψ S T f) ∧
     (IsThetaFunO ψ (negSp S) T (cj id f) ↔ IsThetaFunO ψ S T f)
 
-  heis_neg : ∀ (w : WO S T) (f : WO S T → ℂ), heisO ψ S (negSp T) w (cj id f) = cj id (heisO ψ S T w f) ∧
-    heisO ψ (negSp S) T w (cj id f) = cj id (heisO ψ S T w f)
-
   conj_target : ∀ (χS χT : Chr D) (om : Rep S T), IsWeilDatumO ψ S T χS χT om →
     IsWeilDatumO ψ S (negSp T) χS⁻¹ χT⁻¹ (conjTarget om) ∧
     ∀ om' : Rep S (negSp T), IsWeilDatumO ψ S (negSp T) χS⁻¹ χT⁻¹ om' → ∀ g h f, IsThetaFunO ψ S T f →
@@ -179,14 +174,7 @@ structure ConjAdjoint (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) : Prop wher
     ∀ om' : Rep (negSp S) T, IsWeilDatumO ψ (negSp S) T χS⁻¹ χT⁻¹ om' → ∀ g h f, IsThetaFunO ψ S T f →
       om' (negGA S g, h) (cj id f) = cj id (om (g, h) f)
 
-  sympl_dagger : ∀ x y : WO S T, symplO T S (dagger S T x) (dagger S T y) = -symplO S T x y
-
-  act_dagger : ∀ g h (x : WO S T), dagger S T (actO S T g h x) = actO T S h g (dagger S T x)
-
   theta_dagger : ∀ f : WO S T → ℂ, IsThetaFunO ψ T S (cj (dagger T S) f) ↔ IsThetaFunO ψ S T f
-
-  heis_dagger : ∀ (w : WO S T) (f : WO S T → ℂ),
-    heisO ψ T S (dagger S T w) (cj (dagger T S) f) = cj (dagger T S) (heisO ψ S T w f)
 
   conj_adjoint : ∀ (χS χT : Chr D) (om : Rep S T), IsWeilDatumO ψ S T χS χT om →
     IsWeilDatumO ψ T S χT χS (conjAdjoint om) ∧

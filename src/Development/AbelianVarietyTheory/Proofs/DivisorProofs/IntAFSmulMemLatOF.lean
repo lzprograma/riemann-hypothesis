@@ -164,10 +164,10 @@ variable (σ JS JT) in
 def rhoFF : GAF σ JS × GAF σ JT →* Module.End (𝓞 E) (XFF F E nS nT) where
   toFun p :=
     { toFun := fun x => XFF.mk (actOF σ JS JT p.1 p.2 x) (actOF_mem_finSubF _ _ x.fin)
-      map_add' := fun x y => XFF.ext (actOF_add _ _ _ _)
-      map_smul' := fun r x => XFF.ext (actOF_smul _ _ _ _) }
-  map_one' := LinearMap.ext fun x => XFF.ext (actOF_one _)
-  map_mul' p q := LinearMap.ext fun x => XFF.ext (GlobalTheory.WeilPartsF.actOF_mul p.1 q.1 p.2 q.2 _)
+      map_add' := fun _ _ => XFF.ext (actOF_add _ _ _ _)
+      map_smul' := fun _ _ => XFF.ext (actOF_smul _ _ _ _) }
+  map_one' := LinearMap.ext fun _ => XFF.ext (actOF_one _)
+  map_mul' p q := LinearMap.ext fun _ => XFF.ext (GlobalTheory.WeilPartsF.actOF_mul p.1 q.1 p.2 q.2 _)
 
 theorem coe_rhoFF (p : GAF σ JS × GAF σ JT) (x : XFF F E nS nT) :
     (rhoFF σ JS JT p x : WOF F E nS nT) = actOF σ JS JT p.1 p.2 x := rfl

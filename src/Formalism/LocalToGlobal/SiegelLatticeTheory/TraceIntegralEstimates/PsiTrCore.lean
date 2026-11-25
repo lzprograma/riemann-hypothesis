@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFrameOfHasSignature
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelCore
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.PsiTrCoreApprox
 import Mathlib.Algebra.Module.StablyFree.Basic
@@ -20,12 +21,7 @@ namespace Formalism.L2.S.Pv.PsiTrCore
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
 theorem incl_mem (o : 𝓞 E) : Formalism.UG.inclE (F := F) (Af F) (o : E) ∈ IntAf F E := by
-  show _ ∈ Formalism.UG.tensInt (F := F) (Af F) (Formalism.UG.intOE E) (Formalism.UG.intAd F)
-  unfold Formalism.UG.tensInt
-  apply Subring.subset_closure
-  left
-  refine ⟨⟨(o : E), o, rfl⟩, ?_⟩
-  simp [Formalism.UG.inclE]
+  apply _root_.GlobalTheory.VectorInclusion.inclE_int_mem <;> assumption
 
 theorem one_tmul_mem (c : Af F) (hc : ∀ v, c v ∈ v.adicCompletionIntegers F) :
     (1 : E) ⊗ₜ[F] c ∈ IntAf F E := by

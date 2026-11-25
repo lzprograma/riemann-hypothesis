@@ -3,46 +3,7 @@ module
 public import Formalism.SharpRestriction.LevelLetterCocycles.ExtensionClauses
 public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
 import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
 import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Sheaves.Presheaf
 
 @[expose] public section
@@ -96,59 +57,7 @@ theorem coreExt_of (W : LocWach PD LL O v n) (E : EtTie W RA RW inclR φR gR πA
   have hext' := hext
   unfold Formalism.MainNotions.LiftingTheory.IsExtOf at hext'
   obtain ⟨hses, -⟩ := hext'
-  have hinj : Function.Injective (W.map ι) := by
-    have hs' := hses
-    unfold Formalism.WeaklyAdmissibleFiltrations.IsSESLat at hs'
-    obtain ⟨hιinj, -, honto, hex, hsat⟩ := hs'
-    unfold Formalism.WeaklyAdmissibleFiltrations.LatHom.Onto at honto
-    let ι' : ↥T.L.T →ₗ[O] ↥Tp.L.T := (ι.f.restrictScalars O).restrict ι.T_le
-    let π' : ↥Tp.L.T →ₗ[O] ↥W.one.L.T := (π.f.restrictScalars O).restrict π.T_le
-    have hπs : Function.Surjective π' := by
-      rintro ⟨w, hw⟩
-      obtain ⟨x0, hx0, hxw⟩ := honto w hw
-      exact ⟨⟨x0, hx0⟩, Subtype.ext hxw⟩
-    haveI : Module.Free O ↥W.one.L.T := W.one.L.free
-    obtain ⟨s, hs⟩ := Module.projective_lifting_property π' LinearMap.id hπs
-    let p0 : ↥Tp.L.T →ₗ[O] ↥Tp.L.T := LinearMap.id - s ∘ₗ π'
-    have hrange : ∀ b : ↥Tp.L.T, p0 b ∈ LinearMap.range ι' := by
-      intro b
-      have h0 : π' (p0 b) = 0 := by
-        rw [show p0 b = b - s (π' b) from rfl, map_sub,
-          ← LinearMap.comp_apply π' s, hs, LinearMap.id_apply, sub_self]
-      obtain ⟨y0, hy0⟩ := (hex _).1 (congrArg Subtype.val h0)
-      have hyT : y0 ∈ T.L.T := hsat y0 (by rw [hy0]; exact (p0 b).2)
-      exact ⟨⟨y0, hyT⟩, Subtype.ext hy0⟩
-    have hι'inj : Function.Injective ι' := by
-      intro a b hab
-      exact Subtype.ext (hιinj (congrArg Subtype.val hab))
-    let e := LinearEquiv.ofInjective ι' hι'inj
-    let cr := p0.codRestrict (LinearMap.range ι') hrange
-    let r : ↥Tp.L.T →ₗ[O] ↥T.L.T := e.symm.toLinearMap ∘ₗ cr
-    have hr : ∀ a, r (ι' a) = a := by
-      intro a
-      have hπι : π' (ι' a) = 0 := by
-        apply Subtype.ext
-        show π.f (ι.f (a : T.V)) = 0
-        exact (hex _).2 ⟨a, rfl⟩
-      have hcr : cr (ι' a) = e a := by
-        apply Subtype.ext
-        simp only [cr, p0, LinearMap.codRestrict_apply, LinearMap.sub_apply, LinearMap.id_apply,
-          LinearMap.comp_apply, hπι, map_zero, sub_zero, e, LinearEquiv.ofInjective_apply]
-      change e.symm (cr (ι' a)) = a
-      rw [hcr, e.symm_apply_apply]
-    have hL : Function.LeftInverse (LinearMap.lTensor RW r) (LinearMap.lTensor RW ι') := by
-      intro t0
-      have h3 : r ∘ₗ ι' = LinearMap.id := LinearMap.ext hr
-      have h4 := congrArg (fun f => f t0) (congrArg (LinearMap.lTensor RW) h3)
-      simpa only [LinearMap.lTensor_comp, LinearMap.comp_apply, LinearMap.lTensor_id,
-        LinearMap.id_apply] using h4
-    intro x1 x2 h12
-    apply E.jD_inj T
-    apply hL.injective
-    have h1 := E.jD_map ι x1
-    have h2 := E.jD_map ι x2
-    rw [h12] at h1
-    exact h1.symm.trans h2
+  have hinj := linj_map_inj W E ι π hses
   have hx' : ((u⁻¹ : Oˣ) : O) • x ∈ W.N Tp := smulO_mem W Tp _ hx
   have hx'e : W.map π (((u⁻¹ : Oˣ) : O) • x) = (((u⁻¹ : Oˣ) : O) * ((PD.p : ℕ) : O) ^ k) • e := by
     rw [map_smulO, hxe, smul_smul]
@@ -157,27 +66,11 @@ theorem coreExt_of (W : LocWach PD LL O v n) (E : EtTie W RA RW inclR φR gR πA
   have h8' := h8 T Mi hi hT hJ'
   unfold Formalism.MainNotions.DeltaInvariantLattices.p8 at h8'
   obtain ⟨⟨y, hy, hy'⟩, ⟨z, hz, hz'⟩⟩ := h8' Tp ι π hses hTp e he hφe hγe _ hx' _ hx'e
-  have hcoc : (y, z) ∈ W.divisibleCocycles T := by
-    have h0 := pull_cocycle W ι hinj W.gam _ y z hy' hz'
-    simp only [LocWach.divisibleCocycles, herrCocycles, LinearMap.mem_ker, LinearMap.coprod_apply, LinearMap.sub_apply,
-      LinearMap.neg_apply, LinearMap.id_apply]
-    rw [← sub_eq_add_neg]
-    exact h0
+  have hcoc : (y, z) ∈ W.divisibleCocycles T :=
+    (liftb_mem_Z1D W T y z).2 (pull_cocycle W ι hinj W.gam _ y z hy' hz')
   refine ⟨y, z, hcoc, ?_, ?_, ?_⟩
-  · have hy2 : W.Q ^ Formalism.MainNotions.DeltaInvariantLattices.mx Mi • y ∈ W.N T := hy
-    have hn : n ≠ 0 := by
-      haveI := PD.finK₀
-      rw [W.n_eq]
-      exact Module.finrank_pos.ne'
-    haveI : NeZero n := ⟨hn⟩
-    have hle : Formalism.MainNotions.DeltaInvariantLattices.mx Mi ≤ Mmax n Mi := by
-      unfold Formalism.MainNotions.DeltaInvariantLattices.mx Mmax
-      apply ciSup_le
-      intro i
-      calc Mi i = Mi ((i.val : ℕ) : ZMod n) := by rw [ZMod.natCast_zmod_val]
-        _ ≤ _ := Finset.le_sup (f := fun k : ℕ => Mi (k : ZMod n)) (Finset.mem_range.2 (ZMod.val_lt i))
-    rw [← Nat.sub_add_cancel hle, pow_add, mul_smul]
-    exact (W.N T).smul_mem _ hy2
+  · have := liftb_neZero W
+    rwa [liftb_mx_eq] at hy
   · obtain ⟨z', hz'N, hzz⟩ := hz
     exact ⟨z', hz'N, hzz.symm⟩
   · rw [hu _ _ hx'e y z hcoc hy' hz', ← mul_assoc, Units.mul_inv, one_mul]

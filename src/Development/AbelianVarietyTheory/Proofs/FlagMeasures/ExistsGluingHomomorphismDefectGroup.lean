@@ -192,7 +192,6 @@ private theorem isNoetherianRing_locE_O (L : _root_.Formalism.MainNotions.S.Loc.
       exact Submodule.smul_mem _ _ (Submodule.subset_span (by simp))
   exact IsNoetherianRing.of_finite (ValuativeRel.valuation F).integer L.O
 
-
 open ValuativeRel MeasureTheory in
 open scoped Pointwise ENNReal Classical in
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] in
@@ -433,34 +432,6 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] in
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] in
 variable {L : _root_.Formalism.MainNotions.S.Loc.LocE F E} {r k : ℕ} (S : _root_.GlobalTheory.HL.Frames L r k) in
 variable [IsNonarchimedeanLocalField F] [CharZero F] in
-private theorem mem_complementLattice_of_mem_term (d : S.Datum)
-    (Λ : Submodule L.O S.V) (hT : S.IsTerm d Λ) (w : S.V)
-    (hw : w ∈ S.W0) (hΛ : w ∈ Λ) :
-    w ∈ S.complementLatticeOfDatum d ∧ S.TauRel d Λ w 0 := by
-  obtain ⟨⟨n, n'⟩, hA, hA', hn, hn', hΛn, hΛn', -, hgr⟩ := hT
-  have hME : ∀ x ∈ S.ME, S.h w x = 0 := hw
-  have hXo : w ∈ _root_.GlobalTheory.HL.perp L S.Hm S.X := fun x hx =>
-    hME x (le_sup_of_le_left (_root_.GlobalTheory.HL.TermBasic.spanTo_mono S S.f (Nat.le_succ r)) hx)
-  have hXo' : w ∈ _root_.GlobalTheory.HL.perp L S.Hm S.X' := fun x hx =>
-    hME x (le_sup_of_le_right (_root_.GlobalTheory.HL.TermBasic.spanTo_mono S S.f' (Nat.le_succ r)) hx)
-  refine ⟨⟨hw, ?_, ?_, ?_⟩, ⟨0, Submodule.zero_mem _, 0, Submodule.zero_mem _, by simpa using hΛ,
-    by simpa using hΛ, ⟨0, Λ.zero_mem, by simp⟩, by simpa using Submodule.zero_mem _⟩⟩
-  · refine ((_root_.GlobalTheory.HL.StdLat.stdLat_spec L r k S S.f S.es (Or.inl ⟨rfl, rfl⟩) _ hA).2.2 w).2 ?_
-    refine (_root_.GlobalTheory.HL.TermBasic.inner_smul S hn w).2 ⟨w, ?_, hXo, by simpa using Submodule.zero_mem _⟩
-    rw [← hΛn]; exact hΛ
-  · refine ((_root_.GlobalTheory.HL.StdLat.stdLat_spec L r k S S.f' S.es' (Or.inr ⟨rfl, rfl⟩) _ hA').2.2 w).2 ?_
-    refine (_root_.GlobalTheory.HL.TermBasic.inner_smul S hn' w).2 ⟨w, ?_, hXo', by simpa using Submodule.zero_mem _⟩
-    rw [← hΛn']; exact hΛ
-  · rw [hgr]
-    exact ⟨w, hΛ, w, hΛ, hXo', hXo, by simpa using Submodule.zero_mem _,
-      by simpa using Submodule.zero_mem _, 0, Λ.zero_mem, by simp⟩
-
-open ValuativeRel MeasureTheory in
-open scoped Pointwise ENNReal Classical in
-variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] in
-variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] in
-variable {L : _root_.Formalism.MainNotions.S.Loc.LocE F E} {r k : ℕ} (S : _root_.GlobalTheory.HL.Frames L r k) in
-variable [IsNonarchimedeanLocalField F] [CharZero F] in
 private theorem mem_of_tauRel_zero (d : S.Datum)
     (Λ : Submodule L.O S.V) (hT : S.IsTerm d Λ) (w : S.V)
     (hτ : S.TauRel d Λ w 0) : w ∈ Λ := by
@@ -530,7 +501,6 @@ private theorem mem_of_tauRel_zero (d : S.Datum)
   have := Λ.sub_mem m (hap ▸ hp)
   simpa using this
 
-
 open ValuativeRel MeasureTheory in
 open scoped Pointwise ENNReal Classical in
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] in
@@ -542,7 +512,7 @@ theorem _root_.GlobalTheory.HL.Gluing.main : ∀ {F : Type} [Field F] [Valuative
   have h2 := tauRel_iff_sub_mem_M S d Λ hT
   have hMsat := (_root_.GlobalTheory.HL.TermBasic.term_basic L r k S d Λ hT).2.2.1
   refine ⟨h1, h2, fun c hc w₁ w₂ y₁ y₂ => tauRel_smul_add S d Λ c hc w₁ w₂ y₁ y₂,
-    fun w hw => ⟨mem_complementLattice_of_mem_term S d Λ hT w hw,
+    fun w hw => ⟨GlobalTheory.HL.CompLat.mem_complementLattice_and_tauRel_of_isTerm S d Λ hT w hw,
       fun h => mem_of_tauRel_zero S d Λ hT w h.2⟩, ?_,
     _root_.GlobalTheory.HL.CompLat.main L r k S d Λ hT⟩
   unfold _root_.GlobalTheory.HL.Frames.Ihat

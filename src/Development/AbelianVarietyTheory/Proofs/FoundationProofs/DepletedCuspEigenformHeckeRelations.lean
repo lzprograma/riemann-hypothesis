@@ -1,50 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Foundations.PetIPSmulRight
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
 public import Mathlib.Data.Finset.NatDivisors
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Newform
 
 @[expose] public section
@@ -67,7 +24,7 @@ theorem eig_at (h : Prim k N χ g) {q : ℕ} (hq : q.Prime) (hqN : ¬ q ∣ N) (
 theorem pow_rec (h : Prim k N χ g) {p : ℕ} (hp : p.Prime) (hpN : ¬ p ∣ N) (r : ℕ) :
     g (p ^ (r + 2)) = g p * g (p ^ (r + 1)) - χ p * (p : ℂ) ^ (k - 1) * g (p ^ r) := by
   have e := eig_at h hp hpN (p ^ (r + 1))
-  rw [if_pos (dvd_pow_self p (Nat.succ_ne_zero r)), pow_succ' p r,
+  rw [ite_eq_left (dvd_pow_self p (Nat.succ_ne_zero r)), pow_succ' p r,
     Nat.mul_div_cancel_left _ hp.pos, ← pow_succ', ← pow_succ'] at e
   exact e
 
@@ -86,7 +43,7 @@ theorem ppow_mul (h : Prim k N χ g) {p : ℕ} (hp : p.Prime) {n : ℕ} (hn : ¬
     induction r with
     | zero =>
       refine ⟨by simp [h.one], ?_⟩
-      rw [zero_add, pow_one, eig_at h hp hpN n, if_neg hn, mul_zero, sub_zero]
+      rw [zero_add, pow_one, eig_at h hp hpN n, ite_eq_right hn, mul_zero, sub_zero]
     | succ r ih =>
       refine ⟨ih.2, ?_⟩
       have hd : p ∣ p ^ (r + 1) * n := dvd_mul_of_dvd_left (dvd_pow_self p (Nat.succ_ne_zero r)) n
@@ -94,7 +51,7 @@ theorem ppow_mul (h : Prim k N χ g) {p : ℕ} (hp : p.Prime) {n : ℕ} (hn : ¬
       have hq : p ^ (r + 1) * n / p = p ^ r * n := by
         rw [pow_succ', mul_assoc, Nat.mul_div_cancel_left _ hp.pos]
       have hy : p ^ (r + 1 + 1) * n = p * (p ^ (r + 1) * n) := by ring
-      rw [if_pos hd, hq] at e
+      rw [ite_eq_left hd, hq] at e
       rw [hy, e, pow_rec h hp hpN r, ih.1, ih.2]
       ring
 

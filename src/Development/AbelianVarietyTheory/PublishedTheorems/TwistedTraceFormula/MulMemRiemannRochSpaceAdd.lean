@@ -391,8 +391,6 @@ theorem unitary_extension {A n m : Type} [CommRing A] [Fintype n] [DecidableEq n
 
 end Arch
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem exists_isGood {D : D7} (V : HSp D) : ∃ (Φ : WittFrame V) (L : _) (a : _), Φ.IsGood D.sp.cm L a := by
   obtain ⟨hr, ι, hι, C, hC, hM⟩ := isWittLower_minusHyp (V := V) (le_refl (wittIndex V))
   generalize minusHyp V (wittIndex V) le_rfl = V' at hr ι hι hM

@@ -165,7 +165,6 @@ end Chi
 section Ana
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2
-attribute [local instance] GlobalTheory.Mem.Col2.starE
 
 def carOf (B : GlobalTheory.Mem.Base) : Car := ⟨B.R, B.host, ⟨B.R.Psi, by
   rw [Formalism.BasicNotions.Examples₂.card_Psi, Ranks.f, Ranks.n]⟩, Equiv.refl _⟩
@@ -550,7 +549,6 @@ end Scalar
 section Main
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Forms Formalism.L2.Ker GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.KerDia
-attribute [local instance] GlobalTheory.Mem.Col2.starE
 
 variable {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} (I : TC B X) (l : I.Laws) (h : I.Ok) (u : B.Word) (a : I.ι) (i : ℕ)
   {b : (I.stp u a i).β} {b' : (I.stp u a (i + 1)).β} (q : (I.stp u a i).D b) (q' : (I.stp u a (i + 1)).D b')
@@ -596,11 +594,11 @@ theorem th_move (g : (I.stp u a i).G b) (g' : (I.stp u a (i + 1)).G b') (z : VCx
   have s1 : (I.chain l u a).sSharp i = fun τ => ez τ - ((B.R.N (i + 1) / 2 : ℕ) : ℤ) := funext fun τ => by
     apply Int.cast_injective (α := ℚ)
     rw [Int.cast_sub, _root_.GlobalTheory.CharVal.half_N, ← hez]
-    exact (congrArg _ (dif_pos hi)).trans (floor_sub_half _ _ _)
+    exact (congrArg _ (dite_eq_left hi)).trans (floor_sub_half _ _ _)
   have s2 : (I.chain l u a).sDiv i = fun τ => ez τ - ((B.R.N i / 2 : ℕ) : ℤ) := funext fun τ => by
     apply Int.cast_injective (α := ℚ)
     rw [Int.cast_sub, _root_.GlobalTheory.CharVal.half_N, ← hez]
-    exact (congrArg _ (dif_pos hi)).trans (floor_sub_half _ _ _)
+    exact (congrArg _ (dite_eq_left hi)).trans (floor_sub_half _ _ _)
   have d1 : ∀ {n : ℕ} (γ : UF B.fields.E n) (s : B.fields.Tau → ℤ), detPow B.fields.emb B.embLL (ufGL B.fields.E n γ) s =
       ∏ τ, B.fields.embC I.A.σ₀ τ ((LinearEquiv.det γ.1 : B.fields.Eˣ) : B.fields.E) ^ s τ := fun γ s => by
     rw [detPow, TE.det_ufGL]

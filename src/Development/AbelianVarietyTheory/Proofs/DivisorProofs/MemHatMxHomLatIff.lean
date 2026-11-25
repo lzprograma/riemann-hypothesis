@@ -4,44 +4,7 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.CmHostImagin
 public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
 public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
 public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -211,7 +174,6 @@ theorem frGrp_le_genGrp {Λ : Submodule (𝓞 E) (Fin n → E)} {Λ' : Submodule
     frGrp β β' (idS F 𝔪) ≤ genGrp F (𝔪 • H) := by
   let γ : GL (Fin n) 𝒜 := ⟨((β⁻¹ : GL (Fin n) 𝒜) : Matrix (Fin n) (Fin n) 𝒜)ᵀ, (β : Matrix (Fin n) (Fin n) 𝒜)ᵀ,
     by rw [← transpose_mul, Units.mul_inv, transpose_one], by rw [← transpose_mul, Units.inv_mul, transpose_one]⟩
-  have hγ : ((γ⁻¹ : GL (Fin n) 𝒜) : Matrix (Fin n) (Fin n) 𝒜) = (β : Matrix (Fin n) (Fin n) 𝒜)ᵀ := rfl
   have st : ∀ (c : 𝒮) {w}, w ∈ genGrp F (𝔪 • H) → c • w ∈ genGrp F (𝔪 • H) :=
     fun c w hw => smul_mem_genGrp _ c.1 c.2 w hw
   have k1 : ∀ a ∈ 𝔪, ∀ l' ∈ Λ', ∀ l ∈ lat γ,
@@ -280,7 +242,6 @@ end General
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links
 open IsDedekindDomain NumberField Matrix
 open scoped TensorProduct nonZeroDivisors Pointwise
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem mem_hatMx_iff (D : D7) {m n : ℕ} (M : Submodule (𝓞 D.host.E) (Matrix (Fin m) (Fin n) D.host.E)) (z : Mx D m n) :
     z ∈ GlobalTheory.ChiGrid.hatMx M ↔ (∀ i j, infPart D (z i j) = 0) ∧ z.map (toEAf D) ∈ genGrp D.host.F M := by

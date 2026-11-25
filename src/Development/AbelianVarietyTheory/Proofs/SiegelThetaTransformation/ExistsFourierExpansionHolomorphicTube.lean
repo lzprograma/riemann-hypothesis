@@ -168,7 +168,7 @@ theorem _root_.GlobalTheory.exists_fourier_expansion_tube :
       (fun z hz i ↦ by
         have hm := hper z hz (Pi.single i 1)
         have hs : (fun j ↦ ((Pi.single i (1 : ℤ) : ι → ℤ) j : ℂ)) = Pi.single i 1 := by
-          funext j; by_cases hj : j = i <;> simp [Pi.single_apply, hj]
+          funext j; by_cases hj : j = i <;> simp [hj]
         rw [hs] at hm
         simp only [h]
         rw [hm]

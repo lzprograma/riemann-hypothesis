@@ -7,48 +7,9 @@ public import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.ColTwoStep
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsGaloisExtendingAlgHom
 public import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocE
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LogbHBNonneg
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
 import Formalism.SharpRestriction.LevelLetterCocycles.RamificationTwoAndConjugationAtQAndD
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -113,7 +74,7 @@ theorem exists_liftF_le_sg_of_thick : ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf 
     have h1 := hnt j hj
     have h2 := hηs j
     omega
-  have hhB : TruncatedSeriesCountingBounds.hB b w S η size = b + η + S := if_pos hth
+  have hhB : TruncatedSeriesCountingBounds.hB b w S η size = b + η + S := ite_eq_left hth
 
   let Mi' : ZMod (Module.finrank ℚ_[l] ↥(K0 K)) → ℕ := fun i => if up i then η else size i + S
   let hi' : ZMod (Module.finrank ℚ_[l] ↥(K0 K)) → ℕ := fun i => if up i then size i + S else η
@@ -122,10 +83,10 @@ theorem exists_liftF_le_sg_of_thick : ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf 
     have h1 := hJA i τ hτ a ha
     have h2 := hηs i
     cases hu : up i
-    · simp only [hu, Mi', hi', Bool.false_eq_true, if_false, Set.mem_union, Set.mem_Icc] at h1 ⊢
+    · simp only [hu, Mi', hi', Bool.false_eq_true, ite_false, Set.mem_union, Set.mem_Icc] at h1 ⊢
       push_cast
       omega
-    · simp only [hu, Mi', hi', if_true, Set.mem_union, Set.mem_Icc] at h1 ⊢
+    · simp only [hu, Mi', hi', ite_true, Set.mem_union, Set.mem_Icc] at h1 ⊢
       push_cast
       omega
   have hM : Formalism.MainNotions.LiftingTheory.Mmax (Module.finrank ℚ_[l] ↥(K0 K)) Mi' ≤ b + η + S := by
@@ -133,19 +94,19 @@ theorem exists_liftF_le_sg_of_thick : ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf 
     intro k _
     have h1 := hsz (k : ZMod (Module.finrank ℚ_[l] ↥(K0 K)))
     cases hu : up (k : ZMod (Module.finrank ℚ_[l] ↥(K0 K))) <;>
-      simp only [hu, Mi', Bool.false_eq_true, if_false, if_true] <;> omega
+      simp only [hu, Mi', Bool.false_eq_true, ite_false, ite_true] <;> omega
   have hm : Formalism.MainNotions.LiftingTheory.Mmax (Module.finrank ℚ_[l] ↥(K0 K)) hi' ≤ b + η + S := by
     apply Finset.sup_le
     intro k _
     have h1 := hsz (k : ZMod (Module.finrank ℚ_[l] ↥(K0 K)))
     cases hu : up (k : ZMod (Module.finrank ℚ_[l] ↥(K0 K))) <;>
-      simp only [hu, hi', Bool.false_eq_true, if_false, if_true] <;> omega
+      simp only [hu, hi', Bool.false_eq_true, ite_false, ite_true] <;> omega
   have hH : Formalism.MainNotions.LiftingTheory.Hmax (Module.finrank ℚ_[l] ↥(K0 K)) Mi' hi' ≤ b + η + S + η := by
     apply Finset.sup_le
     intro k _
     have h1 := hsz (k : ZMod (Module.finrank ℚ_[l] ↥(K0 K)))
     cases hu : up (k : ZMod (Module.finrank ℚ_[l] ↥(K0 K))) <;>
-      simp only [hu, Mi', hi', Bool.false_eq_true, if_false, if_true] <;> omega
+      simp only [hu, Mi', hi', Bool.false_eq_true, ite_false, ite_true] <;> omega
   have hjumps : ∀ u ∈ Formalism.MainNotions.LiftingTheory.jumpSet ((HW l).W K 1 LL hG) T₁
       (Formalism.MainNotions.LiftingTheory.Mmax (Module.finrank ℚ_[l] ↥(K0 K)) Mi')
       (Formalism.MainNotions.LiftingTheory.Mmax (Module.finrank ℚ_[l] ↥(K0 K)) hi'),
@@ -197,12 +158,6 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {LL O : Type} [Field LL] [Algebra Qp LL] [TopologicalSpace LL] [CommRing O] [Algebra O LL]
     {v : AddValuation LL (WithTop ℚ)} {n : ℕ}
 
-
-omit [Algebra O LL] in
-theorem len_quot_span_ne_top_dvr [IsDomain O] [IsDiscreteValuationRing O] (t : O) (ht : t ≠ 0) :
-    Module.length O (O ⧸ Ideal.span {t}) ≠ ⊤ := by
-  apply Formalism.MainNotions.BlochKatoDuality.Br.length_quot_ne_top <;> assumption
-
 theorem colLeR_of_exponent [IsDomain O] [IsDiscreteValuationRing O] (PD : PeriodData G Qp K₀ K B BdR)
     (hp0 : ((PD.p : ℕ) : O) ≠ 0) {T₁ T₂ : LocLat G Qp LL O} (F : LatHom T₁.L T₂.L) (g₁ e e' : ℕ)
     (hgen : ∃ s : Finset (LatticeCohomology T₂.L), Submodule.span O (s : Set (LatticeCohomology T₂.L)) = latticeFiniteCohomology PD T₂.L ∧
@@ -223,7 +178,7 @@ theorem colLeR_of_exponent [IsDomain O] [IsDiscreteValuationRing O] (PD : Period
   let s' : Finset (G → T₂.V) := s.image r
   have hmemH : ∀ x ∈ s, x ∈ latticeFiniteCohomology PD T₂.L := fun x hx => hs ▸ Submodule.subset_span hx
   have hrx : ∀ x (hx : x ∈ latticeFiniteCohomology PD T₂.L), r x = (hrep x hx).choose := fun x hx => by
-    simp only [r, dif_pos hx]
+    simp only [r, dite_eq_left hx]
   have hs'Z : (↑s' : Set (G → T₂.V)) ⊆ latticeFiniteCocycles PD T₂.L := by
     intro y hy
     obtain ⟨x, hx, rfl⟩ := Finset.mem_image.1 hy
@@ -294,7 +249,7 @@ theorem colLeR_of_exponent [IsDomain O] [IsDiscreteValuationRing O] (PD : Period
     rw [Submodule.comap_inf, Submodule.comap_subtype_self, inf_top_eq]
   rw [hcomap] at key
   have hcol : F.col PD ≤ ((g₁ * e + Z.card * e' : ℕ) : ℕ∞) * lenOl PD (O := O) := key
-  have hlen : lenOl PD (O := O) ≠ ⊤ := len_quot_span_ne_top_dvr (O := O) _ hp0
+  have hlen : lenOl PD (O := O) ≠ ⊤ := Formalism.MainNotions.BlochKatoDuality.Br.length_quot_ne_top (O := O) _ hp0
   obtain ⟨k, hk⟩ := ENat.ne_top_iff_exists.1 hlen
   rw [← hk, ← Nat.cast_mul] at hcol
   have hcolfin : F.col PD ≠ ⊤ := fun h => ENat.coe_ne_top _ (top_le_iff.1 (h ▸ hcol))

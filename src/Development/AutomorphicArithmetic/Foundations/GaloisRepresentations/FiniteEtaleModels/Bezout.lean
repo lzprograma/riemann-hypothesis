@@ -1,47 +1,9 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.GroupTheory.FiniteAbelian.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
-
-set_option autoImplicit false
 
 namespace UpperTheory.Gal.FiniteEtaleModels.O
 
@@ -54,13 +16,10 @@ private lemma skew (alt : ∀ x, B x x = 0) (x y : M) : B x y = - B y x := by
   simp only [map_add (f := _), LinearMap.add_apply, alt x, alt y, zero_add, add_zero] at h
   exact eq_neg_of_add_eq_zero_right h
 
-private lemma bezout {e n : ℕ} (hc : e.Coprime n) : ∃ a b : ℤ, a * e + b * n = 1 :=
-  Nat.isCoprime_iff_coprime.2 hc
-
-private lemma first {n e : ℕ} (hn : 0 < n) (hc : e.Coprime n) (nd : Function.Injective B)
+private lemma first {n e : ℕ} (hc : e.Coprime n) (nd : Function.Injective B)
     (perf : ∀ f : M →ₗ[ℤ] ℤ, ∃ x, B x = e • f) (x : M) (h : ∀ y, (n : ℤ) ∣ B x y) :
     ∃ z, x = n • z := by
-  obtain ⟨a, b, hab⟩ := bezout hc
+  obtain ⟨a, b, hab⟩ := Nat.isCoprime_iff_coprime.2 hc
   let f : M →ₗ[ℤ] ℤ :=
     { toFun := fun y => B x y / n
       map_add' := fun y y' => by
@@ -87,7 +46,7 @@ private lemma first {n e : ℕ} (hn : 0 < n) (hc : e.Coprime n) (nd : Function.I
 private lemma second {n e : ℕ} (hc : e.Coprime n) (nd : Function.Injective B)
     (alt : ∀ x, B x x = 0) (perf : ∀ f : M →ₗ[ℤ] ℤ, ∃ x, B x = e • f) (h : M →+ M) :
     ∃ k : M →+ M, ∀ x y, (n : ℤ) ∣ B (h x) y - B x (k y) := by
-  obtain ⟨a, b, hab⟩ := bezout hc
+  obtain ⟨a, b, hab⟩ := Nat.isCoprime_iff_coprime.2 hc
   let F : M → M →ₗ[ℤ] ℤ := fun y => (B.flip y) ∘ₗ h.toIntLinearMap
   have hF : ∀ y x, F y x = B (h x) y := fun y x => rfl
   choose w hw using fun y => perf (F y)
@@ -128,7 +87,7 @@ private lemma third {n : ℕ} (hn : 0 < n) [Module.Finite ℤ M] (g : M →+ M)
     rw [← QuotientAddGroup.mk_nsmul, QuotientAddGroup.eq_zero_iff]
     exact (memN _).2 ⟨y, rfl⟩
   have ginj : Function.Injective G := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro u hu
     obtain ⟨y, rfl⟩ := QuotientAddGroup.mk_surjective u
     rw [QuotientAddGroup.map_mk, QuotientAddGroup.eq_zero_iff] at hu
@@ -152,7 +111,7 @@ theorem adj : UpperTheory.Gal.FiniteEtaleModels.O.Adj := by
   have hn : 0 < q ^ e := pow_pos (Fact.out : Nat.Prime q).pos e
   have fst : ∀ x : D.La, (∀ y, ((q ^ e : ℕ) : ℤ) ∣ D.EF x y) → Cg (q ^ e) x 0 := by
     intro x hx
-    obtain ⟨z, hz⟩ := first D.EF hn hc D.nondeg perf x hx
+    obtain ⟨z, hz⟩ := first D.EF hc D.nondeg perf x hx
     exact ⟨z, by rw [zero_add]; exact hz⟩
   refine ⟨fst, ?_, ?_⟩
   · intro h
@@ -175,7 +134,7 @@ theorem adj : UpperTheory.Gal.FiniteEtaleModels.O.Adj := by
   · intro g hg
     have ginj : ∀ x z, g x = (q ^ e) • z → ∃ w, x = (q ^ e) • w := by
       intro x z hz
-      apply first D.EF hn hc D.nondeg perf x
+      apply first D.EF hc D.nondeg perf x
       intro y
       have h3 := hg x y
       rw [hz, map_nsmul, LinearMap.smul_apply, nsmul_eq_mul] at h3

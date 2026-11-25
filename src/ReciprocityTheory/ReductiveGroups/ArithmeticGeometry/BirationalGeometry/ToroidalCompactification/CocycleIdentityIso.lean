@@ -97,7 +97,7 @@ private theorem gm_pullU_eq_gm_comp {X Y Z : Scheme.{0}} (φ : Y ⟶ X) (r : Z �
     gm r z (φ ⁻¹ᵁ U) (pullU φ U x) = gm (r ≫ φ) z U x := by
   have h₁ : r z ∈ φ ⁻¹ᵁ U := h
   have h₂ : (r ≫ φ) z ∈ U := h
-  simp only [gm, dif_pos h₁, dif_pos h₂, MonoidHom.comp_apply]
+  simp only [gm, dite_eq_left h₁, dite_eq_left h₂, MonoidHom.comp_apply]
   ext
   simp only [Units.coe_map, pullU, MonoidHom.coe_coe]
   first
@@ -136,7 +136,7 @@ private theorem res_eq_mul_res_of_gm_id_eq_mul {Y : Scheme.{0}} {V U₁ U₃ : Y
   have key := H y hy
   rw [← gm_res (𝟙 Y) y h₁ hy a, ← gm_res (𝟙 Y) y h₃ hy c, ← map_mul] at key
   have hy' : (𝟙 Y) y ∈ V := hy
-  simp only [gm, dif_pos hy', MonoidHom.comp_apply] at key
+  simp only [gm, dite_eq_left hy', MonoidHom.comp_apply] at key
   have key2 := congrArg Units.val key
   exact key2
 
@@ -201,7 +201,7 @@ theorem res_eq_of_gm {Y : Scheme.{0}} {V U₁ U₂ U₃ U₄ : Y.Opens} {h₁ : 
   rw [← gm_res (𝟙 Y) y h₁ hy a, ← gm_res (𝟙 Y) y h₂ hy b, ← gm_res (𝟙 Y) y h₃ hy c, ← gm_res (𝟙 Y) y h₄ hy d,
     ← map_mul, ← map_mul] at key
   have hy' : (𝟙 Y) y ∈ V := hy
-  simp only [gm, dif_pos hy', MonoidHom.comp_apply] at key
+  simp only [gm, dite_eq_left hy', MonoidHom.comp_apply] at key
   have key2 := congrArg Units.val key
   exact key2
 

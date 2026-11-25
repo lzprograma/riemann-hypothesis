@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsTorusClassOfIrreducibleCharpolyUnitary
 public import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
 public import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
@@ -338,7 +339,7 @@ theorem eventually_mem_intLoc_iff_coordEquiv_mem :
 end GlobalTheory.TrUnitLat
 
 theorem GlobalTheory.TrUnitLat.eventually_mem_intLoc_iff_coordEquiv_mem_all : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (r : ℕ) (P : PPol σ r), ∀ᶠ v : HeightOneSpectrum (𝓞 F) in cofinite, ∀ y : Fv F v ⊗[F] Fld P, y ∈ intLoc F (Fld P) v ↔ GlobalTheory.TrUnitLat.coordEquiv P (Fv F v) y ∈ latLoc F (stdLattice E r) v :=
-  fun F E _ _ _ _ _ σ r P => GlobalTheory.TrUnitLat.eventually_mem_intLoc_iff_coordEquiv_mem P
+  fun _ _ _ _ _ _ _ _ _ P => GlobalTheory.TrUnitLat.eventually_mem_intLoc_iff_coordEquiv_mem P
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -431,16 +432,8 @@ theorem star'_star'_of_invol {F E : Type} [Field F] [Field E] [Algebra F E] {σ 
   exact RingHom.congr_fun h l
 
 theorem trace_star'_eq : ∀ (F E : Type) [Field F] [Field E] [Algebra F E] (σ : E →ₐ[F] E), (∀ e, σ (σ e) = e) → ∀ (n : ℕ) (P : PPol σ n) (l : Fld P), Algebra.trace E (Fld P) (star' P l) = σ (Algebra.trace E (Fld P) l) := by
-  intro F E _ _ _ σ hσ n P l
-  let e₁ : E ≃+* E := RingEquiv.ofRingHom (σ : E →+* E) (σ : E →+* E) (RingHom.ext hσ) (RingHom.ext hσ)
-  let e₂ : Fld P ≃+* Fld P := RingEquiv.ofRingHom (star' P : Fld P →+* Fld P) (star' P : Fld P →+* Fld P)
-    (RingHom.ext (star'_star'_of_invol hσ P)) (RingHom.ext (star'_star'_of_invol hσ P))
-  have he : RingHom.comp (algebraMap E (Fld P)) (e₁ : E →+* E) = RingHom.comp (e₂ : Fld P →+* Fld P) (algebraMap E (Fld P)) := by
-    ext e
-    exact (star'_algebraMap P e).symm
-  have h := Algebra.trace_eq_of_equiv_equiv e₁ e₂ he l
-  change _ = σ (Algebra.trace E (Fld P) (star' P l)) at h
-  rw [h, hσ]
+  intros
+  apply _root_.GlobalTheory.TrEll.HermTrace.trace_star <;> assumption
 
 end GlobalTheory.TrEll
 end -- clump:auto

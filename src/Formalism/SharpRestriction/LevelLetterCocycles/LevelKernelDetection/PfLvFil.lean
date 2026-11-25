@@ -1,43 +1,7 @@
 module
 
+import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfJumpsBdd
 public import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -68,17 +32,7 @@ theorem lvFil_Fil_anti {a b : ℤ} (hab : a ≤ b) : PD.Fil b ≤ PD.Fil a := by
     exact (PD.Fil_anti (a + k)).trans ih
 
 theorem lvFil_FilV_anti : Antitone (FilV PD (LL := LL) (V := V)) := by
-  intro a b hab
-  have h : (PD.Fil b).restrictScalars Qp ≤ (PD.Fil a).restrictScalars Qp := lvFil_Fil_anti PD hab
-  unfold FilV
-  rw [← Submodule.subtype_comp_inclusion _ _ h]
-  have e : AlgebraTensorModule.map (LinearMap.id : V →ₗ[LL] V)
-      (((PD.Fil a).restrictScalars Qp).subtype ∘ₗ Submodule.inclusion h) =
-      AlgebraTensorModule.map (LinearMap.id : V →ₗ[LL] V) ((PD.Fil a).restrictScalars Qp).subtype ∘ₗ
-        AlgebraTensorModule.map (LinearMap.id : V →ₗ[LL] V) (Submodule.inclusion h) := by
-    rw [← AlgebraTensorModule.map_comp, LinearMap.id_comp]
-  rw [e]
-  exact LinearMap.range_comp_le_range _ _
+  apply _root_.Formalism.MainNotions.N.Ln03.Pf.jb_FilV_anti <;> assumption
 
 theorem lvFil_FilCris_anti (ρ : Representation LL G V) : Antitone (FilCris PD ρ) := by
   intro a b hab
@@ -126,37 +80,10 @@ theorem lvFil_φ_mul (c : K₀) (x : V ⊗[Qp] B) :
   | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem lvFil_FilV_exh (y : V ⊗[Qp] BdR) : ∃ a, y ∈ FilV PD (LL := LL) (V := V) a := by
-  induction y using TensorProduct.induction_on with
-  | zero => exact ⟨0, zero_mem _⟩
-  | tmul v b =>
-    obtain ⟨a, ha⟩ := PD.Fil_exh b
-    exact ⟨a, ⟨v ⊗ₜ ⟨b, ha⟩, by simp⟩⟩
-  | add x y hx hy =>
-    obtain ⟨a, ha⟩ := hx
-    obtain ⟨b, hb⟩ := hy
-    exact ⟨min a b, add_mem (lvFil_FilV_anti PD (min_le_left a b) ha)
-      (lvFil_FilV_anti PD (min_le_right a b) hb)⟩
+  apply _root_.Formalism.MainNotions.N.Ln03.Pf.jb_FilV_exh <;> assumption
 
-theorem lvFil_FilV_sep (y : V ⊗[Qp] BdR) (hy : ∀ a, y ∈ FilV PD (LL := LL) (V := V) a) : y = 0 := by
-  classical
-  let bV := Module.Free.chooseBasis Qp V
-  let e := TensorProduct.equivFinsuppOfBasisLeft (N := BdR) bV
-  have hc : ∀ a, ∀ z ∈ FilV PD (LL := LL) (V := V) a, ∀ i, e z i ∈ PD.Fil a := by
-    intro a z hz i
-    obtain ⟨t, rfl⟩ := hz
-    induction t using TensorProduct.induction_on with
-    | zero => simp
-    | tmul v f =>
-      simp only [AlgebraTensorModule.map_tmul, LinearMap.id_apply, Submodule.subtype_apply, e,
-        TensorProduct.equivFinsuppOfBasisLeft_apply_tmul_apply]
-      exact (PD.Fil a).smul_of_tower_mem _ f.2
-    | add x y hx hy =>
-      rw [map_add (f := _), map_add (f := _), Finsupp.add_apply]
-      exact add_mem hx hy
-  have h0 : e y = 0 := by
-    ext i
-    exact PD.Fil_sep _ (fun a => hc a y (hy a) i)
-  exact e.injective (by rw [h0, map_zero])
+theorem lvFil_FilV_sep (y : V ⊗[Qp] BdR) (hy : ∀ a, y ∈ FilV PD (LL := LL) (V := V) a) : y = 0 :=
+  jb_FilV_sep PD y hy
 
 theorem lvFil_exh_sub (ℓ : Submodule LL (V ⊗[Qp] B)) [FiniteDimensional LL ℓ] :
     ∃ lo : ℤ, ∀ x ∈ ℓ, ιV PD (LL := LL) (V := V) x ∈ FilV PD (LL := LL) (V := V) lo := by

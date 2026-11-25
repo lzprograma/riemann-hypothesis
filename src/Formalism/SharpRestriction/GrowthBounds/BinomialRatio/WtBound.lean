@@ -3,47 +3,9 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountDefs
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountUp
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.NotKept
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.BinomialRatio.WdimUp, Formalism.SharpRestriction.GrowthBounds.BinomialRatio.WtBound
@@ -79,7 +41,7 @@ theorem wu_single (hCD : ChainDimAt) {N r : ℕ} [NeZero r] (LL : ChainLetters (
   have hpos : (0 : ℚ) < ∏ i, (sdXi r (LL.deg i) : ℚ) :=
     Finset.prod_pos fun i _ => by exact_mod_cast sdXi_pos _ _ (Nat.pos_of_ne_zero (NeZero.ne r))
   refine (le_of_eq ?_).trans (le_finsum_of_nonneg _ _ hpos h1 ?_ ka)
-  · rw [if_pos ⟨h, fun k => k.elim0⟩]
+  · rw [ite_eq_left ⟨h, fun k => k.elim0⟩]
   · intro x
     split_ifs with hx
     · exact (wdim_pos (IsChain.anti_last hx.1)).le
@@ -117,7 +79,7 @@ theorem wu_step {r : ℕ} (lam : Fin r → ℤ) (hlam : Antitone lam) (a : ℕ) 
   have hadj : ∀ i j : Fin r, i.val + 1 = j.val → lam j ≤ lam i := fun i j hij =>
     hlam (Fin.le_def.mpr (by omega))
   rcases lt_or_ge a r with h1 | h1
-  · rw [if_pos (by rw [decide_eq_true_eq]; omega)]
+  · rw [ite_eq_left (by rw [decide_eq_true_eq]; omega)]
     refine ⟨fun l => ?_, fun i j hij => ?_, ?_⟩
     · unfold wuSt
       have := l.2
@@ -129,7 +91,7 @@ theorem wu_step {r : ℕ} (lam : Fin r → ℤ) (hlam : Antitone lam) (a : ℕ) 
       split_ifs <;> omega
     · have e : wuDeg lam a = (lam ⟨a, h1⟩).toNat := by
         unfold wuDeg wuLam
-        rw [if_pos h1, dite_eq_left h1]
+        rw [ite_eq_left h1, dite_eq_left h1]
       rw [e]
       apply wu_sum _ _ ⟨a, h1⟩
       · unfold wuSt
@@ -140,7 +102,7 @@ theorem wu_step {r : ℕ} (lam : Fin r → ℤ) (hlam : Antitone lam) (a : ℕ) 
         unfold wuSt
         split_ifs <;> omega
   · rcases lt_or_ge a (2 * r) with h2 | h2
-    · rw [if_neg (by rw [decide_eq_true_eq]; omega)]
+    · rw [ite_eq_right (by rw [decide_eq_true_eq]; omega)]
       have h3 : 2 * r - 1 - a < r := by omega
       refine ⟨fun l => ?_, fun i j hij => ?_, ?_⟩
       · unfold wuSt
@@ -153,7 +115,7 @@ theorem wu_step {r : ℕ} (lam : Fin r → ℤ) (hlam : Antitone lam) (a : ℕ) 
         split_ifs <;> omega
       · have e : wuDeg lam a = (-(lam ⟨2 * r - 1 - a, h3⟩)).toNat := by
           unfold wuDeg wuLam
-          rw [if_neg (by omega), if_pos h2, dite_eq_left h3]
+          rw [ite_eq_right (by omega), ite_eq_left h2, dite_eq_left h3]
         rw [e]
         apply wu_sum _ _ ⟨2 * r - 1 - a, h3⟩
         · unfold wuSt
@@ -165,10 +127,10 @@ theorem wu_step {r : ℕ} (lam : Fin r → ℤ) (hlam : Antitone lam) (a : ℕ) 
           unfold wuSt
           split_ifs <;> omega
     · have h4 : a = 2 * r := by omega
-      rw [if_pos (by rw [decide_eq_true_eq]; omega)]
+      rw [ite_eq_left (by rw [decide_eq_true_eq]; omega)]
       have e : wuDeg lam a = 0 := by
         unfold wuDeg
-        rw [if_neg (by omega), if_neg (by omega)]
+        rw [ite_eq_right (by omega), ite_eq_right (by omega)]
       rw [e]
       refine ⟨fun l => ?_, fun i j hij => ?_, ?_⟩
       · unfold wuSt
@@ -208,17 +170,17 @@ theorem wu_prod {r : ℕ} (lam : Fin r → ℤ) :
   have e1 : ∀ x ∈ Finset.range r, (sdXi r (wuDeg lam x) : ℚ) = (sdXi r (wuLam lam x).toNat : ℚ) := fun x hx => by
     have := Finset.mem_range.mp hx
     unfold wuDeg
-    rw [if_pos this]
+    rw [ite_eq_left this]
   have e2 : ∀ x ∈ Finset.range r, (sdXi r (wuDeg lam (r + x)) : ℚ) =
       (fun y => (sdXi r (-(wuLam lam y)).toNat : ℚ)) (r - 1 - x) := fun x hx => by
     have := Finset.mem_range.mp hx
     unfold wuDeg
-    rw [if_neg (by omega), if_pos (by omega)]
+    rw [ite_eq_right (by omega), ite_eq_left (by omega)]
     have e : 2 * r - 1 - (r + x) = r - 1 - x := by omega
     rw [e]
   have e3 : wuDeg lam (r + r) = 0 := by
     unfold wuDeg
-    rw [if_neg (by omega), if_neg (by omega)]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega)]
   rw [Finset.prod_congr rfl e1, Finset.prod_congr rfl e2,
     Finset.prod_range_reflect (fun y => (sdXi r (-(wuLam lam y)).toNat : ℚ)) r, e3, sdXi_zero, Nat.cast_one, mul_one,
     ← Finset.prod_mul_distrib, ← Fin.prod_univ_eq_prod_range
@@ -242,7 +204,7 @@ theorem wdimUp_of (hCD : ChainDimAt) : WdimUpAt := by
     have := l.2
     show wuSt lam (2 * r + 1) l = lam l
     unfold wuSt
-    rw [if_neg (by omega), if_pos (by omega)]
+    rw [ite_eq_right (by omega), ite_eq_left (by omega)]
   rwa [e] at h
 
 end Formalism.MainNotions.ColumnSystems.Pf
@@ -274,7 +236,7 @@ theorem wb_vstep (hP : IsPair A Ai Ci mu lam) (a : ℕ) (ha : a < 2 * s + 1) (hv
   have h := hP.1.2 ⟨a, ha⟩
   have hvec : (kLetters A Ai Ci).vec ⟨a, ha⟩ = true := by
     unfold kLetters; simp only [decide_eq_true_eq]; exact hv
-  rw [if_pos hvec] at h
+  rw [ite_eq_left hvec] at h
   obtain ⟨h1, h2, -⟩ := h
   refine ⟨fun t ht => ?_, fun t ht => ?_⟩
   · have := h1 ⟨t + 1, by omega⟩
@@ -291,7 +253,7 @@ theorem wb_cstep (hP : IsPair A Ai Ci mu lam) (a : ℕ) (ha : a < 2 * s + 1) (hc
   have h := hP.1.2 ⟨a, ha⟩
   have hvec : (kLetters A Ai Ci).vec ⟨a, ha⟩ = false := by
     unfold kLetters; simp only [decide_eq_false_iff_not]; exact hc
-  rw [if_neg (by rw [hvec]; exact Bool.false_ne_true)] at h
+  rw [ite_eq_right (by rw [hvec]; exact Bool.false_ne_true)] at h
   obtain ⟨h1, h2, -⟩ := h
   refine ⟨fun t ht => ?_, fun t ht => ?_⟩
   · have := h1 ⟨t + 1, by omega⟩
@@ -307,7 +269,7 @@ theorem wb_one (hP : IsPair A Ai Ci mu lam) (t : ℕ) : wbK mu 1 t = 0 := by
   have h0 := hP.1.1
   have h := hP.1.2 ⟨0, by omega⟩
   have hvec : (kLetters A Ai Ci).vec ⟨0, by omega⟩ = true := by unfold kLetters; simp
-  rw [if_pos hvec] at h
+  rw [ite_eq_left hvec] at h
   obtain ⟨h1, h2, -⟩ := h
   unfold wbK
   split_ifs with hh
@@ -427,15 +389,15 @@ theorem wtBound_of (hCD : ChainDimAt) : WtBoundAt := by
     simp only [g]
     by_cases h0 : t = 0
     · subst h0
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       have : 0 ≤ lam ⟨0, ht⟩ := le_trans (by
         rcases Nat.eq_zero_or_pos s with hs | hs
         · exact le_of_eq (q2 0 (by omega) (by omega)).symm
         · exact q1 0 hs) (lo 0 ht)
       apply le_of_eq; congr 2; omega
-    rw [if_neg h0]
+    rw [ite_eq_right h0]
     by_cases h1 : t ≤ s
-    · rw [if_pos h1]
+    · rw [ite_eq_left h1]
       have hnn : 0 ≤ lam ⟨t, ht⟩ := le_trans (by
         rcases Nat.lt_or_ge t s with hs | hs
         · exact q1 t hs
@@ -454,16 +416,16 @@ theorem wtBound_of (hCD : ChainDimAt) : WtBoundAt := by
       rw [hrho]
       apply wb_sdXi_mono
       omega
-    · rw [if_neg h1]
+    · rw [ite_eq_right h1]
       by_cases h2 : t + s < r
-      · rw [if_pos h2]
+      · rw [ite_eq_left h2]
         have hz : lam ⟨t, ht⟩ = 0 := by
           apply le_antisymm
           · obtain ⟨t', rfl⟩ : ∃ t', t = t' + 1 := ⟨t - 1, by omega⟩
             exact le_trans (hi t' ht) (le_of_eq (q2 t' (by omega) (by omega)))
           · exact le_trans (le_of_eq (q2 t (by omega) h2).symm) (lo t ht)
         rw [hz]; simp [sdXi_zero]
-      · rw [if_neg h2]
+      · rw [ite_eq_right h2]
         have hnp : lam ⟨t, ht⟩ ≤ 0 := by
           obtain ⟨t', rfl⟩ : ∃ t', t = t' + 1 := ⟨t - 1, by omega⟩
           refine le_trans (hi t' ht) ?_
@@ -486,26 +448,26 @@ theorem wtBound_of (hCD : ChainDimAt) : WtBoundAt := by
   rw [← Finset.prod_range_mul_prod_Ico _ (show 1 ≤ r by omega), Finset.prod_range_one,
     ← Finset.prod_Ico_consecutive _ (show 1 ≤ s + 1 by omega) (show s + 1 ≤ r by omega),
     ← Finset.prod_Ico_consecutive _ (show s + 1 ≤ r - s by omega) (show r - s ≤ r by omega)]
-  have a0 : g 0 = (sdXi r (lam 0).toNat : ℚ) := by simp only [g, if_pos rfl]; rfl
+  have a0 : g 0 = (sdXi r (lam 0).toNat : ℚ) := by simp only [g, ite_eq_left rfl]; rfl
   have a1 : ∏ t ∈ Finset.Ico 1 (s + 1), g t = ∏ i : Fin s, (sdXi r (pairRho mu i).toNat : ℚ) := by
     rw [Finset.prod_Ico_eq_prod_range, Nat.add_sub_cancel, ← Finset.prod_range_reflect,
       ← Fin.prod_univ_eq_prod_range (fun i => g (1 + (s - 1 - i))) s]
     refine Finset.prod_congr rfl fun i _ => ?_
     have hi := i.2
     simp only [g]
-    rw [if_neg (by omega), if_pos (by omega), show s - (1 + (s - 1 - (i : ℕ))) = (i : ℕ) by omega]
+    rw [ite_eq_right (by omega), ite_eq_left (by omega), show s - (1 + (s - 1 - (i : ℕ))) = (i : ℕ) by omega]
   have a2 : ∏ t ∈ Finset.Ico (s + 1) (r - s), g t = 1 := by
     refine Finset.prod_eq_one fun t ht => ?_
     simp only [Finset.mem_Ico] at ht
     simp only [g]
-    rw [if_neg (by omega), if_neg (by omega), if_pos (by omega)]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left (by omega)]
   have a3 : ∏ t ∈ Finset.Ico (r - s) r, g t = ∏ i : Fin s, (sdXi r (pairN (s := s) lam i).toNat : ℚ) := by
     rw [Finset.prod_Ico_eq_prod_range, show r - (r - s) = s by omega,
       ← Fin.prod_univ_eq_prod_range (fun i => g (r - s + i)) s]
     refine Finset.prod_congr rfl fun i _ => ?_
     have hi := i.2
     simp only [g]
-    rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), show r - s + (i : ℕ) - (r - s) = (i : ℕ) by omega]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), show r - s + (i : ℕ) - (r - s) = (i : ℕ) by omega]
   rw [a0, a1, a2, a3, one_mul, mul_assoc]
 
 end Formalism.MainNotions.ColumnSystems.Pf

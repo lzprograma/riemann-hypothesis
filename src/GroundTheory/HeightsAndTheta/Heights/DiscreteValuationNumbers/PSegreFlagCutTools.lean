@@ -210,12 +210,12 @@ theorem flagLineCoord_flag (w w' e : Module.Basis (Fin N) Ω E)
     · rw [repr_flag_inv w w' hsame j ⟨k, hk⟩ hlt, map_zero, mul_zero]
     · have h0 : flagCoord w e t (k + 1) j = 0 := by
         unfold flagCoord
-        rw [if_neg]
+        rw [ite_eq_right]
         exact fun h => absurd hgt (by rw [Fin.lt_def]; simp only; omega)
       rw [h0, zero_mul]
   · simp
   · intro j _ hj
-    rw [Module.Basis.repr_self, Finsupp.single_apply, if_neg hj, map_zero, mul_zero]
+    rw [Module.Basis.repr_self, Finsupp.single_apply, ite_eq_right hj, map_zero, mul_zero]
   · simp
 
 end Flags

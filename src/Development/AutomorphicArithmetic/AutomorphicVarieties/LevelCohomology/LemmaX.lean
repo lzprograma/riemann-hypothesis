@@ -31,56 +31,9 @@ public import Mathlib.Algebra.Ring.Subring.Basic
 public import Mathlib.NumberTheory.DirichletCharacter.Basic
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.UnramifiedCocycleIsCoboundaryOfBernoulliUnit
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.BOneSum
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.ExistsResidueMapPadicAlgClIntegers, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SumFilterTwoPowRootsEqZeroOfSumEqZero, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.TwoPowDvdSubOneOrAddOneOfPowTwoPow, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.LxCore, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.LxPartial, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.PrimitiveTwoPowCharacterOneAddHalfEqNegOne, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.LemmaX
@@ -435,11 +388,11 @@ theorem lx_core {k : Type} [Field k] (l : ℕ) [Fact l.Prime] [CharP k l] (hl : 
         rintro rfl
         rw [map_neg, map_one] at hp
         exact hne hp
-      rw [mul_one, hxs, ← mul_sub, hd, if_pos hp, if_neg hx']
+      rw [mul_one, hxs, ← mul_sub, hd, ite_eq_left hp, ite_eq_right hx']
       by_cases hx1 : x = 1
       · subst hx1
-        rw [hv1, if_pos hs1, if_pos rfl, h1, map_one]; ring
-      · rw [if_neg hx1, if_neg]
+        rw [hv1, ite_eq_left hs1, ite_eq_left rfl, h1, map_one]; ring
+      · rw [ite_eq_right hx1, ite_eq_right]
         · ring
         · intro hlt'
           apply hx1
@@ -462,12 +415,12 @@ theorem lx_core {k : Type} [Field k] (l : ℕ) [Fact l.Prime] [CharP k l] (hl : 
         exact hp (map_one π)
       have hd' := hd (x + s)
       rw [add_sub_cancel_right] at hd'
-      rw [mul_one, hxs, ← mul_sub, ← neg_sub, hd', if_neg hp, if_neg hx']
+      rw [mul_one, hxs, ← mul_sub, ← neg_sub, hd', ite_eq_right hp, ite_eq_right hx']
       by_cases hx1 : x = -1
       · subst hx1
-        rw [hvs, if_pos (by omega), if_pos rfl]
+        rw [hvs, ite_eq_left (by omega), ite_eq_left rfl]
         linear_combination hodd
-      · rw [if_neg hx1, if_neg]
+      · rw [ite_eq_right hx1, ite_eq_right]
         · ring
         · intro hlt'
           apply hx1
@@ -481,7 +434,7 @@ theorem lx_core {k : Type} [Field k] (l : ℕ) [Fact l.Prime] [CharP k l] (hl : 
   have hev : Even (2 ^ e) := (Nat.even_pow.2 ⟨even_two, by omega⟩)
   have hm1 : ξ (-1) ^ (2 ^ e) = 1 := by
     rw [← map_pow, hev.neg_one_pow, map_one]
-  rw [if_pos (by simp), if_pos (by simp [hm1])] at hS
+  rw [ite_eq_left (by simp), ite_eq_left (by simp [hm1])] at hS
   have hx0 : IsUnit (1 + 2 ^ (m + e - 1) : ZMod (2 ^ (m + e))) := by
     by_contra h
     rw [hz _ h] at hh
@@ -626,7 +579,7 @@ theorem lx_partial {K : Type} [Field K] [CharZero K] (f N : ℕ) [NeZero N] (hf 
     simp only [this]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun a _ => ?_
-    simp only [ψ, ite_mul, mul_ite, zero_mul, mul_zero, Finset.sum_ite_eq, mem_univ, if_true]
+    simp only [ψ, ite_mul, mul_ite, zero_mul, mul_zero, Finset.sum_ite_eq, mem_univ, ite_true]
     ring
 
 end UpperTheory.V.X
@@ -968,12 +921,12 @@ theorem UpperTheory.V.X.lemmaX :
       congr 1
       apply Subtype.ext
       show g u - g (u - _) = ((2 ^ e : ℕ) : PadicAlgCl l) * c - φ _
-      rw [h, if_pos hlt]
+      rw [h, ite_eq_left hlt]
     · rw [sub_zero]
       congr 1
       apply Subtype.ext
       show g u - g (u - _) = ((2 ^ e : ℕ) : PadicAlgCl l) * c
-      rw [h, if_neg hlt, sub_zero]
+      rw [h, ite_eq_right hlt, sub_zero]
   have hφk1 : red ⟨φ ((1 : ℕ) : ZMod f), hφA 1⟩ = 1 := by
     have e0 : (⟨φ ((1 : ℕ) : ZMod f), hφA 1⟩ : A) = 1 := Subtype.ext (by simp)
     rw [e0, map_one]

@@ -37,7 +37,7 @@ theorem kUnit_diag_comm (hA : IsGlRep A) (a c : Fin n) (v : X) :
   simp only [LinearMap.sub_apply, Module.End.mul_apply] at h
   by_cases hac : a = c
   · subst hac; rfl
-  · simp only [if_neg hac, if_neg (Ne.symm hac), LinearMap.zero_apply, sub_zero, sub_eq_zero] at h
+  · simp only [ite_eq_right hac, ite_eq_right (Ne.symm hac), LinearMap.zero_apply, sub_zero, sub_eq_zero] at h
     exact h
 
 theorem kUnit_weight_shift (hA : IsGlRep A) {μ : Fin n → ℝ} {w : X} (hw : ∀ c, A c c w = (μ c : ℂ) • w)
@@ -72,7 +72,7 @@ theorem kUnitWtLin_shift (μ : Fin n → ℝ) {a b : Fin n} (hab : a < b) :
   have h : kUnitWtLin (fun c => μ c + (if c = a then 1 else 0) - (if c = b then 1 else 0)) =
       kUnitWtLin μ + ((n : ℝ) - ((a : ℕ) : ℝ)) - ((n : ℝ) - ((b : ℕ) : ℝ)) := by
     simp only [kUnitWtLin, mul_sub, mul_add, Finset.sum_sub_distrib, Finset.sum_add_distrib, mul_ite,
-      mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [h]
   linarith
 

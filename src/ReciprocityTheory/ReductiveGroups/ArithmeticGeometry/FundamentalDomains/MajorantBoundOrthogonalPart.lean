@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.UnipotentMoves.HermLinApply
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.UnipotentOnHyperbolicComplement
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LminorSubmatrixCastSucc
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.UnitaryComplementMoveOfIsotropic
@@ -45,22 +46,7 @@ variable {x : Frame X.Ψ r} {τ : X.Ψ}
 
 lemma maj_smul (hself : ∀ v, X.Hf x τ v v = (X.maj x τ v : ℂ)) (c : ℂ) (v : Fin r → ℂ) :
     X.maj x τ (c • v) = Complex.normSq c * X.maj x τ v := by
-  have hJ : X.Jp x τ (c • v) = c • X.Jp x τ v := by
-    unfold Jp; rw [X.ppos_smul, smul_comm (2 : ℂ) c, ← smul_sub]
-  have hH : ∀ u w, hermC τ.1 X.Gm (c • u) (c • w) = (Complex.normSq c : ℂ) * hermC τ.1 X.Gm u w := by
-    intro u w
-    unfold hermC
-    rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl fun a _ => ?_
-    rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl fun b _ => ?_
-    simp only [Pi.smul_apply, smul_eq_mul, map_mul]
-    rw [Complex.normSq_eq_conj_mul_self]
-    ring
-  have h1 := hself (c • v)
-  rw [show X.Hf x τ (c • v) (c • v) = hermC τ.1 X.Gm (X.Jp x τ (c • v)) (c • v) from rfl, hJ, hH,
-    show hermC τ.1 X.Gm (X.Jp x τ v) v = X.Hf x τ v v from rfl, hself v] at h1
-  exact_mod_cast h1.symm
+  apply UnipMove.DeltaValuation.maj_smul <;> assumption
 
 lemma maj_zero' (hself : ∀ v, X.Hf x τ v v = (X.maj x τ v : ℂ)) : X.maj x τ 0 = 0 := by
   have h1 := X.maj_smul hself (0 : ℂ) 0
@@ -289,7 +275,6 @@ lemma majorant_bound_orthogonal_part (ξ : Fin r → E) (x : Frame X.Ψ r) (hx :
   have hmain := hδ u hu τ
   simpa [u] using hmain
 
-set_option maxHeartbeats 1000000 in
 theorem unipotent_majorant_bound_data : ReducedFrameDomainCovering (E := E) := by
   intro r X ξ hξ x hx δ κ hκ0 hκ1 hδ
   have hCsub : ∀ (τ : X.Ψ) (u v w : Fin r → ℂ) (c : ℂ),
@@ -304,7 +289,6 @@ theorem unipotent_majorant_bound_data : ReducedFrameDomainCovering (E := E) := b
   have hee : ∀ τ : X.Ψ, hermC τ.1 X.Gm (emb τ.1 ξ) (emb τ.1 ξ) = 0 := by
     intro τ
     have h : hermC τ.1 X.Gm (emb τ.1 ξ) (emb τ.1 ξ) = τ.1 (herm X.Gm ξ ξ) := by
-      set_option synthInstance.maxHeartbeats 100000 in
         simp [hermC, herm, Data.emb, map_sum, map_mul, emb_cc]
     rw [h, hξ.2.1, map_zero]
   have he0 : ∀ τ : X.Ψ, emb τ.1 ξ ≠ 0 := by

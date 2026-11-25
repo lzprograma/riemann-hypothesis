@@ -16,53 +16,8 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.InvLevAtOf
 public import Formalism.SharpRestriction.LevelLetterCocycles.InId0OfMem
 public import Formalism.SharpRestriction.LevelLetterCocycles.LatticeMembershipAevalUniformizer
 import Formalism.SharpRestriction.LevelLetterCocycles.EqZeroOfPowDvd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PowerSeries.WeierstrassPreparation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.LevelLetterCocycles.JumpsLetOfWin
-import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.RegularLocalRing.Defs
@@ -119,7 +74,7 @@ section Idem
 
 variable {A : Type} [CommRing A] {E : A}
 
-theorem idem_mul (_hE : E * E = E) {x y : A} (h : x * E = y * E) (z : A) : (z * x) * E = (z * y) * E := by
+theorem idem_mul {x y : A} (h : x * E = y * E) (z : A) : (z * x) * E = (z * y) * E := by
   rw [mul_assoc, h, ← mul_assoc]
 
 theorem idem_pow (hE : E * E = E) {x y : A} (h : x * E = y * E) (k : ℕ) : x ^ k * E = y ^ k * E := by
@@ -219,7 +174,7 @@ theorem finLev_of [IsDomain O] (W : LocWach PD LL O v n) (hR : Formalism.MainNot
     have h1 : (∏ t ∈ Finset.range e, Formalism.MainNotions.ArcLiftingSetup.ps W t ^ H t) * letE a =
         (∏ t ∈ Finset.range e, Formalism.MainNotions.RamifiedCoefficientChains.Sh.at0 W (Fs t) ^ H t) * letE a :=
       idem_prod hE _ _ (fun t => idem_pow hE (hFe t) (H t)) e
-    have h2 := idem_mul hE (idem_pow hE h1 2) W.π₀
+    have h2 := idem_mul (idem_pow hE h1 2) W.π₀
     rw [h2, hGall, Formalism.MainNotions.RamifiedCoefficientChains.Sh.BT.evaluation_eq_homomorphism W hR, map_mul, map_pow, map_prod, ← Formalism.MainNotions.RamifiedCoefficientChains.Sh.BT.evaluation_eq_homomorphism W hR,
       evalZero_X_eq_uniformizer W hR]
     simp only [Formalism.MainNotions.RamifiedCoefficientChains.Sh.BT.evaluation_eq_homomorphism W hR, map_pow]
@@ -402,19 +357,19 @@ theorem crt_fam {ι : Type} [DecidableEq ι] (x₀ : LetA O n) (x : ι → LetA 
       fun i => if i = a then Formalism.MainNotions.ArcLiftingSetup.lA W ^ κ * t else R i * r, ?_, ?_⟩
     · intro i hi
       by_cases hia : i = a
-      · simp only [hia, if_true]; exact W.AΔ.mul_mem (lA_mem W κ) ht
-      · simp only [hia, if_false]
+      · simp only [hia, ite_true]; exact W.AΔ.mul_mem (lA_mem W κ) ht
+      · simp only [hia, ite_false]
         exact W.AΔ.mul_mem (hR i ((Finset.mem_insert.1 hi).resolve_left hia)) hr
     · rw [Finset.sum_insert ha]
       dsimp only
-      rw [if_pos rfl, Finset.erase_insert ha, Finset.prod_insert ha]
+      rw [ite_eq_left rfl, Finset.erase_insert ha, Finset.prod_insert ha]
       have hs : ∑ i ∈ s, x₀ * (∏ j ∈ (insert a s).erase i, x j) *
           (if i = a then Formalism.MainNotions.ArcLiftingSetup.lA W ^ κ * t else R i * r) =
           (∑ i ∈ s, x₀ * (∏ j ∈ s.erase i, x j) * R i) * r * x a := by
         rw [Finset.sum_mul, Finset.sum_mul]
         refine Finset.sum_congr rfl fun i hi => ?_
         have hia : i ≠ a := fun h => ha (h ▸ hi)
-        rw [if_neg hia, Finset.erase_insert_of_ne (Ne.symm hia),
+        rw [ite_eq_right hia, Finset.erase_insert_of_ne (Ne.symm hia),
           Finset.prod_insert (fun h => ha (Finset.mem_of_mem_erase h))]
         ring
       rw [hs, pow_add]

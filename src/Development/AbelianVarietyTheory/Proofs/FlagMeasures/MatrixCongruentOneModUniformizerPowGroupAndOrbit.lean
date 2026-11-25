@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsPowSmulMemOfIsLat
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermLat
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CongruentOneMatricesTransitiveNearHermitian
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsEqZpowMulUnit
@@ -70,7 +71,7 @@ theorem finite_image_of_factor {α β γ : Type} (S : Set α) (f : α → β) (g
 theorem cont_pos {W : Type} [AddCommGroup W] (W0 : AddSubgroup W) (S : Set W) (h : IsCO W0 S)
     (hS : S.Nonempty) : 0 < cont W0 S := by
   unfold cont
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   obtain ⟨h1, h2, -, h4⟩ := h.choose_spec
   refine mul_pos ?_ (div_pos ?_ ?_)
   · exact_mod_cast (Set.ncard_pos h4).2 (hS.image _)
@@ -164,20 +165,7 @@ theorem vE_unit (L : LocE F E) (ϖ : 𝒪[F]) (hϖ : Irreducible ϖ) (u : (𝒪[
 
 theorem exists_pow_mul_mem (L : LocE F E) (ϖ : 𝒪[F]) (hϖ : Irreducible ϖ) (x : E) :
     ∃ n : ℕ, algebraMap F E ((ϖ : F) ^ n) * x ∈ L.O := by
-  haveI : Module.Finite F E := Module.finite_of_finrank_eq_succ L.rank
-  have h1 : IsAlgebraic F x := Algebra.IsAlgebraic.isAlgebraic x
-  have h2 : IsAlgebraic 𝒪[F] x := (IsFractionRing.isAlgebraic_iff 𝒪[F] F E).2 h1
-  obtain ⟨r, hr, hi⟩ := h2.exists_integral_multiple
-  obtain ⟨n, u, rfl⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible hr hϖ
-  refine ⟨n, ?_⟩
-  have h3 := mul_mem (int_mem L ((u⁻¹ : (𝒪[F])ˣ) : 𝒪[F])) ((L.O_def _).2 hi)
-  have e3 : (((u⁻¹ : (𝒪[F])ˣ) : 𝒪[F]) : F) * ((u : 𝒪[F]) : F) = 1 := by
-    rw [← Subring.coe_mul]; simp
-  have e4 : ((u : 𝒪[F]) * ϖ ^ n) • x = algebraMap F E (((u : 𝒪[F]) : F) * (ϖ : F) ^ n) * x := by
-    rw [Algebra.smul_def]
-    rfl
-  rw [e4, ← mul_assoc, ← map_mul, ← mul_assoc, e3, one_mul] at h3
-  exact h3
+  apply _root_.GlobalTheory.PowSmulMemLattice.exists_pow_mul_mem_O <;> assumption
 
 theorem congK_basic (L : LocE F E) (ϖ : 𝒪[F]) (hϖ : Irreducible ϖ) {m i : ℕ} (hi : 1 ≤ i)
     {A : Matrix (Fin m) (Fin m) E} (hA : A ∈ congK L ϖ m i) :
@@ -276,7 +264,7 @@ theorem horb_isCO (L : LocE F E) (ϖ : 𝒪[F]) (hϖ : Irreducible ϖ) {m i : �
       have h := congrFun (congrFun hXY a) b
       have h1 : algebraMap F E ((ϖ : F) ^ c) * X a b ∈ L.O := (hS X hX).2 a b
       have h2 : algebraMap F E ((ϖ : F) ^ c) * Y a b ∈ L.O := (hS Y hY).2 a b
-      simp only [dif_pos h1, dif_pos h2] at h
+      simp only [dite_eq_left h1, dite_eq_left h2] at h
       have h3 := Ideal.Quotient.eq.1 h.symm
       have hI : I = Ideal.span {(⟨_, pow_mem' L ϖ (c + j)⟩ : L.O)} := by
         simp only [I]

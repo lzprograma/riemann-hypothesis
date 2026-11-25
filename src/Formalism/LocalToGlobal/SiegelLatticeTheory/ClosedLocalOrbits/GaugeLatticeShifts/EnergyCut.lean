@@ -19,8 +19,6 @@ namespace Formalism.L2.SG.RealObj.EnergyCut
 
 open Formalism.L2.SG.RealObj
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 theorem tens_onb (u' : D.what₂.Word) :
@@ -40,8 +38,8 @@ theorem tens_onb (u' : D.what₂.Word) :
     by_cases hij : i = j
     · subst hij; simp
     · obtain ⟨v, hv⟩ := Function.ne_iff.1 hij
-      rw [if_neg hij]
-      exact Finset.prod_eq_zero (Finset.mem_univ v) (if_neg hv)
+      rw [ite_eq_right hij]
+      exact Finset.prod_eq_zero (Finset.mem_univ v) (ite_eq_right hv)
   refine ⟨hon, ?_⟩
   have hmem : ∀ x, X.tensU u' x ∈ Submodule.span ℂ (Set.range e) := by
     intro x
@@ -118,7 +116,7 @@ theorem wtV_cont (u u' : D.what₂.Word) : Continuous (wtV u u') := by
     unfold JacV
     refine continuous_finsetProd _ fun l hl => ?_
     have h : l ≤ D.R.rS + 1 := (Finset.mem_Icc.mp hl).2.trans (Nat.le_succ _)
-    simp only [modC, Dl, dif_pos h]
+    simp only [modC, Dl, dite_eq_left h]
     fun_prop
   unfold wtV
   exact ((gv_diag_cont u u').pow _).mul hJ

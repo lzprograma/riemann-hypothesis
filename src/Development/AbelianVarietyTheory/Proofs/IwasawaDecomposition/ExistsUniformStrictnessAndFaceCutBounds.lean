@@ -14,43 +14,7 @@ public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolyF
 public import Mathlib.Algebra.Group.Submonoid.Finsupp
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LinearFormFromFinsupp
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonnegSumSmulIntBilinFormToRealMemPsdCone
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HomExtNormalSt
 
 @[expose] public section
@@ -237,7 +201,7 @@ theorem perModule_bound (hP : IsPolyFanOn bar φ X) : ∃ N₀ : ℕ, ∀ (m : �
   have hw : StrictWith bar φ N ℓ w := strictWith_of_ratCone hP hℓ hδ.mem hδ.nonneg hwb hwp hwδ hδw
   have hex : ∃ (N : ℕ) (ℓ : LinearMap.BilinForm ℤ X →ₗ[ℤ] ℤ), 0 < N ∧ StrictWith bar φ N ℓ (uT T) :=
     ⟨N, _, hN, StrictWith.of_pull e.symm.surjective hw⟩
-  have hD : D T = hex.choose := dif_pos hex
+  have hD : D T = hex.choose := dite_eq_left hex
   obtain ⟨ℓT, hNT, hT⟩ := hex.choose_spec
   have hT' : StrictWith bar φ hex.choose ℓT (fun t => pull e.toLinearMap (w t)) := by
     have : (fun t => pull e.toLinearMap (w t)) = uT T := funext fun t => pull_pull_symm e _
@@ -322,8 +286,7 @@ theorem faceCut_data (hP : IsPolyFanOn bar φ X) [Module.Finite ℤ X] {m m' : �
     have hsum : (0 : ℝ) < ∑ i, c i * h (γ i) := by
       rw [← apply_eq_sum_of_inRCone hβc h]; exact_mod_cast hpos
     obtain ⟨i, -, hi⟩ : ∃ i ∈ Finset.univ, 0 < c i * h (γ i) := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       exact absurd hsum (not_lt.2 (Finset.sum_nonpos hcon))
     have hci : 0 < c i := by
       rcases (hc i).lt_or_eq with hz | hz

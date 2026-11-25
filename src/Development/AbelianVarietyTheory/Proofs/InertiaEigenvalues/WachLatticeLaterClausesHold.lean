@@ -214,8 +214,8 @@ theorem XX_pow_mem_of_QQ_pow_mul_mem_map_phi : ∀ (l : ℕ) [Fact l.Prime] (O :
         (phi_mem_span l O ϖ (hdvd _ hlu) (m + 1) (Nat.le_add_left 1 m) (ih _ (hz j)))
   obtain ⟨a, b, hab⟩ := Ideal.mem_span_pair.1 (main c _ (Ideal.mul_mem_left _ _ (hc _)))
   have h := congrArg (PowerSeries.coeff c) hab
-  rw [map_add (f := _), PowerSeries.coeff_mul_C, PowerSeries.coeff_mul_X_pow', if_neg (by omega),
-    PowerSeries.coeff_X_pow, if_pos rfl, add_zero] at h
+  rw [map_add (f := _), PowerSeries.coeff_mul_C, PowerSeries.coeff_mul_X_pow', ite_eq_right (by omega),
+    PowerSeries.coeff_X_pow, ite_eq_left rfl, add_zero] at h
   exact hϖ.not_isUnit (IsUnit.of_mul_eq_one_right _ h)
 
 end GlobalTheory.Cyc
@@ -266,7 +266,7 @@ theorem indep_of_commensurable {κ : Type} [Fintype κ] (q : A) (hq : ∀ a, a *
     ext k i
     have e : ∑ i, ((M' * M) k i - ((q ^ (m + m')) • (1 : Matrix κ κ A)) k i) • b i = 0 := by
       simp only [sub_smul, Finset.sum_sub_distrib, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul,
-        mul_ite, mul_one, mul_zero, ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        mul_ite, mul_one, mul_zero, ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
       rw [sub_eq_zero, pow_add, mul_smul, hM', Finset.smul_sum]
       simp only [Matrix.mul_apply, Finset.sum_smul]
       rw [Finset.sum_comm]
@@ -641,12 +641,12 @@ theorem GlobalTheory.NL.CokerKill.X_pow_kills_coker : ∀ (D : Formalism.BasicNo
   have hj := (GlobalTheory.NL.JumpsSES.jumps_ses_and_one D HW l K s LL hG T₀ T₁ T₂ ι π c1 hses).1
   exact kills_of_cyclotomic _ π (Nat.cast_ne_zero.2 (Fact.out : l.Prime).ne_zero) hu
     ((D.loc l).PD_p K) ((HW l).W_s K s LL hG) hφ hX hQ
-    ((GlobalTheory.NL.IoXQ.main D HW F l K s LL hG).2.2.2.2.2.2 0).2
+    ((GlobalTheory.NL.IoXQ.main D.loc D.locA HW F l K s LL hG).2.2.2.2.2.2 0).2
     (fun hl hs => Dvd.intro_left _ (GlobalTheory.TorsionCard.card_torsion_mul_finrank (D.loc l) K LL
       ((HW l).W K s LL hG) hl (hs ▸ hG.2.2.1)))
-    c1 c2 (GlobalTheory.NL.N_basis D HW F l K s LL hG T₂ c2) M h
-    (_root_.GlobalTheory.NL.Heights.heights_from_jumps D HW F Cm l K s LL hG T₁ M h c1)
-    (fun hJ => _root_.GlobalTheory.NL.Heights.heights_from_jumps D HW F Cm l K s LL hG T₂ M h c2 fun τ i hτ a ha =>
+    c1 c2 (GlobalTheory.NL.N_basis D.loc D.locA HW F l K s LL hG T₂ c2) M h
+    (_root_.GlobalTheory.NL.Heights.heights_from_jumps D.loc D.locA D.locT HW F Cm l K s LL hG T₁ M h c1)
+    (fun hJ => _root_.GlobalTheory.NL.Heights.heights_from_jumps D.loc D.locA D.locT HW F Cm l K s LL hG T₂ M h c2 fun τ i hτ a ha =>
       hJ τ i hτ a ((hj τ a).2 (Or.inr ha)))
     (_root_.GlobalTheory.NL.CokerFin.coker_killed D HW F Cm l K s LL hG T₀ T₁ T₂ ι π c0 c1 c2 hses)
 end -- clump:auto
@@ -1021,7 +1021,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.WachCrystallineComparison =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CmpIsoOfExpansions =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CmpIsoOfExpansions", "h": "module\n\npublic import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot\npublic import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.WachCrystallineComparison\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineFrobeniusBijOnLettersDirectSum\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NBasisLoc\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionBasisDivisibility\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeEqStdPowerSeriesAtZero\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLevelExpansionAtRootOfUnity\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CmpIsoOfExpansions", "h": "module\n\npublic import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot\npublic import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.WachCrystallineComparison\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineFrobeniusBijOnLettersDirectSum\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NBasisLoc\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionBasisDivisibility\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeEqStdPowerSeriesAtZero\npublic import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLevelExpansionAtRootOfUnity\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExpansionsLowAndPullback\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -1035,14 +1035,6 @@ section Series
 
 variable {LL M : Type} [Field LL] [AddCommGroup M] [Module LL M]
 
-theorem conv_one (f : ℤ → M) : conv (1 : PowerSeries LL) f = f := by
-  funext k
-  unfold conv
-  rw [finsum_eq_single _ 0]
-  · simp
-  · intro j hj
-    simp [PowerSeries.coeff_one, hj]
-
 theorem conv_zero_coeff (e : PowerSeries LL) (f : ℤ → M) (hf : ∀ k < (0 : ℤ), f k = 0) :
     conv e f 0 = PowerSeries.constantCoeff e • f 0 := by
   unfold conv
@@ -1051,12 +1043,9 @@ theorem conv_zero_coeff (e : PowerSeries LL) (f : ℤ → M) (hf : ∀ k < (0 : 
   · intro j hj
     rw [hf _ (by omega), smul_zero]
 
-theorem mem_latSpan {ι : Type} (ex : ι → ℤ → M) (x : ι) : ex x ∈ latSpan (LL := LL) ex :=
-  Submodule.subset_span ⟨1, x, (conv_one _).symm⟩
-
 theorem neg_eq_zero_of_std {ι : Type} {D : Submodule LL M} {ex : ι → ℤ → M}
     (h : Std D (latSpan (LL := LL) ex)) (x : ι) : ∀ k < (0 : ℤ), ex x k = 0 :=
-  ((h _).1 (mem_latSpan ex x)).2
+  ((h _).1 (GlobalTheory.NL.Model.mem_latSpan ex x)).2
 
 theorem full_of_std {D : Submodule LL M} {Λ : Submodule LL (ℤ → M)} (h : Std D Λ) : Full D Λ :=
   ⟨0, fun f h1 h2 => (h f).2 ⟨h1, by simpa using h2⟩⟩
@@ -1067,7 +1056,7 @@ theorem span_const_of_std {ι : Type} {D : Submodule LL M} {ex : ι → ℤ → 
   apply le_antisymm
   · rw [Submodule.span_le]
     rintro _ ⟨x, rfl⟩
-    exact ((h _).1 (mem_latSpan ex x)).1 0
+    exact ((h _).1 (GlobalTheory.NL.Model.mem_latSpan ex x)).1 0
   · intro d hd
     have h1 : (Pi.single (0 : ℤ) d : ℤ → M) ∈ latSpan (LL := LL) ex := by
       refine (h _).2 ⟨fun k => ?_, fun k hk => Pi.single_eq_of_ne hk.ne _⟩
@@ -1186,7 +1175,7 @@ theorem cmp_iso_of_expansions [NeZero n] (hinj : Function.Injective (algebraMap 
         (Finset.mem_univ _)
     have hv : ∀ j, (letπ : LetA O n) ∣ nb.repr x j := fun j =>
       π_dvd_of_van W hinj _ fun i =>
-        hvan i x (exists_shift_of_std (hstd i) _ (mem_latSpan _ x) (h0 i)) j
+        hvan i x (exists_shift_of_std (hstd i) _ (GlobalTheory.NL.Model.mem_latSpan _ x) (h0 i)) j
     choose b hb using hv
     refine ⟨∑ j, b j • nb j, ?_⟩
     rw [Finset.smul_sum]
@@ -1229,13 +1218,13 @@ theorem cmp_iso (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.l
     GlobalTheory.IndefiniteRowSideFullHecke.WachCrystallineComparison.CmpIso ((HW l).W K s LL h) ((D.loc l).PD K).p T := by
   have := ((D.loc l).PD K).finK₀
   have : NeZero (Module.finrank ℚ_[l] ↥(K0 K)) := ⟨Module.finrank_pos.ne'⟩
-  have hstd := _root_.GlobalTheory.NL.AtZero.lat_one_std D HW F Cm l K s LL h T hT
-  have hD := _root_.GlobalTheory.NL.PhiD.phi_letters D HW l K s LL h T hT
-  obtain ⟨nb⟩ := GlobalTheory.NL.N_basis D HW F l K s LL h T hT
+  have hstd := _root_.GlobalTheory.NL.AtZero.lat_one_std D.loc D.locA D.locT HW F Cm l K s LL h T hT
+  have hD := _root_.GlobalTheory.NL.PhiD.phi_letters D.loc D.locA D.locT HW l K s LL h T hT
+  obtain ⟨nb⟩ := GlobalTheory.NL.N_basis D.loc D.locA HW F l K s LL h T hT
   exact cmp_iso_of_expansions ((HW l).W K s LL h) Subtype.val_injective T
     (fun i => ex (Cm l) h T i 1) (fun i x => ((Cm l).C K s LL h).tie.cmp_eq T hT i x) hstd
     hD.2.1 hD.2.2.1 nb
-    (fun i y => (((_root_.GlobalTheory.NL.LevInj.expansion_basis D HW F Cm l K s LL h T hT i 1 (prim_one l)
+    (fun i y => (((_root_.GlobalTheory.NL.LevInj.expansion_basis D.loc D.locA D.locT HW F Cm l K s LL h T hT i 1 (prim_one l)
         (full_of_std (hstd i))).2 _ nb).2.2 y 1).1)
     (fun i x m hx => by
       have key := ((Cm l).C K s LL h).tie.levB_φ T hT i 1 (prim_one _) x m hx 0
@@ -1328,20 +1317,6 @@ theorem finite_of_pi_pow {O : Type} [CommRing O] {n : ℕ} [NeZero n] {M : Type}
   exact Submodule.subset_span (Finset.mem_coe.2 (Finset.mem_image.2
     ⟨(i, k, m), Finset.mem_product.2 ⟨Finset.mem_univ _, Finset.mem_product.2 ⟨hk, hm⟩⟩, rfl⟩))
 
-theorem finiteLength_of_killed {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
-    {M : Type} [AddCommGroup M] [Module O M] [Module.Finite O M] {c : O}
-    (hc : c ≠ 0) (h : ∀ x : M, c • x = 0) : IsFiniteLength O M := by
-  have hfl := isFiniteLength_quotient_span_singleton O (mem_nonZeroDivisors_of_ne_zero hc)
-  rw [isFiniteLength_iff_isNoetherian_isArtinian] at hfl ⊢
-  refine ⟨inferInstance, ?_⟩
-  have ht : Module.IsTorsionBySet O M (Ideal.span {c}) :=
-    (Module.isTorsionBySet_span_singleton_iff c).mpr (fun x => h x)
-  letI := ht.module
-  haveI : IsScalarTower O (O ⧸ Ideal.span {c}) M := ht.isScalarTower
-  haveI : IsArtinianRing (O ⧸ Ideal.span {c}) := isArtinian_of_tower O hfl.2
-  haveI : Module.Finite (O ⧸ Ideal.span {c}) M := Module.Finite.of_restrictScalars_finite O _ _
-  exact isArtinian_of_surjective_algebraMap (R := O ⧸ Ideal.span {c}) Ideal.Quotient.mk_surjective
-
 section Generic
 
 variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
@@ -1374,7 +1349,7 @@ theorem length_cokN_lt_top [NeZero n] [IsDomain O] [IsDiscreteValuationRing O]
     refine ⟨y, hy, ?_⟩
     change W.map π y = ((p : ℕ) : O) ^ c • z
     rw [e, ← algebraMap_smul (LetA O n) (((p : ℕ) : O) ^ c) z, map_pow, map_natCast]
-  exact lt_top_iff_ne_top.2 (Module.length_ne_top_iff.2 (finiteLength_of_killed (pow_ne_zero c hp0) hl'))
+  exact lt_top_iff_ne_top.2 (Module.length_ne_top_iff.2 (GlobalTheory.AdmLoc.finiteLength_of_smul_eq_zero (pow_ne_zero c hp0) hl'))
 
 end Generic
 
@@ -1426,13 +1401,13 @@ theorem wach_used_clauses (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F :
     (Cm : CmpOf D.loc D.locA HW F) : DeltaInvariantNormBound D HW F Cm := by
   unfold DeltaInvariantNormBound
   refine ⟨GlobalTheory.NL.LetterFree.letters_free D HW F, GlobalTheory.NL.WachLatticeTrivialModUniformizer.wachLattice_galois_trivial_mod_uniformizer D HW F Cm,
-    GlobalTheory.NL.CmpCris.wachLattice_comparison_dcris D HW F Cm, _root_.GlobalTheory.NL.LatLevel.lattice_at_level D HW F Cm, _root_.GlobalTheory.NL.Heights.heights_from_jumps D HW F Cm,
+    GlobalTheory.NL.CmpCris.wachLattice_comparison_dcris D HW F Cm, _root_.GlobalTheory.NL.LatLevel.lattice_at_level D.loc D.locA D.locT HW F Cm, _root_.GlobalTheory.NL.Heights.heights_from_jumps D.loc D.locA D.locT HW F Cm,
     _root_.GlobalTheory.NL.Exact.exactness_of_N D HW F Cm, _root_.GlobalTheory.NL.PoleCrys.main D HW F, _root_.GlobalTheory.NL.NygaardFrobeniusPower.crystalline_extension_integral_cocycle_all_places D HW F Cm, _root_.GlobalTheory.NL.p9_statement D HW F,
     _root_.GlobalTheory.NL.FrobeniusMatrixUniqueness.main D HW F, _root_.GlobalTheory.NL.WachModulePoleQuotient.wachModule_consequences_poleQuotient D HW F Cm, GlobalTheory.NL.HerrComplexH1.herr_H1_description D HW F,
     GlobalTheory.NL.FiniteRestrictionH1f.mem_H1f_iff_res_mem D HW F, _root_.GlobalTheory.NL.IntComplex.main D HW F, _root_.GlobalTheory.NL.DefectTorsion.defect_torsion D HW F Cm,
     _root_.GlobalTheory.NL.CokerKill.X_pow_kills_coker D HW F Cm, ?_⟩
   unfold ConclusionE
-  exact ⟨GlobalTheory.NL.NygaardExtension.main D HW F, _root_.GlobalTheory.NL.SandJumps.main D HW F Cm⟩
+  exact ⟨GlobalTheory.NL.NygaardExtension.main D HW F, _root_.GlobalTheory.NL.SandJumps.main D.loc D.locA D.locT HW F Cm⟩
 
 end GlobalTheory.NL
 end -- clump:auto

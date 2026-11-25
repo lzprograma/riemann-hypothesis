@@ -78,29 +78,6 @@ theorem fib_continuous (hI : IsSplit P I) {s : (Fin 1 → Vsp X.dim) → ℂ} (h
   unfold tb
   exact continuous_finsetSum _ fun i _ => (continuous_apply i).smul continuous_const
 
-private lemma im_inner_eq_zero_on_real_span (S₀ : Set (Vsp X.dim))
-    (hS : ∀ x ∈ S₀, ∀ y ∈ S₀, (inner ℂ x y).im = 0) :
-    ∀ x ∈ Submodule.span ℝ S₀, ∀ y ∈ Submodule.span ℝ S₀, (inner ℂ x y).im = 0 := by
-  have key : ∀ x : Vsp X.dim, (∀ y ∈ S₀, (inner ℂ x y).im = 0) →
-      ∀ y ∈ Submodule.span ℝ S₀, (inner ℂ x y).im = 0 := by
-    intro x hx y hy
-    let f : Vsp X.dim →ₗ[ℝ] ℝ := Complex.imLm.comp ((innerSL ℂ x).toLinearMap.restrictScalars ℝ)
-    have hf : ∀ u, f u = (inner ℂ x u).im := fun u => rfl
-    have hle : Submodule.span ℝ S₀ ≤ LinearMap.ker f := by
-      rw [Submodule.span_le]
-      intro u hu
-      rw [SetLike.mem_coe, LinearMap.mem_ker, hf]
-      exact hx u hu
-    have h := hle hy
-    rwa [LinearMap.mem_ker, hf] at h
-  intro x hx y hy
-  have h1 : ∀ u ∈ S₀, (inner ℂ y u).im = 0 := by
-    intro u hu
-    have h := key u (hS u hu) y hy
-    rw [← inner_conj_symm, Complex.conj_im, h, neg_zero]
-  have h := key y h1 x hx
-  rw [← inner_conj_symm, Complex.conj_im, h, neg_zero]
-
 private lemma Hf_eq_inner_swap {ι : Type} [Fintype ι] (x y : EuclideanSpace ℂ ι) : Hf y x = inner ℂ x y := by
   unfold Hf
   rw [PiLp.inner_apply]
@@ -110,11 +87,9 @@ private lemma Hf_eq_inner_swap {ι : Type} [Fintype ι] (x y : EuclideanSpace �
 private lemma zmG_add_mem_of_isSplit (hI : IsSplit P I) {s : (Fin 1 → Vsp X.dim) → ℂ} (hs : s ∈ X.Sec 1 1)
     (w γ : Vsp X.dim) (hγI : γ ∈ I) : zmG I s (w + γ) = zmG I s w := by
   have hγR : γ ∈ IR I := Submodule.subset_span hγI
-  have hreal : ∀ x ∈ IR I, ∀ y ∈ IR I, (inner ℂ x y).im = 0 := by
-    refine im_inner_eq_zero_on_real_span (I : Set (Vsp X.dim)) ?_
-    intro x hx y hy
-    have h := hI.iso y hy x hx
-    rwa [Hf_eq_inner_swap] at h
+  have hreal : ∀ x ∈ IR I, ∀ y ∈ IR I, (inner ℂ x y).im = 0 := fun x hx y hy => by
+    rw [← Hf_eq_inner_swap]
+    exact Hf_im_span_iso (I : Set (Vsp X.dim)) hI.iso y hy x hx
   have hz : ∀ k u, z (IR I) k u = inner ℂ (e (IR I) k) u := by
     intro k u
     rw [z_eq_inner, innerSL_apply_apply]
@@ -133,12 +108,8 @@ private lemma zmG_add_mem_of_isSplit (hI : IsSplit P I) {s : (Fin 1 → Vsp X.di
     intro k
     rw [hz]
     apply Complex.ext
-    · rw [Complex.ofReal_re, OrthonormalBasis.repr_apply_apply, ← hγ', Submodule.coe_inner, heb]
-      first
-        | (rw [PiLp.inner_apply, PiLp.inner_apply, Complex.re_sum]
-           refine Finset.sum_congr rfl fun i _ => ?_
-           first
-             | (rw [RCLike.inner_apply, Complex.inner, mul_comm]))
+    · rw [Complex.ofReal_re, OrthonormalBasis.repr_apply_apply, ← hγ', Submodule.coe_inner, heb,
+        real_inner_eq_Hf, Hf_eq_inner_swap]
     · rw [Complex.ofReal_im]
       exact hreal _ (he_mem k) _ hγR
   have hstar : ∀ u : Vsp X.dim, ∑ k : Fin (dK (IR I)), z (IR I) k u * z (IR I) k γ = Hf u γ := by

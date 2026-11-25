@@ -9,8 +9,6 @@ public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.InfinitesimalDeca
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped Matrix
@@ -21,14 +19,9 @@ variable {n : ℕ} {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] 
   {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)}
 
 theorem inG_rsum {ι : Type*} (s : Finset ι) (r : ι → ℝ) (X : ι → Matrix (Fin n) (Fin n) ℂ)
-    (hX : ∀ i ∈ s, inG ε (X i)) : inG ε (∑ i ∈ s, (r i : ℂ) • X i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa using SmDerA.inG_zero ε
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha]
-    exact _root_.ReciprocityTheory.ChartRestriction.DS.SmDerA.inG_add (_root_.ReciprocityTheory.ChartRestriction.DS.SmDerA.inG_rsmul (hX a (Finset.mem_insert_self a s)) (r a))
-      (ih fun i hi => hX i (Finset.mem_insert_of_mem hi))
+    (hX : ∀ i ∈ s, inG ε (X i)) : inG ε (∑ i ∈ s, (r i : ℂ) • X i) :=
+  Finset.sum_induction _ (inG ε) (fun _ _ ha hb => SmDerA.inG_add ha hb)
+    (by simpa using SmDerA.inG_zero ε) fun i hi => SmDerA.inG_rsmul (hX i hi) (r i)
 
 theorem dS_rsum (hσ : IsURepOn (UJset ε) σ) {ι : Type*} (s : Finset ι) (r : ι → ℝ)
     (X : ι → Matrix (Fin n) (Fin n) ℂ) (hX : ∀ i ∈ s, inG ε (X i)) {v : H} (hv : IsSmoothVecU ε σ v) :
@@ -49,18 +42,9 @@ theorem dS_vsum (hσ : IsURepOn (UJset ε) σ) {X : Matrix (Fin n) (Fin n) ℂ} 
   | empty => simpa using dS_smul_vec (σ := σ) 0 X 0
   | insert a s ha ih =>
     have hs : ∀ i ∈ s, IsSmoothVecU ε σ (v i) := fun i hi => hv i (Finset.mem_insert_of_mem hi)
-    have hsum : IsSmoothVecU ε σ (∑ i ∈ s, c i • v i) := by
-      clear ih
-      induction s using Finset.induction_on with
-      | empty => simpa using (isSmoothVecU_zero : IsSmoothVecU ε σ (0 : H))
-      | insert b t hb ih2 =>
-        rw [Finset.sum_insert hb]
-        exact ((hs b (Finset.mem_insert_self b t)).smul (c b)).add
-          (ih2 (fun h => ha (Finset.mem_insert_of_mem h)) (fun i hi => hv i (by
-            rcases Finset.mem_insert.1 hi with rfl | hi
-            · exact Finset.mem_insert_self _ _
-            · exact Finset.mem_insert_of_mem (Finset.mem_insert_of_mem hi)))
-            (fun i hi => hs i (Finset.mem_insert_of_mem hi)))
+    have hsum : IsSmoothVecU ε σ (∑ i ∈ s, c i • v i) :=
+      Finset.sum_induction _ (IsSmoothVecU ε σ) (fun _ _ ha hb => ha.add hb)
+        isSmoothVecU_zero fun i hi => (hs i hi).smul (c i)
     rw [Finset.sum_insert ha, Finset.sum_insert ha, dS_add_vec hσ hX ((hv a (Finset.mem_insert_self a s)).smul _)
       hsum, dS_smul_vec, ih hs]
 

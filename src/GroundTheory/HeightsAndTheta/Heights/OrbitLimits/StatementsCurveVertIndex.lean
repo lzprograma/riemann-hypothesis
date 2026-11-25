@@ -17,8 +17,4 @@ def CurveVertIndex.Statement : Prop :=
       vertR (mCoordIdeal y) (Fin.elim0 : Fin 0 → ReciprocityTheory.ChartRestriction.G.Geo.HermLine ι) s =
         Real.log (genIndex (chartLat y (fun k => (d k : ℤ)) 1) (curveMul y (aeval y s)))
 
-namespace CurveVertIndex
-
-end CurveVertIndex
-
 end GroundTheory.Heights₂.Heights.Targets

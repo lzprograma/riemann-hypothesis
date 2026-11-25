@@ -136,8 +136,7 @@ theorem exists_hermitian_det_ne_zero_two :
   have h12 := mul_ne_zero h1 h2
   have key : ∃ m : Fin n × Fin n → ℕ, MvPolynomial.eval (fun p => (m p : κ))
       ((c.map C * G + d.map C).det * (c'.map C * Gᵀ + d'.map C).det) ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply h12
     apply MvPolynomial.funext_set (fun _ => Set.range (Nat.cast : ℕ → κ))
       (fun _ => Set.infinite_range_of_injective Nat.cast_injective)
@@ -208,8 +207,7 @@ theorem exists_orthogonal_idempotents_of_sum_mul_eq_one (F : Type) [Field F] [Nu
 
       rw [map_sum, map_one] at this
       exact this
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     rw [Finset.sum_eq_zero (fun i _ => hc i)] at h1
     exact zero_ne_one h1
   have hfin : ∀ v : HeightOneSpectrum (𝓞 F), ∃ i, 1 ≤ Valued.v ((s i).2 v * (f i).2 v) := by
@@ -219,8 +217,7 @@ theorem exists_orthogonal_idempotents_of_sum_mul_eq_one (F : Type) [Field F] [Nu
 
       rw [map_sum, map_one] at this
       exact this
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have := Valuation.map_sum_lt (Valued.v) (s := Finset.univ) (g := 1) one_ne_zero
       (fun i _ => hc i)
     rw [h1, map_one] at this
@@ -384,7 +381,6 @@ noncomputable section
 open scoped Matrix NNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.HermTransversal
 

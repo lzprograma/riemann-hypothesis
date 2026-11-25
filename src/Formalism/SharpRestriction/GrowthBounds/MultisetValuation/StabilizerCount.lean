@@ -1,5 +1,7 @@
 module
 
+
+import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.WeightUpdateAtPlace
 public import Formalism.SubspaceCounting.Statement
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import Mathlib.LinearAlgebra.Dimension.Constructions
@@ -7,58 +9,10 @@ public import Mathlib.LinearAlgebra.Dimension.Finite
 public import Mathlib.LinearAlgebra.FreeModule.PID
 public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
 public import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.Style
 import Formalism.SubspaceCounting.SubspaceCountingProofs.ManyOrbits
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.ThetaLogCoordinates.ProductIdealMonotone.ElementarySymmetricExpBound, Formalism.ThetaLogCoordinates.ProductIdealMonotone.ProductIdealProofs.ElementarySymmetricExpBound, Formalism.SharpRestriction.GrowthBounds.MultisetValuation.StabilizerCount
 
@@ -307,18 +261,7 @@ theorem m_free (G : GAtP p) (v : Fin G.P.nV) [Module.Finite G.O G.M] : Module.Fr
   exact Module.free_of_finite_type_torsion_free'
 
 theorem svc_p_ne_zero (G : GAtP p) (v : Fin G.P.nV) : (p : G.O) ≠ 0 := by
-  have hS := G.P.setting v
-  haveI := hS.frac_alt
-  have hW : (p : G.P.W v) ≠ 0 := hS.p_unif.ne_zero
-  have hQ : (p : G.P.Qq v) ≠ 0 := by
-    rw [← map_natCast (algebraMap (G.P.W v) (G.P.Qq v))]
-    exact fun h0 => hW (IsFractionRing.injective (G.P.W v) (G.P.Qq v) (h0.trans (map_zero _).symm))
-  have hK : (p : G.Kf) ≠ 0 := by
-    rw [← map_natCast (G.P.ι v)]
-    exact (map_ne_zero (G.P.ι v)).2 hQ
-  intro h
-  apply hK
-  rw [← map_natCast (algebraMap G.O G.Kf), h, map_zero]
+  apply _root_.Formalism.L2.G.Pend.p_ne_zero_of_place <;> assumption
 
 theorem dna_le_d (G : GAtP p) (v : Fin G.P.nV) (e : ℕ) [Module.Finite G.O G.M]
     (hs1 : G.Mna.map (((p : G.O) ^ e) • LinearMap.id) ≤ G.M) : G.dna ≤ G.d := by
@@ -573,7 +516,7 @@ theorem stmt6G (D : Formalism.BasicNotions.D7) (L : SizeData₂ D) (X : Inst D L
   by_cases hE : Formalism.MainNotions.G.VV X K (aL L) (bL L) (D.what₂.places.resChar w) = ∅
   · have htau : tauP X K (aL L) (bL L) (D.what₂.places.resChar w) = 0 := by
       unfold tauP
-      rw [if_pos hE]
+      rw [ite_eq_left hE]
     have hio : ioP X K (aL L) (bL L) (D.what₂.places.resChar w) = 0 := by
       unfold ioP
       rw [dite_eq_right]
@@ -622,7 +565,7 @@ theorem stmt6G (D : Formalism.BasicNotions.D7) (L : SizeData₂ D) (X : Inst D L
         ((X.ep (D.what₂.places.resChar w) + ∑ t0 ∈ Formalism.MainNotions.G.VV X K (aL L) (bL L) (D.what₂.places.resChar w),
           D.R.m * (⌈tv X K (aL L) (bL L) (D.what₂.places.resChar w) t0⌉₊ + Dp K L (D.what₂.places.resChar w) + 1) : ℕ) : ℝ) := by
       unfold tauP
-      rw [if_neg hE]
+      rw [ite_eq_right hE]
       push_cast
       rfl
     have hτ : ⌈tauP X K (aL L) (bL L) (D.what₂.places.resChar w)⌉.toNat =

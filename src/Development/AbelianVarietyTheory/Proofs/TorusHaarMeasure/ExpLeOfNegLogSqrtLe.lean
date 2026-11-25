@@ -78,7 +78,7 @@ theorem exists_rdU_ne_zero {σ : c.F →+* ℂ} {r : ℕ} (U : Unf Xo c σ r) {N
   haveI : IsAlgClosed (CAt σ) := inferInstanceAs (IsAlgClosed ℂ)
   obtain ⟨m, hm⟩ := hw (CAt σ) (U.un k ⟨x, hx⟩)
   refine ⟨m, ?_⟩
-  have e : rdU U (w m) k x = toC (evR Xo c (w m) (U.un k ⟨x, hx⟩)) := dif_pos hx
+  have e : rdU U (w m) k x = toC (evR Xo c (w m) (U.un k ⟨x, hx⟩)) := dite_eq_left hx
   rw [e]
   exact hm
 
@@ -139,7 +139,7 @@ theorem firstMin_fn_lower {E : Type} [Field E] [NumberField E] [IsCMField E] {r 
   refine ⟨2 * ReciprocityTheory.ChartRestriction.G.I2.PT.f E / ReciprocityTheory.ChartRestriction.G.I2.PT.rd E ^ 2, th, by positivity, hth,
     fun x _ hlt => ?_⟩
   unfold ReciprocityTheory.ChartRestriction.G.I2.phiFD
-  rw [if_pos hlt, div_div]
+  rw [ite_eq_left hlt, div_div]
 
 
 

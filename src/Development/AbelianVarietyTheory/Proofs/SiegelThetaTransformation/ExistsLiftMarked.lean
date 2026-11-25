@@ -21,46 +21,7 @@ import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.Hermiti
 import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsDerivAt0OfIsPullback
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsHolToFibPtAndCompFibre
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.DatEqZero
 
 @[expose] public section
@@ -71,7 +32,6 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level
 open GlobalTheory.SW hiding Level
 open Formalism.L2.Pj Formalism.L2.PjFree GlobalTheory.Dict GlobalTheory.ClsVal
 open scoped ComplexConjugate Classical
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.Dict.MarkLift
 
@@ -271,147 +231,8 @@ end Geometry
 
 
 open GlobalTheory.Dict.Lift in
-theorem anFib_lift_ex : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Geo.Tor.Level H) (Xo : Moduli Dw l) (c : Coeff l) (n : ℕ) (d : DeltaDat Xo c n) [Algebra c.F ℂ] [Algebra d.c₂.F ℂ], (∀ t : c.F, algebraMap d.c₂.F ℂ (d.eF t) = algebraMap c.F ℂ t) → d.IsLev → ∀ (r g : ℕ) (X : Data E r) (bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ) (idx : Fin g ≃ X.Ψ × Fin r) (e : Fin g ≃ Lt1 Dw) (x : Frame X.Ψ r) (L : Lt E r) (y : FrPt Xo c ℂ) (A : AnFib X bas idx e x L y), IsSympl X bas → x ∈ X.dom → SelfD X L → ∀ y₂ : FrPt d.Xo₂ d.c₂ ℂ, FrOver d y₂ y → ∀ mk : Dw.La →ₗ[𝓞 E] (Fin r → E), A.Marked mk → ∃ A₂ : AnFib X bas idx e x L y₂, (∀ z, (A₂.ex z).left ≫ d.m.φ = (A.ex z).left) ∧ (∀ θ, A.Reads 1 y.s θ → A₂.Reads 1 y₂.s θ) ∧ ∃ mk₂ : Dw.La →ₗ[𝓞 E] (Fin r → E), IsMark d.l₂ L mk₂ ∧ A₂.Marked mk₂ ∧ MarkOver l d.l₂ L mk mk₂ := by
-  intro E _ _ _ H Dw l Xo c n d _ _ _ hlev r g X bas idx e x L y A hsym hx hL y₂ hover mk hmk
-  obtain ⟨hb, hu, w, pm, t, hw, hrig, pm1, pm2, hst, hpm⟩ := hover
-  obtain ⟨Φ, hΦ⟩ := exists_mulEquiv d.m.cart y₂.x y.x hb
-  let ex : (Fin g → ℂ) → (ptO d.Xo₂ y₂.x ⟶ d.Xo₂.univ.t.G) := fun z => Φ.symm (A.ex z)
-  have hex : ∀ z, (ex z).left ≫ d.m.φ = (A.ex z).left := fun z => by
-    rw [← hΦ]
-    exact congrArg _ (Φ.apply_symm_apply _)
-  have hbase : ∀ z, (ex z).left ≫ d.Xo₂.univ.t.G.hom = y₂.x := fun z => Over.w (ex z)
-  have hol : IsHolTo Set.univ (fun z => (ex z).left) := by
-    refine HolFibre.isHolTo_of_isPullback d.m.cart.1 ?_ ?_
-    · exact (funext hex).symm ▸ A.hol
-    · exact (funext hbase).symm ▸ HolFibre.isHolTo_const isOpen_univ _
-  obtain ⟨fr, fr_hol, fr_ne, fr_g, key⟩ := exists_frame Xo.univ.t.PP.isLB d.Xo₂.univ.t.PP.isLB hw
-    (fun z => (ex z).left) hol A.fr (by simpa only [hex] using A.fr_hol) (by simpa only [hex] using A.fr_ne)
-    (by simpa only [hex] using A.fr_g)
-  have hch : ∀ z, ∃ a, ⊤ ≤ ((ex z).left ≫ d.m.φ) ⁻¹ᵁ Xo.univ.t.PP.L.U a :=
-    fun z => exists_chart _ _ Xo.univ.t.PP.isLB
-  have hadd : ∀ z z', ex (z + z') = ex z * ex z' := fun z z' => by
-    simp only [ex, A.ex_add, map_mul]
-  have hker : ∀ z, ex z = 1 ↔ ∃ v ∈ L, z = pv X idx x v := fun z => by
-    rw [← A.ex_ker]
-    exact Φ.symm.map_eq_one_iff
-  have hpv0 : (0 : Fin g → ℂ) = pv X idx x 0 := by
-    have := (hx_laws E r X g bas idx 0 hsym Even.zero x hx).2.2.2.2.1 0 0
-    rw [zero_smul] at this
-    rw [this]
-    funext j
-    simp
-  have hex0 : (ex 0).left = y₂.x ≫ eSec d.Xo₂.univ.t.G := by
-    rw [(hker 0).2 ⟨0, L.zero_mem, hpv0⟩]
-    exact one_left _
-  let A₂ : AnFib X bas idx e x L y₂ :=
-    { ex := ex
-      ex_add := hadd
-      ex_onto := Φ.symm.surjective.comp A.ex_onto
-      ex_ker := hker
-      ex_lin := fun a z => by
-        apply Φ.injective
-        apply Over.OverMorphism.ext
-        rw [hΦ, hΦ, hex, A.ex_lin, Over.comp_left, Over.comp_left, Category.assoc, d.m.act, ← Category.assoc, hex]
-      hol := hol
-      der := fun ℓ => by
-        obtain ⟨v, hv⟩ := VerticalDeriv.exists_isDerivAt0 hol (Pi.single (e.symm ℓ) 1)
-        have h1 := FibreDeriv.isDerivAt0_comp hv d.m.φ
-        simp only [hex] at h1
-        have h2 := VerticalDeriv.isDerivAt0_unique h1 (A.der ℓ)
-        have h3 := VerticalDeriv.isDerivAt0_vertical _ _ hbase hv
-        have : v = y₂.u ℓ.1 ℓ.2 := d.m.cart.1.hom_ext (h2.trans (hu _ _).symm) (h3.trans (y₂.tan _ _).1.symm)
-        exact this ▸ hv
-      fr := fr
-      fr_hol := fr_hol
-      fr_ne := fr_ne
-      fr_g := fr_g
-      fr_0 := fun j hj => by
-        obtain ⟨a, ha⟩ := hch 0
-        have h1 := key a j 0 ha hj
-        have h2 := A.fr_0 a (hex 0 ▸ ha)
-        have h3 := val_rig d.m.cm Xo.univ.t.PP d.Xo₂.univ.t.PP w hrig y₂.x a j (hex0 ▸ ha) (hex0 ▸ hj)
-        have h4 : y₂.x ≫ d.m.cm.e = y.x := by rw [d.m.base]; exact hb
-        have h5 := wv_ne w ha hj
-        erw [h4, ← h2, h1, ← hex0] at h3
-        exact mul_left_cancel₀ h5 h3
-      χ := A.χ
-      χ_norm := A.χ_norm
-      fr_per := fun v hv j z hj => by
-        obtain ⟨a, ha⟩ := hch z
-        have hz : ex (z + pv X idx x v) = ex z := by rw [hadd, (hker _).2 ⟨v, hv, rfl⟩, _root_.mul_one]
-        have h1 := key a j z ha hj
-        have h2 := key a j (z + pv X idx x v) (hz ▸ ha) (hz ▸ hj)
-        have h3 := A.fr_per v hv a z (hex z ▸ ha)
-        simp only [hz] at h2
-        rw [h1, h2] at h3
-        apply mul_left_cancel₀ (wv_ne w ha hj)
-        rw [h3]
-        ring }
-  refine ⟨A₂, hex, fun θ hθ j z pt hp1 hp2 hj => ?_, ?_⟩
-  · obtain ⟨a, ha⟩ := hch z
-    have hp1' : pt ≫ (snd (Over.mk y₂.x) d.Xo₂.univ.t.G).left = (ex z).left := hp1
-    have hq1 : (pt ≫ pm) ≫ Formalism.L2.PjFree.gxFst y.x = (A.ex z).left := by
-      rw [Category.assoc, Formalism.L2.PjFree.gxFst, pm1, ← Category.assoc, hp1', hex]
-    have hq2 : (pt ≫ pm) ≫ Formalism.L2.PjFree.gxSnd y.x = 𝟙 _ := by
-      rw [Category.assoc, Formalism.L2.PjFree.gxSnd, pm2]
-      exact hp2
-    have h1 := hθ a z (pt ≫ pm) hq1 hq2 (hex z ▸ ha)
-    have h2 := val_secMaps w _ y₂.s t hst pt a j (hp1' ▸ ha) (hp1' ▸ hj)
-    have hle : (LB.LinComb (Xo.univ.t.PP.L.pull d.m.φ) (K := Fin 1)
-        (fun _ => (snd (Over.mk y₂.x) d.Xo₂.univ.t.G).left) (fun _ => 1)).U (fun _ _ => a) ≤
-          pm ⁻¹ᵁ (PPx y.x).U (fun _ => a) := by
-      intro p hp
-      have h3 : ((snd (Over.mk y₂.x) d.Xo₂.univ.t.G).left ≫ d.m.φ) p ∈ Xo.univ.t.PP.L.U a :=
-        Set.mem_iInter.1 (Set.mem_iInter.1 hp 0) ⟨⟩
-      rw [← pm1] at h3
-      exact Set.mem_iInter.2 fun _ => h3
-    have h3 := hpm (fun _ => a) hle
-    have hm : ⊤ ≤ pt ⁻¹ᵁ LB.wchart (Xo.univ.t.PP.L.pull d.m.φ)
-        (fun _ : Fin 1 => (snd (Over.mk y₂.x) d.Xo₂.univ.t.G).left) (fun _ _ => a) :=
-      (mem_wchart pt _ _ _).2 fun _ => (mem_wchart _ _ _ _).2 fun _ => hp1' ▸ ha
-    have h4 := valAt'_appLE pt pm _ _ hle (y.s.f (fun _ => a)) hm
-    have h5 := (h2.symm.trans ((congrArg (valAt' pt _) h3).symm.trans h4)).trans h1
-    rw [hp1', key a j z ha hj, zpow_one] at h5
-    apply mul_left_cancel₀ (wv_ne w ha hj)
-    refine h5.trans ?_
-    change _ = _ * (θ z * fr j z ^ (1 : ℤ))
-    rw [zpow_one]
-    ring
-  · obtain ⟨mk₂, h₁, h₂⟩ := GlobalTheory.Dict.exists_mark E H Dw d.l₂ d.Xo₂ d.c₂ r g X bas idx e x L y₂ A₂ hsym hx hL
-    refine ⟨mk₂, h₁, h₂, fun a ha => ?_⟩
-    obtain ⟨hdvd, hM, hcop, -, -, heta, -⟩ := hlev
-    obtain ⟨-, -, -, -, hsm, hinj, -⟩ := hx_laws E r X g bas idx 0 hsym Even.zero x hx
-    have ha' : a ∈ Mfr l • (⊤ : Submodule (𝓞 E) Dw.La) :=
-      Submodule.smul_mono_left (Ideal.map_mono hdvd.2.1) ha
-    have hM0 : (l.M : E) ≠ 0 := Nat.cast_ne_zero.2 (by have := l.three_le; omega)
-    have hp0 : (d.pd : E) ≠ 0 := Nat.cast_ne_zero.2 (by
-      intro h0
-      have := d.l₂.three_le
-      rw [hM, h0] at this
-      omega)
-    have hpadd : ∀ u v, pv X idx x (u + v) = pv X idx x u + pv X idx x v := fun u v => by
-      rw [pv, per_add]
-      rfl
-    have hpow : ∀ (k : ℕ) v, A.ex (pv X idx x ((k : E) • v)) = A.ex (pv X idx x v) ^ k := fun k v => by
-      induction k with
-      | zero => rw [Nat.cast_zero, zero_smul, pow_zero]; exact (A.ex_ker _).2 ⟨0, L.zero_mem, rfl⟩
-      | succ k ih => rw [Nat.cast_succ, add_smul, one_smul, hpadd, A.ex_add, ih, pow_succ]
-    have e1 : Φ (levPt d.Xo₂ y₂.x a) ^ d.pd = levPt Xo y.x a := by
-      apply Over.OverMorphism.ext
-      rw [← map_pow, hΦ, levPt, levPt, ← MonObj.comp_pow, Over.comp_left, Over.comp_left, Category.assoc, heta.1,
-        toUnit_left, toUnit_left, ← hb]
-      exact (Category.assoc _ _ _).symm
-    have e2 : Φ (levPt d.Xo₂ y₂.x a) = A.ex (pv X idx x (((d.l₂.M : E)⁻¹) • mk₂ a)) := by
-      rw [h₂ a ha]
-      exact Φ.apply_symm_apply _
-    rw [e2, ← hpow, hmk a ha', smul_smul, hM, Nat.cast_mul, mul_inv, mul_left_comm, mul_inv_cancel₀ hp0,
-      _root_.mul_one] at e1
-    have e3 : A.ex (pv X idx x ((l.M : E)⁻¹ • mk₂ a - (l.M : E)⁻¹ • mk a)) = 1 := by
-      apply mul_right_cancel (b := A.ex (pv X idx x ((l.M : E)⁻¹ • mk a)))
-      rw [← A.ex_add, ← hpadd, sub_add_cancel, _root_.one_mul, e1]
-    obtain ⟨u, hu', e4⟩ := (A.ex_ker _).1 e3
-    refine ⟨u, hu', ?_⟩
-    rw [← hinj e4, ← Nat.cast_smul_eq_nsmul E, ← smul_sub, smul_smul, mul_inv_cancel₀ hM0, one_smul, add_sub_cancel]
+theorem anFib_lift_ex : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Geo.Tor.Level H) (Xo : Moduli Dw l) (c : Coeff l) (n : ℕ) (d : DeltaDat Xo c n) [Algebra c.F ℂ] [Algebra d.c₂.F ℂ], (∀ t : c.F, algebraMap d.c₂.F ℂ (d.eF t) = algebraMap c.F ℂ t) → d.IsLev → ∀ (r g : ℕ) (X : Data E r) (bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ) (idx : Fin g ≃ X.Ψ × Fin r) (e : Fin g ≃ Lt1 Dw) (x : Frame X.Ψ r) (L : Lt E r) (y : FrPt Xo c ℂ) (A : AnFib X bas idx e x L y), IsSympl X bas → x ∈ X.dom → SelfD X L → ∀ y₂ : FrPt d.Xo₂ d.c₂ ℂ, FrOver d y₂ y → ∀ mk : Dw.La →ₗ[𝓞 E] (Fin r → E), A.Marked mk → ∃ A₂ : AnFib X bas idx e x L y₂, (∀ z, (A₂.ex z).left ≫ d.m.φ = (A.ex z).left) ∧ (∀ θ, A.Reads 1 y.s θ → A₂.Reads 1 y₂.s θ) ∧ ∃ mk₂ : Dw.La →ₗ[𝓞 E] (Fin r → E), IsMark d.l₂ L mk₂ ∧ A₂.Marked mk₂ ∧ MarkOver l d.l₂ L mk mk₂ :=
+  GlobalTheory.Dict.Lift.anFib_lift_ex
 
 theorem exists_lift_marked : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Geo.Tor.Level H) (Xo : Moduli Dw l) (c : Coeff l) (n : ℕ) (d : DeltaDat Xo c n) [Algebra c.F ℂ] [Algebra d.c₂.F ℂ], (∀ t : c.F, algebraMap d.c₂.F ℂ (d.eF t) = algebraMap c.F ℂ t) → d.IsLev → l.A = 1 → d.l₂.A = 1 → (Dw.p = Dw.q → ∀ h : KA l ≤ KA d.l₂, d.r ≫ Xo.s = d.Xo₂.s ≫ Geo.Tor.spMap (IntermediateField.inclusion h).toRingHom) → ∀ (r g : ℕ) (X : Data E r) (bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ) (idx : Fin g ≃ X.Ψ × Fin r) (e : Fin g ≃ Lt1 Dw) (x : Frame X.Ψ r) (L : Lt E r) (y : FrPt Xo c ℂ) (A : AnFib X bas idx e x L y), IsSympl X bas → x ∈ X.dom → SelfD X L → ∀ mk mk₂ : Dw.La →ₗ[𝓞 E] (Fin r → E), IsMark l L mk → A.Marked mk → IsMark d.l₂ L mk₂ → MarkOver l d.l₂ L mk mk₂ → ∃ (y₂ : FrPt d.Xo₂ d.c₂ ℂ) (A₂ : AnFib X bas idx e x L y₂), FrOver d y₂ y ∧ A₂.Marked mk₂ ∧ ∀ θ, A.Reads 1 y.s θ → A₂.Reads 1 y₂.s θ := by
   intro E _ _ _ H Dw l Xo c n d _ _ hk hlev hA hA₂ hK r g X bas idx e x L y A hsym hx hL mk mk₂ hm hmk hm₂ ho₂

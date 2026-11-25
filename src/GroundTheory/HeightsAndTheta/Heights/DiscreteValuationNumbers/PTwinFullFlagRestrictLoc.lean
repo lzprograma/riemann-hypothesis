@@ -6,6 +6,7 @@ import Mathlib.RingTheory.LocalProperties.Reduced
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.TypeStar
+import GroundTheory.HeightsAndTheta.Heights.BlockScaling
 
 @[expose] public section
 
@@ -98,21 +99,8 @@ theorem map_segForm {S : Type*} [CommRing S] (f : R →+* S) (s : ∀ k, ι k) :
 
 theorem mcMap_of_isMultiHomog {Ω : Type*} [CommRing Ω] [Algebra R Ω] (x : (Σ k, ι k) → Ω)
     {H : MRingOver R ι} {α : K → ℕ} (hH : IsMultiHomog H α) :
-    mcMap R x H = MvPolynomial.C (aeval x H) * ∏ k, X k ^ α k := by
-  classical
-  conv_lhs => rw [H.as_sum]
-  conv_rhs => rw [H.as_sum]
-
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun m hm => ?_
-  simp only [mcMap, aeval_monomial, MvPolynomial.algebraMap_apply, map_mul]
-  rw [Finsupp.prod_fintype _ _ (fun _ => pow_zero _), Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
-  simp only [mul_pow, Finset.prod_mul_distrib, map_prod, map_pow]
-  rw [mul_assoc]
-  congr 2
-  rw [Fintype.prod_sigma]
-  refine Finset.prod_congr rfl fun k _ => ?_
-  rw [← hH m hm k, ← Finset.prod_pow_eq_pow_sum]
+    mcMap R x H = MvPolynomial.C (aeval x H) * ∏ k, X k ^ α k :=
+  BlockScaling.aeval_cone_block x hH
 
 theorem mem_mcIdeal_iff {Ω : Type*} [Field Ω] [Algebra R Ω] (x : (Σ k, ι k) → Ω)
     {H : MRingOver R ι} {α : K → ℕ} (hH : IsMultiHomog H α) :

@@ -3,41 +3,6 @@ module
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.GlobalTheory
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.InfinitesimalCharacterGlue
 public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -99,12 +64,11 @@ structure BlockOut (B : Block E) {Γ : Type} (g : Γ → BGen B) (a₀ : Γ) (t�
       (χ ⟨X, StarAlgebra.subset_adjoin ℂ _ (Or.inr rfl)⟩ /
         χ ⟨(g a₀).op, StarAlgebra.subset_adjoin ℂ _ (Or.inl ⟨a₀, rfl⟩)⟩ ^ jX) • F
 
-def ReadLimit : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E],
-  ∃ (Wf₁ : ∀ a b : ℕ, Mods E a → Mods E b → Submodule ℂ (Kinf E a → ℂ))
+abbrev ReadLimitSpec (Wf₁ : ∀ a b : ℕ, Mods E a → Mods E b → Submodule ℂ (Kinf E a → ℂ))
     (Wf₂ : ∀ a b : ℕ, Mods E a → Mods E b → Submodule ℂ (Kinf E b → ℂ))
     (Ωf₁ Ωf₂ : ∀ a b : ℕ, Mods E a → Mods E b → ∀ M : ℕ, Set (Submodule ℂ (Kinf E M → ℂ)))
     (Θf₁ Θf₂ : ∀ a b : ℕ, Mods E a → Mods E b → Subgroup (GL (Fin a) (Af E)) → Subgroup (GL (Fin b) (Af E)) → ∀ M : ℕ,
-      Set (Subgroup (GL (Fin M) (Af E)))),
+      Set (Subgroup (GL (Fin M) (Af E)))) : Prop :=
   (∀ a b Ma Mb, FiniteDimensional ℂ (Wf₁ a b Ma Mb) ∧ FiniteDimensional ℂ (Wf₂ a b Ma Mb) ∧
     KTypes E (Ωf₁ a b Ma Mb) ∧ KTypes E (Ωf₂ a b Ma Mb) ∧ (∀ M, (Ωf₁ a b Ma Mb M).Nonempty ∧ (Ωf₂ a b Ma Mb M).Nonempty) ∧
     Wf₁ a b Ma Mb ≠ ⊥ ∧ Wf₂ a b Ma Mb ≠ ⊥) ∧
@@ -140,6 +104,32 @@ def ReadLimit : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E],
     Nonempty (BlockOut B g a₀ t₀ X tX jX χ K₁ K₂ (Wf₁ B.a B.b B.Ma B.Mb) (Wf₂ B.a B.b B.Ma B.Mb)
       (Θf₁ B.a B.b B.Ma B.Mb K₁ K₂) (Θf₂ B.a B.b B.Ma B.Mb K₁ K₂) (Ωf₁ B.a B.b B.Ma B.Mb) (Ωf₂ B.a B.b B.Ma B.Mb))
 
+def ReadLimit : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E],
+  ∃ (Wf₁ : ∀ a b : ℕ, Mods E a → Mods E b → Submodule ℂ (Kinf E a → ℂ))
+    (Wf₂ : ∀ a b : ℕ, Mods E a → Mods E b → Submodule ℂ (Kinf E b → ℂ))
+    (Ωf₁ Ωf₂ : ∀ a b : ℕ, Mods E a → Mods E b → ∀ M : ℕ, Set (Submodule ℂ (Kinf E M → ℂ)))
+    (Θf₁ Θf₂ : ∀ a b : ℕ, Mods E a → Mods E b → Subgroup (GL (Fin a) (Af E)) → Subgroup (GL (Fin b) (Af E)) → ∀ M : ℕ,
+      Set (Subgroup (GL (Fin M) (Af E)))),
+  ReadLimitSpec Wf₁ Wf₂ Ωf₁ Ωf₂ Θf₁ Θf₂
+
 end PositivityTheory.Rg.BcB.F.Rd
+
+namespace PositivityTheory.Rg.BcB.F
+
+section RL
+variable (hR : Rd.ReadLimit) (E : Type) [Field E] [NumberField E] [IsCMField E]
+
+def rlW₁ := (hR E).choose
+def rlW₂ := (hR E).choose_spec.choose
+def rlΩ₁ := (hR E).choose_spec.choose_spec.choose
+def rlΩ₂ := (hR E).choose_spec.choose_spec.choose_spec.choose
+def rlΘ₁ := (hR E).choose_spec.choose_spec.choose_spec.choose_spec.choose
+def rlΘ₂ := (hR E).choose_spec.choose_spec.choose_spec.choose_spec.choose_spec.choose
+
+theorem rl_spec : Rd.ReadLimitSpec (rlW₁ hR E) (rlW₂ hR E) (rlΩ₁ hR E) (rlΩ₂ hR E) (rlΘ₁ hR E) (rlΘ₂ hR E) :=
+  (hR E).choose_spec.choose_spec.choose_spec.choose_spec.choose_spec.choose_spec
+end RL
+
+end PositivityTheory.Rg.BcB.F
 
 end

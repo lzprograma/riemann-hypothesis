@@ -23,14 +23,9 @@ namespace ImplicitCurve
 
 theorem analyticOnNhd_of_differentiableOn {m p : ℕ} {U : Set (Fin m → ℂ)}
     {Φ : (Fin m → ℂ) → Fin p → ℂ} (hU : IsOpen U) (hΦ : DifferentiableOn ℂ Φ U) :
-    AnalyticOnNhd ℂ Φ U := by
-  refine analyticOnNhd_pi_iff.2 fun j => ?_
-  have hj : DifferentiableOn ℂ (fun t => Φ t j) U := differentiableOn_pi.1 hΦ j
-  refine IndefiniteRowSideFullHecke.ComplexSets.analyticOnNhd_of_continuousOn_of_separately hU hj.continuousOn
-    fun w hw i => ?_
-  have hw : DifferentiableAt ℂ (fun t => Φ t j) (Function.update w i (w i)) := by
-    rw [Function.update_eq_self]; exact (hj w hw).differentiableAt (hU.mem_nhds hw)
-  exact hw.comp (w i) (hasFDerivAt_update w (w i)).differentiableAt
+    AnalyticOnNhd ℂ Φ U :=
+  analyticOnNhd_pi_iff.2 fun j =>
+    ReciprocityTheory.AnForm.Osgood.osgood m U (fun t => Φ t j) hU (differentiableOn_pi.1 hΦ j)
 
 theorem proof : ImplicitCurve.Statement := by
   intro n k γ R L s hγ hs hbij

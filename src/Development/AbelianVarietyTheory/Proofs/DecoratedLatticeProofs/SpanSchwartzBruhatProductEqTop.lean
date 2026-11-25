@@ -68,7 +68,7 @@ theorem isLocallyConstant_indicator_one {Z : Type} [TopologicalSpace Z] {W : Set
 
 theorem indicator_one_mem_SB {Z : Type} [TopologicalSpace Z] {W : Set Z} (hc : IsCompact W)
     (hW : IsClopen W) : W.indicator (1 : Z → ℂ) ∈ SB Z :=
-  ⟨isLocallyConstant_indicator_one hW, HasCompactSupport.intro' hc hW.isClosed fun x hx => Set.indicator_of_notMem hx _⟩
+  ⟨isLocallyConstant_indicator_one hW, HasCompactSupport.intro' hc hW.isClosed fun _ hx => Set.indicator_of_notMem hx _⟩
 
 def S (X Y : Type) [TopologicalSpace X] [TopologicalSpace Y] : Submodule ℂ (X × Y → ℂ) :=
   Submodule.span ℂ (Set.range fun q : SB X × SB Y => prodFn q.1.1 q.2.1)

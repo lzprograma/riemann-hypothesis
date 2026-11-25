@@ -121,16 +121,12 @@ import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StandardLatt
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 section
 noncomputable section
 namespace GlobalTheory.HeightCounting.Up.CopyEx
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
 open GlobalTheory.Mem.Top.TwChar (plUnder incl embLL_incl mem_plUnder plUnder_surjective)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 variable {K : Ctx} {B B' : Base} {f : Top.Fr B.toPre} {f' : Top.Fr B'.toPre} {T : TwDat B} {T' : TwDat B'} {w : ColW B f T}
   {w' : ColW B' f' T'}
@@ -150,14 +146,10 @@ section -- clump:auto
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-
 
 noncomputable section
 namespace GlobalTheory.HeightCounting.Up.ListCarry
 open GlobalTheory.Mem.R3.Tr GlobalTheory.ChiGrid GlobalTheory.BigTop.Fun GlobalTheory.TwInputs.Move
-
 
 open Classical in
 def movePl {D : D7} {I : Type} {L : Formalism.IndefR.Links.LevCh D I} (P : Places L)
@@ -211,29 +203,10 @@ theorem listPin_copy {D D' : D7} {ι : D.what₂.LL →+* D'.what₂.LL} {e : �
     (hP : (∀ k, q0 D' ≠ D'.host.g k) → Nonempty (Places Lc'))
     (h4 : ∀ t, ∀ PP ∈ Lc'.Q t, ((q0 D' : ℕ) : 𝓞 D'.host.E) ∉ PP.asIdeal) {CF b : ℝ} (hp : ListPin D Lc CF b) :
     ListPin D' Lc' CF b := by
-  obtain ⟨a1, a2, a3, nOm, ninstOm, nalgOm, nplOm, nPlG⟩ := h.gal
-  obtain ⟨xcc, xTw, xl, fixedFieldTransport_baseIntegerRing_heq, fixedFieldTransport_baseIntegerCommRing_heq, fixedFieldTransport_baseIntegerAlgebra_heq, fixedFieldTransport_baseIntegerTopology_heq, xO, xcrO, xalgO, xOk, xcrOk, xalgOk, xzk, xpD, xchi1, xSig, xfinSig, xjS, xside, xrhoS, fixedFieldTransport_initialPlaceSet_heq, xhEig, xLam, xsideL, xRCG, xgrpRCG, xfinRCG, xart, xth⟩ := h.set
-  have b1 := h.sp
-  have b2 := h.Tau
-  have b3 := h.instTau
-  have b4 := h.eTau
-  have b5 := h.hc
-  cases D'
-  dsimp only at a1 a2 a3 b1 b2 b3 b4 b5 nOm ninstOm nalgOm nplOm nPlG xcc xTw xl fixedFieldTransport_baseIntegerRing_heq fixedFieldTransport_baseIntegerCommRing_heq fixedFieldTransport_baseIntegerAlgebra_heq fixedFieldTransport_baseIntegerTopology_heq xO xcrO xalgO xOk xcrOk xalgOk xzk xpD xchi1 xSig xfinSig xjS xside xrhoS fixedFieldTransport_initialPlaceSet_heq xhEig xLam xsideL xRCG xgrpRCG xfinRCG xart xth hj hs hX
-  subst a1; subst a2; subst a3; subst b1
-  rename Rows.Data _ => rows'
-  cases rows'
-  dsimp only at b2 b3 b4 b5
-  subst b2; subst b3; subst b4; subst b5
-  rename NData _ _ _ => N'
-  cases N'
-  dsimp only at nOm ninstOm nalgOm nplOm nPlG
-  subst nOm; subst ninstOm; subst nalgOm; subst nplOm; subst nPlG
-  rename NTw _ _ _ _ _ => X'
-  cases X'
-  dsimp only at xcc xTw xl fixedFieldTransport_baseIntegerRing_heq fixedFieldTransport_baseIntegerCommRing_heq fixedFieldTransport_baseIntegerAlgebra_heq fixedFieldTransport_baseIntegerTopology_heq xO xcrO xalgO xOk xcrOk xalgOk xzk xpD xchi1 xSig xfinSig xjS xside xrhoS fixedFieldTransport_initialPlaceSet_heq xhEig xLam xsideL xRCG xgrpRCG xfinRCG xart xth hj hs hX
-  subst xcc; subst xTw; subst xl; subst fixedFieldTransport_baseIntegerRing_heq; subst fixedFieldTransport_baseIntegerCommRing_heq; subst fixedFieldTransport_baseIntegerAlgebra_heq; subst fixedFieldTransport_baseIntegerTopology_heq; subst xO; subst xcrO; subst xalgO; subst xOk; subst xcrOk; subst xalgOk; subst xzk; subst xpD; subst xchi1; subst xSig; subst xfinSig; subst xjS; subst xside; subst xrhoS; subst fixedFieldTransport_initialPlaceSet_heq; subst xhEig; subst xLam; subst xsideL; subst xRCG; subst xgrpRCG; subst xfinRCG; subst xart; subst xth
-  subst hj; subst hs; subst hX
+  obtain ⟨r, rfl⟩ := h.exists_rest
+  have hj' : (overD D r).ntw.jL = D.ntw.jL := (eq_of_heq hj).symm
+  have hs' : (overD D r).ntw.s2 = D.ntw.s2 := (eq_of_heq hs).symm
+  have hX' : (overD D r).ntw.Xv = D.ntw.Xv := (eq_of_heq hX).symm
   obtain ⟨G, hF, hT⟩ := hp
   have hmu := eq_of_heq hmu
   have hd := eq_of_heq hd
@@ -266,8 +239,13 @@ theorem listPin_copy {D D' : D7} {ι : D.what₂.LL →+* D'.what₂.LL} {e : �
     have hw' : (lamOf (⟨P, X, V⟩ : GridData Lc' ⟨1, CF, b⟩)).w0 = (lamOf G).w0 := hw
     refine ⟨by rw [hw']; exact t0, j, fun x => ?_, ?_⟩
     · exact (congrArg j (h.embLL0_eq x).symm).trans ((t1 (e x)).trans (congrArg _ (eq_of_heq (h.emb0 i i HEq.rfl x))))
-    · simp only [GlobalTheory.LamTie.IsLam, BlochKatoReduction.Gen.SOk, hl, hw']
-      exact t2
+    · have hLam : ∀ lam ja a s ι',
+          GlobalTheory.LamTie.IsLam D.ntw (lamOf G) i ι' lam ja a s →
+          GlobalTheory.LamTie.IsLam (overD D r).ntw (lamOf (⟨P, X, V⟩ : GridData Lc' ⟨1, CF, b⟩)) i ι' lam ja a s := by
+        intro lam ja a s ι' ⟨h1, ⟨h2a, h2b, h2c⟩, h3⟩
+        exact ⟨hj' ▸ h1, ⟨hs' ▸ h2a, h2b, h2c⟩, fun Q hQ => hX' ▸ (hl (D.ntw.l i) ja a).symm ▸ h3 Q hQ⟩
+      exact ⟨fun lam => let ⟨ja, a, s, hl', ht'⟩ := t2.1 lam; ⟨ja, a, s, hLam _ _ _ _ _ hl', hw'.symm ▸ (hl (D.ntw.l i) ja a).symm ▸ ht'⟩,
+        fun ja a s b' hs1 hs2 => let ⟨lam, hb, hl', ht'⟩ := t2.2 ja a s b' hs1 hs2; ⟨lam, hb, hLam _ _ _ _ _ hl', hw'.symm ▸ (hl (D.ntw.l i) ja a).symm ▸ ht'⟩⟩
 
 theorem twistPlaces_not_over_leastSplitAuxiliaryPrime {B : Base} {f : Top.Fr B.toPre} {T : TwDat B} (w : ColW B f T) (Z : w.Lt) {hX : B.fields.Ok} {Wt : Set B.places.Pl}
     (z : Dat (w.st Z) w.I hX T Wt) : ∀ t, ∀ PP ∈ z.R.toRealDat.toLevCh.Q t,
@@ -334,13 +312,9 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 noncomputable section
 namespace GlobalTheory.HeightCounting.Up.ListCarry
@@ -372,7 +346,6 @@ section -- clump:auto
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.HeightCounting.Up.HkCopy
 
@@ -404,14 +377,9 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-namespace GlobalTheory.HeightCounting.Up.HkCopy
-end GlobalTheory.HeightCounting.Up.HkCopy
 theorem GlobalTheory.HeightCounting.Up.hecke_eigenform_copy_of_restriction_alt : _root_.GlobalTheory.HeightCounting.Up.PublishedInputsThirdLayerAlt → SerN → ∀ (hL : _root_.UpperTheory.Zero.LLC.RecTExists) {K : Ctx} {B' : Base} {f' : Top.Fr B'.toPre} {T' : TwDat B'} {w' : ColW B' f' T'}, KPx B' f' → Forced K B' T' → Start K B' f' T' w' → ∀ (B : Base) (f : Top.Fr B.toPre) (T : TwDat B) (w : ColW B f T), Enl B B' → HEq f' f → Start K B f T w → HEq w'.px w.px → HEq w'.I.sel w.I.sel → HEq w'.I.J w.I.J → HEq w'.δ w.δ → ∀ (P : Pre2 K w) (x : St P) (lb : _root_.GlobalTheory.HeightCounting.Up.ThirdIntermediateLevel hL x) (P' : Pre2 K w'), Ext P.z P'.z → ∀ (x' : St P') (l' : _root_.GlobalTheory.HeightCounting.Up.IntermediateLevel hL x'), SameGal (Dof x) (Dof x') → ∀ (N : TwNew (Dof x')) (ι : (Dof x).what₂.LL →+* (Dof x').what₂.LL) (e : ↥(Dof x').LL0 ≃+* ↥(Dof x).LL0), CopyN (Dof x) N ι e → ∀ (x'' : St P') (l'' : _root_.GlobalTheory.HeightCounting.Up.IntermediateLevel hL x''), x''.o = oTw x' N → HEq x''.m.z.R.toRealDat.toLevCh (GlobalTheory.Mem.R3.Tr.levCh (a := x'.o.Z) (oTw x' N).Z x'.m.z.R.toRealDat.toLevCh) → HEq l''.a.A.row (N.row l'.a.A.row) → HEq l''.Pq l'.Pq → HEq l''.rat.S (N.rat l'.rat.S) → HEq l''.rat.In.Sb l'.rat.In.Sb → HEq l''.rat.In.hL l'.rat.In.hL → HEq l''.rat.In.eig l'.rat.In.eig → HEq l''.rat.In.θ l'.rat.In.θ → ∃ (cHk : ∀ (i : (Dof x'').ntw.Tw) (_b : Bool) (_P : PlE (Dof x'').host), ((Dof x'').ntw.O i)ˣ), (∀ (i : (Dof x).ntw.Tw) (i' : (Dof x'').ntw.Tw) (b : Bool) (P : PlE (Dof x).host) (P' : PlE (Dof x'').host), HEq i i' → HEq P P' → HEq (cHk i' b P') (lb.b.Bs.cHk i b P)) := by
   intro _ _ hL K B' f' T' w' _ _ _ B f T w _ _ _ _ _ _ _ P x lb P' _ x' l' _ N ι e hN x'' l'' ho _ _ _ _ _ _ _ _
   have hD : Dof x'' = N.toD7 := by
@@ -433,9 +401,6 @@ section -- clump:auto
 noncomputable section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-
 
 namespace GlobalTheory.HeightCounting.SerCarry
 
@@ -461,8 +426,6 @@ section -- clump:auto
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 open GlobalTheory.HeightCounting.SerMove
 
@@ -471,8 +434,6 @@ open GlobalTheory.Mem.R3.Tr GlobalTheory.Mem.R3.Rw.StateChecks
 namespace GlobalTheory.HeightCounting.SerMove.ReGeo
 
 variable {B : Base} {f : Top.Fr B.toPre} {T : TwDat B} {w : ColW B f T} {hX : B.fields.Ok} {Wt : Set B.places.Pl}
-
-
 
 theorem geo_copy {Z Z' : w.Lt} (z₀ : Dat (w.st Z) w.I hX T Wt) (z : Dat (w.st Z') w.I hX T Wt) (h1 : z.Xg = z₀.Xg)
     (h2 : z.tr = z₀.tr) (h3 : HEq z.core (coreJ (a := Z) Z' z₀.core)) (h4 : HEq z.R (real3 (a := Z) Z' (iK := z₀.alg) z₀.R))
@@ -486,88 +447,86 @@ theorem geo_copy {Z Z' : w.Lt} (z₀ : Dat (w.st Z) w.I hX T Wt) (z : Dat (w.st 
   dsimp only at h1 h2 h3 h4 ⊢
   subst h1 h2
   obtain rfl : core = coreJ (a := Z) Z' z₀.core := eq_of_heq h3
-  have e : al = (by with_unfolding_all exact ((alg (a := Z) Z' z₀.alg) :)) := by
+  have e : al = (alg (a := Z) Z' z₀.alg) := by
     refine Algebra.algebra_ext _ _ fun y => B.embLL.injective ?_
-    exact (alg_eq y).trans ((by with_unfolding_all exact ((z₀.alg_eq ((by with_unfolding_all exact (y :)))).symm :)))
+    exact (alg_eq y).trans (((z₀.alg_eq (y)).symm))
   subst e
-  obtain rfl : R = cpR (a := Z) Z' z₀ := eq_of_heq (h4.trans ((by with_unfolding_all exact ((HEq.refl (cpR (a := Z) Z' z₀)) :))))
+  obtain rfl : R = cpR (a := Z) Z' z₀ := eq_of_heq (h4.trans ((HEq.refl (cpR (a := Z) Z' z₀))))
   refine ⟨?_, ?_, ?_, ?_⟩
-  · with_unfolding_all
-      exact GlobalTheory.Mem.R3.Tr.geoHalf (a := Z) Z' (iK := z₀.alg) z₀.geo
-  · with_unfolding_all
-      exact GlobalTheory.Mem.R3.Tr.inGeo_tr (a := Z) Z' (iK := z₀.alg) hg
+  · exact GlobalTheory.Mem.R3.Tr.geoHalf (a := Z) Z' (iK := z₀.alg) z₀.geo
+  · exact GlobalTheory.Mem.R3.Tr.inGeo_tr (a := Z) Z' (iK := z₀.alg) hg
   · intro B' f' T' w' Z'' hX' Wt' z' e
     exact
-      { H := (by with_unfolding_all exact (e.H :))
-        l := (by with_unfolding_all exact (e.l :))
-        c := (by with_unfolding_all exact (e.c :))
-        Dw := (by with_unfolding_all exact (e.Dw :))
-        Xo := (by with_unfolding_all exact (e.Xo :))
-        U := (by with_unfolding_all exact (e.U :))
-        V := (by with_unfolding_all exact (e.V :))
-        dict := (by with_unfolding_all exact (e.dict :))
-        mu := (by with_unfolding_all exact (e.mu :))
-        Kf := (by with_unfolding_all exact (e.Kf :))
-        cE := (by with_unfolding_all exact (e.cE :))
-        chiW := (by with_unfolding_all exact (e.chiW :))
-        x₀ := (by with_unfolding_all exact (e.x₀ :))
-        iota := (by with_unfolding_all exact (e.iota :))
-        ψ := (by with_unfolding_all exact (e.ψ :))
-        θ := (by with_unfolding_all exact (e.θ :))
-        βW := (by with_unfolding_all exact (e.βW :))
-        βY := (by with_unfolding_all exact (e.βY :))
-        nW := (by with_unfolding_all exact (e.nW :))
-        βV := (by with_unfolding_all exact (e.βV :))
-        ΛV := (by with_unfolding_all exact (e.ΛV :))
-        ΛW := (by with_unfolding_all exact (e.ΛW :))
-        Pg := (by with_unfolding_all exact (e.Pg :))
-        eG := (by with_unfolding_all exact (e.eG :))
-        Sb := (by with_unfolding_all exact (e.Sb :))
-        BV := (by with_unfolding_all exact (e.BV :))
-        MW := (by with_unfolding_all exact (e.MW :))
-        forms := (by with_unfolding_all exact (e.forms :))
-        cV := (by with_unfolding_all exact (e.cV :))
-        pb := (by with_unfolding_all exact (e.pb :))
-        ΛY := (by with_unfolding_all exact (e.ΛY :))
-        κ := (by with_unfolding_all exact (e.κ :))
-        ref := (by with_unfolding_all exact (e.ref :))
-        jL := (by with_unfolding_all exact (e.jL :)) }
+      { H := e.H
+        l := e.l
+        c := e.c
+        Dw := e.Dw
+        Xo := e.Xo
+        U := e.U
+        V := e.V
+        dict := e.dict
+        mu := e.mu
+        Kf := e.Kf
+        cE := e.cE
+        chiW := e.chiW
+        x₀ := e.x₀
+        iota := e.iota
+        ψ := e.ψ
+        θ := e.θ
+        βW := e.βW
+        βY := e.βY
+        nW := e.nW
+        βV := e.βV
+        ΛV := e.ΛV
+        ΛW := e.ΛW
+        Pg := e.Pg
+        eG := e.eG
+        Sb := e.Sb
+        BV := e.BV
+        MW := e.MW
+        forms := e.forms
+        cV := e.cV
+        pb := e.pb
+        ΛY := e.ΛY
+        κ := e.κ
+        ref := e.ref
+        jL := e.jL }
   · intro B' f' T' w' Z'' hX' Wt' z' e
     exact
-      { H := (by with_unfolding_all exact (e.H :))
-        l := (by with_unfolding_all exact (e.l :))
-        c := (by with_unfolding_all exact (e.c :))
-        Dw := (by with_unfolding_all exact (e.Dw :))
-        Xo := (by with_unfolding_all exact (e.Xo :))
-        U := (by with_unfolding_all exact (e.U :))
-        V := (by with_unfolding_all exact (e.V :))
-        dict := (by with_unfolding_all exact (e.dict :))
-        mu := (by with_unfolding_all exact (e.mu :))
-        Kf := (by with_unfolding_all exact (e.Kf :))
-        cE := (by with_unfolding_all exact (e.cE :))
-        chiW := (by with_unfolding_all exact (e.chiW :))
-        x₀ := (by with_unfolding_all exact (e.x₀ :))
-        iota := (by with_unfolding_all exact (e.iota :))
-        ψ := (by with_unfolding_all exact (e.ψ :))
-        θ := (by with_unfolding_all exact (e.θ :))
-        βW := (by with_unfolding_all exact (e.βW :))
-        βY := (by with_unfolding_all exact (e.βY :))
-        nW := (by with_unfolding_all exact (e.nW :))
-        βV := (by with_unfolding_all exact (e.βV :))
-        ΛV := (by with_unfolding_all exact (e.ΛV :))
-        ΛW := (by with_unfolding_all exact (e.ΛW :))
-        Pg := (by with_unfolding_all exact (e.Pg :))
-        eG := (by with_unfolding_all exact (e.eG :))
-        Sb := (by with_unfolding_all exact (e.Sb :))
-        BV := (by with_unfolding_all exact (e.BV :))
-        MW := (by with_unfolding_all exact (e.MW :))
-        forms := (by with_unfolding_all exact (e.forms :))
-        cV := (by with_unfolding_all exact (e.cV :))
-        pb := (by with_unfolding_all exact (e.pb :))
-        ΛY := (by with_unfolding_all exact (e.ΛY :))
-        κ := (by with_unfolding_all exact (e.κ :))
-        ref := (by with_unfolding_all exact (e.ref :))
-        jL := (by with_unfolding_all exact (e.jL :)) }
+      { H := e.H
+        l := e.l
+        c := e.c
+        Dw := e.Dw
+        Xo := e.Xo
+        U := e.U
+        V := e.V
+        dict := e.dict
+        mu := e.mu
+        Kf := e.Kf
+        cE := e.cE
+        chiW := e.chiW
+        x₀ := e.x₀
+        iota := e.iota
+        ψ := e.ψ
+        θ := e.θ
+        βW := e.βW
+        βY := e.βY
+        nW := e.nW
+        βV := e.βV
+        ΛV := e.ΛV
+        ΛW := e.ΛW
+        Pg := e.Pg
+        eG := e.eG
+        Sb := e.Sb
+        BV := e.BV
+        MW := e.MW
+        forms := e.forms
+        cV := e.cV
+        pb := e.pb
+        ΛY := e.ΛY
+        κ := e.κ
+        ref := e.ref
+        jL := e.jL }
 
 end GlobalTheory.HeightCounting.SerMove.ReGeo
 
@@ -575,9 +534,9 @@ namespace GlobalTheory.HeightCounting.SerMove
 
 theorem exists_geo_extN : ∀ {K : Ctx} {B B' : Base} {f : Top.Fr B.toPre} {f' : Top.Fr B'.toPre} {T : TwDat B} {T' : TwDat B'} {w : ColW B f T} {w' : ColW B' f' T'} {P : Pre2 K w} {P' : Pre2 K w'}, Ext P.z P'.z → ∀ (x : St P) (x' : St P'), ∃ (g : Geo x) (g' : Geo x'), GlobalTheory.RealGeo.InGeo g ∧ GlobalTheory.RealGeo.InGeo g' ∧ ExtN (datAt x g) (datAt x' g') := by
   intro K B B' f f' T T' w w' P P' e x x'
-  obtain ⟨g, hg, hL, -⟩ := ReGeo.geo_copy (Z := P.Z₀) (Z' := x.o.Z) P.z x.m.z x.m.Xg x.m.tr ((by with_unfolding_all exact (x.copy.core :))) ((by with_unfolding_all exact (x.copy.R :))) P.inGeo
+  obtain ⟨g, hg, hL, -⟩ := ReGeo.geo_copy (Z := P.Z₀) (Z' := x.o.Z) P.z x.m.z x.m.Xg x.m.tr (x.copy.core) (x.copy.R) P.inGeo
   obtain ⟨g', hg', -, hR⟩ :=
-    ReGeo.geo_copy (Z := P'.Z₀) (Z' := x'.o.Z) P'.z x'.m.z x'.m.Xg x'.m.tr ((by with_unfolding_all exact (x'.copy.core :))) ((by with_unfolding_all exact (x'.copy.R :))) P'.inGeo
+    ReGeo.geo_copy (Z := P'.Z₀) (Z' := x'.o.Z) P'.z x'.m.z x'.m.Xg x'.m.tr (x'.copy.core) (x'.copy.R) P'.inGeo
   exact ⟨g, g', hg, hg', hR _ (hL _ e.extN)⟩
 
 end GlobalTheory.HeightCounting.SerMove
@@ -593,8 +552,6 @@ section -- clump:auto
 noncomputable section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 open GlobalTheory.HeightCounting.SerMove GlobalTheory.HeightCounting.SideCopy GlobalTheory.Mem.R3.Tr
 
@@ -645,13 +602,9 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 noncomputable section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 open GlobalTheory.HeightCounting.SerMove GlobalTheory.HeightCounting.SideCopy GlobalTheory.Mem.R3.Tr
 namespace GlobalTheory.HeightCounting.SerGlue
@@ -674,8 +627,8 @@ theorem exists_move_alt (hKP : KPx B' f') (hF : Forced K B' T') (hS' : Start K B
   obtain ⟨h1, h2, h3, h4⟩ := fr_same hE.1 ((heq_of_eq w'.C_eq).trans (hf.trans (heq_of_eq w.C_eq).symm))
   obtain ⟨g, g'', hg, hg'', hX⟩ := GlobalTheory.HeightCounting.SerMove.exists_geo_extN hExt x x''
   have hO' : K.Over B.toPre := hE.1 ▸ hO
-  exact ⟨ι', e', h, ⟨(by with_unfolding_all exact (h1 :)), (by with_unfolding_all exact (h2 :)), (by with_unfolding_all exact (h3 :)), (by with_unfolding_all exact (h4 :))⟩,
-    (by with_unfolding_all exact ((choice_heq hE.1 (p := (l.Pq)) (p' := (l''.Pq)) ((l.Pq_over)) ((l''.Pq_over)) (s := (w.I.sel)) (s' := (w'.I.sel)) ((hsel)) ((l.sel)) ((l''.sel))) : _)),
+  exact ⟨ι', e', h, ⟨h1, h2, h3, h4⟩,
+    (choice_heq hE.1 (p := (l.Pq)) (p' := (l''.Pq)) ((l.Pq_over)) ((l''.Pq_over)) (s := (w.I.sel)) (s' := (w'.I.sel)) ((hsel)) ((l.sel)) ((l''.sel))),
     g, g'', hg, hg'', bigHost_st hO' hB x, bigHost_st hO hB x'',
     GlobalTheory.HeightCounting.SerMove.realMove_of_link x x'' ι' e' g g'' ⟨hO, hKP, hF, hS', hE, hf, hSt, hpx, hsel, hJ, hδ, hExt, h.cp, ⟨h.cp.gal, h.pl⟩, hX⟩ hg hg'' _ _⟩
 end GlobalTheory.HeightCounting.SerGlue
@@ -690,13 +643,9 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 noncomputable section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 namespace GlobalTheory.HeightCounting.SerCarry
 open GlobalTheory.HeightCounting.SerMove GlobalTheory.Mem.R3.Tr
@@ -716,14 +665,10 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 section
 noncomputable section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 namespace GlobalTheory.HeightCounting.SerCarry
 open GlobalTheory.HeightCounting.SerMove GlobalTheory.Mem.R3.Tr
@@ -734,9 +679,9 @@ theorem series_restage_of_carry_alt : _root_.GlobalTheory.HeightCounting.Up.Publ
   obtain ⟨H, hp⟩ := _root_.GlobalTheory.HeightCounting.SerCarry.st_facts_alt lb.toLI g hg a
   obtain ⟨H', hp'⟩ := _root_.GlobalTheory.HeightCounting.SerCarry.st_facts_alt l'' g'' hg'' a''
   obtain ⟨L, hl, hq⟩ := sideB_facts lb.b.Bs lb.b.eF
-  exact (by with_unfolding_all exact ((series_move h m ((x.m.z.geo)) ((x''.m.z.geo)) (kKs := (lb.rat.kKs)) (hk := (lb.rat.hk)) ((l''.rat.kKs))
+  exact (series_move h m ((x.m.z.geo)) ((x''.m.z.geo)) (kKs := (lb.rat.kKs)) (hk := (lb.rat.hk)) ((l''.rat.kKs))
     ((l''.rat.hk)) ((lb.b.YS)) ((lb.b.fi)) hl lb.rat.rat.Sb_le l''.rat.rat.Sb_le H H' (hs := (lb.b.Bs.hs)) (c := lb.b.Bs.cHk)
-    ((l''.rat.In.hs)) (c' := cHk) hc ((L)) hcf lb.a.A.chr l''.a.A.chr hp hp' hPq hq lb.b.tau ((lb.b.ser))) : _))
+    ((l''.rat.In.hs)) (c' := cHk) hc ((L)) hcf lb.a.A.chr l''.a.A.chr hp hp' hPq hq lb.b.tau ((lb.b.ser)))
 end GlobalTheory.HeightCounting.SerCarry
 end
 end
@@ -750,11 +695,8 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.HeightCounting GlobalTheory.TwInputs.Move GlobalTheory.HeightCounting.SideCopy
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 private theorem multiset_eq_of_esymm_pz (M M' : Multiset ℂ) (r : ℕ) (h1 : M.card = r) (h2 : M'.card = r)
     (h : ∀ k, 1 ≤ k → k ≤ r → M.esymm k = M'.esymm k) : M = M' := by
@@ -896,8 +838,6 @@ section -- clump:auto
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.HeightCounting GlobalTheory.TwInputs.Move GlobalTheory.HeightCounting.SideCopy
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 private theorem joint_zero {K V ι : Type*} [Field K] [AddCommGroup V] [Module K V]
     (T : ι → V →ₗ[K] V) (p : ι → Prop) (ev : ι → K) (M : Finset (ι → K)) :
@@ -1054,8 +994,7 @@ theorem UpperTheory.heckeEigenspace_descent_of_equivariant_equiv :
   · intro μ hμ
     obtain ⟨σ, hσ, rfl⟩ := Finset.mem_image.1 hμ
     rw [Set.Finite.mem_toFinset] at hσ
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     refine hno ⟨σ, hσ.1, hσ.2, fun k P a1 a2 a3 a4 => ?_⟩
     have := hne (k, P) ⟨a1, a2, a3, a4⟩
     simp only [sys, hrd] at this
@@ -1088,8 +1027,6 @@ section -- clump:auto
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.HeightCounting GlobalTheory.TwInputs.Move GlobalTheory.HeightCounting.SideCopy
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 private theorem readMove {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] {A K L L' : Type} [CommRing A] [CommRing K]
     [CommRing L] [CommRing L'] {pl : HeightOneSpectrum (𝓞 E) → ValuationSubring Ω} {φ : G E Ω →* Aˣ} {rd : A →+* K} {eL : L →+* K}
@@ -1192,25 +1129,25 @@ theorem UpperTheory.nonempty_coefficientRingData_of_isomorphic_CMDatum :
   have hst : ∀ x y : ↥D'.LL0, (y : D'.what₂.LL) = star (x : D'.what₂.LL) → embLL0 D' y = starRingEnd ℂ (embLL0 D' x) :=
     fun x y hy => (congrArg D'.what₂.embLL hy).trans (D'.starLL_cx _)
   obtain ⟨r, rfl⟩ := h.cp.exists_rest
-  obtain ⟨m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13⟩ := mid B e ((by with_unfolding_all exact ((overD D r).ntw.emb0 :)))
-    ((by with_unfolding_all exact ((overD D r).ntw.emb0b :))) (embLL0 (overD D r))
-    (fun i x => eq_of_heq ((by with_unfolding_all exact ((h.cp.emb0 i ((i)) (((HEq.refl i))) x) : _))))
-    (fun i x => eq_of_heq ((by with_unfolding_all exact ((h.cp.emb0b i ((i)) (((HEq.refl i))) x) : _)))) h.cp.embLL0_eq
-    ((by with_unfolding_all exact ((overD D r).ntw.jL :))) (eq_of_heq ((by with_unfolding_all exact (h.jL :)))) ((by with_unfolding_all exact ((overD D r).ntw.s2 :))) (eq_of_heq ((by with_unfolding_all exact (h.s2 :))))
-    ((by with_unfolding_all exact ((overD D r).ntw.lamG :))) (eq_of_heq ((by with_unfolding_all exact (h.lamG :)))) ((by with_unfolding_all exact ((overD D r).ntw.qs :))) (eq_of_heq ((by with_unfolding_all exact (h.qs :))))
-    ((by with_unfolding_all exact (cf'.mu0 :))) (eq_of_heq ((by with_unfolding_all exact (hf.mu0 :)))) ((by with_unfolding_all exact (cf'.eta :))) (eq_of_heq ((by with_unfolding_all exact (hf.eta :))))
-    ((by with_unfolding_all exact (cf'.del :))) (eq_of_heq ((by with_unfolding_all exact (hf.del :)))) ((by with_unfolding_all exact (cf'.del' :))) (eq_of_heq ((by with_unfolding_all exact (hf.del' :))))
-  exact ⟨⟨⟨(by with_unfolding_all exact (B.twF.K0 :)), (by with_unfolding_all exact (B.twF.eO0 :)), (by with_unfolding_all exact ((fun i => (B.twF.j0 i).comp e.toRingHom) :)), (by with_unfolding_all exact (B.twF.Lw :)),
-      (by with_unfolding_all exact (B.twF.eO :)), (by with_unfolding_all exact (B.twF.eOk :)), (by with_unfolding_all exact (B.twF.iCq :)), (by with_unfolding_all exact (B.twF.S0x :))⟩,
-    ⟨(by with_unfolding_all exact (m1 :)), (by with_unfolding_all exact (B.tw.ringSpec_baseIntegersEquiv_algebraMap :)), (by with_unfolding_all exact (m2 :)), (by with_unfolding_all exact (B.tw.eO_alg :)), (by with_unfolding_all exact (B.tw.eOk_alg :)), (by with_unfolding_all exact (B.tw.mu_g :)),
-      (by with_unfolding_all exact (B.tw.hk_split :)), (by with_unfolding_all exact (B.tw.ringSpec_excludedPlaces_eq :)), (by with_unfolding_all exact (B.tw.concreteTwistFrame_extraExcludedPlaces_conj :)), (by with_unfolding_all exact (B.tw.B_range :)), (by with_unfolding_all exact (B.tw.sig_inj :)),
-      (by with_unfolding_all exact (m3 :)), (by with_unfolding_all exact (B.tw.concreteTwistFrame_extraExcluded_over_smallPrimes :))⟩,
-    ⟨(by with_unfolding_all exact (B.chiD.mu0 :)), (by with_unfolding_all exact (B.chiD.etaT :)), (by with_unfolding_all exact (B.chiD.del :)), fun a => hE.elim a, (by with_unfolding_all exact (B.chiD.chiI :)),
-      (by with_unfolding_all exact ((fun s b => (B.chiD.embO s b).comp e.toRingHom) :))⟩,
-    ⟨fun a => hE.elim a, (by with_unfolding_all exact (B.chi.del_fix :)), (by with_unfolding_all exact (m4 :)), (by with_unfolding_all exact (m5 :)), (by with_unfolding_all exact (m6 :)), (by with_unfolding_all exact (B.chi.etaT_unr :)),
-      (by with_unfolding_all exact (B.chi.etaT_inf :)), (by with_unfolding_all exact (m7 :))⟩,
-    (by with_unfolding_all exact (m8 :)), (by with_unfolding_all exact (m9 :)), (by with_unfolding_all exact (m10 :)), (by with_unfolding_all exact (m11 :)),
-    (by with_unfolding_all exact ((fun s x y hy => m12 s x y (hst x y hy)) :)), (by with_unfolding_all exact (m13 :))⟩⟩
+  obtain ⟨m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13⟩ := mid B e (((overD D r).ntw.emb0))
+    (((overD D r).ntw.emb0b)) (embLL0 (overD D r))
+    (fun i x => eq_of_heq ((h.cp.emb0 i ((i)) (((HEq.refl i))) x)))
+    (fun i x => eq_of_heq ((h.cp.emb0b i ((i)) (((HEq.refl i))) x))) h.cp.embLL0_eq
+    (((overD D r).ntw.jL)) (eq_of_heq (h.jL)) (((overD D r).ntw.s2)) (eq_of_heq (h.s2))
+    (((overD D r).ntw.lamG)) (eq_of_heq (h.lamG)) (((overD D r).ntw.qs)) (eq_of_heq (h.qs))
+    (cf'.mu0) (eq_of_heq (hf.mu0)) (cf'.eta) (eq_of_heq (hf.eta))
+    (cf'.del) (eq_of_heq (hf.del)) (cf'.del') (eq_of_heq (hf.del'))
+  exact ⟨⟨⟨B.twF.K0, B.twF.eO0, (fun i => (B.twF.j0 i).comp e.toRingHom), B.twF.Lw,
+      B.twF.eO, B.twF.eOk, B.twF.iCq, B.twF.S0x⟩,
+    ⟨m1, B.tw.ringSpec_baseIntegersEquiv_algebraMap, m2, B.tw.eO_alg, B.tw.eOk_alg, B.tw.mu_g,
+      B.tw.hk_split, B.tw.ringSpec_excludedPlaces_eq, B.tw.concreteTwistFrame_extraExcludedPlaces_conj, B.tw.B_range, B.tw.sig_inj,
+      m3, B.tw.concreteTwistFrame_extraExcluded_over_smallPrimes⟩,
+    ⟨B.chiD.mu0, B.chiD.etaT, B.chiD.del, fun a => hE.elim a, B.chiD.chiI,
+      (fun s b => (B.chiD.embO s b).comp e.toRingHom)⟩,
+    ⟨fun a => hE.elim a, B.chi.del_fix, m4, m5, m6, B.chi.etaT_unr,
+      B.chi.etaT_inf, m7⟩,
+    m8, m9, m10, m11,
+    (fun s x y hy => m12 s x y (hst x y hy)), m13⟩⟩
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.UnitTensorPairings.NonemptyCoefficientRingDataOfIsomorphicCMDatum =====
@@ -1221,8 +1158,6 @@ section -- clump:auto
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.HeightCounting GlobalTheory.TwInputs.Move GlobalTheory.HeightCounting.SideCopy
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 private theorem under_le_one {K L : Type} [Field K] [NumberField K] [Field L] [NumberField L] (ι : K →+* L)
     (w : HeightOneSpectrum (𝓞 L)) : ∃ v : HeightOneSpectrum (𝓞 K),
@@ -1284,8 +1219,8 @@ theorem UpperTheory.sidePlace_exists_of_copyAll :
   have a := hs (e x)
   rw [hv, hL x] at a
   have b : D.ntw.emb0 i (e x) = (overD D r).ntw.emb0 i x := eq_of_heq (hE i i HEq.rfl x)
-  rw [if_pos rfl, b] at a
-  rw [if_pos rfl]
+  rw [ite_eq_left rfl, b] at a
+  rw [ite_eq_left rfl]
   exact a
 end -- clump:auto
 end -- clump:auto
@@ -1296,13 +1231,10 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 section
 section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.HeightCounting GlobalTheory.TwInputs.Move GlobalTheory.HeightCounting.SideCopy
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.HeightCounting.SideCopy.Restage
 
@@ -1313,23 +1245,23 @@ private theorem eigen_zero_one_transfer (h : CopyAll D D' ι e)
   exact hs
 private theorem lowAll_eq (h : CopyAll D D' ι e) : lowAll D' = lowAll D := by
   obtain ⟨r, rfl⟩ := h.cp.exists_rest
-  exact (by with_unfolding_all exact ((Eq.refl (lowAll D)) :))
+  exact (Eq.refl (lowAll D))
 private theorem over_S0_transfer (h : CopyAll D D' ι e) (low : Finset ℕ) (hs : ∀ i, OverSet D (D.ntw.S0 i) (insert (D.ntw.l i) low)) :
     ∀ i, OverSet D' (D'.ntw.S0 i) (insert (D'.ntw.l i) low) := by
   obtain ⟨r, rfl⟩ := h.cp.exists_rest
-  exact (by with_unfolding_all exact (hs :))
+  exact hs
 private theorem hecke_map_transfer (h : CopyAll D D' ι e) (hs : ∀ i j b k P (x : D.ntw.B i j b), 1 ≤ j → j ≤ D.R.m → P ∉ D.ntw.S0 i →
       IsSplitPl D.host P → k ≤ D.R.r →
       D.nexp.embB i j b (D.ntw.hk i j b k P x) = D.nexp.hkF i j b k P (D.nexp.embB i j b x)) :
     ∀ i j b k P (x : D'.ntw.B i j b), 1 ≤ j → j ≤ D'.R.m → P ∉ D'.ntw.S0 i → IsSplitPl D'.host P → k ≤ D'.R.r →
       D'.nexp.embB i j b (D'.ntw.hk i j b k P x) = D'.nexp.hkF i j b k P (D'.nexp.embB i j b x) := by
   obtain ⟨r, rfl⟩ := h.cp.exists_rest
-  exact (by with_unfolding_all exact (hs :))
+  exact hs
 private theorem eigen_system_transfer (h : CopyAll D D' ι e)
     (hs : ∀ i (s : D.ntw.Sig i), GlobalTheory.EigTie.IsEigSys D.nexp i (D.ntw.jS i s) (D.ntw.side i s) (GlobalTheory.EigTie.sigEv s)) :
     ∀ i (s : D'.ntw.Sig i), GlobalTheory.EigTie.IsEigSys D'.nexp i (D'.ntw.jS i s) (D'.ntw.side i s) (GlobalTheory.EigTie.sigEv s) := by
   obtain ⟨r, rfl⟩ := h.cp.exists_rest
-  exact (by with_unfolding_all exact (hs :))
+  exact hs
 private theorem emb_eq_of_equiv {r : Rest D} {ι : D.what₂.LL →+* (overD D r).what₂.LL} {e : ↥(overD D r).LL0 ≃+* ↥D.LL0}
     (h : CopyTw D (overD D r) ι e) (i : D.ntw.Tw) (x : ↥(overD D r).LL0) :
     D.ntw.emb0 i (e x) = (overD D r).ntw.emb0 i x ∧ D.ntw.emb0b i (e x) = (overD D r).ntw.emb0b i x :=
@@ -1345,7 +1277,7 @@ private theorem hecke_coeff_transfer (h : CopyAll D D' ι e) {c : ∀ (i : D.ntw
   intro i b P hP σ hσ
   have h1 := eq_of_heq (hc i i b P P HEq.rfl HEq.rfl)
   have h2 := hs i b P hP σ hσ
-  exact (by with_unfolding_all exact ((h1.trans h2) :))
+  exact (h1.trans h2)
 private theorem psi_law_transfer (h : CopyAll D D' ι e) {S : RatDat D.ntw} {S' : RatDat D'.ntw} {θ θ'} (h1 : PsiStd D θ) (h2 : PsiStd D' θ')
     (h3 : PsiLaw D S θ) : PsiLaw D' S' θ' := by
   obtain ⟨r, rfl⟩ := h.cp.exists_rest
@@ -1363,17 +1295,17 @@ private theorem psi_law_transfer (h : CopyAll D D' ι e) {S : RatDat D.ntw} {S' 
     apply (embLL0 D).injective
     rw [h.cp.embLL0_eq, a1]
     simp only
-    exact (by with_unfolding_all exact (a2 :))
+    exact a2
   have a4 := h3 i b u hu hu'
   rw [← a3] at a4
   have a5 : ∀ (i : D.ntw.Tw) x, readLL0 S i b (e x) = readLL0 S' i b x := fun i x => by
     obtain ⟨b1, b2⟩ := emb_eq_of_equiv h.cp i x
     cases b
-    · exact (by with_unfolding_all exact ((congrArg (IsFractionRing.map (A := D.ntw.O0 i) (B := D.ntw.O i) (K := FractionRing (D.ntw.O0 i))
-        (L := FractionRing (D.ntw.O i)) (D.ntw.O_inj i)) b2) :))
-    · exact (by with_unfolding_all exact ((congrArg (IsFractionRing.map (A := D.ntw.O0 i) (B := D.ntw.O i) (K := FractionRing (D.ntw.O0 i))
-        (L := FractionRing (D.ntw.O i)) (D.ntw.O_inj i)) b1) :))
-  exact (by with_unfolding_all exact ((a4.trans (a5 i _)) :))
+    · exact (congrArg (IsFractionRing.map (A := D.ntw.O0 i) (B := D.ntw.O i) (K := FractionRing (D.ntw.O0 i))
+        (L := FractionRing (D.ntw.O i)) (D.ntw.O_inj i)) b2)
+    · exact (congrArg (IsFractionRing.map (A := D.ntw.O0 i) (B := D.ntw.O i) (K := FractionRing (D.ntw.O0 i))
+        (L := FractionRing (D.ntw.O i)) (D.ntw.O_inj i)) b1)
+  exact (a4.trans (a5 i _))
 open Formalism.L2.DIV GlobalTheory.HeightCounting.ThetaSt in
 private theorem psi_standard_of_units {G : Type} [Group G] {P0 : Subgroup G} {ψ0 : P0 →* D.what₂.LLˣ} {Ps : Subgroup G} {ψs : Ps →* D.what₂.LLˣ}
     {eG : G ≃* G0g D.nd} (h : PsiPPTie D P0 ψ0 Ps ψs eG) {θ}
@@ -1411,30 +1343,6 @@ private theorem psi_standard_of_units {G : Type} [Group G] {P0 : Subgroup G} {ψ
   rw [← Fintype.prod_equiv pl (fun kv => ψ (pl kv).1 (edgeSum supEdge (eC u (pl kv)))) _ (fun _ => rfl),
     map_inv₀, map_prod, Finset.prod_inv_distrib]
   exact congrArg _ (Finset.prod_congr rfl fun kv _ => hfac kv)
-private theorem lambda_datum_transfer (h : CopyAll D D' ι e) {cf : CharFrame D} {cf' : CharFrame D'} (hf : SameFrame cf cf')
-    (hs : ∃ Z : GlobalTheory.LamTie.LamDat D, Z.Ok ∧ Z.Teich ∧ Z.C = cf ∧ Z.q0 = AbsolutelyIrreducibleSpan.q0 D ∧ GlobalTheory.LamTie.IsLamTieFull D.ntw Z) :
-    ∃ Z : GlobalTheory.LamTie.LamDat D', Z.Ok ∧ Z.Teich ∧ Z.C = cf' ∧ Z.q0 = AbsolutelyIrreducibleSpan.q0 D' ∧ GlobalTheory.LamTie.IsLamTieFull D'.ntw Z := by
-  obtain ⟨r, rfl⟩ := h.cp.exists_rest
-  obtain ⟨Z, hO, hT, rfl, hq, hF⟩ := hs
-  have hmu : Z.C.mu0 = cf'.mu0 := eq_of_heq hf.mu0
-  have hd : Z.C.del = cf'.del := eq_of_heq hf.del
-  have hd' : Z.C.del' = cf'.del' := eq_of_heq hf.del'
-  have hj : D.ntw.jL = (overD D r).ntw.jL := eq_of_heq h.jL
-  have hs2 : D.ntw.s2 = (overD D r).ntw.s2 := eq_of_heq h.s2
-  have hX : D.ntw.Xv = (overD D r).ntw.Xv := eq_of_heq h.Xv
-  let Z' : GlobalTheory.LamTie.LamDat (overD D r) := ⟨cf', Z.q0, Z.w0, Z.c, Z.chi⟩
-  have hl : ∀ l a c, Z'.lam0 l a c = Z.lam0 l a c := fun l a c => by
-    change cf'.mu0 a * (if l = D.host.pde then cf'.del' else cf'.del) * _ = _
-    rw [← hmu, ← hd, ← hd']
-    rfl
-  refine ⟨Z', ⟨(by with_unfolding_all exact (hO.places :)), (by with_unfolding_all exact (hO.aux :)), (by with_unfolding_all exact (hO.big :))⟩, (by with_unfolding_all exact (hT :)), rfl, (by with_unfolding_all exact (hq :)), fun i hi => ?_⟩
-  obtain ⟨t0, j, t1, t2⟩ := hF i ((h.cp.inW1 i i HEq.rfl).2 hi)
-  refine ⟨(by with_unfolding_all exact (t0 :)), j, fun x => ?_, ?_⟩
-  · exact (by with_unfolding_all exact (((congrArg j (h.cp.embLL0_eq x).symm).trans ((t1 (e x)).trans
-      (congrArg (GlobalTheory.ToricDenom.toBar D.ntw i) (emb_eq_of_equiv h.cp i x).1))) :))
-  · simp only [GlobalTheory.LamTie.IsLam, BlochKatoReduction.Gen.SOk, hl, ← hj, ← hs2, ← hX]
-    simp only [GlobalTheory.LamTie.IsLam, BlochKatoReduction.Gen.SOk] at t2
-    exact (by with_unfolding_all exact (t2 :))
 open GlobalTheory.EigTie GlobalTheory.TwInputs Formalism.MainNotions.IntegralHeckeForms in
 private theorem is_eig_sys_sig_ev_of_eig_occ {cf : CharFrame D} {Rw low Pq S hL eig θ} (Bs : SideB D cf Rw low Pq S hL eig θ) {Sb : Finset (PlE D.host)} (hSb : ∀ i, Sb ⊆ D.ntw.S0 i)
     (hKs : ∀ j, 1 ≤ j → j ≤ D.R.m → (S.A j).IsKsForm) (hOcc : EigOcc D S θ hL Sb eig) (i : D.ntw.Tw) (s : D.ntw.Sig i) :
@@ -1530,28 +1438,18 @@ theorem side_data_transferred_alt (hArt : GlobalTheory.Published.GlobalArtinReci
            bsup := bsup, act := act, cHk := c, hkEq := hkEq, cHk_del := hecke_coeff_transfer h hc B.cHk_del, hk_emb := hecke_map_transfer h B.hk_emb
            sigSpan := sigSpan_copy h B.sigSpan, rowS := rowS, rowS_eig := r3, hEig_zero := eigen_zero_one_transfer h B.hEig_zero, rhoS := hρ },
     rfl, rfl, hS⟩
-private theorem exists_full_equiv {D D' : D7} {N : TwNew D'} {ι : D.what₂.LL →+* D'.what₂.LL} {e : ↥D'.LL0 ≃+* ↥D.LL0}
-    (h : GlobalTheory.HeightCounting.Up.CopyN D N ι e) (hp : HEq D.naut.plGw D'.naut.plGw) {D'' : D7} (hD : D'' = N.toD7) :
-    ∃ ι' e', CopyAll D D'' ι' e' := by
-  subst hD
-  exact ⟨ι, e, h.cp, h.jL, h.s2, h.lamG, h.Xv, h.qs, hp⟩
 end GlobalTheory.HeightCounting.SideCopy.Restage
 end
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 namespace GlobalTheory.HeightCounting.SideCopy.Restage
 
-
-private theorem frame_components_heq_alt {A A' : Pre} (h : A' = A) {f : Top.Fr A} {f' : Top.Fr A'} (hf : HEq f' f) :
-    HEq f.mu0 f'.mu0 ∧ HEq f.eta f'.eta ∧ HEq f.del f'.del ∧ HEq f.del' f'.del' := by
-  subst h; cases hf; exact ⟨HEq.rfl, HEq.rfl, HEq.rfl, HEq.rfl⟩
 section State
 variable {hL : _root_.UpperTheory.Zero.LLC.RecTExists} {K : Ctx} {B : Base} {f : Top.Fr B.toPre} {T : TwDat B} {w : ColW B f T} {P : Pre2 K w}
 private theorem same_frame_of_eq {B' : Base} {f' : Top.Fr B'.toPre} {T' : TwDat B'} {w' : ColW B' f' T'} {P' : Pre2 K w'}
     (hB : B'.toPre = B.toPre) (hf : HEq f' f) (x : St P) (x' : St P') : SameFrame (cfOf x) (cfOf x') := by
   have h : HEq w'.I.C w.I.C := (heq_of_eq w'.C_eq).trans (hf.trans (heq_of_eq w.C_eq).symm)
-  obtain ⟨h1, h2, h3, h4⟩ := frame_components_heq_alt hB h
-  exact ⟨(by with_unfolding_all exact (h1 :)), (by with_unfolding_all exact (h2 :)), (by with_unfolding_all exact (h3 :)), (by with_unfolding_all exact (h4 :))⟩
+  obtain ⟨h1, h2, h3, h4⟩ := GlobalTheory.HeightCounting.SerGlue.fr_same hB h
+  exact ⟨h1, h2, h3, h4⟩
 theorem psi_std_of_level_i {x : St P} (l : _root_.GlobalTheory.HeightCounting.Up.IntermediateLevel hL x) : PsiStd (Dof x) l.rat.In.θ :=
   psi_standard_of_units x.m.z.pins.keep.psi l.rat.rat.lvl l.rat.rat.psi
 theorem eig_true_and_eig_occ_of_low {x : St P} (l : _root_.GlobalTheory.HeightCounting.Up.IntermediateLevel hL x) {Sb : Finset (PlE (Dof x).host)} (h1 : l.rat.In.Sb ⊆ Sb)
@@ -1570,14 +1468,13 @@ private theorem eig_low_s0 (D : D7) {F : TwFrameC D} (T : TwistFrameLowIndexComp
 end GlobalTheory.HeightCounting.SideCopy.Restage
 open GlobalTheory.HeightCounting.SideCopy GlobalTheory.HeightCounting.SideCopy.Restage in
 
-
 theorem _root_.GlobalTheory.T.side_eigenform_copy_transfer_alt : _root_.GlobalTheory.HeightCounting.Up.PublishedInputsThirdLayerAlt → SerN → ∀ (hL : _root_.UpperTheory.Zero.LLC.RecTExists) {K : Ctx} {B' : Base} {f' : Top.Fr B'.toPre} {T' : TwDat B'} {w' : ColW B' f' T'}, KPx B' f' → Forced K B' T' → Start K B' f' T' w' → ∀ (B : Base) (f : Top.Fr B.toPre) (T : TwDat B) (w : ColW B f T), Enl B B' → HEq f' f → Start K B f T w → HEq w'.px w.px → HEq w'.I.sel w.I.sel → HEq w'.I.J w.I.J → HEq w'.δ w.δ → ∀ (P : Pre2 K w) (x : St P) (lb : _root_.GlobalTheory.HeightCounting.Up.ThirdIntermediateLevel hL x) (P' : Pre2 K w'), Ext P.z P'.z → ∀ (x' : St P') (l' : _root_.GlobalTheory.HeightCounting.Up.IntermediateLevel hL x'), SameGal (Dof x) (Dof x') → ∀ (N : TwNew (Dof x')) (ι : (Dof x).what₂.LL →+* (Dof x').what₂.LL) (e : ↥(Dof x').LL0 ≃+* ↥(Dof x).LL0), CopyN (Dof x) N ι e → ∀ (x'' : St P') (l'' : _root_.GlobalTheory.HeightCounting.Up.IntermediateLevel hL x''), x''.o = oTw x' N → HEq x''.m.z.R.toRealDat.toLevCh (GlobalTheory.Mem.R3.Tr.levCh (a := x'.o.Z) (oTw x' N).Z x'.m.z.R.toRealDat.toLevCh) → HEq l''.a.A.row (N.row l'.a.A.row) → HEq l''.Pq l'.Pq → HEq l''.rat.S (N.rat l'.rat.S) → HEq l''.rat.In.Sb l'.rat.In.Sb → HEq l''.rat.In.hL l'.rat.In.hL → HEq l''.rat.In.eig l'.rat.In.eig → HEq l''.rat.In.θ l'.rat.In.θ → ∀ (cHk : ∀ (i : (Dof x'').ntw.Tw) (_b : Bool) (_P : PlE (Dof x'').host), ((Dof x'').ntw.O i)ˣ), (∀ (i : (Dof x).ntw.Tw) (i' : (Dof x'').ntw.Tw) (b : Bool) (P : PlE (Dof x).host) (P' : PlE (Dof x'').host), HEq i i' → HEq P P' → HEq (cHk i' b P') (lb.b.Bs.cHk i b P)) → ∀ X : NExpTied (Dof x''), (∀ i j b k Q ψ (h1 : 1 ≤ j) (h2 : j ≤ (Dof x'').R.m) (hadm : NX.AdmTw (Dof x'') i k Q ψ), (X.mtV i j b k Q ψ h1 h2 hadm).QP = qpOf (Dof x'') l''.Pq Q ∧ (X.mtV i j b k Q ψ h1 h2 hadm).DP = qpOf (Dof x'') l''.Pq ((Dof x'').ntw.pD i)) → ∀ eF : (∀ i j b, 1 ≤ j → j ≤ (Dof x'').R.m → (Dof x'').nexp.Fm i j b ≃ₗ[FractionRing ((Dof x'').ntw.O i)] Fm l''.rat.S i j b), (∀ i j b (h1 : 1 ≤ j) (h2 : j ≤ (Dof x'').R.m) (y : (Dof x'').nexp.Fm i j b), y ∈ (Dof x'').nexp.Bsup i j b ↔ eF i j b h1 h2 y ∈ Bsup l''.rat.S i j b) → (∀ i j b (h1 : 1 ≤ j) (h2 : j ≤ (Dof x'').R.m) (g : G0g (Dof x'').nd) (y : (Dof x'').nexp.Fm i j b), eF i j b h1 h2 ((Dof x'').nexp.actG i j b g y) = actG l''.rat.S i j b (l''.rat.In.rho j h1 h2) (l''.rat.In.chi j h1 h2) g (eF i j b h1 h2 y)) → (∀ i j b (h1 : 1 ≤ j) (h2 : j ≤ (Dof x'').R.m) (k : ℕ) (P : PlE (Dof x'').host) (y : (Dof x'').nexp.Fm i j b), P ∉ (Dof x'').ntw.S0 i → IsSplitPl (Dof x'').host P → k ≤ (Dof x'').R.r → eF i j b h1 h2 ((Dof x'').nexp.hkF i j b k P y) = algebraMap ((Dof x'').ntw.O i) (FractionRing ((Dof x'').ntw.O i)) (cHk i b P) ^ k • hkF (Dof x'') l''.rat.S i j b (l''.rat.In.hL j) (l''.rat.In.hs j h1 h2) k P (eF i j b h1 h2 y)) → ∃ b0 : _root_.GlobalTheory.HeightCounting.SettingsFormsData l''.a l''.rat l''.Pq, b0.Bs.exp = X ∧ b0.Bs.eF = eF := by
   intro hPr _ hL K B' f' T' w' _ _ _ B f T w hE hf _ _ _ _ _ P x lb P' _ x' _ hG N ι e hN x'' l'' ho _ _ _ _ _ _ _ _
     cHk hc X hpq eF hsup hact hecke_map_transfer
   have hD : Dof x'' = N.toD7 := by
     show (w'.st x''.o.Z).toD7 = N.toD7
     rw [ho]; rfl
-  obtain ⟨ι', e', h⟩ := exists_full_equiv hN hG.pl hD
+  obtain ⟨ι', e', h⟩ := GlobalTheory.HeightCounting.SerGlue.copyAll_ex hN hG.pl hD
   have hF : SameFrame (cfOf x) (cfOf x'') := same_frame_of_eq hE.1 hf x x''
   obtain ⟨Sb, a1, a2, a3⟩ := GlobalTheory.TwInputs.Eig.exists_low lb.rat.In.Sb (Dof x).ntw.S0 lb.b.Sb_le (eig_low_s0 _ lb.b.Bs.tw)
   obtain ⟨Sb', b1, b2, -⟩ := GlobalTheory.TwInputs.Eig.exists_low (ι := Empty) l''.rat.In.Sb (fun i => i.elim) (fun i => i.elim)
@@ -1587,7 +1484,7 @@ theorem _root_.GlobalTheory.T.side_eigenform_copy_transfer_alt : _root_.GlobalTh
     (_root_.GlobalTheory.HeightCounting.galEx_of_cgTrue_alt hL hPr.what₂.fin hPr.what₂.gal _ l''.a.A.wdT ⟨l''.a.cg⟩) (GlobalTheory.ChebSplitDense.chebSplit_nd hPr.what₂.cheb _)
     l''.rat.In l''.rat.rat.Sb_le hT (_root_.GlobalTheory.HeightCounting.SideCopy.Restage.eig_true_and_eig_occ_of_low l'' b1 b2).1 (is_eig_sys_sig_ev_of_eig_occ lb.b.Bs a3 lb.rat.In.ks hO)
     (_root_.GlobalTheory.HeightCounting.SideCopy.Restage.psi_std_of_level_i lb.toLI) (_root_.GlobalTheory.HeightCounting.SideCopy.Restage.psi_std_of_level_i l'') cHk hc X hpq eF hsup hact hecke_map_transfer
-  refine ⟨⟨B2, h3, ?_, lambda_datum_transfer h hF lb.b.lam⟩, h1, h2⟩
+  refine ⟨⟨B2, h3, ?_, GlobalTheory.HeightCounting.SideCopy.LamCopy.lam_copy h hF lb.b.lam⟩, h1, h2⟩
   rw [lowAll_eq h]
   exact over_S0_transfer h _ lb.b.rootsOfUnityRing_le_wittIntegers
 end
@@ -1601,15 +1498,11 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 section
 noncomputable section
 namespace GlobalTheory.HeightCounting.Up
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 theorem multiplicity_lower_bound_of_restricted_copy_alt : _root_.GlobalTheory.HeightCounting.Up.PublishedInputsThirdLayerAlt → SerN → ∀ (hL : _root_.UpperTheory.Zero.LLC.RecTExists) {K : Ctx} {B' : Base} {f' : Top.Fr B'.toPre} {T' : TwDat B'} {w' : ColW B' f' T'}, KPx B' f' → Forced K B' T' → Start K B' f' T' w' → K.Over B'.toPre → (∀ X : Stages, K.Over X.B.toPre → Formalism.IndefR.Links.HostHyp X.toD7 ∧ 8 * X.toD7.R.f * X.toD7.R.r + 4 ≤ X.toD7.R.nV) → ∀ (B : Base) (f : Top.Fr B.toPre) (T : TwDat B) (w : ColW B f T), Enl B B' → HEq f' f → Start K B f T w → HEq w'.px w.px → HEq w'.I.sel w.I.sel → HEq w'.I.J w.I.J → HEq w'.δ w.δ → ∀ (P : Pre2 K w) (x : St P) (lb : _root_.GlobalTheory.HeightCounting.Up.ThirdIntermediateLevel hL x) (P' : Pre2 K w'), Ext P.z P'.z → ∀ (x' : St P') (l' : _root_.GlobalTheory.HeightCounting.Up.IntermediateLevel hL x'), SameGal (Dof x) (Dof x') → ∀ (N : TwNew (Dof x')) (ι : (Dof x).what₂.LL →+* (Dof x').what₂.LL) (e : ↥(Dof x').LL0 ≃+* ↥(Dof x).LL0), CopyN (Dof x) N ι e → ∀ (x'' : St P') (l'' : _root_.GlobalTheory.HeightCounting.Up.IntermediateLevel hL x''), x''.o = oTw x' N → HEq x''.m.z.R.toRealDat.toLevCh (GlobalTheory.Mem.R3.Tr.levCh (a := x'.o.Z) (oTw x' N).Z x'.m.z.R.toRealDat.toLevCh) → HEq l''.a.A.row (N.row l'.a.A.row) → HEq l''.Pq l'.Pq → HEq l''.rat.S (N.rat l'.rat.S) → HEq l''.rat.In.Sb l'.rat.In.Sb → HEq l''.rat.In.hL l'.rat.In.hL → HEq l''.rat.In.eig l'.rat.In.eig → HEq l''.rat.In.θ l'.rat.In.θ → Nonempty (_root_.GlobalTheory.HeightCounting.Up.SecondIntermediateLevel hL x'') := by
   intro hPr hSer hL K B' f' T' w' hKP hF hS' hO hB B f T w hE hf hSt hpx hsel hJ hδ P x lb P' hExt x' l' hG N ι e hN x'' l'' ho hlev hrow hPq hRS hSb hhL heig hθ
@@ -1630,16 +1523,12 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 section
 noncomputable section
 namespace GlobalTheory.HeightCounting.Up
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top
   GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 theorem exists_levelB1_carried_of_levelI_same_gal : _root_.GlobalTheory.HeightCounting.Up.PublishedInputsThirdLayerAlt → SerN → ∀ hL : _root_.UpperTheory.Zero.LLC.RecTExists, StepW Start fun K B' f' _ w' => ∀ (B : Base) (f : Fr B.toPre) (T : TwDat B) (w : ColW B f T), Enl B B' → HEq f' f → Start K B f T w → HEq w'.px w.px → HEq w'.I.sel w.I.sel → HEq w'.I.J w.I.J → HEq w'.δ w.δ → ∀ (P : Pre2 K w) (x : St P), _root_.GlobalTheory.HeightCounting.Up.ThirdIntermediateLevel hL x → ∀ (P' : Pre2 K w'), Ext P.z P'.z → ∀ x' : St P', _root_.GlobalTheory.HeightCounting.Up.IntermediateLevel hL x' → SameGal (Dof x) (Dof x') → ∃ x'' : St P', Nonempty (_root_.GlobalTheory.HeightCounting.Up.SecondIntermediateLevel hL x'') ∧ Carried (Dof x) (Dof x'') ∧ ∀ cDep : ℝ, ListSt cDep x → ListSt cDep x'' := by
   intro hPr hSer hL
@@ -1671,13 +1560,9 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 noncomputable section
 namespace GlobalTheory.HeightCounting.Up
@@ -1704,11 +1589,11 @@ theorem points_preserved_under_level_transfer_alt : _root_.GlobalTheory.HeightCo
       (h : ListPin (Dof y) Lc c b) :
       ListPin (w.st (oTw y N).Z).toD7 (levCh (a := y.o.Z) (oTw y N).Z Lc) c b := by
     obtain ⟨G, h1, h2⟩ := h
-    exact ⟨(by with_unfolding_all exact ((GlobalTheory.Mem.GridMove.gdC (a := y.o.Z) (oTw y N).Z G) :)),
-      ⟨(by with_unfolding_all exact (h1.values :)), (by with_unfolding_all exact (h1.roots :))⟩,
-      (by with_unfolding_all exact ((hN _ h2) :))⟩
+    refine ⟨GlobalTheory.Mem.GridMove.gdC (a := y.o.Z) (oTw y N).Z G,
+      ⟨h1.values, h1.roots⟩, ?_⟩
+    exact hN (BigTop.Fun.lamOf G) h2
   have eL : m'.z.R.toRealDat.toLevCh =
-      (by with_unfolding_all exact ((levCh (a := x.o.Z) (oTw x (thTw (Dof x) (GlobalTheory.GeoTie.geoNTh hlaw))).Z x.m.z.R.toRealDat.toLevCh) :)) := eq_of_heq hLc
+      (levCh (a := x.o.Z) (oTw x (thTw (Dof x) (GlobalTheory.GeoTie.geoNTh hlaw))).Z x.m.z.R.toRealDat.toLevCh) := eq_of_heq hLc
   show ListPin _ m'.z.R.toRealDat.toLevCh cDep K.s.b
   rw [eL]
   exact htrans x _ (fun Z h => hgen _ _ Z h) _ _ _ hLs
@@ -1725,12 +1610,9 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
-
 section
 section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 namespace GlobalTheory.HeightCounting.Up
 theorem multiplicity_bound_of_local_components_alt : _root_.GlobalTheory.HeightCounting.Up.PublishedInputsThirdLayerAlt → SerN → ∀ hL : _root_.UpperTheory.Zero.LLC.RecTExists, _root_.GlobalTheory.HeightCounting.Up.MoveToBase hL := by
   intro hP hS hL
@@ -1741,13 +1623,6 @@ theorem multiplicity_bound_of_local_components_alt : _root_.GlobalTheory.HeightC
   obtain ⟨x₂, hl₂, hC₂, hL₂⟩ := h' P' x₁ (Dof x) l₁ hC₁
   exact ⟨x₂, hl₂, hC₂, fun c hc => hL₂ c (hL₁ c hc)⟩
 end GlobalTheory.HeightCounting.Up
-end
-section
-open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.TwistChoice
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-theorem _root_.GlobalTheory.T.moveToBase_of_inputs_serN : _root_.GlobalTheory.HeightCounting.Up.PublishedInputsThirdLayerAlt → SerN → ∀ hL : _root_.UpperTheory.Zero.LLC.RecTExists, _root_.GlobalTheory.HeightCounting.Up.MoveToBase hL := by
-  first | exact @_root_.GlobalTheory.HeightCounting.Up.multiplicity_bound_of_local_components_alt
 end
 end
 end -- clump:auto

@@ -1,48 +1,8 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
-
-set_option autoImplicit false
 
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
 
@@ -54,14 +14,12 @@ namespace CobCob
 
 variable {R : Type} [CommRing R] {d : ℕ} {τ : Type}
 
-set_option autoImplicit false in
 open CategoryTheory TensorProduct MvPowerSeries in
 variable {R : Type} [CommRing R] {d : ℕ} {τ : Type} in
 theorem _root_.GlobalTheory.Katz.CobCob.elim_has {u v : Fin d → MvPowerSeries τ R} (hu : ∀ i, constantCoeff (u i) = 0)
     (hv : ∀ i, constantCoeff (v i) = 0) : HasSubst (Sum.elim u v) :=
   hasSubst_of_constantCoeff_zero (by rintro (i | i) <;> simp [hu, hv])
 
-set_option autoImplicit false in
 open CategoryTheory TensorProduct MvPowerSeries in
 variable {R : Type} [CommRing R] {d : ℕ} {τ : Type} in
 theorem _root_.GlobalTheory.Katz.CobCob.op_const
@@ -73,7 +31,6 @@ theorem _root_.GlobalTheory.Katz.CobCob.op_const
   exact constantCoeff_subst_eq_zero (_root_.GlobalTheory.Katz.CobCob.elim_has hu hv)
     (by rintro (j | j) <;> simp [hu, hv]) (h i)
 
-set_option autoImplicit false in
 open CategoryTheory TensorProduct MvPowerSeries in
 variable {R : Type} [CommRing R] {d : ℕ} {τ : Type} in
 theorem _root_.GlobalTheory.Katz.CobCob.constantCoeff_threeGroupsFirstVariables (i : Fin d) :
@@ -81,7 +38,6 @@ theorem _root_.GlobalTheory.Katz.CobCob.constantCoeff_threeGroupsFirstVariables 
   unfold _root_.GlobalTheory.Katz.x1
   exact constantCoeff_X _
 
-set_option autoImplicit false in
 open CategoryTheory TensorProduct MvPowerSeries in
 variable {R : Type} [CommRing R] {d : ℕ} {τ : Type} in
 theorem _root_.GlobalTheory.Katz.CobCob.constantCoeff_threeGroupsSecondVariables (i : Fin d) :
@@ -89,7 +45,6 @@ theorem _root_.GlobalTheory.Katz.CobCob.constantCoeff_threeGroupsSecondVariables
   unfold _root_.GlobalTheory.Katz.x2
   exact constantCoeff_X _
 
-set_option autoImplicit false in
 open CategoryTheory TensorProduct MvPowerSeries in
 variable {R : Type} [CommRing R] {d : ℕ} {τ : Type} in
 theorem _root_.GlobalTheory.Katz.CobCob.constantCoeff_threeGroupsThirdVariables (i : Fin d) :
@@ -99,37 +54,6 @@ theorem _root_.GlobalTheory.Katz.CobCob.constantCoeff_threeGroupsThirdVariables 
 
 end CobCob
 
-set_option autoImplicit false in
-open CategoryTheory TensorProduct MvPowerSeries in
-variable {R : Type} [CommRing R] {d : ℕ} {τ : Type} in
-private theorem at2_sub_of_hasSubst {u v : Fin d → MvPowerSeries τ R}
-    (h : HasSubst (Sum.elim u v)) (c c' : MvPowerSeries (Fin d ⊕ Fin d) R) :
-    _root_.GlobalTheory.Katz.at2 (c - c') u v =
-      _root_.GlobalTheory.Katz.at2 c u v - _root_.GlobalTheory.Katz.at2 c' u v := by
-  unfold _root_.GlobalTheory.Katz.at2
-  exact subst_sub h c c'
-
-set_option autoImplicit false in
-open CategoryTheory TensorProduct MvPowerSeries in
-variable {R : Type} [CommRing R] {d : ℕ} {τ : Type} in
-private theorem at2_subst_of_hasSubst {u v : Fin d → MvPowerSeries τ R}
-    (h : HasSubst (Sum.elim u v)) {a : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R}
-    (ha : ∀ i, constantCoeff (a i) = 0) (f : MvPowerSeries (Fin d) R) :
-    _root_.GlobalTheory.Katz.at2 (subst a f) u v =
-      subst (fun i => _root_.GlobalTheory.Katz.at2 (a i) u v) f := by
-  unfold _root_.GlobalTheory.Katz.at2
-  exact subst_comp_subst_apply (hasSubst_of_constantCoeff_zero ha) h f
-
-set_option autoImplicit false in
-open CategoryTheory TensorProduct MvPowerSeries in
-variable {R : Type} [CommRing R] {d : ℕ} {τ : Type} in
-private theorem at2_X_of_hasSubst {u v : Fin d → MvPowerSeries τ R}
-    (h : HasSubst (Sum.elim u v)) (s : Fin d ⊕ Fin d) :
-    _root_.GlobalTheory.Katz.at2 (X s) u v = Sum.elim u v s := by
-  unfold _root_.GlobalTheory.Katz.at2
-  exact subst_X h s
-
-set_option autoImplicit false in
 open CategoryTheory TensorProduct MvPowerSeries in
 variable {R : Type} [CommRing R] {d : ℕ} {τ : Type} in
 private theorem at2_cob1_eq_subst_op_sub {u v : Fin d → MvPowerSeries τ R}
@@ -138,46 +62,25 @@ private theorem at2_cob1_eq_subst_op_sub {u v : Fin d → MvPowerSeries τ R}
     _root_.GlobalTheory.Katz.at2 (_root_.GlobalTheory.Katz.cob1 μ f) u v =
       subst (_root_.GlobalTheory.Katz.op μ u v) f - subst u f - subst v f := by
   unfold _root_.GlobalTheory.Katz.cob1 _root_.GlobalTheory.Katz.inL _root_.GlobalTheory.Katz.inR
-  rw [at2_sub_of_hasSubst h, at2_sub_of_hasSubst h,
-    at2_subst_of_hasSubst h hμ,
-    at2_subst_of_hasSubst h (fun i => constantCoeff_X _),
-    at2_subst_of_hasSubst h (fun i => constantCoeff_X _)]
-  simp only [at2_X_of_hasSubst h, Sum.elim_inl, Sum.elim_inr]
+    _root_.GlobalTheory.Katz.at2
+  rw [subst_sub h, subst_sub h,
+    subst_comp_subst_apply (hasSubst_of_constantCoeff_zero hμ) h,
+    subst_comp_subst_apply (hasSubst_of_constantCoeff_zero fun _ => constantCoeff_X _) h,
+    subst_comp_subst_apply (hasSubst_of_constantCoeff_zero fun _ => constantCoeff_X _) h]
+  simp only [subst_X h, Sum.elim_inl, Sum.elim_inr]
   rfl
 
-set_option autoImplicit false in
-open CategoryTheory TensorProduct MvPowerSeries in
-variable {R : Type} [CommRing R] {d : ℕ} {τ : Type} in
-private theorem at2_add_of_hasSubst {u v : Fin d → MvPowerSeries τ R}
-    (h : HasSubst (Sum.elim u v)) (c c' : MvPowerSeries (Fin d ⊕ Fin d) R) :
-    _root_.GlobalTheory.Katz.at2 (c + c') u v =
-      _root_.GlobalTheory.Katz.at2 c u v + _root_.GlobalTheory.Katz.at2 c' u v := by
-  unfold _root_.GlobalTheory.Katz.at2
-  exact subst_add h c c'
-
-set_option autoImplicit false in
-open CategoryTheory TensorProduct MvPowerSeries in
-variable {R : Type} [CommRing R] {d : ℕ} {τ : Type} in
-private theorem at2_smul_of_hasSubst {u v : Fin d → MvPowerSeries τ R}
-    (h : HasSubst (Sum.elim u v)) (r : R) (c : MvPowerSeries (Fin d ⊕ Fin d) R) :
-    _root_.GlobalTheory.Katz.at2 (r • c) u v = r • _root_.GlobalTheory.Katz.at2 c u v := by
-  unfold _root_.GlobalTheory.Katz.at2
-  exact subst_smul h r c
-
-set_option autoImplicit false in
 open CategoryTheory TensorProduct MvPowerSeries in
 variable {R : Type} [CommRing R] {d : ℕ} {τ : Type} in
 private theorem op_addLaw_eq_add_of_hasSubst {u v : Fin d → MvPowerSeries τ R}
     (h : HasSubst (Sum.elim u v)) :
     _root_.GlobalTheory.Katz.op (_root_.GlobalTheory.Katz.addLaw R d) u v = fun i => u i + v i := by
   funext i
-  unfold _root_.GlobalTheory.Katz.op _root_.GlobalTheory.Katz.addLaw
-  rw [at2_add_of_hasSubst h, at2_X_of_hasSubst h,
-    at2_X_of_hasSubst h]
+  unfold _root_.GlobalTheory.Katz.op _root_.GlobalTheory.Katz.addLaw _root_.GlobalTheory.Katz.at2
+  rw [subst_add h, subst_X h, subst_X h]
   rfl
 
 
-set_option autoImplicit false in
 open CategoryTheory TensorProduct MvPowerSeries in
 theorem _root_.GlobalTheory.Katz.formalGroupLawCoboundaryTwo_coboundaryOne_alt : ∀ (R : Type) [CommRing R] (d : ℕ)
     (μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R), (∀ i, constantCoeff (μ i) = 0) →
@@ -234,22 +137,19 @@ theorem _root_.GlobalTheory.Katz.formalGroupLawCoboundaryTwo_coboundaryOne_alt :
     unfold _root_.GlobalTheory.Katz.cob1
     abel
   refine ⟨part1, part2, fun c c' => ⟨?_, ?_, ?_⟩, fun r c => ⟨?_, ?_⟩, ?_, fun hl => ?_⟩
-  · unfold _root_.GlobalTheory.Katz.cob2
-    rw [at2_add_of_hasSubst h23, at2_add_of_hasSubst h12_3,
-      at2_add_of_hasSubst h1_23, at2_add_of_hasSubst h12]
+  · unfold _root_.GlobalTheory.Katz.cob2 _root_.GlobalTheory.Katz.at2
+    rw [subst_add h23, subst_add h12_3, subst_add h1_23, subst_add h12]
     abel
-  · unfold _root_.GlobalTheory.Katz.cob2
-    rw [at2_sub_of_hasSubst h23, at2_sub_of_hasSubst h12_3,
-      at2_sub_of_hasSubst h1_23, at2_sub_of_hasSubst h12]
+  · unfold _root_.GlobalTheory.Katz.cob2 _root_.GlobalTheory.Katz.at2
+    rw [subst_sub h23, subst_sub h12_3, subst_sub h1_23, subst_sub h12]
     abel
-  · unfold _root_.GlobalTheory.Katz.swap
-    exact at2_sub_of_hasSubst hs c c'
-  · unfold _root_.GlobalTheory.Katz.cob2
-    rw [at2_smul_of_hasSubst h23, at2_smul_of_hasSubst h12_3,
-      at2_smul_of_hasSubst h1_23, at2_smul_of_hasSubst h12]
+  · unfold _root_.GlobalTheory.Katz.swap _root_.GlobalTheory.Katz.at2
+    exact subst_sub hs c c'
+  · unfold _root_.GlobalTheory.Katz.cob2 _root_.GlobalTheory.Katz.at2
+    rw [subst_smul h23, subst_smul h12_3, subst_smul h1_23, subst_smul h12]
     simp only [smul_sub, smul_add]
-  · unfold _root_.GlobalTheory.Katz.swap
-    exact at2_smul_of_hasSubst hs r c
+  · unfold _root_.GlobalTheory.Katz.swap _root_.GlobalTheory.Katz.at2
+    exact subst_smul hs r c
   · have hc : ∀ i, constantCoeff (_root_.GlobalTheory.Katz.addLaw R d i) = 0 := by
       intro i
       simp [_root_.GlobalTheory.Katz.addLaw]
@@ -260,8 +160,8 @@ theorem _root_.GlobalTheory.Katz.formalGroupLawCoboundaryTwo_coboundaryOne_alt :
       simp
     · intro i
       unfold _root_.GlobalTheory.Katz.swap _root_.GlobalTheory.Katz.addLaw
-      rw [at2_add_of_hasSubst hs, at2_X_of_hasSubst hs,
-        at2_X_of_hasSubst hs]
+        _root_.GlobalTheory.Katz.at2
+      rw [subst_add hs, subst_X hs, subst_X hs]
       simp [add_comm]
     · rw [op_addLaw_eq_add_of_hasSubst
           (_root_.GlobalTheory.Katz.CobCob.elim_has (_root_.GlobalTheory.Katz.CobCob.op_const hc h1 h2) h3),

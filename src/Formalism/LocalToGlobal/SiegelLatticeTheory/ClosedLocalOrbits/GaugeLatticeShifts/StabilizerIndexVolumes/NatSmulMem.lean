@@ -95,10 +95,6 @@ theorem int_smul_mem (Λ : Submodule (𝓞 E) V) {c : E} (hc : IntE c) {v : V} (
   obtain ⟨o, rfl⟩ := hc
   rw [coe_smul_eq]; exact Λ.smul_mem o hv
 
-theorem lat_smul_mem (Λ : Submodule (𝓞 E) V) (h : Submodule.IsFullLattice E Λ) (v : V) :
-    ∃ m : ℕ, m ≠ 0 ∧ (m : E) • v ∈ Λ := by
-  exact Bl.general_b_fact_third_version.goal1 Λ h v
-
 theorem lat_fun_bdd (Λ : Submodule (𝓞 E) V) (h : Submodule.IsLattice E Λ) {ι : Type*} [Fintype ι]
     (φ : ι → V →ₗ[E] E) : ∃ m : ℕ, m ≠ 0 ∧ ∀ v ∈ Λ, ∀ i, IntE ((m : E) * φ i v) := by
   classical

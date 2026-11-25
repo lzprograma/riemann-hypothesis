@@ -23,10 +23,6 @@ open ReciprocityTheory.ChartRestriction.G.Chart (sp)
 open GlobalTheory.ZH.CrdCalc (valR_spMap)
 open TrivSqZeroExt (inl inr)
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.Heat.TangentTranslation

@@ -9,47 +9,6 @@ public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.Test
 public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.CgeZeroIffIntegral
 public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.DigitPartMonomial
 import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.Monomial
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -276,8 +235,8 @@ theorem coeff_digitPart_eIn (p : ℕ) {ζ : D.EM} (hζ : D.LabLowE p ζ) (G : Mv
       MvPolynomial (D.ML × Fin D.r) K).coeff (eIn D.outP ζ) = if α = D.collapseExponent p ζ then G.coeff α else 0 := by
     intro α _
     split_ifs with h1 h2 h2
-    · rw [MvPolynomial.coeff_monomial, if_pos ((D.class_iff p hζ α).2 h2).2]
-    · rw [MvPolynomial.coeff_monomial, if_neg]
+    · rw [MvPolynomial.coeff_monomial, ite_eq_left ((D.class_iff p hζ α).2 h2).2]
+    · rw [MvPolynomial.coeff_monomial, ite_eq_right]
       intro h3
       exact h2 ((D.class_iff p hζ α).1 ⟨h1, h3⟩)
     · exact absurd ((D.class_iff p hζ α).2 h2).1 h1
@@ -465,7 +424,7 @@ theorem value_monomial {C0 : ℝ} (hD : DVRHyp v p) (h1 : 1 ≤ C0) (hV : D.Vali
     intro ζ' hb
     have hl := (hζ.good_exponent_same_block D hb).1
     have c1 : A.coeff ζ' = Q0.coeff (eIn D.outP ζ') := by
-      rw [hA, coeff_hcomp, if_pos hb.1]
+      rw [hA, coeff_hcomp, ite_eq_left hb.1]
       conv_lhs => rw [← eOut_add_eIn D.outP ζ', D.output_exponent_same_block hb]
       rw [coeff_monomial_mul, one_mul]
     have c2 : (D.GM F (D.tpE ζ)).coeff (D.collapseExponent p ζ') =
@@ -515,7 +474,7 @@ theorem value_monomial {C0 : ℝ} (hD : DVRHyp v p) (h1 : 1 ≤ C0) (hV : D.Vali
     (vge_sum v _ _ fun ζ' h => hterm ζ' (hs2 ζ' h) _ ?_)
   have := support_monomial_subset h
   rw [Finset.mem_singleton] at this
-  rw [this, coeff_monomial, if_pos rfl]
+  rw [this, coeff_monomial, ite_eq_left rfl]
   exact vge_mono v (by linarith) (vge_one v)
 
 end TwistData

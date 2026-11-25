@@ -189,12 +189,12 @@ theorem rdU_mul (U : Formalism.L2.PjFree.Unf Xo c σ r) (f g : Rul Xo c) :
   funext k x
   simp only [Formalism.L2.PjFree.rdU, LinearMap.coe_mk, AddHom.coe_mk, Pi.mul_apply]
   by_cases h : x ∈ (U.X k).dom
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     unfold Formalism.L2.PjFree.toC evR evalAt
     split_ifs with h1
     · exact map_mul _ _ _
     · exact (mul_zero _).symm
-  · simp only [dif_neg h, mul_zero]
+  · simp only [dite_eq_right h, mul_zero]
 
 theorem laU_zero (U : Formalism.L2.PjFree.Unf Xo c σ r) (k : U.Comp) : Formalism.L2.PjFree.laU U 0 0 k = 0 := by
   unfold Formalism.L2.PjFree.laU

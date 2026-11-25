@@ -18,8 +18,6 @@ open CategoryTheory MonoidalCategory
 
 universe u
 
-attribute [local instance 2000] Rep.hV2
-
 section Transport
 
 variable {n : ℕ} [NeZero n]

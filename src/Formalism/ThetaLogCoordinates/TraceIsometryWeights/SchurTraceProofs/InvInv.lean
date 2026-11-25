@@ -2,54 +2,9 @@ module
 
 public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementA
 public import Mathlib.CategoryTheory.Category.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -128,7 +83,7 @@ theorem Om_comm_S (h : GlRel E) {S : Finset ι} {z : ι} (hz : z ∉ S) {a b : �
       rw [der3 _ _ _ _ _ _ _ (h.sw a b z i) ho (h.sw a b i z)]
       congr 1
       have hza : ¬ z = a := fun e => haz e.symm
-      simp only [if_neg hbz, if_neg hza]
+      simp only [ite_eq_right hbz, ite_eq_right hza]
       by_cases hia : i = a <;> by_cases hib : i = b
       · subst hia; subst hib; simp
       · subst hia; simp [hib, Ne.symm hib]
@@ -136,7 +91,7 @@ theorem Om_comm_S (h : GlRel E) {S : Finset ι} {z : ι} (hz : z ∉ S) {a b : �
       · simp [hia, hib, Ne.symm hib]
     simp only [Om]
     rw [Finset.mul_sum, Finset.sum_mul, Finset.sum_congr rfl (fun i _ => key i), Finset.sum_add_distrib,
-      Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq', if_pos hb, if_pos ha, sub_self, add_zero]
+      Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq', ite_eq_left hb, ite_eq_left ha, sub_self, add_zero]
 
 theorem diag_comm_omega (h : GlRel E) {S : Finset ι} {z : ι} (hz : z ∉ S)
     (q : ℕ) : E z z * Om E S z q = Om E S z q * E z z := by
@@ -152,7 +107,7 @@ theorem diag_comm_omega (h : GlRel E) {S : Finset ι} {z : ι} (hz : z ∉ S)
     simp [hiz, Ne.symm hiz]
 
 theorem diag_comm (h : GlRel E) {a b c : ι} (ha : a ≠ c) (hb : b ≠ c) : E c c * E a b = E a b * E c c := by
-  rw [h.sw c c a b, if_neg (Ne.symm ha), if_neg hb, sub_zero, add_zero]
+  rw [h.sw c c a b, ite_eq_right (Ne.symm ha), ite_eq_right hb, sub_zero, add_zero]
 
 theorem Om_comm_out (h : GlRel E) {S : Finset ι} {z c : ι} (hc : c ∉ S) (hcz : z ≠ c)
     (q : ℕ) : E c c * Om E S z q = Om E S z q * E c c := by
@@ -173,20 +128,20 @@ def Cj (E : ι → ι → Module.End K W) (S : Finset ι) (z j : ι) : Module.En
   ∑ i ∈ S, E i z * E j i - E j z * E z z + ((S.card : K) + 1) • E j z
 
 theorem EE_comm (h : GlRel E) {z i k : ι} (hi : i ≠ z) (hk : k ≠ z) : E i z * E k z = E k z * E i z := by
-  rw [h.sw i z k z, if_neg (Ne.symm hk), if_neg (Ne.symm hi), sub_zero, add_zero]
+  rw [h.sw i z k z, ite_eq_right (Ne.symm hk), ite_eq_right (Ne.symm hi), sub_zero, add_zero]
 
 theorem sum_G (h : GlRel E) {S : Finset ι} {z j : ι} (hz : z ∉ S) (hj : j ∈ S) :
     ∑ i ∈ S, (E j i - (if i = j then E z z else 0)) * E i z = Cj E S z j := by
   have hjz : j ≠ z := fun e => hz (e ▸ hj)
   have h1 : ∀ i ∈ S, E j i * E i z = E i z * E j i + E j z := by
     intro i _
-    rw [h.sw j i i z, if_pos (rfl : i = i), if_neg (show ¬ z = j from fun e => hjz e.symm), sub_zero]
+    rw [h.sw j i i z, ite_eq_left (rfl : i = i), ite_eq_right (show ¬ z = j from fun e => hjz e.symm), sub_zero]
   have h2 : E z z * E j z = E j z * E z z - E j z := by
-    rw [h.sw z z j z, if_neg (show ¬ z = j from fun e => hjz e.symm), if_pos (rfl : z = z), zero_sub,
+    rw [h.sw z z j z, ite_eq_right (show ¬ z = j from fun e => hjz e.symm), ite_eq_left (rfl : z = z), zero_sub,
       ← sub_eq_add_neg]
   simp only [sub_mul, Finset.sum_sub_distrib]
   rw [Finset.sum_congr rfl h1, Finset.sum_add_distrib]
-  simp only [ite_mul, zero_mul, Finset.sum_ite_eq', if_pos hj, h2, Cj, Finset.sum_const, add_smul, one_smul]
+  simp only [ite_mul, zero_mul, Finset.sum_ite_eq', ite_eq_left hj, h2, Cj, Finset.sum_const, add_smul, one_smul]
   rw [← Nat.cast_smul_eq_nsmul K]
   abel
 
@@ -200,7 +155,7 @@ theorem Cj_E (h : GlRel E) {S : Finset ι} {z j k : ι} (hz : z ∉ S) (hj : j �
     have hiz : i ≠ z := fun e => hz (e ▸ hi)
     calc E i z * E j i * E k z = E i z * (E j i * E k z) := mul_assoc _ _ _
       _ = E i z * (E k z * E j i + (if i = k then E j z else 0)) := by
-          rw [h.sw j i k z, if_neg (show ¬ z = j from fun e => hjz e.symm), sub_zero]
+          rw [h.sw j i k z, ite_eq_right (show ¬ z = j from fun e => hjz e.symm), sub_zero]
       _ = (E i z * E k z) * E j i + E i z * (if i = k then E j z else 0) := by rw [mul_add, mul_assoc]
       _ = E k z * (E i z * E j i) + (if i = k then E k z * E j z else 0) := by
           rw [EE_comm h hiz hkz, mul_assoc]
@@ -210,13 +165,13 @@ theorem Cj_E (h : GlRel E) {S : Finset ι} {z j k : ι} (hz : z ∉ S) (hj : j �
   have a2 : E j z * E z z * E k z = E k z * (E j z * E z z) - E k z * E j z := by
     calc E j z * E z z * E k z = E j z * (E z z * E k z) := mul_assoc _ _ _
       _ = E j z * (E k z * E z z - E k z) := by
-          rw [h.sw z z k z, if_neg (show ¬ z = k from fun e => hkz e.symm), if_pos (rfl : z = z), zero_sub,
+          rw [h.sw z z k z, ite_eq_right (show ¬ z = k from fun e => hkz e.symm), ite_eq_left (rfl : z = z), zero_sub,
             ← sub_eq_add_neg]
       _ = (E j z * E k z) * E z z - E j z * E k z := by rw [mul_sub, mul_assoc]
       _ = E k z * (E j z * E z z) - E k z * E j z := by rw [EE_comm h hjz hkz, mul_assoc]
   simp only [Cj, add_mul, sub_mul, Finset.sum_mul, smul_mul_assoc, mul_add, mul_sub, Finset.mul_sum,
     mul_smul_comm]
-  rw [Finset.sum_congr rfl a1, Finset.sum_add_distrib, Finset.sum_ite_eq', if_pos hk, a2, EE_comm h hjz hkz,
+  rw [Finset.sum_congr rfl a1, Finset.sum_add_distrib, Finset.sum_ite_eq', ite_eq_left hk, a2, EE_comm h hjz hkz,
     two_smul]
   abel
 
@@ -230,7 +185,7 @@ theorem Om_rec (h : GlRel E) {S : Finset ι} {z j : ι} (hz : z ∉ S) (hj : j �
     intro i hi
     have hiz : i ≠ z := fun e => hz (e ▸ hi)
     rw [der3 _ _ _ _ _ (E j z * Om E S z q - Om E S z q * E j z) 0 (h.sw j z z i) (by abel)
-      (by rw [EE_comm h hjz hiz, add_zero]), if_pos rfl]
+      (by rw [EE_comm h hjz hiz, add_zero]), ite_eq_left rfl]
     have hc : (E j i - (if i = j then E z z else 0)) * Om E S z q =
         Om E S z q * (E j i - (if i = j then E z z else 0)) := by
       rw [sub_mul, mul_sub, Om_comm_S h hz hj hi]
@@ -322,7 +277,7 @@ theorem Om_vanish (h : GlRel E) {NN : Submodule K W} (hN : ∀ a b, ∀ x ∈ NN
     have hiz : i ≠ z := fun e => hz (e ▸ hi)
     have hw : E z z (E i z x) = -((k + 1 : ℕ) : K) • E i z x := by
       have e1 := DFunLike.congr_fun (h.sw z z i z) x
-      simp only [Module.End.mul_apply, LinearMap.add_apply, if_neg (Ne.symm hiz),
+      simp only [Module.End.mul_apply, LinearMap.add_apply, ite_eq_right (Ne.symm hiz),
         zero_sub, LinearMap.neg_apply] at e1
       rw [e1, hk, map_smul]
       push_cast
@@ -393,11 +348,11 @@ theorem lower_kill [CharZero K] (h : GlRel E) {NN : Submodule K W} (hN : ∀ a b
     | zero => simpa using hy
     | succ k ih => rw [hpow]; exact hN _ _ _ ih
   have sZ : E z z * E z i = E z i * E z z + E z i := by
-    rw [h.sw z z z i, if_pos (rfl : z = z), if_neg hiz, sub_zero]
+    rw [h.sw z z z i, ite_eq_left (rfl : z = z), ite_eq_right hiz, sub_zero]
   have sI : E i i * E z i = E z i * E i i - E z i := by
-    rw [h.sw i i z i, if_neg hiz, if_pos (rfl : i = i), zero_sub, ← sub_eq_add_neg]
+    rw [h.sw i i z i, ite_eq_right hiz, ite_eq_left (rfl : i = i), zero_sub, ← sub_eq_add_neg]
   have sE : E i z * E z i = E z i * E i z + (E i i - E z z) := by
-    rw [h.sw i z z i, if_pos (rfl : z = z), if_pos (rfl : i = i)]
+    rw [h.sw i z z i, ite_eq_left (rfl : z = z), ite_eq_left (rfl : i = i)]
   have wZ : ∀ k : ℕ, E z z ((E z i ^ k) y) = (k : K) • (E z i ^ k) y := by
     intro k
     induction k with
@@ -476,7 +431,7 @@ theorem Pstep_inv [CharZero K] (h : GlRel E) {NN : Submodule K W} (hN : ∀ a b,
     have hjz : j ≠ z := fun e => hz (e ▸ hj)
     have hw : E z z (E j z u) = -((1 : ℕ) : K) • E j z u := by
       have e1 := DFunLike.congr_fun (h.sw z z j z) u
-      simp only [Module.End.mul_apply, LinearMap.add_apply, if_neg (show ¬ z = j from fun e => hjz e.symm), ↓reduceIte, zero_sub, LinearMap.neg_apply, hzz, map_zero, zero_add] at e1
+      simp only [Module.End.mul_apply, LinearMap.add_apply, ite_eq_right (show ¬ z = j from fun e => hjz e.symm), ↓reduceIte, zero_sub, LinearMap.neg_apply, hzz, map_zero, zero_add] at e1
       rw [e1, Nat.cast_one, neg_one_smul]
     rw [E_Pstep_apply h hz hj hS hzz l,
       Om_vanish h hN hev hz l 1 (E j z u) (hN _ _ _ hu) hw (by omega), smul_zero]

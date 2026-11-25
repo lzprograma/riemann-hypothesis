@@ -14,62 +14,14 @@ public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DensityLemma.PFibreBoundVDefs
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DensityLemma.PFibreBoundV
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SupportPhiZeroSubset
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.Geometry.Manifold.Sheaf.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Tactic.Lemma
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.BigCellVanishingOfCommute
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormFlagVector
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.ZhatNormLinearBound
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Basify
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
 import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.RegularLocalRing.Defs
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsSmoothExt, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DensityLemma.PointwiseBoundHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.FlagStabilizerFixesFrame, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DensityLemma.PFibreBoundHH, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DensityLemma.PFibreBoundW, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DensityLemma.PFibreBoundX, Formalism.HermitianCurvature.HermitianCurvatureProofs.AutomorphicInSphericalLevel
@@ -140,13 +92,6 @@ open MeasureTheory Matrix Formalism.REAL Formalism.QuantumDeterminants Formalism
 noncomputable section
 
 namespace PI.UnitaryGroupMassFormula.DLm
-
-section Frob
-
-attribute [local instance] Matrix.frobeniusSeminormedAddCommGroup Matrix.frobeniusNormedAddCommGroup
-  Matrix.frobeniusNormedSpace
-
-end Frob
 
 lemma gN_cont (k r : ℕ) : Continuous (fun g : B.Mat k r => B.gN g) := by
   unfold B.gN
@@ -585,7 +530,7 @@ theorem nbm_mul (Ba B : Matrix (Fin r) (Fin (k + 1)) ℂ) (Sa S : Matrix (Fin r)
   induction p using cases3 <;> induction q using cases3 <;>
     simp only [nb_ee, nb_we, nb_se, nb_ew, nb_ww, nb_sw, nb_es, nb_ws, nb_ss, zero_mul, mul_zero,
       Finset.sum_const_zero, add_zero, zero_add, ite_mul, mul_ite, one_mul, mul_one, Finset.sum_ite_eq,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true, Matrix.add_apply, star_add]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true, Matrix.add_apply, star_add]
   all_goals first
     | done
     | (rw [nbm_cm, mul_diagonal_conjTranspose_apply, ← Finset.sum_neg_distrib]; ring_nf)
@@ -610,12 +555,6 @@ open scoped ENNReal NNReal
 noncomputable section
 
 namespace PI.UnitaryGroupMassFormula.DLm
-
-namespace HBx
-
-variable {k r : ℕ}
-
-end HBx
 
 namespace HBx
 
@@ -1027,7 +966,7 @@ theorem local_smooth (Bs : B.RealPlaceData k r Wp Wq) (ν' : Fin (2 * r + k + 1)
     obtain ⟨hgG, -⟩ := hsecΩ' Z hZΩ'
     have hgK : (Matrix.of (sec Z) : B.Mat k r) ∈ Kg := by
       rw [hKgdef]; exact ⟨Z, ball_subset_closedBall hZ, rfl⟩
-    rw [PBI.phi0, if_pos hZpos, PBI.fibInt, convolution_def]
+    rw [PBI.phi0, ite_eq_left hZpos, PBI.fibInt, convolution_def]
     refine integral_congr_ae ?_
     filter_upwards [hae] with p hp
     obtain ⟨h1, h2, h3, h4⟩ := hp
@@ -1090,9 +1029,6 @@ end
 
 end Formalism.FourierDecayAlt.P.SmoothExtensionClosedSet
 
-namespace Formalism.FourierDecayAlt.P
-
-end Formalism.FourierDecayAlt.P
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Formalism.HermitianCurvature.HermitianCurvatureProofs.AutomorphicInSphericalLevel =====

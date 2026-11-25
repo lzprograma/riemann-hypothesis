@@ -120,13 +120,13 @@ theorem slt_slice_mem_ncV {k : ℕ} (i : Fin k) (κ : Fin k → Fin n × Fin n) 
   have h := hF (Function.update κ i (ι 0))
   change F (Function.update κ i (ι 0)) ∈ _
   by_cases c : ∀ j : Fin 1, ε (ι j).1 ≠ ε (ι j).2
-  · rw [if_pos c]
+  · rw [ite_eq_left c]
     split_ifs at h with c'
     · exact h
     · rw [Submodule.mem_bot] at h
       rw [h]
       exact V.zero_mem
-  · rw [if_neg c]
+  · rw [ite_eq_right c]
     have c' : ¬ ∀ j, ε ((Function.update κ i (ι 0)) j).1 ≠ ε ((Function.update κ i (ι 0)) j).2 := by
       intro hall
       apply c
@@ -134,7 +134,7 @@ theorem slt_slice_mem_ncV {k : ℕ} (i : Fin k) (κ : Fin k → Fin n × Fin n) 
       have hj := hall i
       rw [Function.update_self] at hj
       rwa [Subsingleton.elim j 0]
-    rwa [if_neg c'] at h
+    rwa [ite_eq_right c'] at h
 
 theorem slt_mem_ncV {k : ℕ} (i : Fin k) (r : {j // j ≠ i} → Fin n × Fin n) {F : Big n k M}
     (hF : F ∈ ncV ε V k) : slt i r F ∈ ncV ε V 1 := by

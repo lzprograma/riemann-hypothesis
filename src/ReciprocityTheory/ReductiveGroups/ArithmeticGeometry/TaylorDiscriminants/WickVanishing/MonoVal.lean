@@ -4,8 +4,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.TB.MV
@@ -56,11 +54,5 @@ theorem coeff_fold {ι : Type} (cd : ι → σ) (hc : Function.Injective cd) (m 
     ring
 
 end Pair
-
-section Pair2
-
-variable {k : Type} [CommRing k]
-
-end Pair2
 
 end ReciprocityTheory.ChartRestriction.G.TB.MV

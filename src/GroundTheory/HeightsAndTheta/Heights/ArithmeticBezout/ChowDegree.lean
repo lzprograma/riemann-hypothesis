@@ -2,53 +2,7 @@ module
 
 public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
 public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.RenameProdMapMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -91,7 +45,7 @@ theorem component_ne_zero_of_mem {p : MvPolynomial σ R} {a : ℕ} (ha : a ∈ w
   obtain ⟨d, hd, rfl⟩ := mem_weightSet.mp ha
   intro h
   have := congrArg (AddMonoidAlgebra.coeff · d) h
-  rw [coeff_weightedHomogeneousComponent, if_pos rfl] at this
+  rw [coeff_weightedHomogeneousComponent, ite_eq_left rfl] at this
   change p.coeff d = 0 at this
   exact mem_support_iff.mp hd this
 
@@ -114,9 +68,9 @@ theorem component_mul_of_unique (p q : MvPolynomial σ R) (a b : ℕ)
       (weightedHomogeneousComponent_isWeightedHomogeneous (w := w) b' q)
     by_cases hs : a' + b' = a + b
     · obtain ⟨rfl, rfl⟩ := h a' ha' b' hb' hs
-      rw [if_pos ⟨rfl, rfl⟩, hh.weightedHomogeneousComponent_same]
+      rw [ite_eq_left ⟨rfl, rfl⟩, hh.weightedHomogeneousComponent_same]
     · rw [hh.weightedHomogeneousComponent_ne _ (Ne.symm hs)]
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨rfl, rfl⟩
       exact hs rfl
 
@@ -126,13 +80,13 @@ theorem component_mul_of_unique (p q : MvPolynomial σ R) (a b : ℕ)
   · by_cases hb : b ∈ weightSet w q
     · rw [Finset.sum_eq_single a]
       · rw [Finset.sum_eq_single b]
-        · rw [if_pos ⟨rfl, rfl⟩]
+        · rw [ite_eq_left ⟨rfl, rfl⟩]
         · intro b' _ hb'
-          rw [if_neg fun h => hb' h.2]
+          rw [ite_eq_right fun h => hb' h.2]
         · intro hb'
           exact absurd hb hb'
       · intro a' _ ha'
-        exact Finset.sum_eq_zero fun b' _ => if_neg fun h => ha' h.1
+        exact Finset.sum_eq_zero fun b' _ => ite_eq_right fun h => ha' h.1
       · intro ha'
         exact absurd ha ha'
     · have : weightedHomogeneousComponent w b q = 0 := by
@@ -213,8 +167,8 @@ theorem weight_groupWeight_apply (d : Fin k × Fin n →₀ ℕ) (i : Fin k) :
   refine Finset.sum_congr rfl fun ij _ => ?_
   simp only [groupWeight, inGroup, Pi.smul_apply, smul_eq_mul, Pi.single_apply]
   by_cases h : ij.1 = i
-  · rw [if_pos h.symm, if_pos h]
-  · rw [if_neg (Ne.symm h), if_neg h]
+  · rw [ite_eq_left h.symm, ite_eq_left h]
+  · rw [ite_eq_right (Ne.symm h), ite_eq_right h]
 
 variable {R : Type*} [CommRing R]
 
@@ -253,8 +207,8 @@ theorem IsChowForm.degrees_eq {I : Ideal (MvPolynomial (Fin n) F)} {g : MvPolyno
       (fun x => ?_) (ha i)
     simp only [inGroup, Prod.map_fst]
     by_cases h : x.1 = i
-    · rw [if_pos h, if_pos (by rw [h, Equiv.swap_apply_left])]
-    · rw [if_neg h, if_neg]
+    · rw [ite_eq_left h, ite_eq_left (by rw [h, Equiv.swap_apply_left])]
+    · rw [ite_eq_right h, ite_eq_right]
       intro h'
       apply h
       have := congrArg (Equiv.swap i j) h'

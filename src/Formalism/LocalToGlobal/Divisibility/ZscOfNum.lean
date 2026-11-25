@@ -109,9 +109,6 @@ section Q
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {Bs : DefBase K} {Df0 Df1 : DefSide Bs} {Dc : DefCols Df1}
   {Sp : SPer Dc} {N : IndefNum Bs}
 
-def QOf (P : IndefCore Df0 Df1 Dc Sp N) (LG E3 : ℝ) (E2 : Bs.J → ℝ) : ℝ :=
-  max 1 (boundB P LG E3 E2 + N.hh + 28 * N.la)
-
 end Q
 
 section Sizes
@@ -126,11 +123,5 @@ def DGamSize (hT : Finite T) (s : ℕ) (cD : ℝ) : Prop :=
   Real.log (dgOf A P0 ψ0 hT : ℝ) + Real.log (s : ℝ) ≤ cD * Nd.unitE Nc
 
 end Sizes
-
-section Assemble
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {m : ℕ}
-
-end Assemble
 
 end Formalism.L2.DIV

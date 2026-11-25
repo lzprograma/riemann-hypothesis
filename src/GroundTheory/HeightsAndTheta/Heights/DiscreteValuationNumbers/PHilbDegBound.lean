@@ -25,22 +25,9 @@ variable {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} {F : Type u} [
 attribute [local instance] MvPolynomial.weightedGradedAlgebra
 
 theorem isHomogeneous_of_isMultiHomogIdeal {I : Ideal (MRing ι F)} (hI : IsMultiHomogIdeal I) :
-    I.IsHomogeneous (weightedHomogeneousSubmodule F (blockWeight ι)) := by
-  classical
-  have e : I = Ideal.span
-      {g | ∃ f ∈ I, ∃ b, g = weightedHomogeneousComponent (blockWeight ι) b f} := by
-    apply le_antisymm
-    · intro f hf
-      rw [← sum_weightedHomogeneousComponent (blockWeight ι) f,
-        finsum_eq_sum _ (weightedHomogeneousComponent_finsupp f)]
-      exact Ideal.sum_mem _ fun b _ => Ideal.subset_span ⟨f, hf, b, rfl⟩
-    · rw [Ideal.span_le]
-      rintro g ⟨f, hf, b, rfl⟩
-      exact hI f hf b
-  rw [e]
-  refine Ideal.homogeneous_span _ _ fun x hx => ?_
-  obtain ⟨f, -, b, rfl⟩ := hx
-  exact ⟨b, weightedHomogeneousComponent_isWeightedHomogeneous b f⟩
+    I.IsHomogeneous (weightedHomogeneousSubmodule F (blockWeight ι)) := fun b r hr => by
+  have := hI r hr b
+  rwa [← weightedDecomposition.decompose'_apply] at this
 
 theorem isMultiHomogIdeal_sup_span {I : Ideal (MRing ι F)} (hI : IsMultiHomogIdeal I)
     {s : MRing ι F} {c : K → ℕ} (hs : IsMultiHomog s c) :

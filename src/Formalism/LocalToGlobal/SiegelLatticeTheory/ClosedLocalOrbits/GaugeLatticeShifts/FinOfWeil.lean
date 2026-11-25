@@ -29,8 +29,7 @@ theorem fin_of_weil (μ μS ν : Measure G) [IsFiniteMeasureOnCompacts μ] (hμ 
     have := hW (fun _ => 1) measurable_const
     simpa using this
   obtain ⟨C, hC, hνC⟩ : ∃ C : Set G, IsCompact C ∧ ν C ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hν
     have : ν Set.univ = 0 := by
       rw [← iUnion_compactCovering G]

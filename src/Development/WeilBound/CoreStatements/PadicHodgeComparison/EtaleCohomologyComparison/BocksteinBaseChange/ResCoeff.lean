@@ -4,48 +4,8 @@ public import Mathlib.Algebra.Ring.Hom.Defs
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Algebra.CharP.Lemmas
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapAcrFromBase
-public import Mathlib.RingTheory.WittVector.Isocrystal
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.CrSEqOne
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.ExistsDpPow
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ValuationSquareOfValuationMod
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -97,34 +57,6 @@ noncomputable def frb {l : ℕ} [Fact l.Prime] {B₀ : Type} [CommRing B₀] (h 
 
 theorem idc {Λ S : Type} [CommRing Λ] [CommRing S] (c : Λ →+* S) (a : Λ) : RingHom.id S (c a) = c (RingHom.id Λ a) := rfl
 
-theorem cast_zero {l : ℕ} {k₀ B₀ : Type} [CommRing k₀] [CommRing B₀] (h : (l : k₀) = 0) (ψ : k₀ →+* B₀) : (l : B₀) = 0 := by
-  rw [← map_natCast ψ, h, map_zero]
-
-theorem frb_nat {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] (F : B.Fn O) {B₀ B' : CommRingCat.{0}} (φ : B₀ ⟶ B') (h : (l : B₀) = 0)
-    (h' : (l : B') = 0) (y : F.Pt.obj B₀) :
-    F.Pt.map (CommRingCat.ofHom (frb h')) (F.Pt.map φ y) = F.Pt.map φ (F.Pt.map (CommRingCat.ofHom (frb h)) y) := by
-  have e : φ ≫ CommRingCat.ofHom (frb h') = CommRingCat.ofHom (frb h) ≫ φ :=
-    CommRingCat.hom_ext (RingHom.ext fun x => (map_pow φ.hom x l).symm)
-  exact (F.Pt.map_comp_apply φ (CommRingCat.ofHom (frb h')) y).symm.trans
-    ((congrArg (fun t : B₀ ⟶ B' => F.Pt.map t y) e).trans (F.Pt.map_comp_apply (CommRingCat.ofHom (frb h)) φ y))
-
-def frbPt {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] (F : B.Fn O) {k₀ : Type} [CommRing k₀] (κ : O →+* k₀) (h : (l : k₀) = 0) :
-    F.ptK κ ⟶ F.ptK κ where
-  app B₀ := TypeCat.ofHom fun z => (F.ptK κ).map (CommRingCat.ofHom (frb (cast_zero h z.1.1))) z
-  naturality B₀ B' φ := by
-    ext z
-    exact Subtype.ext (Prod.ext (RingHom.ext fun x => (map_pow φ.hom _ l).symm)
-      (frb_nat F φ (cast_zero h z.1.1) (cast_zero h (φ.hom.comp z.1.1)) z.1.2))
-
-theorem base_frb {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] (F : B.Fn O) {k₁ k₂ : Type} [CommRing k₁] [CommRing k₂] {κ₁ : O →+* k₁}
-    {κ₂ : O →+* k₂} (τ : k₁ →+* k₂) (h : τ.comp κ₁ = κ₂) (h₁ : (l : k₁) = 0) (h₂ : (l : k₂) = 0) (B₀ : CommRingCat.{0})
-    (y : (F.ptK κ₂).obj B₀) :
-    ((frbPt F κ₁ h₁).app B₀ ((basePt F τ h).app B₀ y)).1.2 = ((basePt F τ h).app B₀ ((frbPt F κ₂ h₂).app B₀ y)).1.2 := rfl
-
-theorem base_map {O : Type} [CommRing O] {F F' : B.Fn O} (u : B.Fn.Map F F') {k₁ k₂ : Type} [CommRing k₁] [CommRing k₂] {κ₁ : O →+* k₁}
-    {κ₂ : O →+* k₂} (τ : k₁ →+* k₂) (h : τ.comp κ₁ = κ₂) (B₀ : CommRingCat.{0}) (y : (F.ptK κ₂).obj B₀) :
-    ((u.ptK κ₁).app B₀ ((basePt F τ h).app B₀ y)).1.2 = ((basePt F' τ h).app B₀ ((u.ptK κ₂).app B₀ y)).1.2 := rfl
-
 variable (l : ℕ) [hl : Fact l.Prime] (k : Type) [Field k] [CharP k l] [PerfectRing k l]
 
 abbrev Wm (m : ℕ) : Type := WittVector l k ⧸ Ideal.span {(l : WittVector l k) ^ m}
@@ -163,33 +95,6 @@ theorem dp_red (m : ℕ) : IsDPMorphism (pd l k (m + 1)) (pd l k m) (red l k m) 
   RL.pd_mor _ _ _ _ _ _ (RingHom.id _) _ Ideal.Quotient.mk_surjective (pdI_l l (witt_unit l k)) (isPd l k _) (isPd l k _)
     (fun _ hx => hx) fun _ => rfl
 
-def frob (m : ℕ) : Wm l k m →+* Wm l k m :=
-  Ideal.quotientMap _ WittVector.frobenius (by
-    rw [Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe, Ideal.mem_comap, map_pow, map_natCast]
-    exact Ideal.mem_span_singleton_self _)
-
-omit [CharP k l] [PerfectRing k l] in
-theorem frob_mk' (m : ℕ) (x : WittVector l k) : frob l k m (Ideal.Quotient.mk _ x) = Ideal.Quotient.mk _ (WittVector.frobenius x) :=
-  Ideal.quotientMap_mk
-
-omit [CharP k l] [PerfectRing k l] in
-theorem red_frob (m : ℕ) (r : Wm l k (m + 1)) : red l k m (frob l k (m + 1) r) = frob l k m (red l k m r) := by
-  obtain ⟨w, rfl⟩ := Ideal.Quotient.mk_surjective r
-  rw [frob_mk', red_mk, red_mk, frob_mk', RingHom.id_apply, RingHom.id_apply]
-
-theorem dp_frob (m : ℕ) : IsDPMorphism (pd l k m) (pd l k m) (frob l k m) :=
-  RL.pd_mor _ _ _ _ _ _ WittVector.frobenius _ Ideal.Quotient.mk_surjective (pdI_l l (witt_unit l k)) (isPd l k _) (isPd l k _)
-    (fun x hx => by
-      obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.1 hx
-      rw [map_mul, map_natCast]
-      exact Ideal.mul_mem_left _ _ (Ideal.mem_span_singleton_self _)) fun _ => rfl
-
-theorem frob_mk (m : ℕ) (r : Wm l k m) : Ideal.Quotient.mk (Im l k m) (frob l k m r) = Ideal.Quotient.mk (Im l k m) r ^ l := by
-  obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective r
-  change Ideal.Quotient.mk _ (Ideal.Quotient.mk _ (WittVector.frobenius x)) = _
-  rw [← res_coeff, ← res_coeff, ← map_pow, WittVector.constantCoeff_apply, WittVector.constantCoeff_apply,
-    WittVector.coeff_frobenius_charP]
-
 variable {k} {O : Type} [CommRing O] (F : B.Fn O) (ρ : O →+* k)
 
 abbrev L (m : ℕ) : (bs l k m).Fun := F.cr (bs l k m) rfl ((res l k m).comp ρ)
@@ -213,75 +118,14 @@ def HS (j : ℕ) : Sys.{1} (WittVector l k) where
   M m := CH.H (OM l F ρ m) j
   r m := (redMor l F ρ m).pull j
 
-omit [PerfectRing k l] [CharP k l] in
-variable (k) in
-theorem l_zero (m : ℕ) : (l : Wm l k m ⧸ Im l k m) = 0 := by
-  rw [← map_natCast (Ideal.Quotient.mk _), ← map_natCast (Ideal.Quotient.mk _)]
-  exact Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.mem_map_of_mem _ (Ideal.mem_span_singleton_self _))
-
-def phiM (m : ℕ) : Mor (L l F ρ m) (L l F ρ m) (frob l k m) :=
-  B.crMor (F := F) (F' := F) (b := bs l k m) (b' := bs l k m) (ht := rfl) (ht' := rfl) (frob l k m) rfl (dp_frob l k m)
-    (frbPt F _ (l_zero l k m)) fun _ y r => ((congrArg y.1.1 (frob_mk l k m r)).trans (map_pow y.1.1 _ l)).symm
-
-def phiMor (m : ℕ) : CH.Mor (OM l F ρ m) (OM l F ρ m) WittVector.frobenius :=
-  B.omMor (phiM l F ρ m) WittVector.frobenius (frob_mk' l k m)
-
-theorem red_phi (m j : ℕ) (x : CH.H (OM l F ρ (m + 1)) j) :
-    (redMor l F ρ m).pull j ((phiMor l F ρ (m + 1)).pull j x) = (phiMor l F ρ m).pull j ((redMor l F ρ m).pull j x) := by
-  unfold redMor phiMor
-  exact cr_square (phiM l F ρ (m + 1)) (redM l F ρ m) (redM l F ρ m) (phiM l F ρ m) (frob_mk' l k _) (red_mk l k m) (red_mk l k m)
-    (frob_mk' l k _) (red_frob l k m) (base_frb F _ (red_res l ρ m) (l_zero l k _) (l_zero l k _)) j x
-
-def phiS (j : ℕ) : Sys.Hom (HS l F ρ j) (HS l F ρ j) WittVector.frobenius where
-  f m := (phiMor l F ρ m).pull j
-  comm m x := red_phi l F ρ m j x
-
-variable {F} {F' : B.Fn O}
-
-def pullM (u : B.Fn.Map F F') (m : ℕ) : Mor (L l F' ρ m) (L l F ρ m) (RingHom.id _) :=
-  B.crMor (F := F') (F' := F) (b := bs l k m) (b' := bs l k m) (ht := rfl) (ht' := rfl) (RingHom.id _) rfl
-    (DPMorphism.id _).isDPMorphism (u.ptK _) fun _ _ _ => rfl
-
-def pullMor (u : B.Fn.Map F F') (m : ℕ) : CH.Mor (OM l F' ρ m) (OM l F ρ m) (RingHom.id _) :=
-  B.omMor (pullM l ρ u m) (RingHom.id _) (idc _)
-
-theorem red_pull (u : B.Fn.Map F F') (m j : ℕ) (x : CH.H (OM l F' ρ (m + 1)) j) :
-    (redMor l F ρ m).pull j ((pullMor l ρ u (m + 1)).pull j x) = (pullMor l ρ u m).pull j ((redMor l F' ρ m).pull j x) := by
-  unfold redMor pullMor
-  exact cr_square (pullM l ρ u (m + 1)) (redM l F ρ m) (redM l F' ρ m) (pullM l ρ u m) (idc _) (red_mk l k m) (red_mk l k m)
-    (idc _) (fun r => (idc (red l k m) r).symm) (base_map u _ (red_res l ρ m)) j x
-
-def pullS (u : B.Fn.Map F F') (j : ℕ) : Sys.Hom (HS l F' ρ j) (HS l F ρ j) (RingHom.id _) where
-  f m := (pullMor l ρ u m).pull j
-  comm m x := red_pull l ρ u m j x
-
-
 variable (k) in
 abbrev K₀ : Type := FractionRing (WittVector l k)
 
-
-variable (k) in
-def frob₀ : K₀ l k →ₛₗ[(WittVector.frobenius : WittVector l k →+* WittVector l k)] K₀ l k where
-  toFun := WittVector.FractionRing.frobeniusRingHom l k
-  map_add' := map_add _
-  map_smul' a x := by
-    rw [Algebra.smul_def, Algebra.smul_def, map_mul]
-    congr 1
-    exact IsFractionRing.ringEquivOfRingEquiv_algebraMap _ a
-
-
-variable (F) in
 def D (j : ℕ) : Type 1 := K₀ l k ⊗[WittVector l k] (HS l F ρ j).lim
 
 instance (j : ℕ) : AddCommGroup (D l F ρ j) := inferInstanceAs (AddCommGroup (K₀ l k ⊗[WittVector l k] (HS l F ρ j).lim))
 
 instance (j : ℕ) : Module (K₀ l k) (D l F ρ j) := inferInstanceAs (Module (K₀ l k) (K₀ l k ⊗[WittVector l k] (HS l F ρ j).lim))
-
-
-variable (F) in
-def phiD (j : ℕ) : D l F ρ j →+ D l F ρ j := (TensorProduct.map (frob₀ l k) (phiS l F ρ j).lim).toAddMonoidHom
-
-def pullD (u : B.Fn.Map F F') (j : ℕ) : D l F' ρ j →ₗ[K₀ l k] D l F ρ j := ((pullS l ρ u j).lim).baseChange (K₀ l k)
 
 end Wc
 

@@ -6,47 +6,7 @@ public import Mathlib.RingTheory.LocalRing.MaximalIdeal.Defs
 public import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ConstantLeRpowOfThreeLe
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.GammaPi0EqPi0MulUnit
-import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PowerSeries.Inverse
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ConstantCoeffSubstAlgHom, Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsPhiBridge
@@ -88,7 +48,7 @@ theorem ringHom_ext_nil {h₁ h₂ : R⟦X⟧ →+* S⟦X⟧} (hC : ∀ r, h₁ 
   obtain ⟨G, hG⟩ : (X : R⟦X⟧) ^ N ∣ F - (PowerSeries.trunc N F : R⟦X⟧) := by
     rw [PowerSeries.X_pow_dvd_iff]
     intro i hi
-    rw [_root_.map_sub, Polynomial.coeff_coe, PowerSeries.coeff_trunc, if_pos hi, sub_self]
+    rw [_root_.map_sub, Polynomial.coeff_coe, PowerSeries.coeff_trunc, ite_eq_left hi, sub_self]
   have hd : h₁ F - h₂ F = h₁ X ^ N * (h₁ G - h₂ G) := by
     have hF : F = (PowerSeries.trunc N F : R⟦X⟧) + X ^ N * G := by rw [← hG]; ring
     rw [hF]
@@ -106,30 +66,23 @@ section Inj
 
 variable {R : Type*} [CommRing R] [IsDomain R]
 
-private theorem powerSeries_algHom_C {R : Type*} [CommRing R] (ψ : R⟦X⟧ →ₐ[R] R⟦X⟧) (c : R) :
-    ψ (C c) = C c := by
-  have h := ψ.commutes c
-  rwa [PowerSeries.algebraMap_apply, Algebra.algebraMap_self, RingHom.id_apply] at h
-
 private theorem constantCoeff_algHom_apply_of_constantCoeff_X {R : Type*} [CommRing R] (ψ : R⟦X⟧ →ₐ[R] R⟦X⟧)
     (h0 : constantCoeff (ψ X) = 0) (F : R⟦X⟧) : constantCoeff (ψ F) = constantCoeff F := by
   obtain ⟨G, hG⟩ : (X : R⟦X⟧) ∣ F - C (constantCoeff F) := by
     rw [PowerSeries.X_dvd_iff, _root_.map_sub, PowerSeries.constantCoeff_C, sub_self]
   have hF : F = C (constantCoeff F) + X * G := by rw [← hG]; ring
-  rw [hF]
-  first
-  | simp only [_root_.map_add (f := _), _root_.map_mul, powerSeries_algHom_C, h0, PowerSeries.constantCoeff_C,
-      PowerSeries.constantCoeff_X, zero_mul, add_zero]
+  conv_lhs => rw [hF]
+  rw [map_add (f := ψ), map_mul (f := ψ), C_eq_algebraMap, ψ.commutes, ← C_eq_algebraMap,
+    map_add, PowerSeries.constantCoeff_C, map_mul, h0, zero_mul, add_zero]
 
 private theorem powerSeries_algHom_injective_of_X_ne_zero {R : Type*} [CommRing R] [IsDomain R]
     (ψ : R⟦X⟧ →ₐ[R] R⟦X⟧) (h0 : constantCoeff (ψ X) = 0) (hne : ψ X ≠ 0) :
     Function.Injective ψ := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro F hF
   by_contra hF0
   have hex : ∃ n, coeff n F ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hF0 (PowerSeries.ext fun n => by rw [h n, _root_.map_zero])
   classical
   obtain ⟨n, hn, hmin⟩ : ∃ n, coeff n F ≠ 0 ∧ ∀ i < n, coeff i F = 0 :=
@@ -142,7 +95,7 @@ private theorem powerSeries_algHom_injective_of_X_ne_zero {R : Type*} [CommRing 
     apply hn
     rw [hU]
     first
-    | rw [PowerSeries.coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self,
+    | rw [PowerSeries.coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self,
         PowerSeries.coeff_zero_eq_constantCoeff_apply, h]
   have hψU : ψ U ≠ 0 := by
     intro h
@@ -151,17 +104,12 @@ private theorem powerSeries_algHom_injective_of_X_ne_zero {R : Type*} [CommRing 
   rw [hU, _root_.map_mul, _root_.map_pow] at hF
   exact mul_ne_zero (pow_ne_zero _ hne) hψU hF
 
-private theorem substAlgHom_X_eq {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
-    {a : S⟦X⟧} (ha : HasSubst a) : (substAlgHom ha : R⟦X⟧ →ₐ[R] S⟦X⟧) X = a := by
-  first
-  | exact substAlgHom_X ha
-
 theorem subst_injective {a : R⟦X⟧} (ha0 : constantCoeff a = 0) (hane : a ≠ 0) :
     Function.Injective (substAlgHom (HasSubst.of_constantCoeff_zero' ha0) : R⟦X⟧ →ₐ[R] R⟦X⟧) := by
   refine powerSeries_algHom_injective_of_X_ne_zero _ ?_ ?_
-  · rw [substAlgHom_X_eq]
+  · rw [substAlgHom_X]
     exact ha0
-  · rw [substAlgHom_X_eq]
+  · rw [substAlgHom_X]
     exact hane
 
 end Inj
@@ -170,12 +118,11 @@ theorem constantCoeff_substAlgHom {R : Type*} [CommRing R] {a : R⟦X⟧} (ha0 :
     (F : R⟦X⟧) :
     constantCoeff ((substAlgHom (HasSubst.of_constantCoeff_zero' ha0) : R⟦X⟧ →ₐ[R] R⟦X⟧) F) =
       constantCoeff F := by
-  refine constantCoeff_algHom_apply_of_constantCoeff_X _ ?_ F
-  rw [substAlgHom_X_eq]
-  exact ha0
+  rw [coe_substAlgHom, constantCoeff_eq, constantCoeff_subst_of_constantCoeff_zero ha0 F,
+    Algebra.algebraMap_self, RingHom.id_apply]
 
-theorem algC {R : Type*} [CommRing R] (ψ : R⟦X⟧ →ₐ[R] R⟦X⟧) (c : R) : ψ (C c) = C c :=
-  powerSeries_algHom_C ψ c
+theorem algC {R : Type*} [CommRing R] (ψ : R⟦X⟧ →ₐ[R] R⟦X⟧) (c : R) : ψ (C c) = C c := by
+  rw [C_eq_algebraMap, ψ.commutes, ← C_eq_algebraMap]
 
 section Shift
 
@@ -220,7 +167,7 @@ def τk (k : ℕ) : O⟦X⟧ →ₐ[O] (Qk O k)⟦X⟧ := substAlgHom (hasSubst_
 omit [IsAdicComplete (IsLocalRing.maximalIdeal O) O] in
 theorem τk_X (k : ℕ) : τk t ht k X = X + C (mkk k t) := by
   show (substAlgHom (hasSubst_k t ht k) : O⟦X⟧ →ₐ[O] (Qk O k)⟦X⟧) X = _
-  exact substAlgHom_X_eq _
+  exact substAlgHom_X _
 
 omit [IsAdicComplete (IsLocalRing.maximalIdeal O) O] in
 theorem τk_C (k : ℕ) (r : O) : τk t ht k (C r) = C (mkk k r) := by

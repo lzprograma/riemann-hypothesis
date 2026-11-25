@@ -159,8 +159,6 @@ theorem oo_factor (γ : ∀ v, G v) (y : ∀ v, V' v) :
 
 end Fact
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem OOFactor_holds {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word) : OOFactor X u u' := by
   intro γ y
   have h := oo_factor (fun v => Formalism.REAL.muG (X.B.I.ε v)) (X.tensU u) (X.tensU u') (X.tensU_inner u)

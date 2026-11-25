@@ -261,8 +261,7 @@ variable [IsDomain O] [IsDiscreteValuationRing O]
 
 private theorem exists_norm_ne_zero_of_isLat {S : Set (Etau K τ)} (hτ : τ ^ 2 - 4 ≠ 0) (h2 : (2 : K) ≠ 0)
     (h : IsLat O τ S) : ∃ w ∈ S, QuadraticAlgebra.norm w ≠ 0 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   obtain ⟨f, hf⟩ := h.fg
   have hB : ∀ w ∈ S, ∀ v ∈ S,
       2 * w.re * v.re + τ * (w.re * v.im + w.im * v.re) + 2 * w.im * v.im = 0 := by

@@ -2,53 +2,14 @@ module
 
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualMapCompDualMap
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineClassMemHodgeFiltrationOfCechRepZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.CechKS GlobalTheory.CechPic
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace CrystallinePoints.Pd
 
@@ -72,19 +33,6 @@ instance ptCat (s : X ⟶ Sp R) : Category.{0} (Pt s) where
   obj P := CommAlgCat.of R P.B
   map φ := CommAlgCat.ofHom φ.ρ
 
-def toPC (s : X ⟶ Sp R) : CoefMap (RingHom.id R) (O (dp0 R) s) (FP s) where
-  G := { obj := fun P ↦ P.triv
-         map := fun φ ↦ Pt.Hom.triv φ
-         map_id := fun _ ↦ Thick.Hom.ext' (AlgHom.ext fun _ ↦ rfl)
-         map_comp := fun _ _ ↦ Thick.Hom.ext' (AlgHom.ext fun _ ↦ rfl) }
-  α P := RingHom.id P.B
-  naturality _ _ := rfl
-  smul _ _ _ := rfl
-
-abbrev H1OnPoints (s : X ⟶ Sp R) : Type 1 := GlobalTheory.CatCoh.H1 (FP s)
-
-def toP (s : X ⟶ Sp R) : FirstDeRham s →ₗ[R] H1OnPoints s := (toPC s).pull1
-
 variable {s : X ⟶ Sp R} {s' : X' ⟶ Sp R'} {s'' : X'' ⟶ Sp R''} {σ : R →+* R'} {φ : X' ⟶ X}
 
 @[reducible] def pushPt (h : φ ≫ s = s' ≫ spMap σ) (P : Pt s') : Pt s where
@@ -98,52 +46,5 @@ def pushHom (h : φ ≫ s = s' ≫ spMap σ) {P Q : Pt s'} (f : P ⟶ Q) : pushP
   pt := by
     change spMap (f.ρ : P.B →+* Q.B) ≫ P.x ≫ φ = Q.x ≫ φ
     rw [← Category.assoc, f.pt]
-
-def pushC (h : φ ≫ s = s' ≫ spMap σ) : CoefMap σ (FP s) (FP s') where
-  G := { obj := pushPt h
-         map := pushHom h
-         map_id := fun _ ↦ hom_ext' fun _ ↦ rfl
-         map_comp := fun _ _ ↦ hom_ext' fun _ ↦ rfl }
-  α P := RingHom.id P.B
-  naturality _ _ := rfl
-  smul T r b := (Algebra.smul_def (A := T.B) (σ r) b).symm
-
-def pullP (h : φ ≫ s = s' ≫ spMap σ) : H1OnPoints s →ₛₗ[σ] H1OnPoints s' := (pushC h).pull1
-
-theorem pullP_toP (m : IsMor (dp0 R) s (dp0 R') s' σ φ) (c : FirstDeRham s) :
-    pullP m.w (toP s c) = toP s' (m.pull1 c) := by
-  obtain ⟨f, rfl⟩ := H1.mk_surjective _ c
-  rfl
-
-theorem pullP_pullP {τ : R' →+* R''} {ψ : X'' ⟶ X'} {ρ : R →+* R''} {χ : X'' ⟶ X}
-    (h : φ ≫ s = s' ≫ spMap σ) (h' : ψ ≫ s' = s'' ≫ spMap τ) (h'' : χ ≫ s = s'' ≫ spMap ρ)
-    (e : ∀ r, τ (σ r) = ρ r) (e' : ψ ≫ φ = χ) (c : H1OnPoints s) : pullP h' (pullP h c) = pullP h'' c :=
-  ((pushC h).pullCohomologyOne_comp (pushC h') c).symm.trans (((pushC h).comp (pushC h')).pullCohomologyOne_eq_of_natTrans (pushC h'')
-    { app := fun T ↦
-        { ρ := { RingHom.id T.B with commutes' := fun r ↦ congrArg (algebraMap R'' T.B) (e r) }
-          pt := by
-            change spMap (RingHom.id T.B) ≫ (T.x ≫ ψ) ≫ φ = T.x ≫ χ
-            rw [GlobalTheory.Cris.spMap_id, ← e']; simp }
-      naturality := fun _ _ _ ↦ hom_ext' fun _ ↦ rfl } (fun _ _ ↦ rfl) c)
-
-theorem toP_eq_zero_iff (c : FirstDeRham s) : toP s c = 0 ↔ c ∈ F1 s := by
-  constructor
-  · intro hc
-    obtain ⟨f, rfl⟩ := H1.mk_surjective _ c
-    obtain ⟨g, hg⟩ := H1.mk_eq_zero.1 hc
-    refine h1_mk_mem_f1_of_isRep_zero R X s Unit (fun _ ↦ ⊤) (by simp) f
-      ⟨fun _ P ↦ g P, fun _ P Q φ _ ↦ ?_, fun _ _ _ _ _ ↦ sub_self _⟩
-    exact (congrFun (congrFun (congrFun hg P) Q) φ).symm
-  · intro hc
-    rw [hodgeFiltration_eq_range] at hc
-    obtain ⟨f, rfl⟩ := hc
-    refine H1.mk_eq_zero.2 ⟨0, ?_⟩
-    funext T T' φ
-    rw [map_zero]
-    exact (f.2 (Pt.Hom.triv φ) rfl rfl).symm
-
-def SurjAll : Prop :=
-  ∀ (R : Type) [CommRing R] (A : Over (Sp R)) [GrpObj A] (g : ℕ), IsAbelianScheme A →
-    SmoothOfRelativeDimension g A.hom → Function.Surjective (toP (A.hom ≫ 𝟙 _))
 
 end CrystallinePoints.Pd

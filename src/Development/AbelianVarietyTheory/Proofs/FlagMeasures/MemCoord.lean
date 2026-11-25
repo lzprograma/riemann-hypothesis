@@ -118,16 +118,6 @@ theorem hf_int {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] {E : T
 
 open ValuativeRel NumberField IsDedekindDomain in
 open scoped Pointwise ENNReal Classical in
-private theorem hf_mem_O {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] {E : Type} [CommRing E]
-    [Algebra F E] [TopologicalSpace E] (L : _root_.Formalism.MainNotions.S.Loc.LocE F E) {n : ℕ} {H : Matrix (Fin n) (Fin n) E}
-    (hI : ∀ i j, H i j ∈ L.O) (x y : Fin n → E) (hx : ∀ j, x j ∈ L.O) (hy : ∀ j, y j ∈ L.O) :
-    _root_.GlobalTheory.HL.hf L H x y ∈ L.O := by
-  unfold _root_.GlobalTheory.HL.hf
-  exact sum_mem fun i _ => sum_mem fun j _ =>
-    mul_mem (mul_mem (hx i) (hI i j)) (_root_.GlobalTheory.UnramOrder.cj_mem L (hy j))
-
-open ValuativeRel NumberField IsDedekindDomain in
-open scoped Pointwise ENNReal Classical in
 private theorem eich_mem_O {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] {E : Type} [CommRing E]
     [Algebra F E] [TopologicalSpace E] (L : _root_.Formalism.MainNotions.S.Loc.LocE F E) {n : ℕ} {H : Matrix (Fin n) (Fin n) E}
     (hI : ∀ i j, H i j ∈ L.O) {x u : Fin n → E} {s : E} (hx : ∀ j, x j ∈ L.O)
@@ -135,8 +125,8 @@ private theorem eich_mem_O {F : Type} [Field F] [ValuativeRel F] [TopologicalSpa
     _root_.GlobalTheory.HL.eich L H x u s v j ∈ L.O := by
   unfold _root_.GlobalTheory.HL.eich
   simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
-  exact sub_mem (add_mem (hv j) (mul_mem (hf_mem_O L hI v u hv hu) (hx j)))
-    (mul_mem (hf_mem_O L hI v x hv hx) (add_mem (hu j) (mul_mem hs (hx j))))
+  exact sub_mem (add_mem (hv j) (mul_mem (hf_int L hI hv hu) (hx j)))
+    (mul_mem (hf_int L hI hv hx) (add_mem (hu j) (mul_mem hs (hx j))))
 
 open ValuativeRel NumberField IsDedekindDomain in
 open scoped Pointwise ENNReal Classical in

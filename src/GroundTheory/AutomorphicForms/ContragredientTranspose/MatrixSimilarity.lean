@@ -4,17 +4,10 @@ public import Mathlib.Algebra.Polynomial.Module.AEval
 public import Mathlib.LinearAlgebra.FreeProduct.Basic
 public import Mathlib.LinearAlgebra.Matrix.Charpoly.Basic
 public import Mathlib.Topology.Instances.Matrix
-import Mathlib.Algebra.AffineMonoid.UniqueSums
 public import Mathlib.Algebra.Module.PID
 public import Mathlib.Algebra.Polynomial.Module.FiniteDimensional
 public import Mathlib.LinearAlgebra.Charpoly.ToMatrix
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.TypeStar
+import Mathlib.LinearAlgebra.Matrix.BilinearForm
 public import Mathlib.LinearAlgebra.Charpoly.Basic
 
 @[expose] public section
@@ -124,9 +117,8 @@ theorem ellQ_add (a b : F[X] ⧸ F[X] ∙ q) : ellQ q hq (a + b) = ellQ q hq a +
   rw [← Submodule.Quotient.mk_add, ellQ_mk, ellQ_mk, ellQ_mk, lcoeffMod_add]
 
 theorem ellQ_zero : ellQ q hq 0 = 0 := by
-  have := ellQ_add hq 0 0
-  rw [add_zero] at this
-  simpa using this
+  rw [← Submodule.Quotient.mk_zero, ellQ_mk]
+  simp [lcoeffMod]
 
 theorem ellQ_C_smul (c : F) (a : F[X] ⧸ F[X] ∙ q) : ellQ q hq (C c • a) = c * ellQ q hq a := by
   obtain ⟨f, rfl⟩ := Submodule.Quotient.mk_surjective _ a
@@ -177,9 +169,7 @@ theorem ContCoeff.C {f : α → F} (hf : Continuous f) : ContCoeff fun a => Poly
 
 theorem ContCoeff.zsmul {P : α → F[X]} (hP : ContCoeff P) (z : ℤ) :
     ContCoeff fun a => z • P a := fun k => by
-  have e : ∀ a, (z • P a).coeff k = (z : F) * (P a).coeff k := fun a => by
-    rw [zsmul_eq_mul, ← C_eq_intCast, coeff_C_mul]
-  simp only [e]
+  simp only [zsmul_eq_mul, ← C_eq_intCast, coeff_C_mul]
   exact continuous_const.mul (hP k)
 
 theorem ContCoeff.sum {ι : Type*} (s : Finset ι) {P : ι → α → F[X]}
@@ -201,20 +191,16 @@ variable {m : Type*} [Fintype m] [DecidableEq m]
 
 theorem continuous_charpoly_coeff_of_fintype (k : ℕ) :
     Continuous fun A : Matrix m m F => A.charpoly.coeff k := by
-  have hentry : ∀ i j : m, ContCoeff fun A : Matrix m m F => A.charmatrix i j := by
-    intro i j
-    simp only [Matrix.charmatrix_apply]
-    have hconst : ContCoeff (fun _ : Matrix m m F => (Matrix.diagonal fun _ : m => (X : F[X])) i j) := ContCoeff.const _
-    have hc : Continuous fun A : Matrix m m F => A i j := continuous_id.matrix_elem i j
-    have := ContCoeff.C (α := Matrix m m F) (f := fun A => -A i j) hc.neg
-    simpa [sub_eq_add_neg] using hconst.add this
-  have : ContCoeff fun A : Matrix m m F => A.charpoly := by
+  have hentry : ∀ i j : m, ContCoeff fun A : Matrix m m F => A.charmatrix i j := fun i j => by
+    simp only [Matrix.charmatrix_apply, sub_eq_add_neg, ← map_neg]
+    exact (ContCoeff.const _).add
+      (ContCoeff.C (f := fun A : Matrix m m F => -A i j) (continuous_id.matrix_elem i j).neg)
+  have hchar : ContCoeff fun A : Matrix m m F => A.charpoly := by
     simp only [Matrix.charpoly, Matrix.det_apply]
     refine ContCoeff.sum _ fun σ _ => ?_
-    have hp := ContCoeff.prod Finset.univ fun i _ => hentry (σ i) i
-    have := hp.zsmul (Equiv.Perm.sign σ : ℤ)
-    simpa only [Units.smul_def] using this
-  exact this k
+    simpa only [Units.smul_def] using
+      (ContCoeff.prod Finset.univ fun i _ => hentry (σ i) i).zsmul (Equiv.Perm.sign σ : ℤ)
+  exact hchar k
 
 theorem continuous_charpoly_coeff {n : ℕ} (k : ℕ) :
     Continuous fun A : Matrix (Fin n) (Fin n) F => A.charpoly.coeff k :=
@@ -307,10 +293,7 @@ theorem sumForm_of_left (i : ι) (b : F[X] ⧸ F[X] ∙ q i) (y : CycSum q) :
   · simp
 
 theorem exists_sumForm_ne_zero {y : CycSum q} (hy : y ≠ 0) : ∃ x, sumForm q hq x y ≠ 0 := by
-  obtain ⟨i, hi⟩ : ∃ i, y i ≠ 0 := by
-    by_contra h
-    push Not at h
-    exact hy (DFinsupp.ext h)
+  obtain ⟨i, hi⟩ : ∃ i, y i ≠ 0 := not_forall.1 fun h => hy (DFinsupp.ext h)
   obtain ⟨b, hb⟩ := exists_ellQ_mul_ne_zero (hq i) hi
   exact ⟨_, by rwa [sumForm_of_left]⟩
 
@@ -332,61 +315,26 @@ theorem exists_isSymm_of_form (A : Matrix (Fin n) (Fin n) F) (B : (Fin n → F) 
     ∃ S : GL (Fin n) F, (S : Matrix (Fin n) (Fin n) F).IsSymm ∧
       (S : Matrix (Fin n) (Fin n) F) * A = Aᵀ * S := by
   classical
-  have hBaddr : ∀ v w w', B v (w + w') = B v w + B v w' := fun v w w' => by
-    rw [hBsymm, hBaddl, hBsymm w, hBsymm w']
-  have hBsmulr : ∀ (c : F) v w, B v (c • w) = c * B v w := fun c v w => by
-    rw [hBsymm, hBsmull, hBsymm]
-  have hexp : ∀ v w, B v w = ∑ l, w l * B v (Pi.single l 1) := by
-    intro v w
-    have hsum : ∀ s : Finset (Fin n), B v (∑ l ∈ s, w l • Pi.single l (1 : F)) =
-        ∑ l ∈ s, w l * B v (Pi.single l 1) := by
-      intro s
-      induction s using Finset.induction_on with
-      | empty =>
-        simp only [Finset.sum_empty]
-        have := hBsmulr 0 v 0
-        simpa using this
-      | insert a s ha ih =>
-        rw [Finset.sum_insert ha, Finset.sum_insert ha, hBaddr, ih, hBsmulr]
-    have hw : ∑ l, w l • Pi.single l (1 : F) = w := by
-      have := (Pi.basisFun F (Fin n)).sum_repr w
-      simpa using this
-    rw [← hsum Finset.univ, hw]
-  have hexpl : ∀ v w, B v w = ∑ l, v l * B (Pi.single l 1) w := by
-    intro v w
-    rw [hBsymm, hexp]
-    simp only [hBsymm w]
-  have hcol : ∀ k, A.mulVec (Pi.single k 1) = fun l => A l k := by
-    intro k
-    rw [Matrix.mulVec_single_one]
+  let B' : LinearMap.BilinForm F (Fin n → F) := LinearMap.mk₂ F B
+    hBaddl
+    (fun c v w => by rw [hBsmull, smul_eq_mul])
+    (fun v w w' => by rw [hBsymm, hBaddl, hBsymm w, hBsymm w'])
+    (fun c v w => by rw [hBsymm, hBsmull, hBsymm, smul_eq_mul])
+  let S : Matrix (Fin n) (Fin n) F := LinearMap.BilinForm.toMatrix' B'
+  have hB' : ∀ v w, v ⬝ᵥ S *ᵥ w = B v w := fun v w => by
+    rw [← Matrix.toBilin'_apply', Matrix.toBilin'_toMatrix']
     rfl
-  let S : Matrix (Fin n) (Fin n) F := Matrix.of fun j k => B (Pi.single j 1) (Pi.single k 1)
-  have hS : ∀ j k, S j k = B (Pi.single j 1) (Pi.single k 1) := fun _ _ => rfl
   have hdet : S.det ≠ 0 := by
     intro h0
     obtain ⟨w, hw0, hw⟩ := Matrix.exists_mulVec_eq_zero_iff.2 h0
-    apply hw0
-    apply hBnd
-    intro v
-    rw [hexpl]
-    refine Finset.sum_eq_zero fun j _ => ?_
-    have hj := congrFun hw j
-    simp only [Matrix.mulVec, dotProduct, hS, Pi.zero_apply] at hj
-    rw [hexp, Finset.sum_congr rfl fun l _ => mul_comm _ _, hj, mul_zero]
+    exact hw0 (hBnd w fun v => by rw [← hB' v w, hw, dotProduct_zero])
   refine ⟨Matrix.GeneralLinearGroup.mkOfDetNeZero S hdet, ?_, ?_⟩
-  · refine Matrix.IsSymm.ext fun j k => ?_
-    show S k j = S j k
-    rw [hS, hS, hBsymm]
+  · exact LinearMap.BilinForm.isSymm_toMatrix'_iff_isSymm.2 ⟨hBsymm⟩
   · show S * A = Aᵀ * S
-    ext j k
-    simp only [Matrix.mul_apply, Matrix.transpose_apply]
-    have h1 : ∑ l, S j l * A l k = B (Pi.single j 1) (A.mulVec (Pi.single k 1)) := by
-      rw [hexp, hcol]
-      exact Finset.sum_congr rfl fun l _ => by rw [hS, mul_comm]
-    have h2 : ∑ l, A l j * S l k = B (A.mulVec (Pi.single j 1)) (Pi.single k 1) := by
-      rw [hexpl, hcol]
-      exact Finset.sum_congr rfl fun l _ => by rw [hS]
-    rw [h1, h2, hBA]
+    rw [LinearMap.BilinForm.toMatrix'_mul, LinearMap.BilinForm.mul_toMatrix',
+      Matrix.transpose_transpose]
+    congr 1
+    exact LinearMap.ext₂ fun v w => (hBA v w).symm
 
 theorem exists_isSymm_mul_eq_transpose_mul (A : Matrix (Fin n) (Fin n) F) :
     ∃ S : GL (Fin n) F, (S : Matrix (Fin n) (Fin n) F).IsSymm ∧
@@ -519,7 +467,7 @@ theorem exists_countable_conj_charpoly (f : F[X]) :
   have hR : R t := ⟨x, ⟨e'⟩⟩
   obtain ⟨e''⟩ := hR.choose_spec
   refine ⟨rep t, ⟨t, rfl⟩, ?_⟩
-  have hrep : rep t = hR.choose := dif_pos hR
+  have hrep : rep t = hR.choose := dite_eq_left hR
   rw [hrep]
   exact exists_conj_of_equiv (e'.trans e''.symm)
 

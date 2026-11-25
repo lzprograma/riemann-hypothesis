@@ -35,7 +35,6 @@ public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.
 public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.OrthCycCycStable
 public import Development.AutomorphicSpectrum.Proofs.SemilocalMultiplicity.DsInfCharCap
 public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.DifferentialCommutesWeightOperator
-public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesLowestKTypeOfClassification
 public import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.ExistsMemIdealInvariants
 public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.ComplexMultiplicationJPremises
 public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ComplexMultiplicationJacquetShalika
@@ -132,14 +131,13 @@ import Mathlib.Tactic.Linter.HaveILetI
 import CompanionTheory.AutomorphicTheory.PadicUnitaryWeights.DixmierMalliavin.DixmierMalliavinFactorisationHolds
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AutomorphicSpectrum.Proofs.GlobalProofs.DiagonalMulMemCongruenceSubgroup, Development.AutomorphicSpectrum.Proofs.GlobalProofs.DiscreteSeriesHermitianUnique, Development.AutomorphicSpectrum.Proofs.SemilocalMultiplicity.LowKMultOneP, Development.AutomorphicSpectrum.Proofs.GlobalProofs.DiscreteSeriesLowestKType, Development.AutomorphicSpectrum.Proofs.GlobalProofs.IdealInvariantsOneOrbit, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsHeckeCharacterOfClassGroup, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DiscrNormConductorEqDFOfUnramified, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalEquationOfUnramified, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InfiniteEmbeddingMemStandardOpenSubgroup, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ModuleSectionMemStandardOpenSubgroup, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RootNumberEqDifferentCoeff, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StandardOpenSubgroupLeKerInv, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumAddCharOfMulMulOfMulInv, Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialZetaFunctionalEquation, Development.WeilBound.CoreStatements.AbelianHeightsDuality.DixmierMalliavin.DixmierMalliavinFactorisationHolds, Development.WeilBound.CoreStatements.AbelianHeightsDuality.PublishedTheoremStatements.ProvedMore
+-- Members: Development.AutomorphicSpectrum.Proofs.GlobalProofs.DiagonalMulMemCongruenceSubgroup, Development.AutomorphicSpectrum.Proofs.GlobalProofs.DiscreteSeriesHermitianUnique, Development.AutomorphicSpectrum.Proofs.GlobalProofs.IdealInvariantsOneOrbit, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsHeckeCharacterOfClassGroup, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DiscrNormConductorEqDFOfUnramified, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalEquationOfUnramified, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InfiniteEmbeddingMemStandardOpenSubgroup, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ModuleSectionMemStandardOpenSubgroup, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RootNumberEqDifferentCoeff, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StandardOpenSubgroupLeKerInv, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumAddCharOfMulMulOfMulInv, Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialZetaFunctionalEquation, Development.WeilBound.CoreStatements.AbelianHeightsDuality.DixmierMalliavin.DixmierMalliavinFactorisationHolds, Development.WeilBound.CoreStatements.AbelianHeightsDuality.PublishedTheoremStatements.ProvedMore
 
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.GlobalProofs.DiagonalMulMemCongruenceSubgroup =====
 -- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.GlobalProofs.DiagonalMulMemCongruenceSubgroup", "h": "module\n\npublic import Development.AbelianVarietyTheory.PublishedTheorems.WeberRayClassFields.WeberRayFieldSt\npublic import GroundTheory.GlobalFields.ComplexMultiplication.AnalyticUniformization\npublic import GroundTheory.GlobalFields.ComplexMultiplication.ClassGroupActionLattice\npublic import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremIdeles\npublic import GroundTheory.GlobalFields.ComplexMultiplication.ReductionMap\npublic import GroundTheory.GlobalFields.ComplexMultiplication.WeberFunction\npublic import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LatticeDeterminedByInvariants\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemConnectedComponentOfOneOfPos\npublic import Development.AbelianVarietyTheory.Proofs.HeightProofs.LeOfFiniteSplitNotSplitBauer\npublic import Development.AbelianVarietyTheory.Proofs.HeightProofs.NcardEqIffStabilizer\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.Imports\nimport GroundTheory.ArithmeticGeometry.AbelianVarieties.TateModule\npublic import GroundTheory.GlobalFields.ComplexMultiplication.JugendtraumGalois\nimport GroundTheory.GlobalFields.ComplexMultiplication.JugendtraumUniformization\npublic import GroundTheory.GlobalFields.ComplexMultiplication.MainTheorem\nimport GroundTheory.GlobalFields.TateThesis.DegreeOneDensity\nimport Mathlib.Algebra.Lie.OfAssociative\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.NumberField.Cyclotomic.Basic\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Std.Tactic.BVDecide.Normalize.Prop\npublic import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex\npublic import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.HasSumLocallyUniformlyWeierstrassZetaExcept\n\n"}
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -621,66 +619,11 @@ end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.GlobalProofs.DiscreteSeriesHermitianUnique =====
 
--- ===== clump member: Development.AutomorphicSpectrum.Proofs.SemilocalMultiplicity.LowKMultOneP =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.SemilocalMultiplicity.LowKMultOneP", "h": "module\n\npublic import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP\npublic import Formalism.SharpRestriction.CuspSpanNormBounds.DiscreteSeriesWeylDimension\npublic import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.FinalAll\npublic import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.Bridge\npublic import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.CreAnnApply\npublic import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.CycDense\npublic import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.FilterAll\npublic import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.GeneralizedVermaModulePolynomial\npublic import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.KoszulDifferentialAnticommutator\npublic import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.RhoSurj\npublic import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.WtProj\nimport CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOnePOf\npublic import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CompactFiniteAdelesAwayPBoundedDenominators\npublic import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ExistsAdFam\npublic import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ExistsPowEqZero\npublic import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.InNOfMem\npublic import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.OrthCycCycStable\npublic import Development.AutomorphicSpectrum.Proofs.SemilocalMultiplicity.DsInfCharCap\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\npublic import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.DifferentialCommutesWeightOperator\nimport Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.KsetSubset\n\n"}
-section -- clump:auto
-@[expose] public section
-
-namespace GlobalTheory.CompanionTheory.TypeCount.LowK
-
-open CompanionTheory.D.LK
-
-theorem hGenCO : GenCO := genCO_of koszul_differential_sq_zero (cover2_of (acycAbs_of koszul_differential_sq_zero))
-
-theorem hInj : Inj :=
-  inj_of (vanK_of (cok_of hGenCO) GlobalTheory.CompanionTheory.LKWtProj.wtProj
-    (GlobalTheory.CompanionTheory.KWeightMajor.wtMajor_of _root_.GlobalTheory.CompanionTheory.KLowSpan.lowSpan_holds)) GlobalTheory.CompanionTheory.LKWtProj.wtProj koszul_differential_sq_zero
-
-theorem hMultAlg : MultAlg :=
-  multAlg_of _root_.GlobalTheory.CompanionTheory.KLowSpan.lowSpan_holds GlobalTheory.CompanionTheory.TransS.InfChar.hHWMap GlobalTheory.CompanionTheory.LKDens.dens
-    GlobalTheory.CompanionTheory.LKInvLift.invLift GlobalTheory.CompanionTheory.HCdecomp.hcdec hGenCO top_degree_cycle hInj
-
-theorem hKModExists : KModExists :=
-  GlobalTheory.CompanionTheory.KModExists.kModExists GlobalTheory.CompanionTheory.TransS.InfChar.hSmMod CompanionTheory.D.gk.admitted.kFin_mem_smoothVecs
-    _root_.UpperTheory.Reformulated.B.Gc1.kFinStab GlobalTheory.CompanionTheory.TransS.InfChar.hStabLink GlobalTheory.CompanionTheory.TransS.InfChar.hHWofType
-    GlobalTheory.CompanionTheory.TransS.InfChar.hTypeOfHW
-
-theorem lowKMultOneP : LowKMultOneP := lowKMultOneP_of hMultAlg hKModExists cyclic_vectors_dense _root_.GlobalTheory.CompanionTheory.LowKType.orthCyc
-
-theorem lowKMultOne : Formalism.MainNotions.DiscreteSeriesWeylDimension.LowKMultOne := low_K_type_multiplicity_one_of lowKMultOneP
-
-end GlobalTheory.CompanionTheory.TypeCount.LowK
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicSpectrum.Proofs.SemilocalMultiplicity.LowKMultOneP =====
-
--- ===== clump member: Development.AutomorphicSpectrum.Proofs.GlobalProofs.DiscreteSeriesLowestKType =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.GlobalProofs.DiscreteSeriesLowestKType", "h": "module\n\npublic import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesLowestKTypeOfClassification\npublic import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DiscreteSeriesUpqUnique\npublic import Development.AutomorphicSpectrum.Proofs.SemilocalMultiplicity.LowKMultOneP\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-namespace GlobalTheory.CompanionTheory.Glob
-
-theorem discreteSeriesLowestKType : GlobalTheory.Published.DiscreteSeriesLowestKType :=
-  GlobalTheory.Published.discreteSeriesLowestKType_iff.2
-    ⟨GlobalTheory.CompanionTheory.TypeCount.LowK.lowKMultOne, GlobalTheory.CompanionTheory.Front.discreteSeriesUpqUnique⟩
-
-end GlobalTheory.CompanionTheory.Glob
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicSpectrum.Proofs.GlobalProofs.DiscreteSeriesLowestKType =====
-
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.GlobalProofs.IdealInvariantsOneOrbit =====
 -- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.GlobalProofs.IdealInvariantsOneOrbit", "h": "module\n\npublic import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.ExistsMemIdealInvariants\npublic import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.ComplexMultiplicationJPremises\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ComplexMultiplicationJacquetShalika\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 
-namespace GlobalTheory.CompanionTheory.CM
-
-theorem idealInvariantsOneOrbit : GlobalTheory.Published.IdealInvariantsOneOrbitSt :=
-  GlobalTheory.Published.ComplexMultiplicationJSt.oneOrbit _root_.GlobalTheory.CompanionTheory.Published.complexMultiplicationJ
-
-end GlobalTheory.CompanionTheory.CM
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.GlobalProofs.IdealInvariantsOneOrbit =====
@@ -1199,9 +1142,9 @@ theorem isPartialZeta_zetaOfClass (C : ClassGroup (𝓞 F)) :
   rw [e]
   constructor
   · intro h
-    rw [if_pos h, inv_mul_cancel₀ card_classGroup_ne_zero]
+    rw [ite_eq_left h, inv_mul_cancel₀ card_classGroup_ne_zero]
   · intro h
-    rw [if_neg h, mul_zero]
+    rw [ite_eq_right h, mul_zero]
 
 theorem isPartialZeta_zetaOfClassInv (C : ClassGroup (𝓞 F)) :
     GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization.IsPartialZeta C (zetaOfClassInv C) := by
@@ -1217,9 +1160,9 @@ theorem isPartialZeta_zetaOfClassInv (C : ClassGroup (𝓞 F)) :
   rw [e]
   constructor
   · intro h
-    rw [if_pos h.symm, inv_mul_cancel₀ card_classGroup_ne_zero]
+    rw [ite_eq_left h.symm, inv_mul_cancel₀ card_classGroup_ne_zero]
   · intro h
-    rw [if_neg (Ne.symm h), mul_zero]
+    rw [ite_eq_right (Ne.symm h), mul_zero]
 
 theorem functionalEquation_classHecke [IsTotallyReal F] (ψ : AddChar (Additive (ClassGroup (𝓞 F))) ℂ)
     (D : (Ideal (𝓞 F))⁰) (hD : (D : Ideal (𝓞 F)) = differentIdeal ℤ (𝓞 F))
@@ -1270,52 +1213,6 @@ open NormedSpace Set MeasureTheory Filter
 
 variable {𝔸 : Type} [NormedRing 𝔸] [NormedAlgebra ℝ 𝔸] [CompleteSpace 𝔸] [FiniteDimensional ℝ 𝔸]
 
-theorem exists_lie (H : Subgroup 𝔸ˣ) (hH : IsClosed (H : Set 𝔸ˣ)) : ∃ 𝔤 : Submodule ℝ 𝔸, IsExpLieAlgebra H 𝔤 := by
-  let M : Submonoid 𝔸 := (H.toSubmonoid.map (Units.coeHom 𝔸)).topologicalClosure
-  have hc : IsClosed (M : Set 𝔸) := isClosed_closure
-  have hsub : ∀ u ∈ H, (u : 𝔸) ∈ (M : Set 𝔸) := fun u hu => subset_closure ⟨u, hu, rfl⟩
-  have hcl : ∀ u : 𝔸ˣ, (u : 𝔸) ∈ (M : Set 𝔸) → u ∈ H := fun u hu => by
-    have : u ∈ closure (H : Set 𝔸ˣ) := by
-      rw [Units.isOpenEmbedding_val.isInducing.closure_eq_preimage_closure_image]
-      exact hu
-    rwa [hH.closure_eq] at this
-  have hm : ∀ a ∈ (M : Set 𝔸), ∀ b ∈ (M : Set 𝔸), a * b ∈ (M : Set 𝔸) := fun a ha b hb => M.mul_mem ha hb
-  have hi : ∀ Z : 𝔸, exp Z ∈ (M : Set 𝔸) → exp (-Z) ∈ (M : Set 𝔸) := fun Z hZ =>
-    hsub _ (H.inv_mem (hcl (expUnit ℝ 𝔸 Z) hZ))
-  refine ⟨GlobalTheory.ClosedMatGroup.lieSub M hc M.one_mem hm, fun X hX => hcl _ (by simpa using hX 1), ?_⟩
-  have hs := (expPartialHomeomorph ℝ 𝔸).open_source.mem_nhds (zero_mem_expPartialHomeomorph_source ℝ 𝔸)
-  have h1 := GlobalTheory.ClosedMatGroup.eventually_exists_exp hc M.one_mem hm hi hs
-  have h2 : Tendsto (exp : 𝔸 → 𝔸) (𝓝 0) (𝓝 1) := by
-    simpa using (contDiff_exp ℝ 𝔸 (n := 0)).continuous.tendsto 0
-  obtain ⟨U, hU, hUo, h0⟩ := mem_nhds_iff.1 ((h2.eventually h1).and hs)
-  refine ⟨U, hUo, h0, fun X hX => (hU hX).2, fun X hX hG => ?_⟩
-  obtain ⟨Y, hY, hY', e⟩ := (hU hX).1 (hsub _ hG)
-  obtain rfl : Y = X := (expPartialHomeomorph ℝ 𝔸).injOn hY (hU hX).2 e
-  exact hY'
-
-theorem mem_ccSmooth_iff {H : Subgroup 𝔸ˣ} {𝔤 : Submodule ℝ 𝔸} (h : IsExpLieAlgebra H 𝔤) (f : H → ℂ) :
-    f ∈ CcSmooth (fun x : H => ((x : 𝔸ˣ) : 𝔸)) ↔
-      (letI := h.chartedSpace; ContMDiff 𝓘(ℝ, 𝔤) 𝓘(ℝ, ℂ) ∞ f) ∧ HasCompactSupport f := by
-  letI := h.chartedSpace
-  constructor
-  · rintro ⟨hc, Φ, hΦ, e⟩
-    refine ⟨?_, hc⟩
-    rw [show f = Φ ∘ fun x : H => ((x : 𝔸ˣ) : 𝔸) from funext e]
-    exact hΦ.contMDiff.comp (h.contMDiff_val ∞)
-  · rintro ⟨hf, hc⟩
-    refine ⟨hc, _root_.GlobalTheory.glue_smooth_of_compactSupport H 𝔸 _ f (continuous_val_val H) hc fun a => ?_⟩
-    have h1 : ContDiff ℝ ∞ fun Y : 𝔤 => f (a * h.expG Y) := by
-      have := (h.contDiff_comp_expG_smul_mul_mul_expG hf 0 a).comp (contDiff_id.prodMk (contDiff_const (c := (0 : ℝ))))
-      simpa [Function.comp_def, h.expG_zero] using this
-    let L : 𝔸 → 𝔸 := fun y => ((a⁻¹ : H) : 𝔸ˣ) * y
-    have hL : ContDiff ℝ ∞ L := contDiff_const.mul contDiff_id
-    refine ⟨L ⁻¹' h.nhdOne, h.isOpen_nhdOne.preimage hL.continuous, ?_,
-      fun y => f (a * h.expG (subspaceProj 𝔤 ((expPartialHomeomorph ℝ 𝔸).symm (L y)))), ?_, fun g hg => ?_⟩
-    · simpa [L] using h.one_mem_nhdOne
-    · exact (h1.comp (subspaceProj 𝔤).contDiff).comp_contDiffOn
-        ((contDiffOn_expPartialHomeomorph_symm ℝ 𝔸).comp hL.contDiffOn fun y hy => h.nhdOne_subset_target hy)
-    · exact congrArg f (h.chart_symm_chart (g := a) (x := g) hg).symm
-
 theorem factor_abs {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [MeasurableSpace G] [BorelSpace G]
     (ι : G →* 𝔸) (hι : Topology.IsClosedEmbedding (ι.toHomUnits : G → 𝔸ˣ)) (μ : Measure G) [μ.IsHaarMeasure]
     {V : Set G} (hV : V ∈ 𝓝 1) {f : G → ℂ} (hf : f ∈ CcSmooth fun g => ι g) :
@@ -1342,7 +1239,7 @@ end -- clump:auto
 -- ===== end clump member: Development.WeilBound.CoreStatements.AbelianHeightsDuality.DixmierMalliavin.DixmierMalliavinFactorisationHolds =====
 
 -- ===== clump member: Development.WeilBound.CoreStatements.AbelianHeightsDuality.PublishedTheoremStatements.ProvedMore =====
--- clump-header: {"m": "Development.WeilBound.CoreStatements.AbelianHeightsDuality.PublishedTheoremStatements.ProvedMore", "h": "module\n\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsEqOfNatCastMulMem\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet\npublic import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.MoyPrasadJacquetIsoTrivial\npublic import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesHermitianUniqueOfClassification\npublic import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesLowestKTypeOfClassification\npublic import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible\npublic import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsClosedEmbeddingOfLocallyCompact\npublic import Development.AbelianVarietyTheory.PublishedTheorems.WeberRayClassFields.WeberRayFieldSt\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MoyPrasadJacquetIso\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.BernsteinZelevinskyFiniteness\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DiagonalMulMemCongruenceSubgroup\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DiscreteSeriesHermitianUnique\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DiscreteSeriesLowestKType\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.EllipticMainTheoremCM\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsAvoidOne\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IdealInvariantsOneOrbit\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialZetaFunctionalEquation\npublic import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DixmierMalliavin.DixmierMalliavinFactorisationHolds\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
+-- clump-header: {"m": "Development.WeilBound.CoreStatements.AbelianHeightsDuality.PublishedTheoremStatements.ProvedMore", "h": "module\n\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsEqOfNatCastMulMem\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet\npublic import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.MoyPrasadJacquetIsoTrivial\npublic import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesHermitianUniqueOfClassification\npublic import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible\npublic import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsClosedEmbeddingOfLocallyCompact\npublic import Development.AbelianVarietyTheory.PublishedTheorems.WeberRayClassFields.WeberRayFieldSt\npublic import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MoyPrasadJacquetIso\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.BernsteinZelevinskyFiniteness\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DiagonalMulMemCongruenceSubgroup\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DiscreteSeriesHermitianUnique\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.EllipticMainTheoremCM\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsAvoidOne\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IdealInvariantsOneOrbit\npublic import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialZetaFunctionalEquation\npublic import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DixmierMalliavin.DixmierMalliavinFactorisationHolds\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
 

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResSConjGen
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralExtensionFiniteAdelesBasicProperties
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LevelMatchIff
@@ -64,20 +65,7 @@ theorem sigR_inclE {F E : Type} [Field F] [Field E] [Algebra F E] (σ : E →ₐ
 
 theorem sigR_mem_OAd {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (σ : E →ₐ[F] E) {a : E ⊗[F] Ad F} (ha : a ∈ OAd F E) : sigR σ (Ad F) a ∈ OAd F E := by
-
-  have key : OAd F E ≤ (OAd F E).comap (sigR σ (Ad F)) := by
-    show tensInt (F := F) (Ad F) (intOE E) (intAd F) ≤
-      (tensInt (F := F) (Ad F) (intOE E) (intAd F)).comap (sigR σ (Ad F))
-    refine (Subring.closure_le).2 ?_
-    rintro _ (⟨⟨x, hx⟩, rfl⟩ | ⟨⟨y, hy⟩, rfl⟩)
-    · obtain ⟨z, rfl⟩ := hx
-      have hint : IsIntegral ℤ (σ (algebraMap (𝓞 E) E z)) :=
-        (RingOfIntegers.isIntegral_coe z).map (σ : E →+* E).toIntAlgHom
-      refine Subring.subset_closure (Or.inl ⟨⟨σ (algebraMap (𝓞 E) E z), ⟨⟨_, hint⟩, rfl⟩⟩, ?_⟩)
-      simp [sigR]
-    · refine Subring.subset_closure (Or.inr ⟨⟨y, hy⟩, ?_⟩)
-      simp [sigR]
-  exact key ha
+  apply _root_.GlobalTheory.ResConjPlace.conj_mem_int <;> assumption
 
 theorem iota_sigR (F E F' E' : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     [Field F'] [NumberField F'] [Field E'] [NumberField E'] [Algebra F' E']
@@ -126,7 +114,6 @@ section -- clump:auto
 
 open MeasureTheory NumberField IsDedekindDomain Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.ColDict GlobalTheory.St GlobalTheory.St.G
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.St.G.IotaSigmaCompatibility
 

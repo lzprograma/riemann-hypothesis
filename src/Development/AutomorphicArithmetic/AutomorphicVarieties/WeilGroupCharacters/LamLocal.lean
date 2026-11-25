@@ -207,13 +207,13 @@ private theorem units_pack (l : ℕ) [Fact l.Prime] (M : Type) [CommGroup M] (o 
         intro x y
         rw [← ofAdd_add]
         congr 1
-        ext <;> simp [smul_add, mul_add])
+        ext <;> simp [mul_add])
   let τ : Additive U →ₗ[ℤ_[l]] Additive U := LinearMap.id - s ∘ₗ f
   have hτ : ∀ z, f (τ z) = 0 := by intro z; simp [τ, hfs]
   have hττ : ∀ w, f w = 0 → τ w = w := by intro w hw; simp [τ, hw]
-  obtain ⟨a, b, hab⟩ : IsCoprime (m : ℤ) ((l : ℤ) ^ e) := by
-    have := Nat.isCoprime_iff_coprime.mpr (hm.symm.pow_right e)
-    simpa using this
+  have hcop : ∀ k : ℕ, IsCoprime (m : ℤ) ((l : ℤ) ^ k) := fun k => by
+    simpa using Nat.isCoprime_iff_coprime.mpr (hm.symm.pow_right k)
+  obtain ⟨a, b, hab⟩ := hcop e
   have key : ∀ w : Additive U, f w = 0 → a • (m • w) = w := by
     intro w hw
     have hl : ((l : ℤ) ^ e) • w = 0 := by
@@ -269,9 +269,7 @@ private theorem units_pack (l : ℕ) [Fact l.Prime] (M : Type) [CommGroup M] (o 
       rw [h1]
       exact mul_le_of_le_one_right (by positivity) (PadicInt.norm_le_one _)
     obtain ⟨n0, hn0⟩ := hdiv
-    obtain ⟨a', b', hab'⟩ : IsCoprime (m : ℤ) ((l : ℤ) ^ k) := by
-      have := Nat.isCoprime_iff_coprime.mpr (hm.symm.pow_right k)
-      simpa using this
+    obtain ⟨a', b', hab'⟩ := hcop k
     have hwm : (wf x) ^ (m : ℤ) = ((v : M)) ^ ((l : ℤ) ^ k) := by
       have h1 := congrArg Subtype.val hgv
       simp only [g, MonoidHom.mk'_apply, SubmonoidClass.coe_pow] at h1
@@ -296,14 +294,10 @@ private theorem units_pack (l : ℕ) [Fact l.Prime] (M : Type) [CommGroup M] (o 
 private theorem ball_pow (l d : ℕ) [Fact l.Prime] (k : ℕ) (y : (Fin d → ℤ_[l]) × ℤ_[l]) :
     ‖y‖ ≤ (l : ℝ) ^ (-k : ℤ) ↔ ∃ z, y = l ^ k • z := by
   have hc : (0 : ℝ) ≤ (l : ℝ) ^ (-k : ℤ) := by positivity
-  have key : ∀ x : ℤ_[l], ‖x‖ ≤ (l : ℝ) ^ (-k : ℤ) ↔ ∃ w : ℤ_[l], x = l ^ k • w := by
-    intro x
+  have key : ∀ x : ℤ_[l], ‖x‖ ≤ (l : ℝ) ^ (-k : ℤ) ↔ ∃ w : ℤ_[l], x = l ^ k • w := fun x => by
     rw [PadicInt.norm_le_pow_iff_mem_span_pow, Ideal.mem_span_singleton]
-    constructor
-    · rintro ⟨w, rfl⟩
-      exact ⟨w, by rw [nsmul_eq_mul]; push_cast; ring⟩
-    · rintro ⟨w, rfl⟩
-      exact ⟨w, by rw [nsmul_eq_mul]; push_cast; ring⟩
+    simp only [nsmul_eq_mul, Nat.cast_pow]
+    rfl
   rw [norm_prod_le_iff, pi_norm_le_iff_of_nonneg hc]
   constructor
   · rintro ⟨h1, h2⟩

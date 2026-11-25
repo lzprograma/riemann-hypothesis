@@ -24,7 +24,7 @@ theorem residue_basisVec_eq_single {N i : ℕ} (hi : i < N) : Loc.eN k N i = Pi.
   by_cases h : l = ⟨i, hi⟩
   · subst h
     simp
-  · rw [Pi.single_eq_of_ne h, if_neg (fun h' => h (Fin.ext h'))]
+  · rw [Pi.single_eq_of_ne h, ite_eq_right (fun h' => h (Fin.ext h'))]
 
 theorem residue_linearEquiv_apply_eq_sum {N : ℕ} (φ : (Fin N → k) ≃ₗ[k] (Fin N → k)) (v : Fin N → k) (l : Fin N) :
     φ v l = ∑ l' : Fin N, φ (Pi.single l' 1) l * v l' := by
@@ -146,12 +146,12 @@ theorem mulVec_basisVec_of_identity_column {N : ℕ} (M : Matrix (Fin N) (Fin N)
     funext l
     rw [mulVec_single_apply_alt, hcol l hi, Pi.single_apply]
     by_cases h : l.1 = i
-    · rw [if_pos h, if_pos (Fin.ext h)]
-    · rw [if_neg h, if_neg (fun h' => h (by rw [h']))]
+    · rw [ite_eq_left h, ite_eq_left (Fin.ext h)]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h (by rw [h']))]
   · have h0 : Loc.eN E N i = 0 := by
       funext l
       unfold Loc.eN
-      rw [if_neg (by have := l.2; omega)]
+      rw [ite_eq_right (by have := l.2; omega)]
       rfl
     rw [h0, Matrix.mulVec_zero]
 
@@ -159,11 +159,11 @@ theorem conjugate_identity_column {n c : ℕ} (hq0 : (q : E) ≠ 0) {L : Matrix 
     (hL0 : ∀ l s, R l s = 0 → L l s = 0) (hL1 : ∀ l s, R l s = 1 → L l s = 1) {l s : Fin (n + c)}
     (h : R l s = if l.1 = s.1 then 1 else 0) : ob2rConj q n c L l s = if l.1 = s.1 then 1 else 0 := by
   by_cases he : l.1 = s.1
-  · rw [if_pos he] at h ⊢
+  · rw [ite_eq_left he] at h ⊢
     have hls : l = s := Fin.ext he
     subst hls
     exact ob2rConj_diag hq0 (hL1 _ _ h)
-  · rw [if_neg he] at h ⊢
+  · rw [ite_eq_right he] at h ⊢
     exact ob2rConj_zero (hL0 _ _ h)
 
 theorem residueR1_lifts_to_stabilizer (hq0 : (q : E) ≠ 0) {n c : ℕ}
@@ -203,11 +203,11 @@ theorem residueR1_lifts_to_stabilizer (hq0 : (q : E) ≠ 0) {n c : ℕ}
     rw [Pi.sub_apply, Pi.single_apply] at h3
     show ρ (Pi.single ⟨n + i, hi⟩ 1) l = _
     by_cases he : l.1 = n + i
-    · rw [if_pos (Fin.ext he), sub_eq_zero] at h3
-      rw [if_pos he]
+    · rw [ite_eq_left (Fin.ext he), sub_eq_zero] at h3
+      rw [ite_eq_left he]
       exact h3
-    · rw [if_neg (fun h' => he (by rw [h'])), sub_zero] at h3
-      rw [if_neg he]
+    · rw [ite_eq_right (fun h' => he (by rw [h'])), sub_zero] at h3
+      rw [ite_eq_right he]
       exact h3
   have hcol0 : ∀ (l : Fin (n + c)) (hi : n < n + c), ob2rMat ρ l ⟨n, hi⟩ = if l.1 = (⟨n, hi⟩ : Fin (n + c)).1 then 1 else 0 := by
     intro l hi
@@ -216,8 +216,8 @@ theorem residueR1_lifts_to_stabilizer (hq0 : (q : E) ≠ 0) {n c : ℕ}
     show ρ (Pi.single ⟨n, hi⟩ 1) l = _
     rw [h]
     by_cases he : l.1 = n
-    · rw [if_pos (Fin.ext he), if_pos he]
-    · rw [if_neg (fun h' => he (by rw [h'])), if_neg he]
+    · rw [ite_eq_left (Fin.ext he), ite_eq_left he]
+    · rw [ite_eq_right (fun h' => he (by rw [h'])), ite_eq_right he]
   have hfix0 : ρ' (Loc.eN E (n + c) n) = Loc.eN E (n + c) n := by
     rw [hap]
     exact mulVec_basisVec_of_identity_column _ fun l hi => conjugate_identity_column hq0 hL0 hL1 (hcol0 l hi)
@@ -235,12 +235,12 @@ theorem residueR1_lifts_to_stabilizer (hq0 : (q : E) ≠ 0) {n c : ℕ}
       have hl' : ¬ l.1 < n + i := hl
       rw [Pi.sub_apply, mulVec_single_apply_alt, conjugate_identity_column hq0 hL0 hL1 (hcolR i l hi (by omega)), Pi.single_apply]
       by_cases he : l.1 = n + i
-      · rw [if_pos he, if_pos (Fin.ext he), sub_self]
-      · rw [if_neg he, if_neg (fun h' => he (by rw [h'])), sub_zero]
+      · rw [ite_eq_left he, ite_eq_left (Fin.ext he), sub_self]
+      · rw [ite_eq_right he, ite_eq_right (fun h' => he (by rw [h'])), sub_zero]
     · have h0 : Loc.eN E (n + c) (n + i) = 0 := by
         funext l
         unfold Loc.eN
-        rw [if_neg (by have := l.2; omega)]
+        rw [ite_eq_right (by have := l.2; omega)]
         rfl
       rw [h0, map_zero, sub_zero]
       exact zero_mem _
@@ -291,7 +291,7 @@ theorem reducedMatrix_eq_of_isReduction {E : Type} [Field E] [NumberField E] [St
 theorem residueFrameEntry_eq_coord {k : Type} [Field k] {k₀ n c : ℕ} (hk : k₀ ≤ n) (κ : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c) → k)) (l l' : Fin (n + c)) :
     ocbEnt k₀ c n c n κ.toLinearMap (LocE.fPos k₀ c n l.1) (LocE.fPos k₀ c n l'.1) = κ (Pi.single l' 1) l := by
   unfold ocbEnt
-  rw [frameIndex_framePos hk l.2, frameIndex_framePos hk l'.2, residue_basisVec_eq_single l'.2]
+  rw [frameIndex_framePos l.2, frameIndex_framePos l'.2, residue_basisVec_eq_single l'.2]
   unfold Loc.atN
   rw [dite_eq_left l.2]
   rfl
@@ -314,7 +314,7 @@ theorem liftFromResidueParabolicProduct_holds (m2 : ℕ) : LiftFromResidueParabo
   have hh₀' : h₀ ∈ stabL X.E _ (LocE.lamY P.1 (qOf P.1) (R.N (i + 1)) (cOf R (i + 1)) fun i => i + 1) := by
     have h := hh₀
     unfold lamYat at h
-    rwa [if_pos hP] at h
+    rwa [ite_eq_left hP] at h
   obtain ⟨ρ, hρ, κ, hκ, heq⟩ := hin
   obtain ⟨ρ', hρ'R, hρ'S, hρ'M⟩ := residueR1_lifts_to_stabilizer hq0 ρ hρ
   have hM0 : ob2M P.1 (qOf P.1) h₀ = ob2rMat hbar := reducedMatrix_eq_of_isReduction hred
@@ -356,7 +356,7 @@ theorem liftFromResidueParabolicProduct_holds (m2 : ℕ) : LiftFromResidueParabo
   rw [hB.sharp]
   refine ⟨ρ', hρ'R, ρ'⁻¹ * h₀, ?_, by rw [mul_one, mul_inv_cancel_left]⟩
   unfold Jat
-  rw [if_pos hP, if_pos rfl]
+  rw [ite_eq_left hP, ite_eq_left rfl]
   exact hJ
 
 end B3

@@ -15,8 +15,6 @@ open Classical
 
 namespace Formalism.L2.SG.Pf.TupGlob
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D)
 
 def StabApprox (u u' : D.what₂.Word) : Prop :=

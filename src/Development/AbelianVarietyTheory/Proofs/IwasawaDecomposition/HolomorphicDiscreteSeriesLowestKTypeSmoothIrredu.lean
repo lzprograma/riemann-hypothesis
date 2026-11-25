@@ -55,7 +55,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff ComplexOrder
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.HolLowOnce
 
@@ -74,7 +73,7 @@ theorem smFn_coef (hσ : Formalism.QuantumDeterminants.IsCRepOn (Formalism.Quant
       obtain ⟨i, rfl⟩ := List.mem_ofFn.1 hv
       exact single_mem_UG (fun _ : Unit => Hm) _ (hX i) _
   simp only [Pi.mul_apply, hσ.2 _ (hu ()) _ (hmem _ ()), ContinuousLinearMap.comp_apply]
-  simp only [prod_single_apply, if_true]
+  simp only [prod_single_apply, ite_true]
   have h1 := hv k Xs hX
   exact (((innerSL ℂ l).comp (σ (u ()))).restrictScalars ℝ).contDiff.comp h1
 
@@ -95,21 +94,10 @@ theorem derC_coef {q : ℕ} {x₀ : Mt n} (h : OrthFr Hm q x₀)
     (hσ : Formalism.QuantumDeterminants.IsCRepOn (Formalism.QuantumDeterminants.UH Hm) σ) (hv : SmoothVec (lieH Hm) σ v) (l : H) (Z : Mt n) {u : Unit → Mt n}
     (hu : u ∈ UG (fun _ : Unit => Hm)) :
     derC (fun _ : Unit => Hm) () Z (fun u => ⟪l, σ (u ()) v⟫_ℂ) u = ⟪l, σ (u ()) (dRepC Hm σ Z v)⟫_ℂ := by
-  obtain ⟨h1, h2⟩ := conj_facts (herm_of_orth h) (dets_ne h).1 Z
-  have hA : (1 / 2 : ℂ) • (Z + conjH Hm Z) ∈ lieH Hm := by
-    show _ = _
-    rw [conjTranspose_smul, conjTranspose_add, Matrix.smul_mul, Matrix.mul_smul, Matrix.add_mul, Matrix.mul_add, h1, h2]
-    have : star (1 / 2 : ℂ) = 1 / 2 := by simp
-    rw [this, ← smul_add]
-    abel_nf
-    simp
-  have hB : (1 / (2 * Complex.I) : ℂ) • (Z - conjH Hm Z) ∈ lieH Hm := by
-    show _ = _
-    rw [conjTranspose_smul, conjTranspose_sub, Matrix.smul_mul, Matrix.mul_smul, Matrix.sub_mul, Matrix.mul_sub, h1, h2]
-    have : star (1 / (2 * Complex.I) : ℂ) = -(1 / (2 * Complex.I)) := by simp
-    rw [this, neg_smul, ← smul_neg, ← smul_add]
-    abel_nf
-    simp
+  have hA : (1 / 2 : ℂ) • (Z + conjH Hm Z) ∈ lieH Hm :=
+    GlobalTheory.UnitarySmVec.re_mem (herm_of_orth h) (dets_ne h).1.isUnit Z
+  have hB : (1 / (2 * Complex.I) : ℂ) • (Z - conjH Hm Z) ∈ lieH Hm :=
+    GlobalTheory.UnitarySmVec.im_mem (herm_of_orth h) (dets_ne h).1.isUnit Z
   unfold derC dRepC
   rw [der_coef hσ hv l hA hu, der_coef hσ hv l hB hu, map_add (f := _), map_smul, inner_add_right, inner_smul_right]
 

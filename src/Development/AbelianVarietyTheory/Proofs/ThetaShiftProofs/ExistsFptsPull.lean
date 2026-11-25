@@ -6,46 +6,9 @@ public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LinearInd
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ToStkAInjective
 public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjPull
 public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.GermEqZeroOfThickenings
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.AppCompatGeneric
 
 @[expose] public section
@@ -76,12 +39,7 @@ theorem exists_chart_pt (hL : L.IsLB) (x : Sp A ⟶ X) : ∃ j, ⊤ ≤ x ⁻¹�
 omit [IsLocalRing A] in
 theorem toStkA_wv (w : LB.Iso L' (L.pull F)) (x : Sp A ⟶ X') {j : L.ι} {k : L'.ι} (hj : ⊤ ≤ (x ≫ F) ⁻¹ᵁ L.U j)
     (hk : ⊤ ≤ x ⁻¹ᵁ L'.U k) (z : Sp A) : toStkA z (wv w x j k) = (gw w x z j k).val :=
-  by
-    have toStkA_valR {B : Type} [CommRing B] {Z : Scheme.{0}} (f : Sp B ⟶ Z) (U : Z.Opens)
-        (z : Sp B) (ht : ⊤ ≤ f ⁻¹ᵁ U) (a : Γ(Z, U)ˣ) :
-        toStkA z (valR f U a.val) = (gm f z U a).val := by
-      rw [FormalValue.toStkA_valR_eq_gs f U z ht, gm_val f z U (ht trivial), gs_eq f z U (ht trivial)]
-    exact toStkA_valR x _ z ((le_div_iff x j k).2 ⟨hj, hk⟩) _
+  toStkA_valR x _ z ((le_div_iff x j k).2 ⟨hj, hk⟩) _
 
 omit [IsLocalRing A] in
 theorem isUnit_wv (w : LB.Iso L' (L.pull F)) (x : Sp A ⟶ X') {j : L.ι} {k : L'.ι} (hj : ⊤ ≤ (x ≫ F) ⁻¹ᵁ L.U j)
@@ -92,10 +50,6 @@ theorem wv_trans {w : LB.Iso L' (L.pull F)} (hw : w.IsGen) (x : Sp A ⟶ X') {j 
     (hj : ⊤ ≤ (x ≫ F) ⁻¹ᵁ L.U j) (hj' : ⊤ ≤ (x ≫ F) ⁻¹ᵁ L.U j') (hk : ⊤ ≤ x ⁻¹ᵁ L'.U k) (hk' : ⊤ ≤ x ⁻¹ᵁ L'.U k') :
     wv w x j k * valR x (L'.U k ⊓ L'.U k') (L'.g k k').val =
       valR (x ≫ F) (L.U j ⊓ L.U j') (L.g j j').val * wv w x j' k' := by
-  have toStkA_valR {B : Type} [CommRing B] {Z : Scheme.{0}} (f : Sp B ⟶ Z) (U : Z.Opens)
-      (z : Sp B) (ht : ⊤ ≤ f ⁻¹ᵁ U) (a : Γ(Z, U)ˣ) :
-      toStkA z (valR f U a.val) = (gm f z U a).val := by
-    rw [FormalValue.toStkA_valR_eq_gs f U z ht, gm_val f z U (ht trivial), gs_eq f z U (ht trivial)]
   apply toStkA_injective
   rw [map_mul, map_mul, toStkA_wv w x hj hk, toStkA_wv w x hj' hk',
     toStkA_valR x (L'.U k ⊓ L'.U k') _ (fun _ hz => ⟨hk hz, hk' hz⟩) (L'.g k k'),
@@ -105,10 +59,6 @@ theorem wv_trans {w : LB.Iso L' (L.pull F)} (hw : w.IsGen) (x : Sp A ⟶ X') {j 
 
 theorem valR_g_self (hL : L.IsLB) (x : Sp A ⟶ X) {j : L.ι} (hj : ⊤ ≤ x ⁻¹ᵁ L.U j) :
     valR x (L.U j ⊓ L.U j) (L.g j j).val = 1 := by
-  have toStkA_valR {B : Type} [CommRing B] {Z : Scheme.{0}} (f : Sp B ⟶ Z) (U : Z.Opens)
-      (z : Sp B) (ht : ⊤ ≤ f ⁻¹ᵁ U) (a : Γ(Z, U)ˣ) :
-      toStkA z (valR f U a.val) = (gm f z U a).val := by
-    rw [FormalValue.toStkA_valR_eq_gs f U z ht, gm_val f z U (ht trivial), gs_eq f z U (ht trivial)]
   apply toStkA_injective
   rw [toStkA_valR x (L.U j ⊓ L.U j) _ (fun _ hz => ⟨hj hz, hj hz⟩) (L.g j j), gm_self hL x _ (hj trivial), map_one, Units.val_one]
 
@@ -260,10 +210,6 @@ theorem exists_fpts {S S' : Scheme.{0}} {t : SAB H S} {t' : SAB H S'} {f : S' �
       have := m.cm.e_comm
       rw [m.base] at this
       rw [Category.assoc, ← this, ← Category.assoc]; exact hj
-    have toStkA_valR {B : Type} [CommRing B] {Z : Scheme.{0}} (f : Sp B ⟶ Z) (U : Z.Opens)
-        (z : Sp B) (ht : ⊤ ≤ f ⁻¹ᵁ U) (a : Γ(Z, U)ˣ) :
-        toStkA z (valR f U a.val) = (gm f z U a).val := by
-      rw [FormalValue.toStkA_valR_eq_gs f U z ht, gm_val f z U (ht trivial), gs_eq f z U (ht trivial)]
     apply toStkA_injective
     rw [map_mul, toStkA_wv w _ hj hk]
     refine (toStkA_valR (y' ≫ f) _ _ (fun _ hz => mem_pull.2 (hj' hz)) _).trans ((congrArg Units.val e).trans ?_)

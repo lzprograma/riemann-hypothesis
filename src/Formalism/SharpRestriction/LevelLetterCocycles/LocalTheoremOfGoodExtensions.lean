@@ -4,51 +4,8 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.ElementDenominator
 public import Formalism.PadicSubsetSums.StableGradedCounts.ARCReuse
 public import Mathlib.RingTheory.OrderOfVanishing.Basic
 public import Formalism.PadicSubsetSums.CentralIdempotents.WindowSums
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.LiftingTheoremOfExplicit, Formalism.PadicSubsetSums.StableGradedCounts.LiftingTheExponent, Formalism.SharpRestriction.LevelLetterCocycles.LocalTheoremOfGoodExtensions
@@ -63,28 +20,6 @@ noncomputable section
 namespace Formalism.MainNotions.ElementDenominator
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Module
-
-section Orbit
-
-variable {G LL : Type} [Group G] [Field LL] (I : Subgroup G) [hI : I.Normal] (Fr : G)
-
-end Orbit
-
-section Iner
-
-variable {G : Type} [Group G] {Qp K₀ K K₀' K' : Type} [Field Qp] [Field K₀] [Field K]
-    [Field K₀'] [Field K']
-    [Algebra Qp K₀] [Algebra Qp K] [Algebra K₀ K] [IsScalarTower Qp K₀ K]
-    [Algebra Qp K₀'] [Algebra Qp K'] [Algebra K₀' K'] [IsScalarTower Qp K₀' K']
-    {B BdR : Type} [CommRing B] [CommRing BdR] [Algebra Qp B] [Algebra K₀ B] [IsScalarTower Qp K₀ B]
-    [Algebra K₀' B] [IsScalarTower Qp K₀' B]
-    [Algebra Qp BdR] [Algebra K₀ BdR] [Algebra K BdR] [IsScalarTower Qp K BdR]
-    [IsScalarTower K₀ K BdR] [IsScalarTower Qp K₀ BdR]
-    [Algebra K₀' BdR] [Algebra K' BdR] [IsScalarTower Qp K' BdR]
-    [IsScalarTower K₀' K' BdR] [IsScalarTower Qp K₀' BdR]
-    (PC : PotCrysData G Qp K₀ K K₀' K' B BdR)
-
-end Iner
 
 section PartII
 
@@ -236,16 +171,6 @@ theorem two_mul_val_factorial_le (l : ℕ) [hl : Fact l.Prime] (h2 : l ≠ 2) (n
     Nat.mul_le_mul_right _ (by omega)
   omega
 
-private theorem padicValInt_neg_natCast_add_one (l i : ℕ) :
-    padicValInt l (-((i : ℤ) + 1)) = padicValNat l (i + 1) := by
-  simp only [padicValInt]
-  rw [show (-((i : ℤ) + 1)).natAbs = i + 1 by omega, Nat.padicValNat_def]
-
-private theorem padicValInt_natCast_add_one (l i : ℕ) :
-    padicValInt l ((i : ℤ) + 1) = padicValNat l (i + 1) := by
-  simp only [padicValInt]
-  rw [show ((i : ℤ) + 1).natAbs = i + 1 by omega, Nat.padicValNat_def]
-
 theorem valuationSumBound : LiftExp := by
   intro l h J hl hl2 hJ h0
   have : Fact l.Prime := ⟨hl⟩
@@ -266,12 +191,13 @@ theorem valuationSumBound : LiftExp := by
     rw [hA, Finset.sum_image (fun x _ y _ e => by simpa using e)]
     rw [← sum_one_add_val l h]
     refine Finset.sum_congr rfl (fun i _ => ?_)
-    simp only [hf, padicValInt_neg_natCast_add_one]
+    simp only [hf, padicValInt, Int.natAbs_neg, ← Nat.cast_add_one, Int.natAbs_natCast,
+      Nat.padicValNat_def]
   have hB_sum : ∑ j ∈ B, f j = 2 * h + padicValNat l (2 * h).factorial := by
     rw [hB, Finset.sum_image (fun x _ y _ e => by simpa using e)]
     rw [← sum_one_add_val l (2 * h)]
     refine Finset.sum_congr rfl (fun i _ => ?_)
-    simp only [hf, padicValInt_natCast_add_one]
+    simp only [hf, ← Nat.cast_add_one, padicValInt.of_nat, Nat.padicValNat_def]
   have hJle : ∑ j ∈ J, f j ≤ ∑ j ∈ A ∪ B, f j := Finset.sum_le_sum_of_subset hsub
   have hU := Finset.sum_union_inter (s₁ := A) (s₂ := B) (f := f)
   have e1 := two_mul_val_factorial_le l hl2 (2 * (2 * h))

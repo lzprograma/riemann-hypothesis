@@ -107,8 +107,7 @@ lemma norm_posPart_le (p : ℕ) {r : ℕ} (u : Fin r → ℂ) : ‖euc (posPart 
   have hn : 0 ≤ negSq p u := Finset.sum_nonneg fun k _ => by split_ifs <;> positivity
   have ha := norm_nonneg (euc (posPart p u))
   have hb := norm_nonneg (euc u)
-  by_contra h
-  push_neg at h
+  by_contra! h
   nlinarith
 
 lemma norm_negPart_le (p : ℕ) {r : ℕ} (u : Fin r → ℂ) : ‖euc (negPart p u)‖ ≤ ‖euc u‖ := by
@@ -118,8 +117,7 @@ lemma norm_negPart_le (p : ℕ) {r : ℕ} (u : Fin r → ℂ) : ‖euc (negPart 
   have hn : 0 ≤ posSq p u := Finset.sum_nonneg fun k _ => by split_ifs <;> positivity
   have ha := norm_nonneg (euc (negPart p u))
   have hb := norm_nonneg (euc u)
-  by_contra h
-  push_neg at h
+  by_contra! h
   nlinarith
 
 lemma euc_zero {r : ℕ} : euc (0 : Fin r → ℂ) = 0 := by
@@ -154,8 +152,7 @@ lemma norm_err_le {r p : ℕ} {μ R : ℝ} (X : Fin r → Fin r → ℂ)
       have h1 := hX j hj
       rw [normSq_eq_euc] at h1
       have ha := norm_nonneg (euc (X j - (R : ℂ) • (Pi.single j 1 : Fin r → ℂ)))
-      by_contra h
-      push_neg at h
+      by_contra! h
       nlinarith
     · rw [hw j (not_lt.mp hj)]
       simp

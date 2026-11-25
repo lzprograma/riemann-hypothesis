@@ -33,13 +33,9 @@ theorem C_mem_laurentSubalgebra (c : ℂ) : RatFunc.C c ∈ laurentSubalgebra :=
 
 theorem algebraMap_mem_laurentSubalgebra (P : ℂ[X]) :
     algebraMap ℂ[X] (RatFunc ℂ) P ∈ laurentSubalgebra := by
-  refine Polynomial.induction_on P (fun a => ?_) (fun p q hp hq => ?_) (fun k a h => ?_)
-  · rw [RatFunc.algebraMap_C]
-    exact C_mem_laurentSubalgebra a
-  · rw [map_add (f := _)]
-    exact add_mem hp hq
-  · rw [pow_succ, ← mul_assoc, map_mul, RatFunc.algebraMap_X]
-    exact mul_mem h X_mem_laurentSubalgebra
+  rw [← RatFunc.aeval_X_left_eq_algebraMap]
+  exact Algebra.adjoin_mono (Set.singleton_subset_iff.2 (Set.mem_insert _ _))
+    (Polynomial.aeval_mem_adjoin_singleton ℂ _)
 
 theorem mem_laurentSubalgebra_iff {R : RatFunc ℂ} :
     R ∈ laurentSubalgebra ↔

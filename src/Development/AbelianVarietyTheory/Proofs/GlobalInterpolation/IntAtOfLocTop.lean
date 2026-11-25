@@ -6,40 +6,6 @@ public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.BadPri
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DatumSupportDivLatticeFinal
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NotDvdCardOfInjective
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationLeOneOfMemZmu
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -73,13 +39,13 @@ theorem intAt_of_locTop (hL : L.Ok Ch sel mu cst G m2) (P : rowSG Pr sel mu) {j 
       simp [LinearMap.funLeft_apply, Loc.eN, Pi.single_apply, Fin.ext_iff]
     simp only [LinearMap.comp_apply, e1] at h3
     have hlt' : l.1 < R.N R.m - 1 + 0 := hlt
-    simp only [Loc.atN, dif_pos hlt', prXp, LinearMap.funLeft_apply] at h3
+    simp only [Loc.atN, dite_eq_left hlt', prXp, LinearMap.funLeft_apply] at h3
     have h4 := (GlobalTheory.SuppTop.intAt_nat P.1 (qOf P.1 ^ cst.A)).mul h3
     rwa [Nat.cast_pow] at h4
   · have h3 := GlobalTheory.SuppTop.intAt_of_ftY sel mu cst P _ _ h2 s
     have hl3 : R.N R.m - 1 < R.N R.m := by omega
     have hl4 : (⟨R.N R.m - 1, hl3⟩ : Fin (R.N R.m)) = l := Fin.ext (by simp only; omega)
-    simp only [LinearMap.comp_apply, atNL, dif_pos hl3, LinearMap.proj_apply, hl4] at h3
+    simp only [LinearMap.comp_apply, atNL, dite_eq_left hl3, LinearMap.proj_apply, hl4] at h3
     obtain ⟨k, hk⟩ := Nat.exists_eq_add_of_le' hL.cst_ok.M_le_A
     have h4 := (GlobalTheory.SuppTop.intAt_nat P.1 (qOf P.1 ^ k)).mul h3
     rw [Nat.cast_pow, ← mul_assoc, ← pow_add] at h4

@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CommAlgFunctorCoboundaryZeroMemCocyclesOne
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.MapDiagonalRepMatrixEq
 import Mathlib.Algebra.Order.Floor.Extended
@@ -54,56 +55,7 @@ open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.U3 UpperTheory.V.Alg
 private theorem UpperTheory.V.UnitaryThreeInertia.map_eq_zero_of_cc {O A σ : Type} [CommRing O] [CommRing A] [Fintype σ]
     (φ : MvPowerSeries σ O →+* A) (hφ : ∀ i, φ (MvPowerSeries.X i) = 0) (p : MvPowerSeries σ O)
     (hp : MvPowerSeries.constantCoeff p = 0) : φ p = 0 := by
-  classical
-  have hsupp : ∀ n : σ →₀ ℕ, n ≠ 0 → n.support.Nonempty :=
-    fun n hn => Finsupp.support_nonempty_iff.mpr hn
-  let sel : (σ →₀ ℕ) → σ → Prop := fun n i => ∃ h : n ≠ 0, (hsupp n h).choose = i
-  let q : σ → MvPowerSeries σ O := fun i m =>
-    if sel (m + Finsupp.single i 1) i then MvPowerSeries.coeff (m + Finsupp.single i 1) p else 0
-  have hX : ∀ (n : σ →₀ ℕ) (i : σ) (f : MvPowerSeries σ O),
-      MvPowerSeries.coeff n (MvPowerSeries.X i * f)
-        = if Finsupp.single i 1 ≤ n then MvPowerSeries.coeff (n - Finsupp.single i 1) f else 0 := by
-    intro n i f
-    rw [show (MvPowerSeries.X i : MvPowerSeries σ O) = MvPowerSeries.monomial (Finsupp.single i 1) 1
-      from rfl, MvPowerSeries.coeff_monomial_mul, one_mul]
-  have hq : ∀ (i : σ) (m : σ →₀ ℕ), MvPowerSeries.coeff m (q i)
-      = if sel (m + Finsupp.single i 1) i then MvPowerSeries.coeff (m + Finsupp.single i 1) p else 0 :=
-    fun i m => rfl
-  have hdec : p = ∑ i, MvPowerSeries.X i * q i := by
-    ext n
-
-    rw [map_sum]
-    simp_rw [hX, hq]
-    by_cases hn : n = 0
-    · subst hn
-      rw [MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hp]
-      symm
-      apply Finset.sum_eq_zero
-      intro i _
-      rw [if_neg]
-      intro hle
-      have := hle i
-      simp at this
-    · set j := (hsupp n hn).choose with hj
-      have hjmem : j ∈ n.support := (hsupp n hn).choose_spec
-      have hjle : Finsupp.single j 1 ≤ n := by
-        rw [Finsupp.single_le_iff]
-        exact Nat.one_le_iff_ne_zero.mpr (Finsupp.mem_support_iff.mp hjmem)
-      rw [Finset.sum_eq_single j]
-      · rw [if_pos hjle, tsub_add_cancel_of_le hjle, if_pos ⟨hn, rfl⟩]
-      · intro b _ hb
-        by_cases hble : Finsupp.single b 1 ≤ n
-        · rw [if_pos hble, tsub_add_cancel_of_le hble, if_neg]
-          rintro ⟨_, hb'⟩
-          exact hb hb'.symm
-        · rw [if_neg hble]
-      · intro h
-        exact absurd (Finset.mem_univ j) h
-
-  rw [hdec, map_sum]
-  apply Finset.sum_eq_zero
-  intro i _
-  rw [map_mul, hφ, zero_mul]
+  apply _root_.UpperTheory.V.UnitaryThreeInertia.Tan.map_eq_zero_of_cc <;> assumption
 
 private theorem UpperTheory.V.UnitaryThreeInertia.map_eq_cc {O σ : Type} [CommRing O] [Fintype σ]
     (φ : MvPowerSeries σ O →ₐ[O] O) (hφ : ∀ i, φ (MvPowerSeries.X i) = 0) (p : MvPowerSeries σ O) :

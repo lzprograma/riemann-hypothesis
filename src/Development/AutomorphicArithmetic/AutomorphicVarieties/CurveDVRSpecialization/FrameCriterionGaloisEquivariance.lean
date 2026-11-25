@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsConjInertiaTameCharOtherPlace
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.CrDefs
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
 import Mathlib.Algebra.Order.Floor.Extended
@@ -43,17 +44,8 @@ open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.
 open scoped Pointwise in
 private theorem val_smul {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω] (g : G F Ω) (A : ValuationSubring Ω) (x : Ω) :
     (g • A).valuation (g x) < 1 ↔ A.valuation x < 1 := by
-  have key : ∀ y : Ω, g.toRingEquiv y ∈ g • A ↔ y ∈ A := by
-    intro y
-    constructor
-    · intro hy
-      obtain ⟨z, hz, hzy⟩ := (ValuationSubring.mem_smul_pointwise_iff_exists _ _ _).1 hy
-      have hzy' : g z = g y := hzy
-      rw [g.injective hzy'] at hz
-      exact hz
-    · intro hy
-      exact ValuationSubring.smul_mem_pointwise_smul g y A hy
-  exact val_lt_one key x
+  intros
+  apply _root_.GlobalTheory.TameMove.val_smul_lt_one_iff <;> assumption
 
 open scoped Pointwise in
 private theorem place_smul {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω] (g : G F Ω) {A : ValuationSubring Ω}

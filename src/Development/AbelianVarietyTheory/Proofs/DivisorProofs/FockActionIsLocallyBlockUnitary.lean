@@ -68,7 +68,7 @@ theorem adjZ_Eab_of_isLeft {p q : ℕ} {a b : Ix p q} (h : a.isLeft = b.isLeft) 
 theorem isKC_Eab_of_isLeft {p q : ℕ} {a b : Ix p q} (h : a.isLeft = b.isLeft) : IsKC (Eab a b) := by
   intro i j hij
   simp only [Eab, Matrix.single_apply]
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro ⟨rfl, rfl⟩
   apply hij
   rcases a with a | a <;> rcases b with b | b <;> simp_all [sameBlock]

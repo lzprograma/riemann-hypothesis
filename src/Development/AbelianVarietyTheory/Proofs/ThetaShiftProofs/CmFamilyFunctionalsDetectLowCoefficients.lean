@@ -102,12 +102,12 @@ theorem absA_wtA_eq {D : D7} (T : Core D) (j : ℕ) (hD : IsDatW D j (T.Q.Dw j))
   have ht := hH.2.2.2 t
   refine congrArg₂ (· + ·) ?_ ?_
   · rw [Finset.sum_eq_single (DV.tauEmb D t)]
-    · simp only [if_true]
+    · simp only [ite_true]
       exact sum_extendByZero_fin_eq_sum _ (by rw [← hD.1]; simp [Datum.mult, ht])
     · intro b _ hb; simp [hb]
     · simp
   · rw [Finset.sum_eq_single (conjEmb (DV.tauEmb D t))]
-    · simp only [if_true]
+    · simp only [ite_true]
       exact sum_extendByZero_fin_eq_sum _ (by rw [← hD.2.1]; simp [Datum.mult, conjugateEmbedding_not_in_cmType _ _ ht])
     · intro b _ hb; simp [hb]
     · simp

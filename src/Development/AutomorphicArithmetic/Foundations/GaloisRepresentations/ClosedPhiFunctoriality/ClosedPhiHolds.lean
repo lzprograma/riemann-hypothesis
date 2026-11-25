@@ -325,7 +325,7 @@ private theorem letter_lift {LL U D : Type} [Field LL] [Field U] [AddCommGroup D
     (hU : ∀ (u : U) (x : D), f (m u x) = κ (τ u) • f x) :
     ∃ ψ : Letter m F τ →+ M, (∀ (c : F) (y : Letter m F τ), ψ (c • y) = κ c • ψ y) ∧
       ∀ x : D, ψ (letterMk m F τ x) = f x := by
-  letI : Module F M := Module.compHom M κ
+  let : Module F M := Module.compHom M κ
   have hsm : ∀ (c : F) (y : M), c • y = κ c • y := fun _ _ => rfl
   let f₂ : F →+ D →+ M := AddMonoidHom.mk' (fun c =>
       (DistribSMul.toAddMonoidHom M (κ c)).comp f)
@@ -397,17 +397,13 @@ variable {l : ℕ} [Fact l.Prime] {P : LocPrime l} {K L : FinExt l} {a : ℕ}
   (R : Representation ↥L.1 ↥(GK K) (Fin a → ↥L.1))
   (ψ₀ : (Fin a → ↥L.1) ⊗[ℚ_[l]] Bst P →+ (Fin a → OB P))
 
-
-
 private noncomputable def fD : ↥(GlobalTheory.Pst.Dpst P R) →+ (Fin a → OB P) :=
   { toFun := fun x => ψ₀ x.1, map_zero' := ψ₀.map_zero, map_add' := fun x y => ψ₀.map_add x.1 y.1 }
 
-set_option synthInstance.maxHeartbeats 400000 in
 private theorem fD_smul (h : IsCoord P L ψ₀) (ι : Om l ≃+* ℂ) (r : ↥L.1) (x : ↥(GlobalTheory.Pst.Dpst P R)) :
     fD R ψ₀ (r • x) = kap P ι (ι (r : Om l)) • fD R ψ₀ x := by
   exact (coord_smul h r x.1).trans
     (congrArg (fun t : OB P => t • ψ₀ x.1) (kap_apply P ι (r : Om l)).symm)
-
 
 private theorem fD_mul (h : IsCoord P L ψ₀) (ι : Om l ≃+* ℂ) (u : ↥(MaximalUnramifiedExtension l)) (x : ↥(GlobalTheory.Pst.Dpst P R)) :
     fD R ψ₀ (GlobalTheory.Pst.mulD P R u x) = kap P ι (ι (u : Om l)) • fD R ψ₀ x := by
@@ -416,7 +412,6 @@ private theorem fD_mul (h : IsCoord P L ψ₀) (ι : Om l ≃+* ℂ) (u : ↥(Ma
 
 end
 
-set_option synthInstance.maxHeartbeats 400000 in
 theorem UpperTheory.Gal.ClosedPhiFromClosedTrace.coordWD_holds :
     CoordWD := by
   intro l _ P ι K L a R ψ₀ h
@@ -436,10 +431,6 @@ section -- clump:auto
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP GlobalTheory.MemLoc GlobalTheory.Pst GlobalTheory.BKLim GlobalTheory.Cong GlobalTheory.WeilDeligne Matrix
 open scoped Formalism.Per NNReal
 open UpperTheory.Gal.ClosedPhiFromClosedTrace
-
-private theorem map_smul_ringHom {S T : Type} [CommRing S] [CommRing T] (f : S →+* T) {d : ℕ} (c : S)
-    (M : Matrix (Fin d) (Fin d) S) : (c • M).map f = f c • M.map f := by
-  ext i j; simp
 
 private theorem dvd_mul_entries_left {T : Type} [CommRing T] {a b e : ℕ} (c : T) (A : Matrix (Fin a) (Fin b) T)
     (B : Matrix (Fin b) (Fin e) T) (h : ∀ i j, c ∣ B i j) (i : Fin a) (j : Fin e) : c ∣ (A * B) i j := by
@@ -635,7 +626,7 @@ open UpperTheory.Gal.ClosedPhiFromClosedTrace
 theorem UpperTheory.Gal.ClosedPhiFromClosedTrace.frEx_holds :
     FrEx := by
   intro l _ K L₀ bk τp hτp P AI T a hL₀ r Cl Cv J hCl hcr
-  haveI := K.2
+  have := K.2
   let N : ℕ := Finset.univ.sup fun τ' : ↥K.1 →ₐ[ℚ_[l]] Om l => ((J τ').map Int.natAbs).sup
   have hN : ∀ τ', ∀ n ∈ J τ', |n| ≤ (N : ℤ) := by
     intro τ' n hn
@@ -677,7 +668,7 @@ open Formalism Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.Basic
 theorem func_holds : IntBasis → Func := by
   intro hB l _ F I _ x z hx hz
   classical
-  letI : Fintype I := Fintype.ofFinite I
+  let : Fintype I := Fintype.ofFinite I
   let eqv := Fintype.equivFin (Option I)
   let y : Fin (Fintype.card (Option I)) → Om l := fun k => (eqv.symm k).elim z x
   have hy : ∀ k, ‖y k‖ ≤ 1 := by
@@ -1276,7 +1267,7 @@ theorem UpperTheory.Gal.ClosedPhiFromClosedTrace.linkA_holds :
   have hev : ∀ s, inclW l (bk.ev s) = bk.evW s := fun s => rfl
   refine ⟨?_, ?_⟩
   · intro i j
-    apply GlobalTheory.HTBound.pow_dvd_of_inclW
+    apply GlobalTheory.CoefDescent.pow_dvd_of_pow_dvd_inclW
     have e1 : (Pi.map (Per.zA l)).map (inclW l) = zW Pi := by
       refine Matrix.ext fun a b => ?_
       exact (inclWA l).commutes _
@@ -1305,7 +1296,7 @@ theorem UpperTheory.Gal.ClosedPhiFromClosedTrace.linkA_holds :
     rw [hmap] at key
     intro i j
     apply pow_dvd_of_ev
-    apply GlobalTheory.HTBound.pow_dvd_of_inclW
+    apply GlobalTheory.CoefDescent.pow_dvd_of_pow_dvd_inclW
     simpa only [Matrix.map_apply, hev] using key i j
 end -- clump:auto
 end -- clump:auto
@@ -1318,7 +1309,6 @@ section -- clump:auto
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open GlobalTheory.AboveL
 
 namespace GlobalTheory.AboveL
@@ -1335,11 +1325,6 @@ theorem eig_pow_of_rep {K Ω : Type} [Field Ω] [Field K] [NumberField K] [Algeb
 
 end GlobalTheory.AboveL
 
-namespace GlobalTheory.AboveL
-
-open Pointwise
-
-end GlobalTheory.AboveL
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.SatakeParameters.MapNormEqOfMapPowEq =====
@@ -1621,8 +1606,8 @@ theorem UpperTheory.Gal.ClosedPhiFromClosedTrace.trLim_holds :
   obtain ⟨htor, hcomp, -⟩ := _root_.GlobalTheory.AcrisFrobE.main l K bk
   have hz := GlobalTheory.CrZero.eq_zero_of_forall_dvd _ hcomp.toIsHausdorff _ hdvd
   have hs0 : s = 0 := GlobalTheory.CrZero.pow_cancel (l : Per.Acris l) htor c₂ s 0 (by simpa using hz)
-  haveI : Nontrivial P.R.B := GlobalTheory.Pst.nontrivial_B P
-  haveI : Nontrivial (Per.Bcris l) := T.eB.injective.nontrivial
+  have : Nontrivial P.R.B := GlobalTheory.Pst.nontrivial_B P
+  have : Nontrivial (Per.Bcris l) := T.eB.injective.nontrivial
   rw [hs0, map_zero] at hs
   exact not_isUnit_zero hs
 end -- clump:auto
@@ -1707,8 +1692,8 @@ open UpperTheory.Gal.ClosedPhiFromClosedTrace
 private theorem exists_ext {l : ℕ} [Fact l.Prime] (L₁ : FinExt l) {d a : ℕ}
     (b : Fin d → Matrix (Fin a) (Fin a) (Om l)) :
     ∃ L : FinExt l, L₁.1 ≤ L.1 ∧ ∀ i j k, b i j k ∈ L.1 := by
-  haveI := L₁.2
-  haveI : ∀ x : Fin d × Fin a × Fin a, FiniteDimensional ℚ_[l] ↥(adjExt (b x.1 x.2.1 x.2.2)).1 :=
+  have := L₁.2
+  have : ∀ x : Fin d × Fin a × Fin a, FiniteDimensional ℚ_[l] ↥(adjExt (b x.1 x.2.1 x.2.2)).1 :=
     fun x => (adjExt _).2
   refine ⟨⟨L₁.1 ⊔ ⨆ x : Fin d × Fin a × Fin a, (adjExt (b x.1 x.2.1 x.2.2)).1,
     IntermediateField.finiteDimensional_sup _ _⟩, le_sup_left, fun i j k => ?_⟩
@@ -1756,7 +1741,7 @@ theorem UpperTheory.Gal.ClosedPhiFromClosedTrace.tie_holds :
   generalize mapRep (IntermediateField.inclusion hL).toRingHom r₁ = r' at hm
   have hc := (hm.isCrysAt_iff P).1 hcr
   have hP : IsPst P (Bw.repE L r') := GlobalTheory.PstOfCrys.isPst_of_isCrys T _ hc
-  haveI := hP.finite
+  have := hP.finite
   have hr : ∀ x i j, (((r' x).val i j : ↥L.1) : Om l) = (r x).val i j := fun x i j => by
     rw [← hm.2]; rfl
   let b' : Fin d → Matrix (Fin a) (Fin a) ↥L.1 := fun i => Matrix.of fun j k => ⟨b i j k, hb i j k⟩

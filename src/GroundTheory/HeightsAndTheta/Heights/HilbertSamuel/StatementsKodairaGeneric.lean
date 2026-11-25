@@ -43,12 +43,6 @@ def KodairaGeneric.Statement : Prop :=
     0 < genDeg (mCoordIdeal y) D a →
     ∃ (k : ℕ) (e : Ω), 1 ≤ k ∧ e ≠ 0 ∧ e ∈ chartLatQ y ((k : ℤ) • a - 1) 1
 
-section Inhabitants
-
-open ProjLine
-
-end Inhabitants
-
 end
 
 end GroundTheory.Heights₂.Heights.HilbertSamuel

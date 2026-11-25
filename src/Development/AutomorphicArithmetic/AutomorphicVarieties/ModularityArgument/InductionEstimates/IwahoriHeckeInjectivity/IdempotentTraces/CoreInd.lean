@@ -11,6 +11,7 @@ public import GroundTheory.AutomorphicForms.CuspidalAdmissible
 public import Development.AutomorphicArithmetic.AdelicGluing.BaseChangeLevelIsOpenIsCompactContainsIwahori
 public import Development.AutomorphicArithmetic.AdelicGluing.GaloisTwistCompUOperatorEqUOperatorSmulPlace
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.IdempotentTraces.GalLoc
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.IdempotentTraces.GalLoc
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.IdempotentTraces.TensAmp
 public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.AvgTens
 public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.HopLevel
@@ -150,14 +151,7 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
 private theorem central_fixed (σ : E ≃ₐ[F] E) (s : {r : ℝ // 0 < r}) :
     mapGL n (galAd σ) (centralSection E n s) = centralSection E n s := by
-  have hd : Module.finrank F E ≠ 0 := Module.finrank_pos.ne'
-  have hroot : (⟨(s : ℝ) ^ ((Module.finrank F E : ℝ))⁻¹, Real.rpow_pos_of_pos s.2 _⟩ : {r : ℝ // 0 < r}) ^
-      Module.finrank F E = s := by
-    apply Subtype.ext
-    rw [Positive.val_pow]
-    exact Real.rpow_inv_natCast_pow s.2.le hd
-  rw [← hroot, ← UpperTheory.centralSection_baseChange F E n]
-  exact (UpperTheory.adele_galois_action_baseChange_compat F E σ n).2.2.2.2.1 _
+  apply _root_.gal_cent <;> assumption
 
 private theorem galois_twist_finite_adelic_point (σ : E ≃ₐ[F] E) (hn : 0 < n) {μ : Measure (G1 E n)} [μ.IsHaarMeasure] {θ : Twist μ}
     (hθ : IsGalTwist σ θ) {x x' : FA E n} (h : mapGL n (galAd σ) (finEmb E n x) = finEmb E n x') :
@@ -677,8 +671,8 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.sideX :
     exact hsm _
   have hcases : ∀ i : ZMod 2, i = 0 ∨ i = 1 := by decide
   let Uq : ZMod 2 → LL μ →L[ℂ] LL μ := fun i => if i = 0 then Uiw μ w₀.1 ν else Uiw μ w₁.1 ν
-  have h0 : Uq 0 = Uiw μ w₀.1 ν := if_pos rfl
-  have h1 : Uq 1 = Uiw μ w₁.1 ν := if_neg (by decide)
+  have h0 : Uq 0 = Uiw μ w₀.1 ν := ite_eq_left rfl
+  have h1 : Uq 1 = Uiw μ w₁.1 ν := ite_eq_right (by decide)
   have hin : ∀ w : PlacesOver E q, Inner μ (Uiw μ w.1 ν) := fun w =>
     (UpperTheory.ConvolutionTheory.Tf.innerOps E n μ).2.2.2.2.2 w.1 _ _ (iw_oc μ w.1).1 (iw_oc μ w.1).2
   have hcm : Commute (Uiw μ w₀.1 ν) (Uiw μ w₁.1 ν) :=
@@ -832,11 +826,6 @@ open scoped ComplexConjugate Classical
 
 open UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E
 
-private theorem normV_eq_absNorm {K : Type} [Field K] [NumberField K]
-    (v : HeightOneSpectrum (𝓞 K)) : Formalism.ConjugateSelfDual.normV v = Ideal.absNorm v.asIdeal := by
-  rw [Ideal.absNorm_apply, Submodule.cardQuot_apply]
-  rfl
-
 private theorem normV_split {K M : Type} [Field K] [NumberField K] [Field M] [NumberField M] [Algebra K M]
     (w : HeightOneSpectrum (𝓞 M)) (h : GM.Split M (w.under (𝓞 K))) :
     Formalism.ConjugateSelfDual.normV w = Formalism.ConjugateSelfDual.normV (w.under (𝓞 K)) := by
@@ -849,7 +838,7 @@ private theorem normV_split {K M : Type} [Field K] [NumberField K] [Field M] [Nu
   have h1 : w.asIdeal.ramificationIdx (𝓞 K) * w.asIdeal.inertiaDeg (𝓞 K) = 1 := by
     rw [← finrank_eq_ramificationIdx_mul_inertiaDeg M (w.under (𝓞 K)) w,
       ← (LinearEquiv.ofBijective _ hb).finrank_eq, Module.finrank_self]
-  simp only [normV_eq_absNorm]
+  simp only [GlobalTheory.CompletionNorm.normV_eq_absNorm]
   rw [← Ideal.absNorm_relNorm (𝓞 K) (𝓞 M) w.asIdeal,
     Ideal.relNorm_eq_pow_of_isMaximal w.asIdeal (w.under (𝓞 K)).asIdeal, Nat.eq_one_of_mul_eq_one_left h1, pow_one]
 
@@ -896,7 +885,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.rigidF :
         ∑ i, B i = ∑ a, B' a := by
     filter_upwards [hsum, hSE.eventually_cofinite_notMem, hund.eventually hSF.eventually_cofinite_notMem] with w hw hwE hwF
     obtain ⟨B, ⟨B1, hB1, e1⟩, D, hD, eD⟩ := hw (UpperTheory.ConvolutionTheory.resDeg F w) (by
-      simpa only [normV_eq_absNorm] using hN w)
+      simpa only [GlobalTheory.CompletionNorm.normV_eq_absNorm] using hN w)
     obtain ⟨C, ⟨C1, hC1, e2⟩, e⟩ := hPt _ hwF
     obtain ⟨A₁, a₁, h₁⟩ := (Dp.sSatIff E 2 _ π₁ τ₁ c₁ w _).1 (hA₁.2 w hwE)
     obtain ⟨A₂, a₂, h₂⟩ := (Dp.sSatIff E 2 _ π₂ τ₂ c₂ w _).1 (hA₂.2 w hwE)
@@ -938,7 +927,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.rigidF :
     have hg : ∀ w' : HeightOneSpectrum (𝓞 E), w'.under (𝓞 F) = w.under (𝓞 F) → w' ∉ X :=
       fun w' hu hc => hy ⟨w', hc, hu⟩
     have hq : 1 < Formalism.ConjugateSelfDual.normV (w.under (𝓞 F)) := by
-      rw [normV_eq_absNorm]
+      rw [GlobalTheory.CompletionNorm.normV_eq_absNorm]
       exact NumberField.HeightOneSpectrum.one_lt_absNorm _
     rcases hd with ⟨hc, hn⟩ | ⟨-, hn⟩
     · obtain ⟨⟨w', hu⟩, hne', -⟩ := (Nat.card_eq_two_iff' (⟨w, rfl⟩ : {u : HeightOneSpectrum (𝓞 E) // u.under (𝓞 F) = w.under (𝓞 F)})).1
@@ -1137,7 +1126,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.secFD :
   let pts : (Fin a × Fin a) × (Fin b × Fin b) × s × (Fin c × Fin c) → G1 K (2 + 2) := fun p =>
     lv (x p.1.1 p.1.2) (y p.2.1.1 p.2.1.2) 0 * (p.2.2.1 : G1 K (2 + 2)) * (z p.2.2.2.1 p.2.2.2.2 : G1 K (2 + 2))
   refine FiniteDimensional.of_injective ((LinearMap.funLeft ℂ ℂ pts).comp S.subtype) ?_
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   rintro ⟨f, a1, a2, a3, a4, a5, a6⟩ hf
   have h0 : ∀ p, f (pts p) = 0 := fun p => congrFun hf p
   have h1 : ∀ i p j q, ∀ k ∈ KG K (2 + 2), f (lv (x i p) (y j q) 0 * k) = 0 := by
@@ -1221,8 +1210,6 @@ private theorem frame_ex {V : Type} [AddCommGroup V] [Module ℂ V] (S : Submodu
   · intro v v'
     exact e.inner_map_map v v'
 
-
-
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.lineEx :
     LineExC := by
   intro K _ _ _ μ _ μ₂ _ τ₁ τ₂ hP D
@@ -1297,10 +1284,6 @@ private theorem fin_pre {F E : Type} [Field F] [NumberField F] [Field E] [Number
     exact ⟨⟨w, ⟨rfl⟩⟩, rfl⟩
   exact hS.preimage' fun v _ => hfib v
 
-private theorem under_of {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    {v : Pl F} (w : PlacesOver E v) : w.1.under (𝓞 F) = v :=
-  HeightOneSpectrum.ext (w.2.over).symm
-
 private theorem at_mono {K : Type} [Field K] [NumberField K] {n : ℕ} {μ : Measure (G1 K n)} [μ.IsHaarMeasure]
     {S S' : Set (Pl K)} (h : S ⊆ S') {V : Submodule ℂ (LL μ)} {Λ : (K →+* ℂ) → Multiset ℂ} {t : Pl K → Multiset ℂ}
     (H : At μ S V Λ t) : At μ S' V Λ t :=
@@ -1369,10 +1352,10 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.coreInd :
     have h := hu' v
     by_cases h1 : v ∈ SE'
     · have h1' := (hSE' v).1 h1
-      rw [if_pos ((hSE v).2 (Or.inl h1')), ] at h
-      rw [if_pos h1]
+      rw [ite_eq_left ((hSE v).2 (Or.inl h1')), ] at h
+      rw [ite_eq_left h1]
       exact hUle v h1' h
-    · rw [if_neg h1]
+    · rw [ite_eq_right h1]
       split_ifs at h with h2
       · exact (hU v).2 h
       · exact h
@@ -1430,10 +1413,10 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.coreInd :
   have hs₁ : IsSummand (BW.mu1 E 2) τ₁ := ⟨hpair.irr₁.le, hpair.irr₁.closed, hpair.irr₁.inv, hpair.irr₁.ne, hpair.irr₁.irr⟩
   have hs₂ : IsSummand (BW.mu1 E 2) τ₂ := ⟨hpair.irr₂.le, hpair.irr₂.closed, hpair.irr₂.inv, hpair.irr₂.ne, hpair.irr₂.irr⟩
   have hrE := rigidE E τ₁ τ₂ hpair 𝔢'.toAmp.S 𝔢'.toAmp.finS m₁ m₂ B₁ B₂ hat₁ hat₂
-  have hw₀S : w₀.1 ∈ SE := (hSE _).2 (Or.inr (under_of w₀))
-  have hw₁S : w₁.1 ∈ SE := (hSE _).2 (Or.inr (under_of w₁))
-  have hI₀ := hUq w₀.1 (under_of w₀)
-  have hI₁ := hUq w₁.1 (under_of w₁)
+  have hw₀S : w₀.1 ∈ SE := (hSE _).2 (Or.inr (UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.IwahoriHeckeOperatorComm.under_eq w₀))
+  have hw₁S : w₁.1 ∈ SE := (hSE _).2 (Or.inr (UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.IwahoriHeckeOperatorComm.under_eq w₁))
+  have hI₀ := hUq w₀.1 (UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.IwahoriHeckeOperatorComm.under_eq w₀)
+  have hI₁ := hUq w₁.1 (UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.IwahoriHeckeOperatorComm.under_eq w₁)
   have hUa := uiwAct E (BW.mu1 E (2 + 2)) (BW.mu1 E 2) τ₁ τ₂ hpair SE U hU Dt hlevel d d' A A'
   have hUb := uiwAct E (BW.mu1 E (2 + 2)) (BW.mu1 E 2) τ₂ τ₁ hpair' SE U hU Dt hlevel d' d A' A
   have hz : ∀ i : ZMod 2, i = 0 ∨ i = 1 := by decide

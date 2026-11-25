@@ -6,8 +6,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
@@ -62,14 +60,6 @@ end Wrap
 section Scale
 
 variable {S : Type} [CommRing S]
-
-private theorem dualMapS_fst' {A A' : Type} [CommRing A] [Algebra S A] [CommRing A'] [Algebra S A']
-    (j : A →ₐ[S] A') (y : DualNumber A) : (dualMapS j y).fst = j y.fst := by
-  simp [dualMapS, Bl.ThirdBlockLemmaB.goal1, TrivSqZeroExt.lift_def]
-
-private theorem dualMapS_snd' {A A' : Type} [CommRing A] [Algebra S A] [CommRing A'] [Algebra S A']
-    (j : A →ₐ[S] A') (y : DualNumber A) : (dualMapS j y).snd = j y.snd := by
-  simp [dualMapS, Bl.ThirdBlockLemmaB.goal1, TrivSqZeroExt.lift_def]
 
 theorem scaleS_comp {A : Type} [CommRing A] [Algebra S A] (a b : A) :
     (scaleS (S := S) a).comp (scaleS b) = scaleS (a * b) := by
@@ -213,10 +203,7 @@ theorem tan_ext_cover {n : ℕ} (s : Fin n → S) (hs : Ideal.span (Set.range s)
   rw [e]
   have hk := congrArg (fun q => Over.Hom.left q) (h k)
   simp only [Over.comp_left] at hk
-  have hr : (dualMapS (Algebra.ofId S (Localization.Away (s k)))).toRingHom = dAway (s k) := by
-    ext x <;> simp [dualMapS_fst', dualMapS_snd', dAway, dualMapR,
-      TrivSqZeroExt.algebraMap_eq_inl']
-  rw [spMap_left, hr] at hk
+  rw [spMap_left, dualMapS_ofId_toRingHom] at hk
   calc
     _ = Spec.map (CommRingCat.ofHom (toL (s k))) ≫
         (Spec.map (CommRingCat.ofHom (dAway (s k))) ≫ Over.Hom.left v₁) := Category.assoc _ _ _

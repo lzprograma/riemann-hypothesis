@@ -2,46 +2,7 @@ module
 
 public import Formalism.PeriodIntegrals.PairValDefs
 public import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.PairValPf
 
 @[expose] public section
 
@@ -59,25 +20,7 @@ variable {K : Type} [Field K] [NumberField K]
 
 theorem sgUp_mul {N : ℕ} {U V : Matrix (Fin N) (Fin N) K} (hU : IsUpUni U) (hV : IsUpUni V) :
     sgUp (U * V) = sgUp U + sgUp V := by
-  unfold sgUp
-  rw [← Finset.sum_add_distrib]
-  refine Finset.sum_congr rfl fun a _ => ?_
-  split_ifs with h
-  · rw [Matrix.mul_apply, Fintype.sum_eq_add a ⟨a.val + 1, h⟩]
-    · rw [(hU a a).2 rfl, (hV ⟨a.val + 1, h⟩ ⟨a.val + 1, h⟩).2 rfl, one_mul, mul_one, add_comm]
-    · intro e
-      rw [Fin.ext_iff] at e
-      simp at e
-    · rintro x ⟨hxa, hxb⟩
-      rcases lt_or_gt_of_ne hxa with hx | hx
-      · rw [(hU a x).1 hx, zero_mul]
-      · have hne : x.val ≠ a.val + 1 := fun e => hxb (Fin.ext e)
-        have hx' : (⟨a.val + 1, h⟩ : Fin N) < x := by
-          rw [Fin.lt_def] at hx ⊢
-          show a.val + 1 < x.val
-          omega
-        rw [(hV x ⟨a.val + 1, h⟩).1 hx', mul_zero]
-  · simp
+  apply _root_.Formalism.L2.SG.Pf.sgUp_mul <;> assumption
 
 theorem sgUp_one {N : ℕ} : sgUp (1 : Matrix (Fin N) (Fin N) K) = 0 := by
   unfold sgUp

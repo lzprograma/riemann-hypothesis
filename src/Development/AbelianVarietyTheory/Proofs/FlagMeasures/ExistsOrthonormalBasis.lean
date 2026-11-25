@@ -268,7 +268,7 @@ private lemma smul_add_smul_mul_mul_smul_add_smul_of_mul_eq_zero (f : Fin n × F
   rw [Fintype.sum_eq_single (i, j)]
   · simp
   · intro z hz
-    rw [if_neg]
+    rw [ite_eq_right]
     exact fun h => hz (Prod.ext h.1 h.2)
 
 private lemma mulVec_fvec_eq_sum_uMap_smul_of_mem_Nset (f : Fin n × Fin n → ℂ) (i j : Fin n) :
@@ -276,7 +276,7 @@ private lemma mulVec_fvec_eq_sum_uMap_smul_of_mem_Nset (f : Fin n × Fin n → �
   rw [Fintype.sum_eq_single (j, i)]
   · simp
   · intro z hz
-    rw [if_neg]
+    rw [ite_eq_right]
     exact fun h => hz (Prod.ext h.2 h.1)
 
 lemma expand (ε : Fin n → Bool) {X : Matrix (Fin n) (Fin n) ℂ} (hX : inG ε X) :

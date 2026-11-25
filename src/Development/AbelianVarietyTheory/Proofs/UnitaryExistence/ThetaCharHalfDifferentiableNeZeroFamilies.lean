@@ -59,10 +59,10 @@ theorem exists_real_of_half {g : ℕ} {c : Fin g → ℂ} (hc : ∀ i, c i = 0 �
   refine ⟨fun i => if c i = 0 then 0 else 1 / 2, funext fun i => ?_⟩
   rcases hc i with h | h
   · show c i = ((if c i = 0 then (0 : ℝ) else 1 / 2 : ℝ) : ℂ)
-    rw [if_pos h, h, Complex.ofReal_zero]
+    rw [ite_eq_left h, h, Complex.ofReal_zero]
   · have h0 : c i ≠ 0 := by rw [h]; norm_num
     show c i = ((if c i = 0 then (0 : ℝ) else 1 / 2 : ℝ) : ℂ)
-    rw [if_neg h0, h]
+    rw [ite_eq_right h0, h]
     norm_num
 
 theorem thetaChar_holomorphic_ne_zero : ∀ (g : ℕ) (c₁ c₂ : Fin g → ℂ), (∀ i, c₁ i = 0 ∨ c₁ i = 1 / 2) → (∀ i, c₂ i = 0 ∨ c₂ i = 1 / 2) → (∀ τ : Matrix (Fin g) (Fin g) ℂ, τ.IsSymm → (τ.map Complex.im).PosDef → Differentiable ℂ (thetaChar τ c₁ c₂) ∧ ∃ z, thetaChar τ c₁ c₂ z ≠ 0) ∧ ∀ (m : ℕ) (B : Set (Fin m → ℂ)) (h τ : (Fin m → ℂ) → Matrix (Fin g) (Fin g) ℂ), IsOpen B → (∀ b ∈ B, (τ b).IsSymm ∧ ((τ b).map Complex.im).PosDef) → (∀ i j, DifferentiableOn ℂ (fun b => h b i j) B ∧ DifferentiableOn ℂ (fun b => τ b i j) B) → DifferentiableOn ℂ (fun bz : (Fin m → ℂ) × (Fin g → ℂ) => thetaChar (τ bz.1) c₁ c₂ (h bz.1 *ᵥ bz.2)) (B ×ˢ Set.univ) := by

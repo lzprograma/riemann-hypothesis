@@ -1,5 +1,7 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.Bridge
+import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.NotCdomAddRoot
 public import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.OrbitStepSpace
 public import Formalism.RealPlaceAnalysis.StatementKT
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
@@ -229,7 +231,7 @@ theorem inK_single {a b : Fin n} (hab : ε a = ε b) (c : ℂ) :
     simp only [e1, e2]
     split_ifs <;> simp [star_sub]
   · simp only [Matrix.sub_apply, Matrix.single_apply]
-    rw [if_neg, if_neg, sub_zero]
+    rw [ite_eq_right, ite_eq_right, sub_zero]
     · rintro ⟨rfl, rfl⟩; simp_all
     · rintro ⟨rfl, rfl⟩; simp_all
 
@@ -271,56 +273,14 @@ theorem sum_single (E : Fin n → Fin n → Module.End ℂ W) (a b : Fin n) (c :
 
 theorem isWeight_root {E : Fin n → Fin n → Module.End ℂ W} (hE : GlRel E) {μ : Fin n → ℝ} {u : W}
     (hu : IsWeight E μ u) (a b : Fin n) : IsWeight E (μ + root a b) (E a b u) := by
-  intro c
-  have h : E c c (E a b u) - E a b (E c c u) =
-      (if c = a then E c b else 0) u - (if b = c then E a c else 0) u :=
-    LinearMap.congr_fun (hE c c a b) u
-  have hu' : ∀ d, E d d u = (μ d : ℂ) • u := hu
-  rw [hu' c, map_smul] at h
-  have key : (if c = a then E c b else 0) u - (if b = c then E a c else 0) u =
-      ((((if c = a then 1 else 0) - (if c = b then 1 else 0) : ℝ)) : ℂ) • E a b u := by
-    split_ifs <;> subst_vars <;> simp_all
-  have hr : (((μ + Formalism.REAL.root a b) c : ℝ) : ℂ) =
-      (μ c : ℂ) + ((((if c = a then 1 else 0) - (if c = b then 1 else 0) : ℝ)) : ℂ) := by
-    simp [Formalism.REAL.root, Pi.single_apply]
-  rw [sub_eq_iff_eq_add'] at h
-  rw [h, key, hr, add_smul]
+  apply _root_.GlobalTheory.CompanionTheory.DSHighestOfKType.isWeight_apply <;> assumption
 
 private theorem sum_mul_root_eq_sub' {n : ℕ} (i j : Fin n) :
     ∑ k : Fin n, ((k : ℕ) : ℝ) * Formalism.REAL.root i j k = ((i : ℕ) : ℝ) - ((j : ℕ) : ℝ) := by
   simp [Formalism.REAL.root, Pi.single_apply, mul_sub, Finset.sum_sub_distrib]
 
 theorem not_cdom (Λ : Fin n → ℝ) {a b : Fin n} (hab : a < b) : ¬ CDom ε (Λ + root a b) Λ := by
-  rintro ⟨c, hc, heq⟩
-  let φ : (Fin n → ℝ) →ₗ[ℝ] ℝ := ∑ k : Fin n, ((k : ℕ) : ℝ) • LinearMap.proj k
-  have hφx : ∀ x, φ x = ∑ k : Fin n, ((k : ℕ) : ℝ) * x k := by
-    intro x; simp [φ]
-  have hφr : ∀ i j, φ (Formalism.REAL.root i j) = ((i : ℕ) : ℝ) - ((j : ℕ) : ℝ) := by
-    intro i j; rw [hφx]; exact sum_mul_root_eq_sub' i j
-  have hneg : Λ - (Λ + Formalism.REAL.root a b) = -Formalism.REAL.root a b := by abel
-  have key : -(((a : ℕ) : ℝ) - ((b : ℕ) : ℝ)) =
-      ∑ i, ∑ j, ((c i j : ℕ) : ℝ) * (((i : ℕ) : ℝ) - ((j : ℕ) : ℝ)) := by
-    have h1 := congrArg φ heq
-    rw [hneg, map_neg, hφr] at h1
-
-    rw [h1, map_sum]
-    refine Finset.sum_congr rfl (fun i _ => ?_)
-
-    rw [map_sum]
-    refine Finset.sum_congr rfl (fun j _ => ?_)
-    rw [map_smul, hφr, smul_eq_mul]
-  have hle : ∑ i, ∑ j, ((c i j : ℕ) : ℝ) * (((i : ℕ) : ℝ) - ((j : ℕ) : ℝ)) ≤ 0 := by
-    apply Finset.sum_nonpos
-    intro i _
-    apply Finset.sum_nonpos
-    intro j _
-    by_cases h : c i j = 0
-    · simp [h]
-    · have hij := (hc i j h).1
-      have : ((i : ℕ) : ℝ) < ((j : ℕ) : ℝ) := by exact_mod_cast hij
-      exact mul_nonpos_of_nonneg_of_nonpos (by positivity) (by linarith)
-  have hab' : ((a : ℕ) : ℝ) < ((b : ℕ) : ℝ) := by exact_mod_cast hab
-  linarith
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.not_cdom_add_root <;> assumption
 
 end Alg
 

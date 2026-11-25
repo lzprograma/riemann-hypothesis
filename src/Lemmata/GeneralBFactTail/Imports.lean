@@ -10,9 +10,9 @@ universe u_1 u_2 u_3
 namespace Bl.general_b_fact_tail
 
 theorem goal1 :
-  ∀ {R : Type u_1} {M : Type u_2} [inst : CommRing.{u_1} R] [inst_1 : IsDomain.{u_1} R]
-  [inst_2 : IsPrincipalIdealRing.{u_1} R] [inst_3 : AddCommGroup.{u_2} M] [inst_4 : Module.{u_1, u_2} R M]
-  {ι : Type u_3} [inst_5 : Fintype.{u_3} ι] [DecidableEq.{u_3 + 1} ι] (b : Module.Basis.{u_3, u_1, u_2} ι R M)
+  ∀ {R : Type u_1} {M : Type u_2} [CommRing.{u_1} R] [IsDomain.{u_1} R]
+  [IsPrincipalIdealRing.{u_1} R] [AddCommGroup.{u_2} M] [Module.{u_1, u_2} R M]
+  {ι : Type u_3} [Fintype.{u_3} ι] [DecidableEq.{u_3 + 1} ι] (b : Module.Basis.{u_3, u_1, u_2} ι R M)
   (N : Submodule.{u_1, u_2} R M)
   (h :
     Eq.{1} (Module.finrank.{u_1, u_2} R (Subtype.{u_2 + 1} fun (x : M) ↦ Membership.mem.{u_2, u_2} N x))

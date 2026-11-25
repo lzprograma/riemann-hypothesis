@@ -2,6 +2,7 @@
 """Trusted CI identity resolution and host-side downloads; never runs PR code."""
 import argparse
 import base64
+from concurrent.futures import ThreadPoolExecutor
 import contextlib
 import fcntl
 import gzip
@@ -169,7 +170,7 @@ def manifest_artifacts(manifest, map_data, identity=None, *, modules=None):
     return selected, hashes
 
 
-def downloads(cache, entries, sha256s):
+def downloads(cache, entries, sha256s, *, optional=False):
     artifacts = cache / "artifacts"
     if artifacts.is_symlink():
         raise ValueError("Cache artifacts must be a real directory")
@@ -187,19 +188,32 @@ def downloads(cache, entries, sha256s):
                 continue
         missing.append(name)
     if not missing:
-        return
+        return True
     print(f"Downloading {len(missing)} cache archives", flush=True)
     with tempfile.TemporaryDirectory(prefix="downloads-", dir=cache) as temp:
         temp = Path(temp)
         config = temp / "curl.conf"
         config.write_text("".join(f'url = "{BASE}/artifacts/{REPO}/{name[:-5]}.art"\noutput = {json.dumps(str(temp / name), ensure_ascii=False)}\n'
                                   for name in missing))
-        subprocess.run(["curl", "--disable", "--fail", "--silent", "--show-error", "--location",
-                        "--retry", "3", "--parallel", "--parallel-max", "500", "--config", str(config)],
-                       env=clean_env(), check=True)
+        command = ["curl", "--disable", "--fail", "--silent", "--show-error", "--location",
+                   "--retry", "3", "--parallel", "--parallel-max", "500", "--config", str(config)]
+        complete = True
+        if optional:
+            fetched = subprocess.run([*command, "--write-out", "%{http_code}\n"], env=clean_env(),
+                                     stdout=subprocess.PIPE, text=True)
+            status = fetched.stdout.splitlines()
+            if (fetched.returncode in (0, 22) and len(status) == len(missing)
+                    and set(status) <= {"200", "404", "410"} and any(c != "200" for c in status)):
+                complete = False
+            else:
+                fetched.check_returncode()
+        else:
+            subprocess.run(command, env=clean_env(), check=True)
         for name in missing:
             path = temp / name
             if not path.is_file() or not path.stat().st_size:
+                if not complete:
+                    continue
                 raise ValueError("Missing downloaded archive")
             if name in sha256s:
                 with path.open("rb") as stream:
@@ -207,8 +221,10 @@ def downloads(cache, entries, sha256s):
                         raise ValueError("Downloaded archive SHA256 mismatch")
             else:
                 raise ValueError("Archive missing manifest digest")
-            path.chmod(0o444)
-            os.replace(path, artifacts / name)
+            if complete:
+                path.chmod(0o444)
+                os.replace(path, artifacts / name)
+        return complete
 
 
 def previous_cache_revisions(candidate, request):
@@ -258,6 +274,73 @@ def restore_previous_cache(candidate, request, cache):
     return None
 
 
+def quick_base(request, candidate):
+    """Read a successful receipt for the resolved main commit when its build configuration matches."""
+    base = request["base_head"]
+    expected = request["expected"]
+    head = expected["candidate_head"]
+    if request.get("base_ref") != "main" or not HEX.fullmatch(base) or not HEX.fullmatch(head):
+        raise ValueError("Invalid quick-check base or candidate")
+
+    def git(*args):
+        return subprocess.check_output(["git", "-C", str(candidate), *args], env=clean_env(), text=True).strip()
+
+    if git("diff", "--no-ext-diff", "--no-textconv", "--name-only", base, head, "--", "lakefile.toml", "lake-manifest.json", "lean-toolchain"):
+        return None
+    raw = get(f"{BASE}/ci/revisions/{base}.json", missing=True, maximum=2_000_000)
+    if raw is None:
+        return None
+    # Use the same receipt scope, nested build result and fingerprint checks as the public cache client.
+    spec = importlib.util.spec_from_file_location("quick_cache_client", Path(__file__).with_name("ci-cache-get.py"))
+    client = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(client)
+    base_tree, src_tree = git("rev-parse", base + "^{tree}", base + ":src").splitlines()
+    identity = dict(expected, source_tree=src_tree)
+    record = client.matching_record(raw, identity)
+    if record is None:
+        return None
+    if record["candidate_head"] != base or record["candidate_tree"] != base_tree:
+        raise ValueError("Quick-check cache does not identify its exact base")
+    # Both immutable keys have been checked by matching_record and can be fetched together.
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        map_job = pool.submit(get, BASE + "/" + record["map_key"], missing=True)
+        manifest_job = pool.submit(get, BASE + "/" + record["module_manifest_key"], missing=True)
+        data, manifest = map_job.result(), manifest_job.result()
+    if data is not None and digest(data) != record["map_sha256"]:
+        raise ValueError("Published quick-check cache integrity mismatch")
+    if manifest is not None and (len(manifest) != record["module_manifest_bytes"]
+                                 or digest(manifest) != record["module_manifest_sha256"]):
+        raise ValueError("Published quick-check cache integrity mismatch")
+    if data is None or manifest is None:
+        return None
+    return data, manifest, record
+
+
+def quick_modules(plan, request):
+    """The older quick plan selects its full pinned cone. Only a base-bound plan can use a CI receipt."""
+    if plan.get("candidate_head") != request["expected"]["candidate_head"] or plan.get("status") != "ready":
+        raise ValueError("quick plan does not bind the resolved candidate")
+
+    def members(field, limit):
+        names = plan.get(field)
+        if not isinstance(names, list) or len(names) > limit or not all(publication.module_name(n) for n in names):
+            raise ValueError("invalid quick plan " + field)
+        return set(names)
+
+    closure = members("closure", 2000)
+    if not closure:
+        raise ValueError("quick plan has an empty dependency cone")
+    if "unchanged_ancestors" not in plan:
+        return closure, False
+    base = plan.get("base_head")
+    if not isinstance(base, str) or not HEX.fullmatch(base) or base != request.get("base_head"):
+        raise ValueError("quick plan does not bind the resolved base")
+    targets, ancestors = members("targets", 8), members("unchanged_ancestors", 2000)
+    if not targets or not targets <= closure or not ancestors <= closure - targets:
+        raise ValueError("invalid quick-check dependency selection")
+    return ancestors, True
+
+
 def preparation_state(directory):
     return Path(directory).expanduser().resolve() / settings.TOOLCHAIN_DIR
 
@@ -304,29 +387,46 @@ def prepare(args):
         subprocess.run(["lake", "exe", "mathlib/cache", "get"], cwd=deps, env=env, check=True)
         cache = state / "baseline"
         cache.mkdir(exist_ok=True)
-        map_data = get(f"{BASE}/revisions/{REPO}/tc/{settings.TOOLCHAIN_DIR}/{REVISION}.jsonl")
-        manifest = get(f"{BASE}/bootstrap/{REVISION}/modules.jsonl.gz")
-        if digest(map_data) != MAP_SHA or digest(manifest) != MANIFEST_SHA:
-            raise ValueError("Pinned baseline integrity mismatch")
-        (cache / "outputs.jsonl").write_bytes(map_data)
-        (cache / "modules.jsonl.gz").write_bytes(manifest)
-        names = None
+        request = json.loads(Path(args.request).read_text())
         quick_plan = getattr(args, "quick_plan", None)
+        names = None
+        seed = None
         if quick_plan:
             plan = json.loads(Path(quick_plan).read_text())
-            request = json.loads(Path(args.request).read_text())
-            if plan.get("candidate_head") != request["expected"]["candidate_head"] or plan.get("status") != "ready":
-                raise ValueError("quick plan does not bind the resolved candidate")
-            names = set(plan["closure"])
-            if not names or len(names) > 2000:
-                raise ValueError("quick plan exceeds its dependency budget")
-        entries, hashes = manifest_artifacts(manifest, map_data, modules=names)
-        downloads(cache, entries, hashes)
-        request = json.loads(Path(args.request).read_text())
+            names, use_base = quick_modules(plan, request)
+            if use_base and names:
+                seed = quick_base(request, args.candidate)
+        if seed:
+            map_data, manifest, record = seed
+            entries, hashes = manifest_artifacts(manifest, map_data, record, modules=names)
+            if not downloads(cache, entries, hashes, optional=True):
+                print("Exact-base archives unavailable, using the pinned baseline", flush=True)
+                seed = None
+        if seed:
+            # The quick caller owns this temporary directory until the selected archives are staged.
+            output = Path(args.output)
+            map_path = output.with_name(output.name + ".map.jsonl")
+            manifest_path = output.with_name(output.name + ".modules.jsonl.gz")
+        else:
+            map_data = get(f"{BASE}/revisions/{REPO}/tc/{settings.TOOLCHAIN_DIR}/{REVISION}.jsonl")
+            manifest = get(f"{BASE}/bootstrap/{REVISION}/modules.jsonl.gz")
+            if digest(map_data) != MAP_SHA or digest(manifest) != MANIFEST_SHA:
+                raise ValueError("Pinned baseline integrity mismatch")
+            record = None
+            map_path = cache / "outputs.jsonl"
+            manifest_path = cache / "modules.jsonl.gz"
+            entries, hashes = manifest_artifacts(manifest, map_data, modules=names)
+        map_path.write_bytes(map_data)
+        manifest_path.write_bytes(manifest)
+        if not seed:
+            downloads(cache, entries, hashes)
         selected = None if quick_plan else restore_previous_cache(args.candidate, request, cache)
         paths = {"packages": str(deps / ".lake/packages"), "baseline_cache": str(cache),
-                 "baseline_manifest": str(cache / "modules.jsonl.gz"), "baseline_map": str(cache / "outputs.jsonl"),
+                 "baseline_manifest": str(manifest_path), "baseline_map": str(map_path),
                  "latest_map": str(selected) if selected else ""}
+        if seed:
+            paths["quick_manifest_sha256"] = record["module_manifest_sha256"]
+            paths["quick_map_sha256"] = record["map_sha256"]
         Path(args.output).write_text(json.dumps(paths, indent=2) + "\n")
 
 

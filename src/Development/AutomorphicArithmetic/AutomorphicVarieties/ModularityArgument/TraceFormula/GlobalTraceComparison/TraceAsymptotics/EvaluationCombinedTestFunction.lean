@@ -64,43 +64,15 @@ variable {G G' : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
 private theorem twOrb_conj' (θ : G →* G) (K : Subgroup G) (δ g : G) (f : G → ℂ) :
     twOrb θ K (g⁻¹ * δ * θ g) f = twOrb θ K δ f := by
-  let dcEquiv :
-    DoubleCoset.Quotient (GlobalTheory.BCT.twCent θ (g⁻¹ * δ * θ g) : Set G) (K : Set G) ≃
-      DoubleCoset.Quotient (GlobalTheory.BCT.twCent θ δ : Set G) (K : Set G) := {
-  toFun q := DoubleCoset.mk (GlobalTheory.BCT.twCent θ δ) K (g * Quotient.out q)
-  invFun q := DoubleCoset.mk (GlobalTheory.BCT.twCent θ (g⁻¹ * δ * θ g)) K (g⁻¹ * Quotient.out q)
-  left_inv q := by
-    obtain ⟨t, ht, k, hk, he⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1
-      (DoubleCoset.out_eq' (DoubleCoset.mk (twCent θ δ) K (g * Quotient.out q))).symm
-    show DoubleCoset.mk _ K (g⁻¹ * Quotient.out (DoubleCoset.mk (GlobalTheory.BCT.twCent θ δ) K (g * Quotient.out q))) = q
-    rw [he]
-    conv_rhs => rw [← DoubleCoset.out_eq' q]
-    rw [DoubleCoset.eq]
-    refine ⟨g⁻¹ * t⁻¹ * g, ?_, k⁻¹, K.inv_mem hk, by group⟩
-    rw [GlobalTheory.TwOrbConj.twCent_conj]
-    exact ⟨t⁻¹, (GlobalTheory.BCT.twCent θ δ).inv_mem ht, by simp⟩
-  right_inv q := by
-    obtain ⟨t, ht, k, hk, he⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1
-      (DoubleCoset.out_eq' (DoubleCoset.mk (twCent θ (g⁻¹ * δ * θ g)) K (g⁻¹ * Quotient.out q))).symm
-    show DoubleCoset.mk _ K (g * Quotient.out (DoubleCoset.mk (GlobalTheory.BCT.twCent θ (g⁻¹ * δ * θ g)) K
-      (g⁻¹ * Quotient.out q))) = q
-    rw [he]
-    conv_rhs => rw [← DoubleCoset.out_eq' q]
-    rw [DoubleCoset.eq]
-    rw [GlobalTheory.TwOrbConj.twCent_conj] at ht
-    obtain ⟨s, hs, rfl⟩ := ht
-    refine ⟨s⁻¹, (GlobalTheory.BCT.twCent θ δ).inv_mem hs, k⁻¹, K.inv_mem hk, ?_⟩
-    simp only [MulEquiv.coe_toMonoidHom, MulAut.conj_apply]
-    group
-
-  }
   rw [GlobalTheory.TwOrbConj.twOrb_eq, GlobalTheory.TwOrbConj.twOrb_eq]
   refine (finsum_congr fun q => ?_).trans
     (finsum_comp_equiv (f := fun q : DoubleCoset.Quotient (twCent θ δ : Set G) (K : Set G) =>
-      GlobalTheory.TwOrbConj.summand θ K δ f (Quotient.out q)) dcEquiv)
+      GlobalTheory.TwOrbConj.summand θ K δ f (Quotient.out q))
+      (GlobalTheory.TwOrbConj.dcEquiv θ K δ g))
   obtain ⟨t, ht, k, hk, he⟩ := DoubleCoset.mk_out_eq_mul (twCent θ δ) K (g * Quotient.out q)
   rw [GlobalTheory.TwOrbConj.summand_twist]
-  show _ = GlobalTheory.TwOrbConj.summand θ K δ f (Quotient.out (DoubleCoset.mk (twCent θ δ) K (g * Quotient.out q)))
+  show _ = GlobalTheory.TwOrbConj.summand θ K δ f
+    (Quotient.out (DoubleCoset.mk (twCent θ δ) K (g * Quotient.out q)))
   rw [he, GlobalTheory.TwOrbConj.summand_rep θ K δ f _ ht hk]
 
 private theorem cptPart_map_equiv (e : G ≃* G') (hc : Continuous e) (hc' : Continuous e.symm) (T : Subgroup G) :
@@ -412,9 +384,9 @@ theorem ends : UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.Ends := by
     refine geomSt2_swap S l₁ l₂ Φ Φ' fun w hw' y => ?_
     rw [hΦ w hw', hΦ' w hw']
     by_cases hs : IsSplitAt w
-    · simp only [if_pos hs]
+    · simp only [ite_eq_left hs]
       exact ctMu_swap b w _ _ _ _ _
-    · simp only [if_neg hs]
+    · simp only [ite_eq_right hs]
       have hm : y ∈ K2 0 b w ↔ (y.2, y.1) ∈ K2 b 0 w := by
         simp [K2, Subgroup.mem_prod, and_comm]
       simp only [Set.indicator, SetLike.mem_coe, hm, Pi.one_apply]

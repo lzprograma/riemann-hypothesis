@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Definitions.Divisors.IsHomogeneousCompIdeal
 public import Formalism.LocalToGlobal.ProjectiveLattices.XcLat
 
 @[expose] public section
@@ -32,39 +33,8 @@ theorem not_good_conj {σ : c.F →+* ℂ} (h : GoodEmb c σ) : ¬ GoodEmb c ((s
   rw [h] at h'
   exact rt0_conj_ne_lemma h'
 
-private theorem imaginary_root_conj_lemma_2 : (starRingEnd ℂ) H.rt0 = -H.rt0 := by
-  have h1 : ((starRingEnd ℂ) H.rt0) ^ 2 = H.rt0 ^ 2 := by
-    rw [← map_pow, H.sqrt_neg_disc_sq, map_neg, map_natCast]
-  rcases sq_eq_sq_iff_eq_or_eq_neg.mp h1 with h | h
-  · exact absurd h rt0_conj_ne_lemma
-  · exact h
-
 theorem goodOf_conj (σ : c.F →+* ℂ) : goodOf c ((starRingEnd ℂ).comp σ) = goodOf c σ := by
-  have key : ∀ τ : c.F →+* ℂ, GoodEmb c τ ∨ GoodEmb c ((starRingEnd ℂ).comp τ) := by
-    intro τ
-    unfold GoodEmb
-    simp only [RingHom.comp_apply]
-    generalize hxd : (IntermediateField.inclusion c.le).toRingHom (baseKA l).ρ = x
-    have hx : (x : ℂ) = H.rt0 := by rw [← hxd]; rfl
-    have hx2 : x ^ 2 = -((H.d : ℕ) : c.F) := by
-      apply Subtype.ext
-      have h0 : (x : ℂ) ^ 2 = -((H.d : ℕ) : ℂ) := by rw [hx, H.sqrt_neg_disc_sq]
-      exact_mod_cast h0
-    have hsq : (τ x) ^ 2 = H.rt0 ^ 2 := by
-      rw [← map_pow, hx2, map_neg, map_natCast, H.sqrt_neg_disc_sq]
-    rcases sq_eq_sq_iff_eq_or_eq_neg.mp hsq with h | h
-    · exact Or.inl h
-    · right
-      rw [h, map_neg, imaginary_root_conj_lemma_2, neg_neg]
-  unfold goodOf
-  by_cases h1 : GoodEmb c σ
-  · have h2 := not_good_conj c h1
-    rw [if_neg h2, if_pos h1]
-    ext x
-    simp
-  · rcases key σ with h | h
-    · exact absurd h h1
-    · rw [if_pos h, if_neg h1]
+  apply _root_.GlobalTheory.CompHt.goodOf_conj <;> assumption
 
 end
 

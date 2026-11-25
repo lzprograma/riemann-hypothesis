@@ -198,7 +198,7 @@ theorem colDet_sub {m : ℕ} (E : Fin (m + 1) → Fin (m + 1) → A) (c c' : Fin
     · rw [prod_ofFn_sub m _ (fun j => capEntry E (c' j) (σ j) j) d]
       · intro j hj
         simp only [h j hj]
-      · simp only [capEntry, hσ, if_true, hd, map_add (f := _), map_one]
+      · simp only [capEntry, hσ, ite_true, hd, map_add (f := _), map_one]
         abel
     · have : (fun j => capEntry E (c j) (σ j) j) = fun j => capEntry E (c' j) (σ j) j := by
         funext j
@@ -241,21 +241,21 @@ theorem hyb_step {m : ℕ} (E : Fin (m + 1) → Fin (m + 1) → A) (x : ℂ) (d 
     · have e : ((d.succAbove i : Fin (m + 1)) : ℕ) = i := by
         rw [Fin.succAbove_of_castSucc_lt _ _ (by simpa [Fin.lt_def] using hi)]
         simp
-      rw [e, if_pos hi]
+      rw [e, ite_eq_left hi]
     · have e : ((d.succAbove i : Fin (m + 1)) : ℕ) = i + 1 := by
         rw [Fin.succAbove_of_le_castSucc _ _ (by simpa [Fin.le_def] using hi)]
         simp
-      rw [e, if_neg (by omega)]
+      rw [e, ite_eq_right (by omega)]
       push_cast
       ring
   · intro j hj
     have : (j : ℕ) ≠ d := fun hh => hj (Fin.ext hh)
     unfold hyb
     by_cases h1 : (j : ℕ) < d
-    · rw [if_pos h1, if_pos (by omega)]
-    · rw [if_neg h1, if_neg (by omega)]
+    · rw [ite_eq_left h1, ite_eq_left (by omega)]
+    · rw [ite_eq_right h1, ite_eq_right (by omega)]
   · unfold hyb
-    rw [if_neg (lt_irrefl _), if_pos (Nat.lt_succ_self _)]
+    rw [ite_eq_right (lt_irrefl _), ite_eq_left (Nat.lt_succ_self _)]
     ring
 
 theorem sum_principal {m : ℕ} (E : Fin (m + 1) → Fin (m + 1) → A) (x : ℂ) :
@@ -515,7 +515,7 @@ theorem sum_tensE_single (v : X.V) (a : Fin (m + 1)) :
     · intro h; exact absurd (mem_univ d) h
   · by_cases h : d = a
     · subst h
-      simp only [Pi.single_eq_same, if_true, Finset.sum_const, Finset.card_univ, Fintype.card_fin]
+      simp only [Pi.single_eq_same, ite_true, Finset.sum_const, Finset.card_univ, Fintype.card_fin]
       rw [← Nat.cast_smul_eq_nsmul ℂ]
     · simp [h]
 

@@ -24,58 +24,10 @@ public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.Calculus.ContDiff.Comp
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalLeviPshRegularization
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularizationGlueC2Explicit
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.AnalyticForms.AnalyticCharts.NullZero
 import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
 import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshBasic
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import ReciprocityTheory.AnalyticForms.LeviForms.TailCutA
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -687,8 +639,6 @@ theorem bound_conv_local (C₅ M : ℝ) : ∃ C₅' : ℝ, 0 ≤ C₅' ∧ ∀ (
           exact mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right h3 hB0) hA0
       _ = K * y ^ K * Real.exp (y / 2) := by rw [hK]; ring
 
-theorem bound_conv : ∀ (C₅ M : ℝ), ∃ C₅' : ℝ, 0 ≤ C₅' ∧ ∀ (rw rl p d : ℝ), Real.exp 1 ≤ rw → Real.exp 1 ≤ rl → |rw - rl| ≤ M → (-C₅ * Real.log rw ≤ p → p ≤ C₅ → -C₅' * Real.log rl ≤ p ∧ p ≤ C₅') ∧ (d ≤ |C₅| * rw ^ |C₅| * Real.exp (rw / 2) → d ≤ C₅' * rl ^ C₅' * Real.exp (rl / 2)) :=
-  bound_conv_local
 
 end GlobalTheory.CompanionTheory.Metric.BoundConv
 end -- clump:auto
@@ -738,7 +688,7 @@ theorem rLoc_rescale_bound {e : ℕ} (S : Finset (Fin e)) (m : Fin e → ℕ) (z
         rw [← Real.log_mul (by positivity) (by positivity)]
         congr 1
         field_simp
-      rw [if_pos h0, hn, hsplit, mul_add, add_sub_cancel_left, abs_of_nonneg (by positivity)]
+      rw [ite_eq_left h0, hn, hsplit, mul_add, add_sub_cancel_left, abs_of_nonneg (by positivity)]
       exact mul_le_mul_of_nonneg_left hlog1 hm0
     · have hfi := hfar i h0
       have hz1 : ‖z₀ i‖ < 1 := (norm_le_pi_norm z₀ i).trans_lt hz₀
@@ -764,7 +714,7 @@ theorem rLoc_rescale_bound {e : ℕ} (S : Finset (Fin e)) (m : Fin e → ℕ) (z
         apply Real.log_le_log (by positivity)
         apply div_le_div_of_nonneg_left (by norm_num) hρ2
         nlinarith
-      rw [if_neg h0, sub_zero, abs_of_nonneg (by positivity)]
+      rw [ite_eq_right h0, sub_zero, abs_of_nonneg (by positivity)]
       exact mul_le_mul_of_nonneg_left hB hm0
   have hdiff : rLoc S m ((ρ : ℂ) • w + z₀) - rLoc (S.filter (fun i => z₀ i = 0)) m w =
       ∑ i ∈ S, ((m i : ℝ) * Real.log (4 / ‖((ρ : ℂ) • w + z₀) i‖ ^ 2) -
@@ -1148,7 +1098,7 @@ theorem isRegFamily_of_glue : ∀ {e : ℕ} {X : Type} [TopologicalSpace X] (A B
       have h3 : C * g ≤ C * g * rW L s y := le_mul_of_one_le_right hCg0 (by linarith)
       have := mul_le_mul_of_nonneg_right hKCl hg0
       nlinarith
-    · push_neg at hyr
+    · push Not at hyr
       have hlog : Real.log (rW L s y) / rW L s y ≤ g := by
         rw [hgdef]
         exact Real.log_div_self_antitoneOn (Set.mem_Ici.2 hl1) (Set.mem_Ici.2 hry) hyr.le
@@ -1301,7 +1251,7 @@ theorem regGlobalStatement_holds : RegGlobalStatement := by
   choose S mm hm1 hbd hrl using hM
   have hcl : IsClosed (bdry s) := LeviFormBoundaryTopology.isClosed_bdry hS
   obtain ⟨hth, hphs, hpsh, hb⟩ := hSW
-  obtain ⟨C₅', hC₅'0, hconv⟩ := _root_.GlobalTheory.CompanionTheory.Metric.BoundConv.bound_conv C₅ M
+  obtain ⟨C₅', hC₅'0, hconv⟩ := _root_.GlobalTheory.CompanionTheory.Metric.BoundConv.bound_conv_local C₅ M
   obtain ⟨hlogd, hmono, hle, htend, hsmall, hmin⟩ := _root_.GlobalTheory.CompanionTheory.Ar.Num.epsT_numerics
   have hrWge : ∀ y, Real.exp 1 ≤ rW L s y := rW_ge L s hs
   have h2le : ((2 : ℕ∞) : WithTop ℕ∞) ≤ ∞ := by exact_mod_cast le_top

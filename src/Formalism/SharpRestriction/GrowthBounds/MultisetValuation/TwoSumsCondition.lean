@@ -7,51 +7,8 @@ public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.DworkExp
 public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.ExpansionAllPlacesOfPlace
 import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NatCastInvMemRp
 import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.LogarithmEquivalence
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.IntRPsubst
-import Mathlib.Tactic.Linter.HaveILetI
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.MultisetValuation.ExistsAtPiG1EqCPowMulIntegralSeries, Formalism.SharpRestriction.GrowthBounds.MultisetValuation.TwoSumsCondition
@@ -89,9 +46,9 @@ theorem th_wt_AA (vp : K') (hvp : vp ^ (p ^ 2 - 1) = (p : K')) {x y : Fin 2} (hx
   by_cases hd : d = Finsupp.single x 1 + Finsupp.single y p
   · have hx : d x = (p ^ 2) ^ 0 := by rw [hd]; simp [hxy.symm]
     have hy : d y = p * (p ^ 2) ^ 0 := by rw [hd]; simp [hxy]
-    rw [if_pos hd, Formalism.InvariantFactorPaths.G7.coeff_AA_of K' hp2 le_rfl hx hy]
+    rw [ite_eq_left hd, Formalism.InvariantFactorPaths.G7.coeff_AA_of K' hp2 le_rfl hx hy]
     exact ⟨0, (Rp p K' vp).zero_mem, by simp⟩
-  · rw [if_neg hd, sub_zero]
+  · rw [ite_eq_right hd, sub_zero]
     by_cases h : MvPowerSeries.coeff d (AA K' p x y) = 0
     · exact ⟨0, (Rp p K' vp).zero_mem, by rw [h]; simp⟩
     · obtain ⟨i, j, hij, hx, hy⟩ := Formalism.InvariantFactorPaths.G7.coeff_AA_ne_zero h
@@ -227,7 +184,7 @@ private theorem coeff_pow_mem_of_lower_coeff_mem {K : Type} [Field K] (R : Subri
   · obtain ⟨i, hi, hli⟩ := hz
     rw [Finset.prod_eq_zero hi (by rw [hli, PowerSeries.coeff_zero_eq_constantCoeff_apply, h0])]
     exact Subring.zero_mem _
-  · push_neg at hz
+  · push Not at hz
     refine Subring.prod_mem _ fun i hi => ih _ ?_
     obtain ⟨j, hj, hji⟩ : ∃ j ∈ range k, j ≠ i := by
       by_cases h : i = 0
@@ -292,43 +249,6 @@ theorem th_mu_int (K' : Type) [Field K'] [Algebra (K0 p) K'] (vp : K') (hvp : vp
     ring
   rw [hμ]
   exact Subring.sub_mem _ hXn hrest
-
-private theorem pow_mul_inv_factorial_mem_Rp (K' : Type) [Field K'] [Algebra (K0 p) K'] (vp : K')
-    (hvp : vp ^ (p ^ 2 - 1) = (p : K')) (k : ℕ) :
-    (vp ^ (p + 1)) ^ k * ((k.factorial : ℕ) : K')⁻¹ ∈ Rp p K' vp := by
-  haveI := charZero_K' p K'
-  have hpK : (p : K') ≠ 0 := Nat.cast_ne_zero.mpr hp.out.ne_zero
-  have hvR : vp ∈ Rp p K' vp := Subring.subset_closure (Or.inr rfl)
-  have hv : (p - 1) * padicValNat p k.factorial ≤ k := by
-    rw [Nat.padicValNat_def]
-    rw [hp.out.sub_one_mul_multiplicity_factorial]
-    exact Nat.sub_le _ _
-  have hdec : k.factorial = p ^ padicValNat p k.factorial * ordCompl[p] k.factorial := by
-    simpa [Nat.padicValNat_def, Nat.factorization_def _ hp.out] using
-      (Nat.ordProj_mul_ordCompl_eq_self k.factorial p).symm
-  have hnd : ¬ p ∣ ordCompl[p] k.factorial := Nat.not_dvd_ordCompl hp.out (Nat.factorial_ne_zero k)
-  have hm0 : ((ordCompl[p] k.factorial : ℕ) : K') ≠ 0 :=
-    Nat.cast_ne_zero.mpr (Nat.ordCompl_pos p (Nat.factorial_ne_zero k)).ne'
-  have h2 : p ^ 2 - 1 = (p + 1) * (p - 1) := by
-    have h1 := hp.out.one_le
-    have h3 : 1 ≤ p ^ 2 := Nat.one_le_pow 2 p (by omega)
-    zify [h1, h3]
-    ring
-  set v := padicValNat p k.factorial with hvdef
-  set m := ordCompl[p] k.factorial with hmdef
-  have hle : (p ^ 2 - 1) * v ≤ (p + 1) * k := by
-    rw [h2, mul_assoc]
-    exact Nat.mul_le_mul_left _ hv
-  have hsplit : (vp ^ (p + 1)) ^ k = (vp ^ (p ^ 2 - 1)) ^ v * vp ^ ((p + 1) * k - (p ^ 2 - 1) * v) := by
-    rw [← pow_mul, ← pow_mul, ← pow_add]
-    congr 1
-    omega
-  rw [hsplit, hvp, hdec, Nat.cast_mul, Nat.cast_pow]
-  have hre : (p : K') ^ v * vp ^ ((p + 1) * k - (p ^ 2 - 1) * v) * ((p : K') ^ v * (m : K'))⁻¹ =
-      vp ^ ((p + 1) * k - (p ^ 2 - 1) * v) * (m : K')⁻¹ := by
-    field_simp
-  rw [hre]
-  exact Subring.mul_mem _ (Subring.pow_mem _ hvR _) (natCast_inv_mem_Rp p K' vp _ hnd)
 
 private theorem atPi_C_mul_X_mul_X_pow {K : Type} [Field K] (vp k : K) (x y : Fin 2) (q : ℕ) :
     atPi vp (MvPowerSeries.C k * (MvPowerSeries.X x * MvPowerSeries.X y ^ q)) =
@@ -462,7 +382,7 @@ theorem gcCondition_of_twoSums (hT : TwoSumsCondition p) : RestGc p := by
     exact Finset.sum_eq_zero fun e _ => MvPowerSeries.constantCoeff_subst_eq_zero (hPs e) (hP0 e) hRr0
   have hWI : IntR (Rp p K' vp) W := IntR_sum _ _ fun e _ => IntR_subst (P e) (hP0 e) (hPI e) hRrI
   rw [hexp, expK_add]
-  · exact ⟨u, hu, _, IntR_expK (pow_mul_inv_factorial_mem_Rp K' vp hvp) (IntR_neg (IntR_add hY hWI)), rfl⟩
+  · exact ⟨u, hu, _, IntR_expK (piFact p K' vp hvp) (IntR_neg (IntR_add hY hWI)), rfl⟩
   · rw [map_neg, map_mul, hhS_const, mul_zero, neg_zero]
   · rw [map_mul, map_neg, map_add (f := _), hY0, hW0, add_zero, neg_zero, mul_zero]
 

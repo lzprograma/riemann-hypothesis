@@ -72,18 +72,7 @@ theorem card_quotient_succ {r : ℕ} (E : Submodule (𝓞 K) (Fin (r + 1) → �
     have hπ : Function.Surjective π := fun a ↦ ⟨fun _ ↦ a, rfl⟩
     have hφ : Function.Surjective φ := (Submodule.mkQ_surjective _).comp hπ
     have hker : LinearMap.ker φ = S := by
-      ext x
-      simp only [φ, LinearMap.mem_ker, LinearMap.coe_comp, Function.comp_apply,
-        Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero, Submodule.mem_map, S,
-        Submodule.mem_sup]
-      constructor
-      · rintro ⟨e, he, hex⟩
-        refine ⟨e, he, x - e, ?_, add_sub_cancel _ _⟩
-        show π (x - e) = 0
-        rw [map_sub, hex, sub_self]
-      · rintro ⟨e, he, k, hk, rfl⟩
-        refine ⟨e, he, ?_⟩
-        rw [map_add (f := _), LinearMap.mem_ker.mp hk, add_zero]
+      simp only [φ, S, LinearMap.ker_comp, Submodule.ker_mkQ, Submodule.comap_map_eq]
     rw [← hker]
     exact Nat.card_congr (φ.quotKerEquivOfSurjective hφ).toEquiv
 
@@ -94,27 +83,19 @@ theorem mul_le_detIdeal {r : ℕ} (E : Submodule (𝓞 K) (Fin (r + 1) → 𝓞 
   rw [Ideal.mul_le]
   intro a ha d hd
   obtain ⟨w, hw, rfl⟩ := Submodule.mem_map.mp ha
-  induction hd using Submodule.span_induction with
-  | mem d hd =>
-    obtain ⟨v', hv', rfl⟩ := hd
-    let v : Fin (r + 1) → Fin (r + 1) → 𝓞 K := Fin.cons w (fun k ↦ consZero r (v' k))
-    have hv : ∀ i, v i ∈ E := by
-      intro i
-      refine Fin.cases ?_ (fun k ↦ ?_) i
-      · exact hw
-      · exact hv' k
-    have hdet : (Matrix.of v).det = w 0 * (Matrix.of v').det := by
-      rw [det_succ_column_zero, Fin.sum_univ_succ]
-      simp only [v, of_apply, Fin.cons_zero, Fin.cons_succ, consZero_zero, Fin.succAbove_zero,
-        Fin.val_zero, pow_zero, one_mul, mul_zero, zero_mul, Finset.sum_const_zero, add_zero]
-      congr 2
-    rw [LinearMap.proj_apply, ← hdet]
-    exact det_mem_detIdeal E v hv
-  | zero => rw [mul_zero]; exact Ideal.zero_mem _
-  | add x y _ _ hx hy => rw [mul_add]; exact Ideal.add_mem _ hx hy
-  | smul c x _ hx =>
-    rw [smul_eq_mul, mul_left_comm]
-    exact Ideal.mul_mem_left _ c hx
+  change _ ∈ Submodule.span (𝓞 K) _ at hd
+  refine (Submodule.span_le.mpr ?_ :
+    _ ≤ Submodule.comap (LinearMap.mulLeft (𝓞 K) (LinearMap.proj 0 w)) (detIdeal E)) hd
+  rintro _ ⟨v', hv', rfl⟩
+  let v : Fin (r + 1) → Fin (r + 1) → 𝓞 K := Fin.cons w (fun k ↦ consZero r (v' k))
+  have hdet : (Matrix.of v).det = w 0 * (Matrix.of v').det := by
+    rw [det_succ_column_zero, Fin.sum_univ_succ]
+    simp only [v, of_apply, Fin.cons_zero, Fin.cons_succ, consZero_zero, Fin.succAbove_zero,
+      Fin.val_zero, pow_zero, one_mul, mul_zero, zero_mul, Finset.sum_const_zero, add_zero]
+    congr 2
+  rw [SetLike.mem_coe, Submodule.mem_comap, LinearMap.mulLeft_apply, LinearMap.proj_apply,
+    ← hdet]
+  exact det_mem_detIdeal E v (Fin.cases (motive := fun i => v i ∈ E) hw hv')
 
 theorem detIdeal_le_mul {r : ℕ} (E : Submodule (𝓞 K) (Fin (r + 1) → 𝓞 K)) :
     detIdeal E ≤ E.map (LinearMap.proj 0) * detIdeal (E.comap (consZero r)) := by

@@ -48,7 +48,6 @@ import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.F
 
 open NumberField NumberField.mixedEmbedding Matrix MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm UpperTheory.V.Af.Fin
 open scoped TensorProduct
-attribute [local instance 100] LieRing.ofAssociativeRing
 
 private theorem ent_le {E : Type} [NormedField E] {a n : ℕ} (e : Fin a ↪ Fin n) (g : GL (Fin a) E) {c : ℝ}
     (hc : 1 ≤ c) (h : ∀ i j, ‖g.val i j‖ ≤ c) (i j : Fin n) : ‖(emb e g).val i j‖ ≤ c := by
@@ -64,10 +63,10 @@ private theorem ent_le {E : Type} [NormedField E] {a n : ℕ} (e : Fin a ↪ Fin
       obtain ⟨l, rfl⟩ := hj
       simp only [matrixExtendByZero_apply, Matrix.sub_apply, Matrix.one_apply, e.injective.eq_iff, add_sub_cancel]
       exact h k l
-    · push_neg at hj
+    · push Not at hj
       rw [matrixExtendByZero_apply_of_outside_col e _ i hj, add_zero]
       exact hone i j
-  · push_neg at hi
+  · push Not at hi
     rw [extendByZero_apply_eq_zero_of_row_not_mem e _ hi, add_zero]
     exact hone i j
 

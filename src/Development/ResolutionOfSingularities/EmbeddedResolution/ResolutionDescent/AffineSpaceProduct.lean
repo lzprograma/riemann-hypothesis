@@ -1,44 +1,6 @@
 module
 
 public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineResolutionRule
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -71,23 +33,6 @@ theorem homOfSumCoords_appTop_coord_inr {n₁ n₂ n : Type u} (e : n₁ ⊕ n�
     (homOfSumCoords e S f g).appTop (AffineSpace.coord S (e (Sum.inr b))) =
       g.appTop (AffineSpace.coord S b) := by
   simp [homOfSumCoords]
-
-private theorem homOfSumCoords_comp_reindex_inl {n₁ n₂ n : Type u} (e : n₁ ⊕ n₂ ≃ n) (S : Scheme.{u})
-    {X : Scheme.{u}} (f : X ⟶ AffineSpace n₁ S) (g : X ⟶ AffineSpace n₂ S) :
-    homOfSumCoords e S f g ≫ AffineSpace.reindex (S := S) (fun a : n₁ => e (Sum.inl a)) = f := by
-  refine AffineSpace.hom_ext ?_ (fun a => ?_)
-  · simp [homOfSumCoords]
-  · rw [AlgebraicGeometry.Scheme.Hom.comp_appTop, CommRingCat.comp_apply]
-    simp
-
-private theorem homOfSumCoords_comp_reindex_inr {n₁ n₂ n : Type u} (e : n₁ ⊕ n₂ ≃ n) (S : Scheme.{u})
-    {X : Scheme.{u}} (f : X ⟶ AffineSpace n₁ S) (g : X ⟶ AffineSpace n₂ S)
-    (hfg : f ≫ (AffineSpace n₁ S ↘ S) = g ≫ (AffineSpace n₂ S ↘ S)) :
-    homOfSumCoords e S f g ≫ AffineSpace.reindex (S := S) (fun b : n₂ => e (Sum.inr b)) = g := by
-  refine AffineSpace.hom_ext ?_ (fun b => ?_)
-  · simpa [homOfSumCoords] using hfg
-  · rw [AlgebraicGeometry.Scheme.Hom.comp_appTop, CommRingCat.comp_apply]
-    simp
 
 private theorem eq_homOfSumCoords_of_comp_reindex {n₁ n₂ n : Type u} (e : n₁ ⊕ n₂ ≃ n) (S : Scheme.{u})
     {X : Scheme.{u}} (f : X ⟶ AffineSpace n₁ S) (g : X ⟶ AffineSpace n₂ S)
@@ -127,14 +72,18 @@ theorem isPullback_reindex_of_sumEquiv {n₁ n₂ n : Type u} (e : n₁ ⊕ n₂
       (Limits.pullback.fst (AffineSpace n₁ S ↘ S) (AffineSpace n₂ S ↘ S))
       (Limits.pullback.snd (AffineSpace n₁ S ↘ S) (AffineSpace n₂ S ↘ S)) ≫
       AffineSpace.reindex (S := S) (fun a : n₁ => e (Sum.inl a)) =
-      Limits.pullback.fst (AffineSpace n₁ S ↘ S) (AffineSpace n₂ S ↘ S) :=
-    homOfSumCoords_comp_reindex_inl e S _ _
+      Limits.pullback.fst (AffineSpace n₁ S ↘ S) (AffineSpace n₂ S ↘ S) := by
+    refine AffineSpace.hom_ext (by simp [homOfSumCoords]) fun a => ?_
+    rw [AlgebraicGeometry.Scheme.Hom.comp_appTop, CommRingCat.comp_apply]
+    simp
   have hB : homOfSumCoords e S
       (Limits.pullback.fst (AffineSpace n₁ S ↘ S) (AffineSpace n₂ S ↘ S))
       (Limits.pullback.snd (AffineSpace n₁ S ↘ S) (AffineSpace n₂ S ↘ S)) ≫
       AffineSpace.reindex (S := S) (fun b : n₂ => e (Sum.inr b)) =
-      Limits.pullback.snd (AffineSpace n₁ S ↘ S) (AffineSpace n₂ S ↘ S) :=
-    homOfSumCoords_comp_reindex_inr e S _ _ hcond
+      Limits.pullback.snd (AffineSpace n₁ S ↘ S) (AffineSpace n₂ S ↘ S) := by
+    refine AffineSpace.hom_ext (by simpa [homOfSumCoords] using hcond) fun b => ?_
+    rw [AlgebraicGeometry.Scheme.Hom.comp_appTop, CommRingCat.comp_apply]
+    simp
   have hid : (𝟙 (AffineSpace n S)) = homOfSumCoords e S
       (AffineSpace.reindex (S := S) (fun a : n₁ => e (Sum.inl a)))
       (AffineSpace.reindex (S := S) (fun b : n₂ => e (Sum.inr b))) :=
@@ -217,13 +166,9 @@ theorem smooth_projRight (hs : AffineSpaceIsSmooth.{u}) (k : Type u) [Field k] (
     (isPullback_projLeft_projRight k n m) (hs k n)
 
 theorem smooth_projLeft (hs : AffineSpaceIsSmooth.{u}) (k : Type u) [Field k] (n m : ℕ) :
-    AlgebraicGeometry.Smooth (projLeft k n m) := by
-  have hsm : AlgebraicGeometry.Smooth (affineSpaceIndexedByToSpec k (ULift.{u} (Fin m))) := hs k m
-  have hpb : IsPullback (projLeft k n m) (projRight k n m)
-      (affineSpaceIndexedByToSpec k (ULift.{u} (Fin n)))
-      (affineSpaceIndexedByToSpec k (ULift.{u} (Fin m))) :=
-    isPullback_reindex_of_sumEquiv (sumUliftEquivUliftSum.{u} n m) (Spec (CommRingCat.of k))
-  exact MorphismProperty.IsStableUnderBaseChange.of_isPullback hpb.flip hsm
+    AlgebraicGeometry.Smooth (projLeft k n m) :=
+  MorphismProperty.IsStableUnderBaseChange.of_isPullback
+    (isPullback_projLeft_projRight k n m).flip (hs k m)
 
 def prodMapOnPreimage (k : Type u) [Field k] (n m c : ℕ)
     (U : (affineSpaceIndexedBy k (ULift.{u} (Fin n))).Opens)
@@ -279,13 +224,9 @@ theorem morphismRestrict_projLeft_comp (k : Type u) [Field k] (n m c : ℕ)
       rw [Category.assoc, projLeft_comp_affineSpaceIndexedByToSpec, prodMapOnPreimage_comp_affineSpaceIndexedByToSpec]
     exact h1.trans h2.symm
   · rintro ⟨j⟩
-    have h : (prodMapOnPreimage k n m c U φ ≫ projLeft k c m).appTop
-        (AffineSpace.coord (Spec (CommRingCat.of k)) (ULift.up j)) =
-        (AlgebraicGeometry.morphismRestrict (projLeft k n m) U ≫ φ).appTop
-        (AffineSpace.coord (Spec (CommRingCat.of k)) (ULift.up j)) := by
-      rw [AlgebraicGeometry.Scheme.Hom.comp_appTop, CommRingCat.comp_apply, projLeft_appTop_coord]
-      simp [prodMapOnPreimage]
-    exact h.symm
+    symm
+    rw [AlgebraicGeometry.Scheme.Hom.comp_appTop, CommRingCat.comp_apply, projLeft_appTop_coord]
+    simp [prodMapOnPreimage]
 
 theorem isPullback_prodMapOnPreimage (k : Type u) [Field k] (n m c : ℕ)
     (U : (affineSpaceIndexedBy k (ULift.{u} (Fin n))).Opens)
@@ -314,10 +255,9 @@ theorem smooth_prodMapOnPreimage (_hs : AffineSpaceIsSmooth.{u}) (k : Type u) [F
     [AlgebraicGeometry.Smooth φ]
     (hφ : φ ≫ affineSpaceIndexedByToSpec k (ULift.{u} (Fin c)) =
       U.ι ≫ affineSpaceIndexedByToSpec k (ULift.{u} (Fin n))) :
-    AlgebraicGeometry.Smooth (prodMapOnPreimage k n m c U φ) := by
-  have hsmooth : AlgebraicGeometry.Smooth φ := ‹AlgebraicGeometry.Smooth φ›
-  exact MorphismProperty.of_isPullback (P := @AlgebraicGeometry.Smooth)
-    (isPullback_prodMapOnPreimage k n m c U φ hφ).flip hsmooth
+    AlgebraicGeometry.Smooth (prodMapOnPreimage k n m c U φ) :=
+  MorphismProperty.of_isPullback (P := @AlgebraicGeometry.Smooth)
+    (isPullback_prodMapOnPreimage k n m c U φ hφ).flip ‹_›
 
 end FunctorialResolution.EmbeddedResolution
 

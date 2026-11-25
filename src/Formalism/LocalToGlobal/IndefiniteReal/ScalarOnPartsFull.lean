@@ -14,8 +14,6 @@ open scoped TensorProduct ContDiff InnerProductSpace
 
 namespace Formalism.IndefR.Mult
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def dualPar (S : SPar) : SPar := S.image fun x => (-x.1, x.2)
 
 variable (D : D7)
@@ -192,11 +190,6 @@ def partFull (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ) (Sb : Fi
     (c : HeightOneSpectrum (𝓞 D.host.E) → List ℤ → ℂ) : Submodule ℂ (MMap M) :=
   Mult θ M J χ ⊓ ⨅ (P : HeightOneSpectrum (𝓞 D.host.E)) (d : List ℤ) (R : Finset (GA D V))
     (_ : Hecke₂ V J χ Sb P d R), LinearMap.ker (heckeOn M R - c P d • LinearMap.id)
-
-def IxFull (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ) (Sb : Finset (HeightOneSpectrum (𝓞 D.host.F)))
-    (e : (GA D V → ℂ) →ₗ[ℂ] (GA D V → ℂ)) : Set (HeightOneSpectrum (𝓞 D.host.E) → List ℤ → ℂ) :=
-  {c | (∀ P d, (¬ ∃ R, Hecke₂ V J χ Sb P d R) → c P d = 0) ∧
-    partFull θ M J χ Sb c ⊓ goodPart θ M J χ e ≠ ⊥}
 
 def dualLab (d : List ℤ) : List ℤ := (d.map Neg.neg).reverse
 

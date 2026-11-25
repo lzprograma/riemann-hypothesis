@@ -1,49 +1,7 @@
 module
 
 public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AfsplitC
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -132,58 +90,6 @@ section Int
 variable {F : Type} [Field F] [NumberField F] {E : Type} [Field E] [NumberField E] [Algebra F E]
   (v : HeightOneSpectrum (𝓞 F))
 
-private lemma prV_tmul_lemma_12 (a : E) (y : 𝔸ᶠ[F]) : prV (E := E) v (a ⊗ₜ[F] y) = a ⊗ₜ[F] (y v) := by
-  first
-    | (simp only [prV, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, Algebra.TensorProduct.map_tmul,
-        AlgHom.id_apply]; done)
-    | (simp only [prV, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, Algebra.TensorProduct.map_tmul,
-        AlgHom.id_apply]; rfl)
-
-private lemma IE_tmul_lemma_10 (a : E) (b : v.adicCompletion F) :
-    afsplitIE v (a ⊗ₜ[F] b) = a ⊗ₜ[F] afsplitF v b := by
-  show LinearMap.lTensor E (afsplitI v) (a ⊗ₜ[F] b) = _
-  rw [LinearMap.lTensor_tmul]
-  try rfl
-
-private lemma eps_eq_lemma_2 : afsplitEps E v = (1 : E) ⊗ₜ[F] afsplitF v 1 := by
-  show afsplitIE v ((1 : E) ⊗ₜ[F] (1 : v.adicCompletion F)) = _
-  exact IE_tmul_lemma_10 v 1 1
-
-private lemma prV_IE_lemma (x : E ⊗[F] v.adicCompletion F) : prV (E := E) v (afsplitIE v x) = x := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a b => rw [IE_tmul_lemma_10, prV_tmul_lemma_12, afsplitF_self]
-  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
-
-private lemma IE_prV_lemma_3 (x : E ⊗[F] 𝔸ᶠ[F]) : afsplitIE v (prV (E := E) v x) = afsplitEps E v * x := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a y =>
-    rw [prV_tmul_lemma_12, IE_tmul_lemma_10, eps_eq_lemma_2, Algebra.TensorProduct.tmul_mul_tmul, one_mul]
-    congr 1
-    ext w
-    congr 1
-    rw [show (afsplitF v 1 * y) w = afsplitF v 1 w * y w from by first | rfl | simp]
-    by_cases h : w = v
-    · subst h
-      rw [afsplitF_self, afsplitF_self, one_mul]
-    · rw [afsplitF_ne v w h, afsplitF_ne v w h, zero_mul]
-  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, mul_add]
-
-private lemma prV_eps_lemma_4 : prV (E := E) v (afsplitEps E v) = 1 := by
-  rw [show afsplitEps E v = afsplitIE v 1 from rfl, prV_IE_lemma]
-
-private lemma F_int_lemma_9 (y : v.adicCompletion F) (hy : y ∈ v.adicCompletionIntegers F) :
-    afsplitF v y ∈ intAd F := by
-  show ∀ w, (afsplitF v y) w ∈ w.adicCompletionIntegers F
-  intro w
-  by_cases h : w = v
-  · subst h
-    rw [afsplitF_self]
-    exact hy
-  · rw [afsplitF_ne v w h]
-    exact zero_mem _
-
 theorem afsplit_prV_int (x : E ⊗[F] 𝔸ᶠ[F]) (hx : x ∈ tensInt (F := F) 𝔸ᶠ[F] (intOE E) (intAd F)) :
     prV (E := E) v x ∈ tensInt (F := F) (v.adicCompletion F) (intOE E)
       (v.adicCompletionIntegers F).toSubring := by
@@ -191,47 +97,35 @@ theorem afsplit_prV_int (x : E ⊗[F] 𝔸ᶠ[F]) (hx : x ∈ tensInt (F := F) �
   induction hx using Subring.closure_induction with
   | mem z hz =>
     rcases hz with ⟨a, rfl⟩ | ⟨b, rfl⟩
-    · apply Subring.subset_closure
-      refine Set.mem_union_left _ ⟨a, ?_⟩
-      simp [prV_tmul_lemma_12]
-      rfl
-    · apply Subring.subset_closure
-      refine Set.mem_union_right _ ⟨⟨(b : 𝔸ᶠ[F]) v, b.2 v⟩, ?_⟩
-      simp [prV_tmul_lemma_12]
+    · exact Subring.subset_closure (Set.mem_union_left _ ⟨a, rfl⟩)
+    · exact Subring.subset_closure (Set.mem_union_right _ ⟨⟨(b : 𝔸ᶠ[F]) v, b.2 v⟩, rfl⟩)
   | zero => rw [map_zero]; exact zero_mem _
   | one => rw [map_one]; exact one_mem _
   | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
   | neg x _ hx => rw [map_neg]; exact neg_mem hx
   | mul x y _ _ hx hy => rw [map_mul]; exact mul_mem hx hy
 
+theorem afsplit_eps_int : afsplitEps E v ∈ tensInt (F := F) 𝔸ᶠ[F] (intOE E) (intAd F) :=
+  Subring.subset_closure
+    (Set.mem_union_right _ ⟨⟨afsplitI v 1, afsplitI_mem_intAd v 1 (one_mem _)⟩, rfl⟩)
+
 theorem afsplit_IE_int (x : E ⊗[F] v.adicCompletion F)
     (hx : x ∈ tensInt (F := F) (v.adicCompletion F) (intOE E) (v.adicCompletionIntegers F).toSubring) :
     afsplitIE v x ∈ tensInt (F := F) 𝔸ᶠ[F] (intOE E) (intAd F) := by
-  unfold tensInt at hx ⊢
+  unfold tensInt at hx
   induction hx using Subring.closure_induction with
   | mem z hz =>
     rcases hz with ⟨a, rfl⟩ | ⟨b, rfl⟩
-    · have h1 : afsplitIE v ((a : E) ⊗ₜ[F] (1 : v.adicCompletion F)) =
-          ((a : E) ⊗ₜ[F] (1 : 𝔸ᶠ[F])) * ((1 : E) ⊗ₜ[F] afsplitF v 1) := by
-        rw [IE_tmul_lemma_10, Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
-      simp only [h1]
-      exact mul_mem (Subring.subset_closure (Set.mem_union_left _ ⟨a, rfl⟩))
-        (Subring.subset_closure (Set.mem_union_right _ ⟨⟨afsplitF v 1, F_int_lemma_9 v 1 (one_mem _)⟩, rfl⟩))
-    · show afsplitIE v ((1 : E) ⊗ₜ[F] ((b : v.adicCompletion F))) ∈ _
-      rw [IE_tmul_lemma_10]
-      exact Subring.subset_closure (Set.mem_union_right _ ⟨⟨afsplitF v b, F_int_lemma_9 v b b.2⟩, rfl⟩)
+    · rw [show afsplitIE v ((a : E) ⊗ₜ[F] 1) = afsplitEps E v * ((a : E) ⊗ₜ[F] 1) from
+        afsplit_decomp (E := E) v ((a : E) ⊗ₜ[F] 1)]
+      exact mul_mem (afsplit_eps_int v) (Subring.subset_closure (Set.mem_union_left _ ⟨a, rfl⟩))
+    · exact Subring.subset_closure
+        (Set.mem_union_right _ ⟨⟨afsplitI v b, afsplitI_mem_intAd v b b.2⟩, rfl⟩)
   | zero => rw [map_zero]; exact zero_mem _
-  | one =>
-    rw [show afsplitIE v 1 = afsplitEps E v from rfl, eps_eq_lemma_2]
-    exact Subring.subset_closure (Set.mem_union_right _ ⟨⟨afsplitF v 1, F_int_lemma_9 v 1 (one_mem _)⟩, rfl⟩)
+  | one => exact afsplit_eps_int v
   | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
   | neg x _ hx => rw [map_neg]; exact neg_mem hx
   | mul x y _ _ hx hy => rw [map_mul]; exact mul_mem hx hy
-
-theorem afsplit_eps_int : afsplitEps E v ∈ tensInt (F := F) 𝔸ᶠ[F] (intOE E) (intAd F) := by
-  unfold tensInt
-  rw [eps_eq_lemma_2]
-  exact Subring.subset_closure (Set.mem_union_right _ ⟨⟨afsplitF v 1, F_int_lemma_9 v 1 (one_mem _)⟩, rfl⟩)
 
 variable {n : Type} [Fintype n] [DecidableEq n]
 
@@ -253,16 +147,9 @@ variable {F : Type} [Field F] [NumberField F] {E : Type} [Field E] [NumberField 
 
 def afsplitKer : Subgroup (GL n (E ⊗[F] 𝔸ᶠ[F])) := UPts σ J 𝔸ᶠ[F] ⊓ (bc (n := n) (prV (E := E) v)).ker
 
-private lemma sig_tmul_lemma_13 {R : Type} [CommRing R] [Algebra F R] (a : E) (y : R) :
-    sigR σ R (a ⊗ₜ[F] y) = σ a ⊗ₜ[F] y := by
-  simp [sigR]
-
 private lemma prV_sig_lemma_8 (x : E ⊗[F] 𝔸ᶠ[F]) :
-    prV (E := E) v (sigR σ 𝔸ᶠ[F] x) = sigR σ (v.adicCompletion F) (prV (E := E) v x) := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a y => simp only [prV_tmul_lemma_12, sig_tmul_lemma_13]
-  | add x y hx hy => simp only [map_add (f := _), hx, hy]
+    prV (E := E) v (sigR σ 𝔸ᶠ[F] x) = sigR σ (v.adicCompletion F) (prV (E := E) v x) :=
+  RingHom.congr_fun (afsplit_prV_comp_sigR σ v) x
 
 theorem afsplit_bc_mem (g : GL n (E ⊗[F] 𝔸ᶠ[F])) (hg : g ∈ UPts σ J 𝔸ᶠ[F]) :
     bc (prV (E := E) v) g ∈ UPts σ J (v.adicCompletion F) := by
@@ -271,79 +158,47 @@ theorem afsplit_bc_mem (g : GL n (E ⊗[F] 𝔸ᶠ[F])) (hg : g ∈ UPts σ J �
   show cT (sigR σ (v.adicCompletion F)) ((g : Matrix n n (E ⊗[F] 𝔸ᶠ[F])).map (prV (E := E) v)) *
       J.map (inclE (F := F) (v.adicCompletion F)) * (g : Matrix n n (E ⊗[F] 𝔸ᶠ[F])).map (prV (E := E) v) =
       J.map (inclE (F := F) (v.adicCompletion F))
-  have hJ : (J.map (inclE (F := F) 𝔸ᶠ[F])).map (prV (E := E) v) = J.map (inclE (F := F) (v.adicCompletion F)) := by
-    ext i j
-    first
-      | (simp only [Matrix.map_apply, inclE, Algebra.TensorProduct.includeLeftRingHom_apply, prV_tmul_lemma_12]; rfl)
+  have hJ : (J.map (inclE (F := F) 𝔸ᶠ[F])).map (prV (E := E) v) = J.map (inclE (F := F) (v.adicCompletion F)) :=
+    rfl
   have hc : (cT (sigR σ 𝔸ᶠ[F]) (g : Matrix n n (E ⊗[F] 𝔸ᶠ[F]))).map (prV (E := E) v) =
       cT (sigR σ (v.adicCompletion F)) ((g : Matrix n n (E ⊗[F] 𝔸ᶠ[F])).map (prV (E := E) v)) := by
     ext i j
-    simp only [cT, Matrix.map_apply, Matrix.transpose_apply, prV_sig_lemma_8]
+    exact prV_sig_lemma_8 σ v _
   rw [← hc, ← hJ, ← Matrix.map_mul, ← Matrix.map_mul, hg']
 
 theorem afsplit_coe_bc_prV (g : GL n (E ⊗[F] 𝔸ᶠ[F])) (w : HeightOneSpectrum (𝓞 F)) :
     ((bc (prV (E := E) w) g : GL n (E ⊗[F] w.adicCompletion F)) : Matrix n n (E ⊗[F] w.adicCompletion F)) =
       (g : Matrix n n (E ⊗[F] 𝔸ᶠ[F])).map (prV (E := E) w) := rfl
 
-private lemma C_map_prV_lemma_5 (M : Matrix n n (E ⊗[F] v.adicCompletion F)) (N : Matrix n n (E ⊗[F] 𝔸ᶠ[F])) :
-    (afsplitC v M N).map (prV (E := E) v) = M := by
-  ext i j
-  simp only [afsplitC, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul,
-    map_sub, map_one, prV_IE_lemma, prV_eps_lemma_4, sub_self, zero_mul, add_zero]
-
 theorem afsplit_ker_mem (g : GL n (E ⊗[F] 𝔸ᶠ[F])) (hg : g ∈ UPts σ J 𝔸ᶠ[F]) :
-    afsplitU v 1 g ∈ afsplitKer σ J v := by
-  refine Subgroup.mem_inf.mpr ⟨afsplitU_mem v σ J 1 g (Subgroup.one_mem _) hg, ?_⟩
-  rw [MonoidHom.mem_ker]
-  apply Units.ext
-  rw [afsplit_coe_bc_prV]
-  exact C_map_prV_lemma_5 v (1 : Matrix n n (E ⊗[F] v.adicCompletion F)) (g : Matrix n n (E ⊗[F] 𝔸ᶠ[F]))
+    afsplitU v 1 g ∈ afsplitKer σ J v :=
+  Subgroup.mem_inf.mpr ⟨afsplitU_mem v σ J 1 g (Subgroup.one_mem _) hg,
+    MonoidHom.mem_ker.mpr (Units.ext ((afsplit_coe_bc_prV _ v).trans (afsplitC_prV v _ _)))⟩
 
 theorem afsplit_ker_map (k : GL n (E ⊗[F] 𝔸ᶠ[F])) (hk : k ∈ afsplitKer σ J v) :
     (k : Matrix n n (E ⊗[F] 𝔸ᶠ[F])).map (prV (E := E) v) = 1 := by
-  have h2 := (Subgroup.mem_inf.mp hk).2
-  rw [MonoidHom.mem_ker] at h2
-  rw [← afsplit_coe_bc_prV, h2, Units.val_one]
+  rw [← afsplit_coe_bc_prV, MonoidHom.mem_ker.mp (Subgroup.mem_inf.mp hk).2, Units.val_one]
 
-private lemma IE_eps_lemma_6 (x : E ⊗[F] v.adicCompletion F) :
-    afsplitIE v x = afsplitEps E v * afsplitIE v x := by
-  rw [show afsplitEps E v = afsplitIE v 1 from rfl, ← map_mul, one_mul]
-
-private lemma eps_idem_lemma_7 : afsplitEps E v * afsplitEps E v = afsplitEps E v := by
-  rw [show afsplitEps E v = afsplitIE v 1 from rfl, ← map_mul, one_mul]
+private lemma afsplitC_afsplitC (M M' : Matrix n n (E ⊗[F] v.adicCompletion F))
+    (N : Matrix n n (E ⊗[F] 𝔸ᶠ[F])) :
+    afsplitC v M (afsplitC v M' N) = afsplitC v M N := by
+  ext i j
+  simp only [afsplitC_apply]
+  linear_combination afsplit_om_eps_IE v (M' i j) + N i j * afsplit_eps_idem (E := E) v
 
 theorem afsplit_left (g : GL n (E ⊗[F] 𝔸ᶠ[F])) :
-    afsplitU v (bc (prV (E := E) v) g) (afsplitU v 1 g) = g := by
-  apply Units.ext
-  show afsplitC v ((g : Matrix n n (E ⊗[F] 𝔸ᶠ[F])).map (prV (E := E) v))
-      (afsplitC v (1 : Matrix n n (E ⊗[F] v.adicCompletion F)) (g : Matrix n n (E ⊗[F] 𝔸ᶠ[F]))) =
-      (g : Matrix n n (E ⊗[F] 𝔸ᶠ[F]))
-  ext i j
-  simp only [afsplitC, Matrix.add_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul, IE_prV_lemma_3]
-  linear_combination IE_eps_lemma_6 v ((1 : Matrix n n (E ⊗[F] v.adicCompletion F)) i j) +
-    (g : Matrix n n (E ⊗[F] 𝔸ᶠ[F])) i j * eps_idem_lemma_7 (E := E) v
+    afsplitU v (bc (prV (E := E) v) g) (afsplitU v 1 g) = g :=
+  Units.ext ((afsplitC_afsplitC v _ _ _).trans (afsplitC_decomp v _))
 
 theorem afsplit_right1 (h : GL n (E ⊗[F] v.adicCompletion F)) (k : GL n (E ⊗[F] 𝔸ᶠ[F])) :
-    bc (prV (E := E) v) (afsplitU v h k) = h := by
-  apply Units.ext
-  rw [afsplit_coe_bc_prV]
-  exact C_map_prV_lemma_5 v (h : Matrix n n (E ⊗[F] v.adicCompletion F)) (k : Matrix n n (E ⊗[F] 𝔸ᶠ[F]))
+    bc (prV (E := E) v) (afsplitU v h k) = h :=
+  Units.ext ((afsplit_coe_bc_prV _ v).trans (afsplitC_prV v _ _))
 
 theorem afsplit_right2 (h : GL n (E ⊗[F] v.adicCompletion F)) (k : GL n (E ⊗[F] 𝔸ᶠ[F]))
     (hk : k ∈ afsplitKer σ J v) : afsplitU v 1 (afsplitU v h k) = k := by
-  have hK := afsplit_ker_map σ J v k hk
   apply Units.ext
-  show afsplitC v (1 : Matrix n n (E ⊗[F] v.adicCompletion F))
-      (afsplitC v (h : Matrix n n (E ⊗[F] v.adicCompletion F)) (k : Matrix n n (E ⊗[F] 𝔸ᶠ[F]))) =
-      (k : Matrix n n (E ⊗[F] 𝔸ᶠ[F]))
-  ext i j
-  have e1 : (1 : Matrix n n (E ⊗[F] v.adicCompletion F)) i j =
-      prV (E := E) v ((k : Matrix n n (E ⊗[F] 𝔸ᶠ[F])) i j) := by
-    rw [← hK, Matrix.map_apply]
-  simp only [afsplitC, Matrix.add_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul]
-  rw [e1, IE_prV_lemma_3]
-  linear_combination IE_eps_lemma_6 v ((h : Matrix n n (E ⊗[F] v.adicCompletion F)) i j) +
-    (k : Matrix n n (E ⊗[F] 𝔸ᶠ[F])) i j * eps_idem_lemma_7 (E := E) v
+  rw [afsplitU_coe, afsplitU_coe, Units.val_one, afsplitC_afsplitC, ← afsplit_ker_map σ J v k hk,
+    afsplitC_decomp]
 
 def afsplitE : UPts σ J 𝔸ᶠ[F] ≃* (UPts σ J (v.adicCompletion F) × afsplitKer σ J v) where
   toFun g := (⟨bc (prV (E := E) v) g, afsplit_bc_mem σ J v g g.2⟩,
@@ -361,102 +216,28 @@ def afsplitE : UPts σ J 𝔸ᶠ[F] ≃* (UPts σ J (v.adicCompletion F) × afsp
 theorem afsplitE_snd (g : UPts σ J 𝔸ᶠ[F]) :
     (((afsplitE σ J v g).2 : afsplitKer σ J v) : GL n _) = afsplitU v 1 (g : GL n (E ⊗[F] 𝔸ᶠ[F])) := rfl
 
-private lemma prV_IE_ne_lemma_16 (w : HeightOneSpectrum (𝓞 F)) (hw : w ≠ v) (x : E ⊗[F] v.adicCompletion F) :
-    prV (E := E) w (afsplitIE v x) = 0 := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a b => rw [IE_tmul_lemma_10, prV_tmul_lemma_12, afsplitF_ne v w hw, TensorProduct.tmul_zero]
-  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
-
-private lemma eps_ne_lemma_17 (w : HeightOneSpectrum (𝓞 F)) (hw : w ≠ v) : prV (E := E) w (afsplitEps E v) = 0 := by
-  rw [show afsplitEps E v = afsplitIE v 1 from rfl]
-  exact prV_IE_ne_lemma_16 v w hw 1
-
-private lemma C_map_ne_lemma_15 (w : HeightOneSpectrum (𝓞 F)) (hw : w ≠ v)
-    (M : Matrix n n (E ⊗[F] v.adicCompletion F)) (N : Matrix n n (E ⊗[F] 𝔸ᶠ[F])) :
-    (afsplitC v M N).map (prV (E := E) w) = N.map (prV (E := E) w) := by
-  ext i j
-  simp only [afsplitC, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul,
-    map_sub, map_one, prV_IE_ne_lemma_16 v w hw, eps_ne_lemma_17 v w hw, sub_zero, one_mul, zero_add]
-
-private lemma Z_lemma_14 (z : E ⊗[F] 𝔸ᶠ[F])
-    (hz : ∀ w : HeightOneSpectrum (𝓞 F), w ≠ v → prV (E := E) w z = 0) :
-    (1 - afsplitEps E v) * z = 0 := by
-  classical
-  obtain ⟨c, rfl⟩ := TensorProduct.eq_repr_basis_left (Module.Basis.ofVectorSpace F E) z
-  have hcw : ∀ w : HeightOneSpectrum (𝓞 F), w ≠ v → ∀ i, (c i) w = 0 := by
-    intro w hw i
-    have h0 := hz w hw
-    have hmap : prV (E := E) w (c.sum fun i n => (Module.Basis.ofVectorSpace F E) i ⊗ₜ[F] n) =
-        (Finsupp.mapRange (evalV F w) (map_zero _) c).sum
-          (fun i n => (Module.Basis.ofVectorSpace F E) i ⊗ₜ[F] n) := by
-      rw [Finsupp.sum_mapRange_index (fun i => by simp)]
-      first | rw [map_finsuppSum]
-      simp only [prV_tmul_lemma_12]
-      try rfl
-    rw [hmap] at h0
-    have h1 := TensorProduct.sum_tmul_basis_left_eq_zero (Module.Basis.ofVectorSpace F E) _ h0
-    have h2 := DFunLike.congr_fun h1 i
-    have h3 : (evalV F w) (c i) = 0 := by simpa using h2
-    exact h3
-  have key : ∀ i, (1 - afsplitF v 1) * c i = 0 := by
-    intro i
-    ext w
-    congr 1
-    rw [show ((1 - afsplitF v 1) * c i) w = (1 - afsplitF v 1 w) * (c i) w from by first | rfl | simp]
-    rw [show (0 : 𝔸ᶠ[F]) w = 0 from by first | rfl | simp]
-    by_cases h : w = v
-    · subst h
-      rw [afsplitF_self, sub_self, zero_mul]
-    · rw [hcw w h i, mul_zero]
-  have h1 : (1 : E ⊗[F] 𝔸ᶠ[F]) - afsplitEps E v = (1 : E) ⊗ₜ[F] (1 - afsplitF v 1) := by
-    rw [eps_eq_lemma_2, TensorProduct.tmul_sub, Algebra.TensorProduct.one_def]
-  rw [h1, Finsupp.mul_sum]
-  unfold Finsupp.sum
-  apply Finset.sum_eq_zero
-  intro i _
-  dsimp only
-  rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, key i, TensorProduct.tmul_zero]
-
 theorem afsplitE_snd_eq_one (g : UPts σ J 𝔸ᶠ[F]) :
     (afsplitE σ J v g).2 = 1 ↔ ∀ w : HeightOneSpectrum (𝓞 F), w ≠ v →
       bc (prV (E := E) w) (g : GL n (E ⊗[F] 𝔸ᶠ[F])) = 1 := by
-  have e : (afsplitE σ J v g).2 = 1 ↔ afsplitU v 1 (g : GL n (E ⊗[F] 𝔸ᶠ[F])) = 1 := by
-    rw [← afsplitE_snd σ J v g]
-    exact ⟨fun h => by simp [h], fun h => by
-      first | exact Subtype.ext h | simpa using h⟩
-  rw [e]
+  rw [← OneMemClass.coe_eq_one, afsplitE_snd]
+  have h1 : ∀ w, (1 : Matrix n n (E ⊗[F] 𝔸ᶠ[F])).map (prV (E := E) w) = 1 :=
+    fun w => Matrix.map_one _ (map_zero _) (map_one _)
   constructor
   · intro h w hw
-    apply Units.ext
-    rw [afsplit_coe_bc_prV]
-    rw [← C_map_ne_lemma_15 v w hw (1 : Matrix n n (E ⊗[F] v.adicCompletion F)) ((g : GL n (E ⊗[F] 𝔸ᶠ[F])) : Matrix n n (E ⊗[F] 𝔸ᶠ[F]))]
-    have h' : afsplitC v (1 : Matrix n n (E ⊗[F] v.adicCompletion F)) ((g : GL n (E ⊗[F] 𝔸ᶠ[F])) : Matrix n n (E ⊗[F] 𝔸ᶠ[F])) = 1 := by
-      have h3 := congrArg (fun M : GL n (E ⊗[F] 𝔸ᶠ[F]) => (M : Matrix n n (E ⊗[F] 𝔸ᶠ[F]))) h
-      exact h3
-    rw [h', Matrix.map_one _ (map_zero _) (map_one _), Units.val_one]
+    have h' : afsplitC v 1 ((g : GL n (E ⊗[F] 𝔸ᶠ[F])) : Matrix n n (E ⊗[F] 𝔸ᶠ[F])) = 1 :=
+      congrArg Units.val h
+    exact Units.ext (by rw [afsplit_coe_bc_prV, ← afsplitC_prV_ne v w hw 1, h', h1, Units.val_one])
   · intro h
-    apply Units.ext
-    show afsplitC v (1 : Matrix n n (E ⊗[F] v.adicCompletion F)) ((g : GL n (E ⊗[F] 𝔸ᶠ[F])) : Matrix n n (E ⊗[F] 𝔸ᶠ[F])) = 1
-    ext i j
-    have hz : ∀ w : HeightOneSpectrum (𝓞 F), w ≠ v →
-        prV (E := E) w (((g : GL n (E ⊗[F] 𝔸ᶠ[F])) : Matrix n n (E ⊗[F] 𝔸ᶠ[F])) i j - (1 : Matrix n n (E ⊗[F] 𝔸ᶠ[F])) i j) = 0 := by
-      intro w hw
-      have hw' := congrArg (fun M : GL n (E ⊗[F] w.adicCompletion F) =>
-        (M : Matrix n n (E ⊗[F] w.adicCompletion F)) i j) (h w hw)
-      simp only [afsplit_coe_bc_prV, Matrix.map_apply, Units.val_one] at hw'
-      rw [map_sub, hw', Matrix.one_apply, Matrix.one_apply]
-      split_ifs <;> simp
-    have hZ := Z_lemma_14 v _ hz
-    have hI : afsplitIE v ((1 : Matrix n n (E ⊗[F] v.adicCompletion F)) i j) =
-        afsplitEps E v * (1 : Matrix n n (E ⊗[F] 𝔸ᶠ[F])) i j := by
-      rw [Matrix.one_apply, Matrix.one_apply]
-      split_ifs
-      · exact (mul_one (afsplitEps E v)).symm
-      · rw [map_zero, mul_zero]
-    simp only [afsplitC, Matrix.add_apply, Matrix.map_apply, Matrix.smul_apply, smul_eq_mul]
-    rw [hI]
-    linear_combination hZ
+    have key : ∀ w, (afsplitC v 1 ((g : GL n (E ⊗[F] 𝔸ᶠ[F])) : Matrix n n (E ⊗[F] 𝔸ᶠ[F]))).map
+        (prV (E := E) w) = (1 : Matrix n n (E ⊗[F] 𝔸ᶠ[F])).map (prV (E := E) w) := by
+      intro w
+      rw [h1]
+      by_cases hw : w = v
+      · rw [hw, afsplitC_prV]
+      · rw [afsplitC_prV_ne v w hw, ← afsplit_coe_bc_prV, h w hw, Units.val_one]
+    refine Units.ext (Matrix.ext fun i j => sub_eq_zero.mp (afsplit_inj _ fun w => ?_))
+    rw [map_sub, sub_eq_zero]
+    exact congr_fun (congr_fun (key w) i) j
 
 end Iso
 

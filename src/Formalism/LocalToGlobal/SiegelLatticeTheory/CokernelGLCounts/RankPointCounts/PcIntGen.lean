@@ -119,7 +119,7 @@ theorem zzplus_int {r : ℕ} {t : Loc.Term V M r} (ht : H.IsGeneric t) (a b : Fi
     · obtain ⟨rfl, rfl⟩ := hcn
       have h1 := hff (Fin.last r) (Fin.last r)
       have h1' := hff' (Fin.last r) (Fin.last r)
-      simp only [and_self, if_true] at h1 h1' ⊢
+      simp only [and_self, ite_true] at h1 h1' ⊢
       rw [h1, map_neg, e_alg] at F1 F2 F3
       rw [h1', map_neg, e_alg] at F3
       simp only [Prod.fst_neg, Prod.snd_neg] at F1 F2 F3
@@ -138,9 +138,9 @@ theorem zzplus_int {r : ℕ} {t : Loc.Term V M r} (ht : H.IsGeneric t) (a b : Fi
       have h1' := hff' a b
       have h2 : H.h (t.f a) (t.f b) = 0 := by
         have := hff b a
-        rw [if_neg (by rintro ⟨rfl, rfl⟩; exact hcn ⟨rfl, rfl⟩)] at this
+        rw [ite_eq_right (by rintro ⟨rfl, rfl⟩; exact hcn ⟨rfl, rfl⟩)] at this
         exact this
-      rw [if_neg hcn] at h1 h1' ⊢
+      rw [ite_eq_right hcn] at h1 h1' ⊢
       rw [h1, map_zero] at F1 F3
       rw [h2, map_zero] at F2
       rw [h1', map_zero] at F3

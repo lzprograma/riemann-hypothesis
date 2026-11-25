@@ -76,8 +76,6 @@ section Step
 
 open Formalism.BasicNotions Formalism.MainNotions.G.CmpJ
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def mapSL {R : Type} {Kc : Type} [CommRing Kc] (ι : ℂ →+* Kc) :
     MvPolynomial R ℂ →ₛₗ[ι] MvPolynomial R Kc where
   toFun := MvPolynomial.map ι

@@ -10,53 +10,7 @@ import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockDiagonalMinorVan
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GenericBlockMatrixIsBlockDiag
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.StepRowsInverseNonzeroEntry
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -156,10 +110,10 @@ theorem elem_apply (t : R) (r c : Fin N) : (1 + Matrix.single cb ca t : Matrix (
 
 theorem elem_lowerUni (hcb : (cb : ℕ) = ca + 1) (t : R) : IsLowerUni (1 + Matrix.single cb ca t) := by
   refine ⟨fun r => ?_, fun r c h => ?_⟩
-  · rw [elem_apply, if_pos rfl, if_neg, add_zero]
+  · rw [elem_apply, ite_eq_left rfl, ite_eq_right, add_zero]
     rintro ⟨rfl, h⟩
     rw [h] at hcb; omega
-  · rw [elem_apply, if_neg h.ne, if_neg, add_zero]
+  · rw [elem_apply, ite_eq_right h.ne, ite_eq_right, add_zero]
     rintro ⟨rfl, rfl⟩
     rw [Fin.lt_def] at h; omega
 
@@ -171,7 +125,7 @@ theorem same_blk (hj : j ≤ N) (hb : (b : ℕ) = a + 1) (hab : (b : ℕ) < j �
 
 theorem elem_block (hS : ((ca : ℕ) < N - j ↔ (cb : ℕ) < N - j)) (t : R) :
     IsBlockDiag j (1 + Matrix.single cb ca t) := fun r c h => by
-  rw [elem_apply, if_neg, if_neg, add_zero]
+  rw [elem_apply, ite_eq_right, ite_eq_right, add_zero]
   · rintro ⟨rfl, rfl⟩; exact h hS.symm
   · rintro rfl; exact h Iff.rfl
 
@@ -198,7 +152,7 @@ theorem minor_other (hj : j ≤ N) (hb : (b : ℕ) = a + 1) (hab : (b : ℕ) < j
     have hone : ∀ x, (1 + Matrix.single cb ca t).submatrix ((stepCols N j i).orderEmbOfFin rfl)
         ((stepCols N j i).orderEmbOfFin rfl) x x = 1 := fun x => (elem_lowerUni hcb t).1 _
     simp only [hone, Finset.prod_const_one, mul_one]
-  · rw [elem_apply, if_neg, if_neg, add_zero]
+  · rw [elem_apply, ite_eq_right, ite_eq_right, add_zero]
     · rintro ⟨rfl, rfl⟩
       apply hk
       have hi' : (i : ℕ) ≠ a := fun e => hi (Fin.ext e)
@@ -362,7 +316,7 @@ theorem image_snd (hb : (b : ℕ) = a + 1) (hab : (b : ℕ) < j ∨ j ≤ (a : �
       by_cases e : k = k₀
       · subst e
         obtain rfl := M.blk_inj _ _ _ hp hk
-        simp only [Function.comp, h2, G, if_true]
+        simp only [Function.comp, h2, G, ite_true]
         rfl
       · simp only [Function.comp, h1 ⟨k, m⟩ e]
         show φ (y ⟨k, m⟩) = _

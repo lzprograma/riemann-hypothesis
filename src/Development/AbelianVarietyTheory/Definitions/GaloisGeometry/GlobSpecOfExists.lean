@@ -5,53 +5,7 @@ public import Formalism.LocalToGlobal.Columns.DecoFin
 public import Formalism.LocalToGlobal.Columns.RhoEqOfSmulEq
 public import Formalism.SharpRestriction.GrowthBounds.DataG
 public import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -113,9 +67,6 @@ def PlTie.act (v : Fin P.nV) : UF X.E n →* GL (Fin (P.m + 1)) (P.Qq v) :=
 
 def PlTie.detTw (c : ℤ) (γ : UF X.E n) : Kf :=
   (∏ τ, T.eK (X.emb τ ((LinearEquiv.det γ.1 : X.Eˣ) : X.E))) ^ c
-
-def PlTie.WtEq (lam : X.Tau → DomWeight n) (c : ℤ) : Prop :=
-  ∀ v s i, P.lam0 v s i = (lam (T.pos ⟨v, s⟩)).w (Fin.cast hn.symm i) + c
 
 end Loc
 
@@ -192,7 +143,7 @@ theorem prod_mem (T : PlTie X P) {δ : X.E} (hδ : star δ * δ = 1) :
   choose t ht using key
   rw [Finset.prod_congr rfl fun s _ => ht s, Finset.prod_mul_distrib, ← map_prod]
   have hsum : ∑ s : Fin (P.n' v), (a * (-1) ^ s.val : ℤ) = 0 := by
-    rw [← Finset.mul_sum, Fin.sum_univ_eq_sum_range (fun i => (-1 : ℤ) ^ i), neg_one_geom_sum, if_pos hS.even, mul_zero]
+    rw [← Finset.mul_sum, Fin.sum_univ_eq_sum_range (fun i => (-1 : ℤ) ^ i), neg_one_geom_sum, ite_eq_left hS.even, mul_zero]
   have hprod : ∀ (S : Finset (Fin (P.n' v))), ∏ s ∈ S, (p : Kf) ^ (a * (-1) ^ s.val : ℤ) =
       (p : Kf) ^ (∑ s ∈ S, (a * (-1) ^ s.val : ℤ)) := by
     intro S
@@ -230,9 +181,6 @@ theorem nV_pos (T : PlTie X P) (hp : p.Prime) : 0 < P.nV := by
 
 end RetractionModules
 
-theorem PlTie.nV_pos_of_prime {X : Fields} {P : Places p O Kf} (T : PlTie X P) (hp : p.Prime) : 0 < P.nV :=
-  RetractionModules.nV_pos T hp
-
 namespace PSys
 
 variable {X : Fields} {n : ℕ} {lam : X.Tau → DomWeight n} {S : GSD X.K} (Y : PSys X n p lam S)
@@ -257,47 +205,11 @@ def Gam (d : S.D) : Subgroup S.G where
     rw [inv_smul_smul] at h
     exact Y.aw_equiv.symm h
 
-theorem finite_comp (h : S.Ok) : Finite Y.Comp := by
-  have := h.fin_orb
-  refine Finite.of_surjective (fun c : S.Cl => (Quot.mk _ (S.outSec.rep c) : Y.Comp)) ?_
-  rintro ⟨d⟩
-  refine ⟨S.cls d, Quot.sound ⟨S.outSec.mv d, ?_⟩⟩
-  rw [S.outSec.mv_smul]
-  exact Y.aw_equiv.refl d
-
 variable {P : Places p O Kf} (T : PlTie X P) (hn : n = P.m + 1)
 
 structure ChiLift (c : ℤ) where
   χ : ∀ d : S.D, Y.Gam d →* Oˣ
   spec : ∀ d (g : Y.Gam d), algebraMap O Kf (χ d g : O) = T.eK ((Y.chr g.1 : X.Kˣ) : X.K) * T.detTw c (Y.u g.1)
-
-theorem exists_chi (hp : p.Prime) (c : ℤ) : ∃ χ : S.G →* Oˣ,
-    ∀ g, algebraMap O Kf (χ g : O) = T.eK ((Y.chr g : X.Kˣ) : X.K) * T.detTw c (Y.u g) := by
-  haveI := (P.setting ⟨0, T.nV_pos_of_prime hp⟩).frac_O
-  have hinj := IsFractionRing.injective O Kf
-  have hmem : ∀ g : S.G, ∃ y : O, algebraMap O Kf y = T.eK ((Y.chr g : X.Kˣ) : X.K) * T.detTw c (Y.u g) := by
-    intro g
-    obtain ⟨k, hk, hc⟩ := Y.chr_root g
-    have h1 : T.eK ((Y.chr g : X.Kˣ) : X.K) ^ k = 1 := by
-      rw [← map_pow, ← Units.val_pow_eq_pow_val, hc, Units.val_one, map_one]
-    have h2 : IsIntegral O (T.eK ((Y.chr g : X.Kˣ) : X.K)) :=
-      ⟨Polynomial.X ^ k - 1, Polynomial.monic_X_pow_sub_C 1 hk.ne', by simp [h1]⟩
-    obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.1 h2
-    obtain ⟨z, hz⟩ := RetractionModules.detTw_mem T c (Y.u g)
-    exact ⟨y * z, by rw [map_mul, hy, hz]⟩
-  choose f hf using hmem
-  let F : S.G →* O :=
-    { toFun := f
-      map_one' := hinj (by simp [hf, PlTie.detTw])
-      map_mul' := fun a b => hinj (by
-        rw [map_mul, hf, hf, hf]
-        simp only [PlTie.detTw, map_mul, Units.val_mul, Subgroup.coe_mul, Finset.prod_mul_distrib, mul_zpow]
-        ring) }
-  exact ⟨F.toHomUnits, hf⟩
-
-def chiLift (hp : p.Prime) (c : ℤ) : Y.ChiLift T c where
-  χ d := (Y.exists_chi T hp c).choose.comp (Y.Gam d).subtype
-  spec _ g := (Y.exists_chi T hp c).choose_spec g.1
 
 def lev {c : ℤ} (x : Y.ChiLift T c) (a : Y.Comp) : Level P where
   Γ := Y.Gam (Y.rep a)
@@ -307,18 +219,5 @@ def lev {c : ℤ} (x : Y.ChiLift T c) (a : Y.Comp) : Level P where
 
 
 end PSys
-
-def gatOf {X : Fields} {n : ℕ} {lam : X.Tau → DomWeight n} {P : Places p O Kf} (T : PlTie X P) (hn : n = P.m + 1)
-    (F : GFam X.K) (hF : F.Ok) (Y : ∀ b, PSys X n p lam (F.mem b)) {c : ℤ} (_hw : T.WtEq hn lam c) (hp : p.Prime) (e : ℕ) :
-    GAtP p where
-  O := O
-  Kf := Kf
-  P := P
-  comp := Σ b, (Y b).Comp
-  finComp := by
-    haveI : ∀ b, Finite (Y b).Comp := fun b => (Y b).finite_comp (hF b)
-    exact Fintype.ofFinite _
-  lev a := (Y a.1).lev T hn ((Y a.1).chiLift T hp c) a.2
-  e := e
 
 end GlobalTheory.GO

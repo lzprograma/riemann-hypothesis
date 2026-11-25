@@ -72,12 +72,6 @@ theorem nfL_self (lam : ι → DomWeight n) (P : MvPolynomial (ι × Fin n × Fi
 
 end FockN
 
-section FinalTheorems
-
-variable (K : Type) [Field K] [NumberField K] [StarRing K] {ι : Type} [Fintype ι] {n : ℕ} (lam : ι → DomWeight n)
-
-end FinalTheorems
-
 section Tgt
 
 variable (K : Type) [Field K] [NumberField K] [StarRing K] {ι : Type} [Fintype ι] {n : ℕ} (lam : ι → DomWeight n)
@@ -126,9 +120,6 @@ def FockSubNorm : Prop :=
 variable (K : Type) [Field K] [NumberField K] [StarRing K] {ι : Type} [Fintype ι] {n : ℕ} (lam : ι → DomWeight n)
 
 def dW (lam : DomWeight n) : ℕ := ∑ s, lam.natW s
-
-def gN (g : ι → GL (Fin n) K) (v : InfinitePlace K) (τ : ι) : ℝ :=
-  hsN (((g τ : Matrix (Fin n) (Fin n) K)ᵀ).map v.embedding)
 
 variable [_root_.NumberField.IsTotallyComplex K]
 

@@ -40,29 +40,10 @@ import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RowsRe
 import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StrictHenselianAcyclic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.MvAll, Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MMvDmvAll
-
--- ===== clump member: Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.MvAll =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.MvAll", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LiftToGlobalDescentData\npublic import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WithLocPre\npublic import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.SwOn\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RowsRestWordColumnUnitBaseTupleAlt\nimport Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StrictHenselianAcyclic\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-open GlobalTheory.Mem.R3.Tr GlobalTheory.LayerMove
-
-noncomputable section
-namespace UpperTheory.One.M
-
-
-end UpperTheory.One.M
-end -- clump:auto
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.MvAll =====
+-- Members: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MMvDmvAll
 
 -- ===== clump member: Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MMvDmvAll =====
--- clump-header: {"m": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MMvDmvAll", "h": "module\n\npublic import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.MvAll\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RingSpecNormalisedCharacterEq\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RowsRestWordColumnUnitBaseTupleAlt\nimport Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StrictHenselianAcyclic\n\n"}
+-- clump-header: {"m": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MMvDmvAll", "h": "module\n\npublic import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RingSpecNormalisedCharacterEq\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RowsRestWordColumnUnitBaseTupleAlt\nimport Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StrictHenselianAcyclic\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -70,7 +51,6 @@ section -- clump:auto
 
 section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Mem.R3.Tr GlobalTheory.LayerMove
 noncomputable section
 namespace UpperTheory.One.M
@@ -105,17 +85,7 @@ def mvAll_alt {D : D7} (m : Mv D) {C : NChoice D} (a : _root_.GlobalTheory.Heigh
         (ptV := (by with_unfolding_all exact (a.gal.av.ptV :))))
       (au := @_root_.Formalism.L2.AUTiedAlt.mk (_) (_) (_)
         (cls := (by with_unfolding_all exact (a.gal.au.cls :)))
-        (surj := (by with_unfolding_all exact (a.gal.au.surj :)))
-        (iso := (by with_unfolding_all exact (a.gal.au.iso :)))
-        (mult := (by with_unfolding_all exact (a.gal.au.mult :)))
-        (sph := (by with_unfolding_all exact (a.gal.au.sph :)))
-        (sat := (by with_unfolding_all exact (a.gal.au.sat :)))
-        (clsWt := (by with_unfolding_all exact (a.gal.au.clsWt :)))
-        (surjWt := (by with_unfolding_all exact (a.gal.au.surjWt :)))
-        (isoWt := (by with_unfolding_all exact (a.gal.au.isoWt :)))
-        (wt := (by with_unfolding_all exact (a.gal.au.wt :)))
-        (infW := (by with_unfolding_all exact (a.gal.au.infW :)))
-        (emb := (by with_unfolding_all exact (a.gal.au.emb :))))
+        (clsWt := (by with_unfolding_all exact (a.gal.au.clsWt :))))
       (rational := (by with_unfolding_all exact (a.gal.rational :)))
       (tup := (by with_unfolding_all exact (a.gal.tup :)))
       (level := @_root_.Formalism.L2.LevelTied.mk (_) (_) (_)
@@ -124,14 +94,6 @@ def mvAll_alt {D : D7} (m : Mv D) {C : NChoice D} (a : _root_.GlobalTheory.Heigh
         (uni := (by with_unfolding_all exact (a.gal.level.uni :)))
         (wt := (by with_unfolding_all exact (a.gal.level.wt :)))
         (hyp := (by with_unfolding_all exact (a.gal.level.hyp :)))))
-    (loc := @_root_.Formalism.L2.LocTied.mk (_)
-      (arith := (by with_unfolding_all exact (a.loc.arith :)))
-      (nbr := (by with_unfolding_all exact (a.loc.nbr :)))
-      (ntwbr := (by with_unfolding_all exact (a.loc.ntwbr :))))
-    (data := @_root_.Formalism.L2.NormalizedDataCompatibility.mk (_)
-      (bj := (by with_unfolding_all exact (a.data.bj :)))
-      (bj_span := (by with_unfolding_all exact (a.data.bj_span :)))
-      (bj_rel := (by with_unfolding_all exact (a.data.bj_rel :))))
     (cover := @_root_.Formalism.L2.NormalizedLocalCompatibility.mk (_) (_)
       (B := @_root_.Formalism.L2.NLocBase.mk (_) (_)
         (Oc := (by with_unfolding_all exact (a.cover.B.Oc :)))
@@ -188,10 +150,6 @@ def mvAll_alt {D : D7} (m : Mv D) {C : NChoice D} (a : _root_.GlobalTheory.Heigh
       (etaT_unr := (by with_unfolding_all exact (a.chi.etaT_unr :)))
       (etaT_inf := (by with_unfolding_all exact (a.chi.etaT_inf :)))
       (lamG := (by with_unfolding_all exact (a.chi.lamG :))))
-    (rho := @_root_.Formalism.L2.NR.NRhoTied.mk (_)
-      (rbarSS := (by with_unfolding_all exact (a.rho.rbarSS :)))
-      (rbar := (by with_unfolding_all exact (a.rho.rbar :)))
-      (rhoS := (by with_unfolding_all exact (a.rho.rhoS :))))
     (types := @_root_.Formalism.L2.NormalizedTypesCompatibility.mk (_) (_)
       (eM := (by with_unfolding_all exact (a.types.eM :)))
       (eM_K := (by with_unfolding_all exact (a.types.eM_K :)))
@@ -219,20 +177,10 @@ def mvAll_alt {D : D7} (m : Mv D) {C : NChoice D} (a : _root_.GlobalTheory.Heigh
       (iCq := (by with_unfolding_all exact (a.twF.iCq :)))
       (S0x := (by with_unfolding_all exact (a.twF.S0x :))))
     (tw := @_root_.Formalism.L2.NTwTied.mk (_) (_)
-      (pl_emb := (by with_unfolding_all exact (a.tw.pl_emb :)))
-      (ringSpec_baseIntegersEquiv_algebraMap := (by with_unfolding_all exact (a.tw.ringSpec_baseIntegersEquiv_algebraMap :)))
-      (ringSpec_baseEmbedding_compatible := (by with_unfolding_all exact (a.tw.ringSpec_baseEmbedding_compatible :)))
-      (eO_alg := (by with_unfolding_all exact (a.tw.eO_alg :)))
-      (eOk_alg := (by with_unfolding_all exact (a.tw.eOk_alg :)))
-      (mu_g := (by with_unfolding_all exact (a.tw.mu_g :)))
       (hk_split := (by with_unfolding_all exact (a.tw.hk_split :)))
       (ringSpec_excludedPlaces_eq := (by with_unfolding_all exact (a.tw.ringSpec_excludedPlaces_eq :)))
-      (concreteTwistFrame_extraExcludedPlaces_conj := (by with_unfolding_all exact (a.tw.concreteTwistFrame_extraExcludedPlaces_conj :)))
       (B_range := (by with_unfolding_all exact (a.tw.B_range :)))
-      (sig_inj := (by with_unfolding_all exact (a.tw.sig_inj :)))
-      (qs_pos := (by with_unfolding_all exact (a.tw.qs_pos :)))
       (S0x_contains_ccK_places := (by with_unfolding_all exact (a.tw.S0x_contains_ccK_places :)))
-      (S0x_contains_q0_places := (by with_unfolding_all exact (a.tw.S0x_contains_q0_places :)))
       (S0x_contains_two_places := (by with_unfolding_all exact (a.tw.S0x_contains_two_places :)))
       (S0x_contains_ramified_places := (by with_unfolding_all exact (a.tw.S0x_contains_ramified_places :))))
     (nct := @_root_.Formalism.BasicNotions.NChTie.mk (_) (_)
@@ -298,7 +246,6 @@ def mvAll_alt {D : D7} (m : Mv D) {C : NChoice D} (a : _root_.GlobalTheory.Heigh
       (sd_conj := (by with_unfolding_all exact (a.choice.sd_conj :)))
       (one := (by with_unfolding_all exact (a.choice.one :)))
       (conj := (by with_unfolding_all exact (a.choice.conj :))))
-    (eMt_level := (by with_unfolding_all exact (a.eMt_level :)))
     (cf := @_root_.Formalism.L2.Host.CharFrame.mk (_)
       (P := (by with_unfolding_all exact (a.cf.P :)))
       (W := (by with_unfolding_all exact (a.cf.W :)))
@@ -325,19 +272,7 @@ def mvAll_alt {D : D7} (m : Mv D) {C : NChoice D} (a : _root_.GlobalTheory.Heigh
       (xi_tw := (by with_unfolding_all exact (a.tp.xi_tw :)))
       (psi_is := (by with_unfolding_all exact (a.tp.psi_is :)))
       (psi_un := (by with_unfolding_all exact (a.tp.psi_un :))))
-    (tupLink := (by with_unfolding_all exact (a.tupLink :)))
-    (eta_eq := (by with_unfolding_all exact (a.eta_eq :)))
-    (ringSpec_normalisedCharacter_eq := (by with_unfolding_all exact (a.ringSpec_normalisedCharacter_eq :)))
-    (del_eq := (by with_unfolding_all exact (a.del_eq :)))
-    (psi_eq := (by with_unfolding_all exact (a.psi_eq :)))
     (plB := (by with_unfolding_all exact (a.plB :)))
-    (plκ := (by with_unfolding_all exact (a.plκ :)))
-    (plB_loc := (by with_unfolding_all exact (a.plB_loc :)))
-    (plB_iota := (by with_unfolding_all exact (a.plB_iota :)))
-    (etaT_link := (by with_unfolding_all exact (a.etaT_link :)))
-    (muC_link := (by with_unfolding_all exact (a.muC_link :)))
-    (iCq_embO := (by with_unfolding_all exact (a.iCq_embO :)))
-    (embO_star := (by with_unfolding_all exact (a.embO_star :)))
 end UpperTheory.One.M
 end
 end

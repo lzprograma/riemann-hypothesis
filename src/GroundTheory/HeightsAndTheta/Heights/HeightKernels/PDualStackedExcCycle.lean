@@ -29,23 +29,12 @@ variable {A : Type*} [CommRing A] [IsNoetherianRing A]
 
 theorem eq_of_le_of_lt {Γ W Q : Ideal A} [hΓ : Γ.IsPrime] {x : A} (hW : W ∈ (Γ ⊔ Ideal.span {x}).minimalPrimes)
     [hQ : Q.IsPrime] (hΓQ : Γ ≤ Q) (hQW : Q < W) : Q = Γ := by
-  have hWp : W.IsPrime := hW.1.1
-  let f := Ideal.Quotient.mk Γ
-  have hf : Function.Surjective f := Ideal.Quotient.mk_surjective
-  have hΓW : Γ ≤ W := hΓQ.trans hQW.le
-  have hWf : (W.map f).IsPrime := Ideal.map_isPrime_of_surjective hf (by rwa [Ideal.mk_ker])
-  have hQf : (Q.map f).IsPrime := Ideal.map_isPrime_of_surjective hf (by rwa [Ideal.mk_ker])
-  have h1 : (W.map f).height ≤ 1 := Ideal.map_height_le_one_of_mem_minimalPrimes hW
-  have h_lt : Q.map f < W.map f := (Ideal.map_mono hQW.le).lt_of_not_ge fun e => hQW.not_ge (by
-    simpa only [Ideal.comap_map_of_surjective f hf, ← RingHom.ker_eq_comap_bot, f, Ideal.mk_ker,
-      sup_eq_left.mpr hΓQ, sup_eq_left.mpr hΓW] using Ideal.comap_mono (f := f) e)
-  have : (W.map f).FiniteHeight := ⟨Or.inr (h1.trans_lt (WithTop.coe_lt_top 1)).ne⟩
-  have h0 := (Ideal.height_strict_mono_of_isPrime_of_isPrime h_lt).trans_le h1
-  rw [Order.lt_one_iff, Ideal.height_eq_zero_iff] at h0
-  have hle : Q.map f ≤ ⊥ := h0.2 ⟨Ideal.isPrime_bot, bot_le⟩ bot_le
-  refine le_antisymm (fun y hy => ?_) hΓQ
-  have hy0 : f y = 0 := (Submodule.mem_bot _).mp (hle (Ideal.mem_map_of_mem f hy))
-  exact Ideal.Quotient.eq_zero_iff_mem.mp hy0
+  have hspan : Γ ⊔ Ideal.span {x} = Ideal.span (insert x (Γ : Set A)) := by
+    rw [Ideal.span_insert, Ideal.span_eq, sup_comm]
+  have hmin := Ideal.mem_minimalPrimes_span_of_mem_minimalPrimes_span_insert hQW x (Γ : Set A)
+    (hspan ▸ hW) (Γ : Set A) hΓQ fun _ ha => Ideal.le_radical (Ideal.subset_span (.inr ha))
+  rw [Ideal.span_eq] at hmin
+  exact le_antisymm (hmin.2 ⟨hΓ, le_rfl⟩ hΓQ) hΓQ
 
 theorem mem_minimalPrimes_of_le {Γ W B : Ideal A} [Γ.IsPrime] {x y : A}
     (hW : W ∈ (Γ ⊔ Ideal.span {x}).minimalPrimes) (hΓB : Γ ≤ B) (hBW : B ≤ W) (hy : y ∈ B) (hyΓ : y ∉ Γ) :
@@ -71,18 +60,11 @@ theorem multAt_eq_toNat {K' : Type} [Fintype K'] {ι : K' → Type} [∀ k, Fint
 
 theorem locLen_eq_zero {J W : Ideal A} [hW : W.IsPrime] {s : A} (hs : s ∈ J) (hsW : s ∉ W) :
     ReciprocityTheory.ChartRestriction.G.AI.locLen (A ⧸ J) ⟨W, hW⟩ = 0 := by
-  have hz : ∀ z : LocalizedModule W.primeCompl (A ⧸ J), z = 0 := by
-    intro z
-    induction z using LocalizedModule.induction_on with
-    | h m t =>
-      obtain ⟨r, rfl⟩ := Submodule.mkQ_surjective J m
-      rw [← LocalizedModule.zero_mk 1, LocalizedModule.mk_eq]
-      refine ⟨⟨s, hsW⟩, ?_⟩
-      rw [smul_zero, smul_zero, one_smul, Submonoid.smul_def, Submodule.mkQ_apply, ← Submodule.Quotient.mk_smul,
-        Submodule.Quotient.mk_eq_zero, smul_eq_mul]
-      exact J.mul_mem_right r hs
-  have : Subsingleton (LocalizedModule W.primeCompl (A ⧸ J)) := ⟨fun x y => (hz x).trans (hz y).symm⟩
-  exact Module.length_eq_zero_iff.mpr inferInstance
+  refine Module.length_eq_zero_iff.mpr (LocalizedModule.subsingleton_iff.mpr fun m => ?_)
+  obtain ⟨r, rfl⟩ := Ideal.Quotient.mk_surjective m
+  refine ⟨s, hsW, ?_⟩
+  rw [Algebra.smul_def, Ideal.Quotient.algebraMap_eq, ← map_mul, Ideal.Quotient.eq_zero_iff_mem]
+  exact J.mul_mem_right r hs
 
 end Length
 
@@ -269,8 +251,7 @@ theorem DualStackedExcCycle.proof (hR : DualStackedExcReduced.Statement) : DualS
       have hl' : ∃ l : T, graphSecond l ∉ W := hW.2 (Sum.inr ())
       obtain ⟨l, hgl⟩ := hl'
       have hj : ∃ j, C (a j) * graphFirst j ∉ W := by
-        by_contra hno
-        push_neg at hno
+        by_contra! hno
         refine hWE (hexc W x hW (sup_le hΓW (Ideal.span_le.mpr ?_)))
         rintro _ ⟨s, rfl⟩
         exact hno s

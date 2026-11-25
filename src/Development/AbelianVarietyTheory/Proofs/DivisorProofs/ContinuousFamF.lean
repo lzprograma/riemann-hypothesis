@@ -24,72 +24,16 @@ public import Formalism.RealPlaceAnalysis.SmoothOnGVIff
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OffDiagBlockNormContInv
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PseudoUnitaryOffDiagNormSqZeroIffMemMaxCompact
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjTransposeSignFormDiagEqSignedSumCol
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
-import Mathlib.CategoryTheory.Countable
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Topology.Separation.CompletelyRegular
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.KFacts
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.KSchur
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.KinstSecondCountable
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarHaarA
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarInv
-import Mathlib.Analysis.Matrix.MeasurableSpace
 import Aesop.Main
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Topology.UniformSpace.Uniformizable
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Topology.Algebra.MvPolynomial
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjDiagReNonneg, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousDen, Development.AbelianVarietyTheory.Proofs.DivisorProofs.IteratedDerivScale, Development.AbelianVarietyTheory.Proofs.DivisorProofs.StConstHolds, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExpConjEntriesHasFDerivAtZero, Development.AbelianVarietyTheory.Proofs.DivisorProofs.StExpDeriv, Development.AbelianVarietyTheory.Proofs.DivisorProofs.StR, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousFamF
@@ -632,7 +576,6 @@ theorem scale_int {ι : Type} [Fintype ι] (g : (ι → ℂ) → ℂ) (t : ℝ) 
     rw [Module.finrank_pi_fintype]
     simp [Complex.finrank_real_complex]
   rw [MeasureTheory.Measure.integral_comp_smul, hf]
-  have hs : 0 < Real.sqrt t := Real.sqrt_pos.2 ht
   have h1 : |(((Real.sqrt t)⁻¹) ^ (Fintype.card ι * 2))⁻¹| = t ^ Fintype.card ι := by
     rw [abs_of_pos (by positivity), inv_pow, inv_inv, mul_comm, pow_mul, Real.sq_sqrt ht.le]
   rw [h1, Complex.real_smul]
@@ -873,7 +816,7 @@ theorem stFamBlow_of (hB : StBlow) : StFamBlow := by
     by_cases hkN : k = Fintype.card ι
     · subst hkN
       simpa using (key (Fintype.card ι)).2
-    · rw [if_neg hkN]
+    · rw [ite_eq_right hkN]
       have hlt : k < Fintype.card ι := lt_of_le_of_ne hk' hkN
       have h0 : Tendsto (fun t : ℝ => ((t : ℂ) ^ (Fintype.card ι - k))⁻¹) atTop (𝓝 0) := by
         have h2 : Tendsto (fun t : ℝ => (t ^ (Fintype.card ι - k))⁻¹) atTop (𝓝 0) :=
@@ -894,7 +837,7 @@ theorem stFamBlow_of (hB : StBlow) : StFamBlow := by
       field_simp
   have hsum := tendsto_finsetSum _ hlim
   rw [Finset.sum_ite_eq' (Finset.range (Fintype.card ι + 1)) (Fintype.card ι),
-    if_pos (Finset.self_mem_range_succ _)] at hsum
+    ite_eq_left (Finset.self_mem_range_succ _)] at hsum
   exact hsum.congr' (by filter_upwards [heq] with t ht using ht.symm)
 
 end GlobalTheory.PsCo.PcdSFB
@@ -948,8 +891,7 @@ theorem stConst_holds : StConst := by
     intro w hw
     rw [Metric.mem_closedBall, dist_zero_right, not_le] at hw
     have : ∃ x, 1 < ‖w x‖ := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact absurd ((pi_norm_le_iff_of_nonneg zero_le_one).2 h) (not_le.2 hw)
     obtain ⟨x, hx⟩ := this
     apply hf0
@@ -1004,7 +946,6 @@ theorem exp_conj_entries_hasFDerivAt_zero : ∀ (n : ℕ) (ι : Type) [Fintype �
   · have hprod := (hexpN.mul' (hasFDerivAt_const s (0 : ι → ℂ))).mul' hexpA
     refine ⟨_, ?_, (Ec.hasFDerivAt).comp (0 : ι → ℂ) hprod⟩
     intro w x
-    have hA0' : A 0 = 0 := map_zero A
     simp only [Ec, E, Ac, NormedSpace.exp_zero, Pi.mul_apply, map_zero]
     change ((1 * s) * A w + (1 * 0 + (-(A w)) * s) * 1 : Matrix (Fin n) (Fin n) ℂ) (p x).1 (p x).2 = (s * A w - A w * s) (p x).1 (p x).2
     rw [one_mul, mul_zero, zero_add, mul_one, neg_mul, ← sub_eq_add_neg]

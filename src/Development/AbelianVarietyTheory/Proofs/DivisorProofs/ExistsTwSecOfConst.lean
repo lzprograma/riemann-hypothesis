@@ -115,7 +115,7 @@ theorem mul_sig_mem_cuspOn (hK : Nonempty (KeySec Xo c)) (hU : ∀ σ, GoodEmb c
     ∀ G : WTZ E, Even G.2 → ∀ f ∈ cuspOn U Z G, f * s.sig ∈ cuspOn U Z (G + wtOf Dw (parWt Dw w) 0) :=
   GlobalTheory.BddCusp.mul_mem_cuspOn_of_bdd E H Dw l Xo c r U x Z _ s.sig hK hU hpq (even_wtOf _ _) (wtOf_parWt_anti w) s.sig_mem
     s.sig_mem_suppOn fun σ hσ => ⟨s.cInf σ, by
-      have e : goodOf c σ = σ := if_pos hσ
+      have e : goodOf c σ = σ := ite_eq_left hσ
       have h : ∀ z ∈ framesOn (U (goodOf c σ)) Z,
           homN (U (goodOf c σ)) x (wtOf Dw (parWt Dw w) 0) s.sig z ≤ s.cInf σ := fun z hz => (s.homN_eq hz).le
       rw [e] at h

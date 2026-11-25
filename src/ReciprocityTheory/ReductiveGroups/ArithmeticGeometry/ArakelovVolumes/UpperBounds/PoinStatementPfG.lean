@@ -39,13 +39,6 @@ theorem map_units_inv (τ : E →+* ℂ) (γ : GL (Fin r) E) :
     exact Matrix.map_one _ (map_zero τ) (map_one τ)
   exact (Matrix.inv_eq_left_inv h).symm
 
-private theorem gram_eq_lemma (X : Data E r) (τ : X.Ψ) (M : Matrix (Fin r) (Fin r) ℂ) :
-    gram τ.1 X.Gm M = M.transpose * Matrix.map X.Gm τ.1 * M.map (starRingEnd ℂ) := by
-  ext a b
-  simp only [gram, hermC, col, Matrix.of_apply, Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply,
-    Finset.sum_mul]
-  exact Finset.sum_comm
-
 theorem gM_lact_mul (X : Data E r) {x0 x : Frame X.Ψ r} (hx0 : IsOrth X x0) (hx : IsOrth X x)
     (γa γb : GL (Fin r) E) (τ : X.Ψ) :
     gM X x0 (lact γb x) τ * (gM X x0 (lact γa x) τ)⁻¹ = gM X x0 (lact (γb * γa⁻¹) x0) τ := by

@@ -23,10 +23,6 @@ def DegZeroLocSeparate.Statement : Prop :=
       ∃ x ∈ degZeroLoc P 𝒲, (¬ ∃ y ∈ degZeroLoc P {W₁}, x * y = 1) ∧
         ∃ y ∈ degZeroLoc P {W₂}, x * y = 1
 
-section Example
-
-end Example
-
 end
 
 end GroundTheory.Heights₂.Heights.FieldNumbers

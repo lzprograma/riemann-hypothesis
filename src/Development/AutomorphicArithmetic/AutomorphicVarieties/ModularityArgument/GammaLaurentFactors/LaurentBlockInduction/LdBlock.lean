@@ -66,7 +66,6 @@ open MeasureTheory Polynomial GroundTheory GroundTheory.Automorphic GroundTheory
 open GroundTheory.Automorphic.GodementJacquet
 open scoped NNReal Classical ValuativeRel
 
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
 
 namespace UpperTheory.V.Z.Gam
 
@@ -76,9 +75,9 @@ theorem ldBlock_of (hL : LdLaurent) (hM : LdMean) (hT : LdTate) : LdBlock := by
     F m μ H W σ hσ hirr α hα0 hα hsupp ψ hψ hψ1 γ hFE
   obtain ⟨c, j, hc, hγ⟩ := hShape
   by_cases h : m = 1 ∧ ∀ g ∈ integralGL F m, σ (g, 1) = 1
-  · refine ⟨1 - C α * X, c, j, by simp, ?_, hc, by simpa only [if_pos h] using hγ⟩
-    rw [if_pos h, show (1 - C α * X : ℂ[X]) = C (-α) * X + C 1 by simp; ring]
+  · refine ⟨1 - C α * X, c, j, by simp, ?_, hc, by simpa only [ite_eq_left h] using hγ⟩
+    rw [ite_eq_left h, show (1 - C α * X : ℂ[X]) = C (-α) * X + C 1 by simp; ring]
     exact natDegree_linear (neg_ne_zero.2 hα0)
-  · exact ⟨1, c, j, by simp, by simp [h], hc, by simpa only [if_neg h] using hγ⟩
+  · exact ⟨1, c, j, by simp, by simp [h], hc, by simpa only [ite_eq_right h] using hγ⟩
 
 end UpperTheory.V.Z.Gam

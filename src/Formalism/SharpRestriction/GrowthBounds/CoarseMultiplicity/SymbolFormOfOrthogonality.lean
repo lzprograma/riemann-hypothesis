@@ -7,44 +7,6 @@ public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationNonne
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.WeightWLet
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockSupported
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.LogLeOfLeSq
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FtFockZeroLeft, Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FactorialExponentEqProd, Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymbolFormOfOrthogonality
@@ -108,7 +70,7 @@ theorem vLEO_one {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O
     (h2 : w ^ 2 = (p : O)) {D : ℝ} (hD : 0 ≤ D) : vLEO p (1 : O) D := by
   refine ⟨0, ?_, by simpa using hD⟩
   unfold vO vK ordW
-  rw [map_one, if_neg one_ne_zero]
+  rw [map_one, ite_eq_right one_ne_zero]
   have hspec := Classical.choose_spec (IsLocalization.surj (nonZeroDivisors O) (1 : KK O))
   rw [one_mul] at hspec
   have heq : ((Classical.choose (IsLocalization.surj (nonZeroDivisors O) (1 : KK O))).2 : O) =
@@ -123,7 +85,7 @@ theorem famOK_mem {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing 
     (j : Fin (numSeg X.TT)) :
     u j (β j) ∈ blockLat O X.p X.m (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) (segAPlus X.TT X.aT j) (X.m0 Cm) (β j) := by
   have h := (Submodule.mem_pi.1 (hu j).1) (β j) (Set.mem_univ _)
-  rwa [if_pos (hβ j)] at h
+  rwa [ite_eq_left (hβ j)] at h
 
 theorem formAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cm Cc : ℝ}
     (hstd : ∀ X : Loc, D1num X → HIext C0 CYb Cde Ck CD Cb X → CBound Cc X → Std C0 Cde CE1 CE2 1 X)
@@ -212,13 +174,13 @@ theorem formAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cm Cc : ℝ}
         choose x hx using hx
         obtain ⟨Y, hY⟩ := prod_add_mul Finset.univ a x (w ^ X.c)
         refine ⟨(∏ j, κb j (β j)) * Y, ?_⟩
-        rw [Finset.prod_congr rfl (fun j _ => hx j), ← map_prod, Finset.prod_mul_distrib, hY, if_pos rfl]
+        rw [Finset.prod_congr rfl (fun j _ => hx j), ← map_prod, Finset.prod_mul_distrib, hY, ite_eq_left rfl]
         congr 1
         ring
       · obtain ⟨j0, hj0⟩ := Function.ne_iff.mp hββ
         refine ⟨0, ?_⟩
         rw [Finset.prod_eq_zero (Finset.mem_univ j0) (by
-          rw [h1 X O _ hD1 j0 _ _ (hβ j0) (hβ' j0) hj0 _ (hs1 j0) _ (hs2 j0), mul_zero]), if_neg hββ]
+          rw [h1 X O _ hD1 j0 _ _ (hβ j0) (hβ' j0) hj0 _ (hs1 j0) _ (hs2 j0), mul_zero]), ite_eq_right hββ]
         simp
     obtain ⟨ν0, h0⟩ := hmain
     refine ⟨ν0 + y1 + y2, ?_⟩
@@ -399,13 +361,18 @@ theorem symPolAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
   intro μ hμ x
   have hwh : IsWeightedHomogeneous (wLet X x) (symFam (KK O) X.p C0 CE1 CE2 X β s)
       (∑ j, TD C0 CE1 CE2 X j (β j) (wLet X x)) :=
-    IsWeightedHomogeneous.prod _ _ _ (fun j _ => ioBlock_wh C0 CE1 CE2 X j O mm (β j) (wLet X x) (fun _ _ _ => rfl)
-      (fun _ => rfl) rfl (s j) (hs j))
+    IsWeightedHomogeneous.prod _ _ _ (fun j _ => ioBlock_wh C0 CE1 CE2 X j O (β j) (wLet X x) (fun _ _ _ => rfl)
+      (fun _ => rfl) rfl (s j) (fun ω' ωL h1 h2 h3 =>
+        ssz_wh O X.p (X.seg C0 CE1 CE2 j) (segATop X.TT X.aT j) (segAPlus X.TT X.aT j) mm (β j) ω' ωL h1 h2 h3 (s j) (hs j)))
   have h1 := hwh (mem_support_iff.1 (Finset.mem_coe.1 hμ))
   rw [weight_wLet] at h1
-  rw [h1, Finset.sum_congr rfl fun j _ => TD_wLet C0 CE1 CE2 X j x (β j) (hβ j) (hO X hD1 hH hc j (β j) (hβ j)),
+  rw [h1, Finset.sum_congr rfl fun j _ =>
+    let hk := hβ j
+    TD_wLet_of_bounds C0 CE1 CE2 X j x (β j) hk.1
+      (fun i h => (hk.2.2.1 i h).2.1) (fun i h => (hk.2.2.1 i h).2.2.1)
+      (fun i h => (hk.2.1 i h).1) (hO X hD1 hH hc j (β j) hk),
     ← natPartSum X.TT St.seg2 (fun s => if s = x.1.val then hhDegs X.TT X.aT X.bT x else 0), Finset.sum_ite_eq',
-    if_pos x.1.2]
+    ite_eq_left x.1.2]
 
 def RestOPlus : Prop := TransportedAlt fun C0 CYb Cde Ck CD Cb CE1 CE2 _ Cc => OPlusAt C0 CYb Cde Ck CD Cb CE1 CE2 Cc
 

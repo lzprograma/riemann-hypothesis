@@ -597,14 +597,6 @@ theorem pull_id {F G : AbSheaf X} (φ : F ⟶ G) (n : ℕ) {V W : Opens X} (i : 
 
 end Functoriality
 
-section Scheme
-
-open AlgebraicGeometry SheafLES
-
-variable {X Y : Scheme.{u}}
-
-end Scheme
-
 end SheafPull
 
 end GlobalTheory

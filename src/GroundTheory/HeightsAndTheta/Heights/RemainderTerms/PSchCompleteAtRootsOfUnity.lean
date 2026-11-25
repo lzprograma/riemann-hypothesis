@@ -4,8 +4,6 @@ public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsSchu
 
 @[expose] public section
 
-set_option maxSynthPendingDepth 1
-
 namespace GroundTheory.Heights₂.Heights.RestTerms
 
 open MvPolynomial Finset
@@ -43,17 +41,17 @@ theorem SchCompleteAtRootsOfUnity.proof (h1 : SchProdOneSubRootsOfUnity.Statemen
   | _ d ih =>
     have e := hrec d
     rcases Nat.eq_zero_or_pos d with rfl | hd
-    · rw [if_neg (by omega), sub_zero, if_pos rfl] at e
-      rw [e, if_pos (dvd_zero k)]
+    · rw [ite_eq_right (by omega), sub_zero, ite_eq_left rfl] at e
+      rw [e, ite_eq_left (dvd_zero k)]
     · by_cases hkd : k ≤ d
-      · rw [if_pos hkd, if_neg (show d ≠ 0 by omega), sub_eq_zero, ih (d - k) (by omega)] at e
+      · rw [ite_eq_left hkd, ite_eq_right (show d ≠ 0 by omega), sub_eq_zero, ih (d - k) (by omega)] at e
         have hdvd : k ∣ d - k ↔ k ∣ d := by
           conv_rhs => rw [show d = d - k + k by omega]
           exact (Nat.dvd_add_self_right).symm
         rw [e]
         exact if_congr hdvd rfl rfl
-      · rw [if_neg hkd, if_neg (show d ≠ 0 by omega), sub_zero] at e
-        rw [e, if_neg]
+      · rw [ite_eq_right hkd, ite_eq_right (show d ≠ 0 by omega), sub_zero] at e
+        rw [e, ite_eq_right]
         exact fun h => hkd (Nat.le_of_dvd hd h)
 
 end GroundTheory.Heights₂.Heights.RestTerms

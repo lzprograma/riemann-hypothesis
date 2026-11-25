@@ -54,8 +54,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
-set_option autoImplicit false
-set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
 
@@ -206,7 +204,7 @@ theorem torusS_frac [IsDomain R] (t : Fin (n + 1) → Rˣ) (S : Finset (Fin (n +
       rw [this]
       refine tpow_mem_torusS t S _ ⟨fun i hi => ?_, fun _ => ?_⟩
       · have hij : i ≠ j := fun h => hi (h ▸ hs)
-        simp only [Pi.add_apply, Pi.single_apply, hij, if_false, add_zero]
+        simp only [Pi.add_apply, Pi.single_apply, hij, ite_false, add_zero]
         split_ifs <;> norm_num
       · simp [Finset.sum_add_distrib]
 
@@ -256,7 +254,7 @@ theorem torus_scale [IsDomain R] (t : Fin (n + 1) → Rˣ) (i : Fin (n + 2)) :
     refine ⟨(∑ k, m k).toNat, ?_⟩
     rw [ra_tpow_single_pow, ← ra_tpow_add]
     refine tpow_mem_torusS t _ _ ⟨fun i hi => absurd (hS i) hi, fun _ => ?_⟩
-    simp only [Pi.add_apply, Finset.sum_add_distrib, Finset.sum_pi_single', Finset.mem_univ, if_true]
+    simp only [Pi.add_apply, Finset.sum_add_distrib, Finset.sum_pi_single', Finset.mem_univ, ite_true]
     omega
   | succ k =>
     have h0 : (0 : Fin (n + 2)) ∈ Finset.univ.erase k.succ :=

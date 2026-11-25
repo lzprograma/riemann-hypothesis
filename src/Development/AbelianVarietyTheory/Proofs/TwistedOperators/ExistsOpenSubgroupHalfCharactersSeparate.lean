@@ -56,7 +56,6 @@ public import Mathlib.Topology.Baire.LocallyCompactRegular
 noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory GlobalTheory.IndefiniteRowSideFullHecke.AdjointIsotropicDecomposition GlobalTheory.HalfAverage
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.HalfSeparate
 
@@ -84,7 +83,7 @@ theorem exists_pair_entry {D : D7} {v : IsDedekindDomain.HeightOneSpectrum (Numb
   have hca : ∀ k, cA D (a k q) = incA D D.host.xi0⁻¹ * fj D (singleV D.host.F v c) * cA D e * incA D (W.gram⁻¹ p k) := by
     intro k
     show cA D (if q = q then _ else 0) = _
-    rw [if_pos rfl, map_mul, map_mul, map_mul, GlobalTheory.DualPairCheck.cA_incA, GlobalTheory.DualPairCheck.cA_incA, star_star, star_star,
+    rw [ite_eq_left rfl, map_mul, map_mul, map_mul, GlobalTheory.DualPairCheck.cA_incA, GlobalTheory.DualPairCheck.cA_incA, star_star, star_star,
       cA_fj]
     ring
   refine ⟨a, fun k j => ?_, fun t => ?_⟩
@@ -99,12 +98,12 @@ theorem exists_pair_entry {D : D7} {v : IsDedekindDomain.HeightOneSpectrum (Numb
       = ∑ i, incA D D.host.xi0⁻¹ * fj D (singleV D.host.F v c) * cA D e * (if p = i then 1 else 0) * t i q :=
         Finset.sum_congr rfl fun i _ => by
           rw [Finset.sum_eq_single q (fun j _ hj => Finset.sum_eq_zero fun k _ => by
-            rw [show a k j = 0 from if_neg hj, map_zero, zero_mul, zero_mul]) (fun h => absurd (Finset.mem_univ q) h)]
+            rw [show a k j = 0 from ite_eq_right hj, map_zero, zero_mul, zero_mul]) (fun h => absurd (Finset.mem_univ q) h)]
           rw [← hG i, Finset.mul_sum, Finset.sum_mul]
           exact Finset.sum_congr rfl fun k _ => by rw [hca]; ring
     _ = incA D D.host.xi0⁻¹ * fj D (singleV D.host.F v c) * cA D e * t p q := by
-      rw [Finset.sum_eq_single p (fun i _ hi => by rw [if_neg (Ne.symm hi), mul_zero, zero_mul])
-        (fun h => absurd (Finset.mem_univ p) h), if_pos rfl, mul_one]
+      rw [Finset.sum_eq_single p (fun i _ hi => by rw [ite_eq_right (Ne.symm hi), mul_zero, zero_mul])
+        (fun h => absurd (Finset.mem_univ p) h), ite_eq_left rfl, mul_one]
 
 end GlobalTheory.HalfSeparate
 
@@ -182,8 +181,7 @@ theorem exists_open_separated : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), I
       _ ≤ ‖y‖ * (‖y1‖ / ρ + 1) := by nlinarith [norm_nonneg y]
       _ < ε0 := hy'
   have hLGsmall : ∀ y ∈ LG, ‖y‖ < ρ := fun y hy => (pi_norm_lt_iff hρ).2 fun p => by
-    by_contra hn
-    push_neg at hn
+    by_contra! hn
     have hp : 0 < ‖y p‖ := hρ.trans_le hn
     have h := hy p (y1 / y p) (by rw [norm_div]; exact div_le_div_of_nonneg_left (norm_nonneg _) hρ hn)
     rw [div_mul_cancel₀ _ (norm_pos_iff.1 hp)] at h
@@ -195,7 +193,7 @@ theorem exists_open_separated : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), I
   obtain ⟨y, rfl⟩ := hJs x
   have hy : ¬ ∀ p, ∀ c : Fv D.host.F v, ‖c‖ ≤ ‖y1‖ / ρ → ψ (ι (c * y p)) = 1 :=
     fun h => hx (AddSubgroup.mem_map_of_mem _ h)
-  push_neg at hy
+  push Not at hy
   obtain ⟨p, c, hc, hne⟩ := hy
   obtain ⟨a, ha, hpair⟩ := exists_pair_entry he W p.1 p.2 c
   have key : ∀ y', ψ (halfSympl W a (J y')) = ψ (ι (c * y' p)) := fun y' => by

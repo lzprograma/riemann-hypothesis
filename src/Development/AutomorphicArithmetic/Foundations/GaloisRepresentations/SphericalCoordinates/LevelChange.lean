@@ -6,42 +6,6 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.IsGPull
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsGaloisCover
 public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.MarkWeightedFixedPointEqDefinitePairOdd
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PerCApply
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
@@ -169,7 +133,7 @@ def UnifG : Prop :=
       x.1 = U.u i P ∧ IsCoord L (Quot.out q) (PD _) (RD _) N (U.Di i) (U.t i) P j a
 
 def StabTriv : Prop :=
-  ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : Link D G), D.a = 1 → D.m = 1 → ∀ (v : InfinitePlace G.F), sigPosH (G.gram_herm v) = 1 → ∀ (t₀ : D.F →+* ℂ), (∀ i, D.tau i = t₀) → ∀ ρ : D.O →+* Matrix (Fin D.g) (Fin D.g) ℂ, IsSigD D ρ t₀ → ∀ (PD : ∀ B : GlobalTheory.LKCx.Form G, PDic L B.β) (RD : ∀ B : GlobalTheory.LKCx.Form G, RDic L v B.β ρ t₀) (N : ℕ), 3 ≤ N → N.Coprime p → ∀ (B : GlobalTheory.LKCx.Form G) (a : GlobalTheory.LKCx.Dat G v B.β) (y : GlobalTheory.LKCx.grp G B.β),
+  ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : Link D G), D.a = 1 → D.m = 1 → ∀ (v : InfinitePlace G.F), sigPosH (G.gram_herm v) = 1 → ∀ (t₀ : D.F →+* ℂ), (∀ i, D.tau i = t₀) → ∀ ρ : D.O →+* Matrix (Fin D.g) (Fin D.g) ℂ, IsSigD D ρ t₀ → ∀ (_ : ∀ B : GlobalTheory.LKCx.Form G, PDic L B.β) (_ : ∀ B : GlobalTheory.LKCx.Form G, RDic L v B.β ρ t₀) (N : ℕ), 3 ≤ N → N.Coprime p → ∀ (B : GlobalTheory.LKCx.Form G) (a : GlobalTheory.LKCx.Dat G v B.β) (y : GlobalTheory.LKCx.grp G B.β),
     Sees B (L.KN N : Set G.GAf) a y → y = 1
 
 def IsogCoord : Prop :=
@@ -184,7 +148,7 @@ def IsogCoord : Prop :=
       IsLocP D'' j'' M
 
 def RegSep : Prop :=
-  ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : Link D G) (v : InfinitePlace G.F), sigPosH (G.gram_herm v) = 1 → ∀ (B : GlobalTheory.LKCx.Form G) (a : GlobalTheory.LKCx.Dat G v B.β) (y : GlobalTheory.LKCx.grp G B.β),
+  ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (_ : Link D G) (v : InfinitePlace G.F), sigPosH (G.gram_herm v) = 1 → ∀ (B : GlobalTheory.LKCx.Form G) (a : GlobalTheory.LKCx.Dat G v B.β) (y : GlobalTheory.LKCx.grp G B.β),
     GlobalTheory.LKCx.FixL G v B.β y a.2.1 → GlobalTheory.LKCx.RegAf G (a.1.1⁻¹ * B.toAf y * a.1.1) →
     (minpoly G.F (((y : G.Cˣ × ℚˣ).1 : G.Cˣ) : G.C)).natDegree = G.n ∧ (minpoly G.F (((y : G.Cˣ × ℚˣ).1 : G.Cˣ) : G.C)).Separable
 
@@ -198,7 +162,7 @@ def MinBridge : Prop :=
     (∀ u, j (ga u) = L.rep c (j u)) → IsMinOf (algebraMap (𝓞 D.F) D.O) ga ((minpoly G.F c).map (L.e.symm : G.F →+* D.F))
 
 def EigSame : Prop :=
-  ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p) (v : InfinitePlace G.F) (c : G.F[X] → ℂ → ℂ) (B : GlobalTheory.LKCx.Form G) (K : Subgroup G.GAf) (S : Set G.GAf),
+  ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p) (v : InfinitePlace G.F) (_ : G.F[X] → ℂ → ℂ) (B : GlobalTheory.LKCx.Form G) (K : Subgroup G.GAf) (S : Set G.GAf),
     (∀ u ∈ K, ∀ g, u⁻¹ * g * u ∈ S ↔ g ∈ S) → ∀ a a' : GlobalTheory.LKCx.Dat G v B.β,
     (Quot.mk _ a : GlobalTheory.LKCx.Form.Pts v B K (KHT p G.m G.n 1 G.Fw)) = Quot.mk _ a' → ∃ E : GlobalTheory.LKCx.grp G B.β ≃ GlobalTheory.LKCx.grp G B.β, E 1 = 1 ∧ ∀ y,
       (Sees B S a y ↔ Sees B S a' (E y)) ∧ (Sees B S a y →

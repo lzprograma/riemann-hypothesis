@@ -109,9 +109,6 @@ def torusPt (ε : Fin n → Bool) (θ : Fin n → ℝ) : UJ ε :=
       rw [mul_right_comm, Pi.star_apply, Complex.star_def, ← Complex.exp_conj, ← Complex.exp_add]
       simp⟩
 
-theorem ujMat_torusPt (ε : Fin n → Bool) (θ : Fin n → ℝ) :
-    ujMat ε (torusPt ε θ) = diagonal fun a => Complex.exp (θ a * Complex.I) := rfl
-
 def wtVal (μ θ : Fin n → ℝ) : ℂ := Complex.exp ((∑ a, μ a * θ a : ℝ) * Complex.I)
 
 def weylDenom (θ : Fin n → ℝ) : ℂ :=
@@ -157,21 +154,6 @@ theorem dsChar_eq (ε : Fin n → Bool) {lam : Fin n → ℝ} {m : Fin n → ℤ
   simp only [← add_mul, Function.comp, hm, ← Complex.exp_int_mul, ← Complex.exp_sum, Complex.ofReal_sum,
     Finset.sum_mul]
   simp [mul_assoc]
-
-theorem exists_isRegSS_torusPt (ε : Fin n → Bool) : ∃ θ, IsRegSS (ujMat ε (torusPt ε θ)) := by
-  refine ⟨fun a => 1 / ((a : ℕ) + 1), ?_⟩
-  rw [IsRegSS, ujMat_torusPt, charpoly_diagonal, separable_prod_X_sub_C_iff]
-  have hb : ∀ a : Fin n, -Real.pi < (((1 / ((a : ℕ) + 1) : ℝ) : ℂ) * Complex.I).im ∧
-      (((1 / ((a : ℕ) + 1) : ℝ) : ℂ) * Complex.I).im ≤ Real.pi := fun a => by
-    have h1 : (0 : ℝ) < 1 / ((a : ℕ) + 1) := by positivity
-    have h2 : (1 : ℝ) / ((a : ℕ) + 1) ≤ 1 := by rw [div_le_one (by positivity)]; simp
-    rw [Complex.mul_I_im, Complex.ofReal_re]
-    constructor <;> linarith [Real.pi_gt_three]
-  intro a b h
-  have := Complex.exp_inj_of_neg_pi_lt_of_le_pi (hb a).1 (hb a).2 (hb b).1 (hb b).2 h
-  rw [mul_left_inj' Complex.I_ne_zero, Complex.ofReal_inj, one_div, one_div, _root_.inv_inj, add_left_inj,
-    Nat.cast_inj] at this
-  exact Fin.ext this
 
 end Torus
 

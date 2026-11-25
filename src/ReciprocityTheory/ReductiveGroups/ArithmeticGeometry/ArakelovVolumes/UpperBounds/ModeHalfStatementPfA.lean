@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.KaUnfoldPfB
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.IsOrth
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Tactic.Lemma
@@ -85,18 +86,7 @@ theorem maj_chart (X : Data E r) {w : Frame X.Ψ r} {τ : X.Ψ} {Y : Matrix (Fin
   simp only [hcol, hS]
 
 theorem dom_of_orth (X : Data E r) {u : Frame X.Ψ r} (hu : IsOrth X u) : u ∈ X.dom := by
-  intro τ
-  have hY := hu τ
-  refine ⟨det_ne_zero_of_gram_eq_diagonal_sgn τ.1 X.Gm X.p0 _ hY, fun i => ?_⟩
-  have hd : dmin X.Gm u τ i = ((psgn X.p0 i : ℝ) : ℂ) := by
-    unfold dmin lminor
-    rw [hY, Matrix.submatrix_diagonal _ _ (Fin.castLE_injective _), Matrix.det_diagonal]
-    simp only [Function.comp_apply, Fin.coe_castLE, psgn, Complex.ofReal_prod]
-    exact Fin.prod_univ_eq_prod_range (fun a => ((sgn X.p0 a : ℝ) : ℂ)) i
-  rw [hd, Complex.ofReal_re]
-  have hne : psgn X.p0 i ≠ 0 :=
-    Finset.prod_ne_zero_iff.mpr fun a _ => by unfold sgn; split_ifs <;> norm_num
-  exact mul_self_pos.mpr hne
+  apply ReciprocityTheory.ChartRestriction.G.AR.Up.KU.orth_dom <;> assumption
 
 theorem maj_orth (X : Data E r) {u : Frame X.Ψ r} (hu : IsOrth X u) (τ : X.Ψ) (v : Fin r → ℂ) :
     X.maj u τ v = ∑ a, ‖((mat u τ)⁻¹ *ᵥ v) a‖ ^ 2 := by
@@ -147,7 +137,7 @@ theorem maj_orth (X : Data E r) {u : Frame X.Ψ r} (hu : IsOrth X u) (τ : X.Ψ)
       (fun h => absurd (Finset.mem_univ a) h)]
     rw [Matrix.one_apply_eq, mul_one, hsf]
     have ha : ((Fin.castLE X.p0_le a : Fin r) : ℕ) < X.p0 := by simp
-    simp only [sgn, ha, if_true, Complex.ofReal_one, one_mul]
+    simp only [sgn, ha, ite_true, Complex.ofReal_one, one_mul]
     rw [Complex.mul_conj, Complex.normSq_eq_norm_sq]
   have hww : (sf X.p0 w w).re = ∑ k : Fin r, sgn X.p0 (k : ℕ) * ‖w k‖ ^ 2 := by
     unfold sf

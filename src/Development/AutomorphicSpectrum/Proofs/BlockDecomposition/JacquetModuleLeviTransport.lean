@@ -9,53 +9,8 @@ public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.
 public import GroundTheory.AutomorphicForms.Iwasawa
 public import GroundTheory.AutomorphicForms.InductionParabolicGroups
 import GroundTheory.LocalFields.PadicLogSeries
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.GroupTheory.DoubleCoset
 import GroundTheory.AutomorphicForms.GeometricLemmaOrbit
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -162,7 +117,7 @@ theorem det_adLie_pairs (e : (Σ i, m i) ≃ Fin N) (β : Fin N → ℕ)
       else 1 := by
     intro a b
     by_cases hab : a ≤ b
-    · rw [if_pos hab]
+    · rw [ite_eq_left hab]
       have hmem : ∀ (i : m a) (j : m b), ¬ β (e ⟨b, j⟩) < β (e ⟨a, i⟩) := by
         intro i j
         rw [hβ]
@@ -198,7 +153,7 @@ theorem det_adLie_pairs (e : (Σ i, m i) ≃ Fin N) (β : Fin N → ℕ)
         rw [leviEmb_apply_same, leviEmb_apply_same]
         rfl
       rw [hk, Matrix.det_kronecker, Matrix.det_transpose]
-    · rw [if_neg hab]
+    · rw [ite_eq_right hab]
       have : IsEmpty {t : ParabolicIndex N β // κ t = toLex (a, b)} := by
         refine ⟨fun t => hab ?_⟩
         have h3 : blk e t.1.1.1 = a ∧ blk e t.1.1.2 = b := by simpa [κ] using t.2
@@ -327,10 +282,10 @@ theorem leviProj_found_eq : ∀ (k : Type) [Field k] [ValuativeRel k] [Topologic
   obtain ⟨⟨b, j⟩, rfl⟩ := e.surjective y
   by_cases hab : a = b
   · subst hab
-    rw [if_pos ((hblk _ _).2 (by simp))]
+    rw [ite_eq_left ((hblk _ _).2 (by simp))]
     have := leviEmb_apply_same k e (leviProj k e ⟨p, h1⟩) a i j
     rw [this, leviProj_apply]
-  · rw [if_neg (fun h => hab (by simpa using (hblk _ _).1 h))]
+  · rw [ite_eq_right (fun h => hab (by simpa using (hblk _ _).1 h))]
     exact leviEmb_apply_ne k e _ hab i j
 
 end GlobalTheory.CompanionTheory.SmGLBridge

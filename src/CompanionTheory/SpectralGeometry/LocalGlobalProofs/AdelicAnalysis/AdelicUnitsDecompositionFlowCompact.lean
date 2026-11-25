@@ -42,8 +42,7 @@ theorem lattice_pigeonhole_measure_preserving :
     isOpen_univ.exists_lt_isCompact (μ := μ) (r := μ C) (by rw [htop]; exact hCfin)
   refine ⟨(fun p : V × V => p.1 - p.2) '' (K ×ˢ K),
     (hKc.prod hKc).image (continuous_fst.sub continuous_snd), fun e he hμ => ?_⟩
-  by_contra hno
-  push_neg at hno
+  by_contra! hno
   have hKm : MeasurableSet K := hKc.isClosed.measurableSet
   have hem : Measurable e := he.measurable
   have hAm : MeasurableSet (e ⁻¹' K) := hem hKm

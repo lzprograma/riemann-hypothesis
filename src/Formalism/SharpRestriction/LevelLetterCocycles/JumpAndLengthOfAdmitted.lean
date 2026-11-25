@@ -3,49 +3,7 @@ module
 public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
 public import Formalism.WachLatticeTwists.Statement
 public import Formalism.WachLatticeTwists.TorsionLengthCounts.SubmoduleLengthBoundStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.OrderOfVanishing.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -78,8 +36,8 @@ theorem rank_eq_count (hBK : BlochKatoDim PD LL) (hS : Splits LL (K := K) (Qp :=
   have h2 : ∀ τ : K →ₐ[Qp] LL, (finrank LL ↥(DdRE PD ρ τ) : ℤ) - finrank LL ↥(FildR PD ρ τ 0) =
       (Formalism.RepresentationBoundsCohomology.negCount (S τ).val : ℤ) := by
     intro τ
-    rw [hF τ (S τ) (fun a ha => by rw [hS1, if_neg ha])]
-    rw [Finset.sum_congr rfl (fun a ha => by rw [hS1, if_pos (Finset.mem_filter.mp ha).1])]
+    rw [hF τ (S τ) (fun a ha => by rw [hS1, ite_eq_right ha])]
+    rw [Finset.sum_congr rfl (fun a ha => by rw [hS1, ite_eq_left (Finset.mem_filter.mp ha).1])]
     simp [Formalism.RepresentationBoundsCohomology.negCount, Finset.filter_val, Finset.card_def]
   rw [Finset.sum_congr rfl (fun τ _ => h2 τ)] at h1
   have h3 : (finrank LL (FiniteCohomology PD ρ) : ℤ) = ((0 + ∑ τ, Formalism.RepresentationBoundsCohomology.negCount (S τ).val : ℕ) : ℤ) := by
@@ -134,8 +92,8 @@ theorem rank_le_row (hBK : BlochKatoDim PD LL) (hS : Splits LL (K := K) (Qp := Q
     intro τ a
     rw [hm τ a]
     by_cases h : -a - 1 ∈ C τ ∪ Lo τ
-    · rw [if_pos h, if_pos ((hmem τ a).mpr h)]
-    · rw [if_neg h, if_neg (fun h' => h ((hmem τ a).mp h'))]
+    · rw [ite_eq_left h, ite_eq_left ((hmem τ a).mpr h)]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h ((hmem τ a).mp h'))]
   have h := rank_eq_count PD ρ hBK hS hc hcr h0 hF
     (fun τ => (C τ ∪ Lo τ).image (fun b => -b - 1)) hS1
   have hS' := hS
@@ -424,14 +382,6 @@ theorem ef_conj {E : Type} [Field E] [NumberField E] (cj : E ≃ₐ[ℚ] E)
 
 end TypeU
 
-section TypeD
-
-open NumberField IsDedekindDomain
-
-variable {E Lc Kf : Type} [Field E] [NumberField E] [Field Lc] [Field Kf]
-
-end TypeD
-
 section Std
 
 theorem mem_stdG_iff {O LL : Type} [CommRing O] [Field LL] [Algebra O LL] (k : ℕ) (v : Fin k → LL) :
@@ -660,7 +610,7 @@ theorem multW_of_shape (k m t : ℕ) (sgn : ℤ) (Cl Lo : Finset ℤ) (μ μW : 
       if a ∈ Finset.Ico (0 : ℤ) (t : ℤ) then 1 else 0 := by
     rw [Finset.sum_congr rfl (fun c hc' => hc c hc' a)]
     by_cases ha : a ∈ Finset.Ico (0 : ℤ) (t : ℤ)
-    · rw [if_pos ha]
+    · rw [ite_eq_left ha]
       rw [Finset.mem_Ico] at ha
       have e : (((a + 1).toNat : ℕ) : ℤ) = a + 1 := Int.toNat_of_nonneg (by omega)
       have hmem : (a + 1).toNat ∈ Finset.Icc 1 t := by
@@ -670,17 +620,17 @@ theorem multW_of_shape (k m t : ℕ) (sgn : ℤ) (Cl Lo : Finset ℤ) (μ μW : 
           (if a = (c : ℤ) - 1 then (1 : ℤ) else 0) = 0 := by
         intro c _ hne
         have hx : ¬ (a = (c : ℤ) - 1) := by omega
-        rw [if_neg hx]
+        rw [ite_eq_right hx]
       rw [Finset.sum_eq_single_of_mem (a + 1).toNat hmem hzero]
       have hx : a = (((a + 1).toNat : ℕ) : ℤ) - 1 := by omega
-      rw [if_pos hx]
-    · rw [if_neg ha]
+      rw [ite_eq_left hx]
+    · rw [ite_eq_right ha]
       rw [Finset.mem_Ico] at ha
       apply Finset.sum_eq_zero
       intro c hc'
       rw [Finset.mem_Icc] at hc'
       have hx : ¬ (a = (c : ℤ) - 1) := by omega
-      rw [if_neg hx]
+      rw [ite_eq_right hx]
   have h1 := hadd a
   have h2 := hμ a
   rw [hsum] at h1
@@ -689,19 +639,19 @@ theorem multW_of_shape (k m t : ℕ) (sgn : ℤ) (Cl Lo : Finset ℤ) (μ μW : 
       rcases Finset.mem_union.mp hCL with h | h
       · exact Finset.disjoint_left.mp hdC h
       · exact Finset.disjoint_left.mp hdL h
-    rw [if_pos hCL]
-    rw [if_neg hI] at h1
-    rw [if_pos (Finset.mem_union_left _ hCL)] at h2
+    rw [ite_eq_left hCL]
+    rw [ite_eq_right hI] at h1
+    rw [ite_eq_left (Finset.mem_union_left _ hCL)] at h2
     omega
-  · rw [if_neg hCL]
+  · rw [ite_eq_right hCL]
     by_cases hI : a ∈ Finset.Ico (0 : ℤ) (t : ℤ)
-    · rw [if_pos hI] at h1
-      rw [if_pos (Finset.mem_union_right _ hI)] at h2
+    · rw [ite_eq_left hI] at h1
+      rw [ite_eq_left (Finset.mem_union_right _ hI)] at h2
       omega
     · have hn : a ∉ Cl ∪ Lo ∪ Finset.Ico (0 : ℤ) (t : ℤ) :=
         fun h => (Finset.mem_union.mp h).elim hCL hI
-      rw [if_neg hI] at h1
-      rw [if_neg hn] at h2
+      rw [ite_eq_right hI] at h1
+      rw [ite_eq_right hn] at h2
       omega
 
 variable {D : D7}
@@ -770,7 +720,7 @@ theorem jump_bound_of_admitted (hL : hypL i) (hD : hypDecl i dc ep) (hπ : π �
       obtain ⟨Cl, Lo, hsh⟩ := (hG2 hg0 hg1 u hw (CoefExt.self i u hw)).2.2 τ
       have hs := hsh π
       have hE : EmbU (CoefExt.self i u hw) ep τ := ⟨τ, hU τ, fun x => rfl⟩
-      rw [if_pos hE] at hs
+      rw [ite_eq_left hE] at hs
       obtain ⟨s, S, η, hs0, -, -, hcl, -⟩ := hs.1
       refine ⟨Cl, Lo, fun a ha => ?_, le_of_eq hs.2.2.1,
         multW_eq i r ρ π hπ hg0 hg1 hBl u hw _ τ 1 Cl Lo hs⟩
@@ -802,7 +752,7 @@ theorem length_bound_of_admitted (e' : ℕ) (c0 : HeightOneSpectrum (𝓞 D.host
       obtain ⟨Cl, Lo, hsh⟩ := (hG2 hg0 hg1 w hw C).2.2 τ
       have hs := hsh π
       have hE : ¬ EmbU C ep τ := fun ⟨τ₀, h1, _⟩ => hTD u hu' hU w hw huw τ₀ h1
-      rw [if_neg hE] at hs
+      rw [ite_eq_right hE] at hs
       obtain ⟨s, S, η, hs0, -, -, hcl, -⟩ := hs.1
       refine ⟨Cl, Lo, fun a ha => ?_, le_of_eq hs.2.2.1, fun a => ?_⟩
       · have := cloud_sign (-1) Cl s hs0 (fun a ha => (hcl a ha).1) a ha

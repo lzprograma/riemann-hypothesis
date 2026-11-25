@@ -51,8 +51,6 @@ open MeasureTheory Matrix
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.KTypeExtension
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar}
 
 def kFin (M : DSModel V S) (τ : D.what₂.Tau) : Submodule ℂ (M.H τ) :=

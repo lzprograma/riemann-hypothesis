@@ -60,6 +60,23 @@ omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem killBlocks_empty : (killBlocks ∅ : MRing ι →ₐ[ℤ] MRing ι) = AlgHom.id ℤ (MRing ι) :=
   MvPolynomial.algHom_ext fun p => by simp [killBlocks]
 
+theorem finset_card_add_ringKrullDim_le {K : Type*} [DecidableEq K] {R : Type*} [CommRing R]
+    (Q : Finset K → Ideal R) (hQp : ∀ S, (Q S).IsPrime)
+    (hstep : ∀ S k, k ∉ S → Q S < Q (insert k S)) (S : Finset K) :
+    (S.card : WithBot ℕ∞) + ringKrullDim (R ⧸ Q S) ≤ ringKrullDim (R ⧸ Q ∅) := by
+  induction S using Finset.induction_on with
+  | empty => simp
+  | @insert k S hk ih =>
+    have : (Q S).IsPrime := hQp S
+    have : (Q (insert k S)).IsPrime := hQp _
+    have h1 := HorizNotMem.ringKrullDim_quotient_add_one_le (hstep S k hk)
+    rw [Finset.card_insert_of_notMem hk]
+    calc (((S.card + 1 : ℕ)) : WithBot ℕ∞) + ringKrullDim (R ⧸ Q (insert k S))
+        = (S.card : WithBot ℕ∞) + (ringKrullDim (R ⧸ Q (insert k S)) + 1) := by
+          push_cast; abel
+      _ ≤ (S.card : WithBot ℕ∞) + ringKrullDim (R ⧸ Q S) := by gcongr
+      _ ≤ _ := ih
+
 theorem card_le_ringKrullDim (W : Ideal (MRing ι)) [W.IsPrime] (hWh : IsMultiHomogIdeal W)
     (hWr : IsRelevant W) : ((Fintype.card K : ℕ) : WithBot ℕ∞) ≤ ringKrullDim (MRing ι ⧸ W) := by
   choose j hj using hWr
@@ -75,30 +92,15 @@ theorem card_le_ringKrullDim (W : Ideal (MRing ι)) [W.IsPrime] (hWh : IsMultiHo
       simp [killBlocks]
     · intro h
       rw [Ideal.mem_comap] at h
-      simp only [killBlocks, aeval_X, if_neg hk] at h
+      simp only [killBlocks, aeval_X, ite_eq_right hk] at h
       exact hj k h
-  have chain : ∀ S : Finset K, (S.card : WithBot ℕ∞) + ringKrullDim (MRing ι ⧸ Q S) ≤
-      ringKrullDim (MRing ι ⧸ Q ∅) := by
-    intro S
-    induction S using Finset.induction_on with
-    | empty => simp
-    | @insert k S hk ih =>
-      have : (Q S).IsPrime := hQp S
-      have : (Q (insert k S)).IsPrime := hQp _
-      have h1 := HorizNotMem.ringKrullDim_quotient_add_one_le (hstep S k hk)
-      rw [Finset.card_insert_of_notMem hk]
-      calc (((S.card + 1 : ℕ)) : WithBot ℕ∞) + ringKrullDim (MRing ι ⧸ Q (insert k S))
-          = (S.card : WithBot ℕ∞) + (ringKrullDim (MRing ι ⧸ Q (insert k S)) + 1) := by
-            push_cast; abel
-        _ ≤ (S.card : WithBot ℕ∞) + ringKrullDim (MRing ι ⧸ Q S) := by gcongr
-        _ ≤ _ := ih
   have hQ0 : Q ∅ = W := by
     ext g
     simp [Q, killBlocks_empty]
   have : (Q Finset.univ).IsPrime := hQp _
   have : IsDomain (MRing ι ⧸ Q Finset.univ) := Ideal.Quotient.isDomain _
   have h3 : (0 : WithBot ℕ∞) ≤ ringKrullDim (MRing ι ⧸ Q Finset.univ) := ringKrullDim_nonneg_of_nontrivial
-  have hc := chain Finset.univ
+  have hc := finset_card_add_ringKrullDim_le Q hQp hstep Finset.univ
   rw [Finset.card_univ, hQ0] at hc
   calc ((Fintype.card K : ℕ) : WithBot ℕ∞) = (Fintype.card K : WithBot ℕ∞) + 0 := (add_zero _).symm
     _ ≤ (Fintype.card K : WithBot ℕ∞) + ringKrullDim (MRing ι ⧸ Q Finset.univ) := by gcongr

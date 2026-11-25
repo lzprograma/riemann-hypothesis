@@ -253,12 +253,6 @@ theorem norm_term_le_of_lower_bound {σ : ℝ} (hσ : -3 ≤ σ) (b : ℕ → �
   push_cast
   gcongr
 
-theorem norm_term_le (b : ℕ → ℂ) (K R : ℝ) (hb : ∀ n, ‖b n‖ ≤ K) (s : ℂ)
-    (hs : -(15 / 8 : ℝ) ≤ s.re) (hR : ‖s‖ ≤ R) (n : ℕ) :
-    ‖b n * diffPow 3 s ((n : ℝ) + 1)‖ ≤ K * (R + 3) ^ 3 * ((n : ℝ) + 1) ^ (-(9 / 8 : ℝ)) := by
-  convert norm_term_le_of_lower_bound (σ := -(15 / 8 : ℝ)) (by norm_num)
-    b K R hb s hs hR n using 1 <;> norm_num
-
 theorem LFunction_eq_of_neg_two_lt (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) :
     ∃ (b : ℕ → ℂ) (μ₁ μ₂ μ₃ : ℂ), (∀ n, ‖b n‖ ≤ 8 * (q : ℝ) ^ 3) ∧ ‖μ₁‖ ≤ q ∧
       ‖μ₂‖ ≤ 2 * (q : ℝ) ^ 2 ∧ ‖μ₃‖ ≤ 4 * (q : ℝ) ^ 3 ∧
@@ -320,15 +314,6 @@ theorem LFunction_eq_of_neg_two_lt (q : ℕ) [NeZero q] (χ : DirichletCharacter
   rw [LSeries.term_of_ne_zero (Nat.succ_ne_zero n), diffPow, cpow_neg, div_eq_mul_inv]
   push_cast
   rfl
-
-theorem LFunction_eq (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) :
-    ∃ (b : ℕ → ℂ) (μ₁ μ₂ μ₃ : ℂ), (∀ n, ‖b n‖ ≤ 8 * (q : ℝ) ^ 3) ∧ ‖μ₁‖ ≤ q ∧
-      ‖μ₂‖ ≤ 2 * (q : ℝ) ^ 2 ∧ ‖μ₃‖ ≤ 4 * (q : ℝ) ^ 3 ∧
-      ∀ s : ℂ, -(15 / 8 : ℝ) < s.re → LFunction χ s =
-        μ₁ * diffPow 0 s 1 + μ₂ * diffPow 1 s 1 + μ₃ * diffPow 2 s 1 +
-          ∑' n : ℕ, b n * diffPow 3 s ((n : ℝ) + 1) := by
-  obtain ⟨b, μ₁, μ₂, μ₃, hb, h₁, h₂, h₃, he⟩ := LFunction_eq_of_neg_two_lt q χ hχ
-  exact ⟨b, μ₁, μ₂, μ₃, hb, h₁, h₂, h₃, fun s hs => he s (by linarith)⟩
 
 end LLeft
 open LLeft

@@ -80,28 +80,12 @@ def dirDeriv {U : A.left.Opens} (h : ⊤ ≤ (u.ex 0).left ⁻¹ᵁ U) (w : Fin 
 theorem dirDeriv_apply {U : A.left.Opens} (h : ⊤ ≤ (u.ex 0).left ⁻¹ᵁ U) (w : Fin g → ℂ) (f : Γ(A.left, U)) :
     dirDeriv u h w f = fderiv ℂ (fun z => valAt' (u.ex z).left U f) 0 w := rfl
 
-private theorem valAt'_constFn_of_comp_eq_id {X : Scheme.{0}} (x : Sp ℂ ⟶ X) (p : X ⟶ Sp ℂ) (hp : x ≫ p = 𝟙 _)
-    (U : X.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) (a : ℂ) : valAt' x U (constFn p U a) = a := by
-  have key : ∀ (q : Sp ℂ ⟶ Sp ℂ) (e : ⊤ ≤ q ⁻¹ᵁ ⊤), q = 𝟙 _ →
-      (Scheme.ΓSpecIso (CommRingCat.of ℂ)).inv ≫ q.appLE ⊤ ⊤ e ≫ (Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom =
-        𝟙 _ := by
-    rintro q e rfl
-    simp [Scheme.Hom.appLE]
-    erw [CategoryTheory.Functor.map_id]
-    simp
-  have hcomp : (Scheme.ΓSpecIso (CommRingCat.of ℂ)).inv ≫ p.appLE ⊤ U (show U ≤ p ⁻¹ᵁ ⊤ from fun _ _ => trivial) ≫
-      x.appLE U ⊤ h ≫ (Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom = 𝟙 _ := by
-    rw [Scheme.Hom.appLE_comp_appLE_assoc]
-    exact key _ _ hp
-  rw [valAt', dite_eq_left h]
-  exact congrArg (fun φ => φ.hom a) hcomp
-
 theorem dirDeriv_constFn {U : A.left.Opens} (h : ⊤ ≤ (u.ex 0).left ⁻¹ᵁ U) (w : Fin g → ℂ) (a : ℂ) :
     dirDeriv u h w (constFn A.hom U a) = 0 := by
   rw [dirDeriv_apply]
   have hev : (fun z => valAt' (u.ex z).left U (constFn A.hom U a)) =ᶠ[𝓝 0] fun _ => a := by
     filter_upwards [eventually_le u h] with z hz
-    exact valAt'_constFn_of_comp_eq_id _ _ (ex_comp u z) U hz a
+    exact valAt'_constFn _ _ (ex_comp u z) U a hz
   rw [hev.fderiv_eq]
   simp
 
@@ -232,7 +216,7 @@ theorem exists_coord_adapted : (∀ (X : Over (Sp ℂ)) (g : ℕ), SmoothOfRelat
       ∀ i, t' i = ∑ j, constFn A.hom U (Sinv (Pi.single j 1) i) * t j :=
     ⟨fun i => ∑ j, constFn A.hom U (Sinv (Pi.single j 1) i) * t j, fun _ => rfl⟩
   have hc0 : ∀ c : ℂ, valAt' (u.ex 0).left U (constFn A.hom U c) = c :=
-    fun c => valAt'_constFn_of_comp_eq_id _ _ (ex_comp u 0) U h c
+    fun c => valAt'_constFn _ _ (ex_comp u 0) U c h
   refine ⟨U, t', hU, h, ?_, ?_⟩
   · intro D hc hl hD'
     apply hD D hc hl
@@ -254,7 +238,7 @@ theorem exists_coord_adapted : (∀ (X : Over (Sp ℂ)) (g : ℕ), SmoothOfRelat
       funext i
       rw [ht', valAt'_finset_sum', apply_eq_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
-      rw [valAt'_mul, valAt'_constFn_of_comp_eq_id _ _ (ex_comp u z) U hz]
+      rw [valAt'_mul, valAt'_constFn _ _ (ex_comp u z) U _ hz]
     have hcomp : HasFDerivAt (fun w => Sinv (fun i => valAt' (u.ex w).left U (t i)))
         ((LinearMap.toContinuousLinearMap Sinv).comp
           (fderiv ℂ (fun z i => valAt' (u.ex z).left U (t i)) 0)) 0 :=

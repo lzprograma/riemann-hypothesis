@@ -356,8 +356,7 @@ theorem leafSizes_of_page (O : OnObj S P c) (C2 : ℝ) (hC2 : 0 ≤ C2) (hC : 1 
     have h80 : 1 < O.DF ^ 2 := by
       have := mul_le_mul (by linarith : (6 : ℝ) ≤ 2 * Real.pi) hnW (by norm_num) (by linarith)
       linarith
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have : O.DF ^ 2 ≤ 1 := by
       have := mul_le_mul hc hc hDF0 zero_le_one
       linarith [show O.DF ^ 2 = O.DF * O.DF by ring]
@@ -395,8 +394,7 @@ theorem leafSizes_of_page (O : OnObj S P c) (C2 : ℝ) (hC2 : 0 ≤ C2) (hC : 1 
   have hy0 : 0 ≤ O.x ^ (O.eps / 3) := Real.rpow_nonneg hx0 _
   have hy3 : O.L = (O.x ^ (O.eps / 3)) ^ 3 := by rw [hLx, hy]
   have hy2 : 2 ≤ O.x ^ (O.eps / 3) := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have : (O.x ^ (O.eps / 3)) ^ 3 < 2 ^ 3 := pow_lt_pow_left₀ hc hy0 (by norm_num)
     linarith
   have hkb : O.k ≤ O.b ^ ((4 : ℝ) / 5) := by

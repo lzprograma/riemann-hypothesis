@@ -49,8 +49,6 @@ open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.Ind
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.HolomorphicLowestType
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Model
 
 variable {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar}

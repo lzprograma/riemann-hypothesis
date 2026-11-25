@@ -46,8 +46,7 @@ lemma isIntegral_cc {x : E} (hx : IsIntegral ℤ x) : IsIntegral ℤ (cc x) := b
 
 lemma exists_imag : ∃ κ : E, cc κ = -κ ∧ κ ≠ 0 := by
   obtain ⟨x, hx⟩ : ∃ x : E, cc x ≠ x := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     obtain ⟨w⟩ : Nonempty (InfinitePlace E) := inferInstance
     apply InfinitePlace.isComplex_iff.mp (IsTotallyComplex.isComplex w)
     refine RingHom.ext fun y => ?_
@@ -204,8 +203,5 @@ noncomputable def inhab : Data E 1 := by
       ext a b
       fin_cases a; fin_cases b
       simp [transvMat, hξ] }
-
-theorem nonempty_data : Nonempty (Data E 1) :=
-  ⟨inhab⟩
 
 end ReciprocityTheory.ChartRestriction.G.FD

@@ -48,7 +48,6 @@ import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowsJoi
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.AutomorphicEvaluation Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowLevelMatch Formalism.L2.SG.PoincareInHH.PoincareSetting MeasureTheory NumberField IsDedekindDomain
 open scoped InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.SeeConjRead
 
 noncomputable section
@@ -74,10 +73,10 @@ theorem pairTable_of {M A : Type} [Ring A] (p : M → M → A) (Z sm : A → Pro
     fun a c => hZ _ (t13 a c), fun a j => hZ _ (t14 a j), fun a => hZ _ (t15 a), fun a c => hZ _ (t16 a c)⟩
   have h := hZ _ (t6 i j)
   by_cases hij : i = j
-  · simp only [hij, if_true] at h ⊢
+  · simp only [hij, ite_true] at h ⊢
     have := hadd _ _ h hu
     rwa [show p (b' j) (b j) - u + (u - 1) = p (b' j) (b j) - 1 by abel] at this
-  · simpa only [hij, if_false] using h
+  · simpa only [hij, ite_false] using h
 
 variable {D : D7}
 

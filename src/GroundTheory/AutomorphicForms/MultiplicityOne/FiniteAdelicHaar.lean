@@ -44,7 +44,6 @@ theorem isMulRightInvariant_finite (μ : Measure (AdelicGLn.FiniteAdelicGL K n))
     rw [Measure.map_map (measurable_mul_const p) he, hcomp,
       ← Measure.map_map he (measurable_mul_const _), map_mul_right_eq_self]
 
-  set_option synthInstance.maxHeartbeats 400000 in
   set c := haarScalarFactor (ν.map e) P
   have hc : ν.map e = c • P := isMulLeftInvariant_eq_smul (ν.map e) P
   have hc0 : c ≠ 0 := by

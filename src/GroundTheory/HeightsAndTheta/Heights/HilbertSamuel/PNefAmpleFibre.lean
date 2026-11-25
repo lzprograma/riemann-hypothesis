@@ -4,6 +4,7 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticInt
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNefAmpleFibre
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKleimanScheme
 public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
+import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiProjPrimeImageZ
 
 @[expose] public section
 
@@ -26,27 +27,19 @@ variable {K : Type} {ι : K → Type} (p : ℕ)
 abbrev red : MRing ι →+* MRingOver (ZMod p) ι := MvPolynomial.map (Int.castRingHom (ZMod p))
 
 theorem red_surjective : Function.Surjective (red (ι := ι) p) :=
-  MvPolynomial.map_surjective _ (fun x => ZMod.intCast_surjective x)
+  Inter.PointVertical.red_surjective p
 
 theorem ker_red_le {J : Ideal (MRing ι)} (hp : ((p : ℕ) : MRing ι) ∈ J) :
-    RingHom.ker (red (ι := ι) p) ≤ J := by
-  rw [MvPolynomial.ker_map, ZMod.ker_intCastRingHom, Ideal.map_span, Set.image_singleton, Ideal.span_le,
-    Set.singleton_subset_iff]
-  simpa using hp
+    RingHom.ker (red (ι := ι) p) ≤ J :=
+  Inter.PointVertical.ker_red_le p hp
 
 theorem mem_map_red_iff {J : Ideal (MRing ι)} (hp : ((p : ℕ) : MRing ι) ∈ J) (g : MRing ι) :
-    red p g ∈ J.map (red p) ↔ g ∈ J := by
-  rw [← Ideal.mem_comap, Ideal.comap_map_of_surjective _ (red_surjective p), sup_eq_left.mpr]
-  rw [← RingHom.ker_eq_comap_bot]
-  exact ker_red_le p hp
+    red p g ∈ J.map (red p) ↔ g ∈ J :=
+  Inter.PointVertical.mem_map_red_iff p hp g
 
 theorem ringKrullDim_red {J : Ideal (MRing ι)} (hp : ((p : ℕ) : MRing ι) ∈ J) :
-    ringKrullDim (MRingOver (ZMod p) ι ⧸ J.map (red p)) = ringKrullDim (MRing ι ⧸ J) := by
-  have e : J = RingHom.ker ((Ideal.Quotient.mk (J.map (red p))).comp (red p)) := by
-    ext g
-    rw [RingHom.mem_ker, RingHom.comp_apply, Ideal.Quotient.eq_zero_iff_mem, mem_map_red_iff p hp]
-  exact (ringKrullDim_eq_of_ringEquiv ((Ideal.quotEquivOfEq e).trans
-    (RingHom.quotientKerEquivOfSurjective (Ideal.Quotient.mk_surjective.comp (red_surjective p))))).symm
+    ringKrullDim (MRingOver (ZMod p) ι ⧸ J.map (red p)) = ringKrullDim (MRing ι ⧸ J) :=
+  Inter.PointVertical.ringKrullDim_red p hp
 
 end Reduction
 

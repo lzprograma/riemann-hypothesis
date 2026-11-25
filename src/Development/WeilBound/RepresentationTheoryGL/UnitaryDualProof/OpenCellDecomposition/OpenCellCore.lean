@@ -394,19 +394,9 @@ theorem relIndex_ne_zero {G : Type*} [Group G] [TopologicalSpace G] [ContinuousM
 
 theorem addRelIndex_ne_zero {A : Type*} [AddCommGroup A] [TopologicalSpace A] [IsTopologicalAddGroup A]
     {T S : AddSubgroup A} (hc : IsCompact (S : Set A)) (hTo : IsOpen (T : Set A)) : T.relIndex S ≠ 0 := by
-  obtain ⟨t, htS, htf, hcov⟩ := hc.elim_finite_subcover_image (b := (S : Set A)) (c := fun x => x +ᵥ (T : Set A))
-    (fun x _ => hTo.vadd x) (fun y hy => Set.mem_iUnion₂.2 ⟨y, hy, 0, T.zero_mem, by simp⟩)
-  have : Finite t := htf.to_subtype
-  let φ : t → S ⧸ T.addSubgroupOf S := fun x => ((⟨x.1, htS x.2⟩ : S) : S ⧸ T.addSubgroupOf S)
-  have : Finite (S ⧸ T.addSubgroupOf S) := Finite.of_surjective φ fun q => by
-    induction q using QuotientAddGroup.induction_on with
-    | H y =>
-      obtain ⟨x, hx, o, ho, e⟩ := Set.mem_iUnion₂.1 (hcov y.2)
-      refine ⟨⟨x, hx⟩, QuotientAddGroup.eq.2 ?_⟩
-      show (-((⟨x, htS hx⟩ : S)) + y : S).1 ∈ T
-      have e' : (-((⟨x, htS hx⟩ : S)) + y : S).1 = o := by
-        simp only [AddSubgroup.coe_add, AddSubgroup.coe_neg]; rw [← e]; simp
-      exact e'.symm ▸ ho
+  have : CompactSpace S := isCompact_iff_compactSpace.1 hc
+  have : Finite (S ⧸ T.addSubgroupOf S) :=
+    AddSubgroup.quotient_finite_of_isOpen _ (hTo.preimage continuous_subtypeVal)
   exact AddSubgroup.index_ne_zero_of_finite
 
 theorem addHaar_smul_set_eq_distribHaarChar_mul {k : Type} [Field k] {A : Type*} [AddCommGroup A] [TopologicalSpace A]

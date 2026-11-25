@@ -10,56 +10,11 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ShearMeasura
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZhatSectionExists
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 import Mathlib.CategoryTheory.Countable
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
 
 @[expose] public section
@@ -85,23 +40,7 @@ lemma skewOf_gt (q : (G.UT j → ℂ) × (Fin j → ℝ)) {a b : Fin j} (h : b <
   exact h3
 
 lemma skewOf_skc {M : Matrix (Fin j) (Fin j) ℂ} (hM : Mᴴ = -M) : skewOf (_root_.Formalism.FourierDecayAlt.P.Ux3.skewCoords M) = M := by
-  have hM' : ∀ a b, conj (M b a) = -M a b := fun a b => by
-    have := congrFun (congrFun hM a) b
-    rwa [conjTranspose_apply] at this
-  ext a b
-  rcases lt_trichotomy a b with h | rfl | h
-  · rw [skewOf_lt _ h]; rfl
-  · rw [skewOf_diag]
-    have h1 := hM' a a
-    apply Complex.ext
-    · simp only [Complex.mul_re, Complex.I_re, Complex.ofReal_re, Complex.I_im, Complex.ofReal_im]
-      have := congrArg Complex.re h1
-      simp only [Complex.conj_re, Complex.neg_re] at this
-      simp [_root_.Formalism.FourierDecayAlt.P.Ux3.skewCoords]; linarith
-    · simp [_root_.Formalism.FourierDecayAlt.P.Ux3.skewCoords]
-  · rw [skewOf_gt _ h, skewOf_lt _ h]
-    show -conj (M b a) = M a b
-    rw [hM']; ring
+  apply _root_.Formalism.FourierDecayAlt.P.Ux3.skewOf_coords <;> assumption
 
 lemma skewOf_add (q1 q2 : (G.UT j → ℂ) × (Fin j → ℝ)) : skewOf (q1 + q2) = skewOf q1 + skewOf q2 := by
   ext a b
@@ -175,7 +114,7 @@ lemma rn_col (x : RC k r 0) (b : Fin r) : Rn k r 0 x *ᵥ bvec (eI k r b) = bvec
   have h := (rn_rset x).2.1
   ext i
   simp only [Matrix.mulVec, dotProduct, bvec, Pi.single_apply, mul_ite, mul_one, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [h i (eI k r b) (by show b.val < r; exact b.isLt)]
 
 end n0
@@ -189,9 +128,9 @@ lemma hpk_mulVec_wb {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (i : Fin
   simp only [Matrix.mulVec, dotProduct]
   rw [Finset.sum_eq_single i]
   · by_cases h : r ≤ i.val ∧ i.val ≤ r + k
-    · rw [if_pos h]; congr 1; unfold Hpk
+    · rw [ite_eq_left h]; congr 1; unfold Hpk
       split_ifs <;> first | rfl | (exfalso; omega)
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       have : z i = 0 := hz i (by omega)
       simp [this]
   · intro j _ hji
@@ -215,17 +154,17 @@ lemma wb_last_ne {z : Fin (2 * r + k + 1) → ℂ} (hz : C2.StdZ k r z) :
     simp only [dotProduct, Pi.star_apply, hpk_mulVec_wb hz.1, Complex.re_sum]
     refine Finset.sum_nonneg fun i _ => ?_
     by_cases h : r ≤ i.val ∧ i.val ≤ r + k
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       by_cases hl : i.val = r + k
       · have : i = ⟨r + k, by omega⟩ := Fin.ext hl
         rw [this, h0]; simp
-      · rw [if_neg hl, one_mul]
+      · rw [ite_eq_right hl, one_mul]
         have := Complex.mul_conj' (z i)
         rw [mul_comm] at this
         simp only [RCLike.star_def]
         rw [this]
         exact_mod_cast sq_nonneg ‖z i‖
-    · rw [if_neg h]; simp
+    · rw [ite_eq_right h]; simp
   linarith
 
 def hb (z : Fin (2 * r + k + 1) → ℂ) : Fin (2 * 0 + k + 1) → ℂ := Hpk k 0 *ᵥ yb z
@@ -245,7 +184,7 @@ lemma hermitian_form_rank_zero_apply (y : Fin (2 * 0 + k + 1) → ℂ) (v : Fin 
 
 lemma hb_last_ne {z : Fin (2 * r + k + 1) → ℂ} (hz : C2.StdZ k r z) : hb z (Fin.last (2 * 0 + k)) ≠ 0 := by
   unfold hb
-  rw [hermitian_form_rank_zero_apply, if_pos (by simp)]
+  rw [hermitian_form_rank_zero_apply, ite_eq_left (by simp)]
   have := wb_last_ne hz
   have e : yb z (Fin.last (2 * 0 + k)) = z ⟨r + k, by omega⟩ := by
     unfold yb; congr 1; ext; rw [eB_lr]; simp
@@ -703,11 +642,11 @@ lemma mul_upper_sub {m : ℕ} {A : Matrix (Fin m) (Fin m) ℂ} (hA : A ∈ C2.UT
       (if i < l then A i l * G.upper x l j else 0) + (if l = i then G.upper x i j else 0) := by
     intro l
     rcases lt_trichotomy l i with h | rfl | h
-    · rw [hA.1 i l h, zero_mul, if_neg (not_lt.mpr h.le), if_neg (ne_of_lt h), add_zero]
-    · rw [hA.2, one_mul, if_neg (lt_irrefl _), if_pos rfl, zero_add]
-    · rw [if_pos h, if_neg (ne_of_gt h), add_zero]
+    · rw [hA.1 i l h, zero_mul, ite_eq_right (not_lt.mpr h.le), ite_eq_right (ne_of_lt h), add_zero]
+    · rw [hA.2, one_mul, ite_eq_right (lt_irrefl _), ite_eq_left rfl, zero_add]
+    · rw [ite_eq_left h, ite_eq_right (ne_of_gt h), add_zero]
   rw [Matrix.mul_apply, Finset.sum_congr rfl fun l _ => hterm l, Finset.sum_add_distrib, Finset.sum_ite_eq']
-  simp only [Finset.mem_univ, if_true]
+  simp only [Finset.mem_univ, ite_true]
   have hx : G.upper x i j = x ⟨(i, j), hij⟩ := by
     simp [G.upper, G.strictUpper, hij, ne_of_lt hij]
   rw [hx]; ring

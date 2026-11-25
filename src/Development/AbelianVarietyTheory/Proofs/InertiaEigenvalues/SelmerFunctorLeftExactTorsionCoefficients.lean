@@ -1,45 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.H1MapSubgroup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
 
 @[expose] public section
@@ -64,7 +26,7 @@ theorem mk_eq_zero_iff (z : Z1 ρ) :
 theorem mapH1_injective (u : M' →ₗ[R] M) (hu : ∀ g m, u (ρ' g m) = ρ g (u m)) (hinj : Function.Injective u)
     (h0 : ∀ m : M, (∀ g, ∃ m', ρ g m - m = u m') → ∃ m', m = u m') :
     Function.Injective (mapH1 ρ' ρ u continuous_of_discreteTopology hu) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨z, rfl⟩ := Submodule.Quotient.mk_surjective _ x
   obtain ⟨m, hm⟩ := (mk_eq_zero_iff ρ (cocycles1MapOfEquivariant ρ' ρ u continuous_of_discreteTopology hu z)).1 hx
@@ -148,9 +110,9 @@ theorem mem_selAll_bkCond {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Al
   · intro h
     refine ⟨fun v hv => ?_, fun v hv hv' => ?_⟩
     · have := h v
-      rwa [if_pos (show ((l : ℕ) : 𝓞 F) ∈ v.asIdeal from hv)] at this
+      rwa [ite_eq_left (show ((l : ℕ) : 𝓞 F) ∈ v.asIdeal from hv)] at this
     · have := h v
-      rwa [if_neg (show ¬ ((l : ℕ) : 𝓞 F) ∈ v.asIdeal from hv), if_neg hv'] at this
+      rwa [ite_eq_right (show ¬ ((l : ℕ) : 𝓞 F) ∈ v.asIdeal from hv), ite_eq_right hv'] at this
   · rintro ⟨h1, h2⟩ v
     split_ifs with a b
     · exact h1 v a

@@ -24,12 +24,12 @@ def gs (f : Y ⟶ X) (y : Y) (U : X.Opens) (a : Γ(X, U)) : Y.presheaf.stalk y :
 theorem gs_eq (f : Y ⟶ X) (y : Y) (U : X.Opens) (h : f y ∈ U) (a : Γ(X, U)) :
     gs f y U a = (Y.presheaf.germ (f ⁻¹ᵁ U) y h).hom ((f.app U).hom a) := by
   unfold gs
-  exact dif_pos h
+  exact dite_eq_left h
 
 theorem gs_unit (f : Y ⟶ X) (y : Y) (U : X.Opens) (h : f y ∈ U) (a : Γ(X, U)ˣ) : gs f y U a.val = (gm f y U a).val := by
   rw [gs_eq f y U h]
   unfold gm
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 theorem gs_mul (f : Y ⟶ X) (y : Y) (U : X.Opens) (h : f y ∈ U) (a b : Γ(X, U)) :
@@ -87,7 +87,7 @@ theorem exists_good (hL : L.IsLB) (z : Z) {K : Type} (ψ : K → (Z ⟶ X)) (j :
     · exact (hcov _).choose_spec
   · intro k
     dsimp only
-    rw [dif_pos ⟨k, rfl⟩]
+    rw [dite_eq_left ⟨k, rfl⟩]
     exact hc _ _ (Exists.choose_spec (⟨k, rfl⟩ : ∃ k', ψ k' = ψ k))
 
 variable {L} {K K' : Type} [Fintype K] [Fintype K']

@@ -20,8 +20,6 @@ def kapQ {R : Ranks} (h : HCParam R) (p q : ℕ) : Fin p ⊕ Fin q → ℚ :=
 
 def kapW {R : Ranks} (h : HCParam R) (p q : ℕ) : Fin p ⊕ Fin q → ℤ := fun a => ⌊kapQ h p q a⌋
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def wtOf (D : D7) (V : HSp D) (τ : D.what₂.Tau) : Fin (V.sig (tauE D τ)).1 ⊕ Fin (V.sig (tauE D τ)).2 → ℤ :=

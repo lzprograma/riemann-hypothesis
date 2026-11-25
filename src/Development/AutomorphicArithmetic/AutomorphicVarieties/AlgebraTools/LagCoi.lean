@@ -3,48 +3,8 @@ module
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.EqLagIff
 public import Mathlib.CategoryTheory.Category.Basic
 public import Mathlib.RingTheory.Idempotents
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Algebra.Polynomial.Div
 public import Mathlib.Algebra.Polynomial.RingDivision
 
@@ -107,7 +67,7 @@ theorem UpperTheory.V.AlgebraTools.lag_coi :
         exact isCoprime_X_sub_C_of_isUnit_sub (ha i j hij)
       · intro k _
         rw [dvd_iff_isRoot, IsRoot, eval_sub, eval_one, eval_finsetSum]
-        simp only [hLe, Finset.sum_ite_eq', Finset.mem_univ, if_true, sub_self]
+        simp only [hLe, Finset.sum_ite_eq', Finset.mem_univ, ite_true, sub_self]
     obtain ⟨g, hg⟩ := h1
     have h2 := congrArg (aeval P) hg
 
@@ -117,8 +77,8 @@ theorem UpperTheory.V.AlgebraTools.lag_coi :
   refine ⟨⟨⟨fun i => ?_, fun i j hij => ?_⟩, hsum⟩, hP, hq, hcomm⟩
   · show lag a P i * lag a P i = lag a P i
     have := hq (L i) i
-    rw [← hL, hLe, if_pos rfl, one_smul] at this
+    rw [← hL, hLe, ite_eq_left rfl, one_smul] at this
     exact this
   · have := hq (L i) j
-    rw [← hL, hLe, if_neg hij, zero_smul] at this
+    rw [← hL, hLe, ite_eq_right hij, zero_smul] at this
     exact this

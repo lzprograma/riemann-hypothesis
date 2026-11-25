@@ -129,35 +129,10 @@ theorem hasDerivAt_conj_exp_action {ε : Fin n → Bool} {σ : Matrix (Fin n) (F
 
 end Rep
 
-private theorem exists_inG_add_I_smul_inG (ε : Fin n → Bool) (X : Matrix (Fin n) (Fin n) ℂ) :
-    ∃ A B : Matrix (Fin n) (Fin n) ℂ, inG ε A ∧ inG ε B ∧ X = A + Complex.I • B := by
-  have hJ : Jm ε * Jm ε = 1 := _root_.ReciprocityTheory.ChartRestriction.DS.S7.Jm_mul_self ε
-  have hJh : (Jm ε)ᴴ = Jm ε := _root_.ReciprocityTheory.ChartRestriction.DS.S7.Jm_conjTranspose ε
-  refine ⟨(1 / 2 : ℂ) • (X - Jm ε * Xᴴ * Jm ε), (1 / (2 * Complex.I)) • (X + Jm ε * Xᴴ * Jm ε),
-    ?_, ?_, ?_⟩
-  · apply _root_.ReciprocityTheory.ChartRestriction.DS.SmDerA.inG_of_J
-    simp only [Matrix.conjTranspose_smul, Matrix.conjTranspose_sub, Matrix.conjTranspose_mul, hJh,
-      Matrix.conjTranspose_conjTranspose, Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_sub,
-      Matrix.sub_mul, Matrix.mul_assoc, hJ, Matrix.mul_one, Jm_mul_Jm_mul_eq]
-    rw [show star (1 / 2 : ℂ) = 1 / 2 by simp, ← smul_neg, neg_sub]
-  · apply _root_.ReciprocityTheory.ChartRestriction.DS.SmDerA.inG_of_J
-    simp only [Matrix.conjTranspose_smul, Matrix.conjTranspose_add, Matrix.conjTranspose_mul, hJh,
-      Matrix.conjTranspose_conjTranspose, Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_add,
-      Matrix.add_mul, Matrix.mul_assoc, hJ, Matrix.mul_one, Jm_mul_Jm_mul_eq]
-    have hc : star (1 / (2 * Complex.I)) = -(1 / (2 * Complex.I)) := by
-      simp [Complex.conj_I]
-    rw [hc, neg_smul, add_comm (Jm ε * (Xᴴ * Jm ε)) X]
-  · have hI : Complex.I * (1 / (2 * Complex.I)) = 1 / 2 := by
-      rw [mul_one_div, mul_comm 2 Complex.I, ← div_div, div_self Complex.I_ne_zero]
-    have h2 : X - Jm ε * Xᴴ * Jm ε + (X + Jm ε * Xᴴ * Jm ε) = (2 : ℂ) • X := by
-      rw [two_smul]; abel
-    rw [smul_smul, hI, ← smul_add, h2, smul_smul]
-    norm_num
-
 theorem b3a : MatrixCoeffConjugationMove := by
   intro n ε H _ _ σ w hσ hw g hg X
   have hφ : ∀ Y, phiW ε σ w Y = ((actM (smE ε σ) Y ⟨w, hw⟩ : smD ε σ) : H) := fun Y => by
-    simp only [phiW, dif_pos hw]
+    simp only [phiW, dite_eq_left hw]
   have hlin : ∀ (Y Z : Matrix (Fin n) (Fin n) ℂ) (c : ℂ),
       ((actM (smE ε σ) (Y + c • Z) ⟨w, hw⟩ : smD ε σ) : H) =
         ((actM (smE ε σ) Y ⟨w, hw⟩ : smD ε σ) : H) +
@@ -173,7 +148,8 @@ theorem b3a : MatrixCoeffConjugationMove := by
   have key : ∀ Y, inG ε Y → ⟪w, σ g ((actM (smE ε σ) Y ⟨w, hw⟩ : smD ε σ) : H)⟫_ℂ =
       -⟪((actM (smE ε σ) (g * Y * g⁻¹) ⟨w, hw⟩ : smD ε σ) : H), σ g w⟫_ℂ :=
     fun Y hY => derived_action_skew_adjoint hσ hw (inG_conj_unitary hg hY) (hasDerivAt_conj_exp_action hσ hw hg hY)
-  obtain ⟨A, B, hA, hB, rfl⟩ := exists_inG_add_I_smul_inG ε X
+  obtain ⟨A, B, hA, hB, rfl⟩ : ∃ A B, inG ε A ∧ inG ε B ∧ X = A + Complex.I • B :=
+    ⟨_, _, SmDerA.inG_cpart1 ε X, SmDerA.inG_cpart2 ε X, SmDerA.cpart_decomp ε X⟩
   have hconj : g * (A + Complex.I • B) * g⁻¹ = g * A * g⁻¹ + Complex.I • (g * B * g⁻¹) := by
     rw [Matrix.mul_add, Matrix.add_mul, Matrix.mul_smul, Matrix.smul_mul]
   rw [hconj, conj_involution_complex_comb (inG_conj_unitary hg hA) (inG_conj_unitary hg hB), hφ, hφ, hlin, hlin, hneg,

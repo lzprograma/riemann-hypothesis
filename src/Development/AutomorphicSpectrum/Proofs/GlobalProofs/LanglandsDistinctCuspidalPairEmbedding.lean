@@ -15,48 +15,8 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JhMultSubAddQuot
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PiExteriorTensorSmoothIrreducibleIsIrreducible
 public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.EqOfSubsingletonStep
 public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSubquotientCompMulSingle
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -78,117 +38,8 @@ theorem cell_antidiag (d : Fin 2 → ℕ) (σ : ∀ i, Irr k (d i))
     (h00 : b.1 0 0 = 0) (h11 : b.1 1 1 = 0) :
     ∃ (f : ∀ i, (Σ j, Fin (b.1 i j)) ≃ Fin (d i)) (g : ∀ j, (Σ i, Fin (b.1 i j)) ≃ Fin (d (Equiv.swap 0 1 j))),
       Nonempty ((cellFunctor f g (piTensor fun i => (σ i).π)).Equiv
-        (piTensor fun j => (σ (Equiv.swap 0 1 j)).π)) := by
-  have r0 := b.2.1 0
-  have r1 := b.2.1 1
-  have c0 := b.2.2 0
-  have c1 := b.2.2 1
-  simp only [Fin.sum_univ_two, Fintype.card_fin, Equiv.swap_apply_left, Equiv.swap_apply_right] at r0 r1 c0 c1
-  have hrz : ∀ i j, j ≠ Equiv.swap 0 1 i → b.1 i j = 0 := by
-    intro i j hj
-    fin_cases i <;> fin_cases j <;> first | exact absurd (by decide) hj | assumption
-  have hcz : ∀ j i, i ≠ Equiv.swap 0 1 j → b.1 i j = 0 := by
-    intro j i hi
-    fin_cases i <;> fin_cases j <;> first | exact absurd (by decide) hi | assumption
-  have hrf : ∀ i, b.1 i (Equiv.swap 0 1 i) = d i := by
-    intro i
-    fin_cases i <;> simp <;> omega
-  have hcf : ∀ j, b.1 (Equiv.swap 0 1 j) j = d (Equiv.swap 0 1 j) := by
-    intro j
-    fin_cases j <;> simp <;> omega
-  let f : ∀ i, (Σ j, Fin (b.1 i j)) ≃ Fin (d i) := fun i =>
-    valEquiv (Equiv.swap 0 1 i) (hrf i) (fun j hj => hrz i j hj)
-  let g : ∀ j, (Σ i, Fin (b.1 i j)) ≃ Fin (d (Equiv.swap 0 1 j)) := fun j =>
-    valEquiv (Equiv.swap 0 1 j) (hcf j) (fun i hi => hcz j i hi)
-  refine ⟨f, g, ?_⟩
-  have hbot : twKer (piTensor fun i => (σ i).π) (relUnip k f) 1 = ⊥ := by
-    refine eq_bot_iff.2 (Submodule.span_le.2 ?_)
-    rintro _ ⟨n, v, rfl⟩
-    have : (n : Levi k (fun i => Fin (d i))) = 1 := funext fun i =>
-      eq_one_of_mem_unipRad_single (f i) (Equiv.swap 0 1 i) (fun j hj => hrz i j hj) (n.2 i trivial)
-    simp [this]
-  have hδ : ∀ z, relDeltaHalf k (fun i j => Fin (b.1 i j)) z = 1 := fun z => by
-    rw [relDeltaHalf_apply]
-    exact Finset.prod_eq_one fun i _ =>
-      deltaHalf_eq_one_of_single (Equiv.swap 0 1 i) (fun j hj => hrz i j hj) (z i)
-  have hδ' : ∀ z, relDeltaHalf k (fun j i => Fin (b.1 i j)) z = 1 := fun z => by
-    rw [relDeltaHalf_apply]
-    exact Finset.prod_eq_one fun j _ =>
-      deltaHalf_eq_one_of_single (Equiv.swap 0 1 j) (fun i hi => hcz j i hi) (z j)
-  have hP : ∀ x, x ∈ relParab k g := fun x j _ =>
-    mem_parab_of_single (g j) (Equiv.swap 0 1 j) (fun i hi => hcz j i hi) (x j)
-  have hγ : ∀ (p : relParab k g) j,
-      relEmb k f (swapBlocks k (fun i j => Fin (b.1 i j)) (relProj k g p)) (Equiv.swap 0 1 j) =
-        (p : Levi k (fun j => Fin (d (Equiv.swap 0 1 j)))) j := by
-    intro p j
-    rw [relEmb_apply]
-    refine Units.ext (Matrix.ext fun x y => ?_)
-    obtain ⟨⟨a, t⟩, rfl⟩ := (f (Equiv.swap 0 1 j)).surjective x
-    obtain ⟨⟨a', s⟩, rfl⟩ := (f (Equiv.swap 0 1 j)).surjective y
-    have ha : a = j := by
-      by_contra hne
-      have h1 := hrz (Equiv.swap 0 1 j) a (by rwa [Equiv.swap_apply_self])
-      have h2 := t.2
-      omega
-    have ha' : a' = j := by
-      by_contra hne
-      have h1 := hrz (Equiv.swap 0 1 j) a' (by rwa [Equiv.swap_apply_self])
-      have h2 := s.2
-      omega
-    subst ha
-    subst ha'
-    rw [leviEmb_apply_same]
-    rfl
-
-  have hsm : IsSmooth (piTensor fun j => (σ (Equiv.swap 0 1 j)).π) :=
-    isSmooth_piTensor fun j => (σ (Equiv.swap 0 1 j)).smooth
-  let R := PiTensorProduct.reindex ℂ (fun i => (σ i).V) (Equiv.swap 0 1)
-  let Ψ : (⨂[ℂ] j, (σ (Equiv.swap 0 1 j)).V) ≃ₗ[ℂ]
-      Jacquet (piTensor fun i => (σ i).π) (relUnip k f) :=
-    R.symm.trans (Submodule.quotEquivOfEqBot _ hbot).symm
-  have hΨ : ∀ u, Ψ u = Submodule.Quotient.mk (R.symm u) := fun u => rfl
-  let τ := (twist ((relJac f (piTensor fun i => (σ i).π)).comp (swapBlocks k (fun i j => Fin (b.1 i j))))
-        (relDeltaHalf k (fun j i => Fin (b.1 i j)))).comp (relProj k g)
-  have law : ∀ (p : relParab k g) u, τ p (Ψ u) =
-        Ψ ((piTensor fun j => (σ (Equiv.swap 0 1 j)).π) p u) := by
-    intro p u
-    rw [MonoidHom.comp_apply, twist_apply, MonoidHom.comp_apply, hΨ, relJac_mk, hδ, hδ', hΨ]
-    simp only [inv_one, Units.val_one, one_smul]
-    congr 1
-    apply R.injective
-    rw [reindex_piTensor σ _ (p : Levi k (fun j => Fin (d (Equiv.swap 0 1 j)))) (hγ p)]
-    exact (congrArg (fun w => (piTensor fun j => (σ (Equiv.swap 0 1 j)).π)
-      (p : Levi k (fun j => Fin (d (Equiv.swap 0 1 j)))) w) (R.apply_symm_apply u)).trans
-        (R.apply_symm_apply _).symm
-  let F : (piTensor fun j => (σ (Equiv.swap 0 1 j)).π).IntertwiningMap
-      (cellFunctor f g (piTensor fun i => (σ i).π)) :=
-    { toFun := fun u => ⟨⟨fun x => Ψ ((piTensor fun j => (σ (Equiv.swap 0 1 j)).π) x u), fun p x => by
-          show Ψ ((piTensor fun j => (σ (Equiv.swap 0 1 j)).π) (↑p * x) u) = _
-          rw [map_mul, Module.End.mul_apply]
-          exact (law p _).symm⟩,
-        mem_smoothPart_of_nhds (Filter.mem_of_superset ((hsm u).mem_nhds (by simp)) fun x hx => by
-          have hx' : (piTensor fun j => (σ (Equiv.swap 0 1 j)).π) x u = u := hx
-          refine Subtype.ext (funext fun y => ?_)
-          show Ψ ((piTensor fun j => (σ (Equiv.swap 0 1 j)).π) (y * x) u) =
-            Ψ ((piTensor fun j => (σ (Equiv.swap 0 1 j)).π) y u)
-          rw [map_mul, Module.End.mul_apply, hx'])⟩
-      map_add' := fun u w => Subtype.ext (Subtype.ext (funext fun x => by simp))
-      map_smul' := fun c u => Subtype.ext (Subtype.ext (funext fun x => by simp))
-      isIntertwining' := fun h => LinearMap.ext fun u => Subtype.ext (Subtype.ext (funext fun x => by
-        show Ψ ((piTensor fun j => (σ (Equiv.swap 0 1 j)).π) x
-            ((piTensor fun j => (σ (Equiv.swap 0 1 j)).π) h u)) =
-          Ψ ((piTensor fun j => (σ (Equiv.swap 0 1 j)).π) (x * h) u)
-        rw [map_mul, Module.End.mul_apply])) }
-  refine ⟨(LocGL.equivOfBijective F ⟨fun u w hw => ?_, fun φ => ⟨Ψ.symm (φ.1.1 1),
-    Subtype.ext (Subtype.ext (funext fun x => ?_))⟩⟩).symm⟩
-  · have h1 : Ψ ((piTensor fun j => (σ (Equiv.swap 0 1 j)).π) 1 u) =
-        Ψ ((piTensor fun j => (σ (Equiv.swap 0 1 j)).π) 1 w) := congrArg (fun φ => φ.1.1 1) hw
-    simpa using h1
-  · show Ψ ((piTensor fun j => (σ (Equiv.swap 0 1 j)).π) x (Ψ.symm (φ.1.1 1))) = φ.1.1 x
-    refine (law ⟨x, hP x⟩ (Ψ.symm (φ.1.1 1))).symm.trans ?_
-    refine (congrArg (τ ⟨x, hP x⟩) (Ψ.apply_symm_apply (φ.1.1 1))).trans ?_
-    refine (φ.1.2 ⟨x, hP x⟩ 1).symm.trans ?_
-    exact congrArg φ.1.1 (mul_one x)
+        (piTensor fun j => (σ (Equiv.swap 0 1 j)).π)) :=
+  GlobalTheory.OneBlockCell.cellFunctor_swap_equiv_of_antidiag k d σ b h00 h11
 
 theorem row_unique (hG : GeometricLemma) {d d' : Fin 2 → ℕ} (σ : ∀ i, Irr k (d i))
     (hσ : ∀ i, IsCuspidal (σ i).π) {b : Fin 2 → Fin 2 → ℕ}

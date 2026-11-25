@@ -87,7 +87,7 @@ variable {V : HSpace E} (Φ : WittFrame V)
 
 theorem linearIndependent_e : LinearIndependent E Φ.e :=
   LinearIndependent.of_pairwise_dual_eq_zero_one _ (fun j => V.hT (Φ.f j))
-    (fun j i h => (Φ.ef i j).trans (if_neg h.symm)) fun i => (Φ.ef i i).trans (if_pos rfl)
+    (fun j i h => (Φ.ef i j).trans (ite_eq_right h.symm)) fun i => (Φ.ef i i).trans (ite_eq_left rfl)
 
 def flag0 : IsoFlag V := .ofVectors Φ.e Φ.linearIndependent_e Φ.ee
 
@@ -116,7 +116,7 @@ theorem coef_eq_zero (i : Fin (wittIndex V)) {y : Fin V.rank → R ⊗[F] E}
   rintro _ ⟨x, hx, rfl⟩
   have : V.hT (Φ.f i) x = 0 := (Submodule.span_le (p := LinearMap.ker (V.hT (Φ.f i)))).2 (by
     rintro _ ⟨j, hj, rfl⟩
-    exact (Φ.ef j i).trans (if_neg (Fin.ne_of_val_ne (ne_of_lt hj)))) hx
+    exact (Φ.ef j i).trans (ite_eq_right (Fin.ne_of_val_ne (ne_of_lt hj)))) hx
   exact (Φ.coef_coordR hc R i x).trans (by rw [HSpace.hD, this, map_zero])
 
 theorem sub_coef_mem (i : Fin (wittIndex V)) {y : Fin V.rank → R ⊗[F] E}
@@ -144,7 +144,7 @@ theorem sub_coef_mem (i : Fin (wittIndex V)) {y : Fin V.rank → R ⊗[F] E}
 
 def chi (i : Fin (wittIndex V)) : Φ.flag0.par hc R →* R ⊗[F] E where
   toFun p := Φ.coef hc R i (act hc V p.1 (coordR V R (Φ.e i)))
-  map_one' := by rw [OneMemClass.coe_one, IndefiniteRowSideFullHecke.AdelicUnitaryGroups.act_one, coef_coordR, Φ.ef, if_pos rfl, map_one]
+  map_one' := by rw [OneMemClass.coe_one, IndefiniteRowSideFullHecke.AdelicUnitaryGroups.act_one, coef_coordR, Φ.ef, ite_eq_left rfl, map_one]
   map_mul' p q := by
     have he : coordR (F := F) V R (Φ.e i) ∈ extSub (F := F) V R (Φ.flag0.X i.succ) :=
       coordR_mem V R (Submodule.subset_span ⟨i, Nat.lt_succ_self _, rfl⟩)
@@ -174,8 +174,6 @@ def IsSSClass {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E} (�
     𝔬 = {γ | ∃ s : GRat σ J, IsSSPart γ.1.1 s.1.1 ∧ IsConj δ s}
 
 end General
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {V : HSp D} (Φ : WittFrame V) (K : Subgroup (GA D V))
 
@@ -212,10 +210,6 @@ def weight (𝔞 : Submodule ℝ (A0 (wittIndex V))) (T : A0 (wittIndex V)) (x :
 def volA (𝔞 : Submodule ℝ (A0 (wittIndex V))) (I : Subgroup (GA D V)) (dt : Measure I) : ℝ :=
   (quotMeasure ((GQ V).subgroupOf I) dt).real {q | ‖𝔞.starProjection (H0 Φ K (q.out : I))‖ < 1} /
     (volume : Measure (aMQ 𝔞 ∅)).real (Metric.ball 0 1)
-
-def IsMinLevi (γ : GF V) (P : Finset (SV (wittIndex V))) : Prop :=
-  IsPar P ∧ rat V γ ∈ Φ.levi D.sp.cm (AF D.host.F) P ∧
-    ∀ (g : GF V) P', IsPar P' → rat V (g * γ * g⁻¹) ∈ Φ.levi D.sp.cm (AF D.host.F) P' → P'.card ≤ P.card
 
 end GlobalTheory.TruncKer
 

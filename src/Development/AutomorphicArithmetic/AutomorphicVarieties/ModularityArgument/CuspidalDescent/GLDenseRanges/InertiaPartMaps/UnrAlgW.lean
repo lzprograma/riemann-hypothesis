@@ -136,7 +136,7 @@ private theorem cond_core {Λ B : Type} [CommRing Λ] [IsDomain Λ] [IsIntegrall
   let ι : Λ →+* FractionRing (B ⧸ Q) :=
     (algebraMap (B ⧸ Q) (FractionRing (B ⧸ Q))).comp ((Ideal.Quotient.mk Q).comp φ)
   have h0 : Function.Injective ((Ideal.Quotient.mk Q).comp φ) := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     by_contra hx0
     exact hc x hx0 (Ideal.Quotient.eq_zero_iff_mem.1 hx)
@@ -675,7 +675,7 @@ private theorem ext_integral {R S K : Type} [CommRing R] [CommRing S] [Field K] 
     rw [hQc'] at ha
     exact ha)
   have hφ' : Function.Injective φ' := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective x
     rw [Ideal.Quotient.eq_zero_iff_mem, hQc']
@@ -758,16 +758,8 @@ private lemma aeval_actL {O Λ B : Type} [CommRing O] [CommRing Λ] [CommRing B]
     (lam : Λ →ₐ[O] B) (M : Type) [AddCommGroup M] [Module B M] [Module Λ M]
     (hs : ∀ (a : Λ) (m : M), a • m = lam a • m) (t : B) (p : Λ[X]) (m : M) :
     (aeval (actL lam M hs t) p) m = (p.eval₂ (lam : Λ →+* B) t) • m := by
-  induction p using Polynomial.induction_on generalizing m with
-  | C a =>
-    rw [aeval_C, eval₂_C, Module.algebraMap_end_apply]
-    exact hs a m
-  | add p q hp hq =>
-    rw [map_add (f := _), LinearMap.add_apply, hp, hq, eval₂_add, add_smul]
-  | monomial n a ih =>
-    have e : (C a * X ^ (n + 1) : Λ[X]) = (C a * X ^ n) * X := by rw [pow_succ, mul_assoc]
-    rw [e, map_mul, aeval_X, Module.End.mul_apply, ih, eval₂_mul (p := C a * X ^ n) (q := X), eval₂_X, mul_smul]
-    rfl
+  intros
+  refine (@_root_.UpperTheory.V.J.act_eval ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_).symm <;> first | assumption | infer_instance
 
 private lemma dvd_of_aeval {Λ M : Type} [CommRing Λ] [IsDomain Λ] [AddCommGroup M] [Module Λ M]
     [Module.Free Λ M] [Module.Finite Λ M] (T : Module.End Λ M) (g q : Λ[X]) (hm : g.Monic)
@@ -893,7 +885,7 @@ private theorem finite_setOf_nat_polynomial_collision {F : Type*} [Field F] [Cha
     rw [Finset.sum_eq_single j]
     · simp
     · intro i _ hij
-      rw [if_neg]
+      rw [ite_eq_right]
       exact fun h => hij (Fin.ext h).symm
     · simp
   have hsub : {s : ℕ | ∃ v ∈ T, ∃ w ∈ T, v ≠ w ∧
@@ -1281,8 +1273,7 @@ private lemma num_core {s : ℕ} (k m : Fin s → ℕ) (N : ℕ) (hm : ∀ i, 1 
     · simp [h0]
     · exact Nat.mul_le_mul_right _ (hle i hp)
   have h2 : ∑ i, k i ≤ 1 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have : N * 2 ≤ N * ∑ i, k i := Nat.mul_le_mul_left _ hc
     omega
   have h3 : k i0 ≤ ∑ i, k i := Finset.single_le_sum (fun i _ => Nat.zero_le _) (Finset.mem_univ i0)
@@ -1396,8 +1387,7 @@ theorem UpperTheory.V.Z.Desc.V0.unrAlgW :
     obtain ⟨y, hy𝒢, hyd, hye⟩ : ∃ y ∈ 𝒢,
         y ((derivative (g i)).eval₂ (lam : Λ →+* B) t) ≠ 0 ∧
           y ((∏ j ∈ Finset.univ.erase i, g j).eval₂ (lam : Λ →+* B) t) ≠ 0 := by
-      by_contra hno
-      push_neg at hno
+      by_contra! hno
       have hmem : (derivative (g i)).eval₂ (lam : Λ →+* B) t * b₀ ∈ UpperTheory.V.J.cmp lam J t g i := by
         rw [UpperTheory.V.J.mem_cmp, mul_right_comm]
         apply hG0

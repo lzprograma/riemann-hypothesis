@@ -239,8 +239,6 @@ open GlobalTheory.Poinc.Sep
 
 open GlobalTheory.Poinc.Tors
 
-theorem _root_.GlobalTheory.T.formal_points_abelian_parts_multiply : ∀ (V : Type) [CommRing V] [IsDomain V] [IsLocalRing V], IsCN V → ∀ (D : DegData V (maximalIdeal V)) (A : PolAV (Sp (FractionRing V))) (G : Over (Sp V)) [GrpObj G] [IsCommMonObj G], IsSemiAbelian G → ∀ (U : Unif (maximalIdeal V) D A G), ∀ (h h' : (𝟙_ (Over (Sp V))) ⟶ G) (g g' g'' : GtPt D.toPre (𝟙_ (Over (Sp V)))), GlobalTheory.IndefiniteRowSideFullHecke.FlatIsoUnitGenerator.FormalEq U.toUnifPre h g → GlobalTheory.IndefiniteRowSideFullHecke.FlatIsoUnitGenerator.FormalEq U.toUnifPre h' g' → GlobalTheory.IndefiniteRowSideFullHecke.FlatIsoUnitGenerator.FormalEq U.toUnifPre (h * h') g'' → g''.b = g.b * g'.b := by
-  first | exact @GlobalTheory.Poinc.Sep.FormalMul.b_mul
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalPointsAbelianPartsMultiplyStatement =====
@@ -253,7 +251,6 @@ section -- clump:auto
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.CoordLinear
 
@@ -687,8 +684,6 @@ open GlobalTheory.Poinc.Sep
 
 open GlobalTheory.Poinc.Tors
 
-set_option backward.isDefEq.respectTransparency false
-
 namespace GlobalTheory.GenericCube
 
 theorem exists_iso_section {X H Y : Scheme.{0}} {L : LB X} {M : LB H} {f : Y ⟶ H} {ψ : Y ⟶ X} (g : H ⟶ Y)
@@ -835,8 +830,6 @@ open GlobalTheory.Poinc.Sep
 
 open GlobalTheory.Poinc.Tors
 
-theorem _root_.GlobalTheory.T.uniformisation_sections_extending_points_multiply : ∀ (V : Type) [CommRing V] [IsDomain V] [IsLocalRing V], IsCN V → ∀ (D : DegData V (maximalIdeal V)) (A : PolAV (Sp (FractionRing V))) (G : Over (Sp V)) [GrpObj G] [IsCommMonObj G], IsSemiAbelian G → ∀ (U : Unif (maximalIdeal V) D A G), ∀ (x x' : TFK (R := V) (FractionRing V) ⟶ A.A) (h h' h'' : (𝟙_ (Over (Sp V))) ⟶ G), IntTerm.Ext U.toUnifPre x h → IntTerm.Ext U.toUnifPre x' h' → IntTerm.Ext U.toUnifPre (x * x') h'' → h'' = h * h' := by
-  first | exact @GlobalTheory.Poinc.Tors.ext_mul
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisationSectionsExtendingPointsMultiplyStatement =====
@@ -879,8 +872,8 @@ theorem cube_of_liesOver : ∀ (V : Type) [CommRing V] [IsDomain V] [IsLocalRing
   choose h g' f t hF hE hP hf ht hT using fun S => _root_.GlobalTheory.Poinc.Sep.LiesData.exists_data V hV D A G hG U w₀ hw₀ N hN (g S) (w S) (x S) (e S)
     (hS S).1 (hS S).2.1 (hS S).2.2.1 (hS S).2.2.2
   have hm : ∀ S T S', x S' = x S * x T → h S' = h S * h T ∧ (g' S').b = (g' S).b * (g' T).b := fun S T S' hx => by
-    have a := GlobalTheory.T.uniformisation_sections_extending_points_multiply V hV D A G hG U (x S) (x T) (h S) (h T) (h S') (hE S) (hE T) (hx ▸ hE S')
-    exact ⟨a, GlobalTheory.T.formal_points_abelian_parts_multiply V hV D A G hG U (h S) (h T) (g' S) (g' T) (g' S') (hF S) (hF T) (a ▸ hF S')⟩
+    have a := GlobalTheory.Poinc.Tors.ext_mul V hV D A G hG U (x S) (x T) (h S) (h T) (h S') (hE S) (hE T) (hx ▸ hE S')
+    exact ⟨a, GlobalTheory.Poinc.Sep.FormalMul.b_mul V hV D A G hG U (h S) (h T) (g' S) (g' T) (g' S') (hF S) (hF T) (a ▸ hF S')⟩
   have m₀ := hm ∅ ∅ ∅ (by rw [hx₀, _root_.mul_one])
   have m₁ := hm _ _ _ hx₁
   have m₂ := hm _ _ _ hx₂

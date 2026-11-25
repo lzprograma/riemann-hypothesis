@@ -46,8 +46,6 @@ namespace GlobalTheory.IndefiniteRowSideFullHecke.WittIndexParallel
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def ParallelSig {D : D7} (V : HSp D) (p q : ℕ) : Prop :=
   ∀ τ : D.host.E →+* ℂ, Formalism.UG.HasSignature (V.gram.map τ) p q
 

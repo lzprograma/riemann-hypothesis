@@ -6,54 +6,13 @@ public import Mathlib.Order.CompletePartialOrder
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
 public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
 public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsReducedIsNormalSchemeIsLocallyNoetherianOfSmoo
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Definitions.Divisors.IsGaloisCover
 import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CoeEqAlgebraMapZeroEquiv
 
 @[expose] public section
 
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.HodgeCoh GlobalTheory.CechDR KaehlerDifferential GlobalTheory.W1
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -66,7 +25,7 @@ theorem irreducibleComponent_eq_closure (Z : Scheme.{0})
     {x : Z} (hx : x ∈ C) :
     haveI := hdom x
     C = closure {Z.fromSpecStalk x (genericPoint (Spec (Z.presheaf.stalk x)))} := by
-  haveI := hdom x
+  have := hdom x
   set ξ := Z.fromSpecStalk x (genericPoint (Spec (Z.presheaf.stalk x)))
   have hCc : IsClosed C := isClosed_of_mem_irreducibleComponents C hC
   have hgen : IsGenericPoint hC.1.genericPoint C := by
@@ -101,7 +60,7 @@ theorem main : ∀ (Z : Scheme.{0}) (s : Z ⟶ Sp ℂ) (d : ℕ) [SmoothOfRelati
   have hdom : ∀ x : Z, IsDomain (Z.presheaf.stalk x) := fun x ↦
     (forall_isDomain_and_isIntegrallyClosed_stalk_of_smooth s
       (isDomain_and_isIntegrallyClosed_stalk_Sp ℂ) x).1
-  haveI : IsNoetherian Z := ⟨⟩
+  have : IsNoetherian Z := ⟨⟩
   have hfin : (irreducibleComponents Z).Finite := finite_irreducibleComponents_of_isNoetherian
   have disj : ∀ C ∈ irreducibleComponents Z, ∀ D ∈ irreducibleComponents Z, C ≠ D →
       Disjoint C D := by
@@ -117,7 +76,7 @@ theorem main : ∀ (Z : Scheme.{0}) (s : Z ⟶ Sp ℂ) (d : ℕ) [SmoothOfRelati
     intro C hC
     have hc : Cᶜ = ⋃ D ∈ irreducibleComponents Z \ {C}, D := by
       ext x
-      simp only [Set.mem_compl_iff, Set.mem_iUnion, Set.mem_diff, Set.mem_singleton_iff,
+      simp only [Set.mem_compl_iff, Set.mem_iUnion, Set.mem_sdiff, Set.mem_singleton_iff,
         exists_prop]
       constructor
       · intro hx
@@ -126,8 +85,8 @@ theorem main : ∀ (Z : Scheme.{0}) (s : Z ⟶ Sp ℂ) (d : ℕ) [SmoothOfRelati
       · rintro ⟨D, ⟨hD, hne⟩, hxD⟩ hxC
         exact Set.disjoint_left.mp (disj D hD C hC hne) hxD hxC
     rw [← isClosed_compl_iff, hc]
-    exact (hfin.subset Set.diff_subset).isClosed_biUnion fun D hD ↦ isClosed_of_mem_irreducibleComponents D hD.1
-  letI : Fintype (irreducibleComponents Z) := hfin.fintype
+    exact (hfin.subset Set.sdiff_subset).isClosed_biUnion fun D hD ↦ isClosed_of_mem_irreducibleComponents D hD.1
+  let : Fintype (irreducibleComponents Z) := hfin.fintype
   refine ⟨irreducibleComponents Z, inferInstance, fun C ↦ ⟨C.1, hopen C.1 C.2⟩, ?_, ?_, ?_⟩
   · intro i j hij
     apply Opens.ext
@@ -139,10 +98,10 @@ theorem main : ∀ (Z : Scheme.{0}) (s : Z ⟶ Sp ℂ) (d : ℕ) [SmoothOfRelati
     exact ⟨⟨C, hC⟩, hxC⟩
   · intro C
     have hirr : IsIrreducible C.1 := C.2.1
-    haveI : IrreducibleSpace (C.1 : Set Z) := Subtype.irreducibleSpace hirr
+    have : IrreducibleSpace (C.1 : Set Z) := Subtype.irreducibleSpace hirr
     let U : Z.Opens := ⟨C.1, hopen C.1 C.2⟩
     change IsIntegral U.toScheme
-    haveI : IrreducibleSpace U.toScheme := this
+    have : IrreducibleSpace U.toScheme := this
     exact isIntegral_of_irreducibleSpace_of_isReduced _
 
 end GlobalTheory.SmoothComponents

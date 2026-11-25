@@ -43,7 +43,7 @@ theorem exists_ball_n {n : ℕ} {A : AddSubgroup (Fin n → k)} (hA : IsCompact 
   have hU : (ball n (1 : kˣ) : Set (Fin n → k)) ∈ nhds (0 : Fin n → k) :=
     Filter.mem_of_superset (pi_lt_mem_nhds (n := n) (γ := 1) one_ne_zero) fun x hx i => by
       have h := hx i (Set.mem_univ i); simp only [Set.mem_ofPred_eq] at h; simpa using h.le
-  obtain ⟨l, hl⟩ := GlobalTheory.T.compact_scaled_into_nhds k n _ hA _ hU ϖ hϖ1
+  obtain ⟨l, hl⟩ := GlobalTheory.CompanionTheory.CompactScaling.exists_pow_smul_mem k n _ hA _ hU ϖ hϖ1
   have hpl : ϖ ^ l ≠ 0 := pow_ne_zero _ hϖ0
   have hne : valuation k (ϖ ^ l) ≠ 0 := (ne_zero_iff _).2 hpl
   refine ⟨Units.mk0 ((ϖ ^ l)⁻¹) (inv_ne_zero hpl), fun x hx i => ?_⟩
@@ -55,7 +55,7 @@ theorem exists_ball_n {n : ℕ} {A : AddSubgroup (Fin n → k)} (hA : IsCompact 
 
 theorem ann_isLat {ψ : Ch k} (hψ : Continuous ψ) (hψ1 : ψ ≠ 1) {m : ℕ} {A : Sub1 k m} (hA : IsLat A) :
     IsLat (ann ψ A) :=
-  let ⟨h1, h2⟩ := GlobalTheory.T.annihilator_open_compact k ψ hψ hψ1 (m + 1) A hA.1 hA.2; ⟨h2, h1⟩
+  let ⟨h1, h2⟩ := GlobalTheory.CompanionTheory.CharPerp.perp_isOpen_isCompact k ψ hψ hψ1 (m + 1) A hA.1 hA.2; ⟨h2, h1⟩
 
 theorem vmv_sq {m : ℕ} (η : V1 k m) :
     vecMulVec (xi0 k m) η * vecMulVec (xi0 k m) η = η (last m) • vecMulVec (xi0 k m) η := by
@@ -152,7 +152,7 @@ theorem sum_char {ψ : Ch k} (hψ : Continuous ψ) (hψ1 : ψ ≠ 1) {m : ℕ} {
   split_ifs with huA
   · rw [sum_congr rfl (g := fun _ => (1 : ℂ)) fun η hη => by simp [pc, hR.1 η hη u huA], sum_const,
       nsmul_eq_mul, mul_one]
-  · obtain ⟨η₀, hη₀A, hη₀u⟩ := GlobalTheory.T.exists_character_separating_lattice k ψ hψ hψ1 (m + 1) A hA.1 hA.2 u huA
+  · obtain ⟨η₀, hη₀A, hη₀u⟩ := GlobalTheory.CompanionTheory.CharacterBiduality.exists_annihilator_ne k ψ hψ hψ1 (m + 1) A hA.1 hA.2 u huA
     refine sum_transversal_char (ann_anti hAA) hR.1 hR.2 (fun η => cJ (pc ψ (η ⬝ᵥ u)))
       (fun a b => by rw [pc, pc, pc, add_dotProduct, AddChar.map_add_eq_mul, Circle.coe_mul, map_mul])
       (fun d hd => by simp [pc, hd u hu]) hη₀A (fun hc => hη₀u <| Circle.coe_inj.1 <| by
@@ -162,7 +162,7 @@ theorem exists_tr_le {n : ℕ} (C D : AddSubgroup (Fin n → k)) (hC : IsCompact
     (hD : IsOpen (D : Set (Fin n → k))) (hDC : D ≤ C) :
     ∃ T : Finset (Fin n → k), IsTr C D T ∧ T.card = D.relIndex C := by
   obtain ⟨T, hT1, hT2⟩ := GlobalTheory.T.exists_coset_reps_open_in_compact (Fin n → k) C D hC hD hDC
-  exact ⟨T, ⟨hT1, hT2⟩, GlobalTheory.T.card_coset_reps_eq_relIndex _ C D T hDC hT1 hT2⟩
+  exact ⟨T, ⟨hT1, hT2⟩, GlobalTheory.T.card_coset_reps_eq_relIndex _ C D T hT1 hT2⟩
 
 theorem det_scal (m : ℕ) (z : kˣ) :
     GeneralLinearGroup.det (Units.map (algebraMap k (M1 k m)).toMonoidHom z) = z ^ (m + 1) := by
@@ -199,9 +199,9 @@ theorem avg_decomp (hψ : Continuous ψ) (hψ1 : ψ ≠ 1) (hπ : IsSmooth π) (
     simp only [f, pc, dotProduct_add, AddChar.map_add_eq_mul, hHξ d hd, mul_one, colEl_add, map_mul, mul_apply_eq_comp,
       hHv d hd]
   have cmul : U'.card = S.card * T.card := by
-    rw [GlobalTheory.T.card_coset_reps_eq_relIndex _ A' H U' (hHA.trans hAA) hU1 hU2,
-      GlobalTheory.T.card_coset_reps_eq_relIndex _ A H S hHA hS1 hS2,
-      GlobalTheory.T.card_coset_reps_eq_relIndex _ A' A T hAA hT.1 hT.2,
+    rw [GlobalTheory.T.card_coset_reps_eq_relIndex _ A' H U' hU1 hU2,
+      GlobalTheory.T.card_coset_reps_eq_relIndex _ A H S hS1 hS2,
+      GlobalTheory.T.card_coset_reps_eq_relIndex _ A' A T hT.1 hT.2,
       AddSubgroup.relIndex_mul_relIndex H A A' hHA hAA]
   have hT0 : (T.card : ℂ) ≠ 0 := cast_ne_zero.2 (transversal_nonempty hT.2).card_pos.ne'
   rw [hsum, hind, hav, smul_smul, smul_smul, cmul]; congr 1; rw [cast_mul, mul_inv]
@@ -240,7 +240,7 @@ theorem stab' (hB : Lv ψ h π s B) (K : Subgroup (G1 k m)) (hK : IsOpen (K : Se
       ((A₀.relIndex A : ℕ) : ℂ) * B (avg ψ h π (xi0 k m) A v) w =
         ((A₀.relIndex A₁ : ℕ) : ℂ) * B (avg ψ h π (xi0 k m) A₁ v) w := by
   obtain ⟨D, hD, hDK⟩ := good_nbhd K hK
-  obtain ⟨A₂, h1, h2, h3⟩ := GlobalTheory.T.lattice_annihilator_within_nhds k ψ hB.cont hB.ne (m + 1) D hD
+  obtain ⟨A₂, h1, h2, h3⟩ := GlobalTheory.CompanionTheory.AnnihShrink.exists_compact_open_annihilator_subset k ψ hB.cont hB.ne (m + 1) D hD
   refine ⟨A₀ ⊔ A₂, isLat_sup hA₀ ⟨h1, h2⟩, le_sup_left, fun v w hv hw A hA h1A => ?_⟩
   have hA₁D : (ann ψ (A₀ ⊔ A₂) : Set (V1 k m)) ⊆ D := fun _ hη => h3 (ann_anti le_sup_right hη)
   obtain ⟨r, hAr⟩ := exists_ball_n hA.1
@@ -588,11 +588,11 @@ theorem dens_bessel {ψ : Ch k} {m N : ℕ} {h : m + 2 ≤ N} {V : Type} [AddCom
   obtain ⟨A₁, hA₁, _, hst⟩ := stab' hB K hK hA₀
   have hzv : valuation k (z : k) < 1 := val_lt_one_of_nabs hz
   obtain ⟨c₀, hc₀⟩ := exists_ne_one hB.ne
-  obtain ⟨d, hd, _, hd2⟩ := GlobalTheory.T.exists_scaled_nontrivial_character k ψ hB.cont (z : k) c₀ hzv hc₀
+  obtain ⟨d, hd, _, hd2⟩ := GlobalTheory.CompanionTheory.CharConductor.exists_conductor_step k ψ hB.cont (z : k) c₀ hzv hc₀
   have hdM : ∀ c : k, c ∈ 𝒪[k] → Pi.single (last m) (c * d) ∈ Mz ψ m (z : k) := fun c hc t ht => by
     rw [dotProduct_single, ← hd2 (t (last m) * c) (mul_mem (ht _) hc)]; congr 1; ring
   have hM : IsLat (Mz ψ m (z : k)) :=
-    GlobalTheory.T.character_annihilator_integer_lattice k ψ hB.cont hB.ne (m + 1) (z : k) z.ne_zero
+    GlobalTheory.CompanionTheory.CharLattice.isCompact_isOpen_annihilator k ψ hB.cont hB.ne (m + 1) (z : k) z.ne_zero
   let A : Sub1 k m := A₁ ⊔ Mz ψ m (z : k); have hA : IsLat A := isLat_sup hA₁ hM
   have hzO : (z : k) ∈ 𝒪[k] := (mem_integer_iff _ _).2 hzv.le
   let σ : ℕ → GL (Fin N) k := fun i => sA m h1 (z ^ i)

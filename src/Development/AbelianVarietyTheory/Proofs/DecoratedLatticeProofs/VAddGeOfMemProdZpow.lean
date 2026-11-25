@@ -103,8 +103,8 @@ theorem vAdd_ge_of_mem_prod_zpow :
     intro i _
     by_cases hwi : w = i
     · subst hwi
-      rw [if_pos rfl, FractionalIdeal.count_zpow_self]
-    · rw [if_neg hwi, FractionalIdeal.count_zpow,
+      rw [ite_eq_left rfl, FractionalIdeal.count_zpow_self]
+    · rw [ite_eq_right hwi, FractionalIdeal.count_zpow,
         FractionalIdeal.count_maximal_coprime K (e w) (fun h => hwi (e.injective h).symm), mul_zero]
   rw [Finset.sum_congr rfl hterm, Finset.sum_ite_eq] at hmono
   rw [vAdd_eq_count (e w) ha0]

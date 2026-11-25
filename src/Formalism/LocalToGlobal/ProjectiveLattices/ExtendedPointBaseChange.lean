@@ -66,12 +66,6 @@ def xplus (X : PJ D B P j) (E : PtExt X) (hM : IntAtExt X E) : PJ D B P j where
   thAll := X.thAll
   shortTh := X.shortTh
 
-section xplus
-
-variable (X : PJ D B P j) (E : PtExt X) (hM : IntAtExt X E)
-
-end xplus
-
 abbrev withNorm (B : WeightFamilies.Prov D) (N : ∀ j ka, (B.KO →+* ℂ) → B.Cusp j ka → ℝ)
     (h0 : ∀ j ka σ F, 0 ≤ N j ka σ F) (h1 : ∀ j ka σ F, N j ka σ F = 0 ↔ F = 0)
     (h2 : ∀ j ka σ (a : B.KO) F, N j ka σ (a • F) = ‖σ a‖ * N j ka σ F)

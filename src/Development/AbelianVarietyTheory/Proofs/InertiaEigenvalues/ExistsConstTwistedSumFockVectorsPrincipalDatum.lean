@@ -14,49 +14,12 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmPureTensorOOfF
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricLevelLiftsExist
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchrodingerIntertwinerSchwartzBruhatIsTheta
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilRepThetaDatumHalfEqSmul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum IsDedekindDomain NumberField GlobalTheory.ExportSeries
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 noncomputable section
@@ -264,11 +227,11 @@ theorem datum_sum (B : Base S T) {ψ : Twist D Circle} (hQ : B.admitted ψ.Q) {�
     fun i => (hJ i).1]
   by_cases c1 : IsHalf (halfIdem B.G.Pg (B.de.Q ∪ ψ.Q)) x ∧ IsIntM (frMapAdj S T B.F.βS B.F.βT x)
   swap
-  · simp only [if_neg c1, zero_mul, mul_zero, Finset.sum_const_zero]
+  · simp only [ite_eq_right c1, zero_mul, mul_zero, Finset.sum_const_zero]
   by_cases c2 : IsHalf (halfIdem B.G.Pg (B.de.Q ∪ ψ.Q)) x ∧ IsIntM (frMapO S T B.F.βS B.F.βT x)
   swap
-  · simp only [if_neg c2, mul_zero, Finset.sum_const_zero]
-  simp only [if_pos c1, if_pos c2]
+  · simp only [ite_eq_right c2, mul_zero, Finset.sum_const_zero]
+  simp only [ite_eq_left c1, ite_eq_left c2]
   symm
   calc _ = ∑ i, (if (∀ PP ∈ B.G.Pg, LowZero T.rank (redM PP (frMapAdj S T B.F.βS B.F.βT x))) ∧
         ∀ PP : ↥B.G.Pg, (upperLeftBlock B.hr (redFn B.F.βS PP.1 (Lev.finE S (g i)))).val =
@@ -288,16 +251,16 @@ theorem datum_sum (B : Base S T) {ψ : Twist D Circle} (hQ : B.admitted ψ.Q) {�
       · obtain ⟨h0, g0, hg0, hH0⟩ := hy
         obtain ⟨i, rfl⟩ := surj g0 hH0
         rw [omegaG_levT_of B.G h0 _ hg0 hH0, Finset.sum_eq_single i]
-        · rw [if_pos ⟨h0, fun PP => hg0 PP⟩]
+        · rw [ite_eq_left ⟨h0, fun PP => hg0 PP⟩]
           rfl
         · intro j _ hj
-          rw [if_neg]
+          rw [ite_eq_right]
           intro hc
           exact hj (inj j i (funext fun PP => Units.ext ((hc.2 PP).trans (hg0 PP).symm)))
         · exact fun h => absurd (Finset.mem_univ _) h
       · rw [omegaG_levT_zero B.G hy]
         refine Finset.sum_eq_zero fun i _ => ?_
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨h0, h1⟩
         exact hy ⟨h0, _, h1, (hk i).2⟩
 

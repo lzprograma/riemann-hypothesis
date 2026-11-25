@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.MetricProofs.HolomorphicAdaptedFrameOnBall
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
 public import Mathlib.Analysis.Matrix.Order
@@ -17,50 +18,9 @@ import GroundTheory.HeightsAndTheta.Heights.Regularisation.PHodgeDerivative
 import GroundTheory.HeightsAndTheta.Heights.Regularisation.PLogCoverDescent
 import GroundTheory.HeightsAndTheta.Heights.Regularisation.PPuncturedExpOrder
 import GroundTheory.HeightsAndTheta.Heights.Regularisation.PRiemannExtensionSlices
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ExistsIntSmulIsAdicIntegralInTensorBasis
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.FubiniLevi
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.MetricProofs.LogBoundEventuallyBounds, Development.AutomorphicSpectrum.Proofs.GeometryProofs.PeriodGramComparisonBound
@@ -207,16 +167,7 @@ theorem logBound_entry {g m : ℕ} (u : Fin m → Fin g → ℂ) (H A W : Matrix
 theorem logBound_det_diffOn {n k : ℕ} {S : Set (Fin n → ℂ)} (B : (Fin n → ℂ) → Matrix (Fin k) (Fin k) ℂ)
     (hB : ∀ i j, DifferentiableOn ℂ (fun z => B z i j) S) :
     DifferentiableOn ℂ (fun z => (B z).det) S := by
-  simp only [Matrix.det_apply']
-  refine DifferentiableOn.fun_sum fun σ _ => ?_
-  have hp : ∀ s : Finset (Fin k), DifferentiableOn ℂ (fun z => ∏ i ∈ s, B z (σ i) i) S := by
-    intro s
-    induction s using Finset.induction_on with
-    | empty => simpa using differentiableOn_const _
-    | insert a s ha ih =>
-      simp only [Finset.prod_insert ha]
-      exact (hB _ _).mul ih
-  exact (differentiableOn_const _).mul (hp _)
+  apply _root_.GlobalTheory.CompanionTheory.Ar.Cusp.Dict.Chart.differentiableOn_det' <;> assumption
 
 theorem logBound_inv_diffOn {n k : ℕ} {S : Set (Fin n → ℂ)} (A : (Fin n → ℂ) → Matrix (Fin k) (Fin k) ℂ)
     (hA : ∀ i j, DifferentiableOn ℂ (fun z => A z i j) S) (hd : ∀ z ∈ S, (A z).det ≠ 0) (i j : Fin k) :

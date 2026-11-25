@@ -51,7 +51,7 @@ theorem clPf_sum_fIdx {M : Type} [AddCommMonoid M] {k₀ c n : ℕ} (hk : k₀ �
   Finset.sum_nbij' (fun u => LocE.fIdx k₀ c n u) (fun u => LocE.fPos k₀ c n u)
     (fun _ ha => Finset.mem_range.2 (symFIdx_lt hk (Finset.mem_range.1 ha)))
     (fun _ ha => Finset.mem_range.2 (framePos_lt hk (Finset.mem_range.1 ha)))
-    (fun _ ha => symFPos_fIdx hk (Finset.mem_range.1 ha)) (fun _ ha => frameIndex_framePos hk (Finset.mem_range.1 ha)) (fun _ _ => rfl)
+    (fun _ ha => symFPos_fIdx hk (Finset.mem_range.1 ha)) (fun _ ha => frameIndex_framePos (Finset.mem_range.1 ha)) (fun _ _ => rfl)
 
 theorem clPf_bEnt_compR (hq0 : (q : E) ≠ 0) {n' c' n c : ℕ} (y : HomE E (n' + c') (n + c)) (κ : Sp E (n' + c') →ₗ[E] Sp E (n' + c'))
     {l s : ℕ} (hl : l < n + c) (hs : s < n' + c') :
@@ -184,8 +184,8 @@ variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] {P : Heig
 theorem clPf_unitV (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (a : E) : LocE.unitV χ a = clPfUV χ (redP P a) := by
   unfold LocE.unitV clPfUV
   by_cases h : IsUnit (redP P a)
-  · simp only [dif_pos h]
-  · simp only [dif_neg h]
+  · simp only [dite_eq_left h]
+  · simp only [dite_eq_right h]
 
 theorem clPf_cond_iff (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu : ((q : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2) {k₀ rS r t j c n : ℕ}
     (hr : k₀ + rS < r) (han : r + (j - 1) * t ≤ n + c) (M : ℕ → ℕ → E) :
@@ -208,7 +208,7 @@ theorem clPf_cond_iff (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu : ((q : ℕ)
         by_cases hpr : p < r
         · right; left
           unfold betaExponentOfRanks at hlt
-          rwa [if_pos hp'r, if_pos hpr] at hlt
+          rwa [ite_eq_left hp'r, ite_eq_left hpr] at hlt
         · left; omega
       · by_cases hpr : p < r
         · have h5 := (clPf_beta_lt_iff (t := t) hr p).2 hpr
@@ -232,7 +232,7 @@ theorem clPf_cond_iff (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu : ((q : ℕ)
         omega
       · by_cases hpr : p < r
         · unfold betaExponentOfRanks at hb
-          rw [if_pos hpr, if_pos hp'] at hb
+          rw [ite_eq_left hpr, ite_eq_left hp'] at hb
           omega
         · have h5 := (clPf_beta_lt_iff (t := t) hr p).not.2 hpr
           have h6 := (clPf_beta_lt_iff (t := t) hr p').2 hp'
@@ -272,7 +272,7 @@ theorem clPf_phiGS_val (ψ₀ : AddChar (𝓞 E ⧸ P.asIdeal) K) (χ : ℕ → 
     LocE.PhiGS q ψ₀ χ k₀ rS r t j c' n' c n x =
       clPfLam ψ₀ χ k₀ r t (j - 1) (clPfRed P q k₀ c' n' c n x) *
         (clPfUV (χ (j - 1)) (clPfTop (r + (j - 1) * t) (clPfRed P q k₀ c' n' c n x)).det)⁻¹ := by
-  rw [phiGS_eq, if_pos hC, clPf_lamGvS ψ₀ χ hkr _ (fun p p' hp hp' => hC.1 p p' (by omega) hp'), clPf_unitV,
+  rw [phiGS_eq, ite_eq_left hC, clPf_lamGvS ψ₀ χ hkr _ (fun p p' hp hp' => hC.1 p p' (by omega) hp'), clPf_unitV,
     redP_det (Matrix.of fun s s' : Fin (r + (j - 1) * t) => LocE.entB q k₀ c' n' c n (fun i => i + 1) (fun i => i + 1) x s.1 s'.1)
       fun s s' => hC.1 _ _ (by have := s.2; omega) s'.2]
   rfl
@@ -290,7 +290,7 @@ theorem clPf_top_ob2M {k₀ n c : ℕ} (hk : k₀ ≤ n) (γ : Sp E (n + c) ≃�
     { toFun := fun s => ⟨LocE.fIdx k₀ c n s.1, symFIdx_lt hk s.2⟩
       invFun := fun l => ⟨LocE.fPos k₀ c n l.1, framePos_lt hk l.2⟩
       left_inv := fun s => Fin.ext (symFPos_fIdx hk s.2)
-      right_inv := fun l => Fin.ext (frameIndex_framePos hk l.2) }
+      right_inv := fun l => Fin.ext (frameIndex_framePos l.2) }
   have h1 : clPfTop (n + c) (clPfRed P q k₀ c n c n γ.toLinearMap) = (ob2M P q γ).submatrix eσ eσ := by
     ext s s'
     exact reduction_frameEntry_eq_matrix hk s.2 s'.2 γ
@@ -435,7 +435,7 @@ theorem clPf_phiGSLaw {P : HeightOneSpectrum (𝓞 E)} {q k₀ rS r t j c' n' c 
         rw [LinearEquiv.apply_symm_apply, LinearEquiv.symm_apply_apply]
       rw [e] at h2
       exact hC h2
-    rw [phiGS_eq, if_neg hC', phiGS_eq, if_neg hC, mul_zero]
+    rw [phiGS_eq, ite_eq_right hC', phiGS_eq, ite_eq_right hC, mul_zero]
 
 end ClPfLaw
 

@@ -176,7 +176,7 @@ theorem piOf_eq_bar_iff (T : Core D) (h : LawsM T) (EX : ErrX D) (i : Fin 2) :
     piOf T EX i = barE D (EX.piG i) ↔ barE D (EX.piG i) ∈ halfI T i := by
   constructor
   · intro he; rw [← he]; exact piOf_mem T h EX i
-  · intro hm; unfold piOf; rw [if_pos hm]
+  · intro hm; unfold piOf; rw [ite_eq_left hm]
 
 theorem bar_core (T : Core D) (a : 𝓞 D.host.E) : T.Q.H.bar a = barE D a := by
   apply IsFractionRing.injective (𝓞 D.host.E) D.host.E

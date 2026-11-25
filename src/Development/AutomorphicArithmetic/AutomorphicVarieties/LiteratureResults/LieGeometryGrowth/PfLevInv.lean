@@ -3,42 +3,7 @@ module
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PairDefs
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.EllFacts
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.ExpOfDeriv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -57,17 +22,6 @@ private def levSub {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTo
     fun u hu => by rw [map_smul, h.2.1 u hu],
     fun m hm => by rw [map_smul, h.2.2 m hm, smul_comm]⟩
 
-private theorem stab_open {G V : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [AddCommGroup V] [Module ℂ V]
-    (ρ : Representation ℂ G V) (v : V) {S : Set G} (hS : IsOpen S) (h1 : (1 : G) ∈ S) (h : ∀ g ∈ S, ρ g v = v) :
-    IsOpen {g | ρ g v = v} := by
-  rw [isOpen_iff_forall_mem_open]
-  intro g hg
-  refine ⟨(fun x => g⁻¹ * x) ⁻¹' S, fun x hx => ?_, hS.preimage (by fun_prop), by simpa using h1⟩
-  have e : x = g * (g⁻¹ * x) := by group
-  have hg' : ρ g v = v := hg
-  show ρ x v = v
-  rw [e, map_mul, Module.End.mul_apply, h _ hx, hg']
-
 theorem UpperTheory.V.Lit.Geo.Pf.levInv :
     UpperTheory.V.Lit.Geo.Pf.LevInv := by
   intro E _ _ _ a ha U hU Ξ r χ h1 hχ q α hα X j
@@ -80,7 +34,8 @@ theorem UpperTheory.V.Lit.Geo.Pf.levInv :
       rw [hχ.2, hφ.2.2 _ h1, (ellFacts E a).1 ha, mul_one, ← add_smul, neg_add_cancel, zero_smul, map_zero, zero_smul]
     rw [aInv E a _ _ hz t g, zero_mul, Complex.exp_zero, one_mul]
   · change IsOpen {k | finRep E a k (mulChi a χ φ) = mulChi a χ φ}
-    refine stab_open (finRep E a) _ (hU.inter (isOpen_ker_chiDet (a := a) χ)) ⟨U.one_mem, by simp⟩ ?_
+    refine isOpen_stab_of_mem_nhds (finRep E a) _ (Filter.mem_of_superset
+      ((hU.inter (isOpen_ker_chiDet (a := a) χ)).mem_nhds ⟨U.one_mem, by simp⟩) ?_)
     rintro k ⟨hk, h2⟩
     have h1' : rt E a (finGL E a k) φ = φ := hφ.2.1 k hk
     have h2' : chiDet a χ (finGL E a k) = 1 := h2

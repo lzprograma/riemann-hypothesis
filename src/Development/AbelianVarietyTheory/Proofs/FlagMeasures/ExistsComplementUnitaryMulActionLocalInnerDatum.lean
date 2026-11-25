@@ -276,13 +276,7 @@ theorem exists_mulAction : ∀ {F : Type} [Field F] [ValuativeRel F] [Topologica
       · rintro ⟨g', hg', rfl⟩
         exact ⟨g'.2, (key g' d d).2 hg'⟩
     rw [hset, Subgroup.closure_eq]
-  rw [hS, Subgroup.mem_map]
-  constructor
-  · rintro ⟨g', hg', he⟩
-    have : g' = g := Subtype.ext he
-    subst this
-    exact MulAction.mem_stabilizer_iff.1 hg'
-  · intro h
-    exact ⟨g, MulAction.mem_stabilizer_iff.2 h, rfl⟩
+  rw [hS]
+  exact (Subgroup.mem_map_iff_mem (x := g) P.UW0.subtype_injective).trans MulAction.mem_stabilizer_iff
 
 end GlobalTheory.InnerDatumAct

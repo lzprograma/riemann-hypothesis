@@ -148,8 +148,8 @@ theorem one_le_qOf (hP : IsCayleyU k r ε P) : 1 ≤ qOf ε := by
   have h1 := hP.1.2
   rw [hJ, Matrix.mul_one, show Pᴴ * P = 1 from Matrix.mem_unitaryGroup_iff'.1 hP.2] at h1
   have h2 := congrFun (congrFun h1 ⟨r + k, by omega⟩) ⟨r + k, by omega⟩
-  rw [Matrix.one_apply_eq, PI.HwUniqW.Hpk_apply, if_pos (Fin.ext (by rw [PI.HwUniqW.piI_val]; simp))] at h2
-  simp only [PI.HwUniqW.epsI, if_true] at h2
+  rw [Matrix.one_apply_eq, PI.HwUniqW.Hpk_apply, ite_eq_left (Fin.ext (by rw [PI.HwUniqW.piI_val]; simp))] at h2
+  simp only [PI.HwUniqW.epsI, ite_true] at h2
   norm_num at h2
 
 theorem one_le_pOf (hk : 1 ≤ k) (hP : IsCayleyU k r ε P) : 1 ≤ pOf ε := by
@@ -165,9 +165,9 @@ theorem one_le_pOf (hk : 1 ≤ k) (hP : IsCayleyU k r ε P) : 1 ≤ pOf ε := by
     at h1
   have h2 := congrFun (congrFun h1 ⟨r, by omega⟩) ⟨r, by omega⟩
   rw [Matrix.neg_apply, Matrix.one_apply_eq, PI.HwUniqW.Hpk_apply,
-    if_pos (Fin.ext (by rw [PI.HwUniqW.piI_val]; simp))] at h2
+    ite_eq_left (Fin.ext (by rw [PI.HwUniqW.piI_val]; simp))] at h2
   simp only [PI.HwUniqW.epsI] at h2
-  rw [if_neg (by omega)] at h2
+  rw [ite_eq_right (by omega)] at h2
   norm_num at h2
 
 theorem dsExistsHpkG (hP : IsCayleyU k r ε P) (lam : Fin (2 * r + k + 1) → ℝ) (hl : IsHCParam lam) {h : ℝ}

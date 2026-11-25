@@ -51,8 +51,6 @@ open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.BasicNotions.
 
 noncomputable section
 
-attribute [local instance] GlobalTheory.Mem.Col2.starE
-
 namespace GlobalTheory.LvT.TrueStep0
 
 open GlobalTheory.LvT.StartTie GlobalTheory.Mem.Col2.ClsZero
@@ -130,11 +128,11 @@ theorem up_deco0 (l : I.Laws) (u : B.Word) (a : I.ι) (b : (I.stp u a 0).β) (p 
     have h1 := congrArg Formalism.L2.Col.Deco.N (((l.lev u a).tied 0).up_deco b p P x hx hf)
     refine Eq.trans h1 ?_
     unfold Formalism.L2.Col.DecoSet.up
-    rw [dif_pos hc]
+    rw [dite_eq_left hc]
     rfl
-  · have h1 : p.1.1.deco.up P ((I.atIn u a).T : 𝓞 B.fields.E) x = p.1.1.deco := dif_neg hc
+  · have h1 : p.1.1.deco.up P ((I.atIn u a).T : 𝓞 B.fields.E) x = p.1.1.deco := dite_eq_right hc
     rw [h1]
-    exact congrArg (fun q : PtAt B.R I.sel (I.tup a) (I.cst a) u 0 => q.1.1.deco) (dif_pos ⟨p.1.1.2, p.2⟩ : p.mv p.1.1.deco = _)
+    exact congrArg (fun q : PtAt B.R I.sel (I.tup a) (I.cst a) u 0 => q.1.1.deco) (dite_eq_left ⟨p.1.1.2, p.2⟩ : p.mv p.1.1.deco = _)
 
 def onesAt {D : D7} {u' : D.what₂.Word} (Y : Ch D u') (v : Y.A.vT) (c : Y.C.cls 0) : Finset (Y.fm.lv 0 v c) :=
   Finset.univ.filter (fun x : Y.fm.lv 0 v c => Y.fm.fv 0 v c x = 1)

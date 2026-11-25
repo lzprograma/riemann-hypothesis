@@ -166,7 +166,7 @@ theorem isExp_mvExp [CharZero C] {σ : Type} [Fintype σ] (y : σ → C) :
       Finset.sum_range_succ', Finset.mul_sum, add_mul, Finset.sum_mul]
     have h0 : MvPowerSeries.coeff (m + Finsupp.single w 1)
         ((∑ x, y x • (X x : MvPowerSeries σ C)) ^ 0) = 0 := by
-      rw [pow_zero, coeff_one, if_neg]
+      rw [pow_zero, coeff_one, ite_eq_right]
       intro h
       have := DFunLike.congr_fun h w
       simp at this
@@ -255,7 +255,7 @@ theorem core (X : RowData C V d I J) (g : Fin 2) (a : ZMod d) (ha : X.big g a) {
         (((u : ℝ) * b : ℝ) : WithTop ℝ) := by
     intro b hb
     simp only [Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
-      if_true] at hb
+      ite_true] at hb
     rw [AddValuation.map_pow, ← nsmul_eq_mul, WithTop.coe_nsmul]
     exact nsmul_le_nsmul_right hb u
   refine ⟨fun g => stdSys (X.G g), t, ht, _, hy _ t ht, fun h => ?_, fun h => ?_⟩

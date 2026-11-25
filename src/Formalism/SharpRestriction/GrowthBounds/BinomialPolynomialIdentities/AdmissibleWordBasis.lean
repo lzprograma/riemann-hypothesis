@@ -13,55 +13,11 @@ public import Mathlib.Algebra.MvPolynomial.Supported
 public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.JacobiMinorProof
 public import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
 public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.TorusComponentMemDominatedWeightPolynomials
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.NormIndexCountBound
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.PathProductHighestWeight
 
@@ -111,7 +67,7 @@ theorem expSet_subset (n i N : ℕ) (B : ℕ → ℕ) :
     have hij : i ≤ j := by
       by_contra hlt
       have h0 := hβ' j
-      rw [if_neg (fun h => hlt h.1)] at h0
+      rw [ite_eq_right (fun h => hlt h.1)] at h0
       exact hpa ((Finset.sum_eq_zero_iff.mp h0) a (Finset.mem_univ a))
     exact ⟨(j - i, a), Prod.ext (show i + (j - i) = j by omega) rfl⟩
   refine ⟨Finsupp.comapDomain _ β (fun _ _ _ _ h => shift_inj n i h), ?_, ?_⟩
@@ -120,8 +76,8 @@ theorem expSet_subset (n i N : ℕ) (B : ℕ → ℕ) :
     show ∑ a, β (i + j, a) = _
     rw [hβ' (i + j)]
     by_cases h : j < N - i
-    · rw [if_pos ⟨by omega, by omega⟩, if_pos h]
-    · rw [if_neg (by omega), if_neg h]
+    · rw [ite_eq_left ⟨by omega, by omega⟩, ite_eq_left h]
+    · rw [ite_eq_right (by omega), ite_eq_right h]
   · apply Finsupp.mapDomain_comapDomain
     · exact shift_inj n i
     · exact hsupp
@@ -366,7 +322,7 @@ theorem partialAction_eq_fullAction_of_vars_lt {L : Type*} [CommRing L] (isVec :
       simp
     · rintro ⟨j, a⟩ hx -
       simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe]
-      rw [partialAction_X, DominanceOrderLemmas.actAll_X, if_pos (hv _ hx)]
+      rw [partialAction_X, DominanceOrderLemmas.actAll_X, ite_eq_left (hv _ hx)]
   exact h
 
 theorem partialAction_monomial_later_letters {L : Type*} [CommRing L] (isVec : ℕ → Bool) (i : ℕ) (g gi : Matrix (Fin n) (Fin n) L)
@@ -377,7 +333,7 @@ theorem partialAction_monomial_later_letters {L : Type*} [CommRing L] (isVec : �
   congr 1
   refine Finsupp.prod_congr fun x hx => ?_
   have : ¬ x.1 < i := fun h => (Finsupp.mem_support_iff.1 hx) (hβ x h)
-  rw [if_neg this]
+  rw [ite_eq_right this]
 
 theorem restSplit : RestSplit := by
   classical
@@ -388,7 +344,7 @@ theorem restSplit : RestSplit := by
   have hlow : ∀ β ∈ T, ∀ x : ℕ × Fin n, x.1 < i → β x = 0 := by
     intro β hβ x hx
     have h0 := h1 β hβ x.1
-    rw [if_neg (by omega)] at h0
+    rw [ite_eq_right (by omega)] at h0
     exact (Finset.sum_eq_zero_iff.1 h0) x.2 (Finset.mem_univ _)
   have hexp : actI isVec i (Formalism.InvariantFactorPaths.GelfandTsetlinBases.genMat k n) (Formalism.InvariantFactorPaths.GelfandTsetlinBases.genMat k n)⁻¹
         (map (algebraMap k (GenField k n)) G) =
@@ -490,9 +446,9 @@ theorem trunc (R : Type*) [CommRing R] (n i : ℕ) (isVec : ℕ → Bool) (μ : 
   | succ N hN ih =>
     intro I
     by_cases hch : colHeight (μ (N + 1)) c = colHeight (μ N) c
-    · rw [pathWord, if_pos hch]
+    · rw [pathWord, ite_eq_left hch]
       exact ih I
-    · rw [pathWord, if_neg hch]
+    · rw [pathWord, ite_eq_right hch]
       choose Q hQ1 hQ2 using ih
       have hX : ∀ m : Fin n, (X (N, m) : MvPolynomial (ℕ × Fin n) R) ∈
           supported R {x : ℕ × Fin n | i ≤ x.1} := fun m => by
@@ -543,24 +499,24 @@ theorem pathWord_card {R : Type*} [CommRing R] {n N : ℕ} {isVec : ℕ → Bool
     intro _ J hJ
     have h0 : J = ∅ := by
       by_contra hne
-      exact hJ (if_neg hne)
+      exact hJ (ite_eq_right hne)
     rw [h0, hp.1, Paths.colHeight_zero]
     split_ifs <;> simp
   | succ j ih =>
     intro hj J hJ
     have ih' := ih (by omega)
     by_cases hch : colHeight (μ (j + 1)) c = colHeight (μ j) c
-    · rw [pathWord, if_pos hch] at hJ
+    · rw [pathWord, ite_eq_left hch] at hJ
       rw [hch]
       exact ih' J hJ
-    · rw [pathWord, if_neg hch] at hJ
+    · rw [pathWord, ite_eq_right hch] at hJ
       have hh := Paths.path_height hp (show j < N by omega) c
       have hle := Paths.colHeight_le (μ j) c
       have hle' := Paths.colHeight_le (μ (j + 1)) c
       unfold stepF at hJ
       cases hup : (isVec j == decide (1 ≤ c))
       · rw [hup] at hJ
-        simp only [Bool.false_eq_true, if_false] at hJ
+        simp only [Bool.false_eq_true, ite_false] at hJ
         unfold contrF at hJ
         obtain ⟨m, hm, hne⟩ := Finset.exists_ne_zero_of_sum_ne_zero hJ
         have e := ih' _ (right_ne_zero_of_mul hne)
@@ -568,16 +524,16 @@ theorem pathWord_card {R : Type*} [CommRing R] {n N : ℕ} {isVec : ℕ → Bool
         by_cases h1 : 1 ≤ c
         · have hv : isVec j = false := by simpa [h1] using hup
           rw [hv] at hh
-          simp only [Bool.false_eq_true, if_false] at hh
-          rw [if_pos h1] at e ⊢
+          simp only [Bool.false_eq_true, ite_false] at hh
+          rw [ite_eq_left h1] at e ⊢
           omega
         · have hv : isVec j = true := by simpa [h1] using hup
           rw [hv] at hh
-          simp only [if_true] at hh
-          rw [if_neg h1] at e ⊢
+          simp only [ite_true] at hh
+          rw [ite_eq_right h1] at e ⊢
           omega
       · rw [hup] at hJ
-        simp only [if_true] at hJ
+        simp only [ite_true] at hJ
         unfold wedgeF at hJ
         obtain ⟨m, hm, hne⟩ := Finset.exists_ne_zero_of_sum_ne_zero hJ
         have e := ih' _ (right_ne_zero_of_mul (left_ne_zero_of_mul hne))
@@ -586,13 +542,13 @@ theorem pathWord_card {R : Type*} [CommRing R] {n N : ℕ} {isVec : ℕ → Bool
         by_cases h1 : 1 ≤ c
         · have hv : isVec j = true := by simpa [h1] using hup
           rw [hv] at hh
-          simp only [if_true] at hh
-          rw [if_pos h1] at e ⊢
+          simp only [ite_true] at hh
+          rw [ite_eq_left h1] at e ⊢
           omega
         · have hv : isVec j = false := by simpa [h1] using hup
           rw [hv] at hh
-          simp only [Bool.false_eq_true, if_false] at hh
-          rw [if_neg h1] at e ⊢
+          simp only [Bool.false_eq_true, ite_false] at hh
+          rw [ite_eq_right h1] at e ⊢
           omega
 
 section Gen
@@ -647,7 +603,7 @@ theorem partialAct_eq_fullAct_of_vars_lt (isVec : ℕ → Bool) (i : ℕ) (g gi 
     simp
   · intro x hx _
     have hxi := hv x hx
-    simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, actI, actAll, MvPolynomial.aeval_X, if_pos hxi]
+    simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, actI, actAll, MvPolynomial.aeval_X, ite_eq_left hxi]
     split_ifs
     · simp [Matrix.vecMul, dotProduct]
     · simp [Matrix.vecMul, dotProduct]
@@ -685,7 +641,7 @@ theorem fullAct_pathWord_support_dominated (isVec : ℕ → Bool) (B : ℕ → �
   refine (Top.factEV L n i isVec B μ I' g hp hI).1 _ ?_
   intro h0
   have h1 := congrArg (AddMonoidAlgebra.coeff · e) h0
-  rw [coeff_weightedHomogeneousComponent, if_pos rfl] at h1
+  rw [coeff_weightedHomogeneousComponent, ite_eq_left rfl] at h1
   exact (mem_support_iff.1 he) (by simpa using h1)
 
 end basic
@@ -749,7 +705,7 @@ theorem restWord : RestWord := by
       have hcF : c ∈ F := by
         by_contra hn
         apply hc
-        have h1 : I' c = ∅ := by rw [hI']; exact dif_neg hn
+        have h1 : I' c = ∅ := by rw [hI']; exact dite_eq_right hn
         have h2 := A1hw.isIndex_can (μ i) c
         rw [(hFi c hn).2 _ (A1hw.isIndex_can (μ i))] at h2
         rw [h1]

@@ -24,7 +24,7 @@ def tupleSeq {m : ℕ} (γ : Fin m → Γ) : ℕ → Γ :=
   fun k => if h : k < m then γ ⟨k, h⟩ else 1
 
 theorem seqTuple_tupleSeq {m : ℕ} (γ : Fin m → Γ) : seqTuple m (tupleSeq γ) = γ :=
-  funext fun k => dif_pos k.2
+  funext fun k => dite_eq_left k.2
 
 omit [Group Γ] in
 theorem seqTuple_congr {m : ℕ} {F F' : ℕ → Γ} (h : ∀ k < m, F k = F' k) :
@@ -33,7 +33,7 @@ theorem seqTuple_congr {m : ℕ} {F F' : ℕ → Γ} (h : ∀ k < m, F k = F' k)
 
 theorem tupleSeq_seqTuple_of_lt {m : ℕ} (F : ℕ → Γ) {k : ℕ} (hk : k < m) :
     tupleSeq (seqTuple m F) k = F k :=
-  dif_pos hk
+  dite_eq_left hk
 
 def prismSeq (g : Γ) (i : ℕ) (F : ℕ → Γ) : ℕ → Γ :=
   fun k => if k < i then F k else if k = i then g else g⁻¹ * F (k - 1) * g

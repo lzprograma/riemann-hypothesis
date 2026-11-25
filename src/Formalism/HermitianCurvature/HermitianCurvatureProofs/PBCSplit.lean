@@ -1,52 +1,9 @@
 module
 
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCLim
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.Matrix.PosDef
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -132,12 +89,12 @@ theorem GermData.phiG_bdd (hG : GermData Y U P Q hat) (κ : H → H → ℂ) :
   refine ⟨(∑ h ∈ Y, ∑ h' ∈ Y, ‖κ h h'‖) * B ^ f, fun x x' => ?_⟩
   unfold phiG
   by_cases hg : Good x ∧ Good x'
-  · simp only [if_pos hg]
+  · simp only [ite_eq_left hg]
     have hE := fun v h (hh : h ∈ Y) h' (hh' : h' ∈ Y) => entry_lemma_2 hG hB0 hB v hh hh' (hg.1 v) (hg.2 v)
     exact ⟨phi_bound Y κ U B hB0 x x' fun v h hh h' hh' => (hE v h hh h' hh').1,
       phi_bound Y κ P B hB0 x x' fun v h hh h' hh' => (hE v h hh h' hh').2.1,
       phi_bound Y κ Q B hB0 x x' fun v h hh h' hh' => (hE v h hh h' hh').2.2⟩
-  · simp only [if_neg hg, norm_zero]
+  · simp only [ite_eq_right hg, norm_zero]
     exact ⟨hC, hC, hC⟩
 
 theorem GermData.phiRG_bdd (hG : GermData Y U P Q hat) (κ : H → H → ℂ) :

@@ -148,10 +148,6 @@ theorem commuting_multiplier_eq_const_smul_generator
     apply LinearIndependent.of_comp R.val.toLinearMap
     exact hind _ (fun j => (bV j : A)) (fun j => (bV j).2)
       (bV.linearIndependent.map' V.subtype V.ker_subtype)
-  have liV' : LinearIndependent ℂ gV' := by
-    apply LinearIndependent.of_comp R.val.toLinearMap
-    exact hind' _ (fun j => (bV' j : A)) (fun j => (bV' j).2)
-      (bV'.linearIndependent.map' V'.subtype V'.ker_subtype)
   let W := Submodule.span ℂ (Set.range gV)
   let W' := Submodule.span ℂ (Set.range gV')
   have eqV : ∀ f : V, (⟨rd f, hV _ f.2⟩ : R) = ∑ j, σ (bV.repr f j) • gV j := by
@@ -196,8 +192,7 @@ theorem commuting_multiplier_eq_const_smul_generator
   haveI : FiniteDimensional ℂ W := Module.Finite.of_basis bW
   have Tc_ne : Tc ≠ 0 := by
     obtain ⟨f, hf⟩ : ∃ f, T f ≠ 0 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact hT (LinearMap.ext hc)
     have hfA : (T f : A) ≠ 0 := fun hz => hf (Subtype.ext hz)
     have li1 : LinearIndependent ℂ (fun _ : Fin 1 => rd (T f : A)) :=

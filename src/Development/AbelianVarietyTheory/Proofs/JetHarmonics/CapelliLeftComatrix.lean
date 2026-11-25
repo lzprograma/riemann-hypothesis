@@ -86,10 +86,10 @@ theorem capelli_left_comatrix :
       refine Fin.cases ?_ (fun k => ?_) k
       · simp [hb, PI.QmColExpWork.cycle_perm_zero]
       · simp [hb, PI.QmColExpWork.cycle_perm_succ]
-    rw [if_pos rfl, hbcyc, qSkewCol A (m + 1) (m + 1) E hE id id _ u, PI.QmColExpWork.sign_cycle_perm,
+    rw [ite_eq_left rfl, hbcyc, qSkewCol A (m + 1) (m + 1) E hE id id _ u, PI.QmColExpWork.sign_cycle_perm,
       Units.val_pow_eq_pow_val, Units.val_neg, Units.val_one, hcast, smul_smul, ← mul_pow]
     simp [qdet]
-  · rw [if_neg hlj]
+  · rw [ite_eq_right hlj]
     obtain ⟨k0, hk0⟩ := Fin.exists_succAbove_eq hlj
     have hfix : b ∘ Equiv.swap (0 : Fin (m + 1)) k0.succ = b := by
       funext k

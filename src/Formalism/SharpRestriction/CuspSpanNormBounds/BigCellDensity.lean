@@ -11,49 +11,7 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingConstruction
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingExistence
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WittOrthonormalBasis
 public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSB
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.CategoryTheory.Countable
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.StatementJF
 
@@ -66,7 +24,7 @@ namespace Formalism.MainNotions.BigCellDensity
 open MeasureTheory Formalism.BasicNotions Formalism.QuantumDeterminants Formalism.MainNotions.S Formalism.MainNotions.S.TopsChoicePartA
 open scoped InnerProductSpace
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 def DensAt (CV : ℕ) : Prop :=
   ∀ (k r : ℕ) (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [FiniteDimensional ℂ Wp]
@@ -655,11 +613,11 @@ theorem partner_partner (l : List (ℕ × ℂ)) (a : ℕ) (ha : a < Formalism.Fo
     simp only [Formalism.FourierDecayAlt.D.ptSize, List.map_cons, List.sum_cons] at ha
     simp only [Formalism.FourierDecayAlt.D.ptPartner]
     by_cases h : a < s
-    · simp only [if_pos h]
-      rw [if_pos (show s - 1 - a < s by omega)]
+    · simp only [ite_eq_left h]
+      rw [ite_eq_left (show s - 1 - a < s by omega)]
       omega
-    · simp only [if_neg h]
-      rw [if_neg (show ¬ (s + Formalism.FourierDecayAlt.D.ptPartner l (a - s) < s) by omega), Nat.add_sub_cancel_left,
+    · simp only [ite_eq_right h]
+      rw [ite_eq_right (show ¬ (s + Formalism.FourierDecayAlt.D.ptPartner l (a - s) < s) by omega), Nat.add_sub_cancel_left,
         ih (a - s) (by simp only [Formalism.FourierDecayAlt.D.ptSize]; omega)]
       omega
 
@@ -675,16 +633,16 @@ theorem partner_order (l : List (ℕ × ℂ)) (hl : GoodL l) (a b : ℕ) (hab : 
     simp only [bD, Formalism.FourierDecayAlt.D.ptPartner]
     by_cases hbs : b < s
     · have has : a < s := by omega
-      simp only [if_pos hbs, if_pos has]
+      simp only [ite_eq_left hbs, ite_eq_left has]
       constructor
       · intro _; omega
       · intro _; trivial
     · by_cases has : a < s
-      · simp only [if_pos has, if_neg hbs]
+      · simp only [ite_eq_left has, ite_eq_right hbs]
         constructor
         · intro h; omega
         · intro h; omega
-      · simp only [if_neg has, if_neg hbs]
+      · simp only [ite_eq_right has, ite_eq_right hbs]
         have := ih (goodL_tail hl) (a - s) (b - s) (by omega) (by simp only [Formalism.FourierDecayAlt.D.ptSize]; omega)
         constructor
         · intro h
@@ -705,23 +663,23 @@ theorem ptEntry_partner (l : List (ℕ × ℂ)) (a b : ℕ) (hb : b < Formalism.
     simp only [Formalism.FourierDecayAlt.D.ptSize, List.map_cons, List.sum_cons] at hb
     simp only [Formalism.FourierDecayAlt.D.ptEntry, Formalism.FourierDecayAlt.D.ptPartner, Formalism.FourierDecayAlt.D.ptScal]
     by_cases hbs : b < s
-    · simp only [if_pos hbs]
+    · simp only [ite_eq_left hbs]
       by_cases has : a < s
-      · rw [if_pos ⟨has, hbs⟩]
+      · rw [ite_eq_left ⟨has, hbs⟩]
         by_cases e : a + b + 1 = s
-        · rw [if_pos e, if_pos (show a = s - 1 - b by omega)]
-        · rw [if_neg e, if_neg (show ¬ a = s - 1 - b by omega)]
-      · rw [if_neg (show ¬ (a < s ∧ b < s) by omega), if_neg (show ¬ (s ≤ a ∧ s ≤ b) by omega),
-          if_neg (show ¬ a = s - 1 - b by omega)]
-    · simp only [if_neg hbs]
+        · rw [ite_eq_left e, ite_eq_left (show a = s - 1 - b by omega)]
+        · rw [ite_eq_right e, ite_eq_right (show ¬ a = s - 1 - b by omega)]
+      · rw [ite_eq_right (show ¬ (a < s ∧ b < s) by omega), ite_eq_right (show ¬ (s ≤ a ∧ s ≤ b) by omega),
+          ite_eq_right (show ¬ a = s - 1 - b by omega)]
+    · simp only [ite_eq_right hbs]
       by_cases has : a < s
-      · rw [if_neg (show ¬ (a < s ∧ b < s) by omega), if_neg (show ¬ (s ≤ a ∧ s ≤ b) by omega),
-          if_neg (show ¬ a = s + Formalism.FourierDecayAlt.D.ptPartner l (b - s) by omega)]
-      · rw [if_neg (show ¬ (a < s ∧ b < s) by omega), if_pos (show s ≤ a ∧ s ≤ b by omega),
+      · rw [ite_eq_right (show ¬ (a < s ∧ b < s) by omega), ite_eq_right (show ¬ (s ≤ a ∧ s ≤ b) by omega),
+          ite_eq_right (show ¬ a = s + Formalism.FourierDecayAlt.D.ptPartner l (b - s) by omega)]
+      · rw [ite_eq_right (show ¬ (a < s ∧ b < s) by omega), ite_eq_left (show s ≤ a ∧ s ≤ b by omega),
           ih (a - s) (b - s) (by simp only [Formalism.FourierDecayAlt.D.ptSize]; omega)]
         by_cases e : a - s = Formalism.FourierDecayAlt.D.ptPartner l (b - s)
-        · rw [if_pos e, if_pos (show a = s + Formalism.FourierDecayAlt.D.ptPartner l (b - s) by omega)]
-        · rw [if_neg e, if_neg (show ¬ a = s + Formalism.FourierDecayAlt.D.ptPartner l (b - s) by omega)]
+        · rw [ite_eq_left e, ite_eq_left (show a = s + Formalism.FourierDecayAlt.D.ptPartner l (b - s) by omega)]
+        · rw [ite_eq_right e, ite_eq_right (show ¬ a = s + Formalism.FourierDecayAlt.D.ptPartner l (b - s) by omega)]
 
 theorem ptScal_ne (l : List (ℕ × ℂ)) (hl : GoodL l) (b : ℕ) (hb : b < Formalism.FourierDecayAlt.D.ptSize l) :
     Formalism.FourierDecayAlt.D.ptScal l b ≠ 0 := by
@@ -782,9 +740,9 @@ theorem ptMatN_mono {r : ℕ} (γ : Point ℂ (r + 1)) :
   have : (i = wPt γ a) ↔ (i.val = Formalism.FourierDecayAlt.D.ptPartner (γ.1.map Prod.swap) a.val) := by
     rw [Fin.ext_iff, wPt_val]
   by_cases h : i = wPt γ a
-  · rw [if_pos (this.1 h), if_pos h]
+  · rw [ite_eq_left (this.1 h), ite_eq_left h]
     rfl
-  · rw [if_neg (fun h' => h (this.2 h')), if_neg h]
+  · rw [ite_eq_right (fun h' => h (this.2 h')), ite_eq_right h]
 
 theorem root_iff {r : ℕ} (γ : Point ℂ (r + 1)) (a b : Fin (r + 1)) (hab : a < b) :
     blockIdx γ.1 a.val = blockIdx γ.1 b.val ↔ (wPt γ).symm b < (wPt γ).symm a := by
@@ -813,9 +771,9 @@ theorem herm_esI (k r : ℕ) (v : Fin (2 * r + k + 1) → ℂ) (a : Fin r) :
     herm (Hpk k r) v (bvec (esI k r a)) = v (eI k r a) := by
   unfold herm bvec
   simp only [dotProduct, Pi.star_apply, Pi.single_apply, apply_ite star, star_one, star_zero, ite_mul, one_mul,
-    zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   simp only [Matrix.mulVec, dotProduct, hpk_esI, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
 
 theorem flag_eq_uMap (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (ρ : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)
     (a b : Fin (r + 1)) (ha : a.val < r) : flagMat k r z ρ a b = Formalism.FourierDecayAlt.C2.uMap k r z ρ a b := by
@@ -1282,55 +1240,17 @@ def hsE : (Wq →L[ℂ] Wp) ≃ₗ[ℂ] PiLp 2 (fun _ : Fin (Module.finrank ℂ 
     ext i
     simp
 
-theorem hsInner_hsE (A B : Wq →L[ℂ] Wp) : Formalism.FourierDecayAlt.B.hsInner A B = ⟪hsE B, hsE A⟫_ℂ := rfl
-
-def adjHS (T : (Wq →L[ℂ] Wp) →L[ℂ] (Wq →L[ℂ] Wp)) : (Wq →L[ℂ] Wp) →L[ℂ] (Wq →L[ℂ] Wp) :=
-  LinearMap.toContinuousLinearMap ((hsE.symm.toLinearMap) ∘ₗ
-    (LinearMap.adjoint (hsE.toLinearMap ∘ₗ T.toLinearMap ∘ₗ hsE.symm.toLinearMap)) ∘ₗ hsE.toLinearMap)
-
-theorem adjHS_spec (T : (Wq →L[ℂ] Wp) →L[ℂ] (Wq →L[ℂ] Wp)) (A B : Wq →L[ℂ] Wp) :
-    Formalism.FourierDecayAlt.B.hsInner (T A) B = Formalism.FourierDecayAlt.B.hsInner A (adjHS T B) := by
-  rw [hsInner_hsE, hsInner_hsE]
-  have e1 : hsE (T A) = (hsE.toLinearMap ∘ₗ T.toLinearMap ∘ₗ hsE.symm.toLinearMap) (hsE A) := by simp
-  have e2 : hsE (adjHS T B) = LinearMap.adjoint (hsE.toLinearMap ∘ₗ T.toLinearMap ∘ₗ hsE.symm.toLinearMap) (hsE B) := by
-    simp [adjHS]
-  rw [e1, e2, LinearMap.adjoint_inner_left]
-
 end HSadj
 
 section cellOp
 variable {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [FiniteDimensional ℂ Wp]
   [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wq]
 
-def cellTerms (w : List (Formalism.MainNotions.BridgeLemma₃.cal_Ix k r)) (a : Formalism.FourierDecayAlt.B.Mat k r → ((Wq →L[ℂ] Wp) →L[ℂ] (Wq →L[ℂ] Wp))) :
-    List (Formalism.FourierDecayAlt.B.DTerm k r Wp Wq) :=
-  (Formalism.MainNotions.BridgeLemma₃.cal_expE w).attach.map fun cv =>
-    { coef := fun g => cv.1.1 • a g
-      coefAdj := fun g => adjHS (cv.1.1 • a g)
-      word := cv.1.2
-      word_lie := fun X hX => Formalism.MainNotions.BridgeLemma₃.cal_expE_lie w cv.1 cv.2 X hX
-      adj_id := by
-        intro x A B
-        exact adjHS_spec (cv.1.1 • a x) A B }
-
-def cellOp {N : ℕ} (ws : Fin N → List (Formalism.MainNotions.BridgeLemma₃.cal_Ix k r))
-    (a : Fin N → Formalism.FourierDecayAlt.B.Mat k r → ((Wq →L[ℂ] Wp) →L[ℂ] (Wq →L[ℂ] Wp))) : Formalism.FourierDecayAlt.B.DiffOp k r Wp Wq :=
-  (List.finRange N).flatMap fun n => cellTerms (ws n) (a n)
-
 end cellOp
 
 section zeroOp
 variable {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [FiniteDimensional ℂ Wp]
   [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wq]
-
-def zeroOp (o : ℕ) : Formalism.FourierDecayAlt.B.DiffOp k r Wp Wq :=
-  [{ coef := fun _ => 0
-     coefAdj := fun _ => 0
-     word := List.replicate o 0
-     word_lie := fun X hX => by
-       rw [List.eq_of_mem_replicate hX]
-       simp [Formalism.FourierDecayAlt.B.inLie]
-     adj_id := fun x A B => by simp [hsInner_hsE] }]
 
 end zeroOp
 

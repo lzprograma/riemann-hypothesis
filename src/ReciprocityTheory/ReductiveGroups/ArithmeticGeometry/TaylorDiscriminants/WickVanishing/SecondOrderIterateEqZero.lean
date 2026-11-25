@@ -7,8 +7,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscrim
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPolynomial
@@ -99,7 +97,7 @@ theorem pairMin_step (c : ι → π) (s : ι → Bool) (n : ι →₀ ℕ) (l l'
     · have hq' : c l' = q := hc ▸ hq
       simp [hq, hq', hs, hs']
     · have hq' : ¬ c l' = q := hc ▸ hq
-      simp only [hq, hq', false_and, if_false]
+      simp only [hq, hq', false_and, ite_false]
       omega
   simp only [pairMin]
   rw [Finset.sum_congr rfl (fun q _ => key q), Finset.sum_add_distrib, Finset.sum_ite_eq]

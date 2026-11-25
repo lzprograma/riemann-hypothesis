@@ -182,17 +182,8 @@ theorem analyticAt_of_differentiableOn {σ : Type} [Fintype σ] {m : ℕ} {U : S
   have hH : DifferentiableOn ℂ H (E ⁻¹' U) :=
     P.differentiable.comp_differentiableOn
       (hG.comp E.differentiable.differentiableOn (Set.mapsTo_preimage _ _))
-  have hHa : AnalyticOnNhd ℂ H (E ⁻¹' U) := by
-    intro y hy
-    refine AnalyticAt.pi fun s => ?_
-    have hs : DifferentiableOn ℂ (fun x => H x s) (E ⁻¹' U) :=
-      (ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : Fin m => ℂ) s).differentiable.comp_differentiableOn hH
-    refine IndefiniteRowSideFullHecke.ComplexSets.analyticOnNhd_of_continuousOn_of_separately hV hs.continuousOn
-      (fun x hx i => ?_) y hy
-    have h1 : DifferentiableAt ℂ (fun x => H x s) (Function.update x i (x i)) := by
-      rw [Function.update_eq_self]
-      exact hs.differentiableAt (hV.mem_nhds hx)
-    exact h1.comp (x i) (hasFDerivAt_update (𝕜 := ℂ) x (x i)).differentiableAt
+  have hHa : AnalyticOnNhd ℂ H (E ⁻¹' U) := analyticOnNhd_pi_iff.2 fun s =>
+    ReciprocityTheory.AnForm.Osgood.osgood _ _ _ hV (differentiableOn_pi.1 hH s)
   have hGe : G = fun x => P.symm (H (E.symm x)) := by
     funext x
     simp [H]

@@ -42,6 +42,7 @@ import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.Automorphisms.PlaceA
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceProjMemIntegersOfIntegral
 
 @[expose] public section
 
@@ -57,22 +58,7 @@ variable {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ}
 
 theorem proj_int (s : SplitPlace L) {z : AL L} (hz : z ∈ ALint L) :
     s.proj z ∈ s.v.adicCompletionIntegers (maximalRealSubfield L) := by
-  have key : ALint L ≤ ((s.v.adicCompletionIntegers (maximalRealSubfield L)).toSubring).comap s.proj := by
-    rw [ALint, Subring.closure_le]
-    rintro y (⟨o, rfl⟩ | ⟨a, ha, rfl⟩)
-    · show s.proj _ ∈ (s.v.adicCompletionIntegers (maximalRealSubfield L)).toSubring
-      have e : s.proj ((o : L) ⊗ₜ[maximalRealSubfield L] (1 : AFplus L)) = s.i (o : L) := by
-        simp [SplitPlace.proj]
-      rw [e]
-      exact s.split_le_one o
-    · show s.proj _ ∈ (s.v.adicCompletionIntegers (maximalRealSubfield L)).toSubring
-      have e : s.proj ((1 : L) ⊗ₜ[maximalRealSubfield L] a) = a s.v := by
-        simp only [SplitPlace.proj, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, Algebra.TensorProduct.lift_tmul, map_one,
-          one_mul]
-        rfl
-      rw [e]
-      exact ha s.v
-  exact key hz
+  apply _root_.GlobalTheory.splitPlace_proj_mem_integers_of_integral <;> assumption
 
 theorem locM_int (s : SplitPlace L) {κ : GAf L n} (h : κ ∈ Umax L n) (a b : Fin n) :
     NX.locM s κ a b ∈ s.v.adicCompletionIntegers (maximalRealSubfield L) := proj_int s (h a b)
@@ -240,12 +226,12 @@ theorem bt_parah {r : ℕ} {x : Matrix (Fin n) (Fin n) (v.adicCompletion (maxima
 
 theorem parah_of_bt {r : ℕ} {x : Matrix (Fin n) (Fin n) (v.adicCompletion (maximalRealSubfield L))} (hx : ∀ a b, x a b ∈ v.adicCompletionIntegers (maximalRealSubfield L)) (h : (resM x hx).BlockTriangular (bP r)) :
     NX.InParah v r x :=
-  ⟨hx, fun a b ha hb => (resM_zero hx a b).1 (h (by simp only [bP]; rw [if_pos ha, if_neg (by omega)]; omega))⟩
+  ⟨hx, fun a b ha hb => (resM_zero hx a b).1 (h (by simp only [bP]; rw [ite_eq_left ha, ite_eq_right (by omega)]; omega))⟩
 
 theorem bt_levG {r : ℕ} {x : Matrix (Fin n) (Fin n) (v.adicCompletion (maximalRealSubfield L))} (hx : NX.InLevG v r x) : (resM x hx.1.1).BlockTriangular (bG r) := by
   intro a b hab
   refine (resM_zero hx.1.1 a b).2 ?_
-  by_cases ha : (a : ℕ) < r <;> by_cases hb : (b : ℕ) < r <;> simp only [bG, ha, hb, if_true, if_false] at hab
+  by_cases ha : (a : ℕ) < r <;> by_cases hb : (b : ℕ) < r <;> simp only [bG, ha, hb, ite_true, ite_false] at hab
   · exact (hx.2 a b ha hb).1 (by rw [Fin.lt_def]; exact hab)
   · omega
   · exact hx.1.2 a b (by omega) hb
@@ -254,7 +240,7 @@ theorem bt_levG {r : ℕ} {x : Matrix (Fin n) (Fin n) (v.adicCompletion (maximal
 theorem levG_top_of_bt {r : ℕ} {x : Matrix (Fin n) (Fin n) (v.adicCompletion (maximalRealSubfield L))} (hx : ∀ a b, x a b ∈ v.adicCompletionIntegers (maximalRealSubfield L)) (h : (resM x hx).BlockTriangular (bG r))
     (hd : ∀ a : Fin n, (a : ℕ) < r → resM x hx a a = 1) :
     ∀ a b : Fin n, (a : ℕ) < r → (b : ℕ) < r → (b < a → Valued.v (x a b) < 1) ∧ (a = b → Valued.v (x a b - 1) < 1) :=
-  fun a b ha hb => ⟨fun hba => (resM_zero hx a b).1 (h (by simp only [bG]; rw [if_pos ha, if_pos hb]; exact hba)),
+  fun a b ha hb => ⟨fun hba => (resM_zero hx a b).1 (h (by simp only [bG]; rw [ite_eq_left ha, ite_eq_left hb]; exact hba)),
     fun hab => by subst hab; exact (resM_one hx a a).1 (hd a ha)⟩
 
 theorem diag_mul {r : ℕ} {K : Type} [CommRing K] {M N : Matrix (Fin n) (Fin n) K} (hM : M.BlockTriangular (bG r))
@@ -292,7 +278,7 @@ theorem lr_mul {K : Type} [CommRing K] {r : ℕ} {M N : Matrix (Fin n) (Fin n) K
   simp only [Matrix.submatrix_apply, Matrix.mul_apply]
   rw [← Fintype.sum_subtype_add_sum_subtype (fun c : Fin n => r ≤ (c : ℕ))]
   have hz : ∑ c : {c : Fin n // ¬ r ≤ (c : ℕ)}, M a.1 c.1 * N c.1 b.1 = 0 := Finset.sum_eq_zero fun c _ => by
-    rw [hM (by simp only [bP]; rw [if_pos a.2, if_neg c.2]; omega), zero_mul]
+    rw [hM (by simp only [bP]; rw [ite_eq_left a.2, ite_eq_right c.2]; omega), zero_mul]
   rw [hz, add_zero]
 
 theorem detT_mul_of {K : Type} [CommRing K] {r : ℕ} {M N : Matrix (Fin n) (Fin n) K} (hM : M.BlockTriangular (bP r)) :

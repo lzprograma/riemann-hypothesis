@@ -13,55 +13,9 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultipl
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.CauchyHW
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.MinDeg
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.ShapeFromFacts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Bool
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Analysis.CStarAlgebra.Classes
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -103,8 +57,7 @@ theorem neg_iff_nN {n : ℕ} (f : Fin n → ℚ) (hseg : ∀ i i' : Fin n, i < i
       intro x hx
       rw [Finset.mem_filter] at hx
       rw [Finset.mem_Ioi]
-      by_contra hle
-      push_neg at hle
+      by_contra! hle
       rcases hle.lt_or_eq with h | h
       · exact hn (hseg x i h hx.2)
       · rw [← h] at hn; exact hn hx.2
@@ -155,7 +108,7 @@ theorem gR_pos_block {m : ℕ} (u v : κ → σ) (pos : κ → Bool) (j : Fin m 
     gR u v pos P = ∑ k, X (u (j k)) * pderiv (v (j k)) P := by
   unfold gR
   rw [sum_range_emb j hj _ (fun c hc => ?_)]
-  · exact Finset.sum_congr rfl (fun k _ => by rw [if_pos (hin k)])
+  · exact Finset.sum_congr rfl (fun k _ => by rw [ite_eq_left (hin k)])
   · split_ifs
     · rw [pderiv_eq_zero_of_noVar (hB c hc), mul_zero]
     · rw [pderiv_eq_zero_of_noVar (hA c hc), mul_zero, neg_zero]
@@ -173,14 +126,14 @@ theorem sw_pos_block {m : ℕ} (e : σ →₀ ℕ) (w : κ → σ) (pos : κ →
     sw e w pos = ((∑ k, e (w (j k)) : ℕ) : ℤ) := by
   unfold sw
   rw [sum_range_emb j hj _ (fun c hc => by rw [hA c hc]; simp), Nat.cast_sum]
-  exact Finset.sum_congr rfl (fun k _ => by rw [if_pos (hin k)])
+  exact Finset.sum_congr rfl (fun k _ => by rw [ite_eq_left (hin k)])
 
 theorem sw_neg_block {m : ℕ} (e : σ →₀ ℕ) (w : κ → σ) (pos : κ → Bool) (j : Fin m → κ) (hj : Function.Injective j)
     (hA : ∀ c, c ∉ Set.range j → e (w c) = 0) (hin : ∀ k, pos (j k) = false) :
     sw e w pos = -((∑ k, e (w (j k)) : ℕ) : ℤ) := by
   unfold sw
   rw [sum_range_emb j hj _ (fun c hc => by rw [hA c hc]; simp), Nat.cast_sum, ← Finset.sum_neg_distrib]
-  exact Finset.sum_congr rfl (fun k _ => by rw [if_neg (by simp [hin k])])
+  exact Finset.sum_congr rfl (fun k _ => by rw [ite_eq_right (by simp [hin k])])
 
 theorem bRow_apply' {m n : ℕ} (ι : Fin m × Fin n → σ) (a b : Fin m) (P : MvPolynomial σ ℂ) :
     bRow ι a b P = ∑ k : Fin n, X (ι (a, k)) * pderiv (ι (b, k)) P := by
@@ -580,7 +533,7 @@ theorem leftRootDerivation_X (a b : Ix p q) (v : Ln p q r s) :
   rw [der1, der_sum_apply, Finset.sum_eq_single v.2]
   · obtain ⟨v1, v2⟩ := v
     by_cases h : linePos (a, v2) = true
-    · simp only [h, if_true, Derivation.smul_apply, pderiv_X, smul_eq_mul]
+    · simp only [h, ite_true, Derivation.smul_apply, pderiv_X, smul_eq_mul]
       by_cases hb : v1 = b
       · subst hb; simp
       · simp [hb]
@@ -602,7 +555,7 @@ theorem rightRootDerivation_X (c d : Ix r s) (v : Ln p q r s) :
   rw [der2, der_sum_apply, Finset.sum_eq_single v.1]
   · obtain ⟨v1, v2⟩ := v
     by_cases h : linePos (v1, c) = true
-    · simp only [h, if_true, Derivation.smul_apply, pderiv_X, smul_eq_mul]
+    · simp only [h, ite_true, Derivation.smul_apply, pderiv_X, smul_eq_mul]
       by_cases hb : v2 = d
       · subst hb; simp
       · simp [hb]
@@ -627,7 +580,7 @@ theorem leftRootOperator_eq_derivation (a b : Ix p q) (hab : a ≠ b) (hblk : �
   by_cases h : linePos (a, c) = true
   · simp [h, smul_eq_mul]
   · have hne : (a, c) ≠ (b, c) := fun e => hab (by simp at e; exact e)
-    simp only [h, if_false, Bool.false_eq_true, LinearMap.neg_apply, LinearMap.mulLeft_apply,
+    simp only [h, ite_false, Bool.false_eq_true, LinearMap.neg_apply, LinearMap.mulLeft_apply,
       Derivation.coeFn_coe, Derivation.neg_apply, Derivation.smul_apply, smul_eq_mul]
     rw [pderiv_mul, pderiv_X_of_ne hne.symm]
     ring
@@ -642,7 +595,7 @@ theorem rightRootOperator_eq_derivation (c d : Ix r s) (hcd : c ≠ d) (hblk : �
   by_cases h : linePos (a, c) = true
   · simp [h, smul_eq_mul]
   · have hne : (a, c) ≠ (a, d) := fun e => hcd (by simp at e; exact e)
-    simp only [h, if_false, Bool.false_eq_true, LinearMap.neg_apply, LinearMap.mulLeft_apply,
+    simp only [h, ite_false, Bool.false_eq_true, LinearMap.neg_apply, LinearMap.mulLeft_apply,
       Derivation.coeFn_coe, Derivation.neg_apply, Derivation.smul_apply, smul_eq_mul]
     rw [pderiv_mul, pderiv_X_of_ne hne.symm]
     ring
@@ -1099,9 +1052,6 @@ theorem mem_wtSub2 (hW : FormWt2) (P : Pol p q r s) (μ : Ix r s → ℚ)
   rw [LinearMap.sub_apply, rightAction_diagonal_of hW P y W hm, hWy]
   simp
 
-theorem posC_ne {n m : ℕ} (x y : Ix n m) (h : posC x y) : x ≠ y := by
-  cases x <;> cases y <;> simp only [posC] at h <;> first | exact h.elim | (intro e; simp at e; omega)
-
 theorem isDiagonalBlockIndex_left_of_positiveRoot (x y : Ix p q) (h : posC x y) (c : Ix r s) : linePos (x, c) = linePos (y, c) := by
   cases x <;> cases y <;> cases c <;> simp only [posC] at h <;> first | exact h.elim | rfl
 
@@ -1222,7 +1172,7 @@ theorem vecHW1_of (hW : FormWt1) (hR : FormRaise1) : VecHW1 := by
   refine Submodule.mem_inf.2 ⟨mem_wtSub1 hW _ _ (wtVec1 a b c d hd), ?_⟩
   simp only [Submodule.mem_iInf, LinearMap.mem_ker]
   intro x y hxy
-  rw [hR p q r s x y (posC_ne x y hxy), leftRootOperator_eq_derivation x y (posC_ne x y hxy) (isDiagonalBlockIndex_left_of_positiveRoot x y hxy)]
+  rw [hR p q r s x y (PI.FockOneDegW.Core.posC_ne x y hxy), leftRootOperator_eq_derivation x y (PI.FockOneDegW.Core.posC_ne x y hxy) (isDiagonalBlockIndex_left_of_positiveRoot x y hxy)]
   exact vecRaise1 a b c d x y hxy
 
 theorem vecHW2_of (hW : FormWt2) (hR : FormRaise2) : VecHW2 := by
@@ -1230,7 +1180,7 @@ theorem vecHW2_of (hW : FormWt2) (hR : FormRaise2) : VecHW2 := by
   refine Submodule.mem_inf.2 ⟨mem_wtSub2 hW _ _ (wtVec2 a b c d hd), ?_⟩
   simp only [Submodule.mem_iInf, LinearMap.mem_ker]
   intro x y hxy
-  rw [hR p q r s x y (posC_ne x y hxy), rightRootOperator_eq_derivation x y (posC_ne x y hxy) (isDiagonalBlockIndex_right_of_positiveRoot x y hxy)]
+  rw [hR p q r s x y (PI.FockOneDegW.Core.posC_ne x y hxy), rightRootOperator_eq_derivation x y (PI.FockOneDegW.Core.posC_ne x y hxy) (isDiagonalBlockIndex_right_of_positiveRoot x y hxy)]
   exact vecRaise2 a b c d x y hxy
 
 end PI.FJMX
@@ -1377,7 +1327,7 @@ theorem eq_C_of_support {Q : MvPolynomial σ ℂ} (h : ∀ e ∈ Q.support, e = 
   rw [coeff_C]
   by_cases hm : m = 0
   · subst hm; simp
-  · rw [if_neg (Ne.symm hm)]
+  · rw [ite_eq_right (Ne.symm hm)]
     by_contra hc
     exact hm (h m (mem_support_iff.2 hc))
 

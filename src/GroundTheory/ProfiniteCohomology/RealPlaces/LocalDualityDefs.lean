@@ -15,8 +15,6 @@ namespace GroundTheory.ProfCoh
 
 open CategoryTheory MonoidalCategory GroundTheory.GroupCoh
 
-attribute [local instance 2000] Rep.hV2
-
 section TateZero
 
 variable {k G : Type} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Fintype G]

@@ -117,9 +117,9 @@ theorem avoid_base (Xa : ArchInM X) (Fl : FlatM X Xa) (j j' : Fin Fl.δ) {γ : G
       ext a e
       by_cases h : e < a
       · have hne : a ≠ e := ne_of_gt h
-        simp only [mat, nmat, Matrix.of_apply, dif_pos h, Matrix.one_apply_ne hne]
+        simp only [mat, nmat, Matrix.of_apply, dite_eq_left h, Matrix.one_apply_ne hne]
         all_goals first | rfl
-      · simp only [mat, nmat, Matrix.of_apply, dif_neg h, Matrix.one_apply]
+      · simp only [mat, nmat, Matrix.of_apply, dite_eq_right h, Matrix.one_apply]
     show mat x0 τ * mat (nmat X 0) τ = x0 τ
     rw [hm, Matrix.mul_one]
     rfl

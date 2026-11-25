@@ -280,18 +280,18 @@ theorem LemmaETrunc.proof : LemmaETrunc.Statement := by
       refine ⟨N, hN, hpN, c - 1, fun q hq => ?_⟩
       by_cases hqY : q ∈ Yo
       · have hq' : u q ≤ c - 1 := hNs ⟨hq, hqY⟩
-        simp only [v, if_pos hqY]
+        simp only [v, ite_eq_left hqY]
         rw [hfixC _ (by linarith)]
-      · simp only [v, if_neg hqY]
+      · simp only [v, ite_eq_right hqY]
     obtain ⟨hs, hp⟩ := trunc_smooth_psh A Om hYo hu hnn c one_pos v
-      (fun p hp => by simp only [v, if_pos hp]) hvC
+      (fun p hp => by simp only [v, ite_eq_left hp]) hvC
     refine ⟨v, hs, hp, fun x => ?_, -1, fun x hx hxR => ?_⟩
     · by_cases hx : x ∈ Yo
-      · simp only [v, if_pos hx]
+      · simp only [v, ite_eq_left hx]
         exact hb _ (hu0 x hx)
-      · simp only [v, if_neg hx]
+      · simp only [v, ite_eq_right hx]
         constructor <;> linarith
-    · simp only [v, if_pos hx]
+    · simp only [v, ite_eq_left hx]
       rw [hfixU _ (hnear x hx hxR)]
       ring
 

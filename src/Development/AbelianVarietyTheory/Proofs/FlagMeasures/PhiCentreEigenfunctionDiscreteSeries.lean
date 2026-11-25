@@ -120,7 +120,7 @@ lemma trPow_eq (l : Fin n → ℂ) (k : ℕ) (a : Fin n) : TrPow_m l k a = ∑ b
     simp only [Matrix.mul_apply]
     rw [Finset.sum_comm]
     simp only [← Finset.mul_sum, ← ih, hsplit, Finset.sum_add_distrib, Finset.sum_ite_eq,
-      Finset.mem_univ, if_true, TrPow_m, Finset.sum_filter, sub_eq_add_neg, ← Finset.sum_neg_distrib]
+      Finset.mem_univ, ite_true, TrPow_m, Finset.sum_filter, sub_eq_add_neg, ← Finset.sum_neg_distrib]
     congr 1
     refine Finset.sum_congr rfl fun x _ => ?_
     split_ifs <;> simp
@@ -382,7 +382,7 @@ lemma Phi_mul_single (lam : Fin n → ℝ) {z : Matrix (Fin n) (Fin n) ℂ} (hz 
       (if a = b then (1 + t) ^ (-(muInt lam a)) else 1) * Phi lam z := by
   have hup : IsUp (1 + t • Matrix.single a b (1 : ℂ)) := by
     intro i j hji
-    rw [Matrix.add_apply, Matrix.one_apply_ne hji.ne', Matrix.smul_apply, Matrix.single_apply, if_neg]
+    rw [Matrix.add_apply, Matrix.one_apply_ne hji.ne', Matrix.smul_apply, Matrix.single_apply, ite_eq_right]
     · simp
     · rintro ⟨rfl, rfl⟩
       exact absurd hab (not_le.2 hji)
@@ -395,8 +395,8 @@ lemma Phi_mul_single (lam : Fin n → ℝ) {z : Matrix (Fin n) (Fin n) ℂ} (hz 
       · rintro ⟨rfl, rfl⟩; exact ⟨rfl, rfl⟩
       · rintro ⟨rfl, rfl⟩; exact ⟨rfl, rfl⟩
     by_cases hc : a = b ∧ l = a
-    · rw [if_pos (hiff.2 hc), if_pos hc]; simp
-    · rw [if_neg (fun h5 => hc (hiff.1 h5)), if_neg hc]; simp
+    · rw [ite_eq_left (hiff.2 hc), ite_eq_left hc]; simp
+    · rw [ite_eq_right (fun h5 => hc (hiff.1 h5)), ite_eq_right hc]; simp
   have hne : ∀ l, (1 : Matrix (Fin n) (Fin n) ℂ) l l ≠ 0 ∧ (1 + t • Matrix.single a b (1 : ℂ)) l l ≠ 0 := by
     intro l
     refine ⟨by simp, ?_⟩
@@ -411,7 +411,7 @@ lemma Phi_mul_single (lam : Fin n → ℝ) {z : Matrix (Fin n) (Fin n) ℂ} (hz 
   simp only [Matrix.one_apply_eq, one_mul, hdiag]
   by_cases hab' : a = b
   · subst hab'
-    simp only [true_and, if_true]
+    simp only [true_and, ite_true]
     rw [Finset.prod_eq_single a (fun l _ hl => by simp [hl]) (by simp)]
     simp
   · simp [hab']
@@ -448,7 +448,7 @@ lemma der_Phi (lam : Fin n → ℝ) (k k' : Matrix (Fin n) (Fin n) ℂ) (h : k' 
   rw [hev.deriv_eq]
   by_cases hab' : a = b
   · subst hab'
-    simp only [if_true]
+    simp only [ite_true]
     have hd : HasDerivAt (fun t : ℂ => (1 + t) ^ (-(muInt lam a)))
         (((-(muInt lam a) : ℤ) : ℂ) * (1 + 0) ^ (-(muInt lam a) - 1) * 1) 0 :=
       (hasDerivAt_zpow (-(muInt lam a)) (1 + 0 : ℂ) (Or.inl (by norm_num))).comp (0 : ℂ)
@@ -481,10 +481,10 @@ theorem phiEigen : PhiEigen := by
       (fun a => -(muInt lam a : ℂ)) (mk (isOpen_conj k k⁻¹) _ (analytic_Phi lam k k⁻¹)) := by
     refine ⟨fun a => ?_, fun a b hab => ?_⟩
     · have h3 := der_Phi lam k k⁻¹ h1 (le_refl a)
-      rw [if_pos rfl] at h3
+      rw [ite_eq_left rfl] at h3
       exact h3
     · have h3 := der_Phi lam k k⁻¹ h1 hab.le
-      rw [if_neg hab.ne, zero_smul] at h3
+      rw [ite_eq_right hab.ne, zero_smul] at h3
       exact h3
   have hl : lsh (fun a => -(muInt lam a : ℂ)) = fun c => -(lam c : ℂ) + ((n : ℂ) - 1) / 2 := by
     funext c

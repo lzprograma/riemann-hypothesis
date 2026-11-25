@@ -163,7 +163,7 @@ theorem coeff_glue_prod (μ : K → (Unit × Fin d →₀ ℕ)) (P : K → MvPol
   split_ifs with h
   · rfl
   · rw [Fintype.mem_piFinset] at h
-    push_neg at h
+    push Not at h
     obtain ⟨k, hk⟩ := h
     symm
     apply Finset.prod_eq_zero (Finset.mem_univ k)

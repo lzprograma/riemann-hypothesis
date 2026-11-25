@@ -68,8 +68,6 @@ open scoped TensorProduct
 
 namespace GlobalTheory.StdFrames
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Ring
 
 open Formalism.UG
@@ -368,8 +366,8 @@ theorem exists_idem (S : Set (Pl D.host.E)) :
     change toAd D e Q = _
     rw [he]
     rfl
-  refine ⟨e, cpt_ext fun Q => ?_, (mem_OA_iff e).2 fun Q => ?_, fun Q hQ => by rw [h, if_pos hQ],
-    fun Q hQ => by rw [h, if_neg hQ]⟩
+  refine ⟨e, cpt_ext fun Q => ?_, (mem_OA_iff e).2 fun Q => ?_, fun Q hQ => by rw [h, ite_eq_left hQ],
+    fun Q hQ => by rw [h, ite_eq_right hQ]⟩
   · rw [map_mul, h]
     split_ifs <;> simp
   · rw [h]

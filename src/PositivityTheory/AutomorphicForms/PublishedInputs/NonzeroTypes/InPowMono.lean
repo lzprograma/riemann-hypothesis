@@ -2,6 +2,7 @@ module
 
 public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroLeviEigenvectorExists
 import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.P_Jmul
 
 @[expose] public section
 
@@ -19,12 +20,8 @@ namespace P_PJ
 
 variable {n : ℕ} (G : Grp k n)
 
-theorem inPow_mono {a b : ℕ} (hab : a ≤ b) {x : k} (hx : InPow b x) : InPow a x := by
-  obtain ⟨y, hy, rfl⟩ := hx
-  exact ⟨y, Ideal.pow_le_pow_right hab hy, rfl⟩
-
 theorem KC_mono {a b : ℕ} (hab : a ≤ b) : KC k n b ⊆ KC k n a := fun _ hg =>
-  ⟨hg.1, fun i j => inPow_mono hab (hg.2 i j)⟩
+  ⟨hg.1, fun i j => P_Jmul.inPow_mono hab (hg.2 i j)⟩
 
 def Jsub (h1 : (1 : GL (Fin n) k) ∈ G.JSet) (hmul : ∀ g ∈ G.JSet, ∀ h ∈ G.JSet, g * h ∈ G.JSet)
     (hinv : ∀ g ∈ G.JSet, g⁻¹ ∈ G.JSet) : Subgroup (GL (Fin n) k) where

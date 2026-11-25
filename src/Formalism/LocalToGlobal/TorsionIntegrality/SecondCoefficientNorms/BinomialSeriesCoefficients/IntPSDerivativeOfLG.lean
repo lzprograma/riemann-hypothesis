@@ -483,9 +483,9 @@ theorem jetExpShape' : JetExpShape := by
     · subst h2
       have e : (2 : K) * (jet l ph 2 / 2) = jet l ph 2 := by
         field_simp
-      rw [if_pos rfl, e, sub_self, neg_zero]
+      rw [ite_eq_left rfl, e, sub_self, neg_zero]
       exact zero_mem R
-    · rw [if_neg h2, sub_zero]
+    · rw [ite_eq_right h2, sub_zero]
       exact neg_mem (hj j hj1 h2)
   · have e : -ph = -(PowerSeries.C (jet l ph 2 / 2) * l ^ 2) + -(ph - PowerSeries.C (jet l ph 2 / 2) * l ^ 2) := by
       ring

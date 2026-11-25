@@ -17,6 +17,7 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityA
 public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.SideEst
 public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TotalDegreeAevalLe
 public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.Degree
+import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.Ci
 import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.ConvSpec
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -450,14 +451,14 @@ private lemma regroup {T : Type} (s : Finset T) (a : T → ℝ) (S : T → Finse
       = ∑ q ∈ (S i).image (fun ζ : ℂ => (a i, ζ)), (if a i = q.1 ∧ q.2 ∈ S i then w i * c i q.2 else 0) * f q := by
         rw [Finset.sum_image hinj]
         refine Finset.sum_congr rfl fun ζ hζ => ?_
-        rw [if_pos ⟨rfl, hζ⟩, mul_assoc]
+        rw [ite_eq_left ⟨rfl, hζ⟩, mul_assoc]
     _ = _ := by
         refine Finset.sum_subset ?_ ?_
         · intro q hq
           obtain ⟨ζ, hζ, rfl⟩ := Finset.mem_image.1 hq
           exact hP i hi ζ hζ
         · intro q _ hq
-          rw [if_neg, zero_mul]
+          rw [ite_eq_right, zero_mul]
           rintro ⟨h1, h2⟩
           exact hq (Finset.mem_image.2 ⟨q.2, h2, Prod.ext h1 rfl⟩)
 
@@ -559,7 +560,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.absX :
     refine Finset.sum_congr rfl fun i hi => ?_
     by_cases hg : good i
     · by_cases ha : a i = x
-      · simp only [hg, ha, and_self, if_true, hgood i hi hg ha, hj i hi]
+      · simp only [hg, ha, and_self, ite_true, hgood i hi hg ha, hj i hi]
       · simp [ha]
     · simp [hg, hbad i hi hg]
   have h4 : {i | act i ∧ good i ∧ a i = x} = ↑(s.filter (fun i => good i ∧ a i = x)) := by
@@ -1123,51 +1124,13 @@ open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Adel PositivityTheory.Rg
 
 private theorem chi_ex (η : ℝ) (hη : 0 < η) : ∃ χ : ℝ → ℝ, Continuous χ ∧ (∀ x, 0 ≤ χ x ∧ χ x ≤ 1) ∧ (∀ x ≥ η, χ x = 1) ∧
     (∀ x ≤ η / 2, χ x = 0) ∧ ∀ x, |χ x| ≤ 1 := by
-  have h01 : ∀ x : ℝ, 0 ≤ max 0 (min 1 (2 * x / η - 1)) ∧ max 0 (min 1 (2 * x / η - 1)) ≤ 1 :=
-    fun x => ⟨le_max_left _ _, max_le zero_le_one (min_le_left _ _)⟩
-  refine ⟨fun x => max 0 (min 1 (2 * x / η - 1)), by fun_prop, h01, ?_, ?_, ?_⟩
-  · intro x hx
-    have : 2 ≤ 2 * x / η := by rw [le_div_iff₀ hη]; linarith
-    show max 0 (min 1 (2 * x / η - 1)) = 1
-    rw [min_eq_left (by linarith), max_eq_right zero_le_one]
-  · intro x hx
-    have : 2 * x / η ≤ 1 := by rw [div_le_iff₀ hη]; linarith
-    exact max_eq_left ((min_le_right _ _).trans (by linarith))
-  · intro x
-    rw [abs_of_nonneg (h01 x).1]; exact (h01 x).2
-
-private theorem trOn_bot {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (T : H →L[ℂ] H) :
-    trOn (⊥ : Submodule ℂ H) T = 0 := by
-  have : prj (⊥ : Submodule ℂ H) = 0 := by
-    ext v
-    have h := Submodule.starProjection_apply_mem (⊥ : Submodule ℂ H).topologicalClosure v
-    have h0 : (⊥ : Submodule ℂ H).topologicalClosure = ⊥ := IsClosed.submodule_topologicalClosure_eq (by simp)
-    exact (Submodule.mem_bot ℂ).mp (h0.le h)
-  simp [trOn, this, trace]
-
-private theorem eig_bot {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (V : Submodule ℂ H)
-    (A : H →L[ℂ] H) (hA : ‖A‖ ≤ 1) (x : ℝ) (hx : 1 < x) : eigIn V A x = ⊥ := by
-  rw [eq_bot_iff]
-  intro v hv
-  have h1 : A v = (x : ℂ) • v := Module.End.mem_eigenspace_iff.mp hv.2
-  have h2 : ‖A v‖ ≤ 1 * ‖v‖ := (A.le_opNorm v).trans (mul_le_mul_of_nonneg_right hA (norm_nonneg _))
-  rw [h1, norm_smul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos (by linarith)] at h2
-  have : ‖v‖ = 0 := by nlinarith [norm_nonneg v]
-  simpa using this
+  obtain ⟨χ, h1, h2, h3, h4⟩ := chiEx η hη
+  exact ⟨χ, h1, h2, h3, h4, fun x => by rw [abs_of_nonneg (h2 x).1]; exact (h2 x).2⟩
 
 private theorem deg_ev (d : ℕ → ℕ) (hd : Tendsto (fun j : ℕ => (d j : ℝ) / j) atTop (𝓝 0)) (p : ℕ) (hp : 0 < p) (A : ℕ) :
     ∀ᶠ j : ℕ in atTop, ∀ m' : ℕ, j / (2 * p) + (d j + A) ≤ (j + m') / p := by
-  have hp' : (0 : ℝ) < p := by exact_mod_cast hp
-  filter_upwards [hd.eventually (gt_mem_nhds (show (0 : ℝ) < 1 / (4 * p) by positivity)), eventually_ge_atTop (4 * p * A),
-    eventually_gt_atTop 0] with j h1 h2 h3 m'
-  have hj : (0 : ℝ) < j := by exact_mod_cast h3
-  rw [div_lt_div_iff₀ hj (by positivity)] at h1
-  have h4 : d j * (4 * p) < j := by
-    have : ((d j * (4 * p) : ℕ) : ℝ) < (j : ℝ) := by push_cast; linarith
-    exact_mod_cast this
-  have h5 := Nat.div_mul_le_self j (2 * p)
-  rw [Nat.le_div_iff_mul_le hp]
-  nlinarith
+  filter_upwards [degEv d hd p hp A] with j hj m'
+  exact (by omega : j / (2 * p) + (d j + A) ≤ j / p).trans (Nat.div_le_div_right (Nat.le_add_right j m'))
 
 private theorem comb_bd (a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) (n : ℕ) (c₁ c₂ j X Y u v : ℝ) (hj : 0 ≤ j) (hX : 0 ≤ X)
     (hY : 0 ≤ Y) (hu : u ≤ a ^ (n + 1) * (Real.exp (c₁ * j) * X + Y)) (hv : v ≤ b ^ (n + 1) * (Real.exp (c₂ * j) * X + Y)) :
@@ -1191,21 +1154,6 @@ private theorem comb_bd (a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ 
 section
 variable {K : Type} [Field K] [NumberField K] {n : ℕ}
 
-private theorem val_congr (x : ℝ) (Λ : (K →+* ℂ) → Multiset ℂ) (t t' : Pl K → Multiset ℂ) (S : Set (Pl K)) (h : ∀ w ∉ S, t w = t' w)
-    (P : PR K n) (hP : ∀ y ∈ P.vars, y.1 ∉ S) : val x Λ t P = val x Λ t' P := by
-  unfold val
-  refine hom_congr_vars (by ext <;> simp) ?_ rfl
-  intro i hi _
-  simp [hval, h _ (hP i hi)]
-
-private theorem val_gam (x : ℝ) (Λ : (K →+* ℂ) → Multiset ℂ) (t : Pl K → Multiset ℂ) (γ : MvPolynomial (Pl K × Fin n) ℂ) :
-    val x Λ t (map C γ : PR K n) = eval (hval t) γ := by
-  unfold val
-  induction γ using MvPolynomial.induction_on with
-  | C a => simp
-  | add p q hp hq => simp only [map_add (f := _), hp, hq]
-  | mul_X p i hp => simp only [map_mul, hp]; simp
-
 private theorem evK_congr (hT : TruncSpec) (S : Set (Pl K)) (Φ : KF (Ix K n) (Pl K × Fin n)) (hΦ : admitted S Φ) (L L' : Ix K n → ℂ)
     (t t' : Pl K → Multiset ℂ) (hL : msOf L = msOf L') (h : ∀ w ∉ S, t w = t' w) : evK L (hval t) Φ = evK L' (hval t') Φ := by
   obtain ⟨⟨G, hG⟩, h2⟩ := hT K n S Φ hΦ
@@ -1216,19 +1164,10 @@ private theorem evK_congr (hT : TruncSpec) (S : Set (Pl K)) (Φ : KF (Ix K n) (P
     funext d
     have a1 := hu' 1 d
     have a2 := hv' 1 d
-    rw [hL, val_congr 1 _ t t' S h _ (fun y hy => hκ _ ((hB d).1 y hy)), a2] at a1
+    rw [hL, valCongr 1 _ t t' S h _ (fun y hy => hκ _ ((hB d).1 y hy)), a2] at a1
     simpa using a1.symm
   subst this
   exact tendsto_nhds_unique hu hv
-
-private theorem pt_card (b : Datum K n) (S : Set (Pl K)) (Λ : (K →+* ℂ) → Multiset ℂ) (t : Pl K → Multiset ℂ) (h : b.Pt S Λ t) :
-    ∀ w ∉ S, (t w).card = n := by
-  obtain ⟨lam, m, B, h1, -, h3⟩ := h
-  intro w hw
-  rw [h3 w hw, Multiset.card_sum]
-  refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_) b.sum
-  rw [Multiset.card_map]
-  exact ((h1 i).2 w hw).1
 
 private theorem tr_eq {l : ℕ} {μ : Measure (normOneGL (K := K) (n := n))} [μ.IsHaarMeasure] {θ : Twist μ} (𝔰 : Side θ l)
     (p : Submodule ℂ (LL μ) → Prop) (x : ℝ) (j : ℕ) :
@@ -1408,10 +1347,8 @@ private theorem sep (hEV : EvVal) (hVB : ValBc) (hSep : SepPoly) {F E : Type} [F
   · rw [(hVB F E n y.1 _ (tF y) P fun z hz => ((hLF y hy).2 _ fun h => h1 _ (h2.1 z hz) ((hS _).mpr h)).1).1]
     exact h4 (Sum.inr ⟨y, Finset.mem_filter.mpr ⟨hy, hy'⟩⟩) y.1
 
-set_option maxHeartbeats 16000000 in
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.cixOf :
     ParEx → TrExp → EvVal → ValBc → KillEx2 → KfBc → TruncSpec → SepPoly → OneSide → OneSideX → EvEx → Kill → KillExempt → FamEx → CIx := by
-  set_option maxHeartbeats 4000000 in
     intro hPar hTr hEV hVB hK2 hKf hTS hSep hOS hOSX hEv hKill hKX hFam F E _ _ _ _ _ _ _ μE _ μF _ θ 𝔢 𝔣 c hG 𝔵 hoff
     classical
     obtain ⟨hAE0, hAE1, -, evE, hevE, hinE⟩ := hEv E (2 + 2) (by norm_num) μE 𝔢.toAmp
@@ -1468,7 +1405,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.cixOf :
     obtain ⟨⟨κ₁, D₁, hκ₁, hB₁⟩, -⟩ := hT G hΦG
     obtain ⟨Φ', G', hΦ', hΦG', hGG, hΦΦ⟩ := hKf F E (2 + 2) 𝔢.S 𝔣.S hS Φ G hΦ hΦG
     have hkill' : ∀ i, Kills 𝔣.S Φ' (b' i) := fun i L' t' h => by
-      rw [hΦΦ L' t' (pt_card _ _ _ _ h)]
+      rw [hΦΦ L' t' (ptCard _ _ _ _ h)]
       exact hΦ2 i L' t' h
     obtain ⟨P₀, κ₂, D₂, hκ₂, hB₂, hP0, hPE, hPF⟩ := sep hEV hVB hSep (by norm_num) 𝔢.toAmp 𝔣.toAmp hS 𝔵.Λ 𝔵.t hΛ
       (fun w hw => (ht w hw).1) sE sF
@@ -1486,7 +1423,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.cixOf :
     obtain ⟨uF, huF, hF⟩ := hF Φ' G' hΦ' hΦG' (hb3' evF hevF χ hχ1 hχ4 hχ5 Φ' G' hΦ' hkill' hΦG') _ hP'
     refine ⟨sE, sp.filter (η < ·), sF, uE, w, uF, x * val x 𝔵.Λ 𝔵.t (map C γ * P₀ : PR E (2 + 2)) * evK L (hval 𝔵.t) Φ, ?_, hsE,
       fun a => by rw [Finset.mem_filter, and_comm]; rfl, hsF, fun y hy => ?_, fun a _ => ?_, fun y hy => ?_, fun s₀ => ?_⟩
-    · rw [map_mul, val_gam]
+    · rw [map_mul, valC]
       exact mul_ne_zero (mul_ne_zero (by exact_mod_cast hx.ne') (mul_ne_zero hγ0 (hP0 x hx.ne'))) hΦ0
     · by_cases hg : At μE 𝔢.S y.2 𝔵.Λ 𝔵.t
       · refine ⟨_, huE y hy L 𝔵.t (hL ▸ hg), fun _ h => ?_, fun h => absurd hg h⟩
@@ -1502,7 +1439,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.cixOf :
         refine ⟨_, huF y hy L' t' h1, fun _ h => ?_, fun h => absurd hg h⟩
         rw [h, hΦΦ L' t' fun v hv => (h1.2 v hv).1,
           (hVB F E (2 + 2) x _ t' _ fun z hz => (h1.2 _ fun h => hP z hz ((hS _).mpr h)).1).1, ← h2,
-          val_congr x _ _ _ _ h3 _ hP, evK_congr hTS _ Φ hΦ L (fun y => L' (y.1.comp (algebraMap F E), y.2)) _ _ (hL.trans h2) h3]
+          valCongr x _ _ _ _ h3 _ hP, evK_congr hTS _ Φ hΦ L (fun y => L' (y.1.comp (algebraMap F E), y.2)) _ _ (hL.trans h2) h3]
       · obtain ⟨L', t', h1, h2⟩ := hPF y hy hg
         refine ⟨_, huF y hy L' t' h1, fun h => absurd h hg, fun _ => ?_⟩
         rw [map_mul, map_mul, h2, mul_zero, mul_zero, zero_mul]

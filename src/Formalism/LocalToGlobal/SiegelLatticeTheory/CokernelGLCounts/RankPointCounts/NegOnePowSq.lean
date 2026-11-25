@@ -15,8 +15,6 @@ open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S
 
 namespace Formalism.L2.SG.Pf.FibD
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) (p : PlF D)
 
 theorem neg_one_pow_sq {R : Type*} [CommRing R] (k : ℕ) : (-1 : R) ^ k * (-1) ^ k = 1 := by
@@ -31,7 +29,7 @@ theorem ρOf_eq (A B : Formalism.L2.SG.PairVal.MatR D) :
     ext i j
     simp only [Formalism.L2.SG.Pf.StabShape.ρL, Formalism.L2.SG.LsDatumB.sgnP, Matrix.of_apply, Matrix.mul_apply,
       Matrix.diagonal_apply, Matrix.map_apply, ite_mul, zero_mul, mul_ite, mul_zero, Finset.sum_ite_eq,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true, map_mul, map_pow, map_neg, map_one]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true, map_mul, map_pow, map_neg, map_one]
     rw [frFac_cf, frFac_cf, inv_alg_cf]
     ring
   | some g =>
@@ -39,7 +37,7 @@ theorem ρOf_eq (A B : Formalism.L2.SG.PairVal.MatR D) :
     apply g.e.injective
     simp only [Formalism.L2.SG.Pf.StabShape.ρG, glue, Formalism.L2.SG.LsDatumB.sgnP, Matrix.of_apply, Matrix.mul_apply,
       Matrix.diagonal_apply, Matrix.map_apply, Matrix.transpose_apply, Sg, ite_mul, zero_mul, mul_ite, mul_zero,
-      Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true, map_mul, map_pow, map_neg, map_one,
+      Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true, map_mul, map_pow, map_neg, map_one,
       AlgEquiv.apply_symm_apply, RingHom.comp_apply, adeleInfiniteComponent_apply, adele_ext_components, frFac_cf, AlgEquiv.commutes,
       Prod.algebraMap_apply, Prod.fst_mul, Prod.pow_fst, Prod.fst_neg, Prod.fst_one, Algebra.algebraMap_self, RingHom.id_apply]
     have h2 : ∀ a, cfi Zd p a = (cf Zd p a)⁻¹ := fun a => eq_inv_of_mul_eq_one_right (cf_cfi Zd p a)

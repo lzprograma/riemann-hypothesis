@@ -48,7 +48,6 @@ import Mathlib.Topology.Sheaves.Init
 
 open scoped Classical ENNReal
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.Unfold
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -148,11 +147,6 @@ theorem mem_of_local (Z : LocDat D) (Γ : LV D) (hΓ : Submodule.IsLattice D.hos
   rw [map_add, hQX y (Submodule.subset_span hy), hQQ, zero_add] at hQx
   simpa only [LinearMap.restrictScalars_apply, hQx, add_zero] using hy
 
-theorem herm_smul_right {F E : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [CommRing E] [Algebra F E]
-    [TopologicalSpace E] [MeasurableSpace E] {M : Loc.Model F E} {V : Type} [AddCommGroup V] [Module E V]
-    (H : Loc.HermSp M V) (c : E) (u w : V) : H.h u (c • w) = M.L.cj c * H.h u w := by
-  rw [H.h_herm (c • w) u, H.h_smul_left, map_mul, ← H.h_herm w u]
-
 theorem herm_span_right {F E : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [CommRing E] [Algebra F E]
     [TopologicalSpace E] [MeasurableSpace E] {M : Loc.Model F E} {V : Type} [AddCommGroup V] [Module E V]
     (H : Loc.HermSp M V) (u : V) (S : Set V) (hS : ∀ s ∈ S, H.h u s = 0) :
@@ -163,7 +157,7 @@ theorem herm_span_right {F E : Type} [Field F] [ValuativeRel F] [TopologicalSpac
   · intro a b _ _ ha hb
     rw [H.h_herm (a + b) u, H.h_add_left, map_add (f := _), ← H.h_herm a u, ← H.h_herm b u, ha, hb, add_zero]
   · intro c a _ ha
-    rw [herm_smul_right, ha, mul_zero]
+    rw [Formalism.L2.SG.CntLocal.h_smul_right', ha, mul_zero]
 
 theorem X_iso {T : D.host.E} (G : LFlag (D.sp.Y 0) D.R.rS T) {x : (VS D).V} (hx : x ∈ Xsp G) :
     x ∈ orth (VS D) (Xsp G) := by
@@ -181,7 +175,6 @@ theorem X_iso {T : D.host.E} (G : LFlag (D.sp.Y 0) D.R.rS T) {x : (VS D).V} (hx 
   · simp
   · intro a c _ _ ha hc; simp [ha, hc]
   · intro c a _ ha; simp [ha]
-
 
 theorem lsub_le (Z : LocDat D) {T : D.host.E} (G : LFlag (D.sp.Y 0) D.R.rS T)
     (f : ∀ p : PlF D, Fin (D.R.rS + 1) → Vp D p)
@@ -215,7 +208,7 @@ theorem lsub_le (Z : LocDat D) {T : D.host.E} (G : LFlag (D.sp.Y 0) D.R.rS T)
       rintro _ ⟨a, rfl⟩
       rw [hf p]
       simp only
-      rw [herm_smul_right]
+      rw [Formalism.L2.SG.CntLocal.h_smul_right']
       have e0 : (locH Z p).h (baseChange₂ D p l) (baseChange₂ D p (frame G a.castSucc)) = 0 := by
         show LocFacts₂ Z.M p (baseChange₂ D p l) (baseChange₂ D p (frame G a.castSucc)) = 0
         rw [baseChangeAt_form Z.M p (Z.hcj p), brS]

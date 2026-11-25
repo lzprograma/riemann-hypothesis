@@ -25,55 +25,11 @@ public import Mathlib.Topology.Algebra.Order.Group
 public import Mathlib.Topology.MetricSpace.Pseudo.Basic
 public import Development.AutomorphicSpectrum.Statements.GeometryStatements.AgreementPos
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AbsCoeffProdXLeOne
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDerived
 import Std.Tactic.BVDecide.Normalize.Prop
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.PermFinTwoUniv
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linter.HaveILetI
 import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
 import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
@@ -101,7 +57,7 @@ def ratioWt (A B : HermLine ι) (z : (Σ k, ι k) → ℂ) : ℝ :=
   if ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0 then Real.log (A.h z) - Real.log (B.h z) else 0
 
 theorem ratioWt_of_mem {A B : HermLine ι} {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) :
-    ratioWt A B z = Real.log (A.h z) - Real.log (B.h z) := if_pos hz
+    ratioWt A B z = Real.log (A.h z) - Real.log (B.h z) := ite_eq_left hz
 
 omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem smul_mem_iff (c : K → ℂ) (z : (Σ k, ι k) → ℂ) (hc : ∀ k, c k ≠ 0) :
@@ -117,7 +73,7 @@ theorem ratioWt_smul {A B : HermLine ι} (hab : A.a = B.a) (c : K → ℂ) (z : 
     rw [Real.log_mul h0 (A.pos z hz).ne', Real.log_mul h0 (B.pos z hz).ne']
     ring
   · have hz' := fun h => hz ((smul_mem_iff c z hc).1 h)
-    simp only [ratioWt, if_neg hz, if_neg hz']
+    simp only [ratioWt, ite_eq_right hz, ite_eq_right hz']
 
 theorem ratioWt_smooth {A B : HermLine ι} (hA : IsSmoothHerm A) (hB : IsSmoothHerm B) :
     SmoothFn (ratioWt A B) := by
@@ -200,7 +156,7 @@ theorem position_integral (hE : ResExistsStatement) {P J : Ideal (MRing ι)} {D 
   have hlift : ∀ x ∉ (∅ : Set R.X), logNormRat (wtLine hab) 1 1 (R.lift x x) = v (π x) := by
     intro x _
     rw [logNormRat_wtLine, ratioWt_of_mem (R.mem x x (R.mem_U x)).1, hlog x]
-  have hb := _root_.GlobalTheory.CompanionTheory.Ar.PB.ptsIntegral_logNormRat_eq_base hE K ι P J D R X A π hπ dg br hP hdeg L Φ hL hΦ hS (wtLine hab) 1 1 v ∅
+  have hb := _root_.PositivityTheory.Xgp.t_re_bridge hE K ι P J D R X A π hπ dg br hP hdeg L Φ hL hΦ hS (wtLine hab) 1 1 v ∅
     (wtLine_smooth hab h₁ h₂) hrat hnull hlift (mIntegrableCont A Φ hΦ v hv)
   rwa [logNormRat_wtLine] at hb
 
@@ -263,7 +219,7 @@ theorem num_sub_num : Inputs → ∀ (II : IntersectionSystem), IsFullIntersecti
       funext j
       rcases Fin.eq_self_or_eq_succAbove r j with rfl | ⟨i, rfl⟩
       · rw [Function.comp_apply, toEnd_self, Fin.snoc_last]
-        exact congrArg (Re.line (w _)) (if_pos (Nat.lt_succ_self _))
+        exact congrArg (Re.line (w _)) (ite_eq_left (Nat.lt_succ_self _))
       · have hne : ((r.succAbove i : Fin (D + 1)) : ℕ) ≠ r := fun h => Fin.succAbove_ne r i (Fin.ext h)
         have hiff : ((r.succAbove i : Fin (D + 1)) : ℕ) < r + 1 ↔ r.succAbove i < r := by
           rw [Fin.lt_def]
@@ -274,7 +230,7 @@ theorem num_sub_num : Inputs → ∀ (II : IntersectionSystem), IsFullIntersecti
       funext j
       rcases Fin.eq_self_or_eq_succAbove r j with rfl | ⟨i, rfl⟩
       · rw [Function.comp_apply, toEnd_self, Fin.snoc_last]
-        exact congrArg (Re.line (w _)) (if_neg (lt_irrefl _))
+        exact congrArg (Re.line (w _)) (ite_eq_right (lt_irrefl _))
       · rw [Function.comp_apply, toEnd_succAbove, Fin.snoc_castSucc]
         exact congrArg (Re.line (w (r.succAbove i))) (if_congr Fin.lt_def.symm rfl rfl)
     rw [e1, e0, (hF K ι).1 P (D + 1) _ (toEnd r) hP fun j => hsm _ (Re.line_smooth _ _ ht ht0) _,
@@ -567,12 +523,12 @@ theorem signed_rate : ConvergenceRateStatement → ∀ (e : ℕ) (σ : Type) [Fi
       (S.th p.1) (S.ph p.1) (S.phT p.1) C5 Cs ts ?_ ?_ (hsing _) (hreg _)
     · intro i
       by_cases hi : i ∈ T
-      · simpa only [hi, if_true] using hsing (p.2 i)
-      · simpa only [hi, if_false] using hzs
+      · simpa only [hi, ite_true] using hsing (p.2 i)
+      · simpa only [hi, ite_false] using hzs
     · intro i
       by_cases hi : i ∈ T
-      · simpa only [hi, if_true] using hreg (p.2 i)
-      · simpa only [hi, if_false] using hzr
+      · simpa only [hi, ite_true] using hreg (p.2 i)
+      · simpa only [hi, ite_false] using hzr
   choose Cf tf htf hbd using hrate
   obtain ⟨a₀, ha₀, hsmall⟩ := GlobalTheory.CompanionTheory.Ar.Giv.epsT_small Cs
   have ev1 : ∀ᶠ u in 𝓝[>] (0 : ℝ), ∀ (p : σ × (Fin e → σ)) (T : Finset (Fin e)), u ≤ tf p T := by
@@ -612,7 +568,7 @@ theorem signed_rate : ConvergenceRateStatement → ∀ (e : ℕ) (σ : Type) [Fi
   have hτ : ∀ i, 0 < (if c i then t else t') ∧ (if c i then t else t') ≤ t₁ := by
     intro i
     by_cases hc : c i
-    · simp only [hc, if_true]; exact ⟨ht, htt₁⟩
+    · simp only [hc, ite_true]; exact ⟨ht, htt₁⟩
     · simp only [hc]; exact ⟨ht', htt'.trans htt₁⟩
   have hgs : S.A.Smooth (fun x => S.phT a t x - S.phT a t' x) := by
     intro j
@@ -635,8 +591,8 @@ theorem signed_rate : ConvergenceRateStatement → ∀ (e : ℕ) (σ : Type) [Fi
           (if c i then t else t')) + S.Θ) := by
     funext i
     by_cases hi : i ∈ T
-    · simp only [hi, if_true]; rfl
-    · simp only [hi, if_false]
+    · simp only [hi, ite_true]; rfl
+    · simp only [hi, ite_false]
       exact (Rate.zero_add_zero_add S.Θ).symm
   rw [hF]
   have hpotF : ∀ i, IsPotential S.A ((if i ∈ T then S.th (w i) else LocPot.ofFun 0) +
@@ -647,9 +603,9 @@ theorem signed_rate : ConvergenceRateStatement → ∀ (e : ℕ) (σ : Type) [Fi
     simp only at this
     rw [← this]
     by_cases hi : i ∈ T
-    · simp only [hi, if_true]
+    · simp only [hi, ite_true]
       exact isPotentialAdd S.A _ _ (hPpot i) hΘ
-    · simp only [hi, if_false]
+    · simp only [hi, ite_false]
       exact hΘ
   have hpshF : ∀ i, IsPsh S.A ((if i ∈ T then S.th (w i) else LocPot.ofFun 0) +
         LocPot.ofFun ((fun (i : Fin e) (τ : ℝ) => if i ∈ T then S.phT (w i) τ else 0) i
@@ -659,9 +615,9 @@ theorem signed_rate : ConvergenceRateStatement → ∀ (e : ℕ) (σ : Type) [Fi
     simp only at this
     rw [← this]
     by_cases hi : i ∈ T
-    · simp only [hi, if_true]
+    · simp only [hi, ite_true]
       exact (hpsh _ _ _ (S.sing (w i)).1 (hreg (w i)) _ (hτ i).1 (hτ i).2).2
-    · simp only [hi, if_false]
+    · simp only [hi, ite_false]
       exact hΘpsh
   have hKR : 0 ≤ K * R := by
     refine mul_nonneg ?_ hR0

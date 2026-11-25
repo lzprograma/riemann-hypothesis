@@ -71,7 +71,6 @@ open GlobalTheory.FunObj.SqNum (hatId CongOne skewLat unitBlock cosetVec)
 open GlobalTheory.NormExact (Reads Setup IsFinIdl HasFinPart finPt)
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (InId IsUnitDet unitChar stdFst)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.StdRead
 
 open scoped TensorProduct nonZeroDivisors
@@ -321,11 +320,7 @@ theorem mem_of_inId (hc : D.host.ccK = ⊤) (hS : S.gram = 1) {I : FractionalIde
     {𝔪 : Ideal (𝓞 D.host.E)} (hI : (𝔪 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) ≤ I) {u : WO S T}
     (h0 : ∀ i j, infPart D (u i j) = 0) (hu : ∀ i j, toEAf D (u i j) ∈ idGrp 𝔪) :
     u ∈ latO S T (stdL D S.rank : Set (Fin S.rank → D.host.E)) (LT : Set (Fin T.rank → D.host.E)) fun _ => True := by
-  have h1 : (1 : D.host.E) ∈ D.host.AA0 := by
-    have hb0 := bb_ne_zero D
-    refine (show (1 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) ≤ D.host.AA0 from ?_) (FractionalIdeal.one_mem_one _)
-    rw [Formalism.BasicNotions.Host.AA0, ← one_div, FractionalIdeal.le_div_iff_mul_le hb0, one_mul]
-    exact FractionalIdeal.coeIdeal_le_one
+  have h1 : (1 : D.host.E) ∈ D.host.AA0 := Formalism.L2.Pj.one_mem_inverse_halfDifferent D
   have key : ∀ i j, ∀ t ∈ idS D.host.F 𝔪, ∃ y : AE D, infPart D y = 0 ∧ toEAf D y = t ∧
       (Matrix.single i j y : WO S T) ∈
         latO S T (stdL D S.rank : Set (Fin S.rank → D.host.E)) (LT : Set (Fin T.rank → D.host.E)) fun _ => True := by

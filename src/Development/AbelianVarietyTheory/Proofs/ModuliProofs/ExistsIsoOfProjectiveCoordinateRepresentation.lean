@@ -185,8 +185,7 @@ abbrev fn (v : σ → A) : σ → Γ(Sp A, ⊤) := fun i => (Scheme.ΓSpecIso (C
 
 theorem noZero_of_span {W : T.Opens} {f : σ → Γ(T, W)} (h : Ideal.span (Set.range f) = ⊤) : NoZero f := by
   intro t ht
-  by_contra hn
-  push_neg at hn
+  by_contra! hn
   have : Ideal.span (Set.range f) ≤
       (IsLocalRing.maximalIdeal _).comap (T.presheaf.germ W t ht).hom :=
     Ideal.span_le.2 (by rintro _ ⟨i, rfl⟩; exact hn i)
@@ -304,9 +303,6 @@ theorem secCoord_of_same (h : ProjRep I s M th) {A : Type} [CommRing A] {x : Sp 
     {v : σ → A} (H : SecCoord M th x v) (H' : Same M th x M' th' x') : SecCoord M' th' x' v :=
   secCoord_of_locCoord (span_eq_top h H) ((locCoord_of_secCoord h.1 H).of_same H')
 
-theorem isoSpec_hom_fromSpec {W : T.Opens} (hW : IsAffineOpen W) : hW.isoSpec.hom ≫ hW.fromSpec = W.ι := by
-  rw [← hW.isoSpec_inv_ι, Iso.hom_inv_id_assoc]
-
 theorem eq_of_same (h : ProjRep I s M th) {x y : T ⟶ X} (hs : x ≫ s = y ≫ s) (H : Same M th x M th y) :
     x = y := by
   refine Scheme.hom_ext_of_forall _ _ fun t => ?_
@@ -317,7 +313,7 @@ theorem eq_of_same (h : ProjRep I s M th) {x y : T ⟶ X} (hs : x ≫ s = y ≫ 
   have e : hW.fromSpec ≫ x = hW.fromSpec ≫ y := (h.2.2 _ β _ h₁ h₂).unique ⟨hβ, hc⟩
     ⟨((Category.assoc _ _ _).trans (congrArg (_ ≫ ·) hs.symm)).trans ((Category.assoc _ _ _).symm.trans hβ), hy⟩
   refine ⟨W, ht, ?_⟩
-  rw [← isoSpec_hom_fromSpec hW, Category.assoc, Category.assoc, e]
+  rw [← AlgebraicGeometry.IsAffineOpen.isoSpec_hom_fromSpec hW, Category.assoc, Category.assoc, e]
 
 theorem exists_hom (h : ProjRep I s M th) (h' : ProjRep I' s' M' th')
     (hI : ∀ (A : Type) [CommRing A] (β : R →+* A) (v : σ → A), Ideal.span (Set.range v) = ⊤ →
@@ -331,9 +327,9 @@ theorem exists_hom (h : ProjRep I s M th) (h' : ProjRep I' s' M' th')
     obtain ⟨h₁, h₂⟩ := h.2.1 _ β _ _ hβ hc
     obtain ⟨y, ⟨hy, hy'⟩, -⟩ := h'.2.2 _ β _ h₁ (hI _ β _ h₁ h₂)
     refine ⟨W, ht, hW.isoSpec.hom ≫ y, ?_, ?_⟩
-    · rw [← isoSpec_hom_fromSpec hW, Category.assoc, Category.assoc]
+    · rw [← AlgebraicGeometry.IsAffineOpen.isoSpec_hom_fromSpec hW, Category.assoc, Category.assoc]
       exact congrArg (_ ≫ ·) (hy.trans hβ.symm)
-    · rw [← isoSpec_hom_fromSpec hW]
+    · rw [← AlgebraicGeometry.IsAffineOpen.isoSpec_hom_fromSpec hW]
       exact ((locCoord_of_secCoord h.1 hc).same (locCoord_of_secCoord h'.1 hy')).comp _
   choose W ht m hm hS using loc
   have hcov : IsOpenCover W := eq_top_iff.2 fun t _ => Opens.mem_iSup.2 ⟨t, ht t⟩

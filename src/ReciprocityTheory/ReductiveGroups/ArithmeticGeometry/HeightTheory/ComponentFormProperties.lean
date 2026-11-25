@@ -65,7 +65,7 @@ theorem psiS_chiImg (j₀ : Fin (N + 1)) (x : Fin N → Ω) (v : TVar D N)
       unfold sImg
       congr 1
       exact (Fin.insertNth_apply_same (α := fun _ => MvPolynomial (SVar D N) Ω) j₀ _ _).trans
-        (if_neg hi)
+        (ite_eq_right hi)
     rw [h1, h2]
 
     simp [psiS, map_neg, map_sum, map_mul, MvPolynomial.rename_X]
@@ -97,7 +97,7 @@ theorem sImg_base (j₀ : Fin (N + 1)) (x : Fin N → Ω) :
   unfold sImg
   congr 1
   first
-  | exact (Fin.insertNth_apply_same (α := fun _ => MvPolynomial (SVar D N) Ω) j₀ _ _).trans (if_pos rfl)
+  | exact (Fin.insertNth_apply_same (α := fun _ => MvPolynomial (SVar D N) Ω) j₀ _ _).trans (ite_eq_left rfl)
 
 theorem ker_eval_ne_bot (hΩ : Algebra.trdeg K Ω = D) (j₀ : Fin (N + 1)) (x : Fin N → Ω) :
     kerP (K := K) (D := D) j₀ x ≠ ⊥ := by
@@ -402,8 +402,8 @@ theorem fZ_factor_height_one_primes (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (F : K
     refine Finset.sum_nonneg fun w hw => ?_
     have hwO := (Set.Finite.mem_toFinset _).mp hw
     by_cases hg : w ∈ d.GoodP c p
-    · rw [if_pos hg, ← mul_add, d.good_valuation_balance hd h c p hp w hg, mul_zero]
-    · rw [if_neg hg, add_zero]
+    · rw [ite_eq_left hg, ← mul_add, d.good_valuation_balance hd h c p hp w hg, mul_zero]
+    · rw [ite_eq_right hg, add_zero]
       refine mul_nonneg (by positivity) (untopD_nonneg ?_)
       refine d.lineRatio_val_nonneg c p w hwO fun a0 ha0' => ?_
       by_contra hne
@@ -451,9 +451,9 @@ theorem fZ_factor_height_one_primes (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (F : K
     obtain ⟨w, hwF, hw0⟩ := Finset.exists_ne_zero_of_sum_ne_zero hne
     have hwO := (Set.Finite.mem_toFinset _).mp hwF
     by_cases hg : w ∈ d.GoodP c p
-    · rw [if_pos hg, ← mul_add, d.good_valuation_balance hd h c p hp w hg, mul_zero] at hw0
+    · rw [ite_eq_left hg, ← mul_add, d.good_valuation_balance hd h c p hp w hg, mul_zero] at hw0
       exact absurd rfl hw0
-    · rw [if_neg hg, add_zero] at hw0
+    · rw [ite_eq_right hg, add_zero] at hw0
       have htriv : ∀ a0 : Ω c, a0 ≠ 0 → d.Wres c w a0 = 0 := fun a0 ha0 => by
         by_contra hne'
         exact hg ⟨hwO, a0, ha0, hne'⟩
@@ -520,7 +520,7 @@ theorem rename_swap_F (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (F : KTp K d.D d.N)
     refine ⟨r ^ (∑ p ∈ T, e p), ?_⟩
     rw [hFg, map_mul, MvPolynomial.rename_C, map_pow, hr, mul_pow, ← map_pow]
     ring
-  · push_neg at hex
+  · push Not at hex
     have hF1 : F = C κ := by
       rw [hFeq]
       have h1 : ∏ p ∈ T, d.gen p ^ e p = 1 := Finset.prod_eq_one fun p hp => by rw [hex p hp, pow_zero]

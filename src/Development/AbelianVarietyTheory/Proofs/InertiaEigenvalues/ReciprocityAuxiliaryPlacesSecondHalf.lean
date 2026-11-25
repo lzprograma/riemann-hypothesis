@@ -25,6 +25,7 @@ public import Formalism.GaloisCohomology.Statement
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CocycleUnramifiedOutsideVanishOnKernel
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumInvEqZeroOfUnramifiedCocycle
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TamePairing
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ReciprocityRelaxedSelmerDualSelmerNewPlace
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -143,80 +144,6 @@ section -- clump:auto
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.Published GlobalTheory.Published.PoitouTate
 
 namespace GlobalTheory
-
-private lemma pairing_smul_left' {p : ℕ} [NeZero p] {M M' : Type} [AddCommGroup M] [AddCommGroup M']
-    [Module (ZMod p) M] (β : M →+ M' →+ ZMod p) (a : ZMod p) (v : M) (m' : M') :
-    β (a • v) m' = a * β v m' := by
-  have h : a • v = a.val • v := by
-    conv_lhs => rw [← ZMod.natCast_zmod_val a]
-    exact Nat.cast_smul_eq_nsmul (ZMod p) a.val v
-  rw [h, map_nsmul, AddMonoidHom.nsmul_apply, nsmul_eq_mul, ZMod.natCast_zmod_val]
-
-theorem exists_sum_mul_of_finite_torsion (l : ℕ) [Fact l.Prime] (M M' : Type) [AddCommGroup M]
-    [AddCommGroup M'] [Module (ZMod l) M] (β : M →+ M' →+ ZMod l) (S : Set M)
-    (hS : S.Finite) :
-    ∃ (ι : Type) (s : Finset ι) (c : ι → M →+ ZMod l) (d : ι → M' →+ ZMod l),
-      ∀ m ∈ S, ∀ m' : M', β m m' = ∑ k ∈ s, c k m * d k m' := by
-  classical
-  haveI : NeZero l := ⟨(Fact.out : l.Prime).ne_zero⟩
-  let b := Module.Basis.ofVectorSpace (ZMod l) M
-  refine ⟨_, hS.toFinset.biUnion (fun m => (b.repr m).support),
-    fun i => (b.coord i).toAddMonoidHom, fun i => β (b i), ?_⟩
-  intro m hm m'
-  have hsub : (b.repr m).support ⊆ hS.toFinset.biUnion (fun m => (b.repr m).support) :=
-    Finset.subset_biUnion_of_mem (fun m => (b.repr m).support) (hS.mem_toFinset.2 hm)
-  have hm' : m = ∑ i ∈ (b.repr m).support, b.repr m i • b i := by
-    conv_lhs => rw [← b.linearCombination_repr m]
-    rw [Finsupp.linearCombination_apply, Finsupp.sum]
-  conv_lhs => rw [hm']
-
-  rw [map_sum, AddMonoidHom.finsetSum_apply]
-  simp only [pairing_smul_left', LinearMap.toAddMonoidHom_coe, Module.Basis.coord_apply]
-  refine Finset.sum_subset hsub ?_
-  intro k _ hk
-  have hz : b.repr m k = 0 := by
-    by_contra h
-    exact hk (Finsupp.mem_support_iff.2 h)
-  rw [hz, zero_mul]
-
-theorem inv_cup_pairing_of_inv_cup_characters : ∀ (Γ : Type) [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] (l : ℕ) [Fact l.Prime] (μ : Representation (ZMod (l ^ 1)) Γ (ZMod (l ^ 1))), (∀ g m, μ g m = m) → ∀ (e : H2 μ →ₗ[ZMod (l ^ 1)] ZMod (l ^ 1)) (I : Γ → Prop) (u : ZMod (l ^ 1)) (γ φ : Γ), (∀ z y : Γ → ZMod (l ^ 1), Continuous z → Continuous y → (∀ g h, z (g * h) = z g + z h) → (∀ g h, y (g * h) = y g + y h) → (∀ g, I g → y g = 0) → ∀ w : Z2 μ, (∀ g h, w.1 (g, h) = z g * y h) → e (Submodule.Quotient.mk w) = u * (z γ * y φ)) → ∀ (M M' : Type) [AddCommGroup M] [TopologicalSpace M] [DiscreteTopology M] [AddCommGroup M'] [TopologicalSpace M'] [DiscreteTopology M'], (∀ m : M, l • m = 0) → ∀ (β : M →+ M' →+ ZMod (l ^ 1)) (x : Γ → M) (y : Γ → M'), Continuous x → Continuous y → (∀ g h, x (g * h) = x g + x h) → (∀ g h, y (g * h) = y g + y h) → (∀ g, I g → y g = 0) → ∀ w : Z2 μ, (∀ g h, w.1 (g, h) = β (x g) (y h)) → e (Submodule.Quotient.mk w) = u * β (x γ) (y φ) := by
-  intro Γ _ _ _ _ l _ μ hμ e I u γ φ hchar M M' _ _ _ _ _ _ hl β x y hxc hyc hxa hya hyI w hw
-  classical
-  haveI hp : Fact (l ^ 1).Prime := ⟨by rw [pow_one]; exact Fact.out⟩
-  haveI : NeZero (l ^ 1) := ⟨hp.out.ne_zero⟩
-  letI : Module (ZMod (l ^ 1)) M :=
-    AddCommGroup.zmodModule (fun m => by rw [pow_one]; exact hl m)
-  have hfin : (Set.range x).Finite := (isCompact_range hxc).finite_of_discrete
-  obtain ⟨ι, s, c, d, hdec⟩ :=
-    exists_sum_mul_of_finite_torsion (l ^ 1) M M' β (Set.range x) hfin
-  have hmem : ∀ k, (fun q : Γ × Γ => c k (x q.1) * d k (y q.2)) ∈ Z2 μ := by
-    intro k
-    rw [mem_cocycles2]
-    refine ⟨?_, ?_⟩
-    · exact ((continuous_of_discreteTopology.comp hxc).comp continuous_fst).mul
-        ((continuous_of_discreteTopology.comp hyc).comp continuous_snd)
-    · intro g h k'
-      simp only [hμ, hxa, hya, map_add (f := _)]
-      ring
-  let W : ι → Z2 μ := fun k => ⟨_, hmem k⟩
-  have hWsum : w = ∑ k ∈ s, W k := by
-    apply Subtype.ext
-    funext q
-    rcases q with ⟨g, h⟩
-    rw [Submodule.coe_sum, Finset.sum_apply, hw g h]
-    exact hdec (x g) ⟨g, rfl⟩ (y h)
-  have hW : ∀ k, e (Submodule.Quotient.mk (W k)) = u * (c k (x γ) * d k (y φ)) := fun k =>
-    hchar (fun g => c k (x g)) (fun g => d k (y g))
-      (continuous_of_discreteTopology.comp hxc) (continuous_of_discreteTopology.comp hyc)
-      (fun g h => by simp only [hxa, map_add (f := _)]) (fun g h => by simp only [hya, map_add (f := _)])
-      (fun g hg => by simp only [hyI g hg, map_zero]) (W k) (fun g h => rfl)
-  have hq : (Submodule.Quotient.mk (∑ k ∈ s, W k) : H2 μ) =
-      ∑ k ∈ s, (Submodule.Quotient.mk (W k) : H2 μ) :=
-    map_sum (Submodule.mkQ _) W s
-
-  rw [hWsum, hq, map_sum]
-  simp only [hW]
-  rw [← Finset.mul_sum, ← hdec (x γ) ⟨γ, rfl⟩ (y φ)]
 
 end GlobalTheory
 end -- clump:auto
@@ -636,7 +563,7 @@ theorem iota_natCast (x : ℕ) : iota l n x = ((l ^ n * x : ℕ) : ZMod (l ^ (n 
   rw [iota_apply, pow_mul_val]
 
 theorem iota_injective : Function.Injective (iota l n) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro b hb
   rw [iota_apply, CharP.cast_eq_zero_iff (ZMod (l ^ (n + 1))) (l ^ (n + 1)), pow_succ,
     Nat.mul_dvd_mul_iff_left (pow_pos (Fact.out : l.Prime).pos n)] at hb
@@ -833,7 +760,7 @@ theorem mk_eq_zero_of_rational (hT : LocalTateDuality) {F Ω : Type} [Field F] [
   have hr : Set.range Bw.toLL = Set.range (algebraMap ↥(Loc.OL Bw.LL) ↥Bw.LL.1) :=
     Bw.eO.surjective.range_comp (algebraMap ↥(Loc.OL Bw.LL) ↥Bw.LL.1)
   obtain ⟨n, a, ha, e⟩ := _root_.GlobalTheory.exists_zmod_pow_coboundary_of_rational_coboundary (Dec (F := F) A) l (fun g => ((cycZ F Ω l g : ℤ_[l]ˣ) : ℤ_[l])) O ↥Bw.LL.1 Bw.toLL
-    (GlobalTheory.BlochKatoIntegralScalars.toLL_injective Bw) (hr ▸ GlobalTheory.LocalIntegers.isOpen_integers l Bw.LL)
+    (Formalism.MainNotions.N.Br.toLL_inj Bw) (hr ▸ GlobalTheory.LocalIntegers.isOpen_integers l Bw.LL)
     (Nat.cast_ne_zero.2 (Fact.out : l.Prime).ne_zero)
     (fun x => by
       obtain ⟨n, hn⟩ := GlobalTheory.BlochKatoIntegralScalars.exists_pow_mul_mem_OL Bw.LL (fun (_ : Unit) (_ : Fin 1) => x)
@@ -940,8 +867,7 @@ section General
 variable {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω] {l : ℕ} [Fact l.Prime]
 
 def locZ (A : ValuationSubring Ω) (w : Z2 (muRep F Ω l 1)) : Z2 (muLoc F l 1 A) :=
-  ⟨fun p => w.1 (p.1, p.2), w.2.1.comp (continuous_subtype_val.prodMap continuous_subtype_val),
-    fun g h k => w.2.2 g h k⟩
+  GlobalTheory.NewRecip.locZ A w
 
 theorem mem_NS {S : Set (HeightOneSpectrum (𝓞 F))} {v : HeightOneSpectrum (𝓞 F)} (hv : v ∉ S) {A : ValuationSubring Ω}
     (hA : IsPlaceOver A v) {σ : G F Ω} (hσ : σ ∈ Ine (F := F) A) : σ ∈ NS Ω S := by
@@ -951,21 +877,6 @@ theorem mem_NS {S : Set (HeightOneSpectrum (𝓞 F))} {v : HeightOneSpectrum (�
   exact ⟨v, hv, A, hA, hσ⟩
 
 omit [NumberField F] in
-theorem conj_root {c : Ω ≃+* Ω} (hc : IsCMConjOm F Ω c) {ζ : Ω} (hζ : IsPrimitiveRoot ζ (l ^ 1)) :
-    c ζ = ζ ^ (-1 : ZMod (l ^ 1)).val := by
-  have hl : l ^ 1 ≠ 0 := pow_ne_zero _ (Fact.out : l.Prime).ne_zero
-  have : NeZero (l ^ 1) := ⟨hl⟩
-  obtain ⟨j, hj⟩ := hc.1
-  have h1 : c ζ * ζ = 1 := by
-    apply j.injective
-    have hn : ‖j ζ‖ = 1 := Complex.norm_eq_one_of_pow_eq_one (by rw [← map_pow, hζ.pow_eq_one, map_one]) hl
-    rw [map_mul, hj, map_one, Complex.conj_mul', hn]
-    simp
-  have h2 : ζ ^ (-1 : ZMod (l ^ 1)).val * ζ = 1 := by
-    rw [← pow_succ, hζ.pow_eq_one_iff_dvd, ← ZMod.natCast_eq_zero_iff]
-    simp
-  exact mul_right_cancel₀ (hζ.ne_zero hl) (h1.trans h2.symm)
-
 theorem eq_zero_of_forall_dual {n : ℕ} [Fact n.Prime] {K : Type} [AddCommGroup K] [Module (ZMod n) K] (k : K)
     (h : ∀ lam : K →+ ZMod n, lam k = 0) : k = 0 :=
   (Module.forall_dual_apply_eq_zero_iff (ZMod n) k).1 fun φ => h φ.toAddMonoidHom
@@ -1045,17 +956,11 @@ theorem contAction_red (hK : IsRes i K) (hρ : ρ = Tgl i s ∨ IsDual i s ρ) :
 
 def cupZ (hK : IsRes i K) (hρ : IsDual i s ρ) (lam : K →+ ZMod (X.l i ^ 1)) (x : Z1 (red i K (Tgl i s)))
     (y : Z1 (red i K ρ)) : Z2 (muRep D.host.E N.Om (X.l i) 1) :=
-  ⟨fun p => lam (x.1 p.1 ⬝ᵥ red i K ρ p.1 (y.1 p.2)),
-    (continuous_of_discreteTopology (f := fun q : (Fin D.R.r → K) × (Fin D.R.r → K) => lam (q.1 ⬝ᵥ q.2))).comp
-      ((x.2.1.comp continuous_fst).prodMk
-        ((contAction_red hK (Or.inr hρ)).comp (continuous_fst.prodMk (y.2.1.comp continuous_snd)))),
-    fun g h k => by
+  GlobalTheory.NewRecip.cupZ (P := (LinearMap.toAddMonoidHom'.comp (dotProductBilin K K).toAddMonoidHom).compr₂ lam)
+    (contAction_red hK (Or.inr hρ)) (fun g a b => by
       have : NeZero (X.l i ^ 1) := ⟨pow_ne_zero _ (Fact.out : (X.l i).Prime).ne_zero⟩
-      dsimp only
-      rw [charRep_apply, ← lam_natCast_mul, ← eps_eq hK, ← red_dot hρ, x.2.2 g h, y.2.2 h k, map_mul,
-        Module.End.mul_apply]
-      simp only [map_add (f := _), dotProduct_add, add_dotProduct]
-      abel⟩
+      change lam (red i K (Tgl i s) g a ⬝ᵥ red i K ρ g b) = _ * lam (a ⬝ᵥ b)
+      rw [red_dot hρ, eps_eq hK, lam_natCast_mul]) x y
 
 omit [TopologicalSpace K] [DiscreteTopology K] in
 theorem map_eq_one_of_residue (hK : IsRes i K) {M : Matrix (Fin D.R.r) (Fin D.R.r) (X.O0 i)}
@@ -1137,14 +1042,6 @@ theorem loc_eq_zero_of_subsingleton (hK : IsRes i K) (hρ : IsDual i s ρ) (lam 
   simp only [map_add (f := _), map_sub, dotProduct_add, sub_dotProduct]
   abel
 
-theorem continuous_cConj : Continuous (cConj X) := by
-  refine continuous_of_continuousAt_one (cConj X) ?_
-  rw [ContinuousAt, map_one]
-  intro U hU
-  obtain ⟨L, hL, hLU⟩ := (krullTopology_mem_nhds_one_iff D.host.E N.Om U).1 hU
-  exact Filter.mem_of_superset ((isOpen_comap_cConj X (IntermediateField.fixingSubgroup_isOpen L)).mem_nhds
-    (Subgroup.one_mem _)) fun g hg => hLU hg
-
 theorem local_pair (hT : TameLocal) {bkP : BKPh X} (h : GalHyp bkP i s) (hK : IsRes i K) (hρ : IsDual i s ρ)
     {ζ : N.Om} (hζ : IsPrimitiveRoot ζ (X.l i ^ 1)) {inv : InvFam D.host.E N.Om (X.l i) 1}
     (hinv : IsLocalInvariants ζ inv) {P : PlE D.host} (hl : P ∉ placesOver D.host.E (X.l i))
@@ -1158,52 +1055,18 @@ theorem local_pair (hT : TameLocal) {bkP : BKPh X} (h : GalHyp bkP i s) (hK : Is
       inv _ (Submodule.Quotient.mk (locZ (N.plOm.1 P) (cupZ hK hρ lam x y))) = (u : ZMod (X.l i ^ 1)) * lam (x.1 γ ⬝ᵥ y.1 φ) ∧
       inv _ (Submodule.Quotient.mk (locZ (moveVal X.cc (N.plOm.1 P)) (cupZ hK hρ lam x y))) =
         -((u : ZMod (X.l i ^ 1)) * lam (x.1 (cConj X γ) ⬝ᵥ y.1 (cConj X φ))) := by
-  have hA := N.plOm.2 P
-  have : IsGalois D.host.E N.Om := {}
-  have : CompactSpace (DecV N P) := isCompact_iff_compactSpace.1 (isClosed_Dec _).isCompact
-  have hcyc : ∀ g : DecV N P, cycMod D.host.E N.Om (X.l i) 1 g = 1 := fun g => cycMod_of_resTriv hK (hP g g.2)
-  have hP' : ∀ g : DecV N P, ResTriv i s (cConj X g) := fun g =>
-    _root_.GlobalTheory.ResTrivConj.resTriv_conj D N X i s h.2.2.1 g _ (cConj_apply X g) (hP g g.2)
-  obtain ⟨u, hu⟩ := _root_.GlobalTheory.TamePairing.tame_pairing hT D.host.E N.Om (X.l i) _ P hA hl hq hcyc (inv _) (hinv.1 _ _ hA).1 M hM d hd
-    ⟨γ, Ine_le_Dec _ hγ⟩ ⟨φ, hφ.1⟩ hγ hdγ hφ
-  refine ⟨u, fun lam x y hy hy' => ?_⟩
-  have hμ : ∀ (g : DecV N P) m, muLoc D.host.E (X.l i) 1 (N.plOm.1 P) g m = m := fun g m => by
-    change ((cycMod D.host.E N.Om (X.l i) 1 g : (ZMod (X.l i ^ 1))ˣ) : ZMod (X.l i ^ 1)) * m = m
-    rw [hcyc, Units.val_one, one_mul]
-  have key := _root_.GlobalTheory.inv_cup_pairing_of_inv_cup_characters (DecV N P) (X.l i) _ hμ (inv _) _ u _ _ hu (Fin D.R.r → K) (Fin D.R.r → K)
-    (fun m => by rw [← Nat.cast_smul_eq_nsmul K, l_eq_zero hK, zero_smul])
-    ((LinearMap.toAddMonoidHom'.comp (dotProductBilin K K).toAddMonoidHom).compr₂ lam)
-  constructor
-  · exact key (fun g => x.1 g) (fun g => y.1 g) (x.2.1.comp continuous_subtype_val) (y.2.1.comp continuous_subtype_val)
-      (fun g h => by rw [Subgroup.coe_mul, x.2.2, red_T_of_resTriv hK (hP g g.2)])
-      (fun g h => by rw [Subgroup.coe_mul, y.2.2, red_dual_of_resTriv hK hρ (hP g g.2)])
-      (fun g hg => hy g hg) _ (fun g h => by
-        change lam (x.1 g ⬝ᵥ red i K ρ g (y.1 h)) = lam (x.1 g ⬝ᵥ y.1 h)
-        rw [red_dual_of_resTriv hK hρ (hP g g.2)])
-  · have hc : Continuous ((cConj X).comp (DecV N P).subtype) := continuous_cConj.comp continuous_subtype_val
-    let w : Z2 (muLoc D.host.E (X.l i) 1 (N.plOm.1 P)) :=
-      compatiblePairCocycles2 (muRep D.host.E N.Om (X.l i) 1) _ ((cConj X).comp (DecV N P).subtype) hc LinearMap.id continuous_id
-        (fun g m => by
-          rw [hμ]
-          change ((cycMod D.host.E N.Om (X.l i) 1 (cConj X g) : (ZMod (X.l i ^ 1))ˣ) : ZMod (X.l i ^ 1)) * m = m
-          rw [cycMod_of_resTriv hK (hP' g), Units.val_one, one_mul]) (cupZ hK hρ lam x y)
-    have h1 := key (fun g => x.1 (cConj X g)) (fun g => y.1 (cConj X g)) (x.2.1.comp hc) (y.2.1.comp hc)
-      (fun g h => by rw [Subgroup.coe_mul, map_mul, x.2.2, red_T_of_resTriv hK (hP' g)])
-      (fun g h => by rw [Subgroup.coe_mul, map_mul, y.2.2, red_dual_of_resTriv hK hρ (hP' g)])
-      (fun g hg => hy' _ (cConj_mem_ine X hg)) w (fun g h => by
-        change lam (x.1 (cConj X g) ⬝ᵥ red i K ρ (cConj X g) (y.1 (cConj X h))) =
-          lam (x.1 (cConj X g) ⬝ᵥ y.1 (cConj X h))
-        rw [red_dual_of_resTriv hK hρ (hP' g)])
-    have h2 := hinv.2 X.cc D.host.conj.toRingEquiv (cc_algebraMap X) (-1) (conj_root X.cc_cm hζ) _
-      (moveVal X.cc (N.plOm.1 P)) P hA (fun x => by rw [mem_moveVal, RingEquiv.symm_apply_apply]) (-w)
-      (locZ _ (cupZ hK hρ lam x y)) (fun g h g' h' hg hh => by
-        have e : ∀ {a b : GE N}, (∀ x, b (X.cc x) = X.cc (a x)) → b = cConj X a := fun hab => by
-          ext x
-          rw [cConj_apply, ← hab, RingEquiv.apply_symm_apply]
-        change (cupZ hK hρ lam x y).1 (g', h') = -1 * -(cupZ hK hρ lam x y).1 (cConj X g, cConj X h)
-        rw [e hg, e hh, neg_one_mul, neg_neg])
-    rw [h2, Submodule.Quotient.mk_neg, map_neg, h1]
-    rfl
+  have hP' : ∀ g ∈ DecV N P, ResTriv i s (cConj X g) := fun g hg =>
+    _root_.GlobalTheory.ResTrivConj.resTriv_conj D N X i s h.2.2.1 g _ (cConj_apply X g) (hP g hg)
+  obtain ⟨u, hu⟩ := GlobalTheory.NewRecip.local_pair hT Nat.one_pos hζ hinv hl hq
+    (fun g hg => cycMod_of_resTriv hK (hP g hg)) (fun g hg => cycMod_of_resTriv hK (hP' g hg)) hM d hd hγ hdγ hφ
+  exact ⟨u, fun lam x y hy hy' => hu ((LinearMap.toAddMonoidHom'.comp (dotProductBilin K K).toAddMonoidHom).compr₂ lam)
+    (contAction_red hK (Or.inr hρ)) (fun g a b => by
+      have : NeZero (X.l i ^ 1) := ⟨pow_ne_zero _ (Fact.out : (X.l i).Prime).ne_zero⟩
+      change lam (red i K (Tgl i s) g a ⬝ᵥ red i K ρ g b) = _ * lam (a ⬝ᵥ b)
+      rw [red_dot hρ, eps_eq hK, lam_natCast_mul])
+    (fun m => by rw [pow_one, ← Nat.cast_smul_eq_nsmul K, l_eq_zero hK, zero_smul])
+    (fun g hg => ⟨red_T_of_resTriv hK (hP g hg), red_dual_of_resTriv hK hρ (hP g hg)⟩)
+    (fun g hg => ⟨red_T_of_resTriv hK (hP' g hg), red_dual_of_resTriv hK hρ (hP' g hg)⟩) x y hy hy'⟩
 
 theorem mem_unrAt {bkP : BKPh X} {Q : Finset (PlE D.host)} {x : H1 (red i K ρ)}
     (hx : x ∈ selOn bkP i ρ (1 : GE N →* Kˣ) K Q) {v : PlE D.host} (hv : v ∉ placesOver D.host.E (X.l i))
@@ -1211,14 +1074,14 @@ theorem mem_unrAt {bkP : BKPh X} {Q : Finset (PlE D.host)} {x : H1 (red i K ρ)}
     resH1 (red i K ρ) (DecV N v).subtype continuous_subtype_val x ∈ Formalism.GaloisCohomology.unrAt (red i K ρ) (N.plOm.1 v) := by
   have h := (mem_Sel _ _ _ _ _).1 hx v
   unfold Formalism.GaloisCohomology.bkCond at h
-  rwa [if_neg (show ¬ ((X.l i : ℕ) : 𝓞 D.host.E) ∈ v.asIdeal from hv), if_neg (fun e => e.elim hv' hQ)] at h
+  rwa [ite_eq_right (show ¬ ((X.l i : ℕ) : 𝓞 D.host.E) ∈ v.asIdeal from hv), ite_eq_right (fun e => e.elim hv' hQ)] at h
 
 theorem mem_bkOn {bkP : BKPh X} {Q : Finset (PlE D.host)} {x : H1 (red i K ρ)}
     (hx : x ∈ selOn bkP i ρ (1 : GE N →* Kˣ) K Q) {v : PlE D.host} (hv : v ∈ placesOver D.host.E (X.l i)) :
     resH1 (red i K ρ) (DecV N v).subtype continuous_subtype_val x ∈ bkOn bkP i ρ (1 : GE N →* Kˣ) K v := by
   have h := (mem_Sel _ _ _ _ _).1 hx v
   unfold Formalism.GaloisCohomology.bkCond at h
-  rwa [if_pos (show ((X.l i : ℕ) : 𝓞 D.host.E) ∈ v.asIdeal from hv)] at h
+  rwa [ite_eq_left (show ((X.l i : ℕ) : 𝓞 D.host.E) ∈ v.asIdeal from hv)] at h
 
 theorem vanish_NS {bkP : BKPh X} (h : GalHyp bkP i s) (hK : IsRes i K) (hρ : ρ = Tgl i s ∨ IsDual i s ρ)
     {Q : Finset (PlE D.host)} {x : Z1 (red i K ρ)} (hx : cl x ∈ selOn bkP i ρ (1 : GE N →* Kˣ) K Q)
@@ -1231,11 +1094,8 @@ theorem vanish_NS {bkP : BKPh X} (h : GalHyp bkP i s) (hK : IsRes i K) (hρ : ρ
   · exact red_T_of_resTriv hK this m
   · exact red_dual_of_resTriv hK hρ this m
 
-theorem spl_subset : Spl (X := X) i ⊆ ↑(X.S0 i) := by
-  rintro v ⟨h | h, -⟩
-  · obtain ⟨k, hk⟩ := Set.mem_iUnion.1 h
-    exact X.placesOver_subset_exceptional i k hk
-  · exact X.primes_subset_exceptional i h
+theorem spl_subset : Spl (X := X) i ⊆ ↑(X.S0 i) :=
+  GlobalTheory.NewRecip.spl_subset
 
 end HidaSetting
 

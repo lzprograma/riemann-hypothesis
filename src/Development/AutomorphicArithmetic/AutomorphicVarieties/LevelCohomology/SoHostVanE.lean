@@ -30,55 +30,11 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThre
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdRepBaseLiftApply
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FrameClassOne
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.GaloisValuations.GlobalB
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
-import Mathlib.Topology.Algebra.Group.Units
 import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoLevFacts
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Basify
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.CobDown, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoCobPlace, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoCobLim, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocallyConstantMaps, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoContLev, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoLocKill, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoLocTors, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoCocL, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoLineNeg, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoLineZero, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoVanEOf, Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoHostVanE
@@ -265,19 +221,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-theorem UpperTheory.Reformulated.B.LocallyConstantMaps.locConst :
-    ∀ {Γ A : Type} [inst : Group Γ] [inst_1 : TopologicalSpace Γ]
-    [IsTopologicalGroup Γ] [inst_3 : Group A] (ψ : Γ →* A), IsOpen (↑ψ.ker : Set Γ) → IsLocallyConstant (⇑ψ : Γ → A) := by
-  intro Γ A _ _ _ _ ψ h
-  rw [IsLocallyConstant.iff_exists_open]
-  intro x
-  refine ⟨(fun y => x⁻¹ * y) ⁻¹' (↑ψ.ker : Set Γ),
-    h.preimage (continuous_const.mul continuous_id), ?_, ?_⟩
-  · simp
-  · intro y hy
-    have hy' : ψ (x⁻¹ * y) = 1 := MonoidHom.mem_ker.mp hy
-    rw [map_mul, map_inv, inv_mul_eq_one] at hy'
-    exact hy'.symm
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocallyConstantMaps =====
@@ -810,9 +753,9 @@ theorem UpperTheory.V.X.So.vanEOf :
   simp only [z, Fin.rev_rev] at e0 e0' e1 e1'
   simp only [U3.cob, Matrix.sub_apply, Matrix.smul_apply, smul_eq_mul, U3.adRep_baseLift_apply, X, Matrix.of_apply, Fin.rev_rev]
   by_cases hη : F.η g = 1
-  · simp only [hη, if_true] at e0 e0' e1 e1' ⊢
+  · simp only [hη, ite_true] at e0 e0' e1 e1' ⊢
     linear_combination e0 - e0' + e1 + e1'
-  · simp only [hη, if_false] at e0 e0' e1 e1' ⊢
+  · simp only [hη, ite_false] at e0 e0' e1 e1' ⊢
     linear_combination e0 - e0' + e1 + e1'
 end -- clump:auto
 end -- clump:auto

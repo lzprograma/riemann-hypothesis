@@ -4,55 +4,10 @@ public import Formalism.LogVandermondeBounds.LogRatioUpperBound
 public import Formalism.LogVandermondeBounds.LogRatioLowerBound
 public import Formalism.SharpRestriction.GlobalSchurBounds.TheoremThreeOfExplicitAndCompact
 public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.PartFiveExplicitOfPropositions
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
 import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LogVandermondeBounds.UpperPlace, Formalism.LogVandermondeBounds.LogVandermondeProofs.UpperPlaceHolds, Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.LogFactorialProductDifference
@@ -240,7 +195,7 @@ lemma up_num_le (n m : ℕ) (lam v : ℕ → ℝ) (Bd : ℝ) (hBd : 1 ≤ Bd)
         rw [up_sign_lo n c (by omega), up_sign_lo n a ha]
       have h2 : ((nBetween (n + 2) a c : ℕ) : ℝ) = 0 := by
         rw [up_nB_zero n a c (by omega) hc.2]; simp
-      rw [if_pos hcond, h2, hlamv a ha, hlamv c hc.2]
+      rw [ite_eq_left hcond, h2, hlamv a ha, hlamv c hc.2]
       ring
     · refine prod_le_pow_of_card_le_of_le _ _ Bd m ?_ hBd ?_
       · rw [Nat.card_Ico]; omega
@@ -419,11 +374,11 @@ theorem UpperPlace_holds : UpperPlace := by
   have hsa : ∀ i, i < n + 1 → rowPar (n + 2) v b i = v i := by
     intro i hi
     show (if i < n + 2 - 1 then v i else -b (i - (n + 2 - 1))) = v i
-    rw [e1, if_pos hi]
+    rw [e1, ite_eq_left hi]
   have hsb : ∀ i, n + 1 ≤ i → rowPar (n + 2) v b i = -b (i - (n + 1)) := by
     intro i hi
     show (if i < n + 2 - 1 then v i else -b (i - (n + 2 - 1))) = -b (i - (n + 1))
-    rw [e1, if_neg (show ¬ i < n + 1 by omega)]
+    rw [e1, ite_eq_right (show ¬ i < n + 1 by omega)]
   have hlup : ∀ a, a < n + 1 + (t + t) → rowPar (n + 2) v b a ≤ v 0 := by
     intro a ha
     rcases Nat.lt_or_ge a (n + 1) with h | h
@@ -660,8 +615,7 @@ theorem log_X_upper_arithmetic (f k m L CY lv l2v SL lg S5 S6 X : ℝ) (hf : 0 <
   have hm0 : 0 < m := by linarith
   have hL0 : 0 < L := by linarith
   have hCY : 0 ≤ CY := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have : 2 * CY * L < 0 := by nlinarith
     linarith
   have ht1 : f * ((m - 1) * k + m * (m - 1) / 2) * lv ≤ f * ((m - 1) * k + m * (m - 1) / 2) * L :=

@@ -130,12 +130,12 @@ theorem omegaAt_some_spec {x y : L} (h : (E.baseChange L).toAffine.Nonsingular x
   rw [hb', neg_ne_zero] at hns
   by_cases hu : a ≠ 0
   · have e : omegaAt E (.some x y h) = a⁻¹ • D F L x := by
-      simp only [omegaAt, ← ha, if_pos hu]
+      simp only [omegaAt, ← ha, ite_eq_left hu]
     rw [e, smul_smul, mul_inv_cancel₀ hu, one_smul, smul_smul, mul_comm, ← smul_smul, ← rel,
       smul_smul, inv_mul_cancel₀ hu, one_smul]
     exact ⟨rfl, rfl⟩
   · have e : omegaAt E (.some x y h) = b⁻¹ • D F L y := by
-      simp only [omegaAt, ← ha, ← hb, if_neg hu]
+      simp only [omegaAt, ← ha, ← hb, ite_eq_right hu]
     rw [not_not] at hu
     have hb0 : b ≠ 0 := hns.resolve_right (fun h' => h' hu)
     have hx : D F L x = 0 := by
@@ -373,7 +373,7 @@ theorem invariantDifferential_eq :
       algebraMap F E.toAffine.FunctionField E.a₃)⁻¹ • D F E.toAffine.FunctionField (genX E) := by
   have h := genDen_ne_zero E
   simp only [invariantDifferential, GroundTheory.Arith.Abelian.genericPoint, omegaAt]
-  exact if_pos h
+  exact ite_eq_left h
 
 instance isSeparable_adjoin_genX :
     Algebra.IsSeparable F⟮genX E⟯ E.toAffine.FunctionField := by

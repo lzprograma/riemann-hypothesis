@@ -17,8 +17,6 @@ open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S
 
 namespace Formalism.L2.SG.Pf
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem trExistsC_of (hP : ∀ (D : D7) (X : HidaSetting D), SatGram.PsiCond X) : TRExistsC :=
   fun D X _ => SatGram.typedRed_exists' SatGramLoc.split_prime_local_holds SatGramLoc.reduction_structure_holds (hP D X)
 
@@ -41,27 +39,8 @@ theorem typed_count_holds (TR : TypedRed X) (i : Fin 2) :
 theorem tt_eq_holds (TR : TypedRed X) :
     ∏ v, (1 + 3 / (Fintype.card (TR.Fq v) : ℝ)) =
       (1 + 3 / (D.host.g 0 : ℝ)) ^ Module.finrank ℚ X.B.I.F * (1 + 3 / (D.host.g 1 : ℝ)) ^ Module.finrank ℚ X.B.I.F := by
-  have h0 := typed_count_holds X TR 0
-  have h1 := typed_count_holds X TR 1
-  rw [Fintype.card_subtype] at h0 h1
-  have hfilt : Finset.univ.filter (fun v => ¬ Fintype.card (TR.Fq v) = D.host.g 0) =
-      Finset.univ.filter (fun v => Fintype.card (TR.Fq v) = D.host.g 1) := by
-    ext v
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    constructor
-    · exact fun h => (TR.card_q v).resolve_left h
-    · intro h h'
-      exact D.host.g_ne (h'.symm.trans h)
-  have e0 : ∏ v ∈ Finset.univ.filter (fun v => Fintype.card (TR.Fq v) = D.host.g 0),
-      (1 + 3 / (Fintype.card (TR.Fq v) : ℝ)) = (1 + 3 / (D.host.g 0 : ℝ)) ^ Module.finrank ℚ X.B.I.F := by
-    rw [Finset.prod_congr rfl (g := fun _ => (1 + 3 / (D.host.g 0 : ℝ)))
-      (fun v hv => by rw [(Finset.mem_filter.mp hv).2]), Finset.prod_const, h0]
-  have e1 : ∏ v ∈ Finset.univ.filter (fun v => ¬ Fintype.card (TR.Fq v) = D.host.g 0),
-      (1 + 3 / (Fintype.card (TR.Fq v) : ℝ)) = (1 + 3 / (D.host.g 1 : ℝ)) ^ Module.finrank ℚ X.B.I.F := by
-    rw [hfilt, Finset.prod_congr rfl (g := fun _ => (1 + 3 / (D.host.g 1 : ℝ)))
-      (fun v hv => by rw [(Finset.mem_filter.mp hv).2]), Finset.prod_const, h1]
-  rw [← Finset.prod_filter_mul_prod_filter_not Finset.univ
-    (fun v => Fintype.card (TR.Fq v) = D.host.g 0), e0, e1]
+  exact SatGram.tt_eq (redExists_holds X) (gUnif_holds X) (gResCard_holds X)
+    (SatGram.gCount_of splitPrimeLoc_holds) TR
 
 theorem gamma_one_typed_places_holds (TR : TypedRed X) :
     Gam1 TR = ∏ p : Formalism.L2.SG.TypedSets.TypP X.B.I.F (D.host.g 0) (D.host.g 1),
@@ -87,7 +66,7 @@ theorem gSplitX_holds : Formalism.L2.SG.LocVol.GSplitX X := by
     · exact gResCard_holds X p.1 0 h0
     · exact gResCard_holds X p.1 1 (hty.resolve_left h0)
   · unfold Formalism.L2.SG.LocVol.etaV
-    rw [if_pos (split_at_g X p.1 hg)]
+    rw [ite_eq_left (split_at_g X p.1 hg)]
 
 end
 

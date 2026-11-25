@@ -141,10 +141,6 @@ def stdCo (σ : E →+* E) (J : Matrix (Fin N) (Fin N) E) : (Fin N → E) ≃ₗ
 def toStd (σ : E →+* E) (J : Matrix (Fin N) (Fin N) E) (Λ : Submodule (𝓞 E) (Fin N → E)) : Submodule (𝓞 E) (Fin N → E) :=
   Λ.map (((stdCo σ J : (Fin N → E) ≃ₗ[E] (Fin N → E)) : (Fin N → E) →ₗ[E] (Fin N → E)).restrictScalars (𝓞 E))
 
-def kerLat (S : StepG I N) (hk : m + 1 = N) (a : 𝓞 E) (i : S.comp) (Lt : Fin nV → Submodule W (Fin (m + 1) → Qq)) :
-    Submodule (𝓞 E) (Fin N → E) :=
-  toStd (sp.cm.sig : E →+* E) S.J (compan (sp := sp) S.J a (globLat S hk i Lt))
-
 end Formalism.L2.PairingIndexBounds.F
 end -- clump:auto
 end -- clump:auto

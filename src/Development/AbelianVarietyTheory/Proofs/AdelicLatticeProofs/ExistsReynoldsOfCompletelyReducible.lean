@@ -2,48 +2,8 @@ module
 
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.LinearAlgebra.Span.Defs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
 public import Mathlib.Algebra.Module.Submodule.Ker
 public import Mathlib.LinearAlgebra.Projection
@@ -68,13 +28,6 @@ private lemma projection_comm_of_mapsTo {p q : Submodule ℂ V} (h : IsCompl p q
   have e3 := (Submodule.IsCompl.projection_apply_eq_zero_iff h).mpr hb
   have e4 := (Submodule.IsCompl.projection_apply_eq_zero_iff h).mpr (hq b hb)
   simp only [map_add (f := _), e1, e2, e3, e4, add_zero]
-
-variable {V : Type} [AddCommGroup V] [Module ℂ V] in
-private lemma sub_projection_mem' {p q : Submodule ℂ V} (h : IsCompl p q) (v : V) :
-    v - p.projection q h v ∈ q := by
-  rw [← Submodule.IsCompl.projection_apply_eq_zero_iff h, map_sub,
-    (Submodule.IsCompl.projection_eq_self_iff h _).mpr
-      (Submodule.IsCompl.projection_apply_mem h v), sub_self]
 
 
 variable {V : Type} [AddCommGroup V] [Module ℂ V] in
@@ -161,7 +114,7 @@ theorem _root_.GlobalTheory.ClassFin.exists_reynolds_of_completelyReducible (V :
   have hPfix : ∀ v ∈ Fix, P v = v := by
     intro v hv
     have hd : v - P v ∈ Fix := Fix.sub_mem hv (hW'Fix _ (Submodule.IsCompl.projection_apply_mem _ v))
-    exact (sub_eq_zero.mp (hFixW _ hd (sub_projection_mem' hWW'.symm v))).symm
+    exact (sub_eq_zero.mp (hFixW _ hd (Submodule.sub_projection_mem hWW'.symm v))).symm
   have hPT : ∀ T : V →ₗ[ℂ] V, (∀ s ∈ S, ∀ v, T (s v) = s (T v)) → ∀ v, P (T v) = T (P v) := by
     intro T hT v
     refine projection_comm_of_mapsTo hWW'.symm T (fun x hx => ?_) (hWT T hT) v
@@ -169,7 +122,7 @@ theorem _root_.GlobalTheory.ClassFin.exists_reynolds_of_completelyReducible (V :
     rw [← hPfix _ hTx]
     exact Submodule.IsCompl.projection_apply_mem _ _
   refine ⟨P, fun v s hs => hW'Fix _ (Submodule.IsCompl.projection_apply_mem _ v) s hs,
-    fun v hv => hPfix v hv, fun v s hs => ?_, fun v => sub_projection_mem' hWW'.symm v,
+    fun v hv => hPfix v hv, fun v s hs => ?_, fun v => Submodule.sub_projection_mem hWW'.symm v,
     hPT, fun U hU v hv => ?_⟩
   · have h0 : P ((s : V → V) v - v) = 0 :=
       (Submodule.IsCompl.projection_apply_eq_zero_iff _).mpr (hWgen s hs v)

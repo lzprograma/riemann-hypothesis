@@ -33,72 +33,18 @@ import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalAtLoc
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieModel
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueSemilinear
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelIsBaseChange
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.CategoryTheory.Monoidal.Cartesian.Basic
-import Mathlib.CategoryTheory.Monoidal.Category
-import Mathlib.CategoryTheory.Monoidal.Mon
-import Mathlib.Topology.Sheaves.Presheaf
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
 import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.SimpleRing.Principal
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrGenOfIsFlagVBOn
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordDegreeBoundGeneric, Development.AutomorphicSpectrum.Proofs.GeometryProofs.GradedDegreeFormula, Development.AutomorphicSpectrum.Proofs.GeometryProofs.GramDetNeZeroOfIndep, Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogCardQuotientBound, Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagLineDegreeFormula
 
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordDegreeBoundGeneric =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordDegreeBoundGeneric", "h": "module\n\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocRatio\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GradedSandwichDegreeBound\npublic import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat\npublic import Mathlib.AlgebraicGeometry.Morphisms.Smooth\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeRegularAtLocalPoint\npublic import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLie\nimport Development.AutomorphicSpectrum.Proofs.MetricProofs.LatticeRationalEmbedding\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalAtLocalRing\nimport Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieModel\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueSemilinear\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelIsBaseChange\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.PiTensorProduct\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
+-- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordDegreeBoundGeneric", "h": "module\n\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocRatio\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GradedSandwichDegreeBound\npublic import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat\npublic import Mathlib.AlgebraicGeometry.Morphisms.Smooth\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeRegularAtLocalPoint\npublic import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLie\nimport Development.AutomorphicSpectrum.Proofs.MetricProofs.LatticeRationalEmbedding\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalAtLocalRing\nimport Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieModel\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueSemilinear\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelIsBaseChange\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.PiTensorProduct\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Std.Tactic.BVDecide.Normalize.Prop\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordsAtSmul\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordDegreeBoundCharZero\nimport Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordDegreeBoundOfFlag\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -192,31 +138,6 @@ section Val
 
 variable {X : Scheme.{0}} {Ω : Type} [Field Ω] {ξ : Sp Ω ⟶ X} {R : Type} [CommRing R] [IsLocalRing R] {z : Sp R ⟶ X}
 
-theorem val_unique (hξ : IsCptGen ξ) {a : Ω} {r r' : R} (h : ValAt ξ z a r) (h' : ValAt ξ z a r') : r = r' := by
-  obtain ⟨h1, s, hs, rfl⟩ := h
-  obtain ⟨h2, s', hs', rfl⟩ := h'
-  have : s = s' := hξ.inj ⟨centre z, h1⟩ (hs.trans hs'.symm)
-  rw [this]
-
-theorem val_mul {a a' : Ω} {r r' : R} (h : ValAt ξ z a r) (h' : ValAt ξ z a' r') :
-    ValAt ξ z (a * a') (r * r') := by
-  obtain ⟨h1, s, rfl, rfl⟩ := h
-  obtain ⟨h2, s', rfl, rfl⟩ := h'
-  exact ⟨h1, s * s', map_mul _ _ _, map_mul _ _ _⟩
-
-theorem val_exists (h : genPt ξ ⤳ centre z) {a : Ω} (ha : a ∈ regAt ξ ⟨centre z, h⟩) : ∃ r, ValAt ξ z a r := by
-  obtain ⟨s, rfl⟩ := ha
-  exact ⟨_, h, s, rfl, rfl⟩
-
-theorem val_zero (h : genPt ξ ⤳ centre z) : ValAt ξ z (0 : Ω) (0 : R) := ⟨h, 0, map_zero _, map_zero _⟩
-
-theorem val_one (h : genPt ξ ⤳ centre z) : ValAt ξ z (1 : Ω) (1 : R) := ⟨h, 1, map_one _, map_one _⟩
-
-theorem reg_of_val {a : Ω} {r : R} (h : ValAt ξ z a r) (h' : genPt ξ ⤳ centre z) :
-    a ∈ regAt ξ ⟨centre z, h'⟩ := by
-  obtain ⟨_, s, rfl, -⟩ := h
-  exact ⟨s, rfl⟩
-
 theorem inv_nat_reg {F : Type} [Field F] [CharZero F] {z : Sp F ⟶ X} (h : genPt ξ ⤳ centre z) {m : ℕ} (hm : 0 < m) :
     (m : Ω)⁻¹ ∈ regAt ξ ⟨centre z, h⟩ ∧ (m : Ω) ≠ 0 := by
   let f : X.presheaf.stalk (centre z) →+* F := (Scheme.stalkClosedPointTo z).hom
@@ -260,7 +181,7 @@ theorem exists_phi : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Sp Ω ⟶
     rw [← Finset.prod_div_distrib]
     refine prod_mem fun k _ => ?_
     obtain ⟨r', hr, -⟩ := (hw.2 k (c₀ k) (hunit k)).2 (c' k)
-    exact reg_of_val hr hp
+    exact GlobalTheory.CompanionTheory.Ar.RootHt.Pick.reg_of_valAt hr hp
   obtain ⟨b, π, κ, hflag, -, hmb, hπ, hreg, hκ0, hκ, hκi, hcls⟩ :=
     _root_.GlobalTheory.CompanionTheory.Ar.RootHt.cls_frame X Ω ξ K J y G Li M V r b₀ m i a e₀ hb₀ hS hD ⟨centre zL, hp⟩ c₀ hIC
   obtain ⟨hmi, hm0⟩ := inv_nat_reg (ξ := ξ) hp hm
@@ -285,20 +206,20 @@ theorem exists_phi : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Sp Ω ⟶
   obtain ⟨hinj, hclr⟩ := clear_int j hbc
   obtain ⟨ev, hev, hevs, -⟩ := _root_.GlobalTheory.CompanionTheory.Ar.lieLat_val X G Ω ξ Li M L _ hp T MT hξ inferInstance
   obtain ⟨g, hg⟩ := _root_.GlobalTheory.CompanionTheory.Ar.RootHt.exists_lieFunctional X G Ω ξ Li M L _ hp T MT (π i) hξ (hπr i)
-  obtain ⟨uκ, huκ⟩ := val_exists hp hκ
-  obtain ⟨uκi, huκi⟩ := val_exists hp hκi
+  obtain ⟨uκ, huκ⟩ := GlobalTheory.CompanionTheory.Ar.RootHt.FinLocal.val_of_mem hp hκ
+  obtain ⟨uκi, huκi⟩ := GlobalTheory.CompanionTheory.Ar.RootHt.FinLocal.val_of_mem hp hκi
   have huκ0 : uκ ≠ 0 := by
-    have h1 := val_mul huκ huκi
+    have h1 := GlobalTheory.CompanionTheory.Ar.RootHt.FinLocal.val_mul huκ huκi
     rw [mul_inv_cancel₀ hκ0] at h1
-    have h2 := val_unique hξ h1 (val_one hp)
+    have h2 := GlobalTheory.CompanionTheory.Ar.RootHt.ArchB.val_unique hξ h1 (GlobalTheory.CompanionTheory.Ar.RootHt.ArchB.val_one hp)
     exact left_ne_zero_of_mul_eq_one h2
   have hdec : ∀ (n : ℕ) (e : Li) (he : e ∈ M.lat ⟨centre _, hp⟩), e ∈ flagStep Ω b n →
       ∃ ρ : Fin r → L, (∀ l, ValAt ξ (spMap (algebraMap (𝓞 L) L) ≫ z) (π l e) (ρ l)) ∧ (∀ l : Fin r, n ≤ l → ρ l = 0) ∧
         ev ⟨e, he⟩ = ∑ l, ρ l • ev ⟨b l, hbl l⟩ := by
     intro n e he hn
     obtain ⟨h1, h2⟩ := flag_coord b π hπ n e hn
-    choose ρ hρ using fun l => val_exists hp (hπr l e he)
-    refine ⟨ρ, hρ, fun l hl => val_unique hξ (hρ l) (by rw [h2 l hl]; exact val_zero hp), ?_⟩
+    choose ρ hρ using fun l => GlobalTheory.CompanionTheory.Ar.RootHt.FinLocal.val_of_mem hp (hπr l e he)
+    refine ⟨ρ, hρ, fun l hl => GlobalTheory.CompanionTheory.Ar.RootHt.ArchB.val_unique hξ (hρ l) (by rw [h2 l hl]; exact GlobalTheory.CompanionTheory.Ar.RootHt.ArchB.val_zero hp), ?_⟩
     have h3 : (⟨e, he⟩ : M.lat ⟨centre _, hp⟩) =
         ∑ l, (⟨π l e, hπr l e he⟩ : regAt ξ ⟨centre _, hp⟩) • (⟨b l, hbl l⟩ : M.lat ⟨centre _, hp⟩) := by
       apply Subtype.ext
@@ -409,11 +330,11 @@ theorem exists_phi : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Sp Ω ⟶
     rw [hφ, (mul_eq_zero.1 h1).resolve_left h2, mul_zero]
   · intro x e v t u he h1 h2 hc hu
     obtain ⟨hl, hj⟩ := hval x e v h1 h2
-    obtain ⟨ρ, hρ⟩ := val_exists hp (hπr i e hl)
+    obtain ⟨ρ, hρ⟩ := GlobalTheory.CompanionTheory.Ar.RootHt.FinLocal.val_of_mem hp (hπr i e hl)
     have h3 : g (j (x : B.carrier)) = ρ := by rw [← hj]; exact hgv e hl ρ hρ
-    have h4 := val_mul hρ huκ
+    have h4 := GlobalTheory.CompanionTheory.Ar.RootHt.FinLocal.val_mul hρ huκ
     rw [← hcls e t he hc] at h4
-    rw [hφ, h3, val_unique hξ hu h4, mul_comm]
+    rw [hφ, h3, GlobalTheory.CompanionTheory.Ar.RootHt.ArchB.val_unique hξ hu h4, mul_comm]
 
 end GlobalTheory.CompanionTheory.Ar.RootHt.FinPhi
 end -- clump:auto

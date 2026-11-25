@@ -16,53 +16,9 @@ public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.LevelsM
 public import Formalism.DistinguishedUnitIdeals.FrobeniusCoboundedArc
 public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.GoodOf
 public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.ThmEFull
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Order.CompletePartialOrder
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Topology.Sheaves.Presheaf
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Linter.Style
 import Formalism.GaussValuationBounds.Statement
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
@@ -88,13 +44,10 @@ section Helpers
 
 variable {O : Type} [CommRing O]
 
-theorem algHom_C (φ : PowerSeries O →ₐ[O] PowerSeries O) (a : O) : φ (C a) = C a := by
-  simpa [PowerSeries.algebraMap_apply] using φ.commutes a
-
 theorem algHom_eq_const_add (φ : PowerSeries O →ₐ[O] PowerSeries O) (h : PowerSeries O) :
     φ h = C (constantCoeff h) + φ X * φ (mk fun p => coeff (p + 1) h) := by
   conv_lhs => rw [PowerSeries.eq_shift_mul_X_add_const h]
-  rw [map_add (f := _), map_mul, algHom_C]
+  rw [map_add (f := _), map_mul, Formalism.ExponentWindows.E.IdempotentNormalFormsRhoFacts.alg_C]
   ring
 
 theorem order_map_toNat_of_isDistinguishedAt {I : Ideal O} (hI : I ≠ ⊤) {E : Polynomial O}
@@ -144,7 +97,7 @@ theorem coe_eq_sum_fin {d : ℕ} {r : Polynomial O} (hr : r.degree < d) :
     · rw [Finset.sum_eq_single ⟨j, hj⟩]
       · simp
       · intro b _ hb
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h
         exact hb (Fin.ext h.symm)
       · intro h
@@ -153,7 +106,7 @@ theorem coe_eq_sum_fin {d : ℕ} {r : Polynomial O} (hr : r.degree < d) :
         (lt_of_lt_of_le hr (by exact_mod_cast not_lt.mp hj))]
       symm
       refine Finset.sum_eq_zero fun i _ => ?_
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       exact hj (h ▸ i.2)
   rw [← coe_sum_fin]
@@ -357,7 +310,7 @@ theorem gaussValC : GaussC := by
   refine le_antisymm ((iInf_le _ 0).trans (by simp)) (le_iInf fun n => ?_)
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp
-  · rw [PowerSeries.coeff_C, if_neg hn.ne', addVal_zero]
+  · rw [PowerSeries.coeff_C, ite_eq_right hn.ne', addVal_zero]
     simp
 
 open IsDiscreteValuationRing in
@@ -367,7 +320,6 @@ theorem gaussValUnit : GaussUnit := by
   refine le_antisymm ((iInf_le _ 0).trans ?_) (by simp)
   rw [PowerSeries.coeff_zero_eq_constantCoeff_apply, ← hw, addVal_eq_zero_of_unit]
   simp
-
 
 end Formalism.NOK
 end -- clump:auto
@@ -408,20 +360,11 @@ private theorem gaussV_zero (x : ℝ) : gaussV x (0 : PowerSeries O) = ⊤ := by
   refine le_antisymm le_top (le_iInf fun n => ?_)
   exact le_of_eq (by rw [map_zero, (addVal O).map_zero, ENat.toENNReal_top, top_add])
 
-private theorem exists_coeff_ne_zero {f : PowerSeries O} (hf : f ≠ 0) : ∃ m, PowerSeries.coeff m f ≠ 0 := by
-  by_contra h
-  push Not at h
-  exact hf (PowerSeries.ext fun n => by rw [h n, map_zero])
-
-private theorem enat_toENNReal_ne_top_of_ne_top {a : ℕ∞} (h : a ≠ ⊤) : (a : ℝ≥0∞) ≠ ⊤ := by
-  lift a to ℕ using h
-  simp
-
 private theorem gaussTerm_ne_top {x : ℝ} {f : PowerSeries O} {n : ℕ} (h : PowerSeries.coeff n f ≠ 0) :
     gaussTerm x f n ≠ ⊤ := by
   have h1 : addVal O (PowerSeries.coeff n f) ≠ ⊤ := fun h' => h (addVal_eq_top_iff.mp h')
   unfold gaussTerm
-  exact ENNReal.add_ne_top.mpr ⟨enat_toENNReal_ne_top_of_ne_top h1, ENNReal.ofReal_ne_top⟩
+  exact ENNReal.add_ne_top.mpr ⟨ENat.toENNReal_ne_top.mpr h1, ENNReal.ofReal_ne_top⟩
 
 private theorem addVal_ne_top_of_term {x : ℝ} {f : PowerSeries O} {n : ℕ} (h : gaussTerm x f n ≠ ⊤) :
     addVal O (PowerSeries.coeff n f) ≠ ⊤ := by
@@ -431,7 +374,7 @@ private theorem addVal_ne_top_of_term {x : ℝ} {f : PowerSeries O} {n : ℕ} (h
   rw [h', ENat.toENNReal_top, top_add]
 
 private theorem gaussV_ne_top {x : ℝ} {f : PowerSeries O} (hf : f ≠ 0) : gaussV x f ≠ ⊤ := by
-  obtain ⟨m, hm⟩ := exists_coeff_ne_zero hf
+  obtain ⟨m, hm⟩ := PowerSeries.exists_coeff_ne_zero_iff_ne_zero.mpr hf
   exact ne_top_of_le_ne_top (gaussTerm_ne_top (x := x) hm) (gaussV_le_term x f m)
 
 private theorem gaussTerm_add_gaussTerm_eq_addVal_coeff_mul {x : ℝ} (hx : 0 ≤ x) (f g : PowerSeries O) (i j : ℕ) :
@@ -468,7 +411,7 @@ private theorem gaussV_add_le_mul {x : ℝ} (hx : 0 ≤ x) (f g : PowerSeries O)
 
 private theorem gaussV_exists_eq {x : ℝ} (hx : 0 < x) {f : PowerSeries O} (hf : f ≠ 0) :
     ∃ i, gaussTerm x f i = gaussV x f := by
-  obtain ⟨m, hm⟩ := exists_coeff_ne_zero hf
+  obtain ⟨m, hm⟩ := PowerSeries.exists_coeff_ne_zero_iff_ne_zero.mpr hf
   have hTtop : gaussTerm x f m ≠ ⊤ := gaussTerm_ne_top hm
   obtain ⟨N', hN'⟩ := exists_nat_gt ((gaussTerm x f m).toReal / x)
   obtain ⟨N, hmN, hN'N⟩ : ∃ N, m ≤ N ∧ N' ≤ N := ⟨max m N', le_max_left _ _, le_max_right _ _⟩
@@ -1267,12 +1210,12 @@ theorem shape_ext {O : Type} [CommRing O] [Nontrivial O] (B : Base O) (ell : ℕ
         Polynomial.monic_X_pow_add_C _ hpos, Polynomial.natDegree_X_pow_add_C, ?_, ?_, isUnit_one,
         fun h => absurd h hs⟩
       · intro i hi
-        rw [Polynomial.coeff_add, Polynomial.coeff_X_pow, if_neg (by omega), zero_add,
+        rw [Polynomial.coeff_add, Polynomial.coeff_X_pow, ite_eq_right (by omega), zero_add,
           Polynomial.coeff_C]
         split_ifs
         · exact dvd_rfl
         · exact dvd_zero _
-      · rw [Polynomial.coeff_add, Polynomial.coeff_X_pow, if_neg (fun h => hpos h.symm), zero_add,
+      · rw [Polynomial.coeff_add, Polynomial.coeff_X_pow, ite_eq_right (fun h => hpos h.symm), zero_add,
           Polynomial.coeff_C_zero]
   choose E u h1 h2 h3 h4 h5 h6 using hall
   exact ⟨E, u, h1, h2, h3, h4, h5, h6⟩
@@ -1472,7 +1415,7 @@ theorem prep [IsLocalRing O] {l : O} (hl : ¬ IsUnit l) [IsAdicComplete (Ideal.s
       rwa [hnd] at this
     have h3 := congrArg (coeff d) hE
     rw [Polynomial.coeff_coe, hcd, hg, add_mul, map_add (f := _),
-      coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self, mul_assoc, coeff_C_mul,
+      coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self, mul_assoc, coeff_C_mul,
       coeff_zero_eq_constantCoeff_apply] at h3
     have h4 : constantCoeff q = 1 + l * (-(coeff d (vi * a * q))) := by
       rw [h3]; ring
@@ -1681,11 +1624,11 @@ theorem latGood {ϖ : O} (hϖ : Irreducible ϖ) {e : ℕ} (hB : PrimBase B ϖ e)
     (completion_holds O B n V L hB.complete hL.free) (X_regular_on_lattice O B n V L hL.free) hL.ltors
   · by_cases h : ∃ c ∈ Cu.cuts, ∃ k : ℕ, 1 ≤ k ∧ k ≤ j ∧ i = c + (k : ZMod n)
     · simp only [Mi]
-      rw [if_pos h]
+      rw [ite_eq_left h]
       obtain ⟨c, hc, k, hk1, hk2, rfl⟩ := h
       exact hL.frobeniusBounded_after c hc k hk1 hk2
     · simp only [Mi]
-      rw [if_neg h]
+      rw [ite_eq_right h]
       exact hL.p5M i
   · have hGh : G ≤ hh := le_trans hN.G_le_g hN.g_le_h
     have hle : Mi i ≤ hh := by
@@ -1695,7 +1638,7 @@ theorem latGood {ϖ : O} (hϖ : Irreducible ϖ) {e : ℕ} (hB : PrimBase B ϖ e)
   · have h : ∃ c' ∈ Cu.cuts, ∃ k' : ℕ, 1 ≤ k' ∧ k' ≤ j ∧ c + (k : ZMod n) = c' + (k' : ZMod n) :=
       ⟨c, hc, k, hk1, hk2, rfl⟩
     simp only [Mi]
-    rw [if_pos h]
+    rw [ite_eq_left h]
 
 theorem unit_phiIt {V₀ : Type} [AddCommGroup V₀] [Module (PowerSeries O) V₀] {L₀ : Lat B n V₀}
     {e₀ : V₀} (h : ∀ i, L₀.φ i e₀ = e₀) (i : ZMod n) (k : ℕ) (a : PowerSeries O) :
@@ -1821,19 +1764,6 @@ theorem theorem_E_primitive_form : ThmEPrim := by
   · exact Prim.arcHyp hϖ hB (hN.ell_le c hc) (hA c hc)
 
 end Formalism.ExponentWindows.E
-
-namespace Formalism.ExponentWindows.E.Prim
-
-open PowerSeries IdempotentNormalFormsRhoFacts GoodPlacesAlt
-
-section p4
-variable {O : Type} [CommRing O] {B : Base O}
-
-variable {n : ℕ} [NeZero n] {V : Type} [AddCommGroup V] [Module (PowerSeries O) V]
-
-end p4
-
-end Formalism.ExponentWindows.E.Prim
 
 namespace Formalism.ExponentWindows.E
 

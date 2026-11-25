@@ -1,6 +1,7 @@
 module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ParHaar
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.AdMeas
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
@@ -75,171 +76,13 @@ open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Adel PositivityTheory.Rg
 open scoped ENNReal NumberField.AdeleRing InnerProductSpace ComplexConjugate Valued
 open UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial
 
-private theorem unip_blocks {a b : ℕ} {R : Type} [CommRing R] (X : UPos (a + b) a → R) :
-    (unipMatrix X).submatrix finSumFinEquiv finSumFinEquiv =
-      Matrix.fromBlocks 1 ((unipMatrix X).submatrix finSumFinEquiv finSumFinEquiv).toBlocks₁₂ 0 (1 : Matrix (Fin b) (Fin b) R) := by
-  ext i j
-  rcases i with i | i <;> rcases j with j | j <;>
-    simp [unipMatrix, blockEntry_apply, Matrix.one_apply, Matrix.toBlocks₁₂, Fin.ext_iff] <;> omega
+private theorem nn_inv {K : Type} [Field K] [NumberField K] (Y : UPos (2 + 2) 2 → 𝔸[K]) : (nn Y)⁻¹ = nn (-Y) :=
+  inv_eq_of_mul_eq_one_right (by rw [← unipOne_add, add_neg_cancel, unipOne_zero])
 
-private theorem unip_onto {a b : ℕ} {R : Type} [CommRing R] (B : Matrix (Fin a) (Fin b) R) : ∃ X : UPos (a + b) a → R,
-    (unipMatrix X).submatrix finSumFinEquiv finSumFinEquiv = Matrix.fromBlocks 1 B 0 (1 : Matrix (Fin b) (Fin b) R) := by
-  refine ⟨fun p => Matrix.reindex finSumFinEquiv finSumFinEquiv (Matrix.fromBlocks 0 B 0 0) p.1.1 p.1.2, ?_⟩
-  rw [unip_blocks]
-  congr 1
-  ext i j
-  have : (Fin.castAdd b i : Fin (a + b)) ≠ Fin.natAdd a j := by
-    simp [Fin.ext_iff]; omega
-  simp [unipMatrix, blockEntry_apply, Matrix.toBlocks₁₂, this]
-
-private theorem low_zero {a b : ℕ} {R : Type} [CommRing R] (X : UPos (a + b) a → R) (c : GL (Fin a) R) (d : GL (Fin b) R) :
-    ((unipGL X * blk c d).val.submatrix finSumFinEquiv finSumFinEquiv).toBlocks₂₁ = 0 := by
-  rw [Units.val_mul, ← Matrix.submatrix_mul_equiv _ _ _ finSumFinEquiv, coe_unipGL, unip_blocks]
-  simp [blk, Matrix.fromBlocks_multiply]
-
-private theorem dec {a b : ℕ} {R : Type} [CommRing R] (g : GL (Fin (a + b)) R)
-    (h : (g.val.submatrix finSumFinEquiv finSumFinEquiv).toBlocks₂₁ = 0)
-    (h' : (g⁻¹.val.submatrix finSumFinEquiv finSumFinEquiv).toBlocks₂₁ = 0) :
-    ∃ (c : GL (Fin a) R) (d : GL (Fin b) R), (c.val = (g.val.submatrix finSumFinEquiv finSumFinEquiv).toBlocks₁₁ ∧
-      c⁻¹.val = (g⁻¹.val.submatrix finSumFinEquiv finSumFinEquiv).toBlocks₁₁) ∧
-      (d.val = (g.val.submatrix finSumFinEquiv finSumFinEquiv).toBlocks₂₂ ∧
-      d⁻¹.val = (g⁻¹.val.submatrix finSumFinEquiv finSumFinEquiv).toBlocks₂₂) ∧
-      ∃ X : UPos (a + b) a → R, g = unipGL X * blk c d := by
-  have e1 : g.val.submatrix finSumFinEquiv finSumFinEquiv * g⁻¹.val.submatrix finSumFinEquiv finSumFinEquiv =
-      (1 : Matrix (Fin a ⊕ Fin b) (Fin a ⊕ Fin b) R) := by
-    rw [Matrix.submatrix_mul_equiv, Units.mul_inv, Matrix.submatrix_one_equiv]
-  have hg : ∀ M : Matrix (Fin a ⊕ Fin b) (Fin a ⊕ Fin b) R, g.val.submatrix finSumFinEquiv finSumFinEquiv = M →
-      g.val = M.submatrix finSumFinEquiv.symm finSumFinEquiv.symm := by
-    rintro _ rfl
-    simp
-  generalize g.val.submatrix finSumFinEquiv finSumFinEquiv = M at *
-  generalize g⁻¹.val.submatrix finSumFinEquiv finSumFinEquiv = N at *
-  have hM := (Matrix.fromBlocks_toBlocks M).symm
-  rw [← Matrix.fromBlocks_toBlocks M, ← Matrix.fromBlocks_toBlocks N, h, h', Matrix.fromBlocks_multiply,
-    ← Matrix.fromBlocks_one, Matrix.fromBlocks_inj] at e1
-  simp only [Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add] at e1
-  obtain ⟨e1, -, -, e2⟩ := e1
-  obtain ⟨X, hX⟩ := unip_onto (M.toBlocks₁₂ * N.toBlocks₂₂)
-  refine ⟨⟨_, _, e1, mul_eq_one_comm.1 e1⟩, ⟨_, _, e2, mul_eq_one_comm.1 e2⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, X, Units.ext ?_⟩
-  have hX' : unipMatrix X = (Matrix.fromBlocks 1 (M.toBlocks₁₂ * N.toBlocks₂₂) 0 1).submatrix
-      finSumFinEquiv.symm finSumFinEquiv.symm := by
-    rw [← hX]; simp
-  rw [Units.val_mul, coe_unipGL, hX', hg M rfl]
-  simp only [blk, Matrix.reindex_apply, Matrix.submatrix_mul_equiv, Matrix.fromBlocks_multiply, Matrix.mul_zero,
-    Matrix.zero_mul, add_zero, zero_add, Matrix.one_mul, Matrix.mul_assoc, mul_eq_one_comm.1 e2, Matrix.mul_one]
-  rw [← h, ← hM]
-
-private theorem low_coord {K : Type} [Field K] [NumberField K] :
-    ∃ (C : Set (G1 K (2 + 2))) (ψ : C → G1 K 2 × G1 K 2 × ℝ × (UPos (2 + 2) 2 → 𝔸[K])), IsClosed C ∧ Continuous ψ ∧
-      (∀ g : G1 K (2 + 2), (∃ X m₁ m₂ t, g = nn X * lv m₁ m₂ t) → (∃ X m₁ m₂ t, g⁻¹ = nn X * lv m₁ m₂ t) → g ∈ C) ∧
-      ∀ s : C, (s : G1 K (2 + 2)) = nn (ψ s).2.2.2 * lv (ψ s).1 (ψ s).2.1 (ψ s).2.2.1 := by
-  obtain ⟨hlv, -, -, hc, hdet, -⟩ := blkLaws (K := K)
-  let F : G1 K (2 + 2) → Matrix (Fin 2 ⊕ Fin 2) (Fin 2 ⊕ Fin 2) 𝔸[K] := fun g =>
-    (g : AdelicGLn.AdelicGL K (2 + 2)).val.submatrix finSumFinEquiv finSumFinEquiv
-  have hF : Continuous F := (Units.continuous_val.comp continuous_subtype_val).matrix_submatrix _ _
-  have hF' : Continuous fun g => F g⁻¹ := hF.comp continuous_inv
-  let C : Set (G1 K (2 + 2)) := {g | (F g).toBlocks₂₁ = 0 ∧ (F g⁻¹).toBlocks₂₁ = 0}
-  have hC : IsClosed C := (isClosed_eq (hF.matrix_submatrix Sum.inr Sum.inl) continuous_const).inter
-    (isClosed_eq (hF'.matrix_submatrix Sum.inr Sum.inl) continuous_const)
-  choose a d ha hd X hX using fun s : C => dec (s.1 : AdelicGLn.AdelicGL K (2 + 2)) s.2.1 s.2.2
-  have hac : Continuous a := Units.continuous_iff.2
-    ⟨((hF.matrix_submatrix Sum.inl Sum.inl).comp continuous_subtype_val).congr fun s => (ha s).1.symm,
-      ((hF'.matrix_submatrix Sum.inl Sum.inl).comp continuous_subtype_val).congr fun s => (ha s).2.symm⟩
-  have hdc : Continuous d := Units.continuous_iff.2
-    ⟨((hF.matrix_submatrix Sum.inr Sum.inr).comp continuous_subtype_val).congr fun s => (hd s).1.symm,
-      ((hF'.matrix_submatrix Sum.inr Sum.inr).comp continuous_subtype_val).congr fun s => (hd s).2.symm⟩
-  let t : C → ℝ := fun s => Real.log (detModule K 2 (a s)).1
-  have htc : Continuous t :=
-    (continuous_subtype_val.comp (continuous_detModule.comp hac)).log fun s => (detModule K 2 (a s)).2.ne'
-  have key : ∀ s : C, (s : G1 K (2 + 2)) = nn (X s) * lv (retractOne (a s)) (retractOne (d s)) (t s) := by
-    intro s
-    have h1 : detModule K 2 (a s) * detModule K 2 (d s) = 1 := by
-      have := mem_normOneGL_iff_detModule.1 s.1.2
-      rwa [hX s, map_mul, mem_normOneGL_iff_detModule.1 (unipGL_mem_normOneGL _), one_mul, hdet] at this
-    have z1 : zt K (t s) = centralSection K 2 (detModule K 2 (a s)) := by
-      unfold zt
-      congr 1
-      exact Subtype.ext (Real.exp_log (detModule K 2 (a s)).2)
-    have z2 : zt K (-t s) = centralSection K 2 (detModule K 2 (d s)) := by
-      unfold zt
-      congr 1
-      refine Subtype.ext ?_
-      rw [eq_inv_of_mul_eq_one_right h1]
-      show Real.exp (-Real.log _) = _
-      rw [Real.exp_neg, Real.exp_log (detModule K 2 (a s)).2]
-      rfl
-    refine Subtype.ext ?_
-    rw [Subgroup.coe_mul, hlv, z1, z2, coe_retractOne, coe_retractOne, inv_mul_cancel_right, inv_mul_cancel_right]
-    exact hX s
-  have hP : Continuous fun s : C => (retractOne (a s), retractOne (d s), t s) :=
-    (continuous_retractOne.comp hac).prodMk ((continuous_retractOne.comp hdc).prodMk htc)
-  have hL : Continuous fun s : C => lv (retractOne (a s)) (retractOne (d s)) (t s) := by
-    simpa only [Function.comp_def] using hc.comp hP
-  have hN : Continuous fun s : C => unipMatrix (X s) := by
-    have : Continuous fun s : C => (nn (X s) : G1 K (2 + 2)) :=
-      (continuous_subtype_val.mul hL.inv).congr fun s => mul_inv_eq_of_eq_mul (key s)
-    have h2 : Continuous fun g : G1 K (2 + 2) => (g : AdelicGLn.AdelicGL K (2 + 2)).val :=
-      Units.continuous_val.comp continuous_subtype_val
-    exact h2.comp this
-  have hXc : Continuous X := continuous_pi fun p => by
-    refine ((hN.matrix_elem p.1.1 p.1.2).sub (continuous_const (y := (1 : Matrix (Fin (2 + 2)) (Fin (2 + 2)) 𝔸[K]) p.1.1 p.1.2))).congr fun s => ?_
-    show unipMatrix (X s) p.1.1 p.1.2 - _ = _
-    rw [unipMatrix, Matrix.add_apply, blockEntry_apply, dite_eq_left p.2, add_sub_cancel_left]
-  have hlow : ∀ g : G1 K (2 + 2), (∃ X m₁ m₂ t, g = nn X * lv m₁ m₂ t) → (F g).toBlocks₂₁ = 0 := by
-    rintro _ ⟨X, m₁, m₂, t, rfl⟩
-    simp only [F, Subgroup.coe_mul, hlv]
-    exact low_zero _ _ _
-  exact ⟨C, fun s => (retractOne (a s), retractOne (d s), t s, X s), hC,
-    (continuous_retractOne.comp hac).prodMk ((continuous_retractOne.comp hdc).prodMk (htc.prodMk hXc)),
-    fun g h h' => ⟨hlow _ h, hlow _ h'⟩, key⟩
-
-private theorem par_homeo {K : Type} [Field K] [NumberField K] :
-    ∃ (S : Subgroup (G1 K (2 + 2))) (φ : (G1 K 2 × G1 K 2 × ℝ × (UPos (2 + 2) 2 → 𝔸[K])) ≃ₜ S),
-      IsClosed (S : Set (G1 K (2 + 2))) ∧ (∀ g, g ∈ S ↔ ∃ X m₁ m₂ t, g = nn X * lv m₁ m₂ t) ∧
-      ∀ m₁ m₂ t X, (φ (m₁, m₂, t, X) : G1 K (2 + 2)) = nn X * lv m₁ m₂ t := by
-  obtain ⟨-, hmul, hone, hc, -⟩ := blkLaws (K := K)
-  obtain ⟨-, -, hinj, -⟩ := pkLaws (K := K)
-  obtain ⟨C, ψ, hC, hψ, hin, hkey⟩ := low_coord (K := K)
-  have hcomm : ∀ (m₁ m₂ : G1 K 2) (t : ℝ) X, ∃ Y, lv m₁ m₂ t * nn X = nn Y * lv m₁ m₂ t := by
-    intro m₁ m₂ t X
-    obtain ⟨e, he, -⟩ := adMeas m₁ m₂ t
-    exact ⟨e.symm X, by rw [he, e.apply_symm_apply]⟩
-  let S : Subgroup (G1 K (2 + 2)) :=
-    { carrier := {g | ∃ X m₁ m₂ t, g = nn X * lv m₁ m₂ t}
-      one_mem' := ⟨0, 1, 1, 0, by rw [hone, mul_one]; exact (unipOne_zero 2).symm⟩
-      mul_mem' := by
-        rintro _ _ ⟨X, m₁, m₂, t, rfl⟩ ⟨X', m₁', m₂', t', rfl⟩
-        obtain ⟨Y, hY⟩ := hcomm m₁ m₂ t X'
-        refine ⟨X + Y, m₁ * m₁', m₂ * m₂', t + t', ?_⟩
-        rw [mul_assoc, ← mul_assoc (lv m₁ m₂ t), hY, mul_assoc, hmul, ← mul_assoc]
-        exact congrArg (· * _) (unipOne_add 2 X Y).symm
-      inv_mem' := by
-        rintro _ ⟨X, m₁, m₂, t, rfl⟩
-        obtain ⟨Y, hY⟩ := hcomm m₁⁻¹ m₂⁻¹ (-t) (-X)
-        refine ⟨Y, m₁⁻¹, m₂⁻¹, -t, ?_⟩
-        rw [← hY, mul_inv_rev]
-        congr 1
-        · refine inv_eq_of_mul_eq_one_right ?_
-          rw [hmul, mul_inv_cancel, mul_inv_cancel, add_neg_cancel, hone]
-        · refine inv_eq_of_mul_eq_one_right ?_
-          rw [← unipOne_add, add_neg_cancel, unipOne_zero] }
-  have hSC : ∀ g ∈ S, g ∈ C := fun g hg => hin g hg (S.inv_mem hg)
-  have hS : (S : Set (G1 K (2 + 2))) = C :=
-    Set.Subset.antisymm hSC fun g hg => ⟨_, _, _, _, hkey ⟨g, hg⟩⟩
-  have hL : Continuous fun p : G1 K 2 × G1 K 2 × ℝ × (UPos (2 + 2) 2 → 𝔸[K]) => lv p.1 p.2.1 p.2.2.1 := by
-    have : Continuous fun p : G1 K 2 × G1 K 2 × ℝ × (UPos (2 + 2) 2 → 𝔸[K]) => (p.1, p.2.1, p.2.2.1) := by fun_prop
-    simpa only [Function.comp_def] using hc.comp this
-  have hN : Continuous fun p : G1 K 2 × G1 K 2 × ℝ × (UPos (2 + 2) 2 → 𝔸[K]) => (nn p.2.2.2 : G1 K (2 + 2)) :=
-    (continuous_unipOne 2).comp (by fun_prop)
-  refine ⟨S,
-    { toFun := fun p => ⟨nn p.2.2.2 * lv p.1 p.2.1 p.2.2.1, _, _, _, _, rfl⟩
-      invFun := fun s => ψ ⟨s.1, hSC _ s.2⟩
-      left_inv := fun p => ?_
-      right_inv := fun s => Subtype.ext (hkey ⟨s.1, hSC _ s.2⟩).symm
-      continuous_toFun := (hN.mul hL).subtype_mk _
-      continuous_invFun := hψ.comp (continuous_subtype_val.subtype_mk _) }, hS ▸ hC, fun _ => Iff.rfl, fun _ _ _ _ => rfl⟩
-  obtain ⟨h1, h2, h3, h4⟩ := hinj _ _ _ _ _ _ _ _ (hkey ⟨_, hSC _ ⟨p.2.2.2, p.1, p.2.1, p.2.2.1, rfl⟩⟩)
-  exact Prod.ext h2.symm (Prod.ext h3.symm (Prod.ext h4.symm h1.symm))
+private theorem lv_nn {K : Type} [Field K] [NumberField K] (m₁ m₂ : G1 K 2) (t : ℝ) (X : UPos (2 + 2) 2 → 𝔸[K]) :
+    ∃ Y, lv m₁ m₂ t * nn X = nn Y * lv m₁ m₂ t := by
+  obtain ⟨e, he, -⟩ := adMeas m₁ m₂ t
+  exact ⟨e.symm X, by rw [he, e.apply_symm_apply]⟩
 
 private def sumv {E : Type} [Zero E] (y₁ y₂ : Fin 2 → E) : Fin (2 + 2) → E :=
   fun i => Sum.elim y₁ y₂ (finSumFinEquiv.symm i)
@@ -392,10 +235,6 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.EA.mkSec :
       have := φ.symm.continuous
       fun_prop
     exact hΛ.comp h1
-  have hnn : ∀ Y : UPos (2 + 2) 2 → 𝔸[K], (nn Y)⁻¹ = nn (-Y) := by
-    intro Y
-    refine inv_eq_of_mul_eq_one_right ?_
-    rw [← unipOne_add, add_neg_cancel, unipOne_zero]
   have hconst : ∀ p p', HaarSK.mulMap S (KG K (2 + 2)) p = HaarSK.mulMap S (KG K (2 + 2)) p' → F p = F p' := by
     rintro ⟨s, k⟩ ⟨s', k'⟩ hp
     obtain ⟨⟨m₁, m₂, t, X⟩, rfl⟩ := φ.surjective s
@@ -426,7 +265,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.EA.mkSec :
     have hb : b ∈ KG K 2 := hab.2
     have hl := hlvK a ha b hb
     have hnY : nn (-Y) ∈ KG K (2 + 2) := by
-      rw [← hnn]
+      rw [← nn_inv]
       refine (KG K (2 + 2)).inv_mem ?_
       have : nn Y = (k : G1 K (2 + 2)) * (k' : G1 K (2 + 2))⁻¹ * (lv a b 0)⁻¹ := by rw [hκ, mul_inv_cancel_right]
       rw [this]
@@ -448,7 +287,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.EA.mkSec :
     show Λ m₁ m₂ k = Λ (m₁ * a) (m₂ * b) k'
     rw [h2 m₁ m₂ a ha b hb k' k'.2]
     have h5 : lv a b 0 * (k' : G1 K (2 + 2)) = nn (-Y) * k := by
-      rw [← hnn, eq_inv_mul_iff_mul_eq, ← mul_assoc, ← hκ, inv_mul_cancel_right]
+      rw [← nn_inv, eq_inv_mul_iff_mul_eq, ← mul_assoc, ← hκ, inv_mul_cancel_right]
     rw [h5, h3 m₁ m₂ (-Y) hnY k k.2]
   refine ⟨fun g => F (Function.surjInv hsurj g), ?_, ?_⟩
   · refine hq.continuous_iff.2 ?_
@@ -554,10 +393,6 @@ private theorem span_le_rep {K : Type} [Field K] [NumberField K] {n : ℕ} (μ :
   rintro _ ⟨k, rfl⟩
   exact ⟨_, hτ.inv _ v hv, reps_tr μ hr k⟩
 
-private theorem int_cont {Y : Type} [TopologicalSpace Y] [CompactSpace Y] [MeasurableSpace Y] [OpensMeasurableSpace Y]
-    (ρ : Measure Y) [IsFiniteMeasure ρ] (F : Y → ℂ) (hF : Continuous F) : Integrable F ρ :=
-  hF.integrable_of_hasCompactSupport (HasCompactSupport.of_compactSpace _)
-
 private theorem dbl {D Y : Type} [TopologicalSpace D] [TopologicalSpace Y] [CompactSpace Y] [MeasurableSpace Y]
     [OpensMeasurableSpace Y] (ρ : Measure Y) [IsFiniteMeasure ρ] (A : D → Y → Y → ℂ)
     (hA : Continuous fun p : (D × Y) × Y => A p.1.1 p.1.2 p.2) :
@@ -566,8 +401,8 @@ private theorem dbl {D Y : Type} [TopologicalSpace D] [TopologicalSpace Y] [Comp
   have hB : Continuous fun p : D × Y => ∫ v₂, A p.1 p.2 v₂ ∂ρ :=
     cont_int ρ (F := fun (p : D × Y) v₂ => A p.1 p.2 v₂) hA
   exact ⟨cont_int ρ (F := fun d v₁ => ∫ v₂, A d v₁ v₂ ∂ρ) hB,
-    fun d v₁ => int_cont ρ _ (hA.comp (Continuous.prodMk_right (d, v₁))),
-    fun d => int_cont ρ _ (hB.comp (Continuous.prodMk_right d))⟩
+    fun d v₁ => (hA.comp (.prodMk_right (d, v₁))).integrable_of_hasCompactSupport (.of_compactSpace _),
+    fun d => (hB.comp (.prodMk_right d)).integrable_of_hasCompactSupport (.of_compactSpace _)⟩
 
 private theorem cont_A {G S T : Type} [TopologicalSpace G] [Group G] [IsTopologicalGroup G] [TopologicalSpace S]
     [TopologicalSpace T] (P : S × S × T → ℂ) (hP : Continuous P) (ι : S → G) (hι : Continuous ι) (φ₁ φ₂ : G → ℂ)
@@ -729,9 +564,8 @@ private theorem sec_red {K : Type} [Field K] [NumberField K] (Λ : G1 K 2 → G1
   have hmul := (blkLaws (K := K)).2.1
   obtain ⟨X, n₁, n₂, t, k, hk, rfl⟩ := iwa g
   refine ⟨n₁, n₂, ⟨k, hk⟩, fun m₁ m₂ => ?_⟩
-  obtain ⟨e, he, -⟩ := adMeas m₁ m₂ 0
-  have e1 : lv m₁ m₂ 0 * nn X = nn (e.symm X) * lv m₁ m₂ 0 := by rw [he, e.apply_symm_apply]
-  have e2 : lv m₁ m₂ 0 * (nn X * lv n₁ n₂ t * k) = nn (e.symm X) * lv (m₁ * n₁) (m₂ * n₂) (0 + t) * k := by
+  obtain ⟨Y, e1⟩ := lv_nn m₁ m₂ 0 X
+  have e2 : lv m₁ m₂ 0 * (nn X * lv n₁ n₂ t * k) = nn Y * lv (m₁ * n₁) (m₂ * n₂) (0 + t) * k := by
     rw [← hmul, ← mul_assoc, ← mul_assoc, e1]
     simp only [mul_assoc]
   rw [e2, hfv _ _ _ _ _ hk]
@@ -751,9 +585,8 @@ private theorem sec_ray {K : Type} [Field K] [NumberField K] (Λ : G1 K 2 → G1
     (g : G1 K (2 + 2)) : f (lv 1 1 t * g) = f g := by
   have hmul := (blkLaws (K := K)).2.1
   obtain ⟨Y, m₁, m₂, s, k, hk, rfl⟩ := iwa g
-  obtain ⟨e, he, -⟩ := adMeas (1 : G1 K 2) 1 t
-  have e1 : lv (1 : G1 K 2) 1 t * nn Y = nn (e.symm Y) * lv (1 : G1 K 2) 1 t := by rw [he, e.apply_symm_apply]
-  have e2 : lv (1 : G1 K 2) 1 t * (nn Y * lv m₁ m₂ s * k) = nn (e.symm Y) * lv (1 * m₁) (1 * m₂) (t + s) * k := by
+  obtain ⟨Z, e1⟩ := lv_nn (1 : G1 K 2) 1 t Y
+  have e2 : lv (1 : G1 K 2) 1 t * (nn Y * lv m₁ m₂ s * k) = nn Z * lv (1 * m₁) (1 * m₂) (t + s) * k := by
     rw [← hmul, ← mul_assoc, ← mul_assoc, e1]
     simp only [mul_assoc]
   rw [e2, hfv _ _ _ _ _ hk, hfv _ _ _ _ _ hk, one_mul, one_mul]

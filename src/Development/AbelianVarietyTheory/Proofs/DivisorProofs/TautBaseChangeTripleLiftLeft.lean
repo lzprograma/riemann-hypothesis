@@ -50,8 +50,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef
 open scoped CategoryTheory.Obj
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace GlobalTheory.PolDeg.TautEx
 
 alias toUnit_left := _root_.GlobalTheory.ObjPull.toUnit_left'
@@ -121,19 +119,6 @@ theorem unit_hom (S : Scheme.{0}) : (𝟙_ (Over S)).hom = 𝟙 S := rfl
 
 end Pts
 
-section Periods
-
-variable (W : Type) [CommRing W] [IsDomain W] (N : ℕ)
-
-end Periods
-
-section Charts
-
-variable {o W : Type} [CommRing o] [CommRing W] [IsDomain W] [IsLocalRing W] (T : TautBase o W) (N : ℕ)
-
-
-end Charts
-
 section Tau
 
 variable {o W : Type} [CommRing o] [CommRing W] [IsDomain W] [IsLocalRing W] (T : TautBase o W) (N m n : ℕ)
@@ -148,12 +133,5 @@ theorem alg_step {G : Type} [CommGroup G] {g₁ g₂ v c a b : G} (e : v * c = a
   rw [mul_assoc (g₁ * g₂), e, _root_.mul_mul_mul_comm]
 
 end Tau
-
-section Main
-
-variable {o W : Type} [CommRing o] [CommRing W] [IsDomain W] [IsLocalRing W] (T : TautBase o W) (N m n : ℕ)
-  (ε : Fin N → LinearMap.BilinForm ℤ (Fin T.r → ℤ))
-
-end Main
 
 end GlobalTheory.PolDeg.TautEx

@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalDiscriminantIsUnit
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
 import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
 
@@ -20,11 +21,6 @@ variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableS
 variable {M : Loc.Model F E} {V : Type} [AddCommGroup V] [Module E V] (H : Loc.HermSp M V)
 
 theorem h_swap (x y : V) : H.h x y = M.L.cj (H.h y x) := H.h_herm y x
-
-def hl (y : V) : V →ₗ[E] E where
-  toFun x := H.h x y
-  map_add' x x' := H.h_add_left x x' y
-  map_smul' a x := by simp only [H.h_smul_left, smul_eq_mul, RingHom.id_apply]
 
 theorem h_add_right (x y y' : V) : H.h x (y + y') = H.h x y + H.h x y' := by
   rw [h_swap H x (y + y'), H.h_add_left, map_add (f := _), ← h_swap H x y, ← h_swap H x y']
@@ -97,21 +93,10 @@ theorem gpart_ne (p : PlF D) : (gpart p : ℚ) ≠ 0 := by
   split_ifs <;> simp [(D.host.g_prime _).ne_zero]
 
 theorem unitAt_ne (p : PlF D) : (uP p : D.host.E) ≠ 0 := by
-  unfold uP
-  have h1 : gpart p ≠ 0 := by exact_mod_cast gpart_ne p
-  have h2 : Lat.gS D ≠ 0 := by
-    unfold Lat.gS
-    exact mul_ne_zero (D.host.g_prime 0).ne_zero (D.host.g_prime 1).ne_zero
-  simp [h1, h2]
+  apply _root_.Formalism.L2.SG.Pf.BBTie.uP_ne <;> assumption
 
 theorem isUnit_frFac (Z : LocDat D) (p : PlF D) (a : Fin (D.R.rS + 1)) : IsUnit (frFac Z.δ p a) := by
-  unfold frFac
-  have hδ : IsUnit (algebraMap (D.s.atP p).Fp (D.s.atP p).Ep (Z.δ p)) :=
-    (isUnit_iff_ne_zero.2 (Z.agree p).2.1).map _
-  have hu : IsUnit ((D.s.atP p).ιE (uP p : D.host.E)) := (isUnit_iff_ne_zero.2 (unitAt_ne p)).map _
-  have h : IsUnit ((algebraMap (D.s.atP p).Fp (D.s.atP p).Ep (Z.δ p) *
-      (D.s.atP p).ιE (uP p : D.host.E)) ^ (D.R.rS - a.val)) := (hδ.mul hu).pow _
-  simpa using h
+  apply _root_.Formalism.L2.SG.Pf.BBTie.bt_frFac_unit <;> assumption
 
 private theorem isUnit_sgnP (p : PlF D) (a : Fin (D.R.rS + 1)) : IsUnit (sgnP D p a) := by
   unfold sgnP

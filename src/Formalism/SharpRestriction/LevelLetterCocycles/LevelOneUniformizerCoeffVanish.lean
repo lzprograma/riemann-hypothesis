@@ -8,47 +8,7 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.IndepStep
 import Formalism.SharpRestriction.LevelLetterCocycles.LamZero
 public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExpPowSubOne
 import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfFrame
 
 @[expose] public section
@@ -186,8 +146,8 @@ theorem hor_exp [IsDomain O] (Ti : Comparison₂ W levB) (hR : Formalism.MainNot
   have hx : (letE c' : LetA O n) • (⟨Hh, hHN⟩ : ↥(W.N T)) = ⟨Hh, hHN⟩ := Subtype.ext hl
   intro k hk
   rcases lt_trichotomy k 0 with hneg | rfl | hpos
-  · rw [if_neg (by omega), ← hx]; exact Ti.hneg T hTc c' _ k hneg
-  · rw [if_pos rfl, ← Ti.hcmp T hTc c' ⟨Hh, hHN⟩, hx, ← Formalism.MainNotions.UnusedSlot80.ArcF.cmpD_of_mem W T hHN]
+  · rw [ite_eq_right (by omega), ← hx]; exact Ti.hneg T hTc c' _ k hneg
+  · rw [ite_eq_left rfl, ← Ti.hcmp T hTc c' ⟨Hh, hHN⟩, hx, ← Formalism.MainNotions.UnusedSlot80.ArcF.cmpD_of_mem W T hHN]
     have hM : 0 < M := by
       rcases Nat.eq_zero_or_pos M with h | h
       · rw [h, mul_zero] at hk; exact absurd hk (by omega)
@@ -213,7 +173,7 @@ theorem hor_exp [IsDomain O] (Ti : Comparison₂ W levB) (hR : Formalism.MainNot
     · simp
     · intro m _ hm; simp [hm]
     · intro h; exact absurd (Finset.mem_univ j) h
-  · rw [if_neg (by omega)]
+  · rw [ite_eq_right (by omega)]
     obtain ⟨x', hx'Δ, hx'e⟩ := (hsol j).1 M κ y hy
     rw [← hHe, smul_zero, sub_zero] at hx'e
     have hγ : W.γD T W.gam Hh = Hh + W.π₀ ^ M • x' := by

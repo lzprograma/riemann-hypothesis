@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.H1BallCocycleLogCyclotomic
 public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.IntermediateMapWittQuadratic
 import Mathlib.RingTheory.Valuation.Integral
 
@@ -66,13 +67,7 @@ open Formalism.MainNotions.FormalGroupSystem
 variable {p : ℕ} [hp : Fact p.Prime]
 
 theorem norm_p_lt_one : ‖(p : ℂ_[p])‖ < 1 := by
-  have h := PadicComplex.norm_extends' p (p : ℚ_[p])
-  have h2 : ‖(p : ℂ_[p])‖ = ‖(p : ℚ_[p])‖ := by
-    rw [← h]
-    congr 1
-    simp
-  rw [h2]
-  exact Padic.norm_p_lt_one
+  apply _root_.GlobalTheory.Cyc.LogClass.norm_l_lt <;> assumption
 
 theorem iC_int_Cp (f : K0 p →+* ℂ_[p]) (hf : ∀ x : WW p, ‖f (algebraMap (WW p) (K0 p) x)‖ ≤ 1) (x : Kc p) :
     x ∈ Oc p ↔ ‖iC f x‖ ≤ 1 :=

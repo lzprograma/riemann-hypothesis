@@ -3,46 +3,7 @@ module
 public import Formalism.SharpRestriction.LevelLetterCocycles.InvLevCoreOfParts
 import Formalism.SharpRestriction.LevelLetterCocycles.LocalInputsFromLiterature
 import Formalism.SharpRestriction.LevelLetterCocycles.SaturationPullbackOfRingCondition
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PowerSeries.WeierstrassPreparation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -77,12 +38,7 @@ theorem isUnit_of_mk {R : Type} [CommRing R] (I : Ideal R) [IsAdicComplete I R] 
 
 theorem aeval_X_coe {R : Type} [CommRing R] (r : Polynomial R) :
     Polynomial.aeval (PowerSeries.X : PowerSeries R) r = (r : PowerSeries R) := by
-  induction r using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add (f := _), hp, hq, Polynomial.coe_add]
-  | monomial k c =>
-    rw [Polynomial.aeval_monomial, Polynomial.coe_monomial, PowerSeries.monomial_eq_mk]
-    ext m
-    simp [PowerSeries.coeff_X_pow, PowerSeries.coeff_C_mul, PowerSeries.coeff_mk, eq_comm]
+  rw [Polynomial.aeval_def, PowerSeries.algebraMap_eq, Polynomial.eval₂_C_X_eq_coe]
 
 theorem map_aeval {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (x : PowerSeries R) (P : Polynomial R) :
     PowerSeries.map f (Polynomial.aeval x P) = Polynomial.aeval (PowerSeries.map f x) (P.map f) := by
@@ -114,10 +70,10 @@ theorem wdiv_ps (W : LocWach PD LL O v n) (hR : ToolsR.RingP W) (hT : Formalism.
     ext k
     rw [Polynomial.coeff_map, Polynomial.coeff_X_pow]
     rcases lt_trichotomy k (PD.p ^ s) with hk | rfl | hk
-    · rw [if_neg hk.ne, Ideal.Quotient.eq_zero_iff_mem]
+    · rw [ite_eq_right hk.ne, Ideal.Quotient.eq_zero_iff_mem]
       exact Ideal.mem_span_singleton.2 (hPc k hk)
-    · rw [if_pos rfl, ← hPd, hPm.coeff_natDegree, map_one]
-    · rw [if_neg hk.ne', Polynomial.coeff_eq_zero_of_natDegree_lt (by omega), map_zero]
+    · rw [ite_eq_left rfl, ← hPd, hPm.coeff_natDegree, map_one]
+    · rw [ite_eq_right hk.ne', Polynomial.coeff_eq_zero_of_natDegree_lt (by omega), map_zero]
   set V : PowerSeries (O ⧸ I) := PowerSeries.map (Ideal.Quotient.mk I) (u a) *
     PowerSeries.map (Ideal.Quotient.mk I) w ^ (PD.p ^ s) with hV
   have hmapD : PowerSeries.map (Ideal.Quotient.mk I) D = V * PowerSeries.X ^ N := by
@@ -132,11 +88,11 @@ theorem wdiv_ps (W : LocWach PD LL O v n) (hR : ToolsR.RingP W) (hT : Formalism.
       simpa using this
     · exact (hw.map (PowerSeries.map (Ideal.Quotient.mk I))).map PowerSeries.constantCoeff
   have hcN : PowerSeries.coeff N (PowerSeries.map (Ideal.Quotient.mk I) D) = PowerSeries.constantCoeff V := by
-    rw [hmapD, PowerSeries.coeff_mul_X_pow', if_pos le_rfl, Nat.sub_self, PowerSeries.coeff_zero_eq_constantCoeff]
+    rw [hmapD, PowerSeries.coeff_mul_X_pow', ite_eq_left le_rfl, Nat.sub_self, PowerSeries.coeff_zero_eq_constantCoeff]
   have hord : (PowerSeries.map (Ideal.Quotient.mk I) D).order.toNat = N := by
     have : (PowerSeries.map (Ideal.Quotient.mk I) D).order = N := by
       refine PowerSeries.order_eq_nat.2 ⟨by rw [hcN]; exact huV.ne_zero, fun i hi => ?_⟩
-      rw [hmapD, PowerSeries.coeff_mul_X_pow', if_neg (by omega)]
+      rw [hmapD, PowerSeries.coeff_mul_X_pow', ite_eq_right (by omega)]
     rw [this, ENat.toNat_natCast]
   have hdiv : D.IsWeierstrassDivisorAt I := by
     unfold PowerSeries.IsWeierstrassDivisorAt

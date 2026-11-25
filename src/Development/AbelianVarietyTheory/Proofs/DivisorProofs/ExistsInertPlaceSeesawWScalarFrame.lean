@@ -76,8 +76,7 @@ theorem mul_mem_range_of_trace {t : 𝓞 E} (ht : t ∈ differentIdeal ℤ (𝓞
 
 theorem exists_mem_different {σ : E →ₐ[F] E} {B : Base F E} (hB : B.IsGood σ) (hw : Formalism.UG.IsInertAt F E v w)
     (h : w.under (𝓞 F) = v) : ∃ t ∈ differentIdeal ℤ (𝓞 E), t ∉ w.asIdeal := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hle : differentIdeal ℤ (𝓞 E) ≤ w.asIdeal := fun t ht => hcon t ht
   rw [differentIdeal_eq_differentIdeal_mul_differentIdeal ℤ (𝓞 F) (𝓞 E)] at hle
   rcases (Ideal.IsPrime.mul_le w.isPrime).1 hle with h1 | h2

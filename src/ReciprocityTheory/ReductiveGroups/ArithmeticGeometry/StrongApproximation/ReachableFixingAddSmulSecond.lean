@@ -401,113 +401,48 @@ include hae haf
 theorem reach_eich_e {u : ι → K} {c : K} (hue : hf σ J u e = 0) (huf : hf σ J u f = 0)
     (hc : c + σ c + hf σ J u u = 0) (hua : ∀ j, hf σ J u (a j) = 0) (b : ι → K) :
     Reach σ J e f a b (eich σ J e u c *ᵥ b) := by
-  have hvmv : ∀ x y v : ι → K, vecMulVec x y *ᵥ v = (y ⬝ᵥ v) • x := by
-    intro x y v
-    ext i
-    simp only [mulVec, dotProduct, vecMulVec_apply, Pi.smul_apply, smul_eq_mul, Finset.sum_mul]
-    exact Finset.sum_congr rfl fun j _ => by ring
-  have hdot : ∀ g v : ι → K, (J *ᵥ (σ ∘ g)) ⬝ᵥ v = hf σ J v g := by
-    intro g v
-    simp only [dotProduct, mulVec, hf, Function.comp, Finset.sum_mul]
-    exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-  have hE : ∀ (g w v : ι → K) (d : K), eich σ J g w d *ᵥ v =
-      v + hf σ J v g • w - hf σ J v w • g + (d * hf σ J v g) • g := by
-    intro g w v d
-    simp only [eich, Matrix.add_mulVec, Matrix.sub_mulVec, Matrix.smul_mulVec,
-      Matrix.one_mulVec, hvmv, hdot, smul_smul]
   have hn : eich σ J e u c ∈ Submonoid.closure (eichSet σ J e f) :=
     Submonoid.subset_closure (Or.inl ⟨u, c, hue, huf, hc, rfl⟩)
   refine ⟨eich σ J e u c,
     ⟨_, hn, 1, 1, by simp, by rw [tor_one hσ hJ he hff hef, Matrix.mul_one]⟩, fun j => ?_, rfl⟩
-  rw [hE, hae j, ← hf_symm hσ hJ u (a j), hua j, map_zero]
+  rw [eich_mulVec, hae j, ← hf_symm hσ hJ u (a j), hua j, map_zero]
   simp
 
 theorem reach_eich_f {u : ι → K} {c : K} (hue : hf σ J u e = 0) (huf : hf σ J u f = 0)
     (hc : c + σ c + hf σ J u u = 0) (hua : ∀ j, hf σ J u (a j) = 0) (b : ι → K) :
     Reach σ J e f a b (eich σ J f u c *ᵥ b) := by
-  have hvmv : ∀ x y v : ι → K, vecMulVec x y *ᵥ v = (y ⬝ᵥ v) • x := by
-    intro x y v
-    ext i
-    simp only [mulVec, dotProduct, vecMulVec_apply, Pi.smul_apply, smul_eq_mul, Finset.sum_mul]
-    exact Finset.sum_congr rfl fun j _ => by ring
-  have hdot : ∀ g v : ι → K, (J *ᵥ (σ ∘ g)) ⬝ᵥ v = hf σ J v g := by
-    intro g v
-    simp only [dotProduct, mulVec, hf, Function.comp, Finset.sum_mul]
-    exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-  have hE : ∀ (g w v : ι → K) (d : K), eich σ J g w d *ᵥ v =
-      v + hf σ J v g • w - hf σ J v w • g + (d * hf σ J v g) • g := by
-    intro g w v d
-    simp only [eich, Matrix.add_mulVec, Matrix.sub_mulVec, Matrix.smul_mulVec,
-      Matrix.one_mulVec, hvmv, hdot, smul_smul]
   have hn : eich σ J f u c ∈ Submonoid.closure (eichSet σ J e f) :=
     Submonoid.subset_closure (Or.inr ⟨u, c, huf, hue, hc, rfl⟩)
   refine ⟨eich σ J f u c,
     ⟨_, hn, 1, 1, by simp, by rw [tor_one hσ hJ he hff hef, Matrix.mul_one]⟩, fun j => ?_, rfl⟩
-  rw [hE, haf j, ← hf_symm hσ hJ u (a j), hua j, map_zero]
+  rw [eich_mulVec, haf j, ← hf_symm hσ hJ u (a j), hua j, map_zero]
   simp
 
 theorem reach_tor {l m : K} (hml : m * σ l = 1) (b : ι → K) :
     Reach σ J e f a b (tor σ J e f l m *ᵥ b) := by
-  have hvmv : ∀ x y v : ι → K, vecMulVec x y *ᵥ v = (y ⬝ᵥ v) • x := by
-    intro x y v
-    ext i
-    simp only [mulVec, dotProduct, vecMulVec_apply, Pi.smul_apply, smul_eq_mul, Finset.sum_mul]
-    exact Finset.sum_congr rfl fun j _ => by ring
-  have hdot : ∀ g v : ι → K, (J *ᵥ (σ ∘ g)) ⬝ᵥ v = hf σ J v g := by
-    intro g v
-    simp only [dotProduct, mulVec, hf, Function.comp, Finset.sum_mul]
-    exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
   refine ⟨tor σ J e f l m, ⟨1, Submonoid.one_mem _, l, m, hml, by rw [Matrix.one_mul]⟩,
     fun j => ?_, rfl⟩
-  simp only [tor, Matrix.add_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec, hvmv, hdot,
-    haf j, hae j, zero_smul, smul_zero, add_zero]
+  rw [tor_mulVec, haf j, hae j]
+  simp
 
 theorem reachableFixing_add_smul_first {c : K} (hc : σ c = -c) (b : ι → K) :
     Reach σ J e f a b (b + (c * hf σ J b e) • e) := by
-  have hvmv : ∀ x y v : ι → K, vecMulVec x y *ᵥ v = (y ⬝ᵥ v) • x := by
-    intro x y v
-    ext i
-    simp only [mulVec, dotProduct, vecMulVec_apply, Pi.smul_apply, smul_eq_mul, Finset.sum_mul]
-    exact Finset.sum_congr rfl fun j _ => by ring
-  have hdot : ∀ g v : ι → K, (J *ᵥ (σ ∘ g)) ⬝ᵥ v = hf σ J v g := by
-    intro g v
-    simp only [dotProduct, mulVec, hf, Function.comp, Finset.sum_mul]
-    exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-  have hE : ∀ (g w v : ι → K) (d : K), eich σ J g w d *ᵥ v =
-      v + hf σ J v g • w - hf σ J v w • g + (d * hf σ J v g) • g := by
-    intro g w v d
-    simp only [eich, Matrix.add_mulVec, Matrix.sub_mulVec, Matrix.smul_mulVec,
-      Matrix.one_mulVec, hvmv, hdot, smul_smul]
   have h0 : ∀ v : ι → K, hf σ J 0 v = 0 := fun v => by simp [hf]
   have h0' : ∀ v : ι → K, hf σ J v 0 = 0 := fun v => by simp [hf]
   have := reach_eich_e hσ hJ he hff hef hae haf (u := 0) (c := c) (h0 e) (h0 f)
     (by rw [hc, h0]; ring) (fun j => h0 _) b
   convert this using 1
-  rw [hE, h0']
+  rw [eich_mulVec, h0']
   simp
 
 theorem reachableFixing_add_smul_second {c : K} (hc : σ c = -c) (b : ι → K) :
     Reach σ J e f a b (b + (c * hf σ J b f) • f) := by
-  have hvmv : ∀ x y v : ι → K, vecMulVec x y *ᵥ v = (y ⬝ᵥ v) • x := by
-    intro x y v
-    ext i
-    simp only [mulVec, dotProduct, vecMulVec_apply, Pi.smul_apply, smul_eq_mul, Finset.sum_mul]
-    exact Finset.sum_congr rfl fun j _ => by ring
-  have hdot : ∀ g v : ι → K, (J *ᵥ (σ ∘ g)) ⬝ᵥ v = hf σ J v g := by
-    intro g v
-    simp only [dotProduct, mulVec, hf, Function.comp, Finset.sum_mul]
-    exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-  have hE : ∀ (g w v : ι → K) (d : K), eich σ J g w d *ᵥ v =
-      v + hf σ J v g • w - hf σ J v w • g + (d * hf σ J v g) • g := by
-    intro g w v d
-    simp only [eich, Matrix.add_mulVec, Matrix.sub_mulVec, Matrix.smul_mulVec,
-      Matrix.one_mulVec, hvmv, hdot, smul_smul]
   have h0 : ∀ v : ι → K, hf σ J 0 v = 0 := fun v => by simp [hf]
   have h0' : ∀ v : ι → K, hf σ J v 0 = 0 := fun v => by simp [hf]
   have := reach_eich_f hσ hJ he hff hef hae haf (u := 0) (c := c) (h0 e) (h0 f)
     (by rw [hc, h0]; ring) (fun j => h0 _) b
   convert this using 1
-  rw [hE, h0']
+  rw [eich_mulVec, h0']
   simp
 
 theorem good_preserves {p : Matrix ι ι K} (hp : p ∈ Good (σ := σ) (J := J) e f) (x y : ι → K) :

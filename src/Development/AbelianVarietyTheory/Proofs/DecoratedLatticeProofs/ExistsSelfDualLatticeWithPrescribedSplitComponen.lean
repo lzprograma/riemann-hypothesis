@@ -108,14 +108,10 @@ open Matrix
 variable {D : D7} {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
 theorem e_mem_idAt (p : SplitPt D k) : p.e ∈ idAt D (· = p.v) := by
-  obtain ⟨ε, hε, hsum⟩ := p.above
-  obtain ⟨hee, hec, -⟩ := p.split
-  refine ((_root_.GlobalTheory.FinPl.placeIdem_acts D p.v ε hε).1 p.e).2 ?_
-  rw [← hsum, add_mul, hee, mul_comm (cA D p.e), hec, add_zero]
+  exact GlobalTheory.FinPl.FrameLat.e_mem_idAt p
 
 theorem sec_eq_mul (p : SplitPt D k) (a : k) : p.sec a = p.e * p.sec a := by
-  have h := p.sec_pr (p.sec a)
-  rwa [p.pr_sec] at h
+  exact (GlobalTheory.FinPl.FrameLat.e_mul_sec p a).symm
 
 alias sec_mem_idAt := _root_.GlobalTheory.FinPl.FrameLat.sec_mem_idAt
 

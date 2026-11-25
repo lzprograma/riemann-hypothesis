@@ -45,7 +45,6 @@ import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowsJoi
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.AutomorphicEvaluation Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowLevelMatch Formalism.L2.SG.PoincareInHH.PoincareSetting MeasureTheory NumberField IsDedekindDomain
 open scoped InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.SeeConjRead
 
 namespace GlobalTheory.SeeConjRead
@@ -57,27 +56,27 @@ theorem flagV_pair_table : ∀ {M A : Type} [Zero M] [Ring A] (p : M → M → A
   have ha := a.isLt
   have hc := c.isLt
   have d1 : ∀ (x y : Fin ρ), x.1 = y.1 → sm (p (f x) (e y) - 1) := by
-    intro x y h; have := t1 x y; rwa [if_pos (Fin.ext h)] at this
+    intro x y h; have := t1 x y; rwa [ite_eq_left (Fin.ext h)] at this
   have o1 : ∀ (x y : Fin ρ), x.1 ≠ y.1 → sm (p (f x) (e y) - 0) := by
-    intro x y h; have := t1 x y; rwa [if_neg (fun hh => h (congrArg Fin.val hh))] at this
+    intro x y h; have := t1 x y; rwa [ite_eq_right (fun hh => h (congrArg Fin.val hh))] at this
   have d6 : ∀ (x y : Fin k), x.1 = y.1 → sm (p (b' x) (b y) - 1) := by
-    intro x y h; have := t6 x y; rwa [if_pos (Fin.ext h)] at this
+    intro x y h; have := t6 x y; rwa [ite_eq_left (Fin.ext h)] at this
   have o6 : ∀ (x y : Fin k), x.1 ≠ y.1 → sm (p (b' x) (b y) - 0) := by
-    intro x y h; have := t6 x y; rwa [if_neg (fun hh => h (congrArg Fin.val hh))] at this
+    intro x y h; have := t6 x y; rwa [ite_eq_right (fun hh => h (congrArg Fin.val hh))] at this
   have d16 : ∀ (x y : Fin ρ), x.1 = y.1 → sm (p (e x) (f y) - 1) := by
-    intro x y h; have := t16 x y; rwa [if_pos (Fin.ext h)] at this
+    intro x y h; have := t16 x y; rwa [ite_eq_left (Fin.ext h)] at this
   have o16 : ∀ (x y : Fin ρ), x.1 ≠ y.1 → sm (p (e x) (f y) - 0) := by
-    intro x y h; have := t16 x y; rwa [if_neg (fun hh => h (congrArg Fin.val hh))] at this
+    intro x y h; have := t16 x y; rwa [ite_eq_right (fun hh => h (congrArg Fin.val hh))] at this
   have d11 : sm (p z z - -1) := by rw [sub_neg_eq_add]; exact t11
   by_cases hac : a.1 = c.1
-  · rw [if_pos (Fin.ext hac)]
+  · rw [ite_eq_left (Fin.ext hac)]
     unfold flagV sgnD
     split_ifs <;> first
       | omega
       | exact d1 _ _ (by dsimp only; omega)
       | exact d6 _ _ (by dsimp only; omega)
       | exact d16 _ _ (by dsimp only; omega)
-  · rw [if_neg (fun hh => hac (congrArg Fin.val hh))]
+  · rw [ite_eq_right (fun hh => hac (congrArg Fin.val hh))]
     unfold flagV
     split_ifs <;> first
       | omega

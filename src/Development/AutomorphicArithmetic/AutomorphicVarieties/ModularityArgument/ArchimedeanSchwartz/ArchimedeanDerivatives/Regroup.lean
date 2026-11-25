@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAfMemIntUIff
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ExpIndep
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvOneSubBound
 import Mathlib.Algebra.Order.Floor.Extended
@@ -81,23 +82,12 @@ private theorem sum_eq (K E : Type) [Field K] [NumberField K] [Field E] [NumberF
 
 private theorem exists_above (K E : Type) [Field K] [NumberField K] [Field E] [NumberField E] [Algebra K E]
     (v : HeightOneSpectrum (𝓞 K)) : ∃ w : HeightOneSpectrum (𝓞 E), w.under (𝓞 K) = v := by
-  haveI := v.isMaximal
-  obtain ⟨P, hPm, hP⟩ := Ideal.exists_maximal_ideal_liesOver_of_isIntegral (S := 𝓞 E) v.asIdeal
-  have hne : P ≠ ⊥ := by
-    intro h
-    apply v.ne_bot
-    rw [hP.over, h]
-    exact Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective (𝓞 K) (𝓞 E))
-  refine ⟨⟨P, hPm.isPrime, hne⟩, ?_⟩
-  ext1
-  rw [HeightOneSpectrum.under_asIdeal]
-  exact hP.over.symm
+  apply _root_.GlobalTheory.Mem.ReadTwist.exists_under_eq <;> assumption
 
 private theorem fiber_split (K E : Type) [Field K] [NumberField K] [Field E] [NumberField E] [Algebra K E] (hE : Module.finrank K E = 2)
     (w w' v : HeightOneSpectrum (𝓞 E)) (hw' : w'.under (𝓞 K) = w.under (𝓞 K))
     (hv : v.under (𝓞 K) = w.under (𝓞 K)) (hne : w' ≠ w) : v = w ∨ v = w' := by
-  by_contra h
-  push_neg at h
+  by_contra! h
   have hvw : v.asIdeal ≠ w.asIdeal := fun e => h.1 (HeightOneSpectrum.ext e)
   have hvw' : v.asIdeal ≠ w'.asIdeal := fun e => h.2 (HeightOneSpectrum.ext e)
   have hww' : w'.asIdeal ≠ w.asIdeal := fun e => hne (HeightOneSpectrum.ext e)

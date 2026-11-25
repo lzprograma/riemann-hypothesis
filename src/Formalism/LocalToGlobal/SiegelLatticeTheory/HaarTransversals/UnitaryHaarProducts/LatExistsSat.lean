@@ -226,11 +226,6 @@ lemma rebase (c1 c2 a : 𝓕) (h1 : c1 ≠ 0) (h2 : c2 ≠ 0) (ha : a ≠ 0) (p 
     exact add_mem (Submodule.mem_sup_left (mem_lineV _ _ (fi_mul_mem E3 hx hγ)))
       (Submodule.mem_sup_right (mem_lineV _ _ (fi_mul_mem E4 hx hδ)))
 
-private lemma fg_of_le_lemma {M N : Submodule (𝓞 E) V} (hM : M.FG) (h : N ≤ M) : N.FG := by
-  haveI := isNoetherian_of_fg_of_noetherian M hM
-  have h1 : (Submodule.comap M.subtype N).FG := IsNoetherian.noetherian _
-  simpa [Submodule.map_comap_subtype, inf_eq_right.2 h] using h1.map M.subtype
-
 theorem adapted_basis (n : ℕ) : ∀ (w : Fin (n + 1) → V), LinearIndependent E w →
     ∀ (M : Submodule (𝓞 E) V), M.FG →
     M ≤ (Submodule.span E (Set.range w)).restrictScalars (𝓞 E) →
@@ -254,7 +249,7 @@ theorem adapted_basis (n : ℕ) : ∀ (w : Fin (n + 1) → V), LinearIndependent
     obtain ⟨d, hd0, hdw⟩ := hd (Fin.last (n + 1))
     obtain ⟨b, u, hb, hMe⟩ := peel w hw M hM hMX hd0 hdw
     have hM'fg : (M ⊓ (Submodule.span E (Set.range (Fin.init w))).restrictScalars (𝓞 E)).FG :=
-      fg_of_le_lemma hM inf_le_left
+      Submodule.FG.of_le hM inf_le_left
     have hind : LinearIndependent E (Fin.init w) := hw.comp _ (Fin.castSucc_injective _)
     have hd' : ∀ i, ∃ d : 𝓞 E, d ≠ 0 ∧ d • Fin.init w i ∈
         M ⊓ (Submodule.span E (Set.range (Fin.init w))).restrictScalars (𝓞 E) := by
@@ -282,15 +277,6 @@ lemma spanE_of_lat {ι : Type} (N : Submodule (𝓞 E) V) (g : ι → V) (Y : Su
 
 end Sat
 
-private lemma fi_exists_ne_lemma {R K : Type} [CommRing R] [Field K] [Algebra R K] {S : Submonoid R}
-    {I : FractionalIdeal S K} (hI : I ≠ 0) : ∃ x ∈ I, x ≠ 0 := by
-  by_contra h
-  push_neg at h
-  apply hI
-  ext x
-  rw [FractionalIdeal.mem_zero_iff]
-  exact ⟨h x, fun hx => hx ▸ FractionalIdeal.mem_coe.1 (Submodule.zero_mem _)⟩
-
 theorem satBasisV_holds :
   ∀ (E V : Type) [Field E] [NumberField E] [AddCommGroup V] [Module E V] [Module (𝓞 E) V]
     [IsScalarTower (𝓞 E) E V] [FiniteDimensional E V] (Λ : Submodule (𝓞 E) V),
@@ -303,7 +289,7 @@ theorem satBasisV_holds :
         latSpanV (Fin.snoc (α := fun _ => FractionalIdeal (nonZeroDivisors (𝓞 E)) E) a c) e := by
   intro E V _ _ _ _ _ _ _ Λ hΛ n w hw a ha
   have hMfg : (Λ ⊓ (Submodule.span E (Set.range w)).restrictScalars (𝓞 E)).FG :=
-    fg_of_le_lemma hΛ.fg inf_le_left
+    Submodule.FG.of_le hΛ.fg inf_le_left
   have hd : ∀ i, ∃ d : 𝓞 E, d ≠ 0 ∧
       d • w i ∈ Λ ⊓ (Submodule.span E (Set.range w)).restrictScalars (𝓞 E) := by
     intro i
@@ -330,8 +316,9 @@ theorem satBasisV_holds :
         induction i using Fin.lastCases with
         | last => rw [Fin.snoc_last]; exact hc
         | cast j => rw [Fin.snoc_castSucc]; exact ha j
-      obtain ⟨x, hx, hx0⟩ := fi_exists_ne_lemma hne
-      exact ⟨x, hx0, by rw [hMe]; exact Submodule.subset_span ⟨i, x, hx, rfl⟩⟩
+      obtain ⟨x, hx0, hx⟩ := FractionalIdeal.exists_ne_zero_mem_isInteger hne
+      exact ⟨algebraMap (𝓞 E) E x, fun h => hx0 (hinj (by rw [h, map_zero])),
+        by rw [hMe]; exact Submodule.subset_span ⟨i, _, hx, rfl⟩⟩
   have hew : Submodule.span E (Set.range e) = Submodule.span E (Set.range w) := hspe.symm.trans hspw
   refine ⟨e, c, ?_, hew, hc, hMe⟩
   rw [linearIndependent_iff_card_eq_finrank_span]

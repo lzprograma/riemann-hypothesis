@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.IntegralStabilizers.ExGModel
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -129,15 +130,6 @@ private lemma quo_mul (a b : (Etau K τ)ˣ) : quo (a * b) = quo a * quo b := by
 
 private lemma quo_one : quo (1 : (Etau K τ)ˣ) = 1 := by simp [quo]
 
-private lemma quo_star (z : (Etau K τ)ˣ) : quo z * star (quo z) = 1 := by
-  have e : (z : Etau K τ) * ((z⁻¹ : (Etau K τ)ˣ) : Etau K τ) = 1 := by simp
-  have e' : star (z : Etau K τ) * star ((z⁻¹ : (Etau K τ)ˣ) : Etau K τ) = 1 := by
-    rw [← star_mul', e, star_one]
-  simp only [quo, star_mul', star_star]
-  calc _ = ((z : Etau K τ) * ((z⁻¹ : (Etau K τ)ˣ) : Etau K τ)) *
-        (star (z : Etau K τ) * star ((z⁻¹ : (Etau K τ)ˣ) : Etau K τ)) := by ring
-    _ = 1 := by rw [e, e', one_mul]
-
 variable (Δ) in
 private def torL (Δ : K) (z : (Etau K τ)ˣ) : Sp Δ τ →ₗ[Lsq K Δ] Sp Δ τ where
   toFun := tor Δ z
@@ -152,13 +144,7 @@ private lemma tor_one (x : Sp Δ τ) : tor Δ (1 : (Etau K τ)ˣ) x = x := by
 
 private lemma herm_tor (c : K) (m : EL Δ τ) (z : (Etau K τ)ˣ) (x y : Sp Δ τ) :
     herm c m (tor Δ z x) (tor Δ z y) = herm c m x y := by
-  have e : ofE Δ (quo z) * star (ofE Δ (quo z)) = 1 := by
-    rw [star_ofE, ← ofE_mul, quo_star, ofE_one]
-  have e2 : m * (ofE Δ (quo z) * x.2) * star (sigL (ofE Δ (quo z) * y.2)) = m * x.2 * star (sigL y.2) := by
-    rw [sigL_mul, sigL_ofE, star_mul']
-    calc _ = (ofE Δ (quo z) * star (ofE Δ (quo z))) * (m * x.2 * star (sigL y.2)) := by ring
-      _ = _ := by rw [e, one_mul]
-  simp only [herm, tor, e2]
+  apply _root_.UpperTheory.V.Z.Sym.Glob.herm_tor <;> assumption
 
 private def mtor (P : Sp Δ τ ≃ₗ[Lsq K Δ] (Fin 3 → Lsq K Δ)) (z : (Etau K τ)ˣ) :
     Matrix (Fin 3) (Fin 3) (Lsq K Δ) :=

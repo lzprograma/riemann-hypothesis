@@ -139,7 +139,7 @@ def finAd (T : Finset (HeightOneSpectrum (𝓞 F))) (y : ∀ v : HeightOneSpectr
     FiniteAdeleRing (𝓞 F) F :=
   ⟨fun v => if v ∈ T then y v else 0, by
     filter_upwards [T.eventually_cofinite_notMem] with v hv
-    simp only [hv, if_false]
+    simp only [hv, ite_false]
     exact zero_mem _⟩
 
 def adPt {κ : Type} (T : Finset (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F))) (x : κ → mixedEmbedding.mixedSpace F)
@@ -169,7 +169,7 @@ theorem pure_apply {κ : Type} [Fintype κ] (f : GlobalTheory.IndefiniteRowSideF
   rw [finprod_eq_prod_of_mulSupport_subset _ (s := T)]
   · refine Finset.prod_congr rfl fun v hv => ?_
     rw [h2 v]
-    simp only [if_pos hv]
+    simp only [ite_eq_left hv]
   · intro v hv
     by_contra hvT
     have hvT' : v ∉ T := by simpa using hvT
@@ -269,7 +269,6 @@ open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.Ind
 open GlobalTheory.Grid GlobalTheory.Doubling GlobalTheory.ChainFr GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints
 open scoped TensorProduct ComplexConjugate
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.SquareComm
 open scoped GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 

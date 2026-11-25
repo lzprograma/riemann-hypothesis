@@ -112,7 +112,7 @@ theorem nPt_eq_prod (P : M.Par) (c : Fin (P.r + 1) → ℂ) (hζ : P.T * P.T' �
   · have hi : i = Fin.last P.r := Fin.ext (by simp only [Fin.val_last]; omega)
     subst hi
     unfold B2.zWeight
-    rw [if_pos hζ]
+    rw [ite_eq_left hζ]
   · rfl
 
 theorem levW_nonneg (P : M.Par) (i : ℕ) (c : ℂ) : 0 ≤ KB.levW P i c := by

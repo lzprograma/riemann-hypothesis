@@ -42,8 +42,8 @@ theorem recR_congr_metric (I : Ideal (MRing ι) → (n : ℕ) → (Fin n → Her
   congr 1
   · refine finsum_mem_congr rfl fun W hW => ?_
     by_cases hhor : IsHorizontal W
-    · rw [if_pos hhor, if_pos hhor, hI W hW hhor]
-    · rw [if_neg hhor, if_neg hhor, hdeg]
+    · rw [ite_eq_left hhor, ite_eq_left hhor, hI W hW hhor]
+    · rw [ite_eq_right hhor, ite_eq_right hhor, hdeg]
   · unfold arInt
     refine (ReciprocityTheory.ChartRestriction.G.Geo.ptsLocal K ι P m 0 _ _ _ _ (fun j z hz => ?_) (fun z hz => ?_)).2
     · simp only [hh j z hz]

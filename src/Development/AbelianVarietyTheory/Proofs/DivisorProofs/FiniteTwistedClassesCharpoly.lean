@@ -69,7 +69,7 @@ theorem cocycle_finite_comm {A : Type} [CommGroup A] (hsq : ∃ F : Set A, F.Fin
   refine ⟨Set.image2 (fun f e => r f * e) F {t : A | t ^ 2 = 1}, hF.image2 _ h2, fun t ht => ?_⟩
   obtain ⟨f, hf, s, rfl⟩ := hsq t
   have h : ∃ s, (f * s ^ 2) * τ (f * s ^ 2) = 1 := ⟨s, ht⟩
-  have hr : r f = f * h.choose ^ 2 := dif_pos h
+  have hr : r f = f * h.choose ^ 2 := dite_eq_left h
   have h0 := h.choose_spec
   set s₀ := h.choose
   refine ⟨r f * ((s * s₀⁻¹) * τ (s * s₀⁻¹)), Set.mem_image2_of_mem hf ?_, (s * s₀⁻¹)⁻¹, ?_⟩
@@ -312,18 +312,18 @@ theorem classes_finite : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E],
     fun a ha => sqFin_centralizer (units_mod_sq w) a (ha ▸ hQ)
   by_cases hw : IsSplitAt w
   · constructor
-    · simp only [nrmL, if_pos hw]
-      exact finite_of_id _ (fun g => by rw [thL, if_pos hw]; rfl) _ hP
-    · exact finite_fixed (MonoidHom.id _) (fun _ => rfl) _ (fun g => by rw [UL, if_pos hw]; simp) _ hP hT
-  · have hth : thL n w = thetaGL n (cj w) := if_neg hw
+    · simp only [nrmL, ite_eq_left hw]
+      exact finite_of_id _ (fun g => by rw [thL, ite_eq_left hw]; rfl) _ hP
+    · exact finite_fixed (MonoidHom.id _) (fun _ => rfl) _ (fun g => by rw [UL, ite_eq_left hw]; simp) _ hP hT
+  · have hth : thL n w = thetaGL n (cj w) := ite_eq_right hw
     constructor
-    · have hn : ∀ y, nrmL n w y = y * thL n w y := fun y => by rw [nrmL, if_neg hw, hth]
+    · have hn : ∀ y, nrmL n w y = y * thL n w y := fun y => by rw [nrmL, ite_eq_right hw, hth]
       simp only [hn]
       exact finite_twisted _ (fun g => by rw [hth]; exact GlobalTheory.ThetaPull.thetaGL_thetaGL _ (cj_cj w) g) _ hP hT
     · refine finite_fixed ((invT n _).comp (GeneralLinearGroup.map (cj w))) (fun g => ?_) _ (fun g => ?_) _ hP hT
       · refine Units.ext (Matrix.ext fun i j => ?_)
         exact cj_cj w _
-      · rw [UL, if_neg hw]
+      · rw [UL, ite_eq_right hw]
         change cT (cj w) g.val * 1 * g.val = 1 ↔ invT n _ (GeneralLinearGroup.map (cj w) g) = g
         rw [mul_one, ← _root_.inv_inj (a := invT n _ _), ← mul_eq_one_iff_eq_inv, Units.ext_iff]
         rfl

@@ -151,7 +151,7 @@ theorem lvlF_of_ties (Fm : FamP eps) (t : RealPlaceSecondLayerConditions Fm) (hT
 theorem slope_lemma_division_side (Fm : FamP eps) (hE : J.LvlF Fm) (hTu : TuSize Fm) (hrk : J.MuRank Fm) (lG : LinkG Fm) (lMu : LinkMu Fm) :
     LocalQuadraticParts.SlopeLemmaFamily Fm := by
   obtain ⟨C, x0, -, h⟩ := Lnk.slopesNF_of Fm
-    (Formalism.L2.GlobalTheoryTheory.Places.placesF_min' Fm (J.lemma_five_one_of_theorem_two Fm hTu hE) (nuCommensF_min Fm hE) hTu hrk lG lMu)
+    (Formalism.L2.GlobalTheoryTheory.Places.placesF_of_local_conditions Fm (J.lemma_five_one_of_theorem_two Fm hTu hE) (nuCommensF_min Fm hE) hTu hrk lG lMu)
   exact ⟨C, x0, fun x hx i _ u => h x hx i u⟩
 
 theorem nuFullF_of_lvl (Fm : FamP eps) (hE : J.LvlF Fm) : NuFullF Fm := nuFullF_of Fm (nuCommensF_min Fm hE)

@@ -156,15 +156,4 @@ def plEquiv : IsDedekindDomain.HeightOneSpectrum (𝓞 F) ≃ {𝔭 : Ideal (�
 
 end Mass
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 end Formalism.L2.SG.Pf.Asm
-
-namespace Formalism.L2.SG.Pf
-
-open Formalism.HermitianLattices.Ext.L3 Formalism.L2.SG.Pf.Cnt Formalism.L2.SG.Pf.Asm
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-
-end Formalism.L2.SG.Pf

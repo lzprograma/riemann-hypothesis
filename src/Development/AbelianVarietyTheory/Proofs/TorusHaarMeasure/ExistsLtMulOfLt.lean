@@ -221,8 +221,7 @@ private lemma one_div_mul_le_one_div_of_ratio_bounds {k c m0 m1 : ℝ} (hk : 0 <
     1 / k * (1 / (c * m0)) ≤ 1 / (c * m1) := by
   have hp' : 0 < c * m0 := one_div_pos.mp hp
   have hm0 : 0 < m0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     nlinarith
   have hm1 : 0 < m1 := by nlinarith
   rw [div_mul_div_comm, one_mul]

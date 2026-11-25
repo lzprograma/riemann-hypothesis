@@ -30,8 +30,6 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {Wp Wq : InfinitePla
 
 end Cut
 
-def ClCut (C₆ : ℝ) : ℝ := max 1 ((420 * C₆ + 48125) / 8)
-
 section Grids
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Sz

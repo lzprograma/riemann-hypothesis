@@ -49,7 +49,6 @@ open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory
 open UpperTheory.V.W (Plc Lp)
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open UpperTheory.V.Z.Sym.Al
 
 private theorem comp_of_proj {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ}
@@ -111,42 +110,3 @@ theorem UpperTheory.V.Z.Sym.U.finFamU :
   have := h3 k u (T i ⟨φ, hφ⟩)
   rw [e] at this
   exact congrArg Subtype.val this.symm
-
-private theorem mem_lev {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ} {U : Subgroup (UA L n)} {S : Finset (Plc L)}
-    (hS : Places (S : Set (Plc L))) (hK : ∀ w ∈ S, locU n w ⊓ Kall L n ≤ U) {w : Plc L} (hw : w ∈ S) {x : UA L n}
-    (hx : x ∈ locU n w) (hJ : cLoc w x ∈ (iw w).J n) : x ∈ lev U S iw := by
-  have hk : x ∈ Kall L n := by
-    refine ((factor L n w).2.2.2.2.1 x hx).2 ?_
-    rw [← GlobalTheory.HeckeEigConj.KO_eq_KGL]
-    exact ((Sig.finFacts _ (iw w)).2.2.2.2.2 n).2.2.2 hJ
-  simp only [lev, Subgroup.mem_inf, Subgroup.mem_iInf]
-  refine ⟨hK w hw ⟨hx, hk⟩, fun w' hw' => ?_⟩
-  by_cases e : w' = w
-  · subst e; exact hJ
-  · have hne : w.under (𝓞 (Lp L)) ≠ w'.under (𝓞 (Lp L)) := fun h => e (hS.inj hw' hw h.symm)
-    have := (factor L n w').2.2.1 w hne hx
-    simp only [away, Subgroup.mem_iInf] at this
-    rw [Subgroup.mem_comap, (MonoidHom.mem_ker.1 (this w' rfl))]
-    exact one_mem _
-
-private theorem unram_of {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ} (σ : Submodule ℂ (UA L n → ℂ)) (S : Finset (Plc L))
-    (V : ∀ w : Plc L, Sig.Lev (Kw w)) (h : ∃ φ ∈ σ, φ ≠ 0 ∧ ∀ u ∈ lev (Kall L n) S V, RU L n u φ = φ) (w : Plc L)
-    (hw : ∀ w' ∈ S, w'.under (𝓞 (Lp L)) ≠ w.under (𝓞 (Lp L))) : IsUnramU σ w := by
-  obtain ⟨φ, h1, h2, h3⟩ := h
-  refine ⟨φ, h1, h2, fun x hx hK => h3 x ?_⟩
-  simp only [lev, Subgroup.mem_inf, Subgroup.mem_iInf]
-  refine ⟨((factor L n w).2.2.2.2.1 x hx).2 hK, fun w' hw' => ?_⟩
-  have := (factor L n w').2.2.1 w (hw w' hw').symm hx
-  simp only [away, Subgroup.mem_iInf] at this
-  rw [Subgroup.mem_comap, (MonoidHom.mem_ker.1 (this w' rfl))]
-  exact one_mem _
-
-private theorem pigeon {X I : Type} (A : Set X) (hA : A.Finite) (P : X → I → Prop)
-    (h : ∀ S : Finset I, ∃ x ∈ A, ∀ i ∈ S, P x i) : ∃ x ∈ A, ∀ i, P x i := by
-  classical
-  by_contra hn
-  push Not at hn
-  choose f hf using fun x : A => hn x.1 x.2
-  haveI := hA.fintype
-  obtain ⟨x, hx, h1⟩ := h (Finset.univ.image f)
-  exact hf ⟨x, hx⟩ (h1 _ (Finset.mem_image_of_mem f (Finset.mem_univ _)))

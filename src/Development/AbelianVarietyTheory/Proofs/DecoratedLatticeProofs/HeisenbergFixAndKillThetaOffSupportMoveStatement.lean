@@ -60,7 +60,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct InnerProductSpace ComplexConjugate
 open GlobalTheory.ChainOnto
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -85,7 +84,7 @@ theorem sep : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D), IsStd
   have hΨ : IsSBHalf e Λ Ψ := by
     refine ⟨fun u hu => ?_, N * k, Nat.mul_pos hNpos hk, fun v hv hvh u => ?_, fun u hu => ?_⟩
     · have : ∃ t, Φ t ≠ 0 ∧ N • t = u := by
-        by_contra h; exact hu (if_neg h)
+        by_contra h; exact hu (ite_eq_right h)
       obtain ⟨t, ht, rfl⟩ := this
       exact _root_.GlobalTheory.SplitScalar.isHalf_nsmul (hΦ.1 t ht) N
     · have key : (∃ t, Φ t ≠ 0 ∧ N • t = u + (N * k) • v) ↔ ∃ t, Φ t ≠ 0 ∧ N • t = u := by
@@ -99,21 +98,21 @@ theorem sep : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D), IsStd
       show (if _ then _ else _) = (if _ then _ else _)
       simp only [key]
     · have : ∃ t, Φ t ≠ 0 ∧ N • t = u := by
-        by_contra h; exact hu (if_neg h)
+        by_contra h; exact hu (ite_eq_right h)
       obtain ⟨t, ht, rfl⟩ := this
       exact Λ.nsmul_mem (hNt t ht) _
   have hspan := (GlobalTheory.PlaceTensor.halfWaves_span D ψ S T ΛS ΛT hψ hS hT e ho.idem he.2 ho.infPart_eq).2 Ψ hΨ
   obtain ⟨q, hq, hqΨ⟩ := GlobalTheory.ThetaOrth.exists_char_of_wave N hspan
   have hq1 : ∀ t, Φ t ≠ 0 → q t = 1 := fun t ht => by
     rw [← hqΨ t (hΦ.1 t ht) (hNt t ht)]
-    exact if_pos ⟨t, ht, rfl⟩
+    exact ite_eq_left ⟨t, ht, rfl⟩
   have hq0 : ∀ t, Φ t ≠ 0 → q (actO S T g 1 t) = 0 := fun t ht => by
     have h1 : N • actO S T g 1 t ∈ Λ := by
       have := hMact (k • t) (hsup t ht)
       have e : actO S T g 1 (k • t) = k • actO S T g 1 t := map_nsmul (GlobalTheory.LatLevel.actHom S T g 1) k t
       rwa [e, ← mul_smul] at this
     rw [← hqΨ _ (GlobalTheory.SplitHecke.isHalf_actO _ _ (hΦ.1 t ht)) h1]
-    refine if_neg ?_
+    refine ite_eq_right ?_
     rintro ⟨t', ht', h⟩
     have : t' = actO S T g 1 t := GlobalTheory.ThetaOrth.nsmul_inj hNpos h
     exact ht' (this ▸ hsupp t ht)
@@ -182,7 +181,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct InnerProductSpace ComplexConjugate
 open GlobalTheory.ChainOnto
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem _root_.GlobalTheory.T.heisenberg_fix_and_kill_theta_off_support_move : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D), IsStdChar D ψ (-1) → ∀ (ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)) (ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)), IsSelfDualC S ΛS → IsSelfDualC T ΛT → ∀ (Z : Finset (Pl D.host.E)) (e : AE D), IsIdemSum e Z → ∀ f₀ Φ f : WO S T → ℂ, IsSBHalf e (latO S T ΛS ΛT fun _ => True) Φ → IsThetaAt ψ (symplO S T) (heisO ψ S T) e (latO S T ΛS ΛT fun _ => True) 1 f₀ Φ f → ∀ g : GA D S, (∀ x, Φ x ≠ 0 → Φ (actO S T g 1 x) = 0) → ∃ (n : ℕ) (a : Fin n → ℂ) (y : Fin n → WO S T), (∀ i, (y i).map (infPart D) = 0 ∧ (actO S T g⁻¹ 1 (-(y i))).map (infPart D) = 0) ∧ ∑ i, a i • heisO ψ S T (y i) f = f ∧ ∑ i, conj (a i) • heisO ψ S T (actO S T g⁻¹ 1 (-(y i))) f = 0 := by
   first | exact @GlobalTheory.HalfSep.sep

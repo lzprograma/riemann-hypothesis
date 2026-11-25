@@ -19,14 +19,6 @@ open IsDedekindDomain NumberField MeasureTheory
 
 namespace Formalism.IndefR.RecTie
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-section Zero
-
-variable {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar} (θ : Datum.InfFam D) (M : Mult.DSModel V S)
-
-end Zero
-
 section FromLinks
 
 open Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Datum
@@ -73,14 +65,14 @@ def toChainReal (R : RealDat D A Ks) (F : Face D A) (tupT : D.what₂.Tup → T)
   It := R.ItY
   th μ k := thetaKO (R.ωY (tupT μ) k)
   ioC _ μ k := if h : k + 1 < D.R.m then
-      (LinearEquiv.ofEq _ _ (by simp only [if_pos (show k < D.R.m by omega)])).toLinearMap ∘ₗ
-        R.ioY (tupT μ) k ∘ₗ (LinearEquiv.ofEq _ _ (by simp only [if_pos h])).toLinearMap
+      (LinearEquiv.ofEq _ _ (by simp only [ite_eq_left (show k < D.R.m by omega)])).toLinearMap ∘ₗ
+        R.ioY (tupT μ) k ∘ₗ (LinearEquiv.ofEq _ _ (by simp only [ite_eq_left h])).toLinearMap
     else 0
   SinfX := PolF D D.sp.X'.rank (Yc D (D.R.m - 1)).rank
   ptX _ μ := R.ptX (tupT μ)
   ItX := R.ItX
   thX μ := thetaKO (R.ωX (tupT μ))
-  ioX _ μ := (LinearEquiv.ofEq _ _ (by simp only [if_pos (show D.R.m - 1 < D.R.m by omega)])).toLinearMap ∘ₗ
+  ioX _ μ := (LinearEquiv.ofEq _ _ (by simp only [ite_eq_left (show D.R.m - 1 < D.R.m by omega)])).toLinearMap ∘ₗ
     R.ioX (tupT μ) ∘ₗ (LinearEquiv.ofEq _ _ (hTop (tupT μ)).symm).toLinearMap
   JE b := levS _ (R.βY 0) (R.dat0 (R.levR F b))
   χE b := levChi _ (R.βY 0) (R.dat0 (R.levR F b))
@@ -149,34 +141,20 @@ structure RecReal (R : RealDat D A Ks) (F : Face D A) (tupT : D.what₂.Tup → 
     (labPi : E.Pi → A.fam.base.Ix) {n : ℕ} (PY : principalLevelFrame.RowPsi (Yc D 0) n) (PW : ∀ i, principalLevelFrame.RowPsi (Wc D i) n)
     (eFT : D.what₂.FT ≃ principalLevelFrame.FTR R.θ PY (R.MY 0) (fun b => levS _ (R.βY 0) (R.dat0 (R.levR F b)))
       (fun b => levChi _ (R.βY 0) (R.dat0 (R.levR F b))) (fun _ => R.e0))
-    (piOf : E.Pi → HeightOneSpectrum (𝓞 D.host.E) → List ℤ → ℂ) (ι : ∀ i, ↥(GfC (Yc D 0)) →* ↥(GfC (Wc D i))) (nch : NChoice D)
+    (piOf : E.Pi → HeightOneSpectrum (𝓞 D.host.E) → List ℤ → ℂ) (_ι : ∀ i, ↥(GfC (Yc D 0)) →* ↥(GfC (Wc D i))) (nch : NChoice D)
     (Tp : Formalism.L2.Host.TupTied D R.C nch) : Prop where
 
   base : R.BaseW F
 
   tied : RecTied D X0 (toChainReal R F tupT hm hTop) Ish I0 (toLiftReal R F tupT hm hTop hinj) IL K
 
-  prtE : ∀ π, Ish.prt π = (principalLevelFrame.isotE R.θ PY (R.MY 0) (levS _ (R.βY 0) (R.dat0 (R.levR F true)))
-    (levChi _ (R.βY 0) (R.dat0 (R.levR F true))) R.e0 (principalLevelFrame.rowRepR R.θ (eFT π))).map
-      (PiTensorProduct.lift : Mult.MMap (R.MY 0) ≃ₗ[ℂ] _).toLinearMap
-
-  prtE0 : ∀ π, I0.prt π = (principalLevelFrame.isotE R.θ PY (R.MY 0) (levS _ (R.βY 0) (R.dat0 (R.levR F false)))
-    (levChi _ (R.βY 0) (R.dat0 (R.levR F false))) R.e0 (principalLevelFrame.rowRepR R.θ (eFT π))).map
-      (PiTensorProduct.lift : Mult.MMap (R.MY 0) ≃ₗ[ℂ] _).toLinearMap
-
   prtWE : ∀ i π, IL.prtW i π = (principalLevelFrame.isotL R.θ (PW i) (R.MW i (sg0 D A))
     (levS _ (R.βW i) (R.datWp i (R.levL F false (sg0 D A)))) (levChi _ (R.βW i) (R.datWp i (R.levL F false (sg0 D A))))
     (R.eWf i (sg0 D A)) (principalLevelFrame.rowRepR R.θ (eFT π))).map (PiTensorProduct.lift : Mult.MMap (R.MW i (sg0 D A)) ≃ₗ[ℂ] _).toLinearMap
 
-  xi : ∀ μ, Used0 D μ → K.xi μ = R.toLevCh.xi (tupT μ)
-
   tupXi : ∀ μ, Used0 D μ → R.toLevCh.xiH (tupT μ) = Tp.xi μ
 
   tupAt : ∀ w, tupT (D.what₂.muAt w) = R.mu (D.plEq w)
-
-  isomFin : ∀ i, principalLevelFrame.IsIsomFin (ι i)
-
-  frameMatch : ∀ i, principalLevelFrame.FrameMatch PY (PW i) (ι i)
 
 end FromLinks
 

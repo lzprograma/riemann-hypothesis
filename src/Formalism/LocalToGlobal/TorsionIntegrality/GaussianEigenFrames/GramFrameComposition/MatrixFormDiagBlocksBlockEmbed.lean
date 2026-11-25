@@ -49,7 +49,7 @@ lemma matrixForm_diagBlocks_blockEmbed {n : Type} [Fintype n] [DecidableEq n] (h
   rw [matH_apply']
   by_cases hab : a = b
   · subst hab
-    rw [if_pos rfl, matH_apply', Fintype.sum_prod_type, Finset.sum_eq_single a]
+    rw [ite_eq_left rfl, matH_apply', Fintype.sum_prod_type, Finset.sum_eq_single a]
     · refine Finset.sum_congr rfl fun i _ => ?_
       rw [Fintype.sum_prod_type, Finset.sum_eq_single a]
       · simp [emb, blk4]
@@ -65,7 +65,7 @@ lemma matrixForm_diagBlocks_blockEmbed {n : Type} [Fintype n] [DecidableEq n] (h
       intro w _
       simp [emb, hc]
     · simp
-  · rw [if_neg hab]
+  · rw [ite_eq_right hab]
     apply Finset.sum_eq_zero
     intro x _
     apply Finset.sum_eq_zero
@@ -106,18 +106,6 @@ theorem IotaOK_proof : IotaOK := by
   have hω : omegaK d = (1 + s) / 2 := rfl
   have hns : ‖ι s‖ ^ 2 = ‖(d : ℂ_[p])‖ := by
     rw [← norm_pow, ← map_pow, hs2, map_neg, map_natCast, norm_neg]
-  have hnat : ∀ k : ℕ, ‖(k : ℂ_[p])‖ ≤ 1 := by
-    intro k
-    induction k with
-    | zero => simp
-    | succ k ih =>
-      rw [Nat.cast_succ]
-      exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ih (by simp))
-  have hint : ∀ k : ℤ, ‖(k : ℂ_[p])‖ ≤ 1 := by
-    intro k
-    obtain ⟨j, rfl | rfl⟩ := Int.eq_nat_or_neg k
-    · simpa using hnat j
-    · simpa using hnat j
   have hk : (d : ℂ) + 1 = 4 * (((d + 1) / 4 : ℕ) : ℂ) := by
     have h4 : d + 1 = 4 * ((d + 1) / 4) := by omega
     exact_mod_cast h4
@@ -127,22 +115,22 @@ theorem IotaOK_proof : IotaOK := by
   have hx2 : ι (omegaK d) ^ 2 = ι (omegaK d) - (((d + 1) / 4 : ℕ) : ℂ_[p]) := by
     rw [← map_pow, hω2, map_sub, map_natCast]
   have hx : ‖ι (omegaK d)‖ ≤ 1 := by
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have h1 : ‖ι (omegaK d)‖ ^ 2 ≤ ‖ι (omegaK d)‖ := by
       rw [← norm_pow, hx2, sub_eq_add_neg]
       refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le le_rfl ?_)
       rw [norm_neg]
-      exact (hnat _).trans hlt.le
+      exact (IsUltrametricDist.norm_natCast_le_one ℂ_[p] _).trans hlt.le
     nlinarith
   refine ⟨?_, ?_⟩
   · rw [← hns, ← Real.sqrt_eq_rpow, Real.sqrt_sq (norm_nonneg _)]
   · intro m n
     refine ⟨?_, ?_⟩
     · rw [map_add (f := _), map_mul, map_intCast, map_intCast]
-      refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hint m) ?_)
+      refine (IsUltrametricDist.norm_add_le_max _ _).trans
+        (max_le (IsUltrametricDist.norm_intCast_le_one _ m) ?_)
       rw [norm_mul]
-      exact mul_le_one₀ (hint n) (norm_nonneg _) hx
+      exact mul_le_one₀ (IsUltrametricDist.norm_intCast_le_one _ n) (norm_nonneg _) hx
     · rw [← map_sub]
       have h1 : ((m : ℂ) + (n : ℂ) * omegaK d) - conj ((m : ℂ) + (n : ℂ) * omegaK d) = s * (n : ℂ) := by
         rw [map_add (f := _), map_mul, conj_omega, map_intCast, map_intCast, hω]
@@ -162,18 +150,6 @@ theorem GramTransfer_of (hM : MulRing) (hI : IotaOK) : GramTransfer := by
     intro h0
     rw [h0, norm_zero] at hNn1
     exact zero_ne_one hNn1
-  have hnat : ∀ k : ℕ, ‖(k : ℂ_[p])‖ ≤ 1 := by
-    intro k
-    induction k with
-    | zero => simp
-    | succ k ih =>
-      rw [Nat.cast_succ]
-      exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ih (by simp))
-  have hint : ∀ k : ℤ, ‖(k : ℂ_[p])‖ ≤ 1 := by
-    intro k
-    obtain ⟨j, rfl | rfl⟩ := Int.eq_nat_or_neg k
-    · simpa using hnat j
-    · simpa using hnat j
   obtain ⟨Y, hY⟩ : ∃ Y : Fin 4 × J → Fin 4 × n → ℂ, ∀ x, Y x = g (emb x.1 (v x.2)) :=
     ⟨_, fun _ => rfl⟩
   have hkey : ∀ y ∈ imgLat (g : (Fin 4 × n → ℂ) →ₗ[ℂ] (Fin 4 × n → ℂ)) (pow4 Λ),
@@ -255,7 +231,7 @@ theorem GramTransfer_of (hM : MulRing) (hI : IotaOK) : GramTransfer := by
     apply IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one
     intro w _
     rw [norm_div, norm_mul, hNn1, div_one]
-    exact mul_le_one₀ (hD w x) (norm_nonneg _) (hint _)
+    exact mul_le_one₀ (hD w x) (norm_nonneg _) (IsUltrametricDist.norm_intCast_le_one _ _)
   · intro a' i b' j
     show ∑ w, ι (g.symm (Pi.single w 1) (a', i)) * ι (Y (b', j) w) = _
     simp_rw [← map_mul]

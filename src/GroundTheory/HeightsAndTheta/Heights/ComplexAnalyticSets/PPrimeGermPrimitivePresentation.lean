@@ -165,7 +165,7 @@ theorem proof (hFP : PrimeGermFiniteProjection.Statement) (hIC : HolGermsIntegra
     rw [hcompA, toGerm_rep]
 
   have hRB : Function.Injective (algebraMap R B) := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro r hr
     rw [← hcomp, hcl0] at hr
     have hev := hinj (rep r).1 (rep r).2 hr
@@ -300,7 +300,7 @@ theorem proof (hFP : PrimeGermFiniteProjection.Statement) (hIC : HolGermsIntegra
       exact degree_sum_fin_lt _
     have hcoef : q.coeff j = toGerm (A w) (mkA (a' j) (ha' j)) := by
       simp only [q, finsetSum_coeff, coeff_C_mul_X_pow]
-      rw [Finset.sum_eq_single j (fun i _ hij => if_neg (fun h => hij (Fin.ext h.symm))) (by simp)]
+      rw [Finset.sum_eq_single j (fun i _ hij => ite_eq_right (fun h => hij (Fin.ext h.symm))) (by simp)]
       simp
     rw [hq0, coeff_zero] at hcoef
     have h' := congrArg Subtype.val hcoef.symm
@@ -316,9 +316,9 @@ theorem proof (hFP : PrimeGermFiniteProjection.Statement) (hIC : HolGermsIntegra
       intro q i
       simp only [lift, finsetSum_coeff, coeff_C_mul_X_pow]
       by_cases hi : i < q.natDegree + 1
-      · rw [Finset.sum_eq_single i (fun j _ hji => if_neg (Ne.symm hji))
-          (fun h => absurd (Finset.mem_range.2 hi) h), if_pos rfl, hGrep]
-      · rw [Finset.sum_eq_zero (fun j hj => if_neg (fun h => by subst h; exact hi (Finset.mem_range.1 hj))),
+      · rw [Finset.sum_eq_single i (fun j _ hji => ite_eq_right (Ne.symm hji))
+          (fun h => absurd (Finset.mem_range.2 hi) h), ite_eq_left rfl, hGrep]
+      · rw [Finset.sum_eq_zero (fun j hj => ite_eq_right (fun h => by subst h; exact hi (Finset.mem_range.1 hj))),
           map_zero, coeff_eq_zero_of_natDegree_lt (by omega), map_zero]
     have hlift : ∀ q : R[X], (lift q).map G = q.map ιR := fun q => by
       ext i

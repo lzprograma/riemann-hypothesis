@@ -44,8 +44,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscrim
 
 @[expose] public section
 
-set_option autoImplicit false
-
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB
 
 namespace GlobalTheory
@@ -68,7 +66,6 @@ theorem bilinPart_eigen_mem_range : ∀ (R : Type) [CommRing R] (d : ℕ) (O : T
     ring
   have e2 : dotProduct v' ((sg1 k h * dAct k B a - (dAct k B (star a)).transpose * sg1 k h).mulVec v) =
       algebraMap R k (∑ i, u' i * ∑ j, M i j * u j) := by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp only [map_sum, map_mul, hM, dotProduct, Matrix.mulVec, hv, hv']
   obtain ⟨w, hw⟩ := hα.exists_left_inv
   refine ⟨-(w * ∑ i, u' i * ∑ j, M i j * u j), ?_⟩

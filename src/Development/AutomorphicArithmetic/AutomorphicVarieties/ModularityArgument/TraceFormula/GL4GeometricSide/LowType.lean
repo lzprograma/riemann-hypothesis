@@ -96,7 +96,7 @@ theorem cone_root {a b : Fin n} (h : a < b) : Cone (ev a - ev b) := by
   refine ⟨fun c d => if c = a ∧ d = b then 1 else 0, fun c d hcd => ?_, fun x => ?_⟩
   · by_cases h1 : c = a ∧ d = b
     · rw [h1.1, h1.2]; exact h
-    · exact absurd (if_neg h1) hcd
+    · exact absurd (ite_eq_right h1) hcd
   · rw [sum_eq_single a, sum_eq_single b]
     · simp [ev]
     · intro d _ hd; simp [hd]
@@ -474,7 +474,7 @@ theorem UpperTheory.V.Z.GSp4Splitting.lowType :
       · have := hlam hij.le
         have : (i : ℕ) < j := hij
         omega
-      · simp only [infOf, if_true]
+      · simp only [infOf, ite_true]
         push_cast
         ring
     · by_cases h2 : τ = barE E w.embedding
@@ -484,7 +484,7 @@ theorem UpperTheory.V.Z.GSp4Splitting.lowType :
         · have := hlam hij.le
           have : (i : ℕ) < j := hij
           omega
-        · simp only [infOf, Bool.false_eq_true, if_false]
+        · simp only [infOf, Bool.false_eq_true, ite_false]
           push_cast
           ring
       · obtain ⟨l, hl, hl'⟩ := GlobalTheory.CompanionTheory.RgCz.charInt_at π hr τ

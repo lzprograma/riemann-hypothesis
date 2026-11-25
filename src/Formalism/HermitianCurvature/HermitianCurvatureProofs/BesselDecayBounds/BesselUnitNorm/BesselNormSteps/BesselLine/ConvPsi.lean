@@ -1,45 +1,7 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExpMemUnipotentAndHasDerivAtCharacter
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselDecayBounds.BesselUnitNorm.BesselNormSteps.BesselLine.ConvGrp
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselDecayBounds.BesselUnitNorm.BesselLine
 
 @[expose] public section
@@ -89,13 +51,13 @@ theorem ell_conj {z : Fin (2 * r + k + 1) → ℂ} {h : Mx k r} (hh : h ∈ UWse
 theorem n_last {n : Mx k r} (hn : n ∈ Nset k r) {d : Fin (2 * r + k + 1) → ℂ} (hd : d ∈ lowS k r r)
     (a : Fin r) (ha : ¬ a.val + 1 < r) : (n *ᵥ d) (eI k r a) = d (eI k r a) := by
   rw [Matrix.mulVec, dotProduct, Finset.sum_eq_single (eI k r a)]
-  · rw [hn.2.1 a (eI k r a) le_rfl, if_pos rfl, one_mul]
+  · rw [hn.2.1 a (eI k r a) le_rfl, ite_eq_left rfl, one_mul]
   · intro j _ hj
     by_cases hjr : r ≤ j.val
     · rw [hd j hjr, mul_zero]
-    · push_neg at hjr
+    · push Not at hjr
       have h1 := hn.2.1 ⟨j.val, hjr⟩ (eI k r a) (by simp only [eI]; omega)
-      rw [show eI k r ⟨j.val, hjr⟩ = j from Fin.ext rfl, if_neg (Ne.symm hj)] at h1
+      rw [show eI k r ⟨j.val, hjr⟩ = j from Fin.ext rfl, ite_eq_right (Ne.symm hj)] at h1
       rw [h1, zero_mul]
   · intro h
     exact absurd (Finset.mem_univ _) h
@@ -110,15 +72,15 @@ theorem ellT_mul {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) {n m : Mx k
       have h1 := congrArg Fin.val h
       simp [eI] at h1
     rw [Finset.sum_eq_add (eI k r a) (eI k r ⟨a.val + 1, hlt⟩) hab]
-    · rw [hn.2.1 a (eI k r a) le_rfl, if_pos rfl, one_mul,
-        hm.2.1 ⟨a.val + 1, hlt⟩ (eI k r ⟨a.val + 1, hlt⟩) le_rfl, if_pos rfl, mul_one, add_comm]
+    · rw [hn.2.1 a (eI k r a) le_rfl, ite_eq_left rfl, one_mul,
+        hm.2.1 ⟨a.val + 1, hlt⟩ (eI k r ⟨a.val + 1, hlt⟩) le_rfl, ite_eq_left rfl, mul_one, add_comm]
     · intro c _ hc
       by_cases hcb : a.val + 1 ≤ c.val
-      · rw [hm.2.1 ⟨a.val + 1, hlt⟩ c hcb, if_neg hc.2, mul_zero]
-      · push_neg at hcb
+      · rw [hm.2.1 ⟨a.val + 1, hlt⟩ c hcb, ite_eq_right hc.2, mul_zero]
+      · push Not at hcb
         have hcr : c.val < r := by omega
         have h1 := hn.2.1 ⟨c.val, hcr⟩ (eI k r a) (by simp only [eI]; omega)
-        rw [show eI k r ⟨c.val, hcr⟩ = c from Fin.ext rfl, if_neg (Ne.symm hc.1)] at h1
+        rw [show eI k r ⟨c.val, hcr⟩ = c from Fin.ext rfl, ite_eq_right (Ne.symm hc.1)] at h1
         rw [h1, zero_mul]
     · intro h
       exact absurd (Finset.mem_univ _) h
@@ -138,17 +100,7 @@ theorem ell_mul {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) {n m : Mx k 
   exact Finset.sum_congr rfl fun a _ => ellT_mul hz hn hm a
 
 theorem ell_one {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) : ell k r z 1 = 0 := by
-  rw [ell_eq]
-  apply Finset.sum_eq_zero
-  intro a _
-  unfold ellT
-  split_ifs with hlt
-  · rw [Matrix.one_apply, if_neg]
-    intro h
-    have h1 := congrArg Fin.val h
-    simp [eI] at h1
-  · rw [Matrix.one_mulVec]
-    exact hz _ (Or.inl (by simp [eI]))
+  apply _root_.GlobalTheory.UnipotentExp.ell_one <;> assumption
 
 theorem psi_add (z : Fin (2 * r + k + 1) → ℂ) (c : ℂ) {g g' g'' : Mx k r}
     (h : ell k r z g = ell k r z g' + ell k r z g'') :
@@ -172,7 +124,7 @@ theorem psiAll : PsiAll := by
     by_contra hdet
     have h0 : n⁻¹ = 0 := Matrix.nonsing_inv_apply_not_isUnit n hdet
     have h1 := (n_inv hn).2.1 ⟨0, hr⟩ (eI k r ⟨0, hr⟩) le_rfl
-    rw [h0, if_pos rfl] at h1
+    rw [h0, ite_eq_left rfl] at h1
     simp at h1
   refine ⟨fun n hn m hm => psi_add z c (ell_mul hz hn hm), fun h hh n hn => ?_, fun h hh n hn => ?_,
     fun n hn => ?_⟩

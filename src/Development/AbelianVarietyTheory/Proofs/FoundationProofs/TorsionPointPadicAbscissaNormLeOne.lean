@@ -7,46 +7,7 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralJ
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionary
 public import Development.AbelianVarietyTheory.Proofs.HeightProofs.WeierstrassPTorsionIntegralAndDistinctMod
 import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.WeierstrassPAddOfNeOfDerivNeZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
 
@@ -167,7 +128,7 @@ theorem rel_lattice (L : PeriodPair) (z : ℂ) {w : ℂ} (hw : w ∉ L.lattice) 
       (GlobalTheory.weierstrassP_eq_iff L a hw).2 (Or.inl (by simpa using hz))
     have d : L.weierstrassP (z - w) = L.weierstrassP w :=
       (GlobalTheory.weierstrassP_eq_iff L b hw).2 (Or.inr (by simpa using hz))
-    refine rel_of_smul 1 ?_ ?_ ?_ <;> simp only [hX, hZ, hz, hw, a, b, c, d, prodF, sumF, if_true, if_false] <;>
+    refine rel_of_smul 1 ?_ ?_ ?_ <;> simp only [hX, hZ, hz, hw, a, b, c, d, prodF, sumF, ite_true, ite_false] <;>
       ring
   by_cases hm : z - w ∈ L.lattice
   · have e := (GlobalTheory.weierstrassP_eq_iff L hz hw).2 (Or.inl hm)
@@ -180,7 +141,7 @@ theorem rel_lattice (L : PeriodPair) (z : ℂ) {w : ℂ} (hw : w ∉ L.lattice) 
       rw [hy] at hsq
       refine rel_of_smul (prodF (⟨0, 0, 0, -L.g₂ / 4, -L.g₃ / 4⟩ : WeierstrassCurve ℂ)
         (hX L z) (hZ L z) (hX L w) (hZ L w)) ?_ ?_ ?_ <;>
-        simp only [hX, hZ, hz, hw, hm, hp, e, prodF, sumF, if_true, if_false, WeierstrassCurve.b₂,
+        simp only [hX, hZ, hz, hw, hm, hp, e, prodF, sumF, ite_true, ite_false, WeierstrassCurve.b₂,
           WeierstrassCurve.b₄, WeierstrassCurve.b₆, WeierstrassCurve.b₈]
       · ring
       · linear_combination -hsq
@@ -192,7 +153,7 @@ theorem rel_lattice (L : PeriodPair) (z : ℂ) {w : ℂ} (hw : w ∉ L.lattice) 
         (GlobalTheory.weierstrassP_eq_iff L hp hww).2 (Or.inl (by simpa using hm))
       have hd := GlobalTheory.TorsionIntegral.dbl L hw hww
       refine rel_of_smul (4 * L.weierstrassP w ^ 3 - L.g₂ * L.weierstrassP w - L.g₃) ?_ ?_ ?_ <;>
-        simp only [hX, hZ, hz, hw, hm, hp, e, c, prodF, sumF, if_true, if_false, WeierstrassCurve.b₂,
+        simp only [hX, hZ, hz, hw, hm, hp, e, c, prodF, sumF, ite_true, ite_false, WeierstrassCurve.b₂,
           WeierstrassCurve.b₄, WeierstrassCurve.b₆, WeierstrassCurve.b₈]
       · linear_combination -hd
       · ring
@@ -207,7 +168,7 @@ theorem rel_lattice (L : PeriodPair) (z : ℂ) {w : ℂ} (hw : w ∉ L.lattice) 
         rwa [show z - w + (w + w) = z + w by ring]))
     have hd := GlobalTheory.TorsionIntegral.dbl L hw hww
     refine rel_of_smul (4 * L.weierstrassP w ^ 3 - L.g₂ * L.weierstrassP w - L.g₃) ?_ ?_ ?_ <;>
-      simp only [hX, hZ, hz, hw, hm, hp, e, c, prodF, sumF, if_true, if_false, WeierstrassCurve.b₂,
+      simp only [hX, hZ, hz, hw, hm, hp, e, c, prodF, sumF, ite_true, ite_false, WeierstrassCurve.b₂,
         WeierstrassCurve.b₄, WeierstrassCurve.b₆, WeierstrassCurve.b₈]
     · linear_combination -hd
     · ring
@@ -216,7 +177,7 @@ theorem rel_lattice (L : PeriodPair) (z : ℂ) {w : ℂ} (hw : w ∉ L.lattice) 
       ((GlobalTheory.weierstrassP_eq_iff L hz hw).1 h).elim hm hp
     obtain ⟨hs, hq⟩ := GlobalTheory.TorsionIntegral.sum_prod L hz hw hne
     refine rel_of_smul ((L.weierstrassP z - L.weierstrassP w) ^ 2) ?_ ?_ ?_ <;>
-      simp only [hX, hZ, hz, hw, hm, hp, prodF, sumF, if_false, WeierstrassCurve.b₂,
+      simp only [hX, hZ, hz, hw, hm, hp, prodF, sumF, ite_false, WeierstrassCurve.b₂,
         WeierstrassCurve.b₄, WeierstrassCurve.b₆, WeierstrassCurve.b₈]
     · linear_combination -hq
     · linear_combination -hs
@@ -263,17 +224,17 @@ theorem norm_abscissa_le (p : ℕ) [Fact p.Prime] (lam : Qbar →+* ℂ_[p]) (L 
   let X : ℕ → ℂ_[p] := fun k => ((C.u⁻¹ : ℂ_[p]ˣ) : ℂ_[p]) ^ 2 * (lam (XQ k) - C.r * lam (ZQ k))
   let Z : ℕ → ℂ_[p] := fun k => lam (ZQ k)
   have hin : ∀ k : ℕ, (k : ℂ) * t ∈ L.lattice → Z k = 0 ∧ X k ≠ 0 := fun k h => by
-    have e1 : XQ k = 1 := Subtype.ext (if_pos h)
-    have e2 : ZQ k = 0 := Subtype.ext (if_pos h)
+    have e1 : XQ k = 1 := Subtype.ext (ite_eq_left h)
+    have e2 : ZQ k = 0 := Subtype.ext (ite_eq_left h)
     simp [X, Z, e1, e2]
   have hout : ∀ k : ℕ, (k : ℂ) * t ∉ L.lattice → Z k = 1 := fun k h => by
-    have e2 : ZQ k = 1 := Subtype.ext (if_neg h)
+    have e2 : ZQ k = 1 := Subtype.ext (ite_eq_right h)
     simp [Z, e2]
   have ht1 : ((1 : ℕ) : ℂ) * t ∉ L.lattice := by simpa using ht
   have hX1 : ((C.u⁻¹ : ℂ_[p]ˣ) : ℂ_[p]) ^ 2 * (lamC lam (L.weierstrassP t) - C.r) = X 1 := by
-    have e1 : (XQ 1 : ℂ) = L.weierstrassP t := (if_neg ht1).trans (by simp)
+    have e1 : (XQ 1 : ℂ) = L.weierstrassP t := (ite_eq_right ht1).trans (by simp)
     have e2 : lam (ZQ 1) = 1 := hout 1 ht1
-    simp only [X, e2, mul_one, ← e1, lamC, dif_pos (XQ 1).2]
+    simp only [X, e2, mul_one, ← e1, lamC, dite_eq_left (XQ 1).2]
   rw [hX1]
   by_contra hx
   have hx0 : X 1 ≠ 0 := fun h => hx (h ▸ O.zero_mem)

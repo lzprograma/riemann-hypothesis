@@ -12,8 +12,6 @@ noncomputable section
 
 namespace Formalism.L2.SG.Pf.LsNc5
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : HidaSetting D) (u : D.what₂.Word)
 
 def eV (v : InfinitePlace X.B.I.F) (a : Fin D.R.rS) : Fin X.B.I.n → ℂ := rv X.B.I v (X.eR a)

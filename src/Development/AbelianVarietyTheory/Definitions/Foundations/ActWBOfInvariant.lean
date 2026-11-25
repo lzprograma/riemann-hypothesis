@@ -11,53 +11,8 @@ public import Development.AbelianVarietyTheory.Definitions.Foundations.ShCocOn
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
 public import Mathlib.RingTheory.AdicCompletion.Noetherian
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlMulToRingEquiv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Foundations.CobOn
 import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 
@@ -80,22 +35,9 @@ open GlobalTheory.KZ GlobalTheory.K4 GlobalTheory.NeedB GlobalTheory.KEdge
 
 variable {Ω : Type} [Field Ω] [Algebra ℚ Ω] {ε : Ω →+* ℂ}
 
-def tInv (l N R : ℕ) : ZMod N := ((l : ZMod N) ^ R)⁻¹
-
-def uIdxMu (l N R : ℕ) (x : ZMod N) : Fin 2 → ℚ := ![1 / (l : ℚ) ^ R + ((x * tInv l N R).val : ℚ) / N, 0]
-
-def vIdxMu (l N R : ℕ) : Fin 2 → ℚ := ![((tInv l N R).val : ℚ) / N, 1 / (l : ℚ) ^ R]
-
 abbrev Om (X : Tower Ω ε) : Type := AlgebraicClosure X.K
 
 attribute [local instance] algMdl
-
-theorem isScalarTower_mdl_om (X : Tower Ω ε) (Γ' : Subgroup SL(2, ℤ)) (S : Subgroup (Ω ≃ₐ[ℚ] Ω)) :
-    @IsScalarTower (mdl X Γ' S) (lev X Γ') (Om X) Algebra.toSMul Algebra.toSMul Algebra.toSMul :=
-  IsScalarTower.of_algebraMap_eq (fun _ => rfl)
-
-attribute [local instance] isScalarTower_mdl_om
-
 
 
 
@@ -107,18 +49,6 @@ def unitOf (X : Tower Ω ε) (a : X.K) : X.Kˣ :=
 
 def clsHat (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (a : X.K) : X.Khat l :=
   AdicCompletion.of (idl l) (X.Kl l) ((1 : ℤ_[l]) ⊗ₜ Additive.ofMul (unitOf X a))
-
-def cR (l N : ℕ) (r₀ : ZMod l) : ℤ := (N : ℤ) * ((-r₀ * (N : ZMod l)⁻¹).val : ℤ)
-
-def gR (l N : ℕ) (r₀ : ZMod l) : SL(2, ℤ) :=
-  ⟨!![1, 0; cR l N r₀, 1], by simp [Matrix.det_fin_two]⟩
-
-
-
-theorem cR_mod (l N : ℕ) [Fact l.Prime] (hN : (N : ZMod l) ≠ 0) (r₀ : ZMod l) : ((cR l N r₀ : ℤ) : ZMod l) = -r₀ := by
-  simp only [cR, Int.cast_mul, Int.cast_natCast, ZMod.natCast_zmod_val]
-  rw [mul_comm (-r₀), ← mul_assoc, mul_inv_cancel₀ hN, one_mul]
-
 
 open scoped MatrixGroups TensorProduct in
 open Matrix in
@@ -179,110 +109,8 @@ variable {Ω : Type} [Field Ω] [Algebra ℚ Ω] {ε : Ω →+* ℂ}
 def secT (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (w : ℕ) (a : X.K) : X.Fn l :=
   fun u => (u 0) ^ w • GlobalTheory.ZetaB.clsHat X l a
 
-
-open Classical in
-def gamMod (N l M : ℕ) [NeZero M] : Finset SL(2, ZMod M) :=
-  Finset.univ.filter fun γ : SL(2, ZMod M) =>
-    γ ∈ (Gam N l).map (Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod M)))
-
-def pushT (X : Tower Ω ε) (l N M : ℕ) [Fact l.Prime] [NeZero M] (b : X.Fn l) : X.Fn l :=
-  ∑ r₀ : (ZMod l)ˣ, ∑ γ ∈ gamMod N l M,
-    X.act l ((GlobalTheory.ZetaB.gR l N (r₀ : ZMod l) * liftSL M γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) b
-
-def clsZT (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n r N : ℕ) [NeZero N] (x : ZMod N) (c d k : ℕ) (σ : Ω ≃ₐ[ℚ] Ω) : X.Fn l :=
-  pushT X l N (topM l n r N) (secT X l (k - 2) (wkTop X l n r N x c d σ))
-
-def crtF (m N : ℕ) : ℤ := (m : ℤ) * (((m : ZMod N)⁻¹).val : ℤ)
-
-def sigN (m N : ℕ) : SL(2, ℤ) :=
-  ⟨!![1 - crtF m N ^ 2, crtF m N ^ 3 - 2 * crtF m N; crtF m N, 1 - crtF m N ^ 2], by
-    rw [Matrix.det_fin_two_of]; ring⟩
-
-def wMat (l N : ℕ) : Matrix (Fin 2) (Fin 2) ℤ := (sigN l N : Matrix (Fin 2) (Fin 2) ℤ) * !![(N : ℤ), 0; 0, 1]
-
-def wB (X : Tower Ω ε) (l N : ℕ) [Fact l.Prime] : X.Fn l →ₗ[ℤ_[l]] X.Fn l := X.act l (wMat l N)
-
-def clsBT (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n r N : ℕ) [NeZero N] (x : ZMod N) (c d k : ℕ) (σ : Ω ≃ₐ[ℚ] Ω) : X.Fn l :=
-  wB X l N (clsZT X l n r N x c d k σ)
-
 def shArg (M : ℕ) (s : Ω ≃ₐ[ℚ] Ω) (y : (ZMod M)ˣ) : Ω ≃ₐ[ℚ] Ω :=
   (repM M y)⁻¹ * s * repM M (y * (cycM M s)⁻¹)
-
-def YBc (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n r N : ℕ) [NeZero N] (x : ZMod N) (c d k : ℕ) (s : Ω ≃ₐ[ℚ] Ω)
-    (y : (ZMod (topM l n r N))ˣ) : X.Fn l :=
-  X.galB l (repM (topM l n r N) y)
-    (clsBT X l n r N x c d k ((repM (topM l n r N) y)⁻¹ * s * repM (topM l n r N) (y * (cycM (topM l n r N) s)⁻¹)))
-
-def YBr (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n r N : ℕ) [NeZero N] (x : ZMod N) (c d k : ℕ) :
-    (Ω ≃ₐ[ℚ] Ω) → (ZMod (l ^ r))ˣ → X.Fn l :=
-  GlobalTheory.KA.push (redM l n r N) (YBc X l n r N x c d k)
-
-def IsZetaB (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (pr : X.Fn l → Fin 2 → Qbar l) (ρ : R2 Ω l)
-    (N : ℕ) [NeZero N] (x : ZMod N) (c d k : ℕ) (cf : Coef l)
-    (Y : ∀ r : ℕ, (Ω ≃ₐ[ℚ] Ω) → (ZMod (l ^ r))ˣ → Fin 2 → Qbar l) : Prop :=
-  ∀ r n : ℕ, ∃ β : (Ω ≃ₐ[ℚ] Ω) → (ZMod (l ^ r))ˣ → X.Fn l, (∀ s y, β s y ∈ X.B N l (k - 2)) ∧
-    (∀ s y u, (β s y - YBr X l n r N x c d k s y) u ∈ (idl l) ^ n • (⊤ : Submodule ℤ_[l] (X.Khat l))) ∧
-    ∃ b : (ZMod (l ^ r))ˣ → Fin 2 → Qbar l, (∀ y i, b y i ∈ cf.O) ∧ ∀ s y,
-      Cv n (Y r s y) (pr (β s y) + (mat ρ s *ᵥ b (y * (cycMod (F := ℚ) (Ω := Ω) l r s)⁻¹) - b y))
-
-theorem Gamma_le_Gamma0 {l M : ℕ} (h : l ∣ M) : CongruenceSubgroup.Gamma M ≤ CongruenceSubgroup.Gamma0 l := fun γ hγ => by
-  rw [CongruenceSubgroup.Gamma_mem] at hγ
-  rw [CongruenceSubgroup.Gamma0_mem, ZMod.intCast_zmod_eq_zero_iff_dvd]
-  exact (Int.natCast_dvd_natCast.2 h).trans ((ZMod.intCast_zmod_eq_zero_iff_dvd _ M).1 hγ.2.2.1)
-
-theorem crtF_mod_left (m N : ℕ) : ((crtF m N : ℤ) : ZMod m) = 0 := by
-  simp [crtF]
-
-theorem crtF_mod_right {m N : ℕ} [NeZero N] (h : Nat.Coprime m N) : ((crtF m N : ℤ) : ZMod N) = 1 := by
-  simp only [crtF, Int.cast_mul, Int.cast_natCast, ZMod.natCast_zmod_val]
-  exact ZMod.mul_inv_of_unit _ ((ZMod.isUnit_iff_coprime m N).2 h)
-
-theorem sigN_mem_Gamma (m N : ℕ) : sigN m N ∈ CongruenceSubgroup.Gamma m := by
-  rw [CongruenceSubgroup.Gamma_mem]
-  simp [sigN, crtF_mod_left]
-
-theorem det_wMat (l N : ℕ) : (wMat l N).det = N := by
-  rw [wMat, Matrix.det_mul, (sigN l N).2, Matrix.det_fin_two_of]
-  simp
-
-theorem exists_wMat_mul {l N : ℕ} [NeZero N] (h : Nat.Coprime l N) {γ : SL(2, ℤ)} (hγ : γ ∈ Gam N l) :
-    ∃ γ' ∈ Gam N l, wMat l N * (γ : Matrix (Fin 2) (Fin 2) ℤ) = (γ' : Matrix (Fin 2) (Fin 2) ℤ) * wMat l N := by
-  obtain ⟨h1, h0⟩ := hγ
-  obtain ⟨h00, h11, h10⟩ := (CongruenceSubgroup.Gamma1_mem _ _).1 h1
-  have hl : ((γ 1 0 : ℤ) : ZMod l) = 0 := CongruenceSubgroup.Gamma0_mem.1 h0
-  obtain ⟨t, ht⟩ : (N : ℤ) ∣ γ 1 0 := (ZMod.intCast_zmod_eq_zero_iff_dvd _ N).1 h10
-  have htl : (t : ZMod l) = 0 := by
-    rw [ht, Int.cast_mul, Int.cast_natCast] at hl
-    exact (((ZMod.isUnit_iff_coprime N l).2 h.symm).mul_right_eq_zero).1 hl
-  let δ : SL(2, ℤ) := ⟨!![γ 0 0, N * γ 0 1; t, γ 1 1], by
-    have e := γ.2
-    rw [Matrix.det_fin_two] at e
-    rw [Matrix.det_fin_two_of]
-    have e' : γ 0 0 * γ 1 1 - γ 0 1 * γ 1 0 = 1 := e
-    rw [ht] at e'
-    linarith⟩
-  have hδ : !![(N : ℤ), 0; 0, 1] * (γ : Matrix (Fin 2) (Fin 2) ℤ) = (δ : Matrix (Fin 2) (Fin 2) ℤ) * !![(N : ℤ), 0; 0, 1] := by
-    ext i j
-    fin_cases i <;> fin_cases j <;> simp [δ, Matrix.mul_apply, Fin.sum_univ_two, ht] <;> ring
-  refine ⟨sigN l N * δ * (sigN l N)⁻¹, Subgroup.mem_inf.2 ⟨?_, ?_⟩, ?_⟩
-  · have hf := crtF_mod_right h
-    have hc : ((sigN l N * δ * (sigN l N)⁻¹ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) =
-        !![1 - crtF l N ^ 2, crtF l N ^ 3 - 2 * crtF l N; crtF l N, 1 - crtF l N ^ 2] * !![γ 0 0, N * γ 0 1; t, γ 1 1] *
-          Matrix.adjugate !![1 - crtF l N ^ 2, crtF l N ^ 3 - 2 * crtF l N; crtF l N, 1 - crtF l N ^ 2] := by
-      rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.SpecialLinearGroup.coe_mul, Matrix.SpecialLinearGroup.coe_inv]
-      rfl
-    refine (CongruenceSubgroup.Gamma1_mem _ _).2 ⟨?_, ?_, ?_⟩ <;> rw [hc] <;>
-      simp [Matrix.adjugate_fin_two, Matrix.mul_apply, Fin.sum_univ_two, hf, h00, h11] <;> norm_num
-  · have hσ := Gamma_le_Gamma0 (dvd_refl l) (sigN_mem_Gamma l N)
-    exact mul_mem (mul_mem hσ (CongruenceSubgroup.Gamma0_mem.2 htl)) (inv_mem hσ)
-  · rw [wMat, Matrix.mul_assoc, hδ, ← Matrix.mul_assoc, ← Matrix.mul_assoc, ← Matrix.SpecialLinearGroup.coe_mul,
-      ← Matrix.SpecialLinearGroup.coe_mul, inv_mul_cancel_right]
-
-theorem vecMul_gR (l N : ℕ) [Fact l.Prime] (hN : (N : ZMod l) ≠ 0) (r₀ : ZMod l) :
-    (![r₀, 1] : Fin 2 → ZMod l) ᵥ* ((GlobalTheory.ZetaB.gR l N r₀ : Matrix (Fin 2) (Fin 2) ℤ).map (Int.castRingHom (ZMod l))) =
-      ![0, 1] := by
-  ext i
-  fin_cases i <;> simp [GlobalTheory.ZetaB.gR, Matrix.vecMul, dotProduct, Fin.sum_univ_two, GlobalTheory.ZetaB.cR_mod l N hN]
 
 def lnFn (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n : ℕ) : Submodule ℤ_[l] (X.Fn l) :=
   Submodule.pi Set.univ fun _ => (idl l) ^ n • (⊤ : Submodule ℤ_[l] (X.Khat l))
@@ -357,16 +185,6 @@ theorem invMod_secT (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] {n M : ℕ} (hM :
     ring
   rw [e]
   exact dvd_add ((hd _ (by push_cast; rw [hγ.1, sub_self])).mul_right _) ((hd _ hγ.2.1).mul_right _)
-
-theorem InvMod.wB {X : Tower Ω ε} {l N : ℕ} [Fact l.Prime] [NeZero N] (h : Nat.Coprime l N) {n : ℕ} {b : X.Fn l}
-    (hb : InvMod X l n (Gam N l) b) : InvMod X l n (Gam N l) (wB X l N b) := by
-  intro γ hγ
-  obtain ⟨γ', hγ', e⟩ := exists_wMat_mul h hγ
-  have hw : 0 < (wMat l N).det := by rw [det_wMat]; exact_mod_cast NeZero.pos N
-  have h1 := act_mem_lnFn X l (wMat l N) (hb γ' hγ')
-  rw [map_sub, Tower.act_act Ω ε X l _ _ (by rw [γ'.2]; exact one_pos) hw, ← e,
-    ← Tower.act_act Ω ε X l _ _ hw (by rw [γ.2]; exact one_pos)] at h1
-  exact h1
 
 theorem cycM_apply [IsAlgClosure ℚ Ω] (M : ℕ) [NeZero M] (s : Ω ≃ₐ[ℚ] Ω) {z : Ω} (hz : z ^ M = 1) :
     s z = z ^ (cycM M s : ZMod M).val := by

@@ -3,40 +3,6 @@ module
 public import Formalism.LocalToGlobal.Divisibility.HeckeCSDICommTrRep
 public import Formalism.LocalToGlobal.Columns.RowFormsSym
 public import Formalism.LocalToGlobal.Divisibility.RecBridgeTied
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.LocalToGlobal.Divisibility.RecBridgeSel
 
 @[expose] public section
@@ -155,16 +121,15 @@ structure ExtendedDataRemainder {G Pl0 I0 Tt : Type} [Group G] [Fintype G] (ex :
   C : ColData (Dcf Zs) (Spf Zs) S1
   NuC : ∀ u, Submodule (𝓞 D.what₂.LL) (Fin ((Dcf Zs).a u) → D.what₂.LL)
   I : DivisionCompatibilityDataThreeSided D A3 P0 ψ0 P1 ψ1 Zs S0 S1 ex.p0 (Dcf Zs)
-  JA : AmbIds D A3.A ex.p0.s ex.amb0 P0 ψ0 I.tup
   JM : MjHIds D A3.A Y (A3.indefDown S0)
-  tied : BaseDivisionAmbientCompatibilityFamily D A3 Y ex.p0 ex.amb0 P0 ψ0 P1 ψ1 Zs S0 S1 C NuC I JA JM
+  tied : BaseDivisionAmbientCompatibilityFamily D A3 Y ex.p0 P0 ψ0 P1 ψ1 Zs S0 S1 C NuC I JM
 
 variable {G Pl0 I0 Tt : Type} [Group G] [Fintype G] {A3 : FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) Tt D.R.m} {P0 : Subgroup G}
   {ψ0 : P0 →* D.what₂.LLˣ} {P1 : Subgroup G} {ψ1 : P1 →* D.what₂.LLˣ} {Dcf : ∀ Zs : DefSub A3.fam3.amb3, DefCols (A3.side3 P1 ψ1 Zs)}
   {Spf : ∀ Zs : DefSub A3.fam3.amb3, SPer (Dcf Zs)}
 
 def ExtendedDataRemainder.extendedDatum (R : ExtendedDataRemainder ex A3 P0 ψ0 P1 ψ1 Dcf Spf) : RowSideFamily ex :=
-  ⟨G, Pl0, I0, Tt, A3, P0, ψ0, P1, ψ1, R.Zs, R.S0, R.S1, Dcf R.Zs, Spf R.Zs, R.C, R.NuC, R.I, R.JA, R.JM, R.tied⟩
+  ⟨G, Pl0, I0, Tt, A3, P0, ψ0, P1, ψ1, R.Zs, R.S0, R.S1, Dcf R.Zs, Spf R.Zs, R.C, R.NuC, R.I, R.JM, R.tied⟩
 
 end IndefiniteRowSideFullHecke
 

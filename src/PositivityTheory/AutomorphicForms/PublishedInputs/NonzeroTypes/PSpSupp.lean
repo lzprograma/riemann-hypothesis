@@ -10,39 +10,6 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Supercu
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ParabolicInductionTensorProductHasFiniteLength
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsCovBySubmodule
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchurAdmissibleAlt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -59,18 +26,8 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 
 theorem exists_equiv_of_map_eq {β : Type*} {h N : ℕ} (x : Fin h → β) (F : Fin N → β)
     (hx : (Finset.univ.val.map x : Multiset β) = Finset.univ.val.map F) :
-    ∃ σ : Fin h ≃ Fin N, ∀ a, x a = F (σ a) := by
-  have hcount : ∀ {M : ℕ} (f : Fin M → β) (c : β),
-      Fintype.card {a // f a = c} = Multiset.count c (Finset.univ.val.map f) := by
-    intro M f c
-    rw [Multiset.count_map, Fintype.card_subtype]
-    simp only [Finset.card, Finset.filter_val]
-    congr 1
-    exact Multiset.filter_congr fun a _ => eq_comm
-  have hcard : ∀ c, Fintype.card {a // x a = c} = Fintype.card {b // F b = c} := fun c => by
-    rw [hcount, hcount, hx]
-  exact ⟨Equiv.ofFiberEquiv fun c => Fintype.equivOfCardEq (hcard c),
-    fun a => (Equiv.ofFiberEquiv_map _ a).symm⟩
+    ∃ σ : Fin h ≃ Fin N, ∀ a, x a = F (σ a) :=
+  (GlobalTheory.WeilDeligne.Unram.exists_equiv_of_map_eq hx).imp fun _ he a => (he a).symm
 
 theorem sum_map_univ {β : Type*} {s N : ℕ} {d : Fin s → ℕ} (e : (Σ a, Fin (d a)) ≃ Fin N)
     (f : ∀ a, Fin (d a) → β) (F : Fin N → β) (hF : ∀ a j, F (e ⟨a, j⟩) = f a j) :

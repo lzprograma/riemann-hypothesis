@@ -10,46 +10,6 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PlkFlagPt
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PluckerNonvanishingOrbitInvariant
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.BaseVectorProperties
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.PullbackPullback
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -63,21 +23,15 @@ namespace GlobalTheory.CompanionTheory.Ar.PB.WSq.FC.DensR
 
 variable {K : Type} {ι : K → Type}
 
-theorem orbit_symm {z z' : (Σ k, ι k) → ℂ} (h : SameOrbit z z') : SameOrbit z' z := by
-  obtain ⟨c, hc, rfl⟩ := h
-  refine ⟨fun k => (c k)⁻¹, fun k => inv_ne_zero (hc k), ?_⟩
-  funext p
-  simp [hc p.1]
-
 theorem analytic_minorIJ {m N : ℕ} {V : Set (Fin m → ℂ)} {h : (Fin m → ℂ) → Matrix (Fin N) (Fin N) ℂ}
     (hh : ∀ r s, AnalyticOnNhd ℂ (fun u => h u r s) V) (I J : Finset (Fin N)) :
     AnalyticOnNhd ℂ (fun u => minorIJ (h u) I J) V := by
   unfold minorIJ
   by_cases e : I.card = J.card
-  · simp only [dif_pos e, Matrix.det_apply', Matrix.submatrix_apply]
+  · simp only [dite_eq_left e, Matrix.det_apply', Matrix.submatrix_apply]
     refine Finset.analyticOnNhd_fun_sum _ fun σ _ => ?_
     exact analyticOnNhd_const.mul (Finset.analyticOnNhd_fun_prod _ fun i _ => hh _ _)
-  · simp only [dif_neg e]
+  · simp only [dite_eq_right e]
     exact analyticOnNhd_const
 
 end GlobalTheory.CompanionTheory.Ar.PB.WSq.FC.DensR
@@ -99,9 +53,9 @@ theorem dens_r : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (�
     intro m V bp hh hV hc ha hm hhan _ q
     have hval := _root_.GlobalTheory.CompanionTheory.Ar.PB.WSq.FC.bvec_val_analytic K ι Φ y Ψ N j M n BM l m V bp hV hc ha hm
     by_cases hk : ∀ p, M.blk p ≠ some q.1
-    · simp only [FC.flagPt, dif_pos hk]
+    · simp only [FC.flagPt, dite_eq_left hk]
       exact hval.1 _
-    · simp only [FC.flagPt, dif_neg hk]
+    · simp only [FC.flagPt, dite_eq_right hk]
       refine Finset.analyticOnNhd_fun_sum _ fun I _ => ?_
       refine (hval.2 _ fun b hb => ((hgood b hb).2.1.2.1 q I).1).mul ?_
       exact analytic_minorIJ (fun r s => hhan _ r s) _ _

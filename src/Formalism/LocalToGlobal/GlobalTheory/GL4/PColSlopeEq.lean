@@ -38,10 +38,10 @@ theorem tcAt_basis (Z : ZBasis ((D.fm u).lam 0)) (v : InfinitePlace D.what₂.LL
   rw [co_coE_symm]
   by_cases h : c'' = c
   · subst h
-    rw [if_pos rfl, Pi.single_eq_same, Z.basis_coe, MvPolynomial.map_map,
+    rw [ite_eq_left rfl, Pi.single_eq_same, Z.basis_coe, MvPolynomial.map_map,
       show v.embedding.comp (Int.castRingHom D.what₂.LL) = Int.castRingHom ℂ from Subsingleton.elim _ _, ← Z.basis_coe ℂ i]
     rfl
-  · rw [if_neg h, Pi.single_eq_of_ne h, Submodule.coe_zero, map_zero, map_zero]
+  · rw [ite_eq_right h, Pi.single_eq_of_ne h, Submodule.coe_zero, map_zero, map_zero]
 
 theorem rho_basis_expand {ι : Type} [Fintype ι] {n : ℕ} {lam : ι → DomWeight n} (Z : ZBasis lam) (g : ι → GL (Fin n) ℂ) (i : Z.J0) :
     ((rhoK lam g (Z.basis ℂ i) : VV ℂ lam) : Pol ℂ ι n) =
@@ -64,7 +64,7 @@ theorem gram_lattice_block_diagonal (Z : ZBasis ((D.fm u).lam 0)) (v : InfiniteP
   simp only [tcAt_basis]
   by_cases hcc : c = c'
   · subst hcc
-    rw [if_pos rfl, Finset.sum_eq_single c]
+    rw [ite_eq_left rfl, Finset.sum_eq_single c]
     · simp only [↓reduceIte]
       rw [rho_basis_expand, rho_basis_expand, nfAll_sum_left]
       simp only [nfAll_sum_right, nfAll_smul_left, nfAll_smul_right]
@@ -80,14 +80,14 @@ theorem gram_lattice_block_diagonal (Z : ZBasis ((D.fm u).lam 0)) (v : InfiniteP
       simp only [starRingEnd_apply]
       ring
     · intro c'' _ h
-      rw [if_neg h, nfAll_zero_left]
+      rw [ite_eq_right h, nfAll_zero_left]
     · intro h; exact absurd (Finset.mem_univ _) h
-  · rw [if_neg hcc]
+  · rw [ite_eq_right hcc]
     refine Finset.sum_eq_zero fun c'' _ => ?_
     by_cases h : c'' = c
     · subst h
-      rw [if_neg hcc, nfAll_zero_left]
-    · rw [if_neg h, nfAll_zero_right]
+      rw [ite_eq_right hcc, nfAll_zero_left]
+    · rw [ite_eq_right h, nfAll_zero_right]
 
 
 include hTV in

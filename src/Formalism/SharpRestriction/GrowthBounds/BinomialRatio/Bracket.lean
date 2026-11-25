@@ -5,53 +5,8 @@ public import Mathlib.Algebra.BigOperators.Fin
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreesLargeBeyond
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.NotKept
 public import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
-import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.BinomialRatio.NkExponent, Formalism.SharpRestriction.GrowthBounds.BinomialRatio.Bracket
@@ -96,7 +51,7 @@ theorem nk_iv (c Ah ρ u : ℝ) (hρ0 : 0 ≤ ρ) (hρc : ρ ≤ c) (hρA : ρ �
   have h2 : 0 ≤ ρ * u := mul_nonneg hρ0 hu0
   linarith
 
-theorem nk_tele (s : ℕ) (c : ℕ → ℝ) (x y : Fin s → ℝ) (hc : ∀ l, 0 ≤ c l) (hx : ∀ i, 0 ≤ x i) (hy : ∀ i, 0 ≤ y i)
+theorem nk_tele (s : ℕ) (c : ℕ → ℝ) (x y : Fin s → ℝ) (hx : ∀ i, 0 ≤ x i) (hy : ∀ i, 0 ≤ y i)
     (h : ∀ i : Fin s, x i * c (i + 1) ≤ y i * c i) : c s * ∏ i, x i ≤ c 0 * ∏ i, y i := by
   induction s with
   | zero => simp
@@ -115,13 +70,13 @@ theorem nk_tele (s : ℕ) (c : ℕ → ℝ) (x y : Fin s → ℝ) (hc : ∀ l, 0
       _ = _ := by ring
 
 theorem nk_bracket (s : ℕ) (c : ℕ → ℝ) (x nn Ai Ci κ μ : Fin s → ℝ) (l A E1 E2 : ℝ)
-    (hc : ∀ l, 0 ≤ c l) (hx : ∀ i, 0 ≤ x i) (hn0 : ∀ i, 0 ≤ nn i) (hAi : ∀ i, 0 ≤ Ai i) (hCi : ∀ i, 0 ≤ Ci i)
-    (hκ : ∀ i, 0 ≤ κ i) (hμ : ∀ i, 0 ≤ μ i) (hl0 : 0 ≤ l) (hE2 : 0 ≤ E2)
+    (hc : ∀ l, 0 ≤ c l) (hx : ∀ i, 0 ≤ x i) (hn0 : ∀ i, 0 ≤ nn i) (hAi : ∀ i, 0 ≤ Ai i)
+    (hκ : ∀ i, 0 ≤ κ i) (hE2 : 0 ≤ E2)
     (hstep : ∀ i : Fin s, x i * c (i + 1) ≤ (κ i * (E2 * Ai i)) * c i)
     (hl : l ≤ c s) (hn : ∀ i, nn i ≤ μ i * (E2 * Ci i)) (hA : c 0 ≤ E1 * A) :
     l * (∏ i, x i) * (∏ i, nn i) ≤
       (E1 * E2 ^ s * E2 ^ s * ((∏ i, κ i) * ∏ i, μ i)) * (A * (∏ i, Ai i) * ∏ i, Ci i) := by
-  have h1 := nk_tele s c x (fun i => κ i * (E2 * Ai i)) hc hx (fun i => by have := hκ i; have := hAi i; positivity) hstep
+  have h1 := nk_tele s c x (fun i => κ i * (E2 * Ai i)) hx (fun i => by have := hκ i; have := hAi i; positivity) hstep
   have hpx : 0 ≤ ∏ i, x i := Finset.prod_nonneg fun i _ => hx i
   have hpn : 0 ≤ ∏ i, nn i := Finset.prod_nonneg fun i _ => hn0 i
   have hpy : 0 ≤ ∏ i, (κ i * (E2 * Ai i)) :=
@@ -215,7 +170,7 @@ theorem brk_core (s m : ℕ) (La p A lam0 : ℝ) (Ai Ci ρ u nn : Fin s → ℝ)
     (hkCi : ∀ i, ((m : ℝ) + 1) ^ 3 ≤ Ci i) (hC0 : cc 0 = A) (hCnn : ∀ l, 0 ≤ cc l)
     (hρ : ∀ i, 0 ≤ ρ i ∧ ρ i ≤ cc i ∧ ρ i ≤ Ai i * (1 + 4 / p ^ 2) ∧ -(4 * Ai i / p ^ 2) ≤ u i)
     (hrec : ∀ i : Fin s, cc (i + 1) = cc i + Ai i - u i - ρ i)
-    (hl0 : 0 ≤ lam0) (hls : lam0 ≤ cc s) (hn : ∀ i, 0 ≤ nn i ∧ nn i ≤ Ci i * (1 + 4 / p ^ 2))
+    (hls : lam0 ≤ cc s) (hn : ∀ i, 0 ≤ nn i ∧ nn i ≤ Ci i * (1 + 4 / p ^ 2))
     (hk : ∃ i0, ¬ (u i0 + 4 * (Ai i0 + m) / p ^ 2 ≤ La * max (cc i0) (Ai i0) / ((m : ℝ) + 1) ∧
       Ci i0 * (1 - La / ((m : ℝ) + 1)) ≤ nn i0)) :
     ∃ θ : ℝ, 0 ≤ θ ∧ θ ^ (m - 1) ≤ Real.exp (2 - La / 5) ∧
@@ -318,8 +273,8 @@ theorem brk_core (s m : ℕ) (La p A lam0 : ℝ) (Ai Ci ρ u nn : Fin s → ℝ)
       rw [hEq1, hEq2]
       exact nk_exponent s m La _ hr9 hroom (by linarith) hγ0 (by rw [← hτeq]; exact hγ)
     · exact nk_bracket s c (fun i => ρ i + m) (fun i => nn i + m) Ai Ci κ μ (lam0 + m) A (Real.exp η)
-        (Real.exp (2 * η)) hc0 (fun i => (hfacts i).1) (fun i => by have := (hn i).1; linarith) hAi0 hCi0 hκ hμ
-        (by linarith) (by positivity) hst hl hnn hcA
+        (Real.exp (2 * η)) hc0 (fun i => (hfacts i).1) (fun i => by have := (hn i).1; linarith) hAi0 hκ
+        (by positivity) hst hl hnn hcA
   obtain ⟨i0, hi0⟩ := hk
   by_cases hP : u i0 + 4 * (Ai i0 + m) / p ^ 2 ≤ La * max (cc i0) (Ai i0) / ((m : ℝ) + 1)
   · have hQ : ¬ (Ci i0 * (1 - La / ((m : ℝ) + 1)) ≤ nn i0) := fun h => hi0 ⟨hP, h⟩
@@ -336,14 +291,14 @@ theorem brk_core (s m : ℕ) (La p A lam0 : ℝ) (Ai Ci ρ u nn : Fin s → ℝ)
       exact nk_iv _ _ _ _ hr0 hrc hrA hu
     · by_cases hi : i = i0
       · subst hi
-        rw [if_pos rfl]
+        rw [ite_eq_left rfl]
         have hm := hmη _ (hkCi i)
         have hC0' := hCi0 i
         have h1 : nn i + m ≤ μ0 * Ci i := by rw [hμ0]; nlinarith
         calc _ ≤ μ0 * Ci i := h1
           _ ≤ μ0 * (Real.exp (2 * η) * Ci i) := mul_le_mul_of_nonneg_left (by nlinarith) hμ00
-      · rw [if_neg hi]; exact hnn1 i
-    · rw [Finset.prod_const_one, one_mul, Finset.prod_ite_eq' Finset.univ i0 (fun _ => μ0), if_pos (Finset.mem_univ _)]
+      · rw [ite_eq_right hi]; exact hnn1 i
+    · rw [Finset.prod_const_one, one_mul, Finset.prod_ite_eq' Finset.univ i0 (fun _ => μ0), ite_eq_left (Finset.mem_univ _)]
       refine le_trans (show μ0 ≤ Real.exp (-(La / k) + η) by linarith [Real.add_one_le_exp (-(La / k) + η)])
         (Real.exp_le_exp.mpr ?_)
       rw [hτ]
@@ -358,7 +313,7 @@ theorem brk_core (s m : ℕ) (La p A lam0 : ℝ) (Ai Ci ρ u nn : Fin s → ℝ)
     · obtain ⟨hr0, hrc, hrA, hu⟩ := hfacts i
       by_cases hi : i = i0
       · subst hi
-        rw [if_pos rfl]
+        rw [ite_eq_left rfl]
         refine hstep0 i (1 - τ) ?_ (by linarith)
         have hcpos : 0 < c i := by
           have := hCnn i
@@ -393,12 +348,12 @@ theorem brk_core (s m : ℕ) (La p A lam0 : ℝ) (Ai Ci ρ u nn : Fin s → ℝ)
         have := mul_le_mul_of_nonneg_left hmax (by linarith : (0:ℝ) ≤ 2 * τ)
         rw [e2] at hP
         linarith
-      · rw [if_neg hi]
+      · rw [ite_eq_right hi]
         refine hstep0 i 1 ?_ zero_le_one
         rw [one_mul]
         exact nk_iv _ _ _ _ hr0 hrc hrA hu
     · rw [Finset.prod_const_one, mul_one, Finset.prod_ite_eq' Finset.univ i0 (fun _ => 1 - τ),
-        if_pos (Finset.mem_univ _)]
+        ite_eq_left (Finset.mem_univ _)]
       linarith [Real.add_one_le_exp (-τ)]
 
 theorem bracket_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hF : PairFactsAt C0 CYb Cde Ck CD Cb CE1 CE2 Cc)
@@ -428,7 +383,7 @@ theorem bracket_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hF : PairFactsAt C0 C
       obtain ⟨a, b, c, d⟩ := hρ i
       exact ⟨by exact_mod_cast a, by exact_mod_cast b, c, d⟩)
     (fun i => by simp only [pairO]; push_cast; ring)
-    (by exact_mod_cast hl0) (by exact_mod_cast hls)
+    (by exact_mod_cast hls)
     (fun i => by
       obtain ⟨a, b⟩ := hn i
       exact ⟨by exact_mod_cast a, b⟩) hk'

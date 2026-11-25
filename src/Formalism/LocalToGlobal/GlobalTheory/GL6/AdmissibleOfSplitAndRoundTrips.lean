@@ -190,15 +190,6 @@ def SplitAtT (A : AtTTied u) : Prop :=
   ∀ v : (D.mem u).A.vT, ∃ e ∈ intV D.host.E (A.eV v).1, e * e = e ∧
     sigR (sigD D) ((A.eV v).1.adicCompletion D.host.F) e = 1 - e
 
-theorem local_diamonds_of_split (Tf : FormsTied D u) (hs : SplitAtT Tf.atT) : LocalDiamondElementsExist Tf := by
-  intro i hi v a
-  obtain ⟨k, hk, hkT⟩ := unit_lift_int_prime_field (D.mem u).A.T_prime ((D.mem u).A.card_Fv v) a
-  obtain ⟨e, he, hee, hσ⟩ := hs v
-  exact ⟨k, hk, local_diamond_of_split_idempotent (Tf.cls i hi).lev _ _ (D.mem u).A.T_prime k hkT e he hee hσ⟩
-
-theorem diamond_elements_of_split (Tf : FormsTied D u) (hs : SplitAtT Tf.atT) : DiamondElementsExist Tf :=
-  diamond_elements_of_local Tf (local_diamonds_of_split Tf hs)
-
 end Tied
 
 end Formalism.L2.GlobalTheoryTheory.LocalLatticeBases

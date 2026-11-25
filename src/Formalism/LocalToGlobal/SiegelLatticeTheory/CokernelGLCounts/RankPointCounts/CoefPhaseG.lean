@@ -4,48 +4,7 @@ public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankP
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCountLoc
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCountOrb
 import Formalism.SharpRestriction.CuspSpanNormBounds.LocalOrbitGerms
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -88,7 +47,7 @@ theorem corner_sg (σ : Fin (n + 1) → Fin (n + 1)) (hσ : ∀ a, σ (σ a) = a
         · simp [Matrix.mul_apply, Ecorner, hb, hU.2 b (Fin.last n) (Fin.lt_last_iff_ne_last.mpr hb)]
       · simp [Matrix.mul_apply, Ecorner, ha]
     refine ⟨U, hU, ?_, ?_⟩
-    · rw [if_pos hl, Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_smul, hLE, Matrix.smul_mul, hEU]
+    · rw [ite_eq_left hl, Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_smul, hLE, Matrix.smul_mul, hEU]
     · simp [hl]
   · generalize hj : σ (Fin.last n) = j₀ at hl hu ⊢
     have hm : M (Fin.last n) j₀ ≠ 0 := hu hl
@@ -112,12 +71,12 @@ theorem corner_sg (σ : Fin (n + 1) → Fin (n + 1)) (hσ : ∀ a, σ (σ a) = a
       · simp [Matrix.mul_apply, hX, Ecorner, hb]
     refine ⟨U - X, ⟨fun a => ?_, fun a b hab => ?_⟩, ?_, ?_⟩
     · have hn : ¬ (a = j₀ ∧ a = Fin.last n) := fun h => hl (h.1.symm.trans h.2)
-      simp only [Matrix.sub_apply, hX, Matrix.of_apply, hU.1 a, if_neg hn, sub_zero]
+      simp only [Matrix.sub_apply, hX, Matrix.of_apply, hU.1 a, ite_eq_right hn, sub_zero]
     · have hn : ¬ (b = j₀ ∧ a = Fin.last n) := fun h => by
         rw [h.2] at hab
         exact absurd hab (not_lt.mpr (Fin.le_last b))
-      simp only [Matrix.sub_apply, hX, Matrix.of_apply, hU.2 a b hab, if_neg hn, sub_zero]
-    · rw [if_neg hl, zero_smul, sub_zero, Matrix.mul_sub, Matrix.mul_assoc L M X, hMX,
+      simp only [Matrix.sub_apply, hX, Matrix.of_apply, hU.2 a b hab, ite_eq_right hn, sub_zero]
+    · rw [ite_eq_right hl, zero_smul, sub_zero, Matrix.mul_sub, Matrix.mul_assoc L M X, hMX,
         Matrix.mul_smul, hLE]
     · have key : ∀ j : Fin (n + 1), (if h : j.val + 1 < n + 1 then (U - X) j ⟨j.val + 1, h⟩ else 0) =
           (if h : j.val + 1 < n + 1 then U j ⟨j.val + 1, h⟩ else 0) -
@@ -129,7 +88,7 @@ theorem corner_sg (σ : Fin (n + 1) → Fin (n + 1)) (hσ : ∀ a, σ (σ a) = a
           simp only [hX, Matrix.of_apply, Fin.ext_iff, Fin.val_last]
         · rw [dite_eq_right h1, dite_eq_right h1]
           have hn : ¬ (j = j₀ ∧ j.val + 1 = n) := fun h => h1 (by omega)
-          rw [if_neg hn, sub_zero]
+          rw [ite_eq_right hn, sub_zero]
       unfold Formalism.DoubleCosetMeasures.sUp
       simp only [key, Finset.sum_sub_distrib]
       congr 1
@@ -165,7 +124,7 @@ theorem last_row : ∀ (bs : List (K × ℕ)) (N : ℕ), (∀ b ∈ bs, 1 ≤ b.
           simp only [List.map_cons, List.sum_cons] at h
           omega
       subst hbs
-      simp only [pTau, pSz, pSt, pSig, if_pos hlt, List.getLast?_singleton]
+      simp only [pTau, pSz, pSt, pSig, ite_eq_left hlt, List.getLast?_singleton]
       refine ⟨trivial, by omega, by omega⟩
     · have hge : s ≤ N := by omega
       have hpos' : ∀ b ∈ bs, 1 ≤ b.2 := fun b hb => hpos b (List.mem_cons_of_mem _ hb)
@@ -173,7 +132,7 @@ theorem last_row : ∀ (bs : List (K × ℕ)) (N : ℕ), (∀ b ∈ bs, 1 ≤ b.
         have := hpos (t, s) List.mem_cons_self; omega
       obtain ⟨ih1, ih2, ih3⟩ := ih (N - s) hpos' hsum
       have hne : bs ≠ [] := by rintro rfl; simp at hsum
-      simp only [pTau, pSz, pSt, pSig, if_neg hlt]
+      simp only [pTau, pSz, pSt, pSig, ite_eq_right hlt]
       refine ⟨?_, by omega, by rw [ih3]⟩
       rw [List.getLast?_cons, ih1]
       simp
@@ -284,22 +243,22 @@ theorem local_phase_typed_places (hA : ∀ p, Agree δ M p) : PhaseLocG M δ u u
   obtain ⟨r1', hr1', e1, hs1⟩ := corner_sg (sgF w) (sgF_sgF w) hl1 hr1
     (M := (sg.q : (D.s.atP p).Fp)⁻¹ • (Matrix.diagonal (cf Zd p) * (ptMat w).map φ1 * Matrix.diagonal (cf Zd p)))
     (fun a b hb => by
-      simp only [Matrix.smul_apply, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', if_neg hb,
+      simp only [Matrix.smul_apply, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', ite_eq_right hb,
         map_zero, mul_zero, zero_mul, smul_eq_mul])
     (-(((D.mem u).A.T : ℕ) : (D.s.atP p).Fp) / (sg.q : (D.s.atP p).Fp))
     (fun _ => by
-      simp only [Matrix.smul_apply, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', if_true,
+      simp only [Matrix.smul_apply, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', ite_true,
         smul_eq_mul]
       exact mul_ne_zero (inv_ne_zero hq) (mul_ne_zero (mul_ne_zero (hcf0 _) ((map_ne_zero _).2 (pTau_ne' _ _))) (hcf0 _)))
   obtain ⟨r2', hr2', e2', hs2⟩ := corner_sg (sgF w) (sgF_sgF w) hl2 hr2
     (M := (-(sg.q : (D.s.atP p).Fp)⁻¹) • (Matrix.diagonal (cf Zd p) *
       (Sg (D.s.atP p).Fp D.R.rS * (ptMat w).map φ2 * Sg (D.s.atP p).Fp D.R.rS) * Matrix.diagonal (cf Zd p)))
     (fun a b hb => by
-      simp only [Sg, Matrix.smul_apply, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', if_neg hb,
+      simp only [Sg, Matrix.smul_apply, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', ite_eq_right hb,
         map_zero, mul_zero, zero_mul, smul_eq_mul])
     ((((D.mem u').A.T : ℕ) : (D.s.atP p).Fp) / (sg.q : (D.s.atP p).Fp))
     (fun _ => by
-      simp only [Sg, Matrix.smul_apply, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', if_true,
+      simp only [Sg, Matrix.smul_apply, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', ite_true,
         smul_eq_mul]
       exact mul_ne_zero (neg_ne_zero.2 (inv_ne_zero hq)) (by have hpt := pTau_ne' w (Fin.last D.R.rS); simp only [Fin.val_last] at hpt; simp [hcf0, hpt]))
   have hδZ : Zd.δ = δ := rfl
@@ -395,8 +354,8 @@ theorem local_phase_typed_places (hA : ∀ p, Agree δ M p) : PhaseLocG M δ u u
     simp only [Finset.mem_insert, Finset.mem_singleton] at hmem
     unfold gpart
     by_cases h0 : Loc.resChar p = D.host.g 0
-    · rw [if_pos h0, h0]
-    · rw [if_neg h0, if_pos (hmem.resolve_left h0), hmem.resolve_left h0]
+    · rw [ite_eq_left h0, h0]
+    · rw [ite_eq_right h0, ite_eq_left (hmem.resolve_left h0), hmem.resolve_left h0]
   have hres : ((Loc.resChar p : ℕ) : (D.s.atP p).Fp) ≠ 0 := by rw [← sg.q_eq]; exact hq
   have hgF : ((gS D : ℕ) : (D.s.atP p).Fp) ≠ 0 := by
     rw [← map_natCast (D.s.atP p).ιF]
@@ -428,30 +387,30 @@ theorem local_phase_typed_places (hA : ∀ p, Agree δ M p) : PhaseLocG M δ u u
       have := congrArg Fin.val h; rw [hσv, Fin.val_last] at this; omega
     have hc : sgF w (Fin.last D.R.rS) ≠ Fin.last D.R.rS ∧ (sgF w (Fin.last D.R.rS)).val + 1 = D.R.rS :=
       ⟨hne, by rw [hσv]; omega⟩
-    rw [hdf, if_pos h2, if_pos hc, if_pos hc, hpsiR, ← AddChar.map_add_eq_mul]
+    rw [hdf, ite_eq_left h2, ite_eq_left hc, ite_eq_left hc, hpsiR, ← AddChar.map_add_eq_mul]
     congr 1
     set b := blkMod δ (D.mem u).A.T (D.mem u').A.T p D.R.rS 2 (pTau w.1 D.R.rS) with hb
     have hmb : modMat δ (D.mem u).A.T (D.mem u').A.T p w (Fin.last D.R.rS) (sgF w (Fin.last D.R.rS)) = b := by
-      rw [modMat_apply', if_pos rfl, Fin.val_last, h2, show 1 + pSt w.1 D.R.rS = D.R.rS by omega]
+      rw [modMat_apply', ite_eq_left rfl, Fin.val_last, h2, show 1 + pSt w.1 D.R.rS = D.R.rS by omega]
     have hX1 : ((sg.q : (D.s.atP p).Fp)⁻¹ • (Matrix.diagonal (cf Zd p) * (ptMat w).map φ1 * Matrix.diagonal (cf Zd p)))
         (Fin.last D.R.rS) (sgF w (Fin.last D.R.rS)) = p1 sg.e b := by
       have h := congrFun (congrFun hm1' (Fin.last D.R.rS)) (sgF w (Fin.last D.R.rS))
-      rw [Matrix.map_apply, hmb, if_neg hne, zero_smul, sub_zero] at h
+      rw [Matrix.map_apply, hmb, ite_eq_right hne, zero_smul, sub_zero] at h
       exact h.symm
     have hX2 : ((-(sg.q : (D.s.atP p).Fp)⁻¹) • (Matrix.diagonal (cf Zd p) *
         (Sg (D.s.atP p).Fp D.R.rS * (ptMat w).map φ2 * Sg (D.s.atP p).Fp D.R.rS) * Matrix.diagonal (cf Zd p)))
         (Fin.last D.R.rS) (sgF w (Fin.last D.R.rS)) = p2 sg.e b := by
       have h := congrFun (congrFun hm2' (Fin.last D.R.rS)) (sgF w (Fin.last D.R.rS))
-      rw [Matrix.map_apply, hmb, if_neg hne, zero_smul, sub_zero] at h
+      rw [Matrix.map_apply, hmb, ite_eq_right hne, zero_smul, sub_zero] at h
       exact h.symm
     have hb1 : p1 sg.e b ≠ 0 := by
       rw [← hX1]
-      simp only [Matrix.smul_apply, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', if_true,
+      simp only [Matrix.smul_apply, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', ite_true,
         smul_eq_mul]
       exact mul_ne_zero (inv_ne_zero hq) (by have hpt := pTau_ne' w (Fin.last D.R.rS); simp only [Fin.val_last] at hpt; simp [hcf0, hpt])
     have hb2 : p2 sg.e b ≠ 0 := by
       rw [← hX2]
-      simp only [Sg, Matrix.smul_apply, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', if_true,
+      simp only [Sg, Matrix.smul_apply, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', ite_true,
         smul_eq_mul]
       exact mul_ne_zero (neg_ne_zero.2 (inv_ne_zero hq)) (by have hpt := pTau_ne' w (Fin.last D.R.rS); simp only [Fin.val_last] at hpt; simp [hcf0, hpt])
     have hbu : IsUnit b := by
@@ -485,7 +444,7 @@ theorem local_phase_typed_places (hA : ∀ p, Agree δ M p) : PhaseLocG M δ u u
       apply h2
       rw [hσv] at h2'
       omega
-    rw [hdf, if_neg h2, if_neg hc, if_neg hc, one_mul]
+    rw [hdf, ite_eq_right h2, ite_eq_right hc, ite_eq_right hc, one_mul]
     congr 1
     rw [hsdef, map_add (f := _), map_add (f := _), hyP]
     field_simp

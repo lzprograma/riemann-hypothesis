@@ -31,8 +31,8 @@ theorem lift_cont : Continuous (liftVec k 1 r') := by
   refine continuous_pi fun p => ?_
   unfold liftVec
   by_cases hp : 1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1
-  · simp only [dif_pos hp]; exact continuous_apply _
-  · simp only [dif_neg hp]; exact continuous_const
+  · simp only [dite_eq_left hp]; exact continuous_apply _
+  · simp only [dite_eq_right hp]; exact continuous_const
 
 theorem heisenberg_map_continuous : Continuous (heis0 k r') := by
   have h1 : Continuous fun x : HPar k r' => liftVec k 1 r' x.1 := (lift_cont k r').comp continuous_fst
@@ -44,9 +44,9 @@ theorem lev_cont : Continuous (fun g : Mat k r' => ιLev k 1 r' g) := by
   unfold ιLev
   by_cases hp : 1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1
   · by_cases hq : 1 ≤ q.val ∧ q.val < 2 * r' + k + 1 + 1
-    · simp only [dif_pos hp, dif_pos hq]; exact continuous_id.matrix_elem _ _
-    · simp only [dif_pos hp, dif_neg hq]; exact continuous_const
-  · simp only [dif_neg hp]; exact continuous_const
+    · simp only [dite_eq_left hp, dite_eq_left hq]; exact continuous_id.matrix_elem _ _
+    · simp only [dite_eq_left hp, dite_eq_right hq]; exact continuous_const
+  · simp only [dite_eq_right hp]; exact continuous_const
 
 theorem Dl_cont (r : ℕ) (l : Fin (r + 1)) : Continuous (fun g : Mt k r => Dl k r l (Matrix.of g)) := by
   unfold Dl herm

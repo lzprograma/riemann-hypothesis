@@ -4,49 +4,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGLet
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstExpansionIdentity
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondExpansionIdentity
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -225,17 +182,17 @@ theorem letter_plus_component_one (z z' : Fin (2 * r + k + 1) → ℂ) (j : ℕ)
     Formalism.FourierDecayAlt.D.vLet k r z z' j hj (true, Y) 1 f g =
       (Dmin k r z z' g ⟨j, by omega⟩)⁻¹ • C3.AAop k r (j - 1) (by omega) ((Y : ℂ) + ((2 * r + k : ℕ) : ℂ) / 2) f g := by
   show (if (1 : Fin 2) = 1 ∧ j = 0 then 0 else _) = _
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
   show (if true = true then _ else _) = _
-  rw [if_pos rfl, AAop_congr' (m₂ := j - 1) (by simp) _ (by omega)]
+  rw [ite_eq_left rfl, AAop_congr' (m₂ := j - 1) (by simp) _ (by omega)]
 
 theorem letter_plus_component_zero (z z' : Fin (2 * r + k + 1) → ℂ) (j : ℕ) (hj : j ≤ r) (Y : ℝ) (f : Q.Mx k r → E) (g : Q.Mx k r) :
     Formalism.FourierDecayAlt.D.vLet k r z z' j hj (true, Y) 0 f g =
       (Dmin k r z z' g ⟨j, by omega⟩)⁻¹ • C3.AAop k r j hj ((Y : ℂ) + ((2 * r + k : ℕ) : ℂ) / 2) f g := by
   show (if (0 : Fin 2) = 1 ∧ j = 0 then 0 else _) = _
-  rw [if_neg (by simp)]
+  rw [ite_eq_right (by simp)]
   show (if true = true then _ else _) = _
-  rw [if_pos rfl, AAop_congr' (m₂ := j) (by simp) _ hj]
+  rw [ite_eq_left rfl, AAop_congr' (m₂ := j) (by simp) _ hj]
 
 theorem letter_minus_component_one (z z' : Fin (2 * r + k + 1) → ℂ) (j : ℕ) (hj : j ≤ r) (hj1 : 1 ≤ j) (Y : ℝ) (f : Q.Mx k r → E)
     (g : Q.Mx k r) :
@@ -243,17 +200,17 @@ theorem letter_minus_component_one (z z' : Fin (2 * r + k + 1) → ℂ) (j : ℕ
       (conj (Dmin k r z z' g ⟨j, by omega⟩))⁻¹ •
         C3.AAvop k r (j - 1) (by omega) ((Y : ℂ) - ((2 * r + k : ℕ) : ℂ) / 2) f g := by
   show (if (1 : Fin 2) = 1 ∧ j = 0 then 0 else _) = _
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
   show (if false = true then _ else _) = _
-  rw [if_neg (by simp), AAvop_congr' (m₂ := j - 1) (by simp) _ (by omega)]
+  rw [ite_eq_right (by simp), AAvop_congr' (m₂ := j - 1) (by simp) _ (by omega)]
 
 theorem letter_minus_component_zero (z z' : Fin (2 * r + k + 1) → ℂ) (j : ℕ) (hj : j ≤ r) (Y : ℝ) (f : Q.Mx k r → E) (g : Q.Mx k r) :
     Formalism.FourierDecayAlt.D.vLet k r z z' j hj (false, Y) 0 f g =
       (conj (Dmin k r z z' g ⟨j, by omega⟩))⁻¹ • C3.AAvop k r j hj ((Y : ℂ) - ((2 * r + k : ℕ) : ℂ) / 2) f g := by
   show (if (0 : Fin 2) = 1 ∧ j = 0 then 0 else _) = _
-  rw [if_neg (by simp)]
+  rw [ite_eq_right (by simp)]
   show (if false = true then _ else _) = _
-  rw [if_neg (by simp), AAvop_congr' (m₂ := j) (by simp) _ hj]
+  rw [ite_eq_right (by simp), AAvop_congr' (m₂ := j) (by simp) _ hj]
 
 theorem dmin_nf (z z' : Fin (2 * r + k + 1) → ℂ) (x₁ : Q.Mx k r) (i0 s : ℕ) (hh : Matrix (Fin i0) (Fin i0) ℂ) (τ : ℂ)
     (hj : i0 + s ≤ r)
@@ -266,7 +223,7 @@ theorem dmin_nf (z z' : Fin (2 * r + k + 1) → ℂ) (x₁ : Q.Mx k r) (i0 s : �
   congr 1
   ext a b
   simp only [Matrix.of_apply]
-  rw [hnf _ _ (by simp; omega), if_pos (by simp [C3.xR, eI]; omega)]
+  rw [hnf _ _ (by simp; omega), ite_eq_left (by simp [C3.xR, eI]; omega)]
   simp [C3.xR, eI]
 
 theorem letter_plus_component_one_eq_smul_component_zero (hD : IsOpen D) (z z' : Fin (2 * r + k + 1) → ℂ) (i0 s : ℕ) (hs : 1 ≤ s) (hj : i0 + s ≤ r)

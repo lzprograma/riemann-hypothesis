@@ -8,51 +8,8 @@ import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.
 import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.MarkedBlowupSequenceBoundary
 import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.CoverTriple, Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.BoundarySeparation
@@ -277,14 +234,14 @@ theorem locallyOfFiniteType_projectionToBase_comp (hstar : MaxContactCoverProper
     AlgebraicGeometry.LocallyOfFiniteType (s.proj i ≫ S.structMap) := by
   have h := (hstar.valid_level S hV s.toMarkedSequenceOfBlowups i hi).locallyOfFiniteType
   simp at h
-  with_unfolding_all exact h
+  exact h
 
 theorem smooth_projectionToBase_comp (hstar : MaxContactCoverProperties.{u}) (S : MarkedIdealWithBoundary.{u}) (hV : S.IsAdmissible)
     (s : MarkedBlowupSequenceData S.structMap S.ideal S.mult S.boundary) (i : ℕ) (hi : i ≤ s.length) :
     AlgebraicGeometry.Smooth (s.proj i ≫ S.structMap) := by
   have h := (hstar.valid_level S hV s.toMarkedSequenceOfBlowups i hi).smooth
   simp at h
-  with_unfolding_all exact h
+  exact h
 
 theorem iteratedStrictTransform_eq_toBlowupSequenceData {k : Type u} [Field k] {X : Scheme.{u}}
     {p : X ⟶ Spec (CommRingCat.of k)} {I : X.IdealSheafData} {m : ℕ} {E : List X.IdealSheafData}
@@ -378,7 +335,7 @@ theorem isAdmissible_derivedTriple (hstar : MaxContactCoverProperties.{u}) (S : 
     have h := hlev.quasiCompact
     rw [MaxContactCoverData.derivedTriple_structureMorphism]
     simp at h
-    with_unfolding_all exact h
+    exact h
   case smooth =>
     rw [MaxContactCoverData.derivedTriple_structureMorphism]
     exact smooth_projectionToBase_comp hstar S hV s s.length (le_refl s.length)
@@ -601,48 +558,6 @@ private theorem getElem_eq_of_list_eq {α : Type*} {L L' : List α} (h : L = L')
   subst h
   rfl
 
-private theorem getElem_map_of_lt {α β : Type*} (f : α → β) :
-    ∀ (L : List α) (n : ℕ) (hn : n < L.length) (hn' : n < (L.map f).length),
-      (L.map f)[n]'hn' = f (L[n]'hn) := by
-  intro L
-  induction L with
-  | nil =>
-      intro n hn _
-      exact absurd hn (Nat.not_lt_zero n)
-  | cons a L ih =>
-      intro n hn hn'
-      cases n with
-      | zero => rfl
-      | succ r =>
-          have h1 : r < L.length := by
-            simp only [List.length_cons] at hn
-            omega
-          have h2 : r < (L.map f).length := by
-            simp only [List.length_map, List.length_cons] at hn' ⊢
-            omega
-          exact ih r h1 h2
-
-private theorem getElem_map_append_of_lt {α β : Type*} (f : α → β) :
-    ∀ (L : List α) (R : List β) (n : ℕ) (hn : n < L.length)
-      (hn' : n < (L.map f ++ R).length), (L.map f ++ R)[n]'hn' = f (L[n]'hn) := by
-  intro L
-  induction L with
-  | nil =>
-      intro R n hn _
-      exact absurd hn (Nat.not_lt_zero n)
-  | cons a L ih =>
-      intro R n hn hn'
-      cases n with
-      | zero => rfl
-      | succ r =>
-          have h1 : r < L.length := by
-            simp only [List.length_cons] at hn
-            omega
-          have h2 : r < (L.map f ++ R).length := by
-            simp only [List.length_append, List.length_map, List.length_cons] at hn' ⊢
-            omega
-          exact ih R r h1 h2
-
 private theorem boundary_getElem_eq_iteratedStrictTransform {k : Type u} [Field k] {X : Scheme.{u}}
     {p : X ⟶ Spec (CommRingCat.of k)} {I : X.IdealSheafData} {m : ℕ} {E : List X.IdealSheafData}
     (u : MarkedBlowupSequenceData p I m E) (i : ℕ) (hi : i ≤ u.length) (n : ℕ) (hn : n < E.length)
@@ -654,9 +569,8 @@ private theorem boundary_getElem_eq_iteratedStrictTransform {k : Type u} [Field 
   have h2 : n < (E.map (u.iteratedStrictTransform i) ++ u.boundaryFrom ([] : List X.IdealSheafData) i).length := by
     rw [← h1]
     exact hn'
-  rw [getElem_eq_of_list_eq h1 n hn' h2]
-  exact getElem_map_append_of_lt (u.iteratedStrictTransform i) E
-    (u.boundaryFrom ([] : List X.IdealSheafData) i) n hn h2
+  rw [getElem_eq_of_list_eq h1 n hn' h2, List.getElem_append_left (by simpa using hn),
+    List.getElem_map]
 
 private theorem orderAtLeastLocus_append_succ_subset_preimage (hstar : MaxContactCoverProperties.{u}) {k : Type u} [Field k]
     {X : Scheme.{u}}
@@ -748,10 +662,7 @@ private theorem separateBoundaryInvariant_append (hstar : MaxContactCoverPropert
         (fun D => D.comap (eqToHom hobj0))).length := by simpa using hiS
     have hbeli : ((s.append t hinv).boundary s.length)[i]'hiU
         = ((s.boundary s.length)[i]'hiS).comap (eqToHom hobj0) :=
-      (getElem_eq_of_list_eq hbd0 i hiU himap).trans
-        (getElem_map_of_lt
-          (fun D : (s.obj s.length).IdealSheafData => D.comap (eqToHom hobj0))
-          (s.boundary s.length) i hiS himap)
+      (getElem_eq_of_list_eq hbd0 i hiU himap).trans (List.getElem_map _)
     exact orderAtLeastLocus_inter_support_eq_empty_of_eq hid0 hbeli
       (orderAtLeastLocus_comap_eqToHom_inter_support_eq_empty hinv hobj0 (s.ideal s.length)
         ((s.boundary s.length)[i]'hiS) S.mult hsep)
@@ -790,10 +701,7 @@ private theorem separateBoundaryInvariant_append (hstar : MaxContactCoverPropert
           (fun D => D.comap (eqToHom hobjT))).length := by simpa using hjtt
       have hbelT : ((s.append t hinv).boundary (s.length + t.length))[j]'hjU
           = ((t.boundary t.length)[j]'hjtt).comap (eqToHom hobjT) :=
-        (getElem_eq_of_list_eq hbdT j hjU hjmapT).trans
-          (getElem_map_of_lt
-            (fun D : (t.obj t.length).IdealSheafData => D.comap (eqToHom hobjT))
-            (t.boundary t.length) j hjtt hjmapT)
+        (getElem_eq_of_list_eq hbdT j hjU hjmapT).trans (List.getElem_map _)
       have hbel : (t.boundary t.length)[j]'hjtt
           = t.iteratedStrictTransform t.length ((s.boundary s.length)[j]'hbj) :=
         boundary_getElem_eq_iteratedStrictTransform t t.length (le_refl t.length) j hbj hjtt
@@ -868,7 +776,7 @@ theorem separateBoundaryInvariant_appendLowerDimReduction (hstar : MaxContactCov
   have hsncAll : InStrictNormalCrossingPosition (s.proj s.length ≫ S.structMap) (s.boundary s.length) := by
     have h := (hstar.valid_level S hV s.toMarkedSequenceOfBlowups s.length (le_refl s.length)).snc
     simp at h
-    with_unfolding_all exact h
+    exact h
   have hsnc0 : InStrictNormalCrossingPosition (s.proj s.length ≫ S.structMap)
       (([] : List ((s.obj s.length)).IdealSheafData) ++ (s.boundary s.length).drop 0) := by
     simpa using hsncAll
@@ -877,7 +785,7 @@ theorem separateBoundaryInvariant_appendLowerDimReduction (hstar : MaxContactCov
   have hdimC : (MaxContactCoverData.derivedTriple S s hft [] 0).krullDimSucc ≤ T.krullDimSucc := by
     have h1 := hstar.schemeDim_level_le S hV s.toMarkedSequenceOfBlowups s.length (le_refl s.length)
     have h2 : (MaxContactCoverData.derivedTriple S s hft [] 0).krullDimSucc ≤ S.krullDimSucc := by
-      with_unfolding_all exact h1
+      exact h1
     exact le_trans h2 hdimS
   have hPC : P (MaxContactCoverData.derivedTriple S s hft [] 0).krullDimSucc := hmono _ _ hdimC hPdimT
   have hordBound := LowerDimReductionPullback.isOrderBoundedByMult_derivedTriple hstar S hV hm hO s hft [] 0 hVc
@@ -908,7 +816,7 @@ theorem separateBoundaryInvariant_appendLowerDimReduction (hstar : MaxContactCov
     exact isLocallyNoetherian_tunedMarkedBlowupSeq_schemeAt hstar S hV s hft [] 0 hVc
       (A j (MaxContactCoverData.derivedTriple S s hft [] 0)) i hi
   · rw [hC2, hget]
-    with_unfolding_all rfl
+    rfl
   · intro r hr
     by_cases hb : bv = true ∧ r = 0
     · obtain ⟨hb1, hb2⟩ := hb
@@ -1011,21 +919,9 @@ theorem separateBoundaryInvariant_separateBoundarySeq (hstar : MaxContactCoverPr
 private theorem forall_mem_take_of_forall_lt {α : Type*} (Q : α → Prop) :
     ∀ (L : List α) (n : ℕ),
       (∀ i : ℕ, i < n → ∀ hi : i < L.length, Q (L.get ⟨i, hi⟩)) → ∀ a ∈ L.take n, Q a := by
-  intro L
-  induction L with
-  | nil =>
-      intro n _ a ha
-      simp at ha
-  | cons b L ih =>
-      intro n hQ a ha
-      cases n with
-      | zero => simp at ha
-      | succ m =>
-          have ha' : a ∈ b :: L.take m := ha
-          rcases List.mem_cons.mp ha' with rfl | ha''
-          · exact hQ 0 (Nat.succ_pos m) (by simp)
-          · exact ih m
-              (fun i him hi => hQ (i + 1) (Nat.succ_lt_succ him) (Nat.succ_lt_succ hi)) a ha''
+  intro L n hQ a ha
+  obtain ⟨i, hi, rfl⟩ := List.mem_take_iff_getElem.1 ha
+  simpa using hQ i (Nat.lt_min.1 hi).1 (Nat.lt_min.1 hi).2
 
 theorem exists_cover_eq_separateAllBoundary_append (hstar : MaxContactCoverProperties.{u}) (hinv : ComapIsoInvariance.{u}) (P : ℕ → Prop)
     (hmono : ∀ a b : ℕ, a ≤ b → P b → P a) (A : ℕ → PrincipalizationAssignment.{u})
@@ -1102,7 +998,7 @@ theorem exists_cover_eq_separateAllBoundary_append (hstar : MaxContactCoverPrope
     have h2 := hstar.coverTriple_dim_le T h.valid
     have h3 : (reduceAlongHypersurfaceTriple T h.valid hinv A hft).krullDimSucc ≤
         (MaxContactCoverData.coverTriple T h.valid).krullDimSucc := by
-      with_unfolding_all exact h1
+      exact h1
     exact le_trans h3 h2
   have hP : P (reduceAlongHypersurfaceTriple T h.valid hinv A hft).krullDimSucc := hmono _ _ hdim h.dim_prop
   have hj : 0 < ([MaxContactReduction.strictTransformAtLength (separateAllBoundary T h.valid hinv A)

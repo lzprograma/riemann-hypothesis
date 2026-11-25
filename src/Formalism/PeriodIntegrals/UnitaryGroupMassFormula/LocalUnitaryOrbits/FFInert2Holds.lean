@@ -3,56 +3,8 @@ module
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.LocDensFFHS
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensFF
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.LocDensFFIn
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -134,12 +86,10 @@ variable {K : Type} [Field K] {σ : K →+* K} {V : Type} [AddCommGroup V] [Modu
 
 theorem exists_aniso2 (h2 : ∃ z : K, z + σ z ≠ 0) (hs : IsHS σ h) (x : V) (hx : x ≠ 0) :
     ∃ e, h e e ≠ 0 := by
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   obtain ⟨z, hz⟩ := h2
   obtain ⟨y, hy⟩ : ∃ y, h x y ≠ 0 := by
-    by_contra hy
-    push_neg at hy
+    by_contra! hy
     exact hx (hs.nondeg x hy)
   have hσσ : σ (σ (h x y)) = h x y := by
     rw [← hs.herm x y, ← hs.herm y x]
@@ -214,13 +164,13 @@ theorem card_norm2 (q : ℕ) (hq0 : 0 < q) (hK : Fintype.card K = q ^ 2) (hσ : 
     by_cases hc0 : c = 0
     · have h1 : Nat.card {x : V // h x x = c} = 1 :=
         Nat.card_eq_one_iff_exists.mpr ⟨⟨0, by rw [h00, hc0]⟩, fun y => Subtype.ext (hV y.1)⟩
-      rw [h1, if_pos hc0]
+      rw [h1, ite_eq_left hc0]
       simp only [Nat.cast_zero, mul_zero, zero_sub, zpow_neg_one, pow_zero, one_mul, Nat.cast_one]
       field_simp
       try ring
     · haveI : IsEmpty {x : V // h x x = c} :=
         ⟨fun y => hc0 (by rw [← y.2, hV y.1, h00])⟩
-      rw [Nat.card_of_isEmpty, if_neg hc0]
+      rw [Nat.card_of_isEmpty, ite_eq_right hc0]
       simp only [Nat.cast_zero, mul_zero, zero_sub, zpow_neg_one, pow_zero, one_mul]
       ring
   | succ m ih =>
@@ -275,9 +225,9 @@ theorem card_norm2 (q : ℕ) (hq0 : 0 < q) (hK : Fintype.card K = q ^ 2) (hσ : 
     simp_rw [hfib]
     rw [hsum, hN0, hKr, e2, e3, zpow_add₀ hq, zpow_add₀ hq, zpow_two, zpow_one]
     by_cases hc0 : c = 0
-    · rw [if_pos hc0, if_pos hc0]
+    · rw [ite_eq_left hc0, ite_eq_left hc0]
       ring
-    · rw [if_neg hc0, if_neg hc0]
+    · rw [ite_eq_right hc0, ite_eq_right hc0]
       ring
 
 theorem card_diag2 (q : ℕ) (hq0 : 0 < q) (hK : Fintype.card K = q ^ 2) (hσ : ∀ x, σ (σ x) = x)
@@ -315,13 +265,13 @@ theorem card_diag2 (q : ℕ) (hq0 : 0 < q) (hK : Fintype.card K = q ^ 2) (hσ : 
             | zero => simpa using p.1.2
             | succ j =>
               simp only [Fin.cons_zero, Fin.cons_succ]
-              rw [if_neg (Fin.succ_ne_zero j).symm]
+              rw [ite_eq_right (Fin.succ_ne_zero j).symm]
               exact (mem_perp hs.toIsSq _ _).mp (p.2.1 j).2
           | succ i =>
             cases j using Fin.cases with
             | zero =>
               simp only [Fin.cons_zero, Fin.cons_succ]
-              rw [if_neg (Fin.succ_ne_zero i), hs.herm, (mem_perp hs.toIsSq _ _).mp (p.2.1 i).2,
+              rw [ite_eq_right (Fin.succ_ne_zero i), hs.herm, (mem_perp hs.toIsSq _ _).mp (p.2.1 i).2,
                 map_zero]
             | succ j =>
               simp only [Fin.cons_succ]
@@ -348,7 +298,7 @@ theorem card_diag2 (q : ℕ) (hq0 : 0 < q) (hK : Fintype.card K = q ^ 2) (hσ : 
         ((if d 0 = 0 then (q : ℝ) else 0) - 1) =
         (q : ℝ) ^ (2 * (m - ((0 : Fin (a + 1)) : ℕ)) - 1) -
           (-1) ^ (m - ((0 : Fin (a + 1)) : ℕ)) * (q : ℝ) ^ (m - ((0 : Fin (a + 1)) : ℕ) - 1) := by
-      rw [if_neg (hd0 0), Fin.val_zero, Nat.sub_zero]
+      rw [ite_eq_right (hd0 0), Fin.val_zero, Nat.sub_zero]
       have e1 : (2 * (m : ℤ) - 1) = ((2 * m - 1 : ℕ) : ℤ) := by omega
       have e2 : ((m : ℤ) - 1) = ((m - 1 : ℕ) : ℤ) := by omega
       rw [e1, e2, zpow_natCast, zpow_natCast]
@@ -372,8 +322,7 @@ def FFInert2 : Prop :=
 
 theorem exists_tr_ne {k K : Type} [Field k] [Field K] [Algebra k K] (σ : K ≃ₐ[k] K)
     (hne : σ ≠ AlgEquiv.refl) : ∃ z : K, z + (σ : K →+* K) z ≠ 0 := by
-  by_contra hall
-  push_neg at hall
+  by_contra! hall
   apply hne
   ext z
   have h1 : (1 : K) + 1 = 0 := by
@@ -424,9 +373,9 @@ theorem fFInert2_holds : FFInert2 := by
     intro i j
     by_cases hij : i = j
     · subst hij
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       rfl
-    · rw [if_neg hij]
+    · rw [ite_eq_right hij]
       exact hf1 i j hij
   let E : (Fin a → Fin M → K) ≃ (Fin a → Fin M → K) :=
     { toFun := fun X => (Matrix.of f * Matrix.of X : Matrix (Fin a) (Fin M) K)

@@ -106,9 +106,9 @@ theorem relab_good : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H :
     refine ⟨fun h => ?_, fun h => ?_⟩
     · rw [hcard]
       unfold Datum.mult
-      rw [if_pos ((hrel τ₀).1 h)]
+      rw [ite_eq_left ((hrel τ₀).1 h)]
     · rw [hcard]
       unfold Datum.mult
-      rw [if_neg (fun h' => h ((hrel τ₀).2 h'))]
+      rw [ite_eq_right (fun h' => h ((hrel τ₀).2 h'))]
 
 end GlobalTheory.Relab

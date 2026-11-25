@@ -10,46 +10,7 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisi
 public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
 import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
 public import Formalism.SharpRestriction.LevelLetterCocycles.SemisimpleLetterIffForallMem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PowerSeries.Inverse
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 public import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfFrame
 
 @[expose] public section
@@ -354,7 +315,7 @@ theorem contentBoundLevel_of [NeZero n] (h5 : Formalism.MainNotions.DeltaInvaria
     have := Formalism.MainNotions.RamifiedCoefficientChains.S9.parity_succ hn d (c - 1)
     rw [sub_add_cancel] at this
     omega
-  have hMc : boxM d b S η c = b c + S := if_pos hcD
+  have hMc : boxM d b S η c = b c + S := ite_eq_left hcD
   have hM₁ : ∀ z ∈ W.Nl T₁ (c - 1), W.Q ^ (b c + S) • W.φD T₁ z ∈ W.N T₁ := by
     rw [← hMc]; exact h5₁.1 c
   have hM₂ : ∀ z ∈ W.Nl T₂ (c - 1), W.Q ^ (b c + S) • W.φD T₂ z ∈ W.N T₂ := by
@@ -556,12 +517,12 @@ theorem contentBoundLevel_of [NeZero n] (h5 : Formalism.MainNotions.DeltaInvaria
       (LB_mono (lowerBound_delta_zero C) (min_le_right mdd 0))) v hv0 Bn hkey
     refine ⟨fun i hi hi0 => ?_, ?_, ?_⟩
     · have := hdiff i hi
-      simp only [Pi.sub_apply, del0, hi0, if_false, sub_zero] at this
+      simp only [Pi.sub_apply, del0, hi0, ite_false, sub_zero] at this
       exact this
     · have hηb := rk_eta_lt W hset c
       have hB1 : 1 ≤ Bn := by omega
       have := hdiff 0 (by omega)
-      simp only [Pi.sub_apply, del0, if_true, sub_eq_zero] at this
+      simp only [Pi.sub_apply, del0, ite_true, sub_eq_zero] at this
       rw [this, hC]
     · have hζ' : IsPrimitiveRoot ζ (PD.p ^ (0 + 1)) := by rwa [zero_add, pow_one]
       have hLv := (hLev T₂ hT₂ c 0 ζ hζ').1

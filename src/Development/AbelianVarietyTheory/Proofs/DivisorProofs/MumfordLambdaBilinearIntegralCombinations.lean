@@ -3,42 +3,7 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUnifOfIsMumfordOf
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinProdIsGen
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBPull
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.XValuePf
@@ -49,7 +14,6 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.Mum
 
 noncomputable section
@@ -149,9 +113,6 @@ def cPm (T : Over (Spec (CommRingCat.of R))) : D.X →+ Additive (T ⟶ D.P.A) w
   map_zero' := by rw [cPoint_zero]; rfl
   map_add' a b := by rw [DVR.cPoint_add]; rfl
 
-theorem cPoint_zsmul (T : Over (Spec (CommRingCat.of R))) (n : ℤ) (a : D.X) : DVR.cP D T (n • a) = DVR.cP D T a ^ n :=
-  congrArg Additive.toMul (map_zsmul (cPm T) n a)
-
 theorem cPoint_sum (T : Over (Spec (CommRingCat.of R))) {κ : Type} (s : Finset κ) (f : κ → D.X) :
     DVR.cP D T (∑ k ∈ s, f k) = ∏ k ∈ s, DVR.cP D T (f k) :=
   congrArg Additive.toMul (map_sum (cPm T) f s)
@@ -183,7 +144,7 @@ theorem exists_powZ (hB : D.TauBimult) {T : Over (Spec (CommRingCat.of R))} (x u
       (LB.mulGen D.P.L _ _ _ _ (LB.invGen D.P.L _ _ c) (LB.invGen D.P.L _ _ p))
       (DVR.mulGen_isGen _ _ _ _ _ _ _ (DVR.invGen_isGen _ _ _ _ hc) (DVR.invGen_isGen _ _ _ _ hp))
     refine ⟨t, ht, fun ρ y b hx hu z J hJ => ?_⟩
-    have h₁ : ρ ≫ x ^ (-(k : ℤ)) = DVR.cP D (TK R) ((-(k : ℤ)) • y) := by rw [comp_zpow, hx, cPoint_zsmul]
+    have h₁ : ρ ≫ x ^ (-(k : ℤ)) = DVR.cP D (TK R) ((-(k : ℤ)) • y) := by rw [comp_zpow, hx, GlobalTheory.IntEnd.cPoint_zsmul]
     have h₂ : ρ ≫ x ^ k = DVR.cP D (TK R) (k • y) := by rw [DVR.cPoint_nsmul, ← hx]; exact map_pow (preHom ρ) x k
     rw [hv _ _ z J hJ, val_mul hJ, val_inv, val_inv, hcv ρ _ _ b h₁ h₂ hu z J hJ, hpv ρ y b hx hu z J hJ]
     have e₀ : (-(k : ℤ)) • y + k • y = 0 := by rw [neg_smul, natCast_zsmul, neg_add_cancel]
@@ -196,7 +157,7 @@ theorem comp_combo {T T' : Over (Spec (CommRingCat.of R))} (ρ : T' ⟶ T) {r : 
     (m : Fin r → ℤ) (y : Fin r → D.X) (hp : ∀ k, ρ ≫ p k = DVR.cP D T' (y k)) :
     ρ ≫ ∏ k, p k ^ m k = DVR.cP D T' (∑ k, m k • y k) := by
   rw [_root_.GlobalTheory.MatrixAction.comp_finsetProd, cPoint_sum]
-  exact Finset.prod_congr rfl fun k _ => by rw [comp_zpow, hp, cPoint_zsmul]
+  exact Finset.prod_congr rfl fun k _ => by rw [comp_zpow, hp, GlobalTheory.IntEnd.cPoint_zsmul]
 
 theorem exists_generator_lambda_linear_first_position (hB : D.TauBimult) {T : Over (Spec (CommRingCat.of R))} : ∀ {r : ℕ} (p : Fin r → (T ⟶ D.P.A))
     (m : Fin r → ℤ) (u : T ⟶ D.P.A),
@@ -239,7 +200,7 @@ theorem exists_generator_lambda_linear_first_position (hB : D.TauBimult) {T : Ov
       (LB.mulGen D.P.L _ _ _ _ c (LB.mulGen D.P.L _ _ _ _ a i))
       (DVR.mulGen_isGen _ _ _ _ _ _ _ hc (DVR.mulGen_isGen _ _ _ _ _ _ _ ha hi))
     refine ⟨t, ht, fun ρ y b hp hu z J hJ => ?_⟩
-    have h₀ : ρ ≫ p 0 ^ m 0 = DVR.cP D (TK R) (m 0 • y 0) := by rw [comp_zpow, hp, cPoint_zsmul]
+    have h₀ : ρ ≫ p 0 ^ m 0 = DVR.cP D (TK R) (m 0 • y 0) := by rw [comp_zpow, hp, GlobalTheory.IntEnd.cPoint_zsmul]
     have h₁ := comp_combo ρ (fun k : Fin r => p k.succ) (fun k => m k.succ) (fun k => y k.succ) (fun k => hp k.succ)
     rw [hv _ _ z J hJ, val_mul hJ, val_mul hJ, hcv ρ _ _ b h₀ h₁ hu z J hJ, hav ρ (y 0) b (hp 0) hu z J hJ,
       hiv ρ (fun k => y k.succ) b (fun k => hp k.succ) hu z J hJ, Fin.sum_univ_succ, Fin.prod_univ_succ]

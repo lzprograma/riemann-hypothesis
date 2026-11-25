@@ -36,20 +36,11 @@ abbrev cr : Crd I.A.fam.amb (faceOf I.A I.P0 I.ψ0 I.P1 I.ψ1 I.Dc I.Sp I.Zsc) :
 
 abbrev cg : Crd I.A.fam.amb (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc) := crdOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc
 
-def lvP : Bool → Subgroup G := fun b => cond b I.P1 I.P0
-
-def lvψ : ∀ b, I.lvP b →* Kˣ
-  | false => I.ψ0
-  | true => I.ψ1
-
 abbrev Sb (b : Bool) := I.X.data I.cr b
 
 abbrev Sg := (prin I.X).data I.cg false
 
 abbrev iCg := I.X.iC I.cg false I.A.fam.base.μ0
-
-def Jm (b : Bool) : Matrix (Fin I.Sg.D) (Fin (I.Sb b).D) K :=
-  kMat I.A.fam.base.v0.embedding (relMat I.iCg (I.X.iC I.cr b I.A.fam.base.μ0))
 
 def ρf (g : G) : Matrix (Fin I.Sg.D) (Fin I.Sg.D) K :=
   kMat I.A.fam.base.v0.embedding (relMat I.iCg ((I.gE g).comp I.iCg))
@@ -81,35 +72,6 @@ structure Hyp (s : ℕ) : Prop where
   gequiv : GEquiv I.A I.X I.gE
   np0 : I.X.nP false = (Nat.card I.P0 : ℝ)
   np1 : I.X.nP true = (Nat.card I.P1 : ℝ)
-
-def PRho : Prop :=
-  ∀ s, I.Hyp s → I.ρf 1 = 1 ∧ (∀ g h, I.ρf (g * h) = I.ρf g * I.ρf h) ∧
-    ∀ g (x : Fin I.Sg.D → K), I.iCg (cpt I.A.fam.base.v0.embedding (I.ρf g *ᵥ x)) =
-      I.gE g (I.iCg (cpt I.A.fam.base.v0.embedding x))
-
-def PJ : Prop :=
-  ∀ s, I.Hyp s → ∀ b, (∀ x : Fin (I.Sb b).D → K, I.iCg (cpt I.A.fam.base.v0.embedding (I.Jm b *ᵥ x)) =
-      I.X.iC I.cr b I.A.fam.base.μ0 (cpt I.A.fam.base.v0.embedding x)) ∧ Function.Injective (I.Jm b).mulVec
-
-def PJt : Prop :=
-  ∀ s, I.Hyp s → ∀ b t,
-    (∀ x, I.X.iC I.cg false t (cpt I.A.fam.base.v0.embedding (I.Jt b t *ᵥ x)) =
-      I.X.iC I.cr b t (cpt I.A.fam.base.v0.embedding x)) ∧
-    (∀ x, I.cg.toR I.X.zs false t (I.Jt b t *ᵥ x) = I.cr.toR I.X.zs b t x) ∧
-    ∀ x, I.Jm b *ᵥ (I.X.rowMat I.cr b t *ᵥ x) = I.X.rowMat I.cg false t *ᵥ (I.Jt b t *ᵥ x)
-
-def PMet : Prop :=
-  ∀ s, I.Hyp s → ∀ b v (x y : Fin (I.Sb b).D → K),
-    Formalism.HermitianLatticesTheory.majAt (Pi.basisFun K (Fin (I.Sb b).D)) (I.Sb b).XE v x y =
-      Formalism.HermitianLatticesTheory.majAt (Pi.basisFun K (Fin I.Sg.D)) (Formalism.BranchingDeterminantCap.scaleFrame (Real.sqrt (Nat.card (I.lvP b))) I.Sg.XE) v
-        (I.Jm b *ᵥ x) (I.Jm b *ᵥ y)
-
-def PFrames : Prop := ∀ s, I.Hyp s → ∀ v, IsUnit (I.Sg.XE v).det
-
-def PUni : Prop :=
-  ∀ s, I.Hyp s → ∀ v (g : G) (x y : Fin I.Sg.D → K),
-    Formalism.HermitianLatticesTheory.majAt (Pi.basisFun K (Fin I.Sg.D)) I.Sg.XE v (I.ρf g *ᵥ x) (I.ρf g *ᵥ y) =
-      Formalism.HermitianLatticesTheory.majAt (Pi.basisFun K (Fin I.Sg.D)) I.Sg.XE v x y
 
 end In
 

@@ -241,9 +241,9 @@ theorem hermite (g : GQ) : ∃ n : ℕ, 0 < n ∧ ∀ γ₀ : SL(2, ℤ), ∃ (�
   have hps : p * s - q * r = nI := by
     rw [hp_def, hr_def, hq_def, hs_def, hnI]; linear_combination (m 0 0 * m 1 1 - m 0 1 * m 1 0) * hdet0
   have hpr : p ≠ 0 ∨ r ≠ 0 := by
-    by_contra h; push_neg at h; rw [h.1, h.2] at hps; omega
+    by_contra h; push Not at h; rw [h.1, h.2] at hps; omega
   have hrs : r ≠ 0 ∨ s ≠ 0 := by
-    by_contra h; push_neg at h; rw [h.1, h.2] at hps; omega
+    by_contra h; push Not at h; rw [h.1, h.2] at hps; omega
   set a : ℕ := Int.gcd p r with ha_def
   have ha : 0 < a := Int.gcd_pos_iff.mpr hpr
   set p' : ℤ := p / a
@@ -279,7 +279,7 @@ theorem hermite (g : GQ) : ∃ n : ℕ, 0 < n ∧ ∀ γ₀ : SL(2, ℤ), ∃ (�
       rw [this]; push_cast; rfl
     have hD0 : ((γ₀ 1 0 : ℤ) : ℂ) * τ + ((γ₀ 1 1 : ℤ) : ℂ) ≠ 0 := by
       apply lin_ne_zero _ _ _ hz
-      by_contra h; push_neg at h; rw [h.1, h.2] at hdet0; simp at hdet0
+      by_contra h; push Not at h; rw [h.1, h.2] at hdet0; simp at hdet0
     have hRS : (r : ℂ) * τ + s ≠ 0 := lin_ne_zero r s _ hz hrs
     have hpC : (p : ℂ) = a * p' := by exact_mod_cast hp
     have hrC : (r : ℂ) = a * r' := by exact_mod_cast hr
@@ -344,7 +344,7 @@ theorem qAll_affine : ∀ (E : Subring ℂ) (N a d : ℕ) (b : ℤ) (f : ℍ →
     · show HasSum (fun k => _) (f _)
       convert hτ using 1
       funext k
-      simp only [Function.comp_apply, dvd_mul_right, if_true, Nat.mul_div_cancel_left _ ha, e]
+      simp only [Function.comp_apply, dvd_mul_right, ite_true, Nat.mul_div_cancel_left _ ha, e]
       rw [mul_assoc, ← Complex.exp_add]
       congr 2
       push_cast
@@ -357,9 +357,9 @@ theorem qAll_affine : ∀ (E : Subring ℂ) (N a d : ℕ) (b : ℤ) (f : ℍ →
       simp [this]
   · intro m
     by_cases h : a ∣ m
-    · simp only [h, if_true]
+    · simp only [h, ite_true]
       exact E.mul_mem (hcE _) (hE _)
-    · simp only [h, if_false]; exact E.zero_mem
+    · simp only [h, ite_false]; exact E.zero_mem
 
 end GlobalTheory.FNQ
 end -- clump:auto

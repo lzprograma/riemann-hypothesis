@@ -2,48 +2,7 @@ module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.GrpParts
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.EqOneOfToHAFin
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -79,12 +38,11 @@ theorem injOn_nhds_of_strict {E F : Type} [NormedAddCommGroup E] [NormedSpace �
   exact sub_eq_zero.1 (norm_eq_zero.1 this)
 
 
-set_option backward.isDefEq.respectTransparency false in
+open scoped Matrix.Norms.Operator in
 theorem exp_mul_injOn {ι V : Type} [Fintype ι] [Fintype V] {n : ℕ}
     (L : EuclideanSpace ℝ ι →ₗ[ℝ] (V → Matrix (Fin n) (Fin n) ℂ)) (P : V → Matrix (Fin n) (Fin n) ℂ)
     (hker : ∀ x, (∀ v, L x v * P v = 0) → x = 0) :
     ∃ r : ℝ, 0 < r ∧ InjOn (fun x => fun v => NormedSpace.exp (L x v) * P v) (ball 0 r) := by
-  open scoped Matrix.Norms.Operator in
   let Lc : EuclideanSpace ℝ ι →L[ℝ] (V → Matrix (Fin n) (Fin n) ℂ) := L.toContinuousLinearMap
   let R : V → (Matrix (Fin n) (Fin n) ℂ →L[ℝ] Matrix (Fin n) (Fin n) ℂ) :=
     fun v => (ContinuousLinearMap.mul ℝ (Matrix (Fin n) (Fin n) ℂ)).flip (P v)
@@ -92,10 +50,7 @@ theorem exp_mul_injOn {ι V : Type} [Fintype ι] [Fintype V] {n : ℕ}
     ContinuousLinearMap.pi fun v => (R v).comp ((ContinuousLinearMap.proj v).comp Lc)
   have hf' : ∀ x v, f' x v = L x v * P v := fun x v => rfl
   have hd : HasStrictFDerivAt (fun x => fun v => NormedSpace.exp (L x v) * P v) f' 0 := by
-    letI : NormedAddCommGroup (Matrix (Fin n) (Fin n) ℂ) := Matrix.linftyOpNormedAddCommGroup
-    letI : NormedSpace ℝ (Matrix (Fin n) (Fin n) ℂ) := Matrix.linftyOpNormedSpace
-    rw [hasStrictFDerivAt_pi]
-    intro v
+    refine hasStrictFDerivAt_pi.2 fun v => ?_
     have h0 : HasStrictFDerivAt (fun x : EuclideanSpace ℝ ι => L x v)
         ((ContinuousLinearMap.proj v).comp Lc) 0 :=
       ((ContinuousLinearMap.proj v).comp Lc).hasStrictFDerivAt
@@ -107,7 +62,7 @@ theorem exp_mul_injOn {ι V : Type} [Fintype ι] [Fintype V] {n : ℕ}
         ((R v).comp ((1 : Matrix (Fin n) (Fin n) ℂ →L[ℝ] Matrix (Fin n) (Fin n) ℂ).comp
           ((ContinuousLinearMap.proj v).comp Lc))) 0 :=
       (R v).hasStrictFDerivAt.comp 0 (he.comp 0 h0)
-    convert h2 using 1 <;> rfl
+    exact h2
   have hinj : Function.Injective f' := by
     intro x y hxy
     have : x - y = 0 := hker (x - y) fun v => by

@@ -63,12 +63,6 @@ def DualStackedExcChart.Statement : Prop :=
       ∀ v u : T, ∃ N : ℕ, ∀ e ∈ linPrime α M,
         (graphFirst v * graphSecond u) ^ N * e ∈ stackedGraph b' a ⊔ Ideal.span {C (a u) * graphFirst u}
 
-namespace DualStackedExcChartExample
-
-open DualTopSimpleSubExample
-
-end DualStackedExcChartExample
-
 end
 
 end GroundTheory.Heights₂.Heights

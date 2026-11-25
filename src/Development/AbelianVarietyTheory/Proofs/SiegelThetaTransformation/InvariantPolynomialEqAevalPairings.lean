@@ -4,55 +4,11 @@ public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Calculus.FDeriv.Defs
 public import Mathlib.Analysis.Complex.Exponential
 public import Mathlib.LinearAlgebra.UnitaryGroup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.Convex.Contractible
 public import Mathlib.Analysis.Matrix.PosDef
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 public import Mathlib.Topology.Algebra.Module.Cardinality
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
 public import Mathlib.Algebra.MvPolynomial.Funext
@@ -122,7 +78,7 @@ theorem act_mul (g h g' h' : T → Matrix (Fin n) (Fin n) ℂ) (z : T × Bool ×
     act (fun t => g t * g' t) (fun t => h t * h' t) z = act g h (act g' h' z) := by
   funext ⟨t, b, k, j⟩
   cases b <;>
-  · simp only [act, Matrix.mul_apply, Finset.sum_mul, Finset.mul_sum, if_true, Bool.false_eq_true, if_false, mul_assoc]
+  · simp only [act, Matrix.mul_apply, Finset.sum_mul, Finset.mul_sum, ite_true, Bool.false_eq_true, ite_false, mul_assoc]
     exact Finset.sum_comm
 
 theorem act_diagonal (a b : T → Fin n → ℂ) (z : T × Bool × Fin n × Fin N → ℂ) :
@@ -151,7 +107,7 @@ theorem eval_act_diagonal (p : MvPolynomial (T × Bool × Fin n × Fin N) ℂ)
     apply differentiable_eval
     rintro ⟨t, b, k, j⟩
     simp only [act_diagonal]
-    cases b <;> simp only [if_true, Bool.false_eq_true, if_false] <;> fun_prop
+    cases b <;> simp only [ite_true, Bool.false_eq_true, ite_false] <;> fun_prop
   have hI : ∀ y : ℝ, F (y * I) = MvPolynomial.eval z p := by
     intro y
     rw [← hp (fun t => diagonal fun i => cexp (y * I * a t i)) ?_ z]
@@ -222,7 +178,7 @@ theorem eval_eq_base_of_isUnit (hN : N ≤ n) (p : MvPolynomial (T × Bool × Fi
   have hyt : ∀ t k j, y (t, true, k, j) = if k.val = j.val then 1 else 0 := by
     intro t k j
     have := congrFun (congrFun (hinv t) k) (Fin.castLE hN j)
-    simp only [hy, act, hz, if_true]
+    simp only [hy, act, hz, ite_true]
     rw [← Matrix.mul_apply, this, Matrix.one_apply]
     simp [Fin.ext_iff]
   let Y : ℂ → T × Bool × Fin n × Fin N → ℂ := fun c v =>
@@ -242,7 +198,7 @@ theorem eval_eq_base_of_isUnit (hN : N ≤ n) (p : MvPolynomial (T × Bool × Fi
       funext ⟨t, b, k, j⟩
       cases b
       · simp [Y]
-      · simp only [Y, if_true, hyt]
+      · simp only [Y, ite_true, hyt]
         have := j.2
         split_ifs <;> first | omega | simp
     · intro t
@@ -254,14 +210,14 @@ theorem eval_eq_base_of_isUnit (hN : N ≤ n) (p : MvPolynomial (T × Bool × Fi
   congr 2
   funext ⟨t, b, k, j⟩
   cases b
-  · simp only [Y, base, Bool.false_eq_true, if_false]
+  · simp only [Y, base, Bool.false_eq_true, ite_false]
     split_ifs with h
-    · simp only [hy, act, hz, Bool.false_eq_true, if_false, one_mul, transpose_apply]
+    · simp only [hy, act, hz, Bool.false_eq_true, ite_false, one_mul, transpose_apply]
       refine Finset.sum_congr rfl fun l _ => ?_
       rw [mul_comm]
       rfl
     · simp
-  · simp only [Y, base, if_true, hyt]
+  · simp only [Y, base, ite_true, hyt]
 
 theorem eval_eq_base [Finite T] (hN : N ≤ n) (p : MvPolynomial (T × Bool × Fin n × Fin N) ℂ)
     (hp : ∀ g h : T → Matrix (Fin n) (Fin n) ℂ, (∀ t, g t * (h t)ᵀ = 1) →

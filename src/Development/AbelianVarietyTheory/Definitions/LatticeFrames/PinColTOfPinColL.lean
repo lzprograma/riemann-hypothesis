@@ -1,44 +1,7 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRatDatum
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EvalAtOneExtremalMul
 import Development.AbelianVarietyTheory.Definitions.LatticeFrames.JointSmooth
@@ -56,7 +19,6 @@ open NumberField IsDedekindDomain Matrix MeasureTheory GlobalTheory.Mem GlobalTh
 open scoped TensorProduct Classical
 
 namespace GlobalTheory.AdForm.LiveModel
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} {I : TC B X} {l : I.Laws} {Z : TC.Later B (I.cols l)} {u : B.Word} {a : I.ι}
 
@@ -73,8 +35,8 @@ theorem gram_pos {E : Type} [Field E] [NumberField E] [StarRing E] (hs : ∀ x :
   funext i j
   refine (Examples₂.stdSpace_gram_apply hs n (fun _ => false) n 0 i j).trans ?_
   by_cases h : i = j
-  · subst h; rw [Matrix.one_apply_eq]; exact (if_pos rfl).trans (by simp [Examples₂.sgn])
-  · rw [Matrix.one_apply_ne h]; exact if_neg h
+  · subst h; rw [Matrix.one_apply_eq]; exact (ite_eq_left rfl).trans (by simp [Examples₂.sgn])
+  · rw [Matrix.one_apply_ne h]; exact ite_eq_right h
 
 theorem rk_top (D : D7) : D.sp.X'.rank + 1 = (D.sp.X D.R.m).rank := by
   have h1 := rankP D
@@ -167,8 +129,8 @@ theorem isEmbTop_topDec (hG : (D.sp.X D.R.m).gram = 1) (hG' : D.sp.X'.gram = 1)
       show _ = incA D (if D.sp.X'.rank = a then 1 else 0) * incA D c
       rw [← map_mul]
       by_cases ha : D.sp.X'.rank = a
-      · rw [if_pos ha, if_pos (this.2 ha), one_mul]
-      · rw [if_neg ha, if_neg (fun h => ha (this.1 h)), zero_mul]
+      · rw [ite_eq_left ha, ite_eq_left (this.2 ha), one_mul]
+      · rw [ite_eq_right ha, ite_eq_right (fun h => ha (this.1 h)), zero_mul]
     have ez' := congrFun ez b
     rw [ez, ez', ← e]
     refine Eq.trans ?_ (congrArg (· * incA D c) Matrix.mul_apply).symm

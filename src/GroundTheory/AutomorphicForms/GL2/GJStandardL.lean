@@ -12,51 +12,6 @@ import GroundTheory.AutomorphicForms.GL2.GJStandardLEuler
 import GroundTheory.AutomorphicForms.GL2.GJStandardLPartial
 import GroundTheory.AutomorphicForms.GL2.GJStandardLUnramified
 import GroundTheory.GlobalFields.TateThesis.RootNumberLocalPlace
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Log.Summable
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -273,12 +228,6 @@ theorem exists_unramified (hn : 2 ≤ n) (μ : Measure (Reduction.normOneGL (K :
 
 end Unramified
 
-section Converges
-
-variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
-
-end Converges
-
 section Helpers
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
@@ -289,55 +238,7 @@ theorem zetaIntegrand_smul (c : ℂ) (Φ : Matrix (Fin n) (Fin n) 𝔸[K] → �
   funext g
   simp only [GJGlobal.zetaIntegrand, Pi.smul_apply, smul_eq_mul, mul_assoc]
 
-theorem factor_nonvanishing {f : AdelicGLn.AdelicGL K n → ℂ} (hfc : Continuous f)
-    (S : Finset (HeightOneSpectrum (𝓞 K)))
-    {V : HeightOneSpectrum (𝓞 K) → Type*} [∀ v, AddCommGroup (V v)] [∀ v, Module ℂ (V v)]
-    (π : ∀ v, Representation ℂ (GL (Fin n) (v.adicCompletion K)) (V v)) (ξ : ∀ v, V v)
-    (ℓ : ∀ v, Module.Dual ℂ (V v))
-    (hsph : ∀ v ∉ S, ξ v ∈ fixedVectors (π v) (integralGL (v.adicCompletion K) n) ∧ ℓ v (ξ v) = 1)
-    (fi : AdelicGLn.InfiniteAdelicGL K n → ℂ)
-    (hf : ∀ g, f g = fi (archComp K n g) *
-      ∏ᶠ v : HeightOneSpectrum (𝓞 K), Parabolic.matrixCoeff (F := v.adicCompletion K) (π v) (ξ v) (ℓ v)
-        (localComp n v g))
-    {g₀ : AdelicGLn.AdelicGL K n} (hg₀ : f g₀ ≠ 0) :
-    Continuous fi ∧ fi (archComp K n g₀) ≠ 0 ∧ ∀ v : HeightOneSpectrum (𝓞 K),
-      Parabolic.matrixCoeff (F := v.adicCompletion K) (π v) (ξ v) (ℓ v) (localComp n v g₀) ≠ 0 := by
-  set c₀ := ∏ᶠ v : HeightOneSpectrum (𝓞 K),
-    Parabolic.matrixCoeff (F := v.adicCompletion K) (π v) (ξ v) (ℓ v) (localComp n v g₀) with hc₀
-  have hsupp : (Function.mulSupport fun v : HeightOneSpectrum (𝓞 K) ↦
-      Parabolic.matrixCoeff (F := v.adicCompletion K) (π v) (ξ v) (ℓ v) (localComp n v g₀)).Finite := by
-    refine ((finite_setOf_not_mem g₀).union S.finite_toSet).subset fun v hv ↦ ?_
-    by_contra hc
-    simp only [mem_union, Finset.mem_coe, not_or] at hc
-    have hK : localComp n v g₀ ∈ integralGL (v.adicCompletion K) n := by
-      by_contra h
-      exact hc.1 h
-    apply hv
-    show ℓ v (π v (localComp n v g₀) (ξ v)) = 1
-    rw [(hsph v hc.2).1 _ hK, (hsph v hc.2).2]
-  rw [hf g₀] at hg₀
-  have hfi0 : fi (archComp K n g₀) ≠ 0 := left_ne_zero_of_mul hg₀
-  have hc₀0 : c₀ ≠ 0 := right_ne_zero_of_mul hg₀
-  refine ⟨?_, hfi0, fun v h ↦ hc₀0 (finprod_eq_zero _ v h hsupp)⟩
-  have key : ∀ x, fi x = f ((AdelicGLn.prodEquiv K n).symm (x, finComp K n g₀)) / c₀ := by
-    intro x
-    have : f ((AdelicGLn.prodEquiv K n).symm (x, finComp K n g₀)) = fi x * c₀ := by
-      rw [hf, archComp_prodEquiv_symm]
-      simp_rw [localComp_prodEquiv_symm]
-      rfl
-    rw [this, mul_div_cancel_right₀ _ hc₀0]
-  have hc : Continuous fun x ↦ f ((AdelicGLn.prodEquiv K n).symm (x, finComp K n g₀)) / c₀ :=
-    (hfc.comp ((AdelicGLn.prodEquiv K n).symm.continuous.comp
-      (continuous_id.prodMk continuous_const))).div_const c₀
-  exact hc.congr fun x ↦ (key x).symm
-
 end Helpers
-
-section Arch
-
-variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
-
-end Arch
 
 section NonVanishing
 

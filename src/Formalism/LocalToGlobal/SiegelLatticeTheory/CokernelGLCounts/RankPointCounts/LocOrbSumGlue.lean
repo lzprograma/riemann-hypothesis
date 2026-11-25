@@ -36,12 +36,12 @@ def isoComp (M : Loc.Model F E) {m : ℕ} {X Y W : M.Mat (m + 1)} (φ : M.Iso X 
 theorem nIso_out (M : Loc.Model F E) {m : ℕ} (X : M.Mat (m + 1)) (c : M.Cls m) :
     M.nIso X (Quotient.out c) = if Quotient.mk (M.isoSetoid m) X = c then M.nAut c else 0 := by
   by_cases h : Quotient.mk (M.isoSetoid m) X = c
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     have hn : Nonempty (M.Iso X (Quotient.out c)) :=
       Quotient.exact (s := M.isoSetoid m) (h.trans (Quotient.out_eq (s := M.isoSetoid m) c).symm)
     obtain ⟨φ⟩ := hn
     exact Nat.card_congr (isoComp M φ)
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     refine Nat.card_eq_zero.2 (Or.inl ⟨fun φ => h ?_⟩)
     exact (Quotient.sound (s := M.isoSetoid m) (show Nonempty (M.Iso X (Quotient.out c)) from ⟨φ⟩)).trans
       (Quotient.out_eq (s := M.isoSetoid m) c)
@@ -79,41 +79,41 @@ theorem mul_of_mul {R : Type} [CommRing R] {n : ℕ} (l ρ : Matrix (Fin (n + 1)
     · rw [hl i, Matrix.of_apply]
       by_cases hi : i = Fin.last n <;> by_cases hk : k = Fin.last n <;> simp [hi, hk]
     · intro b _ hb
-      rw [Matrix.of_apply, if_neg (fun h => hb h.1), mul_zero]
+      rw [Matrix.of_apply, ite_eq_right (fun h => hb h.1), mul_zero]
     · intro h; exact absurd (Finset.mem_univ _) h
   ext i j
   rw [Matrix.mul_apply, Finset.sum_eq_single (Fin.last n)]
   · rw [h1, hρ j, Matrix.of_apply]
     by_cases hi : i = Fin.last n <;> by_cases hj : j = Fin.last n <;> simp [hi, hj]
   · intro b _ hb
-    rw [h1, if_neg (fun h => hb h.2), zero_mul]
+    rw [h1, ite_eq_right (fun h => hb h.2), zero_mul]
   · intro h; exact absurd (Finset.mem_univ _) h
 
 theorem last_of_low {R : Type} [CommRing R] {n : ℕ} (l : Matrix (Fin (n + 1)) (Fin (n + 1)) R)
     (h1 : ∀ a, l a a = 1) (h2 : ∀ a b, a < b → l a b = 0) (i : Fin (n + 1)) :
     l i (Fin.last n) = if i = Fin.last n then 1 else 0 := by
   by_cases hi : i = Fin.last n
-  · rw [if_pos hi, hi, h1]
-  · rw [if_neg hi]; exact h2 _ _ (lt_of_le_of_ne (Fin.le_last i) hi)
+  · rw [ite_eq_left hi, hi, h1]
+  · rw [ite_eq_right hi]; exact h2 _ _ (lt_of_le_of_ne (Fin.le_last i) hi)
 
 theorem last_of_up {R : Type} [CommRing R] {n : ℕ} (ρ : Matrix (Fin (n + 1)) (Fin (n + 1)) R)
     (h1 : ∀ a, ρ a a = 1) (h2 : ∀ a b, b < a → ρ a b = 0) (j : Fin (n + 1)) :
     ρ (Fin.last n) j = if j = Fin.last n then 1 else 0 := by
   by_cases hj : j = Fin.last n
-  · rw [if_pos hj, hj, h1]
-  · rw [if_neg hj]; exact h2 _ _ (lt_of_le_of_ne (Fin.le_last j) hj)
+  · rw [ite_eq_left hj, hj, h1]
+  · rw [ite_eq_right hj]; exact h2 _ _ (lt_of_le_of_ne (Fin.le_last j) hj)
 
 theorem uLow_last {R : Type} [CommRing R] {n : ℕ} (x : Loc.IL (n + 1) → R) (i : Fin (n + 1)) :
     Loc.uLow x i (Fin.last n) = if i = Fin.last n then 1 else 0 := by
   refine last_of_low _ (fun a => by simp [Loc.uLow]) (fun a b hab => ?_) i
   simp only [Loc.uLow]
-  rw [if_neg (ne_of_lt hab), dite_eq_right (not_lt.2 hab.le)]
+  rw [ite_eq_right (ne_of_lt hab), dite_eq_right (not_lt.2 hab.le)]
 
 theorem uUp_last {R : Type} [CommRing R] {n : ℕ} (w : Loc.Pt R (n + 1)) (y : Loc.IN w → R) (j : Fin (n + 1)) :
     Loc.uUp w y (Fin.last n) j = if j = Fin.last n then 1 else 0 := by
   refine last_of_up _ (fun a => by simp [Loc.uUp]) (fun a b hab => ?_) j
   simp only [Loc.uUp]
-  rw [if_neg (ne_of_gt hab), dite_eq_right (fun h => (not_lt.2 hab.le) h.1)]
+  rw [ite_eq_right (ne_of_gt hab), dite_eq_right (fun h => (not_lt.2 hab.le) h.1)]
 
 end Glue
 
@@ -187,7 +187,7 @@ theorem fL_hasSum (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (
     have h0 : fL M δ T T' p w τ = fun _ => 0 := by
       funext O
       unfold fL
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨Y, -, ⟨w₀, hw₀, -⟩, -⟩
       rw [ha] at hw₀
       cases hw₀
@@ -219,7 +219,7 @@ theorem fL_hasSum (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (
         intro O hO'
         show fL M δ T T' p w (some c) {Y | Y + shM δ T T' p w ∈ O} = 0
         unfold fL
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨Y, hY, ⟨w₀, hw₀, xy, hxy⟩, hOY⟩
         rw [ha] at hw₀
         cases hw₀
@@ -259,10 +259,10 @@ theorem fL_hasSum (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (
           exact hmem
         · show fL M δ T T' p w (some c) {Y | Y + shM δ T T' p w ∈ orbR (M p) (zAt a xy0)} = _
           have hr : repL M δ T T' p w {Y | Y + shM δ T T' p w ∈ orbR (M p) (zAt a xy0)} = rep := by
-            unfold repL; exact dif_pos hL
+            unfold repL; exact dite_eq_left hL
           have hph : phL M δ T T' p w rep = dfac M δ T T' p w *
               (M p).psiR (Loc.simpleLow (Loc.uLow hX.choose.1) + Loc.simpleUp (Loc.uUp a hX.choose.2)) := by
-            unfold phL; simp only [ha]; rw [dif_pos hX]
+            unfold phL; simp only [ha]; rw [dite_eq_left hX]
           have hset : {xy : (Loc.IL (D.R.rS + 1) → (D.s.atP p).Ep) × (Loc.IN a → (D.s.atP p).Ep) |
               Loc.uLow xy.1 * modMat δ T T' p w * Loc.uUp a xy.2 ∈ kkOrb M p rep} =
               {xy | zAt a xy ∈ orbR (M p) (zAt a xy0)} := by
@@ -282,12 +282,12 @@ theorem fL_hasSum (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (
           have hbb : (M p).bbIntegrand a c hX.choose =
               ((M p).nIso (Formalism.MainNotions.LocalOrbitGerms.Cls.toMat (M p) _ hZi hZd) (Quotient.out c) : ℂ) *
                 (M p).psiR (Loc.simpleLow (Loc.uLow hX.choose.1) + Loc.simpleUp (Loc.uUp a hX.choose.2)) := by
-            rw [Formalism.MainNotions.LocalOrbitGerms.Cls.bbIntegrand_eq, Formalism.MainNotions.LocalOrbitGerms.Cls.GG, dif_pos ⟨hZi, hZd⟩]
+            rw [Formalism.MainNotions.LocalOrbitGerms.Cls.bbIntegrand_eq, Formalism.MainNotions.LocalOrbitGerms.Cls.GG, dite_eq_left ⟨hZi, hZd⟩]
           have hcl : clsOf (M p) (Loc.uLow hX.choose.1 * a.mat * Loc.uUp a hX.choose.2) =
               some (Quotient.mk _ (Formalism.MainNotions.LocalOrbitGerms.Cls.toMat (M p) _ hZi hZd) : (M p).Cls D.R.rS) := by
-            unfold clsOf; rw [dif_pos ⟨hZi, hZd⟩]; rfl
+            unfold clsOf; rw [dite_eq_left ⟨hZi, hZd⟩]; rfl
           unfold fL
-          rw [if_pos hL, hr, hph, hwt, hth, hcl, hbb, nIso_out]
+          rw [ite_eq_left hL, hr, hph, hwt, hth, hcl, hbb, nIso_out]
           erw [nIsoO_some]
           split_ifs with h1 h2 h2
           · ring
@@ -307,14 +307,14 @@ theorem gL_mul (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (δ 
   unfold gL fL
   by_cases hL : IsLCls M δ T T' p w O
   · by_cases ht : thL M δ T T' p w (repL M δ T T' p w O) = some c
-    · rw [if_pos ⟨hL, ht⟩, if_pos hL, ht]
+    · rw [ite_eq_left ⟨hL, ht⟩, ite_eq_left hL, ht]
       erw [nIsoO_some]
-      rw [if_pos rfl]
-    · rw [if_neg (fun h => ht h.2), if_pos hL]
+      rw [ite_eq_left rfl]
+    · rw [ite_eq_right (fun h => ht h.2), ite_eq_left hL]
       erw [nIsoO_some]
-      rw [if_neg ht]
+      rw [ite_eq_right ht]
       simp
-  · rw [if_neg (fun h => hL h.1), if_neg hL, zero_mul]
+  · rw [ite_eq_right (fun h => hL h.1), ite_eq_right hL, zero_mul]
 
 theorem gL_hasSum (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (δ : ∀ p : PlF D, (D.s.atP p).Fp)
     (T T' : ℕ) (p : PlF D) (w : Point D.host.E (D.R.rS + 1)) (c : (M p).Cls D.R.rS) (hN : (M p).nAut c ≠ 0)

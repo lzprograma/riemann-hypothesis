@@ -80,12 +80,12 @@ theorem isPtOf_of_decoRaw [IsEmpty Q] {x : GL (Fin n) (AfE F E)} (hx : x ∈ UAd
     rw [← hN] at hv
     rw [← hd]
     simp only [decoRaw]
-    rw [if_pos (le_locP _ _ hv), e]
+    rw [ite_eq_left (le_locP _ _ hv), e]
     exact PtExist.hasRes_redA _ ((mem_globLat x v).1 hv i)
   · rw [← hN] at hv
     rw [← hd]
     simp only [decoRaw]
-    rw [if_pos (le_locP _ _ hv)]
+    rw [ite_eq_left (le_locP _ _ hv)]
     exact PtExist.hasRes_redA _ ((mem_globLat x v).1 hv i)
 
 theorem isPtOf_mul_inv [IsEmpty Q] {g : GL (Fin n) (AfE F E)} {p : DecoF E n ST SG Q} (h : IsPtOf hc g p) (z : J0 hc n ST) :
@@ -236,7 +236,6 @@ structure Cmp {σ : E →ₐ[F] E} {gp : Fin 2 → ℕ} (G : GLoc F E σ gp) (SG
   e_eq : ∀ j v h s, IsLocalRing.residue _ (ρ j v h s) = e j v h (resS F (W j v h).1 s)
 
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar in
 theorem nonempty_cmp {R : Ranks} (H : Formalism.BasicNotions.Host R) (hc : CMData H.F H.E) {SG : Finset (HeightOneSpectrum (𝓞 H.E))}
     (hl : LevOk H SG ∅) (G : GLoc H.F H.E hc.sig H.g) (hne : H.g 0 ≠ H.g 1)
     (h1 : ∀ w ∈ SG, ∃ j, (H.g j : 𝓞 H.E) ∈ w.asIdeal)
@@ -435,10 +434,10 @@ theorem lastDiag_commute {A : Type} [CommRing A] (φ : A →+* κ) (u : Aˣ) {M 
   by_cases hij : i = j
   · rw [hij, mul_comm]
   by_cases hi : i.1 + 1 = n
-  · rw [(h j i hi).2, if_neg (Ne.symm hij), mul_zero, zero_mul]
+  · rw [(h j i hi).2, ite_eq_right (Ne.symm hij), mul_zero, zero_mul]
   by_cases hj : j.1 + 1 = n
-  · rw [(h i j hj).1, if_neg hij, mul_zero, zero_mul]
-  · rw [if_neg hi, if_neg hj, mul_comm]
+  · rw [(h i j hj).1, ite_eq_right hij, mul_zero, zero_mul]
+  · rw [ite_eq_right hi, ite_eq_right hj, mul_comm]
 
 end Mat
 

@@ -11,45 +11,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongRes
 public import Mathlib.Order.Interval.Set.Monotone
 import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupFlatBaseChange
 import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.PullbackBlowupSequenceTransitions, Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.ChartFlatBaseChange
@@ -71,9 +33,7 @@ variable {X : Scheme.{u}}
 
 theorem pullbackTransitionMap_self_eq_id (s : SequenceOfBlowups X) {X' : Scheme.{u}} (φ : X' ⟶ X) {i : ℕ} (h : i ≤ i) :
     s.pullbackTransitionMap φ h = 𝟙 (pullback φ (s.projectionToBase i)) := by
-  refine pullback.hom_ext ?_ ?_
-  · rw [s.pullbackTransitionMap_fst, Category.id_comp]
-  · rw [s.pullbackTransitionMap_snd, s.transitionMap_self_eq_id, Category.comp_id, Category.id_comp]
+  exact FunctorialResolution.EmbeddedResolution.SequenceOfBlowups.pullbackTransitionMap_refl s φ h
 
 theorem pullbackTransitionMap_trans (s : SequenceOfBlowups X) {X' : Scheme.{u}} (φ : X' ⟶ X) {i j l : ℕ}
     (hij : i ≤ j) (hjl : j ≤ l) :
@@ -457,31 +417,6 @@ theorem strictTransformIdeal_eq_comap (F : ChartFlatBaseChange S S') (j : ℕ) (
       rw [← hkey, S.strictTransformIdeal_succ (F.reindex n), hst, ← hIH, ← hcenter]
       exact S'.strictTransformIdeal_succ n
 
-private theorem exists_iso_of_mono_of_comp_eq
-    {A Z W : Scheme.{u}} (g : Z ⟶ A) (i : W ⟶ A)
-    [CategoryTheory.Mono g] [CategoryTheory.Mono i] (a : W ⟶ Z) (b : Z ⟶ W)
-    (ha : a ≫ g = i) (hb : b ≫ i = g) :
-    ∃ u : W ≅ Z, u.hom ≫ g = i := by
-  refine ⟨⟨a, b, ?_, ?_⟩, ha⟩
-  · refine (cancel_mono i).mp ?_
-    rw [Category.assoc, hb, ha, Category.id_comp]
-  · refine (cancel_mono g).mp ?_
-    rw [Category.assoc, ha, hb, Category.id_comp]
-
-private theorem exists_iso_subscheme_ker
-    {A Z : Scheme.{u}} (g : Z ⟶ A) [AlgebraicGeometry.IsClosedImmersion g] :
-    ∃ u : (Scheme.Hom.ker g).subscheme ≅ Z, u.hom ≫ g = (Scheme.Hom.ker g).subschemeι := by
-  have hker : Scheme.Hom.ker (Scheme.Hom.ker g).subschemeι = Scheme.Hom.ker g :=
-    AlgebraicGeometry.Scheme.IdealSheafData.ker_subschemeι _
-  have h1 : Scheme.Hom.ker g ≤ Scheme.Hom.ker (Scheme.Hom.ker g).subschemeι :=
-    le_of_eq hker.symm
-  have h2 : Scheme.Hom.ker (Scheme.Hom.ker g).subschemeι ≤ Scheme.Hom.ker g := le_of_eq hker
-  exact exists_iso_of_mono_of_comp_eq g (Scheme.Hom.ker g).subschemeι
-    (AlgebraicGeometry.IsClosedImmersion.lift g (Scheme.Hom.ker g).subschemeι h1)
-    (AlgebraicGeometry.IsClosedImmersion.lift (Scheme.Hom.ker g).subschemeι g h2)
-    (AlgebraicGeometry.IsClosedImmersion.lift_fac ..)
-    (AlgebraicGeometry.IsClosedImmersion.lift_fac ..)
-
 private theorem exists_isPullback_subscheme_of_ker_eq
     {A B : Scheme.{u}} (f : A ⟶ B) (I : B.IdealSheafData) (J : A.IdealSheafData)
     (hJ : J = Scheme.Hom.ker (pullback.fst f I.subschemeι)) :
@@ -489,23 +424,16 @@ private theorem exists_isPullback_subscheme_of_ker_eq
       g ≫ I.subschemeι = J.subschemeι ≫ f ∧
         IsPullback g J.subschemeι I.subschemeι f := by
   subst hJ
-  have : AlgebraicGeometry.IsClosedImmersion (pullback.fst f I.subschemeι) :=
-    MorphismProperty.IsStableUnderBaseChange.of_isPullback
-      (P := @AlgebraicGeometry.IsClosedImmersion)
-      (IsPullback.of_hasPullback f I.subschemeι).flip inferInstance
-  obtain ⟨u, hu⟩ := exists_iso_subscheme_ker (pullback.fst f I.subschemeι)
-  have hfst : (u ≪≫ pullbackSymmetry f I.subschemeι).hom ≫ pullback.fst I.subschemeι f
-      = u.hom ≫ pullback.snd f I.subschemeι := by
-    rw [Iso.trans_hom, Category.assoc, pullbackSymmetry_hom_comp_fst]
-  have hsnd : (u ≪≫ pullbackSymmetry f I.subschemeι).hom ≫ pullback.snd I.subschemeι f
-      = (Scheme.Hom.ker (pullback.fst f I.subschemeι)).subschemeι := by
-    rw [Iso.trans_hom, Category.assoc, pullbackSymmetry_hom_comp_snd, hu]
-  have hcomm : ((u ≪≫ pullbackSymmetry f I.subschemeι).hom ≫ pullback.fst I.subschemeι f)
-        ≫ I.subschemeι
-      = (Scheme.Hom.ker (pullback.fst f I.subschemeι)).subschemeι ≫ f := by
-    rw [hfst, Category.assoc, ← pullback.condition, ← Category.assoc, hu]
-  exact ⟨(u ≪≫ pullbackSymmetry f I.subschemeι).hom ≫ pullback.fst I.subschemeι f, hcomm,
-    IsPullback.of_iso_pullback ⟨hcomm⟩ (u ≪≫ pullbackSymmetry f I.subschemeι) rfl hsnd⟩
+  let e : (I.comap f).subscheme ≅ pullback I.subschemeι f :=
+    I.comapIso f ≪≫ pullbackSymmetry f I.subschemeι
+  have hsnd : e.hom ≫ pullback.snd I.subschemeι f = (I.comap f).subschemeι := by
+    rw [Iso.trans_hom, Category.assoc, pullbackSymmetry_hom_comp_snd,
+      Scheme.IdealSheafData.comapIso_hom_fst]
+  have hcomm : (e.hom ≫ pullback.fst I.subschemeι f) ≫ I.subschemeι =
+      (I.comap f).subschemeι ≫ f := by
+    rw [Category.assoc, pullback.condition, ← Category.assoc, hsnd]
+  exact ⟨e.hom ≫ pullback.fst I.subschemeι f, hcomm,
+    IsPullback.of_iso_pullback ⟨hcomm⟩ e rfl hsnd⟩
 
 theorem exists_isPullback_strictTransformι (F : ChartFlatBaseChange S S') (j : ℕ) (hj : j ≤ S'.length) :
     ∃ g : S'.strictTransform j ⟶ S.strictTransform (F.reindex j),

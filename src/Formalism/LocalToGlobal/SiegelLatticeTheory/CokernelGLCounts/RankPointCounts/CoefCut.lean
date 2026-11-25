@@ -13,8 +13,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
   Formalism.L2.SG.LsDatumB
 open Classical ValuativeRel
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Steps
 
 variable {D : Formalism.BasicNotions.D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
@@ -68,7 +66,7 @@ theorem hL_at {T T' : ℕ} {p : PlF D} {w : Point D.host.E (D.R.rS + 1)} {Y : Ma
   have hcls : IsLCls M δ T T' p w (kkOrb M p Y) := ⟨Y, hY, hO, rfl⟩
   obtain ⟨-, hrO, hrE⟩ := repL_spec' hcls
   unfold hL
-  rw [if_pos hcls]
+  rw [ite_eq_left hcls]
   generalize repL M δ T T' p w (kkOrb M p Y) = R at hrO hrE ⊢
   have hmem : R ∈ kkOrb M p Y := by
     rw [hrE]; exact PCount.mem_kkOrb_self p R

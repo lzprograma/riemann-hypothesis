@@ -226,10 +226,6 @@ theorem injective_zero : Function.Injective (map R S.f U 0) := by
 
 include hS
 
-theorem map_g_surjective (h : Subsingleton (cohOn S.X₁ U (n + 1))) :
-    Function.Surjective (map R S.g U n) :=
-  fun x ↦ (exact₃ R hS U n x).1 (Subsingleton.elim _ _)
-
 theorem app_surjective (h : Subsingleton (cohOn S.X₁ U 1)) : Function.Surjective (S.g.app U) := by
   have h₁ : Subsingleton (Sheaf.H'.{u} ((toAbSheaf (X := X)).obj S.X₁) 1 U) := h
   exact SheafLES.sections_surjective_of_subsingleton.{u} (shortExact_toAbSheaf hS) U h₁

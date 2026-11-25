@@ -16,8 +16,6 @@ namespace Formalism.L2.SG.Pf.MassDataPos
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermDef Formalism.L2.SG.HidaSetting Formalism.L2.SG.AdBridge Formalism.L2.SG.TypedSets
   Formalism.L2.SG.MassDataConc MeasureTheory
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem glkC_pos (k g : ℕ) (hg : g.Prime) : 0 < glkC k g := by
   haveI : NeZero g := ⟨hg.ne_zero⟩
   unfold glkC

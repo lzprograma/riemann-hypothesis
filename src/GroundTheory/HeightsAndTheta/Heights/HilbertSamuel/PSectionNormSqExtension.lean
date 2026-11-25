@@ -77,7 +77,7 @@ def Qf (d : (∀ k, ι k) → K → ℕ) (G : (∀ k, ι k) → Fin N → MRing 
   ∑ c, ∑ j, ‖ev (G c j) x‖ ^ 2 / Nd (d c) x
 
 def Rf (d : (∀ k, ι k) → K → ℕ) (x : (Σ k, ι k) → ℂ) : ℝ :=
-  ∑ c, ‖ev (chartMon c (d c)) x‖ ^ 2 / Nd (d c) x
+  ∑ c, ‖ev (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x‖ ^ 2 / Nd (d c) x
 
 def Ef (A : HermLine ι) (m : ℕ) (F : Finset (MRing ι × (K → ℕ))) (x : (Σ k, ι k) → ℂ) : ℝ :=
   A.h x ^ (2 * m) * ∑ p ∈ F, ‖ev p.1 x‖ ^ 2 / Nd p.2 x
@@ -90,7 +90,7 @@ theorem Rf_pos (d : (∀ k, ι k) → K → ℕ) {x : (Σ k, ι k) → ℂ} (hx 
   obtain ⟨c, hc⟩ : ∃ c : ∀ k, ι k, ∀ k, x ⟨k, c k⟩ ≠ 0 := ⟨fun k => (hx k).choose, fun k => (hx k).choose_spec⟩
   refine Finset.sum_pos' (fun c' _ => div_nonneg (sq_nonneg _) (Nd_pos _ hx).le)
     ⟨c, Finset.mem_univ _, div_pos (pow_pos (norm_pos_iff.mpr ?_) 2) (Nd_pos _ hx)⟩
-  rw [ev, eval_chartMon]
+  rw [ev, GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.eval_chartMon]
   exact Finset.prod_ne_zero_iff.mpr fun k _ => pow_ne_zero _ (hc k)
 
 theorem Qf_nonneg (d : (∀ k, ι k) → K → ℕ) (G : (∀ k, ι k) → Fin N → MRing ι) {x : (Σ k, ι k) → ℂ}
@@ -104,7 +104,7 @@ variable {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} {A : HermLine ι} {m :
 
 theorem QE_pos (hgen : KH.GeneratesOn y (fun k => (m : ℤ) * A.a k) v)
     (he : ∀ c k, (e c k : ℤ) = d c k + m * A.a k) (hG : ∀ c j, IsMultiHomog (G c j) (e c))
-    (hGy : ∀ c j, aeval y (G c j) = v j * aeval y (chartMon c (d c)))
+    (hGy : ∀ c j, aeval y (G c j) = v j * aeval y (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)))
     (hFspan : mCoordIdeal y ≤ Ideal.span ((fun p => p.1) '' (F : Set (MRing ι × (K → ℕ)))))
     {x : (Σ k, ι k) → ℂ} (hx : x ∈ blockNZ ι) : 0 < Qf d G x + Ef A m F x := by
   have hQ := Qf_nonneg d G hx
@@ -114,7 +114,7 @@ theorem QE_pos (hgen : KH.GeneratesOn y (fun k => (m : ℤ) * A.a k) v)
   by_cases h0 : ∀ p ∈ F, ev p.1 x = 0
   · have hxm := mem_mcPts_of_gens hFspan hx h0
     obtain ⟨c, hc⟩ : ∃ c : ∀ k, ι k, ∀ k, x ⟨k, c k⟩ ≠ 0 := ⟨fun k => (hx k).choose, fun k => (hx k).choose_spec⟩
-    have hyc : ∀ k, y ⟨k, c k⟩ ≠ 0 := fun k => y_ne_zero hxm (hc k)
+    have hyc : ∀ k, y ⟨k, c k⟩ ≠ 0 := fun k => GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.y_ne_zero hxm (hc k)
     obtain ⟨j, hj⟩ := exists_G_ne hgen hyc (he c) (hG c) (hGy c) hxm hc
     have hpos : 0 < Qf d G x := by
       refine Finset.sum_pos' (fun c' _ => Finset.sum_nonneg fun _ _ => div_nonneg (sq_nonneg _) (Nd_pos _ hx).le)
@@ -129,7 +129,7 @@ theorem QE_pos (hgen : KH.GeneratesOn y (fun k => (m : ℤ) * A.a k) v)
 
 theorem Sf_pos (hgen : KH.GeneratesOn y (fun k => (m : ℤ) * A.a k) v)
     (he : ∀ c k, (e c k : ℤ) = d c k + m * A.a k) (hG : ∀ c j, IsMultiHomog (G c j) (e c))
-    (hGy : ∀ c j, aeval y (G c j) = v j * aeval y (chartMon c (d c)))
+    (hGy : ∀ c j, aeval y (G c j) = v j * aeval y (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)))
     (hFspan : mCoordIdeal y ≤ Ideal.span ((fun p => p.1) '' (F : Set (MRing ι × (K → ℕ)))))
     {x : (Σ k, ι k) → ℂ} (hx : x ∈ blockNZ ι) : 0 < Sf d G A m F x :=
   div_pos (QE_pos hgen he hG hGy hFspan hx) (mul_pos (Rf_pos d hx) (pow_pos (A.pos x hx) _))
@@ -235,7 +235,7 @@ theorem Sf_smul {m : ℕ} {A : HermLine ι} {d e : (∀ k, ι k) → K → ℕ} 
   have hR : Rf d (fun p => c p.1 * x p) = Rf d x := by
     unfold Rf
     refine Finset.sum_congr rfl fun c' _ => ?_
-    rw [term_smul (homog_chartMon c' (d c')) (0 : K → ℤ) (fun k => by simp) hc x]
+    rw [term_smul (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.homog_chartMon c' (d c')) (0 : K → ℤ) (fun k => by simp) hc x]
     simp [wt]
   have hE : Ef A m F (fun p => c p.1 * x p) = lam * Ef A m F x := by
     unfold Ef
@@ -274,7 +274,7 @@ variable {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} {A : HermLine ι} {m :
 
 theorem Sf_value (hv : ∀ j, v j ∈ chartLat y A.a m)
     (he : ∀ c k, (e c k : ℤ) = d c k + m * A.a k) (hG : ∀ c j, IsMultiHomog (G c j) (e c))
-    (hGy : ∀ c j, aeval y (G c j) = v j * aeval y (chartMon c (d c)))
+    (hGy : ∀ c j, aeval y (G c j) = v j * aeval y (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)))
     (hF : ∀ p ∈ F, IsMultiHomog p.1 p.2 ∧ p.1 ∈ mCoordIdeal y)
     {x : (Σ k, ι k) → ℂ} (hx : x ∈ mcPts (mCoordIdeal y)) :
     Sf d G A m F x = ∑ j, secNormAt y A m (v j) x ^ 2 := by
@@ -288,8 +288,8 @@ theorem Sf_value (hv : ∀ j, v j ∈ chartLat y A.a m)
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [Finset.sum_congr rfl fun j _ => by rw [norm_eval_rep (hv j) (he c) (hG c j) (hGy c j) hx]]
     rw [← Finset.sum_div]
-    have h1 : ∀ j, (secNormAt y A m (v j) x * ‖ev (chartMon c (d c)) x‖ * A.h x ^ m) ^ 2 =
-        secNormAt y A m (v j) x ^ 2 * (‖ev (chartMon c (d c)) x‖ ^ 2 * A.h x ^ (2 * m)) := fun j => by ring
+    have h1 : ∀ j, (secNormAt y A m (v j) x * ‖ev (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x‖ * A.h x ^ m) ^ 2 =
+        secNormAt y A m (v j) x ^ 2 * (‖ev (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x‖ ^ 2 * A.h x ^ (2 * m)) := fun j => by ring
     rw [Finset.sum_congr rfl fun j _ => h1 j, ← Finset.sum_mul]
     ring
   have hR := Rf_pos d hx'
@@ -332,24 +332,24 @@ variable {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} [∀ k, Fintyp
 def Uf (d : (∀ k, ι k) → K → ℕ) (G : (∀ k, ι k) → Fin N → MRing ι) (A : HermLine ι) (m : ℕ)
     (F : Finset (MRing ι × (K → ℕ))) (c₀ : ∀ k, ι k) (x : (Σ k, ι k) → ℂ) : ℝ :=
   (∑ c, ∑ j, (fun x' => 1 / Nd (d c) x') x *
-      (‖ev (G c₀ j * chartMon c (d c)) x +
-          ev (G c j * chartMon c₀ (d c₀) - G c₀ j * chartMon c (d c)) x‖ ^ 2 -
-        ‖ev (G c₀ j * chartMon c (d c)) x‖ ^ 2)) +
-    ∑ p ∈ F, (fun x' => A.h x' ^ (2 * m) * ‖ev (chartMon c₀ (d c₀)) x'‖ ^ 2 / Nd p.2 x') x *
+      (‖ev (G c₀ j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x +
+          ev (G c j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c₀ (d c₀) - G c₀ j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x‖ ^ 2 -
+        ‖ev (G c₀ j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x‖ ^ 2)) +
+    ∑ p ∈ F, (fun x' => A.h x' ^ (2 * m) * ‖ev (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c₀ (d c₀)) x'‖ ^ 2 / Nd p.2 x') x *
       (‖(fun _ => (0 : ℂ)) x + ev p.1 x‖ ^ 2 - ‖(fun _ => (0 : ℂ)) x‖ ^ 2)
 
 theorem decomp (d : (∀ k, ι k) → K → ℕ) (G : (∀ k, ι k) → Fin N → MRing ι) (A : HermLine ι) (m : ℕ)
     (F : Finset (MRing ι × (K → ℕ))) (c₀ : ∀ k, ι k) (x : (Σ k, ι k) → ℂ) :
-    ‖ev (chartMon c₀ (d c₀)) x‖ ^ 2 * (Qf d G x + Ef A m F x) =
+    ‖ev (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c₀ (d c₀)) x‖ ^ 2 * (Qf d G x + Ef A m F x) =
       Rf d x * ∑ j, ‖ev (G c₀ j) x‖ ^ 2 + Uf d G A m F c₀ x := by
-  set H := chartMon c₀ (d c₀) with hH
+  set H := GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c₀ (d c₀) with hH
   have hterm : ∀ c j, (fun x' => 1 / Nd (d c) x') x *
-      (‖ev (G c₀ j * chartMon c (d c)) x + ev (G c j * H - G c₀ j * chartMon c (d c)) x‖ ^ 2 -
-        ‖ev (G c₀ j * chartMon c (d c)) x‖ ^ 2) =
+      (‖ev (G c₀ j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x + ev (G c j * H - G c₀ j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x‖ ^ 2 -
+        ‖ev (G c₀ j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x‖ ^ 2) =
       ‖ev H x‖ ^ 2 * (‖ev (G c j) x‖ ^ 2 / Nd (d c) x) -
-        ‖ev (chartMon c (d c)) x‖ ^ 2 / Nd (d c) x * ‖ev (G c₀ j) x‖ ^ 2 := by
+        ‖ev (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x‖ ^ 2 / Nd (d c) x * ‖ev (G c₀ j) x‖ ^ 2 := by
     intro c j
-    have e : ev (G c₀ j * chartMon c (d c)) x + ev (G c j * H - G c₀ j * chartMon c (d c)) x =
+    have e : ev (G c₀ j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x + ev (G c j * H - G c₀ j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x =
         ev (G c j) x * ev H x := by
       simp only [ev, map_mul, map_sub]
       ring
@@ -357,8 +357,8 @@ theorem decomp (d : (∀ k, ι k) → K → ℕ) (G : (∀ k, ι k) → Fin N �
     simp only [ev, map_mul, norm_mul, mul_pow]
     ring
   have e1 : (∑ c, ∑ j, (fun x' => 1 / Nd (d c) x') x *
-      (‖ev (G c₀ j * chartMon c (d c)) x + ev (G c j * H - G c₀ j * chartMon c (d c)) x‖ ^ 2 -
-        ‖ev (G c₀ j * chartMon c (d c)) x‖ ^ 2)) =
+      (‖ev (G c₀ j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x + ev (G c j * H - G c₀ j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x‖ ^ 2 -
+        ‖ev (G c₀ j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x‖ ^ 2)) =
       ‖ev H x‖ ^ 2 * Qf d G x - Rf d x * ∑ j, ‖ev (G c₀ j) x‖ ^ 2 := by
     rw [Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun j _ => hterm c j]
     unfold Qf Rf
@@ -390,10 +390,10 @@ theorem mem_of_homog {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} {g : MRing
 theorem numer_mem {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} {A : HermLine ι} {m : ℕ} {v : Fin N → Ω}
     {d e : (∀ k, ι k) → K → ℕ} {G : (∀ k, ι k) → Fin N → MRing ι}
     (he : ∀ c k, (e c k : ℤ) = d c k + m * A.a k) (hG : ∀ c j, IsMultiHomog (G c j) (e c))
-    (hGy : ∀ c j, aeval y (G c j) = v j * aeval y (chartMon c (d c))) (c₀ c : ∀ k, ι k) (j : Fin N) :
-    G c j * chartMon c₀ (d c₀) - G c₀ j * chartMon c (d c) ∈ mCoordIdeal y := by
-  refine mem_of_homog (homog_sub (homog_mul (hG c j) (homog_chartMon c₀ (d c₀)))
-    (homog_congr (homog_mul (hG c₀ j) (homog_chartMon c (d c))) fun k => ?_)) ?_
+    (hGy : ∀ c j, aeval y (G c j) = v j * aeval y (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c))) (c₀ c : ∀ k, ι k) (j : Fin N) :
+    G c j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c₀ (d c₀) - G c₀ j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c) ∈ mCoordIdeal y := by
+  refine mem_of_homog (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.homog_sub (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.homog_mul (hG c j) (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.homog_chartMon c₀ (d c₀)))
+    (fun m hm k => ((GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.homog_mul (hG c₀ j) (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.homog_chartMon c (d c))) m hm k).trans ?_)) ?_
   · simp only [Pi.add_apply]
     zify
     linarith [he c k, he c₀ k]
@@ -466,7 +466,7 @@ variable {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} {A : HermLine ι} {m :
 
 theorem isFlat_Uf (h₂ : LeviHolPerturb.Statement) (hsm : IsSmoothHerm A)
     (he : ∀ c k, (e c k : ℤ) = d c k + m * A.a k) (hG : ∀ c j, IsMultiHomog (G c j) (e c))
-    (hGy : ∀ c j, aeval y (G c j) = v j * aeval y (chartMon c (d c)))
+    (hGy : ∀ c j, aeval y (G c j) = v j * aeval y (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)))
     (hF : ∀ p ∈ F, IsMultiHomog p.1 p.2 ∧ p.1 ∈ mCoordIdeal y) (c₀ : ∀ k, ι k)
     {z w : (Σ k, addIdx ι N k) → ℂ} (hz : z ∈ mcPts (mCoordIdeal (addBlock y v)))
     (hw : IsConeTangent (Int.castRingHom ℂ) (mCoordIdeal (addBlock y v)) z w) :
@@ -475,15 +475,15 @@ theorem isFlat_Uf (h₂ : LeviHolPerturb.Statement) (hsm : IsSmoothHerm A)
   have hxo : basePart₂ z ∈ blockNZ ι := hx.1
   have hhC : ContDiffAt ℝ 2 A.h (basePart₂ z) := contDiffAt_of_on hsm hxo
   have h1 : IsFlat (fun x => ∑ c, ∑ j, (fun x' => 1 / Nd (d c) x') x *
-      (‖ev (G c₀ j * chartMon c (d c)) x +
-          ev (G c j * chartMon c₀ (d c₀) - G c₀ j * chartMon c (d c)) x‖ ^ 2 -
-        ‖ev (G c₀ j * chartMon c (d c)) x‖ ^ 2)) (basePart₂ z) (basePart₂ w) := by
+      (‖ev (G c₀ j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x +
+          ev (G c j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c₀ (d c₀) - G c₀ j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x‖ ^ 2 -
+        ‖ev (G c₀ j * GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)) x‖ ^ 2)) (basePart₂ z) (basePart₂ w) := by
     refine isFlat_sum _ fun c _ => isFlat_sum _ fun j _ => ?_
     have hmem := numer_mem he hG hGy c₀ c j
     exact h₂ _ _ _ _ _ _ (contDiffAt_const.div (contDiff_Nd _).contDiffAt (Nd_pos _ hxo).ne')
       (analyticAt_eval _ _) (analyticAt_eval _ _) (hx.2 _ hmem) (fderiv_old_eq_zero hw hmem)
   have h2 : IsFlat (fun x => ∑ p ∈ F,
-      (fun x' => A.h x' ^ (2 * m) * ‖ev (chartMon c₀ (d c₀)) x'‖ ^ 2 / Nd p.2 x') x *
+      (fun x' => A.h x' ^ (2 * m) * ‖ev (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c₀ (d c₀)) x'‖ ^ 2 / Nd p.2 x') x *
       (‖(fun _ => (0 : ℂ)) x + ev p.1 x‖ ^ 2 - ‖(fun _ => (0 : ℂ)) x‖ ^ 2)) (basePart₂ z) (basePart₂ w) := by
     refine isFlat_sum _ fun p hp => ?_
     exact h₂ _ _ _ _ _ _
@@ -491,7 +491,7 @@ theorem isFlat_Uf (h₂ : LeviHolPerturb.Statement) (hsm : IsSmoothHerm A)
       analyticAt_const (analyticAt_eval _ _) (hx.2 _ (hF p hp).2) (fderiv_old_eq_zero hw (hF p hp).2)
   exact h1.add h2
 
-theorem graph_cross (hGy : ∀ c j, aeval y (G c j) = v j * aeval y (chartMon c (d c)))
+theorem graph_cross (hGy : ∀ c j, aeval y (G c j) = v j * aeval y (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)))
     (hG : ∀ c j, IsMultiHomog (G c j) (e c)) (c₀ : ∀ k, ι k)
     {z w : (Σ k, addIdx ι N k) → ℂ} (hz : z ∈ mcPts (mCoordIdeal (addBlock y v)))
     (hw : IsConeTangent (Int.castRingHom ℂ) (mCoordIdeal (addBlock y v)) z w) (j j' : Fin N) :
@@ -533,7 +533,7 @@ theorem levi_identity (h₁ : LeviLogFlat.Statement) (h₂ : LeviHolPerturb.Stat
     (h₃ : LeviCompHol.Statement) (h₄ : LeviFSInvariant.Statement) (hsm : IsSmoothHerm A)
     (hgen : KH.GeneratesOn y (fun k => (m : ℤ) * A.a k) v)
     (he : ∀ c k, (e c k : ℤ) = d c k + m * A.a k) (hG : ∀ c j, IsMultiHomog (G c j) (e c))
-    (hGy : ∀ c j, aeval y (G c j) = v j * aeval y (chartMon c (d c)))
+    (hGy : ∀ c j, aeval y (G c j) = v j * aeval y (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c (d c)))
     (hF : ∀ p ∈ F, IsMultiHomog p.1 p.2 ∧ p.1 ∈ mCoordIdeal y)
     (hFspan : mCoordIdeal y ≤ Ideal.span ((fun p => p.1) '' (F : Set (MRing ι × (K → ℕ)))))
     {z w : (Σ k, addIdx ι N k) → ℂ} (hz : z ∈ mcPts (mCoordIdeal (addBlock y v)))
@@ -545,7 +545,7 @@ theorem levi_identity (h₁ : LeviLogFlat.Statement) (h₂ : LeviHolPerturb.Stat
   have hxo : basePart₂ z ∈ blockNZ ι := hx.1
   obtain ⟨c₀, hc₀⟩ : ∃ c : ∀ k, ι k, ∀ k, basePart₂ z ⟨k, c k⟩ ≠ 0 :=
     ⟨fun k => (hxo k).choose, fun k => (hxo k).choose_spec⟩
-  have hyc : ∀ k, y ⟨k, c₀ k⟩ ≠ 0 := fun k => y_ne_zero hx (hc₀ k)
+  have hyc : ∀ k, y ⟨k, c₀ k⟩ ≠ 0 := fun k => GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.y_ne_zero hx (hc₀ k)
   obtain ⟨j₀, hj₀⟩ := exists_G_ne hgen hyc (he c₀) (hG c₀) (hGy c₀) hx hc₀
   have hgan : AnalyticAt ℂ (fun x' (j : Fin N) => ev (G c₀ j) x') (basePart₂ z) :=
     AnalyticAt.pi fun j => analyticAt_eval _ _
@@ -645,8 +645,8 @@ theorem levi_identity (h₁ : LeviLogFlat.Statement) (h₂ : LeviHolPerturb.Stat
     rw [leviForm_congr eS, leviForm_sub (lQEC.sub lRC) (contDiffAt_const.mul lhC), leviForm_sub lQEC lRC,
       leviForm_const_mul lhC]
 
-  have hHx : ev (chartMon c₀ (d c₀)) (basePart₂ z) ≠ 0 := by
-    rw [ev, eval_chartMon]
+  have hHx : ev (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c₀ (d c₀)) (basePart₂ z) ≠ 0 := by
+    rw [ev, GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.eval_chartMon]
     exact Finset.prod_ne_zero_iff.mpr fun k _ => pow_ne_zero _ (hc₀ k)
   obtain ⟨hUC, hU0, hUd1, hUd2, hUl⟩ := isFlat_Uf h₂ hsm he hG hGy hF c₀ hz hw
   have hsumC : ContDiffAt ℝ 2 (fun u => ∑ j, ‖ev (G c₀ j) u‖ ^ 2) (basePart₂ z) :=
@@ -657,16 +657,16 @@ theorem levi_identity (h₁ : LeviLogFlat.Statement) (h₂ : LeviHolPerturb.Stat
   have hPUpos : Rf d (basePart₂ z) * ∑ j, ‖ev (G c₀ j) (basePart₂ z)‖ ^ 2 + Uf d G A m F c₀ (basePart₂ z) ≠ 0 := by
     rw [hU0, add_zero]
     exact hP1pos.ne'
-  have lHC : ContDiffAt ℝ 2 (fun u => Real.log (‖ev (chartMon c₀ (d c₀)) u‖ ^ 2)) (basePart₂ z) :=
+  have lHC : ContDiffAt ℝ 2 (fun u => Real.log (‖ev (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c₀ (d c₀)) u‖ ^ 2)) (basePart₂ z) :=
     (contDiff_normSq_eval _).contDiffAt.log (pow_ne_zero _ (norm_ne_zero_iff.mpr hHx))
-  have hHopen : IsOpen {u : (Σ k, ι k) → ℂ | ev (chartMon c₀ (d c₀)) u ≠ 0} :=
+  have hHopen : IsOpen {u : (Σ k, ι k) → ℂ | ev (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c₀ (d c₀)) u ≠ 0} :=
     isOpen_ne_fun (MvPolynomial.continuous_eval _) continuous_const
   have eQE : (fun u => Real.log (Qf d G u + Ef A m F u)) =ᶠ[𝓝 (basePart₂ z)]
       fun u => Real.log (Rf d u * ∑ j, ‖ev (G c₀ j) u‖ ^ 2 + Uf d G A m F c₀ u) -
-        Real.log (‖ev (chartMon c₀ (d c₀)) u‖ ^ 2) := by
+        Real.log (‖ev (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c₀ (d c₀)) u‖ ^ 2) := by
     filter_upwards [isOpen_blockNZ.mem_nhds hxo, hHopen.mem_nhds hHx] with u hu hHu
     have h1 := QE_pos hgen he hG hGy hFspan hu
-    have h2 : (0 : ℝ) < ‖ev (chartMon c₀ (d c₀)) u‖ ^ 2 := pow_pos (norm_pos_iff.mpr hHu) 2
+    have h2 : (0 : ℝ) < ‖ev (GroundTheory.Heights₂.Heights.HilbertSamuel.PowerBlockMetric.chartMon c₀ (d c₀)) u‖ ^ 2 := pow_pos (norm_pos_iff.mpr hHu) 2
     rw [← decomp, Real.log_mul h2.ne' h1.ne']
     ring
   have LQE : leviForm (fun u => Real.log (Qf d G u + Ef A m F u)) (basePart₂ z) (basePart₂ w) =

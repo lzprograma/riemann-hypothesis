@@ -53,16 +53,6 @@ open GlobalTheory.ZM
 
 namespace GlobalTheory.LinDescent
 
-private lemma isOpenImmersion_of_section_of_etale' {X Y : Scheme.{0}} (s : Y ⟶ X) (g : X ⟶ Y)
-    [Etale g] (h : s ≫ g = 𝟙 Y) : IsOpenImmersion s := by
-  have hP : MorphismProperty.HasOfPostcompProperty @IsOpenImmersion @Etale :=
-    MorphismProperty.hasOfPostcompProperty_iff_le_diagonal.mpr fun _ _ f hf => by
-      have : Etale f := hf
-      exact inferInstanceAs (IsOpenImmersion (pullback.diagonal f))
-  refine MorphismProperty.of_postcomp (W := @IsOpenImmersion) (W' := @Etale) s g inferInstance ?_
-  rw [h]
-  infer_instance
-
 private lemma exists_mem_range_lift_of_isGaloisCover {X Y : Scheme.{0}} {π : X ⟶ Y} {Ga : Type} [Group Ga]
     {ρ : Ga → (X ⟶ X)} (h : IsGaloisCover Ga ρ π) (p : ↥(pullback π π)) :
     ∃ a, p ∈ Set.range ⇑(pullback.lift (ρ a) (𝟙 X) (by rw [h.inv a, Category.id_comp]) :
@@ -97,7 +87,7 @@ theorem locTransitive_of_isGaloisCover {X Y : Scheme.{0}} {π : X ⟶ Y} {Ga : T
   let gr : X ⟶ pullback π π := pullback.lift (ρ c) (𝟙 X) (by rw [h.inv c, Category.id_comp])
   have : Etale π := h.etale
   have : IsOpenImmersion gr :=
-    isOpenImmersion_of_section_of_etale' gr (pullback.snd π π) (pullback.lift_snd _ _ _)
+    isOpenImmersion_of_section_of_etale (pullback.snd π π) gr (pullback.lift_snd _ _ _)
   let U : Z.Opens := φ ⁻¹ᵁ gr.opensRange
   have hr : Set.range (U.ι ≫ φ) ⊆ Set.range gr := by
     rintro _ ⟨v, rfl⟩

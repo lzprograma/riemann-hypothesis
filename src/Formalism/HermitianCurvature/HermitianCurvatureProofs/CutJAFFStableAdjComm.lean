@@ -18,52 +18,10 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStabl
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERHaarPos
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.HaarUniquenessConjugation
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Aesop.Main
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
 import Mathlib.Topology.Sheaves.Presheaf
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
@@ -227,8 +185,6 @@ open scoped ComplexConjugate
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.FFS.AC
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
   [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq]
 
@@ -275,8 +231,6 @@ end Formalism.FourierDecayAlt.P.CutMP.JA.FFS.AC
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.FFS
 
 open Formalism.FourierDecayAlt.P.CutMP.JA.FFS.AC
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem hermitian_curvature_adjoint_integral : AdjIntAsm := by
   intro hU hF k r Wp Wq _ _ _ _ _ _ D Θ hs hc f hf hfc hfs p hp φ hφ hφc hφs
@@ -378,7 +332,7 @@ theorem integrable_nn {μ : Measure (Mt k r)} (hμ : B.IsHaarOn (B.GV k r) μ) {
     rw [Set.indicator_of_mem hg']
     exact hM _ ⟨hgK, hg⟩
   · have hg' : g ∉ (Matrix.of ⁻¹' K : Set (Mt k r)) := hgK
-    simp only [Set.indicator, hg', if_false, hAz _ hgK, norm_zero, zero_mul, le_refl]
+    simp only [Set.indicator, hg', ite_false, hAz _ hgK, norm_zero, zero_mul, le_refl]
 
 end Formalism.FourierDecayAlt.P.CutMP.JA.FFS.AC
 
@@ -435,8 +389,6 @@ section -- clump:auto
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt MeasureTheory
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.FFS.AC
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {k r : ℕ}
 
@@ -524,8 +476,6 @@ end Formalism.FourierDecayAlt.P.CutMP.JA.FFS.AC
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.FFS.AC
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {k r : ℕ}
 
 theorem sgsM_left (p : B.SS k r) (hp1 : IsUnit (Matrix.of p.1.1 : B.Mat k r).det)
@@ -560,8 +510,6 @@ end Formalism.FourierDecayAlt.P.CutMP.JA.FFS.AC
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.FFS
 
 open Formalism.FourierDecayAlt.P.CutMP.JA.FFS.AC
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem unitary_rho_holds : RhoUni := by
   intro k r Wp Wq _ _ _ _ _ _ D p hp

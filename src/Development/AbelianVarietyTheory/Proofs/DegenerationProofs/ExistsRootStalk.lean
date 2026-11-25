@@ -67,7 +67,6 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR GlobalTheory.ZH GlobalTheory.UT
 open ReciprocityTheory.ChartRestriction.G.Out
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 
@@ -109,8 +108,8 @@ theorem exists_addVal (p : ℕ) [Fact p.Prime] {π : PadicAlgCl p} (h0 : 0 < ‖
     have := Real.log_le_log (norm_pos_iff.2 hx) h
     rw [hf x hx, hf y hy] at this
     exact_mod_cast (mul_le_mul_left_of_neg hl).1 this
-  refine ⟨AddValuation.of (fun x => if x = 0 then ⊤ else (f x : WithTop ℚ)) (if_pos rfl) ?_ ?_ ?_, fun x r => ?_⟩
-  · rw [if_neg one_ne_zero, inj (f 1) 0 (by rw [← hf 1 one_ne_zero]; simp)]; rfl
+  refine ⟨AddValuation.of (fun x => if x = 0 then ⊤ else (f x : WithTop ℚ)) (ite_eq_left rfl) ?_ ?_ ?_, fun x r => ?_⟩
+  · rw [ite_eq_right one_ne_zero, inj (f 1) 0 (by rw [← hf 1 one_ne_zero]; simp)]; rfl
   · intro x y
     by_cases hx : x = 0
     · simp [hx]
@@ -118,7 +117,7 @@ theorem exists_addVal (p : ℕ) [Fact p.Prime] {π : PadicAlgCl p} (h0 : 0 < ‖
     · simp [hy]
     by_cases hs : x + y = 0
     · simp [hs]
-    simp only [if_neg hx, if_neg hy, if_neg hs, min_le_iff, WithTop.coe_le_coe]
+    simp only [ite_eq_right hx, ite_eq_right hy, ite_eq_right hs, min_le_iff, WithTop.coe_le_coe]
     exact (le_max_iff.1 (IsUltrametricDist.norm_add_le_max x y)).imp (mono _ _ hs hx) (mono _ _ hs hy)
   · intro x y
     by_cases hx : x = 0
@@ -126,14 +125,14 @@ theorem exists_addVal (p : ℕ) [Fact p.Prime] {π : PadicAlgCl p} (h0 : 0 < ‖
     by_cases hy : y = 0
     · simp [hy]
     have hs := mul_ne_zero hx hy
-    simp only [if_neg hx, if_neg hy, if_neg hs, ← WithTop.coe_add]
+    simp only [ite_eq_right hx, ite_eq_right hy, ite_eq_right hs, ← WithTop.coe_add]
     refine congrArg _ (inj _ _ ?_)
     rw [← hf _ hs, norm_mul, Real.log_mul (norm_ne_zero_iff.2 hx) (norm_ne_zero_iff.2 hy), hf x hx, hf y hy]
     push_cast; ring
   · rw [AddValuation.of_apply, neg_mul, neg_neg]
     by_cases hx : x = 0
     · simp [hx, (Real.exp_pos _).ne]
-    rw [if_neg hx, WithTop.coe_eq_coe]
+    rw [ite_eq_right hx, WithTop.coe_eq_coe]
     refine ⟨fun h => by rw [← h, ← hf x hx, Real.exp_log (norm_pos_iff.2 hx)], fun h => inj _ _ ?_⟩
     rw [← hf x hx, h, Real.log_exp]
 

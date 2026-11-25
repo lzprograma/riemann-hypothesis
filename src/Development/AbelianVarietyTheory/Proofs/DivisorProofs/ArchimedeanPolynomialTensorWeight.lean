@@ -4,48 +4,7 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeights
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyFinitePiTensorSumOfFactorOperators
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeakExponentialActionOnFockVectors
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
 public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceTensorProductFiniteExtension
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndLineInf
@@ -125,18 +84,9 @@ theorem commute_jm {R S : ℕ} {X : Mat R S} (hX : IsKC X) : Commute X (Formalis
   rcases a with a | a <;> rcases b with b | b <;>
     simp [Formalism.BasicNotions.TH.Jm, Formalism.UG.Jpq, Matrix.mul_apply, Matrix.fromBlocks, Fintype.sum_sum_type, Matrix.one_apply, h1, h2]
 
-theorem isKC_smul {R S : ℕ} {X : Mat R S} (hX : IsKC X) (c : ℂ) : IsKC (c • X) := fun a b h => by
-  simp [hX a b h]
 
-theorem isKC_zero (R S : ℕ) : IsKC (0 : Mat R S) := fun a b _ => rfl
 
-theorem isKC_add {R S : ℕ} {X X' : Mat R S} (hX : IsKC X) (hX' : IsKC X') : IsKC (X + X') := fun a b h => by
-  simp [hX a b h, hX' a b h]
 
-theorem isKC_conjTranspose {R S : ℕ} {X : Mat R S} (hX : IsKC X) : IsKC Xᴴ := fun a b h => by
-  have h' : ¬ sameBlock b a := by
-    intro h2; apply h; rcases a with a | a <;> rcases b with b | b <;> simp_all [sameBlock]
-  simp [Matrix.conjTranspose_apply, hX b a h']
 
 theorem mem_upq {R S : ℕ} {X : Mat R S} (hX : IsKC X) (hs : Xᴴ = -X) : X ∈ upq R S := by
   show Xᴴ * _ + _ * X = 0
@@ -155,20 +105,6 @@ theorem frame_inv {α : Type} [Fintype α] [DecidableEq α] {R S : ℕ} {M : Mat
       _ = Kᵀ := by rw [Matrix.mul_assoc, hA, Matrix.mul_one]
   rw [h3, h2]
 
-theorem commute_of_frame {α : Type} [Fintype α] [DecidableEq α] {R S : ℕ} {C : Matrix α (Ix R S) ℂ}
-    {A' : Matrix (Ix R S) α ℂ} (hCA : C * A' = 1) (hAC : A' * C = 1) {G θ : Matrix α α ℂ} {E : Mat R S}
-    (hG : G * C = C * E) (hθ : θ * C = C * Formalism.BasicNotions.TH.Jm R S) (hE : Commute E (Formalism.BasicNotions.TH.Jm R S)) : Commute G θ := by
-  have hG' : G = C * E * A' := by rw [← hG, Matrix.mul_assoc, hCA, Matrix.mul_one]
-  have hθ' : A' * θ = Formalism.BasicNotions.TH.Jm R S * A' := by
-    calc A' * θ = A' * θ * (C * A') := by rw [hCA, Matrix.mul_one]
-      _ = A' * (θ * C) * A' := by simp only [Matrix.mul_assoc]
-      _ = _ := by rw [hθ]; simp only [← Matrix.mul_assoc, hAC, Matrix.one_mul]
-  show G * θ = θ * G
-  rw [hG']
-  calc C * E * A' * θ = C * E * (A' * θ) := by rw [Matrix.mul_assoc]
-    _ = C * (E * Formalism.BasicNotions.TH.Jm R S) * A' := by rw [hθ']; simp only [Matrix.mul_assoc]
-    _ = (θ * C) * E * A' := by rw [hE.eq, hθ]; simp only [Matrix.mul_assoc]
-    _ = _ := by simp only [Matrix.mul_assoc]
 
 end GlobalTheory.FockKStab
 end
@@ -180,131 +116,11 @@ open Matrix
 section Tensor
 variable {ι : Type} [Fintype ι] [DecidableEq ι] {V : ι → Type} [∀ i, AddCommGroup (V i)] [∀ i, Module ℂ (V i)]
 
-theorem atPl_eq' (w : ι) (L : Module.End ℂ (V w)) :
-    atPl w L = PiTensorProduct.mapMultilinear ℂ V V (Function.update (fun i => (LinearMap.id : V i →ₗ[ℂ] V i)) w L) := rfl
-
-theorem atPl_add' (w : ι) (L L' : Module.End ℂ (V w)) : atPl w (L + L') = atPl w L + atPl w L' := by
-  simp only [atPl_eq', MultilinearMap.map_update_add]
-
-theorem atPl_smul' (w : ι) (c : ℂ) (L : Module.End ℂ (V w)) : atPl w (c • L) = c • atPl w L := by
-  simp only [atPl_eq', MultilinearMap.map_update_smul, RingHom.id_apply]
-
-theorem atPl_zero' (w : ι) : atPl w (0 : Module.End ℂ (V w)) = 0 := by
-  simp only [atPl_eq', MultilinearMap.map_update_zero]
-
-theorem atPl_one' (w : ι) : atPl w (1 : Module.End ℂ (V w)) = 1 := by
-  rw [atPl_eq', show Function.update (fun i => (LinearMap.id : V i →ₗ[ℂ] V i)) w 1 = fun i => LinearMap.id by
-    funext i; by_cases h : i = w
-    · subst h; simp; rfl
-    · simp [Function.update_of_ne h]]
-  exact PiTensorProduct.map_id
-
 end Tensor
 
-theorem locFin_fock2' (P Q R S : ℕ) (Y : Mat R S) (hY : IsKC Y) (c : ℂ) :
-    LocFin (fockAct2 P Q R S Y + c • 1) := fun v => by
-  obtain ⟨⟨W, hW, hv, hs⟩, -⟩ := (GlobalTheory.FockPolGK.pol_locFin_weights P Q R S).2 v
-  exact ⟨W, hW, hv, fun y hy => W.add_mem (hs Y hY y hy) (W.smul_mem c hy)⟩
 
 
 
-theorem kstab_skew : GlobalTheory.RealLift.ActsLaws → GlobalTheory.RealLift.LineEx → ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E)
-    (n d P Q R S : ℕ) (X : Spc F E n) (W : Spc F E d) (om : Rep σ X W)
-    (C : InfinitePlace F → Matrix (Fin d) (Formalism.BasicNotions.TH.Ix R S) ℂ) (Φ : GlobalTheory.RealLift.Tens F P Q R S →ₗ[ℂ] SInf F (Fin n × Fin d))
-    (c : InfinitePlace F → ℂ), IsCMExt F E σ →
-    (∀ w, GlobalTheory.RealLift.IsFrame (Complex.I • (incM F W.J).map (piInf (B.emb w))) (C w)) →
-    (∀ w, W.θ w * C w = C w * Formalism.BasicNotions.TH.Jm R S) → Function.Injective Φ →
-    GlobalTheory.RealLift.ActsBy B.emb C (om.comp (MonoidHom.inr _ _)) Φ (Formalism.BasicNotions.TH.fockAct2 P Q R S) c →
-    (∀ g, ∀ l ∈ (adeleClass F).adm (Fin n × Fin d), l ∘ₗ om g ∈ (adeleClass F).adm (Fin n × Fin d)) →
-    ∀ N : Submodule ℂ (GlobalTheory.RealLift.Tens F P Q R S),
-      (∀ k ∈ KInf σ W B.emb, ∀ T ∈ N, ∀ f₁ : SInf F (Fin n × Fin d), Acts (evI F) (om (1, k)) (Φ T) f₁ → f₁ ∈ N.map Φ) →
-      ∀ w (Y : Formalism.BasicNotions.TH.Mat R S), Formalism.BasicNotions.TH.IsKC Y → Yᴴ = -Y → ∀ T ∈ N,
-        GlobalTheory.RealLift.atPl (V := fun _ : InfinitePlace F => Formalism.BasicNotions.TH.Pol P Q R S) w (Formalism.BasicNotions.TH.fockAct2 P Q R S Y) T ∈ N := by
-  intro hAL hLE F E _ _ _ _ _ σ B n d P Q R S X W om C Φ c hcm hC hθ hinj hact hadm N hN w
-  intro Y hY hYs T hT
-  set L0 : Module.End ℂ (Tens F P Q R S) :=
-    atPl (V := fun _ : InfinitePlace F => Formalism.BasicNotions.TH.Pol P Q R S) w (fockAct2 P Q R S Y + (c w * Y.trace) • 1) with hL0
-  set Ys : ℝ → InfinitePlace F → Mat R S := fun s w' => if w' = w then (s : ℂ) • Y else 0 with hYsdef
-  have hYsKC : ∀ s w', IsKC (Ys s w') := by
-    intro s w'; by_cases h : w' = w
-    · simp only [hYsdef, if_pos h]; exact isKC_smul hY _
-    · simp only [hYsdef, if_neg h]; exact isKC_zero R S
-  have hYsU : ∀ s w', Ys s w' ∈ upq R S := by
-    intro s w'; apply mem_upq (hYsKC s w'); by_cases h : w' = w
-    · simp [hYsdef, h, Matrix.conjTranspose_smul, hYs]
-    · simp [hYsdef, h]
-  have hsum : ∀ s : ℝ, sumPl (V := fun _ : InfinitePlace F => Formalism.BasicNotions.TH.Pol P Q R S)
-      (fun w' => fockAct2 P Q R S (Ys s w') + (c w' * (Ys s w').trace) • 1) = (s : ℂ) • L0 := by
-    intro s
-    unfold sumPl
-    rw [Finset.sum_eq_single w]
-    · rw [hL0, ← atPl_smul']
-      congr 1
-      simp only [hYsdef, if_pos rfl, map_smul, Matrix.trace_smul, smul_add, smul_smul, smul_eq_mul]
-      congr 2; ring
-    · intro w' _ hw'; simp [hYsdef, hw', atPl_zero']
-    · simp
-  have hloc : ∀ s : ℝ, LocFin (sumPl (V := fun _ : InfinitePlace F => Formalism.BasicNotions.TH.Pol P Q R S)
-      (fun w' => fockAct2 P Q R S (Ys s w') + (c w' * (Ys s w').trace) • 1)) := fun s =>
-    GlobalTheory.RealLift.locFin_sumPl _ _ _ (fun w' => locFin_fock2' P Q R S _ (hYsKC s w') _)
-  have hexp : ∀ s : ℝ, ∃ U : Module.End ℂ (Tens F P Q R S), IsExp ((s : ℂ) • L0) U ∧ U T ∈ N := by
-    intro s
-    obtain ⟨γ, hγ, hgen⟩ := hLE F E σ (Fin d) R S B.emb (incM F W.J) Complex.I C hcm hC (Ys s) (hYsU s)
-    obtain ⟨U, hU, hSA⟩ := GlobalTheory.ExpAct.expAct_fock F (Fin n × Fin d) _ Φ _
-      ((om.comp (MonoidHom.inr _ _)).comp γ) (hloc s) (fun t l hl => hadm _ l hl) (fun T => hact γ hγ (Ys s) hgen T)
-    refine ⟨U, hsum s ▸ hU, ?_⟩
-    have h1 := (hAL F _ (Φ T) (Φ (U T)) (Φ (U T))).2.1 _ (map_zero _) (hSA T)
-    have hk : γ (Multiplicative.ofAdd 1) ∈ KInf σ W B.emb := by
-      refine ⟨hγ.2 _, fun w' => ?_⟩
-      obtain ⟨A', hA'⟩ := (hC w').2
-      exact commute_of_frame hA' (frame_inv (hC w') hA') (hgen 1 w') (hθ w')
-        (Commute.exp_left (Commute.smul_left (commute_jm (hYsKC s w')) _))
-    have h2 := hN _ hk T hT _ h1
-    obtain ⟨y, hy, e⟩ := Submodule.mem_map.1 h2
-    exact hinj e ▸ hy
-  have hL0loc : LocFin L0 := by
-    have := hloc 1
-    rwa [hsum 1, Complex.ofReal_one, one_smul] at this
-  have hmem := mem_of_exp L0 hL0loc N T hexp
-  have e : L0 T = atPl (V := fun _ : InfinitePlace F => Formalism.BasicNotions.TH.Pol P Q R S) w (fockAct2 P Q R S Y) T +
-      (c w * Y.trace) • T := by
-    simp [hL0, atPl_add', atPl_smul', atPl_one']
-  rw [e] at hmem
-  simpa using N.sub_mem hmem (N.smul_mem (c w * Y.trace) hT)
-
-
-
-theorem kstab : GlobalTheory.RealLift.ActsLaws → GlobalTheory.RealLift.LineEx →
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E)
-    (n d P Q R S : ℕ) (X : Spc F E n) (W : Spc F E d) (om : Rep σ X W)
-    (C : InfinitePlace F → Matrix (Fin d) (Formalism.BasicNotions.TH.Ix R S) ℂ) (Φ : GlobalTheory.RealLift.Tens F P Q R S →ₗ[ℂ] SInf F (Fin n × Fin d))
-    (c : InfinitePlace F → ℂ), IsCMExt F E σ →
-    (∀ w, GlobalTheory.RealLift.IsFrame (Complex.I • (incM F W.J).map (piInf (B.emb w))) (C w)) →
-    (∀ w, W.θ w * C w = C w * Formalism.BasicNotions.TH.Jm R S) → Function.Injective Φ →
-    GlobalTheory.RealLift.ActsBy B.emb C (om.comp (MonoidHom.inr _ _)) Φ (Formalism.BasicNotions.TH.fockAct2 P Q R S) c →
-    (∀ g, ∀ l ∈ (adeleClass F).adm (Fin n × Fin d), l ∘ₗ om g ∈ (adeleClass F).adm (Fin n × Fin d)) →
-    ∀ N : Submodule ℂ (GlobalTheory.RealLift.Tens F P Q R S),
-      (∀ k ∈ KInf σ W B.emb, ∀ T ∈ N, ∀ f₁ : SInf F (Fin n × Fin d), Acts (evI F) (om (1, k)) (Φ T) f₁ → f₁ ∈ N.map Φ) →
-      ∀ w (Z : Formalism.BasicNotions.TH.Mat R S), Formalism.BasicNotions.TH.IsKC Z → ∀ T ∈ N,
-        GlobalTheory.RealLift.atPl (V := fun _ : InfinitePlace F => Formalism.BasicNotions.TH.Pol P Q R S) w (Formalism.BasicNotions.TH.fockAct2 P Q R S Z) T ∈ N := by
-  intro hAL hLE F E _ _ _ _ _ σ B n d P Q R S X W om C Φ c hcm hC hθ hinj hact hadm N hN w Z hZ T hT
-  have key := kstab_skew hAL hLE F E σ B n d P Q R S X W om C Φ c hcm hC hθ hinj hact hadm N hN w
-  obtain ⟨Y1, hY1⟩ : ∃ Y1 : Mat R S, Y1 = (1 / 2 : ℂ) • (Z - Zᴴ) := ⟨_, rfl⟩
-  obtain ⟨Y2, hY2⟩ : ∃ Y2 : Mat R S, Y2 = (1 / (2 * Complex.I)) • (Z + Zᴴ) := ⟨_, rfl⟩
-  have hZ' : Z = Y1 + Complex.I • Y2 := by
-    rw [hY1, hY2, smul_smul, show Complex.I * (1 / (2 * Complex.I)) = 1 / 2 by field_simp, ← smul_add]
-    rw [show Z - Zᴴ + (Z + Zᴴ) = (2 : ℂ) • Z by rw [two_smul]; abel, smul_smul]; norm_num
-  have hZh : IsKC Zᴴ := isKC_conjTranspose hZ
-  have k1 : IsKC Y1 := hY1 ▸ isKC_smul (by rw [sub_eq_add_neg]; exact isKC_add hZ (by simpa using isKC_smul hZh (-1))) _
-  have k2 : IsKC Y2 := hY2 ▸ isKC_smul (isKC_add hZ hZh) _
-  have s1 : Y1ᴴ = -Y1 := by
-    rw [hY1, Matrix.conjTranspose_smul, Matrix.conjTranspose_sub, Matrix.conjTranspose_conjTranspose]
-    rw [show star (1 / 2 : ℂ) = 1 / 2 by simp, ← smul_neg, neg_sub]
-  have s2 : Y2ᴴ = -Y2 := by
-    rw [hY2, Matrix.conjTranspose_smul, Matrix.conjTranspose_add, Matrix.conjTranspose_conjTranspose]
-    rw [show star (1 / (2 * Complex.I)) = -(1 / (2 * Complex.I)) by simp, neg_smul, add_comm]
-  rw [hZ', map_add (f := _), map_smul, atPl_add', atPl_smul', LinearMap.add_apply, LinearMap.smul_apply]
-  exact N.add_mem (key Y1 k1 s1 T hT) (N.smul_mem _ (key Y2 k2 s2 T hT))
 
 end GlobalTheory.FockKStab
 end

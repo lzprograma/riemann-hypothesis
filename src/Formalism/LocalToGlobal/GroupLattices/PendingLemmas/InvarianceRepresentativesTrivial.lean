@@ -207,10 +207,10 @@ theorem subst_actS (j : ℕ) (B B' : ∀ v : X.Pl, GL (Fin ((X.Pj j).m + 1)) (X.
   rw [subst_lin (hasSubst_actS X Kc j B)]
   simp only [MvPowerSeries.subst_X (hasSubst_actS X Kc j B), actS]
   by_cases hs : IsOddPos s
-  · simp only [if_pos hs]
+  · simp only [ite_eq_left hs]
     rw [sum_lin (MvPowerSeries.C) (mAt X Kc j v s ((B' v)⁻¹ : GL _ _)) (mAt X Kc j v s ((B v)⁻¹ : GL _ _))
       (fun a' => (MvPowerSeries.X ⟨v, (s, a', b)⟩ : MvPowerSeries (X.ZA j) Kc)) a, mAt_mul, ← Units.val_mul, ← mul_inv_rev]
-  · simp only [if_neg hs]
+  · simp only [ite_eq_right hs]
     have h := sum_lin (MvPowerSeries.C) (mAt X Kc j v s (B' v)).transpose (mAt X Kc j v s (B v)).transpose
       (fun a' => (MvPowerSeries.X ⟨v, (s, a', b)⟩ : MvPowerSeries (X.ZA j) Kc)) a
     simp only [Matrix.transpose_apply] at h

@@ -44,7 +44,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.CuspRep GlobalTheory.GalOfCusp GlobalTheory.UnitaryBC UpperTheory.V.Af
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 namespace UpperTheory.V.Z.Win.Gu
 theorem spehOf_alt (H : _root_.UpperTheory.V.Af.HypothesesH') : GlobalTheory.BcSpeh.BcSpeh :=
   _root_.UpperTheory.BaseChangeIdentities.bcSpeh_alt (_root_.UpperTheory.BaseChangeIdentities.bridge H.litN.aut.bc H.litN.loc.bern)

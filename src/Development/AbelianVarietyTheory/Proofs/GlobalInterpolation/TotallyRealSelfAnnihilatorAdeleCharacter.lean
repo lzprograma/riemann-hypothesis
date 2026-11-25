@@ -107,7 +107,7 @@ theorem exists_eq_of_forall [IsTotallyReal F] {ψ : AddChar (AF F) ℂ} (hψ : I
     (hx : ∀ ξ : F, ψ (x * algebraMap F (AF F) ξ) = 1) : ∃ ξ : F, x = algebraMap F (AF F) ξ := by
   by_cases htriv : ∀ y, ψ (x * y) = 1
   · exact ⟨0, by rw [map_zero]; exact eq_zero_of_forall hψ x htriv⟩
-  · push_neg at htriv
+  · push Not at htriv
     obtain ⟨hc, hn, -, -⟩ := id hψ
 
     have hχ : IsCharAF F (ψ.compAddMonoidHom (AddMonoidHom.mulLeft x)) := by

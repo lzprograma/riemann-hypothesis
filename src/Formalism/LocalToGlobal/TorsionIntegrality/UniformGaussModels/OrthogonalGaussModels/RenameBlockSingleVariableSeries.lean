@@ -25,11 +25,11 @@ theorem hyp_of_gram (l : ℕ) [Fact l.Prime] (σ : MaximalUnramifiedExtension l 
     ?_, ?_, ?_⟩
   · intro e e'
     have := hG (false, e') (false, e)
-    simp only [ne_eq, not_true_eq_false, false_and, if_false] at this
+    simp only [ne_eq, not_true_eq_false, false_and, ite_false] at this
     rw [← this]; exact Finset.sum_congr rfl fun i _ => mul_comm _ _
   · intro e e'
     have := hG (true, e') (true, e)
-    simp only [ne_eq, not_true_eq_false, false_and, if_false] at this
+    simp only [ne_eq, not_true_eq_false, false_and, ite_false] at this
     rw [← this]; exact Finset.sum_congr rfl fun i _ => mul_comm _ _
   · intro e e'
     have := hG (true, e') (false, e)
@@ -52,12 +52,3 @@ theorem joint (l : ℕ) [Fact l.Prime] (hl : 5 ≤ l) (ν r0 r1 : ℕ) [NeZero �
   exact ⟨σ, F, om, oms, f, f', hU, hF, h2, hev, hO, hT, hζ, hff⟩
 
 end Formalism.L2.Th1.Top.InhA
-
-namespace Formalism.L2.Th1.Top.InhB
-
-open Formalism.L2.Th1.D Formalism.L2.Th1.Top
-open Formalism.DworkPowerSeriesWeights (Integral mvExp)
-open Formalism.InvariantFactorPaths.G7 (lgF at1 UnrOK)
-open Formalism.L2.Th1.CM (MaximalUnramifiedExtension)
-
-end Formalism.L2.Th1.Top.InhB

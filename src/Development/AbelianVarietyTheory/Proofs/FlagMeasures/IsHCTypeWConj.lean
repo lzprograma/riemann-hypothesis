@@ -75,13 +75,3 @@ theorem lowK_neg_rev (u : Fin k → ℝ) :
 variable {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
 end GlobalTheory.ConjTypeW
-
-namespace GlobalTheory.ConjTypeW
-
-variable {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V] [FiniteDimensional ℂ V]
-
-end GlobalTheory.ConjTypeW
-
-namespace GlobalTheory.ConjTypeW
-
-end GlobalTheory.ConjTypeW

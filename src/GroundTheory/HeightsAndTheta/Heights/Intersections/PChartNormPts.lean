@@ -70,17 +70,17 @@ theorem ChartNormPts.proof : ChartNormPts.Statement := by
         (fun q => G.x' ⟨q.1.1, q.2⟩ / G.x' ⟨q.1.1, j q.1⟩) (σ q')) = fun q' => c q'.1 * G.x' q' := by
       funext q'
       by_cases h : q'.1 ∈ Set.range κ
-      · simp only [σ, c, dif_pos h, coe_eval₂Hom, eval₂_C, one_mul]
+      · simp only [σ, c, dite_eq_left h, coe_eval₂Hom, eval₂_C, one_mul]
         simp [(hv.2.2.2 q' h).choose_spec]
-      · simp only [σ, c, dif_neg h, coe_eval₂Hom, eval₂_X]
+      · simp only [σ, c, dite_eq_right h, coe_eval₂Hom, eval₂_X]
         rw [div_eq_inv_mul]
     have hz : (fun q' => eval₂Hom (aeval (z' ∘ v) : MRing ι →ₐ[ℤ] ℂ).toRingHom
         (fun q => z' ⟨q.1.1, q.2⟩) (σ q')) = z' := by
       funext q'
       by_cases h : q'.1 ∈ Set.range κ
-      · simp only [σ, dif_pos h, coe_eval₂Hom, eval₂_C]
+      · simp only [σ, dite_eq_left h, coe_eval₂Hom, eval₂_C]
         simp [(hv.2.2.2 q' h).choose_spec]
-      · simp only [σ, dif_neg h, coe_eval₂Hom, eval₂_X]
+      · simp only [σ, dite_eq_right h, coe_eval₂Hom, eval₂_X]
     rw [hx, hz, ChartNormPts.aeval_smul_homog g a ha] at h1
     have hg0 : aeval G.x' g = 0 := by
       have : g ∈ RingHom.ker (aeval G.x' : MRing ι' →ₐ[ℤ] G.Φ') := by

@@ -15,8 +15,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.SatGramActL
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem satGramActLIota_kB_good {D : D7} {X : HidaSetting D} {w : D.what₂.Word}
     {rs : Finset (Submodule (𝓞 D.host.E) (VS D).V)} (c : ColSys X w rs) (Λ : Submodule (𝓞 D.host.E) (VS D).V)
     (γ : Gam X w) (hk : kB c Λ γ ∈ X.B.I.Kset) : Good X (kB c Λ γ) := by

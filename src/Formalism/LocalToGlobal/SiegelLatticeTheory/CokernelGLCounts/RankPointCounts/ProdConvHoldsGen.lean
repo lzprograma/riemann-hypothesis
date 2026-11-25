@@ -1,5 +1,7 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolUHerm
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSIntWittOEv
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ProdConvCut
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DensitySumsAndDomination
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.AlTiePl
@@ -35,68 +37,16 @@ public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankP
 public import Formalism.LocalRingCardinality.IntCastDvdOfDvdIntegers
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CanonicalAnalyticData
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TheoremSRecursion
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Log.Summable
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LocMassTyp
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CovolumeFrames.StepSize
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.FrameStd
-import Mathlib.Tactic.TypeStar
 import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtA
-import Mathlib.Tactic.ENatToNat
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.DensFibV
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Polynomial.Basic
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.KitAbs
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.DetAdmA
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TensTop
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.InertPow
 import Mathlib.Tactic.Linter.HaveILetI
 
@@ -300,8 +250,6 @@ open MeasureTheory NumberField IsDedekindDomain
 open Formalism.BasicNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.SG.Sub Formalism.L2.SG.Measures Formalism.L2.SG.HidaSetting Formalism.L2.SG.AdBridge
   Formalism.L2.SG.LocVol Formalism.L2.SG.TypedSets Formalism.L2.SG.Pf.MassDataX
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem local_factors_pos_typical_general {D : D7} (X : HidaSetting D) (hb : AdBridgeIso X.B.I) (ψ : AddChar (AF X.B.I.F) ℂ)
     (hψ : IsCharAF X.B.I.F ψ) (hs : IsStdChar ψ) (hloc : ∀ w : D.what₂.Word, LocCompatX X ψ w)
     (u u' : D.what₂.Word) (v : PlX X) (hv : TypAt X v) : 0 < MX X u u' ψ v ∧ 0 < localVolumeUnit X ψ v := by
@@ -325,7 +273,7 @@ theorem local_factors_pos_typical_general {D : D7} (X : HidaSetting D) (hb : AdB
       (mul_pos (sv_pos X u p (kg_sub_kv X p) subset_rfl) (sv_pos X u' p (kg_sub_kv X p) subset_rfl))
   have hR : 0 < MX X u u' ψ v / localVolumeUnit X ψ v := by
     unfold MX localVolumeUnit OmX
-    rw [if_pos hv, if_pos hv]
+    rw [ite_eq_left hv, ite_eq_left hv]
     exact lt_of_lt_of_eq hpos h.symm
   have hU0 : 0 ≤ localVolumeUnit X ψ v := ENNReal.toReal_nonneg
   rcases div_pos_iff.1 hR with ⟨h1, h2⟩ | ⟨-, h2⟩
@@ -351,8 +299,6 @@ namespace Formalism.L2.SG.Pf.ProdConvCut2
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.LocVol Formalism.L2.SG.Pf.NcVal
   Formalism.L2.SG.Pf.NcVal.VolOrdW Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory Formalism.L2.SG.TypedSets
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (X : HidaSetting D) (u u' : D.what₂.Word) (ψ : AddChar (AF X.B.I.F) ℂ)
 
@@ -382,7 +328,7 @@ theorem zz_one (hN : SdNormDV X ψ) {v : PlX X} (hv : ¬ TypAt X v) (h1 : absV v
     ext z
     simp [ZZOrd, locZ, Set.mem_pi, Prod.forall]
   unfold ZZX volS
-  rw [if_neg hv, hsetZ, SdW.boxScaleL_holds v (Fin (D.R.rS + 1) × Fin (D.R.rS + 1)) hfin
+  rw [ite_eq_right hv, hsetZ, SdW.boxScaleL_holds v (Fin (D.R.rS + 1) × Fin (D.R.rS + 1)) hfin
     (sdE (E := X.B.I.E) ψ v (Fin (D.R.rS + 1) × Fin (D.R.rS + 1)))
     (fun p : Fin (D.R.rS + 1) × Fin (D.R.rS + 1) => alp v D.R.rS p.1 * alp v D.R.rS p.2)
     (fun p => mul_ne_zero (alp_ne_zero v D.R.rS p.1) (alp_ne_zero v D.R.rS p.2)), hO1, h1, one_pow, one_mul]
@@ -413,7 +359,7 @@ theorem unramified_factor_eq_one (hN : SdNormDV X ψ) {v : PlX X} (hv : ¬ TypAt
   have := hH2
   have := hS2
   unfold localVolumeUnit volU
-  rw [if_neg hv, localVolumeOrdinary, Measure.prod_prod, ENNReal.toReal_mul, uo_one hN hv h1, one_mul]
+  rw [ite_eq_right hv, localVolumeOrdinary, Measure.prod_prod, ENNReal.toReal_mul, uo_one hN hv h1, one_mul]
 
 theorem pp_one (hN : SdNormDV X ψ) {v : PlX X} (hv : ¬ TypAt X v) (h1 : absV v (dV v) = 1) (l : Fin (D.R.rS + 1)) :
     PPX X u u' ψ l v = 1 := by
@@ -426,7 +372,7 @@ theorem pp_one (hN : SdNormDV X ψ) {v : PlX X} (hv : ¬ TypAt X v) (h1 : absV v
     simp [PPOrd, Set.mem_pi]
     exact ⟨fun h i => h, fun h => h ()⟩
   unfold PPX volC
-  rw [if_neg hv, hset, SdW.boxScaleL_holds v Unit hfin (sdE (E := X.B.I.E) ψ v Unit)
+  rw [ite_eq_right hv, hset, SdW.boxScaleL_holds v Unit hfin (sdE (E := X.B.I.E) ψ v Unit)
     (fun _ : Unit => alp v D.R.rS l ^ 2) (fun _ => pow_ne_zero _ (alp_ne_zero v D.R.rS l)), hO, h1, one_pow, one_mul]
   refine Finset.prod_eq_one fun q _ => ?_
   rw [absV_pow, absV_alp_one v h1]
@@ -435,7 +381,7 @@ theorem pp_one (hN : SdNormDV X ψ) {v : PlX X} (hv : ¬ TypAt X v) (h1 : absV v
 theorem jac_one {v : PlX X} (hv : ¬ TypAt X v) (h1 : absV v (dV v) = 1) : jacX X v = 1 := by
   unfold jacX jacS
   refine Finset.prod_eq_one fun l _ => ?_
-  rw [if_neg hv, mul_one, absV_prod]
+  rw [ite_eq_right hv, mul_one, absV_prod]
   rw [Finset.prod_eq_one fun i _ => by rw [absV_pow, absV_alp_one v h1, one_pow]]
   norm_num
 
@@ -544,8 +490,6 @@ namespace Formalism.L2.SG.Pf.LocalPositivity
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.LocVol Formalism.L2.SG.Pf.NcVal
   Formalism.L2.SG.Pf.NcVal.VolOrdW Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory Formalism.L2.SG.TypedSets
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : HidaSetting D) (u u' : D.what₂.Word) (ψ : AddChar (AF X.B.I.F) ℂ)
 
 theorem pos_of_div {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (h : 0 < a / b) : 0 < a ∧ 0 < b := by
@@ -576,7 +520,7 @@ theorem pp_pos_ord (hψ : IsCharAF X.B.I.F ψ) (hs : IsStdChar ψ) {v : PlX X} (
     simp [PPOrd, Set.mem_pi]
     exact ⟨fun h i => h, fun h => h ()⟩
   unfold PPX volC
-  rw [if_neg hv, hset, SdW.boxScaleL_holds v Unit hfin (sdE (E := X.B.I.E) ψ v Unit)
+  rw [ite_eq_right hv, hset, SdW.boxScaleL_holds v Unit hfin (sdE (E := X.B.I.E) ψ v Unit)
     (fun _ : Unit => alp v D.R.rS l ^ 2) (fun _ => pow_ne_zero _ (alp_ne_zero v D.R.rS l)), hO]
   refine mul_pos (pow_pos (absV_pos v (dV_ne_zero v)) _) (Finset.prod_pos fun q _ => ?_)
   exact inv_pos.2 (pow_pos (absV_pos v (pow_ne_zero _ (alp_ne_zero v D.R.rS l))) 2)
@@ -633,34 +577,7 @@ theorem sc_mul (t : Fv F v) (x : Fv F v ⊗[F] E) : sc (E := E) v t * x = t • 
 
 theorem oev_mul {x y : Fv F v ⊗[F] E} (hx : x ∈ OEv (E := E) v) (hy : y ∈ OEv (E := E) v) :
     x * y ∈ OEv (E := E) v := by
-  unfold OEv at hx hy ⊢
-  rw [SetLike.mem_coe] at hx hy ⊢
-  induction hx using Submodule.span_induction with
-  | mem a ha =>
-    induction hy using Submodule.span_induction with
-    | mem b hb =>
-      obtain ⟨a', -, rfl⟩ := ha
-      obtain ⟨b', -, rfl⟩ := hb
-      apply Submodule.subset_span
-      refine ⟨a' * b', Set.mem_univ _, ?_⟩
-      first
-        | exact map_mul _ _ _
-    | zero => simp
-    | add y z _ _ hy hz =>
-      rw [mul_add]
-      exact Submodule.add_mem _ hy hz
-    | smul c y _ hy =>
-      first
-        | rw [mul_smul_comm]
-      exact Submodule.smul_mem _ c hy
-  | zero => simp
-  | add x z _ _ hx hz =>
-    rw [add_mul]
-    exact Submodule.add_mem _ hx hz
-  | smul c x _ hx =>
-    first
-      | rw [smul_mul_assoc]
-    exact Submodule.smul_mem _ c hx
+  apply _root_.Formalism.L2.SG.Pf.NcS.IntWittPf.oev_mul <;> assumption
 
 theorem sigR_smul (σ : E →ₐ[F] E) (c : Fv F v) (x : Fv F v ⊗[F] E) :
     sigR (Fv F v) σ (c • x) = c • sigR (Fv F v) σ x := by
@@ -676,22 +593,7 @@ private theorem sigR_smulO_lemma (σ : E →ₐ[F] E) (c : v.adicCompletionInteg
 
 theorem oev_sigR (σ : E →ₐ[F] E) {x : Fv F v ⊗[F] E} (hx : x ∈ OEv (E := E) v) :
     sigR (Fv F v) σ x ∈ OEv (E := E) v := by
-  unfold OEv at hx ⊢
-  rw [SetLike.mem_coe] at hx ⊢
-  induction hx using Submodule.span_induction with
-  | mem a ha =>
-    obtain ⟨a', -, rfl⟩ := ha
-    apply Submodule.subset_span
-    first
-      | exact ⟨NumberField.RingOfIntegers.mapRingHom (σ : E →+* E) a', Set.mem_univ _,
-          by simp [sigR, inclR]⟩
-  | zero => simp
-  | add x y _ _ hx hy =>
-    rw [map_add (f := _)]
-    exact Submodule.add_mem _ hx hy
-  | smul c x _ hx =>
-    rw [sigR_smulO_lemma]
-    exact Submodule.smul_mem _ c hx
+  apply _root_.Formalism.L2.SG.Pf.NcS.IntWittPf.oev_sigR <;> assumption
 
 theorem integer_ring_topology : OTop (E := E) v :=
   ⟨Sd.isCompact_oev v, Sd.isOpen_oev v, oev_one v, fun _ hx _ hy => oev_mul v hx hy,
@@ -972,17 +874,7 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
   {σ : E →ₐ[F] E} {v : HeightOneSpectrum (𝓞 F)}
 
 theorem continuous_sigR' (σ : E →ₐ[F] E) : Continuous (sigR (Fv F v) σ) := by
-  have : IsModuleTopology (Fv F v) (Fv F v ⊗[F] E) := ⟨rfl⟩
-  have h : ∀ x : Fv F v ⊗[F] E, sigR (Fv F v) σ x = (σ.toLinearMap.baseChange (Fv F v)) x := by
-    intro x
-    induction x using TensorProduct.induction_on with
-    | zero => simp
-    | tmul r e => simp [sigR]
-    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
-  have : (sigR (Fv F v) σ : Fv F v ⊗[F] E → Fv F v ⊗[F] E) = (σ.toLinearMap.baseChange (Fv F v)) :=
-    funext h
-  rw [this]
-  exact IsModuleTopology.continuous_of_linearMap _
+  apply _root_.Formalism.L2.SG.Pf.NcVal.VolUHm.sigR_cont <;> assumption
 
 namespace SD
 
@@ -1116,7 +1008,7 @@ theorem parabolic_volume : VolPP σ v := by
             OEv (E := E) v}) := by
       ext c
       simp only [Set.mem_preimage, Set.mem_pi, Set.mem_univ, true_implies, Set.mem_ofPred_eq, PPTyp,
-        if_pos hl, unit_forall]
+        ite_eq_left hl, unit_forall]
       rw [D.mem_sc_mul, D.mem_sc_mul, D.mem_pt_mul, D.shear_first_coordinate, D.shear_second_coordinate]
       simp only [map_add (f := _), (D.p_sig _).1, (D.p_sig _).2, id]
       constructor
@@ -1139,7 +1031,7 @@ theorem parabolic_volume : VolPP σ v := by
     have hA := absV_pos v (alp_ne_zero v r l)
     have hG := absV_pos v hg0
     field_simp
-  · have hlr : alp v r l = 1 := by unfold alp; rw [if_neg hl]
+  · have hlr : alp v r l = 1 := by unfold alp; rw [ite_eq_right hl]
     obtain ⟨k, hk⟩ := hT
     have hk' : ((T : Fv F v) - (T' : Fv F v)) = (g : Fv F v) * (k : Fv F v) := by
       have := congrArg (Int.cast : ℤ → Fv F v) hk
@@ -1151,7 +1043,7 @@ theorem parabolic_volume : VolPP σ v := by
             {c | D.pt (((g : Fv F v)⁻¹) ^ 2) (g : Fv F v)⁻¹ * c ∈ OEv (E := E) v})) := by
       ext c
       simp only [Set.mem_preimage, Set.mem_pi, Set.mem_univ, true_implies, Set.mem_ofPred_eq, PPTyp,
-        if_neg hl, unit_forall, Pi.add_apply]
+        ite_eq_right hl, unit_forall, Pi.add_apply]
       rw [D.mem_sc_mul, D.mem_sc_mul, D.mem_pt_mul]
       simp only [map_add (f := _), D.shear_first_coordinate, D.shear_second_coordinate, hp0, hp1, map_natCast, (D.p_sig _).1, (D.p_sig _).2, id]
       constructor
@@ -1204,8 +1096,6 @@ open MeasureTheory NumberField IsDedekindDomain
 open Formalism.BasicNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.SG.HidaSetting Formalism.L2.SG.LocVol Formalism.L2.SG.TypedSets Formalism.L2.SG.Pf.NcVal
   Formalism.L2.SG.Pf.NcVal.VolOrdW
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem pp_pos_typ_gen {D : D7} (X : HidaSetting D) (hb : Formalism.L2.SG.AdBridge.AdBridgeIso X.B.I) (ψ : AddChar (AF X.B.I.F) ℂ)
     (hψ : IsCharAF X.B.I.F ψ) (hs : IsStdChar ψ) (u u' : D.what₂.Word) (v : PlX X) (hv : TypAt X v)
     (l : Fin (D.R.rS + 1)) : 0 < PPX X u u' ψ l v := by
@@ -1234,7 +1124,7 @@ theorem pp_pos_typ_gen {D : D7} (X : HidaSetting D) (hb : Formalism.L2.SG.AdBrid
     by_contra h
     have he := hTF.2.2.1
     unfold etaV at he
-    rw [if_neg h] at he
+    rw [ite_eq_right h] at he
     exact absurd he (by decide)
   have hS : PI.UnitaryGroupMassFormula.LocJacTyp.SplitHyp X.B.I.cm.sig v := ⟨X.B.I.cm.deg2, hnt, hid⟩
   have hg : 0 < gAt X v := hTF.1.pos
@@ -1248,7 +1138,7 @@ theorem pp_pos_typ_gen {D : D7} (X : HidaSetting D) (hb : Formalism.L2.SG.AdBrid
       absV v (dV v) ^ Fintype.card Unit * PI.LocJacTyp.absV v (gAt X v : Fv X.B.I.F v) ^ 3 *
         (PI.LocJacTyp.absV v (PI.LocJacTyp.alp v D.R.rS l) ^ 4)⁻¹ := hP
   unfold PPX volC
-  rw [if_pos hv, hP']
+  rw [ite_eq_left hv, hP']
   have hd : 0 < absV v (dV v) := absV_pos v (dV_ne_zero v)
   have hgv : (gAt X v : Fv X.B.I.F v) ≠ 0 := by exact_mod_cast hg.ne'
   have h1 : 0 < PI.LocJacTyp.absV v (gAt X v : Fv X.B.I.F v) := PI.UnitaryGroupMassFormula.LocJacTyp.absV_pos v hgv

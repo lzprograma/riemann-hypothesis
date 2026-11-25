@@ -66,7 +66,7 @@ theorem periodic_shift {K : Type} (g : ℕ → K) (N : ℕ) (h : ∀ i, g (N + i
   | zero => intro i; simp
   | succ k ih => intro i; rw [Nat.mul_succ, add_assoc, ih, h]
 
-theorem sum_range_mul_of_periodic : ∀ {K : Type} [inst : Field K] (g : ℕ → K) (N : ℕ),
+theorem sum_range_mul_of_periodic : ∀ {K : Type} [Field K] (g : ℕ → K) (N : ℕ),
     (∀ (i : ℕ), g (N + i) = g i) → ∀ (k : ℕ),
       ∑ i ∈ Finset.range (N * k), g i = (↑k : K) * ∑ i ∈ Finset.range N, g i := by
   intro K _ g N h k

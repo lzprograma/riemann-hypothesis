@@ -3,53 +3,9 @@ module
 public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
 public import Development.AutomorphicArithmetic.PrimeDiscriminants.CycImage
 import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.LinearAlgebra.Lagrange
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -320,7 +276,6 @@ theorem jump_of_total [CharZero Qp] [FiniteDimensional Qp K] (hs : Nat.card (K �
     have := mu_alg (K := K) (LL := LL) (0 : Qp) y
     simpa using this
   have hsum : x = ∑ τ, aeval (μ pb.gen) (Lagrange.basis Finset.univ v τ) x := by
-    set_option synthInstance.maxHeartbeats 100000 in
       rw [← LinearMap.sum_apply, ← map_sum, Lagrange.sum_basis hv.injOn hne, map_one, Module.End.one_apply]
   rw [hsum]
   refine Submodule.sum_mem _ fun τ _ => ?_
@@ -359,24 +314,6 @@ section D
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module NumberField IsDedekindDomain Formalism.MainNotions
 section Loc
 variable {l : ℕ} [Fact l.Prime]
-
-theorem Ks_mono (K : FinExt l) {s s' : ℕ} (h : s ≤ s') : Ks K s ≤ Ks K s' := by
-  unfold Ks
-  refine sup_le_sup_left (IntermediateField.adjoin.mono _ _ _ ?_) _
-  intro x hx
-  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le h
-  have hx' : x ^ (l ^ s) = 1 := hx
-  show x ^ (l ^ (s + k)) = 1
-  rw [pow_add, pow_mul, hx', one_pow]
-
-theorem good_one {K LL : FinExt l} {s : ℕ} (h : Good K s LL) (h2 : l ≠ 2) (hK : K.1 ≤ Ks K 1) :
-    Good K 1 LL := by
-  refine ⟨le_rfl, fun e => absurd e h2, hK, fun τ x => ?_⟩
-  have e := h.2.2.2 ((τ.liftNormal (Om l)).comp (Ks K s).val) ⟨x.1, Ks_mono K h.1 x.2⟩
-  have e2 : τ.liftNormal (Om l) (algebraMap ↥(Ks K 1) (Om l) x) = algebraMap (Om l) (Om l) (τ x) :=
-    AlgHom.liftNormal_commutes τ (Om l) x
-  have e3 : ((τ.liftNormal (Om l)).comp (Ks K s).val) ⟨x.1, Ks_mono K h.1 x.2⟩ = τ x := e2
-  rwa [e3] at e
 
 theorem card_emb (K LL : FinExt l) (h : ∀ (τ : ↥K.1 →ₐ[ℚ_[l]] Om l) (x : ↥K.1), τ x ∈ LL.1) :
     Nat.card (↥K.1 →ₐ[ℚ_[l]] ↥LL.1) = finrank ℚ_[l] ↥K.1 := by

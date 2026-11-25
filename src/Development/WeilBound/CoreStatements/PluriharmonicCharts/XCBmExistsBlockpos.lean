@@ -1,44 +1,6 @@
 module
 
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.OmHeightslockG
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -50,29 +12,13 @@ namespace PositivityTheory.Xgp.c_bm_exists_blockpos
 
 theorem posDef_fromBlocks {m n : Type} [Fintype m] [Fintype n] {A : Matrix m m ℂ} {B : Matrix n n ℂ}
     (hA : A.PosDef) (hB : B.PosDef) : (Matrix.fromBlocks A 0 0 B).PosDef := by
-  rw [Matrix.posDef_iff_dotProduct_mulVec] at hA hB ⊢
-  refine ⟨?_, fun x hx => ?_⟩
-  · rw [Matrix.IsHermitian, Matrix.fromBlocks_conjTranspose, hA.1, hB.1]; simp
-  · have e : star x ⬝ᵥ (Matrix.fromBlocks A 0 0 B *ᵥ x) =
-        star (x ∘ Sum.inl) ⬝ᵥ (A *ᵥ (x ∘ Sum.inl)) + star (x ∘ Sum.inr) ⬝ᵥ (B *ᵥ (x ∘ Sum.inr)) := by
-      rw [Matrix.fromBlocks_mulVec]
-      simp [dotProduct, Fintype.sum_sum_type]
-    rw [e]
-    have h1 : 0 ≤ star (x ∘ Sum.inl) ⬝ᵥ (A *ᵥ (x ∘ Sum.inl)) := by
-      by_cases h : x ∘ Sum.inl = 0
-      · rw [h]; simp
-      · exact (hA.2 h).le
-    have h2 : 0 ≤ star (x ∘ Sum.inr) ⬝ᵥ (B *ᵥ (x ∘ Sum.inr)) := by
-      by_cases h : x ∘ Sum.inr = 0
-      · rw [h]; simp
-      · exact (hB.2 h).le
-    by_cases h : x ∘ Sum.inl = 0
-    · have h' : x ∘ Sum.inr ≠ 0 := fun h' => hx (funext fun i => by
-        rcases i with i | i
-        · exact congrFun h i
-        · exact congrFun h' i)
-      exact add_pos_of_nonneg_of_pos h1 (hB.2 h')
-    · exact add_pos_of_pos_of_nonneg (hA.2 h) h2
+  classical
+  let _ := hA.isUnit.invertible
+  have hpsd : (Matrix.fromBlocks A 0 0 B).PosSemidef := by
+    simpa only [Matrix.conjTranspose_zero] using
+      (Matrix.PosDef.fromBlocks₁₁ (0 : Matrix m n ℂ) B hA).2 (by simpa using hB.posSemidef)
+  rw [hpsd.posDef_iff_det_ne_zero, Matrix.det_fromBlocks_zero₁₂]
+  exact mul_ne_zero hA.det_pos.ne' hB.det_pos.ne'
 
 end PositivityTheory.Xgp.c_bm_exists_blockpos
 

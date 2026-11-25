@@ -2,47 +2,7 @@ module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.UnitFam
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -51,27 +11,11 @@ open scoped MatrixGroups ModularForm
 
 namespace UpperTheory.V.Sd
 
-private theorem coe_comb {N : ℕ} {k : ℤ} {I : Type} (s : Finset I) (c : I → ℂ) (f : I → ModularForm (Gamma1 N) k) :
-    ((∑ a ∈ s, c a • f a : ModularForm (Gamma1 N) k) : ℍ → ℂ) = ∑ a ∈ s, c a • (f a : ℍ → ℂ) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, ModularForm.coe_add, ModularForm.coe_smul, ih]
-
-private theorem one_mem_per (N : ℕ) :
-    (1 : ℝ) ∈ (Subgroup.map (Matrix.SpecialLinearGroup.mapGL ℝ) (Gamma1 N)).strictPeriods := by
-  rw [Subgroup.mem_strictPeriods_iff, Subgroup.mem_map]
-  refine ⟨ModularGroup.T, ?_, ?_⟩
-  · rw [CongruenceSubgroup.Gamma1_mem]
-    simp [ModularGroup.T]
-  · ext i j
-    fin_cases i <;> fin_cases j <;>
-      simp [Matrix.GeneralLinearGroup.upperRightHom, Matrix.SpecialLinearGroup.mapGL, ModularGroup.coe_T]
-
 private theorem coef_smul {N : ℕ} {k : ℤ} (c : ℂ) (f : ModularForm (Gamma1 N) k) (n : ℕ) :
     coef (c • (f : ℍ → ℂ)) n = c * coef f n := by
   unfold coef
-  rw [ModularForm.qExpansion_smul one_pos (one_mem_per N) c f]
+  rw [ModularForm.qExpansion_smul one_pos
+    (by rw [CongruenceSubgroup.strictPeriods_Gamma1]; exact AddSubgroup.mem_zmultiples 1) c f]
   simp
 
 private theorem coef_comb {N : ℕ} {k : ℤ} {I : Type} (s : Finset I) (c : I → ℂ) (f : I → ModularForm (Gamma1 N) k) (n : ℕ) :
@@ -82,8 +26,12 @@ private theorem coef_comb {N : ℕ} {k : ℤ} {I : Type} (s : Finset I) (c : I �
   | insert a s ha ih =>
     rw [Finset.sum_insert ha, Finset.sum_insert ha, ← ih, ← coef_smul]
     unfold coef
-    rw [ModularForm.coe_add, ModularFormClass.qExpansion_add one_pos (one_mem_per N), map_add (f := _),
-      ModularForm.coe_smul]
+    have hper : (1 : ℝ) ∈
+        (Subgroup.map (Matrix.SpecialLinearGroup.mapGL ℝ) (Gamma1 N)).strictPeriods := by
+      rw [CongruenceSubgroup.strictPeriods_Gamma1]
+      exact AddSubgroup.mem_zmultiples 1
+    rw [FunLike.coe_add, ModularForm.qExpansion_add one_pos hper, map_add (f := _),
+      FunLike.coe_smul]
 
 private theorem slash_neg_one (k : ℕ) (f : ℍ → ℂ) : f ∣[(k : ℤ)] (-1 : SL(2, ℤ)) = ((-1 : ℂ) ^ k) • f := by
   ext τ
@@ -123,17 +71,10 @@ theorem UpperTheory.V.Sd.unitForm :
     rw [h, map_zero, norm_zero] at hnorm1
     exact zero_ne_one hnorm1
   set w : (ZMod N)ˣ → ℂ := fun a => (2 * c1)⁻¹ * χ ((a⁻¹ : (ZMod N)ˣ) : ZMod N) with hw
-  have hslash : ∀ (s : Finset (ZMod N)ˣ) (γ : SL(2, ℤ)),
-      (∑ a ∈ s, w a • (f a : ℍ → ℂ)) ∣[(k : ℤ)] γ = ∑ a ∈ s, w a • ((f a : ℍ → ℂ) ∣[(k : ℤ)] γ) := by
-    intro s γ
-    classical
-    induction s using Finset.induction_on with
-    | empty => simp [SlashAction.zero_slash]
-    | insert a s ha ih =>
-      rw [Finset.sum_insert ha, Finset.sum_insert ha, SlashAction.add_slash, ih, ModularForm.SL_smul_slash]
   refine ⟨∑ a, w a • f a, ?_, ?_, ?_, ?_⟩
   · intro γ hγ
-    rw [coe_comb, hslash]
+    rw [FunLike.coe_sum]
+    simp only [FunLike.coe_smul, SlashAction.sum_slash, ModularForm.SL_smul_slash]
     have h10 : (((γ : Matrix (Fin 2) (Fin 2) ℤ) 1 0 : ℤ) : ZMod N) = 0 := CongruenceSubgroup.Gamma0_mem.mp hγ
     have hdet : (((γ : Matrix (Fin 2) (Fin 2) ℤ) 1 1 : ℤ) : ZMod N) * (((γ : Matrix (Fin 2) (Fin 2) ℤ) 0 0 : ℤ) : ZMod N) = 1 := by
       have h := congrArg (fun x : ℤ => (x : ZMod N)) (Matrix.SpecialLinearGroup.det_coe γ)
@@ -155,7 +96,6 @@ theorem UpperTheory.V.Sd.unitForm :
     simp only [hw, mul_inv_rev, inv_inv, Units.val_mul, map_mul]
     ring
   · intro n
-
     rw [coef_comb, map_sum]
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one (fun a _ => ?_)
     rw [map_mul, norm_mul]
@@ -165,18 +105,10 @@ theorem UpperTheory.V.Sd.unitForm :
     rw [hwa, one_mul]
     exact hint a n
   · intro γ hγ
-    rw [coe_comb, hslash]
-    have hz : ∀ s : Finset (ZMod N)ˣ, IsZeroAtImInfty (∑ a ∈ s, w a • ((f a : ℍ → ℂ) ∣[(k : ℤ)] γ)) := by
-      intro s
-      classical
-      induction s using Finset.induction_on with
-      | empty =>
-        rw [Finset.sum_empty]
-        exact Filter.zero_zeroAtFilter _
-      | insert a s ha ih =>
-        rw [Finset.sum_insert ha]
-        exact ((hvan a γ hγ).smul (w a)).add ih
-    exact hz _
+    rw [FunLike.coe_sum]
+    simp only [FunLike.coe_smul, SlashAction.sum_slash, ModularForm.SL_smul_slash]
+    exact Finset.sum_induction _ _ (fun _ _ => Filter.ZeroAtFilter.add)
+      (Filter.zero_zeroAtFilter _) fun a _ => (hvan a γ hγ).smul (w a)
   · haveI : Fact (2 < N) := ⟨by omega⟩
     have hne : (1 : (ZMod N)ˣ) ≠ -1 := by
       intro h

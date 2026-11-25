@@ -12,58 +12,19 @@ public import Mathlib.LinearAlgebra.Eigenspace.Minpoly
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormPowSubOneLe
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicTateMaximalIdealKillsFirstCohomology
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicNormZpowSubOnePadicValInt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
 import Mathlib.NumberTheory.Padics.LocalField
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Algebra.Nonarchimedean.Completion
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.MetricSpace.Ultra.Pi
 import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicTowerGeneratorMatrixPerturbation
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormPrimitiveRootPrimePowSubOnePadicComplex
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateDecompositionCompletedCyclotomicIntegers
@@ -557,13 +518,6 @@ theorem norm_mulVec_le {r : ℕ} (B : Matrix (Fin r) (Fin r) C) {c : ℝ} (hc : 
   exact mul_le_mul (hB a b) (norm_le_pi_norm v b) (norm_nonneg _) hc
 
 omit [IsUltrametricDist C] in
-theorem mulVec_mem {r : ℕ} (X : AddSubgroup C) (B : Matrix (Fin r) (Fin r) C)
-    (hB : ∀ a b, ∀ x ∈ X, B a b * x ∈ X) (v : Fin r → C) (hv : ∀ a, v a ∈ X) (a : Fin r) :
-    B.mulVec v a ∈ X := by
-  simp only [Matrix.mulVec, dotProduct]
-  exact X.sum_mem fun b _ => hB a b _ (hv b)
-
-omit [IsUltrametricDist C] in
 theorem map_mulVec {r : ℕ} (X : AddSubgroup C) (O : Set C) (hOX : ∀ o ∈ O, ∀ x ∈ X, o * x ∈ X)
     (T : C → C) (hadd : ∀ x ∈ X, ∀ x' ∈ X, T (x + x') = T x + T x')
     (hlin : ∀ o ∈ O, ∀ x ∈ X, T (o * x) = o * T x)
@@ -595,7 +549,7 @@ theorem eq_zero_of_small {r : ℕ} (X : AddSubgroup C) (hX1 : ∀ x ∈ X, ‖x�
     | succ n ih =>
       obtain ⟨i1, i2, i3⟩ := ih
       simp only [Function.iterate_succ_apply']
-      refine ⟨mulVec_mem X B hBX _ i1, (pi_norm_le_iff_of_nonneg (by positivity)).2 fun a => ?_, ?_⟩
+      refine ⟨CycPerturb.mulVec_mem X B hBX _ i1, (pi_norm_le_iff_of_nonneg (by positivity)).2 fun a => ?_, ?_⟩
       · rw [pow_succ']
         exact (norm_mulVec_le B hc hB _ a).trans (mul_le_mul_of_nonneg_left i2 hc)
       · rw [map_mulVec X O hOX T hadd hlin B hBO _ i1, i3]
@@ -617,27 +571,9 @@ end Abstract
 
 variable {l : ℕ} [hl : Fact l.Prime]
 
-theorem rho_lt_one : rho1 l < 1 := by
-  have h1 : (1 : ℝ) < l := by exact_mod_cast hl.1.one_lt
-  rw [rho1]
-  apply Real.rpow_lt_one_of_one_lt_of_neg h1
-  exact div_neg_of_neg_of_pos (by norm_num) (by linarith)
-
-theorem norm_root_sub_one {ζ : PadicComplex l} (h : IsPrimitiveRoot ζ l) : ‖ζ - 1‖ = rho1 l := by
-  have := GlobalTheory.Cyc.norm_primitiveRoot_sub_one l 1 le_rfl ζ (by rwa [pow_one])
-  simpa [rho1] using this
-
-theorem mem_inC_iff (F : IntermediateField ℚ_[l] (Om l)) (y : PadicComplex l) :
-    y ∈ inC F ↔ y ∈ F.toSubfield.map (algebraMap (Om l) (PadicComplex l)) := by
-  simp [inC, PadicComplex.coe_eq]
-
 theorem root_mem_inC (K : FinExt l) {j : ℕ} (hj : 1 ≤ j) {ζ : PadicComplex l}
     (h : IsPrimitiveRoot ζ l) : ζ ∈ inC (Ks K j) :=
   GlobalTheory.CycPerturb.root_mem_inC K hj h
-
-theorem chiC_mem_inC (χ : GQ l →* ℚ_[l]ˣ) (i : ℤ) (g : GQ l)
-    (F : IntermediateField ℚ_[l] (Om l)) : chiC χ i g ∈ inC F :=
-  ⟨algebraMap ℚ_[l] (Om l) _, F.algebraMap_mem _, rfl⟩
 
 theorem exists_quot {χ : GQ l →* ℚ_[l]ˣ} {K : FinExt l} {j : ℕ} (hj : Lev l j) {g : GQ l}
     (hg : IsGen χ K j g) {r : ℕ} (U : Matrix (Fin r) (Fin r) (PadicComplex l))
@@ -683,11 +619,11 @@ theorem twAct_fixed_eq_zero {act : GQ l →* (PadicComplex l ≃+* PadicComplex 
   obtain ⟨S, hS, hadd, hlin⟩ := GlobalTheory.Cyc.exists_tate_operator l act χ hact hχ K j hj g hg ζ hζ
   obtain ⟨B, c, hc0, hc1, hB, hBO, hBe⟩ := exists_quot hj hg (U g) hU hU1 i hζ
   have hBO' : ∀ a b, (-B) a b ∈ intC (Ks K j) := fun a b =>
-    ⟨(mem_inC_iff _ _).2 (neg_mem ((mem_inC_iff _ _).1 (hBO a b).1)), by
+    ⟨(CycPerturb.mem_inC_iff _ _).2 (neg_mem ((CycPerturb.mem_inC_iff _ _).1 (hBO a b).1)), by
       rw [Matrix.neg_apply, norm_neg]; exact (hBO a b).2⟩
   have hp : ζ - 1 ∈ intC (Ks K j) :=
-    ⟨(mem_inC_iff _ _).2 (sub_mem ((mem_inC_iff _ _).1 (root_mem_inC K hj.1 hζ)) (one_mem _)), by
-      rw [norm_root_sub_one hζ]; exact rho_lt_one.le⟩
+    ⟨(CycPerturb.mem_inC_iff _ _).2 (sub_mem ((CycPerturb.mem_inC_iff _ _).1 (root_mem_inC K hj.1 hζ)) (one_mem _)), by
+      rw [CycPerturb.norm_root_sub_one hζ]; exact CycPerturb.rho_lt_one.le⟩
   have hp0 : ζ - 1 ≠ 0 := sub_ne_zero.2 (hζ.ne_one hl.1.one_lt)
   refine eq_zero_of_small (Xj K j) (fun x hx => ohat_norm K (hO x hx)) _ hmul
     (fun x => S (act g x)) (fun x hx => (hS _ (hgX x hx)).1)
@@ -702,7 +638,7 @@ theorem twAct_fixed_eq_zero {act : GQ l →* (PadicComplex l ≃+* PadicComplex 
     rw [Matrix.neg_mulVec, Pi.neg_apply]
     linear_combination -this
   have h2 := (hS _ (hy a)).2.2
-  rw [h1, hlin _ hp _ (mulVec_mem (Xj K j) (-B) (fun a b => hmul _ (hBO' a b)) _
+  rw [h1, hlin _ hp _ (CycPerturb.mulVec_mem (Xj K j) (-B) (fun a b => hmul _ (hBO' a b)) _
     (fun b => hgX _ (hy b)) a)] at h2
   exact (mul_left_cancel₀ hp0 h2).symm
 
@@ -741,8 +677,6 @@ variable {l : ℕ} [Fact l.Prime]
 
 alias hinf_le_gj := _root_.GlobalTheory.Cyc.AlmostTrace.Hinf_le_Gj
 
-alias gj_le := _root_.GlobalTheory.Cyc.cyclotomicTowerLevelGaloisSubgroup_le_fixingSubgroup_base
-
 alias norm_l_lt := _root_.GlobalTheory.TateDecomp.norm_l_lt
 
 theorem norm_chiC {χ : GQ l →* ℚ_[l]ˣ} (hχ : IsCyc χ) (j : ℤ) (g : GQ l) : ‖chiC χ j g‖ = 1 := by
@@ -752,7 +686,7 @@ theorem norm_chiC {χ : GQ l →* ℚ_[l]ˣ} (hχ : IsCyc χ) (j : ℤ) (g : GQ 
 theorem chiC_hinf {χ : GQ l →* ℚ_[l]ˣ} (hχ : IsCyc χ) (K : FinExt l) (j : ℤ) {h : GQ l}
     (hh : h ∈ Hinf K) : chiC χ j h = 1 := by
   have : χ h = 1 :=
-    ((GlobalTheory.Cyc.cyc_basic l χ hχ).2.2 K h (gj_le K 0 (hinf_le_gj K 0 hh))).2.1 hh
+    ((GlobalTheory.Cyc.cyc_basic l χ hχ).2.2 K h (GlobalTheory.Cyc.cyclotomicTowerLevelGaloisSubgroup_le_fixingSubgroup_base K 0 (hinf_le_gj K 0 hh))).2.1 hh
   simp [chiC, this]
 
 theorem chiC_neg_mul (χ : GQ l →* ℚ_[l]ˣ) (j : ℤ) (g : GQ l) :
@@ -780,19 +714,19 @@ theorem eigen_of_norm_le {act : GQ l →* (PadicComplex l ≃+* PadicComplex l)}
       funext a; rw [hsum a, map_add (f := _)]; rfl
     simp only [twAct]
     rw [e, Matrix.mulVec_add, smul_add]
-  have hc : chiC χ u g ∈ intC (Ks K m) := ⟨chiC_mem_inC χ u g _, (norm_chiC hχ u g).le⟩
+  have hc : chiC χ u g ∈ intC (Ks K m) := ⟨CycPerturb.chiC_mem_inC χ u g _, (norm_chiC hχ u g).le⟩
   have hX : ∀ a, twAct act χ u U g x a ∈ Xj K m := by
     intro a
     simp only [twAct, Pi.smul_apply, smul_eq_mul, Matrix.mulVec, dotProduct]
     exact hmul _ hc _ ((Xj K m).sum_mem fun b _ =>
-      hmul _ (hU g hg.1 a b) _ (hstab g (gj_le K m hg.1) _ (hx b)))
+      hmul _ (hU g hg.1 a b) _ (hstab g (GlobalTheory.Cyc.cyclotomicTowerLevelGaloisSubgroup_le_fixingSubgroup_base K m hg.1) _ (hx b)))
   have hK : ∀ a, twAct act χ u U g y0 a - y0 a ∈ inC (Ks K m) := by
     intro a
-    rw [mem_inC_iff]
+    rw [CycPerturb.mem_inC_iff]
     simp only [twAct, hfix, Pi.smul_apply, smul_eq_mul, Matrix.mulVec, dotProduct]
-    exact sub_mem (mul_mem ((mem_inC_iff _ _).1 hc.1) (sum_mem fun b _ =>
-      mul_mem ((mem_inC_iff _ _).1 (hU g hg.1 a b).1) ((mem_inC_iff _ _).1 (hy0 b).1)))
-      ((mem_inC_iff _ _).1 (hy0 a).1)
+    exact sub_mem (mul_mem ((CycPerturb.mem_inC_iff _ _).1 hc.1) (sum_mem fun b _ =>
+      mul_mem ((CycPerturb.mem_inC_iff _ _).1 (hU g hg.1 a b).1) ((CycPerturb.mem_inC_iff _ _).1 (hy0 b).1)))
+      ((CycPerturb.mem_inC_iff _ _).1 (hy0 a).1)
   have hrel : ∀ a, twAct act χ u U g y0 a - y0 a = x a - twAct act χ u U g x a := by
     intro a
     have h1 := congrFun (hadd.symm.trans (hy g hg.1)) a

@@ -94,15 +94,6 @@ theorem subsingleton_of_rank_zero (D : Datum H) (hD : D.p + D.q = 0) : Subsingle
   have := isTorsionFree D
   exact Module.finrank_zero_iff.mp (D.rank.trans hD)
 
-theorem occurs_of_rank_zero (U : FamilyUnif Xo σ ty) (hD : D.p + D.q = 0) (D' : Datum H) (hp : D'.p = D.p)
-    (hq : D'.q = D.q) (s : D.La → D'.La) : Occurs U D' s := by
-  let i : Fin U.n := ⟨0, U.n_pos⟩
-  have := subsingleton_of_rank_zero D' (by omega)
-  have := subsingleton_of_rank_zero (U.Di i) (by have := U.sig i; omega)
-  exact ⟨i, LinearEquiv.ofSubsingleton _ _, fun a a' => by
-    rw [Subsingleton.elim a 0, map_zero, map_zero, map_zero, LinearMap.zero_apply, LinearMap.zero_apply],
-    fun a _ => ⟨0, Subsingleton.elim _ _⟩⟩
-
 end AllClasses
 
 end GlobalTheory

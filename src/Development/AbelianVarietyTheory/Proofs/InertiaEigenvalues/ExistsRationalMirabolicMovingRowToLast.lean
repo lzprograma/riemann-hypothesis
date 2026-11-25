@@ -1,50 +1,6 @@
 module
 
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicArithmetic.IntegralCasts.IsOpenStabOfMemNhds
 
@@ -66,7 +22,7 @@ theorem mir_exists_row : ∀ (E : Type) [Field E] [NumberField E] (a m : ℕ), m
     intro t
     have h1 := t.2
     have hle : (t.1.1 : ℕ) ≤ m := by omega
-    simp only [v, dif_pos hle]
+    simp only [v, dite_eq_left hle]
     congr 1
     apply Subtype.ext
     apply Prod.ext
@@ -95,7 +51,7 @@ theorem mir_exists_row : ∀ (E : Type) [Field E] [NumberField E] (a m : ℕ), m
     by_cases hj : j = i₀
     · subst hj
       have := hrow mm
-      simp only [M, Matrix.mulVec, dotProduct, Matrix.of_apply, if_true] at this
+      simp only [M, Matrix.mulVec, dotProduct, Matrix.of_apply, ite_true] at this
       rw [Finset.sum_eq_single i₀ (fun k _ hk => by rw [hoff k hk, mul_zero]) (by simp)] at this
       exact (mul_eq_zero.1 this).resolve_left hvi₀
     · exact hoff j hj
@@ -112,7 +68,7 @@ theorem mir_exists_row : ∀ (E : Type) [Field E] [NumberField E] (a m : ℕ), m
       have h2 : k ≠ i₀ := fun e => by rw [e] at hk; omega
       split_ifs with e1 e2
       · subst e1
-        simp only [v, Matrix.one_apply, h1.symm, if_false]
+        simp only [v, Matrix.one_apply, h1.symm, ite_false]
         rw [dite_eq_right (by omega)]
       · simp [e2, Ne.symm h2]
       · rfl
@@ -121,7 +77,7 @@ theorem mir_exists_row : ∀ (E : Type) [Field E] [NumberField E] (a m : ℕ), m
     have hs : ∃ s : UnipotentBlockColumnIndex a (m + 1) (m + 1), s.1.1 = mm := ⟨⟨(mm, c), by simp [hmm, hc]⟩, rfl⟩
     obtain ⟨s₀, hs₀⟩ := hs
     rw [Finset.sum_eq_single s₀]
-    · simp only [eLast, hs₀, hmm, M, Matrix.of_apply, if_true, one_mul]
+    · simp only [eLast, hs₀, hmm, M, Matrix.of_apply, ite_true, one_mul]
       exact hv t
     · intro s _ hs
       have : ¬ ((s.1.1 : ℕ) + 1 = m + 1) := by
@@ -132,7 +88,7 @@ theorem mir_exists_row : ∀ (E : Type) [Field E] [NumberField E] (a m : ℕ), m
         apply Prod.ext
         · apply Fin.ext; rw [hs₀]; simp [hmm]; omega
         · apply Fin.ext; omega
-      simp only [eLast, if_neg this, zero_mul]
+      simp only [eLast, ite_eq_right this, zero_mul]
     · simp
 
 end GlobalTheory.CuspGeneric

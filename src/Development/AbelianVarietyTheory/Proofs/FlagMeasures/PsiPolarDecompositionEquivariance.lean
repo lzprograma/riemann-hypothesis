@@ -42,6 +42,7 @@ import Mathlib.Tactic.NormNum.Parity
 import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Sheaves.Init
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PsiRestrictionHolomorphicNearOne
 
 @[expose] public section
 
@@ -55,15 +56,7 @@ namespace GlobalTheory.Dec.PsiPolarProof
 variable {n : ℕ}
 
 lemma exp_posDef_of_herm {X : Matrix (Fin n) (Fin n) ℂ} (h : Xᴴ = X) : (NormedSpace.exp X).PosDef := by
-  have hY : ((1 / 2 : ℝ) • X)ᴴ = (1 / 2 : ℝ) • X := by
-    rw [Matrix.conjTranspose_smul, h]; simp
-  have e : X = (1 / 2 : ℝ) • X + (1 / 2 : ℝ) • X := by rw [← add_smul]; norm_num
-  have e2 : NormedSpace.exp X =
-      (NormedSpace.exp ((1 / 2 : ℝ) • X))ᴴ * NormedSpace.exp ((1 / 2 : ℝ) • X) := by
-    rw [exp_conjTranspose_of_hermitian hY, ← exp_add_self, ← e]
-  rw [e2]
-  exact Matrix.PosDef.conjTranspose_mul_self _
-    (Matrix.mulVec_injective_of_isUnit (Matrix.isUnit_exp _))
+  apply _root_.GlobalTheory.Dec.Local.posDef_exp <;> assumption
 
 lemma mul_mem_K {ε : Fin n → Bool} {k k' : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε)
     (hk' : k' ∈ Kset ε) : k * k' ∈ Kset ε :=

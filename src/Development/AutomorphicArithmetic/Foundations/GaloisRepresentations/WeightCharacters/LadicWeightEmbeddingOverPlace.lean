@@ -30,57 +30,13 @@ public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentation
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.ExpBasic
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.KaplFin
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.TopOf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
-import Mathlib.Tactic.Polynomial.Basic
 import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
 import Formalism.GradedWeylDivisibility.FinalC
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.EllGrp
 import Formalism.PadicSubsetSums.StableGradedCounts.ZBrauerNesbittAlg
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.Style
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Algebra.Order.Star.Int
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitAtOfIsSplitPl
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.EmbProjHolds
 import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.NeatLev
@@ -142,7 +98,7 @@ theorem UpperTheory.Gal.Wt.autCrit_of :
       rwa [GlobalTheory.EllU.finPart_of_finU k.2] at this
     funext g
     exact hC _ hk' g
-  · haveI := hS
+  · have := hS
     refine Submodule.finiteDimensional_of_le (S₂ := S) (Submodule.span_le.2 ?_)
     rintro _ ⟨k, rfl⟩
     exact hSub k k.2
@@ -183,13 +139,13 @@ theorem UpperTheory.Gal.Wt.autMul_of :
       change RU E a k (fun g => φ g * ψ g) = fun g => φ g * ψ g
       rw [RU_mul', h1, h2]
       rfl
-  · haveI := hφ.kfin
-    haveI := hψ.kfin
+  · have := hφ.kfin
+    have := hψ.kfin
     have f1 : (Submodule.span ℂ (Set.range fun k : infU E a => RU E a k φ)).FG :=
       Submodule.fg_iff_finiteDimensional _ |>.2 inferInstance
     have f2 : (Submodule.span ℂ (Set.range fun k : infU E a => RU E a k ψ)).FG :=
       Submodule.fg_iff_finiteDimensional _ |>.2 inferInstance
-    haveI : FiniteDimensional ℂ ↥(Submodule.span ℂ (Set.range fun k : infU E a => RU E a k φ) *
+    have : FiniteDimensional ℂ ↥(Submodule.span ℂ (Set.range fun k : infU E a => RU E a k φ) *
         Submodule.span ℂ (Set.range fun k : infU E a => RU E a k ψ)) :=
       Submodule.fg_iff_finiteDimensional _ |>.1 (f1.mul f2)
     refine Submodule.finiteDimensional_of_le (S₂ := Submodule.span ℂ (Set.range fun k : infU E a => RU E a k φ) *
@@ -608,7 +564,7 @@ theorem UpperTheory.Gal.Wt.famEx_of : NeatLev → EllC → Twist → TwistBd →
   obtain ⟨ℓ, hℓ⟩ := hE E a C hC.fin hneat
   obtain ⟨R, hR0, hR⟩ := hTB E l ι a C hC ℓ hℓ W f X b hb
   obtain ⟨κ, hκr, hκi, hκ1, hκc, hκI⟩ := hK E l ι a v' τ hτ
-  haveI : CompactSpace C := isCompact_iff_compactSpace.1 hC.compact
+  have : CompactSpace C := isCompact_iff_compactSpace.1 hC.compact
   let φ : C →* GL (Fin a) ℂ := κ.comp C.subtype
   have hφI : ∀ c : C, IntGL ι (φ c) := fun c => hκI _ (hint _ c.2)
   obtain ⟨Q, _, c, P, hQ⟩ := hP l ι a C φ (fun i j => (hκc i j).comp continuous_subtype_val) hφI
@@ -649,7 +605,7 @@ theorem UpperTheory.Gal.Wt.famEx_of : NeatLev → EllC → Twist → TwistBd →
   rw [famOf_apply, hv, hnM]
   have e : (F q₀).1 (b g i) g - ∑ q, pev (P q) (φ (ℓ g)) * delta ν ((φ (c q))⁻¹ * φ (ℓ g)) * (F q).1 (b g i) g =
       ∑ q, ((if q = q₀ then 1 else 0) - pev (P q) (φ (ℓ g)) * delta ν (φ ((c q)⁻¹ * ℓ g))) * (F q).1 (b g i) g := by
-    simp only [sub_mul, Finset.sum_sub_distrib, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, hδ]
+    simp only [sub_mul, Finset.sum_sub_distrib, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, hδ]
 
   rw [e, map_sum]
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hε.le fun q _ => ?_
@@ -659,14 +615,14 @@ theorem UpperTheory.Gal.Wt.famEx_of : NeatLev → EllC → Twist → TwistBd →
   by_cases hq : q = q₀
   · subst hq
     have hb3 := hb2 _ hε' h1
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     have e2 : 1 - pev (P q) (φ (ℓ g)) * delta ν (φ ((c q)⁻¹ * ℓ g)) =
         -((pev (P q) (φ (ℓ g)) - 1) * delta ν (φ ((c q)⁻¹ * ℓ g)) + (delta ν (φ ((c q)⁻¹ * ℓ g)) - 1)) := by ring
     rw [e2, map_neg, norm_neg, map_add (f := _)]
     refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ?_ hb3)
     rw [map_mul, norm_mul]
     exact (mul_le_mul h2 hb1 (norm_nonneg _) hε').trans_eq (mul_one _)
-  · rw [if_neg hq, zero_sub, map_neg, norm_neg, map_mul, norm_mul]
+  · rw [ite_eq_right hq, zero_sub, map_neg, norm_neg, map_mul, norm_mul]
     exact (mul_le_mul (h3 q hq) hb1 (norm_nonneg _) hε').trans_eq (mul_one _)
 end -- clump:auto
 end -- clump:auto
@@ -724,7 +680,6 @@ open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory
 open GlobalTheory.GalCut GlobalTheory.UnitaryBC GlobalTheory.Cong GlobalTheory.DefU GlobalTheory.Branching
 open UpperTheory.Gal.Gen (IsLevel fixedBy)
 open UpperTheory.Gal.Wt
-
 
 theorem UpperTheory.Gal.Wt.famOf_of : ExpBasic → PevExp → SqExp → TopUp → WExp → FamOfA → FamOf := by
   intro hB hP hS hT hW hA E _ _ _ a τ C hC n hn W Q _ f hf P
@@ -802,8 +757,7 @@ theorem famOff_holds : FamOff := by
   obtain ⟨y₁, y₂, v₀, hv₀⟩ := hne
   set v := InfinitePlace.mk τ' with hv
   obtain ⟨e, he⟩ : ∃ e, B y₁ y₂ (GlobalTheory.CoefIrred.tenMul W e) ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have h1 : B y₁ y₂ = 0 := by
       apply (Formalism.L2.DIV.bVV ℂ W).ext
       intro i
@@ -844,7 +798,7 @@ theorem psum_succ {a : ℕ} (κ : DomWeight a) (i : Fin a) : psum κ (i + 1) = p
 
 theorem famWt_of : FamOff → FamSum → FamWt := by
   intro hOff hSum E _ _ _ a τ W K ν d B hB U hU hBU hne
-  obtain ⟨mu, hmu⟩ := GlobalTheory.T.exists_algebraicWeight_definiteUnitaryAutRep E a U hU
+  obtain ⟨mu, hmu⟩ := GlobalTheory.Cong.exists_weight_of_isAutRepU E a U hU
   refine ⟨mu, ⟨hU, hmu, ?_⟩, fun τ' h => hasWeightAt_unique ⟨U, hU⟩ τ' (hmu τ') (hOff E a τ W K ν d B hB U hU hBU hne τ' h),
     fun i => ?_⟩
   · obtain ⟨y₁, y₂, v, hv⟩ := hne
@@ -881,7 +835,7 @@ theorem famProj_of : EvLem → SumRep → FamProj := by
   classical
   obtain ⟨S₀, hS₀, hBS₀⟩ := hB.fin
   let S := S₀ ⊓ autU E a
-  haveI : FiniteDimensional ℂ S := Submodule.finiteDimensional_of_le inf_le_left
+  have : FiniteDimensional ℂ S := Submodule.finiteDimensional_of_le inf_le_left
   have hBS : ∀ y₁ y₂ v, B y₁ y₂ v ∈ S := fun y₁ y₂ v => ⟨hBS₀ y₁ y₂ v, hB.aut y₁ y₂ v⟩
   obtain ⟨t, ht, hind, hle⟩ := hSum E a S inferInstance fun φ hφ => hφ.2
   have hex : ∀ U : Submodule ℂ (UA E a → ℂ), ∃ p : (UA E a → ℂ) →ₗ[ℂ] (UA E a → ℂ), U ∈ t → (∀ φ, p φ ∈ U) ∧
@@ -980,8 +934,7 @@ theorem famSum_of : ExpBasic → EvLem → TorFacts → QR → WtBd → EmbProj 
       rw [← (hx z).2, ← hp _ (hx z).1 _ (hBU _ _ _), hB.inf (x z)]
       rfl
   · obtain ⟨y, v', hv'⟩ : ∃ y v', B 1 y v' ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       obtain ⟨u, b, hb, rfl⟩ := hQR a y₁
       obtain ⟨x', -, h2⟩ := hxu u
       have e1 := hB.inf x' 1 ((cEmb τ x'.1)⁻¹ * y₂) (W.rep x'⁻¹ v)
@@ -1281,7 +1234,7 @@ private theorem tor_entry_mem_expLe_one_expGe_zero (h : ExpBasic) (a k : ℕ) (A
     by_cases hl : (l:ℕ) < k
     · convert (hmon ((A : Matrix (Fin a) (Fin a) ℂ) i l * (B : Matrix (Fin a) (Fin a) ℂ) l j) 1).1 using 1
       funext z
-      simp only [hl, if_true, zpow_one]
+      simp only [hl, ite_true, zpow_one]
       ring
     · convert (hmono 0 1 (by norm_num)).1
         (hconst ((A : Matrix (Fin a) (Fin a) ℂ) i l * (B : Matrix (Fin a) (Fin a) ℂ) l j)).1 using 1
@@ -1292,7 +1245,7 @@ private theorem tor_entry_mem_expLe_one_expGe_zero (h : ExpBasic) (a k : ℕ) (A
     · convert (hmono 0 1 (by norm_num)).2
         (hmon ((A : Matrix (Fin a) (Fin a) ℂ) i l * (B : Matrix (Fin a) (Fin a) ℂ) l j) 1).2 using 1
       funext z
-      simp only [hl, if_true, zpow_one]
+      simp only [hl, ite_true, zpow_one]
       ring
     · convert (hconst ((A : Matrix (Fin a) (Fin a) ℂ) i l * (B : Matrix (Fin a) (Fin a) ℂ) l j)).2 using 1
       funext z
@@ -1406,8 +1359,8 @@ theorem pieces_of (hS : SepPoly) (hN : NearSub) : Pieces := by
     intro i j
     rw [MonoidHom.mem_ker.mp hg]
     simpa using hε.le
-  haveI : Finite (Γ ⧸ K) := Subgroup.quotient_finite_of_isOpen K hKo
-  letI : Fintype (Γ ⧸ K) := Fintype.ofFinite _
+  have : Finite (Γ ⧸ K) := Subgroup.quotient_finite_of_isOpen K hKo
+  let : Fintype (Γ ⧸ K) := Fintype.ofFinite _
   let c : Γ ⧸ K → Γ := fun q => q.out
   let v : Γ → (Fin a × Fin a → Qbar l) := fun g p => ι.symm ((φ g : Matrix (Fin a) (Fin a) ℂ) p.1 p.2)
   have hv : Continuous v := continuous_pi fun p => hcont p.1 p.2
@@ -1473,7 +1426,7 @@ open UpperTheory.Gal.Wt
 theorem UpperTheory.Gal.Wt.qR_of :
     UpperTheory.Gal.Wt.QR := by
   intro a y
-  obtain ⟨k, hk, b, hg, hb⟩ := _root_.GlobalTheory.CompanionTheory.QR.exists_unitary_mul_blockTriangular (y : Matrix (Fin a) (Fin a) ℂ) y.isUnit
+  obtain ⟨k, hk, b, hg, hb⟩ := _root_.GlobalTheory.CompanionTheory.QR.exists_unitary_mul_blockTriangular (y : Matrix (Fin a) (Fin a) ℂ)
   let u : Matrix.unitaryGroup (Fin a) ℂ := ⟨k, hk⟩
   have hu : ((unitaryIncl a u : GL (Fin a) ℂ) : Matrix (Fin a) (Fin a) ℂ) = k := rfl
   refine ⟨u, (unitaryIncl a u)⁻¹ * y, ?_, (mul_inv_cancel_left _ _).symm⟩
@@ -1544,7 +1497,7 @@ private theorem rFin_of_rep {a : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
   rfl
 
 private theorem rFin_delta {a : ℕ} (ν : DomWeight a) (X : GL (Fin a) ℂ) : RFin fun n => delta ν (X * n) := by
-  haveI : FiniteDimensional ℂ (nablaSq ℂ a ν) := inferInstance
+  have : FiniteDimensional ℂ (nablaSq ℂ a ν) := inferInstance
   exact rFin_of_rep (sqRep ℂ a ν) (ev1 ν) (top ν) X (GlobalTheory.BCT.TrKer.continuous_coef_sqRep a ν (top ν) (ev1 ν))
 
 theorem UpperTheory.Gal.Wt.rFinEx_of :
@@ -1786,11 +1739,11 @@ private theorem isOpen_subgroupOf {E : Type} [Field E] [NumberField E] [IsCMFiel
 theorem twistBd_of : Twist → TwistBd := by
   intro hT E _ _ _ l _ ι a C hC ℓ hℓ W f X b hb
   classical
-  obtain ⟨C₀, hC₀, hf⟩ := UpperTheory.Gal.Gen.levelEx_holds E a W f
+  obtain ⟨C₀, hC₀, hf⟩ := _root_.UpperTheory.Gal.Gen.levelEx_pf E a W f
   have hHo := isOpen_subgroupOf hC hC₀
-  haveI : CompactSpace C := isCompact_iff_compactSpace.1 hC.compact
-  haveI : Finite (C ⧸ C₀.subgroupOf C) := Subgroup.quotient_finite_of_isOpen _ hHo
-  letI := Fintype.ofFinite (C ⧸ C₀.subgroupOf C)
+  have : CompactSpace C := isCompact_iff_compactSpace.1 hC.compact
+  have : Finite (C ⧸ C₀.subgroupOf C) := Subgroup.quotient_finite_of_isOpen _ hHo
+  let := Fintype.ofFinite (C ⧸ C₀.subgroupOf C)
   have hq : ∀ q : C ⧸ C₀.subgroupOf C, ∃ R : ℝ, ∀ g i,
       ‖ι.symm (f.1 (b g i) (g * ((ℓ g)⁻¹ * q.out : C)))‖ ≤ R := by
     intro q

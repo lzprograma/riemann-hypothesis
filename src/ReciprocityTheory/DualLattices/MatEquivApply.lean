@@ -254,7 +254,7 @@ theorem lenIdB_of (hPL : DualLenStatement) : LenIdBStatement := by
     c₁ hc₁
   haveI : IsDomain R := Function.Injective.isDomain _ hv.hom_inj
   obtain ⟨φ⟩ := hd
-  have hP : εL i * εL i = εL i := by rw [hLo, if_pos rfl]
+  have hP : εL i * εL i = εL i := by rw [hLo, ite_eq_left rfl]
   set U := matU (εL i) φ with hU
   set V := matV (εL i) φ with hV
   have hVU : V * U = 1 := matV_matU (εL i) hP φ
@@ -374,20 +374,15 @@ lemma matEquiv_apply {d : ℕ} (P : Matrix (Fin d) (Fin d) R) (hP : IsUnit P.det
 lemma sum_val_eq {n : ℕ} (j : ℕ) (f : Fin n → R) :
     ∑ k : Fin n, (if (k : ℕ) = j then f k else 0) = if h : j < n then f ⟨j, h⟩ else 0 := by
   split_ifs with h
-  · rw [Fintype.sum_eq_single ⟨j, h⟩ (fun k hk => if_neg fun h' => hk (Fin.ext h'))]
-    exact if_pos rfl
-  · exact Finset.sum_eq_zero fun k _ => if_neg fun (h' : (k : ℕ) = j) => h (h' ▸ k.isLt)
+  · rw [Fintype.sum_eq_single ⟨j, h⟩ (fun k hk => ite_eq_right fun h' => hk (Fin.ext h'))]
+    exact ite_eq_left rfl
+  · exact Finset.sum_eq_zero fun k _ => ite_eq_right fun (h' : (k : ℕ) = j) => h (h' ▸ k.isLt)
 
 lemma hasLen_pi {C : Type} [Field C] (v : Valuation C NNReal) [Algebra R C] {d : ℕ} (a : Fin d → R) :
     HasLen v R ((Fin d → R) ⧸ Submodule.pi Set.univ (fun j => (Ideal.span {a j} : Submodule R R)))
       (∏ j, v (algebraMap R C (a j))) :=
   ⟨d, a, ⟨Submodule.quotientPi _⟩, rfl⟩
 
-private lemma hasLen_of_linearEquiv' {C : Type} [Field C] {v : Valuation C NNReal} [Algebra R C]
-    {M M' : Type} [AddCommGroup M] [Module R M] [AddCommGroup M'] [Module R M'] {x : NNReal}
-    (h : HasLen v R M x) (e : M ≃ₗ[R] M') : HasLen v R M' x := by
-  obtain ⟨m, c, ⟨e0⟩, hc⟩ := h
-  exact ⟨m, c, ⟨e.symm.trans e0⟩, hc⟩
 
 theorem dualLen_fin {C : Type} [Field C] {v : Valuation C NNReal} [Algebra R C]
     (hv : v.Integers R) {d n : ℕ} (A : Matrix (Fin d) (Fin n) R) (c : R) (hc : c ≠ 0)
@@ -493,8 +488,8 @@ theorem dualLen_fin {C : Type} [Field C] {v : Valuation C NNReal} [Algebra R C]
     simp only [Matrix.mulVec, dotProduct, Matrix.transpose_apply, hD, ite_mul, zero_mul]
     refine Finset.sum_congr rfl fun j _ => ?_
     by_cases h : (k : ℕ) = (j : ℕ)
-    · rw [if_pos h, if_pos h.symm]
-    · rw [if_neg h, if_neg (Ne.symm h)]
+    · rw [ite_eq_left h, ite_eq_left h.symm]
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
   have hdiv : ∀ j : Fin d, (j : ℕ) < n ∧ ∃ b, a j * b = c := by
     intro j
     obtain ⟨t, ht⟩ := hkill (P⁻¹ *ᵥ Pi.single j 1)
@@ -587,9 +582,9 @@ theorem dualLen_fin {C : Type} [Field C] {v : Valuation C NNReal} [Algebra R C]
               Matrix.transpose_one, Matrix.one_mulVec]
         _ = _ := by rw [h1, Matrix.mulVec_smul]
   have hA1 : HasLen v R ((Fin d → R) ⧸ LinearMap.range A.mulVecLin)
-      (∏ j, v (algebraMap R C (a j))) := hasLen_of_linearEquiv' (hasLen_pi v a) e1.symm
+      (∏ j, v (algebraMap R C (a j))) := hasLen_of_equiv e1 (hasLen_pi v a)
   have hc1 := hasLen_unique hv hc₁ hA1
-  refine ⟨∏ j, v (algebraMap R C (b j)), hasLen_of_linearEquiv' (hasLen_pi v b) e2.symm, ?_⟩
+  refine ⟨∏ j, v (algebraMap R C (b j)), hasLen_of_equiv e2 (hasLen_pi v b), ?_⟩
   rw [hc1, ← Finset.prod_mul_distrib]
   simp_rw [← map_mul, mul_comm (b _) (a _), hb]
   rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]

@@ -34,54 +34,10 @@ public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.FortyEig
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport
 public import Formalism.SharpRestriction.GrowthBounds.MonomialSupport.GeZSum
 public import Formalism.SharpRestriction.GrowthBounds.MonomialSupport.Lam1SPderivAndXMulLeAddIndicator
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.BitVec
 import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SlackBoundReal
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Order.Star.Int
 import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationBoundDetPowerFactor
 import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.TwiceValuationFactorialProduct
 import Mathlib.Tactic.Linter.HaveILetI
@@ -233,47 +189,7 @@ section Geo
 
 variable {n' r : ℕ} [NeZero n'] (Fr : Frames n' r)
 
-theorem llPos_mem (j : ℤ) (l : ℕ) (hl : l < (Fr.LLset j).card) : llPos Fr j l ∈ Fr.LLset j := by
-  unfold llPos
-  have hlen : ((Fr.LLset j).sort (· ≤ ·)).length = (Fr.LLset j).card := Finset.length_sort _
-  rw [List.getD_eq_getElem _ _ (by rw [hlen]; exact hl)]
-  exact (Finset.mem_sort (· ≤ ·)).1 (List.getElem_mem _)
-
-theorem mem_LLset (j x : ℤ) : x ∈ Fr.LLset j ↔
-    (Fr.fr (j - 1) (r - 1) < x ∧ x < Fr.fr j 0) ∧ posOf n' x ∈ Fr.TT := by
-  simp [Frames.LLset]
-
 variable {Fr} {L₁ N₁ : ℕ}
-
-theorem LL_sub_letters (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j y : ℤ) (hy : y ∈ Fr.LLset j) :
-    y ∈ Fr.letters j ∧ ¬ Fr.IsW j y := by
-  have h := (mem_LLset Fr _ _).1 hy
-  have h1 := frame_row_monotone Fr L₁ N₁ hV (j - 1) (r - 1) (by omega)
-  have h2 := frame_row_monotone Fr L₁ N₁ hV j (r - 1) (by omega)
-  refine ⟨?_, ?_⟩
-  · unfold Frames.letters
-    simp only [Finset.mem_filter, Finset.mem_Icc]
-    exact ⟨⟨by omega, by omega⟩, h.2⟩
-  · unfold Frames.IsW
-    omega
-
-theorem posU_mem (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (u : ℕ) (hu : u < (Fr.LLset j).card + r) :
-    posU Fr (Fr.LLset j).card j u ∈ Fr.letters j ∧ ¬ Fr.IsW j (posU Fr (Fr.LLset j).card j u) := by
-  unfold posU
-  split_ifs with h
-  · exact LL_sub_letters hV hr j _ (llPos_mem Fr j u h)
-  · have hi : u - (Fr.LLset j).card < r := by omega
-    have h1 := hV.2.2.2.1 (j - 1)
-    rw [sub_add_cancel] at h1
-    have h2 := frame_row_monotone Fr L₁ N₁ hV (j - 1) (r - 1) (by omega)
-    have h3 := frame_row_monotone Fr L₁ N₁ hV j _ hi
-    have h4 := frame_entry_le_last Fr L₁ N₁ hV j _ hi
-    refine ⟨?_, ?_⟩
-    · unfold Frames.letters
-      simp only [Finset.mem_filter, Finset.mem_Icc]
-      exact ⟨⟨by omega, h4⟩, (hV.2.2.2.2.1 j _ hi).1⟩
-    · unfold Frames.IsW
-      omega
 
 theorem Bo_ge (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (p : ℕ) (hp : 1 ≤ p) (deg : Fin n' → ℕ) (a : ℝ)
     (hdeg : ∀ s ∈ Fr.TT, a ≤ (deg s : ℝ)) (G : ℕ) (j x : ℤ) (hG : Fr.fr j (r - 1) - Fr.fr (j - 1) 0 ≤ G)
@@ -303,8 +219,8 @@ theorem wordLoss_le {k : ℕ} (l : List (Fin n' × (Fin k × Fin k))) (c0 : ℕ)
       have hm : z.1 ∈ T := by
         rw [hT]
         exact Finset.mem_image.2 ⟨x, hx, hxs⟩
-      rw [if_pos ⟨x, hx, hxs, by assumption⟩, if_pos hm]
-    · rw [if_neg ht]
+      rw [ite_eq_left ⟨x, hx, hxs, by assumption⟩, ite_eq_left hm]
+    · rw [ite_eq_right ht]
       split_ifs <;> norm_num
   have h2 := sum_ite_mem (fun z : Fin n' × (Fin k × Fin k) => z.1) T l
   have h3 : ∑ s ∈ T, ((l.filter fun z => z.1 = s).length : ℝ) ≤ ∑ _s ∈ T, (c0 : ℝ) := by
@@ -349,7 +265,7 @@ theorem wordBoundStep (C CLa : ℝ) (hC : 16 ≤ C) : WordBoundStep C CLa := by
   obtain ⟨hTT, hV, hG, _⟩ := hF
   have hr1 : 1 ≤ r := by omega
   have ha0 : (0 : ℝ) ≤ a := by linarith [hB.two_le_a]
-  obtain ⟨hx, hW⟩ := posU_mem hV hr1 jz u hu
+  obtain ⟨hx, hW⟩ := Formalism.MainNotions.Proposition5Numerics.posU_mem' hV hr1 jz u hu
   set xx := posU F (F.LLset jz).card jz u with hxx
 
   have hw := wordLoss_le (Fr := F) l c0 hc jz u
@@ -430,11 +346,10 @@ theorem geoTouch : GeoTouch := by
   rcases hx with (⟨l, hl, hlt⟩ | ⟨m, hm, hlt⟩) | ⟨m, hm⟩
   · subst hl
     have hl' : l.val < (Fr.LLset (segZ j)).card := by rw [← hnL]; exact l.isLt
-    refine ⟨llPos Fr (segZ j) l.val, (LL_sub_letters hV hr _ _ (llPos_mem Fr (segZ j) l.val hl')).1, rfl, ?_⟩
+    refine ⟨llPos Fr (segZ j) l.val, (LL_sub_letters hV hr _ _ (Formalism.MainNotions.Proposition5Numerics.DdG.llPos_mem Fr (segZ j) l.val hl')).1, rfl, ?_⟩
     rw [← posU_ll (Fr := Fr) (segZ j) l.val hl']
     exact (posU_le_iff hV (segZ j) _ _ (by omega) hu').2 (by omega)
   · subst hm
-    have hm' := m.isLt
     refine ⟨Fr.fr (segZ j) (r - 1 - m.val), fr_mem_letters hV hr _ _ (by omega), rfl, ?_⟩
     rw [← posU_fr (Fr := Fr) (segZ j) (r - 1 - m.val)]
     refine (posU_le_iff hV (segZ j) _ _ (by omega) hu').2 ?_
@@ -533,18 +448,6 @@ section Lev
 variable {n' r K m : ℕ} [NeZero n'] (Fr : Frames n' r) (p : ℕ) {O : Type} [CommRing O] [IsDomain O]
   (hk : m + 1 = r + K) {J : ℕ} [NeZero J] (nL : ZMod J → ℕ)
 
-theorem levN_add (F G : MvPolynomial (TV n' (m + 1)) (KK O)) :
-    levN Fr p hk nL (F + G) = levN Fr p hk nL F + levN Fr p hk nL G := by
-  unfold levN
-  exact sumSupp_add (fun mo => (monomial (R := KK O) (noMon Fr p hk nL mo)).toAddMonoidHom) F G
-
-theorem levN_monomial (mo : TV n' (m + 1) →₀ ℕ) (c : KK O) :
-    levN Fr p hk nL (monomial mo c) = monomial (noMon Fr p hk nL mo) c := by
-  unfold levN
-  by_cases h : c = 0
-  · subst h; simp
-  · rw [support_monomial, if_neg h, Finset.sum_singleton, coeff_monomial, if_pos rfl]
-
 def psiExp (a : TL J nL r × Fin K →₀ ℕ) : TV n' (m + 1) →₀ ℕ :=
   a.sum fun v e => Finsupp.single (noVar Fr hk nL v.1 v.2) (lowP Fr p v.1 * e)
 
@@ -579,7 +482,7 @@ theorem noMon_psiExp {L₁ N₁ : ℕ} (hp : 0 < p) (hV : Fr.Valid L₁ N₁) (h
     rw [Finsupp.sum_apply, Finsupp.sum_eq_single (x, b)]
     · rw [Finsupp.single_eq_same]
     · intro v _ hv
-      rw [Finsupp.single_apply, if_neg]
+      rw [Finsupp.single_apply, ite_eq_right]
       intro h
       obtain ⟨e1, e2⟩ := noVar_inj hk hV hr hJ hnL h
       exact hv (Prod.ext e1 e2)
@@ -592,8 +495,8 @@ theorem levN_Psi {L₁ N₁ : ℕ} (hp : 0 < p) (hV : Fr.Valid L₁ N₁) (hr : 
     (hnL : ∀ j, nL j = (Fr.LLset (segZ j)).card) (H : MvPolynomial (TL J nL r × Fin K) (KK O)) :
     levN Fr p hk nL (Psi (O := O) Fr p hk nL H) = H := by
   induction H using MvPolynomial.induction_on' with
-  | monomial a c => rw [Psi_monomial, levN_monomial, noMon_psiExp p hk hp hV hr hJ hnL]
-  | add F G hF hG => rw [map_add (f := _), levN_add, hF, hG]
+  | monomial a c => rw [Psi_monomial, Formalism.MainNotions.PairMembershipBlocks.T5.levN_monomial, noMon_psiExp p hk hp hV hr hJ hnL]
+  | add F G hF hG => rw [map_add (f := _), Formalism.MainNotions.PairMembershipBlocks.T5.levN_add, hF, hG]
 
 end Lev
 
@@ -716,20 +619,20 @@ private theorem list_prod_isoProj_apply_eq_ite (hee : ∀ i mu, IsIsoProj (E i) 
   | cons a l ih =>
     rw [List.map_cons, List.prod_cons, Module.End.mul_apply, ih]
     by_cases h : ∀ i ∈ l, lam i = ka i
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       by_cases ha : lam a = ka a
       · have hall : ∀ i ∈ a :: l, lam i = ka i := by
           intro i hi
           rcases List.mem_cons.mp hi with rfl | hi
           · exact ha
           · exact h i hi
-        rw [if_pos hall]
+        rw [ite_eq_left hall]
         exact (hee a (ka a)).1 x (by rw [← ha]; exact hx a)
       · have hno : ¬ ∀ i ∈ a :: l, lam i = ka i := fun hh => ha (hh a (List.mem_cons.mpr (Or.inl rfl)))
-        rw [if_neg hno]
+        rw [ite_eq_right hno]
         exact (hee a (ka a)).2 (lam a) ha x (hx a)
     · have hno : ¬ ∀ i ∈ a :: l, lam i = ka i := fun hh => h fun i hi => hh i (List.mem_cons.mpr (Or.inr hi))
-      rw [if_neg h, if_neg hno, map_zero]
+      rw [ite_eq_right h, ite_eq_right hno, map_zero]
 
 theorem jproj_eq (hee : ∀ i mu, IsIsoProj (E i) mu (ee i mu))
     (hdec : ∀ i (G : V), ∃ T : Finset (Fin n → ℤ), G = ∑ mu ∈ T, ee i mu G ∧ ∀ mu, ee i mu G ∈ isoSub (E i) mu)
@@ -746,11 +649,11 @@ theorem jproj_eq (hee : ∀ i mu, IsIsoProj (E i) mu (ee i mu))
     unfold jointE
     rw [list_prod_isoProj_apply_eq_ite E ee hee ka lam x hx']
     by_cases h : lam = ka
-    · rw [if_pos (fun i _ => congrFun h i)]
+    · rw [ite_eq_left (fun i _ => congrFun h i)]
       exact he.1 lam h x hxj
     · have hno : ¬ ∀ i ∈ (Finset.univ : Finset ι).toList, lam i = ka i :=
         fun hh => h (funext fun i => hh i (Finset.mem_toList.mpr (Finset.mem_univ i)))
-      rw [if_neg hno]
+      rw [ite_eq_right hno]
       exact he.2 lam h x hxj
   | zero => simp
   | add a b _ _ ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
@@ -860,9 +763,9 @@ theorem valS_congr_supp {R : Type*} [CommRing R] {ι : Type*} {n : ℕ} [NeZero 
       ((MvPolynomial.mem_vars_iff_mem_support v).mpr ⟨c, MvPolynomial.mem_support_iff.mpr hc, hv⟩)
     by_cases hS : v.1 ∈ S
     · have hS' : v.1 ∈ S' := (h v.1 hvL).mp hS
-      simp only [hS, hS', if_true]
+      simp only [hS, hS', ite_true]
     · have hS' : v.1 ∉ S' := fun h' => hS ((h v.1 hvL).mpr h')
-      simp only [hS, hS', if_false]
+      simp only [hS, hS', ite_false]
   rw [ht]
 
 theorem sl_le_g2mg (p n' : ℕ) [NeZero n'] (r K : ℕ) (F : Frames n' r) (deg : Fin n' → ℕ) (mS : ℕ) (Y : ℝ) (j x : ℤ) :
@@ -928,10 +831,10 @@ theorem le_pred_iff (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (u : ℕ)
     by_cases hu1 : u < N
     · have hpu : posU Fr N j u = L[u]'(by omega) := by
         unfold posU
-        rw [if_pos hu1, hLpos u hu1]
+        rw [ite_eq_left hu1, hLpos u hu1]
       have hpu1 : posU Fr N j (u - 1) = L[u - 1]'(by omega) := by
         unfold posU
-        rw [if_pos (by omega), hLpos (u - 1) (by omega)]
+        rw [ite_eq_left (by omega), hLpos (u - 1) (by omega)]
       rw [hpu, hpu1]
       refine ⟨List.pairwise_iff_getElem.1 hsorted _ _ _ _ (by omega), fun z hz hz1 hz2 => ?_⟩
       have hzLL := hinLL z hz (lt_trans (hLLb _ (hLmem (u - 1) (by omega))).1 hz1)
@@ -940,20 +843,20 @@ theorem le_pred_iff (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (u : ℕ)
     · by_cases hu2 : u = N
       · have hpu : posU Fr N j u = Fr.fr j 0 := by
           unfold posU
-          rw [if_neg hu1, show u - N = 0 by omega]
+          rw [ite_eq_right hu1, show u - N = 0 by omega]
         have hpu1 : posU Fr N j (u - 1) = L[u - 1]'(by omega) := by
           unfold posU
-          rw [if_pos (by omega), hLpos (u - 1) (by omega)]
+          rw [ite_eq_left (by omega), hLpos (u - 1) (by omega)]
         rw [hpu, hpu1]
         refine ⟨(hLLb _ (hLmem (u - 1) (by omega))).2, fun z hz hz1 hz2 => ?_⟩
         have hzLL := hinLL z hz (lt_trans (hLLb _ (hLmem (u - 1) (by omega))).1 hz1) hz2
         exact false_of_mem_gt_last_of_pairwise_lt L hsorted (u - 1) (by omega) z ((Finset.mem_sort _).2 hzLL) hz1
       · have hpu : posU Fr N j u = Fr.fr j (u - N) := by
           unfold posU
-          rw [if_neg hu1]
+          rw [ite_eq_right hu1]
         have hpu1 : posU Fr N j (u - 1) = Fr.fr j (u - 1 - N) := by
           unfold posU
-          rw [if_neg (by omega)]
+          rw [ite_eq_right (by omega)]
         rw [hpu, hpu1]
         have hi : u - 1 - N + 1 = u - N := by omega
         have hir : u - 1 - N + 1 < r := by omega
@@ -963,8 +866,7 @@ theorem le_pred_iff (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (u : ℕ)
   · intro hle
     exact lt_of_le_of_lt hle key.1
   · intro hlt
-    by_contra hgt
-    push_neg at hgt
+    by_contra! hgt
     exact key.2 y hy hgt hlt
 
 theorem oldest_pred (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (u : ℕ) (h1 : 1 ≤ u) (hu : u < (Fr.LLset j).card + r)
@@ -1146,11 +1048,6 @@ theorem geZ_sum {Kf : Type} [Field Kf] {ι κ : Type} {n : ℕ} [NeZero n] (LL :
     exact geZ_mono (mul_valS_add _ _ _ _) (geZ_min (h a (Finset.mem_insert_self a s))
       (ih fun i hi => h i (Finset.mem_insert_of_mem hi)))
 
-theorem le_of_geZ {x : WithTop ℤ} {t : ℝ} (h : geZ x t) : ((⌈t⌉ : ℤ) : WithTop ℤ) ≤ x := by
-  induction x using WithTop.recTopCoe with
-  | top => exact le_top
-  | coe k => exact WithTop.coe_le_coe.2 (Int.ceil_le.2 (h k rfl))
-
 theorem geZ_coe {k : ℤ} {t : ℝ} (h : t ≤ (k : ℝ)) : geZ ((k : ℤ) : WithTop ℤ) t := by
   intro k' hk'
   have : k = k' := WithTop.coe_injective hk'
@@ -1265,7 +1162,7 @@ theorem restLink_of (hNN : ValNN) (hHD : HomDec) (hLL : LinkL) (hDg : LkDeg) (hV
         omega
       exact_mod_cast h2
     have h1 : ((⌈t j u⌉ : ℤ) : WithTop ℤ) ≤ valS LZ {y | y < posU Fr (Dt.nL j) (segZ j) u} F := by
-      refine le_trans (Lk.le_of_geZ (ht j u hur)) ?_
+      refine le_trans (Formalism.MainNotions.Proposition5Numerics.ceil_le_of_geZ (ht j u hur)) ?_
       have h2 := (valComp (KK O) ℤ r LZ {y | y < posU Fr (Dt.nL j) (segZ j) u} (Ab j) δ).1
       rw [Lk.homComp_eq] at h2
       refine le_trans (le_of_eq ?_) h2
@@ -1331,7 +1228,7 @@ theorem lkW {n' r : ℕ} (Fr : Frames n' r) (jz : ℤ) (μ : ℤ × Fin r →₀
         refine Finset.sum_le_sum fun v _ => ?_
         split_ifs with h
         · obtain ⟨m, hm⟩ := h
-          calc μ v = (if v.1 = Fr.fr (jz - 1) (r - 1 - m.val) then μ v else 0) := by rw [if_pos hm]
+          calc μ v = (if v.1 = Fr.fr (jz - 1) (r - 1 - m.val) then μ v else 0) := by rw [ite_eq_left hm]
             _ ≤ _ := Finset.single_le_sum
               (f := fun m' : Fin r => if v.1 = Fr.fr (jz - 1) (r - 1 - m'.val) then μ v else 0)
               (fun _ _ => Nat.zero_le _) (Finset.mem_univ m)
@@ -1385,9 +1282,9 @@ theorem PhiJ_nonW (hV : Fr.Valid L₁ N₁) (hnL : ∀ j, Dt.nL j = (Fr.LLset (s
     ∃ s, posTL Fr (⟨j, s⟩ : TL J Dt.nL r) = y ∧ ∀ a : Fin r, PhiJ Fr Dt j (X (y, a)) = X (⟨j, s⟩, a) := by
   rcases restSpec n' r Fr L₁ N₁ hV J Dt.nL hnL j y hy with ⟨l, hyl, hml⟩ | ⟨m, hym, hml⟩ | ⟨m, hym, _⟩
   · exact ⟨Sum.inl l, hyl.symm, fun a => by
-      simp only [PhiJ, AlgHom.comp_apply, chi, aeval_X, if_pos hy, hml, SignedChainData.ph]⟩
+      simp only [PhiJ, AlgHom.comp_apply, chi, aeval_X, ite_eq_left hy, hml, SignedChainData.ph]⟩
   · exact ⟨Sum.inr m, hym.symm, fun a => by
-      simp only [PhiJ, AlgHom.comp_apply, chi, aeval_X, if_pos hy, hml, SignedChainData.ph]⟩
+      simp only [PhiJ, AlgHom.comp_apply, chi, aeval_X, ite_eq_left hy, hml, SignedChainData.ph]⟩
   · exact absurd ⟨m, hym⟩ hw
 
 theorem PhiJ_w (hV : Fr.Valid L₁ N₁) (hnL : ∀ j, Dt.nL j = (Fr.LLset (segZ j)).card) (j : ZMod J) (y : ℤ)
@@ -1396,12 +1293,12 @@ theorem PhiJ_w (hV : Fr.Valid L₁ N₁) (hnL : ∀ j, Dt.nL j = (Fr.LLset (segZ
   obtain ⟨m, rfl⟩ := hw
   by_cases hy : Fr.fr (segZ j - 1) (r - 1 - m.val) ∈ Fr.letters (segZ j)
   · have : PhiJ Fr Dt j (X (Fr.fr (segZ j - 1) (r - 1 - m.val), a)) = X (⟨j - 1, Sum.inr m⟩, a) ^ Dt.P (j - 1) m := by
-      simp only [PhiJ, AlgHom.comp_apply, chi, aeval_X, if_pos hy, mlOf_wc hV hnL j m, SignedChainData.ph]
+      simp only [PhiJ, AlgHom.comp_apply, chi, aeval_X, ite_eq_left hy, mlOf_wc hV hnL j m, SignedChainData.ph]
     rw [this]
     refine Subalgebra.pow_mem _ ?_ _
     rw [X_mem_supported, Set.mem_ofPred_eq]
   · have : PhiJ Fr Dt j (X (Fr.fr (segZ j - 1) (r - 1 - m.val), a)) = 0 := by
-      simp only [PhiJ, AlgHom.comp_apply, chi, aeval_X, if_neg hy, map_zero]
+      simp only [PhiJ, AlgHom.comp_apply, chi, aeval_X, ite_eq_right hy, map_zero]
     rw [this]
     exact Subalgebra.zero_mem _
 
@@ -1435,7 +1332,6 @@ theorem linkL : LinkL := by
   intro p _ n' r _ _ O _ _ _ Fr L₁ N₁ hV hn J _ Dt hT hJ2 j mm hmm F hF dw hdeg th hth
   obtain ⟨hJ, hnL, hsgn, -, -, -⟩ := hT
   have hr : 1 ≤ r := NeZero.one_le
-  have hmm' := mm.isLt
   set u := Dt.nL j + (r - 1 - mm.val) with hu
   have hul : u < Dt.nL j + r := by omega
   set w := wSet Fr (segZ j) with hwdef
@@ -1475,7 +1371,7 @@ theorem linkL : LinkL := by
       rw [Finsupp.filter_apply] at hv'
       have hvw : v.1 ∈ w := by
         by_contra hc
-        rw [if_neg hc] at hv'
+        rw [ite_eq_right hc] at hv'
         exact hv' rfl
       exact PhiJ_w Dt hV hnL j v.1 hvw v.2
     refine valS_off _ _ _ fun v hv hvT => ?_
@@ -1496,7 +1392,7 @@ theorem linkL : LinkL := by
     · have hvw : v.1 ∉ w := by
         intro hvw
         have h5 : (ν.filter (fun v => v.1 ∈ w)) v = 0 := by rw [hcond.1]; rfl
-        rw [Finsupp.filter_apply, if_pos hvw] at h5
+        rw [Finsupp.filter_apply, ite_eq_left hvw] at h5
         exact hv' h5
       have hvF : v ∈ F.vars := (mem_vars_iff_mem_support v).2 ⟨_, mem_support_iff.2 hc, by
         rw [Finsupp.mem_support_iff, Finsupp.add_apply]; omega⟩
@@ -1569,22 +1465,22 @@ theorem multideg_single (v : ι × Fin n) (k : ℕ) (x : ι) :
     multideg (Finsupp.single v k) x = if v.1 = x then k else 0 := by
   unfold multideg
   by_cases h : v.1 = x
-  · rw [if_pos h, Finset.sum_eq_single v.2]
+  · rw [ite_eq_left h, Finset.sum_eq_single v.2]
     · have hv : v = (x, v.2) := by
         obtain ⟨v1, v2⟩ := v
         simp only at h
         rw [h]
-      rw [Finsupp.single_apply, if_pos hv]
+      rw [Finsupp.single_apply, ite_eq_left hv]
     · intro c _ hc
-      rw [Finsupp.single_apply, if_neg]
+      rw [Finsupp.single_apply, ite_eq_right]
       intro e
       exact hc (congrArg Prod.snd e).symm
     · intro h'
       exact absurd (Finset.mem_univ _) h'
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     apply Finset.sum_eq_zero
     intro c _
-    rw [Finsupp.single_apply, if_neg]
+    rw [Finsupp.single_apply, ite_eq_right]
     intro e
     exact h (congrArg Prod.fst e)
 
@@ -1618,7 +1514,7 @@ theorem ph_wc (j : ZMod J) (m : Fin r) (a : Fin r) :
 
 theorem PhiJ_X (j : ZMod J) (v : ℤ × Fin r) (hv : v.1 ∈ Fr.letters (segZ j)) :
     PhiJ Fr Dt j (X v) = Dt.ph (X (mlOf Fr Dt.nL j v.1, v.2)) := by
-  rw [PhiJ, AlgHom.comp_apply, chi, aeval_X, if_pos hv]
+  rw [PhiJ, AlgHom.comp_apply, chi, aeval_X, ite_eq_left hv]
 
 theorem PhiJ_X_mon (hV : Fr.Valid L₁ N₁) (hnL : ∀ j, Dt.nL j = (Fr.LLset (segZ j)).card) (hJ : 2 ≤ J) (j : ZMod J)
     (v : ℤ × Fin r) (hv : v.1 ∈ Fr.letters (segZ j)) :
@@ -1626,21 +1522,20 @@ theorem PhiJ_X_mon (hV : Fr.Valid L₁ N₁) (hnL : ∀ j, Dt.nL j = (Fr.LLset (
       ∀ m' : Fin r, multideg e ⟨j - 1, Sum.inr m'⟩ =
         Dt.P (j - 1) m' * (if v.1 = Fr.fr (segZ j - 1) (r - 1 - m'.val) then 1 else 0) := by
   have hne := ne_pred hJ j
-  have hr : 1 ≤ r := NeZero.one_le
   rw [PhiJ_X Dt j v hv]
   have hord := hV.2.2.2.1 (segZ j - 1)
   rw [sub_add_cancel] at hord
   rcases Formalism.MainNotions.NormalSetCounting.restSpec n' r Fr L₁ N₁ hV J Dt.nL hnL j v.1 hv with ⟨l, hy, hml⟩ | ⟨m, hy, hml⟩ | ⟨m, hy, hml⟩
   · rw [hml]
     refine ⟨_, ph_ll Dt j l v.2, fun m' => ?_⟩
-    rw [multideg_single, if_neg (fun h => hne (congrArg Sigma.fst h)), if_neg, mul_zero]
+    rw [multideg_single, ite_eq_right (fun h => hne (congrArg Sigma.fst h)), ite_eq_right, mul_zero]
     intro h
     have h1 := (Formalism.MainNotions.NormalSetCounting.ll_between hnL j l).1
     have h2 := frame_entry_le_last Fr L₁ N₁ hV (segZ j - 1) (r - 1 - m'.val) (by omega)
     omega
   · rw [hml]
     refine ⟨_, ph_lab Dt j m v.2, fun m' => ?_⟩
-    rw [multideg_single, if_neg (fun h => hne (congrArg Sigma.fst h)), if_neg, mul_zero]
+    rw [multideg_single, ite_eq_right (fun h => hne (congrArg Sigma.fst h)), ite_eq_right, mul_zero]
     intro h
     have h1 := frame_row_monotone Fr L₁ N₁ hV (segZ j) (r - 1 - m.val) (by omega)
     have h2 := frame_entry_le_last Fr L₁ N₁ hV (segZ j - 1) (r - 1 - m'.val) (by omega)
@@ -1650,8 +1545,8 @@ theorem PhiJ_X_mon (hV : Fr.Valid L₁ N₁) (hnL : ∀ j, Dt.nL j = (Fr.LLset (
     rw [multideg_single]
     by_cases hmm : m = m'
     · subst hmm
-      rw [if_pos rfl, if_pos hy, mul_one]
-    · rw [if_neg, if_neg, mul_zero]
+      rw [ite_eq_left rfl, ite_eq_left hy, mul_one]
+    · rw [ite_eq_right, ite_eq_right, mul_zero]
       · intro h
         rw [hy] at h
         exact hmm (Formalism.MainNotions.NormalSetCounting.fr_rev_inj hV _ h)

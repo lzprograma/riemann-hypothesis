@@ -506,23 +506,25 @@ theorem sq_eq_zero {A : Type} [CommRing A] [Algebra (X.O0 i) A] (hK : Kills i A)
   rw [map_mul, map_pow, map_natCast] at this
   rw [Nat.cast_pow, pow_succ, this]
 
-theorem local_pair (hT : TameLocal) {n : ℕ} (hn : 0 < n) {R W W' : Type} [CommRing R] [AddCommGroup W] [Module R W]
-    [TopologicalSpace W] [DiscreteTopology W] [AddCommGroup W'] [Module R W'] [TopologicalSpace W'] [DiscreteTopology W']
-    {ρ : Representation R (GE N) W} {ρ' : Representation R (GE N) W'} {B : W →+ W' →+ ZMod (X.l i ^ n)}
-    (hc : ContAction ρ')
-    (hB : ∀ g x y, B (ρ g x) (ρ' g y) =
-      ((cycMod D.host.E N.Om (X.l i) n g : (ZMod (X.l i ^ n))ˣ) : ZMod (X.l i ^ n)) * B x y)
-    (hW : ∀ m : W', X.l i ^ n • m = 0)
+theorem local_pair (hT : TameLocal) {n : ℕ} (hn : 0 < n)
     {ζ : N.Om} (hζ : IsPrimitiveRoot ζ (X.l i ^ n)) {inv : InvFam D.host.E N.Om (X.l i) n}
     (hinv : IsLocalInvariants ζ inv) {P : PlE D.host} (hl : P ∉ placesOver D.host.E (X.l i))
     (hq : normV P ≡ 1 [MOD X.l i ^ n])
-    (hP : ∀ g ∈ DecV N P, (∀ m, ρ g m = m) ∧ (∀ m, ρ' g m = m) ∧ cycMod D.host.E N.Om (X.l i) n g = 1)
-    (hP' : ∀ g ∈ DecV N P, (∀ m, ρ (cConj X g) m = m) ∧ (∀ m, ρ' (cConj X g) m = m) ∧
-      cycMod D.host.E N.Om (X.l i) n (cConj X g) = 1) {M : ℕ} (hM : 1 ≤ M)
+    (hcyc : ∀ g ∈ DecV N P, cycMod D.host.E N.Om (X.l i) n g = 1)
+    (hcyc' : ∀ g ∈ DecV N P, cycMod D.host.E N.Om (X.l i) n (cConj X g) = 1) {M : ℕ} (hM : 1 ≤ M)
     (d : GE N →* Multiplicative (ZMod (X.l i ^ M))) (hd : IsOpen (d.ker : Set (GE N))) {γ φ : GE N}
     (hγ : γ ∈ Ine (F := D.host.E) (N.plOm.1 P)) (hdγ : d γ = Multiplicative.ofAdd 1)
     (hφ : IsFrob (N.plOm.1 P) (normV P) φ) :
-    ∃ u : (ZMod (X.l i ^ n))ˣ, ∀ (x : Z1 ρ) (y : Z1 ρ'),
+    ∃ u : (ZMod (X.l i ^ n))ˣ, ∀ {R W W' : Type} [CommRing R] [AddCommGroup W] [Module R W]
+      [TopologicalSpace W] [DiscreteTopology W] [AddCommGroup W'] [Module R W'] [TopologicalSpace W'] [DiscreteTopology W']
+      {ρ : Representation R (GE N) W} {ρ' : Representation R (GE N) W'} (B : W →+ W' →+ ZMod (X.l i ^ n))
+      (hc : ContAction ρ')
+      (hB : ∀ g x y, B (ρ g x) (ρ' g y) =
+        ((cycMod D.host.E N.Om (X.l i) n g : (ZMod (X.l i ^ n))ˣ) : ZMod (X.l i ^ n)) * B x y)
+      (hW : ∀ m : W', X.l i ^ n • m = 0)
+      (hP : ∀ g ∈ DecV N P, (∀ m, ρ g m = m) ∧ (∀ m, ρ' g m = m))
+      (hP' : ∀ g ∈ DecV N P, (∀ m, ρ (cConj X g) m = m) ∧ (∀ m, ρ' (cConj X g) m = m))
+      (x : Z1 ρ) (y : Z1 ρ'),
       (∀ σ ∈ Ine (F := D.host.E) (N.plOm.1 P), y.1 σ = 0) →
       (∀ σ ∈ Ine (F := D.host.E) (moveVal X.cc (N.plOm.1 P)), y.1 σ = 0) →
       inv _ (Submodule.Quotient.mk (locZ (N.plOm.1 P) (cupZ hc hB x y))) = (u : ZMod (X.l i ^ n)) * B (x.1 γ) (y.1 φ) ∧
@@ -531,31 +533,31 @@ theorem local_pair (hT : TameLocal) {n : ℕ} (hn : 0 < n) {R W W' : Type} [Comm
   have hA := N.plOm.2 P
   obtain ⟨u, hu⟩ := _root_.GlobalTheory.TamePairing.tame_pairing_hom hT D.host.E N.Om (X.l i) n _ P hn hA hl hq (inv _) (hinv.1 _ _ hA).1 M hM d hd
     ⟨γ, Ine_le_Dec _ hγ⟩ ⟨φ, hφ.1⟩ hγ hdγ hφ
-  refine ⟨u, fun x y hy hy' => ?_⟩
+  refine ⟨u, fun {_ _ _} _ _ _ _ _ _ _ _ _ {_ ρ'} B hc hB hW hP hP' x y hy hy' => ?_⟩
   have hμ : ∀ (g : DecV N P) m, muLoc D.host.E (X.l i) n (N.plOm.1 P) g m = m := fun g m => by
     change ((cycMod D.host.E N.Om (X.l i) n g : (ZMod (X.l i ^ n))ˣ) : ZMod (X.l i ^ n)) * m = m
-    rw [(hP g g.2).2.2, Units.val_one, one_mul]
-  have key := hu W W' B
+    rw [hcyc g g.2, Units.val_one, one_mul]
+  have key := hu _ _ B
   constructor
   · exact key (fun g => x.1 g) (fun g => y.1 g) hW (x.2.1.comp continuous_subtype_val) (y.2.1.comp continuous_subtype_val)
       (fun g h => by rw [Subgroup.coe_mul, x.2.2, (hP g g.2).1])
-      (fun g h => by rw [Subgroup.coe_mul, y.2.2, (hP g g.2).2.1])
+      (fun g h => by rw [Subgroup.coe_mul, y.2.2, (hP g g.2).2])
       (fun g hg => hy g hg) _ (fun g h => by
         change B (x.1 g) (ρ' g (y.1 h)) = B (x.1 g) (y.1 h)
-        rw [(hP g g.2).2.1])
+        rw [(hP g g.2).2])
   · have hcc : Continuous ((cConj X).comp (DecV N P).subtype) := continuous_cConj.comp continuous_subtype_val
     let w : Z2 (muLoc D.host.E (X.l i) n (N.plOm.1 P)) :=
       compatiblePairCocycles2 (muRep D.host.E N.Om (X.l i) n) _ ((cConj X).comp (DecV N P).subtype) hcc LinearMap.id continuous_id
         (fun g m => by
           rw [hμ]
           change ((cycMod D.host.E N.Om (X.l i) n (cConj X g) : (ZMod (X.l i ^ n))ˣ) : ZMod (X.l i ^ n)) * m = m
-          rw [(hP' g g.2).2.2, Units.val_one, one_mul]) (cupZ hc hB x y)
+          rw [hcyc' g g.2, Units.val_one, one_mul]) (cupZ hc hB x y)
     have h1 := key (fun g => x.1 (cConj X g)) (fun g => y.1 (cConj X g)) hW (x.2.1.comp hcc) (y.2.1.comp hcc)
       (fun g h => by rw [Subgroup.coe_mul, map_mul, x.2.2, (hP' g g.2).1])
-      (fun g h => by rw [Subgroup.coe_mul, map_mul, y.2.2, (hP' g g.2).2.1])
+      (fun g h => by rw [Subgroup.coe_mul, map_mul, y.2.2, (hP' g g.2).2])
       (fun g hg => hy' _ (cConj_mem_ine X hg)) w (fun g h => by
         change B (x.1 (cConj X g)) (ρ' (cConj X g) (y.1 (cConj X h))) = B (x.1 (cConj X g)) (y.1 (cConj X h))
-        rw [(hP' g g.2).2.1])
+        rw [(hP' g g.2).2])
     have h2 := hinv.2 X.cc D.host.conj.toRingEquiv (cc_algebraMap X) (-1) (conj_root X.cc_cm hζ) _
       (moveVal X.cc (N.plOm.1 P)) P hA (fun x => by rw [mem_moveVal, RingEquiv.symm_apply_apply]) (-w)
       (locZ _ (cupZ hc hB x y)) (fun g h g' h' hg hh => by
@@ -627,10 +629,13 @@ theorem reciprocity : PoitouTateTotallyComplex → TameLocal → ∀ (D : Formal
     · obtain ⟨m, hm⟩ := hy.2.1 v (Or.inr e)
       rw [hm g (Ine_le_Dec _ hg), ht, sub_self]
     · exact hy.1 v (hS0 v hv).1 (hS0 v hv).2 e g hg
-  obtain ⟨u, hu⟩ := local_pair hT (show 0 < nu X i + 1 by omega) hc' hB
-    (fun m => by rw [← Nat.cast_smul_eq_nsmul A, sq_eq_zero hK, zero_smul]) hζ hinv (hS0 _ (over_refl p)).1 hq
-    (fun g hg => hHt g (hDH g hg)) (fun g hg => hHt _ (hHc g (hDH g hg))) (by omega) d hd hγ hdγ hσ
-  obtain ⟨e1, e2⟩ := hu x y (hyI _ (over_refl _) _ (N.plOm.2 _))
+  obtain ⟨u, hu⟩ := local_pair hT (show 0 < nu X i + 1 by omega) hζ hinv (hS0 _ (over_refl p)).1 hq
+    (fun g hg => (hHt g (hDH g hg)).2.2) (fun g hg => (hHt _ (hHc g (hDH g hg))).2.2) (by omega) d hd hγ hdγ hσ
+  obtain ⟨e1, e2⟩ := hu (vecPair D.R.r β) hc' hB
+    (fun m => by rw [← Nat.cast_smul_eq_nsmul A, sq_eq_zero hK, zero_smul])
+    (fun g hg => ⟨(hHt g (hDH g hg)).1, (hHt g (hDH g hg)).2.1⟩)
+    (fun g hg => ⟨(hHt _ (hHc g (hDH g hg))).1, (hHt _ (hHc g (hDH g hg))).2.1⟩)
+    x y (hyI _ (over_refl _) _ (N.plOm.2 _))
     (hyI _ (Or.inr hpb) _ (isPlaceOver_moveVal_cc X hpb (N.plOm.2 _)))
   let Av : PlE D.host → ValuationSubring N.Om := Function.update N.plOm.1 pb (moveVal X.cc (N.plOm.1 p))
   have hAb : Av pb = moveVal X.cc (N.plOm.1 p) := Function.update_self ..
@@ -654,8 +659,8 @@ theorem reciprocity : PoitouTateTotallyComplex → TameLocal → ∀ (D : Formal
     refine ⟨?_, fun m => by rw [ht, Module.End.one_apply]⟩
     have h := hxloc v
     unfold Formalism.GaloisCohomology.bkCond at h
-    rw [if_neg (show ¬ ((X.l i : ℕ) : 𝓞 D.host.E) ∈ v.asIdeal from (hout v hv).1),
-      if_neg (fun e => e.elim (hout v hv).2.1 (hout v hv).2.2)] at h
+    rw [ite_eq_right (show ¬ ((X.l i : ℕ) : 𝓞 D.host.E) ∈ v.asIdeal from (hout v hv).1),
+      ite_eq_right (fun e => e.elim (hout v hv).2.1 (hout v hv).2.2)] at h
     obtain ⟨m, hm⟩ := (mem_coboundaries1 _ _).1 ((Submodule.Quotient.mk_eq_zero _).1 h)
     have h3 : x.1 τ = repOn (Tgl i s) κ Y τ m - m := hm ⟨⟨τ, Ine_le_Dec _ hτ⟩, hτ⟩
     rw [h3, ht, Module.End.one_apply, sub_self]
@@ -678,7 +683,7 @@ theorem reciprocity : PoitouTateTotallyComplex → TameLocal → ∀ (D : Formal
       by_cases e : v ∈ placesOver D.host.E (X.l i)
       · have h := hxloc v
         unfold Formalism.GaloisCohomology.bkCond at h
-        rw [if_pos (show ((X.l i : ℕ) : 𝓞 D.host.E) ∈ v.asIdeal from e)] at h
+        rw [ite_eq_left (show ((X.l i : ℕ) : 𝓞 D.host.E) ∈ v.asIdeal from e)] at h
         obtain ⟨c, hc1, hc2⟩ := hy.2.2 v e (restrictCocycles1 _ _ continuous_subtype_val x) h
         rw [Submodule.Quotient.mk_eq_zero]
         refine (separated_dvr_second_cohomology_mem _ _).2 ⟨c, hc1.continuous, ?_⟩

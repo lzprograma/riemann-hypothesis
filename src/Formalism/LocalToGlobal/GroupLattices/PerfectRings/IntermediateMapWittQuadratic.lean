@@ -1,5 +1,6 @@
 module
 
+import Formalism.FormalGroupWitt.FormalGroupWittProofs.WittTeichmullerRoot
 public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
 public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.CharZeroWittQuadratic
 import Formalism.LocalToGlobal.GroupLattices.PerfectRings.IsLocalRingOfComplete
@@ -17,18 +18,7 @@ open Formalism.MainNotions.FormalGroupSystem IsLocalRing IntermediateField Polyn
 variable (p : ℕ) [hp : Fact p.Prime]
 
 instance instCharZeroWW : CharZero (WW p) := by
-  obtain ⟨q, hq⟩ := CharP.exists (WW p)
-  rcases CharP.char_is_prime_or_zero (WW p) q with h | h
-  · exfalso
-    have h0 : ((q : ℕ) : WW p) = 0 := CharP.cast_eq_zero _ q
-    have h1 : ((q : ℕ) : kb p) = 0 := by
-      have := congrArg (WittVector.constantCoeff (p := p) (R := kb p)) h0
-      rwa [map_natCast, map_zero] at this
-    have h2 : p ∣ q := (CharP.cast_eq_zero_iff (kb p) p q).1 h1
-    have h3 : p = q := (Nat.prime_dvd_prime_iff_eq hp.out h).1 h2
-    exact (WittVector.irreducible p (k := kb p)).ne_zero (h3 ▸ h0)
-  · subst h
-    exact CharP.charP_to_charZero _
+  apply _root_.Formalism.FG.witt_char_zero <;> assumption
 
 instance charZero_witt_fraction : CharZero (K0 p) :=
   charZero_of_injective_algebraMap (IsFractionRing.injective (WW p) (K0 p))
@@ -46,35 +36,6 @@ theorem mem_Oc (x : Kc p) : x ∈ Oc p ↔ IsIntegral (WW p) x := Iff.rfl
 theorem witt_mem_integers_Cp (x : WW p) : algebraMap (K0 p) (Kc p) (algebraMap (WW p) (K0 p) x) ∈ Oc p := by
   rw [mem_Oc, ← IsScalarTower.algebraMap_apply]
   exact isIntegral_algebraMap
-
-theorem Oc_val (x : Kc p) : x ∈ Oc p ∨ x⁻¹ ∈ Oc p := by
-  have hx : IsIntegral (K0 p) x := Algebra.IsIntegral.isIntegral x
-  have : FiniteDimensional (K0 p) (K0 p)⟮x⟯ := adjoin.finiteDimensional hx
-  have hD : IsDiscreteValuationRing (integralClosure (WW p) (K0 p)⟮x⟯) :=
-    IntCl.isDVR (WW p) (K0 p) (K0 p)⟮x⟯ (completeWW p)
-  have hF : IsFractionRing (integralClosure (WW p) (K0 p)⟮x⟯) (K0 p)⟮x⟯ := IntCl.frac (WW p) (K0 p) (K0 p)⟮x⟯
-  have : IsScalarTower (WW p) (K0 p)⟮x⟯ (Kc p) := IsScalarTower.of_algebraMap_eq (fun _ => rfl)
-  let x' : (K0 p)⟮x⟯ := ⟨x, mem_adjoin_simple_self _ _⟩
-  have key : ∀ y : (K0 p)⟮x⟯, IsLocalization.IsInteger (integralClosure (WW p) (K0 p)⟮x⟯) y →
-      IsIntegral (WW p) (y : Kc p) := by
-    rintro y ⟨b, rfl⟩
-    exact (b.2 : IsIntegral (WW p) (b : (K0 p)⟮x⟯)).map (IsScalarTower.toAlgHom (WW p) (K0 p)⟮x⟯ (Kc p))
-  rcases ValuationRing.isInteger_or_isInteger (integralClosure (WW p) (K0 p)⟮x⟯) x' with h | h
-  · exact Or.inl (key _ h)
-  · exact Or.inr (key _ h)
-
-theorem Oc_rank1 (x : Kc p) (_hx : x ≠ 0) : ∃ m : ℕ, (p : Kc p) ^ m / x ∈ Oc p := by
-  have halg : IsAlgebraic (WW p) x⁻¹ :=
-    (IsFractionRing.isAlgebraic_iff (WW p) (K0 p) (Kc p)).2 (Algebra.IsAlgebraic.isAlgebraic _)
-  obtain ⟨a, ha, hint⟩ := halg.exists_integral_multiple
-  obtain ⟨m, u, hu⟩ := WittVector.exists_eq_pow_p_mul' a ha
-  refine ⟨m, ?_⟩
-  rw [mem_Oc]
-  have h1 : (p : Kc p) ^ m / x = ((u⁻¹ : (WW p)ˣ) : WW p) • (a • x⁻¹) := by
-    rw [smul_smul, hu, mul_comm ((p : WW p) ^ m), ← mul_assoc, Units.inv_mul, one_mul, Algebra.smul_def, map_pow,
-      map_natCast, div_eq_mul_inv]
-  rw [h1]
-  exact hint.smul _
 
 theorem p_inv_notMem_Oc : (p : Kc p)⁻¹ ∉ Oc p := by
   rw [mem_Oc]
@@ -136,7 +97,7 @@ theorem gO_mem (z : OO p n) : gO p n z ∈ Oc p := by
   exact (Oc p).add_mem (gW_mem p n _) ((Oc p).mul_mem (gW_mem p n _) (sqrtPrime_mem p))
 
 theorem gO_injective : Function.Injective (gO p n) := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro z hz
   rw [gO_apply] at hz
   by_cases hb : z.im = 0

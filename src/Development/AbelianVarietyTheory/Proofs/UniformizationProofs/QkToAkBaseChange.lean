@@ -53,9 +53,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -95,18 +92,52 @@ theorem grp_generic {R : Type} [CommRing R] [IsDomain R] {I : Ideal R} {D : DegD
   have : IsMonHom U.gen.symm.hom := inferInstanceAs (IsMonHom U.gen.inv)
   exact ((isGrpPullback_of_iso U.gen.symm).comp (isGrpPullback_pullback G (jK R))).congr (Category.id_comp _) rfl
 
-end GlobalTheory.ThetaBaseChange
-
-namespace GlobalTheory
-
-
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR GlobalTheory.FieldBaseChange GlobalTheory.ThetaBaseChange in
-
-theorem qkToAk_baseChange : GlobalFnsSt → SecBaseChangeSt → QkBaseChangeSt := by
-  intro hG _ R R' _ _ _ _ I I' _ _ φ D A G _ _ U G' _ _ bc hbc A' D' hD U' hU F _ _ _ hF k hk p x p' x' hy hg hx H w' hw'
+theorem exists_baseChange_data (hG : GlobalFnsSt)
+    (R R' : Type) [CommRing R] [IsDomain R] [CommRing R'] [IsDomain R']
+    (I : Ideal R) (I' : Ideal R') (φ : R →+* R')
+    (D : DegData R I) (A : PolAV (Spec (CommRingCat.of (FractionRing R))))
+    (G : Over (Spec (CommRingCat.of R))) [GrpObj G] [IsCommMonObj G] (U : Unif I D A G)
+    (G' : Over (Spec (CommRingCat.of R'))) [GrpObj G'] [IsCommMonObj G']
+    (bc : G' ≅ (Over.pullback (specOf φ)).obj G) (hbc : IsMonHom bc.hom)
+    (A' : PolAV (Spec (CommRingCat.of (FractionRing R')))) (D' : DegData R' I')
+    (hD : IsPullDeg φ D.toPre D'.toPre) (U' : Unif I' D' A' G') (hU : IsPullUnif φ hD bc U U')
+    (F : Type) [Field F] [Algebra (FractionRing R) F] [Algebra (FractionRing R') F]
+    (hF : ∀ r : R, algebraMap (FractionRing R) F (algebraMap R (FractionRing R) r) =
+      algebraMap (FractionRing R') F (algebraMap R' (FractionRing R') (φ r)))
+    (k : ℕ) (hk : 1 ≤ k)
+    (x : TFK (R := R) F ⟶ A.A) (x' : TFK (R := R') F ⟶ A'.A)
+    (hx : x'.left ≫ U'.gen.inv.left ≫ pullback.fst G'.hom (jK R') ≫ bc.hom.left ≫ pullback.fst G.hom (specOf φ) =
+      x.left ≫ U.gen.inv.left ≫ pullback.fst G.hom (jK R))
+    (w : LB.Iso (A.L.pull U.gen.hom.left) (U.LG.L.pull (pullback.fst G.hom (jK R)))) (hw : w.IsGen)
+    (w' : LB.Iso (A'.L.pull U'.gen.hom.left) (U'.LG.L.pull (pullback.fst G'.hom (jK R')))) (hw' : w'.IsGen) :
+    ∃ (g : Spec (CommRingCat.of (FractionRing R')) ⟶ Spec (CommRingCat.of (FractionRing R)))
+      (Φ : A'.A.left ⟶ A.A.left)
+      (v : LB.Iso A'.L (A.L.pull Φ))
+      (Θ : (Over.mk (jFK (R := R') F ≫ jK R') ⊗ D'.toPre.P.A).left ⟶
+        (Over.mk (jFK (R := R) F ≫ jK R) ⊗ D.toPre.P.A).left)
+      (Ω : (TFK (R := R') F ⊗ A'.A).left ⟶ (TFK (R := R) F ⊗ A.A).left)
+      (ω : (TFK (R := R) F ⊗ A.A).left ⟶ (TFK (R := R') F ⊗ A'.A).left)
+      (pl : Fam D.toPre F k → Fam D'.toPre F k),
+      (jFK (R := R') F ≫ g = jFK (R := R) F) ∧
+      ((jFK (R := R') F ≫ jK R') ≫ specOf φ = jFK (R := R) F ≫ jK R) ∧
+      IsGrpPullback A'.A A.A g Φ ∧
+      x'.left ≫ Φ = x.left ∧
+      PGen v ∧
+      (Θ ≫ (fst (Over.mk (jFK (R := R) F ≫ jK R)) D.toPre.P.A).left =
+        (fst (Over.mk (jFK (R := R') F ≫ jK R')) D'.toPre.P.A).left) ∧
+      (Θ ≫ (snd (Over.mk (jFK (R := R) F ≫ jK R)) D.toPre.P.A).left =
+        (snd (Over.mk (jFK (R := R') F ≫ jK R')) D'.toPre.P.A).left ≫
+          hD.e.hom.left ≫ pullback.fst D.toPre.P.A.hom (specOf φ)) ∧
+      (Ω ≫ (fst (TFK (R := R) F) A.A).left = (fst (TFK (R := R') F) A'.A).left) ∧
+      (Ω ≫ (snd (TFK (R := R) F) A.A).left = (snd (TFK (R := R') F) A'.A).left ≫ Φ) ∧
+      (ω ≫ (fst (TFK (R := R') F) A'.A).left = (fst (TFK (R := R) F) A.A).left) ∧
+      (ω ≫ (snd (TFK (R := R') F) A'.A).left ≫ Φ = (snd (TFK (R := R) F) A.A).left) ∧
+      (Ω ≫ ω = 𝟙 _) ∧
+      (∀ b x, GlobalTheory.FamFieldPull.IsSecPull hD.w (DegPre.famφ D'.toPre F x) (DegPre.famφ D.toPre F (hD.xe x))
+        (DegPre.famε k) Θ ((pl b).s x) (b.s (hD.xe x))) ∧
+      (∀ a' b', U'.toUnifPre.ExpandsF F k w' a' b' →
+        ∃ a b, Moved v ω a' a ∧ U.toUnifPre.ExpandsF F k w a b ∧ pl b = b') := by
   obtain ⟨wL, hwL, -, -, hlev⟩ := (isPullUnif_iff_stalks R R' I I' φ D D' hD A A' G G' bc U U').1 hU
-  obtain ⟨w, hw⟩ := U.ext
-  obtain ⟨hx1, H⟩ := H w hw
   obtain ⟨g, hg₁, hg₂⟩ := exists_fraction_map φ F hF
   have gA := grp_generic U.toUnifPre
   have gΨ : IsGrpPullback G' G (specOf φ) (bc.hom.left ≫ pullback.fst G.hom (specOf φ)) :=
@@ -123,7 +154,6 @@ theorem qkToAk_baseChange : GlobalFnsSt → SecBaseChangeSt → QkBaseChangeSt :
   have hxΦ : x'.left ≫ Φ = x.left := gA.1.hom_ext (by
     rw [Category.assoc, hΦ₁, ← hx]; simp only [Category.assoc]) (by
     rw [Category.assoc, hΦ₂, ← Category.assoc, Over.w x', Over.w x]; exact hg₂)
-  refine ⟨pow_eq_one_of_push hg₂ gΦ hxΦ hx1, fun θ' hθ' => ?_⟩
   have n₁ : U.gen.inv.left ≫ U.gen.hom.left = 𝟙 _ := by rw [← Over.comp_left, U.gen.inv_hom_id, Over.id_left]
   have n₂ : U'.gen.inv.left ≫ U'.gen.hom.left = 𝟙 _ := by rw [← Over.comp_left, U'.gen.inv_hom_id, Over.id_left]
   have n₃ : U'.gen.hom.left ≫ U'.gen.inv.left = 𝟙 _ := by rw [← Over.comp_left, U'.gen.hom_inv_id, Over.id_left]
@@ -170,22 +200,36 @@ theorem qkToAk_baseChange : GlobalFnsSt → SecBaseChangeSt → QkBaseChangeSt :
     refine (Category.assoc _ _ _).symm.trans ((congrArg (· ≫ _) x₂).trans ?_)
     refine Eq.trans ?_ ((congrArg (_ ≫ ·) hΦ₃).trans (Category.assoc _ _ _).symm)
     simp only [Category.assoc]
+  have bij := (expandsF_bijective U.toUnifPre F hG hk (U.expand k hk) hw).1
+  have bij' := (expandsF_bijective U'.toUnifPre F hG hk (U'.expand k hk) hw').1
+  choose pl hpl using exists_fam_field_pull hG R R' φ D.toPre D'.toPre hD F hF Θ hΘ₁ hΘ₂ k
+  refine ⟨g, Φ, v, Θ, Ω, ω, pl, hg₂, hΘF, gΦ, hxΦ, hv, hΘ₁, hΘ₂, hΩ₁, hΩ₂, hω₁, hω₂, hΩω, hpl, fun a' b' E => ?_⟩
+  obtain ⟨a, ha⟩ := exists_moved A.isLB A'.isLB hω₂ n₂ hv₂ hvv a'
+  obtain ⟨b, σ, h₁, h₂⟩ := (bij a).exists
+  refine ⟨a, b, ha, ⟨σ, h₁, h₂⟩, (bij' a').unique ?_ E⟩
+  obtain ⟨σ', h₁', -⟩ := E
+  exact ⟨σ', h₁', expandsG_transport R R' I I' φ D D' hD A A' G G' bc hbc U.toUnifPre U'.toUnifPre wL hwL hlev F hF
+    Θ hΘ₁ hΘ₂ Ξ hΞ₁ hΞ₂ k σ σ' b (pl b)
+    (moved_sec A.isLB A'.isLB n₃ n₁ hΦ₃ hsq hvv x₁ x₂ ha h₁ h₁') (hpl b) h₂⟩
+
+end GlobalTheory.ThetaBaseChange
+
+namespace GlobalTheory
+
+
+open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR GlobalTheory.FieldBaseChange GlobalTheory.ThetaBaseChange in
+
+theorem qkToAk_baseChange : GlobalFnsSt → SecBaseChangeSt → QkBaseChangeSt := by
+  intro hG _ R R' _ _ _ _ I I' _ _ φ D A G _ _ U G' _ _ bc hbc A' D' hD U' hU F _ _ _ hF k hk p x p' x' hy hg hx H w' hw'
+  obtain ⟨w, hw⟩ := U.ext
+  obtain ⟨hx1, H⟩ := H w hw
+  obtain ⟨g, Φ, v, Θ, Ω, ω, pl, hg₂, -, gΦ, hxΦ, hv, hΘ₁, hΘ₂, -, -, hω₁, hω₂, -, hpl, key⟩ :=
+    exists_baseChange_data hG R R' I I' φ D A G U G' bc hbc A' D' hD U' hU F hF k hk x x' hx w hw w' hw'
+  refine ⟨pow_eq_one_of_push hg₂ gΦ hxΦ hx1, fun θ' hθ' => ?_⟩
   obtain ⟨θ, hθ, hact⟩ := exists_theta_moved A.isLB A'.isLB hg₂ gΦ hv hω₁ hω₂ θ' (x := x) (by rw [hθ']; exact hxΦ)
   obtain ⟨ν, hν, Hν⟩ := H θ hθ
   obtain ⟨ν', hν', Hν'⟩ := GlobalTheory.phiRel_transport hG R R' φ D.toPre D'.toPre hD F hF Θ hΘ₁ hΘ₂ k p p' hy hg ν hν
   refine ⟨ν', hν', fun t' t₂' s' s₂' E E₂ hA => ?_⟩
-  have bij := (expandsF_bijective U.toUnifPre F hG hk (U.expand k hk) hw).1
-  have bij' := (expandsF_bijective U'.toUnifPre F hG hk (U'.expand k hk) hw').1
-  choose pl hpl using exists_fam_field_pull hG R R' φ D.toPre D'.toPre hD F hF Θ hΘ₁ hΘ₂ k
-  have key : ∀ a' b', U'.toUnifPre.ExpandsF F k w' a' b' → ∃ a b, Moved v ω a' a ∧
-      U.toUnifPre.ExpandsF F k w a b ∧ pl b = b' := fun a' b' E => by
-    obtain ⟨a, ha⟩ := exists_moved A.isLB A'.isLB hω₂ n₂ hv₂ hvv a'
-    obtain ⟨b, σ, h₁, h₂⟩ := (bij a).exists
-    refine ⟨a, b, ha, ⟨σ, h₁, h₂⟩, (bij' a').unique ?_ E⟩
-    obtain ⟨σ', h₁', -⟩ := E
-    exact ⟨σ', h₁', expandsG_transport R R' I I' φ D D' hD A A' G G' bc hbc U.toUnifPre U'.toUnifPre wL hwL hlev F hF
-      Θ hΘ₁ hΘ₂ Ξ hΞ₁ hΞ₂ k σ σ' b (pl b)
-      (moved_sec A.isLB A'.isLB n₃ n₁ hΦ₃ hsq hvv x₁ x₂ ha h₁ h₁') (hpl b) h₂⟩
   obtain ⟨t, s, m, e, rfl⟩ := key t' s' E
   obtain ⟨t₂, s₂, m₂, e₂, rfl⟩ := key t₂' s₂' E₂
   exact Hν' s s₂ _ _ (hpl s) (hpl s₂) (Hν t t₂ s s₂ e e₂ (hact t' t₂' t t₂ m m₂ hA))

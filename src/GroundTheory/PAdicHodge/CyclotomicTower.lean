@@ -175,7 +175,7 @@ theorem normTrace_cycl_isPrimitiveRoot {k : ℕ} (hk : 1 ≤ k) {η : PadicAlgCl
     eq_of_monic_of_dvd_of_natDegree_le (minpoly.monic hint) hfm hdvd (by rw [hfdeg, hdeg])
   have hnext : f.nextCoeff = 0 := by
     rw [nextCoeff_of_natDegree_pos (by omega), hfdeg, hf, coeff_sub, coeff_X_pow, coeff_C]
-    simp only [if_neg (show p - 1 ≠ p by omega), if_neg (show p - 1 ≠ 0 by omega), sub_zero]
+    simp only [ite_eq_right (show p - 1 ≠ p by omega), ite_eq_right (show p - 1 ≠ 0 by omega), sub_zero]
   rw [normTrace, normTraceF, ← heq, hnext]
   simp
 

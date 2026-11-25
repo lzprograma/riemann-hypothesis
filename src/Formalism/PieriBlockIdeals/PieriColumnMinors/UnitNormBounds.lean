@@ -5,55 +5,9 @@ public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.Harmonic.Bounds
 public import Formalism.PieriBlockIdeals.FactorialValuationSum
 public import Formalism.PieriBlockIdeals.PieriColumnMinors.DividedPowerZeroZeroVector
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PieriBlockIdeals.PieriColumnMinors.LabelSumNeedsLeFalse, Formalism.PieriBlockIdeals.PieriColumnMinors.UnitNormBounds
@@ -71,7 +25,7 @@ namespace Formalism.CohomologicalDescent
 
 open Classical
 
-lemma label_vl_le_one {l : ℕ} (_hl : l.Prime) {n : ℤ} (h0 : 0 < n) (h1 : n < (l : ℤ) ^ 2) :
+lemma label_vl_le_one {l : ℕ} {n : ℤ} (h0 : 0 < n) (h1 : n < (l : ℤ) ^ 2) :
     vl l n ≤ 1 := by
   by_contra hlt
   push Not at hlt
@@ -81,19 +35,19 @@ lemma label_vl_le_one {l : ℕ} (_hl : l.Prime) {n : ℤ} (h0 : 0 < n) (h1 : n <
   have := Int.le_of_dvd h0 hdvd
   linarith
 
-lemma label_vl_le_ind {l : ℕ} (hl : l.Prime) {n : ℤ} (h0 : 0 < n) (h1 : n < (l : ℤ) ^ 2) :
+lemma label_vl_le_ind {l : ℕ} {n : ℤ} (h0 : 0 < n) (h1 : n < (l : ℤ) ^ 2) :
     (vl l n : ℝ) ≤ if (l : ℤ) ∣ n then 1 else 0 := by
   split_ifs with hd
-  · exact_mod_cast label_vl_le_one hl h0 h1
+  · exact_mod_cast label_vl_le_one h0 h1
   · have h : vl l n = 0 := padicValInt.eq_zero_of_not_dvd hd
     simp [h]
 
-lemma label_sum_le_filter {l : ℕ} (hl : l.Prime) (s : Finset ℤ) (mB : ℤ) (c : ℤ → ℝ)
+lemma label_sum_le_filter {l : ℕ} (s : Finset ℤ) (mB : ℤ) (c : ℤ → ℝ)
     (hc : ∀ x ∈ s, 0 ≤ c x) (hr : ∀ x ∈ s, 0 < x - mB ∧ x - mB < (l : ℤ) ^ 2) :
     ∑ x ∈ s, c x * (vl l (x - mB) : ℝ) ≤ ∑ x ∈ s.filter (fun x => (l : ℤ) ∣ x - mB), c x := by
   rw [Finset.sum_filter]
   refine Finset.sum_le_sum fun x hx => ?_
-  have h := label_vl_le_ind hl (hr x hx).1 (hr x hx).2
+  have h := label_vl_le_ind (hr x hx).1 (hr x hx).2
   calc c x * (vl l (x - mB) : ℝ) ≤ c x * (if (l : ℤ) ∣ x - mB then 1 else 0) :=
         mul_le_mul_of_nonneg_left h (hc x hx)
     _ = if (l : ℤ) ∣ x - mB then c x else 0 := by split_ifs <;> simp
@@ -224,7 +178,7 @@ lemma label_second {l k t h : ℕ} {i : ℝ} {xm mB : ℤ} (hl : l.Prime) (hi : 
     intro ct hct
     rw [Finset.mem_Ioo] at hct
     exact ⟨by omega, by linarith [hct.2]⟩
-  have step1 := label_sum_le_filter hl (Finset.Ioo mB xm) mB
+  have step1 := label_sum_le_filter (Finset.Ioo mB xm) mB
     (fun ct => min (min (k : ℝ) (t : ℝ)) (i / ((xm - ct : ℤ) : ℝ))) hc hr
   refine le_trans step1 ?_
   obtain ⟨S, hS⟩ : ∃ S, S = (Finset.Ioo mB xm).filter (fun x => (l : ℤ) ∣ x - mB) := ⟨_, rfl⟩
@@ -263,7 +217,7 @@ lemma label_second {l k t h : ℕ} {i : ℝ} {xm mB : ℤ} (hl : l.Prime) (hi : 
     · rw [h0] at he
       have hd : xm - ct = (d0 : ℤ) := by push_cast at he; linarith
       have hlt : ((d0 : ℕ) : ℤ) < xm - mB := by omega
-      rw [hA, if_pos hlt]
+      rw [hA, ite_eq_left hlt]
       have hdR : ((xm - ct : ℤ) : ℝ) = (d0 : ℝ) := by rw [hd]; norm_cast
       rw [hdR]
     · have hd0nn : (0 : ℤ) ≤ (d0 : ℤ) := by positivity
@@ -291,7 +245,7 @@ lemma label_second {l k t h : ℕ} {i : ℝ} {xm mB : ℤ} (hl : l.Prime) (hi : 
   have hH : ∑ j ∈ Finset.range (h / l), F (j + 1) = (i / l) * ((harmonic (h / l) : ℚ) : ℝ) := by
     simp only [harmonic, Rat.cast_sum, Rat.cast_inv, Rat.cast_natCast, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
-    rw [hF, if_neg (by omega)]
+    rw [hF, ite_eq_right (by omega)]
     push_cast
     field_simp
   have hlog := label_harm_le hlpos hlh
@@ -307,7 +261,7 @@ lemma label_second {l k t h : ℕ} {i : ℝ} {xm mB : ℤ} (hl : l.Prime) (hi : 
         Finset.sum_le_sum_of_subset_of_nonneg (Finset.image_subset_iff.mpr hmaps)
           (fun j _ _ => hF0 j)
     _ = ∑ j ∈ Finset.range (h / l), F (j + 1) + F 0 := Finset.sum_range_succ' _ _
-    _ = (i / l) * ((harmonic (h / l) : ℚ) : ℝ) + A := by rw [hH, hF 0, if_pos rfl]
+    _ = (i / l) * ((harmonic (h / l) : ℚ) : ℝ) + A := by rw [hH, hF 0, ite_eq_left rfl]
     _ ≤ A + (i / (l : ℝ)) * (1 + Real.log ((h : ℝ) / (l : ℝ))) := by linarith
 
 theorem labelSumLe_holds : LabelSum := by
@@ -316,7 +270,7 @@ theorem labelSumLe_holds : LabelSum := by
   have hlpos : 0 < l := hl.pos
   have hhZ : (h : ℤ) < (l : ℤ) ^ 2 := by exact_mod_cast hh
   have hk : (0 : ℝ) ≤ k := Nat.cast_nonneg _
-  have hA := label_sum_le_filter hl (Finset.Icc xm xp) mB (fun _ => (k : ℝ))
+  have hA := label_sum_le_filter (Finset.Icc xm xp) mB (fun _ => (k : ℝ))
     (fun _ _ => hk) (fun x hx => by
       rw [Finset.mem_Icc] at hx
       exact ⟨by omega, by linarith [hx.2]⟩)
@@ -491,8 +445,8 @@ theorem boxesOfLabel_le_bound (k j t w M i : ℕ) (lam : Fin (k + j) → ℕ) (x
   have hk : (cloudBoxes k j t w M lam tau ct : ℝ) ≤ k := by exact_mod_cast h2.1
   have ht : (cloudBoxes k j t w M lam tau ct : ℝ) ≤ t := by exact_mod_cast h2.2
   by_cases hct : ct < xm
-  · rw [if_pos hct] at h1
-    rw [if_pos hct, if_pos hct]
+  · rw [ite_eq_left hct] at h1
+    rw [ite_eq_left hct, ite_eq_left hct]
     have h1' : (boxesOfLabel t w M lam tau ct : ℝ) ≤ (j : ℝ) + (cloudBoxes k j t w M lam tau ct : ℝ) := by
       exact_mod_cast h1
     have h3 := counts_deep_holds k j t w M i lam xm xp hR tau htau ct hct
@@ -501,8 +455,8 @@ theorem boxesOfLabel_le_bound (k j t w M i : ℕ) (lam : Fin (k + j) → ℕ) (x
     have h4 : (cloudBoxes k j t w M lam tau ct : ℝ) ≤ (i : ℝ) / ((xm - ct : ℤ) : ℝ) := (le_div_iff₀ hpos).mpr h3'
     have h5 := le_min (le_min hk ht) h4
     linarith
-  · rw [if_neg hct] at h1
-    rw [if_neg hct, if_neg hct]
+  · rw [ite_eq_right hct] at h1
+    rw [ite_eq_right hct, ite_eq_right hct]
     have h1' : (boxesOfLabel t w M lam tau ct : ℝ) ≤ (0 : ℝ) + (cloudBoxes k j t w M lam tau ct : ℝ) := by
       exact_mod_cast h1
     have h5 := le_min (le_min hk ht) hk
@@ -558,7 +512,7 @@ theorem padicValInt_prod_eq_sum (l : ℕ) [Fact l.Prime] (s : Finset ℕ) (g : �
         (Finset.prod_ne_zero_iff.mpr fun x hx => hg x (Finset.mem_insert_of_mem hx)),
       ih (fun x hx => hg x (Finset.mem_insert_of_mem hx))]
 
-theorem padicValInt_pow_eq_mul (l : ℕ) [Fact l.Prime] (x : ℤ) (_hx : x ≠ 0) (m : ℕ) :
+theorem padicValInt_pow_eq_mul (l : ℕ) [Fact l.Prime] (x : ℤ) (m : ℕ) :
     padicValInt l (x ^ m) = m * padicValInt l x := by
   unfold padicValInt
   rw [Int.natAbs_pow, padicValNat.pow]
@@ -591,12 +545,7 @@ theorem depth_valuation_sum_holds : DnValSum := by
       mu t (M - w) i (dual M lam) ((x : ℤ) - ((k + j : ℕ) : ℤ)) *
         vl l (((M - w : ℕ) : ℤ) - ((x : ℤ) - ((k + j : ℕ) : ℤ))) := by
     intro x _
-    by_cases h : (((M - w : ℕ) : ℤ) - ((x : ℤ) - ((k + j : ℕ) : ℤ))) = 0
-    · have hc : ((x : ℤ) - ((k + j : ℕ) : ℤ)) = ((M - w : ℕ) : ℤ) := by omega
-      rw [hc, ld_mu_w]
-      simp
-    · unfold vl
-      exact padicValInt_pow_eq_mul l _ h _
+    exact padicValInt_pow_eq_mul l _ _
   rw [padicValInt_prod_eq_sum l _ _ hne, Finset.sum_congr rfl hterm]
   refine Finset.sum_bij_ne_zero
     (fun x _ _ => maxB t w + (((M - w : ℕ) : ℤ) - ((x : ℤ) - ((k + j : ℕ) : ℤ)))) ?_ ?_ ?_ ?_
@@ -691,7 +640,7 @@ theorem harmonic_positive_log_holds : HarmPosLog := by
       linarith
   · intro h1 h2
     unfold harm
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
     have hl0 : (0 : ℝ) < (l : ℝ) := by exact_mod_cast h1
     have hx : (1 : ℝ) ≤ (h : ℝ) / (l : ℝ) := by
       rw [le_div_iff₀ hl0, one_mul]
@@ -740,8 +689,8 @@ theorem indexIntegral_shift (l : ℕ) (xm xp mB : ℤ) : IlInd l (xm - mB) (xp -
     · rintro ⟨y, h1, h2, h3⟩
       exact ⟨y - mB, by omega, by omega, by simpa using h3⟩
   by_cases hc : ∃ y : ℤ, xm ≤ y ∧ y ≤ xp ∧ (l : ℤ) ∣ y - mB
-  · rw [if_pos hc, if_pos (h.mpr hc)]
-  · rw [if_neg hc, if_neg (fun h' => hc (h.mp h'))]
+  · rw [ite_eq_left hc, ite_eq_left (h.mpr hc)]
+  · rw [ite_eq_right hc, ite_eq_right (fun h' => hc (h.mp h'))]
 
 theorem indexIntegral_nonneg (l : ℕ) (xm xp mB : ℤ) : 0 ≤ IlInd l xm xp mB := by
   unfold IlInd
@@ -770,7 +719,7 @@ theorem label_sum_plus_holds : LabelSumPlus := by
           add_zero]
     rw [hL]
     unfold labelSumBoundPos harm
-    rw [if_pos hlh, add_zero]
+    rw [ite_eq_left hlh, add_zero]
     refine add_nonneg (mul_nonneg (Nat.cast_nonneg _) (add_nonneg (div_nonneg ?_ (Nat.cast_nonneg _))
       (indexIntegral_nonneg _ _ _ _))) (gated_min_nonneg l k t i hi _)
     exact_mod_cast (by omega : (0 : ℤ) ≤ xp - xm)
@@ -779,7 +728,7 @@ theorem label_sum_plus_holds : LabelSumPlus := by
     rw [← labelLHS_shift_to_zero] at h1
     unfold labelSumBound at h1
     unfold labelSumBoundPos harm
-    rw [if_neg hlh]
+    rw [ite_eq_right hlh]
     have e : xp - mB - (xm - mB) = xp - xm := by ring
     rw [indexIntegral_shift, e] at h1
     simp only [sub_zero] at h1
@@ -843,7 +792,7 @@ theorem second_valuation_holds : Step2Val := by
     intro ct hct
     have hlt := (Finset.mem_Ioo.mp hct).2
     have hm := multiplicity_bound_holds k j t w M i lam xm xp hR ct
-    rw [if_pos hlt, if_pos hlt] at hm
+    rw [ite_eq_left hlt, ite_eq_left hlt] at hm
     calc (mu t (M - w) i (dual M lam) (cont t w M ct) : ℝ) * (vl l (ct - maxB t w) : ℝ)
         ≤ ((j : ℝ) + min (min (k : ℝ) (t : ℝ)) ((i : ℝ) / ((xm - ct : ℤ) : ℝ))) * (vl l (ct - maxB t w) : ℝ) :=
           mul_le_mul_of_nonneg_right hm (Nat.cast_nonneg _)
@@ -856,7 +805,7 @@ theorem second_valuation_holds : Step2Val := by
     · intro ct hct
       have hge := (Finset.mem_Ico.mp hct).1
       have hm := multiplicity_bound_holds k j t w M i lam xm xp hR ct
-      rw [if_neg (by omega), if_neg (by omega), zero_add] at hm
+      rw [ite_eq_right (by omega), ite_eq_right (by omega), zero_add] at hm
       exact mul_le_mul_of_nonneg_right (le_trans hm (min_le_right _ _)) (Nat.cast_nonneg _)
     · intro ct _ _
       exact mul_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)

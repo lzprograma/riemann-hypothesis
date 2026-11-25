@@ -130,11 +130,11 @@ variable {x}
 
 theorem twPart_of_nonneg (M₀ : FinGradedSub (S := S) (x := x) Ω) (a : ℤ) (n : ℕ) :
     twPart η M₀ a n = Submodule.span S ((M₀.piece a : Set Ω) * Set.range η ^ n) := by
-  rw [twPart, if_pos (Int.natCast_nonneg n), Int.toNat_natCast]
+  rw [twPart, ite_eq_left (Int.natCast_nonneg n), Int.toNat_natCast]
 
 theorem twPart_of_neg (M₀ : FinGradedSub (S := S) (x := x) Ω) (a : ℤ) {b : ℤ} (hb : b < 0) :
     twPart η M₀ a b = ⊥ := by
-  rw [twPart, if_neg (not_le.mpr hb)]
+  rw [twPart, ite_eq_right (not_le.mpr hb)]
 
 theorem twPart_form_mul (M₀ : FinGradedSub (S := S) (x := x) Ω) {a b : ℤ} {f : Poly S N} {d : ℕ}
     (hf : f.IsHomogeneous d) {z : Ω} (hz : z ∈ twPart η M₀ a b) :

@@ -121,7 +121,7 @@ lemma re_self {x : Frame X.Ψ r} (hx : X.IsOrtho x) (τ : X.Ψ) (hdet : (mat x �
   conv_lhs => rw [expand X hx τ hdet y]
   rw [hermC_quad]
   simp_rw [_root_.ReciprocityTheory.ChartRestriction.G.FD.OrthonormalPerpBasis.ortho_h X hx τ]
-  simp only [mul_ite, ite_mul, mul_zero, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [mul_ite, ite_mul, mul_zero, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   rw [Complex.re_sum]
   refine Finset.sum_congr rfl (fun c _ => ?_)
   rw [map_mul, Complex.conj_ofReal]
@@ -135,11 +135,11 @@ lemma re_self {x : Frame X.Ψ r} (hx : X.IsOrtho x) (τ : X.Ψ) (hdet : (mat x �
 
 lemma sgn_castLE (b : Fin X.p0) : sgn X.p0 (Fin.castLE X.p0_le b : ℕ) = 1 := by
   unfold sgn
-  rw [if_pos (by simp [b.isLt])]
+  rw [ite_eq_left (by simp [b.isLt])]
 
 lemma sgn_kap (a : Fin (r - X.p0)) : sgn X.p0 (kap X.p0_le a : ℕ) = -1 := by
   unfold sgn
-  rw [if_neg (by show ¬ (X.p0 + (a : ℕ) < X.p0); omega)]
+  rw [ite_eq_right (by show ¬ (X.p0 + (a : ℕ) < X.p0); omega)]
 
 lemma re_self_split {x : Frame X.Ψ r} (hx : X.IsOrtho x) (τ : X.Ψ) (hdet : (mat x τ).det ≠ 0)
     (y : Fin r → ℂ) : (hermC τ.1 X.Gm y y).re = Pos X x τ y - Neg X x τ y := by
@@ -175,7 +175,7 @@ lemma perp_kap {x : Frame X.Ψ r} (hx : X.IsOrtho x) (τ : X.Ψ) (w : Fin r → 
   induction hw using Submodule.span_induction with
   | mem z hz =>
     obtain ⟨b, rfl⟩ := hz
-    rw [_root_.ReciprocityTheory.ChartRestriction.G.FD.OrthonormalPerpBasis.ortho_h X hx τ, if_neg (kap_ne_castLE X.p0_le a b).symm]
+    rw [_root_.ReciprocityTheory.ChartRestriction.G.FD.OrthonormalPerpBasis.ortho_h X hx τ, ite_eq_right (kap_ne_castLE X.p0_le a b).symm]
   | zero => exact hermC_zero_left _ _ _
   | add z1 z2 _ _ h1 h2 => rw [hermC_add_left, h1, h2, add_zero]
   | smul c z _ h => rw [hermC_smul_left, h, mul_zero]

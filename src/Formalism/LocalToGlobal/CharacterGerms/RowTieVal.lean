@@ -43,14 +43,6 @@ theorem map_prod_add (V : VF C) {α : Type} (s : Finset α) (x : α → C) : V.v
 
 variable {d : ℕ} [NeZero d]
 
-section One
-
-variable {I : Fin 2 → Type} [∀ g, Fintype (I g)]
-
-variable (Y : FBChart C V O dd) (p : PairData Y d I) (H : (Y.raw p).Hyps V) (Ls : LetSys C dd) (n : ℕ)
-
-end One
-
 section Orb
 
 variable {Orb : Type} [Fintype Orb] {I : Orb → Fin 2 → Type} [∀ o g, Fintype (I o g)]

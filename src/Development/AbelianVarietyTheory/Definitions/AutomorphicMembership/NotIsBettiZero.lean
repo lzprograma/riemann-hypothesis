@@ -50,8 +50,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits NumberField
@@ -100,8 +98,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits NumberField
@@ -120,8 +116,8 @@ theorem expo_detSym (τ : GlobalTheory.AllWt.Psi H) (a : ℕ → Bool) (R : Opti
     expo Dw (detSym Dw a R τ.1) z = if z.1 = τ.1 then 1 else if z.1 = conjEmb τ.1 then -1 else 0 := by
   obtain ⟨ρ, i⟩ := z
   have hne : conjEmb τ.1 ≠ τ.1 := fun e => GlobalTheory.AllWt.conj_not_mem τ (e.symm ▸ τ.2)
-  have hp : Dw.mult τ.1 = Dw.p := if_pos τ.2
-  have hq : Dw.mult (conjEmb τ.1) = Dw.q := if_neg (GlobalTheory.AllWt.conj_not_mem τ)
+  have hp : Dw.mult τ.1 = Dw.p := ite_eq_left τ.2
+  have hq : Dw.mult (conjEmb τ.1) = Dw.q := ite_eq_right (GlobalTheory.AllWt.conj_not_mem τ)
   have hl : ∀ (ρ' : E →+* ℂ) (k : ℕ), letterOf Dw (.inl (ρ', k)) = some ⟨ρ, i⟩ ↔ ρ' = ρ ∧ k = i := fun ρ' k => by
     constructor
     · intro h
@@ -130,7 +126,7 @@ theorem expo_detSym (τ : GlobalTheory.AllWt.Psi H) (a : ℕ → Bool) (R : Opti
       obtain ⟨rfl, h2⟩ := Sigma.mk.inj_iff.1 (Option.some.inj h)
       exact ⟨rfl, congrArg Fin.val (eq_of_heq h2)⟩
     · rintro ⟨rfl, rfl⟩
-      exact dif_pos i.2
+      exact dite_eq_left i.2
   have h1 : expo Dw (detSym Dw a R τ.1) ⟨ρ, i⟩ = ∑ k ∈ Finset.range (Dw.p + Dw.q), expo Dw (rootSym Dw a R τ.1 k) ⟨ρ, i⟩ :=
     (Finsupp.sum_finsetSum_index (h := fun (a : Sym E) (n : ℤ) => if letterOf Dw a.2.2 = some ⟨ρ, i⟩ then n else 0)
       (fun _ => by simp) (fun _ _ _ => by split_ifs <;> simp)).symm
@@ -143,7 +139,7 @@ theorem expo_detSym (τ : GlobalTheory.AllWt.Psi H) (a : ℕ → Bool) (R : Opti
   split_ifs with e1 e2
   · subst e1
     rw [Finset.sum_eq_single (i : ℕ) (fun k _ hk => by simp [hk, hne]) fun h => absurd (Finset.mem_range.2 (by omega)) h,
-      if_pos (by omega), if_pos ⟨rfl, rfl⟩]
+      ite_eq_left (by omega), ite_eq_left ⟨rfl, rfl⟩]
   · subst e2
     rw [Finset.sum_eq_single (Dw.p + Dw.q - 1 - i) (fun k hk hk' => by
         have := Finset.mem_range.1 hk
@@ -152,7 +148,7 @@ theorem expo_detSym (τ : GlobalTheory.AllWt.Psi H) (a : ℕ → Bool) (R : Opti
         · rfl
         · omega
         · rfl) fun h => absurd (Finset.mem_range.2 (by omega)) h,
-      if_neg (by omega), if_pos ⟨rfl, by omega⟩]
+      ite_eq_right (by omega), ite_eq_left ⟨rfl, by omega⟩]
   · exact Finset.sum_eq_zero fun k _ => by simp [Ne.symm e1, Ne.symm e2]
 
 theorem expo_detSym_eq (τ : GlobalTheory.AllWt.Psi H) (a : ℕ → Bool) (R : Option ℝ) :
@@ -162,19 +158,19 @@ theorem expo_detSym_eq (τ : GlobalTheory.AllWt.Psi H) (a : ℕ → Bool) (R : O
   show _ = -(GlobalTheory.AllWt.wtOf Dw (flatWt Dw τ) 0).1 (ρ, i)
   by_cases h : ρ (H.rt : E) = H.rt0
   · have h1 : ρ ≠ conjEmb τ.1 := fun e => GlobalTheory.AllWt.conj_not_mem τ (e ▸ h)
-    rw [GlobalTheory.AllWt.wtOf_big (flatWt Dw τ) 0 ⟨ρ, h⟩ i ((if_pos h : Dw.mult ρ = Dw.p) ▸ i.2)]
+    rw [GlobalTheory.AllWt.wtOf_big (flatWt Dw τ) 0 ⟨ρ, h⟩ i ((ite_eq_left h : Dw.mult ρ = Dw.p) ▸ i.2)]
     by_cases e : ρ = τ.1 <;> simp [flatWt, parWt, Subtype.ext_iff, e, h1]
   · have h1 : ρ ≠ τ.1 := fun e => h (e ▸ τ.2)
-    have := GlobalTheory.AllWt.wtOf_small (flatWt Dw τ) 0 ⟨_, GlobalTheory.AllWt.conj_mem h⟩ i ((if_neg h : Dw.mult ρ = Dw.q) ▸ i.2)
+    have := GlobalTheory.AllWt.wtOf_small (flatWt Dw τ) 0 ⟨_, GlobalTheory.AllWt.conj_mem h⟩ i ((ite_eq_right h : Dw.mult ρ = Dw.q) ▸ i.2)
     simp only [GlobalTheory.AllWt.conjEmb_conjEmb] at this
     rw [this]
     have h2 : conjEmb ρ = τ.1 ↔ ρ = conjEmb τ.1 :=
       ⟨fun e => by rw [← e, GlobalTheory.AllWt.conjEmb_conjEmb], fun e => by rw [e, GlobalTheory.AllWt.conjEmb_conjEmb]⟩
     have h3 : (⟨_, GlobalTheory.AllWt.conj_mem h⟩ : GlobalTheory.AllWt.Psi H) = τ ↔ ρ = conjEmb τ.1 := Subtype.ext_iff.trans h2
-    simp only [flatWt, parWt, if_neg h1]
+    simp only [flatWt, parWt, ite_eq_right h1]
     by_cases e : ρ = conjEmb τ.1
-    · rw [if_pos e, if_pos (h3.2 e)]; rfl
-    · rw [if_neg e, if_neg (mt h3.1 e)]; rfl
+    · rw [ite_eq_left e, ite_eq_left (h3.2 e)]; rfl
+    · rw [ite_eq_right e, ite_eq_right (mt h3.1 e)]; rfl
 
 end Expo
 

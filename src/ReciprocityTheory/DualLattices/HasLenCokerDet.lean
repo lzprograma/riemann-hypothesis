@@ -46,6 +46,6 @@ theorem hasLen_coker_det' {C : Type} [Field C] (v : Valuation C NNReal) (R : Typ
   exact hasLen_of_equiv (Submodule.Quotient.equiv _ _ Φ hrange) h
 
 theorem lenId_of_B (hB : LenIdBStatement) : LenIdStatement :=
-  lenId_of (fun C _ v R _ _ hv => hasLen_coker_det' v R hv) hB
+  lenId_of (fun _ _ v R _ _ hv => hasLen_coker_det' v R hv) hB
 
 end ReciprocityTheory.PGsh.Up

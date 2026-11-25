@@ -22,12 +22,6 @@ open scoped ComplexOrder
 
 namespace Formalism.L2.Geo
 
-section Abs
-
-variable {K : Type} [Field K] [NumberField K]
-
-end Abs
-
 namespace FormsPkg
 
 variable {D : D7} {G : DV.Geo D.what₂.LL} {NW : ℕ → ℕ} {CompW : ℕ → Type} [∀ j, Fintype (CompW j)]
@@ -46,12 +40,6 @@ theorem inc_mem_cuspF {j : ℕ} {w : WeightFamilies.Wt D j} (F : P.Cusp j w) : P
 
 variable {j : ℕ}
 
-
-section Gauss
-
-variable (la : HeightOneSpectrum (𝓞 P.KO)) (y : P.Pt j la)
-
-end Gauss
 
 end FormsPkg
 
@@ -242,8 +230,6 @@ theorem kForm_semi {H X : Type} [AddCommGroup H] [Module ℂ H] [AddCommGroup X]
 
 end Semi
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 section Links
@@ -339,15 +325,6 @@ end RealDat
 
 
 end Prim
-
-section Geo
-
-open Formalism.L2.Geo Formalism.MainNotions
-
-variable {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
-  {Gm : DV.Geo D.what₂.LL} {Lv : Type} {Fam : ShimFam D Gm Lv} (Kp : FormsKPkg Fam) [Algebra Kp.fs.KO D.what₂.LL]
-
-end Geo
 
 section Exist
 

@@ -1,8 +1,9 @@
 module
 
+
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.OFRepGood
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DensCut
 public import Lemmata.GeneralBFactThirdAltForm.Imports
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DensEqZeroOfNotMem, Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NotIntDensOfSteps
 
@@ -17,8 +18,6 @@ open Classical ValuativeRel
 noncomputable section
 
 namespace Formalism.L2.SG.Pf.Cnt
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Local
 
@@ -73,8 +72,7 @@ def GaPlusIntMM : Prop :=
 
 theorem notIntDens_of (h1 : LocSelfDual) (hG : GaPlusIntMM) : NotIntDens := by
   intro D δ M hA L u u' hT F0 what₂ hR ϖ hϖ Z F' hz hZ hP hI
-  by_contra hall
-  push_neg at hall
+  by_contra! hall
   apply hI
   refine hG D δ M hA L u u' hT F0 what₂ hR Z F' hz hZ hP fun p a b => ?_
   by_contra hab
@@ -98,8 +96,6 @@ noncomputable section
 
 namespace Formalism.L2.SG.Pf.Cnt.DualityBasisChange
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Herm
 
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
@@ -108,20 +104,16 @@ variable {M : Loc.Model F E} {V : Type} [AddCommGroup V] [Module E V] (H : Loc.H
 
 alias h_zero_left := _root_.Formalism.MainNotions.S.Loc.HermSp.h_zero_left
 
-theorem h_smul_right (c : E) (x y : V) : H.h x (c • y) = M.L.cj c * H.h x y := by
-  rw [H.h_herm (c • y) x, H.h_smul_left, map_mul, ← H.h_herm y x]
+theorem h_smul_right (c : E) (x y : V) : H.h x (c • y) = M.L.cj c * H.h x y :=
+  CntLocal.h_smul_right' H c x y
 
 theorem h_sum_left {ι : Type} (s : Finset ι) (x : ι → V) (y : V) :
-    H.h (∑ i ∈ s, x i) y = ∑ i ∈ s, H.h (x i) y := by
-  induction s using Finset.induction_on with
-  | empty => simp [h_zero_left]
-  | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, H.h_add_left, ih]
+    H.h (∑ i ∈ s, x i) y = ∑ i ∈ s, H.h (x i) y :=
+  CntLocal.h_sum_left H s x y
 
 theorem h_sum_right {ι : Type} (s : Finset ι) (x : ι → V) (y : V) :
-    H.h y (∑ i ∈ s, x i) = ∑ i ∈ s, H.h y (x i) := by
-
-  rw [H.h_herm (∑ i ∈ s, x i) y, h_sum_left, map_sum]
-  exact Finset.sum_congr rfl fun i _ => (H.h_herm (x i) y).symm
+    H.h y (∑ i ∈ s, x i) = ∑ i ∈ s, H.h y (x i) :=
+  CntLocal.h_sum_right H s y x
 
 theorem gram_comb {ι : Type} [Fintype ι] (v : ι → V) (A : Matrix ι ι E) :
     (Matrix.of fun a b => H.h (∑ d, A d b • v d) (∑ c, A c a • v c)) =
@@ -153,20 +145,7 @@ variable {D : Formalism.BasicNotions.D7}
 
 theorem flag_hT {T : D.host.E} (F : FlagG (VS D) D.R.rS T) (a b : Fin (D.R.rS + 1)) :
     (VS D).hT (F.fvec a) (F.fvec b) = if a = Fin.last D.R.rS ∧ b = Fin.last D.R.rS then -T else 0 := by
-  induction a using Fin.lastCases with
-  | last =>
-    induction b using Fin.lastCases with
-    | last => simp [FlagG.fvec, F.z_norm]
-    | cast b =>
-      simp only [FlagG.fvec, Fin.snoc_last, Fin.snoc_castSucc]
-      rw [if_neg (by simp [Fin.castSucc_ne_last])]
-      rw [← (VS D).herm.eq (F.e b) F.z, F.z_orth b, map_zero]
-  | cast a =>
-    simp only [FlagG.fvec, Fin.snoc_castSucc]
-    rw [if_neg (by simp [Fin.castSucc_ne_last])]
-    induction b using Fin.lastCases with
-    | last => simp only [Fin.snoc_last]; exact F.z_orth a
-    | cast b => simp only [Fin.snoc_castSucc]; exact F.e_iso a b
+  apply _root_.PI.UnitaryGroupMassFormula.CntFormula.flag_gram <;> assumption
 
 def vfam {T T' : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') :
     Fin (D.R.rS + 1) ⊕ Fin (D.R.rS + 1) → (VS D).V :=

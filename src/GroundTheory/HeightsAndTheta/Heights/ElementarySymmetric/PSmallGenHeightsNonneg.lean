@@ -78,11 +78,11 @@ theorem killBlocksBelow_monomial (j : ℕ) (m : (Σ k, ι k) →₀ ℕ) (c : �
   · rw [monomial_eq, Finsupp.prod, Finsupp.prod]
     congr 1
     refine Finset.prod_congr rfl fun p hp ↦ ?_
-    rw [if_neg (h p hp)]
+    rw [ite_eq_right (h p hp)]
   · push Not at h
     obtain ⟨p, hp, hlt⟩ := h
     rw [Finsupp.prod, Finset.prod_eq_zero hp, mul_zero]
-    rw [if_pos hlt, zero_pow (Finsupp.mem_support_iff.mp hp)]
+    rw [ite_eq_left hlt, zero_pow (Finsupp.mem_support_iff.mp hp)]
 
 theorem killBlocksBelow_of_isMultiHomog (j : ℕ) {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) :
     killBlocksBelow j f = f ∨ killBlocksBelow j f = 0 := by
@@ -92,7 +92,7 @@ theorem killBlocksBelow_of_isMultiHomog (j : ℕ) {f : MRing ι} {a : K → ℕ}
 
     conv_lhs => rw [f.as_sum, map_sum]
     refine Finset.sum_congr rfl fun m hm ↦ ?_
-    rw [killBlocksBelow_monomial, if_pos]
+    rw [killBlocksBelow_monomial, ite_eq_left]
     intro p hp hlt
     have hsum := hf m hm p.1
     rw [h p.1 hlt, Finset.sum_eq_zero_iff] at hsum
@@ -103,7 +103,7 @@ theorem killBlocksBelow_of_isMultiHomog (j : ℕ) {f : MRing ι} {a : K → ℕ}
 
     conv_lhs => rw [f.as_sum, map_sum]
     refine Finset.sum_eq_zero fun m hm ↦ ?_
-    rw [killBlocksBelow_monomial, if_neg]
+    rw [killBlocksBelow_monomial, ite_eq_right]
     push Not
     have hsum := hf m hm k
     rw [← hsum] at hak
@@ -128,7 +128,7 @@ theorem killBlocksBelow_comp {j j' : ℕ} (hj : j ≤ j') :
   · simp
   · rw [RingHom.comp_apply, killBlocksBelow_X j p]
     split_ifs with h1
-    · rw [map_zero, killBlocksBelow_X, if_pos (by omega)]
+    · rw [map_zero, killBlocksBelow_X, ite_eq_left (by omega)]
     · rfl
 
 theorem killBlocksBelow_card (f : MRing ι) :
@@ -136,7 +136,7 @@ theorem killBlocksBelow_card (f : MRing ι) :
   have : (killBlocksBelow (Fintype.card K) : MRing ι →+* MRing ι) = C.comp constantCoeff := by
     refine MvPolynomial.ringHom_ext (fun c ↦ ?_) fun p ↦ ?_
     · simp
-    · rw [killBlocksBelow_X, if_pos (Fin.isLt _)]
+    · rw [killBlocksBelow_X, ite_eq_left (Fin.isLt _)]
       simp
   rw [this, RingHom.comp_apply]
 
@@ -177,7 +177,7 @@ theorem comap_killBlocksBelow_le_succ {V : Ideal (MRing ι)} (hVm : IsMultiHomog
 theorem X_mem_comap_killBlocksBelow_succ {V : Ideal (MRing ι)} {j : ℕ} (hj : j < Fintype.card K)
     (i : ι ((Fintype.equivFin K).symm ⟨j, hj⟩)) :
     (X ⟨(Fintype.equivFin K).symm ⟨j, hj⟩, i⟩ : MRing ι) ∈ V.comap (killBlocksBelow (j + 1)) := by
-  rw [Ideal.mem_comap, killBlocksBelow_X, if_pos]
+  rw [Ideal.mem_comap, killBlocksBelow_X, ite_eq_left]
   · exact zero_mem _
   · simp only [Equiv.apply_symm_apply]
     exact Nat.lt_succ_self j
@@ -186,14 +186,14 @@ theorem X_mem_comap_killBlocksBelow_iff {V : Ideal (MRing ι)} {j : ℕ} (hj : j
     (i : ι ((Fintype.equivFin K).symm ⟨j, hj⟩)) :
     (X ⟨(Fintype.equivFin K).symm ⟨j, hj⟩, i⟩ : MRing ι) ∈ V.comap (killBlocksBelow j) ↔
       (X ⟨(Fintype.equivFin K).symm ⟨j, hj⟩, i⟩ : MRing ι) ∈ V := by
-  rw [Ideal.mem_comap, killBlocksBelow_X, if_neg]
+  rw [Ideal.mem_comap, killBlocksBelow_X, ite_eq_right]
   simp only [Equiv.apply_symm_apply]
   exact lt_irrefl j
 
 theorem chainIdeal_lt_succ_of_lt {V : Ideal (MRing ι)} (hV : IsMultiProjPrime V) {j : ℕ}
     (hj : j < Fintype.card K) : chainIdeal V j < chainIdeal V (j + 1) := by
   obtain ⟨-, hVm, hVr⟩ := hV
-  rw [chainIdeal, chainIdeal, if_pos hj.le, if_pos (Nat.succ_le_of_lt hj)]
+  rw [chainIdeal, chainIdeal, ite_eq_left hj.le, ite_eq_left (Nat.succ_le_of_lt hj)]
   refine lt_of_le_of_ne (comap_killBlocksBelow_le_succ hVm j) fun h ↦ ?_
   obtain ⟨i, hi⟩ := hVr ((Fintype.equivFin K).symm ⟨j, hj⟩)
   have h1 := X_mem_comap_killBlocksBelow_succ (V := V) hj i
@@ -203,7 +203,7 @@ theorem chainIdeal_lt_succ_of_lt {V : Ideal (MRing ι)} (hV : IsMultiProjPrime V
 theorem chainIdeal_card_lt {V : Ideal (MRing ι)} (hV : IsMultiProjPrime V) (hh : IsHorizontal V) :
     chainIdeal V (Fintype.card K) < chainIdeal V (Fintype.card K + 1) := by
   obtain ⟨-, hVm, -⟩ := hV
-  rw [chainIdeal, chainIdeal, if_pos le_rfl, if_neg (Nat.not_succ_le_self _)]
+  rw [chainIdeal, chainIdeal, ite_eq_left le_rfl, ite_eq_right (Nat.not_succ_le_self _)]
   refine lt_of_le_of_ne (comap_card_le_even hVm hh) fun h ↦ ?_
   have h2 : (C (2 : ℤ) : MRing ι) ∈ (Ideal.span {(2 : ℤ)}).comap (constantCoeff : MRing ι →+* ℤ) := by
     rw [Ideal.mem_comap, constantCoeff_C]
@@ -308,7 +308,7 @@ theorem SmallGenHeightsNonneg.proof : SmallGenHeightsNonneg.Statement := by
     hsmall j z ⟨hz.1, fun f hf ↦ hz.2 f (hPW hf)⟩
   refine sub_nonneg.mpr ((arInt_nonpos hsm).trans ?_)
   refine finsum_nonneg fun V ↦ finsum_nonneg fun hV ↦ ?_
-  rw [if_neg (not_isHorizontal_of_mem_divSupp hW ⟨a, ha, hw j, hj⟩ hV)]
+  rw [ite_eq_right (not_isHorizontal_of_mem_divSupp hW ⟨a, ha, hw j, hj⟩ hV)]
   have hg : (0 : ℝ) ≤ geoNum 0 V (fun i ↦ ((Fin.elim0 : Fin 0 → HermLine ι) i).a) := by
     unfold geoNum
     split_ifs <;> positivity

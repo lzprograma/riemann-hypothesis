@@ -4,41 +4,6 @@ public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PickDefs
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.LeOfOneLeMul
 import Formalism.PolynomialDimension.MultinomialDepth.FockGaussComparisonHolds
 import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SlackBoundReal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SlackBoundJoint
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -313,7 +278,6 @@ theorem sl_lt_Bo (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (p : ℕ) (hp : 1 ≤ 
   obtain ⟨hx1, hx2⟩ := posU_mem' hV hr (segZ j) u hu'
   rw [← hnL j] at hx1 hx2
   have hB := Bo_ge hV hr p hp deg a hdeg (segZ j) _ hx1 hx2
-  have hp' : (0 : ℝ) < (p : ℝ) := by exact_mod_cast (by omega : 0 < p)
   have hpos : 0 < Bo p Fr deg (segZ j) (posU Fr (nL j) (segZ j) u) := lt_of_lt_of_le (by positivity) hB
   unfold slU
   exact sl_lt_real _ Y (k : ℝ) _ rfl hpos hY (by exact_mod_cast hk)
@@ -332,7 +296,6 @@ theorem sizeAt_of [hpF : Fact p.Prime] (hk : m + 1 = r + K) (hF : FramesOK TT L�
     SizeAt (K := K) p F nL (dT TT lam0) (9 * ((TT.card : ℝ) * ((m + 1 : ℕ) : ℝ) ^ 2 * Real.logb p a)) := by
   have hV := hF.2.1
   have hp2 : 2 ≤ p := hpF.out.two_le
-  have hp1 : (1 : ℝ) < (p : ℝ) := by exact_mod_cast (by omega : 1 < p)
   have ha2 := hnb.two_le_a
   intro rho dPl dNo hBk bp bn hbp hbn
   have hsum : ∀ x, ((dPl x + dNo x : ℕ) : ℝ) ≤ 2 * a := by
@@ -342,7 +305,7 @@ theorem sizeAt_of [hpF : Fact p.Prime] (hk : m + 1 = r + K) (hF : FramesOK TT L�
       rwa [hF.1] at this
     have e := hBk.2 x
     have e2 : dT TT lam0 (posOf n' (posTL F x)) = flatDeg lam0 (posOf n' (posTL F x)) := by
-      unfold dT; rw [if_pos htop]
+      unfold dT; rw [ite_eq_left htop]
     rw [e2] at e
     have hl : 1 ≤ lowP F p x := Nat.one_le_pow _ _ (by omega)
     have e3 : dPl x + dNo x ≤ flatDeg lam0 (posOf n' (posTL F x)) := by
@@ -355,13 +318,11 @@ theorem sizeAt_of [hpF : Fact p.Prime] (hk : m + 1 = r + K) (hF : FramesOK TT L�
     intro x
     have := hsum x
     push_cast at this
-    have h0 : (0 : ℝ) ≤ (dNo x : ℝ) := Nat.cast_nonneg _
     linarith
   have hdn : ∀ x, (dNo x : ℝ) ≤ 2 * a := by
     intro x
     have := hsum x
     push_cast at this
-    have h0 : (0 : ℝ) ≤ (dPl x : ℝ) := Nat.cast_nonneg _
     linarith
   have hcard : Fintype.card (TL J nL r) ≤ TT.card := by
     have := card_TL_le F hV hr hJ hnL

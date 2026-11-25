@@ -49,8 +49,6 @@ open scoped TensorProduct ContDiff ComplexOrder
 
 namespace GlobalTheory.FockCompare.LiftUnitary
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Abstract
 
 variable {A B T : Type} [CommRing A] [CommRing B] {n : Type} [Fintype n] [DecidableEq n]

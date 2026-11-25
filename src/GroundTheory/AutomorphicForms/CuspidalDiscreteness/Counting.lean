@@ -166,7 +166,7 @@ theorem exists_ncard_ratGLBox_le (n : ℕ) {𝒦 : Set (FiniteAdeleRing (𝓞 K)
       ((Φ γ i j : 𝓞 K) : K) = m * (γ : Matrix (Fin n) (Fin n) K) i j := by
     intro γ hγ i j
     have h := hmint _ (hγ i j).1
-    simp only [Φ, dif_pos h]
+    simp only [Φ, dite_eq_left h]
     exact h.choose_spec
   have hmaps : ∀ γ ∈ ratGLBox n 𝒦 T, Φ γ ∈ (box : Set (Fin n → Fin n → 𝓞 K)) := by
     intro γ hγ

@@ -46,7 +46,6 @@ import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.F
 
 open NumberField NumberField.mixedEmbedding Matrix MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm UpperTheory.V.Af.Fin
 open scoped TensorProduct
-attribute [local instance 100] LieRing.ofAssociativeRing
 
 private theorem exp_block_extension (K : Type) [Field K] [NumberField K] {a n : ℕ} (e : Fin a ↪ Fin n) (Y : ArchMatrix K a) :
     (1 : ArchMatrix K n) + (show ArchMatrix K n from ext0 (R := mixedSpace K) e (NormedSpace.exp Y - 1 : ArchMatrix K a)) =
@@ -76,7 +75,7 @@ private theorem exp_block_extension (K : Type) [Field K] [NumberField K] {a n : 
     funext k
     cases k with
     | zero => simp
-    | succ k => rw [if_neg (Nat.succ_ne_zero k), add_zero, map_smul, hpow]
+    | succ k => rw [ite_eq_right (Nat.succ_ne_zero k), add_zero, map_smul, hpow]
   rw [heq] at h2
   have h5 := h2.unique h4
   have hsub : g (NormedSpace.exp Y - 1) = g (NormedSpace.exp Y) - g 1 := map_sub g _ _

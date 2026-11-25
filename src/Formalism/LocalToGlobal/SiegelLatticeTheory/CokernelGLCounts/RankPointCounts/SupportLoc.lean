@@ -173,13 +173,13 @@ theorem ptEntry_append_ge {L : Type} [Zero L] : ∀ (l0 l1 : List (L × ℕ)) (i
   | (t, s) :: l0, l1, i, j, hi => by
     simp only [List.map_cons, List.sum_cons] at hi ⊢
     simp only [List.cons_append, ptEntry]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
     by_cases h2 : s ≤ j
-    · rw [if_pos ⟨by omega, h2⟩, ptEntry_append_ge l0 l1 (i - s) (j - s) (by omega)]
+    · rw [ite_eq_left ⟨by omega, h2⟩, ptEntry_append_ge l0 l1 (i - s) (j - s) (by omega)]
       by_cases h3 : s + (l0.map Prod.snd).sum ≤ j
-      · rw [if_pos (by omega), if_pos h3, Nat.sub_sub, Nat.sub_sub]
-      · rw [if_neg (by omega), if_neg h3]
-    · rw [if_neg (fun h => h2 h.2), if_neg (by omega)]
+      · rw [ite_eq_left (by omega), ite_eq_left h3, Nat.sub_sub, Nat.sub_sub]
+      · rw [ite_eq_right (by omega), ite_eq_right h3]
+    · rw [ite_eq_right (fun h => h2 h.2), ite_eq_right (by omega)]
 
 end Pts
 
@@ -196,19 +196,19 @@ theorem ptEntry_scale (ι : K →+* S) (g : ℕ → ℕ → K → S) (ρ : ℕ �
   | (t, s) :: l, a, i, j, ha, hi, hj, hn => by
     simp only [mapBlocks, ptEntry]
     by_cases h1 : i < s ∧ j < s
-    · rw [if_pos h1, if_pos h1]
+    · rw [ite_eq_left h1, ite_eq_left h1]
       by_cases h2 : i + j + 1 = s
-      · rw [if_pos h2, if_pos h2]
+      · rw [ite_eq_left h2, ite_eq_left h2]
         exact H a s t _ _ ha (by omega) (by omega) (by omega) hi hj hn
-      · rw [if_neg h2, if_neg h2]; simp
-    · rw [if_neg h1, if_neg h1]
+      · rw [ite_eq_right h2, ite_eq_right h2]; simp
+    · rw [ite_eq_right h1, ite_eq_right h1]
       by_cases h2 : s ≤ i ∧ s ≤ j
-      · rw [if_pos h2, if_pos h2, ptEntry_scale ι g ρ κ r H l (a + s) (i - s) (j - s) (by omega) (by omega) (by omega)
+      · rw [ite_eq_left h2, ite_eq_left h2, ptEntry_scale ι g ρ κ r H l (a + s) (i - s) (j - s) (by omega) (by omega) (by omega)
           (by omega)]
         have e1 : a + s - 1 + (i - s) = a - 1 + i := by omega
         have e2 : a + s - 1 + (j - s) = a - 1 + j := by omega
         rw [e1, e2]
-      · rw [if_neg h2, if_neg h2]; simp
+      · rw [ite_eq_right h2, ite_eq_right h2]; simp
 
 theorem det_scaled {n : ℕ} (ι : K →+* S) (ρ : Fin n → S) (κ : S) (P : Matrix (Fin n) (Fin n) K) :
     (Matrix.of fun x y => ρ x * ρ y * κ * ι (P x y)).det = (∏ x, ρ x) ^ 2 * κ ^ n * ι P.det := by
@@ -262,7 +262,7 @@ theorem det_uLow {n : ℕ} (x : Loc.IL n → E) : (Loc.uLow x).det = 1 := by
     intro i j hij
     have hij' : i < j := hij
     simp only [Loc.uLow]
-    rw [if_neg (ne_of_lt hij'), dite_eq_right (lt_asymm hij')]
+    rw [ite_eq_right (ne_of_lt hij'), dite_eq_right (lt_asymm hij')]
   rw [Matrix.det_of_lowerTriangular _ hlt]
   simp [Loc.uLow]
 
@@ -271,15 +271,14 @@ theorem det_uUp {n : ℕ} (w : Loc.Pt E n) (y : Loc.IN w → E) : (Loc.uUp w y).
     intro i j hij
     have hij' : j < i := hij
     simp only [Loc.uUp]
-    rw [if_neg (ne_of_gt hij'), dite_eq_right (fun h => lt_asymm hij' h.1)]
+    rw [ite_eq_right (ne_of_gt hij'), dite_eq_right (fun h => lt_asymm hij' h.1)]
   rw [Matrix.det_of_upperTriangular hut]
   simp [Loc.uUp]
 
 theorem bb_ne (Mo : Loc.Model F E) {m : ℕ} (w : Loc.Pt E (m + 1)) (c : Mo.Cls m) (h : Mo.BB w c ≠ 0) :
     ∃ ZZ : Mo.Mat (m + 1), (ZZ.Z.map Mo.R.subtype).det = w.mat.det ∧ Nonempty (Mo.Iso ZZ (Quotient.out c)) := by
   obtain ⟨xy, hxy⟩ : ∃ xy, Mo.bbIntegrand w c xy ≠ 0 := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     apply h
     unfold Loc.Model.BB
     simp [hc]
@@ -360,9 +359,9 @@ theorem blkTop_eq (δ : ∀ p, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF D) :
     apply hn
     constructor <;> omega
   unfold blkTop
-  rw [if_neg hc]
+  rw [ite_eq_right hc]
   unfold blkMod
-  rw [if_neg hc, sub_zero]
+  rw [ite_eq_right hc, sub_zero]
   unfold tMod
   rw [twist_eq]
   have hν : nu D.R.rS a (a + s - 1) = (D.R.rS - x) + (D.R.rS - y) := by
@@ -468,14 +467,14 @@ theorem last_one (w : Point D.host.E (D.R.rS + 1)) (hD : Dmin w D.R.rS ≠ 0) :
     · have := j.isLt
       have := hmem.2
       simp only [ptEntry, Nat.sub_self]
-      rw [if_pos ⟨by omega, by omega⟩, if_neg (by omega)]
+      rw [ite_eq_left ⟨by omega, by omega⟩, ite_eq_right (by omega)]
     · rfl
 
 theorem ptMat_last (w : Point D.host.E (D.R.rS + 1)) (l0 : List (D.host.E × ℕ)) (t : D.host.E)
     (hb : w.1 = l0 ++ [(t, 1)]) (hs : (l0.map Prod.snd).sum = D.R.rS) :
     ptMat w (Fin.last _) (Fin.last _) = t := by
   show ptEntry w.1 (Fin.last D.R.rS).val (Fin.last D.R.rS).val = t
-  rw [hb, Fin.val_last, ptEntry_append_ge l0 [(t, 1)] D.R.rS D.R.rS (by omega), if_pos (by omega), hs,
+  rw [hb, Fin.val_last, ptEntry_append_ge l0 [(t, 1)] D.R.rS D.R.rS (by omega), ite_eq_left (by omega), hs,
     Nat.sub_self]
   simp [ptEntry]
 
@@ -486,7 +485,7 @@ theorem dmin_snoc (w : Point D.host.E (D.R.rS + 1)) (l0 : List (D.host.E × ℕ)
   have hrow : ∀ j : Fin (D.R.rS + 1), j ≠ Fin.last _ → ptMat w (Fin.last _) j = 0 := by
     intro j hj
     show ptEntry w.1 _ _ = 0
-    rw [hb, Fin.val_last, ptEntry_append_ge l0 [(t, 1)] _ _ (by omega), if_neg]
+    rw [hb, Fin.val_last, ptEntry_append_ge l0 [(t, 1)] _ _ (by omega), ite_eq_right]
     intro hle
     apply hj
     ext
@@ -501,7 +500,7 @@ theorem dmin_snoc (w : Point D.host.E (D.R.rS + 1)) (l0 : List (D.host.E × ℕ)
     · simp [B, hj, hrow j hj])
   have hc := det_corner (ptMat w) B (fun x y hxy => by
     simp only [B, Matrix.of_apply]
-    rw [if_neg hxy])
+    rw [ite_eq_right hxy])
   have hsub : B.submatrix Fin.castSucc Fin.castSucc = (ptMat w).submatrix Fin.castSucc Fin.castSucc := by
     ext x y
     simp [B, Fin.castSucc_ne_last]
@@ -515,7 +514,7 @@ theorem amat_last (δ : ∀ p, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF D) (w : Poi
     a.mat (Fin.last _) (Fin.last _) = blkTop δ T T' p (D.R.rS + 1) 1 t := by
   show Formalism.MainNotions.S.Loc.ptEntryL a.blocks (Fin.last D.R.rS).val (Fin.last D.R.rS).val = _
   rw [ptEntryL_eq, modPt_blocks δ T T' p w a ha, hb, mapBlocks_append, Fin.val_last,
-    ptEntry_append_ge _ _ _ _ (by rw [mapBlocks_snd]; omega), if_pos (by rw [mapBlocks_snd]; omega),
+    ptEntry_append_ge _ _ _ _ (by rw [mapBlocks_snd]; omega), ite_eq_left (by rw [mapBlocks_snd]; omega),
     mapBlocks_snd, hs, Nat.sub_self]
   simp [mapBlocks, ptEntry, Nat.add_comm 1 D.R.rS]
 

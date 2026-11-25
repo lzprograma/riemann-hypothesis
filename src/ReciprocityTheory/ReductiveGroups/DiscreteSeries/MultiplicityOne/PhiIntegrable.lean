@@ -153,13 +153,6 @@ theorem integrable_bet (h : UnitaryGroupStructuralFacts) (D : RealPlaceData k r 
       (ReciprocityTheory.ChartRestriction.DS.Mult1.bcPow (k := k) (r := r) (AB k r) (mulM (p.2, p.1))).toReal)
       (D.μW.prod D.μN) :=
     integrable_toReal_of_lintegral_ne_top hmeasB.aemeasurable hfin.ne
-  have hmul : ∀ u ∈ GV k r, ∀ v ∈ GV k r, u * v ∈ GV k r := by
-    intro u hu v hv
-    have hu' : uᴴ * Hpk k r * u = Hpk k r := hu
-    have hv' : vᴴ * Hpk k r * v = Hpk k r := hv
-    show (u * v)ᴴ * Hpk k r * (u * v) = Hpk k r
-    simp only [Matrix.conjTranspose_mul, Matrix.mul_assoc] at hu' hv' ⊢
-    rw [← Matrix.mul_assoc (Hpk k r) u v, ← Matrix.mul_assoc uᴴ (Hpk k r * u) v, hu', hv']
   have hW0 : D.μW {y : Mt k r | (Matrix.of y : Mat k r) ∈ UWset k r D.z}ᶜ = 0 := D.haarW.conc
   have hN0 : D.μN {y : Mt k r | (Matrix.of y : Mat k r) ∈ Nset k r}ᶜ = 0 := D.haarN.conc
   have hae : ∀ᵐ p ∂(D.μW.prod D.μN), (Matrix.of p.1 : Mat k r) ∈ UWset k r D.z ∧
@@ -178,7 +171,7 @@ theorem integrable_bet (h : UnitaryGroupStructuralFacts) (D : RealPlaceData k r 
   refine Integrable.mono' (hgi.const_mul (gN (Matrix.of x : Mat k r)⁻¹ ^ AB k r))
     (measurable_bet_Gm x).aestronglyMeasurable ?_
   filter_upwards [hae] with p hp
-  have hg : (Matrix.of (mulM (p.2, p.1)) : Mat k r) ∈ GV k r := hmul _ hp.2.1 _ hp.1.1
+  have hg : (Matrix.of (mulM (p.2, p.1)) : Mat k r) ∈ GV k r := gv_mul hp.2.1 hp.1.1
   have hle := pow_mul_le hGL hg hx (AB_nonneg k r)
   rw [Real.norm_of_nonneg (bet_nonneg _)]
   unfold ReciprocityTheory.ChartRestriction.DS.Mult1.bcPow
@@ -191,19 +184,12 @@ theorem orbN_pos (h : UnitaryGroupStructuralFacts) (D : RealPlaceData k r Wp Wp)
   haveI : IsFiniteMeasureOnCompacts D.μN := ⟨fun K hK => D.haarN.finite_compact K hK⟩
   have hGL : GNLower := gnLower_of h
   have hint := integrable_bet h D hD hx
-  have hmul : ∀ u ∈ GV k r, ∀ v ∈ GV k r, u * v ∈ GV k r := by
-    intro u hu v hv
-    have hu' : uᴴ * Hpk k r * u = Hpk k r := hu
-    have hv' : vᴴ * Hpk k r * v = Hpk k r := hv
-    show (u * v)ᴴ * Hpk k r * (u * v) = Hpk k r
-    simp only [Matrix.conjTranspose_mul, Matrix.mul_assoc] at hu' hv' ⊢
-    rw [← Matrix.mul_assoc (Hpk k r) u v, ← Matrix.mul_assoc uᴴ (Hpk k r * u) v, hu', hv']
   have hsub : {y : Mt k r | (Matrix.of y : Mat k r) ∈ UWset k r D.z} ×ˢ
       {y : Mt k r | (Matrix.of y : Mat k r) ∈ Nset k r} ⊆
       Function.support (fun p : Mt k r × Mt k r => bet (Gm p x)) := by
     rintro ⟨a, b⟩ ⟨ha, hb⟩
     have hg : (Matrix.of (Gm (a, b) x) : Mat k r) ∈ GV k r :=
-      hmul _ (hmul _ hb.1 _ ha.1) _ hx
+      gv_mul (gv_mul hb.1 ha.1) hx
     have h1 := hGL k r _ hg
     rw [Function.mem_support]
     show gN (Matrix.of (Gm (a, b) x) : Mat k r) ^ (-AB k r) ≠ 0

@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.ZzMinusSecondProjTranspose
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.SumIndL
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.FormSplitP
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.CompOfMemR
@@ -88,16 +89,7 @@ theorem det_map_unit {n : Type} [Fintype n] [DecidableEq n] (f : E →+* F) (A :
 
 theorem zm_unit {Zh : Matrix (Fin (r + 1)) (Fin (r + 1)) E} (hZh : IsUnit Zh.det) (T T' : F) :
     IsUnit (ZZm g Zh T T').det := by
-  have hq := q_ne g
-  apply Formalism.L2.SG.LocalCountModules.UnitaryGroupMassFormula.LocCntUG.isUnit_of_comp g
-  · rw [← adeleInfiniteComponent_apply, RingHom.map_det]
-    change (((ZZm g Zh T T').map (p1 g))).det ≠ 0
-    rw [zzMinus_firstProj hs, Matrix.det_smul]
-    exact mul_ne_zero (pow_ne_zero _ (inv_ne_zero hq)) (det_map_unit hs (p1 g) Zh hZh).ne_zero
-  · rw [← adele_ext_components, RingHom.map_det]
-    change (((ZZm g Zh T T').map (p2 g))).det ≠ 0
-    rw [zzMinus_secondProj hs, Matrix.det_smul, Matrix.det_transpose]
-    exact mul_ne_zero (pow_ne_zero _ (neg_ne_zero.2 (inv_ne_zero hq))) (det_map_unit hs (p2 g) Zh hZh).ne_zero
+  apply _root_.Formalism.L2.SG.LocalCountModules.ThetaMbe0GWork.unit_zzm <;> assumption
 
 theorem inv_smul_q {n : Type} [Fintype n] [DecidableEq n] (c : F) (hc : c ≠ 0) (X : Matrix n n F)
     (hX : IsUnit X.det) : (c⁻¹ • X)⁻¹ = c • X⁻¹ := by
@@ -205,10 +197,10 @@ theorem e_ueq (η : M.R) (l : Fin (r + 1) → M.R) (b : Fin (r + 1)) :
     by_cases hb : b = Fin.last r
     · subst hb
       rw [show (((eV r : Fin (r + 1) → M.R) (Fin.last r) : M.R) : E) = 1 by simp [eV], map_one]
-      simp only [dl, if_true]
+      simp only [dl, ite_true]
       rfl
     · rw [show (((eV r : Fin (r + 1) → M.R) b : M.R) : E) = 0 by simp [eV, hb], map_zero]
-      simp only [dl, if_neg hb]
+      simp only [dl, ite_eq_right hb]
       rfl
   simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, AddMemClass.coe_add, MulMemClass.coe_mul, map_add (f := _),
     map_mul, he, embedding_uniformizer]
@@ -333,8 +325,8 @@ theorem vals :
   simp only [pdat]
   refine Prod.ext (Prod.ext ?_ ?_) (Prod.ext ?_ ?_) <;> simp only <;> apply g.e.injective <;>
     rw [AlgEquiv.apply_symm_apply] <;> refine Prod.ext ?_ ?_ <;> simp only [← adeleInfiniteComponent_apply, ← adele_ext_components]
-  · rw [(fY _).1, dl, if_pos rfl, mul_one]
-  · rw [(gY _).1, dl, if_pos rfl, mul_one]
+  · rw [(fY _).1, dl, ite_eq_left rfl, mul_one]
+  · rw [(gY _).1, dl, ite_eq_left rfl, mul_one]
   · rw [lambdaStar_firstProj hs hZh, lastCoordinate_secondProj hs hZh, corner_inverse_secondProj hs hZh]
     have e : ∀ b, (Zh.map (p2 g))⁻¹ b (Fin.last r) *
         p1 g ((Y (Sum.inl b) : E) + algebraMap F E (g.q : F) * Y (Sum.inr b)) =

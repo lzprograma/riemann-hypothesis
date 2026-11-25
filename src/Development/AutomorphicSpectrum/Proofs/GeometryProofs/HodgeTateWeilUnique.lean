@@ -12,52 +12,8 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SectionEqZer
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.AbelianSchemeQuotients.IsAbelianScheme
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionEmbeddingGeometricPoints
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -128,25 +84,12 @@ theorem le_of_field {k B : Type} [Field k] [CommRing B] [Nontrivial B] (φ : k �
 theorem spec_fst_surj (R : Type) [CommRing R] :
     Function.Surjective (Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom R R R).toRingHom)) := by
   intro p
-  refine ⟨PrimeSpectrum.comap (algebraMap R (DualNumber R)) p, ?_⟩
-  apply PrimeSpectrum.ext
-  ext a
-  change (algebraMap R (DualNumber R)) a.fst ∈ p.asIdeal ↔ a ∈ p.asIdeal
-  have hsq : ∀ b : R, (TrivSqZeroExt.inr b : DualNumber R) ∈ p.asIdeal := fun b =>
-    p.2.mem_of_pow_mem 2 (by
-      rw [pow_two, TrivSqZeroExt.inr_mul_inr]
-      exact p.asIdeal.zero_mem)
-  have ha : a = algebraMap R (DualNumber R) a.fst + TrivSqZeroExt.inr a.snd := by
-    rw [TrivSqZeroExt.algebraMap_eq_inl, TrivSqZeroExt.inl_fst_add_inr_snd_eq]
-  constructor
-  · intro h
-    rw [ha]
-    exact p.asIdeal.add_mem h (hsq _)
-  · intro h
-    have : algebraMap R (DualNumber R) a.fst = a - TrivSqZeroExt.inr a.snd := by
-      nth_rw 2 [ha]; ring
-    rw [this]
-    exact p.asIdeal.sub_mem h (hsq _)
+  show p ∈ Set.range (PrimeSpectrum.comap (TrivSqZeroExt.fstHom R R R).toRingHom)
+  rw [_root_.range_comap_of_surjective _ _ TrivSqZeroExt.fst_surjective]
+  intro a ha
+  have ha' : a.fst = 0 := ha
+  have h2 : a ^ 2 = 0 := by ext <;> simp [pow_two, ha']
+  exact p.2.mem_of_pow_mem 2 (h2 ▸ Ideal.zero_mem _)
 
 section
 variable {X : Scheme.{0}} {Ω : Type} [Field Ω] {G : Over X} [GrpObj G] {ξ : Spec (CommRingCat.of Ω) ⟶ X}

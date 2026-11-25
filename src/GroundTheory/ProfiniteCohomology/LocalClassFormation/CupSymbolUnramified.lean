@@ -16,7 +16,7 @@ namespace GroundTheory.ProfCoh
 open CategoryTheory IntermediateField GroundTheory.LocalField ValuativeRel groupCohomology
 open GroundTheory.LocalField.Abstract GroundTheory.LocalField.Abstract.ProfiniteInteger
 
-attribute [local instance 2000] Rep.hV2 Submodule.module Submodule.Quotient.module
+attribute [local instance 2000] Submodule.module Submodule.Quotient.module
 
 section Characters
 

@@ -149,15 +149,6 @@ theorem cohomologyMapAlong_conj (A : Rep.{u} k G) [IsDiscreteRep A] {φ φ' : H 
 
 end Conj
 
-section Local
-
-variable {k K E Kv Ωv : Type u} [CommRing k] [Field K] [Field E] [Field Kv] [Field Ωv]
-  [Algebra K E] [Algebra K Kv] [Algebra Kv Ωv] [Algebra K Ωv] [IsScalarTower K Kv Ωv]
-  [IsGalois K E]
-
-
-end Local
-
 section Places
 
 open NumberField IsDedekindDomain

@@ -44,7 +44,6 @@ import Mathlib.Tactic.Polynomial.Basic
 
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 open MvPolynomial GlobalTheory.FlagBundle
 open scoped Matrix
@@ -52,7 +51,6 @@ namespace GlobalTheory.GoodMetric.PolyRep
 variable {ι : Type} {m : ι → ℕ}
 
 
-set_option autoImplicit false in
 open MvPolynomial in
 open scoped Matrix in
 variable {ι : Type} {m : ι → ℕ} in
@@ -62,7 +60,6 @@ theorem _root_.GlobalTheory.GoodMetric.PolyRep.lie_proj_model [Fintype ι] (τ :
   simp [_root_.GlobalTheory.GoodMetric.PolyRep.lie, _root_.GlobalTheory.GoodMetric.PolyRep.proj, pderiv_X, Pi.single_apply]
   rfl
 
-set_option autoImplicit false in
 open MvPolynomial in
 open scoped Matrix in
 variable {ι : Type} {m : ι → ℕ} in
@@ -87,7 +84,6 @@ private lemma aeval_dualNumber_inl_add_inr {σ : Type} [Fintype σ] {R : Type} [
       simp [Pi.single_apply, Finset.mul_sum, mul_comm, mul_left_comm, add_comm]
 
 
-set_option autoImplicit false in
 open MvPolynomial in
 open scoped Matrix in
 variable {ι : Type} {m : ι → ℕ} in

@@ -3,54 +3,8 @@ module
 public import Formalism.MahlerMeasure.LevelSum
 public import Formalism.MahlerMeasure.LevelLattice
 public import Formalism.MahlerMeasure.MahlerMeasureProofs.RemoveS
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.MahlerMeasure.GoodCount
 import Formalism.MahlerMeasure.MahlerMeasureProofs.LevelAct
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -99,25 +53,6 @@ theorem ld_biHom_of_euler [CharZero k] {a b : ℕ} {g : MvPolynomial σ k}
   exact ⟨key w a hW, key e b hE⟩
 
 end
-
-section fockSec
-open Formalism.GM.M
-
-variable {p : ℕ} [Fact p.Prime] {σ : Type}
-
-end fockSec
-
-section
-variable {k σ : Type} [Field k] {r : ℕ} {w e : Fin r → σ}
-
-end
-
-section fockSec
-open Formalism.GM.M
-
-variable {p : ℕ} [Fact p.Prime] {σ : Type} {r : ℕ} {w e : Fin r → σ}
-
-end fockSec
 
 end Formalism.GM
 end -- clump:auto
@@ -314,7 +249,7 @@ theorem step_same [CharZero k] (hv : M.TieVars w e zv sv) (hr : 1 ≤ r) {o n z 
       ((j.factorial : k) ^ 2 * (((o + n + r + z + 1 + j - 1).choose j : ℕ) : k) * (z.factorial : k)) *
         M.fockK y (Formalism.GM.tiePhi w e o n z y') := by
   have h := ProjS.fockForm_raiseAug_pow_augLift (z := z) hv hr hy hy' hz hz' j j
-  rw [if_pos rfl, ProjS.fockK_smul_left, ProjS.fockK_smul_right, tieEh_pow_apply, tieEh_pow_apply] at h
+  rw [ite_eq_left rfl, ProjS.fockK_smul_left, ProjS.fockK_smul_right, tieEh_pow_apply, tieEh_pow_apply] at h
   have hf : (j.factorial : k) ≠ 0 := Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero j)
   have h2 : M.fockK (Ehp w e zv sv ^ j * M.tieP w e zv sv o n z y) (Ehp w e zv sv ^ j * M.tieP w e zv sv o n z y') =
       (j.factorial : k) * ((j.factorial : k) * (((j.factorial : k))⁻¹ * (((j.factorial : k))⁻¹ *
@@ -583,7 +518,7 @@ theorem degU (hB : D.BlockOK) (j : Fin D.T.t → ℕ) (jp : ℕ) :
     (D.lettersAt j jp).deg D.uPos = D.LL.deg D.uPos - jp := by
   simp only [BlockData.lettersAt]
   rw [← Fin.sum_univ_def]
-  rw [Finset.sum_eq_zero (fun i _ => if_neg (by have := hB.2.1 i; omega))]
+  rw [Finset.sum_eq_zero (fun i _ => ite_eq_right (by have := hB.2.1 i; omega))]
   simp
 
 theorem deg_fst (hB : D.BlockOK) (j : Fin D.T.t → ℕ) (jp : ℕ) (i : Fin D.T.t) :
@@ -593,9 +528,9 @@ theorem deg_fst (hB : D.BlockOK) (j : Fin D.T.t → ℕ) (jp : ℕ) (i : Fin D.T
   have hv : (D.letterAt (D.T.pos i) : ℕ) = D.T.pos i := letterAt_val (by omega)
   simp only [BlockData.lettersAt]
   rw [← Fin.sum_univ_def]
-  rw [Finset.sum_eq_single i (fun i' _ hi' => if_neg (by
+  rw [Finset.sum_eq_single i (fun i' _ hi' => ite_eq_right (by
       rw [hv]; have := pos_ne hB (Ne.symm hi'); have := pos_ne_succ hB i i'; omega)) (by simp),
-    if_pos (Or.inl hv), if_neg (by intro h; rw [h] at hv; omega)]
+    ite_eq_left (Or.inl hv), ite_eq_right (by intro h; rw [h] at hv; omega)]
   simp
 
 theorem deg_snd (hB : D.BlockOK) (j : Fin D.T.t → ℕ) (jp : ℕ) (i : Fin D.T.t) :
@@ -605,9 +540,9 @@ theorem deg_snd (hB : D.BlockOK) (j : Fin D.T.t → ℕ) (jp : ℕ) (i : Fin D.T
   have hv : (D.letterAt (D.T.pos i + 1) : ℕ) = D.T.pos i + 1 := letterAt_val (by omega)
   simp only [BlockData.lettersAt]
   rw [← Fin.sum_univ_def]
-  rw [Finset.sum_eq_single i (fun i' _ hi' => if_neg (by
+  rw [Finset.sum_eq_single i (fun i' _ hi' => ite_eq_right (by
       rw [hv]; have := pos_ne hB (Ne.symm hi'); have := pos_ne_succ hB i' i; omega)) (by simp),
-    if_pos (Or.inr hv), if_neg (by intro h; rw [h] at hv; omega)]
+    ite_eq_left (Or.inr hv), ite_eq_right (by intro h; rw [h] at hv; omega)]
   simp
 
 end Block

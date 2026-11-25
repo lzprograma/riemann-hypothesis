@@ -221,8 +221,7 @@ theorem casimir_mul_pos {O : Type} [Ring O] {r : ℕ} (x : Module.Basis (Fin r) 
     rw [e]
     exact adjugate_posDef h1
   have hy0 : ∃ i, y i ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     apply hu
     calc u = (∑ i, x.repr 1 i • x i) * u := by rw [x.sum_repr, one_mul]
       _ = ∑ i, x.repr 1 i • y i := by rw [Finset.sum_mul]; simp only [hy, smul_mul_assoc]
@@ -299,95 +298,10 @@ theorem trace_comp_pos_of_adjoint {V : Type} [AddCommGroup V] [Module ℝ V] [Fi
     · simp [h]
     · exact (hp _ h).le
   obtain ⟨i, hi⟩ : ∃ i, T' (b i) ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     apply hT'
     exact b.toBasis.ext (fun i => by simpa using h i)
   exact Finset.sum_pos' (fun i _ => hnn i) ⟨i, Finset.mem_univ _, hp _ hi⟩
-
-theorem trace_mul_star_pos : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.Datum p) (x : D.O), x ≠ 0 →
-    0 < LinearMap.trace ℤ D.La (DistribSMul.toLinearMap ℤ D.La (x * (D.star x).unop)) := by
-  intro p _ D x hx
-  haveI := D.freeLa
-  haveI := D.finLa
-  obtain ⟨J, hJJ, hJinv, hpos, hcomm, -⟩ := D.dom
-  let A : D.O → (ℝ ⊗[ℤ] D.La →ₗ[ℝ] ℝ ⊗[ℤ] D.La) := fun b =>
-    (DistribSMul.toLinearMap ℤ D.La b).baseChange ℝ
-  have hcomp : A x ∘ₗ A (D.star x).unop =
-      (DistribSMul.toLinearMap ℤ D.La (x * (D.star x).unop)).baseChange ℝ := by
-    clear hcomm hpos hJinv hJJ
-    simp only [A]
-    rw [← LinearMap.baseChange_comp]
-    congr 1
-    ext y
-    show x • ((D.star x).unop • y) = (x * (D.star x).unop) • y
-    rw [mul_smul]
-  have hA : ∀ b (r : ℝ) (y : D.La), A b (r ⊗ₜ y) = r ⊗ₜ (b • y) := fun _ _ _ => rfl
-  have hAJ : ∀ b, J ∘ₗ A b = A b ∘ₗ J := fun b => hcomm b (A b) (fun y => rfl)
-  have hEF : ∀ y z : D.La, D.EF y z = - D.EF z y := by
-    intro y z
-    have h := D.alt (y + z)
-    simp only [map_add (f := _), LinearMap.add_apply, D.alt y, D.alt z, zero_add, add_zero] at h
-    omega
-  have hanti : ∀ u v, D.EF.baseChange ℝ u v = - D.EF.baseChange ℝ v u := by
-    intro u v
-    induction u using TensorProduct.induction_on with
-    | zero => simp
-    | tmul r y =>
-      induction v using TensorProduct.induction_on with
-      | zero => simp
-      | tmul s z =>
-        rw [LinearMap.BilinForm.baseChange_tmul, LinearMap.BilinForm.baseChange_tmul, hEF y z]
-        simp only [zsmul_eq_mul, Int.cast_neg]
-        ring
-      | add v w hv hw =>
-        simp only [map_add (f := _), LinearMap.add_apply]
-        rw [hv, hw]
-        ring
-    | add u w hu hw =>
-      simp only [map_add (f := _), LinearMap.add_apply]
-      rw [hu, hw]
-      ring
-  have hadjB : ∀ b u v, D.EF.baseChange ℝ (A b u) v = D.EF.baseChange ℝ u (A (D.star b).unop v) := by
-    intro b u v
-    induction u using TensorProduct.induction_on with
-    | zero => simp
-    | tmul r y =>
-      induction v using TensorProduct.induction_on with
-      | zero => simp
-      | tmul s z =>
-        rw [hA, hA, LinearMap.BilinForm.baseChange_tmul, LinearMap.BilinForm.baseChange_tmul, D.adj]
-      | add v w hv hw => simp only [map_add (f := _), hv, hw]
-    | add u w hu hw => simp only [map_add (f := _), LinearMap.add_apply, hu, hw]
-  have hsym : ∀ u v, D.EF.baseChange ℝ (J u) v = D.EF.baseChange ℝ (J v) u := by
-    intro u v
-    rw [← hJinv (J v) u, hJJ, map_neg, LinearMap.neg_apply, hanti v (J u), neg_neg]
-  have hadjg : ∀ u v, (D.EF.baseChange ℝ ∘ₗ J) (A x u) v =
-      (D.EF.baseChange ℝ ∘ₗ J) u (A (D.star x).unop v) := by
-    intro u v
-    simp only [LinearMap.comp_apply]
-    rw [← LinearMap.comp_apply J (A x), hAJ, LinearMap.comp_apply, hadjB]
-  have hinj : ∀ y : D.La, (1 : ℝ) ⊗ₜ[ℤ] y = 0 → y = 0 := by
-    intro y hy
-    refine (Module.forall_dual_apply_eq_zero_iff ℤ y).1 fun φ => ?_
-    have h := congrArg (fun t => TensorProduct.rid ℤ ℝ (LinearMap.baseChange ℝ φ t)) hy
-    simp only [LinearMap.baseChange_tmul, TensorProduct.rid_tmul, map_zero] at h
-    simpa using h
-  have hT' : A (D.star x).unop ≠ 0 := by
-    intro h0
-    apply hx
-    have hz : ∀ y : D.La, (D.star x).unop • y = 0 := fun y => hinj _ (by
-      have := LinearMap.congr_fun h0 ((1 : ℝ) ⊗ₜ y)
-      rwa [hA, LinearMap.zero_apply] at this)
-    have h1 := _root_.GlobalTheory.HTFaith.faithful p D _ hz
-    rw [← D.star_star x, h1]
-    simp
-  have htr := trace_comp_pos_of_adjoint (D.EF.baseChange ℝ ∘ₗ J)
-    (fun u v => by simp only [LinearMap.comp_apply]; exact hsym u v)
-    (fun u hu => by simpa only [LinearMap.comp_apply] using hpos u hu)
-    (A x) (A (D.star x).unop) hadjg hT'
-  rw [hcomp, LinearMap.trace_baseChange] at htr
-  simpa using htr
 
 end GlobalTheory.UPel.HT
 end -- clump:auto
@@ -782,8 +696,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT
 
@@ -856,7 +768,6 @@ section -- clump:auto
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT
 
-attribute [local instance] Over.cartesianMonoidalCategory
 noncomputable section
 
 namespace GlobalTheory.UPel.HT.LevPull

@@ -7,55 +7,11 @@ public import Mathlib.Algebra.Category.Grp.Injective
 public import Mathlib.Analysis.SpecialFunctions.Complex.Log
 public import Mathlib.RingTheory.RootsOfUnity.Complex
 import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -229,10 +185,10 @@ theorem ip_smul_self (c : ℂ) (hc : c ≠ 0) (φ : Matrix κ ι ℚ → ℂ) :
       unfold IsSB; rw [hp]
     unfold haar
     by_cases h : IsSB ψ
-    · rw [dif_pos h, dif_pos (hiff.2 h), hch _ _ (hiff.2 h) h hp]
+    · rw [dite_eq_left h, dite_eq_left (hiff.2 h), hch _ _ (hiff.2 h) h hp]
       unfold haarAt
       rw [← mul_finsum]; ring
-    · rw [dif_neg h, dif_neg (mt hiff.1 h), mul_zero]
+    · rw [dite_eq_right h, dite_eq_right (mt hiff.1 h), mul_zero]
   unfold ip
   rw [← key _ hcc]
   congr 1; funext x; simp; ring
@@ -352,7 +308,7 @@ theorem vacuum (κ ι : Type) [Fintype κ] [Fintype ι] [DecidableEq ι] (A : Ad
   have hv : ∀ y ∈ A, v (x₀ + y.2) = fac ε y (x₀ + y.2) := by
     intro y hy
     have h : ∃ y' ∈ A, x₀ + y.2 = x₀ + y'.2 := ⟨y, hy, rfl⟩
-    have e : v (x₀ + y.2) = fac ε h.choose (x₀ + y.2) := dif_pos h
+    have e : v (x₀ + y.2) = fac ε h.choose (x₀ + y.2) := dite_eq_left h
     obtain ⟨hy', e'⟩ := h.choose_spec
     rw [e]
     generalize h.choose = y' at hy' e'
@@ -364,7 +320,7 @@ theorem vacuum (κ ι : Type) [Fintype κ] [Fintype ι] [DecidableEq ι] (A : Ad
     have : fac ε (y'.1 - y.1, 0) x₀ = 1 := by
       rw [← hx₀ _ hmem, fac, pr_zero_right, sub_zero]
     rw [this, mul_one]
-  have hv0 : ∀ x, (¬ ∃ y ∈ A, x = x₀ + y.2) → v x = 0 := fun x h => dif_neg h
+  have hv0 : ∀ x, (¬ ∃ y ∈ A, x = x₀ + y.2) → v x = 0 := fun x h => dite_eq_right h
   have hvx : v x₀ = 1 := by
     have := hv 0 A.zero_mem
     simpa [fac, h0, pr_zero_right, ex_zero] using this

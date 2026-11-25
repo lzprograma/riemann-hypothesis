@@ -219,7 +219,7 @@ theorem _root_.GlobalTheory.QNorm.hilbert90_sUnits_quadratic_extension_qnorm : �
     rw [map_mul, valuation_algebraMap_eq_of_unit_at_under hq w (hadm _ hvS).1 (hδ _ hvS), ha _ hvS,
       hfib w hw]
     have h0 : (ch (w.under (𝓞 F))).valuation E y ≠ 0 := (Valuation.ne_zero_iff _).mpr hy0
-    simp only [n, if_neg hvS]
+    simp only [n, ite_eq_right hvS]
     nth_rewrite 1 [← WithZero.exp_log h0]
     rw [← WithZero.exp_add, add_neg_cancel, WithZero.exp_zero]
   · show (u : E) = y * algebraMap F E a / σ (y * algebraMap F E a)
@@ -681,7 +681,7 @@ theorem two_mul_card_le_card_over : ∀ (F E : Type) [Field F] [NumberField F] [
   · obtain ⟨w, hw⟩ := (places_over F E).2.1 v
     have : 0 < (SE.filter (fun w => w.under (𝓞 F) = v)).card :=
       Finset.card_pos.2 ⟨w, Finset.mem_filter.2 ⟨(hSE w).2 (hw ▸ hv), hw⟩⟩
-    rw [if_pos hs]
+    rw [ite_eq_left hs]
     omega
 
 end GlobalTheory.QNorm

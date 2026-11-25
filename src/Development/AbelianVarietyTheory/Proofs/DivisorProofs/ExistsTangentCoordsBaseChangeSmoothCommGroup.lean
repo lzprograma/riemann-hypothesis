@@ -56,8 +56,6 @@ open GlobalTheory GlobalTheory.AbLaw GlobalTheory.UU GlobalTheory.LN GlobalTheor
 open scoped CategoryTheory.Obj
 open GlobalTheory.UPel.HT
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.LieCoordR
@@ -171,7 +169,7 @@ theorem comp_eq_tanExp (hv : IsLieBasis v) (u : G ⟶ G) [IsMonHom u] (i : Fin n
   have hc := (hv.2 _ (h i)).exists.choose_spec
   rw [isLieComb_iff_lieExp] at hc
   rw [hc]
-  simp only [lieMat, dif_pos h, Matrix.transpose_apply, Matrix.of_apply]
+  simp only [lieMat, dite_eq_left h, Matrix.transpose_apply, Matrix.of_apply]
 
 theorem coordPt_comp (hv : IsLieBasis v) (u : G ⟶ G) [IsMonHom u] (c : Fin n → R') :
     coordPt v c ≫ u = coordPt v (((lieMat v hv u).map (algebraMap W R')).mulVec c) := by

@@ -17,8 +17,6 @@ namespace GroundTheory.ProfCoh
 
 open CategoryTheory MonoidalCategory
 
-attribute [local instance 2000] Rep.hV2
-
 theorem finite_of_finite_addMonoidHom_zmod {A : Type*} [AddCommGroup A] {n : ℕ} [NeZero n]
     (hA : ∀ a : A, n • a = 0) [Finite (A →+ ZMod n)] : Finite A := by
   refine Finite.of_injective (fun a (χ : A →+ ZMod n) => χ a) fun a b hab => ?_
@@ -30,12 +28,6 @@ theorem finite_of_finite_addMonoidHom_zmod {A : Type*} [AddCommGroup A] {n : ℕ
   rw [map_sub, ← zmodToQZ_zmodOfQZ χ hn a, ← zmodToQZ_zmodOfQZ χ hn b]
   change zmodToQZ n (zmodOfQZ χ hn a) - zmodToQZ n (zmodOfQZ χ hn b) = 0
   rw [show zmodOfQZ χ hn a = zmodOfQZ χ hn b from h, sub_self]
-
-section NormZero
-
-variable {k F : Type} [CommRing k] [Group F] [TopologicalSpace F] [IsTopologicalGroup F] [Fintype F]
-
-end NormZero
 
 section Hypotheses
 
@@ -162,14 +154,6 @@ theorem ptTCompactDualMap_ptTLocalToCompact {r s : ℕ} (h : r + s = 2) (h' : r 
 
 
 end TatePoitouTateHypotheses
-
-section DegreeZero
-
-variable {φ ψ}
-
-
-
-end DegreeZero
 
 namespace TatePoitouTateHypotheses
 

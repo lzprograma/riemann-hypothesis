@@ -1,53 +1,10 @@
 module
 
 public import Mathlib.RingTheory.Etale.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 public import Mathlib.RingTheory.MvPolynomial.Ideal
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Algebra.MvPolynomial.CommRing
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -137,7 +94,7 @@ theorem sub_const_mem_span_X {κ : Type} (p : MvPolynomial κ R) :
     ext i
     exact hcon i (Set.mem_univ i)
   subst h0
-  rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_sub, MvPolynomial.coeff_C, if_pos rfl] at hm
+  rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_sub, MvPolynomial.coeff_C, ite_eq_left rfl] at hm
   apply hm
   rw [sub_eq_zero, MvPolynomial.aeval_zero', ← MvPolynomial.constantCoeff_eq]
   rfl
@@ -206,28 +163,6 @@ theorem ker_jetTruncate_pow_eq_bot (κ : Type) {m n k : ℕ} (h : m ≤ n) (hk :
     (RingHom.ker (jetTruncate R κ h)) ^ k = ⊥ := by
   rw [ker_jetTruncate, ← pow_mul, ← le_bot_iff]
   exact (Ideal.pow_le_pow_right hk).trans (ker_jetAug_pow (R := R) κ n).le
-
-/-- The nilpotence bound is sharp when there is a variable and the coefficient ring is nontrivial. -/
-theorem ker_jetTruncate_pow_eq_bot_iff [Nontrivial R] (κ : Type) [Nonempty κ] {m n k : ℕ} (h : m ≤ n) :
-    (RingHom.ker (jetTruncate R κ h)) ^ k = ⊥ ↔ n + 1 ≤ (m + 1) * k := by
-  refine ⟨fun hbot => ?_, ker_jetTruncate_pow_eq_bot (R := R) κ h⟩
-  obtain ⟨j⟩ := ‹Nonempty κ›
-  rw [ker_jetTruncate, ← pow_mul] at hbot
-  have hz : zR (R := R) n j ∈ RingHom.ker (jetAug R κ n) := jetAug_zR n j
-  have hzpow := Ideal.pow_mem_pow hz ((m + 1) * k)
-  rw [hbot, Ideal.mem_bot] at hzpow
-  have hp : (MvPolynomial.X j : MvPolynomial κ R) ^ ((m + 1) * k) ∈
-      MvPolynomial.idealOfVars κ R ^ (n + 1) := by
-    apply Ideal.Quotient.eq_zero_iff_mem.mp
-    rw [map_pow]
-    exact hzpow
-  rwa [MvPolynomial.X_pow_eq_monomial, MvPolynomial.monomial_mem_pow_idealOfVars_iff _ _ one_ne_zero,
-    Finsupp.degree_single] at hp
-
-/-- The kernel of a one-step truncation is annihilated by the augmentation ideal. -/
-theorem ker_jetTruncR_mul_ker_jetAug (κ : Type) (m : ℕ) :
-    RingHom.ker (jetTruncR R κ m) * RingHom.ker (jetAug R κ (m + 1)) = ⊥ := by
-  rw [jetTruncR, ker_jetTruncate, ← pow_succ, ker_jetAug_pow]
 
 theorem ker_jetTruncR_sq (κ : Type) (m : ℕ) :
     (RingHom.ker (jetTruncR R κ m)) ^ 2 = ⊥ :=

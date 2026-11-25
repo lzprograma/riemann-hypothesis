@@ -5,53 +5,8 @@ public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefiniti
 public import Mathlib.FieldTheory.RatFunc.Basic
 public import Mathlib.RingTheory.SimpleRing.Principal
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
 
@@ -214,41 +169,41 @@ theorem IsBlockDiag.exists_upper {G : Matrix (Fin N) (Fin N) R} (hG : IsBlockDia
   have key : ∀ a b, (G * B) a b = ∑ c : {c // P b c}, G a c * v b c := fun a b => by
     rw [Matrix.mul_apply, ← Finset.sum_filter_add_sum_filter_not Finset.univ (P b),
       Finset.sum_eq_zero (s := Finset.univ.filter fun c => ¬ P b c) (fun c hc => by
-        rw [show B c b = 0 from dif_neg (Finset.mem_filter.1 hc).2, mul_zero]), add_zero,
+        rw [show B c b = 0 from dite_eq_right (Finset.mem_filter.1 hc).2, mul_zero]), add_zero,
       Finset.sum_subtype (p := P b) _ (by simp)]
-    exact Finset.sum_congr rfl fun c _ => by rw [show B c b = v b c from dif_pos c.2]
+    exact Finset.sum_congr rfl fun c _ => by rw [show B c b = v b c from dite_eq_left c.2]
   have key2 : ∀ a b (h : P b a), (G * B) a b = if a = b then 1 else 0 := fun a b h => by
     have := congrFun (congrFun (Matrix.mul_nonsing_inv _ (hu b)) ⟨a, h⟩) ⟨b, le_rfl, Iff.rfl⟩
     rw [Matrix.mul_apply, Matrix.one_apply] at this
     rw [key]
     refine this.trans ?_
     simp [Subtype.ext_iff]
-  refine ⟨B, fun a b h => dif_neg fun e => h e.2, fun a b h => dif_neg fun e => absurd e.1 (not_le.2 h),
-    fun a => by rw [key2 a a ⟨le_rfl, Iff.rfl⟩, if_pos rfl], fun a b h => ?_⟩
+  refine ⟨B, fun a b h => dite_eq_right fun e => h e.2, fun a b h => dite_eq_right fun e => absurd e.1 (not_le.2 h),
+    fun a => by rw [key2 a a ⟨le_rfl, Iff.rfl⟩, ite_eq_left rfl], fun a b h => ?_⟩
   by_cases e : ((a : ℕ) < N - j ↔ (b : ℕ) < N - j)
-  · rw [key2 a b ⟨h.le, e⟩, if_neg h.ne]
+  · rw [key2 a b ⟨h.le, e⟩, ite_eq_right h.ne]
   · rw [key]
     exact Finset.sum_eq_zero fun c _ => by rw [hG a c fun e' => e (e'.trans c.2.2), zero_mul]
 
-theorem generic_block_matrix_isBlockDiag (τ : Ψ) : IsBlockDiag j (genericBlockMatrix R N j τ) := fun _ _ h => dif_neg h
+theorem generic_block_matrix_isBlockDiag (τ : Ψ) : IsBlockDiag j (genericBlockMatrix R N j τ) := fun _ _ h => dite_eq_right h
 
 theorem genLow_blockDiag (τ : Ψ) : IsBlockDiag j (genLow R N j τ) := fun a b h =>
-  (dif_neg fun e => h e.2).trans (if_neg fun e => h (by rw [e]))
+  (dite_eq_right fun e => h e.2).trans (ite_eq_right fun e => h (by rw [e]))
 
 theorem genLow_lowerUni (τ : Ψ) : IsLowerUni (genLow R N j τ) :=
-  ⟨fun _ => (dif_neg fun e => lt_irrefl _ e.1).trans (if_pos rfl),
-    fun _ _ h => (dif_neg fun e => lt_asymm h e.1).trans (if_neg h.ne)⟩
+  ⟨fun _ => (dite_eq_right fun e => lt_irrefl _ e.1).trans (ite_eq_left rfl),
+    fun _ _ h => (dite_eq_right fun e => lt_asymm h e.1).trans (ite_eq_right h.ne)⟩
 
-theorem genLow_apply (q : LowIdx Ψ N j) : genLow R N j q.1.1 q.1.2.1 q.1.2.2 = X q := dif_pos q.2
+theorem genLow_apply (q : LowIdx Ψ N j) : genLow R N j q.1.1 q.1.2.1 q.1.2.2 = X q := dite_eq_left q.2
 
-theorem generic_block_matrix_apply (q : inertBlockIndex Ψ N j) : genericBlockMatrix R N j q.1.1 q.1.2.1 q.1.2.2 = X q := dif_pos q.2
+theorem generic_block_matrix_apply (q : inertBlockIndex Ψ N j) : genericBlockMatrix R N j q.1.1 q.1.2.1 q.1.2.2 = X q := dite_eq_left q.2
 
-theorem genUp_apply (q : UpIdx Ψ N j) : genUp R N j q.1.1 q.1.2.1 q.1.2.2 = X q := dif_pos q.2
+theorem genUp_apply (q : UpIdx Ψ N j) : genUp R N j q.1.1 q.1.2.1 q.1.2.2 = X q := dite_eq_left q.2
 
-theorem genUp_blockDiag (τ : Ψ) : IsBlockDiag j (genUp R N j τ) := fun _ _ h => dif_neg fun e => h e.2
+theorem genUp_blockDiag (τ : Ψ) : IsBlockDiag j (genUp R N j τ) := fun _ _ h => dite_eq_right fun e => h e.2
 
 theorem genUp_upper (τ : Ψ) : (genUp R N j τ).BlockTriangular id := fun _ _ h =>
-  dif_neg fun e => absurd e.1 (not_le.2 h)
+  dite_eq_right fun e => absurd e.1 (not_le.2 h)
 
 theorem generic_block_matrix_map (f : MvPolynomial (inertBlockIndex Ψ N j) R →+* S) {H : Ψ → Matrix (Fin N) (Fin N) S}
     (hH : ∀ τ, IsBlockDiag j (H τ)) (hf : ∀ q, f (X q) = H q.1.1 q.1.2.1 q.1.2.2) (τ : Ψ) :
@@ -567,12 +522,6 @@ theorem blkH_some {p : Unit × Fin 2} {k : Bool} (h : blkH p = some k) : p = (()
   · exact ⟨rfl, (Option.some_injective _ h).symm⟩
   · exact absurd h (by simp [blkH])
 
-theorem blkH_none {p : Unit × Fin 2} (h : blkH p = none) : p = ((), 1) := by
-  obtain ⟨⟨⟩, i⟩ := p
-  fin_cases i
-  · exact absurd h (by simp [blkH])
-  · rfl
-
 def bb : NonPluckerBlocks blkH := ⟨false, fun p h => by simpa using (blkH_some h).2⟩
 
 instance : Unique (NonPluckerBlocks blkH) where
@@ -589,57 +538,16 @@ abbrev ΦH : Type := FractionRing (MvPolynomial (LowIdx Unit 2 2) Ω)
 def gH : Unit → Matrix (Fin 2) (Fin 2) (ΦH Ω) := fun τ =>
   (genLow Ω 2 2 τ).map (algebraMap (MvPolynomial (LowIdx Unit 2 2) Ω) (ΦH Ω))
 
-def coefH (x : Fin 3 → Ω) : (Σ k, ιH k) → Finset (Fin 2) → Ω := fun q I =>
-  if q.1 then (if q.2 = 2 then (if I = {1} then 1 else 0) else if I = {0} then x q.2 else 0) else 0
-
-def yH (x : Fin 3 → Ω) : (Σ k, ιH k) → ΦH Ω := fun q =>
-  if q.1 then ∑ I, algebraMap Ω (ΦH Ω) (coefH Ω x q I) * minorIJ (gH Ω ()) I (stepCols 2 2 0)
-  else algebraMap Ω (ΦH Ω) (x q.2)
-
 theorem minor_single {R : Type} [CommRing R] (h : Matrix (Fin 2) (Fin 2) R) (a b : Fin 2) :
     minorIJ h {a} {b} = h a b := by
   unfold minorIJ
-  rw [dif_pos (by simp)]
+  rw [dite_eq_left (by simp)]
   haveI : Unique (Fin ({b} : Finset (Fin 2)).card) := inferInstanceAs (Unique (Fin 1))
   rw [det_unique]
   show h _ _ = _
   congr 1
   · exact Finset.mem_singleton.1 (Finset.orderEmbOfFin_mem _ _ _)
   · exact Finset.mem_singleton.1 (Finset.orderEmbOfFin_mem _ _ _)
-
-theorem cols0 : stepCols 2 2 0 = {0} := by decide
-
-theorem sum_minor {R : Type} [CommRing R] (u : Finset (Fin 2) → R) (h : Matrix (Fin 2) (Fin 2) R) :
-    ∑ I, u I * minorIJ h I {0} = u {0} * h 0 0 + u {1} * h 1 0 := by
-  have : (Finset.univ : Finset (Finset (Fin 2))) = {∅, {0}, {1}, {0, 1}} := by decide
-  rw [this, Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_pair (by decide),
-    minor_single, minor_single]
-  have e1 : minorIJ h ∅ {0} = 0 := dif_neg (by decide)
-  have e2 : minorIJ h {0, 1} {0} = 0 := dif_neg (by decide)
-  rw [e1, e2]; ring
-
-theorem detFac0 {R : Type} [CommRing R] (T : Matrix (Fin 2) (Fin 2) R) : detFac 2 0 T = 1 := by
-  simp [detFac]
-
-theorem detFac1 {R : Type} [CommRing R] (T : Matrix (Fin 2) (Fin 2) R) : detFac 2 1 T = T.det := by
-  have e1 : wIdx 2 2 = Finset.univ := by decide
-  have e2 : omIdx 2 2 = ∅ := by decide
-  have h1 : minorIJ T Finset.univ Finset.univ = T.det := by
-    unfold minorIJ
-    rw [dif_pos rfl]
-    exact det_submatrix_equiv_self (Equiv.ofBijective (Finset.univ.orderEmbOfFin rfl)
-      ⟨(Finset.univ.orderEmbOfFin rfl).injective, fun a => by
-        have := Finset.range_orderEmbOfFin (Finset.univ : Finset (Fin 2)) rfl
-        exact (Set.range_eq_univ.1 (by simpa using this)) a⟩) T
-  have h2 : minorIJ T ∅ ∅ = 1 := by
-    unfold minorIJ
-    rw [dif_pos rfl]
-    haveI : IsEmpty (Fin (∅ : Finset (Fin 2)).card) := inferInstanceAs (IsEmpty (Fin 0))
-    exact det_isEmpty
-  simp [detFac, e1, e2, h1, h2]
-
-theorem blockDiag2 {R : Type} [CommRing R] (T : Matrix (Fin 2) (Fin 2) R) : IsBlockDiag 2 T :=
-  fun a b h => absurd (by simp) h
 
 variable {Ω}
 
@@ -666,86 +574,6 @@ theorem regAt_int (x : (Σ k, baseIdx ιH blkH k) → Ω) {Q : Ideal (MRing (bas
     (n : ℤ) : RegAt x Q (n : Ω) :=
   ⟨fun _ => 0, C n, C 1, isMultiHomog_C' n, isMultiHomog_C' 1,
     fun h => hQ.ne_top ((Ideal.eq_top_iff_one _).2 (by simpa using h)), by simp⟩
-
-def FH (x : Fin 3 → Ω) (c : Fin 3) : FrameData ιH Unit 2 Ω blkH where
-  c _ := c
-  T _ := Matrix.diagonal ![1, x c]
-  u q I := if q.1 then (if q.2 = 2 then (if I = {1} then 1 else 0) else if I = {0} then x q.2 / x c else 0) else 0
-  u' I q := if q.1 ∧ ((I = {0} ∧ q.2 = c) ∨ (I = {1} ∧ q.2 = 2)) then 1 else 0
-  υ _ := 1
-
-def MH (x : Fin 3 → Ω) (hx2 : x 2 = 0) (hx : x 0 ≠ 0 ∨ x 1 ≠ 0) : FlagModel (yH Ω x) Unit 2 2 where
-  j_le := le_rfl
-  Ω := Ω
-  blk := blkH
-  blk_none := by
-    rintro ⟨⟨⟩, i⟩
-    fin_cases i <;> simp [blkH, IsProperStep]
-  blk_inj p p' k h h' := by rw [(blkH_some h).1, (blkH_some h').1]
-  x q := x q.2
-  x_ne k := hx.elim (fun h => ⟨0, h⟩) fun h => ⟨1, h⟩
-  y_base q := by
-    obtain ⟨⟨k, hk⟩, i⟩ := q
-    cases k
-    · rfl
-    · exact absurd rfl (hk ((), 0))
-  g := gH Ω
-  g_block _ := blockDiag2 _
-  g_indep := by
-    refine IsGenericFlag.of_lowerUni (fun τ => (genLow_lowerUni τ).map _) ?_
-    have e : (fun q : LowIdx Unit 2 2 => gH Ω q.1.1 q.1.2.1 q.1.2.2) =
-        fun q => algebraMap (MvPolynomial (LowIdx Unit 2 2) Ω) (ΦH Ω) (X q) :=
-      funext fun q => congrArg (algebraMap (MvPolynomial (LowIdx Unit 2 2) Ω) (ΦH Ω)) (genLow_apply (R := Ω) q)
-    rw [e]
-    exact (MvPolynomial.algebraicIndependent_X (LowIdx Unit 2 2) Ω).map'
-      (f := IsScalarTower.toAlgHom Ω (MvPolynomial (LowIdx Unit 2 2) Ω) (ΦH Ω)) (IsFractionRing.injective _ _)
-  coef := coefH Ω x
-  y_step p k hp m := by
-    obtain ⟨rfl, rfl⟩ := blkH_some hp
-    rfl
-  b _ _ := 1
-  lam _ := 1
-  frames Q hQ hrel hle := by
-    obtain ⟨c, hc⟩ := hrel bb
-    have hxc : x c ≠ 0 := fun h => hc (hle (by
-      show mConeMap _ (X ⟨bb, c⟩) = 0
-      rw [mConeMap, aeval_X]
-      show C (x c) * X bb = 0
-      rw [h, map_zero, zero_mul]))
-    have hc2 : c ≠ 2 := fun e => hxc (e ▸ hx2)
-    have hprod : ∀ f : NonPluckerBlocks blkH → Ω, ∏ k, f k = f bb := fun f => Fintype.prod_unique f
-    refine ⟨FH x c, ⟨⟨fun _ => ⟨blockDiag2 _, by simp [FH, hxc]⟩, fun p k hp m h _ => ?_, fun p k hp I I' hI hI' => ?_,
-      fun p hp => ?_⟩, ⟨fun k => by rw [Subsingleton.elim k bb]; exact hc, fun q I => ⟨?_, ?_⟩, fun p _ => ⟨one_ne_zero, ?_, ?_⟩⟩⟩⟩
-    · obtain ⟨rfl, rfl⟩ := blkH_some hp
-      rw [detFac0, one_mul, hprod, cols0, sum_minor, sum_minor]
-      simp only [FH, coefH, diagonal_mul, zpow_one]
-      fin_cases m <;> simp
-      all_goals (rw [← mul_assoc, mul_comm (x c), div_mul_cancel₀ _ hxc])
-    · obtain ⟨rfl, rfl⟩ := blkH_some hp
-      have a := hI.1
-      have b := hI'.1
-      rw [cols0, Finset.card_singleton, Finset.card_eq_one] at a b
-      obtain ⟨a, rfl⟩ := a
-      obtain ⟨b, rfl⟩ := b
-      rw [Fin.sum_univ_three]
-      fin_cases a <;> fin_cases b <;> fin_cases c <;> simp [FH] at hc2 hxc ⊢ <;> exact hxc
-    · obtain rfl := blkH_none hp
-      rw [detFac1, hprod]
-      simp [FH]
-    · simp only [FH]
-      split_ifs
-      · simpa using regAt_int (fun q => x q.2) hQ 1
-      · simpa using regAt_int (fun q => x q.2) hQ 0
-      · exact ⟨fun _ => 1, X ⟨bb, q.2⟩, X ⟨bb, c⟩, isMultiHomog_X' _, isMultiHomog_X' _, hc, by
-          simp [div_mul_cancel₀ _ hxc]⟩
-      · simpa using regAt_int (fun q => x q.2) hQ 0
-      · simpa using regAt_int (fun q => x q.2) hQ 0
-    · simp only [FH]
-      split_ifs
-      · simpa using regAt_int (fun q => x q.2) hQ 1
-      · simpa using regAt_int (fun q => x q.2) hQ 0
-    · simpa [FH] using regAt_int (fun q => x q.2) hQ 1
-    · simpa [FH] using regAt_int (fun q => x q.2) hQ 1
 
 end FlagEx
 

@@ -119,7 +119,7 @@ theorem linN_coeff {lg : Pt C 1 d} (hlin : LinN lg) (j b : Fin d) :
   rw [hlin j _ (by rw [Finsupp.degree_single]), coeff_X]
   by_cases h : b = j
   · subst h; simp
-  · rw [if_neg h, if_neg]
+  · rw [ite_eq_right h, ite_eq_right]
     intro e
     exact h (congrArg Prod.snd ((Finsupp.single_left_inj one_ne_zero).mp e))
 
@@ -176,7 +176,7 @@ theorem log_endo (G : FGLaw C d) (lg : Pt C 1 d) (hlin : LinN lg)
 
       rw [map_sub, map_sum]
       simp only [coeff_C_mul, linN_coeff hlin, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.sum_ite_eq',
-        Finset.mem_univ, if_true]
+        Finset.mem_univ, ite_true]
 
       rw [← cc_pderiv, show comp1 lg φ i = ev ![φ] (lg i) from rfl]
       have hchain :
@@ -191,7 +191,7 @@ theorem log_endo (G : FGLaw C d) (lg : Pt C 1 d) (hlin : LinN lg)
 
       rw [hchain, map_sum]
       simp only [map_mul, constantCoeff_ev hφ1, cc_pderiv, linN_coeff hlin, ite_mul, one_mul, zero_mul,
-        Finset.sum_ite_eq', Finset.mem_univ, if_true]
+        Finset.sum_ite_eq', Finset.mem_univ, ite_true]
       unfold linM
       ring)
     (by

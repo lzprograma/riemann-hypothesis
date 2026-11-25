@@ -209,11 +209,6 @@ open scoped CategoryTheory.Obj
 namespace GlobalTheory.ClosedGlue
 open Scheme TopologicalSpace
 
-theorem restrict_app_eq_zero_iff {T S : Scheme.{0}} (f : T ⟶ S) (U : S.Opens) (V : U.toScheme.Opens)
-    (a : Γ(S, U.ι ''ᵁ V)) : ((f ∣_ U).app V).hom a = 0 ↔ (f.app (U.ι ''ᵁ V)).hom a = 0 := by
-  rw [morphismRestrict_app]
-  exact map_eq_zero_iff (T.presheaf.map _).hom (ConcreteCategory.bijective_of_isIso _).1
-
 def killIdeal {S : Scheme.{0}} (Φ : ∀ (T : Scheme.{0}), (T ⟶ S) → Prop) (W : S.Opens) :
     Ideal Γ(S, W) :=
   ⨅ (T : Scheme.{0}) (t : T ⟶ S) (_ : Φ T t), RingHom.ker (t.app W).hom
@@ -222,12 +217,6 @@ theorem mem_killIdeal {S : Scheme.{0}} (Φ : ∀ (T : Scheme.{0}), (T ⟶ S) →
     {b : Γ(S, W)} :
     b ∈ killIdeal Φ W ↔ ∀ (T : Scheme.{0}) (t : T ⟶ S), Φ T t → (t.app W).hom b = 0 := by
   simp [killIdeal, Submodule.mem_iInf, RingHom.mem_ker]
-
-theorem app_res_eq_zero {S T : Scheme.{0}} (t : T ⟶ S) {V W : S.Opens} (h : V ≤ W) (b : Γ(S, W))
-    (hb : (t.app W).hom b = 0) : (t.app V).hom ((S.presheaf.map (homOfLE h).op).hom b) = 0 := by
-  have e := congrArg (fun φ => φ.hom b) (t.naturality (homOfLE h).op)
-  simp only [CommRingCat.hom_comp, RingHom.comp_apply] at e
-  rw [e, hb, map_zero]
 
 theorem killIdeal_map_basicOpen {S : Scheme.{0}} (Φ : ∀ (T : Scheme.{0}), (T ⟶ S) → Prop)
     (hstab : ∀ (T T' : Scheme.{0}) (t : T ⟶ S) (u : T' ⟶ T), Φ T t → Φ T' (u ≫ t))
@@ -257,7 +246,6 @@ theorem killIdeal_map_basicOpen {S : Scheme.{0}} (Φ : ∀ (T : Scheme.{0}), (T 
     exact ⟨f ^ n, ⟨n, rfl⟩, (mem_killIdeal Φ).2 hn⟩
 
 end GlobalTheory.ClosedGlue
-
 
 open GlobalTheory.ClosedGlue in
 theorem GlobalTheory.closedSubscheme_glue : ∀ (S : Scheme.{0}) (Φ : ∀ (T : Scheme.{0}), (T ⟶ S) → Prop), (∀ (T T' : Scheme.{0}) (t : T ⟶ S) (u : T' ⟶ T), Φ T t → Φ T' (u ≫ t)) → (∀ (T : Scheme.{0}) (t : T ⟶ S), (∀ τ : T, ∃ V : T.Opens, τ ∈ V ∧ Φ V (V.ι ≫ t)) → Φ T t) → (∀ x : S, ∃ (U : S.Opens) (Z : Scheme.{0}) (i : Z ⟶ U), x ∈ U ∧ IsClosedImmersion i ∧ ∀ (T : Scheme.{0}) (t : T ⟶ U), Φ T (t ≫ U.ι) ↔ ∃ z : T ⟶ Z, z ≫ i = t) → ∃ (Z : Scheme.{0}) (i : Z ⟶ S), IsClosedImmersion i ∧ ∀ (T : Scheme.{0}) (t : T ⟶ S), Φ T t ↔ ∃ z : T ⟶ Z, z ≫ i = t := by
@@ -391,41 +379,10 @@ open scoped CategoryTheory.Obj
 
 namespace GlobalTheory.TrivLocusLocal
 
-
 open ReciprocityTheory.ChartRestriction.G.Pdiv.PullbackComparison in
 theorem exists_gen_pull_pull_iff {X Y Z : Scheme.{0}} (N : LB X) (a : Y ⟶ X) (b : Z ⟶ Y) :
     (∃ s : ((N.pull a).pull b).Gen, s.IsGen) ↔ ∃ s : (N.pull (b ≫ a)).Gen, s.IsGen := by
-  have hb : ∀ z : Z, (b ≫ a).base z = a.base (b.base z) := fun z => rfl
-  have m1 : ∀ (j : PUnit.{1} → N.ι) (z : Z), z ∈ (N.pull (b ≫ a)).U j →
-      z ∈ ((N.pull a).pull b).U (fun _ _ => j PUnit.unit) := by
-    intro j z hz
-    have h1 : (b ≫ a).base z ∈ N.U (j PUnit.unit) := (mem_wchart_pu N (b ≫ a) j z).1 hz
-    have h2 : b.base z ∈ (N.pull a).U (fun _ => j PUnit.unit) :=
-      (mem_wchart_pu N a (fun _ => j PUnit.unit) (b.base z)).2 (by rw [← hb]; exact h1)
-    exact (mem_wchart_pu (N.pull a) b (fun _ _ => j PUnit.unit) z).2 h2
-  have m2 : ∀ (j : PUnit.{1} → PUnit.{1} → N.ι) (z : Z), z ∈ ((N.pull a).pull b).U j →
-      z ∈ (N.pull (b ≫ a)).U (fun _ => j PUnit.unit PUnit.unit) := by
-    intro j z hz
-    have h2 : b.base z ∈ (N.pull a).U (j PUnit.unit) := (mem_wchart_pu (N.pull a) b j z).1 hz
-    have h1 : a.base (b.base z) ∈ N.U (j PUnit.unit PUnit.unit) :=
-      (mem_wchart_pu N a (j PUnit.unit) (b.base z)).1 h2
-    exact (mem_wchart_pu N (b ≫ a) (fun _ => j PUnit.unit PUnit.unit) z).2 (by rw [hb]; exact h1)
-  constructor
-  · intro h
-    refine exists_gen_transfer (L := (N.pull a).pull b) (L' := N.pull (b ≫ a))
-      (fun j _ _ => j PUnit.unit) m1 ?_ h
-    intro i j y hy
-    have hy' := pull_inf_le N (b ≫ a) i j hy
-    exact (germ_pull N (b ≫ a) i j y hy hy').trans
-      (germ_pull_pull N a b (fun _ _ => i PUnit.unit) (fun _ _ => j PUnit.unit) y ⟨m1 i y hy.1, m1 j y hy.2⟩ hy').symm
-  · intro h
-    refine exists_gen_transfer (L := N.pull (b ≫ a)) (L' := (N.pull a).pull b)
-      (fun j _ => j PUnit.unit PUnit.unit) m2 ?_ h
-    intro i j y hy
-    have hy2 : y ∈ (N.pull (b ≫ a)).U (fun _ => i PUnit.unit PUnit.unit) ⊓
-        (N.pull (b ≫ a)).U (fun _ => j PUnit.unit PUnit.unit) := ⟨m2 i y hy.1, m2 j y hy.2⟩
-    have hy' := pull_inf_le N (b ≫ a) _ _ hy2
-    exact (germ_pull_pull N a b i j y hy hy').trans (germ_pull N (b ≫ a) _ _ y hy2 hy').symm
+  apply _root_.GlobalTheory.TrivSubscheme.triv_pull_iff <;> assumption
 
 end GlobalTheory.TrivLocusLocal
 
@@ -533,8 +490,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory.EndLoc GlobalTheory.TrivLocus
 open scoped CategoryTheory.Obj
 
-theorem _root_.GlobalTheory.T.lineBundleTrivialOnPullbackSquares_of_local : ∀ (S : Scheme.{0}) (A : Over S) [GrpObj A] (N : LB A.left), IsAbelianScheme A → N.IsLB → Out.Rigidified A N → ∀ (T : Scheme.{0}) (t : T ⟶ S), (∀ τ : T, ∃ V : T.Opens, τ ∈ V ∧ TrivCond A N V (V.ι ≫ t)) → TrivCond A N T t := by
-  first | (exact @GlobalTheory.TrivLocus.trivCond_of_local)
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.LineBundleTrivialOnPullbackSquaresOfLocalStatement =====
@@ -554,7 +509,7 @@ namespace GlobalTheory.TrivLocus
 theorem trivLocus_closed : ∀ (S : Scheme.{0}) [IsLocallyNoetherian S] (A : Over S) [GrpObj A] (L₀ N : LB A.left), IsAbelianScheme A → L₀.IsLB → Out.RelAmple A L₀ → N.IsLB → Out.Rigidified A N → ∃ (Z : Scheme.{0}) (i : Z ⟶ S), IsClosedImmersion i ∧ ∀ (T : Scheme.{0}) (t : T ⟶ S) (A' : Over T) [GrpObj A'] (φ' : A'.left ⟶ A.left), IsGrpPullback A' A t φ' → ((∃ s : (N.pull φ').Gen, s.IsGen) ↔ ∃ z : T ⟶ Z, z ≫ i = t) := by
   intro S _ A _ L₀ N hA hL₀ hamp hN hrig
   obtain ⟨Z, i, hi, hZ⟩ := _root_.GlobalTheory.closedSubscheme_glue S (TrivCond A N) (trivCond_comp A N)
-    (GlobalTheory.T.lineBundleTrivialOnPullbackSquares_of_local S A N hA hN hrig) (_root_.GlobalTheory.TrivLocusLocal.exists_closed_triv_local S A L₀ N hA hL₀ hamp hN hrig)
+    (GlobalTheory.TrivLocus.trivCond_of_local S A N hA hN hrig) (_root_.GlobalTheory.TrivLocusLocal.exists_closed_triv_local S A L₀ N hA hL₀ hamp hN hrig)
   refine ⟨Z, i, hi, fun T t A' _ φ' hP => ?_⟩
   rw [trivCond_iff A N T t A'.left φ' A'.hom hP.1]
   exact hZ T t
@@ -573,13 +528,6 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.EndLoc
 open scoped CategoryTheory.Obj
-
-namespace GlobalTheory.TrivLocus
-
-theorem trivLocus_closed_of_relAmple : ∀ (S : Scheme.{0}) [IsLocallyNoetherian S] (A : Over S) [GrpObj A] (L₀ N : LB A.left), IsAbelianScheme A → L₀.IsLB → Out.RelAmple A L₀ → N.IsLB → Out.Rigidified A N → ∃ (Z : Scheme.{0}) (i : Z ⟶ S), IsClosedImmersion i ∧ ∀ (T : Scheme.{0}) (t : T ⟶ S) (A' : Over T) [GrpObj A'] (φ' : A'.left ⟶ A.left), IsGrpPullback A' A t φ' → ((∃ s : (N.pull φ').Gen, s.IsGen) ↔ ∃ z : T ⟶ Z, z ≫ i = t) :=
-  _root_.GlobalTheory.TrivLocus.trivLocus_closed
-
-end GlobalTheory.TrivLocus
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrivialLocusRigidifiedBundleClosedSeesaw =====

@@ -5,51 +5,8 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormalFormOr
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeB
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRadAdj
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSAdjH
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -211,24 +168,24 @@ theorem Formalism.FourierDecayAlt.P.CutMP.Gauge.GC.gTSSAdjPt_of_radAdj : GTRadAd
       have hb := shift_block_lower_component hRel hQQ hl hU (Yr : ℂ) Φ
       rw [hΦp] at hb
       have h1 := pj_pt P Bs hpl hk2 e he d hk ρ' (X.t (Yr : ℂ) 1 0 Φ) ρ' q
-      rw [if_pos rfl, one_mul] at h1
-      rw [← h1, hb, Submodule.coe_smul, rawR_smul, pj_pt P Bs hpl hk2 e he d hk, if_pos rfl, one_mul,
+      rw [ite_eq_left rfl, one_mul] at h1
+      rw [← h1, hb, Submodule.coe_smul, rawR_smul, pj_pt P Bs hpl hk2 e he d hk, ite_eq_left rfl, one_mul,
         (ss_pt P Bs hpl hk2 e he d s t hst hL hl Φ ρ' q).1]
       congr 1
-      rw [Finset.sum_eq_single ρ (fun σ _ hσ => by rw [hΦr, if_neg hσ, zero_mul, mul_zero]) (by simp), hΦr,
-        if_pos rfl, one_mul]
+      rw [Finset.sum_eq_single ρ (fun σ _ hσ => by rw [hΦr, ite_eq_right hσ, zero_mul, mul_zero]) (by simp), hΦr,
+        ite_eq_left rfl, one_mul]
     have hT2 : ∀ q : MA.Qp P.r P.TT, rawR P Bs.μsec e ((X.t (Yr : ℂ) 0 1 Ψ : Q.RadSp P.k P.r Bs.z Bs.z' Bs.π Bs.π') :
         Q.Fn P.k P.r (Wq →L[ℂ] Wp)) ρ q = x * (t l ρ ρ' q.1.2 * g q.1.2) := by
       intro q
       have hb := shift_block_upper_component hRel hQQ hl hU (Yr : ℂ) Ψ
       rw [hΨp] at hb
       have h1 := pj_pt P Bs hpl hk2 e he d hk ρ (X.t (Yr : ℂ) 0 1 Ψ) ρ q
-      rw [if_pos rfl, one_mul] at h1
-      rw [← h1, hb, Submodule.coe_smul, rawR_smul, pj_pt P Bs hpl hk2 e he d hk, if_pos rfl, one_mul,
+      rw [ite_eq_left rfl, one_mul] at h1
+      rw [← h1, hb, Submodule.coe_smul, rawR_smul, pj_pt P Bs hpl hk2 e he d hk, ite_eq_left rfl, one_mul,
         (ss_pt P Bs hpl hk2 e he d s t hst hL hl Ψ ρ q).2]
       congr 1
-      rw [Finset.sum_eq_single ρ' (fun σ _ hσ => by rw [hΨr, if_neg hσ, zero_mul, mul_zero]) (by simp), hΨr,
-        if_pos rfl, one_mul]
+      rw [Finset.sum_eq_single ρ' (fun σ _ hσ => by rw [hΨr, ite_eq_right hσ, zero_mul, mul_zero]) (by simp), hΨr,
+        ite_eq_left rfl, one_mul]
 
     have hvan : ∃ K : Set ℂ, IsCompact K ∧ K ⊆ Ann P ∧ ∀ ζ ∈ Ann P, ζ ∉ K →
         (Φ : Q.Fn P.k P.r (Wq →L[ℂ] Wp)) c0 (NF.muZ P.k P.r Bs.μsec ζ) = 0 ∧
@@ -257,16 +214,16 @@ theorem Formalism.FourierDecayAlt.P.CutMP.Gauge.GC.gTSSAdjPt_of_radAdj : GTRadAd
         ∫ ζ in Ann P, star (x * (s l ρ' ρ ζ * f ζ)) * g ζ := by
       refine setIntegral_congr_fun hmA fun ζ hζ => ?_
       refine (hs_pair P Bs hpl hk2 e he (X.t (Yr : ℂ) 1 0 Φ) Ψ (qOf ζ hζ)).trans ?_
-      rw [Finset.sum_eq_single ρ' (fun σ _ hσ => by rw [hΨr, if_neg hσ, zero_mul, mul_zero]) (by simp), hΨr,
-        if_pos rfl, one_mul, hT1]
+      rw [Finset.sum_eq_single ρ' (fun σ _ hσ => by rw [hΨr, ite_eq_right hσ, zero_mul, mul_zero]) (by simp), hΨr,
+        ite_eq_left rfl, one_mul, hT1]
     have hI2 : ∫ ζ in Ann P, (((wR P.k P.TT ζ) ^ 2 : ℝ) : ℂ) *
           inner ℂ (B.hsVec ((Φ : Q.Fn P.k P.r (Wq →L[ℂ] Wp)) c0 (NF.muZ P.k P.r Bs.μsec ζ)))
             (B.hsVec ((X.t (Yr : ℂ) 0 1 Ψ : Q.Fn P.k P.r (Wq →L[ℂ] Wp)) c0 (NF.muZ P.k P.r Bs.μsec ζ))) =
         ∫ ζ in Ann P, star (f ζ) * (x * (t l ρ ρ' ζ * g ζ)) := by
       refine setIntegral_congr_fun hmA fun ζ hζ => ?_
       refine (hs_pair P Bs hpl hk2 e he Φ (X.t (Yr : ℂ) 0 1 Ψ) (qOf ζ hζ)).trans ?_
-      rw [Finset.sum_eq_single ρ (fun σ _ hσ => by rw [hΦr, if_neg hσ, zero_mul, star_zero, zero_mul]) (by simp),
-        hΦr, if_pos rfl, one_mul, hT2]
+      rw [Finset.sum_eq_single ρ (fun σ _ hσ => by rw [hΦr, ite_eq_right hσ, zero_mul, star_zero, zero_mul]) (by simp),
+        hΦr, ite_eq_left rfl, one_mul, hT2]
     rw [hI1, hI2] at hRA'
 
     have hfc : Continuous f := (Complex.ofRealCLM.contDiff.comp hφ).continuous
@@ -302,18 +259,18 @@ theorem Formalism.FourierDecayAlt.P.CutMP.Gauge.GC.gTSSAdjPt_of_radAdj : GTRadAd
     have hs0 : s l ρ' ρ ζ0 = 0 := by
       have h0 := blk_zero hRel hU U0
       have h1 := pj_pt P Bs hpl hk2 e he d hk ρ' ((d.SS l).1 ((NO.Pj d ρ).1 U0)) ρ' (qOf ζ0 hζ0)
-      rw [h0, if_pos rfl, one_mul, Submodule.coe_zero, rawR_zero, hU0p,
+      rw [h0, ite_eq_left rfl, one_mul, Submodule.coe_zero, rawR_zero, hU0p,
         (ss_pt P Bs hpl hk2 e he d s t hst hL hl U0 ρ' (qOf ζ0 hζ0)).1,
-        Finset.sum_eq_single ρ (fun σ _ hσ => by rw [hU0r, if_neg hσ, zero_mul, mul_zero]) (by simp), hU0r,
-        if_pos rfl, one_mul, mul_one] at h1
+        Finset.sum_eq_single ρ (fun σ _ hσ => by rw [hU0r, ite_eq_right hσ, zero_mul, mul_zero]) (by simp), hU0r,
+        ite_eq_left rfl, one_mul, mul_one] at h1
       exact h1.symm
     have ht0 : t l ρ ρ' ζ0 = 0 := by
       have h0 := blk_zero_star hRel hU V0
       have h1 := pj_pt P Bs hpl hk2 e he d hk ρ ((star (d.SS l)).1 ((NO.Pj d ρ').1 V0)) ρ (qOf ζ0 hζ0)
-      rw [h0, if_pos rfl, one_mul, Submodule.coe_zero, rawR_zero, hV0p,
+      rw [h0, ite_eq_left rfl, one_mul, Submodule.coe_zero, rawR_zero, hV0p,
         (ss_pt P Bs hpl hk2 e he d s t hst hL hl V0 ρ (qOf ζ0 hζ0)).2,
-        Finset.sum_eq_single ρ' (fun σ _ hσ => by rw [hV0r, if_neg hσ, zero_mul, mul_zero]) (by simp), hV0r,
-        if_pos rfl, one_mul, mul_one] at h1
+        Finset.sum_eq_single ρ' (fun σ _ hσ => by rw [hV0r, ite_eq_right hσ, zero_mul, mul_zero]) (by simp), hV0r,
+        ite_eq_left rfl, one_mul, mul_one] at h1
       exact h1.symm
     rw [hs0, ht0, star_zero]
 

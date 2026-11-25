@@ -162,42 +162,67 @@ theorem Vz_stable (n m : ℕ) (z : Om l) (hz : IsPrimitiveRoot z (l ^ (n + m)))
     rw [map_mul, (IntermediateField.mem_fixingSubgroup_iff _ _).1 hg c c.2]
     exact (Vz z (l ^ m)).smul_mem c hx
 
-theorem zeta_pow (C : Core l) (n m : ℕ) : C.ζ (n + m) ^ l ^ m = C.ζ n := by
+structure CycData (l : ℕ) [Fact l.Prime] where
+  ζ : ℕ → Om l
+  χ : GQ l →* ℤ_[l]ˣ
+  ζ_zero : ζ 0 = 1
+  ζ_succ : ∀ m, ζ (m + 1) ^ l = ζ m
+  ζ_one : ζ 1 ≠ 1
+  χ_cyc : ∀ (g : GQ l) (m : ℕ) (x : Om l), x ^ (l ^ m) = 1 → g x = x ^ (PadicInt.toZModPow m (χ g : ℤ_[l])).val
+
+def toCycData (C : Core l) : CycData l where
+  ζ := C.ζ
+  χ := C.χ
+  ζ_zero := C.ζ_zero
+  ζ_succ := C.ζ_succ
+  ζ_one := C.ζ_one
+  χ_cyc := C.χ_cyc
+
+theorem zeta_pow_of (C : CycData l) (n m : ℕ) : C.ζ (n + m) ^ l ^ m = C.ζ n := by
   induction m with
   | zero => simp
   | succ m ih => rw [pow_succ', pow_mul, ← add_assoc, C.ζ_succ, ih]
 
-theorem zeta_prim (C : Core l) (n : ℕ) : IsPrimitiveRoot (C.ζ n) (l ^ n) := by
+theorem zeta_pow (C : Core l) (n m : ℕ) : C.ζ (n + m) ^ l ^ m = C.ζ n :=
+  zeta_pow_of (toCycData C) n m
+
+theorem zeta_prim_of (C : CycData l) (n : ℕ) : IsPrimitiveRoot (C.ζ n) (l ^ n) := by
   cases n with
   | zero => simp [C.ζ_zero]
   | succ n =>
     have h := orderOf_eq_prime_pow (x := C.ζ (n + 1)) (p := l) (n := n)
-      (by rw [add_comm n 1, zeta_pow]; exact C.ζ_one)
-      (by have := zeta_pow C 0 (n + 1); rwa [zero_add, C.ζ_zero] at this)
+      (by rw [add_comm n 1, zeta_pow_of]; exact C.ζ_one)
+      (by have := zeta_pow_of C 0 (n + 1); rwa [zero_add, C.ζ_zero] at this)
     rw [← h]
     exact IsPrimitiveRoot.orderOf _
 
-theorem Fz_mono (C : Core l) : Monotone fun n => Fz (C.ζ n) := by
+theorem zeta_prim (C : Core l) (n : ℕ) : IsPrimitiveRoot (C.ζ n) (l ^ n) :=
+  zeta_prim_of (toCycData C) n
+
+theorem Fz_mono_of (C : CycData l) : Monotone fun n => Fz (C.ζ n) := by
   intro a b hab
   obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le hab
-  rw [IntermediateField.adjoin_simple_le_iff, ← zeta_pow C a m]
+  rw [IntermediateField.adjoin_simple_le_iff, ← zeta_pow_of C a m]
   exact pow_mem_Fz _ _
 
-theorem chi_eq_one (C : Core l) (g : GQ l) (hg : g ∈ (⨆ n, Fz (C.ζ n)).fixingSubgroup) : C.χ g = 1 := by
+theorem chi_eq_one_of (C : CycData l) (g : GQ l) (hg : g ∈ (⨆ n, Fz (C.ζ n)).fixingSubgroup) : C.χ g = 1 := by
   apply Units.ext
   apply PadicInt.ext_of_toZModPow.mp
   intro n
   have : NeZero (l ^ n) := ⟨(pow_pos (Fact.out : l.Prime).pos _).ne'⟩
-  have h1 := C.χ_cyc g n _ (zeta_prim C n).pow_eq_one
+  have h1 := C.χ_cyc g n _ (zeta_prim_of C n).pow_eq_one
   have h2 : g (C.ζ n) = C.ζ n := (IntermediateField.mem_fixingSubgroup_iff _ _).1 hg _
     ((le_iSup (fun n => Fz (C.ζ n)) n) (IntermediateField.mem_adjoin_simple_self _ _))
   rw [h2] at h1
   have h3 : (PadicInt.toZModPow n (C.χ g : ℤ_[l])).val ≡ 1 [MOD l ^ n] := by
-    have h5 := (isOfFinOrder_iff_pow_eq_one.2 ⟨_, NeZero.pos (l ^ n), (zeta_prim C n).pow_eq_one⟩).pow_eq_pow_iff_modEq.1
+    have h5 := (isOfFinOrder_iff_pow_eq_one.2 ⟨_, NeZero.pos (l ^ n), (zeta_prim_of C n).pow_eq_one⟩).pow_eq_pow_iff_modEq.1
       (h1.symm.trans (pow_one _).symm)
-    rwa [← (zeta_prim C n).eq_orderOf] at h5
+    rwa [← (zeta_prim_of C n).eq_orderOf] at h5
   have h4 := (ZMod.natCast_eq_natCast_iff _ _ _).2 h3
   simpa using h4
+
+theorem chi_eq_one (C : Core l) (g : GQ l) (hg : g ∈ (⨆ n, Fz (C.ζ n)).fixingSubgroup) : C.χ g = 1 :=
+  chi_eq_one_of (toCycData C) g hg
 
 theorem le_natDegree (n m : ℕ) (z : Om l) (hn : 1 ≤ n) (hz : IsPrimitiveRoot z (l ^ (n + m))) :
     l ^ m ≤ (minpoly (Fz (z ^ l ^ m)) z).natDegree := by
@@ -215,13 +240,13 @@ theorem le_natDegree (n m : ℕ) (z : Om l) (hn : 1 ≤ n) (hz : IsPrimitiveRoot
   have h1 : ‖((minpoly (Fz (z ^ l ^ m)) z).coeff 0 : Om l)‖ ≤ 0 := nonpos_of_mul_nonpos_right h hl
   exact minpoly.coeff_zero_ne_zero hint hz0 (Subtype.ext (norm_le_zero_iff.1 h1))
 
-theorem exists_gamma (C : Core l) (n : ℕ) (hn : 1 ≤ n) (j : ℕ) (hj : j ≠ 0) :
+theorem exists_gamma_of (C : CycData l) (n : ℕ) (hn : 1 ≤ n) (j : ℕ) (hj : j ≠ 0) :
     ∃ g ∈ (Fz (C.ζ n)).fixingSubgroup, (C.χ g : ℤ_[l]) ^ j ≠ 1 := by
   classical
   by_contra hcon
   push Not at hcon
-  have h1 := le_natDegree n j _ hn (zeta_prim C (n + j))
-  rw [zeta_pow] at h1
+  have h1 := le_natDegree n j _ hn (zeta_prim_of C (n + j))
+  rw [zeta_pow_of] at h1
   set z := C.ζ (n + j) with hz
   set F := Fz (C.ζ n)
   have hint : IsIntegral F z := Algebra.IsIntegral.isIntegral z
@@ -237,24 +262,28 @@ theorem exists_gamma (C : Core l) (n : ℕ) (hn : 1 ≤ n) (j : ℕ) (hj : j ≠
     rw [Finset.coe_image]
     refine ⟨C.χ (s.restrictScalars ℚ_[l]), ?_, ?_⟩
     · simpa [Polynomial.mem_nthRoots (Nat.pos_of_ne_zero hj)] using hcon _ hg
-    · exact (C.χ_cyc _ _ _ (zeta_prim C (n + j)).pow_eq_one).symm.trans hs
+    · exact (C.χ_cyc _ _ _ (zeta_prim_of C (n + j)).pow_eq_one).symm.trans hs
   have h3 := Set.ncard_le_ncard h2 (Finset.finite_toSet _)
   rw [Set.ncard_coe_finset, ← Nat.card_coe_set_eq, Nat.card_eq_fintype_card] at h3
   have h4 := h1.trans (h3.trans (Finset.card_image_le.trans
     ((Multiset.toFinset_card_le _).trans (Polynomial.card_nthRoots _ _))))
   exact absurd h4 (not_le.2 (Nat.lt_pow_self (Fact.out : l.Prime).one_lt))
 
-theorem estimate (C : Core l) (n : ℕ) (hn : 1 ≤ n) (g : GQ l) (hg : g ∈ (Fz (C.ζ n)).fixingSubgroup)
+theorem exists_gamma (C : Core l) (n : ℕ) (hn : 1 ≤ n) (j : ℕ) (hj : j ≠ 0) :
+    ∃ g ∈ (Fz (C.ζ n)).fixingSubgroup, (C.χ g : ℤ_[l]) ^ j ≠ 1 :=
+  exists_gamma_of (toCycData C) n hn j hj
+
+theorem estimate_of (C : CycData l) (n : ℕ) (hn : 1 ≤ n) (g : GQ l) (hg : g ∈ (Fz (C.ζ n)).fixingSubgroup)
     (c : ℚ_[l]) (y₀ y : Om l) (h₀ : y₀ ∈ Fz (C.ζ n)) (hy : y ∈ ⨆ k, Fz (C.ζ k)) :
     ∃ b : Om l, ‖(l : Om l)‖ * ‖b - y₀‖ ≤ ‖y - y₀‖ ∧
       ‖(l : Om l)‖ * (‖c - 1‖ * ‖b‖) ≤ ‖g y * algebraMap _ _ c - y‖ := by
   have hy' : y ∈ ((⨆ k, Fz (C.ζ k) : IntermediateField _ _) : Set (Om l)) := hy
-  rw [IntermediateField.coe_iSup_of_directed (Fz_mono C).directed_le, Set.mem_iUnion] at hy'
+  rw [IntermediateField.coe_iSup_of_directed (Fz_mono_of C).directed_le, Set.mem_iUnion] at hy'
   obtain ⟨m, hm⟩ := hy'
-  have hm' : y ∈ Fz (C.ζ (n + m)) := Fz_mono C (Nat.le_add_left m n) hm
-  rw [← zeta_pow C n m] at hg h₀
+  have hm' : y ∈ Fz (C.ζ (n + m)) := Fz_mono_of C (Nat.le_add_left m n) hm
+  rw [← zeta_pow_of C n m] at hg h₀
   obtain ⟨b, hb, w, hw, rfl⟩ := decomp _ (l ^ m) y hm'
-  have hz := zeta_prim C (n + m)
+  have hz := zeta_prim_of C (n + m)
   refine ⟨b, ?_, ?_⟩
   · have := bound n m _ hn hz (b - y₀) w (sub_mem hb h₀) hw
     rwa [sub_add_eq_add_sub] at this
@@ -267,10 +296,16 @@ theorem estimate (C : Core l) (n : ℕ) (hn : 1 ≤ n) (g : GQ l) (hg : g ∈ (F
     rw [map_add (f := _), (IntermediateField.mem_fixingSubgroup_iff _ _).1 hg b hb, map_sub, map_one]
     ring
 
-theorem full (C : Core l) (i : ℤ) (x : ℂ_[l]) (hi : i ≠ 0)
+theorem estimate (C : Core l) (n : ℕ) (hn : 1 ≤ n) (g : GQ l) (hg : g ∈ (Fz (C.ζ n)).fixingSubgroup)
+    (c : ℚ_[l]) (y₀ y : Om l) (h₀ : y₀ ∈ Fz (C.ζ n)) (hy : y ∈ ⨆ k, Fz (C.ζ k)) :
+    ∃ b : Om l, ‖(l : Om l)‖ * ‖b - y₀‖ ≤ ‖y - y₀‖ ∧
+      ‖(l : Om l)‖ * (‖c - 1‖ * ‖b‖) ≤ ‖g y * algebraMap _ _ c - y‖ :=
+  estimate_of (toCycData C) n hn g hg c y₀ y h₀ hy
+
+theorem full_of (C : CycData l) (i : ℤ) (x : ℂ_[l]) (hi : i ≠ 0)
     (hx : ∀ g : GQ l, Per.σC g x * (algebraMap ℚ_[l] ℂ_[l] ((C.χ g : ℤ_[l]) : ℚ_[l])) ^ i = x) : x = 0 := by
   have hcl := GlobalTheory.MemLoc.ax_sen_tate l (⨆ k, Fz (C.ζ k)).fixingSubgroup x fun g hg => by
-    simpa [chi_eq_one C g hg] using hx g
+    simpa [chi_eq_one_of C g hg] using hx g
   have happ : ∀ ε > 0, ∃ y ∈ ⨆ k, Fz (C.ζ k), ‖x - (y : ℂ_[l])‖ < ε := by
     intro ε hε
     obtain ⟨_, ⟨y, hy, rfl⟩, h⟩ := Metric.mem_closure_iff.1 hcl ε hε
@@ -283,10 +318,10 @@ theorem full (C : Core l) (i : ℤ) (x : ℂ_[l]) (hi : i ≠ 0)
     intro ε hε
     obtain ⟨y₀, hy₀, hxy₀⟩ := happ ε hε
     have hy' : y₀ ∈ ((⨆ k, Fz (C.ζ k) : IntermediateField _ _) : Set (Om l)) := hy₀
-    rw [IntermediateField.coe_iSup_of_directed (Fz_mono C).directed_le, Set.mem_iUnion] at hy'
+    rw [IntermediateField.coe_iSup_of_directed (Fz_mono_of C).directed_le, Set.mem_iUnion] at hy'
     obtain ⟨m, hm⟩ := hy'
-    have hm' : y₀ ∈ Fz (C.ζ (m + 1)) := Fz_mono C (Nat.le_succ m) hm
-    obtain ⟨g, hg, hgc⟩ := exists_gamma C (m + 1) (Nat.le_add_left 1 m) i.natAbs (Int.natAbs_ne_zero.2 hi)
+    have hm' : y₀ ∈ Fz (C.ζ (m + 1)) := Fz_mono_of C (Nat.le_succ m) hm
+    obtain ⟨g, hg, hgc⟩ := exists_gamma_of C (m + 1) (Nat.le_add_left 1 m) i.natAbs (Int.natAbs_ne_zero.2 hi)
     set c : ℚ_[l] := ((C.χ g : ℤ_[l]) : ℚ_[l]) ^ i with hc
     have hc1 : c ≠ 1 := by
       intro h
@@ -303,7 +338,7 @@ theorem full (C : Core l) (i : ℤ) (x : ℂ_[l]) (hi : i ≠ 0)
       rw [hc, norm_zpow, PadicInt.padic_norm_e_of_padicInt, PadicInt.norm_units, one_zpow]
     have hd : 0 < ‖c - 1‖ := norm_pos_iff.2 (sub_ne_zero.2 hc1)
     obtain ⟨y, hy, hxy⟩ := happ (min ε (‖c - 1‖ * ε / 2)) (lt_min hε (by positivity))
-    obtain ⟨b, hb1, hb2⟩ := estimate C (m + 1) (Nat.le_add_left 1 m) g hg c y₀ y hm' hy
+    obtain ⟨b, hb1, hb2⟩ := estimate_of C (m + 1) (Nat.le_add_left 1 m) g hg c y₀ y hm' hy
     have hca : ((algebraMap ℚ_[l] (Om l) c : Om l) : ℂ_[l]) = algebraMap ℚ_[l] ℂ_[l] c := rfl
     have hcC : ‖algebraMap ℚ_[l] ℂ_[l] c‖ = 1 := by
       rw [← hca, PadicComplex.norm_extends, norm_algebraMap', hcn]
@@ -337,18 +372,17 @@ theorem full (C : Core l) (i : ℤ) (x : ℂ_[l]) (hi : i ≠ 0)
     rwa [mul_div_cancel₀ _ (by positivity), ← zero_add ε] at this
   exact norm_le_zero_iff.1 (by by_contra h; nlinarith [mul_pos hl (not_le.1 h)])
 
+theorem full (C : Core l) (i : ℤ) (x : ℂ_[l]) (hi : i ≠ 0)
+    (hx : ∀ g : GQ l, Per.σC g x * (algebraMap ℚ_[l] ℂ_[l] ((C.χ g : ℤ_[l]) : ℚ_[l])) ^ i = x) : x = 0 :=
+  full_of (toCycData C) i x hi hx
+
 theorem σC_algebraMap (g : GQ l) (c : ℚ_[l]) :
     Per.σC g (algebraMap ℚ_[l] ℂ_[l] c) = algebraMap ℚ_[l] ℂ_[l] c := by
   have hca : algebraMap ℚ_[l] ℂ_[l] c = ((algebraMap ℚ_[l] (Om l) c : Om l) : ℂ_[l]) := rfl
   rw [hca, GlobalTheory.RingBasics.σC_coe, g.commutes]
 
-end GlobalTheory.MemLoc.TateTwist
-
-namespace GlobalTheory.MemLoc
-
-open TateTwist in
-theorem tate_twist_invariants : ∀ (l : ℕ) [Fact l.Prime], ∀ (C : Core l) (K : FinExt l) (i : ℤ) (x : ℂ_[l]), i ≠ 0 → (∀ g ∈ GK K, Per.σC g x * (algebraMap ℚ_[l] ℂ_[l] ((C.χ g : ℤ_[l]) : ℚ_[l])) ^ i = x) → x = 0 := by
-  intro l _ C K i x hi hx
+theorem tate_twist_invariants_of (C : CycData l) (K : FinExt l) (i : ℤ) (x : ℂ_[l]) (hi : i ≠ 0)
+    (hx : ∀ g ∈ GK K, Per.σC g x * (algebraMap ℚ_[l] ℂ_[l] ((C.χ g : ℤ_[l]) : ℚ_[l])) ^ i = x) : x = 0 := by
   have hK := K.2
   have hidx : (GK K).index ≠ 0 := by
     rw [GK, ← IntermediateField.finrank_eq_fixingSubgroup_index]
@@ -372,7 +406,7 @@ theorem tate_twist_invariants : ∀ (l : ℕ) [Fact l.Prime], ∀ (C : Core l) (
     obtain ⟨h, hh⟩ := QuotientGroup.mk_out_eq_mul (GK K) g
     rw [hh, fmul]
     exact congrArg (fun t => Per.σC g t * a g) (hx h h.2)
-  have hprod := full C (i * Fintype.card (GQ l ⧸ GK K)) (∏ q : GQ l ⧸ GK K, f q.out)
+  have hprod := full_of C (i * Fintype.card (GQ l ⧸ GK K)) (∏ q : GQ l ⧸ GK K, f q.out)
     (mul_ne_zero hi (by exact_mod_cast Fintype.card_ne_zero)) fun g => by
       rw [zpow_mul, zpow_natCast, map_prod, ← Finset.card_univ, ← Finset.prod_const,
         ← Finset.prod_mul_distrib, ← Equiv.prod_comp (MulAction.toPerm g) fun q : GQ l ⧸ GK K => f q.out]
@@ -382,4 +416,12 @@ theorem tate_twist_invariants : ∀ (l : ℕ) [Fact l.Prime], ∀ (C : Core l) (
       rw [e, fout, fmul]
   obtain ⟨q, -, hq⟩ := Finset.prod_eq_zero_iff.1 hprod
   exact (map_eq_zero _).1 ((mul_eq_zero.1 hq).resolve_right (ane _))
+
+end GlobalTheory.MemLoc.TateTwist
+
+namespace GlobalTheory.MemLoc
+
+open TateTwist in
+theorem tate_twist_invariants : ∀ (l : ℕ) [Fact l.Prime], ∀ (C : Core l) (K : FinExt l) (i : ℤ) (x : ℂ_[l]), i ≠ 0 → (∀ g ∈ GK K, Per.σC g x * (algebraMap ℚ_[l] ℂ_[l] ((C.χ g : ℤ_[l]) : ℚ_[l])) ^ i = x) → x = 0 :=
+  fun _ _ C => tate_twist_invariants_of (toCycData C)
 end GlobalTheory.MemLoc

@@ -39,7 +39,7 @@ lemma prj_apply {dim : (E →+* ℂ) → ℕ} (σ : E →+* ℂ) (v : Vsp dim) (
 
 lemma prj_inPart {dim : (E →+* ℂ) → ℕ} (σ : E →+* ℂ) (v : Vsp dim) : InPart σ (prj σ v) := by
   intro j hj
-  rw [prj_apply, if_neg hj]
+  rw [prj_apply, ite_eq_right hj]
 
 lemma Hf_prj_right {dim : (E →+* ℂ) → ℕ} {σ : E →+* ℂ} {v : Vsp dim} (hv : InPart σ v) (x : Vsp dim) :
     Hf v (prj σ x) = Hf v x := by

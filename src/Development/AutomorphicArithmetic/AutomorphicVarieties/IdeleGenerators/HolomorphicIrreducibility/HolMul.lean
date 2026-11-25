@@ -1,5 +1,7 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.HolCap
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ExpUnique
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.IsCondAt
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.GlobFixed
@@ -358,29 +360,7 @@ private theorem casimir {V : Type} [AddCommGroup V] [Module ℂ V] (E : Fin 2 �
     (hE : Formalism.REAL.GlRel E) (k : ℂ) (φ : V) (h0 : E 0 0 φ + E 1 1 φ = 0)
     (h1 : E 0 1 φ - E 1 0 φ = (Complex.I * k) • φ) (h2 : E 0 0 φ - E 1 1 φ = Complex.I • (E 0 1 φ + E 1 0 φ)) (u : ℂ) :
     Formalism.REAL.qdet E (u + 1 / 2) φ = ((u + (k - 1) / 2) * (u - (k - 1) / 2)) • φ := by
-  have hI := Complex.I_mul_I
-  have hc : E 1 0 φ = E 0 1 φ - (Complex.I * k) • φ := by rw [← h1]; abel
-  have ha : E 0 0 φ = Complex.I • E 0 1 φ + (k / 2) • φ := by
-    rw [hc] at h2
-    linear_combination (norm := skip) (1 / 2 : ℂ) • h0 + (1 / 2 : ℂ) • h2
-    match_scalars <;> first | ring1 | linear_combination (k / 2) * hI | linear_combination (-k / 2) * hI
-  have hd : E 1 1 φ = -E 0 0 φ := eq_neg_of_add_eq_zero_right h0
-  have r1 : E 0 0 (E 0 1 φ) = E 0 1 (E 0 0 φ) + E 0 1 φ := by
-    have := LinearMap.congr_fun (hE 0 0 0 1) φ
-    simp at this
-    exact sub_eq_iff_eq_add'.1 this
-  have r2 : E 1 0 (E 0 1 φ) = E 0 1 (E 1 0 φ) + (E 1 1 φ - E 0 0 φ) := by
-    have := LinearMap.congr_fun (hE 1 0 0 1) φ
-    simp at this
-    rw [← this]; abel
-  have r3 : E 0 0 (E 0 0 φ) = Complex.I • E 0 0 (E 0 1 φ) + (k / 2) • E 0 0 φ := by
-    conv_lhs => rw [ha]
-    simp
-  rw [qdet2]
-  simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.add_apply, Module.algebraMap_end_apply, map_add (f := _),
-    map_smul, hd, map_neg, r2, r3, r1]
-  simp only [hc, ha, map_add (f := _), map_smul, map_sub]
-  match_scalars <;> ring_nf <;> simp [Complex.I_sq]
+  apply _root_.casimir <;> assumption
 
 theorem UpperTheory.V.Sd.Hm.zfinof :
     ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (k : ℕ) (φ : TR.Sm F 2),
@@ -448,7 +428,7 @@ private theorem coefAt_eq {y : Af F} {𝔪 : Ideal (𝓞 F)} (h : GenD y 𝔪) (
   have h' : ∃ 𝔪, GenD y 𝔪 := ⟨𝔪, h⟩
   rw [coefAt, dite_eq_left h', genD_unique h'.choose_spec h]
 
-private theorem coefAt_zero {y : Af F} (h : ¬ ∃ 𝔪, GenD y 𝔪) (a : Ideal (𝓞 F) → ℂ) : coefAt a y = 0 := dif_neg h
+private theorem coefAt_zero {y : Af F} (h : ¬ ∃ 𝔪, GenD y 𝔪) (a : Ideal (𝓞 F) → ℂ) : coefAt a y = 0 := dite_eq_right h
 
 private theorem coefAt_unit {u : Af F} (hu : ∀ w, Valued.v (pLoc F w u) = 1) (y : Af F) (a : Ideal (𝓞 F) → ℂ) :
     coefAt a (y * u) = coefAt a y := by
@@ -464,19 +444,7 @@ private theorem ordI_fin {I : Ideal (𝓞 F)} (hI : I ≠ ⊥) : ∀ᶠ w : Heig
   exact_mod_cast hw
 
 private theorem exists_genD {𝔪 : Ideal (𝓞 F)} (h : 𝔪 ≠ ⊥) : ∃ y : (Af F)ˣ, GenD (y : Af F) 𝔪 := by
-  choose t ht using fun w : HeightOneSpectrum (𝓞 F) => w.valuedAdicCompletion_surjective F
-    (WithZero.exp ((ordI w (differentIdeal ℤ (𝓞 F)) : ℤ) - (ordI w 𝔪 : ℤ)))
-  have hf : ∀ᶠ w in Filter.cofinite, Valued.v (t w) = 1 := by
-    filter_upwards [ordI_fin h, ordI_fin (I := differentIdeal ℤ (𝓞 F)) differentIdeal_ne_bot] with w h1 h2
-    rw [ht, h1, h2]; simp
-  let a : FiniteAdeleRing (𝓞 F) F := ⟨t, by
-    filter_upwards [hf] with w hw
-    exact (HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).2 hw.le⟩
-  have hu : IsUnit a := FiniteAdeleRing.isUnit_iff.2 ⟨fun w hw => by
-    have := ht w
-    rw [show t w = 0 from hw, map_zero] at this
-    exact WithZero.exp_ne_zero this.symm, hf⟩
-  exact ⟨hu.unit, h, fun w => ht w⟩
+  apply _root_.UpperTheory.V.Sd.exists_genD <;> assumption
 
 private theorem exists_ideal (n : Pl F → ℕ) (hn : ∀ᶠ w in Filter.cofinite, n w = 0) :
     ∃ 𝔪 : Ideal (𝓞 F), 𝔪 ≠ ⊥ ∧ ∀ w, ordI w 𝔪 = n w := by
@@ -586,17 +554,17 @@ private theorem hasSum_cf (a : Ideal (𝓞 F) → ℂ) (y : Af F) (E : F → ℂ
     simp [cf, this]
   · intro ξ h
     by_contra h'
-    exact h (by simp only [cf]; rw [if_neg (show ¬ ∀ v, 0 < reAt v ξ from h'), zero_mul])
+    exact h (by simp only [cf]; rw [ite_eq_right (show ¬ ∀ v, 0 < reAt v ξ from h'), zero_mul])
 
 private theorem cf_ne {a : Ideal (𝓞 F) → ℂ} {y : Af F} {ξ : F} (h : cf a y ξ ≠ 0) :
     (∀ v, 0 < reAt v ξ) ∧ ∃ 𝔪, GenD (algebraMap F (Af F) ξ * y) 𝔪 ∧ cf a y ξ = a 𝔪 := by
   by_cases h1 : ∀ v, 0 < reAt v ξ
-  · rw [cf, if_pos h1] at h ⊢
+  · rw [cf, ite_eq_left h1] at h ⊢
     by_cases h2 : ∃ 𝔪, GenD (algebraMap F (Af F) ξ * y) 𝔪
     · obtain ⟨𝔪, h2⟩ := h2
       exact ⟨h1, 𝔪, h2, coefAt_eq h2 a⟩
     · exact absurd (coefAt_zero h2 a) h
-  · exact absurd (if_neg h1) h
+  · exact absurd (ite_eq_right h1) h
 
 private theorem cf_unit {u : Af F} (hu : ∀ w, Valued.v (pLoc F w u) = 1) (y : Af F) (a : Ideal (𝓞 F) → ℂ) :
     cf a (y * u) = cf a y := funext fun ξ => by simp only [cf, ← mul_assoc, coefAt_unit hu]
@@ -705,7 +673,7 @@ theorem UpperTheory.V.Sd.holMul :
   choose! Y hY using fun 𝔪 : Ideal (𝓞 F) => exists_genD (𝔪 := 𝔪)
   let A : (Af F)ˣ → ℂ := fun y => cf a y 1 * d₀ y + cv a b y 1
   have one : ∀ v : InfinitePlace F, 0 < reAt v (1 : F) := fun v => by simp [reAt]
-  have cf1 : ∀ y : Af F, cf a y 1 = coefAt a y := fun y => by rw [cf, if_pos one, map_one, one_mul]
+  have cf1 : ∀ y : Af F, cf a y 1 = coefAt a y := fun y => by rw [cf, ite_eq_left one, map_one, one_mul]
   have hA : ∀ y : (Af F)ˣ, coefAt (fun 𝔪 => A (Y 𝔪)) y = A y := fun y => by
     by_cases h : ∃ 𝔪, GenD (y : Af F) 𝔪
     · obtain ⟨𝔪, h⟩ := h
@@ -743,12 +711,12 @@ theorem UpperTheory.V.Sd.holMul :
         simp only [A, const_rat hψ.aut eb y (Units.mk0 ξ (ne_zero_of_pos h)) h] at e1
         change coefAt _ (algebraMap F (Af F) ξ * (y : Af F)) =
           cf a (algebraMap F (Af F) ξ * (y : Af F)) 1 * _ + cv a b (algebraMap F (Af F) ξ * (y : Af F)) 1 at e1
-        rw [cf, if_pos h, e1, cf_rat h, cv_rat h, one_mul]
+        rw [cf, ite_eq_left h, e1, cf_rat h, cv_rat h, one_mul]
         ring
       · have : cv a b y ξ = 0 := by
           by_contra h'
           exact h (cv_ne h').1
-        simp only [cf, if_neg h, this, zero_mul, add_zero]
+        simp only [cf, ite_eq_right h, this, zero_mul, add_zero]
     · rw [hχ, Pi.mul_apply, Nat.cast_add, add_div, Real.rpow_add hp]
       push_cast
       simp only [Pi.zero_apply]

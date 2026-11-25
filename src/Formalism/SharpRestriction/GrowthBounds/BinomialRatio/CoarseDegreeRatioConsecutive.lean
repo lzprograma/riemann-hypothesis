@@ -6,45 +6,7 @@ import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreeAlterna
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.LeAndHalfLeProdOneSubExpNegOfBounds
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ThresholdLowerBounds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
 
 @[expose] public section
@@ -128,7 +90,7 @@ theorem chain_first_tail {N r : ℕ} {LL : ChainLetters (N + 1)} {mu : Fin (N + 
     (h : IsChain LL mu) (hv : LL.vec 0 = true) (t : Fin r) : mu 1 t.succ = 0 := by
   obtain ⟨h0, hs⟩ := h
   have h1 := hs 0
-  rw [if_pos hv] at h1
+  rw [ite_eq_left hv] at h1
   obtain ⟨a, b, _⟩ := h1
   have ha := a t.succ
   have hb := b t.castSucc t.succ (by simp only [Fin.coe_castSucc, Fin.val_succ])
@@ -142,12 +104,12 @@ theorem finPos_eq (N n : ℕ) (h : n < N + 1) : finPos N n = ⟨n, h⟩ := by
 theorem pairChain_lt {s r : ℕ} (mu : Fin (2 * s + 1 + 1) → Fin (r + 1) → ℤ) (lam : Fin r → ℤ) (n : ℕ) (h : n < 2 * s + 1) :
     pairChain mu lam ⟨n, by omega⟩ = fun t : Fin r => mu ⟨n + 1, by omega⟩ t.succ := by
   unfold pairChain
-  exact dif_pos h
+  exact dite_eq_left h
 
 theorem pairChain_last {s r : ℕ} (mu : Fin (2 * s + 1 + 1) → Fin (r + 1) → ℤ) (lam : Fin r → ℤ) :
     pairChain mu lam ⟨2 * s + 1, by omega⟩ = lam := by
   unfold pairChain
-  exact dif_neg (Nat.lt_irrefl _)
+  exact dite_eq_right (Nat.lt_irrefl _)
 
 theorem pair_top {s r : ℕ} {A : ℕ} {Ai Ci : Fin s → ℕ} {mu : Fin (2 * s + 1 + 1) → Fin (r + 1) → ℤ}
     (h : IsChain (kLetters A Ai Ci) mu) (i : Fin s) :
@@ -161,12 +123,12 @@ theorem pair_top {s r : ℕ} {A : ℕ} {Ai Ci : Fin s → ℕ} {mu : Fin (2 * s 
   have hi := i.2
   have hV : Strip (mu ⟨2 * i.val + 2, by omega⟩) (mu ⟨2 * i.val + 1, by omega⟩) (Ai i) := by
     have := h.2 ⟨2 * i.val + 1, by omega⟩
-    rw [if_pos (show (kLetters A Ai Ci).vec ⟨2 * i.val + 1, by omega⟩ = true from
+    rw [ite_eq_left (show (kLetters A Ai Ci).vec ⟨2 * i.val + 1, by omega⟩ = true from
       decide_eq_true (Or.inr (by show (2 * i.val + 1) % 2 = 1; omega))), kLetters_deg_odd] at this
     exact this
   have hC : Strip (mu ⟨2 * i.val + 2, by omega⟩) (mu ⟨2 * i.val + 3, by omega⟩) (Ci i) := by
     have := h.2 ⟨2 * i.val + 2, by omega⟩
-    rw [if_neg (show ¬ (kLetters A Ai Ci).vec ⟨2 * i.val + 2, by omega⟩ = true from by
+    rw [ite_eq_right (show ¬ (kLetters A Ai Ci).vec ⟨2 * i.val + 2, by omega⟩ = true from by
       intro hh
       rcases of_decide_eq_true hh with h1 | h1
       · have : 2 * i.val + 2 = 0 := h1
@@ -207,7 +169,7 @@ theorem pair_top {s r : ℕ} {A : ℕ} {Ai Ci : Fin s → ℕ} {mu : Fin (2 * s 
 theorem jE_pair {s r : ℕ} (S : SegData s) (Ai : Fin s → ℕ) (mu : Fin (2 * s + 1 + 1) → Fin (r + 1) → ℤ) (i : Fin s)
     (h : S.sigma ≤ i.val) : jE S (pairLevel S Ai mu) i.val = (pairSg mu Ai i).toNat := by
   unfold jE
-  rw [dif_pos ⟨h, i.2⟩]
+  rw [dite_eq_left ⟨h, i.2⟩]
   simp only [pairLevel]
   congr 2
   exact Fin.ext (by simp only [uTop]; omega)
@@ -247,12 +209,12 @@ theorem pair_chain (p : ℕ) {s r : ℕ} (S : SegData s) (aTop : Fin s → ℕ) 
     have e : (if i.val < S.sigma then (pairBlock S rz ry Ai mu lam jp).w i else (pairBlock S rz ry Ai mu lam jp).o i) -
         jE S (pairLevel S Ai mu) i.val = (pairW mu i.val).toNat := by
       by_cases hσ : i.val < S.sigma
-      · rw [if_pos hσ, jE_S S _ hσ, Nat.sub_zero]
+      · rw [ite_eq_left hσ, jE_S S _ hσ, Nat.sub_zero]
         show (if i.val < S.sigma then (pairW mu i.val).toNat else 0) = _
-        rw [if_pos hσ]
-      · rw [if_neg hσ, jE_pair S Ai mu i (by omega)]
+        rw [ite_eq_left hσ]
+      · rw [ite_eq_right hσ, jE_pair S Ai mu i (by omega)]
         show (if i.val < S.sigma then 0 else (pairO mu Ai i).toNat) - _ = _
-        rw [if_neg hσ]
+        rw [ite_eq_right hσ]
         have := Int.toNat_of_nonneg (show 0 ≤ pairO mu Ai i by rw [eO]; omega)
         omega
     rw [e]
@@ -269,10 +231,10 @@ theorem pair_chain (p : ℕ) {s r : ℕ} (S : SegData s) (aTop : Fin s → ℕ) 
         jE S (pairLevel S Ai mu) i.val = Ci i - (pairSg mu Ai i).toNat := by
       have hcc : coarseC p S aTop (pairBlock S rz ry Ai mu lam jp) i = Ci i := rfl
       by_cases hσ : i.val < S.sigma
-      · rw [if_pos hσ, jE_S S _ hσ, Nat.sub_zero, hcc]
+      · rw [ite_eq_left hσ, jE_S S _ hσ, Nat.sub_zero, hcc]
         show Ci i - (if i.val < S.sigma then (pairSg mu Ai i).toNat else 0) = _
-        rw [if_pos hσ]
-      · rw [if_neg hσ, jE_pair S Ai mu i (by omega), hcc]
+        rw [ite_eq_left hσ]
+      · rw [ite_eq_right hσ, jE_pair S Ai mu i (by omega), hcc]
     rw [e]
     exact t2
   constructor
@@ -282,12 +244,12 @@ theorem pair_chain (p : ℕ) {s r : ℕ} (S : SegData s) (aTop : Fin s → ℕ) 
     exact chain_first_tail (N := 2 * s) hP.1 (by simp [kLetters]) t
   · rintro ⟨xv, hxv⟩
     obtain ⟨i, rfl | rfl⟩ : ∃ i, xv = 2 * i ∨ xv = 2 * i + 1 := ⟨xv / 2, by omega⟩
-    · rw [if_pos (by show decide ((2 * i) % 2 = 0) = true; exact decide_eq_true (by omega))]
+    · rw [ite_eq_left (by show decide ((2 * i) % 2 = 0) = true; exact decide_eq_true (by omega))]
       by_cases hi : i = s
       · subst hi
         exact hU
       · exact hW ⟨i, by omega⟩
-    · rw [if_neg (by
+    · rw [ite_eq_right (by
         show ¬ decide ((2 * i + 1) % 2 = 0) = true
         intro hh
         have := of_decide_eq_true hh
@@ -333,12 +295,12 @@ theorem pair_level (p : ℕ) {s r : ℕ} (S : SegData s) (aTop : Fin s → ℕ) 
     have e2 := chain_deg_E p S aTop b
       ((blockData p S aTop aPlus m b).letterAt ((blockData p S aTop aPlus m b).T.pos l + 1)) (uTop S l)
       (by show min (2 * (S.sigma + l.val) + 1) (2 * s + 1 - 1) = 2 * (S.sigma + l.val) + 1; omega)
-    rw [if_neg hσ] at e1 e2
+    rw [ite_eq_right hσ] at e1 e2
     have eO : pairO mu Ai (uTop S l) = pairW mu (uTop S l).val + pairSg mu Ai (uTop S l) := by unfold pairSg; ring
     have n5 := Int.toNat_of_nonneg t5
     have g1 : pairLevel S Ai mu l ≤ b.o (uTop S l) := by
       show (pairSg mu Ai (uTop S l)).toNat ≤ (if (uTop S l).val < S.sigma then 0 else (pairO mu Ai (uTop S l)).toNat)
-      rw [if_neg hσ]
+      rw [ite_eq_right hσ]
       have := Int.toNat_of_nonneg (show 0 ≤ pairO mu Ai (uTop S l) by rw [eO]; omega)
       omega
     have g2 : pairLevel S Ai mu l ≤ coarseC p S aTop b (uTop S l) := by
@@ -374,7 +336,7 @@ theorem pairC_zero {s r : ℕ} {A : ℕ} {Ai Ci : Fin s → ℕ} {mu : Fin (2 * 
     (h : IsChain (kLetters A Ai Ci) mu) : pairC mu 0 = A := by
   obtain ⟨h0, hs⟩ := h
   have h1 := hs 0
-  rw [if_pos (by simp [kLetters])] at h1
+  rw [ite_eq_left (by simp [kLetters])] at h1
   obtain ⟨ha, hb, h3⟩ := h1
   simp only [Fin.castSucc_zero, h0, Pi.zero_apply, Finset.sum_const_zero, sub_zero] at ha hb h3
   have ht : ∀ t : Fin r, mu (0 : Fin (2 * s + 1)).succ t.succ = 0 := fun t =>
@@ -440,13 +402,13 @@ theorem pair_thr (p : ℕ) {s r : ℕ} [NeZero r] (S : SegData s) (aTop : Fin s 
   · have hks : k.val < s - S.sigma := hk
     have eJ : (blockData p S aTop aPlus m b).T.J k = 2 * (S.sigma + k.val) + 1 := by
       show (if h : (k : ℕ) < S.t then 2 * (uTop S ⟨k, h⟩ : ℕ) + 1 else 2 * s + 1) = _
-      rw [dif_pos hk]
+      rw [dite_eq_left hk]
       rfl
     have eT : (blockData p S aTop aPlus m b).T.thr k =
         ((⌊((cap p S b (S.sigma + k.val) : ℤ) : ℝ) - m⌋ : ℤ) : WithTop ℤ) := by
       show (segmentCapacities p S b k).map (fun x : ℤ => ⌊(x : ℝ) - m⌋) = _
       unfold segmentCapacities
-      rw [dif_pos hk]
+      rw [dite_eq_left hk]
       rfl
     rw [eJ, eT, WithTop.coe_le_coe, finPos_eq (2 * s + 1) (2 * (S.sigma + k.val) + 1) (by omega),
       pairChain_lt mu lam (2 * (S.sigma + k.val) + 1) (by omega)]
@@ -454,11 +416,11 @@ theorem pair_thr (p : ℕ) {s r : ℕ} [NeZero r] (S : SegData s) (aTop : Fin s 
     exact le_trans (t7 0 h0) (hfl _ (by omega))
   · have eJ : (blockData p S aTop aPlus m b).T.J k = 2 * s + 1 := by
       show (if h : (k : ℕ) < S.t then 2 * (uTop S ⟨k, h⟩ : ℕ) + 1 else 2 * s + 1) = _
-      rw [dif_neg hk]
+      rw [dite_eq_right hk]
     have eT : (blockData p S aTop aPlus m b).T.thr k = ((⌊((cap p S b s : ℤ) : ℝ) - m⌋ : ℤ) : WithTop ℤ) := by
       show (segmentCapacities p S b k).map (fun x : ℤ => ⌊(x : ℝ) - m⌋) = _
       unfold segmentCapacities
-      rw [dif_neg hk]
+      rw [dite_eq_right hk]
       rfl
     rw [eJ, eT, WithTop.coe_le_coe, finPos_eq (2 * s + 1) (2 * s + 1) (by omega), pairChain_last]
     have h3 := (inter_strip hP.2).2.2 0 h0
@@ -553,7 +515,6 @@ theorem kept_pair_of_three_lines {C0 CYb Cde Ck CD Cb CE1 CE2 Cc H : ℝ}
   have hs := hstd X hD hI hc
   obtain ⟨⟨hP, hK⟩, hjp⟩ := ht
   have hk : 0 < X.k := by unfold Loc.k; positivity
-  have hkk : X.k = (X.m : ℝ) + 1 := rfl
   have hLa0 : 0 ≤ X.La C0 := le_trans zero_le_one hs.La1
   have hA0 : (0 : ℝ) ≤ ((X.seg C0 CE1 CE2 j).A0 X.p : ℝ) := by
     refine le_trans ?_ (hs.half_ratio_le_segment_base_of_std j)
@@ -603,9 +564,9 @@ theorem kept_pair_of_three_lines {C0 CYb Cde Ck CD Cb CE1 CE2 Cc H : ℝ}
       unfold pairSg; ring
     have n0 := Int.toNat_of_nonneg (show 0 ≤ pairO t.1 (clA C0 CE1 CE2 X j rz ry) i by rw [eO]; omega)
     have hσ : ¬ i.val < (X.seg C0 CE1 CE2 j).sigma := by omega
-    have eo : (pairMap C0 CE1 CE2 X j rz ry t).1.o i = (pairO t.1 (clA C0 CE1 CE2 X j rz ry) i).toNat := if_neg hσ
-    have ew : (pairMap C0 CE1 CE2 X j rz ry t).1.w i = 0 := if_neg hσ
-    have esg : (pairMap C0 CE1 CE2 X j rz ry t).1.sg i = 0 := if_neg hσ
+    have eo : (pairMap C0 CE1 CE2 X j rz ry t).1.o i = (pairO t.1 (clA C0 CE1 CE2 X j rz ry) i).toNat := ite_eq_right hσ
+    have ew : (pairMap C0 CE1 CE2 X j rz ry t).1.w i = 0 := ite_eq_right hσ
+    have esg : (pairMap C0 CE1 CE2 X j rz ry t).1.sg i = 0 := ite_eq_right hσ
     obtain ⟨u1, u2⟩ := hUi i hi
     refine ⟨?_, ?_, ew, esg⟩
     · rw [eo]
@@ -624,9 +585,9 @@ theorem kept_pair_of_three_lines {C0 CYb Cde Ck CD Cb CE1 CE2 Cc H : ℝ}
     have n5 := Int.toNat_of_nonneg t5
     have eO : pairO t.1 (clA C0 CE1 CE2 X j rz ry) i = pairW t.1 i.val + pairSg t.1 (clA C0 CE1 CE2 X j rz ry) i := by
       unfold pairSg; ring
-    have eo : (pairMap C0 CE1 CE2 X j rz ry t).1.o i = 0 := if_pos hi
-    have ew : (pairMap C0 CE1 CE2 X j rz ry t).1.w i = (pairW t.1 i.val).toNat := if_pos hi
-    have esg : (pairMap C0 CE1 CE2 X j rz ry t).1.sg i = (pairSg t.1 (clA C0 CE1 CE2 X j rz ry) i).toNat := if_pos hi
+    have eo : (pairMap C0 CE1 CE2 X j rz ry t).1.o i = 0 := ite_eq_left hi
+    have ew : (pairMap C0 CE1 CE2 X j rz ry t).1.w i = (pairW t.1 i.val).toNat := ite_eq_left hi
+    have esg : (pairMap C0 CE1 CE2 X j rz ry t).1.sg i = (pairSg t.1 (clA C0 CE1 CE2 X j rz ry) i).toNat := ite_eq_left hi
     obtain ⟨s1, s2⟩ := hSi i hi
     have c5 : (((pairSg t.1 (clA C0 CE1 CE2 X j rz ry) i).toNat : ℕ) : ℝ) =
         ((pairSg t.1 (clA C0 CE1 CE2 X j rz ry) i : ℤ) : ℝ) := by exact_mod_cast n5
@@ -660,7 +621,6 @@ theorem kept_pair_of_three_lines {C0 CYb Cde Ck CD Cb CE1 CE2 Cc H : ℝ}
       rfl
     have nD := Int.toNat_of_nonneg (show 0 ≤ pairD t.1 t.2.1 by rw [eD]; exact hd0)
     have cD : (((pairD t.1 t.2.1).toNat : ℕ) : ℝ) = ((pairD t.1 t.2.1 : ℤ) : ℝ) := by exact_mod_cast nD
-    have hB : (0 : ℝ) ≤ ((X.seg C0 CE1 CE2 j).bPlus : ℝ) := Nat.cast_nonneg _
     have hj : (t.2.2 : ℝ) ≤ X.La C0 * ((X.seg C0 CE1 CE2 j).bPlus : ℝ) / X.k :=
       le_trans (by exact_mod_cast hjp) (Nat.floor_le (by positivity))
     have hC : ∀ i : Fin (segS X.TT j), (clC C0 CE1 CE2 X j rz ry i : ℝ) ≤
@@ -684,8 +644,6 @@ theorem kept_pair_of_three_lines {C0 CYb Cde Ck CD Cb CE1 CE2 Cc H : ℝ}
         mul_comm (X.a : ℝ) (2 / (X.k * X.Y))]
     have hsum : ∑ i, (clC C0 CE1 CE2 X j rz ry i : ℝ) ≤
         ∑ i, 2 * (X.a : ℝ) / ((X.seg C0 CE1 CE2 j).P X.p i : ℝ) := Finset.sum_le_sum fun i _ => hC i
-    have hsum0 : (0 : ℝ) ≤ ∑ i, 2 * (X.a : ℝ) / ((X.seg C0 CE1 CE2 j).P X.p i : ℝ) :=
-      Finset.sum_nonneg fun i _ => by positivity
     have hq : X.La C0 / X.k * ∑ i, (clC C0 CE1 CE2 X j rz ry i : ℝ) ≤
         (X.La C0 / X.k + 4 / (X.p : ℝ) ^ 2) * ∑ i, 2 * (X.a : ℝ) / ((X.seg C0 CE1 CE2 j).P X.p i : ℝ) := by
       have a1 : X.La C0 / X.k * ∑ i, (clC C0 CE1 CE2 X j rz ry i : ℝ) ≤
@@ -723,7 +681,6 @@ theorem coarse_degree_ratio_consecutive {C0 Cde CE1 CE2 H : ℝ} {X : Loc} (hs :
   have hlt := (dist_pos_lt X.TT j l').2
   obtain ⟨k1, hk1⟩ := ho1
   obtain ⟨k2, hk2⟩ := ho2
-  have hdd : (segDists X.TT j).get l + 2 ≤ (segDists X.TT j).get l' := by omega
   set P := X.p ^ (segG X.TT j - (segDists X.TT j).get l) with hP
   set P' := X.p ^ (segG X.TT j - (segDists X.TT j).get l') with hP'
   have hp1 : 1 ≤ X.p := by have := hs.p5; omega
@@ -738,9 +695,7 @@ theorem coarse_degree_ratio_consecutive {C0 Cde CE1 CE2 H : ℝ} {X : Loc} (hs :
   have wb := hs.winB _ (pos_mem X.TT j l).1
   have wb' := hs.winB _ (pos_mem X.TT j l').1
   have hbe := hs.beLe
-  have hbe0 := hs.be0
   have hde := hs.de6
-  have hLK := hs.LaK
   have hk5 := hs.k5
   have hkQ := hs.kQ hH
   have hb := hs.bpos
@@ -759,7 +714,6 @@ theorem coarse_degree_ratio_consecutive {C0 Cde CE1 CE2 H : ℝ} {X : Loc} (hs :
 
   have hkP : X.k * (P' : ℝ) ≤ X.b' / 12 := by
     have h1 : X.k * (P' : ℝ) ≤ X.k * X.Q := mul_le_mul_of_nonneg_left (le_trans hPQ' hQ) (by linarith)
-    have h2 : X.k ^ 3 * X.Q ≤ X.b' := hkQ
     have h3 : 12 * (X.k * X.Q) ≤ X.k ^ 3 * X.Q := by
       have h12 : (12 : ℝ) ≤ X.k ^ 2 := by
         calc (12 : ℝ) ≤ 5 ^ 2 := by norm_num
@@ -774,7 +728,6 @@ theorem coarse_degree_ratio_consecutive {C0 Cde CE1 CE2 H : ℝ} {X : Loc} (hs :
     calc (X.p : ℝ) ^ 2 * A * P' = A * ((X.p : ℝ) ^ 2 * P') := by ring
       _ ≤ A * P := mul_le_mul_of_nonneg_left hPPr hA0
       _ ≤ _ := le_trans cb.1 wb.2
-  have e2 : X.b' * (1 - be X C0) - X.k * P' < A' * P' := by linarith [cb'.2, wb'.1]
   have hP'pos : (0 : ℝ) < P' := hP0'
   have hbb := mul_le_mul_of_nonneg_left hbe1 hb.le
   have key : (X.p : ℝ) ^ 2 * A * P' ≤ 2 * A' * P' := by linarith
@@ -792,7 +745,7 @@ theorem coarse_degree_prefix_sum {C0 Cde CE1 CE2 H : ℝ} {X : Loc} (hs : Std C0
   intro ⟨i, hi⟩
   induction i with
   | zero =>
-    simp only [Nat.not_lt_zero, if_false, Finset.sum_const_zero]
+    simp only [Nat.not_lt_zero, ite_false, Finset.sum_const_zero]
     positivity
   | succ i ih =>
     have ih' := ih (by omega)
@@ -805,12 +758,11 @@ theorem coarse_degree_prefix_sum {C0 Cde CE1 CE2 H : ℝ} {X : Loc} (hs : Std C0
       rw [← h2, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun l _ => ?_
       by_cases h1 : l.val < i
-      · rw [if_pos (by omega), if_pos h1, if_neg (fun h => by rw [h] at h1; simp at h1)]; ring
+      · rw [ite_eq_left (by omega), ite_eq_left h1, ite_eq_right (fun h => by rw [h] at h1; simp at h1)]; ring
       · by_cases h3 : l.val = i
-        · rw [if_pos (by omega), if_neg h1, if_pos (Fin.ext h3)]; ring
-        · rw [if_neg (by omega), if_neg h1, if_neg (fun h => h3 (by rw [h]))]; ring
+        · rw [ite_eq_left (by omega), ite_eq_right h1, ite_eq_left (Fin.ext h3)]; ring
+        · rw [ite_eq_right (by omega), ite_eq_right h1, ite_eq_right (fun h => h3 (by rw [h]))]; ring
     rw [e]
-    have hA : (0 : ℝ) ≤ (clA C0 CE1 CE2 X j rz ry ⟨i, by omega⟩ : ℝ) := Nat.cast_nonneg _
     have hp0 : (0 : ℝ) < (X.p : ℝ) ^ 2 := by linarith
     rw [div_eq_mul_inv] at ih' ⊢
     have hinv : (X.p : ℝ) ^ 2 * ((X.p : ℝ) ^ 2)⁻¹ = 1 := mul_inv_cancel₀ hp0.ne'

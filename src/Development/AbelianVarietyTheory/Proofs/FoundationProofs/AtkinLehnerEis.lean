@@ -6,55 +6,10 @@ public import Development.AbelianVarietyTheory.Definitions.Foundations.RepL
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EisensteinLatticeFunctionIsModularFormCoeffSeq
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsCuspFormCoeffSeqDirichletTwistLevelMulSq
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlashIntMatrixPosDetProperties
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RegularizedEisensteinLatticeSumDirectionIndep
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RegularizedEisensteinLatticeSumSlTwoSmul
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SummableRegularizedEisensteinLatticeTerm
-import Mathlib.Analysis.SpecialFunctions.RegularizedHypergeometric
-import Mathlib.GroupTheory.Nilpotent
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Newform
 
@@ -192,7 +147,7 @@ theorem latF_rows_subst : ∀ (N l : ℕ) (ν : DirichletCharacter ℂ N) (φ : 
   simp only [latF]
   by_cases h1 : (N : ℤ) ∣ y1
   · obtain ⟨m, rfl⟩ := h1
-    rw [if_pos (dvd_mul_right _ _)]
+    rw [ite_eq_left (dvd_mul_right _ _)]
     have hdiv : (N : ℤ) * m / N = m := Int.mul_ediv_cancel_left m hNz
     simp only [hdiv]
     have key : ((N : ℤ) * l ∣ N * m) ↔ ((l : ℤ) ∣ m) := by
@@ -211,7 +166,7 @@ theorem latF_rows_subst : ∀ (N l : ℕ) (ν : DirichletCharacter ℂ N) (φ : 
     push_cast
     by_cases h2 : (l : ℤ) ∣ m
     · obtain ⟨m2, rfl⟩ := h2
-      rw [if_pos ((key2).mpr (dvd_mul_right _ _)), if_pos (key.mpr (dvd_mul_right _ _))]
+      rw [ite_eq_left ((key2).mpr (dvd_mul_right _ _)), ite_eq_left (key.mpr (dvd_mul_right _ _))]
       have hlz : (l : ℤ) ≠ 0 := by exact_mod_cast hl.ne'
       have e1 : (l : ℤ) * m2 * (N * d) - y2 * (l * c) = l * (m2 * N * d - y2 * c) := by ring
       rw [e1, Int.mul_ediv_cancel_left _ hlz]
@@ -221,8 +176,8 @@ theorem latF_rows_subst : ∀ (N l : ℕ) (ν : DirichletCharacter ℂ N) (φ : 
         simp [mul_comm]
       · push_cast
         simp [mul_comm]
-    · rw [if_neg (fun h => h2 (key2.mp h)), if_neg (fun h => h2 (key.mp h))]
-  · rw [if_neg h1, if_neg]
+    · rw [ite_eq_right (fun h => h2 (key2.mp h)), ite_eq_right (fun h => h2 (key.mp h))]
+  · rw [ite_eq_right h1, ite_eq_right]
     intro h
     push_cast at h
     exact h1 (dvd_trans (dvd_mul_right _ _) h)
@@ -277,7 +232,7 @@ theorem lat_dilate : ∀ (j L N : ℕ) (v : ℤ × ℤ) (Φ : ℤ × ℤ → ℂ
   set Ψ : ℤ × ℤ → ℂ := fun y => if (N : ℤ) ∣ y.1 then Φ (y.1 / N, y.2) else 0 with hΨ
   have hΨι : ∀ x, Ψ (ι x) = Φ x := by
     intro x
-    simp only [hΨ, hιdef, dvd_mul_right, if_true, Int.mul_ediv_cancel_left _ hN']
+    simp only [hΨ, hιdef, dvd_mul_right, ite_true, Int.mul_ediv_cancel_left _ hN']
   unfold lat
   rw [← hvι]
   simp_rw [hdd]
@@ -291,7 +246,7 @@ theorem lat_dilate : ∀ (j L N : ℕ) (v : ℤ × ℤ) (Φ : ℤ × ℤ → ℂ
   by_cases h : (N : ℤ) ∣ y.1
   · obtain ⟨c, hc⟩ := h
     exact ⟨(c, y.2), by simp only [hιdef]; exact Prod.ext hc.symm rfl⟩
-  · exact absurd (by simp only [hΨ, h, if_false, zero_mul]) hy
+  · exact absurd (by simp only [hΨ, h, ite_false, zero_mul]) hy
 
 end GlobalTheory.EisM
 end -- clump:auto
@@ -481,7 +436,7 @@ theorem atkin_lehner_eis : ∀ (j N l : ℕ) (ω : DirichletCharacter ℂ l) (ν
   simp only [mul_one] at hMF''
   have hq2 : qs (C⁻¹ • eis j c'' (hat φ₂) fun _ => 1) = qs E₂ :=
     qs_eq_of_MF j (N * l) _ _ _ hj hNl (MF_smul _ _ _ _ _ hMF'') h2 (fun n hn => by
-      simp only [hE₂, eis, Pi.smul_apply, smul_eq_mul, if_neg hn, hChat, Finset.mul_sum]
+      simp only [hE₂, eis, Pi.smul_apply, smul_eq_mul, ite_eq_right hn, hChat, Finset.mul_sum]
       refine Finset.sum_congr rfl fun p _ => ?_
       field_simp)
 
@@ -557,7 +512,7 @@ theorem atkin_lehner_eis : ∀ (j N l : ℕ) (ω : DirichletCharacter ℂ l) (ν
               φ ((a : ZMod l) * (x.2 : ZMod l) + (r : ZMod l) * (-1)) := by
             refine Finset.sum_congr rfl fun r _ => ?_
             simp only [hΨ, latF, Prod.fst_sub, Prod.snd_sub, Prod.smul_mk, smul_eq_mul]
-            rw [if_pos (by obtain ⟨m, hm⟩ := h; exact ⟨m - r * c, by push_cast at hm ⊢; rw [hm]; ring⟩)]
+            rw [ite_eq_left (by obtain ⟨m, hm⟩ := h; exact ⟨m - r * c, by push_cast at hm ⊢; rw [hm]; ring⟩)]
             simp only [hφ₂, one_mul, map_intCast]
             congr 2
             · push_cast; rw [ZMod.natCast_self]; ring
@@ -565,7 +520,7 @@ theorem atkin_lehner_eis : ∀ (j N l : ℕ) (ω : DirichletCharacter ℂ l) (ν
         _ = 0 := by rw [← Finset.mul_sum, GlobalTheory.EisForm.sum_shift l φ _ _ isUnit_one.neg, hsum0, mul_zero]
     · refine Finset.sum_eq_zero fun r _ => ?_
       simp only [hΨ, latF, Prod.fst_sub, Prod.snd_sub, Prod.smul_mk, smul_eq_mul]
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h2; apply h
       have h3 : ((N * l : ℕ) : ℤ) ∣ (r : ℤ) * ((N : ℤ) * ((l : ℤ) * c)) := ⟨r * c, by push_cast; ring⟩
       simpa using dvd_add h2 h3

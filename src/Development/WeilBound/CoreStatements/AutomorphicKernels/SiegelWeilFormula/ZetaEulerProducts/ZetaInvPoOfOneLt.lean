@@ -12,57 +12,7 @@ public import GroundTheory.GlobalFields.TateThesis.DedekindZetaContinuation
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ZetaEulerProducts.SummablePrimesRpow
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Deligne
 public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.UniformSpace.Uniformizable
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Analysis.Complex.RemovableSingularity
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ZetaEulerProducts.FactorDifferentiable, Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ZetaEulerProducts.FinMod, Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ZetaEulerProducts.NormESpZpow, Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ZetaEulerProducts.ZetaEGrouped, Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ZetaEulerProducts.InvGammaRZo, Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ZetaEulerProducts.ZetaOrd, Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ZetaEulerProducts.ZetaInvPoOfOneLt
@@ -143,26 +93,26 @@ theorem hasProd_compl_finset {ι : Type*} [DecidableEq ι] (f g : ι → ℂ) (a
   let F : ι → ℂ := Set.mulIndicator {v | v ∉ S} f
   let k : ι → ℂ := fun v => if v ∈ T then (g v)⁻¹ * F v else 1
   have hkT : HasProd k (∏ v ∈ T, k v) :=
-    hasProd_prod_of_ne_finset_one (fun v hv => if_neg hv)
+    hasProd_prod_of_ne_finset_one (fun v hv => ite_eq_right hv)
   have hgk : ∀ v, g v * k v = F v := by
     intro v
     by_cases hv : v ∈ T
     · show g v * (if v ∈ T then (g v)⁻¹ * F v else 1) = F v
-      rw [if_pos hv, ← mul_assoc, mul_inv_cancel₀ (hg0 v hv), one_mul]
+      rw [ite_eq_left hv, ← mul_assoc, mul_inv_cancel₀ (hg0 v hv), one_mul]
     · have hvS : v ∉ S := fun h => hv (hST h)
       show g v * (if v ∈ T then (g v)⁻¹ * F v else 1) = Set.mulIndicator {v | v ∉ S} f v
-      rw [if_neg hv, mul_one, Set.mulIndicator_of_mem (show v ∈ {v | v ∉ S} from hvS), hfg v hv]
+      rw [ite_eq_right hv, mul_one, Set.mulIndicator_of_mem (show v ∈ {v | v ∉ S} from hvS), hfg v hv]
   have hFT : ∏ v ∈ T, F v = ∏ v ∈ T \ S, f v := by
     rw [Finset.sdiff_eq_filter, Finset.prod_filter]
     refine Finset.prod_congr rfl (fun v _ => ?_)
     by_cases hvS : v ∈ S
-    · rw [if_neg (not_not.2 hvS)]
+    · rw [ite_eq_right (not_not.2 hvS)]
       exact Set.mulIndicator_of_notMem (show v ∉ {v | v ∉ S} from not_not.2 hvS) f
-    · rw [if_pos hvS]
+    · rw [ite_eq_left hvS]
       exact Set.mulIndicator_of_mem (show v ∈ {v | v ∉ S} from hvS) f
   have hkprod : ∏ v ∈ T, k v = (∏ v ∈ T, (g v)⁻¹) * ∏ v ∈ T \ S, f v := by
     rw [← hFT, ← Finset.prod_mul_distrib]
-    exact Finset.prod_congr rfl (fun v hv => if_pos hv)
+    exact Finset.prod_congr rfl (fun v hv => ite_eq_left hv)
   have hF : HasProd F (a * (∏ v ∈ T, (g v)⁻¹) * ∏ v ∈ T \ S, f v) := by
     have h := hg.mul hkT
     rw [hkprod, ← mul_assoc] at h
@@ -403,10 +353,10 @@ theorem zeta_pole (K : Type) [Field K] [NumberField K] :
       ∀ᶠ s in 𝓝[≠] (1 : ℂ), (s - 1) * continuedDedekindZeta K s = A s := by
   refine ⟨Function.update (fun s => (s - 1) * continuedDedekindZeta K s) 1 (dedekindZeta_residue K : ℂ),
     (differentiable_sub_one_mul_continuedDedekindZeta K).analyticAt 1, ?_, ?_⟩
-  · rw [Function.update_apply, if_pos rfl]
+  · rw [Function.update_apply, ite_eq_left rfl]
     exact Complex.ofReal_ne_zero.mpr (dedekindZeta_residue_ne_zero K)
   · filter_upwards [self_mem_nhdsWithin] with s hs
-    rw [Function.update_apply, if_neg (show s ≠ 1 from hs)]
+    rw [Function.update_apply, ite_eq_right (show s ≠ 1 from hs)]
 
 theorem completed_zeta_continued_eq (K : Type) [Field K] [NumberField K] {s : ℂ} (hs0 : s ≠ 0) :
     continuedDedekindZeta K s = ((|(discr K : ℝ)| : ℝ) : ℂ) ^ (-(s / 2)) *
@@ -464,7 +414,7 @@ theorem zeta_zo_nonpos (K : Type) [Field K] [NumberField K] (j : ℤ) (hj : j �
     have Z := ((ZO.of_analytic hb.1 hb.2).mul hG).mul (ZO.of_analytic hΛa hΛ0)
     have hord : nrRealPlaces K * (if Even j then 1 else 0) + nrComplexPlaces K - (if j = 0 then 1 else 0)
         = 0 + ((if Even j then 1 else 0) * nrRealPlaces K + 1 * nrComplexPlaces K) + 0 := by
-      rw [if_neg hne, Nat.sub_zero]
+      rw [ite_eq_right hne, Nat.sub_zero]
       ring
     rw [hord]
     refine Z.congr ?_
@@ -494,19 +444,19 @@ theorem zeta_zo_nonpos (K : Type) [Field K] [NumberField K] (j : ℤ) (hj : j �
           differentiableAt_id.mul (differentiableAt_completedDedekindZeta K hz0 hz1)
         refine hd.congr_of_eventuallyEq ?_
         filter_upwards [isOpen_compl_singleton.mem_nhds hz0] with w hw
-        rw [hFdef, Function.update_apply, if_neg (show w ≠ 0 from hw)]
+        rw [hFdef, Function.update_apply, ite_eq_right (show w ≠ 0 from hw)]
       · rw [hFdef]
         exact continuousAt_update_same.mpr hT
     unfold ZO at hG ⊢
     obtain ⟨u, hu, hu0, hGu⟩ := hG
     refine ⟨fun s => ((|(discr K : ℝ)| : ℝ) : ℂ) ^ (-(s / 2)) * u s * F s, (hb0.1.mul hu).mul hFa, ?_, ?_⟩
     · refine mul_ne_zero (mul_ne_zero hb0.2 hu0) ?_
-      rw [hFdef, Function.update_apply, if_pos rfl]
+      rw [hFdef, Function.update_apply, ite_eq_left rfl]
       exact hL0
     · filter_upwards [self_mem_nhdsWithin, hGu] with s hs hGs
       rw [completed_zeta_continued_eq K hs, hGs]
       have hFs : F s = s * completedDedekindZeta K s := by
-        rw [hFdef, Function.update_apply, if_neg (show s ≠ 0 from hs)]
+        rw [hFdef, Function.update_apply, ite_eq_right (show s ≠ 0 from hs)]
       rw [hFs, pow_succ]
       ring
 
@@ -541,7 +491,7 @@ theorem factorF_zo (v : HeightOneSpectrum (𝓞 F)) (j : ℤ) :
   by_cases hj : j = 0
   · subst hj
     simpa using factor_zo_zero _ hN
-  · rw [if_neg hj]
+  · rw [ite_eq_right hj]
     simpa using factor_zo _ hN 1 (by simp) j hj
 
 theorem lOrd_even (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (S : Finset (HeightOneSpectrum (𝓞 F))) (j : ℤ)
@@ -578,9 +528,9 @@ theorem lOrd_even (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (S : Finset (HeightO
       have hP := (zeta_inv_po_of_one_lt F hre).mul
         (PO.prod S (fun v s => (1 - (Ideal.absNorm v.asIdeal : ℂ) ^ (-s))⁻¹) (fun _ => if j = 0 then 1 else 0)
           fun v _ => (factorF_zo v j).inv)
-      rw [if_pos hj1]
+      rw [ite_eq_left hj1]
       exact hP.mono (by simp [hj0])
-    · rw [if_neg hj1]
+    · rw [ite_eq_right hj1]
       have hle : j ≤ 0 := by omega
       have hP := (zeta_zo_nonpos F j hle).inv.mul
         (PO.prod S (fun v s => (1 - (Ideal.absNorm v.asIdeal : ℂ) ^ (-s))⁻¹) (fun _ => if j = 0 then 1 else 0)
@@ -590,13 +540,6 @@ theorem lOrd_even (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (S : Finset (HeightO
       by_cases hj0 : j = 0
       · simp [hj0, hFr, hFc] <;> omega
       · simp [hj0, hFr, hFc, hj]
-
-private theorem hasProd_inv' {ι : Type} {f : ι → ℂ} {a : ℂ} (h : HasProd f a) (ha : a ≠ 0) :
-    HasProd (fun i => (f i)⁻¹) a⁻¹ := by
-  unfold HasProd at h ⊢
-  convert h.inv₀ ha using 1
-  funext t
-  exact Finset.prod_inv_distrib _
 
 theorem lOrd_odd (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (S : Finset (HeightOneSpectrum (𝓞 F))) (j : ℤ)
     (hj : ¬ Even j) :
@@ -629,7 +572,7 @@ theorem lOrd_odd (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (S : Finset (HeightOn
   have hneFj : ∀ v : HeightOneSpectrum (𝓞 F), (1 - (Ideal.absNorm v.asIdeal : ℂ) ^ (-(j : ℂ))) ≠ 0 :=
     fun v => by simpa using factor_ne_zero_int _ (_root_.PositivityTheory.Lord.two_le_absNorm' F v) 1 (by simp) j hj0
   have hesp : ∀ v : HeightOneSpectrum (𝓞 F), eSp E v ^ j = eSp E v := fun v => by
-    rw [eSp_zpow, if_neg hj]
+    rw [eSp_zpow, ite_eq_right hj]
   set T : Finset (HeightOneSpectrum (𝓞 F)) := S ∪ (badSet_finite F E).toFinset with hT
   refine ⟨fun s => ((continuedDedekindZeta E s)⁻¹ * continuedDedekindZeta F s *
       ∏ v ∈ T, ((∏ P ∈ fib F E v, (1 - (Ideal.absNorm P.asIdeal : ℂ) ^ (-s))) *
@@ -646,7 +589,7 @@ theorem lOrd_odd (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (S : Finset (HeightOn
     have hs0 : 0 < s.re := by linarith
     have hFinv : HasProd (fun v : HeightOneSpectrum (𝓞 F) => (1 - (Ideal.absNorm v.asIdeal : ℂ) ^ (-s))⁻¹)
         (continuedDedekindZeta F s) := by
-      have := hasProd_inv' (zeta_euler F hs).1 (inv_ne_zero (zeta_euler F hs).2)
+      have := (zeta_euler F hs).1.inv₀ (inv_ne_zero (zeta_euler F hs).2)
       rwa [inv_inv] at this
     have hg := (zetaE_grouped (F := F) (E := E) hs).mul hFinv
     have key := hasProd_compl_finset (fun v => 1 - eSp E v * (Ideal.absNorm v.asIdeal : ℂ) ^ (-s))
@@ -666,7 +609,7 @@ theorem lOrd_odd (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (S : Finset (HeightOn
       have h1 := ZO.prod (fib F E v) (fun P s => 1 - (Ideal.absNorm P.asIdeal : ℂ) ^ (-s)) (fun _ => 0)
         (fun P _ => by
           have := factorF_zo P j
-          rwa [if_neg hj0] at this)
+          rwa [ite_eq_right hj0] at this)
       have h3 : ZO (fun s => (1 - (Ideal.absNorm v.asIdeal : ℂ) ^ (-s))⁻¹) (j : ℂ) 0 :=
         ZO.of_analytic ((hfacF v j).inv (hneFj v)) (inv_ne_zero (hneFj v))
       have := h1.mul h3
@@ -684,7 +627,7 @@ theorem lOrd_odd (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (S : Finset (HeightOn
       simp only [Finset.sum_const_zero] at this
       exact this
     by_cases hj1 : 1 ≤ j
-    · rw [if_pos hj1]
+    · rw [ite_eq_left hj1]
       by_cases hj1' : j = 1
       · subst hj1'
         obtain ⟨AE, hAE, hAE1, hevE⟩ := zeta_pole E
@@ -703,7 +646,7 @@ theorem lOrd_odd (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (S : Finset (HeightOn
         have hj1c : (j : ℂ) ≠ 1 := by exact_mod_cast hj1'
         have hZ := (zeta_inv_po_of_one_lt E hre).mul (PO.of_analytic (zeta_analyticAt F hj1c))
         exact ((hZ.mul hPg).mul hPf).mono (by norm_num)
-    · rw [if_neg hj1, if_neg hj0]
+    · rw [ite_eq_right hj1, ite_eq_right hj0]
       have hle : j ≤ 0 := by omega
       have hj1c : (j : ℂ) ≠ 1 := by exact_mod_cast (by omega : j ≠ 1)
       have hZ := ((zeta_zo_nonpos E j hle).inv).mul (PO.of_analytic (zeta_analyticAt F hj1c))

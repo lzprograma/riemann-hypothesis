@@ -67,22 +67,6 @@ theorem locLen_cross {V : Ideal R} (hV : V.IsPrime) {f g u v : R} (hrel : f * v 
 
 end Ring
 
-section Homog
-
-variable {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fintype (ι k)]
-
-end Homog
-
-section Models
-
-variable {Ω : Type*} [Field Ω] {ι ν κ : Type u} [Fintype ι] [Fintype ν] [Fintype κ]
-  {E : Type*} [AddCommGroup E] [Module Ω E] {Φ : Type*} [Field Φ] [Algebra Ω Φ]
-  (x : ι → Ω) (δ : ν → Ω) (e : Module.Basis (Fin 2) Ω E) (φ : κ → E →ₗ[Ω] Ω) (a₀ : Φ)
-
-
-
-end Models
-
 end DiagPull
 
 end

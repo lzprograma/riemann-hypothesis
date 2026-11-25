@@ -29,7 +29,7 @@ theorem antiB_sq (t : K) (s : ℕ) : antiB t s * antiB t s = (t * t) • (1 : Ma
     split_ifs <;> first | omega | simp
   · intro j _ hj
     simp only [antiB]
-    rw [if_neg, zero_mul]
+    rw [ite_eq_right, zero_mul]
     intro h
     apply hj
     ext

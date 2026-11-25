@@ -59,19 +59,7 @@ def lo_edge (G : GAtP p) (v : Fin G.P.nV) (A : GL (Fin (G.P.m + 1)) (G.P.Qq v))
 
 theorem lo_edge_inv' (G : GAtP p) (v : Fin G.P.nV) (A : GL (Fin (G.P.m + 1)) (G.P.Qq v))
     (e : Edge (G.P.W v) (G.P.Qq v) (G.P.m + 1)) : lo_edge G v A (lo_edge G v A⁻¹ e) = e := by
-  have hm : ∀ S : Submodule (G.P.W v) (Fin (G.P.m + 1) → G.P.Qq v),
-      (S.map (nt_phi (G.P.W v) A⁻¹)).map (nt_phi (G.P.W v) A) = S := by
-    intro S
-    rw [← Submodule.map_comp]
-    have : (nt_phi (G.P.W v) A).comp (nt_phi (G.P.W v) A⁻¹) = LinearMap.id := by
-      refine LinearMap.ext fun x => ?_
-      simp only [LinearMap.comp_apply, nt_phi, LinearMap.restrictScalars_apply, Matrix.mulVecLin_apply,
-        Matrix.mulVec_mulVec, LinearMap.id_apply]
-      rw [Units.mul_inv, Matrix.one_mulVec]
-    rw [this, Submodule.map_id]
-  cases e with
-  | mk src tgt =>
-    simp only [lo_edge, hm]
+  cases e; simp only [lo_edge, nt_map_inv']
 
 theorem lo_isEdge (G : GAtP p) (v : Fin G.P.nV) (A : GL (Fin (G.P.m + 1)) (G.P.Qq v))
     (e : Edge (G.P.W v) (G.P.Qq v) (G.P.m + 1)) (he : IsEdge p (G.P.n' v) G.P.r e) :
@@ -136,18 +124,6 @@ theorem lo_Nsrc (G : GAtP p) (v : Fin G.P.nV) (tv : ℕ) (A : GL (Fin (G.P.m + 1
     (hx : x ∈ Nsrc (O := G.O) p (G.P.n' v) (G.P.ι v) (G.P.σ v) G.P.w G.P.r (G.P.lam0 v) tv Lv) :
     je_locV G v A x ∈ Nsrc (O := G.O) p (G.P.n' v) (G.P.ι v) (G.P.σ v) G.P.w G.P.r (G.P.lam0 v) tv
       (Lv.map (nt_phi (G.P.W v) A)) := by
-  have hid1 : (nt_phi (G.P.W v) A).comp (nt_phi (G.P.W v) A⁻¹) = LinearMap.id := by
-    refine LinearMap.ext fun x => ?_
-    simp only [LinearMap.comp_apply, nt_phi, LinearMap.restrictScalars_apply, Matrix.mulVecLin_apply,
-      Matrix.mulVec_mulVec, LinearMap.id_apply]
-    rw [Units.mul_inv, Matrix.one_mulVec]
-  have hid2 : (nt_phi (G.P.W v) A⁻¹).comp (nt_phi (G.P.W v) A) = LinearMap.id := by
-    refine LinearMap.ext fun x => ?_
-    simp only [LinearMap.comp_apply, nt_phi, LinearMap.restrictScalars_apply, Matrix.mulVecLin_apply,
-      Matrix.mulVec_mulVec, LinearMap.id_apply]
-    rw [Units.inv_mul, Matrix.one_mulVec]
-  have hmm : ∀ S : Submodule (G.P.W v) (Fin (G.P.m + 1) → G.P.Qq v), (S.map (nt_phi (G.P.W v) A)).map (nt_phi (G.P.W v) A⁻¹) = S := by
-    intro S; rw [← Submodule.map_comp, hid2, Submodule.map_id]
   obtain ⟨hx1, hx2⟩ := Submodule.mem_inf.1 hx
   refine Submodule.mem_inf.2 ⟨?_, ?_⟩
   · obtain ⟨y, hy, rfl⟩ := hx1
@@ -164,7 +140,7 @@ theorem lo_Nsrc (G : GAtP p) (v : Fin G.P.nV) (tv : ℕ) (A : GL (Fin (G.P.m + 1
     have hE := lo_isEdge G v A⁻¹ e' he'
     have hsrc'' : (lo_edge G v A⁻¹ e').src = Lv := by
       show e'.src.map (nt_phi (G.P.W v) A⁻¹) = Lv
-      rw [hsrc, hmm]
+      rw [hsrc, nt_map_inv]
     have hx3 := (Submodule.mem_iInf _).1 (hx2 (lo_edge G v A⁻¹ e')) ⟨hE, hsrc''⟩
     have := lo_Re G v A (lo_edge G v A⁻¹ e') hE x hx3
     rwa [lo_edge_inv'] at this
@@ -175,18 +151,6 @@ theorem lo_Ntgt (G : GAtP p) (v : Fin G.P.nV) (tv : ℕ) (A : GL (Fin (G.P.m + 1
       (Lv.map (nt_phi (G.P.W v) A))) :
     (je_locV G v A).dualMap φ ∈
       Ntgt (O := G.O) p (G.P.n' v) (G.P.ι v) (G.P.σ v) G.P.w G.P.r (G.P.lam0 v) tv Lv := by
-  have hid1 : (nt_phi (G.P.W v) A).comp (nt_phi (G.P.W v) A⁻¹) = LinearMap.id := by
-    refine LinearMap.ext fun x => ?_
-    simp only [LinearMap.comp_apply, nt_phi, LinearMap.restrictScalars_apply, Matrix.mulVecLin_apply,
-      Matrix.mulVec_mulVec, LinearMap.id_apply]
-    rw [Units.mul_inv, Matrix.one_mulVec]
-  have hid2 : (nt_phi (G.P.W v) A⁻¹).comp (nt_phi (G.P.W v) A) = LinearMap.id := by
-    refine LinearMap.ext fun x => ?_
-    simp only [LinearMap.comp_apply, nt_phi, LinearMap.restrictScalars_apply, Matrix.mulVecLin_apply,
-      Matrix.mulVec_mulVec, LinearMap.id_apply]
-    rw [Units.inv_mul, Matrix.one_mulVec]
-  have hmm : ∀ S : Submodule (G.P.W v) (Fin (G.P.m + 1) → G.P.Qq v), (S.map (nt_phi (G.P.W v) A)).map (nt_phi (G.P.W v) A⁻¹) = S := by
-    intro S; rw [← Submodule.map_comp, hid2, Submodule.map_id]
   obtain ⟨hφ1, hφ2⟩ := Submodule.mem_inf.1 hφ
   refine Submodule.mem_inf.2 ⟨?_, ?_⟩
   · obtain ⟨ψ, hψ, rfl⟩ := hφ1
@@ -225,25 +189,6 @@ theorem lo_at (G : GAtP p) (v : Fin G.P.nV) (t D : ℕ) (κ : ℝ) (cStar : ℕ)
     (h : LPprimeAt (O := G.O) p (G.P.n' v) (G.P.ι v) (G.P.σ v) G.P.w G.P.r (G.P.lam0 v) t D κ cStar L) :
     LPprimeAt (O := G.O) p (G.P.n' v) (G.P.ι v) (G.P.σ v) G.P.w G.P.r (G.P.lam0 v) t D κ cStar
       (L.map (nt_phi (G.P.W v) A)) := by
-  have hid1 : (nt_phi (G.P.W v) A).comp (nt_phi (G.P.W v) A⁻¹) = LinearMap.id := by
-    refine LinearMap.ext fun x => ?_
-    simp only [LinearMap.comp_apply, nt_phi, LinearMap.restrictScalars_apply, Matrix.mulVecLin_apply,
-      Matrix.mulVec_mulVec, LinearMap.id_apply]
-    rw [Units.mul_inv, Matrix.one_mulVec]
-  have hid2 : (nt_phi (G.P.W v) A⁻¹).comp (nt_phi (G.P.W v) A) = LinearMap.id := by
-    refine LinearMap.ext fun x => ?_
-    simp only [LinearMap.comp_apply, nt_phi, LinearMap.restrictScalars_apply, Matrix.mulVecLin_apply,
-      Matrix.mulVec_mulVec, LinearMap.id_apply]
-    rw [Units.inv_mul, Matrix.one_mulVec]
-  have hmm : ∀ S : Submodule (G.P.W v) (Fin (G.P.m + 1) → G.P.Qq v), (S.map (nt_phi (G.P.W v) A)).map (nt_phi (G.P.W v) A⁻¹) = S := by
-    intro S; rw [← Submodule.map_comp, hid2, Submodule.map_id]
-  have hlat : ∀ S : Submodule (G.P.W v) (Fin (G.P.m + 1) → G.P.Qq v), IsLattice (G.P.W v) S → IsLattice (G.P.W v) (S.map (nt_phi (G.P.W v) A)) := by
-    rintro _ ⟨g, hg, rfl⟩
-    refine ⟨(A : Matrix (Fin (G.P.m + 1)) (Fin (G.P.m + 1)) (G.P.Qq v)) * g, ?_, ?_⟩
-    · rw [Matrix.det_mul]; exact (Matrix.isUnits_det_units A).mul hg
-    · unfold colSpan
-      rw [Submodule.map_span, ← Set.range_comp]
-      congr 2
   obtain ⟨M, e, F, h1, h2, h3, n, hn, u, Mm, hu⟩ := h
   refine ⟨M, fun i => lo_edge G v A (e i), fun i => je_locV G v A (F i),
     fun i => ⟨lo_isEdge G v A (e i) (h1 i).1, ?_⟩, fun i => ?_, fun i e' he' hsrc hne => ?_, n, hn, ?_⟩
@@ -254,7 +199,7 @@ theorem lo_at (G : GAtP p) (v : Fin G.P.nV) (t D : ℕ) (κ : ℝ) (cStar : ℕ)
     have hsrc'' : (lo_edge G v A⁻¹ e').src = (e i).src := by
       show e'.src.map (nt_phi (G.P.W v) A⁻¹) = _
       rw [hsrc]
-      exact hmm _
+      exact nt_map_inv A _
     have hne'' : lo_edge G v A⁻¹ e' ≠ e i := by
       intro heq
       apply hne
@@ -267,8 +212,8 @@ theorem lo_at (G : GAtP p) (v : Fin G.P.nV) (t D : ℕ) (κ : ℝ) (cStar : ℕ)
     show _ = je_locV G v A (F i)
     rw [← hyF]
     simp [LinearMap.lsmul_apply, map_smul]
-  · have hAL : (L.map (nt_phi (G.P.W v) A)).map (nt_phi (G.P.W v) A⁻¹) = L := hmm L
-    have hLA := hlat L hL
+  · have hAL : (L.map (nt_phi (G.P.W v) A)).map (nt_phi (G.P.W v) A⁻¹) = L := nt_map_inv A L
+    have hLA := nt_lat_map A L hL
     let T := LinearMap.codRestrict
       (Ntgt (O := G.O) p (G.P.n' v) (G.P.ι v) (G.P.σ v) G.P.w G.P.r (G.P.lam0 v) t (L.map (nt_phi (G.P.W v) A)))
       ((((je_locV G v A⁻¹).dualMap).restrictScalars G.O).comp

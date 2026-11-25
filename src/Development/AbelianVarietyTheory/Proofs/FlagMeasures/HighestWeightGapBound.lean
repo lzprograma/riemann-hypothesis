@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.SmoothMatrixMaps.TmAContDiffMulLeft
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ActSingleNeZero
 public import Formalism.RealPlaceAnalysis.StatementU
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SymmetricKMapEqZeroOfVminusSlices
@@ -249,8 +250,8 @@ theorem val_mem {j : ℕ} (F : Arr V n j) (hF : F ∈ arrV0 ε E u j) (α : Fin 
     F α ∈ kSpan ε E u := by
   have h := (mem_arrV0_iff_forall_mem_kSpan ε E u F).mp hF α
   by_cases hc : ∀ i, ε (α i).1 ≠ ε (α i).2
-  · rwa [if_pos hc] at h
-  · rw [if_neg hc, Submodule.mem_bot] at h
+  · rwa [ite_eq_left hc] at h
+  · rw [ite_eq_right hc, Submodule.mem_bot] at h
     rw [h]
     exact Submodule.zero_mem _
 
@@ -261,10 +262,10 @@ theorem mapArr_mem (hι : ∀ c d, ε c = ε d → ∀ x ∈ kSpan ε E u, ι (E
   rw [mapArr_apply]
   have h := hF α
   by_cases hc : ∀ i, ε (α i).1 ≠ ε (α i).2
-  · rw [if_pos hc] at h ⊢
+  · rw [ite_eq_left hc] at h ⊢
     rw [kSpan_map ε E E' ι u hι]
     exact Submodule.mem_map_of_mem h
-  · rw [if_neg hc, Submodule.mem_bot] at h ⊢
+  · rw [ite_eq_right hc, Submodule.mem_bot] at h ⊢
     rw [h, map_zero]
 
 theorem mapArr_arrE (hι : ∀ c d, ε c = ε d → ∀ x ∈ kSpan ε E u, ι (E c d x) = E' c d (ι x))
@@ -342,7 +343,7 @@ theorem uniqAlg : ∀ (V : Type) [NormedAddCommGroup V] [InnerProductSpace ℂ V
         rw [mem_arrV0_iff_forall_mem_kSpan]
         intro α
         by_cases h : α = α0
-        · rw [h, if_pos hc0]
+        · rw [h, ite_eq_left hc0]
           simpa [F] using hz
         · simp [F, h]
       have hθ : thetaA E' _ (mapArr ι n _ F) = jmW E' α0 (ι z) := by
@@ -477,24 +478,7 @@ theorem eword_local {f f' : Matrix (Fin n) (Fin n) ℂ → ℂ} {U : Set (Matrix
 theorem eword_comb {f f' : Matrix (Fin n) (Fin n) ℂ → ℂ} (hf : SmoothOnG ε f) (hf' : SmoothOnG ε f') (c : ℂ)
     (w : List (Fin n × Fin n)) :
     ∀ g, inUJ ε g → Eword ε w (fun x => f x + c * f' x) g = Eword ε w f g + c * Eword ε w f' g := by
-  induction w with
-  | nil => intro g _; rfl
-  | cons p w ih =>
-    intro g hg
-    have hE := eab_local (ε := ε) isOpen_univ (fun x _ hx => ih x hx) p.1 p.2 g trivial hg
-    show Eab ε p.1 p.2 (Eword ε w _) g = Eab ε p.1 p.2 (Eword ε w f) g + c * Eab ε p.1 p.2 (Eword ε w f') g
-    rw [hE]
-    have hs1 := eword_smooth hf w
-    have hs2 := eword_smooth hf' w
-    have A := cpartMem n ε (Matrix.single p.1 p.2 1)
-    have r1 := (rdLin n ε _ _ _ _ 0 c g hs1 hs2 A.1 A.1 hg).2.2
-    have r2 := (rdLin n ε _ _ _ _ 0 c g hs1 hs2 A.2.1 A.2.1 hg).2.2
-    show Rd _ (fun x => Eword ε w f x + c * Eword ε w f' x) g +
-        Complex.I * Rd _ (fun x => Eword ε w f x + c * Eword ε w f' x) g =
-      (Rd _ (Eword ε w f) g + Complex.I * Rd _ (Eword ε w f) g) +
-        c * (Rd _ (Eword ε w f') g + Complex.I * Rd _ (Eword ε w f') g)
-    rw [r1, r2]
-    ring
+  first | exact _root_.ReciprocityTheory.ChartRestriction.DS.Lap.tmA_eword_lin | exact @_root_.ReciprocityTheory.ChartRestriction.DS.Lap.tmA_eword_lin | apply _root_.ReciprocityTheory.ChartRestriction.DS.Lap.tmA_eword_lin <;> assumption
 
 theorem inUJ_one : inUJ ε (1 : Matrix (Fin n) (Fin n) ℂ) := by
   show (1 : Matrix (Fin n) (Fin n) ℂ)ᴴ * Jm ε * 1 = Jm ε
@@ -520,15 +504,8 @@ theorem eword_append (w w' : List (Fin n × Fin n)) (f : Matrix (Fin n) (Fin n) 
 
 theorem eword_left (w : List (Fin n × Fin n)) (f : Matrix (Fin n) (Fin n) ℂ → ℂ) (h : Matrix (Fin n) (Fin n) ℂ) :
     Eword ε w (fun x => f (h * x)) = fun g => Eword ε w f (h * g) := by
-  induction w with
-  | nil => rfl
-  | cons p w ih =>
-    funext g
-    show Eab ε p.1 p.2 (Eword ε w fun x => f (h * x)) g = Eab ε p.1 p.2 (Eword ε w f) (h * g)
-    rw [ih]
-    show Rd _ (fun x => Eword ε w f (h * x)) g + Complex.I * Rd _ (fun x => Eword ε w f (h * x)) g =
-      Rd _ (Eword ε w f) (h * g) + Complex.I * Rd _ (Eword ε w f) (h * g)
-    rw [rdLeft n (Eword ε w f) _ h g, rdLeft n (Eword ε w f) _ h g]
+  intros
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.Lap.tmA_eword_left <;> assumption
 
 theorem eword_gl {f : Matrix (Fin n) (Fin n) ℂ → ℂ} (hf : SmoothOnG ε f) (w w' : List (Fin n × Fin n))
     (a b c d : Fin n) :

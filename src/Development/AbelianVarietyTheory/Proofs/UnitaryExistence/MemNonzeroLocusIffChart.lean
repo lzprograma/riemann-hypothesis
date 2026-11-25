@@ -48,7 +48,6 @@ open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCate
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.H1.SectionArithmetic
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.AbLaw
 
 noncomputable section
@@ -65,11 +64,6 @@ theorem mem_nonzeroLocus_iff_sval {K : Type} [Fintype K] {φ : K → (Y ⟶ X)} 
   exact isUnit_sval s (𝟙 Y) y hJ k hk
 
 end General
-
-section Group
-variable {S : Scheme.{0}} (A : Over S) [GrpObj A]
-
-end Group
 
 end GlobalTheory.AbVarProj
 end

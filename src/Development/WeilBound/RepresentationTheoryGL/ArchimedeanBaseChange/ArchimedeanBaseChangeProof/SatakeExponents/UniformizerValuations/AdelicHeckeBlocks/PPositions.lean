@@ -12,41 +12,7 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteRe
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralOfTwistConjugatePlace
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.TopoThetaRCont
 import GroundTheory.GlobalFields.LocalFieldAtPlace
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -60,8 +26,6 @@ open PositivityTheory.Rg.BcN.F2 (mconv)
 open scoped Classical
 
 namespace PositivityTheory.Rg.BcB.F
-
-attribute [local instance] borelG borelF borelH
 
 namespace Slots
 
@@ -137,9 +101,9 @@ theorem ev_dite {n : ℕ} {p : Pl E → Prop} (y : ∀ w : {w // p w}, GLw n w.1
   by_cases hp : p u
   · refine ⟨⟨u, hp⟩, ?_, rfl⟩
     have hu' : ¬ (if hu : p u then y ⟨u, hu⟩ else 1) ∈ GlobalTheory.LFun.KGL u (n := n) := hu
-    rw [dif_pos hp] at hu'
+    rw [dite_eq_left hp] at hu'
     exact hu'
-  · exact absurd (by rw [dif_neg hp]; exact one_mem _) hu
+  · exact absurd (by rw [dite_eq_right hp]; exact one_mem _) hu
 
 theorem cP_cP (v : Pl E) : cP (cP v) = v := GlobalTheory.CompanionTheory.SuppFinTw.cPl_cPl v
 
@@ -185,22 +149,22 @@ theorem F_exists {n : ℕ} {S : Set (Pl E)} (hS : IsSection S) (y : ∀ i : Slot
         exact hw' hsp
     have h0 : loc n (cP w) g₂ = loc n (cP w) 1 := by
       rw [h₂, map_one]
-      exact dif_neg hn
+      exact dite_eq_right hn
     rw [loc_thF_congr w h0, map_one, map_one]
   have hS2 : ∀ w : Pl E, w ∈ S → IsSplitAt w → loc n w (thF E n g₁) = 1 := by
     intro w hw hsp
     have h0 : loc n (cP w) g₁ = loc n (cP w) 1 := by
       rw [h₁, map_one]
-      exact dif_neg (GlobalTheory.CompanionTheory.SuppFinTw.conj_not_mem hS hw hsp)
+      exact dite_eq_right (GlobalTheory.CompanionTheory.SuppFinTw.conj_not_mem hS hw hsp)
     rw [loc_thF_congr w h0, map_one, map_one]
   refine ⟨g₁ * thF E n g₂, fun i => ?_⟩
   rcases i with w | w
   · show loc n w.1 (g₁ * thF E n g₂) = y (.inl w)
     rw [map_mul, hS1 w.1 w.2, mul_one, h₁]
-    exact dif_pos w.2
+    exact dite_eq_left w.2
   · show loc n w.1 (thF E n (g₁ * thF E n g₂)) = y (.inr w)
     rw [map_mul, map_mul, GlobalTheory.EulerTw.Comm.thF_thF, hS2 w.1 w.2.1 w.2.2, one_mul, h₂]
-    exact dif_pos w.2
+    exact dite_eq_left w.2
 
 theorem F_ext {n : ℕ} {S : Set (Pl E)} (hS : IsSection S) {g h : GL (Fin n) (Af E)}
     (H : ∀ i : Slot S, cpn n i g = cpn n i h) : g = h := by
@@ -288,7 +252,7 @@ theorem pair_compact {a b : ℕ} {S : Set (Pl E)} (hS : IsSection S) (C : ∀ i 
     by_contra hn
     exact hi (by
       show (if h : i ∈ T then ((c ⟨i, h⟩).1 : GLw a i.pl × GLw b i.pl) else 1) ∈ K2 a b i.pl
-      rw [dif_neg hn]
+      rw [dite_eq_right hn]
       exact one_mem _)
   choose xc hxc using hlift
   have hcl : IsClosed {x : Gf E a b | ∀ i : Slot S, cpH a b i x ∈ C i} := by
@@ -312,9 +276,9 @@ theorem pair_compact {a b : ℕ} {S : Set (Pl E)} (hS : IsSection S) (C : ∀ i 
     refine (pair_mem hS _).2 fun i => ?_
     rw [map_mul, map_inv, hxc]
     by_cases hi : i ∈ T
-    · rw [dif_pos hi]
+    · rw [dite_eq_left hi]
       exact hc ⟨i, hi⟩
-    · rw [dif_neg hi, inv_one, one_mul]
+    · rw [dite_eq_right hi, inv_one, one_mul]
       have hi' : ¬ ¬ C i = K2 a b i.pl := by
         rw [hT] at hi
         exact hi

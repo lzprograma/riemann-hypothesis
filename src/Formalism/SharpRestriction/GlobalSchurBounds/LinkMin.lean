@@ -20,45 +20,6 @@ public import Formalism.LogVandermondeBounds.LogVandermondeProofs.LogRatioLowerB
 public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.FamilyPartFiveOfExplicitConstants
 public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.LemmaFiveOneOfTheoremTwo
 public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.LogFactorialProductDifference
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Topology.Sheaves.Presheaf
 import Formalism.LocalRingCardinality.Lemmas
 import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
 import Formalism.LocalToGlobal.GlobalTheory.PlacesP
@@ -67,9 +28,6 @@ import Formalism.SharpRestriction.AdmissibleParameterJoins.LenAtT
 import Formalism.SharpRestriction.GlobalSchurBounds.FrameCodeOfAdditive
 import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.PartFiveExplicitOfPropositions
 import Formalism.SharpRestriction.GlobalSchurBounds.LinkPk
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -117,18 +75,18 @@ theorem harmonic_gap_sum_le (k : ℕ) (a : Fin k) :
     refine Finset.sum_congr rfl (fun b _ => ?_)
     try dsimp only
     by_cases h : a < b
-    · rw [if_pos h, if_pos (show a.val < b.val from h)]
-    · rw [if_neg h, if_neg (show ¬ a.val < b.val from h)]
+    · rw [ite_eq_left h, ite_eq_left (show a.val < b.val from h)]
+    · rw [ite_eq_right h, ite_eq_right (show ¬ a.val < b.val from h)]
   obtain ⟨m, hm⟩ : ∃ m, k = (a.val + 1) + m := ⟨k - (a.val + 1), by have := a.isLt; omega⟩
   have hr : range k = range ((a.val + 1) + m) := congrArg range hm
   rw [e, hr, Finset.sum_range_add]
   have h1 : ∑ i ∈ range (a.val + 1), (if a.val < i then (1 : ℝ) / ((i : ℝ) - (a.val : ℝ)) else 0) = 0 :=
-    Finset.sum_eq_zero (fun i hi => if_neg (by have := Finset.mem_range.mp hi; omega))
+    Finset.sum_eq_zero (fun i hi => ite_eq_right (by have := Finset.mem_range.mp hi; omega))
   have h2 : ∑ x ∈ range m, (if a.val < a.val + 1 + x then
       (1 : ℝ) / (((a.val + 1 + x : ℕ) : ℝ) - (a.val : ℝ)) else 0) =
       ∑ x ∈ range m, (1 : ℝ) / ((x : ℝ) + 1) :=
     Finset.sum_congr rfl (fun x _ => by
-      rw [if_pos (show a.val < a.val + 1 + x by omega)]
+      rw [ite_eq_left (show a.val < a.val + 1 + x by omega)]
       push_cast
       congr 1
       ring)
@@ -161,7 +119,7 @@ theorem log_vandermonde_variation_of_separated (k : ℕ) (Δ : ℝ) (u u' : Fin 
     · obtain ⟨h1, h2, h3⟩ := G0 a b ha hab
       have hc : 0 < (k : ℝ) * (4 * Δ) := mul_pos hkR (by linarith)
       refine ⟨by linarith, by linarith, ?_⟩
-      rw [if_pos ha]
+      rw [ite_eq_left ha]
       have h4 := abs_log_sub_le_div (u a - u b) (u' a - u' b) Δ ((k : ℝ) * (4 * Δ)) hc h1 h2 h3
       have h5 : Δ / ((k : ℝ) * (4 * Δ)) = 1 / (4 * (k : ℝ)) := by
         rw [div_eq_div_iff hc.ne' (mul_ne_zero (by norm_num) hk0)]
@@ -174,7 +132,7 @@ theorem log_vandermonde_variation_of_separated (k : ℕ) (Δ : ℝ) (u u' : Fin 
       have hba : (0 : ℝ) < (b.val : ℝ) - (a.val : ℝ) := by linarith
       have hc : 0 < 3 * ((b.val : ℝ) - (a.val : ℝ)) * Δ := mul_pos (mul_pos (by norm_num) hba) h0
       refine ⟨by linarith, by linarith, ?_⟩
-      rw [if_neg ha]
+      rw [ite_eq_right ha]
       have h4 := abs_log_sub_le_div (u a - u b) (u' a - u' b) (2 * Δ) (3 * ((b.val : ℝ) - (a.val : ℝ)) * Δ)
         hc h1 h2 h3
       have h5 : 2 * Δ / (3 * ((b.val : ℝ) - (a.val : ℝ)) * Δ) =
@@ -197,7 +155,7 @@ theorem log_vandermonde_variation_of_separated (k : ℕ) (Δ : ℝ) (u u' : Fin 
       (if a.val = 0 then (1 : ℝ) / 4 else 0) + 2 / 3 * (1 + Real.log k) := by
     intro a
     by_cases ha : a.val = 0
-    · simp only [if_pos ha]
+    · simp only [ite_eq_left ha]
       rw [Finset.sum_const, nsmul_eq_mul]
       have hc : ((univ.filter (fun b : Fin k => a < b)).card : ℝ) ≤ k := by
         have := Finset.card_filter_le (univ : Finset (Fin k)) (fun b => a < b)
@@ -209,7 +167,7 @@ theorem log_vandermonde_variation_of_separated (k : ℕ) (Δ : ℝ) (u u' : Fin 
       have h5 : 0 ≤ 1 / (4 * (k : ℝ)) := by positivity
       have h6 := mul_le_mul_of_nonneg_right hc h5
       linarith
-    · simp only [if_neg ha]
+    · simp only [ite_eq_right ha]
       rw [← Finset.mul_sum, zero_add]
       exact mul_le_mul_of_nonneg_left (harmonic_gap_sum_le k a) (by norm_num)
   have hS : ∑ a : Fin k, ((if a.val = 0 then (1 : ℝ) / 4 else 0) + 2 / 3 * (1 + Real.log k)) ≤
@@ -245,12 +203,12 @@ theorem vandermonde_variation_at_place (D : D7) (sc : Scale) (C0 CY Δ : ℝ) (w
     simp [uColR, uN]
   have hfirst : uN D u ρ 0 = uN D u' ρ 0 := by
     have h := (D.hcW_first u ρ hkpos).trans (D.hcW_first u' ρ hkpos).symm
-    simp only [uN, dif_pos hkpos]
+    simp only [uN, dite_eq_left hkpos]
     exact congrArg (fun q : ℚ => (q : ℝ)) h
   have hlast : uN D u ρ (D.R.k - 1) = uN D u' ρ (D.R.k - 1) := by
     have h1 : D.R.k - 1 < D.R.k := by omega
     have h := (D.hcW_last u ρ hkpos).trans (D.hcW_last u' ρ hkpos).symm
-    simp only [uN, dif_pos h1]
+    simp only [uN, dite_eq_left h1]
     exact congrArg (fun q : ℚ => (q : ℝ)) h
   have hchain : ∀ i j : ℕ, i ≤ j → j < D.R.k - 1 →
       vN D ρ i - vN D ρ j = 4 * Δ * ((j : ℝ) - (i : ℝ)) := by
@@ -645,8 +603,7 @@ theorem log_X_lower_arithmetic (F K Mm Lr lv l2v G SL SG SP SW X lo : ℝ)
   have hpos : 0 ≤ F * K * (X - lo) := by
     rw [key]
     nlinarith
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have : F * K * (X - lo) < 0 := mul_neg_of_pos_of_neg hFK (by linarith)
   linarith
 
@@ -1377,13 +1334,19 @@ theorem linkGLOBAL7_items (Fm : FamP eps) (Cabs CH C0 : ℝ) (hCabs : 0 ≤ Cabs
   have hDl := dl_of_chosen Fm C5' cQD
   have hSM : SlopesMF Fm := flipTwoThree.slopesMF_of_count_fam Fm hZ2 hZ3 hCount hDl tCV
   have hSN : SlopesNF Fm :=
-    slopesNF_of Fm (Formalism.L2.GlobalTheoryTheory.Places.placesF_min' Fm (J.lemma_five_one_of_theorem_two Fm hTu hE) hNC hTu hRank lG lMu)
+    slopesNF_of Fm (Formalism.L2.GlobalTheoryTheory.Places.placesF_of_local_conditions Fm (J.lemma_five_one_of_theorem_two Fm hTu hE) hNC hTu hRank lG lMu)
   have hLat : LatF Fm := latF Fm lD hNF hRank hRR
   have hFr : FrameF Fm CH := frameF_of Fm CH C0 hCH (by linarith)
     (frameRealF_of'' Fm Cabs CH C0 hCH.le lD lI lS cPr hNF hRank hTu (ramRankF_min Fm hE)
       (matKF_of Fm Cabs CH C0 (by linarith) lS cPr lD)) hLat cPr cCo hNF
   exact linkCore Fm Cabs CH 0 C5' c6 hCabs hCH.le le_rfl hc6 hCount hSM hSN hLat (nodesF Fm) hFr
     (lossF_of_7 Fm (Formalism.L2.GlobalTheoryTheory.Loss7.stLoss7 eps Fm cTT cBad lG) cW) (charF Fm) (size_windows_of_thick_density Fm cT2) cTT cQD cTh lI lD
+
+theorem Wire.family_theorems_two_and_five {eps : ℝ} (Fm : FamP eps) (hW : FamU Fm fun D u => Nonempty (product_first_zeroth_parts.FreeT D u))
+    (hμ : FamU Fm product_first_zeroth_parts.SlopeLine) (hI : FamU Fm LocalLatticeBases.HeckeIntegralLevelZero) (hR : FamU Fm LocalLatticeBases.HeckeRamifiedLevelZero) (hB : FamU Fm LocalLatticeBases.SecondBranchInclusionLength) :
+    FamU Fm product_first_zeroth_parts.family_property_and ∧ FamU Fm LocalLatticeBases.CongruenceLatticeLengthBound :=
+  ⟨(hW.and hμ).mono fun _ _ hS h => by obtain ⟨⟨W⟩, hm⟩ := h; exact product_first_zeroth_parts.division_side_conditions_at_sizeData hS W hm,
+   (hB.and (hI.and hR)).mono fun _ _ hS h => LocalLatticeBases.congruence_no_kernel_minimal hS h.1 h.2.1 h.2.2⟩
 
 theorem linkGLOBAL7_min (Fm : FamP eps) (Cabs CH C0 C5 : ℝ) (hCabs : 0 ≤ Cabs) (hCH : 0 < CH) (hC0 : 3 ≤ C0)
 
@@ -1395,11 +1358,11 @@ theorem linkGLOBAL7_min (Fm : FamP eps) (Cabs CH C0 C5 : ℝ) (hCabs : 0 ≤ Cab
     (hW : FamU Fm fun D u => Nonempty (product_first_zeroth_parts.FreeT D u)) (hμ : FamU Fm product_first_zeroth_parts.SlopeLine)
 
     (hI : FamU Fm LocalLatticeBases.HeckeIntegralLevelZero) (hR : FamU Fm LocalLatticeBases.HeckeRamifiedLevelZero) (hB : FamU Fm LocalLatticeBases.SecondBranchInclusionLength) :
-    TuSize Fm → LinkGLOBAL7 Fm Cabs CH C0 Cabs 0 :=
-  linkGLOBAL7_items Fm Cabs CH C0 hCabs hCH hC0 (family_part_five_of_explicit_constants Fm (StandardLattice.division_level_prime_family Fm h2b h2v h3))
-    (flipTwoThree.familySlopeLower_of_open Fm hZa) (flipTwoThree.familySlopeMax_of_open Fm C5 hZb) tCV
-    ((hW.and hμ).mono fun _ _ hS h => by obtain ⟨⟨W⟩, hm⟩ := h; exact product_first_zeroth_parts.division_side_conditions_at_sizeData hS W hm)
-    ((hB.and (hI.and hR)).mono fun _ _ hS h => LocalLatticeBases.congruence_no_kernel_minimal hS h.1 h.2.1 h.2.2)
+    TuSize Fm → LinkGLOBAL7 Fm Cabs CH C0 Cabs 0 := by
+  obtain ⟨hT2, hT5⟩ := Wire.family_theorems_two_and_five Fm hW hμ hI hR hB
+  exact linkGLOBAL7_items Fm Cabs CH C0 hCabs hCH hC0
+    (family_part_five_of_explicit_constants Fm (StandardLattice.division_level_prime_family Fm h2b h2v h3))
+    (flipTwoThree.familySlopeLower_of_open Fm hZa) (flipTwoThree.familySlopeMax_of_open Fm C5 hZb) tCV hT2 hT5
 
 theorem muRank_items (Fm : FamP eps) (C0 : ℝ) (hC0 : 0 < C0) (hT2 : FamU Fm product_first_zeroth_parts.family_property_and) (hT5 : FamU Fm LocalLatticeBases.CongruenceLatticeLengthBound) :
     TuSize Fm → ChosenProviso Fm C0 → NuFullF Fm ∧ J.MuRank Fm := by

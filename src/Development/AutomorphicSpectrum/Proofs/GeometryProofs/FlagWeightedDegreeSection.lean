@@ -16,50 +16,8 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ContDiffUnce
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.InteriorPointPolarised
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PairSumFrameAtPoint
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptInteriorGeneric
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -84,7 +42,7 @@ theorem ιMulti_eq_prod_smul {b₀ b : Fin r → V} {t : Fin r → Ω}
   have hb : b = fun i => ∑ k, a i k • b₀ k := by
     funext i
     have e : b i = t i • b₀ i + ∑ l, d i l • b₀ l := by rw [← hd2 i]; abel
-    simp only [a, add_smul, Finset.sum_add_distrib, ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [a, add_smul, Finset.sum_add_distrib, ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     rw [e, add_comm]
   have hdet : a.det = ∏ k, t k := by
     rw [Matrix.det_of_lowerTriangular a]
@@ -135,11 +93,11 @@ theorem prod_roots (D : Datum H) (τ : CMType H) {M : Type} [CommMonoid M]
   congr 1
   · refine Finset.prod_congr rfl fun k _ => ?_
     have h : ((Fin.castAdd D.q k : Fin (D.p + D.q)) : ℕ) < D.p := k.2
-    simp only [HodgeCpt.rootIdx, HodgeCpt.rootSgn, dif_pos h, if_pos h]
+    simp only [HodgeCpt.rootIdx, HodgeCpt.rootSgn, dite_eq_left h, ite_eq_left h]
     rfl
   · refine Fintype.prod_equiv Fin.revPerm _ _ fun j => ?_
     have h : ¬ ((Fin.natAdd D.p j : Fin (D.p + D.q)) : ℕ) < D.p := by simp
-    simp only [HodgeCpt.rootIdx, HodgeCpt.rootSgn, dif_neg h, if_neg h]
+    simp only [HodgeCpt.rootIdx, HodgeCpt.rootSgn, dite_eq_right h, ite_eq_right h]
     congr 2
     apply Fin.ext
     simp only [Fin.revPerm_apply, Fin.val_rev, Fin.val_natAdd]

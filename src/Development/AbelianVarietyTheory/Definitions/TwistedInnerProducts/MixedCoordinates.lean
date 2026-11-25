@@ -14,7 +14,6 @@ namespace I195MixedCoordinates
 open Formalism.BasicNotions Formalism.BasicNotions.TH
 open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.MixModel MeasureTheory
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 public noncomputable abbrev source
     {D : D7} {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) (T : HSp D)

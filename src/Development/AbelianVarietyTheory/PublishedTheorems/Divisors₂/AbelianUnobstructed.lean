@@ -47,8 +47,6 @@ import Mathlib.RingTheory.DividedPowers.Basic
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj DividedPowers

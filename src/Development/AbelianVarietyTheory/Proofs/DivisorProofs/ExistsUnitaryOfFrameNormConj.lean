@@ -1,7 +1,6 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBoundedPolesGlobalData
-public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsConjFsBasisOfUnitary
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -45,8 +44,6 @@ import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace NumberField
@@ -67,51 +64,5 @@ theorem CxPts.mem_ptsIn_conj {y : CxPts p σ} {y' : CxPts p σ'} (h : y'.1 = spM
   exact fun x _ => hy (Set.mem_univ _)
 
 end Points
-
-theorem mem_unitaryGroup_of_norm_mulVec {α : Type*} [Fintype α] [DecidableEq α] {V : Matrix α α ℂ}
-    (h : ∀ w : α → ℂ, √(∑ i, ‖V.mulVec w i‖ ^ 2) = √(∑ i, ‖w i‖ ^ 2)) : V ∈ Matrix.unitaryGroup α ℂ := by
-  have key := (LinearMap.norm_map_iff_inner_map_map (Matrix.toEuclideanLin V)).1 fun x => by
-    rw [EuclideanSpace.norm_eq, EuclideanSpace.norm_eq]
-    exact h x.ofLp
-  rw [Matrix.mem_unitaryGroup_iff']
-  ext i j
-  have := key (EuclideanSpace.single i 1) (EuclideanSpace.single j 1)
-  simpa [PiLp.inner_apply, Matrix.mul_apply, Matrix.one_apply, mul_comm, Pi.single_apply, eq_comm] using this
-
-theorem exists_unitary_of_frameNorm_conj {N : ℕ} {M M' : Matrix (Fin N) (Fin N) ℂ} (hM : M.det ≠ 0)
-    (hM' : M'.det ≠ 0) (h : ∀ x : Fin N → ℂ, frameNorm M' (fun j => conj (x j)) = frameNorm M x) :
-    ∃ U ∈ Matrix.unitaryGroup (Fin N) ℂ, M' = M.map (starRingEnd ℂ) * U := by
-  have hV : M'⁻¹ * M.map (starRingEnd ℂ) ∈ Matrix.unitaryGroup (Fin N) ℂ :=
-    mem_unitaryGroup_of_norm_mulVec fun w => by
-      have := h (M.mulVec fun j => conj (w j))
-      have e : (fun j => conj (M.mulVec (fun j => conj (w j)) j)) = (M.map (starRingEnd ℂ)).mulVec w :=
-        funext fun j => by simp [Matrix.mulVec, dotProduct]
-      rw [e, frameNorm, frameNorm, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec,
-        Matrix.nonsing_inv_mul M hM.isUnit, Matrix.one_mulVec] at this
-      simpa only [RCLike.norm_conj] using this
-  refine ⟨_, Unitary.star_mem hV, ?_⟩
-  have e : M.map (starRingEnd ℂ) = M' * (M'⁻¹ * M.map (starRingEnd ℂ)) := by
-    rw [← Matrix.mul_assoc, Matrix.mul_nonsing_inv M' hM'.isUnit, Matrix.one_mul]
-  generalize M'⁻¹ * M.map (starRingEnd ℂ) = V at e hV
-  rw [e, Matrix.mul_assoc, Matrix.mem_unitaryGroup_iff.1 hV, Matrix.mul_one]
-
-variable {F : Type} [Field F] [NumberField F]
-
-theorem Adelic.HermSys.isConj_weight (T : Adelic.HermSys F) (hb : T.BasePointFree) (hh : T.Hermitian)
-    (hc : T.ConjInvariant) (σ : F →+* ℂ) :
-    (T.weight hb hh σ).IsConj (T.weight hb hh (ComplexEmbedding.conjugate σ)) := by
-  obtain ⟨U, hU, e⟩ := exists_unitary_of_frameNorm_conj (hh σ) (hh (ComplexEmbedding.conjugate σ)) (hc σ)
-  exact Weight.isConj_fsBasis_of_unitary _ _ _ _ _ hU e
-
-namespace HilbertSamuel.Geo
-
-variable (G : Geo F)
-
-theorem isConj_φ₂ (σ : F →+* ℂ) : (G.φ₂ σ).IsConj (G.φ₂ (ComplexEmbedding.conjugate σ)) :=
-  G.second.isConj_weight _ _ G.conj₂ σ
-
-variable {G}
-
-end HilbertSamuel.Geo
 
 end GlobalTheory

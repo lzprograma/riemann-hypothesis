@@ -271,8 +271,6 @@ section -- clump:auto
 open AlgebraicGeometry CategoryTheory Limits NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.GeometryOfNumbersTheory GlobalTheory GlobalTheory.CM GlobalTheory.ArchMetricCompare
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 noncomputable section
 
 namespace GlobalTheory.CM.LieMetricConj
@@ -685,8 +683,6 @@ section -- clump:auto
 
 open AlgebraicGeometry CategoryTheory ReciprocityTheory.ChartRestriction.G.Semi NumberField IsDedekindDomain Module Formalism.BasicNotions Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.CompHt GlobalTheory.FlatCore
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.OrthoFlatFac
@@ -698,13 +694,13 @@ theorem sum_wtOf_flatWt {E : Type} [Field E] [NumberField E] [IsCMField E] {H : 
   have key : ∀ ρ : E →+* ℂ, ∑ i : Fin (Dw.mult ρ), (((wtOf Dw (flatWt Dw τ) 0).1 (ρ, i) : ℤ) : ℝ) =
       (if ρ = conjEmb τ.1 then (Dw.q : ℝ) else 0) - if ρ = τ.1 then (Dw.p : ℝ) else 0 := fun ρ => by
     by_cases h : ρ (H.rt : E) = H.rt0
-    · have hm : Dw.mult ρ = Dw.p := if_pos h
+    · have hm : Dw.mult ρ = Dw.p := ite_eq_left h
       have h1 : ρ ≠ conjEmb τ.1 := fun e => conj_not_mem τ (e ▸ h)
       have h2 : ∀ i : Fin (Dw.mult ρ), (wtOf Dw (flatWt Dw τ) 0).1 (ρ, i) = if ρ = τ.1 then -1 else 0 := fun i =>
         (wtOf_big (flatWt Dw τ) 0 ⟨ρ, h⟩ i (hm ▸ i.2)).trans (by simp [flatWt, parWt, Subtype.ext_iff])
       simp only [h2]
       split_ifs <;> simp_all
-    · have hm : Dw.mult ρ = Dw.q := if_neg h
+    · have hm : Dw.mult ρ = Dw.q := ite_eq_right h
       have h1 : ρ ≠ τ.1 := fun e => h (e ▸ τ.2)
       have h2 : ∀ i : Fin (Dw.mult ρ), (wtOf Dw (flatWt Dw τ) 0).1 (ρ, i) = if ρ = conjEmb τ.1 then 1 else 0 :=
         fun i => by
@@ -717,7 +713,7 @@ theorem sum_wtOf_flatWt {E : Type} [Field E] [NumberField E] [IsCMField E] {H : 
             simp [flatWt, parWt, Subtype.ext_iff, e, this]
       simp only [h2]
       split_ifs <;> simp_all
-  simp only [key, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [key, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem homFac_flatWt_ortho : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E)
     (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (σ : c.F →+* ℂ) (r : ℕ) (U : Unf Xo c σ r) (x : ℝ)
@@ -741,8 +737,6 @@ section -- clump:auto
 
 open AlgebraicGeometry CategoryTheory ReciprocityTheory.ChartRestriction.G.Semi NumberField IsDedekindDomain Module Formalism.BasicNotions Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.CompHt GlobalTheory.FlatCore
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.CompHS.FlatDiag
@@ -758,7 +752,7 @@ theorem norm_diagChar_flatWt : ∀ (E : Type) [Field E] [NumberField E] [IsCMFie
     obtain ⟨n, hi⟩ := i
     simp only [he_def, exOf, exZ, wtOf, flatWt, parWt, Datum.mult] at hi ⊢
     by_cases h : ρ (H.rt : E) = H.rt0
-    · rw [if_pos h] at hi
+    · rw [ite_eq_left h] at hi
       rw [dite_eq_left h, dite_eq_left hi]
       have h2 : ρ ≠ conjEmb τ.1 := fun e => conj_not_mem τ (e ▸ h)
       by_cases h1 : ρ = τ.1
@@ -766,18 +760,18 @@ theorem norm_diagChar_flatWt : ∀ (E : Type) [Field E] [NumberField E] [IsCMFie
         simp
       · have h3 : (⟨ρ, h⟩ : Psi H) ≠ τ := fun e => h1 (congrArg Subtype.val e)
         simp [h1, h2, h3]
-    · rw [if_neg h] at hi
+    · rw [ite_eq_right h] at hi
       rw [dite_eq_right h]
       have h1 : ρ ≠ τ.1 := fun e => h (e ▸ τ.2)
       by_cases h' : conjEmb ρ (H.rt : E) = H.rt0
       · rw [dite_eq_left h', dite_eq_left hi]
         by_cases h2 : ρ = conjEmb τ.1
         · have h3 : (⟨conjEmb ρ, h'⟩ : Psi H) = τ := Subtype.ext (show conjEmb ρ = τ.1 by rw [h2, Formalism.L2.Pj.conjEmb_conjEmb])
-          rw [if_pos h3, if_neg h1, if_pos h2]
+          rw [ite_eq_left h3, ite_eq_right h1, ite_eq_left h2]
           norm_num
         · have h3 : (⟨conjEmb ρ, h'⟩ : Psi H) ≠ τ := fun e => h2 (by
             rw [← congrArg Subtype.val e, Formalism.L2.Pj.conjEmb_conjEmb])
-          rw [if_neg h3, if_neg h1, if_neg h2]
+          rw [ite_eq_right h3, ite_eq_right h1, ite_eq_right h2]
           norm_num
       · rw [dite_eq_right h']
         have h2 : ρ ≠ conjEmb τ.1 := fun e => h' (by rw [e, Formalism.L2.Pj.conjEmb_conjEmb]; exact τ.2)
@@ -799,12 +793,12 @@ theorem norm_diagChar_flatWt : ∀ (E : Type) [Field E] [NumberField E] [IsCMFie
     rw [← Finset.prod_pair hne]
     refine (Finset.prod_subset (Finset.subset_univ _) fun ρ _ hρ => ?_).symm
     simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hρ
-    exact Finset.prod_eq_one fun i _ => by rw [hE, if_neg hρ.1, if_neg hρ.2, zpow_zero]
+    exact Finset.prod_eq_one fun i _ => by rw [hE, ite_eq_right hρ.1, ite_eq_right hρ.2, zpow_zero]
   have gτ : g τ.1 = (∏ i : Fin (Dw.mult τ.1), ‖toC ((t (some ⟨τ.1, i⟩) : CAt σ))‖)⁻¹ := by
     rw [← Finset.prod_inv_distrib]
-    exact Finset.prod_congr rfl fun i _ => by rw [hE, if_pos rfl, zpow_neg_one]
+    exact Finset.prod_congr rfl fun i _ => by rw [hE, ite_eq_left rfl, zpow_neg_one]
   have gc : g (conjEmb τ.1) = ∏ j : Fin (Dw.mult (conjEmb τ.1)), ‖toC ((t (some ⟨conjEmb τ.1, j⟩) : CAt σ))‖ :=
-    Finset.prod_congr rfl fun i _ => by rw [hE, if_neg hne.symm, if_pos rfl, zpow_one]
+    Finset.prod_congr rfl fun i _ => by rw [hE, ite_eq_right hne.symm, ite_eq_left rfl, zpow_one]
   rw [e₂, e₃, gτ, gc, div_eq_mul_inv, mul_comm]
 
 end GlobalTheory.CompHS.FlatDiag
@@ -832,8 +826,8 @@ theorem homFac_eq_gram_ortho : ∀ (E : Type) [Field E] [NumberField E] [IsCMFie
   have hHm := GlobalTheory.OrthoHerm.hm_eq_smul_one E H Dw l Xo c _ r (U _) x hσ hU k w W Wu (hL.xi _ hσ k) hort
   obtain ⟨hzx, hcomb, -⟩ := hbor
   choose C hCi hCup hCc using hcomb
-  have hp : Dw.mult τ.1 = Dw.p := by unfold Datum.mult; rw [if_pos τ.2]
-  have hq : Dw.mult (conjEmb τ.1) = Dw.q := by unfold Datum.mult; rw [if_neg (conj_not_mem τ)]
+  have hp : Dw.mult τ.1 = Dw.p := by unfold Datum.mult; rw [ite_eq_left τ.2]
+  have hq : Dw.mult (conjEmb τ.1) = Dw.q := by unfold Datum.mult; rw [ite_eq_right (conj_not_mem τ)]
 
   have hx : 0 < x := by
     have hne : Nonempty (Σ ρ : E →+* ℂ, Fin (Dw.mult ρ)) := by
@@ -908,7 +902,7 @@ theorem good_case (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Recipr
   obtain ⟨k, w, t, ho, hb⟩ := GlobalTheory.LamT.exists_ortho_frBor E H Dw l Xo c σ₀ r (U σ₀) (hL.unf σ₀ hσ) z
   have hon : (⟨k, w.1⟩ : Σ k, Frame ((U σ₀).X k).Ψ r) ∈ framesOn (U σ₀) Z :=
     ⟨w.2, liesOn_frBor hb (liesOn_frMap hz hy)⟩
-  have hgood : goodOf c σ₀ = σ₀ := if_pos hσ
+  have hgood : goodOf c σ₀ = σ₀ := ite_eq_left hσ
   have hinf := s.norm_inf σ₀
   rw [hgood] at hinf
   have h1 : homN (U σ₀) x (wtOf Dw (flatWt Dw τ) 0) s.sig ⟨k, w.1⟩ = s.cInf σ₀ := by
@@ -937,7 +931,7 @@ theorem cInf_eq_frame_norm : ∀ (E : Type) [Field E] [NumberField E] [IsCMField
     have e0 : σ'.comp (algebraMap c.F K) = (starRingEnd ℂ).comp (σ.comp (algebraMap c.F K)) := RingHom.comp_assoc _ _ _
     have hσ' : GoodEmb c (σ'.comp (algebraMap c.F K)) := by
       have := goodEmb_goodOf c (σ.comp (algebraMap c.F K))
-      rw [goodOf, if_neg hσ] at this
+      rw [goodOf, ite_eq_right hσ] at this
       rw [e0]; exact this
     have hg := good_case E H Dw l Xo c r U x hL Z τ s K y hy B t₀ m1 m2 F h hh u u' hu hu' σ' hσ'
     have hc : s.cInf (σ'.comp (algebraMap c.F K)) = s.cInf (σ.comp (algebraMap c.F K)) := by
@@ -979,12 +973,6 @@ open scoped TensorProduct
 open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open Formalism.L2.PjFree (FrBaseChg ReFrame XoNumPt TanLin SClause IntRebase)
 
-section Dual
-
-variable {R R' : Type} [CommRing R] [CommRing R']
-
-end Dual
-
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 variable {Xo : Moduli Dw l} {c : Coeff l}
 
@@ -1006,12 +994,6 @@ theorem isEigAt_of_isCombAt [Algebra c.F S] {x : Sp S ⟶ Xo.X} {m : ℕ}
   exact ReciprocityTheory.ChartRestriction.G.PullbackSections.wtfA_comb_eig x c τ (fun j => ReciprocityTheory.ChartRestriction.G.PullbackSections.wtfA_lt x (v j) (hv j)) he a
 
 end Comb
-
-section Gen
-
-variable {S : Type} [CommRing S] [Algebra c.F S]
-
-end Gen
 
 variable (Xo c)
 

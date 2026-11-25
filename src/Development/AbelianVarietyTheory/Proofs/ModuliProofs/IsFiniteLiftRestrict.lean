@@ -123,19 +123,6 @@ theorem isFinite_lift_restrict {Y Z U V A A' : Scheme.{0}} {g : Y ⟶ Z} {gU : U
 def toRing {T : Scheme.{0}} {R : Type} [CommRing R] (u : T ⟶ Sp R) : R →+* Γ(T, ⊤) :=
   ((Scheme.ΓSpecIso (CommRingCat.of R)).inv ≫ u.appTop).hom
 
-theorem toRing_inj {T : Scheme.{0}} {R : Type} [CommRing R] {u v : T ⟶ Sp R} (h : toRing u = toRing v) : u = v := by
-  apply ext_of_isAffine
-  have h' : (Scheme.ΓSpecIso (CommRingCat.of R)).inv ≫ u.appTop =
-      (Scheme.ΓSpecIso (CommRingCat.of R)).inv ≫ v.appTop := CommRingCat.hom_ext h
-  exact (cancel_epi _).1 h'
-
-theorem toRing_comp {T : Scheme.{0}} {R R' : Type} [CommRing R] [CommRing R'] (u : T ⟶ Sp R') (b : R →+* R') :
-    toRing (u ≫ spMap b) = (toRing u).comp b := by
-  unfold toRing
-  rw [Scheme.Hom.comp_appTop]
-  change _ = (CommRingCat.ofHom b ≫ (Scheme.ΓSpecIso (CommRingCat.of R')).inv ≫ u.appTop).hom
-  rw [Scheme.ΓSpecIso_inv_naturality_assoc]
-
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
 
 theorem eq_of_RZ {T : Scheme.{0}} {l : Level H} {S A : ℕ} (hA : l.A = A) {β : RZ H S A →+* KA l}

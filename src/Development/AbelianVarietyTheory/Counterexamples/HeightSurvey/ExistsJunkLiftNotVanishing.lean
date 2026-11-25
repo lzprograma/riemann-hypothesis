@@ -48,8 +48,6 @@ open scoped TensorProduct ContDiff
 
 namespace GlobalTheory.WeilTieCheck
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem hHom_add_left (V W : HSp D) (x x' y : WA V W) : hHom V W (x + x') y = hHom V W x y + hHom V W x' y := by

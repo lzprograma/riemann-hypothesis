@@ -7,6 +7,7 @@ import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.TotallySplit
 public import Mathlib.RingTheory.Valuation.LocalSubring
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ProjDefs
+import GroundTheory.HeightsAndTheta.Heights.BlockScaling
 
 @[expose] public section
 
@@ -24,19 +25,8 @@ variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : 
 
 theorem aeval_scale_of_isMultiHomog (y : (Σ k, ι k) → Ω) (t : K → Ω) {f : MRing ι} {e : K → ℕ}
     (hf : IsMultiHomog f e) :
-    aeval (fun p => t p.1 * y p) f = (∏ k, t k ^ e k) * aeval y f := by
-  simp only [aeval_def, eval₂_eq', Finset.mul_sum]
-  refine Finset.sum_congr rfl fun d hd => ?_
-  have hpow : ∏ p : Σ k, ι k, t p.1 ^ d p = ∏ k, t k ^ e k := by
-    rw [Fintype.prod_sigma]
-    refine Finset.prod_congr rfl fun k _ => ?_
-    show ∏ i, t k ^ d ⟨k, i⟩ = t k ^ e k
-    rw [Finset.prod_pow_eq_pow_sum, hf d hd k]
-  have hsplit : ∏ p, (t p.1 * y p) ^ d p = (∏ p : Σ k, ι k, t p.1 ^ d p) * ∏ p, y p ^ d p := by
-    rw [← Finset.prod_mul_distrib]
-    exact Finset.prod_congr rfl fun p _ => mul_pow _ _ _
-  rw [hsplit, hpow]
-  ring
+    aeval (fun p => t p.1 * y p) f = (∏ k, t k ^ e k) * aeval y f :=
+  BlockScaling.eval₂_mul_block_left (algebraMap ℤ Ω) t y hf
 
 
 omit [Fintype K] [∀ k, Fintype (ι k)] in
@@ -121,25 +111,16 @@ theorem aeval_mem_of_forall [CharZero Ω] (V : Subring Ω) (hQ : ∀ r : ℚ, al
   | add p q hp hq => rw [map_add (f := _)]; exact V.add_mem hp hq
   | mul_X p i hp => rw [map_mul, aeval_X]; exact V.mul_mem hp (hy i)
 
-theorem proof : PullSectionIntegral.Statement := by
-  intro K _ ι _ Ω _ _ y D e L q hV _ he hL hzero τ s hs j hj
-  classical
-  set A := Algebra.adjoin ℚ (Set.range fun i => aeval y (L i) / aeval y (L j))
-  set R := (integralClosure A Ω).toSubring
-  have : IsIntegrallyClosedIn R Ω := inferInstanceAs (IsIntegrallyClosedIn (integralClosure A Ω) Ω)
-  show s / aeval y (L j) ^ (q * τ) ∈ R
-  by_contra hnot
-  obtain ⟨V, hRV, htV⟩ := Subring.exists_le_valuationSubring_of_isIntegrallyClosedIn hnot
-  have hAV : ∀ x ∈ A, x ∈ V := fun x hx =>
-    hRV (isIntegral_algebraMap (R := A) (A := Ω) (x := ⟨x, hx⟩))
-  have hQ : ∀ r : ℚ, algebraMap ℚ Ω r ∈ V.toSubring := fun r => hAV _ (A.algebraMap_mem r)
-
-  have hrel : ∀ k, ∃ i, y ⟨k, i⟩ ≠ 0 := by
-    intro k
-    obtain ⟨i, hi⟩ := hV.2.1.2.2 k
-    refine ⟨i, fun h0 => hi ?_⟩
-    show mConeMap y (X ⟨k, i⟩) = 0
-    simp [mConeMap, h0]
+theorem exists_valMax_chart (V : ValuationSubring Ω) (y : (Σ k, ι k) → Ω)
+    (hrel : ∀ k, ∃ i, y ⟨k, i⟩ ≠ 0) (e : K → ℕ) (q τ : ℕ) (s : Ω)
+    (hs : ∀ c : ∀ k, ι k, (∀ k, y ⟨k, c k⟩ ≠ 0) →
+      s * ∏ k, y ⟨k, c k⟩ ^ (-((τ : ℤ) * ((q * e k : ℕ) : ℤ))) ∈
+        (integralClosure (chartRingZ y c) Ω).toSubring) :
+    ∃ c : ∀ k, ι k,
+      (∀ k, y ⟨k, c k⟩ ≠ 0) ∧
+      (∀ p : Σ k, ι k, y p / y ⟨p.1, c p.1⟩ ∈ V) ∧
+      (∏ k, y ⟨k, c k⟩ ^ e k) ≠ 0 ∧
+      s * ((∏ k, y ⟨k, c k⟩ ^ e k) ^ (q * τ))⁻¹ ∈ V.toSubring := by
   have hmax : ∀ k, ∃ c : ι k, ∀ i, V.valuation (y ⟨k, i⟩) ≤ V.valuation (y ⟨k, c⟩) := by
     intro k
     obtain ⟨i0, -⟩ := hrel k
@@ -157,7 +138,6 @@ theorem proof : PullSectionIntegral.Statement := by
     intro p
     rw [← V.valuation_le_one_iff, map_div₀]
     exact div_le_one_of_le₀ (hc p.1 p.2) zero_le
-
   set M : Ω := ∏ k, y ⟨k, c k⟩ ^ e k
   have hM0 : M ≠ 0 := Finset.prod_ne_zero_iff.mpr fun k _ => pow_ne_zero _ (hc0 k)
   have hchart : (chartRingZ y c : Set Ω) ⊆ V := by
@@ -177,6 +157,29 @@ theorem proof : PullSectionIntegral.Statement := by
     rw [show -((τ : ℤ) * ((q * e k : ℕ) : ℤ)) = -((e k * (q * τ) : ℕ) : ℤ) by push_cast; ring,
       zpow_neg, zpow_natCast, pow_mul]
   rw [hprod] at hxV
+  exact ⟨c, hc0, hratio, hM0, hxV⟩
+
+theorem proof : PullSectionIntegral.Statement := by
+  intro K _ ι _ Ω _ _ y D e L q hV _ he hL hzero τ s hs j hj
+  classical
+  set A := Algebra.adjoin ℚ (Set.range fun i => aeval y (L i) / aeval y (L j))
+  set R := (integralClosure A Ω).toSubring
+  have : IsIntegrallyClosedIn R Ω := inferInstanceAs (IsIntegrallyClosedIn (integralClosure A Ω) Ω)
+  show s / aeval y (L j) ^ (q * τ) ∈ R
+  by_contra hnot
+  obtain ⟨V, hRV, htV⟩ := Subring.exists_le_valuationSubring_of_isIntegrallyClosedIn hnot
+  have hAV : ∀ x ∈ A, x ∈ V := fun x hx =>
+    hRV (isIntegral_algebraMap (R := A) (A := Ω) (x := ⟨x, hx⟩))
+  have hQ : ∀ r : ℚ, algebraMap ℚ Ω r ∈ V.toSubring := fun r => hAV _ (A.algebraMap_mem r)
+
+  have hrel : ∀ k, ∃ i, y ⟨k, i⟩ ≠ 0 := by
+    intro k
+    obtain ⟨i, hi⟩ := hV.2.1.2.2 k
+    refine ⟨i, fun h0 => hi ?_⟩
+    show mConeMap y (X ⟨k, i⟩) = 0
+    simp [mConeMap, h0]
+  obtain ⟨c, hc0, hratio, hM0, hxV⟩ := exists_valMax_chart V y hrel e q τ s hs
+  set M : Ω := ∏ k, y ⟨k, c k⟩ ^ e k
 
   set t : K → Ω := fun k => (y ⟨k, c k⟩)⁻¹
   have hP' : ∀ f ∈ mCoordIdeal y, aeval (fun p => t p.1 * y p) f = 0 := fun f hf =>

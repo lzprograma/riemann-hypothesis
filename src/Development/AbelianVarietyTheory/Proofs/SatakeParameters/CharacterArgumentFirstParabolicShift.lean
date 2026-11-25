@@ -9,48 +9,6 @@ public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.Unfold
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnfoldingCharacterArgumentCompUnipotentRadicals
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.VectorsLinearMapsBoundedDenominatorsAtPrime
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfPowPred
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.BoxSumNeZeroInvariantAffineChange
 
 @[expose] public section
@@ -285,7 +243,7 @@ theorem phiAt_mod (Ch : Chars X Pr R.m) {S : Set ℕ} (mu : Tup X.F X.E X.K S) (
     omega
   by_cases hP : P ∈ Pr.vGs
   · unfold PhiAt lamYat
-    simp only [if_pos hP]
+    simp only [ite_eq_left hP]
     split_ifs
     · have := LastSteps.good_PhiGS (psi0P Ch P) (chiP Ch P) (rS := R.rS) h1 h2 h3 h4
       exact ⟨this.1, this.2.1⟩
@@ -293,7 +251,7 @@ theorem phiAt_mod (Ch : Chars X Pr R.m) {S : Set ℕ} (mu : Tup X.F X.E X.K S) (
       exact ⟨this.1, this.2.1⟩
   · simp only [IndefiniteRowSideFullHecke.SandwichNormalForm.mem_lamYat hP]
     unfold PhiAt
-    rw [if_neg hP]
+    rw [ite_eq_right hP]
     exact Proof.twistPrimeDatum_integral_support_and_invariant.phiQ_bdd X.E X.K P _ _ _ _ _ _ _ h1 h2 (by omega) (by omega)
 
 theorem jat_le (sharp : Bool) (j : ℕ) (P : HeightOneSpectrum (𝓞 X.E)) :
@@ -302,11 +260,11 @@ theorem jat_le (sharp : Bool) (j : ℕ) (P : HeightOneSpectrum (𝓞 X.E)) :
   unfold Jat at hk
   by_cases hP : P ∈ Pr.vGs
   · unfold lamYat
-    rw [if_pos hP] at hk ⊢
+    rw [ite_eq_left hP] at hk ⊢
     split_ifs at hk
     · exact hk.1
     · exact hk.1
-  · rw [if_neg hP] at hk
+  · rw [ite_eq_right hP] at hk
     intro v
     rw [IndefiniteRowSideFullHecke.SandwichNormalForm.mem_lamYat hP, IndefiniteRowSideFullHecke.SandwichNormalForm.mem_lamYat hP]
     exact (mem_stdAt_iff _).symm.trans ((hk.1 v).trans (mem_stdAt_iff _))
@@ -334,11 +292,11 @@ theorem chArg_depth (hL : L.Ok Ch sel mu cst G m2) {i : ℕ} (hi : i < m2) (al :
       have := (hL.stabG _ be P hP _).2 (hz _ ((inv_mem (hL.stabG _ al P hP) v).2 hv))
       rwa [LinearEquiv.apply_symm_apply, show L.h i al P ((L.h i al P)⁻¹ v) = v from LinearEquiv.apply_symm_apply _ v] at this
     unfold lamYat at h1
-    simp only [if_pos hP] at h1
+    simp only [ite_eq_left hP] at h1
     have h2 := LastSteps.mem_homS_sclLat.1 h1 ⟨_, l1⟩ ⟨_, l2⟩
     have e : LocE.scE (R.N i) (fun i => i + 1) (R.N i + s + 1) - LocE.scE (R.N (i + 1)) (fun i => i + 1) (R.N (i + 1) + s) = 1 := by
       unfold LocE.scE
-      rw [if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega)]
       dsimp only
       omega
     rw [e, zpow_one, mul_comm] at h2

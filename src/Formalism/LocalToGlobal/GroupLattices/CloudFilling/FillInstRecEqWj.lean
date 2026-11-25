@@ -24,8 +24,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.G
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def LatticeCompatibleAt {D : D7} {L : SizeData₂ D} (X : Inst D L) {p : ℕ} (G : GAtP p)
     (pos : (Σ v : Fin G.P.nV, Fin (G.P.n' v)) ≃ D.what₂.Tau) (vOf : HH D → Fin G.P.nV) (Fl : Fills G) : Prop :=
   Fl.mm = D.R.m ∧ Fl.t = D.R.t ∧
@@ -144,130 +142,6 @@ theorem lamRec_top {D : D7} (L : SizeData₂ D) (u : D.what₂.Word) (g : D.R.Ps
     push_cast
     ring
 
-def cRec {D : D7} (L : SizeData₂ D) : ℕ := ⌊Formalism.MainNotions.G.cG L⌋₊
-
-theorem cG_nonneg {D : D7} (L : SizeData₂ D) : 0 ≤ Formalism.MainNotions.G.cG L := by
-  unfold Formalism.MainNotions.G.cG
-  linarith [L.Sc_pos]
-
-theorem cRec_le {D : D7} (L : SizeData₂ D) : (cRec L : ℝ) ≤ Formalism.MainNotions.G.cG L := Nat.floor_le (cG_nonneg L)
-
-theorem lt_cRec {D : D7} (L : SizeData₂ D) : 4 * L.Sc - 1 < (cRec L : ℝ) := by
-  have := Nat.lt_floor_add_one (Formalism.MainNotions.G.cG L)
-  unfold cRec
-  unfold Formalism.MainNotions.G.cG at this ⊢
-  linarith
-
-theorem ktl_le_Del {D : D7} {L : SizeData₂ D} (P : ParameterChoice' D L) :
-    (D.R.k : ℝ) + D.R.t + 1 ≤ (D.s.Del : ℝ) := by
-  have h := P.Del_ge.2.2.2
-  have hm : (1 : ℝ) ≤ (D.R.m : ℝ) := by have := D.R.two_le_m; exact_mod_cast (by omega : 1 ≤ D.R.m)
-  have hm10 : (1 : ℝ) ≤ (D.R.m : ℝ) ^ 10 := one_le_pow₀ hm
-  have hN : (D.R.k : ℝ) + D.R.t + 1 ≤ (D.R.N D.R.m : ℝ) := by
-    simp only [Ranks.N]
-    push_cast
-    have ht : (0 : ℝ) ≤ (D.R.t : ℝ) + 1 := by positivity
-    nlinarith
-  have hN0 : (0 : ℝ) ≤ (D.R.N D.R.m : ℝ) := Nat.cast_nonneg _
-  nlinarith
-
-theorem five_le_k (R : Ranks) : (5 : ℝ) ≤ (R.k : ℝ) := by
-  have h1 := R.two_le_m
-  have h2 := R.m_add_three_le_k
-  exact_mod_cast (by omega : 5 ≤ R.k)
-
-theorem ktl_le_Sc {D : D7} {L : SizeData₂ D} (P : ParameterChoice' D L) : 20 * ((D.R.k : ℝ) + D.R.t + 1) ≤ L.Sc := by
-  have h1 := ktl_le_Del P
-  have h2 := five_le_k D.R
-  have h3 : (0 : ℝ) ≤ (D.R.t : ℝ) := Nat.cast_nonneg _
-  rw [L.Sc_eq]
-  nlinarith
-
-theorem w''_le_wj_one {D : D7} (L : SizeData₂ D) (τ : D.what₂.Tau) : L.sc.w'' D.R.n ≤ wj D 1 τ := by
-  have hm : 1 ≤ D.R.m := by have := D.R.two_le_m; omega
-  have hle := Formalism.MainNotions.Inhab.scale_w''_le L.sc D.R.n (Formalism.MainNotions.Inhab.ranks_one_le_n D.R)
-  by_cases htop : (D.eTau τ : D.R.GG) ∈ D.host.topPlaces
-  · obtain ⟨t, ht, hte⟩ := Finset.mem_image.1 htop
-    have h1 := (L.win_top 1 le_rfl hm τ ⟨t, ht⟩ hte.symm).1
-    have h2 := L.bT_ge ⟨t, ht⟩
-    have h3 := Formalism.MainNotions.Inhab.scale_b'_nonneg L.sc
-    linarith [hle.1]
-  · by_cases hth : (D.eTau τ : D.R.GG) ∈ D.host.thickPlaces
-    · have h1 := (L.win_thick 1 le_rfl hm τ hth).1
-      linarith [hle.2]
-    · exact (L.win_thin 1 le_rfl hm τ ⟨(D.eTau τ).2, htop, hth⟩).1
-
-theorem cloudBound {D : D7} (L : SizeData₂ D) (P : ParameterChoice' D L) (u : D.what₂.Word) : CloudBound D u (cRec L) := by
-  have hk := k_pred D.R
-  have hk5 := five_le_k D.R
-  have hk5n : 5 ≤ D.R.k := by
-    have h1 := D.R.two_le_m
-    have h2 := D.R.m_add_three_le_k
-    omega
-  have hS := ktl_le_Sc P
-  have hc := lt_cRec L
-  have ht0 : (0 : ℝ) ≤ (D.R.t : ℝ) := Nat.cast_nonneg _
-  have hmid : ∀ (g : D.R.Psi) (i : Fin (D.R.k - 1 + 1)), 0 < i.val → i.val < D.R.k - 1 →
-      |lamRec D u g i| ≤ (cRec L : ℤ) := by
-    intro g i h0 h1
-    have hi : i.1 < D.R.k := by omega
-    have h := lamRec_real D u g i hi
-    have cl := L.cloud_u u (D.eTau.symm g) ⟨i.1, hi⟩ h0 (by show i.1 + 1 < D.R.k; omega)
-    have hiR : (i.1 : ℝ) + 1 ≤ (D.R.k : ℝ) := by exact_mod_cast hi
-    have hi0 : (0 : ℝ) ≤ (i.1 : ℝ) := Nat.cast_nonneg _
-    have h2 : |((lamRec D u g i : ℤ) : ℝ)| ≤ (cRec L : ℝ) := by
-      rw [h, abs_le]
-      constructor <;> linarith [cl.1, cl.2]
-    exact_mod_cast h2
-  refine ⟨fun g _ i h0 h1 => hmid g i h0 h1, fun g hg i => ?_, fun g => ?_⟩
-  · have hg' : (D.eTau (D.eTau.symm g) : D.R.GG) ∉ D.host.topPlaces := by rwa [Equiv.apply_symm_apply]
-    have hk0 : 0 < D.R.k := by omega
-    by_cases h0 : i.val = 0
-    · have hi : i.1 < D.R.k := by omega
-      have h := lamRec_real D u g i hi
-      have e : (⟨i.1, hi⟩ : Fin D.R.k) = ⟨0, hk0⟩ := Fin.ext h0
-      rw [e, D.hcW_first u _ hk0, h0] at h
-      have g1 := (L.cloud_gap (D.eTau.symm g) (by omega) hg').1
-      have g2 := P.cloud_place_bound (D.eTau.symm g) (by omega) hg'
-      have g3 := L.cloud_v (D.eTau.symm g) ⟨0, by omega⟩
-      push_cast at g1 g2
-      have h2 : |((lamRec D u g i : ℤ) : ℝ)| ≤ (cRec L : ℝ) := by
-        rw [h, abs_le]
-        push_cast
-        constructor <;> linarith [g3.1, g3.2]
-      exact_mod_cast h2
-    · by_cases h1 : i.val < D.R.k - 1
-      · exact hmid g i (Nat.pos_of_ne_zero h0) h1
-      · have hi1 : i.val = D.R.k - 1 := by have := i.2; omega
-        have hi : i.1 < D.R.k := by omega
-        have h := lamRec_real D u g i hi
-        have e : (⟨i.1, hi⟩ : Fin D.R.k) = ⟨D.R.k - 1, by omega⟩ := Fin.ext hi1
-        have hkR : ((D.R.k - 1 : ℕ) : ℝ) = (D.R.k : ℝ) - 1 := by
-          rw [Nat.cast_sub (by omega)]; simp
-        rw [e, D.hcW_last u _ hk0, P.uk_extreme (D.eTau.symm g) (by omega) hg', hi1, hkR] at h
-        have g3 := L.cloud_v (D.eTau.symm g) ⟨D.R.k - 2, by omega⟩
-        push_cast at h
-        have h2 : |((lamRec D u g i : ℤ) : ℝ)| ≤ (cRec L : ℝ) := by
-          rw [h, abs_le]
-          constructor <;> linarith [g3.1, g3.2]
-        exact_mod_cast h2
-  · have h1 : (1 : ℕ) ∈ SizeData₂.lifts D := Finset.mem_Icc.2 ⟨le_rfl, by have := D.R.two_le_m; omega⟩
-    have hw := wRec_eq D u g 1 h1
-    have hw'' := w''_le_wj_one L (D.eTau.symm g)
-    have hkS := P.kS_le
-    have hSc := L.Sc_pos
-    have hka : Formalism.MainNotions.G.kaJ D 1 = ((D.R.k : ℝ) + D.R.t + 1) / 2 := by
-      unfold Formalism.MainNotions.G.kaJ
-      push_cast
-      ring
-    have hcle := cRec_le L
-    unfold Formalism.MainNotions.G.cG at hcle
-    have h5 : 5 * L.Sc ≤ (D.R.k : ℝ) * L.Sc := by nlinarith
-    have h2 : ((cRec L : ℕ) : ℝ) ≤ ((wRec D u g 1 : ℤ) : ℝ) := by
-      rw [hw, hka]
-      linarith
-    exact_mod_cast h2
-
 end Formalism.L2.G
 end -- clump:auto
 end -- clump:auto
@@ -285,8 +159,6 @@ open Formalism.BasicNotions NumberField IsDedekindDomain Formalism.UG Formalism.
 open scoped TensorProduct
 
 namespace Formalism.L2.G
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 structure LocPack (D : D7) (u : D.what₂.Word)
     (Lc : ColLevel D.R D.host.F D.host.E D.sp D.host.g (D.mem u).C (D.mem u).A (D.clsLat u)) (p : ℕ) where
@@ -366,58 +238,10 @@ def gatTiesG : GatTies (recG D sc Ce Lc X hd) where
 
 variable (L : SizeData₂ (recG D sc Ce Lc X hd)) (P : ParameterChoice' (recG D sc Ce Lc X hd) L)
 
-def fillsG (u : D.what₂.Word) (w : D.what₂.places.Pl) (h : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) :
-    Fills ((recG D sc Ce Lc X hd).gat u w h) :=
-  fillsRec D u _ (X u w h).hS (rSc sc D.R.k (D.what₂.places.resChar w)) (Lc u) (X u w h).I (X u w h).ψ
-    (repP (Lc u) _) (epSc D.R sc Ce (D.what₂.places.resChar w)) (cRec L) ⟨(cloudBound L P u).top, (cloudBound L P u).off, (cloudBound L P u).fill⟩
-
 
 def levTieG (u : D.what₂.Word) (w : D.what₂.places.Pl) (h : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) :
     Formalism.L2.Herm.GLevTie (Lc u) ((recG D sc Ce Lc X hd).gat u w h) :=
   gatRecP_lev D u _ (X u w h).hS _ (Lc u) (X u w h).I (X u w h).ψ _
-
-theorem std_of_fills {p : ℕ} (G : GAtP p) (Fl : Fills G) (v : Fin G.P.nV) (hr : 1 ≤ G.P.r) (h2r : 2 * G.P.r ≤ G.P.m + 1)
-    (hm : 1 ≤ Fl.mm) :
-    Formalism.MainNotions.FormalGroupSystem.Std p (G.P.n' v) G.P.m Fl.t Fl.mm Fl.c G.P.r (Fl.TT v) (Fl.a v) (Fl.b v) (G.P.lam0 v) (Fl.w v) :=
-  { prime := (G.P.setting v).prime
-    five_le := (G.P.setting v).five_le
-    two_le := (G.P.setting v).two_le
-    even := (G.P.setting v).even
-    r_pos := hr
-    two_r := h2r
-    m_pos := hm
-    base := Fl.base v
-    dom := G.P.dom v
-    w_low := fun s => ⟨le_trans (le_max_left _ _) (Fl.w_ge v s), le_trans (le_max_right _ _) (Fl.w_ge v s)⟩
-    w_mono := fun s l h1 _ => Fl.w_mono v s l h1 }
-
-theorem one_le_rSc (k p : ℕ) : 1 ≤ rSc sc k p := by
-  unfold rSc rG
-  split_ifs <;> omega
-
-theorem two_rSc_le (k p : ℕ) (h : 2 * rG sc ≤ k) : 2 * rSc sc k p ≤ k := by
-  unfold rSc
-  split_ifs
-  · exact h
-  · unfold rG at h
-    omega
-
-theorem stdG (h2r : 2 * rG sc ≤ D.R.k) (u : D.what₂.Word) (w : D.what₂.places.Pl)
-    (h : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) (v : Fin ((recG D sc Ce Lc X hd).gat u w h).P.nV) :
-    Formalism.MainNotions.FormalGroupSystem.Std (D.what₂.places.resChar w) (((recG D sc Ce Lc X hd).gat u w h).P.n' v) ((recG D sc Ce Lc X hd).gat u w h).P.m
-      (fillsG D sc Ce Lc X hd L P u w h).t (fillsG D sc Ce Lc X hd L P u w h).mm (fillsG D sc Ce Lc X hd L P u w h).c
-      ((recG D sc Ce Lc X hd).gat u w h).P.r ((fillsG D sc Ce Lc X hd L P u w h).TT v) ((fillsG D sc Ce Lc X hd L P u w h).a v)
-      ((fillsG D sc Ce Lc X hd L P u w h).b v) (((recG D sc Ce Lc X hd).gat u w h).P.lam0 v)
-      ((fillsG D sc Ce Lc X hd L P u w h).w v) := by
-  refine std_of_fills _ _ v ?_ ?_ ?_
-  · exact one_le_rSc sc _ _
-  · have h1 := two_rSc_le sc D.R.k (D.what₂.places.resChar w) h2r
-    have h2 := D.R.m_add_three_le_k
-    show 2 * rSc sc D.R.k (D.what₂.places.resChar w) ≤ D.R.k - 1 + 1
-    omega
-  · have := D.R.two_le_m
-    show 1 ≤ D.R.m
-    omega
 
 end Formalism.L2.G
 end -- clump:auto

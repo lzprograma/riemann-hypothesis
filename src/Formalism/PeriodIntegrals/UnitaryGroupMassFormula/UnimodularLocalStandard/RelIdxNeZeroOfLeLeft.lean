@@ -1,50 +1,8 @@
 module
 
 public import Formalism.PeriodIntegrals.UnimodLocStd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -81,18 +39,8 @@ private theorem relIndex_ne_zero_of_finite_cover {A B : AddSubgroup V} {ι : Typ
   exact AddSubgroup.index_ne_zero_of_finite
 
 lemma relIdx_ne_zero_of_le_left {A A' B : AddSubgroup V} (h : A ≤ A') (hA : A.relIndex B ≠ 0) :
-    A'.relIndex B ≠ 0 := by
-  haveI : Finite (B ⧸ A.addSubgroupOf B) :=
-    Nat.finite_of_card_ne_zero (α := B ⧸ A.addSubgroupOf B) hA
-  refine relIndex_ne_zero_of_finite_cover (ι := B ⧸ A.addSubgroupOf B) (fun q => ((q.out : B) : V))
-    (fun q => q.out.2) ?_
-  intro b hb
-  refine ⟨((⟨b, hb⟩ : B) : B ⧸ A.addSubgroupOf B), h ?_⟩
-  have e : -((((⟨b, hb⟩ : B) : B ⧸ A.addSubgroupOf B)).out) + (⟨b, hb⟩ : B) ∈ A.addSubgroupOf B := by
-    rw [← QuotientAddGroup.eq]
-    exact QuotientAddGroup.out_eq' _
-  rw [AddSubgroup.mem_addSubgroupOf] at e
-  simpa [neg_add_eq_sub] using e
+    A'.relIndex B ≠ 0 :=
+  mt (AddSubgroup.relIndex_eq_zero_of_le_left h) hA
 
 lemma relIdx_map_smul {w : ℂ} (hw : w ≠ 0) (A B : AddSubgroup V) :
     (A.map (smulHom w)).relIndex (B.map (smulHom w)) = A.relIndex B := by
@@ -118,10 +66,6 @@ private theorem relIndex_ne_zero_of_le {A B : AddSubgroup V} (h : B ≤ A) : A.r
   relIndex_ne_zero_of_finite_cover (ι := Unit) (fun _ => 0) (fun _ => B.zero_mem)
     (fun b hb => ⟨(), by simpa using h hb⟩)
 
-private theorem relIndex_ne_zero_trans' {A B C : AddSubgroup V} (h : A.relIndex B ≠ 0)
-    (h' : B.relIndex C ≠ 0) : A.relIndex C ≠ 0 := by
-  exact AddSubgroup.relIndex_ne_zero_trans h h'
-
 lemma comm_smul {S X : AddSubgroup V} {w : ℂ} (hw : w ≠ 0) {N : ℕ} (hN : N ≠ 0)
     (hS : (S.map (smulHom (N : ℂ))).relIndex S ≠ 0) (h1 : S.relIndex X ≠ 0) (h2 : X.relIndex S ≠ 0)
     (ha : ∀ x ∈ X, (N : ℂ) • w • x ∈ X) (hb : ∀ x ∈ X, (N : ℂ) • w⁻¹ • x ∈ X) :
@@ -130,7 +74,7 @@ lemma comm_smul {S X : AddSubgroup V} {w : ℂ} (hw : w ≠ 0) {N : ℕ} (hN : N
   have hNXS : (X.map (smulHom (N : ℂ))).relIndex (S.map (smulHom (N : ℂ))) ≠ 0 := by
     rw [relIdx_map_smul hN']; exact h2
   have t1 : (X.map (smulHom (N : ℂ))).relIndex X ≠ 0 :=
-    relIndex_ne_zero_trans' (relIndex_ne_zero_trans' hNXS hS) h1
+    AddSubgroup.relIndex_ne_zero_trans (AddSubgroup.relIndex_ne_zero_trans hNXS hS) h1
   have hcomm : (X.map (smulHom w)).map (smulHom (N : ℂ)) =
       (X.map (smulHom (N : ℂ))).map (smulHom w) := by
     rw [AddSubgroup.map_map, AddSubgroup.map_map]
@@ -151,14 +95,10 @@ lemma comm_smul {S X : AddSubgroup V} {w : ℂ} (hw : w ≠ 0) {N : ℕ} (hN : N
     rw [smulHom_apply, smulHom_apply, smul_smul, smul_smul]
     congr 1
     rw [mul_comm w, mul_assoc, mul_inv_cancel₀ hw, mul_one]
-  exact ⟨relIndex_ne_zero_trans' (relIndex_ne_zero_trans' h1 t3) t2,
-    relIndex_ne_zero_trans' t4 (relIndex_ne_zero_trans' hNXS hS)⟩
+  exact ⟨AddSubgroup.relIndex_ne_zero_trans (AddSubgroup.relIndex_ne_zero_trans h1 t3) t2,
+    AddSubgroup.relIndex_ne_zero_trans t4 (AddSubgroup.relIndex_ne_zero_trans hNXS hS)⟩
 
 end Idx
-
-private theorem mem_lattice_iff_exists_int_comb (L : PeriodPair) (z : ℂ) :
-    z ∈ L.lattice ↔ ∃ p q : ℤ, (p : ℂ) * L.ω₁ + (q : ℂ) * L.ω₂ = z := by
-  exact PeriodPair.mem_lattice
 
 lemma stdLat_smul_idx (L : PeriodPair) (m : Type*) [Fintype m] {N : ℕ} (hN : N ≠ 0) :
     ((stdLat L m).map (smulHom (N : ℂ))).relIndex (stdLat L m) ≠ 0 := by
@@ -169,18 +109,18 @@ lemma stdLat_smul_idx (L : PeriodPair) (m : Type*) [Fintype m] {N : ℕ} (hN : N
   · intro f
     simp only [PI.ULS.stdLat, AddSubgroup.mem_pi]
     intro j _
-    exact (mem_lattice_iff_exists_int_comb L _).mpr ⟨_, _, rfl⟩
+    exact (PeriodPair.mem_lattice (L := L)).mpr ⟨_, _, rfl⟩
   · intro b hb
     simp only [PI.ULS.stdLat, AddSubgroup.mem_pi] at hb
     have hb' : ∀ j, ∃ p q : ℤ, (p : ℂ) * L.ω₁ + (q : ℂ) * L.ω₂ = b j :=
-      fun j => (mem_lattice_iff_exists_int_comb L (b j)).mp (hb j (Set.mem_univ _))
+      fun j => (PeriodPair.mem_lattice (L := L) (x := b j)).mp (hb j (Set.mem_univ _))
     choose p q hpq using hb'
     refine ⟨fun j => (⟨p j % N, Set.mem_Ico.mpr ⟨Int.emod_nonneg _ hN1, Int.emod_lt_of_pos _ hN0⟩⟩,
       ⟨q j % N, Set.mem_Ico.mpr ⟨Int.emod_nonneg _ hN1, Int.emod_lt_of_pos _ hN0⟩⟩), ?_⟩
     refine ⟨fun j => ((p j / N : ℤ) : ℂ) * L.ω₁ + ((q j / N : ℤ) : ℂ) * L.ω₂, ?_, ?_⟩
     · simp only [PI.ULS.stdLat]
       intro j _
-      exact (mem_lattice_iff_exists_int_comb L _).mpr ⟨_, _, rfl⟩
+      exact (PeriodPair.mem_lattice (L := L)).mpr ⟨_, _, rfl⟩
     · funext j
       simp only [smulHom_apply, Pi.smul_apply, Pi.sub_apply, smul_eq_mul]
       rw [← hpq j]

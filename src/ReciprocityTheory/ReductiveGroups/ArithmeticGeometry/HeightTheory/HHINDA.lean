@@ -211,8 +211,7 @@ theorem op_irreducible (ϖ : 𝓞 K) (hϖ : ϖ ∈ la.asIdeal) (hϖ2 : ϖ ∉ la
   have hxnu : ¬ IsUnit x := (IsLocalRing.mem_maximalIdeal x).mp hxm
   refine ⟨hxnu, ?_⟩
   intro a b hab
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have ha : a ∈ IsLocalRing.maximalIdeal (Op D N la) := (IsLocalRing.mem_maximalIdeal a).mpr hcon.1
   have hb : b ∈ IsLocalRing.maximalIdeal (Op D N la) := (IsLocalRing.mem_maximalIdeal b).mpr hcon.2
   rw [hm, Ideal.mem_span_singleton] at ha hb
@@ -337,9 +336,6 @@ theorem norm_at_la (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (la : IsDedekindDomain.
   d.norm_at_la_A hd h c la ϖ hϖ hϖ2 y hy
 
 
-open MeasureTheory in
-alias norm_at_sg := _root_.ReciprocityTheory.ChartRestriction.G.T0.Data.norm_at_sg_B
-
 end Data
 
 end ReciprocityTheory.ChartRestriction.G.T0
@@ -451,8 +447,8 @@ theorem gaussAbs_C (w : NumberField.FinitePlace K) {σ : Type*} (c : K) :
   by_cases hc : c = 0
   · subst hc
     simp
-  · rw [MvPolynomial.support_C, if_neg hc]
-    simp only [Finset.sup_singleton, MvPolynomial.coeff_C, if_true]
+  · rw [MvPolynomial.support_C, ite_eq_right hc]
+    simp only [Finset.sup_singleton, MvPolynomial.coeff_C, ite_true]
     exact Real.coe_toNNReal _ (by positivity)
 
 end ReciprocityTheory.ChartRestriction.G.T0.HeightMultiplicativity
@@ -484,7 +480,7 @@ theorem gaussAbs_prim {σ : Type*} (la : HeightOneSpectrum (𝓞 K)) (x : MvPoly
     gaussAbs (FinitePlace.mk la) (MvPolynomial.map (algebraMap (𝓞 K) K) x) = 1 := by
   classical
   rw [MvPolynomial.mem_map_C_iff] at hx
-  push_neg at hx
+  push Not at hx
   obtain ⟨s0, hs0⟩ := hx
   have hw : ∀ a : 𝓞 K, FinitePlace.mk la (algebraMap (𝓞 K) K a) ≤ 1 := fun a => by
     rw [FinitePlace.mk_apply]

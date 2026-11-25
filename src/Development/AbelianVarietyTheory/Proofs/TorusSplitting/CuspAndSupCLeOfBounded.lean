@@ -49,13 +49,10 @@ import Development.AbelianVarietyTheory.Definitions.TorusSections.IsTorusOf
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.L2.PjFree GlobalTheory.EtaForm GlobalTheory.EtaAn GlobalTheory.ArcQ
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.BoundedCusp
 
@@ -102,13 +99,13 @@ theorem cusp_and_supC_le_of_bounded : ∀ (E : Type) [Field E] [NumberField E] [
       · intro i i' h1 h2
         unfold laU
         by_cases h3 : ((U σ).X j).p0 ≤ (i : ℕ)
-        · rw [if_pos h3, if_pos (by omega)]
+        · rw [ite_eq_left h3, ite_eq_left (by omega)]
           simp
-        · rw [if_neg h3, if_neg (by omega)]
+        · rw [ite_eq_right h3, ite_eq_right (by omega)]
           simp
       · intro i i' h1 h2
         unfold laU
-        rw [if_neg (by omega), if_pos (by omega)]
+        rw [ite_eq_right (by omega), ite_eq_left (by omega)]
         omega
   · have h1 : lieFac Dw xi (0 : (E →+* ℂ) × ℕ → ℕ) = 1 := by simp [lieFac]
     unfold supC supN

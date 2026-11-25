@@ -61,8 +61,8 @@ theorem elimCol_mul_elimCol (h : Matrix (Fin n) (Fin n) F) (a : Fin n) :
   refine Finset.sum_eq_zero fun k _ => ?_
   by_cases hk : k = a
   · subst hk
-    rw [elimCol_apply h k k l, if_neg (fun h => lt_irrefl _ h.2), mul_zero]
-  · rw [elimCol_apply, if_neg (fun h => hk h.1), zero_mul]
+    rw [elimCol_apply h k k l, ite_eq_right (fun h => lt_irrefl _ h.2), mul_zero]
+  · rw [elimCol_apply, ite_eq_right (fun h => hk h.1), zero_mul]
 
 theorem elimCol_mul_apply (h : Matrix (Fin n) (Fin n) F) (a i l : Fin n) :
     (elimCol β h a * h) i l = if elimKey β a < elimKey β i then h i a / h a a * h a l else 0 := by
@@ -70,13 +70,13 @@ theorem elimCol_mul_apply (h : Matrix (Fin n) (Fin n) F) (a i l : Fin n) :
   simp only [elimCol_apply]
   split_ifs with hi
   · rw [Finset.sum_eq_single a]
-    · rw [if_pos ⟨rfl, hi⟩]
+    · rw [ite_eq_left ⟨rfl, hi⟩]
     · intro k _ hk
-      rw [if_neg (fun h => hk h.1), zero_mul]
+      rw [ite_eq_right (fun h => hk h.1), zero_mul]
     · intro h
       exact absurd (Finset.mem_univ a) h
   · refine Finset.sum_eq_zero fun k _ => ?_
-    rw [if_neg (fun h => hi h.2), zero_mul]
+    rw [ite_eq_right (fun h => hi h.2), zero_mul]
 
 variable (β)
 
@@ -107,7 +107,7 @@ theorem elimGL_mem_blockUpper_dual (h : Matrix (Fin n) (Fin n) F) (a : Fin n) :
   intro i k hik
   have hik' : β i < β k := hik
   show (1 : Matrix (Fin n) (Fin n) F) i k - elimCol β h a i k = 0
-  rw [one_apply_ne (fun e => hik'.ne (by rw [e])), elimCol_apply, if_neg, sub_zero]
+  rw [one_apply_ne (fun e => hik'.ne (by rw [e])), elimCol_apply, ite_eq_right, sub_zero]
   rintro ⟨rfl, hk⟩
   exact (le_of_elimKey_lt hk).not_gt hik'
 
@@ -142,7 +142,7 @@ theorem exists_mul_mem_blockUpper (K : Subgroup (GL (Fin n) F))
           Matrix (Fin n) (Fin n) F) i j = 0
       rw [hentry, elimCol_mul_apply]
       rcases Finset.mem_insert.1 hj with rfl | hjs
-      · rw [if_pos hji, div_mul_cancel₀ _ (hdiag h hK j), sub_self]
+      · rw [ite_eq_left hji, div_mul_cancel₀ _ (hdiag h hK j), sub_self]
       · have hja : elimKey β j < elimKey β a :=
           elimKey_lt_of_le (hmax j hjs) (fun e => ha (e ▸ hjs))
         have h1 : (h : GL (Fin n) F) i j = 0 := hz j hjs i hji
@@ -308,7 +308,7 @@ theorem leviProj_mem_iwahori {p : GL (Fin n) F} (hp : p ∈ blockUpper F n β)
     · exact h2 i j hij
     · rw [map_zero]
       exact zero_lt_one
-  · rw [leviProj_apply, if_pos rfl]
+  · rw [leviProj_apply, ite_eq_left rfl]
     exact h3 i
 
 theorem valuation_elimCol_lt_one (hβ : Monotone β) {h : GL (Fin n) F} (hh : h ∈ iwahori F n)
@@ -394,13 +394,6 @@ variable {F : Type*} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchi
   {n : ℕ} {α : Type*} [LinearOrder α] {β : Fin n → α}
 
 local notation "ϖ" => (GLnLocal.uniformizer F : F)
-
-theorem valuation_zpow_mul_le_pow_mul {x : F} {e : ℕ} {z : ℤ} (hz : (e : ℤ) ≤ z) :
-    valuation F (ϖ ^ z * x) ≤ valuation F ϖ ^ e * valuation F x := by
-  obtain ⟨d, rfl⟩ : ∃ d : ℕ, z = e + d := ⟨(z - e).toNat, by omega⟩
-  rw [zpow_add₀ (GLnLocal.uniformizer_ne_zero F), zpow_natCast, zpow_natCast, map_mul, map_mul,
-    map_pow, map_pow, mul_right_comm]
-  exact mul_le_of_le_one_right' (pow_le_one' (valuation_uniformizer_lt_one F).le d)
 
 
 end Contraction

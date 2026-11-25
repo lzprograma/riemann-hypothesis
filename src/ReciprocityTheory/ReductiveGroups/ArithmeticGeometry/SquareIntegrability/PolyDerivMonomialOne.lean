@@ -95,8 +95,8 @@ theorem itD_prod {n : ℕ} {g : Fin n → W → ℂ} (hg : ∀ k, ContDiff ℂ (
     rw [← Finset.prod_erase_mul Finset.univ _ (Finset.mem_univ a.1)]
     congr 1
     · refine Finset.prod_congr rfl fun k hk => ?_
-      rw [colL_cons, if_neg (Ne.symm (Finset.ne_of_mem_erase hk))]
-    · rw [colL_cons, if_pos rfl, itD_cons (hg _)]
+      rw [colL_cons, ite_eq_right (Ne.symm (Finset.ne_of_mem_erase hk))]
+    · rw [colL_cons, ite_eq_left rfl, itD_cons (hg _)]
 
 theorem itD_col {s : (Fin 1 → W) → ℂ} (hs : ContDiff ℂ (⊤ : ℕ∞) s) (l : List W) :
     itD (fun z : W => s (fun _ => z)) l 0 = iteratedFDeriv ℂ l.length s 0 (fun j _ => l.get j) := by
@@ -153,7 +153,7 @@ theorem polyDeriv_monomial_one (m : σ →₀ ℕ) (u : σ → W) (F : W → ℂ
     polyDeriv (MvPolynomial.monomial m (1 : ℂ)) u F x = pdTerm u F x m := by
   classical
   rw [polyDeriv_eq_of_subset _ u F x (S := {m}) MvPolynomial.support_monomial_subset,
-    Finset.sum_singleton, MvPolynomial.coeff_monomial, if_pos rfl, one_mul]
+    Finset.sum_singleton, MvPolynomial.coeff_monomial, ite_eq_left rfl, one_mul]
 
 theorem pdTerm_eq_itD (u : σ → W) (F : W → ℂ) (x : W) (m : σ →₀ ℕ) :
     pdTerm u F x m = itD F ((Finsupp.toMultiset m).toList.map u) x := by

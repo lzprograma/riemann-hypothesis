@@ -176,14 +176,14 @@ theorem twoStep_finite_on_compacts : ∀ (F E : Type) [Field F] [NumberField F] 
   have hs : IsSec R σ J x s := by
     intro y hy
     by_cases h : ∃ g ∈ C, g • ratTup (F := F) R x = y
-    · simp only [s, dif_pos h]
+    · simp only [s, dite_eq_left h]
       exact h.choose_spec.2
-    · simp only [s, dif_neg h, dif_pos hy]
+    · simp only [s, dite_eq_right h, dite_eq_left hy]
       exact hy.choose_spec
   have hsC : ∀ y ∈ K₁, (∃ g : HA R σ J, g • ratTup (F := F) R x = y) → s y ∈ C := by
     intro y hy hg
     have h := hCK y hy hg
-    simp only [s, dif_pos h]
+    simp only [s, dite_eq_left h]
     exact h.choose_spec.1
   have h1 := hT (K.indicator 1) (measurable_one.indicator hK.measurableSet) s hs
   rw [lintegral_indicator_one hK.measurableSet] at h1

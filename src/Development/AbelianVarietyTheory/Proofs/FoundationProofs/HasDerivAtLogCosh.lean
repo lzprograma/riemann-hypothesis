@@ -319,7 +319,7 @@ theorem norm_sq_sum {σ H : Type} [DecidableEq σ] [NormedAddCommGroup H] [Inner
   refine Finset.sum_congr rfl fun α hα => ?_
   rw [inner_sum, Finset.sum_eq_single α, ← mul_pow, ← norm_smul, e]
   · intro β _ hβ
-    rw [inner_smul_left, inner_smul_right, h, if_neg (Ne.symm hβ), mul_zero, mul_zero]
+    rw [inner_smul_left, inner_smul_right, h, ite_eq_right (Ne.symm hβ), mul_zero, mul_zero]
   · exact fun h => (h hα).elim
 
 theorem norm_dil_le {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] {ι : Pol p q n 0 →ₗ[ℂ] H}
@@ -507,7 +507,7 @@ theorem kronOne_mem {Y : Mat p q} (hY : Y ∈ upq p q) :
     Matrix.kroneckerMap_apply, Matrix.one_apply]
   by_cases h : c = d
   · subst h
-    simp only [if_true, mul_one]
+    simp only [ite_true, mul_one]
     linear_combination sgnIx c * hY a b
   · simp [h, Ne.symm h]
 
@@ -681,7 +681,7 @@ theorem act_tanhDiag (σ : ℕ → ℝ) (t : ℝ) (α : Ln p q n 0 →₀ ℕ) :
       ((σ (posIx a) * Real.tanh (t * σ (posIx a)) : ℝ) : ℂ)) • Eab a a := by
     ext i j
     simp only [tanhDiag, Eab, Matrix.sum_apply, Matrix.smul_apply, Matrix.single_apply, Matrix.diagonal_apply,
-      ite_and, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      ite_and, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
   rw [e, map_sum, LinearMap.sum_apply]
   simp only [map_smul, LinearMap.smul_apply, cartan1, smul_smul, ← Finset.sum_smul]

@@ -59,7 +59,7 @@ theorem integral_mem_of_isClosed {α V : Type*} [MeasurableSpace α] [NormedAddC
   rw [this]
   exact Subtype.property _
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 variable {n : ℕ} {H : Type*} [NormedAddCommGroup H] [NormedSpace ℂ H]
 

@@ -189,12 +189,12 @@ theorem JoinDivCycle.proof : JoinDivCycle.Statement := by
     simp only [ReciprocityTheory.ChartRestriction.G.Geo.divCycle, Finsupp.ofSupportFinite_coe]
     by_cases hQ : Q ∈ ReciprocityTheory.ChartRestriction.G.Geo.divSupp P f
     · haveI : Q.IsPrime := hQ.1.1.1
-      rw [if_pos ((hsupp Q).2 hQ), if_pos hQ,
+      rw [ite_eq_left ((hsupp Q).2 hQ), ite_eq_left hQ,
         multAt_map_rename P Q (le_sup_left.trans hQ.1.1.2) f]
-    · rw [if_neg (fun h => hQ ((hsupp Q).1 h)), if_neg hQ]
+    · rw [ite_eq_right (fun h => hQ ((hsupp Q).1 h)), ite_eq_right hQ]
   · rw [Finsupp.mapDomain_of_notMem_range _ _ (by rintro ⟨Q, hQ⟩; exact hW ⟨Q, hQ⟩)]
     simp only [ReciprocityTheory.ChartRestriction.G.Geo.divCycle, Finsupp.ofSupportFinite_coe]
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨hmin, -⟩
     rw [hsup, mem_minimalPrimes_map_rename_iff] at hmin
     obtain ⟨Q, -, hQ⟩ := hmin

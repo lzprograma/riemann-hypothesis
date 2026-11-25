@@ -13,8 +13,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.Herm
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 structure TwChJointS {D : D7} {inQ : D.what₂.Tup → HeightOneSpectrum (𝓞 D.host.F) → Prop} (T : TwChTied D inQ)
     (H : HermColsCh D) where
 
@@ -30,8 +28,6 @@ structure TwChJointS {D : D7} {inQ : D.what₂.Tup → HeightOneSpectrum (𝓞 D
 end Formalism.L2.Herm
 
 namespace Formalism.L2.Forms
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
@@ -70,36 +66,8 @@ structure TwFormsTiedS (D : D7) (Tw : TwForms D) {inQ : D.what₂.Tup → Height
 
   chi_fin : ∀ u μ hμ i h1 hm β, ∃ n : ℕ, 0 < n ∧ ∀ κ, (ch u μ hμ i h1 hm β).lev.chi κ ^ n = 1
 
-  chi_offC : ∀ u μ hμ i h1 (h2 : i + 1 ≤ D.R.m) β (κ : (ch u μ hμ i h1 (le_of_succ_m h2) β).lev.U)
-    (κ' : ((F u).ch i h1 h2 (J.gOf u μ i β)).lev.U), κ.1 = κ'.1 →
-    (∀ v ∈ T.Q μ, bc (prV (E := D.host.E) v) κ.1 = 1) →
-    (ch u μ hμ i h1 (le_of_succ_m h2) β).lev.chi κ = ((F u).ch i h1 h2 (J.gOf u μ i β)).lev.chi κ'
-
-  chi_offM : ∀ u μ hμ (h1 : 1 ≤ D.R.m) β (κ : (ch u μ hμ D.R.m h1 le_rfl β).lev.U)
-    (κ' : ((F u).cls D.R.m le_rfl (Or.inr rfl)).lev.U), κ.1 = κ'.1 →
-    (∀ v ∈ T.Q μ, bc (prV (E := D.host.E) v) κ.1 = 1) →
-    (ch u μ hμ D.R.m h1 le_rfl β).lev.chi κ = ((F u).cls D.R.m le_rfl (Or.inr rfl)).lev.chi κ'
-
-  chiJ : ∀ u μ (h : 1 ≤ D.R.m - 1), (T.levJ u μ h).U →* ℂˣ
-  chiJ_eq : ∀ u μ hμ (h : 1 ≤ D.R.m - 1) β (κ : (T.levJ u μ h).U)
-    (κ' : (ch u μ hμ (D.R.m - 1) h (Nat.sub_le _ _) β).lev.U), κ'.1 = reGL (rankN D (D.R.m - 1) (Nat.sub_le _ _)) _ κ.1 →
-    (ch u μ hμ (D.R.m - 1) h (Nat.sub_le _ _) β).lev.chi κ' = chiJ u μ h κ
-
-  chiJ_off : ∀ u μ (h : 1 ≤ D.R.m - 1) (κ : (T.levJ u μ h).U) (κ' : (F u).levJ.U),
-    κ'.1 = reGL (rankN D (D.R.m - 1) (Nat.sub_le _ _)) _ κ.1 →
-    (∀ v ∈ T.Q μ, bc (prV (E := D.host.E) v) κ.1 = 1) → chiJ u μ h κ = (F u).levJ.chi κ'
-
   val : ∀ u μ hμ i h1 hm, ValuationCompatibleChart (Tw.fm u μ) (twYS T F u μ i hm) (okQ D (T.Q μ)) (T.chOf u μ i)
     (lat := fun c => latCrd D i hm (T.lat u μ i c)) (ch u μ hμ i h1 hm)
-
-  dil : ∀ u μ hμ i h1 hm, DilationCompatibleChart (Tw.fm u μ) (twYS T F u μ i hm) ((atT u μ).eV (F u).atT) (T.chOf u μ i)
-    (lat := fun c => latCrd D i hm (T.lat u μ i c)) (ch u μ hμ i h1 hm)
-
-  ipV : ∀ u μ i hi, IpVTieG (Tw.fm u μ) (twYS T F u μ i hi)
-
-  norm : ∀ u μ i hi, NormTieG (Tw.fm u μ) (twYS T F u μ i hi)
-
-  twisted_e0_at_mu0_eq_eMu0 : ∀ u x, Tw.e0 u D.what₂.mu0 x = Tw.eMu0 u 0 (Nat.zero_le _) x
 
 
 
@@ -114,11 +82,6 @@ structure SymmetricTwistedLevelData {Tw : TwForms D} {T : Formalism.L2.Herm.TwCh
   dnN : ∀ u μ hμ i h1 hm, DnNatTieG (lv u μ hμ i h1 hm) (twYS T F u μ i hm) ((W.atT u μ).eV (F u).atT) (W.ch u μ hμ i h1 hm)
   bw : ∀ u μ, μ ≠ D.what₂.mu0 → ∀ i, 1 ≤ i → ∀ hm : i ≤ D.R.m,
     BwTieG (Tw.fm u μ) (D.mem u).A.T ((W.atT u μ).res (F u).atT) (twYS T F u μ i hm) (fun c => latCrd D i hm (T.lat u μ i c))
-
-structure TwLvSameS {Tw : TwForms D} {T : Formalism.L2.Herm.TwChTied D inQ} {H : Formalism.L2.Herm.HermColsCh D} {J : Formalism.L2.Herm.TwChJointS T H}
-    {F : ∀ u, FormsTiedSym D u (H.Ch u) (H.chOf u)} (W : TwFormsTiedS D Tw T J F) where
-  step0 : ∀ u μ, LvSame (W.atT u μ) 0 (T.eCls0 u μ) (T.eY u μ 0 (Nat.zero_le _)) (Tw.e0 u μ)
-  mu0 : ∀ u i (hi : i ≤ D.R.m), LvSame (W.atT u D.what₂.mu0) i (Formalism.L2.Herm.clsCast D u i) (Formalism.L2.Herm.yCast D u i) (Tw.eMu0 u i hi)
 
 end Formalism.L2.Forms
 

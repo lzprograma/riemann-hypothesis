@@ -12,54 +12,10 @@ public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommutantReductionReal
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeviStabilityReal
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ScalarActionFifthReal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Bool
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsEvaluationOfMemAdjoin, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InvariantPickReal, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeviRelationsReal, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CreqAnnqTopqSame, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SemisimpleClassificationReal, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.FirstSubSecondLeviFamily, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.MultForOf, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.MultForOfCapCls
@@ -137,14 +93,14 @@ theorem ad_letter (h : Pair2 E1 E2) (c d : Fin n) (s : Bool) (a b : Fin n) :
   cases s
   · have h2 := h.gl2 c d a b
     have c1 := h.comm c d a b
-    simp only [Bool.false_eq_true, if_false]
+    simp only [Bool.false_eq_true, ite_false]
     rw [add_mul, mul_add, c1]
     have : E2 a b * E1 c d + E2 c d * E2 a b - (E2 a b * E1 c d + E2 a b * E2 c d) =
       E2 c d * E2 a b - E2 a b * E2 c d := by abel
     rw [this, h2]
   · have h1 := h.gl1 c d a b
     have c1 := h.comm a b c d
-    simp only [if_true]
+    simp only [ite_true]
     rw [add_mul, mul_add, ← c1]
     have : E1 c d * E1 a b + E1 a b * E2 c d - (E1 a b * E1 c d + E1 a b * E2 c d) =
       E1 c d * E1 a b - E1 a b * E1 c d := by abel
@@ -186,10 +142,10 @@ theorem exists_adFam (a : FreeAlgebra ℂ (Lt n)) :
       rw [h]
       congr 1
       · by_cases h1 : d = a
-        · simp only [h1, true_and, if_true, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ]
+        · simp only [h1, true_and, ite_true, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ]
         · simp [h1]
       · by_cases h1 : b = c
-        · simp only [h1, true_and, if_true, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ]
+        · simp only [h1, true_and, ite_true, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ]
         · simp [h1]
     · simp [Pi.single_apply]
   | mul a b ha hb =>
@@ -210,7 +166,7 @@ theorem exists_adFam (a : FreeAlgebra ℂ (Lt n)) :
       simp only []
       rw [this, e1, e2]
       simp only [Matrix.of_apply, add_smul, Finset.sum_add_distrib, Fintype.sum_prod_type, ite_smul, zero_smul,
-        Finset.sum_ite_eq', Finset.mem_univ, if_true, map_mul, Finset.sum_mul, Finset.mul_sum, smul_mul_assoc,
+        Finset.sum_ite_eq', Finset.mem_univ, ite_true, map_mul, Finset.sum_mul, Finset.mul_sum, smul_mul_assoc,
         mul_smul_comm]
       congr 1
       rw [Finset.sum_comm]
@@ -563,7 +519,7 @@ theorem pick (σ : Bool) (x y : Fin n) (h : x < y) (G : Bool → Fin n → Fin n
   rw [Finset.sum_eq_single (σ, (⟨(x, y), h⟩ : {p : Fin n × Fin n // p.1 < p.2}))]
   · simp
   · intro b _ hb
-    rw [if_neg, zero_mul]
+    rw [ite_eq_right, zero_mul]
     rintro ⟨h1, h2⟩
     exact hb (Prod.ext h1 (Subtype.ext h2))
   · intro hmem
@@ -583,12 +539,12 @@ theorem sum_adCL {lev : Fin n → ℕ} (hm : Monotone lev) (s : Bool) {p q : Fin
   refine congrArg₂ _ ?_ ?_
   · by_cases hq : q = l.2.1.1
     · have hlt : p < l.2.1.2 := GlobalTheory.CompanionTheory.LevChainRel.lt_of_lev hm (by rw [hpq, hq]; exact hl)
-      simp only [hq, true_and, if_true]
+      simp only [hq, true_and, ite_true]
       exact GlobalTheory.CompanionTheory.LevChainRel.pick _ _ _ hlt G
     · simp [hq]
   · by_cases hp : l.2.1.2 = p
     · have hlt : l.2.1.1 < q := GlobalTheory.CompanionTheory.LevChainRel.lt_of_lev hm (by rw [← hpq, ← hp]; exact hl)
-      simp only [hp, true_and, if_true]
+      simp only [hp, true_and, ite_true]
       exact GlobalTheory.CompanionTheory.LevChainRel.pick _ _ _ hlt G
     · simp [hp]
 
@@ -603,30 +559,25 @@ theorem sum_Mx {lev : Fin n → ℕ} (hm : Monotone lev) (s t : Bool) {a b c d :
           (if lev j.2.1.1 < lev j.2.1.2 then GlobalTheory.CompanionTheory.LevChainRel.adG s a b j.1 j.2.1.1 j.2.1.2 k else 0) := by
     intro j
     unfold GlobalTheory.CompanionTheory.LevChainRel.Mx
-    rw [if_pos hl]
+    rw [ite_eq_left hl]
     by_cases hj : PositivityTheory.RgBcC.RealD.inUU lev j
     · have hj' : lev j.2.1.1 < lev j.2.1.2 := hj
-      rw [if_pos hj, if_pos hj']
+      rw [ite_eq_left hj, ite_eq_left hj']
       rfl
     · have hj' : ¬ lev j.2.1.1 < lev j.2.1.2 := hj
-      rw [if_neg hj, if_neg hj']
+      rw [ite_eq_right hj, ite_eq_right hj']
   refine (Finset.sum_congr rfl fun j _ => key j).trans
     ((GlobalTheory.CompanionTheory.LevChainRel.sum_adCL hm t hcd l hl
       (fun σ x y => if lev x < lev y then GlobalTheory.CompanionTheory.LevChainRel.adG s a b σ x y k else 0)).trans ?_)
   refine congrArg₂ _ ?_ ?_
   · by_cases hd : d = l.2.1.1
     · have hlt : lev c < lev l.2.1.2 := by rw [hcd, hd]; exact hl
-      rw [if_pos hd, if_pos hd, if_pos hlt]
-    · rw [if_neg hd, if_neg hd]
+      rw [ite_eq_left hd, ite_eq_left hd, ite_eq_left hlt]
+    · rw [ite_eq_right hd, ite_eq_right hd]
   · by_cases hc : l.2.1.2 = c
     · have hlt : lev l.2.1.1 < lev d := by rw [← hcd, ← hc]; exact hl
-      rw [if_pos hc, if_pos hc, if_pos hlt]
-    · rw [if_neg hc, if_neg hc]
-
-theorem ind3 (P Q R : Prop) [Decidable P] [Decidable Q] [Decidable R] :
-    (if P ∧ Q ∧ R then (1 : ℂ) else 0) =
-      (if P then 1 else 0) * (if Q then 1 else 0) * (if R then 1 else 0) := by
-  by_cases hP : P <;> by_cases hQ : Q <;> by_cases hR : R <;> simp [hP, hQ, hR]
+      rw [ite_eq_left hc, ite_eq_left hc, ite_eq_left hlt]
+    · rw [ite_eq_right hc, ite_eq_right hc]
 
 theorem ite_zero_eq (P : Prop) [Decidable P] (X : ℂ) : (if P then X else 0) = (if P then 1 else 0) * X := by
   by_cases hP : P <;> simp [hP]
@@ -642,7 +593,7 @@ theorem key_id (s t u : Bool) (a b c d x y : Fin n) (k : Lt n) :
     GlobalTheory.CompanionTheory.LevChainRel.ite_zero_eq (b = c), GlobalTheory.CompanionTheory.LevChainRel.ite_zero_eq (d = a)]
   unfold GlobalTheory.CompanionTheory.LevChainRel.adG
   rw [hx1, hx2]
-  simp only [GlobalTheory.CompanionTheory.LevChainRel.ind3]
+  simp only [GlobalTheory.CompanionTheory.RgCOBlock.LetterGl.ite3]
   ring
 
 theorem mx_id {lev : Fin n → ℕ} (hm : Monotone lev) (s t : Bool) {a b c d : Fin n} (hab : lev a = lev b)
@@ -653,7 +604,7 @@ theorem mx_id {lev : Fin n → ℕ} (hm : Monotone lev) (s t : Bool) {a b c d : 
   · rw [GlobalTheory.CompanionTheory.LevChainRel.sum_Mx hm s t hab hcd l k hl,
       GlobalTheory.CompanionTheory.LevChainRel.sum_Mx hm t s hcd hab l k hl,
       GlobalTheory.CompanionTheory.LevChainRel.key_id]
-    simp only [GlobalTheory.CompanionTheory.LevChainRel.Mx, if_pos hl]
+    simp only [GlobalTheory.CompanionTheory.LevChainRel.Mx, ite_eq_left hl]
     rfl
   · simp [GlobalTheory.CompanionTheory.LevChainRel.Mx, hl]
 
@@ -743,7 +694,7 @@ theorem xS_comm {E1 E2 : Fin n → Fin n → Module.End ℂ V} (h : IsPairA E1 E
       (if b = c then E2 a d else 0) - (if d = a then E2 c b else 0) := h2 a b c d
   cases s <;> cases t <;>
     simp only [GlobalTheory.CompanionTheory.LevChainRel.xS, PositivityTheory.RgBcC.RealD.kA, PositivityTheory.RgBcC.RealD.pA,
-      Bool.false_eq_true, if_true, if_false, Bool.false_xor, Bool.true_xor,
+      Bool.false_eq_true, ite_true, ite_false, Bool.false_xor, Bool.true_xor,
       Bool.not_true, Bool.not_false]
   · rw [GlobalTheory.CompanionTheory.LevChainRel.comm_kk (h12 a b c d) (h12 c d a b), e1, e2]
     split_ifs <;> abel
@@ -813,7 +764,7 @@ variable {V : Type} [AddCommGroup V] [Module ℂ V]
 theorem evLc_letter {lev : Fin n → ℕ} (E1 E2 : Fin n → Fin n → Module.End ℂ V) (s : Bool) {p q : Fin n}
     (h : lev p = lev q) : evLc lev E1 E2 (FreeAlgebra.ι ℂ (s, p, q)) = Tc lev E1 E2 s p q := by
   simp only [PositivityTheory.RgBcC.RealD.evLc, FreeAlgebra.lift_ι_apply]
-  rw [if_pos h]
+  rw [ite_eq_left h]
   rfl
 
 theorem leviFamilyOne_eq_half_sum {lev : Fin n → ℕ} (E1 E2 : Fin n → Fin n → Module.End ℂ V) {p q : Fin n} (h : lev p = lev q) :
@@ -902,18 +853,6 @@ namespace GlobalTheory.CompanionTheory.PairMult.TopK
 
 variable {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
 
-theorem sgL_erase (l : Lt n) (B : Finset (Lt n)) : sgL l (B.erase l) = sgL l B := by
-  unfold sgL
-  congr 2
-  ext j
-  simp only [mem_filter, mem_erase]
-  constructor
-  · exact fun h => ⟨h.1.2, h.2⟩
-  · exact fun h => ⟨⟨fun e => by subst e; exact lt_irrefl _ h.2, h.1⟩, h.2⟩
-
-theorem sgL_sq (l : Lt n) (B : Finset (Lt n)) : sgL l B * sgL l B = 1 := by
-  unfold sgL; rw [← pow_add, ← two_mul, pow_mul]; simp
-
 theorem adC_diag_ne {p q : Fin n} (h : p ≠ q) (i : Pos n) : adC p q i i = 0 := by
   have h1 : ¬(q = i.1.1 ∧ i.1 = (p, i.1.2)) := fun e => h (by
     have := congrArg Prod.fst e.2
@@ -984,7 +923,7 @@ theorem kF_bracket {E1 E2 : Fin n → Fin n → Module.End ℂ V} (g1 : GlRel E1
     kF E1 E2 q p * kF E1 E2 p q - kF E1 E2 p q * kF E1 E2 q p = kF E1 E2 q q - kF E1 E2 p p := by
   have h1 := g1 q p p q
   have h2 := g2 q p p q
-  simp only [if_true] at h1 h2
+  simp only [ite_true] at h1 h2
   have e : kF E1 E2 q p * kF E1 E2 p q - kF E1 E2 p q * kF E1 E2 q p =
       (E1 q p * E1 p q - E1 p q * E1 q p) + (E2 q p * E2 p q - E2 p q * E2 q p) := by
     simp only [kF, add_mul, mul_add, hc q p p q, hc p q q p]
@@ -998,9 +937,9 @@ theorem K_act {lam : Fin n → ℤ} {lev : Fin n → ℕ} (hl : IsLev lam lev) {
     kF E1 E2 p q x = if p = q then ((muQ lam lev p : ℝ) : ℂ) • x else 0 := by
   have hK : KHighest (fun _ => true) (kF E1 E2) (muQ lam lev) x := hx
   rcases lt_trichotomy p q with h | rfl | h
-  · rw [if_neg h.ne, hK.2 p q h rfl]
-  · rw [if_pos rfl, hK.1 p]
-  · rw [if_neg h.ne']
+  · rw [ite_eq_right h.ne, hK.2 p q h rfl]
+  · rw [ite_eq_left rfl, hK.1 p]
+  · rw [ite_eq_right h.ne']
     have hmu : muQ lam lev q = muQ lam lev p := by
       simp only [muQ, rhoU_eq hpq.symm, hl.2 q p hpq.symm]
     have hb := LinearMap.congr_fun (kF_bracket hA.gl1 hA.gl2 hA.comm p q) x
@@ -1032,12 +971,6 @@ namespace GlobalTheory.CompanionTheory.SemiClass
 
 variable {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
 
-theorem annL_app (l : Lt n) (x : Cq n V) (B : Finset (Lt n)) :
-    annL l x B = if l ∈ B then 0 else sgL l B • x (insert l B) := rfl
-
-theorem creL_app (l : Lt n) (x : Cq n V) (B : Finset (Lt n)) :
-    creL l x B = if l ∈ B then sgL l B • x (B.erase l) else 0 := rfl
-
 theorem sgL_erase (l : Lt n) (B : Finset (Lt n)) : sgL l (B.erase l) = sgL l B := by
   unfold sgL
   congr 2
@@ -1056,9 +989,9 @@ theorem sgL_sq (l : Lt n) (B : Finset (Lt n)) : sgL l B * sgL l B = 1 := by
 
 theorem creL_annL (l : Lt n) (x : Cq n V) (B : Finset (Lt n)) :
     creL l (annL l x) B = if l ∈ B then x B else 0 := by
-  rw [creL_app]
+  rw [GlobalTheory.CompanionTheory.LvChain.creL_apply]
   split_ifs with hB
-  · rw [annL_app, if_neg (by simp), Finset.insert_erase hB, sgL_erase, smul_smul, sgL_sq, one_smul]
+  · rw [GlobalTheory.CompanionTheory.LvChain.annL_apply, ite_eq_right (by simp), Finset.insert_erase hB, sgL_erase, smul_smul, sgL_sq, one_smul]
   · rfl
 
 theorem mem_omU {lev : Fin n → ℕ} {l : Lt n} : l ∈ omU lev ↔ l.1 = false ∧ lev l.2.1.1 < lev l.2.1.2 := by
@@ -1088,7 +1021,7 @@ theorem liftL_top (lev : Fin n → ℕ) (T : Module.End ℂ V) (x : V) :
 theorem annL_top_of_notMem {lev : Fin n → ℕ} {l : Lt n} (x : V) (h : l ∉ omU lev) :
     annL l (Pi.single (omU lev) x : Cq n V) = 0 := by
   ext B
-  rw [annL_app, top_app]
+  rw [GlobalTheory.CompanionTheory.LvChain.annL_apply, top_app]
   split_ifs with h1 h2
   · rfl
   · exact absurd (by rw [← h2]; exact Finset.mem_insert_self l B) h
@@ -1100,17 +1033,17 @@ theorem creL_annL_top_same {lev : Fin n → ℕ} {l : Lt n} (x : V) (h : l ∈ o
   rw [creL_annL]
   split_ifs with hB
   · rfl
-  · rw [top_app, if_neg (fun e => hB (by rw [e]; exact h))]
+  · rw [top_app, ite_eq_right (fun e => hB (by rw [e]; exact h))]
 
 theorem creL_annL_top_ne {lev : Fin n → ℕ} {l m : Lt n} (x : V) (hm : m ∈ omU lev) (hne : m ≠ l) :
     creL m (annL l (Pi.single (omU lev) x : Cq n V)) = 0 := by
   ext B
-  rw [creL_app]
+  rw [GlobalTheory.CompanionTheory.LvChain.creL_apply]
   split_ifs with hB
-  · rw [annL_app]
+  · rw [GlobalTheory.CompanionTheory.LvChain.annL_apply]
     split_ifs with hl
     · simp
-    · rw [top_app, if_neg]
+    · rw [top_app, ite_eq_right]
       · simp
       · intro e
         have hmem : m ∈ insert l (B.erase m) := by
@@ -1161,11 +1094,11 @@ theorem adLL_top {lev : Fin n → ℕ} {p q : Fin n} (hpq : lev p = lev q) (x : 
     intro l k
     by_cases hl : l ∈ omU lev
     · have hin : inUU lev l := (mem_omU.1 hl).2
-      rw [if_pos hin, LinearMap.smul_apply, Module.End.mul_apply]
+      rw [ite_eq_left hin, LinearMap.smul_apply, Module.End.mul_apply]
       by_cases hk : k = l
       · subst hk
-        rw [creL_annL_top_same x hl, if_pos rfl, if_pos hl]
-      · rw [if_neg hk]
+        rw [creL_annL_top_same x hl, ite_eq_left rfl, ite_eq_left hl]
+      · rw [ite_eq_right hk]
         by_cases hkm : k ∈ omU lev
         · rw [creL_annL_top_ne x hkm hk, smul_zero]
         · have h0 : adCL false p q l k = 0 := by
@@ -1184,7 +1117,7 @@ theorem adLL_top {lev : Fin n → ℕ} {p q : Fin n} (hpq : lev p = lev q) (x : 
     rw [omU, Finset.sum_filter, Fintype.sum_prod_type, Fintype.sum_bool]
     simp [adCL_self]
   unfold adLL
-  simp only [LinearMap.sum_apply, key, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [LinearMap.sum_apply, key, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [← hsum, Finset.sum_smul, ← Finset.sum_filter]
   congr 1
   ext l
@@ -1208,18 +1141,18 @@ theorem semiCls : SemiCls := by
   unfold evLc
   rw [FreeAlgebra.lift_ι_apply]
   dsimp only
-  rw [if_pos hac]
-  simp only [Bool.false_eq_true, if_false]
+  rw [ite_eq_left hac]
+  simp only [Bool.false_eq_true, ite_false]
   rw [LinearMap.add_apply, liftL_top, adLL_top hac]
   have hk : kA E1 E2 a c v = kF E1 E2 a c v := rfl
   rw [hk, GlobalTheory.CompanionTheory.PairMult.TopK.K_act hl hA hv hac]
   by_cases h : a = c
   · subst h
-    rw [if_pos (rfl : a = a), if_pos (rfl : a = a), GlobalTheory.CompanionTheory.PairMult.TopK.sum_diag hl.1, top_smul, ← add_smul]
+    rw [ite_eq_left (rfl : a = a), ite_eq_left (rfl : a = a), GlobalTheory.CompanionTheory.PairMult.TopK.sum_diag hl.1, top_smul, ← add_smul]
     congr 1
     push_cast
     ring
-  · rw [if_neg h, if_neg h, top_zero, zero_add]
+  · rw [ite_eq_right h, ite_eq_right h, top_zero, zero_add]
     have h0 : (∑ i : Pos n, if lev i.1.1 < lev i.1.2 then adC a c i i else 0) = 0 := by
       apply Finset.sum_eq_zero
       intro i _
@@ -1343,11 +1276,6 @@ section Chains
 
 variable {V : Type} [AddCommGroup V] [Module ℂ V]
 
-theorem first_add_second_levi_family (lev : Fin n → ℕ) (E1 E2 : Fin n → Fin n → Module.End ℂ V) (p q : Fin n) :
-    firstLeviFamily lev E1 E2 p q + secondLeviFamily lev E1 E2 p q = evLc lev E1 E2 (FreeAlgebra.ι ℂ (false, p, q)) := by
-  simp only [firstLeviFamily, secondLeviFamily]
-  module
-
 theorem first_sub_second_levi_family (lev : Fin n → ℕ) (E1 E2 : Fin n → Fin n → Module.End ℂ V) (p q : Fin n) :
     firstLeviFamily lev E1 E2 p q - secondLeviFamily lev E1 E2 p q = evLc lev E1 E2 (FreeAlgebra.ι ℂ (true, p, q)) := by
   simp only [firstLeviFamily, secondLeviFamily]
@@ -1430,7 +1358,7 @@ theorem multiplicity_assembly_holds : MultiplicityAssembly := by
   have hkill : ∀ l : Lt n, l.1 = false → inUU lev l → xL E1 E2 l v = 0 := by
     intro l hl _
     have hlt : l.2.1.1 < l.2.1.2 := l.2.2
-    simp only [xL, hl, Bool.false_eq_true, if_false]
+    simp only [xL, hl, Bool.false_eq_true, ite_false]
     exact hv.2 _ _ hlt rfl
   obtain ⟨y, hyS, hyD, hyEq⟩ := hA n lev hlev.1 a b ha hcong V E1 E2 hp v hkill
   have iL : Intw B.mkQ (evLc lev E1 E2 b) (evLv lev FrobeniusMapsXPow FiniteCocycleOfIntegral b) := by
@@ -1440,7 +1368,7 @@ theorem multiplicity_assembly_holds : MultiplicityAssembly := by
     · cases s
       · have e : evLv lev FrobeniusMapsXPow FiniteCocycleOfIntegral (FreeAlgebra.ι ℂ (false, p1, p2)) = FrobeniusMapsXPow p1 p2 + FiniteCocycleOfIntegral p1 p2 := by
           simp [evLv, h, kA]
-        rw [e, ← first_add_second_levi_family]
+        rw [e, ← GlobalTheory.CompanionTheory.SemiClass.leviFamilyOne_add_leviFamilyTwo]
         exact (i1 p1 p2).add (i2 p1 p2)
       · have e : evLv lev FrobeniusMapsXPow FiniteCocycleOfIntegral (FreeAlgebra.ι ℂ (true, p1, p2)) = FrobeniusMapsXPow p1 p2 - FiniteCocycleOfIntegral p1 p2 := by
           simp [evLv, h, pA]

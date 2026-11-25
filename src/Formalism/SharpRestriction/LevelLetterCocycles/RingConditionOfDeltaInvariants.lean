@@ -1,52 +1,13 @@
 module
 
 import Mathlib.RingTheory.AdicCompletion.Functoriality
-
 public import Formalism.SharpRestriction.LevelLetterCocycles.CoordHomMapTrace
 public import Formalism.DistinguishedUnitIdeals.FrobeniusCoboundedArc
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.AdicCompletion.Noetherian
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CyclotomicFrobeniusPowerSeriesXEqMulQuotient
 
 @[expose] public section
 
@@ -63,25 +24,7 @@ variable {R : Type} [CommRing R]
 theorem algHom_ext_X (f g : PowerSeries R →ₐ[R] PowerSeries R)
     (h : f PowerSeries.X = g PowerSeries.X)
     (h0 : PowerSeries.constantCoeff (f PowerSeries.X) = 0) : f = g := by
-  have hpoly : ∀ p : Polynomial R, f (p : PowerSeries R) = g (p : PowerSeries R) := by
-    have hc : f.comp (Polynomial.coeToPowerSeries.algHom R) =
-        g.comp (Polynomial.coeToPowerSeries.algHom R) := by
-      apply Polynomial.algHom_ext
-      simpa using h
-    intro p
-    simpa using AlgHom.congr_fun hc p
-  refine AlgHom.ext fun a => PowerSeries.ext fun k => ?_
-  obtain ⟨t, b, ha⟩ : ∃ (t : Polynomial R) (b : PowerSeries R),
-      a = (t : PowerSeries R) + PowerSeries.X ^ (k + 1) * b := by
-    obtain ⟨b, hb⟩ : PowerSeries.X ^ (k + 1) ∣ a - (PowerSeries.trunc (k + 1) a : PowerSeries R) := by
-      rw [PowerSeries.X_pow_dvd_iff]
-      intro m hm
-      rw [map_sub, Polynomial.coeff_coe, PowerSeries.coeff_trunc, if_pos hm, sub_self]
-    exact ⟨_, b, by rw [← hb]; ring⟩
-  obtain ⟨c, hcX⟩ := PowerSeries.X_dvd_iff.mpr h0
-  have hcX' : g PowerSeries.X = PowerSeries.X * c := by rw [← h]; exact hcX
-  subst ha
-  simp [hcX, hcX', hpoly t, mul_pow, mul_assoc, PowerSeries.coeff_X_pow_mul']
+  apply _root_.GlobalTheory.Fon.algHom_ext_X <;> assumption
 
 theorem constCoeff_algHom (f : PowerSeries R →ₐ[R] PowerSeries R)
     (h0 : PowerSeries.constantCoeff (f PowerSeries.X) = 0) (a : PowerSeries R) :
@@ -498,23 +441,6 @@ theorem ground_of [IsDomain O] [IsDiscreteValuationRing O] (hR : Ring9 W) (hs : 
 section Complete
 
 variable {R : Type} [CommRing R] (J : Ideal R)
-
-theorem mem_smul_top_pi (k : ℕ) (x : Fin k → R) :
-    x ∈ (J • ⊤ : Submodule R (Fin k → R)) ↔ ∀ i, x i ∈ J := by
-  constructor
-  · intro hx
-    have hle : (J • ⊤ : Submodule R (Fin k → R)) ≤
-        Submodule.pi Set.univ (fun _ => (J : Submodule R R)) := by
-      rw [Submodule.smul_le]
-      intro r hr m _
-      rw [Submodule.mem_pi]
-      intro j _
-      simpa [smul_eq_mul] using J.mul_mem_right (m j) hr
-    intro i
-    exact (Submodule.mem_pi.mp (hle hx)) i (Set.mem_univ i)
-  · intro hx
-    rw [pi_eq_sum_univ x]
-    exact sum_mem fun i _ => Submodule.smul_mem_smul (hx i) Submodule.mem_top
 
 theorem precomplete_pi [IsPrecomplete J R] (k : ℕ) : IsPrecomplete J (Fin k → R) := by
   apply AdicCompletion.of_surjective_iff.mp

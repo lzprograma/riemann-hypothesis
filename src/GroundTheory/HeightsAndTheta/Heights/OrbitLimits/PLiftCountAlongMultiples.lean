@@ -102,13 +102,13 @@ theorem secM_le_chartLat [DecidableEq K] {r : ℕ} (y : (Σ k, ι k) → Ω) (v 
     have hold : ∀ (k : K) (i : ι k), m ⟨some k, i⟩ = 0 := by
       intro k i
       have h := hg m hm (some k)
-      simp only [blockDeg, reduceCtorEq, if_false] at h
+      simp only [blockDeg, reduceCtorEq, ite_false] at h
       exact Finset.sum_eq_zero_iff.mp h i (Finset.mem_univ _)
     have htot : ∑ p ∈ m.support, m p = n := by
       rw [Finset.sum_subset (Finset.subset_univ _) (fun p _ hp => Finsupp.notMem_support_iff.mp hp),
         Fintype.sum_sigma, Fintype.sum_option]
       have h0 := hg m hm none
-      simp only [blockDeg, if_true] at h0
+      simp only [blockDeg, ite_true] at h0
       have h1 : ∑ k : K, ∑ i : addIdx ι r (some k), m ⟨some k, i⟩ = 0 :=
         Finset.sum_eq_zero fun k _ => Finset.sum_eq_zero fun i _ => hold k i
       rw [h0, h1, add_zero]
@@ -240,7 +240,7 @@ theorem isSmallH_of_lift [DecidableEq K] {r : ℕ} {y : (Σ k, ι k) → Ω} {v 
     · have h1 := hdeg k
       have h2 := hdeg₁ k
       simp only [Pi.add_apply, Pi.smul_apply, Option.elim_some, smul_eq_mul, Pi.single_apply, reduceCtorEq,
-        if_false, mul_zero, add_zero, unitDeg] at h2 ⊢
+        ite_false, mul_zero, add_zero, unitDeg] at h2 ⊢
       push_cast at h1 h2 ⊢
       simp only [ht] at h2
       linear_combination h1 - (n : ℤ) * h2

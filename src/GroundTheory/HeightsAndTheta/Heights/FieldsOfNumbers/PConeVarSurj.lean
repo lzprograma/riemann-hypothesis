@@ -78,7 +78,7 @@ theorem ConeVarSurj.proof : ConeVarSurj.Statement.{u} := by
   refine ⟨Q f, Q g, Finsupp.equivFunOnFinite.symm d, ?_, ?_⟩
   · have hcoeff : (Q g).coeff (Finsupp.equivFunOnFinite.symm d) = c g d := by
       simp only [Q, coeff_sum, coeff_monomial, EmbeddingLike.apply_eq_iff_eq]
-      rw [Finset.sum_ite_eq', if_pos hdD]
+      rw [Finset.sum_ite_eq', ite_eq_left hdD]
     rw [hcoeff]
     refine isUnit_iff_exists_inv.mpr ⟨⟨π (U d) / π (comp g d), div_mem_degZeroLoc P {W} (hUh d)
       (weightedHomogeneousComponent_isWeightedHomogeneous _ _) (fun h' => hdW (hPW h'))

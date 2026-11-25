@@ -46,7 +46,7 @@ theorem eq_zero_of_eval_units (P : MvPolynomial (ι × Fin n × Fin n) ℂ)
     rw [map_mul, eval_detAll, map_zero]
     by_cases hx : ∀ τ, IsUnit (Matrix.of fun a b => x (τ, a, b)).det
     · rw [h x hx, zero_mul]
-    · push_neg at hx
+    · push Not at hx
       obtain ⟨τ, hτ⟩ := hx
       rw [isUnit_iff_ne_zero, not_not] at hτ
       rw [Finset.prod_eq_zero (Finset.mem_univ τ) hτ, mul_zero]

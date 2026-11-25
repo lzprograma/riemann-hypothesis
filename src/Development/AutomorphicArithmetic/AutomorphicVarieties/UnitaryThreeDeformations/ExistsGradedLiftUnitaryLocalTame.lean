@@ -17,57 +17,8 @@ public import Mathlib.Topology.LocallyConstant.Basic
 public import Mathlib.Data.ZMod.Basic
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
 public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Module.StablyFree.Basic
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linter.Style
 import ReciprocityTheory.GaloisValuations.SeparatedDvrSecondCohomologyMem
 
@@ -407,7 +358,7 @@ private theorem sgnAct_one_add (hI : I * I = ⊥) (q : GL (Fin m) C)
       rw [hq, Matrix.add_mul, Matrix.mul_sub, Matrix.mul_sub, entIn_mul_zero hI hX hX]
       simp
     rw [sgnAct_neg_one, theta_val, hinv]
-    simp only [h, if_false, thetaLie, Matrix.transpose_sub, Matrix.transpose_one, Matrix.mul_sub,
+    simp only [h, ite_false, thetaLie, Matrix.transpose_sub, Matrix.transpose_one, Matrix.mul_sub,
       Matrix.sub_mul, Matrix.mul_one, Jmat_mul_Jmat]
     rw [sub_eq_add_neg]
 
@@ -1179,31 +1130,6 @@ open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.U3 UpperTheory.V.Alg
 
 namespace UpperTheory.V.UnitaryThreeInertia
 
-private theorem lu_unit {O : Type} [CommRing O] (t : Oˣ) (ht : IsUnit ((t : O) ^ 2 - 1)) (a b : Fin 3)
-    (hab : a ≠ b) : IsUnit (((t ^ wt1 a : Oˣ) : O) - ((t ^ wt1 b : Oˣ) : O)) := by
-  have e : (t : O) * ((t⁻¹ : Oˣ) : O) = 1 := Units.mul_inv t
-  have h1 : IsUnit ((t : O) - 1) := by
-    rw [show (t : O) ^ 2 - 1 = ((t : O) - 1) * (t + 1) by ring] at ht
-    exact isUnit_of_mul_isUnit_left ht
-  have h2 : IsUnit ((t : O) - ((t⁻¹ : Oˣ) : O)) := by
-    have := ht.mul (t⁻¹).isUnit
-    convert this using 1
-    linear_combination (-(t : O)) * e
-  have h3 : IsUnit (1 - ((t⁻¹ : Oˣ) : O)) := by
-    have := h1.mul (t⁻¹).isUnit
-    convert this using 1
-    linear_combination (-1 : O) * e
-  have h1' := h1.neg
-  have h2' := h2.neg
-  have h3' := h3.neg
-  rw [neg_sub] at h1' h2' h3'
-  have w0 : wt1 0 = 1 := rfl
-  have w1 : wt1 1 = 0 := rfl
-  have w2 : wt1 2 = -1 := rfl
-  fin_cases a <;> fin_cases b <;>
-    simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, w0, w1, w2, zpow_one, zpow_zero, _root_.zpow_neg,
-      Units.val_one, ne_eq, not_true_eq_false] at hab ⊢ <;> assumption
-
 private theorem lu_up {R : Type} [CommRing R] (U k T : Matrix (Fin 3) (Fin 3) R) (e : U * k = k * T)
     (hU : ∀ a b, wt a b < 0 → U a b = 0) (hT : ∀ a b, wt a b < 0 → T a b = 0)
     (hu : ∀ a b, a ≠ b → IsUnit (U a a - T b b)) :
@@ -1225,10 +1151,6 @@ private theorem lu_up {R : Type} [CommRing R] (U k T : Matrix (Fin 3) (Fin 3) R)
     rw [k20] at e21; linear_combination e21)
   intro a b hab
   fin_cases a <;> fin_cases b <;> first | assumption | exact absurd hab (by decide)
-
-private theorem lu_J {R : Type} [CommRing R] (X : Matrix (Fin 3) (Fin 3) R) (a b : Fin 3) :
-    (Jmat R 3 * Xᵀ * Jmat R 3) a b = X b.rev a.rev := by
-  fin_cases a <;> fin_cases b <;> simp [Matrix.mul_apply, Fin.sum_univ_three, Jmat, Fin.rev]
 
 end UpperTheory.V.UnitaryThreeInertia
 
@@ -1260,14 +1182,14 @@ theorem UpperTheory.V.UnitaryThreeInertia.lt_upper :
     have := congrArg Units.val e1
     rwa [Units.val_mul, Units.val_mul, theta_val, inv_inv] at this
   refine lu_up _ _ _ e2 (hU x hx) (fun a b hab => ?_) (fun a b hab => ?_)
-  · rw [lu_J]
+  · rw [UpperTheory.V.UnitaryThreeInertia.Jc]
     refine hU y hηy _ _ ?_
     have : wt b.rev a.rev = wt a b := by fin_cases a <;> fin_cases b <;> rfl
     rwa [this]
   · have w : wt1 b.rev = -wt1 b := by fin_cases b <;> rfl
-    rw [lu_J, ← residue_ne_zero_iff_isUnit, map_sub, hX, hX, ← map_sub,
+    rw [UpperTheory.V.UnitaryThreeInertia.Jc, ← residue_ne_zero_iff_isUnit, map_sub, hX, hX, ← map_sub,
       ← map_sub, residue_ne_zero_iff_isUnit, hΨy, w, _root_.inv_zpow', neg_neg]
-    exact (lu_unit (Ψ x) hΨ a b hab).map _
+    exact (lb_unit (Ψ x) hΨ a b hab).map _
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.LtUpper =====
@@ -1483,7 +1405,7 @@ private theorem tri_lift {O R R' D : Type} [CommRing O] [IsLocalRing O] [CommRin
         have h1 := congrFun (congrFun (hupm g) a) a
         rw [hu'mat, Matrix.diagonal_apply_eq] at h1
         exact h1
-    simp only [s, L, dif_pos h]
+    simp only [s, L, dite_eq_left h]
     exact h.choose_spec
   have hr'lc : IsLocallyConstant r' := lc_hom η r' hη hr.mult hlc
   have hulc' : IsLocallyConstant u := lc_hom η u hη hur hulc

@@ -114,8 +114,8 @@ private lemma coord_one_smul_mem_homF_succ {A : Submodule R M} {n : ℕ}
   · dsimp only
     rw [hbu, Finset.smul_sum]
     conv_rhs => rw [Fin.sum_univ_castSucc]
-    simp only [Fin.coe_castSucc, Fin.is_lt, dif_pos, Fin.val_last, lt_self_iff_false,
-      dif_neg, not_false_eq_true, smul_zero, add_zero, Fin.eta, smul_smul]
+    simp only [Fin.coe_castSucc, Fin.is_lt, dite_eq_left, Fin.val_last, lt_self_iff_false,
+      dite_eq_right, not_false_eq_true, smul_zero, add_zero, Fin.eta, smul_smul]
     refine Finset.sum_congr rfl fun i _ => ?_
     have hi : n + 1 - (i : ℕ) = n - (i : ℕ) + 1 := Nat.sub_add_comm (Nat.lt_succ_iff.mp i.isLt)
     rw [hi, pow_succ]

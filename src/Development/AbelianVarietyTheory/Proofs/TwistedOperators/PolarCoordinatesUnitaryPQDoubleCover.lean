@@ -131,18 +131,12 @@ private theorem mul_jpq_comm_of_isKC {p q : ℕ} (X : Mat p q) (hX : IsKC X) :
   · simp [hX (Sum.inr a) (Sum.inl b) (by simp [sameBlock])]
   · simp
 
-private theorem Jpq_mul_Jpq_mul (p q : ℕ) : Formalism.UG.Jpq p q * Formalism.UG.Jpq p q = 1 := by
-  rw [jpq_eq_diagonal', Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-  congr 1
-  funext i
-  rcases i with i | i <;> simp
-
 private theorem exists_UJ_umat_eq_of_inUJ {p q : ℕ} (g : Mat p q) (hg : gᴴ * Formalism.UG.Jpq p q * g = Formalism.UG.Jpq p q)
     (hK : IsKC g) : gᴴ * g = 1 := by
-  calc gᴴ * g = gᴴ * g * (Formalism.UG.Jpq p q * Formalism.UG.Jpq p q) := by rw [Jpq_mul_Jpq_mul, Matrix.mul_one]
+  calc gᴴ * g = gᴴ * g * (Formalism.UG.Jpq p q * Formalism.UG.Jpq p q) := by rw [Formalism.UG.P.Jpq_mul_self, Matrix.mul_one]
     _ = gᴴ * (g * Formalism.UG.Jpq p q) * Formalism.UG.Jpq p q := by simp only [Matrix.mul_assoc]
     _ = gᴴ * Formalism.UG.Jpq p q * g * Formalism.UG.Jpq p q := by rw [mul_jpq_comm_of_isKC g hK]; simp only [Matrix.mul_assoc]
-    _ = 1 := by rw [hg, Jpq_mul_Jpq_mul]
+    _ = 1 := by rw [hg, Formalism.UG.P.Jpq_mul_self]
 
 private theorem unitary_inv_of_unitary {n : Type} [Fintype n] [DecidableEq n] (u : GL n ℂ)
     (hu : (u : Matrix n n ℂ)ᴴ * (u : Matrix n n ℂ) = 1) :
@@ -351,10 +345,6 @@ open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible GlobalTheo
 noncomputable section
 namespace GlobalTheory.PolarU
 
-theorem polJ_aOf_eq_prod (p q : ℕ) (h : ℕ → ℝ) :
-    polJ (aOf p q h) = ∏ ab : PIx p q, shc (rootP h ab.1) := by
-  apply GlobalTheory.CartanInt.polJ_aOf
-
 theorem shc_pos (x : ℝ) : 0 < shc x := by
   unfold shc
   split_ifs with hx
@@ -378,7 +368,7 @@ theorem exists_conj_aOf {p q : ℕ} (T : GrpData p q) {Y : Mat p q} (hY : Y ∈ 
 
 theorem polJ_pos {p q : ℕ} (T : GrpData p q) (B : Fin p → Fin q → ℂ) : 0 < polJ (pY B) := by
   obtain ⟨k, hk, h, hB⟩ := exists_conj_aOf T (pY_mem B)
-  rw [hB, polJ_conj T hk, polJ_aOf_eq_prod]
+  rw [hB, polJ_conj T hk, GlobalTheory.CartanInt.polJ_aOf]
   exact Finset.prod_pos fun _ _ => shc_pos _
 
 theorem cartan {p q : ℕ} (T : GrpData p q) (g : T.G) : ∃ k ∈ T.Kset, ∃ Y ∈ pR p q, g = k * T.expt Y := by
@@ -460,7 +450,7 @@ theorem polar_coordinates : ∀ X : ProvA, CoverHaarIntegration X := by
   · rw [← matG_inv]; exact polJ_conj _ hk Y
   · obtain ⟨k, hk, h, hY⟩ := exists_conj_aOf (X.grp p q) hY
     exact ⟨k, hk, h, by rw [← matG_inv]; exact hY⟩
-  · rw [polJ_aOf_eq_prod, _root_.GlobalTheory.PolarU.RootProd.prod_shc_rootP]
+  · rw [GlobalTheory.CartanInt.polJ_aOf, _root_.GlobalTheory.PolarU.RootProd.prod_shc_rootP]
 
 end GlobalTheory.PolarU
 end -- clump:auto

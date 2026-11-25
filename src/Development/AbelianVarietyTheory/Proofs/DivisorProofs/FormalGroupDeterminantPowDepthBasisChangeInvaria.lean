@@ -163,7 +163,7 @@ theorem pair_C_left (c : R) (Q : MvPolynomial κ R) : pair (C c) Q = c * constan
     rw [MvPolynomial.mem_support_iff, coeff_C] at hA
     simp only [Finset.mem_singleton]
     by_contra h
-    exact hA (if_neg (Ne.symm h)))]
+    exact hA (ite_eq_right (Ne.symm h)))]
   simp [wt, constantCoeff_eq]
 
 theorem pair_mul_X (P Q : MvPolynomial κ R) (v : κ) :
@@ -352,7 +352,7 @@ theorem derivAt0_subst_linP {i : ℕ} (g : Matrix (Fin i) (Fin i) C)
     rw [coeff_subst hL, coeff_subst hL]
     refine finsum_congr fun d => ?_
     by_cases hd : e.degree = d.degree
-    · rw [MvPolynomial.coeff_coe, coeff_trunc', if_pos (le_const_of_degree_le (hd ▸ he))]
+    · rw [MvPolynomial.coeff_coe, coeff_trunc', ite_eq_left (le_const_of_degree_le (hd ▸ he))]
     · rw [coeff_prod_linP g d e hd, smul_zero, smul_zero]
   have h2 : subst (fun s => (↑(linP g s) : MvPowerSeries (Σ _ : Fin i, Fin i) C)) (Q : MvPowerSeries _ C) =
       ((GlobalTheory.PolyPairingAdjoint.subst (kerMat g) Q : MvPolynomial _ C) : MvPowerSeries _ C) := by
@@ -375,7 +375,7 @@ theorem derivAt0_subst_linP {i : ℕ} (g : Matrix (Fin i) (Fin i) C)
         unfold derivAt0
         refine Finset.sum_congr rfl fun α hα => ?_
         rw [MvPolynomial.coeff_coe, coeff_trunc',
-          if_pos (le_const_of_degree_le (le_trans (degree_le_totalDegree hα) (le_max_right _ _)))]
+          ite_eq_left (le_const_of_degree_le (le_trans (degree_le_totalDegree hα) (le_max_right _ _)))]
 
 end
 

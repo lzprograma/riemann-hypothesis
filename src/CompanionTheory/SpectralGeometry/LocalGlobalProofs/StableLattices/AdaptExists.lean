@@ -226,14 +226,14 @@ theorem Q_eq_A (hi : i.val ≠ r) (hi' : i.val ≠ r + k) (hj : j.val ≠ r) (hj
 
 theorem col_p (hj : j.val = r) :
     col k r j = s2 • (bvec (wI k r 0) + bvec (wI k r (Fin.last k))) := by
-  rw [col, if_pos hj]
+  rw [col, ite_eq_left hj]
 
 theorem col_q (hk : 1 ≤ k) (hj : j.val = r + k) :
     col k r j = s2 • (bvec (wI k r 0) - bvec (wI k r (Fin.last k))) := by
-  rw [col, if_neg (by omega), if_pos hj]
+  rw [col, ite_eq_right (by omega), ite_eq_left hj]
 
 theorem col_o (hj : j.val ≠ r) (hj' : j.val ≠ r + k) : col k r j = bvec j := by
-  rw [col, if_neg hj, if_neg hj']
+  rw [col, ite_eq_right hj, ite_eq_right hj']
 
 end entries
 
@@ -345,7 +345,7 @@ theorem adaptExists : AdaptExists := by
     (by rw [huu]; exact neg_ne_zero.mpr (Complex.ofReal_ne_zero.mpr hT.ne'))
   have hout : ∀ i : Fin (2 * r + k + 1), (i.val < r ∨ r + k < i.val) → (γ * G0 k r) *ᵥ bvec i = bvec i := by
     intro i hi
-    rw [← mulVec_mulVec, unitary_adapted_basis_apply_basis, col, if_neg (by omega), if_neg (by omega)]
+    rw [← mulVec_mulVec, unitary_adapted_basis_apply_basis, col, ite_eq_right (by omega), ite_eq_right (by omega)]
     exact hfix _ (herm_outer k r i hi u huW) (herm_outer k r i hi z hz)
   refine ⟨γ * G0 k r, ?_, ?_, ρ, hρ0, ?_⟩
   · rw [conjTranspose_mul, ← unitary_adapted_basis_transforms_form k r hk]

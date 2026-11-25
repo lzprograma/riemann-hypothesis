@@ -103,47 +103,7 @@ public import Development.EtaleCohomology.EtaleSheaves.TowerFinPf
 public import Development.EtaleCohomology.EtaleSheaves.TruncBijPf
 public import Development.EtaleCohomology.EtaleSheaves.Truncation
 public import Development.EtaleCohomology.EtaleSheaves.ZCovPf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.CategoryTheory.Limits.FunctorCategory.Shapes.Products
 import Mathlib.AlgebraicGeometry.QuasiAffine
@@ -159,7 +119,6 @@ import Mathlib.RingTheory.SimpleRing.Principal
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.AlgebraicGeometry.ProjectiveSpectrum.Proper
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.RingTheory.PiTensorProduct
 import Development.EtaleCohomology.EtaleSheaves.AICOpenPf
 
@@ -913,9 +872,6 @@ theorem aic_field (K : Type) [Field K] [IsAlgClosed K] : GlobalTheory.EtC.AIC K 
   intro p _ hd
   exact IsAlgClosed.exists_root p (by rw [degree_eq_natDegree (ne_zero_of_natDegree_gt hd)]; exact_mod_cast hd.ne')
 
-theorem aic_subsingleton (R : Type) [CommRing R] [Subsingleton R] : GlobalTheory.EtC.AIC R :=
-  fun _ _ _ => ⟨0, Subsingleton.elim _ _⟩
-
 theorem aic_specK (K : Type) [Field K] [IsAlgClosed K] (V : (Spec (CommRingCat.of K)).Opens) :
     GlobalTheory.EtC.AIC Γ(Spec (CommRingCat.of K), V) := by
   by_cases hV : (V : Set (Spec (CommRingCat.of K))).Nonempty
@@ -932,7 +888,7 @@ theorem aic_specK (K : Type) [Field K] [IsAlgClosed K] (V : (Spec (CommRingCat.o
       simp only [TopologicalSpace.Opens.coe_bot, Set.mem_empty_iff_false, iff_false]
       exact fun hx => hV ⟨x, hx⟩
     subst h
-    exact aic_subsingleton _
+    exact LateralTheory.E.NormACPf.aic_of_subsingleton _
 
 theorem affAIC : AICPf.AffAIC := by
   intro K _ _ W g _ _ U hU
@@ -1480,51 +1436,12 @@ open CategoryTheory Limits AlgebraicGeometry Polynomial GlobalTheory.EtC Lateral
 
 namespace LateralTheory.E.StalkAICRingPf
 
-theorem aic_loc {R S : Type} [CommRing R] [CommRing S] [Algebra R S] (M : Submonoid R) [IsLocalization M S]
-    (hR : AIC R) : AIC S := by
-  intro p hp hn
-  rcases subsingleton_or_nontrivial R with hR1 | hR1
-  · refine ⟨0, ?_⟩
-    have h01 : (0 : S) = 1 := by
-      rw [← map_zero (algebraMap R S), ← map_one (algebraMap R S), Subsingleton.elim (0 : R) 1]
-    exact @Subsingleton.elim _ (subsingleton_of_zero_eq_one h01) _ _
-  set n := p.natDegree with hnd
-  obtain ⟨b, hb⟩ := IsLocalization.exist_integer_multiples M (Finset.univ : Finset (Fin n)) (fun i => p.coeff i)
-  choose r hr using fun i : Fin n => hb i (Finset.mem_univ _)
-  set β : S := algebraMap R S b with hβ
-  have hu : IsUnit β := IsLocalization.map_units S b
-  set q : R[X] := X ^ n + ∑ i : Fin n, C (r i * (b : R) ^ (n - 1 - i)) * X ^ (i : ℕ) with hq
-  have hqm : q.Monic := monic_X_pow_add (degree_sum_fin_lt _)
-  have hqd : q.natDegree = n := by
-    rw [hq, natDegree_add_eq_left_of_degree_lt, natDegree_X_pow]
-    rw [degree_X_pow]; exact degree_sum_fin_lt _
-  obtain ⟨c, hc⟩ := hR q hqm (hqd ▸ hn)
-  refine ⟨hu.unit⁻¹ * algebraMap R S c, ?_⟩
-  have key : β ^ n * p.eval (hu.unit⁻¹ * algebraMap R S c) = algebraMap R S (q.eval c) := by
-    conv_lhs => rw [hp.as_sum]
-    rw [← hnd, ← Fin.sum_univ_eq_sum_range]
-
-    simp only [hq, eval_add, eval_pow, eval_X, eval_finsetSum, eval_mul, eval_C, map_add (f := _), map_pow, map_sum, map_mul, mul_add,
-    Finset.mul_sum]
-    congr 1
-    · rw [← mul_pow, ← mul_assoc, hu.mul_val_inv, one_mul]
-    · refine Finset.sum_congr rfl fun i _ => ?_
-      rw [hr i]
-      have hβn : β ^ n = β ^ 1 * β ^ (n - 1 - (i : ℕ)) * β ^ (i : ℕ) := by
-        rw [← pow_add, ← pow_add]; congr 1; omega
-      simp only [Algebra.smul_def, ← hβ]
-      rw [hβn, mul_pow]
-      have h1 : β ^ (i : ℕ) * (↑hu.unit⁻¹ : S) ^ (i : ℕ) = 1 := by rw [← mul_pow, hu.mul_val_inv, one_pow]
-      linear_combination (β ^ 1 * β ^ (n - 1 - (i:ℕ)) * p.coeff i * algebraMap R S c ^ (i:ℕ)) * h1
-  rw [hc, map_zero] at key
-  exact (hu.pow n).mul_right_eq_zero.1 key
-
 theorem StalkAICRing_of : _root_.LateralTheory.E.FibStalkPf.StalkAIC := by
   intro S hS x
   obtain ⟨U, hU, hxU, -⟩ := exists_isAffineOpen_mem_and_subset (x := x) (U := ⊤) trivial
   let _ := TopCat.Presheaf.algebra_section_stalk S.presheaf (⟨x, hxU⟩ : U)
   have := hU.isLocalization_stalk ⟨x, hxU⟩
-  exact aic_loc (hU.primeIdealOf ⟨x, hxU⟩).asIdeal.primeCompl (hS.2 U hU ⟨x, hxU⟩)
+  exact LateralTheory.E.SpecAICPf.aic_localization (hU.primeIdealOf ⟨x, hxU⟩).asIdeal.primeCompl (hS.2 U hU ⟨x, hxU⟩)
 
 end LateralTheory.E.StalkAICRingPf
 end -- clump:auto
@@ -1559,10 +1476,10 @@ theorem germs (S : Scheme.{0}) (x : S) (c : ℕ → S.presheaf.stalk x) (s : Fin
        else (S.presheaf.map (homOfLE (hWUV.trans inf_le_left)).op).hom (f i), ?_⟩
     intro i hi
     rcases Finset.mem_insert.mp hi with rfl | hi
-    · simp only [if_true]
+    · simp only [ite_true]
       rw [← hg, ← CommRingCat.comp_apply, TopCat.Presheaf.germ_res]
     · have : i ≠ a := fun h => ha (h ▸ hi)
-      simp only [this, if_false]
+      simp only [this, ite_false]
       rw [← hf i hi, ← CommRingCat.comp_apply, TopCat.Presheaf.germ_res]
 
 theorem stalkAIC : StalkAIC := by
@@ -1678,7 +1595,7 @@ theorem n95 : LateralTheory.E.PartDiagCut.PartC := LateralTheory.E.PartCPfSplit.
 
 theorem n87 : LateralTheory.E.HensCut.PartDiag := LateralTheory.E.PartDiagCut.goal_of _root_.LateralTheory.E.PartDirectedPf.PartDirected_of _root_.LateralTheory.E.DiagIdPf.DiagId_of _root_.LateralTheory.E.DiagCompPf.DiagComp_of _root_.LateralTheory.E.DiagNatPf.DiagNat_of n92 _root_.LateralTheory.E.PartAPf.PartA_of _root_.LateralTheory.E.PartBPf.PartB_of n95
 
-theorem n82 : LateralTheory.E.QuotAcycCut.Hens := LateralTheory.E.HensCut.goal_of _root_.LateralTheory.E.LocalizationIntegralClosure.LocAIC_of _root_.LateralTheory.E.MonicSplitsPf.MonicSplits_of _root_.LateralTheory.E.IdemPartPf.IdemPart_of _root_.LateralTheory.E.ColimHensPf.ColimHens_of n87
+theorem n82 : LateralTheory.E.QuotAcycCut.Hens := LateralTheory.E.HensCut.goal_of _root_.LateralTheory.E.ColimHensPf.ColimHens_of n87
 
 theorem n78 : LateralTheory.E.t_E2Cut.QuotAcyc := LateralTheory.E.QuotAcycCut.goal_of n79 n82
 

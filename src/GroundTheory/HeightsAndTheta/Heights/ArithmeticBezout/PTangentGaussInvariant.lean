@@ -151,7 +151,7 @@ theorem exists_unitary_leadCoordPlane {n m : ℕ} (hm : 0 < m) (hmn : m ≤ n)
       rintro ⟨i, hi⟩ ⟨j, hj⟩
       have hi' : (i : ℕ) < m := hi
       have hj' : (j : ℕ) < m := hj
-      simp only [Set.domRestrict, hv, dif_pos hi', dif_pos hj']
+      simp only [Set.domRestrict, hv, dite_eq_left hi', dite_eq_left hj']
       rw [← Submodule.coe_inner, orthonormal_iff_ite.1 bT.orthonormal]
       simp [Fin.ext_iff])
   have hBv : ∀ j : Fin n, ∀ h : (j : ℕ) < m, B j = (bT ⟨j, h⟩ : EuclideanSpace ℂ (Fin n)) := by

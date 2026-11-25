@@ -1,43 +1,6 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeMapFractionField
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.BitVec
 
@@ -179,8 +142,8 @@ theorem vg_X (v : ℤ × Fin n) :
   by_cases hv : v.1 ∈ S
   · have hc := coord_clauses (R := R) LZ S v.1 hv v.2
     by_cases he : Even v.1
-    · rw [if_pos he]; exact (hc.1 (by simp [LZ, he])).1
-    · rw [if_neg he]; exact (hc.2 (by simp [LZ, he])).1
+    · rw [ite_eq_left he]; exact (hc.1 (by simp [LZ, he])).1
+    · rw [ite_eq_right he]; exact (hc.2 (by simp [LZ, he])).1
   · refine (le_valS_iff LZ S _ _).mpr fun k hk => ?_
     have := sDegs_X_out (R := R) LZ S _ v hv k hk
     simp at this
@@ -192,8 +155,8 @@ theorem lg_X (v : ℤ × Fin n) :
   by_cases hv : v.1 ∈ S
   · have hc := coord_clauses (R := R) LZ S v.1 hv v.2
     by_cases he : Even v.1
-    · rw [if_pos he]; exact (hc.1 (by simp [LZ, he])).2
-    · rw [if_neg he]; exact (hc.2 (by simp [LZ, he])).2
+    · rw [ite_eq_left he]; exact (hc.1 (by simp [LZ, he])).2
+    · rw [ite_eq_right he]; exact (hc.2 (by simp [LZ, he])).2
   · refine (lowest_degree_le_iff LZ S _ _).mpr fun k hk => ?_
     have := sDegs_X_out (R := R) LZ S _ v hv k hk
     simp at this

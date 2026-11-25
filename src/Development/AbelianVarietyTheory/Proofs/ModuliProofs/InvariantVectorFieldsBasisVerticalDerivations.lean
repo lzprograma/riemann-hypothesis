@@ -252,42 +252,20 @@ theorem existsUnique_coeff_affine [Smooth G.hom] {v : Fin n → (epsR K ⟶ G)} 
   refine ⟨c, fun f => (hc f).trans (by simp only [hkey]), fun c' hc' => hu c' fun f => (hc' f).trans ?_⟩
   simp only [hkey]
 
-private theorem rsT_eq_resG_of_le' {Y : Scheme.{0}} {O₀ O : Y.Opens} (s : Γ(Y, O₀)) (h : O ≤ O₀) :
-    rsT s O = resG Y h s := by
-  simp [rsT, h]
-
-private theorem rsT_rsT_moduli {Y : Scheme.{0}} {O₀ O₁ O : Y.Opens} (s : Γ(Y, O₀)) (h₁ : O₁ ≤ O₀) (h : O ≤ O₁) :
-    rsT (rsT s O₁) O = rsT s O := by
-  rw [rsT_eq_resG_of_le' _ h, rsT_eq_resG_of_le' _ h₁, rsT_eq_resG_of_le' _ (h.trans h₁), resG, resG, resG,
-    ← CommRingCat.comp_apply, ← Functor.map_comp]
-  rfl
-
-private theorem rsT_pbT_of_le_of_le {Z Y : Scheme.{0}} (f : Z ⟶ Y) {O₀ : Y.Opens} {O₁ O : Z.Opens} (s : Γ(Y, O₀))
-    (h₁ : O₁ ≤ f ⁻¹ᵁ O₀) (h : O ≤ O₁) : rsT (pbT f s O₁) O = pbT f s O := by
-  rw [rsT_eq_resG_of_le' _ h]
-  simp only [pbT, dif_pos h₁, dif_pos (h.trans h₁), resG]
-  rw [← CommRingCat.comp_apply, Scheme.Hom.appLE_map]
-
-private theorem pbT_rsT_of_le_preimage_of_le {Z Y : Scheme.{0}} (f : Z ⟶ Y) {O₀ O₁ : Y.Opens} {O : Z.Opens} (s : Γ(Y, O₀))
-    (h₁ : O₁ ≤ O₀) (h : O ≤ f ⁻¹ᵁ O₁) : pbT f (rsT s O₁) O = pbT f s O := by
-  rw [rsT_eq_resG_of_le' _ h₁]
-  simp only [pbT, dif_pos h, dif_pos (h.trans (f.preimage_mono h₁)), resG]
-  rw [← CommRingCat.comp_apply, Scheme.Hom.map_appLE]
-
 private theorem rsT_comp_app_eq_pbT_app {Z Y X : Scheme.{0}} (y : Z ⟶ Y) (m : Y ⟶ X) {W : X.Opens} {V : Z.Opens}
     (h : V ≤ y ⁻¹ᵁ (m ⁻¹ᵁ W)) (f : Γ(X, W)) :
     rsT (((y ≫ m).app W).hom f) V = pbT y ((m.app W).hom f) V := by
-  rw [← GlobalTheory.KS.InvField.pbT_eq_app (y ≫ m) f, rsT_pbT_of_le_of_le (y ≫ m) f le_rfl h, ← GlobalTheory.KS.InvField.pbT_eq_app m f,
+  rw [← GlobalTheory.KS.InvField.pbT_eq_app (y ≫ m) f, rsT_pbT (O₀ := W) (y ≫ m) le_rfl h f, ← GlobalTheory.KS.InvField.pbT_eq_app m f,
     GlobalTheory.KS.InvField.pbT_pbT y m le_rfl h f]
 
 private theorem rsT_sum_mul_fintype {Y : Scheme.{0}} {O₀ O : Y.Opens} {J : Type} [Fintype J] (s t : J → Γ(Y, O₀))
     (h : O ≤ O₀) : rsT (∑ a, s a * t a) O = ∑ a, rsT (s a) O * rsT (t a) O := by
   set_option synthInstance.maxHeartbeats 100000 in
-    simp only [rsT_eq_resG_of_le' _ h, map_sum, map_mul]
+    simp only [rsT_of_le h _, map_sum, map_mul]
 
 private theorem sheaf_map_eq_rsT {Y : Scheme.{0}} {O₀ O : Y.Opens} (e : O ⟶ O₀) (s : Γ(Y, O₀)) :
     ConcreteCategory.hom (Y.sheaf.obj.map e.op) s = rsT s O := by
-  rw [rsT_eq_resG_of_le' _ (leOfHom e)]
+  rw [rsT_of_le (leOfHom e) _]
   rfl
 
 theorem existsUnique_coeff : ∀ (K : Type) [Field K] (A₀ : Over (Sp K)) [GrpObj A₀] (g : ℕ) (v : Fin g → (epsR K ⟶ A₀)) (dd : Fin g → ∀ O : A₀.left.Opens, Γ(A₀.left, O) → Γ(A₀.left, O)), Smooth A₀.hom → IsLieBasis v → (∀ a, IsInvDer (v a) (dd a)) → ∀ (R : Type) [CommRing R] (x₀ : R →+* K) (X : Scheme.{0}) (p : X ⟶ Sp R) (m : A₀.left ⟶ X), IsPullback m A₀.hom p (spMap x₀) → ∀ (T : Scheme.{0}) (y : T ⟶ A₀.left) (W₀ : X.Opens) (d : ∀ W : X.Opens, Γ(X, W) → Γ(T, (y ≫ m) ⁻¹ᵁ W)), LocDerK (y ≫ A₀.hom) p (y ≫ m) (fun _ => 0) W₀ d → ∃! c : Fin g → Γ(T, (y ≫ m) ⁻¹ᵁ W₀), ∀ W, W ≤ W₀ → ∀ f, d W f = ∑ a, rsT (c a) _ * pbT y (dd a (m ⁻¹ᵁ W) ((m.app W).hom f)) _ := by
@@ -302,21 +280,21 @@ theorem existsUnique_coeff : ∀ (K : Type) [Field K] (A₀ : Over (Sp K)) [GrpO
         pbT y (dd a (m ⁻¹ᵁ Wb) ((m.app Wb).hom f)) Vl := by
     intro Wb Wl hl Vl hVl a f
     have e1 : (m.app Wl).hom (resG X hl f) = rsT ((m.app Wb).hom f) (m ⁻¹ᵁ Wl) := by
-      rw [← rsT_eq_resG_of_le' _ hl, ← GlobalTheory.KS.InvField.pbT_eq_app, ← GlobalTheory.KS.InvField.pbT_eq_app,
-        pbT_rsT_of_le_preimage_of_le m f hl le_rfl, rsT_pbT_of_le_of_le m f le_rfl (m.preimage_mono hl)]
-    rw [e1, hdd a _ _ _ (m.preimage_mono hl), pbT_rsT_of_le_preimage_of_le y _ (m.preimage_mono hl) hVl]
+      rw [← rsT_of_le hl _, ← GlobalTheory.KS.InvField.pbT_eq_app, ← GlobalTheory.KS.InvField.pbT_eq_app,
+        pbT_rsT m hl le_rfl f, rsT_pbT (O₀ := Wb) m le_rfl (m.preimage_mono hl) f]
+    rw [e1, hdd a _ _ _ (m.preimage_mono hl), pbT_rsT y (m.preimage_mono hl) hVl _]
   have loc : ∀ (W : X.Opens) (V : T.Opens), IsAffineOpen W → W ≤ W₀ → IsAffineOpen V →
       V ≤ y ⁻¹ᵁ (m ⁻¹ᵁ W) →
       ∃! c : Fin g → Γ(T, V), ∀ f, rsT (d W f) V = ∑ a, c a * pbT y (dd a _ ((m.app W).hom f)) V := by
     intro W V hW hW₀ hV hVW
     refine existsUnique_coeff_affine (G := A₀) hv hd x₀ p m H y hW hV hVW (fun f => rsT (d W f) V) ?_ ?_ ?_
     · intro f f'
-      simp only [hD.add W hW₀, rsT_eq_resG_of_le' (O₀ := (y ≫ m) ⁻¹ᵁ W) _ hVW, map_add (f := _)]
+      simp only [hD.add W hW₀, rsT_of_le (O₀ := (y ≫ m) ⁻¹ᵁ W) hVW _, map_add (f := _)]
     · intro f f'
-      simp only [hD.mul W hW₀, rsT_eq_resG_of_le' (O₀ := (y ≫ m) ⁻¹ᵁ W) _ hVW, map_add (f := _), map_mul]
-      simp only [← rsT_eq_resG_of_le' (O₀ := (y ≫ m) ⁻¹ᵁ W) _ hVW, rsT_comp_app_eq_pbT_app y m hVW]
+      simp only [hD.mul W hW₀, rsT_of_le (O₀ := (y ≫ m) ⁻¹ᵁ W) hVW _, map_add (f := _), map_mul]
+      simp only [← rsT_of_le (O₀ := (y ≫ m) ⁻¹ᵁ W) hVW _, rsT_comp_app_eq_pbT_app y m hVW]
     · intro r
-      simp only [hD.base W hW₀, GlobalTheory.KS.InvField.constFn_zero, rsT_eq_resG_of_le' (O₀ := (y ≫ m) ⁻¹ᵁ W) _ hVW,
+      simp only [hD.base W hW₀, GlobalTheory.KS.InvField.constFn_zero, rsT_of_le (O₀ := (y ≫ m) ⁻¹ᵁ W) hVW _,
         map_zero]
   let P := {pr : X.Opens × T.Opens // IsAffineOpen pr.1 ∧ pr.1 ≤ W₀ ∧ IsAffineOpen pr.2 ∧
     pr.2 ≤ y ⁻¹ᵁ (m ⁻¹ᵁ pr.1)}
@@ -342,12 +320,12 @@ theorem existsUnique_coeff : ∀ (K : Type) [Field K] (A₀ : Over (Sp K)) [GrpO
       (y₁ := fun a => rsT (C k a) l.1.2) (y₂ := C l) ?_ ?_
     · exact fun a => congrFun e a
     · intro f
-      rw [← rsT_rsT_moduli (d k.1.1 f) k.2.2.2.2 hV, hC k f, rsT_sum_mul_fintype _ _ hV]
+      rw [← rsT_rsT (O₀ := (y ≫ m) ⁻¹ᵁ k.1.1) k.2.2.2.2 hV (d k.1.1 f), hC k f, rsT_sum_mul_fintype _ _ hV]
       refine Finset.sum_congr rfl fun a _ => ?_
-      rw [rsT_pbT_of_le_of_le y _ k.2.2.2.2 hV]
+      rw [rsT_pbT y k.2.2.2.2 hV _]
     · intro f
       have hq : l.1.2 ≤ (y ≫ m) ⁻¹ᵁ l.1.1 := l.2.2.2.2
-      rw [← rsT_rsT_moduli (d k.1.1 f) ((y ≫ m).preimage_mono hW) hq, ← hD.res k.1.1 l.1.1 hW k.2.2.1 f,
+      rw [← rsT_rsT ((y ≫ m).preimage_mono hW) hq (d k.1.1 f), ← hD.res k.1.1 l.1.1 hW k.2.2.1 f,
         hC l (resG X hW f)]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [hsub k.1.1 l.1.1 hW l.1.2 l.2.2.2.2]
@@ -363,31 +341,31 @@ theorem existsUnique_coeff : ∀ (K : Type) [Field K] (A₀ : Over (Sp K)) [GrpO
         (cov _ _ (inf_le_left.trans k.2.2.1) (fun t ht => ⟨k.2.2.2.2 ht.1, l.2.2.2.2 ht.2⟩))
       intro j
       erw [sheaf_map_eq_rsT, sheaf_map_eq_rsT, sheaf_map_eq_rsT, sheaf_map_eq_rsT]
-      rw [rsT_rsT_moduli _ inf_le_left j.2.2, rsT_rsT_moduli _ inf_le_right j.2.2,
+      rw [rsT_rsT inf_le_left j.2.2 _, rsT_rsT inf_le_right j.2.2 _,
         resc k j.1 (j.2.1.trans inf_le_left) (j.2.2.trans inf_le_left),
         resc l j.1 (j.2.1.trans inf_le_right) (j.2.2.trans inf_le_right)]
     obtain ⟨s, hs, hsu⟩ := T.sheaf.existsUnique_gluing' (fun k : P => k.1.2) ((y ≫ m) ⁻¹ᵁ W₀)
       (fun k => homOfLE (U0 k)) hcov (fun k => C k a) hcomp
     refine ⟨s, fun k => ?_, fun s' hs' => hsu s' fun k => ?_⟩
-    · exact (rsT_eq_resG_of_le' _ (U0 k)).trans (hs k)
-    · exact (rsT_eq_resG_of_le' _ (U0 k)).symm.trans (hs' k)
+    · exact (rsT_of_le (U0 k) _).trans (hs k)
+    · exact (rsT_of_le (U0 k) _).symm.trans (hs' k)
   choose c hc using fun a => (glue a).exists
   refine ⟨c, fun W hW f => ?_, fun c' hc' => funext fun a => (glue a).unique ?_ (hc a)⟩
   · apply T.sheaf.eq_of_locally_eq' (fun j : {j : P // j.1.1 ≤ W ∧ j.1.2 ≤ (y ≫ m) ⁻¹ᵁ W} => j.1.1.2)
       ((y ≫ m) ⁻¹ᵁ W) (fun j => homOfLE j.2.2) (cov W _ hW le_rfl)
     intro j
     erw [sheaf_map_eq_rsT, sheaf_map_eq_rsT]
-    rw [← rsT_rsT_moduli (d W f) ((y ≫ m).preimage_mono j.2.1) j.1.2.2.2.2, ← hD.res W j.1.1.1 j.2.1 hW f,
+    rw [← rsT_rsT ((y ≫ m).preimage_mono j.2.1) j.1.2.2.2.2 (d W f), ← hD.res W j.1.1.1 j.2.1 hW f,
       hC j.1 (resG X j.2.1 f), rsT_sum_mul_fintype _ _ j.2.2]
     refine Finset.sum_congr rfl fun a _ => ?_
-    rw [rsT_rsT_moduli _ ((y ≫ m).preimage_mono hW) j.2.2, hc a j.1, hsub W j.1.1.1 j.2.1 j.1.1.2 j.1.2.2.2.2,
-      rsT_pbT_of_le_of_le (O₀ := m ⁻¹ᵁ W) (O₁ := (y ≫ m) ⁻¹ᵁ W) y _ le_rfl j.2.2]
+    rw [rsT_rsT ((y ≫ m).preimage_mono hW) j.2.2 _, hc a j.1, hsub W j.1.1.1 j.2.1 j.1.1.2 j.1.2.2.2.2,
+      rsT_pbT (O₀ := m ⁻¹ᵁ W) (O₁ := (y ≫ m) ⁻¹ᵁ W) y le_rfl j.2.2 _]
   · intro k
     have e := (Cex k).unique (y₁ := fun a => rsT (c' a) k.1.2) (y₂ := C k) ?_ (hC k)
     · exact congrFun e a
     · intro f
       rw [hc' k.1.1 k.2.2.1 f, rsT_sum_mul_fintype (O₀ := (y ≫ m) ⁻¹ᵁ k.1.1) _ _ k.2.2.2.2]
       refine Finset.sum_congr rfl fun b _ => ?_
-      rw [rsT_rsT_moduli _ ((y ≫ m).preimage_mono k.2.2.1) k.2.2.2.2, rsT_pbT_of_le_of_le (O₀ := m ⁻¹ᵁ k.1.1) (O₁ := (y ≫ m) ⁻¹ᵁ k.1.1) y _ le_rfl k.2.2.2.2]
+      rw [rsT_rsT ((y ≫ m).preimage_mono k.2.2.1) k.2.2.2.2 _, rsT_pbT (O₀ := m ⁻¹ᵁ k.1.1) (O₁ := (y ≫ m) ⁻¹ᵁ k.1.1) y le_rfl k.2.2.2.2 _]
 
 end GlobalTheory.InvFieldBasis

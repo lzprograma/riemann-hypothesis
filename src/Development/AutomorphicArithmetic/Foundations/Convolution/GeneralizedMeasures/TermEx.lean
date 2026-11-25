@@ -17,54 +17,11 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.Integrab
 public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.LocAll
 public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.MatchOne
 public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.G1St
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.HaveILetI
 import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
-import Mathlib.Tactic.TypeStar
 import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
-import Mathlib.Topology.Separation.Connected
 import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.SplitLoc
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -204,8 +161,8 @@ theorem UpperTheory.finprod_local_factors_with_iwahori_at_place :
     · simp [hw]
     · simp [hw]
   let h' : ∀ w : Pl E, GL (Fin n) (w.adicCompletion E) → ℂ := fun w => if w ∈ T then 1 else h w
-  have hh'T : ∀ w ∈ T, h' w = 1 := fun w hw => by simp only [h', if_pos hw]
-  have hh'N : ∀ w ∉ T, h' w = h w := fun w hw => by simp only [h', if_neg hw]
+  have hh'T : ∀ w ∈ T, h' w = 1 := fun w hw => by simp only [h', ite_eq_left hw]
+  have hh'N : ∀ w ∉ T, h' w = h w := fun w hw => by simp only [h', ite_eq_right hw]
   have hUfin : (T ∪ (κ : Set (Pl E))).Finite := hTfin.union κ.finite_toSet
   have hU : ∀ w ∉ T ∪ (κ : Set (Pl E)), h' w = (GLnLocal.integralGL (w.adicCompletion E) n : Set _).indicator 1 := by
     intro w hw
@@ -233,10 +190,10 @@ theorem UpperTheory.finprod_local_factors_with_iwahori_at_place :
   have hfac : ∀ v, φ v (X v) = A v * B v := by
     intro v
     by_cases hv : v ∈ insert q S
-    · simp only [A, if_pos hv, hB1 v hv, mul_one]
+    · simp only [A, ite_eq_left hv, hB1 v hv, mul_one]
     · have hv' := Finset.mem_insert.not.1 hv
-      push_neg at hv'
-      simp only [A, if_neg hv, one_mul, B]
+      push Not at hv'
+      simp only [A, ite_eq_right hv, one_mul, B]
       rw [hoff v hv'.2 hv'.1]
       unfold prodFn
       refine finprod_congr fun w => ?_
@@ -248,7 +205,7 @@ theorem UpperTheory.finprod_local_factors_with_iwahori_at_place :
   have hAsub : Function.mulSupport A ⊆ (insert q S : Finset (Pl F)) := by
     intro v hv
     by_contra hc
-    exact hv (if_neg hc)
+    exact hv (ite_eq_right hc)
   have hAfin : (Function.mulSupport A).Finite := (Finset.finite_toSet _).subset hAsub
   have hBfin : (Function.mulSupport B).Finite := by
     refine (hafin.image fun w : Pl E => w.under (𝓞 F)).subset ?_
@@ -267,9 +224,9 @@ theorem UpperTheory.finprod_local_factors_with_iwahori_at_place :
   have hAprod : ∏ᶠ v, A v = iwFn w₀ m (X q) * ∏ v ∈ S, ψ v (X v) := by
     rw [finprod_eq_prod_of_mulSupport_subset _ hAsub, Finset.prod_insert hq]
     congr 1
-    · simp only [A, Finset.mem_insert_self, if_true, hqφ]
+    · simp only [A, Finset.mem_insert_self, ite_true, hqφ]
     · refine Finset.prod_congr rfl fun v hv => ?_
-      simp only [A, if_pos (Finset.mem_insert_of_mem hv), hS v hv]
+      simp only [A, ite_eq_left (Finset.mem_insert_of_mem hv), hS v hv]
   have hBprod : ∏ᶠ v, B v = ∏ᶠ w, h' w (cf w x) := hten
   have haprod : ∏ᶠ w, h' w (cf w x) = (Cnd S q κ).indicator 1 x * ∏ w ∈ κ, h w (cf w x) := by
     by_cases hx : x ∈ Cnd S q κ
@@ -294,8 +251,7 @@ theorem UpperTheory.finprod_local_factors_with_iwahori_at_place :
       · exact (hκ w hw).2 h1
     · have hex : ∃ w, w ∉ κ ∧ w.under (𝓞 F) ∉ S ∧ w.under (𝓞 F) ≠ q ∧
           cf w x ∉ GLnLocal.integralGL (w.adicCompletion E) n := by
-        by_contra hc
-        push_neg at hc
+        by_contra! hc
         exact hx fun w h1 h2 h3 => hc w h1 h2 h3
       obtain ⟨w, hwκ, hwS, hwq, hnot⟩ := hex
       have hwT : w ∉ T := by
@@ -486,8 +442,7 @@ private theorem unit_prod (v : Pl F) :
     exact (Set.indicator_of_mem hm _).trans rfl
   · rw [Set.indicator_of_notMem hg]
     have : ∃ w : PlacesOver E v, cmp w g ∉ (GLnLocal.integralGL (w.1.adicCompletion E) n : Set _) := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact hg hc
     obtain ⟨w, hw⟩ := this
     exact finprod_eq_zero _ w (Set.indicator_of_notMem hw _) (Set.toFinite _)
@@ -577,8 +532,8 @@ private theorem rF_congr (S : Finset (Pl F)) {q : Pl F} (w₀ : PlacesOver E q)
     · exact Finset.prod_congr rfl h1
     · refine finprod_congr fun w => ?_
       by_cases hw : w = w₀
-      · rw [if_pos hw, if_pos hw]
-      · rw [if_neg hw, if_neg hw]
+      · rw [ite_eq_left hw, ite_eq_left hw]
+      · rw [ite_eq_right hw, ite_eq_right hw]
         by_cases hb : cf w.1 b ∈ iwCoset w.1 (0 : Fin n → ℤ)
         · rw [Set.indicator_of_mem hb, Set.indicator_of_mem ((h2 w hw).2 hb)]; rfl
         · rw [Set.indicator_of_notMem hb, Set.indicator_of_notMem (mt (h2 w hw).1 hb)]
@@ -661,7 +616,7 @@ private theorem supp (S : Finset (Pl F)) {q : Pl F} (w₀ : PlacesOver E q)
   haveI := Fintype.ofFinite (PlacesOver E q)
   rw [finprod_eq_prod_of_fintype] at hw
   have := Finset.prod_ne_zero_iff.1 hw w (Finset.mem_univ _)
-  rw [if_neg hw'] at this
+  rw [ite_eq_right hw'] at this
   exact Set.mem_of_indicator_ne_zero this
 
 private theorem regroup (S : Finset (Pl F)) {q : Pl F} (hq : q ∉ S) (w₀ : PlacesOver E q)
@@ -716,7 +671,7 @@ theorem UpperTheory.ConvolutionTheory.GM.termE :
   have hκ' : ∀ w ∈ κ, w.under (𝓞 F) ∉ L.S ∧ w.under (𝓞 F) ≠ q := fun w hw => by
     have := hκ w hw
     rw [hS] at this
-    push_neg at this
+    push Not at this
     exact this
   have ht : ∀ w, IsLocallyConstant (h w) ∧ HasCompactSupport (h w) := fun w => by
     by_cases hw : w ∈ κ
@@ -965,7 +920,7 @@ private theorem ht_le (q : Pl K) (T : Finset (Pl K)) (B : Pl K → ℝ) (hB : �
     have hc' : v ∉ T := hc
     by_cases hq : v = q
     · simp [hq]
-    · simp only [ne_eq, hq, not_false_eq_true, if_true]
+    · simp only [ne_eq, hq, not_false_eq_true, ite_true]
       exact h2 v hq hc'
 
 private theorem ind_inv {G : Type*} [Group G] (H : Subgroup G) {k : G} (hk : k ∈ H) (x : G) :
@@ -1006,10 +961,10 @@ theorem UpperTheory.ConvolutionTheory.GM.termF :
   have hψt : ∀ v ∈ T, IsLocallyConstant (ψ v) ∧ HasCompactSupport (ψ v) := by
     intro v hv
     by_cases hvS : v ∈ L.S
-    · simp only [hψ, hvS, if_true]
+    · simp only [hψ, hvS, ite_true]
       exact ⟨(L.test v hvS).2.2.1, (L.test v hvS).2.2.2⟩
     · have hvk : v ∈ κ := (Finset.mem_union.1 hv).resolve_left hvS
-      simp only [hψ, hvS, if_false]
+      simp only [hψ, hvS, ite_false]
       have := (sphEx F n hn v).2.2 (p v) (h v) (hsph v hvk)
       exact ⟨this.1, this.2.1⟩
   have hBex : ∀ v, ∃ b : ℝ, 1 ≤ b ∧ (v ∈ T → ∀ g, ψ v g ≠ 0 → locHeight g ≤ b) := by
@@ -1025,8 +980,8 @@ theorem UpperTheory.ConvolutionTheory.GM.termF :
   have hφψ : ∀ v, v ≠ q₁ → φ v = ψ v := by
     intro v hv
     by_cases hvS : v ∈ L.S
-    · simp only [hψ, hvS, if_true]; exact hφS v hvS
-    · simp only [hψ, hvS, if_false]; exact hφo v hvS hv
+    · simp only [hψ, hvS, ite_true]; exact hφS v hvS
+    · simp only [hψ, hvS, ite_false]; exact hφo v hvS hv
   have hφoff : ∀ v ∉ insert q₁ T, φ v = (GLnLocal.integralGL (v.adicCompletion F) n : Set _).indicator 1 := by
     intro v hv
     rw [Finset.mem_insert, not_or] at hv
@@ -1067,7 +1022,7 @@ theorem UpperTheory.ConvolutionTheory.GM.termF :
     by_cases hv : v ∈ s
     · simp [hv]
     · have hvw : v ≠ w := fun h' => hv (h' ▸ hw)
-      simp only [hv, if_false, cf_loc hvw]
+      simp only [hv, ite_false, cf_loc hvw]
   have hφr : ∀ v ∉ s, φ v = L.f v := by
     intro v hv
     rw [Finset.mem_insert, not_or] at hv
@@ -1087,13 +1042,13 @@ theorem UpperTheory.ConvolutionTheory.GM.termF :
     rw [he, fp_split _ (hφs x) s]
     have hrx : (∏ᶠ v, if v ∈ s then (1 : ℂ) else φ v (cf v x)) = r x := finprod_congr fun v => by
       by_cases hv : v ∈ s
-      · simp only [hv, if_true]
-      · simp only [hv, if_false]
+      · simp only [hv, ite_true]
+      · simp only [hv, ite_false]
         rw [hφr v hv]
     rw [hrx, hs, Finset.prod_insert hq₁κ, hφq, mul_assoc]
     refine congrArg₂ _ rfl (congrArg₂ _ rfl (Finset.prod_congr rfl fun v hv => ?_))
     rw [hφψ v (hκq v hv)]
-    simp only [hψ, hκS v hv, if_false]
+    simp only [hψ, hκS v hv, ite_false]
   have hUc : ∀ u ∈ 𝔣.toAmp.U, cf q₁ u ∈ GLnLocal.iwahori (q₁.adicCompletion F) n ∧ ∀ x, r (u * x) = r x := by
     intro u hu
     rw [hU] at hu
@@ -1101,7 +1056,7 @@ theorem UpperTheory.ConvolutionTheory.GM.termF :
     refine ⟨L.at_q.2.2.2 ▸ hu' q₁, fun x => finprod_congr fun v => ?_⟩
     by_cases hv : v ∈ s
     · simp [hv]
-    · simp only [hv, if_false, cf_mul]
+    · simp only [hv, ite_false, cf_mul]
       rw [Finset.mem_insert, not_or] at hv
       by_cases hvS : v ∈ L.S
       · exact (L.inv v hvS).2 _ (hu' v) _
@@ -1594,17 +1549,17 @@ theorem UpperTheory.ConvolutionTheory.GM.termEx :
   obtain ⟨φ, φS, φq, φo⟩ : ∃ φ : ∀ v : Pl F, GL (Fin n) (CompletionsOver E v) → ℂ, (∀ v ∈ L.S, φ v = L.φ v) ∧
       φ q = iwFn w₀ (fun i => (j : ℤ) * ν i) ∧ ∀ v ∉ L.S, v ≠ q → φ v = prodFn fun w : PlacesOver E v => h w.1 :=
     ⟨Function.update (fun v => if v ∈ L.S then L.φ v else prodFn fun w : PlacesOver E v => h w.1) q (iwFn w₀ fun i => (j : ℤ) * ν i),
-      fun v hv => by rw [Function.update_of_ne (fun e : v = q => L.q_not (e ▸ hv)), if_pos hv], Function.update_self ..,
-      fun v hv hvq => by rw [Function.update_of_ne hvq, if_neg hv]⟩
+      fun v hv => by rw [Function.update_of_ne (fun e : v = q => L.q_not (e ▸ hv)), ite_eq_left hv], Function.update_self ..,
+      fun v hv hvq => by rw [Function.update_of_ne hvq, ite_eq_right hv]⟩
   obtain ⟨ψ, ψS, ψq, ψo⟩ : ∃ ψ : ∀ v : Pl F, GL (Fin n) (v.adicCompletion F) → ℂ, (∀ v ∈ L.S, ψ v = L.f v) ∧
       ψ q = (iwCoset q fun i => (j : ℤ) * ν i).indicator 1 ∧ ∀ v ∉ L.S, v ≠ q → ψ v = f v :=
     ⟨Function.update (fun v => if v ∈ L.S then L.f v else f v) q ((iwCoset q fun i => (j : ℤ) * ν i).indicator 1),
-      fun v hv => by rw [Function.update_of_ne (fun e : v = q => L.q_not (e ▸ hv)), if_pos hv], Function.update_self ..,
-      fun v hv hvq => by rw [Function.update_of_ne hvq, if_neg hv]⟩
+      fun v hv => by rw [Function.update_of_ne (fun e : v = q => L.q_not (e ▸ hv)), ite_eq_left hv], Function.update_self ..,
+      fun v hv hvq => by rw [Function.update_of_ne hvq, ite_eq_right hv]⟩
   obtain ⟨c, cS, cq', co⟩ : ∃ c : Pl F → ℂ, (∀ v ∈ L.S, c v = L.c v) ∧ c q = cq ∧ ∀ v ∉ L.S, v ≠ q → c v = 1 :=
     ⟨Function.update (fun v => if v ∈ L.S then L.c v else 1) q cq,
-      fun v hv => by rw [Function.update_of_ne (fun e : v = q => L.q_not (e ▸ hv)), if_pos hv], Function.update_self ..,
-      fun v hv hvq => by rw [Function.update_of_ne hvq, if_neg hv]⟩
+      fun v hv => by rw [Function.update_of_ne (fun e : v = q => L.q_not (e ▸ hv)), ite_eq_left hv], Function.update_self ..,
+      fun v hv hvq => by rw [Function.update_of_ne hvq, ite_eq_right hv]⟩
   obtain ⟨fE, e1, e2, e3⟩ := TE evE hE j wd φ φS φq φo
   obtain ⟨fF, g1, g2, g3⟩ := TF evF hF j (wd.map (resIx F)) ψ ψS ψq ψo
   have hpoly : (map C (∏ w ∈ κ, atPl w (γ w)) * monomial β (mono wd) : PR E n) =

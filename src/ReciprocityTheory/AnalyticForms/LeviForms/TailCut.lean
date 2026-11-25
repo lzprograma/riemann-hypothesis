@@ -54,30 +54,9 @@ private lemma continuousAt_of_continuousOn_chart_comp {e : ℕ} {X β : Type} [T
   filter_upwards [(A.chart j).open_source.mem_nhds hj] with z hz
   simp only [Function.comp_apply, (A.chart j).left_inv hz]
 
-private lemma isClosed_bdry_of_isSection' {e : ℕ} {X : Type} [TopologicalSpace X] (A : FinHolAtlas e X)
-    (L : LocPot X) (s : X → X → ℂ) (hL : IsPotential A L) (hs : IsSection A L s) :
-    IsClosed (bdry s) := by
-  obtain ⟨hs1, hs2⟩ := hs
-  obtain ⟨hL1, _⟩ := hL
-  have hN : Continuous (fun y => ‖s y y‖ * Real.exp (-L.φ y y)) := by
-    rw [continuous_iff_continuousAt]
-    intro y
-    have h1 : ContinuousAt (s y) y :=
-      continuousAt_of_continuousOn_chart_comp A (L.isOpen_U y) (fun j => (hs1 y j).continuousOn) (L.mem_U y)
-    have h2 : ContinuousAt (L.φ y) y :=
-      continuousAt_of_continuousOn_chart_comp A (L.isOpen_U y) (fun j => (hL1 y j).continuousOn) (L.mem_U y)
-    refine (h1.norm.mul h2.neg.rexp).congr ?_
-    filter_upwards [(L.isOpen_U y).mem_nhds (L.mem_U y)] with z hz
-    exact (hs2 z y z ⟨L.mem_U z, hz⟩).symm
-  have hB : bdry s = (fun y => ‖s y y‖ * Real.exp (-L.φ y y)) ⁻¹' {0} := by
-    ext y
-    simp [bdry, Real.exp_ne_zero]
-  rw [hB]
-  exact isClosed_singleton.preimage hN
-
 theorem bdry_null : BdryNullStatement := by
-  intro e X _ _ _ _ _ A L s n m W hL hs hsnc Φ hΦ
-  have hB : IsClosed (bdry s) := isClosed_bdry_of_isSection' A L s hL hs
+  intro e X _ _ _ _ _ A L s n m W _ hs hsnc Φ hΦ
+  have hB : IsClosed (bdry s) := isClosed_bdry hs
   unfold maMeasure
   split_ifs with h
   swap

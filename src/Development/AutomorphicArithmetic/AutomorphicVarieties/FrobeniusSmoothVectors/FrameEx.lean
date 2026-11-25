@@ -94,8 +94,6 @@ import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVec
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AuxwEx, Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ClrkTr, Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EtaleSimplicialCochainSchemeSectionExtensionNatu, Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FieldEx, Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusGaloisFieldFourCompatibility, Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.OkBasic, Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.RankLeOfCardLe, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.B1p, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.PhiGam, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.Imports, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.PsiLocalPairEqLocal, Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.ResH1SurjectiveOfIsomorphism, Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrameEx
 
-attribute [local instance 10000] DivisionSemiring.to_moduleIsTorsionFree
-
 -- ===== clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AuxwEx =====
 -- clump-header: {"m": "Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AuxwEx", "h": "module\n\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusSplitPrimeDatum\npublic import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.DecActRoots\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\npublic import Mathlib.NumberTheory.PrimesCongruentOne\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
@@ -877,7 +875,7 @@ private theorem lev_rk {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω
   haveI : Algebra.IsAlgebraic ℚ Ω := IsAlgClosure.isAlgebraic
   haveI : Module.IsTorsionFree E Ω := DivisionSemiring.to_moduleIsTorsionFree
   haveI : IsAlgClosure E Ω := ⟨IsAlgClosure.isAlgClosed ℚ, Algebra.IsAlgebraic.tower_top (K := ℚ) E⟩
-  obtain ⟨r, hr⟩ := _root_.UpperTheory.V.FW.ferreroWashington l E (by rw [if_neg h2]; exact hζ)
+  obtain ⟨r, hr⟩ := _root_.UpperTheory.V.FW.ferreroWashington l E (by rw [ite_eq_right h2]; exact hζ)
   refine ⟨r, fun n => ?_⟩
   let K' := Kum.Fn E Ω l n
   obtain ⟨hcyc, -, -⟩ := Kum.fnCyc E Ω l n
@@ -1149,16 +1147,6 @@ private theorem pG_nat {F : Type} [Field F] [NumberField F] (S : Finset (HeightO
   rw [hc, Nat.cast_mul]
   exact Ideal.mul_mem_right _ _ (Ideal.absNorm_mem _)
 
-private theorem pG_lc {H M : Type} [Group H] [TopologicalSpace H] [IsTopologicalGroup H] [Group M]
-    (φ : H →* M) (h : IsOpen (φ.ker : Set H)) : IsLocallyConstant φ := by
-  rw [IsLocallyConstant.iff_eventually_eq]
-  intro x
-  have ho : IsOpen ((fun y => x⁻¹ * y) ⁻¹' (φ.ker : Set H)) := h.preimage (by fun_prop)
-  filter_upwards [ho.mem_nhds (show x ∈ (fun y => x⁻¹ * y) ⁻¹' (φ.ker : Set H) by simp)] with y hy
-  have : φ (x⁻¹ * y) = 1 := hy
-  rw [map_mul, map_inv, inv_mul_eq_one] at this
-  exact this.symm
-
 theorem UpperTheory.V.GC.phiGam :
     ∀ (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime] (S : Finset (HeightOneSpectrum (𝓞 F))) (K : Subgroup (G F Ω)) (Γ : Type) [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] [TotallyDisconnectedSpace Γ] (π : G F Ω →* Γ), GLink l S K π → Alg.PhiCond Γ l := by
   intro F Ω _ _ _ _ _ l hl S K Γ _ _ _ _ _ _ π hL H hH
@@ -1215,7 +1203,7 @@ theorem UpperTheory.V.GC.phiGam :
   refine Finite.of_injective (β := {φ : G E Ω → ZMod l | IsLocallyConstant φ ∧ (∀ a b, φ (a * b) = φ a + φ b) ∧
       ∀ A : ValuationSubring Ω, ¬ A.valuation (N : Ω) < 1 → ∀ g ∈ Ine (F := E) A, φ g = 0} ×
       (H ⧸ e.range → Multiplicative (ZMod l)))
-    (fun φ => (⟨fun g => Multiplicative.toAdd (φ.1 (e g)), ((pG_lc φ.1 φ.2).comp_continuous he).comp _,
+    (fun φ => (⟨fun g => Multiplicative.toAdd (φ.1 (e g)), ((UpperTheory.Reformulated.B.LocallyConstantOfKernel.lc_of_ker φ.1 φ.2).comp_continuous he).comp _,
       fun a b => by simp only [map_mul, toAdd_mul], fun A hA g hg => by
         show Multiplicative.toAdd (φ.1 (e g)) = 0
         rw [hker A hA g hg, map_one, toAdd_one]⟩, fun q => φ.1 q.out)) ?_
@@ -1353,8 +1341,7 @@ theorem UpperTheory.V.GC.b1 :
           change A.valuation (algebraMap F Ω ((x * y : 𝓞 F) : F)) < 1 at hxy
           change A.valuation (algebraMap F Ω (x : F)) < 1 ∨ A.valuation (algebraMap F Ω (y : F)) < 1
           simp only [map_mul] at hxy
-          by_contra h
-          push_neg at h
+          by_contra! h
           have hx1 : A.valuation (algebraMap F Ω (x : F)) = 1 := le_antisymm (hOk x) h.1
           have hy1 : A.valuation (algebraMap F Ω (y : F)) = 1 := le_antisymm (hOk y) h.2
           rw [hx1, hy1, one_mul] at hxy
@@ -1467,8 +1454,6 @@ private theorem sum_deg (l : ℕ) [Fact l.Prime] (F : Type) [Field F] [NumberFie
     ∑ v, locDeg (pl v) ≤ finrank ℚ F := by
   classical
   have hl : l.Prime := Fact.out
-  haveI : IsPrincipalIdealRing ℤ := EuclideanDomain.instIsPrincipalIdealRing
-  haveI : Module.Flat ℤ (𝓞 F) := Module.Flat.of_free
   have hmax : (Ideal.span {(l : ℤ)}).IsMaximal :=
     PrincipalIdealRing.isMaximal_of_irreducible (Nat.prime_iff_prime_int.1 hl).irreducible
   have hsum := Ideal.sum_ramification_inertia_eq_finrank (Ideal.span {(l : ℤ)}) (𝓞 F)

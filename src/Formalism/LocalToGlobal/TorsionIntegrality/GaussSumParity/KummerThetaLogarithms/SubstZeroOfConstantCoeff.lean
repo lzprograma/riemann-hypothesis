@@ -271,7 +271,7 @@ theorem torus_tilde : TorusTil := by
     refine Finset.sum_congr rfl fun s _ => ?_
     split_ifs with h
     · have e : σ^[s.val] (oms r) * u ^ lw l s = σ^[s.val] (u * oms r) := by
-        rw [← RingHom.coe_pow, map_mul, RingHom.coe_pow, iter_pow σ hσ, lw, if_pos h, one_mul,
+        rw [← RingHom.coe_pow, map_mul, RingHom.coe_pow, iter_pow σ hσ, lw, ite_eq_left h, one_mul,
           ← Nat.cast_pow, zpow_natCast, mul_comm]
       rw [e]
     · rfl
@@ -282,7 +282,7 @@ theorem torus_tilde : TorusTil := by
     split_ifs with h
     · rfl
     · have e : σ^[s.val] (om r) * u ^ lw l s = σ^[s.val] (u⁻¹ * om r) := by
-        rw [← RingHom.coe_pow, map_mul, map_inv₀, RingHom.coe_pow, iter_pow σ hσ, lw, if_neg h,
+        rw [← RingHom.coe_pow, map_mul, map_inv₀, RingHom.coe_pow, iter_pow σ hσ, lw, ite_eq_right h,
           neg_one_mul, zpow_neg, ← Nat.cast_pow, zpow_natCast, mul_comm]
       rw [e]
   rw [hE, hO]
@@ -347,7 +347,7 @@ theorem coeff_pair_degO {G : MvPowerSeries (Fin 2) K} (hG : DivAB G) (σ : K →
     by_cases hs : s.val % 2 = 0
     · simp [ha, hs]
     · have := (Finset.sum_eq_zero_iff.1 hn) s (Finset.mem_univ s)
-      rw [if_neg hs] at this
+      rw [ite_eq_right hs] at this
       rw [this, pow_zero]
   have hO : MvPowerSeries.subst (fun s => MvPowerSeries.C (a s) * MvPowerSeries.X s)
       (linO (d := d) σ c') = 0 := by
@@ -377,7 +377,7 @@ theorem coeff_pair_degE {G : MvPowerSeries (Fin 2) K} (hG : DivAB G) (σ : K →
     refine Finset.prod_eq_one fun s _ => ?_
     by_cases hs : s.val % 2 = 0
     · have := (Finset.sum_eq_zero_iff.1 hn) s (Finset.mem_univ s)
-      rw [if_pos hs] at this
+      rw [ite_eq_left hs] at this
       rw [this, pow_zero]
     · simp [ha, hs]
   have hE : MvPowerSeries.subst (fun s => MvPowerSeries.C (a s) * MvPowerSeries.X s)
@@ -425,14 +425,14 @@ theorem wt_ne_one {l : ℕ} (hl : 2 ≤ l) {ζ : K} (hζ : IsPrimitiveRoot ζ (l
   obtain ⟨t, ht1, ht⟩ := exists_of_sum_eq_one _ hO
   have hse : s.val % 2 = 0 := by
     by_contra hc
-    rw [if_neg hc] at hs1
+    rw [ite_eq_right hc] at hs1
     omega
   have hto : ¬ t.val % 2 = 0 := by
     intro hc
-    rw [if_pos hc] at ht1
+    rw [ite_eq_left hc] at ht1
     omega
-  rw [if_pos hse] at hs1
-  rw [if_neg hto] at ht1
+  rw [ite_eq_left hse] at hs1
+  rw [ite_eq_right hto] at ht1
   have hst : s ≠ t := fun h => hto (h ▸ hse)
   have hw : wt l ζ n = ζ ^ (lw l s + lw l t) := by
     unfold wt
@@ -441,9 +441,9 @@ theorem wt_ne_one {l : ℕ} (hl : 2 ≤ l) {ζ : K} (hζ : IsPrimitiveRoot ζ (l
       have hc0 : n c = 0 := by
         by_cases hc : c.val % 2 = 0
         · have := hs c hcs
-          rwa [if_pos hc] at this
+          rwa [ite_eq_left hc] at this
         · have := ht c hct
-          rwa [if_neg hc] at this
+          rwa [ite_eq_right hc] at this
       rw [hc0, pow_zero]
     · intro h
       exact absurd (Finset.mem_univ s) h
@@ -453,7 +453,7 @@ theorem wt_ne_one {l : ℕ} (hl : 2 ≤ l) {ζ : K} (hζ : IsPrimitiveRoot ζ (l
   rw [hw, hζ.zpow_eq_one_iff_dvd] at h1
   have e : lw l s + lw l t = (l : ℤ) ^ s.val - (l : ℤ) ^ t.val := by
     unfold lw
-    rw [if_pos hse, if_neg hto]
+    rw [ite_eq_left hse, ite_eq_right hto]
     ring
   rw [e] at h1
   have := Formalism.HermitianLattices.IntegralLatticeDensity.no_form_of_bidegree_one_one l d s.val t.val hl (ZMod.val_lt s) (ZMod.val_lt t) h1

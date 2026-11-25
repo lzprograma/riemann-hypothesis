@@ -104,11 +104,6 @@ theorem eq_zero_of_eval (P : B[X]) (h : ∀ u : ℂ, P.eval (algebraMap ℂ B u)
 
 end
 
-section
-variable {V : Type} [AddCommGroup V] [Module ℂ V] {n : ℕ}
-
-end
-
 end GlobalTheory.CompanionTheory.Inh.CharId
 
 namespace GlobalTheory.CompanionTheory.Inh

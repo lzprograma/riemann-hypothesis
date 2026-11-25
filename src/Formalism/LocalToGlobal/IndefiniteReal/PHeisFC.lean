@@ -12,8 +12,6 @@ open MeasureTheory Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.Ma
   IsDedekindDomain NumberField
 open scoped TensorProduct
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace Formalism.IndefR.PHeisFC
 
 section Tens

@@ -115,15 +115,8 @@ theorem sigma_eq_pow {k : Type*} [Field k] [Fintype k] (σ : k ≃+* k)
   haveI : NeZero p := ⟨hp.ne_zero⟩
   letI : Algebra (ZMod p) k := ZMod.algebra k p
   have hpow : ∀ i : ℕ, ∀ x : k,
-      ((FiniteField.frobeniusAlgEquivOfAlgebraic (ZMod p) k) ^ i) x = x ^ (p ^ i) := by
-    intro i
-    induction i with
-    | zero => intro x; simp
-    | succ i ih =>
-      intro x
-      rw [pow_succ, AlgEquiv.mul_apply, ih]
-      simp only [FiniteField.coe_frobeniusAlgEquivOfAlgebraic, ZMod.card]
-      rw [← pow_mul, ← pow_succ']
+      ((FiniteField.frobeniusAlgEquivOfAlgebraic (ZMod p) k) ^ i) x = x ^ (p ^ i) := fun i x => by
+    rw [AlgEquiv.coe_pow, FiniteField.coe_frobeniusAlgEquivOfAlgebraic_iterate, ZMod.card]
   let σ' : k ≃ₐ[ZMod p] k := AlgEquiv.ofRingEquiv (f := σ) (fun c =>
     DFunLike.congr_fun (RingHom.ext_zmod (σ.toRingHom.comp (algebraMap (ZMod p) k))
       (algebraMap (ZMod p) k)) c)
@@ -197,10 +190,10 @@ theorem card_norm_fibre {k : Type*} [Field k] [Fintype k] [DecidableEq k] (σ : 
         exact mul_ne_zero (hne0 y hy) hy h
       · intro h
         rw [h, map_zero, zero_mul]
-    rw [this, Finset.card_singleton, if_pos rfl]
+    rw [this, Finset.card_singleton, ite_eq_left rfl]
     push_cast
     ring
-  rw [if_neg hc0]
+  rw [ite_eq_right hc0]
 
   set Fs := univ.filter (fun b : k => σ b = b ∧ b ≠ 0) with hFs
   set G : k → Finset k := fun b => univ.filter (fun y : k => σ y * y = b) with hG
@@ -311,7 +304,7 @@ theorem card_herm_norm_eq {k : Type*} [Field k] [Fintype k] (σ : k ≃+* k)
   have h := FiniteNormFibres.card_sum_norm_fibres (fun y : k => σ y * y) (fun c => σ c = c)
     (fun c y hc => by simp only [map_sub, map_mul, hσ, hc]; ring) (q : ℤ) (-1)
     (by rw [hq]; push_cast; ring) (fun c hc => by convert FiniteNormFibres.card_norm_fibre σ hσ hne q hq c hc) M c hc
-  rw [if_neg hc0, mul_pow] at h
+  rw [ite_eq_right hc0, mul_pow] at h
   have hq0 : (q : ℤ) ≠ 0 := by
     intro h0
     have h1 : q = 0 := by exact_mod_cast h0
@@ -336,7 +329,7 @@ theorem card_dot_eq {k : Type*} [Field k] [Fintype k] (q : ℕ) (hq : Fintype.ca
   have h := FiniteNormFibres.card_sum_norm_fibres (fun y : k × k => y.1 * y.2) (fun _ => True) (fun _ _ _ => trivial)
     (q : ℤ) 1 (by rw [Fintype.card_prod, hq]; push_cast; ring)
     (fun c _ => by rw [← hq]; convert FiniteNormFibres.card_mul_fibre c) M c trivial
-  rw [if_neg hc, one_mul] at h
+  rw [ite_eq_right hc, one_mul] at h
   have hq0 : (q : ℤ) ≠ 0 := by
     intro h0
     have h1 : q = 0 := by exact_mod_cast h0

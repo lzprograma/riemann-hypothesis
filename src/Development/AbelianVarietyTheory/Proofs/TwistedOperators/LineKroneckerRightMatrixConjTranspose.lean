@@ -64,17 +64,13 @@ variable {σ : Type} [DecidableEq σ] {H : Type} [NormedAddCommGroup H] [InnerPr
 theorem monomial_eq_smul (m : σ →₀ ℕ) (c : ℂ) :
     monomial m c = c • (monomial m 1 : MvPolynomial σ ℂ) := by simp [smul_monomial]
 
-theorem inner_X_mul (h : IsFockIP ι) (i : σ) (P Q : MvPolynomial σ ℂ) :
-    inner ℂ (ι (X i * P)) (ι Q) = inner ℂ (ι P) (ι (pderiv i Q)) := by
-  apply GlobalTheory.FockDeg.inner_X_mul <;> assumption
-
 theorem inner_pderiv (h : IsFockIP ι) (i : σ) (P Q : MvPolynomial σ ℂ) :
     inner ℂ (ι (pderiv i P)) (ι Q) = inner ℂ (ι P) (ι (X i * Q)) := by
-  rw [← inner_conj_symm, ← inner_X_mul h, inner_conj_symm]
+  rw [← inner_conj_symm, ← GlobalTheory.FockDeg.inner_X_mul h, inner_conj_symm]
 
 theorem inner_polar (h : IsFockIP ι) (u v : σ) (P Q : MvPolynomial σ ℂ) :
     inner ℂ (ι (polar ℂ u v P)) (ι Q) = inner ℂ (ι P) (ι (polar ℂ v u Q)) := by
-  rw [polar_apply, polar_apply, inner_X_mul h, inner_pderiv h]
+  rw [polar_apply, polar_apply, GlobalTheory.FockDeg.inner_X_mul h, inner_pderiv h]
 
 theorem inner_colOp (h : IsFockIP ι) {I J : Type*} [Fintype I] (z : I × J → σ) (k l : J)
     (P Q : MvPolynomial σ ℂ) :
@@ -123,12 +119,12 @@ theorem parts_of_add (U D : Module.End ℂ (MvPolynomial σ ℂ))
   constructor
   · rw [← key U, plusPart]
     refine finsum_congr fun d => ?_
-    rw [LinearMap.add_apply, map_add (f := _), homogeneousComponent_of_mem (hU _ _ (hh d)), if_pos rfl,
-      homogeneousComponent_of_mem (hD _ _ (hh d)), if_neg (by omega), add_zero]
+    rw [LinearMap.add_apply, map_add (f := _), homogeneousComponent_of_mem (hU _ _ (hh d)), ite_eq_left rfl,
+      homogeneousComponent_of_mem (hD _ _ (hh d)), ite_eq_right (by omega), add_zero]
   · have h2 : ∀ d, homogeneousComponent d ((U + D) (homogeneousComponent (d + 2) P)) =
         D (homogeneousComponent (d + 2) P) := fun d => by
       rw [LinearMap.add_apply, map_add (f := _), homogeneousComponent_of_mem (hU _ _ (hh _)),
-        if_neg (by omega), homogeneousComponent_of_mem (hD _ _ (hh _)), if_pos (by omega), zero_add]
+        ite_eq_right (by omega), homogeneousComponent_of_mem (hD _ _ (hh _)), ite_eq_left (by omega), zero_add]
     rw [minusPart, finsum_congr h2, ← key D]
     rw [finsum_eq_sum_of_support_subset (s := Finset.range (P.totalDegree + 1)),
       finsum_eq_sum_of_support_subset (s := Finset.range (P.totalDegree + 1 + 1 + 1)),
@@ -229,7 +225,7 @@ theorem inner_upOp {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
   by_cases e : linePos l' = linePos l
   · simp [h l' l e]
   · cases h1 : linePos l <;> cases h2 : linePos l' <;> simp_all [mul_assoc]
-    rw [inner_smul_left, inner_smul_right, inner_X_mul hι, inner_X_mul hι]
+    rw [inner_smul_left, inner_smul_right, GlobalTheory.FockDeg.inner_X_mul hι, GlobalTheory.FockDeg.inner_X_mul hι]
 
 theorem fischer {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     {ι : Pol p q r s →ₗ[ℂ] H} (hι : IsFockIP ι) (hinj : Function.Injective ι)

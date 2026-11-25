@@ -70,51 +70,19 @@ private theorem exists_ringHom_eq_valAt'' {Y : Scheme.{0}} (x : Sp ℂ ⟶ Y) (U
     ∃ φ : Γ(Y, U) →+* ℂ, ∀ f, valAt' x U f = φ f := by
   refine ⟨(Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom.comp (x.appLE U ⊤ h).hom, fun f => ?_⟩
   unfold valAt'
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 private theorem valAt'_resG_of_le {Y : Scheme.{0}} (x : Sp ℂ ⟶ Y) {U V : Y.Opens} (hVU : V ≤ U) (h : ⊤ ≤ x ⁻¹ᵁ V)
     (f : Γ(Y, U)) : valAt' x V (resG Y hVU f) = valAt' x U f := by
   have h' : ⊤ ≤ x ⁻¹ᵁ U := fun _ ha => hVU (h ha)
   unfold valAt'
-  rw [dif_pos h, dif_pos h']
+  rw [dite_eq_left h, dite_eq_left h']
   unfold valAt
   exact congrArg (fun s => (Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom s)
     (congrArg (fun φ => CommRingCat.Hom.hom φ f) (Scheme.Hom.map_appLE x h (homOfLE hVU).op))
 
 private alias valAt'_app_eq_valAt'_comp_moduli := _root_.GlobalTheory.valAt'_comp
-
-private theorem valAt'_constFn' {Y : Scheme.{0}} (y : Sp ℂ ⟶ Y) (q : Y ⟶ Sp ℂ) (hq : y ≫ q = 𝟙 _) (U : Y.Opens)
-    (h : ⊤ ≤ y ⁻¹ᵁ U) (c : ℂ) : valAt' y U (constFn q U c) = c := by
-  unfold valAt' constFn
-  rw [dif_pos h]
-  unfold valAt
-  have e2 := congrArg (fun φ => CommRingCat.Hom.hom φ ((Scheme.ΓSpecIso (CommRingCat.of ℂ)).inv.hom c))
-    (Scheme.Hom.appLE_comp_appLE y q ⊤ U ⊤ (fun x _ => trivial) h)
-  have key : ∀ (φ : Sp ℂ ⟶ Sp ℂ) (_ : φ = 𝟙 _) (e : ⊤ ≤ φ ⁻¹ᵁ ⊤),
-      (Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom ((φ.appLE ⊤ ⊤ e).hom
-        ((Scheme.ΓSpecIso (CommRingCat.of ℂ)).inv.hom c)) = c := by
-    rintro φ rfl e
-    simp [Scheme.Hom.appLE]
-    change (Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom (((Sp ℂ).presheaf.map (𝟙 (Opposite.op ⊤))).hom
-      ((Scheme.ΓSpecIso (CommRingCat.of ℂ)).inv.hom c)) = c
-    rw [CategoryTheory.Functor.map_id]
-    simp
-  exact (congrArg (fun s => (Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom s) e2).trans (key _ hq _)
-
-private theorem top_le_preimage_basicOpen_of_valAt'_ne_zero {Y : Scheme.{0}} (y : Sp ℂ ⟶ Y) (U : Y.Opens) (h : ⊤ ≤ y ⁻¹ᵁ U) (g : Γ(Y, U))
-    (hg : valAt' y U g ≠ 0) : ⊤ ≤ y ⁻¹ᵁ Y.basicOpen g := by
-  unfold valAt' at hg
-  rw [dif_pos h] at hg
-  unfold valAt at hg
-  have hu : IsUnit ((y.appLE U ⊤ h).hom g) := by
-    have h1 := (isUnit_iff_ne_zero.2 hg).map (Scheme.ΓSpecIso (CommRingCat.of ℂ)).inv.hom
-    simpa using h1
-  have h1 : (Sp ℂ).basicOpen ((y.appLE U ⊤ h).hom g) = ⊤ := Scheme.basicOpen_of_isUnit _ hu
-  have h2 : (Sp ℂ).basicOpen ((y.appLE U ⊤ h).hom g) ≤ y ⁻¹ᵁ Y.basicOpen g := by
-    rw [Scheme.preimage_basicOpen]
-    exact (Scheme.basicOpen_res (Sp ℂ) ((y.app U).hom g) (homOfLE h).op).le.trans inf_le_right
-  exact h1.ge.trans h2
 
 private theorem top_le_preimage_preimage_inf {Y X : Scheme.{0}} (y : Sp ℂ ⟶ Y) (m : Y ⟶ X) {U V : X.Opens}
     (h1 : ⊤ ≤ y ⁻¹ᵁ m ⁻¹ᵁ U) (h2 : ⊤ ≤ y ⁻¹ᵁ m ⁻¹ᵁ V) : ⊤ ≤ y ⁻¹ᵁ m ⁻¹ᵁ (U ⊓ V) :=
@@ -215,7 +183,7 @@ theorem ptOf_const {D : R → ℂ} (h : LocDer q p m D W₀ d) (y : Sp ℂ ⟶ Y
     (hy : ⊤ ≤ (y ≫ m) ⁻¹ᵁ W₀) (r : R) : ptOf W₀ d y ⊤ (constFn p ⊤ r) = D r := by
   unfold ptOf
   rw [resG_constFn, h.base _ inf_le_right r]
-  exact valAt'_constFn' y q hq (m ⁻¹ᵁ (⊤ ⊓ W₀)) (fun a ha => ⟨trivial, hy ha⟩) (D r)
+  exact valAt'_constFn y q hq (m ⁻¹ᵁ (⊤ ⊓ W₀)) (D r) (fun a ha => ⟨trivial, hy ha⟩)
 
 end GlobalTheory.KS.VertReg
 
@@ -235,7 +203,7 @@ theorem locDer_regular_coeff : ∀ (P₀ : Out.PolAV (Sp ℂ)) (u : HolUnif P₀
   have hwf : ∀ z (hz : ⊤ ≤ ((u.ex z).left ≫ m) ⁻¹ᵁ W₀) W f, z ∈ dom u m W →
       ptOf W₀ d (u.ex z).left W f = fderiv ℂ (fn u m W f) z (wf z) := by
     intro z hz W f hzW
-    simp only [wf, dif_pos hz]
+    simp only [wf, dite_eq_left hz]
     exact (hw z hz).choose_spec W f hzW
   have lin : ∀ (L : (Fin P₀.g → ℂ) →L[ℂ] ℂ) (v : Fin P₀.g → ℂ), L v = ∑ i, v i * L (Pi.single i 1) := by
     intro L v
@@ -270,7 +238,7 @@ theorem locDer_regular_coeff : ∀ (P₀ : Out.PolAV (Sp ℂ)) (u : HolUnif P₀
     obtain ⟨c, hcr⟩ := exists_cramer _ _ J e a
     refine ⟨_, c, inf_le_right.trans (fun _ hx => (inf_le_right : W ⊓ W₀ ≤ W₀) hx), ?_, ?_⟩
     · have hb : ⊤ ≤ (u.ex z).left ⁻¹ᵁ P₀.A.left.basicOpen J.det := by
-        refine top_le_preimage_basicOpen_of_valAt'_ne_zero _ _ hzW' _ ?_
+        refine (top_le_preimage_basicOpen_iff _ _ _).mpr ?_
         obtain ⟨φ, hφ⟩ := exists_ringHom_eq_valAt'' _ _ hzW'
         rw [hφ, RingHom.map_det]
         convert hdet using 2

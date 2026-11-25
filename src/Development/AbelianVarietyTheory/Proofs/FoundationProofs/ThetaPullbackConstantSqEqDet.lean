@@ -20,50 +20,11 @@ public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OrthoProd
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PhDetMulIntegral
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaSpaceSelfDualPairAtMostLine
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaTranslationIntertwinerUnitary
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.LinearAlgebra.Eigenspace.Minpoly
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
 
 @[expose] public section
@@ -79,11 +40,6 @@ theorem exists_basis_lamOf (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (hC 
   obtain ⟨L, hL⟩ := GlobalTheory.CurveLattice.exists_periodPair_lamOf D cc δ hC
   refine ⟨L.ω₁, L.ω₂, L.indep, AddSubgroup.ext fun z => ?_⟩
   rw [hL, PeriodPair.lattice, ← Submodule.span_int_eq_addSubgroupClosure, Submodule.mem_toAddSubgroup]
-
-theorem exists_orthonormal_basis_family (Λ : AddSubgroup ℂ) (ω t : ℂ) (G : ℂ → ℂ) (z : ℂ) :
-    U1 Λ ω (U1 Λ t G) z =
-      Complex.exp (-(Real.pi : ℂ) * Complex.I * (gl3FieldFirst Λ ω (2 * t) : ℂ)) * U1 Λ t (U1 Λ ω G) z := by
-  apply GlobalTheory.HalfPeriodTheta.exists_orthonormal_basis_family
 
 theorem even_im_hermitian_sub (Λ : AddSubgroup ℂ) (w₁ w₂ : ℂ) (hi : LinearIndependent ℝ ![w₁, w₂])
     (hΛ : Λ = AddSubgroup.closure {w₁, w₂})
@@ -145,7 +101,7 @@ theorem theta_signed_translation : ∀ (D : D7), ∀ (cc : Ideal (𝓞 D.host.K)
       split_ifs with h
       · rw [(hpar.2 h).neg_one_zpow]; simp
       · rw [(Int.not_even_iff_odd.1 (mt hpar.1 h)).neg_one_zpow]; simp
-    rw [e1, exists_orthonormal_basis_family, hn, e2, e3]
+    rw [e1, GlobalTheory.HalfPeriodTheta.exists_orthonormal_basis_family, hn, e2, e3]
     simp only [GL3Theta.th0]
     linear_combination (U1 Λ t0 (sgStar Λ) z / U1 Λ t0 (sgStar Λ) 0) * e4
 
@@ -234,7 +190,7 @@ theorem ph_const_mul_det {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] [
   simp only [key] at hL
   rw [integral_const_mul, integral_finsetSum _ (fun q _ => (hR q).1.const_mul _)] at hL
   simp only [integral_const_mul, fun q => (hR q).2, hq, mul_ite, mul_zero, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true] at hL
+    Finset.mem_univ, ite_true] at hL
   refine ph_of_mul_pos (t := μ.real Fd) (ENNReal.toReal_pos h0 hfin) ?_
   convert hL using 1
   linear_combination (-(LinearMap.det (1 - (a : V →ₗ[ℂ] V)) * c * (μ.real Fd : ℂ))) * hα0

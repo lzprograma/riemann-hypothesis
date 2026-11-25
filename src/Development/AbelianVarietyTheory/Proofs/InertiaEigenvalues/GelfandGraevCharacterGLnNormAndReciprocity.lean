@@ -7,48 +7,7 @@ public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Labe
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WhittakerDimensionHarishChandraInductionMul
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WhittakerJacquetIdempotentsPropertiesPrimeField
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWhittakerDatumAndHalfLevels
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.GroupTheory.Nilpotent
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FlagMeasures.BlockDiagonalWithIdentityGLEqOneIff, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GelfandGraevCharacterGLnNormAndReciprocity
@@ -75,16 +34,9 @@ theorem tri_add (a b : ℕ) : (a + b) * (a + b - 1) / 2 = a * (a - 1) / 2 + (a *
   | succ b ih =>
     rw [← add_assoc a b 1, Nat.triangle_succ, Nat.triangle_succ, ih]; ring
 
-theorem conj_eq_one {G : Type} [Group G] (p x : G) : p * x * p⁻¹ = 1 ↔ x = 1 := by
-  constructor
-  · intro h
-    have : x = p⁻¹ * (p * x * p⁻¹) * p := by group
-    rw [this, h]; group
-  · rintro rfl; group
-
 theorem dirac_class (n : ℕ) : IsClass (dirac g n) := by
   intro x y
-  simp only [dirac, conj_eq_one]
+  simp only [dirac, conj_eq_one_iff]
 
 theorem gg_class (ψ : AddChar (ZMod g) ℂ) (n : ℕ) : IsClass (gg ψ n) := by
   intro x z
@@ -131,14 +83,14 @@ theorem inR_one (i n : ℕ) (hi : i ≤ n) : InR i (1 : Mt g n) := by
   have ha := a.2
   have hb := b.2
   rw [br, entN_one n _ _ (by omega) (by omega)]
-  refine ⟨fun h => if_neg ?_, fun h => if_pos (by rw [h])⟩
+  refine ⟨fun h => ite_eq_right ?_, fun h => ite_eq_left (by rw [h])⟩
   have : (b : ℕ) < a := h
   omega
 
 theorem supFrom_one (i n : ℕ) : supFrom i (1 : Mt g n) = 0 := by
   refine Finset.sum_eq_zero fun j hj => ?_
   rw [Finset.mem_Ico] at hj
-  rw [entN_one n _ _ (by omega) (by omega), if_neg (by omega)]
+  rw [entN_one n _ _ (by omega) (by omega), ite_eq_right (by omega)]
 
 theorem der_dirac (ψ : AddChar (ZMod g) ℂ) (i n : ℕ) (hi : i ≤ n) :
     der ψ i (dirac g n) =
@@ -263,7 +215,7 @@ theorem gg_term_inv (ψ : AddChar (ZMod g) ℂ) {n : ℕ} (u : Gn g n) :
       if IsUniUp (u : Mt g n) then (ψ (∑ i ∈ Finset.range (n - 1), entN (u : Mt g n) i (i + 1)))⁻¹ else 0 := by
   by_cases hu : IsUniUp (u : Mt g n)
   · have hi := GlobalTheory.BadCount.Inh.isUniUp_inv u hu
-    rw [if_pos hi, if_pos hu]
+    rw [ite_eq_left hi, ite_eq_left hu]
     have h := GlobalTheory.BadCount.Inh.sd_mul hi hu
     rw [← Units.val_mul, inv_mul_cancel, Units.val_one, GlobalTheory.BadCount.Inh.sd_one] at h
     have e : (∑ i ∈ Finset.range (n - 1), entN ((u⁻¹ : Gn g n) : Mt g n) i (i + 1)) =
@@ -272,7 +224,7 @@ theorem gg_term_inv (ψ : AddChar (ZMod g) ℂ) {n : ℕ} (u : Gn g n) :
     rw [e, AddChar.map_neg_eq_inv]
   · have hi : ¬ IsUniUp ((u⁻¹ : Gn g n) : Mt g n) := fun h =>
       hu (by simpa using GlobalTheory.BadCount.Inh.isUniUp_inv u⁻¹ h)
-    rw [if_neg hi, if_neg hu]
+    rw [ite_eq_right hi, ite_eq_right hu]
 
 theorem ip_gg (ψ : AddChar (ZMod g) ℂ) (n : ℕ) (χ : Gn g n → ℂ) (hχ : IsClass χ) :
     ip χ (gg ψ n) = wh ψ χ := by

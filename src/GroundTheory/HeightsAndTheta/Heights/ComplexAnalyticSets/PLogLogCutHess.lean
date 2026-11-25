@@ -92,7 +92,7 @@ theorem logLogCut_eventually_step {m : ℕ} (Q : MvPolynomial (Fin m) ℂ) (k : 
   filter_upwards [(continuousAt_normSq_eval Q y).preimage_mem_nhds (Ioo_mem_nhds h0 h1)] with z hz
   have hz : ‖eval z Q‖ ^ 2 ∈ Set.Ioo (0 : ℝ) 1 := hz
   unfold logLogCut
-  rw [if_neg hz.1.ne', if_neg (not_le.2 hz.2)]
+  rw [ite_eq_right hz.1.ne', ite_eq_right (not_le.2 hz.2)]
 
 end
 
@@ -284,7 +284,7 @@ theorem LogLogCutHess.proof (hC : HessCCompPluri.Statement) : LogLogCutHess.Stat
     have e1 : logAbsSq Q y ≤ -Real.exp (((k : ℝ) + 1) / 2) := (Real.log_le_iff_le_exp hw0).2 (not_lt.1 h2)
     have e2 : 1 ≤ Real.exp (((k : ℝ) + 1) / 2) := Real.one_le_exp (by positivity)
     linarith
-  have htw : tubeWeight Q y = (logAbsSq Q y ^ 2)⁻¹ := if_pos hLy
+  have htw : tubeWeight Q y = (logAbsSq Q y ^ 2)⁻¹ := ite_eq_left hLy
   have hg : AnalyticAt ℂ (fun z => eval z Q) y := AnalyticOnNhd.eval_mvPolynomial Q y (Set.mem_univ y)
   have hgy : eval y Q ≠ 0 := by
     intro h

@@ -60,8 +60,7 @@ theorem exists_hform_not_mem (σ : A →+* A) (hσ : ∀ y, σ (σ y) = y) (h2 :
     (hδ : ∃ δ : A, IsUnit δ ∧ σ δ = -δ) (m : ℕ) (J : Matrix (Fin (m + 1)) (Fin (m + 1)) A)
     (hdet : IsUnit J.det) (P : Ideal A) (hP : P.IsMaximal) :
     ∃ y, hform σ J y y ∉ P := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   obtain ⟨δ, hδu, hδσ⟩ := hδ
   have hpol : ∀ x y, hform σ J x y + hform σ J y x ∈ P := fun x y => by
     have h := hcon (x + y)

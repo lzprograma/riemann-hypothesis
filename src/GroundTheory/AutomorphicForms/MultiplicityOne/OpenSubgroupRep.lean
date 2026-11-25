@@ -24,8 +24,6 @@ def compHom (π : UnitaryRep G H) {G' : Type*} [Group G'] [TopologicalSpace G'] 
 @[simp] theorem compHom_apply (π : UnitaryRep G H) {G' : Type*} [Group G'] [TopologicalSpace G']
     (f : G' →* G) (hf : Continuous f) (g : G') : π.compHom f hf g = π (f g) := rfl
 
-set_option linter.unusedSectionVars false
-
 variable [IsTopologicalGroup G] [T2Space G]
 
 

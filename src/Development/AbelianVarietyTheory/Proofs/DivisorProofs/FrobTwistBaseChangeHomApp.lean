@@ -43,8 +43,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open TensorProduct Coalgebra Bialgebra WithConv CategoryTheory
@@ -288,12 +286,6 @@ def SemiHom.frobTwist (h' : (p : S) = 0) {σ : R →+* S} {G' : PDivGroup p S} (
   letI := (frobRing h).toAlgebra
   (SemiHom.liftOver_app ((frobProj h' G').comp s) σ _ n 1 a).trans
     (by rw [map_one, one_smul, SemiHom.comp_app])
-
-section BaseChange
-
-variable (h' : (p : S) = 0) [Algebra R S] (G)
-
-end BaseChange
 
 end PDivGroup
 

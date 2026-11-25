@@ -33,8 +33,6 @@ open NumberField IsDedekindDomain Formalism.MainNotions.S Formalism.MainNotions.
 open scoped BigOperators ComplexOrder
 open Classical
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem twist_mul {D : Formalism.BasicNotions.D7} (p : PlF D) (s : ℕ) (x : (D.s.atP p).Ep) :
     twist p s x = x * twist p s 1 := by
   unfold twist
@@ -125,7 +123,7 @@ theorem ptOfList_of {i : ℕ} {x : TB.Pt D.host.E} (hx : Formalism.L2.S.IsPtL (s
     ∃ w, ptOfList i x = some w ∧ w.1 = (signPt D.R.rS x).map Prod.swap := by
   refine ⟨(Formalism.L2.S.ptEquiv D.host.E i).symm ⟨signPt D.R.rS x, hx⟩, ?_, rfl⟩
   unfold ptOfList
-  rw [dif_pos hx]
+  rw [dite_eq_left hx]
 
 theorem ptOfList_none {i : ℕ} {x : TB.Pt D.host.E} (hx : ¬ Formalism.L2.S.IsPtL (signPt D.R.rS x) i) :
     ptOfList i x = none := by
@@ -226,7 +224,7 @@ theorem modPt_of_blocks {δ : ∀ p : PlF D, (D.s.atP p).Fp} {T T' : ℕ} {p : P
   unfold modPt
   rw [hl]
   simp only
-  rw [dif_pos hs]
+  rw [dite_eq_left hs]
 
 theorem modPt_snoc {δ : ∀ p : PlF D, (D.s.atP p).Fp} {T T' : ℕ} {p : PlF D} {m s : ℕ}
     {w : Point D.host.E m} {W : Point D.host.E (m + s)} {x : D.host.E} (hW : W.1 = w.1 ++ [(x, s)]) (hs : 0 < s)
@@ -238,7 +236,7 @@ theorem modPt_snoc {δ : ∀ p : PlF D, (D.s.atP p).Fp} {T T' : ℕ} {p : PlF D}
   have hl : modBlocks (blkTop δ T T' p) 1 W.1 = some (a.blocks ++ [(hu.unit, ⟨s, hs⟩)]) := by
     rw [hW, modBlocks_append, hb, hsum]
     simp only [Option.bind_some, modBlocks]
-    rw [add_comm 1 m, dif_pos ⟨hu, hs⟩]
+    rw [add_comm 1 m, dite_eq_left ⟨hu, hs⟩]
     simp
   exact modPt_of_blocks hl _
 
@@ -252,7 +250,7 @@ theorem blkTop_nonTop (δ : ∀ p : PlF D, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF
     (h : ¬ (a + s - 1 = D.R.rS + 1 ∧ s = 1)) (x : D.host.E) :
     blkTop δ T T' p a s x = (D.s.atP p).ιE x * PI.SupportDatumW.hF D δ p a s := by
   unfold blkTop blkMod
-  rw [if_neg h, if_neg h, sub_zero, tMod_eq]
+  rw [ite_eq_right h, ite_eq_right h, sub_zero, tMod_eq]
 
 end Lists
 
@@ -460,7 +458,7 @@ theorem modBlocks_low {δ : ∀ p : PlF D, (D.s.atP p).Fp} (T T' : ℕ) (p : PlF
     have hs0 : 0 < s := by omega
     have e : modBlocks (blkTop δ T T' p) a ((t, s) :: rest) = some ((hu.unit, ⟨s, hs0⟩) :: l') := by
       simp only [modBlocks]
-      rw [dif_pos ⟨hu, hs0⟩, hl']
+      rw [dite_eq_left ⟨hu, hs0⟩, hl']
       rfl
     exact ⟨_, e⟩
 
@@ -629,7 +627,7 @@ def uU (δ : ∀ p : PlF D, (D.s.atP p).Fp) (p : PlF D) (i s : ℕ) : (D.s.atP p
 
 theorem uU_val {δ : ∀ p : PlF D, (D.s.atP p).Fp} {p : PlF D} (hδ : δ p ≠ 0) (i s : ℕ) :
     ((uU δ p i s : (D.s.atP p).Epˣ) : (D.s.atP p).Ep) = uS δ p i s := by
-  rw [uU, dif_pos (isUnit_uS p hδ i s)]
+  rw [uU, dite_eq_left (isUnit_uS p hδ i s)]
   rfl
 
 theorem uT_eq {δ : ∀ p : PlF D, (D.s.atP p).Fp} {p : PlF D} (hδ : δ p ≠ 0) (i s : ℕ) (t : D.host.E) (ht : t ≠ 0) :
@@ -702,7 +700,7 @@ theorem pullS_N {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep} {δ
   have e2 : etaH δ T T' (m + s - s) p h' = Formalism.MainNotions.LocalModelPeriodLattices.tr a' := by
     rw [Nat.add_sub_cancel, etaH, hpt_of hw', etaW_of ha']
   rw [locK_join hA T T' p hs hnt ht ht' hW hW' ha ha', uT_eq, uT_eq]
-  simp only [pullS, J.phaseSys, J.pullSys, dif_pos (And.intro ht ht'), A5.Ns, e1, e2]
+  simp only [pullS, J.phaseSys, J.pullSys, dite_eq_left (And.intro ht ht'), A5.Ns, e1, e2]
   have hu1 : IsUnit (uS δ p (m + s) s * (D.s.atP p).ιE t) := (isUnit_uS p (hA p).2.1 _ _).mul (isUnit_ιE p ht)
   have hu2 : IsUnit (uS δ p (m + s) s * (D.s.atP p).ιE t') := (isUnit_uS p (hA p).2.1 _ _).mul (isUnit_ιE p ht')
   have ev : ∀ x (hx : x ≠ 0), ((uU δ p (m + s) s * Units.map ((D.s.atP p).ιE : D.host.E →* (D.s.atP p).Ep)
@@ -733,12 +731,12 @@ theorem dfac_join (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (
   rw [hl]
   rcases Nat.lt_or_ge s 3 with h3 | h3
   · obtain rfl : s = 2 := by omega
-    rw [if_pos (show m + 2 = D.R.rS + 1 ∧ 2 = 2 from ⟨hi, rfl⟩)]
+    rw [ite_eq_left (show m + 2 = D.R.rS + 1 ∧ 2 = 2 from ⟨hi, rfl⟩)]
     rcases (D.s.atP p).split with _ | sg
     · rfl
     · rfl
   · obtain ⟨k, rfl⟩ : ∃ k, s = k + 3 := ⟨s - 3, by omega⟩
-    rw [if_neg (show ¬ (m + (k + 3) = D.R.rS + 1 ∧ k + 3 = 2) by omega)]
+    rw [ite_eq_right (show ¬ (m + (k + 3) = D.R.rS + 1 ∧ k + 3 = 2) by omega)]
     rcases (D.s.atP p).split with _ | sg
     · rfl
     · rfl
@@ -752,7 +750,7 @@ theorem kglob_join {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep} 
         locK M δ T T' p (m + s) W W' := by
   unfold Kglob
   by_cases hi : m + s = D.R.rS + 1
-  · rw [dif_pos hi]
+  · rw [dite_eq_left hi]
     have hs2 : 2 ≤ s := by
       rcases Nat.lt_or_ge s 2 with h | h
       · exact absurd ⟨hi, by omega⟩ hnt
@@ -761,12 +759,12 @@ theorem kglob_join {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep} 
     have hc' : (hi ▸ W').1 = w'.1 ++ [(sgn D (m + s) * t', s)] := (cast_val hi W').trans hW'
     have hk : kind (hi ▸ W) = none := by
       unfold kind
-      rw [if_pos (PI.SupportDatumW.dmin_last_big D _ _ _ _ hc hs2)]
+      rw [ite_eq_left (PI.SupportDatumW.dmin_last_big D _ _ _ _ hc hs2)]
     have hk' : kind (hi ▸ W') = none := by
       unfold kind
-      rw [if_pos (PI.SupportDatumW.dmin_last_big D _ _ _ _ hc' hs2)]
+      rw [ite_eq_left (PI.SupportDatumW.dmin_last_big D _ _ _ _ hc' hs2)]
     unfold KtopG
-    rw [if_pos (hk.trans hk'.symm)]
+    rw [ite_eq_left (hk.trans hk'.symm)]
     refine finprod_congr fun p => ?_
     unfold KtopP
     rw [locK_cast M δ T T' p hi W W']
@@ -774,7 +772,7 @@ theorem kglob_join {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep} 
     ring
   · rw [dite_eq_right hi]
     refine finprod_congr fun p => ?_
-    simp only [dph, show ¬ (m + s = D.R.rS + 1 ∧ s = 2) from fun h => hi h.1, if_false, map_one, one_mul]
+    simp only [dph, show ¬ (m + s = D.R.rS + 1 ∧ s = 2) from fun h => hi h.1, ite_false, map_one, one_mul]
 
 end Sys
 
@@ -846,7 +844,7 @@ theorem krOf_join (hMN : ModNorm D) {δ : ∀ p : PlF D, (D.s.atP p).Fp}
       Kglob δ M T T' (m + s) W W' /
         ((phi (m + s) (TB.join h s t) : ℂ) * (phi (m + s) (TB.join h' s t') : ℂ)) := by
     unfold KrOf
-    rw [if_neg (by omega), if_neg (by omega), hWo, hWo']
+    rw [ite_eq_right (by omega), ite_eq_right (by omega), hWo, hWo']
   have hphi : ∀ (g : TB.Pt D.host.E) (x : D.host.E), TB.level g = m →
       phi (m + s) (TB.join g s x) = phi m g * blkN D 1 g ^ s *
         nrm (D := D) (nu D.R.rS (m + 1) (m + s)) x ^ (s * (s - 1) / 2) := by
@@ -958,7 +956,7 @@ theorem krOf_head {δ : ∀ p : PlF D, (D.s.atP p).Fp}
     simp [h1, KrOf, phi, blockWeightPhi]
   · have hK : KrOf δ M T T' m h h' = Kglob δ M T T' m w w' / ((phi m h : ℂ) * (phi m h' : ℂ)) := by
       unfold KrOf
-      rw [if_neg (by omega), if_neg (by omega), hw, hw']
+      rw [ite_eq_right (by omega), ite_eq_right (by omega), hw, hw']
     have hpos : ((phi m h : ℂ) * (phi m h' : ℂ)) ≠ 0 := by
       have a1 := phi_pos (isPtL_of_ptOfList hw)
       have a2 := phi_pos (isPtL_of_ptOfList hw')
@@ -1210,7 +1208,7 @@ theorem krOf_none {δ : ∀ p : PlF D, (D.s.atP p).Fp} {M : ∀ p : PlF D, Loc.M
     (T T' : ℕ) {i : ℕ} (hi : i ≠ 0) {x y : TB.Pt D.host.E} (h : ptOfList i x = none ∨ ptOfList i y = none) :
     KrOf δ M T T' i x y = 0 := by
   unfold KrOf
-  rw [if_neg hi]
+  rw [ite_eq_right hi]
   split_ifs
   · rfl
   · rcases h with h | h
@@ -1224,7 +1222,7 @@ theorem krOf_zero_none {δ : ∀ p : PlF D, (D.s.atP p).Fp} {M : ∀ p : PlF D, 
     obtain ⟨w, hw, -⟩ := ptOfList_of (D := D) (i := 0) (x := []) ⟨by simp [signPt, signAux], by simp [signPt, signAux]⟩
     rw [hw]; exact Option.some_ne_none _
   unfold KrOf
-  rw [if_pos rfl, if_neg]
+  rw [ite_eq_left rfl, ite_eq_right]
   rintro ⟨rfl, rfl⟩
   rcases h with h | h <;> exact hn h
 
@@ -1363,7 +1361,7 @@ variable {D : Formalism.BasicNotions.D7}
 theorem nSh_unit {A : Type} [CommRing A] {c : A} (h : ∃ n : Fin 3, IsUnit (c + (((n : Fin 3) : ℕ) : A))) :
     IsUnit (c + ((nSh c : ℕ) : A)) := by
   unfold nSh
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem tauZero_of_not_split {p : PlF D} (h : (D.s.atP p).split = none) (T T' : ℕ) : tau0 p T T' = 0 := by
@@ -1421,7 +1419,7 @@ theorem top_same {E K α : Type} [Field E] [CommRing K] (R : Subring K) (ψ : Ad
   simp only [J.topSys]
   split_ifs with htt
   · have hu := nSh_unit (hex t ht)
-    rw [thetaT, dif_pos hu, ← hper _ _ (natCast_mem R _)]
+    rw [thetaT, dite_eq_left hu, ← hper _ _ (natCast_mem R _)]
     conv_rhs => rw [← IsUnit.unit_spec hu]
     exact (hag _ _ _ (hη h) (hη h')).symm
   · rfl
@@ -1502,7 +1500,7 @@ theorem kind_top {w : Point D.host.E D.R.rS} {W : Point D.host.E (D.R.rS + 1)} {
   have h1 := PI.SupportDatumW.dmin_last_one D W w.1 x hW
   have h2 : PI.SupportDatumW.blkDet w.1 ≠ 0 := PI.SupportDatumW.blkDet_ne_zero w.1 fun b hb => (w.2.1 b hb).1
   unfold kind zetaOf
-  rw [if_neg (by rw [h1]; exact h2), h1, PI.SupportDatumW.dmin_top, hW, PI.SupportDatumW.blkDet_append]
+  rw [ite_eq_right (by rw [h1]; exact h2), h1, PI.SupportDatumW.dmin_top, hW, PI.SupportDatumW.blkDet_append]
   simp [PI.SupportDatumW.blkDet, h2]
 
 theorem dfac_top (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (δ : ∀ p : PlF D, (D.s.atP p).Fp)
@@ -1530,10 +1528,10 @@ theorem locK_top {δ : ∀ p : PlF D, (D.s.atP p).Fp} {M : ∀ p : PlF D, Loc.Mo
     have hm : blkMod δ T T' p (D.R.rS + 1) 1 (sgn D (D.R.rS + 1) * t) =
         uS δ p (D.R.rS + 1) 1 * (D.s.atP p).ιE t - tau0 p T T' := by
       unfold blkMod
-      rw [if_pos htop, tMod_eq, uS_mul]
+      rw [ite_eq_left htop, tMod_eq, uS_mul]
       rfl
     unfold blkTop
-    rw [if_pos htop, hm]
+    rw [ite_eq_left htop, hm]
   have hu := nSh_unit (exists_shift p (hA p).2.1 T T' (D.R.rS + 1) 1 ht)
   have hu' : IsUnit (blkTop δ T T' p (D.R.rS + 1) 1 (sgn D (D.R.rS + 1) * t)) := by rw [hc]; exact hu
   have e1 : hu'.unit = hu.unit := by ext; rw [IsUnit.unit_spec, IsUnit.unit_spec, hc]
@@ -1541,7 +1539,7 @@ theorem locK_top {δ : ∀ p : PlF D, (D.s.atP p).Fp} {M : ∀ p : PlF D, Loc.Mo
   rw [modPt_snoc hW (by omega) ha hu', modPt_snoc hW' (by omega) ha' hu']
   simp only
   refine (Formalism.MainNotions.LocalOrbitGerms.KKAll_proved _ _ (M p) (hA p).1 _ _ _).trans ?_
-  rw [thetaT, dif_pos hu, A5.Ns]
+  rw [thetaT, dite_eq_left hu, A5.Ns]
   simp only [Nat.sub_self, mul_zero, Nat.zero_div, pow_zero, Complex.ofReal_one, one_mul]
   exact congrArg₂ (A5.Kp (M p).R (M p).psiR)
     ((Formalism.MainNotions.LocalModelPeriodLattices.tr_snoc a hu'.unit _).trans (by rw [e1]; rfl))
@@ -1552,7 +1550,7 @@ theorem topS_N {δ : ∀ p : PlF D, (D.s.atP p).Fp} {M : ∀ p : PlF D, Loc.Mode
     (topS M δ T T' p).N t t h h' = thetaT (M p).R (M p).psiR (uS δ p (D.R.rS + 1) 1 * (D.s.atP p).ιE t - tau0 p T T')
       (etaH δ T T' (D.R.rS + 1 - 1) p h) (etaH δ T T' (D.R.rS + 1 - 1) p h') := by
   simp only [topS, J.topSys]
-  rw [if_pos trivial, uU_val (hA p).2.1]
+  rw [ite_eq_left trivial, uU_val (hA p).2.1]
 
 theorem krOf_top {δ : ∀ p : PlF D, (D.s.atP p).Fp}
     {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep} (hA : ∀ p, Agree δ M p) (T T' : ℕ)
@@ -1568,7 +1566,7 @@ theorem krOf_top {δ : ∀ p : PlF D, (D.s.atP p).Fp}
   have hK : KrOf δ M T T' (D.R.rS + 1) (TB.join h 1 t) (TB.join h' 1 t) =
       KtopG M δ T T' W W' / ((phi (D.R.rS + 1) (TB.join h 1 t) : ℂ) * (phi (D.R.rS + 1) (TB.join h' 1 t) : ℂ)) := by
     unfold KrOf
-    rw [if_neg (by omega), if_neg (by omega), hWo, hWo']
+    rw [ite_eq_right (by omega), ite_eq_right (by omega), hWo, hWo']
     simp [Kglob]
   have hloc : ∀ p, locK M δ T T' p (D.R.rS + 1) W W' = (topS M δ T T' p).N t t h h' := by
     intro p
@@ -1582,7 +1580,7 @@ theorem krOf_top {δ : ∀ p : PlF D, (D.s.atP p).Fp}
   have hWX' : scal W' ⊆ X := by rw [scal_join hW']; exact Finset.union_subset hX' (by simpa using htX)
   have hG : KtopG M δ T T' W W' = ∏ p ∈ P, locK M δ T T' p (D.R.rS + 1) W W' := by
     unfold KtopG
-    rw [if_pos ((kind_top hW).trans (kind_top hW').symm)]
+    rw [ite_eq_left ((kind_top hW).trans (kind_top hW').symm)]
     have e : ∀ p, KtopP M δ T T' p W W' = locK M δ T T' p (D.R.rS + 1) W W' := by
       intro p
       unfold KtopP
@@ -1707,7 +1705,7 @@ theorem clS_top (hMN : ModNorm D) {δ : ∀ p : PlF D, (D.s.atP p).Fp}
       ring
     · have hz : ∏ p ∈ P ∪ Q t t', (topS M δ T T' p).N t t' h h' = 0 := by
         refine Finset.prod_eq_zero (Finset.mem_union_left _ hp0) ?_
-        simp only [topS, J.topSys, if_neg htt]
+        simp only [topS, J.topSys, ite_eq_right htt]
       obtain ⟨W, hWo, hW⟩ := ptOfList_join (hY' h hh) hw (le_refl 1) ht
       obtain ⟨W', hWo', hW'⟩ := ptOfList_join (hY' h' hh') hw' (le_refl 1) ht'
       have hk : kind W ≠ kind W' := by
@@ -1718,7 +1716,7 @@ theorem clS_top (hMN : ModNorm D) {δ : ∀ p : PlF D, (D.s.atP p).Fp}
         exact mul_left_cancel₀ (sgn_ne _) this
       have hK : KrOf δ M T T' (D.R.rS + 1) (TB.join h 1 t) (TB.join h' 1 t') = 0 := by
         unfold KrOf
-        rw [if_neg (by omega), if_neg (by omega), hWo, hWo']
+        rw [ite_eq_right (by omega), ite_eq_right (by omega), hWo, hWo']
         simp [Kglob, KtopG, hk]
       rw [hK, hz, mul_zero]
   · exact B_eq hMN hA S u u' (le_refl _) Y X0 hX0' P hP _ (fun _ _ => rfl) (fun _ _ _ => rfl)

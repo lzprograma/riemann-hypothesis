@@ -5,56 +5,10 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThre
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.nakayama
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 public import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 public import Mathlib.RingTheory.Ideal.Quotient.Index
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -139,9 +93,9 @@ private theorem tan_isCoc (F : R →ₐ[O] DualNumber κ) (r : Γ →* GG (m := 
         ((r g).left⁻¹).val.map (dualFst F) := rfl
   rw [e, tanCoc_eq, tanCoc_eq, tanCoc_eq, map_mul, SemidirectProduct.mul_left, lder_mul]
   rcases Int.units_eq_one_or (r g).right with hs | hs
-  · rw [hs, sgnAct_one, if_pos rfl]
+  · rw [hs, sgnAct_one, ite_eq_left rfl]
   · rw [hs, sgnAct_neg_one, lder_theta]
-    simp only [hne, if_false]
+    simp only [hne, ite_false]
 
 private theorem tan_mul (F : R →ₐ[O] DualNumber κ) (r : Γ →* GG (m := 3) (R := R)) (g : Γ) :
     tanCoc F r g * (push (dualFst F) r g).mat = (r g).mat.map (sndL F) := by
@@ -192,16 +146,6 @@ private theorem fin_gen {O R : Type} [CommRing O] [IsLocalRing O] [CommRing R] [
   refine Module.Finite.of_surjective (Submodule.liftQ _ φ hk) fun z => ?_
   obtain ⟨y, rfl⟩ := hφ z
   exact ⟨Submodule.Quotient.mk y, rfl⟩
-
-private theorem sup_pow_le {R : Type} [CommRing R] (I J : Ideal R) (k : ℕ) : (I ⊔ J) ^ k ≤ I ^ k ⊔ J := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    rw [pow_succ, pow_succ]
-    refine (Ideal.mul_mono_left ih).trans ?_
-    rw [Ideal.sup_mul, Ideal.mul_sup]
-    exact sup_le (sup_le le_sup_left (le_sup_of_le_right (Ideal.mul_le_inf.trans inf_le_right)))
-      (le_sup_of_le_right (Ideal.mul_le_inf.trans inf_le_left))
 
 section Fin
 
@@ -261,10 +205,7 @@ private theorem pow_le {f : R →ₐ[c.O] PadicAlgCl l} (hf : IsLocPt f) :
     Ideal.IsPrime.isMaximal inferInstance hne
   have hb : (⊥ : Ideal (R ⧸ q)).IsMaximal :=
     Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := c.O) ⊥ hm
-  have hq' : q.IsMaximal := by
-    have := Ideal.comap_isMaximal_of_surjective (Ideal.Quotient.mk q) Ideal.Quotient.mk_surjective (K := ⊥)
-    rwa [← RingHom.ker_eq_comap_bot, Ideal.mk_ker] at this
-  exact (eq_maximalIdeal hq').ge
+  exact (eq_maximalIdeal (Ideal.Quotient.maximal_of_isField q (Ring.isField_iff_maximal_bot.2 hb))).ge
 
 private theorem fin_quot {f : R →ₐ[c.O] PadicAlgCl l} (hf : IsLocPt f) :
     Module.Finite c.O (R ⧸ (RingHom.ker f ^ 2).restrictScalars c.O) := by
@@ -306,10 +247,10 @@ private theorem small {f : R →ₐ[c.O] PadicAlgCl l} (hf : IsLocPt f) (D : R �
     exact Padic.norm_p_lt_one
   have hpos : 0 < ‖D y₀‖ + 1 := by positivity
   obtain ⟨k, hk⟩ := exists_pow_lt_of_lt_one (div_pos hε hpos) hl
-  refine ⟨n * k, fun y hy => ?_⟩
-  have hle : maximalIdeal R ^ (n * k) ≤ Ideal.span {(l : R) ^ k} ⊔ RingHom.ker f ^ 2 := by
-    rw [pow_mul, ← Ideal.span_singleton_pow]
-    exact (Ideal.pow_right_mono hn k).trans (sup_pow_le _ _ _)
+  refine ⟨n * (k + 1), fun y hy => ?_⟩
+  have hle : maximalIdeal R ^ (n * (k + 1)) ≤ Ideal.span {(l : R) ^ k} ⊔ RingHom.ker f ^ 2 := by
+    rw [pow_mul, ← Ideal.span_singleton_pow, ← pow_one (RingHom.ker f ^ 2)]
+    exact (Ideal.pow_right_mono hn _).trans Ideal.sup_pow_add_le_pow_sup_pow
   obtain ⟨u, hu, v, hv, rfl⟩ := Submodule.mem_sup.1 (hle hy)
   obtain ⟨w, rfl⟩ := Ideal.mem_span_singleton'.1 hu
   have e : w * (l : R) ^ k = ((l : c.O) ^ k) • w := by

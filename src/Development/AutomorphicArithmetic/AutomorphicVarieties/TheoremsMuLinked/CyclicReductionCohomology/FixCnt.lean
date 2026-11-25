@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.FixBdQZero
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.DualPair
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CardEqPowLength
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LemmaB
@@ -51,29 +52,7 @@ private theorem fixBd_abs {A : Type} [CommRing A] [IsDomain A] [IsDiscreteValuat
       (∀ Y ∈ T, ∃ Z, r Z = Y ∧ ∀ s, r (f s Z) = 0) →
       T.ncard ≤ Nat.card (IsLocalRing.ResidueField A) ^
         (m * Module.finrank A (⨅ s, LinearMap.ker (f s) : Submodule A E) + C) := by
-  obtain ⟨e, he⟩ := UpperTheory.V.AlgebraTools.lemma_B f
-  refine ⟨e, fun m E' _ _ r T hk hT => ?_⟩
-  have h := he m
-  set N := (⨅ s, (IsLocalRing.maximalIdeal A ^ m • (⊤ : Submodule A E)).comap (f s)).map
-    (IsLocalRing.maximalIdeal A ^ m • (⊤ : Submodule A E)).mkQ with hN
-  have hne : Module.length A N ≠ ⊤ := ne_top_of_le_ne_top (ENat.coe_ne_top _) h
-  have hfin : Finite N := (UpperTheory.V.AlgebraTools.card_eq_pow_length (A := A) (X := N)).1.2 hne
-  have hc := (UpperTheory.V.AlgebraTools.card_eq_pow_length (A := A) (X := N)).2 hfin
-  have hsub : T ⊆ ((IsLocalRing.maximalIdeal A ^ m • (⊤ : Submodule A E)).liftQ r hk.ge) '' (SetLike.coe N) := by
-    intro Y hY
-    obtain ⟨Z, rfl, hZ⟩ := hT Y hY
-    refine ⟨_, Submodule.mem_map_of_mem (r := Z) ?_, rfl⟩
-    rw [Submodule.mem_iInf]
-    intro s
-    rw [Submodule.mem_comap, ← hk]
-    exact hZ s
-  have hf : (SetLike.coe N).Finite := Set.toFinite _
-  refine (Set.ncard_le_ncard hsub (hf.image _)).trans ((Set.ncard_image_le hf).trans ?_)
-  have : (SetLike.coe N).ncard = Nat.card N := rfl
-  rw [this, hc]
-  refine Nat.pow_le_pow_right Nat.card_pos ?_
-  rw [mul_comm]
-  exact ENat.toNat_le_of_le_coe h
+  apply _root_.fixBd_abs <;> assumption
 
 theorem UpperTheory.V.Th.fixCnt :
     ∀ (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsCoef l O] [Algebra ℤ_[l] O] (n : ℕ) (S : Type) (Φ : S → Matrix (Fin n) (Fin n) O →ₗ[O] Matrix (Fin n) (Fin n) O), ∃ C : ℕ, ∀ m, {Y : Mm O n m | ∃ Y', red m Y' = Y ∧ ∀ s, red m (Φ s Y') = 0}.ncard ≤ Nat.card (ResidueField O) ^ (m * Module.finrank O (⨅ s, LinearMap.ker (Φ s) : Submodule O (Matrix (Fin n) (Fin n) O)) + C) := by

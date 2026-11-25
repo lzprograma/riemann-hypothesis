@@ -42,8 +42,6 @@ import Mathlib.Tactic.Polynomial.Basic
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Filter Topology Asymptotics
@@ -123,15 +121,6 @@ theorem tendsto_of_triv (h : ArithHilbertSamuel) (hX : IsArithVar p D) (hL : L.I
   have : (m : ℝ) ≠ 0 := by positivity
   field_simp
   ring
-
-theorem volNef (h : ArithHilbertSamuel) : VolNef := fun k _ X _ p D hX L a hL ha => by
-  refine Tendsto.limsup_eq (((continuous_coe_real_ereal.tendsto a).comp
-    (h.tendsto_of_triv hX hL ha)).congr' ?_)
-  filter_upwards [(h.of_triv hX hL ha).1] with m hm
-  have h0 : 0 < (L.pow m).smallSec.ncard := (Set.ncard_pos hm).2 ⟨_, (L.pow m).zero_mem_smallSec⟩
-  rw [← hm.cast_ncard_eq, ENat.toENNReal_coe, ← ENNReal.ofReal_natCast,
-    ENNReal.log_ofReal_of_pos (by exact_mod_cast h0), ← EReal.coe_mul]
-  rfl
 
 end ArithHilbertSamuel
 

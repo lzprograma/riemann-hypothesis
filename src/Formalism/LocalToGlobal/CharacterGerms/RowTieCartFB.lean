@@ -39,7 +39,7 @@ theorem coeff_subst_rename_inj {σ τ : Type} [Finite σ] (φ : σ → τ) (hφ 
   rw [MvPowerSeries.coeff_subst hA, finsum_eq_single _ e]
   · rw [prod_X_rename, MvPowerSeries.coeff_monomial_same, smul_eq_mul, mul_one]
   · intro d hd
-    rw [prod_X_rename, MvPowerSeries.coeff_monomial, if_neg, smul_zero]
+    rw [prod_X_rename, MvPowerSeries.coeff_monomial, ite_eq_right, smul_zero]
     intro h
     exact hd (Finsupp.mapDomain_injective hφ h).symm
 

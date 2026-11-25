@@ -1,52 +1,7 @@
 module
 
 public import Formalism.DoubleCosetMeasures.Statement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -82,10 +37,10 @@ theorem revIn_revIn : ∀ (s : List ℕ) (j : ℕ), j < s.sum → revIn s (revIn
     intro j h
     simp only [List.sum_cons] at h
     by_cases hj : j < a
-    · simp only [revIn, if_pos hj]
-      rw [if_pos (by omega)]; omega
-    · simp only [revIn, if_neg hj]
-      rw [if_neg (by omega)]
+    · simp only [revIn, ite_eq_left hj]
+      rw [ite_eq_left (by omega)]; omega
+    · simp only [revIn, ite_eq_right hj]
+      rw [ite_eq_right (by omega)]
       have e : a + revIn s (j - a) - a = revIn s (j - a) := by omega
       rw [e, ih (j - a) (by omega)]
       omega
@@ -98,10 +53,10 @@ theorem blk_revIn : ∀ (s : List ℕ) (j : ℕ), j < s.sum → blk s (revIn s j
     intro j h
     simp only [List.sum_cons] at h
     by_cases hj : j < a
-    · simp only [revIn, blk, if_pos hj]
-      rw [if_pos (by omega)]
-    · simp only [revIn, blk, if_neg hj]
-      rw [if_neg (by omega)]
+    · simp only [revIn, blk, ite_eq_left hj]
+      rw [ite_eq_left (by omega)]
+    · simp only [revIn, blk, ite_eq_right hj]
+      rw [ite_eq_right (by omega)]
       have e : a + revIn s (j - a) - a = revIn s (j - a) := by omega
       rw [e, ih (j - a) (by omega)]
 
@@ -193,7 +148,7 @@ theorem mono_mul (s : List ℕ) (f : Fin s.sum → K) (M : Matrix (Fin s.sum) (F
   · simp [mono]
   · intro b _ hb
     simp only [mono]
-    rw [if_neg hb, zero_mul]
+    rw [ite_eq_right hb, zero_mul]
   · simp
 
 theorem mul_mono (s : List ℕ) (f : Fin s.sum → K) (M : Matrix (Fin s.sum) (Fin s.sum) K)
@@ -202,7 +157,7 @@ theorem mul_mono (s : List ℕ) (f : Fin s.sum → K) (M : Matrix (Fin s.sum) (F
   · simp [mono]
   · intro b _ hb
     simp only [mono]
-    rw [if_neg (fun h => hb (by rw [h, revF_revF])), mul_zero]
+    rw [ite_eq_right (fun h => hb (by rw [h, revF_revF])), mul_zero]
   · simp
 
 theorem pt_eq_mono (s : List ℕ) (t : ℕ → Kˣ) :
@@ -211,8 +166,8 @@ theorem pt_eq_mono (s : List ℕ) (t : ℕ → Kˣ) :
   funext a b
   simp only [mono]
   by_cases h : (b : ℕ) = revIn s a
-  · rw [if_pos h, if_pos (Fin.ext h)]
-  · rw [if_neg h, if_neg (fun h' => h (congrArg Fin.val h'))]
+  · rw [ite_eq_left h, ite_eq_left (Fin.ext h)]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h (congrArg Fin.val h'))]
 
 def ptI (s : List ℕ) (t : ℕ → Kˣ) : Matrix (Fin s.sum) (Fin s.sum) K :=
   mono s (fun a => (((t (blk s a))⁻¹ : Kˣ) : K))
@@ -320,11 +275,11 @@ private lemma sum_superdiagonal_eq_sum_ite {n : ℕ} (M : Matrix (Fin n) (Fin n)
   · rw [Finset.sum_eq_single (⟨a + 1, h⟩ : Fin n)]
     · simp
     · intro b _ hb
-      rw [if_neg (show ¬ ((b : ℕ) = a + 1) from fun e => hb (Fin.ext e))]
+      rw [ite_eq_right (show ¬ ((b : ℕ) = a + 1) from fun e => hb (Fin.ext e))]
     · simp
   · symm
     refine Finset.sum_eq_zero fun c _ => ?_
-    rw [if_neg (show ¬ ((c : ℕ) = a + 1) from fun e => h (by have := c.2; omega))]
+    rw [ite_eq_right (show ¬ ((c : ℕ) = a + 1) from fun e => h (by have := c.2; omega))]
 
 private lemma sum_subdiagonal_eq_sum_ite {n : ℕ} (M : Matrix (Fin n) (Fin n) K) :
     (∑ j : Fin n, if h : (j : ℕ) + 1 < n then M ⟨j + 1, h⟩ j else 0) =
@@ -335,11 +290,11 @@ private lemma sum_subdiagonal_eq_sum_ite {n : ℕ} (M : Matrix (Fin n) (Fin n) K
   · rw [Finset.sum_eq_single (⟨c + 1, h⟩ : Fin n)]
     · simp
     · intro b _ hb
-      rw [if_neg (show ¬ ((b : ℕ) = c + 1) from fun e => hb (Fin.ext e))]
+      rw [ite_eq_right (show ¬ ((b : ℕ) = c + 1) from fun e => hb (Fin.ext e))]
     · simp
   · symm
     refine Finset.sum_eq_zero fun a _ => ?_
-    rw [if_neg (show ¬ ((a : ℕ) = c + 1) from fun e => h (by have := a.2; omega))]
+    rw [ite_eq_right (show ¬ ((a : ℕ) = c + 1) from fun e => h (by have := a.2; omega))]
 
 theorem phase_main : PhaseWellDef := by
   unfold PhaseWellDef
@@ -367,17 +322,17 @@ theorem phase_main : PhaseWellDef := by
       (if (a : ℕ) = c + 1 then x a c else 0) := by
     intro a c
     by_cases h1 : (a : ℕ) = c + 1
-    · rw [if_pos h1]
+    · rw [ite_eq_left h1]
       by_cases hb : blk s a = blk s c
       · have hs := revIn_succ s c (by have := a.2; omega) (by rw [← h1]; exact hb.symm)
         rw [← h1] at hs
-        rw [if_pos (show (revF s c : ℕ) = revF s a + 1 by rw [revF_val, revF_val]; omega), hb,
+        rw [ite_eq_left (show (revF s c : ℕ) = revF s a + 1 by rw [revF_val, revF_val]; omega), hb,
           mul_assoc, mul_comm (x a c), ← mul_assoc, Units.inv_mul, one_mul]
       · rw [hxz a c h1 hb]
         simp
-    · rw [if_neg h1]
+    · rw [ite_eq_right h1]
       by_cases h2 : (revF s c : ℕ) = revF s a + 1
-      · rw [if_pos h2]
+      · rw [ite_eq_left h2]
         by_cases hb : blk s a = blk s c
         · exfalso
           have hs := revIn_succ s (revF s a) (by have := (revF s c).2; omega)
@@ -395,7 +350,7 @@ theorem phase_main : PhaseWellDef := by
             have := blk_mono s c a (not_lt.1 hca)
             omega
           rw [low_zero hx hac, mul_zero, zero_mul]
-      · rw [if_neg h2]
+      · rw [ite_eq_right h2]
   have hy1 := mul_inv_one_up hy
   have hyz : ∀ a c : Fin s.sum, (if (c : ℕ) = a + 1 then y a c else 0) =
       -(if (c : ℕ) = a + 1 then y⁻¹ a c else 0) := by

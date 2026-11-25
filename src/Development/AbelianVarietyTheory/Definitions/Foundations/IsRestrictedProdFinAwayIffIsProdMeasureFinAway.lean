@@ -3,49 +3,7 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsUniqueIsProdMeasureFinAway
 public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFinsetOfEventually
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.ExtremallyDisconnected
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -134,12 +92,6 @@ theorem IsRestrictedProd.haar_loc {μ : Measure (GAd σ J)} (h : IsRestrictedPro
     (v : HeightOneSpectrum (𝓞 F)) : (μf v).IsHaarMeasure := (isRestrictedProd_iff.1 h).2.1 v
 
 theorem IsRestrictedProd.haar {μ : Measure (GAd σ J)} (h : IsRestrictedProd σ J L μa μf μ) : μ.IsHaarMeasure := (isRestrictedProd_iff.1 h).2.2.1
-
-theorem IsRestrictedProd.isCylProd {μ : Measure (GAd σ J)} (h : IsRestrictedProd σ J L μa μf μ) :
-    IsCylProd (fun w => projArch σ J w) (fun v => proj σ J v) (fun v => (stabLoc σ J L v : Set (GLoc σ J v)))
-      μa μf μ := by
-  unfold IsRestrictedProd IsHaarProd at h
-  exact h.2.2.2
 
 theorem IsRestrictedProd.eventually_eq_one {μ : Measure (GAd σ J)} (h : IsRestrictedProd σ J L μa μf μ) :
     ∀ᶠ v in cofinite, μf v (stabLoc σ J L v) = 1 := (isRestrictedProd_iff.1 h).2.2.2.1
@@ -242,26 +194,10 @@ variable {σ J L} {S : Finset (HeightOneSpectrum (𝓞 F))} {μa : ∀ w, Measur
 theorem IsRestrictedProd.unique (h : IsRestrictedProd σ J L μa μf μ) (h' : IsRestrictedProd σ J L μa μf μ') :
     μ = μ' := IsHaarProd.unique (isOpen_stabLoc σ J L) (isCompact_stabLoc σ J L) h h'
 
-section Indep
-
-variable (L' : Submodule (𝓞 E) (Fin n → E)) [Submodule.IsLattice E L']
-
-end Indep
-
 theorem IsRestrictedProd.smul_arch [DecidableEq (InfinitePlace F)] (h : IsRestrictedProd σ J L μa μf μ)
     (w : InfinitePlace F) {x : ℝ≥0} (hx : x ≠ 0) :
     IsRestrictedProd σ J L (Function.update μa w (x • μa w)) μf (x • μ) := isRestrictedProd_iff_isProdMeasure.2
     (IsRestrProd.smul_inf (isRestrictedProd_iff_isProdMeasure.1 h) w hx)
-
-theorem IsRestrictedProd.measure_level (h : IsRestrictedProd σ J L μa μf μ) {A : ∀ w, Set (GArch σ J w)}
-    (hA : ∀ w, MeasurableSet (A w)) :
-    μ {g | (∀ w, projArch σ J w g ∈ A w) ∧ g ∈ levelOpen σ J L} =
-      (∏ w, μa w (A w)) * ∏ᶠ v, μf v (stabLoc σ J L v) := by
-  have e : {g | (∀ w, projArch σ J w g ∈ A w) ∧ g ∈ levelOpen σ J L} =
-      {g | (∀ w, projArch σ J w g ∈ A w) ∧ ∀ v, proj σ J v g ∈ stabLoc σ J L v} :=
-    Set.ext fun g => and_congr Iff.rfl mem_levelOpen
-  rw [e]
-  exact h.isCylProd.measure_level (fun v => (isOpen_stabLoc σ J L v).measurableSet) hA
 
 theorem IsRestrictedProdFin.measure_level {ν : Measure (GFin σ J)} (h : IsRestrictedProdFin σ J L μf ν) :
     ν (levelOffFin σ J L ∅) = ∏ᶠ v, μf v (stabLoc σ J L v) := by

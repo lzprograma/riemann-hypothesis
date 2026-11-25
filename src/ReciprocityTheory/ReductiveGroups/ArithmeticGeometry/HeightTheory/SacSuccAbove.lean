@@ -91,7 +91,7 @@ theorem sH_rel (hd : d.AxH 𝒜) (c : ι) (i : Fin d.D) :
   simp_rw [hr, d.sH_eq, ← map_mul, ← map_sum]
   rw [Fin.sum_univ_succAbove _ (d.jc c)]
   simp only [sHp, MvPolynomial.aeval_X, pImg, sac_self, sac_succAbove, ratio_self (hd.w_base c),
-    Fin.succ_ne_zero, if_false, hx, MvPolynomial.C_1, mul_one, neg_add_cancel, map_zero]
+    Fin.succ_ne_zero, ite_false, hx, MvPolynomial.C_1, mul_one, neg_add_cancel, map_zero]
 
 noncomputable def evP (c : ι) (P : Ω c →+* ℂ) (pt : TVar d.D d.N → ℂ) :
     MvPolynomial (SVar d.D d.N) (Ω c) →+* ℂ :=
@@ -123,7 +123,7 @@ theorem evP_sHp (c : ι) (sg : K →+* ℂ) (pt : TVar d.D d.N → ℂ) (hd : d.
         cases i using Fin.cases with
         | zero => simp [evP]
         | succ i' =>
-          rw [if_neg (Fin.succ_ne_zero i')]
+          rw [ite_eq_right (Fin.succ_ne_zero i')]
           have h1 := heq i'
           rw [Fin.sum_univ_succAbove _ (d.jc c), ratio_self (hd.w_base c), map_one, mul_one] at h1
           simp only [hx] at h1
@@ -193,7 +193,7 @@ theorem evalAtPoint_injective (P : Ω c →+* ℂ) (hP : P ∈ d.ST c sg (fun i 
   obtain ⟨hPT, hPeq⟩ := hP
   have hcomp : (d.evP c P pt).comp (d.sHp c).toRingHom = eval₂Hom sg pt :=
     RingHom.ext fun q => d.evP_sHp c sg pt hd P hPT hPeq q
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro F hF
   by_contra hF0
   let : Algebra (KTf K d.D d.N) (OmS (Ω c) d.D d.N) := (d.KTtoS h c).toAlgebra

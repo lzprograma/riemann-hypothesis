@@ -5,8 +5,6 @@ public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 public import Mathlib.Analysis.CStarAlgebra.Module.Constructions
 public import Mathlib.Analysis.InnerProductSpace.StarOrder
 public import Mathlib.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.Abs
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Presheaf
 public import Mathlib.Analysis.Normed.Operator.Extend
 
 @[expose] public section
@@ -26,9 +24,7 @@ theorem ennreal_two_mul_le_sq_add_sq (a b : ℝ≥0∞) : 2 * (a * b) ≤ a ^ 2 
   lift a to NNReal using ha
   lift b to NNReal using hb
   norm_cast
-  rw [← NNReal.coe_le_coe]
-  push_cast
-  nlinarith [sq_nonneg ((a : ℝ) - b)]
+  simpa only [mul_assoc] using two_mul_le_add_sq a b
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
@@ -50,14 +46,10 @@ theorem inner_apply_eq_norm_sqrt_sq {A : H →L[ℂ] H} (hA : 0 ≤ A) (x : H) :
   rfl
 
 theorem norm_abs_apply (T : H →L[ℂ] H) (x : H) : ‖CFC.abs T x‖ = ‖T x‖ := by
-  have hR : (CFC.abs T)† = CFC.abs T := adjoint_eq_of_nonneg (CFC.abs_nonneg T)
-  have h : ‖CFC.abs T x‖ ^ 2 = ‖T x‖ ^ 2 := by
-    rw [@norm_sq_eq_re_inner ℂ, @norm_sq_eq_re_inner ℂ]
-    congr 1
-    conv_lhs => rw [← adjoint_inner_right (CFC.abs T), hR, ← comp_apply, ← mul_def,
-      CFC.abs_mul_abs, star_eq_adjoint, mul_def, comp_apply, adjoint_inner_right]
-  have := congrArg Real.sqrt h
-  rwa [Real.sqrt_sq (norm_nonneg _), Real.sqrt_sq (norm_nonneg _)] at this
+  apply (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp
+  rw [apply_norm_sq_eq_inner_adjoint_left, adjoint_eq_of_nonneg (CFC.abs_nonneg T),
+    ← mul_def, CFC.abs_mul_abs, star_eq_adjoint, mul_def,
+    ← apply_norm_sq_eq_inner_adjoint_left]
 
 theorem exists_polar (T : H →L[ℂ] H) :
     ∃ V : H →L[ℂ] H, ‖V‖ ≤ 1 ∧ V.comp (CFC.abs T) = T ∧ (V†).comp T = CFC.abs T := by
@@ -394,19 +386,8 @@ theorem IsTraceClass.summable_norm_inner {T : H →L[ℂ] H} (hT : IsTraceClass 
   have h := ENNReal.summable_toReal ((tsum_enorm_inner_self_le b T).trans_lt hT).ne
   simpa using h
 
-theorem enorm_trace_le (T : H →L[ℂ] H) : ‖trace T‖ₑ ≤ traceNorm T := by
-  by_cases hT : IsTraceClass T
-  · let b := stdHilbertBasis ℂ H
-    have hs := hT.summable_norm_inner b
-    calc ‖trace T‖ₑ = ENNReal.ofReal ‖trace T‖ := (ofReal_norm _).symm
-      _ ≤ ENNReal.ofReal (∑' i, ‖⟪b i, T (b i)⟫_ℂ‖) :=
-          ENNReal.ofReal_le_ofReal ((hT.hasSum_trace b).norm_le_of_bounded hs.hasSum fun _ => le_rfl)
-      _ = ∑' i, ‖⟪b i, T (b i)⟫_ℂ‖ₑ := by
-          rw [ENNReal.ofReal_tsum_of_nonneg (fun _ => norm_nonneg _) hs]
-          simp only [ofReal_norm]
-      _ ≤ traceNorm T := tsum_enorm_inner_self_le b T
-  · rw [IsTraceClass, not_lt, top_le_iff] at hT
-    rw [hT]; exact le_top
+theorem enorm_trace_le (T : H →L[ℂ] H) : ‖trace T‖ₑ ≤ traceNorm T :=
+  eNorm_tsum_le_tsum_eNorm.trans (tsum_enorm_inner_self_le (stdHilbertBasis ℂ H) T)
 
 theorem trace_add {S T : H →L[ℂ] H} (hS : IsTraceClass S) (hT : IsTraceClass T) :
     trace (S + T) = trace S + trace T := by

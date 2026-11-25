@@ -41,8 +41,6 @@ section Real
 
 open Formalism.IndefR.Links
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type}
   {A3 : Formalism.L2.DIV.FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
 
@@ -145,25 +143,6 @@ variable {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type}
   {A3 : Formalism.L2.DIV.FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
 
 
-
-structure NMjRR (Rl : RealDat3 D A3 Ks) (cG : Formalism.L2.DIV.G0 Rl.Pg D.R.r ≃* G0g D.nd) (S : RatDat D.ntw)
-    (Y : NExpRealS Rl cG S)
-    (X : DivX D) (c : NChoice D) (jD : ∀ j, (X.MjH j).V →ₗ[D.what₂.LL] S.WL j)
-    extends NMjR X c where
-
-  ks : ∀ j, 1 ≤ j → j ≤ D.R.m → (S.A j).IsKsForm
-  eMj_sum : ∀ w j (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) (x : (X.MjH j).V) (n : ℕ) (a : Fin n → D.what₂.LL)
-    (f : Fin n → FmK S j),
-    jD j x = ∑ k, a k • (show ↥(S.A j).WK from f k).1 →
-      eMj w j x = ∑ k, c.embW w (a k) ⊗ₜ[D.ntw.O (c.twI w)]
-        (Y.eF (c.twI w) j (c.sd w) h1 h2).symm
-          ((1 : KB S (c.twI w) (c.sd w)) ⊗ₜ[S.Ks] f k)
-
-  embW_Ks : ∀ w j (a : S.Ks) (m : D.nexp.Fm (c.twI w) j (c.sd w)),
-    (c.embW w (algebraMap S.Ks D.what₂.LL a) ⊗ₜ[D.ntw.O (c.twI w)] m :
-        FractionRing (c.Oe w) ⊗[D.ntw.O (c.twI w)] D.nexp.Fm (c.twI w) j (c.sd w)) =
-      (1 : FractionRing (c.Oe w)) ⊗ₜ[D.ntw.O (c.twI w)]
-        ((show FractionRing (D.ntw.O (c.twI w)) from ιK S (c.twI w) (c.sd w) a) • m)
 
 def jDL (Rl : RealDat3 D A3 Ks) (F : Face D A3.A) (i : Fin D.R.m) :
     (Fin (Module.finrank D.what₂.LL (Rl.toRealDat.WL F false i)) → D.what₂.LL) →ₗ[D.what₂.LL] (Fin (Rl.nW i) → D.what₂.LL) :=

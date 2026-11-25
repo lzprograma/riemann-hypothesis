@@ -18,19 +18,6 @@ open CategoryTheory groupCohomology GroundTheory.ProfCoh
 
 universe u
 
-section Cocycles
-
-variable {k : Type u} [CommRing k] {H : Type u} [Group H] [TopologicalSpace H]
-  [IsTopologicalGroup H] {B : Rep.{u} k H} [IsDiscreteRep B]
-
-end Cocycles
-
-section Topology
-
-variable {K Ks : Type u} [Field K] [Field Ks] [Algebra K Ks]
-
-end Topology
-
 section Main
 
 variable {K Ks : Type u} [Field K] [Field Ks] [Algebra K Ks] [IsSepClosure K Ks]

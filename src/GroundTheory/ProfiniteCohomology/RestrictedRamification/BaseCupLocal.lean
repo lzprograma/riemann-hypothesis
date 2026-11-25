@@ -6,44 +6,6 @@ import GroundTheory.ProfiniteCohomology.CupProducts.Cocycles
 import GroundTheory.ProfiniteCohomology.CupProducts.ExistsCocycleMapFEqD
 import GroundTheory.ProfiniteCohomology.GlobalClassFormation.RealPlaces
 import GroundTheory.ProfiniteCohomology.RestrictedRamification.Brauer
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -54,8 +16,6 @@ namespace GroundTheory.ProfCoh
 open CategoryTheory MonoidalCategory NumberField IsDedekindDomain GroundTheory.Global
 
 open scoped DirectSum
-
-attribute [local instance 2000] Rep.hV2
 
 noncomputable section
 
@@ -84,53 +44,7 @@ end ULiftCompareAlong
 
 section Bock
 
-variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] {n : ℕ}
-
-theorem exists_cocycle_δ_bockSeq (hn : n ≠ 0) (z : cocycles (zmodRep.{0} G n) 1) :
-    ∃ x₁ : cocycles (intRepTriv G) 2,
-      cohomologyπ _ 2 x₁ = (δ (bockSeq_shortExact G n hn) 1 2 rfl).hom (cohomologyπ _ 1 z) ∧
-      ∀ g h : G, (cochainOf _ (cocycleι _ 2 x₁) ![g, h]).down = bockInt (zmodCocycleHom z) g h := by
-  have : NeZero n := ⟨hn⟩
-  have hS := bockSeq_shortExact G n hn
-  have hχ : ∀ g h : G, zmodCocycleHom z (g * h) = zmodCocycleHom z g + zmodCocycleHom z h :=
-    zmodCocycleHom_mul z
-  have hlc : IsLocallyConstant fun v : Fin 1 → G =>
-      (ULift.up ((zmodCocycleHom z (v 0)).val : ℤ) : intRepTriv G) :=
-    IsLocallyConstant.comp ((isLocallyConstant_zmodCocycleHom z).comp_continuous (continuous_apply 0))
-      (fun c : ZMod n => (ULift.up (c.val : ℤ) : ULift.{0} ℤ))
-  let x₂ : (cochainsComplex (bockSeq G n).X₂).X 1 :=
-    mkCochain (bockSeq G n).X₂ (fun v : Fin 1 → G =>
-      (ULift.up ((zmodCocycleHom z (v 0)).val : ℤ) : intRepTriv G)) hlc
-  have hx₂ : (cochainsMap (bockSeq G n).g).f 1 x₂ = cocycleι (bockSeq G n).X₃ 1 z := by
-    apply cochainOf_injective
-    rw [cochainOf_cochainsMap_f]
-    funext v
-    have hv : v = ![v 0] := by funext i; fin_cases i; rfl
-    change (zmodReduction G n).hom (ULift.up ((zmodCocycleHom z (v 0)).val : ℤ)) =
-      cochainOf _ (cocycleι _ 1 z) v
-    rw [zmodReduction_hom_apply]
-    apply ULift.ext
-    change (((zmodCocycleHom z (v 0)).val : ℤ) : ZMod n) = (cochainOf _ (cocycleι _ 1 z) v).down
-    rw [Int.cast_natCast, ZMod.natCast_zmod_val]
-    conv_rhs => rw [hv]
-    rfl
-  obtain ⟨x₁, hx₁⟩ := exists_cocycle_map_f_eq_d hS 2 z x₂ hx₂
-  have hδ := δ_cohomologyπ_of_lift hS rfl z x₂ hx₂ x₁ hx₁
-  refine ⟨x₁, hδ.symm, fun g h => ?_⟩
-  have e : cochainOf (bockSeq G n).X₂ ((cochainsMap (bockSeq G n).f).f 2 (cocycleι _ 2 x₁)) ![g, h] =
-      cochainOf (bockSeq G n).X₂ (((cochainsComplex (bockSeq G n).X₂).d 1 2).hom x₂) ![g, h] :=
-    congrArg (fun c => cochainOf (bockSeq G n).X₂ c ![g, h]) hx₁
-  rw [cochainOf_cochainsMap_f, cochainOf_d_one_apply] at e
-  have e2 := congrArg ULift.down e
-  change n • (cochainOf _ (cocycleι _ 2 x₁) ![g, h]).down =
-    ((zmodCocycleHom z h).val : ℤ) - ((zmodCocycleHom z (g * h)).val : ℤ) +
-      ((zmodCocycleHom z g).val : ℤ) at e2
-  have e3 := natCast_mul_bockInt (zmodCocycleHom z) hχ g h
-  rw [nsmul_eq_mul] at e2
-  apply mul_left_cancel₀ (show (n : ℤ) ≠ 0 by exact_mod_cast hn)
-  rw [e2, e3]
-  ring
-
+variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable {H : Type} [Group H] [TopologicalSpace H] [IsTopologicalGroup H] (ψ : H →* G)
 
 def resIntRepTriv : Rep.res ψ (intRepTriv G) ⟶ intRepTriv H :=

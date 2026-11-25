@@ -15,47 +15,7 @@ public import Development.AutomorphicArithmetic.CommutativeAlgebra.KumSExact
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCochainEvalOnSimplexBasicPropertiesStatement
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchClsCocycleSecStatement
 import Development.AutomorphicArithmetic.CommutativeAlgebra.PicUnit
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -77,31 +37,6 @@ private lemma map_smul_int {V : Scheme.{0}} (b : Sec Gm V) (n : ℤ) : Sec.map (
   rfl
 
 private alias unitSec_pow := _root_.GlobalTheory.EtC.KummerSeq.unitSec_pow
-
-private lemma units_comp {W V U : Scheme.{0}} (k : W ⟶ V) (g : V ⟶ U) (w : (Γ(U, ⊤))ˣ) :
-    Units.map k.appTop.hom.toMonoidHom (Units.map g.appTop.hom.toMonoidHom w) =
-      Units.map (k ≫ g).appTop.hom.toMonoidHom w := by
-  ext
-  simp [Scheme.Hom.appTop, Scheme.Hom.app]
-  rfl
-
-private lemma ker_res {R : Type} [CommRing R] (F : Shv R) (U : Scheme.{0}) (z : Sec ((res R F).X 0) U)
-    (hz : Sec.map ((res R F).d 0 1) z = 0) : ∃ s : Sec F U, Sec.map (resι R F) s = z := by
-  obtain ⟨α, hα0, -⟩ := (GlobalTheory.T.cocycle_ev_d_eq_zero_and_mk_eq_zero_iff R U (res R F) (-1) 0 1 (by norm_num) (by norm_num)).1 z hz
-  obtain ⟨s, hs⟩ := (_root_.GlobalTheory.EtC.secClass_props R F U).2.1.2 (CohomologyClass.mk α)
-  refine ⟨s, ?_⟩
-  have h1 := ((_root_.GlobalTheory.EtC.secClass_props R F U).1 s α).2 hs.symm
-  rw [← h1, hα0]
-  show (ModuleCat.Hom.hom (((res R F).X 0).obj.map (𝟙 U).op)) z = z
-  rw [op_id, CategoryTheory.Functor.map_id]
-  rfl
-
-private lemma resι_inj {R : Type} [CommRing R] (F : Shv R) (U : Scheme.{0}) (a b : Sec F U)
-    (h : Sec.map (resι R F) a = Sec.map (resι R F) b) : a = b := by
-  obtain ⟨α, hα⟩ := CohomologyClass.mk_surjective (secClass F a)
-  have h1 := ((_root_.GlobalTheory.EtC.secClass_props R F U).1 a α).2 hα
-  have h2 := ((_root_.GlobalTheory.EtC.secClass_props R F U).1 b α).1 (h1.trans h)
-  exact (_root_.GlobalTheory.EtC.secClass_props R F U).2.1.1 (hα.symm.trans h2)
 
 variable (q : ℕ) [NeZero q]
 
@@ -140,7 +75,7 @@ private lemma unique_datum {V : Scheme.{0}} (hq : IsUnit (q : Γ(V, ⊤))) (v v'
   have h3 : Sec.map (resι _ (tw q 1)) s = Sec.map (resι _ (tw q 1)) ((show Sec (tw q 1) V from a) + s') := by
     rw [_root_.GlobalTheory.EtC.ClsSpec.smap_add]
     exact add_left_cancel h
-  have hs := resι_inj _ _ _ _ h3
+  have hs := (_root_.GlobalTheory.EtC.resSec _ _ V).2.1 h3
   rw [hs, kp_add, e1, add_assoc]
   rfl
 
@@ -170,7 +105,7 @@ theorem UpperTheory.exists_root_of_kummer_class_eq_zero :
       rw [sec_map_sub, map_res, hy, sub_eq_zero]
       refine e.trans ?_
       exact hγ2 V g v hv
-    obtain ⟨s, hs⟩ := ker_res _ V _ hd
+    obtain ⟨s, hs⟩ := ((_root_.GlobalTheory.EtC.resSec _ _ V).1 _).1 hd
     exact ⟨_, v, s, hv, by rw [hs]; abel, rfl⟩
   have hB : ∀ {V : Scheme.{0}} (g : V ⟶ X) (b b' : Sec Gm V), D V g b → D V g b' → b = b' := by
     intro V g b b' ⟨v, s, hv, hs, hb⟩ ⟨v', s', hv', hs', hb'⟩
@@ -180,7 +115,7 @@ theorem UpperTheory.exists_root_of_kummer_class_eq_zero :
     intro V W g k b ⟨v, s, hv, hs, hb⟩
     refine ⟨Units.map ↑(CommRingCat.Hom.hom (Scheme.Hom.appTop k)) v, Sec.res k s, ?_, ?_, ?_⟩
     · rw [← map_pow, hv]
-      exact units_comp k g w
+      exact (_root_.GlobalTheory.EtC.ClsSpec.umap_comp k g w).symm
     · rw [← res_comp, hs, sec_res_add, (_root_.GlobalTheory.EtC.KummerSplit.isKum_kumT q).1 W V k v (hqV g), map_res]
       rfl
     · rw [hb, sec_res_add, UpperTheory.PicD.unitSec_res, kp_res]

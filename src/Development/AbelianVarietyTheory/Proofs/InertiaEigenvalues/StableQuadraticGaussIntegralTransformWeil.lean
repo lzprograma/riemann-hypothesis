@@ -195,8 +195,7 @@ theorem eq_zpow_smul (O : Subring R) (p : Rˣ) (D : Set R) (hpO : (p : R) ∈ O)
   obtain ⟨n, hn⟩ := hbig
   have hinh : ∃ v : ℤ, ((p ^ v : Rˣ) : R) ∈ D := ⟨n, by simpa using hn 1 (one_mem O)⟩
   have hbdd : ∃ b : ℤ, ∀ v : ℤ, ((p ^ v : Rˣ) : R) ∈ D → b ≤ v := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hall : ∀ v : ℤ, ((p ^ v : Rˣ) : R) ∈ D := by
       intro v
       obtain ⟨w, hw, hwv⟩ := hcon v
@@ -420,7 +419,7 @@ theorem gaussInt_stable_of_dual : ∀ (F E : Type) [NontriviallyNormedField F] [
     · rw [Set.not_nonempty_iff_eq_empty.1 hne, Measure.restrict_empty, integral_zero_measure]
     obtain ⟨y₀, ⟨hy₀Λ, hy₀D⟩, hy₀q⟩ := hne
     have hy₀ : ¬ ∀ m ∈ M, A.kerL ψ (t * x) y₀ m = 1 := fun h => hy₀D ((hmemD y₀).2 h)
-    push_neg at hy₀
+    push Not at hy₀
     obtain ⟨m₀, hm₀, hc⟩ := hy₀
     have hm₀D : m₀ ∈ D := hMD hm₀
     have hshift : ∀ y ∈ S q, g (m₀ + y) = A.kerL ψ (t * x) y₀ m₀ * g y := by
@@ -1376,8 +1375,7 @@ theorem level1 : ∀ (F E : Type) [NontriviallyNormedField F] [NontriviallyNorme
     rwa [← mul_assoc] at this
 
   have hnt : ∃ s : A.K, algebraMap A.K A.L s ∈ O ∧ A.psiK ψ (t * x * s) ≠ 1 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have h1 : ∀ m ∈ O, A.kerL ψ (t * x) 1 m = 1 := fun m hm => by
       rw [kerL_one]
       exact hcon _ (by rw [htrL]; exact O.add_mem hm (hOs m hm))
@@ -1495,17 +1493,6 @@ noncomputable section
 namespace GlobalTheory.JR.WeilQuad
 open scoped Pointwise
 
-theorem isStableGauss_unique {F E : Type} [NontriviallyNormedField F] [NontriviallyNormedField E]
-    [NormedAlgebra F E] [StarRing E] (A : Et F E) (ψ : AddChar F ℂ) (x : A.K) (μ : Measure A.L) (u : A.K)
-    {G G' : ℂ} (h : IsStableGauss A ψ x μ u G) (h' : IsStableGauss A ψ x μ u G') : G = G' := by
-  haveI : IsTopologicalAddGroup A.L := IsModuleTopology.topologicalAddGroup F A.L
-  obtain ⟨Λ₀, ho, hc, hG⟩ := h
-  obtain ⟨Λ₁, ho', hc', hG'⟩ := h'
-  have hs : ((Λ₀ ⊔ Λ₁ : AddSubgroup A.L) : Set A.L) = (Λ₀ : Set A.L) + (Λ₁ : Set A.L) := AddSubgroup.add_normal Λ₀ Λ₁
-  have hO : IsOpen ((Λ₀ ⊔ Λ₁ : AddSubgroup A.L) : Set A.L) := AddSubgroup.isOpen_mono le_sup_left ho
-  have hC : IsCompact ((Λ₀ ⊔ Λ₁ : AddSubgroup A.L) : Set A.L) := by rw [hs]; exact hc.add hc'
-  rw [← hG _ hO hC le_sup_left, ← hG' _ hO hC le_sup_right]
-
 theorem absK_units_mul {F E : Type} [NontriviallyNormedField F] [NontriviallyNormedField E]
     [NormedAlgebra F E] [StarRing E] (A : Et F E) (a b : A.Kˣ) :
     A.absK ((a * b : A.Kˣ) : A.K) = A.absK a * A.absK b := by
@@ -1522,7 +1509,7 @@ theorem gauss_transform : ∀ (F E : Type) [NontriviallyNormedField F] [Nontrivi
   by_cases hu : ∃ y, A.NL y = u
   · have h1 := _root_.GlobalTheory.JR.WeilQuad.GaussTrans.main F E A ψ x μ ω hH 1 u hu G₁ (by simpa using hG₁)
     rw [one_mul] at h1
-    rw [isStableGauss_unique A ψ x μ _ hG h1, (hω u).1 hu]; ring
+    rw [GlobalTheory.JR.WeilQuad.NonNorm.stable_unique A ψ x μ _ hG h1, (hω u).1 hu]; ring
   · obtain ⟨ϖ, hϖ, hGϖ⟩ := _root_.GlobalTheory.JR.WeilQuad.NonNorm.gauss_at_uniformiser F E A ψ x μ ω hH G₁ hG₁
     have hps : ϖ * (ϖ⁻¹ * u) = u := mul_inv_cancel_left ϖ u
     have hs : ∃ y, A.NL y = ((ϖ⁻¹ * u : A.Kˣ) : A.K) := by

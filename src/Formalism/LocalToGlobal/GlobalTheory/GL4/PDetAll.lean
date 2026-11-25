@@ -169,12 +169,12 @@ theorem trAct_single_scalar (lam : ι → DomWeight n) (τ : ι) (t : Kˣ) (F : 
       rw [(Formalism.GradedWeylDivisibility.blockActTensor K K ι n n _).1 s (G s)]
       by_cases hs : s = τ
       · subst hs
-        rw [if_pos rfl, Pi.mulSingle_eq_same, brpSc_coe, rowAct_scalar]
+        rw [ite_eq_left rfl, Pi.mulSingle_eq_same, brpSc_coe, rowAct_scalar]
         have hW : G s ∈ weightedHomogeneousSubmodule K (Formalism.GradedWeylDivisibility.colW n n) (lam s).natW :=
           (Submodule.mem_inf.1 (hG s)).1
         rw [brp_aeval_scale_whom _ _ hW, map_smul]
-      · rw [if_neg hs, Pi.mulSingle_eq_of_ne hs, Units.val_one, rowAct_one_tr, one_smul]
-    rw [Finset.prod_congr rfl fun s _ => hfac s, Finset.prod_smul, Finset.prod_ite_eq' Finset.univ τ, if_pos (Finset.mem_univ τ)]
+      · rw [ite_eq_right hs, Pi.mulSingle_eq_of_ne hs, Units.val_one, rowAct_one_tr, one_smul]
+    rw [Finset.prod_congr rfl fun s _ => hfac s, Finset.prod_smul, Finset.prod_ite_eq' Finset.univ τ, ite_eq_left (Finset.mem_univ τ)]
   | zero => simp
   | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, smul_add]
   | smul a x _ hx => rw [map_smul, hx, smul_comm]

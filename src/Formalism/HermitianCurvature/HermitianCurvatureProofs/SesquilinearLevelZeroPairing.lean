@@ -2,48 +2,6 @@ module
 
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairLevZeroIndep
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -78,18 +36,18 @@ theorem ins_lift0_apply (s0 : S) (M : M2 A) (z z' : Ix S) :
     · intro h; exact absurd (Finset.mem_univ z') h
   simp only [h1]
   by_cases h : ∀ b, b ≠ s0 → z b = z' b
-  · rw [if_pos h, Finset.sum_eq_single (z s0)]
+  · rw [ite_eq_left h, Finset.sum_eq_single (z s0)]
     · rw [Finset.sum_eq_single (z' s0)]
-      · rw [if_pos ⟨rfl, rfl, h⟩]
-      · intro j _ hj; rw [if_neg]; intro hh; exact hj hh.2.1.symm
+      · rw [ite_eq_left ⟨rfl, rfl, h⟩]
+      · intro j _ hj; rw [ite_eq_right]; intro hh; exact hj hh.2.1.symm
       · intro hh; exact absurd (Finset.mem_univ _) hh
     · intro i _ hi
       refine Finset.sum_eq_zero fun j _ => ?_
-      rw [if_neg]; intro hh; exact hi hh.1.symm
+      rw [ite_eq_right]; intro hh; exact hi hh.1.symm
     · intro hh; exact absurd (Finset.mem_univ _) hh
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     refine Finset.sum_eq_zero fun i _ => Finset.sum_eq_zero fun j _ => ?_
-    rw [if_neg]; intro hh; exact h hh.2.2
+    rw [ite_eq_right]; intro hh; exact h hh.2.2
 
 def eS (s0 : S) (i : Fin 2) : Ix S := Function.update (fun _ => 0) s0 i
 
@@ -109,7 +67,7 @@ theorem blockMulVec_one_letter (QQ : ℂ → M2 (Q.Pr V)) (s0 : S) (Y : ℂ) (i 
   rw [rrw_one]
   unfold actP
   rw [Finset.sum_eq_single (eS s0 j)]
-  · rw [Pi.single_eq_same, ins_lift0_apply, if_pos (eS_agree s0 i j), eS_self, eS_self]
+  · rw [Pi.single_eq_same, ins_lift0_apply, ite_eq_left (eS_agree s0 i j), eS_self, eS_self]
   · intro b _ hb; rw [Pi.single_eq_of_ne hb, map_zero]
   · intro h; exact absurd (Finset.mem_univ _) h
 

@@ -40,34 +40,13 @@ def flagDim : ℕ := f * ((j + k) * (j + k - 1) / 2)
 
 def rootPsum (m : ℕ) (τ : Fin f) : RootPoly f j k := ∑ i, X (τ, i) ^ m
 
-def lieClass (m : ℕ) : Fin f × Bool → RootPoly f j k
-  | (τ, false) => ∑ a : Fin j, X (τ, Sum.inl a) ^ m
-  | (τ, true) => (-1) ^ m * ∑ b : Fin k, X (τ, Sum.inr b) ^ m
-
 def vandermonde {R : Type*} [CommRing R] {m : ℕ} (v : Fin m → R) : R :=
   (Matrix.of fun a b : Fin m => v a ^ (m - 1 - (b : ℕ))).det
-
-def fibre : RootPoly f j k :=
-  ∏ τ : Fin f, if k ≤ j then
-      vandermonde (fun b : Fin k => (X (τ, Sum.inr b) : RootPoly f j k)) *
-        vandermonde (fun a : Fin j => (X (τ, Sum.inl a) : RootPoly f j k))
-    else
-      vandermonde (fun a : Fin j => -(X (τ, Sum.inl a) : RootPoly f j k)) *
-        vandermonde (fun b : Fin k => (X (τ, Sum.inr b) : RootPoly f j k))
 
 structure IsFlagIntegral (I : RootPoly f j k →ₗ[ℝ] ℝ) : Prop where
   kills : ∀ (m : ℕ) (τ : Fin f) (G : RootPoly f j k), 1 ≤ m → m ≤ flagDim f j k →
     G.IsHomogeneous (flagDim f j k - m) → I (rootPsum f j k m τ * G) = 0
   ne_zero : ∃ G : RootPoly f j k, G.IsHomogeneous (flagDim f j k) ∧ I G ≠ 0
-
-def IsPowerSumDecomposition (F : RootPoly f j k) (Q : Fin f → ℕ → RootPoly f j k) : Prop :=
-  (∀ τ m, 1 ≤ m → m ≤ j + k → (Q τ m).IsHomogeneous (flagDim f j k + 1 - m)) ∧
-    F = ∑ τ : Fin f, ∑ m ∈ Finset.Icc 1 (j + k), rootPsum f j k m τ * Q τ m
-
-def restAt (I : RootPoly f j k →ₗ[ℝ] ℝ) (vol : ℝ) (φ : ℕ → ℕ → Fin f → Fin f × Bool)
-    (Q : Fin f → ℕ → RootPoly f j k) (p : ℕ) : ℝ :=
-  log p * vol * ∑ τ : Fin f, ∑ m ∈ Finset.Icc 2 (j + k), ∑' n : ℕ,
-    (((p : ℝ) ^ ((n + 1) * m))⁻¹ * m * I (lieClass f j k (m - 1) (φ p (n + 1) τ) * Q τ m))
 
 end
 

@@ -9,56 +9,9 @@ public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenNsm
 public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DenseHasCompactSupport
 public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionHeisenbergInvariant
 public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumAdmissibility
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.MembershipProofs.AdelicCharacterRationalDualImports, Development.AutomorphicSpectrum.Proofs.MembershipProofs.AdelicCharacterRationalDual
@@ -204,7 +157,7 @@ theorem cosetInd_mem_SB : ∀ (F : Type) [Field F] [NumberField F] (κ : Type) [
   have hK : IsCompact ((fun x => x - c) ⁻¹' (levelSub F κ N : Set (κ → FiniteAdeleRing (𝓞 F) F))) :=
     (Homeomorph.subRight c).isCompact_preimage.2 (levelSub_isCompact F κ N)
   refine HasCompactSupport.intro hK fun x hx => ?_
-  rw [GroundTheory.Automorphic.GJMatrix.cosetInd_apply, if_neg (show ¬ (x - c ∈ levelSub F κ N) from hx)]
+  rw [GroundTheory.Automorphic.GJMatrix.cosetInd_apply, ite_eq_right (show ¬ (x - c ∈ levelSub F κ N) from hx)]
 
 theorem levelSub_basis (F : Type) [Field F] [NumberField F] (κ : Type) [Fintype κ]
     (W : Set (κ → FiniteAdeleRing (𝓞 F) F)) (hW : W ∈ nhds (0 : κ → FiniteAdeleRing (𝓞 F) F)) :
@@ -500,14 +453,14 @@ theorem level_zero (hψ : Continuous ψ) (h1 : ψ ≠ 1) (hn : ∀ x, ‖ψ x‖
     exact congrArg (fun z => ω.repr z j) h2
   rw [← hinj.tsum_eq]
   · refine tsum_congr fun m => ?_
-    rw [_root_.GlobalTheory.CompanionTheory.ThetaAdm.pureA_rat, hB, cosetInd_apply, if_pos ((inCoset_rat_iff F hN _).2 ⟨_, rfl⟩), mul_one]
+    rw [_root_.GlobalTheory.CompanionTheory.ThetaAdm.pureA_rat, hB, cosetInd_apply, ite_eq_left ((inCoset_rat_iff F hN _).2 ⟨_, rfl⟩), mul_one]
   · intro ξ hξ
     rw [Function.mem_support, _root_.GlobalTheory.CompanionTheory.ThetaAdm.pureA_rat, cosetInd_apply] at hξ
     by_cases h : InCoset F N 0 (fun i => algebraMap F _ (ξ i))
     · obtain ⟨a, rfl⟩ := (inCoset_rat_iff F hN _).1 h
       refine ⟨fun p => ω.repr (a p.1) p.2, ?_⟩
       simp only [e, Module.Basis.sum_repr]
-    · rw [if_neg h, mul_zero] at hξ
+    · rw [ite_eq_right h, mul_zero] at hξ
       exact absurd rfl hξ
 
 theorem level_span

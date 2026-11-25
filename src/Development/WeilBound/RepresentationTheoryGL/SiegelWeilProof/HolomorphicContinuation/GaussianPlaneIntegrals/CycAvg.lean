@@ -7,59 +7,7 @@ public import Mathlib.MeasureTheory.Integral.Pi
 public import Mathlib.RingTheory.Complex
 public import Mathlib.RingTheory.Norm.Transitivity
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.AssemblyAlt
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Algebra.Group.Units
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.CycAvgA, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.CycAvg
@@ -119,13 +67,11 @@ theorem evX_subR (u : Matrix (Fin m) (Fin m) ℂ) (P : PX m n) (x : Fin m → Fi
 theorem subR_comp (v w : Matrix (Fin m) (Fin m) ℂ) : (subR (n := n) v).comp (subR w) = subR (w * v) := by
   apply MvPolynomial.algHom_ext
   rintro ⟨a, i, _ | _⟩
-  · set_option synthInstance.maxHeartbeats 100000 in
-      simp only [AlgHom.comp_apply, subR_X_false, map_sum, map_mul, subR_C]
+  · simp only [AlgHom.comp_apply, subR_X_false, map_sum, map_mul, subR_C]
 
     simp only [Finset.mul_sum, Matrix.mul_apply, map_sum, Finset.sum_mul, ← mul_assoc, ← C_mul]
     exact Finset.sum_comm
-  · set_option synthInstance.maxHeartbeats 100000 in
-      simp only [AlgHom.comp_apply, subR_X_true, map_sum, map_mul, subR_C]
+  · simp only [AlgHom.comp_apply, subR_X_true, map_sum, map_mul, subR_C]
 
     simp only [Finset.mul_sum, Matrix.mul_apply, star_sum, star_mul', map_sum, Finset.sum_mul, ← mul_assoc, ← C_mul]
     exact Finset.sum_comm
@@ -194,8 +140,8 @@ theorem mp_act (u : Matrix (Fin m) (Fin m) ℂ) (hu : uᴴ * u = 1) :
 
 theorem continuous_pt (k : Fin m × Fin n × Bool) : Continuous fun x : Fin m → Fin n → ℂ => pt x k := by
   rcases k with ⟨a, i, _ | _⟩
-  · simp only [pt, Bool.false_eq_true, if_false]; fun_prop
-  · simp only [pt, if_true]; fun_prop
+  · simp only [pt, Bool.false_eq_true, ite_false]; fun_prop
+  · simp only [pt, ite_true]; fun_prop
 
 theorem continuous_evX (P : PX m n) : Continuous (evX P) := by
   induction P using MvPolynomial.induction_on
@@ -261,10 +207,10 @@ theorem exp_bound (P : PX m n) : ∀ ε : ℝ, 0 < ε → ∃ C : ℝ, ∀ x, �
     have hk : ‖pt x k‖ ≤ (1 + 1 / (ε / 2)) * Real.exp (ε / 2 * sq x) := by
       rcases k with ⟨a, i, _ | _⟩
       · have hb := coord_bound (δ := ε / 2) (by linarith) x a i
-        simp only [pt, Bool.false_eq_true, if_false]
+        simp only [pt, Bool.false_eq_true, ite_false]
         exact hb
       · have hb := coord_bound (δ := ε / 2) (by linarith) x a i
-        simp only [pt, if_true, norm_star]
+        simp only [pt, ite_true, norm_star]
         exact hb
     have hp' : ‖evX p x‖ ≤ max C1 0 * Real.exp (ε / 2 * sq x) :=
       (h1 x).trans (mul_le_mul_of_nonneg_right (le_max_left _ _) (Real.exp_pos _).le)
@@ -407,8 +353,8 @@ theorem CC.ofC {K : Type*} [TopologicalSpace K] {f : K → ℂ} (hf : Continuous
   fun t => by
     simp only [coeff_C]
     by_cases h : (0 : (Fin m × Fin n × Bool) →₀ ℕ) = t
-    · simp only [h, if_true]; exact hf
-    · simp only [h, if_false]; exact continuous_const
+    · simp only [h, ite_true]; exact hf
+    · simp only [h, ite_false]; exact continuous_const
 
 theorem CC.sum {K : Type*} [TopologicalSpace K] {ι : Type*} (s : Finset ι) {F : ι → K → PX m n} (hF : ∀ i, CC (F i)) :
     CC fun k => ∑ i ∈ s, F i k := fun t => by
@@ -499,8 +445,8 @@ theorem coeff_avg (P : PX m n) (t) : AddMonoidAlgebra.coeff (avg ε P) t = ∫ k
   rw [coeff_sum]
   simp only [coeff_monomial]
   by_cases ht : t ∈ D m n P.totalDegree
-  · rw [Finset.sum_eq_single t (fun b _ hb => if_neg hb) (fun h => absurd ht h), if_pos rfl]
-  · rw [Finset.sum_eq_zero (fun b hb => if_neg (fun h : b = t => ht (h ▸ hb)))]
+  · rw [Finset.sum_eq_single t (fun b _ hb => ite_eq_right hb) (fun h => absurd ht h), ite_eq_left rfl]
+  · rw [Finset.sum_eq_zero (fun b hb => ite_eq_right (fun h : b = t => ht (h ▸ hb)))]
     have : ∀ k, AddMonoidAlgebra.coeff (subR (gK ε k) P) t = 0 := fun k =>
       notMem_support_iff.1 (fun h => ht (support_subR _ P h))
     simp [this]

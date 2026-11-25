@@ -152,8 +152,6 @@ open GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts G
 open GlobalTheory.FlagFibre (Low)
 open scoped Matrix ContDiff ComplexOrder ENNReal Classical
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.FlagCell2.TopPow
@@ -183,8 +181,7 @@ theorem pow_card_sum_of_sq {B : Type} [Fintype B] [DecidableEq B] (w : B → R) 
     · exact Fintype.prod_bijective g ((Fintype.bijective_iff_injective_and_card g).2 ⟨hg, by simp⟩) _ _
         (fun _ => rfl)
     · obtain ⟨i, j, hij, hne⟩ : ∃ i j, g i = g j ∧ i ≠ j := by
-        by_contra h
-        push_neg at h
+        by_contra! h
         exact hg h
       exact prod_eq_zero_of_pair (fun k => w (g k)) hne (by simp only [hij]; exact hw _)
   simp only [key, Finset.sum_ite, Finset.sum_const_zero, add_zero, Finset.sum_const]
@@ -245,8 +242,7 @@ theorem sum_pow_card {B : Type} [Fintype B] [DecidableEq B] (s : B → B → R)
   have hnon : ∀ g : B → B, ¬ Function.Injective g → (∏ a, K a (g a)) • ∏ a, s a (g a) = 0 := by
     intro g hg
     obtain ⟨i, j, hij, hne⟩ : ∃ i j, g i = g j ∧ i ≠ j := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hg h
     rw [prod_eq_zero_of_pair (fun k => s k (g k)) hne (by simp only [hij]; exact hzero _ _ _), smul_zero]
   have hsum : ∑ g : B → B, (∏ a, K a (g a)) • ∏ a, s a (g a) =
@@ -440,7 +436,7 @@ theorem row_lt {s : ℕ} {i : Fin s} {y y' : Low s → ℂ} (h : ∀ j : Low s, 
 
 theorem row_ge {s : ℕ} {i : Fin s} (y : Low s → ℂ) {a : Fin s} (ha : i ≤ a) (c : Fin s) :
     upU (fun j => if j.1.2 < i then y j else 0) a c = if a = c then 1 else 0 := by
-  simp only [upU, Matrix.of_apply, ha.not_gt, if_false]
+  simp only [upU, Matrix.of_apply, ha.not_gt, ite_false]
   split_ifs with h1 h2
   · exact absurd h2 h1.ne
   all_goals rfl
@@ -454,7 +450,7 @@ theorem rows_eq {s : ℕ} {i : Fin s} {y y' : Low s → ℂ} (h : ∀ j : Low s,
   rintro (a | a) c <;> refine Eq.trans ?_ Matrix.mul_apply.symm
   · simp only [Fintype.sum_sum_type, Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂,
       Matrix.zero_apply, zero_mul, Finset.sum_const_zero, add_zero, Matrix.one_apply, ite_mul, one_mul,
-      Finset.sum_ite_eq, Finset.mem_univ, if_true, Matrix.submatrix_apply, id]
+      Finset.sum_ite_eq, Finset.mem_univ, ite_true, Matrix.submatrix_apply, id]
     exact congrFun (row_lt h a.2) c
   · simp only [Fintype.sum_sum_type, Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂,
       Matrix.zero_apply, zero_mul, Finset.sum_const_zero, zero_add, Matrix.submatrix_apply, id, Matrix.of_apply]
@@ -468,11 +464,11 @@ theorem rows_eq {s : ℕ} {i : Fin s} {y y' : Low s → ℂ} (h : ∀ j : Low s,
     · have h1 : ixA i (.inl c) < i := c.2
       simp [upU, h1.not_gt, h1.ne']
     · simp only [EmbeddingLike.apply_eq_iff_eq, Sum.inr.injEq, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-        Finset.mem_univ, if_true]
+        Finset.mem_univ, ite_true]
       obtain _ | ⟨⟨⟨b, a⟩, hab⟩, rfl⟩ := c
       · change upU y' i i = 1
         simp [upU]
-      · exact dif_pos hab
+      · exact dite_eq_left hab
 
 theorem conj_mul {A B C : Type} [Fintype B] [Fintype C] (W : Matrix A B ℂ) (R : Matrix B C ℂ) (G : Matrix C C ℂ) :
     W * R * G * (W * R)ᴴ = W * (R * G * Rᴴ) * Wᴴ := by
@@ -688,7 +684,7 @@ theorem leviForm_log_herm : ∀ (n : ℕ) (B : Type) [Fintype B] [DecidableEq B]
   have hL : ∀ (a : B) i, L i (Pi.single a 1) = if i = some a then 1 else 0 := by
     intro a i; cases i <;> simp [L, Pi.single_apply]
   simp only [hL, map_zero, add_zero, apply_ite (starRingEnd ℂ), map_one, ite_mul, mul_ite, one_mul,
-    zero_mul, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true,
+    zero_mul, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true,
     Finset.sum_ite_irrel, Finset.sum_const_zero]
   rfl
 
@@ -874,8 +870,6 @@ open GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts G
 open GlobalTheory.FlagFibre (Low)
 open scoped Matrix ContDiff ComplexOrder ENNReal Classical
 
-set_option autoImplicit false
-
 namespace GlobalTheory.FlagCell2
 
 theorem upU_row_eq {s : ℕ} (y y' : Low s → ℂ) (i : Fin s)
@@ -1055,8 +1049,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open Set MeasureTheory
 open ReciprocityTheory.L2DbarEstimates (V)
 open GlobalTheory.CxForm
@@ -1115,8 +1107,6 @@ open ReciprocityTheory.L2DbarEstimates (V)
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.FlagBundle GlobalTheory.HermFrame GlobalTheory.GoodMetric GlobalTheory.CxForm GlobalTheory.LineForm GlobalTheory.ChernCalc GlobalTheory.FlagCell2
 open GlobalTheory.FlagFibre (Low)
 open scoped Matrix ContDiff ComplexOrder ENNReal Classical
-
-set_option autoImplicit false
 
 namespace GlobalTheory.FlagCell2.BaseVol
 
@@ -1202,8 +1192,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopDegreeDensityBlockTriangularDiagonalBlocks", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.BsLApply\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopDegreeDensityPullbackEqNormSqDetMul\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.PiTensorProduct\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 

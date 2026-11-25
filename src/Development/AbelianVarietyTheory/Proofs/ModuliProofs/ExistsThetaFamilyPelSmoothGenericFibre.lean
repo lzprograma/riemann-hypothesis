@@ -191,7 +191,7 @@ theorem finrank_derivation_le (o k R S C : Type) [CommRing o] [CommRing k]
       map_add' := fun _ _ ↦ by ext; rfl
       map_smul' := fun _ _ ↦ by ext; rfl }
   refine LinearMap.finrank_le_finrank_of_injective (f := f) ?_
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro D hD
   have h0 : ∀ r, D (algebraMap R S r) = 0 := fun r ↦ congr($hD r)
   ext s
@@ -264,7 +264,7 @@ theorem exists_hom_of_ker_eq {R K K' : Type} [CommRing R] [Field K] [Field K'] (
     exact ⟨Ideal.Quotient.mk _ a, Ideal.Quotient.mk _ b, h⟩
   let g : (R ⧸ RingHom.ker φ) →+* K' := Ideal.Quotient.lift _ θ (fun a ha => by rw [← hk] at ha; exact ha)
   have hg : Function.Injective g := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro a ha
     obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective a
     rw [Ideal.Quotient.eq_zero_iff_mem, ← hk]
@@ -300,13 +300,10 @@ theorem exists_local_domain {A K : Type} [CommRing A] [Field K] (e : A →+* K) 
     rw [show e' a = 0 from ha, zero_mul]
 
 theorem spMap_comp {R R' R'' : Type} [CommRing R] [CommRing R'] [CommRing R''] (f : R →+* R') (f' : R' →+* R'') :
-    spMap f' ≫ spMap f = spMap (f'.comp f) := by
-  unfold spMap
-  rw [← Spec.map_comp, ← CommRingCat.ofHom_comp]
+    spMap f' ≫ spMap f = spMap (f'.comp f) := GlobalTheory.spMap_comp_ring f f'
 
 theorem spMap_inj {R R' : Type} [CommRing R] [CommRing R'] {f f' : R →+* R'} (h : spMap f = spMap f') : f = f' := by
-  have := Spec.map_injective h
-  exact congrArg CommRingCat.Hom.hom this
+  exact GlobalTheory.ZM.DenseFib.spMap_inj h
 
 theorem exists_factor {X : Scheme.{0}} {R R' K : Type} [CommRing R] [CommRing R'] [Field K] (x : Sp R ⟶ X)
     [IsOpenImmersion x] (x' : Sp R' ⟶ X) (φ : R →+* K) (ψ : R' →+* K) (hψ : ∀ r, ψ r ≠ 0 → IsUnit r)
@@ -616,7 +613,7 @@ theorem hasTh_iff_secCoord (h₁ : Out.Laws) (h₂ : Out.Laws2) (ho : Odd N') (h
     obtain ⟨f, hf, z, e⟩ := exists_away_lift x x' p hp
     exact ⟨f, hf, fun i => z (v' i), e ▸ (Coord.secCoord_bc_scale_unique X M _ th R' x' v' hM a).1 _ z,
       e ▸ _root_.GlobalTheory.hasTh_baseChange h₂ o g N' J b X s t R' _ z x' v' c⟩
-  refine ⟨fun h => _root_.GlobalTheory.ZM.secCoord_of_locally X M _ th R x v hM (sp R x v h) fun p => ?_,
+  refine ⟨fun h => _root_.GlobalTheory.ZM.secCoord_of_locally X M _ th R x v (sp R x v h) fun p => ?_,
     fun h => hasTh_of_local t ho fun q hq => ?_⟩
   · obtain ⟨f, hf, w, a, c⟩ := key p
     refine ⟨Localization.Away f, inferInstance, algebraMap R _, inferInstance,

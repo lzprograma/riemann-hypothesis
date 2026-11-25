@@ -48,8 +48,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Matrix
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.ChainOnto.RealData
 
 variable {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar}
@@ -96,7 +94,7 @@ theorem Jpq_submatrix {n : ℕ} {ε : Fin n → Bool} {p q : ℕ} (hp : (Finset.
   simp only [submatrix_apply, Formalism.REAL.Jm, diagonal_apply]
   by_cases hab : a = b
   · subst hab
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     rcases h1 : signEquiv ε hp hq a with i | i
     · have := signEquiv_inl hp hq i
       rw [← h1, Equiv.symm_apply_apply] at this
@@ -105,7 +103,7 @@ theorem Jpq_submatrix {n : ℕ} {ε : Fin n → Bool} {p q : ℕ} (hp : (Finset.
       rw [← h1, Equiv.symm_apply_apply] at this
       simp [Formalism.UG.Jpq, this]
   · have hne : signEquiv ε hp hq a ≠ signEquiv ε hp hq b := (signEquiv ε hp hq).injective.ne hab
-    rw [if_neg hab]
+    rw [ite_eq_right hab]
     rcases h1 : signEquiv ε hp hq a with i | i <;> rcases h2 : signEquiv ε hp hq b with j | j <;> rw [h1, h2] at hne <;>
       simp_all [Formalism.UG.Jpq]
 

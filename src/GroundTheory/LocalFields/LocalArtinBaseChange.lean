@@ -265,16 +265,6 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
 
 attribute [local instance] isDiscreteModule_units
 
-omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] [ValuativeRel Ω]
-  [TopologicalSpace Ω] [IsValuativeTopology Ω] [ValuativeExtension K Ω] [IsSepClosure K Ω]
-  [FiniteDimensional K E] in
-theorem abelianization_of_injective_of_comm {G : Type*} [Group G] [IsMulCommutative G] :
-    Function.Injective (Group.Abelianization.of : G →* Group.Abelianization G) := by
-  refine (injective_iff_map_eq_one _).2 fun σ hσ => ?_
-  rw [← MonoidHom.mem_ker, Group.Abelianization.ker_of, commutator,
-    Subgroup.commutator_eq_bot_iff_le_centralizer.2 (fun x _ y _ => mul_comm' y x)] at hσ
-  exact hσ
-
 theorem restrictAb_baseChangeArtinMap_uniformizer {ϖ : Eˣ} (hϖ : ord (ϖ : E) = 1) :
     restrictAb (maximalUnramifiedExtension E Ω) maximalUnramifiedExtension_le_maximalAbelianExtension
       (baseChangeArtinMap K E ϖ) = maximalUnramifiedExtensionFrobenius E Ω := by
@@ -391,16 +381,5 @@ theorem localArtinMap_apply_of_mem (x : Eˣ) {y : Ω} (hy : y ∈ maximalAbelian
     topologicalAbelianizationEquiv_mk_apply]
 
 end Functoriality
-
-section Relative
-
-variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
-  {Ω : Type*} [Field Ω] [ValuativeRel Ω] [TopologicalSpace Ω] [IsValuativeTopology Ω]
-  [Algebra K Ω] [ValuativeExtension K Ω] [IsSepClosure K Ω]
-  {E : IntermediateField K Ω} [FiniteDimensional K E]
-
-attribute [local instance] isDiscreteModule_units
-
-end Relative
 
 end GroundTheory.LocalField

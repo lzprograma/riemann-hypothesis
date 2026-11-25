@@ -50,7 +50,6 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Alg
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.ZH ReciprocityTheory.ChartRestriction.G.Out Classical
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 
@@ -103,29 +102,8 @@ theorem exists_th_notMem (hL : Laws) (hL₂ : Laws2) (ρ : S.Real) (z : PrimeSpe
   refine ((le_preimage_basicOpen_iff _ hU _).1 hk').ne_zero ?_
   rw [hv _ _ _ (ρ.th_val (a + c)) K f k hU, (hf _).2 h, zero_mul]
 
-section Comb
-
-variable {X Z : Scheme.{0}} (p : X ⟶ Z) {B : LB X} {J : Type} [Fintype J] (s : J → B.Sec) (W : Z.Opens)
-
-variable [DecidableEq J] (b c : Matrix J J Γ(Z, W)) (hc : c * b = 1)
-include hc
-
-end Comb
-
-section Transfer
-
-variable {Z : Scheme.{0}} (P : PolAV Z)
-
-end Transfer
-
 variable (ρ : S.Real) (c : CubicalStr ρ.P.A ⟨ρ.P.L, ρ.rig, ρ.P.isLB, ρ.rig_gen⟩)
 
-
-section Support
-
-include ρ
-
-end Support
 
 
 end GlobalTheory.ZH.GoodOut

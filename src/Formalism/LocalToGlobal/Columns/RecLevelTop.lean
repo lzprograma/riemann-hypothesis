@@ -75,16 +75,7 @@ theorem rlt_isCompact_intAd : IsCompact (Formalism.UG.intAd F : Set (FiniteAdele
   have hemb := RestrictedProduct.isEmbedding_structureMap (R := fun v : HeightOneSpectrum (𝓞 F) => v.adicCompletion F)
     (A := fun v => (v.adicCompletionIntegers F : Set (v.adicCompletion F))) (𝓕 := Filter.cofinite)
   have h := isCompact_range hemb.continuous
-  have hset : (Formalism.UG.intAd F : Set (FiniteAdeleRing (𝓞 F) F)) =
-      Set.range (RestrictedProduct.structureMap (fun v : HeightOneSpectrum (𝓞 F) => v.adicCompletion F)
-        (fun v => (v.adicCompletionIntegers F : Set (v.adicCompletion F))) Filter.cofinite) := by
-    ext a
-    constructor
-    · intro ha
-      exact ⟨fun v => ⟨a v, ha v⟩, rfl⟩
-    · rintro ⟨b, rfl⟩ v
-      exact (b v).2
-  rw [hset]
+  rw [RestrictedProduct.range_structureMap] at h
   exact h
 
 end LocalCompact

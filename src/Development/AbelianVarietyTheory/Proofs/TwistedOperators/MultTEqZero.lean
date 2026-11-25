@@ -56,8 +56,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR.Mult GlobalTheory.SmVec MeasureTheory Matrix
 open scoped TensorProduct InnerProductSpace Classical
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.Grid.Sep
 
 theorem density {G H ι : Type} [Group G] [Fintype ι] [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
@@ -414,8 +412,7 @@ theorem multT_eq_zero {u : (⨂[ℂ] τ, M.sm τ) →ₗ[ℂ] (GA D V → ℂ)} 
     rw [hxsum, map_sum] at h
     simpa only [map_smul, huT] using h
   obtain ⟨w', hw'⟩ : ∃ w' : M.Vec, tprodInnerFun w' x ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     exact hx (eq_zero_of_tprodInnerFun x hne)
   apply PiTensorProduct.ext
   apply MultilinearMap.ext

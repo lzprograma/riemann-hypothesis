@@ -24,68 +24,13 @@ public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Deco
 public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.RationalDualityOfAllCoefficients
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineBoundsCrystallineDeRhamAll
 public import Formalism.SharpRestriction.LevelLetterCocycles.JsetEmb
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Mathlib.RingTheory.PiTensorProduct
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodCoefficientRingPadicIntegersFinExt
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOrbitPadicComplex
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTateOperatorLevelComplement
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormPrimitiveRootPrimePowSubOnePadicComplex
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.NumberTheory.Padics.LocalField
-import Mathlib.Topology.Algebra.Nonarchimedean.Completion
-import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Topology.Sheaves.Presheaf
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowSmulMemOL, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSubBasis, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegralFactorOfIdempotentSubfield, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormCoeAutLeOneIff, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TmulMemFilV, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTauComponentFrameOfLattice, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrimePowSmulMemOfTwistedInvariantModLattice, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InvariantsVanishAtPrimeOfAdmissible, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TorsionExponentKillsInvariantsNoJumpZero
@@ -717,14 +662,6 @@ theorem mul_mul (c c' : K) (x : V ⊗[Qp] BdR) :
   | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul v z => simp only [mulVdR_tmul, map_mul, mul_assoc]
 
-theorem mul_add' (c c' : K) (x : V ⊗[Qp] BdR) :
-    mulVdR (K := K) (LL := LL) (c + c') x =
-      mulVdR (K := K) (LL := LL) c x + mulVdR (K := K) (LL := LL) c' x := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
-  | add x y hx hy => simp only [map_add (f := _), hx, hy]; abel
-  | tmul v z => simp only [mulVdR_tmul, map_add (f := _), add_mul, TensorProduct.tmul_add]
-
 theorem mul_smul' (r : Qp) (c : K) (x : V ⊗[Qp] BdR) :
     mulVdR (K := K) (LL := LL) (r • c) x = r • mulVdR (K := K) (LL := LL) c x := by
   induction x using TensorProduct.induction_on with
@@ -738,7 +675,7 @@ def projMap (τ : K →ₐ[Qp] LL) (x : V ⊗[Qp] BdR) : K ⊗[Qp] K →ₗ[Qp] 
   TensorProduct.lift (LinearMap.mk₂ Qp (fun a c => τ a • mulVdR (K := K) (LL := LL) c x)
     (fun a a' c => by rw [map_add (f := _), add_smul])
     (fun r a c => by rw [map_smul, smul_assoc])
-    (fun a c c' => by rw [mul_add', smul_add])
+    (fun a c c' => by rw [GlobalTheory.HubLoc.mu_add, smul_add])
     (fun r a c => by rw [mul_smul', smul_comm]))
 
 theorem proj_mem (τ : K →ₐ[Qp] LL) {n : ℕ} (α β : Fin n → K)
@@ -1351,11 +1288,6 @@ namespace GlobalTheory.Cyc.InvKilled
 
 variable {l : ℕ} [Fact l.Prime]
 
-theorem exists_pow_smul_mem (K LL : FinExt l) (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)) (v : T.V) :
-    ∃ n : ℕ, (l : ↥LL.1) ^ n • v ∈ T.L.T := by
-  first
-  | (apply _root_.GlobalTheory.IntegerRingPowers.main <;> assumption)
-
 theorem killed_of_coordinates {G : Type} [Group G] [TopologicalSpace G] {Qp LL O : Type} [Field Qp]
     [Field LL] [CharZero LL] [Algebra Qp LL] [CommRing O] [Algebra O LL] [TopologicalSpace LL]
     (T : LocLat G Qp LL O) [Module ℤ_[l] ↥T.L.T]
@@ -1443,7 +1375,7 @@ theorem killed_of_coord (K LL : FinExt l) (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 
       ∀ a, ‖(l : ℚ_[l]) ^ c * y a‖ ≤ 1)
     (v : T.V) (hw : ∀ g : ↥(GK K), T.ρ g v - v ∈ T.L.T) : (l : ↥LL.1) ^ c • v ∈ T.L.T := by
   obtain ⟨b, hb, -⟩ := hM
-  obtain ⟨n, hn⟩ := exists_pow_smul_mem K LL T v
+  obtain ⟨n, hn⟩ := GlobalTheory.IntegerRingPowers.main K LL T v
   refine @killed_of_coordinates l _ _ _ _ _ _ _ _ _ _ _ _ _ _ T (zlMod LL T) ?_
     (fun g => actTZ LL T g) (fun _ _ => rfl) d b (fun g => M g) hb c
     (fun y hy => H y fun σ hσ => hy ⟨σ, hσ⟩) v hw n hn
@@ -1591,8 +1523,8 @@ theorem two_add_sum_jumps_le_intervalExponent (S : LocalSituation.Sit) (Y : LocL
     · intro u _
       by_cases hj : IsJumpV S.PD Y.ρ τ u
       · have hu0 : u ≠ 0 := by rintro rfl; exact h0 hj
-        simp only [if_pos hj, if_pos (mem_Jset_of_isJumpV S Y τ u hj), if_pos hu0, le_refl]
-      · simp only [if_neg hj]
+        simp only [ite_eq_left hj, ite_eq_left (mem_Jset_of_isJumpV S Y τ u hj), ite_eq_left hu0, le_refl]
+      · simp only [ite_eq_right hj]
         exact Nat.zero_le _
   omega
 

@@ -48,20 +48,6 @@ theorem deg_nonneg {D : Divisor k K} (hD : 0 ≤ D) : 0 ≤ deg D := by
 
 variable [IsFunctionField k K]
 
-theorem eq_zero_of_deg_eq_zero {D : Divisor k K} (hD : 0 ≤ D) (h : deg D = 0) : D = 0 := by
-  rw [deg_eq_sum] at h
-  have hnn : ∀ v ∈ D.support, 0 ≤ D v * v.deg := fun v _ =>
-    mul_nonneg (by simpa using Finsupp.le_def.1 hD v) (Int.natCast_nonneg _)
-  have h0 := (Finset.sum_eq_zero_iff_of_nonneg hnn).1 h
-  ext v
-  by_cases hv : v ∈ D.support
-  · have := h0 v hv
-    have hdeg : (0 : ℤ) < v.deg := by exact_mod_cast v.deg_pos
-    rcases mul_eq_zero.1 this with h' | h'
-    · simpa using h'
-    · omega
-  · simpa using hv
-
 end Divisor
 
 variable [IsFunctionField k K]
@@ -250,51 +236,63 @@ theorem finiteDimensional_L_add_single (D : Divisor k K) (v : Place k K)
     LinearMap.finrank_le_finrank_of_injective hψ
   omega
 
-theorem finiteDimensional_L_of_le_of_deg_lt (n : ℕ) :
-    ∀ {D E : Divisor k K}, D ≤ E → deg (E - D) < n → FiniteDimensional k (L D) →
-      FiniteDimensional k (L E) ∧
-        (finrank k (L E) : ℤ) ≤ finrank k (L D) + deg E - deg D := by
+theorem induction_le {P : Divisor k K → Divisor k K → Prop}
+    (hrefl : ∀ D, P D D)
+    (hstep : ∀ D E v, D ≤ E → P D E → P D (E + Finsupp.single v 1))
+    {D E : Divisor k K} (hDE : D ≤ E) : P D E := by
   classical
-  induction n with
-  | zero =>
-    intro D E hDE hn _
-    have := deg_nonneg (sub_nonneg.2 hDE)
-    omega
-  | succ n ih =>
-    intro D E hDE hn hD
-    by_cases hED : E = D
-    · subst hED
-      exact ⟨hD, by omega⟩
-    obtain ⟨v, hv⟩ : ∃ v, D v < E v := by
-      by_contra h
-      push Not at h
-      exact hED (le_antisymm (Finsupp.le_def.2 h) hDE)
-    set E' := E - Finsupp.single v 1 with hE'
-    have hDE' : D ≤ E' := Finsupp.le_def.2 fun w => by
-      rw [hE', Finsupp.coe_sub, Pi.sub_apply, Finsupp.single_apply]
-      split_ifs with h
-      · subst h; omega
-      · have := Finsupp.le_def.1 hDE w; omega
-    have hn' : deg (E' - D) < n := by
-      have h1 : deg (E' - D) = deg (E - D) - v.deg := by
-        rw [hE', map_sub, map_sub, map_sub, deg_single]; ring
-      have := v.deg_pos
+  have key : ∀ (n : ℕ) {D E : Divisor k K}, D ≤ E → deg (E - D) < n → P D E := by
+    intro n
+    induction n with
+    | zero =>
+      intro D E hDE hn
+      have := deg_nonneg (sub_nonneg.2 hDE)
       omega
-    obtain ⟨hfin', hle'⟩ := ih hDE' hn' hD
-    have hE : E = E' + Finsupp.single v 1 := by rw [hE']; abel
-    have := hfin'
-    obtain ⟨hfin, hle⟩ := finiteDimensional_L_add_single E' v
-    rw [← hE] at hfin hle
-    refine ⟨hfin, ?_⟩
-    have hdeg : deg E = deg E' + v.deg := by rw [hE, map_add (f := _), deg_single, one_mul]
-    have : (finrank k (L E) : ℤ) ≤ finrank k (L E') + v.deg := by exact_mod_cast hle
-    omega
+    | succ n ih =>
+      intro D E hDE hn
+      by_cases hED : E = D
+      · subst hED; exact hrefl E
+      obtain ⟨v, hv⟩ : ∃ v, D v < E v := by
+        by_contra h
+        push Not at h
+        exact hED (le_antisymm (Finsupp.le_def.2 h) hDE)
+      set E' := E - Finsupp.single v 1 with hE'
+      have hDE' : D ≤ E' := Finsupp.le_def.2 fun w => by
+        rw [hE', Finsupp.coe_sub, Pi.sub_apply, Finsupp.single_apply]
+        split_ifs with h
+        · subst h; omega
+        · have := Finsupp.le_def.1 hDE w; omega
+      have hn' : deg (E' - D) < n := by
+        have h1 : deg (E' - D) = deg (E - D) - v.deg := by
+          rw [hE', map_sub, map_sub, map_sub, deg_single]; ring
+        have := v.deg_pos
+        omega
+      have hE : E = E' + Finsupp.single v 1 := by rw [hE']; abel
+      rw [hE]
+      exact hstep D E' v hDE' (ih hDE' hn')
+  exact key ((deg (E - D)).toNat + 1) hDE (by omega)
 
 theorem finiteDimensional_L_of_le {D E : Divisor k K} (hDE : D ≤ E)
     [FiniteDimensional k (L D)] :
     FiniteDimensional k (L E) ∧
-      (finrank k (L E) : ℤ) ≤ finrank k (L D) + deg E - deg D :=
-  finiteDimensional_L_of_le_of_deg_lt ((deg (E - D)).toNat + 1) hDE (by omega) inferInstance
+      (finrank k (L E) : ℤ) ≤ finrank k (L D) + deg E - deg D := by
+  refine induction_le (P := fun D E => FiniteDimensional k (L D) →
+      FiniteDimensional k (L E) ∧ (finrank k (L E) : ℤ) ≤ finrank k (L D) + deg E - deg D)
+    (fun D hD => ⟨hD, by omega⟩) (fun D E' v _ ih hD => ?_) hDE inferInstance
+  obtain ⟨hfin', hle'⟩ := ih hD
+  have := hfin'
+  obtain ⟨hfin, hle⟩ := finiteDimensional_L_add_single E' v
+  refine ⟨hfin, ?_⟩
+  have hdeg : deg (E' + Finsupp.single v 1) = deg E' + v.deg := by
+    rw [map_add (f := _), deg_single, one_mul]
+  have : (finrank k (L (E' + Finsupp.single v 1)) : ℤ) ≤ finrank k (L E') + v.deg := by exact_mod_cast hle
+  omega
+
+theorem finiteDimensional_L_of_le_of_deg_lt (n : ℕ) :
+    ∀ {D E : Divisor k K}, D ≤ E → deg (E - D) < n → FiniteDimensional k (L D) →
+      FiniteDimensional k (L E) ∧
+        (finrank k (L E) : ℤ) ≤ finrank k (L D) + deg E - deg D :=
+  fun hDE _ hD => have := hD; finiteDimensional_L_of_le hDE
 
 instance (D : Divisor k K) : FiniteDimensional k (L D) := by
   classical

@@ -116,7 +116,7 @@ theorem CutOffShape.proof : CutOffShape.Statement := by
     have hNk : (N : ℝ) ≤ k := by exact_mod_cast hk
     have h3 : L / ((k : ℝ) + 1) < 1 / 2 := by
       rw [div_lt_iff₀ hk']; linarith [le_abs_self L]
-    simp only [logLogCut, logAbsSq, hw0, hw1, if_false]
+    simp only [logLogCut, logAbsSq, hw0, hw1, ite_false]
     exact (Real.smoothTransition.one_of_one_le (by linarith)).symm
 
 end

@@ -15,15 +15,15 @@ variable {M : Type*} [AddCommGroup M] [Module k M]
 
 def C1 (G : Type*) [TopologicalSpace G] (N : Submodule k M) : Submodule k (G → M) where
   carrier := {c | IsLocallyConstant c ∧ ∀ g, c g ∈ N}
-  add_mem' := fun {a b} ha hb => ⟨ha.1.add hb.1, fun g => N.add_mem (ha.2 g) (hb.2 g)⟩
+  add_mem' := fun {_ _} ha hb => ⟨ha.1.add hb.1, fun g => N.add_mem (ha.2 g) (hb.2 g)⟩
   zero_mem' := ⟨IsLocallyConstant.const 0, fun _ => N.zero_mem⟩
-  smul_mem' := fun c x hx => ⟨hx.1.comp (fun m => c • m), fun g => N.smul_mem c (hx.2 g)⟩
+  smul_mem' := fun c _ hx => ⟨hx.1.comp (fun m => c • m), fun g => N.smul_mem c (hx.2 g)⟩
 
 def C2 (G : Type*) [TopologicalSpace G] (N : Submodule k M) : Submodule k (G × G → M) where
   carrier := {c | IsLocallyConstant c ∧ ∀ x, c x ∈ N}
-  add_mem' := fun {a b} ha hb => ⟨ha.1.add hb.1, fun g => N.add_mem (ha.2 g) (hb.2 g)⟩
+  add_mem' := fun {_ _} ha hb => ⟨ha.1.add hb.1, fun g => N.add_mem (ha.2 g) (hb.2 g)⟩
   zero_mem' := ⟨IsLocallyConstant.const 0, fun _ => N.zero_mem⟩
-  smul_mem' := fun c x hx => ⟨hx.1.comp (fun m => c • m), fun g => N.smul_mem c (hx.2 g)⟩
+  smul_mem' := fun c _ hx => ⟨hx.1.comp (fun m => c • m), fun g => N.smul_mem c (hx.2 g)⟩
 
 def d0 (π : Representation k G M) : M →ₗ[k] (G → M) where
   toFun m := fun g => π g m - m

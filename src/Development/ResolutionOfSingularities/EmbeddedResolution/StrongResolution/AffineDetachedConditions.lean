@@ -9,48 +9,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTra
 import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.DiscardedLocus
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
 import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeMorphismProperties
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.SetTheory.ZFC.PSet
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
 
@@ -63,13 +22,6 @@ open CategoryTheory AlgebraicGeometry TopologicalSpace
 noncomputable section
 
 namespace FunctorialResolution.EmbeddedResolution
-
-private theorem mem_of_mem_support_vanishingIdeal {W : Scheme.{u}} (Z : TopologicalSpace.Closeds ↥W)
-    (x : ↥W) (hx : x ∈ (Scheme.IdealSheafData.vanishingIdeal Z).support) : x ∈ (Z : Set ↥W) := by
-  have h2 : x ∈ (((Scheme.IdealSheafData.vanishingIdeal Z).support :
-      TopologicalSpace.Closeds ↥W) : Set ↥W) := hx
-  rw [Scheme.IdealSheafData.coe_support_vanishingIdeal] at h2
-  exact h2
 
 private theorem exists_iso_subscheme_vanishingIdeal_of_closure_range {A W : Scheme.{u}} (f : A ⟶ W)
     [AlgebraicGeometry.IsClosedImmersion f] [AlgebraicGeometry.IsReduced A]
@@ -156,86 +108,25 @@ private theorem mem_support_of_le {X : Scheme.{u}} {I J : X.IdealSheafData} (h :
   (mem_orderAtLeastLocus_one_iff I x).mp
     (orderAtLeastLocus_subset_of_le_ideal h 1 ((mem_orderAtLeastLocus_one_iff J x).mpr hx))
 
-private theorem mem_support_mul {X : Scheme.{u}} (I J : X.IdealSheafData) (x : ↥X) :
-    x ∈ (I * J).support ↔ x ∈ I.support ∨ x ∈ J.support := by
-  have h : (((I * J).support : TopologicalSpace.Closeds ↥X) : Set ↥X)
-      = ((I.support : TopologicalSpace.Closeds ↥X) : Set ↥X)
-        ∪ ((J.support : TopologicalSpace.Closeds ↥X) : Set ↥X) := by
-    simp
-  constructor
-  · intro hx
-    have h2 : x ∈ (((I * J).support : TopologicalSpace.Closeds ↥X) : Set ↥X) := hx
-    rw [h] at h2
-    exact h2
-  · intro hx
-    have h2 : x ∈ (((I * J).support : TopologicalSpace.Closeds ↥X) : Set ↥X) := by
-      rw [h]
-      exact hx
-    exact h2
-
-private theorem mem_support_comap {X Z : Scheme.{u}} (f : X ⟶ Z) (I : Z.IdealSheafData) (x : ↥X) :
-    x ∈ (I.comap f).support ↔ ⇑f.base x ∈ I.support := by
-  constructor
-  · intro hx
-    have h : x ∈ ((((I.comap f)).support : TopologicalSpace.Closeds ↥X) : Set ↥X) := hx
-    rw [support_comap_eq] at h
-    exact h
-  · intro hx
-    have h : x ∈ ((((I.comap f)).support : TopologicalSpace.Closeds ↥X) : Set ↥X) := by
-      rw [support_comap_eq]
-      exact hx
-    exact h
-
-private theorem exists_mem_list_subset_of_isIrreducible {α : Type*} [TopologicalSpace α] {ι : Type*}
-    {s : Set α} (hs : IsIrreducible s) (g : ι → Set α) :
-    ∀ L : List ι, (∀ t ∈ L, IsClosed (g t)) → s ⊆ (⋃ t ∈ L, g t) → ∃ t ∈ L, s ⊆ g t := by
-  intro L
-  induction L with
-  | nil =>
-      intro _ hsub
-      obtain ⟨x, hx⟩ := hs.nonempty
-      obtain ⟨t, ht, -⟩ := Set.mem_iUnion₂.mp (hsub hx)
-      simp at ht
-  | cons a L ih =>
-      intro hcl hsub
-      have hsub' : s ⊆ g a ∪ ⋃ t ∈ L, g t := by
-        intro z hz
-        obtain ⟨t, ht, hzt⟩ := Set.mem_iUnion₂.mp (hsub hz)
-        rcases List.mem_cons.mp ht with rfl | ht'
-        · exact Or.inl hzt
-        · exact Or.inr (Set.mem_iUnion₂.mpr ⟨t, ht', hzt⟩)
-      have hacl : IsClosed (g a) := hcl a (List.mem_cons.mpr (Or.inl rfl))
-      have hUcl : IsClosed (⋃ t ∈ L, g t) :=
-        Set.Finite.isClosed_biUnion L.finite_toSet
-          (fun t ht => hcl t (List.mem_cons.mpr (Or.inr ht)))
-      rcases isPreirreducible_iff_isClosed_union_isClosed.mp hs.2 _ _ hacl hUcl hsub' with h | h
-      · exact ⟨a, List.mem_cons.mpr (Or.inl rfl), h⟩
-      · obtain ⟨t, ht, hts⟩ := ih (fun t ht => hcl t (List.mem_cons.mpr (Or.inr ht))) h
-        exact ⟨t, List.mem_cons.mpr (Or.inr ht), hts⟩
-
-private theorem quasiCompact_strictTransformImmersion {X' X : Scheme.{u}}
-    [TopologicalSpace.NoetherianSpace ↥X'] (π : X' ⟶ X) (Z J : X.IdealSheafData) :
-    AlgebraicGeometry.QuasiCompact (Blowup.strictTransformImmersion π Z J) := by
+private theorem mem_support_strictTransform {X' X : Scheme.{u}}
+    [TopologicalSpace.NoetherianSpace ↥X'] (π : X' ⟶ X)
+    (Z J : X.IdealSheafData) (x : ↥X')
+    (h1 : ⇑π.base x ∈ J.support) (h2 : ⇑π.base x ∉ Z.support) :
+    x ∈ (Blowup.strictTransform π Z J).support := by
   have : AlgebraicGeometry.IsPreimmersion (Blowup.strictTransformImmersion π Z J) := by
     rw [Blowup.strictTransformImmersion_eq]
     infer_instance
-  refine ⟨fun U _ _ => ?_⟩
-  refine ((Blowup.strictTransformImmersion π Z J).isEmbedding.isInducing.isCompact_iff).mpr ?_
-  exact TopologicalSpace.NoetherianSpace.isCompact _
-
-private theorem mem_support_strictTransform {X' X : Scheme.{u}} (π : X' ⟶ X)
-    (Z J : X.IdealSheafData)
-    (hqc : AlgebraicGeometry.QuasiCompact (Blowup.strictTransformImmersion π Z J)) (x : ↥X')
-    (h1 : ⇑π.base x ∈ J.support) (h2 : ⇑π.base x ∉ Z.support) :
-    x ∈ (Blowup.strictTransform π Z J).support := by
-  have := hqc
+  have : AlgebraicGeometry.QuasiCompact (Blowup.strictTransformImmersion π Z J) :=
+    ⟨fun _ _ _ =>
+      ((Blowup.strictTransformImmersion π Z J).isEmbedding.isInducing.isCompact_iff).mpr
+        (TopologicalSpace.NoetherianSpace.isCompact _)⟩
   have hxr : x ∈ Set.range ⇑(J.comap π).subschemeι.base := by
     rw [AlgebraicGeometry.Scheme.IdealSheafData.range_subschemeι]
-    exact (mem_support_comap π J x).mpr h1
+    exact Scheme.IdealSheafData.mem_support_comap.mpr h1
   obtain ⟨y, hy⟩ := hxr
   have h3 : ⇑(J.comap π).subschemeι.base y ∉ (Z.comap π).support := by
     intro hc
-    have h5 := (mem_support_comap π Z _).mp hc
+    have h5 := Scheme.IdealSheafData.mem_support_comap.mp hc
     rw [hy] at h5
     exact h2 h5
   have hyo : y ∈ Blowup.strictTransformOpens π Z J := by
@@ -327,14 +218,13 @@ private theorem support_weakTransform_subset_range_or_boundary {k : Type u} [Fie
       intro hj x hx
       have hjlt : j < S.ambientLength := hj
       have hNs : AlgebraicGeometry.IsNoetherian (S.ambientLevel (j + 1)) := hN (j + 1) hj
-      have hNSs : TopologicalSpace.NoetherianSpace ↥(S.ambientLevel (j + 1)) := inferInstance
       have hxp : x ∈ (Blowup.exceptionalIdeal (S.ambientBlowupMorphism j) (S.ambientCenter j)
-          * principalizationSequenceIdeal S (j + 1)).support :=
-        (mem_support_mul (Blowup.exceptionalIdeal (S.ambientBlowupMorphism j) (S.ambientCenter j))
-          (principalizationSequenceIdeal S (j + 1)) x).mpr (Or.inr hx)
+          * principalizationSequenceIdeal S (j + 1)).support := by
+        rw [Scheme.IdealSheafData.support_mul, ← SetLike.mem_coe, TopologicalSpace.Closeds.coe_sup]
+        exact Or.inr hx
       rw [exceptionalIdeal_mul_weakTransform_succ S j hjlt] at hxp
       have hx1 : ⇑(S.ambientBlowupMorphism j).base x ∈ (principalizationSequenceIdeal S j).support :=
-        (mem_support_comap (S.ambientBlowupMorphism j) (principalizationSequenceIdeal S j) x).mp hxp
+        Scheme.IdealSheafData.mem_support_comap.mp hxp
       by_cases hexc : x ∈ (Blowup.exceptionalIdeal (S.ambientBlowupMorphism j) (S.ambientCenter j)).support
       · have hmem1 : Blowup.exceptionalIdeal (S.ambientBlowupMorphism j) (S.ambientCenter j) ∈ S.boundary (j + 1) := by
           rw [boundary_succ_eq S j hjlt]
@@ -344,7 +234,7 @@ private theorem support_weakTransform_subset_range_or_boundary {k : Type u} [Fie
           intro hc
           apply hexc
           have h6 : x ∈ ((S.ambientCenter j).comap (S.ambientBlowupMorphism j)).support :=
-            (mem_support_comap (S.ambientBlowupMorphism j) (S.ambientCenter j) x).mpr hc
+            Scheme.IdealSheafData.mem_support_comap.mpr hc
           rw [Blowup.exceptionalIdeal_eq_comap]
           exact h6
         rcases ih (le_of_lt hjlt) (⇑(S.ambientBlowupMorphism j).base x) hx1 with hA | ⟨E, hE, hxE⟩
@@ -352,9 +242,7 @@ private theorem support_weakTransform_subset_range_or_boundary {k : Type u} [Fie
           have h1 : ⇑(S.ambientBlowupMorphism j).base x ∈ (S.strictTransformIdeal j).support :=
             (mem_range_strictTransformι_iff S j _).mp hA
           have h2 := mem_support_strictTransform (S.ambientBlowupMorphism j) (S.ambientCenter j)
-            (S.strictTransformIdeal j)
-            (quasiCompact_strictTransformImmersion (S.ambientBlowupMorphism j) (S.ambientCenter j)
-              (S.strictTransformIdeal j)) x h1 hnc
+            (S.strictTransformIdeal j) x h1 hnc
           refine (mem_range_strictTransformι_iff S (j + 1) x).mpr ?_
           rw [S.strictTransformIdeal_succ_eq_strictTransform j]
           exact h2
@@ -363,8 +251,8 @@ private theorem support_weakTransform_subset_range_or_boundary {k : Type u} [Fie
             rw [boundary_succ_eq S j hjlt]
             simp only [List.mem_append, List.mem_map]
             exact Or.inl ⟨E, hE, rfl⟩
-          have hmem2 := mem_support_strictTransform (S.ambientBlowupMorphism j) (S.ambientCenter j) E
-            (quasiCompact_strictTransformImmersion (S.ambientBlowupMorphism j) (S.ambientCenter j) E) x hxE hnc
+          have hmem2 := mem_support_strictTransform (S.ambientBlowupMorphism j) (S.ambientCenter j)
+            E x hxE hnc
           exact Or.inr ⟨_, hmem1, hmem2⟩
 
 private theorem detachedClopenInCenter_of_isNoetherian_of_support {k : Type u} [Field k] [CharZero k] {Y : Scheme.{u}}
@@ -386,7 +274,6 @@ private theorem detachedClopenInCenter_of_isNoetherian_of_support {k : Type u} [
       ((S.ambientCenter i).subschemeι ≫ S.schemeAtToSpec i) := S.principalizationSequence.smooth_center_subschemeι i hi
   have hredW : AlgebraicGeometry.IsReduced (S.ambientCenter i).subscheme :=
     smooth_isReduced ((S.ambientCenter i).subschemeι ≫ S.schemeAtToSpec i) hsmW
-  have hNW : TopologicalSpace.NoetherianSpace ↥(S.ambientCenter i).subscheme := inferInstance
   have hrangeA : Set.range ⇑(S.strictTransformι i).base
       = (((S.strictTransformIdeal i).support : TopologicalSpace.Closeds ↥(S.ambientLevel i))
           : Set ↥(S.ambientLevel i)) := by
@@ -469,11 +356,15 @@ private theorem detachedClopenInCenter_of_isNoetherian_of_support {k : Type u} [
         exact Set.image_mono hG
       intro z hz
       exact hclosure (subset_closure (Set.mem_image_of_mem _ hz))
-    · obtain ⟨E, hE, hFsubE⟩ := exists_mem_list_subset_of_isIrreducible hFirr
-        (fun E : (S.ambientLevel i).IdealSheafData =>
+    · classical
+      obtain ⟨_, hmem, hFsubE⟩ := isIrreducible_iff_sUnion_isClosed.mp hFirr
+        ((S.boundary i).toFinset.image fun E =>
           ((E.support : TopologicalSpace.Closeds ↥(S.ambientLevel i)) : Set ↥(S.ambientLevel i)))
-        (S.boundary i) (fun E _ => (E.support).2) hcase
-      exact ((hmk i hi.le C hCcomp E hE) (hCsubF.trans hFsubE)).elim
+        (fun _ ht => by rcases Finset.mem_image.mp ht with ⟨E, _, rfl⟩; exact E.support.2)
+        (by simpa [Set.sUnion_image] using hcase)
+      obtain ⟨E, hE, hEq⟩ := Finset.mem_image.mp hmem
+      exact ((hmk i hi.le C hCcomp E (List.mem_toFinset.mp hE))
+        (hCsubF.trans (hEq ▸ hFsubE))).elim
   have hPreimageDiscarded : ⇑((S.ambientCenter i).subschemeι).base ⁻¹'
       (⇑(S.strictTransformι i).base '' S.discardedLocus i)
       = ⋃₀ ((fun C : Set ↥(S.strictTransform i) =>
@@ -565,8 +456,8 @@ private theorem detachedClopenInCenter_ofAffine (A : PrincipalizationAlgorithm.{
       x ∈ (principalizationSequenceIdeal (AffineSpacePrincipalizationData.ofAffine A hemb hsnc hsm k Y pY) 0).support →
         x ∈ Set.range ⇑((AffineSpacePrincipalizationData.ofAffine A hemb hsnc hsm k Y pY).strictTransformι 0).base := by
     intro x hx
-    rw [heq] at hx
-    exact mem_of_mem_support_vanishingIdeal _ x hx
+    rw [heq, ← SetLike.mem_coe, Scheme.IdealSheafData.coe_support_vanishingIdeal] at hx
+    exact hx
   refine detachedClopenInCenter_of_isNoetherian_of_support _ hN (support_weakTransform_subset_range_or_boundary _ hN hbase) ?_
   intro j hj C hC E hE
   exact OpenImmersionRestriction.not_image_irreducibleComponent_subset_boundary_support

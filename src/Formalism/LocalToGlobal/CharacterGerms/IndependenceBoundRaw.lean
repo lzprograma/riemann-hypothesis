@@ -2,58 +2,8 @@ module
 
 import Formalism.LocalToGlobal.CharacterGerms.MaximalOfValuationGeOne
 public import Formalism.LocalToGlobal.CharacterGerms.Interface
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
 public import Mathlib.Data.Nat.Choose.Dvd
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Presheaf
 public import Mathlib.Algebra.BigOperators.Field
 
 @[expose] public section
@@ -93,22 +43,14 @@ theorem mm_mul_int {a b : C} (ha : V.Ge 0 a) (hb : V.MM b) : V.MM (a * b) := by
 theorem mm_of_pow {a : C} {n : ℕ} (h : V.MM (a ^ n)) : V.MM a := by
   unfold VF.MM at *
   rw [V.v.map_pow] at h
-  by_contra hle
-  push_neg at hle
+  by_contra! hle
   exact absurd h (not_lt.mpr (nsmul_nonpos hle n))
-
-theorem mm_pow {a : C} (ha : V.MM a) {n : ℕ} (hn : n ≠ 0) : V.MM (a ^ n) := by
-  obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
-  unfold VF.MM at *
-  rw [V.v.map_pow, succ_nsmul]
-  exact lt_of_lt_of_le ha (le_add_of_nonneg_left (nsmul_nonneg ha.le m))
 
 theorem valuation_nonneg_of_pow {a : C} {n : ℕ} (h : V.Ge 0 (a ^ n)) (hn : n ≠ 0) : V.Ge 0 a := by
   rw [valuation_nonneg_iff] at *
   rw [V.v.map_pow] at h
   obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   rw [succ_nsmul] at h
   have h1 : m • V.v a ≤ 0 := nsmul_nonpos hlt.le m
   exact absurd h (not_le.mpr (lt_of_le_of_lt (le_of_le_of_eq (add_le_add h1 le_rfl) (zero_add _)) hlt))
@@ -117,8 +59,7 @@ theorem valuation_nonneg_div {x y : C} (hy : y ≠ 0) (h : V.v y ≤ V.v x) : V.
   obtain ⟨r, hr⟩ := WithTop.ne_top_iff_exists.mp (fun h' => hy ((V.v.top_iff).mp h'))
   have hx : x = (x / y) * y := by field_simp
   rw [valuation_nonneg_iff]
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   obtain ⟨s, hs⟩ := WithTop.ne_top_iff_exists.mp (ne_top_of_lt hlt)
   have h2 : V.v x = ((s + r : ℝ) : WithTop ℝ) := by
     rw [hx, V.v.map_mul, ← hs, ← hr, WithTop.coe_add]
@@ -128,10 +69,6 @@ theorem valuation_nonneg_div {x y : C} (hy : y ≠ 0) (h : V.v y ≤ V.v x) : V.
   have h4 : r ≤ s + r := by exact_mod_cast h
   linarith
 
-theorem frob2 {a b : C} (ha : V.Ge 0 a) (hb : V.Ge 0 b) :
-    V.MM ((a + b) ^ V.l - a ^ V.l - b ^ V.l) := by
-  apply Formalism.L2.FormalSeriesBounds.MaximalIdealCongruence.mm_add_pow <;> assumption
-
 theorem frob_sum {ι : Type*} (s : Finset ι) (f : ι → C) (hf : ∀ i ∈ s, V.Ge 0 (f i)) :
     V.MM ((∑ i ∈ s, f i) ^ V.l - ∑ i ∈ s, f i ^ V.l) := by
   induction s using Finset.induction_on with
@@ -139,7 +76,7 @@ theorem frob_sum {ι : Type*} (s : Finset ι) (f : ι → C) (hf : ∀ i ∈ s, 
   | insert i s hi ih =>
     rw [Finset.sum_insert hi, Finset.sum_insert hi]
     have hs : V.Ge 0 (∑ j ∈ s, f j) := VF.Ge.sum fun j hj => hf j (Finset.mem_insert_of_mem hj)
-    have h1 := frob2 (hf i (Finset.mem_insert_self i s)) hs
+    have h1 := Formalism.L2.FormalSeriesBounds.MaximalIdealCongruence.mm_add_pow (hf i (Finset.mem_insert_self i s)) hs
     have h2 := ih fun j hj => hf j (Finset.mem_insert_of_mem hj)
     have e : (f i + ∑ j ∈ s, f j) ^ V.l - (f i ^ V.l + ∑ j ∈ s, f j ^ V.l) =
         ((f i + ∑ j ∈ s, f j) ^ V.l - f i ^ V.l - (∑ j ∈ s, f j) ^ V.l) +
@@ -216,7 +153,7 @@ theorem independence_bound_of_span_raw [IsAlgClosed C] (X : Cart V d I J) (a : Z
     simpa [Finset.sum_apply, Pi.smul_apply, smul_eq_mul] using this)
   apply hν0
   rw [← hc ν0]
-  exact mm_pow (hcm ν0) hl2.ne'
+  exact Formalism.L2.FormalSeriesBounds.MaximalIdealCongruence.mm_pow (hcm ν0) hl2.ne'
 
 theorem even_val_add_two {d : ℕ} [NeZero d] (hd : Even d) (a : ZMod d) :
     Even (a + 2).val ↔ Even a.val := by
@@ -227,11 +164,5 @@ theorem even_val_add_two {d : ℕ} [NeZero d] (hd : Even d) (a : ZMod d) :
   omega
 
 end ValuationNonnegativity
-
-section Closed
-
-variable {C : Type} [Field C]
-
-end Closed
 
 end Formalism.L2.FormalSeriesBounds

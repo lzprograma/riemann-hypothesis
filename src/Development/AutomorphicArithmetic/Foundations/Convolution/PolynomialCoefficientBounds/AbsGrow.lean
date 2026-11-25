@@ -4,55 +4,7 @@ public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.Affine
 public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.MatrixEntryAbsSumUnitaryLieCoordinatesSplit
 public import Mathlib.RingTheory.Polynomial.Vieta
 public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.MvPolynomial
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.Reduce, Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.AbsGrow
@@ -66,15 +18,6 @@ open MvPolynomial Filter Topology PositivityTheory.Rg.Fx
 
 private noncomputable def nrm {ι : Type} (p : MvPolynomial ι ℂ) : ℝ :=
   ∑ α ∈ p.support, ‖p.coeff α‖
-
-private theorem nrm_nonneg {ι : Type} (p : MvPolynomial ι ℂ) : 0 ≤ nrm p :=
-  Finset.sum_nonneg fun _ _ => norm_nonneg _
-
-private theorem nrm_add {ι : Type} (p q : MvPolynomial ι ℂ) : nrm (p + q) ≤ nrm p + nrm q :=
-  (UpperTheory.ConvolutionTheory.FX.coeffL1_submultiplicative_facts ι p q).1
-
-private theorem nrm_mul {ι : Type} (p q : MvPolynomial ι ℂ) : nrm (p * q) ≤ nrm p * nrm q :=
-  (UpperTheory.ConvolutionTheory.FX.coeffL1_submultiplicative_facts ι p q).2.1
 
 private theorem nrm_monomial {ι : Type} (a : ι →₀ ℕ) (c : ℂ) :
     nrm (monomial a c : MvPolynomial ι ℂ) = ‖c‖ :=
@@ -99,9 +42,10 @@ private theorem FXRep.add {p q c d e} (h : FXRep φ m p e c) (h' : FXRep φ m q 
   refine ⟨fun β => G β + G' β, ?_, ?_, fun β => (totalDegree_add _ _).trans (max_le (h3 β) (h3' β))⟩
   · rw [h1, h1', ← Finset.sum_add_distrib]
     simp only [map_add (f := _), add_mul]
-  · refine (Finset.sum_le_sum fun β _ => nrm_add _ _).trans ?_
+  · refine (Finset.sum_le_sum fun β _ =>
+      (UpperTheory.ConvolutionTheory.FX.coeffL1_submultiplicative_facts ι _ _).1).trans ?_
     rw [Finset.sum_add_distrib]
-    linarith
+    exact add_le_add h2 h2'
 
 private theorem FXRep.sum {κ : Type} (s : Finset κ) (f : κ → MvPolynomial ι ℂ) (c : κ → ℝ) {e : ℕ}
     (h : ∀ i ∈ s, FXRep φ m (f i) e (c i)) : FXRep φ m (∑ i ∈ s, f i) e (∑ i ∈ s, c i) := by
@@ -119,9 +63,10 @@ private theorem FXRep.smul {p c e e'} (g : MvPolynomial ι ℂ) (hg : g.totalDeg
   refine ⟨fun β => g * G β, ?_, ?_, fun β => (totalDegree_mul _ _).trans (add_le_add hg (h3 β))⟩
   · rw [h1, Finset.mul_sum]
     simp only [map_mul, mul_assoc]
-  · refine (Finset.sum_le_sum fun β _ => nrm_mul _ _).trans ?_
+  · refine (Finset.sum_le_sum fun β _ =>
+      (UpperTheory.ConvolutionTheory.FX.coeffL1_submultiplicative_facts ι _ _).2.1).trans ?_
     rw [← Finset.mul_sum]
-    exact mul_le_mul_of_nonneg_left h2 (nrm_nonneg g)
+    exact mul_le_mul_of_nonneg_left h2 (Finset.sum_nonneg fun _ _ => norm_nonneg _)
 
 private theorem FXRep.basis (β : B) : FXRep φ m (m β) 0 1 := by
   classical

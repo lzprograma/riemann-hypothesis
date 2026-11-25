@@ -5,48 +5,9 @@ public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PosULeIff
 public import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeMapFractionField
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.FrMemLetters
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SlackBoundJoint
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.BitVec
-import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.GrowthBounds.PathWeight.DvDegOtherMono
 import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PreChainLe, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembVB
@@ -316,8 +277,7 @@ private theorem sDegs_rename_subset_sDegs_preimage {R : Type} [CommRing R] {ι �
   intro k hk
   simp only [Finset.mem_biUnion, MvPolynomial.mem_support_iff, Finsupp.mem_support_iff] at hk ⊢
   obtain ⟨m, -, hk⟩ := hk
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   apply hk
 
   rw [B.as_sum, map_sum, coeff_sum]
@@ -536,14 +496,11 @@ theorem valBd_of (hM : MFH p Fr TT L₁ L₂ N₁ G' deg d Y (r + K) cP)
         have hmg := hM.margin _ _ hx.1 hx.2
         have hpos : (tlPos Fr Dt.nL (⟨j, Sum.inr ⟨r - 1 - (u - Dt.nL j), hm⟩⟩ : TL J Dt.nL r)) =
             (j, posU Fr (Dt.nL j) (segZ j) u) := by
-          simp only [tlPos, posTL, posU, if_neg (show ¬ u < Dt.nL j by omega)]
+          simp only [tlPos, posTL, posU, ite_eq_right (show ¬ u < Dt.nL j by omega)]
           congr 2
           omega
         rw [hpos] at hmg
         unfold slU
-        have hcp : (0 : ℝ) ≤ 128 * (cP : ℝ) := by positivity
-        have hmg' : (128 * (cP : ℝ)) ≤ ((sl p Fr deg Y (r + K) (segZ j) (posU Fr (Dt.nL j) (segZ j) u) : ℤ) : ℝ) := by
-          exact_mod_cast hmg
         linarith
       intro k hk
       rw [hk] at h2
@@ -554,8 +511,6 @@ theorem valBd_of (hM : MFH p Fr TT L₁ L₂ N₁ G' deg d Y (r + K) cP)
       rw [hthL j _ hmm2, hc] at h3
       simp only [hu'] at h3
       unfold tauU
-      have h5 := vb_arith2 (thStar Fr p deg Y (r + K) (mStar p Fr (r + K) N₁ (p ^ G') cP) Dt.nL K ka j u)
-        (slU Fr p deg Y (r + K) Dt.nL j u) (cP : ℝ) hs
       have h6 : (k' : ℝ) ≤ (k : ℝ) := by exact_mod_cast h4
       linarith
   · intro j u hu

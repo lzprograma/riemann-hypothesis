@@ -5,54 +5,9 @@ public import Mathlib.LinearAlgebra.Matrix.IsDiag
 public import Mathlib.NumberTheory.NumberField.CMField
 public import Mathlib.RingTheory.SimpleRing.Principal
 public import Mathlib.RingTheory.Unramified.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
+import Formalism.SharedLemmas.NormLeOneOfIntegral
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.RingTheory.DedekindDomain.Factorization
 
 @[expose] public section
@@ -99,8 +54,7 @@ theorem hf_smul_right (G : Matrix I I R) (a : R) (x y : I → R) : hf G x (a •
 theorem local_exists [Nonempty I] (G : Matrix I I R) (hG : Gᴴ = -G) (hdet : IsUnit G.det) (m : Ideal R)
     (hm : ∃ a : R, a - star a ∉ m) : ∃ x : I → R, hf G x x ∉ m := by
   obtain ⟨a, ha⟩ := hm
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   obtain ⟨k⟩ := ‹Nonempty I›
   set e : I → R := Pi.single k 1 with he
   set v : I → R := e ᵥ* G⁻¹ with hv
@@ -281,8 +235,7 @@ theorem crt_entry [Finite (MaximalSpectrum R)] (t : MaximalSpectrum R → R) :
 theorem unimod {I : Type} [Fintype I] [DecidableEq I] (G : Matrix I I R) (x : I → R) (hu : IsUnit (hf G x x)) :
     ∀ M : Ideal R, M.IsMaximal → ∃ i, x i ∉ M := by
   intro M hM
-  by_contra h
-  push_neg at h
+  by_contra! h
   have hmem : hf G x x ∈ M := by
     rw [hf_expand]
     exact Ideal.sum_mem _ fun i _ => Ideal.sum_mem _ fun j _ => M.mul_mem_right _ (M.mul_mem_right _ (h i))
@@ -329,13 +282,13 @@ theorem unitCoord [Finite (MaximalSpectrum R)] {n : ℕ} (x : Fin (n + 1) → R)
       by_cases hi : i = 0
       · subst hi
         by_cases h0 : (0 : Fin (n + 1)) = k P
-        · rw [if_pos h0]
+        · rw [ite_eq_left h0]
           simp [c']
-        · rw [if_neg h0]
+        · rw [ite_eq_right h0]
           simpa [c'] using hk0 P (Ne.symm h0)
       · have h : x i * (c i - if i = k P then 1 else 0) ∈ M := Ideal.mul_mem_left _ (x i) (hc i P)
         have he : x i * c' i - (if i = k P then x i else 0) = x i * (c i - if i = k P then 1 else 0) := by
-          simp only [c', if_neg hi]
+          simp only [c', ite_eq_right hi]
           split_ifs <;> ring
         rw [he]
         exact h
@@ -506,8 +459,7 @@ theorem PositivityTheory.Xgf.skew_hermitian_diagonalizable : ∀ (R : Type) [Com
 
 theorem PositivityTheory.Xgf.exists_not_mem_sub_conj : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (bar : 𝓞 E ≃+* 𝓞 E), (∀ a : 𝓞 E, ((bar a : 𝓞 E) : E) = IsCMField.complexConj E (a : E)) → Algebra.Unramified (𝓞 (maximalRealSubfield E)) (𝓞 E) → ∀ m : Ideal (𝓞 E), m.IsMaximal → ∃ a : 𝓞 E, a - bar a ∉ m := by
   intro E _ _ _ bar hbar hunr m hm
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hfix : ∀ r : 𝓞 (maximalRealSubfield E),
       bar (algebraMap _ (𝓞 E) r) = algebraMap _ (𝓞 E) r := by
     intro r
@@ -562,35 +514,6 @@ theorem norm_natCast_cp (p : Nat.Primes) (n : ℕ) (hn : ¬ (p : ℕ) ∣ n) : �
 
 end PositivityTheory.Xgf.LocGen
 
-private theorem norm_le_one_lemma (p : Nat.Primes) (y : ℂ_[(p : ℕ)]) (f : Polynomial ℤ) (hmon : f.Monic)
-    (hf : f.eval₂ (Int.castRingHom ℂ_[(p : ℕ)]) y = 0) : ‖y‖ ≤ 1 := by
-  by_contra hlt
-  push_neg at hlt
-  rw [hmon.as_sum] at hf
-  simp only [Polynomial.eval₂_add, Polynomial.eval₂_pow, Polynomial.eval₂_X, Polynomial.eval₂_finsetSum,
-    Polynomial.eval₂_mul, Polynomial.eval₂_C, Int.coe_castRingHom] at hf
-  have hd : f.natDegree ≠ 0 := by
-    intro h0
-    rw [h0] at hf
-    simp at hf
-  have h1 : y ^ f.natDegree = -∑ i ∈ Finset.range f.natDegree, ((f.coeff i : ℤ) : ℂ_[(p : ℕ)]) * y ^ i :=
-    eq_neg_of_add_eq_zero_left hf
-  have h2 : ‖∑ i ∈ Finset.range f.natDegree, ((f.coeff i : ℤ) : ℂ_[(p : ℕ)]) * y ^ i‖ ≤
-      ‖y‖ ^ (f.natDegree - 1) := by
-    apply IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (by positivity)
-    intro i hi
-    rw [norm_mul, norm_pow]
-    have hc : ‖((f.coeff i : ℤ) : ℂ_[(p : ℕ)])‖ ≤ 1 := IsUltrametricDist.norm_intCast_le_one _ _
-    have hi' : i ≤ f.natDegree - 1 := by
-      have := Finset.mem_range.1 hi
-      omega
-    calc ‖((f.coeff i : ℤ) : ℂ_[(p : ℕ)])‖ * ‖y‖ ^ i ≤ 1 * ‖y‖ ^ (f.natDegree - 1) :=
-          mul_le_mul hc (pow_le_pow_right₀ hlt.le hi') (by positivity) zero_le_one
-      _ = _ := one_mul _
-  rw [← norm_neg, ← h1, norm_pow] at h2
-  have h3 : ‖y‖ ^ (f.natDegree - 1) < ‖y‖ ^ f.natDegree := pow_lt_pow_right₀ hlt (by omega)
-  linarith
-
 open PositivityTheory.Xgf.LocGen in
 theorem PositivityTheory.Xgf.ideal_padic_generator_log_norm : ∀ (F : Type) [Field F] [NumberField F] (I : Ideal (𝓞 F)) (p : Nat.Primes), I ≠ ⊥ → ∃ δ ∈ I, δ ≠ 0 ∧ (∃ n : ℕ, ¬ (p : ℕ) ∣ n ∧ ∀ a ∈ I, (n : 𝓞 F) * a ∈ Ideal.span {δ}) ∧ ∀ j : F →+* ℂ_[p], Real.log ‖j (δ : F)‖ = logIdeal (j.comp (algebraMap (𝓞 F) F)) I := by
   intro F _ _ I p hI
@@ -644,13 +567,9 @@ theorem PositivityTheory.Xgf.ideal_padic_generator_log_norm : ∀ (F : Type) [Fi
     exact Ideal.add_mem _ (Ideal.mul_mem_left _ _ hay) (Ideal.mul_mem_right _ _ hNmem)
   refine ⟨δ, hδI, hδ0, ⟨n, hn, hmul⟩, ?_⟩
   intro j
-  have hint : ∀ b : 𝓞 F, ‖j (algebraMap (𝓞 F) F b)‖ ≤ 1 := by
-    intro b
-    obtain ⟨f, hmon, hf⟩ := NumberField.RingOfIntegers.isIntegral_coe b
-    refine norm_le_one_lemma p _ f hmon ?_
-    have h := congrArg j hf
-    rw [Polynomial.hom_eval₂, map_zero] at h
-    rwa [show j.comp (algebraMap ℤ F) = Int.castRingHom _ from RingHom.ext_int _ _] at h
+  have hint : ∀ b : 𝓞 F, ‖j (algebraMap (𝓞 F) F b)‖ ≤ 1 := fun b =>
+    _root_.Formalism.SharedLemmas.norm_le_one_of_isIntegral
+      (map_isIntegral_int j (NumberField.RingOfIntegers.isIntegral_coe b))
   have bound : ∀ a ∈ I, ‖j (algebraMap (𝓞 F) F a)‖ ≤ ‖j (algebraMap (𝓞 F) F δ)‖ := by
     intro a ha
     obtain ⟨b, hb⟩ := Ideal.mem_span_singleton'.1 (hmul a ha)

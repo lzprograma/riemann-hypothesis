@@ -1,52 +1,7 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -92,11 +47,11 @@ theorem UpperTheory.Gal.productCup_of_system.localOne_of_gl1 :
   let yb : Finset β → Finset κ → E := fun b => if h : (b.card : ℤ) = n - d then (hy b h).choose else 0
   have hyb : ∀ b, (b.card : ℤ) = n - d → yb b ∈ (colA A w b).C (d - 1) ∧ (colA A w b).D (yb b) = col c b := by
     intro b hb
-    simp only [yb, dif_pos hb]
+    simp only [yb, dite_eq_left hb]
     exact (hy b hb).choose_spec
   have hy0 : ∀ b, ¬ (b.card : ℤ) = n - d → yb b = 0 := by
     intro b hb
-    simp only [yb, dif_neg hb]
+    simp only [yb, dite_eq_right hb]
   let y : Finset (β ⊕ₗ κ) → E := fun s => ((-1 : ℤ) ^ (lft s).card) • yb (lft s) (rgt s)
   have hmem : ∀ b, (b.card : ℤ) = n - d → ∀ L, yb b L ∈ (if (L.card : ℤ) = d - 1 then A (uni b L) else ⊥) := by
     intro b hb L
@@ -108,7 +63,7 @@ theorem UpperTheory.Gal.productCup_of_system.localOne_of_gl1 :
     by_cases hb : ((lft s).card : ℤ) = n - d
     · have hL : ¬ ((rgt s).card : ℤ) = d - 1 := fun h => hs ⟨hb, h⟩
       have h1 := hmem _ hb (rgt s)
-      rw [if_neg hL, Submodule.mem_bot] at h1
+      rw [ite_eq_right hL, Submodule.mem_bot] at h1
       simp only [y, h1, smul_zero]
     · simp only [y, hy0 _ hb, Pi.zero_apply, smul_zero]
   have hcC : ∀ s : Finset (β ⊕ₗ κ), ¬ (s.card : ℤ) = n → c s = 0 := by
@@ -116,7 +71,7 @@ theorem UpperTheory.Gal.productCup_of_system.localOne_of_gl1 :
     have h : c ∈ Submodule.pi Set.univ
       (fun s : Finset (β ⊕ₗ κ) => if (s.card : ℤ) = n then A s else ⊥) := hc.1
     have h1 := (Submodule.mem_pi.1 h) s (Set.mem_univ _)
-    rwa [if_neg hs, Submodule.mem_bot] at h1
+    rwa [ite_eq_right hs, Submodule.mem_bot] at h1
   refine hG (β ⊕ₗ κ) E A w (Finset.univ.map (inrE : κ ↪o β ⊕ₗ κ).toEmbedding) d n hW
     (hC β κ E A w d hK) c hc ?_ ⟨y, ?_, ?_, ?_⟩
   · intro s hs
@@ -130,9 +85,9 @@ theorem UpperTheory.Gal.productCup_of_system.localOne_of_gl1 :
     · have hcard : (s.card : ℤ) = n - 1 := by
         rw [eC s]; push_cast; omega
       have h1 := hmem _ h.1 (rgt s)
-      rw [if_pos h.2, e s] at h1
+      rw [ite_eq_left h.2, e s] at h1
       show y s ∈ (if (s.card : ℤ) = n - 1 then A s else ⊥)
-      rw [if_pos hcard]
+      rw [ite_eq_left hcard]
       exact zsmul_mem h1 _
     · rw [hz s h]
       exact zero_mem _
@@ -147,12 +102,12 @@ theorem UpperTheory.Gal.productCup_of_system.localOne_of_gl1 :
         (fun i : β => wOn (Finset.univ.map (inrE : κ ↪o β ⊕ₗ κ).toEmbedding) w (inlE i)) = fun _ => 0 := by
       intro _i
       funext i
-      simp only [wOn, if_neg (inl_not_mem i)]
+      simp only [wOn, ite_eq_right (inl_not_mem i)]
     have h1 : ∀ _i : DecidableEq (β ⊕ₗ κ),
         (fun l : κ => wOn (Finset.univ.map (inrE : κ ↪o β ⊕ₗ κ).toEmbedding) w (inrE l)) = fun l => w (inrE l) := by
       intro _i
       funext l
-      simp only [wOn, if_pos (inr_mem l)]
+      simp only [wOn, ite_eq_left (inr_mem l)]
     have h2 : (fun L' : Finset κ => y (uni (lft s) L')) = ((-1 : ℤ) ^ (lft s).card) • yb (lft s) := by
       funext L'
       simp only [y, eL, eR, Pi.smul_apply]

@@ -144,6 +144,39 @@ theorem paramFun_add (hf : IsParamFun σ J L S f B) (hf' : IsParamFun σ J L S f
 theorem paramFun_smul (hf : IsParamFun σ J L S f B) {a : ℂ} (ha : a ≠ 0) : IsParamFun σ J L S (a • f) B :=
   fun v hv w h => paramVec_smul (hf v hv w h) ha
 
+open scoped ComplexConjugate in
+/-- Functions whose nonzero conjugates have the prescribed Hecke parameters. -/
+def conjParamSubmodule (L : Submodule (𝓞 E) (Fin n → E)) (S : Set (HeightOneSpectrum (𝓞 F)))
+    (B : Fam E) : Submodule ℂ (GAd σ J → ℂ) where
+  carrier := {f | f ≠ 0 → IsParamFun σ J L S (fun g => conj (f g)) B}
+  zero_mem' h := (h rfl).elim
+  add_mem' {f f'} hf hf' h := by
+    by_cases hz : f = 0
+    · subst f
+      simpa using hf' (by simpa using h)
+    by_cases hz' : f' = 0
+    · subst f'
+      simpa using hf (by simpa using h)
+    have hne : (fun g => conj (f g)) + (fun g => conj (f' g)) ≠ 0 := by
+      intro he
+      apply h
+      funext g
+      simpa using congrArg (fun z : ℂ => conj z) (congrFun he g)
+    have hadd : (fun g => conj ((f + f') g)) =
+        (fun g => conj (f g)) + (fun g => conj (f' g)) := by
+      funext g
+      simp
+    rw [hadd]
+    exact paramFun_add (hf hz) (hf' hz') hne
+  smul_mem' a f hf h := by
+    have ha : a ≠ 0 := fun e => h (by simp [e])
+    have hne : f ≠ 0 := fun e => h (by simp [e])
+    have hsmul : (fun g => conj ((a • f) g)) = conj a • (fun g => conj (f g)) := by
+      funext g
+      simp
+    rw [hsmul]
+    exact paramFun_smul (hf hne) (by simpa using ha)
+
 end Fun
 
 end GlobalTheory.LFun.ParLin
@@ -154,49 +187,18 @@ open scoped TensorProduct InnerProductSpace ComplexConjugate
 
 namespace GlobalTheory.ChainOnto
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 open GlobalTheory.LFun.ParLin in
 theorem isPar_add_smul : ∀ (D : D7) (c : Com D) (s : PiLocalization₂ D), (∀ (u u' : s.CC c) B B' (a : ℂ), IsPar u B → IsPar u' B' →
     (∀ w ∉ (GlobalTheory.LFun.above D.host.E (c.S : Set (HeightOneSpectrum (𝓞 D.host.F)))), B w = B' w) →
     u + a • u' ≠ 0 → IsPar (u + a • u') B) ∧ ∀ (u : s.CC c) B (a : ℂ), IsPar u B → a ≠ 0 → IsPar (a • u) B := by
   intro D c s
-  have cne : ∀ f : GA D s.V → ℂ, f ≠ 0 → (fun g => conj (f g)) ≠ 0 := fun f hf h0 =>
-    hf (funext fun g => by simpa using congrFun h0 g)
-  refine ⟨fun u u' B B' a hu hu' hB h0 => ⟨h0, fun v hv => ?_⟩, fun u B a hu ha => ⟨smul_ne_zero ha hu.1, fun v hv => ?_⟩⟩
-  · have hval : PiLocalization₂.val (u + a • u') v = PiLocalization₂.val u v + a • PiLocalization₂.val u' v := by simp [PiLocalization₂.val]
-    have hc : (fun g => conj (PiLocalization₂.val (u + a • u') v g)) =
-        (fun g => conj (PiLocalization₂.val u v g)) + (conj a) • (fun g => conj (PiLocalization₂.val u' v g)) := by
-      funext g; simp [hval]
-    unfold ParFun
-    rw [hc]
-    by_cases h1 : PiLocalization₂.val u v = 0
-    · have h2 : a • PiLocalization₂.val u' v ≠ 0 := by rw [hval, h1, zero_add] at hv; exact hv
-      have ha : a ≠ 0 := fun e => h2 (by simp [e])
-      have hu'v : PiLocalization₂.val u' v ≠ 0 := fun e => h2 (by simp [e])
-      have hz : (fun g => conj (PiLocalization₂.val u v g)) = 0 := by funext g; simp [h1]
-      rw [hz, zero_add]
-      exact paramFun_smul (paramFun_of_agree (hu'.2 v hu'v) hB) (by simpa using ha)
-    · by_cases h2 : a • PiLocalization₂.val u' v = 0
-      · have hz : (conj a) • (fun g => conj (PiLocalization₂.val u' v g)) = 0 := by
-          funext g
-          have := congrFun h2 g
-          simp only [Pi.smul_apply, smul_eq_mul, Pi.zero_apply] at this ⊢
-          rw [← map_mul, this, map_zero]
-        rw [hz, add_zero]
-        exact hu.2 v h1
-      · have ha : a ≠ 0 := fun e => h2 (by simp [e])
-        have hu'v : PiLocalization₂.val u' v ≠ 0 := fun e => h2 (by simp [e])
-        refine paramFun_add (hu.2 v h1) (paramFun_smul (paramFun_of_agree (hu'.2 v hu'v) hB) (by simpa using ha)) ?_
-        rw [← hc]
-        exact cne _ hv
-  · have hval : PiLocalization₂.val (a • u) v = a • PiLocalization₂.val u v := by simp [PiLocalization₂.val]
-    have hu0 : PiLocalization₂.val u v ≠ 0 := fun e => hv (by rw [hval, e, smul_zero])
-    have hc : (fun g => conj (PiLocalization₂.val (a • u) v g)) = (conj a) • (fun g => conj (PiLocalization₂.val u v g)) := by
-      funext g; simp [hval]
-    unfold ParFun
-    rw [hc]
-    exact paramFun_smul (hu.2 v hu0) (by simpa using ha)
+  let P := fun B => conjParamSubmodule (σ := D.sp.cm.sig) (J := s.V.gram) s.Λ c.S B
+  refine ⟨fun u u' B B' a hu hu' hB h0 => ⟨h0, fun v => ?_⟩,
+    fun u B a hu ha => ⟨smul_ne_zero ha hu.1, fun v => ?_⟩⟩
+  · exact (P B).add_mem (show PiLocalization₂.val u v ∈ P B from hu.2 v)
+      ((P B).smul_mem a (show PiLocalization₂.val u' v ∈ P B from
+        fun h => paramFun_of_agree (hu'.2 v h) hB))
+  · exact (P B).smul_mem a (show PiLocalization₂.val u v ∈ P B from hu.2 v)
 
 end GlobalTheory.ChainOnto

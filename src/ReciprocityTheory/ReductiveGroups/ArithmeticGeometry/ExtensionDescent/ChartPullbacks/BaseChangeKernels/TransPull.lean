@@ -3,10 +3,10 @@ module
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
 import Mathlib.AlgebraicGeometry.Modules.Sheaf
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
+import
+  ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -18,21 +18,6 @@ open Semi Geo.Tor
 
 def pidx {X Y : Scheme.{0}} (L : LB X) (F : Y ⟶ X) (i : L.ι) : (L.pull F).ι := fun _ => i
 
-private theorem res_res_lemma {X : Scheme.{0}} {U V W : X.Opens} (h₁ : V ≤ U) (h₂ : W ≤ V)
-    (x : Γ(X, U)ˣ) : res h₂ (res h₁ x) = res (h₂.trans h₁) x := by
-  ext
-  change (X.presheaf.map (homOfLE h₁).op ≫ X.presheaf.map (homOfLE h₂).op).hom (x : Γ(X, U)) = _
-  rw [← Functor.map_comp]
-  rfl
-
-private theorem pullU_res_lemma_2 {X Y : Scheme.{0}} (f : Y ⟶ X) {U V : X.Opens} (h : V ≤ U)
-    (x : Γ(X, U)ˣ) : pullU f V (res h x) = res (f.preimage_mono h) (pullU f U x) := by
-  ext
-  change (X.presheaf.map (homOfLE h).op ≫ f.app V).hom (x : Γ(X, U)) =
-    (f.app U ≫ Y.presheaf.map (homOfLE (f.preimage_mono h)).op).hom (x : Γ(X, U))
-  rw [f.naturality]
-  rfl
-
 private theorem app_map_lemma_3 {X Y : Scheme.{0}} (φ ψ : Y ⟶ X) (e : φ = ψ) (U : X.Opens)
     {W : Y.Opens} (h₁ : W ≤ φ ⁻¹ᵁ U) (h₂ : W ≤ ψ ⁻¹ᵁ U) (x : Γ(X, U)ˣ) :
     res h₁ (pullU φ U x) = res h₂ (pullU ψ U x) := by
@@ -43,7 +28,7 @@ private theorem fin_lemma_4 {X Y Z : Scheme.{0}} (f : Z ⟶ Y) (g : Y ⟶ X) (U 
     {A B : Y.Opens} (k₁ : A ≤ g ⁻¹ᵁ U) (k₂ : B ≤ A) (x : Γ(X, U)ˣ) :
     res (f.preimage_mono (k₂.trans k₁)) (pullU (f ≫ g) U x) =
       pullU f B (res k₂ (res k₁ (pullU g U x))) := by
-  rw [res_res_lemma, pullU_res_lemma_2]
+  rw [Semi.LB.res_res, Semi.LB.pullU_res]
   all_goals rfl
 
 theorem trans_pull {G' G B' B : Scheme.{0}} (a : G' ⟶ G) (q : G ⟶ B) (q' : G' ⟶ B') (F : B' ⟶ B)
@@ -65,8 +50,8 @@ theorem trans_pull {G' G B' B : Scheme.{0}} (a : G' ⟶ G) (q : G ⟶ B) (q' : G
     (q'.preimage_mono (inf_le_right : V ⊓ V' ≤ V')).trans p'
   have hW : q' ⁻¹ᵁ (V ⊓ V') ≤ a ⁻¹ᵁ (q ⁻¹ᵁ (U ⊓ U')) := le_inf hW1 hW2
   have h1 := congrArg (fun y => res hW (pullU a (q ⁻¹ᵁ (U ⊓ U')) y)) h
-  simp only [map_mul, pullU_res_lemma_2, res_res_lemma] at h1
-  simp only [LB.pull, LB.LinComb, pidx, Fintype.prod_unique, zpow_one, res_res_lemma]
+  simp only [map_mul, Semi.LB.pullU_res, Semi.LB.res_res] at h1
+  simp only [LB.pull, LB.LinComb, pidx, Fintype.prod_unique, zpow_one, Semi.LB.res_res]
   rw [h1]
   congr 1
   exact (app_map_lemma_3 (a ≫ q) (q' ≫ F) hqb.symm (L.U i ⊓ L.U i') _ _ (L.g i i')).trans

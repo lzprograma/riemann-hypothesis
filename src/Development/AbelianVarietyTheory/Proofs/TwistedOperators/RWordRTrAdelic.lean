@@ -50,8 +50,6 @@ open GlobalTheory.Grow GlobalTheory.Mem.AutSpace GlobalTheory.Mem.RealTranslate 
 
 namespace GlobalTheory.Size
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {θ : InfFam D} {V : HSp D}
 
 theorem adAt_mem_lieAt (hθ : IsInfFam θ) (k : GA D V) {τ : D.what₂.Tau} {X : Matrix (Fin V.rank) (Fin V.rank) ℂ}
@@ -97,19 +95,6 @@ theorem Rder_rTr_adelic (hθ : IsInfFam θ) (k : GA D V) {τ : D.what₂.Tau} {X
   funext t
   rw [mul_assoc, oneP_mul_adelic hθ k hX t, ← mul_assoc]
 
-theorem rWord_rTr_adelic (hθ : IsInfFam θ) (k : GA D V) (φ : GA D V → ℂ)
-    {l : List (D.what₂.Tau × Matrix (Fin V.rank) (Fin V.rank) ℂ)} (hl : IsLieWord V l) :
-    rWord θ V l (rTr V k φ) = rTr V k (rWord θ V (l.map fun p => (p.1, adAt θ k p.1 p.2)) φ) := by
-
-  induction l with
-  | nil => simp only [rWord, wordAct, List.foldr_nil, List.map_nil]
-  | cons p l ih =>
-    have hp : p.2 ∈ lieAt V p.1 := hl p List.mem_cons_self
-    have hl' : IsLieWord V l := fun q hq => hl q (List.mem_cons_of_mem _ hq)
-    have ih' := ih hl'
-    simp only [rWord, wordAct, List.foldr_cons, List.map_cons] at ih' ⊢
-    rw [ih', Rder_rTr_adelic hθ k hp]
-
 theorem rTr_mem_smFun (hθ : IsInfFam θ) (k : GA D V) {φ : GA D V → ℂ} (hφ : φ ∈ SmFun θ V) :
     rTr V k φ ∈ SmFun θ V := by
 
@@ -122,30 +107,6 @@ theorem rTr_mem_smFun (hθ : IsInfFam θ) (k : GA D V) {φ : GA D V → ℂ} (h�
   rw [mul_assoc, prod_mul_eq k n (fun i => oneP θ V (τs i) (Xs i) (t i))
     (fun i => oneP θ V (τs i) (adAt θ k (τs i) (Xs i)) (t i)) (fun i => oneP_mul_adelic hθ k (hXs i) (t i)),
     ← mul_assoc]
-
-private theorem rapidDecSm_rTr_of_mem_GinfC (hθ : IsInfFam θ) {a : GA D V} (ha : a ∈ GinfC V) {φ : GA D V → ℂ}
-    (h : RapidDecSm θ V φ) : RapidDecSm θ V (Formalism.L2.Theta.rTr V a φ) := by
-
-  have hR := h.rapidDec.mul_right a
-  refine ⟨⟨hR.1, ?_, hR.2.1⟩, rTr_mem_smFun hθ a h.smooth, fun l hl => ?_⟩
-  · obtain ⟨U, hU, hUφ⟩ := h.level
-    refine ⟨U, hU, fun u hu huf g => ?_⟩
-    show φ (g * u * a) = φ (g * a)
-    rw [mul_assoc, ← comm_of_mem V ha huf, ← mul_assoc, hUφ u hu huf]
-  · rw [rWord_rTr_adelic hθ a φ hl]
-    refine (h.decay _ fun p hp => ?_).mul_right a
-    obtain ⟨q, hq, rfl⟩ := List.mem_map.1 hp
-    exact adAt_mem_lieAt hθ a (hl q hq)
-
-theorem RapidDecSm.rTr (hθ : IsInfFam θ) {φ : GA D V → ℂ} (h : RapidDecSm θ V φ) (k : GA D V) :
-    RapidDecSm θ V (Formalism.L2.Theta.rTr V k φ) := by
-
-  obtain ⟨a, ha, f, hf, rfl⟩ := (GlobalTheory.UnitarySplit.real_finite_split D V).1 k
-  have e : Formalism.L2.Theta.rTr V (a * f) φ = Formalism.L2.Theta.rTr V a (Formalism.L2.Theta.rTr V f φ) := by
-    funext g
-    simp only [Formalism.L2.Theta.rTr, mul_assoc]
-  rw [e]
-  exact rapidDecSm_rTr_of_mem_GinfC hθ ha (h.rTr_fin hf)
 
 end GlobalTheory.Size
 

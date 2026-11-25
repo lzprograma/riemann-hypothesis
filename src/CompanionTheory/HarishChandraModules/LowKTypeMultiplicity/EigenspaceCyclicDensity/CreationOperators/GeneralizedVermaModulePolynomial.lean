@@ -79,7 +79,7 @@ theorem generalized_verma_module_polynomial : Verma2 := by
       simp only [v, add_mul, mul_add, (hδ a c (yy j)).eq]
       abel
     · intro d e
-      have h0 : ¬(ε d = true ∧ ε e = false) → dd ε d e = 0 := fun h => dif_neg h
+      have h0 : ¬(ε d = true ∧ ε e = false) → dd ε d e = 0 := fun h => dite_eq_right h
       simp only [u, v]
       generalize dd ε d e = T at *
       by_cases hde : d = e
@@ -117,15 +117,15 @@ theorem generalized_verma_module_polynomial : Verma2 := by
     have i2 := i.2.2
     cases hc : ε c
     · have e1 : i.1.1 ≠ c := fun e => by rw [e, hc] at i1; exact Bool.noConfusion i1
-      have e2 : dd ε d i.1.2 = 0 := dif_neg (by simp [← h, hc])
-      simp only [u, v, if_neg e1, e2, yy, Module.End.mul_apply, add_zero, zero_sub, LinearMap.neg_apply,
+      have e2 : dd ε d i.1.2 = 0 := dite_eq_right (by simp [← h, hc])
+      simp only [u, v, ite_eq_right e1, e2, yy, Module.End.mul_apply, add_zero, zero_sub, LinearMap.neg_apply,
         LinearMap.mulLeft_apply]
       split_ifs
       · rw [mul_neg, totalDegree_neg]; exact hd _ _ _
       · simp
     · have e1 : d ≠ i.1.2 := fun e => by rw [← e, ← h, hc] at i2; exact Bool.noConfusion i2
-      have e2 : dd ε i.1.1 c = 0 := dif_neg (by simp [hc])
-      simp only [u, v, if_neg e1, e2, yy, Module.End.mul_apply, zero_add, sub_zero, LinearMap.mulLeft_apply]
+      have e2 : dd ε i.1.1 c = 0 := dite_eq_right (by simp [hc])
+      simp only [u, v, ite_eq_right e1, e2, yy, Module.End.mul_apply, zero_add, sub_zero, LinearMap.mulLeft_apply]
       split_ifs
       · exact hd _ _ _
       · simp
@@ -220,7 +220,7 @@ theorem free_module_induction : FreeStep := by
     by_cases h : (i.1.1 : ℕ) < m
     · have e1 := LinearMap.congr_fun (hF.da i j h) z
       simp only [LinearMap.sub_apply, Module.End.mul_apply] at e1
-      simp only [if_pos h, LinearMap.sub_apply, Module.End.mul_apply, LinearMap.add_apply, LinearMap.rTensor_tmul,
+      simp only [ite_eq_left h, LinearMap.sub_apply, Module.End.mul_apply, LinearMap.add_apply, LinearMap.rTensor_tmul,
         LinearMap.lTensor_tmul, map_add, sub_eq_iff_eq_add.1 e1, TensorProduct.add_tmul]
       split_ifs <;> simp
     · have e1 : dd ε i.1.1 i.1.2 (y j f) - y j (dd ε i.1.1 i.1.2 f) = if i = j then f else 0 := by
@@ -232,14 +232,14 @@ theorem free_module_induction : FreeStep := by
           rw [this]
           by_cases e : i = j
           · subst e; simp
-          · rw [if_neg e, if_neg fun h' => e (Subtype.ext (Prod.ext h'.1 h'.2))]; rfl
-        · rw [dif_neg hj, if_neg]
+          · rw [ite_eq_right e, ite_eq_right fun h' => e (Subtype.ext (Prod.ext h'.1 h'.2))]; rfl
+        · rw [dite_eq_right hj, ite_eq_right]
           · simp
           · rintro rfl
             have := i.2
             exact hj ⟨by simp only [ε, decide_eq_true_eq]; omega,
               by simp only [ε, decide_eq_false_iff_not]; rw [Fin.lt_def] at this; omega⟩
-      simp only [if_neg h, LinearMap.sub_apply, Module.End.mul_apply, LinearMap.add_apply, LinearMap.rTensor_tmul,
+      simp only [ite_eq_right h, LinearMap.sub_apply, Module.End.mul_apply, LinearMap.add_apply, LinearMap.rTensor_tmul,
         LinearMap.lTensor_tmul, map_add, sub_eq_iff_eq_add.1 e1, TensorProduct.tmul_add]
       split_ifs <;> simp
   · intro k l hkl

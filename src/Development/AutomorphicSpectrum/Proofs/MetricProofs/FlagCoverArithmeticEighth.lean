@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverFramesAtPoint
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsImg
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AevalNeZeroOfNotMem
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GenericBlockMatrixIsBlockDiag
@@ -8,51 +9,7 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArith
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.SameOrbitRefl
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.MemMCoordIdealOfAevalEqZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
 
 @[expose] public section
@@ -88,15 +45,8 @@ theorem analyticAt_eval {σ : Type} [Fintype σ] (P : MvPolynomial σ ℂ) (t : 
 
 theorem notMem_of_eval_ne_zero {t : (Σ k, ι k) → ℂ} {h : MRing ι} {d : K → ℕ}
     (hh : IsMultiHomog h d) (h0 : eval t (map (Int.castRingHom ℂ) h) ≠ 0) : h ∉ mCoordIdeal t := by
-  intro hm
-  have h' : mConeMap t h = 0 := hm
-  rw [mConeMap_of_isMultiHomog t hh] at h'
-  rcases mul_eq_zero.1 h' with h1 | h1
-  · refine h0 ?_
-    have h2 := MvPolynomial.C_eq_zero.1 h1
-    rw [MvPolynomial.aeval_def, MvPolynomial.eval₂_eq_eval_map] at h2
-    simpa using h2
-  · exact absurd h1 (Finset.prod_ne_zero_iff.2 fun k _ => pow_ne_zero _ (MvPolynomial.X_ne_zero _))
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.Ar.PB.CovMap.LocImg.An.notMem_of_eval_ne_zero <;> assumption
 
 theorem exists_value_family {A : Type} [Finite A] {x : (Σ k, ι k) → Ω} {b : (Σ k, ι k) → ℂ}
     (hb : b ∈ mcPts (mCoordIdeal x)) (e : A → Ω) (he : ∀ a, RegAt x (mCoordIdeal b) (e a)) :
@@ -162,13 +112,13 @@ theorem exists_normalised (M : FlagModel y Ψ N j) (F : FrameData ι Ψ N M.Ω M
     (basePart M.blk z ⟨⟨k, h⟩, F.c ⟨k, h⟩⟩)⁻¹ else 1
   refine ⟨fun p => c p.1 * z p, ⟨c, fun k => ?_, rfl⟩, fun k => ?_⟩
   · by_cases h : ∀ q, M.blk q ≠ some k
-    · simp only [c, dif_pos h]
+    · simp only [c, dite_eq_left h]
       exact inv_ne_zero (hc ⟨k, h⟩)
-    · simp only [c, dif_neg h]
+    · simp only [c, dite_eq_right h]
       exact one_ne_zero
   · obtain ⟨k, h⟩ := k
     show c k * basePart M.blk z ⟨⟨k, h⟩, F.c ⟨k, h⟩⟩ = 1
-    simp only [c, dif_pos h]
+    simp only [c, dite_eq_left h]
     exact inv_mul_cancel₀ (hc ⟨k, h⟩)
 
 theorem good_open (M : FlagModel y Ψ N j) (F : FrameData ι Ψ N M.Ω M.blk) {b : (Σ k, baseIdx ι M.blk k) → ℂ}
@@ -226,9 +176,9 @@ theorem val_inv (M : FlagModel y Ψ N j) (M' : FlagModel y' Ψ N j) (Cv : FlagCo
       rw [valAt_eq ht (hvA a c), valAt_eq ht (hvB c b)]
   rw [e, Matrix.one_apply]
   split_ifs with hab
-  · rw [if_pos hab] at hv
+  · rw [ite_eq_left hab] at hv
     exact isValueAt_one ht hv
-  · rw [if_neg hab] at hv
+  · rw [ite_eq_right hab] at hv
     exact isValueAt_zero ht hv
 
 theorem left_inv_val (M : FlagModel y Ψ N j) (F : FrameData ι Ψ N M.Ω M.blk) (hF : M.IsFrame F)
@@ -249,9 +199,9 @@ theorem left_inv_val (M : FlagModel y Ψ N j) (F : FrameData ι Ψ N M.Ω M.blk)
     Finset.sum_congr rfl fun m _ => by rw [valAt_eq hb (hv m), valAt_eq hb (hw m)]
   rw [e]
   split_ifs with hII
-  · rw [if_pos hII] at hs
+  · rw [ite_eq_left hII] at hs
     exact isValueAt_one hb hs
-  · rw [if_neg hII] at hs
+  · rw [ite_eq_right hII] at hs
     exact isValueAt_zero hb hs
 
 theorem minor_analytic {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {n : ℕ}
@@ -259,11 +209,11 @@ theorem minor_analytic {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {n 
     (h : ∀ a b, AnalyticAt ℂ (fun w => A w a b) x) : AnalyticAt ℂ (fun w => minorIJ (A w) I J) x := by
   unfold minorIJ
   by_cases e : I.card = J.card
-  · simp only [dif_pos e, Matrix.det_apply']
+  · simp only [dite_eq_left e, Matrix.det_apply']
     refine Finset.analyticAt_fun_sum _ fun σ _ => analyticAt_const.fun_mul
       (Finset.analyticAt_fun_prod _ fun a _ => ?_)
     exact h _ _
-  · simp only [dif_neg e]
+  · simp only [dite_eq_right e]
     exact analyticAt_const
 
 theorem flag_transfer (N j : ℕ) (i : Fin N) (hj : j ≤ N) {κ κ' : Type} [Fintype κ] [Fintype κ']
@@ -279,7 +229,7 @@ theorem flag_transfer (N j : ℕ) (i : Fin N) (hj : j ≤ N) {κ κ' : Type} [Fi
   have hvan : ∀ I, ¬ IsStepRows N j i I → minorIJ (T * h) I (stepCols N j i) = 0 := fun I hI => by
     rcases hvan' (T * h) I hTh hI with e | e
     · exact e
-    · refine dif_neg fun hc => hI ⟨hc, ?_⟩
+    · refine dite_eq_right fun hc => hI ⟨hc, ?_⟩
       rw [e, Finset.card_empty, Finset.card_eq_zero] at hc
       rw [hc]
       exact Finset.empty_subset _
@@ -293,10 +243,10 @@ theorem flag_transfer (N j : ℕ) (i : Fin N) (hj : j ≤ N) {κ κ' : Type} [Fi
       _ = a * minorIJ (T * h) I' (stepCols N j i) := by
           congr 1
           rw [Finset.sum_eq_single I']
-          · rw [hu I' I' hI' hI', if_pos rfl, one_mul]
+          · rw [hu I' I' hI' hI', ite_eq_left rfl, one_mul]
           · intro I _ hne
             by_cases hI : IsStepRows N j i I
-            · rw [hu I' I hI' hI, if_neg hne.symm, zero_mul]
+            · rw [hu I' I hI' hI, ite_eq_right hne.symm, zero_mul]
             · rw [hvan I hI, mul_zero]
           · simp
   have hmin : ∀ I, minorIJ h I (stepCols N j i) = a⁻¹ * ∑ I', if IsStepRows N j i I' then
@@ -307,9 +257,9 @@ theorem flag_transfer (N j : ℕ) (i : Fin N) (hj : j ≤ N) {κ κ' : Type} [Fi
     rw [hCB, Finset.mul_sum]
     refine Finset.sum_congr rfl fun I' _ => ?_
     by_cases hI' : IsStepRows N j i I'
-    · rw [if_pos hI', step I' hI']
+    · rw [ite_eq_left hI', step I' hI']
       field_simp
-    · rw [if_neg hI', hvan I' hI', mul_zero, mul_zero]
+    · rw [ite_eq_right hI', hvan I' hI', mul_zero, mul_zero]
   refine ⟨a' * a⁻¹, mul_ne_zero ha' (inv_ne_zero ha), fun m => ?_⟩
   rw [h1 m, mul_assoc]
   congr 1
@@ -454,10 +404,10 @@ theorem lift_inverse : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fint
         (ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : (Σ k, ι k) => ℂ) q).analyticAt w
       refine Finset.analyticAt_fun_sum _ fun I _ => (aU _).fun_mul (Finset.analyticAt_fun_sum _ fun I' _ => ?_)
       by_cases hst : IsStepRows N j p.2 I'
-      · simp only [if_pos hst]
+      · simp only [ite_eq_left hst]
         exact (minor_analytic _ _ _ _ fun a b => aT _).fun_mul
           (Finset.analyticAt_fun_sum _ fun m _ => (aV _).fun_mul (aw _))
-      · simp only [if_neg hst]
+      · simp only [ite_eq_right hst]
         exact analyticAt_const
     · have h' : ∀ p, M'.blk p ≠ some k' := fun p e => h ⟨p, e⟩
       refine ⟨fun w m => S w ⟨⟨k', h'⟩, m⟩, fun m w hw => analyticAt_pi_iff.1 (hSa w hw) ⟨⟨k', h'⟩, m⟩,

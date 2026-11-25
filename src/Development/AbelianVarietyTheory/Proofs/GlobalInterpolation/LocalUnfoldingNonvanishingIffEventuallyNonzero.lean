@@ -125,7 +125,7 @@ theorem decomp {n c : ℕ} (x : Fin (n + c) → E) :
   · have h1 : ∀ i : Fin c, Loc.eN E (n + c) (n + i.1) (Fin.castAdd c a) = 0 := by
       intro i
       simp only [Loc.eN, Fin.val_castAdd]
-      rw [if_neg]
+      rw [ite_eq_right]
       omega
     simp [inX_castAdd, Finset.sum_apply, h1]
   · have h2 : ∀ i : Fin c, Loc.eN E (n + c) (n + i.1) (Fin.natAdd n b) = if i = b then 1 else 0 := by
@@ -133,8 +133,8 @@ theorem decomp {n c : ℕ} (x : Fin (n + c) → E) :
       by_cases hib : i = b
       · subst hib
         simp [Loc.eN]
-      · simp only [Loc.eN, Fin.val_natAdd, if_neg hib]
-        rw [if_neg]
+      · simp only [Loc.eN, Fin.val_natAdd, ite_eq_right hib]
+        rw [ite_eq_right]
         intro h
         apply hib
         ext
@@ -452,7 +452,7 @@ theorem phiAt_prop {sharp : Bool} {i : ℕ} {P : HeightOneSpectrum (𝓞 X.E)} (
     (∀ x, PhiAt Ch mu sharp i P x ≠ 0 → IntHom P x) ∧
       ∀ x y, IntHom P y → PhiAt Ch mu sharp i P (x + (qOf P : X.E) • y) = PhiAt Ch mu sharp i P x := by
   unfold PhiAt
-  rw [if_neg hP]
+  rw [ite_eq_right hP]
   exact _root_.GlobalTheory.Proof.twistPrimeDatum_integral_support_and_invariant.phiQ_bdd X.E X.K P _ _ _ _ _ _ _ (rank_le R i).1 (rank_le R (i + 1)).1 (rank_le R i).2 (rank_le R (i + 1)).2
 
 theorem omPhi_bdd {i : ℕ} {P : rowSG Pr sel mu} (hP : P.1 ∉ Pr.vGs) {hal : AutY X R i} {h : AutY X R (i + 1)}

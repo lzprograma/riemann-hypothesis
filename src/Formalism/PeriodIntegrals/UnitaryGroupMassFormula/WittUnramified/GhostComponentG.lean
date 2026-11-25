@@ -1,50 +1,10 @@
 module
 
 public import Mathlib.RingTheory.WittVector.Frobenius
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.NumberTheory.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -226,21 +186,11 @@ def sHom (hinj : Function.Injective (algebraMap W Qq)) : W →+* WittVector p W 
 theorem sHom_apply (hinj : Function.Injective (algebraMap W Qq)) (x : W) :
     sHom p Qq F hF hinj x = sFun p Qq F hF hinj x := rfl
 
-private theorem map_frobenius' (f : W →+* Qq) (w : WittVector p W) :
-    WittVector.map f (frobenius w) = frobenius (WittVector.map f w) := by
-  have key : ∀ P : MvPolynomial ℕ ℤ,
-      f (MvPolynomial.aeval w.coeff P) = MvPolynomial.aeval (fun i => f (w.coeff i)) P := by
-    intro P
-    first
-      | exact DFunLike.congr_fun (MvPolynomial.comp_aeval (f := w.coeff) f.toIntAlgHom) P
-  ext n
-  rw [WittVector.map_coeff, WittVector.coeff_frobenius, WittVector.coeff_frobenius, key]
-  congr 1
-
 theorem sHom_frob (hinj : Function.Injective (algebraMap W Qq)) (x : W) :
     sHom p Qq F hF hinj (F x) = frobenius (sHom p Qq F hF hinj x) := by
   apply WittVector.map_injective _ hinj
-  rw [sHom_apply, map_sFun, G_frob, map_frobenius' p Qq F hF (algebraMap W Qq), sHom_apply, map_sFun]
+  rw [sHom_apply, map_sFun, G_frob, (WittVector.frobenius_isPoly p).map (algebraMap W Qq),
+    sHom_apply, map_sFun]
 
 theorem sHom_coeff_zero (hinj : Function.Injective (algebraMap W Qq)) (x : W) :
     (sHom p Qq F hF hinj x).coeff 0 = x := by

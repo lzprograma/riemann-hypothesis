@@ -306,7 +306,7 @@ theorem exists_derived_action : ∀ (k : ℕ) (W : Type) [NormedAddCommGroup W] 
         cpart2 (PI.UpqRep.allPos k) (Matrix.single a b (1 : ℂ)) := by
       simp only [cpart2, Jm_allPos, Matrix.one_mul, Matrix.mul_one, conjTranspose_single, star_one, add_comm]
     have e3 := (rdLinV k _ _ π π _ _ (-1) 0 1 hs hs h1' h1' hone).2.1
-    simp only [EabV, EcV, e1, e2, e3, sgn, PI.UpqRep.allPos, if_true, ContinuousLinearMap.coe_coe,
+    simp only [EabV, EcV, e1, e2, e3, sgn, PI.UpqRep.allPos, ite_true, ContinuousLinearMap.coe_coe,
       ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, inner_add_left, inner_add_right,
       inner_smul_left, inner_smul_right]
     have s1 := rdV_skew hs h1 hiso h1' x y

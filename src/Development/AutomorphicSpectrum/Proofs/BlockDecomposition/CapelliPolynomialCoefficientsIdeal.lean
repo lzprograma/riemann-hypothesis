@@ -4,51 +4,8 @@ public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.RingTheory.IntegralClosure.IsIntegral.Defs
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MonicFactorCoefficientsIntegral
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -168,40 +125,28 @@ theorem monic_relations_to_blocks : ∀ (V : Type) [AddCommGroup V] [Module ℂ 
   let π := Ideal.Quotient.mkₐ ℂ Y
   have hRmem : ∀ u, R u ∈ Algebra.adjoin ℂ s := fun u => Algebra.subset_adjoin (Or.inl ⟨u, rfl⟩)
   have hSmem : ∀ u, S u ∈ Algebra.adjoin ℂ s := fun u => Algebra.subset_adjoin (Or.inr ⟨u, rfl⟩)
-  have hamem : ∀ k, a k ∈ Algebra.adjoin ℂ s := fun k =>
-    (Submodule.span_le (p := Subalgebra.toSubmodule (Algebra.adjoin ℂ s))).mpr
-      (by rintro x ⟨u, rfl⟩; exact hRmem u) (haspan k)
-  have hbmem : ∀ k, b k ∈ Algebra.adjoin ℂ s := fun k =>
-    (Submodule.span_le (p := Subalgebra.toSubmodule (Algebra.adjoin ℂ s))).mpr
-      (by rintro x ⟨u, rfl⟩; exact hSmem u) (hbspan k)
-  let P : (Algebra.adjoin ℂ s ⧸ Y)[X] := sumPoly (fun k => π ⟨a k, hamem k⟩) n₁
-  let Q : (Algebra.adjoin ℂ s ⧸ Y)[X] := sumPoly (fun k => π ⟨b k, hbmem k⟩) n₂
-  have hPm : P.Monic := sumPoly_monic _ _ (by
-    have : (⟨a n₁, hamem n₁⟩ : Algebra.adjoin ℂ s) = 1 := Subtype.ext ha1
-    change π ⟨a n₁, hamem n₁⟩ = 1
-    rw [this, map_one])
-  have hQm : Q.Monic := sumPoly_monic _ _ (by
-    have : (⟨b n₂, hbmem n₂⟩ : Algebra.adjoin ℂ s) = 1 := Subtype.ext hb1
-    change π ⟨b n₂, hbmem n₂⟩ = 1
-    rw [this, map_one])
-  have hPev : ∀ t : ℂ, P.eval (algebraMap ℂ _ t) = π ⟨R t, hRmem t⟩ := by
-    intro t
-    have : (⟨R t, hRmem t⟩ : Algebra.adjoin ℂ s)
-        = ∑ k ∈ Finset.range (n₁ + 1), t ^ k • (⟨a k, hamem k⟩ : Algebra.adjoin ℂ s) := by
-      apply Subtype.ext; simp [hRform t]
-
+  have hmk : ∀ (T : ℂ → Module.End ℂ V) (c : ℕ → Module.End ℂ V) (n : ℕ)
+      (hTmem : ∀ u, T u ∈ Algebra.adjoin ℂ s) (hc1 : c n = 1)
+      (hcspan : ∀ k, c k ∈ Submodule.span ℂ (Set.range T))
+      (hTform : ∀ u : ℂ, T u = ∑ k ∈ Finset.range (n + 1), u ^ k • c k),
+      ∃ Rₚ : (Algebra.adjoin ℂ s ⧸ Y)[X], Rₚ.Monic ∧
+        ∀ t : ℂ, Rₚ.eval (algebraMap ℂ _ t) = π ⟨T t, hTmem t⟩ := by
+    intro T c n hTmem hc1 hcspan hTform
+    have hcmem : ∀ k, c k ∈ Algebra.adjoin ℂ s := fun k =>
+      (Submodule.span_le (p := Subalgebra.toSubmodule (Algebra.adjoin ℂ s))).mpr
+        (by rintro x ⟨u, rfl⟩; exact hTmem u) (hcspan k)
+    refine ⟨sumPoly (fun k => π ⟨c k, hcmem k⟩) n, sumPoly_monic _ _ (by
+      have : (⟨c n, hcmem n⟩ : Algebra.adjoin ℂ s) = 1 := Subtype.ext hc1
+      change π ⟨c n, hcmem n⟩ = 1
+      rw [this, map_one]), fun t => ?_⟩
+    have : (⟨T t, hTmem t⟩ : Algebra.adjoin ℂ s)
+        = ∑ k ∈ Finset.range (n + 1), t ^ k • (⟨c k, hcmem k⟩ : Algebra.adjoin ℂ s) := by
+      apply Subtype.ext; simp [hTform t]
     rw [this, map_sum, sumPoly_eval]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, Algebra.smul_def, map_pow, mul_comm]
-  have hQev : ∀ t : ℂ, Q.eval (algebraMap ℂ _ t) = π ⟨S t, hSmem t⟩ := by
-    intro t
-    have : (⟨S t, hSmem t⟩ : Algebra.adjoin ℂ s)
-        = ∑ k ∈ Finset.range (n₂ + 1), t ^ k • (⟨b k, hbmem k⟩ : Algebra.adjoin ℂ s) := by
-      apply Subtype.ext; simp [hSform t]
-
-    rw [this, map_sum, sumPoly_eval]
-    refine Finset.sum_congr rfl fun k _ => ?_
-    rw [map_smul, Algebra.smul_def, map_pow, mul_comm]
+  obtain ⟨P, hPm, hPev⟩ := hmk R a n₁ hRmem ha1 haspan hRform
+  obtain ⟨Q, hQm, hQev⟩ := hmk S b n₂ hSmem hb1 hbspan hSform
   have hβ : ∀ u : ℂ, IsIntegral ℂ (P.eval (algebraMap ℂ _ (u + c₁)) *
       Q.eval (algebraMap ℂ _ (u + c₂))) := by
     intro u
@@ -218,24 +163,19 @@ theorem monic_relations_to_blocks : ∀ (V : Type) [AddCommGroup V] [Module ℂ 
     rw [hp0 F hF, sub_zero] at key
     exact key
   have hcoef := _root_.GlobalTheory.CompanionTheory.IntFac.isIntegral_coeff_of_shifted_product (Algebra.adjoin ℂ s ⧸ Y) P Q c₁ c₂ hPm hQm hβ
-  refine ⟨fun u => ?_, fun u => ?_⟩
-  · have hint : IsIntegral ℂ (π ⟨R u, hRmem u⟩) := by
-      rw [← hPev]
-      exact isIntegral_eval P (fun k => (hcoef k).1) _ isIntegral_algebraMap
-    obtain ⟨q, hqm, hq0⟩ := hint
+  have hfin : ∀ (Rₚ : (Algebra.adjoin ℂ s ⧸ Y)[X]) (hc : ∀ k, IsIntegral ℂ (Rₚ.coeff k))
+      (T : ℂ → Module.End ℂ V) (hTmem : ∀ u, T u ∈ Algebra.adjoin ℂ s)
+      (hTev : ∀ t : ℂ, Rₚ.eval (algebraMap ℂ _ t) = π ⟨T t, hTmem t⟩) (u : ℂ),
+      ∃ q : Polynomial ℂ, q.Monic ∧ ∀ F ∈ W₀, Polynomial.aeval (T u) q F ∈ I := by
+    intro Rₚ hc T hTmem hTev u
+    obtain ⟨q, hqm, hq0⟩ := show IsIntegral ℂ (π ⟨T u, hTmem u⟩) by
+      rw [← hTev]
+      exact isIntegral_eval Rₚ hc _ isIntegral_algebraMap
     refine ⟨q, hqm, fun F hF => ?_⟩
     rw [← Polynomial.aeval_def, Polynomial.aeval_algHom_apply, Ideal.Quotient.mkₐ_eq_mk,
       Ideal.Quotient.eq_zero_iff_mem] at hq0
     have := hq0 F hF
     rwa [Polynomial.aeval_subalgebra_coe] at this
-  · have hint : IsIntegral ℂ (π ⟨S u, hSmem u⟩) := by
-      rw [← hQev]
-      exact isIntegral_eval Q (fun k => (hcoef k).2) _ isIntegral_algebraMap
-    obtain ⟨q, hqm, hq0⟩ := hint
-    refine ⟨q, hqm, fun F hF => ?_⟩
-    rw [← Polynomial.aeval_def, Polynomial.aeval_algHom_apply, Ideal.Quotient.mkₐ_eq_mk,
-      Ideal.Quotient.eq_zero_iff_mem] at hq0
-    have := hq0 F hF
-    rwa [Polynomial.aeval_subalgebra_coe] at this
+  exact ⟨hfin P (fun k => (hcoef k).1) R hRmem hPev, hfin Q (fun k => (hcoef k).2) S hSmem hQev⟩
 
 end GlobalTheory.CompanionTheory.Dblock.CentreBlocks

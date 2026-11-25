@@ -56,7 +56,6 @@ open scoped TensorProduct InnerProductSpace ComplexConjugate
 open GlobalTheory.ChainOnto GlobalTheory.ChainTw
 open GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting (SplitProj IsProjAt IsIdemOf LiftsChar rdA grpCo frCo gAt)
 open GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection (Blocks parahoric datum)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open GlobalTheory.Chain GlobalTheory.ChainFr GlobalTheory.PairLift GlobalTheory.Chain.RealIt
 
 noncomputable section
@@ -121,7 +120,7 @@ theorem GlobalTheory.tameLift_isTame_not_isUnram : ∀ (D : D7) (v : HeightOneSp
     rw [hl x 1 hr, map_one]
   · intro hun
     obtain ⟨k, hk⟩ : ∃ k, ξ k ≠ 1 := by
-      by_contra h; push_neg at h; exact hξ (MonoidHom.ext h)
+      by_contra h; push Not at h; exact hξ (MonoidHom.ext h)
     obtain ⟨x0, hx0⟩ := Ideal.Quotient.mk_surjective (k : kP PP)
     have hnot : x0 ∉ PP.asIdeal := by
       intro hm

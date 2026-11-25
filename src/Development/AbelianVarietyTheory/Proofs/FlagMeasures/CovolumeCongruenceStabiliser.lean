@@ -74,7 +74,6 @@ namespace GlobalTheory.LoopV.Cover
 section Analysis
 variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
 
-
 omit [FiniteDimensional ℝ E] in
 theorem near_of_finset (Λ : Submodule ℤ E) (s : Finset E) (hs : ∀ x ∈ s, x ∈ Λ) (w : E)
     (hw : w ∈ Submodule.span ℝ (s : Set E)) : ∃ l ∈ Λ, ‖w - l‖ ≤ ∑ x ∈ s, ‖x‖ := by
@@ -1091,11 +1090,6 @@ theorem expT_conj {K : Type} [Field K] {N : ℕ} (U x : Matrix (Fin N) (Fin N) K
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Matrix.mul_smul, Matrix.smul_mul]
 
-theorem det_upUni {K : Type} [Field K] {N : ℕ} {U : Matrix (Fin N) (Fin N) K} (h : IsUpUni U) :
-    U.det = 1 := by
-  rw [Matrix.det_of_isUpperTriangular (fun i j hij => (h i j).1 hij)]
-  exact Finset.prod_eq_one fun i _ => (h i i).2 rfl
-
 theorem det_loUni {K : Type} [Field K] {N : ℕ} {L : Matrix (Fin N) (Fin N) K} (h : IsLoUni L) :
     L.det = 1 := by
   rw [Matrix.det_of_isLowerTriangular L (fun i j hij => (h i j).1 hij)]
@@ -1274,7 +1268,7 @@ theorem covolume_congruence_stabiliser : ∀ (K : Type) [Field K] [NumberField K
   classical
   intro K _ _ _ ι _ τ N L U p I B Bv hstar hτ hrk hL hU hZ hI hB hBv hprod
   obtain ⟨hstab, hlie, hstabp, hliep⟩ := _root_.GlobalTheory.LoopV.Cell.stab_cell K N L U p hL hU
-  have hUdet : IsUnit U.det := by rw [det_upUni hU]; exact isUnit_one
+  have hUdet : IsUnit U.det := by rw [GlobalTheory.LieCovol.det_upUni hU]; exact isUnit_one
   have hZdet : (L * ptMat p * U).det ≠ 0 := by
     rw [Matrix.det_mul, Matrix.det_mul, det_loUni hL, _root_.GlobalTheory.LieCovol.det_upUni hU, one_mul, mul_one]
     exact (GlobalTheory.LoopV.Cell.ptMat_det p).ne_zero

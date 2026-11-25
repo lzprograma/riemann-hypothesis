@@ -105,7 +105,7 @@ theorem _root_.GlobalTheory.AdLat.adCoord_sum (e : Module.Basis (Fin n) E (Fin n
     split_ifs <;> simp [Algebra.TensorProduct.one_def]
 
   simp only [map_sum, _root_.GlobalTheory.AdLat.adCoord_smul, h1, mul_ite, mul_one, mul_zero,
-  Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 end
 

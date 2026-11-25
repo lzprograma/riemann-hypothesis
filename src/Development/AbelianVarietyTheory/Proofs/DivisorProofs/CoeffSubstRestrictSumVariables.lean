@@ -70,13 +70,13 @@ theorem coeff_prod_pow_of_embedding {σ τ R : Type} [CommRing R] (j : σ → τ
     have hs : (∑ i ∈ β.support, Finsupp.single i (β i)) = β := Finsupp.sum_single β
     rw [hs, coeff_monomial]
     simp only [(Finsupp.mapDomain_injective hj).eq_iff, eq_comm]
-  · push_neg at h
+  · push Not at h
     obtain ⟨t, ht, hdt⟩ := h
     have hne : d ≠ α.mapDomain j := by
       intro hd
       have : d ∈ Set.range (Finsupp.mapDomain j) := ⟨α, hd.symm⟩
       exact hdt (((Finsupp.mem_range_mapDomain_iff j hj d).mp this) t ht)
-    rw [if_neg hne, Finsupp.prod, Finset.prod_eq_zero (Finsupp.mem_support_iff.mpr hdt)
+    rw [ite_eq_right hne, Finsupp.prod, Finset.prod_eq_zero (Finsupp.mem_support_iff.mpr hdt)
       (by rw [h0 t ht, zero_pow hdt]), map_zero]
 
 theorem coeff_subst_of_embedding {σ τ R : Type} [CommRing R] [Finite τ] (j : σ → τ)
@@ -91,9 +91,9 @@ theorem coeff_subst_of_embedding {σ τ R : Type} [CommRing R] [Finite τ] (j : 
       rw [ha]; exact constantCoeff_X s
     · rw [h0 t ht]; exact map_zero _)
   rw [coeff_subst hsub, finsum_eq_single _ (α.mapDomain j)]
-  · rw [coeff_prod_pow_of_embedding j hj a ha h0, if_pos rfl, smul_eq_mul, mul_one]
+  · rw [coeff_prod_pow_of_embedding j hj a ha h0, ite_eq_left rfl, smul_eq_mul, mul_one]
   · intro d hd
-    rw [coeff_prod_pow_of_embedding j hj a ha h0, if_neg hd, smul_zero]
+    rw [coeff_prod_pow_of_embedding j hj a ha h0, ite_eq_right hd, smul_zero]
 
 theorem coeff_subst_restrict_sum {R ι κ : Type} [CommRing R] [Fintype ι] [Fintype κ]
     (g : MvPowerSeries (ι ⊕ κ) R) :

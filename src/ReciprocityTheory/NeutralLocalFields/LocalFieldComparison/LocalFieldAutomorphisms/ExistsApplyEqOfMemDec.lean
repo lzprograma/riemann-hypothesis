@@ -4,48 +4,6 @@ public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.FieldTheory.Galois.Profinite
 public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.ContinuousGK
 public import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -71,8 +29,7 @@ theorem norm_apply_le_of_mem_dec {A : ValuationSubring Ω} {ι : Ω →+* PadicA
     first
     | (rw [hsA] at h2; exact h2)
   have key : ∀ y, ‖ι y‖ ≤ 1 → ‖ι (τ y)‖ ≤ 1 := fun y hy => (h (τ y)).1 (hs y ((h y).2 hy))
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have hc : (1 : ℝ) < p := by exact_mod_cast (Fact.out : p.Prime).one_lt
   have hpa : (0 : ℝ) < p := by linarith
   have ha : 0 < ‖ι x‖ := by
@@ -196,10 +153,8 @@ theorem minpoly_aeval_of_mem_dec {A : ValuationSubring Ω} {ι : Ω →+* PadicA
   have hu : ∀ i, ‖u i‖ ≤ δ := fun i => by rw [hu_def]; exact (hf i).le
   obtain ⟨w, hw⟩ : ∃ w : Ω, w = ∑ i ∈ Finset.range N, algebraMap F Ω (f i) * x ^ i := ⟨_, rfl⟩
   have hιw : ι w = ∑ i ∈ Finset.range N, ι (algebraMap F Ω (f i)) * ι x ^ i := by
-    set_option synthInstance.maxHeartbeats 100000 in
       rw [hw]; simp only [map_sum, map_mul, map_pow]
   have hιτw : ι (τ w) = ∑ i ∈ Finset.range N, ι (algebraMap F Ω (f i)) * ι (τ x) ^ i := by
-    set_option synthInstance.maxHeartbeats 100000 in
       rw [hw]; simp only [map_sum, map_mul, map_pow, AlgEquiv.commutes]
   have h1 : ι w = -∑ i ∈ Finset.range N, u i * ι x ^ i := by
     rw [hιw, eq_neg_iff_add_eq_zero, ← Finset.sum_add_distrib, ← hy0]

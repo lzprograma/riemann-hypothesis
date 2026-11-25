@@ -4,52 +4,9 @@ public import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
 public import Formalism.DefsOC
 public import Formalism.ZetaNonvanishing.MellinSAux
 public import Formalism.ZetaNonvanishing.MellinSgen
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.MellinInversion
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -68,8 +25,7 @@ lemma perron_Sz_eq_zero_of_le_one {x : ℝ} (hx : x ≤ 1) : Formalism.Sz x = 0 
   intro n hn
   rw [Finset.mem_Icc] at hn
   have hx0 : 0 ≤ x := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have h1 := Nat.floor_of_nonpos h.le
     omega
   have hnx : (n : ℝ) ≤ x := (Nat.le_floor_iff hx0).1 hn.2
@@ -80,13 +36,10 @@ lemma perron_Sz_eq_zero_of_le_one {x : ℝ} (hx : x ≤ 1) : Formalism.Sz x = 0 
   subst hn1
   simp [ArithmeticFunction.vonMangoldt_apply_one]
 
-lemma perron_continuous_mxS (n : ℕ) : Continuous (Formalism.mxS n) :=
-  Formalism.continuous_mxS n
-
 lemma perron_Sz_continuousAt (y : ℝ) : ContinuousAt (fun x => (Formalism.Sz x : ℂ)) y := by
   rw [perron_Sz_eq_Sa]
   exact (Complex.continuous_ofReal.comp
-    (Formalism.Sa_continuous (fun n => (Λ n : ℝ)) (by simp))).continuousAt
+    (Formalism.Sa_continuous (fun n => (Λ n : ℝ)))).continuousAt
 
 lemma perron_norm_LSeries_le {σ₀ : ℝ} (hσ : 1 < σ₀) (w : ℂ) (hw : w.re = σ₀) :
     ‖LSeries ↗Λ w‖ ≤ ∑' n, ‖LSeries.term ↗Λ (σ₀ : ℂ) n‖ := by
@@ -126,12 +79,6 @@ lemma perron_denom_bound {σ₀ : ℝ} (hσ : 1 < σ₀) (t : ℝ) :
   rw [norm_mul]
   exact (pow_le_pow_iff_left₀ a0 (by positivity) two_ne_zero).1 (key.trans e.symm.le)
 
-lemma perron_Fy_eq_LSeries (y : ℝ) (w : ℂ) (hw : 1 < w.re) :
-    Fy y w = LSeries ↗Λ w * (y : ℂ) ^ w / (w * (w - 1)) := by
-  unfold Fy
-  rw [ArithmeticFunction.LSeries_vonMangoldt_eq_deriv_riemannZeta_div hw]
-  ring
-
 lemma perron_continuous_Fy {y : ℝ} (hy : 0 < y) {σ₀ : ℝ} (hσ : 1 < σ₀) :
     Continuous (fun t : ℝ => Fy y ((σ₀ : ℂ) + t * I)) := by
   have hU : ∀ t : ℝ, 1 < ((σ₀ : ℂ) + t * I).re := fun t => by simpa using hσ
@@ -161,26 +108,34 @@ lemma perron_continuous_Fy {y : ℝ} (hy : 0 < y) {σ₀ : ℝ} (hσ : 1 < σ₀
       rw [h] at h1
       simp at h1
 
+lemma perron_integrable_of_bounded {g : ℂ → ℂ} {y σ B : ℝ} (hy : 0 < y) (hσ : 1 < σ)
+    (hg : ∀ t : ℝ, ‖g ((σ : ℂ) + t * I)‖ ≤ B)
+    (hcont : Continuous (fun t : ℝ => let w := (σ : ℂ) + t * I
+      g w * (y : ℂ) ^ w / (w * (w - 1)))) :
+    Integrable (fun t : ℝ => let w := (σ : ℂ) + t * I
+      g w * (y : ℂ) ^ w / (w * (w - 1))) := by
+  let d := min ((σ - 1) ^ 2) 1
+  have hd : 0 < d := lt_min (sq_pos_of_pos (sub_pos.mpr hσ)) one_pos
+  have hB := (norm_nonneg _).trans (hg 0)
+  refine Integrable.mono' (integrable_inv_one_add_sq.const_mul (B * y ^ σ / d))
+    hcont.aestronglyMeasurable (Eventually.of_forall fun t => ?_)
+  dsimp only
+  rw [norm_div, norm_mul, Complex.norm_cpow_eq_rpow_re_of_pos hy]
+  simp only [add_re, ofReal_re, mul_I_re, ofReal_im, neg_zero, add_zero]
+  calc _ ≤ B * y ^ σ / (d * (1 + t ^ 2)) :=
+        div_le_div₀ (mul_nonneg hB (Real.rpow_nonneg hy.le _))
+          (mul_le_mul_of_nonneg_right (hg t) (Real.rpow_nonneg hy.le _)) (by positivity)
+          (perron_denom_bound hσ t)
+    _ = _ := by rw [div_mul_eq_div_div, div_eq_mul_inv _ (1 + t ^ 2)]
+
 lemma perron_integrable_Fy {y : ℝ} (hy : 0 < y) {σ₀ : ℝ} (hσ : 1 < σ₀) :
     Integrable (fun t : ℝ => Fy y ((σ₀ : ℂ) + t * I)) := by
-  have hm : 0 < min ((σ₀ - 1) ^ 2) 1 := lt_min (by nlinarith) one_pos
-  have hS : 0 ≤ ∑' n, ‖LSeries.term ↗Λ (σ₀ : ℂ) n‖ := tsum_nonneg fun n => norm_nonneg _
-  have hbound : ∀ t : ℝ, ‖Fy y ((σ₀ : ℂ) + t * I)‖ ≤
-      ((∑' n, ‖LSeries.term ↗Λ (σ₀ : ℂ) n‖) * y ^ σ₀ / min ((σ₀ - 1) ^ 2) 1) * (1 + t ^ 2)⁻¹ := by
-    intro t
-    have hre : 1 < ((σ₀ : ℂ) + t * I).re := by simpa using hσ
-    have hre' : ((σ₀ : ℂ) + t * I).re = σ₀ := by simp
-    rw [perron_Fy_eq_LSeries y _ hre, norm_div, norm_mul, Complex.norm_cpow_eq_rpow_re_of_pos hy, hre']
-    have hL := perron_norm_LSeries_le hσ ((σ₀ : ℂ) + t * I) hre'
-    have hD := perron_denom_bound hσ t
-    have hDpos : 0 < min ((σ₀ - 1) ^ 2) 1 * (1 + t ^ 2) := by positivity
-    have hy' : 0 < y ^ σ₀ := Real.rpow_pos_of_pos hy σ₀
-    calc ‖LSeries ↗Λ ((σ₀ : ℂ) + t * I)‖ * y ^ σ₀ / ‖((σ₀ : ℂ) + t * I) * ((σ₀ : ℂ) + t * I - 1)‖
-        ≤ (∑' n, ‖LSeries.term ↗Λ (σ₀ : ℂ) n‖) * y ^ σ₀ / (min ((σ₀ - 1) ^ 2) 1 * (1 + t ^ 2)) :=
-          div_le_div₀ (mul_nonneg hS hy'.le) (mul_le_mul_of_nonneg_right hL hy'.le) hDpos hD
-      _ = _ := by field_simp
-  exact Integrable.mono' ((integrable_inv_one_add_sq).const_mul _)
-    (perron_continuous_Fy hy hσ).aestronglyMeasurable (Filter.Eventually.of_forall hbound)
+  refine perron_integrable_of_bounded (B := ∑' n, ‖LSeries.term ↗Λ (σ₀ : ℂ) n‖)
+    (g := fun w => -(deriv riemannZeta w / riemannZeta w)) hy hσ ?_ (perron_continuous_Fy hy hσ)
+  intro t
+  have hw : 1 < ((σ₀ : ℂ) + t * I).re := by simpa using hσ
+  rw [← neg_div, ← ArithmeticFunction.LSeries_vonMangoldt_eq_deriv_riemannZeta_div hw]
+  exact perron_norm_LSeries_le hσ _ (by simp)
 
 lemma perron_mellinSgen_Λ :
     Measurable (Formalism.Sa (fun n => (Λ n : ℝ))) ∧

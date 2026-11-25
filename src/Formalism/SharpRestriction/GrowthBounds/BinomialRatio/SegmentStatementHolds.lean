@@ -1,43 +1,7 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSystems
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -94,7 +58,6 @@ private lemma cdist_next_pos_and_le_of_strictMono (L : List (Fin n')) (hL : Stri
   have hm := m.isLt
   have hs := (L.get j).isLt
   have hnx := (L.get i').isLt
-  have he := (L.get m).isLt
   rcases Nat.lt_or_ge (j.val + 1) L.length with hk | hk
   · rw [Nat.mod_eq_of_lt hk] at hi
     have a1 : (L.get j).val < (L.get i').val := (lt_iff j i').2 (by omega)
@@ -227,7 +190,7 @@ private lemma cdist_lt_segStart_of_mem_oddSet_of_ne (TT : Finset (Fin n')) (j j'
   have hne : segStart TT j' ≠ segStart TT j := (ev_mono TT).injective.ne (Ne.symm h)
   obtain ⟨hpos, hle⟩ := next_min TT j (segStart TT j') (start_mem TT j').1 (start_mem TT j').2 hne
   have hg : segG TT j = cdist (segStart TT j) (segNext TT j) := by
-    simp only [segG, if_neg hpos.ne']
+    simp only [segG, ite_eq_right hpos.ne']
   have := (Finset.mem_filter.1 hs).2.2.2
   omega
 
@@ -239,11 +202,7 @@ theorem oddSet_disj (TT : Finset (Fin n')) (j j' : Fin (numSeg TT)) (h : j ≠ j
   have h2 := cdist_lt_segStart_of_mem_oddSet_of_ne TT j' j (Ne.symm h) hs'
   have p1 := (Finset.mem_filter.1 hs).2.2.1
   have p2 := (Finset.mem_filter.1 hs').2.2.1
-  have hne : (segStart TT j).val ≠ (segStart TT j').val := fun e =>
-    (ev_mono TT).injective.ne h (Fin.ext e)
   have ha := (segStart TT j).isLt
-  have hb := (segStart TT j').isLt
-  have hsl := s.isLt
   rcases cd_cases (segStart TT j) s with ⟨_, e1⟩ | ⟨_, e1⟩ <;>
   rcases cd_cases (segStart TT j') s with ⟨_, e2⟩ | ⟨_, e2⟩ <;>
   rcases cd_cases (segStart TT j) (segStart TT j') with ⟨_, e3⟩ | ⟨_, e3⟩ <;>

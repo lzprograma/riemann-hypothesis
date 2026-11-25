@@ -48,8 +48,6 @@ public import Mathlib.AlgebraicGeometry.Morphisms.Affine
 
 open AlgebraicGeometry CategoryTheory Limits
 
-set_option autoImplicit false
-
 namespace GlobalTheory.AffBaseChange
 
 theorem isPushout_appLE_of_isPullback_of_isAffine :

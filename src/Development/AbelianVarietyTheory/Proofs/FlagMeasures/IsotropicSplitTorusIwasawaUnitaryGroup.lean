@@ -1,5 +1,6 @@
 module
 
+import Development.WeilBound.CoreStatements.OrbitDecayEstimates.CurveDerivativeDecay.HasDerivAtCurve
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermitianFormUnitaryOneOne
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -669,15 +670,7 @@ theorem exists_iwasawa {ε : Fin n → Bool} {P : Matrix (Fin n) (Fin n) ℂ}
 
 private lemma mul_inv_one_mul_inv_eq_mul_inv {ε : Fin n → Bool} (p : UJ ε) :
     umat p⁻¹ = Jm ε * (umat p)ᴴ * Jm ε := by
-  have hm : (umat p)ᴴ * Jm ε * umat p = Jm ε := p.2
-  have hl : Jm ε * (umat p)ᴴ * Jm ε * umat p = 1 := by
-    rw [show Jm ε * (umat p)ᴴ * Jm ε * umat p = Jm ε * ((umat p)ᴴ * Jm ε * umat p) by
-      simp only [mul_assoc], hm, Jm_mul_self]
-  have hr : umat p * umat p⁻¹ = 1 := by
-    simp [umat]
-  calc umat p⁻¹ = (Jm ε * (umat p)ᴴ * Jm ε * umat p) * umat p⁻¹ := by rw [hl, one_mul]
-    _ = Jm ε * (umat p)ᴴ * Jm ε * (umat p * umat p⁻¹) := by rw [mul_assoc]
-    _ = Jm ε * (umat p)ᴴ * Jm ε := by rw [hr, mul_one]
+  apply _root_.CompanionTheory.Lime.T3.uMat_inv <;> assumption
 
 theorem perp_stable {ε : Fin n → Bool} {P : Matrix (Fin n) (Fin n) ℂ} (h : Pᴴ = P) (p : UJ ε)
     (hp : P * (umat p⁻¹ * P) = umat p⁻¹ * P) :

@@ -3,47 +3,6 @@ module
 public import GroundTheory.GlobalFields.TateThesis.GlobalZetaFinite
 public import GroundTheory.GlobalFields.TateThesis.HeckeLFunction
 public import GroundTheory.GlobalFields.TateThesis.SchwartzBruhatFinite
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -106,18 +65,18 @@ theorem finiteTest_eq_zero {v : HeightOneSpectrum (𝓞 K)} {x : v.adicCompletio
 theorem finiteTest_eq_zero_of_dvd {v : HeightOneSpectrum (𝓞 K)} (hv : v.asIdeal ∣ χ.conductor)
     {x : v.adicCompletion K} (hx : Valued.v x ≠ 1) : χ.finiteTest v x = 0 := by
   unfold finiteTest
-  rw [if_pos hv, dite_eq_right hx]
+  rw [ite_eq_left hv, dite_eq_right hx]
 
 theorem finiteTest_eq_one {v : HeightOneSpectrum (𝓞 K)} (hv : ¬ v.asIdeal ∣ χ.conductor)
     {x : v.adicCompletion K} (hx : Valued.v x ≤ 1) : χ.finiteTest v x = 1 := by
   unfold finiteTest
-  rw [if_neg hv, if_pos hx]
+  rw [ite_eq_right hv, ite_eq_left hx]
 
 theorem finiteTest_of_dvd {v : HeightOneSpectrum (𝓞 K)} (hv : v.asIdeal ∣ χ.conductor)
     (u : (v.adicCompletion K)ˣ) (hu : Valued.v (u : v.adicCompletion K) = 1) :
     χ.finiteTest v u = ((χ.localComponent v u : ℂ))⁻¹ := by
   unfold finiteTest
-  rw [if_pos hv, dite_eq_left hu, Circle.coe_inv]
+  rw [ite_eq_left hv, dite_eq_left hu, Circle.coe_inv]
   congr 3
   exact Units.ext rfl
 
@@ -174,7 +133,7 @@ theorem finiteTest_add {v : HeightOneSpectrum (𝓞 K)} (x : v.adicCompletion K)
       · intro hx
         exact (Valuation.map_add _ _ _).trans (max_le hx hh)
     unfold finiteTest
-    simp only [if_neg hv, hiff]
+    simp only [ite_eq_right hv, hiff]
 
 theorem hasFiniteMulSupport_finiteTest (x : FiniteAdeleRing (𝓞 K) K) :
     Function.HasFiniteMulSupport fun v ↦ χ.finiteTest v (x v) := by
@@ -289,7 +248,7 @@ theorem finiteTestFun_mul_toIdele (b : (FiniteAdeleRing (𝓞 K) K)ˣ) :
       else 0 := by
   have hval := valued_eq_exp_ord b
   by_cases hpos : ∀ v, 0 ≤ ord v (ofFinite b)
-  · rw [if_pos hpos]
+  · rw [ite_eq_left hpos]
     set n := ordFinsupp K (ofFinite b) with hn_def
     have hn : ∀ v, n v = ord v (ofFinite b) := fun v ↦ rfl
     have hn0 : ∀ v, 0 ≤ n v := fun v ↦ (hn v).symm ▸ hpos v
@@ -322,7 +281,7 @@ theorem finiteTestFun_mul_toIdele (b : (FiniteAdeleRing (𝓞 K) K)ˣ) :
         exact (count_idealOfExponents hn0 v).symm
       have hmem : ofFinite b' ∈ primeToLevel χ.conductor := by
         refine mem_primeToLevel.2 ⟨toInfinite_ofFinite _, fun v hv ↦ ?_⟩
-        rw [← finiteComponent_toFinite, toFinite_ofFinite, hcomp, if_pos hv]
+        rw [← finiteComponent_toFinite, toFinite_ofFinite, hcomp, ite_eq_left hv]
         exact one_mem _
       have hchar : χ.coeff (idealOfExponents n) = χ.toIdele (ofFinite b') := by
         rw [χ.coeff_of_mem ⟨hI0, hIc⟩]
@@ -369,7 +328,7 @@ theorem finiteTestFun_mul_toIdele (b : (FiniteAdeleRing (𝓞 K) K)ˣ) :
       have h2 : χ.coeff (idealOfExponents n) = 0 :=
         χ.coeff_of_not fun h ↦ not_dvd_of_isCoprime h.2 hv hdvd
       rw [h1, zero_mul, h2]
-  · rw [if_neg hpos]
+  · rw [ite_eq_right hpos]
     push Not at hpos
     obtain ⟨v, hv⟩ := hpos
     rw [χ.finiteTestFun_eq_zero (v := v) (by rw [hval, ← exp_zero, exp_lt_exp]; omega), zero_mul]
@@ -394,7 +353,7 @@ theorem finiteTestFun_mul_toIdele_mul_cpow (b : (FiniteAdeleRing (𝓞 K) K)ˣ) 
       χ.orderTerm s (ordFinsupp K (ofFinite b)) := by
   rw [χ.finiteTestFun_mul_toIdele, orderTerm]
   by_cases hpos : ∀ v, 0 ≤ ord v (ofFinite b)
-  · rw [if_pos hpos, if_pos (show ∀ v, 0 ≤ (ordFinsupp K (ofFinite b)) v from hpos),
+  · rw [ite_eq_left hpos, ite_eq_left (show ∀ v, 0 ≤ (ordFinsupp K (ofFinite b)) v from hpos),
       finiteModule_ofFinite_eq hpos]
     have hN : (0 : ℝ) < Ideal.absNorm (idealOfExponents (ordFinsupp K (ofFinite b))) := by
       have := idealOfExponents_ne_bot (K := K) (n := ordFinsupp K (ofFinite b)) hpos
@@ -404,7 +363,7 @@ theorem finiteTestFun_mul_toIdele_mul_cpow (b : (FiniteAdeleRing (𝓞 K) K)ˣ) 
       exact Real.pi_pos.ne
     congr 1
     rw [Complex.ofReal_inv, Complex.inv_cpow _ _ harg, ← Complex.cpow_neg, Complex.ofReal_natCast]
-  · rw [if_neg hpos, if_neg (show ¬ ∀ v, 0 ≤ (ordFinsupp K (ofFinite b)) v from hpos), zero_mul]
+  · rw [ite_eq_right hpos, ite_eq_right (show ¬ ∀ v, 0 ≤ (ordFinsupp K (ofFinite b)) v from hpos), zero_mul]
 
 theorem exists_idealOfExponents_eq {I : Ideal (𝓞 K)} (hI : I ≠ ⊥) :
     ∃ n : HeightOneSpectrum (𝓞 K) →₀ ℤ, (∀ v, 0 ≤ n v) ∧ idealOfExponents n = I := by
@@ -431,10 +390,10 @@ theorem hasSum_orderTerm {s : ℂ} (hs : 1 < s.re) : HasSum (χ.orderTerm s) (χ
     · convert h1 using 1
       funext n
       simp only [Function.comp_apply, orderTerm]
-      rw [if_pos (show ∀ v, 0 ≤ (n : HeightOneSpectrum (𝓞 K) →₀ ℤ) v from n.2)]
+      rw [ite_eq_left (show ∀ v, 0 ≤ (n : HeightOneSpectrum (𝓞 K) →₀ ℤ) v from n.2)]
     · intro n hn
       by_contra h
-      exact hn (by simp only [orderTerm]; rw [if_neg (show ¬ ∀ v, 0 ≤ n v from h)])
+      exact hn (by simp only [orderTerm]; rw [ite_eq_right (show ¬ ∀ v, 0 ≤ n v from h)])
   · intro I hI
     by_cases h0 : I = ⊥
     · rw [h0, coeff_bot, zero_mul]

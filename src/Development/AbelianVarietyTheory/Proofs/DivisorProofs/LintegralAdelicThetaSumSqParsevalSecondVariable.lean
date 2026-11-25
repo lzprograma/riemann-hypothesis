@@ -4,45 +4,7 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRatVecIff
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzSpaceTranslateMem
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
 
 @[expose] public section
@@ -51,8 +13,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open IsDedekindDomain NumberField MeasureTheory
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels Matrix Formalism.IndefR.Datum
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model Chr incM)
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 open scoped Pointwise
@@ -169,7 +129,7 @@ theorem lintegral_thetaSum_schr_sq : ∀ (F : Type) [Field F] [NumberField F] (�
       have : ∀ y, e 0 y = 1 := fun y => by simp [he, hemb]
       simp_rw [this]; rw [setIntegral_const]; simp
     · obtain ⟨i, hi⟩ : ∃ i, ζ i ≠ 0 := by
-        by_contra h; push_neg at h; exact hζ (funext h)
+        by_contra h; push Not at h; exact hζ (funext h)
       haveI : Countable (GlobalTheory.ThetaParseval.ratVec F κ) := by
         refine Function.Surjective.countable (f := fun ρ : κ → F => (⟨emb ρ, ?_⟩ : GlobalTheory.ThetaParseval.ratVec F κ)) ?_
         · exact (GlobalTheory.ThetaParseval.mem_ratVec_iff _).2 ⟨ρ, by rw [hemb]⟩
@@ -195,8 +155,8 @@ theorem lintegral_thetaSum_schr_sq : ∀ (F : Type) [Field F] [NumberField F] (�
     intro p
     rw [integral_const_mul, horth]
     by_cases h : p.1 = p.2
-    · rw [if_pos (sub_eq_zero.mpr h), if_pos h, h, Complex.mul_conj']; push_cast; ring
-    · rw [if_neg (sub_ne_zero.mpr h), if_neg h, mul_zero]
+    · rw [ite_eq_left (sub_eq_zero.mpr h), ite_eq_left h, h, Complex.mul_conj']; push_cast; ring
+    · rw [ite_eq_right (sub_ne_zero.mpr h), ite_eq_right h, mul_zero]
   have hI : ∫ y in 𝓕₁, ‖g y‖ ^ 2 ∂μ = (∑' ξ, ‖a ξ‖ ^ 2) * μ.real 𝓕₁ := by
     apply Complex.ofReal_injective
     rw [← integral_complex_ofReal]
@@ -205,12 +165,12 @@ theorem lintegral_thetaSum_schr_sq : ∀ (F : Type) [Field F] [NumberField F] (�
     simp_rw [hFval]
     have hinj : Function.Injective (fun ξ : κ → F => (ξ, ξ)) := fun _ _ h => (Prod.ext_iff.1 h).1
     rw [← hinj.tsum_eq]
-    · simp only [if_true]
+    · simp only [ite_true]
       rw [← tsum_mul_right, Complex.ofReal_tsum]
     · intro p hp
       by_cases h : p.1 = p.2
       · exact ⟨p.1, Prod.ext rfl h⟩
-      · exact absurd (if_neg h) hp
+      · exact absurd (ite_eq_right h) hp
   have hsq : Summable fun ξ => ‖a ξ‖ ^ 2 :=
     Summable.of_nonneg_of_le (fun _ => sq_nonneg _)
       (fun ξ => by

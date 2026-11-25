@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.LocUnr
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.EveryPointSatisfiesFrameCondition
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.IneAbs
@@ -75,18 +76,7 @@ private theorem val_prime (A : ValuationSubring Ω) (n : ℕ) (hn : n ≠ 0) (h 
 
 private theorem val_cop (A : ValuationSubring Ω) {a b : ℕ} (h : a.Coprime b) (ha : A.valuation (a : Ω) < 1) :
     ¬ A.valuation (b : Ω) < 1 := by
-  intro hb
-  obtain ⟨u, v, e⟩ := Nat.isCoprime_iff_coprime.2 h
-  have e' : (a : Ω) * (u : Ω) + (b : Ω) * (v : Ω) = 1 := by
-    have := congrArg (Int.cast : ℤ → Ω) e
-    push_cast at this
-    rw [← this]; ring
-  have h1 : A.valuation ((a : Ω) * (u : Ω) + (b : Ω) * (v : Ω)) < 1 := by
-    refine Valuation.map_add_lt _ ?_ ?_ <;> rw [map_mul]
-    · exact mul_lt_one_of_lt_of_le ha (val_int_le A u)
-    · exact mul_lt_one_of_lt_of_le hb (val_int_le A v)
-  rw [e', map_one] at h1
-  exact lt_irrefl _ h1
+  apply _root_.not_both <;> assumption
 
 variable [CharZero Ω] [IsAlgClosure ℚ Ω]
 

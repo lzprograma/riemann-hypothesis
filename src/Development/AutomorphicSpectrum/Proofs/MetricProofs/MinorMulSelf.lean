@@ -10,47 +10,6 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagAdjacentCh
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameDataLocalResolutionOpen
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorIJLowerUniSwap
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PMatStepColsEntry
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsBaseChart
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.PullbackPullback
@@ -60,7 +19,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersecti
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.IsRatSectionOn
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsValueAtOfTorus
 import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
 
@@ -102,8 +60,8 @@ theorem det_squareBlockRestriction_ne_zero (G : Matrix (Fin N) (Fin N) ℂ) (hd 
     have h3 : (square_block_restriction G⁻¹ T * square_block_restriction G T) x y = ∑ i : {x // x ∈ T}, G⁻¹ x.1 i.1 * G i.1 y.1 := rfl
     rw [h3, h1, Matrix.one_apply]
     by_cases hxy : x = y
-    · rw [if_pos hxy, if_pos (congrArg Subtype.val hxy)]
-    · rw [if_neg hxy, if_neg (fun h => hxy (Subtype.ext h))]
+    · rw [ite_eq_left hxy, ite_eq_left (congrArg Subtype.val hxy)]
+    · rw [ite_eq_right hxy, ite_eq_right (fun h => hxy (Subtype.ext h))]
   intro h0
   have h2 := congrArg Matrix.det hprod
   rw [Matrix.det_mul, h0, mul_zero, Matrix.det_one] at h2
@@ -131,7 +89,7 @@ theorem exists_cols (G : Matrix (Fin N) (Fin N) ℂ) (F : Set (Finset (Fin N))) 
   refine ⟨Matrix.of fun x b => if hx : x ∈ Tb b then (square_block_restriction G (Tb b))⁻¹ ⟨x, hx⟩ ⟨b, hbTb b⟩ else 0, ?_, ?_⟩
   · intro T hT c hc x hx
     have hx' : x ∉ Tb c := fun h' => hx (hTbmin c T hT hc h')
-    simp only [Matrix.of_apply, dif_neg hx']
+    simp only [Matrix.of_apply, dite_eq_right hx']
   · intro a b hab
     have ha : a ∈ Tb b := hab (Tb b) (hTbF b) (hbTb b)
     have hM : square_block_restriction G (Tb b) * (square_block_restriction G (Tb b))⁻¹ = 1 :=
@@ -147,7 +105,7 @@ theorem exists_cols (G : Matrix (Fin N) (Fin N) ℂ) (F : Set (Finset (Fin N))) 
     simp only [Matrix.of_apply]
     rw [← Finset.sum_subset (Finset.subset_univ (Tb b))
       (f := fun x => G a x * (if hx : x ∈ Tb b then (square_block_restriction G (Tb b))⁻¹ ⟨x, hx⟩ ⟨b, hbTb b⟩ else 0))
-      (fun x _ hx => by simp only [dif_neg hx, mul_zero]),
+      (fun x _ hx => by simp only [dite_eq_right hx, mul_zero]),
       ← Finset.sum_coe_sort (Tb b), Finset.sum_congr rfl (fun x _ => h2 x), h1]
     simp only [Subtype.mk.injEq]
 
@@ -209,18 +167,18 @@ theorem exists_lu : ∀ (N j : ℕ) (kp : Fin N → Prop) (G : Matrix (Fin N) (F
         refine Finset.sum_congr rfl (fun x _ => ?_)
         rw [hEdef, Matrix.of_apply]
         by_cases hxc : ((x : ℕ) < N - j ↔ (c : ℕ) < N - j)
-        · rw [if_pos hxc]
-        · rw [if_neg hxc, hbd a x (fun hax => hxc (hax.symm.trans hac)), zero_mul, zero_mul]
+        · rw [ite_eq_left hxc]
+        · rw [ite_eq_right hxc, hbd a x (fun hax => hxc (hax.symm.trans hac)), zero_mul, zero_mul]
       · have hne : a ≠ c := fun h => hac (by rw [h])
         rw [Matrix.one_apply_ne hne, Matrix.mul_apply]
         refine Finset.sum_eq_zero (fun x _ => ?_)
         rw [hEdef, Matrix.of_apply]
         by_cases hxc : ((x : ℕ) < N - j ↔ (c : ℕ) < N - j)
         · rw [hbd a x (fun hax => hac (hax.trans hxc)), zero_mul]
-        · rw [if_neg hxc, mul_zero]
+        · rw [ite_eq_right hxc, mul_zero]
     have hEinv : G⁻¹ = E := Matrix.inv_eq_right_inv hE
     intro x c hxc
-    rw [hEinv, hEdef, Matrix.of_apply, if_neg hxc]
+    rw [hEinv, hEdef, Matrix.of_apply, ite_eq_right hxc]
   have hom : (square_block_restriction G (omIdx N j)).det ≠ 0 := det_squareBlockRestriction_ne_zero G hdet _ (fun x hx c hc => hGinv x c (fun h => by
     simp only [omIdx, Finset.mem_filter, Finset.mem_univ, true_and] at hx hc
     exact hc (h.mp hx)))
@@ -270,12 +228,12 @@ theorem exists_lu : ∀ (N j : ℕ) (kp : Fin N → Prop) (G : Matrix (Fin N) (F
     · rw [hbd a x (fun hax => hab (hax.trans hxb)), zero_mul]
     · rw [hWblk x b hxb, mul_zero]
   refine ⟨G * W, W, hLblk, ⟨fun a => ?_, fun a b hab => ?_⟩, ?_, hWblk, ?_, rfl⟩
-  · rw [hGW a a (fun T _ h => h), if_pos rfl]
+  · rw [hGW a a (fun T _ h => h), ite_eq_left rfl]
   · by_cases hs : ((a : ℕ) < N - j ↔ (b : ℕ) < N - j)
-    · rw [hGW a b (fun T hT hb => (hseg T hT).down hb hab hs), if_neg (ne_of_lt hab)]
+    · rw [hGW a b (fun T hT hb => (hseg T hT).down hb hab hs), ite_eq_right (ne_of_lt hab)]
     · exact hLblk a b hs
   · intro a b hba hs hno
-    refine (hGW a b ?_).trans (if_neg (ne_of_gt hba))
+    refine (hGW a b ?_).trans (ite_eq_right (ne_of_gt hba))
     rintro T (⟨i, hki, hpi, rfl⟩ | rfl | rfl) hb
     · by_contra ha
       exact hno ⟨i, hki, hpi, hb, ha⟩
@@ -317,16 +275,16 @@ theorem pMat_of_low (keep : Ψ × Fin N → Prop) (L : Ψ → Matrix (Fin N) (Fi
   ext a b
   unfold pMat lowMat cExt
   by_cases h : b < a ∧ ((a : ℕ) < N - j ↔ (b : ℕ) < N - j)
-  · rw [dif_pos h]
+  · rw [dite_eq_left h]
     by_cases hS : Sep keep (⟨(τ, a, b), h⟩ : LowIdx Ψ N j)
-    · rw [dif_pos hS]
-    · rw [dif_neg hS]
+    · rw [dite_eq_left hS]
+    · rw [dite_eq_right hS]
       exact (hs τ a b h.1 h.2 hS).symm
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     by_cases e : a = b
     · subst e
-      rw [if_pos rfl, (hl τ).1]
-    · rw [if_neg e]
+      rw [ite_eq_left rfl, (hl τ).1]
+    · rw [ite_eq_right e]
       rcases lt_or_gt_of_ne e with hlt | hgt
       · exact ((hl τ).2 a b hlt).symm
       · exact (hb τ a b fun hi => h ⟨hgt, hi⟩).symm
@@ -334,7 +292,7 @@ theorem pMat_of_low (keep : Ψ × Fin N → Prop) (L : Ψ → Matrix (Fin N) (Fi
 theorem minor_self {X : Matrix (Fin N) (Fin N) ℂ} (hX : IsLowerUni X) (C : Finset (Fin N)) :
     minorIJ X C C = 1 := by
   unfold minorIJ
-  rw [dif_pos rfl, det_of_lowerTriangular (X.submatrix (C.orderEmbOfFin rfl) (C.orderEmbOfFin rfl)) fun a b e =>
+  rw [dite_eq_left rfl, det_of_lowerTriangular (X.submatrix (C.orderEmbOfFin rfl) (C.orderEmbOfFin rfl)) fun a b e =>
     hX.2 _ _ ((C.orderEmbOfFin rfl).strictMono (show a < b from e))]
   exact Finset.prod_eq_one fun a _ => hX.1 _
 
@@ -397,9 +355,9 @@ theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι 
   let c : Kk → ℂ := fun k => if hk : ∀ p, M.blk p ≠ some (κ k) then c₀ ⟨κ k, hk⟩ else 1
   have hc : ∀ k, c k ≠ 0 := fun k => by
     by_cases hk : ∀ p, M.blk p ≠ some (κ k)
-    · simp only [c, dif_pos hk]
+    · simp only [c, dite_eq_left hk]
       exact hc₀ _
-    · simp only [c, dif_neg hk]
+    · simp only [c, dite_eq_right hk]
       exact one_ne_zero
   let z' : (Σ k, ιk k) → ℂ := fun p => c p.1 * z p
   have hz' : z' ∈ mcPts (mCoordIdeal (y ∘ v)) :=
@@ -407,7 +365,7 @@ theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι 
   have hbase : ∀ (k : NonPluckerBlocks M.blk) (m : ι k.1), upV v z' ⟨k.1, m⟩ = c₀ k * upV v z ⟨k.1, m⟩ := fun k m =>
     upV_scale hbm c z ((hκ k.1).2 (Or.inl k.2)) (fun k' e' => by
       have hk' : ∀ p, M.blk p ≠ some (κ k') := e' ▸ k.2
-      simp only [c, dif_pos hk']
+      simp only [c, dite_eq_left hk']
       congr 1
       exact Subtype.ext e') m
   have hbp : pBase M v z' = zc := by
@@ -418,7 +376,7 @@ theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι 
   have hkept : ∀ p k, keep p → M.blk p = some k → ∀ m : ι k, upV v z' ⟨k, m⟩ = 1 * upV v z ⟨k, m⟩ :=
     fun p k hp hk m => upV_scale hbm c z ((hκ k).2 (Or.inr ⟨p, hp, hk⟩)) (fun k' e' => by
       have hk' : ¬ ∀ p, M.blk p ≠ some (κ k') := fun hn => hn p (hk.trans (by rw [e']))
-      simp only [c, dif_neg hk']) m
+      simp only [c, dite_eq_right hk']) m
   obtain ⟨H, hH, hHf⟩ := _root_.GlobalTheory.CompanionTheory.Ar.PB.PFl.Fwd.main K ι Φ y Ψ N j M keep Kk ιk κ v hbm hκ F z' hF hz' (hbp ▸ hblgood)
     (by rw [hbp]; exact hblnorm)
   rw [hbp] at hHf

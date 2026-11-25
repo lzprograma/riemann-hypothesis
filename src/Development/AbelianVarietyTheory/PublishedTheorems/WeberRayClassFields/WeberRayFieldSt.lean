@@ -42,8 +42,6 @@ import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
-set_option autoImplicit false
-
 namespace GlobalTheory.Published
 
 open NumberField GlobalTheory.FieldSize

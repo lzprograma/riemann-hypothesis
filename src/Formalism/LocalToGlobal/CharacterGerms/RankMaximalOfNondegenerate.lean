@@ -5,8 +5,6 @@ public import Formalism.LocalToGlobal.CharacterGerms.RowTieCartFB
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators
@@ -100,13 +98,7 @@ theorem mm_mul_ge {a b : C} (ha : V.MM a) (hb : V.Ge 0 b) : V.MM (a * b) := by
   exact lt_of_lt_of_le ha (le_add_of_nonneg_right hb')
 
 theorem mm_sum {ι : Type} (s : Finset ι) (f : ι → C) (hf : ∀ i ∈ s, V.MM (f i)) : V.MM (∑ i ∈ s, f i) := by
-  induction s using Finset.induction_on with
-  | empty =>
-    rw [Finset.sum_empty]
-    exact mm_zero
-  | insert i s hi ih =>
-    rw [Finset.sum_insert hi]
-    exact mm_add (hf i (Finset.mem_insert_self i s)) (ih fun j hj => hf j (Finset.mem_insert_of_mem hj))
+  exact Finset.sum_induction f V.MM (fun _ _ => mm_add) mm_zero hf
 
 end MM
 
@@ -155,15 +147,15 @@ theorem tyS_good_coeff {g : Fin 2} {w : I g → C} {x : ℕ → I g ⊕ JJ I g �
   · rw [pow_zero]
     by_cases hn1 : n = 1
     · subst hn1
-      rw [if_pos rfl, if_pos rfl]
+      rw [ite_eq_left rfl, ite_eq_left rfl]
       simp [h0]
     · have hn1' : ¬ (1 = n) := fun h => hn1 h.symm
-      rw [if_neg hn1', if_neg hn1]
+      rw [ite_eq_right hn1', ite_eq_right hn1]
   · intro s _ hs0
     by_cases hs1 : s = 1
     · subst hs1
       simp [h1 c]
-    · rw [if_neg]
+    · rw [ite_eq_right]
       intro hsn
       have h2 : 2 ≤ s := by omega
       have h3 : V.l ^ 2 ≤ V.l ^ s := Nat.pow_le_pow_right (by omega) h2

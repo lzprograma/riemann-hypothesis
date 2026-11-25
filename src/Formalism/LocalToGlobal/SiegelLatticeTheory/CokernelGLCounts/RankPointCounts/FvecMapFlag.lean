@@ -69,7 +69,7 @@ theorem coef_mat (F : FlagG S r T) (s : S.V →ₗ[E] S.V) (hs : ∀ j, ∀ x �
       rw [Fin.sum_univ_castSucc]
       simp only [M, Matrix.of_apply, Fin.lastCases_last, Fin.lastCases_castSucc, Formalism.MainNotions.S.FlagG.fvec,
         Fin.snoc_last, Fin.snoc_castSucc, zero_smul, add_zero, add_smul, Finset.sum_add_distrib, ite_smul,
-        one_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+        one_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
       exact hl b'
   have hdiag : ∀ i, M i i = 1 := by
     intro i

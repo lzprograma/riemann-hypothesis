@@ -1,51 +1,13 @@
 module
 
+import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCurveCharts
+
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSncModel
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrimeChartExistsUniquePoint
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalization
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SncChartOfSmoothCoords
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -165,34 +127,7 @@ end Ratios
 
 theorem exists_nat_mul_mem_adjoin {Ω : Type} [Field Ω] [CharZero Ω] {W : Set Ω} {a : Ω}
     (ha : a ∈ Algebra.adjoin ℚ W) : ∃ N : ℕ, N ≠ 0 ∧ (N : Ω) * a ∈ Algebra.adjoin ℤ W := by
-  induction ha using Algebra.adjoin_induction with
-  | mem x hx => exact ⟨1, one_ne_zero, by simpa using Algebra.subset_adjoin hx⟩
-  | algebraMap r =>
-    refine ⟨r.den, r.den_ne_zero, ?_⟩
-    have : (r.den : Ω) * algebraMap ℚ Ω r = (r.num : Ω) := by
-      have hd : (r.den : Ω) ≠ 0 := Nat.cast_ne_zero.mpr r.den_ne_zero
-      rw [eq_ratCast, Rat.cast_def]
-      field_simp
-    rw [this]
-    exact intCast_mem _ _
-  | add x y _ _ hx hy =>
-    obtain ⟨N, hN, hx⟩ := hx
-    obtain ⟨M, hM, hy⟩ := hy
-    refine ⟨N * M, mul_ne_zero hN hM, ?_⟩
-    have : ((N * M : ℕ) : Ω) * (x + y) = (M : Ω) * ((N : Ω) * x) + (N : Ω) * ((M : Ω) * y) := by
-      push_cast
-      ring
-    rw [this]
-    exact add_mem (mul_mem (natCast_mem _ _) hx) (mul_mem (natCast_mem _ _) hy)
-  | mul x y _ _ hx hy =>
-    obtain ⟨N, hN, hx⟩ := hx
-    obtain ⟨M, hM, hy⟩ := hy
-    refine ⟨N * M, mul_ne_zero hN hM, ?_⟩
-    have : ((N * M : ℕ) : Ω) * (x * y) = ((N : Ω) * x) * ((M : Ω) * y) := by
-      push_cast
-      ring
-    rw [this]
-    exact mul_mem hx hy
+  apply _root_.GroundTheory.Heights₂.Heights.CurveAffineCharts.exists_nat_mul_mem_adjoin <;> assumption
 
 theorem aeval_mem_subring {Ω σ : Type} [Field Ω] (T : Subring Ω) (r : σ → Ω) (h : ∀ p, r p ∈ T)
     (g : MvPolynomial σ ℤ) : MvPolynomial.aeval r g ∈ T := by

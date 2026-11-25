@@ -1,56 +1,13 @@
 module
 
 public import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 public import Mathlib.RingTheory.Valuation.Integral
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
+import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemTwKerOfFibIntEqZero
 
 @[expose] public section
 
@@ -125,8 +82,7 @@ theorem alg_mem_O {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 
 theorem exists_not_mem_range {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
     {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E] (M : Model F E) : ∃ y : E, y ∉ Set.range (algebraMap F E) := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   have hs : Function.Surjective (Algebra.linearMap F E) := fun y => hc y
   have h := LinearMap.finrank_range_le (Algebra.linearMap F E)
   rw [LinearMap.range_eq_top.mpr hs, finrank_top, Module.finrank_self, M.L.rank] at h
@@ -134,16 +90,7 @@ theorem exists_not_mem_range {F : Type} [Field F] [ValuativeRel F] [TopologicalS
 
 theorem exists_mul_mem_integer {F : Type} [Field F] [ValuativeRel F] (s : F) :
     ∃ c : F, c ∈ 𝒪[F] ∧ c ≠ 0 ∧ c * s ∈ 𝒪[F] := by
-  by_cases hs : s ∈ 𝒪[F]
-  · exact ⟨1, one_mem _, one_ne_zero, by simpa using hs⟩
-  · have hs0 : s ≠ 0 := by
-      rintro rfl
-      exact hs (zero_mem _)
-    refine ⟨s⁻¹, ?_, inv_ne_zero hs0, by rw [inv_mul_cancel₀ hs0]; exact one_mem _⟩
-    rw [Valuation.mem_integer_iff] at hs ⊢
-    rw [map_inv₀]
-    push_neg at hs
-    exact inv_le_one_of_one_le₀ hs.le
+  apply _root_.GlobalTheory.CompanionTheory.BZPsiPG.FibKer.exists_integral_mul <;> assumption
 
 theorem exists_omega0 {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
     {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E] (M : Model F E) :
@@ -226,8 +173,7 @@ theorem coords_exist {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 theorem mem_of_sq_mem {F : Type} [Field F] [ValuativeRel F] {y : F} (h : y ^ 2 ∈ 𝒪[F]) : y ∈ 𝒪[F] := by
   rw [Valuation.mem_integer_iff] at h ⊢
   rw [map_pow] at h
-  by_contra hy
-  push_neg at hy
+  by_contra! hy
   have h2 : 1 < (ValuativeRel.valuation F) y ^ 2 := one_lt_pow₀ hy two_ne_zero
   exact absurd h (not_le.mpr h2)
 

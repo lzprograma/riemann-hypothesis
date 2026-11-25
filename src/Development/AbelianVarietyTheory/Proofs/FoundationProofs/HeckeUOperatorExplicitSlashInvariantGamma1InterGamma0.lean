@@ -71,7 +71,7 @@ theorem lev_transform {N l : ℕ} {k : ℤ} {f : ℍ → ℂ}
     have e2 : g 1 1 = D := rfl
     have := (show denom (Matrix.SpecialLinearGroup.toGL
       ((Matrix.SpecialLinearGroup.map (Int.castRingHom ℝ)) g)) (w : ℂ) = ((g 1 0 : ℤ) : ℂ) * z + (g 1 1 : ℤ) by
-      simp [denom, Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply, w])
+      simp [denom, Matrix.SpecialLinearGroup.map_apply_coe, Matrix.map_apply, w])
     rw [this, e1, e2]
   have hsm : ((g • w : ℍ) : ℂ) = (A * z + B) / (C * z + D) := by
     rw [specialLinearGroup_apply]; simp [g, w]

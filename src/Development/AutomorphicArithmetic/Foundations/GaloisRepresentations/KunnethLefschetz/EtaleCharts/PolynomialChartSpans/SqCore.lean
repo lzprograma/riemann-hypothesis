@@ -23,70 +23,23 @@ public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentation
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StdSmoothMvPolynomial
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.ProjProd
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.BlowOfBl
-public import Development.AutomorphicArithmetic.AutomorphicVarieties.IntegralityNearIdentity.EqOneOfNear
+public import Mathlib.NumberTheory.Padics.Complex
+public import Mathlib.NumberTheory.Padics.PadicIntegers
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsExtraAlt
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IntegralityNearIdentity.IsIntegralOfNormLe
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.TowerRallisLemma
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.BlowBC
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.BlowOfBl
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CommRingSections.IsCovPr
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.AlgebraicGeometry.Morphisms.Etale
-import Mathlib.Tactic.Basify
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.TypeStar
 import Development.ResolutionOfSingularities.Foundations.Blowup.ReesGrading
 import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
 import GroundTheory.ArithmeticGeometry.SchemeCohomology.ConsCompSuccAboveZero
 import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjSpace
-import Mathlib.AlgebraicGeometry.Morphisms.Finite
-import Mathlib.Tactic.ENatToNat
-import Mathlib.RingTheory.RegularLocalRing.Defs
+import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.DiagonalPullbacks.DiagEt3Of
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.BCoord, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.BlowUpSmooth, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsFurtherBis, Development.AutomorphicArithmetic.WhittakerHecke.CechCocycleLineBundle, Development.AutomorphicArithmetic.WhittakerHecke.SurjectiveEvalBlowupChartOfSpanEq, Development.AutomorphicArithmetic.WhittakerHecke.ExistsBlowupAffineChartCoverOfSpanEq, Development.AutomorphicArithmetic.WhittakerHecke.ExistsHomogeneousGeneratorsIdealSheafClosedImmer, Development.AutomorphicArithmetic.WhittakerHecke.IsUnitChartCoordAndHomogeneousChartTransition, Development.AutomorphicArithmetic.WhittakerHecke.RestrictMemNonZeroDivisorsOfIsAffineOpen, Development.AutomorphicArithmetic.WhittakerHecke.SectionsGeneratedOverAffineProductCover, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.CrossOfRel, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.ExSmooth, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.BlowUpTop, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.OKDvr, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.SubstXZero, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.SqCore
@@ -97,186 +50,6 @@ section -- clump:auto
 @[expose] public section
 
 open CategoryTheory Limits MvPolynomial
-
-namespace UpperTheory.Gal.KunnethLefschetz.G
-
-private theorem etale_chart {A E B : Type} [CommRing A] [CommRing E] [CommRing B] {D : ℕ}
-    (p : A →+* E) (ψ : E →+* B) (s : Fin D → E) (y : Fin D → B) (j : Fin D)
-    (hφ : (eval₂Hom p s).Etale)
-    (surj : Function.Surjective (eval₂Hom ψ y))
-    (ker : RingHom.ker (eval₂Hom ψ y) = Ideal.span (insert (X j - 1 : MvPolynomial (Fin D) E)
-      (Set.range fun k => MvPolynomial.C (s k) - MvPolynomial.C (s j) * X k))) :
-    (eval₂Hom (ψ.comp p) (Function.update y j (ψ (s j)))).Etale := by
-  classical
-  let γ := eval₂Hom (ψ.comp p) (Function.update y j (ψ (s j)))
-  let Z : Fin D → MvPolynomial (Fin D) A := Function.update X j 1
-  let α' : MvPolynomial (ULift.{0} (Fin D)) A →+* E := eval₂Hom p (fun k => s k.down)
-  let β' : MvPolynomial (ULift.{0} (Fin D)) A →+* MvPolynomial (Fin D) A :=
-    eval₂Hom C (fun k => X j * Z k.down)
-  have hα' : α'.Etale := by
-    have e1 : α' = (eval₂Hom p s).comp
-        (MvPolynomial.renameEquiv A Equiv.ulift).toRingEquiv.toRingHom := by
-      apply MvPolynomial.ringHom_ext
-      · intro a
-        simp [α']
-      · intro k
-        simp [α']
-    rw [e1]
-    exact RingHom.Etale.respectsIso.2 _ _ hφ
-  have hker : ∀ q ∈ Ideal.span (insert (X j - 1 : MvPolynomial (Fin D) E)
-      (Set.range fun k => C (s k) - C (s j) * X k)), eval₂Hom ψ y q = 0 := by
-    intro q hq
-    rw [← ker] at hq
-    exact hq
-  have hyj : y j = 1 := by
-    have h0 := hker _ (Ideal.subset_span (Set.mem_insert _ _))
-    simp only [map_sub, eval₂Hom_X', map_one] at h0
-    exact sub_eq_zero.1 h0
-  have hyk : ∀ k, ψ (s k) = ψ (s j) * y k := by
-    intro k
-    have h0 := hker _ (Ideal.subset_span (Set.mem_insert_of_mem _ ⟨k, rfl⟩))
-    simp only [map_sub, map_mul, eval₂Hom_C, eval₂Hom_X'] at h0
-    exact sub_eq_zero.1 h0
-  have hγX : ∀ k, k ≠ j → γ (X k) = y k := by
-    intro k hk
-    simp [γ, Function.update_of_ne hk]
-  have hγXj : γ (X j) = ψ (s j) := by simp [γ]
-  have hγZ : ∀ k, γ (X j * Z k) = ψ (s k) := by
-    intro k
-    by_cases hk : k = j
-    · subst hk
-      simp [Z, hγXj]
-    · rw [map_mul, hγXj]
-      simp only [Z, Function.update_of_ne hk]
-      rw [hγX k hk, hyk k]
-  have hcompat : ∀ t, ψ (α' t) = γ (β' t) := by
-    intro t
-    have h0 : ψ.comp α' = γ.comp β' := by
-      apply MvPolynomial.ringHom_ext
-      · intro a
-        simp [α', β', γ]
-      · intro k
-        simp only [RingHom.comp_apply, α', β', eval₂Hom_X']
-        exact (hγZ k.down).symm
-    exact RingHom.congr_fun h0 t
-  letI : Algebra (MvPolynomial (ULift.{0} (Fin D)) A) E := α'.toAlgebra
-  letI : Algebra (MvPolynomial (ULift.{0} (Fin D)) A) (MvPolynomial (Fin D) A) := β'.toAlgebra
-  letI : Algebra (MvPolynomial (ULift.{0} (Fin D)) A) B := (γ.comp β').toAlgebra
-  have hbc := RingHom.Etale.isStableUnderBaseChange.tensorProduct (MvPolynomial (Fin D) A)
-    (R := MvPolynomial (ULift.{0} (Fin D)) A) (S := E) hα'
-  let fA : MvPolynomial (Fin D) A →ₐ[MvPolynomial (ULift.{0} (Fin D)) A] B :=
-    { γ with commutes' := fun _ => rfl }
-  let gA : E →ₐ[MvPolynomial (ULift.{0} (Fin D)) A] B :=
-    { ψ with commutes' := fun t => hcompat t }
-  let F := (Algebra.TensorProduct.lift fA gA (fun _ _ => Commute.all _ _)).toRingHom
-  have hF : ∀ a e, F (TensorProduct.tmul (MvPolynomial (ULift.{0} (Fin D)) A) a e) = γ a * ψ e := by
-    intro a e
-    simp [F, fA, gA]
-  have hT : ∀ t, TensorProduct.tmul (MvPolynomial (ULift.{0} (Fin D)) A) (1 : MvPolynomial (Fin D) A) (α' t) = TensorProduct.tmul (MvPolynomial (ULift.{0} (Fin D)) A) (β' t) (1 : E) := by
-    intro t
-    have h1 : α' t = t • (1 : E) := by
-      rw [Algebra.smul_def, mul_one]
-      rfl
-    have h2 : β' t = t • (1 : MvPolynomial (Fin D) A) := by
-      rw [Algebra.smul_def, mul_one]
-      rfl
-    rw [h1, h2, TensorProduct.smul_tmul]
-  have hTs : ∀ k, TensorProduct.tmul (MvPolynomial (ULift.{0} (Fin D)) A) (1 : MvPolynomial (Fin D) A) (s k) = TensorProduct.tmul (MvPolynomial (ULift.{0} (Fin D)) A) (X j * Z k) (1 : E) := by
-    intro k
-    simpa [α', β'] using hT (X ⟨k⟩)
-  let G0 : MvPolynomial (Fin D) E →+* TensorProduct (MvPolynomial (ULift.{0} (Fin D)) A) (MvPolynomial (Fin D) A) E :=
-    eval₂Hom (Algebra.TensorProduct.includeRight :
-      E →ₐ[MvPolynomial (ULift.{0} (Fin D)) A] TensorProduct (MvPolynomial (ULift.{0} (Fin D)) A) (MvPolynomial (Fin D) A) E).toRingHom (fun k => TensorProduct.tmul (MvPolynomial (ULift.{0} (Fin D)) A) (Z k) (1 : E))
-  have hG0C : ∀ e, G0 (C e) = TensorProduct.tmul (MvPolynomial (ULift.{0} (Fin D)) A) (1 : MvPolynomial (Fin D) A) e := by
-    intro e
-    simp [G0]
-  have hG0X : ∀ k, G0 (X k) = TensorProduct.tmul (MvPolynomial (ULift.{0} (Fin D)) A) (Z k) (1 : E) := by
-    intro k
-    simp [G0]
-  have hG0 : RingHom.ker (eval₂Hom ψ y) ≤ RingHom.ker G0 := by
-    rw [ker, Ideal.span_le]
-    rintro q (rfl | ⟨k, rfl⟩)
-    · rw [SetLike.mem_coe, RingHom.mem_ker, map_sub, map_one, hG0X]
-      simp [Z, Algebra.TensorProduct.one_def]
-    · rw [SetLike.mem_coe, RingHom.mem_ker, map_sub, map_mul, hG0C, hG0C, hG0X,
-        Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_one, hTs k]
-      have h3 : TensorProduct.tmul (MvPolynomial (ULift.{0} (Fin D)) A) (Z k) (s j) = TensorProduct.tmul (MvPolynomial (ULift.{0} (Fin D)) A) (Z k) (1 : E) * TensorProduct.tmul (MvPolynomial (ULift.{0} (Fin D)) A) (1 : MvPolynomial (Fin D) A) (s j) := by
-        rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
-      rw [h3, hTs j, Algebra.TensorProduct.tmul_mul_tmul]
-      simp [Z, mul_comm]
-  let G : B →+* TensorProduct (MvPolynomial (ULift.{0} (Fin D)) A) (MvPolynomial (Fin D) A) E :=
-    (Ideal.Quotient.lift _ G0 (fun q hq => hG0 hq)).comp
-      (RingHom.quotientKerEquivOfSurjective surj).symm.toRingHom
-  have hG : ∀ q, G (eval₂Hom ψ y q) = G0 q := by
-    intro q
-    have h4 : (RingHom.quotientKerEquivOfSurjective surj).symm (eval₂Hom ψ y q)
-        = Ideal.Quotient.mk _ q := by
-      rw [RingEquiv.symm_apply_eq]
-      rfl
-    show Ideal.Quotient.lift _ G0 (fun q hq => hG0 hq)
-      ((RingHom.quotientKerEquivOfSurjective surj).symm (eval₂Hom ψ y q)) = G0 q
-    rw [h4]
-    rfl
-  have hGψ : ∀ e, G (ψ e) = TensorProduct.tmul (MvPolynomial (ULift.{0} (Fin D)) A) (1 : MvPolynomial (Fin D) A) e := by
-    intro e
-    rw [← eval₂Hom_C ψ y e, hG, hG0C]
-  have hFG : F.comp G = RingHom.id B := by
-    have h5 : F.comp G0 = eval₂Hom ψ y := by
-      apply MvPolynomial.ringHom_ext
-      · intro e
-        rw [RingHom.comp_apply, hG0C, hF, map_one, one_mul, eval₂Hom_C]
-      · intro k
-        rw [RingHom.comp_apply, hG0X, hF, map_one, mul_one, eval₂Hom_X']
-        by_cases hk : k = j
-        · subst hk
-          simp [Z, hyj]
-        · simp only [Z, Function.update_of_ne hk]
-          exact hγX k hk
-    apply RingHom.ext
-    intro b
-    obtain ⟨q, rfl⟩ := surj b
-    rw [RingHom.comp_apply, hG, RingHom.id_apply]
-    exact RingHom.congr_fun h5 q
-  have hGγ : ∀ a, G (γ a) = TensorProduct.tmul (MvPolynomial (ULift.{0} (Fin D)) A) a (1 : E) := by
-    have h6 : G.comp γ = Algebra.TensorProduct.includeLeftRingHom := by
-      apply MvPolynomial.ringHom_ext
-      · intro c
-        have h7 := hT (C c)
-        simp only [α', β', eval₂Hom_C] at h7
-        simp only [RingHom.comp_apply, Algebra.TensorProduct.includeLeftRingHom_apply]
-        simp only [γ, eval₂Hom_C, RingHom.comp_apply]
-        rw [hGψ, h7]
-      · intro k
-        simp only [RingHom.comp_apply, Algebra.TensorProduct.includeLeftRingHom_apply]
-        by_cases hk : k = j
-        · subst hk
-          rw [hγXj, hGψ, hTs]
-          simp [Z]
-        · rw [hγX k hk, ← eval₂Hom_X' ψ y k, hG, hG0X]
-          simp only [Z, Function.update_of_ne hk]
-    intro a
-    exact RingHom.congr_fun h6 a
-  have hGF : G.comp F = RingHom.id _ := by
-    apply RingHom.ext
-    intro x
-    induction x using TensorProduct.induction_on with
-    | zero => simp
-    | tmul a e =>
-      rw [RingHom.comp_apply, hF, map_mul, RingHom.id_apply, hGγ, hGψ,
-        Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
-    | add x y hx hy =>
-      simp only [RingHom.comp_apply, RingHom.id_apply, map_add (f := _)] at hx hy ⊢
-      rw [hx, hy]
-  let e := RingEquiv.ofRingHom F G hFG hGF
-  have h8 := RingHom.Etale.respectsIso.1 _ e hbc
-  convert h8 using 1
-  apply RingHom.ext
-  intro x
-  show γ x = F (algebraMap _ _ x)
-  rw [Algebra.TensorProduct.algebraMap_apply, hF, map_one, mul_one]
-  rfl
-
-end UpperTheory.Gal.KunnethLefschetz.G
 
 open UpperTheory.Gal.DifferentialFormSections in
 theorem UpperTheory.Gal.KunnethLefschetz.G.bCoord :
@@ -297,52 +70,6 @@ noncomputable section
 open CategoryTheory Limits AlgebraicGeometry UpperTheory.Gal.DifferentialFormSections
 
 namespace UpperTheory.Gal.KunnethLefschetz.G
-
-private theorem stdC (A : Type) [CommRing A] (D : ℕ) :
-    (MvPolynomial.C : A →+* MvPolynomial (Fin D) A).IsStandardSmoothOfRelativeDimension D := by
-  rw [← MvPolynomial.algebraMap_eq, RingHom.isStandardSmoothOfRelativeDimension_algebraMap]
-  let v : PEmpty.{1} → MvPolynomial (Fin D) A := PEmpty.elim
-  let P0 := Algebra.PreSubmersivePresentation.naive (R := A) (v := v) (σ := Fin D)
-    (ι := PEmpty.{1}) PEmpty.elim (fun a => a.elim)
-  let P1 : Algebra.SubmersivePresentation A _ (Fin D) PEmpty.{1} :=
-    { toPreSubmersivePresentation := P0
-      jacobian_isUnit := by
-        classical
-        rw [Algebra.PreSubmersivePresentation.jacobian_eq_jacobiMatrix_det]
-        simp }
-  have hv : Ideal.span (Set.range v) = ⊥ := by simp [v]
-  let e : (MvPolynomial (Fin D) A ⧸ Ideal.span (Set.range v)) ≃ₐ[A] MvPolynomial (Fin D) A :=
-    (Ideal.quotientEquivAlgOfEq A hv).trans (AlgEquiv.quotientBot A _)
-  exact ⟨⟨Fin D, PEmpty.{1}, inferInstance, inferInstance, P1.ofAlgEquiv e,
-    by simp [Algebra.Presentation.dimension]⟩⟩
-
-private theorem chart {X Y : Scheme.{0}} (f : X ⟶ Y) (n : ℕ) {U : Y.Opens} {V : X.Opens}
-    (hU : IsAffineOpen U) (hV : IsAffineOpen V) (e : V ≤ f ⁻¹ᵁ U)
-    (h : RingHom.IsStandardSmoothOfRelativeDimension n (f.appLE U V e).hom) :
-    SmoothOfRelativeDimension n (V.ι ≫ f) := by
-  haveI : IsAffine U := hU
-  haveI : IsAffine V := hV
-  have H := (HasRingHomProperty.isLocal_ringHomProperty
-    (@SmoothOfRelativeDimension n)).respectsIso
-  have hr : SmoothOfRelativeDimension n (f.resLE U V e) := by
-    rw [HasRingHomProperty.iff_of_isAffine (P := @SmoothOfRelativeDimension n)]
-    rw [Scheme.Hom.appTop, Scheme.Hom.resLE_app_top, CommRingCat.hom_comp, H.cancel_left_isIso,
-      CommRingCat.hom_comp, H.cancel_right_isIso]
-    exact RingHom.locally_of RingHom.isStandardSmoothOfRelativeDimension_respectsIso _ h
-  haveI : SmoothOfRelativeDimension 0 U.ι := by
-    rw [← Etale.iff_smoothOfRelativeDimension_zero]
-    infer_instance
-  rw [← Scheme.Hom.resLE_comp_ι f e]
-  simpa using smoothOfRelativeDimension_comp n 0 (f.resLE U V e) U.ι
-
-private theorem ofPts {X Y : Scheme.{0}} (f : X ⟶ Y) (n : ℕ)
-    (H : ∀ x : X, ∃ O : X.Opens, x ∈ O ∧ SmoothOfRelativeDimension n (O.ι ≫ f)) :
-    SmoothOfRelativeDimension n f := by
-  haveI : IsZariskiLocalAtSource (@SmoothOfRelativeDimension n) :=
-    HasRingHomProperty.instIsZariskiLocalAtSource
-  choose O hxO hO using H
-  exact IsZariskiLocalAtSource.of_iSup_eq_top (P := @SmoothOfRelativeDimension n) O
-    (top_unique fun x _ => TopologicalSpace.Opens.mem_iSup.mpr ⟨x, hxO x⟩) hO
 
 theorem blSmooth : BlowUpSmooth := by
   intro R _ _ Z W D _ _ π hπ
@@ -573,7 +300,6 @@ private lemma loc_coord (U : W.Opens) (x : Fin (M + 1) → Γ(W, U)) (m l : Fin 
   rw [this, CategoryTheory.Functor.map_id]
   rfl
 
-set_option backward.isDefEq.respectTransparency false in
 private lemma appLE_ι {Y : Scheme.{0}} (f : W ⟶ Y) (O : Y.Opens) (U : W.Opens)
     (h : U ≤ f ⁻¹ᵁ O) (e : ⊤ ≤ (U.ι ≫ f) ⁻¹ᵁ O) (y : Γ(Y, O)) :
     (U.ι ≫ f).appLE O ⊤ e y = U.topIso.inv (f.appLE O U h y) := by
@@ -734,8 +460,6 @@ section -- clump:auto
 
 open CategoryTheory Limits AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor FunctorialResolution.Blowup
 open GroundTheory.Arith.SchemeCoh GroundTheory.Arith.SchemeCoh.ProjSpace MvPolynomial
-
-attribute [local instance] MvPolynomial.gradedAlgebra
 
 private theorem chart_cover {R : Type} [CommRing R] (I : Ideal R) {M : ℕ} (a : Fin (M + 1) → ↥I)
     (h : Ideal.span (Set.range fun l => (a l : R)) = I) :
@@ -1127,9 +851,9 @@ theorem UpperTheory.exists_homogeneous_generators_idealSheaf_closedImmersion :
   refine ⟨n, M, F, ?_, ?_⟩
   · intro m
     by_cases hm : (m : ℕ) < M
-    · simp only [F, dif_pos hm]
+    · simp only [F, dite_eq_left hm]
       exact hGh _
-    · simp only [F, dif_neg hm]
+    · simp only [F, dite_eq_right hm]
       exact MvPolynomial.isHomogeneous_zero _ _ _
   · intro a hU
     change Ideal.span (Set.range fun m => phi i a (F m)) = I.ideal ⟨_, isAffineOpen_U i a⟩
@@ -1137,9 +861,9 @@ theorem UpperTheory.exists_homogeneous_generators_idealSheaf_closedImmersion :
     · rw [Ideal.span_le]
       rintro _ ⟨m, rfl⟩
       by_cases hm : (m : ℕ) < M
-      · simp only [F, dif_pos hm]
+      · simp only [F, dite_eq_left hm]
         exact hGb _ a
-      · simp only [F, dif_neg hm, map_zero]
+      · simp only [F, dite_eq_right hm, map_zero]
         exact Ideal.zero_mem _
     · rw [← hgens a, Ideal.span_le]
       intro h hh
@@ -1147,7 +871,7 @@ theorem UpperTheory.exists_homogeneous_generators_idealSheaf_closedImmersion :
         ⟨a, h, hh⟩
       refine Ideal.subset_span ⟨⟨e p, by omega⟩, ?_⟩
       have hlt : ((⟨e p, by omega⟩ : Fin (M + 1)) : ℕ) < M := (e p).2
-      simp only [F, dif_pos hlt]
+      simp only [F, dite_eq_left hlt]
       simp only [Fin.eta, Equiv.symm_apply_apply]
       exact hGa p
 end -- clump:auto
@@ -1213,8 +937,6 @@ section -- clump:auto
 open CategoryTheory Limits AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor FunctorialResolution.Blowup
 open GroundTheory.Arith.SchemeCoh GroundTheory.Arith.SchemeCoh.ProjSpace MvPolynomial
 
-attribute [local instance] MvPolynomial.gradedAlgebra
-
 theorem UpperTheory.restrict_mem_nonZeroDivisors_of_isAffineOpen :
     ∀ {W : Scheme.{0}} {V O : W.Opens}, IsAffineOpen V → ∀ (h : O ≤ V) (t : Γ(W, V)), t ∈ nonZeroDivisors Γ(W, V) →
         W.presheaf.map (homOfLE h).op t ∈ nonZeroDivisors Γ(W, O) := by
@@ -1244,8 +966,6 @@ section -- clump:auto
 
 open CategoryTheory Limits AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor FunctorialResolution.Blowup
 open GroundTheory.Arith.SchemeCoh GroundTheory.Arith.SchemeCoh.ProjSpace MvPolynomial
-
-attribute [local instance] MvPolynomial.gradedAlgebra
 
 theorem UpperTheory.sections_generated_over_affine_product_cover :
     ∀ {S Z P W : Scheme.{0}} [IsAffine S] (p : Z ⟶ S) (q : P ⟶ S) (π : W ⟶ Z) (f : W ⟶ P)
@@ -1468,7 +1188,7 @@ private theorem stdSmooth_of_bijective {A B σ : Type} [CommRing A] [CommRing B]
     φ.IsStandardSmoothOfRelativeDimension d := by
   have h0 : (algebraMap A (MvPolynomial (Fin d) A)).IsStandardSmoothOfRelativeDimension d :=
     (RingHom.isStandardSmoothOfRelativeDimension_algebraMap (n := d)).mpr
-      (GlobalTheory.CompanionTheory.Ar.LieInh.stdSmooth_mvPolynomial A d)
+      (Algebra.IsStandardSmoothOfRelativeDimension.mvPolynomial_fin (R := A) (n := d))
   let e₁ : MvPolynomial (Fin d) A ≃+* MvPolynomial σ A :=
     (MvPolynomial.renameEquiv A (Fintype.equivFinOfCardEq hd).symm).toRingEquiv
   let e₂ : MvPolynomial σ A ≃+* B := RingEquiv.ofBijective _ hb

@@ -207,8 +207,7 @@ theorem exists_covers_fam : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
   intro L _ _ W hW y
   obtain ⟨j, e, he, ψ, z, t, h1, hz, hb⟩ := hP L W hW y
   have hex : ∃ i, ψ (evR Xo c (ws i) ((P j).y e he)) ≠ 0 := by
-    by_contra hn
-    push_neg at hn
+    by_contra! hn
     have hle : Ideal.span (Set.range fun i => (evR Xo c (ws i) ((P j).y e he) : (P j).R e)) ≤ RingHom.ker ψ := by
       rw [Ideal.span_le]
       rintro _ ⟨i, rfl⟩

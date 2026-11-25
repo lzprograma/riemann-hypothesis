@@ -74,7 +74,6 @@ section -- clump:auto
 @[expose] public section
 
 open NumberField IsDedekindDomain
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 
@@ -127,11 +126,6 @@ theorem exists_isGeneric_subrep {E : Type} [Field E] [NumberField E] [_root_.Num
 
 end GlobalTheory.CuspDetBlocks
 
-namespace GlobalTheory.CuspDetBlocks
-
-open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.CuspRep GlobalTheory.Whittaker
-
-end GlobalTheory.CuspDetBlocks
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -149,14 +143,6 @@ noncomputable section
 namespace GlobalTheory.ThK.DetProd
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil
-
-section Local
-
-variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-
-end Local
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 theorem exists_isGeneric_of_isLocComp {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ}
     {τ : GlobalTheory.CuspRep.CuspSub E n} {w : HeightOneSpectrum (𝓞 E)}
@@ -190,7 +176,6 @@ section
 noncomputable section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi
 open GlobalTheory.PRep GlobalTheory.TypeTwo.PowIrrProof
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 namespace UpperTheory.V.Z.J.D.TypeVAux
 private theorem eq_one_of_charpoly_dvd {V : Type} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
     (f : Module.End ℂ V) (hf : f.IsSemisimple) {n : ℕ} (hd : f.charpoly ∣ (X - C 1) ^ n) : f = 1 := by
@@ -431,7 +416,7 @@ theorem nonempty_equiv_principal_series_of_char_poly_of_generic (Lc : _root_.Glo
       simp only [IrrGL.nu, IrrGL.tw_ofChar, IrrGL.ofChar_inj]
       exact e
     have hself : (Δ p).first ≠ (Δ p).first.nu 1 := fun e3 => by
-      refine GlobalTheory.UnlinkedMono.lpTw_one_ne (rc (Δ p).first) (by rw [H.dim]; exact (Δ p).isCusp_first.1) ?_
+      refine GlobalTheory.WeilDeligne.WD.lpTw_one_ne (rc (Δ p).first) (by rw [H.dim]; exact (Δ p).isCusp_first.1) ?_
       calc (rc (Δ p).first).lpTw 1 = rc ((Δ p).first.nu ((1 : ℝ) : ℂ)) := (H.nu_eq _ 1).symm
         _ = rc (Δ p).first := by rw [Complex.ofReal_one, ← e3]
     have hpq : p ≠ q := fun e3 => hself (by rw [← hnu, e3])
@@ -462,7 +447,6 @@ section
 noncomputable section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi
 open GlobalTheory.PRep GlobalTheory.TypeTwo.PowIrrProof
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open scoped commutatorElement
 namespace UpperTheory.V.Z.J.D.TypeVAux
 private theorem exists_chars {Γ : Type} [Group Γ] {n : ℕ} (ρ : Representation ℂ Γ (Fin n → ℂ))

@@ -319,7 +319,7 @@ theorem formal_halving_exists : HalfExists := by
       simp only [Matrix.mul_apply, Finset.univ_unique, Finset.sum_singleton, Matrix.of_apply,
         Matrix.one_apply]
       have : MvPowerSeries.coeff (Finsupp.single (default : Unit) 1) D = 2 := hD1
-      rw [this, mul_inv_cancel₀ two0, if_pos trivial])
+      rw [this, mul_inv_cancel₀ two0, ite_eq_left trivial])
   have hsX : MvPowerSeries.HasSubst X' := MvPowerSeries.hasSubst_of_constantCoeff_zero hX0
   let g : PowerSeries K := X' ()
   have hg0 : PowerSeries.constantCoeff g = 0 := hX0 ()

@@ -67,7 +67,7 @@ open scoped TensorProduct
 
 namespace GlobalTheory.SumWCompare
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.IndefiniteRowSideFullHecke.LevelCuspCharacters.factPrime
+attribute [local instance] GlobalTheory.IndefiniteRowSideFullHecke.LevelCuspCharacters.factPrime
 
 section Places
 
@@ -104,14 +104,5 @@ theorem coeff_centralIdem {G : Type} [Group G] [Finite G] (τ : G → ℂ) (x : 
   classical
   unfold LevelCuspCharacters.centralIdem
   simp [MonoidAlgebra.coeff_sum, Finsupp.single_apply]
-
-section Match
-
-variable {pb : Fin 2 → 𝓞 D.host.E} (h : IsTypeDatum D.host.g pb) (pl : LevelCuspCharacters.Sq D.host ≃ ↥(GoodIdempotentBadPlaces.typePl pb))
-  (red : ∀ v : LevelCuspCharacters.Sq D.host, kP (pl v).1 ≃+* ZMod (D.host.g v.1))
-
-
-
-end Match
 
 end GlobalTheory.SumWCompare

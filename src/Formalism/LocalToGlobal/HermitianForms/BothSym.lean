@@ -12,8 +12,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.Forms
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def chM {D : D7} (H : Formalism.L2.Herm.HermColsCh D) (u : D.what₂.Word) : H.Ch u D.R.m :=
   @default _ (H.Ch_m u).some.toInhabited
 

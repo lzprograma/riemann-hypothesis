@@ -73,8 +73,6 @@ theorem continuous_toZModPow (l : ℕ) [hl : Fact (Nat.Prime l)] (n : ℕ) :
     exact hy
   exact tendsto_nhds_of_eventually_eq hev
 
-alias main := _root_.GlobalTheory.ContinuousZModPow.continuous_toZModPow
-
 end GlobalTheory.ContinuousZModPow
 end -- clump:auto
 end -- clump:auto

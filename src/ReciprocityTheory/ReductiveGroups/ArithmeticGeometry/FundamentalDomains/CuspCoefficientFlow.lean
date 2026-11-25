@@ -1,6 +1,7 @@
 module
 
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ModerateCoefficientPositivity
+import Mathlib.Analysis.Complex.Schwarz
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.HopfAlgebra.Basic
@@ -22,58 +23,6 @@ section Param
 
 variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℂ F] [FiniteDimensional ℂ F]
   [MeasurableSpace F] [BorelSpace F] {ι : Type} [Fintype ι]
-
-private theorem norm_fderiv_le_of_differentiableOn_ball_of_norm_le {F : Type*} [NormedAddCommGroup F] [NormedSpace ℂ F]
-    {f : F → ℂ} {x0 x : F} {ρ C : ℝ} (hρ : 0 < ρ) (hf : DifferentiableOn ℂ f (ball x0 ρ))
-    (hC : ∀ z ∈ ball x0 ρ, ‖f z‖ ≤ C) (hx : x ∈ ball x0 (ρ / 2)) :
-    ‖fderiv ℂ f x‖ ≤ C / (ρ / 2) := by
-  have hC0 : 0 ≤ C := (norm_nonneg _).trans (hC x0 (mem_ball_self hρ))
-  have hx1 : ‖x - x0‖ < ρ / 2 := mem_ball_iff_norm.mp hx
-  have hxd : DifferentiableAt ℂ f x :=
-    hf.differentiableAt (isOpen_ball.mem_nhds (ball_subset_ball (by linarith) hx))
-  refine ContinuousLinearMap.opNorm_le_bound _ (by positivity) fun v => ?_
-  rcases eq_or_ne v 0 with rfl | hv
-  · simp
-  have hvpos : 0 < ‖v‖ := norm_pos_iff.mpr hv
-  set R := ρ / 2 / ‖v‖ with hRdef
-  have hR : 0 < R := by positivity
-  have hRv : R * ‖v‖ = ρ / 2 := div_mul_cancel₀ _ hvpos.ne'
-  have hmem : ∀ w : ℂ, ‖w‖ ≤ R → x + w • v ∈ ball x0 ρ := by
-    intro w hw
-    rw [mem_ball_iff_norm]
-    have h2 : ‖w • v‖ ≤ ρ / 2 := by
-      rw [norm_smul, ← hRv]
-      exact mul_le_mul_of_nonneg_right hw (norm_nonneg v)
-    have h3 : x + w • v - x0 = (x - x0) + w • v := by abel
-    rw [h3]
-    calc _ ≤ ‖x - x0‖ + ‖w • v‖ := norm_add_le _ _
-      _ < ρ / 2 + ρ / 2 := add_lt_add_of_lt_of_le hx1 h2
-      _ = ρ := by ring
-  have hgd : DifferentiableOn ℂ (fun w : ℂ => f (x + w • v)) (closedBall 0 R) := by
-    intro w hw
-    have hw' : ‖w‖ ≤ R := by simpa using hw
-    have hfa : DifferentiableAt ℂ f (x + w • v) :=
-      hf.differentiableAt (isOpen_ball.mem_nhds (hmem w hw'))
-    exact (hfa.comp w ((differentiableAt_id.smul_const v).const_add x)).differentiableWithinAt
-  have hdc : DiffContOnCl ℂ (fun w : ℂ => f (x + w • v)) (ball 0 R) := by
-    apply DifferentiableOn.diffContOnCl
-    rw [closure_ball _ hR.ne']
-    exact hgd
-  have hcau := Complex.norm_deriv_le_of_forall_mem_sphere_norm_le hR hdc
-    (fun z hz => hC _ (hmem z (le_of_eq (mem_sphere_zero_iff_norm.mp hz))))
-  have hline : HasDerivAt (fun w : ℂ => x + w • v) ((1 : ℂ) • v) 0 :=
-    ((hasDerivAt_id (0 : ℂ)).smul_const v).const_add x
-  have hfd : HasFDerivAt f (fderiv ℂ f x) (x + (0 : ℂ) • v) := by
-    rw [zero_smul, add_zero]
-    exact hxd.hasFDerivAt
-  have hg := hfd.comp_hasDerivAt (0 : ℂ) hline
-  rw [one_smul] at hg
-  have hder : deriv (fun w : ℂ => f (x + w • v)) 0 = fderiv ℂ f x v := hg.deriv
-  rw [hder] at hcau
-  calc ‖fderiv ℂ f x v‖ ≤ C / R := hcau
-    _ = C / (ρ / 2) * ‖v‖ := by
-      rw [hRdef]
-      field_simp
 
 theorem diffOn_param_bdd {K : Set (ι → ℝ)} (hKv : volume K < ⊤)
     (A : (ι → ℝ) → F →L[ℂ] F) (hA : Continuous A) {U : Set F} (hU : IsOpen U)
@@ -112,7 +61,7 @@ theorem diffOn_param_bdd {K : Set (ι → ℝ)} (hKv : volume K < ⊤)
     exact (ContinuousLinearMap.compL ℂ F F ℂ).aestronglyMeasurable_comp₂ h1 hA.aestronglyMeasurable
   have key := hasFDerivAt_integral_of_dominated_of_fderiv_le (μ := volume.restrict K)
     (F := fun x t => G (A t x) * e t) (F' := fun x t => e t • fderiv ℂ (fun z => G (A t z)) x)
-    (bound := fun _ => C / (ρ / 2)) (x₀ := x0) (ball_mem_nhds x0 (half_pos hρ))
+    (bound := fun _ => 2 * C / (ρ / 2)) (x₀ := x0) (ball_mem_nhds x0 (half_pos hρ))
     (Filter.eventually_of_mem (hU.mem_nhds hx0) fun x hx => (hcont x hx).aestronglyMeasurable)
     ((integrable_const C).mono' (hcont x0 hx0).aestronglyMeasurable
       (Filter.Eventually.of_forall fun t => by
@@ -124,12 +73,20 @@ theorem diffOn_param_bdd {K : Set (ι → ℝ)} (hKv : volume K < ⊤)
     hmeasF'
     (Filter.Eventually.of_forall fun t x hx => by
       rw [norm_smul]
-      have hb := norm_fderiv_le_of_differentiableOn_ball_of_norm_le hρ ((hslice t).mono hballU)
-        (fun z hz => hC t z (ball_subset_closedBall hz)) hx
-      have hC0 : 0 ≤ C / (ρ / 2) := (norm_nonneg _).trans hb
-      calc ‖e t‖ * ‖fderiv ℂ (fun z => G (A t z)) x‖ ≤ 1 * (C / (ρ / 2)) :=
+      have hxρ : x ∈ ball x0 ρ := ball_subset_ball (by linarith) hx
+      have hsub : ball x (ρ / 2) ⊆ ball x0 ρ := fun z hz => by
+        rw [mem_ball] at hz hx ⊢
+        linarith [dist_triangle z x x0]
+      have hb : ‖fderiv ℂ (fun z => G (A t z)) x‖ ≤ 2 * C / (ρ / 2) := by
+        refine Complex.norm_fderiv_le_div_of_mapsTo_ball
+          ((hslice t).mono (hsub.trans hballU)) (fun z hz => ?_) (half_pos hρ)
+        rw [mem_closedBall, dist_eq_norm_sub]
+        have h1 := hC t z (ball_subset_closedBall (hsub hz))
+        have h2 := hC t x (ball_subset_closedBall hxρ)
+        linarith [norm_sub_le (G (A t z)) (G (A t x))]
+      calc ‖e t‖ * ‖fderiv ℂ (fun z => G (A t z)) x‖ ≤ 1 * (2 * C / (ρ / 2)) :=
             mul_le_mul (he1 t) hb (norm_nonneg _) zero_le_one
-        _ = C / (ρ / 2) := one_mul _)
+        _ = 2 * C / (ρ / 2) := one_mul _)
     (integrable_const _)
     (Filter.Eventually.of_forall fun t x hx =>
       hfd t x (hballU (ball_subset_ball (by linarith) hx)))

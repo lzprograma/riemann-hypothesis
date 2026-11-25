@@ -1,49 +1,10 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapQdetEtr
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MinorCellOfParts
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -85,11 +46,11 @@ theorem EA_gl (hD : IsOpen D) : GlRel (EA (E := E) hD) := by
   rw [h]
   congr 1
   · by_cases hbc : b = c
-    · rw [if_pos (congrArg cI hbc), if_pos hbc]; rfl
-    · rw [if_neg (fun e => hbc (cI_inj e)), if_neg hbc]; rfl
+    · rw [ite_eq_left (congrArg cI hbc), ite_eq_left hbc]; rfl
+    · rw [ite_eq_right (fun e => hbc (cI_inj e)), ite_eq_right hbc]; rfl
   · by_cases hda : d = a
-    · rw [if_pos (congrArg cI hda), if_pos hda]; rfl
-    · rw [if_neg (fun e => hda (cI_inj e)), if_neg hda]; rfl
+    · rw [ite_eq_left (congrArg cI hda), ite_eq_left hda]; rfl
+    · rw [ite_eq_right (fun e => hda (cI_inj e)), ite_eq_right hda]; rfl
 
 def La (hD : IsOpen D) (v : VS k r 0 D E) (g : Mx k r) : SA E hD →ₗ[ℂ] E where
   toFun x := ((x : Module.End ℂ (VS k r 0 D E)) v : Mx k r → E) g
@@ -134,7 +95,7 @@ theorem comm_Tor (hD : IsOpen D) (j : ℕ) (p q : Fin (2 * r + k + 1))
   | mem y hy =>
     obtain ⟨l, hl, rfl⟩ := hy
     have h := EA_gl (E := E) hD p q (eI k r l) (eI k r l)
-    rw [if_neg (hq l hl), if_neg (fun e => hp l hl e.symm), sub_zero] at h
+    rw [ite_eq_right (hq l hl), ite_eq_right (fun e => hp l hl e.symm), sub_zero] at h
     exact sub_eq_zero.1 h
   | algebraMap c => exact Algebra.commute_algebraMap_right c _
   | add y₁ y₂ _ _ h₁ h₂ => exact h₁.add_right h₂
@@ -154,16 +115,7 @@ section qm
 theorem map_qminor {A B : Type} [Ring A] [Algebra ℂ A] [Ring B] [Algebra ℂ B] (φ : A →ₐ[ℂ] B) {n t : ℕ}
     (E : Fin n → Fin n → A) (a b : Fin t → Fin n) (u : ℂ) :
     φ (qminor E a b u) = qminor (fun p q => φ (E p q)) a b u := by
-  unfold qminor
-
-  rw [map_sum]
-  refine Finset.sum_congr rfl fun σ _ => ?_
-  rw [map_mul, map_intCast, map_list_prod, List.map_ofFn]
-  congr 2
-  congr 1
-  funext k
-  simp only [Function.comp_apply, Tm, map_add]
-  split_ifs <;> simp
+  apply _root_.GlobalTheory.CompanionTheory.CapelliMap.map_qminor <;> assumption
 
 theorem qminor_reindex {A : Type} [Ring A] [Algebra ℂ A] {n n' t : ℕ} (E : Fin n' → Fin n' → A) (ι : Fin n → Fin n')
     (hι : Function.Injective ι) (a b : Fin t → Fin n) (u : ℂ) :
@@ -175,8 +127,8 @@ theorem qminor_reindex {A : Type} [Ring A] [Algebra ℂ A] {n n' t : ℕ} (E : F
   funext l
   simp only [Tm, Function.comp_apply]
   by_cases h : a (σ l) = b l
-  · rw [if_pos h, if_pos (congrArg ι h)]
-  · rw [if_neg h, if_neg (fun e => h (hι e))]
+  · rw [ite_eq_left h, ite_eq_left (congrArg ι h)]
+  · rw [ite_eq_right h, ite_eq_right (fun e => h (hι e))]
 
 end qm
 
@@ -187,7 +139,7 @@ variable {k r : ℕ} {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {D : 
 theorem gauge_last (c : Fin r → ℂ) :
     (∏ a : Fin r, (if a.val < (Fin.last r).val then ‖c a‖ ^ (Mdim k r a - 1) else 1)) =
       ∏ a : Fin r, ‖c a‖ ^ (Mdim k r a - 1) :=
-  Finset.prod_congr rfl fun a _ => if_pos a.isLt
+  Finset.prod_congr rfl fun a _ => ite_eq_left a.isLt
 
 theorem resG_last (J : Mx k r → E) (c : Fin r → ℂ) (g : Mx k r) :
     Q.resG k r (Fin.last r) J c g = ((∏ a : Fin r, ‖c a‖ ^ (Mdim k r a - 1) : ℝ) : ℂ) • J (wCell k r (Fin.last r) c * g) := by

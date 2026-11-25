@@ -79,12 +79,10 @@ theorem ip_self (u : X.Ψ → Fin r → ℂ) : ip X u u = ∑ τ, X.c τ * ∑ a
 theorem ip_pos {u : X.Ψ → Fin r → ℂ} (hu : u ≠ 0) : 0 < ip X u u := by
   rw [ip_self]
   obtain ⟨τ, hτ⟩ : ∃ τ, u τ ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hu (funext h)
   obtain ⟨a, ha⟩ : ∃ a, u τ a ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hτ (funext h)
   apply Finset.sum_pos' (fun i _ => mul_nonneg (c_pos X i).le
     (Finset.sum_nonneg fun b _ => sq_nonneg _))
@@ -114,10 +112,6 @@ theorem ip_Ly_self (y : X.Ψ → Matrix (Fin r) (Fin r) ℂ) (v : Fin r → E) :
     ip X (Ly X y (X.embV v)) (Ly X y (X.embV v)) = Qy X y v := by
   rw [ip_self]
   rfl
-
-theorem Qy_nonneg (y : X.Ψ → Matrix (Fin r) (Fin r) ℂ) (v : Fin r → E) : 0 ≤ Qy X y v := by
-  unfold Qy
-  exact Finset.sum_nonneg fun τ _ => mul_nonneg (c_pos X τ).le (Finset.sum_nonneg fun a _ => sq_nonneg _)
 
 theorem embV_sum {ι : Type} (s : Finset ι) (w : ι → Fin r → E) :
     X.embV (∑ i ∈ s, w i) = ∑ i ∈ s, X.embV (w i) := by

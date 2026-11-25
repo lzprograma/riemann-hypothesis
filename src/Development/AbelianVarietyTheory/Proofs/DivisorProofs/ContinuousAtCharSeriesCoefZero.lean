@@ -1,52 +1,7 @@
 module
 
 public import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Algebra.Field.GeomSum
 public import Mathlib.Analysis.Normed.Group.InfiniteSum
@@ -87,7 +42,6 @@ theorem geom_avg_le {ζ : ℂ} (hζ : ζ ≠ 1) (h1 : ‖ζ‖ = 1) (K : ℕ) (h
     ‖(K:ℂ)⁻¹ * ∑ k : Fin K, ζ ^ (k:ℕ)‖ ≤ 2 / (K * ‖ζ - 1‖) := by
   rw [Fin.sum_univ_eq_sum_range (fun k => ζ ^ k) K, geom_sum_eq hζ K]
   have hz : 0 < ‖ζ - 1‖ := norm_pos_iff.mpr (sub_ne_zero.mpr hζ)
-  have hKpos : (0:ℝ) < K := by exact_mod_cast hK
   have hnum : ‖ζ ^ K - 1‖ ≤ 2 := by
     calc ‖ζ ^ K - 1‖ ≤ ‖ζ ^ K‖ + ‖(1:ℂ)‖ := norm_sub_le _ _
       _ = 2 := by rw [norm_pow, h1]; norm_num
@@ -194,24 +148,24 @@ theorem continuousAt_coef_zero {Y Ξ P : Type} [AddCommGroup Y] [Zero Ξ] [Topol
         (δ * S + (S - ∑ a ∈ s, M a)) := by
       refine (hM.hasSum.mul_left δ).add (hM.hasSum.sub ?_)
       have : HasSum (fun a => if a ∈ s then M a else 0) (∑ b ∈ s, if b ∈ s then M b else 0) :=
-        hasSum_sum_of_ne_finset_zero (fun b hb => if_neg hb)
+        hasSum_sum_of_ne_finset_zero (fun b hb => ite_eq_right hb)
       have e2 : (∑ b ∈ s, if b ∈ s then M b else 0) = ∑ b ∈ s, M b :=
-        Finset.sum_congr rfl (fun b hb => if_pos hb)
+        Finset.sum_congr rfl (fun b hb => ite_eq_left hb)
       rw [e2] at this
       exact this
     refine h3.norm_le_of_bounded hg (fun a => ?_)
     have hMa := hM0 a
     by_cases ha : a = 0
     · subst ha
-      simp only [hα0, one_mul, if_true, sub_self, norm_zero]
+      simp only [hα0, one_mul, ite_true, sub_self, norm_zero]
       split_ifs <;> nlinarith [mul_nonneg hδ.le hMa]
-    · simp only [ha, if_false, sub_zero]
+    · simp only [ha, ite_false, sub_zero]
       by_cases has : a ∈ s
-      · simp only [has, if_true, sub_self, add_zero]
+      · simp only [has, ite_true, sub_self, add_zero]
         rw [norm_mul]
         have := hw a (Finset.mem_erase.mpr ⟨ha, has⟩)
         exact mul_le_mul this (hp a) (norm_nonneg _) hδ.le
-      · simp only [has, if_false, sub_zero]
+      · simp only [has, ite_false, sub_zero]
         rw [norm_mul]
         have : ‖α a‖ * ‖c p a‖ ≤ 1 * M a := mul_le_mul (hα1 a) (hp a) (norm_nonneg _) zero_le_one
         nlinarith

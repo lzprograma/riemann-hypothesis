@@ -98,28 +98,28 @@ theorem UpperTheory.exists_integral_powerSeries_of_bounded_distribution :
   obtain ⟨L, hLO, hL⟩ := GlobalTheory.AmiceDist.amice l c μ
     (fun r x => by
       by_cases hr : r = 0
-      · simp only [μ, if_pos hr]
+      · simp only [μ, ite_eq_left hr]
         exact sum_mem (fun x' _ => hO 1 le_rfl x')
-      · simp only [μ, if_neg hr]
+      · simp only [μ, ite_eq_right hr]
         exact hO r (Nat.one_le_iff_ne_zero.2 hr) x)
     (fun r x => by
       have hr1 : r + 1 ≠ 0 := by omega
-      simp only [μ, if_neg hr1]
+      simp only [μ, ite_eq_right hr1]
       by_cases hr : r = 0
       · subst hr
-        simp only [if_true]
+        simp only [ite_true]
         have hf : Finset.univ.filter (fun x' : ZMod (l ^ (0 + 1)) =>
             ZMod.castHom (pow_dvd_pow l (Nat.le_succ 0)) (ZMod (l ^ 0)) x' = x) = Finset.univ :=
           Finset.filter_true_of_mem
             (fun x' _ => (show ∀ a b : ZMod 1, a = b from fun a b => Subsingleton.elim a b) _ _)
         rw [hf]
-      · simp only [if_neg hr]
+      · simp only [ite_eq_right hr]
         exact hsum r (Nat.one_le_iff_ne_zero.2 hr) x)
   refine ⟨L, hLO, fun r hr z hz => ?_⟩
   have h1 := hL r hr z hz
   have h2 : ∑ x, μ r x * z ^ x.val = ν r (fun x => z ^ x.val) := by
     have hr0 : r ≠ 0 := by omega
-    simp only [μ, if_neg hr0]
+    simp only [μ, ite_eq_right hr0]
     have h3 : (fun x : ZMod (l ^ r) => z ^ x.val) = ∑ x, z ^ x.val • Pi.single x (1 : Qbar l) := by
       funext y
       simp [Finset.sum_apply, Pi.single_apply]
@@ -141,13 +141,6 @@ open Formalism.ConjugateSelfDual UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory
 private theorem UpperTheory.pow_val_mul_zmod {K : Type*} [Monoid K] {m : ℕ} (z : K) (hz : z ^ m = 1) (a b : ZMod m) :
     (z ^ a.val) ^ b.val = z ^ (a * b).val := by
   rw [← pow_mul, ZMod.val_mul, ← pow_eq_pow_mod _ hz]
-
-private theorem UpperTheory.norm_dirichlet_character_le_one {l : ℕ} [Fact l.Prime] {m : ℕ} [NeZero m] (ψ : DirichletCharacter (Qbar l) m)
-    (b : (ZMod m)ˣ) : ‖ψ b‖ ≤ 1 := by
-  have h1 : (ψ b) ^ (Fintype.card (ZMod m)ˣ) = 1 := by
-    rw [← map_pow, ← Units.val_pow_eq_pow_val, pow_card_eq_one, Units.val_one, map_one]
-  have h2 : ‖ψ b‖ ^ (Fintype.card (ZMod m)ˣ) = 1 := by rw [← norm_pow, h1, norm_one]
-  exact ((pow_eq_one_iff_of_nonneg (norm_nonneg _) Fintype.card_ne_zero).1 h2).le
 
 theorem UpperTheory.gaussSum_twist_congr_of_measure :
     ∀ (l : ℕ) [Fact l.Prime] (r : ℕ) (N : (ZMod (l ^ r) → Qbar l) →ₗ[Qbar l] Qbar l) (L : PowerSeries (Qbar l)),
@@ -177,7 +170,7 @@ theorem UpperTheory.gaussSum_twist_congr_of_measure :
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (norm_nonneg _) fun b _ => ?_
   rw [← mul_sub, norm_mul]
   have h1 := hL (z ^ (b : ZMod (l ^ r)).val) (by rw [← pow_mul, mul_comm, pow_mul, hz, one_pow])
-  calc _ ≤ 1 * _ := mul_le_mul (UpperTheory.norm_dirichlet_character_le_one ψ' b) h1 (norm_nonneg _) zero_le_one
+  calc _ ≤ 1 * _ := mul_le_mul (ψ'.norm_le_one b) h1 (norm_nonneg _) zero_le_one
     _ = _ := one_mul _
 end -- clump:auto
 end -- clump:auto
@@ -221,16 +214,6 @@ private theorem norm_int_eq_one (l : ℕ) [Fact l.Prime] (n : ℤ) (h : ¬ (l : 
   have h2 : (n : Qbar l) = algebraMap ℚ_[l] (Qbar l) (n : ℚ_[l]) := by simp
   rw [h2, norm_algebraMap', h1]
 
-private theorem norm_char_le_one (l : ℕ) [Fact l.Prime] (φ : DirichletCharacter (Qbar l) l) (x : ZMod l) :
-    ‖φ x‖ ≤ 1 := by
-  by_cases hx : x = 0
-  · subst hx
-    rw [MulChar.map_zero]; simp
-  · have h1 : x ^ (l - 1) = 1 := ZMod.pow_card_sub_one_eq_one hx
-    have h2 : ‖φ x‖ ^ (l - 1) = 1 := by rw [← norm_pow, ← map_pow, h1, map_one, norm_one]
-    have h3 : l - 1 ≠ 0 := by have := (Fact.out : l.Prime).two_le; omega
-    exact ((pow_eq_one_iff_of_nonneg (norm_nonneg _) h3).1 h2).le
-
 theorem UpperTheory.norm_character_pow_difference_estimate :
     ∀ (l : ℕ) [Fact l.Prime] (r e : ℕ) (φ : DirichletCharacter (Qbar l) l) (y : ZMod (l ^ r)) (a : ℕ) (n : ℤ), 1 ≤ r → ¬ l ∣ a → ¬ (l : ℤ) ∣ n →
       y * (a : ZMod (l ^ r)) = (n : ZMod (l ^ r)) →
@@ -268,7 +251,7 @@ theorem UpperTheory.norm_character_pow_difference_estimate :
   have haK : (a : Qbar l) ≠ 0 := by
     intro h; rw [h, norm_zero] at hna; exact zero_ne_one hna
   rw [hφ, ← mul_sub, norm_mul]
-  refine (mul_le_of_le_one_left (norm_nonneg _) (norm_char_le_one l φ _)).trans ?_
+  refine (mul_le_of_le_one_left (norm_nonneg _) (φ.norm_le_one _)).trans ?_
   refine (_root_.UpperTheory.Reformulated.B.Qi18.norm_pow_sub_pow_le _ _ (IsUltrametricDist.norm_natCast_le_one _ _) ?_ e).trans ?_
   · rw [norm_div, hna, div_one]
     exact IsUltrametricDist.norm_intCast_le_one _ _
@@ -454,7 +437,7 @@ theorem neg_inv_unit {N : ℕ} {y : ZMod N} (h : IsUnit y) : (-y)⁻¹ = -y⁻¹
 theorem sym_par (ι : Qbar l ≃+* ℂ) {s : ℂ} (hs : s * s = 1) {N : ℕ} (g : ZMod N → Qbar l) (y : ZMod N) :
     sym ι s g (-y) = s * sym ι s g y := by
   by_cases hy : IsUnit y
-  · simp only [sym, if_pos hy, if_pos hy.neg, neg_neg]
+  · simp only [sym, ite_eq_left hy, ite_eq_left hy.neg, neg_neg]
     linear_combination (-ι (g (-y)⁻¹) / 2) * hs
   · simp [sym, hy]
 
@@ -490,10 +473,10 @@ theorem eisensteinUnitFunctional_compat_succ {ι : Qbar l ≃+* ℂ} {e : ℕ} {
     intro y
     unfold sym
     by_cases hy : l ∣ y
-    · rw [if_neg (by rw [unit_iff (M := M + 1) (by omega)]; exact not_not.2 hy),
-        if_neg (by rw [unit_iff hM]; exact not_not.2 hy)]
+    · rw [ite_eq_right (by rw [unit_iff (M := M + 1) (by omega)]; exact not_not.2 hy),
+        ite_eq_right (by rw [unit_iff hM]; exact not_not.2 hy)]
     · have h1 : IsUnit (y : ZMod (l ^ (M + 1))) := (unit_iff (M := M + 1) (by omega) y).2 hy
-      rw [if_pos h1, if_pos ((unit_iff hM y).2 hy), hg, hg, hinv _ h1, hinv _ h1.neg, map_neg, map_natCast]
+      rw [ite_eq_left h1, ite_eq_left ((unit_iff hM y).2 hy), hg, hg, hinv _ h1, hinv _ h1.neg, map_neg, map_natCast]
   rw [eisensteinUnitFunctional_apply, eisensteinUnitFunctional_apply, H.compat M hM (sym ι s g) (sym ι s g') (sym_par ι hs g) hsym]
 
 theorem norm_nat {a : ℕ} (ha : ¬ l ∣ a) : ‖(a : Qbar l)‖ = 1 := by
@@ -514,7 +497,7 @@ theorem sgn_cases {s : ℂ} (hs : s * s = 1) : s = 1 ∨ s = -1 := mul_self_eq_o
 theorem symm_sym (ι : Qbar l ≃+* ℂ) (s : ℂ) {N : ℕ} (g : ZMod N → Qbar l) {y : ZMod N} (hy : IsUnit y) :
     ι.symm (sym ι s g y) = (g y⁻¹ + ι.symm s * g (-y⁻¹)) / 2 := by
   unfold sym
-  rw [if_pos hy, neg_inv_unit hy, map_div₀, map_add (f := _), map_mul, RingEquiv.symm_apply_apply,
+  rw [ite_eq_left hy, neg_inv_unit hy, map_div₀, map_add (f := _), map_mul, RingEquiv.symm_apply_apply,
     RingEquiv.symm_apply_apply, map_ofNat]
 
 theorem eisensteinUnitFunctional_bounded {ι : Qbar l ≃+* ℂ} {e : ℕ} {s : ℂ} {u w : ℤ → ℂ} {ψ : DirichletCharacter ℂ l} {α : ℂ} {B : ℕ} {c : ℕ → ℂ} {v : ℂ}
@@ -556,7 +539,7 @@ theorem exists_finiteExt_eisensteinUnitFunctional_mem {ι : Qbar l ≃+* ℂ} {e
       rw [← one_add_one_eq_two]
       exact E.add_mem E.one_mem E.one_mem
     exact E.div_mem (E.add_mem (hg _) (E.mul_mem hs' (hg _))) h2
-  · simp only [sym, if_neg hy, map_zero]
+  · simp only [sym, ite_eq_right hy, map_zero]
     exact E.zero_mem
 
 theorem sym_char (ι : Qbar l ≃+* ℂ) (s : ℂ) {N : ℕ} (χ : DirichletCharacter (Qbar l) N) (y : ZMod N) :
@@ -732,7 +715,7 @@ private theorem riem0 {ι : Qbar l ≃+* ℂ} {e : ℕ} {s : ℂ} {u w : ℤ →
     simp only [hTd, map_mul, map_pow, map_div₀, map_natCast, ← hφ, ← hφ', Int.cast_natCast, Nat.cast_mul, Int.cast_mul, div_pow,
       mul_pow]
     ring
-  simp only [Pi.smul_apply, smul_eq_mul, if_neg h1, if_neg h3]
+  simp only [Pi.smul_apply, smul_eq_mul, ite_eq_right h1, ite_eq_right h3]
   refine ⟨by rw [key, hX]; exact h2, ?_⟩
   rw [mul_left_comm, key, hX]
   refine le_trans (le_of_eq ?_) h4

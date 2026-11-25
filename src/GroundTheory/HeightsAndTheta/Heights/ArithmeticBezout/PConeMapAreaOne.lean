@@ -246,31 +246,8 @@ theorem volume_ball_E (e : ℕ) :
 
 theorem coordBall_eq (m k : ℕ) :
     {y : EuclideanSpace ℂ (Fin (m + k)) | ‖y‖ < 1 ∧ ∀ j : Fin (m + k), m ≤ (j : ℕ) → y j = 0} =
-      zeroExt m k '' Metric.ball 0 1 := by
-  ext y
-  simp only [Set.mem_ofPred_eq, Set.mem_image, Metric.mem_ball, dist_zero_right]
-  constructor
-  · rintro ⟨hy, hz⟩
-    refine ⟨WithLp.toLp 2 fun i => y (Fin.castAdd k i), ?_, ?_⟩
-    · rw [← norm_zeroExt m k]
-      convert hy using 2
-      ext j
-      refine Fin.addCases (fun i => ?_) (fun i => ?_) j
-      · simp [zeroExt]
-      · simp [zeroExt, hz (Fin.natAdd m i) (by simp)]
-    · ext j
-      refine Fin.addCases (fun i => ?_) (fun i => ?_) j
-      · simp [zeroExt]
-      · simp [zeroExt, hz (Fin.natAdd m i) (by simp)]
-  · rintro ⟨x, hx, rfl⟩
-    refine ⟨by rwa [norm_zeroExt], fun j hj => ?_⟩
-    revert hj
-    refine Fin.addCases (fun i => ?_) (fun i => ?_) j
-    · intro hi
-      simp at hi
-      omega
-    · intro _
-      simp [zeroExt]
+      zeroExt m k '' Metric.ball 0 1 :=
+  GroundTheory.Heights₂.Heights.coordBall_eq m k
 
 end ConeMapAreaFormula
 

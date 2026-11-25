@@ -11,56 +11,7 @@ public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoor
 public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.StrictTransformSubscheme
 import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
 import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeMorphismProperties
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothCenterChart
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -238,7 +189,7 @@ theorem etaleChart_numCoords_add_one_of_hypersurface (p : P ⟶ Spec (CommRingCa
     [AlgebraicGeometry.LocallyOfFiniteType (H.subschemeι ≫ p)]
     {U : P.Opens} (hU : IsAffineOpen U) {n : ℕ} (c : EtaleChart p U n) (j₁ : Fin n)
     (hH : restrictIdeal H U = c.coordIdeal {j₁})
-    {V : H.subscheme.Opens} (_hV : IsAffineOpen V) {m' : ℕ}
+    {V : H.subscheme.Opens} {m' : ℕ}
     (c' : EtaleChart (H.subschemeι ≫ p) V m')
     (y : H.subscheme) (hyU : y ∈ H.subschemeι ⁻¹ᵁ U) (hyV : y ∈ V) :
     m' + 1 = n := by
@@ -601,9 +552,9 @@ theorem hasStrictNormalCrossingsWith_ker_cons_of_hasLocalCoordsOnSmoothHypersurf
           exact Ideal.mem_span_singleton_self _
         exact hproper (hA.trans (span_coord_eq_top_of_mem_span hV (c'.restrict hVU') hne hmem))
   obtain ⟨a, ha0, has⟩ : ∃ a : ℕ → Option (Fin n), a 0 = some j₀ ∧ ∀ i, a (i + 1) = lab i :=
-    ⟨fun i => if i = 0 then some j₀ else lab (i - 1), if_pos rfl, fun i => by
+    ⟨fun i => if i = 0 then some j₀ else lab (i - 1), ite_eq_left rfl, fun i => by
       show (if i + 1 = 0 then some j₀ else lab (i + 1 - 1)) = lab i
-      rw [if_neg (by omega : ¬ (i + 1 = 0)), Nat.add_sub_cancel]⟩
+      rw [ite_eq_right (by omega : ¬ (i + 1 = 0)), Nat.add_sub_cancel]⟩
   refine ⟨U, hxU, n, c, a, insert j₀ S, ?_, ?_, ?_, ?_⟩
   · intro i hi j hj t hti htj
     cases i with
@@ -803,7 +754,7 @@ theorem det_eq_det_submatrix_of_row_eq_single (e : ι ≃ Fin (n + 1)) (M : Matr
     by_cases hb : b = 0
     · simp [hb]
     · have hne : ¬ (e.symm b = e.symm 0) := fun hc => hb (e.symm.injective hc)
-      rw [if_neg hne, if_neg hb]
+      rw [ite_eq_right hne, ite_eq_right hb]
   have h2 := det_eq_det_submatrix_succ (M.submatrix e.symm e.symm) hN
   rw [Matrix.det_submatrix_equiv_self] at h2
   rw [h2, Matrix.submatrix_submatrix]
@@ -1220,7 +1171,7 @@ private theorem appLE_subschemeι_chartPartialDeriv_complOrderEmb {p : X ⟶ Spe
       have h2 : ¬ (b = ULift.up i) := by
         intro hcon
         exact hb (congrArg ULift.down hcon)
-      rw [h1, if_neg h2]
+      rw [h1, ite_eq_right h2]
       simp
   have hδ'eq : δ' = EtaleCoordinates.partialDeriv k
       (ULift.{u} (Fin (n - ({j₀} : Finset (Fin n)).card)))
@@ -1323,7 +1274,7 @@ theorem hasLocalCoordsOnSmoothHypersurface_of_comap (p : P ⟶ Spec (CommRingCat
       restrictIdeal_eq_restrict_coordIdeal_of_le hV₁V c' Z S' hZV
     exact restrictIdeal_eq_restrict_coordIdeal_of_le hW'V₁ (c'.restrict hV₁V) Z S' h1
   have hmn : m + 1 = n :=
-    etaleChart_numCoords_add_one_of_hypersurface p H hU'aff (c.restrict hU'U) j₀ hHU' hW'aff
+    etaleChart_numCoords_add_one_of_hypersurface p H hU'aff (c.restrict hU'U) j₀ hHU'
       ((c'.restrict hV₁V).restrict hW'V₁) y hyU' hyU'
   have hPx' : (hU'aff.primeIdealOf ⟨x, hxU'⟩).asIdeal
       = Ideal.comap (H.subschemeι.appLE U' (H.subschemeι ⁻¹ᵁ U') le_rfl).hom

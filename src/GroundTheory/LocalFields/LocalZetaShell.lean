@@ -45,19 +45,8 @@ theorem ord_unifUnit_zpow (k : ℤ) : ord ((unifUnit K ^ k : Kˣ) : K) = k := by
 
 theorem valuation_eq_one_iff_ord_eq_zero {x : K} (hx : x ≠ 0) :
     valuation K x = 1 ↔ ord x = 0 := by
-  have h0 := mem_valBall_iff_le_ord (n := 0) hx
-  have h1 := mem_valBall_iff_le_ord (n := 1) hx
-  rw [mem_valBall_zero_iff, Valuation.mem_integer_iff] at h0
-  rw [mem_valBall_one_iff] at h1
-  constructor
-  · intro h
-    have a := h0.mp h.le
-    have b : ¬ 1 ≤ ord x := fun hb => (h1.mpr hb).ne h
-    omega
-  · intro h
-    refine le_antisymm (h0.mpr h.ge) (not_lt.mp fun hl => ?_)
-    have := h1.mp hl
-    omega
+  rw [← map_one (valuation K), ← normalizedValuation_eq_iff, map_one,
+    normalizedValuation_eq_exp_ord hx, WithZero.exp_eq_one, neg_eq_zero]
 
 theorem mem_unitFiltrationUnits_zero_iff_ord {u : Kˣ} :
     u ∈ unitFiltrationUnits K 0 ↔ ord (u : K) = 0 := by
@@ -208,23 +197,18 @@ theorem residueCard_ne_zero_complex : (residueCard K : ℂ) ≠ 0 := by
 
 theorem modulus_cpow_eq_zpow (u : Kˣ) (s : ℂ) :
     ((modulus (u : K) : ℝ) : ℂ) ^ s = ((residueCard K : ℂ) ^ (-s)) ^ ord (u : K) := by
-  have hq := residueCard_pos_real (K := K)
-  rw [modulus_of_ne_zero u.ne_zero, NNReal.coe_zpow, NNReal.coe_natCast]
-  have hpos : (0 : ℝ) < (residueCard K : ℝ) ^ (-ord (u : K)) := zpow_pos hq _
-  rw [Complex.cpow_def_of_ne_zero (by exact_mod_cast hpos.ne'),
-    Complex.cpow_def_of_ne_zero residueCard_ne_zero_complex, ← Complex.exp_int_mul,
-    ← Complex.ofReal_log hpos.le, Real.log_zpow, ← Complex.ofReal_natCast,
-    ← Complex.ofReal_log hq.le]
-  push_cast
-  ring_nf
+  rw [modulus_of_ne_zero u.ne_zero, NNReal.coe_zpow, NNReal.coe_natCast,
+    ← Real.rpow_intCast, ← Complex.cpow_mul_ofReal_nonneg (residueCard_pos_real (K := K)).le,
+    ← Complex.cpow_int_mul]
+  simp only [Int.cast_neg, Complex.ofReal_neg, Complex.ofReal_intCast, neg_mul, mul_neg,
+    Complex.ofReal_natCast]
 
 theorem norm_qpow (s : ℂ) : ‖(residueCard K : ℂ) ^ (-s)‖ = (residueCard K : ℝ) ^ (-s.re) := by
   rw [← Complex.ofReal_natCast, Complex.norm_cpow_eq_rpow_re_of_pos residueCard_pos_real,
     Complex.neg_re]
 
-theorem qpow_ne_zero (s : ℂ) : (residueCard K : ℂ) ^ (-s) ≠ 0 := by
-  rw [Complex.cpow_def_of_ne_zero residueCard_ne_zero_complex]
-  exact Complex.exp_ne_zero _
+theorem qpow_ne_zero (s : ℂ) : (residueCard K : ℂ) ^ (-s) ≠ 0 :=
+  Complex.cpow_ne_zero_iff.mpr (Or.inl residueCard_ne_zero_complex)
 
 end Power
 

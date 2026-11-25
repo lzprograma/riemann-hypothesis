@@ -2,52 +2,8 @@ module
 
 public import Formalism.SuccessiveMinima.DefsMink
 public import Mathlib.Analysis.Convex.Gauge
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -128,8 +84,7 @@ theorem succMin_mem (hKc : IsCompact K) (hKv : Convex ℝ K) (hK0 : (0 : E) ∈ 
   rintro u ⟨huL, hut⟩
   have hgt : gauge K u ≤ t := (mem_smul_iff_gauge hKc hKv hK0 htS.1 u).mp hut
   refine ⟨huL, (mem_smul_iff_gauge hKc hKv hK0 hs0 u).mpr ?_⟩
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have huT : u ∈ T • K :=
     (mem_smul_iff_gauge hKc hKv hK0 (hs0.trans hsT.le) u).mpr (by linarith)
   have := hmB u ⟨⟨huL, huT⟩, hlt⟩
@@ -191,8 +146,7 @@ theorem Formalism.FN.existsSuccessiveMinimaVectors : Formalism.FN.SuccMinFacts :
   have hpos : ∀ j, 1 ≤ j → j ≤ finrank ℝ E → 0 < succMin L K j := by
     intro j hj1 hjn
     obtain ⟨h0, hj⟩ := hmem j hjn
-    by_contra hneg
-    push_neg at hneg
+    by_contra! hneg
     rw [hmbot _ h0 (lt_of_le_of_lt hneg hm0), finrank_bot] at hj
     omega
 
@@ -207,8 +161,7 @@ theorem Formalism.FN.existsSuccessiveMinimaVectors : Formalism.FN.SuccMinFacts :
       obtain ⟨_, hdim⟩ := hmem (k + 1) hk
       have hex : ∃ x ∈ (L : Set E) ∩ succMin L K (k + 1) • K,
           x ∉ Submodule.span ℝ (Set.range w) := by
-        by_contra hno
-        push_neg at hno
+        by_contra! hno
         have h1 := Submodule.finrank_mono (Submodule.span_le.mpr hno)
         rw [finrank_span_eq_card hw, Fintype.card_fin] at h1
         omega
@@ -238,8 +191,7 @@ theorem Formalism.FN.existsSuccessiveMinimaVectors : Formalism.FN.SuccMinFacts :
     have huW : u ∈ W := Submodule.subset_span ⟨huL, (hmemK hg0 u).mpr le_rfl⟩
     have hdn : finrank ℝ W ≤ finrank ℝ E := Submodule.finrank_le W
     have hdi : finrank ℝ W ≤ (i : ℕ) := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       have := hle hg0 (show (i : ℕ) + 1 ≤ finrank ℝ W by omega)
       linarith
 

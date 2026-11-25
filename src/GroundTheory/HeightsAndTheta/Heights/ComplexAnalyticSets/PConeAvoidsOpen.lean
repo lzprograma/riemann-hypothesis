@@ -122,14 +122,14 @@ theorem ConeAvoidsOpen.proof : ConeAvoidsOpen.Statement := by
       by_cases hs : s.degree = N
       · have e := congr_fun (congr_fun hinv ⟨s, (hV s).2 hs⟩) ⟨m, (hV m).2 hm⟩
         simp only [Matrix.mul_apply, hMT, Matrix.one_apply, Subtype.ext_iff] at e
-        simp only [hs, if_true]
+        simp only [hs, ite_true]
         simp_rw [mul_comm (M⁻¹ _ _)]
         rw [e]
         by_cases hsm : s = m
         · simp [hsm]
         · simp [hsm, Ne.symm hsm]
-      · simp only [hs, if_false, mul_zero, Finset.sum_const_zero]
-        rw [if_neg]
+      · simp only [hs, ite_false, mul_zero, Finset.sum_const_zero]
+        rw [ite_eq_right]
         rintro rfl
         exact hs hm
     rw [key]

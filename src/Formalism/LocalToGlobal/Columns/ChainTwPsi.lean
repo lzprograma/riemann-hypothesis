@@ -3,6 +3,7 @@ module
 public import Formalism.LocalToGlobal.Columns.ChainTwOk
 public import Formalism.LocalToGlobal.Columns.AtTOwedC
 import Mathlib.RingTheory.SimpleRing.Principal
+import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SandwichNormalForm
 
 @[expose] public section
 
@@ -221,16 +222,7 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks}
 
 theorem twLamQ_mem {j : ℕ} {P : HeightOneSpectrum (𝓞 X.E)} (hP : P ∉ Pr.vGs) (v : Sp X.E (R.N j + cOf R j)) :
     v ∈ lamYat (Pr := Pr) (R := R) j P ↔ ∀ l, IntAt P (v l) := by
-  have e : lamYat (Pr := Pr) (R := R) j P = LocE.lamY P (qOf P) (R.N j) (cOf R j) 0 := by
-    unfold lamYat
-    rw [if_neg hP]
-  rw [e]
-  unfold LocE.lamY
-  rw [ciMem_sclLat]
-  have h0 : ∀ l : ℕ, LocE.scE (R.N j) 0 l = 0 := fun l => by
-    unfold LocE.scE
-    split_ifs <;> rfl
-  simp only [h0, zpow_zero, inv_one, one_mul]
+  apply _root_.GlobalTheory.IndefiniteRowSideFullHecke.SandwichNormalForm.mem_lamYat <;> assumption
 
 theorem twStd_mem {E : Type} [Field E] [NumberField E] [StarRing E] {P : HeightOneSpectrum (𝓞 E)} {n : ℕ} (v : Sp E n) :
     v ∈ stdAt E n P ↔ ∀ l, IntAt P (v l) := ciMem_stdAt P v

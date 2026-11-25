@@ -265,9 +265,7 @@ section Explicit
 theorem pow_eq_pow_of_natCast_eq {M : Type*} [Monoid M] {ξ : M} {m a b : ℕ} (hξ : ξ ^ m = 1)
     (h : (a : ZMod m) = b) : ξ ^ a = ξ ^ b := by
   rw [ZMod.natCast_eq_natCast_iff] at h
-  have key : ∀ c, ξ ^ c = ξ ^ (c % m) := fun c => by
-    conv_lhs => rw [← Nat.div_add_mod c m, pow_add, pow_mul, hξ, one_pow, one_mul]
-  rw [key a, key b, h]
+  rw [pow_eq_pow_mod a hξ, pow_eq_pow_mod b hξ, h]
 
 namespace Padic
 

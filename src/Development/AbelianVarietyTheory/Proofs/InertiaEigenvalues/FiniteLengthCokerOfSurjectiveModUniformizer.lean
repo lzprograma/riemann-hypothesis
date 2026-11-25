@@ -15,49 +15,9 @@ public import Mathlib.RingTheory.AdicCompletion.Basic
 public import Mathlib.Topology.Algebra.Valued.NormedValued
 public import Mathlib.RingTheory.PowerSeries.WeierstrassPreparation
 public import Mathlib.RingTheory.PowerSeries.Order
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.NumberTheory.Padics.LocalField
 import Mathlib.Tactic.Linter.HaveILetI
@@ -70,7 +30,6 @@ import Mathlib.Tactic
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Topology.Sheaves.Presheaf
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 import Mathlib.Order.CompletePartialOrder
@@ -105,8 +64,8 @@ theorem eq_low_add_high (f : K⟦X⟧) (n₀ : ℕ) :
   ext n
   rw [map_add (f := _), coeff_mk, coeff_X_pow_mul', coeff_mk]
   by_cases h : n < n₀
-  · rw [if_pos h, if_neg (not_le.2 h), add_zero]
-  · rw [if_neg h, if_pos (not_lt.1 h), zero_add, Nat.sub_add_cancel (not_lt.1 h)]
+  · rw [ite_eq_left h, ite_eq_right (not_le.2 h), add_zero]
+  · rw [ite_eq_right h, ite_eq_left (not_lt.1 h), zero_add, Nat.sub_add_cancel (not_lt.1 h)]
 
 theorem exists_inv_mem_A {O : Type} [CommRing O] [Algebra O K] [IsUnitBall O K] {u : K⟦X⟧}
     (hu : u ∈ A O K) (h0 : ‖coeff 0 u‖ = 1) : ∃ w ∈ A O K, u * w = 1 := by
@@ -141,7 +100,7 @@ theorem step {g p u w : K⟦X⟧} {n₀ : ℕ} {ρ t : ℝ} (hρ : 0 ≤ ρ) (ht
       (fun m => by rw [hfh, coeff_mk]; exact hf _) n
     rwa [one_mul] at this
   refine ⟨w * fh, r, hq, fun i hi => ?_, fun i => ?_, fun n => ?_⟩
-  · rw [hr, coeff_mk, if_neg (not_lt.2 hi)]
+  · rw [hr, coeff_mk, ite_eq_right (not_lt.2 hi)]
   · rw [hr, coeff_mk]
     split_ifs
     · exact hf _
@@ -213,8 +172,6 @@ open scoped Formalism.Per
 noncomputable section
 namespace GlobalTheory.CokerFinLen
 
-theorem divApprox : ∀ (O K : Type) [CommRing O] [NormedField K] [IsUltrametricDist K] [Algebra O K] [IsUnitBall O K] (g : K⟦X⟧), g ∈ A O K → ∀ n₀ : ℕ, ‖coeff n₀ g‖ = 1 → (∀ i < n₀, ‖coeff i g‖ < 1) → ∀ δ : ℝ, 0 < δ → ∀ f ∈ A O K, ∃ q ∈ A O K, ∃ r : K⟦X⟧, (∀ i, n₀ ≤ i → coeff i r = 0) ∧ (∀ i, ‖coeff i r‖ ≤ 1) ∧ ∀ n, ‖coeff n (f - q * g - r)‖ ≤ δ := _root_.GlobalTheory.BK.DivApprox.exists_div_approx
-
 theorem exists_net {K : Type} [NormedField K] (l : ℕ) [Fact l.Prime] [NormedAlgebra ℚ_[l] K]
     [FiniteDimensional ℚ_[l] K] {δ : ℝ} (hδ : 0 < δ) :
     ∃ T : Finset K, (∀ t ∈ T, ‖t‖ ≤ 1) ∧ ∀ x : K, ‖x‖ ≤ 1 → ∃ t ∈ T, ‖x - t‖ < δ := by
@@ -240,7 +197,7 @@ theorem exists_finset_reps {O K : Type} [CommRing O] [NormedField K] [IsUltramet
   let mkR : (Fin n₀ → T) → K⟦X⟧ := fun t => PowerSeries.mk fun n =>
     if h : n < n₀ then ((t ⟨n, h⟩ : T) : K) else 0
   refine ⟨Finset.univ.image mkR, fun f hf => ?_⟩
-  obtain ⟨q, hq, r, hr0, hr1, hrem⟩ := divApprox O K g hg n₀ hn₀ hlow _ hδ f hf
+  obtain ⟨q, hq, r, hr0, hr1, hrem⟩ := _root_.GlobalTheory.BK.DivApprox.exists_div_approx O K g hg n₀ hn₀ hlow _ hδ f hf
   choose t ht hrt using fun i : Fin n₀ => hT (coeff i r) (hr1 i)
   let r' := mkR fun i => ⟨t i, ht i⟩
   have hcoeff : ∀ n, coeff n r' = if h : n < n₀ then t ⟨n, h⟩ else 0 := fun n => by
@@ -403,8 +360,7 @@ theorem norm_coeff_le_one_of_mul {x g : K⟦X⟧} (hx : ∃ B : ℝ, ∀ n, ‖c
     exact (hgx _).trans (le_max_left _ _)
   have hSM : S ≤ Mx := ciSup_le key
   have hS1 : S ≤ 1 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have h2 : S ≤ θ * S := by
       rcases le_total 1 ((θ : ℝ) * S) with h3 | h3
       · rwa [hMx, max_eq_right h3] at hSM
@@ -607,7 +563,7 @@ theorem frobSlice_frob_mul {K : Type} [NormedField K] (l : ℕ) [Fact l.Prime] {
       omega
     · simp
   · rintro ⟨p, q⟩ -
-    simp only [coeff_frob, coeff_frobSlice, dvd_mul_right, if_true, Nat.mul_div_cancel_left _ hl]
+    simp only [coeff_frob, coeff_frobSlice, dvd_mul_right, ite_true, Nat.mul_div_cancel_left _ hl]
 
 theorem frobSlice_sum {K : Type} [Field K] (l i : ℕ) {μ : Type} (s : Finset μ) (f : μ → K⟦X⟧) :
     frobSlice l i (∑ j ∈ s, f j) = ∑ j ∈ s, frobSlice l i (f j) := by
@@ -707,20 +663,6 @@ theorem norm_coeff_sum_le {s : Type} (t : Finset s) (f : s → K⟦X⟧) {C : �
     rw [Finset.sum_insert hk, map_add (f := _)]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hf k n) ih)
 
-theorem bdd_matMul {μ ν ρ : Type} [Fintype ν] {Y : Matrix μ ν K⟦X⟧} {Z : Matrix ν ρ K⟦X⟧}
-    (hY : ∃ c : ℝ, ∀ i j n, ‖coeff n (Y i j)‖ ≤ c) (hZ : ∃ c : ℝ, ∀ i j n, ‖coeff n (Z i j)‖ ≤ c) :
-    ∃ c : ℝ, ∀ i j n, ‖coeff n ((Y * Z) i j)‖ ≤ c := by
-  obtain ⟨a, ha⟩ := hY
-  obtain ⟨b, hb⟩ := hZ
-  refine ⟨max a 0 * max b 0, fun i j n => ?_⟩
-  rw [Matrix.mul_apply]
-  refine norm_coeff_sum_le _ (fun k => Y i k * Z k j)
-    (mul_nonneg (le_max_right _ _) (le_max_right _ _)) (fun k m => ?_) n
-  simpa using norm_coeff_mul_le (w := fun _ => 1) (fun _ => zero_le_one) (fun _ _ => by simp)
-    (le_max_right a 0) (le_max_right b 0) (f := Y i k) (g := Z k j)
-    (fun p => by rw [mul_one]; exact (ha i k p).trans (le_max_left _ _))
-    (fun p => by rw [mul_one]; exact (hb k j p).trans (le_max_left _ _)) m
-
 theorem bdd_frob (l : ℕ) [Fact l.Prime] {f : K⟦X⟧} (hf : ∃ c : ℝ, ∀ n, ‖coeff n f‖ ≤ c) :
     ∃ c : ℝ, ∀ n, ‖coeff n (frob K l f)‖ ≤ c := by
   obtain ⟨c, hc⟩ := hf
@@ -799,7 +741,7 @@ theorem exists_pow_E_mul_frob_mem_ldivSet (l e a : ℕ) (ι : Type) [Fintype ι]
   refine ⟨N₁ + N₂, fun τ h ⟨hb, Y, hY, hYF⟩ => ⟨?_, ?_⟩⟩
   · exact bdd_mul (bdd_of_mem_A (pow_mem (E_mem l e (A O K)) _)) (bdd_frob l hb)
   · refine ⟨(E K l e ^ N₁ • P.mx τ) * Y.map (frob K l) * (E K l e ^ N₂ • Q.mxInv τ),
-      bdd_matMul (bdd_matMul ⟨1, fun i j n => ?_⟩ (bdd_map_frob l hY)) ⟨1, fun i j n => ?_⟩, ?_⟩
+      GlobalTheory.BK.RdivSlice.bdd_matrix_mul (GlobalTheory.BK.RdivSlice.bdd_matrix_mul ⟨1, fun i j n => ?_⟩ (bdd_map_frob l hY)) ⟨1, fun i j n => ?_⟩, ?_⟩
     · rw [Matrix.smul_apply, smul_eq_mul]; exact hN₁ (τ, i, j) n
     · rw [Matrix.smul_apply, smul_eq_mul]; exact hN₂ (τ, i, j) n
     · simp only [Matrix.smul_mul, Matrix.mul_smul]
@@ -846,7 +788,7 @@ theorem frobSlice_mul_frob {l : ℕ} [Fact l.Prime] {i : ℕ} (hi : i < l) (z f 
   have hval : ∀ p q : ℕ, coeff (l * p + i) z * coeff q f =
       coeff (l * p + i) z * coeff (l * q) (frob K l f) := by
     intro p q
-    rw [coeff_frob, if_pos (dvd_mul_right l q), Nat.mul_div_cancel_left q hl]
+    rw [coeff_frob, ite_eq_left (dvd_mul_right l q), Nat.mul_div_cancel_left q hl]
   symm
   refine Finset.sum_bij_ne_zero (fun p _ _ => (l * p.1 + i, l * p.2)) ?_ ?_ ?_ ?_
   · rintro ⟨p, q⟩ hpq -
@@ -905,20 +847,11 @@ theorem bdd_unif {μ ν : Type} [Finite μ] [Finite ν] {M : Matrix μ ν K⟦X�
   obtain ⟨C, hC⟩ := Finite.bddAbove_range (fun p : μ × ν => c p.1 p.2)
   exact ⟨C, fun i j n => (hc i j n).trans (hC ⟨(i, j), rfl⟩)⟩
 
-theorem exists_pow_E_mul_mem (l e : ℕ) {β : Type} [Finite β] (g : β → K⟦X⟧)
-    (hg : ∀ b, g b ∈ invE l e (A O K)) : ∃ N : ℕ, ∀ b, E K l e ^ N * g b ∈ A O K := by
-  have := Fintype.ofFinite β
-  choose n hn using fun b => (mem_away.1 (hg b))
-  refine ⟨Finset.univ.sup n, fun b => ?_⟩
-  obtain ⟨c, hc⟩ := Nat.exists_eq_add_of_le' (Finset.le_sup (f := n) (Finset.mem_univ b))
-  rw [hc, pow_add, mul_assoc]
-  exact mul_mem (pow_mem (E_mem l e _) c) (by simpa using hn b)
-
 theorem frobSlice_mem_ldivSet : ∀ (O K : Type) [CommRing O] [NormedField K] [IsUltrametricDist K] [CompleteSpace K] [Algebra O K] [IsUnitBall O K] (l e a : ℕ) (ι : Type) [Fintype ι] [DecidableEq ι] [Fact l.Prime] [NormedAlgebra ℚ_[l] K] [NeZero e] [NeZero a] [TameDescentExponentData K l e a] (κ : Type) [Fintype κ] [DecidableEq κ] (P : PhiMod O K l e a ι) (Q : PhiMod O K l e a κ) (F : GlobalTheory.BK.Hom P Q), ∃ M : ℕ, ∀ τ, ∀ h ∈ F.ldivSet τ, ∀ i < l, frobSlice l i (E K l e ^ M * h) ∈ F.ldivSet (τ - 1) := by
   intro O K _ _ _ _ _ _ l e a ι _ _ _ _ _ _ _ κ _ _ P Q F
-  obtain ⟨N₁, hN₁⟩ := exists_pow_E_mul_mem (O := O) l e
+  obtain ⟨N₁, hN₁⟩ := GlobalTheory.BK.Hom.exists_pow_E_mul_mem (O := O) l e
     (fun p : ZMod a × ι × ι => P.mxInv p.1 p.2.1 p.2.2) (fun p => P.mxInv_mem _ _ _)
-  obtain ⟨N₂, hN₂⟩ := exists_pow_E_mul_mem (O := O) l e
+  obtain ⟨N₂, hN₂⟩ := GlobalTheory.BK.Hom.exists_pow_E_mul_mem (O := O) l e
     (fun p : ZMod a × κ × κ => Q.mx p.1 p.2.1 p.2.2) (fun p => Q.mx_mem _ _ _)
   refine ⟨N₁ + N₂, fun τ h hh i hi => ?_⟩
   obtain ⟨hhb, Y, ⟨cY, hcY⟩, hY⟩ := hh
@@ -1163,8 +1096,7 @@ theorem exists_primitive_generator : ∀ (K : Type) [NormedField K] [IsUltrametr
   · exact ⟨q, hq1, by rw [hqr, hr, add_zero, mul_comm]⟩
   exfalso
   have hex : ∃ n, coeff n r ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     exact hr (PowerSeries.ext fun n => by simpa using hne n)
   obtain ⟨n0, hn0⟩ := hex
   have hn0d : n0 < Nat.find hS := by
@@ -1304,7 +1236,7 @@ theorem DomTerm.mul {ρ : ℝ} (hρ : 0 < ρ) {f g : K⟦X⟧} {i j : ℕ} {c d 
 omit [IsUltrametricDist K] in
 theorem domTerm_one (ρ : ℝ) : DomTerm ρ (1 : K⟦X⟧) 0 1 := by
   refine ⟨one_pos, ?_, fun n => ?_, fun n hn => absurd hn (Nat.not_lt_zero n)⟩
-  · rw [coeff_one, if_pos rfl, norm_one, pow_zero, mul_one]
+  · rw [coeff_one, ite_eq_left rfl, norm_one, pow_zero, mul_one]
   · rw [coeff_one]
     split_ifs with hn
     · rw [hn, norm_one, pow_zero, mul_one]
@@ -1390,14 +1322,14 @@ theorem coeff_E (l e n : ℕ) (he : 0 < e) :
 omit [IsUltrametricDist K] in
 theorem domTerm_E_one {l e : ℕ} (he : 0 < e) (hl : ‖(l : K)‖ < 1) : DomTerm 1 (E K l e) e 1 := by
   refine ⟨one_pos, ?_, fun n => ?_, fun n hn => ?_⟩
-  · rw [coeff_E (K := K) l e e he, if_pos rfl, norm_one, one_pow, mul_one]
+  · rw [coeff_E (K := K) l e e he, ite_eq_left rfl, norm_one, one_pow, mul_one]
   · rw [coeff_E (K := K) l e n he, one_pow, mul_one]
     split_ifs
     · rw [norm_one]
     · exact hl.le
     · rw [norm_zero]
       exact zero_le_one
-  · rw [coeff_E (K := K) l e n he, one_pow, mul_one, if_neg hn.ne]
+  · rw [coeff_E (K := K) l e n he, one_pow, mul_one, ite_eq_right hn.ne]
     split_ifs
     · exact hl
     · rw [norm_zero]
@@ -1407,7 +1339,7 @@ omit [IsUltrametricDist K] in
 theorem domTerm_E_root {l e : ℕ} (he : 0 < e) {r : ℝ} (hr : 0 < r) (hre : r ^ e = ‖(l : K)‖) :
     DomTerm r (E K l e) 0 (r ^ e) := by
   refine ⟨pow_pos hr e, ?_, fun n => ?_, fun n hn => absurd hn (Nat.not_lt_zero n)⟩
-  · rw [coeff_E (K := K) l e 0 he, if_neg he.ne, if_pos rfl, pow_zero, mul_one, hre]
+  · rw [coeff_E (K := K) l e 0 he, ite_eq_right he.ne, ite_eq_left rfl, pow_zero, mul_one, hre]
   · rw [coeff_E (K := K) l e n he]
     split_ifs with h1 h2
     · rw [h1, norm_one, one_mul]
@@ -1423,7 +1355,7 @@ theorem DomTerm.frob (l : ℕ) [Fact l.Prime] {f : K⟦X⟧} {i : ℕ} (h : DomT
   have hco : ∀ n, coeff n (GlobalTheory.BK.frob K l f) = if l ∣ n then coeff (n / l) f else 0 := fun n => by
     exact GlobalTheory.BK.coeff_frob l f n
   refine ⟨one_pos, ?_, fun n => ?_, fun n hn => ?_⟩
-  · rw [hco, if_pos (dvd_mul_right l i), Nat.mul_div_cancel_left i hl0, one_pow, mul_one]
+  · rw [hco, ite_eq_left (dvd_mul_right l i), Nat.mul_div_cancel_left i hl0, one_pow, mul_one]
     rw [one_pow, mul_one] at hi
     exact hi
   · rw [hco, one_pow, mul_one]
@@ -1536,7 +1468,7 @@ theorem norm_constantCoeff_eq_one_of_cycle (K : Type) [NormedField K] [IsUltrame
     exact (h1.unique h2).1
 
   have hE0 : constantCoeff (E K l e) = (l : K) := by
-    rw [← coeff_zero_eq_constantCoeff_apply, coeff_E l e 0 he, if_neg he.ne, if_pos rfl]
+    rw [← coeff_zero_eq_constantCoeff_apply, coeff_E l e 0 he, ite_eq_right he.ne, ite_eq_left rfl]
   have hEord : ∀ n, (E K l e ^ n).order = (0 : ℕ) := fun n => by
     apply order_eq_zero_of_ne
     rw [map_pow, hE0]
@@ -1669,7 +1601,7 @@ theorem sum_X_pow_mul_frob_frobSlice (l : ℕ) [Fact l.Prime] (z : K⟦X⟧) :
   rw [Finset.sum_eq_single (n % l)]
   · have h1 : n % l ≤ n := Nat.mod_le n l
     have h2 : l ∣ n - n % l := Nat.dvd_sub_mod n
-    rw [if_pos h1, if_pos h2, Nat.mul_div_cancel' h2, Nat.sub_add_cancel h1]
+    rw [ite_eq_left h1, ite_eq_left h2, Nat.mul_div_cancel' h2, Nat.sub_add_cancel h1]
   · intro i hi hne
     split_ifs with h1 h2
     · exfalso

@@ -68,7 +68,7 @@ theorem det_lmat {r : ℕ} (x0 : UT r → ℂ) : (lmat x0).det = 1 := by
     intro p q hpq
     have hpq' : q.1.1 < p.1.1 := hpq
     simp only [lmat, upper]
-    rw [dif_neg (not_lt.2 hpq'.le), if_neg hpq'.ne']
+    rw [dite_eq_right (not_lt.2 hpq'.le), ite_eq_right hpq'.ne']
     simp
   rw [h.det]
   refine Finset.prod_eq_one fun a _ => ?_
@@ -76,7 +76,7 @@ theorem det_lmat {r : ℕ} (x0 : UT r → ℂ) : (lmat x0).det = 1 := by
     ext p q
     have hp : p.1.1.1 = a := p.2
     have hq : q.1.1.1 = a := q.2
-    simp only [Matrix.toSquareBlock_def, Matrix.of_apply, lmat, upper, hp, hq, lt_irrefl, dif_neg, not_false_eq_true, if_true,
+    simp only [Matrix.toSquareBlock_def, Matrix.of_apply, lmat, upper, hp, hq, lt_irrefl, dite_eq_right, not_false_eq_true, ite_true,
       Matrix.one_apply]
     congr 1
     apply propext
@@ -96,7 +96,7 @@ theorem upper_mul {r : ℕ} (x0 x : UT r → ℂ) : upper x0 * upper x = upper (
     intro c
     by_cases h : c < b
     · rw [Finset.sum_eq_single ⟨(c, b), h⟩]
-      · simp [h.ne, show upper x c b = x ⟨(c, b), h⟩ from dif_pos h]
+      · simp [h.ne, show upper x c b = x ⟨(c, b), h⟩ from dite_eq_left h]
       · intro q _ hq
         by_cases h1 : q.1.1 = c
         · by_cases h2 : b = q.1.2
@@ -105,7 +105,7 @@ theorem upper_mul {r : ℕ} (x0 x : UT r → ℂ) : upper x0 * upper x = upper (
         · simp [h1]
       · simp
     · rw [Finset.sum_eq_zero]
-      · rw [show upper x c b = if c = b then 1 else 0 from dif_neg h]
+      · rw [show upper x c b = if c = b then 1 else 0 from dite_eq_right h]
         split_ifs with h1
         · simp [h1]
         · simp
@@ -115,15 +115,15 @@ theorem upper_mul {r : ℕ} (x0 x : UT r → ℂ) : upper x0 * upper x = upper (
           · exact absurd (by rw [← h1, h2]; exact q.2) h
           · simp [h2]
         · simp [h1]
-  simp only [key, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [key, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [Finset.sum_comm]
-  simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   by_cases h : a < b
-  · rw [show upper (x0 + lmat x0 *ᵥ x) a b = (x0 + lmat x0 *ᵥ x) ⟨(a, b), h⟩ from dif_pos h,
-      show upper x0 a b = x0 ⟨(a, b), h⟩ from dif_pos h]
+  · rw [show upper (x0 + lmat x0 *ᵥ x) a b = (x0 + lmat x0 *ᵥ x) ⟨(a, b), h⟩ from dite_eq_left h,
+      show upper x0 a b = x0 ⟨(a, b), h⟩ from dite_eq_left h]
     rfl
-  · rw [show upper (x0 + lmat x0 *ᵥ x) a b = if a = b then 1 else 0 from dif_neg h,
-      show upper x0 a b = if a = b then 1 else 0 from dif_neg h, Finset.sum_eq_zero, add_zero]
+  · rw [show upper (x0 + lmat x0 *ᵥ x) a b = if a = b then 1 else 0 from dite_eq_right h,
+      show upper x0 a b = if a = b then 1 else 0 from dite_eq_right h, Finset.sum_eq_zero, add_zero]
     intro q _
     by_cases h2 : b = q.1.2
     · have h3 : q.1.1 < a := lt_of_lt_of_le (h2 ▸ q.2) (not_lt.1 h)
@@ -256,8 +256,8 @@ theorem conj_rad (k r : ℕ) (q0 : PPar k r) (x : UT r → ℂ) :
     rw [bvec, Matrix.mulVec_single_one, Pi.single_eq_of_ne hne] at h4
     have h5 : uEmb k r (upper x1) (eI k r p.1.1) (eI k r p.1.2) = x1 p := by
       have : uEmb k r (upper x1) (eI k r p.1.1) (eI k r p.1.2) = upper x1 p.1.1 p.1.2 :=
-        dif_pos (⟨p.1.1.2, p.1.2.2⟩ : (eI k r p.1.1).val < r ∧ (eI k r p.1.2).val < r)
-      rw [this]; exact dif_pos p.2
+        dite_eq_left (⟨p.1.1.2, p.1.2.2⟩ : (eI k r p.1.1).val < r ∧ (eI k r p.1.2).val < r)
+      rw [this]; exact dite_eq_left p.2
     rw [← h5]; exact h4
   refine ⟨q1, ?_⟩
   rw [hx1, upper_zero, (GlobalTheory.Amp.UEmb.uEmb_hom k r).2.1, one_mul] at h1'

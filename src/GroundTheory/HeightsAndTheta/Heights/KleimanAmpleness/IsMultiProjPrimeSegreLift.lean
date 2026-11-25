@@ -39,9 +39,6 @@ def SegreLiftPrime.Statement : Prop :=
     [∀ k, Fintype (ι k)] (W : Ideal (MRing ι F)), IsMultiProjPrime W →
       IsMultiProjPrime (segreLift ι F W)
 
-theorem SegreLiftPrime.hyps : IsMultiProjPrime (⊥ : Ideal (MRing (fun _ : Unit => Fin 2) ℚ)) :=
-  NumbersDVR.isMultiProjPrime_bot
-
 end GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
 end -- clump:auto
 end -- clump:auto
@@ -143,8 +140,8 @@ theorem segreIncl_weightedHomogeneousComponent (b : K → ℕ) (f : MRing ι F) 
     rw [segreIncl, coeff_rename_mapDomain _ hinj, coeff_rename_mapDomain _ hinj,
       coeff_weightedHomogeneousComponent, segre_weight_mapDomain]
     by_cases hd : Finsupp.weight (NumbersDVR.blockWeight ι) e = b
-    · rw [if_pos hd, if_pos (by rw [hd])]
-    · rw [if_neg hd, if_neg fun h => hd (funext fun k => congrFun h (Sum.inr k))]
+    · rw [ite_eq_left hd, ite_eq_left (by rw [hd])]
+    · rw [ite_eq_right hd, ite_eq_right fun h => hd (funext fun k => congrFun h (Sum.inr k))]
   · push Not at he
     rw [segreIncl, coeff_rename_eq_zero _ _ _ fun u hu => absurd hu (he u)]
     split_ifs

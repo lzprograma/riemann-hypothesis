@@ -16,8 +16,6 @@ open Classical
 
 namespace Formalism.L2.SG.Pf.TupGlob
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D)
 
 def locL (p : PlF D) (A B : PairVal.MatR D) : MatP D p :=

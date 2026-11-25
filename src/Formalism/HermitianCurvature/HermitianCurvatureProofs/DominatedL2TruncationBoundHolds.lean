@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselNormSqEqBigCellNormSq
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJD
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
 public import Formalism.HermitianCurvature.StatementJF
@@ -15,56 +16,11 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutFpmDecay
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDCCLower
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_PtwCut
 public import Mathlib.Analysis.PSeries
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.ENatToNat
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LUFactorOrbitBounds
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplySub
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.TriangleInequalityAtPlace
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -79,8 +35,6 @@ open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Form
 open scoped ContDiff
 
 namespace Formalism.FourierDecayAlt.P.CutBP
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 noncomputable section
 
@@ -190,8 +144,6 @@ open Formalism.FourierDecayAlt Formalism.QuantumDeterminants Filter Topology Mea
 
 noncomputable section
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 def bcE (r : ℕ) : (Fin (r + 1) → ℂ) ≃ᵐ (Fin r → ℂ) × ℂ :=
   (MeasurableEquiv.piFinSuccAbove (fun _ => ℂ) (Fin.last r)).trans MeasurableEquiv.prodComm
 
@@ -271,43 +223,8 @@ theorem ew_eq_weight (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp
     TBB.Ew p (fun _ => 1) F (P.r + 1) [] (TBB.bigPt P.r c) =
       bcWeight P.k P.r (Tz P.k P.r p.T.base.z) (Tz P.k P.r p.T.base.z') ((fun j => c j.castSucc), c (Fin.last P.r)) *
         ‖B.hsVec (B.JF p.T.base F (bigCell P.k P.r (fun j => c j.castSucc) (p.T.base.μsec (c (Fin.last P.r)))))‖ ^ 2 := by
-  have hloc := isLocPt_bigPt_of_ne_zero P.r c hd
-  have hTT : TBB.TTp p = Tz P.k P.r p.T.base.z * Tz P.k P.r p.T.base.z' := rfl
-  have hpos : 0 < Complex.normSq (∏ i : Fin P.r, c i.castSucc) :=
-    Complex.normSq_pos.2 (Finset.prod_ne_zero_iff.2 fun i _ => hd _)
-  have hRR : p.RR F (P.r + 1) [] (TBB.bigPt P.r c) (TBB.bigPt P.r c) =
-      B.hsInner (p.V F (TBB.bigPt P.r c)) (p.V F (TBB.bigPt P.r c)) := by
-    unfold KB.Pl.RR D.RRplace
-    rw [dite_eq_left ⟨hloc, hloc⟩, dite_eq_right (by omega), if_pos rfl, if_pos rfl]
-    rfl
-  have hEw : TBB.Ew p (fun _ => 1) F (P.r + 1) [] (TBB.bigPt P.r c) =
-      Real.sqrt (TBB.nPt P.k P.r (TBB.TTp p) (TBB.bigPt P.r c)) *
-        Real.sqrt (TBB.nPt P.k P.r (TBB.TTp p) (TBB.bigPt P.r c)) *
-        ‖B.hsVec (p.V F (TBB.bigPt P.r c))‖ ^ 2 := by
-    rw [TBB.Ew, TBB.NP, hRR, B.hsInner, JCTx2.inner_self_real, ← Complex.ofReal_mul, Complex.ofReal_re]
-    simp [TBB.normC]
-  rw [hEw]
-  by_cases hζ : TBB.TTp p < Complex.normSq (c (Fin.last P.r))
-  · have hG : 0 < TBB.Gp p (TBB.bigPt P.r c) := by
-      rw [gp_bigPt_eq_normSq_prod_mul_sub]
-      exact mul_pos hpos (by linarith)
-    have hn := nPt_bigPt P.k P.r (Tz P.k P.r p.T.base.z) (Tz P.k P.r p.T.base.z') c
-      (by rw [← hTT]; exact hζ.le)
-    rw [hTT, hn, Real.mul_self_sqrt (bcWeight_nonneg0 _ _ _ _ _), hsVec_norm_V_bigPt p F c hd hG]
-  · replace hζ := not_lt.1 hζ
-    have hG : ¬ 0 < TBB.Gp p (TBB.bigPt P.r c) := by
-      rw [gp_bigPt_eq_normSq_prod_mul_sub]
-      intro h
-      have := (pos_iff_pos_of_mul_pos h).1 hpos
-      linarith
-    have hV0 : p.V F (TBB.bigPt P.r c) = 0 := by
-      unfold KB.Pl.V D.vecV
-      rw [dite_eq_right]
-      exact fun hh => hG hh.2
-    have h0 : B.hsVec (0 : Wq →L[ℂ] Wp) = 0 := by
-      simpa using JCTx2.hsVec_smul' (0 : ℂ) (0 : Wq →L[ℂ] Wp)
-    rw [bcWeight_eq_zero_of_normSq_le p.hl.2.2 _ _ _ (by exact hζ), hV0, h0]
-    simp
+  intros
+  apply _root_.GlobalTheory.jN2_eq_normSq_base.pt_eq <;> assumption
 
 theorem ew_integrable (p : KB.Pl P Wp Wq) {A : ℝ} {H : B.Mat P.k P.r → (Wq →L[ℂ] Wp)} (hAB : B.AB P.k P.r ≤ A)
     (hT : JF.TransportedAlt P.k P.r A 0) (hH : ∀ j : ℕ, j ≤ 5 → B.InCC A j H) :
@@ -370,7 +287,6 @@ theorem nf_arith_low (R x N : ℝ) (hR1 : 1 ≤ R) (hx1 : 1 ≤ x) (hN0 : 0 ≤ 
 
 theorem nf_arith_ab (r k : ℝ) (hr : 0 ≤ r) (hk : 2 ≤ k) :
     2 * (k + r) * (r + 1) + 1 ≤ 20 * ((r + 1) * (2 * r + k + 1) ^ 3) := by
-  have hs : 3 ≤ 2 * r + k + 1 := by linarith
   have hs3 : 9 * (2 * r + k + 1) ≤ (2 * r + k + 1) ^ 3 := by
     nlinarith [mul_nonneg (mul_nonneg (by linarith : (0 : ℝ) ≤ 2 * r + k + 1)
       (by linarith : (0 : ℝ) ≤ 2 * r + k + 1 - 3)) (by linarith : (0 : ℝ) ≤ 2 * r + k + 1 + 3)]
@@ -400,8 +316,6 @@ open Formalism.FourierDecayAlt Formalism.QuantumDeterminants Filter Topology Mea
 open scoped ENNReal
 
 noncomputable section
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 section general
 
@@ -598,7 +512,6 @@ theorem dominated_L2_truncation_bound_holds : DominatedL2TruncationBound := by
       have := mul_neg_of_neg_of_pos h hp
       linarith [this, show C₁ * (2 * (P.r : ℝ) + P.k + 1) * ((N : ℝ) + 1) =
         C₁ * ((2 * (P.r : ℝ) + P.k + 1) * ((N : ℝ) + 1)) by ring]
-    have h2 : (0 : ℝ) ≤ (B.opOrder Th : ℝ) := Nat.cast_nonneg _
     linarith
   have hd0 : 0 ≤ C₁ * ((P.r : ℝ) + 1) * (2 * (P.r : ℝ) + P.k + 1) * ((N : ℝ) + 1) := by positivity
   obtain ⟨-, hcc1⟩ := Formalism.FourierDecayAlt.P.CutMP.class_lower_decay_holds P.k P.r Wp Wq Th _ A₀ hd0 hgc f hfck hf
@@ -609,7 +522,6 @@ theorem dominated_L2_truncation_bound_holds : DominatedL2TruncationBound := by
   obtain ⟨KT, hKT0, hKT⟩ := jdCCLowerQ Th _ (A₀ - 1) hd0 hgc 5
   set d : ℝ := C₁ * ((P.r : ℝ) + 1) * (2 * (P.r : ℝ) + P.k + 1) * ((N : ℝ) + 1) with hd
   set q₀ : ℝ := (((2 * P.r + 2) * p₀ : ℕ) : ℝ) with hq₀
-  have hq0 : 0 ≤ q₀ := Nat.cast_nonneg _
   set x : ℝ := 2 * (P.r : ℝ) + P.k + 1 with hx
   set R : ℝ := (P.r : ℝ) + 1 with hR
   have hS : 0 ≤ R ^ 4 * (N * x ^ 2 + x ^ 3) := by positivity
@@ -687,7 +599,6 @@ theorem dominated_L2_truncation_bound_holds : DominatedL2TruncationBound := by
   have hM0 : 0 ≤ M := by positivity
   have hT_le : ∀ m : ℕ, ∫⁻ c, T m c ≤ ENNReal.ofReal (M * (1 / ((m : ℝ) + 1) ^ 2)) := by
     intro m
-    have hm1 : (0 : ℝ) < (m : ℝ) + 1 := by positivity
     have i1 := hC3 (B.opApply Th (ψ m)) _ ⟨_, Formalism.FourierDecayAlt.P.BetaSesquilinearity.CCle_mono_A hA3le (hYc m)⟩
       (Formalism.FourierDecayAlt.P.BetaSesquilinearity.CCle_mono_A hA3le (Formalism.FourierDecayAlt.P.BetaSesquilinearity.CCle_mono_m (by norm_num) (hYc m)))
     have i2 := hC3 _ _ ⟨_, hY'c m⟩ (Formalism.FourierDecayAlt.P.BetaSesquilinearity.CCle_mono_m (by norm_num) (hY'c m))

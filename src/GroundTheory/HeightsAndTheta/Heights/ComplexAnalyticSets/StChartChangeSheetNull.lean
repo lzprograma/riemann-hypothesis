@@ -29,10 +29,6 @@ def ChartChangeSheetNull.Statement : Prop :=
         {x | x ∈ zeroSet J ∧ (∃ s, IsSheetAt J A x s) ∧
           ¬ (linEval u x ≠ 0 ∧ ∃ s', IsSheetAt J' A' (Ψ x) s')}) = 0
 
-namespace ChartChange
-
-end ChartChange
-
 end
 
 end GroundTheory.Heights₂.Heights

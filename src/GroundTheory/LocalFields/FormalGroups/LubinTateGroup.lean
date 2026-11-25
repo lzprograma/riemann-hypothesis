@@ -155,7 +155,7 @@ theorem constantCoeff_dropConst (φ : MvPowerSeries σ A) : constantCoeff (dropC
 theorem coeff_dropConst (φ : MvPowerSeries σ A) {e : σ →₀ ℕ} (he : e ≠ 0) :
     coeff e (dropConst φ) = coeff e φ := by
   classical
-  rw [dropConst, map_sub, coeff_C, if_neg he, sub_zero]
+  rw [dropConst, map_sub, coeff_C, ite_eq_right he, sub_zero]
 
 theorem dropConst_of_constantCoeff_eq_zero {φ : MvPowerSeries σ A} (h : constantCoeff φ = 0) :
     dropConst φ = φ := by
@@ -257,7 +257,7 @@ theorem step_eq_self_iff {ℓ : MvPowerSeries σ A} (hℓ : constantCoeff ℓ = 
     have hlin : ∀ e : σ →₀ ℕ, e.degree ≤ 1 → coeff e φ = coeff e ℓ := by
       intro e he
       have := congrArg (coeff e) hs
-      rw [coeff_step, if_pos he] at this
+      rw [coeff_step, ite_eq_left he] at this
       exact this.symm
     have hφ0 : constantCoeff φ = 0 := by
       rw [← coeff_zero_eq_constantCoeff_apply, hlin 0 (by simp),
@@ -278,7 +278,7 @@ theorem step_eq_self_iff {ℓ : MvPowerSeries σ A} (hℓ : constantCoeff ℓ = 
           simp [coeff_zero_eq_constantCoeff_apply, constantCoeff_dropConst]
         · rw [h, pow_one, sub_self, zero_mul]
       · have := congrArg (coeff e) hs
-        rw [coeff_step, if_neg he, add_eq_left] at this
+        rw [coeff_step, ite_eq_right he, add_eq_left] at this
         have hu := Ring.inverse_mul_cancel _ (hunit (e.degree - 1) (by omega))
         have hq : divBy π (coeff e (defect f g φ)) = 0 := by
           linear_combination (1 - π ^ (e.degree - 1)) * this -

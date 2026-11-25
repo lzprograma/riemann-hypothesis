@@ -21,12 +21,8 @@ def idealLat (w : Fin ρ → Fin N → F) (a : Ideal (𝓞 F)) : Submodule (𝓞
   Submodule.map (Fintype.linearCombination (𝓞 F) w) (Submodule.pi Set.univ fun _ => a)
 
 theorem linearCombination_injective {w : Fin ρ → Fin N → F} (hw : LinearIndependent F w) :
-    Function.Injective (Fintype.linearCombination (𝓞 F) w) := by
-  have hw' : LinearIndependent (𝓞 F) w := (LinearIndependent.iff_fractionRing (𝓞 F) F).2 hw
-  rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
-  intro c hc
-  funext i
-  exact Fintype.linearIndependent_iff.1 hw' c (by rwa [Fintype.linearCombination_apply] at hc) i
+    Function.Injective (Fintype.linearCombination (𝓞 F) w) :=
+  ((LinearIndependent.iff_fractionRing (𝓞 F) F).2 hw).fintypeLinearCombination_injective
 
 omit [NumberField F] in
 theorem idealLat_toAddSubgroup (w : Fin ρ → Fin N → F) (a : Ideal (𝓞 F)) :

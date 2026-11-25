@@ -181,8 +181,6 @@ theorem exists_eichler (θ : 𝓞 E) (hθ : (θ : E) + star (θ : E) = 1) {r : �
 
 end Gen
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem eichler_mem_unipotent : ∀ (D : D7) (T : D.host.E) (F : Fg D T) (Λ : LatV D), Formalism.HermitianLatticesTheory.IsUnimodular (hS D).hT Λ → ∀ σ ∈ Lrep Λ F, ∀ w ∈ XLam Λ F, ∃ n ∈ NLam Λ F, ∃ t : D.host.E, (∀ x ∈ Xsp F, n x = x) ∧ ∀ x, n x = x - (hS D).hT σ x • w + (hS D).hT w x • σ - (t * (hS D).hT w x) • w := by
   intro D T F Λ hΛ σ hσ w hw
   obtain ⟨θ, hθ, -⟩ := GlobalTheory.TraceOne.exists_trace_one D 2 Nat.prime_two

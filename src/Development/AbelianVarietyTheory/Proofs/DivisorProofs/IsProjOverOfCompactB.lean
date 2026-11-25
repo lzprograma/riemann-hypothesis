@@ -152,8 +152,7 @@ theorem eq_zero_of_mem_eigenSub_of_sum {O k N : Type} [CommRing O] [Field k] [Ad
   | insert j s hj ih =>
     intro m y hm hy h
     obtain ⟨c, hc⟩ : ∃ c, χ j c ≠ σ c := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       exact hχ j (RingHom.ext hcon)
     let f : Module.End k N := ρ c - χ j c • LinearMap.id
     have hfm : f m = (σ c - χ j c) • m := by
@@ -226,8 +225,7 @@ theorem exists_ringHom_avoid {F : Type} [Field F] [NumberField F] [IsCMField F] 
     · intro τ _; ext z; simp [hcc]
   have htot : T.card + Tc.card = Module.finrank ℚ F := by
     rw [Finset.card_filter_add_card_filter_not, Finset.card_univ, NumberField.Embeddings.card]
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hsub : T.image (fun τ => τ.comp (algebraMap (𝓞 F) F)) ⊆ Finset.univ.image χ := by
     intro σ hσ
     obtain ⟨τ, hτ, rfl⟩ := Finset.mem_image.1 hσ
@@ -292,8 +290,6 @@ open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCate
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.AbLaw GlobalTheory.UU GlobalTheory.LN GlobalTheory.Raynaud IsLocalRing
 open scoped CategoryTheory.Obj
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -527,8 +523,7 @@ theorem exists_unit_coeff {W V ι : Type} [CommRing W] [IsDomain W] [IsDiscreteV
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [hv i]; ring
   refine ⟨v, ?_, ?_⟩
-  · by_contra hnu
-    push_neg at hnu
+  · by_contra! hnu
     have h1 : (1 : W) ∈ IsLocalRing.maximalIdeal W := by
       rw [← hsum]
       exact Ideal.sum_mem _ fun i _ =>
@@ -545,8 +540,7 @@ theorem exists_vecMul_eq_zero {W Ω ι κ : Type} [CommRing W] [IsDomain W] [Fie
     (A : Matrix ι κ W) (x : ι → Ω) (hx : x ≠ 0) (h : x ᵥ* A.map f = 0) :
     ∃ w : ι → W, w ≠ 0 ∧ w ᵥ* A = 0 := by
   classical
-  by_contra H
-  push_neg at H
+  by_contra! H
   let L := FractionRing W
   let g : L →+* Ω := IsFractionRing.lift hf
   have hg : ∀ r, g (algebraMap W L r) = f r := fun r => IsFractionRing.lift_algebraMap hf r
@@ -726,7 +720,7 @@ namespace GlobalTheory
 theorem ringOfIntegers_action_injective (F : Type) [Field F] [NumberField F] (X : Type)
     [AddCommGroup X] [Module.Free ℤ X] [Nontrivial X] (ρ : 𝓞 F →+* Module.End ℤ X) :
     Function.Injective ρ := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro a ha
   have hmem : a ∈ RingHom.ker ρ := ha
   have hn : ((Ideal.absNorm (RingHom.ker ρ) : ℕ) : 𝓞 F) ∈ RingHom.ker ρ := Ideal.absNorm_mem _
@@ -804,7 +798,7 @@ theorem finrank_eq_zero_of_dual_killed : ∀ (F : Type) [Field F] [NumberField F
   by_contra hX
   haveI : Nontrivial X := Module.finrank_pos_iff.mp (Nat.pos_of_ne_zero hX)
   obtain ⟨i0, hi0⟩ : ∃ i, w i ≠ 0 := by
-    by_contra hc; push_neg at hc; exact hw (funext hc)
+    by_contra hc; push Not at hc; exact hw (funext hc)
   set B := Module.Free.chooseBasis ℤ X
   have key : ∀ (χ : X) (r : Module.Free.ChooseBasisIndex ℤ X),
       ∑ i, (B.repr (ρ (b i) χ) r) • w i = 0 := by
@@ -824,7 +818,7 @@ theorem finrank_eq_zero_of_dual_killed : ∀ (F : Type) [Field F] [NumberField F
     haveI : CharP k p := ringChar.charP k
     letI : Algebra (ZMod p) k := ZMod.algebra k p
     obtain ⟨π, hπ⟩ : ∃ π : Module.Dual (ZMod p) k, π (w i0) ≠ 0 := by
-      by_contra hc; push_neg at hc
+      by_contra hc; push Not at hc
       exact hi0 ((Module.forall_dual_apply_eq_zero_iff (ZMod p) (w i0)).mp hc)
     set e : ι → ℤ := fun i => ((π (w i)).val : ℤ) with hedef
     have hdiv : ∀ (χ : X) (r : Module.Free.ChooseBasisIndex ℤ X),
@@ -849,7 +843,7 @@ theorem finrank_eq_zero_of_dual_killed : ∀ (F : Type) [Field F] [NumberField F
       have := ringChar.charP k; rw [hp] at this; exact CharP.charP_to_charZero k
     letI : Algebra ℚ k := DivisionRing.toRatAlgebra
     obtain ⟨π, hπ⟩ : ∃ π : Module.Dual ℚ k, π (w i0) ≠ 0 := by
-      by_contra hc; push_neg at hc
+      by_contra hc; push Not at hc
       exact hi0 ((Module.forall_dual_apply_eq_zero_iff ℚ (w i0)).mp hc)
     set c : ι → ℚ := fun i => π (w i) with hcdef
     set e : ι → ℤ := fun i => (c i).num * ∏ j ∈ Finset.univ.erase i, ((c j).den : ℤ) with hedef
@@ -904,7 +898,6 @@ open scoped CategoryTheory.Obj
 
 namespace GlobalTheory
 section
-attribute [local instance] Over.cartesianMonoidalCategory
 namespace TorusTangent
 
 variable {k : Type} [Field k] {X : Type} [AddCommGroup X]
@@ -1024,7 +1017,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory GlobalTheory.AbLaw GlobalTheory.UU GlobalTheory.LN GlobalTheory.Raynaud IsLocalRing
 open scoped CategoryTheory.Obj
 
-set_option autoImplicit false
 noncomputable section
 
 namespace GlobalTheory.TorLie

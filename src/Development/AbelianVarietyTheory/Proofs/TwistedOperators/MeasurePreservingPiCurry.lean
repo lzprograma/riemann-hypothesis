@@ -109,9 +109,9 @@ omit [ValuativeRel k] [IsNonarchimedeanLocalField k] [Fintype A] in
 theorem continuous_setCols (P : Finset C) (Y : Matrix A C k) : Continuous (setCols P Y) := by
   refine continuous_pi fun i => continuous_pi fun j => ?_
   by_cases h : j ∈ P
-  · simp only [setCols, of_apply, dif_pos h]
+  · simp only [setCols, of_apply, dite_eq_left h]
     exact (continuous_apply (⟨j, h⟩ : P)).comp (continuous_apply i)
-  · simp only [setCols, of_apply, dif_neg h]
+  · simp only [setCols, of_apply, dite_eq_right h]
     exact continuous_const
 
 theorem comp_setCols_mem_SB {Ξ : Matrix A C k → ℂ} (hΞ : Ξ ∈ SB (Matrix A C k)) (P : Finset C)

@@ -9,6 +9,7 @@ import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.NatCardEqPowLength
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithModel
+import GroundTheory.HeightsAndTheta.Heights.BlockScaling
 
 @[expose] public section
 
@@ -29,17 +30,7 @@ theorem aeval_scale {S : Type} [CommRing S] {g : MRing ι} {a : K → ℕ} (hg :
     (t : K → S) (x z : (Σ k, ι k) → S) (hz : ∀ p, z p = t p.1 * x p) :
     aeval z g = (∏ k, t k ^ a k) * aeval x g := by
   obtain rfl : z = fun p => t p.1 * x p := funext hz
-  rw [aeval_def, aeval_def, eval₂_eq', eval₂_eq', Finset.mul_sum]
-  refine Finset.sum_congr rfl fun m hm => ?_
-  have hprod : ∏ p, (t p.1 * x p) ^ m p = (∏ k, t k ^ a k) * ∏ p, x p ^ m p := by
-    simp only [mul_pow, Finset.prod_mul_distrib]
-    congr 1
-    rw [Fintype.prod_sigma]
-    refine Finset.prod_congr rfl fun k _ => ?_
-    show ∏ i, t k ^ m ⟨k, i⟩ = t k ^ a k
-    rw [Finset.prod_pow_eq_pow_sum, hg m hm k]
-  rw [hprod]
-  ring
+  exact BlockScaling.eval₂_mul_block_left (algebraMap ℤ S) t x hg
 
 theorem eval_map_int {σ : Type} (z : σ → ℂ) (f : MvPolynomial σ ℤ) :
     eval z (map (Int.castRingHom ℂ) f) = aeval z f := by

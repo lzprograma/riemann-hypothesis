@@ -57,8 +57,6 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.LogBasis
@@ -190,17 +188,17 @@ theorem exists_basis_of_dual {K R : Type} [CommRing R] [IsNoetherianRing R] (hQ 
     have h2 : g l * u l = 0 := by
       rw [← hsum (fun k => g k * u k) l, h1]; rfl
     by_cases hl : l ∈ Set.range e
-    · simp only [u, if_pos hl] at h2
+    · simp only [u, ite_eq_left hl] at h2
       exact mem_of_mul_mem hQ (d l) ⊥ (fun r hr => by rw [Ideal.mem_bot.1 hr, map_zero]; exact zero_mem _)
         (t := z l) (by simp [hd]) (by rw [mul_comm, h2]; exact zero_mem _)
-    · simpa only [u, if_neg hl, mul_one] using h2
+    · simpa only [u, ite_eq_right hl, mul_one] using h2
   have hsp : ⊤ ≤ Submodule.span R (Set.range v) := by
     rintro ⟨D, hD⟩ -
     obtain ⟨hD0, hD1⟩ := (hM D).1 hD
     have hdiv : ∀ k, u k ∣ D (z k) := by
       intro k
       by_cases hk : k ∈ Set.range e
-      · simp only [u, if_pos hk]
+      · simp only [u, ite_eq_left hk]
         obtain ⟨j, rfl⟩ := hk
         have h1 := Ideal.mem_span_singleton.1 (hD1 _ (Ideal.mem_span_singleton_self _))
         rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ j), D.leibniz, smul_eq_mul, smul_eq_mul] at h1
@@ -218,7 +216,7 @@ theorem exists_basis_of_dual {K R : Type} [CommRing R] [IsNoetherianRing R] (hQ 
             exact Ideal.mem_span_singleton.1 (mem_of_mul_mem hQ (d (e i)) _
               (mem_span_of_dvd _ (by simp [hd, hij])) (by simp [hd]) (Ideal.mem_span_singleton.2 ha))
         exact h3 _ (Finset.notMem_erase _ _) _ h2
-      · simp only [u, if_neg hk, one_dvd]
+      · simp only [u, ite_eq_right hk, one_dvd]
     choose g hg using hdiv
     refine (Submodule.mem_span_range_iff_exists_fun R).2 ⟨g, Subtype.ext ?_⟩
     conv_rhs => rw [show (⟨D, hD⟩ : M).1 = D from rfl, hspan D hD0]
@@ -454,7 +452,6 @@ open GlobalTheory.KS (rsT pbT C1 IsCoc IsCob)
 open GlobalTheory.LogKS (IsField)
 open GlobalTheory.RayEv (Ray)
 open GlobalTheory.Toroidal GlobalTheory.LogKS GlobalTheory.LogKSChart GlobalTheory.Heat
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem GlobalTheory.LogBasis.exists_logDer_basis : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Geo.Tor.Level H) (Xo : Moduli Dw l) (c : Coeff l) (Y : Model Xo c (RingHom.id c.F)), 1 ≤ Dw.p + Dw.q → SmoothOfRelativeDimension Dw.dim (genStr Y) → ReciprocityTheory.AnForm.R.FinalTheorems.Snc (genBdIdeal Y) → ∀ (U : Y.X.affineOpens) (x : Y.X), x ∈ U.1 → ∃ (f : Γ(Y.X, U.1)) (W : Y.X.affineOpens) (hW : W.1 ≤ U.1) (m : ℕ) (t : Fin m → Γ(Y.X, W.1)) (b : Module.Basis (Fin Dw.dim) Γ(Y.X, W.1) (logDer Y.s (Scheme.IdealSheafData.vanishingIdeal (interior Y).compl) W)), x ∈ W.1 ∧ W.1 = Y.X.basicOpen f ∧ (∀ g ∈ (Scheme.IdealSheafData.vanishingIdeal (interior Y).compl).ideal W, g ∈ Ideal.span {∏ i, t i}) ∧ ∏ i, t i ∈ (Scheme.IdealSheafData.vanishingIdeal (interior Y).compl).ideal W ∧ ∀ (i : Fin m) (k : Fin Dw.dim), ((b k).1 : Derivation ℤ Γ(Y.X, W.1) Γ(Y.X, W.1)) (t i) = if (k : ℕ) = i then t i else 0 := by
   intro E _ _ _ H Dw l Xo c Y _ hs hsnc U x hx

@@ -2,51 +2,11 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.ThetaValues.ThConst
 public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
 import Mathlib.RingTheory.MvPolynomial.Ideal
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsValueAtJetPointCmFrameSection
-import Mathlib.Tactic.Basify
 import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -58,13 +18,10 @@ import Std.Tactic.BVDecide.Normalize.Prop
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.PullbackSections Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.AnVal
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.AnVal.JetUniq
 
@@ -99,18 +56,18 @@ private theorem snd_aeval_eps_monomial_eq_ite {κ : Type} [DecidableEq κ] (ℓ 
   · have hp : (e.prod fun i k => (if i = ℓ then (DualNumber.eps : DualNumber ℂ) else 0) ^ k).snd = 0 := by
       by_cases hs : ∃ i ∈ e.support, i ≠ ℓ
       · obtain ⟨i, hi, hiℓ⟩ := hs
-        rw [Finsupp.prod, Finset.prod_eq_zero hi (by rw [if_neg hiℓ]; exact zero_pow (Finsupp.mem_support_iff.mp hi))]
+        rw [Finsupp.prod, Finset.prod_eq_zero hi (by rw [ite_eq_right hiℓ]; exact zero_pow (Finsupp.mem_support_iff.mp hi))]
         rfl
       · have he' : e = Finsupp.single ℓ (e ℓ) := by
           ext i
           by_cases hi : i = ℓ
           · subst hi
             simp
-          · rw [Finsupp.single_apply, if_neg (Ne.symm hi)]
+          · rw [Finsupp.single_apply, ite_eq_right (Ne.symm hi)]
             by_contra h0
             exact hs ⟨i, Finsupp.mem_support_iff.mpr h0, hi⟩
         have hk : e ℓ ≠ 1 := fun h1 => he (by rw [he', h1])
-        rw [he', Finsupp.prod_single_index (by simp), if_pos rfl]
+        rw [he', Finsupp.prod_single_index (by simp), ite_eq_left rfl]
         rcases Nat.lt_or_gt_of_ne hk with h0 | h2
         · rw [show e ℓ = 0 by omega, pow_zero]
           rfl
@@ -139,7 +96,7 @@ private theorem snd_jetTan_psJet_succ_eq_coeff_single {κ : Type} [Fintype κ] [
 
   rw [map_sum, TrivSqZeroExt.snd_sum]
   simp_rw [snd_aeval_eps_monomial_eq_ite]
-  rw [Finset.sum_ite_eq', if_pos (single_one_mem_degLE_succ k ℓ)]
+  rw [Finset.sum_ite_eq', ite_eq_left (single_one_mem_degLE_succ k ℓ)]
 
 theorem fderiv_eq_of_jetOf {g : ℕ} (m : ℕ) (θ θ' : (Fin g → ℂ) → ℂ)
     (h : PullbackSections.jetOf (m + 1) θ = PullbackSections.jetOf (m + 1) θ') : fderiv ℂ θ 0 = fderiv ℂ θ' 0 := by
@@ -317,7 +274,7 @@ private theorem jetAug_jetN_zero_eq_apply_zero {n g : ℕ} (F : (Fin n → Fin g
 
   rw [map_sum]
   simp only [MvPolynomial.constantCoeff_monomial]
-  rw [Finset.sum_ite_eq', if_pos (zero_mem_degLE' 0)]
+  rw [Finset.sum_ite_eq', ite_eq_left (zero_mem_degLE' 0)]
   have e1 := PullbackSections.coeff_tay_zero (fun v => F (colsOf n g v)) 0
   have hf : PullbackSections.fct (0 : Fin 1 × Fin (n * g) →₀ ℕ) = 1 := by simp [PullbackSections.fct]
   have hdir : PullbackSections.dirs (0 : Fin 1 × Fin (n * g) →₀ ℕ) = 0 := by simp [PullbackSections.dirs]
@@ -377,15 +334,11 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.PullbackSections Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.AnVal
 open scoped ContDiff
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.AnVal.JetCorr
 
@@ -479,7 +432,7 @@ theorem prod_zpow_fiber {M T K : Type*} [CommGroup M] [Fintype K] (s : Finset T)
   simp only [h]
   rw [Finset.prod_comm]
   refine Finset.prod_congr rfl fun k _ => ?_
-  rw [Finset.prod_ite_eq, if_pos (hs k)]
+  rw [Finset.prod_ite_eq, ite_eq_left (hs k)]
 
 
 open scoped Classical in
@@ -492,14 +445,14 @@ theorem prod_zpow_eq {M T K K' : Type*} [CommGroup M] [Fintype K] [Fintype K'] (
   let w : T → M := fun ψ => if h : ∃ k, φ k = ψ then u h.choose else if h' : ∃ k, φ' k = ψ then u' h'.choose else 1
   have hw : ∀ k, u k = w (φ k) := fun k => by
     have h : ∃ l, φ l = φ k := ⟨k, rfl⟩
-    simp only [w, dif_pos h]
+    simp only [w, dite_eq_left h]
     exact h₁ _ _ h.choose_spec.symm
   have hw' : ∀ k, u' k = w (φ' k) := fun k => by
     by_cases h : ∃ l, φ l = φ' k
-    · simp only [w, dif_pos h]
+    · simp only [w, dite_eq_left h]
       exact (h₃ _ _ h.choose_spec).symm
     · have h' : ∃ l, φ' l = φ' k := ⟨k, rfl⟩
-      simp only [w, dif_neg h, dif_pos h']
+      simp only [w, dite_eq_right h, dite_eq_left h']
       exact h₂ _ _ h'.choose_spec.symm
   simp only [hw, hw']
   rw [prod_zpow_fiber (Finset.univ.image φ ∪ Finset.univ.image φ') φ (fun k => by simp) ε w,
@@ -511,7 +464,6 @@ section Frame
 variable {S : Scheme.{0}} {A : Over S} [GrpObj A] {L : RigLB A} {x0 : Sp ℂ ⟶ S} {g : ℕ} (Φ : AnFr A L x0 g)
 
 
-set_option backward.isDefEq.respectTransparency false in
 theorem origin_mem {n m : ℕ} {ψ : Sp (Jet ℂ (Fin n × Fin g) m) ⟶ A.left}
     {Λ : (Fin n → Fin g → ℂ) →ₗ[ℂ] (Fin g → ℂ)} (h : Φ.JetMap m ψ Λ) {U : A.left.Opens}
     (p : Sp (Jet ℂ (Fin n × Fin g) m)) (hp : ψ p ∈ U) : ⊤ ≤ (Φ.e 0).left ⁻¹ᵁ U := by

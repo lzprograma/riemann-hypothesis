@@ -265,7 +265,7 @@ theorem rep_basis [CharZero K] (hJ : Jᴴ = J) (hd : IsUnit J.det) (hW : Isot J 
     rw [← hs] at hw
     obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun K).1 hw
     simp only [hf_sum_right, hf_smul_right, hu, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ,
-      if_true]
+      ite_true]
   let s : κ → κ → K := fun i k => hf J (u i) (X *ᵥ u k)
   have hss : ∀ i k, star (s k i) = -s i k := fun i k => by
     simp only [s]; rw [hf_star hJ, hf_skew hX.1]
@@ -284,13 +284,13 @@ theorem rep_basis [CharZero K] (hJ : Jᴴ = J) (hd : IsUnit J.det) (hW : Isot J 
     have hb : ∀ k, hf J (b k) (u j) = (2 : K)⁻¹ * s k j := fun k => by
       simp only [b]
       rw [hf_add_leftC, hf_neg_left, hf_skew hX.1, neg_neg, hf_sum_left]
-      simp only [hf_smul_leftC, hu', mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true,
+      simp only [hf_smul_leftC, hu', mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true,
         star_mul', star_half, hss]
       show s k j + _ = _
       ring
     rw [sum_mulVec]
     simp only [xw_mulVec, hb, hu', ite_smul, one_smul, zero_smul, Finset.sum_sub_distrib, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
     simp only [b]
     abel
   refine mat_extC fun z => ?_
@@ -298,7 +298,7 @@ theorem rep_basis [CharZero K] (hJ : Jᴴ = J) (hd : IsUnit J.det) (hW : Isot J 
     rw [← hs]
     refine mem_perp_spanC fun i => ?_
     simp only [hf_sub_right, hf_sum_right, hf_smul_right, hu', mul_ite, mul_one, mul_zero, Finset.sum_ite_eq,
-      Finset.mem_univ, if_true, sub_self]
+      Finset.mem_univ, ite_true, sub_self]
   rw [← sub_add_cancel z (∑ j, hf J (v j) z • u j), mulVec_add, mulVec_add, e1 _ hz, mulVec_sum, mulVec_sum]
   simp only [mulVec_smul, e2]
 

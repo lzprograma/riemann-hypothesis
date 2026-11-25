@@ -79,7 +79,7 @@ theorem locW_ptAt (z : w.adicCompletion E) : locW h (ptAt hw h z) = z := by
 
 theorem at_ptAt (z : w.adicCompletion E) : At (evFin F v) (ptAt hw h z) :=
   GlobalTheory.ThK.at_evFin_iff.2 ⟨fun u => GlobalTheory.AdelicU.Supp.compInf_singleTens u v _,
-    fun u hu => GlobalTheory.AdelicU.Supp.compFin_singleTens_ne hu _⟩
+    fun _ hu => GlobalTheory.AdelicU.Supp.compFin_singleTens_ne hu _⟩
 
 theorem ptAt_locW {z : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)} (hz : At (evFin F v) z) : ptAt hw h (locW h z) = z := by
   obtain ⟨h1, h2⟩ := GlobalTheory.ThK.at_evFin_iff.1 hz

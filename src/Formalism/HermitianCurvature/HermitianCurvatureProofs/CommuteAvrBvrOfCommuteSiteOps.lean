@@ -2,48 +2,6 @@ module
 
 public import Formalism.HermitianCurvature.StatementTL
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RuleGD
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.LetterLiftOfParts
 import Mathlib.Tactic.Linter.Style
@@ -64,9 +22,6 @@ section
 
 variable {A : Type} [Ring A] [StarRing A] [Algebra ℂ A] [StarModule ℂ A] {r : ℕ} {L : LevelData A r} {st : Start A}
 
-theorem fn_comm (L : LevelData A r) {x y : A} (hx : x ∈ zfns L) (hy : y ∈ zfns L) : x * y = y * x :=
-  L.fns_comm x (Or.inr hx) y (Or.inr hy)
-
 theorem z10 (h : IsLevelStart L st) {Y : ℂ} (hi : Y ∈ st.inv) :
     st.QQ Y 1 0 * L.ζ = L.ζ * st.QQ Y 1 0 - st.QQ Y 1 1 ∧ Commute (st.QQ Y 1 0) L.ζb := by
   have hlow := h.low Y hi
@@ -76,7 +31,7 @@ theorem z10 (h : IsLevelStart L st) {Y : ℂ} (hi : Y ∈ st.inv) :
   have mζb : L.ζb ∈ zfns L := Or.inr (Or.inr (Or.inl rfl))
   have mGG : L.GG ∈ zfns L := Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl))))
   have mGGi : L.GGi ∈ zfns L := Or.inr (Or.inr (Or.inr (Or.inr (Or.inr rfl))))
-  have cm : ∀ {x y : A}, x ∈ zfns L → y ∈ zfns L → Commute x y := fun hx hy => fn_comm L hx hy
+  have cm : ∀ {x y : A}, x ∈ zfns L → y ∈ zfns L → Commute x y := fun hx hy => Formalism.FourierDecayAlt.P.Fr5.fn_comm L hx hy
   have hX : ∀ g ∈ zfns L, Commute (st.x Y) g := h.x_fn Y
   have hE : ∀ g ∈ zfns L, Commute (st.ee Y) g := h.ee_fn Y
   have hc : ∀ a : A, Commute (algebraMap ℂ A (Y + 1 / 2)) a := fun a => Algebra.commutes _ a
@@ -132,8 +87,8 @@ theorem zetaQQ : ZetaQQ := by
     · have := congrArg star b.eq
       rw [star_mul, star_mul, herm Z hZ, sζb] at this
       exact this.symm
-    · rw [h.tau]; exact Commute.mul_left (fn_comm L mG mζ) (h.x_fn Z _ mζ)
-    · rw [h.tau]; exact Commute.mul_left (fn_comm L mG mζb) (h.x_fn Z _ mζb)
+    · rw [h.tau]; exact Commute.mul_left (Formalism.FourierDecayAlt.P.Fr5.fn_comm L mG mζ) (h.x_fn Z _ mζ)
+    · rw [h.tau]; exact Commute.mul_left (Formalism.FourierDecayAlt.P.Fr5.fn_comm L mG mζb) (h.x_fn Z _ mζb)
   refine ⟨base Y hY hi, fun hn => ?_⟩
   have cancel : ∀ Z ∈ st.inv, ∀ u : A, u * st.QQ Z 1 1 = 0 → u = 0 := fun Z hZ u hu => by
     rw [h.tau] at hu
@@ -353,10 +308,6 @@ theorem cj_add (g gi : A) (h : g * gi = 1) (h' : gi * g = 1) {x a : A} (hx : x *
   show gi * x * g = x + gi * a
   rw [mul_assoc, hx, mul_add, ← mul_assoc, h', one_mul]
 
-theorem commute_Avr_Bvr_of_commute_siteOps {L : LevelData A r} {x : A} (hx : ∀ y ∈ siteOps L, Commute x y) (Y : ℂ) :
-    Commute x (L.Avr Y) ∧ Commute x (L.Bvr Y) := by
-  apply Formalism.FourierDecayAlt.P.TLA.ColumnLift.comm_TM <;> assumption
-
 end
 
 theorem capConj : CapConj := by
@@ -405,8 +356,8 @@ theorem capConj : CapConj := by
       exacts [(L.p_ζi l).symm, (L.pb_ζi l).symm, fc L (m_ζi L) (m_c L l), fc L (m_ζi L) (m_ci L l),
         fc L (m_ζi L) (m_cb L l), fc L (m_ζi L) (m_cbi L l)]
     have bM' : bM L st Y = L.Avr Y * (L.ζi * st.QQ Y 0 1) + L.Bvr Y * (L.ζi * st.QQ Y 1 1) := by
-      rw [bM, mul_add, (commute_Avr_Bvr_of_commute_siteOps (h.qq_site Y 0 1) Y).1.eq, (commute_Avr_Bvr_of_commute_siteOps (h.qq_site Y 1 1) Y).2.eq, ← mul_assoc, ← mul_assoc,
-        (commute_Avr_Bvr_of_commute_siteOps zi Y).1.eq, (commute_Avr_Bvr_of_commute_siteOps zi Y).2.eq, mul_assoc, mul_assoc]
+      rw [bM, mul_add, (Formalism.FourierDecayAlt.P.TLA.ColumnLift.comm_TM (h.qq_site Y 0 1) Y).1.eq, (Formalism.FourierDecayAlt.P.TLA.ColumnLift.comm_TM (h.qq_site Y 1 1) Y).2.eq, ← mul_assoc, ← mul_assoc,
+        (Formalism.FourierDecayAlt.P.TLA.ColumnLift.comm_TM zi Y).1.eq, (Formalism.FourierDecayAlt.P.TLA.ColumnLift.comm_TM zi Y).2.eq, mul_assoc, mul_assoc]
     have nb : cZ L (cDr L (bM L st Y)) = bM L st Y := by
       simp only [bM, map_add (f := _), map_mul, (qq_Dr h Y _ _).1, (e1.M _).1, (e1.M _).2, (e3.M _).1, (e3.M _).2, sub_zero, q01, q11,
         e1.f _ (m_ζi L), e3.f _ (m_ζi L)]

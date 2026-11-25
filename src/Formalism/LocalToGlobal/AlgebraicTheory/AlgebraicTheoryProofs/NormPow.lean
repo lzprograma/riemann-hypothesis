@@ -177,20 +177,6 @@ private theorem sum_ite_eq_snd {α β : Type} [Fintype α] [Fintype β] [Decidab
     simp [Ne.symm hc]
   · simp
 
-private theorem sum_ite_eq_fst {α β : Type} [Fintype α] [Fintype β] [DecidableEq α] (a : α)
-    (f : α × β → ℂ) : ∑ w : α × β, (if a = w.1 then f w else 0) = ∑ k, f (a, k) := by
-  rw [Fintype.sum_prod_type, Finset.sum_eq_single a]
-  · simp
-  · intro c _ hc
-    simp [Ne.symm hc]
-  · simp
-
-private theorem matH_blk4 {N : Type} [Fintype N] (g : Matrix N N ℂ) (u v : Fin 4 × N → ℂ) :
-    matH (blk4 g) u v = ∑ a, matH g (slice a u) (slice a v) := by
-  simp only [matH, LinearMap.mk₂'ₛₗ_apply, blk4, mul_ite, ite_mul, mul_zero, zero_mul, sum_ite_eq_fst]
-  rw [Fintype.sum_prod_type]
-  rfl
-
 theorem sqrt_pow_inv (r k : ℕ) :
     ((Real.sqrt ((r ^ k : ℕ) : ℝ) : ℝ) : ℂ)⁻¹ = (((Real.sqrt r : ℝ) : ℂ)⁻¹) ^ k := by
   have h : Real.sqrt ((r ^ k : ℕ) : ℝ) = Real.sqrt r ^ k := by
@@ -416,11 +402,11 @@ theorem matH_hPow (h : Matrix n n ℂ) (u v : n × I → ℂ) :
 
 theorem hermitian_block_power_sum (h : Matrix n n ℂ) (x y : Fin 4 × (n × I) → ℂ) :
     matH (blk4 (hPow I h)) x y = ∑ i, matH (blk4 h) (sl (eP n I) i x) (sl (eP n I) i y) := by
-  rw [matH_blk4]
+  rw [Formalism.L2.Th1.H.matrixForm_fourfoldBlock]
   simp only [matH_hPow]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [matH_blk4]
+  rw [Formalism.L2.Th1.H.matrixForm_fourfoldBlock]
   rfl
 
 theorem img_prod (g : (Fin 4 × n → ℂ) ≃ₗ[ℂ] (Fin 4 × n → ℂ)) (Λ : AddSubgroup (n → ℂ)) :

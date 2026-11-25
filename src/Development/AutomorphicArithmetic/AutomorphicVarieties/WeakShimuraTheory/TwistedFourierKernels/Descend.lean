@@ -3,39 +3,7 @@ module
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.TwistedFourierKernels.IsTwistTwD
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.IsAlgClosureField
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.TwistedFourierKernels.PrFacts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -50,20 +18,13 @@ private theorem not_mem_of_norm {F : Type} [Field F] [NumberField F] {l p : ℕ}
   intro hmem
   have hcard : Nat.card (𝓞 F ⧸ v.asIdeal) = p := hn
   haveI : Nontrivial (𝓞 F ⧸ v.asIdeal) := Ideal.Quotient.nontrivial_iff.mpr v.isPrime.ne_top
-  have h1 : addOrderOf (1 : 𝓞 F ⧸ v.asIdeal) ∣ p := hcard ▸ addOrderOf_dvd_natCard (1 : 𝓞 F ⧸ v.asIdeal)
-  have h2 : addOrderOf (1 : 𝓞 F ⧸ v.asIdeal) ∣ l := by
-    rw [addOrderOf_dvd_iff_nsmul_eq_zero, nsmul_one]
-    have h0 : Ideal.Quotient.mk v.asIdeal (l : 𝓞 F) = 0 := Ideal.Quotient.eq_zero_iff_mem.mpr hmem
-    simpa using h0
-  have hne1 : addOrderOf (1 : 𝓞 F ⧸ v.asIdeal) ≠ 1 := by
-    intro h
-    have h3 : addOrderOf (1 : 𝓞 F ⧸ v.asIdeal) ∣ 1 := by rw [h]
-    rw [addOrderOf_dvd_iff_nsmul_eq_zero, one_nsmul] at h3
-    exact one_ne_zero h3
-  rcases (Nat.dvd_prime hp).mp h1 with h | h
-  · exact hne1 h
-  · rw [h] at h2
-    exact hne ((Nat.prime_dvd_prime_iff_eq hp hl).mp h2)
+  have h1 := hcard ▸ addOrderOf_dvd_natCard (1 : 𝓞 F ⧸ v.asIdeal)
+  have h2 : addOrderOf (1 : 𝓞 F ⧸ v.asIdeal) ∣ l := addOrderOf_dvd_iff_nsmul_eq_zero.2 (by
+    simpa [nsmul_one] using Ideal.Quotient.eq_zero_iff_mem.mpr hmem)
+  have hd := Nat.dvd_gcd h1 h2
+  rw [((Nat.coprime_primes hp hl).2 hne).gcd_eq_one, addOrderOf_dvd_iff_nsmul_eq_zero,
+    one_nsmul] at hd
+  exact one_ne_zero hd
 
 theorem UpperTheory.V.Ws.H5.descend :
     ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l} {D : Raw Ω c} {T : Tower D} {c' : Coef l} {h : c.O ≤ c'.O} (K : Link T c' h), ∃ β₀ : K.V.frame.G₀ →* c'.Oˣ, TwCh K.V.frame β₀ ∧ β₀.comp K.V.pr = K.β := by

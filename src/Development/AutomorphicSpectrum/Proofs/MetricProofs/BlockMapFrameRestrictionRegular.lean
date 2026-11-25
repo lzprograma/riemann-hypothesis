@@ -6,52 +6,8 @@ public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GenericB
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockDiagValuationNormalization
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.StepRowsInverseNonzeroEntry
-import Mathlib.Basic.Complex.Basic
-import Mathlib.RingTheory.Valuation.ValuationSubring
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.ValuationRingExtensionSpecialization
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -179,141 +135,12 @@ theorem flag_fwd_kept (M : FlagModel y Ψ N j) (keep : Ψ × Fin N → Prop) {κ
     rw [← hv' q, upV_apply hb.2.1]
   rw [hpb] at hG ⊢
   have hzb : z ∘ v' ∈ mcPts (mCoordIdeal M.x) := comp_mem_mcPts hb' am hx hz
-  let O := regRing (y ∘ v) z
-  let val : O →+* ℂ := regVal hz
-  obtain ⟨V, hOV, hpl⟩ := _root_.GlobalTheory.CompanionTheory.Ar.ComplexPlace.exists_valuationSubring_place Φ O val (regVal_local hz)
-  have hO : ∀ {s}, RegAt M.x (mCoordIdeal (z ∘ v')) s → am s ∈ O := fun hs => ⟨_, val_lift_of am hb' hx hz hs⟩
-  let Ag : Ψ → Matrix (Fin N) (Fin N) Φ := fun τ => (F.T τ)⁻¹.map am * M.g τ
-  have hinvD : ∀ τ, ((F.T τ)⁻¹.map am).det ≠ 0 := fun τ => by
-    have : ((F.T τ)⁻¹.map am).det = am ((F.T τ)⁻¹.det) := (RingHom.map_det am _).symm
-    rw [this]
-    refine (map_ne_zero am).2 fun h0 => ?_
-    have h1 := Matrix.det_nonsing_inv_mul_det (F.T τ) (hF.1 τ).2.isUnit
-    rw [h0, zero_mul] at h1
-    exact zero_ne_one h1
-  have hAgB : ∀ τ, IsBlockDiag j (Ag τ) := fun τ =>
-    (((hF.1 τ).1.inv (hF.1 τ).2.isUnit).map am).mul (M.g_block τ)
-  have hAgD : ∀ τ, (Ag τ).det ≠ 0 := fun τ => by
-    rw [Matrix.det_mul]
-    exact mul_ne_zero (hinvD τ) (M.isUnit_det_g τ).ne_zero
-  choose b hbB hbT hbd hbV hbdet hbinv using fun τ => _root_.GlobalTheory.CompanionTheory.Ar.PB.IwBlock.main Φ V N j (Ag τ) (hAgB τ) (hAgD τ)
-  let H : Ψ → Matrix (Fin N) (Fin N) Φ := fun τ => Ag τ * b τ
-  have hHB : ∀ τ, IsBlockDiag j (H τ) := fun τ => (hAgB τ).mul (hbB τ)
-  let wf : ∀ (p : Ψ × Fin N) (k : K), ι k → Φ := fun p k m =>
-    ∑ I, am (F.u ⟨k, m⟩ I) * minorIJ (H p.1) I (stepCols N j p.2)
-  have data : ∀ p, ∃ wc : Φ, wc ∈ V ∧ wc ≠ 0 ∧ wc⁻¹ ∈ V ∧ ∀ k, keep p → M.blk p = some k →
-      ∃ c : ι k, upV v z ⟨k, c⟩ ≠ 0 ∧
-        ∀ m, ∃ r, IsValueAt (y ∘ v) r z (upV v z ⟨k, m⟩ / upV v z ⟨k, c⟩) ∧ wf p k m = r * wc := by
-    intro p
-    by_cases hkp : keep p
-    swap
-    · exact ⟨1, V.one_mem, one_ne_zero, by simpa using V.one_mem, fun k h => absurd h hkp⟩
-    cases hp : M.blk p with
-    | none => exact ⟨1, V.one_mem, one_ne_zero, by simpa using V.one_mem, fun k _ hk => by cases hk⟩
-    | some k =>
+  exact flag_fwd_core M hF hzb hG (regRing (y ∘ v) z) (regVal hz) (regVal_local hz)
+    (fun hs => ⟨_, val_lift_of am hb' hx hz hs⟩) (fun hs => regVal_eq hz _ (val_lift_of am hb' hx hz hs))
+    keep (upV v z) (fun p k hkp hp => by
       obtain ⟨k₁, rfl⟩ := (hrange k).2 (Or.inr ⟨p, hkp, hp⟩)
       obtain ⟨c, hzc, hyc⟩ := exists_coord hb hz k₁
-      have hdet : am (detFac j p.2 (F.T p.1)) ≠ 0 :=
-        (map_ne_zero am).2 (detFac_ne_zero M.j_le p.2 (hF.1 p.1).1 (hF.1 p.1).2)
-      have hE : am (∏ k', M.x ⟨k', F.c k'⟩ ^ M.b p k') ≠ 0 := (map_ne_zero am).2 (Finset.prod_ne_zero_iff.2 fun k' _ =>
-        zpow_ne_zero _ (M.x_chart_ne (mCoordIdeal_le hzb) hG k'))
-      have hB : (∏ c ∈ stepCols N j p.2, b p.1 c c) ≠ 0 := Finset.prod_ne_zero_iff.2 fun c _ => hbd p.1 c
-      have rel : ∀ m, am (detFac j p.2 (F.T p.1)) * (∏ c ∈ stepCols N j p.2, b p.1 c c) * y ⟨κ k₁, m⟩ =
-          am (∏ k', M.x ⟨k', F.c k'⟩ ^ M.b p k') * wf p (κ k₁) m := fun m =>
-        frame_gen M hF (RingHom.id Φ) hp m (hHB p.1) (hbB p.1) (hbT p.1) (by
-          show (F.T p.1).map am * ((F.T p.1)⁻¹.map am * M.g p.1 * b p.1) = (M.g p.1).map (RingHom.id Φ) * b p.1
-          rw [Matrix.mul_assoc ((F.T p.1)⁻¹.map am), map_mul_inv_map am (hF.1 p.1).2]
-          rfl)
-      obtain ⟨e, he, hw⟩ : ∃ e : Φ, e ≠ 0 ∧ ∀ m, wf p (κ k₁) m = e * y ⟨κ k₁, m⟩ :=
-        ⟨am (detFac j p.2 (F.T p.1)) * (∏ c ∈ stepCols N j p.2, b p.1 c c) / am (∏ k', M.x ⟨k', F.c k'⟩ ^ M.b p k'),
-          div_ne_zero (mul_ne_zero hdet hB) hE, fun m => by
-            rw [div_mul_eq_mul_div, rel m, mul_div_cancel_left₀ _ hE]⟩
-      obtain ⟨m₀, hm₀, hm₀i⟩ := _root_.GlobalTheory.CompanionTheory.Ar.PB.UnitComb.unit_comb Φ V N j p.2 (H p.1) (ι (κ k₁)) (fun m I => am (F.u ⟨κ k₁, m⟩ I))
-        (fun I m => am (F.u' I ⟨κ k₁, m⟩)) M.j_le (hHB p.1) (hbV p.1) (hbdet p.1) (hbinv p.1)
-        (fun I m => hOV _ (hO (hG.2.1 _ I).2)) (fun m I => hOV _ (hO (hG.2.1 _ I).1)) (fun I I' hI hI' => by
-          have := congrArg am (hF.2.2.1 p (κ k₁) hp I I' hI hI')
-
-          rw [map_sum] at this
-          simp only [map_mul] at this
-          rw [this]
-          split_ifs <;> simp)
-      have hwc : wf p (κ k₁) c ≠ 0 := by rw [hw]; exact mul_ne_zero he hyc
-      have hr : ∀ m, wf p (κ k₁) m = y ⟨κ k₁, m⟩ / y ⟨κ k₁, c⟩ * wf p (κ k₁) c := fun m => by
-        rw [hw, hw]
-        field_simp
-      refine ⟨wf p (κ k₁) c, ?_, hwc, ?_, fun k' _ hk' => ?_⟩
-      · exact sum_mem fun I _ => V.mul_mem _ _ (hOV _ (hO (hG.2.1 _ I).1)) (minorIJ_mem V.toSubring (hbV p.1) I _)
-      · have h1 : y ⟨κ k₁, m₀⟩ / y ⟨κ k₁, c⟩ ∈ O := ⟨_, ratio_up hb hyc hzc⟩
-        have h2 : (wf p (κ k₁) c)⁻¹ = y ⟨κ k₁, m₀⟩ / y ⟨κ k₁, c⟩ * (wf p (κ k₁) m₀)⁻¹ := by
-          have hm₀' : wf p (κ k₁) m₀ ≠ 0 := hm₀
-          rw [hr m₀] at hm₀' ⊢
-          have h3 := left_ne_zero_of_mul hm₀'
-          rw [mul_inv, ← mul_assoc, mul_inv_cancel₀ h3, one_mul]
-        rw [h2]
-        exact V.mul_mem _ _ (hOV _ h1) hm₀i
-      · obtain rfl := Option.some.inj hk'
-        exact ⟨c, hzc, fun m => ⟨_, ratio_up hb hyc hzc, hr m⟩⟩
-  choose wc hwV hw0 hwinv hdat using data
-  let T : Finset Φ := (Finset.univ.image fun t : Ψ × Fin N × Fin N => H t.1 t.2.1 t.2.2) ∪
-    (Finset.univ.image fun τ => (H τ).det) ∪ (Finset.univ.image wc)
-  have hT1 : ∀ τ a c, H τ a c ∈ T := fun τ a c => Finset.mem_union_left _ (Finset.mem_union_left _
-    (Finset.mem_image.2 ⟨(τ, a, c), Finset.mem_univ _, rfl⟩))
-  have hT2 : ∀ τ, (H τ).det ∈ T := fun τ => Finset.mem_union_left _ (Finset.mem_union_right _
-    (Finset.mem_image.2 ⟨τ, Finset.mem_univ _, rfl⟩))
-  have hT3 : ∀ p, wc p ∈ T := fun p => Finset.mem_union_right _ (Finset.mem_image.2 ⟨p, Finset.mem_univ _, rfl⟩)
-  have hTV : ∀ t ∈ T, t ∈ V := fun t ht => by
-    rcases Finset.mem_union.1 ht with ht | ht
-    · rcases Finset.mem_union.1 ht with ht | ht
-      · obtain ⟨q, -, rfl⟩ := Finset.mem_image.1 ht
-        exact hbV _ _ _
-      · obtain ⟨τ, -, rfl⟩ := Finset.mem_image.1 ht
-        exact det_mem V.toSubring (hbV τ)
-    · obtain ⟨p, -, rfl⟩ := Finset.mem_image.1 ht
-      exact hwV p
-  obtain ⟨R, hOR, ψ, hTR, hψ, hinv⟩ := hpl T hTV
-  let HR : Ψ → Matrix (Fin N) (Fin N) R := fun τ => Matrix.of fun a c => ⟨H τ a c, hTR _ (hT1 τ a c)⟩
-  have hHR : ∀ τ, (HR τ).map R.subtype = H τ := fun τ => by ext a c; rfl
-  refine ⟨fun τ => (HR τ).map ψ, fun τ => ⟨?_, ?_⟩, fun p k hkp hp => ?_⟩
-  · intro a c hac
-    have h0 : HR τ a c = 0 := Subtype.ext (hHB τ a c hac)
-    show ψ (HR τ a c) = 0
-    rw [h0, map_zero]
-  · have e1 : R.subtype (HR τ).det = (H τ).det := by rw [RingHom.map_det]; exact congrArg _ (hHR τ)
-    have e2 : (HR τ).det * ⟨(H τ).det⁻¹, hinv _ (hT2 τ) (hbdet τ) (hbinv τ)⟩ = 1 := Subtype.ext (by
-      show R.subtype (HR τ).det * (H τ).det⁻¹ = 1
-      rw [e1, mul_inv_cancel₀ (hbdet τ)])
-    have e3 := congrArg ψ e2
-    rw [map_mul, map_one, RingHom.map_det] at e3
-    exact left_ne_zero_of_mul_eq_one e3
-  · obtain ⟨c, hzc, hm⟩ := hdat p k hkp hp
-    let wR : R := ⟨wc p, hTR _ (hT3 p)⟩
-    have hβ : ψ wR ≠ 0 := by
-      have e2 : wR * ⟨(wc p)⁻¹, hinv _ (hT3 p) (hw0 p) (hwinv p)⟩ = 1 := Subtype.ext (mul_inv_cancel₀ (hw0 p))
-      have e3 := congrArg ψ e2
-      rw [map_mul, map_one] at e3
-      exact left_ne_zero_of_mul_eq_one e3
-    refine ⟨upV v z ⟨k, c⟩ / ψ wR, div_ne_zero hzc hβ, fun m => ?_⟩
-    obtain ⟨r, hr, hw⟩ := hm m
-    let uR : Finset (Fin N) → R := fun I => Subring.inclusion hOR ⟨am (F.u ⟨k, m⟩ I), hO (hG.2.1 _ I).1⟩
-    let rR : R := Subring.inclusion hOR ⟨r, _, hr⟩
-    have e1 : ∑ I, uR I * minorIJ (HR p.1) I (stepCols N j p.2) = rR * wR := Subtype.ext (by
-      show R.subtype _ = r * wc p
-
-      rw [map_sum]
-      simp only [map_mul, ← minorIJ_map, hHR]
-      exact hw)
-    have e2 := congrArg ψ e1
-
-    rw [map_sum] at e2
-    simp only [map_mul, ← minorIJ_map] at e2
-    have e3 : ∀ I, ψ (uR I) = valAt M.x (F.u ⟨k, m⟩ I) (z ∘ v') := fun I =>
-      (hψ _).trans (regVal_eq hz _ (val_lift_of am hb' hx hz (hG.2.1 _ I).1))
-    have e4 : ψ rR = upV v z ⟨k, m⟩ / upV v z ⟨k, c⟩ := (hψ _).trans (regVal_eq hz _ hr)
-    simp only [e3] at e2
-    rw [e4] at e2
-    show upV v z ⟨k, m⟩ = _ * ∑ I, valAt M.x (F.u ⟨k, m⟩ I) (z ∘ v') * minorIJ ((HR p.1).map ψ) I (stepCols N j p.2)
-    rw [e2]
-    field_simp
+      exact ⟨c, hzc, hyc, fun m => ⟨⟨_, ratio_up hb hyc hzc⟩, regVal_eq hz _ (ratio_up hb hyc hzc)⟩⟩)
 
 end Flag
 

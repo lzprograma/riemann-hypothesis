@@ -18,8 +18,6 @@ open IsDedekindDomain NumberField CategoryTheory MonoidalCategory GroundTheory.G
 
 noncomputable section
 
-attribute [local instance 2000] Rep.hV2
-
 universe u
 
 section RootsMap

@@ -3,48 +3,9 @@ module
 public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TestFacts
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.FiltrationSpanDividedPowers
 public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ValuationSquareOfValuationMod
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
-
-set_option backward.isDefEq.respectTransparency false
 
 open CategoryTheory AlgebraicGeometry CrystallineSemistableComparison CrystallineSemistableComparison.R
 
@@ -62,9 +23,9 @@ private theorem val_aic {S : Type} [CommRing S] (ϖ : S) [IsAdicComplete (Ideal.
   have hd : ∀ P : Ideal S, P.IsPrime → Dich (Ideal.Quotient.mk (compI P) ϖ) := fun P hP =>
     RL.dich_of_mod _ (hjb _) (RL.valuation_square_of_valuation_mod ϖ h0 P hP)
   have hv : Val ϖ := RL.val_of_dich ϖ fun m hm => hd m hm.isPrime
-  refine ⟨hv, RL.aic_limit ϖ (RL.step_glob ϖ fun m hm => ?_) (RL.pow_dvd ϖ hnz hv)⟩
-  refine RL.step_comp _ (hjb _) ((RL.dich_comp ϖ m hm.isPrime).2 hnz) (hd m hm.isPrime) ?_
-  refine (RL.surj_pass (Ideal.Quotient.lift (Ideal.span {ϖ ^ 2})
+  refine ⟨hv, _root_.GlobalTheory.CompanionTheory.AicLimit.aic_of_step ϖ (RL.step_glob ϖ fun m hm => ?_) (_root_.GlobalTheory.CompanionTheory.ValPowDvd.dvd_of_pow_mul_dvd_pow ϖ hnz hv)⟩
+  refine GlobalTheory.CompanionTheory.NewtonStep.step_comp _ (hjb _) ((RL.dich_comp ϖ m hm.isPrime).2 hnz) (hd m hm.isPrime) ?_
+  refine (_root_.GlobalTheory.CompanionTheory.SurjPass.absolutely_closed_comparable_surjective (Ideal.Quotient.lift (Ideal.span {ϖ ^ 2})
     ((Ideal.Quotient.mk (Ideal.span {Ideal.Quotient.mk (compI m) ϖ ^ 2})).comp (Ideal.Quotient.mk (compI m))) ?_)
     (Ideal.Quotient.lift_surjective_of_surjective _ _
       (Ideal.Quotient.mk_surjective.comp Ideal.Quotient.mk_surjective))).1 ha
@@ -75,18 +36,18 @@ private theorem val_aic {S : Type} [CommRing S] (ϖ : S) [IsAdicComplete (Ideal.
 
 private theorem splits {T : Type} [CommRing T] (ha : Aic T) (hl : Loc T) (Y : Scheme.{0})
     (f : Y ⟶ Spec (CommRingCat.of T)) (he : Etale f) (hs : Surjective f) : ∃ s, s ≫ f = 𝟙 _ := by
-  obtain ⟨h0, hm, h1⟩ := RL.sec_rules Y f
+  obtain ⟨h0, hm, h1⟩ := _root_.GlobalTheory.CompanionTheory.SecRules.main Y f
   exact h1 (RL.glue (SecOn f) h0 (fun e e' _ _ h => hm e e' h)
     (fun e e' h₁ h₂ h₃ => RL.sec_add Y f e e' h₁ h₂ h₃) fun m hm' => RL.split_pt ha hl Y f he hs m hm')
 
 theorem UpperTheory.Ru.crystallineComparison.testFacts :
     UpperTheory.Ru.crystallineComparison.TestFacts := by
   intro l _ A hA
-  obtain ⟨ϖ, hϖ, h0, ha⟩ := RL.untilt_valuation_mod_square A hA
+  obtain ⟨ϖ, hϖ, h0, ha⟩ := _root_.GlobalTheory.CompanionTheory.Untilt.untilt_mod_varpi_sq A hA
   have hl : (l : A.U) ∈ nonZeroDivisors A.U := (RL.u_tf A).1
   have hl0 : l ≠ 0 := (Fact.out : l.Prime).ne_zero
   haveI : IsAdicComplete (Ideal.span {ϖ}) A.U :=
-    (RL.val_pow ϖ l hl0).2 (by rw [hϖ]; exact RL.u_complete A)
+    (RL.val_pow ϖ l hl0).2 (by rw [hϖ]; exact _root_.GlobalTheory.CompanionTheory.Untilt.isAdicComplete_U A)
   have hnz : ϖ ∈ nonZeroDivisors A.U := by
     have h : ϖ ^ (l - 1) * ϖ ∈ nonZeroDivisors A.U := by
       rw [← pow_succ, Nat.sub_add_cancel (Nat.pos_of_ne_zero hl0), hϖ]
@@ -97,5 +58,5 @@ theorem UpperTheory.Ru.crystallineComparison.testFacts :
     rw [← hϖ]
     exact (RL.val_pow ϖ l hl0).1.2 hv
   obtain ⟨hL, hLg⟩ := (RL.loc_aic (l : A.U)).1 hvl
-  exact ⟨hl, RL.int_closed _ hl hvl, fun Y f he hs => splits ((RL.loc_aic (l : A.U)).2 hU) hLg Y f he hs,
-    fun Y f he hs => splits hU hL Y f he hs, RL.idem_au A⟩
+  exact ⟨hl, _root_.GlobalTheory.CompanionTheory.ValIntClosed.exists_eq_of_isIntegral _ hl hvl, fun Y f he hs => splits ((RL.loc_aic (l : A.U)).2 hU) hLg Y f he hs,
+    fun Y f he hs => splits hU hL Y f he hs, _root_.GlobalTheory.CompanionTheory.Untilt.existsUnique_idempotent_sharp A⟩

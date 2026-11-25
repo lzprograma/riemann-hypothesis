@@ -2,50 +2,6 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
 public import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.PlaneGen
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
 
 @[expose] public section
@@ -150,52 +106,6 @@ theorem planeOK {B : Base F E} (hB : B.IsGood σ) {Y : Spc F E n} {Y₁ : Spc F 
       simpa using this
     have := congrArg (· ᵥ* (incM F Y.J)⁻¹) h0
     simpa [Matrix.vecMul_vecMul, Matrix.mul_nonsing_inv _ hu] using this
-
-theorem full_of_dual_zero {B : Base F E} (hB : B.IsGood σ) {Y : Spc F E n}
-    (ε : ℤˣ) (hJ : ∀ i j, σ (Y.J j i) = ((ε : ℤ) : E) * Y.J i j)
-    (hL : Y.L.IsLattice E)
-    (hdual : ∀ y, (∀ x ∈ Y.L, form σ Y.J y x = 0) → y ∈ Y.L) :
-    Y.L.IsFullLattice E := by
-  let := hL
-  refine { span_eq_top := ?_ }
-  let W := Submodule.span E (Y.L : Set (Fin n → E))
-  change W = ⊤
-  by_contra hW
-  let g : (Fin n → E) →ₗ[E] Module.Dual E W :=
-    ((dotProductBilin E E).compl₂ (Matrix.mulVecLin Y.Jᵀ)).domRestrict₂ W
-  have hdim : Module.finrank E (Module.Dual E W) < Module.finrank E (Fin n → E) := by
-    rw [Subspace.dual_finrank_eq]
-    exact Submodule.finrank_lt hW
-  obtain ⟨z, hz, hz₀⟩ :=
-    Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
-  let y : Fin n → E := fun i => σ (z i)
-  have hy₀ : y ≠ 0 := by
-    intro hy
-    apply hz₀
-    exact funext fun i => σ.injective ((congrFun hy i).trans (map_zero σ).symm)
-  have horth (x : Fin n → E) (hx : x ∈ Y.L) : form σ Y.J y x = 0 := by
-    have hz' : z ⬝ᵥ Y.Jᵀ *ᵥ x = 0 :=
-      congrArg (fun f : Module.Dual E W => f ⟨x, Submodule.subset_span hx⟩)
-        (LinearMap.mem_ker.mp hz)
-    have hzero : form σ Y.J x y = 0 := by
-      rw [Matrix.dotProduct_transpose_mulVec] at hz'
-      simpa only [form, y, conj_conj hB] using hz'
-    have hs : σ (form σ Y.J y x) = ((ε : ℤ) : E) * form σ Y.J x y := by
-      simp only [form, dotProduct, Matrix.mulVec, map_sum, map_mul, conj_conj hB, hJ, Finset.mul_sum]
-      rw [Finset.sum_comm]
-      exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-    rw [hzero, mul_zero] at hs
-    exact (map_eq_zero σ).1 hs
-  have hline (a : E) : a • y ∈ Y.L := hdual _ fun x hx => by
-    simpa only [form, smul_dotProduct, smul_eq_mul] using
-      (show a * form σ Y.J y x = 0 by rw [horth x hx, mul_zero])
-  let i : E →ₗ[𝓞 E] Y.L :=
-    ((LinearMap.toSpanSingleton E _ y).restrictScalars (𝓞 E)).codRestrict Y.L hline
-  let : Module.Finite (𝓞 E) Y.L := Module.Finite.iff_fg.mpr hL.fg
-  let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
-    smul_left_injective E hy₀ (congrArg Subtype.val hab)
-  exact RingOfIntegers.not_isField E
-    (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
 
 theorem planeOK_herm {B : Base F E} (hB : B.IsGood σ) {Y : Spc F E n} {Y₁ : Spc F E k} {H : Plane E n k} {i₀ i₁ r s : ℕ}
     (hH : H.IsAdapted σ B Y Y₁ i₀ i₁) (hY : Y.IsHerm σ B r s) :

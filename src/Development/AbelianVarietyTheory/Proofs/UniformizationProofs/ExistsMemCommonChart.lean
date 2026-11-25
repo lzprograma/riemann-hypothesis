@@ -64,7 +64,7 @@ theorem isWt_of_gm {G : Over S} [GrpObj G] {X : Type} [AddCommGroup X] {i : spli
   have hf : ((t ≫ i) * g).left z ∈ V := h₁ trivial
   have ht : t.left z ∈ (⊤ : (splitTorus S X).left.Opens) := trivial
   have key := congrArg Units.val (h Z t g z hg)
-  simp only [gm, dif_pos hg, dif_pos hf, dif_pos ht, pullU, MonoidHom.comp_apply, Units.coe_map,
+  simp only [gm, dite_eq_left hg, dite_eq_left hf, dite_eq_left ht, pullU, MonoidHom.comp_apply, Units.coe_map,
     Units.val_mul] at key
   change Z.left.presheaf.germ ⊤ z hz _ = Z.left.presheaf.germ ⊤ z hz _
   simp only [Scheme.Hom.appLE, CommRingCat.comp_apply, map_mul, TopCat.Presheaf.germ_res_apply]
@@ -91,7 +91,7 @@ private theorem gm_res_pullU_eq_gm_comp {Z P Y : Scheme.{0}} (p : Z ⟶ P) (a : 
     gm p z W (res h (pullU a U w)) = gm (p ≫ a) z U w := by
   have hz' : (p ≫ a) z ∈ U := h hz
   ext
-  simp only [gm, dif_pos hz, dif_pos hz', pullU, res, MonoidHom.comp_apply, Units.coe_map]
+  simp only [gm, dite_eq_left hz, dite_eq_left hz', pullU, res, MonoidHom.comp_apply, Units.coe_map]
   erw [← Scheme.Hom.germ_stalkMap_apply p W z hz, TopCat.Presheaf.germ_res_apply,
     Scheme.Hom.germ_stalkMap_apply]
   rfl
@@ -101,7 +101,7 @@ private theorem gm_id_pullU_eq_gm {Z P Y : Scheme.{0}} (p : Z ⟶ P) (a : P ⟶ 
     gm p z (a ⁻¹ᵁ U) (pullU a U w) = gm (p ≫ a) z U w := by
   have hz' : (p ≫ a) z ∈ U := hz
   ext
-  simp only [gm, dif_pos hz, dif_pos hz', pullU, MonoidHom.comp_apply, Units.coe_map]
+  simp only [gm, dite_eq_left hz, dite_eq_left hz', pullU, MonoidHom.comp_apply, Units.coe_map]
   rfl
 
 theorem isWt_coordinate (d : E.GtDatum G) (j : E.ChartIdx) (k : Module.Free.ChooseBasisIndex ℤ E.X) :

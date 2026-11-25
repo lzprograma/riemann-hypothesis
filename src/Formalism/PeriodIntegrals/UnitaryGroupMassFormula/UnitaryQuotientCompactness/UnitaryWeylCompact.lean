@@ -3,52 +3,8 @@ module
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.MulVecBvecApply
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.SsetGroup
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.MaximalCompactIsCompact
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -81,22 +37,22 @@ lemma star_dotProduct_Hpk_mulVec_eq_sum_sub (v w : Fin (2 * r + k + 1) → ℂ) 
         have hW' := hW
         unfold inW at hW'
         unfold piI
-        rw [if_pos hW']
+        rw [ite_eq_left hW']
       rw [hp]
       unfold inW at hW
       by_cases hl : i.val = r + k
       · have h1 : lI k r = i := Fin.ext hl.symm
-        rw [if_neg (by omega), if_pos h1, h1]
-        unfold epsI; rw [if_pos hl]; ring
+        rw [ite_eq_right (by omega), ite_eq_left h1, h1]
+        unfold epsI; rw [ite_eq_left hl]; ring
       · have h1 : lI k r ≠ i := fun h => hl (by rw [← h]; rfl)
-        rw [if_pos ⟨hW.1, by omega⟩, if_neg h1]
-        unfold epsI; rw [if_neg hl]; ring
+        rw [ite_eq_left ⟨hW.1, by omega⟩, ite_eq_right h1]
+        unfold epsI; rw [ite_eq_right hl]; ring
     · have h0 : v (piI k r i) = 0 := hv _ (piI_not_inW hW)
       have h1 : lI k r ≠ i := fun h => hW (by rw [← h]; unfold inW lI; simp)
       unfold inW at hW
-      rw [h0, if_neg (by omega), if_neg h1]; ring
+      rw [h0, ite_eq_right (by omega), ite_eq_right h1]; ring
   simp only [dotProduct, Pi.star_apply, hterm, Finset.sum_sub_distrib, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true, Wp, Finset.sum_filter]
+    Finset.mem_univ, ite_true, Wp, Finset.sum_filter]
 
 lemma star_mul_self_eq (x : ℂ) : star x * x = ((‖x‖ ^ 2 : ℝ) : ℂ) := by
   rw [Complex.star_def, Complex.conj_mul']
@@ -172,7 +128,7 @@ lemma uw_entry_bound {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0
     intro x hx
     have hne : x ≠ j := by rintro rfl; exact hx hjW
     have := uw_block hh x j (fun h' => hx h'.1)
-    simp only [hcdef, this, if_neg hne]
+    simp only [hcdef, this, ite_eq_right hne]
   have hEA : star c ⬝ᵥ (Hpk k r *ᵥ c) = star (bvec j) ⬝ᵥ (Hpk k r *ᵥ bvec j) := by
     rw [hc]; exact herm_invariant hh.1 _ _
   have hEK : star z ⬝ᵥ (Hpk k r *ᵥ c) = star z ⬝ᵥ (Hpk k r *ᵥ bvec j) := by

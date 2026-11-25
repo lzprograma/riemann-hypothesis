@@ -1,54 +1,10 @@
 module
 
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.CoreSt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
 import Mathlib.Data.Finsupp.Interval
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -91,7 +47,7 @@ theorem list_single_apply (γ : σ → ℕ) (l : List σ) (k : σ) (hk : k ∉ l
   | cons k' l' ih =>
     rw [List.mem_cons, not_or] at hk
     simp only [List.map_cons, List.sum_cons, Finsupp.coe_add, Pi.add_apply, Finsupp.single_apply,
-      if_neg (Ne.symm hk.1), zero_add]
+      ite_eq_right (Ne.symm hk.1), zero_add]
     exact ih hk.2
 
 theorem list_pderiv (γ : σ → ℕ) (l : List σ) (hl : l.Nodup) (s : σ →₀ ℕ) (a : ℂ) :
@@ -158,7 +114,7 @@ theorem op_sum {ι : Type*} (S : Finset ι) (g : ι → Sym m n) (f : PX m n) :
 
 theorem op_monomial (t : σ ⊕ σ →₀ ℕ) (c : ℂ) (f : PX m n) : op (monomial t c) f = c • opMono t f := by
   classical
-  rw [op_eq_sum (monomial t c) {t} (support_monomial_subset), Finset.sum_singleton, coeff_monomial, if_pos rfl]
+  rw [op_eq_sum (monomial t c) {t} (support_monomial_subset), Finset.sum_singleton, coeff_monomial, ite_eq_left rfl]
 
 theorem op_f_add (s : Sym m n) (f g : PX m n) : op s (f + g) = op s f + op s g := by
   unfold op; rw [← Finset.sum_add_distrib]
@@ -345,21 +301,20 @@ where
         rw [one_smul, smul_monomial, smul_monomial, smul_eq_mul, smul_eq_mul, mul_one]
       rw [hmain]
       by_cases hlt : γ < δ'
-      · rw [if_pos hlt, if_neg (ne_of_gt hlt)]; simp
-      · rw [if_neg hlt]
+      · rw [ite_eq_left hlt, ite_eq_right (ne_of_gt hlt)]; simp
+      · rw [ite_eq_right hlt]
         by_cases he : δ' = γ
         · subst he
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl]
           have hD : D δ' = 1 := by
             simp only [D, g, Nat.descFactorial_self]
             rw [inv_mul_cancel₀]
             exact Finset.prod_ne_zero_iff.mpr fun k _ => by exact_mod_cast Nat.factorial_ne_zero _
           rw [hD, one_smul, tsub_self, ← C_apply, C_1]; simp
-        · rw [if_neg he]
+        · rw [ite_eq_right he]
           have hnle : ¬ γ ≤ δ' := fun hle => hlt (lt_of_le_of_ne hle (Ne.symm he))
           obtain ⟨k, hk⟩ : ∃ k, δ' k < γ k := by
-            by_contra hcon
-            push_neg at hcon
+            by_contra! hcon
             exact hnle (fun k => hcon k)
           have hD : D δ' = 0 := by
             simp only [D]
@@ -411,7 +366,7 @@ theorem dens : Dens := by
     simp only [op_renameL]
     rw [Finset.sum_congr rfl fun γ hγ => by rw [(hP γ hγ).2 δ hδ]]
     simp only [mul_ite, mul_one, mul_zero]
-    rw [Finset.sum_ite_eq, if_pos hδ]
+    rw [Finset.sum_ite_eq, ite_eq_left hδ]
   | zero => rw [op_f_zero, map_zero]
   | add x y _ _ hx hy => rw [op_f_add, map_add (f := _), hx, hy]
   | smul a x _ hx => rw [op_f_smul, map_smul, hx]

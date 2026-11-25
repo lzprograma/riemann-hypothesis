@@ -80,11 +80,11 @@ theorem exists_linearForm_invariant_isotropic_vacuum : ∀ {R X M : Type} [CommR
   have hrep : ∀ q, (Submodule.Quotient.mk (rep q) : X ⧸ Λ) = q := by
     intro q
     by_cases hq : P q
-    · simp only [rep, dif_pos hq]; exact hq.choose_spec.2
-    · simp only [rep, dif_neg hq]; exact Quotient.out_eq q
+    · simp only [rep, dite_eq_left hq]; exact hq.choose_spec.2
+    · simp only [rep, dite_eq_right hq]; exact Quotient.out_eq q
   have hrepA : ∀ q, P q → rep q ∈ A := by
     intro q hq
-    simp only [rep, dif_pos hq]; exact hq.choose_spec.1
+    simp only [rep, dite_eq_left hq]; exact hq.choose_spec.1
   let e : X ⧸ Λ → M := fun q => W (rep q) s
   have he : ∀ z, W z s = γ (w • z) (rep (Submodule.Quotient.mk z) - z) • e (Submodule.Quotient.mk z) := by
     intro z
@@ -124,7 +124,7 @@ theorem exists_linearForm_invariant_isotropic_vacuum : ∀ {R X M : Type} [CommR
   · have h0 : P (Submodule.Quotient.mk 0) := ⟨0, A.zero_mem, rfl⟩
     have h1 := he 0
     rw [h.zero, hwA 0 A.zero_mem _ (A.sub_mem (hrepA _ h0) A.zero_mem), one_smul] at h1
-    rw [h1, hℓ, if_pos h0]
+    rw [h1, hℓ, ite_eq_left h0]
   · intro a ha v
     have hext : ℓ ∘ₗ W a = ℓ := by
       refine b.ext fun q => ?_
@@ -134,14 +134,14 @@ theorem exists_linearForm_invariant_isotropic_vacuum : ∀ {R X M : Type} [CommR
       by_cases hq : P q
       · have hA1 : a + rep q ∈ A := A.add_mem ha (hrepA q hq)
         have hq' : P (Submodule.Quotient.mk (a + rep q)) := ⟨_, hA1, rfl⟩
-        rw [if_pos hq, if_pos hq', hwA a ha _ (hrepA q hq), hwA _ hA1 _ (A.sub_mem (hrepA _ hq') hA1)]
+        rw [ite_eq_left hq, ite_eq_left hq', hwA a ha _ (hrepA q hq), hwA _ hA1 _ (A.sub_mem (hrepA _ hq') hA1)]
         simp
       · have hq' : ¬ P (Submodule.Quotient.mk (a + rep q)) := by
           rintro ⟨c, hc, hce⟩
           apply hq
           refine ⟨c - a, A.sub_mem hc ha, ?_⟩
           rw [Submodule.Quotient.mk_sub, hce, ← Submodule.Quotient.mk_sub, add_sub_cancel_left, hrep]
-        rw [if_neg hq, if_neg hq']
+        rw [ite_eq_right hq, ite_eq_right hq']
         simp
     exact LinearMap.congr_fun hext v
 

@@ -89,12 +89,12 @@ theorem exists_zero_coord {F : Type*} [Field F] (h2 : (2 : F) ≠ 0) {ι : Type*
         simp [hij, hi]
       · by_cases h2 : k = j
         · subst h2
-          simp only [h1, if_false, if_true]
+          simp only [h1, ite_false, ite_true]
           ring
-        · simp only [h1, h2, if_false]
+        · simp only [h1, h2, ite_false]
           ring
     simp only [this, Finset.sum_add_distrib, ← Finset.mul_sum, h, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
     rw [ht]
     field_simp
     ring
@@ -388,45 +388,10 @@ theorem congr_of_local (hG : ∀ a b, cc (G a b) = G b a) (hG' : ∀ a b, cc (G'
       CongrOver (v.adicCompletion (maximalRealSubfield E)) G G')
     (hs : ∀ τ : E →+* ℂ, ∃ Q : Matrix (Fin r) (Fin r) ℂ, Q.det ≠ 0 ∧
       G'.map τ = Qᵀ * G.map τ * Q.map conj) :
-    ∃ P : Matrix (Fin r) (Fin r) E, P.det ≠ 0 ∧ G' = Pᵀ * G * P.map cc := by
-  refine landherr_of_hasseNormSt GlobalTheory.QNorm.hasseNormSt E r G G' hG hG' hd hd' hs ?_
-  have hm : G.det / G'.det ∈ maximalRealSubfield E := by
-    rw [← IsCMField.complexConj_eq_self_iff, map_div₀]
-    exact congrArg₂ (· / ·) (GlobalTheory.Published.cc_det_of_herm hG) (GlobalTheory.Published.cc_det_of_herm hG')
-  let a : maximalRealSubfield E := ⟨_, hm⟩
-  obtain ⟨θ, h0, hθ⟩ := GlobalTheory.Published.exists_cc_eq_neg E
-  obtain ⟨b, hb0, hb1⟩ := GlobalTheory.Published.exists_basis_one_imaginary h0 hθ
-  obtain ⟨d, hdθ⟩ := GlobalTheory.Published.exists_sq_real hθ
-  have hd0 : d ≠ 0 := fun h => mul_ne_zero h0 h0 (hdθ.symm.trans (congrArg Subtype.val h))
-  have ha0 : a ≠ 0 := fun h => div_ne_zero hd hd' (congrArg Subtype.val h)
-  obtain ⟨x, y, hxy⟩ := GlobalTheory.QNorm.hasseNormSt (maximalRealSubfield E) d a hd0 ha0
-    (fun ρ => by
-      let τ := ComplexEmbedding.lift E (Complex.ofRealHom.comp ρ)
-      have h1 : τ (a : E) = (Complex.ofRealHom.comp ρ) a :=
-        ComplexEmbedding.lift_algebraMap_apply E _ a
-      have h2 : 0 < (τ (a : E)).re := GlobalTheory.Published.Landherr.re_det_div_pos hd τ (hs τ)
-      rw [h1] at h2
-      exact ⟨√(ρ a), 0, by rw [Real.sq_sqrt (le_of_lt (by simpa using h2))]; ring⟩)
-    (fun v => by
-      obtain ⟨z, hz⟩ := (hf v).det_norm hd'
-      let B := Algebra.TensorProduct.basis (v.adicCompletion (maximalRealSubfield E)) b
-      have hzB : z = B.repr z 0 ⊗ₜ[maximalRealSubfield E] (1 : E) +
-          B.repr z 1 ⊗ₜ[maximalRealSubfield E] θ := by
-        conv_lhs => rw [← B.sum_repr z, Fin.sum_univ_two]
-        simp only [B, Algebra.TensorProduct.basis_apply, hb0, hb1, TensorProduct.smul_tmul',
-          smul_eq_mul, mul_one]
-      refine ⟨B.repr z 0, B.repr z 1, ?_⟩
-      rw [← GlobalTheory.Published.norm_tmul_add_tmul _ h0 hθ hdθ, ← hzB]
-      refine (algebraMap _
-        (v.adicCompletion (maximalRealSubfield E) ⊗[maximalRealSubfield E] E)).injective ?_
-      rw [GlobalTheory.Published.algebraMap_norm_tensor, ← hz, ← IsScalarTower.algebraMap_apply]
-      exact Algebra.TensorProduct.algebraMap_apply' a)
-  refine ⟨x + y * θ, ?_⟩
-  have h1 := congrArg (Subtype.val : maximalRealSubfield E → E) hxy
-  have h2 : IsCMField.complexConj E θ = -θ := hθ
-  simp [a, hdθ] at h1
-  simp only [cc, map_add (f := _), map_mul, IsCMField.complexConj_apply_eq_self, h2, h1]
-  ring
+    ∃ P : Matrix (Fin r) (Fin r) E, P.det ≠ 0 ∧ G' = Pᵀ * G * P.map cc :=
+  GlobalTheory.SelfDualGenus.congr_of_local_norm
+    (landherr_of_hasseNormSt GlobalTheory.QNorm.hasseNormSt) GlobalTheory.QNorm.hasseNormSt
+    hG hG' hd hd' hs fun v => (hf v).det_norm hd'
 
 end Global
 

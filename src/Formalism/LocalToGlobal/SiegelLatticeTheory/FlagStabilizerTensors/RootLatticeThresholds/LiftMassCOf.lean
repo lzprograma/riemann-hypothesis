@@ -68,18 +68,18 @@ theorem chain_step (hn : n ∈ NLam Λ F) (i : ℕ) : ∀ x ∈ chainC F (i + 1)
   intro x hx
   unfold chainC at hx ⊢
   by_cases h1 : i + 1 ≤ r
-  · rw [if_pos h1] at hx
-    rw [if_pos (by omega)]
+  · rw [ite_eq_left h1] at hx
+    rw [ite_eq_left (by omega)]
     exact hn.2.1 i x hx
-  · rw [if_neg h1] at hx
+  · rw [ite_eq_right h1] at hx
     by_cases h2 : i = r
     · subst h2
-      rw [if_pos le_rfl]
+      rw [ite_eq_left le_rfl]
       have e : 2 * i + 1 - (i + 1) = i := by omega
       rw [e, Formalism.L2.SG.Pf.xflag_r] at hx
       rw [Formalism.L2.SG.Pf.xflag_r]
       exact hn.2.2 x hx
-    · rw [if_neg (by omega)]
+    · rw [ite_eq_right (by omega)]
       by_cases h3 : i ≤ 2 * r
       · have e1 : 2 * r + 1 - (i + 1) = 2 * r - i := by omega
         have e2 : 2 * r + 1 - i = (2 * r - i) + 1 := by omega
@@ -108,14 +108,14 @@ theorem nlam_nilp (hn : n ∈ NLam Λ F) : ((n : S.V →ₗ[E] S.V) - 1) ^ (2 * 
   ext x
   have hx : x ∈ chainC F (0 + (2 * r + 1)) := by
     unfold chainC
-    rw [if_neg (by omega), Formalism.L2.SG.Pf.mem_orth_iff_td]
+    rw [ite_eq_right (by omega), Formalism.L2.SG.Pf.mem_orth_iff_td]
     intro y hy
     have e : 2 * r + 1 - (0 + (2 * r + 1)) = 0 := by omega
     rw [e, Formalism.L2.SG.Pf.xflag_zero_td, Submodule.mem_bot] at hy
     rw [hy, map_zero, LinearMap.zero_apply]
   have h := chain_pow hn (2 * r + 1) 0 x hx
   unfold chainC at h
-  rw [if_pos (Nat.zero_le _), Formalism.L2.SG.Pf.xflag_zero_td, Submodule.mem_bot] at h
+  rw [ite_eq_left (Nat.zero_le _), Formalism.L2.SG.Pf.xflag_zero_td, Submodule.mem_bot] at h
   rw [h, LinearMap.zero_apply]
 
 theorem conj_nilp (hn : n ∈ NLam Λ F) (γ : S.V ≃ₗ[E] S.V) :
@@ -146,7 +146,7 @@ theorem unip_fin (A : Module.End K M) {k N : ℕ} (hk : 0 < k) (h1 : A ^ k = 1) 
   have hA : A = B + 1 := by rw [hB]; abel
 
   have hd : X ∣ ((X + 1 : K[X]) ^ k - 1) := by
-    rw [X_dvd_iff, coeff_sub, coeff_X_add_one_pow, coeff_one, if_pos rfl, Nat.choose_zero_right, Nat.cast_one, sub_self]
+    rw [X_dvd_iff, coeff_sub, coeff_X_add_one_pow, coeff_one, ite_eq_left rfl, Nat.choose_zero_right, Nat.cast_one, sub_self]
   obtain ⟨q, hq⟩ := hd
   have hq0 : q.coeff 0 = (k : K) := by
     have := congrArg (fun p : K[X] => p.coeff 1) hq
@@ -247,8 +247,6 @@ open scoped Classical
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp
 
 namespace Formalism.L2.SG.Pf.FibreCounting
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Rel
 
@@ -447,8 +445,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.MainNoti
   Formalism.L2.SG.Full
 
 namespace Formalism.L2.SG.Pf.FibreCounting
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Count
 

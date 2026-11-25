@@ -59,8 +59,6 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.Automorphic
 
 @[expose] public section
 
-set_option synthInstance.maxHeartbeats 400000
-
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.C UpperTheory.ConvolutionTheory.Ci PositivityTheory.Rg.Fx
@@ -342,8 +340,7 @@ private theorem core [_root_.NumberField.IsTotallyComplex E] {S : Set (Pl E)} {�
         ∂quotientMeasure (Gam E 2) (BW.mu1 E 2) ∂quotientMeasure (Gam E 2) (BW.mu1 E 2) = 0) :
     ∀ x y, F x y = 0 := by
   classical
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   obtain ⟨x₀, y₀, hne⟩ := hcon
   haveI : FiniteDimensional ℂ (GS S Ea) := Submodule.finiteDimensional_of_le (fun φ (h : φ ∈ GS S Ea) => h.1)
   haveI : FiniteDimensional ℂ (GS S Eb) := Submodule.finiteDimensional_of_le (fun φ (h : φ ∈ GS S Eb) => h.1)

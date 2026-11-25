@@ -104,8 +104,6 @@ end SpecOver
 
 namespace WeierstrassCurve
 
-attribute [local instance] MvPolynomial.gradedAlgebra
-
 variable {R : Type u} [CommRing R] (W : WeierstrassCurve R)
 
 theorem specOverMap_ptOver {A B : Type u} [CommRing A] [CommRing B] [Algebra R A] [Algebra R B]
@@ -825,16 +823,6 @@ variable [_root_.IsReduced R]
 end ReducedBase
 
 section Examples
-
-private def sampleCurve : WeierstrassCurve ℚ := ⟨0, 0, 1, -1, 0⟩
-
-private theorem sample_sol {a b : ℚ} (h : b ^ 2 + b = a ^ 3 - a) :
-    IsUnimodularSol (sampleCurve.baseChange ℚ) ![a, b, 1] :=
-  isUnimodularSol_some (by
-    rw [WeierstrassCurve.Affine.equation_iff]
-    simp only [sampleCurve, WeierstrassCurve.baseChange, WeierstrassCurve.map, map_zero, map_one,
-      map_neg]
-    linear_combination h)
 
 end Examples
 

@@ -1,50 +1,7 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.RestPair
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -61,39 +18,6 @@ theorem cn_notMem {l1 l2 : List α} (h : (l1 ++ l2).Nodup) {x : α} (hx : x ∈ 
   first
   | exact List.disjoint_of_nodup_append h hx1 hx
 
-private theorem idxOf_cons_self_eq_zero (a : α) (l : List α) : (a :: l).idxOf a = 0 := by
-  first
-  | simp
-
-private theorem idxOf_cons_of_ne (a u : α) (h : a ≠ u) (l : List α) : (a :: l).idxOf u = l.idxOf u + 1 := by
-  first
-  | simp [h]
-
-private theorem idxOf_append_of_not_mem_left (l1 : List α) (u : α) (hu : u ∉ l1) (l : List α) :
-    (l1 ++ l).idxOf u = l1.length + l.idxOf u := by
-  induction l1 with
-  | nil => simp
-  | cons a t ih =>
-    have hau : a ≠ u := by
-      rintro rfl
-      simp at hu
-    have ht : u ∉ t := fun h' => hu (List.mem_cons_of_mem _ h')
-    rw [List.cons_append, idxOf_cons_of_ne a u hau, ih ht, List.length_cons]
-    omega
-
-private theorem idxOf_append_of_mem_left_and_lt_length (l1 : List α) (u : α) (hu : u ∈ l1) (l : List α) :
-    (l1 ++ l).idxOf u = l1.idxOf u ∧ l1.idxOf u < l1.length := by
-  induction l1 with
-  | nil => simp at hu
-  | cons a t ih =>
-    by_cases hau : a = u
-    · rw [hau, List.cons_append, idxOf_cons_self_eq_zero, idxOf_cons_self_eq_zero]
-      simp
-    · have ht : u ∈ t := by simpa [Ne.symm hau] using hu
-      obtain ⟨h1, h2⟩ := ih ht
-      rw [List.cons_append, idxOf_cons_of_ne a u hau, idxOf_cons_of_ne a u hau, h1, List.length_cons]
-      exact ⟨rfl, by omega⟩
-
 theorem cn_pos_swap (l1 l2 : List α) (x y : α) (hxy : x ≠ y) (hx : x ∉ l1) (hy : y ∉ l1) (u : α) :
     (u = x ∧ (l1 ++ x :: y :: l2).idxOf u = l1.length ∧ (l1 ++ y :: x :: l2).idxOf u = l1.length + 1) ∨
     (u = y ∧ (l1 ++ x :: y :: l2).idxOf u = l1.length + 1 ∧ (l1 ++ y :: x :: l2).idxOf u = l1.length) ∨
@@ -101,17 +25,18 @@ theorem cn_pos_swap (l1 l2 : List α) (x y : α) (hxy : x ≠ y) (hx : x ∉ l1)
       ((l1 ++ x :: y :: l2).idxOf u < l1.length ∨ l1.length + 2 ≤ (l1 ++ x :: y :: l2).idxOf u)) := by
   by_cases hux : u = x
   · refine Or.inl ⟨hux, ?_, ?_⟩ <;> rw [hux] <;>
-      simp only [idxOf_append_of_not_mem_left l1 x hx, idxOf_cons_self_eq_zero, idxOf_cons_of_ne y x (Ne.symm hxy)] <;> omega
+      simp only [List.idxOf_append, hx, ↓reduceIte, List.idxOf_cons,
+        beq_iff_eq, hxy.symm] <;> omega
   · by_cases huy : u = y
     · refine Or.inr (Or.inl ⟨huy, ?_, ?_⟩) <;> rw [huy] <;>
-        simp only [idxOf_append_of_not_mem_left l1 y hy, idxOf_cons_self_eq_zero, idxOf_cons_of_ne x y hxy] <;> omega
+        simp only [List.idxOf_append, hy, ↓reduceIte, List.idxOf_cons,
+          beq_iff_eq, hxy] <;> omega
     · refine Or.inr (Or.inr ⟨hux, huy, ?_⟩)
       by_cases hu1 : u ∈ l1
-      · obtain ⟨e1, e2⟩ := idxOf_append_of_mem_left_and_lt_length l1 u hu1 (x :: y :: l2)
-        obtain ⟨e3, _⟩ := idxOf_append_of_mem_left_and_lt_length l1 u hu1 (y :: x :: l2)
-        exact ⟨by rw [e1, e3], Or.inl (by rw [e1]; exact e2)⟩
+      · exact ⟨by simp [List.idxOf_append, hu1], Or.inl (by simp [List.idxOf_append, hu1, List.idxOf_lt_length_of_mem hu1])⟩
       · refine ⟨?_, Or.inr ?_⟩ <;>
-          simp only [idxOf_append_of_not_mem_left l1 u hu1, idxOf_cons_of_ne x u (Ne.symm hux), idxOf_cons_of_ne y u (Ne.symm huy)] <;> omega
+          simp only [List.idxOf_append, hu1, ↓reduceIte, List.idxOf_cons, beq_iff_eq,
+            Ne.symm hux, Ne.symm huy] <;> omega
 
 theorem cn_pos_braid (l1 l2 : List α) (x y z : α) (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
     (hx : x ∉ l1) (hy : y ∉ l1) (hz : z ∉ l1) (u : α) :
@@ -123,21 +48,22 @@ theorem cn_pos_braid (l1 l2 : List α) (x y z : α) (hxy : x ≠ y) (hxz : x ≠
       ((l1 ++ x :: y :: z :: l2).idxOf u < l1.length ∨ l1.length + 3 ≤ (l1 ++ x :: y :: z :: l2).idxOf u)) := by
   by_cases hux : u = x
   · refine Or.inl ⟨hux, ?_, ?_⟩ <;> rw [hux] <;>
-      simp only [idxOf_append_of_not_mem_left l1 x hx, idxOf_cons_self_eq_zero, idxOf_cons_of_ne y x (Ne.symm hxy), idxOf_cons_of_ne z x (Ne.symm hxz)] <;> omega
+      simp only [List.idxOf_append, hx, ↓reduceIte, List.idxOf_cons,
+        beq_iff_eq, hxy.symm, hxz.symm] <;> omega
   · by_cases huy : u = y
     · refine Or.inr (Or.inl ⟨huy, ?_, ?_⟩) <;> rw [huy] <;>
-        simp only [idxOf_append_of_not_mem_left l1 y hy, idxOf_cons_self_eq_zero, idxOf_cons_of_ne x y hxy, idxOf_cons_of_ne z y (Ne.symm hyz)]
+        simp only [List.idxOf_append, hy, ↓reduceIte, List.idxOf_cons,
+          beq_iff_eq, hxy, hyz.symm] <;> omega
     · by_cases huz : u = z
       · refine Or.inr (Or.inr (Or.inl ⟨huz, ?_, ?_⟩)) <;> rw [huz] <;>
-          simp only [idxOf_append_of_not_mem_left l1 z hz, idxOf_cons_self_eq_zero, idxOf_cons_of_ne x z hxz, idxOf_cons_of_ne y z hyz] <;> omega
+          simp only [List.idxOf_append, hz, ↓reduceIte, List.idxOf_cons,
+            beq_iff_eq, hxz, hyz] <;> omega
       · refine Or.inr (Or.inr (Or.inr ⟨hux, huy, huz, ?_⟩))
         by_cases hu1 : u ∈ l1
-        · obtain ⟨e1, e2⟩ := idxOf_append_of_mem_left_and_lt_length l1 u hu1 (x :: y :: z :: l2)
-          obtain ⟨e3, _⟩ := idxOf_append_of_mem_left_and_lt_length l1 u hu1 (z :: y :: x :: l2)
-          exact ⟨by rw [e1, e3], Or.inl (by rw [e1]; exact e2)⟩
+        · exact ⟨by simp [List.idxOf_append, hu1], Or.inl (by simp [List.idxOf_append, hu1, List.idxOf_lt_length_of_mem hu1])⟩
         · refine ⟨?_, Or.inr ?_⟩ <;>
-            simp only [idxOf_append_of_not_mem_left l1 u hu1, idxOf_cons_of_ne x u (Ne.symm hux), idxOf_cons_of_ne y u (Ne.symm huy),
-              idxOf_cons_of_ne z u (Ne.symm huz)] <;> omega
+            simp only [List.idxOf_append, hu1, ↓reduceIte, List.idxOf_cons, beq_iff_eq,
+              Ne.symm hux, Ne.symm huy, Ne.symm huz] <;> omega
 
 theorem cn_idx_rev {l : List α} (hnd : l.Nodup) {x : α} (hx : x ∈ l) :
     l.reverse.idxOf x + l.idxOf x + 1 = l.length := by
@@ -151,11 +77,11 @@ theorem cn_idx_rev {l : List α} (hnd : l.Nodup) {x : α} (hx : x ∈ l) :
     · have hat' : x ∉ t := hax ▸ hat
       have hr : x ∉ t.reverse := by simpa using hat'
       rw [hax]
-      simp only [idxOf_append_of_not_mem_left t.reverse x hr, idxOf_cons_self_eq_zero, List.length_reverse]
+      simp only [List.idxOf_append, hr, ↓reduceIte, List.idxOf_cons_self, List.length_reverse]
+      omega
     · have hxt : x ∈ t := by simpa [Ne.symm hax] using hx
       have hxr : x ∈ t.reverse := by simpa using hxt
-      obtain ⟨e1, _⟩ := idxOf_append_of_mem_left_and_lt_length t.reverse x hxr [a]
-      rw [e1, idxOf_cons_of_ne a x hax]
+      simp only [List.idxOf_append, hxr, ↓reduceIte, List.idxOf_cons, beq_iff_eq, hax]
       have := ih hnd' hxt
       omega
 

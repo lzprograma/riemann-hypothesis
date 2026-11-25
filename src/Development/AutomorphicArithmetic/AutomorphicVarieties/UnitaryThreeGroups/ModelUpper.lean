@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.PtShape
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.NormO
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ModelSigns
@@ -193,7 +194,7 @@ private theorem exists_form {O K P : Type} [CommRing O] [Field K] [Algebra O K] 
     (hi : Function.Injective (algebraMap O K)) (T : Submodule O P) (p : P) (hp : ∀ c : O, c ≠ 0 → c • p ∉ T) :
     ∃ lam : P →ₗ[O] K, lam p = 1 ∧ ∀ y ∈ T, lam y = 0 := by
   have hinj : Function.Injective (LinearMap.toSpanSingleton O (P ⧸ T) (T.mkQ p)) := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro c hc
     by_contra h0
     apply hp c h0
@@ -289,21 +290,6 @@ private theorem spans_of_der {O A K ι : Type} [CommRing O] [IsDomain O] [CommRi
   rw [hz, hδ0 f hfx', h1] at this
   exact zero_ne_one this
 
-private theorem norm_lt_one_of_mem {l : ℕ} [Fact l.Prime] (c : Coef l) (a : c.O) (ha : ¬ IsUnit a) :
-    ‖(a : PadicAlgCl l)‖ < 1 := by
-  by_cases h0 : a = 0
-  · subst h0; simp
-  have h := UpperTheory.V.Base.normO l c.O a h0
-  have h1 : IsDiscreteValuationRing.addVal c.O a ≠ 0 := fun h =>
-    ha (IsDiscreteValuationRing.addVal_eq_zero_iff.1 h)
-  have h2 : IsDiscreteValuationRing.addVal c.O a ≠ ⊤ := fun h => h0 (IsDiscreteValuationRing.addVal_eq_top_iff.1 h)
-  have h3 : (IsDiscreteValuationRing.addVal c.O a).toNat ≠ 0 := by
-    rw [Ne, ENat.toNat_eq_zero]; tauto
-  have hl : (1 : ℝ) < l := by exact_mod_cast (Fact.out : l.Prime).one_lt
-  have h4 := pow_lt_one₀ (a := (l : ℝ)⁻¹) (by positivity) (inv_lt_one_of_one_lt₀ hl) h3
-  by_contra hn
-  exact absurd (h ▸ h4) (not_lt.2 (one_le_pow₀ (not_lt.1 hn)))
-
 private theorem local_of_res {O R : Type} [CommRing O] [IsLocalRing O] [CommRing R] [Algebra O R] [IsCO O R]
     (x : R →ₐ[O] O) (y : R) (hy : y ∈ maximalIdeal R) : ¬ IsUnit (x y) := by
   intro hu
@@ -372,7 +358,7 @@ theorem UpperTheory.V.U3.gradedModel_spansCot_of_rigid_weights :
       M2 M.𝒜 M.Q.ideal → (∀ j : ℤ, j ≤ 0 → RigidWt j S.r.hom (toBar M.x₀)) → M1 M.Q := by
   intro l _ c Γ H _ _ _ _ _ _ η Ψ N ι hι U I cc g₁ S M hl hm h2 hrig
   have hi : Function.Injective (algebraMap c.O (PadicAlgCl l)) := Subtype.val_injective
-  have hloc : IsLocPt (toBar M.x₀) := fun y hy => norm_lt_one_of_mem c _ (local_of_res M.x₀ y hy)
+  have hloc : IsLocPt (toBar M.x₀) := fun y hy => norm_lt_one_of_nonunit c _ (local_of_res M.x₀ y hy)
   have hq : (toBar M.x₀).comp M.q = (Algebra.ofId c.O (PadicAlgCl l)).comp M.x := by
     rw [← M.x₀_q]; rfl
   let Ψ' : Γ →* (PadicAlgCl l)ˣ := (Units.map (algebraMap c.O (PadicAlgCl l)).toMonoidHom).comp Ψ
@@ -468,8 +454,7 @@ private theorem norm_coe_coefO_le_one {l : ℕ} [Fact l.Prime] (c : Coef l) (x :
     have hx : IsIntegral ℤ_[l] x := Algebra.IsIntegral.isIntegral x
     exact hx.map c.O.val
   obtain ⟨p, hmon, hp⟩ := hint
-  by_contra hgt
-  push_neg at hgt
+  by_contra! hgt
   rw [hmon.as_sum, Polynomial.eval₂_add, Polynomial.eval₂_X_pow, Polynomial.eval₂_finsetSum] at hp
   have hcoef : ∀ i ∈ Finset.range p.natDegree,
       ‖Polynomial.eval₂ (algebraMap ℤ_[l] (PadicAlgCl l)) (x : PadicAlgCl l)
@@ -622,7 +607,7 @@ private theorem exists_irred {α : Type} (R : α → α → Prop) (htr : ∀ a b
   | H T₁ ih =>
     by_cases hirr : ∀ f ∈ T₁, ∀ f' ∈ T₁, R f f' → f = f'
     · exact ⟨T₁, h, hirr⟩
-    · push_neg at hirr
+    · push Not at hirr
       obtain ⟨f, hf, f', hf', hR, hne⟩ := hirr
       apply ih (T₁.erase f') (Finset.erase_ssubset hf')
       refine ⟨fun g hg => h.1 g (Finset.mem_of_mem_erase hg), fun g hg => ?_⟩
@@ -704,7 +689,6 @@ private theorem conj_conj {G R : Type} [Group G] [CommRing R] (r : G →* GG (m 
   intro g
   simp [conjBy, map_mul, mul_assoc]
 
-set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 200000 in
 theorem UpperTheory.V.U3.model_upper :
     ∀ {l : ℕ} [Fact l.Prime] {c : Coef l} {Γ H : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [Group H] [TopologicalSpace H] [IsTopologicalGroup H]
@@ -848,7 +832,7 @@ theorem UpperTheory.V.U3.model_upper :
     have hne : UpperTheory.V.Base.eO l c.O ≠ ⊤ := ne_top_of_le_ne_top (ENat.coe_ne_top _) hefin
     have hz : (UpperTheory.V.Base.eO l c.O).toNat ≠ 0 := by
       rw [Ne, ENat.toNat_eq_zero]
-      push_neg
+      push Not
       exact ⟨he0, hne⟩
     exact_mod_cast Nat.pos_of_ne_zero hz
   rw [UpperTheory.V.Chr.nrm, div_le_iff₀ hepos]

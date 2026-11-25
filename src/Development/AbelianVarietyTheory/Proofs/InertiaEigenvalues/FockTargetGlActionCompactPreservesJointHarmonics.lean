@@ -50,7 +50,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DownLift
 
 noncomputable section
@@ -60,27 +59,14 @@ namespace GlobalTheory.CompactHarm
 open MvPolynomial
 
 theorem pd_comm {σ : Type*} (i j : σ) (f : MvPolynomial σ ℂ) :
-    pderiv i (pderiv j f) = pderiv j (pderiv i f) := by
-  classical
-  induction f using MvPolynomial.induction_on with
-  | C a => simp
-  | add p q hp hq => simp only [map_add (f := _), hp, hq]
-  | mul_X p k hp =>
-    have h : ∀ a b : σ, pderiv a (pderiv b (X k : MvPolynomial σ ℂ)) = 0 := by
-      intro a b
-      rw [pderiv_X]
-      by_cases hk : k = b
-      · subst hk; simp
-      · simp [Pi.single_eq_of_ne hk]
-    simp only [Derivation.leibniz, map_add (f := _), smul_eq_mul, hp, h]
-    ring
+    pderiv i (pderiv j f) = pderiv j (pderiv i f) := MvPolynomial.pderiv_comm i j f
 
 theorem pd_X_mul {σ : Type*} [DecidableEq σ] (x u : σ) (Q : MvPolynomial σ ℂ) :
     pderiv x (X u * Q) = (if u = x then Q else 0) + X u * pderiv x Q := by
   rw [Derivation.leibniz, pderiv_X, smul_eq_mul, smul_eq_mul]
   by_cases h : u = x
-  · subst h; simp only [Pi.single_eq_same, mul_one, if_true]; ring
-  · simp only [Pi.single_apply, h, if_false, mul_zero, add_zero, zero_add]
+  · subst h; simp only [Pi.single_eq_same, mul_one, ite_true]; ring
+  · simp only [Pi.single_apply, h, ite_false, mul_zero, add_zero, zero_add]
 
 theorem dd_X_mul {σ : Type*} [DecidableEq σ] (x y u : σ) (R : MvPolynomial σ ℂ) :
     pderiv x (pderiv y (X u * R)) = (if u = y then pderiv x R else 0) + (if u = x then pderiv y R else 0) +
@@ -139,7 +125,7 @@ theorem low_eq {D : D7} {m n : ℕ} (τ : D.what₂.Tau) (ε' : Fin m → Bool) 
     fockT τ (fun _ : Fin n => true) ε' (Matrix.single i l (1 : ℂ)) Q =
       -∑ j, pderiv (τ, i, j) (pderiv (τ, l, j) Q) := by
   have hil : i ≠ l := fun e => by rw [e, hl] at hi; exact Bool.noConfusion hi
-  rw [fockT_single, if_neg hil, add_zero, ← Finset.sum_neg_distrib]
+  rw [fockT_single, ite_eq_right hil, add_zero, ← Finset.sum_neg_distrib]
   refine Finset.sum_congr rfl fun j _ => ?_
   simp [raiO, lowO, sgn, hi, hl]
 
@@ -192,11 +178,11 @@ theorem fockT_compact_harm : ∀ (D : D7) (n m : ℕ) (p : D.what₂.Tau → ℕ
       (hL τ' i l hi hl) ?_ ?_
     · by_cases h : τ = τ' ∧ a = l
       · obtain ⟨rfl, rfl⟩ := h
-        simp only [Prod.mk.injEq, true_and, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+        simp only [Prod.mk.injEq, true_and, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
         exact hL τ i b hi hb
-      · refine Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun k _ => if_neg ?_
+      · refine Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun k _ => ite_eq_right ?_
         intro e; simp only [Prod.mk.injEq] at e; exact h ⟨e.1, e.2.1⟩
-    · refine Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun k _ => if_neg ?_
+    · refine Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun k _ => ite_eq_right ?_
       intro e; simp only [Prod.mk.injEq] at e; obtain ⟨rfl, rfl, -⟩ := e; omega
   · have hb : ¬ (b : ℕ) < p τ := fun h => ha (hab.2 h)
     rw [dn_eq τ _ a b (by simpa using ha) (by simpa using hb)]
@@ -211,14 +197,14 @@ theorem fockT_compact_harm : ∀ (D : D7) (n m : ℕ) (p : D.what₂.Tau → ℕ
     rw [e, map_add (f := _), map_neg, map_add (f := _), hS1, zero_add, hite, add_zero, neg_eq_zero, hLop]
     refine gen (fun j => (τ', i, j)) (fun j => (τ', l, j)) (fun k => (τ, b, k)) (fun k => (τ, a, k)) P
       (hL τ' i l hi hl) ?_ ?_
-    · refine Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun k _ => if_neg ?_
+    · refine Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun k _ => ite_eq_right ?_
       intro e; simp only [Prod.mk.injEq] at e; obtain ⟨rfl, rfl, -⟩ := e; omega
     · by_cases h : τ = τ' ∧ b = i
       · obtain ⟨rfl, rfl⟩ := h
-        simp only [Prod.mk.injEq, true_and, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+        simp only [Prod.mk.injEq, true_and, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
         simp only [pd_comm (τ, l, _) (τ, a, _)]
         exact hL τ a l (not_lt.1 ha) hl
-      · refine Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun k _ => if_neg ?_
+      · refine Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun k _ => ite_eq_right ?_
         intro e; simp only [Prod.mk.injEq] at e; exact h ⟨e.1, e.2.1⟩
 
 end GlobalTheory.CompactHarm

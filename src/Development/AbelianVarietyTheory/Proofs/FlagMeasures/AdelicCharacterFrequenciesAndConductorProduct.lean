@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FractionalIdealNormEqFiniteIdeleModule
 public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
 public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
 public import Mathlib.Algebra.AffineMonoid.Basic
@@ -287,15 +288,7 @@ theorem conductor_of_scaling [IsTotallyReal F] {ψ : AddChar (AF F) ℂ} (h : Is
 theorem finprod_absNorm_zpow_count {I : FractionalIdeal (𝓞 F)⁰ F} (hI : I ≠ 0) :
     ∏ᶠ u : HeightOneSpectrum (𝓞 F), (Ideal.absNorm u.asIdeal : ℝ) ^ FractionalIdeal.count F u I =
       ((FractionalIdeal.absNorm I : ℚ) : ℝ) := by
-  let g : FractionalIdeal (𝓞 F)⁰ F →*₀ ℝ := (Rat.castHom ℝ).toMonoidWithZeroHom.comp FractionalIdeal.absNorm
-  have hg : ∀ J, g J = ((FractionalIdeal.absNorm J : ℚ) : ℝ) := fun _ => rfl
-  conv_rhs => rw [← hg, ← FractionalIdeal.finprod_heightOneSpectrum_factorization' F hI]
-  rw [map_finprod g]
-  · refine finprod_congr fun u => ?_
-    rw [map_zpow₀, hg, FractionalIdeal.coeIdeal_absNorm]
-    simp
-  · refine (Filter.eventually_cofinite.1 (FractionalIdeal.finite_factors I)).subset fun u hu h0 => hu ?_
-    simp only [h0, zpow_zero]
+  apply _root_.GlobalTheory.LatVal.InvIdealNorm.finprod_absNorm_zpow_count <;> assumption
 
 
 open MeasureTheory Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.GaussMean in
@@ -324,7 +317,7 @@ theorem real_part_and_conductors : ∀ (I : AutInst) (θ : InfinitePlace I.F →
     congr 1
     · simp
     · refine Finset.prod_congr rfl fun w _ => ?_
-      rw [InfinitePlace.mult, if_pos (IsTotallyReal.isReal w), pow_one, ← InfinitePlace.norm_embedding_eq,
+      rw [InfinitePlace.mult, ite_eq_left (IsTotallyReal.isReal w), pow_one, ← InfinitePlace.norm_embedding_eq,
         ← embedding_re, Complex.norm_real, Real.norm_eq_abs]
 
 end GlobalTheory.AdeleCharConductor

@@ -305,8 +305,7 @@ theorem exists_factor {F : IntermediateField ℚ_[l] (Om l)} {r : ℕ}
   by_cases hz : B = 0
   · exact ⟨0, 0, h0, by simp, fun a b => h0, by simp [hz]⟩
   obtain ⟨a₀, b₀, hne⟩ : ∃ a b, B a b ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hz (Matrix.ext hcon)
   haveI : Nonempty (Fin r × Fin r) := ⟨(a₀, b₀)⟩
   obtain ⟨q, hq⟩ := Finite.exists_max fun q : Fin r × Fin r => ‖B q.1 q.2‖
@@ -321,11 +320,7 @@ theorem exists_factor {F : IntermediateField ℚ_[l] (Om l)} {r : ℕ}
 
 theorem act_fix {act : GQ l →* (PadicComplex l ≃+* PadicComplex l)} (hact : IsActC act)
     {K : FinExt l} {j : ℕ} {g : GQ l} (hg : g ∈ Gj K j) {y : PadicComplex l}
-    (hy : y ∈ inC (Ks K j)) : act g y = y := by
-  obtain ⟨x, hx, rfl⟩ := hy
-  have := (IntermediateField.mem_fixingSubgroup_iff _ _).1 hg x hx
-  change act g (x : PadicComplex l) = (x : PadicComplex l)
-  rw [hact.1, this]
+    (hy : y ∈ inC (Ks K j)) : act g y = y := GlobalTheory.Cyc.TateS.act_fix hact K hg hy
 
 theorem norm_le_one_of_mem_Ohat {K : FinExt l} {x : PadicComplex l} (hx : x ∈ Ohat K) :
     ‖x‖ ≤ 1 :=

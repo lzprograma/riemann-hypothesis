@@ -2,44 +2,6 @@ module
 
 public import Formalism.LocalRingCardinality.DataDIV
 public import Formalism.LocalRingCardinality.DataNChoice
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -123,10 +85,6 @@ open NumberField IsDedekindDomain Formalism.BasicNotions
 
 variable (D : D7)
 
-def HermRat : Prop :=
-  ∀ μ j, 1 ≤ j → j ≤ D.R.m → ∀ x y : D.what₂.MtL μ j,
-    ∃ c : D.what₂.LL, D.what₂.embLL c = inner ℂ (D.what₂.jMt μ j x) (D.what₂.jMt μ j y)
-
 def Z0 (μ : D.what₂.Tup) (j : ℕ) : Submodule ℂ (D.what₂.Mt μ j) :=
   (LinearMap.ker (D.what₂.thetaP μ j))ᗮ ⊓ LinearMap.range (D.what₂.eMt μ j)
 
@@ -144,16 +102,7 @@ def IsLocBasis {V : Type} [AddCommGroup V] [Module D.what₂.LL V] [Module (𝓞
     Formalism.HermitianLatticesTheory.loc (K := D.what₂.LL) (D.plEq w).asIdeal (Submodule.span (𝓞 D.what₂.LL) (Set.range b)) =
       Formalism.HermitianLatticesTheory.loc (K := D.what₂.LL) (D.plEq w).asIdeal A
 
-def FactGram : Prop :=
-  HermRat D → ∀ μ j w, 1 ≤ j → j ≤ D.R.m → (TjL D μ j).FG →
-    ∀ (n : ℕ) (b : Fin n → D.what₂.MtL μ j), IsLocBasis D (TjL D μ j) w b →
-      vAdd (D.plEq w) (gramDet D μ j b) = - jwIdx D μ j w
-
 variable {D} (X : DivX D)
-
-def ThetaRat : Prop :=
-  ∀ μ j, 1 ≤ j → j ≤ D.R.m → ∀ x : D.what₂.MtL μ j,
-    ∃ y, X.jM j y = D.what₂.thetaP μ j (D.what₂.jMt μ j x)
 
 theorem jM_inj (j : ℕ) : Function.Injective (X.jM j) :=
   inj_of_li D.what₂.embLL (X.jM j) (X.MjH j).b (X.jM_basis j).1
@@ -163,54 +112,13 @@ def thetaL (μ : D.what₂.Tup) (j : ℕ)
     D.what₂.MtL μ j →ₗ[D.what₂.LL] (X.MjH j).V :=
   descend (D.what₂.jMt μ j) (X.jM j) (jM_inj X j) (D.what₂.thetaP μ j) h
 
-theorem thetaL_spec (μ : D.what₂.Tup) (j : ℕ)
-    (h : ∀ x : D.what₂.MtL μ j, ∃ y, X.jM j y = D.what₂.thetaP μ j (D.what₂.jMt μ j x)) (x : D.what₂.MtL μ j) :
-    X.jM j (thetaL X μ j h x) = D.what₂.thetaP μ j (D.what₂.jMt μ j x) :=
-  descend_spec (D.what₂.jMt μ j) (X.jM j) (jM_inj X j) (D.what₂.thetaP μ j) h x
-
-theorem thImg_eq_map (μ : D.what₂.Tup) (j : ℕ)
-    (h : ∀ x : D.what₂.MtL μ j, ∃ y, X.jM j y = D.what₂.thetaP μ j (D.what₂.jMt μ j x))
-    (A : Submodule (𝓞 D.what₂.LL) (D.what₂.MtL μ j)) :
-    thImg X μ j A = A.map ((thetaL X μ j h).restrictScalars (𝓞 D.what₂.LL)) := by
-  ext y
-  constructor
-  · rintro ⟨x, hx, hy⟩
-    exact ⟨x, hx, jM_inj X j (by rw [hy]; exact thetaL_spec X μ j h x)⟩
-  · rintro ⟨x, hx, rfl⟩
-    exact ⟨x, hx, thetaL_spec X μ j h x⟩
-
-def FactStepBz : Prop :=
-  ThetaRat X → ∀ μ j w, 1 ≤ j → j ≤ D.R.m →
-    ∀ (n : ℕ) (b : Fin n → D.what₂.MtL μ j) (b0 : Fin n → D.what₂.MtL D.what₂.mu0 j)
-      (Z : Matrix (Fin n) (Fin n) D.what₂.LL),
-      IsLocBasis D (TjL D μ j) w b → IsLocBasis D (TjL D D.what₂.mu0 j) w b0 →
-      LinearIndependent ℂ (fun k => D.what₂.thetaP D.what₂.mu0 j (D.what₂.jMt D.what₂.mu0 j (b0 k))) →
-      Submodule.span ℂ (Set.range fun k => D.what₂.thetaP D.what₂.mu0 j (D.what₂.jMt D.what₂.mu0 j (b0 k))) = ⊤ →
-      LinearIndependent ℂ (fun k => D.what₂.thetaP μ j (D.what₂.jMt μ j (b k))) →
-      (∀ i, D.what₂.thetaP μ j (D.what₂.jMt μ j (b i)) =
-        ∑ k, D.what₂.embLL (Z k i) • D.what₂.thetaP D.what₂.mu0 j (D.what₂.jMt D.what₂.mu0 j (b0 k))) →
-      vAdd (D.plEq w) Z.det = IjIdx X μ j w - IjIdx X D.what₂.mu0 j w
-
 end Formalism.BasicNotions.Idx
 
 namespace Formalism.BasicNotions
 
 open NumberField IsDedekindDomain
 
-def bridge_lidx_det : Prop :=
-  ∀ (K V : Type) [Field K] [NumberField K] [AddCommGroup V] [Module K V] [FiniteDimensional K V]
-    [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (w : HeightOneSpectrum (𝓞 K)) (A B : Submodule (𝓞 K) V)
-    (γ : V ≃ₗ[K] V), Submodule.IsFullLattice K A →
-    Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (A.map ((γ : V →ₗ[K] V).restrictScalars (𝓞 K))) = Formalism.HermitianLatticesTheory.localization₂ w.asIdeal B →
-    Formalism.HermitianLatticesTheory.lidx w.asIdeal A B = vAdd w (LinearMap.det (γ : V →ₗ[K] V))
-
 end Formalism.BasicNotions
-
-namespace Formalism.BasicNotions.Idx
-
-open NumberField IsDedekindDomain Formalism.BasicNotions
-
-end Formalism.BasicNotions.Idx
 
 namespace Formalism.BasicNotions
 
@@ -292,13 +200,6 @@ structure NMj (D : D7) (X : DivX D) (c : NChoice D) where
   eMj_th : ∀ w j, D.what₂.muAt w ≠ D.what₂.mu0 → 1 ≤ j → j ≤ D.R.m → ∀ x ∈ Idx.TjV D (D.what₂.muTw w) j, ∀ y : (X.MjH j).V,
     X.jM j y = D.what₂.thetaP (D.what₂.muTw w) j (D.what₂.jMt (D.what₂.muTw w) j x) →
     NChoice.toFracE D c w j (eMj w j y) = NChoice.thPe D c w j (c.eMt w j x)
-
-namespace NMj
-
-variable {D : D7} {X : DivX D} {c : NChoice D} (T : NMj D X c)
-
-
-end NMj
 
 
 end Formalism.BasicNotions

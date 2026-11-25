@@ -89,7 +89,7 @@ theorem exists_congr_diagonal (H : GlobalTheory.Published.Landherr) (X : Data E 
     unfold cc at h1 h2 ⊢
     rw [hd, map_div₀, h1, h2]
   have hdet : (Matrix.diagonal fun a : Fin r => s a * (if a = k then d else 1)).det = X.Gm.det := by
-    rw [Matrix.det_diagonal, Finset.prod_mul_distrib, Finset.prod_ite_eq', if_pos (Finset.mem_univ _),
+    rw [Matrix.det_diagonal, Finset.prod_mul_distrib, Finset.prod_ite_eq', ite_eq_left (Finset.mem_univ _),
       ← Matrix.det_diagonal, hd]
     field_simp
   refine ⟨d, GlobalTheory.Published.Landherr.of_signature H X.Gm_herm ?_ X.Gm_det (hdet ▸ X.Gm_det)
@@ -121,7 +121,7 @@ theorem exists_congr_diagonal (H : GlobalTheory.Published.Landherr) (X : Data E 
       rw [← hre, mul_right_comm, ← Complex.ofReal_mul, ← Complex.ofReal_mul, ht, ← mul_inv,
         Real.mul_self_sqrt hpos.le, inv_mul_cancel₀ hpos.ne', Complex.ofReal_one]
     refine ⟨Matrix.diagonal fun a => if a = k then (t : ℂ) else 1, ?_, ?_⟩
-    · rw [Matrix.det_diagonal, Finset.prod_ite_eq', if_pos (Finset.mem_univ _)]
+    · rw [Matrix.det_diagonal, Finset.prod_ite_eq', ite_eq_left (Finset.mem_univ _)]
       exact_mod_cast ht0
     · rw [GlobalTheory.Published.gram_eq, Matrix.diagonal_transpose, Matrix.diagonal_map (map_zero τ),
         Matrix.diagonal_map (map_zero _), Matrix.diagonal_mul_diagonal, Matrix.diagonal_mul_diagonal]
@@ -199,7 +199,7 @@ theorem nonempty_cuspFD : GlobalTheory.Published.HasseNormSt → ∀ (E : Type) 
       omega
     have e3 : (i c : ℕ) < X.p0 := by simp only [i]; omega
     have e4 : ¬ (j c : ℕ) < X.p0 := by simp only [j]; omega
-    simp only [if_pos e3, if_neg e4, if_neg e1, if_neg e2]
+    simp only [ite_eq_left e3, ite_eq_right e4, ite_eq_right e1, ite_eq_right e2]
     ring
 
 end GlobalTheory.CuspExist

@@ -86,8 +86,6 @@ open scoped CategoryTheory.Obj
 attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.ZM
 
-set_option autoImplicit false
-
 noncomputable section
 namespace GlobalTheory.PrincipalModel
 open GlobalTheory.UU GlobalTheory.AbLaw

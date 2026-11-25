@@ -3,48 +3,7 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountDefs
 public import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
 public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IntegralPolyLinearMapClosed
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -85,7 +44,7 @@ theorem xiExp_other (N r t : ℕ) (β : Fin r → ℕ) (v : BVar N r t) (hv : �
     xiExp N r t β v = 0 := by
   classical
   simp only [xiExp, Finsupp.finsetSum_apply, Finsupp.single_apply]
-  exact Finset.sum_eq_zero fun c _ => if_neg fun h => hv c h.symm
+  exact Finset.sum_eq_zero fun c _ => ite_eq_right fun h => hv c h.symm
 
 theorem eq_xiExp (N r t : ℕ) (μ : BVar N r t →₀ ℕ) (h : ∀ v ∈ μ.support, ∃ c, v = xiVar N r t c) :
     μ = xiExp N r t fun c => μ (xiVar N r t c) := by
@@ -189,8 +148,7 @@ theorem xiMon_mem (b : ℕ) (β : Fin r → ℕ) (hβ : ∑ c, β c = b) : xiMon
     have hm' : m = xiExp N r D.T.t β := Finset.mem_singleton.mp (MvPolynomial.support_monomial_subset hm)
     subst hm'
     refine ⟨fun v hv => ?_, ?_⟩
-    · by_contra hne
-      push_neg at hne
+    · by_contra! hne
       exact (Finsupp.mem_support_iff.mp hv) (xiExp_other N r D.T.t β v hne)
     · simp only [xiExp_xi, hβ]
   · rw [GLWeightTheory.mem_integral_poly_iff_coeff]
@@ -285,12 +243,12 @@ open Classical in
 theorem finsum_lv (f : (Fin D.T.t → ℕ) × ℕ → ℕ) :
     (∑ᶠ x : (Fin D.T.t → ℕ) × ℕ, if D.LevelOK x.1 x.2 then f x else 0) = ∑ x ∈ Lv D, f x := by
   rw [finsum_eq_sum_of_support_subset (s := Lv D)]
-  · exact Finset.sum_congr rfl fun x hx => if_pos ((mem_Lv D x).1 hx)
+  · exact Finset.sum_congr rfl fun x hx => ite_eq_left ((mem_Lv D x).1 hx)
   · intro x hx
     rw [Function.mem_support] at hx
     rw [Finset.mem_coe, mem_Lv]
     by_contra h
-    exact hx (if_neg h)
+    exact hx (ite_eq_right h)
 
 theorem span_eq_range : Submodule.span (KK O) ((D.SSZ O (r := r) :
     Submodule O (MvPolynomial (BVar N r D.T.t) (KK O))) : Set (MvPolynomial (BVar N r D.T.t) (KK O))) =
@@ -472,7 +430,7 @@ theorem eExp_inj {x x' : (Fin D.T.t → ℕ) × ℕ} {β β' : Fin r → ℕ} (h
 
 theorem ltot_inj : Function.Injective (Ltot (O := O) (r := r) D) := by
   classical
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro v hv
   rw [Ltot_apply] at hv
   simp only [ell_eq_tau] at hv
@@ -487,10 +445,10 @@ theorem ltot_inj : Function.Injective (Ltot (O := O) (r := r) D) := by
   funext i0
   have h2 := congrArg (AddMonoidAlgebra.coeff · (eExp D i0.1.1 i0.1.2)) h1
   rw [coeff_sum, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, Finset.sum_eq_single i0] at h2
-  · rw [coeff_monomial, if_pos rfl] at h2
+  · rw [coeff_monomial, ite_eq_left rfl] at h2
     exact Subtype.ext h2
   · intro b _ hb
-    rw [coeff_monomial, if_neg]
+    rw [coeff_monomial, ite_eq_right]
     intro he
     obtain ⟨e1, e2⟩ := eExp_inj D he
     exact hb (Subtype.ext (Sigma.ext e1 (heq_of_eq e2)))

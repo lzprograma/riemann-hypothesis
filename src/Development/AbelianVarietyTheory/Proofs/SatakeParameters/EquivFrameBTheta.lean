@@ -2,43 +2,7 @@ module
 
 public import Formalism.LocalToGlobal.InertKernelTheory.SubBSplit
 public import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.LtCNeZero
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.LocalToGlobal.InertKernelTheory.K2OfAgreements
 import Formalism.LocalToGlobal.InertKernelTheory.KernelDifferenceOfFrame
 import Formalism.LocalToGlobal.InertKernelTheory.SecondKernelEntrywiseLastLevel
@@ -198,9 +162,9 @@ theorem ySub_rel (h : FrRel X Kc j U W κ) (v : X.Pl) (s : Fin (X.G.P.n' v)) :
         cD X Kc j (κ v s) • (YtMat X Kc j v s).map (mapT X Kc j W) := odd_YtMat X Kc j U W v s (κ v s) ((h v s).2 ho)
     rw [show (YtMat X Kc j v s).adjugate.map (thU X Kc j U) =
       (YtMat X Kc j v s).adjugate.map ((thU X Kc j U : DA X Kc j →+* DA X Kc j)) from rfl, h1, h3, h2,
-      Matrix.adjugate_smul, Fintype.card_fin, sg, if_pos ho, map_pow]
-  · have h0 : ySub X Kc j v s = dyMat X Kc j v s := by unfold ySub; rw [if_neg ho]
-    rw [h0, even_dyMat X Kc j U W v s ((h v s).1 ho), sg, if_neg ho, map_one, one_smul]
+      Matrix.adjugate_smul, Fintype.card_fin, sg, ite_eq_left ho, map_pow]
+  · have h0 : ySub X Kc j v s = dyMat X Kc j v s := by unfold ySub; rw [ite_eq_right ho]
+    rw [h0, even_dyMat X Kc j U W v s ((h v s).1 ho), sg, ite_eq_right ho, map_one, one_smul]
 
 def sS (X : Sys p) (Kc : Type) [Field Kc] (j : ℕ) (κ : ∀ v : X.Pl, Fin (X.G.P.n' v) → Kc) : Kc :=
   ∏ b : (Σ v : X.Pl, Fin (X.G.P.n' v)),
@@ -242,8 +206,8 @@ theorem thU_subD (h : FrRel X Kc j U W κ) (G : (X.Pj j).Xsp) (hO : OddDeg X j G
     rw [h2]
     unfold sg
     by_cases hb : IsOddPos b.2
-    · rw [if_pos hb, if_pos hb, ← hO m hm b hb, Int.toNat_natCast]
-    · rw [if_neg hb, if_neg hb, one_pow]
+    · rw [ite_eq_left hb, ite_eq_left hb, ← hO m hm b hb, Int.toNat_natCast]
+    · rw [ite_eq_right hb, ite_eq_right hb, one_pow]
 
 end GlobalTheory.FrameB
 
@@ -300,9 +264,9 @@ theorem thU_numD (h : FrRel X Kc j U W κ) (hW : ∀ v s, (W v s).det ≠ 0) :
   rw [← Finset.prod_mul_distrib]
   refine Finset.prod_congr rfl fun s _ => ?_
   by_cases ho : IsOddPos s
-  · simp only [if_pos ho, map_mul, map_pow, thU_det_y' hW, thU_det_Yt h v s ho]
+  · simp only [ite_eq_left ho, map_mul, map_pow, thU_det_y' hW, thU_det_Yt h v s ho]
     ring
-  · simp only [if_neg ho]
+  · simp only [ite_eq_right ho]
     rw [map_pow, thU_det_dy h v s ho, map_one, one_mul, map_pow]
 
 theorem thU_denD (h : FrRel X Kc j U W κ) (hW : ∀ v s, (W v s).det ≠ 0) :
@@ -314,9 +278,9 @@ theorem thU_denD (h : FrRel X Kc j U W κ) (hW : ∀ v s, (W v s).det ≠ 0) :
   rw [← Finset.prod_mul_distrib]
   refine Finset.prod_congr rfl fun s _ => ?_
   by_cases ho : IsOddPos s
-  · simp only [if_pos ho, map_mul, map_pow, thU_det_y' hW, thU_det_Yt h v s ho]
+  · simp only [ite_eq_left ho, map_mul, map_pow, thU_det_y' hW, thU_det_Yt h v s ho]
     ring
-  · simp only [if_neg ho]
+  · simp only [ite_eq_right ho]
     rw [map_one, map_one, map_one, one_mul]
 
 theorem kD_ne (hW : ∀ v s, (W v s).det ≠ 0) (hk : ∀ v s, κ v s ≠ 0) : kD X Kc j W κ ≠ 0 := by
@@ -401,7 +365,7 @@ theorem aeval_linT_eq (U : ∀ v : X.Pl, Fin (X.G.P.n' v) → Matrix (Fin (NN X.
     rw [hV0 z _ (Ne.symm hz), map_zero, map_zero, zero_mul])]
   rw [Finset.sum_eq_single a (fun a' _ ha' => Finset.sum_eq_zero fun b' _ => by
     beta_reduce
-    rw [hV, if_neg ha', map_zero, map_zero, zero_mul]) (fun h => absurd (Finset.mem_univ _) h)]
+    rw [hV, ite_eq_right ha', map_zero, map_zero, zero_mul]) (fun h => absurd (Finset.mem_univ _) h)]
   simp only [Matrix.mul_apply, Matrix.map_apply, hV, dMat]
   refine Finset.sum_congr rfl fun b' _ => ?_
   rw [mul_comm]
@@ -435,18 +399,18 @@ theorem vOf_blk (v : X.Pl) (s : Fin (X.G.P.n' v)) (a a' : Fin (NN X.G.P.m X.t j)
   unfold VOf uV mk mAt
   by_cases ha : a = a'
   · subst ha
-    rw [if_pos ⟨rfl, rfl⟩, if_pos rfl]
+    rw [ite_eq_left ⟨rfl, rfl⟩, ite_eq_left rfl]
     by_cases ho : IsOddPos s
-    · rw [if_pos ho, if_pos ho]
+    · rw [ite_eq_left ho, ite_eq_left ho]
       rfl
-    · rw [if_neg ho, if_neg ho]
+    · rw [ite_eq_right ho, ite_eq_right ho]
       rfl
-  · rw [if_neg (fun h => ha h.2.symm), if_neg ha]
+  · rw [ite_eq_right (fun h => ha h.2.symm), ite_eq_right ha]
 
 theorem vOf_off (x y : X.ZA j) (h : (⟨y.1, y.2.1⟩ : Σ v : X.Pl, Fin (X.G.P.n' v)) ≠ ⟨x.1, x.2.1⟩) :
     VOf Kc fd c j La' x y = 0 := by
   unfold VOf
-  rw [if_neg (fun h' => h h'.1)]
+  rw [ite_eq_right (fun h' => h h'.1)]
 
 theorem trSub_vOf : trSub X Kc j (VOf Kc fd c j La') = thU X Kc j (uV Kc fd c j La') :=
   aeval_linT_eq _ _ (vOf_blk Kc fd c j La') (vOf_off Kc fd c j La')
@@ -471,9 +435,9 @@ theorem frRel_vOf : FrRel X Kc j (uV Kc fd c j La') (wV Kc fd c j La') (kV Kc fd
   intro v s
   refine ⟨fun ho => ?_, fun ho => ?_⟩
   · unfold uV wV
-    rw [if_neg ho, if_neg ho]
+    rw [ite_eq_right ho, ite_eq_right ho]
   · unfold uV wV kV
-    rw [if_pos ho, if_pos ho, if_pos ho, mAt_inv hF, Matrix.inv_def, Ring.inverse_eq_inv', Matrix.transpose_smul,
+    rw [ite_eq_left ho, ite_eq_left ho, ite_eq_left ho, mAt_inv hF, Matrix.inv_def, Ring.inverse_eq_inv', Matrix.transpose_smul,
       Matrix.transpose_transpose, smul_smul]
 
 theorem wV_det_ne (v : X.Pl) (s : Fin (X.G.P.n' v)) : (wV Kc fd c j La' v s).det ≠ 0 := by

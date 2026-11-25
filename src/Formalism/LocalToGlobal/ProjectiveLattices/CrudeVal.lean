@@ -9,8 +9,6 @@ import Mathlib.Tactic.Lemma
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace Formalism.L2.Pj.Crude
@@ -126,7 +124,7 @@ lemma crv_nval_natCast (ho : OverLa la V ι e) {N : ℕ} (hN : N ≠ 0) :
   have hN' : ((N : ℕ) : K') ≠ 0 := by
     rw [← map_natCast ι N]
     exact (map_ne_zero ι).mpr (Nat.cast_ne_zero.mpr hN)
-  rw [if_neg hN', ← map_natCast ι N, ho.2, crv_vLa_natCast la hN]
+  rw [ite_eq_right hN', ← map_natCast ι N, ho.2, crv_vLa_natCast la hN]
   have he : (e : ℝ) ≠ 0 := by exact_mod_cast ho.1.ne'
   congr 1
   generalize padicValNat (resCharOf la) N * ramOverZ la = m

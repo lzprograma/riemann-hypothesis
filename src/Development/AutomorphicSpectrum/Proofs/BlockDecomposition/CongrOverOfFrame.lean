@@ -355,8 +355,6 @@ section Ad
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.AdelicU GlobalTheory.MixModel
 open PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC PositivityTheory.Rg.Rsw PositivityTheory.Rg.Rsw.L IsDedekindDomain NumberField
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem gram_herm (V : HSp D) : ∀ i j, D.sp.cm.sig (V.gram i j) = V.gram j i := by
@@ -502,7 +500,7 @@ theorem noFrame (_ : IdemEx) : NoFrame := by
     refine ⟨{v}, fun S hS e he z hz hh => hv ?_⟩
     refine congrOver_of_free _ (evFin D.host.F v) ε b₀ hb ?_ hz hh.1 hh.2.2.2
     have := he.2 v
-    rw [if_pos (hS (Finset.mem_singleton_self v))] at this
+    rw [ite_eq_left (hS (Finset.mem_singleton_self v))] at this
     exact this
   · push Not at h
     obtain ⟨w, hw⟩ := h

@@ -5,52 +5,9 @@ public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomolo
 public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
 public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
 public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsAlgHomOfIsBaseChange
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -455,13 +412,6 @@ theorem jacobian_mul_sub_mem (i : K.bundle.ι) (h : V ≤ K.bundle.U i) (I : Ide
     (u : Γ(Y, V)) (f : Fin D → Γ(Y, V)) (hf : ∀ a, f a ∈ I) :
     K.jacobian i h (fun a => u * f a) - u ^ D * K.jacobian i h f ∈ I := map_dForm_mul_sub_mem (K.coeff i h) I u f hf
 
-theorem jacobian_eq_det_mul (i : K.bundle.ι) (h : V ≤ K.bundle.U i) (f x : Fin D → Γ(Y, V))
-    (m : Matrix (Fin D) (Fin D) Γ(Y, V))
-    (e : ∀ a, dFun (algX p V) (f a) = ∑ b, m a b • dFun (algX p V) (x b)) :
-    K.jacobian i h f = m.det * K.jacobian i h x := by
-  change K.coeff i h (dForm _ f) = m.det * K.coeff i h (dForm _ x)
-  rw [dForm_eq_det_smul f x m e, map_smul, smul_eq_mul]
-
 theorem isUnit_jacobian_iff (i : K.bundle.ι) (hV : IsAffineOpen V) (h : V ≤ K.bundle.U i)
     (x : Fin D → Γ(Y, V)) : IsUnit (K.jacobian i h x) ↔ IsFrame (dOn p x) := by
   rw [← K.jacobian_smul_om i hV h x]
@@ -484,32 +434,6 @@ theorem VanishesAlong.appLE_resG {s : LB.Sec L} {y : T ⟶ Y} (hs : VanishesAlon
     (y.appLE V W e).hom (resG Y h (s.f j)) = 0 := by
   change (Y.presheaf.map (homOfLE h).op ≫ y.appLE V W e).hom (s.f j) = 0
   rw [Scheme.Hom.map_appLE, Scheme.Hom.appLE, CommRingCat.hom_comp, RingHom.comp_apply, hs j, map_zero]
-
-theorem vanishesAlong_iff_evalPt {R : Type} [CommRing R] (s : LB.Sec L) (y : Sp R ⟶ Y) (j : L.ι)
-    (h : ⊤ ≤ y ⁻¹ᵁ L.U j) : VanishesAlong s y ↔ evalPt y _ h (s.f j) = 0 := by
-  constructor
-  · intro hs
-    change ((y.app (L.U j) ≫ (Sp R).presheaf.map (homOfLE h).op) ≫
-      (Scheme.ΓSpecIso (CommRingCat.of R)).hom).hom (s.f j) = 0
-    simp only [CommRingCat.hom_comp, RingHom.comp_apply, hs j, map_zero]
-  · intro h0 j'
-    have hA : (y.appLE (L.U j) ⊤ h).hom (s.f j) = 0 := by
-      have e0 := h0
-      unfold evalPt at e0
-      rw [CommRingCat.hom_comp, RingHom.comp_apply] at e0
-      exact (Scheme.ΓSpecIso (CommRingCat.of R)).commRingCatIsoToRingEquiv.injective (e0.trans (map_zero _).symm)
-    have hO' : y ⁻¹ᵁ L.U j' ≤ y ⁻¹ᵁ (L.U j' ⊓ L.U j) := le_preimage_inf le_rfl (le_top.trans h)
-    have e2 : (y.appLE (L.U j' ⊓ L.U j) (y ⁻¹ᵁ L.U j') hO').hom (resG Y inf_le_right (s.f j)) = 0 := by
-      change (Y.presheaf.map (homOfLE inf_le_right).op ≫ y.appLE (L.U j' ⊓ L.U j) (y ⁻¹ᵁ L.U j') hO').hom
-        (s.f j) = 0
-      rw [Scheme.Hom.map_appLE, ← Scheme.Hom.appLE_map y h (homOfLE le_top).op, CommRingCat.hom_comp,
-        RingHom.comp_apply, hA, map_zero]
-    have e1 : (y.appLE (L.U j') (y ⁻¹ᵁ L.U j') le_rfl).hom (s.f j') =
-        (y.appLE (L.U j' ⊓ L.U j) (y ⁻¹ᵁ L.U j') hO').hom (resG Y inf_le_left (s.f j')) := by
-      change _ = (Y.presheaf.map (homOfLE inf_le_left).op ≫ y.appLE (L.U j' ⊓ L.U j) (y ⁻¹ᵁ L.U j') hO').hom
-        (s.f j')
-      rw [Scheme.Hom.map_appLE]
-    rw [Scheme.Hom.app_eq_appLE, e1, sec_rel s j' j inf_le_left inf_le_right le_rfl, map_mul, e2, mul_zero]
 
 theorem lbPow_U_le (n : ℕ) (j : (lbPow L n).ι) : (lbPow L n).U j ≤ L.U (j PUnit.unit) := by
   intro x hx
@@ -621,17 +545,6 @@ section Point
 
 variable {F : Type} [CommRing F]
 
-def jacVal (s : Fin D → LB.Sec L) (y : Sp F ⟶ Y) (i : K.bundle.ι) (j : L.ι)
-    (hi : ⊤ ≤ y ⁻¹ᵁ K.bundle.U i) (hj : ⊤ ≤ y ⁻¹ᵁ L.U j) : F :=
-  evalPt y (K.bundle.U i ⊓ L.U j) (le_preimage_inf hi hj) (K.jacFun s i j)
-
-theorem jacVal_eq (s : Fin D → LB.Sec L) (y : Sp F ⟶ Y) (i : K.bundle.ι) (j : L.ι)
-    (hi : ⊤ ≤ y ⁻¹ᵁ K.bundle.U i) (hj : ⊤ ≤ y ⁻¹ᵁ L.U j) (h₁ : V ≤ K.bundle.U i) (h₂ : V ≤ L.U j)
-    (hy : ⊤ ≤ y ⁻¹ᵁ V) : K.jacVal s y i j hi hj =
-      evalPt y V hy (K.jacobian i h₁ fun a => resG Y h₂ ((s a).f j)) := by
-  unfold jacVal
-  rw [← evalPt_res y (le_inf h₁ h₂) _ hy, K.resG_jacFun]
-
 end Point
 
 end CanonLB
@@ -737,32 +650,6 @@ theorem polyFn_comp : (polyFn (k := k) (D := D)).comp (algebraMap k _) = algX (a
   exact congrArg (fun φ => φ.hom a)
     (Scheme.ΓSpecIso_inv_naturality (CommRingCat.ofHom (algebraMap k (MvPolynomial (Fin D) k))))
 
-private theorem dFun_polyFn_eq_sum_pderiv (g : MvPolynomial (Fin D) k) :
-    dFun (algX (affStr k D) ⊤) (polyFn g) =
-      ∑ b, polyFn (pderiv b g) • dFun (algX (affStr k D) ⊤) (polyFn (X b)) := by
-  let _ := (algX (affStr k D) ⊤).toAlgebra
-  induction g using MvPolynomial.induction_on with
-  | C c =>
-    have e : polyFn (C c : MvPolynomial (Fin D) k) = algX (affStr k D) ⊤ c := by
-      rw [← polyFn_comp]
-      rfl
-    rw [e]
-    simp only [pderiv_C, map_zero, zero_smul, Finset.sum_const_zero]
-    exact (KaehlerDifferential.D k _).map_algebraMap c
-  | add p q hp hq =>
-    simp only [map_add (f := _), hp, hq, add_smul, Finset.sum_add_distrib]
-  | mul_X p i hp =>
-    have hl : dFun (algX (affStr k D) ⊤) (polyFn (p * X i)) =
-        polyFn p • dFun (algX (affStr k D) ⊤) (polyFn (X i)) +
-          polyFn (X i : MvPolynomial (Fin D) k) • dFun (algX (affStr k D) ⊤) (polyFn p) := by
-      rw [map_mul]
-      exact (KaehlerDifferential.D k _).leibniz _ _
-    rw [hl, hp, Finset.smul_sum]
-    simp only [Derivation.leibniz, pderiv_X, smul_eq_mul, map_add (f := _), map_mul, add_smul, mul_smul,
-      Finset.sum_add_distrib]
-    congr 1
-    simp [Pi.single_apply]
-
 theorem isFrame_dX : IsFrame (dOn (affStr k D) fun a => polyFn (X a)) := by
   refine ⟨isAffineOpen_top _, ?_⟩
   have hfg : IsFreeGen (MvPolynomial (Fin D) k) (dForm (algebraMap k (MvPolynomial (Fin D) k)) fun a => X a) := by
@@ -790,33 +677,11 @@ def affineSpace : CanonLB (affStr k D) D :=
     (fun _ => isFrame_dX k D) iSup_const
 
 
-variable {k D} in
-theorem jacobian_affineSpace (f : Fin D → MvPolynomial (Fin D) k) :
-    (affineSpace k D).jacobian PUnit.unit le_rfl (fun a => polyFn (f a)) =
-      polyFn (Matrix.of fun a b => pderiv b (f a)).det := by
-  have hx : (affineSpace k D).jacobian PUnit.unit le_rfl (fun a => polyFn (X a)) = 1 := by
-    have := (affineSpace k D).coeff_om PUnit.unit le_rfl
-    rwa [resForm_self] at this
-  rw [(affineSpace k D).jacobian_eq_det_mul PUnit.unit le_rfl _ (fun a => polyFn (X a))
-    (polyFn.mapMatrix (Matrix.of fun a b => pderiv b (f a))) (fun a => dFun_polyFn_eq_sum_pderiv k D (f a)), hx, mul_one,
-    RingHom.map_det]
-  rfl
-
 
 variable {k D} in
 def polySec (f : MvPolynomial (Fin D) k) :
     LB.Sec (Out.Inh.trivLB (Sp (MvPolynomial (Fin D) k))) :=
   ⟨fun _ => polyFn f, fun _ _ => (one_mul _).symm⟩
-
-theorem jacVal_affineSpace {F : Type} [CommRing F] (φ : MvPolynomial (Fin D) k →+* F)
-    (f : Fin D → MvPolynomial (Fin D) k) :
-    (affineSpace k D).jacVal (fun a => polySec (f a)) (spMap φ) PUnit.unit PUnit.unit
-      le_rfl le_rfl = φ (Matrix.of fun a b => pderiv b (f a)).det := by
-  have h1 := (affineSpace k D).jacVal_eq (fun a => polySec (f a)) (spMap φ) PUnit.unit PUnit.unit le_rfl le_rfl
-    (V := ⊤) le_rfl le_rfl le_rfl
-  refine h1.trans ((congrArg (evalPt (spMap φ) ⊤ _) (congrArg ((affineSpace k D).jacobian PUnit.unit le_rfl)
-    (funext fun a => resG_self _ _))).trans ?_)
-  exact (congrArg _ (jacobian_affineSpace f)).trans (evalPt_spMap φ _)
 
 end AffineSpace
 

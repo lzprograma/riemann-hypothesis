@@ -51,10 +51,10 @@ private theorem hs_eq_one_iff {K : Type} [Field K] (d x : K) :
   constructor
   · intro h
     by_contra hn
-    rw [if_neg (fun ⟨a, b, e⟩ => hn ⟨a, b, e.symm⟩)] at h
+    rw [ite_eq_right (fun ⟨a, b, e⟩ => hn ⟨a, b, e.symm⟩)] at h
     norm_num at h
   · rintro ⟨a, b, e⟩
-    exact if_pos ⟨a, b, e.symm⟩
+    exact ite_eq_left ⟨a, b, e.symm⟩
 
 theorem UpperTheory.V.Z.Sym.Glob.hsHasse :
     UpperTheory.V.Z.Sym.Glob.HsHasse := by

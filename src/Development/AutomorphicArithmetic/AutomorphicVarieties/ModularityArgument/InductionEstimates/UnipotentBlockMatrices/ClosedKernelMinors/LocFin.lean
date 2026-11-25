@@ -59,18 +59,6 @@ open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Adel PositivityTheory.Rg
 open scoped ENNReal NumberField.AdeleRing InnerProductSpace ComplexConjugate
 open UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial
 
-private theorem lf_fin {K : Type} [Field K] [NumberField K] {S : Set 𝔸[K]} (hS : IsCompact S) :
-    {k : K | algebraMap K 𝔸[K] k ∈ S}.Finite := by
-  have h1 := GroundTheory.Global.discreteTopology_principalSubgroup K
-  have h2 := GroundTheory.Global.isClosed_principalSubgroup K
-  have h3 : IsCompact ((Subtype.val : NumberField.AdeleRing.principalSubgroup (𝓞 K) K → 𝔸[K]) ⁻¹' S) :=
-    h2.isClosedEmbedding_subtypeVal.isCompact_preimage hS
-  have h4 := h3.finite_of_discrete
-  refine Set.Finite.of_finite_image (f := algebraMap K 𝔸[K]) ((h4.image Subtype.val).subset ?_)
-    (NumberField.AdeleRing.algebraMap_injective (𝓞 K) K).injOn
-  rintro _ ⟨k, hk, rfl⟩
-  exact ⟨⟨_, k, rfl⟩, hk, rfl⟩
-
 private theorem lf_ray (K : Type) [Field K] [NumberField K] (T : ℝ) :
     ∃ Z : Set 𝔸[K], IsCompact Z ∧ ∀ t, T ≤ t →
       ((zt K (-t) : AdelicGLn.AdelicGL K 2) : Matrix (Fin 2) (Fin 2) 𝔸[K]).det ∈ Z := by
@@ -126,7 +114,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.locFin :
     ((Units.continuous_val.comp continuous_fst).mul continuous_snd.fst).mul
       ((hmn c).comp (continuous_snd.snd.fst.mul continuous_snd.snd.snd.inv))
   have hfin : ∀ c, {k : K | algebraMap K 𝔸[K] k ∈ Φ c '' (D ×ˢ Z ×ˢ (KG K (2 + 2) : Set (G1 K (2 + 2))) ×ˢ C)}.Finite :=
-    fun c => lf_fin ((hD.prod (hZ.prod (hK.prod hC))).image (hΦ c))
+    fun c => finite_setOf_algebraMap_mem ((hD.prod (hZ.prod (hK.prod hC))).image (hΦ c))
   have hrat : ∀ q : Cos K, ∃ γ : GL (Fin (2 + 2)) K, AdelicGLn.diagonal K (2 + 2) γ =
       ((q.out : G1 K (2 + 2)) : AdelicGLn.AdelicGL K (2 + 2)) := fun q => q.out.2
   choose γ hγ using hrat

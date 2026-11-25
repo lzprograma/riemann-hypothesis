@@ -67,7 +67,7 @@ theorem redA_spec (P : Pl E) {a : E ⊗[F] Formalism.L2.Herm.Af F} {s : 𝓞 E} 
       Ideal.Quotient.mk P.asIdeal s * c = resS F P ⟨_, hm⟩ := ⟨_, s, hs, hm, hc⟩
   have hr : redA P a = hex.choose := by
     unfold redA
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
   obtain ⟨s₀, hs₀, hm₀, h₀⟩ := hex.choose_spec
   rw [hr, redA_uniq_lemma P hs₀ hs hm₀ hm h₀ hc, hc]
 
@@ -85,7 +85,7 @@ theorem redA_iA (P : Pl E) {e : E} {r s : 𝓞 E} (hs : s ∉ P.asIdeal) (h : al
       rw [← mul_assoc, mul_inv_cancel₀ hs0, one_mul]⟩
   have hr : redP P e = hex.choose := by
     unfold redP
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
   obtain ⟨r₀, s₀, hs₀, he₀, h₀⟩ := hex.choose_spec
   have hm : iA F E (algebraMap (𝓞 E) E s₀) * iA F E e ∈ Formalism.L2.Herm.intAf F E := by
     rw [← map_mul, he₀]
@@ -369,8 +369,8 @@ theorem decoRaw_rawSm (γ : URat hc n) (k : J0 hc n ST) (x : GL (Fin n) (E ⊗[F
         rw [← hs']
         exact hs''
       rw [hpull, redA_mulVec_lemma_4 hkSt P.1 hs _ hsv,
-        Finset.sum_eq_single (lastIdx n) (fun j _ hj => by rw [hmi j, if_neg hj, zero_mul])
-          (fun h => absurd (Finset.mem_univ _) h), hmi (lastIdx n), if_pos rfl, one_mul]
+        Finset.sum_eq_single (lastIdx n) (fun j _ hj => by rw [hmi j, ite_eq_right hj, zero_mul])
+          (fun h => absurd (Finset.mem_univ _) h), hmi (lastIdx n), ite_eq_left rfl, one_mul]
     · rfl
   case e_be =>
     funext w v
@@ -431,8 +431,8 @@ theorem decorated_lattice_mul_principal (x : GL (Fin n) (E ⊗[F] Formalism.L2.H
     · obtain ⟨s, hs, hsv⟩ := pullV_den hv
       have hmi := inv_mem (hmir P.1 P.2)
       rw [hpull, redA_mulVec_lemma_4 hSt' P.1 hs _ hsv, hredinv,
-        Finset.sum_eq_single (lastIdx n) (fun j _ hj => by rw [hmi j, if_neg hj, zero_mul])
-          (fun h => absurd (Finset.mem_univ _) h), hmi (lastIdx n), if_pos rfl, one_mul]
+        Finset.sum_eq_single (lastIdx n) (fun j _ hj => by rw [hmi j, ite_eq_right hj, zero_mul])
+          (fun h => absurd (Finset.mem_univ _) h), hmi (lastIdx n), ite_eq_left rfl, one_mul]
     · rfl
   · funext w v
     split_ifs with hv
@@ -471,7 +471,7 @@ theorem decoPtEqv_of (hOk : DecoOfOk hc n ST SG) : DecoPtEqv hc n ST SG H := by
   have hr := hOk _ (rawSm hc n ST γ k.1 x).2
   rw [rawSm_val] at hr
   unfold decoOf
-  rw [dif_pos hr, dif_pos hx]
+  rw [dite_eq_left hr, dite_eq_left hx]
   apply Subtype.ext
   show decoRaw ST SG _ = _
   rw [decoRaw_rawSm]
@@ -670,7 +670,7 @@ theorem mem_congruence_of_action {x y : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.A
     rw [hzr w.1 i j]
     refine red_row_eq y (A := (Formalism.UG.bc (resS F w.1) z : GL (Fin n) (kP w.1)).1) (B := (g w).1) i (fun v hv => ?_) j
     have hb := congrFun (congrFun (congrArg Deco.be h) w) v
-    simp only [decoRaw, Deco.act, hone, if_pos (hinP w.1 v hv).1, if_pos (hinP w.1 v hv).2] at hb
+    simp only [decoRaw, Deco.act, hone, ite_eq_left (hinP w.1 v hv).1, ite_eq_left (hinP w.1 v hv).2] at hb
     have hb' := congrFun hb i
     rw [hval w.1 v hv i] at hb'
     exact hb'
@@ -680,7 +680,7 @@ theorem mem_congruence_of_action {x y : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.A
     refine red_row_eq y (A := (Formalism.UG.bc (resS F P.1) z : GL (Fin n) (kP P.1)).1)
       (B := (1 : Matrix (Fin n) (Fin n) (kP P.1))) (lastIdx n) (fun v hv => ?_) j |>.trans ?_
     · have hb := congrFun (congrFun (congrArg Deco.f h) P) v
-      simp only [decoRaw, Deco.act, hone, if_pos (hinP P.1 v hv).1, if_pos (hinP P.1 v hv).2] at hb
+      simp only [decoRaw, Deco.act, hone, ite_eq_left (hinP P.1 v hv).1, ite_eq_left (hinP P.1 v hv).2] at hb
       rw [hval P.1 v hv (lastIdx n)] at hb
       rw [show ∑ j, (1 : Matrix (Fin n) (Fin n) (kP P.1)) (lastIdx n) j * redA P.1 (pullV y v j) =
         redA P.1 (pullV y v (lastIdx n)) by simp [Matrix.one_apply]]
@@ -722,7 +722,7 @@ theorem decoPt_injective (hOk : DecoOfOk hc n ST SG) : Function.Injective (decoP
   have hx := hOk _ x.2
   have hy := hOk _ y.2
   unfold decoOf at h
-  rw [dif_pos hx, dif_pos hy] at h
+  rw [dite_eq_left hx, dite_eq_left hy] at h
   have hr : decoRaw ST SG (x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) = decoRaw ST SG (y : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) := by
     injection h
   apply QuotientGroup.eq.2
@@ -739,7 +739,7 @@ theorem redHSurj_of (hOk : DecoOfOk hc n ST SG) (hS : Function.Surjective (decoP
   rw [decoPt_mk] at hq
   have hy := hOk _ y.2
   unfold decoOf at hq
-  rw [dif_pos hy] at hq
+  rw [dite_eq_left hy] at hq
   have h1 : decoRaw ST SG (y : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) =
       (decoRaw ST SG (1 : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F))).act 1 (h : GLG (E := E) (n := n) (SG := SG)) := by
     have h2 := congrArg Subtype.val hq
@@ -939,50 +939,50 @@ theorem decoOfOk_of (hK : RedKer F E n) : DecoOfOk hc n ST SG := by
       be_ker := ?_ }
   · intro P v hv w hw
     simp only [decoRaw, Deco.at] at hv hw ⊢
-    rw [if_pos (Submodule.add_mem _ hv hw), if_pos hv, if_pos hw, pullV_add]
+    rw [ite_eq_left (Submodule.add_mem _ hv hw), ite_eq_left hv, ite_eq_left hw, pullV_add]
     obtain ⟨s, hs, h₁, h₂⟩ := pull_vectors_common_denominator hv hw
     exact redA_add P.1 hs (h₁ _) (h₂ _)
   · intro P a v hv
     simp only [decoRaw, Deco.at] at hv ⊢
-    rw [if_pos (Submodule.smul_mem _ a hv), if_pos hv, pullV_osmul]
+    rw [ite_eq_left (Submodule.smul_mem _ a hv), ite_eq_left hv, pullV_osmul]
     obtain ⟨s, hs, h₁⟩ := pullV_den hv
     exact redA_smul P.1 hs (h₁ _) a
   · intro P v hv
     simp only [decoRaw, Deco.at] at hv ⊢
-    rw [if_neg hv]
+    rw [ite_eq_right hv]
   · intro P
     obtain ⟨v, hv, hvc⟩ := redN_surj x P.1 (Pi.single (lastIdx n) 1)
     refine ⟨v, hv, ?_⟩
     simp only [decoRaw]
-    rw [if_pos (hloc P.1 v hv), hvc, Pi.single_eq_same]
+    rw [ite_eq_left (hloc P.1 v hv), hvc, Pi.single_eq_same]
     exact one_ne_zero
   · intro w v hv u hu
     simp only [decoRaw, Deco.at] at hv hu ⊢
-    rw [if_pos (Submodule.add_mem _ hv hu), if_pos hv, if_pos hu]
+    rw [ite_eq_left (Submodule.add_mem _ hv hu), ite_eq_left hv, ite_eq_left hu]
     funext i
     rw [Pi.add_apply, pullV_add]
     obtain ⟨s, hs, h₁, h₂⟩ := pull_vectors_common_denominator hv hu
     exact redA_add w.1 hs (h₁ _) (h₂ _)
   · intro w a v hv
     simp only [decoRaw, Deco.at] at hv ⊢
-    rw [if_pos (Submodule.smul_mem _ a hv), if_pos hv]
+    rw [ite_eq_left (Submodule.smul_mem _ a hv), ite_eq_left hv]
     funext i
     rw [Pi.smul_apply, smul_eq_mul, pullV_osmul]
     obtain ⟨s, hs, h₁⟩ := pullV_den hv
     exact redA_smul w.1 hs (h₁ _) a
   · intro w v hv
     simp only [decoRaw, Deco.at] at hv ⊢
-    rw [if_neg hv]
+    rw [ite_eq_right hv]
   · intro w c
     obtain ⟨v, hv, hvc⟩ := redN_surj x w.1 c
     refine ⟨v, hv, ?_⟩
     simp only [decoRaw]
-    rw [if_pos (hloc w.1 v hv)]
+    rw [ite_eq_left (hloc w.1 v hv)]
     funext i; exact hvc i
   · intro w v hv h0
     refine hK x w.1 v hv fun i => ?_
     simp only [decoRaw] at h0
-    rw [if_pos (hloc w.1 v hv)] at h0
+    rw [ite_eq_left (hloc w.1 v hv)] at h0
     exact congrFun h0 i
 
 end Ok2
@@ -1143,13 +1143,6 @@ theorem decorated_point_equivariant (H : Subgroup (GLG (E := E) (n := n) (SG := 
 
 end Final
 
-section Inst
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
-variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Pl E)) (H : Subgroup (GLG (E := E) (n := n) (SG := SG)))
-
-end Inst
-
 section LinAlg
 
 variable {R κ V : Type} [CommRing R] [Field κ] [AddCommGroup V] [Module R V] {n : ℕ}
@@ -1197,8 +1190,7 @@ theorem exists_GL_lastRow [NeZero n] (l : Fin n → κ) (hl : l ≠ 0) :
     ∃ A : GL (Fin n) κ, ∀ j, (A : Matrix (Fin n) (Fin n) κ) (lastIdx n) j = l j := by
   classical
   obtain ⟨k, hk⟩ : ∃ k, l k ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hl (funext h)
   let M : Matrix (Fin n) (Fin n) κ := Matrix.of fun i j =>
     if i = lastIdx n then l j else if i = k then (if j = lastIdx n then 1 else 0) else (if j = i then 1 else 0)
@@ -1218,7 +1210,7 @@ theorem exists_GL_lastRow [NeZero n] (l : Fin n → κ) (hl : l ≠ 0) :
     have hxk : x k = 0 := by
       have h1 := congrFun hx (lastIdx n)
       rw [hrow] at h1
-      simp only [M, Matrix.of_apply, if_true, Pi.zero_apply] at h1
+      simp only [M, Matrix.of_apply, ite_true, Pi.zero_apply] at h1
       rw [Finset.sum_eq_single k (fun j _ hj => by rw [h0 j hj, mul_zero])
         (fun h => absurd (Finset.mem_univ k) h)] at h1
       exact (mul_eq_zero.1 h1).resolve_left hk
@@ -1387,7 +1379,7 @@ theorem decoPtSurj_of (hG : UnimodGenus hc n) (hR : Formalism.L2.DIV.RedSurj) (h
   refine ⟨((⟨x, hxU⟩ : UAd hc n) : adPt hc n ST SG), ?_⟩
   rw [decoPt_mk]
   unfold decoOf
-  rw [dif_pos (decorated_lattice_exists hc n ST SG x hxU)]
+  rw [dite_eq_left (decorated_lattice_exists hc n ST SG x hxU)]
   apply Subtype.ext
   show decoRaw ST SG x = d
   ext1
@@ -1397,7 +1389,7 @@ theorem decoPtSurj_of (hG : UnimodGenus hc n) (hR : Formalism.L2.DIV.RedSurj) (h
     show (if v ∈ Formalism.HermitianLatticesTheory.localization₂ P.1.asIdeal (Formalism.UG.CS.globLat x (stdLat E n)) then redA P.1 (pullV x v (lastIdx n))
       else 0) = d.f P v
     by_cases hv : v ∈ Formalism.HermitianLatticesTheory.localization₂ P.1.asIdeal (Formalism.UG.CS.globLat x (stdLat E n))
-    · rw [if_pos hv]
+    · rw [ite_eq_left hv]
       have hv0 : v ∈ Formalism.HermitianLatticesTheory.localization₂ P.1.asIdeal N0 := by rwa [hNx] at hv
       have hv' : v ∈ Formalism.HermitianLatticesTheory.localization₂ P.1.asIdeal d.N := by rwa [← hN]
       obtain ⟨s, hs, hsv⟩ := (mem_locP P.1 _ v).1 hv'
@@ -1407,10 +1399,10 @@ theorem decoPtSurj_of (hG : UnimodGenus hc n) (hR : Formalism.L2.DIV.RedSurj) (h
       refine Finset.sum_congr rfl fun j _ => ?_
       have hPu : P.1 ∈ ST ∪ SG := Finset.mem_union_left _ P.2
       have h1 := hred ⟨P.1, hPu⟩ (lastIdx n) j
-      have h2 : y ⟨P.1, hPu⟩ = A P := by simp only [y, dif_pos P.2]
+      have h2 : y ⟨P.1, hPu⟩ = A P := by simp only [y, dite_eq_left P.2]
       rw [h2] at h1
       rw [h1]
-    · rw [if_neg hv]
+    · rw [ite_eq_right hv]
       have hv' : v ∉ Deco.at d P.1 := by
         show v ∉ Formalism.HermitianLatticesTheory.localization₂ P.1.asIdeal d.N
         rwa [hNx, hN] at hv
@@ -1419,7 +1411,7 @@ theorem decoPtSurj_of (hG : UnimodGenus hc n) (hR : Formalism.L2.DIV.RedSurj) (h
     show (if v ∈ Formalism.HermitianLatticesTheory.localization₂ w.1.asIdeal (Formalism.UG.CS.globLat x (stdLat E n)) then fun i => redA w.1 (pullV x v i)
       else 0) = d.be w v
     by_cases hv : v ∈ Formalism.HermitianLatticesTheory.localization₂ w.1.asIdeal (Formalism.UG.CS.globLat x (stdLat E n))
-    · rw [if_pos hv]
+    · rw [ite_eq_left hv]
       have hv0 : v ∈ Formalism.HermitianLatticesTheory.localization₂ w.1.asIdeal N0 := by rwa [hNx] at hv
       have hv' : v ∈ Formalism.HermitianLatticesTheory.localization₂ w.1.asIdeal d.N := by rwa [← hN]
       obtain ⟨s, hs, hsv⟩ := (mem_locP w.1 _ v).1 hv'
@@ -1433,10 +1425,10 @@ theorem decoPtSurj_of (hG : UnimodGenus hc n) (hR : Formalism.L2.DIV.RedSurj) (h
       have hwu : w.1 ∈ ST ∪ SG := Finset.mem_union_right _ w.2
       have hwS : w.1 ∉ ST := fun h => Finset.disjoint_left.1 hD h w.2
       have h1 := hred ⟨w.1, hwu⟩ i j
-      have h2 : y ⟨w.1, hwu⟩ = Y w := by simp only [y, dif_neg hwS]
+      have h2 : y ⟨w.1, hwu⟩ = Y w := by simp only [y, dite_eq_right hwS]
       rw [h2] at h1
       rw [h1]
-    · rw [if_neg hv]
+    · rw [ite_eq_right hv]
       have hv' : v ∉ Deco.at d w.1 := by
         show v ∉ Formalism.HermitianLatticesTheory.localization₂ w.1.asIdeal d.N
         rwa [hNx, hN] at hv

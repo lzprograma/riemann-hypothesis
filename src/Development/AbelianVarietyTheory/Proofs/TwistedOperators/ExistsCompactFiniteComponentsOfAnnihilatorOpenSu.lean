@@ -48,7 +48,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open GlobalTheory.MixModel GlobalTheory.Unf
 noncomputable section
@@ -82,7 +81,7 @@ theorem GlobalTheory.AnnihMat.annihilator_inBox_full : ∀ (D : D7) (ψ : AddCha
     refine continuous_pi fun a => continuous_pi fun b => ?_
     simp only [Matrix.single_apply]
     split_ifs
-    · exact continuous_cA'
+    · exact GlobalTheory.FockCompare.ThetaCont.continuous_conj
     · exact continuous_const
   have hK := fun i j => GlobalTheory.CondBound.annihilator_finPart_compact D ψ hψ (U.comap (g i j)) (hU.preimage (hg i j))
   choose K hKc hK using hK

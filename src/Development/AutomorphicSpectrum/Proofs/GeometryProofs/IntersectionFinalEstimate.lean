@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HasReferenceOfSandwichAllPrimes
 public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsModelPtsIntegrable
 public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.Weights
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalHolomorphicSectionOfPotential
@@ -68,68 +69,20 @@ public import GroundTheory.HeightsAndTheta.Heights.Intersections.PConsequences
 public import GroundTheory.HeightsAndTheta.Heights.Intersections.PPtsAbsIntegrable
 public import GroundTheory.HeightsAndTheta.Heights.Intersections.PPtsAbsMeasurable
 public import GroundTheory.HeightsAndTheta.Heights.SemipositiveHeights.PtsIntegrable
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularChartDataProperties
 import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PNbarLeviChartReg
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PNbarSmooth
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
 import Std.Tactic.BVDecide.Normalize.Prop
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.PermFinTwoUniv
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.NumberTheory.Height.NumberField
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHermExtend
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHoloInjDerivInj
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PProjSmoothAlong
-import Mathlib.Tactic.TypeStar
 import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCriticalFlatNotInjective
 import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PHolomorphicKernelFibre
 import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PInjectiveHolomorphicInverse
@@ -308,32 +261,20 @@ variable {e : ℕ} {X : Type} [TopologicalSpace X]
 def ReHolAt (A : FinHolAtlas e X) (f : X → ℝ) (y₀ : X) : Prop :=
   ∃ W : Set X, IsOpen W ∧ y₀ ∈ W ∧ ∃ G : X → ℂ, A.HoloOn W G ∧ ∀ z ∈ W, f z = (G z).re
 
-theorem holoOn_mono {A : FinHolAtlas e X} {U V : Set X} {G : X → ℂ} (h : A.HoloOn U G) (hVU : V ⊆ U) :
-    A.HoloOn V G := fun j u hu => h j u ⟨hu.1, hVU hu.2⟩
-
 theorem ReHolAt.congr {A : FinHolAtlas e X} {f g : X → ℝ} {y₀ : X} (hg : ReHolAt A g y₀)
     (h : f =ᶠ[𝓝 y₀] g) : ReHolAt A f y₀ := by
   obtain ⟨W, hW, hy, G, hG, hWG⟩ := hg
   obtain ⟨T, hT, hTo, hyT⟩ := mem_nhds_iff.1 h
-  exact ⟨W ∩ T, hW.inter hTo, ⟨hy, hyT⟩, G, holoOn_mono hG Set.inter_subset_left,
+  exact ⟨W ∩ T, hW.inter hTo, ⟨hy, hyT⟩, G, GlobalTheory.CompanionTheory.Ar.Giv.MuLimit.holo_mono hG Set.inter_subset_left,
     fun z hz => (hT hz.2).trans (hWG z hz.1)⟩
 
 theorem ReHolAt.add {A : FinHolAtlas e X} {f g : X → ℝ} {y₀ : X} (hf : ReHolAt A f y₀)
-    (hg : ReHolAt A g y₀) : ReHolAt A (fun y => f y + g y) y₀ := by
-  obtain ⟨W, hW, hy, G, hG, hWG⟩ := hf
-  obtain ⟨W', hW', hy', G', hG', hWG'⟩ := hg
-  refine ⟨W ∩ W', hW.inter hW', ⟨hy, hy'⟩, fun z => G z + G' z, fun j u hu => ?_, fun z hz => ?_⟩
-  · exact (hG j u ⟨hu.1, hu.2.1⟩).add (hG' j u ⟨hu.1, hu.2.2⟩)
-  · show f z + g z = (G z + G' z).re
-    rw [hWG z hz.1, hWG' z hz.2, Complex.add_re]
+    (hg : ReHolAt A g y₀) : ReHolAt A (fun y => f y + g y) y₀ :=
+  _root_.GlobalTheory.CompanionTheory.Ar.Giv.Push.DCont.ReHolAt.add hf hg
 
 theorem ReHolAt.const_mul {A : FinHolAtlas e X} {f : X → ℝ} {y₀ : X} (c : ℝ) (hf : ReHolAt A f y₀) :
-    ReHolAt A (fun y => c * f y) y₀ := by
-  obtain ⟨W, hW, hy, G, hG, hWG⟩ := hf
-  refine ⟨W, hW, hy, fun z => (c : ℂ) * G z, fun j u hu => ?_, fun z hz => ?_⟩
-  · exact analyticAt_const.mul (hG j u hu)
-  · show c * f z = ((c : ℂ) * G z).re
-    rw [hWG z hz, Complex.re_ofReal_mul]
+    ReHolAt A (fun y => c * f y) y₀ :=
+  _root_.GlobalTheory.CompanionTheory.Ar.Giv.Push.DCont.ReHolAt.const_mul c hf
 
 theorem ReHolAt.sub {A : FinHolAtlas e X} {f g : X → ℝ} {y₀ : X} (hf : ReHolAt A f y₀)
     (hg : ReHolAt A g y₀) : ReHolAt A (fun y => f y - g y) y₀ := by
@@ -342,38 +283,13 @@ theorem ReHolAt.sub {A : FinHolAtlas e X} {f g : X → ℝ} {y₀ : X} (hf : ReH
   ring
 
 theorem ReHolAt.sum {A : FinHolAtlas e X} {J : Type} (s : Finset J) {f : J → X → ℝ} {y₀ : X}
-    (hf : ∀ i ∈ s, ReHolAt A (f i) y₀) : ReHolAt A (fun y => ∑ i ∈ s, f i y) y₀ := by
-  classical
-  induction s using Finset.induction_on with
-  | empty =>
-    refine ⟨Set.univ, isOpen_univ, Set.mem_univ _, fun _ => 0, fun j u _ => analyticAt_const, ?_⟩
-    intro z _
-    simp
-  | insert a s ha ih =>
-    refine ((hf a (Finset.mem_insert_self _ _)).add
-      (ih fun i hi => hf i (Finset.mem_insert_of_mem hi))).congr (Eventually.of_forall fun y => ?_)
-    show ∑ i ∈ insert a s, f i y = f a y + ∑ i ∈ s, f i y
-    rw [Finset.sum_insert ha]
+    (hf : ∀ i ∈ s, ReHolAt A (f i) y₀) : ReHolAt A (fun y => ∑ i ∈ s, f i y) y₀ :=
+  _root_.GlobalTheory.CompanionTheory.Ar.Giv.Push.DCont.ReHolAt.sum s hf
 
 theorem reHolAt_log_norm {A : FinHolAtlas e X} {W : Set X} {f : X → ℂ} {y₀ : X} (hW : IsOpen W)
     (hf : A.HoloOn W f) (hy : y₀ ∈ W) (h0 : f y₀ ≠ 0) :
-    ReHolAt A (fun y => Real.log ‖f y‖) y₀ := by
-  have hS : IsOpen {w : ℂ | w / f y₀ ∈ Complex.slitPlane} :=
-    Complex.isOpen_slitPlane.preimage (continuous_id.div_const _)
-  have hW' := (_root_.GlobalTheory.CompanionTheory.Ar.Giv.Push.DCont.holoOn_continuousOn hf).isOpen_inter_preimage hW hS
-  refine ⟨_, hW', ⟨hy, ?_⟩, fun z => Complex.log (f z / f y₀) + (Real.log ‖f y₀‖ : ℂ),
-    fun j u hu => ?_, fun z hz => ?_⟩
-  · show f y₀ / f y₀ ∈ Complex.slitPlane
-    rw [div_self h0]
-    exact Complex.one_mem_slitPlane
-  · have h1 : AnalyticAt ℂ (f ∘ (A.chart j).symm) u := hf j u ⟨hu.1, hu.2.1⟩
-    exact ((h1.div_const (c := f y₀)).clog hu.2.2).add analyticAt_const
-  · have hz0 : f z ≠ 0 := fun h => by
-      have := Complex.slitPlane_ne_zero hz.2
-      simp [h] at this
-    rw [Complex.add_re, Complex.log_re, norm_div, Real.log_div (norm_ne_zero_iff.2 hz0) (norm_ne_zero_iff.2 h0),
-      Complex.ofReal_re]
-    ring
+    ReHolAt A (fun y => Real.log ‖f y‖) y₀ :=
+  _root_.GlobalTheory.CompanionTheory.Ar.Giv.Push.DCont.reHolAt_log_norm hW hf hy h0
 
 end General
 
@@ -602,8 +518,8 @@ theorem potential_nbarQ (X : ComponentSetting D O Lt) (Θ : LocPot X.M.Xc) (hs :
   have hall := (h1.add ((h2.add h3).const_mul ((p : ℝ) / q))).sub h4
   obtain ⟨W, hW, hyW, G, hG, hWG⟩ := hall
   refine ⟨W ∩ (U₁ ∩ (U₂ ∩ X.S.R.Yo)), hW.inter (hU₁.inter (hU₂.inter hYo)), ⟨hyW, hy₁, hy₂, hy.2⟩, ?_, s,
-    fun y' hy' => hsm y' hy'.2.1, fun p => holoOn_mono (hsH p) fun y' hy' => hy'.2.1, G,
-    holoOn_mono hG Set.inter_subset_left, fun y' hy' => ?_⟩
+    fun y' hy' => hsm y' hy'.2.1, fun p => GlobalTheory.CompanionTheory.Ar.Giv.MuLimit.holo_mono (hsH p) fun y' hy' => hy'.2.1, G,
+    GlobalTheory.CompanionTheory.Ar.Giv.MuLimit.holo_mono hG Set.inter_subset_left, fun y' hy' => ?_⟩
   · intro y' hy'
     exact ⟨⟨⟨(hU₁s hy'.2.1 : _), (hU₂s hy'.2.2.1).1⟩, Set.mem_univ _⟩, hy'.2.2.2⟩
   · have hm := hsm y' hy'.2.1
@@ -828,12 +744,12 @@ theorem logRatio_smul {a a₀ : HermLine ι} (hd : a.a = a₀.a) (c : K → ℂ)
   have hcone := cone_smul c z hc
   unfold logRatio
   by_cases h : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0
-  · rw [if_pos (hcone.mpr h), if_pos h, a.smul c z hc, a₀.smul c z hc, hd]
+  · rw [ite_eq_left (hcone.mpr h), ite_eq_left h, a.smul c z hc, a₀.smul c z hc, hd]
     have hprod : (∏ k, ‖c k‖ ^ a₀.a k) ≠ 0 :=
       Finset.prod_ne_zero_iff.mpr fun k _ => zpow_ne_zero _ (norm_ne_zero_iff.mpr (hc k))
     rw [Real.log_mul hprod (a₀.pos z h).ne', Real.log_mul hprod (a.pos z h).ne']
     ring
-  · rw [if_neg (fun h' => h (hcone.mp h')), if_neg h]
+  · rw [ite_eq_right (fun h' => h (hcone.mp h')), ite_eq_right h]
 
 theorem logRatio_smooth {a a₀ : HermLine ι} (ha : IsSmoothHerm a) (ha₀ : IsSmoothHerm a₀) :
     ReciprocityTheory.ChartRestriction.G.AI.I2.SmoothFn (logRatio a a₀) := by
@@ -843,7 +759,7 @@ theorem logRatio_smooth {a a₀ : HermLine ι} (ha : IsSmoothHerm a) (ha₀ : Is
   refine ((h0.log fun z hz => (a₀.pos z hz).ne').sub (h1.log fun z hz => (a.pos z hz).ne')).congr ?_
   intro z hz
   have hz' : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0 := hz
-  simp only [logRatio, if_pos hz']
+  simp only [logRatio, ite_eq_left hz']
 
 theorem tensor_logRatio_h {a a₀ : HermLine ι}
     (hu : ∀ (c : K → ℂ) z, (∀ k, c k ≠ 0) → logRatio a a₀ (fun p => c p.1 * z p) = logRatio a a₀ z)
@@ -852,7 +768,7 @@ theorem tensor_logRatio_h {a a₀ : HermLine ι}
   have h0 := a₀.pos z hz
   have h1 := a.pos z hz
   show a₀.h z * Real.exp (-logRatio a a₀ z) = a.h z
-  rw [logRatio, if_pos hz, neg_sub, Real.exp_sub, Real.exp_log h1, Real.exp_log h0,
+  rw [logRatio, ite_eq_left hz, neg_sub, Real.exp_sub, Real.exp_log h1, Real.exp_log h0,
     ← mul_div_assoc, mul_div_right_comm, div_self h0.ne', one_mul]
 
 theorem word_step (I : Ideal (MRing ι) → (n : ℕ) → (Fin n → HermLine ι) → ℝ)
@@ -944,18 +860,7 @@ namespace GlobalTheory.CompanionTheory.Ar.Giv.Mix
 
 theorem continuous_of_atlasSmooth {e : ℕ} {X : Type} [TopologicalSpace X] {A : FinHolAtlas e X}
     {f : X → ℝ} (hf : A.Smooth f) : Continuous f := by
-  rw [continuous_iff_continuousAt]
-  intro x
-  obtain ⟨j, hj⟩ := A.cover x
-  have h1 : ContinuousOn (f ∘ (A.chart j).symm) (A.chart j).target := by
-    have := (hf j).continuousOn
-    simpa [Set.preimage_univ, Set.inter_univ] using this
-  have h2 : ContinuousAt ((f ∘ (A.chart j).symm) ∘ A.chart j) x :=
-    (h1.continuousAt ((A.chart j).open_target.mem_nhds ((A.chart j).map_source hj))).comp
-      ((A.chart j).continuousAt hj)
-  refine h2.congr ?_
-  filter_upwards [(A.chart j).open_source.mem_nhds hj] with z hz
-  simp [(A.chart j).left_inv hz]
+  apply _root_.GlobalTheory.CompanionTheory.Ar.FlatBound.continuous_of_smooth <;> assumption
 
 theorem tendsto_ptsIntegral_of_chart_conv : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (P : Ideal (MRing ι)) (n : ℕ) (M : CxModel P n) (R : GroundTheory.Heights₂.Heights.Regular.RegChartData M.atlas) (Θ : LocPot M.Xc) (Pp : Fin n → LocPot M.Xc) (f : Fin n → M.Xc → ℝ) (fT : Fin n → ℝ → M.Xc → ℝ) (G : M.Xc → ℝ) (GT : ℝ → M.Xc → ℝ) (C : ℝ) (L : ℝ → Fin n → HermLine ι) (g : ℝ → ((Σ k, ι k) → ℂ) → ℝ), IsArithVar P (n + 1) → IsPotential M.atlas Θ → IsPosPot M.atlas Θ → (∀ i, IsPotential M.atlas (Pp i)) → (∀ i, M.atlas.SmoothOn R.Yo (f i)) → (∀ᶠ t in 𝓝[>] (0 : ℝ), ∀ i, M.atlas.Smooth (fT i t) ∧ IsPsh M.atlas (Pp i + LocPot.ofFun (fT i t) + Θ) ∧ ∀ x ∈ R.Yo, |fT i t x| ≤ C + C * Real.log (R.r x) ∧ fT i t x ≤ C) → (∀ i, ∀ j, ∀ K' ⊆ (M.atlas.chart j).target ∩ (M.atlas.chart j).symm ⁻¹' R.Yo, IsCompact K' → TendstoUniformlyOn (fun t => fT i t ∘ (M.atlas.chart j).symm) (f i ∘ (M.atlas.chart j).symm) (𝓝[>] 0) K' ∧ TendstoUniformlyOn (fun t => fderiv ℝ (fT i t ∘ (M.atlas.chart j).symm)) (fderiv ℝ (f i ∘ (M.atlas.chart j).symm)) (𝓝[>] 0) K' ∧ TendstoUniformlyOn (fun t => fderiv ℝ (fderiv ℝ (fT i t ∘ (M.atlas.chart j).symm))) (fderiv ℝ (fderiv ℝ (f i ∘ (M.atlas.chart j).symm))) (𝓝[>] 0) K') → (∀ᶠ t in 𝓝[>] (0 : ℝ), M.atlas.Smooth (GT t) ∧ ∀ x ∈ R.Yo, |GT t x| ≤ C + C * Real.log (R.r x)) → (∀ K' ⊆ R.Yo, IsCompact K' → TendstoUniformlyOn GT G (𝓝[>] 0) K') → (∀ᶠ t in 𝓝[>] (0 : ℝ), ∀ i x, ∀ y₀ ∈ (Pp i + LocPot.ofFun (fT i t)).U x ∩ Set.univ, ∃ U : Set M.Xc, IsOpen U ∧ y₀ ∈ U ∧ U ⊆ (Pp i + LocPot.ofFun (fT i t)).U x ∩ Set.univ ∧ ∃ s : M.Xc → (Σ k, ι k) → ℂ, (∀ y' ∈ U, s y' ∈ mcPts P ∧ M.proj (s y') = y') ∧ (∀ p, M.atlas.HoloOn U fun y' => s y' p) ∧ ∃ G' : M.Xc → ℂ, M.atlas.HoloOn U G' ∧ ∀ y' ∈ U, (Pp i + LocPot.ofFun (fT i t)).φ x y' - Real.log ((L t i).h (s y')) = (G' y').re) → (∀ᶠ t in 𝓝[>] (0 : ℝ), ∀ z ∈ mcPts P, g t z = GT t (M.proj z)) → ∃ l : ℝ, Tendsto (fun t => ptsIntegral P (pot (L t)) (g t)) (𝓝[>] 0) (𝓝 l) := by
   intro K _ ι _ P n M R Θ Pp f fT G GT C L g hV hΘ hΘp hP hf hfT hconv hGT hGc hrel hg
@@ -1365,13 +1270,12 @@ theorem term_tendsto (X : ComponentSetting D O Lt) (B : ℕ) (Θ : LocPot X.M.Xc
       rw [_root_.GlobalTheory.CompanionTheory.Ar.Giv.Mix.muReg_h_eq_of_mem_mcPts II Ψ K ι Ω E D O Lt X B u z hz, Real.log_mul (mul_pos (X.S.ref.pos z hz.1) (Real.exp_pos _)).ne'
         (hvp 0).ne', Real.log_mul (X.S.ref.pos z hz.1).ne' (Real.exp_pos _).ne', Real.log_exp]
     unfold logRatio
-    rw [if_pos hz.1, hlog, hlog]
+    rw [ite_eq_left hz.1, hlog, hlog]
     ring
 
 end
 
 end Mix
-
 
 open Mix in
 theorem mixed_limit : ReciprocityTheory.ChartRestriction.G.Geo.ResK.ResKStatement → TopNMixedLimit.Statement := by
@@ -1470,8 +1374,6 @@ theorem stokes_of_model : PB.Inputs → Prov.An → ReciprocityTheory.ChartRestr
 
 end ModelDimension.OrbitMargin
 
-theorem ModelDimension.abelian_cm_stokes_identity : PB.Inputs → Prov.An → ReciprocityTheory.ChartRestriction.G.Geo.ResK.ResKStatement → Flat.GagaSections → GlobalTheory.Published.SemiAbelianHomExtension → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] [IsAbelianGalois ℚ E] (H : Host E) (D : Datum H) (Xo : ∀ l : Tor.Level H, Moduli D l) (l : Tor.Level H) (c : Coeff l) (Y : Model (Xo l) c (algebraMap (𝓞 c.F) c.F)) (II : IntersectionSystem) (K : Type) [Fintype K] (J : K → Type) [∀ k, Fintype (J k)] (Ω : Type) [Field Ω] [Algebra ℚ Ω] (W : CMType H → Type) [∀ τ, AddCommGroup (W τ)] [∀ τ, Module Ω (W τ)] (Dc : ComponentData II (CMType H) K J Ω W) (Hd : HodgeData Dc) (S₀ : Finset ℕ) (Or : CptOrigin Y S₀ Dc Hd) (B₁ : ℕ) (U : ((Σ k, J k) → ℂ) → ℝ), IsFullIntersectionSystem II → admitted Xo l c Y Or B₁ → Or.𝔐.IsCuspWeight Or.sm U → ∀ [DecidableEq (CMType H)] (O Lt : Type) [CommRing O] [AddCommGroup Lt] [Module O Lt] (X : ComponentSetting Dc O Lt), X.H = Hd → (∀ z ∈ Dc.Xo, X.Cd.cuspWeight z = U z) → CuspBundlePos X → ∀ B : ℕ, 4 * Dc.f + 2 ≤ B → ArLimExists X.H X.S B → Top.StokesAt X B :=
-  ModelDimension.OrbitMargin.stokes_of_model
 end -- clump:auto
 end -- clump:auto
 end -- clump:auto
@@ -1486,8 +1388,6 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
 open GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp MeasureTheory
 
-theorem _root_.GlobalTheory.CompanionTheory.Relay.intersection_final_estimate : PB.Inputs → Prov.An → ReciprocityTheory.ChartRestriction.G.Geo.ResK.ResKStatement → Flat.GagaSections → GlobalTheory.Published.SemiAbelianHomExtension → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] [IsAbelianGalois ℚ E] (H : Host E) (D : Datum H) (Xo : ∀ l : Tor.Level H, Moduli D l) (l : Tor.Level H) (c : Coeff l) (Y : Model (Xo l) c (algebraMap (𝓞 c.F) c.F)) (II : IntersectionSystem) (K : Type) [Fintype K] (J : K → Type) [∀ k, Fintype (J k)] (Ω : Type) [Field Ω] [Algebra ℚ Ω] (W : CMType H → Type) [∀ τ, AddCommGroup (W τ)] [∀ τ, Module Ω (W τ)] (Dc : ComponentData II (CMType H) K J Ω W) (Hd : HodgeData Dc) (S₀ : Finset ℕ) (Or : CptOrigin Y S₀ Dc Hd) (B₁ : ℕ) (U : ((Σ k, J k) → ℂ) → ℝ), IsFullIntersectionSystem II → admitted Xo l c Y Or B₁ → Or.𝔐.IsCuspWeight Or.sm U → ∀ [DecidableEq (CMType H)] (O Lt : Type) [CommRing O] [AddCommGroup Lt] [Module O Lt] (X : ComponentSetting Dc O Lt), X.H = Hd → (∀ z ∈ Dc.Xo, X.Cd.cuspWeight z = U z) → CuspBundlePos X → ∀ B : ℕ, 4 * Dc.f + 2 ≤ B → ArLimExists X.H X.S B → Top.StokesAt X B := by
-  first | exact @ModelDimension.abelian_cm_stokes_identity
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntersectionFinalEstimate =====

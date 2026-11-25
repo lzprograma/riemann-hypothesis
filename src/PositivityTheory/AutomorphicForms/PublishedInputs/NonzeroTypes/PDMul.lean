@@ -50,13 +50,8 @@ theorem unit_factor {R : Type} [CommRing R] [IsLocalRing R] (Q : Ideal R) (hQ : 
       rw [sub_mul, ← hW, Units.mul_inv]
     rw [e]
     exact Ideal.mul_mem_right _ _ hxyz
-  have hunit : IsUnit (x * ((W⁻¹ : Rˣ) : R)) := by
-    rw [← IsLocalRing.notMem_maximalIdeal]
-    intro hm
-    have h1 : (1 : R) ∈ IsLocalRing.maximalIdeal R := by
-      have := Ideal.sub_mem _ hm (hQ hsub)
-      simpa using this
-    exact (IsLocalRing.maximalIdeal.isMaximal R).ne_top ((Ideal.eq_top_iff_one _).mpr h1)
+  have hunit : IsUnit (x * ((W⁻¹ : Rˣ) : R)) :=
+    Ideal.isUnit_of_sub_one_mem_jacobson _ (by rw [IsLocalRing.ringJacobson_eq_maximalIdeal]; exact hQ hsub)
   refine ⟨hunit.unit, ?_, ?_⟩
   · rw [IsUnit.unit_spec]; exact hsub
   · rw [IsUnit.unit_spec, ← hW, mul_left_comm, Units.mul_inv, mul_one]

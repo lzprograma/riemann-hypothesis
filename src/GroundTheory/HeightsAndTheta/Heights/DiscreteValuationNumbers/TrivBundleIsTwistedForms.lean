@@ -2,46 +2,6 @@ module
 
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsIntersectionFamily
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.MemOfMemSupportDivCycle, GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.TrivBundleIsTwistedForms
@@ -61,34 +21,14 @@ open MvPolynomial Module ReciprocityTheory.ChartRestriction.G.Geo ReciprocityThe
 
 universe u v w
 
-section Lengths
-
-end Lengths
-
 section Models
 
 variable {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fintype (ι k)]
 variable {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
 
-def redMap : MRingOver O ι →+* MRingOver (IsLocalRing.ResidueField O) ι :=
-  MvPolynomial.map (IsLocalRing.residue O)
-
 def IsModelOver (P : Ideal (MRingOver O ι)) (d : ℕ) : Prop :=
   IsMultiProjPrime P ∧ P.comap (C : O →+* MRingOver O ι) = ⊥ ∧
     ringKrullDim (MRingOver O ι ⧸ P) = ((d + 1 + Fintype.card K : ℕ) : WithBot ℕ∞)
-
-def intCyc {R : Type*} [CommRing R] (Z : Ideal (MRingOver R ι) →₀ ℕ) : Ideal (MRingOver R ι) →₀ ℤ :=
-  Finsupp.mapRange (fun m : ℕ => (m : ℤ)) Nat.cast_zero Z
-
-def specCyc (ϖ : O) (P : Ideal (MRingOver O ι)) : Ideal (MRingOver O ι) →₀ ℕ :=
-  divCycle P (C ϖ)
-
-def divO (P : Ideal (MRingOver O ι)) (f g : MRingOver O ι) : Ideal (MRingOver O ι) →₀ ℤ :=
-  intCyc (divCycle P f) - intCyc (divCycle P g)
-
-def redEval (J : Ideal (MRingOver (IsLocalRing.ResidueField O) ι) → ℤ)
-    (Z : Ideal (MRingOver O ι) →₀ ℤ) : ℤ :=
-  Z.sum fun W m => m * J (W.map redMap)
 
 end Models
 
@@ -100,23 +40,8 @@ variable {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fintype (ι k)]
 variable {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
 
 
-omit [Fintype K] [IsDomain O] [IsDiscreteValuationRing O] in
-theorem isMultiHomog_C (a : O) : IsMultiHomog (C a : MRingOver O ι) 0 := by
-  classical
-  intro m hm k
-  rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_C] at hm
-  split_ifs at hm with h0
-  · subst h0; simp
-  · exact absurd rfl hm
-
 
 end Inhabitants
-
-section LengthInhabitants
-
-open IsLocalRing
-
-end LengthInhabitants
 
 end GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR
 end -- clump:auto
@@ -149,24 +74,6 @@ def segreVec (pt : MRingOver o ι →ₐ[o] Ω) : ((k : K) → ι k) → Ω :=
 
 end Coordinates
 
-section Flags
-
-variable {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fintype (ι k)]
-variable {o : Type*} [CommRing o] {Ω : Type*} [Field Ω] [Algebra o Ω]
-variable {E : Type*} [AddCommGroup E] [Module Ω E] {N : ℕ}
-
-end Flags
-
-section ProjBundle
-
-variable {K : Type*} [Fintype K]
-
-variable {ι : K → Type w} [∀ k, Fintype (ι k)] {τ : Type w} [Fintype τ]
-variable {F : Type*} [Field F] {Ω : Type*} [Field Ω] [Algebra F Ω]
-variable {E : Type*} [AddCommGroup E] [Module Ω E] {N : ℕ}
-
-end ProjBundle
-
 section PolyNum
 
 variable {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fintype (ι k)]
@@ -174,13 +81,7 @@ variable {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fintype (ι k)]
 def monoList {N : ℕ} (mono : Fin N →₀ ℕ) : List (Fin N) :=
   (List.finRange N).flatMap fun l => List.replicate (mono l) l
 
-def tupleOfList {α : Type*} [Zero α] {n : ℕ} (L : List α) : Fin n → α := fun j => L.getD j 0
-
 variable {F : Type*} [Field F]
-
-def polyNum (I : IFamily F ι) (V : Ideal (MRingOver F ι)) (n : ℕ) {N : ℕ} (cls : Fin N → K → ℤ)
-    (Q : MvPolynomial (Fin N) ℤ) (Y : List (K → ℤ)) : ℤ :=
-  ∑ mono ∈ Q.support, Q.coeff mono * I V n (tupleOfList ((monoList mono).map cls ++ Y))
 
 end PolyNum
 
@@ -199,19 +100,6 @@ structure VPair (K : Type*) [Fintype K] (O : Type*) [CommRing O] (ι : K → Typ
   g : MRingOver O ι
 
 variable {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
-
-def vNum (P : Ideal (MRingOver O ι)) (Iκ : IFamily (IsLocalRing.ResidueField O) ι) (n : ℕ)
-    (p : VPair K O ι) (L : List (K → ℤ)) : ℤ :=
-  redEval (fun W => Iκ W n (tupleOfList L)) (divO P p.f p.g)
-
-def monoPairNum (P : Ideal (MRingOver O ι)) (Iκ : IFamily (IsLocalRing.ResidueField O) ι) (n : ℕ)
-    {r : ℕ} (pr : Fin r → VPair K O ι) (ls : List (Fin r)) : ℤ :=
-  ∑ k : Fin ls.length, vNum P Iκ n (pr (ls.get k))
-    ((ls.take k).map (fun l => (pr l).y - (pr l).b) ++ (ls.drop (k + 1)).map fun l => (pr l).y)
-
-def pairNum (P : Ideal (MRingOver O ι)) (Iκ : IFamily (IsLocalRing.ResidueField O) ι) (n : ℕ)
-    {r : ℕ} (pr : Fin r → VPair K O ι) (Q : MvPolynomial (Fin r) ℤ) : ℤ :=
-  ∑ mono ∈ Q.support, Q.coeff mono * monoPairNum P Iκ n pr (monoList mono)
 
 variable {Ω : Type*} [Field Ω] [Algebra O Ω] {E : Type*} [AddCommGroup E] [Module Ω E] {N : ℕ}
 
@@ -233,12 +121,6 @@ def genPt (R : Type*) [CommRing R] [IsDomain R] (ι : K → Type*) [∀ k, Finty
     MRingOver R ι →ₐ[R] FractionRing (MRingOver R ι) :=
   IsScalarTower.toAlgHom R _ _
 
-
-section DVR
-
-variable {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
-
-end DVR
 
 end Inhabitants
 

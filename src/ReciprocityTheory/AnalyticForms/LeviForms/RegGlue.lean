@@ -76,11 +76,11 @@ theorem regMax_dominated : RegMaxDominatedStatement := by
       linarith
     · intro j hj
       show (if j ∈ I then t j else t k₀ - η) + η * h j ≤ (if k₀ ∈ I then t k₀ else t k₀ - η) + η * h k₀
-      rw [if_neg hj, if_pos hk₀]
+      rw [ite_eq_right hj, ite_eq_left hk₀]
       have a := mul_lt_mul_of_pos_left (abs_lt.mp (hs j)).2 hη
       have b := mul_lt_mul_of_pos_left (abs_lt.mp (hs k₀)).1 hη
       linarith
-  · push_neg at hs
+  · push Not at hs
     obtain ⟨j, hj⟩ := hs
     have h0 : ∏ i, ReciprocityTheory.AnForm.A.kθ (h i) = 0 :=
       Finset.prod_eq_zero (Finset.mem_univ j) (kθ_eq_zero_of_half_le_abs hj)
@@ -140,8 +140,7 @@ lemma polydiscCutoff_eq_zero_of_not_mem_ball {e : ℕ} {z : Fin e → ℂ} (hz :
   unfold cutP
   rw [mem_ball_zero_iff, not_lt] at hz
   obtain ⟨i, hi⟩ : ∃ i, 9 / 8 ≤ ‖z i‖ := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have h3 : ‖z‖ < 9 / 8 := (pi_norm_lt_iff (by norm_num)).mpr hcon
     linarith
   apply Finset.prod_eq_zero (Finset.mem_univ i)
@@ -191,7 +190,7 @@ private theorem smooth_glueCut_of_compatible {e : ℕ} {X : Type} [TopologicalSp
     intro z hz
     show glueCut B j ((A.chart k).symm z) = cutP (B.chart j ((A.chart k).symm z)) - 1
     unfold glueCut
-    exact if_pos hz.2.2
+    exact ite_eq_left hz.2.2
   · refine ⟨(A.chart k).target ∩ (A.chart k).symm ⁻¹' ((B.chart j).symm '' closedBall 0 (9 / 8))ᶜ,
       (A.chart k).isOpen_inter_preimage_symm hCc.isOpen_compl, ⟨hx.1, fun hc => hxs (hCsrc hc)⟩, ?_⟩
     refine (contDiffOn_const (c := (-1 : ℝ))).congr ?_
@@ -207,7 +206,7 @@ theorem glue_cutoff : GlueCutoffStatement := by
     · constructor <;> linarith [polydiscCutoff_nonneg (B.chart j y), cutP_le_one (B.chart j y)]
     · norm_num
   · unfold glueCut
-    rw [if_pos hy.1, polydiscCutoff_eq_one_of_mem_ball hy.2, sub_self]
+    rw [ite_eq_left hy.1, polydiscCutoff_eq_one_of_mem_ball hy.2, sub_self]
   · unfold glueCut
     split_ifs with hys
     · have hn : B.chart j y ∉ ball (0 : Fin e → ℂ) (9 / 8) := fun hb =>

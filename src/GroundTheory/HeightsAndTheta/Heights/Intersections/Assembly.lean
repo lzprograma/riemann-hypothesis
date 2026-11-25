@@ -153,63 +153,11 @@ public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PCoordRatioDeg
 public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PFibreMultiHomog
 public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PGenFibreChartDeg
 public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ProjContract
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.RingTheory.LocalProperties.Reduced
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.TotallySplit
 import GroundTheory.HeightsAndTheta.Heights.Intersections.IsSmoothHermFubiniStudyO1
-import Mathlib.Algebra.Order.Star.Real
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
 import Mathlib.Tactic.Linter.Style
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import GroundTheory.HeightsAndTheta.Heights.Intersections.IsHorizontalImageZ
 import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiHomogOfPullWeight
 import GroundTheory.HeightsAndTheta.Heights.Intersections.NormSegreSameOrbit
@@ -491,7 +439,7 @@ theorem VerticalEmbedding.proof (hD : regularityDehomogenization_holds.Statement
     if h : ReciprocityTheory.ChartRestriction.G.Geo.IsRelevant W then ∏ k, (X ⟨k, (h k).choose⟩ : MRing ι) ^ a k else 1
   have ht : ∀ W : Ideal (MRing ι), W.IsPrime → ReciprocityTheory.ChartRestriction.G.Geo.IsRelevant W → IsMultiHomog (t W) a ∧ t W ∉ W := by
     intro W hWp hW
-    simp only [t, dif_pos hW]
+    simp only [t, dite_eq_left hW]
     refine ⟨AvoidRing.isMultiHomog_coordProd _ _, fun hmem => ?_⟩
     obtain ⟨k, -, hk⟩ := hWp.prod_mem_iff.mp hmem
     exact (hW k).choose_spec (hWp.mem_of_pow_mem _ hk)
@@ -520,7 +468,7 @@ theorem VerticalEmbedding.proof (hD : regularityDehomogenization_holds.Statement
     intro s hs hsP W hW
     have hA : IsSectionOn P (HermLine.ofMetrics (fun k => fsMetric (ι := ι k)) (fun k => (a k : ℤ))) s :=
       ⟨a, fun _ => rfl, hs, hsP⟩
-    rw [if_neg (not_isHorizontal_of_dimOne arithVarZero hP hA hW)]
+    rw [ite_eq_right (not_isHorizontal_of_dimOne arithVarZero hP hA hW)]
     obtain ⟨-, -, hta, htW, hy⟩ := hdata s W hW
     obtain ⟨hyW, hm⟩ := hD K ι P s (t W) a W (y s W) hP.2.1 hs hsP hW hta htW (hy s)
     have hy0 : y s W ≠ 0 := by

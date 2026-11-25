@@ -54,8 +54,6 @@ open GlobalTheory.NormSum (Pair)
 
 namespace GlobalTheory.SqTop
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 abbrev GP := ∀ {D : D7} {T : Type} {Lc : LevCh D T} {sc : GlobalTheory.ChiGrid.Consts}, GridData Lc sc → T → ℝ → ℝ → ℝ → Prop
 
 structure Rec {D : D7} (large₂ : SizeData₂ D) : Prop where

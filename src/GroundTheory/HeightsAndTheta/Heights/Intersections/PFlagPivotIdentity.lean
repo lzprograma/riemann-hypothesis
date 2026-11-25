@@ -82,31 +82,31 @@ theorem pivotMatrix_rows (M : Matrix (Fin n) (Fin n) R) (j : Fin (n - 1)) {m : �
   ext a b
   have ha : (a : ℕ) < n - 1 := by have := j.2; have := a.2; omega
   rw [Matrix.mul_apply]
-  simp only [Matrix.submatrix_apply, pivotMatrix, Matrix.of_apply, Fin.val_castLE, dif_pos ha]
+  simp only [Matrix.submatrix_apply, pivotMatrix, Matrix.of_apply, Fin.val_castLE, dite_eq_left ha]
   rw [pivotMinor_eq_sum M ⟨a, ha⟩ (e b)]
   rw [← sum_castLE (m := (j : ℕ) + 1) (k := (a : ℕ) + 1) (Nat.succ_le_of_lt a.2)]
   · refine Finset.sum_congr rfl fun i _ => ?_
     have hi : ((Fin.castLE (n := (a : ℕ) + 1) (m := (j : ℕ) + 1) (Nat.succ_le_of_lt a.2) i) : ℕ) ≤ a :=
       Nat.lt_succ_iff.mp i.2
     simp only [pivotCoeff, Matrix.of_apply]
-    rw [dif_pos hi]
+    rw [dite_eq_left hi]
     rfl
   · intro i hi
     have : ¬ ((i : ℕ) ≤ a) := by omega
     simp only [pivotCoeff, Matrix.of_apply]
-    rw [dif_neg this, zero_mul]
+    rw [dite_eq_right this, zero_mul]
 
 theorem pivotCoeff_isLowerTriangular (M : Matrix (Fin n) (Fin n) R) (j : Fin (n - 1)) :
     (pivotCoeff M j).IsLowerTriangular := by
   intro a i hai
   have hai' : (a : ℕ) < i := OrderDual.toDual_lt_toDual.mp hai
   have : ¬ ((i : ℕ) ≤ a) := by omega
-  simp only [pivotCoeff, Matrix.of_apply, dif_neg this]
+  simp only [pivotCoeff, Matrix.of_apply, dite_eq_right this]
 
 theorem pivotCoeff_diag (M : Matrix (Fin n) (Fin n) R) (j : Fin (n - 1)) (a : Fin (j + 1)) :
     pivotCoeff M j a a = leadDet M a := by
   have ha : (a : ℕ) ≤ n := by have := j.2; have := a.2; omega
-  simp only [pivotCoeff, Matrix.of_apply, dif_pos le_rfl, pivotCof, leadDet, dif_pos ha]
+  simp only [pivotCoeff, Matrix.of_apply, dite_eq_left le_rfl, pivotCof, leadDet, dite_eq_left ha]
   have hl : (⟨a, Nat.lt_succ_self _⟩ : Fin ((a : ℕ) + 1)) = Fin.last a := rfl
   rw [hl, Fin.succAbove_last, Even.neg_one_pow ⟨a, rfl⟩, one_mul]
   rfl
@@ -115,7 +115,7 @@ theorem leadMinor_eq (M : Matrix (Fin n) (Fin n) R) (a : Fin (n - 1)) :
     leadMinor M a = leadDet M (a + 1) := by
   have h : (a : ℕ) + 1 ≤ n := by have := a.2; omega
   unfold leadMinor pivotMinor leadDet
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   congr 2
   funext c
   rcases c with ⟨c, hc⟩

@@ -368,17 +368,17 @@ private lemma cyclotomic_comp_X_add_one_eq (p : ℕ) [Fact p.Prime] :
     intro i
     rw [coeff_sub, coeff_X_pow]
     rcases lt_trichotomy i (p - 1) with h | h | h
-    · rw [if_neg h.ne, sub_zero]
+    · rw [ite_eq_right h.ne, sub_zero]
       exact Ideal.mem_span_singleton.1 (hE.mem (by rwa [hd]))
-    · rw [if_pos h, h, ← hd, hm.coeff_natDegree, sub_self]
+    · rw [ite_eq_left h, h, ← hd, hm.coeff_natDegree, sub_self]
       exact dvd_zero _
-    · rw [if_neg h.ne', sub_zero, coeff_eq_zero_of_natDegree_lt (by rwa [hd])]
+    · rw [ite_eq_right h.ne', sub_zero, coeff_eq_zero_of_natDegree_lt (by rwa [hd])]
       exact dvd_zero _
   have h0 : G.coeff 0 = 1 := by
     have h : ((cyclotomic p ℤ).comp (X + 1) - X ^ (p - 1)).coeff 0 = (C (p : ℤ) * G).coeff 0 := by
       rw [hG]
     have hp1 : (0 : ℕ) ≠ p - 1 := (Nat.sub_pos_of_lt hp.one_lt).ne
-    rw [coeff_sub, coeff_X_pow, if_neg hp1, sub_zero, coeff_C_mul, coeff_zero_eq_eval_zero,
+    rw [coeff_sub, coeff_X_pow, ite_eq_right hp1, sub_zero, coeff_C_mul, coeff_zero_eq_eval_zero,
       eval_comp] at h
     simp only [eval_add, eval_X, eval_one, zero_add, eval_one_cyclotomic_prime] at h
     have hpz : (p : ℤ) ≠ 0 := by exact_mod_cast hp.ne_zero

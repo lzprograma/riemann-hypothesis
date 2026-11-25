@@ -594,7 +594,7 @@ theorem UpperTheory.V.Z.Sym.Wt.twineC :
   have := hqThree k ((τ v + a) / 2) ((τ v - a) / 2)
   rw [h1, h2] at this
   rw [Fintype.sum_bool, ← this]
-  simp only [if_true, Bool.false_eq_true, if_false, Nat.add_sub_cancel, trOne _ _ _ _ hc]
+  simp only [ite_true, Bool.false_eq_true, ite_false, Nat.add_sub_cancel, trOne _ _ _ _ hc]
   ring
 end -- clump:auto
 end -- clump:auto
@@ -687,8 +687,6 @@ noncomputable section
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC GlobalTheory.SmGL Formalism.BasicNotions UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 open UpperTheory.V.W (Plc Lp)
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob UpperTheory.V.Z.Sym.Sig UpperTheory.V.Z.Sym.So UpperTheory.V.Z.Sym.Dict UpperTheory.V.Z.Sym.Dict.Br
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace UpperTheory.V.Z.Sym.So
 

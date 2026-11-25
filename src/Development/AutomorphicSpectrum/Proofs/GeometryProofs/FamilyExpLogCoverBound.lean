@@ -1,5 +1,7 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsDifferentiableOnTransfer
+
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
 public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExponentialFamilyPeriods
@@ -8,46 +10,7 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PeriodLattic
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PeriodSetClosed
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionSectionEqOfConnected
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -62,18 +25,7 @@ open GlobalTheory.CompanionTheory.Ar.Flat Metric
 theorem isHolTo_comp {V V' : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] [NormedAddCommGroup V'] [NormedSpace ℂ V']
     {X : Scheme.{0}} {A : Set V'} {y : V' → (Sp ℂ ⟶ X)} (hy : IsHolTo A y) {B' : Set V} (hB' : IsOpen B')
     {φ : V → V'} (hφ : DifferentiableOn ℂ φ B') (hmap : Set.MapsTo φ B' A) : IsHolTo B' (fun b => y (φ b)) := by
-  intro U f
-  obtain ⟨h₁, h₂⟩ := hy U f
-  have hset : {b ∈ B' | ⊤ ≤ y (φ b) ⁻¹ᵁ U} = B' ∩ φ ⁻¹' {v ∈ A | ⊤ ≤ y v ⁻¹ᵁ U} := by
-    ext b
-    constructor
-    · rintro ⟨hb, hU⟩
-      exact ⟨hb, hmap hb, hU⟩
-    · rintro ⟨hb, _, hU⟩
-      exact ⟨hb, hU⟩
-  rw [hset]
-  refine ⟨hφ.continuousOn.isOpen_inter_preimage hB' h₁, ?_⟩
-  exact h₂.comp (hφ.mono Set.inter_subset_left) (fun b hb => hb.2)
+  apply _root_.GlobalTheory.HolPeriods.isHolTo_comp <;> assumption
 
 section Exp
 
@@ -123,7 +75,7 @@ theorem period_of_tendsto (e : FamExp G M B ψ) (hsep : IsSeparated G.hom) (hhol
     classical
     let s : (Fin n → ℂ) → (Fin g → ℂ) := fun b =>
       if h : b ≠ b₀ ∧ ∃ m, bs m = b then q (Nat.find h.2) else p
-    have hs₀ : s b₀ = p := dif_neg (fun h => h.1 rfl)
+    have hs₀ : s b₀ = p := dite_eq_right (fun h => h.1 rfl)
     have hcont : ContinuousAt s b₀ := by
       rw [ContinuousAt, hs₀]
       intro U hU
@@ -138,7 +90,7 @@ theorem period_of_tendsto (e : FamExp G M B ψ) (hsep : IsSeparated G.hom) (hhol
       filter_upwards [hV] with b hbV
       show s b ∈ U
       by_cases h : b ≠ b₀ ∧ ∃ m, bs m = b
-      · have hsb : s b = q (Nat.find h.2) := dif_pos h
+      · have hsb : s b = q (Nat.find h.2) := dite_eq_left h
         rw [hsb]
         have hspec : bs (Nat.find h.2) = b := Nat.find_spec h.2
         refine hK _ ?_
@@ -146,7 +98,7 @@ theorem period_of_tendsto (e : FamExp G M B ψ) (hsep : IsSeparated G.hom) (hhol
         refine hbV _ (Finset.mem_range.mpr (not_le.mp hlt)) ?_ hspec.symm
         rw [hspec]
         exact h.1
-      · have hsb : s b = p := dif_neg h
+      · have hsb : s b = p := dite_eq_right h
         rw [hsb]
         exact mem_of_mem_nhds hU
     have hfr : ∃ᶠ b in 𝓝 b₀, b ∈ B ∧ s b ∈ e.per b := by
@@ -154,7 +106,7 @@ theorem period_of_tendsto (e : FamExp G M B ψ) (hsep : IsSeparated G.hom) (hhol
       filter_upwards [hne, hb (hhol.1.mem_nhds hb₀)] with m hm hmB
       refine ⟨hmB, ?_⟩
       have h : bs m ≠ b₀ ∧ ∃ k, bs k = bs m := ⟨hm, m, rfl⟩
-      obtain ⟨k, hk, hsk⟩ : ∃ k, bs k = bs m ∧ s (bs m) = q k := ⟨Nat.find h.2, Nat.find_spec h.2, dif_pos h⟩
+      obtain ⟨k, hk, hsk⟩ : ∃ k, bs k = bs m ∧ s (bs m) = q k := ⟨Nat.find h.2, Nat.find_spec h.2, dite_eq_left h⟩
       rw [hsk, ← hk]
       exact hper k
     have := _root_.GlobalTheory.CompanionTheory.Ar.Flat.mem_per_of_frequently R G g n M B ψ e hsep hhol b₀ hb₀ s hcont hfr

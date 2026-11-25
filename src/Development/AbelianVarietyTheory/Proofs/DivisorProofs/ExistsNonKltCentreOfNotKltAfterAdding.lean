@@ -106,7 +106,7 @@ theorem exists_isNkltCentre : ∀ (X : Scheme.{0}) [IsIntegral X] [IsLocallyNoet
   obtain ⟨η, m, g, hη, hm, hg, -⟩ := hk
   obtain ⟨m', g', hm', hg'⟩ := exists_isLogEqn_add hD hm hg
   rw [hg'.kltAt_iff hn hη hm'] at hnk
-  push_neg at hnk
+  push Not at hnk
   obtain ⟨E, hE, hd⟩ := hnk
   obtain ⟨z, hz, hc⟩ := exists_centreAt hE
   exact ⟨z, hz, E, η, m', g', hη, hm', fun w hw => hg' w (hw.trans hz), hc, hd⟩

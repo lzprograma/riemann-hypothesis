@@ -127,16 +127,10 @@ lemma exists_eigvec (T : J → Module.End ℂ V) (hT : ∀ i j, T i * T j = T j 
   obtain ⟨x, hxU, hx0⟩ := (Submodule.ne_bot_iff U).mp hU0
   refine ⟨x, hx0, fun j => ?_⟩
 
-  have hsub : ∀ n : ℕ, ∀ y ∈ U, ((T j - s j • 1) ^ n) y ∈ U := by
-    intro n
-    induction n with
-    | zero => intro y hy; simpa using hy
-    | succ n ih =>
-      intro y hy
-      rw [pow_succ', Module.End.mul_apply]
-      have h1 := ih y hy
+  have hsub : ∀ n : ℕ, ∀ y ∈ U, ((T j - s j • 1) ^ n) y ∈ U := fun n =>
+    Module.End.pow_apply_mem_of_forall_mem n fun y hy => by
       simp only [LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply]
-      exact U.sub_mem (hUT j _ h1) (U.smul_mem _ h1)
+      exact U.sub_mem (hUT j _ hy) (U.smul_mem _ hy)
   let U' : Submodule ℂ V := U ⊓ (T j).eigenspace (s j)
   have hU'P : U' ∈ P := by
     refine ⟨?_, inf_le_left.trans hUE, ?_⟩

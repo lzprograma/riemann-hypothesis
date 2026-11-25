@@ -517,7 +517,6 @@ theorem exists_osc_involution (H : Matrix ι ι ℂ) (h1 : Hᴴ = H) (h2 : H * H
         (crd_kL _), e3, e2, e6]
       field_simp)
   let φ : G →* uGrp H := m.toHomUnits.codRestrict (uGrp H) hm
-  have hφ : ∀ g, ((φ g).1 : Matrix ι ι ℂ) = m g := fun _ => rfl
   refine ⟨fun g => Ω (φ g), isOsc_comp (crd ι) φ (fun g v => crd_kL _ v) hΩ, fun g hg f hf => ?_,
     fun hmc f hf => ?_, fun s g hs hpos hsg f hf hD => ?_⟩
   · have : φ g = 1 := Subtype.ext (Units.ext hg)

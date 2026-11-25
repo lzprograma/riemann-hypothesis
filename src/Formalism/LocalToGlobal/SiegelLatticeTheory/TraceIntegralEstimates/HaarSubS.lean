@@ -12,8 +12,6 @@ namespace Formalism.L2.S.Pv.HaarSubS
 
 open Formalism.L2.SG.HidaSetting
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def Hu (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u : D.what₂.Word) : Set X.B.I.Ginf :=

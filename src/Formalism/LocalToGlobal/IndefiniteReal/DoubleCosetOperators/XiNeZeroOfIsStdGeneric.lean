@@ -102,7 +102,7 @@ def psiUD (D : D7) (i : D.ntw.Tw) (θ : ∀ k : Fin 2, Multiplicative (ZMod (D.h
 theorem psiUD_side (D : D7) (i : D.ntw.Tw)
     (θ : ∀ k : Fin 2, Multiplicative (ZMod (D.host.g k)) →* (FractionRing (D.ntw.O i))ˣ) (u : U D.nd) :
     psiUD D i θ false u = (psiUD D i θ true u)⁻¹ := by
-  simp only [psiUD, psiUOf_apply, thSide, Bool.false_eq_true, if_false, if_true, MonoidHom.inv_apply,
+  simp only [psiUD, psiUOf_apply, thSide, Bool.false_eq_true, ite_false, ite_true, MonoidHom.inv_apply,
     Finset.prod_inv_distrib]
 
 def XiRedNZ (D : D7) : Prop := ∀ kv : (Σ k : Fin 2, D.nd.PlG k), xiRed D kv ≠ 0
@@ -129,11 +129,5 @@ theorem tied_U_clauses (D : D7)
   · exact ⟨thSide D.host.g (θ i) b, fun hr kk => thSide_ne_one _ _ b _ (hθ hr i kk), fun u => by rw [hψ]; rfl⟩
 
 end Rec
-
-section PerPlace
-
-variable {R : Ranks} {H : Host R} {what₂ : Rows.Data R}
-
-end PerPlace
 
 end Formalism.IndefR.NX

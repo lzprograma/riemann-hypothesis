@@ -82,7 +82,7 @@ lemma quad_le {y b r : K} {C : ℝ} (h : y ^ 2 + b * y = r) (hb : ‖b‖ ^ 2 �
   rcases le_or_gt ‖y‖ ‖b‖ with hy | hy
   · exact (pow_le_pow_left₀ (norm_nonneg _) hy 2).trans hb
   · have : ‖r‖ = ‖y‖ ^ 2 := by
-      rw [← h, show y ^ 2 + b * y = y * (y + b) by ring, norm_mul, norm_add_eq_of_lt hy, sq]
+      rw [← h, show y ^ 2 + b * y = y * (y + b) by ring, norm_mul, GlobalTheory.UltrametricLineBounds.norm_add_of_lt hy, sq]
     exact this ▸ hr
 
 lemma quad_eq {y b r : K} (h : y ^ 2 + b * y = r) (hb : ‖b‖ ^ 2 < ‖r‖) : ‖y‖ ^ 2 = ‖r‖ := by
@@ -93,7 +93,7 @@ lemma quad_eq {y b r : K} (h : y ^ 2 + b * y = r) (hb : ‖b‖ ^ 2 < ‖r‖) :
       rw [← h, show y ^ 2 + b * y = y * (y + b) by ring, norm_mul]
       gcongr
     linarith
-  · rw [← h, show y ^ 2 + b * y = y * (y + b) by ring, norm_mul, norm_add_eq_of_lt hy, sq]
+  · rw [← h, show y ^ 2 + b * y = y * (y + b) by ring, norm_mul, GlobalTheory.UltrametricLineBounds.norm_add_of_lt hy, sq]
 
 lemma quad_mem {y b r : K} (h : y ^ 2 + b * y = r) (hb : b ∈ intRing K) (hr : r ∈ intRing K) :
     y ∈ intRing K := by
@@ -119,7 +119,7 @@ lemma norm_cubic {a₂ a₄ a₆ x : K} (h₂ : ‖a₂‖ ≤ 1) (h₄ : ‖a�
     refine (norm_add_le_max _ _).trans_lt (max_lt ?_ (h₆.trans_lt (one_lt_pow₀ hx (by norm_num))))
     rw [norm_mul]
     exact lt_of_le_of_lt (by gcongr) h3
-  rw [← norm_pow, ← norm_add_eq_of_lt h1]
+  rw [← norm_pow, ← GlobalTheory.UltrametricLineBounds.norm_add_of_lt h1]
   congr 1
   ring
 
@@ -184,11 +184,11 @@ lemma third_big {a₁ a₂ a₃ a₄ a₆ x₁ x₂ x₃ l n : K} (h₁ : ‖a�
     · exact ⟨_, h, le_rfl, hn⟩
   have hab : a * b ≤ L * N := by
     have h1 : ‖x₁ * x₂ + x₁ * x₃ + x₂ * x₃‖ = a * b := by
-      rw [add_assoc, norm_add_eq_of_lt, norm_mul]
+      rw [add_assoc, GlobalTheory.UltrametricLineBounds.norm_add_of_lt, norm_mul]
       refine (norm_add_le_max _ _).trans_lt (max_lt ?_ ?_) <;> rw [norm_mul, norm_mul]
       · exact mul_lt_mul_of_pos_left hc (by linarith)
       · exact (mul_le_mul_of_nonneg_right h12 c0).trans_lt (mul_lt_mul_of_pos_left hc (by linarith))
-    have t1 : ‖l * n * 2‖ ≤ ‖l * n‖ := norm_mul_le_of_mem norm_two_le
+    have t1 : ‖l * n * 2‖ ≤ ‖l * n‖ := norm_mul_le_of_mem GlobalTheory.UltrametricLineBounds.norm_two_le
     have t2 : ‖n * a₁‖ ≤ ‖n‖ := norm_mul_le_of_mem h₁
     have t3 : ‖l * a₃‖ ≤ ‖l‖ := norm_mul_le_of_mem h₃
     have t4 : ‖l * n‖ ≤ L * N := by rw [norm_mul]; gcongr
@@ -248,7 +248,7 @@ lemma chord {a₁ a₂ a₃ a₄ a₆ x₁ x₂ x₃ y₁ y₂ y₃ l n : K} {M 
   have hM2 : 1 < M ^ 2 := one_lt_pow₀ hM two_ne_zero
   have habc : M ^ 2 ≤ a * b * c := (le_mul_of_one_le_left (by positivity) (by linarith [hM2])).trans p1
   have hr : ‖x₁ * x₂ * x₃ + a₆‖ = a * b * c := by
-    rw [norm_add_eq_of_lt, norm_mul, norm_mul]
+    rw [GlobalTheory.UltrametricLineBounds.norm_add_of_lt, norm_mul, norm_mul]
     rw [norm_mul, norm_mul]
     linarith
   have hn : ‖n‖ ^ 2 = a * b * c := by
@@ -305,7 +305,7 @@ lemma chord {a₁ a₂ a₃ a₄ a₆ x₁ x₂ x₃ y₁ y₂ y₃ l n : K} {M 
   refine (norm_add_le_max _ _).trans (max_le ((norm_mul_le_of_mem ?_).trans k1)
     ((norm_mul_le_of_mem ?_).trans k2))
   · exact sub_mem (mul_mem m₃ m1) m₁
-  · exact sub_mem (sub_mem (mul_mem (mul_mem norm_two_le m₄) m1)
+  · exact sub_mem (sub_mem (mul_mem (mul_mem GlobalTheory.UltrametricLineBounds.norm_two_le m₄) m1)
       (mul_mem (mul_mem norm_three_le m₆) (pow_mem m1 _))) m₂
 
 lemma add_step' [DecidableEq K] {W : Affine K} {M : ℝ} (h₁ : ‖W.a₁‖ ≤ 1) (h₂ : ‖W.a₂‖ ≤ 1)

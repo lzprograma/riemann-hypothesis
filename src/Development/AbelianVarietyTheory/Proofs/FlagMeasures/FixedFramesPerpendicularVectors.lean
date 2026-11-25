@@ -85,7 +85,6 @@ section -- clump:auto
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LoopC.WMem
 
@@ -111,10 +110,6 @@ theorem exists_rep {E W : Type} [Field E] [StarRing E] [AddCommGroup W] [Module 
   simpa using this
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E]
-
-theorem exists_vec (S : HSpace E) (φ : S.V →ₗ[E] E) : ∃ w, ∀ x, φ x = S.hT w x := by
-  apply _root_.GlobalTheory.LoopC.FunIdx.exists_vec
-
 
 theorem span_eq_top_of_unimodular {S : HSpace E} (L : Submodule (𝓞 E) S.V)
     (hL : Submodule.IsLattice E L)
@@ -239,7 +234,7 @@ theorem norm_cof {E : Type} [Field E] [NumberField E] [StarRing E] {S : Formalis
   have h1 : leadMinorE (Zhat F F') (r + 1) = (Zhat F F').det := by
     simp [leadMinorE]
   have h2 : leadMinorE (Zhat F F') r = ((Zhat F F').submatrix Fin.castSucc Fin.castSucc).det := by
-    simp only [leadMinorE, dif_pos (Nat.le_succ r)]; rfl
+    simp only [leadMinorE, dite_eq_left (Nat.le_succ r)]; rfl
   rw [h1, h2, ← h]
   have h3 : ((-1 : E) ^ r) * (-1) ^ r = 1 := by rw [← mul_pow]; simp
   simp only [LinearMap.flip_apply, map_smul, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,

@@ -37,57 +37,12 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHec
 public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceUmg
 import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
 import GroundTheory.GlobalFields.Adele.Topology
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OneMemGoodCT
 import GroundTheory.AutomorphicForms.CuspidalDiscreteness.AltSum
 import GroundTheory.AutomorphicForms.QuotientMeasure
 import GroundTheory.AutomorphicForms.ReductionBlock
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.PiTensorProduct
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.WhittakerHecke.ConstantTermLeviRestrictionModerateGrowth, Development.AutomorphicArithmetic.WhittakerHecke.FunctionalQdetEqAevalShiftedPolynomial, Development.AutomorphicArithmetic.WhittakerHecke.FunctionalVanishesInvariant, Development.AutomorphicArithmetic.WhittakerHecke.IntegrableMulConjOfModerateGrowthOfCuspidal, Development.AutomorphicArithmetic.WhittakerHecke.IntegralQuotientDerivativeOneParameterEqZero, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MovedPointDeterminant, Development.AutomorphicArithmetic.WhittakerHecke.OneParameterSubgroupNormOne, Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceCapR, Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceCap, Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CompCap
@@ -350,7 +305,7 @@ theorem UpperTheory.functional_vanishes_invariant :
       have : oneL E r i k = (1 : Matrix (Fin r) (Fin r) (Cinf E)) i k := rfl
       rw [this, Matrix.one_apply]
       split_ifs <;> simp
-    simp only [hc, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [hc, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   rw [j0, LinearMap.smul_apply, ← h4, h0, smul_zero]
 end -- clump:auto
 end -- clump:auto
@@ -689,11 +644,11 @@ private theorem coord_zL (τ : E →+* ℂ) (i k : Fin r) :
 
 private theorem uC_zL : uC E r (ιC E r (zL E r)) = j0 E r := by
   rw [uC_ιC, lie_eq_sum, j0]
-  simp only [coord_zL, ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true, Finset.smul_sum]
+  simp only [coord_zL, ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true, Finset.smul_sum]
 
 private theorem tr_zL (hr : 0 < r) : ∑ τ : E →+* ℂ, ∑ i, coord τ (zL E r i i) = 1 := by
   have hd : 0 < Module.finrank ℚ E := Module.finrank_pos
-  simp only [coord_zL, if_true, Finset.sum_const, Finset.card_univ, Fintype.card_fin, NumberField.Embeddings.card, nsmul_eq_mul]
+  simp only [coord_zL, ite_true, Finset.sum_const, Finset.card_univ, Fintype.card_fin, NumberField.Embeddings.card, nsmul_eq_mul]
   have h1 : (r : ℂ) ≠ 0 := Nat.cast_ne_zero.2 hr.ne'
   have h2 : (Module.finrank ℚ E : ℂ) ≠ 0 := Nat.cast_ne_zero.2 hd.ne'
   push_cast
@@ -892,14 +847,12 @@ theorem UpperTheory.ConvolutionTheory.BW.sliceCapR :
     rw [UpperTheory.V.Fb.map_qdet]; simp only [uC_genC]; rfl
   have e2 : j1 E r s = uC E (r + s) (((r * Module.finrank ℚ E : ℕ) : ℂ)⁻¹ •
       ∑ τ : E →+* ℂ, ∑ i : Fin r, genC τ (Fin.castAdd s i) (Fin.castAdd s i)) := by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp only [map_smul, map_sum, uC_genC]; rfl
   have h1 : ρ (capR r s τ u F) = cap τ u (ρ F) := by
     have := GlobalTheory.GLSlice.aeval_qdet_slice (Fin.castAddEmb s) (lev (Ad E) r s (zt E r t, m)) F τ (u + ((r : ℂ) - 1) / 2) Polynomial.X
     simp only [Polynomial.aeval_X] at this
     exact this.symm
   have h2 : ∀ G, ρ (j1 E r s G) = j0 E r (ρ G) := fun G => by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp only [j1, j0, LinearMap.smul_apply, LinearMap.sum_apply, map_smul, map_sum, ρ, GlobalTheory.GLSlice.Eop_slice,
       Fin.castAddEmb_apply]
   have h3 : ∀ (P : Polynomial ℂ) G, ρ (Polynomial.aeval (j1 E r s) P G) = Polynomial.aeval (j0 E r) P (ρ G) := fun P => by
@@ -1101,8 +1054,8 @@ private theorem idx_nat (b : Blo S r) (d : Dat S s) (i : Fin s) :
 private theorem sum_zero {M : Type} [AddCommMonoid M] (b : Blo S r) (d : Dat S s) (f : Fin (r + s) → M) :
     ∑ i ∈ Finset.univ.filter fun i => (Dat.cons b d).idx i = (z0 b d), f i = ∑ i, f (Fin.castAdd s i) := by
   rw [Finset.sum_filter, Fin.sum_univ_add, Finset.sum_eq_zero (s := (Finset.univ : Finset (Fin s))), add_zero]
-  · exact Finset.sum_congr rfl fun i _ => if_pos (idx_cast b d i)
-  · exact fun i _ => if_neg (by rw [idx_nat]; exact Fin.succ_ne_zero _)
+  · exact Finset.sum_congr rfl fun i _ => ite_eq_left (idx_cast b d i)
+  · exact fun i _ => ite_eq_right (by rw [idx_nat]; exact Fin.succ_ne_zero _)
 
 private theorem sum_succ {M : Type} [AddCommMonoid M] (b : Blo S r) (d : Dat S s) (j : Fin d.len) (f : Fin (r + s) → M) :
     ∑ i ∈ Finset.univ.filter fun i => (Dat.cons b d).idx i = (sc b d j), f i =
@@ -1110,7 +1063,7 @@ private theorem sum_succ {M : Type} [AddCommMonoid M] (b : Blo S r) (d : Dat S s
   rw [Finset.sum_filter, Finset.sum_filter, Fin.sum_univ_add, Finset.sum_eq_zero (s := (Finset.univ : Finset (Fin r))),
     zero_add]
   · exact Finset.sum_congr rfl fun i _ => if_congr (by rw [idx_nat]; exact Fin.succ_inj) rfl rfl
-  · exact fun i _ => if_neg (by rw [idx_cast]; exact (Fin.succ_ne_zero _).symm)
+  · exact fun i _ => ite_eq_right (by rw [idx_cast]; exact (Fin.succ_ne_zero _).symm)
 
 private theorem size_zero (b : Blo S r) (d : Dat S s) : (Dat.cons b d).size (z0 b d) = r := by
   rw [Dat.size, Finset.card_eq_sum_ones, sum_zero]; simp

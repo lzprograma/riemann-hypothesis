@@ -320,7 +320,7 @@ theorem exists_zero_five_of_valuation {K : Type*} [Field K] (h2 : (2 : K) ≠ 0)
   set c : Fin 5 → K := Pi.single i (x 0) + Pi.single j (x 1 * s) + Pi.single k (x 2 * t) with hc
   have hsum : ∑ p, c p • P p = x 0 • P i + x 1 • s • P j + x 2 • t • P k := by
     simp only [hc, Pi.add_apply, add_smul, Finset.sum_add_distrib, Pi.single_apply, ite_smul,
-      zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true, smul_smul]
+      zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, smul_smul]
   have hlt : v (qf a (∑ p, c p • P p)) < v w := by
     rw [← div_lt_one₀ hvw, ← map_div₀]
     convert hx using 2

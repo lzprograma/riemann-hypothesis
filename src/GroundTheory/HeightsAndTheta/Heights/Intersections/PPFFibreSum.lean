@@ -129,7 +129,7 @@ theorem PFFibreSum.proof (hFD : FibreDimStatement) (hBij : PFFibreBij.Statement)
   have hdiv1 : divCycle (fibreIdeal κ G) 1 = 0 := by
     ext W
     simp only [divCycle, Finsupp.ofSupportFinite_coe, Finsupp.coe_zero, Pi.zero_apply]
-    rw [if_neg]
+    rw [ite_eq_right]
     simp [divSupp, Ideal.span_singleton_one, Ideal.minimalPrimes_top]
   set L := fun j : Fin r => fibreDeg κ (N (Fin.castSucc j)).a
   set V := fibreIdeal κ G

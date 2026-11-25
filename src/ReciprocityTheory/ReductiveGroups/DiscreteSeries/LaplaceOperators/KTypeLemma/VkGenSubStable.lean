@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.GeneratedSubmoduleStableUnderAction
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.QuotientHighestWeightTensorStandard
 import Mathlib.Tactic.TypeStar
 
@@ -60,24 +61,7 @@ theorem vk_eeV_comm (E : Fin n → Fin n → Module.End ℂ M) (hE : IsGlRep E) 
 
 theorem vk_eeVd_comm (E : Fin n → Fin n → Module.End ℂ M) (hE : IsGlRep E) (a b : Fin n) :
     eeVd E * tensVd E a b = tensVd E a b * eeVd E := by
-  refine LinearMap.ext fun f => funext fun d => ?_
-  simp only [Module.End.mul_apply, vk_eeVd_apply]
-  have h1 : ∀ c, E d c (tensVd E a b f c) = E a b (E d c (f c)) + (if c = a then E d b (f c) else 0) -
-      (if b = d then E a c (f c) else 0) - (if c = b then E d b (f a) else 0) := by
-    intro c
-    rw [vk_tensVd_apply, map_sub, vk_rel E hE d c a b]
-    by_cases h : c = b
-    · subst h; simp
-    · simp [h]
-  rw [Finset.sum_congr rfl fun c _ => h1 c]
-
-  simp only [vk_tensVd_apply, vk_eeVd_apply, map_sum, map_neg]
-  by_cases hdb : d = b
-  · subst hdb
-    simp [Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.sum_ite_eq']
-    abel
-  · have hbd : ¬ b = d := fun h => hdb h.symm
-    simp [hdb, hbd, Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.sum_ite_eq']
+  apply ReciprocityTheory.ChartRestriction.DS.Lap.LemK.euler_tensor_dual_commute_gl_action <;> assumption
 
 end VK
 

@@ -47,9 +47,9 @@ lemma sum_ins_succ {p m : ℕ} (y : Yp p m) (z : ℂ) (i : Fin (p + 1)) (g : ℂ
   · have hj : j ≠ 0 := by
       rintro rfl
       simp at h
-    rw [if_pos h, if_pos h, ins_snd_fst_eq_tailPt_snd_fst_of_ne_zero y z hj]
+    rw [ite_eq_left h, ite_eq_left h, ins_snd_fst_eq_tailPt_snd_fst_of_ne_zero y z hj]
     all_goals rfl
-  · rw [if_neg h, if_neg h]
+  · rw [ite_eq_right h, ite_eq_right h]
 
 lemma sumR_ins_succ {p m : ℕ} (y : Yp p m) (z : ℂ) (i : Fin (p + 1)) :
     (∑ j : Fin (p + 1), if i.succ.val ≤ j.val then ‖(ins y z).2.1 j‖ ^ 2 else 0) =
@@ -59,8 +59,8 @@ lemma sumR_ins_succ {p m : ℕ} (y : Yp p m) (z : ℂ) (i : Fin (p + 1)) :
   · have hj : j ≠ 0 := by
       rintro rfl
       simp at h
-    rw [if_pos h, if_pos h, ins_snd_fst_eq_tailPt_snd_fst_of_ne_zero y z hj]
-  · rw [if_neg h, if_neg h]
+    rw [ite_eq_left h, ite_eq_left h, ins_snd_fst_eq_tailPt_snd_fst_of_ne_zero y z hj]
+  · rw [ite_eq_right h, ite_eq_right h]
 
 lemma rhoSq_ins_succ {p m : ℕ} (y : Yp p m) (z : ℂ) (i : Fin (p + 1)) :
     rhoSq (ins y z) i.succ = rhoSq (tailPt y) i.succ := by
@@ -97,8 +97,8 @@ lemma Lsq_mono {p m : ℕ} (x : Xp p m) {l l' : Fin (p + 1)} (h : l ≤ l') : Ls
     intro j _
     by_cases h1 : j.val < l.val
     · have h2 : j.val < l'.val := lt_of_lt_of_le h1 h'
-      rw [if_pos h1, if_pos h2]
-    · rw [if_neg h1]
+      rw [ite_eq_left h1, ite_eq_left h2]
+    · rw [ite_eq_right h1]
       split_ifs <;> positivity
   linarith
 

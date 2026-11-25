@@ -46,16 +46,11 @@ theorem det_mem_pow {m : ℕ} (Z : B.Mat k r → Matrix (Fin m) (Fin m) ℂ)
   refine Submodule.sum_mem _ fun σ _ => Submodule.smul_mem _ _ ?_
   simpa using prod_mem_pow Finset.univ (fun i g => Z g (σ i) i) fun i _ => h _ _
 
-theorem hpk_herm : (Formalism.QuantumDeterminants.Hpk k r)ᴴ = Formalism.QuantumDeterminants.Hpk k r := by
-  ext i j
-  simp only [Matrix.conjTranspose_apply, Formalism.QuantumDeterminants.Hpk, Fin.ext_iff]
-  split_ifs <;> first | (exfalso; omega) | simp
-
 theorem herm_letter (x y : Fin (2 * r + k + 1) → ℂ) :
     (fun g : B.Mat k r => Formalism.QuantumDeterminants.herm (Formalism.QuantumDeterminants.Hpk k r) (g *ᵥ x) y) ∈ Letters k r := by
   refine Submodule.subset_span (Or.inr ⟨x, Formalism.QuantumDeterminants.Hpk k r *ᵥ y, Or.inl fun g _ => ?_⟩)
   simp only [Formalism.QuantumDeterminants.herm]
-  rw [Matrix.star_mulVec, hpk_herm, Matrix.dotProduct_mulVec]
+  rw [Matrix.star_mulVec, Formalism.QuantumDeterminants.GBasic.Hpk_herm, Matrix.dotProduct_mulVec]
 
 theorem herm_conj_letter (x y : Fin (2 * r + k + 1) → ℂ) :
     (fun g : B.Mat k r => star (Formalism.QuantumDeterminants.herm (Formalism.QuantumDeterminants.Hpk k r) (g *ᵥ x) y)) ∈ Letters k r := by
@@ -67,7 +62,7 @@ theorem herm_conj_letter (x y : Fin (2 * r + k + 1) → ℂ) :
     rw [Matrix.mul_assoc, Matrix.mul_nonsing_inv _ ((Matrix.isUnit_iff_isUnit_det _).1 hu), Matrix.mul_one]
   simp only [Formalism.QuantumDeterminants.herm]
   rw [← Matrix.star_dotProduct_star, star_star, Matrix.mulVec_mulVec, Matrix.star_mulVec,
-    Matrix.star_mulVec, Matrix.conjTranspose_mul, hpk_herm, e, Matrix.dotProduct_mulVec, Matrix.vecMul_vecMul]
+    Matrix.star_mulVec, Matrix.conjTranspose_mul, Formalism.QuantumDeterminants.GBasic.Hpk_herm, e, Matrix.dotProduct_mulVec, Matrix.vecMul_vecMul]
 
 theorem dmin_mem (z z' : Fin (2 * r + k + 1) → ℂ) (l : Fin (r + 2)) :
     (fun g : B.Mat k r => ((Complex.normSq (Formalism.QuantumDeterminants.Dmin k r z z' g l) : ℝ) : ℂ)) ∈ Letters k r ^ (2 * r + 2) := by

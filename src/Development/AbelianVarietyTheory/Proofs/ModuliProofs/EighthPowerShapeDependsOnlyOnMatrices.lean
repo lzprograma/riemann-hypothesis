@@ -292,7 +292,7 @@ section Sharp
 variable {h g k : ℕ} {o : Type} [CommRing o] {b : TBase o k} {J : Type} {S : Scheme.{0}} {s : S ⟶ Sp o}
 
 def levHom (c : SiegPre h k (b.ζ : o) s) (T : Over S) : Multiplicative (Fin h ⊕ Fin h → ℤ) →* (T ⟶ c.A) :=
-  (preHom (toUnit T)).comp (MonoidHom.mk' (fun a => c.lev a.toAdd) fun a a' => c.lev_add _ _)
+  (preHom (toUnit T)).comp (MonoidHom.mk' (fun a => c.lev a.toAdd) fun _ _ => c.lev_add _ _)
 
 theorem label_iff (c : SiegPre h k (b.ζ : o) s) (t : TObj g k J b s) (pr : Fin 8 → (t.A ⟶ c.A))
     (hpr : ∀ u, IsMonHom (pr u))

@@ -78,19 +78,7 @@ namespace GlobalTheory.JointHarm
 
 open MvPolynomial Matrix
 
-section Minors
-
-variable {R : Type*} [CommRing R]
-
-variable {n l : ℕ}
-
-end Minors
-
 variable {n p q : ℕ}
-
-section Killed
-
-end Killed
 
 section Fock
 
@@ -149,7 +137,7 @@ theorem coeff_rename_mul (hf : Function.Injective f) (hg : Function.Injective g)
       by_cases h : α'.mapDomain f + β'.mapDomain g = α.mapDomain f + β.mapDomain g
       · obtain ⟨rfl, rfl⟩ := mapDomain_add_inj hf hg hfg h
         simp
-      · rw [if_neg h]
+      · rw [ite_eq_right h]
         split_ifs with h1 h2
         · exact absurd (by rw [h1, h2]) h
         all_goals simp
@@ -418,20 +406,20 @@ theorem capelli_step (hd : ∀ r j s c, d r j (x s c) = if r = s ∧ j = c then 
         have := j.2
         rw [Fin.lt_def]; omega
       rcases lt_trichotomy (I s) j with h | h | h
-      · rw [hup _ _ h, if_neg h.ne, Finset.sum_eq_zero]
+      · rw [hup _ _ h, ite_eq_right h.ne, Finset.sum_eq_zero]
         · simp
         · intro t _
           simp only [hδ]
-          rw [if_neg (h.trans (hgt t)).ne, zero_mul]
-      · rw [h, hwt, if_pos rfl, Finset.sum_eq_zero]
+          rw [ite_eq_right (h.trans (hgt t)).ne, zero_mul]
+      · rw [h, hwt, ite_eq_left rfl, Finset.sum_eq_zero]
         · simp
         · intro t _
           simp only [hδ]
-          rw [if_neg (h.trans_lt (hgt t)).ne, zero_mul]
+          rw [ite_eq_right (h.trans_lt (hgt t)).ne, zero_mul]
       · have h1 := (I s).2
         have h2 : (j : ℕ) < I s := h
         have h3 := j.2
-        rw [if_neg h.ne', zero_mul, zero_add,
+        rw [ite_eq_right h.ne', zero_mul, zero_add,
           Finset.sum_eq_single (⟨(I s : ℕ) - (j + 1), by omega⟩ : Fin m)]
         · have : I s = Fin.tail J ⟨(I s : ℕ) - (j + 1), by omega⟩ := by
             have := hJ' ⟨(I s : ℕ) - (j + 1), by omega⟩
@@ -439,10 +427,10 @@ theorem capelli_step (hd : ∀ r j s c, d r j (x s c) = if r = s ∧ j = c then 
             simp only at this
             omega
           simp only [hδ]
-          rw [if_pos this, one_mul, ← this]
+          rw [ite_eq_left this, one_mul, ← this]
         · intro t _ ht
           simp only [hδ]
-          rw [if_neg, zero_mul]
+          rw [ite_eq_right, zero_mul]
           intro h'
           apply ht
           have := hJ' t
@@ -538,13 +526,13 @@ theorem pol_minor (hd : ∀ r j s c, d r j (x s c) = if r = s ∧ j = c then 1 e
   by_cases hj : (j : ℕ) < m
   · rw [Finset.sum_eq_single (⟨j, hj⟩ : Fin m)]
     · have e : Fin.castLE hm ⟨j, hj⟩ = j := rfl
-      simp only [e, if_true]
+      simp only [e, ite_true]
       by_cases h : i = j
       · subst h
-        rw [if_pos ⟨rfl, hj⟩, one_mul]
+        rw [ite_eq_left ⟨rfl, hj⟩, one_mul]
         congr 1
         exact updateRow_eq_self _ _
-      · rw [if_neg (fun h' => h h'.1), zero_mul]
+      · rw [ite_eq_right (fun h' => h h'.1), zero_mul]
         have hi : (i : ℕ) < j := lt_of_le_of_ne hij (fun h' => h (Fin.ext h'))
         refine det_zero_of_row_eq (i := ⟨j, hj⟩) (j := ⟨i, hi.trans hj⟩)
           (fun h' => hi.ne' (Fin.mk.inj h')) ?_
@@ -552,13 +540,13 @@ theorem pol_minor (hd : ∀ r j s c, d r j (x s c) = if r = s ∧ j = c then 1 e
         rfl
     · intro t _ ht
       refine det_eq_zero_of_row_eq_zero t fun u => ?_
-      rw [updateRow_self, if_neg]
+      rw [updateRow_self, ite_eq_right]
       intro h
       exact ht (Fin.ext (congrArg Fin.val h :))
     · simp
-  · rw [if_neg (fun h => hj h.2), zero_mul]
+  · rw [ite_eq_right (fun h => hj h.2), zero_mul]
     refine Finset.sum_eq_zero fun t _ => det_eq_zero_of_row_eq_zero t fun u => ?_
-    rw [updateRow_self, if_neg]
+    rw [updateRow_self, ite_eq_right]
     intro h
     apply hj
     rw [← h]
@@ -576,21 +564,12 @@ theorem fock_eq_sum (P Q : MvPolynomial σ ℂ) (s : Finset (σ →₀ ℕ)) (hs
   refine Finset.sum_subset hs fun m _ hm => ?_
   rw [MvPolynomial.notMem_support_iff.mp hm]; simp
 
-theorem fock_add_left (P P' Q : MvPolynomial σ ℂ) :
-    Formalism.E.fock (P + P') Q = Formalism.E.fock P Q + Formalism.E.fock P' Q := by
-  classical
-  rw [fock_eq_sum (P + P') Q (P.support ∪ P'.support) support_add,
-    fock_eq_sum P Q (P.support ∪ P'.support) Finset.subset_union_left,
-    fock_eq_sum P' Q (P.support ∪ P'.support) Finset.subset_union_right, ← Finset.sum_add_distrib]
-  refine Finset.sum_congr rfl fun m _ => ?_
-  rw [MvPolynomial.coeff_add]; ring
-
 theorem fock_sum_left {ι : Type} (s : Finset ι) (P : ι → MvPolynomial σ ℂ) (Q : MvPolynomial σ ℂ) :
     Formalism.E.fock (∑ i ∈ s, P i) Q = ∑ i ∈ s, Formalism.E.fock (P i) Q := by
   classical
   induction s using Finset.induction_on with
   | empty => simp [Formalism.E.fock]
-  | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, fock_add_left, ih]
+  | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, GlobalTheory.JointHarm.fock_add_left, ih]
 
 theorem fock_sum_right {ι : Type} (s : Finset ι) (P : MvPolynomial σ ℂ) (Q : ι → MvPolynomial σ ℂ) :
     Formalism.E.fock P (∑ i ∈ s, Q i) = ∑ i ∈ s, Formalism.E.fock P (Q i) := by
@@ -645,7 +624,7 @@ theorem coeff_pderiv' (v : σ) (m : σ →₀ ℕ) (Q : MvPolynomial σ ℂ) :
     rw [pderiv_monomial, coeff_monomial, coeff_monomial]
     by_cases h : b = m + Finsupp.single v 1
     · subst h; simp
-    · rw [if_neg h, zero_mul]
+    · rw [ite_eq_right h, zero_mul]
       split_ifs with h'
       · have : b v = 0 := by
           by_contra hb
@@ -659,12 +638,12 @@ theorem fock_X_mul (v : σ) (P Q : MvPolynomial σ ℂ) :
     Formalism.E.fock (X v * P) Q = Formalism.E.fock P (pderiv v Q) := by
   classical
   induction P using MvPolynomial.induction_on' with
-  | add P₁ P₂ h₁ h₂ => simp only [mul_add, fock_add_left, h₁, h₂]
+  | add P₁ P₂ h₁ h₂ => simp only [mul_add, GlobalTheory.JointHarm.fock_add_left, h₁, h₂]
   | monomial a c =>
     rw [mul_comm, X, monomial_mul, mul_one,
       fock_eq_sum _ _ {a + Finsupp.single v 1} support_monomial_subset,
       fock_eq_sum _ _ {a} support_monomial_subset, Finset.sum_singleton, Finset.sum_singleton,
-      coeff_monomial, coeff_monomial, if_pos rfl, if_pos rfl, coeff_pderiv', mfact_add_single]
+      coeff_monomial, coeff_monomial, ite_eq_left rfl, ite_eq_left rfl, coeff_pderiv', mfact_add_single]
     simp only [star_mul', star_add, star_natCast, star_one]
     push_cast
     ring
@@ -830,8 +809,8 @@ theorem addCol_antitone {a : Fin l → ℕ} (ha : Antitone a) (K : Fin l) : Anti
   have := ha hij
   unfold addCol
   by_cases h : j ≤ K
-  · rw [if_pos h, if_pos (hij.trans h)]; omega
-  · rw [if_neg h]; omega
+  · rw [ite_eq_left h, ite_eq_left (hij.trans h)]; omega
+  · rw [ite_eq_right h]; omega
 
 theorem hookProd_addCol {a : Fin l → ℕ} (ha : Antitone a) (K : Fin l) (hK : ∀ i, K < i → a i = 0) :
     hookProd (addCol a K) =
@@ -863,7 +842,7 @@ theorem hookProd_addCol {a : Fin l → ℕ} (ha : Antitone a) (K : Fin l) (hK : 
       rw [← prod_Ioi_eq]
       refine Finset.prod_congr rfl fun j hj => ?_
       have hj' := Finset.mem_Ioi.mp hj
-      simp only [addCol, hi, if_true, not_le.mpr hj', if_false, hK j hj']
+      simp only [addCol, hi, ite_true, not_le.mpr hj', ite_false, hK j hj']
       push_cast
       ring
     have e3 : ∏ j ∈ Finset.Ioi K, ((a i : ℚ) - a j + (j : ℕ) - (i : ℕ)) =
@@ -877,16 +856,16 @@ theorem hookProd_addCol {a : Fin l → ℕ} (ha : Antitone a) (K : Fin l) (hK : 
     have e4 : ((addCol a K i + (l - ((i : ℕ) + 1))).factorial : ℚ) =
         ((a i : ℚ) - (i : ℕ) + l) * (a i + (l - ((i : ℕ) + 1))).factorial := by
       have : addCol a K i + (l - ((i : ℕ) + 1)) = (a i + (l - ((i : ℕ) + 1))) + 1 := by
-        simp only [addCol, hi, if_true]; omega
+        simp only [addCol, hi, ite_true]; omega
       rw [this, Nat.factorial_succ]
       push_cast [Nat.cast_sub (show (i : ℕ) + 1 ≤ l from i.2)]
       ring
     have t := telescope ((a i : ℚ) - (i : ℕ)) ((K : ℕ) + 1) l K.2
-    rw [hsplit, hsplit, e1, e2, e3, e4, if_pos hi]
+    rw [hsplit, hsplit, e1, e2, e3, e4, ite_eq_left hi]
     push_cast at t
     linear_combination (-((a i + (l - ((i : ℕ) + 1))).factorial : ℚ) *
       ∏ j ∈ Finset.Ioc i K, ((a i : ℚ) - a j + (j : ℕ) - (i : ℕ))) * t
-  · rw [if_neg hi, one_mul]
+  · rw [ite_eq_right hi, one_mul]
     have e : ∀ j, i ≤ j → addCol a K j = a j := fun j hj => by
       simp [addCol, show ¬ j ≤ K from fun h => hi (hj.trans h)]
     rw [e i le_rfl]
@@ -925,7 +904,7 @@ theorem del_addCol {a : Fin l → ℕ} (ha : Antitone a) (K : Fin l) :
     del v (addCol a K) = minor v K * del v a := by
   unfold del
   simp only [addCol_exp ha, pow_add, Finset.prod_mul_distrib, pow_ite, pow_one, pow_zero,
-    Finset.prod_ite_eq', Finset.mem_univ, if_true]
+    Finset.prod_ite_eq', Finset.mem_univ, ite_true]
   ring
 
 variable {v}
@@ -967,7 +946,7 @@ theorem pol_del (hv : ∀ r c s e, v r c = v s e → r = s ∧ c = e) {k : ℕ} 
     rw [del_addCol v ha, Derivation.leibniz, ih', hm]
     simp only [addCol, smul_eq_mul, Fin.le_def, Fin.val_castLE, Nat.lt_succ_iff]
     by_cases h : i = j
-    · simp only [h, true_and, if_true]
+    · simp only [h, true_and, ite_true]
       push_cast
       ring
     · simp [h]
@@ -994,8 +973,8 @@ theorem fock_del (hv : ∀ r c s e, v r c = v s e → r = s ∧ c = e) (a : Fin 
       (fun t => addCol a K (Fin.castLE K.2 t)) (del v a) (del v (addCol a K)) (del_addCol v ha K)
       (det_X_ne_zero _ hv')
       (fun i j hij => by
-        rw [pol_del hv K.2 i j hij.le _ (addCol_antitone ha K) h0, if_neg hij.ne]; simp)
-      (fun j => by rw [pol_del hv K.2 j j le_rfl _ (addCol_antitone ha K) h0, if_pos rfl])
+        rw [pol_del hv K.2 i j hij.le _ (addCol_antitone ha K) h0, ite_eq_right hij.ne]; simp)
+      (fun j => by rw [pol_del hv K.2 j j le_rfl _ (addCol_antitone ha K) h0, ite_eq_left rfl])
     rw [h, ih, hookProd_addCol ha K hK, prod_ite_le]
     push_cast
     congr 1
@@ -1004,7 +983,7 @@ theorem fock_del (hv : ∀ r c s e, v r c = v s e → r = s ∧ c = e) (a : Fin 
       have := t.2
       simp only [Fin.le_def, Fin.val_castLE]
       omega
-    simp only [addCol, ht, if_true, Fin.val_castLE]
+    simp only [addCol, ht, ite_true, Fin.val_castLE]
     rw [Nat.cast_sub (show (t : ℕ) ≤ K from ht)]
     push_cast
     ring
@@ -1061,7 +1040,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Formalism.L2.Pj Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues GlobalTheory.AdelicScalar GlobalTheory.LiftRows GlobalTheory.LowRow
 
 namespace GlobalTheory.LowRowFock

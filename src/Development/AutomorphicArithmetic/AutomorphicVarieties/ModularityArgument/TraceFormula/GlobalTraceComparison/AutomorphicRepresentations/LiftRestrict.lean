@@ -144,8 +144,23 @@ private theorem prod_reorder {ι A : Type} [Monoid A] (Z : Finset ι) (c : ι ×
   intro a b ha hb hab
   exact hc a (Finset.mem_toList.1 ha) b (Finset.mem_toList.1 hb) hab
 
-theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.zTr_pf :
-    UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.admitted → PfHecke → ProdOp → LocComm → YLoc → ZSimple → YSwap → Isot → SimpleFix → AbsCore → ZTr := by
+theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.zTr_pf_aux (P : ℂ → Prop) :
+    UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.admitted → PfHecke → ProdOp → LocComm → YLoc → ZSimple → YSwap → Isot → SimpleFix →
+    (∀ (I : Type) [Fintype I] (J M : I → Type) [∀ i, AddCommGroup (M i)] [∀ i, Module ℂ (M i)]
+      [∀ i, FiniteDimensional ℂ (M i)] (Y : Type) [AddCommGroup Y] [Module ℂ Y] [FiniteDimensional ℂ Y] [Nontrivial Y]
+      (α : ∀ i, J i → Module.End ℂ (M i)) (a b : ∀ i, J i → Module.End ℂ Y) (A : Module.End ℂ Y),
+        (∀ i, ∀ W : Submodule ℂ (M i), (∀ f, ∀ x ∈ W, α i f x ∈ W) → W = ⊥ ∨ W = ⊤) →
+        (∀ i p, FreeAlgebra.lift ℂ (α i) p = 0 → FreeAlgebra.lift ℂ (a i) p = 0) →
+        (∀ i k, i ≠ k → ∀ f g, Commute (a i f) (a k g)) → (∀ i k f g, Commute (a i f) (b k g)) →
+        A * A = 1 → (∀ i f, A * a i f = b i f * A) →
+        (∀ W : Submodule ℂ Y, (∀ i f, ∀ x ∈ W, a i f x ∈ W ∧ b i f x ∈ W) → W = ⊥ ∨ W = ⊤) →
+        ∃ d : ℂ, P d ∧ ∀ f g : ∀ i, J i,
+          LinearMap.trace ℂ Y (((Finset.univ : Finset I).toList.map fun i => a i (f i) * b i (g i)).prod * A) =
+            d * ∏ i, LinearMap.trace ℂ (M i) (α i (f i) * α i (g i))) →
+    ForLev fun E _ _ _ n S Z N => ∀ π (y : Yd π (Lev S N)) (τ : ∀ w : Pl E, SmIrr (GLw n w)),
+      (∀ w ∈ Z, π.IsLocComp w (τ w)) → (∀ w ∈ Z, fixed (τ w).ρ (N w) ≠ ⊥) ∧ ∃ d : ℂ, P d ∧ ∀ F, Fam S N (Z ×ˢ Finset.univ) F →
+        LinearMap.trace ℂ y.Y (y.r (pf S F) * y.A) =
+          d * ∏ w ∈ Z, GlobalTheory.BCT.trOn (fixed (τ w).ρ (N w)) (Lv (τ w).ρ (N w) (F w false) * Lv (τ w).ρ (N w) (F w true)) := by
   intro hAdm hPf hPO hLC hYL hZS hYS hIs hSF hAC E _ _ _ n S Z N hS hZ hG π y τ hτ
   have hNo : ∀ w, IsOpen (N w : Set (GLw n w)) := fun w => (hG w).1
   have hNl : ∀ w, N w ≤ KGL w (n := n) := fun w => (hG w).2.1
@@ -254,3 +269,8 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.zTr_pf :
     hαinv w ⟨_, hFh _ w.2 _⟩ _ (hαinv w ⟨_, hFh _ w.2 _⟩ v hv)
   rw [GlobalTheory.BCT.trOn, dite_eq_left hinv]
   rfl
+
+
+theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.zTr_pf :
+    UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.admitted → PfHecke → ProdOp → LocComm → YLoc → ZSimple → YSwap → Isot → SimpleFix → AbsCore → ZTr :=
+  UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.zTr_pf_aux (· ≠ 0)

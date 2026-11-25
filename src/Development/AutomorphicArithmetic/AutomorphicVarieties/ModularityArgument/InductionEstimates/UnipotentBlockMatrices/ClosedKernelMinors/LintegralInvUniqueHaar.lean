@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.RepsRight
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BfFun
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.DenseCc
@@ -113,12 +114,7 @@ private theorem fix_tw {K : Type} [Field K] [NumberField K] {n : ℕ} {μ : Meas
 
 private theorem reps_uniq {K : Type} [Field K] [NumberField K] {n : ℕ} {μ : Measure (G1 K n)} [μ.IsHaarMeasure]
     {v w : L2 μ} {φ : G1 K n → ℂ} (hv : Reps μ v φ) (hw : Reps μ w φ) : v = w := by
-  refine Lp.ext ?_
-  have h : ∀ᵐ y ∂μ, (v : RightCosetSpace (Gam K n) → ℂ) (mk (Gam K n) y) = (w : RightCosetSpace (Gam K n) → ℂ) (mk (Gam K n) y) := by
-    filter_upwards [hv, hw] with y a b using a.trans b.symm
-  have hm : MeasurableSet {y | (v : RightCosetSpace (Gam K n) → ℂ) y = (w : RightCosetSpace (Gam K n) → ℂ) y} :=
-    measurableSet_eq_fun (Lp.stronglyMeasurable v).measurable (Lp.stronglyMeasurable w).measurable
-  exact (ae_map_iff (measurable_mk (Gam K n)).aemeasurable hm).2 (ae_restrict_of_ae h)
+  apply _root_.reps_ext' <;> assumption
 
 private theorem reps_tw {K : Type} [Field K] [NumberField K] {n : ℕ} {μ : Measure (G1 K n)} [μ.IsHaarMeasure]
     (θ : Twist μ) {v : L2 μ} {φ : G1 K n → ℂ} (hv : Reps μ v φ) : Reps μ (θ.U v) fun x => φ (θ.e.symm x) := by

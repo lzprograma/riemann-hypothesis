@@ -24,8 +24,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.StabIntSh
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 def CondX (w : Point D.host.E (D.R.rS + 1)) (X : MatR D) : Prop :=
@@ -116,8 +114,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
   Formalism.L2.SG.Pf.BlockPermutation Formalism.L2.SG.Pf.StabIntSh
 
 namespace Formalism.L2.SG.Pf.StabIntLat
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (w : Point D.host.E (D.R.rS + 1))
 

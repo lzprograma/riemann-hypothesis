@@ -126,8 +126,6 @@ end ReciprocityTheory.ChartRestriction.DS.Mult1.TopH
 
 noncomputable section
 
-open MeasureTheory Matrix
-open scoped InnerProductSpace ENNReal ComplexConjugate
 
 namespace ReciprocityTheory.ChartRestriction.DS.Mult1.TopH
 

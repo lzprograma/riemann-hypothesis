@@ -9,63 +9,14 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemWeylCellU
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SphericalWeylCellTranslate
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SwapLtSwapIffOfAddTwo
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusConjugationWeylCell
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemShellUIffDepth
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasBoundedSumsOne
 import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GindikinKarpelevich
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.Linter.HaveILetI
 import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
-import Mathlib.Tactic.ENatToNat
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenIsCompactUnitaryIntegralPoints
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Topology.UniformSpace.Uniformizable
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCellUAbsorbUnip, Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeylCellStabilizerMeasure, Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeylCellStabilizerMeasureTwo, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ShellMeasure
@@ -96,22 +47,22 @@ theorem blockKeep_mul (a b : Fin n) (A B : Matrix (Fin n) (Fin n) R) (hA : ∀ i
   ext i j
   by_cases hi : a ≤ i ∧ i ≤ b
   · by_cases hj : a ≤ j ∧ j ≤ b
-    · simp only [blockKeep, Matrix.mul_apply, if_pos (And.intro hi hj)]
+    · simp only [blockKeep, Matrix.mul_apply, ite_eq_left (And.intro hi hj)]
       refine Finset.sum_congr rfl fun k _ => ?_
       by_cases hk : a ≤ k ∧ k ≤ b
-      · rw [if_pos ⟨hi, hk⟩, if_pos ⟨hk, hj⟩]
-      · rw [if_neg (fun h => hk h.2), Matrix.one_apply_ne (by rintro rfl; exact hk hi), zero_mul]
+      · rw [ite_eq_left ⟨hi, hk⟩, ite_eq_left ⟨hk, hj⟩]
+      · rw [ite_eq_right (fun h => hk h.2), Matrix.one_apply_ne (by rintro rfl; exact hk hi), zero_mul]
         rcases not_and_or.1 hk with h | h
         · rw [hA i k (lt_of_lt_of_le (not_le.1 h) hi.1), zero_mul]
         · rw [hB k j (lt_of_le_of_lt hj.2 (not_le.1 h)), mul_zero]
-    · have hcol : ∀ k, blockKeep a b B k j = (1 : Matrix (Fin n) (Fin n) R) k j := fun k => if_neg (fun h => hj h.2)
+    · have hcol : ∀ k, blockKeep a b B k j = (1 : Matrix (Fin n) (Fin n) R) k j := fun k => ite_eq_right (fun h => hj h.2)
       rw [Matrix.mul_apply]
-      simp only [hcol, Matrix.one_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
-      simp only [blockKeep, hi, hj, and_false, if_false, true_and, Matrix.one_apply]
-  · have hrow : ∀ k, blockKeep a b A i k = (1 : Matrix (Fin n) (Fin n) R) i k := fun k => if_neg (fun h => hi h.1)
+      simp only [hcol, Matrix.one_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
+      simp only [blockKeep, hi, hj, and_false, ite_false, true_and, Matrix.one_apply]
+  · have hrow : ∀ k, blockKeep a b A i k = (1 : Matrix (Fin n) (Fin n) R) i k := fun k => ite_eq_right (fun h => hi h.1)
     rw [Matrix.mul_apply]
-    simp only [hrow, Matrix.one_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
-    simp only [blockKeep, hi, false_and, if_false, Matrix.one_apply]
+    simp only [hrow, Matrix.one_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
+    simp only [blockKeep, hi, false_and, ite_false, Matrix.one_apply]
 
 end BlockKeep
 
@@ -144,8 +95,8 @@ theorem blockKeepGL_mem_GU [Valued L (WithZero (Multiplicative ℤ))] {σ : L �
   unfold blockKeep
   simp only [key]
   by_cases h : (a ≤ i ∧ i ≤ a.rev) ∧ (a ≤ j ∧ j ≤ a.rev)
-  · rw [if_pos h, if_pos h.symm, hG]
-  · rw [if_neg h, if_neg (fun h' => h h'.symm), Matrix.one_apply, Matrix.one_apply, apply_ite σ, map_one, map_zero]
+  · rw [ite_eq_left h, ite_eq_left h.symm, hG]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h h'.symm), Matrix.one_apply, Matrix.one_apply, apply_ite σ, map_one, map_zero]
     simp only [Fin.rev_inj, eq_comm (a := j)]
 
 theorem blockKeep_eq_self (a b : Fin n) (A : Matrix (Fin n) (Fin n) L) (h1 : ∀ i j, j < i → A i j = 0)
@@ -420,12 +371,6 @@ namespace GKConjScale
 
 variable {L : Type} [Field L] [Valued L (WithZero (Multiplicative ℤ))]
 
-theorem v_eq_ofAdd_ordL {x : L} (hx : x ≠ 0) :
-    Valued.v x = ((Multiplicative.ofAdd (-ordL x) : Multiplicative ℤ) : WithZero (Multiplicative ℤ)) := by
-  have h : Valued.v x ≠ 0 := by simpa using hx
-  unfold ordL
-  rw [dite_eq_right h, neg_neg, ofAdd_toAdd, WithZero.coe_unzero]
-
 theorem coe_mul_le_iff (g h : Multiplicative ℤ) (x : WithZero (Multiplicative ℤ)) :
     (g : WithZero (Multiplicative ℤ)) * x ≤ h ↔ x ≤ ((g⁻¹ * h : Multiplicative ℤ) : WithZero (Multiplicative ℤ)) := by
   constructor
@@ -683,7 +628,7 @@ theorem conjScale' : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicativ
     · simp
   have ha0 : T a a ≠ 0 := right_ne_zero_of_mul_eq_one hprod
   have hva : Valued.v (T a a) = ((Multiplicative.ofAdd (-r) : Multiplicative ℤ) : WithZero (Multiplicative ℤ)) :=
-    v_eq_ofAdd_ordL ha0
+    Formalism.UG.P.fSatake_v_eq ha0
   have hva' : Valued.v (T a.rev a.rev) = ((Multiplicative.ofAdd r : Multiplicative ℤ) : WithZero (Multiplicative ℤ)) := by
     have h := congrArg Valued.v hprod
     rw [map_mul, hσv, map_one, hva] at h
@@ -788,7 +733,7 @@ theorem shiftCore (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))
           exact absurd hij (not_lt.2 hlt.le))]
       simp
     · rw [Units.val_mul, Units.val_mul, conj_apply hy, hT, ite_eq_left rfl,
-        ite_eq_right (fun h => hne (h.1.symm.trans h.2)), add_zero, mul_one, inv_mul_diag hy]
+        ite_eq_right (fun h => hne (h.1.symm.trans h.2)), add_zero, mul_one, GlobalTheory.WeylCellRankOne.diag_mul_eq_one hy]
   · intro u hu g
     have huB : (u : GL (Fin n) L) ∈ unipB L (Fin n) := (mem_cell.1 hu).1
     set N : GL (Fin n) L := (u : GL (Fin n) L) * ν * (u : GL (Fin n) L)⁻¹ * T⁻¹ with hN
@@ -822,7 +767,7 @@ theorem shiftCore (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))
       · exact ((mem_unipB L).1 hNB).1 _ _ h
     have hbd : ∀ i, ((b : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) i i = 1 := by
       intro i
-      rw [hbv, ((mem_unipB L).1 hNB).2, mul_one, inv_mul_diag hy]
+      rw [hbv, ((mem_unipB L).1 hNB).2, mul_one, GlobalTheory.WeylCellRankOne.diag_mul_eq_one hy]
     have hchi : chiDeltaU q α b = 1 := by
       unfold chiDeltaU
       apply Finset.prod_eq_one

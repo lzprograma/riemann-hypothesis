@@ -11,62 +11,15 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordTieComp
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameCoeffsRegularInChart
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsNonzeroXbOfLeftInverse
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.ENatToNat
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.CompRightEqZero
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.Sheaves.Presheaf
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AutomorphicSpectrum.Proofs.MetricProofs.CauchyBinetSumPositionedMinors, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsComponentInChartRegular, Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalFrameOfTwistGeneration, Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorExpansionOfScaledProduct, Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorExpansionOfScaledProductStatement, Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorRatioRegularOfMatrixIdentity, Development.AutomorphicSpectrum.Proofs.MetricProofs.ProdXbPowEqXcOfPow, Development.AutomorphicSpectrum.Proofs.MetricProofs.TMatBlockDiagDetFactors, Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptFrameChangeRegular
+-- Members: Development.AutomorphicSpectrum.Proofs.MetricProofs.CauchyBinetSumPositionedMinors, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsComponentInChartRegular, Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalFrameOfTwistGeneration, Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorExpansionOfScaledProduct, Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorRatioRegularOfMatrixIdentity, Development.AutomorphicSpectrum.Proofs.MetricProofs.ProdXbPowEqXcOfPow, Development.AutomorphicSpectrum.Proofs.MetricProofs.TMatBlockDiagDetFactors, Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptFrameChangeRegular
 
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.CauchyBinetSumPositionedMinors =====
 -- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.MetricProofs.CauchyBinetSumPositionedMinors", "h": "module\n\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.DetMemSubring\npublic import GroundTheory.PAdicHodge.SlopeCauchyBinet\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.YvEqSumMinorsGMat\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Std.Tactic.BVDecide.Normalize.Prop\n\n"}
@@ -88,9 +41,9 @@ theorem bExt_posOf (B : ∀ s, Matrix (Fin (rk Ψ p q s)) (Fin (n s)) Ω) (s : �
   have hinj := (BlockEmbeddings.posOf_strictMono (Ψ := Ψ) (p := p) (q := q) s).injective
   unfold bExt
   rw [Finset.sum_eq_single l]
-  · rw [if_pos rfl]
+  · rw [ite_eq_left rfl]
   · intro b _ hb
-    rw [if_neg fun h => hb (hinj h)]
+    rw [ite_eq_right fun h => hb (hinj h)]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -99,15 +52,15 @@ theorem aExt_posOf (C : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω) (s : �
   have hinj := (BlockEmbeddings.posOf_strictMono (Ψ := Ψ) (p := p) (q := q) s).injective
   unfold aExt
   rw [Finset.sum_eq_single l]
-  · rw [if_pos rfl]
+  · rw [ite_eq_left rfl]
   · intro b _ hb
-    rw [if_neg fun h => hb (hinj h)]
+    rw [ite_eq_right fun h => hb (hinj h)]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
 theorem aExt_of_forall_ne (C : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω) (s : Ψ ⊕ Ψ)
     (j : Fin (n s)) {b : Fin (p + q)} (h : ∀ l, posOf p q s l ≠ b) : aExt C s j b = 0 :=
-  Finset.sum_eq_zero fun l _ => if_neg (h l)
+  Finset.sum_eq_zero fun l _ => ite_eq_right (h l)
 
 theorem bExt_mul_aExt_row (C : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω)
     (B : ∀ s, Matrix (Fin (rk Ψ p q s)) (Fin (n s)) Ω) (hBC : ∀ s, B s * C s = 1) (s : Ψ ⊕ Ψ)
@@ -158,13 +111,13 @@ theorem sum_sMin_mul_cMin : ∀ {Ψ : Type} {p q : ℕ} {Ω : Type} [Field Ω] {
   intro Ψ p q Ω _ n C B hBC t I I' hI hI' hp _
   classical
   rw [sum_strictMono_eq (fun J => sMin B t I J * cMin C t J I') (fun J hJ => by
-    simp only [sMin, if_neg hJ, zero_mul])]
+    simp only [sMin, ite_eq_right hJ, zero_mul])]
   have hterm : ∀ s : GroundTheory.PAdicHodge.KSubset (n t.1) ((t.2 : ℕ) + 1),
       sMin B t I s.emb * cMin C t s.emb I' =
         (((bExt B t.1).submatrix (I.orderEmbOfFin hI) id).submatrix id s.emb).det *
           (((aExt C t.1).submatrix id (I'.orderEmbOfFin hI')).submatrix s.emb id).det := by
     intro s
-    simp only [sMin, if_pos s.emb.strictMono, bMin, cMin, dif_pos hI, dif_pos hI']
+    simp only [sMin, ite_eq_left s.emb.strictMono, bMin, cMin, dite_eq_left hI, dite_eq_left hI']
     rfl
   simp only [hterm]
   rw [← GroundTheory.PAdicHodge.det_mul_eq_sum_minors]
@@ -178,8 +131,8 @@ theorem sum_sMin_mul_cMin : ∀ {Ψ : Type} {p q : ℕ} {Ω : Type} [Field Ω] {
   rw [hmat]
   by_cases e : I = I'
   · subst e
-    rw [if_pos rfl, Matrix.submatrix_one _ (I.orderEmbOfFin hI).injective, Matrix.det_one]
-  · rw [if_neg e]
+    rw [ite_eq_left rfl, Matrix.submatrix_one _ (I.orderEmbOfFin hI).injective, Matrix.det_one]
+  · rw [ite_eq_right e]
     have hns : ¬ I ⊆ I' := fun hs => e (Finset.eq_of_subset_of_card_le hs (by omega))
     obtain ⟨a, ha, ha'⟩ := Finset.not_subset.1 hns
     have hr : a ∈ Set.range (I.orderEmbOfFin hI) := by
@@ -387,20 +340,9 @@ theorem pos_cover (b : Fin (p + q)) : (∃ a, b = omEmb p q a) ∨ ∃ a, b = wE
   · exact Or.inl ⟨a, (blockEquiv p q).symm.injective (h.trans (BlockEmbeddings.blockEquiv_symm_omEmb a).symm)⟩
   · exact Or.inr ⟨a, (blockEquiv p q).symm.injective (h.trans (BlockEmbeddings.blockEquiv_symm_wEmb a).symm)⟩
 
-theorem aExt_posOf (C : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω) (s : Ψ ⊕ Ψ) (j : Fin (n s))
-    (l : Fin (rk Ψ p q s)) : aExt C s j (posOf p q s l) = C s j l := by
-  have hi := (BlockEmbeddings.posOf_strictMono (p := p) (q := q) s).injective
-  simp only [aExt]
-  rw [Finset.sum_eq_single l]
-  · rw [if_pos rfl]
-  · intro b _ hb
-    rw [if_neg fun e => hb (hi e)]
-  · intro h
-    exact absurd (Finset.mem_univ _) h
-
 theorem aExt_off (C : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω) (s : Ψ ⊕ Ψ) (j : Fin (n s))
     (b : Fin (p + q)) (hb : ¬ ∃ l, posOf p q s l = b) : aExt C s j b = 0 :=
-  Finset.sum_eq_zero fun l _ => if_neg fun e => hb ⟨l, e⟩
+  Finset.sum_eq_zero fun l _ => ite_eq_right fun e => hb ⟨l, e⟩
 
 theorem tMat_posOf (Ts : ∀ s, Matrix (Fin (rk Ψ p q s)) (Fin (rk Ψ p q s)) Ω) (τ : Ψ) (s : Ψ ⊕ Ψ)
     (hs : s = .inl τ ∨ s = .inr τ) (l l' : Fin (rk Ψ p q s)) :
@@ -447,7 +389,7 @@ theorem aExt_mul_tMat (A C : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω)
   · obtain ⟨l', rfl⟩ := hb
     have h2 := congrFun (congrFun (hAT s) j) l'
     rw [Matrix.mul_apply, Matrix.smul_apply, smul_eq_mul] at h2
-    rw [aExt_posOf, ← h2]
+    rw [GlobalTheory.CompanionTheory.Ar.PB.FMX.Frm.Inv.aExt_posOf, ← h2]
     exact Finset.sum_congr rfl fun l _ => by rw [tMat_posOf Ts τ s hs]
   · rw [aExt_off C s j b hb, mul_zero]
     exact Finset.sum_eq_zero fun l _ => by rw [tMat_off Ts τ s hs l b hb, mul_zero]
@@ -480,19 +422,6 @@ end -- clump:auto
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorExpansionOfScaledProduct =====
-
--- ===== clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorExpansionOfScaledProductStatement =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorExpansionOfScaledProductStatement", "h": "module\n\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.DetMemSubring\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorExpansionOfScaledProduct\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open AlgebraicGeometry CategoryTheory NumberField Matrix
-open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor
-open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.PB GlobalTheory.CompanionTheory.Ar.PB.FMX GlobalTheory.CompanionTheory.Ar.FlagBun GlobalTheory.CompanionTheory.Ar.PB.FMX.Frm
-
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorExpansionOfScaledProductStatement =====
 
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorRatioRegularOfMatrixIdentity =====
 -- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorRatioRegularOfMatrixIdentity", "h": "module\n\npublic import Mathlib.LinearAlgebra.Matrix.Determinant.Basic\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio\nimport Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags\nimport Development.AutomorphicSpectrum.Proofs.MetricProofs.DetMemSubring\nimport Mathlib.Topology.Sheaves.Presheaf\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.CompRightEqZero\nimport ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens\n\n"}
@@ -548,13 +477,8 @@ theorem minor_isUnit_of_leftInverse : ∀ {Ω : Type} [Field Ω] {n r : ℕ} (R 
     have h := hrel J₀
     rw [h0, mul_zero] at h
     exact mul_ne_zero hz hT h
-  have hCR : (C.submatrix J₀ id).det ∈ R := by
-    let M : Matrix (Fin r) (Fin r) R := Matrix.of fun i j => ⟨C (J₀ i) j, hC _ _⟩
-    have hM : R.subtype.mapMatrix M = C.submatrix J₀ id := by
-      ext i j
-      rfl
-    rw [← hM, ← RingHom.map_det]
-    exact SetLike.coe_mem M.det
+  have hCR : (C.submatrix J₀ id).det ∈ R :=
+    det_mem_subring R (C.submatrix J₀ id) fun _ _ => hC _ _
   have hratio : ∀ J : Fin r → Fin n, (C.submatrix J id).det =
       (C.submatrix J₀ id).det * ((A.submatrix J id).det / (A.submatrix J₀ id).det) := by
     intro J
@@ -621,7 +545,6 @@ theorem zOf_of_rk_eq_zero (A : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω)
     {s : Ψ ⊕ Ψ} (h : rk Ψ p q s = 0) : zOf A c s = 1 := by
   haveI : IsEmpty (Fin (rk Ψ p q s)) := by rw [h]; infer_instance
   exact Matrix.det_isEmpty
-
 
 open Classical in
 def stepFac (z : Ω) (s : Ψ ⊕ Ψ) : K₀ ⊕ StepIx Ψ p q → Ω :=
@@ -787,7 +710,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.TMatBlockDiagDetFactors =====
 
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptFrameChangeRegular =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptFrameChangeRegular", "h": "module\n\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.DetMemSubring\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SpecializesOfUnits\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.CauchyBinetSumPositionedMinors\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsComponentInChartRegular\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordTieCompEquiv\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalFrameOfTwistGeneration\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorExpansionOfScaledProductStatement\npublic import Mathlib.LinearAlgebra.Matrix.Determinant.Basic\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorRatioRegularOfMatrixIdentity\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.ProdXbPowEqXcOfPow\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.TMatBlockDiagDetFactors\nimport Development.AutomorphicSpectrum.Proofs.MetricProofs.YvEqSumMinorsGMat\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\n\n"}
+-- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptFrameChangeRegular", "h": "module\n\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.DetMemSubring\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SpecializesOfUnits\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.CauchyBinetSumPositionedMinors\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsComponentInChartRegular\npublic import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordTieCompEquiv\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalFrameOfTwistGeneration\npublic import Mathlib.LinearAlgebra.Matrix.Determinant.Basic\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorRatioRegularOfMatrixIdentity\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.ProdXbPowEqXcOfPow\npublic import Development.AutomorphicSpectrum.Proofs.MetricProofs.TMatBlockDiagDetFactors\nimport Development.AutomorphicSpectrum.Proofs.MetricProofs.YvEqSumMinorsGMat\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -914,21 +837,21 @@ theorem frames_pure (A : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω) (x₀
       have hr2 := r.2.2
       obtain ⟨hp1, hp2⟩ := hp
       by_cases hi : (r.2 : ℕ) < p
-      · have e : stepOf Ψ p q r = ⟨.inl r.1, ⟨r.2, hi⟩⟩ := dif_pos hi
+      · have e : stepOf Ψ p q r = ⟨.inl r.1, ⟨r.2, hi⟩⟩ := dite_eq_left hi
         have w1 : rkW r.2 = (r.2 : ℕ) + 1 := by simp only [rkW]; omega
         have w2 : rkO r.2 = 0 := by simp only [rkO]; omega
         have hn : ¬ p ≤ (r.2 : ℕ) + 1 := by omega
         rw [e, w1, w2]
-        simp only [if_neg hn, if_neg hp2]
+        simp only [ite_eq_right hn, ite_eq_right hp2]
         simp [wt, mul_comm]
-      · have e : stepOf Ψ p q r = ⟨.inr r.1, ⟨r.2 - p, by show _ < q; omega⟩⟩ := dif_neg hi
+      · have e : stepOf Ψ p q r = ⟨.inr r.1, ⟨r.2 - p, by show _ < q; omega⟩⟩ := dite_eq_right hi
         have w1 : rkW r.2 = p := by simp only [rkW]; omega
         have w2 : rkO r.2 = (r.2 : ℕ) - p + 1 := by simp only [rkO]; omega
         have hy : p ≤ (r.2 : ℕ) + 1 := by omega
         have h3 : (Ts (.inl r.1)).det = (xcOf x₀ c ^ m (.inl r.1)) ^ p * υs (.inl r.1) * (zOf A c (.inl r.1))⁻¹ :=
           hW _
         rw [e, w1, w2]
-        simp only [if_pos hy, if_neg hp2]
+        simp only [ite_eq_left hy, ite_eq_right hp2]
         simp only [wt, Sum.elim_inr, mul_one]
         rw [h3]
         ring
@@ -951,7 +874,7 @@ theorem frames_pure (A : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω) (x₀
     field_simp
   · have hnp : ¬ IsProperStep (p + q) p r.2 := fun hp => by
       unfold blkF at hr'
-      rw [if_pos hp] at hr'
+      rw [ite_eq_left hp] at hr'
       simp at hr'
     have hr2 := r.2.2
     have hpi : p ≤ (r.2 : ℕ) + 1 := by
@@ -960,13 +883,13 @@ theorem frames_pure (A : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω) (x₀
     show detFac p r.2 (tMat Ts r.1) * 1 = (∏ k', xb A x₀ ⟨k', c k'⟩ ^ bF m r k') *
       ((if p ≤ (r.2 : ℕ) + 1 then υs (.inl r.1) else 1) * (if (r.2 : ℕ) + 1 = p + q then υs (.inr r.1) else 1))
     rw [_root_.GlobalTheory.CompanionTheory.Ar.PB.FMX.Frm.prod_xb_zpow_bF, (_root_.GlobalTheory.CompanionTheory.Ar.PB.FMX.Frm.tMat_main Ts r.1).2.2]
-    simp only [if_pos hpi]
+    simp only [ite_eq_left hpi]
     have h3 : (Ts (.inl r.1)).det = (xcOf x₀ c ^ m (.inl r.1)) ^ p * υs (.inl r.1) * (zOf A c (.inl r.1))⁻¹ := hW _
     have h4 : (Ts (.inr r.1)).det = (xcOf x₀ c ^ m (.inr r.1)) ^ q * υs (.inr r.1) * (zOf A c (.inr r.1))⁻¹ := hW _
     have w1 : rkW r.2 = p := by simp only [rkW]; omega
     by_cases hN : (r.2 : ℕ) + 1 = p + q
     · have w2 : rkO r.2 = q := by simp only [rkO]; omega
-      simp only [if_pos hN]
+      simp only [ite_eq_left hN]
       rw [w1, w2, h3, h4]
       ring
     · have w2 : rkO r.2 = 0 := by
@@ -974,7 +897,7 @@ theorem frames_pure (A : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω) (x₀
           by_contra h'
           exact hnp ⟨h', hN⟩
         simp only [rkO]; omega
-      simp only [if_neg hN]
+      simp only [ite_eq_right hN]
       rw [w1, w2, h3]
       ring
   · obtain ⟨k | t, J⟩ := r
@@ -985,7 +908,7 @@ theorem frames_pure (A : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω) (x₀
     · exact R.mul_mem (hwt t).2.2 (sMin_mem R B hB t I J)
   · have hnp : ¬ IsProperStep (p + q) p r.2 := fun hp => by
       unfold blkF at hr'
-      rw [if_pos hp] at hr'
+      rw [ite_eq_left hp] at hr'
       simp at hr'
     show ((if p ≤ (r.2 : ℕ) + 1 then υs (.inl r.1) else 1) * (if (r.2 : ℕ) + 1 = p + q then υs (.inr r.1) else 1)) ≠ 0 ∧
       ((if p ≤ (r.2 : ℕ) + 1 then υs (.inl r.1) else 1) * (if (r.2 : ℕ) + 1 = p + q then υs (.inr r.1) else 1)) ∈ R ∧

@@ -164,7 +164,7 @@ theorem hasQ_of_integral_quot : ∀ (N n : ℕ) (A D : ℍ → ℂ) (s : Fin n �
   have hUc : IsPreconnected {z : ℂ | 0 < z.im} := (convex_halfSpace_im_gt 0).isPreconnected
   obtain ⟨τ₀, hτ₀⟩ : ∃ τ, D τ ≠ 0 := by
     by_contra hc'
-    push_neg at hc'
+    push Not at hc'
     exact hD0 (funext hc')
   have hofc : ∀ z : ℂ, 0 < z.im → ((UpperHalfPlane.ofComplex z : ℍ) : ℂ) = z := fun z hz => by
     rw [UpperHalfPlane.ofComplex_apply_of_im_pos hz]

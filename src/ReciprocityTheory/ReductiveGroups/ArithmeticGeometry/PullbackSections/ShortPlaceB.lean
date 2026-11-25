@@ -8,8 +8,6 @@ import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.PullbackSections
@@ -43,7 +41,7 @@ theorem le_nval_sum (e : ℕ) {ι : Type} (s : Finset ι) (f : ι → K') (r : E
       rw [h0, Valuation.map_zero] at hle
       exact hs ((Valuation.zero_iff _).1 (le_antisymm hle zero_le'))
     have h1 := h i hi
-    rw [if_neg hfi] at h1
+    rw [ite_eq_right hfi] at h1
     refine h1.trans ?_
     have hlog := (WithZero.log_le_log ((Valuation.ne_zero_iff _).2 hs) ((Valuation.ne_zero_iff _).2 hfi)).2 hle
     refine EReal.coe_le_coe_iff.2 ?_

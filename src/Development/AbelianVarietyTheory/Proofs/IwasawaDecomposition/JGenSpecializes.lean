@@ -40,8 +40,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace NumberField IsDedekindDomain
@@ -56,26 +54,11 @@ variable {K : Type} [Field K] {Z : Scheme.{0}} [IsIntegral Z] {y : Sp K ⟶ Z} {
 theorem valAt_algebraMap (a : Z.presheaf.stalk (below y)) :
     valAt y (algebraMap _ Z.functionField a) = (Scheme.stalkClosedPointTo y).hom a := by
   have h : RegAt (below y) (algebraMap _ Z.functionField a) := ⟨a, rfl⟩
-  rw [valAt, dif_pos h, IsFractionRing.injective _ Z.functionField h.choose_spec]
-
-theorem valAt_mul (hf : RegAt (below y) f) (hg : RegAt (below y) g) :
-    valAt y (f * g) = valAt y f * valAt y g := by
-  obtain ⟨a, rfl⟩ := hf
-  obtain ⟨b, rfl⟩ := hg
-  rw [← map_mul, valAt_algebraMap, valAt_algebraMap, valAt_algebraMap, map_mul]
+  rw [valAt, dite_eq_left h, IsFractionRing.injective _ Z.functionField h.choose_spec]
 
 theorem regAt_pow {x : Z} (hf : RegAt x f) (n : ℕ) : RegAt x (f ^ n) := by
   obtain ⟨a, rfl⟩ := hf
   exact ⟨a ^ n, map_pow _ _ _⟩
-
-theorem valAt_pow (hf : RegAt (below y) f) (n : ℕ) : valAt y (f ^ n) = valAt y f ^ n := by
-  obtain ⟨a, rfl⟩ := hf
-  rw [← map_pow, valAt_algebraMap, valAt_algebraMap, map_pow]
-
-theorem valAt_ne_zero (hf : UnitAt (below y) f) : valAt y f ≠ 0 := by
-  obtain ⟨a, ha, rfl⟩ := hf
-  rw [valAt_algebraMap]
-  exact (ha.map (Scheme.stalkClosedPointTo y).hom).ne_zero
 
 theorem valAt_fnOf {U : Z.Opens} (hy : below y ∈ U) (h : genericPoint Z ∈ U) (a : Γ(Z, U)) :
     valAt y (fnOf U h a) = valR y U a := by
@@ -85,14 +68,14 @@ theorem valAt_fnOf {U : Z.Opens} (hy : below y ∈ U) (h : genericPoint Z ∈ U)
   have H := congrArg (fun φ => φ.hom a) (Scheme.germ_stalkClosedPointTo y U hy)
   rw [e, valAt_algebraMap]
   first
-  | rw [valR, dif_pos ht]
+  | rw [valR, dite_eq_left ht]
   refine H.trans ?_
   first
   | rfl
 
 theorem ratVal_eq_valAt {k : Type} [CommRing k] {q : Z ⟶ Sp k} {σ : k →+* ℂ} (y : CxPts q σ)
     (hf : RegAt (under y) f) : ratVal f y = valAt y.1 f := by
-  rw [ratVal, dif_pos hf]
+  rw [ratVal, dite_eq_left hf]
   have he := hf.exists_fnOf.choose_spec.choose_spec.choose_spec
   conv_rhs => rw [← he]
   exact (valAt_fnOf hf.exists_fnOf.choose_spec.choose _ _).symm
@@ -153,49 +136,6 @@ end Fn
 section Model
 
 variable {F : Type} [Field F] [NumberField F] {Y : Var F} (M : Model Y)
-
-theorem isPreimmersion_j : IsPreimmersion M.j := by
-  have : IsPreimmersion (spMap (algebraMap (𝓞 F) F)) :=
-    IsPreimmersion.of_isLocalization (nonZeroDivisors (𝓞 F))
-  exact MorphismProperty.of_isPullback (P := @IsPreimmersion) M.pb.flip this
-
-private theorem asIdeal_spMap_algebraMap_eq_bot (s : Sp F) : (spMap (algebraMap (𝓞 F) F) s).asIdeal = ⊥ := by
-  haveI := s.isPrime
-  have hs : s.asIdeal = ⊥ := Ideal.eq_bot_of_prime _
-  have e : (spMap (algebraMap (𝓞 F) F) s).asIdeal = Ideal.comap (algebraMap (𝓞 F) F) s.asIdeal := by
-    first
-    | rfl
-  rw [e, hs]
-  exact Ideal.comap_bot_of_injective _ (IsFractionRing.injective (𝓞 F) F)
-
-theorem mem_range_j {x : M.X} (hx : (M.p x).asIdeal = ⊥) : x ∈ Set.range M.j := by
-  have e : M.p x = spMap (algebraMap (𝓞 F) F) (IsLocalRing.closedPoint F) :=
-    PrimeSpectrum.ext (hx.trans (asIdeal_spMap_algebraMap_eq_bot _).symm)
-  obtain ⟨z, hz1, -⟩ := Scheme.Pullback.exists_preimage_pullback x _ e
-  refine ⟨M.pb.isoPullback.inv z, ?_⟩
-  rw [← hz1, ← M.pb.isoPullback_inv_fst]
-  first
-  | rfl
-
-theorem asIdeal_p_j (y : Y.X) : (M.p (M.j y)).asIdeal = ⊥ := by
-  have e : M.p (M.j y) = spMap (algebraMap (𝓞 F) F) (Y.str y) := by
-    first
-    | (show (M.j ≫ M.p) y = (Y.str ≫ spMap _) y
-       rw [M.pb.w])
-  rw [e, asIdeal_spMap_algebraMap_eq_bot]
-
-theorem asIdeal_p_gen [IsIntegral M.X] : (M.p (genericPoint M.X)).asIdeal = ⊥ := by
-  obtain ⟨y⟩ : Nonempty Y.X := inferInstance
-  have hs : genericPoint M.X ⤳ M.j y := (genericPoint_spec M.X).specializes trivial
-  have h3 : (M.p (genericPoint M.X)).asIdeal ≤ (M.p (M.j y)).asIdeal :=
-    (PrimeSpectrum.le_iff_specializes _ _).2 (M.p.base.hom.map_specializes hs)
-  rw [asIdeal_p_j] at h3
-  exact le_bot_iff.1 h3
-
-theorem j_gen_specializes [IsIntegral M.X] : M.j (genericPoint Y.X) ⤳ genericPoint M.X := by
-  obtain ⟨y0, hy0⟩ := mem_range_j M (asIdeal_p_gen M)
-  rw [← hy0]
-  exact M.j.base.hom.map_specializes ((genericPoint_spec Y.X).specializes trivial)
 
 end Model
 

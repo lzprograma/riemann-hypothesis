@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsFRepExteriorPowerStandardRep
 public import Formalism.HermitianCurvature.FiniteOrderIntersectionInSmooth
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
@@ -151,15 +152,7 @@ variable {k r : ℕ}
 
 theorem entry_le_gN (y : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) (i j : Fin (2 * r + k + 1)) :
     ‖y i j‖ ≤ Formalism.FourierDecayAlt.B.gN y := by
-  unfold Formalism.FourierDecayAlt.B.gN
-  rw [← Real.sqrt_sq (norm_nonneg (y i j)), Complex.sq_norm]
-  apply Real.sqrt_le_sqrt
-  calc Complex.normSq (y i j) ≤ ∑ j', Complex.normSq (y i j') :=
-        Finset.single_le_sum (f := fun j' => Complex.normSq (y i j')) (fun _ _ => Complex.normSq_nonneg _)
-          (Finset.mem_univ j)
-    _ ≤ ∑ i', ∑ j', Complex.normSq (y i' j') :=
-        Finset.single_le_sum (f := fun i' => ∑ j', Complex.normSq (y i' j'))
-          (fun _ _ => Finset.sum_nonneg fun _ _ => Complex.normSq_nonneg _) (Finset.mem_univ i)
+  apply _root_.GlobalTheory.WedgeFRep.entry_le_hs <;> assumption
 
 def AT (γ : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) (T : ℝ) : Set (Mt k r) :=
   {y | Matrix.of y ∈ RStab k r γ ∧ Formalism.FourierDecayAlt.B.gN (Matrix.of y) ≤ T}

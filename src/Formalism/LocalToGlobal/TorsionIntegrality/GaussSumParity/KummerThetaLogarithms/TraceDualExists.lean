@@ -37,7 +37,7 @@ lemma sum_range_even {M : Type} [AddCommMonoid M] (m : ℕ) (g : ℕ → M) :
       Finset.sum_range_succ]
     have h1 : (2 * m) % 2 = 0 := by omega
     have h2 : ¬ (2 * m + 1) % 2 = 0 := by omega
-    rw [if_pos h1, if_neg h2, add_zero]
+    rw [ite_eq_left h1, ite_eq_right h2, add_zero]
 
 lemma norm_det_le {K : Type} [NormedField K] [IsUltrametricDist K] {n : Type} [Fintype n]
     [DecidableEq n] (M : Matrix n n K) (h : ∀ i j, ‖M i j‖ ≤ 1) : ‖M.det‖ ≤ 1 := by

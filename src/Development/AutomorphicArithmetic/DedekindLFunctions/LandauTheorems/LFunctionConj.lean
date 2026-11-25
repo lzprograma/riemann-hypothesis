@@ -4,50 +4,8 @@ public import Mathlib.Analysis.Analytic.Order
 
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.NumberTheory.LSeries.DirichletContinuation
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
 public import Mathlib.Analysis.Calculus.Deriv.Star
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
 public import Mathlib.NumberTheory.MulChar.Lemmas
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -141,72 +99,6 @@ theorem LFunction_conj {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (s :
     rfl
 
 open scoped ComplexConjugate
-
-/-- Conjugation exchanges every derivative of a character's L-function with that of
-its inverse character. This includes the totalized derivatives at exceptional points. -/
-theorem iteratedDeriv_LFunction_conj {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) (n : ℕ) (s : ℂ) :
-    iteratedDeriv n (DirichletCharacter.LFunction χ⁻¹) (conj s) =
-      conj (iteratedDeriv n (DirichletCharacter.LFunction χ) s) := by
-  have h : iteratedDeriv n (DirichletCharacter.LFunction χ⁻¹) =
-      conj ∘ iteratedDeriv n (DirichletCharacter.LFunction χ) ∘ conj := by
-    induction n with
-    | zero =>
-      ext z
-      simpa using LFunction_conj χ (conj z)
-    | succ n ih =>
-      rw [iteratedDeriv_succ, ih, deriv_conj_conj, iteratedDeriv_succ]
-  simpa [Function.comp_def] using congrFun h (conj s)
-
-/-- Conjugate zeros of inverse characters have the same analytic multiplicity. -/
-theorem analyticOrderAt_LFunction_conj {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) (s : ℂ) :
-    analyticOrderAt (DirichletCharacter.LFunction χ⁻¹) (conj s) =
-      analyticOrderAt (DirichletCharacter.LFunction χ) s := by
-  by_cases hs : χ ≠ 1 ∨ s ≠ 1
-  · have ha : AnalyticAt ℂ (DirichletCharacter.LFunction χ) s := by
-      rcases hs with hχ | h1
-      · exact (DirichletCharacter.differentiable_LFunction hχ).analyticAt s
-      · exact analyticAt_iff_eventually_differentiableAt.mpr
-          ((eventually_ne_nhds h1).mono fun z hz =>
-            DirichletCharacter.differentiableAt_LFunction χ z (.inl hz))
-    have hb : AnalyticAt ℂ (DirichletCharacter.LFunction χ⁻¹) (conj s) := by
-      rcases hs with hχ | h1
-      · exact (DirichletCharacter.differentiable_LFunction (inv_ne_one.mpr hχ)).analyticAt _
-      · have hc : conj s ≠ 1 := by
-          intro hc
-          apply h1
-          simpa using congrArg (conj : ℂ → ℂ) hc
-        exact analyticAt_iff_eventually_differentiableAt.mpr
-          ((eventually_ne_nhds hc).mono fun z hz =>
-            DirichletCharacter.differentiableAt_LFunction χ⁻¹ z (.inl hz))
-    apply ENat.eq_of_forall_natCast_le_iff
-    intro n
-    rw [natCast_le_analyticOrderAt_iff_iteratedDeriv_eq_zero hb,
-      natCast_le_analyticOrderAt_iff_iteratedDeriv_eq_zero ha]
-    simp only [iteratedDeriv_LFunction_conj, map_eq_zero]
-  · push Not at hs
-    obtain ⟨rfl, rfl⟩ := hs
-    simp
-
-theorem analyticOrderNatAt_LFunction_conj {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) (s : ℂ) :
-    analyticOrderNatAt (DirichletCharacter.LFunction χ⁻¹) (conj s) =
-      analyticOrderNatAt (DirichletCharacter.LFunction χ) s := by
-  simp only [analyticOrderNatAt, analyticOrderAt_LFunction_conj χ s]
-
-/-- Conjugating a finite explicit-formula sum exchanges the character with its inverse,
-including the zero multiplicities and totalized values at exceptional points. -/
-theorem LFunction_zero_sum_conj {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) (S : Finset ℂ) (u : ℝ) (hu : 0 ≤ u) :
-    (∑ ρ ∈ S.map ⟨conj, (starRingEnd ℂ).injective⟩,
-      (analyticOrderNatAt (DirichletCharacter.LFunction χ⁻¹) ρ : ℂ) * ((u : ℂ) ^ ρ / ρ)) =
-      conj (∑ ρ ∈ S,
-        (analyticOrderNatAt (DirichletCharacter.LFunction χ) ρ : ℂ) * ((u : ℂ) ^ ρ / ρ)) := by
-  rw [Finset.sum_map, map_sum]
-  refine Finset.sum_congr rfl fun ρ _ => ?_
-  simp only [Function.Embedding.coeFn_mk, analyticOrderNatAt_LFunction_conj χ ρ]
-  rw [LFunctionConjugation.ofReal_cpow_conj hu, map_mul, map_div₀, map_natCast]
 
 end Deduction
 

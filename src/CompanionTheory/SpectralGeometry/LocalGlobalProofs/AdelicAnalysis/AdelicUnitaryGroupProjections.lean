@@ -267,7 +267,7 @@ theorem components : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numbe
     let G : ∀ v : HeightOneSpectrum (𝓞 F), HA (Fv F v) σ J := fun v => if v ∈ S then g v else 1
     have hS : ∀ᶠ v : HeightOneSpectrum (𝓞 F) in Filter.cofinite, G v = 1 := by
       filter_upwards [S.finite_toSet.compl_mem_cofinite] with v hv
-      exact if_neg hv
+      exact ite_eq_right hv
     obtain ⟨X, mi, mv⟩ := glueM ginf G hS
     obtain ⟨X', mi', mv'⟩ := glueM ginf⁻¹ (fun v => (G v)⁻¹) (by
       filter_upwards [hS] with v hv
@@ -278,11 +278,11 @@ theorem components : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numbe
       injM _ _ (map_eqs σ J _ _ _ ginf mi mi').2 fun v => (map_eqs σ J _ _ _ (G v) (mv v) (mv' v)).2
     let hh : HA (AF F) σ J := (⟨⟨X, X', e1, mul_eq_one_comm.1 e1⟩, e2⟩ : HR (AF F) σ J)
     refine ⟨hh, ha_ext σ J mi, fun v hv => ha_ext σ J ?_, fun v hv => ha_ext σ J ?_⟩
-    · have e : G v = g v := if_pos hv
+    · have e : G v = g v := ite_eq_left hv
       have m := mv v
       rw [e] at m
       exact m
-    · have e : G v = 1 := if_neg hv
+    · have e : G v = 1 := ite_eq_right hv
       have m := mv v
       rw [e] at m
       exact m

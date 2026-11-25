@@ -58,7 +58,6 @@ import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittSma
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -100,17 +99,17 @@ theorem GlobalTheory.TopLevQ.blk_iff {K : Type} [Field K] [ValuativeRel K] {κ �
   constructor
   · intro h p a
     have := h (e (Sum.inr p)) (e (Sum.inl a)) (by
-      simp only [Formalism.L2.DIV.blk2, if_pos (hlo a), if_neg (Nat.not_lt.2 (hhi p))]; omega)
+      simp only [Formalism.L2.DIV.blk2, ite_eq_left (hlo a), ite_eq_right (Nat.not_lt.2 (hhi p))]; omega)
     simp only [Equiv.symm_apply_apply] at this
     exact this
   · intro h i j hij
     have hj : j.val < κ + (s + 1) := by
       by_contra hc
-      simp only [Formalism.L2.DIV.blk2, if_neg hc] at hij
+      simp only [Formalism.L2.DIV.blk2, ite_eq_right hc] at hij
       split_ifs at hij <;> omega
     have hi : ¬ i.val < κ + (s + 1) := by
       intro hc
-      simp only [Formalism.L2.DIV.blk2, if_pos hc, if_pos hj] at hij
+      simp only [Formalism.L2.DIV.blk2, ite_eq_left hc, ite_eq_left hj] at hij
       omega
     obtain ⟨p, hp⟩ : ∃ p, e.symm i = Sum.inr p := by
       rcases hi' : e.symm i with a | p

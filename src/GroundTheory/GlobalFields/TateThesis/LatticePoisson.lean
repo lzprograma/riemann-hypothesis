@@ -22,14 +22,7 @@ open scoped RealInnerProductSpace FourierTransform SchwartzMap
 noncomputable section
 
 theorem fourierChar_add_intCast (x : ℝ) (k : ℤ) : 𝐞 (x + k) = 𝐞 x := by
-  rw [AddChar.map_add_eq_mul]
-  have : 𝐞 (k : ℝ) = 1 := by
-    ext
-    rw [Real.fourierChar_apply, Circle.coe_one]
-    convert Complex.exp_int_mul_two_pi_mul_I k using 2
-    push_cast
-    ring
-  rw [this, mul_one]
+  rw [AddChar.map_add_eq_mul, Real.fourierChar_apply' (k : ℝ), Circle.exp_two_pi_mul_int, mul_one]
 
 namespace LatticePoisson
 

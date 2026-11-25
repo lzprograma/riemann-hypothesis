@@ -29,14 +29,15 @@ theorem exists_decomp_direction {f : G → ℂ}
     (hf : letI := h.chartedSpace; ContMDiff 𝓘(ℝ, 𝔤) 𝓘(ℝ, ℂ) ∞ f)
     (hfc : HasCompactSupport f) (X : 𝔤) {ε : ℝ} (hε : 0 < ε) :
     ∃ f₁ : G → ℂ, (letI := h.chartedSpace; ContMDiff 𝓘(ℝ, 𝔤) 𝓘(ℝ, ℂ) ∞ f₁) ∧
-      HasCompactSupport f₁ ∧
+      tsupport f₁ ⊆ tsupport f ∧
       ∃ g k : ℝ → ℂ, ContDiff ℝ ∞ g ∧ ContDiff ℝ ∞ k ∧ tsupport g ⊆ Icc (-ε) ε ∧
         tsupport k ⊆ Icc (-ε) ε ∧
         ∀ x, f x = (∫ t, g t * f₁ (h.expG (t • X) * x)) + ∫ t, k t * f (h.expG (t • X) * x) := by
   obtain ⟨M, hM, hser⟩ := h.exists_bound_dirDeriv hf hfc X
   obtain ⟨c, g, k, hg, hk, hgs, hks, hc, hid⟩ := exists_dixmierMalliavin_line M hε
-  obtain ⟨hf₁, hf₁c⟩ := hser c hc
-  refine ⟨_, hf₁, hf₁c, g, k, hg, hk, hgs, hks, fun x => ?_⟩
+  obtain ⟨hf₁, -⟩ := hser c hc
+  refine ⟨_, hf₁, closure_minimal (fun x hx => by_contra fun hx' => hx (by
+    simp [h.dirDeriv_eq_zero_of_notMem X _ hx'])) (isClosed_tsupport f), g, k, hg, hk, hgs, hks, fun x => ?_⟩
   set F : ℝ → ℂ := fun t => f (h.expG (t • X) * x) with hFdef
   have hF : ContDiff ℝ ∞ F := h.contDiff_comp_expG_smul_mul hf X x
   have hD : ∀ p t, iteratedDeriv p F t = h.dirDeriv X p f (h.expG (t • X) * x) :=
@@ -101,8 +102,9 @@ theorem exists_decomp_iter {ε : ℝ} (hε : 0 < ε) : ∀ {d : ℕ} (X : Fin d 
   | succ d ih =>
     intro X f hf hfc
     let := h.chartedSpace
-    obtain ⟨f₁, hf₁, hf₁c, g, k, hg, hk, hgs, hks, hdec⟩ :=
+    obtain ⟨f₁, hf₁, hf₁s, g, k, hg, hk, hgs, hks, hdec⟩ :=
       h.exists_decomp_direction hf hfc (X 0) hε
+    have hf₁c : HasCompactSupport f₁ := hfc.of_isClosed_subset (isClosed_tsupport _) hf₁s
     obtain ⟨m₁, F₁, K₁, hF₁, hK₁, hd₁⟩ := ih (Fin.tail X) f₁ hf₁ hf₁c
     obtain ⟨m₂, F₂, K₂, hF₂, hK₂, hd₂⟩ := ih (Fin.tail X) f hf hfc
     refine ⟨m₁ + m₂, Fin.append F₁ F₂,

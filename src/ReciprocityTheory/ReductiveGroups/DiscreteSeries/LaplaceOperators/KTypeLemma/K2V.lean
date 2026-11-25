@@ -29,7 +29,7 @@ theorem k2V (n : ℕ) : EigenspaceWeightConeStandard n := by
   have hU := isInfUnitary_of_isDerivedOn hσ hD
   have hU' : ∀ a b, ε a = ε b → ∀ x y : D, ⟪E a b x, y⟫_ℂ = ⟪x, E b a y⟫_ℂ := by
     intro a b hab x y
-    rw [hU a b x y, adjSign, if_pos hab, one_mul]
+    rw [hU a b x y, adjSign, ite_eq_left hab, one_mul]
   have hℓ : ∀ (a : Fin n) (v w : V), (w : D) = E a a v →
       submoduleEvaluationFunctional V (ι.symm T.w) w = ((lowK ε lam a : ℝ) : ℂ) * submoduleEvaluationFunctional V (ι.symm T.w) v := by
     intro a v w hw

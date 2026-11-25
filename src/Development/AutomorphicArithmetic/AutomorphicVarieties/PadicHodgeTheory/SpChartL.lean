@@ -15,64 +15,15 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeT
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LiftChart
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TangentSpaceDeformationAtL
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.OnCompSelf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FrobDense
-import Mathlib.Algebra.Module.StablyFree.Basic
 import Mathlib.NumberTheory.Padics.LocalField
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
 import Mathlib.FieldTheory.Galois.Profinite
-import Mathlib.RingTheory.TotallySplit
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LiftSymplecticSimilitudeNilpotent, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.UnipotentExponentialSurjective, Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LiftUnramifiedUnipotentCharacter, Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.SpBorLift, Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.SpLiftL, Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.SpChartL
@@ -87,11 +38,6 @@ open UpperTheory.V.GradeZeroInterpolatingElement
 section SlopeTestRemainingChoices
 
 variable {R R' : Type} [CommRing R] [CommRing R']
-
-private theorem adj_mul' (X Y : M4 R) : adj (X * Y) = adj Y * adj X := by
-  ext i j
-  fin_cases i <;> fin_cases j <;>
-    simp [adj_apply, sgn, Fin.rev, Matrix.mul_apply, Fin.sum_univ_four] <;> ring
 
 private theorem adj_adj' (X : M4 R) : adj (adj X) = X := by
   ext i j
@@ -162,12 +108,12 @@ theorem UpperTheory.lift_symplectic_similitude_nilpotent :
     exact this
   have hadj : adj Y' = -Y' := by
     have hT : IsUnit (adj (U : M4 B')) :=
-      ⟨⟨adj (U : M4 B'), adj (↑U⁻¹ : M4 B'), by rw [← adj_mul', Units.inv_mul, adj_one'],
-        by rw [← adj_mul', Units.mul_inv, adj_one']⟩, rfl⟩
+      ⟨⟨adj (U : M4 B'), adj (↑U⁻¹ : M4 B'), by rw [← UpperTheory.V.Loc.SpFlag.adj_mul, Units.inv_mul, adj_one'],
+        by rw [← UpperTheory.V.Loc.SpFlag.adj_mul, Units.mul_inv, adj_one']⟩, rfl⟩
     rw [← add_eq_zero_iff_eq_neg, ← hT.mul_right_eq_zero, ← U.isUnit.mul_left_eq_zero]
     have : adj (U : M4 B') * (adj Y' + Y') * (U : M4 B') =
         adj (Y' * (U : M4 B')) * (U : M4 B') + adj (U : M4 B') * (Y' * (U : M4 B')) := by
-      rw [adj_mul']; noncomm_ring
+      rw [UpperTheory.V.Loc.SpFlag.adj_mul]; noncomm_ring
     rw [this, e2, hU, adj_sub', adj_add', adj_one']
     have e3 : (adj g - 1) * (1 + g) + (1 + adj g) * (g - 1) =
         (adj g * g - 1) + (adj g * g - 1) := by noncomm_ring
@@ -210,7 +156,7 @@ theorem UpperTheory.lift_symplectic_similitude_nilpotent :
     rw [one_smul, ← sub_eq_zero, ← hT.mul_right_eq_zero, ← hT'.mul_left_eq_zero]
     have : (1 + Y) * (adj h * h - 1) * (1 - Y) =
         adj (h * (1 - Y)) * (h * (1 - Y)) - (1 + Y) * (1 - Y) := by
-      rw [adj_mul', a1]
+      rw [UpperTheory.V.Loc.SpFlag.adj_mul, a1]
       simp only [mul_sub (1 + Y) (adj h * h), sub_mul _ _ (1 - Y), mul_one, mul_assoc]
     rw [this, e4, a2]
     noncomm_ring
@@ -498,7 +444,6 @@ private theorem bor_cont {X : Type} [TopologicalSpace X] [TopologicalSpace B] [I
   fin_cases i <;> fin_cases j <;> simp [bor] <;> fun_prop
 
 end UpperTheory.V.Loc.SpBor
-
 
 open UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Loc.SpBor in
 theorem UpperTheory.V.Loc.borLift (hP : LocalPublishedTheorems) {v l : ℕ} [Fact v.Prime] [Fact l.Prime] {G : Type} [Group G]
@@ -993,7 +938,7 @@ private theorem cl_count {n : ℕ} (u : Fin n → ℤ × ℤ) (h : ∀ j, Nat.ca
     by_contra hn
     have h2 : dimsL (u i) = 0 := by
       unfold dimsL
-      rw [if_neg, if_neg hn]
+      rw [ite_eq_right, ite_eq_right hn]
       rintro (e | e | e | e | e) <;> exact hn (by rw [e]; decide)
     haveI : Nonempty {k // u k = u i} := ⟨⟨i, rfl⟩⟩
     exact Nat.card_pos.ne' ((h _).trans h2)

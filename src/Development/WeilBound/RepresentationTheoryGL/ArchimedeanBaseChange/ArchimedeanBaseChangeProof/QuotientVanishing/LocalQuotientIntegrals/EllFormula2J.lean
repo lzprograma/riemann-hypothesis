@@ -11,52 +11,7 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsFundam
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralNonnegNormaliserEq
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.OnlyIsotropic
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.LocalQuotientIntegrals.ClassVanish
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Foundations.MeasurePreservingRmulQuotMeas
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
 import GroundTheory.AutomorphicForms.AdelicGLn
@@ -215,7 +170,7 @@ theorem kernel_decomp (hι : Injective ι) (hθ : ∀ r, ι (θR r) = θ (ι r))
           (fun d => if cls d = c then χ x * φ (twConj θ x (ι d)) else 0) (orbPt ι θR (rep c) q) := by
       intro q
       have : cls (orbPt ι θR (rep c) q) = c := (hcls _ _).2 ⟨_, rfl⟩
-      simp only [this, if_true]
+      simp only [this, ite_true]
       exact hg c q
     have hs : support (fun d => if cls d = c then χ x * φ (twConj θ x (ι d)) else 0) ⊆
         range (orbPt ι θR (rep c) (S := (H c).subgroupOf ι.range)) := by
@@ -540,7 +495,6 @@ theorem unfold2_of (hM : Mahler) : Unfold2 := by
   have hφm : ∀ d, Measurable fun x => φ (twConj θ x (ι d)) := fun d =>
     (hφ.cont.comp ((continuous_inv.mul continuous_const).mul hθc)).measurable
   haveI : T2Space (GA E a × GA E b) := by
-    set_option synthInstance.maxHeartbeats 200000 in
       exact inferInstance
   obtain ⟨B, hB⟩ := hφ.supp.exists_bound_of_continuous hφ.cont
   have key := unfold_abs (μ := μ₁.prod μ₂) (ι := ι) (θ := θ) (θR := θR) (cls := cls) (rep := rep) (H := H)
@@ -750,17 +704,6 @@ section Rational
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
-theorem thetaA_ratGL_eq (t : GL (Fin n) E) : thetaA E n (ratGL E n t) = ratGL E n (thetaE E n t) := by
-  refine Units.ext ?_
-  ext i j
-  have hinv : ((ratGL E n t)⁻¹ : GA E n) = ratGL E n t⁻¹ := (map_inv _ _).symm
-  rw [thetaR_val, hinv]
-  exact conjAd_algebraMap _
-
-theorem twConj_ratGL (γ d : GL (Fin n) E) :
-    twConj (thetaA E n) (ratGL E n γ) (ratGL E n d) = ratGL E n (twConj (thetaE E n) γ d) := by
-  simp only [twConj, map_mul, map_inv, thetaA_ratGL_eq]
-
 theorem twConj_mul' {G : Type*} [Group G] (θ : Monoid.End G) (a b d : G) :
     twConj θ (a * b) d = twConj θ b (twConj θ a d) := by
   simp only [twConj, map_mul, _root_.mul_inv_rev, mul_assoc]
@@ -770,18 +713,8 @@ theorem twConj_ratCent (d : GL (Fin n) E) {h : GA E n} (hh : h ∈ ratCent d) (x
   obtain ⟨t, ht, rfl⟩ := hh
   refine twConj_mul_left _ _ ?_ x
   change twConj (thetaA E n) (ratGL E n t) (ratGL E n d) = ratGL E n d
-  rw [twConj_ratGL]
+  rw [PositivityTheory.Rg.BcB.CV.AdelicTopology.twConj_ratGL]
   exact congrArg _ ht
-
-theorem discreteTopology_ratCent (d : GL (Fin n) E) : DiscreteTopology (ratCent d) := by
-  haveI := GlobalTheory.CompanionTheory.KerTwFin.discreteTopology_range (E := E) (n := n)
-  exact DiscreteTopology.of_subset (s := ((ratGL E n).range : Set (GA E n)))
-    GlobalTheory.CompanionTheory.KerTwFin.discreteTopology_range (by rintro _ ⟨t, -, rfl⟩; exact ⟨t, rfl⟩)
-
-theorem countable_ratCent (d : GL (Fin n) E) : Countable (ratCent d) := by
-  haveI := discreteTopology_ratCent d
-  haveI := GlobalTheory.CuspRep.CuspidalL2GL.secondCountableTopology_GA E n
-  exact TopologicalSpace.separableSpace_iff_countable.1 inferInstance
 
 theorem continuous_twConj (δ : GA E n) : Continuous fun x : GA E n => twConj (thetaA E n) x δ :=
   (continuous_inv.mul continuous_const).mul GlobalTheory.CompanionTheory.KerTwFin.continuous_thetaA
@@ -803,7 +736,7 @@ theorem exists_compact_cover (hM : Mahler) (τ : ℝ) (d : GL (Fin n) E) {K : Se
   obtain ⟨_, ⟨γ, rfl⟩, c, hc, rfl⟩ := Set.mem_mul.1 (hcov hx)
   set δ := twConj (thetaE E n) γ d with hδ
   have hk : twConj (thetaA E n) c (ratGL E n δ) ∈ K := by
-    rw [hδ, ← twConj_ratGL, ← twConj_mul']
+    rw [hδ, ← PositivityTheory.Rg.BcB.CV.AdelicTopology.twConj_ratGL, ← twConj_mul']
     exact hxK
   have hδK : ratGL E n δ ∈ C * K * (thetaA E n '' C)⁻¹ := by
     have e : ratGL E n δ = c * twConj (thetaA E n) c (ratGL E n δ) * (thetaA E n c)⁻¹ := by
@@ -813,7 +746,7 @@ theorem exists_compact_cover (hM : Mahler) (τ : ℝ) (d : GL (Fin n) E) {K : Se
     exact Set.mul_mem_mul (Set.mul_mem_mul hc hk) (Set.inv_mem_inv.2 (mem_image_of_mem _ hc))
   have hex : ∃ γ, twConj (thetaE E n) γ d = δ := ⟨γ, rfl⟩
   have hp : twConj (thetaE E n) (pick δ) d = δ := by
-    simp only [pick, dif_pos hex]
+    simp only [pick, dite_eq_left hex]
     exact hex.choose_spec
   set p := pick δ with hpdef
   have ht : γ * p⁻¹ ∈ twCent (thetaE E n) d := by
@@ -849,10 +782,10 @@ theorem sliceTerm_of (hM : Mahler) : SliceTerm := by
   haveI := GlobalTheory.CuspRep.CuspidalL2GL.secondCountableTopology_GA E b
   haveI := GlobalTheory.CuspRep.CuspidalL2GL.locallyCompactSpace_GA E a
   haveI := GlobalTheory.CuspRep.CuspidalL2GL.locallyCompactSpace_GA E b
-  haveI := discreteTopology_ratCent d₁
-  haveI := discreteTopology_ratCent d₂
-  haveI := countable_ratCent d₁
-  haveI := countable_ratCent d₂
+  haveI := PositivityTheory.Rg.BcB.CV.AdelicTopology.discrete_ratCent d₁
+  haveI := PositivityTheory.Rg.BcB.CV.AdelicTopology.discrete_ratCent d₂
+  haveI := PositivityTheory.Rg.BcB.CV.AdelicTopology.countable_ratCent d₁
+  haveI := PositivityTheory.Rg.BcB.CV.AdelicTopology.countable_ratCent d₂
   have c₁ : Measurable (chiT τ : GA E a → ℂ) :=
     measurable_one.indicator (hM E a τ).1.measurableSet
   have c₂ : Measurable (chiT τ : GA E b → ℂ) :=

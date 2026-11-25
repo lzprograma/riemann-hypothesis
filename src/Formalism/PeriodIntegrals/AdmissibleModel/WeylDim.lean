@@ -5,46 +5,8 @@ public import Formalism.SharpRestriction.GrowthBounds.ProjectionLemmaBaseLevel
 public import Formalism.ThetaLogCoordinates.JacobiPathWeights.StatementP
 public import Formalism.GradedWeylDivisibility.FinalD
 public import Formalism.ThetaLogCoordinates.ResidueClassEstimates.FinalT
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.Interval.Finset.Box
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -65,13 +27,13 @@ def SSZ (k : ℕ) (κ : Fin k → ℤ) : Type :=
 theorem sum_le_castSucc {k : ℕ} (F : Fin (k + 1) → ℕ) (a : Fin k) :
     (∑ b : Fin (k + 1) with b ≤ a.castSucc, F b) = ∑ b : Fin k with b ≤ a, F b.castSucc := by
   have h : ¬ (Fin.last k ≤ a.castSucc) := not_le.mpr (Fin.castSucc_lt_last a)
-  rw [Finset.sum_filter, Finset.sum_filter, Fin.sum_univ_castSucc, if_neg h, add_zero]
+  rw [Finset.sum_filter, Finset.sum_filter, Fin.sum_univ_castSucc, ite_eq_right h, add_zero]
   simp [Fin.castSucc_le_castSucc_iff]
 
 theorem sum_lt_castSucc {k : ℕ} (F : Fin (k + 1) → ℕ) (a : Fin k) :
     (∑ b : Fin (k + 1) with b < a.castSucc, F b) = ∑ b : Fin k with b < a, F b.castSucc := by
   have h : ¬ (Fin.last k < a.castSucc) := not_lt.mpr (Fin.castSucc_lt_last a).le
-  rw [Finset.sum_filter, Finset.sum_filter, Fin.sum_univ_castSucc, if_neg h, add_zero]
+  rw [Finset.sum_filter, Finset.sum_filter, Fin.sum_univ_castSucc, ite_eq_right h, add_zero]
   simp [Fin.castSucc_lt_castSucc_iff]
 
 theorem sum_le_last {k : ℕ} (F : Fin (k + 1) → ℕ) :
@@ -80,7 +42,7 @@ theorem sum_le_last {k : ℕ} (F : Fin (k + 1) → ℕ) :
 
 theorem sum_lt_last {k : ℕ} (F : Fin (k + 1) → ℕ) :
     (∑ b : Fin (k + 1) with b < Fin.last k, F b) = ∑ b : Fin k, F b.castSucc := by
-  rw [Finset.sum_filter, Fin.sum_univ_castSucc, if_neg (lt_irrefl _), add_zero]
+  rw [Finset.sum_filter, Fin.sum_univ_castSucc, ite_eq_right (lt_irrefl _), add_zero]
   simp [Fin.castSucc_lt_last]
 
 theorem intl_zero {K N : ℕ} (f : Fin K → Fin N → ℕ) (hf : Intl f) :
@@ -362,7 +324,7 @@ theorem weylV_proved : Formalism.MainNotions.flipOneThree.WeylV := by
     unfold Vsp
     congr 1
     funext s
-    rw [if_pos (hA s)]
+    rw [ite_eq_left (hA s)]
   show ((Module.finrank Kf (Vsp Kf lam0) : ℕ) : ℚ) = _
   rw [hV, finrank_tensor', Nat.cast_prod]
   refine Finset.prod_congr rfl (fun s _ => ?_)

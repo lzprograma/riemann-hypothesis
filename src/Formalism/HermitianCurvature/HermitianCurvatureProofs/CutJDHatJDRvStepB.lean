@@ -1,5 +1,6 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHLFrozen
 public import Formalism.HermitianCurvature.StatementQ
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursionFromSingleDescent
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVCoef
@@ -17,55 +18,11 @@ import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFu
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightDerivativeRulePsi
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellMulVecBasis
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedLocSec
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.QminorZero
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRvStepBRules, Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRvStepB
@@ -83,8 +40,6 @@ noncomputable section
 namespace Formalism.FourierDecayAlt.P.CutMP.StepB
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.P.Qx3 Formalism.FourierDecayAlt.P.WeylCellAction
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {k r : ℕ}
 
@@ -158,9 +113,9 @@ theorem rightRuleBv (z' : Fin (2 * r + k + 1) → ℂ) (D : Set (Mx k r)) (f : M
   rw [h]
   have hx : xbv k r z' a.succ ⟨r + w.val - a.val - 1, hjlt⟩ = 0 := by
     simp only [xbv, fvec, hpos]
-    rw [dif_pos (show (a.succ : Fin (r + 1)).val < r by simp; omega), Formalism.FourierDecayAlt.P.SignAntidiagonal.herm_bvec_eI]
+    rw [dite_eq_left (show (a.succ : Fin (r + 1)).val < r by simp; omega), Formalism.FourierDecayAlt.P.SignAntidiagonal.herm_bvec_eI]
     simp only [bvec, Pi.single_apply]
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h'
     have := congrArg Fin.val h'
     simp [wI, esI] at this
@@ -231,11 +186,11 @@ theorem leftRuleBv (z : Fin (2 * r + k + 1) → ℂ) (D : Set (Mx k r)) (f : Mx 
   have hinv : (T * g)⁻¹ *ᵥ bvec (eI k r b1) = star (c b1) • bvec (esI k r b1) := by
     rw [← hx, Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul _ (Formalism.QuantumDeterminants.WeylGroupFacts.isUnit_of_uh hU), Matrix.one_mulVec]
   have hy : yv k r z b.succ (T * g) ⟨r + v.val - b.val - 1, hjlt⟩ = 0 := by
-    simp only [yv, hpos, fvec, dif_pos hb1]
+    simp only [yv, hpos, fvec, dite_eq_left hb1]
     have e1 : (eI k r ⟨(b.succ : Fin (r + 1)).val, hb1⟩) = eI k r b1 := by simp [b1, eI]
     rw [e1, hinv]
     simp only [Pi.smul_apply, bvec, Pi.single_apply, smul_eq_mul]
-    rw [if_neg, mul_zero]
+    rw [ite_eq_right, mul_zero]
     intro h'
     have := congrArg Fin.val h'
     simp [wI, esI, b1] at this
@@ -282,7 +237,7 @@ theorem gaugePb {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] (r : ℕ) 
       ((∏ a, ‖c a‖ ^ n a : ℝ) : ℂ) * ((n l : ℂ) / 2) := by
     rw [hψ', hψI]
     exact gauge_scalar_bar (c l) (hc l) (n l) _
-  simp only [pbOp, if_pos hc, wirtBar]
+  simp only [pbOp, ite_eq_left hc, wirtBar]
   rw [hD, hD]
   simp only [← Complex.coe_smul]
   linear_combination (norm := module) hs • H c
@@ -293,21 +248,7 @@ section ring
 
 theorem comm_qminor {A : Type} [Ring A] [Algebra ℂ A] {n t : ℕ} (E : Fin n → Fin n → A) (hE : GlRel E) (p : Fin n)
     {a b : Fin t → Fin n} (ha : ∀ i, a i ≠ p) (hb : ∀ i, b i ≠ p) (w : ℂ) : Commute (E p p) (qminor E a b w) := by
-  unfold qminor
-  refine Commute.sum_right _ _ _ fun σ _ => ?_
-  refine ((Int.cast_commute _ _).symm).mul_right ?_
-  apply Commute.list_prod_right
-  intro T hT
-  rw [List.mem_ofFn] at hT
-  obtain ⟨i, rfl⟩ := hT
-  unfold Tm
-  refine Commute.add_right ?_ ?_
-  · split_ifs
-    · exact Algebra.commute_algebraMap_right _ _
-    · exact Commute.zero_right _
-  · have h := hE p p (a (σ i)) (b i)
-    rw [if_neg (Ne.symm (ha _)), if_neg (hb _), sub_zero] at h
-    exact sub_eq_zero.1 h
+  apply _root_.Formalism.FourierDecayAlt.P.CutHL.comm_qminor <;> assumption
 
 theorem stepBv_ring {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fin n → Fin n → A) (hE : GlRel E)
     {M : Type} [AddCommGroup M] [Module ℂ M] (Λ : A →ₗ[ℂ] M) (q0 q1 : Fin n) (h01 : q0 ≠ q1) (κ : ℂ)
@@ -352,13 +293,13 @@ theorem stepBv_ring {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fin n →
       have hbm : b' m.castSucc = b m.castSucc.castSucc := rfl
       rw [hbm, ha'', Fin.cons_zero]
       unfold Tm
-      rw [if_neg (Ne.symm (hbR m)), zero_add, zcomm _ (E q0 _), zcomm _ (E q0 _)]
+      rw [ite_eq_right (Ne.symm (hbR m)), zero_add, zcomm _ (E q0 _), zcomm _ (E q0 _)]
       exact hL0 m _
     rw [Finset.sum_eq_zero (fun m _ => hrest m), zero_add]
     have hbl : b' (Fin.last t) = q1 := hb1
     rw [hbl, ha'', Fin.cons_zero]
     unfold Tm
-    rw [if_neg h01, zero_add, zcomm _ (E q0 q1), zcomm _ (E q0 q1), hL1, ← mul_assoc, hsg, ← Int.cast_mul]
+    rw [ite_eq_right h01, zero_add, zcomm _ (E q0 q1), zcomm _ (E q0 q1), hL1, ← mul_assoc, hsg, ← Int.cast_mul]
     have h11 : ((-1 : ℤ) ^ t * (-1) ^ ((Fin.last t : Fin (t + 1)) : ℕ)) = 1 := by
       rw [Fin.val_last, ← pow_add, ← two_mul, pow_mul]
       norm_num
@@ -372,7 +313,7 @@ theorem stepBv_ring {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fin n →
     intro m
     rw [hb0]
     unfold Tm
-    rw [if_neg (haR m), zero_add, ← mul_assoc]
+    rw [ite_eq_right (haR m), zero_add, ← mul_assoc]
     exact hR0 m _
   rw [Finset.sum_eq_zero (fun m _ => hrest m), zero_add]
   have hsl : Λ ((((-1 : ℤ) ^ (t + 1 + (((Fin.last t).castSucc : Fin (t + 2)) : ℕ)) : ℤ) : A) *
@@ -381,7 +322,7 @@ theorem stepBv_ring {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fin n →
       -Λ (qminor E a' b' u) := by
     rw [ha1, hb0]
     unfold Tm
-    rw [if_neg (Ne.symm h01), zero_add, ← mul_assoc, hR1, zmul, map_smul]
+    rw [ite_eq_right (Ne.symm h01), zero_add, ← mul_assoc, hR1, zmul, map_smul]
     simp only [Fin.coe_castSucc, Fin.val_last]
     rw [show t + 1 + t = 2 * t + 1 by ring, pow_succ, pow_mul]
     simp
@@ -417,8 +358,6 @@ noncomputable section
 namespace Formalism.FourierDecayAlt.P.CutMP.StepB
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.P.Qx5 Formalism.FourierDecayAlt.P.Qx2 Formalism.FourierDecayAlt.P.PBN Formalism.FourierDecayAlt.P.PBN.MC
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 section pt
 
@@ -490,7 +429,7 @@ theorem stepBv_pt (z z' : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hz' : 
       rw [hpe, leftRuleBv z D _ hz hD hN hsm hle c hc g hg hcD ⟨l, by omega⟩ (by simp; omega)]
     · have hpe : p = esI k r ⟨2 * r + k - p.val, by omega⟩ := Fin.ext (by simp [esI]; omega)
       rw [hpe, Formalism.FourierDecayAlt.P.CutMP.TVG.mirror_left_rule_cell_holds E k r z D _ hz hD hN hsm hle c hc g hg hcD
-        ⟨2 * r + k - p.val, by omega⟩ ⟨l, by omega⟩ (by simp; omega), if_neg (by simp; omega), zero_smul]
+        ⟨2 * r + k - p.val, by omega⟩ ⟨l, by omega⟩ (by simp; omega), ite_eq_right (by simp; omega), zero_smul]
   have hL1 : ∀ X : SA E hD, Λ (EA hD (esI k r ⟨l, by omega⟩) (esI k r ⟨l + 1, by omega⟩) * X) =
       (star (c ⟨l + 1, by omega⟩) / star (c ⟨l, by omega⟩)) • Λ X := by
     intro X
@@ -498,7 +437,7 @@ theorem stepBv_pt (z z' : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hz' : 
     have hsm := (((X : Module.End ℂ (VS k r 0 D E)) v₀ : VS k r 0 D E)).2.1
     have hle := leftEq_SA hD z hN X v₀ hLv
     rw [Formalism.FourierDecayAlt.P.CutMP.TVG.mirror_left_rule_cell_holds E k r z D _ hz hD hN hsm hle c hc g hg hcD ⟨l + 1, by omega⟩
-      ⟨l, by omega⟩ (by simp), if_pos (by simp), La_apply]
+      ⟨l, by omega⟩ (by simp), ite_eq_left (by simp), La_apply]
   have hRmid : ∀ p : Fin (2 * r + k + 1), r ≤ p.val → p.val + l + 2 ≤ 2 * r + k → ∀ X : SA E hD,
       Λ (X * EA hD p (esI k r ⟨l, by omega⟩)) = 0 := by
     intro p hp1 hp2 X
@@ -509,14 +448,14 @@ theorem stepBv_pt (z z' : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hz' : 
         rw [hpe, hv₀, EA_v0Bv hD z' hz' hf hRf ⟨l, by omega⟩ (by simp; omega)]
       · have hpe : p = esI k r ⟨2 * r + k - p.val, by omega⟩ := Fin.ext (by simp [esI]; omega)
         rw [hpe, hv₀, Formalism.FourierDecayAlt.P.CutMP.TVG.root_action_on_truncated_vector hD z' hz' Formalism.FourierDecayAlt.P.CutMP.TVG.mirror_right_rule_holds hf hRf
-          ⟨2 * r + k - p.val, by omega⟩ ⟨l, by omega⟩ (by simp; omega), if_neg (by simp; omega), zero_smul]
+          ⟨2 * r + k - p.val, by omega⟩ ⟨l, by omega⟩ (by simp; omega), ite_eq_right (by simp; omega), zero_smul]
     rw [hzero, map_zero]
     rfl
   have hR1 : ∀ X : SA E hD, Λ (X * EA hD (esI k r ⟨l + 1, by omega⟩) (esI k r ⟨l, by omega⟩)) = Λ X := by
     intro X
     rw [hΛ, La_apply, La_apply, Subalgebra.coe_mul, Module.End.mul_apply]
     rw [hv₀, Formalism.FourierDecayAlt.P.CutMP.TVG.root_action_on_truncated_vector hD z' hz' Formalism.FourierDecayAlt.P.CutMP.TVG.mirror_right_rule_holds hf hRf
-      ⟨l + 1, by omega⟩ ⟨l, by omega⟩ (by simp), if_pos (by simp), one_smul]
+      ⟨l + 1, by omega⟩ ⟨l, by omega⟩ (by simp), ite_eq_left (by simp), one_smul]
   have hne : esI k r ⟨l, by omega⟩ ≠ esI k r ⟨l + 1, by omega⟩ := by simp [esI, Fin.ext_iff]; omega
   have hvalL : ∀ m : Fin tt, r ≤ (a m.castSucc.castSucc).val ∧ (a m.castSucc.castSucc).val + l + 2 ≤ 2 * r + k := by
     intro m
@@ -581,7 +520,7 @@ theorem stepBv_pt (z z' : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hz' : 
       (w - ((tt + 1 : ℕ) : ℂ)) • Λ Q1 + EH k r (esI k r ⟨l, by omega⟩) (esI k r ⟨l, by omega⟩)
         (((Q1 : Module.End ℂ (VS k r 0 D E)) v₀ : VS k r 0 D E) : Mx k r → E) x0 := by
     unfold Tm
-    rw [if_pos rfl, mul_add, map_add (f := _), ← hcomm.eq, la_E hD v₀ hx0, Algebra.algebraMap_eq_smul_one, mul_smul_comm,
+    rw [ite_eq_left rfl, mul_add, map_add (f := _), ← hcomm.eq, la_E hD v₀ hx0, Algebra.algebraMap_eq_smul_one, mul_smul_comm,
       mul_one, map_smul]
   rw [hT', Formalism.FourierDecayAlt.P.CutMP.TVG.mirror_torus_cell_holds E k r D _ hD
     (((Q1 : Module.End ℂ (VS k r 0 D E)) v₀ : VS k r 0 D E)).2.1 c hc g hg hcD ⟨l, by omega⟩] at hring
@@ -622,7 +561,7 @@ theorem conj_partial_derivative_double_sum {E : Type} [NormedAddCommGroup E] [No
     (κ : ι → ι' → ℂ) (F : ι → ι' → (Fin r → ℂ) → E) {c : Fin r → ℂ} (hF : ∀ i j, DifferentiableAt ℝ (F i j) c)
     (l : Fin r) (hc : c ∈ OmX r) :
     pbOp l (fun c' => ∑ i, ∑ j, κ i j • F i j c') c = ∑ i, ∑ j, κ i j • pbOp l (F i j) c := by
-  simp only [pbOp, if_pos hc, wirtBar, (has_fderiv_double_sum κ F hF).fderiv, ContinuousLinearMap.coe_sum', Finset.sum_apply,
+  simp only [pbOp, ite_eq_left hc, wirtBar, (has_fderiv_double_sum κ F hF).fderiv, ContinuousLinearMap.coe_sum', Finset.sum_apply,
     ContinuousLinearMap.coe_smul', Pi.smul_apply]
   simp only [Finset.smul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -645,8 +584,6 @@ end Formalism.FourierDecayAlt.P.CutMP.StepB
 namespace Formalism.FourierDecayAlt.P.CutMP
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.P.PBN.MC Formalism.FourierDecayAlt.P.CutMP.StepB
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem mirror_residue_second_move : JDRvStepB := by
   intro Wp Wq _ _ _ _ k r z z' π π' D Y hz hz' hD J hJ l hl c hc g hg hcg

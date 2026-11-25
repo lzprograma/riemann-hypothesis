@@ -150,7 +150,7 @@ theorem quadAlg_isField_or_split {K A : Type} [Field K] [CommRing A] [Algebra K 
           linear_combination (-(a - b) * (c - f)) * hee }
     have hψ : ∀ x, ψ x = algebraMap K A x.1 * e + algebraMap K A x.2 * (1 - e) := fun _ => rfl
     have hinj : Function.Injective ψ := by
-      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+      rw [injective_iff_map_eq_zero]
       intro x hx
       rw [hψ] at hx
       have ha : algebraMap K A x.1 * e = 0 := by
@@ -539,7 +539,7 @@ theorem extend_frame : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Num
     simp only [gramE, tupH, Fin.append_left, Fin.append_right, F0]
     refine Fin.lastCases ?_ (fun a => ?_) i
     · rw [Fin.snoc_last, ← hE_swap hinv hJ.1 P.z (P.f b), hfz, map_zero]
-      exact (if_neg (Fin.castSucc_ne_last b).symm).symm
+      exact (ite_eq_right (Fin.castSucc_ne_last b).symm).symm
     · rw [Fin.snoc_castSucc, hef]
       simp only [Fin.castSucc_inj]
   funext i j

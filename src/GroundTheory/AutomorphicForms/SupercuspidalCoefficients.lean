@@ -212,11 +212,11 @@ theorem isCompactModCenter_matrixCoeff (hπ : IsSmooth π) (hsc : IsSupercuspida
       (Finset.univ.image μ).min' ⟨_, Finset.mem_image_of_mem μ (Finset.mem_univ h.choose)⟩ else 0
     have hc₀le : ∀ k, c₀ ≤ μ k := by
       intro k
-      simp only [c₀, dif_pos (⟨k, trivial⟩ : ∃ k : Fin n, True)]
+      simp only [c₀, dite_eq_left (⟨k, trivial⟩ : ∃ k : Fin n, True)]
       exact Finset.min'_le _ _ (Finset.mem_image_of_mem _ (Finset.mem_univ k))
     have hc₀mem : ∀ j : Fin n, ∃ k, c₀ = μ k := by
       intro j
-      simp only [c₀, dif_pos (⟨j, trivial⟩ : ∃ k : Fin n, True)]
+      simp only [c₀, dite_eq_left (⟨j, trivial⟩ : ∃ k : Fin n, True)]
       obtain ⟨k, -, hk⟩ := Finset.mem_image.1 (Finset.min'_mem (Finset.univ.image μ) _)
       exact ⟨k, hk.symm⟩
     let ν : Fin n → ℤ := μ - fun _ => c₀
@@ -242,12 +242,6 @@ theorem isCompactModCenter_matrixCoeff (hπ : IsSmooth π) (hsc : IsSupercuspida
     group
 
 end Compact
-
-section Converse
-
-variable {π : Representation ℂ (GL (Fin n) F) V}
-
-end Converse
 
 end Parabolic
 

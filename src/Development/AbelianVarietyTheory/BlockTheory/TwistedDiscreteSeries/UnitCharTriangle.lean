@@ -47,8 +47,6 @@ open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionVa
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped Pointwise TensorProduct InnerProductSpace
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle
 
 open GlobalTheory.Grid
@@ -217,12 +215,6 @@ def nuH (i j : Fin D.R.m) (t : T) : Formalism.L2.Host.HChar D.host.E := R.C.mu0 
 
 open Classical in
 def places (t : T) : Finset (Pl D.host.E) := G.toPlaceDat.W R.Pg ∪ R.Q t
-
-def IsSum (N₁ N₂ : Node D) (WW : HSp D) (Λ : Submodule (𝓞 D.host.E) (Fin WW.rank → D.host.E)) : Prop :=
-  N₁.V.rank + N₂.V.rank = WW.rank ∧
-    ∃ (ι₁ : N₁.V.V →ₗ[D.host.E] WW.V) (ι₂ : N₂.V.V →ₗ[D.host.E] WW.V),
-      Formalism.BasicNotions.HSpace.IsIsomEmb N₁.V WW ι₁ ∧ Formalism.BasicNotions.HSpace.IsIsomEmb N₂.V WW ι₂ ∧ (∀ x y, WW.hD (ι₁ x) (ι₂ y) = 0) ∧
-      ∀ z : WW.V, WW.frame.equivFun z ∈ Λ ↔ ∃ x y, N₁.InLat x ∧ N₂.InLat y ∧ z = ι₁ x + ι₂ y
 
 def BottomInField (i j : Fin D.R.m) : Prop :=
   ∃ (A A' WW : HSp D) (X : Tri T A A' WW),

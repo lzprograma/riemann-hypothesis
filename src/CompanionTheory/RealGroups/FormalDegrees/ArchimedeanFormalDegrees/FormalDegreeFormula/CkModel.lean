@@ -76,7 +76,7 @@ theorem cpart1_Eaa (ε : Fin n → Bool) (a : Fin n) : cpart1 ε (bdPart ε (sin
   ext i j
   rw [cpart1_bdPart_apply]
   by_cases h : ε i = ε j
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     simp only [single_apply]
     split_ifs <;> aesop
   · simp [h]
@@ -214,21 +214,21 @@ theorem uEv_hw {ε : Fin n → Bool} {m : Fin n → ℤ} (hm : NonnegDom ε m) {
     refine h'.trans ?_
     by_cases hca : c = a
     · have hcb : c ≠ b := hca ▸ hab'
-      rw [if_pos hca, if_neg (Ne.symm hcb)]
+      rw [ite_eq_left hca, ite_eq_right (Ne.symm hcb)]
       subst hca
-      simp only [hμ, Pi.sub_apply, Pi.single_apply, if_true, if_neg hcb, ContinuousLinearMap.coe_coe,
+      simp only [hμ, Pi.sub_apply, Pi.single_apply, ite_true, ite_eq_right hcb, ContinuousLinearMap.coe_coe,
         LinearMap.zero_apply, sub_zero]
       push_cast
       module
     · by_cases hcb : c = b
-      · rw [if_neg hca, if_pos hcb.symm]
+      · rw [ite_eq_right hca, ite_eq_left hcb.symm]
         subst hcb
-        simp only [hμ, Pi.sub_apply, Pi.single_apply, if_true, if_neg hca, ContinuousLinearMap.coe_coe,
+        simp only [hμ, Pi.sub_apply, Pi.single_apply, ite_true, ite_eq_right hca, ContinuousLinearMap.coe_coe,
           LinearMap.zero_apply, zero_sub]
         push_cast
         module
-      · rw [if_neg hca, if_neg (Ne.symm hcb)]
-        simp only [hμ, Pi.sub_apply, Pi.single_apply, if_neg hca, if_neg hcb, LinearMap.zero_apply, sub_zero]
+      · rw [ite_eq_right hca, ite_eq_right (Ne.symm hcb)]
+        simp only [hμ, Pi.sub_apply, Pi.single_apply, ite_eq_right hca, ite_eq_right hcb, LinearMap.zero_apply, sub_zero]
         push_cast
         module
   obtain ⟨c, hc, hΛ⟩ := HW.KType.weight_le T hv hwt

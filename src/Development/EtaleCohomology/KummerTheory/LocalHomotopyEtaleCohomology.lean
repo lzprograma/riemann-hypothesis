@@ -24,49 +24,8 @@ public import Development.EtaleCohomology.KummerTheory.LimOfIso
 public import Development.EtaleCohomology.KummerTheory.MVnatPf
 public import Development.EtaleCohomology.KummerTheory.NrmMkPf
 public import Development.EtaleCohomology.KummerTheory.SHenCutPf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
-import Mathlib.Tactic.Lemma
 import Mathlib.Algebra.Category.ModuleCat.Products
-import Mathlib.Tactic.Basify
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.EtaleCohomology.KummerTheory.DictPfEv
 
@@ -239,16 +198,6 @@ open LateralTheory.KummerTheory.LHCut
 
 variable {Λ : Type} [CommRing Λ]
 
-theorem sres_comp {F : Shv Λ} {W V U : Scheme.{0}} (h : W ⟶ V) (g : V ⟶ U) (a : Sec F U) :
-    Sec.res h (Sec.res g a) = Sec.res (h ≫ g) a := by
-  show (F.obj.map h.op).hom ((F.obj.map g.op).hom a) = (F.obj.map (h ≫ g).op).hom a
-  rw [op_comp, Functor.map_comp]
-  rfl
-
-theorem smap_res {F G : Shv Λ} (φ : F ⟶ G) {V U : Scheme.{0}} (g : V ⟶ U) (a : Sec F U) :
-    Sec.res g (Sec.map φ a) = Sec.map φ (Sec.res g a) :=
-  (congrArg (fun k => k.hom a) (φ.hom.naturality g.op)).symm
-
 theorem smap_comp {F G H : Shv Λ} (φ : F ⟶ G) (ψ : G ⟶ H) {U : Scheme.{0}} (a : Sec F U) :
     Sec.map ψ (Sec.map φ a) = Sec.map (φ ≫ ψ) a := rfl
 
@@ -264,11 +213,11 @@ theorem leib' {I J K : Cx Λ} (μ : Pair I J K) (U : Scheme.{0}) (s t w : ℤ) (
 
 theorem rst_fst {X S : Scheme.{0}} (p : X ⟶ S) {V U : Over S} (g : V ⟶ U) :
     rst p g ≫ pullback.fst p U.hom = pullback.fst p V.hom := by
-  simp only [rst, pullback.map]; erw [pullback.lift_fst]; simp
+  simp only [rst, pullback.map]; rw [pullback.lift_fst]; simp
 
 theorem rst_snd {X S : Scheme.{0}} (p : X ⟶ S) {V U : Over S} (g : V ⟶ U) :
     rst p g ≫ pullback.snd p U.hom = pullback.snd p V.hom ≫ g.left := by
-  simp only [rst, pullback.map]; erw [pullback.lift_snd]
+  simp only [rst, pullback.map]; rw [pullback.lift_snd]
 
 theorem rst_comp {X S : Scheme.{0}} (p : X ⟶ S) {W V U : Over S} (g' : W ⟶ V) (g : V ⟶ U) :
     rst p (g' ≫ g) = rst p g' ≫ rst p g := by
@@ -276,16 +225,10 @@ theorem rst_comp {X S : Scheme.{0}} (p : X ⟶ S) {W V U : Over S} (g' : W ⟶ V
   · rw [Category.assoc, rst_fst, rst_fst, rst_fst]
   · rw [Category.assoc, rst_snd, rst_snd, ← Category.assoc, rst_snd, Category.assoc, Over.comp_left]
 
-theorem smap_add {F G : Shv Λ} (φ : F ⟶ G) {U : Scheme.{0}} (a b : Sec F U) :
-    Sec.map φ (a + b) = Sec.map φ a + Sec.map φ b := map_add _ _ _
-theorem smap_sub {F G : Shv Λ} (φ : F ⟶ G) {U : Scheme.{0}} (a b : Sec F U) :
-    Sec.map φ (a - b) = Sec.map φ a - Sec.map φ b := map_sub _ _ _
 theorem smap_smul {F G : Shv Λ} (φ : F ⟶ G) {U : Scheme.{0}} (c : ULift.{1} Λ) (a : Sec F U) :
     Sec.map φ (c • a) = c • Sec.map φ a := map_smul _ _ _
 theorem smap_sum {F G : Shv Λ} (φ : F ⟶ G) {U : Scheme.{0}} {ι : Type*} (t : Finset ι) (f : ι → Sec F U) :
     Sec.map φ (∑ i ∈ t, f i) = ∑ i ∈ t, Sec.map φ (f i) := map_sum _ _ _
-theorem sres_sub {F : Shv Λ} {V U : Scheme.{0}} (g : V ⟶ U) (a b : Sec F U) :
-    Sec.res g (a - b) = Sec.res g a - Sec.res g b := map_sub _ _ _
 theorem sres_zero {F : Shv Λ} {V U : Scheme.{0}} (g : V ⟶ U) : Sec.res g (0 : Sec F U) = 0 := map_zero _
 theorem sres_sum {F : Shv Λ} {V U : Scheme.{0}} (g : V ⟶ U) {ι : Type*} (t : Finset ι) (f : ι → Sec F U) :
     Sec.res g (∑ i ∈ t, f i) = ∑ i ∈ t, Sec.res g (f i) := map_sum _ _ _
@@ -304,7 +247,7 @@ theorem usmul_res {F : Shv Λ} {V U : Scheme.{0}} (g : V ⟶ U) (u : ℤˣ) (a :
 theorem dS_add (n m : ℤ) {U : Scheme.{0}} (b b' : FinalTheorems J r M n U) : dS n m (b + b') = dS n m b + dS n m b' := by
   funext a s
   simp only [dS, Pi.add_apply]
-  rw [smap_add, smul_add]
+  rw [LateralTheory.KummerTheory.DeltaPf.smap_add, smul_add]
 
 theorem dS_smul (n m : ℤ) {U : Scheme.{0}} (c : ULift.{1} Λ) (b : FinalTheorems J r M n U) : dS n m (c • b) = c • dS n m b := by
   funext a s
@@ -335,8 +278,8 @@ theorem d_Phi (hγ : Closed γ) (n w : ℤ) (h : n = w) (n' w' : ℤ) (hn : n + 
   rw [smap_sum]
   refine Finset.sum_congr rfl (fun s _ => ?_)
   have ha : Sec.map (I.d ((a : ℕ) : ℤ) ((a : ℕ) + 1)) (Sec.res (pullback.fst p U.hom) (γ a s)) = 0 := by
-    rw [← smap_res, hγ]; exact sres_zero _
-  rw [leib' μ _ _ _ _ _ _ _ ha (n' - ((a : ℕ) : ℤ)) w' (by omega) hw, usmul_res, smap_res, Units.smul_def,
+    rw [← LateralTheory.KummerTheory.AW.sec_map_res, hγ]; exact sres_zero _
+  rw [leib' μ _ _ _ _ _ _ _ ha (n' - ((a : ℕ) : ℤ)) w' (by omega) hw, usmul_res, LateralTheory.KummerTheory.AW.sec_map_res, Units.smul_def,
     Units.smul_def, map_zsmul]
 
 theorem Phi_res (n w : ℤ) (h : n = w) {V U : Over S} (g : V ⟶ U) (b : FinalTheorems J r M n U.left) :
@@ -346,7 +289,7 @@ theorem Phi_res (n w : ℤ) (h : n = w) {V U : Over S} (g : V ⟶ U) (b : FinalT
   refine Finset.sum_congr rfl (fun a _ => ?_)
   rw [sres_sum]
   refine Finset.sum_congr rfl (fun s _ => ?_)
-  rw [μ.nat, sres_comp, sres_comp, sres_comp, rst_fst, rst_snd]
+  rw [μ.nat, LateralTheory.KummerTheory.ExactPf.res_res, LateralTheory.KummerTheory.ExactPf.res_res, LateralTheory.KummerTheory.ExactPf.res_res, rst_fst, rst_snd]
 
 end Main
 
@@ -356,13 +299,13 @@ theorem coneAlg_of : ConeAlg := by
     fun W g' x => ?_⟩⟩
   · refine Prod.ext (dS_add _ _ _ _) ?_
     show Phi μ p γ _ _ h U (x.1 + y.1) - Sec.map (K.d j j') (x.2 + y.2) = _
-    rw [Phi_add, smap_add, add_sub_add_comm]; rfl
+    rw [Phi_add, LateralTheory.KummerTheory.DeltaPf.smap_add, add_sub_add_comm]; rfl
   · refine Prod.ext (dS_smul _ _ _ _) ?_
     show Phi μ p γ _ _ h U (c • x.1) - Sec.map (K.d j j') (c • x.2) = _
     rw [Phi_smul, smap_smul, ← smul_sub]; rfl
   · refine Prod.ext (dS_dS _ _ _ _) ?_
     show Phi μ p γ _ _ h' U (dS _ _ x.1) - Sec.map (K.d j' j'') (Phi μ p γ _ _ h U x.1 - Sec.map (K.d j j') x.2) = 0
-    rw [smap_sub, d_Phi μ p γ hγ (j + 1) j' h (j' + 1) j'' (by omega) h', dd, sub_zero, sub_self]
+    rw [LateralTheory.KummerTheory.DeltaPf.smap_sub, d_Phi μ p γ hγ (j + 1) j' h (j' + 1) j'' (by omega) h', dd, sub_zero, sub_self]
   · refine Prod.ext ?_ (map_add _ _ _)
     funext a s; exact map_add _ _ _
   · refine Prod.ext ?_ (map_smul _ _ _)
@@ -370,16 +313,16 @@ theorem coneAlg_of : ConeAlg := by
   · refine Prod.ext ?_ ?_
     · funext a s
       show Sec.res g.left (_ • Sec.map _ _) = _ • Sec.map _ (Sec.res g.left _)
-      rw [usmul_res, smap_res]
+      rw [usmul_res, LateralTheory.KummerTheory.AW.sec_map_res]
     · show Sec.res (rst p g) (Phi μ p γ _ _ h U x.1 - Sec.map (K.d j j') x.2) =
         Phi μ p γ _ _ h V (fun a s => Sec.res g.left (x.1 a s)) - Sec.map (K.d j j') (Sec.res (rst p g) x.2)
-      rw [sres_sub, Phi_res, smap_res]
+      rw [LateralTheory.KummerTheory.DeltaPf.res_sub, Phi_res, LateralTheory.KummerTheory.AW.sec_map_res]
   · refine Prod.ext ?_ ?_
     · funext a s
       show Sec.res (g' ≫ g).left _ = Sec.res g'.left (Sec.res g.left _)
-      rw [Over.comp_left, sres_comp]
+      rw [Over.comp_left, LateralTheory.KummerTheory.ExactPf.res_res]
     · show Sec.res (rst p (g' ≫ g)) x.2 = Sec.res (rst p g') (Sec.res (rst p g) x.2)
-      rw [rst_comp, sres_comp]
+      rw [rst_comp, LateralTheory.KummerTheory.ExactPf.res_res]
 
 end LateralTheory.KummerTheory.ConeAlgPf
 end -- clump:auto
@@ -479,8 +422,8 @@ theorem sym_tot {X S : Scheme.{0}} (p : X ⟶ S) {V U : Over S} (g : V ⟶ U) :
     pullback.lift (pullback.fst V.hom p ≫ g.left) (pullback.snd V.hom p)
       (by rw [Category.assoc, Over.w g]; exact pullback.condition)
   apply pullback.hom_ext <;> simp only [rst, Category.assoc, pullbackSymmetry_hom_comp_fst, pullbackSymmetry_hom_comp_snd]
-  · erw [pullback.lift_fst, pullbackSymmetry_hom_comp_fst_assoc]; simp only [pullback.map]; erw [pullback.lift_snd]
-  · erw [pullback.lift_snd, pullbackSymmetry_hom_comp_snd]; simp only [pullback.map, Category.comp_id]; erw [pullback.lift_fst]
+  · rw [pullback.lift_fst, pullbackSymmetry_hom_comp_fst_assoc]; simp only [pullback.map]; rw [pullback.lift_snd]
+  · rw [pullback.lift_snd, pullbackSymmetry_hom_comp_snd]; simp only [pullback.map, Category.comp_id]; rw [pullback.lift_fst]
 
 def prodSec {Λ : Type} [CommRing Λ] {S : Scheme.{0}} {ι : Type 1} (G : ι → SlShv Λ S) (U : Over S) :
     (∏ᶜ G).obj.obj (op U) →ₗ[ULift.{1} Λ] (∀ i, (G i).obj.obj (op U)) :=
@@ -903,18 +846,9 @@ section Gen
 variable {I J K : Cx Λ} {X S : Scheme.{0}} {r : ℕ → ℕ} {M : ℕ} (μ : Pair I J K) (p : X ⟶ S)
   (γ : ∀ a : ℕ, Fin (r a) → Sec (I.X (a : ℤ)) X)
 
-theorem cD_fst (j j' : ℤ) (h : j + 1 = j') (U : Over S) (x : Cone J K p r M j U) :
-    (cD μ p γ j j' h U x).1 = dS (j + 1) (j' + 1) x.1 := rfl
-
-theorem cD_snd (j j' : ℤ) (h : j + 1 = j') (U : Over S) (x : Cone J K p r M j U) :
-    (cD μ p γ j j' h U x).2 = Phi μ p γ (j + 1) j' h U x.1 - Sec.map (K.d j j') x.2 := rfl
-
 theorem dS_zero (n m : ℤ) (U : Scheme.{0}) : dS n m (0 : FinalTheorems J r M n U) = 0 := by
   funext a s
   simp [dS]
-
-theorem Phi_zero (n w : ℤ) (h : n = w) (U : Over S) : Phi μ p γ n w h U (0 : FinalTheorems J r M n U.left) = 0 := by
-  simp [Phi]
 
 theorem closed_of_dS (n m : ℤ) (hm : m = n + 1) (U : Scheme.{0}) (b : FinalTheorems J r M n U) (hb : dS n m b = 0)
     (a : Fin (M + 1)) (s : Fin (r a)) : Sec.map (J.d (n - ((a : ℕ) : ℤ)) (n - ((a : ℕ) : ℤ) + 1)) (b a s) = 0 := by
@@ -935,11 +869,11 @@ theorem cok_part (hD : Dict) (hL : LhSec) (q : ℕ) {X S : Scheme.{0}} (p : X �
   have hk0c := ((hD (ZMod q) (res _ (tw q i)) (pullback p U.hom) (j + 1)).2.2.1 _ _ hk0).1
   have hcl : cD (mu q i) p γ (j + 1) (j + 1 + 1) rfl U ((0, k0) : Cone _ _ p r M (j + 1) U) = 0 := by
     refine Prod.ext ?_ ?_
-    · rw [cD_fst, dS_zero, Prod.fst_zero]
-    · rw [cD_snd, Phi_zero, hk0c, sub_zero, Prod.snd_zero]
+    · rw [LateralTheory.KummerTheory.LHCut.lcv_cD_fst, dS_zero, Prod.fst_zero]
+    · rw [LateralTheory.KummerTheory.LHCut.lcv_cD_snd, LateralTheory.KummerTheory.LHCut.etale_leray_hirsch_cone_comparison_map_degree_cast, hk0c, sub_zero, Prod.snd_zero]
   obtain ⟨y', hy'⟩ := coneEx' h1 j rfl _ hcl
   have e1 := congrArg Prod.fst hy'
-  rw [cD_fst, Prod.smul_fst, smul_zero] at e1
+  rw [LateralTheory.KummerTheory.LHCut.lcv_cD_fst, Prod.smul_fst, smul_zero] at e1
   have hcls := closed_of_dS (j + 1) (j + 1 + 1) rfl U.left y'.1 e1
   choose yc hyc using fun (a : Fin (M + 1)) (s : Fin (r a)) =>
     (hD (ZMod q) (res _ (tw q 0)) U.left ((j + 1) - ((a : ℕ) : ℤ))).1 (y'.1 a s) (hcls a s)
@@ -948,7 +882,7 @@ theorem cok_part (hD : Dict) (hL : LhSec) (q : ℕ) {X S : Scheme.{0}} (p : X �
   refine ((hC (ZMod q) (res _ (tw q i)) (pullback p U.hom) (j + 1)).2.2.2 j rfl _ _ _ _ hlh
     ((hC _ _ _ _).2.1 N _ _ hk0)).2 ⟨y'.2, ?_⟩
   have e2 := congrArg Prod.snd hy'
-  rw [cD_snd, Prod.smul_snd] at e2
+  rw [LateralTheory.KummerTheory.LHCut.lcv_cD_snd, Prod.smul_snd] at e2
   rw [← e2, sub_sub_cancel]
 
 theorem exIso_of (hD : Dict) (hL : LhSec) : ExIso := by
@@ -1001,7 +935,7 @@ theorem extd (C : CochainComplex A ℤ) (N : ℕ) {j k l : ℤ} (hjk : j + 1 = k
           rw [← Category.assoc, image.fac]
     _ = N • φ := by rw [Injective.comp_factorThru, Abelian.comp_epiDesc]
 
-theorem step (C : CochainComplex A ℤ) (N M : ℕ) {i j k l : ℤ} (_hij : i + 1 = j) (hjk : j + 1 = k)
+theorem step (C : CochainComplex A ℤ) (N M : ℕ) {i j k l : ℤ} (hjk : j + 1 = k)
     (hkl : k + 1 = l) (hH : N • 𝟙 (C.homology k) = 0) [Injective (C.X k)]
     (a : C.X j ⟶ C.X i) (b : C.X k ⟶ C.X j) (hab : a ≫ C.d i j + C.d j k ≫ b = M • 𝟙 (C.X j)) :
     ∃ c : C.X l ⟶ C.X k, (N • b) ≫ C.d j k + C.d k l ≫ c = (N * M) • 𝟙 (C.X k) := by
@@ -1035,7 +969,7 @@ theorem homot (C : CochainComplex A ℤ) [C.IsStrictlyGE (-1)] (hI : ∀ j, Inje
     subst hij
     obtain ⟨a, b, hab⟩ := ih (i - 1) i (i + 1) (by ring) rfl (by push_cast at hj; omega) (by omega)
     have := hI (i + 1)
-    obtain ⟨c, hc⟩ := step C N (N ^ (n + 1)) (by ring : i - 1 + 1 = i) rfl hjk (hH _ hjm) a b hab
+    obtain ⟨c, hc⟩ := step C N (N ^ (n + 1)) rfl hjk (hH _ hjm) a b hab
     exact ⟨N • b, c, by rw [hc, ← pow_succ']⟩
 
 theorem Ghost_of : LateralTheory.KummerTheory.Ghost := by
@@ -1153,14 +1087,6 @@ theorem pull_cast (q : ℕ) {E E' : Spc} (f : E ⟶ E') {n i n' i' : ℤ} (hn : 
     pull _ f _ _ (x.cast hn hi) = Ht.cast hn hi (pull _ f _ _ x : Ht q E n i) := by
   subst hn; subst hi; rfl
 
-theorem rst_fst {X S : Scheme.{0}} (p : X ⟶ S) {V U : Over S} (g : V ⟶ U) :
-    LateralTheory.KummerTheory.LHCut.rst p g ≫ pullback.fst p U.hom = pullback.fst p V.hom := by
-  unfold LateralTheory.KummerTheory.LHCut.rst; rw [pullback.lift_fst, Category.comp_id]
-
-theorem rst_snd {X S : Scheme.{0}} (p : X ⟶ S) {V U : Over S} (g : V ⟶ U) :
-    LateralTheory.KummerTheory.LHCut.rst p g ≫ pullback.snd p U.hom = pullback.snd p V.hom ≫ g.left := by
-  unfold LateralTheory.KummerTheory.LHCut.rst; rw [pullback.lift_snd]
-
 theorem pull_pull (q : ℕ) {E E' E'' : Spc} (f : E ⟶ E') (g : E' ⟶ E'') {n i : ℤ} (x : Ht q E'' n i) :
     pull _ f _ _ (pull _ g _ _ x) = pull _ (f ≫ g) _ _ x := (pull_comp _ f g _ _ x).symm
 
@@ -1172,7 +1098,7 @@ theorem lhNat_of : LateralTheory.KummerTheory.LHCut.LhNat := by
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun s _ => ?_
   unfold LateralTheory.KummerTheory.ext
   rw [pull_cast, (hA q).1, pull_pull, pull_pull, pull_pull, ← Functor.map_comp, ← Functor.map_comp,
-    ← Functor.map_comp, rst_fst, rst_snd]
+    ← Functor.map_comp, LateralTheory.KummerTheory.ConeAlgPf.rst_fst, LateralTheory.KummerTheory.ConeAlgPf.rst_snd]
 
 end LateralTheory.KummerTheory.LhNatPf
 end -- clump:auto

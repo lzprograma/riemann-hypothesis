@@ -58,6 +58,7 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUnique
 import Development.AbelianVarietyTheory.Definitions.Divisors.IsoOverOfIsOpenImmersion
 import Development.AbelianVarietyTheory.Definitions.Divisors.LinearIndependentBasisCoords
 public import Development.AbelianVarietyTheory.Definitions.Divisors.UnitaryWeightExponentVectorSignatureWeightMuZero
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDetNeZeroEvalFrNeZero
 
 @[expose] public section
 
@@ -116,27 +117,7 @@ open Formalism.L2.LamCM in
 theorem exists_frame_evalFr_ne_zero {K : Type} [Field K] [Infinite K] {B : Type} [Fintype B] (m : B → ℕ)
     (P : MvPolynomial (FrVar m) K) (hP : P ≠ 0) :
     ∃ Y : ∀ b, Matrix (Fin (m b)) (Fin (m b)) K, (∀ b, (Y b).det ≠ 0) ∧ evalFr P Y ≠ 0 := by
-  classical
-  have hD : ∀ b, GlobalTheory.LamT.FieldPoly.blockDetPoly K m b ≠ 0 := by
-    intro b h
-    have := GlobalTheory.LamT.FieldPoly.evalFr_blockDetPoly (K := K) m b (fun _ => 1)
-    rw [h] at this
-    simp [evalFr] at this
-  have hQ : P * ∏ b, GlobalTheory.LamT.FieldPoly.blockDetPoly K m b ≠ 0 :=
-    mul_ne_zero hP (Finset.prod_ne_zero_iff.2 fun b _ => hD b)
-  obtain ⟨v, hv⟩ : ∃ v : FrVar m → K,
-      MvPolynomial.eval v (P * ∏ b, GlobalTheory.LamT.FieldPoly.blockDetPoly K m b) ≠ 0 := by
-    by_contra h
-    push_neg at h
-    exact hQ (MvPolynomial.funext fun x => by simp only [h x, map_zero])
-  let Y : ∀ b, Matrix (Fin (m b)) (Fin (m b)) K := fun b => Matrix.of fun i j => v ⟨b, (j, i)⟩
-  have hY : ∀ R : MvPolynomial (FrVar m) K, evalFr R Y = MvPolynomial.eval v R := fun R => rfl
-  rw [map_mul, map_prod] at hv
-  refine ⟨Y, fun b => ?_, ?_⟩
-  · rw [← GlobalTheory.LamT.FieldPoly.evalFr_blockDetPoly m b Y, hY]
-    exact (Finset.prod_ne_zero_iff.1 (right_ne_zero_of_mul hv)) b (Finset.mem_univ b)
-  · rw [hY]
-    exact left_ne_zero_of_mul hv
+  apply _root_.GlobalTheory.LatFull.CMInt.exists_det_ne_zero_evalFr_ne_zero <;> assumption
 
 theorem exists_frame_evR_ne_zero_of_complex : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H)
     (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (K : Type) [Field K] [NumberField K] [Algebra c.F K]

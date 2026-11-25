@@ -4,42 +4,6 @@ public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ManyEdges
 public import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.TwiceValuationFactorialProduct
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.DecompositionOfThreeParts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.DualFockLinear.ValLeOfVK, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.Proposition5OfThreeParts
@@ -199,7 +163,6 @@ theorem value_core {p : ℕ} [hpF : Fact p.Prime] {O : Type} [CommRing O] [IsDom
         ((fock G (asm F p O hk Dt.nL rho (Dt.ph (Gp + R)) N0) - k0 * Dt.Bform F2 (Dt.ph (Gp + R))) -
           fock G (asm F p O hk Dt.nL rho (Dt.ph R) N0)) := by
     rw [map_add (f := _), asm_add, fock_add_right]; ring
-  have hκ0 : (0 : ℝ) ≤ (kapFl p (m + 1) d : ℝ) := Nat.cast_nonneg _
   have herr : geQ (vK p ((fock G (asm F p O hk Dt.nL rho (Dt.ph (Gp + R)) N0) - k0 * Dt.Bform F2 (Dt.ph (Gp + R))) -
           fock G (asm F p O hk Dt.nL rho (Dt.ph R) N0)))
           ((cP : ℝ) - CDm * large₂ + twiceValuationFactorialProduct p d - (kapFl p (m + 1) d : ℝ)) := by
@@ -237,10 +200,6 @@ theorem proposition5_at_of_three_parts (C CDn CDm CLa : ℝ) (h0n : 0 ≤ CDn) (
       have : cStar ≤ cPrime n' r TT.card c0 cpp cStar := by unfold cPrime; omega
       exact_mod_cast this
     have h2 : (8 : ℝ) * ((Dp : ℝ) + 1) ≤ (cStar : ℝ) := by exact_mod_cast hcS
-    have h3 : C * ((TT.card : ℝ) * ((m + 1 : ℕ) : ℝ) ^ 2 * Real.logb p a) ≤ (Dp : ℝ) := by
-      calc C * ((TT.card : ℝ) * ((m + 1 : ℕ) : ℝ) ^ 2 * Real.logb p a)
-          = C * (TT.card : ℝ) * ((m + 1 : ℕ) : ℝ) ^ 2 * Real.logb p a := by ring
-        _ ≤ _ := hDp
     linarith
   obtain ⟨large₂, hLgdef⟩ : ∃ large₂ : ℝ, large₂ = (TT.card : ℝ) * ((m + 1 : ℕ) : ℝ) ^ 2 * Real.logb p a := ⟨_, rfl⟩
   rw [← hLgdef] at hLg hκ hNum hcPge
@@ -286,7 +245,6 @@ theorem proposition5_of_three_parts (D : Formalism.BasicNotions.D7) (CLa Ck Crk 
   have c2 : C₂ ≤ C := le_trans (le_trans (le_max_right _ _) (le_max_left _ _)) hC
   have c3 : C₃ ≤ C := le_trans (le_trans (le_max_left _ _) (le_max_right _ _)) hC
   have c4 : CDn + 3 * CDm ≤ C := le_trans (le_trans (le_max_right _ _) (le_max_right _ _)) hC
-  have c5 : 0 ≤ C := le_trans h2.le c1
   exact proposition5_at_of_three_parts C CDn CDm CLa h1.le h4.le (by linarith) (hP' C c1) (hM' C c2) (hN' C c3)
 
 end Formalism.MainNotions.Proposition5Numerics

@@ -53,25 +53,25 @@ theorem rightRegular_unitary_eq (ε : Fin n → Bool) (y : Formalism.REAL.UJ ε)
     rreg ε (Formalism.MainNotions.S.umat y) = rregG ε y := by
   have h : ∃ y' : Formalism.REAL.UJ ε, Formalism.MainNotions.S.umat y' = Formalism.MainNotions.S.umat y := ⟨y, rfl⟩
   unfold rreg
-  rw [dif_pos h, unitary_matrix_injective ε h.choose_spec]
+  rw [dite_eq_left h, unitary_matrix_injective ε h.choose_spec]
 
 theorem rightRegularGroup_eq_comp (ε : Fin n → Bool) (y : Formalism.REAL.UJ ε) (f : L2 ε) :
     rregG ε y f = Lp.compMeasurePreserving (fun x : Formalism.REAL.UJ ε => x * y) (measurePreserving_mul_right ε y) f := by
   unfold rregG
-  rw [dif_pos (measurePreserving_mul_right ε y)]
+  rw [dite_eq_left (measurePreserving_mul_right ε y)]
   rfl
 
 theorem toL2_eq_memLp_toLp (ε : Fin n → Bool) {F : Matrix (Fin n) (Fin n) ℂ → ℂ}
     (hF : MemLp (fun g : Formalism.REAL.UJ ε => F (Formalism.MainNotions.S.umat g)) 2 (Formalism.REAL.muG ε)) :
     toL2 ε F = hF.toLp _ := by
   unfold toL2
-  exact dif_pos hF
+  exact dite_eq_left hF
 
 theorem toL2_eq_zero_of_not_memLp (ε : Fin n → Bool) {F : Matrix (Fin n) (Fin n) ℂ → ℂ}
     (hF : ¬ MemLp (fun g : Formalism.REAL.UJ ε => F (Formalism.MainNotions.S.umat g)) 2 (Formalism.REAL.muG ε)) :
     toL2 ε F = 0 := by
   unfold toL2
-  exact dif_neg hF
+  exact dite_eq_right hF
 
 theorem rreg_umat_ae (ε : Fin n → Bool) (y : Formalism.REAL.UJ ε) (f : L2 ε) :
     (rreg ε (Formalism.MainNotions.S.umat y) f : Formalism.REAL.UJ ε → ℂ) =ᵐ[Formalism.REAL.muG ε] fun x => f (x * y) := by

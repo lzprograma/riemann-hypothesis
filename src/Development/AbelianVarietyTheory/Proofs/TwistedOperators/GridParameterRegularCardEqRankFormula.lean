@@ -50,8 +50,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.IndefR Formalism.IndefR.Links
 open GlobalTheory.SignedHC GlobalTheory.ChiGrid Finset
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.GridParDCount
 
 variable (D : D7) (C : ℝ) (τ : D.what₂.Tau)

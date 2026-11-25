@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LengthSumHeightOneDisjointDivisors
 public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.EulerVanishingBelowDimension
 public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.RuleFin
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
@@ -330,7 +331,7 @@ private theorem algHom_finite_domain_injective {O : Type} [CommRing O] [IsDomain
     {D : Type} [CommRing D] [IsDomain D] [Algebra O D] [Module.Finite O D] (σ : D →ₐ[O] K) :
     Function.Injective σ := by
   have : Algebra.IsIntegral O D := Algebra.IsIntegral.of_finite O D
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro x hx
   have hker : (RingHom.ker σ).comap (algebraMap O D) = ⊥ := by
     ext c
@@ -439,17 +440,8 @@ private theorem len_mid {R M N P : Type} [CommRing R] [AddCommGroup M] [Module R
     [AddCommGroup N] [Module R N] [AddCommGroup P] [Module R P] (f : M →ₗ[R] N) (h : N →ₗ[R] P)
     (e : Function.Exact f h) :
     Module.length R N = Module.length R (LinearMap.range f) + Module.length R (LinearMap.range h) := by
-  refine Module.length_eq_add_of_exact (LinearMap.range f).subtype h.rangeRestrict
-    (Submodule.injective_subtype _) h.surjective_rangeRestrict ?_
-  intro n
-  rw [Subtype.ext_iff, ZeroMemClass.coe_zero]
-  change h n = 0 ↔ _
-  rw [e n]
-  constructor
-  · rintro ⟨m, rfl⟩
-    exact ⟨⟨f m, m, rfl⟩, rfl⟩
-  · rintro ⟨⟨_, m, rfl⟩, rfl⟩
-    exact ⟨m, rfl⟩
+  intros
+  apply _root_.GlobalTheory.ScalarSnakeLength.length_mid <;> assumption
 
 private def tmap {R M N : Type} [CommRing R] [AddCommGroup M] [Module R M]
     [AddCommGroup N] [Module R N] (g : R) (f : M →ₗ[R] N) :
@@ -1550,8 +1542,7 @@ theorem UpperTheory.V.Alg.M.int_holds :
       have h2 := hf a (Finset.mem_insert_self a s) hfa
       have h3 := ih (fun i hi => hf i (Finset.mem_insert_of_mem hi)) hS
       exact le_trans (le_min h2 h3) h1
-  by_contra hneg
-  push_neg at hneg
+  by_contra! hneg
   obtain ⟨p, hpm, hp⟩ := hy
   have hsum := hp
   rw [Polynomial.eval₂_eq_sum_range, Finset.sum_range_succ, hpm.coeff_natDegree, map_one, one_mul] at hsum

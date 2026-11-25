@@ -4,47 +4,8 @@ public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClas
 public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.RestrictionEqZeroIffMemVanishingFiltration
 public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.HasseKpAlgebraMapKl
 public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ExistsPowSmulMemBall
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -58,12 +19,7 @@ variable {D : D7} {B : WeightFamilies.Prov D} {P : ModuliIntegralCharts.Prov D} 
 
 /-- If `O` is a discrete valuation ring with fraction field `K` of characteristic zero and `A` is a
 reduced finite-dimensional `K`-algebra, then the integral closure of `O` in `A` is finite over `O`
-and its localization at each maximal ideal is a discrete valuation ring.
-[The Stacks project authors, *Stacks Project* (Tags 032L and 09IG)][stacks-project].
-This is a special case of these two tags, after splitting `A` into a product of fields; the last step,
-from a Dedekind domain to its localizations at maximal ideals being discrete valuation rings, is standard
-and is not part of Tag 09IG.
-This reference is a reader's proposal and has not been checked by a mathematician. -/
+and its localization at each maximal ideal is a discrete valuation ring. -/
 def PublishedIntClos : Prop :=
   ∀ (O K A : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field K] [Algebra O K]
     [IsFractionRing O K] [CharZero K] [CommRing A] [Algebra K A] [Algebra O A] [IsScalarTower O K A]
@@ -280,8 +236,7 @@ private theorem pt_lemma_6 (O K A : Type) [CommRing O] [IsDomain O] [IsDiscreteV
     · intro h
       exact absurd (Finset.mem_univ M) h
   obtain ⟨I, hI⟩ : ∃ I, (⟨E I, hEi I⟩ : ↥(As O A)) ∉ ζ.asIdeal := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     apply ζ.isMaximal.ne_top
     rw [Ideal.eq_top_iff_one]
     have h1 : (∑ I, (⟨E I, hEi I⟩ : ↥(As O A))) ∈ ζ.asIdeal :=
@@ -305,7 +260,7 @@ private theorem pt_lemma_6 (O K A : Type) [CommRing O] [IsDomain O] [IsDiscreteV
     refine ⟨⟨E I * a, hint I y (y.2 : IsIntegral O (y : A ⧸ I.asIdeal)) a ha⟩, ?_⟩
     apply Subtype.ext
     show Ideal.Quotient.mk I.asIdeal (E I * a) = y
-    rw [hmk, if_pos rfl, ha]
+    rw [hmk, ite_eq_left rfl, ha]
   have hone : φ ⟨E I, hEi I⟩ = 1 := Subtype.ext (hE1 I)
   have hzero : ∀ c, φ c = 0 → (⟨E I, hEi I⟩ : ↥(As O A)) * c = 0 := by
     intro c hc

@@ -110,7 +110,7 @@ theorem _root_.GlobalTheory.TorsionFourier.charOfValues_basis {ι : Type} [Finty
   simp only [_root_.GlobalTheory.TorsionFourier.charOfValues, MonoidHom.coe_mk, OneHom.coe_mk, toAdd_ofAdd,
     Basis.repr_self]
   rw [Finset.prod_eq_single j
-    (fun i _ hi => by simp [Finsupp.single_apply, Ne.symm hi]) (by simp)]
+    (fun i _ hi => by simp [Ne.symm hi]) (by simp)]
   simp
 
 open Module in

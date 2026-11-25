@@ -41,12 +41,12 @@ theorem zMat_apply (N : ℕ) (z : Pairs N → ℂ) (i j : Fin N) :
   · rw [Finset.sum_eq_single ⟨(j, i), h⟩]
     · simp
     · intro b _ hb
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨h1, h2⟩
       exact hb (Subtype.ext (Prod.ext h2 h1))
     · simp
   · refine Finset.sum_eq_zero fun p _ => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2⟩
     exact h (by rw [← h1, ← h2]; exact p.2)
 
@@ -103,7 +103,7 @@ theorem cf_cpP (N n : ℕ) (A : Matrix (Fin N) (Fin N) ℂ) :
 theorem coeffMatrix_zero_truncExpPoly (N : ℕ) (A : Matrix (Fin N) (Fin N) ℂ) : cf 0 (cpP N A) = 1 := by
   rcases Nat.eq_zero_or_pos N with rfl | hN
   · exact Subsingleton.elim _ _
-  · rw [cf_cpP, if_pos hN]; simp
+  · rw [cf_cpP, ite_eq_left hN]; simp
 
 theorem coeffMatrix_one_truncExpPoly (N : ℕ) (A : Matrix (Fin N) (Fin N) ℂ) (hA : N ≤ 1 → A = 0) :
     cf 1 (cpP N A) = A := by

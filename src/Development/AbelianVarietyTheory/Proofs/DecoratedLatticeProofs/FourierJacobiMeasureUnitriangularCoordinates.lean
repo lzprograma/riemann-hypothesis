@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagSubgroupsClosedNormalCocompact
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsThetaFam
 import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittHyperbolicAnisotropicCommuteLevi
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EqSemiMeasOfCovolOne
@@ -51,7 +52,6 @@ import Mathlib.Topology.Sheaves.Init
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf
 
 noncomputable section
@@ -97,36 +97,7 @@ theorem isClosed_stabX : IsClosed (stabX d : Set (GA D S)) := by
   exact isClosed_eq ((continuous_mt S).matrix_mul continuous_const) continuous_const
 
 theorem isClosed_flagN : IsClosed (flagN d : Set (GA D S)) := by
-  haveI := (lattice_Mx D S.rank ρ).2.2.2.1
-  haveI := (lattice_Mx D S₀.rank S₀.rank).2.2.2.1
-  have e : (flagN d : Set (GA D S)) = (blockX d ⁻¹' GlobalTheory.UnitU.uniSet D ρ) ∩
-      ({g | mt S g ⬝ d.jX = d.jX ⬝ blockX d g} ∩ {g | d.p0 ⬝ (mt S g ⬝ d.j0) = 1}) := by
-    ext g
-    constructor
-    · intro hg
-      refine ⟨?_, ?_, (GlobalTheory.JacProj.flag_le d hg).2⟩
-      · obtain ⟨n, hn, u, rfl⟩ := exists_rad_lv d hg
-        rw [Set.mem_preimage, blockX_mul_lv d hn]
-        exact u.2
-      · exact GlobalTheory.JacProj.keeps_jX d (GlobalTheory.JacProj.flag_le d hg).1
-    · rintro ⟨h1, h2, h3⟩
-      let u : UX D ρ := ⟨GlobalTheory.UnitU.toUnit _ h1, h1⟩
-      have hs : (lv d u)⁻¹ * g ∈ stabX d := by
-        change mt S ((lv d u)⁻¹ * g) ⬝ d.jX = d.jX
-        have h4 : mt S g ⬝ d.jX = mt S (lv d u) ⬝ d.jX := (show _ = _ from h2).trans (d.levi_jX u.1).symm
-        rw [mt_mul, Matrix.mul_assoc, h4, ← Matrix.mul_assoc, mt_inv_mul, Matrix.one_mul]
-      obtain ⟨n, hn, h, he⟩ := ((flag_jacobi_structure D S S₀ ρ d).2.2.1 _).1 hs
-      have hg : g = lv d u * n * d.emb0 h := by rw [mul_assoc, ← he, mul_inv_cancel_left]
-      have hn' : lv d u * n ∈ flagN d := mul_mem (lv_mem d u) hn.1
-      have h5 := GlobalTheory.JacProj.witt_anisotropic_block_flag_mul_embedded d hn' h
-      rw [← hg, show d.p0 ⬝ (mt S g ⬝ d.j0) = 1 from h3] at h5
-      have h6 : h = 1 := mt_injective S₀ (h5.symm.trans (mt_one S₀).symm)
-      rw [hg, h6, map_one, mul_one]
-      exact hn'
-  rw [e]
-  exact ((GlobalTheory.UnitU.isClosed_uniSet D ρ).preimage (continuous_blockX d)).inter
-    ((isClosed_eq ((continuous_mt S).matrix_mul continuous_const) (continuous_const.matrix_mul (continuous_blockX d))).inter
-      (isClosed_eq (continuous_const.matrix_mul ((continuous_mt S).matrix_mul continuous_const)) continuous_const))
+  first | exact _root_.GlobalTheory.Unf.FlagSub.isClosed_flagN | exact @_root_.GlobalTheory.Unf.FlagSub.isClosed_flagN | apply _root_.GlobalTheory.Unf.FlagSub.isClosed_flagN <;> assumption
 
 theorem isClosed_radX : IsClosed (radX d : Set (GA D S)) := (isClosed_flagN d).inter (isClosed_stabX d)
 

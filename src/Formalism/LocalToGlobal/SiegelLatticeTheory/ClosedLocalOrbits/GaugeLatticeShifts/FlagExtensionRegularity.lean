@@ -17,8 +17,6 @@ namespace Formalism.L2.SG.RealObj.FlagExtensionRegularity
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.RealObj.HermitianBlockSpans Formalism.MainNotions.S.Lat
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem fam_castLE {n r l : ℕ} (e : Fin r → Fin n → ℂ) (z : Fin n → ℂ) (hl : l ≤ r) (h : l ≤ r + 1) (b : Fin l) :
     fam e z (Fin.castLE h b) = e (Fin.castLE hl b) := by
   have : Fin.castLE h b = Fin.castSucc (Fin.castLE hl b) := Fin.ext rfl

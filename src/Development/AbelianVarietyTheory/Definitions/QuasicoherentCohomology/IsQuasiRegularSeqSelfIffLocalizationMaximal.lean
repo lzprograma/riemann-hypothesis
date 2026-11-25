@@ -5,51 +5,7 @@ public import Mathlib.Algebra.Module.Torsion.Basic
 public import Mathlib.RingTheory.Flat.Basic
 public import Mathlib.RingTheory.MvPolynomial.Homogeneous
 public import Mathlib.Tactic.Continuity
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 public import Mathlib.RingTheory.MvPolynomial.Ideal
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.LinearAlgebra.TensorProduct.Pi
 public import Mathlib.LinearAlgebra.TensorProduct.Quotient
@@ -286,13 +242,6 @@ theorem monoToPowGr_mk (f : ι → R) (a : ℕ) (c : MonoDeg ι a → M) :
   simp
 
 
-variable (M) in
-theorem monoToPowGr_surjective (f : ι → R) (a : ℕ) : Function.Surjective (monoToPowGr M f a) := by
-  intro x
-  obtain ⟨⟨x, hx⟩, rfl⟩ := powGr.mk_surjective _ M a x
-  obtain ⟨c, rfl⟩ := (mem_pow_smul_top_iff f a x).mp hx
-  exact ⟨_, monoToPowGr_mk f a c⟩
-
 theorem monoToPowGr_injective_iff (f : ι → R) (a : ℕ) :
     Function.Injective (monoToPowGr M f a) ↔ ∀ c : MonoDeg ι a → M,
       ∑ α, monoVal f α.1 • c α ∈ (Ideal.span (Set.range f) ^ (a + 1) • ⊤ : Submodule R M) →
@@ -311,11 +260,6 @@ theorem monoToPowGr_injective_iff (f : ι → R) (a : ℕ) :
 theorem isQuasiRegularSeq_iff_injective (f : ι → R) :
     IsQuasiRegularSeq M f ↔ ∀ a, Function.Injective (monoToPowGr M f a) :=
   forall_congr' fun a => (monoToPowGr_injective_iff f a).symm
-
-theorem isQuasiRegularSeq_iff_bijective (f : ι → R) :
-    IsQuasiRegularSeq M f ↔ ∀ a, Function.Bijective (monoToPowGr M f a) :=
-  (isQuasiRegularSeq_iff_injective f).trans <| forall_congr' fun a =>
-    ⟨fun h => ⟨h, monoToPowGr_surjective M f a⟩, fun h => h.1⟩
 
 theorem isQuasiRegularSeq_self_iff (f : ι → R) :
     IsQuasiRegularSeq R f ↔ ∀ (a : ℕ) (p : MvPolynomial ι R), p.IsHomogeneous a →
@@ -357,11 +301,6 @@ theorem isQuasiRegularSeq_self_iff (f : ι → R) :
     simpa only [hco] using hc
 
 namespace IsQuasiRegularSeq
-
-noncomputable def powGrEquiv {f : ι → R} (h : IsQuasiRegularSeq M f) (a : ℕ) :
-    (MonoDeg ι a → M ⧸ (Ideal.span (Set.range f) • ⊤ : Submodule R M)) ≃ₗ[R ⧸
-      Ideal.span (Set.range f)] powGr (Ideal.span (Set.range f)) M a :=
-  LinearEquiv.ofBijective (monoToPowGr M f a) ((isQuasiRegularSeq_iff_bijective f).mp h a)
 
 theorem comp_equiv {κ : Type*} [Finite κ] {f : ι → R} (h : IsQuasiRegularSeq M f) (e : κ ≃ ι) :
     IsQuasiRegularSeq M (f ∘ e) := by
@@ -408,17 +347,6 @@ end Quasi
 section Basis
 
 variable {R : Type*} [CommRing R] {ι : Type*} [Finite ι]
-
-noncomputable def quotSMulTopEquivQuot (I : Ideal R) :
-    (R ⧸ (I • ⊤ : Submodule R R)) ≃ₗ[R ⧸ I] R ⧸ I :=
-  LinearEquiv.extendScalarsOfSurjective Ideal.Quotient.mk_surjective <|
-    Submodule.quotEquivOfEq _ _ (by simp)
-
-noncomputable def IsQuasiRegularSeq.powGrBasis {f : ι → R} (h : IsQuasiRegularSeq R f) (a : ℕ) :
-    Module.Basis (MonoDeg ι a) (R ⧸ Ideal.span (Set.range f))
-      (powGr (Ideal.span (Set.range f)) R a) :=
-  Module.Basis.ofEquivFun <| (h.powGrEquiv a).symm ≪≫ₗ
-    LinearEquiv.piCongrRight fun _ => quotSMulTopEquivQuot _
 
 end Basis
 
@@ -541,7 +469,7 @@ theorem isQuasiRegularSeq_X (ι : Type*) [Finite ι] :
     obtain rfl : x = 0 := (Finsupp.degree_eq_zero_iff x).mp (by omega)
     simpa [MvPolynomial.coeff_monomial_mul'] using h1
   · intro β _ hβ
-    rw [MvPolynomial.coeff_monomial_mul', if_neg]
+    rw [MvPolynomial.coeff_monomial_mul', ite_eq_right]
     intro hle
     obtain ⟨γ, hγ⟩ := exists_add_of_le hle
     have hd := congrArg Finsupp.degree hγ
@@ -556,24 +484,6 @@ noncomputable instance MonoDeg.unique (ι : Type*) [Unique ι] (a : ℕ) : Uniqu
     obtain ⟨α, rfl⟩ := α
     ext
     simp [Finsupp.degree_eq_sum]
-
-theorem isQuasiRegularSeq_singleton_iff {M : Type*} [AddCommGroup M] [Module R M] (x : R) :
-    IsQuasiRegularSeq M ![x] ↔
-      ∀ (a : ℕ) (m m' : M), x ^ a • m = x ^ (a + 1) • m' → ∃ m'', m = x • m'' := by
-  have hI : Ideal.span (Set.range ![x]) = Ideal.span {x} := by simp
-  have hm : ∀ (y : R) (m : M), m ∈ (Ideal.span {y} • ⊤ : Submodule R M) ↔ ∃ m', m = y • m' := by
-    intro y m
-    simp [Submodule.ideal_span_singleton_smul, Submodule.mem_smul_pointwise_iff_exists, eq_comm]
-  have hv : ∀ a, monoVal ![x] (default : MonoDeg (Fin 1) a).1 = x ^ a :=
-    fun a => monoVal_single _ _ _
-  simp only [IsQuasiRegularSeq, hI, Ideal.span_singleton_pow, hm, Fintype.sum_unique, hv,
-    Unique.forall_iff]
-  exact ⟨fun h a m m' hm => h a (fun _ => m) ⟨m', hm⟩, fun h a c ⟨m', hm⟩ => h a _ m' hm⟩
-
-theorem isQuasiRegularSeq_singleton {M : Type*} [AddCommGroup M] [Module R M] {x : R}
-    (hx : IsSMulRegular M x) : IsQuasiRegularSeq M ![x] :=
-  (isQuasiRegularSeq_singleton_iff x).mpr fun a _ m' h =>
-    ⟨m', hx.pow a (by simpa only [pow_succ, mul_smul] using h)⟩
 
 end Examples
 

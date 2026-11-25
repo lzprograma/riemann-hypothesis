@@ -48,7 +48,6 @@ import Mathlib.Tactic.ReduceModChar
 @[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -65,7 +64,7 @@ theorem lastAll_transpose (a : ι → ℂˣ) (τ : ι) :
   simp only [Matrix.transpose_apply, lastAll, lastGL_apply]
   by_cases h : i = j
   · subst h; rfl
-  · rw [if_neg h, if_neg (Ne.symm h)]
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
 
 theorem fnOf_lastAll (G : ι → Matrix (Fin N) (Fin N) ℂ) (lam : ι → DomWeight N) (a : ι → ℂˣ) (P : Pol ℂ ι N) :
     fnOf G (shiftOf lam) (fun τ => ((lastAll N a τ : GL (Fin N) ℂ) : Matrix (Fin N) (Fin N) ℂ)) P =
@@ -150,24 +149,24 @@ theorem bZ_std (hO : I.Ok) (hP : TC.Pins B X) (z0 : Fin (B.R.N B.R.m) → B.host
   rw [Matrix.diagonal_apply]
   by_cases h : b.1 < B.R.N B.R.m - 1
   · have e : bZ (D := I.rec7 l Z) u z0 a b = iXc (I.rec7 l Z) (Pi.single ⟨b.1, h⟩ 1) a := by
-      exact (dif_pos h).trans (LinearMap.toMatrix'_apply _ _ _)
+      exact (dite_eq_left h).trans (LinearMap.toMatrix'_apply _ _ _)
     refine (e.trans (hc _ a)).trans ?_
     by_cases hab : a = b
     · subst hab
-      rw [dif_pos h, if_pos rfl, if_neg (by omega)]
+      rw [dite_eq_left h, ite_eq_left rfl, ite_eq_right (by omega)]
       exact Pi.single_eq_same (M := fun _ : Fin (B.R.N B.R.m - 1) => B.host.E) _ _
-    · rw [if_neg hab]
+    · rw [ite_eq_right hab]
       split_ifs with h2
       · exact Pi.single_eq_of_ne (M := fun _ : Fin (B.R.N B.R.m - 1) => B.host.E) (fun h3 => hab (Fin.ext (Fin.mk.inj_iff.1 h3))) _
       · rfl
   · have e : bZ (D := I.rec7 l Z) u z0 a b = z0 a / (B.T u : B.host.E) := by
-      exact dif_neg h
+      exact dite_eq_right h
     rw [e, hz, ← hπ]
     by_cases hab : a = b
     · subst hab
-      rw [if_pos rfl, if_pos (by omega), if_pos (by omega)]
+      rw [ite_eq_left rfl, ite_eq_left (by omega), ite_eq_left (by omega)]
       field_simp
-    · rw [if_neg hab, if_neg (fun h3 => hab (Fin.ext (by omega))), zero_div]
+    · rw [ite_eq_right hab, ite_eq_right (fun h3 => hab (Fin.ext (by omega))), zero_div]
 
 def aT (τ : Tau B.R) : ℂˣ :=
   Units.mk0 (embAt B.embLL B.fields.emb τ (star ((X.piT u : 𝓞 B.host.E) : B.host.E))) ((map_ne_zero _).2 (star_pi_ne I l u))

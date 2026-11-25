@@ -55,7 +55,7 @@ import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableA
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AbelianVarietyTheory.Proofs.TwistedOperators.DownwardVertexMapLastVertexMulOfFrame, Development.AbelianVarietyTheory.Proofs.TwistedOperators.DownwardVertexMapLastVertexMulOfFrameStatement, Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseAdjacentInnerStepsInvariant, Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseAdjacentInnerStepsInvariantStatement, Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseLastInnerVertexInvariant, Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseLastInnerVertexInvariantStatement, Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseAdjacentStepsInvariantVertex, Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseAdjacentStepsInvariantVertexStatement, Development.AbelianVarietyTheory.Proofs.TwistedOperators.StepPointMulPeriodUnipotentGLMeasurePreservingStatement, Development.AbelianVarietyTheory.Proofs.TwistedOperators.LastRowVertexAdjacentStepsTranslateFrames, Development.AbelianVarietyTheory.Proofs.TwistedOperators.LastRowVertexAdjacentStepsTranslateFramesStatement, Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnfoldingFilledArgsMoveInnerLastColumnVertex, Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnfoldingFilledArgsMoveInnerLastColumnVertexStatement, Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlatTensorMoveArgumentsLastRowVertex
+-- Members: Development.AbelianVarietyTheory.Proofs.TwistedOperators.DownwardVertexMapLastVertexMulOfFrame, Development.AbelianVarietyTheory.Proofs.TwistedOperators.DownwardVertexMapLastVertexMulOfFrameStatement, Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseAdjacentInnerStepsInvariant, Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseLastInnerVertexInvariant, Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseAdjacentStepsInvariantVertex, Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseAdjacentStepsInvariantVertexStatement, Development.AbelianVarietyTheory.Proofs.TwistedOperators.StepPointMulPeriodUnipotentGLMeasurePreservingStatement, Development.AbelianVarietyTheory.Proofs.TwistedOperators.LastRowVertexAdjacentStepsTranslateFrames, Development.AbelianVarietyTheory.Proofs.TwistedOperators.LastRowVertexAdjacentStepsTranslateFramesStatement, Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnfoldingFilledArgsMoveInnerLastColumnVertex, Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnfoldingFilledArgsMoveInnerLastColumnVertexStatement, Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlatTensorMoveArgumentsLastRowVertex
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.DownwardVertexMapLastVertexMulOfFrame =====
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.DownwardVertexMapLastVertexMulOfFrame", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.FlatTensorVacuum\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteUnfSupportOfNeOne\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.ValuationGdetKapAt\n\n"}
@@ -64,7 +64,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.TopLevelInv
 open GlobalTheory.FunObj.FiniteSupport
 
@@ -113,7 +112,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.TopLevelInv
 open GlobalTheory.FunObj.FiniteSupport
 
@@ -133,7 +131,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.TopLevelInv
 open GlobalTheory.FunObj.FiniteSupport
 
@@ -196,31 +193,6 @@ end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseAdjacentInnerStepsInvariant =====
 
--- ===== clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseAdjacentInnerStepsInvariantStatement =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseAdjacentInnerStepsInvariantStatement", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.FlatTensorVacuum\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseAdjacentInnerStepsInvariant\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteUnfSupportOfNeOne\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.ValuationGdetKapAt\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
-open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
-open GlobalTheory.TopLevelInv
-open GlobalTheory.FunObj.FiniteSupport
-
-theorem _root_.GlobalTheory.T.fourierJacobiPhase_adjacentInnerSteps_invariant : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] {Γ : Grid k} (j : ℕ) (hA : j + 2 < Γ.m) (x x' : ColArgs Γ) (e e' : Vars Γ),
-    (∀ i, i ≠ j → i ≠ j + 1 → x' i = x i) → (∀ i : Fin (Γ.m - 1), i.val ≠ j → i.val ≠ j + 1 → e' i = e i) →
-    ch (stepPt (x' j) (e' ⟨j, by omega⟩)) + ch (stepPt (x' (j + 1)) (e' ⟨j + 1, by omega⟩)) +
-        (if Even (Γ.m - 2 - j) then ∑ r, rowVar x' e' (j + 1) r * colVar x' e' ⟨j, by omega⟩ r else 0) =
-      ch (stepPt (x j) (e ⟨j, by omega⟩)) + ch (stepPt (x (j + 1)) (e ⟨j + 1, by omega⟩)) +
-        (if Even (Γ.m - 2 - j) then ∑ r, rowVar x e (j + 1) r * colVar x e ⟨j, by omega⟩ r else 0) →
-    (Odd (Γ.m - 2 - j) → ∀ s : Fin (topRank Γ j), rowVar x' e' j s = rowVar x e j s) →
-    (Odd (Γ.m - 2 - j) → ∀ r : Fin (topRank Γ (j + 1 + 1)), colVar x' e' ⟨j + 1, by omega⟩ r = colVar x e ⟨j + 1, by omega⟩ r) →
-    phase x e = phase x' e' := by
-  first | exact @GlobalTheory.TopLevelInv.phase_eq_of_two_steps
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseAdjacentInnerStepsInvariantStatement =====
-
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseLastInnerVertexInvariant =====
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseLastInnerVertexInvariant", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.FlatTensorVacuum\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteUnfSupportOfNeOne\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.ValuationGdetKapAt\n\n"}
 section -- clump:auto
@@ -228,7 +200,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.TopLevelInv
 open GlobalTheory.FunObj.FiniteSupport
 
@@ -285,7 +256,7 @@ theorem phase_eq_of_lastMove {k : Type} [Field k] [ValuativeRel k] [TopologicalS
       simp [ch]
     rw [hch, hch, zero_add, zero_add]
     simp only [Fin.val_mk]
-    rw [if_pos (by rw [h0]; exact ⟨0, rfl⟩), if_pos (by rw [h0]; exact ⟨0, rfl⟩)]
+    rw [ite_eq_left (by rw [h0]; exact ⟨0, rfl⟩), ite_eq_left (by rw [h0]; exact ⟨0, rfl⟩)]
     have hrow : ∀ (z : ColArgs Γ) (f : Vars Γ) s, rowVar z f (i + 1) s = z (i + 1) (topLast Γ (i + 1 + 1)) s := by
       intro z f s
       simp only [rowVar]
@@ -305,27 +276,6 @@ end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseLastInnerVertexInvariant =====
 
--- ===== clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseLastInnerVertexInvariantStatement =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseLastInnerVertexInvariantStatement", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.FlatTensorVacuum\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseLastInnerVertexInvariant\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteUnfSupportOfNeOne\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.ValuationGdetKapAt\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
-open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
-open GlobalTheory.TopLevelInv
-open GlobalTheory.FunObj.FiniteSupport
-
-theorem _root_.GlobalTheory.T.fourierJacobiPhase_lastInnerVertex_invariant : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] {Γ : Grid k} (j : ℕ) (hB : j + 2 = Γ.m) (κ : GL (Fin (topRank Γ (j + 1))) k) (x x' : ColArgs Γ) (e e' : Vars Γ),
-    (∀ i, i ≠ j → i ≠ j + 1 → x' i = x i) → x' (j + 1) = x (j + 1) * κ.val →
-    (∀ i : Fin (Γ.m - 1), i.val ≠ j → e' i = e i) →
-    stepPt (x' j) (e' ⟨j, by omega⟩) = ((embX (Γ.m - 2 - j) κ)⁻¹).val * stepPt (x j) (e ⟨j, by omega⟩) →
-    phase x e = phase x' e' := by
-  first | exact @GlobalTheory.TopLevelInv.phase_eq_of_lastMove
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseLastInnerVertexInvariantStatement =====
-
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseAdjacentStepsInvariantVertex =====
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseAdjacentStepsInvariantVertex", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.FlatTensorVacuum\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrdL\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInverseUnipotentVolumeConjDiagonalEq\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.PiTensorProduct\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.ValuationGdetKapAt\n\n"}
 section -- clump:auto
@@ -333,7 +283,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.TopLevelInv
 
 noncomputable section
@@ -353,10 +302,10 @@ theorem mul_apply_of_shape {β : Type} {ℓ : ι → ℕ} {M : Matrix ι ι k}
     by_cases ht : ℓ r < ℓ t
     · have : t ≠ r := by rintro rfl; exact lt_irrefl _ ht
       simp [ht, this]
-    · rw [hM r t (by omega), if_neg ht, add_zero]
+    · rw [hM r t (by omega), ite_eq_right ht, add_zero]
       by_cases htr : t = r
       · subst htr; simp
-      · rw [Matrix.one_apply_ne (Ne.symm htr), if_neg htr, zero_mul]
+      · rw [Matrix.one_apply_ne (Ne.symm htr), ite_eq_right htr, zero_mul]
   rw [Finset.sum_congr rfl fun t _ => h t, Finset.sum_add_distrib, Finset.sum_ite_eq']
   simp
 
@@ -369,10 +318,10 @@ theorem apply_mul_of_shape {α : Type} {ℓ : ι → ℕ} {M : Matrix ι ι k}
     by_cases ht : ℓ t < ℓ s
     · have : t ≠ s := by rintro rfl; exact lt_irrefl _ ht
       simp [ht, this]
-    · rw [hM t s (by omega), if_neg ht, add_zero]
+    · rw [hM t s (by omega), ite_eq_right ht, add_zero]
       by_cases htr : t = s
       · subst htr; simp
-      · rw [Matrix.one_apply_ne htr, if_neg htr, mul_zero]
+      · rw [Matrix.one_apply_ne htr, ite_eq_right htr, mul_zero]
   rw [Finset.sum_congr rfl fun t _ => h t, Finset.sum_add_distrib, Finset.sum_ite_eq']
   simp
 
@@ -387,7 +336,7 @@ theorem stepPt_rr_lt (x₀ : Matrix n n' k) (e : StepVar n c n' → k) (l : Fin 
       Kept ((Sum.inr l : n ⊕ Fin c), (Sum.inr i : n' ⊕ Fin (c + 1)))) := by
     simp only [Free, Kept, or_false]; omega
   rw [stepPt, Matrix.add_apply, Matrix.of_apply, dite_eq_right h1, add_zero, basePt, fromBlocks_apply₂₂,
-    Matrix.of_apply, if_neg (by omega)]
+    Matrix.of_apply, ite_eq_right (by omega)]
 
 theorem stepPt_rr_eq (x₀ : Matrix n n' k) (e : StepVar n c n' → k) (l : Fin c) (i : Fin (c + 1))
     (h : l.val = i.val) : stepPt x₀ e (.inr l) (.inr i) = 1 := by
@@ -395,7 +344,7 @@ theorem stepPt_rr_eq (x₀ : Matrix n n' k) (e : StepVar n c n' → k) (l : Fin 
       Kept ((Sum.inr l : n ⊕ Fin c), (Sum.inr i : n' ⊕ Fin (c + 1)))) := by
     simp only [Free, Kept, or_false]; omega
   rw [stepPt, Matrix.add_apply, Matrix.of_apply, dite_eq_right h1, add_zero, basePt, fromBlocks_apply₂₂,
-    Matrix.of_apply, if_pos h]
+    Matrix.of_apply, ite_eq_left h]
 
 theorem stepPt_lr_zero (x₀ : Matrix n n' k) (e : StepVar n c n' → k) (r : n) (i : Fin (c + 1))
     (h : i.val < c / 2 ∨ (i.val = c / 2 ∧ c % 2 = 1)) : stepPt x₀ e (.inl r) (.inr i) = 0 := by
@@ -424,12 +373,12 @@ theorem sum_succ_eq (f : Fin (c + 1) → Fin (c + 1) → k) :
       ∑ l : Fin c, f l.castSucc l.succ := by
   rw [Fin.sum_univ_castSucc]
   have h0 : (∑ j : Fin (c + 1), if j.val = (Fin.last c).val + 1 then f (Fin.last c) j else 0) = 0 :=
-    Finset.sum_eq_zero fun j _ => if_neg (by simp; omega)
+    Finset.sum_eq_zero fun j _ => ite_eq_right (by simp; omega)
   rw [h0, add_zero]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [Finset.sum_eq_single l.succ]
-  · rw [if_pos (by simp)]
-  · intro j _ hj; rw [if_neg]; intro h; exact hj (Fin.ext (by simp at h ⊢; omega))
+  · rw [ite_eq_left (by simp)]
+  · intro j _ hj; rw [ite_eq_right]; intro h; exact hj (Fin.ext (by simp at h ⊢; omega))
   · simp
 
 theorem ch_shape_mul {M : Matrix (n ⊕ Fin (c + 1)) (n ⊕ Fin (c + 1)) k}
@@ -450,15 +399,15 @@ theorem ch_shape_mul {M : Matrix (n ⊕ Fin (c + 1)) (n ⊕ Fin (c + 1)) k}
     congr 1
     · refine Finset.sum_congr rfl fun j _ => ?_
       by_cases hj : j.val = i.val + 1
-      · rw [if_pos (by simp [ordL]; omega), if_pos hj, stepPt_rr_eq _ _ _ _ (by simp [hj]), mul_one]
-      · rw [if_neg hj]
+      · rw [ite_eq_left (by simp [ordL]; omega), ite_eq_left hj, stepPt_rr_eq _ _ _ _ (by simp [hj]), mul_one]
+      · rw [ite_eq_right hj]
         split_ifs with h
         · rw [stepPt_rr_lt _ _ _ _ (by simp [ordL] at h; simp; omega), mul_zero]
         · rfl
     · by_cases hc : 2 * i.val + 1 = c
-      · rw [if_pos hc]
-        exact Finset.sum_congr rfl fun x _ => if_pos (by simp [ordL]; omega)
-      · rw [if_neg hc]
+      · rw [ite_eq_left hc]
+        exact Finset.sum_congr rfl fun x _ => ite_eq_left (by simp [ordL]; omega)
+      · rw [ite_eq_right hc]
         refine Finset.sum_eq_zero fun x _ => ?_
         split_ifs with h
         · rw [stepPt_lr_zero _ _ _ _ (by simp [ordL] at h; simp; omega), mul_zero]
@@ -479,7 +428,7 @@ theorem ch_mul_shape {M : Matrix (n ⊕ Fin (c + 1)) (n ⊕ Fin (c + 1)) k}
   rw [Fintype.sum_sum_type, add_comm]
   congr 1
   · rw [Finset.sum_eq_single l.castSucc]
-    · rw [if_pos (by simp [ordL]), stepPt_rr_eq _ _ _ _ (by simp), one_mul]
+    · rw [ite_eq_left (by simp [ordL]), stepPt_rr_eq _ _ _ _ (by simp), one_mul]
     · intro j _ hj
       split_ifs with h
       · rw [stepPt_rr_lt _ _ _ _ ?_, zero_mul]
@@ -489,9 +438,9 @@ theorem ch_mul_shape {M : Matrix (n ⊕ Fin (c + 1)) (n ⊕ Fin (c + 1)) k}
       · rfl
     · simp
   · by_cases hc : 2 * l.val + 1 = c
-    · rw [if_pos hc]
-      exact Finset.sum_congr rfl fun x _ => if_pos (by simp [ordL]; omega)
-    · rw [if_neg hc]
+    · rw [ite_eq_left hc]
+      exact Finset.sum_congr rfl fun x _ => ite_eq_left (by simp [ordL]; omega)
+    · rw [ite_eq_right hc]
       refine Finset.sum_eq_zero fun x _ => ?_
       split_ifs with h
       · rw [stepPt_rl_zero _ _ _ _ (by simp [ordL] at h; omega), zero_mul]
@@ -512,7 +461,7 @@ theorem simple_rel (hV : ∀ r s, ordL (c + 1) s ≤ ordL (c + 1) r → V r s = 
   have h1 : (∑ j : Fin (c + 1), if ordL (c + 1) (Sum.inr l.castSucc : n ⊕ Fin (c + 1)) < ordL (c + 1) (Sum.inr j : n ⊕ Fin (c + 1)) then
       V (.inr l.castSucc) (.inr j) * W (.inr j) (.inr l.succ) else 0) = V (.inr l.castSucc) (.inr l.succ) := by
     rw [Finset.sum_eq_single l.succ]
-    · rw [if_pos (by simp [ordL]), hW _ _ le_rfl, Matrix.one_apply_eq, mul_one]
+    · rw [ite_eq_left (by simp [ordL]), hW _ _ le_rfl, Matrix.one_apply_eq, mul_one]
     · intro j _ hj
       split_ifs with hc
       · rw [hW _ _ (by simp [ordL] at hc ⊢; omega), Matrix.one_apply_ne (by simpa using hj), mul_zero]
@@ -522,9 +471,9 @@ theorem simple_rel (hV : ∀ r s, ordL (c + 1) s ≤ ordL (c + 1) r → V r s = 
       V (.inr l.castSucc) (.inl x) * W (.inl x) (.inr l.succ) else 0) =
       (if 2 * l.val + 1 = c then ∑ x, V (.inr l.castSucc) (.inl x) * W (.inl x) (.inr l.succ) else 0) := by
     by_cases hc : 2 * l.val + 1 = c
-    · rw [if_pos hc]
-      exact Finset.sum_congr rfl fun x _ => if_pos (by simp [ordL]; omega)
-    · rw [if_neg hc]
+    · rw [ite_eq_left hc]
+      exact Finset.sum_congr rfl fun x _ => ite_eq_left (by simp [ordL]; omega)
+    · rw [ite_eq_right hc]
       refine Finset.sum_eq_zero fun x _ => ?_
       split_ifs with h'
       · rw [hW _ _ (by simp [ordL] at h' ⊢; omega), Matrix.one_apply_ne (by simp), mul_zero]
@@ -547,7 +496,7 @@ theorem row_rel (hV : ∀ r s, ordL (c + 1) s ≤ ordL (c + 1) r → V r s = (1 
   have h2 : (∑ y : n, if ordL (c + 1) (Sum.inr ⟨c / 2, by omega⟩ : n ⊕ Fin (c + 1)) < ordL (c + 1) (Sum.inl y : n ⊕ Fin (c + 1)) then
       V (.inr ⟨c / 2, by omega⟩) (.inl y) * W (.inl y) (.inl x) else 0) = V (.inr ⟨c / 2, by omega⟩) (.inl x) := by
     rw [Finset.sum_eq_single x]
-    · rw [if_pos (by simp [ordL]; omega), hW _ _ le_rfl, Matrix.one_apply_eq, mul_one]
+    · rw [ite_eq_left (by simp [ordL]; omega), hW _ _ le_rfl, Matrix.one_apply_eq, mul_one]
     · intro y _ hy
       rw [hW _ _ (by simp [ordL]), Matrix.one_apply_ne (by simpa using hy)]
       simp
@@ -564,7 +513,7 @@ theorem col_rel (hV : ∀ r s, ordL (c + 1) s ≤ ordL (c + 1) r → V r s = (1 
   have h1 : (∑ j : Fin (c + 1), if ordL (c + 1) (Sum.inl x : n ⊕ Fin (c + 1)) < ordL (c + 1) (Sum.inr j : n ⊕ Fin (c + 1)) then
       V (.inl x) (.inr j) * W (.inr j) (.inr ⟨(c + 1) / 2, by omega⟩) else 0) = V (.inl x) (.inr ⟨(c + 1) / 2, by omega⟩) := by
     rw [Finset.sum_eq_single ⟨(c + 1) / 2, by omega⟩]
-    · rw [if_pos (by simp [ordL]; omega), hW _ _ le_rfl, Matrix.one_apply_eq, mul_one]
+    · rw [ite_eq_left (by simp [ordL]; omega), hW _ _ le_rfl, Matrix.one_apply_eq, mul_one]
     · intro j _ hj
       split_ifs with h'
       · rw [hW _ _ (by simp [ordL] at h' ⊢; omega), Matrix.one_apply_ne (by simpa using hj), mul_zero]
@@ -572,7 +521,7 @@ theorem col_rel (hV : ∀ r s, ordL (c + 1) s ≤ ordL (c + 1) r → V r s = (1 
     · simp
   have h2 : (∑ y : n, if ordL (c + 1) (Sum.inl x : n ⊕ Fin (c + 1)) < ordL (c + 1) (Sum.inl y : n ⊕ Fin (c + 1)) then
       V (.inl x) (.inl y) * W (.inl y) (.inr ⟨(c + 1) / 2, by omega⟩) else 0) = 0 :=
-    Finset.sum_eq_zero fun y _ => if_neg (by simp [ordL])
+    Finset.sum_eq_zero fun y _ => ite_eq_right (by simp [ordL])
   rw [h1, h2] at h
   linear_combination h
 
@@ -582,8 +531,8 @@ theorem pair_right (hV : ∀ r s, ordL (c + 1) s ≤ ordL (c + 1) r → V r s = 
       stepPt x₁ e₁ (.inr ⟨c / 2, by omega⟩) (.inl x) + V (.inr ⟨c / 2, by omega⟩) (.inl x) := by
   rw [apply_mul_of_shape hV, Fintype.sum_sum_type]
   congr 1
-  rw [Finset.sum_eq_zero fun y _ => if_neg (by simp [ordL]), zero_add, Finset.sum_eq_single ⟨c / 2, by omega⟩]
-  · rw [if_pos (by simp [ordL]; omega), stepPt_rr_eq _ _ _ _ rfl, one_mul]
+  rw [Finset.sum_eq_zero fun y _ => ite_eq_right (by simp [ordL]), zero_add, Finset.sum_eq_single ⟨c / 2, by omega⟩]
+  · rw [ite_eq_left (by simp [ordL]; omega), stepPt_rr_eq _ _ _ _ rfl, one_mul]
   · intro j _ hj
     split_ifs with h'
     · rw [stepPt_rr_lt _ _ _ _ ?_, zero_mul]
@@ -600,8 +549,8 @@ theorem pair_left (hW : ∀ r s, ordL (c + 1) s ≤ ordL (c + 1) r → W r s = (
       stepPt x₀ e₀ (.inl x) (.inr ⟨(c + 1) / 2, by omega⟩) + W (.inl x) (.inr ⟨(c + 1) / 2, by omega⟩) := by
   rw [mul_apply_of_shape hW, Fintype.sum_sum_type]
   congr 1
-  rw [Finset.sum_eq_zero fun y _ => if_neg (by simp [ordL]), zero_add, Finset.sum_eq_single ⟨(c + 1) / 2, by omega⟩]
-  · rw [if_pos (by simp [ordL]; omega), stepPt_rr_eq _ _ _ _ rfl, mul_one]
+  rw [Finset.sum_eq_zero fun y _ => ite_eq_right (by simp [ordL]), zero_add, Finset.sum_eq_single ⟨(c + 1) / 2, by omega⟩]
+  · rw [ite_eq_left (by simp [ordL]; omega), stepPt_rr_eq _ _ _ _ rfl, mul_one]
   · intro j _ hj
     split_ifs with h'
     · rw [stepPt_rr_lt _ _ _ _ ?_, mul_zero]
@@ -616,7 +565,7 @@ theorem row_left (hW : ∀ r s, ordL (c + 1) s ≤ ordL (c + 1) r → W r s = (1
     (hc : c % 2 = 0) (x₀ : Matrix n n₀ k) (e₀ : StepVar n (c + 1) n₀ → k) (s : n₀) :
     (W * stepPt x₀ e₀) (.inr ⟨(c + 1) / 2, by omega⟩) (.inl s) = stepPt x₀ e₀ (.inr ⟨(c + 1) / 2, by omega⟩) (.inl s) := by
   rw [mul_apply_of_shape hW, Fintype.sum_sum_type,
-    Finset.sum_eq_zero fun y _ => if_neg (by simp [ordL]; omega), zero_add]
+    Finset.sum_eq_zero fun y _ => ite_eq_right (by simp [ordL]; omega), zero_add]
   rw [Finset.sum_eq_zero, add_zero]
   intro j _
   split_ifs with h'
@@ -627,7 +576,7 @@ theorem row_right (hV : ∀ r s, ordL (c + 1) s ≤ ordL (c + 1) r → V r s = (
     (hc : c % 2 = 0) (x₁ : Matrix n₂ n k) (e₁ : StepVar n₂ c n → k) (r : n₂) :
     (stepPt x₁ e₁ * V) (.inl r) (.inr ⟨c / 2, by omega⟩) = stepPt x₁ e₁ (.inl r) (.inr ⟨c / 2, by omega⟩) := by
   rw [apply_mul_of_shape hV, Fintype.sum_sum_type,
-    Finset.sum_eq_zero fun y _ => if_neg (by simp [ordL]; omega), zero_add]
+    Finset.sum_eq_zero fun y _ => ite_eq_right (by simp [ordL]; omega), zero_add]
   rw [Finset.sum_eq_zero, add_zero]
   intro j _
   split_ifs with h'
@@ -694,21 +643,21 @@ theorem phase_step_inv : ∀ {k : Type} [Field k] {n₀ n n₂ : Type} [Fintype 
   rcases Nat.even_or_odd (c + 1) with hc | hc
   · have hc' : c % 2 = 1 := by rcases hc with ⟨r, hr⟩; omega
     refine ⟨?_, fun h => absurd h (Nat.not_odd_iff_even.mpr hc)⟩
-    rw [if_pos hc, if_pos hc]
+    rw [ite_eq_left hc, ite_eq_left hc]
     have hs0 : (⟨c / 2, by omega⟩ : Fin (c + 1)).succ = ⟨(c + 1) / 2, by omega⟩ := Fin.ext (by simp; omega)
     have hs1 : (⟨c / 2, by omega⟩ : Fin c).succ = ⟨(c + 1) / 2, by omega⟩ := Fin.ext (by simp; omega)
     have hcs : (⟨c / 2, by omega⟩ : Fin c).castSucc = ⟨c / 2, by omega⟩ := rfl
     have f0 : (∑ i : Fin (c + 1), if 2 * i.val + 1 = c then
         ∑ x, (v⁻¹).val (.inr i) (.inl x) * stepPt x₀ e₀ (.inl x) (.inr i.succ) else 0) =
         ∑ x, (v⁻¹).val (.inr ⟨c / 2, by omega⟩) (.inl x) * stepPt x₀ e₀ (.inl x) (.inr ⟨(c + 1) / 2, by omega⟩) := by
-      rw [Finset.sum_eq_single ⟨c / 2, by omega⟩, if_pos (by simp; omega), hs0]
-      · intro i _ hi; rw [if_neg]; intro h; exact hi (Fin.ext (by simp; omega))
+      rw [Finset.sum_eq_single ⟨c / 2, by omega⟩, ite_eq_left (by simp; omega), hs0]
+      · intro i _ hi; rw [ite_eq_right]; intro h; exact hi (Fin.ext (by simp; omega))
       · simp
     have f1 : (∑ l : Fin c, if 2 * l.val + 1 = c then
         ∑ x, stepPt x₁ e₁ (.inr l) (.inl x) * v.val (.inl x) (.inr l.succ) else 0) =
         ∑ x, stepPt x₁ e₁ (.inr ⟨c / 2, by omega⟩) (.inl x) * v.val (.inl x) (.inr ⟨(c + 1) / 2, by omega⟩) := by
-      rw [Finset.sum_eq_single ⟨c / 2, by omega⟩, if_pos (by simp; omega), hs1]
-      · intro i _ hi; rw [if_neg]; intro h; exact hi (Fin.ext (by simp; omega))
+      rw [Finset.sum_eq_single ⟨c / 2, by omega⟩, ite_eq_left (by simp; omega), hs1]
+      · intro i _ hi; rw [ite_eq_right]; intro h; exact hi (Fin.ext (by simp; omega))
       · simp
     have hS : ∑ l : Fin c, v.val (.inr l.castSucc) (.inr l.succ) + ∑ l : Fin c, (v⁻¹).val (.inr l.castSucc) (.inr l.succ) +
         ∑ x, v.val (.inr ⟨c / 2, by omega⟩) (.inl x) * (v⁻¹).val (.inl x) (.inr ⟨(c + 1) / 2, by omega⟩) = 0 := by
@@ -716,16 +665,16 @@ theorem phase_step_inv : ∀ {k : Type} [Field k] {n₀ n n₂ : Type} [Fintype 
       have f2 : (∑ l : Fin c, if 2 * l.val + 1 = c then
           ∑ x, v.val (.inr l.castSucc) (.inl x) * (v⁻¹).val (.inl x) (.inr l.succ) else 0) =
           ∑ x, v.val (.inr ⟨c / 2, by omega⟩) (.inl x) * (v⁻¹).val (.inl x) (.inr ⟨(c + 1) / 2, by omega⟩) := by
-        rw [Finset.sum_eq_single ⟨c / 2, by omega⟩, if_pos (by simp; omega), hs1, hcs]
-        · intro i _ hi; rw [if_neg]; intro h; exact hi (Fin.ext (by simp; omega))
+        rw [Finset.sum_eq_single ⟨c / 2, by omega⟩, ite_eq_left (by simp; omega), hs1, hcs]
+        · intro i _ hi; rw [ite_eq_right]; intro h; exact hi (Fin.ext (by simp; omega))
         · simp
       rw [Finset.sum_add_distrib, Finset.sum_add_distrib, f2] at h
       exact h
     have hp : ∀ (D₁ : Matrix (n₂ ⊕ Fin c) (n ⊕ Fin (c + 1)) k) r,
         (∑ l : Fin c, if l.val = c / 2 then D₁ (.inr l) (.inl r) else 0) = D₁ (.inr ⟨c / 2, by omega⟩) (.inl r) := by
       intro D₁ r
-      rw [Finset.sum_eq_single ⟨c / 2, by omega⟩, if_pos rfl]
-      · intro i _ hi; rw [if_neg]; intro h; exact hi (Fin.ext h)
+      rw [Finset.sum_eq_single ⟨c / 2, by omega⟩, ite_eq_left rfl]
+      · intro i _ hi; rw [ite_eq_right]; intro h; exact hi (Fin.ext h)
       · simp
     simp only [hp]
     rw [e₀', e₁', pair_blk _ _ hK, f0, f1]
@@ -740,10 +689,10 @@ theorem phase_step_inv : ∀ {k : Type} [Field k] {n₀ n n₂ : Type} [Fintype 
   · have hc' : c % 2 = 0 := by rcases hc with ⟨r, hr⟩; omega
     have hne : ¬ Even (c + 1) := Nat.not_even_iff_odd.mpr hc
     refine ⟨?_, fun _ => ⟨fun s => ?_, fun r => ?_⟩⟩
-    · rw [if_neg hne, if_neg hne]
+    · rw [ite_eq_right hne, ite_eq_right hne]
       have z0 : ∀ i : Fin (c + 1), ¬ (2 * i.val + 1 = c) := fun i => by omega
       have z1 : ∀ i : Fin c, ¬ (2 * i.val + 1 = c) := fun i => by omega
-      simp only [z0, z1, if_false, Finset.sum_const_zero, add_zero]
+      simp only [z0, z1, ite_false, Finset.sum_const_zero, add_zero]
       have hS : ∑ l : Fin c, v.val (.inr l.castSucc) (.inr l.succ) + ∑ l : Fin c, (v⁻¹).val (.inr l.castSucc) (.inr l.succ) = 0 := by
         rw [← Finset.sum_add_distrib]
         exact Finset.sum_eq_zero fun l _ => by simpa [z1 l] using hrel l
@@ -764,7 +713,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.TopLevelInv
 
 theorem _root_.GlobalTheory.T.fourierJacobiPhase_adjacentSteps_invariant_vertex : ∀ {k : Type} [Field k] {n₀ n n₂ : Type} [Fintype n₀] [DecidableEq n₀] [Fintype n] [DecidableEq n] [Fintype n₂] [DecidableEq n₂] {c : ℕ},
@@ -790,14 +738,8 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.TopLevelInv
 
-theorem _root_.GlobalTheory.T.stepPoint_mul_periodUnipotent_GL_measurePreserving : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] {n n' : Type} [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] {c : ℕ} (ν : Measure k) [ν.IsAddHaarMeasure],
-    ∀ v ∈ symN k n' (c + 1), ∀ κ : GL n' k, valuation k (gdet κ : k) = 1 → ∀ x₀ : Matrix n n' k,
-      ∃ φ : (StepVar n c n' → k) ≃ᵐ (StepVar n c n' → k), MeasurePreserving φ (stepVol ν n c n') (stepVol ν n c n') ∧
-        ∀ e, stepPt x₀ e * (v * embX (c + 1) κ).val = stepPt (x₀ * κ.val) (φ e) := by
-  first | exact @GlobalTheory.TopLevelInv.stepPt_mul_symN_embX
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.StepPointMulPeriodUnipotentGLMeasurePreservingStatement =====
@@ -809,7 +751,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.TopLevelInv
 open GlobalTheory.FunObj.FiniteSupport
 
@@ -857,7 +798,7 @@ theorem GlobalTheory.flatStep_vertex : ∀ {k : Type} [Field k] [ValuativeRel k]
   intro k _ _ _ _ _ _ a₀ a₁ a₂ b c c₀ c' ν _ hc₀ hc' h₁ h₂ h' g κ hκ v hv hg x₀ x₁
   subst hc₀ hc'
   obtain ⟨φ₀, hφ₀, H₀⟩ := GlobalTheory.T.fourierJacobiStep_leftChange_measurePreserving (n := Fin a₁) (n' := Fin a₀) (c := c + 1) ν v hv κ hκ x₀
-  obtain ⟨φ₁, hφ₁, H₁⟩ := GlobalTheory.T.stepPoint_mul_periodUnipotent_GL_measurePreserving (n := Fin a₂) (n' := Fin a₁) (c := c) ν v hv κ hκ x₁
+  obtain ⟨φ₁, hφ₁, H₁⟩ := GlobalTheory.TopLevelInv.stepPt_mul_symN_embX (n := Fin a₂) (n' := Fin a₁) (c := c) ν v hv κ hκ x₁
   refine ⟨φ₀, hφ₀, φ₁, hφ₁, fun e₀ e₁ => ?_⟩
   have hg₁ : frameGL h₁ g = v * embX (c + 1) κ := hg
   have hg₂ : frameGL h₂ g = v * embX (c + 1) κ := hg
@@ -881,7 +822,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.TopLevelInv
 open GlobalTheory.FunObj.FiniteSupport
 
@@ -920,7 +860,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.TopLevelInv
 open GlobalTheory.FunObj.FiniteSupport
 
@@ -981,7 +920,6 @@ section -- clump:auto
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.TopLevelInv
 open GlobalTheory.FunObj.FiniteSupport
 
@@ -997,13 +935,12 @@ end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnfoldingFilledArgsMoveInnerLastColumnVertexStatement =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlatTensorMoveArgumentsLastRowVertex =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlatTensorMoveArgumentsLastRowVertex", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ValuationGdetKapAt\nimport Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteUnfSupportOfNeOne\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DownwardVertexMapLastVertexMulOfFrameStatement\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseAdjacentInnerStepsInvariantStatement\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseLastInnerVertexInvariantStatement\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiStepLeftChangeMeasurePreservingStatement\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LastRowVertexAdjacentStepsTranslateFramesStatement\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnfoldingFilledArgsMoveInnerLastColumnVertexStatement\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlatTensorMoveArgumentsLastRowVertex", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ValuationGdetKapAt\nimport Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteUnfSupportOfNeOne\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DownwardVertexMapLastVertexMulOfFrameStatement\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.FlatTensorVacuum\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseAdjacentInnerStepsInvariant\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiPhaseLastInnerVertexInvariant\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiStepLeftChangeMeasurePreservingStatement\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LastRowVertexAdjacentStepsTranslateFramesStatement\npublic import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnfoldingFilledArgsMoveInnerLastColumnVertexStatement\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses\n\n"}
 section -- clump:auto
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open GlobalTheory.TopLevelInv
 
 noncomputable section
@@ -1136,7 +1073,7 @@ theorem flatTensor_moveArgs_mulSingle : ∀ {k : Type} [Field k] [ValuativeRel k
     · have hrow : ∀ (x : ColArgs Γ) (e : Vars Γ) r, rowVar x e (j + 1) r = ∑ l : Fin (Γ.m - 2 - (j + 1)),
           if l.val = (Γ.m - 2 - (j + 1)) / 2 then stepPt (x (j + 1)) (e ⟨j + 1, by omega⟩) (.inr l) (.inl r) else 0 :=
         fun x e r => by rw [rowVar, dite_eq_left (by omega)]
-      refine GlobalTheory.T.fourierJacobiPhase_adjacentInnerSteps_invariant j hA x (colMove j κ x) e (Φ e) hcol (fun i h1 h2 => hΦo e i h1 h2) ?_ ?_ ?_
+      refine _root_.GlobalTheory.TopLevelInv.phase_eq_of_two_steps j hA x (colMove j κ x) e (Φ e) hcol (fun i h1 h2 => hΦo e i h1 h2) ?_ ?_ ?_
       · simp only [hrow, colVar]
         rw [hcj, hcj1, hΦ0, hΦ1]
         exact (H (e ⟨j, by omega⟩) (e ⟨j + 1, by omega⟩)).2.2.1
@@ -1177,7 +1114,7 @@ theorem flatTensor_moveArgs_mulSingle : ∀ {k : Type} [Field k] [ValuativeRel k
       · rw [downMap, dite_eq_left (show j < Γ.m - 1 by omega), downMap, dite_eq_left (show j < Γ.m - 1 by omega), hcj, hΦ0,
           ← H, one_mul, mul_reindex, map_inv, hf]
       · exact GlobalTheory.T.downwardVertexMap_lastVertex_mul_of_frame hs j hj hB' g κ hg' x (colMove j κ x) e (Φ e) hcj1
-    · refine GlobalTheory.T.fourierJacobiPhase_lastInnerVertex_invariant j hB' κ x (colMove j κ x) e (Φ e) hcol hcj1 (fun i h1 => hΦo e i h1) ?_
+    · refine _root_.GlobalTheory.TopLevelInv.phase_eq_of_lastMove j hB' κ x (colMove j κ x) e (Φ e) hcol hcj1 (fun i h1 => hΦo e i h1) ?_
       rw [hcj, hΦ0, ← H, one_mul]
 
 end GlobalTheory.TopLevelInv.FlatStep

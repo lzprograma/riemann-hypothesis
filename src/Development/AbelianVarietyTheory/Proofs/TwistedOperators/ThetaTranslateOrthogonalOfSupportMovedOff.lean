@@ -14,44 +14,8 @@ public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsInv
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchwartzBruhatHalfSpanModulatedTranslates
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaInnerProductHermitian
 import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
 public import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
 import Development.AbelianVarietyTheory.Definitions.Foundations.NormEulerPolySubOneLe
@@ -70,7 +34,6 @@ open Formalism.UG (IsUnifV qV IsUnramInv GU KU IsInertAt Hecke dosetInd IsCommen
 open Formalism.MainNotions.SchurIrreducible (IsSplit)
 open GlobalTheory.LGrp (IsUnitarisable IsIrrSmooth bcParam)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor
 
 noncomputable section
@@ -131,11 +94,11 @@ theorem exists_char_of_wave {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {a : 
     by_cases hxΛ : x ∈ Λ
     · refine ⟨fun t => ψ (symplO S T t (N • y)), Submodule.subset_span ⟨N • y, _root_.GlobalTheory.SplitScalar.isHalf_nsmul hy N, rfl⟩, fun t ht htΛ => ?_⟩
       have h1 : halfInd a Λ (N • t + x) = 1 :=
-        if_pos ⟨Λ.add_mem htΛ hxΛ, _root_.GlobalTheory.SplitScalar.isHalf_add (_root_.GlobalTheory.SplitScalar.isHalf_nsmul ht N) hx⟩
+        ite_eq_left ⟨Λ.add_mem htΛ hxΛ, _root_.GlobalTheory.SplitScalar.isHalf_add (_root_.GlobalTheory.SplitScalar.isHalf_nsmul ht N) hx⟩
       show ψ (symplO S T (N • t) y) * halfInd a Λ (N • t + x) = _
       rw [h1, mul_one, symplO_nsmul]
     · refine ⟨0, Submodule.zero_mem _, fun t ht htΛ => ?_⟩
-      have h1 : halfInd a Λ (N • t + x) = 0 := if_neg fun h => hxΛ (by
+      have h1 : halfInd a Λ (N • t + x) = 0 := ite_eq_right fun h => hxΛ (by
         have := Λ.sub_mem h.1 htΛ
         rwa [add_sub_cancel_left] at this)
       show ψ (symplO S T (N • t) y) * halfInd a Λ (N • t + x) = 0
@@ -247,7 +210,7 @@ theorem orth : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (χS 
   have hΨ : IsSBHalf (cA D e) Λ Ψ := by
     refine ⟨fun u hu => ?_, N * k, Nat.mul_pos hNpos hk, fun v hv hvh u => ?_, fun u hu => ?_⟩
     · have : ∃ t, Φ t ≠ 0 ∧ N • t = u := by
-        by_contra h; exact hu (if_neg h)
+        by_contra h; exact hu (ite_eq_right h)
       obtain ⟨t, ht, rfl⟩ := this
       exact _root_.GlobalTheory.SplitScalar.isHalf_nsmul (hΦ.1 t ht) N
     · have key : (∃ t, Φ t ≠ 0 ∧ N • t = u + (N * k) • v) ↔ ∃ t, Φ t ≠ 0 ∧ N • t = u := by
@@ -261,7 +224,7 @@ theorem orth : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (χS 
       show (if _ then _ else _) = (if _ then _ else _)
       simp only [key]
     · have : ∃ t, Φ t ≠ 0 ∧ N • t = u := by
-        by_contra h; exact hu (if_neg h)
+        by_contra h; exact hu (ite_eq_right h)
       obtain ⟨t, ht, rfl⟩ := this
       exact Λ.nsmul_mem (hNt t ht) _
   have hspan := (GlobalTheory.PlaceTensor.halfWaves_span D ψ S T ΛS ΛT hψ hS hT (cA D e) ho.idem hac ho.infPart_eq).2 Ψ hΨ
@@ -269,14 +232,14 @@ theorem orth : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (χS 
   obtain ⟨-, -, hip⟩ := pairing_charSpan hw hTm hΦ hfT hf hμ g hq
   have hq1 : ∀ t, Φ t ≠ 0 → q t = 1 := fun t ht => by
     rw [← hqΨ t (hΦ.1 t ht) (hNt t ht)]
-    exact if_pos ⟨t, ht, rfl⟩
+    exact ite_eq_left ⟨t, ht, rfl⟩
   have hq0 : ∀ t, Φ t ≠ 0 → q (actO S T 1 g t) = 0 := fun t ht => by
     have h1 : N • actO S T 1 g t ∈ Λ := by
       have := hMact (k • t) (hsup t ht)
       have e : actO S T 1 g (k • t) = k • actO S T 1 g t := map_nsmul (GlobalTheory.LatLevel.actHom S T 1 g) k t
       rwa [e, ← mul_smul] at this
     rw [← hqΨ _ (GlobalTheory.SplitHecke.isHalf_actO _ _ (hΦ.1 t ht)) h1]
-    refine if_neg ?_
+    refine ite_eq_right ?_
     rintro ⟨t', ht', h⟩
     have : t' = actO S T 1 g t := nsmul_inj hNpos h
     exact ht' (this ▸ hsupp t ht)

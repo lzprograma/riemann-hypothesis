@@ -24,9 +24,9 @@ theorem ChowFormCycleAdd.proof (h1 : ChowFormAssoc.Statement) : ChowFormCycleAdd
     by_cases hW1 : W ∈ Z₁.support
     · by_cases hW2 : W ∈ Z₂.support
       · obtain ⟨d, hd, he⟩ := h1 F n k W (g₁ W) (g₂ W) (hg₁ W hW1) (hg₂ W hW2)
-        exact ⟨d, hd, fun _ => by simp only [g, if_pos hW1, he]⟩
+        exact ⟨d, hd, fun _ => by simp only [g, ite_eq_left hW1, he]⟩
       · exact ⟨1, one_ne_zero, fun h => absurd h hW2⟩
-    · exact ⟨1, one_ne_zero, fun _ => by simp only [g, if_neg hW1, map_one, one_mul]⟩
+    · exact ⟨1, one_ne_zero, fun _ => by simp only [g, ite_eq_right hW1, map_one, one_mul]⟩
   choose d hd0 hdg using hd
   have hsupp : (Z₁ + Z₂).support = Z₁.support ∪ Z₂.support := by
     ext W
@@ -38,12 +38,12 @@ theorem ChowFormCycleAdd.proof (h1 : ChowFormAssoc.Statement) : ChowFormCycleAdd
   · intro W hW
     rw [hsupp, Finset.mem_union] at hW
     by_cases hW1 : W ∈ Z₁.support
-    · simpa only [g, if_pos hW1] using hg₁ W hW1
-    · simpa only [g, if_neg hW1] using hg₂ W (hW.resolve_left hW1)
+    · simpa only [g, ite_eq_left hW1] using hg₁ W hW1
+    · simpa only [g, ite_eq_right hW1] using hg₂ W (hW.resolve_left hW1)
   · have e1 : ∏ W ∈ Z₁.support, g₁ W ^ Z₁ W =
         ∏ W ∈ Z₁.support ∪ Z₂.support, g W ^ Z₁ W := by
       rw [← Finset.prod_subset Finset.subset_union_left (f := fun W => g W ^ Z₁ W)]
-      · exact Finset.prod_congr rfl fun W hW => by simp only [g, if_pos hW]
+      · exact Finset.prod_congr rfl fun W hW => by simp only [g, ite_eq_left hW]
       · intro W _ hW
         rw [Finsupp.mem_support_iff, not_not] at hW
         simp [hW]

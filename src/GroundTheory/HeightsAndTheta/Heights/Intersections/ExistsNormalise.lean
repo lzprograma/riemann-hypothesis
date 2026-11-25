@@ -37,21 +37,21 @@ theorem exists_normalise {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} 
     intro k
     have h : κ k ∈ Set.range κ := ⟨k, rfl⟩
     have hk : h.choose = k := hv.1 h.choose_spec
-    simp only [d, dif_pos h, hk]
+    simp only [d, dite_eq_left h, hk]
   have hd : ∀ k, d k ≠ 0 := by
     intro k'
     by_cases h : k' ∈ Set.range κ
     · obtain ⟨k, rfl⟩ := h
       rw [hdk]
       exact div_ne_zero (hc k) (hs k)
-    · simp only [d, dif_neg h]
+    · simp only [d, dite_eq_right h]
       exact inv_ne_zero (hj ⟨k', h⟩)
   refine ⟨d, hd, mcPts_smul hP' d hd hz', fun p => ?_, fun k => ?_⟩
   · have h1 : z' (v p) = s p.1 * z p := congrFun hzs p
     rw [hv.2.2.1 p, hdk, h1]
     field_simp [hs p.1]
   · have h : k.1 ∉ Set.range κ := k.2
-    simp only [d, dif_neg h]
+    simp only [d, dite_eq_right h]
     exact inv_mul_cancel₀ (hj k)
 
 

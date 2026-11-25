@@ -125,14 +125,6 @@ theorem isLattice_of_map (h : S.Ok) (L : Submodule (𝓞 K) S.EqFun)
     (Submodule.fg_of_fg_map_injective ((S.hCoord h).toLinearMap.restrictScalars (𝓞 K))
       (S.hCoord h).injective hL.fg)
 
-theorem intDel_isLattice (h : S.Ok) (hD : ∀ d, Submodule.IsLattice K (S.Del d)) :
-    Submodule.IsLattice K S.intDel := by
-  apply S.isLattice_of_map h
-  rw [show S.intDel.map ((S.hCoord h).toLinearMap.restrictScalars (𝓞 K)) = (S.toCSD h).delLat from
-    S.map_intDel h S.outSec]
-  let _ : Fintype S.Cl := h.fintypeCl
-  exact ValuationLatticeField.valLatF_isLattice _ (S.toCSD h).I_injective _ fun c => hD _
-
 theorem intNab_isLattice (h : S.Ok) (hD : ∀ d, Submodule.IsLattice K (S.Nab d)) :
     Submodule.IsLattice K S.intNab := by
   apply S.isLattice_of_map h
@@ -406,12 +398,6 @@ theorem Rat.ipAt_indep (R : S.Rat) (h : S.Ok) (s : S.Sec) (v : InfinitePlace K) 
   refine Finset.sum_congr rfl fun c _ => ?_
   obtain ⟨g, hg⟩ := S.outSec.exists_smul s c
   rw [S.wt_eq h S.outSec c, ← hg, S.card_stab_smul, φ.2, ψ.2, R.pairAt_inv h]
-
-end GSD
-
-namespace GSD
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {S : GSD K}
 
 end GSD
 

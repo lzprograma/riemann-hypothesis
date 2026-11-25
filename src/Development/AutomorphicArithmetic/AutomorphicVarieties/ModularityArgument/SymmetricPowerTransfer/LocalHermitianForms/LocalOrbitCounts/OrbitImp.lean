@@ -189,16 +189,6 @@ private theorem quo_norm (z : (Etau K τ)ˣ) (s : K) (hs : s ≠ 0) (w : Etau K 
   have := congrArg (fun x => s⁻¹ • x) h3
   simpa [smul_smul, inv_mul_cancel₀ hs] using this
 
-private theorem isInt_w (w : Etau K τ) (a n : O) (ha : QuadraticAlgebra.trace w = algebraMap O K a)
-    (hn : QuadraticAlgebra.norm w = algebraMap O K n) : IsIntegral O w := by
-  refine ⟨Polynomial.X ^ 2 - Polynomial.C a * Polynomial.X + Polynomial.C n, by monicity!, ?_⟩
-  have := sq_sub_trace_smul_add_norm_eq_zero w
-  rw [ha, hn, Algebra.smul_def] at this
-  simp only [Polynomial.eval₂_add, Polynomial.eval₂_sub, Polynomial.eval₂_mul, Polynomial.eval₂_pow,
-    Polynomial.eval₂_X, Polynomial.eval₂_C]
-  rw [IsScalarTower.algebraMap_apply O K (Etau K τ) a, IsScalarTower.algebraMap_apply O K (Etau K τ) n]
-  exact this
-
 private theorem quo_int (j : Etau K τ →ₐ[K] Matrix (Fin 2) (Fin 2) K) (ht : (j ω).trace = τ)
     (z : (Etau K τ)ˣ) (hz : jU j z ∈ ZK O K) : IsIntegral O (quo z) := by
   obtain ⟨s, k, ⟨k₀, rfl⟩, e⟩ := mem_ZK.1 hz
@@ -213,7 +203,7 @@ private theorem quo_int (j : Etau K τ →ₐ[K] Matrix (Fin 2) (Fin 2) K) (ht :
     rw [← j_tr j ht, hjw, Matrix.trace_fin_two, Matrix.trace_fin_two]; simp
   have h2 : QuadraticAlgebra.norm w = algebraMap O K (k₀ : Matrix (Fin 2) (Fin 2) O).det := by
     rw [← j_det j ht, hjw, RingHom.map_det]; rfl
-  have hwi := isInt_w (O := O) w _ _ h1 h2
+  have hwi := isIntegral_of_trace_norm _ _ h1 h2
   obtain ⟨n, hn⟩ := Matrix.isUnits_det_units k₀
   have hzw : (z : Etau K τ) = (s : K) • w := by rw [hw, smul_smul]; simp
   have h3 := quo_norm z s s.ne_zero w hzw

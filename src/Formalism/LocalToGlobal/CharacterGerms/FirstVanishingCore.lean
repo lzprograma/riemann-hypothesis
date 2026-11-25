@@ -10,8 +10,6 @@ import Mathlib.Algebra.Order.Star.Int
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators
@@ -62,7 +60,7 @@ theorem coeff1_of_lgLin (Y : FBChart C V O dd) {γ : Fin dd → PowerSeries C} (
   have h3 := (hL i).mono (show 2 ≤ V.l ^ 2 by nlinarith)
   have h4 := (h2.symm.trans h3) (Finsupp.single () 1) (by rw [Finsupp.degree_single]; omega)
   change PowerSeries.coeff 1 (γ i) = PowerSeries.coeff 1 _ at h4
-  rw [h4, map_smul, coeffX', if_pos rfl, smul_eq_mul, mul_one]
+  rw [h4, map_smul, coeffX', ite_eq_left rfl, smul_eq_mul, mul_one]
 
 theorem lg_mulCv' (Y : FBChart C V O dd) {γ : Fin dd → PowerSeries C}
     (hγ0 : ∀ j, PowerSeries.constantCoeff (γ j) = 0) (n : ℕ) (j : Fin dd) :

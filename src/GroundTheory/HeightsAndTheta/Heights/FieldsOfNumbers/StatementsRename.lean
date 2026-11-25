@@ -15,12 +15,6 @@ noncomputable section
 
 universe u
 
-section Split
-
-variable {K K' : Type}
-
-end Split
-
 def RenameMultiHomog.Statement : Prop :=
   ∀ (R : Type u) [CommRing R] (K K' : Type) [DecidableEq K] [DecidableEq K'] (j : K ↪ K')
     (ι : K → Type) (ι' : K' → Type) (g : (Σ k, ι k) → (Σ k', ι' k')), (∀ v, (g v).1 = j v.1) →

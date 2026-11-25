@@ -4,8 +4,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDesc
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory
@@ -133,10 +131,6 @@ def IsAdd (p p' p'' : QkPtW D W ψW k T) : Prop :=
 def IsPull {T' : Over W.toScheme} (h : T' ⟶ T) (p : QkPtW D W ψW k T) (p' : QkPtW D W ψW k T') :
     Prop :=
   p'.y = p.y ∧ GtPt.IsPull h.left p.g p'.g
-
-def IsPullF (F : Type) [Field F] [Algebra (FractionRing R) F]
-    (x : Spec (CommRingCat.of F) ⟶ T.left) (p : QkPtW D W ψW k T) (p' : QkPt D F k) : Prop :=
-  p'.y = p.y ∧ GtPt.IsPullF F x p.g p'.g
 
 end QkPtW
 

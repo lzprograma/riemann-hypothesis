@@ -23,17 +23,17 @@ def Aa {K : Type} [Field K] {m : ℕ} (vec : Bool) (g : Matrix (Fin (m + 1)) (Fi
 theorem Aa_inv_mul {K : Type} [Field K] {m : ℕ} (vec : Bool) (g : Matrix (Fin (m + 1)) (Fin (m + 1)) K)
     (hg : IsUnit g.det) : Aa vec g⁻¹ * Aa vec g = 1 := by
   cases vec
-  · rw [Aa, Aa, if_neg Bool.false_ne_true, if_neg Bool.false_ne_true, ← Matrix.transpose_mul,
+  · rw [Aa, Aa, ite_eq_right Bool.false_ne_true, ite_eq_right Bool.false_ne_true, ← Matrix.transpose_mul,
       Matrix.nonsing_inv_nonsing_inv g hg, Matrix.nonsing_inv_mul g hg, Matrix.transpose_one]
-  · rw [Aa, Aa, if_pos rfl, if_pos rfl]
+  · rw [Aa, Aa, ite_eq_left rfl, ite_eq_left rfl]
     exact Matrix.nonsing_inv_mul g hg
 
 theorem Aa_mul_inv {K : Type} [Field K] {m : ℕ} (vec : Bool) (g : Matrix (Fin (m + 1)) (Fin (m + 1)) K)
     (hg : IsUnit g.det) : Aa vec g * Aa vec g⁻¹ = 1 := by
   cases vec
-  · rw [Aa, Aa, if_neg Bool.false_ne_true, if_neg Bool.false_ne_true, ← Matrix.transpose_mul,
+  · rw [Aa, Aa, ite_eq_right Bool.false_ne_true, ite_eq_right Bool.false_ne_true, ← Matrix.transpose_mul,
       Matrix.nonsing_inv_nonsing_inv g hg, Matrix.mul_nonsing_inv g hg, Matrix.transpose_one]
-  · rw [Aa, Aa, if_pos rfl, if_pos rfl]
+  · rw [Aa, Aa, ite_eq_left rfl, ite_eq_left rfl]
     exact Matrix.mul_nonsing_inv g hg
 
 theorem fl_rowAct_one (R : Type) [CommRing R] {k n : ℕ} (F : MvPolynomial (Fin k × Fin n) R) :
@@ -58,7 +58,7 @@ theorem twist_theta (K : Type) [Field K] (m : ℕ) (hm : 1 ≤ m) (d : ℕ) (vec
   cases vec
   · have h1 : letterWt m d false (Fin.last m) = -(d : ℤ) := by simp [letterWt]
     have h2 : act false g = g.det • (g⁻¹).transpose := by
-      simp only [act, Bool.false_eq_true, if_false]
+      simp only [act, Bool.false_eq_true, ite_false]
       rw [Matrix.inv_def, Ring.inverse_eq_inv', Matrix.transpose_smul, smul_smul, mul_inv_cancel₀ hg.ne_zero,
         one_smul]
     rw [h1, h2, lin_smul _ _ _ hQ, map_smul, smul_smul, zpow_neg, zpow_natCast,

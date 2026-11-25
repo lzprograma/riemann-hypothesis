@@ -163,12 +163,9 @@ theorem hs_J_mul (M : Matrix (Fin n) (Fin n) ℂ) : hs (Formalism.REAL.Jm ε * M
 theorem hs_mul_J (M : Matrix (Fin n) (Fin n) ℂ) : hs (M * Formalism.REAL.Jm ε) = hs M := by
   rw [← hs_conjTranspose, conjTranspose_mul, Formalism.REAL.Jm_conjTranspose, hs_J_mul, hs_conjTranspose]
 
-theorem hs_one : hs (1 : Matrix (Fin n) (Fin n) ℂ) = n := by
-  simp [Formalism.REAL.hs, Matrix.one_apply, apply_ite, Finset.sum_ite_eq]
-
 theorem hs_proj_le {P : Matrix (Fin n) (Fin n) ℂ} (h1 : Pᴴ = P) (h2 : P * P = P) : hs P ≤ n := by
   have := hs_split h1 h2 1
-  rw [hs_one, Matrix.one_mul, Matrix.one_mul] at this
+  rw [Formalism.REAL.f1auxiliary_hs_one, Matrix.one_mul, Matrix.one_mul] at this
   linarith [_root_.Formalism.REAL.frobenius_nonneg_matrix (1 - P)]
 
 theorem hs_eq_zero {M : Matrix (Fin n) (Fin n) ℂ} (h : hs M = 0) : M = 0 := by

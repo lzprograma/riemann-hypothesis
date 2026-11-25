@@ -6,46 +6,7 @@ public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.
 public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPeriodMapHomeomorphRiemannFormDensity
 public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ConjKappa
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LatticeSpanMembership
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DblZMemHn
 import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DoubledHermitianTestFunctionSpec
 import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianThetaSummableAndDeterminesTestFn
@@ -56,10 +17,7 @@ import Mathlib.RingTheory.Etale.Weakly
 import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DoubledGaussianKernelDiagonalTranslationInvarian, Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.MeanRealTorusNormalisedThetaMulConj
@@ -286,14 +244,14 @@ theorem dblz'_shift (x₁ x₂ : Frame X.Ψ r) (τ : X.Ψ) (h : (aLin X x₁ x�
   funext c
   by_cases hc : (c : ℕ) < X.p0
   · set_option synthInstance.maxHeartbeats 100000 in
-      simp only [if_pos hc, zR, Equiv.apply_symm_apply, hermC, map_sum, map_mul, conj_conj, DblPer.conj_Gm, mulVec, dotProduct,
+      simp only [ite_eq_left hc, zR, Equiv.apply_symm_apply, hermC, map_sum, map_mul, conj_conj, DblPer.conj_Gm, mulVec, dotProduct,
       aLin, of_apply, Finset.sum_mul, FD.col, mat, Pi.add_apply]
     rw [Finset.sum_comm (f := fun i j => τ.1 (X.Gm i j) * conj (x₂ τ j c) * w τ k i),
       ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun _ _ => ?_
     rw [← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl fun _ _ => by ring
-  · simp only [if_neg hc, zR, Equiv.apply_symm_apply, mulVec, dotProduct, aLin, of_apply, Pi.add_apply]
+  · simp only [ite_eq_right hc, zR, Equiv.apply_symm_apply, mulVec, dotProduct, aLin, of_apply, Pi.add_apply]
     rw [← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl fun _ _ => by ring
 
@@ -310,7 +268,7 @@ theorem dblz_shift (x₁ x₂ : Frame X.Ψ r) (τ : X.Ψ) (h : (aAnti X x₁ x�
   congr 1
   funext c
   by_cases hc : (c : ℕ) < X.p0
-  · simp only [if_pos hc, zR, Equiv.apply_symm_apply, hermC, map_add (f := _), mulVec, dotProduct,
+  · simp only [ite_eq_left hc, zR, Equiv.apply_symm_apply, hermC, map_add (f := _), mulVec, dotProduct,
       aAnti, of_apply, Finset.sum_mul, FD.col, mat, Pi.add_apply, Pi.star_apply, RCLike.star_def]
     rw [Finset.sum_comm (f := fun i j => x₁ τ j c * τ.1 (X.Gm j i) * conj (w τ k i)),
       ← Finset.sum_add_distrib]
@@ -318,7 +276,7 @@ theorem dblz_shift (x₁ x₂ : Frame X.Ψ r) (τ : X.Ψ) (h : (aAnti X x₁ x�
     rw [← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl fun _ _ => by ring
   · set_option synthInstance.maxHeartbeats 100000 in
-      simp only [if_neg hc, zR, Equiv.apply_symm_apply, mulVec, dotProduct, aAnti, of_apply, Pi.add_apply, map_sum, map_mul,
+      simp only [ite_eq_right hc, zR, Equiv.apply_symm_apply, mulVec, dotProduct, aAnti, of_apply, Pi.add_apply, map_sum, map_mul,
       map_add, Pi.star_apply, RCLike.star_def]
     rw [← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl fun _ _ => by ring

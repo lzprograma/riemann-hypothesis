@@ -13,53 +13,9 @@ public import Mathlib.FieldTheory.IntermediateField.Basic
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.MemOfFixedByAutomorphisms
 public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.FramedPointSpecialization
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 import Mathlib.Tactic.Linter.Style
+import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LeftEqOfIsLieCombSingle
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlatGenFrameIndependent, Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlatGenFrameComplexCompat
@@ -301,22 +257,7 @@ theorem comp_one_over {Y Z M : Over S} [GrpObj M] (f : Y ⟶ Z) : f ≫ (1 : Z �
 
 theorem prod_ofFn_single {M : Type*} [Monoid M] : ∀ {n : ℕ} (u : Fin n → M) (j : Fin n),
     (∀ i, i ≠ j → u i = 1) → (List.ofFn u).prod = u j := by
-  intro n
-  induction n with
-  | zero => intro u j; exact j.elim0
-  | succ n ih =>
-    intro u j hu
-    rw [List.ofFn_succ, List.prod_cons]
-    by_cases hj : j = 0
-    · subst hj
-      have h1 : (List.ofFn fun i : Fin n => u i.succ).prod = 1 := List.prod_eq_one fun x hx => by
-        simp only [List.mem_ofFn] at hx
-        obtain ⟨i, rfl⟩ := hx
-        exact hu _ (Fin.succ_ne_zero i)
-      rw [h1, _root_.mul_one]
-    · obtain ⟨j', rfl⟩ := Fin.exists_succ_eq.2 hj
-      rw [hu 0 (Fin.succ_ne_zero j').symm, _root_.one_mul]
-      exact ih (fun i => u i.succ) j' fun i hi => hu _ fun h => hi (Fin.succ_injective _ h)
+  apply _root_.GlobalTheory.LamF.LetterEigen.prod_ofFn_eq_single <;> assumption
 
 theorem isComb_single {G : Over S} [GrpObj G] {x : Sp R ⟶ S} {n : ℕ} (w : Fin n → (epsAt x ⟶ G))
     (hw : ∀ i, GlobalTheory.CompanionTheory.Ar.IsTanAt G x (w i)) (j : Fin n) : GlobalTheory.CompanionTheory.Ar.Fl.IsComb (Pi.single j 1) w (w j) := by
@@ -326,13 +267,13 @@ theorem isComb_single {G : Over S} [GrpObj G] {x : Sp R ⟶ S} {n : ℕ} (w : Fi
     by_cases hij : i = j
     · subst hij
       simp [epsMul_one_eq, spMap]
-    · rw [if_neg hij, Pi.single_eq_of_ne hij, epsMul_zero_eq]
+    · rw [ite_eq_right hij, Pi.single_eq_of_ne hij, epsMul_zero_eq]
       have h1 := comp_one_over (M := G)
         (Over.homMk (Spec.map (CommRingCat.ofHom (algebraMap R (DualNumber R)))) rfl :
           GlobalTheory.CompanionTheory.Ar.epsAt x ⟶ Over.mk x)
       rw [← h1, Over.comp_left, ← hw i]
       simp [spMap]
-  · rw [prod_ofFn_single _ j fun i hi => if_neg hi, if_pos rfl]
+  · rw [prod_ofFn_single _ j fun i hi => ite_eq_right hi, ite_eq_left rfl]
 
 end Comb
 

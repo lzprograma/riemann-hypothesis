@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymmetricLevelTypePrimeDatumLocallySmall
 public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
 import Formalism.LocalToGlobal.Columns.BaseLemmas
 import Mathlib.Algebra.Order.Star.Int
@@ -51,8 +52,8 @@ theorem ciConjPiG_notMem_sq (hX : X.Ok) (hPr : Pr.Ok) (i : Fin 2) {P : HeightOne
     intro Q hQ
     rw [Ideal.dvd_span_singleton]
     by_cases hQP : Q = P
-    · simp only [fam, if_pos hQP]; exact hmem
-    · simp only [fam, if_neg hQP]; exact (mem_divs h0 Q).1 hQ
+    · simp only [fam, ite_eq_left hQP]; exact hmem
+    · simp only [fam, ite_eq_right hQP]; exact (mem_divs h0 Q).1 hQ
   have hbase : ∀ Q Q' : HeightOneSpectrum (𝓞 X.E), Q ≠ Q' → IsCoprime Q.asIdeal Q'.asIdeal := by
     intro Q Q' hne
     rw [Ideal.isCoprime_iff_sup_eq]
@@ -62,12 +63,12 @@ theorem ciConjPiG_notMem_sq (hX : X.Ok) (hPr : Pr.Ok) (i : Fin 2) {P : HeightOne
     show IsCoprime (fam Q) (fam Q')
     by_cases hQP : Q = P
     · have hQ'P : Q' ≠ P := fun h => hne (hQP.trans h.symm)
-      simp only [fam, if_pos hQP, if_neg hQ'P]
+      simp only [fam, ite_eq_left hQP, ite_eq_right hQ'P]
       exact (hbase P Q' hQ'P.symm).pow_left
     · by_cases hQ'P : Q' = P
-      · simp only [fam, if_neg hQP, if_pos hQ'P]
+      · simp only [fam, ite_eq_right hQP, ite_eq_left hQ'P]
         exact (hbase Q P hQP).pow_right
-      · simp only [fam, if_neg hQP, if_neg hQ'P]
+      · simp only [fam, ite_eq_right hQP, ite_eq_right hQ'P]
         exact hbase Q Q' hne
   have hprod : ∏ Q ∈ Pr.vG i, fam Q ∣ Ideal.span {X.conjO (Pr.piG i)} := Finset.prod_dvd_of_coprime hcop hdvd
   have hN : Ideal.absNorm (∏ Q ∈ Pr.vG i, fam Q) = Pr.g i ^ (X.f + 1) := by
@@ -75,11 +76,11 @@ theorem ciConjPiG_notMem_sq (hX : X.Ok) (hPr : Pr.Ok) (i : Fin 2) {P : HeightOne
     have h1 : ∀ Q ∈ Pr.vG i, Ideal.absNorm (fam Q) = Pr.g i * (if Q = P then Pr.g i else 1) := by
       intro Q hQ
       by_cases hQP : Q = P
-      · simp only [fam, if_pos hQP]
+      · simp only [fam, ite_eq_left hQP]
         rw [map_pow, hPr.vG_norm i P hP, sq]
-      · simp only [fam, if_neg hQP]
+      · simp only [fam, ite_eq_right hQP]
         rw [hPr.vG_norm i Q hQ, mul_one]
-    rw [Finset.prod_congr rfl h1, Finset.prod_mul_distrib, Finset.prod_const, hPr.vG_card, Finset.prod_ite_eq', if_pos hP,
+    rw [Finset.prod_congr rfl h1, Finset.prod_mul_distrib, Finset.prod_const, hPr.vG_card, Finset.prod_ite_eq', ite_eq_left hP,
       pow_succ]
   have h3 := map_dvd Ideal.absNorm hprod
   rw [hN, ciAbsNorm_conjPiG hX hPr i] at h3
@@ -252,19 +253,7 @@ theorem redP_det {n : Type} [Fintype n] [DecidableEq n] (N : Matrix n n E) (h : 
 
 theorem redP_add_natCast_mul (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) {a d : E} (hd : IntAt P d) :
     redP P (a + q * d) = redP P a := by
-  have hqd : IntAt P ((q : E) * d) := ciIntAt_q.mul hd
-  by_cases ha : IntAt P a
-  · rw [reduction_add ha hqd, reduction_mul ciIntAt_q hd, redP_natCast_eq_zero hq, zero_mul, add_zero]
-  · have ha' : ¬ IntAt P (a + q * d) := fun h => ha (by simpa using ciIntAt_sub h hqd)
-    have hz : ∀ b : E, ¬ IntAt P b → redP P b = 0 := by
-      intro b hb
-      have hn : ¬ ∃ c : 𝓞 E ⧸ P.asIdeal, ∃ r s : 𝓞 E, s ∉ P.asIdeal ∧
-          algebraMap (𝓞 E) E s * b = algebraMap (𝓞 E) E r ∧
-          Ideal.Quotient.mk P.asIdeal s * c = Ideal.Quotient.mk P.asIdeal r := by
-        rintro ⟨c, r, s, hs, h1, -⟩
-        exact hb ⟨r, s, hs, h1⟩
-      rw [redP, dite_eq_right hn]
-    rw [hz _ ha', hz _ ha]
+  apply _root_.GlobalTheory.SymLevelDatum.redP_add_mul <;> assumption
 
 theorem ciIntAt_add_iff {a d : E} (hd : IntAt P d) : IntAt P (a + d) ↔ IntAt P a := ⟨fun h => by simpa using ciIntAt_sub h hd, fun h => h.add hd⟩
 
@@ -380,17 +369,17 @@ theorem ciCst_ok (hPr : Pr.Ok) (hCh : Ch.Ok) {SB : Finset (HeightOneSpectrum (�
       show ciPsi Ch P (x + y) = ciPsi Ch P x * ciPsi Ch P y
       simp only [ciCst, pow_one] at hx hy
       unfold ciPsi
-      rw [if_pos hx, if_pos hy, mul_add, if_pos (hx.add hy), reduction_add hx hy, AddChar.map_add_eq_mul]
+      rw [ite_eq_left hx, ite_eq_left hy, mul_add, ite_eq_left (hx.add hy), reduction_add hx hy, AddChar.map_add_eq_mul]
     psi_int := fun P x hx => by
       show ciPsi Ch P x = 1
       unfold ciPsi
-      rw [if_pos ((ciIntAt_q (q := qOf P.1)).mul hx), reduction_mul (ciIntAt_q (q := qOf P.1)) hx, redP_natCast_eq_zero (ciQ_mem P.1), zero_mul,
+      rw [ite_eq_left ((ciIntAt_q (q := qOf P.1)).mul hx), reduction_mul (ciIntAt_q (q := qOf P.1)) hx, redP_natCast_eq_zero (ciQ_mem P.1), zero_mul,
         AddChar.map_zero_eq_one]
     psi_ne := fun P => by
       show ciPsi Ch P _ ≠ 1
       have hq0 : (qOf P.1 : X.E) ≠ 0 := by exact_mod_cast (ciQOf_prime hPr (hSB P.1 P.2)).ne_zero
       unfold ciPsi
-      rw [mul_inv_cancel₀ hq0, if_pos ciIntAt_one, redP_one]
+      rw [mul_inv_cancel₀ hq0, ite_eq_left ciIntAt_one, redP_one]
       unfold psi0P
       rw [dite_eq_left (hSB P.1 P.2)]
       have hqp := ciQOf_prime hPr (hSB P.1 P.2)
@@ -622,7 +611,7 @@ theorem ciR1cond {n c : ℕ} (A : Matrix (Fin n) (Fin n) E) (r : Sp E (n + c) �
     rw [hr, ciExtM_fix]
     intro l
     unfold Loc.eN
-    rw [if_neg (by simp; omega)]
+    rw [ite_eq_right (by simp; omega)]
   refine ⟨fun i v hv => ?_, ?_, fun i => ?_⟩
   · intro m hm
     have hm' : ¬ m.1 < n + i := hm
@@ -640,12 +629,6 @@ theorem extended_matrix_in_reduction {n c : ℕ} (A A' : Matrix (Fin n) (Fin n) 
   ⟨ciR1cond A _ (ciEquiv_apply _ _ h1 h2), ciR1cond A' _ (ciEquiv_inv_apply _ _ h1 h2)⟩
 
 end Mem
-
-section Mem2
-
-variable {E : Type} [Field E] [NumberField E] [StarRing E] {P : HeightOneSpectrum (𝓞 E)} {q : ℕ}
-
-end Mem2
 
 section Of
 
@@ -686,28 +669,6 @@ theorem ciEntry {n : ℕ} {g : Sp E n ≃ₗ[E] Sp E n} {hbar : GL (Fin n) (𝓞
   simp [Matrix.mulVec, dotProduct, Pi.single_apply]
 
 end Of
-
-section Lev
-
-variable {X : Fields} {Pr : Primes X} (Ch : Chars X Pr Examples₂.R0.m)
-
-end Lev
-
-section Chr
-
-variable {X : Fields} {Pr : Primes X} (Ch : Chars X Pr Examples₂.R0.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) (S : Set ℕ)
-  {mq : ℕ → rowSG Pr sel (mu0 X.F X.E X.K S) → X.K}
-
-end Chr
-
-section Chr1
-
-variable {X : Fields} {Pr : Primes X} (Ch : Chars X Pr Examples₂.R0.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) (S : Set ℕ)
-  {mq : ℕ → rowSG Pr sel (mu0 X.F X.E X.K S) → X.K}
-
-end Chr1
 
 section Phi
 
@@ -822,7 +783,7 @@ theorem ciPhiG_congr (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hq0 : (q : E) �
       · rw [k3 p p' (by omega) hp']; exact h4 p p' h0 hp' hp hpp
       · rw [k3 p k₀ hp hk]; exact h5 hs p hp
   by_cases hC : ciPhiCond P q sharp k₀ r t j c n M
-  · rw [if_pos (hc.2 hC), if_pos hC]
+  · rw [ite_eq_left (hc.2 hC), ite_eq_left hC]
     have htrip : ∀ p p', p < a → p' < a → IntAt P (M p p') ∧ IntAt P (M' p p') ∧ redP P (M' p p') = redP P (M p p') :=
       fun p p' hp hp' => ⟨hC.1 p p' (by omega) hp', (hc.2 hC).1 p p' (by omega) hp', k3 p p' (by omega) hp'⟩
     congr 1
@@ -834,7 +795,7 @@ theorem ciPhiG_congr (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hq0 : (q : E) �
       congr 1
       ext s s'
       exact (htrip s.1 s'.1 s.2 s'.2).2.2
-  · rw [if_neg (fun h => hC (hc.1 h)), if_neg hC]
+  · rw [ite_eq_right (fun h => hC (hc.1 h)), ite_eq_right hC]
 
 open Classical in
 theorem ciPhiG_int (ψ₀ : AddChar (𝓞 E ⧸ P.asIdeal) K) (χ : ℕ → (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (sharp : Bool)
@@ -844,7 +805,7 @@ theorem ciPhiG_int (ψ₀ : AddChar (𝓞 E ⧸ P.asIdeal) K) (χ : ℕ → (�
   rw [ciPhiG_eq] at h
   by_cases hC : ciPhiCond P q sharp k₀ r t j c n (LocE.entB q k₀ c' n' c n (fun i => i + 1) (fun i => i + 1) x)
   · exact hC.1
-  · rw [if_neg hC] at h
+  · rw [ite_eq_right hC] at h
     exact absurd rfl h
 
 end Phi
@@ -866,16 +827,6 @@ variable {X : Fields} {Pr : Primes X} (Ch : Chars X Pr Examples₂.R0.m)
 
 
 end Inst
-
-section PsiInst
-
-variable {X : Fields} {Pr : Primes X} (Ch : Chars X Pr Examples₂.R0.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) (S : Set ℕ)
-  {mq : ℕ → rowSG Pr sel (mu0 X.F X.E X.K S) → X.K}
-
-
-
-end PsiInst
 
 section Tied
 
@@ -921,7 +872,7 @@ theorem ciCst_weil (hX : X.Ok) (hPr : Pr.Ok) {SB : Finset (HeightOneSpectrum (�
   have hq0 : (qOf P.1 : X.E) ≠ 0 := ciQ_ne_zero hu
   show σ₀ (ciPsi Ch P a) = _
   unfold ciPsi
-  rw [if_pos ha]
+  rw [ite_eq_left ha]
   have hpsi : psi0P Ch P.1 = Ch.psi0 ⟨P.1, hSB P.1 P.2⟩ := by
     unfold psi0P
     rw [dite_eq_left (hSB P.1 P.2)]
@@ -940,21 +891,5 @@ theorem intAt_of_redP_ne_zero₂ {E : Type} [Field E] [NumberField E] {P : Heigh
 
 
 end Tied
-
-section InstOk
-
-variable {X : Fields} {Pr : Primes X} (Ch : Chars X Pr Examples₂.R0.m)
-  (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) (S : Set ℕ)
-  {mq : ℕ → rowSG Pr sel (mu0 X.F X.E X.K S) → X.K}
-
-end InstOk
-
-section Nd2
-
-open Formalism.L2.Host Formalism.FrobeniusOrbits
-
-variable (LL : Fld) [FiniteDimensional ℚ LL] [Normal ℚ LL] (hLL : cycQ nd2N ≤ LL)
-
-end Nd2
 
 end Formalism.L2.Col

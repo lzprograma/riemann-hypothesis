@@ -276,8 +276,8 @@ theorem act_bound {M : Type*} [NormedAddCommGroup M] [InnerProductSpace ℂ M]
       trace_dMat, mul_sum, sum_smul]
     congr 1
     refine sum_congr rfl fun a _ => ?_
-    rw [sum_eq_single a (fun b _ hb => by rw [if_neg (Ne.symm hb), zero_smul, smul_zero])
-      (by simp), if_pos rfl, smul_smul]
+    rw [sum_eq_single a (fun b _ hb => by rw [ite_eq_right (Ne.symm hb), zero_smul, smul_zero])
+      (by simp), ite_eq_left rfl, smul_smul]
     congr 1; push_cast; ring
   rw [e, l1, mul_sum]
   refine (norm_sum_le _ _).trans (sum_le_sum fun a _ => ?_)
@@ -357,7 +357,7 @@ theorem matrixCoeffBounds_imply_bound : MatrixCoeffBoundsImplyBound := by
       by_contra h
       exact hne a a (hs a a (right_ne_zero_of_mul h)) rfl
     have := act_bound (smE ε σ) ⟨w, hw⟩ d t C X fun a b h => by
-      rw [if_neg (hne a b (hs a b h)), zero_smul, sub_zero]; exact bp a b (hs a b h)
+      rw [ite_eq_right (hne a b (hs a b h)), zero_smul, sub_zero]; exact bp a b (hs a b h)
     rw [h0, mul_zero, zero_smul, sub_zero] at this
     exact this.trans (hbd X hX)
   have hstn : ∀ X : Matrix (Fin n) (Fin n) ℂ, ‖stJ ε X‖ ≤ 1 * ‖X‖ := fun X => by

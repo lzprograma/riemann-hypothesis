@@ -17,59 +17,12 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanFormsEqB
 public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.SplittingLocalIntegrality
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RoundedTwistLocalEquationChart
 public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.LogSectionsDifferentialClosed
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Basify
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogFormsEqChartForms
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
 import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.IsIsoTermComparisonRestrictScalars
 import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
-import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Tactic.Lemma
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.CartierMapEqExtDImpEqZero, Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSubringOfPthPowerTwistedMonomialMem, Development.AbelianVarietyTheory.Proofs.DivisorProofs.EulerContractionChartForms, Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.LogCartierRoundingFamily, Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.CartierOperatorLogSections, Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedFrobLogForm, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsGamma, Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobeniusDerivationFactorsThroughKaehler, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsHOfIsFrob, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtDAlgebraMapPowCharMul, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExteriorDerivativeIsDifferential, Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.FrobLiftPsiNatCastMul, Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogFormsGeneratedDlog, Development.AbelianVarietyTheory.Proofs.DivisorProofs.RegularFunctionsPthPowerTwist, Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.CechLogFormsFrobeniusLift, Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.FrobeniusDecompositionOfLift
@@ -352,8 +305,7 @@ theorem logCartier_rounding_family : ∀ (K : Type) [Field K] (p : ℕ) [Fact p.
   · intro ha
     subst ha
     exact (hT y0).2.1 η (hη y0)
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [map_sum]
+  · rw [map_sum]
     simp_rw [_root_.GlobalTheory.cartierMap_smul_logWedge K p n x γ hγ]
     rw [← hQη]
     have h2 := hhom η
@@ -496,10 +448,10 @@ private theorem logAt_le_chartForms_of_isLogChart {X : Scheme.{0}} [IsIntegral X
     intro k b hb
     by_cases hk : k ∈ J
     · have h1 : dK (x k : X.functionField) = (x k : X.functionField) • frame x J k := by
-        rw [frame, if_pos hk, _root_.GlobalTheory.LogDR.StabD.dK_unit]
+        rw [frame, ite_eq_left hk, _root_.GlobalTheory.LogDR.StabD.dK_unit]
       rw [h1, smul_smul]
       exact hfr k _ ((locRing y).mul_mem hb (hch.mem k))
-    · have h1 : dK (x k : X.functionField) = frame x J k := by rw [frame, if_neg hk]
+    · have h1 : dK (x k : X.functionField) = frame x J k := by rw [frame, ite_eq_right hk]
       rw [h1]
       exact hfr k b hb
   rw [_root_.GlobalTheory.LogDR.ChartStalk.dlog_mul, dlog_prod_zpow]
@@ -515,7 +467,7 @@ private theorem logAt_le_chartForms_of_isLogChart {X : Scheme.{0}} [IsIntegral X
     exact sum_mem fun k _ => by
       rw [smul_smul]
       exact hdK k _ ((locRing y).mul_mem huiA (hcf k))
-  · have h1 : dlog (x k) = (1 : X.functionField) • frame x J k := by rw [frame, if_pos hk, one_smul]
+  · have h1 : dlog (x k) = (1 : X.functionField) • frame x J k := by rw [frame, ite_eq_left hk, one_smul]
     rw [h1]
     exact hfr k 1 (locRing y).one_mem
 
@@ -538,9 +490,9 @@ private theorem chartForms_le_logAt_of_isLogChart {X : Scheme.{0}} [IsIntegral X
       refine (hc.logUnit y hy (x k)).2 ⟨1, fun i => if i = k then 1 else 0, ⟨1, isUnit_one, by simp⟩, ?_⟩
       rw [one_mul, Finset.prod_eq_single k (fun b _ hb => by simp [hb]) (fun h => absurd hk h)]
       simp
-    rw [frame, if_pos hk, ← one_smul X.functionField (dlog (x k))]
+    rw [frame, ite_eq_left hk, ← one_smul X.functionField (dlog (x k))]
     exact AddSubgroup.subset_closure ⟨1, (locRing y).one_mem, _, ⟨x k, hlu, rfl⟩, rfl⟩
-  · rw [frame, if_neg hk]
+  · rw [frame, ite_eq_right hk]
     obtain ⟨u, hu, b, hb, hd⟩ := exists_unitAt_dK_eq_smul_dlog_of_regAt (mem_locRing.1 ((hc.chart y hy).mem k))
     rw [hd]
     exact AddSubgroup.subset_closure ⟨b, mem_locRing.2 hb, _, ⟨u, logUnit_of_unitAt Z hu, rfl⟩, rfl⟩
@@ -572,7 +524,7 @@ private theorem isEqn_smul_add_sum_smul {X : Scheme.{0}} [IsIntegral X] {C : Typ
     · simp
     · have hj0 : j0 ∈ J := (hJ j0).2 ⟨c, hc⟩
       simp only [Option.some.injEq, Option.elim_some]
-      rw [Finset.prod_ite_eq J j0 (fun j => x j ^ r c), if_pos hj0]
+      rw [Finset.prod_ite_eq J j0 (fun j => x j ^ r c), ite_eq_left hj0]
   rw [hprod]
   exact (ht.nsmul p).add (hs _)
 
@@ -1054,9 +1006,6 @@ theorem frobLift_w_unique (hL : IsFlatLift p π) {z w w' : Kt} (h : F z = z ^ p 
   have e2 := (hL.ann _).mp e
   rwa [map_sub, sub_eq_zero] at e2
 
-theorem kaehlerD_pow_char (x : K) : KaehlerDifferential.D ℤ K (x ^ p) = 0 := by
-  rw [Derivation.leibniz_pow, ← Nat.cast_smul_eq_nsmul K, CharP.cast_eq_zero, zero_smul]
-
 def frobLiftPsi (hL : IsFlatLift p π) (hF : IsFrob p π F) (z : Kt) : Ω[K⁄ℤ] :=
   π z ^ (p - 1) • KaehlerDifferential.D ℤ K (π z) +
     KaehlerDifferential.D ℤ K (π (frobLift_exists_w p π F hL hF z).choose)
@@ -1113,7 +1062,7 @@ theorem frobLiftPsi_mul (hL : IsFlatLift p π) (hF : IsFrob p π F) (z z' : Kt) 
     frobLiftPsi_spec hL hF (w := w * z' ^ p + z ^ p * w' + p * w * w')
       (by rw [map_mul, hw, hw']; ring)]
   simp only [map_add (f := _), map_mul, map_pow, map_natCast, hpK, zero_mul, add_zero, Derivation.leibniz,
-    kaehlerD_pow_char p, smul_zero, zero_add]
+    GlobalTheory.DI.kaehlerZ_D_pow_char p, smul_zero, zero_add]
   have e1 : (π z * π z') ^ (p - 1) * π z = π z ^ p * π z' ^ (p - 1) := by
     rw [mul_pow, mul_right_comm, ← pow_succ, Nat.sub_add_cancel hp1]
   have e2 : (π z * π z') ^ (p - 1) * π z' = π z' ^ p * π z ^ (p - 1) := by
@@ -1130,7 +1079,7 @@ theorem frobLiftPsi_natCast_mul (hL : IsFlatLift p π) (hF : IsFrob p π F) (y :
     rw [← pow_succ', Nat.sub_add_cancel hp1]
   rw [frobLiftPsi_spec hL hF (w := F y - (p : Kt) ^ (p - 1) * y ^ p)
     (by rw [map_mul, map_natCast, mul_pow]; linear_combination (y ^ p) * e)]
-  simp [hF y, kaehlerD_pow_char p, zero_pow hp2]
+  simp [hF y, GlobalTheory.DI.kaehlerZ_D_pow_char p, zero_pow hp2]
 
 theorem frobLiftPsi_congr (hL : IsFlatLift p π) (hF : IsFrob p π F) {z z' : Kt} (h : π z = π z') :
     frobLiftPsi p π F hL hF z = frobLiftPsi p π F hL hF z' := by

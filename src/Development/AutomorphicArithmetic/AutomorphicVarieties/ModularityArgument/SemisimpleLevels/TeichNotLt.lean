@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.LocUnr
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.BlochKatoSelmerVanishes
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.DecompSigmaOrd
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharInertiaSurjective
@@ -46,22 +47,7 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 
 private theorem teich_not_lt {Ω : Type} [Field Ω] (A : ValuationSubring Ω) {l N : ℕ} (h : l.Coprime N)
     (hl : A.valuation (l : Ω) < 1) : ¬ A.valuation (N : Ω) < 1 := by
-  intro hN
-  obtain ⟨a, b, hab⟩ := Nat.isCoprime_iff_coprime.mpr h
-  have ha : A.valuation (a : Ω) ≤ 1 := by simpa using A.valuation_le_one (a : A)
-  have hb : A.valuation (b : Ω) ≤ 1 := by simpa using A.valuation_le_one (b : A)
-  have hv : A.valuation ((a : Ω) * l + (b : Ω) * N) < 1 := by
-    refine lt_of_le_of_lt (Valuation.map_add _ _ _) (max_lt ?_ ?_)
-    · rw [Valuation.map_mul]
-      exact lt_of_le_of_lt (mul_le_of_le_one_left' ha) hl
-    · rw [Valuation.map_mul]
-      exact lt_of_le_of_lt (mul_le_of_le_one_left' hb) hN
-  have h1 : ((a : Ω) * l + (b : Ω) * N) = 1 := by
-    have e := congrArg (Int.cast : ℤ → Ω) hab
-    push_cast at e
-    exact e
-  rw [h1, map_one] at hv
-  exact lt_irrefl _ hv
+  apply _root_.not_both <;> assumption
 
 theorem UpperTheory.V.Lev.teichDvd :
     ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l} (D : Raw Ω c), D.Good → ∀ N : ℕ, 1 ≤ N → Af.KillsMu N D.om → l ∣ N := by

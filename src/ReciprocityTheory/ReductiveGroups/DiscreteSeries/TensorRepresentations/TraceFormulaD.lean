@@ -24,9 +24,9 @@ theorem coe_toL2_ae_eq_of_memLp {ε : Fin n → Bool} {F : Matrix (Fin n) (Fin n
 theorem tfd_coef {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] (dual : Bool) (ε : Fin n → Bool)
     (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)) (y : H) (ζ : Fin n → H) (c : Fin n)
     (g : Matrix (Fin n) (Fin n) ℂ) :
-    coefMap dual σ (Pi.single c (tfSgn ε c • y)) ζ g =
+    ReciprocityTheory.ChartRestriction.DS.occCoef dual σ (Pi.single c (tfSgn ε c • y)) ζ g =
       tfSgn ε c * ∑ d, tfCoef dual g c d * inner ℂ y (σ g (ζ d)) := by
-  unfold coefMap
+  unfold ReciprocityTheory.ChartRestriction.DS.occCoef
   rw [sum_eq_single c (fun b _ hb => by simp [hb]) (by simp), Pi.single_eq_same, inner_smul_left,
     tf_tensGrp_apply, inner_sum]
   simp only [inner_smul_right]
@@ -43,12 +43,12 @@ theorem tensor_functor_separation (dual : Bool) {lam : Fin n → ℝ} {H : Type*
     {y : H} (hy : y ∈ closGen E V) {ζ ζ' : Fin n → H} (hζ : ∀ c, ζ c ∈ closGen E V)
     (hζ' : ∀ c, ζ' c ∈ closGen E V)
     (hm : ∀ c, MemLp (fun g : Formalism.REAL.UJ ε =>
-      coefMap dual σ (Pi.single c (tfSgn ε c • y)) ζ (Formalism.MainNotions.S.umat g)) 2 (Formalism.REAL.muG ε))
+      ReciprocityTheory.ChartRestriction.DS.occCoef dual σ (Pi.single c (tfSgn ε c • y)) ζ (Formalism.MainNotions.S.umat g)) 2 (Formalism.REAL.muG ε))
     (hm' : ∀ c, MemLp (fun g : Formalism.REAL.UJ ε =>
-      coefMap dual σ (Pi.single c (tfSgn ε c • y)) ζ' (Formalism.MainNotions.S.umat g)) 2 (Formalism.REAL.muG ε)) :
+      ReciprocityTheory.ChartRestriction.DS.occCoef dual σ (Pi.single c (tfSgn ε c • y)) ζ' (Formalism.MainNotions.S.umat g)) 2 (Formalism.REAL.muG ε)) :
     inner ℂ (tfPh dual ε σ y ζ) (tfJ ε (tfPh dual ε σ y ζ')) = tfFormBH ε ζ ζ' * inner ℂ y y / (d : ℂ) := by
   set F : (Fin n → H) → Fin n → Formalism.REAL.UJ ε → ℂ := fun ζ c g =>
-    coefMap dual σ (Pi.single c (tfSgn ε c • y)) ζ (Formalism.MainNotions.S.umat g) with hF
+    ReciprocityTheory.ChartRestriction.DS.occCoef dual σ (Pi.single c (tfSgn ε c • y)) ζ (Formalism.MainNotions.S.umat g) with hF
   have h1 : ∀ c, inner ℂ (tfPh dual ε σ y ζ c) (tfJ ε (tfPh dual ε σ y ζ') c) =
       ∫ g, tfSgn ε c * (star (F ζ c g) * F ζ' c g) ∂(Formalism.REAL.muG ε) := fun c => by
     rw [tfJ_apply, inner_smul_right, integral_const_mul, tfPh_apply, tfPh_apply, L2.inner_def]

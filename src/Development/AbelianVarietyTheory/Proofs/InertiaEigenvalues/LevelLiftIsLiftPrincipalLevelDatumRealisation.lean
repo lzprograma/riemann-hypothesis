@@ -19,44 +19,6 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdjointHalfDatum
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchrodingerIntertwinerSchwartzBruhatIsTheta
 import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilRepThetaDatumHalfEqSmul
 import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -71,8 +33,6 @@ open scoped TensorProduct
 
 
 namespace GlobalTheory.FlatVecSum
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open GlobalTheory.ExportSeries GlobalTheory.ExportSeries.DualType GlobalTheory.ExportType GlobalTheory.ConjTwist
 
@@ -125,21 +85,21 @@ theorem omegaG_eq_sum {n r : ℕ} (hr : r ≤ n) (G : TypeDat D r) [Fintype G.P.
   by_cases hy : (∀ PP ∈ G.Pg, LowZero r (y PP)) ∧ ∃ g : G0 G.Pg r, (∀ PP : ↥G.Pg, (g PP).val = topL r (y PP.1)) ∧ g ∈ G.P.H
   · obtain ⟨h0, g, hg, hgH⟩ := hy
     rw [omegaG_levT_of G h0 g hg hgH, Finset.sum_eq_single (⟨g, hgH⟩ : G.P.H)⁻¹]
-    · rw [omegaK, if_pos ((key _).2 ⟨h0, fun PP => by rw [inv_inv]; exact hg PP⟩), mul_one, map_inv, inv_inv, Units.val_mul,
+    · rw [omegaK, ite_eq_left ((key _).2 ⟨h0, fun PP => by rw [inv_inv]; exact hg PP⟩), mul_one, map_inv, inv_inv, Units.val_mul,
         Units.coe_prod, ← Finset.prod_coe_sort G.Pg]
       congr 1
       refine Finset.prod_congr rfl fun PP _ => ?_
       rw [← hK, ← Units.val_inv_eq_inv_val, ← map_inv, ← map_inv]
       rfl
     · intro p _ hp
-      rw [omegaK, if_neg, mul_zero]
+      rw [omegaK, ite_eq_right, mul_zero]
       intro h
       refine hp (inv_eq_iff_eq_inv.1 (Subtype.ext (funext fun PP => Units.ext ?_)))
       exact (((key p).1 h).2 PP).trans (hg PP).symm
     · exact fun h => absurd (Finset.mem_univ _) h
   · rw [omegaG_levT_zero G hy, Finset.sum_eq_zero]
     intro p _
-    rw [omegaK, if_neg, mul_zero]
+    rw [omegaK, ite_eq_right, mul_zero]
     exact fun h => hy ⟨((key p).1 h).1, _, ((key p).1 h).2, (p⁻¹).2⟩
 
 open Classical in
@@ -186,11 +146,11 @@ theorem datumFn_eq_sum (B : Base S T) {ψ : Twist D Circle} (hQ : B.admitted ψ.
   simp only [omegaG_princ, show (princG B.G).Pg = B.G.Pg from rfl, hH, fun p => (hO p).1, fun p => (hJ p).1]
   by_cases c1 : IsHalf (halfIdem B.G.Pg (B.de.Q ∪ ψ.Q)) x ∧ IsIntM (frMapAdj S T B.F.βS B.F.βT x)
   swap
-  · simp only [if_neg c1, zero_mul, mul_zero, Finset.sum_const_zero]
+  · simp only [ite_eq_right c1, zero_mul, mul_zero, Finset.sum_const_zero]
   by_cases c2 : IsHalf (halfIdem B.G.Pg (B.de.Q ∪ ψ.Q)) x ∧ IsIntM (frMapO S T B.F.βS B.F.βT x)
   swap
-  · simp only [if_neg c2, mul_zero, Finset.sum_const_zero]
-  simp only [if_pos c1, if_pos c2]
+  · simp only [ite_eq_right c2, mul_zero, Finset.sum_const_zero]
+  simp only [ite_eq_left c1, ite_eq_left c2]
   rw [omegaG_eq_sum B.hr B.G (fun p PP => redFn B.F.βT PP (Lev.finE T (k p))) (fun p => (hk p).red), Finset.sum_mul]
   refine Finset.sum_congr rfl fun p _ => ?_
   rw [funext ((hO p).2 c2.2), funext ((hJ p).2 c1.2)]
@@ -302,20 +262,20 @@ theorem datumFn_eq_tensor {F : Frame S T} (hF : F.Good) {G : TypeDat D T.rank} {
   rw [tensorHalf_apply, show idem Q + cA D (idem G.Pg) = halfIdem G.Pg Q from add_comm _ _, Frame.datumFn]
   by_cases hx : IsHalf (halfIdem G.Pg Q) x
   swap
-  · rw [if_neg hx, if_neg fun h => hx h.1, zero_mul, mul_zero]
+  · rw [ite_eq_right hx, ite_eq_right fun h => hx h.1, zero_mul, mul_zero]
   have hxe : cA D (idem G.Pg) • x + idem Q • x = x := by
     rw [← add_smul]
     exact Matrix.ext fun i j => hx i j
   have i1 := isHalf_smul hg' x
   have i2 := isHalf_smul hq x
-  rw [if_pos hx, mul_one]
+  rw [ite_eq_left hx, mul_one]
   by_cases hi : IsIntM (frMapO S T F.βS F.βT x)
   · have hj := int_adj_of_int hF hi
     have k1 : IsIntM (frMapAdj S T F.βS F.βT (cA D (idem G.Pg) • x)) := by
-      rw [frMapAdj_smul]; exact isIntM_smul_cA hg' hj
+      rw [GlobalTheory.RedHalfDrop.frMapAdj_smul_eq]; exact isIntM_smul_cA hg' hj
     have k2 : IsIntM (frMapO S T F.βS F.βT (idem Q • x)) := by
       rw [frMapO_smul]; exact isIntM_smul hq hi
-    rw [if_pos ⟨hx, hj⟩, if_pos ⟨hx, hi⟩, if_pos ⟨i2, k2⟩, if_pos ⟨i1, k1⟩, mul_comm]
+    rw [ite_eq_left ⟨hx, hj⟩, ite_eq_left ⟨hx, hi⟩, ite_eq_left ⟨i2, k2⟩, ite_eq_left ⟨i1, k1⟩, mul_comm]
     congr 1
     · refine hω _ _ fun PP hPP => ?_
       have e : frMapO S T F.βS F.βT (idem Q • x) =
@@ -326,16 +286,16 @@ theorem datumFn_eq_tensor {F : Frame S T} (hF : F.Good) {G : TypeDat D T.rank} {
     · refine GlobalTheory.PlaceDatum.omegaG_congr _ _ _ _ fun PP hPP => ?_
       have e : frMapAdj S T F.βS F.βT (cA D (idem G.Pg) • x) =
           frMapAdj S T F.βS F.βT x - toEAf D (cA D (idem Q)) • frMapAdj S T F.βS F.βT x := by
-        rw [← frMapAdj_smul, eq_sub_iff_add_eq, ← GlobalTheory.PlaceVec.frMapAdj_add, hxe]
+        rw [← GlobalTheory.RedHalfDrop.frMapAdj_smul_eq, eq_sub_iff_add_eq, ← GlobalTheory.PlaceVec.frMapAdj_add, hxe]
       rw [e, GlobalTheory.RedHalfDrop.redM_sub_smul PP hj (toEAf_mem_intAf_of_idem hq')
         (GlobalTheory.RedHalfDrop.resS_eq_zero_of_mul (og PP hPP).2 _ (og PP hPP).1)]
-  · rw [if_neg (show ¬ (IsHalf (halfIdem G.Pg Q) x ∧ IsIntM (frMapO S T F.βS F.βT x)) from fun h => hi h.2), mul_zero]
+  · rw [ite_eq_right (show ¬ (IsHalf (halfIdem G.Pg Q) x ∧ IsIntM (frMapO S T F.βS F.βT x)) from fun h => hi h.2), mul_zero]
     by_cases k2 : IsIntM (frMapO S T F.βS F.βT (idem Q • x))
-    · rw [if_neg (show ¬ (IsHalf (cA D (idem G.Pg)) (cA D (idem G.Pg) • x) ∧
+    · rw [ite_eq_right (show ¬ (IsHalf (cA D (idem G.Pg)) (cA D (idem G.Pg) • x) ∧
         IsIntM (frMapAdj S T F.βS F.βT (cA D (idem G.Pg) • x))) from fun k1 => hi ?_), mul_zero]
       rw [← hxe, frMapO_add']
       exact fun i j => add_mem (int_of_int_adj hF k1.2 i j) (k2 i j)
-    · rw [if_neg fun h => k2 h.2, zero_mul]
+    · rw [ite_eq_right fun h => k2 h.2, zero_mul]
 
 
 open Classical in
@@ -398,9 +358,9 @@ theorem omegaFlat_eq_locFn {ψ : Twist D Circle} {t t₀ : T0} (ht : IsTupOf R B
   rw [Finset.prod_union hQ.2]
   congr 1
   · refine Finset.prod_congr rfl fun PP hP => ?_
-    rw [hx PP (Finset.mem_union_left _ hP), Twist.locC, Twist.locC, if_pos hP, if_neg (Finset.disjoint_left.1 hQ.2 hP), mul_one]
+    rw [hx PP (Finset.mem_union_left _ hP), Twist.locC, Twist.locC, ite_eq_left hP, ite_eq_right (Finset.disjoint_left.1 hQ.2 hP), mul_one]
   · refine Finset.prod_congr rfl fun PP hP => ?_
-    rw [hx PP (Finset.mem_union_right _ hP), Twist.locC, Twist.locC, if_pos hP, if_neg (Finset.disjoint_right.1 hQ.2 hP), one_mul]
+    rw [hx PP (Finset.mem_union_right _ hP), Twist.locC, Twist.locC, ite_eq_left hP, ite_eq_right (Finset.disjoint_right.1 hQ.2 hP), one_mul]
 
 
 open Classical in
@@ -427,7 +387,7 @@ theorem levelLift_isLift_principalLevelDatum_realisation (h : BaseOf R i B) {p :
     fun PP hP => absurd hP (Finset.notMem_empty _)⟩, rfl⟩
   have rW : (Wc D i).rank = D.R.r := D.sp.W_rank _ (Nat.le_add_left _ _) i.2
   have ha : a.val < D.R.r := lt_of_lt_of_eq a.2 rW
-  have e : blkOf D.R.r D.R.t a = 0 := if_pos ha
+  have e : blkOf D.R.r D.R.t a = 0 := ite_eq_left ha
   exact absurd (lt_of_lt_of_eq hab e) (Nat.not_lt_zero _)
 
 end Real

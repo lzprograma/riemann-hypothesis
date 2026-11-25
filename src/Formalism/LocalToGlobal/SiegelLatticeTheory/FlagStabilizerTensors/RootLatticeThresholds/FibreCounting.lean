@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelativeEquivalence.DCRelEquivAllHolds
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.ParametersTermRelations
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SaturatedPf
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.TermDefPf
@@ -13,8 +14,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions Form
   Formalism.L2.SG.PackageTie2 Formalism.L2.SG.TermOp
 
 namespace Formalism.L2.SG.Pf.FibreCounting
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Gen
 
@@ -41,20 +40,7 @@ theorem nlam_gmap {Λ : Submodule (𝓞 E) S.V} {T : E} {F : LFlag S r T} {n : S
 
 theorem gmap_inv_of {Λ : Submodule (𝓞 E) S.V} {g : S.V ≃ₗ[E] S.V} (h : Formalism.HermitianLatticesTheory.gmap g Λ = Λ) :
     Formalism.HermitianLatticesTheory.gmap g⁻¹ Λ = Λ := by
-  have hinv : ∀ y : S.V, g⁻¹ (g y) = y := fun y => g.symm_apply_apply y
-  ext x
-  simp only [Formalism.HermitianLatticesTheory.gmap, Submodule.mem_map, LinearMap.coe_restrictScalars, LinearEquiv.coe_coe]
-  constructor
-  · rintro ⟨y, hy, rfl⟩
-    have hy' : y ∈ Formalism.HermitianLatticesTheory.gmap g Λ := by rw [h]; exact hy
-    simp only [Formalism.HermitianLatticesTheory.gmap, Submodule.mem_map, LinearMap.coe_restrictScalars, LinearEquiv.coe_coe] at hy'
-    obtain ⟨z, hz, rfl⟩ := hy'
-    rw [hinv]
-    exact hz
-  · intro hx
-    refine ⟨g x, ?_, hinv x⟩
-    rw [← h]
-    exact Submodule.mem_map_of_mem hx
+  apply _root_.PI.DCRelEquiv.UnitaryGroupMassFormula.gmap_inv' <;> assumption
 
 end Gen
 

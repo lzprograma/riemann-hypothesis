@@ -51,9 +51,6 @@ import Mathlib.Tactic.Polynomial.Basic
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -81,7 +78,7 @@ theorem exists_ratio {fS : S →+* F} {π : S →+* F'} (hf : Function.Injective
   · refine absurd ?_ hi
     have e : a i = 0 := ind 2 _ H ![a i, b i] (by simp [Fin.sum_univ_two, h]) 0
     rw [e, map_zero]
-  · push_neg at H
+  · push Not at H
     obtain ⟨u, hu, m, hm⟩ := H
     simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one, _root_.mul_one, mul_neg] at hu
     have inj' : ∀ x, fS x = 0 → x = 0 := fun x e => hf (e.trans (map_zero _).symm)

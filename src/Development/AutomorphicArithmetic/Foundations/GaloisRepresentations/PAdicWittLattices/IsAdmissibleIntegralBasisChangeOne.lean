@@ -3,44 +3,6 @@ module
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.BcMapFst
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsWtZero
 public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OmegaPullOmegaTraceOfSecTraceOne
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 
 @[expose] public section
 
@@ -75,7 +37,7 @@ theorem isAdmissibleIntegralBasisChange_one {i j : X.ι} (h : X.K i ≤ X.K j) :
 theorem tower_admissible_self {j : X.ι} {k : G} (hk : k ∈ X.K j) : X.admitted j j k :=
   ⟨X.K_le j k hk, fun _ hu => (X.K j).mul_mem ((X.K j).mul_mem hk hu) ((X.K j).inv_mem hk)⟩
 
-theorem pl_eq {i j : X.ι} {h : G} (a : X.admitted i j h) : X.pl T i j h = T.pull (X.tr i j h a.1 a.2) (X.tr_q ..) := dif_pos a
+theorem pl_eq {i j : X.ι} {h : G} (a : X.admitted i j h) : X.pl T i j h = T.pull (X.tr i j h a.1 a.2) (X.tr_q ..) := dite_eq_left a
 
 theorem pl_pl {i j m : X.ι} {h h' : G} (a : X.admitted i j h) (a' : X.admitted j m h') (x : T.H (X.q m)) :
     X.pl T i j h (X.pl T j m h' x) = X.pl T i m (h' * h) x := by
@@ -133,9 +95,6 @@ def HodgeInj : Prop := ∀ (k : Type) [Field k] [CharZero k] (a b : ℕ) {Z W : 
 
 def EtTr : Prop := ∀ (l : ℕ) [Fact l.Prime] (B : Scheme.{0}), IsUnit (l : Γ(B, ⊤)) → ∀ (n i : ℤ) {Z Y : Scheme.{0}} (p : Z ⟶ B)
   (q : Y ⟶ B) (s : Y ⟶ Z) [IsFinite s] [Etale s], (etn l B n i).IsTr p q s (TranscendenceTraces.trHQ l s (TranscendenceTraces.Wt.const Y 1) n i)
-
-def EtInjFlat : Prop := ∀ (l : ℕ) [Fact l.Prime] (n i : ℤ) {W Z : Scheme.{0}} [CompactSpace Z] (c : W ⟶ Z) [IsFinite c] [Flat c]
-  [LocallyOfFinitePresentation c] [Surjective c], IsUnit (l : Γ(Z, ⊤)) → Function.Injective (pullHQ l (sch.map c) n i)
 
 def OpTr : Prop := ∀ {B : Scheme.{0}} {R : Type} [Field R] (T : Th.{u} B R), T.Good → ∀ {Z Y Z' : Scheme.{0}} (p : Z ⟶ B)
   (q : Y ⟶ B) (p' : Z' ⟶ B) (s : Y ⟶ Z) (t : Y ⟶ Z') (_ : s ≫ p = q) (ht : t ≫ p' = q) (tr : T.H q →ₗ[R] T.H p),

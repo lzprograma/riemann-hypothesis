@@ -91,13 +91,4 @@ end Ext
 
 def LevelSAll : Prop := Formalism.MainNotions.UnusedSlot34.ForAllCM fun F E _ _ _ _ σ M J => LevelS F E σ M J
 
-section Comparison₂
-
-variable (F E : Type) [Field F] [NumberField F] [Field E] [Algebra F E]
-  (σ : E →ₐ[F] E) (M : ℕ) (J : Matrix (Fin M) (Fin M) E)
-
-variable {F E σ M J}
-
-end Comparison₂
-
 end Formalism.L2.SG.Volumes

@@ -239,7 +239,7 @@ theorem TubeDeepAreaCount.proof (hB : IsolatedPointsCount.Statement) : TubeDeepA
     have hM : ∀ I, deepMap P hex.choose I (A *ᵥ x) = deepMap P (σ' k) I (A *ᵥ x) := fun I => by
       rw [(hmev I).eq_of_nhds, hσ'deep k I _ hAU]
     refine ⟨?_, (hBmem k _).2 ⟨hAU, hsx.symm ▸ hx⟩, hsx⟩
-    simp only [ht, dif_pos hex, Set.indicator_of_mem (hEBl k hx), one_mul, hG, hJ, hM]
+    simp only [ht, dite_eq_left hex, Set.indicator_of_mem (hEBl k hx), one_mul, hG, hJ, hM]
     rw [ENNReal.ofReal_sum_of_nonneg fun I _ => mul_nonneg (sq_nonneg _) (hg0 _)]
     exact Finset.sum_congr rfl fun I _ => ENNReal.ofReal_mul (sq_nonneg _)
 
@@ -252,48 +252,16 @@ theorem TubeDeepAreaCount.proof (hB : IsolatedPointsCount.Statement) : TubeDeepA
         ∑ᶠ x, (fibre J A y).indicator (t y) x := by
       unfold sheetSum
       rw [finsum_mem_def]
-    have hnn : ∀ x, 0 ≤ (fibre J A y).indicator (t y) x := fun x =>
-      Set.indicator_nonneg (fun x _ => ht0 y x) x
     rw [hS]
-    calc ENNReal.ofReal (∑ᶠ x, (fibre J A y).indicator (t y) x)
-        ≤ ∑' x, ENNReal.ofReal ((fibre J A y).indicator (t y) x) := ofReal_finsum_le_tsum _ hnn
-      _ ≤ ∑' x, ∑' k, (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t y x)) x := by
-        refine ENNReal.tsum_le_tsum fun x => ?_
-        by_cases hxf : x ∈ fibre J A y
-        · by_cases hx : (∃ s, IsSheetAt J A x s) ∧ x ∈ Bl
-          · obtain ⟨k, hk⟩ := hEcover x hx.1 hx.2
-            rw [Set.indicator_of_mem hxf]
-            exact (Set.indicator_of_mem (show x ∈ E k ∩ fibre J A y from ⟨hk, hxf⟩)
-              (fun x => ENNReal.ofReal (t y x))).symm.le.trans
-                (ENNReal.le_tsum (f := fun k =>
-                  (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t y x)) x) k)
-          · have : t y x = 0 := by
-              simp only [ht]
-              split_ifs with h
-              · rw [Set.indicator_of_notMem (fun hB => hx ⟨h, hB⟩), zero_mul]
-              · rfl
-            rw [Set.indicator_of_mem hxf, this, ENNReal.ofReal_zero]
-            exact zero_le
-        · rw [Set.indicator_of_notMem hxf, ENNReal.ofReal_zero]
-          exact zero_le
-      _ = ∑' k, ∑' x, (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t y x)) x :=
-        ENNReal.tsum_comm
-      _ ≤ ∑' k, (B k).indicator (G k) y := by
-        refine ENNReal.tsum_le_tsum fun k => ?_
-        rw [tsum_eq_single (σ (e k) y)]
-        · by_cases hm : σ (e k) y ∈ E k ∩ fibre J A y
-          · rw [Set.indicator_of_mem hm]
-            obtain ⟨h1, h2, -⟩ := htE k _ hm.1
-            have hAy : A *ᵥ σ (e k) y = y := hm.2.2
-            rw [hAy] at h1 h2
-            rw [h1, Set.indicator_of_mem h2]
-          · rw [Set.indicator_of_notMem hm]
-            exact zero_le
-        · intro x hne
-          refine Set.indicator_of_notMem (fun hx => hne ?_) _
-          obtain ⟨-, -, hsx⟩ := htE k x hx.1
-          have hAx : A *ᵥ x = y := hx.2.2
-          rw [← hAx, hsx]
+    exact SheetAreaCompare.ofReal_finsum_fibre_le_tsum (ht0 y) (σ := fun k => σ (e k))
+      (fun x _ htx => by
+        by_cases hx : (∃ s, IsSheetAt J A x s) ∧ x ∈ Bl
+        · exact hEcover x hx.1 hx.2
+        · exfalso; apply htx; simp only [ht]
+          split_ifs with h
+          · rw [Set.indicator_of_notMem (fun hB => hx ⟨h, hB⟩), zero_mul]
+          · rfl)
+      (fun k x hx => ⟨fun hAx => by rw [← hAx]; exact ⟨(htE k x hx).1, (htE k x hx).2.1⟩, (htE k x hx).2.2⟩)
 
   set C : ℕ → (Fin d → Fin n) → Set (Fin (d + 1) → ℂ) := fun k I =>
     B k ∩ {y | deepJacDet P (σ (e k)) I y ≠ 0} with hC

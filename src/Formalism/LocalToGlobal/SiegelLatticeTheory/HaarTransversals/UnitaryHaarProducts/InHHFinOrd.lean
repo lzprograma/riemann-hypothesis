@@ -15,8 +15,6 @@ open scoped TensorProduct
 
 namespace Formalism.L2.SG.PoincareInHH.Cut
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : HidaSetting D) (u : D.what₂.Word)
 
 section R6a
@@ -297,7 +295,7 @@ theorem delta_finOrd (δ : (VS D).V ≃ₗ[D.host.E] (VS D).V) (hδiso : δ ∈ 
 
       rw [← hcf, map_sum] at h1
       simp only [map_smul, smul_eq_mul, hT_f_e, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-        Finset.mem_univ, if_true] at h1
+        Finset.mem_univ, ite_true] at h1
       exact h1
     rw [← hcf]
     simp [hc0]

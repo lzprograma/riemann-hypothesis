@@ -4,50 +4,6 @@ public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHo
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormFormOneUnitary.PRowWSColW
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThirdPolynomialExpansion
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TriangularFactorMiddleRow
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -86,21 +42,21 @@ def ViF (m : ℕ) (i : Fin (m + 1)) (Vc : Fin m → Fin (2 * (m + 1) + k + 1) �
 variable (m : ℕ) (i : Fin (m + 1)) (Vc : Fin m → Fin (2 * (m + 1) + k + 1) → ℂ)
 
 theorem insertion_vector_zero_off_index (p : Fin (2 * (m + 1) + k + 1)) (hp : m + 1 ≤ p.val) (hne : p ≠ esI k (m + 1) i) : ViF m i Vc p = 0 := by
-  unfold ViF; rw [if_neg hne, dite_eq_right (by omega)]
+  unfold ViF; rw [ite_eq_right hne, dite_eq_right (by omega)]
 
 theorem ViF_eI : ViF m i Vc (eI k (m + 1) i) = 0 := by
   unfold ViF
-  rw [if_neg, dite_eq_right]
+  rw [ite_eq_right, dite_eq_right]
   · simp [eI]
   · intro h; have := congrArg Fin.val h; simp [eI, esI] at this; omega
 
 theorem tau_eI (c : Fin (m + 1)) : WeylGroupFacts.tau k (m + 1) (eI k (m + 1) c) = esI k (m + 1) c := by
   have := c.isLt
-  ext; rw [tau_val, if_pos (by left; simp only [eI]; omega)]; simp only [eI, esI]
+  ext; rw [tau_val, ite_eq_left (by left; simp only [eI]; omega)]; simp only [eI, esI]
 
 theorem tau_esI (c : Fin (m + 1)) : WeylGroupFacts.tau k (m + 1) (esI k (m + 1) c) = eI k (m + 1) c := by
   have := c.isLt
-  ext; rw [tau_val, if_pos (by right; simp only [esI]; omega)]; simp only [esI, eI]; omega
+  ext; rw [tau_val, ite_eq_left (by right; simp only [esI]; omega)]; simp only [esI, eI]; omega
 
 end SpacedProductLowerBound
 
@@ -142,9 +98,9 @@ theorem hermitian_insertion_vector_orthogonal (z' : Fin (2 * (m + 1) + k + 1) �
 theorem ViF_star (q : Fin (2 * (m + 1) + k + 1)) (hq : m + 1 + k < q.val) :
     ViF m i Vc q = if (NFOne.sg k (m + 1) q).val = i.val then 1 else 0 := by
   by_cases h : q = esI k (m + 1) i
-  · rw [if_pos (by rw [sg_val', h]; simp [esI]; omega)]
-    unfold ViF; rw [if_pos h]
-  · rw [insertion_vector_zero_off_index m i Vc q (by omega) h, if_neg]
+  · rw [ite_eq_left (by rw [sg_val', h]; simp [esI]; omega)]
+    unfold ViF; rw [ite_eq_left h]
+  · rw [insertion_vector_zero_off_index m i Vc q (by omega) h, ite_eq_right]
     intro h'; apply h; ext; rw [sg_val'] at h'; simp [esI]; omega
 
 theorem ViF_Vc (hVs : ∀ (b : Fin m) (q : Fin (2 * (m + 1) + k + 1)), m + 1 + k < q.val →
@@ -154,22 +110,22 @@ theorem ViF_Vc (hVs : ∀ (b : Fin m) (q : Fin (2 * (m + 1) + k + 1)), m + 1 + k
   have hsi : (i.succAbove c').val ≠ i.val := fun h' => Fin.succAbove_ne i c' (Fin.ext h')
   rw [herm_expand, Finset.sum_eq_add (eI k (m + 1) i) (esI k (m + 1) (i.succAbove c'))]
   · rw [tau_eI, tau_esI]
-    have e1 : ViF m i Vc (esI k (m + 1) i) = 1 := by unfold ViF; rw [if_pos rfl]
+    have e1 : ViF m i Vc (esI k (m + 1) i) = 1 := by unfold ViF; rw [ite_eq_left rfl]
     have e2 : ViF m i Vc (eI k (m + 1) (i.succAbove c')) = -star (Vc c' (eI k (m + 1) i)) := by
       unfold ViF
-      rw [if_neg (by intro h; have := congrArg Fin.val h; simp [eI, esI] at this; omega),
+      rw [ite_eq_right (by intro h; have := congrArg Fin.val h; simp [eI, esI] at this; omega),
         dite_eq_left ⟨by simp only [eI]; omega, by simpa [eI] using hsi⟩]
       congr 3
       have := pidx_succAbove m i c' ⟨hs, hsi⟩
       simpa [eI] using this
     have e3 : Vc c' (esI k (m + 1) (i.succAbove c')) = 1 := by
-      rw [hVs c' _ (by simp [esI]; omega), if_pos (by rw [sg_val']; simp [esI]; omega)]
+      rw [hVs c' _ (by simp [esI]; omega), ite_eq_left (by rw [sg_val']; simp [esI]; omega)]
     rw [e1, e2, e3, sgn_one _ (by simp [eI]; omega), sgn_one _ (by simp [esI]; omega)]
     simp
   · intro h; have := congrArg Fin.val h; simp [eI, esI] at this; omega
   · intro l _ hl
     by_cases hS : m + 1 + k < l.val
-    · rw [hVs c' l hS, if_neg]
+    · rw [hVs c' l hS, ite_eq_right]
       · simp
       · intro h'; apply hl.2; ext; rw [sg_val'] at h'; simp [esI]; omega
     · by_cases hX : l.val < m + 1

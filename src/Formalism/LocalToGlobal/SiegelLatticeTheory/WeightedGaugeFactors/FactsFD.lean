@@ -38,16 +38,6 @@ namespace Formalism.BasicNotions.Examples₂.CD
 open MeasureTheory Matrix Formalism.REAL Formalism.UG.P Topology
 open scoped ENNReal NNReal
 
-section One
-
-variable {n P Q : ℕ} (ε : Fin n → Bool) (e : Fin P ⊕ Fin Q ≃ Fin n)
-  (h1 : ∀ i, ε (e (Sum.inl i)) = true) (h2 : ∀ j, ε (e (Sum.inr j)) = false)
-
-
-
-
-end One
-
 def nT {n : ℕ} (ε : Fin n → Bool) : ℕ := Fintype.card {i // ε i = true}
 def nF {n : ℕ} (ε : Fin n → Bool) : ℕ := Fintype.card {i // ¬ ε i = true}
 

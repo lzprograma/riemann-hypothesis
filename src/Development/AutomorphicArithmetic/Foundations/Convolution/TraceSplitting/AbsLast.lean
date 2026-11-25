@@ -10,51 +10,9 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevOpMemFixe
 public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SplitStable
 public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.PowIndep
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.IrreducibleAdmissibleGL
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 import GroundTheory.AutomorphicForms.MeasuresGL
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportHfun, Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CharIndep, Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.AbsLast
@@ -145,7 +103,7 @@ theorem hfun_eq_zero (y : G) (hy : ∀ q : K' ⧸ U.subgroupOf K', ∀ g ∈ s, 
     hfun K' U s a y = 0 := by
   unfold hfun
   refine Finset.sum_eq_zero fun q _ => Finset.sum_eq_zero fun g hg => ?_
-  rw [if_neg (fun h => hy q g hg (QuotientGroup.eq.1 h)), mul_zero]
+  rw [ite_eq_right (fun h => hy q g hg (QuotientGroup.eq.1 h)), mul_zero]
 
 theorem hasCompactSupport_hfun [TopologicalSpace G] [IsTopologicalGroup G] (hK'c : IsCompact (K' : Set G))
     (hK'o : IsOpen (K' : Set G)) : HasCompactSupport (hfun K' U s a) := by
@@ -192,7 +150,7 @@ theorem levOp_hfun {V : Type} [AddCommGroup V] [Module ℂ V] (ρ : Representati
   refine Finset.sum_congr rfl fun q _ => ?_
   rw [Finset.sum_comm (s := T)]
   refine Finset.sum_congr rfl fun g hg => ?_
-  rw [← LinearMap.sum_apply, Finset.sum_ite_eq, if_pos (hmemT q g hg), LinearMap.smul_apply,
+  rw [← LinearMap.sum_apply, Finset.sum_ite_eq, ite_eq_left (hmemT q g hg), LinearMap.smul_apply,
     LinearMap.comp_apply, LinearMap.id_apply, hout]
 
 end GlobalTheory.HeckeTraceIndep
@@ -248,14 +206,14 @@ theorem twTr_linearIndependent : ∀ (G : Type) [Group G] [TopologicalSpace G] [
     rw [hact i _ (b i k).2]
     by_cases hi : i = i₀
     · have e : (σ i).ρ.asAlgebraHom x (b i k : (σ i).V) = b i k := by
-        exact hxk.trans (if_pos hi)
-      rw [if_pos hi, e]
+        exact hxk.trans (ite_eq_left hi)
+      rw [ite_eq_left hi, e]
       have h2 : ∀ q : K' ⧸ U.subgroupOf K', (σ i).ρ ((q.out : K') : G) (b i k : (σ i).V) = b i k :=
         fun q => fixed_apply (b i k).2 q.out
       simp only [h2, Finset.sum_const, Finset.card_univ]
       rw [← Nat.cast_smul_eq_nsmul ℂ, smul_smul]
-    · have e : (σ i).ρ.asAlgebraHom x (b i k : (σ i).V) = 0 := hxk.trans (if_neg hi)
-      rw [if_neg hi, e]
+    · have e : (σ i).ρ.asAlgebraHom x (b i k : (σ i).V) = 0 := hxk.trans (ite_eq_right hi)
+      rw [ite_eq_right hi, e]
       simp
   have hfixedEq : ∀ i, ∀ v ∈ fixed (σ i).ρ K', levOp (σ i).ρ K K' f LinearMap.id v =
       (if i = i₀ then r⁻¹ * N else 0) • v := by
@@ -283,7 +241,7 @@ theorem twTr_linearIndependent : ∀ (G : Type) [Group G] [TopologicalSpace G] [
     rw [this, map_smul, LinearMap.trace_id, smul_eq_mul]
   have hsum := hc f hHecke
   simp only [htr] at hsum
-  rw [Finset.sum_eq_single i₀ (fun i _ hi => by simp [hi]) (by simp), if_pos rfl] at hsum
+  rw [Finset.sum_eq_single i₀ (fun i _ hi => by simp [hi]) (by simp), ite_eq_left rfl] at hsum
   have hr : r ≠ 0 := by
     haveI : CompactSpace K := isCompact_iff_compactSpace.mp hKc
     haveI : Finite (K ⧸ K'.subgroupOf K) := Subgroup.quotient_finite_of_isOpen _ (by

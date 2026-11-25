@@ -164,40 +164,8 @@ theorem exists_le_of_algebraMap_mem (hL : ∀ x : L, algebraMap L Ω x ∈ (maxU
     ∃ E : IntermediateField F Ω, FiniteDimensional F E ∧ IsUnramifiedOutside S E ∧
       ∀ x : L, algebraMap L Ω x ∈ E := by
   classical
-  have mem_iff {x : Ω} : x ∈ maxUnramifiedOutside (F := F) (Ω := Ω) S ↔
-      ∃ E : IntermediateField F Ω, FiniteDimensional F E ∧
-        IsUnramifiedOutside S E ∧ x ∈ E := by
-    constructor
-    · intro hx
-      have hne : Nonempty {E : IntermediateField F Ω // FiniteDimensional F E ∧
-          IsUnramifiedOutside S E} := ⟨⟨⊥, inferInstance, isUnramifiedOutside_bot S⟩⟩
-      have hdir : Directed (· ≤ ·) (fun E : {E : IntermediateField F Ω //
-          FiniteDimensional F E ∧ IsUnramifiedOutside S E} => E.1) := by
-        intro E₁ E₂
-        have := E₁.2.1
-        have := E₂.2.1
-        exact ⟨⟨E₁.1 ⊔ E₂.1, inferInstance, E₁.2.2.sup E₂.2.2⟩, le_sup_left, le_sup_right⟩
-      rw [maxUnramifiedOutside_eq_iSup, ← SetLike.mem_coe,
-        IntermediateField.coe_iSup_of_directed hdir, Set.mem_iUnion] at hx
-      obtain ⟨E, hE⟩ := hx
-      exact ⟨E.1, E.2.1, E.2.2, hE⟩
-    · rintro ⟨E, hf, hu, hx⟩
-      exact le_maxUnramifiedOutside S hu hx
-  have exists_subset (s : Finset Ω)
-      (hs : ∀ x ∈ s, x ∈ maxUnramifiedOutside (F := F) (Ω := Ω) S) :
-      ∃ E : IntermediateField F Ω, FiniteDimensional F E ∧ IsUnramifiedOutside S E ∧
-        ∀ x ∈ s, x ∈ E := by
-    induction s using Finset.induction_on with
-    | empty => exact ⟨⊥, inferInstance, isUnramifiedOutside_bot S, by simp⟩
-    | insert a s _ ih =>
-      obtain ⟨E₁, hf₁, hu₁, ha⟩ := mem_iff.1 (hs a (Finset.mem_insert_self a s))
-      obtain ⟨E₂, hf₂, hu₂, hs₂⟩ := ih fun x hx => hs x (Finset.mem_insert_of_mem hx)
-      refine ⟨E₁ ⊔ E₂, inferInstance, hu₁.sup hu₂, fun x hx => ?_⟩
-      rcases Finset.mem_insert.1 hx with rfl | hx
-      · exact le_sup_left (α := IntermediateField F Ω) ha
-      · exact le_sup_right (α := IntermediateField F Ω) (hs₂ x hx)
   let b := Module.finBasis F L
-  obtain ⟨E, hf, hu, hE⟩ := exists_subset
+  obtain ⟨E, hf, hu, hE⟩ := exists_subset_of_subset_maxUnramifiedOutside S
     (Finset.univ.image fun i => algebraMap L Ω (b i)) fun x hx => by
       obtain ⟨i, -, rfl⟩ := Finset.mem_image.1 hx
       exact hL (b i)
@@ -228,95 +196,21 @@ theorem isUnramifiedIn_of_algebraMap_mem
   subst e
   exact h
 
-
-omit [IsGalois F Ω] in
-theorem isUnramifiedOutside_restrictScalars_iff_of_isUnramifiedIn
-    (hL : ∀ v ∉ S, Algebra.IsUnramifiedIn (𝓞 L) v.asIdeal) (M : IntermediateField L Ω)
-    [FiniteDimensional L M] :
-    IsUnramifiedOutside S (M.restrictScalars F) ↔ IsUnramifiedOutside (placesOver S) M := by
-  have : FiniteDimensional F M := FiniteDimensional.trans F L M
-  have := NumberField.of_module_finite L M
-  change (∀ v ∉ S, Algebra.IsUnramifiedIn (𝓞 M) v.asIdeal) ↔ _
-  constructor
-  · intro hM w hw Q hQ hQw
-    have hv0 : w.asIdeal.under (𝓞 F) ≠ ⊥ := Ideal.under_ne_bot (𝓞 F) w.ne_bot
-    let v : HeightOneSpectrum (𝓞 F) := ⟨w.asIdeal.under (𝓞 F), inferInstance, hv0⟩
-    have hwv : w.asIdeal.LiesOver v.asIdeal := ⟨rfl⟩
-    have hv : v ∉ S := fun hvS => hw ⟨v, hvS, hwv⟩
-    have : Q.LiesOver v.asIdeal := Ideal.LiesOver.trans Q w.asIdeal v.asIdeal
-    exact ((isUnramifiedAt_tower_iff (F := F) (L := L) Q).1 (hM v hv Q hQ this)).2
-  · intro hM v hv Q hQ hQv
-    have hP0 : Q.under (𝓞 L) ≠ ⊥ := by
-      have : (Q.under (𝓞 L)).LiesOver v.asIdeal :=
-        ⟨by rw [Ideal.under_under]; exact hQv.over⟩
-      exact Ideal.ne_bot_of_liesOver_of_ne_bot v.ne_bot (Q.under (𝓞 L))
-    let w : HeightOneSpectrum (𝓞 L) := ⟨Q.under (𝓞 L), inferInstance, hP0⟩
-    have hwv : w.asIdeal.LiesOver v.asIdeal := ⟨by
-      change v.asIdeal = (Q.under (𝓞 L)).under (𝓞 F)
-      rw [Ideal.under_under]; exact hQv.over⟩
-    have hw : w ∉ placesOver S := by
-      rintro ⟨u, huS, hwu⟩
-      have huv : u = v := HeightOneSpectrum.ext (hwu.over.trans hwv.over.symm)
-      exact hv (huv ▸ huS)
-    have h1 := hM w hw Q hQ ⟨rfl⟩
-    have h2 := hL v hv (Q.under (𝓞 L)) inferInstance hwv
-    exact (isUnramifiedAt_tower_iff (F := F) (L := L) Q).2 ⟨h2, h1⟩
-
 theorem restrictScalars_maxUnramifiedOutside_eq
     (hL : ∀ x : L, algebraMap L Ω x ∈ (maxUnramifiedOutside (F := F) (Ω := Ω) S)) :
     ((maxUnramifiedOutside (F := L) (Ω := Ω) (placesOver S))).restrictScalars F = (maxUnramifiedOutside (F := F) (Ω := Ω) S) := by
   have hLu := isUnramifiedIn_of_algebraMap_mem S hL
   have : IsGalois L Ω := IsGalois.tower_top_of_isGalois F L Ω
-  have mem_iff {x : Ω} : x ∈ maxUnramifiedOutside (F := L) (Ω := Ω) (placesOver S) ↔
-      ∃ M : IntermediateField L Ω, FiniteDimensional L M ∧
-        IsUnramifiedOutside (placesOver S) M ∧ x ∈ M := by
-    constructor
-    · intro hx
-      have hne : Nonempty {M : IntermediateField L Ω // FiniteDimensional L M ∧
-          IsUnramifiedOutside (placesOver S) M} := ⟨⟨⊥, inferInstance,
-            isUnramifiedOutside_bot (placesOver S)⟩⟩
-      have hdir : Directed (· ≤ ·) (fun M : {M : IntermediateField L Ω //
-          FiniteDimensional L M ∧ IsUnramifiedOutside (placesOver S) M} => M.1) := by
-        intro M₁ M₂
-        have := M₁.2.1
-        have := M₂.2.1
-        exact ⟨⟨M₁.1 ⊔ M₂.1, inferInstance,
-          M₁.2.2.sup M₂.2.2⟩, le_sup_left, le_sup_right⟩
-      rw [maxUnramifiedOutside_eq_iSup, ← SetLike.mem_coe,
-        IntermediateField.coe_iSup_of_directed hdir, Set.mem_iUnion] at hx
-      obtain ⟨M, hM⟩ := hx
-      exact ⟨M.1, M.2.1, M.2.2, hM⟩
-    · rintro ⟨M, hf, hu, hx⟩
-      exact le_maxUnramifiedOutside (placesOver S) hu hx
-  have mem_iff_F {x : Ω} : x ∈ maxUnramifiedOutside (F := F) (Ω := Ω) S ↔
-      ∃ E : IntermediateField F Ω, FiniteDimensional F E ∧
-        IsUnramifiedOutside S E ∧ x ∈ E := by
-    constructor
-    · intro hx
-      have hne : Nonempty {E : IntermediateField F Ω // FiniteDimensional F E ∧
-          IsUnramifiedOutside S E} := ⟨⟨⊥, inferInstance, isUnramifiedOutside_bot S⟩⟩
-      have hdir : Directed (· ≤ ·) (fun E : {E : IntermediateField F Ω //
-          FiniteDimensional F E ∧ IsUnramifiedOutside S E} => E.1) := by
-        intro E₁ E₂
-        have := E₁.2.1
-        have := E₂.2.1
-        exact ⟨⟨E₁.1 ⊔ E₂.1, inferInstance, E₁.2.2.sup E₂.2.2⟩, le_sup_left, le_sup_right⟩
-      rw [maxUnramifiedOutside_eq_iSup, ← SetLike.mem_coe,
-        IntermediateField.coe_iSup_of_directed hdir, Set.mem_iUnion] at hx
-      obtain ⟨E, hE⟩ := hx
-      exact ⟨E.1, E.2.1, E.2.2, hE⟩
-    · rintro ⟨E, hf, hu, hx⟩
-      exact le_maxUnramifiedOutside S hu hx
   ext x
   rw [IntermediateField.mem_restrictScalars]
   constructor
   · intro hx
-    obtain ⟨M, hf, hu, hxM⟩ := mem_iff.1 hx
+    obtain ⟨M, hf, hu, hxM⟩ := (mem_maxUnramifiedOutside_iff (F := L) (placesOver S)).1 hx
     have : FiniteDimensional F (M.restrictScalars F) := FiniteDimensional.trans F L M
     exact le_maxUnramifiedOutside S
       ((isUnramifiedOutside_restrictScalars_iff_of_isUnramifiedIn S hLu M).2 hu) hxM
   · intro hx
-    obtain ⟨E, hf, hu, hxE⟩ := mem_iff_F.1 hx
+    obtain ⟨E, hf, hu, hxE⟩ := (mem_maxUnramifiedOutside_iff S).1 hx
     obtain ⟨E₀, hf₀, hu₀, hE₀⟩ := exists_le_of_algebraMap_mem S hL
     let E' : IntermediateField F Ω := E₀ ⊔ E
     have hE' : ∀ y : L, algebraMap L Ω y ∈ E'.toSubfield := fun y =>

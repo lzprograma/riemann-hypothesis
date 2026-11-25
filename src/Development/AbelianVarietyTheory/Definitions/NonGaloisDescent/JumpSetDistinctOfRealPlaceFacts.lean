@@ -415,8 +415,8 @@ theorem count_PPm {L : SizeData₂ D} {j : ℕ} {ρ : D.what₂.Tau} (hF : JFact
     (PPm D j ρ).count (q - sz D j ρ - c0 D) = if q ∈ Jp D j ρ then 1 else 0 := by
   rw [Multiset.count_eq_of_nodup (jp_nodup hF)]
   by_cases h : q ∈ Jp D j ρ
-  · rw [if_pos ((jp_mem_iff hF q).2 h), if_pos h]
-  · rw [if_neg (mt (jp_mem_iff hF q).1 h), if_neg h]
+  · rw [ite_eq_left ((jp_mem_iff hF q).2 h), ite_eq_left h]
+  · rw [ite_eq_right (mt (jp_mem_iff hF q).1 h), ite_eq_right h]
 
 end GlobalTheory.JumpSets
 
@@ -767,9 +767,9 @@ lemma jd_card_lt {m j : ℕ} (hj : j ≤ m) :
   rw [this, Finset.card_image_of_injective _ (Fin.castLE_injective hj), Finset.card_univ,
     Fintype.card_fin]
 
-lemma jd_card_ge {m j : ℕ} (hj : j ≤ m) :
+lemma jd_card_ge {m j : ℕ} :
     (Finset.univ.filter (fun a : Fin m => j ≤ a.1)).card = m - j := by
-  apply Formalism.CohomologicalDescent.FrobeniusPeriodChange.card_filter_le_val_eq_sub <;> assumption
+  exact Formalism.CohomologicalDescent.FrobeniusPeriodChange.card_filter_le_val_eq_sub m j
 
 lemma jd_ncard {n : ℕ} (f : Fin n → ℚ) (hf : Function.Injective f) (p : Fin n → Prop)
     [DecidablePred p] (S : Set ℚ) (hS : ∀ q, q ∈ S ↔ ∃ a, p a ∧ q = f a) :
@@ -868,7 +868,7 @@ theorem jumpSetDistinct_of_realPlaceFacts {L : SizeData₂ D} (h : ∀ j, 1 ≤ 
       have := F.v_anti a a' hl; try dsimp only at e
       linarith)
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
-  · refine (jd_ncard _ iL (fun a => j ≤ a.1) _ ?_).trans (jd_card_ge hjm)
+  · refine (jd_ncard _ iL (fun a => j ≤ a.1) _ ?_).trans jd_card_ge
     intro q
     simp only [lowJ, Set.mem_ofPred_eq]
     constructor
@@ -898,7 +898,7 @@ theorem jumpSetDistinct_of_realPlaceFacts {L : SizeData₂ D} (h : ∀ j, 1 ≤ 
       have := jd_lneg F a hlt; linarith
     · rintro ⟨a, ha, rfl⟩
       exact ⟨⟨a, by ring⟩, by have := jd_lpos F a ha; linarith⟩
-  · refine (jd_ncard _ iR (fun a => j ≤ a.1) _ ?_).trans (jd_card_ge hjm)
+  · refine (jd_ncard _ iR (fun a => j ≤ a.1) _ ?_).trans jd_card_ge
     intro q
     simp only [jd_lowT_f, reflS, AdmissibleParameterJ.refl, lowJ, Set.mem_ofPred_eq]
     constructor
@@ -908,7 +908,7 @@ theorem jumpSetDistinct_of_realPlaceFacts {L : SizeData₂ D} (h : ∀ j, 1 ≤ 
       have := jd_lpos F a hlt; linarith
     · rintro ⟨a, ha, rfl⟩
       exact ⟨⟨a, by ring⟩, by have := jd_lneg F a ha; linarith⟩
-  · refine (jd_ncard _ iL (fun a => j ≤ a.1) _ ?_).trans (jd_card_ge hjm)
+  · refine (jd_ncard _ iL (fun a => j ≤ a.1) _ ?_).trans jd_card_ge
     intro q
     simp only [jumpUnion_true, cloudJ, lowJ, Set.mem_union, Set.mem_ofPred_eq]
     constructor
@@ -1014,7 +1014,7 @@ theorem jumpSetFinal_of_realPlaceFacts {L : SizeData₂ D} (h : ∀ j, 1 ≤ j �
       · by_cases hja : j ≤ a.1
         · have := jd_lneg F a hja; linarith
         · have := jd_lpos F a (by omega); linarith
-  · refine (jd_ncard _ iL4 (fun a => j ≤ a.1) _ ?_).trans (jd_card_ge hjm)
+  · refine (jd_ncard _ iL4 (fun a => j ≤ a.1) _ ?_).trans jd_card_ge
     intro u
     simp only [dualS, jd_JW_f, reflS, AdmissibleParameterJ.refl, cloudJ, lowJ, Set.mem_union, Set.mem_ofPred_eq]
     constructor
@@ -1097,14 +1097,14 @@ theorem count_key {L : SizeData₂ D} {j : ℕ} {ρ : D.what₂.Tau} (hF : JFact
       show AdmissibleParameterJ.refl D (a : ℚ) ∈ Jp D j ρ ↔ _
       rw [hr]
     by_cases h : (D.R.t : ℚ) - 1 - a ∈ Jp D j ρ
-    · rw [if_pos h, if_pos (hm.2 h)]; simp
-    · rw [if_neg h, if_neg (fun h' => h (hm.1 h'))]; simp
+    · rw [ite_eq_left h, ite_eq_left (hm.2 h)]; simp
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h (hm.1 h'))]; simp
   · have hs := hsU rfl
     subst hs
     have : (1 : ℚ) * ((a : ℚ) + c - cτ) = (a : ℚ) - sz D j ρ - c0 D := by
       rw [hc]; ring
     rw [this, count_PPm hF]
-    simp only [JJ, if_true]
+    simp only [JJ, ite_true]
     split_ifs <;> simp
 
 theorem ite_ne_zero_iff' (P : Prop) [Decidable P] : ((if P then (1 : ℤ) else 0) ≠ 0) ↔ P := by
@@ -1116,8 +1116,4 @@ theorem dualS_int (S : Set ℚ) (a : ℤ) : ((a : ℚ) ∈ dualS S ↔ ((-a - 1 
 end GlobalTheory.JumpSets
 
 end
-
-namespace GlobalTheory.JumpSets
-
-end GlobalTheory.JumpSets
 

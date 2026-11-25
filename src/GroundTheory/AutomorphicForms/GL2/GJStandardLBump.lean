@@ -58,13 +58,8 @@ theorem exists_localBump (μ : Measure (GL (Fin n) F)) [μ.IsHaarMeasure] {V : T
   set S : Set (Matrix (Fin n) (Fin n) F) := Units.val '' W with hS
   have hSo : IsOpen S := hval.isOpenMap _ hWo
   have hSc : IsCompact S := hWc.image Units.continuous_val
-  have hmemS : ∀ g : GL (Fin n) F, (g : Matrix (Fin n) (Fin n) F) ∈ S ↔ g ∈ W := by
-    intro g
-    constructor
-    · rintro ⟨h, hh, he⟩
-      rwa [← Units.ext he]
-    · intro h
-      exact ⟨g, h, rfl⟩
+  have hmemS : ∀ g : GL (Fin n) F, (g : Matrix (Fin n) (Fin n) F) ∈ S ↔ g ∈ W :=
+    fun _ ↦ Units.val_injective.mem_set_image
   set Φ : Matrix (Fin n) (Fin n) F → ℂ := S.indicator fun _ ↦ (1 : ℂ) with hΦ
   set c : ℂ := Parabolic.matrixCoeff π ξ ℓ g₀ with hc
   have hfW : ∀ g ∈ W, Parabolic.matrixCoeff π ξ ℓ g = c := by
@@ -112,19 +107,8 @@ section Arch
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
 theorem isUnit_infiniteAdeleRing_iff {x : InfiniteAdeleRing K} :
-    IsUnit x ↔ ∀ w : InfinitePlace K, x w ≠ 0 := by
-  constructor
-  · rintro ⟨u, rfl⟩ w hw
-    have h := congrFun u.mul_inv w
-    change (u : InfiniteAdeleRing K) w * (↑u⁻¹ : InfiniteAdeleRing K) w = 1 at h
-    rw [hw, zero_mul] at h
-    exact zero_ne_one h
-  · intro h
-    refine ⟨⟨x, fun w ↦ (x w)⁻¹, ?_, ?_⟩, rfl⟩
-    · funext w
-      exact mul_inv_cancel₀ (h w)
-    · funext w
-      exact inv_mul_cancel₀ (h w)
+    IsUnit x ↔ ∀ w : InfinitePlace K, x w ≠ 0 :=
+  Pi.isUnit_iff.trans (forall_congr' fun _ ↦ isUnit_iff_ne_zero)
 
 def infInv (x : InfiniteAdeleRing K) : InfiniteAdeleRing K := fun w ↦ (x w)⁻¹
 

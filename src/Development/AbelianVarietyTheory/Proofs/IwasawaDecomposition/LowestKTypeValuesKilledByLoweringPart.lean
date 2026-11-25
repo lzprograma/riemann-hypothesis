@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegrableOnMulRight
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlace
 public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HolomorphicLowestType
 public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.UniformModerateGrowthLevel
@@ -55,7 +56,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff ComplexOrder
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.DefLift
 
 namespace GlobalTheory.DefLift.LowerKill
@@ -67,9 +67,9 @@ theorem entry_eq_zero {n : ℕ} {ε : Fin n → Bool} {κ : Matrix (Fin n) (Fin 
   have e := congrFun (congrFun h a) b
   simp only [Formalism.REAL.Jm, mul_diagonal, diagonal_mul] at e
   cases ha : ε a <;> cases hb : ε b <;> simp only [ha, hb, ne_eq, not_true_eq_false] at hab e
-  · simp only [Bool.false_eq_true, if_false, if_true] at e
+  · simp only [Bool.false_eq_true, ite_false, ite_true] at e
     linear_combination (1 / 2 : ℂ) * e
-  · simp only [Bool.false_eq_true, if_false, if_true] at e
+  · simp only [Bool.false_eq_true, ite_false, ite_true] at e
     linear_combination (-1 / 2 : ℂ) * e
 
 theorem block_conj {n : ℕ} {ε : Fin n → Bool} {κ κ' Y : Matrix (Fin n) (Fin n) ℂ}
@@ -89,21 +89,7 @@ variable {D : D7} {T : HSp D} {Sp : D.what₂.Tau → SPar}
 
 theorem frame_mem_UH (M : DSModel T Sp) (τ : D.what₂.Tau) {κ : Matrix (Fin T.rank) (Fin T.rank) ℂ}
     (hκ : κ ∈ Formalism.REAL.Kset (M.ε τ)) : (M.fr τ)⁻¹ * κ * M.fr τ ∈ Formalism.QuantumDeterminants.UH (gramAt D T τ) := by
-  have hu : IsUnit (M.fr τ).det := (isUnit_iff_isUnit_det _).1 (M.fr_unit τ)
-  have h1 : κᴴ * κ = 1 := hκ.1.1
-  have h2 : κᴴ * Formalism.REAL.Jm (M.ε τ) * κ = Formalism.REAL.Jm (M.ε τ) := by
-    rw [Matrix.mul_assoc, ← hκ.2, ← Matrix.mul_assoc, h1, Matrix.one_mul]
-  have h3 : M.fr τ * ((M.fr τ)⁻¹ * κ * M.fr τ) = κ * M.fr τ := by
-    rw [Matrix.mul_assoc, mul_nonsing_inv_cancel_left _ _ hu]
-  show ((M.fr τ)⁻¹ * κ * M.fr τ)ᴴ * gramAt D T τ * ((M.fr τ)⁻¹ * κ * M.fr τ) = gramAt D T τ
-  rw [← M.fr_gram τ]
-  calc _ = (M.fr τ * ((M.fr τ)⁻¹ * κ * M.fr τ))ᴴ * Formalism.REAL.Jm (M.ε τ) * (M.fr τ * ((M.fr τ)⁻¹ * κ * M.fr τ)) := by
-        rw [conjTranspose_mul (M.fr τ)]
-        simp only [Matrix.mul_assoc]
-    _ = (M.fr τ)ᴴ * (κᴴ * Formalism.REAL.Jm (M.ε τ) * κ) * M.fr τ := by
-        rw [h3, conjTranspose_mul]
-        simp only [Matrix.mul_assoc]
-    _ = _ := by rw [h2]
+  first | exact _root_.GlobalTheory.Chain.IoLift.AvgLift.frame_mem | exact @_root_.GlobalTheory.Chain.IoLift.AvgLift.frame_mem | apply _root_.GlobalTheory.Chain.IoLift.AvgLift.frame_mem <;> assumption
 
 theorem adAt_mem_pMinus {θ : InfFam D} (hθ : IsInfFam θ) (M : DSModel T Sp) (ρ τ : D.what₂.Tau)
     {κ : Matrix (Fin T.rank) (Fin T.rank) ℂ} (hκ : κ ∈ Formalism.REAL.Kset (M.ε ρ))

@@ -13,7 +13,7 @@ import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra
 public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.BernsteinZelevinskyFiniteness
 public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.GeometricLemma
 public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasSupportOfIsSubquotientProdIrr
-public import Development.WeilBound.CoreStatements.PublishedTheorems.FiniteGLInvariants.AffineLieInvariants.Imports
+public import Development.WeilBound.RepresentationTheoryGL.ConstantTermFiniteness.LieInvariants.InvariantOfLieOneLEqZero
 import Formalism.DoubleCosetMeasures.Statement
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -60,9 +60,6 @@ noncomputable section
 open NumberField IsDedekindDomain Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.HenQ UpperTheory.V.Z.Bc UpperTheory.V.Published
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL UpperTheory.Zero.LLC UpperTheory.V.Z.Inf
 open scoped Classical
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
 
 namespace UpperTheory.V.Z.Gam
 
@@ -140,7 +137,7 @@ theorem UpperTheory.V.Z.Gam.suppFacts :
   have uniq : ∀ {σ σ' s}, π.IsLocComp v σ → π.IsLocComp v σ' → HasSupport σ.ρ s → HasSupport σ'.ρ s :=
     fun h h' hs => hs.of_equiv (LocUniq.isLocComp_unique π v _ _ h h').some
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · obtain ⟨σ, hσ, -⟩ := LocEx.exists_isLocComp CuspFormAutomorphicBounds.automorphicFormsFiniteGL K n π v
+  · obtain ⟨σ, hσ, -⟩ := LocEx.exists_isLocComp PositivityTheory.Rg.HF.GL.automorphicFormsFiniteGL K n π v
     obtain ⟨s, hs⟩ := supp_exists σ.smooth σ.irred
     exact ⟨s, σ, hσ, hs⟩
   · rintro s s' ⟨σ, hσ, hs⟩ ⟨σ', hσ', hs'⟩

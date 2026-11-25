@@ -47,8 +47,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.EigDir
@@ -86,7 +84,7 @@ theorem aeval_tan [Fintype κ] [DecidableEq κ] (v : κ → S) (P : MvPolynomial
   induction P using MvPolynomial.induction_on with
   | C a =>
     have h : ∀ i, AddMonoidAlgebra.coeff (MvPolynomial.C a : MvPolynomial κ S) (Finsupp.single i 1) = 0 := fun i => by
-      rw [MvPolynomial.coeff_C, if_neg (Finsupp.single_ne_zero.2 one_ne_zero).symm]
+      rw [MvPolynomial.coeff_C, ite_eq_right (Finsupp.single_ne_zero.2 one_ne_zero).symm]
     simp [h]
   | add p q hp hq =>
     rw [map_add (f := _), hp, hq, map_add (f := _), map_add (f := _)]
@@ -100,9 +98,9 @@ theorem aeval_tan [Fintype κ] [DecidableEq κ] (v : κ → S) (P : MvPolynomial
       rw [MvPolynomial.coeff_mul_X']
       by_cases h : i = n
       · subst h
-        rw [if_pos (by simp), if_pos rfl, tsub_self, MvPolynomial.constantCoeff_eq]
-      · rw [if_neg (by simp [Ne.symm h]), if_neg h]
-    simp only [hc, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, map_mul,
+        rw [ite_eq_left (by simp), ite_eq_left rfl, tsub_self, MvPolynomial.constantCoeff_eq]
+      · rw [ite_eq_right (by simp [Ne.symm h]), ite_eq_right h]
+    simp only [hc, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, map_mul,
       MvPolynomial.constantCoeff_X, mul_zero, map_zero, zero_add]
     apply TrivSqZeroExt.ext <;> simp [Algebra.smul_def, TrivSqZeroExt.algebraMap_eq_inl, mul_comm]
 
@@ -140,7 +138,7 @@ theorem coeff_psTrunc' {ιt : Type} [Fintype ιt] [DecidableEq ιt] (m : ℕ) (f
   rw [psTrunc, MvPolynomial.coeff_sum, Finset.sum_eq_single e]
   · simp [MvPolynomial.coeff_monomial]
   · intro b _ hb
-    rw [MvPolynomial.coeff_monomial, if_neg hb]
+    rw [MvPolynomial.coeff_monomial, ite_eq_right hb]
   · intro h
     exact absurd hmem h
 
@@ -166,7 +164,7 @@ theorem law_coeff (G : Germ.FGLaw S d) (i j : Fin d) (k : Fin 2) :
     rw [MvPowerSeries.coeff_X]
     by_cases h : p = q
     · simp [h]
-    · rw [if_neg, if_neg h]
+    · rw [ite_eq_right, ite_eq_right h]
       intro h'
       exact h (Finsupp.single_left_injective one_ne_zero h')
   have hX2 : ∀ (p q : Fin 2 × Fin d), MvPowerSeries.coeff (Finsupp.single p 1)
@@ -175,7 +173,7 @@ theorem law_coeff (G : Germ.FGLaw S d) (i j : Fin d) (k : Fin 2) :
     rw [MvPowerSeries.coeff_X]
     by_cases h : p = q
     · simp [h]
-    · rw [if_neg, if_neg h]
+    · rw [ite_eq_right, ite_eq_right h]
       intro h'
       exact h (Finsupp.single_left_injective one_ne_zero h')
 
@@ -206,8 +204,6 @@ theorem law_coeff (G : Germ.FGLaw S d) (i j : Fin d) (k : Fin 2) :
 end Law
 
 section Scal
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {X0 : Scheme.{0}} {S : Type} [CommRing S] (x0 : Sp S ⟶ X0) {G : Over X0} [GrpObj G] [IsCommMonObj G]
 
@@ -249,8 +245,6 @@ end Scal
 
 section Scal2
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 variable {X0 : Scheme.{0}} {S : Type} [CommRing S] (x0 : Sp S ⟶ X0) {G : Over X0} [GrpObj G]
 
 theorem smT_zero_jetTan {κ : Type} [DecidableEq κ] (ℓ : κ) (m : ℕ)
@@ -273,19 +267,17 @@ theorem smT_zero_jetTan {κ : Type} [DecidableEq κ] (ℓ : κ) (m : ℕ)
       Algebra.ofId S (DualNumber S) ((jetAug : Jet S κ (m + 1) →ₐ[S] S) (Ideal.Quotient.mk _ (MvPolynomial.X i)))
     rw [h1, h2, map_zero]
     by_cases h : i = ℓ
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       show TrivSqZeroExt.map _ (TrivSqZeroExt.inr 1) = 0
       rw [TrivSqZeroExt.map_inr]
       simp
-    · rw [if_neg h, map_zero]
+    · rw [ite_eq_right h, map_zero]
   unfold smT
   rw [← Category.assoc, homAt_comp, e, ← homAt_comp, Category.assoc, hx, MonObj.comp_one]
 
 end Scal2
 
 section Pts
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 variable {Xo : Moduli Dw l} {c : Coeff l} {S : Type} [CommRing S] [Algebra c.F S] (y : FrPt Xo c S) {d : ℕ}
@@ -359,7 +351,7 @@ theorem Tv_add (F : Germ.FGLaw S d)
     rw [Finset.sum_eq_single (i, p.2)]
     · simp
     · intro b _ hb
-      rw [MvPolynomial.coeff_X, if_neg (fun h => hb (Finsupp.single_left_injective one_ne_zero h).symm), zero_mul]
+      rw [MvPolynomial.coeff_X, ite_eq_right (fun h => hb (Finsupp.single_left_injective one_ne_zero h).symm), zero_mul]
     · intro h; exact absurd (Finset.mem_univ _) h
   have hL : (tanV ψv : Jet S (Fin 2 × Fin d) (0 + 1) →ₐ[S] DualNumber S).comp
       (jetSubstP 1 fun p : Fin 1 × Fin d => psTrunc 1 (F.F p.2)) = tanV (v + w) := by
@@ -371,7 +363,7 @@ theorem Tv_add (F : Germ.FGLaw S d)
         (Finsupp.single s 1) =
         if s.2 = p.2 then 1 else 0 := by
       intro s
-      rw [MvPolynomial.coeff_sub, MvPolynomial.coeff_C, if_neg (Finsupp.single_ne_zero.2 one_ne_zero).symm,
+      rw [MvPolynomial.coeff_sub, MvPolynomial.coeff_C, ite_eq_right (Finsupp.single_ne_zero.2 one_ne_zero).symm,
         sub_zero, coeff_psTrunc' 1 _ _ (by simp), law_coeff]
     simp only [hco, ite_mul, _root_.one_mul, zero_mul, Fintype.sum_prod_type, Fin.sum_univ_two]
     obtain ⟨p1, p2⟩ := p
@@ -401,8 +393,6 @@ theorem Tv_add (F : Germ.FGLaw S d)
 end Pts
 
 section Sep
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {X0 : Scheme.{0}} {S : Type} [CommRing S] (x0 : Sp S ⟶ X0) {G : Over X0} [GrpObj G] [IsCommMonObj G]
 
@@ -479,8 +469,6 @@ end Sep
 
 section Pts2
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 variable {Xo : Moduli Dw l} {c : Coeff l} {S : Type} [CommRing S] [Algebra c.F S] {y : FrPt Xo c S} {d : ℕ}
 variable {x : ∀ m, jO y d m 1 ⟶ Xo.univ.t.G}
@@ -527,7 +515,7 @@ theorem Tv_act (a : 𝓞 E) (act : Fin d → MvPowerSeries (Fin 1 × Fin d) S)
       (Finsupp.single s 1) =
       MvPowerSeries.coeff (Finsupp.single s 1) (act p.2) := by
     intro s
-    rw [MvPolynomial.coeff_sub, MvPolynomial.coeff_C, if_neg (Finsupp.single_ne_zero.2 one_ne_zero).symm,
+    rw [MvPolynomial.coeff_sub, MvPolynomial.coeff_C, ite_eq_right (Finsupp.single_ne_zero.2 one_ne_zero).symm,
       sub_zero, coeff_psTrunc' 1 _ _ (by simp)]
   simp only [hco, Fintype.sum_prod_type, Fin.sum_univ_one]
   rfl
@@ -535,8 +523,6 @@ theorem Tv_act (a : 𝓞 E) (act : Fin d → MvPowerSeries (Fin 1 × Fin d) S)
 end Pts2
 
 section Main
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem embK_sep {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {l : Level H} (c : Coeff l)
     (τ τ' : E →+* ℂ) (h : τ ≠ τ') : ∃ a : 𝓞 E, embK c τ a ≠ embK c τ' a := by

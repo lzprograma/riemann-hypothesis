@@ -62,7 +62,6 @@ open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid Glob
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
 open GlobalTheory.FlipRun
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
 namespace GlobalTheory.VecsLast
 
@@ -111,11 +110,11 @@ theorem isSBHalf_prodCoord {m n : ℕ} {e : AE D} {Λ : AddSubgroup (Mx D m n)} 
       simp only [Matrix.add_apply, mul_add, h i j, hu i j]
   refine ⟨fun t ht => ?_, ∏ w : P, N w, hk0, fun u hu hue t => ?_, fun t ht => ?_⟩
   · by_contra hc'
-    exact ht (if_neg hc')
+    exact ht (ite_eq_right hc')
   · have hku := hhalf (∏ w : P, N w) u hue
     dsimp only
     by_cases ht : IsHalf e t
-    · rw [if_pos ((hadd hku).2 ht), if_pos ht]
+    · rw [ite_eq_left ((hadd hku).2 ht), ite_eq_left ht]
       refine Finset.prod_congr rfl fun w _ => ?_
       rw [map_add (f := _), map_nsmul]
       refine h2 w _ _ fun i j => ?_
@@ -128,12 +127,12 @@ theorem isSBHalf_prodCoord {m n : ℕ} {e : AE D} {Λ : AddSubgroup (Mx D m n)} 
       calc valuation (Kw w.1) (((∏ w : P, N w : ℕ) : Kw w.1)) * valuation (Kw w.1) (c w u i j)
           ≤ valuation (Kw w.1) (((∏ w : P, N w : ℕ) : Kw w.1)) := mul_le_of_le_one_right' hint
         _ ≤ _ := hle.trans (hN w)
-    · rw [if_neg (fun h => ht ((hadd hku).1 h)), if_neg ht]
+    · rw [ite_eq_right (fun h => ht ((hadd hku).1 h)), ite_eq_right ht]
   · dsimp only at ht
     have hE : IsHalf e t := by
       by_contra h
-      exact ht (if_neg h)
-    rw [if_pos hE] at ht
+      exact ht (ite_eq_right h)
+    rw [ite_eq_left hE] at ht
     have hmem : t ∈ Λ := (hc t hE).2 fun w => h1 w _ (Finset.prod_ne_zero_iff.1 ht w (Finset.mem_univ _))
     exact Λ.nsmul_mem hmem _
 

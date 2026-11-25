@@ -285,8 +285,7 @@ theorem eq_zero_of_mass_charpoly_eq_zero (F : Type) [Field F] [Finite F] (V : Ty
       exact_mod_cast this.ne'
     exact div_ne_zero (mul_ne_zero h1 h2) h3
   have hex : ∃ g₀ : Module.End F V, LinearMap.charpoly g₀ = f ^ m ∧ aeval g₀ f = 0 ∧ psi s V g₀ ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     apply hmass
     rw [mass]
     refine finsum_mem_eq_zero_of_forall_eq_zero fun x hx => ?_

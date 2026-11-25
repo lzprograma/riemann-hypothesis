@@ -92,8 +92,7 @@ lemma sum_dot {k : Type} [Field k] [Fintype k] [DecidableEq k] {ι : Type} [Fint
   · obtain ⟨i, hi⟩ := Function.ne_iff.mp hw
     have hi' : w i ≠ 0 := hi
     have h1 : ∃ a : k, ψ (a * w i) ≠ 1 := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       have := AddChar.sum_mulShift (w i) hψ
       simp [hcon, hi'] at this
     obtain ⟨a, ha⟩ := h1
@@ -134,7 +133,7 @@ lemma gauss_normSq {k : Type} [Field k] [Fintype k] [DecidableEq k] {ι : Type} 
     rw [Finset.sum_eq_single (0 : ι → k)]
     · simp
     · intro z _ hz
-      rw [if_neg, mul_zero]
+      rw [ite_eq_right, mul_zero]
       intro h
       rcases smul_eq_zero.mp h with h | h
       · exact mul_ne_zero h2 ht h

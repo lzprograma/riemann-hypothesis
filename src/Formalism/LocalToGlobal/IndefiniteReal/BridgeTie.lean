@@ -16,8 +16,6 @@ namespace Formalism.IndefR.Bridge
 
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.HermitianLatticesTheory Formalism.BasicNotions
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : Formalism.BasicNotions.D7}
 
 def hLat (V : Formalism.BasicNotions.TH.HSp D) (h : Gf V) : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E) :=

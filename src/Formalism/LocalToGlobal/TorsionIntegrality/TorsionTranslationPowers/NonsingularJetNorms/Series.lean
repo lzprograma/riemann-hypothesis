@@ -90,7 +90,7 @@ theorem oneUnit_of_mul_eq_one {f g : K⟦X⟧} (hf : OneUnit f) (h : f * g = 1) 
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · rw [coeff_zero_eq_constantCoeff_apply, h0]; simp
     · have h1 : coeff n (f * g) = 0 := by
-        rw [h, coeff_one, if_neg hn.ne']
+        rw [h, coeff_one, ite_eq_right hn.ne']
       rw [coeff_mul, ← Finset.add_sum_erase _ _ (show (0, n) ∈ antidiagonal n by simp)] at h1
       simp only [coeff_zero_eq_constantCoeff_apply, hf.1, one_mul] at h1
       rw [eq_neg_of_add_eq_zero_left h1, norm_neg]
@@ -185,16 +185,16 @@ theorem rootInt {N : ℕ} {g : K⟦X⟧} (hN : ‖(N : K)‖ = 1) (h0 : constant
         · exact ih i hi
         · simp
       have hA0 : constantCoeff A = 1 := by
-        rw [← coeff_zero_eq_constantCoeff_apply, hA, coeff_mk, if_pos hn,
+        rw [← coeff_zero_eq_constantCoeff_apply, hA, coeff_mk, ite_eq_left hn,
           coeff_zero_eq_constantCoeff_apply, h0]
       have hdvd : (X : K⟦X⟧) ^ n ∣ g - A := by
         rw [X_pow_dvd_iff]
         intro m hm
-        rw [map_sub, hA, coeff_mk, if_pos hm, sub_self]
+        rw [map_sub, hA, coeff_mk, ite_eq_left hm, sub_self]
       obtain ⟨B, hB⟩ := hdvd
       have hB0 : constantCoeff B = coeff n g := by
         have h1 : coeff (0 + n) (X ^ n * B) = coeff 0 B := coeff_X_pow_mul B n 0
-        rw [← hB, zero_add, map_sub, hA, coeff_mk, if_neg (lt_irrefl n), sub_zero,
+        rw [← hB, zero_add, map_sub, hA, coeff_mk, ite_eq_right (lt_irrefl n), sub_zero,
           coeff_zero_eq_constantCoeff_apply] at h1
         exact h1.symm
       set S : K⟦X⟧ := ∑ i ∈ range N, g ^ i * A ^ (N - 1 - i) with hS

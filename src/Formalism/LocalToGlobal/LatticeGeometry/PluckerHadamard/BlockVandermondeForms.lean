@@ -1,5 +1,7 @@
 module
 
+import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ExistsSmulOfMapResidueEqZero
+import GroundTheory.AutomorphicForms.SphericalIntegral
 public import Formalism.LocalToGlobal.LatticeGeometry.PluckerHadamard.FlagIntegralKillsPowerSums
 public import Formalism.DegreeFormula.PointDegree.PowSum
 import Mathlib.Tactic.TypeStar
@@ -33,15 +35,15 @@ theorem dS_X (τ : Ψ) (S : Finset (Fin N)) (σ : Ψ) (a : Fin N) :
   simp only [pderiv_X]
   by_cases h : σ = τ ∧ a ∈ S
   · obtain ⟨rfl, ha⟩ := h
-    rw [if_pos ⟨rfl, ha⟩, Finset.sum_eq_single a]
+    rw [ite_eq_left ⟨rfl, ha⟩, Finset.sum_eq_single a]
     · simp
     · intro b _ hb
       simp [Ne.symm hb]
     · intro h'
       exact absurd ha h'
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     refine Finset.sum_eq_zero fun i hi => ?_
-    rw [Pi.single_apply, if_neg]
+    rw [Pi.single_apply, ite_eq_right]
     intro he
     simp only [Prod.mk.injEq] at he
     exact h ⟨he.1, by rw [he.2]; exact hi⟩
@@ -70,15 +72,7 @@ theorem card_smallBlock (N j : ℕ) : (smallBlock N j).card = N - j := by
   rw [e, Nat.card_Ico]
 
 theorem card_top (N j : ℕ) (hj : j ≤ N) : (Formalism.ShimuraLimitIdentity.top N j).card = j := by
-  unfold Formalism.ShimuraLimitIdentity.top
-  rw [card_filter_fin_val_eq_card_filter_range N (fun x => x < j)]
-  have e : (Finset.range N).filter (fun x => x < j) = Finset.range j := by
-    ext x
-    simp only [Finset.mem_filter, Finset.mem_range]
-    constructor
-    · exact fun h => h.2
-    · exact fun h => ⟨by omega, h⟩
-  rw [e, Finset.card_range]
+  apply _root_.Formalism.IndefR.Fin.HCount.card_filter_lt <;> assumption
 
 end BlockVandermondeForms
 
@@ -105,23 +99,7 @@ namespace BlockVandermondeForms
 
 theorem pairs_eq {N : ℕ} (S : Finset (Fin N)) :
     ∑ a ∈ S, (S.filter (fun b => a < b)).card = S.card.choose 2 := by
-  refine Finset.induction_on_max S (by simp) fun m S hm ih => ?_
-  have hmS : m ∉ S := fun h => lt_irrefl m (hm m h)
-  rw [Finset.sum_insert hmS, Finset.card_insert_of_notMem hmS]
-  have h1 : ((insert m S).filter (fun b => m < b)).card = 0 := by
-    rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff]
-    intro x hx
-    rcases Finset.mem_insert.mp hx with rfl | hx
-    · exact lt_irrefl _
-    · exact fun h => lt_asymm h (hm x hx)
-  have h2 : ∀ a ∈ S, ((insert m S).filter (fun b => a < b)).card = (S.filter (fun b => a < b)).card + 1 := by
-    intro a ha
-    rw [Finset.filter_insert, if_pos (hm a ha),
-      Finset.card_insert_of_notMem (fun h => hmS (Finset.mem_filter.mp h).1)]
-  rw [h1, zero_add, Finset.sum_congr rfl h2, Finset.sum_add_distrib, ih, Finset.sum_const, smul_eq_mul, mul_one,
-    Nat.choose_succ_succ', Nat.choose_one_right]
-  simp only [Nat.reduceAdd]
-  omega
+  apply +allowSynthFailures _root_.GroundTheory.Automorphic.Spherical.sum_card_filter_lt <;> assumption
 
 theorem add_choose_two (a b : ℕ) : (a + b).choose 2 = a.choose 2 + a * b + b.choose 2 := by
   have hs : ∀ k : ℕ, (k + 1).choose 2 = k.choose 2 + k := fun k => by

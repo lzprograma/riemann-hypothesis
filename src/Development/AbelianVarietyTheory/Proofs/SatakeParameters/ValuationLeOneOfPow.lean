@@ -4,42 +4,6 @@ public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetOpInte
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfPowPred
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastTwoStepsGuarded
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NotDvdCardOfInjective
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -141,7 +105,7 @@ theorem valuation_ftY (hc : cst.Ok) (P : rowSG Pr sel mu) (hP : P.1 ∉ Pr.vGs) 
     (hy : ((qOf P.1 : X.E) ^ cst.M) • y ∈ stdAt X.E n P.1) (η : Sp X.E n →ₗ[X.E] X.E) :
     w.valuation X.K (ftY sel mu cst P η y) ≤ 1 := by
   unfold ftY
-  rw [if_neg hP]
+  rw [ite_eq_right hP]
   split_ifs with h
   · have h2 : w.valuation X.K (algebraMap (𝓞 X.K) X.K (qOf P.1 : 𝓞 X.K)) = 1 :=
       (w.valuation_eq_one_iff_notMem (K := X.K)).2 hw
@@ -156,7 +120,7 @@ theorem ftY_add (hc : cst.Ok) (P : rowSG Pr sel mu) (hP : P.1 ∉ Pr.vGs) (hD : 
   have he : IntAt P.1 (epsSg : X.E) := by simpa [epsSg] using intAt_neg intAt_one
   have hz' := (inDual_iff z).1 hz
   unfold ftY
-  simp only [if_neg hP]
+  simp only [ite_eq_right hP]
   refine ite_eq_ite_zero (forall_congr' fun i => ?_) fun h => ?_
   · rw [LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, mul_add]
     exact intAt_add_iff ((intAt_pow (intAt_nat _) _).mul ((intAt_pow (intAt_nat _) _).mul (hz' i)))
@@ -186,7 +150,7 @@ theorem pow_smul_repY {n : ℕ} {N : Submodule (𝓞 X.E) (Sp X.E n)} {Y : Set (
   rw [hY] at h0
   have h1 := (mem_locLat _ _ _ _).1 hy P
   have h2 := (mem_locLat _ _ _ _).1 h0 P
-  rw [if_neg hP] at h1 h2
+  rw [ite_eq_right hP] at h1 h2
   simp only [zpow_neg, inv_inv, zpow_natCast] at h1 h2
   have hq : ((qOf P.1 : X.E) ^ cst.M) ≠ 0 := pow_ne_zero _ qOf_ne_zero
   have hi : IntAt P.1 ((qOf P.1 : X.E) ^ cst.M) := intAt_pow (intAt_nat _) _
@@ -208,7 +172,7 @@ theorem topAtQ : GlobalTheory.ColPeriod.TopAtQ := by
     exact pow_smul_repY sel mu cst hY P hP
   refine ⟨fun x => ?_, fun x z hz => ?_⟩
   · unfold facTop PhiTop
-    rw [if_neg hP, map_mul]
+    rw [ite_eq_right hP, map_mul]
     exact mul_le_one' (valuation_PhiQ w _ _ _ _ _ _ _ _ _) (valuation_ftY sel mu cst hc P hP hD w hw hy _)
   · have key : ∀ y ∈ stdAt X.E (R.N (m2 + 1)) P.1,
         (d.1.liftFr P).symm (prXp X.E R (z (frsF sel mu p P y))) ∈ stdAt X.E (R.N R.m - 1) P.1 ∧
@@ -227,7 +191,7 @@ theorem topAtQ : GlobalTheory.ColPeriod.TopAtQ := by
       omega
     obtain ⟨k, hk⟩ := Nat.exists_eq_add_of_le' hc.B_pos
     unfold facTop PhiTop
-    rw [if_neg hP]
+    rw [ite_eq_right hP]
     congr 1
     · have e : (d.1.liftFr P).symm.toLinearMap ∘ₗ prXp X.E R ∘ₗ (x + ((qOf P.1 : X.E) ^ cst.B) • z) ∘ₗ
             (frsF sel mu p P).toLinearMap ∘ₗ LinearMap.funLeft X.E X.E (Fin.castAdd (cOf R (m2 + 1))) =

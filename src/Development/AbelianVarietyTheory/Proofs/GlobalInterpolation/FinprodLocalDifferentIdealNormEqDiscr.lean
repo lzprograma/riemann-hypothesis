@@ -2,55 +2,12 @@ module
 
 public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.LocalDualIndex
 import Mathlib.Algebra.AffineMonoid.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
 public import Mathlib.NumberTheory.NumberField.Discriminant.Different
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -158,52 +115,9 @@ open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum WithZero Po
 variable {K : Type} [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K)) in
 private lemma exists_integer_valuation_sub_le_exp_neg (k : K) (hk : v.valuation K k ≤ 1) (n : ℕ) :
     ∃ a : 𝓞 K, v.valuation K (k - algebraMap (𝓞 K) K a) ≤ WithZero.exp (-(n : ℤ)) := by
-  obtain ⟨b, c, hc, rfl⟩ := IsFractionRing.div_surjective (A := 𝓞 K) k
-  have hc0 : c ≠ 0 := nonZeroDivisors.ne_zero hc
-  have hspan : Ideal.span {c} ≠ 0 := by
-    rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
-    exact hc0
-  obtain ⟨s, hsv, hs⟩ := exists_notMem_mul_mem_of_pow_count v hspan
-  have hcK : algebraMap (𝓞 K) K c ≠ 0 := by
-    simpa using hc0
-  have hb : b ∈ v.asIdeal ^ (Associates.mk v.asIdeal).count (Associates.mk (Ideal.span {c})).factors := by
-    rw [← intValuation_le_pow_iff_mem, ← intValuation_if_neg v hc0]
-    rw [map_div₀, valuation_of_algebraMap, valuation_of_algebraMap] at hk
-    have hcv : v.intValuation c ≠ 0 := by
-      rw [intValuation_if_neg v hc0]
-      exact WithZero.exp_ne_zero
-    exact (div_le_one₀ (zero_lt_iff.mpr hcv)).mp hk
-  obtain ⟨a', ha'⟩ := Ideal.mem_span_singleton'.mp (hs b hb)
-  obtain ⟨y, i, hi, hyi⟩ := Ideal.IsMaximal.exists_inv v.isMaximal hsv
-  refine ⟨a' * (y * ∑ j ∈ Finset.range n, i ^ j), ?_⟩
-  have hgeom := mul_neg_geom_sum i n
-  have hk' : algebraMap (𝓞 K) K b / algebraMap (𝓞 K) K c -
-      algebraMap (𝓞 K) K (a' * (y * ∑ j ∈ Finset.range n, i ^ j)) =
-      algebraMap (𝓞 K) K b / algebraMap (𝓞 K) K c * algebraMap (𝓞 K) K (i ^ n) := by
-    have h1 : algebraMap (𝓞 K) K a' * algebraMap (𝓞 K) K c =
-        algebraMap (𝓞 K) K b * algebraMap (𝓞 K) K s := by
-      rw [← map_mul, ← map_mul, ha']
-    have h2 : algebraMap (𝓞 K) K y * algebraMap (𝓞 K) K s =
-        1 - algebraMap (𝓞 K) K i := by
-      rw [← map_mul, ← map_one (algebraMap (𝓞 K) K), ← map_sub, ← hyi]
-      ring_nf
-    have h3 := congrArg (algebraMap (𝓞 K) K) hgeom
-
-    simp only [map_mul, map_sub, map_one, map_pow, map_sum] at h3 ⊢
-    have key : algebraMap (𝓞 K) K b - algebraMap (𝓞 K) K c * (algebraMap (𝓞 K) K a' *
-        (algebraMap (𝓞 K) K y * ∑ j ∈ Finset.range n, algebraMap (𝓞 K) K i ^ j)) =
-        algebraMap (𝓞 K) K b * algebraMap (𝓞 K) K i ^ n := by
-      linear_combination (-(algebraMap (𝓞 K) K y *
-          ∑ j ∈ Finset.range n, algebraMap (𝓞 K) K i ^ j)) * h1 -
-        (algebraMap (𝓞 K) K b * ∑ j ∈ Finset.range n, algebraMap (𝓞 K) K i ^ j) * h2 -
-        algebraMap (𝓞 K) K b * h3
-    field_simp
-    linear_combination key
-  rw [hk', map_mul, valuation_of_algebraMap]
-  calc v.valuation K (algebraMap (𝓞 K) K b / algebraMap (𝓞 K) K c) * v.intValuation (i ^ n)
-      ≤ 1 * WithZero.exp (-(n : ℤ)) :=
-        mul_le_mul' hk ((intValuation_le_pow_iff_mem v _ n).mpr (Ideal.pow_mem_pow hi n))
-    _ = _ := one_mul _
+  obtain ⟨a, ha⟩ := HeightOneSpectrum.exists_valuation_sub_lt_of_integer v hk
+    (Units.mk0 (WithZero.exp (-(n : ℤ))) WithZero.exp_ne_zero)
+  exact ⟨a, by rw [Valuation.map_sub_swap]; exact ha.le⟩
 
 open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum WithZero Polynomial in
 variable {K : Type} [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K)) in
@@ -326,13 +240,6 @@ theorem _root_.GlobalTheory.LocalDifferentProduct.finprod_card_quot_map {K : Typ
   have h := MonoidHom.map_finprod (Ideal.absNorm : Ideal (𝓞 K) →*₀ ℕ).toMonoidHom hfin
   simp only [Ideal.finprod_heightOneSpectrum_factorization hI] at h
   exact h.symm
-
-section Relative
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-  {σ : E →ₐ[F] E}
-
-end Relative
 
 
 open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum WithZero Polynomial in

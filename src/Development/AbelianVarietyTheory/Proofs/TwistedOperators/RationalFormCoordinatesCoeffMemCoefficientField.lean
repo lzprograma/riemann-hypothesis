@@ -47,8 +47,6 @@ open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj Globa
 
 namespace GlobalTheory.FormCoef
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 T : Type} {A : FamIn D.what₂.LL Γ Pl0 T D.R.m}
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
 
@@ -69,8 +67,6 @@ theorem typeX_mem (R : RealDat D A Ks) (t : T) (M : Subfield ℂ)
 end GlobalTheory.FormCoef
 
 namespace GlobalTheory.FormCoef
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 

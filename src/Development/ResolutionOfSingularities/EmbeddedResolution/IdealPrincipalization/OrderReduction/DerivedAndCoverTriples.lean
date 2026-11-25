@@ -1,47 +1,7 @@
 module
 
 public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.MaxContactReduction
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Morphisms.WeaklyEtale
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
@@ -68,7 +28,7 @@ theorem isMaxContactCover_maxContactCover (T : MarkedIdealWithBoundary.{u})
     (hft : LocallyOfFiniteType T.structMap) (W : T.scheme.IdealSheafData) (μ : ℕ)
     (h : ∃ D : MaxContactReduction.FiniteOpenCoverWithIdeals T, MaxContactReduction.IsMaxContactCover T D hft W μ) :
     MaxContactReduction.IsMaxContactCover T (MaxContactReduction.maxContactCover T hft W μ) hft W μ := by
-  have he : MaxContactReduction.maxContactCover T hft W μ = h.choose := dif_pos h
+  have he : MaxContactReduction.maxContactCover T hft W μ = h.choose := dite_eq_left h
   rw [he]
   exact h.choose_spec
 
@@ -139,11 +99,11 @@ theorem isStrictPullbackBlowupSeq_of_descendStrictPullback_eq_some {T S : Marked
     (hd : MaxContactReduction.descendStrictPullback T S φ s = some d) :
     IsStrictPullbackBlowupSeq φ s.toBlowupSequenceData.toSequenceOfBlowups d.toSequenceOfBlowups := by
   by_cases hex : ∃ e : BlowupSequenceData T.scheme, IsStrictPullbackBlowupSeq φ s.toBlowupSequenceData.toSequenceOfBlowups e.toSequenceOfBlowups
-  · have he : MaxContactReduction.descendStrictPullback T S φ s = some hex.choose := dif_pos hex
+  · have he : MaxContactReduction.descendStrictPullback T S φ s = some hex.choose := dite_eq_left hex
     rw [he] at hd
     have h2 : hex.choose = d := Option.some.inj hd
     exact h2 ▸ hex.choose_spec
-  · have he : MaxContactReduction.descendStrictPullback T S φ s = none := dif_neg hex
+  · have he : MaxContactReduction.descendStrictPullback T S φ s = none := dite_eq_right hex
     rw [he] at hd
     simp at hd
 
@@ -151,13 +111,13 @@ theorem exists_descendStrictPullback_eq_some {T S : MarkedIdealWithBoundary.{u}}
     (s : MarkedBlowupSequenceData S.structMap S.ideal S.mult S.boundary)
     (h : ∃ d : BlowupSequenceData T.scheme, IsStrictPullbackBlowupSeq φ s.toBlowupSequenceData.toSequenceOfBlowups d.toSequenceOfBlowups) :
     ∃ d : BlowupSequenceData T.scheme, MaxContactReduction.descendStrictPullback T S φ s = some d :=
-  ⟨h.choose, dif_pos h⟩
+  ⟨h.choose, dite_eq_left h⟩
 
 theorem asMarkedSeq_eq_toMarkedSequence_of_isMarked (T : MarkedIdealWithBoundary.{u}) (d : BlowupSequenceData T.scheme)
     (h : d.IsMarked T.structMap T.ideal T.mult T.boundary) :
     MaxContactReduction.asMarkedSeq T d =
       (d.toMarkedBlowupSequenceData T.structMap T.ideal T.mult T.boundary h).toMarkedSequenceOfBlowups :=
-  dif_pos h
+  dite_eq_left h
 
 theorem asMarkedSeq_toSequenceOfBlowups (T : MarkedIdealWithBoundary.{u}) (d : BlowupSequenceData T.scheme)
     (h : d.IsMarked T.structMap T.ideal T.mult T.boundary) :
@@ -183,7 +143,7 @@ theorem reduceOrder_eq_asMarkedSeq (hinv : ComapIsoInvariance.{u}) (T : MarkedId
           | none => MaxContactReduction.emptyMarkedSeq T) = MaxContactReduction.asMarkedSeq T d
     rw [hd]
   unfold MaxContactReduction.reduceOrder
-  rw [dif_pos hv, if_neg hne, key]
+  rw [dite_eq_left hv, ite_eq_right hne, key]
 
 theorem reduceOrder_eq_toMarkedSequence (hinv : ComapIsoInvariance.{u}) (T : MarkedIdealWithBoundary.{u})
     (rc : ∀ S : MarkedIdealWithBoundary.{u}, S.krullDimSucc ≤ T.krullDimSucc → ℕ → S.SequenceOfBlowups) (hv : T.IsAdmissible)
@@ -211,7 +171,7 @@ theorem asMarkedData_eq_some_of_isMarked (s : MarkedBlowupSequenceData p I m E) 
     (h : d.IsMarked (s.proj s.length ≫ p) (s.ideal s.length) m (s.boundary s.length)) :
     MaxContactReduction.asMarkedData s d =
       some (d.toMarkedBlowupSequenceData (s.proj s.length ≫ p) (s.ideal s.length) m (s.boundary s.length) h) :=
-  dif_pos h
+  dite_eq_left h
 
 theorem concatOfIsMarked_eq_append_of_isMarked (hinv : ComapIsoInvariance.{u}) (s : MarkedBlowupSequenceData p I m E)
     (d : BlowupSequenceData (s.obj s.length))
@@ -267,8 +227,8 @@ theorem appendLowerDimReduction_eq_concatOfIsMarked (hinv : ComapIsoInvariance.{
       MaxContactReduction.concatOfIsMarked hinv s
         (BlowupSequenceData.ofSequenceOfBlowups (rc (derivedTriple S s hft extra keep) hdim n).toSequenceOfBlowups) := by
   unfold MaxContactReduction.appendLowerDimReduction
-  rw [dif_pos hft]
-  exact dif_pos hdim
+  rw [dite_eq_left hft]
+  exact dite_eq_left hdim
 
 theorem appendLowerDimReduction_of_not_locallyOfFiniteType (hinv : ComapIsoInvariance.{u}) (T : MarkedIdealWithBoundary.{u})
     (rc : ∀ S : MarkedIdealWithBoundary.{u}, S.krullDimSucc ≤ T.krullDimSucc → ℕ → S.SequenceOfBlowups) (S : MarkedIdealWithBoundary.{u})
@@ -277,7 +237,7 @@ theorem appendLowerDimReduction_of_not_locallyOfFiniteType (hinv : ComapIsoInvar
     (hft : ¬ LocallyOfFiniteType (s.proj s.length ≫ S.structMap)) :
     MaxContactReduction.appendLowerDimReduction hinv T rc S s extra keep n = s := by
   unfold MaxContactReduction.appendLowerDimReduction
-  exact dif_neg hft
+  exact dite_eq_right hft
 
 @[simp] theorem separateBoundary_zero (hinv : ComapIsoInvariance.{u}) (T : MarkedIdealWithBoundary.{u})
     (rc : ∀ S : MarkedIdealWithBoundary.{u}, S.krullDimSucc ≤ T.krullDimSucc → ℕ → S.SequenceOfBlowups) (S : MarkedIdealWithBoundary.{u}) :

@@ -238,7 +238,7 @@ theorem tsum_residue_class_split : ∀ (N : ℕ) [NeZero N] (r : ZMod N) (R : �
   have hz : ∀ t ∉ Set.range g, F t = 0 := by
     intro t ht
     simp only [F]
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     apply ht
     have h2 : ((t - (r.val : ℤ) : ℤ) : ZMod N) = 0 := by

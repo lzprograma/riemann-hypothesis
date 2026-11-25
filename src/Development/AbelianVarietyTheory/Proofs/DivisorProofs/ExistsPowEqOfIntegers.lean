@@ -121,7 +121,7 @@ theorem cotMap_injective_of_sq : ∀ (R C A : Type) [CommRing R] [CommRing C] [C
       b ∈ RingHom.ker (Bialgebra.counitAlgHom R C) ^ 2) →
     Function.Injective (GlobalTheory.PDiv.cotMap f) := by
   intro R C A _ _ _ _ _ f h
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro w hw
   obtain ⟨c, rfl⟩ := AugCot.d_surjective _ w
   have hw' : dUnit (R := R) (f c) = 0 := (cotMap_d f c).symm.trans hw
@@ -833,8 +833,6 @@ section -- clump:auto
 
 open scoped TensorProduct
 
-set_option autoImplicit false
-
 noncomputable section
 
 open TensorProduct Coalgebra Bialgebra GlobalTheory.PDiv
@@ -846,7 +844,6 @@ namespace PDivGroup
 variable {p : ℕ} {R : Type} [CommRing R] (G : PDivGroup p R)
 
 open scoped TensorProduct in
-set_option autoImplicit false in
 open TensorProduct Coalgebra Bialgebra in
 variable {p : ℕ} {R : Type} [CommRing R] (G : _root_.GlobalTheory.PDivGroup p R) in
 theorem _root_.GlobalTheory.PDivGroup.ker_resOne (n : ℕ) :
@@ -899,7 +896,6 @@ theorem _root_.GlobalTheory.PDivGroup.ker_resOne (n : ℕ) :
     exact _root_.GlobalTheory.PDiv.torsionIdeal_le_of_dvd (dvd_pow_self p (Nat.succ_ne_zero n))
 
 open scoped TensorProduct in
-set_option autoImplicit false in
 open TensorProduct Coalgebra Bialgebra in
 variable {p : ℕ} {R : Type} [CommRing R] (G : _root_.GlobalTheory.PDivGroup p R) in
 theorem _root_.GlobalTheory.PDivGroup.kerIdeal_mulP (n : ℕ) :
@@ -911,18 +907,11 @@ theorem _root_.GlobalTheory.PDivGroup.kerIdeal_mulP (n : ℕ) :
 
 end PDivGroup
 
-section TensorQuot
-
-variable {R k M : Type} [CommRing R] [CommRing k] [Algebra R k] [AddCommGroup M] [Module R M]
-
-end TensorQuot
-
 namespace PDivGroup
 
 end PDivGroup
 
 open scoped TensorProduct in
-set_option autoImplicit false in
 open TensorProduct Coalgebra Bialgebra in
 private theorem mem_ker_smul_univ_of_one_tmul_eq_zero {R k M : Type} [CommRing R] [CommRing k]
     [Algebra R k] [AddCommGroup M] [Module R M] (hk : Function.Surjective (algebraMap R k))
@@ -943,7 +932,6 @@ private theorem mem_ker_smul_univ_of_one_tmul_eq_zero {R k M : Type} [CommRing R
   exact hker ▸ h2
 
 open scoped TensorProduct in
-set_option autoImplicit false in
 open TensorProduct Coalgebra Bialgebra in
 theorem _root_.GlobalTheory.fibre_statement : ∀ (p : ℕ) (R k : Type) [CommRing R] [CommRing k]
     [Algebra R k], Function.Surjective (algebraMap R k) → ∀ (G : _root_.GlobalTheory.PDivGroup p R) (n : ℕ),
@@ -1460,7 +1448,7 @@ theorem truncMono_eq_zero {p : ℕ} [Fact p.Prime] {k A : Type} [Field k] [CommR
       rw [coeff_C]
       by_cases hm : m = 0
       · subst hm; simp
-      · rw [if_neg (Ne.symm hm)]; exact hc m hm
+      · rw [ite_eq_right (Ne.symm hm)]; exact hc m hm
     rw [hFC, aeval_C] at hF
     have h0 : AddMonoidAlgebra.coeff F 0 = 0 := Subtype.ext (by simpa using hF)
     rw [hFC, h0, C_0]
@@ -1495,8 +1483,7 @@ theorem truncMono_eq_zero {p : ℕ} [Fact p.Prime] {k A : Type} [Field k] [CommR
     apply hconst F _ hF
     intro m hm
     obtain ⟨i, hi⟩ : ∃ i, m i ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hm (Finsupp.ext h)
     by_contra hc
     have hlt := (hs m (mem_support_iff.mpr hc)).1 i
@@ -1554,7 +1541,7 @@ theorem truncMono_linearIndependent : ∀ (p : ℕ) [Fact p.Prime] (k A : Type) 
     obtain ⟨a, _, ha⟩ := Finset.exists_ne_zero_of_sum_ne_zero hm
     have hm' : toF a = m := by
       by_contra h
-      exact ha (if_neg h)
+      exact ha (ite_eq_right h)
     subst hm'
     refine ⟨fun i => by simp [toF], ?_⟩
     apply Finset.sum_le_sum
@@ -1619,7 +1606,7 @@ theorem square_presentation_counital_comul_of_finrank (p : ℕ) [Fact p.Prime] (
     have hBtop : B ≠ ⊤ := by
       intro h
       have h1 := hE ⟨0, hd⟩ ⟨0, hd⟩
-      rw [hEB _ _ (h ▸ Algebra.mem_top), if_pos rfl] at h1
+      rw [hEB _ _ (h ▸ Algebra.mem_top), ite_eq_left rfl] at h1
       exact zero_ne_one h1
     have hlt : Module.finrank k B < n := by
       rw [← hn]
@@ -1837,8 +1824,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowEqOfIntegers", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.ToSpanSingletonConstGenInjective\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.KerIdealCompOfSurjective\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BialgHomCotangentPullbackInjectiveOfSq\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DUnitMemRangeOfMemKerIdeal\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulPMemSqCounitKer\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupOmegaNoPTorsionOfCotangentInjective\npublic import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt\npublic import Mathlib.RingTheory.Flat.TorsionFree\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 open scoped TensorProduct
 

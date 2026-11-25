@@ -105,8 +105,6 @@ theorem unitFrame_V (h : DiagSpaces S) {j : ℕ} (hn : S.Vneg j = false) : UnitF
 
 end Diag
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem diagSpaces_of_over {K : Ctx} {B : Pre} (h : K.Over B) : DiagSpaces B.sp := by
   obtain ⟨sp, hT, hY, hA, hV, hz, rfl, hd⟩ := h
   exact hd

@@ -133,8 +133,7 @@ theorem norm_coeff_pow_le {K : Type} [NormedField K] [IsUltrametricDist K] {f : 
 theorem exists_norm_coeff_eq_one : ∀ {l : ℕ} [Fact l.Prime] {a : ℕ} [NeZero a] {e : ℕ} {O K : Type} [CommRing O] [Algebra ℤ_[l] O] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [NormedField K] [IsUltrametricDist K] [Algebra O K] [IsUnitBall O K] [NormedAlgebra ℚ_[l] K] (t : Wq l a →ₐ[ℤ_[l]] O) (ϖ : PiSys l e) {S : Type} [Fintype S] (y : S → ZMod a → A O K) (c : S → OW l O) (h : ∑ s, c s * inclO l O (ϖ.iTot t K (y s)) = 1) (τ : ZMod a), ∃ s k, ‖coeff k (y s τ : K⟦X⟧)‖ = 1 := by
   intro l _ a _ e O K _ _ _ _ _ _ _ _ _ t ϖ S _ y c h τ
   have := neZero_of_piSys ϖ
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   obtain ⟨ρ, hρ0, hρ1, hρ⟩ := exists_bound (l := l) (O := O) (K := K)
   have hco : ∀ s k, ‖coeff k (y s τ : K⟦X⟧)‖ ≤ ρ := fun s k => by
     obtain ⟨o, ho⟩ := (IsUnitBall.mem_range_iff (O := O) _).2 (mem_A.1 (y s τ).2 k)
@@ -188,8 +187,7 @@ theorem exists_norm_coeff_eq_one : ∀ {l : ℕ} [Fact l.Prime] {a : ℕ} [NeZer
     refine IsIdempotentElem.eq_zero_of_isNilpotent ?_ ?_
     · show _ * _ = _
       rw [← map_mul, hidem.eq]
-    · set_option synthInstance.maxHeartbeats 100000 in
-      rw [hsum, map_sum]
+    · rw [hsum, map_sum]
       refine isNilpotent_sum fun s _ => ?_
       rw [map_mul]
       exact (Commute.all _ _).isNilpotent_mul_left (hnil s)
@@ -533,7 +531,7 @@ theorem isExactTriple_of_isSESLat_gen {l : ℕ} [Fact l.Prime] {a : ℕ} [NeZero
         have := congrFun (hW (Pi.single j 1)) i
         rw [homW_apply, homW_apply, Matrix.mulVec_mulVec] at this
         simp only [Matrix.mulVec, dotProduct, Pi.single_apply, mul_ite, mul_one, mul_zero,
-          Finset.sum_ite_eq', Finset.mem_univ, if_true, Pi.zero_apply] at this
+          Finset.sum_ite_eq', Finset.mem_univ, ite_true, Pi.zero_apply] at this
         rw [Matrix.map_mul]
         exact this
       have hz : Ht * Ft = 0 := Matrix.map_injective hφ (hM.trans (Matrix.map_zero _ (map_zero φ)).symm)

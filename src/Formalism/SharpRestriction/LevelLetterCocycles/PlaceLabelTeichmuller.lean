@@ -6,55 +6,12 @@ public import Formalism.PadicSubsetSums.StableGradedCounts.LocalEstimateIVOfType
 public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
 public import Formalism.CyclotomicNorms.NonsquarefreeBounds.NonsquarefreeMonicBoundHolds
 public import Formalism.SharpRestriction.LevelLetterCocycles.ResidualIrreducibleOfTheoremThreePrime
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.ConjugateSelfDual.Statement
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 import ReciprocityTheory.GaloisValuations.GlobalA
 import Formalism.SharpRestriction.Divisibility.PrimeDegreeVariant
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NeZeroOfMemRoots
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.PrimesEffectiveChebotarev, Formalism.SharpRestriction.LevelLetterCocycles.PlaceLabelTeichmuller
@@ -70,8 +27,6 @@ namespace Formalism.MainNotions.N.CuspidalLatticeIdempotents
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial NumberField IsDedekindDomain
 open scoped ComplexOrder
-
-open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial NumberField IsDedekindDomain
 
 theorem algBB_sub (g N : ℕ) (hg : 2 ≤ g) :
     Formalism.CyclotomicNorms.BB N g ⊆ ((Formalism.IrreducibleCountingLemmas.GaloisIrreducibility.BB g N : Finset ℕ) : Set ℕ) := by
@@ -117,17 +72,13 @@ def tens (a : ∀ i, MonoidAlgebra ℂ (G i)) : MonoidAlgebra ℂ (∀ i, G i) :
 theorem tens_coeff (a : ∀ i, MonoidAlgebra ℂ (G i)) (g : ∀ i, G i) :
     (tens a).coeff g = ∏ i, (a i).coeff (g i) := rfl
 
-theorem conv_coeff {H : Type} [Group H] [Fintype H] (x y : MonoidAlgebra ℂ H) (g : H) :
-    (x * y).coeff g = ∑ h, x.coeff h * y.coeff (h⁻¹ * g) := by
-  apply Formalism.MainNotions.PrimeDegreeVariant.Ten.conv_coeff
-
 theorem tens_mul (a b : ∀ i, MonoidAlgebra ℂ (G i)) :
     tens a * tens b = tens (fun i => a i * b i) := by
   classical
   letI : ∀ i, Fintype (G i) := fun i => Fintype.ofFinite _
   apply MonoidAlgebra.ext
   ext g
-  simp only [conv_coeff, tens_coeff]
+  simp only [Formalism.MainNotions.PrimeDegreeVariant.Ten.conv_coeff, tens_coeff]
   rw [Fintype.prod_sum]
   refine Finset.sum_congr rfl (fun h _ => ?_)
   rw [Finset.prod_mul_distrib]
@@ -209,9 +160,9 @@ theorem tens_one : tens (fun i => (1 : MonoidAlgebra ℂ (G i))) = 1 := by
   by_cases hg : g = 1
   · subst hg
     simp
-  · rw [if_neg (Ne.symm hg)]
+  · rw [ite_eq_right (Ne.symm hg)]
     obtain ⟨i, hi⟩ := Function.ne_iff.mp hg
-    exact Finset.prod_eq_zero (Finset.mem_univ i) (if_neg (Ne.symm hi))
+    exact Finset.prod_eq_zero (Finset.mem_univ i) (ite_eq_right (Ne.symm hi))
 
 theorem sum_tens {P : ι → Type} [∀ i, Fintype (P i)] [DecidableEq ι]
     (E : ∀ i, P i → MonoidAlgebra ℂ (G i)) :
@@ -278,15 +229,15 @@ theorem mapDomain_mulSingle (i : ι) (a : MonoidAlgebra ℂ (G i)) :
     · intro j hj
       rw [Pi.mulSingle_eq_of_ne hj]
       first | rw [Function.update_of_ne hj]
-      rw [h1, if_pos rfl]
-  · push_neg at hg
+      rw [h1, ite_eq_left rfl]
+  · push Not at hg
     obtain ⟨j, hj, hgj⟩ := hg
     rw [Finsupp.mapDomain_notin_range]
     · symm
       refine Finset.prod_eq_zero (Finset.mem_univ j) ?_
       first | rw [Function.update_of_ne hj]
       rw [h1]
-      exact if_neg (Ne.symm hgj)
+      exact ite_eq_right (Ne.symm hgj)
     · rintro ⟨h, rfl⟩
       exact hgj (Pi.mulSingle_eq_of_ne hj h)
 
@@ -296,7 +247,6 @@ section Good
 
 variable {ι : Type} [Fintype ι] [DecidableEq ι] {G : ι → Type} [∀ i, Group (G i)] [∀ i, Finite (G i)]
   {P : ι → Type} [∀ i, Fintype (P i)]
-
 
 open Classical in
 def eGood (E : ∀ i, P i → MonoidAlgebra ℂ (G i)) (good : (∀ i, P i) → Prop) :
@@ -315,7 +265,6 @@ theorem eGood_central (hcen : ∀ i p a, E i p * a = a * E i p) (x : MonoidAlgeb
   · simp
 
 variable {W : Type} [AddCommGroup W] [Module ℂ W]
-
 
 open Classical in
 def onC {A : Type} [Ring A] [Algebra ℂ A] (Φ : Subalgebra.center ℂ A →ₐ[ℂ] Module.End ℂ W) (z : A) :
@@ -405,9 +354,9 @@ theorem onC_eGood (hid : ∀ i p, E i p * E i p = E i p) (hcen : ∀ i p a, E i 
       exact absurd (Finset.mem_univ _) hl
   constructor
   · intro hg
-    rw [hmain, if_pos hg]
+    rw [hmain, ite_eq_left hg]
   · intro hg
-    rw [hmain, if_neg hg]
+    rw [hmain, ite_eq_right hg]
 
 end Good
 
@@ -428,11 +377,6 @@ def ESer (kv : Σ k : Fin 2, D.nd.PlG k) (p : Fin D.R.r → ZMod (D.host.g kv.1)
 def goodVec (p : ∀ kv : (Σ k : Fin 2, D.nd.PlG k), Fin D.R.r → ZMod (D.host.g kv.1)) : Prop :=
   D.ntypes.goodTuple (fun k v => Formalism.CyclotomicNorms.monicOf (p ⟨k, v⟩))
 
-theorem monicOf_inj {K : Type} [Field K] {N : ℕ} (a b : Fin N → K)
-    (h : Formalism.CyclotomicNorms.monicOf a = Formalism.CyclotomicNorms.monicOf b) : a = b := by
-  funext i
-  rw [← _root_.Formalism.CyclotomicNorms.Sqf.coeff_monicOf_lt a i, ← _root_.Formalism.CyclotomicNorms.Sqf.coeff_monicOf_lt b i, h]
-
 theorem ESer_idem (kv) (p) : ESer D kv p * ESer D kv p = ESer D kv p := by
   unfold ESer
   exact D.ntypes.eSer_idem _ _
@@ -448,7 +392,7 @@ theorem ESer_sum (kv : Σ k : Fin 2, D.nd.PlG k) : ∑ p, ESer D kv p = 1 := by
   have himg : ∑ p, ESer D kv p =
       ∑ f ∈ Finset.univ.image (fun p : Fin D.R.r → ZMod (D.host.g kv.1) => Formalism.CyclotomicNorms.monicOf p),
         D.ntypes.eSer kv.1 f := by
-    rw [Finset.sum_image fun a _ b _ h => monicOf_inj a b h]
+    rw [Finset.sum_image fun a _ b _ h => Formalism.MainNotions.PrimeDegreeVariant.Ten.monicOf_inj a b h]
     rfl
   rw [himg]
   symm
@@ -477,14 +421,12 @@ theorem e0_eq : D.ntypes.e0 = eGood (ESer D) (goodVec D) := by
   refine Finset.sum_congr (by first | rfl) (fun p _ => ?_)
   split_ifs <;> rfl
 
-
 theorem atPlace_eq (k : Fin 2) (v : D.nd.PlG k) (a : MonoidAlgebra ℂ (GL (Fin D.R.r) (ZMod (D.host.g k)))) :
     ArithmeticCylinders.atPlace D k v a =
       plc (G := fun kv : (Σ k : Fin 2, D.nd.PlG k) => GL (Fin D.R.r) (ZMod (D.host.g kv.1))) ⟨k, v⟩ a := by
   unfold Formalism.MainNotions.ArithmeticCylinders.atPlace
   convert mapDomain_mulSingle
     (G := fun kv : (Σ k : Fin 2, D.nd.PlG k) => GL (Fin D.R.r) (ZMod (D.host.g kv.1))) ⟨k, v⟩ a
-
 
 end Record
 
@@ -531,7 +473,7 @@ theorem idempotent_action_on_forms {W : Type} [AddCommGroup W] [Module ℂ W]
     by_contra hne
     apply hp
     have h' := h k v (Formalism.CyclotomicNorms.monicOf p) (by rwa [atPlace_eq])
-    apply monicOf_inj
+    apply Formalism.MainNotions.PrimeDegreeVariant.Ten.monicOf_inj
     rw [h', monicOf_labVec]
 
 end Record2
@@ -585,16 +527,7 @@ theorem mem_rootSet_iff (f : (ZMod g)[X]) (x : Formalism.CyclotomicNorms.Fbar g)
 
 theorem root_ne_zero {f : (ZMod g)[X]} (h0 : f.coeff 0 ≠ 0) {x : Formalism.CyclotomicNorms.Fbar g}
     (hx : x ∈ Formalism.CyclotomicNorms.rootsBar f) : x ≠ 0 := by
-  intro hx0
-  subst hx0
-  unfold Formalism.CyclotomicNorms.rootsBar at hx
-  have hne : f.map (algebraMap (ZMod g) (Formalism.CyclotomicNorms.Fbar g)) ≠ 0 := by
-    intro h
-    rw [h] at hx
-    simp at hx
-  have hr := (Polynomial.mem_roots hne).mp hx
-  rw [Polynomial.IsRoot.def, ← Polynomial.coeff_zero_eq_eval_zero, Polynomial.coeff_map] at hr
-  exact h0 ((map_eq_zero_iff _ (algebraMap (ZMod g) (Formalism.CyclotomicNorms.Fbar g)).injective).mp hr)
+  apply _root_.GlobalTheory.SerSys.LabLoc.ne_zero_of_mem_roots <;> assumption
 
 def bigM (g N : ℕ) : ℕ := ∏ d ∈ Finset.Icc 1 N, (g ^ d - 1)
 

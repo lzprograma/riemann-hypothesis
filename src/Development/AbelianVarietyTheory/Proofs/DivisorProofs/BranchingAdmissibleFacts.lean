@@ -9,58 +9,11 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualWeylLeOf
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPairingLastRowMonomialReadsCoefficient
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DualWeylEqEvalAtOneSmulExtremalOfRowWeight
 public import Formalism.BranchSandwichDivisors.DivFromPassageAndNorm
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.MvPolynomial.Nilpotent
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.Foundations.TracePowApply
 import Formalism.LocalToGlobal.Divisibility.CoefMod
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 import Formalism.GradedWeylDivisibility.FockSpaceTableaux.HWRaise
 import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -226,7 +179,7 @@ theorem capDet_dual {M : Type} [AddCommGroup M] [Module K M] (E : Fin n → Fin 
   have key := fun α : Equiv.Perm (Fin n) => dual_tri ψ (fun k => bmF E u k (α k) k)
     (fun j => ((u + ((j : ℕ) : ℤ) - μ j : ℤ) : K)) (fun k => α k = k)
     (fun k hk x => by
-      simp only [bmF, hk, if_true, LinearMap.sub_apply, Module.End.intCast_apply, map_sub, map_zsmul, hw, zsmul_eq_mul]
+      simp only [bmF, hk, ite_true, LinearMap.sub_apply, Module.End.intCast_apply, map_sub, map_zsmul, hw, zsmul_eq_mul]
       push_cast; ring)
     (fun k hk hj x => by
       have hlt : k < α k := by
@@ -265,7 +218,6 @@ theorem rowGen_initMinor {r m s : ℕ} (a b : Fin r) (I : Fin s → Fin r) (hs :
     simp [rowGen_X, e1]
 
 theorem xi_raise (lam sg : Fin n → ℕ) (l j : Fin n) (h : l < j) : rE K n n l j (xiB K lam sg) = 0 := by
-  have h' : l.val < j.val := h
   have key : rowGen K l.castSucc j.castSucc (xiB K lam sg) = Polynomial.C (xiB K lam sg) := by
     unfold xiB
     rw [map_prod, map_prod]
@@ -284,7 +236,7 @@ theorem xi_raise (lam sg : Fin n → ℕ) (l j : Fin n) (h : l < j) : rE K n n l
       · have := congrArg Fin.val e'
         simp at this; omega
       · simp only [rowsB]
-        rw [if_pos (by omega)]; rfl
+        rw [ite_eq_left (by omega)]; rfl
     · intro p q e
       simpa [rowsA, Fin.ext_iff] using e
     · intro p e
@@ -293,7 +245,7 @@ theorem xi_raise (lam sg : Fin n → ℕ) (l j : Fin n) (h : l < j) : rE K n n l
       refine ⟨⟨l.val, by omega⟩, fun e' => ?_, rfl⟩
       have := congrArg Fin.val e'
       simp at this; omega
-  rw [rE, (rowE_eq_rowDiv K _ _ _ _ _).1, rowDiv, key, Polynomial.coeff_C, if_neg one_ne_zero]
+  rw [rE, (rowE_eq_rowDiv K _ _ _ _ _).1, rowDiv, key, Polynomial.coeff_C, ite_eq_right one_ne_zero]
 
 theorem zcomp_lift {lam b : Fin n → ℕ} {f : MvPolynomial (Fin n × Fin n) K} {G : BP K n} (h : bmLift K n lam b f G) :
     zcomp K n (fun s => (b s : ℤ)) G = zmon K n b * emb K n f := by
@@ -313,7 +265,7 @@ theorem fockB_zcomp (β : Fin n → ℤ) (G A : BP K n) (hA : IsWeightedHomogene
   rw [← sub_eq_zero, ← fockBL_apply, ← fockBL_apply, ← LinearMap.sub_apply, ← map_sub]
   refine fockB_eq_zero _ _ fun μ hμ => ?_
   by_contra h0
-  rw [MvPolynomial.coeff_sub, coeff_zcomp, if_pos (hA h0), sub_self] at hμ
+  rw [MvPolynomial.coeff_sub, coeff_zcomp, ite_eq_left (hA h0), sub_self] at hμ
   exact hμ rfl
 
 theorem lead_inj (b : Fin n → ℕ) {f g : MvPolynomial (Fin n × Fin n) K}
@@ -360,7 +312,7 @@ theorem psi_eq_zero {lam sg : Fin n → ℕ} (hI : Interlace (lamZ lam) (fun i =
     · rw [h0, map_zero]
     obtain ⟨μ, hμ⟩ := ne_zero_iff.1 h0
     have hne : (S.filter fun β => zcomp K n β y ≠ 0).Nonempty := by
-      have : zcomp K n (Finsupp.weight (zW n) μ) y ≠ 0 := ne_zero_iff.2 ⟨μ, by rw [coeff_zcomp, if_pos rfl]; exact hμ⟩
+      have : zcomp K n (Finsupp.weight (zW n) μ) y ≠ 0 := ne_zero_iff.2 ⟨μ, by rw [coeff_zcomp, ite_eq_left rfl]; exact hμ⟩
       exact ⟨_, Finset.mem_filter.2 ⟨hsub _ this, this⟩⟩
     obtain ⟨β, hβ, hmax⟩ := Finset.exists_max_image _ omg hne
     obtain ⟨hβS, hβ⟩ := Finset.mem_filter.1 hβ

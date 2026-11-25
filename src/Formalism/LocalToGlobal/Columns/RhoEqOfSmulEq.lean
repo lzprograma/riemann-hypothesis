@@ -124,12 +124,6 @@ def intNab : Submodule (𝓞 K) S.EqFun := S.intOf S.Nab
 
 def intDel : Submodule (𝓞 K) S.EqFun := S.intOf S.Del
 
-theorem mem_intNab (φ : S.EqFun) : φ ∈ S.intNab ↔ ∀ d, (φ : S.D → S.V) d ∈ S.Nab d := by
-  exact Iff.rfl
-
-theorem mem_intDel (φ : S.EqFun) : φ ∈ S.intDel ↔ ∀ d, (φ : S.D → S.V) d ∈ S.Del d := by
-  exact Iff.rfl
-
 @[reducible] def toCSDOf (h : S.Ok) (s : S.Sec) : CSD K where
   Cl := S.Cl
   finCl := h.fintypeCl
@@ -315,8 +309,8 @@ def ofMap (tr : S'.G →* S.G) (p : S'.D → S.D) (T : S.V →ₗ[K] S'.V)
       rw [← hT, ← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply]
     rw [hp, Finsupp.single_apply, Finsupp.single_apply]
     by_cases e : p d' = d
-    · rw [if_pos e, if_pos (by rw [e]), hc]
-    · rw [if_neg e, if_neg (fun e' => e (MulAction.injective (tr g) e'))]
+    · rw [ite_eq_left e, ite_eq_left (by rw [e]), hc]
+    · rw [ite_eq_right e, ite_eq_right (fun e' => e (MulAction.injective (tr g) e'))]
       simp
 
 theorem ofMap_op_apply (tr : S'.G →* S.G) (p : S'.D → S.D) (T : S.V →ₗ[K] S'.V)
@@ -466,12 +460,6 @@ end GSD.Iso
 
 namespace GSD
 
-variable (K) (G D : Type) [Group G] [MulAction G D]
-
-end GSD
-
-namespace GSD
-
 variable {K : Type} [Field K] [NumberField K] [StarRing K] (S : GSD K)
 
 def csOf (h : S.Ok) (s : S.Sec) {M : Type} [AddCommGroup M] [Module K M] (F : S.D → M) : M :=
@@ -489,12 +477,6 @@ structure BiPair (S S' : GSD K) where
   B : S.V →ₗ[K] S'.V →ₗ[K] K
   hp : ∀ (g : S'.G) (d' : S'.D), p (g • d') = tr g • p d'
   inv : ∀ (g : S'.G) (x : S.V) (y : S'.V), B (S.ρ (tr g) x) (S'.ρ g y) = B x y
-
-namespace BiPair
-
-variable {S S' : GSD K} (P : BiPair S S')
-
-end BiPair
 
 structure GFam (K : Type) [Field K] [NumberField K] [StarRing K] where
 
@@ -582,9 +564,6 @@ def resOf (h : F.Ok) (s : ∀ b, (F.mem b).Sec) : F.Forms ≃ₗ[K] (F.toCSDOf h
       invFun := fun f b => ⟨fun c => f.1 ⟨b, c⟩, fun c γ => f.2 ⟨b, c⟩ γ⟩
       left_inv := fun _ => rfl
       right_inv := fun _ => rfl }
-
-theorem resOf_apply (h : F.Ok) (s : ∀ b, (F.mem b).Sec) (φ : F.Forms) (c : F.Cl) :
-    (F.resOf h s φ).1 c = ((φ c.1 : (F.mem c.1).EqFun) : F.D c.1 → F.V) ((s c.1).rep c.2) := rfl
 
 def ipOf (h : F.Ok) (s : ∀ b, (F.mem b).Sec) (φ ψ : F.Forms) : K :=
   ∑ b, (F.mem b).ipOf (h b) (s b) (φ b) (ψ b)

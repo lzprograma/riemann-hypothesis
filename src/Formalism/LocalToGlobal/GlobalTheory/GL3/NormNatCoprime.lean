@@ -136,7 +136,7 @@ theorem lemmaU : LemmaU D := by
     rw [map_pow, map_prod]
     simp only [map_inv₀]
     exact hpow
-  have hl : lamC lam (χ 𝔞) = lam c := by simp only [lamC, dif_pos hmem]; try rfl
+  have hl : lamC lam (χ 𝔞) = lam c := by simp only [lamC, dite_eq_left hmem]; try rfl
   rw [hl]
   have hk1 : ‖lam c‖ ^ k = 1 := by
     rw [← norm_pow, ← map_pow, hcpow, map_prod, norm_prod]
@@ -226,10 +226,10 @@ theorem chiFacUnit : ChiFacUnit D := by
   have hmem : Base.chiFac χ N N' L L' ∈ Qbar := by rw [hcf]; exact Subtype.property _
   refine ⟨hmem, ?_⟩
   have hl : lamC lam (Base.chiFac χ N N' L L') = lam (a ^ (((N' / 2 : ℕ) : ℤ)) * b ^ (-((N / 2 : ℕ) : ℤ))) := by
-    simp only [lamC, dif_pos hmem]
+    simp only [lamC, dite_eq_left hmem]
     congr 1
-  have hla : lam a = lamC lam (χ (detId D (Formalism.MainNotions.StandardLatticesGL3.stdL D N) L)) := by simp only [lamC, dif_pos m1]; try rfl
-  have hlb : lam b = lamC lam (χ (detId D (Formalism.MainNotions.StandardLatticesGL3.stdL D N') L')) := by simp only [lamC, dif_pos m2]; try rfl
+  have hla : lam a = lamC lam (χ (detId D (Formalism.MainNotions.StandardLatticesGL3.stdL D N) L)) := by simp only [lamC, dite_eq_left m1]; try rfl
+  have hlb : lam b = lamC lam (χ (detId D (Formalism.MainNotions.StandardLatticesGL3.stdL D N') L')) := by simp only [lamC, dite_eq_left m2]; try rfl
   rw [hl, map_mul, map_zpow₀, map_zpow₀, norm_mul, norm_zpow, norm_zpow, hla, hlb, u1, u2, one_zpow, one_zpow,
     one_mul]
 

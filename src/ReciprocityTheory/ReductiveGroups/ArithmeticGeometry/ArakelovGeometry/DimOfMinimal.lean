@@ -95,14 +95,14 @@ theorem per_factor {L : ℝ} {m p : ℕ} (hp : p.Prime) {W : Ideal (MRing ι)} [
     obtain ⟨k, hk⟩ := hrel
     refine ⟨1 + tdeg c, 0, le_rfl, fun a ha => ?_⟩
     have hpos : 0 < (a - c) k := (le_of_tdeg_le ha k).2
-    rw [if_neg hnot, lg, card_mPiece_irrel hk hpos]
+    rw [ite_eq_right hnot, lg, card_mPiece_irrel hk hpos]
     simp
   by_cases hmin : q ∈ divSupp W s
   · have hqd := dim_of_minimal hsW hmin.1 hdim
     obtain ⟨⟨a₀', C', hC', hIH⟩, hS⟩ := IH q ⟨hq, hqm, hrel⟩ hpq hqd
     obtain ⟨K', hK', hsh⟩ := appr_shift L m q hS c
     refine ⟨a₀' + tdeg c, C' + K', by positivity, fun a ha => ?_⟩
-    rw [if_pos hmin]
+    rw [ite_eq_left hmin]
     have h1 := hIH (a - c) fun k => (le_of_tdeg_le ha k).2
     have h2 := hsh a fun k => (le_of_tdeg_le ha k).1
     have hmono := pow_tdeg_mono (tdeg_sub_le a c) (m - 1)
@@ -140,7 +140,7 @@ theorem per_factor {L : ℝ} {m p : ℕ} (hp : p.Prime) {W : Ideal (MRing ι)} [
     have hgq : g ∈ q := hqS ▸ Ideal.subset_span hgS
     obtain ⟨K', hK', hsh⟩ := appr_shift L m W' hS c'
     refine ⟨a₀' + tdeg c' + tdeg c, 2 * C' + K', by positivity, fun a ha => ?_⟩
-    rw [if_neg hmin, sub_zero, abs_of_nonneg (lg_nonneg _ _)]
+    rw [ite_eq_right hmin, sub_zero, abs_of_nonneg (lg_nonneg _ _)]
     set x := a - c with hxdef
     have hx : ∀ k, c' k ≤ x k ∧ a₀' ≤ (x - c') k := fun k =>
       le_of_tdeg_le (fun k => (le_of_tdeg_le ha k).2) k

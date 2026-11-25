@@ -77,6 +77,49 @@ theorem exists_sheet_nhds {J : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matrix (Fi
   · exact ⟨fun _ => x, ∅, ∅, isOpen_empty, isOpen_empty, differentiableOn_empty, by simp,
       by simp, fun h => absurd h hx⟩
 
+theorem ofReal_finsum_fibre_le_tsum {m : ℕ} {J : Ideal (MvPolynomial (Fin n) ℂ)}
+    {A : Matrix (Fin m) (Fin n) ℂ} {y : Fin m → ℂ} {t : (Fin n → ℂ) → ℝ} (ht0 : ∀ x, 0 ≤ t x)
+    {E : ℕ → Set (Fin n → ℂ)} {B : ℕ → Set (Fin m → ℂ)} {G : ℕ → (Fin m → ℂ) → ℝ≥0∞}
+    {σ : ℕ → (Fin m → ℂ) → Fin n → ℂ}
+    (hcover : ∀ x ∈ fibre J A y, t x ≠ 0 → ∃ k, x ∈ E k)
+    (htE : ∀ k, ∀ x ∈ E k, (A *ᵥ x = y → ENNReal.ofReal (t x) = G k y ∧ y ∈ B k) ∧ σ k (A *ᵥ x) = x) :
+    ENNReal.ofReal (∑ᶠ x, (fibre J A y).indicator t x) ≤ ∑' k, (B k).indicator (G k) y := by
+  have hnn : ∀ x, 0 ≤ (fibre J A y).indicator t x := fun x =>
+    Set.indicator_nonneg (fun x _ => ht0 x) x
+  calc ENNReal.ofReal (∑ᶠ x, (fibre J A y).indicator t x)
+      ≤ ∑' x, ENNReal.ofReal ((fibre J A y).indicator t x) := ofReal_finsum_le_tsum _ hnn
+    _ ≤ ∑' x, ∑' k, (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t x)) x := by
+      refine ENNReal.tsum_le_tsum fun x => ?_
+      by_cases hxf : x ∈ fibre J A y
+      · by_cases htx : t x = 0
+        · rw [Set.indicator_of_mem hxf, htx, ENNReal.ofReal_zero]
+          exact zero_le
+        · obtain ⟨k, hk⟩ := hcover x hxf htx
+          rw [Set.indicator_of_mem hxf]
+          have hle : (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t x)) x ≤
+              ∑' k, (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t x)) x :=
+            le_tsum (fun k => (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t x)) x) k
+          exact (Set.indicator_of_mem (show x ∈ E k ∩ fibre J A y from ⟨hk, hxf⟩)
+            (fun x => ENNReal.ofReal (t x))).symm.le.trans hle
+      · rw [Set.indicator_of_notMem hxf, ENNReal.ofReal_zero]
+        exact zero_le
+    _ = ∑' k, ∑' x, (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t x)) x :=
+      ENNReal.tsum_comm
+    _ ≤ ∑' k, (B k).indicator (G k) y := by
+      refine ENNReal.tsum_le_tsum fun k => ?_
+      rw [tsum_eq_single (σ k y)]
+      · by_cases hm : σ k y ∈ E k ∩ fibre J A y
+        · rw [Set.indicator_of_mem hm]
+          obtain ⟨h1, h2⟩ := (htE k _ hm.1).1 hm.2.2
+          rw [h1, Set.indicator_of_mem h2]
+        · rw [Set.indicator_of_notMem hm]
+          exact zero_le
+      · intro x hne
+        refine Set.indicator_of_notMem (fun hx => hne ?_) _
+        have hsx := (htE k x hx.1).2
+        have hAx : A *ᵥ x = y := hx.2.2
+        rw [← hAx, hsx]
+
 end SheetAreaCompare
 
 
@@ -160,7 +203,7 @@ theorem SheetAreaCompare.proof (h₁ : SheetImageArea.Statement) : SheetAreaComp
       unfold sheetJac
       rw [(SheetSumMeasurable.sheet_eventuallyEq hsh hex.choose_spec).fderiv_eq]
     refine ⟨?_, (hBmem k _).2 ⟨hAU, hsx.symm ▸ hx⟩, hsx⟩
-    simp only [ht, dif_pos hex, hG, hσ'eq k _ hAU, hsx, hJ]
+    simp only [ht, dite_eq_left hex, hG, hσ'eq k _ hAU, hsx, hJ]
     rw [ENNReal.ofReal_mul (abs_nonneg _), Real.enorm_eq_ofReal_abs]
 
   have hpt : ∀ y, ‖sheetSum J A (fun x s => |h x| * sheetJac s (A *ᵥ x)) y‖ₑ ≤
@@ -173,42 +216,9 @@ theorem SheetAreaCompare.proof (h₁ : SheetImageArea.Statement) : SheetAreaComp
     have hnn : ∀ x, 0 ≤ (fibre J A y).indicator t x := fun x =>
       Set.indicator_nonneg (fun x _ => ht0 x) x
     rw [hS, Real.enorm_eq_ofReal (finsum_nonneg hnn)]
-    calc ENNReal.ofReal (∑ᶠ x, (fibre J A y).indicator t x)
-        ≤ ∑' x, ENNReal.ofReal ((fibre J A y).indicator t x) := ofReal_finsum_le_tsum _ hnn
-      _ ≤ ∑' x, ∑' k, (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t x)) x := by
-        refine ENNReal.tsum_le_tsum fun x => ?_
-        by_cases hxf : x ∈ fibre J A y
-        · by_cases hx : ∃ s, IsSheetAt J A x s
-          · obtain ⟨k, hk⟩ := hEcover x hx
-            rw [Set.indicator_of_mem hxf]
-            have hle : (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t x)) x ≤
-                ∑' k, (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t x)) x :=
-              le_tsum (fun k => (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t x)) x) k
-            exact (Set.indicator_of_mem (show x ∈ E k ∩ fibre J A y from ⟨hk, hxf⟩)
-              (fun x => ENNReal.ofReal (t x))).symm.le.trans hle
-          · have : t x = 0 := by simp only [ht, dif_neg hx]
-            rw [Set.indicator_of_mem hxf, this, ENNReal.ofReal_zero]
-            exact zero_le
-        · rw [Set.indicator_of_notMem hxf, ENNReal.ofReal_zero]
-          exact zero_le
-      _ = ∑' k, ∑' x, (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t x)) x :=
-        ENNReal.tsum_comm
-      _ ≤ ∑' k, (B k).indicator (G k) y := by
-        refine ENNReal.tsum_le_tsum fun k => ?_
-        rw [tsum_eq_single (σ (e k) y)]
-        · by_cases hm : σ (e k) y ∈ E k ∩ fibre J A y
-          · rw [Set.indicator_of_mem hm]
-            obtain ⟨h1, h2, -⟩ := htE k _ hm.1
-            have hAy : A *ᵥ σ (e k) y = y := hm.2.2
-            rw [hAy] at h1 h2
-            rw [h1, Set.indicator_of_mem h2]
-          · rw [Set.indicator_of_notMem hm]
-            exact zero_le
-        · intro x hne
-          refine Set.indicator_of_notMem (fun hx => hne ?_) _
-          obtain ⟨-, -, hsx⟩ := htE k x hx.1
-          have hAx : A *ᵥ x = y := hx.2.2
-          rw [← hAx, hsx]
+    exact ofReal_finsum_fibre_le_tsum ht0 (σ := fun k => σ (e k))
+      (fun x _ htx => hEcover x (by by_contra hx; exact htx (by simp only [ht, dite_eq_right hx])))
+      (fun k x hx => ⟨fun hAx => by rw [← hAx]; exact ⟨(htE k x hx).1, (htE k x hx).2.1⟩, (htE k x hx).2.2⟩)
 
   have hpiece : ∀ k, ∫⁻ y, (B k).indicator (G k) y = c * ∫⁻ z in (WithLp.ofLp ⁻¹' E k : Set (EuclideanSpace ℂ (Fin n))),
       ‖h (WithLp.ofLp z)‖ₑ ∂(μH[((2 * d : ℕ) : ℝ)]) := by

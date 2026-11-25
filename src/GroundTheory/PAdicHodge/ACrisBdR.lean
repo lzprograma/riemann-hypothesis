@@ -135,7 +135,9 @@ theorem exists_decomp_of_mem_dpowSpan {ξ : AInf K p} (hξ : RingHom.ker θ = Id
     · refine ⟨0, zero_mem _, 0, Ring.inverse (n.factorial : 𝔸) *
         algebraMap (AInf K p) 𝔸 ξ ^ (n - m), by simp, ?_⟩
       rw [zero_add, show dpow n ξ = Ring.inverse (n.factorial : 𝔸) * algebraMap (AInf K p) 𝔸 ξ ^ n
-        from rfl, map_pow, ← mul_assoc, mul_comm (algebraMap (AInf K p) 𝔸 ξ ^ m),
+        from (dpow_eq_iff n ξ _).2 (by
+          rw [← mul_assoc, Ring.mul_inverse_cancel _ (isUnit_natCast (Nat.factorial_ne_zero n)), one_mul]),
+        map_pow, ← mul_assoc, mul_comm (algebraMap (AInf K p) 𝔸 ξ ^ m),
         mul_assoc, ← pow_add, Nat.add_sub_cancel' (not_lt.1 hn)]
   | zero => exact ⟨0, zero_mem _, 0, 0, by simp, by simp⟩
   | add x z _ _ hx hz =>
@@ -259,7 +261,7 @@ end ExtendComp
 section Quot
 
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
-variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p] [CharZero K]
+variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p]
 
 local notation "𝔸" => Localization.Away (p : AInf K p)
 local notation "θ" => fontaineTheta (normInteger K) p
@@ -280,18 +282,6 @@ theorem kerAway_pow (m : ℕ) :
 theorem mk_eq_zero_iff (m : ℕ) (a : 𝔸) :
     Ideal.Quotient.mk (kerAway K p ^ m) a = 0 ↔ algebraMap (AInf K p) 𝔸 (xiGen K p ^ m) ∣ a := by
   rw [Ideal.Quotient.eq_zero_iff_mem, kerAway_pow, Ideal.mem_span_singleton]
-
-theorem algebraMap_dvd_iff (m : ℕ) (w : AInf K p) :
-    algebraMap (AInf K p) 𝔸 (xiGen K p ^ m) ∣ algebraMap (AInf K p) 𝔸 w ↔
-      w ∈ Ideal.span {xiGen K p ^ m} := by
-  constructor
-  · intro h
-    obtain ⟨s, hs⟩ := IsPerfectoidField.exists_p_pow_mul_mem_of_dvd h
-    exact IsPerfectoidField.mem_span_xi_pow_of_p_pow_mul_mem ker_eq_span_xiGen hs
-  · intro h
-    obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton.1 h
-    rw [map_mul]
-    exact dvd_mul_right _ _
 
 variable (K p) in
 def latticeQ (m : ℕ) : Subring (𝔸 ⧸ kerAway K p ^ m) :=
@@ -339,6 +329,20 @@ theorem pow_mul_mem_latticeQ (m : ℕ) :
   show Ideal.Quotient.mk _ (algebraMap (AInf K p) 𝔸 (↑hu.unit⁻¹ * w)) = _
   rw [hcalc, map_mul, map_pow, map_natCast, map_add (f := _), hz, add_zero]
 
+variable [CharZero K]
+
+theorem algebraMap_dvd_iff (m : ℕ) (w : AInf K p) :
+    algebraMap (AInf K p) 𝔸 (xiGen K p ^ m) ∣ algebraMap (AInf K p) 𝔸 w ↔
+      w ∈ Ideal.span {xiGen K p ^ m} := by
+  constructor
+  · intro h
+    obtain ⟨s, hs⟩ := IsPerfectoidField.exists_p_pow_mul_mem_of_dvd h
+    exact IsPerfectoidField.mem_span_xi_pow_of_p_pow_mul_mem ker_eq_span_xiGen hs
+  · intro h
+    obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton.1 h
+    rw [map_mul]
+    exact dvd_mul_right _ _
+
 variable (K p) in
 instance isAdicComplete_latticeQ (m : ℕ) :
     IsAdicComplete (Ideal.span {(p : latticeQ K p m)}) (latticeQ K p m) := by
@@ -376,7 +380,7 @@ end Quot
 section Iota
 
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
-variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p] [CharZero K]
+variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p]
 
 local notation "𝔸" => Localization.Away (p : AInf K p)
 
@@ -394,19 +398,6 @@ theorem span_p_le_comap_iotaZero (m : ℕ) :
   rw [Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe, Ideal.mem_comap, map_natCast]
   exact Ideal.mem_span_singleton_self _
 
-variable (K p) in
-def embedding₂ (m : ℕ) : ACris (K := K) (p := p) →+* acrisQ K p m :=
-  AdicCompletion.extendRingHom _ _ (iotaZero K p m) (span_p_le_comap_iotaZero m)
-
-variable (K p) in
-def iotaQ (m : ℕ) : ACris (K := K) (p := p) →+* 𝔸 ⧸ kerAway K p ^ m :=
-  (acrisQ K p m).subtype.comp (embedding₂ K p m)
-
-theorem iotaQ_of (m : ℕ) (y : ACrisZero (K := K) (p := p)) :
-    iotaQ K p m (_root_.AdicCompletion.of _ _ y) = Ideal.Quotient.mk (kerAway K p ^ m) (y : 𝔸) := by
-  rw [iotaQ, RingHom.comp_apply, embedding₂, AdicCompletion.extendRingHom_of]
-  rfl
-
 def acrisQFactor {m n : ℕ} (hle : m ≤ n) : acrisQ K p n →+* acrisQ K p m :=
   ((Ideal.Quotient.factorPow (kerAway K p) hle).comp (acrisQ K p n).subtype).codRestrict
     (acrisQ K p m) fun s => by
@@ -418,6 +409,23 @@ theorem acrisQFactor_comp_iotaZero {m n : ℕ} (hle : m ≤ n) :
     (acrisQFactor hle).comp (iotaZero K p n) = iotaZero K p m := by
   ext y
   rfl
+
+variable [CharZero K]
+
+variable (K p) in
+def embedding₂ (m : ℕ) : ACris (K := K) (p := p) →+* acrisQ K p m :=
+  AdicCompletion.extendRingHom (Ideal.span {(p : ACrisZero K p)})
+    (Ideal.span {(p : acrisQ K p m)}) (iotaZero K p m) (span_p_le_comap_iotaZero m)
+
+variable (K p) in
+def iotaQ (m : ℕ) : ACris (K := K) (p := p) →+* 𝔸 ⧸ kerAway K p ^ m :=
+  (acrisQ K p m).subtype.comp (embedding₂ K p m)
+
+theorem iotaQ_of (m : ℕ) (y : ACrisZero (K := K) (p := p)) :
+    iotaQ K p m (algebraMap (ACrisZero K p) (ACris K p) y) = Ideal.Quotient.mk (kerAway K p ^ m) (y : 𝔸) :=
+  congrArg (acrisQ K p m).subtype
+    (AdicCompletion.extendRingHom_of (Ideal.span {(p : ACrisZero K p)})
+      (Ideal.span {(p : acrisQ K p m)}) (iotaZero K p m) (span_p_le_comap_iotaZero m) y)
 
 theorem iotaQ_compat {m n : ℕ} (hle : m ≤ n) :
     (Ideal.Quotient.factorPow (kerAway K p) hle).comp (iotaQ K p n) = iotaQ K p m := by
@@ -440,7 +448,7 @@ theorem evalₐ_iota (m : ℕ) (y : ACris (K := K) (p := p)) :
   _root_.AdicCompletion.evalₐ_liftRingHom _ _ _ m y
 
 theorem iota_of (y : ACrisZero (K := K) (p := p)) :
-    iota K p (_root_.AdicCompletion.of _ _ y) = toBDeRhamPlus (normInteger K) p (y : 𝔸) := by
+    iota K p (algebraMap (ACrisZero K p) (ACris K p) y) = toBDeRhamPlus (normInteger K) p (y : 𝔸) := by
   apply _root_.AdicCompletion.ext_evalₐ
   intro m
   rw [evalₐ_iota, iotaQ_of]
@@ -448,8 +456,7 @@ theorem iota_of (y : ACrisZero (K := K) (p := p)) :
 
 theorem iota_algebraMap (w : AInf K p) :
     iota K p (algebraMap (AInf K p) (ACris (K := K) (p := p)) w) = wittToBDeRhamPlus (normInteger K) p w := by
-  rw [AdicCompletion.algebraMap_apply, iota_of]
-  rfl
+  exact iota_of (algebraMap (AInf K p) (ACrisZero K p) w)
 
 end Iota
 

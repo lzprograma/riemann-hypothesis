@@ -64,8 +64,6 @@ end Local
 
 section Sylow
 
-attribute [local instance 2000] Rep.hV2
-
 variable {K Ksep : Type} [Field K] [Field Ksep] [Algebra K Ksep] [IsSepClosure K Ksep]
 
 theorem rootsOfUnityFixing_normal (n : ℕ) [NeZero n] :

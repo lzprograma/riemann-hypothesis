@@ -1,5 +1,6 @@
 module
 
+import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.RelIndexMulMeasure
 public import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
 public import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsMulLeftInvariantVolGL
@@ -66,35 +67,7 @@ theorem relIndex_mul_measure_subgroup {G : Type*} [Group G] [MeasurableSpace G] 
     (H L : Subgroup G) (hHL : H ≤ L) [(H.subgroupOf L).FiniteIndex]
     (hH : MeasurableSet (H : Set G)) (μ : Measure G) [μ.IsMulLeftInvariant] :
     (H.relIndex L : ENNReal) * μ H = μ L := by
-  obtain ⟨s, hs, -⟩ := (H.subgroupOf L).exists_isComplement_left 1
-  have hs' : Finite s := hs.finite_left_iff.mpr inferInstance
-  have hU : (⋃ a : s, (a.val : L) • (H : Set G)) = (L : Set G) := by
-    ext x
-    simp only [Set.mem_iUnion, Set.mem_smul_set, SetLike.mem_coe]
-    constructor
-    · rintro ⟨a, h, hh, rfl⟩
-      exact L.mul_mem a.val.2 (hHL hh)
-    · intro hx
-      obtain ⟨⟨b, h⟩, hbh, -⟩ := hs.existsUnique ⟨x, hx⟩
-      refine ⟨b, (h.val : G), Subgroup.mem_subgroupOf.mp h.2, ?_⟩
-      have := congrArg Subtype.val hbh
-      exact this
-  have hdisj : Pairwise (Function.onFun Disjoint fun a : s => (a.val : L) • (H : Set G)) := by
-    intro a b hab
-    rw [Function.onFun, Set.disjoint_left]
-    rintro x ⟨h1, hh1, rfl⟩ ⟨h2, hh2, he⟩
-    apply hab
-    have hh1' : (⟨h1, hHL hh1⟩ : L) ∈ H.subgroupOf L := Subgroup.mem_subgroupOf.mpr hh1
-    have hh2' : (⟨h2, hHL hh2⟩ : L) ∈ H.subgroupOf L := Subgroup.mem_subgroupOf.mpr hh2
-    have e : (a.val : L) * ⟨h1, hHL hh1⟩ = (b.val : L) * ⟨h2, hHL hh2⟩ := Subtype.ext he.symm
-    have := (hs.existsUnique ((a.val : L) * ⟨h1, hHL hh1⟩)).unique
-      (y₁ := (a, ⟨_, hh1'⟩)) (y₂ := (b, ⟨_, hh2'⟩)) rfl e.symm
-    exact congrArg Prod.fst this
-  calc (H.relIndex L : ENNReal) * μ H = ∑' a : s, μ ((a.val : L) • (H : Set G)) := by
-        simp [measure_smul, hs.encard_left, Subgroup.relIndex]
-    _ = μ (⋃ a : s, (a.val : L) • (H : Set G)) :=
-        (measure_iUnion hdisj fun a => hH.const_smul _).symm
-    _ = μ L := by rw [hU]
+  first | exact _root_.Formalism.DoubleCosetMeasures.P.GLRed.relIndex_mul_measure | exact @_root_.Formalism.DoubleCosetMeasures.P.GLRed.relIndex_mul_measure | apply _root_.Formalism.DoubleCosetMeasures.P.GLRed.relIndex_mul_measure <;> assumption
 
 theorem volGL_of_subset_KO {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] {n : Type} [Fintype n] [DecidableEq n]

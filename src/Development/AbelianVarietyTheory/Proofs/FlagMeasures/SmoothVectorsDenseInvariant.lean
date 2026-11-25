@@ -59,7 +59,7 @@ variable {k r : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
   {σ : Mat k r → (H →L[ℂ] H)}
 
 theorem gg_mul {a b : Mat k r} (ha : a ∈ GG k r) (hb : b ∈ GG k r) : a * b ∈ GG k r :=
-  Formalism.MainNotions.LowestKTypeMultiplicity.UH_mul ha hb
+  PI.WUN.UH_mul ha hb
 
 theorem gg_one : (1 : Mat k r) ∈ GG k r := Formalism.MainNotions.LowestKTypeMultiplicity.UH_one k r
 
@@ -84,8 +84,8 @@ theorem smooth_dsig (hσ : IsURepOn (GG k r) σ) {v : H} (hv : IsSmoothVec (k :=
 
 theorem lie_conj {g Y : Mat k r} (hg : g ∈ GG k r) (hY : InLieHpk k r Y) :
     InLieHpk k r (g * Y * g⁻¹) := by
-  have hd : IsUnit g.det := Formalism.MainNotions.LowestKTypeMultiplicity.UH_det hg
-  have hM : g⁻¹ ∈ GG k r := Formalism.MainNotions.LowestKTypeMultiplicity.UH_inv hg
+  have hd : IsUnit g.det := PI.WUN.UH_det hg
+  have hM : g⁻¹ ∈ GG k r := PI.WUN.UH_inv hg
   have hgM : g * g⁻¹ = 1 := Matrix.mul_nonsing_inv g hd
   have hMg : g⁻¹ * g = 1 := Matrix.nonsing_inv_mul g hd
   have hg' : gᴴ * Hpk k r * g = Hpk k r := hg
@@ -111,15 +111,15 @@ theorem lie_conj {g Y : Mat k r} (hg : g ∈ GG k r) (hY : InLieHpk k r Y) :
 theorem dsig_conj (hσ : IsURepOn (GG k r) σ) {v : H} (hv : IsSmoothVec (k := k) (r := r) σ v)
     {Y : Mat k r} (hY : InLieHpk k r Y) {g : Mat k r} (hg : g ∈ GG k r) :
     σ g (dsig σ Y v) = dsig σ (g * Y * g⁻¹) (σ g v) := by
-  have hd : IsUnit g := (Matrix.isUnit_iff_isUnit_det g).2 (Formalism.MainNotions.LowestKTypeMultiplicity.UH_det hg)
-  have hM : g⁻¹ ∈ GG k r := Formalism.MainNotions.LowestKTypeMultiplicity.UH_inv hg
+  have hd : IsUnit g := (Matrix.isUnit_iff_isUnit_det g).2 (PI.WUN.UH_det hg)
+  have hM : g⁻¹ ∈ GG k r := PI.WUN.UH_inv hg
   have hMg : g⁻¹ * g = 1 := Matrix.nonsing_inv_mul g ((Matrix.isUnit_iff_isUnit_det g).1 hd)
   have h1 := hasDeriv_dsig hσ hv hY
   have h2 := ((σ g).restrictScalars ℝ).hasFDerivAt.comp_hasDerivAt (0 : ℝ) h1
   have e : (fun t : ℝ => σ (NormedSpace.exp ((t : ℂ) • (g * Y * g⁻¹))) (σ g v)) =
       (⇑((σ g).restrictScalars ℝ) ∘ fun t : ℝ => σ (NormedSpace.exp ((t : ℂ) • Y)) v) := by
     funext t
-    have hx := Formalism.MainNotions.LowestKTypeMultiplicity.exp_mem_UH hY t
+    have hx := PI.WUN.exp_mem_UH hY t
     have hs : (t : ℂ) • (g * Y * g⁻¹) = g * ((t : ℂ) • Y) * g⁻¹ := by
       rw [Matrix.mul_smul, Matrix.smul_mul]
     rw [hs, Matrix.exp_conj _ _ hd]

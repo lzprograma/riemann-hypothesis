@@ -10,48 +10,6 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.CocyclesToWachVecto
 public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
 public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsInIInPNPowSmulSubMap
 import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.Pi0PowSmulInjective
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -165,8 +123,7 @@ theorem sum_clK_eq_pow_smul_clK_of_level_decomposition [NeZero n] (M s σ : ℕ)
       refine (hF2 _ hw).unique ⟨?_, ?_⟩ ⟨hY2, ?_⟩
       · exact Finset.sum_induction _ _ (fun a b ha hb => Formalism.MainNotions.RamifiedCoefficientChains.S9.inPN_add W T ha hb)
           (uniformizerLattice_zero W T M) (fun c hc => (hZ c hc).1)
-      · set_option synthInstance.maxHeartbeats 100000 in
-          rw [map_sum, ← Finset.sum_sub_distrib, map_sum, ← Finset.sum_sub_distrib]
+      · rw [map_sum, ← Finset.sum_sub_distrib, map_sum, ← Finset.sum_sub_distrib]
         exact Finset.sum_congr rfl fun c hc => (hZ c hc).2
       · rw [← hY1]
         have hyz' : W.γ T (yz : W.DD T × W.DD T).1 - (yz : W.DD T × W.DD T).1 =
@@ -569,26 +526,26 @@ theorem passage_to_quotient [NeZero n] (hK : Sh.LemK W) (hD : Sh.FilDim W) (hR :
       refine ⟨k + 1, fun j => if j ≤ k then Fl j else C, by simp only [List.length_cons]; omega,
         ?_, ?_, ?_, ?_, ?_⟩
       · show (if 0 ≤ k then Fl 0 else C) = F₁
-        rw [if_pos (Nat.zero_le k)]
+        rw [ite_eq_left (Nat.zero_le k)]
         exact h0
       · show (if k + 1 ≤ k then Fl (k + 1) else C) ≤ F₁
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
         exact inf_le_left.trans hFl
       · intro i hi
         show PStep lenO m cc (if i ≤ k then Fl i else C) (if i + 1 ≤ k then Fl (i + 1) else C) True
         by_cases hik : i < k
-        · rw [if_pos hik.le, if_pos (show i + 1 ≤ k by omega)]
+        · rw [ite_eq_left hik.le, ite_eq_left (show i + 1 ≤ k by omega)]
           exact hstep i hik
         · have hik' : i = k := by omega
-          rw [if_pos (by omega), if_neg (by omega), hik']
+          rw [ite_eq_left (by omega), ite_eq_right (by omega), hik']
           exact hnew
       · intro h0m
         show (if k + 1 ≤ k then Fl (k + 1) else C) = F₁
-        rw [if_neg (by omega), hC h0m, hm0 h0m]
+        rw [ite_eq_right (by omega), hC h0m, hm0 h0m]
       · intro c hc f hf
         have hf' : (f : FF) ∈ C := by
           have h : (f : FF) ∈ (if k + 1 ≤ k then Fl (k + 1) else C) := hf
-          rwa [if_neg (by omega)] at h
+          rwa [ite_eq_right (by omega)] at h
         rcases List.mem_cons.mp hc with hca | hc'
         · obtain ⟨g, hg0, hgf⟩ := Submodule.mem_map.mp (Submodule.mem_inf.mp hf').2
           have hgeq : g = f := Subtype.ext hgf
@@ -791,7 +748,7 @@ theorem second_lift_at_situation [NeZero n] (W : LocWach PD LL O v n) (hZ : TToo
     exact (W.N T₂).smul_mem _ this
   have hMi : ∀ c ∈ evens n d, MiW d b S η c = b c + S := fun c hc => by simp [MiW, hev c hc]
   have hMiU : ∀ c ∈ evens n d, MiW d b S η (c + 1) = η := fun c hc => by
-    simp only [MiW]; rw [if_neg (succ_not_mem_evens hn hc)]
+    simp only [MiW]; rw [ite_eq_right (succ_not_mem_evens hn hc)]
   have hhi : ∀ c ∈ evens n d, hiW d b S η c = η := fun c hc => by simp [hiW, hev c hc]
 
   obtain ⟨hX1, hX2⟩ := hX

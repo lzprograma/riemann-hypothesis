@@ -20,57 +20,8 @@ public import Mathlib.Algebra.Field.Subfield.Defs
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValuationSubOnePowEqPrime
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FixedFieldAlmostEtaleOfMovesIntegers
 public import Mathlib.RingTheory.Invariant.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Lemma
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValuationFrobeniusSumSubLeNatCastPrime, Development.AbelianVarietyTheory.Proofs.FoundationProofs.PowMulApproxPowOfAlmostEtaleSeparatingFamily, Development.AbelianVarietyTheory.Proofs.FoundationProofs.ApproxPthRootFixedSubfieldOfAlmostEtale, Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSurjHomZmodOfIsPGroup, Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLagrangeResolventOfPGroupFaithful, Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsNormalSubgroupNotMovesUniformBound, Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValuationAddPowSubLe, Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsImprovedApproxKummerGenerator, Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerGeneratorApproxCriticalRadius, Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerAutomorphismMovesIntegersAlmostUnit, Development.AbelianVarietyTheory.Proofs.FoundationProofs.MovesIntegersAlmostUnitDistanceFixedSubfield, Development.AbelianVarietyTheory.Proofs.FoundationProofs.NatCastEqOneOfCoprime, Development.AbelianVarietyTheory.Proofs.FoundationProofs.MovesIntegersAlmostUnitOfCoprimeOrder, Development.AbelianVarietyTheory.Proofs.FoundationProofs.AlmostPurityMovesIntegersOfNeOne, Development.AbelianVarietyTheory.Proofs.FoundationProofs.AlmostPurityOfNormalFiniteIndexSubgroup
@@ -120,11 +71,6 @@ theorem frob_sum_sub_le (L : Type) [Field L] (v : Valuation L ℝ≥0) (p : ℕ)
     calc v (p : L) * v (x a * (∑ i ∈ s, x i) * (r : L)) ≤ v (p : L) * 1 := by gcongr
       _ = v (p : L) := mul_one _
 
-theorem frob_sum_sub_le' : ∀ (L : Type) [Field L] (v : Valuation L ℝ≥0) (p : ℕ), p.Prime →
-    ∀ (ι : Type) (s : Finset ι) (x : ι → L), (∀ i ∈ s, v (x i) ≤ 1) →
-      v ((∑ i ∈ s, x i) ^ p - ∑ i ∈ s, x i ^ p) ≤ v (p : L) :=
-  fun L _ v p hp ι s x hx => frob_sum_sub_le L v p hp ι s x hx
-
 end GlobalTheory.AlmostEt
 end -- clump:auto
 end -- clump:auto
@@ -143,7 +89,7 @@ namespace GlobalTheory.AlmostEt
 theorem cpow_mul_approx_pow_of_isSep :
     ∀ (L : Type) [Field L] (v : Valuation L ℝ≥0) (p : ℕ), p.Prime → ∀ (G : Type) [Group G] [MulSemiringAction G L], (∀ (g : G) (x : L), v (g • x) = v x) → ∀ (N : Subgroup G) [Fintype (G ⧸ N)] (θ : ℝ≥0), θ ≤ 1 → (∀ u ∈ Fix L (⊤ : Subgroup G), ∃ w ∈ Fix L (⊤ : Subgroup G), v (u - w ^ p) ≤ θ * v u) → ∀ (n : ℕ) (a b : Fin n → L) (c : L), IsSep v N a b c → ∀ x ∈ Fix L N, v x ≤ 1 → ∃ w ∈ Fix L N, v (c ^ p * x - w ^ p) ≤ max θ (v (p : L)) := by
   intro L _ v p hp G _ _ hv N _ θ hθ hroot n a b c hs x hx hx1
-  have frob := _root_.GlobalTheory.AlmostEt.frob_sum_sub_le' L v p hp
+  have frob := _root_.GlobalTheory.AlmostEt.frob_sum_sub_le L v p hp
   have trfix := _root_.GlobalTheory.AlmostEt.cosetTrace_fixed_props L v G hv N
   have memN : ∀ y : L, y ∈ Fix L N ↔ ∀ g ∈ N, g • y = y := by
     intro y
@@ -373,8 +319,7 @@ theorem exists_lagrange_resolvent : ∀ (L : Type) [Field L] (p : ℕ), p.Prime 
   have hli : LinearIndependent L (fun g : G => ((f g : L →* L) : L → L)) :=
     (linearIndependent_monoidHom L L).comp f hf
   have hex : ∃ x : L, ∑ g : G, ψ g⁻¹ * (g • x) ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have h0 : ∑ g : G, ψ g⁻¹ • ((f g : L →* L) : L → L) = 0 := by
       funext x
       simpa [f, Finset.sum_apply] using hcon x
@@ -419,7 +364,7 @@ variable {L : Type} [Field L] {G : Type} [Group G] [MulSemiringAction G L]
 theorem not_moves_top_iff (v : Valuation L ℝ≥0) (σ : G) :
     ¬ Moves v ⊤ σ ↔ ∃ r : ℝ≥0, r < 1 ∧ ∀ x : L, v x ≤ 1 → v (σ • x - x) ≤ r := by
   unfold Moves
-  push_neg
+  push Not
   constructor
   · rintro ⟨r, hr, h⟩
     exact ⟨r, hr, fun x hx => h x (Subfield.mem_top x) hx⟩
@@ -650,8 +595,7 @@ theorem kummer_approx_critical : ∀ (L : Type) [Field L] (v : Valuation L ℝ�
   by_cases hα0 : α = 0
   · refine ⟨0, F.zero_mem, ?_⟩
     simp [hα0, zero_pow hp1]
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hs0 : (0 : ℝ≥0) < s := zero_lt_one.trans hs
   have ha : 0 < v α := (Valuation.pos_iff v).2 hα0
   set a := v α with ha_def
@@ -795,8 +739,7 @@ theorem moves_fix_of_moves : ∀ (L : Type) [Field L] (v : Valuation L ℝ≥0) 
     ∀ σ : G, Moves v ⊤ σ → Moves v (Fix L N) σ := by
   intro L _ v G _ _ _ hinv N i hi hN σ hσ r hr
   classical
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   haveI := Fintype.ofFinite G
   set n := Fintype.card N with hn_def
   have hn : n ≠ 0 := Fintype.card_ne_zero
@@ -868,26 +811,18 @@ open scoped NNReal
 
 namespace GlobalTheory.AlmostEt
 
-theorem valuation_nnreal_natCast_le_one {L : Type} [Field L] (v : Valuation L ℝ≥0) (n : ℕ) : v (n : L) ≤ 1 := by
-  induction n with
-  | zero => simp
-  | succ k ih =>
-    push_cast
-    exact le_trans (v.map_add _ _) (max_le ih (by simp))
-
 theorem valuation_nnreal_intCast_le_one {L : Type} [Field L] (v : Valuation L ℝ≥0) (z : ℤ) : v (z : L) ≤ 1 := by
   cases z with
-  | ofNat n => simpa using valuation_nnreal_natCast_le_one v n
+  | ofNat n => simpa using GlobalTheory.AlmostEt.valuation_natCast_le_one v n
   | negSucc n =>
     rw [Int.cast_negSucc, Valuation.map_neg]
-    exact_mod_cast valuation_nnreal_natCast_le_one v (n + 1)
+    exact_mod_cast GlobalTheory.AlmostEt.valuation_natCast_le_one v (n + 1)
 
 theorem natCast_eq_one_of_coprime :
     ∀ (L : Type) [Field L] (v : Valuation L ℝ≥0) (p l : ℕ), v (p : L) < 1 → Nat.Coprime l p → v (l : L) = 1 := by
   intro L _ v p l hp hlp
-  refine le_antisymm (valuation_nnreal_natCast_le_one v l) ?_
-  by_contra hlt
-  push_neg at hlt
+  refine le_antisymm (GlobalTheory.AlmostEt.valuation_natCast_le_one v l) ?_
+  by_contra! hlt
   have hb : ((Nat.gcd l p : ℕ) : ℤ) = (l : ℤ) * Nat.gcdA l p + (p : ℤ) * Nat.gcdB l p := Nat.gcd_eq_gcd_ab l p
   rw [hlp, Nat.cast_one] at hb
   have hL : (1 : L) = (l : L) * (Nat.gcdA l p : L) + (p : L) * (Nat.gcdB l p : L) := by
@@ -928,8 +863,7 @@ theorem moves_top_of_coprime_order : ∀ (L : Type) [Field L] (v : Valuation L �
     _root_.GlobalTheory.AlmostEt.klc_scale L v p hp F hF hp0 hp1 r hr (σ • y - y) (sub_ne_zero.mpr hy)
   set x := (σ • y - y) * d ^ p with hxdef
   refine ⟨x, Subfield.mem_top x, hx1, ?_⟩
-  by_contra hle
-  push_neg at hle
+  by_contra! hle
   have hfix : ∀ j : ℕ, (σ ^ j) • d = d := by
     intro j
     induction j with
@@ -1002,8 +936,7 @@ theorem moves_of_ne_one : ∀ (L : Type) [Field L] (v : Valuation L ℝ≥0) (p 
     have hl : ((τ : G) ^ (p ^ k)) ^ (n / p ^ k) = 1 := by
       rw [← pow_mul, Nat.mul_div_cancel' (Nat.ordProj_dvd n p), hn, pow_orderOf_eq_one]
     obtain ⟨y, hy⟩ : ∃ y : L, ((τ : G) ^ (p ^ k)) • y ≠ y := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact hne' (eq_of_smul_eq_smul (α := L) (fun y => by rw [h y, one_smul]))
     exact (hNmem _).1 hτ' (_root_.GlobalTheory.AlmostEt.moves_top_of_coprime_order L v p hp (Fix L N) hF hp0 hp1 G hinv _ (hfixN _ hτ') _ hcop hl ⟨y, hy⟩)
   haveI : Nontrivial N := ⟨⟨⟨σ, hσN⟩, 1, fun h => hσ (congrArg Subtype.val h)⟩⟩

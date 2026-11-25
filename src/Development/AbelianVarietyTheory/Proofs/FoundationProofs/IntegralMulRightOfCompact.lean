@@ -196,7 +196,7 @@ theorem integral_eq_sum_ker [Fintype Q] (hF : Integrable F μ) (h0 : ∀ g ∉ K
     · have : ∀ q, g ∈ (((Function.surjInv hr q : K) : G)⁻¹ * ·) ⁻¹' kerSet r ↔ q = r ⟨g, hg⟩ := fun q => by
         refine (coe_mem_kerSet (r := r) (k := (Function.surjInv hr q)⁻¹ * ⟨g, hg⟩)).trans ?_
         rw [map_mul, map_inv, Function.surjInv_eq hr, inv_mul_eq_one]
-      simp only [indicator_apply, this, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      simp only [indicator_apply, this, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     · simp [indicator_apply, h0 g hg]
   rw [integral_congr_ae (.of_forall e), integral_finsetSum _ fun q _ => hF.indicator (hm.preimage (by fun_prop))]
   refine Finset.sum_congr rfl fun q _ => ?_

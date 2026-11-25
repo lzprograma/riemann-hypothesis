@@ -1,54 +1,6 @@
 module
 
 public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.Statements
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.NumberTheory.NumberField.ProductFormula
 
 @[expose] public section
@@ -177,17 +129,8 @@ theorem finite_support_blockFin (y : Cone n K) (k : ι) (hy : y k ≠ 0) :
 
 theorem sum_log_places_eq_zero {t : K} (ht : t ≠ 0) :
     (∑ᶠ v : FinitePlace K, Real.log (v t)) + ∑ σ : K →+* ℂ, Real.log ‖σ t‖ = 0 := by
-  have hfin : (Function.mulSupport fun w : FinitePlace K ↦ w t).Finite :=
-    FinitePlace.hasFiniteMulSupport ht
-  have hprod := FinitePlace.prod_eq_inv_abs_norm ht
-  rw [finprod_eq_prod_of_mulSupport_subset (s := hfin.toFinset) _
-    (fun v hv ↦ Finset.mem_coe.mpr (hfin.mem_toFinset.mpr hv))] at hprod
-  have hsupp : (Function.support fun v : FinitePlace K ↦ Real.log (v t)) ⊆ hfin.toFinset := by
-    intro v hv
-    refine Finset.mem_coe.mpr (hfin.mem_toFinset.mpr fun h ↦ hv ?_)
-    simp only [h, Real.log_one]
-  rw [finsum_eq_sum_of_support_subset _ hsupp,
-    ← Real.log_prod (fun v _ ↦ (FinitePlace.pos_iff.mpr ht).ne'), hprod]
+  rw [← Real.log_finprod (f := fun v : FinitePlace K ↦ v t) fun _ ↦ FinitePlace.pos_iff.mpr ht,
+    FinitePlace.prod_eq_inv_abs_norm ht]
   have h1 : (((Algebra.norm ℚ t : ℚ) : ℂ)) = ∏ σ : K →+* ℂ, σ t := by
     have := Algebra.norm_eq_prod_embeddings ℚ ℂ t
     rw [eq_ratCast] at this

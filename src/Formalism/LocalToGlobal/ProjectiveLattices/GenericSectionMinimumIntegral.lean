@@ -5,17 +5,6 @@ public import ReciprocityTheory.SemistableReduction.ComapInclusionIsLocalHom
 public import ReciprocityTheory.SemistableReduction.AlgAll
 public import Formalism.LocalToGlobal.ProjectiveLattices.SumT0MulRatioEqOne
 public import Formalism.LocalToGlobal.ProjectiveLattices.TieInst
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.Valuation.LocalSubring
-import Mathlib.Tactic.TypeStar
-import Mathlib.RingTheory.MvPolynomial
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.ProjectiveLattices.TotalDegreePderivLt, Formalism.LocalToGlobal.ProjectiveLattices.GenericSectionMinimumIntegral
@@ -24,8 +13,6 @@ import Mathlib.RingTheory.MvPolynomial
 -- clump-header: {"m": "Formalism.LocalToGlobal.ProjectiveLattices.TotalDegreePderivLt", "h": "module\n\npublic import Formalism.LocalToGlobal.ProjectiveLattices.PowMapMemOfPowMulMem\npublic import ReciprocityTheory.SemistableReduction.ComapInclusionIsLocalHom\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Henselian\nimport Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic\nimport Mathlib.RingTheory.PiTensorProduct\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\npublic import ReciprocityTheory.SemistableReduction.AlgAll\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -84,7 +71,7 @@ theorem der_aeval {δ : F → F} (h : IsDer δ) {E : Type} [CommRing E] [Algebra
       · simp [MvPolynomial.pderiv_X, hi, Ne.symm hi]
     simp only [map_mul, MvPolynomial.aeval_X, h.mul, hp, MvPolynomial.pderiv_mul, map_add (f := _), hsingle,
       add_mul, Finset.sum_add_distrib, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rw [Finset.mul_sum, add_comm]
     congr 1
     exact Finset.sum_congr rfl fun i _ => by ring
@@ -132,8 +119,7 @@ theorem algIndep_of_der {E : Type} [Field E] [CharZero E] [Algebra E F] {N : ℕ
       intro s hs
       by_contra hpos
       obtain ⟨l, hl⟩ : ∃ l, s l ≠ 0 := by
-        by_contra hall
-        push_neg at hall
+        by_contra! hall
         have h0 : s = 0 := Finsupp.ext fun a => by simp [hall a]
         simp [h0] at hpos
       have hs' : s - Finsupp.single l 1 + Finsupp.single l 1 = s := by
@@ -263,7 +249,7 @@ theorem gauss_direct {F K : Type} [Field F] [Field K] [CharZero K] [Algebra K F]
     · simpa using this
     · rw [MvPolynomial.coeff_X']
       split_ifs <;> simp
-    · rw [MvPolynomial.coeff_X', if_pos rfl]
+    · rw [MvPolynomial.coeff_X', ite_eq_left rfl]
       simp
   have hTV : ∀ q, T q ∈ V := fun q => (V.valuation_le_one_iff _).1 (hT1 q).le
 
@@ -425,7 +411,7 @@ theorem gauss_direct {F K : Type} [Field F] [Field K] [CharZero K] [Algebra K F]
     simp only [Lp, MvPolynomial.coeff_sum, MvPolynomial.coeff_C_mul, MvPolynomial.coeff_X',
       MvPolynomial.coeff_zero] at this
     rw [Finset.sum_eq_single j0] at this
-    · rw [if_pos rfl, mul_one] at this
+    · rw [ite_eq_left rfl, mul_one] at this
       have h1' : abar j0 = 1 := by
         show residue (V.comap (algebraMap E F)) ⟨⟨a j0, hmema j0⟩, haW j0⟩ = 1
         have : (⟨⟨a j0, hmema j0⟩, haW j0⟩ : ↥(V.comap (algebraMap E F))) = 1 := Subtype.ext (Subtype.ext ha0)
@@ -433,7 +419,7 @@ theorem gauss_direct {F K : Type} [Field F] [Field K] [CharZero K] [Algebra K F]
       rw [h1'] at this
       exact one_ne_zero this
     · intro b _ hb
-      rw [if_neg, mul_zero]
+      rw [ite_eq_right, mul_zero]
       intro hs
       exact hb ((Finsupp.single_left_inj one_ne_zero).mp hs)
     · simp
@@ -479,8 +465,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace Formalism.L2.Pj.GenericSectionMinimum
@@ -494,10 +478,10 @@ theorem isIntegral_of_quot {R A : Type*} [CommRing R] [CommRing A] [Algebra R A]
   let q : Ideal A → Polynomial R := fun m => if hm : m.IsMaximal then Classical.choose (h m hm) else 1
   have hq : ∀ m, (q m).Monic := fun m => by
     by_cases hm : m.IsMaximal
-    · simp only [q, dif_pos hm]; exact (Classical.choose_spec (h m hm)).1
-    · simp only [q, dif_neg hm]; exact Polynomial.monic_one
+    · simp only [q, dite_eq_left hm]; exact (Classical.choose_spec (h m hm)).1
+    · simp only [q, dite_eq_right hm]; exact Polynomial.monic_one
   have hqm : ∀ m, m.IsMaximal → Polynomial.aeval x (q m) ∈ m := fun m hm => by
-    have hqe : q m = Classical.choose (h m hm) := dif_pos hm
+    have hqe : q m = Classical.choose (h m hm) := dite_eq_left hm
     set p := Classical.choose (h m hm) with hp
     have e : Polynomial.eval₂ (algebraMap R (A ⧸ m)) (Ideal.Quotient.mk m x) p = 0 :=
       (Classical.choose_spec (h m hm)).2
@@ -686,11 +670,11 @@ theorem isIntegral_xr (hfd : FiniteDimensional (Kp X la N) (OsK X la w)) (k : Fi
     rw [hδK, dK_Tv X la N (0, l) (0, k)]
     by_cases hk : k = l
     · subst hk; simp
-    · rw [if_neg (fun h => hk (Prod.mk.inj h).2), if_neg hk, map_zero]
+    · rw [ite_eq_right (fun h => hk (Prod.mk.inj h).2), ite_eq_right hk, map_zero]
   have hδs : ∀ l (i : Fin (WeightFamilies.dimY D j)) k, δ l (T (i.succ, k)) = 0 := by
     intro l i k
     show δ l (algebraMap (Kp X la N) (OsK X la w ⧸ m) (@algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N (i.succ, k)))) = 0
-    rw [hδK, dK_Tv X la N (0, l) (i.succ, k), if_neg (fun h => Fin.succ_ne_zero i (Prod.mk.inj h).1), map_zero]
+    rw [hδK, dK_Tv X la N (0, l) (i.succ, k), ite_eq_right (fun h => Fin.succ_ne_zero i (Prod.mk.inj h).1), map_zero]
   have hδKl : ∀ l (c : X.Kl la), δ l (algebraMap (X.Kl la) (OsK X la w ⧸ m) c) = 0 := by
     intro l c
     show δ l (algebraMap (Kp X la N) (OsK X la w ⧸ m) (algebraMap (X.Kl la) (Kp X la N) c)) = 0

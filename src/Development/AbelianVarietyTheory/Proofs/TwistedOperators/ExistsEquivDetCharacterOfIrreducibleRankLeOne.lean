@@ -163,8 +163,7 @@ private theorem exists_eq_smul_one_of_intertwining {G V : Type} [Group G] [AddCo
     {σ : Representation ℂ G V} (hi : σ.IsIrreducible) {S : Set V} (hS : S.Countable)
     (hspan : Submodule.span ℂ S = ⊤) {v : V} (hv : v ≠ 0) (T : Module.End ℂ V)
     (hT : ∀ h x, T (σ h x) = σ h (T x)) : ∃ a : ℂ, T = a • (1 : Module.End ℂ V) := by
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   refine false_of_forall_sub_smul_bijective hS hspan hv T fun a => ?_
   have hU : ∀ h x, (T - a • (1 : Module.End ℂ V)) (σ h x) = σ h ((T - a • (1 : Module.End ℂ V)) x) := by
     intro h x
@@ -206,8 +205,7 @@ theorem exists_equiv_detRep (k : Type) [Field k] [ValuativeRel k] [TopologicalSp
       _ = h * g := by rw [scalar_det_of_subsingleton, scalar_det_of_subsingleton]
 
   obtain ⟨v, hv⟩ : ∃ v : V, v ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     haveI : Subsingleton V := ⟨fun x y => by rw [hcon x, hcon y]⟩
     apply (bot_ne_top : (⊥ : Subrepresentation σ) ≠ ⊤)
     apply Subrepresentation.toSubmodule_injective

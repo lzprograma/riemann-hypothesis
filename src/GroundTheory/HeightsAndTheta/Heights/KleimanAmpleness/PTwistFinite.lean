@@ -521,7 +521,7 @@ theorem mem_range_readChartH0 (i0 : Fin (N + 1)) (hi0 : x i0 ≠ 0) (t : Amb x �
       apply locL_injective x η S n0 d0 g0 J.1 hJ
       change locL x η S n0 d0 g0 J.1 hJ (locRes h (v I)) = locL x η S n0 d0 g0 J.1 hJ (v J)
       rw [locL_locRes]
-      simp only [v, dif_pos hI, dif_pos hJ]
+      simp only [v, dite_eq_left hI, dite_eq_left hJ]
       rw [(ht I hI).choose_spec.2, (ht J hJ).choose_spec.2]
     · push Not at hJ
       obtain ⟨i, hi, hx⟩ := hJ
@@ -532,12 +532,12 @@ theorem mem_range_readChartH0 (i0 : Fin (N + 1)) (hi0 : x i0 ≠ 0) (t : Amb x �
         locResS 0 := by
     refine ⟨Cech.d_zero_of_compat v hv, fun I _ => ?_⟩
     by_cases hI : ∀ i ∈ I.1.1, x i ≠ 0
-    · simp only [v, dif_pos hI]; exact (ht I.1 hI).choose_spec.1
-    · simp only [v, dif_neg hI]; exact zero_mem _
+    · simp only [v, dite_eq_left hI]; exact (ht I.1 hI).choose_spec.1
+    · simp only [v, dite_eq_right hI]; exact zero_mem _
   refine ⟨Submodule.Quotient.mk ⟨_, hcoc⟩, ?_⟩
   change evalIdx x η S n0 d0 g0 i0 hi0 ⟨_, hcoc⟩ = t
   change locL x η S n0 d0 g0 (idx0 i0).1.1 (mem_chartCell_ne_zero x hi0) (v (idx0 i0).1) = t
-  simp only [v, dif_pos (mem_chartCell_ne_zero x hi0)]
+  simp only [v, dite_eq_left (mem_chartCell_ne_zero x hi0)]
   exact (ht _ (mem_chartCell_ne_zero x hi0)).choose_spec.2
 
 end TwistFin
@@ -763,8 +763,8 @@ theorem coeff_psi_mul_single (c : Sy S r) (b' b : ℕ) (s' : Ω) :
   rw [psi_of_isHomogeneous η S (homogeneousComponent_isHomogeneous d c), single_mul_single, coeff_single,
     Finsupp.single_apply]
   by_cases hdb : d + b' = b
-  · rw [if_pos hdb, if_pos (by ext <;> simp; omega)]
-  · rw [if_neg hdb, if_neg (by intro h; apply hdb; have := congrArg Prod.snd h; simp at this; omega)]
+  · rw [ite_eq_left hdb, ite_eq_left (by ext <;> simp; omega)]
+  · rw [ite_eq_right hdb, ite_eq_right (by intro h; apply hdb; have := congrArg Prod.snd h; simp at this; omega)]
 
 end TwistFin
 

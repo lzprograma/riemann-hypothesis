@@ -73,8 +73,8 @@ theorem contDiff_detGram (N : ℕ) (hd : Fin N → ℝ) (m : ℕ) (hm : m ≤ N)
   have hZ : ∀ a b, ContDiff ℝ 2 (fun z : Pairs N → ℂ => zMat N z a b) := by
     intro a b
     by_cases h : b < a
-    · simp only [zMat_apply, dif_pos h]; exact contDiff_apply ℝ (fun _ => ℂ) _
-    · simp only [zMat_apply, dif_neg h]; exact contDiff_const
+    · simp only [zMat_apply, dite_eq_left h]; exact contDiff_apply ℝ (fun _ => ℂ) _
+    · simp only [zMat_apply, dite_eq_right h]; exact contDiff_const
   have hP : ∀ k a b, ContDiff ℝ 2 (fun z : Pairs N → ℂ => (zMat N z ^ k) a b) := by
     intro k
     induction k with
@@ -152,10 +152,10 @@ theorem bracket_eq (N : ℕ) (hd : Fin N → ℝ) (m : ℕ) (hm : m ≤ N) (v : 
       ∑ k : Fin N, if m ≤ k.val then hd k * ‖zMat N v k i‖ ^ 2 else 0), sW]
     refine Finset.sum_congr rfl fun i _ => ?_
     by_cases hi : i.val < m
-    · rw [if_pos hi, Finset.mul_sum]
+    · rw [ite_eq_left hi, Finset.mul_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       by_cases hk : m ≤ k.val
-      · simp only [hi, hk, and_self, if_true]; ring
+      · simp only [hi, hk, and_self, ite_true]; ring
       · simp [hk]
     · simp [hi]
   have hC := congrArg (fun x : ℝ => (x : ℂ)) hR
@@ -178,13 +178,13 @@ theorem sW_pairs (N : ℕ) (hd : Fin N → ℝ) (m : ℕ) (w : Pairs N → ℂ) 
       by_contra hlt
       apply hq
       simp only [F]
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨h1, h2⟩
       exact hlt (Fin.lt_iff_val_lt_val.2 (by omega))
     _ = ∑ p : Pairs N, F p.1 := Finset.sum_subtype _ (by simp) F
     _ = _ := by
       refine Finset.sum_congr rfl fun p _ => ?_
-      simp only [F, zMat_apply, dif_pos p.2]
+      simp only [F, zMat_apply, dite_eq_left p.2]
 
 end HomDensHelp
 

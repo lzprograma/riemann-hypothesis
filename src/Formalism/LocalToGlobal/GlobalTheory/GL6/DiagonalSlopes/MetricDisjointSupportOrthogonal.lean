@@ -41,8 +41,8 @@ theorem polynomial_rep_of_rational_form (Tf : Forms0 D u) (x : ((D.fm u).lat 0).
   refine ⟨fun c => if (D.fm u).emb 0 x c = 0 then 0 else Q c, fun c h => by simp [h], fun c z => ?_⟩
   by_cases h : (D.fm u).emb 0 x c = 0
   · rw [h]
-    simp only [h, if_true, map_zero, Pi.zero_apply]
-  · simp only [h, if_false, hQ]
+    simp only [h, ite_true, map_zero, Pi.zero_apply]
+  · simp only [h, ite_false, hQ]
     exact hPe c z
 
 theorem norm_form_zero {n : ℕ} (lam : D.what₂.Tau → DomWeight n) : nfAll lam 0 0 = 0 := by

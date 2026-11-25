@@ -22,19 +22,13 @@ namespace DvrConeDimTrdeg
 
 attribute [local instance] MvPolynomial.algebraMvPolynomial
 
-theorem proof : Statement := by
-  intro O _ _ _ K _ _ ι _ P hP hPC
+theorem ringKrullDim_genFib_eq_trdeg {O : Type} [CommRing O] [IsDomain O]
+    {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} [∀ k, Fintype (ι k)]
+    {P : Ideal (MRing ι O)} (hPp : P.IsPrime) (hPC : P.comap (C : O →+* MRing ι O) = ⊥) :
+    ringKrullDim (MRing ι (FractionRing O) ⧸ genFib P) =
+      (Algebra.trdeg O (MRing ι O ⧸ P)).toENat := by
   classical
   let F := FractionRing O
-  have hPp : P.IsPrime := hP.isPrime
-  have hG : (genFib P).IsPrime := (GenericFibProps.full.{0} O K ι P hP hPC).1
-  have hdim : ringKrullDim (MRing ι O ⧸ P) = ringKrullDim (MRing ι F ⧸ genFib P) + 1 :=
-    le_antisymm (GenericDimGe.proof.{0} O K ι P hPp hPC) (GenericDimBound.full.{0} O K ι P hP hPC)
-
-  have hB : ringKrullDim (MRing ι F ⧸ genFib P) =
-      (Algebra.trdeg F (MRing ι F ⧸ genFib P)).toENat :=
-    GroundTheory.Arith.Abelian.Jacobian.ringKrullDim_eq_trdeg F
-
   let M : Submonoid (MRing ι O) := (nonZeroDivisors O).map (C : O →+* MRing ι O)
   have : IsLocalization M (MRing ι F) := MvPolynomial.isLocalization (nonZeroDivisors O) F
   have hdisj : Disjoint (M : Set (MRing ι O)) (P : Set (MRing ι O)) := by
@@ -43,6 +37,11 @@ theorem proof : Statement := by
     have : a ∈ P.comap (C : O →+* MRing ι O) := hmem
     rw [hPC] at this
     exact nonZeroDivisors.ne_zero ha ((Submodule.mem_bot _).1 this)
+  have hG : (genFib P).IsPrime :=
+    IsLocalization.isPrime_of_isPrime_disjoint M (MRing ι F) P hPp hdisj
+  have hB : ringKrullDim (MRing ι F ⧸ genFib P) =
+      (Algebra.trdeg F (MRing ι F ⧸ genFib P)).toENat :=
+    GroundTheory.Arith.Abelian.Jacobian.ringKrullDim_eq_trdeg F
   have hcomap : (genFib P).comap (algebraMap (MRing ι O) (MRing ι F)) = P :=
     IsLocalization.under_map_of_isPrime_disjoint M (MRing ι F) hPp hdisj
   let φ : (MRing ι O ⧸ P) →+* (MRing ι F ⧸ genFib P) :=
@@ -89,7 +88,13 @@ theorem proof : Statement := by
   have h2 := trdeg_add_eq O (MRing ι O ⧸ P) (A := MRing ι F ⧸ genFib P)
   rw [trdeg_eq_zero (R := O) (A := F), zero_add] at h1
   rw [trdeg_eq_zero (R := MRing ι O ⧸ P) (A := MRing ι F ⧸ genFib P), add_zero] at h2
-  rw [hdim, hB, h1, ← h2]
+  rw [hB, h1, ← h2]
+
+theorem proof : Statement := by
+  intro O _ _ _ K _ _ ι _ P hP hPC
+  have hdim : ringKrullDim (MRing ι O ⧸ P) = ringKrullDim (MRing ι (FractionRing O) ⧸ genFib P) + 1 :=
+    le_antisymm (GenericDimGe.proof.{0} O K ι P hP.isPrime hPC) (GenericDimBound.full.{0} O K ι P hP hPC)
+  rw [hdim, ringKrullDim_genFib_eq_trdeg hP.isPrime hPC]
   rfl
 
 end DvrConeDimTrdeg

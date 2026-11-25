@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergOperatorFPreservesIsThetaFunction
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
 public import Formalism.LocalToGlobal.IndefiniteReal.DatumF
 import Mathlib.Algebra.Order.Floor.Extended
@@ -78,26 +79,8 @@ theorem topRing : IsTopologicalRing (AEF F E) := by
   haveI := modTop (F := F) (E := E)
   exact IsModuleTopology.isTopologicalRing (AF F) (AEF F E)
 
-def sigLin (σ : E →ₐ[F] E) : AEF F E →ₗ[AF F] AEF F E :=
-  TensorProduct.AlgebraTensorModule.map (LinearMap.id : AF F →ₗ[AF F] AF F) σ.toLinearMap
-
 theorem continuous_cAF (σ : E →ₐ[F] E) : Continuous (cAF σ) := by
-  haveI := finiteFE (F := F) (E := E)
-  haveI := modTop (F := F) (E := E)
-  haveI := topRing (F := F) (E := E)
-  have h := IsModuleTopology.continuous_of_linearMap (sigLin σ)
-  have e : (sigLin σ : AEF F E → AEF F E) = cAF σ := by
-    funext x
-    induction x using TensorProduct.induction_on with
-    | zero => simp
-    | tmul a b =>
-      show (TensorProduct.AlgebraTensorModule.map (LinearMap.id : AF F →ₗ[AF F] AF F) σ.toLinearMap)
-        (a ⊗ₜ[F] b) = Algebra.TensorProduct.map (AlgHom.id F (AF F)) σ (a ⊗ₜ[F] b)
-      rw [TensorProduct.AlgebraTensorModule.map_tmul, Algebra.TensorProduct.map_tmul]
-      rfl
-    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
-  rw [e] at h
-  exact h
+  apply _root_.GlobalTheory.HeisKeepF.continuous_cAF <;> assumption
 
 theorem continuous_symplOHF (σ : E →ₐ[F] E) {nS nT : ℕ} (JS : Matrix (Fin nS) (Fin nS) E)
     (JT : Matrix (Fin nT) (Fin nT) E) (ξ : E) {X : Type} [TopologicalSpace X] {x y : X → WOF F E nS nT}

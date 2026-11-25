@@ -4,41 +4,6 @@ public import Formalism.SharpRestriction.Divisibility.WeightAlgebra
 public import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
 public import Formalism.SharpRestriction.LevelLetterCocycles.LocsCoverTw
 public import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -110,27 +75,6 @@ namespace GeoX
 variable {D : D7} {r j p : ℕ} {Lc : ModuliIntegralCharts.Loc D r j p} (G : GeoX Lc)
 
 
-open Classical in
-def typeDeg {y : Lc.Pt Lc.Xm} {La : Lc.Unim} (e : G.Lt y La →₀ ℕ) (σ : ModuliIntegralCharts.PsiT D × Bool) : ℕ :=
-  ∑ l ∈ e.support, if G.ltype y La l = σ then e l else 0
-
-def HomT {y : Lc.Pt Lc.Xm} {La : Lc.Unim} (P : MvPolynomial (G.Lt y La) (Lc.fld y).C) : Prop :=
-  ∀ e ∈ P.support, ∀ e' ∈ P.support, ∀ σ, G.typeDeg e σ = G.typeDeg e' σ
-
-def IntP {y : Lc.Pt Lc.Xm} {La : Lc.Unim} (P : MvPolynomial (G.Lt y La) (Lc.fld y).C) : Prop :=
-  ∀ e, ‖P.coeff e‖ ≤ 1
-
-def nnOf {y : Lc.Pt Lc.Xm} {La : Lc.Unim} (x : D.host.E) (e : G.Lt y La →₀ ℕ) : (Lc.fld y).C :=
-  e.prod fun l k => G.sgE y (G.ltype y La l) x ^ k
-
-def IsV {y : Lc.Pt Lc.Xm} {La : Lc.Unim} (x : D.host.E) (l : G.Lt y La) : Prop :=
-  ‖G.sgE y (G.ltype y La l) x‖ < 1
-
-
-open Classical in
-def subV {y : Lc.Pt Lc.Xm} {La : Lc.Unim} (x : D.host.E) (yy : G.Lt y La → (Lc.fld y).C)
-    (P : MvPolynomial (G.Lt y La) (Lc.fld y).C) : MvPolynomial (G.Lt y La) (Lc.fld y).C :=
-  MvPolynomial.bind₁ (fun l => if G.IsV x l then MvPolynomial.C (yy l) else MvPolynomial.X l) P
 
 def INT : Prop :=
   ∀ (y : Lc.Pt Lc.Xm) (La : Lc.Unim), G.nrm y La 1 (Lc.vth y La 1) ≤ 1 ∧
@@ -138,19 +82,6 @@ def INT : Prop :=
     (∀ n (γ : Lc.Th y La n) (s : Lc.Sn y La n), (∃ k : ℕ, 0 < k ∧ γ ^ k = 1) →
       G.nrm y La n (Lc.act y La n γ s) = G.nrm y La n s) ∧
     (∀ n (s : Lc.Sn y La n), G.nrm y La n s ≤ 1 → ∀ DF, Lc.jet y La n DF s ∈ Lc.intJet y La n DF)
-
-def LemA (x : D.host.E) : Prop :=
-  ∀ (y : Lc.Pt Lc.Xm) (La : Lc.Unim) (n' : ℕ), Nat.Coprime n' p → ∀ s : Lc.Sn y La n', G.nrm y La n' s ≤ 1 →
-    ∀ γ : Lc.Th y La (p * n'), (∃ k : ℕ, 0 < k ∧ γ ^ k = 1) →
-      G.inQQ y La (p * n') (Multiplicative.toAdd (Lc.ovr y La (p * n') γ)) →
-    (∀ DF, Lc.jet y La (p * n') DF (Lc.act y La (p * n') γ (G.pull y La n' s)) ∈ Lc.intJet y La (p * n') DF) ∧
-    ∀ P : MvPolynomial (G.Lt y La) (Lc.fld y).C, G.IntP P → G.harm y La P → G.HomT P → P.totalDegree + 1 < p →
-      ‖G.ev y La (p * n') P (Lc.act y La (p * n') γ (G.pull y La n' s))‖ ≤ 1 ∧
-      (∀ e ∈ P.support, G.ev y La (p * n') P (Lc.act y La (p * n') γ (G.pull y La n' s)) =
-        G.nnOf x e * G.evT y La n' γ s P) ∧
-      (∀ yy, G.isHT y La (p * n') (Multiplicative.toAdd (Lc.ovr y La (p * n') γ)) yy →
-        ‖G.ev y La (p * n') P (Lc.act y La (p * n') γ (G.pull y La n' s)) -
-          G.ev y La (p * n') (G.subV x yy P) (Lc.act y La (p * n') γ (G.pull y La n' s))‖ ≤ (p : ℝ)⁻¹)
 
 end GeoX
 
@@ -166,8 +97,6 @@ def PhiB {D : D7} {r j p : ℕ} (Lc : ModuliIntegralCharts.Loc D r j p) (CRd : �
   ∀ (Z : Lc.Mdl) (y : Lc.Pt Z), 0 ≤ Lc.phiCy y ∧ (Lc.phiCy y = 0 ↔ Lc.good y) ∧
     ∀ (a : Lc.Ylat y) (n : ℕ), 0 < n → ∃ z : Lc.Ylat y,
       Lc.be y (a - n • z) (a - n • z) / 2 ≤ (n : ℝ) ^ 2 * ((Lc.dP y : ℝ) * CdOf D CRd (Lc.dP y) * Lc.phiCy y)
-
-def pib {D : D7} (EX : ErrX D) (i : Fin 2) : D.host.E := D.host.conj (EX.piG i : D.host.E)
 
 def plS {D : D7} (nch : NChoice D) (w : Pl D) (b : Bool) : Pl D :=
   if b = nch.sd w then w else D.what₂.places.conj w
@@ -395,30 +324,6 @@ section Conclusion₂
 
 variable (D : D7) (L : SizeData₂ D) (EX : ErrX D) {nch : NChoice D} (X : Loc D nch)
 
-def LemmaOneDefinite : Prop := ∀ N (i : Fin 2) (y : (X.cm N i).Pt (X.cm N i).Xm) (La : (X.cm N i).Unim)
-  (s : (X.cm N i).Sn y La 1), (X.cmx N i).nrm y La 1 s ≤ 1 →
-  ∀ γ : (X.cm N i).Th y La (D.host.g i * 1), (∃ k : ℕ, 0 < k ∧ γ ^ k = 1) →
-    (X.cmx N i).inQQ y La (D.host.g i * 1) (Multiplicative.toAdd ((X.cm N i).ovr y La (D.host.g i * 1) γ)) →
-    ∀ e : (X.cmx N i).Lt y La →₀ ℕ, 2 * e.degree + 2 < D.host.g i →
-      ‖(X.cmx N i).nnOf (pib EX i) e * (X.cmx N i).evT y La 1 γ s (MvPolynomial.monomial e 1)‖ ≤ 1
-
-def L2BoundAlt : Prop := ∀ (i : Fin 2) (n : ℕ) (R : Type) [CommRing R] [IsDomain R] (ζ : R),
-  IsPrimitiveRoot ζ (D.host.g i) →
-  ∀ φ : (Fin D.R.f × Fin n → ℚ_[D.host.g i]) → R,
-    (∀ x, φ x ≠ 0 → ∀ a, ‖x a‖ ≤ 1) →
-    (∀ (x : Fin D.R.f × Fin n → ℚ_[D.host.g i]) (z : Fin D.R.f × Fin n → ℤ_[D.host.g i]),
-      φ (fun a => x a + (D.host.g i : ℚ_[D.host.g i]) * (z a : ℚ_[D.host.g i])) = φ x) →
-    ∃ c : (Fin D.R.f × Fin n → ZMod (D.host.g i)) → R, ∀ x : Fin D.R.f × Fin n → ℚ_[D.host.g i],
-      (D.host.g i : R) ^ (D.R.f * n) * φ x =
-        open Classical in
-        if h : ∀ a, ‖x a‖ ≤ 1 then
-          ∑ y : Fin D.R.f × Fin n → ZMod (D.host.g i),
-            c y * ζ ^ (∑ a, PadicInt.toZMod (⟨x a, h a⟩ : ℤ_[D.host.g i]) * y a).val
-        else 0
-
-def LemmaAGaloisBound : Prop :=
-  (∀ d i, (X.gx d i).LemA ((EX.piG i : 𝓞 D.host.E) : D.host.E)) ∧ ∀ N i, (X.cmx N i).LemA (pib EX i)
-
 def LemmaBWeightBound (CRd : ℝ) : Prop := ∀ (i : Fin 2) j (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) la, X.laOver i la →
   ∀ (wt : WeightFamilies.Wt D j) (n1 n2 : ℕ), X.RangeB CRd i wt n1 n2 →
   ∀ y : (X.W j h1 h2).Pt la, ∃ F ∈ X.WWB j la wt n1 n2,
@@ -430,36 +335,6 @@ def errC : ℝ :=
   (D.R.f : ℝ) * ((D.R.m : ℝ) * (D.R.N D.R.m : ℝ) * ((D.R.N D.R.m : ℝ) + D.R.t) + (D.R.m : ℝ) ^ 3 * L.etaSz)
 
 def Dpi (u : D.what₂.Word) (j : ℕ) : ℝ := ∑ τ : D.what₂.Tau, nuAbs D u j τ
-
-def PropositionCLatticeBound (C1 C2 : ℝ) : Prop :=
-  (∀ (i : Fin 2) w, Over D i w → ∀ u : D.what₂.Word, D.what₂.places.resChar w ≠ (D.mem u).A.T → ∀ μ : D.what₂.Tup,
-    ∀ φ ∈ DV.MramL D u, ∀ F ∈ (D.what₂.Mtilde μ).carrier, ∃ y : D.what₂.LL, D.what₂.embLL y = D.what₂.perCol u μ (D.jN u φ) F ∧
-      (y = 0 ∨ -(∑ j ∈ lifts D, vNN EX i u j w) - C1 * errC D L ≤ vG D w y)) ∧
-  (∀ (i : Fin 2) w, Over D i w → ∀ u : D.what₂.Word, D.what₂.places.resChar w ≠ (D.mem u).A.T → ∀ μ : D.what₂.Tup,
-    ∀ φ ∈ DV.MramL D u, ∀ φ' ∈ DV.MramL D u, ∀ F ∈ (D.what₂.Mtilde μ).carrier, ∀ F' ∈ (D.what₂.Mtilde μ).carrier, ∀ y y' : D.what₂.LL,
-      D.what₂.embLL y = D.what₂.perCol u μ (D.jN u φ) F → D.what₂.embLL y' = D.what₂.perCol u μ (D.jN u φ') F' →
-      y ≠ 0 → y' ≠ 0 →
-      -(∑ j ∈ lifts D, Dpi D u j) - C2 * errC D L ≤ vG D w y + vG D (D.what₂.places.conj w) y')
-
-def JetConsequence (C1 C2 C3 : ℝ) : Prop :=
-  (∀ (i : Fin 2) w, Over D i w → ∀ u : D.what₂.Word, D.what₂.places.resChar w ≠ (D.mem u).A.T → ∀ μ : D.what₂.Tup,
-    ∀ φ ∈ DV.MramL D u, ∀ F ∈ (D.what₂.Mtilde μ).carrier, ∃ y : D.what₂.LL, D.what₂.embLL y = D.what₂.perCol u μ (D.jN u φ) F ∧
-      (y = 0 ∨ -(∑ j ∈ lifts D, vNN EX i u j w) - C1 * errC D L ≤ vG D w y)) ∧
-  (∀ (i : Fin 2) w, Over D i w → ∀ u, ∀ j ∈ lifts D,
-    vNN EX i u j w + vNN EX i u j (D.what₂.places.conj w) = Dpi D u j) ∧
-  (∀ (i : Fin 2) w, Over D i w → ∀ u : D.what₂.Word, D.what₂.places.resChar w ≠ (D.mem u).A.T → ∀ μ : D.what₂.Tup,
-    ∀ φ ∈ DV.MramL D u, ∀ φ' ∈ DV.MramL D u, ∀ F ∈ (D.what₂.Mtilde μ).carrier, ∀ F' ∈ (D.what₂.Mtilde μ).carrier, ∀ y y' : D.what₂.LL,
-      D.what₂.embLL y = D.what₂.perCol u μ (D.jN u φ) F → D.what₂.embLL y' = D.what₂.perCol u μ (D.jN u φ') F' →
-      y ≠ 0 → y' ≠ 0 →
-      -(∑ j ∈ lifts D, Dpi D u j) - C2 * errC D L ≤ vG D w y + vG D (D.what₂.places.conj w) y') ∧
-  (∀ u, ∀ j ∈ lifts D,
-    (∀ τ, (∀ t : D.host.TT, (D.eTau τ : D.R.GG) ≠ D.R.tau1 t) →
-      |nuAbs D u j τ - (D.R.k : ℝ) * wj D j τ| ≤ C3 * ((D.R.k : ℝ) * L.Sc + (D.R.m : ℝ) * D.R.t * L.etaSz)) ∧
-    (∀ τ (t : D.host.TT), (D.eTau τ : D.R.GG) = D.R.tau1 t →
-      |nuAbs D u j τ - ((L.aT t : ℝ) + ((D.R.k : ℝ) - 1) * wj D j τ)| ≤
-        C3 * ((D.R.k : ℝ) * L.Sc + (D.R.m : ℝ) * D.R.t * L.etaSz + L.sc.b' / L.sc.x)) ∧
-    Dpi D u j ≤ (∑ t, (L.aT t : ℝ)) +
-      ∑ τ, ((D.R.k : ℝ) * wj D j τ + C3 * ((D.R.k : ℝ) * L.Sc + (D.R.m : ℝ) * D.R.t * L.etaSz)))
 
 def rhsA (C : ℝ) (r : HeightOneSpectrum (𝓞 X.B.KO) → ℝ) (j : ℕ) (w : Pl D) : ℝ :=
   -((Dpm D j : ℝ)) * D.what₂.D0 + C * ((X.TO : ℝ) + D.R.f * (D.R.nV : ℝ) ^ 2) * D.what₂.D0 +
@@ -480,22 +355,7 @@ def ConjugationNormInvariance (C : ℝ) : Prop := ∃ r : ℕ → HeightOneSpect
         (AjMu D (D.what₂.muTw w) j w : ℝ) ≤
           (D.what₂.places.ramIdx w : ℝ) * (rhsA D X C (r j) j w + (D.what₂.etaJ j w : ℝ) + ε j))
 
-def ThetaAdjointPositiveScalar (C : ℝ) : Prop := DV.KapDef D → ∀ j ∈ lifts D,
-  |(Dpm D j : ℝ) - ∑ τ, ((D.R.k : ℝ) - 1) * wj D j τ| ≤
-    C * D.R.f * ((D.R.k : ℝ) * L.Sc + (D.R.m : ℝ) * L.etaSz + (D.R.k : ℝ) * ((D.R.N D.R.m : ℝ) + D.R.t))
-
-def Conclusion₂ (CRd C1 C2 C3 CA CD : ℝ) : Prop :=
-  LemmaOneDefinite D EX X ∧ L2BoundAlt D ∧ LemmaAGaloisBound D EX X ∧ LemmaBWeightBound D X CRd ∧ PropositionCLatticeBound D L EX C1 C2 ∧ JetConsequence D L EX C1 C2 C3 ∧
-    ConjugationNormInvariance D L X CA ∧ ThetaAdjointPositiveScalar D L CD
-
 end Conclusion₂
-
-section Fam
-
-variable {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
-  (XF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), Loc (Fm.D x i) (Fm.ex x hx i).nch)
-
-end Fam
 
 end Formalism.MainNotions.LiftErrorLocal
 

@@ -3,51 +3,7 @@ module
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BorderMinorRotation.Development
 public import Formalism.PeriodIntegrals.QmRowExp
 public import Formalism.PeriodIntegrals.QmSkip
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.GroupTheory.Perm.Fin
 
 @[expose] public section
@@ -63,9 +19,9 @@ open PI
 theorem val_sA {n : ℕ} (p : Fin (n + 1)) (k : Fin n) :
     (p.succAbove k).val = if k.val < p.val then k.val else k.val + 1 := by
   by_cases h : k.val < p.val
-  · rw [if_pos h, Fin.succAbove_of_castSucc_lt _ _ (by simpa [Fin.lt_def] using h)]
+  · rw [ite_eq_left h, Fin.succAbove_of_castSucc_lt _ _ (by simpa [Fin.lt_def] using h)]
     rfl
-  · rw [if_neg h, Fin.succAbove_of_le_castSucc _ _ (by simpa [Fin.le_def] using not_lt.mp h)]
+  · rw [ite_eq_right h, Fin.succAbove_of_le_castSucc _ _ (by simpa [Fin.le_def] using not_lt.mp h)]
     rfl
 
 theorem cons_comp_finRotate {n t : ℕ} (e : Fin n) (f : Fin t → Fin n) :
@@ -158,40 +114,40 @@ theorem skip_two_succAbove_comp_alt {k : ℕ} (w : Fin (k + 2)) (j : Fin (k + 1)
   rw [val_sA w (j.succAbove i), val_sA j i]
   unfold skip2
   rcases lt_or_ge (j : ℕ) (w : ℕ) with h | h
-  · have hlt : w.succAbove j < w := by rw [Fin.lt_def, hv, if_pos h]; exact h
+  · have hlt : w.succAbove j < w := by rw [Fin.lt_def, hv, ite_eq_left h]; exact h
     rw [min_eq_right hlt.le, max_eq_left hlt.le]
-    rw [if_pos h] at hv
+    rw [ite_eq_left h] at hv
     split_ifs <;> (simp_all; try omega)
-  · have hle : w ≤ w.succAbove j := by rw [Fin.le_def, hv, if_neg (by omega)]; omega
+  · have hle : w ≤ w.succAbove j := by rw [Fin.le_def, hv, ite_eq_right (by omega)]; omega
     rw [min_eq_left hle, max_eq_right hle]
-    rw [if_neg (by omega)] at hv
+    rw [ite_eq_right (by omega)] at hv
     split_ifs <;> (simp_all; try omega)
 
 theorem sign_pair_succAbove_right {k : ℕ} (w : Fin (k + 1)) (j : Fin k) :
     sg2 w (w.succAbove j) = (-1 : ℤ) ^ ((w : ℕ) + (j : ℕ)) := by
   unfold sg2
   rcases lt_or_ge (j : ℕ) (w : ℕ) with h | h
-  · have hv : (w.succAbove j).val = j := by rw [val_sA, if_pos h]
-    rw [if_pos (by rw [hv]; exact h), hv]
-  · have hv : (w.succAbove j).val = j + 1 := by rw [val_sA, if_neg (by omega)]
-    rw [if_neg (by rw [hv]; omega), hv, show (w : ℕ) + (j + 1) + 1 = (w + j) + 2 by ring, pow_add]
+  · have hv : (w.succAbove j).val = j := by rw [val_sA, ite_eq_left h]
+    rw [ite_eq_left (by rw [hv]; exact h), hv]
+  · have hv : (w.succAbove j).val = j + 1 := by rw [val_sA, ite_eq_right (by omega)]
+    rw [ite_eq_right (by rw [hv]; omega), hv, show (w : ℕ) + (j + 1) + 1 = (w + j) + 2 by ring, pow_add]
     norm_num
 
 theorem sign_two_succAbove_left {k : ℕ} (x : Fin (k + 1)) (y : Fin k) :
     sg2 (x.succAbove y) x = -(-1 : ℤ) ^ ((x : ℕ) + (y : ℕ)) := by
   unfold sg2
   rcases lt_or_ge (y : ℕ) (x : ℕ) with h | h
-  · have hv : (x.succAbove y).val = y := by rw [val_sA, if_pos h]
-    rw [if_neg (by rw [hv]; omega), hv, pow_succ, add_comm (y : ℕ)]
+  · have hv : (x.succAbove y).val = y := by rw [val_sA, ite_eq_left h]
+    rw [ite_eq_right (by rw [hv]; omega), hv, pow_succ, add_comm (y : ℕ)]
     ring
-  · have hv : (x.succAbove y).val = y + 1 := by rw [val_sA, if_neg (by omega)]
-    rw [if_pos (by rw [hv]; omega), hv, show (y : ℕ) + 1 + x = (x + y) + 1 by ring, pow_succ]
+  · have hv : (x.succAbove y).val = y + 1 := by rw [val_sA, ite_eq_right (by omega)]
+    rw [ite_eq_left (by rw [hv]; omega), hv, show (y : ℕ) + 1 + x = (x + y) + 1 by ring, pow_succ]
     ring
 
 theorem sum_sA_ite {M : Type*} [AddCommMonoid M] {k : ℕ} (w : Fin (k + 1)) (g : Fin (k + 1) → M) :
     ∑ w' : Fin (k + 1), (if w ≠ w' then g w' else 0) = ∑ j : Fin k, g (w.succAbove j) := by
-  rw [Fin.sum_univ_succAbove _ w, if_neg (not_not.mpr rfl), zero_add]
-  exact Finset.sum_congr rfl fun j _ => if_pos (Fin.succAbove_ne w j).symm
+  rw [Fin.sum_univ_succAbove _ w, ite_eq_right (not_not.mpr rfl), zero_add]
+  exact Finset.sum_congr rfl fun j _ => ite_eq_left (Fin.succAbove_ne w j).symm
 
 theorem triple {M : Type*} [AddCommMonoid M] {k : ℕ} (w : Fin (k + 1))
     (H : Fin (k + 1) → Fin (k + 1) → Fin (k + 1) → M) :
@@ -214,7 +170,7 @@ theorem triple {M : Type*} [AddCommMonoid M] {k : ℕ} (w : Fin (k + 1))
     by_cases h : x = x'
     · subst h
       rfl
-    · rw [if_pos h, if_pos (Ne.symm h)]
+    · rw [ite_eq_left h, ite_eq_left (Ne.symm h)]
   rw [Finset.sum_congr rfl fun x _ => h2 x]
   exact sum_sA_ite x' (fun x => H (w.succAbove j) x x')
 
@@ -245,7 +201,7 @@ private theorem intCast_mul_mul_mul_eq_of_mul_eq {A : Type} [Ring A] (c₁ c₂ 
     (c₁ : A) * (((c₂ : A) * X) * S) = (c₀ : A) * ((a : A) * (X * S)) := by
   rw [mul_assoc (c₂ : A), ← mul_assoc, ← mul_assoc (c₀ : A), ← Int.cast_mul, ← Int.cast_mul, h]
 
-theorem bfCross_of (hRow : PI.QmRowExp) (_hSkip : PI.QmSkip) : BFCross := by
+theorem bfCross_of (hRow : PI.QmRowExp) : BFCross := by
   intro A _ _ n k E e es v hG hB u w
   obtain ⟨hF, hR⟩ := hRow
   obtain ⟨_, _, hve, hves⟩ := hB
@@ -254,7 +210,7 @@ theorem bfCross_of (hRow : PI.QmRowExp) (_hSkip : PI.QmSkip) : BFCross := by
     rw [Fin.sum_univ_zero]
     symm
     refine mul_eq_zero_of_right _ (Finset.sum_eq_zero fun w' _ => Finset.sum_eq_zero fun x _ =>
-      Finset.sum_eq_zero fun x' _ => if_neg fun h => h.1 (Fin.ext ?_))
+      Finset.sum_eq_zero fun x' _ => ite_eq_right fun h => h.1 (Fin.ext ?_))
     have := w.isLt
     have := w'.isLt
     omega

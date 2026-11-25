@@ -24,8 +24,6 @@ namespace Formalism.L2.SG.Pf.AlTieFD
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.LocVol Formalism.L2.SG.TypedSets
   Formalism.L2.SG.Pf.AlTie
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : HidaSetting D) (u u' : D.what₂.Word)
 
 def DiscriminantAbsEq : Prop := |(NumberField.discr X.B.I.F : ℝ)| = |(NumberField.discr D.host.F : ℝ)|
@@ -80,7 +78,7 @@ theorem local_a_factor_symmetric : ∀ p : TypX X,
     aP (E := X.B.I.E) p.1 D.R.k X.B.I.n (Tw u') = aP (E := X.B.I.E) p.1 D.R.k X.B.I.n (Tw u) := by
   intro p
   unfold aP Tw
-  rw [if_neg (T_not_mem X u' p), if_neg (T_not_mem X u p)]
+  rw [ite_eq_right (T_not_mem X u' p), ite_eq_right (T_not_mem X u p)]
 
 theorem fieldDict_of (h3 : EulerProductEta X) (h4 : LocalFactorProduct X u) (h5 : VInvEqHalfRootDiscriminant (D := D)) (h6 : QuadraticInfinitePlaces (D := D)) (h8 : DifferentGeneratorUnit X)
     (h10 : TypedGeneratorProduct X) : Formalism.L2.SG.Pf.NcVal.FieldDict X u u' := by
@@ -194,11 +192,11 @@ theorem typed_generator_product : TypedGeneratorProduct X := by
     rw [← Set.ncard_eq_toFinset_card _ hA1, card_over X 1, finrank_eq X]
   have hg0v : ∀ v ∈ hA0.toFinset, (gAt X v : ℝ) = (D.host.g 0 : ℝ) := by
     intro v hv
-    rw [gAt, if_pos (show ((D.host.g 0 : ℕ) : 𝓞 X.B.I.F) ∈ v.asIdeal from hA0.mem_toFinset.1 hv)]
+    rw [gAt, ite_eq_left (show ((D.host.g 0 : ℕ) : 𝓞 X.B.I.F) ∈ v.asIdeal from hA0.mem_toFinset.1 hv)]
   have hg1v : ∀ v ∈ hA1.toFinset, (gAt X v : ℝ) = (D.host.g 1 : ℝ) := by
     intro v hv
     have h1 : ((D.host.g 1 : ℕ) : 𝓞 X.B.I.F) ∈ v.asIdeal := hA1.mem_toFinset.1 hv
-    rw [gAt, if_neg (fun h0 => not_both X v h0 h1)]
+    rw [gAt, ite_eq_right (fun h0 => not_both X v h0 h1)]
   show ∏ p : ↥(typSet X.B.I.F (D.host.g 0) (D.host.g 1)), (gAt X p.1 : ℝ) = _
   rw [Finset.prod_coe_sort (typSet X.B.I.F (D.host.g 0) (D.host.g 1)) (fun v => (gAt X v : ℝ)), hT,
     Finset.prod_union hdisj, Finset.prod_congr rfl hg0v, Finset.prod_congr rfl hg1v, Finset.prod_const,

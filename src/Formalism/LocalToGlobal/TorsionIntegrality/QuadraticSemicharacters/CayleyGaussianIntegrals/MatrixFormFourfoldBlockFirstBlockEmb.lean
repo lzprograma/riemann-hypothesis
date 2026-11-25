@@ -64,18 +64,18 @@ theorem firstBlockEmb_mem_fourfoldLattice (Λ : AddSubgroup (n → ℂ)) {x : n 
 theorem prod_blockSlice_firstBlockEmb (α : (n → ℂ) → ℂ) (hα0 : α 0 = 1) (x : n → ℂ) :
     ∏ a, α (slice a (emb0 x)) = α x := by
   rw [Finset.prod_eq_single (0 : Fin 4)]
-  · rw [blockSlice_firstBlockEmb, if_pos rfl]
+  · rw [blockSlice_firstBlockEmb, ite_eq_left rfl]
   · intro a _ ha
-    rw [blockSlice_firstBlockEmb, if_neg ha, hα0]
+    rw [blockSlice_firstBlockEmb, ite_eq_right ha, hα0]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
 theorem matrixForm_fourfoldBlock_firstBlockEmb (h : Matrix n n ℂ) (z : Fin 4 × n → ℂ) (x : n → ℂ) :
     matH (blk4 h) z (emb0 x) = matH h (slice 0 z) x := by
   rw [matrixForm_fourfoldBlock, Finset.sum_eq_single (0 : Fin 4)]
-  · rw [blockSlice_firstBlockEmb, if_pos rfl]
+  · rw [blockSlice_firstBlockEmb, ite_eq_left rfl]
   · intro a _ ha
-    rw [blockSlice_firstBlockEmb, if_neg ha, map_zero]
+    rw [blockSlice_firstBlockEmb, ite_eq_right ha, map_zero]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -96,7 +96,7 @@ theorem restrict_mem (h : Matrix n n ℂ) (Λ : AddSubgroup (n → ℂ)) (α : (
   · intro x hx v
     have h1 := hP.2 (emb0 x) (firstBlockEmb_mem_fourfoldLattice Λ hx) (z₁ + emb0 v)
     simp only [opU, prod_blockSlice_firstBlockEmb α hα0, matrixForm_fourfoldBlock_firstBlockEmb, slice_add, hz₁, zero_add] at h1 ⊢
-    rw [blockSlice_firstBlockEmb, if_pos rfl, blockSlice_firstBlockEmb, if_pos rfl, add_assoc, ← map_add (f := _)] at h1
+    rw [blockSlice_firstBlockEmb, ite_eq_left rfl, blockSlice_firstBlockEmb, ite_eq_left rfl, add_assoc, ← map_add (f := _)] at h1
     exact h1
 
 end Blocks
@@ -132,7 +132,7 @@ theorem FourthRoot_of (h4 : Tens4Mem) : FourthRoot := by
     have h1 := congrFun hc (mk4 (fun a => if a = 0 then v else slice 0 z))
     rw [← hθP] at h1
     simp only [Pi.smul_apply, smul_eq_mul, tens4, Fin.prod_univ_four, blockSlice_fourfoldMk] at h1
-    simp only [if_true, Fin.isValue, one_ne_zero, if_false, Fin.reduceEq] at h1
+    simp only [ite_true, Fin.isValue, one_ne_zero, ite_false, Fin.reduceEq] at h1
     have h3 : θ (slice 0 z) * θ (slice 0 z) * θ (slice 0 z) ≠ 0 := mul_ne_zero (mul_ne_zero hw hw) hw
     apply mul_right_cancel₀ h3
     simp only [Pi.smul_apply, smul_eq_mul]
@@ -146,7 +146,7 @@ theorem FourthRoot_of (h4 : Tens4Mem) : FourthRoot := by
       funext p
       by_cases hp : p.1 = 0
       · have : p = (0, p.2) := Prod.ext hp rfl
-        simp only [Pi.add_apply, hz₁def, emb0, LinearMap.coe_mk, AddHom.coe_mk, hp, if_true, slice,
+        simp only [Pi.add_apply, hz₁def, emb0, LinearMap.coe_mk, AddHom.coe_mk, hp, ite_true, slice,
           zero_add]
         rw [← this]
       · simp [hz₁def, emb0, hp]

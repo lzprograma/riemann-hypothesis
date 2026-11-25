@@ -4,43 +4,6 @@ public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.RankDefs
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FamilyFourthBound
 public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreeAlternative
 import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ThresholdLowerBounds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -94,19 +57,14 @@ theorem le_and_half_le_prod_one_sub_exp_neg_of_bounds {a b' k Q Y La N1 A0 m M :
     have e3 : (M * k) * Q ≤ (A0 * N1 * La) * Q := by
       have hAQ : A0 * 24 * Q ≤ (A0 * N1 * La) * Q := by
         simpa [mul_assoc] using mul_le_mul_of_nonneg_right e2 hQ0.le
-      have hAQ0 : 0 ≤ A0 * Q := mul_nonneg hA0pos.le hQ0.le
-      have hMkQ : (M * k) * Q = M * (k * Q) := mul_assoc M k Q
       have h6' : a ≤ 2 * (A0 * Q) := by linarith [show A0 * (2 * Q) = 2 * (A0 * Q) by ring]
-      have hAQ24 : A0 * 24 * Q = 24 * (A0 * Q) := by ring
       linarith
     exact le_of_mul_le_mul_right e3 hQ0
   · have hx : (k - 1) * M / A0 ≤ 1 / 30 := by
       rw [div_le_iff₀ hA0pos]
       have e1 : (k - 1) * M ≤ k * M := mul_le_mul_of_nonneg_right (by linarith) hM0
       have e3 : (k * M) * Q ≤ (1 / 30 * A0) * Q := by
-        have hkm : (k * M) * Q = M * (k * Q) := by ring
         have h6' : a ≤ 2 * (A0 * Q) := by linarith [show A0 * (2 * Q) = 2 * (A0 * Q) by ring]
-        have hrhs : (1 / 30 * A0) * Q = 1 / 30 * (A0 * Q) := by ring
         linarith
       have := le_of_mul_le_mul_right e3 hQ0
       linarith
@@ -146,7 +104,6 @@ theorem Std.half_ratio_le_segment_base_of_std (h : Std C0 Cde CE1 CE2 H X) (j : 
   have hp1 := h.p1
   have ha := h.apos
   have hQ1 := h.Q1
-  have hQ0 : 0 < X.Q := by linarith
   have hQj1 : (1 : ℝ) ≤ ((X.p ^ segG X.TT j : ℕ) : ℝ) := by
     push_cast
     exact one_le_pow₀ hp1

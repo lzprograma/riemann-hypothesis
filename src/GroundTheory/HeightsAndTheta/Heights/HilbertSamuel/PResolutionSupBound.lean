@@ -19,17 +19,8 @@ noncomputable section
 namespace ResolutionSupBound
 
 theorem eval_smul_homog {ι : Type*} {f : MvPolynomial ι ℂ} {n : ℕ} (hf : f.IsHomogeneous n) (c : ℂ)
-    (z : ι → ℂ) : eval (c • z) f = c ^ n * eval z f := by
-  classical
-  rw [eval_eq, eval_eq, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun e he => ?_
-  have hdeg : e.degree = n := by
-    by_contra h
-    exact (mem_support_iff.mp he) (hf.coeff_eq_zero h)
-  simp only [Pi.smul_apply, smul_eq_mul, mul_pow, Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum]
-  have hs : e.degree = ∑ i ∈ e.support, e i := rfl
-  rw [← hdeg, hs]
-  ring
+    (z : ι → ℂ) : eval (c • z) f = c ^ n * eval z f :=
+  hf.eval_smul c z
 
 theorem ptNorm_smul {ι : Type*} (m : ConeMetric ℂ ι) {n : ℕ} {f : MvPolynomial ι ℂ} (hf : f.IsHomogeneous n)
     {c : ℂ} (hc : c ≠ 0) (z : ι → ℂ) :

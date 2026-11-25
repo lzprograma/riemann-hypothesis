@@ -125,14 +125,14 @@ theorem jacExGoodN_of_hpkEx_of_pFrame_of_haarCorr (hH : HpkEx) (hP : PFrame) (hH
   have hμs : Formalism.QuantumDeterminants.IsSection k r zH zH' μs := by
     refine ⟨fun i j => (hμ.1 i j).congr fun ζ hζ => ?_, fun ζ hζ => ?_⟩
     · have hζ' : Formalism.QuantumDeterminants.Tz k r zH * Formalism.QuantumDeterminants.Tz k r zH' < Complex.normSq ζ := hζ
-      simp only [μs, if_pos hζ']
-    · simp only [μs, if_pos hζ]
+      simp only [μs, ite_eq_left hζ']
+    · simp only [μs, ite_eq_left hζ]
       exact hμ.2 ζ hζ
   have hU : ∀ ζ, (μs ζ)ᴴ * Formalism.QuantumDeterminants.Hb k * μs ζ = Formalism.QuantumDeterminants.Hb k := by
     intro ζ
     by_cases hζ : Formalism.QuantumDeterminants.Tz k r zH * Formalism.QuantumDeterminants.Tz k r zH' < Complex.normSq ζ
-    · simp only [μs, if_pos hζ]; exact (hμ.2 ζ hζ).1
-    · simp only [μs, if_neg hζ, Matrix.conjTranspose_one, Matrix.one_mul, Matrix.mul_one]
+    · simp only [μs, ite_eq_left hζ]; exact (hμ.2 ζ hζ).1
+    · simp only [μs, ite_eq_right hζ, Matrix.conjTranspose_one, Matrix.one_mul, Matrix.mul_one]
   have hMuj : ∀ q : (Fin r → ℂ) × ℂ, (∀ a, q.1 a ≠ 0) →
       Formalism.REAL.inUJ ε (P * Formalism.QuantumDeterminants.bigCell k r q.1 (μs q.2) * P⁻¹) := fun q hq =>
     inUJ_conj hPJ hPdet (hBM k r q.1 (μs q.2) hq (hU q.2))
@@ -143,7 +143,7 @@ theorem jacExGoodN_of_hpkEx_of_pFrame_of_haarCorr (hH : HpkEx) (hP : PFrame) (hH
       uMat (h0 (coordSc r sc q)) = P * Formalism.QuantumDeterminants.bigCell k r q.1 (μs q.2) * P⁻¹ := by
     intro q hq
     have hq' : ∀ a, (qOf r sc (coordSc r sc q)).1 a ≠ 0 := by rw [qOf_coordSc r hsc]; exact hq
-    simp only [h0, dif_pos hq', uMat_ujOf, qOf_coordSc r hsc]
+    simp only [h0, dite_eq_left hq', uMat_ujOf, qOf_coordSc r hsc]
   refine ⟨h0, ?_, ?_⟩
   ·
     intro c hc
@@ -206,7 +206,7 @@ theorem jacExGoodN_of_hpkEx_of_pFrame_of_haarCorr (hH : HpkEx) (hP : PFrame) (hH
         congr 1
         refine lintegral_congr fun u => lintegral_congr fun u' => ?_
         rw [psiP_mul_B hPdet u u' _ (h0 (coordSc r sc q)) (hh0 q hq), hext]
-      · push_neg at hq
+      · push Not at hq
         obtain ⟨a, ha⟩ := hq
         rw [bcWeight_zero T T' q a ha, ENNReal.ofReal_zero, zero_mul, zero_mul]
     rw [lintegral_congr hpt]

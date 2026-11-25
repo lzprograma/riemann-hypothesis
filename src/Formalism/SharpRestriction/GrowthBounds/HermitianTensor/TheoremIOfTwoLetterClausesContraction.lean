@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgeLatticeMulOfWeightSum
 public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudADef
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.OneMemDualWeyl
 public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CcDualWtAnti
@@ -18,48 +19,9 @@ public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.TheoremI
 public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.NuOfWtPQCast
 import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
 import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoLowerBoundOfEdgeCount
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetLemmas
-import Mathlib.Tactic.Basify
 import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FinrankLetter
 import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FactorizationBoundMonoLattices
 import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LatticeCountPrimeMonoLevel
@@ -193,12 +155,7 @@ theorem last_ne_zero'' (m : ℕ) (hm : 1 ≤ m) : Fin.last m ≠ 0 := by
 
 theorem lamAt_add' {n' m : ℕ} (X Y : Fin n' → Fin (m + 1) → ℤ) (s : Fin n') :
     lamAt (X + Y) s = lamAt X s + lamAt Y s := by
-  unfold lamAt
-  split_ifs
-  · rfl
-  · funext i
-    simp only [Pi.add_apply]
-    ring
+  apply _root_.Formalism.MainNotions.Pf14.lamAt_add <;> assumption
 
 theorem lamAt_sub' {n' m : ℕ} (X Y : Fin n' → Fin (m + 1) → ℤ) (s : Fin n') :
     lamAt (X - Y) s = lamAt X s - lamAt Y s := by
@@ -214,27 +171,10 @@ theorem lamAt_dualW {n' m : ℕ} (lo : Fin n' → Fin (m + 1) → ℤ) (s : Fin 
   unfold lamAt dualW
   split_ifs <;> rfl
 
-theorem dualWt_anti {m : ℕ} (mu : Fin (m + 1) → ℤ) (h : Antitone mu) : Antitone (dualWt mu) := by
-  intro i j hij
-  simp only [dualWt]
-  have := h (Fin.rev_le_rev.mpr hij)
-  linarith
-
 theorem flatW_top {n' : ℕ} (m : ℕ) {TT : Finset (Fin n')} (al be : TT → ℕ) (s : TT) :
     flatW m al be s.val = wtPQ m (al s) (be s) := by
   funext i
-  simp only [flatW, wtPQ, dif_pos s.2]
-
-theorem flatW_off {n' : ℕ} (m : ℕ) {TT : Finset (Fin n')} (al be : TT → ℕ) (s : Fin n') (hs : s ∉ TT) :
-    flatW m al be s = 0 := by
-  funext i
-  simp only [flatW, dif_neg hs, Pi.zero_apply]
-
-theorem flatW_add {n' : ℕ} (m : ℕ) {TT : Finset (Fin n')} (al be al' be' : TT → ℕ) :
-    flatW m (fun s => al s + al' s) (fun s => be s + be' s) = flatW m al be + flatW m al' be' := by
-  funext s i
-  simp only [flatW, Pi.add_apply]
-  split_ifs <;> push_cast <;> ring
+  simp only [flatW, wtPQ, dite_eq_left s.2]
 
 theorem lo_apply (m : ℕ) (ccl P Q : ℕ) (lam : Fin (m + 1) → ℤ) (h0 : lam 0 = (P : ℤ) + ccl)
     (hl : lam (Fin.last m) = -((Q : ℤ) + ccl)) (i : Fin (m + 1)) :
@@ -315,10 +255,10 @@ theorem posOK_top (h1 : CloudOne) {p n' : ℕ} (R : RS p n') (mm : ℕ) (hmm : 1
   have hl0 := last_ne_zero'' (mm + 1) (by omega)
   have z1 : (wtPQ (mm + 1) (2 * ccl) (2 * ccl)) 0 = ((2 * ccl : ℕ) : ℤ) := by simp [wtPQ]
   have z2 : (lam - wtPQ (mm + 1) P Q) 0 = ((ccl : ℕ) : ℤ) := by
-    rw [lo_apply (mm + 1) ccl P Q lam h0 hl, if_pos rfl]
+    rw [lo_apply (mm + 1) ccl P Q lam h0 hl, ite_eq_left rfl]
   have z3 : (dualWt (lam - wtPQ (mm + 1) P Q)) 0 = ((ccl : ℕ) : ℤ) := by
     simp only [dualWt, Fin.rev_zero]
-    rw [lo_apply (mm + 1) ccl P Q lam h0 hl, if_neg hl0, if_pos rfl, neg_neg]
+    rw [lo_apply (mm + 1) ccl P Q lam h0 hl, ite_eq_right hl0, ite_eq_left rfl, neg_neg]
   rw [z1, z2, z3, zpow_natCast, zpow_natCast]
   exact e4 c hc
 
@@ -364,18 +304,18 @@ theorem posOK_at_top (h1 : CloudOne) {p n' : ℕ} (R : RS p n') (mm : ℕ) (hmm 
   rw [lamAt_sub', lamAt_dualW, lamAt_sub', hflat, hflat, hflat]
   rw [show cloudAt lam0 s.val = fun j => lamAt lam0 s.val j.castSucc.succ from rfl]
   by_cases he : Even s.val.val
-  · simp only [if_pos he]
+  · simp only [ite_eq_left he]
     have hlam' : lamAt lam0 s.val = lam0 s.val := by
       unfold lamAt
-      rw [if_pos he]
+      rw [ite_eq_left he]
     rw [hlam']
     exact posOK_top h1 R mm hmm a ccl (A s) (B s) (lam0 s.val) (hDom s.val) t0 tl tm h8
-  · simp only [if_neg he]
+  · simp only [ite_eq_right he]
     have hlam' : lamAt lam0 s.val = fun i => -lam0 s.val i.rev := by
       unfold lamAt
-      rw [if_neg he]
+      rw [ite_eq_right he]
     rw [hlam']
-    refine posOK_top h1 R mm hmm a ccl (B s) (A s) _ (dualWt_anti _ (hDom s.val)) ?_ ?_ ?_ h8
+    refine posOK_top h1 R mm hmm a ccl (B s) (A s) _ (Formalism.MainNotions.flipOneThree.Pf.cc_dualWt_anti _ (hDom s.val)) ?_ ?_ ?_ h8
     · simp only [Fin.rev_zero]
       rw [tl]
       try ring
@@ -417,9 +357,9 @@ theorem mulV_mem (X Y Z : Fin n' → Fin (m + 1) → ℤ) (hX : IsDominant X) (h
   intro F hF r hr
   unfold Vsp at hF hr ⊢
   refine tensorLat_mul _ _ _ (fun s f hf g hg => ?_) F hF r hr
-  simp only [if_pos (lamAt_anti X hX s)] at hf
-  simp only [if_pos (lamAt_anti Y hY s)] at hg
-  simp only [if_pos (lamAt_anti Z hZ s)]
+  simp only [ite_eq_left (lamAt_anti X hX s)] at hf
+  simp only [ite_eq_left (lamAt_anti Y hY s)] at hg
+  simp only [ite_eq_left (lamAt_anti Z hZ s)]
   rw [h s, cbNuOf_add _ _ (lamAt_anti X hX s) (lamAt_anti Y hY s)]
   exact Formalism.GradedWeylDivisibility.dualWeyl_mul hf hg
 
@@ -498,9 +438,9 @@ theorem cloudTen {p n' : ℕ} (R : RS p n') (m : ℕ) (lam0 H Hp ze lo lo' : Fin
   have hLV : ∀ V ∈ Vsp R.Kf lam0, ∀ W ∈ Vsp R.Kf lo', lamPoly T V W ∈ Vsp R.Kf Hp := by
     unfold Vsp
     refine lamPoly_mem T Ls hT' _ _ _ (fun s v hv t ht => ?_)
-    simp only [if_pos (lamAt_anti lam0 dlam s)] at hv
-    simp only [if_pos (lamAt_anti lo' dlo' s)] at ht
-    simp only [if_pos (lamAt_anti Hp dHp s)]
+    simp only [ite_eq_left (lamAt_anti lam0 dlam s)] at hv
+    simp only [ite_eq_left (lamAt_anti lo' dlo' s)] at ht
+    simp only [ite_eq_left (lamAt_anti Hp dHp s)]
     exact hA s v hv t ht
   refine ⟨mulV H ze Hp dH dze dHp hadd1, mulV H lo lam0 dH dlo dlam hadd2,
     LinearMap.mk₂ R.Kf (fun V W => (⟨lamPoly T V.1 W.1, hLV _ V.2 _ W.2⟩ : Vsp R.Kf Hp))
@@ -539,7 +479,7 @@ theorem cloudTen {p n' : ℕ} (R : RS p n') (m : ℕ) (lam0 H Hp ze lo lo' : Fin
         obtain ⟨G, hG, rfl⟩ := hx
         have hGs : ∀ s, G s ∈ dualWeyl R.Kf (m + 1) (m + 1) (nuOf (lamAt H s)) := fun s => by
           have h := hG s
-          simp only [if_pos (lamAt_anti H dH s)] at h
+          simp only [ite_eq_left (lamAt_anti H dH s)] at h
           exact h
         rw [show (∏ s, blockEmb R.Kf s (G s)) * ∏ s, blockEmb R.Kf s (sv s (e b s)) =
             ∏ s, blockEmb R.Kf s (G s * sv s (e b s)) by
@@ -549,21 +489,20 @@ theorem cloudTen {p n' : ℕ} (R : RS p n') (m : ℕ) (lam0 H Hp ze lo lo' : Fin
         · subst hab
           have hfac : ∀ s, Ls s (blockEmb R.Kf true (G s * sv s (e a' s)) * blockEmb R.Kf false (sv' s (e a' s))) =
               ((p : R.Kf) ^ ka s (e a' s)) • (z0 s * G s) := fun s => by
-            rw [hmul s _ _ _ (hGs s), if_pos rfl]
-          rw [if_pos rfl]
+            rw [hmul s _ _ _ (hGs s), ite_eq_left rfl]
+          rw [ite_eq_left rfl]
           simp only [hfac]
           rw [prod_bE_smul, Finset.prod_pow_eq_pow_sum]
           congr 1
           rw [← Finset.prod_mul_distrib]
           exact Finset.prod_congr rfl fun s _ => by rw [map_mul, mul_comm]
-        · rw [if_neg hab]
+        · rw [ite_eq_right hab]
           have hex : ∃ s, e a' s ≠ e b s := by
-            by_contra hcon
-            push_neg at hcon
+            by_contra! hcon
             exact hab (e.injective (funext hcon))
           obtain ⟨s0, hs0⟩ := hex
           apply Finset.prod_eq_zero (Finset.mem_univ s0)
-          rw [hmul s0 _ _ _ (hGs s0), if_neg hs0, map_zero]
+          rw [hmul s0 _ _ _ (hGs s0), ite_eq_right hs0, map_zero]
       | zero => simp only [zero_mul, lamPoly_zero_left, smul_zero, ite_self]
       | add x y _ _ hx hy =>
         rw [add_mul, lamPoly_add_left, hx, hy]
@@ -609,7 +548,7 @@ theorem cloudTen {p n' : ℕ} (R : RS p n') (m : ℕ) (lam0 H Hp ze lo lo' : Fin
             (fun s => if Antitone (lamAt H s) then dualWeyl R.Kf (m + 1) (m + 1) (nuOf (lamAt H s)) else ⊥) := F.2
         have hfun : (fun s => if Antitone (lamAt H s) then dualWeyl R.Kf (m + 1) (m + 1) (nuOf (lamAt H s)) else ⊥) =
             fun s => dualWeyl R.Kf (m + 1) (m + 1) (nuOf (lamAt H s)) :=
-          funext fun s => if_pos (lamAt_anti H dH s)
+          funext fun s => ite_eq_left (lamAt_anti H dH s)
         rw [hfun] at h2
         exact hIso R.O R.Kf R.w hw n' m (fun s => lamAt H s) (fun s => lamAt ze s) (lamAt_anti H dH)
           (lamAt_anti ze dze) (famD R.O gs c) (fun s => famD_lat R.O gs hgs c hc s)
@@ -633,61 +572,6 @@ namespace Formalism.MainNotions.flipOneThree.Pf
 
 open Formalism.MainNotions.G Formalism.MainNotions.flipOneThree Formalism.CountingSumsFrames Formalism.GradedWeylDivisibility MvPolynomial Formalism.MainNotions.G.LatticeSystems
 
-private theorem sub_wtPQ_apply_eq_ite (mm ccl P Q : ℕ) (lam : Fin (mm + 1 + 1) → ℤ) (h0 : lam 0 = (P : ℤ) + ccl)
-    (hl : lam (Fin.last (mm + 1)) = -((Q : ℤ) + ccl)) (i : Fin (mm + 1 + 1)) :
-    (lam - wtPQ (mm + 1) P Q) i = if i = 0 then (ccl : ℤ) else if i = Fin.last (mm + 1) then -(ccl : ℤ) else lam i := by
-  simp only [Pi.sub_apply, wtPQ]
-  split_ifs with h1 h2
-  · subst h1
-    rw [h0]
-    ring
-  · subst h2
-    rw [hl]
-    ring
-  · ring
-
-private theorem antitone_sub_wtPQ (mm ccl P Q : ℕ) (lam : Fin (mm + 1 + 1) → ℤ) (hlam : Antitone lam)
-    (h0 : lam 0 = (P : ℤ) + ccl) (hl : lam (Fin.last (mm + 1)) = -((Q : ℤ) + ccl))
-    (hmid : ∀ i : Fin (mm + 1 + 1), 0 < i.val → i.val < mm + 1 → |lam i| ≤ ccl) :
-    Antitone (lam - wtPQ (mm + 1) P Q) := by
-  intro a b hab
-  rw [sub_wtPQ_apply_eq_ite mm ccl P Q lam h0 hl a, sub_wtPQ_apply_eq_ite mm ccl P Q lam h0 hl b]
-  have hlv : (Fin.last (mm + 1)).val = mm + 1 := Fin.val_last _
-  have hab' : a.val ≤ b.val := hab
-  have hc : (0 : ℤ) ≤ (ccl : ℤ) := Int.natCast_nonneg _
-  have hbl' := b.isLt
-  have hal' := a.isLt
-  by_cases ha0 : a = 0
-  · subst ha0
-    rw [ite_eq_left rfl]
-    split_ifs with hb0 hbl
-    · exact le_refl _
-    · linarith
-    · have hb1 : 0 < b.val := Nat.pos_of_ne_zero (fun h => hb0 (Fin.ext h))
-      have hb2 : b.val < mm + 1 := by
-        have : b.val ≠ mm + 1 := fun h => hbl (Fin.ext (h.trans hlv.symm))
-        omega
-      exact le_trans (le_abs_self _) (hmid b hb1 hb2)
-  · by_cases hal : a = Fin.last (mm + 1)
-    · have hb : b = Fin.last (mm + 1) := by
-        apply Fin.ext
-        rw [hal] at hab'
-        omega
-      subst hal
-      subst hb
-      exact le_refl _
-    · have ha1 : 0 < a.val := Nat.pos_of_ne_zero (fun h => ha0 (Fin.ext h))
-      have ha2 : a.val < mm + 1 := by
-        have : a.val ≠ mm + 1 := fun h => hal (Fin.ext (h.trans hlv.symm))
-        omega
-      rw [ite_eq_right ha0, ite_eq_right hal]
-      split_ifs with hb0 hbl
-      · exfalso
-        have : b.val = 0 := by rw [hb0]; rfl
-        omega
-      · linarith [neg_abs_le (lam a), hmid a ha1 ha2]
-      · exact hlam hab
-
 theorem restCloudLat_of (h1 : CloudOne) (hCO : CartanOnto) (hIso : CloudIsoP) : RestCloudLat := by
   unfold RestCloudLat
   intro p n' R mm hmm TT a ccl aw bw lam0 A B hbase hdom hoff hAB hc H Hp ze lo lo' hH hHp hze hlo hlo'
@@ -700,9 +584,9 @@ theorem restCloudLat_of (h1 : CloudOne) (hCO : CartanOnto) (hIso : CloudIsoP) : 
       rw [e]
       obtain ⟨h0, hl, hmid⟩ := (hbase s).1 hs
       obtain ⟨hA, hB⟩ := hAB ⟨s, hs⟩
-      exact antitone_sub_wtPQ mm ccl _ _ (lam0 s) (hdom s) (by rw [h0]; linarith) (by rw [hl]; linarith) hmid
+      exact Formalism.MainNotions.flipOneThree.Pf.caLo_anti mm ccl _ _ (lam0 s) (hdom s) (by rw [h0]; linarith) (by rw [hl]; linarith) hmid
     · have e : (lam0 - flatW (mm + 1) A B) s = lam0 s := by
-        rw [Pi.sub_apply, flatW_off (mm + 1) A B s hs, sub_zero]
+        rw [Pi.sub_apply, Formalism.MainNotions.flipOneThree.Pf.cc_flat_off (mm + 1) A B s hs, sub_zero]
       rw [e]
       exact hdom s
   have hdomlo' : IsDominant (dualW (lam0 - flatW (mm + 1) A B)) := by
@@ -714,7 +598,7 @@ theorem restCloudLat_of (h1 : CloudOne) (hCO : CartanOnto) (hIso : CloudIsoP) : 
     intro s
     rw [← lamAt_add']
     congr 1
-    exact flatW_add (mm + 1) A B (fun _ : TT => 2 * ccl) (fun _ : TT => 2 * ccl)
+    exact Formalism.MainNotions.flipOneThree.Pf.cc_flat_add (mm + 1) A B (fun _ : TT => 2 * ccl) (fun _ : TT => 2 * ccl)
   have hadd2 : ∀ s, lamAt lam0 s = lamAt (flatW (mm + 1) A B) s + lamAt (lam0 - flatW (mm + 1) A B) s := by
     intro s
     rw [lamAt_sub']

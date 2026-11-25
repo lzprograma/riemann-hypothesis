@@ -7,51 +7,8 @@ public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CmThetaOperat
 public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ImagQuadraticMaximalOrderArithmeticAtSplitPrime
 public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MkLeContinuumOfDenseRange
 public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.OpUConstMul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
 
@@ -65,10 +22,6 @@ open GlobalTheory.MomOne.LiftChange
 
 variable {g : ℕ} {q : ℕ} [Fact q.Prime]
 
-theorem hf_add_right (Hm : Matrix (Fin g) (Fin g) ℂ) (x y y' : Fin g → ℂ) :
-    hf Hm x (y + y') = hf Hm x y + hf Hm x y' := by
-  simp only [hf, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
-
 theorem hf_neg_right (Hm : Matrix (Fin g) (Fin g) ℂ) (x y : Fin g → ℂ) : hf Hm x (-y) = -hf Hm x y := by
   have h := hf_smul_right Hm (-1) x y
   rw [neg_one_smul, map_neg, map_one, neg_one_mul] at h
@@ -76,9 +29,7 @@ theorem hf_neg_right (Hm : Matrix (Fin g) (Fin g) ℂ) (x y : Fin g → ℂ) : h
 
 theorem hf_sub_right (Hm : Matrix (Fin g) (Fin g) ℂ) (x y y' : Fin g → ℂ) :
     hf Hm x (y - y') = hf Hm x y - hf Hm x y' := by
-  rw [sub_eq_add_neg, hf_add_right, hf_neg_right, ← sub_eq_add_neg]
-
-alias hf_sub_left := _root_.GlobalTheory.MomDual.hf_sub_left
+  rw [sub_eq_add_neg, GlobalTheory.HeisOps.hf_add_right, hf_neg_right, ← sub_eq_add_neg]
 
 theorem hf_sum_right (Hm : Matrix (Fin g) (Fin g) ℂ) {r : ℕ} (x : Fin g → ℂ) (y : Fin r → Fin g → ℂ) :
     hf Hm x (∑ i, y i) = ∑ i, hf Hm x (y i) := by
@@ -86,7 +37,7 @@ theorem hf_sum_right (Hm : Matrix (Fin g) (Fin g) ℂ) {r : ℕ} (x : Fin g → 
     intro s
     induction s using Finset.induction_on with
     | empty => simp [hf]
-    | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, hf_add_right, ih]
+    | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, GlobalTheory.HeisOps.hf_add_right, ih]
   exact this _
 
 theorem norm_zc (a : ℤ_[q]) : ‖GlobalTheory.MomOne.zc a‖ = ‖a‖ := by
@@ -105,8 +56,6 @@ end GlobalTheory.MomN.GoodLift
 namespace GlobalTheory.MomN
 open GlobalTheory.MomOne.LiftChange GlobalTheory.MomN.GoodLift
 open scoped ComplexOrder
-
-
 
 theorem goodLift_eq : ∀ (q : ℕ) [Fact q.Prime] (lam : Qbar →+* ℂ_[q]) (g : ℕ) (S : Setup g) (r : ℕ) (b : Fin r → Fin g → ℂ) (e : (Fin g → ℂ) → ℂ) (t : Fin g → ℂ), S.Ok → GlobalTheory.MomOne.Split S.d q → S.NNBasis q b → S.IsTheta e → ∀ N₀ : ℕ, 0 < N₀ → Nat.Coprime N₀ q → (N₀ : ℂ) • t ∈ S.La → ∀ (n : ℕ), ∀ y ∈ AddSubgroup.closure {y : Fin g → ℂ | ∃ κ ∈ OK S.d, ‖lamA lam (conj κ)‖ ≤ (q : ℝ) ^ (-(2 * n : ℤ)) ∧ ∃ x ∈ S.La, y = (κ * (N₀ : ℂ) / (q : ℂ) ^ n) • x}, (∃ z : ℤ, (beta S.d S.Hm y y).re = z) ∧ ∃ (m : ℕ) (eps : ℂ) (yt : Fin r → Fin (q ^ n)), IsIdem lam S.d m eps ∧ 2 * n ≤ m ∧ (∀ i, ∃ z : ℤ, (hf S.Hm (eps • b i) t).im = z) ∧ opW S.d S.Hm y (opU S.Hm t e) = opW S.d S.Hm (liftY q n eps b yt) (opU S.Hm t e) ∧ ∀ a : Fin r → ℕ, kap S.Hm (∑ i, (a i : ℂ) • b i) y = kap S.Hm (vecA n b fun i => (a i : ℤ_[q])) (liftY q n eps b yt) := by
   intro q _ lam g S r b e t hS hsp hb he N₀ hN₀ hcop hNt n y hy
@@ -141,11 +90,11 @@ theorem goodLift_eq : ∀ (q : ℕ) [Fact q.Prime] (lam : Qbar →+* ℂ_[q]) (g
   have bsl : ∀ (a : ℂ) x y, beta S.d S.Hm (a • x) y = a * beta S.d S.Hm x y := fun a x y => by
     rw [beta, beta, hf_smul_left]; ring
   have bar : ∀ x y y', beta S.d S.Hm x (y + y') = beta S.d S.Hm x y + beta S.d S.Hm x y' := fun x y y' => by
-    rw [beta, beta, beta, hf_add_right]; ring
+    rw [beta, beta, beta, GlobalTheory.HeisOps.hf_add_right]; ring
   have bsubr : ∀ x y y', beta S.d S.Hm x (y - y') = beta S.d S.Hm x y - beta S.d S.Hm x y' := fun x y y' => by
     rw [beta, beta, beta, hf_sub_right]; ring
   have bsubl : ∀ x x' y, beta S.d S.Hm (x - x') y = beta S.d S.Hm x y - beta S.d S.Hm x' y := fun x x' y => by
-    rw [beta, beta, beta, hf_sub_left]; ring
+    rw [beta, beta, beta, GlobalTheory.MomDual.hf_sub_left]; ring
   have bnr : ∀ x y, beta S.d S.Hm x (-y) = -beta S.d S.Hm x y := fun x y => by
     rw [beta, beta, hf_neg_right]; ring
   have bsumr : ∀ x (y : Fin r → Fin g → ℂ), beta S.d S.Hm x (∑ j, y j) = ∑ j, beta S.d S.Hm x (y j) := fun x y => by

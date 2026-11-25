@@ -154,7 +154,6 @@ theorem selfDual_pi_of_form [LocallyCompactSpace A] (e : A ≃+* (P → ℝ)) (h
       fun x y => χ (x ⬝ᵥ y) := by
     funext x y
     have hdot : ∀ w, e (x ⬝ᵥ y) w = ∑ i, e (x i) w * e (y i) w := fun w => by
-      set_option synthInstance.maxHeartbeats 100000 in
         simp [dotProduct, map_sum, Finset.sum_apply]
     have hs : ∑ q : ι × P, a q.2 * (eqvPi e he he' ι x q * eqvPi e he he' ι y q) =
         ∑ w, a w * e (x ⬝ᵥ y) w := by
@@ -184,7 +183,7 @@ theorem GlobalTheory.CompanionTheory.SW.selfDual_pi_inf : ∀ (F : Type) [Field 
     (GlobalTheory.CompanionTheory.SW.RealCoord.coord F) he'
     (psiInf F ψ) hpc (fun _ => hψ.2.1 _)
     (fun u v => by
-      simp only [psiInf, map_add (f := _), ← AddChar.map_add_eq_mul]
+      simp only [psiInf, ← AddChar.map_add_eq_mul]
       congr 1
       exact Prod.ext rfl (add_zero _).symm)
     (_root_.GlobalTheory.GaugeEx.CharLoc.char_local F ψ hψ).2.2

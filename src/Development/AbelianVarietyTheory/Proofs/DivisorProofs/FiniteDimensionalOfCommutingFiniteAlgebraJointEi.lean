@@ -220,7 +220,7 @@ theorem finiteDimensional_of_commuting_finite_eigen :
   simp only [Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply, Module.algebraMap_end_apply, sub_eq_zero]
   intro s hs
   have hsA : s ∈ Algebra.adjoin ℂ S := Algebra.subset_adjoin hs
-  simp only [c', dif_pos hsA]
+  simp only [c', dite_eq_left hsA]
   exact Classical.choose_spec (scal s hsA) v hv
 
 end GlobalTheory.AutGrowth

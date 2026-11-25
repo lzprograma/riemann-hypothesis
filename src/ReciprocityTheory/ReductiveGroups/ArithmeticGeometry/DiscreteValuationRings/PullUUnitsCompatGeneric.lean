@@ -9,8 +9,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRin
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Opposite
@@ -23,14 +21,9 @@ variable {X Y Z : Scheme.{0}} {L : LB X} {K K' : Type} [Fintype K] [Fintype K']
 
 private lemma res_res_lemma {S : Scheme.{0}} {U V W : S.Opens} (h1 : V ≤ U) (h2 : W ≤ V) (x : Γ(S, U)ˣ) :
     res h2 (res h1 x) = res (h2.trans h1) x := by
-  have hc : S.presheaf.map (homOfLE h1).op ≫ S.presheaf.map (homOfLE h2).op =
-      S.presheaf.map (homOfLE (h2.trans h1)).op := by
-    rw [← Functor.map_comp]
-    rfl
-  ext
-  simp only [res, Units.coe_map, MonoidHom.coe_coe]
-  rw [← hc]
-  rfl
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.G.DVR.res_res'
+    | apply _root_.ReciprocityTheory.ChartRestriction.G.DVR.res_res' <;> first | assumption | rfl | infer_instance
 
 private lemma res_pullU_res_eq_res_pullU {S T : Scheme.{0}} (h : T ⟶ S) {U V : S.Opens} {W : T.Opens} (hVU : V ≤ U)
     (hW : W ≤ h ⁻¹ᵁ V) (hW' : W ≤ h ⁻¹ᵁ U) (t : Γ(S, U)ˣ) :

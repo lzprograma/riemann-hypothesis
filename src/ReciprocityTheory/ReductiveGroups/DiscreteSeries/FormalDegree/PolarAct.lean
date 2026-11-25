@@ -70,14 +70,8 @@ theorem plog_unitary_mul_exp (k X : Matrix (Fin n) (Fin n) ℂ) (hk : kᴴ * k =
     pact_cfc_log_exp (X + X) (hX.add hX) hB, ← two_smul ℂ X, smul_smul]
   norm_num
 
-private theorem toMK_unit_lemma {ε : Fin n → Bool} (k : KG ε) : (toMK k)ᴴ * toMK k = 1 := by
-  have hk := k.2
-  unfold S7.KG Kset at hk
-  unfold S7.toMK
-  exact Matrix.mem_unitaryGroup_iff'.mp hk.1
-
 theorem plog_polarM {ε : Fin n → Bool} (k : KG ε) (z : PCoord ε → ℂ) : plog (polarM (k, z)) = pmat z :=
-  plog_unitary_mul_exp (toMK k) (pmat z) (toMK_unit_lemma k) (pmat_isHermitian z)
+  plog_unitary_mul_exp (toMK k) (pmat z) (adKAux_K_facts k).1 (pmat_isHermitian z)
 
 theorem pact_pmat_coords {ε : Fin n → Bool} (w : PCoord ε → ℂ) :
     (fun ab : PCoord ε => pmat w ab.1.1 ab.1.2) = w := by
@@ -119,8 +113,8 @@ theorem actR_mul {ε : Fin n → Bool} {g h : Matrix (Fin n) (Fin n) ℂ} (hg : 
   obtain ⟨k2, h2⟩ := actR_spec hh (actR g z)
   simp only [polarM] at h1 h2
   apply actR_eq_lemma (U := toMK k1 * toMK k2)
-  · rw [Matrix.conjTranspose_mul, Matrix.mul_assoc, ← Matrix.mul_assoc (toMK k1)ᴴ, toMK_unit_lemma k1,
-      Matrix.one_mul, toMK_unit_lemma k2]
+  · rw [Matrix.conjTranspose_mul, Matrix.mul_assoc, ← Matrix.mul_assoc (toMK k1)ᴴ,
+      (adKAux_K_facts k1).1, Matrix.one_mul, (adKAux_K_facts k2).1]
   · rw [← Matrix.mul_assoc, h1, Matrix.mul_assoc (toMK k1) (NormedSpace.exp (pmat (actR g z))) h, h2,
       Matrix.mul_assoc (toMK k1) (toMK k2)]
 
@@ -133,15 +127,9 @@ theorem pact_pmat_zero {ε : Fin n → Bool} : pmat (0 : PCoord ε → ℂ) = 0 
   ext a b
   simp [pmat]
 
-private theorem toMK_unit_lemma_2 {ε : Fin n → Bool} (k : KG ε) : toMK k * (toMK k)ᴴ = 1 := by
-  have hk := k.2
-  unfold S7.KG Kset at hk
-  unfold S7.toMK
-  exact Matrix.mem_unitaryGroup_iff.mp hk.1
-
 theorem actR_K {ε : Fin n → Bool} (k : KG ε) (z : PCoord ε → ℂ) : actR (toMK k) z = adK k⁻¹ z := by
-  have hU := toMK_unit_lemma k
-  have hU' : toMK k * (toMK k)ᴴ = 1 := toMK_unit_lemma_2 k
+  have hU := (adKAux_K_facts k).1
+  have hU' : toMK k * (toMK k)ᴴ = 1 := Matrix.mem_unitaryGroup_iff.mp k.2.1
   have hinv : toMK k⁻¹ * toMK k = 1 := by
     simp [S7.toMK, S7.toM]
   have hi1 : (toMK k)⁻¹ = (toMK k)ᴴ := Matrix.inv_eq_left_inv hU

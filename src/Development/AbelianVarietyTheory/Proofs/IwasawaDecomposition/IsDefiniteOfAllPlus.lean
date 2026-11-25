@@ -54,7 +54,6 @@ import Mathlib.Tactic.ReduceModChar
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult
   Formalism.IndefR.Datum Formalism.IndefR.Lev Formalism.IndefR.Cx GlobalTheory.DefLift GlobalTheory.Chain
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -119,7 +118,7 @@ theorem rTr_mem_of_places {θ : InfFam D} (hθ : IsInfFam θ) (U : Set (GA D V �
   have e : GlobalTheory.RealLift.prodAt θ V Finset.univ.toList (fun τ => Formalism.L2.Pj.archM V (θ τ) k) = k :=
     r3 _ (GlobalTheory.RealLift.prodAt_mem θ V _ _) _ hk fun τ => by
       rw [GlobalTheory.RealLift.infMat_prodAt hθ V hu τ _ (Finset.nodup_toList _),
-        if_pos (Finset.mem_toList.2 (Finset.mem_univ _))]
+        ite_eq_left (Finset.mem_toList.2 (Finset.mem_univ _))]
       rfl
   rw [← e]
   clear e
@@ -208,9 +207,9 @@ theorem real_le (hθ : IsInfFam θ) (U : Submonoid (GA D V))
       exact ⟨_, U.mul_mem (hU τ g hg) hx, funext fun y => by simp only [rTr, mul_assoc]⟩) hk _ ⟨1, U.one_mem, rfl⟩
   obtain ⟨x, hx, e⟩ := h
   have := congrFun e 1
-  simp only [rTr, mul_one, one_mul, if_pos hx] at this
+  simp only [rTr, mul_one, one_mul, ite_eq_left hx] at this
   by_contra hn
-  rw [if_neg hn] at this
+  rw [ite_eq_right hn] at this
   exact zero_ne_one this
 
 theorem ext_injective (c : CoefA V) : Function.Injective c.ext := by

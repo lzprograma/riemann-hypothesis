@@ -72,7 +72,6 @@ open GlobalTheory.FunObj GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheor
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation (spV spW spW₁ spV₁ alpha beta Num skewGram blk conjU)
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model HasExp SplitsFully Chars)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open scoped GlobalTheory.VacAny
 
 noncomputable section
@@ -150,7 +149,6 @@ open GlobalTheory.FunObj GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheor
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation (spV spW spW₁ spV₁ alpha beta Num skewGram blk conjU)
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model HasExp SplitsFully Chars)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open scoped GlobalTheory.VacAny
 
 
@@ -175,7 +173,6 @@ open GlobalTheory.FunObj GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheor
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation (spV spW spW₁ spV₁ alpha beta Num skewGram blk conjU)
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model HasExp SplitsFully Chars)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open scoped GlobalTheory.VacAny
 
 noncomputable section
@@ -200,8 +197,7 @@ theorem _root_.GlobalTheory.SympDualNbhd.exists_dual_nbhd : ∀ {F : Type} [Fiel
         ∀ w' ∈ N', ∀ w ∈ Y, ψ (w'.1 ⬝ᵥ w.2 - w.1 ⬝ᵥ w'.2) = 1 := by
   intro F _ _ v ψ hψ hne κ _ N hN
   obtain ⟨t₀, ht₀⟩ : ∃ t, ψ t ≠ 1 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hne (AddChar.ext _ _ fun t => by rw [h t, AddChar.one_apply])
   obtain ⟨U₀, hU₀⟩ := _root_.GlobalTheory.HeisLatVac.lc_exists_open_ker ψ hψ
   obtain ⟨δ, hδ, hδU⟩ := Metric.isOpen_iff.mp U₀.isOpen 0 (zero_mem U₀)
@@ -227,8 +223,7 @@ theorem _root_.GlobalTheory.SympDualNbhd.exists_dual_nbhd : ∀ {F : Type} [Fiel
   · intro w' hw'
     have h1 : ∀ i, ‖w'.1 i‖ < ε := by
       intro i
-      by_contra h
-      push_neg at h
+      by_contra! h
       have h0 : w'.1 i ≠ 0 := norm_pos_iff.mp (hε.trans_le h)
       have hy : ((0 : κ → _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv F v), (Pi.single i (t₀ / w'.1 i) : κ → _)) ∈ Y := by
         rw [hmemY]
@@ -241,8 +236,7 @@ theorem _root_.GlobalTheory.SympDualNbhd.exists_dual_nbhd : ∀ {F : Type} [Fiel
       exact ht₀ this
     have h2 : ∀ i, ‖w'.2 i‖ < ε := by
       intro i
-      by_contra h
-      push_neg at h
+      by_contra! h
       have h0 : w'.2 i ≠ 0 := norm_pos_iff.mp (hε.trans_le h)
       have hy : ((Pi.single i (-t₀ / w'.2 i) : κ → _), (0 : κ → _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv F v)) ∈ Y := by
         rw [hmemY]
@@ -295,7 +289,6 @@ open GlobalTheory.FunObj GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheor
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation (spV spW spW₁ spV₁ alpha beta Num skewGram blk conjU)
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model HasExp SplitsFully Chars)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open scoped GlobalTheory.VacAny
 
 
@@ -322,7 +315,6 @@ open GlobalTheory.FunObj GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheor
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation (spV spW spW₁ spV₁ alpha beta Num skewGram blk conjU)
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model HasExp SplitsFully Chars)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open scoped GlobalTheory.VacAny
 
 
@@ -347,7 +339,6 @@ open GlobalTheory.FunObj GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheor
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation (spV spW spW₁ spV₁ alpha beta Num skewGram blk conjU)
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model HasExp SplitsFully Chars)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 open scoped GlobalTheory.VacAny
 
 namespace GlobalTheory.VacLoc
@@ -357,8 +348,7 @@ theorem exists_twisted_sum_ne_zero : ∀ {G Y X : Type} [AddCommGroup G] [Fintyp
     ∀ c : G → X, c 0 ≠ 0 → ∃ w, ∑ a, θ w a • c a ≠ 0 := by
   intro G Y X _ _ _ _ _ θ hθ hsep c hc0
   classical
-  by_contra hall
-  push_neg at hall
+  by_contra! hall
   have h1 : θ 0 = 1 := by
     have := hθ 0 0
     rw [add_zero] at this
@@ -373,8 +363,7 @@ theorem exists_twisted_sum_ne_zero : ∀ {G Y X : Type} [AddCommGroup G] [Fintyp
   have key : ∀ a : G, a ≠ 0 → ∑ s : S, (s : AddChar G ℂ) a = 0 := by
     intro a ha
     obtain ⟨w, hw⟩ : ∃ w, θ w a ≠ 1 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       exact ha (hsep a h)
     let s₀ : S := ⟨θ w, w, rfl⟩
     have e : ∑ s : S, (s : AddChar G ℂ) a = θ w a * ∑ s : S, (s : AddChar G ℂ) a := by

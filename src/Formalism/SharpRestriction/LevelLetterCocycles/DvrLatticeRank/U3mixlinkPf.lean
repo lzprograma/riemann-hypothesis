@@ -14,57 +14,14 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.Phib
 import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.U3upPfFilCAnti
 import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.UnivLinkPfA
 import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowUniformizerFactorisation
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.Interval.Finset.Box
-import Mathlib.RingTheory.PowerSeries.Inverse
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ConstantCoeffQZeroEqP
 import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.U3downPfFildRConst
-import Mathlib.Tactic.Basify
 import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.DvdCondition
 import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfPt
 import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfC
 import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.PolyExpand
 import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.WLocal
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Topology.Sheaves.Init
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.TmulMkLMemInvLOfValAtMemFilC, Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.MixLocal, Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.U3mixlinkPf
@@ -709,7 +666,7 @@ theorem mix_local [IsDomain O] (hinj : Function.Injective (algebraMap O LL))
         have h0 := V₁.inj τD ζD hptD _ (hsumN o) (filC_top T₁ τD _ (fun i hi hJ => by
           have h := hd1 τD i hJ
           unfold deep at h
-          simp only [huD, Bool.false_eq_true, if_false, Set.mem_union, Set.mem_Icc] at h
+          simp only [huD, Bool.false_eq_true, ite_false, Set.mem_union, Set.mem_Icc] at h
           omega) ho)
         refine ⟨h0, ?_⟩
         rw [← V₂.sum hptU _ o _ hy2, ← hmap]
@@ -735,7 +692,7 @@ theorem mix_local [IsDomain O] (hinj : Function.Injective (algebraMap O LL))
     rwa [fildR_gap T₁ τ (η + 1) (b τ) (by have := hηb τ; omega) fun i h1 h2 hJ => by
       have h := hd1 τ i hJ
       unfold deep at h
-      simp only [hu, if_true, Set.mem_union, Set.mem_Icc] at h
+      simp only [hu, ite_true, Set.mem_union, Set.mem_Icc] at h
       omega]
   · obtain ⟨x₀, hx₀⟩ := hdn τD ζD hptD huD
     have hint := integ DU DD hyU huU' hyD huD' (δ := algebraMap O LL (rD - rU))

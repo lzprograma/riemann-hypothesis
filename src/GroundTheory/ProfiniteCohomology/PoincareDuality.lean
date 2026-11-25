@@ -16,8 +16,6 @@ open CategoryTheory MonoidalCategory
 
 universe u
 
-attribute [local instance 2000] Rep.hV2
-
 section MapAlongEquiv
 
 variable {k G H : Type u} [CommRing k] [Group G] [Group H] [TopologicalSpace G]

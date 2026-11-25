@@ -133,8 +133,6 @@ open scoped ContDiff
 
 namespace PositivityTheory.Rg.Sw.LVs.HolC
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 open PositivityTheory.Rg.Sw PositivityTheory.Rg.Sw.LVs PositivityTheory.Rg.Sw.LVs.HolB
 
 variable {n : ℕ}

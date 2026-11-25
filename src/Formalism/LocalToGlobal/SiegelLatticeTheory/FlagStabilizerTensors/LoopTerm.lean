@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LoopTermLem
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LoopTieOf
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TermTieOf
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LocWSOf
@@ -24,8 +25,6 @@ open Matrix MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotio
   Formalism.L2.SG.TermTieOf Formalism.L2.SG.LocWSOf Formalism.L2.SG.LoopTieOf
 
 namespace Formalism.L2.SG.LoopTerm
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section PartB
 
@@ -277,7 +276,7 @@ theorem jnorm {u u' : D.what₂.Word} (hPin : PinAll (Y := Y) u u') (hCv : Covol
     have h2f : thetaS hI C hB t ^ (2 * Fintype.card D.what₂.Tau) =
         volRC hI t ^ 2 * P1 hI C hB t / hsNormSq (JtOf hI t) := by
       unfold thetaS
-      rw [if_pos hpos]
+      rw [ite_eq_left hpos]
       rw [show (1 : ℝ) / (2 * Fintype.card D.what₂.Tau) = ((2 * Fintype.card D.what₂.Tau : ℕ) : ℝ)⁻¹ by
         push_cast; ring]
       exact Real.rpow_inv_natCast_pow hx hn
@@ -318,18 +317,7 @@ theorem hJ_smul_real {n : ℕ} (ε : Fin n → Bool) (r s : ℝ) (x y : Fin n �
 
 theorem frS_pow (D : D7) (a : Fin (D.R.rS + 1)) (h : a.val < D.R.rS) :
     frS D ^ (D.R.rS - a.val) = ((rhoF D a : ℝ) : ℂ) := by
-  have hk : D.host.ka / (2 * Real.pi) = D.host.rdE⁻¹ := by
-    simp only [Formalism.BasicNotions.Host.ka, Formalism.BasicNotions.Host.v]
-    rcases eq_or_ne D.host.rdE 0 with h0 | h0
-    · simp [h0]
-    · have hπ : Real.pi ≠ 0 := Real.pi_ne_zero
-      field_simp
-  have hr : 0 ≤ D.host.rdE := Real.rpow_nonneg (abs_nonneg _) _
-  unfold frS rhoF
-  rw [← Complex.ofReal_pow, hk]
-  congr 1
-  rw [Real.rpow_neg hr, show (D.R.rS : ℝ) - ((a : ℕ) : ℝ) = ((D.R.rS - a.val : ℕ) : ℝ) by
-    rw [Nat.cast_sub h.le], Real.rpow_natCast, inv_pow]
+  apply +allowSynthFailures _root_.Formalism.L2.SG.Pf.LTL.frS_pow <;> assumption
 
 theorem rhoF_last (D : D7) : rhoF D (Fin.last D.R.rS) = 1 := by
   simp [rhoF]
@@ -337,24 +325,7 @@ theorem rhoF_last (D : D7) : rhoF D (Fin.last D.R.rS) = 1 := by
 theorem Q_fvec (u : D.what₂.Word) (τ : D.what₂.Tau) (a : Fin (D.R.rS + 1)) :
     C.Q τ *ᵥ Formalism.QuantumDeterminants.fvec D.R.k D.R.rS (zB X (C.Qi τ) u τ) a =
       ((rhoF D a : ℝ) : ℂ) • rv X.B.I (vOf X τ) (X.crd ((X.Fu u).fvec a)) := by
-  obtain ⟨_, hQQi, _, hfr⟩ := C.isT τ
-  unfold Formalism.QuantumDeterminants.fvec
-  split_ifs with h
-  · have e := (hfr ⟨a.val, h⟩ ⟨a.val, h⟩ rfl).1
-    unfold Formalism.QuantumDeterminants.bvec
-    rw [e, frS_pow D a h]
-    have hv : (X.Fu u).fvec a = X.eX ⟨a.val, h⟩ := by
-      have ha : a = Fin.castSucc ⟨a.val, h⟩ := Fin.ext rfl
-      conv_lhs => rw [ha]
-      rw [FlagG.fvec, Fin.snoc_castSucc, X.Fu_e u]
-    rw [hv]
-    rfl
-  · have ha : a = Fin.last D.R.rS := Fin.ext (by rw [Fin.val_last]; have := a.isLt; omega)
-    subst ha
-    rw [rhoF_last, Complex.ofReal_one, one_smul]
-    unfold zB
-    rw [Matrix.mulVec_mulVec, hQQi, Matrix.one_mulVec, FlagG.fvec, Fin.snoc_last, X.flagZVector u]
-    rfl
+  apply +allowSynthFailures _root_.Formalism.L2.SG.Pf.LTL.Q_fvec <;> assumption
 
 theorem gram_holds {u u' : D.what₂.Word} (hL : FrameLiftEx hI u u') : GramTr W hI C u u' := by
   intro t τ a b
@@ -612,26 +583,7 @@ variable {D : D7} {X : HidaSetting D} {Y : Full X} {hF : FinX Y} (W : WittDat X)
 
 theorem tz_zB (u : D.what₂.Word) (τ : D.what₂.Tau) :
     Formalism.QuantumDeterminants.Tz D.R.k D.R.rS (zB X (C.Qi τ) u τ) = ((Tu D u : ℕ) : ℝ) := by
-  obtain ⟨_, _, hH, _⟩ := C.isT τ
-  have hz : Formalism.QuantumDeterminants.fvec D.R.k D.R.rS (zB X (C.Qi τ) u τ) (Fin.last D.R.rS) = zB X (C.Qi τ) u τ := by
-    unfold Formalism.QuantumDeterminants.fvec
-    rw [dite_eq_right (by simp)]
-  have hQ := Q_fvec C u τ (Fin.last D.R.rS)
-  rw [hz, rhoF_last, Complex.ofReal_one, one_smul] at hQ
-  have hl : (X.Fu u).fvec (Fin.last D.R.rS) = X.zu u := by
-    rw [FlagG.fvec, Fin.snoc_last, X.flagZVector u]
-  rw [hl] at hQ
-  unfold Formalism.QuantumDeterminants.Tz Formalism.QuantumDeterminants.herm
-  rw [← hH, ← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, star_dot_conjT, hQ]
-  have h2 := Formalism.L2.SG.Pf.Level.hJ_rv X (vOf X τ) (X.crd (X.zu u)) (X.crd (X.zu u))
-  unfold hJ at h2
-  rw [h2, X.φ_eq, show X.pl (vOf X τ) = τ from X.pl.apply_symm_apply τ]
-  have h3 := Formalism.L2.SG.PoincareInHH.Cut.hform_crd X (X.zu u) (X.zu u)
-  have h4 : (VS D).hT (X.zu u) (X.zu u) = -((Tu D u : ℕ) : D.host.E) := by
-    have := (X.Fu u).z_norm
-    rwa [X.flagZVector u] at this
-  rw [show X.ιE (Formalism.L2.SG.Pf.Level.hE X (X.crd (X.zu u)) (X.crd (X.zu u))) = (VS D).hT (X.zu u) (X.zu u) from h3, h4]
-  simp
+  apply +allowSynthFailures _root_.Formalism.L2.SG.Pf.LTL.tz_zB <;> assumption
 
 theorem dmin_eq {u u' : D.what₂.Word} (t : D.s.Term u u') (τ : D.what₂.Tau) (l : Fin (D.R.rS + 2)) :
     Formalism.QuantumDeterminants.Dmin D.R.k D.R.rS (zB X (C.Qi τ) u τ) (zB X (C.Qi τ) u' τ) (gamR hI C t τ) l =
@@ -766,16 +718,10 @@ theorem thetaWin_of {large₂ : SizeData₂ D} {C1 : ℝ} {u u' : D.what₂.Word
     rw [hth]
     exact hW
   · unfold thetaS
-    rw [if_neg h]
+    rw [ite_eq_right h]
     exact h1
 
 end ThetaCut
-
-section Assembly
-
-variable {D : D7} {X : HidaSetting D} {Y : Full X} {hF : FinX Y} (W : WittDat X) (hI : SIso D.s (sOf hF))
-
-end Assembly
 
 section Fact
 
@@ -807,7 +753,7 @@ theorem thetaEqN_of {u u' : D.what₂.Word} (hJ : JFactN hI C hB u u') : ThetaEq
   have hx : 0 ≤ volRC hI t ^ 2 * P1 hI C hB t / hsNormSq (JtOf hI t) :=
     div_nonneg (mul_nonneg (sq_nonneg _) hP0.le) hJ0.le
   unfold thetaS
-  rw [if_pos ⟨hJ0, hP0⟩]
+  rw [ite_eq_left ⟨hJ0, hP0⟩]
   rw [show (1 : ℝ) / (2 * Fintype.card D.what₂.Tau) = ((2 * Fintype.card D.what₂.Tau : ℕ) : ℝ)⁻¹ by
     push_cast; ring]
   rw [Real.rpow_inv_natCast_pow hx hn, div_eq_iff hJ0.ne']

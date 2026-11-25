@@ -66,16 +66,20 @@ theorem vertFactor_local (D : ComponentData II Ψ K ι Ω E) {p : ℕ} (hp : p �
 
 
 open MuRegSmooth TopNPoly NbarSmooth in
-theorem regNbarQ_smooth_eq [DecidableEq Ψ] (hE : HermExtend.Statement) (hP : ProjSmoothAlong.Statement)
-    (D : ComponentData II Ψ K ι Ω E) (H : HodgeData D) (M : XModel D) (S : LogLogRegularisationSetting M D.Xo (muLine H))
-    (B p q : ℕ) (t : ℝ) (hsm : M.atlas.Smooth (S.regWeight t)) :
-    IsSmoothHerm (regNbarQ H M S B p q t) ∧ ∀ z ∈ mcPts (mCoordIdeal D.y),
-      (regNbarQ H M S B p q t).h z = (S.ref.h z * Real.exp (S.regWeight t (M.proj z))) ^ q *
-        (∏ p' ∈ D.SB B, D.vertFactor p' z) ^ q * D.A'.h z ^ p := by
+theorem exists_smooth_herm_of_weight (hE : HermExtend.Statement) (hP : ProjSmoothAlong.Statement)
+    (D : ComponentData II Ψ K ι Ω E) (H : HodgeData D) (M : XModel D)
+    (ref : HermLine ι) (href_deg : ref.a = H.aMu) (href_smooth : IsSmoothHerm ref)
+    (wt : M.Xc → ℝ) (hsm : M.atlas.Smooth wt) (B p q : ℕ) :
+    let a : K → ℤ := (q : ℤ) • muTwDeg H B + (p : ℤ) • D.a'
+    let F : ((Σ k, ι k) → ℂ) → ℝ := fun z => (ref.h z * Real.exp (wt (M.proj z))) ^ q *
+      (∏ p' ∈ D.SB B, D.vertFactor p' z) ^ q * D.A'.h z ^ p
+    (∀ z ∈ mcPts (mCoordIdeal D.y), (hermOfFun ι a F).h z = F z) ∧
+      ∃ Z : HermLine ι, Z.a = a ∧ IsSmoothHerm Z ∧
+        ∀ z ∈ mcPts (mCoordIdeal D.y), Z.h z = (hermOfFun ι a F).h z := by
   have hVS := VertFactorSmooth.proof VertFactorPos.proof
   set P := mCoordIdeal D.y with hPdef
   set a : K → ℤ := (q : ℤ) • muTwDeg H B + (p : ℤ) • D.a' with ha
-  set F : ((Σ k, ι k) → ℂ) → ℝ := fun z => (S.ref.h z * Real.exp (S.regWeight t (M.proj z))) ^ q *
+  set F : ((Σ k, ι k) → ℂ) → ℝ := fun z => (ref.h z * Real.exp (wt (M.proj z))) ^ q *
     (∏ p' ∈ D.SB B, D.vertFactor p' z) ^ q * D.A'.h z ^ p with hFdef
   have hSB : ∀ p' ∈ D.SB B, p' ∈ D.S := fun p' hp' => (Finset.mem_filter.1 hp').1
   have hMH : IsMultiHomogIdeal P := D.arith.2.1.2.1
@@ -83,16 +87,16 @@ theorem regNbarQ_smooth_eq [DecidableEq Ψ] (hE : HermExtend.Statement) (hP : Pr
     intro z hz
     have h2 : 0 < ∏ p' ∈ D.SB B, D.vertFactor p' z := Finset.prod_pos fun p' hp' =>
       VertFactorPos.proof II Ψ K ι Ω E D p' (hSB p' hp') z hz
-    exact mul_pos (mul_pos (pow_pos (mul_pos (S.ref.pos z hz.1) (Real.exp_pos _)) q) (pow_pos h2 q))
+    exact mul_pos (mul_pos (pow_pos (mul_pos (ref.pos z hz.1) (Real.exp_pos _)) q) (pow_pos h2 q))
       (pow_pos (D.A'.pos z hz.1) p)
   have hhom : ∀ z ∈ mcPts P, ∀ c : K → ℂ, (∀ k, c k ≠ 0) →
       F (torusSmul c z) = (∏ k, ‖c k‖ ^ a k) * F z := by
     intro z hz c hc
     have hcz : torusSmul c z ∈ mcPts P := mcPts_smul hMH c hc hz
     have hproj : M.proj (torusSmul c z) = M.proj z := ((M.fibre z hz _ hcz).2 ⟨c, hc, rfl⟩).symm
-    have href : S.ref.h (torusSmul c z) = (∏ k, ‖c k‖ ^ H.aMu k) * S.ref.h z := by
-      have := S.ref.smul c z hc
-      rw [S.ref_deg] at this
+    have href : ref.h (torusSmul c z) = (∏ k, ‖c k‖ ^ H.aMu k) * ref.h z := by
+      have := ref.smul c z hc
+      rw [href_deg] at this
       exact this
     have hA : D.A'.h (torusSmul c z) = (∏ k, ‖c k‖ ^ D.a' k) * D.A'.h z := by
       have := D.A'.smul c z hc
@@ -116,16 +120,25 @@ theorem regNbarQ_smooth_eq [DecidableEq Ψ] (hE : HermExtend.Statement) (hP : Pr
     ring
   have hsmooth : SmoothAlong (mcPts P) F :=
     smoothAlong_mul (smoothAlong_mul
-      (smoothAlong_pow (smoothAlong_mul (smoothAlong_of_contDiffOn S.ref_smooth)
+      (smoothAlong_pow (smoothAlong_mul (smoothAlong_of_contDiffOn href_smooth)
         (smoothAlong_exp (hP II Ψ K ι Ω E D M _ hsm))) q)
       (smoothAlong_pow (smoothAlong_prod _ fun p' hp' => (hVS II Ψ K ι Ω E D p' (hSB p' hp')).2) q))
       (smoothAlong_pow (smoothAlong_of_contDiffOn D.A'_pos.1) p)
   obtain ⟨Z, hZa, hZs, hZh⟩ := hE K ι P a F hMH hpos hhom hsmooth
   have hon : ∀ z ∈ mcPts P, (hermOfFun ι a F).h z = F z := fun z hz =>
     hermOfFun_h_of_mem hMH hhom hz (hpos z hz)
-  refine ⟨?_, fun z hz => (smoothRep_h _ hz).trans (hon z hz)⟩
-  show IsSmoothHerm (smoothRep P (hermOfFun ι a F))
-  exact smoothRep_smooth_of (Z := Z) hZa hZs fun z hz => (hZh z hz).trans (hon z hz).symm
+  exact ⟨hon, Z, hZa, hZs, fun z hz => (hZh z hz).trans (hon z hz).symm⟩
+
+open TopNPoly in
+theorem regNbarQ_smooth_eq [DecidableEq Ψ] (hE : HermExtend.Statement) (hP : ProjSmoothAlong.Statement)
+    (D : ComponentData II Ψ K ι Ω E) (H : HodgeData D) (M : XModel D) (S : LogLogRegularisationSetting M D.Xo (muLine H))
+    (B p q : ℕ) (t : ℝ) (hsm : M.atlas.Smooth (S.regWeight t)) :
+    IsSmoothHerm (regNbarQ H M S B p q t) ∧ ∀ z ∈ mcPts (mCoordIdeal D.y),
+      (regNbarQ H M S B p q t).h z = (S.ref.h z * Real.exp (S.regWeight t (M.proj z))) ^ q *
+        (∏ p' ∈ D.SB B, D.vertFactor p' z) ^ q * D.A'.h z ^ p := by
+  obtain ⟨hon, Z, hZa, hZs, hZh⟩ :=
+    exists_smooth_herm_of_weight hE hP D H M S.ref S.ref_deg S.ref_smooth (S.regWeight t) hsm B p q
+  exact ⟨smoothRep_smooth_of (Z := Z) hZa hZs hZh, fun z hz => (smoothRep_h _ hz).trans (hon z hz)⟩
 
 end NbarLeviChartReg
 

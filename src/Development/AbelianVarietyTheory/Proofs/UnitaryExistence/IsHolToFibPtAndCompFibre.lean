@@ -56,11 +56,7 @@ namespace GlobalTheory.HolFibre
 variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
 theorem isHolTo_comp {W : Set E} {X Y : Scheme.{0}} {c : E → (Sp ℂ ⟶ X)} (hc : IsHolTo W c) (ψ : X ⟶ Y) :
-    IsHolTo W (fun w => c w ≫ ψ) := by
-  intro U f
-  have := hc (ψ ⁻¹ᵁ U) ((ψ.app U).hom f)
-  simp only [valAt'_comp, ← top_le_preimage_comp] at this
-  exact this
+    IsHolTo W (fun w => c w ≫ ψ) := GlobalTheory.HolTorsion.isHolTo_comp hc ψ
 
 theorem isHolTo_const {W : Set E} (hW : IsOpen W) {X : Scheme.{0}} (x : Sp ℂ ⟶ X) :
     IsHolTo W (fun _ => x) := by

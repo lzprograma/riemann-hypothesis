@@ -15,12 +15,8 @@ namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
 open Topology Metric Filter
 
 theorem NonIsolatedFibreCurve.analyticOnNhd_of_differentiableOn {k : ℕ} {O : Set (Fin k → ℂ)}
-    {g : (Fin k → ℂ) → ℂ} (hO : IsOpen O) (hg : DifferentiableOn ℂ g O) : AnalyticOnNhd ℂ g O := by
-  refine analyticOnNhd_of_continuousOn_of_separately hO hg.continuousOn fun z hz i => ?_
-  have h1 : DifferentiableAt ℂ g (Function.update z i (z i)) := by
-    rw [Function.update_eq_self]
-    exact hg.differentiableAt (hO.mem_nhds hz)
-  exact h1.comp (z i) (hasFDerivAt_update z (z i)).differentiableAt
+    {g : (Fin k → ℂ) → ℂ} (hO : IsOpen O) (hg : DifferentiableOn ℂ g O) : AnalyticOnNhd ℂ g O :=
+  ReciprocityTheory.AnForm.Osgood.osgood k O g hO hg
 
 theorem NonIsolatedFibreCurve.proof (hComp : AnalyticGermComponents.Statement)
     (hCurve : IrreducibleGermCurve.Statement) : NonIsolatedFibreCurve.Statement := by

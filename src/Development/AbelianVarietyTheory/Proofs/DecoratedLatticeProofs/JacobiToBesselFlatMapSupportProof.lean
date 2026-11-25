@@ -61,7 +61,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil ValuativeRel IsLocalRing
 open GlobalTheory.IndefiniteRowSideFullHecke.UnramifiedCharacter (compFin ExtUnramAt CharUnramAt)
 open scoped TensorProduct Pointwise
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FinPl.SuppShift
 
@@ -148,7 +147,7 @@ theorem eps_mul {v : Pl D} {a : AE D} (ha : a ∈ idAt D (· = v)) : eps v * a =
 theorem eps_idAt (v : Pl D) : eps v ∈ idAt D (· = v) := by
   change pairA D.host.F 0 (SelfDualAt.indP (· = v)) ⊗ₜ[D.host.F] (1 : D.host.E) ∈ _
   refine LatMem.tmul_mem_idAt (fun w hw => ?_) _
-  rw [SelfDualAt.evalV_indP, if_neg hw]
+  rw [SelfDualAt.evalV_indP, ite_eq_right hw]
 
 theorem int_of_idem {e : AE D} (he : e * e = e) : finPart D e ∈ intAE D :=
   AdIdem.idempotent_mem_intAE D _ (by rw [← RingHom.map_mul, he])
@@ -360,7 +359,7 @@ theorem shift_one {ψ : AddChar (AF D.host.F) ℂ} {V V₀ W : HSp D} {ρ : ℕ}
         split_ifs
         · exact Ideal.mul_mem_left _ _ hs
         · exact zero_mem _) fun k l hkl => by
-      rw [Matrix.single_apply, if_neg]
+      rw [Matrix.single_apply, ite_eq_right]
       rintro ⟨rfl, rfl⟩
       rw [Fin.le_def] at hkl
       omega
@@ -368,7 +367,7 @@ theorem shift_one {ψ : AddChar (AF D.host.F) ℂ} {V V₀ W : HSp D} {ρ : ℕ}
     have h2 := smul_eq_self hne h1
     have e2 : upSum (Matrix.single i j (c * s) : Mx D ρ ρ) = c * s := by
       unfold upSum
-      rw [Finset.sum_eq_single i, Finset.sum_eq_single j, if_pos hij, Matrix.single_apply_same]
+      rw [Finset.sum_eq_single i, Finset.sum_eq_single j, ite_eq_left hij, Matrix.single_apply_same]
       · intro l _ hl; rw [Matrix.single_apply_of_col_ne _ _ hl.symm, ite_self]
       · intro h; exact absurd (Finset.mem_univ _) h
       · intro k _ hk

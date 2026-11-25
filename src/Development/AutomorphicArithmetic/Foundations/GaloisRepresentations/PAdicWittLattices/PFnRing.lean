@@ -1,48 +1,6 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.IsAdmissibleIntegralBasisChangeOne
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 
 @[expose] public section
 
@@ -72,33 +30,14 @@ private theorem tower_isFn_ind_inv_of_mem {B : Scheme} {G : Type} [Group G] (X :
     unfold ind
     rw [Set.indicator_apply]
     split_ifs with hg <;> simp [hg]
-  have memL : ∀ k ∈ X.K j, ∀ g, k * g ∈ DoubleCoset.doubleCoset h⁻¹ (X.K j : Set G) (X.K j) ↔
-      g ∈ DoubleCoset.doubleCoset h⁻¹ (X.K j : Set G) (X.K j) := by
-    intro k hk g
-    simp only [DoubleCoset.mem_doubleCoset, SetLike.mem_coe]
-    constructor
-    · rintro ⟨x, hx, y, hy, e⟩
-      refine ⟨k⁻¹ * x, (X.K j).mul_mem ((X.K j).inv_mem hk) hx, y, hy, ?_⟩
-      rw [show k⁻¹ * x * h⁻¹ * y = k⁻¹ * (x * h⁻¹ * y) by group, ← e]
-      group
-    · rintro ⟨x, hx, y, hy, e⟩
-      exact ⟨k * x, (X.K j).mul_mem hk hx, y, hy, by rw [e]; group⟩
-  have memR : ∀ k ∈ X.K j, ∀ g, g * k ∈ DoubleCoset.doubleCoset h⁻¹ (X.K j : Set G) (X.K j) ↔
-      g ∈ DoubleCoset.doubleCoset h⁻¹ (X.K j : Set G) (X.K j) := by
-    intro k hk g
-    simp only [DoubleCoset.mem_doubleCoset, SetLike.mem_coe]
-    constructor
-    · rintro ⟨x, hx, y, hy, e⟩
-      refine ⟨x, hx, y * k⁻¹, (X.K j).mul_mem hy ((X.K j).inv_mem hk), ?_⟩
-      rw [show x * h⁻¹ * (y * k⁻¹) = (x * h⁻¹ * y) * k⁻¹ by group, ← e]
-      group
-    · rintro ⟨x, hx, y, hy, e⟩
-      exact ⟨x, hx, y * k, (X.K j).mul_mem hy hk, by rw [e]; group⟩
+  have eqv : ∀ g, g ∈ DoubleCoset.doubleCoset h⁻¹ (X.K j : Set G) (X.K j) ↔
+      DoubleCoset.mk (X.K j) (X.K j) h⁻¹ = DoubleCoset.mk (X.K j) (X.K j) g := fun g =>
+    DoubleCoset.mem_doubleCoset.trans DoubleCoset.eq.symm
   refine ⟨fun k hk g => ⟨?_, ?_⟩, fun g hg => ?_, ?_⟩
   · unfold ind
-    simp only [Set.indicator_apply, memL k hk g, Pi.one_apply]
+    simp only [Set.indicator_apply, eqv, DoubleCoset.mk_mem_mul ⟨k, hk⟩ g, Pi.one_apply]
   · unfold ind
-    simp only [Set.indicator_apply, memR k hk g, Pi.one_apply]
+    simp only [Set.indicator_apply, eqv, DoubleCoset.mk_mul_mem ⟨k, hk⟩ g, Pi.one_apply]
   · obtain ⟨x, hx, y, hy, e⟩ := DoubleCoset.mem_doubleCoset.mp ((key g).mp hg)
     rw [e, show (x * h⁻¹ * y)⁻¹ = y⁻¹ * (h * x⁻¹) by group]
     exact X.Δ.mul_mem (X.K_le _ _ ((X.K j).inv_mem hy))

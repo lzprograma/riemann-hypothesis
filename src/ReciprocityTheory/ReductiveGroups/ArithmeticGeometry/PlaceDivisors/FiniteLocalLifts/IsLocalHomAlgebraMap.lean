@@ -6,7 +6,6 @@ public import Mathlib.RingTheory.Ideal.GoingUp
 
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 open IsLocalRing
 

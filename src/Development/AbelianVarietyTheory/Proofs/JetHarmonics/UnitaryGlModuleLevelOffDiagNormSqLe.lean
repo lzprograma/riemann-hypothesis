@@ -82,8 +82,8 @@ private lemma norm_sq_apply_eq_re_inner_of_isUnitary {M : Type} [NormedAddCommGr
     rw [← inner_self_eq_norm_sq (𝕜 := ℂ)]; rfl
   rw [hn, h, Module.End.mul_apply]
   by_cases hab : ε a = ε b
-  · rw [if_pos hab.symm, if_pos hab]; simp; ring
-  · rw [if_neg (fun h' => hab h'.symm), if_neg hab]; simp
+  · rw [ite_eq_left hab.symm, ite_eq_left hab]; simp; ring
+  · rw [ite_eq_right (fun h' => hab h'.symm), ite_eq_right hab]; simp
 
 open Finset in
 open scoped InnerProductSpace in

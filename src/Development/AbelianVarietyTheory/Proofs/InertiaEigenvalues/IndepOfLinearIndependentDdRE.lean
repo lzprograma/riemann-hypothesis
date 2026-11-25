@@ -77,8 +77,7 @@ private theorem eq_zero_of_sum_smul_invariant_eq_zero_of_card_support_le {G E M 
     omega
   | succ n ih =>
     intro c hcard hsum
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     obtain ⟨i₀, hi₀⟩ := hne
     obtain ⟨b, hb⟩ := hE.mul_inv_cancel hi₀
 
@@ -187,25 +186,6 @@ private theorem sm_tmul_tmul {Qp LL V F : Type} [Field Qp] [CommRing F] [Algebra
     sm Qp F LL V (a ⊗ₜ[Qp] f) (v ⊗ₜ[Qp] f') = (a • v) ⊗ₜ[Qp] (f * f') := by
   simp [sm, bil]
 
-private theorem sm_mul_inertia_eigenvalues {Qp LL V F : Type} [Field Qp] [CommRing F] [Algebra Qp F] [Field LL]
-    [Algebra Qp LL] [AddCommGroup V] [Module LL V] [Module Qp V] [IsScalarTower Qp LL V]
-    (x x' : LL ⊗[Qp] F) (y : V ⊗[Qp] F) :
-    sm Qp F LL V (x * x') y = sm Qp F LL V x (sm Qp F LL V x' y) := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
-  | add x₁ x₂ h₁ h₂ => simp only [add_mul, map_add (f := _), LinearMap.add_apply, h₁, h₂]
-  | tmul a f =>
-    induction x' using TensorProduct.induction_on with
-    | zero => simp
-    | add x₁ x₂ h₁ h₂ => simp only [mul_add, map_add (f := _), LinearMap.add_apply, h₁, h₂]
-    | tmul a' f' =>
-      induction y using TensorProduct.induction_on with
-      | zero => simp
-      | add y₁ y₂ h₁ h₂ => simp only [map_add (f := _), h₁, h₂]
-      | tmul v f'' =>
-        rw [Algebra.TensorProduct.tmul_mul_tmul, sm_tmul_tmul, sm_tmul_tmul, sm_tmul_tmul, mul_smul,
-          mul_assoc]
-
 theorem indep_of_linearIndependent_DdRE {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
     [Algebra Qp K₀] [Algebra Qp K] [Algebra K₀ K] [IsScalarTower Qp K₀ K] {B F : Type} [CommRing B]
     [CommRing F] [Algebra Qp B] [Algebra K₀ B] [IsScalarTower Qp K₀ B] [Algebra Qp F] [Algebra K₀ F]
@@ -270,7 +250,7 @@ theorem indep_of_linearIndependent_DdRE {G : Type} [Group G] {Qp K₀ K : Type} 
     rw [h1', one_smul]
   have hidem : ∀ i (X : LL ⊗[Qp] F), sm Qp F LL V (idem F τ * X) (d i) = sm Qp F LL V X (d i) := by
     intro i X
-    rw [mul_comm, sm_mul_inertia_eigenvalues, hfix]
+    rw [mul_comm, sm_mul, hfix]
 
   letI : Algebra K LL := τ.toRingHom.toAlgebra
   haveI : IsScalarTower Qp K LL := IsScalarTower.of_algebraMap_eq (fun q => (τ.commutes q).symm)

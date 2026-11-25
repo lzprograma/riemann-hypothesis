@@ -4,8 +4,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDo
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Inst.CurvPf
@@ -20,8 +18,7 @@ theorem sum_eq_castLE {m : ℕ} (hm : m ≤ r) {M : Type} [AddCommMonoid M] (g :
   symm
   refine Fintype.sum_of_injective (Fin.castLE hm) (Fin.castLE_injective hm) _ g
     (fun k hk => hg k ?_) (fun j => rfl)
-  by_contra h
-  push_neg at h
+  by_contra! h
   exact hk ⟨⟨k, h⟩, Fin.ext rfl⟩
 
 theorem sub_LMU {m : ℕ} (hm : m ≤ r) (L M U : Matrix (Fin r) (Fin r) ℂ)

@@ -1,5 +1,6 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.RecursionWithDensities
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelNonzeroModulusDeterminantEq
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstKernelExplicitFormula
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GramKernelHermitian
@@ -8,64 +9,15 @@ import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.IsOpenIsIntSet
 import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.MulInvBlockDiagApplySameBlock
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralLatticeRefinementIdentity
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelQuotientFinite
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
 noncomputable section
 
-open Matrix Formalism.DoubleCosetMeasures Formalism.FourierDecayAlt.A5 Formalism.FourierDecayAlt.A6 Formalism.FourierDecayAlt.P.A5x5 Formalism.FourierDecayAlt.P.A5x8 Formalism.FourierDecayAlt.P.A6x8 Filter Topology
+open Matrix Formalism.DoubleCosetMeasures Formalism.FourierDecayAlt.A5 Formalism.FourierDecayAlt.A6 Formalism.FourierDecayAlt.P.A5x5 Formalism.FourierDecayAlt.P.A5x8 Formalism.FourierDecayAlt.P.A6x8 Filter Topology Formalism.FourierDecayAlt.P.AdicNeighbourhood
 
 namespace Formalism.FourierDecayAlt.P.OrbitalIntegralReduction
 
@@ -426,7 +378,7 @@ theorem tk_fin_box {ι : Type} [Finite ι] (Λ : AddSubgroup K) (hΛ : IsOpen (�
   intro y hy i
   exact hy i
 
-theorem bx_sum (_hD : LocalDatum K R ψ) {ι κ : Type} [Fintype ι] [Fintype κ] {Λ L : AddSubgroup K}
+theorem bx_sum {ι κ : Type} [Fintype ι] [Fintype κ] {Λ L : AddSubgroup K}
     (hΛ : IsLat Λ) (hL : IsLat L) (f : (ι ⊕ κ → K) → ℂ) (hs : BSupp L f) :
     bx R Λ (ι ⊕ κ) f = bx R Λ ι (fun a => bx R Λ κ (fun b => f (Sum.elim a b))) := by
   unfold bx
@@ -530,14 +482,7 @@ theorem tk_out_subG (M : AddSubgroup V) (x : V) : (Quotient.out (x : V ⧸ M) : 
   rw [hh]; simp
 
 theorem tk_mk_eqG (M : AddSubgroup V) (x y : V) : ((x : V ⧸ M) = (y : V ⧸ M)) ↔ x - y ∈ M := by
-  rw [QuotientAddGroup.eq]
-  constructor
-  · intro h
-    have := M.neg_mem h
-    simpa [sub_eq_add_neg, add_comm] using this
-  · intro h
-    have := M.neg_mem h
-    simpa [sub_eq_add_neg, add_comm] using this
+  apply _root_.Formalism.FourierDecayAlt.P.RecursionWithDensities.A1.mk_eq_iff <;> assumption
 
 theorem tk_out_sub_mem {M' M : AddSubgroup V} (h : M' ≤ M) (y : V ⧸ M') :
     (Quotient.out (AddSubgroup.quotientEquivProdOfLE h y).1 : V) - (Quotient.out y : V) ∈ M := by
@@ -554,9 +499,9 @@ open Classical in
 theorem tk_ind_sum (N : AddSubgroup V) (c : V) :
     ∑ᶠ y : V ⧸ N, (if (Quotient.out y : V) - c ∈ N then (1 : ℂ) else 0) = 1 := by
   rw [finsum_eq_single _ ((c : V) : V ⧸ N)]
-  · rw [if_pos (tk_out_subG N c)]
+  · rw [ite_eq_left (tk_out_subG N c)]
   · intro y hy
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     apply hy
     have := (tk_mk_eqG N _ _).2 h
@@ -648,11 +593,11 @@ theorem tk_cells {V₀ : AddSubgroup V} (h0 : Lat V₀) {Q : Type} (c : Q → V)
       intro q _
       by_cases hq : q = q₀
       · subst hq; simp [hq₀]
-      · rw [if_neg hq, if_neg (fun h => hq (huniq q h)), mul_zero]
+      · rw [ite_eq_right hq, ite_eq_right (fun h => hq (huniq q h)), mul_zero]
     rw [Finset.sum_congr rfl hterm, Finset.sum_ite_eq', hv]
     by_cases hq : q₀ ∈ S
-    · rw [if_pos hq]
-    · rw [if_neg hq]
+    · rw [ite_eq_left hq]
+    · rw [ite_eq_right hq]
       by_contra hne
       exact hq (by rw [hS, Set.Finite.mem_toFinset]; exact hne)
   rw [← tk_S_refine h0 hM hM' inf_le_left f hinv]
@@ -925,7 +870,7 @@ theorem lu_mul_EE {n : ℕ} {u : Matrix (Fin n) (Fin n) K} (hu : IsUpUni u) (r :
   have e1 : ∑ k, u i k * EE r k j = ∑ k : Fin n, if h : k < j then u i k * r ⟨(k, j), h⟩ else 0 := by
     refine Finset.sum_congr rfl fun k _ => ?_
     by_cases h : k < j
-    · rw [lu_EE_lt r h, dif_pos h]
+    · rw [lu_EE_lt r h, dite_eq_left h]
     · rw [lu_EE_not_lt r h, dite_eq_right h, mul_zero]
   rw [e1]
   by_cases hij : i < j
@@ -936,7 +881,7 @@ theorem lu_mul_EE {n : ℕ} {u : Matrix (Fin n) (Fin n) K} (hu : IsUpUni u) (r :
   · rw [lu_EE_not_lt _ hij]
     refine Finset.sum_eq_zero fun k _ => ?_
     by_cases h : k < j
-    · rw [dif_pos h]
+    · rw [dite_eq_left h]
       have : u i k = 0 := hu.1 (lt_of_lt_of_le h (not_lt.1 hij))
       rw [this, zero_mul]
     · rw [dite_eq_right h]
@@ -970,7 +915,7 @@ theorem lu_det {n : ℕ} {u : Matrix (Fin n) (Fin n) K} (hu : IsUpUni u) : (lu_M
     by_cases h : p = p'
     · subst h
       simp [hu.2]
-    · rw [Matrix.one_apply_ne (by simpa [Subtype.ext_iff] using h), if_neg]
+    · rw [Matrix.one_apply_ne (by simpa [Subtype.ext_iff] using h), ite_eq_right]
       intro h2
       apply h
       apply Subtype.ext
@@ -1075,11 +1020,11 @@ theorem antidiagonal_block_apply (n : ℕ) (z : Kˣ) (a b : Fin n) :
   show (if (b : ℕ) = revIn [n] a then
     ((Function.update (fun _ => (1 : Kˣ)) 0 z (blk [n] a) : Kˣ) : K) else 0) = _
   have ha := a.2
-  simp only [revIn, blk, ha, if_true, Function.update_self]
+  simp only [revIn, blk, ha, ite_true, Function.update_self]
   by_cases h : b = Fin.rev a
-  · rw [if_pos h, if_pos]
+  · rw [ite_eq_left h, ite_eq_left]
     rw [h, Fin.val_rev]; omega
-  · rw [if_neg h, if_neg]
+  · rw [ite_eq_right h, ite_eq_right]
     intro h2
     apply h
     apply Fin.ext
@@ -1089,17 +1034,17 @@ theorem antidiagonal_block_mul_left (n : ℕ) (z : Kˣ) (H : Matrix (Fin n) (Fin
     antidiagonalBlock n z * H = ((z : K) • H).submatrix Fin.rev id := by
   ext i j
   rw [Matrix.mul_apply, Finset.sum_eq_single (Fin.rev i)]
-  · rw [antidiagonal_block_apply, if_pos rfl]; simp
+  · rw [antidiagonal_block_apply, ite_eq_left rfl]; simp
   · intro k _ hk
-    rw [antidiagonal_block_apply, if_neg hk, zero_mul]
+    rw [antidiagonal_block_apply, ite_eq_right hk, zero_mul]
   · simp
 
 theorem mul_antidiagonal_block_reversed (n : ℕ) (z : Kˣ) (G : Matrix (Fin n) (Fin n) K) (i k : Fin n) :
     (G * antidiagonalBlock n z) i (Fin.rev k) = G i k * (z : K) := by
   rw [Matrix.mul_apply, Finset.sum_eq_single k]
-  · rw [antidiagonal_block_apply, if_pos rfl]
+  · rw [antidiagonal_block_apply, ite_eq_left rfl]
   · intro j _ hj
-    rw [antidiagonal_block_apply, if_neg (fun h2 => hj (Fin.rev_injective h2).symm), mul_zero]
+    rw [antidiagonal_block_apply, ite_eq_right (fun h2 => hj (Fin.rev_injective h2).symm), mul_zero]
   · simp
 
 theorem st_lowW_single (n : ℕ) (z : Kˣ) (g : lowW K (addBlock h0 n z).1 (addBlock h0 n z).2) :
@@ -1196,10 +1141,10 @@ theorem st_blk_Hm (m : ℕ) (t : Kˣ) (c : K) (ξ : Fin m → K)
   rcases i with i | i
   · simp only [blkM_ll, blkM_lr, Pi.zero_apply, zero_mul, Finset.sum_const_zero, add_zero]
     rw [Finset.sum_eq_single (Fin.rev i)]
-    · rw [antidiagonal_block_apply, if_pos rfl, st_eN_inl, st_eN_inl]
+    · rw [antidiagonal_block_apply, ite_eq_left rfl, st_eN_inl, st_eN_inl]
       simp only [Matrix.submatrix_apply, id, Hm, Fin.rev_castSucc, Fin.cases_succ]
     · intro k _ hk
-      rw [antidiagonal_block_apply, if_neg hk, zero_mul]
+      rw [antidiagonal_block_apply, ite_eq_right hk, zero_mul]
     · simp
   · simp only [blkM_rl, blkM_rr, Finset.univ_unique, Finset.sum_singleton]
     rw [st_eN_inr]
@@ -1207,16 +1152,16 @@ theorem st_blk_Hm (m : ℕ) (t : Kˣ) (c : K) (ξ : Fin m → K)
     congr 1
     · refine Finset.sum_congr rfl fun k _ => ?_
       rw [st_eN_inl, Matrix.vecMul, dotProduct, Finset.sum_eq_single (Fin.rev k)]
-      · rw [antidiagonal_block_apply, if_pos (Fin.rev_rev k).symm]; ring
+      · rw [antidiagonal_block_apply, ite_eq_left (Fin.rev_rev k).symm]; ring
       · intro l _ hl
-        rw [antidiagonal_block_apply, if_neg, mul_zero]
+        rw [antidiagonal_block_apply, ite_eq_right, mul_zero]
         intro h2
         apply hl
         rw [h2, Fin.rev_rev]
       · simp
     · by_cases hj : j = Fin.last m
-      · rw [if_pos hj, hj, hu.2, mul_one]
-      · rw [if_neg hj, Formalism.DoubleCosetMeasures.P.Phase.up_zero hu (lt_of_le_of_ne (Fin.le_last j) hj), mul_zero]
+      · rw [ite_eq_left hj, hj, hu.2, mul_one]
+      · rw [ite_eq_right hj, Formalism.DoubleCosetMeasures.P.Phase.up_zero hu (lt_of_le_of_ne (Fin.le_last j) hj), mul_zero]
 
 end ST
 
@@ -1636,7 +1581,7 @@ theorem hs_L_mul {m : ℕ} (t c : K) (ξ : Fin m → K) (u : Matrix (Fin (m + 1)
       intro k
       simp [hs_L, Fin.succ_ne_zero]
     simp only [h0, h1, zero_mul, zero_add, Hm, Fin.cases_succ, ite_mul, one_mul,
-      Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 theorem det_Hm {m : ℕ} (t c : K) (ξ : Fin m → K) (u : Matrix (Fin (m + 1)) (Fin (m + 1)) K)
     (hu : IsUpUni u) : (Hm t c ξ u).det = (-1) ^ m * (c * t ^ m) := by
@@ -1682,7 +1627,7 @@ theorem hessenberg_entry_above_diagonal {n : ℕ} (t : K) (d : Fin n → K) (y :
     HH t d y p.1.1 p.1.2 = y p := by
   have h := p.2
   unfold HH
-  rw [if_neg h.ne, dif_pos h]
+  rw [ite_eq_right h.ne, dite_eq_left h]
 
 theorem antidiagonal_hessenberg_reversed_apply {n : ℕ} (t : K) (d : Fin n → K) (y : Pr n → K) (i j : Fin n) :
     ZZ t d y (Fin.rev i) j = HH t d y i j := by
@@ -1730,11 +1675,11 @@ theorem GG_supp (hC : Cst R ϖ L₀ Λ₀ Q a b) {m : ℕ} (Φ : ∀ n : ℕ, Ma
   have hϖ := hC.adic.mem
   by_cases hU : ∀ k, IsUnit (x k)
   swap
-  · exact absurd (by rw [GG, if_neg hU]) h
+  · exact absurd (by rw [GG, ite_eq_right hU]) h
   have hΦne : Φ (m + 1) (ZZ 0 (xt (D' : K) x) y) ≠ 0 := by
     intro h0
     apply h
-    rw [GG, if_pos hU, h0]
+    rw [GG, ite_eq_left hU, h0]
     simp
   have hent := hΦ.2.1 _ hΦne
   have hx : ∀ k, x k ∈ L₀ := by
@@ -1972,7 +1917,7 @@ theorem orbital_integral_change_estimate (hD : LocalDatum K R ψ) (hC : Cst R ϖ
     · intro p
       exact hC.abelian₂ _ (Sm.mono hϖ (by omega) (hlS' p))
   refine ⟨?_, ?_⟩
-  · rw [GG, if_pos hU', GG, if_pos hU, hΦeq, hψ, hP', hmod, hP]
+  · rw [GG, ite_eq_left hU', GG, ite_eq_left hU, hΦeq, hψ, hP', hmod, hP]
   · choose r hr hlr using hl
     refine ⟨∑ k, (ϖ : K) ^ (c + a₁) * r k + ((ϖ : K) ^ c * ((D' : K) * E)) * sW, ?_, ?_⟩
     · refine R.add_mem (R.sum_mem fun k _ => R.mul_mem (R.pow_mem hϖ _) (hr k)) (R.mul_mem ?_ hsW)
@@ -2329,12 +2274,12 @@ theorem pw_sUp {m : ℕ} (N : Pr (m + 1) → K) : sUp (1 + EE N) = ∑ i : Fin m
   rw [Fin.sum_univ_castSucc]
   simp only [Fin.val_last, lt_self_iff_false, dite_false, add_zero, Fin.val_castSucc]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [dif_pos (by omega), pw_one_add_EE]
+  rw [dite_eq_left (by omega), pw_one_add_EE]
   have h1 : i.castSucc ≠ (⟨i.val + 1, by omega⟩ : Fin (m + 1)) := by
     intro h; have := congrArg Fin.val h; simp at this
   have h2 : i.castSucc < (⟨i.val + 1, by omega⟩ : Fin (m + 1)) := by
     rw [Fin.lt_def]; simp
-  rw [if_neg h1, dif_pos h2]
+  rw [ite_eq_right h1, dite_eq_left h2]
   rfl
 
 end PWa
@@ -2366,19 +2311,19 @@ theorem pw_shape {m : ℕ} (hm : 1 ≤ m) (t c : K) (ξ : Fin m → K) (N : Pr (
   · refine Fin.cases ?_ (fun j' => ?_) j
     · have h0 : (0 : Fin (m + 1)) ≠ Fin.last m := by
         intro h; have := congrArg Fin.val h; simp at this; omega
-      simp only [Hm, HH, Fin.cases_zero, if_true, Fin.cons_zero, if_neg h0, add_zero]
+      simp only [Hm, HH, Fin.cases_zero, ite_true, Fin.cons_zero, ite_eq_right h0, add_zero]
       rw [pw_lastE_rev, Finset.mul_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [pw_one_add_EE]
       by_cases hk : k.val = 0
       · have : k.castSucc = 0 := by ext; simpa using hk
-        rw [if_pos this, if_pos hk]; ring
+        rw [ite_eq_left this, ite_eq_left hk]; ring
       · have : k.castSucc ≠ 0 := by
           intro h; apply hk; have := congrArg Fin.val h; simpa using this
-        rw [if_neg this, if_neg hk, dite_eq_right (by simp)]; ring
+        rw [ite_eq_right this, ite_eq_right hk, dite_eq_right (by simp)]; ring
     · have h0 : (0 : Fin (m + 1)) ≠ j'.succ := (Fin.succ_ne_zero j').symm
       have h1 : (0 : Fin (m + 1)) < j'.succ := Fin.succ_pos j'
-      simp only [Hm, HH, Fin.cases_zero, if_neg h0, dif_pos h1]
+      simp only [Hm, HH, Fin.cases_zero, ite_eq_right h0, dite_eq_left h1]
       rw [pw_ys_zero]
       simp only [Pi.add_apply, Matrix.mulVec, dotProduct, pw_Mx, pw_bv]
       congr 1
@@ -2391,17 +2336,17 @@ theorem pw_shape {m : ℕ} (hm : 1 ≤ m) (t c : K) (ξ : Fin m → K) (N : Pr (
     by_cases h1 : i'.succ = j
     · subst h1
       have h2 : i'.castSucc ≠ i'.succ := (Fin.castSucc_lt_succ).ne
-      rw [if_pos rfl, if_neg h2, dif_pos Fin.castSucc_lt_succ, Fin.cons_succ]
+      rw [ite_eq_left rfl, ite_eq_right h2, dite_eq_left Fin.castSucc_lt_succ, Fin.cons_succ]
       rfl
-    · rw [if_neg h1]
+    · rw [ite_eq_right h1]
       by_cases h2 : i'.succ < j
       · have h3 : i'.castSucc < j := lt_trans Fin.castSucc_lt_succ h2
-        rw [dif_pos h2, if_neg h3.ne, dif_pos h3, pw_ys_succ _ _ _ _ h2 h3]
+        rw [dite_eq_left h2, ite_eq_right h3.ne, dite_eq_left h3, pw_ys_succ _ _ _ _ h2 h3]
         rfl
       · rw [dite_eq_right h2]
         by_cases h3 : j.val + 1 = i'.succ.val
         · have h4 : i'.castSucc = j := by ext; simp at h3 ⊢; omega
-          rw [if_pos h3, if_pos h4, mul_one]
+          rw [ite_eq_left h3, ite_eq_left h4, mul_one]
         · have h4 : i'.castSucc ≠ j := by
             intro h; apply h3; rw [← h]; simp
           have h5 : ¬ i'.castSucc < j := by
@@ -2409,7 +2354,7 @@ theorem pw_shape {m : ℕ} (hm : 1 ≤ m) (t c : K) (ξ : Fin m → K) (N : Pr (
             rw [Fin.lt_def] at h h2
             have h6 : i'.succ.val ≠ j.val := fun e => h1 (Fin.ext e)
             simp at h h2 h6; omega
-          rw [if_neg h3, if_neg h4, dite_eq_right h5, mul_zero]
+          rw [ite_eq_right h3, ite_eq_right h4, dite_eq_right h5, mul_zero]
 
 theorem pw_lastE_add {m : ℕ} (ξ r : Fin m → K) : lastE (ξ + r) = lastE ξ + lastE r := by
   unfold lastE
@@ -2421,8 +2366,8 @@ theorem pw_lastE_mem {m : ℕ} (R : Subring K) (r : Fin m → K) (hr : ∀ i, r 
   unfold lastE
   refine R.sum_mem fun j _ => ?_
   by_cases h : j.val + 1 = m
-  · rw [if_pos h]; exact hr j
-  · rw [if_neg h]; exact R.zero_mem
+  · rw [ite_eq_left h]; exact hr j
+  · rw [ite_eq_right h]; exact R.zero_mem
 
 def pw_ro {m : ℕ} (r : Fin m → K) : Matrix (Fin (m + 1)) (Fin (m + 1)) K :=
   fun i j => if i = j then 1 else
@@ -2433,10 +2378,10 @@ theorem pw_ro_mul {m : ℕ} (t c : K) (ξ r : Fin m → K) (u : Matrix (Fin (m +
   ext i j
   rw [Matrix.mul_apply, Fin.sum_univ_succ]
   refine Fin.cases ?_ (fun i' => ?_) i
-  · simp only [pw_ro, if_true, Fin.cases_zero, one_mul, (Fin.succ_ne_zero _).symm, if_false,
+  · simp only [pw_ro, ite_true, Fin.cases_zero, one_mul, (Fin.succ_ne_zero _).symm, ite_false,
       Fin.cases_succ, Hm, Pi.add_apply, add_mul, Finset.sum_add_distrib]
     ring
-  · simp only [pw_ro, Fin.succ_ne_zero, if_false, Fin.cases_succ, zero_mul, zero_add, Hm]
+  · simp only [pw_ro, Fin.succ_ne_zero, ite_false, Fin.cases_succ, zero_mul, zero_add, Hm]
     rw [Finset.sum_eq_single i']
     · simp
     · intro k _ hk
@@ -2452,7 +2397,7 @@ theorem pw_ro_low {m : ℕ} (r : Fin m → K) : IsLowUni ((pw_ro r).submatrix Fi
     have h3 : Fin.rev i ≠ 0 := by
       intro h; rw [h] at h1; exact absurd h1 (by simp)
     obtain ⟨i', hi'⟩ := Fin.exists_succ_eq.2 h3
-    simp only [Matrix.submatrix_apply, pw_ro, if_neg h2]
+    simp only [Matrix.submatrix_apply, pw_ro, ite_eq_right h2]
     rw [← hi']
     simp
   · simp [pw_ro]
@@ -2462,8 +2407,8 @@ theorem pw_ro_int {m : ℕ} (R : Subring K) (r : Fin m → K) (hr : ∀ i, r i �
   intro i j
   simp only [Matrix.submatrix_apply, pw_ro]
   by_cases h : Fin.rev i = Fin.rev j
-  · rw [if_pos h]; exact R.one_mem
-  · rw [if_neg h]
+  · rw [ite_eq_left h]; exact R.one_mem
+  · rw [ite_eq_right h]
     generalize Fin.rev i = i1
     generalize Fin.rev j = j1
     refine Fin.cases ?_ (fun i' => ?_) i1
@@ -2553,17 +2498,17 @@ theorem pw_Phi_eq (hC : Cst R ϖ L₀ Λ₀ Q a b) {m : ℕ} (Φ : ∀ n : ℕ, 
     generalize Fin.rev i = i1
     by_cases h1 : i1 = j
     · subst h1
-      rw [if_pos rfl, if_pos rfl]
+      rw [ite_eq_left rfl, ite_eq_left rfl]
       refine Fin.cases ?_ (fun k => ?_) i1
       · simpa [xt] using hC.abelian₂ _ hρ
       · simp [xt]
-    · rw [if_neg h1, if_neg h1]
+    · rw [ite_eq_right h1, ite_eq_right h1]
       by_cases h2 : i1 < j
-      · rw [dif_pos h2, dif_pos h2, sub_self]; exact Λ₀.zero_mem
+      · rw [dite_eq_left h2, dite_eq_left h2, sub_self]; exact Λ₀.zero_mem
       · rw [dite_eq_right h2, dite_eq_right h2]
         by_cases h3 : j.val + 1 = i1.val
-        · rw [if_pos h3, if_pos h3, sub_zero]; exact hC.abelian₂ _ ht
-        · rw [if_neg h3, if_neg h3, sub_self]; exact Λ₀.zero_mem
+        · rw [ite_eq_left h3, ite_eq_left h3, sub_zero]; exact hC.abelian₂ _ ht
+        · rw [ite_eq_right h3, ite_eq_right h3, sub_self]; exact Λ₀.zero_mem
   have := hΦ.2.2 _ _ hdet hY
   rwa [add_sub_cancel] at this
 
@@ -2623,7 +2568,7 @@ theorem pw_point (hD : LocalDatum K R ψ) (hC : Cst R ϖ L₀ Λ₀ Q a b) {m : 
       rw [hs]
       unfold x0 at h2
       linear_combination h2 - (lastE ξ + ∑ k, N (sd k)) * ht1
-    rw [e, AddChar.map_add_eq_mul, AddChar.map_add_eq_mul, psi_R hD hr, mul_one, GG, if_pos hxu]
+    rw [e, AddChar.map_add_eq_mul, AddChar.map_add_eq_mul, psi_R hD hr, mul_one, GG, ite_eq_left hxu]
     obtain ⟨P, hP⟩ := pw_isUnit_prod x hxu
     have hpos : (modK R (∏ k, x k) : ℝ) ≠ 0 := by
       rw [← hP]; exact (modK_pos hC.adic.isOpen hC.adic.isCompact P).ne'
@@ -2955,7 +2900,7 @@ theorem fa_crit (hD : LocalDatum K R ψ) (hC : Cst R ϖ L₀ Λ₀ Q a b) {m : �
       ((modK R (z : K) ^ m : ℝ) : ℂ) * GG R ψ Φ (D' : K) (fun _ => (z : K)) ((z : K) • N) := by
     intro N
     have hu : ∀ _k : Fin m, IsUnit (z : K) := fun _ => z.isUnit
-    simp only [hf, GG, if_pos hu, hprod, fa_modK_pow hA, hxt, hg1, _root_.Formalism.FourierDecayAlt.P.OrbitalIntegralReduction.pw_sUp, fa_smul_EE, ZZ]
+    simp only [hf, GG, ite_eq_left hu, hprod, fa_modK_pow hA, hxt, hg1, _root_.Formalism.FourierDecayAlt.P.OrbitalIntegralReduction.pw_sUp, fa_smul_EE, ZZ]
     have : ((modK R (z : K) ^ m : ℝ) : ℂ) ≠ 0 := by
       exact_mod_cast (pow_pos hP m).ne'
     push_cast
@@ -3169,12 +3114,12 @@ theorem fa_main (hD : LocalDatum K R ψ) (hC : Cst R ϖ L₀ Λ₀ Q a b) (hL₀
     rintro (i | p)
     · exact (h1 i).1
     · exact h2 p
-  have h7 := bx_sum hD (ι := Pr (m + 1)) (κ := Fin m) hlatt hL₀ (fun w => Jh (fun k => w (ee k))) (by
+  have h7 := bx_sum (R := R) (ι := Pr (m + 1)) (κ := Fin m) hlatt hL₀ (fun w => Jh (fun k => w (ee k))) (by
     intro w hw j
     obtain ⟨k, rfl⟩ := fa_ee_bij.2 j
     exact hsJh (fun k => w (ee k)) hw k)
   have h8 := bx_equiv (R := R) (Equiv.ofBijective ee (fa_ee_bij (m := m))).symm Λt Jh
-  have h9 := bx_sum hD (ι := Fin m) (κ := Pr (m + 1)) hlatt hL₀ Jh hsJh
+  have h9 := bx_sum (R := R) (ι := Fin m) (κ := Pr (m + 1)) hlatt hL₀ Jh hsJh
   have e7 : bx R Λt (Pr (m + 1)) f = bx R Λt (Fin m ⊕ Pr (m + 1)) Jh := by
     rw [h8]
     exact h7.symm

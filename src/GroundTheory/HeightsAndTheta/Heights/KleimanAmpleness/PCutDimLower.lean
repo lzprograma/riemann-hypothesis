@@ -26,16 +26,16 @@ section CutDimLowerAux
 variable {S : Type u} [CommRing S] {Ω : Type w} [Field Ω] [Algebra S Ω] {N : ℕ}
   {x : Fin (N + 1) → Ω}
 
-theorem exists_monos_mul_mem_twistMod_all (L : LineBundle S x) (I : Chart x) (y : Ω)
-    (hy : ∀ δ ∈ L.sub I, y * δ ∈ chartRing S x I) :
+theorem exists_monos_mul_mem_twistMod_all_subFamily (D : SubFamily S x Ω) (hfg : ∀ K, (D.sub K).FG)
+    (I : Chart x) (y : Ω) (hy : ∀ δ ∈ D.sub I, y * δ ∈ chartRing S x I) :
     ∃ U ∈ monos (S := S) I.1, ∃ dU : ℕ, U.IsHomogeneous dU ∧
-      ∀ (K : Chart x), ∀ δ ∈ L.sub K, aeval x U * (y * δ) ∈ twistMod S x (dU : ℤ) K := by
+      ∀ (K : Chart x), ∀ δ ∈ D.sub K, aeval x U * (y * δ) ∈ twistMod S x (dU : ℤ) K := by
   classical
-  have hyU := mul_mem_chartRing_union L.toSubFamily I
-  choose G hG using fun K => L.fg K
+  have hyU := mul_mem_chartRing_union D I
+  choose G hG using hfg
   have hgen : ∀ p : Σ K : Chart x, (G K : Set Ω),
       y * (p.2 : Ω) ∈ chartRing S x (chartUnion I p.1) := fun p =>
-    hyU p.1 y hy _ (L.mono p.1 (chartUnion I p.1)
+    hyU p.1 y hy _ (D.mono p.1 (chartUnion I p.1)
       (show p.1.1 ⊆ (chartUnion I p.1).1 from Finset.subset_union_right) _
       (by rw [← hG p.1]; exact Submodule.subset_span p.2.2))
   choose u hu d hd hud using fun p : (Σ K : Chart x, (G K : Set Ω)) =>
@@ -67,6 +67,12 @@ theorem exists_monos_mul_mem_twistMod_all (L : LineBundle S x) (I : Chart x) (y 
     rw [chartRing_smul_def, show aeval x U * (y * ((a : Ω) * b)) = (a : Ω) * (aeval x U * (y * b)) by ring,
       ← chartRing_smul_def]
     exact Submodule.smul_mem _ a hb
+
+theorem exists_monos_mul_mem_twistMod_all (L : LineBundle S x) (I : Chart x) (y : Ω)
+    (hy : ∀ δ ∈ L.sub I, y * δ ∈ chartRing S x I) :
+    ∃ U ∈ monos (S := S) I.1, ∃ dU : ℕ, U.IsHomogeneous dU ∧
+      ∀ (K : Chart x), ∀ δ ∈ L.sub K, aeval x U * (y * δ) ∈ twistMod S x (dU : ℤ) K :=
+  exists_monos_mul_mem_twistMod_all_subFamily L.toSubFamily L.fg I y hy
 
 end CutDimLowerAux
 
@@ -180,23 +186,15 @@ theorem CutDimLower.proof : CutDimLower.Statement.{u, w} := by
   have key := GroundTheory.Arith.Abelian.Jacobian.height_add_ringKrullDim_quotient k
     (qq.map (Ideal.Quotient.mk pp))
   rw [ringKrullDim_eq_of_ringEquiv (DoubleQuot.quotQuotEquivQuotOfLE hppq), hW.dim] at key
-  have hnn : (0 : WithBot ℕ∞) ≤ ringKrullDim (Poly k N ⧸ qq) := ringKrullDim_nonneg_of_nontrivial
-  generalize ringKrullDim (Poly k N ⧸ qq) = D at key hnn ⊢
-  generalize (qq.map (Ideal.Quotient.mk pp)).height = H at key hQ
-  induction D using WithBot.recBotCoe with
-  | bot => exact absurd hnn (by simp)
-  | coe d =>
-    have key' : H + d = ((n + 1 + 1 : ℕ) : ℕ∞) := by exact_mod_cast key
-    suffices ((n + 1 : ℕ) : ℕ∞) ≤ d by exact_mod_cast this
-    induction d using ENat.recTopCoe with
-    | top => exact le_top
-    | coe m =>
-      induction H using ENat.recTopCoe with
-      | top => simp at hQ
-      | coe h =>
-        have h1 : h ≤ 1 := by exact_mod_cast hQ
-        have h2 : h + m = n + 1 + 1 := by exact_mod_cast key'
-        exact_mod_cast (by omega : n + 1 ≤ m)
+  by_contra! hlt
+  have h1 : ((n + 1 + 1 : ℕ) : WithBot ℕ∞) ≤ ((n + 1 : ℕ) : WithBot ℕ∞) := calc
+    ((n + 1 + 1 : ℕ) : WithBot ℕ∞)
+      = (qq.map (Ideal.Quotient.mk pp)).height + ringKrullDim (Poly k N ⧸ qq) := key.symm
+    _ ≤ 1 + ringKrullDim (Poly k N ⧸ qq) := by gcongr; exact_mod_cast hQ
+    _ = ringKrullDim (Poly k N ⧸ qq) + 1 := add_comm _ _
+    _ ≤ ((n + 1 : ℕ) : WithBot ℕ∞) := ENat.WithBot.add_one_le_natCast_iff.mpr hlt
+  have h2 : n + 1 + 1 ≤ n + 1 := by exact_mod_cast h1
+  omega
 
 end
 

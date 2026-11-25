@@ -67,8 +67,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
-attribute [local instance] Over.cartesianMonoidalCategory
-set_option autoImplicit false
 
 noncomputable section
 
@@ -365,21 +363,6 @@ theorem weilIs_exp_riemannForm_of_isFactorAH : ∀ (A : Over (Sp ℂ)) [GrpObj A
     (Eq.trans ?_ (congrArg (_ * · * (c : ℂ)) (val_pullGen hv _ _ _ _ _ _ _ n₃).symm))
   rw [(tr θx _ hpx z).1, (tr θy _ hpy z).1]
   exact key
-
-theorem im_hermForm_int {A : Over (Sp ℂ)} [GrpObj A] {L : LB A.left} (hL : L.IsLB) {n : ℕ} (u : HolUnif A L n)
-    {Hm : Matrix (Fin n) (Fin n) ℂ} {χ : u.Λ → ℂ} (h : u.IsAH Hm χ) (l m : u.Λ) :
-    ∃ e : ℤ, (e : ℝ) = ((l : Fin n → ℂ) ⬝ᵥ Hm.mulVec (star (m : Fin n → ℂ))).im := by
-  exact im_hermForm_int_of_isFactorAH hL u (GlobalTheory.TorusRM.isFactorAH_of_isAH h) l m
-
-theorem thetaGrp_in_frame {A : Over (Sp ℂ)} [GrpObj A] {L : LB A.left} (hL : L.IsLB) {n : ℕ} (u : HolUnif A L n)
-    {Hm : Matrix (Fin n) (Fin n) ℂ} {χ : u.Λ → ℂ} (hAH : u.IsAH Hm χ) (k : ℕ) (a : u.Λ) (hk : 0 < k)
-    (T : Over (Sp ℂ)) (p : 𝟙_ (Over (Sp ℂ)) ⟶ T) (θ : Out.ThetaGrp A L k T)
-    (hθ : p ≫ θ.pt = u.ex ((k : ℂ)⁻¹ • (a : Fin n → ℂ))) :
-    ∃ C : ℂ, ∀ (j : Fin 2 → L.ι) z, ⊤ ≤ (u.ex z).left ⁻¹ᵁ L.U (j 0) →
-      ⊤ ≤ (u.ex (z + (k : ℂ)⁻¹ • (a : Fin n → ℂ))).left ⁻¹ᵁ L.U (j 1) →
-      valAt' (lift p (u.ex z)).left _ (θ.φ.s j).val * u.fr (j 1) (z + (k : ℂ)⁻¹ • (a : Fin n → ℂ)) ^ k =
-        C * cexp (-(Real.pi * (z ⬝ᵥ Hm.mulVec (star (a : Fin n → ℂ))))) * u.fr (j 0) z ^ k := by
-  exact thetaGrp_in_frame_of_isFactorAH hL u (GlobalTheory.TorusRM.isFactorAH_of_isAH hAH) k a hk T p θ hθ
 
 open GlobalTheory.WeilExp in
 theorem weilIs_exp_riemannForm : ∀ (A : Over (Sp ℂ)) [GrpObj A] [IsCommMonObj A], IsAbelianScheme A →

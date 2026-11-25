@@ -220,10 +220,10 @@ theorem classNumber_mul_regulator_le_sqrt_discr_rpow :
     · rintro ⟨⟨h0, hle⟩, hc⟩
       have hI : I ∈ nonZeroDivisors (Ideal (𝓞 K)) := mem_nonZeroDivisors_of_ne_zero h0
       refine ⟨hI, ?_, hle⟩
-      simpa only [cls, dif_pos hI] using hc
+      simpa only [cls, dite_eq_left hI] using hc
     · rintro ⟨hI, hc, hle⟩
       refine ⟨⟨nonZeroDivisors.ne_zero hI, hle⟩, ?_⟩
-      simpa only [cls, dif_pos hI] using hc
+      simpa only [cls, dite_eq_left hI] using hc
   have h2 : ∀ I ∈ T, g I ≤ Y ^ s * (Ideal.absNorm I : ℝ) ^ (-s) := by
     intro I hI
     obtain ⟨h0, hle⟩ := (hmem I).1 hI
@@ -422,17 +422,6 @@ open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheor
 
 namespace GlobalTheory.SphereRatio
 
-theorem sphV_succ (i : ℕ) : sphV (i + 1) = sphV i * (2 * Real.pi ^ (i + 1) / (i.factorial : ℝ)) := by
-  unfold sphV
-  rw [Finset.prod_Icc_succ_top (by omega)]
-  simp
-
-theorem sphV_pos (i : ℕ) : 0 < sphV i := by
-  unfold sphV
-  refine Finset.prod_pos fun l _ => ?_
-  have := Real.pi_pos
-  positivity
-
 theorem le_exp : (32.5 : ℝ) ≤ Real.exp 3.49 := by
   have h := Real.sum_le_exp_of_nonneg (x := (3.49 : ℝ)) (by norm_num) 10
   refine le_trans ?_ h
@@ -447,8 +436,8 @@ theorem sphV_add_le (m j : ℕ) : sphV (m + j) ≤ sphV m * Real.exp (3.49 * j) 
     rw [Nat.add_sub_cancel] at h
     have h2 := h.trans le_exp
     have hp := Real.pi_pos
-    have hm := sphV_pos m
-    rw [← add_assoc, sphV_succ]
+    have hm := GlobalTheory.SphRatio.sphV_pos m
+    rw [← add_assoc, GlobalTheory.SphRatio.sphV_succ]
     calc sphV (m + j) * (2 * Real.pi ^ (m + j + 1) / ((m + j).factorial : ℝ))
         ≤ (sphV m * Real.exp (3.49 * j)) * Real.exp 3.49 :=
           mul_le_mul ih h2 (by positivity) (by positivity)
@@ -470,8 +459,8 @@ theorem inv_sphV_le (J : ℕ) : (sphV J)⁻¹ ≤ (J : ℝ) ^ (J * (J - 1) / 2) 
       rw [inv_div]
       exact (div_le_self (by positivity) h1).trans hf
     have he : (J + 1) * (J + 1 - 1) / 2 = J * (J - 1) / 2 + J := Nat.triangle_succ J
-    have hJ := sphV_pos J
-    rw [sphV_succ, mul_inv, he]
+    have hJ := GlobalTheory.SphRatio.sphV_pos J
+    rw [GlobalTheory.SphRatio.sphV_succ, mul_inv, he]
     calc (sphV J)⁻¹ * (2 * Real.pi ^ (J + 1) / (J.factorial : ℝ))⁻¹
         ≤ (J : ℝ) ^ (J * (J - 1) / 2) * (J : ℝ) ^ J :=
           mul_le_mul ih h2 (by positivity) (by positivity)
@@ -484,11 +473,11 @@ end GlobalTheory.SphereRatio
 theorem GlobalTheory.sphV_ratio_and_inv_bounds :
     (∀ q j : ℕ, j ≤ q → Real.log (sphV q / sphV (q - j)) ≤ 3.49 * j) ∧
       ∀ J : ℕ, 0 < sphV J ∧ (sphV J)⁻¹ ≤ (J : ℝ) ^ (J * (J - 1) / 2) := by
-  refine ⟨fun q j h => ?_, fun J => ⟨GlobalTheory.SphereRatio.sphV_pos J, GlobalTheory.SphereRatio.inv_sphV_le J⟩⟩
+  refine ⟨fun q j h => ?_, fun J => ⟨GlobalTheory.SphRatio.sphV_pos J, GlobalTheory.SphereRatio.inv_sphV_le J⟩⟩
   have h1 := GlobalTheory.SphereRatio.sphV_add_le (q - j) j
   rw [Nat.sub_add_cancel h] at h1
-  have hq := GlobalTheory.SphereRatio.sphV_pos q
-  have hm := GlobalTheory.SphereRatio.sphV_pos (q - j)
+  have hq := GlobalTheory.SphRatio.sphV_pos q
+  have hm := GlobalTheory.SphRatio.sphV_pos (q - j)
   rw [Real.log_le_iff_le_exp (by positivity), div_le_iff₀ hm, mul_comm]
   exact h1
 end -- clump:auto
@@ -566,8 +555,6 @@ theorem numeric (N s L c : ℝ) (hs : 100 ≤ s) (hN : N = s * s) (hL : 15 ≤ L
   linarith [show (N - 2 * s) * (L - (c + 1)) = N * L - 2 * (s * L) - (N - 2 * s) * (c + 1) by ring]
 
 end ConstBd
-
-
 
 open ConstBd in
 theorem constantBound : ConstantBound := by

@@ -3,49 +3,6 @@ module
 public import Formalism.HermitianCurvature.FrameMinor
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorRepresentations
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -57,8 +14,6 @@ noncomputable section
 namespace Formalism.FourierDecayAlt.P
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Qr
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 namespace AnisotropicColumnSums
 
@@ -147,9 +102,9 @@ theorem herm_bcol_eq_ite {x : Fin (2 * r + k + 1) → ℂ} {Bs : Fin k → Fin (
     herm (Hpk k r) (bcol k r x Bs j) x = if j.val < k then 0 else herm (Hpk k r) x x := by
   unfold bcol
   by_cases h : j.val < k
-  · rw [dite_eq_left h, if_pos h]
+  · rw [dite_eq_left h, ite_eq_left h]
     exact hB.2.2 _ x (List.mem_singleton_self x)
-  · rw [dite_eq_right h, if_neg h]
+  · rw [dite_eq_right h, ite_eq_right h]
 
 private theorem herm_eq_star_herm_swap (v w : Fin (2 * r + k + 1) → ℂ) :
     herm (Hpk k r) v w = star (herm (Hpk k r) w v) := by
@@ -172,22 +127,22 @@ theorem gram {x : Fin (2 * r + k + 1) → ℂ} {Bs : Fin k → Fin (2 * r + k + 
     omega
   unfold bcol nrm
   by_cases h1 : j.val < k <;> by_cases h2 : j'.val < k
-  · rw [dite_eq_left h2, dite_eq_left h1, if_pos h1, mul_one, hBo]
+  · rw [dite_eq_left h2, dite_eq_left h1, ite_eq_left h1, mul_one, hBo]
     by_cases hjj : j = j'
     · subst hjj
       simp
     · have hne : ¬ j'.val = j.val := fun h => hjj (Fin.ext h.symm)
       simp [hjj, hne]
-  · rw [dite_eq_right h2, dite_eq_left h1, if_pos h1, mul_one, hx0', if_neg]
+  · rw [dite_eq_right h2, dite_eq_left h1, ite_eq_left h1, mul_one, hx0', ite_eq_right]
     rintro rfl
     exact h2 h1
-  · rw [dite_eq_left h2, dite_eq_right h1, if_neg h1, hx0, zero_mul, if_neg]
+  · rw [dite_eq_left h2, dite_eq_right h1, ite_eq_right h1, hx0, zero_mul, ite_eq_right]
     rintro rfl
     exact h1 h2
   · have hjj : j = j' := by
       ext
       omega
-    rw [dite_eq_right h2, dite_eq_right h1, if_neg h1, if_pos hjj, mul_inv_cancel₀ hxx]
+    rw [dite_eq_right h2, dite_eq_right h1, ite_eq_right h1, ite_eq_left hjj, mul_inv_cancel₀ hxx]
 
 end AnisotropicColumnSums
 
@@ -220,11 +175,11 @@ theorem qr_chatFrame_of : Formalism.FourierDecayAlt.Qr.FrameMinor → Formalism.
     (EV k r (Fin.last r) D E) P Q la rfl ι (fun _ => rfl) (relation_representation E k r 0 (Fin.last r) D hD).1 hQP hPQ u
     (fun j => herm (Hpk k r) (bvec (posL k r (Fin.last r) j)) x) (by
       intro j hj
-      rw [hβP, if_pos]
+      rw [hβP, ite_eq_left]
       have h1 : j.val < k + 1 := lt_of_lt_of_eq j.isLt mdim_last
       have : j.val ≠ k := fun e => hj (Fin.ext e)
       omega)
-  rw [hcol, key, hβP, if_neg (by simp [la])]
+  rw [hcol, key, hβP, ite_eq_right (by simp [la])]
   have hm := hFM E k r k D hD Bs hB.1 P Q ι (fun a b e => Fin.ext (by have e' := congrArg Fin.val e; exact e'))
     (by
       intro a c

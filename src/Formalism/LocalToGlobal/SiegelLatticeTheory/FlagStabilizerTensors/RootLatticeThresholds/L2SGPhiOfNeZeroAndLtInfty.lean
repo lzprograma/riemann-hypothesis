@@ -62,10 +62,10 @@ theorem nu_conc {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} (hz : Formalism.Qu
     by_cases hx : Matrix.of x ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r)
     · have hnm : x ∉ {x : Formalism.QuantumDeterminants.Mt k r | Matrix.of x ∉ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r)} :=
         fun h => h hx
-      rw [Set.indicator_apply, if_neg hnm]
+      rw [Set.indicator_apply, ite_eq_right hnm]
       exact bot_le
     · have hxm : x ∈ {x : Formalism.QuantumDeterminants.Mt k r | Matrix.of x ∉ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r)} := hx
-      rw [Set.indicator_apply, if_pos hxm]
+      rw [Set.indicator_apply, ite_eq_left hxm]
       calc μS Set.univ = ∫⁻ _, (1 : ℝ≥0∞) ∂μS := lintegral_one.symm
         _ ≤ _ := by
           apply lintegral_mono_ae

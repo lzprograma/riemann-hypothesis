@@ -51,6 +51,7 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
 import Formalism.LocalToGlobal.IndefiniteForms.IndefSide
 import Formalism.LocalToGlobal.IndefiniteReal.IndefiniteWeightData
 import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+import Development.WeilBound.ThetaLifts.FrameEstimates.ContinuousMixedSymm
 
 @[expose] public section
 
@@ -60,7 +61,6 @@ open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.Ind
 open GlobalTheory.Grid GlobalTheory.Doubling GlobalTheory.ChainFr GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.SquareComm GlobalTheory.SquareAgree
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped Classical
@@ -89,14 +89,7 @@ theorem evI_add (a b : AF F) : evI F (a + b) = evI F a + evI F b := map_add evIH
 theorem evI_mul (a b : AF F) : evI F (a * b) = evI F a * evI F b := map_mul evIHom a b
 
 theorem continuous_evI : Continuous (evI F) := by
-  have h : Continuous (InfiniteAdeleRing.ringEquiv_mixedSpace F) := by
-    change Continuous fun x : InfiniteAdeleRing F =>
-      ((fun (v : {w : InfinitePlace F // w.IsReal}) => InfinitePlace.Completion.extensionEmbeddingOfIsReal v.2 (x v)),
-       (fun (v : {w : InfinitePlace F // w.IsComplex}) => InfinitePlace.Completion.extensionEmbedding v.1 (x v)))
-    refine Continuous.prodMk (continuous_pi fun v => ?_) (continuous_pi fun v => ?_)
-    · exact (InfinitePlace.Completion.isometry_extensionEmbeddingOfIsReal v.2).continuous.comp (continuous_apply _)
-    · exact (InfinitePlace.Completion.isometry_extensionEmbedding v.1).continuous.comp (continuous_apply _)
-  exact h.comp continuous_fst
+  apply _root_.PositivityTheory.ThKEst.W.cont_evI <;> assumption
 
 theorem fst_eq_zero {a : AF F} (h : evI F a = 0) : a.1 = 0 :=
   (InfiniteAdeleRing.ringEquiv_mixedSpace F).injective (by rw [map_zero]; exact h)
@@ -104,7 +97,7 @@ theorem fst_eq_zero {a : AF F} (h : evI F a = 0) : a.1 = 0 :=
 theorem mul_eq_zero_of {a b : AF F} (ha : evI F a = 0) (hb : b.2 = 0) : a * b = 0 :=
   Prod.ext (by show a.1 * b.1 = 0; rw [fst_eq_zero ha, zero_mul]) (by show a.2 * b.2 = 0; rw [hb, mul_zero])
 
-theorem at_of_snd {a : AF F} (h : a.2 = 0) : At (evI F) a := fun u hu => mul_eq_zero_of hu h
+theorem at_of_snd {a : AF F} (h : a.2 = 0) : At (evI F) a := fun _ hu => mul_eq_zero_of hu h
 
 theorem snd_of_at {a : AF F} (h : At (evI F) a) : a.2 = 0 := by
   have h1 := h (((0 : InfiniteAdeleRing F), (1 : FiniteAdeleRing (𝓞 F) F)) : AF F)
@@ -114,10 +107,10 @@ theorem snd_of_at {a : AF F} (h : At (evI F) a) : a.2 = 0 := by
 
 theorem at_vec_iff {κ : Type} {z : κ → AF F} : At (evI F) z ↔ ∀ i, (z i).2 = 0 :=
   ⟨fun h i => snd_of_at (fun u hu => congrFun (h u hu) i),
-    fun h u hu => funext fun i => mul_eq_zero_of hu (h i)⟩
+    fun h _ hu => funext fun i => mul_eq_zero_of hu (h i)⟩
 
 theorem archPart_archLift {κ : Type} (x : κ → mixedEmbedding.mixedSpace F) : archPart (archLift x) = x :=
-  funext fun i => RingEquiv.apply_symm_apply _ _
+  funext fun _ => RingEquiv.apply_symm_apply _ _
 
 theorem archLift_archPart {κ : Type} {z : κ → AF F} (hz : At (evI F) z) : archLift (archPart z) = z := by
   funext i

@@ -20,6 +20,7 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.Automorphic
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.OrthCases
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.Places
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ExistsIdele
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ExistsIdele
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ExpInj
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ExpUnique
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.HolLin
@@ -131,16 +132,7 @@ private theorem unr_of_hol [IsTotallyReal F] {k : ℕ} {c : Pl F → ℕ} {ω : 
 
 private theorem chi_prime (ω : HChar F) (c : Pl F → ℕ) (w : Pl F) :
     chiI ω c w.asIdeal = if c w = 0 then ((ω.val w : ℂˣ) : ℂ) else 0 := by
-  unfold chiI
-  rw [finprod_eq_single _ w]
-  · have : ordI w w.asIdeal = 1 := Associates.count_self w.associates_irreducible
-    rw [this, pow_one]
-  · intro v hv
-    have : ordI v w.asIdeal = 0 := by
-      by_contra h0
-      have h1 := (Associates.count_ne_zero_iff_dvd w.ne_bot v.irreducible).1 h0
-      exact hv (HeightOneSpectrum.ext (associated_iff_eq.1 ((v.prime.dvd_prime_iff_associated w.prime).1 h1)))
-    rw [this, pow_zero]
+  apply _root_.UpperTheory.V.Sd.chi_prime <;> assumption
 
 end Gen
 
@@ -182,20 +174,20 @@ private theorem hk_coef {k N : ℕ} (hN : 1 ≤ N) {χ : DirichletCharacter ℂ 
   have hχ : chiI ω (lev N) w.asIdeal = χ (normV w : ZMod N) := by
     rw [chi_prime, lev_eq N hN]
     by_cases hd : normV w ∣ N
-    · rw [if_neg (hp.factorization_pos_of_dvd (by omega) hd).ne', MulChar.map_nonunit]
+    · rw [ite_eq_right (hp.factorization_pos_of_dvd (by omega) hd).ne', MulChar.map_nonunit]
       rw [ZMod.isUnit_prime_iff_not_dvd hp]
       exact not_not.2 hd
-    · rw [if_pos (Nat.factorization_eq_zero_of_not_dvd hd), hval w hd]
+    · rw [ite_eq_left (Nat.factorization_eq_zero_of_not_dvd hd), hval w hd]
   have hd : coefDiv (icoef g.f) w.asIdeal 𝔪 =
       if normV w ∣ Ideal.absNorm 𝔪 then coef g.f (Ideal.absNorm 𝔪 / normV w) else 0 := by
     unfold coefDiv
     by_cases h : ∃ 𝔫, 𝔪 = w.asIdeal * 𝔫
     · have e := congrArg Ideal.absNorm h.choose_spec
       rw [map_mul, hn] at e
-      rw [dite_eq_left h, if_pos ⟨_, e⟩, icoef]
+      rw [dite_eq_left h, ite_eq_left ⟨_, e⟩, icoef]
       congr 1
       exact (Nat.div_eq_of_eq_mul_right hp.pos e).symm
-    · rw [dite_eq_right h, if_neg fun h' => h (dvd_of_norm w 𝔪 h')]
+    · rw [dite_eq_right h, ite_eq_right fun h' => h (dvd_of_norm w 𝔪 h')]
   rw [hkCoef, hχ, hd, icoef, icoef, map_mul, hn]
   exact g.eig _ hp _ h1
 

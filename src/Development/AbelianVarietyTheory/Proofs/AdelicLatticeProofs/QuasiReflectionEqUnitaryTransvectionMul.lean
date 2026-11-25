@@ -232,7 +232,7 @@ theorem _root_.GlobalTheory.UTrans.PlaneRefl.quasiRefl_eq_mul_of_plane : ∀ (E 
   by_cases hD : u * σ a * _root_.GlobalTheory.UTrans.hf σ G x z +
       a * σ (_root_.GlobalTheory.UTrans.hf σ G x z) ≠ 0
   · exact quasiReflection_eq_transvectionGen_mul_shifted σ G hinv hG x z a u hzz hxz hxx hyy hu hu1 hD
-  push_neg at hD
+  push Not at hD
   obtain ⟨e, he⟩ := hne
   obtain ⟨ω, hωdef⟩ : ∃ ω, ω = e - σ e := ⟨_, rfl⟩
   have hσω : σ ω = -ω := by rw [hωdef, map_sub, hinv]; ring

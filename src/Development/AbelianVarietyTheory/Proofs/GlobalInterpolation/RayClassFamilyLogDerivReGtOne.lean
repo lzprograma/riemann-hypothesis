@@ -306,18 +306,18 @@ theorem logDeriv_F : ∀ (𝓕 : LFam) (χ : AddChar 𝓕.G ℂ) (s : ℂ), 1 < 
   · by_cases h : χ = 1
     · have hev : 𝓕.F χ =ᶠ[𝓝 s] fun z => (z - 1) * LSeries (𝓕.aChi χ) z :=
         Filter.eventually_of_mem (hU.mem_nhds hs) fun z hz => by
-          rw [(hLS z hz).2, if_pos h]
+          rw [(hLS z hz).2, ite_eq_left h]
       have hd : HasDerivAt (fun z => (z - 1) * LSeries (𝓕.aChi χ) z)
           (1 * LSeries (𝓕.aChi χ) s +
             (s - 1) * (-(LSeries (𝓕.lamChi χ) s * LSeries (𝓕.aChi χ) s))) s :=
         ((hasDerivAt_id s).sub_const (1 : ℂ)).mul hder
-      rw [hev.deriv_eq, hd.deriv, (hLS s hs).2, if_pos h, if_pos h]
+      rw [hev.deriv_eq, hd.deriv, (hLS s hs).2, ite_eq_left h, ite_eq_left h]
       field_simp
       ring
     · have hev : 𝓕.F χ =ᶠ[𝓝 s] LSeries (𝓕.aChi χ) :=
         Filter.eventually_of_mem (hU.mem_nhds hs) fun z hz => by
-          rw [(hLS z hz).2, if_neg h, one_mul]
-      rw [hev.deriv_eq, hder.deriv, (hLS s hs).2, if_neg h, if_neg h, one_mul]
+          rw [(hLS z hz).2, ite_eq_right h, one_mul]
+      rw [hev.deriv_eq, hder.deriv, (hLS s hs).2, ite_eq_right h, ite_eq_right h, one_mul]
       field_simp
       ring
 

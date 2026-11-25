@@ -5,55 +5,7 @@ public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemIwUIff
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FSatakeB
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FSatakeC
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -98,11 +50,10 @@ theorem row_form (g : GU σ n) (i j : Fin n) :
 theorem row_isotropic (g : GU σ n) {a : Fin n} (ha : a ≠ a.rev) :
     ∑ l, mat g a l * σ (mat g a l.rev) = 0 := by
   have h := row_form g a a.rev
-  rwa [if_neg ha, Fin.rev_rev] at h
+  rwa [ite_eq_right ha, Fin.rev_rev] at h
 
 theorem row_ne_zero (g : GU σ n) (a : Fin n) : ∃ j, mat g a j ≠ 0 := by
-  by_contra h
-  push_neg at h
+  by_contra! h
   have := sum_mul_inv g a a
   simp [h] at this
 
@@ -146,7 +97,7 @@ theorem eich_dual (hσ : ∀ x, σ (σ x) = x) (p : Fin n) (z : Fin n → L) (i 
   by_cases hj : j = p.rev
   · subst hj; simp
   · have h1 : ¬ j.rev = p := fun h => hj (by rw [← h, Fin.rev_rev])
-    rw [if_neg h1, if_neg hj]
+    rw [ite_eq_right h1, ite_eq_right hj]
     by_cases hi : i = p
     · subst hi
       by_cases hj' : j = i
@@ -154,7 +105,7 @@ theorem eich_dual (hσ : ∀ x, σ (σ x) = x) (p : Fin n) (z : Fin n → L) (i 
       · have h2 : ¬ j.rev = i.rev := fun h => hj' (Fin.rev_injective h)
         simp [h2, hj', hσ]
     · have h2 : ¬ i.rev = p.rev := fun h => hi (Fin.rev_injective h)
-      rw [if_neg h2, if_neg hi]
+      rw [ite_eq_right h2, ite_eq_right hi]
       by_cases hij : i = j
       · subst hij; simp
       · have h3 : ¬ j.rev = i.rev := fun h => hij (Fin.rev_injective h).symm
@@ -168,11 +119,11 @@ theorem exists_eich (hσ : ∀ x, σ (σ x) = x) {p : Fin n} (hp : p ≠ p.rev) 
   simp only [Matrix.of_apply, eich_dual hσ]
   by_cases hi : i = p
   · subst hi
-    simp only [eichM, if_true]
+    simp only [eichM, ite_true]
     by_cases hk : k = i.rev
-    · simp only [hk, if_true]
-      rw [hiso, if_neg hp]
-    · simp only [if_neg hk]
+    · simp only [hk, ite_true]
+      rw [hiso, ite_eq_right hp]
+    · simp only [ite_eq_right hk]
       by_cases hki : k = i
       · subst hki
         rw [Finset.sum_eq_single k]
@@ -193,7 +144,7 @@ theorem exists_eich (hσ : ∀ x, σ (σ x) = x) {p : Fin n} (hp : p ≠ p.rev) 
         (if j = p.rev then (if i = p.rev then 0 else - σ (z i.rev)) else 0) := by
       intro j
       unfold eichM
-      rw [if_neg hi]
+      rw [ite_eq_right hi]
       by_cases h1 : j = p.rev
       · subst h1
         by_cases h2 : i = p.rev
@@ -202,7 +153,7 @@ theorem exists_eich (hσ : ∀ x, σ (σ x) = x) {p : Fin n} (hp : p ≠ p.rev) 
       · simp [h1]
     simp only [e, add_mul, Finset.sum_add_distrib]
     have hpr : p.rev ≠ p := Ne.symm hp
-    simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true, if_neg hpr,
+    simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true, ite_eq_right hpr,
       Fin.rev_rev, hz, map_one]
     by_cases hk : k = p.rev
     · subst hk
@@ -230,7 +181,7 @@ theorem eich_fix (σ : L →+* L) {p c : Fin n} {z : Fin n → L} (hz : z p = 1)
   constructor
   · intro j
     unfold eichM
-    rw [if_neg h1]
+    rw [ite_eq_right h1]
     by_cases hj : j = p.rev
     · subst hj; simp [h2, hc']
     · simp [hj]
@@ -244,12 +195,12 @@ theorem eich_lower (σ : L →+* L) {p : Fin n} {z : Fin n → L} (hz : ∀ c, p
     eichM σ p z i j = 0 := by
   unfold eichM
   by_cases hi : i = p
-  · subst hi; rw [if_pos rfl]; exact hz j hij
-  · rw [if_neg hi]
+  · subst hi; rw [ite_eq_left rfl]; exact hz j hij
+  · rw [ite_eq_right hi]
     by_cases hj : j = p.rev
     · subst hj
-      rw [if_pos rfl, if_neg hij.ne, hz i.rev (Fin.lt_rev_iff.2 hij), map_zero, neg_zero]
-    · rw [if_neg hj, if_neg hij.ne]
+      rw [ite_eq_left rfl, ite_eq_right hij.ne, hz i.rev (Fin.lt_rev_iff.2 hij), map_zero, neg_zero]
+    · rw [ite_eq_right hj, ite_eq_right hij.ne]
 
 theorem inv_fix {T : GU σ n} {c : Fin n} (hr : ∀ j, mat T c j = if c = j then 1 else 0)
     (hc : ∀ i, mat T i c = if i = c then 1 else 0) :
@@ -282,7 +233,7 @@ theorem IsoAt.mul_fix {g S : GU σ n} {a c : Fin n} (h : IsoAt (mat g) a c)
     simp [hc]
   refine ⟨?_, fun j hj => ?_, fun i hi => ?_⟩
   · rw [e1]; simpa using h.1
-  · rw [e1, if_neg (Ne.symm hj), mul_zero]
+  · rw [e1, ite_eq_right (Ne.symm hj), mul_zero]
   · rw [e2, h.2.2 i hi]
 
 theorem IsoAt.rev {g : GU σ n} {a c : Fin n} (h : IsoAt (mat g) a c) : IsoAt (mat g) a.rev c.rev := by
@@ -304,17 +255,17 @@ theorem IsoAt.rev {g : GU σ n} {a c : Fin n} (h : IsoAt (mat g) a c) : IsoAt (m
   · have h1 := e3 c.rev
     rw [Fin.rev_rev, h0, map_zero] at h1
     have h2 := e1 c
-    rw [← h1, zero_mul, if_pos rfl] at h2
+    rw [← h1, zero_mul, ite_eq_left rfl] at h2
     exact zero_ne_one h2
   · have h2 := e1 j.rev
     have hne : j.rev ≠ c := fun hh => hj (by rw [← hh, Fin.rev_rev])
-    rw [if_neg hne] at h2
+    rw [ite_eq_right hne] at h2
     have h3 : mat g⁻¹ j.rev a = 0 := (mul_eq_zero.1 h2).resolve_right h.1
     rw [← e3] at h3
     exact (map_eq_zero σ).1 h3
   · have h2 := e2 i.rev
     have hne : a ≠ i.rev := fun hh => hi (by rw [hh, Fin.rev_rev])
-    rw [if_neg hne] at h2
+    rw [ite_eq_right hne] at h2
     have h3 : mat g⁻¹ c i.rev = 0 := (mul_eq_zero.1 h2).resolve_left h.1
     rw [← e4] at h3
     exact (map_eq_zero σ).1 h3
@@ -346,9 +297,9 @@ theorem iso_last (g : GU σ n) (a : Fin n) (h : ∀ b, b ≠ a → ∃ c, IsoAt 
   refine ⟨c, ⟨hc, fun j hj => ?_, hcol c hc⟩⟩
   by_contra h0
   have h1 := hmul j h0
-  rw [if_neg (Ne.symm hj)] at h1
+  rw [ite_eq_right (Ne.symm hj)] at h1
   have h2 := hmul c hc
-  rw [if_pos rfl] at h2
+  rw [ite_eq_left rfl] at h2
   have h3 : mat g⁻¹ c a = 0 := (mul_eq_zero.1 h1).resolve_right h0
   rw [h3, zero_mul] at h2
   exact zero_ne_one h2
@@ -375,7 +326,7 @@ theorem mono_end (g : GU σ n) (h : ∀ a, ∃ c, IsoAt (mat g) a c) :
       simp only [Matrix.of_apply]
       rw [Finset.sum_eq_single (f i)]
       · have : (f i).rev.rev = f i := Fin.rev_rev _
-        simp only [if_true, one_mul, hrev k, Fin.rev_injective.eq_iff, hinj.eq_iff]
+        simp only [ite_true, one_mul, hrev k, Fin.rev_injective.eq_iff, hinj.eq_iff]
         by_cases hik : i = k
         · simp [hik]
         · simp [hik]
@@ -389,7 +340,7 @@ theorem mono_end (g : GU σ n) (h : ∀ a, ∃ c, IsoAt (mat g) a c) :
   intro i j hji
   show mat (g * w⁻¹) i j = 0
   rw [mat_mul_apply, Finset.sum_eq_single (f i)]
-  · rw [mat_inv_apply, hw', if_neg, map_zero, mul_zero]
+  · rw [mat_inv_apply, hw', ite_eq_right, map_zero, mul_zero]
     intro hh
     rw [hrev] at hh
     exact hji.ne' (hinj (Fin.rev_injective hh))
@@ -483,13 +434,13 @@ theorem eich_mem_iw (hσv : ∀ x, Valued.v (σ x) = Valued.v x) {p : Fin n} {z 
     rw [hT]
     unfold eichM
     by_cases hi : i = p
-    · subst hi; rw [if_pos rfl]; exact h2 j hji
-    · rw [if_neg hi]
+    · subst hi; rw [ite_eq_left rfl]; exact h2 j hji
+    · rw [ite_eq_right hi]
       by_cases hj : j = p.rev
       · subst hj
-        rw [if_pos rfl, if_neg hji.ne', Valuation.map_neg, hσv]
+        rw [ite_eq_left rfl, ite_eq_right hji.ne', Valuation.map_neg, hσv]
         exact h2 _ (Fin.rev_lt_iff.2 hji)
-      · rw [if_neg hj, if_neg hji.ne']
+      · rw [ite_eq_right hj, ite_eq_right hji.ne']
         simp
 
 theorem step (hσ : ∀ x, σ (σ x) = x) (hσv : ∀ x, Valued.v (σ x) = Valued.v x) (g : GU σ n) {k : ℕ}
@@ -577,9 +528,9 @@ theorem step (hσ : ∀ x, σ (σ x) = x) (hσv : ∀ x, Valued.v (σ x) = Value
   have hg₂e : ∀ i j, mat g₂ i j = mat G₂ j i := by intro i j; rw [hg₂]; rfl
   have hIso : IsoAt (mat g₂) a p := by
     refine ⟨?_, fun j hj => ?_, fun i hi => ?_⟩
-    · rw [hg₂e, h2, if_pos rfl]; exact hxp
-    · rw [hg₂e, h3, hGe, h1, if_neg (Ne.symm hj)]
-    · rw [hg₂e, h2, if_neg (Ne.symm hi)]
+    · rw [hg₂e, h2, ite_eq_left rfl]; exact hxp
+    · rw [hg₂e, h3, hGe, h1, ite_eq_right (Ne.symm hj)]
+    · rw [hg₂e, h2, ite_eq_right (Ne.symm hi)]
   have hiso2 : ∀ b c, (b.val < k ∨ n ≤ b.val + k) → IsoAt (mat g) b c → IsoAt (mat g₂) b c := by
     intro b c hb hbc
     have hf := eich_fix σ (c := b) hz'a (hz'0 b hb) (hz'0 b.rev (hfinR b hb))

@@ -237,17 +237,6 @@ theorem exists_isWittFrame (h : IsCMExt F E σ) (hJ : IsHermND σ J) :
     (fun i => (gram_mulVec (of y)ᵀ z i).symm.trans (congrFun h2 i)) ((hB z z).trans h3) hw₀)
 
 
-omit [NumberField F] [NumberField E] in
-theorem isWittFrame_plane : IsWittFrame σ !![0, 1; 1, 0] (!![1; 0] : Matrix (Fin 2) (Fin 1) E) !![0; 1] := by
-  refine ⟨?_, ?_, ?_, fun z h1 h2 _ => ?_⟩
-  · ext i j; simp [cT, Matrix.mul_apply, Fin.sum_univ_two]
-  · ext i j; simp [cT, Matrix.mul_apply, Fin.sum_univ_two]
-  · ext i j; simp [cT, Matrix.mul_apply, Fin.sum_univ_two, Subsingleton.elim i j, Matrix.one_apply]
-  · have e1 := congrFun h1 0
-    have e2 := congrFun h2 0
-    simp [cT, Matrix.mul_apply, Fin.sum_univ_two, mulVec, dotProduct] at e1 e2
-    funext i; fin_cases i <;> simp [e1, e2]
-
 theorem exists_unit_torus {A : Type} [CommRing A] {s : A →+* A} (hs : ∀ a, s (s a) = a) {J : Matrix (Fin n) (Fin n) A}
     (hJ : cT s J = J) {X Y : Matrix (Fin n) (Fin r) A} (xx : cT s X * J * X = 0) (yy : cT s Y * J * Y = 0)
     (xy : cT s X * J * Y = 1) (d : Fin r → Aˣ) (hd : ∀ i, s (d i) = d i) :
@@ -288,24 +277,6 @@ theorem exists_unit_torus {A : Type} [CommRing A] {s : A →+* A} (hs : ∀ a, s
   have hM' : M d⁻¹ * M d = 1 := by simpa only [inv_inv] using hM d⁻¹
   exact ⟨⟨M d, M d⁻¹, hM d, hM'⟩, show cT s (M d) * J * M d = J by rw [hU, Matrix.mul_assoc, hM', Matrix.mul_one],
     hX d, hY d, rfl⟩
-
-theorem exists_isRealLine (h : IsCMExt F E σ) (hJ : IsHermND σ J) {w : InfinitePlace F} (τ : EmbOver E w)
-    {Z : Matrix (Fin n) (Fin n) ℂ} (hZ : Zᴴ * J.map τ.1 + J.map τ.1 * Z = 0) :
-    ∃ γ, IsRealLine σ J γ ∧ ∀ t : ℝ, archMat σ J τ (projArch σ J w (γ t)) = NormedSpace.exp (t • Z) := by
-  have hd : IsUnit (J.map τ.1).det := by
-    rw [← RingHom.mapMatrix_apply, ← RingHom.map_det]
-    exact (IsUnit.mk0 _ hJ.2).map _
-  have hy : ∀ t : ℝ, ∃ y : GArch σ J w, archMat σ J τ y = NormedSpace.exp (t • Z) := fun t => by
-    obtain ⟨u, hu⟩ := Matrix.isUnit_exp (t • Z)
-    have h1 := GlobalTheory.SmoothForms.exp_mem_UH (X := t • Z) hd (by
-      rw [conjTranspose_smul, star_trivial, Matrix.smul_mul, Matrix.mul_smul, ← smul_add, hZ, smul_zero])
-    refine ⟨(archEquiv J h τ).symm ⟨u, show _ * _ * _ = _ from hu ▸ h1⟩, ?_⟩
-    rw [GlobalTheory.Orb.archMat_eq_archEquiv J h, MulEquiv.apply_symm_apply]
-    exact hu
-  choose y hy using hy
-  exact ⟨fun t => embArch σ J w (y t), ⟨w, τ, Z, hZ, fun t => ⟨y t, rfl, hy t⟩⟩, fun t => by
-    rw [projArch_embArch_self, hy]⟩
-
 
 variable (σ J) in
 theorem isSmoothModerate_const (c : ℂ) : IsSmoothModerate σ J fun _ => c := by
@@ -378,8 +349,6 @@ theorem conj_exp (Z : Matrix (Fin n) (Fin n) ℂ) :
 section Record
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)} {V : HSp D} {φ : GA D V → ℂ}
 

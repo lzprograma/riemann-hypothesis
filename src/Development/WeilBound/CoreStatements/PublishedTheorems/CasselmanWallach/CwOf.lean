@@ -19,62 +19,15 @@ public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWa
 public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.PageTheorem
 public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.TendstoPiZero
 public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.ZetaClassicalZeroFreeRegion
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.Style
 import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.SubquotientNontrivial
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothA
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactHaarRightInvariantInst
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.LocallyConvex.HahnBanach
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexificationHolds
-import Mathlib.Tactic.TypeStar
 import Development.WeilBound.HeckeVectors.SmoothVectors.SobolevApproximation.SobApproxHolds
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Analysis.Normed.Algebra.MatrixExponential
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.C3C, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.C7, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.CasimirNonnegative, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.CasimirNonnegativeSymmetric, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.D5, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.DerivativeContinuity, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.DerivativeRepresentation, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.E3D, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.EigenOrthogonalForm, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.EigenspacesOrthogonal, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.ExistsFunctional, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.ExistsNormingFunctional, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.ExponentialKSet, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.HighestWeightKernel, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.HilbertSchmidtSqEq, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.Imports, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.MatrixActionAdditive, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.MatrixActionLinear, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SeminormApproximation, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SlopeLimitConstant, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.ZeroOnDense, Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.CwOf
@@ -556,7 +509,6 @@ theorem incl_E (a b : Fin n) (v : kfin ε σ) :
 
 theorem incl_actM (X : Mx n) (v : kfin ε σ) :
     incl hK (ReciprocityTheory.ChartRestriction.DS.actM (Eop hK h2) X v) = ReciprocityTheory.ChartRestriction.DS.actM (ReciprocityTheory.ChartRestriction.DS.smE ε σ) X (incl hK v) := by
-  set_option synthInstance.maxHeartbeats 100000 in
     simp only [ReciprocityTheory.ChartRestriction.DS.actM, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, incl_E]
 
 end PositivityTheory.CW.KFiniteInclusion
@@ -1147,8 +1099,7 @@ end ExistsFunctional
 theorem e1b : faceMap_comp_succAbove_castSucc := by
   unfold faceMap_comp_succAbove_castSucc AllTgt
   intro n ε H _ _ _ σ hU hI E _ _ _ _ _ _ p π dπ hrep T hT i w₀ hw₀ hp u hu hu0
-  by_contra hall
-  push_neg at hall
+  by_contra! hall
   obtain ⟨φ, hφ0, hφ⟩ := ExistsFunctional.exists_functional (p i) hp
   let ℓ : H →ₗ[ℂ] ℂ := φ ∘ₗ T
   have hlie : ((GlobalTheory.LowTypeDetermined.lie (Jm ε) : Set (Mx n))) = lieSet ε := rfl
@@ -1493,7 +1444,7 @@ theorem re_inner_casK_nonneg (hU : IsInfUnitary ε E) (x : V) : 0 ≤ (⟪x, cas
   refine Finset.sum_nonneg fun a _ => Finset.sum_nonneg fun b hb => ?_
   have hb' : ε b = ε a := (Finset.mem_filter.1 hb).2
   have h := hU b a x (E b a x)
-  simp only [ReciprocityTheory.ChartRestriction.DS.adjSign, hb', if_true, one_mul] at h
+  simp only [ReciprocityTheory.ChartRestriction.DS.adjSign, hb', ite_true, one_mul] at h
   rw [← h]
   simpa using (inner_self_nonneg (𝕜 := ℂ) (x := E b a x))
 
@@ -1503,7 +1454,7 @@ theorem eig_nonneg (hU : IsInfUnitary ε E) {μ : ℝ} {v : V} (hv : v ≠ 0) (h
   have h3 : 0 ≤ μ * ‖v‖ ^ 2 := by simpa [← Complex.ofReal_pow] using h2
   have hn : 0 < ‖v‖ ^ 2 := pow_pos (norm_pos_iff.2 hv) 2
   by_contra hμ
-  push_neg at hμ
+  push Not at hμ
   nlinarith [mul_neg_of_neg_of_pos hμ hn]
 
 end PositivityTheory.CW.CasimirNonnegativeSymmetric

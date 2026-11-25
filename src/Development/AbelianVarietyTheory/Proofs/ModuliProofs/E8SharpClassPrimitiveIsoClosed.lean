@@ -77,8 +77,8 @@ theorem prod_mul_prod {M : Type} [CommGroup M] {n : ℕ} (x : Fin n → M) {m m'
     rwa [Matrix.add_apply, Matrix.one_apply] at e
   rw [List.prod_ofFn, List.prod_ofFn, ← Finset.prod_mul_distrib]
   simp_rw [← zpow_add, hm]
-  rw [Finset.prod_eq_single u (fun v _ hv => by rw [if_neg (Ne.symm hv), zpow_zero])
-    (fun hu => absurd (Finset.mem_univ u) hu), if_pos rfl, zpow_one]
+  rw [Finset.prod_eq_single u (fun v _ hv => by rw [ite_eq_right (Ne.symm hv), zpow_zero])
+    (fun hu => absurd (Finset.mem_univ u) hu), ite_eq_left rfl, zpow_one]
 
 variable {o : Type} [CommRing o] {S : Scheme.{0}} {g k h : ℕ} {J : Type} {b : TBase o k} {s : S ⟶ Sp o}
 

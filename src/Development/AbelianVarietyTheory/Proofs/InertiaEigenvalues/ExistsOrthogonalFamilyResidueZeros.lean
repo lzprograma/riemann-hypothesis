@@ -22,64 +22,9 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltUnt
 public import Mathlib.Analysis.Normed.Field.Instances
 public import Mathlib.NumberTheory.Padics.Complex
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LiftHasSumZeroOfSurjectiveModPrime
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Order.Interval.Finset.Box
-import Mathlib.Tactic.TypeStar
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linter.Style
 import Mathlib.Tactic.Linter.HaveILetI
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Topology.Algebra.InfiniteSum.Nonarchimedean
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-import Mathlib.Topology.Algebra.Nonarchimedean.Completion
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardWindowZerosEqIntegralAdditiveSystem, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardWindowZerosInnerEqShiftedOuter, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWindowRadii, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WindowAdditive, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusWindowSeriesTermNormLeRowBound, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormFrobeniusWindowSeriesTermMono, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormalOfInvMul, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MoorePowSubSelfEqProd, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormalizedRowCoefficientMatricesDetNorm, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WindowSummedRowPowEqAdditiveSystemPowerSum, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusPolydiscWindowsSurjectiveBoundsZero, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumMulUntiltFrobeniusDoubleSeriesEqZero, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltComplexPadicIsAlgClosedUnitBall, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltOrthOfUntiltOrth, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltUntiltMultiplicativeExtensionSurjective, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormUntiltExtensionFinsetSumSubLe, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RingHomTiltMapTiltFrobeniusIntegerPower, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltedSeriesRowSubUntiltTruncatedAdditiveRow, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsOrthogonalFamilyResidueZeros
@@ -166,7 +111,7 @@ theorem pw_eq_zpow (k : ℤ) (x : F) : pw p k x = (frobPerm (F := F) p ^ k) x :=
   · obtain ⟨n, rfl⟩ := Int.eq_ofNat_of_zero_le hk
     rw [zpow_natCast, frobPerm_pow_apply]
     simp
-  · push_neg at hk
+  · push Not at hk
     obtain ⟨n, hn⟩ : ∃ n : ℕ, k = -(n : ℤ) := ⟨(-k).toNat, by omega⟩
     subst hn
     rw [zpow_neg, zpow_natCast, ← inv_pow, Equiv.Perm.coe_pow]
@@ -680,8 +625,7 @@ theorem norm_pw_mono {F : Type*} [NormedField F] (p : ℕ) [Fact p.Prime] [CharP
     have hN : p ^ m ≠ 0 := pow_ne_zero _ (Fact.out : p.Prime).ne_zero
     have e1 := iter_frobSymm_pow p m y
     have e2 := iter_frobSymm_pow p m y'
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have := pow_lt_pow_left₀ hc (norm_nonneg _) hN
     rw [← norm_pow, ← norm_pow, e1, e2] at this
     linarith
@@ -961,9 +905,9 @@ theorem coefDet_pw_natCast (n : ℕ) (x : F) : pw p (n : ℤ) x = x ^ p ^ n := b
 theorem coefDet_pw_pow_p (k : ℤ) (x : F) : pw p k x ^ p = pw p (k + 1) x := by
   unfold pw
   by_cases hk : 0 ≤ k
-  · rw [if_pos hk, if_pos (by omega), ← pow_mul, ← pow_succ]
+  · rw [ite_eq_left hk, ite_eq_left (by omega), ← pow_mul, ← pow_succ]
     congr 2; omega
-  · rw [if_neg hk]
+  · rw [ite_eq_right hk]
     obtain ⟨n, hn⟩ : ∃ n : ℕ, (-k).toNat = n + 1 := ⟨(-k).toNat - 1, by omega⟩
     rw [hn, Function.iterate_succ_apply']
     have e : ((frobeniusEquiv F p).symm (((frobeniusEquiv F p).symm)^[n] x)) ^ p =
@@ -972,11 +916,11 @@ theorem coefDet_pw_pow_p (k : ℤ) (x : F) : pw p k x ^ p = pw p (k + 1) x := by
       rwa [frobenius_def] at this
     rw [e]
     by_cases hk1 : 0 ≤ k + 1
-    · rw [if_pos hk1]
+    · rw [ite_eq_left hk1]
       have hn0 : n = 0 := by omega
       have h0 : (k + 1).toNat = 0 := by omega
       rw [hn0, h0]; simp
-    · rw [if_neg hk1]; congr 1; omega
+    · rw [ite_eq_right hk1]; congr 1; omega
 
 theorem coefDet_pw_pow (k : ℤ) (x : F) (a : ℕ) : pw p k x ^ p ^ a = pw p (k + a) x := by
   induction a with
@@ -1060,7 +1004,7 @@ theorem coefB_det (F : Type) [NormedField F] [IsUltrametricDist F] (p : ℕ) [Fa
   · have e : coefB p ϖ lam π L U L = Matrix.of fun r j : Fin h =>
         ((c r)⁻¹ * (lam j * π j ^ p ^ (r : ℕ))) ^ p ^ (h - (r : ℕ)) := by
       ext r j
-      simp only [coefB, Matrix.of_apply, term, le_add_iff_nonneg_right, zero_le, if_true, sub_self, neg_zero,
+      simp only [coefB, Matrix.of_apply, term, le_add_iff_nonneg_right, zero_le, ite_true, sub_self, neg_zero,
         zpow_zero, mul_one, zero_mul, add_zero, coefDet_pw_natCast, hc]
       rw [div_eq_inv_mul]
     rw [e, coefDet_det_scaled, norm_mul, norm_mul, norm_prod, norm_prod, hDn]
@@ -1088,7 +1032,7 @@ theorem coefB_det (F : Type) [NormedField F] [IsUltrametricDist F] (p : ℕ) [Fa
     have e : coefB p ϖ lam π L U 0 = Matrix.of fun r j : Fin h =>
         ((ϖ ^ L / c r) * (lam j * y j ^ p ^ (r : ℕ))) ^ p ^ (h - (r : ℕ)) := by
       ext r j
-      simp only [coefB, Matrix.of_apply, term, zero_le, if_true, hc, hy, coefDet_pw_pow]
+      simp only [coefB, Matrix.of_apply, term, zero_le, ite_true, hc, hy, coefDet_pw_pow]
       have e1 : ((r : ℕ) : ℤ) + (((0 : ℕ) : ℤ) - L) * h = -((L : ℤ) * h) + ((r : ℕ) : ℤ) := by
         push_cast; ring
       have e2 : ϖ ^ (-(((0 : ℕ) : ℤ) - L)) = ϖ ^ L := by
@@ -1193,7 +1137,7 @@ theorem GlobalTheory.PMonE.rowS_winPt_pow_eq_gsum_coefB (F : Type) [NormedField 
     have ht : ((n + L).toNat : ℤ) = n + L := Int.toNat_of_nonneg (by omega)
     have hle : (n + L).toNat ≤ L + U := by omega
     have hsub : (((n + L).toNat : ℕ) : ℤ) - L = n := by omega
-    rw [if_pos hle, hsub, term, term, winPt, pw_mul, ← pw_win p h r L hr hL n hn.1 (z j)]
+    rw [ite_eq_left hle, hsub, term, term, winPt, pw_mul, ← pw_win p h r L hr hL n hn.1 (z j)]
     rw [show lam j * ϖ ^ (-n) * (pw p (↑↑r + n * ↑h) (π j) * pw p (↑↑r + n * ↑h) (z j ^ (p ^ h) ^ (L - 1))) /
         (lam r * π r ^ p ^ (r : ℕ)) = (lam j * ϖ ^ (-n) * pw p (↑↑r + n * ↑h) (π j) / (lam r * π r ^ p ^ (r : ℕ))) *
         pw p (↑↑r + n * ↑h) (z j ^ (p ^ h) ^ (L - 1)) by ring, mul_pow]
@@ -1346,8 +1290,7 @@ theorem winThm : WinThm := by
     have hsub : ∀ x : {x : Fin (k + 1) → F // (∀ j, ‖x j‖ ≤ ‖π j‖) ∧ ∀ r, rowS p ϖ lam 2 2 x r = 0},
         ∀ j, ‖x.1 j‖ ≤ ‖π j‖ ^ p ^ (k + 1) := by
       intro x
-      by_contra hx
-      push_neg at hx
+      by_contra! hx
       exact hcon ⟨x.1, x.2.1, hx, x.2.2⟩
     haveI : Finite {x : Fin (k + 1) → F // (∀ j, ‖x j‖ ≤ ‖π j‖ ^ p ^ (k + 1)) ∧
         ∀ r, rowT p ϖ lam 2 x r = 0} := Nat.finite_of_card_ne_zero (by rw [cI]; positivity)
@@ -1515,8 +1458,7 @@ theorem tilt_orth_of_untilt_orth : ∀ (l : ℕ) [Fact l.Prime] (h : ℕ) (m : F
   have ho := horth (fun i => ((n i : ℕ) : ℚ_[l])) j
   simp only [hnj, one_mul] at ho
 
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   set b := sh (∑ i, (c i : Fl l) * m i)
   set a := ∑ i, algebraMap ℚ_[l] ℂ_[l] ((n i : ℕ) : ℚ_[l]) * sh (m i)
   have : ‖a‖ ≤ max ‖b‖ ‖b - a‖ := by
@@ -1548,7 +1490,7 @@ theorem tsh_surjective : ∀ (l : ℕ) [Fact l.Prime] (F : Type) [NormedField F]
   by_cases ht : ‖t‖ ≤ 1
   · obtain ⟨x, hx⟩ := honto t ht
     exact ⟨ι x, by rw [hsh, hx]⟩
-  · push_neg at ht
+  · push Not at ht
     have hinv : ‖t⁻¹‖ ≤ 1 := by
       rw [norm_inv]; exact inv_le_one_of_one_le₀ ht.le
     obtain ⟨x, hx⟩ := honto t⁻¹ hinv
@@ -1606,7 +1548,7 @@ theorem untilt_ext_sum_sub_le : ∀ (l : ℕ) [Fact l.Prime] (F : Type) [NormedF
         _ ≤ 1 := hN
     · exact ⟨0, map_zero ι⟩
   choose x hxe using hx
-  have hxa : ∀ a ∈ s, ι (x a) = c * z a := fun a ha => by rw [hxe, if_pos ha]
+  have hxa : ∀ a ∈ s, ι (x a) = c * z a := fun a ha => by rw [hxe, ite_eq_left ha]
   have hsa : ∀ a ∈ s, sh (x a) = tsh c * tsh (z a) := fun a ha => by
     rw [← hι, hxa a ha, map_mul]
   have hss : sh (∑ a ∈ s, x a) = tsh c * tsh (∑ a ∈ s, z a) := by
@@ -1673,7 +1615,7 @@ theorem map_pw_eq_pw (l : ℕ) [Fact l.Prime] (F : Type) [NormedField F] [CharP 
   | negSucc n =>
     have hk : Int.negSucc n = -((n + 1 : ℕ) : ℤ) := rfl
     simp only [GlobalTheory.PSer.pw, GlobalTheory.PMonE.pw]
-    rw [if_neg (by omega), hk, hneg, hit]
+    rw [ite_eq_right (by omega), hk, hneg, hit]
     congr
 
 end GlobalTheory.PSer

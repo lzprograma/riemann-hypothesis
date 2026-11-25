@@ -58,9 +58,7 @@ theorem discrete_series_gk_admissible_irreducible (X : ProvA) (h5 : admQ5 X) {r 
   exact (hU D.U ⟨D.nontriv, D.irred⟩).2.2 D.HK D.ι ⟨D.ι_inj, D.ι_range, D.der⟩
 
 theorem cPair_sub {p q i : ℕ} (hp : i ≤ p) (hq : i ≤ q) : cPair (p - i) (q - i) = cPair p q := by
-  unfold cPair
-  rw [Nat.cast_sub hp, Nat.cast_sub hq]
-  ring
+  exact GlobalTheory.LowestTypeDrop.cPair_sub p q i hp hq
 
 theorem intw_eq_zero (X : ProvA) (h2 : admH2 X) (hD : DiscreteSeriesBlattner X) (h5 : admQ5 X)
     {p q r s : ℕ} (hrs : 1 ≤ r + s) (lam : Ix r s → ℚ) (hlam : IsParam lam) (θ : ℚ)

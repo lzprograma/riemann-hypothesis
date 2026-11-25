@@ -122,42 +122,7 @@ theorem psiM_iso {n : ℕ} {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T T' : S7
 
 theorem uw_closedSubgroup (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) :
     Formalism.FourierDecayAlt.B2.IsClosedSubgroup (UWset k r z) := by
-  have hG := Formalism.QuantumDeterminants.uHGroup _ (Hpk k r) (Formalism.FourierDecayAlt.P.B2x2.hpk_unit k r)
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · simp only [UWset, Set.mem_setOf_eq, Matrix.one_mulVec]
-    exact ⟨hG.1, by simp⟩
-  · intro g hg h hh
-    simp only [UWset, Set.mem_setOf_eq] at hg hh ⊢
-    obtain ⟨hg1, hg2, hg3⟩ := hg
-    obtain ⟨hh1, hh2, hh3⟩ := hh
-    refine ⟨hG.2.1 g hg1 h hh1, fun a => ⟨?_, ?_⟩, ?_⟩
-    · rw [← Matrix.mulVec_mulVec, (hh2 a).1, (hg2 a).1]
-    · rw [← Matrix.mulVec_mulVec, (hh2 a).2, (hg2 a).2]
-    · rw [← Matrix.mulVec_mulVec, hh3, hg3]
-  · intro g hg
-    simp only [UWset, Set.mem_setOf_eq] at hg ⊢
-    obtain ⟨hg1, hg2, hg3⟩ := hg
-    have hu := (hG.2.2 g hg1).1
-    have key : ∀ v, g *ᵥ v = v → g⁻¹ *ᵥ v = v := by
-      intro v hv
-      conv_lhs => rw [← hv]
-      rw [Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul _ hu, Matrix.one_mulVec]
-    exact ⟨(hG.2.2 g hg1).2, fun a => ⟨key _ (hg2 a).1, key _ (hg2 a).2⟩, key _ hg3⟩
-  · intro g hg
-    simp only [UWset, Set.mem_setOf_eq] at hg
-    exact (hG.2.2 g hg.1).1
-  · have hA : IsClosed (UH (Hpk k r)) :=
-      isClosed_eq ((continuous_id.matrix_conjTranspose.matrix_mul continuous_const).matrix_mul
-        continuous_id) continuous_const
-    have hB : IsClosed {g : Mat k r | ∀ a : Fin r, g *ᵥ bvec (eI k r a) = bvec (eI k r a) ∧
-        g *ᵥ bvec (esI k r a) = bvec (esI k r a)} := by
-      simp only [Set.setOf_forall, Set.setOf_and]
-      exact isClosed_iInter fun a =>
-        (isClosed_eq (continuous_id.matrix_mulVec continuous_const) continuous_const).inter
-          (isClosed_eq (continuous_id.matrix_mulVec continuous_const) continuous_const)
-    have hC : IsClosed {g : Mat k r | g *ᵥ z = z} :=
-      isClosed_eq (continuous_id.matrix_mulVec continuous_const) continuous_const
-    exact hA.inter (hB.inter hC)
+  apply _root_.Formalism.FourierDecayAlt.P.B2x3.closedW <;> assumption
 
 theorem n_closedSubgroup (k r : ℕ) : Formalism.FourierDecayAlt.B2.IsClosedSubgroup (Nset k r) := Formalism.FourierDecayAlt.P.B2x2.closedN k r
 

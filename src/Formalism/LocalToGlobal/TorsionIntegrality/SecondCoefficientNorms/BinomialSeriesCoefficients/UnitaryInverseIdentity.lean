@@ -191,9 +191,9 @@ theorem hyperbolic_plane_split : HyperbolicSplit := by
     refine Finset.sum_congr rfl fun e _ => ?_
     rw [cross' h1 h2 (fun i => f e i) (fun i e' => f' e' i) (t e) Finset.univ t',
       Finset.sum_eq_single e]
-    · rw [hff' e e, if_pos rfl, one_smul]
+    · rw [hff' e e, ite_eq_left rfl, one_smul]
     · intro e' _ hne
-      rw [hff' e e', if_neg (fun h => hne h.symm), zero_smul, cob_zero_right' h1]
+      rw [hff' e e', ite_eq_right (fun h => hne h.symm), zero_smul, cob_zero_right' h1]
     · intro h
       exact absurd (Finset.mem_univ e) h
   calc ∑ i, φ (∑ e, (f e i • t e + f' e i • t' e))

@@ -55,7 +55,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Sheaves.Init
 import Mathlib.RepresentationTheory.Irreducible
 import Development.AbelianVarietyTheory.Proofs.CharacterTheory.ImportsAlt
-import Formalism.UnipotentAdelicQuotients.CuspEllipticValues
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.RingTheory.SimpleRing.Principal
@@ -67,18 +66,19 @@ import Formalism.LocalToGlobal.Divisibility.DefGroup
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.Coalgebra.CoassocSimps
+import Mathlib.LinearAlgebra.Matrix.Charpoly.Basic
+import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsSimpleModuleOfFinrankEnd, Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockGLHomConjPermMatrixOfBlocksMatch, Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspidalLeviDatumPermBlocksMatch, Development.AbelianVarietyTheory.Proofs.DivisorProofs.EquivOfNeZeroMapIsotypicSumOfCopies, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockDiagActEq, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInjectiveKernelCoindIntertwiningMap, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLeviGeneratedCommutingBlockGLStatement, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroCoindIntertwinerOfDoubleCoset, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroIntertwiningOfCommutingIsotypicFacto, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPermOfBlockSizeBijection, Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalOfIrr
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsSimpleModuleOfFinrankEnd =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsSimpleModuleOfFinrankEnd", "h": "module\n\npublic import Mathlib.Basic.Complex.Basic\npublic import Mathlib.LinearAlgebra.Dimension.Finrank\npublic import Mathlib.RingTheory.SimpleModule.Basic\npublic import Mathlib.LinearAlgebra.Dimension.Finite\npublic import Mathlib.LinearAlgebra.FiniteDimensional.Basic\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Mathlib.RepresentationTheory.Irreducible\nimport Development.AbelianVarietyTheory.Proofs.CharacterTheory.ImportsAlt\nimport Formalism.UnipotentAdelicQuotients.CuspEllipticValues\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsSimpleModuleOfFinrankEnd", "h": "module\n\npublic import Mathlib.Basic.Complex.Basic\npublic import Mathlib.LinearAlgebra.Dimension.Finrank\npublic import Mathlib.RingTheory.SimpleModule.Basic\npublic import Mathlib.LinearAlgebra.Dimension.Finite\npublic import Mathlib.LinearAlgebra.FiniteDimensional.Basic\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Mathlib.RepresentationTheory.Irreducible\nimport Development.AbelianVarietyTheory.Proofs.CharacterTheory.ImportsAlt\nimport Mathlib.LinearAlgebra.Matrix.Charpoly.Basic\nimport Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs\n\n"}
 section -- clump:auto
 @[expose] public section
 
 namespace GlobalTheory.CuspCharCompare
 
-open CuspElliptic
 open scoped MonoidAlgebra
 
 section Group
@@ -386,7 +386,7 @@ theorem IsCuspDatum.exists_blockDiag_act_eq (F : Type) [Field F] (r : ℕ) (V : 
   have h2 : σ (m⁻¹ * p) = 1 := by
     refine hσ.infl _ fun i j hij => ?_
     have e := GlobalTheory.Parabolic.leviProj_apply b (m⁻¹ * p) i j
-    rw [h1, if_pos hij] at e
+    rw [h1, ite_eq_left hij] at e
     rw [← e]
     simp
   calc σ m = σ m * σ (m⁻¹ * p) := by rw [h2, mul_one]
@@ -416,11 +416,11 @@ noncomputable def delta : V →ₗ[ℂ] Representation.coindV P.subtype σ where
     intro p g
     by_cases hg : g ∈ P
     · have h1 : P.subtype p * g ∈ P := P.mul_mem p.2 hg
-      simp only [dif_pos hg, dif_pos h1]
+      simp only [dite_eq_left hg, dite_eq_left h1]
       have : (⟨P.subtype p * g, h1⟩ : P) = p * ⟨g, hg⟩ := rfl
       rw [this, map_mul]; rfl
     · have h1 : P.subtype p * g ∉ P := fun h => hg ((P.mul_mem_cancel_left p.2).1 h)
-      simp only [dif_neg hg, dif_neg h1, map_zero]⟩
+      simp only [dite_eq_right hg, dite_eq_right h1, map_zero]⟩
   map_add' v w := by
     ext x
     by_cases hx : x ∈ P <;> simp [hx]
@@ -441,11 +441,11 @@ theorem coind_delta (p : P) (v : V) :
   rw [coind_val, delta_apply, delta_apply]
   by_cases hx : x ∈ P
   · have h1 : x * (p : G) ∈ P := P.mul_mem hx p.2
-    rw [dif_pos hx, dif_pos h1]
+    rw [dite_eq_left hx, dite_eq_left h1]
     have : (⟨x * (p : G), h1⟩ : P) = ⟨x, hx⟩ * p := rfl
     rw [this, map_mul]; rfl
   · have h1 : x * (p : G) ∉ P := fun h => hx ((P.mul_mem_cancel_right p.2).1 h)
-    rw [dif_neg hx, dif_neg h1]
+    rw [dite_eq_right hx, dite_eq_right h1]
 
 open Classical in
 theorem sum_delta [Fintype G] (f : Representation.coindV P.subtype σ) :
@@ -457,11 +457,11 @@ theorem sum_delta [Fintype G] (f : Representation.coindV P.subtype σ) :
     intro g
     rw [coind_val, delta_apply]
     by_cases hx : x * g⁻¹ ∈ P
-    · rw [dif_pos hx, if_pos hx]
+    · rw [dite_eq_left hx, ite_eq_left hx]
       have := f.2 ⟨x * g⁻¹, hx⟩ g
       rw [← this]
       simp
-    · rw [dif_neg hx, if_neg hx]
+    · rw [dite_eq_right hx, ite_eq_right hx]
   rw [Submodule.coe_sum, Finset.sum_apply, Finset.sum_congr rfl fun g _ => h g]
   have e := Equiv.sum_comp ((Equiv.inv G).trans (Equiv.mulLeft x))
     (fun y : G => if y ∈ P then f.1 x else 0)
@@ -699,24 +699,24 @@ theorem exists_ne_zero_intertwiningMap_coind_of_doubleCoset :
         intro q y
         by_cases hy : y ∈ P
         · have hqy : P.subtype q * y ∈ P := P.mul_mem q.2 hy
-          simp only [dif_pos hy, dif_pos hqy]
+          simp only [dite_eq_left hy, dite_eq_left hqy]
           rw [← Module.End.mul_apply, ← map_mul]
           rfl
         · have hqy : P.subtype q * y ∉ P := fun hh => hy ((P.mul_mem_cancel_left q.2).1 hh)
-          simp only [dif_neg hy, dif_neg hqy, map_zero]⟩
+          simp only [dite_eq_right hy, dite_eq_right hqy, map_zero]⟩
     have hL0 : L = 0 := congrArg Representation.IntertwiningMap.toLinearMap h0
     have h1 : (L δ).1 x = 0 := by rw [hL0]; rfl
     have h2 : ∀ p' : P', σ' p' (T (δ.1 (x⁻¹ * (p' : G)⁻¹ * x))) =
         if x⁻¹ * (p' : G)⁻¹ * x ∈ P then T v else 0 := by
       intro p'
       by_cases hp : x⁻¹ * (p' : G)⁻¹ * x ∈ P
-      · have hδ : δ.1 (x⁻¹ * (p' : G)⁻¹ * x) = σ ⟨_, hp⟩ v := dif_pos hp
+      · have hδ : δ.1 (x⁻¹ * (p' : G)⁻¹ * x) = σ ⟨_, hp⟩ v := dite_eq_left hp
         have := LinearMap.congr_fun (h ⟨_, hp⟩ p'⁻¹ (by simp [mul_assoc])) v
         simp only [LinearMap.comp_apply] at this
-        rw [hδ, if_pos hp, ← this, ← Module.End.mul_apply, ← map_mul]
+        rw [hδ, ite_eq_left hp, ← this, ← Module.End.mul_apply, ← map_mul]
         simp
-      · have hδ : δ.1 (x⁻¹ * (p' : G)⁻¹ * x) = 0 := dif_neg hp
-        rw [hδ, if_neg hp]
+      · have hδ : δ.1 (x⁻¹ * (p' : G)⁻¹ * x) = 0 := dite_eq_right hp
+        rw [hδ, ite_eq_right hp]
         simp
     rw [hL, Finset.sum_congr rfl fun p' _ => h2 p', ← Finset.sum_filter, Finset.sum_const,
       ← Nat.cast_smul_eq_nsmul ℂ, smul_eq_zero] at h1
@@ -1008,7 +1008,7 @@ theorem coind_irreducible [Finite G] (P : Subgroup G) (σ : Representation ℂ P
       map_add' := fun a b => Representation.IntertwiningMap.ext (by simp)
       map_smul' := fun a b => Representation.IntertwiningMap.ext (by simp) }
   have hE : Function.Injective E := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro Ψ h0
     have h1 : K Ψ 1 = 0 := congrArg Representation.IntertwiningMap.toLinearMap h0
     apply hi
@@ -1115,7 +1115,7 @@ theorem parInd_irreducible (h : IsRegularCusp b σ d W ρ) : (parInd b σ).IsIrr
   refine coind_irreducible _ σ h.1.irr fun K hK g hg => ?_
   obtain ⟨w, p', p, rfl, hw⟩ := exists_perm_of_kernel h h hK hg
   refine Subgroup.mul_mem _ (Subgroup.mul_mem _ p'.2 (mem_blockTri.2 fun i j hij => ?_)) p.2
-  rw [permGL_apply, if_neg]
+  rw [permGL_apply, ite_eq_right]
   rintro rfl
   exact h.2.2 _ ⟨j, rfl⟩ _ ⟨w j, rfl⟩ hij.ne (hw j)
 
@@ -1151,7 +1151,7 @@ theorem exists_twist (h : IsRegularCusp b σ d W ρ) (h' : IsRegularCusp b' σ' 
   have hp' : (p' : GL (Fin r) F) = permGL F w * p * (permGL F w)⁻¹ := eq_mul_inv_of_mul_eq e
   obtain ⟨m, hm, hm1⟩ := h.1.exists_blockDiag_act_eq F r V b σ p
   obtain ⟨m', hm', hm1'⟩ := h'.1.exists_blockDiag_act_eq F r V' b' σ' p'
-  have hmL : (m : GL (Fin r) F) ∈ levi F b := fun i j hij => by rw [hm1, if_neg hij]
+  have hmL : (m : GL (Fin r) F) ∈ levi F b := fun i j hij => by rw [hm1, ite_eq_right hij]
   have e' : m' = ι' ⟨m, hmL⟩ := by
     refine Subtype.ext (Units.ext (Matrix.ext fun i j => ?_))
     obtain ⟨i, rfl⟩ := w.surjective i

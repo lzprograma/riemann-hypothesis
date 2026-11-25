@@ -290,8 +290,8 @@ theorem component_X_mul (i : σ) (n : M) (G : MvPolynomial σ K) :
     have hw : Finsupp.weight w d = Finsupp.weight w (d - Finsupp.single i 1) + w i := by
       conv_lhs => rw [hd]
       rw [map_add (f := _), Finsupp.weight_single, one_smul]
-    simp only [hi, if_true, hw, add_left_inj]
-  · simp only [hi, if_false, ite_self]
+    simp only [hi, ite_true, hw, add_left_inj]
+  · simp only [hi, ite_false, ite_self]
 
 theorem component_mem_span_X (s : Set σ) (n : M) {G : MvPolynomial σ K}
     (hG : G ∈ Ideal.span (X '' s : Set (MvPolynomial σ K))) :
@@ -1224,7 +1224,7 @@ theorem exists_poly
         nsmul_eq_mul, he', Pi.mul_apply, Pi.natCast_apply]
       split_ifs <;> ring
     rw [Pi.add_apply, Finset.sum_apply, Finset.sum_congr rfl fun i _ => s i, Finset.sum_add_distrib,
-      ← Finset.mul_sum, Finset.sum_ite_eq, if_pos (Finset.mem_univ _)]
+      ← Finset.mul_sum, Finset.sum_ite_eq, ite_eq_left (Finset.mem_univ _)]
     simp only [m, η, Option.elim, Pi.smul_apply, smul_eq_mul, nsmul_eq_mul, Pi.mul_apply, Pi.natCast_apply]
     push_cast
     ring
@@ -1257,7 +1257,6 @@ open GlobalTheory.ZV GlobalTheory.CechPic
 
 variable {X : Scheme.{0}} {L : LB X} {I : Type} [Fintype I]
 
-set_option backward.isDefEq.respectTransparency false in
 theorem lbIso_pow (hL : L.IsLB) (φ : I → (X ⟶ X)) (x : I → ℤ) (a : ℕ) :
     LBIso (lbPow (LB.LinComb L φ x) a) (LB.LinComb L φ (a • x)) := by
   have h := LB.isLB_linComb hL φ
@@ -1281,7 +1280,6 @@ theorem lbIso_pow (hL : L.IsLB) (φ : I → (X ⟶ X)) (x : I → ℤ) (a : ℕ)
     intro k hk
     rw [← zpow_mul, ← zpow_mul, mul_comm]
 
-set_option backward.isDefEq.respectTransparency false in
 theorem lbIso_div (hL : L.IsLB) (φ : I → (X ⟶ X)) (x y : I → ℤ) :
     LBIso (LB.div (LB.LinComb L φ x) (LB.LinComb L φ y)) (LB.LinComb L φ (x - y)) := by
   have h := LB.isLB_linComb hL φ

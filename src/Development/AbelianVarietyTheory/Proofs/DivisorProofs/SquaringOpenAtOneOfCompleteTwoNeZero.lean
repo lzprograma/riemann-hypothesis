@@ -53,7 +53,6 @@ theorem sqOpen_of_two_ne_zero : ∀ (K : Type) [NormedField K] [CompleteSpace K]
   intro K _ _ h2 V hV
   obtain ⟨ε, hε, hball⟩ := Metric.mem_nhds_iff.1 hV
   set c := ‖(2:K)⁻¹‖ with hc
-  have hc0 : 0 ≤ c := norm_nonneg _
   set ρ := min (ε / 2) (1 / (4 * c + 1)) with hρ
   have hρ0 : 0 < ρ := lt_min (by linarith) (by positivity)
   have hρε : ρ < ε := lt_of_le_of_lt (min_le_left _ _) (by linarith)
@@ -88,8 +87,6 @@ theorem sqOpen_of_two_ne_zero : ∀ (K : Type) [NormedField K] [CompleteSpace K]
     have a2 : ‖1 - μ₂‖ ≤ ρ := by
       rw [norm_sub_rev]; simpa [hs, dist_eq_norm] using h2'
     have a3 : ‖(1 - μ₁) + (1 - μ₂)‖ ≤ 2 * ρ := (norm_add_le _ _).trans (by linarith)
-    have a4 : 0 ≤ ‖μ₁ - μ₂‖ := norm_nonneg _
-    have a5 : 0 ≤ ‖(1 - μ₁) + (1 - μ₂)‖ := norm_nonneg _
     calc ‖μ₁ - μ₂‖ * ‖(1 - μ₁) + (1 - μ₂)‖ * c ≤ ‖μ₁ - μ₂‖ * (2 * ρ) * c := by gcongr
       _ = ‖μ₁ - μ₂‖ * (2 * ρ * c) := by ring
       _ ≤ ‖μ₁ - μ₂‖ * (1 / 2) := by gcongr

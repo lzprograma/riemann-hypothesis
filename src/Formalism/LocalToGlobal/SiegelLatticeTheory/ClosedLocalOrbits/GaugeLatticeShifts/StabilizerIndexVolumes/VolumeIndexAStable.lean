@@ -12,8 +12,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.StabilizerIndexVolumes
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem closure_subset_StSet (hSt : StClosed) {E : Type} [Field E] [NumberField E] {n : ℕ}
     (W : Matrix (Fin n) (Fin n) E) (K : Set (Matrix.GeneralLinearGroup (Fin n) E))
     (hK : K ⊆ StSet W) : ((Subgroup.closure K : Subgroup _) : Set _) ⊆ StSet W := by

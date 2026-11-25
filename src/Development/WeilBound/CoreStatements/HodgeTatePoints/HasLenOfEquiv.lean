@@ -360,7 +360,7 @@ private theorem exists_smul_augIdeal_mem_sqIdeal_of_isLat {C : Type} [Field C] {
       intro x hx
       simp [Ne.symm (Finset.ne_of_mem_erase hx)]
     · rw [Finset.sum_eq_single y]
-      · rw [if_pos (rfl : y = y), Algebra.smul_def, Algebra.smul_def, ← hc y, map_mul]
+      · rw [ite_eq_left (rfl : y = y), Algebra.smul_def, Algebra.smul_def, ← hc y, map_mul]
         ring
       · intro b _ hb
         simp [Ne.symm hb]

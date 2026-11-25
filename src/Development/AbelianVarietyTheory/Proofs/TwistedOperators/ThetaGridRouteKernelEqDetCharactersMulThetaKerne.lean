@@ -62,7 +62,6 @@ open IsDedekindDomain NumberField MeasureTheory Matrix
 open scoped TensorProduct
 open GlobalTheory.FunObj GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StdFrames Formalism.L2.DIV
 open GlobalTheory.RouteSeesaw GlobalTheory.ChainFr
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
 namespace GlobalTheory.SquareDict.ExactBig
 
@@ -133,8 +132,8 @@ theorem attChr_eq {C : Type} [CommGroup C] (χ η : C) (n : ℕ) :
     Formalism.IndefR.Lift.attChr χ η n = χ / η ^ (n % 2) := by
   unfold Formalism.IndefR.Lift.attChr
   rcases Nat.even_or_odd n with h | h
-  · rw [if_neg (Nat.not_odd_iff_even.2 h), Nat.even_iff.1 h]; simp
-  · rw [if_pos h, Nat.odd_iff.1 h]; simp [div_eq_mul_inv]
+  · rw [ite_eq_right (Nat.not_odd_iff_even.2 h), Nat.even_iff.1 h]; simp
+  · rw [ite_eq_left h, Nat.odd_iff.1 h]; simp [div_eq_mul_inv]
 
 theorem kerBig_eq : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} {μ₀ : T}, L.Is μ₀ → ∀ (W : G.Weil) (t : T) (i j : Fin D.R.m)
     (ωA : GlobalTheory.Grid.WRep (G.V (.grid (↑i + 1) (↑j + 1))) (GlobalTheory.Doubling.hsum (G.V (.grid ↑i (↑j + 1))) (G.V (.grid (↑i + 1) ↑j)))),

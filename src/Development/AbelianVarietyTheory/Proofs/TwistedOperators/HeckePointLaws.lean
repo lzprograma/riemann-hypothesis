@@ -42,12 +42,3 @@ import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
-
-set_option autoImplicit false
-
-namespace GlobalTheory.HeckePointLaw
-
-theorem heckePointLaws : GlobalTheory.IndefiniteRowSideFullHecke.HeckePrimeDetection.HeckePointLaws :=
-  heckePointLaws_of_transport _root_.GlobalTheory.ThetaTransport.thetaTransportLaw
-
-end GlobalTheory.HeckePointLaw

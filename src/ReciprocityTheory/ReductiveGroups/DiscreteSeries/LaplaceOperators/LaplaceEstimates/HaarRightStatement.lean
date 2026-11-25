@@ -97,7 +97,7 @@ theorem st_single (a b : Fin (2 * r + k + 1)) :
   by_cases h : a = flipB k r j ∧ b = flipB k r i
   · obtain ⟨rfl, rfl⟩ := h
     simp [flipB_flipB, sgnB_flip]
-  · rw [if_neg h, if_neg, star_zero, mul_zero, zero_mul]
+  · rw [ite_eq_right h, ite_eq_right, star_zero, mul_zero, zero_mul]
     rintro ⟨rfl, rfl⟩
     exact h ⟨(flipB_flipB a).symm, (flipB_flipB b).symm⟩
 
@@ -115,15 +115,15 @@ theorem simple_of {a b : Fin (2 * r + k + 1)} {p : Fin r} :
 
 theorem psiC_zero (z : Fin (2 * r + k + 1) → ℂ) (c : Fin r → ℂ) {a b : Fin (2 * r + k + 1)}
     (h : ¬ Simple k r a b) : psiC z c (Matrix.single a b 1) = 0 := by
-  rw [psiC, st_single, LF_single, LF_single, sum_eq_zero fun p _ => if_neg fun hp => h (simple_of.1 hp),
-    sum_eq_zero fun p _ => if_neg fun hp => h (simple_of.2 hp)]
+  rw [psiC, st_single, LF_single, LF_single, sum_eq_zero fun p _ => ite_eq_right fun hp => h (simple_of.1 hp),
+    sum_eq_zero fun p _ => ite_eq_right fun hp => h (simple_of.2 hp)]
   simp
 
 theorem LF_single_ne {z : Fin (2 * r + k + 1) → ℂ} {c : Fin r → ℂ} (hc : ∀ p, c p ≠ 0)
     (hT : 0 < Tz k r z) (p : Fin r) {s : ℂ} (hs : s ≠ 0) :
     LF z c (Matrix.single (eI k r p) (nxt k r p) s) ≠ 0 := by
-  rw [LF_single, sum_eq_single p (fun q _ hq => if_neg fun h => hq
-    (Fin.ext (by have := congrArg Fin.val h.1; exact this.symm))) (by simp), if_pos ⟨rfl, rfl⟩]
+  rw [LF_single, sum_eq_single p (fun q _ hq => ite_eq_right fun h => hq
+    (Fin.ext (by have := congrArg Fin.val h.1; exact this.symm))) (by simp), ite_eq_left ⟨rfl, rfl⟩]
   refine mul_ne_zero (hc p) (mul_ne_zero ?_ hs)
   unfold kap
   split_ifs
@@ -141,7 +141,7 @@ theorem psiC_ne {z : Fin (2 * r + k + 1) → ℂ} {c : Fin r → ℂ} (hc : ∀ 
   by_cases h1 : a.val < r
   · have e1 : a = eI k r ⟨a.val, h1⟩ := rfl
     have e2 : b = nxt k r ⟨a.val, h1⟩ := Fin.ext (by rw [nxt_val]; split_ifs at h ⊢ <;> simp only at * <;> omega)
-    rw [LF_single z c (flipB k r b), sum_eq_zero fun p _ => if_neg fun hp => ?_, map_zero, sub_zero]
+    rw [LF_single z c (flipB k r b), sum_eq_zero fun p _ => ite_eq_right fun hp => ?_, map_zero, sub_zero]
     · have := LF_single_ne hc hT ⟨a.val, h1⟩ one_ne_zero
       rwa [← e1, ← e2] at this
     · have h2 := congrArg Fin.val hp.2
@@ -150,10 +150,10 @@ theorem psiC_ne {z : Fin (2 * r + k + 1) → ℂ} {c : Fin r → ℂ} (hc : ∀ 
       split_ifs at h2 <;> omega
   · have h3 : r + k ≤ a.val ∧ b.val = a.val + 1 := by split_ifs at h <;> omega
     have hp : 2 * r + k - b.val < r := by omega
-    have e1 : flipB k r b = eI k r ⟨_, hp⟩ := Fin.ext (by rw [flipB_val, if_pos (by omega)]; rfl)
+    have e1 : flipB k r b = eI k r ⟨_, hp⟩ := Fin.ext (by rw [flipB_val, ite_eq_left (by omega)]; rfl)
     have e2 : flipB k r a = nxt k r ⟨_, hp⟩ := Fin.ext (by
       rw [flipB_val, nxt_val]; split_ifs <;> simp only at * <;> omega)
-    rw [LF_single z c a, sum_eq_zero fun p _ => if_neg fun hq => ?_, zero_sub, neg_ne_zero, e1, e2]
+    rw [LF_single z c a, sum_eq_zero fun p _ => ite_eq_right fun hq => ?_, zero_sub, neg_ne_zero, e1, e2]
     · refine (map_ne_zero _).mpr (LF_single_ne hc hT _ ?_)
       unfold sgnB; split_ifs <;> simp
     · have h2 := congrArg Fin.val hq.1
@@ -511,7 +511,7 @@ theorem frameLaw : FrameLawStatement := by
     fun a b hab m hm => ?_, fun a b _ hs => EvaluationEquivalence.psiC_zero z c hs, fun _ => ?_, fun i j m hm => ?_, hcap⟩
   · set Z : Mat k r := Matrix.single (capIdx k r a) (capIdx k r b) 1 with hZ
     have hZ1 : Z ∈ Base.N.levF (Base.levB k r) 0 := fun i j hij => by
-      rw [hZ, Matrix.single_apply, if_neg]
+      rw [hZ, Matrix.single_apply, ite_eq_right]
       rintro ⟨rfl, rfl⟩
       have h8 : Base.levB k r (capIdx k r a) < Base.levB k r (capIdx k r b) := hab
       omega

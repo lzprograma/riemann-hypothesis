@@ -93,13 +93,6 @@ theorem tau_ne_conj (τ τ' : Pl R) : tau H τ ≠ (starRingEnd ℂ).comp (tau H
 
 end Host
 
-section Forms
-
-variable {R : Ranks} {H : Host R} {n : ℕ}
-
-
-end Forms
-
 end GlobalTheory.CuspAlgComparison
 
 end

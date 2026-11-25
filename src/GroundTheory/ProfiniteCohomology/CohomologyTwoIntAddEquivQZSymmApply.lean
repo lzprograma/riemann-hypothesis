@@ -22,17 +22,4 @@ theorem isAddTorsion_QZ : IsAddTorsion QZ := by
   refine ⟨q.num, ?_⟩
   rw [nsmul_eq_mul, mul_comm, Rat.mul_den_eq_num, zsmul_one]
 
-section Eval
-
-variable {G : Type*} [Group G] [TopologicalSpace G]
-
-end Eval
-
-section H2
-
-variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
-  [TotallyDisconnectedSpace G] {σ : G}
-
-end H2
-
 end GroundTheory.ProfCoh

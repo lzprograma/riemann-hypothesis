@@ -101,7 +101,7 @@ theorem isMultiHomogIdeal_of_blockDeg [Fintype K] {I : Ideal (MRing ι F)}
     rw [hG, coeff_weightedHomogeneousComponent]
     by_cases hw : Finsupp.weight (blockWeight ι) d = b
     · simp [hw]
-    · rw [if_neg hw, if_neg]
+    · rw [ite_eq_right hw, ite_eq_right]
       exact fun h => hw (funext fun k => h k (Finset.mem_univ k))
   rw [← this]
   exact hmem _
@@ -130,15 +130,9 @@ theorem isMultiHomogIdeal_sup_span {I : Ideal (MRing ι F)} (hI : IsMultiHomogId
     {f : MRing ι F} {c : K → ℕ} (hf : IsMultiHomog f c) :
     IsMultiHomogIdeal (I ⊔ Ideal.span {f}) := by
   classical
-  have hI' : I.IsHomogeneous (weightedHomogeneousSubmodule F (blockWeight ι)) :=
-    (isHomogeneous_iff (blockWeight ι) I).mpr fun m r hr => hI r hr m
-  have : (I ⊔ Ideal.span {f}).IsHomogeneous (weightedHomogeneousSubmodule F (blockWeight ι)) :=
-    hI'.sup (Ideal.homogeneous_span _ _ fun x hx => by
-      rw [Set.mem_singleton_iff] at hx
-      subst hx
-      exact ⟨c, (mem_weightedHomogeneousSubmodule _ _ _ _).mpr hf⟩)
-  intro r hr b
-  exact (isHomogeneous_iff _ _).mp this b r hr
+  have hI' := (isHomogeneous_iff (blockWeight ι) I).mpr fun m r hr => hI r hr m
+  exact fun r hr b => (isHomogeneous_iff _ _).mp
+    (hI'.sup (Ideal.homogeneous_span _ _ (by rintro _ rfl; exact ⟨c, hf⟩))) b r hr
 
 end Homog
 
@@ -237,7 +231,7 @@ theorem pullNat_apply (e : K → ℕ) (k' : K') :
     rw [Finset.sum_eq_zero]
     · simp
     · intro κ _
-      rw [if_neg (fun hk => h ⟨κ, hk.symm⟩), mul_zero]
+      rw [ite_eq_right (fun hk => h ⟨κ, hk.symm⟩), mul_zero]
 
 theorem pullNat_sub (b : K → ℤ) :
     (fun k' => (pullNat K K' j (fun κ => (b κ).toNat) k' : ℤ) -

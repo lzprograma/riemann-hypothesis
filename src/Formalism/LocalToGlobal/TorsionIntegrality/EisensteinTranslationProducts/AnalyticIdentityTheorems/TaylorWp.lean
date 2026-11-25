@@ -47,7 +47,7 @@ theorem weierstrass_p_series_coeff : PSeriesCoeff := by
   rw [pSeries, taylor0, coeff_mk, L.iteratedDeriv_weierstrassPExcept_self 0]
   by_cases hn : n = 0
   · simp [hn]
-  · simp only [hn, if_false, PeriodPair.sumInvPow_zero]
+  · simp only [hn, ite_false, PeriodPair.sumInvPow_zero]
     have h : ((n.factorial : ℕ) : ℂ) ≠ 0 := by exact_mod_cast n.factorial_ne_zero
     rw [Nat.factorial_succ]
     push_cast

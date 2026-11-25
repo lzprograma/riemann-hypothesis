@@ -4,55 +4,8 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsIsChart
 public import Mathlib.Data.Matrix.Mul
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsIntPreimageOfOrthogonalKernel
 import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsAdaptedUnimodular
-import Mathlib.Analysis.Complex.Norm
-import Mathlib.LinearAlgebra.Matrix.PosDef
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RiemannFormHermitianLattice
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.ImLowerOnKernel
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.FubiniLevi
 
 @[expose] public section
@@ -236,20 +189,15 @@ theorem limitForm_period_symm {L : Flat.LogPeriods n a g Λ} {bas : Module.Basis
     intro m
     refine ⟨fun i => ?_, fun k hk => ?_⟩
     · have hi : (Fin.castLE L.a_le i).val < a := i.2
-      simp only [ws, hi, if_true]
+      simp only [ws, hi, ite_true]
       have : (0 : ℝ) ≤ m := Nat.cast_nonneg m
       simp
       linarith
     · simp [ws, not_lt.2 hk]
-  have hexp : Tendsto (fun m : ℕ => Complex.exp (-((m : ℂ) + 1))) atTop (𝓝 0) := by
-    rw [tendsto_zero_iff_norm_tendsto_zero]
-    have e : ∀ m : ℕ, ‖Complex.exp (-((m : ℂ) + 1))‖ = Real.exp (-((m : ℝ) + 1)) := by
-      intro m
-      rw [Complex.norm_exp]
-      simp
-    simp only [e]
-    exact Real.tendsto_exp_atBot.comp (tendsto_neg_atTop_atBot.comp
-      (tendsto_atTop_add_const_right _ _ tendsto_natCast_atTop_atTop))
+  have hexp : Tendsto (fun m : ℕ => Complex.exp (-((m : ℂ) + 1))) atTop (𝓝 0) :=
+    Complex.tendsto_exp_comap_re_atBot.comp (tendsto_comap_iff.2 (by
+      simpa [Function.comp_def] using tendsto_neg_atTop_atBot.comp
+        (tendsto_atTop_add_const_right _ (1 : ℝ) tendsto_natCast_atTop_atTop)))
   have hz : Tendsto (fun m => expCover a (ws m)) atTop (𝓝 (0 : Fin n → ℂ)) := by
     rw [tendsto_pi_nhds]
     intro k

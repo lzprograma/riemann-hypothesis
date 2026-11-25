@@ -19,62 +19,9 @@ public import Formalism.GaussJetBounds.Statement
 public import Formalism.GaussJetBounds.GaussJetProofs.AsmOne
 public import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffEvenDerivativeEqZero
 public import Formalism.GaussJetBounds.GaussJetProofs.OneLetterRadiusIdentity
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
 import Formalism.FormalGroupLog.Statement
-import Mathlib.RingTheory.PowerSeries.Basic
 import Formalism.GaussJetBounds.GaussJetProofs.SubstitutionWeightBound
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.TypeStar
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.GaussJetBounds.GaussJetProofs.ExistsNeZeroOfFinsumNeZero, Formalism.TorsionNormIteration.InverseIntegralClasses.NormNatCastOfNotDvd, Formalism.GaussJetBounds.GaussJetProofs.LogStep, Formalism.GaussJetBounds.GaussJetProofs.SwappedParitySeriesBinomialForm, Formalism.GaussJetBounds.OneLetterRadius
@@ -546,7 +493,7 @@ theorem logarithm_weight_induction : LogStep.{u, v} := by
     · simpa using Real.rpow_nonneg hπ0.le _
   have hlow : Low N (D - truncBelow N D) := by
     intro m hm
-    rw [map_sub, coeff_truncBelow, if_pos hm, sub_self]
+    rw [map_sub, coeff_truncBelow, ite_eq_left hm, sub_self]
   have hT1 : Low 1 (truncBelow N D) := by
     intro m hm
     rw [coeff_truncBelow]
@@ -593,10 +540,10 @@ theorem logarithm_weight_induction : LogStep.{u, v} := by
     unfold mvExp
     rw [PowerSeries.coeff_subst hs]
     change ∑ᶠ k, a k = _
-    rw [habc, finsum_add_distrib hbfin hcfin, finsum_eq_single c 1 (fun k hk => if_neg hk)]
-    simp only [hc, if_pos rfl, ha1]
+    rw [habc, finsum_add_distrib hbfin hcfin, finsum_eq_single c 1 (fun k hk => ite_eq_right hk)]
+    simp only [hc, ite_eq_left rfl, ha1]
   have hEq : coeff n D = coeff n (mvExp D - 1) + -(∑ᶠ k, b k) := by
-    rw [map_sub, coeff_one, if_neg hn0, sub_zero, hsum]
+    rw [map_sub, coeff_one, ite_eq_right hn0, sub_zero, hsum]
     ring
   rw [monoWtGe_iff, hEq]
   refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hE n) ?_)
@@ -608,7 +555,7 @@ theorem logarithm_weight_induction : LogStep.{u, v} := by
   rcases Nat.lt_or_ge k 2 with hk2 | hk2
   · have hk0 : k = 0 := by omega
     subst hk0
-    simp only [ha, pow_zero, coeff_one, if_neg hn0, smul_zero, norm_zero]
+    simp only [ha, pow_zero, coeff_one, ite_eq_right hn0, smul_zero, norm_zero]
     exact Real.rpow_nonneg hπ0.le _
 
   have hce : coeff n (D ^ k) = coeff n (truncBelow N D ^ k) := by
@@ -638,7 +585,7 @@ end -- clump:auto
 -- ===== end clump member: Formalism.GaussJetBounds.GaussJetProofs.LogStep =====
 
 -- ===== clump member: Formalism.GaussJetBounds.GaussJetProofs.SwappedParitySeriesBinomialForm =====
--- clump-header: {"m": "Formalism.GaussJetBounds.GaussJetProofs.SwappedParitySeriesBinomialForm", "h": "module\n\npublic import Formalism.GaussJetBounds.GenLogInverse\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Int\nimport Mathlib.Algebra.Order.Star.Real\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\npublic import Mathlib.Analysis.Normed.Ring.Ultra\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\npublic import Mathlib.Data.Nat.Choose.Lucas\npublic import Mathlib.Data.Nat.Prime.Factorial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Henselian\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.RegularLocalRing.Defs\nimport Mathlib.RingTheory.SimpleRing.Principal\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Tactic.TypeStar\nimport Mathlib.Topology.Sheaves.Init\nimport Std.Tactic.BVDecide.Normalize.Prop\npublic import Mathlib.Analysis.Normed.Group.Ultra\n\n"}
+-- clump-header: {"m": "Formalism.GaussJetBounds.GaussJetProofs.SwappedParitySeriesBinomialForm", "h": "module\n\npublic import Formalism.GaussJetBounds.GenLogInverse\npublic import Mathlib.Analysis.Normed.Ring.Ultra\npublic import Mathlib.Data.Nat.Choose.Lucas\npublic import Mathlib.Data.Nat.Prime.Factorial\npublic import Mathlib.Analysis.Normed.Group.Ultra\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -651,77 +598,44 @@ namespace Formalism.DworkPowerSeriesWeights
 
 open MvPowerSeries Formalism.IncomingBounds
 
-theorem bnx_lin_pow {K : Type u} [Field K] {σ : Type*} [DecidableEq σ] (x y : σ) (a b : K) (k : ℕ)
-    (μ : σ →₀ ℕ) :
+theorem bnx_lin_pow {K : Type u} [Field K] {σ : Type*} [DecidableEq σ] (x y : σ) (a b : K) (k : ℕ) (μ : σ →₀ ℕ) :
     coeff μ ((C a * X x + C b * X y : MvPowerSeries σ K) ^ k) =
-      ∑ r ∈ Finset.range (k + 1),
-        if Finsupp.single x r + Finsupp.single y (k - r) = μ then
-          a ^ r * b ^ (k - r) * (k.choose r : K) else 0 := by
-
-  rw [add_pow, map_sum]
-  refine Finset.sum_congr rfl fun r _ => ?_
-  have e : (C a * X x : MvPowerSeries σ K) ^ r * (C b * X y) ^ (k - r) *
-      ((k.choose r : ℕ) : MvPowerSeries σ K) =
-      C (a ^ r * b ^ (k - r) * (k.choose r : K)) * (X x ^ r * X y ^ (k - r)) := by
-    simp only [map_mul, map_pow, map_natCast]
-    ring
-  rw [e, coeff_C_mul, X_pow_eq, X_pow_eq, monomial_mul_monomial, one_mul, coeff_monomial]
+      ∑ r ∈ Finset.range (k + 1), if Finsupp.single x r + Finsupp.single y (k - r) = μ then
+        a ^ r * b ^ (k - r) * (k.choose r : K) else 0 := by
+  rw [add_pow, map_sum]; refine Finset.sum_congr rfl fun r _ => ?_
+  rw [show (C a * X x : MvPowerSeries σ K) ^ r * (C b * X y) ^ (k - r) * ((k.choose r : ℕ) : MvPowerSeries σ K) =
+      C (a ^ r * b ^ (k - r) * (k.choose r : K)) * (X x ^ r * X y ^ (k - r)) by
+    simp only [map_mul, map_pow, map_natCast]; ring,
+    coeff_C_mul, X_pow_eq, X_pow_eq, monomial_mul_monomial, one_mul, coeff_monomial]
   by_cases h : Finsupp.single x r + Finsupp.single y (k - r) = μ
-  · subst h
-    simp
-  · rw [if_neg (Ne.symm h), if_neg h, mul_zero]
+  · subst h; simp
+  · rw [ite_eq_right (Ne.symm h), ite_eq_right h, mul_zero]
 
 theorem bnx_single_add_single_eq {σ : Type*} {x y : σ} (hxy : x ≠ y) (r s i j : ℕ) :
-    Finsupp.single x r + Finsupp.single y s = Finsupp.single x i + Finsupp.single y j ↔
-      r = i ∧ s = j := by
-  constructor
-  · intro h
-    have h1 := DFunLike.congr_fun h x
-    have h2 := DFunLike.congr_fun h y
-    simp [hxy, hxy.symm] at h1 h2
-    exact ⟨h1, h2⟩
-  · rintro ⟨rfl, rfl⟩
-    rfl
+    Finsupp.single x r + Finsupp.single y s = Finsupp.single x i + Finsupp.single y j ↔ r = i ∧ s = j :=
+  ⟨fun h => ⟨by simpa [Finsupp.single_apply, hxy] using DFunLike.congr_fun h x,
+    by simpa [Finsupp.single_apply, hxy.symm] using DFunLike.congr_fun h y⟩, by rintro ⟨rfl, rfl⟩; rfl⟩
 
 theorem bnx_lin_pow_val {K : Type u} [Field K] {σ : Type*} [DecidableEq σ] {x y : σ} (hxy : x ≠ y)
     (a b : K) (k i j : ℕ) :
     coeff (Finsupp.single x i + Finsupp.single y j) ((C a * X x + C b * X y : MvPowerSeries σ K) ^ k) =
       if i + j = k then a ^ i * b ^ j * (k.choose i : K) else 0 := by
-  rw [bnx_lin_pow]
-  simp_rw [bnx_single_add_single_eq hxy]
-  split_ifs with hk
+  rw [bnx_lin_pow]; simp_rw [bnx_single_add_single_eq hxy]; split_ifs with hk
   · rw [Finset.sum_eq_single i]
-    · have hj : k - i = j := by omega
-      rw [if_pos ⟨rfl, hj⟩, hj]
-    · intro r _ hr
-      rw [if_neg]
-      rintro ⟨h1, _⟩
-      exact hr h1
-    · intro hi
-      simp only [Finset.mem_range] at hi
-      omega
+    · simp [show k - i = j by omega]
+    · intro _ _ hr; split_ifs with h <;> [exact absurd h.1 hr; rfl]
+    · exact fun hi => absurd (Finset.mem_range.2 (by omega)) hi
   · refine Finset.sum_eq_zero fun r hr => ?_
-    rw [if_neg]
-    rintro ⟨h1, h2⟩
-    simp only [Finset.mem_range] at hr
-    omega
+    split_ifs with h <;> [exact absurd (by have := Finset.mem_range.1 hr; omega) hk; rfl]
 
-theorem bnx_lin_pow_supp {K : Type u} [Field K] {σ : Type*} [DecidableEq σ] (x y : σ)
-    (a b : K) (k : ℕ) (μ : σ →₀ ℕ)
-    (h : coeff μ ((C a * X x + C b * X y : MvPowerSeries σ K) ^ k) ≠ 0) (z : σ) (hz : μ z ≠ 0) :
-    z = x ∨ z = y := by
-  rw [bnx_lin_pow] at h
-  obtain ⟨r, _, hr⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
+theorem bnx_lin_pow_supp {K : Type u} [Field K] {σ : Type*} [DecidableEq σ] (x y : σ) (a b : K) (k : ℕ) (μ : σ →₀ ℕ)
+    (h : coeff μ ((C a * X x + C b * X y : MvPowerSeries σ K) ^ k) ≠ 0) (z : σ) (hz : μ z ≠ 0) : z = x ∨ z = y := by
+  rw [bnx_lin_pow] at h; obtain ⟨r, _, hr⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
   split_ifs at hr with hμ
-  · subst hμ
-    by_contra hne
-    push_neg at hne
-    apply hz
-    simp [Ne.symm hne.1, Ne.symm hne.2]
+  · subst hμ; by_contra hne; rw [not_or] at hne; exact hz (by simp [Ne.symm hne.1, Ne.symm hne.2])
   · exact absurd rfl hr
 
 section Blocks
-
 variable {K : Type u} [Field K] {d : ℕ} [NeZero d]
 
 def bnxA (a b : ZMod d → K) (s : ZMod d) : MvPowerSeries (V2 d) K :=
@@ -732,503 +646,237 @@ def bnxRes (m : V2 d →₀ ℕ) (s : ZMod d) : V2 d →₀ ℕ :=
 
 theorem bnxRes_apply (m : V2 d →₀ ℕ) (s : ZMod d) (z : V2 d) :
     bnxRes m s z = if z.2 = s then m z else 0 := by
-  obtain ⟨b, t⟩ := z
+  have _ := NeZero.ne d; obtain ⟨b, t⟩ := z
   by_cases h : t = s
-  · subst h
-    cases b <;> simp [bnxRes]
+  · subst h; cases b <;> simp [bnxRes]
   · cases b <;> simp [bnxRes, h]
-
-private theorem coeff_prod_bnxA_pow_eq_ite {K : Type u} [Field K] {d : ℕ} [NeZero d]
-    (a b : ZMod d → K) (k : ZMod d → ℕ) (S : Finset (ZMod d)) (m : V2 d →₀ ℕ) :
-    coeff m (∏ s ∈ S, bnxA a b s ^ k s) =
-      if ∀ z : V2 d, z.2 ∉ S → m z = 0 then
-        ∏ s ∈ S, coeff (bnxRes m s) (bnxA a b s ^ k s) else 0 := by
-  revert m
-  refine Finset.induction_on S ?_ ?_
-  · intro m
-    rw [Finset.prod_empty, Finset.prod_empty, coeff_one]
-    by_cases hm : m = 0
-    · subst hm
-      simp
-    · rw [if_neg hm, if_neg]
-      intro h
-      apply hm
-      ext z
-      exact h z (by simp)
-  · intro c S ha ih m
-    have hr : ∀ z, bnxRes m c z = if z.2 = c then m z else 0 := bnxRes_apply m c
-    rw [Finset.prod_insert ha, Finset.prod_insert ha, coeff_mul]
-    rw [Finset.sum_eq_single (bnxRes m c, m - bnxRes m c)]
-    · rw [ih]
-      have hcond : (∀ z : V2 d, z.2 ∉ S → (m - bnxRes m c) z = 0) ↔
-          (∀ z : V2 d, z.2 ∉ insert c S → m z = 0) := by
-        constructor
-        · intro h z hz
-          have h1 := h z (fun hS => hz (Finset.mem_insert_of_mem hS))
-          have hza : z.2 ≠ c := fun e => hz (by rw [e]; exact Finset.mem_insert_self c S)
-          rw [Finsupp.tsub_apply, hr, if_neg hza] at h1
-          omega
-        · intro h z hz
-          rw [Finsupp.tsub_apply, hr]
-          split_ifs with hza
-          · omega
-          · have h2 := h z (by simp [hza, hz])
-            omega
-      by_cases hc : ∀ z : V2 d, z.2 ∉ insert c S → m z = 0
-      · rw [if_pos (hcond.2 hc), if_pos hc]
-        congr 1
-        refine Finset.prod_congr rfl fun s hs => ?_
-        have hsa : s ≠ c := fun e => ha (by rw [← e]; exact hs)
-        have hres : bnxRes (m - bnxRes m c) s = bnxRes m s := by
-          ext z
-          simp only [bnxRes_apply, Finsupp.tsub_apply]
-          by_cases h1 : z.2 = s
-          · simp [h1, hsa]
-          · simp [h1]
-        rw [hres]
-      · rw [if_neg (mt hcond.1 hc), if_neg hc, mul_zero]
-    · intro p hp hne
-      first
-        | rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-      by_contra hnz
-      have h1 : coeff p.1 (bnxA a b c ^ k c) ≠ 0 := left_ne_zero_of_mul hnz
-      have h2 : coeff p.2 (∏ s ∈ S, bnxA a b s ^ k s) ≠ 0 := right_ne_zero_of_mul hnz
-      rw [ih] at h2
-      have hP : ∀ z : V2 d, z.2 ∉ S → p.2 z = 0 := by
-        by_contra hP
-        exact h2 (if_neg hP)
-      have hs1 : ∀ z : V2 d, z.2 ≠ c → p.1 z = 0 := by
-        intro z hz
-        by_contra hz0
-        rcases bnx_lin_pow_supp (false, c) (true, c) (a c) (b c) (k c) p.1 h1 z hz0 with h | h <;>
-          (subst h; exact hz rfl)
-      apply hne
-      have e1 : p.1 = bnxRes m c := by
-        ext z
-        rw [hr]
-        split_ifs with hz
-        · have h4 := hP z (by rw [hz]; exact ha)
-          have h3 := DFunLike.congr_fun hp z
-          rw [Finsupp.add_apply] at h3
-          omega
-        · exact hs1 z hz
-      have e2 : p.2 = m - bnxRes m c := by
-        ext z
-        have h3 := DFunLike.congr_fun hp z
-        rw [Finsupp.add_apply] at h3
-        rw [Finsupp.tsub_apply, ← e1]
-        omega
-      exact Prod.ext e1 e2
-    · intro h
-      exfalso
-      apply h
-      first
-      | rw [Finset.HasAntidiagonal.mem_antidiagonal]
-      ext z
-      rw [Finsupp.add_apply, Finsupp.tsub_apply, hr]
-      split_ifs <;> omega
 
 theorem bnx_coeff_prod (a b : ZMod d → K) (k : ZMod d → ℕ) (m : V2 d →₀ ℕ) :
     coeff m (∏ s, bnxA a b s ^ k s) = ∏ s, coeff (bnxRes m s) (bnxA a b s ^ k s) := by
-  rw [coeff_prod_bnxA_pow_eq_ite, if_pos (fun z hz => absurd (Finset.mem_univ _) hz)]
-
+  suffices ∀ (S : Finset (ZMod d)) (m : V2 d →₀ ℕ), coeff m (∏ s ∈ S, bnxA a b s ^ k s) =
+      if ∀ z : V2 d, z.2 ∉ S → m z = 0 then ∏ s ∈ S, coeff (bnxRes m s) (bnxA a b s ^ k s) else 0 by
+    simpa using this Finset.univ m
+  intro S m; induction S using Finset.induction_on generalizing m with
+  | empty =>
+    rw [Finset.prod_empty, Finset.prod_empty, coeff_one]; by_cases hm : m = 0
+    · subst hm; simp
+    · rw [ite_eq_right hm, ite_eq_right fun h => hm (Finsupp.ext fun z => h z (by simp))]
+  | insert c S ha ih =>
+    rw [Finset.prod_insert ha, Finset.prod_insert ha, coeff_mul,
+      Finset.sum_eq_single (bnxRes m c, m - bnxRes m c), ih]
+    · have hcond : (∀ z : V2 d, z.2 ∉ S → (m - bnxRes m c) z = 0) ↔
+          (∀ z : V2 d, z.2 ∉ insert c S → m z = 0) :=
+        ⟨fun h z hz => by
+          simpa [bnxRes_apply, show z.2 ≠ c from fun e => hz (e ▸ Finset.mem_insert_self c S)]
+            using h z fun hS => hz (Finset.mem_insert_of_mem hS),
+        fun h z hz => by
+          simp only [Finsupp.tsub_apply, bnxRes_apply]
+          split_ifs with hzc <;> [omega; simp [h z (by simp [hzc, hz])]]⟩
+      by_cases hc : ∀ z : V2 d, z.2 ∉ insert c S → m z = 0
+      · rw [ite_eq_left (hcond.2 hc), ite_eq_left hc]
+        refine congrArg (_ * ·) (Finset.prod_congr rfl fun s hs => congrArg (coeff · _) ?_)
+        ext z; simp only [bnxRes_apply, Finsupp.tsub_apply]
+        by_cases hz : z.2 = s <;> [simp [hz, show s ≠ c from fun e => ha (e ▸ hs)]; simp [hz]]
+      · rw [ite_eq_right (mt hcond.1 hc), ite_eq_right hc, mul_zero]
+    · intro p hp hne; rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
+      by_contra hnz; have h1 := left_ne_zero_of_mul hnz; have h2 := right_ne_zero_of_mul hnz; rw [ih] at h2
+      have hP : ∀ z : V2 d, z.2 ∉ S → p.2 z = 0 := by split_ifs at h2 with hP <;> [exact hP; exact absurd rfl h2]
+      have e1 : p.1 = bnxRes m c := by
+        ext z; rw [bnxRes_apply]; split_ifs with hz
+        · have h3 := DFunLike.congr_fun hp z; have h4 := hP z (hz ▸ ha); rw [Finsupp.add_apply] at h3; omega
+        · by_contra hz0; rcases bnx_lin_pow_supp _ _ _ _ _ _ h1 z hz0 with rfl | rfl <;> exact hz rfl
+      refine hne (Prod.ext e1 (Finsupp.ext fun z => ?_))
+      have h3 := DFunLike.congr_fun hp z; rw [Finsupp.add_apply] at h3; rw [Finsupp.tsub_apply, ← e1]; omega
+    · intro h; refine absurd (Finset.HasAntidiagonal.mem_antidiagonal.2 (Finsupp.ext fun z => ?_)) h
+      simp only [Finsupp.add_apply, Finsupp.tsub_apply, bnxRes_apply]; split_ifs <;> omega
 end Blocks
 
 section Subst
-
 variable {K : Type u} [Field K] {d : ℕ} [NeZero d]
 
-def bnxN (m : V2 d →₀ ℕ) : ZMod d →₀ ℕ :=
-  Finsupp.equivFunOnFinite.symm fun s => m (false, s) + m (true, s)
+def bnxN (m : V2 d →₀ ℕ) : ZMod d →₀ ℕ := Finsupp.equivFunOnFinite.symm fun s => m (false, s) + m (true, s)
 
-theorem bnxN_apply (m : V2 d →₀ ℕ) (s : ZMod d) : bnxN m s = m (false, s) + m (true, s) := by
-  first
-  | rfl
+theorem bnxN_apply (m : V2 d →₀ ℕ) (s : ZMod d) : bnxN m s = m (false, s) + m (true, s) := rfl
 
 theorem bnx_coeff_subst (a b : ZMod d → K) (f : MvPowerSeries (ZMod d) K) (m : V2 d →₀ ℕ) :
     coeff m (subst (bnxA a b) f) = coeff (bnxN m) f *
-      ∏ s, (a s ^ m (false, s) * b s ^ m (true, s) *
-        ((m (false, s) + m (true, s)).choose (m (false, s)) : K)) := by
-  have ha : HasSubst (bnxA a b) := hasSubst_of_constantCoeff_zero fun s => by simp [bnxA]
-  rw [coeff_subst ha]
+      ∏ s, (a s ^ m (false, s) * b s ^ m (true, s) * ((m (false, s) + m (true, s)).choose (m (false, s)) : K)) := by
+  rw [coeff_subst (hasSubst_of_constantCoeff_zero fun s => by simp [bnxA])]
   have hterm : ∀ dd : ZMod d →₀ ℕ, coeff m (dd.prod fun s e => bnxA a b s ^ e) =
       ∏ s, (if m (false, s) + m (true, s) = dd s then
-        a s ^ m (false, s) * b s ^ m (true, s) * ((dd s).choose (m (false, s)) : K) else 0) := by
-    intro dd
-    rw [Finsupp.prod_fintype _ _ (fun s => pow_zero _), bnx_coeff_prod]
-    refine Finset.prod_congr rfl fun s _ => ?_
-    have hres : bnxRes m s = Finsupp.single (false, s) (m (false, s)) +
-        Finsupp.single (true, s) (m (true, s)) := rfl
-    rw [hres]
-    exact bnx_lin_pow_val (x := (false, s)) (y := (true, s)) (by simp) (a s) (b s) (dd s) _ _
+        a s ^ m (false, s) * b s ^ m (true, s) * ((dd s).choose (m (false, s)) : K) else 0) := fun dd => by
+    rw [Finsupp.prod_fintype _ _ fun _ => pow_zero _, bnx_coeff_prod]
+    exact Finset.prod_congr rfl fun s _ => bnx_lin_pow_val (x := (false, s)) (y := (true, s)) (by simp) (a s) (b s) (dd s) _ _
   rw [finsum_eq_single _ (bnxN m)]
-  · rw [hterm, smul_eq_mul]
-    congr 1
-    refine Finset.prod_congr rfl fun s _ => ?_
-    rw [if_pos (bnxN_apply m s).symm, bnxN_apply]
+  · simp only [hterm, smul_eq_mul, bnxN_apply, ↓reduceIte]
   · intro dd hdd
-    have hex : ∃ s, dd s ≠ bnxN m s := by
-      by_contra hc
-      push_neg at hc
-      exact hdd (Finsupp.ext hc)
-    obtain ⟨s, hs⟩ := hex
+    obtain ⟨s, hs⟩ : ∃ s, dd s ≠ bnxN m s := by by_contra hc; push Not at hc; exact hdd (Finsupp.ext hc)
     rw [hterm, Finset.prod_eq_zero (Finset.mem_univ s), smul_zero]
-    rw [if_neg]
-    intro h
-    apply hs
-    rw [← h, bnxN_apply]
+    split_ifs with h <;> [exact absurd (h.symm.trans (bnxN_apply m s).symm) hs; rfl]
 
 theorem evenIndicator_series_binomial_form : (s1 : ZMod d → MvPowerSeries (V2 d) K) =
     bnxA (fun _ => 1) (fun s => if s.val % 2 = 0 then 1 else 0) := by
-  funext s
-  simp only [s1, bnxA]
-  split_ifs <;> simp
+  have _ := NeZero.ne d; funext s; simp only [s1, bnxA]; split_ifs <;> simp
 
 theorem zero_series_binomial_form : (s0 : ZMod d → MvPowerSeries (V2 d) K) = bnxA (fun _ => 1) (fun _ => 0) := by
-  funext s
-  simp [s0, bnxA]
+  have _ := NeZero.ne d; funext s; simp [s0, bnxA]
 
 theorem swapped_parity_series_binomial_form : (s2 : ZMod d → MvPowerSeries (V2 d) K) =
     bnxA (fun s => if s.val % 2 = 0 then 0 else 1) (fun s => if s.val % 2 = 0 then 1 else 0) := by
-  funext s
-  simp only [s2, bnxA]
-  split_ifs <;> simp
+  have _ := NeZero.ne d; funext s; simp only [s2, bnxA]; split_ifs <;> simp
 
 theorem oddIndicator_series_binomial_form : (s1' : ZMod d → MvPowerSeries (V2 d) K) =
     bnxA (fun _ => 1) (fun s => if s.val % 2 = 0 then 0 else 1) := by
-  funext s
-  simp only [s1', bnxA]
-  split_ifs <;> simp
+  have _ := NeZero.ne d; funext s; simp only [s1', bnxA]; split_ifs <;> simp
 
 theorem parity_series_binomial_form : (s2' : ZMod d → MvPowerSeries (V2 d) K) =
     bnxA (fun s => if s.val % 2 = 0 then 1 else 0) (fun s => if s.val % 2 = 0 then 0 else 1) := by
-  funext s
-  simp only [s2', bnxA]
-  split_ifs <;> simp
+  have _ := NeZero.ne d; funext s; simp only [s2', bnxA]; split_ifs <;> simp
 
 def bnxM (n : ZMod d →₀ ℕ) (k : ZMod d → ℕ) : V2 d →₀ ℕ :=
   Finsupp.equivFunOnFinite.symm fun x => if x.1 then n x.2 - k x.2 else k x.2
 
-theorem bnxM_false (n : ZMod d →₀ ℕ) (k : ZMod d → ℕ) (s : ZMod d) : bnxM n k (false, s) = k s := by
-  first
-  | rfl
+theorem bnxM_false (n : ZMod d →₀ ℕ) (k : ZMod d → ℕ) (s : ZMod d) : bnxM n k (false, s) = k s := rfl
 
-theorem bnxM_true (n : ZMod d →₀ ℕ) (k : ZMod d → ℕ) (s : ZMod d) :
-    bnxM n k (true, s) = n s - k s := by
-  first
-  | rfl
+theorem bnxM_true (n : ZMod d →₀ ℕ) (k : ZMod d → ℕ) (s : ZMod d) : bnxM n k (true, s) = n s - k s := rfl
 
 theorem bnxN_bnxM (n : ZMod d →₀ ℕ) (k : ZMod d → ℕ) (hk : ∀ s, k s ≤ n s) : bnxN (bnxM n k) = n := by
-  ext s
-  rw [bnxN_apply, bnxM_false, bnxM_true]
-  have := hk s
-  omega
+  ext s; rw [bnxN_apply, bnxM_false, bnxM_true]; have := hk s; omega
 
-theorem bnx_degree_bnxM (n : ZMod d →₀ ℕ) (k : ZMod d → ℕ) (hk : ∀ s, k s ≤ n s) :
-    (bnxM n k).degree = n.degree := by
+theorem bnx_degree_bnxM (n : ZMod d →₀ ℕ) (k : ZMod d → ℕ) (hk : ∀ s, k s ≤ n s) : (bnxM n k).degree = n.degree := by
   rw [Finsupp.degree_eq_sum, Finsupp.degree_eq_sum, Fintype.sum_prod_type]
-  simp only [Fintype.sum_bool, bnxM_true, bnxM_false]
-  rw [← Finset.sum_add_distrib]
+  simp only [Fintype.sum_bool, bnxM_true, bnxM_false, ← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl fun s _ => by have := hk s; omega
-
 end Subst
 
 section De
-
 variable {K : Type u} [Field K] {d : ℕ} [NeZero d]
 
 theorem bnx_update_le (n : ZMod d →₀ ℕ) (s : ZMod d) (j : ℕ) (hj : j < n s) :
-    ∀ t, Function.update (⇑n) s j t ≤ n t := by
-  intro t
-  rw [Function.update_apply]
-  split_ifs with h
-  · subst h
-    exact hj.le
-  · exact le_rfl
+    ∀ t, Function.update (⇑n) s j t ≤ n t := fun t => by
+  have _ := NeZero.ne d; rw [Function.update_apply]; split_ifs with h <;> [exact h ▸ hj.le; exact le_rfl]
 
-theorem bnx_prod_choose (n : ZMod d →₀ ℕ) (s : ZMod d) (j : ℕ) (hj : j < n s) (e : ZMod d → K)
-    (he : e s = 1) :
+theorem bnx_prod_choose (n : ZMod d →₀ ℕ) (s : ZMod d) (j : ℕ) (hj : j < n s) (e : ZMod d → K) (he : e s = 1) :
     ∏ t, ((1 : K) ^ Function.update (⇑n) s j t * e t ^ (n t - Function.update (⇑n) s j t) *
       ((Function.update (⇑n) s j t + (n t - Function.update (⇑n) s j t)).choose
         (Function.update (⇑n) s j t) : K)) = ((n s).choose j : K) := by
   rw [Finset.prod_eq_single s]
-  · first
-    | (rw [Function.update_apply, if_pos rfl, he, one_pow, one_pow, one_mul, one_mul,
-        Nat.add_sub_cancel' hj.le])
-  · intro t _ hts
-    simp [hts]
-  · intro h
-    exact absurd (Finset.mem_univ s) h
+  · simp [he, Nat.add_sub_cancel' hj.le]
+  · exact fun t _ hts => by simp [hts]
+  · exact fun h => absurd (Finset.mem_univ s) h
+
+private theorem deriv_binomial_coeff (P : ZMod d → Prop) [DecidablePred P]
+    (be : MvPowerSeries (ZMod d) K) (n : ZMod d →₀ ℕ) (s : ZMod d) (hs : P s)
+    (j : ℕ) (hj : j < n s) (hpos : 0 < j ∨ ∃ t : ZMod d, P t ∧ t ≠ s ∧ n t ≠ 0) :
+    coeff (bnxM n (Function.update (⇑n) s j))
+      (subst (bnxA (fun _ => 1) (fun t => if P t then 1 else 0)) be - subst (bnxA (fun _ => 1) (fun _ => 0)) be -
+        subst (bnxA (fun t => if P t then 0 else 1) (fun t => if P t then 1 else 0)) be) =
+      coeff n be * ((n s).choose j : K) := by
+  rw [map_sub, map_sub, bnx_coeff_subst, bnx_coeff_subst, bnx_coeff_subst, bnxN_bnxM n _ (bnx_update_le n s j hj)]
+  simp only [bnxM_false, bnxM_true]
+  rw [bnx_prod_choose n s j hj (fun t => if P t then (1 : K) else 0) (by simp [hs]),
+    Finset.prod_eq_zero (Finset.mem_univ s) (by simp [zero_pow (by omega : n s - j ≠ 0)]), mul_zero, sub_zero]
+  rcases hpos with hj0 | ⟨t, ht, hts, hnt⟩
+  · rw [Finset.prod_eq_zero (Finset.mem_univ s) (by simp [hs, hj0.ne']), mul_zero, sub_zero]
+  · rw [Finset.prod_eq_zero (Finset.mem_univ t) (by simp [hts, ht, hnt]), mul_zero, sub_zero]
 
 theorem evenDerivative_binomial_coeff (be : MvPowerSeries (ZMod d) K) (n : ZMod d →₀ ℕ) (s : ZMod d)
-    (hs : s.val % 2 = 0) (j : ℕ) (hj : j < n s)
-    (hpos : 0 < j ∨ ∃ t : ZMod d, t.val % 2 = 0 ∧ t ≠ s ∧ n t ≠ 0) :
+    (hs : s.val % 2 = 0) (j : ℕ) (hj : j < n s) (hpos : 0 < j ∨ ∃ t : ZMod d, t.val % 2 = 0 ∧ t ≠ s ∧ n t ≠ 0) :
     coeff (bnxM n (Function.update (⇑n) s j)) (de1 be) = coeff n be * ((n s).choose j : K) := by
-  have hk := bnx_update_le n s j hj
-  unfold de1
-  rw [map_sub, map_sub, evenIndicator_series_binomial_form, zero_series_binomial_form, swapped_parity_series_binomial_form, bnx_coeff_subst, bnx_coeff_subst, bnx_coeff_subst,
-    bnxN_bnxM n _ hk]
-  simp only [bnxM_false, bnxM_true]
-  rw [bnx_prod_choose n s j hj (fun t => if t.val % 2 = 0 then (1 : K) else 0) (by simp [hs])]
-  have hz0 : ∏ t, ((1 : K) ^ Function.update (⇑n) s j t * (0 : K) ^ (n t - Function.update (⇑n) s j t) *
-      ((Function.update (⇑n) s j t + (n t - Function.update (⇑n) s j t)).choose
-        (Function.update (⇑n) s j t) : K)) = 0 := by
-    apply Finset.prod_eq_zero (Finset.mem_univ s)
-    rw [Function.update_apply, if_pos rfl, zero_pow (by omega)]
-    simp
-  have hz2 : ∏ t, ((if t.val % 2 = 0 then (0 : K) else 1) ^ Function.update (⇑n) s j t *
-      (if t.val % 2 = 0 then (1 : K) else 0) ^ (n t - Function.update (⇑n) s j t) *
-      ((Function.update (⇑n) s j t + (n t - Function.update (⇑n) s j t)).choose
-        (Function.update (⇑n) s j t) : K)) = 0 := by
-    rcases hpos with hj0 | ⟨t, ht, hts, hnt⟩
-    · apply Finset.prod_eq_zero (Finset.mem_univ s)
-      rw [Function.update_apply, if_pos rfl, if_pos hs, zero_pow (by omega)]
-      simp
-    · apply Finset.prod_eq_zero (Finset.mem_univ t)
-      rw [Function.update_apply, if_neg hts, if_pos ht, zero_pow hnt]
-      simp
-  rw [hz0, hz2, mul_zero, sub_zero, sub_zero]
+  rw [de1, evenIndicator_series_binomial_form, zero_series_binomial_form, swapped_parity_series_binomial_form]
+  exact deriv_binomial_coeff (fun t => t.val % 2 = 0) be n s hs j hj hpos
 
 theorem oddDerivative_binomial_coeff (be : MvPowerSeries (ZMod d) K) (n : ZMod d →₀ ℕ) (s : ZMod d)
-    (hs : s.val % 2 ≠ 0) (j : ℕ) (hj : j < n s)
-    (hpos : 0 < j ∨ ∃ t : ZMod d, t.val % 2 ≠ 0 ∧ t ≠ s ∧ n t ≠ 0) :
+    (hs : s.val % 2 ≠ 0) (j : ℕ) (hj : j < n s) (hpos : 0 < j ∨ ∃ t : ZMod d, t.val % 2 ≠ 0 ∧ t ≠ s ∧ n t ≠ 0) :
     coeff (bnxM n (Function.update (⇑n) s j)) (de2 be) = coeff n be * ((n s).choose j : K) := by
-  have hk := bnx_update_le n s j hj
-  unfold de2
-  rw [map_sub, map_sub, oddIndicator_series_binomial_form, zero_series_binomial_form, parity_series_binomial_form, bnx_coeff_subst, bnx_coeff_subst, bnx_coeff_subst,
-    bnxN_bnxM n _ hk]
-  simp only [bnxM_false, bnxM_true]
-  rw [bnx_prod_choose n s j hj (fun t => if t.val % 2 = 0 then (0 : K) else 1) (by simp [hs])]
-  have hz0 : ∏ t, ((1 : K) ^ Function.update (⇑n) s j t * (0 : K) ^ (n t - Function.update (⇑n) s j t) *
-      ((Function.update (⇑n) s j t + (n t - Function.update (⇑n) s j t)).choose
-        (Function.update (⇑n) s j t) : K)) = 0 := by
-    apply Finset.prod_eq_zero (Finset.mem_univ s)
-    rw [Function.update_apply, if_pos rfl, zero_pow (by omega)]
-    simp
-  have hz2 : ∏ t, ((if t.val % 2 = 0 then (1 : K) else 0) ^ Function.update (⇑n) s j t *
-      (if t.val % 2 = 0 then (0 : K) else 1) ^ (n t - Function.update (⇑n) s j t) *
-      ((Function.update (⇑n) s j t + (n t - Function.update (⇑n) s j t)).choose
-        (Function.update (⇑n) s j t) : K)) = 0 := by
-    rcases hpos with hj0 | ⟨t, ht, hts, hnt⟩
-    · apply Finset.prod_eq_zero (Finset.mem_univ s)
-      rw [Function.update_apply, if_pos rfl, if_neg hs, zero_pow (by omega)]
-      simp
-    · apply Finset.prod_eq_zero (Finset.mem_univ t)
-      rw [Function.update_apply, if_neg hts, if_neg ht, zero_pow hnt]
-      simp
-  rw [hz0, hz2, mul_zero, sub_zero, sub_zero]
-
+  rw [de2, oddIndicator_series_binomial_form, zero_series_binomial_form, parity_series_binomial_form]
+  simpa only [ne_eq, ite_not] using deriv_binomial_coeff (fun t => t.val % 2 ≠ 0) be n s hs j hj hpos
 end De
 
 section NormNat
-
 variable {K : Type u} [NormedField K] [IsUltrametricDist K]
 
-theorem bnx_norm_one {l : ℕ} (hl : l.Prime) (hl1 : ‖(l : K)‖ < 1) (B : ℕ) (hB : ¬ l ∣ B) :
-    1 ≤ ‖(B : K)‖ := by
-  have hcop : Nat.Coprime l B := (Nat.Prime.coprime_iff_not_dvd hl).2 hB
-  obtain ⟨u, v, huv⟩ := Nat.isCoprime_iff_coprime.2 hcop
-  have h1 : (u : K) * (l : K) + (v : K) * (B : K) = 1 := by
-    have := congrArg (fun z : ℤ => (z : K)) huv
-    push_cast at this
-    exact this
-  have hu : ‖(u : K)‖ ≤ 1 := IsUltrametricDist.norm_intCast_le_one K u
-  have hv : ‖(v : K)‖ ≤ 1 := IsUltrametricDist.norm_intCast_le_one K v
-  have key : ‖(1 : K)‖ ≤ max ‖(u : K) * (l : K)‖ ‖(v : K) * (B : K)‖ := by
-    rw [← h1]
-    exact IsUltrametricDist.norm_add_le_max _ _
-  rw [norm_one, norm_mul, norm_mul] at key
-  have hl0 : 0 ≤ ‖(l : K)‖ := norm_nonneg _
-  have hB0 : 0 ≤ ‖(B : K)‖ := norm_nonneg _
-  have hA : ‖(u : K)‖ * ‖(l : K)‖ < 1 := by
-    calc ‖(u : K)‖ * ‖(l : K)‖ ≤ 1 * ‖(l : K)‖ := mul_le_mul_of_nonneg_right hu hl0
-      _ < 1 := by rw [one_mul]; exact hl1
-  have hC : ‖(v : K)‖ * ‖(B : K)‖ ≤ ‖(B : K)‖ := by
-    calc ‖(v : K)‖ * ‖(B : K)‖ ≤ 1 * ‖(B : K)‖ := mul_le_mul_of_nonneg_right hv hB0
-      _ = ‖(B : K)‖ := one_mul _
+theorem bnx_norm_one {l : ℕ} (hl : l.Prime) (hl1 : ‖(l : K)‖ < 1) (B : ℕ) (hB : ¬ l ∣ B) : 1 ≤ ‖(B : K)‖ := by
+  obtain ⟨u, v, huv⟩ := Nat.isCoprime_iff_coprime.2 (hl.coprime_iff_not_dvd.2 hB)
+  have h1 : (u : K) * l + v * B = 1 := by simpa using congrArg (Int.cast : ℤ → K) huv
+  have key : (1 : ℝ) ≤ max (‖(u : K)‖ * ‖(l : K)‖) (‖(v : K)‖ * ‖(B : K)‖) := by
+    simpa [norm_mul, h1] using IsUltrametricDist.norm_add_le_max ((u : K) * l) ((v : K) * B)
   rcases le_max_iff.1 key with h | h
-  · linarith
-  · linarith
+  · linarith [mul_le_of_le_one_left (norm_nonneg (l : K)) (IsUltrametricDist.norm_intCast_le_one K u)]
+  · exact h.trans (mul_le_of_le_one_left (norm_nonneg _) (IsUltrametricDist.norm_intCast_le_one K v))
 
 theorem bnx_norm_ge {l : ℕ} (hl : l.Prime) (hl1 : ‖(l : K)‖ < 1) (B : ℕ) (hB0 : B ≠ 0)
     (hB : ¬ l ^ 2 ∣ B) : ‖(l : K)‖ ≤ ‖(B : K)‖ := by
-  by_cases hd : l ∣ B
-  · obtain ⟨B', rfl⟩ := hd
-    have hB' : ¬ l ∣ B' := fun h => hB (by rw [pow_two]; exact mul_dvd_mul_left l h)
-    rw [Nat.cast_mul, norm_mul]
-    have h1 := bnx_norm_one hl hl1 B' hB'
-    have h0 : 0 ≤ ‖(l : K)‖ := norm_nonneg _
-    nlinarith
-  · have h1 := bnx_norm_one hl hl1 B hd
-    linarith
-
+  let _ := hB0; by_cases hd : l ∣ B
+  · obtain ⟨B', rfl⟩ := hd; rw [Nat.cast_mul, norm_mul]
+    exact le_mul_of_one_le_right (norm_nonneg _) (bnx_norm_one hl hl1 B' fun h => hB (pow_two l ▸ mul_dvd_mul_left l h))
+  · exact hl1.le.trans (bnx_norm_one hl hl1 B hd)
 end NormNat
 
-theorem bnx_choose_lucas {l : ℕ} (hl : l.Prime) (c : ℕ) :
-    ∀ a : ℕ, (l ^ a * c).choose (l ^ a) ≡ c [MOD l] := by
-  haveI := Fact.mk hl
-  intro a
-  induction a with
+theorem bnx_choose_lucas {l : ℕ} (hl : l.Prime) (c : ℕ) : ∀ a : ℕ, (l ^ a * c).choose (l ^ a) ≡ c [MOD l] := by
+  have := Fact.mk hl; intro a; induction a with
   | zero => simp [Nat.ModEq]
   | succ a ih =>
-    have h := Choose.choose_modEq_choose_mod_mul_choose_div_nat (n := l * (l ^ a * c))
-      (k := l * l ^ a) (p := l)
+    have h := Choose.choose_modEq_choose_mod_mul_choose_div_nat (n := l * (l ^ a * c)) (k := l * l ^ a) (p := l)
     rw [Nat.mul_mod_right, Nat.mul_mod_right, Nat.mul_div_cancel_left _ hl.pos,
       Nat.mul_div_cancel_left _ hl.pos, Nat.choose_self, one_mul] at h
-    rw [pow_succ', mul_assoc]
-    exact h.trans ih
+    rw [pow_succ', mul_assoc]; exact h.trans ih
 
 theorem bnx_choose_nonpow {l : ℕ} (hl : l.Prime) (m : ℕ) (hm0 : m ≠ 0) (hm : ∀ e, m ≠ l ^ e) :
     ∃ j, 0 < j ∧ j < m ∧ ¬ l ∣ m.choose j := by
-  obtain ⟨v, c, hc, hm'⟩ := Nat.exists_eq_pow_mul_and_not_dvd hm0 l hl.ne_one
-  have hc1 : c ≠ 1 := by
-    rintro rfl
-    exact hm v (by rw [hm', mul_one])
-  have hc0 : c ≠ 0 := by
-    rintro rfl
-    exact hm0 (by rw [hm', mul_zero])
-  have hp := pow_pos hl.pos v
-  refine ⟨l ^ v, hp, ?_, ?_⟩
-  · have h2 : 2 ≤ c := by omega
-    rw [hm']
-    nlinarith
-  · intro hd
-    have h := bnx_choose_lucas hl c v
-    rw [← hm'] at h
-    exact hc (Nat.modEq_zero_iff_dvd.1 (h.symm.trans (Nat.modEq_zero_iff_dvd.2 hd)))
+  obtain ⟨v, c, hc, rfl⟩ := Nat.exists_eq_pow_mul_and_not_dvd hm0 l hl.ne_one
+  have hc0 : c ≠ 0 := fun h => hm0 (by simp [h]); have hc1 : c ≠ 1 := fun h => hm v (by simp [h])
+  refine ⟨l ^ v, pow_pos hl.pos v, lt_mul_of_one_lt_right (pow_pos hl.pos v) (by omega), fun hd => ?_⟩
+  exact hc (Nat.modEq_zero_iff_dvd.1 ((bnx_choose_lucas hl c v).symm.trans (Nat.modEq_zero_iff_dvd.2 hd)))
 
 theorem bnx_choose_pow {l : ℕ} (hl : l.Prime) (e : ℕ) (he : 1 ≤ e) :
     0 < l ^ (e - 1) ∧ l ^ (e - 1) < l ^ e ∧ (l ^ e).choose (l ^ (e - 1)) ≠ 0 ∧
       ¬ l ^ 2 ∣ (l ^ e).choose (l ^ (e - 1)) := by
-  have hlp := hl.pos
-  have hk0 : 0 < l ^ (e - 1) := pow_pos hlp _
-  have hN : l ^ e = l * l ^ (e - 1) := by
-    rw [← pow_succ']
-    congr 1
-    omega
-  have hlt : l ^ (e - 1) < l ^ e := by
-    rw [hN]
-    have := hl.two_le
-    nlinarith
-  refine ⟨hk0, hlt, (Nat.choose_pos hlt.le).ne', ?_⟩
-  have hnd : ∀ f i, i ≤ l ^ f - 1 → ¬ l ∣ (l ^ f - 1).choose i := by
-    haveI := Fact.mk hl
-    intro f
-    induction f with
-    | zero =>
-      intro i hi
-      have hi0 : i = 0 := by
-        rw [pow_zero] at hi
-        omega
-      subst hi0
-      rw [Nat.choose_zero_right]
-      exact hl.not_dvd_one
-    | succ f ih =>
-      intro i hi hd
-      have hA : 1 ≤ l ^ f := Nat.one_le_pow _ _ hlp
-      have hsplit : l ^ (f + 1) - 1 = (l - 1) + l * (l ^ f - 1) := by
-        rw [pow_succ']
-        have h4 : l * l ^ f = l * (l ^ f - 1) + l := by
-          rw [Nat.mul_sub_one]
-          have : l ≤ l * l ^ f := by nlinarith
-          omega
-        rw [h4]
-        omega
-      have hm1 : (l ^ (f + 1) - 1) % l = l - 1 := by
-        rw [hsplit, Nat.add_mul_mod_self_left]
-        exact Nat.mod_eq_of_lt (by omega)
-      have hd1 : (l ^ (f + 1) - 1) / l = l ^ f - 1 := by
-        rw [hsplit, Nat.add_mul_div_left _ _ hlp, Nat.div_eq_of_lt (by omega), zero_add]
-      have h := Choose.choose_modEq_choose_mod_mul_choose_div_nat (n := l ^ (f + 1) - 1) (k := i) (p := l)
-      rw [hm1, hd1] at h
-      have h2 : l ∣ (l - 1).choose (i % l) * (l ^ f - 1).choose (i / l) :=
-        Nat.modEq_zero_iff_dvd.1 (h.symm.trans (Nat.modEq_zero_iff_dvd.2 hd))
-      rcases (Nat.Prime.dvd_mul hl).1 h2 with h3 | h3
-      · have hi' : i % l ≤ l - 1 := by
-          have := Nat.mod_lt i hlp
-          omega
-        have h4 := Nat.choose_mul_factorial_mul_factorial hi'
-        have h5 : l ∣ (l - 1).factorial := by
-          rw [← h4]
-          exact Dvd.dvd.mul_right (Dvd.dvd.mul_right h3 _) _
-        rw [hl.dvd_factorial] at h5
-        omega
-      · refine ih (i / l) ?_ h3
-        have h6 : i / l ≤ (l ^ (f + 1) - 1) / l := Nat.div_le_div_right hi
-        rw [hd1] at h6
-        exact h6
-  intro hdiv
-  have hid : (l ^ e - 1 + 1) * (l ^ e - 1).choose (l ^ (e - 1) - 1) =
-      (l ^ e - 1 + 1).choose (l ^ (e - 1) - 1 + 1) * (l ^ (e - 1) - 1 + 1) := by
-    first
-    | exact Nat.add_one_mul_choose_eq _ _
-  have e1 : l ^ e - 1 + 1 = l ^ e := by omega
-  have e2 : l ^ (e - 1) - 1 + 1 = l ^ (e - 1) := by omega
-  rw [e1, e2] at hid
+  have hlp := hl.pos; have hk0 : 0 < l ^ (e - 1) := pow_pos hlp _
+  have hN : l ^ e = l * l ^ (e - 1) := by rw [← pow_succ', Nat.sub_add_cancel he]
+  have hlt : l ^ (e - 1) < l ^ e := hN ▸ lt_mul_of_one_lt_left hk0 hl.one_lt
+  refine ⟨hk0, hlt, (Nat.choose_pos hlt.le).ne', fun hdiv => ?_⟩
   have hC : (l ^ e).choose (l ^ (e - 1)) = l * (l ^ e - 1).choose (l ^ (e - 1) - 1) := by
     apply Nat.eq_of_mul_eq_mul_right hk0
-    rw [← hid, hN]
-    ring
-  rw [hC, pow_two] at hdiv
-  have h7 : l ∣ (l ^ e - 1).choose (l ^ (e - 1) - 1) := by
-    first
-    | exact Nat.dvd_of_mul_dvd_mul_left hlp hdiv
-  exact hnd e _ (by omega) h7
+    have hid := Nat.add_one_mul_choose_eq (l ^ e - 1) (l ^ (e - 1) - 1)
+    have e1 : l ^ e - 1 + 1 = l ^ e := by omega
+    have e2 : l ^ (e - 1) - 1 + 1 = l ^ (e - 1) := by omega
+    rw [e1, e2] at hid; rw [← hid, hN]; ring
+  rw [hC, pow_two] at hdiv; have h7 := Nat.dvd_of_mul_dvd_mul_left hlp hdiv
+  have hmod1 : ∀ b : ℕ, (l ^ (b + 1) - 1).choose (l ^ b - 1) ≡ 1 [MOD l] := by
+    have := Fact.mk hl
+    have hdm : ∀ a : ℕ, (l ^ (a + 1) - 1) % l = l - 1 ∧ (l ^ (a + 1) - 1) / l = l ^ a - 1 := fun a => by
+      have hs : l ^ (a + 1) - 1 = (l - 1) + l * (l ^ a - 1) := by
+        have : l ≤ l * l ^ a := Nat.le_mul_of_pos_right l (pow_pos hlp a); rw [pow_succ', Nat.mul_sub_one]; omega
+      rw [hs, Nat.add_mul_mod_self_left, Nat.add_mul_div_left _ _ hlp,
+        Nat.mod_eq_of_lt (by omega), Nat.div_eq_of_lt (by omega), zero_add]; exact ⟨rfl, rfl⟩
+    intro b; induction b with
+    | zero => simp [Nat.ModEq]
+    | succ b ih =>
+      have h := Choose.choose_modEq_choose_mod_mul_choose_div_nat
+        (n := l ^ (b + 2) - 1) (k := l ^ (b + 1) - 1) (p := l)
+      rw [(hdm (b + 1)).1, (hdm b).1, (hdm (b + 1)).2, (hdm b).2, Nat.choose_self, one_mul] at h
+      exact h.trans ih
+  have hm := hmod1 (e - 1); rw [Nat.sub_add_cancel he] at hm
+  exact hl.not_dvd_one (Nat.modEq_zero_iff_dvd.1 (hm.symm.trans (Nat.modEq_zero_iff_dvd.2 h7)))
 
 theorem bnx_pow_reduce (l d x : ℕ) (hl : 1 ≤ l) : l ^ x ≡ l ^ (x % d) [MOD l ^ d - 1] := by
-  have h1 : l ^ d ≡ 1 [MOD l ^ d - 1] := by
-    have : 1 ≤ l ^ d := Nat.one_le_pow _ _ (by omega)
-    exact ((Nat.modEq_iff_dvd' this).2 dvd_rfl).symm
-  calc l ^ x = (l ^ d) ^ (x / d) * l ^ (x % d) := by
-        rw [← pow_mul, ← pow_add, Nat.div_add_mod]
+  have h1 : l ^ d ≡ 1 [MOD l ^ d - 1] := ((Nat.modEq_iff_dvd' (Nat.one_le_pow _ _ hl)).2 dvd_rfl).symm
+  calc l ^ x = (l ^ d) ^ (x / d) * l ^ (x % d) := by rw [← pow_mul, ← pow_add, Nat.div_add_mod]
     _ ≡ 1 ^ (x / d) * l ^ (x % d) [MOD l ^ d - 1] := (h1.pow _).mul_right _
     _ = l ^ (x % d) := by rw [one_pow, one_mul]
 
-theorem bnx_pow_mod (l d x y : ℕ) (hl : 3 ≤ l) (hd : 1 ≤ d)
-    (h : l ^ x ≡ l ^ y [MOD l ^ d - 1]) : x % d = y % d := by
-  have hx := bnx_pow_reduce l d x (by omega)
-  have hy := bnx_pow_reduce l d y (by omega)
-  have h' : l ^ (x % d) ≡ l ^ (y % d) [MOD l ^ d - 1] := hx.symm.trans (h.trans hy)
-  have hxd : x % d < d := Nat.mod_lt _ (by omega)
-  have hyd : y % d < d := Nat.mod_lt _ (by omega)
-  have hlt : ∀ k, k < d → l ^ k < l ^ d - 1 := by
-    intro k hk
+theorem bnx_pow_mod (l d x y : ℕ) (hl : 3 ≤ l) (hd : 1 ≤ d) (h : l ^ x ≡ l ^ y [MOD l ^ d - 1]) : x % d = y % d := by
+  have h' := (bnx_pow_reduce l d x (by omega)).symm.trans (h.trans (bnx_pow_reduce l d y (by omega)))
+  have hlt : ∀ k < d, l ^ k < l ^ d - 1 := fun k hk => by
     have h1 : l ^ k ≤ l ^ (d - 1) := Nat.pow_le_pow_right (by omega) (by omega)
-    have h2 : l ^ d = l * l ^ (d - 1) := by
-      rw [← pow_succ']
-      congr 1
-      omega
-    have h3 : 1 ≤ l ^ (d - 1) := Nat.one_le_pow _ _ (by omega)
-    have h4 : 3 * l ^ (d - 1) ≤ l * l ^ (d - 1) := Nat.mul_le_mul_right _ hl
-    rw [h2]
-    generalize l * l ^ (d - 1) = P at h4 ⊢
-    generalize l ^ (d - 1) = L at h1 h3 h4
-    generalize l ^ k = A at h1 ⊢
-    omega
-  have heq : l ^ (x % d) = l ^ (y % d) := by
-    have h5 := h'
-    unfold Nat.ModEq at h5
-    rwa [Nat.mod_eq_of_lt (hlt _ hxd), Nat.mod_eq_of_lt (hlt _ hyd)] at h5
-  exact Nat.pow_right_injective (by omega : 2 ≤ l) heq
-
-private theorem finsupp_prod_torus_pow_eq_C_mul_monomial {K : Type u} [Field K] {d : ℕ} [NeZero d] (l : ℕ) (ζ : K)
-    (dd : ZMod d →₀ ℕ) :
-    (dd.prod fun t e => (torus l ζ t : MvPowerSeries (ZMod d) K) ^ e) =
-      C (∏ t, (ζ ^ lw l t) ^ dd t) * monomial dd 1 := by
-  rw [Finsupp.prod_fintype _ _ (fun t => pow_zero _)]
-  simp only [torus, mul_pow, ← map_pow, Finset.prod_mul_distrib, map_prod]
-  congr 1
-  have hmono : ∀ S : Finset (ZMod d), ∏ t ∈ S, (X t ^ dd t : MvPowerSeries (ZMod d) K) =
-      monomial (∑ t ∈ S, Finsupp.single t (dd t)) 1 := by
-    intro S
-    refine Finset.induction_on S ?_ ?_
-    · simp [monomial_zero_eq_C_apply]
-    · intro a S ha ih
-      rw [Finset.prod_insert ha, Finset.sum_insert ha, ih, X_pow_eq, monomial_mul_monomial, one_mul]
-  rw [hmono]
-  rw [show ∑ t, Finsupp.single t (dd t) = dd from by
-    ext u
-    simp]
+    have h2 : 3 * l ^ (d - 1) ≤ l ^ d := by
+      rw [show l ^ d = l * l ^ (d - 1) by rw [← pow_succ', Nat.sub_add_cancel hd]]
+      exact Nat.mul_le_mul_right _ hl
+    have h3 : 1 ≤ l ^ (d - 1) := Nat.one_le_pow _ _ (by omega); omega
+  unfold Nat.ModEq at h'
+  rw [Nat.mod_eq_of_lt (hlt _ (Nat.mod_lt _ (by omega))), Nat.mod_eq_of_lt (hlt _ (Nat.mod_lt _ (by omega)))] at h'
+  exact Nat.pow_right_injective (by omega) h'
 
 theorem bnx_torus_cong {K : Type u} [Field K] (l d : ℕ) [NeZero d] (hl : l.Prime) (hl3 : 3 ≤ l)
     (hd2 : 2 ≤ d) (hde : Even d) (ζ : K) (hζ : IsPrimitiveRoot ζ (l ^ d - 1))
@@ -1236,271 +884,140 @@ theorem bnx_torus_cong {K : Type u} [Field K] (l d : ℕ) [NeZero d] (hl : l.Pri
     (s s' : ZMod d) (hs : s.val % 2 = 0) (hs' : s'.val % 2 ≠ 0) (α β : ℕ)
     (hc : coeff (Finsupp.single s (l ^ α) + Finsupp.single s' (l ^ β)) be ≠ 0) :
     s + (α : ZMod d) = s' + (β : ZMod d) := by
-  have hk0 : 0 < l ^ d - 1 := by
-    have : l ≤ l ^ d := Nat.le_self_pow (by omega) l
-    omega
-  have hss : s ≠ s' := by
-    rintro rfl
-    exact hs' hs
-  have ha : HasSubst (torus l ζ : ZMod d → MvPowerSeries (ZMod d) K) :=
-    hasSubst_of_constantCoeff_zero fun t => by simp [torus]
+  let _ := PLift.up hl; let _ := PLift.up hde
+  have htor_prod : ∀ dd : ZMod d →₀ ℕ, (dd.prod fun t e => (torus l ζ t : MvPowerSeries (ZMod d) K) ^ e) =
+      C (∏ t, (ζ ^ lw l t) ^ dd t) * monomial dd 1 := fun dd => by
+    rw [Finsupp.prod_fintype _ _ fun _ => pow_zero _]
+    simp only [torus, mul_pow, ← map_pow, Finset.prod_mul_distrib, map_prod]
+    suffices ∀ S : Finset (ZMod d), ∏ t ∈ S, (X t ^ dd t : MvPowerSeries (ZMod d) K) =
+        monomial (∑ t ∈ S, Finsupp.single t (dd t)) 1 by
+      rw [this, show ∑ t, Finsupp.single t (dd t) = dd by ext; simp]
+    exact fun S => Finset.induction_on S (by simp [monomial_zero_eq_C_apply]) fun a S ha ih => by
+      rw [Finset.prod_insert ha, Finset.sum_insert ha, ih, X_pow_eq, monomial_mul_monomial, one_mul]
+  have hk0 : 0 < l ^ d - 1 := by have := Nat.le_self_pow (by omega : d ≠ 0) l; omega
+  have hss : s ≠ s' := fun e => hs' (e ▸ hs)
   have hcoef := congrArg (coeff (Finsupp.single s (l ^ α) + Finsupp.single s' (l ^ β))) htor
-  rw [coeff_subst ha, finsum_eq_single _ (Finsupp.single s (l ^ α) + Finsupp.single s' (l ^ β))] at hcoef
+  rw [coeff_subst (hasSubst_of_constantCoeff_zero fun t => by simp [torus]),
+    finsum_eq_single _ (Finsupp.single s (l ^ α) + Finsupp.single s' (l ^ β))] at hcoef
   swap
-  · intro dd hdd
-    rw [finsupp_prod_torus_pow_eq_C_mul_monomial, coeff_C_mul, coeff_monomial, if_neg (Ne.symm hdd), mul_zero, smul_zero]
-  rw [finsupp_prod_torus_pow_eq_C_mul_monomial, coeff_C_mul, coeff_monomial, if_pos rfl, mul_one, smul_eq_mul] at hcoef
+  · intro dd hdd; rw [htor_prod, coeff_C_mul, coeff_monomial]; simp [Ne.symm hdd]
+  rw [htor_prod, coeff_C_mul, coeff_monomial] at hcoef; simp only [↓reduceIte, mul_one, smul_eq_mul] at hcoef
   have hprod := mul_left_cancel₀ hc (hcoef.trans (mul_one _).symm)
-  rw [Finset.prod_eq_mul s s' hss
-    (fun t _ ht => by simp [Finsupp.single_apply, Ne.symm ht.1, Ne.symm ht.2])
+  rw [Finset.prod_eq_mul s s' hss (fun t _ ht => by simp [Ne.symm ht.1, Ne.symm ht.2])
     (fun h => absurd (Finset.mem_univ s) h) (fun h => absurd (Finset.mem_univ s') h)] at hprod
-  have hv1 : (Finsupp.single s (l ^ α) + Finsupp.single s' (l ^ β)) s = l ^ α := by
-    simp [Ne.symm hss]
-  have hv2 : (Finsupp.single s (l ^ α) + Finsupp.single s' (l ^ β)) s' = l ^ β := by
-    simp [hss]
-  rw [hv1, hv2] at hprod
-  have hζ0 : ζ ≠ 0 := hζ.ne_zero hk0.ne'
-  rw [← zpow_natCast, ← zpow_natCast, ← zpow_mul, ← zpow_mul, ← zpow_add₀ hζ0,
-    hζ.zpow_eq_one_iff_dvd] at hprod
-  unfold lw at hprod
-  rw [if_pos hs, if_neg hs'] at hprod
+  simp only [Finsupp.add_apply, Finsupp.single_eq_same, Finsupp.single_eq_of_ne hss,
+    Finsupp.single_eq_of_ne (Ne.symm hss), add_zero, zero_add] at hprod
+  rw [← zpow_natCast, ← zpow_natCast, ← zpow_mul, ← zpow_mul, ← zpow_add₀ (hζ.ne_zero hk0.ne'),
+    hζ.zpow_eq_one_iff_dvd, show lw l s = (l : ℤ) ^ s.val by simp [lw, hs],
+    show lw l s' = -(l : ℤ) ^ s'.val by simp [lw, hs']] at hprod
   have hmod : l ^ (s.val + α) ≡ l ^ (s'.val + β) [MOD l ^ d - 1] := by
-    rw [Nat.modEq_iff_dvd]
-    have e : ((l ^ (s'.val + β) : ℕ) : ℤ) - ((l ^ (s.val + α) : ℕ) : ℤ) =
-        -((1 : ℤ) * (l : ℤ) ^ s.val * ((l ^ α : ℕ) : ℤ) +
-          (-1) * (l : ℤ) ^ s'.val * ((l ^ β : ℕ) : ℤ)) := by
-      push_cast
-      ring
-    rw [e]
-    first
-    | exact dvd_neg.2 hprod
-  have key := bnx_pow_mod l d _ _ hl3 (by omega) hmod
-  have h2 := congrArg (fun x : ℕ => (x : ZMod d)) key
-  first
-  | (simp only [ZMod.natCast_mod, Nat.cast_add, ZMod.natCast_zmod_val] at h2; exact h2)
+    rw [Nat.modEq_iff_dvd]; convert dvd_neg.2 hprod using 1; push_cast; ring
+  simpa [ZMod.natCast_mod, Nat.cast_add, ZMod.natCast_zmod_val] using
+    congrArg (Nat.cast : ℕ → ZMod d) (bnx_pow_mod l d _ _ hl3 (by omega) hmod)
 
-theorem bnx_dot_const {ι : Type*} (n : ι →₀ ℕ) (c : ℝ) :
-    dot n (fun _ => c) = (n.degree : ℝ) * c := by
-  unfold dot
-  rw [Finsupp.sum, ← Finset.sum_mul]
-  congr 1
-  first
-  | simp [Finsupp.degree_apply]
+theorem bnx_dot_const {ι : Type*} (n : ι →₀ ℕ) (c : ℝ) : dot n (fun _ => c) = (n.degree : ℝ) * c := by
+  simp [dot, Finsupp.sum, ← Finset.sum_mul, Finsupp.degree_apply]
 
 section Sides
-
 variable {K : Type u} [NormedField K] {d : ℕ} [NeZero d]
 
 theorem bnx_sideE (be : MvPowerSeries (ZMod d) K) (pi r w : ℝ) (h1 : WtGe pi (fun _ => r) w (de1 be))
     (n : ZMod d →₀ ℕ) (s : ZMod d) (hs : s.val % 2 = 0) (j : ℕ) (hj : j < n s)
     (hpos : 0 < j ∨ ∃ t : ZMod d, t.val % 2 = 0 ∧ t ≠ s ∧ n t ≠ 0) :
     ‖coeff n be‖ * ‖((n s).choose j : K)‖ ≤ pi ^ (w - dot n (fun _ => r)) := by
-  have h := h1 (bnxM n (Function.update (⇑n) s j))
-  unfold MonoWtGe at h
-  rw [evenDerivative_binomial_coeff be n s hs j hj hpos, norm_mul, bnx_dot_const,
-    bnx_degree_bnxM n _ (bnx_update_le n s j hj), ← bnx_dot_const] at h
-  exact h
+  simpa [MonoWtGe, evenDerivative_binomial_coeff be n s hs j hj hpos, norm_mul, bnx_dot_const,
+    bnx_degree_bnxM n _ (bnx_update_le n s j hj)] using h1 (bnxM n (Function.update (⇑n) s j))
 
 theorem bnx_sideO (be : MvPowerSeries (ZMod d) K) (pi r w : ℝ) (h2 : WtGe pi (fun _ => r) w (de2 be))
     (n : ZMod d →₀ ℕ) (s : ZMod d) (hs : s.val % 2 ≠ 0) (j : ℕ) (hj : j < n s)
     (hpos : 0 < j ∨ ∃ t : ZMod d, t.val % 2 ≠ 0 ∧ t ≠ s ∧ n t ≠ 0) :
     ‖coeff n be‖ * ‖((n s).choose j : K)‖ ≤ pi ^ (w - dot n (fun _ => r)) := by
-  have h := h2 (bnxM n (Function.update (⇑n) s j))
-  unfold MonoWtGe at h
-  rw [oddDerivative_binomial_coeff be n s hs j hj hpos, norm_mul, bnx_dot_const,
-    bnx_degree_bnxM n _ (bnx_update_le n s j hj), ← bnx_dot_const] at h
-  exact h
-
+  simpa [MonoWtGe, oddDerivative_binomial_coeff be n s hs j hj hpos, norm_mul, bnx_dot_const,
+    bnx_degree_bnxM n _ (bnx_update_le n s j hj)] using h2 (bnxM n (Function.update (⇑n) s j))
 end Sides
 
-theorem bnx_div {pi a b X v : ℝ} (h0 : 0 < pi) (hb : pi ^ v ≤ b) (ha : 0 ≤ a) (h : a * b ≤ X) :
-    a ≤ X / pi ^ v := by
-  have hp : 0 < pi ^ v := Real.rpow_pos_of_pos h0 v
-  rw [le_div_iff₀ hp]
-  exact (mul_le_mul_of_nonneg_left hb ha).trans h
+theorem bnx_div {pi a b X v : ℝ} (h0 : 0 < pi) (hb : pi ^ v ≤ b) (ha : 0 ≤ a) (h : a * b ≤ X) : a ≤ X / pi ^ v :=
+  (le_div_iff₀ (Real.rpow_pos_of_pos h0 v)).2 ((mul_le_mul_of_nonneg_left hb ha).trans h)
 
-theorem bnx_side_cases {d : ℕ} {l : ℕ} (hl : l.Prime) (P : ZMod d → Prop) (n : ZMod d →₀ ℕ)
-    (h : ∃ s, P s ∧ n s ≠ 0) :
+theorem bnx_side_cases {d : ℕ} {l : ℕ} (hl : l.Prime) (P : ZMod d → Prop) (n : ZMod d →₀ ℕ) (h : ∃ s, P s ∧ n s ≠ 0) :
     (∃ s j, P s ∧ j < n s ∧ (0 < j ∨ ∃ t, P t ∧ t ≠ s ∧ n t ≠ 0) ∧ ¬ l ∣ (n s).choose j) ∨
     (∃ s e, P s ∧ (∀ t, P t → t ≠ s → n t = 0) ∧ n s = l ^ e) := by
   obtain ⟨s, hs, hns⟩ := h
   by_cases hex : ∃ t, P t ∧ t ≠ s ∧ n t ≠ 0
-  · left
-    refine ⟨s, 0, hs, Nat.pos_of_ne_zero hns, Or.inr hex, ?_⟩
-    rw [Nat.choose_zero_right]
-    exact hl.not_dvd_one
-  · push_neg at hex
-    by_cases hpow : ∃ e, n s = l ^ e
-    · right
-      obtain ⟨e, he⟩ := hpow
-      exact ⟨s, e, hs, fun t ht hts => hex t ht hts, he⟩
-    · left
-      push_neg at hpow
-      obtain ⟨j, hj0, hjn, hjd⟩ := bnx_choose_nonpow hl (n s) hns hpow
-      exact ⟨s, j, hs, hjn, Or.inl hj0, hjd⟩
+  · exact Or.inl ⟨s, 0, hs, Nat.pos_of_ne_zero hns, Or.inr hex, by simpa using hl.not_dvd_one⟩
+  · push Not at hex; by_cases hpow : ∃ e, n s = l ^ e
+    · obtain ⟨e, he⟩ := hpow; exact Or.inr ⟨s, e, hs, hex, he⟩
+    · push Not at hpow; obtain ⟨j, hj0, hjn, hjd⟩ := bnx_choose_nonpow hl (n s) hns hpow
+      exact Or.inl ⟨s, j, hs, hjn, Or.inl hj0, hjd⟩
 
 theorem bnx_degE_eq {d : ℕ} [NeZero d] (n : ZMod d →₀ ℕ) (s : ZMod d) (hs : s.val % 2 = 0)
     (hu : ∀ t : ZMod d, t.val % 2 = 0 → t ≠ s → n t = 0) : degE n = n s := by
-  unfold degE
-  rw [Finset.sum_eq_single s]
-  · rw [if_pos hs]
-  · intro t _ hts
-    split_ifs with ht
-    · exact hu t ht hts
-    · rfl
-  · intro h
-    exact absurd (Finset.mem_univ s) h
+  rw [degE, Finset.sum_eq_single s, ite_eq_left hs]
+  · intro t _ hts; split_ifs with ht <;> [exact hu t ht hts; rfl]
+  · exact fun h => absurd (Finset.mem_univ s) h
 
 theorem bnx_degO_eq {d : ℕ} [NeZero d] (n : ZMod d →₀ ℕ) (s : ZMod d) (hs : s.val % 2 ≠ 0)
     (hu : ∀ t : ZMod d, t.val % 2 ≠ 0 → t ≠ s → n t = 0) : degO n = n s := by
-  unfold degO
-  rw [Finset.sum_eq_single s]
-  · rw [if_neg hs]
-  · intro t _ hts
-    split_ifs with ht
-    · rfl
-    · exact hu t ht hts
-  · intro h
-    exact absurd (Finset.mem_univ s) h
+  rw [degO, Finset.sum_eq_single s, ite_eq_right hs]
+  · intro t _ hts; split_ifs with ht <;> [rfl; exact hu t ht hts]
+  · exact fun h => absurd (Finset.mem_univ s) h
 
 theorem bnx_exE {d : ℕ} [NeZero d] (n : ZMod d →₀ ℕ) (h : 0 < degE n) :
     ∃ s : ZMod d, s.val % 2 = 0 ∧ n s ≠ 0 := by
-  by_contra hne
-  push_neg at hne
-  have h0 : degE n = 0 := by
-    unfold degE
-    refine Finset.sum_eq_zero fun s _ => ?_
-    split_ifs with hs
-    · exact hne s hs
-    · rfl
-  omega
+  obtain ⟨s, _, hs⟩ := Finset.exists_ne_zero_of_sum_ne_zero h.ne'
+  split_ifs at hs with he <;> [exact ⟨s, he, hs⟩; exact absurd rfl hs]
 
 theorem bnx_exO {d : ℕ} [NeZero d] (n : ZMod d →₀ ℕ) (h : 0 < degO n) :
     ∃ s : ZMod d, s.val % 2 ≠ 0 ∧ n s ≠ 0 := by
-  by_contra hne
-  push_neg at hne
-  have h0 : degO n = 0 := by
-    unfold degO
-    refine Finset.sum_eq_zero fun s _ => ?_
-    split_ifs with hs
-    · rfl
-    · exact hne s hs
-  omega
-
-private theorem monoWtGe_or_biPower_of_wtGe_de1_de2 {K : Type u} [NormedField K] [IsUltrametricDist K] [CharZero K]
-    {l d : ℕ} [NeZero d] (hl : l.Prime) (hl3 : 3 ≤ l) (hd2 : 2 ≤ d) (hde : Even d)
-    (hl1 : ‖(l : K)‖ < 1) (ζ : K) (hζ : IsPrimitiveRoot ζ (l ^ d - 1))
-    (be : MvPowerSeries (ZMod d) K) (htor : subst (torus l ζ) be = be) (hlow : NoLowBidegree be)
-    (r w : ℝ) (h1 : WtGe ‖(l : K)‖ (fun _ => r) w (de1 be))
-    (h2 : WtGe ‖(l : K)‖ (fun _ => r) w (de2 be))
-    (n : ZMod d →₀ ℕ) (hn : coeff n be ≠ 0) :
-    MonoWtGe ‖(l : K)‖ (fun _ => r) w n (coeff n be) ∨
-      (IsBiPower l n ∧ MonoWtGe ‖(l : K)‖ (fun _ => r) (w - 1) n (coeff n be)) := by
-  have hpi0 : 0 < ‖(l : K)‖ := norm_pos_iff.2 (Nat.cast_ne_zero.2 hl.ne_zero)
-  obtain ⟨hE, hO, hEO⟩ := hlow n hn
-  have hc0 := norm_nonneg (coeff n be)
-  unfold MonoWtGe
-  rcases bnx_side_cases hl (fun s : ZMod d => s.val % 2 = 0) n (bnx_exE n hE) with
-    ⟨s, j, hs, hj, hpos, hnd⟩ | ⟨s, α, hs, hu, hα⟩
-  · left
-    have hb := bnx_sideE be _ _ _ h1 n s hs j hj hpos
-    have hC := bnx_norm_one hl hl1 _ hnd
-    nlinarith
-  rcases bnx_side_cases hl (fun s : ZMod d => s.val % 2 ≠ 0) n (bnx_exO n hO) with
-    ⟨s', j, hs', hj, hpos, hnd⟩ | ⟨s', β, hs', hu', hβ⟩
-  · left
-    have hb := bnx_sideO be _ _ _ h2 n s' hs' j hj hpos
-    have hC := bnx_norm_one hl hl1 _ hnd
-    nlinarith
-  have hss : s ≠ s' := by
-    rintro rfl
-    exact hs' hs
-  have hneq : n = Finsupp.single s (l ^ α) + Finsupp.single s' (l ^ β) := by
-    ext t
-    simp only [Finsupp.add_apply, Finsupp.single_apply]
-    by_cases ht : t.val % 2 = 0
-    · by_cases hts : t = s
-      · subst hts
-        simp [Ne.symm hss, hα]
-      · have h0 := hu t ht hts
-        have hts' : t ≠ s' := by
-          rintro rfl
-          exact hs' ht
-        simp [Ne.symm hts, Ne.symm hts', h0]
-    · by_cases hts : t = s'
-      · subst hts
-        simp [hss, hβ]
-      · have h0 := hu' t ht hts
-        have hts2 : t ≠ s := by
-          rintro rfl
-          exact ht hs
-        simp [Ne.symm hts, Ne.symm hts2, h0]
-  have hαβ : α ≠ 0 ∨ β ≠ 0 := by
-    by_contra hc
-    push_neg at hc
-    obtain ⟨rfl, rfl⟩ := hc
-    apply hEO
-    rw [bnx_degE_eq n s hs hu, bnx_degO_eq n s' hs' hu', hα, hβ]
-    simp
-  have hc' : coeff (Finsupp.single s (l ^ α) + Finsupp.single s' (l ^ β)) be ≠ 0 := by
-    rw [← hneq]
-    exact hn
-  have hcong := bnx_torus_cong l d hl hl3 hd2 hde ζ hζ be htor s s' hs hs' α β hc'
-  have hbi : IsBiPower l n := by
-    unfold IsBiPower
-    exact ⟨s, s', α, β, hs, Nat.mod_two_ne_zero.1 hs', hαβ, hcong, hneq⟩
-  right
-  refine ⟨hbi, ?_⟩
-  rcases hαβ with hα0 | hβ0
-  · obtain ⟨hj0, hjlt, hCne, hC2⟩ := bnx_choose_pow hl α (Nat.one_le_iff_ne_zero.2 hα0)
-    have hb := bnx_sideE be _ _ _ h1 n s hs (l ^ (α - 1)) (by rw [hα]; exact hjlt) (Or.inl hj0)
-    rw [hα] at hb
-    have hC := bnx_norm_ge hl hl1 _ hCne hC2
-    have hb' := le_trans (mul_le_mul_of_nonneg_left hC hc0) hb
-    have h3 := bnx_div (v := 1) hpi0 (le_of_eq (Real.rpow_one _)) hc0 hb'
-    rw [← Real.rpow_sub hpi0] at h3
-    convert h3 using 2
-    ring
-  · obtain ⟨hj0, hjlt, hCne, hC2⟩ := bnx_choose_pow hl β (Nat.one_le_iff_ne_zero.2 hβ0)
-    have hb := bnx_sideO be _ _ _ h2 n s' hs' (l ^ (β - 1)) (by rw [hβ]; exact hjlt) (Or.inl hj0)
-    rw [hβ] at hb
-    have hC := bnx_norm_ge hl hl1 _ hCne hC2
-    have hb' := le_trans (mul_le_mul_of_nonneg_left hC hc0) hb
-    have h3 := bnx_div (v := 1) hpi0 (le_of_eq (Real.rpow_one _)) hc0 hb'
-    rw [← Real.rpow_sub hpi0] at h3
-    convert h3 using 2
-    ring
+  obtain ⟨s, _, hs⟩ := Finset.exists_ne_zero_of_sum_ne_zero h.ne'
+  split_ifs at hs with he <;> [exact absurd rfl hs; exact ⟨s, he, hs⟩]
 
 theorem binomial_coefficient_extraction : BinomExtract.{u} := by
-  unfold BinomExtract
-  intro K _ _ _ l d _ hl hlo hd2 hde hl1 ζ hζ be htor hlow h1 h2
-  have hl3 : 3 ≤ l := by
-    have := hl.two_le
-    obtain ⟨m, hm⟩ := hlo
-    omega
+  intro K _ _ _ l d _ hl ⟨m, hm⟩ hd2 hde hl1 ζ hζ be htor hlow h1 h2
+  have hl3 : 3 ≤ l := by have := hl.two_le; omega
   have hpi0 : 0 < ‖(l : K)‖ := norm_pos_iff.2 (Nat.cast_ne_zero.2 hl.ne_zero)
-  have key := fun n hn => monoWtGe_or_biPower_of_wtGe_de1_de2 hl hl3 hd2 hde hl1 ζ hζ be htor hlow _ _ h1 h2 n hn
-  constructor
-  · unfold WtGe
-    intro n
-    by_cases hn : coeff n be = 0
-    · unfold MonoWtGe
-      rw [hn, norm_zero]
-      positivity
-    · rcases key n hn with h | ⟨_, h⟩
-      · unfold MonoWtGe at h ⊢
-        refine h.trans ?_
-        first
-        | exact Real.rpow_le_rpow_of_exponent_ge hpi0 hl1.le (by linarith)
-      · exact h
-  · intro n hnb
-    by_cases hn : coeff n be = 0
-    · unfold MonoWtGe
-      rw [hn, norm_zero]
-      positivity
-    · rcases key n hn with h | ⟨hb, _⟩
-      · exact h
-      · exact absurd hb hnb
+  let r := rho l; let w : ℝ := 1 / ((l : ℝ) - 1)
+  have key : ∀ n : ZMod d →₀ ℕ, coeff n be ≠ 0 →
+      MonoWtGe ‖(l : K)‖ (fun _ => r) w n (coeff n be) ∨
+        (IsBiPower l n ∧ MonoWtGe ‖(l : K)‖ (fun _ => r) (w - 1) n (coeff n be)) := fun n hn => by
+    obtain ⟨hE, hO, hEO⟩ := hlow n hn; have hc0 := norm_nonneg (coeff n be); unfold MonoWtGe
+    rcases bnx_side_cases hl (fun s : ZMod d => s.val % 2 = 0) n (bnx_exE n hE) with
+      ⟨s, j, hs, hj, hpos, hnd⟩ | ⟨s, α, hs, hu, hα⟩
+    · exact Or.inl ((le_mul_of_one_le_right hc0 (bnx_norm_one hl hl1 _ hnd)).trans
+        (bnx_sideE be _ _ _ h1 n s hs j hj hpos))
+    rcases bnx_side_cases hl (fun s : ZMod d => s.val % 2 ≠ 0) n (bnx_exO n hO) with
+      ⟨s', j, hs', hj, hpos, hnd⟩ | ⟨s', β, hs', hu', hβ⟩
+    · exact Or.inl ((le_mul_of_one_le_right hc0 (bnx_norm_one hl hl1 _ hnd)).trans
+        (bnx_sideO be _ _ _ h2 n s' hs' j hj hpos))
+    have hss : s ≠ s' := fun e => hs' (e ▸ hs)
+    have hneq : n = Finsupp.single s (l ^ α) + Finsupp.single s' (l ^ β) := by
+      ext t; rw [Finsupp.add_apply, Finsupp.single_apply, Finsupp.single_apply]
+      by_cases ht : t.val % 2 = 0
+      · by_cases hts : t = s
+        · subst hts; simp [hss.symm, hα]
+        · simp [Ne.symm hts, show s' ≠ t from fun e => hs' (e ▸ ht), hu t ht hts]
+      · by_cases hts : t = s'
+        · subst hts; simp [hss, hβ]
+        · simp [Ne.symm hts, show s ≠ t from fun e => ht (e ▸ hs), hu' t ht hts]
+    have hαβ : α ≠ 0 ∨ β ≠ 0 := by
+      by_contra hc; rw [not_or, not_ne_iff, not_ne_iff] at hc
+      exact hEO ⟨by simp [bnx_degE_eq n s hs hu, hα, hc.1], by simp [bnx_degO_eq n s' hs' hu', hβ, hc.2]⟩
+    have hcong := bnx_torus_cong l d hl hl3 hd2 hde ζ hζ be htor s s' hs hs' α β (hneq ▸ hn)
+    refine Or.inr ⟨⟨s, s', α, β, hs, Nat.mod_two_ne_zero.1 hs', hαβ, hcong, hneq⟩, ?_⟩
+    have hpow_bd : ∀ {γ : ℕ}, γ ≠ 0 →
+        (∀ j, j < l ^ γ → 0 < j → ‖coeff n be‖ * ‖((l ^ γ).choose j : K)‖ ≤ ‖(l : K)‖ ^ (w - dot n (fun _ => r))) →
+        ‖coeff n be‖ ≤ ‖(l : K)‖ ^ (w - 1 - dot n (fun _ => r)) := fun hγ hside => by
+      obtain ⟨hj0, hjlt, hCne, hC2⟩ := bnx_choose_pow hl _ (Nat.one_le_iff_ne_zero.2 hγ)
+      have hb := (mul_le_mul_of_nonneg_left (bnx_norm_ge hl hl1 _ hCne hC2) hc0).trans (hside _ hjlt hj0)
+      have h3 := bnx_div (v := 1) hpi0 (Real.rpow_one _).le hc0 hb
+      rwa [← Real.rpow_sub hpi0, show w - dot n (fun _ => r) - 1 = w - 1 - dot n (fun _ => r) by ring] at h3
+    rcases hαβ with hα0 | hβ0
+    · exact hpow_bd hα0 fun j hj hj0 => hα ▸ bnx_sideE be _ _ _ h1 n s hs j (hα.symm ▸ hj) (Or.inl hj0)
+    · exact hpow_bd hβ0 fun j hj hj0 => hβ ▸ bnx_sideO be _ _ _ h2 n s' hs' j (hβ.symm ▸ hj) (Or.inl hj0)
+  refine ⟨fun n => (em (coeff n be = 0)).elim (fun hn => by simp [MonoWtGe, hn]; positivity) fun hn =>
+    (key n hn).elim (fun h => h.trans (Real.rpow_le_rpow_of_exponent_ge hpi0 hl1.le (by linarith))) And.right,
+    fun n hnb => (em (coeff n be = 0)).elim (fun hn => by simp [MonoWtGe, hn]; positivity) fun hn =>
+      (key n hn).resolve_right fun hb => hnb hb.1⟩
 
 end Formalism.DworkPowerSeriesWeights
 end -- clump:auto

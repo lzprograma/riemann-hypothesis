@@ -4,53 +4,6 @@ public import Formalism.PeriodIntegrals.HermitianGenusExtension.SemilocalHermiti
 public import Formalism.SelfDualUnimodular.LocalLatticeDictionary.ExistsUnitNorm
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictZAbs
 public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittExtensionTheorem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SelfDualUnimodular.LocalLatticeDictionary.SelfDualRestr, Formalism.SelfDualUnimodular.LocalLatticeDictionary.SemiGenusLocal
@@ -67,6 +20,7 @@ open NumberField
 namespace Formalism.L2.SG.Pf.LatDictZ.Z0.SGB
 
 open ReciprocityTheory.ChartRestriction.L3 ReciprocityTheory.ChartRestriction.L3.WA Formalism.L2.SG.Pf.LatDictZ.Z0.SGA
+open Formalism.HermitianLattices.Ext.L3.WA (IsSelfDualMod IsUnitIn locRing)
 
 variable {K : Type} [Field K] [StarRing K]
 variable {V : Type} [AddCommGroup V] [Module K V]
@@ -179,31 +133,6 @@ theorem mem_iff_split {h : V →ₗ⋆[K] V →ₗ[K] K} {M : AddSubgroup V} (hM
     rw [decomp h X hXu.1 x]
     exact M.add_mem (hM.smul_mem _ hc X hXM) hp
 
-theorem selfDual_restr {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : ∀ u v, star (h u v) = h v u) {M : AddSubgroup V}
-    (hM : IsSelfDualMod S h M) {X : V} (hXM : X ∈ M) (hXu : IsUnitIn S (h X X)) :
-    IsSelfDualMod S (restr h (LinearMap.ker (h X)))
-      (M.comap ((LinearMap.ker (h X)).subtype : LinearMap.ker (h X) →ₗ[K] V).toAddMonoidHom) := by
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · intro a ha m hm
-    change ((a • m : LinearMap.ker (h X)) : V) ∈ M
-    rw [Submodule.coe_smul]
-    exact hM.smul_mem a ha _ hm
-  · exact fun x hx y hy => hM.int _ hx _ hy
-  · intro x hx
-    change (x : V) ∈ M
-    apply hM.dual
-    intro m hm
-    have hpm : ((proj h X hXu.1 m : LinearMap.ker (h X)) : V) ∈ M := ((mem_iff_split hM hXM hXu m).1 hm).2
-    have e : h m x = h (proj h X hXu.1 m) x := by
-      conv_lhs => rw [decomp h X hXu.1 m]
-      rw [map_add (f := _), LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, LinearMap.mem_ker.1 x.2,
-        smul_zero, zero_add]
-    rw [e]
-    exact hx (proj h X hXu.1 m) hpm
-  · intro x
-    obtain ⟨t, ht, htx⟩ := hM.span (x : V)
-    exact ⟨t, ht, by change ((t • x : LinearMap.ker (h X)) : V) ∈ M; rw [Submodule.coe_smul]; exact htx⟩
-
 theorem nondeg_restr {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : ∀ u v, star (h u v) = h v u)
     (hnd : ∀ x, (∀ y, h x y = 0) → x = 0) {X : V} (hX : h X X ≠ 0) (w : LinearMap.ker (h X))
     (hw : ∀ y, restr h (LinearMap.ker (h X)) w y = 0) : w = 0 := by
@@ -215,28 +144,6 @@ theorem symm_restr {h : V →ₗ⋆[K] V →ₗ[K] K} (hsy : h.IsSymm) (W : Subm
     (restr h W).IsSymm := by
   first
     | exact ⟨fun x y => hsy.eq x y⟩
-
-theorem selfDual_map {h : V →ₗ⋆[K] V →ₗ[K] K} {M : AddSubgroup V} (hM : IsSelfDualMod S h M)
-    (g : V ≃ₗ[K] V) (hg : ∀ x y, h (g x) (g y) = h x y) :
-    IsSelfDualMod S h (M.comap (g.symm : V →ₗ[K] V).toAddMonoidHom) := by
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · intro a ha m hm
-    change g.symm (a • m) ∈ M
-    rw [map_smul]; exact hM.smul_mem a ha _ hm
-  · intro x hx y hy
-    have := hM.int _ hx _ hy
-    change h (g.symm x) (g.symm y) ∈ S at this
-    rwa [← hg, LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply] at this
-  · intro x hx
-    change g.symm x ∈ M
-    apply hM.dual
-    intro m hm
-    have := hx (g m) (by change g.symm (g m) ∈ M; rwa [LinearEquiv.symm_apply_apply])
-    rw [← hg m (g.symm x), LinearEquiv.apply_symm_apply]
-    exact this
-  · intro x
-    obtain ⟨t, ht, htx⟩ := hM.span (g.symm x)
-    exact ⟨t, ht, by change g.symm (t • x) ∈ M; rwa [map_smul]⟩
 
 end Formalism.L2.SG.Pf.LatDictZ.Z0.SGB
 end -- clump:auto
@@ -256,6 +163,7 @@ open NumberField Module
 namespace Formalism.L2.SG.Pf.LatDictZ.Z0.SGC
 
 open ReciprocityTheory.ChartRestriction.L3 ReciprocityTheory.ChartRestriction.L3.WA Formalism.L2.SG.Pf.LatDictZ.Z0.SGA Formalism.L2.SG.Pf.LatDictZ.Z0.SGB
+open Formalism.HermitianLattices.Ext.L3.WA (IsSelfDualMod IsUnitIn locRing)
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K]
 

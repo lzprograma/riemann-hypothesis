@@ -55,8 +55,8 @@ theorem qth_lamQB_one {P : HeightOneSpectrum (𝓞 X.E)} (hq : ((qOf P : ℕ) : 
     refine ⟨h1, ?_⟩
     rw [h2, Matrix.one_apply, Matrix.one_apply]
     by_cases hst : s = t
-    · rw [if_pos (Fin.ext (by simp [hst])), if_pos hst, redP_one]
-    · rw [if_neg (fun h => hst (Fin.ext (by have := congrArg Fin.val h; simp at this; omega))), if_neg hst, redP_zero]
+    · rw [ite_eq_left (Fin.ext (by simp [hst])), ite_eq_left hst, redP_one]
+    · rw [ite_eq_right (fun h => hst (Fin.ext (by have := congrArg Fin.val h; simp at this; omega))), ite_eq_right hst, redP_zero]
   have hdet : redP P D.det = 1 := by
     rw [redP_det D fun s t => (hent s t).1]
     have : D.map (redP P) = 1 := Matrix.ext fun s t => (hent s t).2
@@ -133,7 +133,7 @@ theorem thetaOpen_twLevQ (hc : cst.Ok) (hQg : ∀ P ∈ QE sel (mu : Chr X.F X.E
     unfold chiInv
     rw [hc.psi_int P' _ hint, inv_one, one_mul]
     unfold lamRow
-    rw [if_neg hPg]
+    rw [ite_eq_right hPg]
     exact qth_lamQB_one hq hq0 _ _ hy
   · rfl
 

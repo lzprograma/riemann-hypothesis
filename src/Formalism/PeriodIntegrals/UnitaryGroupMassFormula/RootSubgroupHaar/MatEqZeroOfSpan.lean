@@ -6,48 +6,7 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupBasi
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupJacobian.SUpPowEqZero
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupJacobian.ContinuousRootCoords
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupBasics.NegOnePowMulSelf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupJacobian.BlkLt, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupHaar.MatEqZeroOfSpan
@@ -113,7 +72,7 @@ theorem Hpk_eI (b : Fin r) (j : Fin (2 * r + k + 1)) :
 theorem Hpk_mulVec_eI (y : Fin (2 * r + k + 1) → ℂ) (b : Fin r) :
     (Hpk k r *ᵥ y) (eI k r b) = y (esI k r b) := by
   simp only [Matrix.mulVec, dotProduct, Hpk_eI, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, ite_true]
 
 theorem Hpk_mulVec_low {w : Fin (2 * r + k + 1) → ℂ} (hw : ∀ i : Fin (2 * r + k + 1), r ≤ i.val → w i = 0)
     (i : Fin (2 * r + k + 1)) (hi : i.val ≤ r + k) : (Hpk k r *ᵥ w) i = 0 := by
@@ -157,14 +116,14 @@ theorem nset_fix {a : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (h
     by_cases hj1 : j.val < r
     · have h2 := ha.2.1 ⟨j.val, hj1⟩ i (by show j.val ≤ i.val; omega)
       have hej : eI k r ⟨j.val, hj1⟩ = j := Fin.ext rfl
-      rw [hej, if_neg (fun h => by rw [h] at hi; omega)] at h2
-      rw [h2, zero_mul, if_neg (fun h => by rw [h] at hj1; omega)]
+      rw [hej, ite_eq_right (fun h => by rw [h] at hi; omega)] at h2
+      rw [h2, zero_mul, ite_eq_right (fun h => by rw [h] at hj1; omega)]
     · by_cases hj2 : j.val ≤ r + k
       · rw [ha.2.2 i j (by omega) hj2 hi]
         by_cases hij : i = j
         · subst hij
           simp
-        · rw [if_neg hij, if_neg (Ne.symm hij), zero_mul]
+        · rw [ite_eq_right hij, ite_eq_right (Ne.symm hij), zero_mul]
       · have hyj : y j = 0 := by
           have := hy ⟨2 * r + k - j.val, by have := j.isLt; omega⟩
           rwa [esI_of j (by omega)] at this
@@ -173,7 +132,7 @@ theorem nset_fix {a : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (h
         · subst hji
           exact hyj.symm
         · rfl
-  simp only [Matrix.mulVec, dotProduct, hterm, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Matrix.mulVec, dotProduct, hterm, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem zhat_mulVec_inj {z z' : Fin (2 * r + k + 1) → ℂ} {g : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
     {p : Point ℂ (r + 1)} (hP : ZhatO k r z z' g = ptMat p) {β : Fin (r + 1) → ℂ}
@@ -182,7 +141,7 @@ theorem zhat_mulVec_inj {z z' : Fin (2 * r + k + 1) → ℂ} {g : Matrix (Fin (2
   show β j = 0
   have h1 := congrFun h (ptσ p j)
   simp only [Matrix.mulVec, dotProduct, zhat_pt hP, ite_mul, zero_mul, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true, Pi.zero_apply, ptσ_invol] at h1
+    Finset.mem_univ, ite_true, Pi.zero_apply, ptσ_invol] at h1
   exact (mul_eq_zero.mp h1).resolve_left (ptζ_ne p _)
 
 theorem fm_low (z' : Fin (2 * r + k + 1) → ℂ) (x : Fin (2 * r + k + 1) → ℂ)
@@ -288,7 +247,7 @@ theorem gv_inr (z z' : Fin (2 * r + k + 1) → ℂ) (g : Matrix (Fin (2 * r + k 
     (y : Fin (2 * r + k + 1) → ℂ) (b : Fin r) :
     ((GV k r z z' g)ᴴ *ᵥ y) (Sum.inr (Fin.castSucc b)) = (gᴴ *ᵥ y) (eI k r b) := by
   simp only [Matrix.mulVec, dotProduct, Matrix.conjTranspose_apply, GV, Matrix.of_apply, gramVec, fvec_cs,
-    bvec, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    bvec, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem uh_ct_H {g : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hg : g ∈ UH (Hpk k r)) :
     gᴴ * Hpk k r = Hpk k r * g⁻¹ := by

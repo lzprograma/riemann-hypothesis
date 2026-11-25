@@ -436,18 +436,18 @@ theorem hasSum_coeff_mul_FSum (j : ℕ) [NeZero j] (α : A.X) (th : (Fin A.gB �
     rw [coeff_FSum, Finset.mul_sum]
     convert hasSum_sum_of_ne_finset_zero (s := A.level j α p.2) (L := SummationFilter.unconditional _)
       (f := fun μ => if A.exponent j α μ = p.2 then r.coeff p.1 * A.term j α th μ v else 0)
-      fun μ hμ => if_neg (by simpa using hμ) using 1
-    exact Finset.sum_congr rfl fun μ hμ => (if_pos (by simpa using hμ)).symm
+      fun μ hμ => ite_eq_right (by simpa using hμ) using 1
+    exact Finset.sum_congr rfl fun μ hμ => (ite_eq_left (by simpa using hμ)).symm
   convert hasSum_sum fun p _ => h1 p using 2 with μ
   rw [Finset.sum_eq_single (n - A.exponent j α μ, A.exponent j α μ)]
   · simp
   · rintro ⟨a, b⟩ hab hne
-    refine if_neg fun hb => hne ?_
+    refine ite_eq_right fun hb => hne ?_
     have := (Finset.mem_antidiagonal.1 hab).2.2
     simp only at hb this
     ext <;> simp only <;> omega
   · intro hn
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     by_contra hc
     exact hn (Finset.mem_antidiagonal.2 ⟨left_ne_zero_of_mul hc, A.neg_be_le_exponent (NeZero.ne j) α μ, by simp⟩)
 

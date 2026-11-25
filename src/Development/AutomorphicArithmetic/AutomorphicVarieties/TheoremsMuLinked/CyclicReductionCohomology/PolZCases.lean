@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.PolZCases
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.DualPair
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -56,23 +57,7 @@ private theorem polZ_nmem {l : ℕ} [Fact l.Prime] (F : GFrame l) (g : F.G₀) :
 
 private theorem polZ_proj {l : ℕ} [Fact l.Prime] (F : GFrame l) :
     ∃ p : F.Γ → F.G₀, Continuous p ∧ (∀ g : F.G₀, p g = g) ∧ ∀ g : F.G₀, p (g * F.c) = g := by
-  classical
-  refine ⟨fun γ => ⟨if γ ∈ F.η.ker then γ else γ * F.c, ?_⟩, ?_, ?_, ?_⟩
-  · split_ifs with h
-    · exact h
-    · exact polZ_mem F h
-  · refine Continuous.subtype_mk ?_ _
-    refine Continuous.if ?_ continuous_id (continuous_id.mul continuous_const)
-    have hc : IsClopen (F.η.ker : Set F.Γ) := ⟨Subgroup.isClosed_of_isOpen _ F.η_open, F.η_open⟩
-    intro a ha
-    have : frontier {x | x ∈ F.η.ker} = ∅ := hc.frontier_eq
-    rw [this] at ha
-    exact ha.elim
-  · intro g
-    exact Subtype.ext (if_pos g.2)
-  · intro g
-    refine Subtype.ext ((if_neg (polZ_nmem F g)).trans ?_)
-    rw [mul_assoc, F.c_sq, mul_one]
+  apply _root_.polZ_proj <;> assumption
 
 private theorem polZ_cases {l : ℕ} [Fact l.Prime] (F : GFrame l) (γ : F.Γ) :
     (∃ g : F.G₀, γ = g) ∨ ∃ g : F.G₀, γ = g * F.c := by
@@ -91,28 +76,7 @@ private theorem polZ_ext {l : ℕ} [Fact l.Prime] (F : GFrame l) {A M : Type} [C
     (rep : Representation A F.Γ M) (Z : F.G₀ → M) (hl : IsLocallyConstant Z)
     (hm : ∀ g h, Z (g * h) = Z g + rep g (Z h)) (hc : ∀ g, Z (F.conj g) = rep F.c (Z g)) :
     ∃ y ∈ Zl rep, y F.c = 0 ∧ ∀ g : F.G₀, y g = Z g := by
-  obtain ⟨p, pc, p1, p2⟩ := polZ_proj F
-  have h1 : Z 1 = 0 := by
-    have := hm 1 1
-    simpa using this
-  have cc : ∀ x : F.Γ, x * F.c * F.c = x := fun x => by rw [mul_assoc, F.c_sq, mul_one]
-  refine ⟨Z ∘ p, ⟨hl.comp_continuous pc, fun a b => ?_⟩, ?_, fun g => by simp [p1]⟩
-  · simp only [Function.comp]
-    rcases polZ_cases F a with ⟨g, rfl⟩ | ⟨g, rfl⟩ <;> rcases polZ_cases F b with ⟨h, rfl⟩ | ⟨h, rfl⟩
-    · rw [← Subgroup.coe_mul, p1, p1, p1, hm]
-    · rw [← mul_assoc, ← Subgroup.coe_mul, p2, p1, p2, hm]
-    · have : (g : F.Γ) * F.c * h = ((g * F.conj h : F.G₀) : F.Γ) * F.c := by
-        rw [Subgroup.coe_mul, polZ_conj, ← mul_assoc, ← mul_assoc, cc]
-      rw [this, p2, p2, p1, hm, hc, map_mul]
-      rfl
-    · have : (g : F.Γ) * F.c * (h * F.c) = ((g * F.conj h : F.G₀) : F.Γ) := by
-        rw [Subgroup.coe_mul, polZ_conj]
-        simp only [mul_assoc]
-      rw [this, p2, p2, p1, hm, hc, map_mul]
-      rfl
-  · have := p2 1
-    rw [OneMemClass.coe_one, one_mul] at this
-    simp [this, h1]
+  apply _root_.polZ_ext <;> assumption
 
 theorem UpperTheory.V.Th.polP :
     ∀ (l : ℕ) [Fact l.Prime] (F : GFrame l) (A R : Type) [CommRing A] [CommRing R] [Algebra A R] (n : ℕ) (ρ : F.G₀ → Matrix (Fin n) (Fin n) R) (P : Matrix (Fin n) (Fin n) R) (χ : F.Γ → R) (rep : Representation A F.Γ (Matrix (Fin n) (Fin n) R)), IsUnit P → IsAdP F ρ P χ rep → (∀ z : F.G₀ → Matrix (Fin n) (Fin n) R, IsLocallyConstant z → (∀ g g', z (g * g') = z g + χ g • (ρ g * z g' * ρ g⁻¹)) → (∀ g, P * z (F.conj g) = -(χ F.c • ((z g)ᵀ * P))) → ∃ y ∈ Zl rep, y F.c = 0 ∧ ∀ g : F.G₀, y g = z g) ∧ (∀ y ∈ Zl rep, y F.c = 0 → (∀ g : F.G₀, P * y (F.conj g) = -(χ F.c • ((y g)ᵀ * P))) ∧ ((∀ g : F.G₀, y g = 0) → y = 0)) := by

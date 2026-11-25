@@ -66,7 +66,6 @@ open scoped TensorProduct InnerProductSpace ComplexConjugate
 open GlobalTheory.ChainOnto GlobalTheory.ChainTw
 open GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting (SplitProj IsProjAt IsIdemOf LiftsChar rdA grpCo frCo gAt)
 open GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection (Blocks parahoric datum)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 open Classical
 
@@ -86,7 +85,7 @@ theorem datum_specQ (S T : HSp D) (βS : GL (Fin S.rank) (Lev.EAf D)) (βT : GL 
         topL S.rank (redM PP.1 (frMapO S T βS βT x))) ∧
       (∀ PP : ↥L.Pg, a PP ∈ blockTri (blkOf L.r L.t)) ∧ (fun PP => upperLeftBlock L.hr (a PP)) ∈ L.P.H := by
   by_cases hc : IsHalf e x ∧ IsIntM (frMapO S T βS βT x)
-  · rw [if_pos hc] at hx
+  · rw [ite_eq_left hc] at hx
     have hG := left_ne_zero_of_mul hx
     unfold omegaG at hG
     split_ifs at hG with hd
@@ -95,7 +94,7 @@ theorem datum_specQ (S T : HSp D) (βS : GL (Fin S.rank) (Lev.EAf D)) (βT : GL 
       rw [← ha ⟨PP, hPP⟩]
       exact Matrix.isUnits_det_units (a ⟨PP, hPP⟩)
     · exact absurd rfl hG
-  · rw [if_neg hc] at hx
+  · rw [ite_eq_right hc] at hx
     exact absurd rfl hx
 
 theorem idemSum_left {e : AE D} {P Q : Finset (Pl D.host.E)} (h : IsIdemSum e (P ∪ Q)) :
@@ -142,7 +141,7 @@ theorem finE_gAt_mem : ∀ (D : D7) (S T : HSp D) (ΛS : Submodule (𝓞 D.host.
   intro D S T ΛS βS βT L χ ξ e hSD hFr hST hId hH g x hx hgx PP hPP _
   have hHalf : IsHalf e x := by
     by_contra hn
-    exact hx (if_neg fun h => hn h.1)
+    exact hx (ite_eq_right fun h => hn h.1)
   obtain ⟨hI1, hU1, a, ha, haT, haH⟩ := datum_specQ S T βS βT L χ ξ L.Q e x hx
   obtain ⟨hI2, hU2, a', ha', ha'T, ha'H⟩ := datum_specQ S T βS βT L χ ξ L.Q e (actO S T g 1 x) hgx
 

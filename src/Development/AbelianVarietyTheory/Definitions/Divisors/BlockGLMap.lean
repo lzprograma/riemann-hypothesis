@@ -3,7 +3,6 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Divisors.GalMapMul
 public import Aesop.BuiltinRules
 public import Mathlib.RepresentationTheory.Homological.GroupHomology.Basic
-import Mathlib.CategoryTheory.Limits.FunctorCategory.Shapes.Products
 
 @[expose] public section
 
@@ -40,8 +39,8 @@ def Um.map (N : ℕ) {A B : Type} [CommRing A] [CommRing B] (f : A →+* B) : Um
 def pglCat (N : ℕ) : CommRingCat.{0} ⥤ Cat.{0,0} where
   obj A := Cat.of (Um N A)
   map f := (Um.map N f.hom).toCatHom
-  map_id A := rfl
-  map_comp f g := rfl
+  map_id _ := rfl
+  map_comp _ _ := rfl
 
 def PGL (N : ℕ) : Spc := ofCat (pglCat N)
 
@@ -145,7 +144,7 @@ def grpPt {Γ : Type} [Group Γ] (X : Scheme.{0}) {m : ℕ} (g : Fin m → Γ) :
       ((evaluation SimplexCategoryᵒᵖ (Scheme.{0}ᵒᵖ ⥤ Type)).obj (op (SimplexCategory.mk m))) :=
     (evaluation_preservesLimitsOfShape (J := Discrete WalkingPair) _).preservesLimit
   prod.lift
-    ({ app := fun U => TypeCat.ofHom fun _ => grpSimplex g, naturality := fun _ _ _ => rfl } :
+    ({ app := fun _ => TypeCat.ofHom fun _ => grpSimplex g, naturality := fun _ _ _ => rfl } :
       yoneda.obj X ⟶ (cst (SingleObj Γ)).obj (op (SimplexCategory.mk m))) (𝟙 (yoneda.obj X)) ≫
     (PreservesLimitPair.iso ((evaluation _ _).obj (op (SimplexCategory.mk m))) (cst (SingleObj Γ)) (sch.obj X)).inv
 

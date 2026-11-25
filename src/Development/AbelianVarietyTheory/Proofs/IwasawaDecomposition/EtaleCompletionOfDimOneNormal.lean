@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.NormalNoethLocalDimOneIsDVR
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 public import Mathlib.RingTheory.KrullDimension.Basic
@@ -69,17 +70,6 @@ namespace GlobalTheory.CdvrExt
 
 theorem isDVR_of_ringKrullDim_eq_one {A : Type} [CommRing A] [IsLocalRing A] [IsDomain A] [IsNoetherianRing A]
     [IsIntegrallyClosed A] (hA : ringKrullDim A = 1) : IsDiscreteValuationRing A := by
-  obtain ⟨hf, hrad⟩ := ringKrullDim_eq_one_iff_of_isLocalRing_isDomain.1 hA
-  have key := (IsDiscreteValuationRing.TFAE A hf).out 1 4
-  try simp only [List.length_cons, List.getElem_cons_succ, List.getElem_cons_zero] at key
-  refine key.2 ⟨inferInstance, maximalIdeal A, ⟨?_, ?_⟩, ?_⟩
-  · exact (isField_iff_maximalIdeal_eq).not.1 hf
-  · exact (maximalIdeal.isMaximal A).isPrime
-  · rintro P ⟨hP, hPp⟩
-    obtain ⟨x, hxP, hx0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hP
-    refine le_antisymm (le_maximalIdeal hPp.ne_top) ?_
-    refine (hrad x hx0).trans ?_
-    rw [hPp.radical_le_iff, Ideal.span_singleton_le_iff_mem]
-    exact hxP
+  apply GlobalTheory.CompanionTheory.Ar.Flat.normal_noeth_local_dim_one_isDVR <;> assumption
 
 end GlobalTheory.CdvrExt

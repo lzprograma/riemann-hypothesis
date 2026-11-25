@@ -52,40 +52,12 @@ open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootE
 
 namespace GlobalTheory.RootEx
 
-private theorem isLocallyConstant_indicator_const_of_isClopen {X : Type} [TopologicalSpace X] {B : Set X}
-    (hB : IsClopen B) (c : ℂ) : IsLocallyConstant (B.indicator fun _ => c) := by
-  rw [IsLocallyConstant.iff_exists_open]
-  intro x
-  by_cases hx : x ∈ B
-  · refine ⟨B, hB.isOpen, hx, fun y hy => ?_⟩
-    rw [Set.indicator_of_mem hy, Set.indicator_of_mem hx]
-  · refine ⟨Bᶜ, hB.isClosed.isOpen_compl, hx, fun y hy => ?_⟩
-    rw [Set.indicator_of_notMem hy, Set.indicator_of_notMem hx]
-
-private theorem sigmaCompactSpace_of_isNonarchimedeanLocalField (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
-    [IsNonarchimedeanLocalField k] : SigmaCompactSpace k := by
-  obtain ⟨g, hg⟩ := IsCyclic.exists_generator (α := (ValueGroupWithZero k)ˣ)
-  refine SigmaCompactSpace.of_countable
-    (Set.range fun m : ℤ => {x : k | valuation k x ≤ ((g ^ m : (ValueGroupWithZero k)ˣ) : ValueGroupWithZero k)})
-    (Set.countable_range _) ?_ ?_
-  · rintro _ ⟨m, rfl⟩
-    exact IsNonarchimedeanLocalField.isCompact_closedBall k _
-  · refine Set.eq_univ_of_forall fun x => ?_
-    by_cases hx : x = 0
-    · subst hx
-      refine Set.mem_sUnion.mpr ⟨_, ⟨0, rfl⟩, ?_⟩
-      rw [Set.mem_ofPred_eq, map_zero]
-      exact zero_le
-    · obtain ⟨m, hm⟩ := Subgroup.mem_zpowers_iff.mp
-        (hg (Units.mk0 (valuation k x) ((map_ne_zero (valuation k)).mpr hx)))
-      refine Set.mem_sUnion.mpr ⟨_, ⟨m, rfl⟩, ?_⟩
-      rw [Set.mem_ofPred_eq, hm, Units.val_mk0]
-
 
 open GlobalTheory.SplitWeil.FourierPi in
 theorem exists_SB_supported_integral_one : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] (n : Type) [Fintype n] [DecidableEq n] (ν : Measure k) [ν.IsAddHaarMeasure] (U : Set (n → k)) (_ : U ∈ nhds (0 : n → k)), ∃ Ψ : SB (n → k), (∀ y, y ∉ U → Ψ.1 y = 0) ∧ ∫ y, Ψ.1 y ∂(Measure.pi fun _ => ν) = 1 := by
   intro k _ _ _ _ _ _ n _ _ ν _ U hU
-  have := sigmaCompactSpace_of_isNonarchimedeanLocalField k
+  have := GlobalTheory.SplitWeil.secondCountable k
+  have := sigmaCompactSpace_of_locallyCompact_secondCountable (X := k)
   obtain ⟨s, hsU⟩ := exists_box_subset (k := k) (n := n) hU
   have hBo : IsOpen (box (k := k) n s) := isOpen_box s
   have hBc : IsCompact (box (k := k) n s) := isCompact_box s
@@ -111,7 +83,7 @@ theorem exists_SB_supported_integral_one : ∀ (k : Type) [Field k] [ValuativeRe
     (ENNReal.toReal_pos hpos.ne' hfin.ne).ne'
   set c : ℂ := (((Measure.pi fun _ : n => ν).real (box n s) : ℝ) : ℂ)⁻¹ with hc
   refine ⟨⟨(box (k := k) n s).indicator fun _ => c,
-    isLocallyConstant_indicator_const_of_isClopen ⟨hBcl, hBo⟩ c,
+    (LocallyConstant.indicator (LocallyConstant.const _ c) ⟨hBcl, hBo⟩).isLocallyConstant,
     HasCompactSupport.intro' hBc hBcl fun y hy => Set.indicator_of_notMem hy _⟩, ?_, ?_⟩
   · intro y hy
     show (box (k := k) n s).indicator (fun _ => c) y = 0

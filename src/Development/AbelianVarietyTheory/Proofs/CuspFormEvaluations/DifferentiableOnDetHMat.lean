@@ -6,49 +6,7 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDo
 public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DetOfTriangular
 public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DifferentiableOnLeftInverse
 public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.MemIffConjugateNotMem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LminorSubmatrixCastSucc
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantOrthogonality
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -88,21 +46,21 @@ variable {X}
 
 theorem borMat_eq_zero_of_lt {b : Frame X.Ψ r} (hb : b ∈ Bor X.Ψ r) {p q : X.Ψ × Fin r}
     (h : (p.2 : ℕ) < X.p0) (hq : p.2 < q.2) : borMat X b p q = 0 := by
-  simp only [borMat, of_apply, if_pos h, transpose_apply]
+  simp only [borMat, of_apply, ite_eq_left h, transpose_apply]
   split_ifs
   · exact PerMove.bor_tri hb _ hq
   · rfl
 
 theorem borMat_eq_zero_of_le {b : Frame X.Ψ r} (hb : b ∈ Bor X.Ψ r) {p q : X.Ψ × Fin r}
     (h : X.p0 ≤ (p.2 : ℕ)) (hq : q.2 < p.2) : borMat X b p q = 0 := by
-  simp only [borMat, of_apply, if_neg (not_lt.2 h)]
+  simp only [borMat, of_apply, ite_eq_right (not_lt.2 h)]
   split_ifs
   · exact PerMove.bor_inv_tri hb _ hq
   · rfl
 
 theorem borMat_diag {b : Frame X.Ψ r} (hb : b ∈ Bor X.Ψ r) (p : X.Ψ × Fin r) :
     borMat X b p p = rowFac X (fun τ a => b τ a a) p := by
-  simp only [borMat, of_apply, if_true, rowFac]
+  simp only [borMat, of_apply, ite_true, rowFac]
   split_ifs
   · rfl
   · exact PerMove.bor_inv_diag hb _ _

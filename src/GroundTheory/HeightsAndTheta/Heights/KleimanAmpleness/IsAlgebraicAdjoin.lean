@@ -3,51 +3,6 @@ module
 public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsRestFurther
 import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
 public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RenameBaseHomogeneousComponent
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -129,13 +84,11 @@ theorem transcendental_eta [W.IsPrime] (hH : NumbersDVR.IsMultiHomogIdeal W) (j 
   have hGc : ∀ c, ∑ d ∈ Finset.range ((f c).totalDegree + 1),
       baseRen k N m (homogeneousComponent d (f c)) * Y ^ c = baseRen k N m (f c) * Y ^ c := by
     intro c
-    set_option synthInstance.maxHeartbeats 100000 in
-      rw [← Finset.sum_mul, ← map_sum, sum_homogeneousComponent]
+    rw [← Finset.sum_mul, ← map_sum, sum_homogeneousComponent]
 
   have hG : G ∈ W := by
     rw [← map_eq_zero_iff W, ← hp, Polynomial.aeval_def, Polynomial.eval₂_eq_sum, Polynomial.sum_def, hGdef]
-    set_option synthInstance.maxHeartbeats 100000 in
-      simp only [hGc, map_sum, map_mul, map_pow]
+    simp only [hGc, map_sum, map_mul, map_pow]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [← phi_apply, hf c]
     rfl
@@ -144,8 +97,7 @@ theorem transcendental_eta [W.IsPrime] (hH : NumbersDVR.IsMultiHomogIdeal W) (j 
       weightedHomogeneousComponent (NumbersDVR.blockWeight (graphIdx N m)) (bideg d c) G =
         baseRen k N m (homogeneousComponent d (f c)) * Y ^ c := by
     intro c hc d hd
-    set_option synthInstance.maxHeartbeats 100000 in
-      rw [hGdef, map_sum, Finset.sum_eq_single c, map_sum, Finset.sum_eq_single d]
+    rw [hGdef, map_sum, Finset.sum_eq_single c, map_sum, Finset.sum_eq_single d]
     · exact (isMultiHomog_term (f c) d c j).weightedHomogeneousComponent_same
     · intro d' _ hne
       refine (isMultiHomog_term (f c) d' c j).weightedHomogeneousComponent_ne _ fun e => hne ?_
@@ -155,8 +107,7 @@ theorem transcendental_eta [W.IsPrime] (hH : NumbersDVR.IsMultiHomogIdeal W) (j 
     · intro h
       exact absurd hd h
     · intro c' _ hne
-      set_option synthInstance.maxHeartbeats 100000 in
-        rw [map_sum]
+      rw [map_sum]
       refine Finset.sum_eq_zero fun d' _ => ?_
       refine (isMultiHomog_term (f c') d' c' j).weightedHomogeneousComponent_ne _ fun e => hne ?_
       have := congrFun e (Sum.inr ())
@@ -167,21 +118,20 @@ theorem transcendental_eta [W.IsPrime] (hH : NumbersDVR.IsMultiHomogIdeal W) (j 
 
   have hmemF : ∀ c ∈ s, baseRen k N m (f c) ∈ W := by
     intro c hc
-    set_option synthInstance.maxHeartbeats 100000 in
-      rw [← sum_homogeneousComponent (f c), map_sum]
+    rw [← sum_homogeneousComponent (f c), map_sum]
     refine Ideal.sum_mem _ fun d hd => ?_
     have hmem : baseRen k N m (homogeneousComponent d (f c)) * Y ^ c ∈ W := by
       rw [← hcomp c hc d hd]
       exact hH G hG _
     exact (Ideal.IsPrime.mem_or_mem ‹_› hmem).resolve_right
       fun h => hj (Ideal.IsPrime.mem_of_pow_mem ‹_› c h)
-  refine Polynomial.ext fun c => ?_
+  ext c
   rw [Polynomial.coeff_zero]
   by_cases hc : c ∈ s
   · have := hf c
     rw [phi_apply, (map_eq_zero_iff W _).2 (hmemF c hc)] at this
-    exact Subtype.ext this.symm
-  · exact Polynomial.notMem_support_iff.mp hc
+    exact this.symm
+  · exact congrArg Subtype.val (Polynomial.notMem_support_iff.mp hc)
 
 theorem isAlgebraic_adjoin [W.IsPrime] (j : Fin m)
     (hrat : ∀ b : Fin m, ∃ f g : Kleiman.Poly k N, baseRen k N m g ∉ W ∧
@@ -207,8 +157,7 @@ theorem isAlgebraic_adjoin [W.IsPrime] (j : Fin m)
         rw [phi_apply, Ne, map_eq_zero_iff]
         exact hg
       have hrel := (map_eq_zero_iff W _).2 hfg
-      set_option synthInstance.maxHeartbeats 100000 in
-        simp only [map_sub, map_mul] at hrel
+      simp only [map_sub, map_mul] at hrel
       have e : algebraMap R L (Ideal.Quotient.mk W (X ⟨Sum.inr (), i⟩)) = phi W f * eta W j / phi W g := by
         rw [eq_div_iff hg0, phi_apply, phi_apply]
         linear_combination hrel
@@ -223,8 +172,7 @@ theorem isAlgebraic_adjoin [W.IsPrime] (j : Fin m)
       have := hA (C c)
       rwa [phi_apply, baseRen_C] at this
     | add f g hf hg =>
-      set_option synthInstance.maxHeartbeats 100000 in
-        rw [map_add (f := _), map_add (f := _)]
+      rw [map_add (f := _), map_add (f := _)]
       exact hf.add hg
     | mul_X f v hf => rw [map_mul, map_mul]; exact hf.mul (hvar v)
   refine ⟨fun x => ?_⟩

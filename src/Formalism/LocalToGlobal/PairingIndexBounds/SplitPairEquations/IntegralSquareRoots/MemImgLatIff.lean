@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.NormPow
 public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.UnitaryConstant
 import Mathlib.RingTheory.SimpleRing.Principal
 
@@ -25,12 +26,7 @@ structure Copies (e : V ≃ₗ[ℂ] (ι → V₁)) (H : Sesq V) (H₁ : Sesq V�
 
 theorem mem_imgLat_iff {W : Type} [AddCommGroup W] [Module ℂ W] (g : W ≃ₗ[ℂ] W) (M : AddSubgroup W) (x : W) :
     x ∈ imgLat (g : W →ₗ[ℂ] W) M ↔ g.symm x ∈ M := by
-  constructor
-  · rintro ⟨y, hy, rfl⟩
-    show g.symm (g y) ∈ M
-    rw [LinearEquiv.symm_apply_apply]; exact hy
-  · intro h
-    exact ⟨g.symm x, h, g.apply_symm_apply x⟩
+  apply _root_.Formalism.L2.AlgTh.RepresentativeBijection.mem_imgLat' <;> assumption
 
 theorem symm_coord (e : V ≃ₗ[ℂ] (ι → V₁)) (g : V ≃ₗ[ℂ] V) (g₁ : V₁ ≃ₗ[ℂ] V₁) (h : ∀ x i, e (g x) i = g₁ (e x i))
     (x : V) (i : ι) : e (g.symm x) i = g₁.symm (e x i) := by

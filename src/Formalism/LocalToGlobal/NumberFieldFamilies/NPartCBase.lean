@@ -26,12 +26,6 @@ open NumberField IsDedekindDomain IsLocalRing Formalism.ConjugateSelfDual Recipr
 
 namespace TwB
 
-section Settings
-
-variable (F : Type) [Field F] [NumberField F]
-
-end Settings
-
 section OneLL
 
 variable {l : ℕ} [hl : Fact l.Prime] {F : Type} [Field F] (LL : FinExt l) (φ : F →+* PadicAlgCl l)

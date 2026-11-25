@@ -2,48 +2,9 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MultiplicationLatticeSecond
 public import Development.AbelianVarietyTheory.Definitions.Divisors.IsIsoQuotToImOmegaLieOfSplit
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -53,8 +14,6 @@ open GlobalTheory.LieVB GlobalTheory.Conormal
 open GlobalTheory.Twist (resM resM_resM resM_self app_resM)
 open GlobalTheory.QCoh (pullbackSections)
 open ReciprocityTheory.ChartRestriction.G.Pdiv (specO)
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.LocM
 
@@ -209,20 +168,12 @@ def ofBundle {F : B.X.Modules} (θ : F ⟶ B.om) [Mono θ]
     ⟨V, n, _, hx, hm.map_iso ((rangeSub θ).lift θ fun _ s => ⟨s, rfl⟩)⟩
   gen V h := LinearMap.range_eq_top.2 (hθ V h)
 
-theorem mem_ofBundle {F : B.X.Modules} (θ : F ⟶ B.om) [Mono θ] (hF hθ) {V : B.X.Opens} {s : Γ(B.om, V)} :
-    s ∈ (ofBundle θ hF hθ).N.sec V ↔ ∃ r, θ.app V r = s := by
-  change s ∈ LinearMap.range (QCoh.appLinear θ V) ↔ _
-  simp [LinearMap.mem_range]
-
 
 variable (B) in
 def top : Lat B :=
   ofBundle (𝟙 _) (have := B.t.semi; have := B.t.semi.smooth; exists_isFrame_omega B.t.G) fun _ _ s => ⟨s, rfl⟩
 
 def IsTop (L : Lat B) : Prop := ∀ V, L.N.sec V = ⊤
-
-theorem isTop_top : (top B).IsTop := fun _ =>
-  eq_top_iff.2 fun s _ => (mem_ofBundle _ _ _).2 ⟨s, rfl⟩
 
 theorem ext {L L' : Lat B} (h : ∀ V, L.N.sec V = L'.N.sec V) : L = L' := by
   obtain ⟨⟨N, r, m⟩, f, g⟩ := L
@@ -246,34 +197,7 @@ structure Step : Type where
 
   le : k ≤ Dw.mult σ
 
-def InStep (Z B : Mdl Y i₀) (σ : E →+* ℂ) (r : ℕ) {k : Type} [Field k] (w : Sp k ⟶ Z.X)
-    (v : Sp (DualNumber k) ⟶ B.t.G.left) : Prop :=
-  ∃ (τ : (Y Z.i).X ⟶ (Y B.i).X) (mu : SABMap (Y Z.i).t (Y B.i).t τ) (u : Vecs Dw (Y Z.i).t k) (i : Fin (Dw.mult σ)),
-    LocM.IsTrans B.i Z.i τ mu ∧ Z.FlagAt w u ∧ (i : ℕ) < r ∧ v ≫ B.tMap.φ = u σ i ≫ mu.φ
 
-def Step.Holds (t : Step Y i₀) (Z : Mdl Y i₀) : Prop :=
-  t.k ∈ Z.ty t.σ ∧ ∃ g : Z.X ⟶ t.B.X, IsMap Z t.B g ∧ ∀ x : Z.X,
-    ∃ (U : Z.X.Opens) (hU : IsAffineOpen U) (V : t.B.X.Opens) (n : ℕ) (m : Fin n → Γ(t.L.N.toMod, V))
-      (a : GL (Fin n) Γ(Z.X, U)), x ∈ U ∧ U ≤ g ⁻¹ᵁ V ∧ VB.IsFrame m ∧
-      ∀ (k : Type) [Field k] (φ : Γ(Z.X, U) →+* k) (v : Sp (DualNumber k) ⟶ t.B.t.G.left)
-        (hv : IsTanAtG t.B.t ((spMap φ ≫ hU.fromSpec) ≫ g) v) (h : ⊤ ≤ ((spMap φ ≫ hU.fromSpec) ≫ g) ⁻¹ᵁ V),
-        InStep Z t.B t.σ t.k (spMap φ ≫ hU.fromSpec) v →
-        ∀ j : Fin n, t.k ≤ (j : ℕ) → ∑ l, φ (a j l) * tanEv t.B.t hv h (t.L.N.incl.app V (m l)) = 0
-
-
-open Classical in
-def stepTy (s : Finset (Step Y i₀)) (σ : E →+* ℂ) : Finset ℕ := (s.filter fun t => t.σ = σ).image Step.k
-
-theorem mem_stepTy {s : Finset (Step Y i₀)} {σ : E →+* ℂ} {r : ℕ} : r ∈ stepTy s σ ↔ ∃ t ∈ s, t.σ = σ ∧ t.k = r := by
-  simp [stepTy, and_assoc]
-
-def IsFlagCl (Z : Mdl Y i₀) (s : Finset (Step Y i₀)) (Z' : Mdl Y i₀) : Prop :=
-  Z'.i = Z.i ∧ (∀ σ, Z'.ty σ = Z.ty σ ∪ stepTy s σ) ∧ (∃ f, IsMap Z' Z f) ∧ (∀ t ∈ s, t.Holds Z') ∧
-    ∀ Z'' : Mdl Y i₀, (∃ g, IsMap Z'' Z g) → (∀ t ∈ s, t.Holds Z'') → ∃ h, IsMap Z'' Z' h
-
-
-open Classical in
-def flagClosure (Z : Mdl Y i₀) (s : Finset (Step Y i₀)) : Mdl Y i₀ := if h : ∃ Z', IsFlagCl Z s Z' then h.choose else Z
 
 
 open Classical in
@@ -289,13 +213,6 @@ theorem mem_allSteps {B : Mdl Y i₀} {L : Lat B} {t : Step Y i₀} :
     exact ⟨σ, r, _, rfl⟩
   · rintro ⟨σ, r, hr, rfl⟩
     exact Finset.mem_image.2 ⟨⟨σ, ⟨r, Nat.lt_succ_iff.2 hr⟩⟩, Finset.mem_univ _, rfl⟩
-
-theorem allSteps_ne_empty {B : Mdl Y i₀} (L : Lat B) : allSteps L ≠ ∅ := by
-  intro h
-  obtain ⟨σ⟩ : Nonempty (E →+* ℂ) := inferInstance
-  have hm : (⟨B, L, σ, 0, Nat.zero_le _⟩ : Step Y i₀) ∈ allSteps L := mem_allSteps.2 ⟨σ, 0, _, rfl⟩
-  rw [h] at hm
-  exact Finset.notMem_empty _ hm
 
 def Step.admitted (P : ∀ B : Mdl Y i₀, Lat B → Prop) (Z : Mdl Y i₀) (t : Step Y i₀) : Prop :=
   (t.B = Z ∨ ∃ f, IsMap Z t.B f) ∧ (t.L.IsTop ∨ P t.B t.L)
@@ -314,26 +231,11 @@ def full {Z : Mdl Y i₀} (L : Lat Z) (h : L.IsTop ∨ P Z L) : FlagFam P Z :=
     obtain ⟨σ, r, hr, rfl⟩ := mem_allSteps.1 ht
     exact ⟨.inl rfl, h⟩⟩
 
-def deRham (Z : Mdl Y i₀) : FlagFam P Z := full (Lat.top Z) (.inl Lat.isTop_top)
-
 end FlagFam
 
 end Free
 
 variable {D : D7} {A : Amb D} {N j : ℕ} {S : Sig A N j} {κ : Lv A} {p : ℕ}
 
-
-open Classical in
-def At.flagCl (ct : At S κ p) (Z : ct.Mdl) (s : Finset (Step ct.Y ⟨κ.l, κ.c, κ.good p ct.hp⟩)) : ct.Mdl :=
-  if s = ∅ then Z else if s = allSteps (Lat.top Z) ∧ IsDRFlag Z ct.YY then ct.YY else flagClosure Z s
-
-theorem At.flagCl_allSteps (ct : At S κ p) : ct.flagCl ct.Xm (allSteps (Lat.top ct.Xm)) = ct.YY := by
-  rw [At.flagCl, if_neg (allSteps_ne_empty _), if_pos ⟨rfl, ct.isYY⟩]
-
-def flgOf (ct : At S κ p) (P : ∀ B : ct.Mdl, Lat B → Prop) : FlgSt ct where
-  FlagData := FlagFam P
-  flagCl Z s := ct.flagCl Z s.1
-  allFlags := FlagFam.deRham ct.Xm
-  YY_eq := ct.flagCl_allSteps.symm
 
 end GlobalTheory.LocM

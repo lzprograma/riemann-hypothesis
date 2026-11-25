@@ -54,29 +54,6 @@ variable {L : Type} [Field L] [NumberField L] [IsCMField L]
 
 local notation3 "L⁺" => maximalRealSubfield L
 
-theorem cong_natCast_eq_tmul_one (k : ℕ) : (k : ReciprocityTheory.Aut.AL L) = (k : L) ⊗ₜ[L⁺] (1 : ReciprocityTheory.Aut.AFplus L) := by
-  rw [← Algebra.TensorProduct.includeLeftRingHom_apply, map_natCast]
-
-theorem cong_natCast_eq_one_tmul (k : ℕ) : (k : ReciprocityTheory.Aut.AL L) = (1 : L) ⊗ₜ[L⁺] (k : ReciprocityTheory.Aut.AFplus L) := by
-  rw [← Algebra.TensorProduct.includeRight_apply, map_natCast]
-
-theorem cong_adele_nat_denom (a : ReciprocityTheory.Aut.AFplus L) :
-    ∃ k : ℕ, 0 < k ∧ ∀ v, ((k : ReciprocityTheory.Aut.AFplus L) * a) v ∈ v.adicCompletionIntegers L⁺ := by
-  obtain ⟨d, hd0, hd⟩ := Formalism.UG.P.levelaf_adele_denom (F := L⁺) a
-  set k := Ideal.absNorm (Ideal.span {d}) with hk
-  have hk0 : k ≠ 0 := by
-    rw [hk, Ne, Ideal.absNorm_eq_zero_iff, Ideal.span_singleton_eq_bot]
-    exact hd0
-  obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.1 (Ideal.absNorm_mem (Ideal.span {d}))
-  refine ⟨k, Nat.pos_of_ne_zero hk0, ?_⟩
-  have e : (k : ReciprocityTheory.Aut.AFplus L) * a =
-      algebraMap (𝓞 L⁺) (ReciprocityTheory.Aut.AFplus L) c * (algebraMap (𝓞 L⁺) (ReciprocityTheory.Aut.AFplus L) d * a) := by
-    rw [← mul_assoc, ← map_mul, hc, map_natCast]
-  have hm : (k : ReciprocityTheory.Aut.AFplus L) * a ∈ Formalism.UG.intAd L⁺ := by
-    rw [e]
-    exact Subring.mul_mem _ (Formalism.UG.P.levelaf_int_mem c) hd
-  exact hm
-
 theorem cong_nat_denom (x : ReciprocityTheory.Aut.AL L) : ∃ d : ℕ, 0 < d ∧ (d : ReciprocityTheory.Aut.AL L) * x ∈ ReciprocityTheory.Aut.ALint L := by
   apply GlobalTheory.FinTypCount.exists_denom
 

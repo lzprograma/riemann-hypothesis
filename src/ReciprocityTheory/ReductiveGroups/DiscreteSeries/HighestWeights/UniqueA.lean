@@ -293,7 +293,7 @@ private theorem eq_bot_of_KStable_of_highest_not_mem (ε : Fin n → Bool) (F : 
   have hFU : ∀ a b, ε a = ε b → ∀ y, S.mkQ (F a b y) = FU a b (S.mkQ y) := by
     intro a b h y
     rw [hFUdef]
-    simp only [dif_pos h]
+    simp only [dite_eq_left h]
     rfl
   have hTU : kSpan ε FU (S.mkQ w) = ⊤ := by
     refine eq_top_iff.2 fun z _ => ?_

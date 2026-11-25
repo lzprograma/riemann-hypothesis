@@ -30,10 +30,6 @@ section Inertia
 variable {F E M : Type*} [Field F] [Field E] [Field M] [Algebra F E] [Algebra E M] [Algebra F M]
   [IsScalarTower F E M]
 
-theorem restrictScalars_mem_inertia_iff (Q : Ideal (𝓞 M)) (σ : Gal(M/E)) :
-    AlgEquiv.restrictScalarsHom F σ ∈ Q.inertia Gal(M/F) ↔ σ ∈ Q.inertia Gal(M/E) :=
-  Iff.rfl
-
 theorem mem_range_restrictScalarsHom_iff (σ : Gal(M/F)) :
     σ ∈ (AlgEquiv.restrictScalarsHom F : Gal(M/E) →* Gal(M/F)).range ↔
       ∀ x : E, σ (algebraMap E M x) = algebraMap E M x := by
@@ -62,14 +58,10 @@ theorem isUnramifiedAt_under_iff_inertia (Q : Ideal (𝓞 M)) [Q.IsPrime] :
     Ideal.ramificationIdx_tower (q := Q.under (𝓞 E)) (r := Q)
   set φ : Gal(M/E) →* Gal(M/F) := AlgEquiv.restrictScalarsHom F with hφ
   have hinj : Function.Injective φ := AlgEquiv.restrictScalarsHom_injective F
+  have hcomap : (Q.inertia Gal(M/F)).comap φ = Q.inertia Gal(M/E) :=
+    Subgroup.ext fun _ => Iff.rfl
   have hmap : (Q.inertia Gal(M/E)).map φ = Q.inertia Gal(M/F) ⊓ φ.range := by
-    ext σ
-    simp only [Subgroup.mem_map, Subgroup.mem_inf, MonoidHom.mem_range]
-    constructor
-    · rintro ⟨τ, hτ, rfl⟩
-      exact ⟨(restrictScalars_mem_inertia_iff Q τ).2 hτ, τ, rfl⟩
-    · rintro ⟨hσ, τ, rfl⟩
-      exact ⟨τ, (restrictScalars_mem_inertia_iff Q τ).1 hσ, rfl⟩
+    rw [← hcomap, Subgroup.map_comap_eq, inf_comm]
   have hcardmap : Nat.card ((Q.inertia Gal(M/E)).map φ) = Nat.card (Q.inertia Gal(M/E)) :=
     Subgroup.card_map_of_injective hinj
   have hpos : 0 < Nat.card (Q.inertia Gal(M/E)) := Nat.card_pos

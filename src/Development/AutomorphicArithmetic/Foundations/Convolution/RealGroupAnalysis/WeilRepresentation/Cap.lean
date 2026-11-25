@@ -32,49 +32,6 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGrou
 public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.LieZ
 public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.SumCoordPl
 public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.SplitA
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.TrivialOnInertiaOfUnr
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Newform
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
@@ -84,14 +41,9 @@ import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
 import GroundTheory.AutomorphicForms.GL2.GJMatrixInfinite
 import GroundTheory.GlobalFields.TateThesis.NoSmallSubgroups
 import ReciprocityTheory.NeutralLocalFields.Reciprocity
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.RingTheory.PiTensorProduct
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
 import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.OpsEx
 import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
 import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
@@ -160,11 +112,11 @@ theorem UpperTheory.ConvolutionTheory.R2.Fo.capAbs :
     have h1 : a 0 0 s + a 1 1 s = -h s := by simpa using LinearMap.congr_fun hz s
     have h2 : Λ v (a 0 0 s) + Λ v (a 1 1 s) = Λ ((E 0 0 - E 1 1) v) s := by
       rw [← map_add (f := _), h1, map_neg, hhΛ v hv s hs, neg_neg]
-    simp only [LinearMap.add_apply, hPΛ _ _ v hv s hs, if_true, map_add (f := _)]
+    simp only [LinearMap.add_apply, hPΛ _ _ v hv s hs, ite_true, map_add (f := _)]
     simp only [LinearMap.sub_apply, map_sub] at h2
     linear_combination (norm := module) h2
   have hHP : ∀ v ∈ V₀, ∀ s ∈ S₀, (P 0 0 - P 1 1) (Λ v s) = Λ v ((a 0 0 - a 1 1) s) := fun v hv s hs => by
-    simp only [LinearMap.sub_apply, hPΛ _ _ v hv s hs, if_true, map_sub]
+    simp only [LinearMap.sub_apply, hPΛ _ _ v hv s hs, ite_true, map_sub]
     abel
   have hA : ∀ s ∈ S₀, (a 0 0 - a 1 1) s ∈ S₀ := fun s hs => S₀.sub_mem (haS 0 0 s hs) (haS 1 1 s hs)
   have hBr : (P 0 0 - P 1 1) ((P 0 0 - P 1 1) (Λ v s)) + (2 : ℂ) • (P 0 1 (P 1 0 (Λ v s)) + P 1 0 (P 0 1 (Λ v s)))
@@ -223,10 +175,10 @@ theorem UpperTheory.ConvolutionTheory.R2.Fo.capelli :
   have h01 : ¬ ((0 : Fin 2) = 1) := by decide
   have h10 : ¬ ((1 : Fin 2) = 0) := by decide
   subst hq hΔ hh
-  simp only [ha, Fin.sum_univ_two, h2, h01, h10, if_true, if_false]
+  simp only [ha, Fin.sum_univ_two, h2, h01, h10, ite_true, ite_false]
   refine ⟨?_, ?_, ?_⟩
   all_goals
-    try simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, neg_zero, zero_sub, mul_one, one_mul, mul_assoc, hDX, hDX', h01, h10, and_self, and_true, and_false, if_true, if_false, add_zero,
+    try simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, neg_zero, zero_sub, mul_one, one_mul, mul_assoc, hDX, hDX', h01, h10, and_self, and_true, and_false, ite_true, ite_false, add_zero,
       hX' 1 1 0 0, hX' 1 1 0 1, hX' 1 1 1 0, hX' 1 0 0 0, hX' 1 0 0 1, hX' 0 1 0 0,
       hD 1 1 0 0, hD 1 1 0 1, hD 1 1 1 0, hD 1 0 0 0, hD 1 0 0 1, hD 0 1 0 0]
   all_goals abel
@@ -249,16 +201,16 @@ private theorem coord_half {E : Type} [Field E] [NumberField E] [_root_.NumberFi
   by_cases h : InfinitePlace.mk σ = InfinitePlace.mk τ
   · rcases InfinitePlace.mk_eq_iff.1 h with e | e
     · subst e
-      rw [if_pos rfl, coord_atEmb, coord_atEmb, Complex.I_mul_I]
+      rw [ite_eq_left rfl, coord_atEmb, coord_atEmb, Complex.I_mul_I]
       norm_num
     · have hne : ComplexEmbedding.conjugate τ ≠ τ := fun h' =>
         InfinitePlace.not_isReal_iff_isComplex.2 (IsTotallyComplex.isComplex (InfinitePlace.mk τ))
           (InfinitePlace.isReal_mk_iff.2 (ComplexEmbedding.isReal_iff.2 h'))
       obtain rfl : σ = ComplexEmbedding.conjugate τ := by
         rw [← e]; exact (star_star σ).symm
-      rw [if_neg hne, GlobalTheory.IsoPull.coord_conj, GlobalTheory.IsoPull.coord_conj, coord_atEmb, coord_atEmb]
+      rw [ite_eq_right hne, GlobalTheory.IsoPull.coord_conj, GlobalTheory.IsoPull.coord_conj, coord_atEmb, coord_atEmb]
       simp
-  · rw [GlobalTheory.IsoPull.coord_atEmb_of_ne h, GlobalTheory.IsoPull.coord_atEmb_of_ne h, if_neg (fun e => h (by rw [e]))]
+  · rw [GlobalTheory.IsoPull.coord_atEmb_of_ne h, GlobalTheory.IsoPull.coord_atEmb_of_ne h, ite_eq_right (fun e => h (by rw [e]))]
     simp
 
 private theorem coord_single {E : Type} [Field E] (σ : E →+* ℂ) (i j k l : Fin 2) (c : Cinf E) :
@@ -268,7 +220,7 @@ private theorem coord_single {E : Type} [Field E] (σ : E →+* ℂ) (i j k l : 
   by_cases h : k = i ∧ l = j
   · obtain ⟨rfl, rfl⟩ := h
     simp
-  · rw [if_neg h, if_neg (fun e => h ⟨e.1.symm, e.2.symm⟩), map_zero]
+  · rw [ite_eq_right h, ite_eq_right (fun e => h ⟨e.1.symm, e.2.symm⟩), map_zero]
 
 private theorem half_comb {E N : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] [AddCommGroup N] [Module ℂ N]
     (R : (E →+* ℂ) → Fin 2 → Fin 2 → N) (τ : E →+* ℂ) (i j : Fin 2) (x y : N)
@@ -305,7 +257,6 @@ theorem UpperTheory.ConvolutionTheory.R2.Fo.eopLift :
       simp only [Submodule.coe_add, Submodule.coe_sum, Submodule.coe_smul, Pi.add_apply, Finset.sum_apply, Pi.smul_apply,
         smul_eq_mul, hΛ _ (hE _) φ hφ, hΛ f hf _ h1]
     have h3 : Λ f (O.dL D Y φ) = ∑ σ : E →+* ℂ, ∑ k, ∑ l, coord σ (Y k l) • Λ f (O.dE D σ k l φ) := by
-      set_option synthInstance.maxHeartbeats 100000 in
         simp only [Ops.dL, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul]
     rw [h2, h3, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun σ _ => ?_

@@ -36,8 +36,7 @@ theorem subst_zero_of {σ τ : Type} [Finite σ] {a : σ → MvPowerSeries τ C}
   · subst hd
     rw [MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hf, zero_smul]
   · obtain ⟨s, hsd⟩ : ∃ s, d s ≠ 0 := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       exact hd (Finsupp.ext hcon)
     have hp : (d.prod fun s n => (0 : σ → MvPowerSeries τ C) s ^ n) = 0 := by
       apply Finset.prod_eq_zero (i := s) (Finsupp.mem_support_iff.mpr hsd)

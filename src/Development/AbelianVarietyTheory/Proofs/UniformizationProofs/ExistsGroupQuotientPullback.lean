@@ -177,8 +177,6 @@ theorem exists_grpObj {C : Type u} [Category.{v} C] [CartesianMonoidalCategory C
         rw [← cancel_mono i, hm]
         exact Classical.choose_spec (ex s)))
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 variable {S : Scheme.{0}}
 
 lemma effectiveEpi_of_left {X Y : Over S} (f : X ⟶ Y) [EffectiveEpi f.left] :
@@ -220,8 +218,6 @@ lemma quasiCompact_tensorHom {X Y X' Y' : Over S} (f : X ⟶ Y) (g : X' ⟶ Y')
     [hf : QuasiCompact f.left] [hg : QuasiCompact g.left] : QuasiCompact (f ⊗ₘ g).left := MorphismProperty.pullbackMap (P := @QuasiCompact) hf hg (Over.w f).symm (Over.w g).symm
 
 end CosetQuotient
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem grpObj_of_flat_coset_quotient :
     ∀ (S : Scheme.{0}) (G T B : Over S) [GrpObj G] [IsCommMonObj G] [GrpObj T] (i : T ⟶ G)

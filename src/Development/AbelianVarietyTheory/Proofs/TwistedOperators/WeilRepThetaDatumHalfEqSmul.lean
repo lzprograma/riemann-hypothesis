@@ -47,7 +47,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.IndefR GlobalTheory.WeilParts
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.ThetaMove
 
@@ -87,8 +86,8 @@ theorem halfInd_act {e : AE D} {Λ : AddSubgroup (WO S T)} (g : GA D S) (h : GA 
   have : (actO S T g h t ∈ Λ ∧ IsHalf e (actO S T g h t)) ↔ (t ∈ Λ ∧ IsHalf e t) :=
     and_congr (hΛ t).symm ⟨isHalf_of_act g h, isHalf_actO g h⟩
   by_cases ht : t ∈ Λ ∧ IsHalf e t
-  · rw [if_pos ht, if_pos (this.2 ht)]
-  · rw [if_neg ht, if_neg (fun hh => ht (this.1 hh))]
+  · rw [ite_eq_left ht, ite_eq_left (this.2 ht)]
+  · rw [ite_eq_right ht, ite_eq_right (fun hh => ht (this.1 hh))]
 
 alias heisO_smul' := _root_.GlobalTheory.LatVac.heisO_smul
 

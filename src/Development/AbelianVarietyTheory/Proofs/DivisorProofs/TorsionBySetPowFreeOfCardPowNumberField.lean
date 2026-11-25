@@ -154,7 +154,6 @@ theorem torsionBySet_pow_free_of_natCard : ∀ (F : Type) [Field F] [NumberField
   haveI : Finite (𝓞 F ⧸ w0) := Ideal.finiteQuotientOfFreeOfNeBot w0 hne
   haveI : Nontrivial (𝓞 F ⧸ w0) := Ideal.Quotient.nontrivial_iff.mpr hmax.ne_top
   have hq : 2 ≤ Nat.card (𝓞 F ⧸ w0) := Finite.one_lt_card
-  have hqpos : 0 < Nat.card (𝓞 F ⧸ w0) := by omega
   have hfin : ∀ j, Finite (T j) := fun j =>
     Nat.finite_of_card_ne_zero (by rw [hcard j]; positivity)
   rcases r with _ | n

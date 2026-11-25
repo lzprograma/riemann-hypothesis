@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitStripIntegralEqIterated
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.StripInt
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -53,17 +54,7 @@ open UpperHalfPlane hiding I
 namespace UpperTheory.V.Af.Rs
 
 private lemma measurable_ofComplex : Measurable (ofComplex : ℂ → ℍ) := by
-  classical
-  rw [← measurableEmbedding_coe.measurable_comp_iff]
-  have h : (UpperHalfPlane.coe ∘ (ofComplex : ℂ → ℍ)) =
-      fun w : ℂ => if 0 < w.im then w else ((ofComplex 0 : ℍ) : ℂ) := by
-    funext w
-    by_cases hw : 0 < w.im
-    · simp [hw, ofComplex_apply_of_im_pos hw]
-    · simp only [Function.comp, hw, if_false]
-      rw [ofComplex_apply_of_im_nonpos (not_lt.mp hw), ofComplex_apply_of_im_nonpos (le_refl _ : (0 : ℂ).im ≤ 0)]
-  rw [h]
-  exact Measurable.ite (measurableSet_lt measurable_const Complex.measurable_im) measurable_id measurable_const
+  apply _root_.GlobalTheory.EisM.measurable_ofComplex_hp <;> assumption
 
 private lemma pt_eq (p : ℝ × ℝ) : pt p.1 p.2 = ofComplex (Complex.measurableEquivRealProd.symm p) := by
   unfold pt

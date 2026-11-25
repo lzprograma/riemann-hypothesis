@@ -68,7 +68,7 @@ theorem lfLift_tcoef (ε : Fin n → Bool) (x : LfIdx ε → N) (S : LfIdx ε) :
   simp only [lfLift, map_sum, tcoef, LinearMap.coe_comp, Function.comp_apply, TensorProduct.map_tmul,
   LinearMap.id_apply, LinearEquiv.coe_coe, TensorProduct.rid_tmul, Module.Basis.coord_apply, Module.Basis.repr_self]
   rw [Finset.sum_eq_single S (fun T _ hT => by
-    rw [Finsupp.single_apply, if_neg (fun h => hT (Subtype.ext h)), zero_smul]) (by simp)]
+    rw [Finsupp.single_apply, ite_eq_right (fun h => hT (Subtype.ext h)), zero_smul]) (by simp)]
   simp
 
 theorem lfLift_ne_zero (ε : Fin n → Bool) {x : LfIdx ε → N} (hx : x ≠ 0) : lfLift ε x ≠ 0 := by

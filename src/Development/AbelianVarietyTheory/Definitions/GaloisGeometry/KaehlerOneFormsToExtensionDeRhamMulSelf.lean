@@ -45,8 +45,6 @@ import Development.AbelianVarietyTheory.Definitions.Divisors.CupPair
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD
@@ -58,7 +56,6 @@ variable (k K L : Type) [Field k] [Field K] [Field L] [Algebra k K] [Algebra k L
 def map1 : Ω[K⁄k] →ₗ[K] DR k L :=
   ((ι1 (R := k) (B := L)).restrictScalars K).comp (KaehlerDifferential.map k k K L)
 
-set_option autoImplicit false in
 open KaehlerDifferential in
 variable (k K L : Type) [Field k] [Field K] [Field L] [Algebra k K] [Algebra k L] [Algebra K L]
   [IsScalarTower k K L] in

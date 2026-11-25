@@ -7,51 +7,8 @@ public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustStatementPfA
 public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FiniteClsAndStab
 public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.IsHeatThH
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.FirstCoordinateAdmissible
 import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianThetaEisensteinConvergeBounded
@@ -204,12 +161,12 @@ theorem quad_add {n N : ℕ} (S : Matrix (Fin N) (Fin N) ℂ) (z z' : Matrix (Fi
     rw [h, h]
     by_cases hj : j = k
     · subst hj
-      simp only [if_true, Matrix.mulVec_add, add_dotProduct, dotProduct_add, single_dotProduct]
+      simp only [ite_true, Matrix.mulVec_add, add_dotProduct, dotProduct_add, single_dotProduct]
       rw [Matrix.dotProduct_mulVec _ _ (Pi.single a s), dotProduct_single]
       simp [Matrix.mulVec_single]
       ring
     · simp [hj]
-  simp only [h2, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [h2, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   ring
 
 theorem deriv_deriv_const_mul_cexp_bilinear_at_zero (K w q u v c : ℂ) :
@@ -361,13 +318,6 @@ end Lines
 
 variable {E : Type} [Field E] (Ψ : Finset (E →+* ℂ)) {n N : ℕ}
 
-theorem imH_isHermitian (Z : Matrix (Fin N) (Fin N) ℂ) : (imH Z).IsHermitian := by
-  unfold imH IsHermitian
-  rw [conjTranspose_smul, conjTranspose_sub, conjTranspose_conjTranspose, ← neg_sub Z, smul_neg,
-    ← neg_smul]
-  congr 1
-  simp
-
 theorem eventually_posDef (δ : ℝ) {p : CF Ψ N N × CF Ψ n N × CF Ψ n N}
     (hp : ∀ τ, (imH (p.1 τ) - (δ : ℂ) • (1 : Matrix (Fin N) (Fin N) ℂ)).PosDef) :
     ∀ᶠ q : CF Ψ N N × CF Ψ n N × CF Ψ n N in 𝓝 p,
@@ -378,7 +328,7 @@ theorem eventually_posDef (δ : ℝ) {p : CF Ψ N N × CF Ψ n N × CF Ψ n N}
   · change Continuous fun q : CF Ψ N N × CF Ψ n N × CF Ψ n N =>
       (2 * I)⁻¹ * (q.1 τ i j - star (q.1 τ j i)) - ((δ : ℂ) • (1 : Matrix (Fin N) (Fin N) ℂ)) i j
     fun_prop
-  · refine (imH_isHermitian _).sub ?_
+  · refine (GlobalTheory.SW.ExpSum.imH_isHermitian _).sub ?_
     unfold IsHermitian
     rw [conjTranspose_smul, conjTranspose_one]
     simp
@@ -530,10 +480,10 @@ theorem GlobalTheory.SW.isHeat_eis : ∀ (E : Type) [Field E] [NumberField E] [I
   refine isHeat_tsum Ψ (D := fun U : Lag E N => eisTerm Ψ U.2.choose φ)
     (fun U => isHeat_const_mul Ψ (isHeat_hFac_inv E Ψ n N _ U.2.choose_spec.1) _) fun p hp => ?_
   obtain ⟨B, hB⟩ := (_root_.GlobalTheory.SW.ip_self_nonneg_and_bounds E _ _ R φ hR hφ).2.2.2.2.1
-  obtain ⟨δ₀, hδ₀, hI⟩ := EisTrans.exists_mem_HnGe Ψ (Base.I_mem_Hn (N := N) Ψ)
+  obtain ⟨δ₀, hδ₀, hI⟩ := GlobalTheory.PosSemidefShiftByScalar.exists_pos_mem_HnGe Ψ (Base.I_mem_Hn (N := N) Ψ)
   obtain ⟨C, hC⟩ := _root_.GlobalTheory.SW.theta_eis_bounded E Ψ hΨ n N hn hN R δ₀ hR hδ₀
   have hs := (hC φ hφ B hB _ hI).1
-  obtain ⟨δ, hδ, hp'⟩ := EisTrans.exists_mem_HnGe Ψ hp
+  obtain ⟨δ, hδ, hp'⟩ := GlobalTheory.PosSemidefShiftByScalar.exists_pos_mem_HnGe Ψ hp
   have h1 := eventually_posDef Ψ (δ / 2) (p := p) fun τ => by
     have h : (((δ / 2 : ℝ) : ℂ) • (1 : Matrix (Fin N) (Fin N) ℂ)).PosDef :=
       PosDef.one.smul (by exact_mod_cast half_pos hδ)

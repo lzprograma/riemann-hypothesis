@@ -10,53 +10,6 @@ import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsFinite
 import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
 import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsConjFsBasisOfUnitary
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Calculus.ContDiff.WithLp
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.KrullDimension.Field
-import Mathlib.RingTheory.KrullDimension.Polynomial
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.HoloSmooth
 public import ReciprocityTheory.L2DbarEstimates.LeviForms.DetUpdateColEq
 public import ReciprocityTheory.L2DbarEstimates.LeviForms.LogNormSq
@@ -67,8 +20,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.T
 public import Mathlib.Algebra.Algebra.ZMod
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -436,7 +387,7 @@ theorem finite_support_mult [CompactSpace Z] (D : CartierDiv Z) :
     fun z hz => ?_
   obtain ⟨T, hT, hzT⟩ := mem_sUnion.1 (hU.le (mem_supp_of_mult_ne_zero hz))
   refine ⟨T, hT, ?_⟩
-  simp only [dif_pos (hi T hT)]
+  simp only [dite_eq_left (hi T hT)]
   have hg := (hi T hT).isGenericPoint_genericPoint (hc T hT)
   have h₁ : z ≤ (hi T hT).genericPoint := hg.specializes hzT
   have h₂ : (hi T hT).genericPoint < genericPoint Z := by
@@ -470,7 +421,7 @@ theorem ratVal_fnOf {U : Z.Opens} (hy : y ∈ ptsIn q σ U) (h : genericPoint Z 
   have hr := regAt_fnOf (mem_ptsIn.1 hy) h a
   have e := hr.exists_fnOf.choose_spec.choose_spec.choose_spec
   have hV := mem_ptsIn_inf.2 ⟨mem_ptsIn.2 hr.exists_fnOf.choose_spec.choose, hy⟩
-  rw [ratVal, dif_pos hr, ← ev_res inf_le_left hV, ← ev_res inf_le_right hV]
+  rw [ratVal, dite_eq_left hr, ← ev_res inf_le_left hV, ← ev_res inf_le_right hV]
   congr 1
   exact fn_ext fun _ => by rw [fnOf_resG, fnOf_resG, e]
 
@@ -536,7 +487,7 @@ variable {hL : L.IsLB} {s : L.Sec} {hs : genericPoint Z ∈ nonzeroLocus s}
 
 theorem val_ratOfSec {i : L.ι} (h : genericPoint Z ∈ L.U i) :
     (ratOfSec s hs i : Z.functionField) = fnOf _ h (s.f i) := by
-  rw [ratOfSec, dif_pos h, Units.val_mk0]
+  rw [ratOfSec, dite_eq_left h, Units.val_mk0]
 
 
 variable (s hs) in
@@ -1249,119 +1200,6 @@ section Product
 variable [IsLocallyNoetherian Z] [IsAffine Z] (e : ℤ ≃+* Γ(Z, ⊤))
 include e
 
-theorem finsum_ord_prime {ℓ : ℕ} (hℓ : ℓ.Prime) :
-    ∑ᶠ z, (Scheme.ord (fnOf ⊤ (Opens.mem_top _) (e ℓ)) z : ℝ) * Real.log (Nat.card (Z.residueField z)) =
-      Real.log ℓ := by
-  have hU := isAffineOpen_top Z
-  have : IsPrincipalIdealRing Γ(Z, ⊤) := .of_surjective e e.surjective
-  have hπ : Prime (e ℓ) := (MulEquiv.prime_iff e).2 (Nat.prime_iff_prime_int.1 hℓ)
-  let P : PrimeSpectrum Γ(Z, ⊤) :=
-    ⟨Ideal.span {e ℓ}, (Ideal.span_singleton_prime hπ.ne_zero).2 hπ⟩
-  have hP0 : P.asIdeal ≠ ⊥ := mt Ideal.span_singleton_eq_bot.1 hπ.ne_zero
-  have hPm : P.asIdeal.IsMaximal := P.isPrime.isMaximal hP0
-  let z₀ : Z := hU.fromSpec P
-  have hz₀ : hU.primeIdealOf ⟨z₀, trivial⟩ = P :=
-    hU.fromSpec.isOpenEmbedding.injective (hU.fromSpec_primeIdealOf _)
-  rw [finsum_eq_single _ z₀ fun z hz => ?_]
-  · let := TopCat.Presheaf.algebra_section_stalk Z.presheaf (⟨z₀, trivial⟩ : (⊤ : Z.Opens))
-    have hl : IsLocalization.AtPrime (Z.presheaf.stalk z₀) P.asIdeal := by
-      have := hU.isLocalization_stalk ⟨z₀, trivial⟩
-      convert this
-      exact hz₀.symm
-    have := IsLocalization.AtPrime.isDiscreteValuationRing_of_dedekind_domain _ hP0
-      (Z.presheaf.stalk z₀)
-    have hm : IsLocalRing.maximalIdeal (Z.presheaf.stalk z₀) =
-        Ideal.span {algebraMap Γ(Z, ⊤) _ (e ℓ)} := by
-      rw [← IsLocalization.AtPrime.map_eq_maximalIdeal P.asIdeal, Ideal.map_span, image_singleton]
-    have hc : Order.coheight z₀ = 1 := by
-      have := (ringKrullDim_stalk_eq_coheight z₀).symm.trans
-        (IsDiscreteValuationRing.ringKrullDim_eq_one _)
-      exact_mod_cast this
-    have hi := (IsDiscreteValuationRing.irreducible_iff_uniformizer _).2 hm
-    have h₁ : Scheme.ord (fnOf ⊤ (Opens.mem_top _) (e ℓ)) z₀ = 1 := by
-      rw [← algebraMap_germ (Opens.mem_top z₀)]
-      exact (ord_algebraMap hc hi.ne_zero).trans
-        (congrArg (fun n : ℕ∞ => (n.toNat : ℤ)) (Ring.ord_of_irreducible hi))
-    have h₂ : Nat.card (Z.residueField z₀) = ℓ :=
-      (Nat.card_congr (((IsLocalization.AtPrime.equivQuotMaximalIdeal P.asIdeal
-        (Z.presheaf.stalk z₀)).toRingEquiv.symm.trans (Ideal.quotientEquiv (Ideal.span {(ℓ : ℤ)}) P.asIdeal e
-          (by rw [Ideal.map_span, image_singleton]; rfl)).symm).trans
-        (Int.quotientSpanNatEquivZMod ℓ)).toEquiv).trans (Nat.card_zmod ℓ)
-    rw [h₁, h₂, Int.cast_one, one_mul]
-  · let := TopCat.Presheaf.algebra_section_stalk Z.presheaf (⟨z, trivial⟩ : (⊤ : Z.Opens))
-    have := hU.isLocalization_stalk ⟨z, trivial⟩
-    have hn : e ℓ ∉ (hU.primeIdealOf ⟨z, trivial⟩).asIdeal := fun h => hz <|
-      (hU.fromSpec_primeIdealOf ⟨z, trivial⟩).symm.trans (congrArg hU.fromSpec (PrimeSpectrum.ext
-        (hPm.eq_of_le (Ideal.IsPrime.ne_top inferInstance)
-          ((Ideal.span_singleton_le_iff_mem _).2 h)).symm))
-    have hu : UnitAt z (fnOf ⊤ (Opens.mem_top _) (e ℓ)) :=
-      ⟨_, IsLocalization.map_units (Z.presheaf.stalk z)
-        (⟨_, hn⟩ : (hU.primeIdealOf ⟨z, trivial⟩).asIdeal.primeCompl), algebraMap_germ (Opens.mem_top z) _⟩
-    rw [hu.ord_eq_zero, Int.cast_zero, zero_mul]
-
-theorem product_formula {q : Z ⟶ Sp ℤ} {σ : ℤ →+* ℂ} (y : CxPts q σ) {f : Z.functionField}
-    (hf : f ≠ 0) : UnitAt (under y) f ∧
-      ∑ᶠ z, (Scheme.ord f z : ℝ) * Real.log (Nat.card (Z.residueField z)) =
-        Real.log ‖ratVal f y‖ := by
-  let G (f : Z.functionField) : ℝ :=
-    ∑ᶠ z, (Scheme.ord f z : ℝ) * Real.log (Nat.card (Z.residueField z))
-  have hfin {f : Z.functionField} (hf : f ≠ 0) : (Function.support fun z =>
-      (Scheme.ord f z : ℝ) * Real.log (Nat.card (Z.residueField z))).Finite :=
-    (CartierDiv.principal (Units.mk0 f hf)).finite_support_mult.subset fun z hz h0 => hz (by
-      rw [(CartierDiv.isEqn_principal _ z).mult_eq, Units.val_mk0] at h0
-      simp [h0])
-  have hG {f g : Z.functionField} (hf : f ≠ 0) (hg : g ≠ 0) : G (f * g) = G f + G g := by
-    simp only [G, Scheme.ord_mul hf hg, Int.cast_add, add_mul]
-    exact finsum_add_distrib (hfin hf) (hfin hg)
-  have hlog {f g : Z.functionField} (hf : UnitAt (under y) f) (hg : UnitAt (under y) g) :
-      Real.log ‖ratVal (f * g) y‖ = Real.log ‖ratVal f y‖ + Real.log ‖ratVal g y‖ := by
-    rw [ratVal_mul hf.regAt hg.regAt, norm_mul, Real.log_mul (norm_ne_zero_iff.2 (ratVal_ne_zero hf))
-      (norm_ne_zero_iff.2 (ratVal_ne_zero hg))]
-  have hev (n : ℤ) : ev q σ ⊤ (e n) y = n := by
-    rw [ev_eq mem_ptsIn_top, eq_intCast e, map_intCast]
-  have hu {n : ℤ} (hn : n ≠ 0) : UnitAt (under y) (fnOf ⊤ (Opens.mem_top _) (e n)) :=
-    (unitAt_fnOf_iff (Opens.mem_top _) _ _).2 (mem_ptsIn.1 ((mem_ptsIn_basicOpen mem_ptsIn_top _).2
-      (hev n ▸ Int.cast_ne_zero.2 hn)))
-  have hint (n : ℤ) (hn : n ≠ 0) :
-      G (fnOf ⊤ (Opens.mem_top _) (e n)) = Real.log ‖ratVal (fnOf ⊤ (Opens.mem_top _) (e n)) y‖ := by
-    induction n using UniqueFactorizationMonoid.induction_on_prime with
-    | h₁ => exact absurd rfl hn
-    | h₂ n h =>
-      have (z : Z) : Scheme.ord (fnOf ⊤ (Opens.mem_top _) (e n)) z = 0 :=
-        (unitAt_fnOf (U := ⊤) trivial trivial (h.map e).unit).ord_eq_zero
-      simp only [G, this]
-      rw [ratVal_fnOf mem_ptsIn_top, hev]
-      rcases Int.isUnit_iff.1 h with rfl | rfl <;> simp
-    | h₃ a π ha hπ ih =>
-      have hp : G (fnOf ⊤ (Opens.mem_top _) (e π)) = Real.log ‖ratVal (fnOf ⊤ (Opens.mem_top _) (e π)) y‖ := by
-        have h₁ := finsum_ord_prime e (Int.prime_iff_natAbs_prime.1 hπ)
-        have h₂ (z : Z) : Scheme.ord (fnOf ⊤ (Opens.mem_top _) (e π)) z =
-            Scheme.ord (fnOf ⊤ (Opens.mem_top _) (e π.natAbs)) z := by
-          rcases Int.natAbs_eq π with h | h
-          · rw [← h]
-          · have h₃ := (unitAt_fnOf (U := ⊤) (x := z) trivial trivial (-1)).ord_eq_zero
-            have h₄ := hu (Int.natCast_ne_zero.2 (Int.natAbs_ne_zero.2 hπ.ne_zero))
-            conv_lhs => rw [h, map_neg, ← neg_one_mul, map_mul]
-            refine (Scheme.ord_mul (by simp) h₄.ne_zero).trans ?_
-            exact (congrArg (· + _) h₃).trans (zero_add _)
-        simp only [G, h₂]
-        rw [h₁, ratVal_fnOf mem_ptsIn_top, hev, Complex.norm_intCast, Nat.cast_natAbs, Int.cast_abs]
-      rw [map_mul, map_mul, hG (hu hπ.ne_zero).ne_zero (hu ha).ne_zero, hlog (hu hπ.ne_zero) (hu ha),
-        hp, ih ha]
-  have := functionField_isFractionRing_of_isAffineOpen Z ⊤ (isAffineOpen_top Z)
-  obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (A := Γ(Z, ⊤)) f
-  obtain ⟨a, rfl⟩ := e.surjective a
-  obtain ⟨b, rfl⟩ := e.surjective b
-  have ha0 : a ≠ 0 := by rintro rfl; simp at hf
-  have hb0 : b ≠ 0 := by rintro rfl; simp at hb
-  rw [CartierDiv.algebraMap_top] at hf ⊢
-  have hq := (hu ha0).mul (hu hb0).inv
-  rw [← div_eq_mul_inv] at hq
-  have h₁ := hG hf (hu hb0).ne_zero
-  have h₂ := hlog hq (hu hb0)
-  rw [div_mul_cancel₀ _ (hu hb0).ne_zero] at h₁ h₂
-  exact ⟨hq, by linarith [hint a ha0, hint b hb0]⟩
-
 end Product
 
 variable (i : Z ⟶ Sp ℤ)
@@ -1376,74 +1214,6 @@ theorem mem_asIdeal_iff (n : ℤ) : n ∈ (i (genericPoint Z)).asIdeal ↔ (n : 
   exact ⟨UnitAt.ne_zero, unitAt_genericPoint⟩
 
 
-omit [IsIntegral Z] in
-theorem surjective_intCast [IsClosedImmersion i] :
-    Function.Surjective (Int.castRingHom Γ(Z, ⊤)) := by
-  rw [← RingHom.ext_int (i.appTop.hom.comp (Scheme.ΓSpecIso (.of ℤ)).inv.hom) (Int.castRingHom _)]
-  exact (IsClosedImmersion.isAffine_surjective_of_isAffine i).2.comp
-    (ConcreteCategory.bijective_of_isIso (Scheme.ΓSpecIso (.of ℤ)).inv).2
-
-def trivShift (t : ℝ) : HermLB (𝟙 (Sp ℤ)) := (HermLB.triv _).shift (fun _ => t) fun _ => rfl
-
-
-open Classical in
-theorem isArithHeight_trivShift (t : ℝ) : (trivShift t).IsArithHeight fun x =>
-    if x.asIdeal = ⊥ then t else Real.log (Nat.card (ℤ ⧸ x.asIdeal)) := {
-  vertical Z i _ _ κ _ _ _ d hd := by
-    have := (IsClosedImmersion.isAffine_surjective_of_isAffine i).1
-    have hinj := (algebraMap κ Γ(Z, ⊤)).injective
-    have hs : Function.Surjective (Int.castRingHom κ) := fun a =>
-      have ⟨n, hn⟩ := surjective_intCast i (algebraMap κ _ a)
-      ⟨n, hinj ((map_intCast _ n).trans hn)⟩
-    have hb : Function.Bijective (algebraMap κ Γ(Z, ⊤)) := ⟨hinj, fun a =>
-      have ⟨n, hn⟩ := surjective_intCast i a
-      ⟨n, (map_intCast _ n).trans hn⟩⟩
-    have hk : (i (genericPoint Z)).asIdeal = RingHom.ker (Int.castRingHom κ) := Ideal.ext fun n => by
-      rw [mem_asIdeal_iff, ← map_intCast (algebraMap κ Γ(Z, ⊤)), map_eq_zero_iff _ hinj]
-      rfl
-    have h0 : RingHom.ker (Int.castRingHom κ) ≠ ⊥ := fun h =>
-      have := Finite.of_injective _ ((RingHom.injective_iff_ker_eq_bot _).2 h)
-      not_finite ℤ
-    obtain rfl : d = 0 := by
-      rw [IsHomeomorph.topologicalKrullDim_eq _ Z.isoSpec.hom.homeomorph.isHomeomorph] at hd
-      have := hd.symm.trans ((PrimeSpectrum.topologicalKrullDim_eq_ringKrullDim _).trans
-        ((ringKrullDim_eq_of_ringEquiv (RingEquiv.ofBijective _ hb)).symm.trans (ringKrullDim_eq_zero_of_field κ)))
-      exact_mod_cast this
-    rw [hk, if_neg h0, Nat.card_congr (RingHom.quotientKerEquivOfSurjective hs).toEquiv, topSelfIntersection,
-      interNum_of_isEmpty, chi_structureModule_of_isAffine,
-      ← (AlgEquiv.ofBijective (Algebra.ofId _ _) hb).toLinearEquiv.finrank_eq, Module.finrank_self]
-    simp
-  point Z i _ _ _ hc _ r hr := by
-    have := (IsClosedImmersion.isAffine_surjective_of_isAffine i).1
-    let e := RingEquiv.ofBijective (Int.castRingHom Γ(Z, ⊤))
-      ⟨Int.cast_injective, surjective_intCast i⟩
-    have h0 : (i (genericPoint Z)).asIdeal = ⊥ := eq_bot_iff.2 fun n hn =>
-      Int.cast_eq_zero.1 ((mem_asIdeal_iff i n).1 hn)
-    let σ := Int.castRingHom ℂ
-    let y : CxPts (i ≫ 𝟙 _) σ := ofHom (isAffineOpen_top Z) (σ.comp e.symm) fun a =>
-      RingHom.congr_fun (RingHom.ext_int ((σ.comp e.symm.toRingHom).comp
-        (DVR.FlatBC.algX (i ≫ 𝟙 _) ⊤)) σ) a
-    have hy (y' : CxPts (i ≫ 𝟙 _) σ) : y' = y :=
-      Subtype.ext ((cancel_mono (i ≫ 𝟙 _)).1 (y'.2.trans y.2.symm))
-    let j := pick (((trivShift t).restr i).φ σ).isLB y
-    have hj (z : Z) : (((trivShift t).restr i).div hr).mult z = Scheme.ord (r j : Z.functionField) z :=
-      ((presents_divOfRatSec _ hr).isEqn j z (mem_iInter.2 fun _ => trivial)).mult_eq
-    have e' : (((trivShift t).restr i).φ σ).φ j y = 0 + 2 * t := ((trivShift t).φ σ).pull_φ i rfl j y
-    rw [if_pos h0, HermLB.curveDeg, finsum_eq_single _ σ fun σ' h => absurd (RingHom.ext_int _ _) h,
-      finsum_eq_single _ y fun y' h => absurd (hy y') h, logNorm]
-    simp only [hj]
-    rw [(product_formula e y (r j).ne_zero).2]
-    rw [e']
-    ring
-  recursion Z i _ _ _ _ e he hd := by
-    have := hd.ge.trans (i.isClosedEmbedding.isInducing.topologicalKrullDim_le.trans
-      isArithVar_int.dim_eq.le)
-    norm_cast at this
-    omega }
-
-theorem isSelfInter_trivShift (t : ℝ) : (trivShift t).IsSelfInter t :=
-  ⟨_, isArithHeight_trivShift t, if_pos (Ideal.ext fun n =>
-    (mem_asIdeal_iff (𝟙 (Sp ℤ)) n).trans (have := isArithVar_int.charZero; Int.cast_eq_zero))⟩
 
 end ArithBase
 

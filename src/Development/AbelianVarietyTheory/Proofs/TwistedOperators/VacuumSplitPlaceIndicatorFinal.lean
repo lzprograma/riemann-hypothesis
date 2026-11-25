@@ -229,10 +229,4 @@ theorem dbl_line_co {σ : E →ₐ[F] E} {n d : ℕ} {X : Spc F E n} {Y : Spc F 
 
 end GlobalTheory.DblVacLineTransp
 
-namespace GlobalTheory.DblVacLineSplitTransp
-
-open GlobalTheory.DblVacLineTransp
-
-end GlobalTheory.DblVacLineSplitTransp
-
 end

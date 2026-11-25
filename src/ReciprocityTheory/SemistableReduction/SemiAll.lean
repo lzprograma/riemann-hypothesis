@@ -438,18 +438,18 @@ theorem wa_main {K : Type} [Field K] [NumberField K] {r : ℕ} (S : HermForm K r
         simp only [waExt_zero, waExt_last, waExt_mid, Fin.val_zero, Fin.val_last, Fin.val_succ,
           Fin.val_castSucc] <;>
         try simp only [true_and]
-      · rw [hxx, if_neg (by omega), if_neg (by omega)]
-      · rw [hxy, if_pos (by omega)]
+      · rw [hxx, ite_eq_right (by omega), ite_eq_right (by omega)]
+      · rw [hxy, ite_eq_left (by omega)]
       · have := j.2
-        rw [(hmem j).2.1, if_neg (by omega), if_neg (by omega)]
-      · rw [hyx, if_pos (by omega)]
-      · rw [hyy, if_neg (by omega), if_neg (by omega)]
+        rw [(hmem j).2.1, ite_eq_right (by omega), ite_eq_right (by omega)]
+      · rw [hyx, ite_eq_left (by omega)]
+      · rw [hyy, ite_eq_right (by omega), ite_eq_right (by omega)]
       · have := j.2
-        rw [(hmem j).2.2, if_neg (by omega), if_neg (by omega)]
+        rw [(hmem j).2.2, ite_eq_right (by omega), ite_eq_right (by omega)]
       · have := i.2
-        rw [hbx, if_neg (by omega), if_neg (by omega)]
+        rw [hbx, ite_eq_right (by omega), ite_eq_right (by omega)]
       · have := i.2
-        rw [hby, if_neg (by omega), if_neg (by omega)]
+        rw [hby, ite_eq_right (by omega), ite_eq_right (by omega)]
       · have := i.2
         have := j.2
         rw [hgram', wa_witt_apply]
@@ -477,8 +477,8 @@ theorem wa_main {K : Type} [Field K] [NumberField K] {r : ℕ} (S : HermForm K r
       have := i.2
       by_cases hij : i = j
       · subst hij
-        rw [if_neg (by omega), if_pos ⟨rfl, by omega, by omega⟩]
-      · rw [hbo i j hij, if_neg (by omega), if_neg (fun h => hij (Fin.ext h.1))]
+        rw [ite_eq_right (by omega), ite_eq_left ⟨rfl, by omega, by omega⟩]
+      · rw [hbo i j hij, ite_eq_right (by omega), ite_eq_right (fun h => hij (Fin.ext h.1))]
     · have hz : ∀ k, S.h (b k) (∑ i, t i • b i) = t k * S.h (b k) (b k) := fun k => by
         rw [wa_sum_right, Finset.sum_eq_single k
           (fun i _ hik => by rw [hbo k i (Ne.symm hik), mul_zero]) (by simp)]
@@ -520,12 +520,12 @@ theorem wa_witt_ker {K : Type} [Field K] (r m : ℕ) (g : Fin r → K)
   · have h := hv j
     rw [Finset.sum_eq_single j] at h
     · simp only [wittMat, Matrix.of_apply] at h
-      rw [if_neg (by omega), if_pos ⟨trivial, hmid.1, hmid.2⟩] at h
+      rw [ite_eq_right (by omega), ite_eq_left ⟨trivial, hmid.1, hmid.2⟩] at h
       exact (mul_eq_zero.1 h).resolve_right (hg j hmid.1 hmid.2)
     · intro i _ hij
       have hi := i.isLt
       simp only [wittMat, Matrix.of_apply]
-      rw [if_neg, if_neg, mul_zero]
+      rw [ite_eq_right, ite_eq_right, mul_zero]
       · rintro ⟨h1, -⟩
         exact hij h1.symm
       · rintro ⟨h1, h2⟩
@@ -540,12 +540,12 @@ theorem wa_witt_ker {K : Type} [Field K] (r m : ℕ) (g : Fin r → K)
       have hc : (p : ℕ) + j + 1 = r ∧ ((p : ℕ) < m ∨ (j : ℕ) < m) := by
         rw [hpv]
         omega
-      rw [if_pos hc, mul_one] at h
+      rw [ite_eq_left hc, mul_one] at h
       exact h
     · intro i _ hij
       have hi := i.isLt
       simp only [wittMat, Matrix.of_apply]
-      rw [if_neg, if_neg, mul_zero]
+      rw [ite_eq_right, ite_eq_right, mul_zero]
       · rintro ⟨-, h2, h3⟩
         rw [hpv] at h2 h3
         omega
@@ -575,7 +575,7 @@ theorem wittBasis_holds : WittBasisStatement := by
   have hgmid : ∀ k : Fin r, m ≤ (k : ℕ) → (k : ℕ) + m < r → g k ≠ 0 := by
     intro k hk1 hk2 hgk
     have ht := hg (Pi.single k 1) (fun i hi => by
-      rw [Pi.single_apply, if_neg]
+      rw [Pi.single_apply, ite_eq_right]
       rintro rfl
       omega) (by
       rw [Finset.sum_eq_single k]
@@ -653,7 +653,7 @@ theorem sdd_factor {n : ℕ} {A : Matrix (Fin n) (Fin n) ℂ} (hA : A.PosDef) :
 theorem sdd_star_self_eig {n : ℕ} {D : Matrix (Fin n) (Fin n) ℂ} (hD : D.IsHermitian) (i : Fin n) :
     star (⇑(hD.eigenvectorBasis i)) ⬝ᵥ (⇑(hD.eigenvectorBasis i)) = 1 := by
   have h := orthonormal_iff_ite.mp hD.eigenvectorBasis.orthonormal i i
-  rw [if_pos rfl, PiLp.inner_apply] at h
+  rw [ite_eq_left rfl, PiLp.inner_apply] at h
   rw [← h]
   simp only [dotProduct, Pi.star_apply, RCLike.inner_apply]
   refine Finset.sum_congr rfl fun x _ => ?_
@@ -749,25 +749,21 @@ theorem sdd_det_mono {n : ℕ} (X Y : Matrix (Fin n) (Fin n) ℂ) (hX : X.PosDef
   rw [hdetX, hYe, sdd_det_congr, hDr, Complex.ofReal_re, ← Complex.ofReal_mul, Complex.ofReal_re]
   exact ⟨hBpos, le_mul_of_one_le_right hBpos.le hD1⟩
 
-def embM {K : Type} [Field K] [NumberField K] {r k : ℕ} (σ : K →+* ℂ) (b : Fin k → Fin r → K) :
-    Matrix (Fin r) (Fin k) ℂ :=
-  Matrix.of fun l i => σ (b i l)
-
 theorem sdd_gramX_eq {K : Type} [Field K] [NumberField K] {r k m : ℕ}
     (H : Matrix (Fin r) (Fin r) ℂ) (σ : K →+* ℂ) (b : Fin k → Fin r → K) (c : Fin m → Fin r → K) :
-    gramX H σ b c = (embM σ b)ᴴ * H * embM σ c := by
+    gramX H σ b c = (ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b)ᴴ * H * ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ c := by
   ext i j
-  simp only [gramX, embM, embVec, Matrix.of_apply, Matrix.mul_apply, conjTranspose_apply, dotProduct,
+  simp only [gramX, ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat, embVec, Matrix.of_apply, Matrix.mul_apply, conjTranspose_apply, dotProduct,
     Matrix.mulVec, Pi.star_apply, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
 
 theorem sdd_gramC_eq {K : Type} [Field K] [NumberField K] {r k : ℕ}
     (H : Matrix (Fin r) (Fin r) ℂ) (σ : K →+* ℂ) (b : Fin k → Fin r → K) :
-    gramC H σ b = (embM σ b)ᴴ * H * embM σ b := sdd_gramX_eq H σ b b
+    gramC H σ b = (ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b)ᴴ * H * ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b := sdd_gramX_eq H σ b b
 
 theorem sdd_embM_inj {K : Type} [Field K] [NumberField K] {r k : ℕ} (σ : K →+* ℂ)
-    (b : Fin k → Fin r → K) (hb : LinearIndependent K b) : Function.Injective (embM σ b).mulVec := by
+    (b : Fin k → Fin r → K) (hb : LinearIndependent K b) : Function.Injective (ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b).mulVec := by
   classical
   let M : Matrix (Fin r) (Fin k) K := Matrix.of fun l i => b i l
   have hM : Function.Injective M.mulVecLin := by
@@ -785,7 +781,7 @@ theorem sdd_embM_inj {K : Type} [Field K] [NumberField K] {r k : ℕ} (σ : K �
     rw [Matrix.toLin'_apply, Matrix.toLin'_apply, Matrix.one_mulVec, ← Matrix.mulVec_mulVec,
       LinearMap.toMatrix'_mulVec]
     exact LinearMap.congr_fun hg x
-  have hE : embM σ b = M.map σ := rfl
+  have hE : ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b = M.map σ := rfl
   intro x y hxy
   have e := congrArg ((LinearMap.toMatrix' g).map σ).mulVec hxy
   simp only [hE, Matrix.mulVec_mulVec, ← Matrix.map_mul, hLM, Matrix.map_one _ (map_zero σ) (map_one σ),
@@ -1045,34 +1041,34 @@ theorem sdd_gram_step {K : Type} [Field K] [NumberField K] {r e k₀ k₁ : ℕ}
     exact h l hl
   set D : Matrix (Fin r) (Fin r) ℂ := diagonal fun l => (d l : ℂ) with hDdef
   have hDpd : D.PosDef := posDef_diagonal_ofReal_of_pos d hd
-  have hG0 : ((embM σ b₀)ᴴ * D * embM σ b₀).PosDef :=
+  have hG0 : ((ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b₀)ᴴ * D * ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b₀).PosDef :=
     hDpd.conjTranspose_mul_mul_same (sdd_embM_inj σ b₀ hb₀li)
-  have hG1 : ((embM σ b₁)ᴴ * D * embM σ b₁).PosDef :=
+  have hG1 : ((ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b₁)ᴴ * D * ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b₁).PosDef :=
     hDpd.conjTranspose_mul_mul_same (sdd_embM_inj σ b₁ hb₁li)
-  have hu : IsUnit ((embM σ b₀)ᴴ * D * embM σ b₀).det := by
+  have hu : IsUnit ((ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b₀)ᴴ * D * ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b₀).det := by
     first
     | exact (Matrix.isUnit_iff_isUnit_det _).mp hG0.isUnit
-  set E : Matrix (Fin r) (Fin k₁) ℂ := embM σ c - embM σ b₀ *
-    (((embM σ b₀)ᴴ * D * embM σ b₀)⁻¹ * ((embM σ b₀)ᴴ * D * embM σ c)) with hE
+  set E : Matrix (Fin r) (Fin k₁) ℂ := ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ c - ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b₀ *
+    (((ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b₀)ᴴ * D * ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b₀)⁻¹ * ((ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b₀)ᴴ * D * ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ c)) with hE
 
   have hq : quotGramC D σ b₀ c = Eᴴ * D * E := by
     simp only [quotGramC, sdd_gramC_eq, sdd_gramX_eq]
     exact sdd_schur _ _ _ hDpd.1 hG0.1 hu
 
   have hB1 : ∀ (l : Fin r) (j : Fin k₁),
-      embM σ b₁ l j = if e ≤ (l : ℕ) then E l j else 0 := by
+      ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b₁ l j = if e ≤ (l : ℕ) then E l j else 0 := by
     intro l j
     have hb1 : b₁ j l = if e ≤ (l : ℕ) then c j l else 0 := by
       rw [← hcb j]; rfl
     by_cases hl : e ≤ (l : ℕ)
     · have hz : ∀ i, b₀ i l = 0 := fun i => hcutz i l hl
-      rw [if_pos hl, hE]
-      simp [embM, Matrix.mul_apply, hb1, hl, hz]
-    · rw [if_neg hl]
-      simp [embM, hb1, hl]
-  have hquad : ∀ v : Fin k₁ → ℂ, (star v ⬝ᵥ (((embM σ b₁)ᴴ * D * embM σ b₁) *ᵥ v)).re ≤
+      rw [ite_eq_left hl, hE]
+      simp [ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat, Matrix.mul_apply, hb1, hl, hz]
+    · rw [ite_eq_right hl]
+      simp [ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat, hb1, hl]
+  have hquad : ∀ v : Fin k₁ → ℂ, (star v ⬝ᵥ (((ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b₁)ᴴ * D * ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b₁) *ᵥ v)).re ≤
       (star v ⬝ᵥ ((Eᴴ * D * E) *ᵥ v)).re :=
-    sdd_cut_quad d (fun l => (hd l).le) e E (embM σ b₁) hB1
+    sdd_cut_quad d (fun l => (hd l).le) e E (ReciprocityTheory.MultiplicativeHeights.DegAdd.embMat σ b₁) hB1
   obtain ⟨hpos, hle⟩ := sdd_det_mono _ _ hG1 (Matrix.isHermitian_conjTranspose_mul_mul E hDpd.1) hquad
   rw [sdd_gramC_eq, hq]
   exact Real.log_le_log hpos hle

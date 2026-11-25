@@ -64,8 +64,6 @@ open GlobalTheory.FlagTan (dimFlag)
 open GlobalTheory.HSApp
 open GlobalTheory.Cartier GlobalTheory.Discrepancy GlobalTheory.QCoh
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.NefFieldExt

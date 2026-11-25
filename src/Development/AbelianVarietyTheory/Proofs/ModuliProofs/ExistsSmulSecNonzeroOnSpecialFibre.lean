@@ -82,10 +82,8 @@ theorem isPushout_app {g : R →+* R'} {f : X ⟶ Spec (CommRingCat.of R)} {π :
   · simp [Scheme.Hom.app_eq_appLE]
   · ext x; simp [AbLaw.cst, Scheme.Hom.appLE]; rfl
 
-theorem pre_le (π : X' ⟶ X) {U V : X.Opens} (h : V ≤ U) : π ⁻¹ᵁ V ≤ π ⁻¹ᵁ U := fun _ hy => h hy
-
 theorem app_rs (π : X' ⟶ X) {U V : X.Opens} (h : V ≤ U) (a : Γ(X, U)) :
-    (π.app V).hom (rs X h a) = rs X' (pre_le π h) ((π.app U).hom a) :=
+    (π.app V).hom (rs X h a) = rs X' (π.preimage_mono h) ((π.app U).hom a) :=
   congrArg (fun φ => φ.hom a) (π.naturality (homOfLE h).op)
 
 theorem app_cst {g : R →+* R'} {f : X ⟶ Spec (CommRingCat.of R)} {π : X' ⟶ X}
@@ -113,15 +111,6 @@ theorem mem_basicOpen_cst (f : X ⟶ Spec (CommRingCat.of R)) (W : X.Opens) (r :
   refine (congrArg (x ∈ ·) e₁).to_iff.symm.trans ?_
   exact (congrArg (f x ∈ ·) e₂).to_iff
 
-theorem mem_basicOpen_iff {U : X.Opens} (hU : IsAffineOpen U) (x : U) (s : Γ(X, U)) :
-    x.1 ∈ X.basicOpen s ↔ s ∉ (hU.primeIdealOf x).asIdeal := by
-  have h : (hU.primeIdealOf x : Spec Γ(X, U)) ∈ hU.fromSpec ⁻¹ᵁ X.basicOpen s ↔
-      x.1 ∈ X.basicOpen s := by
-    conv_rhs => rw [← hU.fromSpec_primeIdealOf x]
-    rfl
-  rw [← h, hU.fromSpec_preimage_basicOpen]
-  rfl
-
 theorem cst_eq (f : X ⟶ Spec (CommRingCat.of R)) (U : X.Opens) :
     AbLaw.cst f U = (f.appLE ⊤ U le_top).hom.comp (Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom := by
   ext x; simp [AbLaw.cst, Scheme.Hom.appLE]; rfl
@@ -141,7 +130,7 @@ theorem exists_etale_chart (f : X ⟶ Spec (CommRingCat.of R)) [Smooth f] {U : X
   haveI : Algebra.Smooth R Γ(X, W) := cst_smooth f hW
   obtain ⟨g, hg, hs⟩ := Algebra.IsSmoothAt.exists_notMem_isStandardSmooth R (hW.primeIdealOf ⟨x, hxW⟩).asIdeal
   have hxg : x ∈ X.basicOpen g := by
-    exact (mem_basicOpen_iff hW ⟨x, hxW⟩ g).2 hg
+    exact (AlgebraicGeometry.IsAffineOpen.mem_basicOpen_iff_notMem_primeIdealOf hW ⟨x, hxW⟩ g).2 hg
   haveI := hW.isLocalization_basicOpen g
   letI := (AbLaw.cst f (X.basicOpen g)).toAlgebra
   haveI : IsScalarTower R Γ(X, W) Γ(X, X.basicOpen g) :=
@@ -239,7 +228,7 @@ theorem app_injective [Smooth f] (U : X.Opens) : Function.Injective (j.app U).ho
 
 theorem exists_extension [Smooth f] {U : X.Opens} (t : Γ(XK, j ⁻¹ᵁ U))
     (h : ∀ x ∈ U, ∃ (V : X.Opens) (hV : V ≤ U) (b : Γ(X, V)), x ∈ V ∧
-      (j.app V).hom b = rs XK (pre_le j hV) t) :
+      (j.app V).hom b = rs XK (j.preimage_mono hV) t) :
     ∃ b : Γ(X, U), (j.app U).hom b = t := by
   choose V hV b hx hb using h
   have hc : U ≤ ⨆ x : U, V x.1 x.2 := fun x hxU =>
@@ -265,7 +254,7 @@ def loc (σ : LB.Sec (M.pull j)) (i : M.ι) {V : X.Opens} (hV : V ≤ M.U i) : �
   rs XK (le_pull M j hV) (σ.f (fun _ => i))
 
 theorem rs_loc (σ : LB.Sec (M.pull j)) (i : M.ι) {V W : X.Opens} (hV : V ≤ M.U i) (h : W ≤ V) :
-    rs XK (pre_le j h) (loc σ i hV) = loc σ i (h.trans hV) := rs_rs _ _ _
+    rs XK (j.preimage_mono h) (loc σ i hV) = loc σ i (h.trans hV) := rs_rs _ _ _
 
 theorem loc_trans (σ : LB.Sec (M.pull j)) (i k : M.ι) {V : X.Opens} (hi : V ≤ M.U i) (hk : V ≤ M.U k) :
     loc σ i hi = (j.app V).hom (rs X (le_inf hi hk) (M.g i k).val) * loc σ k hk := by
@@ -369,11 +358,11 @@ theorem exists_of_eq [Ring.DimensionLEOne O] [IsAlgClosed K] [Smooth f] [Geometr
       (⟨(IsLocalRing.maximalIdeal O).map (AbLaw.cst f V), hp⟩ : PrimeSpectrum Γ(X, V))
     have hy' : (hV.primeIdealOf y).asIdeal = (IsLocalRing.maximalIdeal O).map (AbLaw.cst f V) :=
       congrArg PrimeSpectrum.asIdeal hy
-    refine ⟨y.1, (mem_basicOpen_iff hV y b').2 (hy' ▸ hb'), ?_⟩
+    refine ⟨y.1, (AlgebraicGeometry.IsAffineOpen.mem_basicOpen_iff_notMem_primeIdealOf hV y b').2 (hy' ▸ hb'), ?_⟩
     refine PrimeSpectrum.ext (((IsLocalRing.maximalIdeal.isMaximal O).eq_of_le (f y.1).isPrime.ne_top
       fun a ha => ?_).symm)
     by_contra h
-    exact (mem_basicOpen_iff hV y _).1 ((mem_basicOpen_cst f V a y.2).2 h) (hy' ▸ Ideal.mem_map_of_mem _ ha)
+    exact (AlgebraicGeometry.IsAffineOpen.mem_basicOpen_iff_notMem_primeIdealOf hV y _).1 ((mem_basicOpen_cst f V a y.2).2 h) (hy' ▸ Ideal.mem_map_of_mem _ ha)
 
 theorem exists_eq_mul [Smooth f] [GeometricallyIntegral f] {i k : M.ι} {V W : X.Opens} (hV : V ≤ M.U i)
     (hW : W ≤ M.U k) {c d : K} (hd : d ≠ 0) {a : Γ(X, V)} {b : Γ(X, W)}

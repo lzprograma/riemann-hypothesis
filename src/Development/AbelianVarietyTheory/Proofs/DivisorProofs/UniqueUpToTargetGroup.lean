@@ -46,8 +46,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.P
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open NumberField IsDedekindDomain Module ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.IndefiniteRowSideFullHecke.FrameWeightGapBounds
@@ -184,8 +182,6 @@ theorem sub_mem_natSMul_span (A : FractionalIdeal (nonZeroDivisors (𝓞 E)) E) 
     rw [← algebraMap_smul E c x, Matrix.mulVec_smul, ← smul_sub, e, ← algebraMap_smul E c y, smul_comm]
 
 end Transfer
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem IsTransp.uniq {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D}
     {Kc : Formalism.MainNotions.G.Consts} {Y : DivX D} {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc Y cX} {Csz : ℝ} (p : PtAt ex Csz)

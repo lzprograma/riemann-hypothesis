@@ -64,8 +64,6 @@ import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelPullbackIdComp
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
@@ -365,13 +363,6 @@ theorem isSymplectic_of_translFixed {ζ : Bˣ} (hM : M ≠ 0) (hζ : ζ ^ M = 1)
 
 end Symplectic
 
-section Along
-
-variable {h M : ℕ} {B B' : Type} [CommRing B] [CommRing B'] {S S' : Scheme.{0}} {s : S ⟶ Sp B} {s' : S' ⟶ Sp B'}
-  {ζ : B} {ζ' : B'}
-
-end Along
-
 section Clauses
 
 variable {h M : ℕ} (p : ℕ) {B : Type} [CommRing B] {X : Scheme.{0}} {s : X ⟶ Sp B}
@@ -379,11 +370,5 @@ variable {h M : ℕ} (p : ℕ) {B : Type} [CommRing B] {X : Scheme.{0}} {s : X �
 alias spMap_comp := _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap_comp
 
 end Clauses
-
-section Main
-
-variable {h p M : ℕ}
-
-end Main
 
 end GlobalTheory.SiegelTypings

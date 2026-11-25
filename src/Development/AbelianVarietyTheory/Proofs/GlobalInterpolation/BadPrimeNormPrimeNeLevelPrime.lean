@@ -12,43 +12,7 @@ public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.Valuation
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationLeOneOfMemZmu
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationLeOneOfPow
 public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.VolqExistsPow
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -162,7 +126,7 @@ theorem awayAt_locTop (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (hS : Pr.T 
       exact TopTwist.pow_smul_repY sel mu cst hY P hP
     refine ⟨fun x => ?_, fun x z hz => ?_⟩
     · unfold TopStep.locTop PhiTop
-      rw [if_neg hP, map_mul]
+      rw [ite_eq_right hP, map_mul]
       exact mul_le_one' (TopTwist.valuation_PhiQ w _ _ _ _ _ _ _ _ _) (TopTwist.valuation_ftY sel mu cst hc P hP hD w hqw hy _)
     · have hz' := fun y hy => (key _).1 (hz P.1 (Finset.mem_singleton_self _) y hy)
       have h1 : R.r ≤ R.N (m2 + 1) + cOf R (m2 + 1) := by
@@ -176,7 +140,7 @@ theorem awayAt_locTop (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (hS : Pr.T 
       obtain ⟨k, hk⟩ := Nat.exists_eq_add_of_le' hc.B_pos
       unfold TopStep.locTop PhiTop
       dsimp only
-      rw [if_neg hP]
+      rw [ite_eq_right hP]
       congr 1
       · have e : prXp X.E R ∘ₗ (x + ((qOf P.1 : X.E) ^ cst.B) • z) ∘ₗ
               LinearMap.funLeft X.E X.E (Fin.castAdd (cOf R (m2 + 1))) =
@@ -266,7 +230,7 @@ theorem kerIsTerm_of_muqUnit (W : Wts X Pr.Word R) (hX : X.Ok) (hPr : Pr.Ok) (hs
         (inFr (frsF sel mu p.1.1 P) (frsF sel mu p'.1.1 P) x) else 0,
     ⟨fun x hx => ?_, fun x y hy => ?_⟩, fun w hw x => ?_, isFrames_frsF p.1.1, isFrames_frsF p'.1.1, fun q q' hq hq' => ?_⟩
   · by_contra h
-    exact hx (if_neg h)
+    exact hx (ite_eq_right h)
   · obtain ⟨w, hw⟩ := exists_place X.K (hPr.T_prime u)
     have hy' : y ∈ divLat (cAof sel mu cst) (homAt (rowSG Pr sel mu) p.1.1.deco.1.N p'.1.1.deco.1.N) := by
       obtain ⟨z, hz, rfl⟩ := hy
@@ -293,7 +257,7 @@ theorem kerIsTerm_of_muqUnit (W : Wts X Pr.Word R) (hX : X.Ok) (hPr : Pr.Ok) (hs
       rw [localization_eq hX hPr hsel hS hq'.1 ⟨P, hP⟩]
       exact hx P (Finset.mem_union_right _ hP) y hy
     dsimp only
-    rw [if_pos hx', (hΦ q q').1, frsF_eq hX hPr hsel hS hq, frsF_eq hX hPr hsel hS hq', ← hq.2.2.2, ← hq'.2.2.2]
+    rw [ite_eq_left hx', (hΦ q q').1, frsF_eq hX hPr hsel hS hq, frsF_eq hX hPr hsel hS hq', ← hq.2.2.2, ← hq'.2.2.2]
 
 end Chain
 

@@ -3,47 +3,7 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFDefs
 public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockMonomial
 import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.TopOddNeEnd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
 import Mathlib.Data.Finsupp.Pointwise
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -121,7 +81,7 @@ theorem expFact_ioExp (C0 CE1 CE2 : ℝ) (X : Loc) (j : Fin (numSeg X.TT)) (b : 
     intro x hx
     rw [ioExp, Finsupp.add_apply, hsumv, Finset.sum_eq_zero, add_zero]
     intro v _
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hx (Finset.mem_image.2 ⟨v, Finset.mem_univ _, h⟩)
   have hin : ∀ v, ioExp C0 CE1 CE2 X j b μ (symVar C0 CE1 CE2 X j v) =
@@ -130,13 +90,13 @@ theorem expFact_ioExp (C0 CE1 CE2 : ℝ) (X : Loc) (j : Fin (numSeg X.TT)) (b : 
     rw [ioExp, Finsupp.add_apply, hsumv]
     congr 1
     rw [Finset.sum_eq_single v]
-    · rw [if_pos rfl]
+    · rw [ite_eq_left rfl]
     · intro v' _ hne
-      rw [if_neg]
+      rw [ite_eq_right]
       exact fun h => hne (hinj h)
     · intro hv
       have h0 : μ v = 0 := by simpa using hv
-      rw [if_pos rfl, h0, mul_zero]
+      rw [ite_eq_left rfl, h0, mul_zero]
   rw [expFact, Finsupp.prod_fintype _ _ (fun _ => Nat.factorial_zero)]
   rw [← Finset.prod_sdiff (Finset.subset_univ (Finset.univ.image (symVar C0 CE1 CE2 X j)))]
   rw [Finset.prod_image (fun a _ c _ h => hinj h)]
@@ -167,7 +127,7 @@ theorem baseExp_odd (C0 CE1 CE2 : ℝ) (X : Loc) (j : Fin (numSeg X.TT)) (b : Se
       · rw [Finsupp.add_apply, Finsupp.single_apply, Finsupp.single_apply]
         cases β0 <;> simp
       · intro c _ hc
-        rw [Finsupp.add_apply, Finsupp.single_apply, Finsupp.single_apply, if_neg, if_neg]
+        rw [Finsupp.add_apply, Finsupp.single_apply, Finsupp.single_apply, ite_eq_right, ite_eq_right]
         · rfl
         · intro h
           exact hc (congrArg (fun y => y.2) h)
@@ -178,8 +138,8 @@ theorem baseExp_odd (C0 CE1 CE2 : ℝ) (X : Loc) (j : Fin (numSeg X.TT)) (b : Se
     · intro i _ hi
       rw [Finsupp.finsetSum_apply]
       refine Finset.sum_eq_zero fun c _ => ?_
-      rw [Finsupp.add_apply, Finsupp.single_apply, Finsupp.single_apply, if_neg (hne i true c hi),
-        if_neg (hne i false c hi)]
+      rw [Finsupp.add_apply, Finsupp.single_apply, Finsupp.single_apply, ite_eq_right (hne i true c hi),
+        ite_eq_right (hne i false c hi)]
       rfl
     · intro h
       exact absurd (Finset.mem_univ i0) h
@@ -188,21 +148,21 @@ theorem baseExp_odd (C0 CE1 CE2 : ℝ) (X : Loc) (j : Fin (numSeg X.TT)) (b : Se
       by_cases h1 : (i0 : ℕ) < (X.seg C0 CE1 CE2 j).sigma
       · by_cases hc : c0 = 0
         · subst hc
-          rw [if_pos h1, if_pos ⟨h1, rfl⟩, Finsupp.add_apply, Finsupp.single_apply, Finsupp.single_apply]
+          rw [ite_eq_left h1, ite_eq_left ⟨h1, rfl⟩, Finsupp.add_apply, Finsupp.single_apply, Finsupp.single_apply]
           cases β0 <;> simp
-        · rw [if_pos h1, if_neg (fun h => hc h.2), Finsupp.add_apply, Finsupp.single_apply,
-            Finsupp.single_apply, if_neg, if_neg]
+        · rw [ite_eq_left h1, ite_eq_right (fun h => hc h.2), Finsupp.add_apply, Finsupp.single_apply,
+            Finsupp.single_apply, ite_eq_right, ite_eq_right]
           · rfl
           · intro h
             exact hc (congrArg (fun y => y.2) h).symm
           · intro h
             exact hc (congrArg (fun y => y.2) h).symm
-      · rw [if_neg h1, if_neg (fun h => h1 h.1)]
+      · rw [ite_eq_right h1, ite_eq_right (fun h => h1 h.1)]
     · intro i _ hi
       rw [hite]
       split_ifs
-      · rw [Finsupp.add_apply, Finsupp.single_apply, Finsupp.single_apply, if_neg (hne i true 0 hi),
-          if_neg (hne i false 0 hi)]
+      · rw [Finsupp.add_apply, Finsupp.single_apply, Finsupp.single_apply, ite_eq_right (hne i true 0 hi),
+          ite_eq_right (hne i false 0 hi)]
         rfl
       · rfl
     · intro h

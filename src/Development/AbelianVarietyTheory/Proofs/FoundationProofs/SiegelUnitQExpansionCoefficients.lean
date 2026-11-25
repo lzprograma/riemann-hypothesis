@@ -10,51 +10,9 @@ public import Mathlib.RingTheory.SimpleRing.Principal
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SiegelUnitInTowerAnEqSiegelUnitOnComplex
 import Development.AbelianVarietyTheory.Definitions.Foundations.CthFac
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SmoothedSiegelUnitQExpansionCoeffsIntegral
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 import Mathlib.Analysis.Normed.Group.Tannery
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -119,13 +77,13 @@ theorem uniq (d : ℚ → ℂ) (hwf : (Function.support d).IsWF) (S : Set ℂ)
   · intro r
     by_cases hr : r = r0
     · subst hr
-      simp only [f, g, if_pos rfl, sub_self, mul_zero, zero_mul, Complex.exp_zero, mul_one]
+      simp only [f, g, ite_eq_left rfl, sub_self, mul_zero, zero_mul, Complex.exp_zero, mul_one]
       exact tendsto_const_nhds
     by_cases hd : d r = 0
-    · simp only [f, g, hd, zero_mul, if_neg hr]
+    · simp only [f, g, hd, zero_mul, ite_eq_right hr]
       exact tendsto_const_nhds
     have hlt : (r0 : ℝ) < r := by exact_mod_cast lt_of_le_of_ne (hle r hd) (Ne.symm hr)
-    simp only [g, if_neg hr]
+    simp only [g, ite_eq_right hr]
     rw [tendsto_zero_iff_norm_tendsto_zero]
     have hpos : 0 < 2 * Real.pi * ((r : ℝ) - r0) := by have := Real.pi_pos; nlinarith
     have hT : Filter.Tendsto (fun j : ℕ => ‖d r‖ * Real.exp (-(2 * Real.pi * ((r : ℝ) - r0) * j))) Filter.atTop (nhds 0) := by
@@ -160,14 +118,13 @@ end GlobalTheory.KExp
 
 namespace GlobalTheory.KExp
 
-theorem siegel_exp : ∀ (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (ε : Ω →+* ℂ) (T : Tower Ω ε) (c : ℕ) (M a b : ℕ), 0 < M → a < M → admitted c ![(a : ℚ) / M, (b : ℚ) / M] → ∃ (k : ℤ) (A : ℕ → Ω), GlobalTheory.QFam.HasQ M (fun τ => sg c ![(a : ℚ) / M, (b : ℚ) / M] τ * ee (-((k : ℂ) / M) * (τ : ℂ))) (fun n => ε (A n)) ∧ (∀ n : ℕ, (T.exp (siegel T c ![(a : ℚ) / M, (b : ℚ) / M])).coeff (((k : ℚ) + n) / M) = A n) ∧ ∀ r : ℚ, (∀ n : ℕ, r ≠ ((k : ℚ) + n) / M) → (T.exp (siegel T c ![(a : ℚ) / M, (b : ℚ) / M])).coeff r = 0 := by
-  intro Ω _ _ _ ε T c M a b hM haM hadm
+theorem exp_of_hasQ {Ω : Type} [Field Ω] [Algebra ℚ Ω] {ε : Ω →+* ℂ} (T : Tower Ω ε) (f : T.K) (g : UpperHalfPlane → ℂ) {M : ℕ}
+    (hM : 0 < M) (k : ℤ) (A' : ℕ → ℂ)
+    (hmem : T.an f = ((fun z => g (UpperHalfPlane.ofComplex z) : ℂ → ℂ) : GlobalTheory.KZ.Mero))
+    (hA' : GlobalTheory.QFam.HasQ M (fun τ => g τ * ee (-((k : ℂ) / M) * (τ : ℂ))) A') :
+    (∀ n : ℕ, ε ((T.exp f).coeff (((k : ℚ) + n) / M)) = A' n) ∧
+      ∀ r : ℚ, (∀ n : ℕ, r ≠ ((k : ℚ) + n) / M) → (T.exp f).coeff r = 0 := by
   classical
-  set x : Fin 2 → ℚ := ![(a : ℚ) / M, (b : ℚ) / M] with hx
-  obtain ⟨k, hk⟩ := _root_.GlobalTheory.SiegQ.sg_expansion_int c M a hM haM
-  obtain ⟨A', hA', -⟩ := hk b hadm
-  have hmem := _root_.GlobalTheory.KZ.SiegelMem.an_siegel_eq Ω ε T c x hadm
-  set f := siegel T c x with hf
   obtain ⟨φ, C, hφ, hsum⟩ := T.an_exp f
   have hMq : (M : ℚ) ≠ 0 := by exact_mod_cast hM.ne'
   have hMc : (M : ℂ) ≠ 0 := by exact_mod_cast hM.ne'
@@ -181,7 +138,7 @@ theorem siegel_exp : ∀ (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure �
   have hBι : ∀ n, B (ι n) = A' n := by
     intro n
     have h : ∃ m, ι m = ι n := ⟨n, rfl⟩
-    simp only [B, dif_pos h]
+    simp only [B, dite_eq_left h]
     rw [hι h.choose_spec]
   have hB0 : ∀ r, r ∉ Set.range ι → B r = 0 := by
     intro r hr
@@ -189,7 +146,7 @@ theorem siegel_exp : ∀ (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure �
     rw [dite_eq_right]
     exact hr
   have hBsum : ∀ z : ℂ, 0 < z.im →
-      HasSum (fun r : ℚ => B r * Complex.exp (2 * Real.pi * Complex.I * (r : ℂ) * z)) (sgC c x z) := by
+      HasSum (fun r : ℚ => B r * Complex.exp (2 * Real.pi * Complex.I * (r : ℂ) * z)) (g (UpperHalfPlane.ofComplex z)) := by
     intro z hz
     have h2 := (hA' ⟨z, hz⟩).mul_left (ee ((k : ℂ) / M * z))
     rw [← hι.hasSum_iff (fun r hr => by simp [hB0 r hr])]
@@ -201,18 +158,18 @@ theorem siegel_exp : ∀ (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure �
       congr 2
       push_cast
       field_simp
-    have e2 : sgC c x z = ee ((k : ℂ) / M * z) * (sg c x ⟨z, hz⟩ * ee (-((k : ℂ) / M) * z)) := by
-      simp only [sgC, UpperHalfPlane.ofComplex_apply_of_im_pos hz]
+    have e2 : g (UpperHalfPlane.ofComplex z) = ee ((k : ℂ) / M * z) * (g ⟨z, hz⟩ * ee (-((k : ℂ) / M) * z)) := by
+      simp only [UpperHalfPlane.ofComplex_apply_of_im_pos hz]
       rw [mul_left_comm, ee, ee, ← Complex.exp_add]
       have : 2 * Real.pi * Complex.I * ((k : ℂ) / M * z) + 2 * Real.pi * Complex.I * (-((k : ℂ) / M) * (z : ℂ)) = 0 := by
         ring
       rw [this, Complex.exp_zero, mul_one]
     rw [e1, e2]
     simpa using h2
-  have hgerm : φ =ᶠ[Filter.codiscreteWithin Hs] sgC c x := by
+  have hgerm : φ =ᶠ[Filter.codiscreteWithin Hs] fun z => g (UpperHalfPlane.ofComplex z) := by
     have := hφ.symm.trans hmem
     exact Filter.Germ.coe_eq.mp this
-  let S : Set ℂ := {z | C < z.im ∧ 0 < z.im ∧ φ z = sgC c x z}
+  let S : Set ℂ := {z | C < z.im ∧ 0 < z.im ∧ φ z = g (UpperHalfPlane.ofComplex z)}
   have hS : ∀ y : ℝ, ∃ z ∈ S, y < z.im := by
     intro y
     set Y := max (max y C) 0 + 1 with hY
@@ -268,16 +225,24 @@ theorem siegel_exp : ∀ (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure �
       have := ((hsum _ hzi).summable.sub (hBsum _ hzp).summable)
       simpa [d, sub_mul] using this
   have hdr : ∀ r, ε ((T.exp f).coeff r) = B r := fun r => sub_eq_zero.mp (congrFun hd r)
-  refine ⟨k, fun n => (T.exp f).coeff (ι n), ?_, fun n => rfl, ?_⟩
-  · have : (fun n => ε ((T.exp f).coeff (ι n))) = A' := funext fun n => by rw [hdr, hBι]
-    rw [this]
-    exact hA'
-  · intro r hr
-    have hr' : r ∉ Set.range ι := by
-      rintro ⟨n, rfl⟩
-      exact hr n rfl
-    have := hdr r
-    rw [hB0 r hr'] at this
-    exact (map_eq_zero_iff ε ε.injective).mp this
+  refine ⟨fun n => by rw [hdr]; exact hBι n, fun r hr => ?_⟩
+  have hr' : r ∉ Set.range ι := by
+    rintro ⟨n, rfl⟩
+    exact hr n rfl
+  have := hdr r
+  rw [hB0 r hr'] at this
+  exact (map_eq_zero_iff ε ε.injective).mp this
+
+theorem siegel_exp : ∀ (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (ε : Ω →+* ℂ) (T : Tower Ω ε) (c : ℕ) (M a b : ℕ), 0 < M → a < M → admitted c ![(a : ℚ) / M, (b : ℚ) / M] → ∃ (k : ℤ) (A : ℕ → Ω), GlobalTheory.QFam.HasQ M (fun τ => sg c ![(a : ℚ) / M, (b : ℚ) / M] τ * ee (-((k : ℂ) / M) * (τ : ℂ))) (fun n => ε (A n)) ∧ (∀ n : ℕ, (T.exp (siegel T c ![(a : ℚ) / M, (b : ℚ) / M])).coeff (((k : ℚ) + n) / M) = A n) ∧ ∀ r : ℚ, (∀ n : ℕ, r ≠ ((k : ℚ) + n) / M) → (T.exp (siegel T c ![(a : ℚ) / M, (b : ℚ) / M])).coeff r = 0 := by
+  intro Ω _ _ _ ε T c M a b hM haM hadm
+  set x : Fin 2 → ℚ := ![(a : ℚ) / M, (b : ℚ) / M]
+  obtain ⟨k, hk⟩ := _root_.GlobalTheory.SiegQ.sg_expansion_int c M a hM haM
+  obtain ⟨A', hA', -⟩ := hk b hadm
+  have hmem := _root_.GlobalTheory.KZ.SiegelMem.an_siegel_eq Ω ε T c x hadm
+  obtain ⟨h1, h2⟩ := exp_of_hasQ T (siegel T c x) (sg c x) hM k A' hmem hA'
+  refine ⟨k, fun n => (T.exp (siegel T c x)).coeff (((k : ℚ) + n) / M), ?_, fun _ => rfl, h2⟩
+  have h1' : (fun n : ℕ => ε ((T.exp (siegel T c x)).coeff (((k : ℚ) + n) / M))) = A' := funext h1
+  rw [h1']
+  exact hA'
 
 end GlobalTheory.KExp

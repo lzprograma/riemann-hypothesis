@@ -57,9 +57,9 @@ theorem kron_identity {T : Type} [Fintype T] [DecidableEq T] {J : T → Type}
   by_cases h : I = I'
   · subst h
     simp
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     obtain ⟨t, ht⟩ : ∃ t, I t ≠ I' t := not_forall.mp fun hc => h (funext hc)
-    exact Finset.prod_eq_zero (Finset.mem_univ t) (if_neg ht)
+    exact Finset.prod_eq_zero (Finset.mem_univ t) (ite_eq_right ht)
 
 end GlobalTheory.KroneckerIdentity
 end -- clump:auto

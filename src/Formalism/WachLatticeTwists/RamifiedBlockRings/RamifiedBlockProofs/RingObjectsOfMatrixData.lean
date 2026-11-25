@@ -11,56 +11,9 @@ public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs
 public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.FinrankRangeEq
 public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.IdempotentImageSurjective
 public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.RankDiagIte
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Linter.HaveILetI
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.CMemPolyT, Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.RingObjectsOfMatrixData
@@ -305,7 +258,6 @@ theorem eDiag' (A : Type) [CommRing A] (d : Type) [Fintype d] [DecidableEq d] (S
   funext a
   rw [hl]
 
-set_option maxHeartbeats 8000000 in
 theorem ring_objects_of_matrix_data (hEM : StatEMat) (hSP : StatSplitPts) (hKO : StatIdemKO) : RingObjectsExist := by
   intro O _ _ _ X _ T d _ _ G _ r₀ π t ht bl χ₁ ε hP hA eB e₁ hI g₀ s hX
   obtain ⟨hloc, hpts, hG1, hbd, hc1, hχ⟩ := hP
@@ -342,7 +294,7 @@ theorem ring_objects_of_matrix_data (hEM : StatEMat) (hSP : StatSplitPts) (hKO :
     if h : i < t then ⟨splitRoot t P ⟨i, h⟩, Algebra.subset_adjoin (Or.inr ⟨_, rfl⟩)⟩ else 0
   have hrr : ∀ i (h : i < t) (y : X'), (rr i).1 y = y.1.2 ⟨i, h⟩ := by
     intro i h y
-    simp only [rr, dif_pos h]; rfl
+    simp only [rr, dite_eq_left h]; rfl
   let rK : G →* (X' → Matrix d d K) :=
     { toFun := fun g y => (r₀ g (p y)).map ι
       map_one' := by funext y; simp
@@ -568,11 +520,11 @@ theorem ring_objects_of_matrix_data (hEM : StatEMat) (hSP : StatSplitPts) (hKO :
   have hval0 : ∀ a, bl a = 0 → val a = 0 := fun a h => by simp [val, h]
   have hval1 : ∀ a, (bl a : ℕ) = 1 → val a = ι δO := fun a h => by
     have h0 : bl a ≠ 0 := fun e => by rw [e] at h; simp at h
-    simp only [val, if_pos h0, h, Nat.sub_self]
+    simp only [val, ite_eq_left h0, h, Nat.sub_self]
     rw [hδy, hrrπ 0 (by omega)]
   have hval2 : ∀ a, 2 ≤ (bl a : ℕ) → val a = 0 := fun a h => by
     have h0 : bl a ≠ 0 := fun e => by rw [e] at h; simp at h
-    simp only [val, if_pos h0]
+    simp only [val, ite_eq_left h0]
     have hlt : (bl a : ℕ) - 1 < t := by have := (bl a).2; omega
     refine Finset.prod_eq_zero (i := (bl a : ℕ) - 1) (Finset.mem_Ioo.mpr ⟨by omega, hlt⟩) ?_
     rw [hrrπ _ hlt, sub_self]
@@ -585,7 +537,7 @@ theorem ring_objects_of_matrix_data (hEM : StatEMat) (hSP : StatSplitPts) (hKO :
     have h1 : ∀ j, ρk k a i j = if i = j then w else 0 := fun j => by
       apply hι; rw [hρk, hentπ, h]; split_ifs <;> simp
     show ∑ j, ρk k a i j • (m j : KO O) = w • (m i : KO O)
-    simp only [h1, ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [h1, ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   have hEblk : ∀ k (w : O), (∀ a, bl a = k → val a = ι w) → ∀ m : blockRestrictedRepresentationType bl ρk k, E • m = w • m := by
     intro k w h
     refine hscal k E w fun i j => ?_
@@ -719,7 +671,7 @@ theorem ring_objects_of_matrix_data (hEM : StatEMat) (hSP : StatSplitPts) (hKO :
     have hs : Subsingleton {a // bl a = c1} :=
       Fintype.card_le_one_iff_subsingleton.mp (le_of_eq (hc1 c1 hc10))
     rw [hscal c1 (uElt rR χ g) 1 (fun i j => by
-      rw [if_pos (hs.elim i j), hs.elim j i]
+      rw [ite_eq_left (hs.elim i j), hs.elim j i]
       show ((((χ g)⁻¹ : (T')ˣ) : T') • rR g : R').1 π' i.1 i.1 = ι 1
       rw [hsv, hχinv]
       show ι _ • ι (r₀ g π i.1 i.1) = ι 1

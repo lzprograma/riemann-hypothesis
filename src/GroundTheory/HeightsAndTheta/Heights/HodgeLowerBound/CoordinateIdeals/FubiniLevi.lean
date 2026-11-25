@@ -112,8 +112,4 @@ theorem leviForm_phi {z : J → ℂ} (hz : sqSum z ≠ 0) (w : J → ℂ) :
   field_simp
   ring
 
-section Line
-
-end Line
-
 end GroundTheory.Heights₂.Heights.LowerBoundFree.FubiniLevi

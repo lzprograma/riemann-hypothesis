@@ -47,7 +47,6 @@ public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsBoxP
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.DVR
-attribute [local instance] Over.cartesianMonoidalCategory
 open scoped CategoryTheory.Obj
 
 noncomputable section
@@ -65,7 +64,7 @@ theorem val_lhs {R : Type} [CommRing R] [IsDomain R] (D : DegPre R) {y : (TK R).
   refine (val_cub D.cub (𝟙 (TK R)) hJ (cP D _ a) (cP D _ a') (cP D _ b)).trans ?_
   rw [Category.id_comp, Category.id_comp, Category.id_comp]
 
-theorem tauBimult_pow : GlobalFnsSt → ∀ (R : Type) [CommRing R] [IsDomain R] (j : ℕ) (D D' : DegPre R) (pD : IsPowDeg D' D j), D.TauBimult → D'.TauBimult := by
+theorem tauBimult_pow : GlobalFnsSt → ∀ (R : Type) [CommRing R] [IsDomain R] (j : ℕ) (D D' : DegPre R) (_ : IsPowDeg D' D j), D.TauBimult → D'.TauBimult := by
   intro hG R _ _ j D D' pD hB a a' b
   refine corr_of_val D'.P.isLB fun y J' hJ' => ?_
   obtain ⟨J, hJ⟩ := exists_good_at D.P.isLB y

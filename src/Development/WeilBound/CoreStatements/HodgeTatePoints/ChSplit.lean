@@ -3,52 +3,7 @@ module
 public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsSplitGaussChars
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.EigenProjectorsSplitAction
 public import Development.WeilBound.CoreStatements.HodgeTatePoints.DegLeOfEquiv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -81,7 +36,7 @@ theorem split_ses : ∀ (K : Type) [Field K] (C : ACurve K) (V : Type) [AddCommG
 
     rw [hes, LinearMap.sum_apply, map_sum]
     simp only [LinearMap.smul_apply, map_smul, hg]
-    rw [h1, hc s, if_pos rfl, map_one, one_smul]
+    rw [h1, hc s, ite_eq_left rfl, map_one, one_smul]
   have hA : ∀ x, x ∈ eig ρ (fun a => algebraMap k K (χ s a)) ↔
       f x ∈ eig (fun a => ρ' a) (fun a => algebraMap k K (χ s a)) := by
     intro x
@@ -119,34 +74,6 @@ theorem split_ses : ∀ (K : Type) [Field K] (C : ACurve K) (V : Type) [AddCommG
       exact hyz
   rw [hdeg, hIeq]
   rfl
-
-private theorem isBun_of_linearEquiv {K : Type} [Field K] {C : ACurve K} {V V' : Type} [AddCommGroup V]
-    [Module K V] [FiniteDimensional K V] [AddCommGroup V'] [Module K V'] [FiniteDimensional K V']
-    {L : C.I → AddSubgroup V} {L' : C.I → AddSubgroup V'} (e : V ≃ₗ[K] V') (hL' : IsBun C L')
-    (h : ∀ i x, x ∈ L i ↔ e x ∈ L' i) : IsBun C L := by
-  have hr : Module.finrank K V' = Module.finrank K V := e.finrank_eq.symm
-  have key : ∀ i (b : Module.Basis (Fin (Module.finrank K V')) K V'), IsLatOf C i b (L' i) →
-      IsLatOf C i ((b.map e.symm).reindex (finCongr hr)) (L i) := by
-    intro i b hb x
-    rw [h i x, hb (e x)]
-    simp only [Module.Basis.repr_reindex_apply, Module.Basis.map_repr, LinearEquiv.trans_apply,
-      LinearEquiv.symm_symm]
-    constructor
-    · intro H q
-      exact H _
-    · intro H q
-      simpa using H (finCongr hr q)
-  obtain ⟨h1, b, hb⟩ := hL'
-  refine ⟨fun i => ?_, (b.map e.symm).reindex (finCongr hr), hb.subset fun i hi hl => hi (key i b hl)⟩
-  obtain ⟨b', hb'⟩ := h1 i
-  exact ⟨_, key i b' hb'⟩
-
-private theorem deg_eq_of_linearEquiv' {K : Type} [Field K] {C : ACurve K} {V V' : Type} [AddCommGroup V]
-    [Module K V] [FiniteDimensional K V] [AddCommGroup V'] [Module K V'] [FiniteDimensional K V']
-    {L : C.I → AddSubgroup V} {L' : C.I → AddSubgroup V'} (e : V ≃ₗ[K] V') (hL : IsBun C L)
-    (hL' : IsBun C L') (h : ∀ i x, x ∈ L i ↔ e x ∈ L' i) : deg C L = deg C L' :=
-  le_antisymm (deg_le_of_equiv e hL hL' fun i x hx => (h i x).1 hx)
-    (deg_le_of_equiv e.symm hL' hL fun i x hx => (h i _).2 (by simpa using hx))
 
 private theorem deg_eq_zero_of_finrank_eq_zero {K : Type} [Field K] (C : ACurve K) {V : Type} [AddCommGroup V]
     [Module K V] [FiniteDimensional K V] (L : C.I → AddSubgroup V) (h : Module.finrank K V = 0) :
@@ -195,7 +122,7 @@ private theorem subDeg_top_eq_sum_subDeg_eig_of_ncard_le (K : Type) [Field K] (C
     by_cases hall : ∀ s, eig (fun a => ρ a) (fun a => algebraMap k K (χ s a)) = ⊥
     · exact subDeg_top_eq_sum_subDeg_of_all_eq_bot C L (fun s => eig (fun a => ρ a) (fun a => algebraMap k K (χ s a))) e he_mem
         he_sum hall
-    push_neg at hall
+    push Not at hall
     obtain ⟨s0, hs0⟩ := hall
     have hcomm : ∀ s a x, e s (ρ a x) = ρ a (e s x) := by
       intro s a x
@@ -215,7 +142,7 @@ private theorem subDeg_top_eq_sum_subDeg_eig_of_ncard_le (K : Type) [Field K] (C
         comb_eig (fun a => ρ a) (fun a => χ t a) hx c b
       rw [hes, LinearMap.sum_apply]
       simp only [LinearMap.smul_apply]
-      rw [h1, hc t, if_neg hts, map_zero, zero_smul]
+      rw [h1, hc t, ite_eq_right hts, map_zero, zero_smul]
     set W0 := eig (fun a => ρ a) (fun a => algebraMap k K (χ s0 a)) with hW0
     set K0 := LinearMap.ker (e s0) with hK0
     have hidem : ∀ x, e s0 (e s0 x) = e s0 x := fun x => he_id s0 _ (he_mem s0 x)
@@ -263,7 +190,7 @@ private theorem subDeg_top_eq_sum_subDeg_eig_of_ncard_le (K : Type) [Field K] (C
       rfl
     have hLK : IsBun C (sub C L K0) := by
       rw [hIeq] at hI
-      exact isBun_of_linearEquiv (Submodule.topEquiv.symm) hI fun i x => Iff.rfl
+      exact (DegEquiv.deg_equiv K C _ _ _ _ Submodule.topEquiv hI fun _ _ => Iff.rfl).1
     have hpresK : ∀ a (x : V), x ∈ K0 → ρ a x ∈ K0 := by
       intro a x hx
       show e s0 (ρ a x) = 0
@@ -376,8 +303,7 @@ private theorem subDeg_top_eq_sum_subDeg_eig_of_ncard_le (K : Type) [Field K] (C
 theorem split_deg : ∀ (K : Type) [Field K] (C : ACurve K) (V : Type) [AddCommGroup V] [Module K V] [FiniteDimensional K V] (L : C.I → AddSubgroup V) (O k S : Type) [CommRing O] [Field k] [Algebra k K] [Fintype S] [DecidableEq S] (χ : S → (O →+* k)), IsSplit χ → (∀ i (c : k), C.v i (algebraMap k K c) ≤ 1) → ∀ ρ : O →+* Module.End K V, IsBun C L → (∀ a, IsHom C L L (ρ a)) → deg C L = ∑ s, subDeg C L (eig (fun a => ρ a) (fun a => algebraMap k K (χ s a))) := by
   intro K _ C V _ _ _ L O k S _ _ _ _ _ χ hχ hv ρ hL hρ
   have htop : subDeg C L ⊤ = deg C L :=
-    deg_eq_of_linearEquiv' Submodule.topEquiv (isBun_of_linearEquiv Submodule.topEquiv hL fun _ _ => Iff.rfl) hL
-      fun _ _ => Iff.rfl
+    (DegEquiv.deg_equiv K C V _ L (sub C L ⊤) Submodule.topEquiv.symm hL fun _ _ => Iff.rfl).2
   rw [← htop]
   exact subDeg_top_eq_sum_subDeg_eig_of_ncard_le K C O k S χ hχ hv _ V L ρ hL hρ le_rfl
 

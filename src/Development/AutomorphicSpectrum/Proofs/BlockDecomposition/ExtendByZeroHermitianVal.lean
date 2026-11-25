@@ -23,7 +23,6 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doublin
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.StdUnn GlobalTheory.StdUnn.Model PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC PositivityTheory.PfSWUS PositivityTheory.Rg.Rsw PositivityTheory.Rg.Rsw.L GlobalTheory.CompanionTheory.PcFc GlobalTheory.CompanionTheory.FourierN
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open IsDedekindDomain NumberField
 open GlobalTheory.RegSch (ikS projS Lvl)
 
@@ -368,15 +367,10 @@ theorem exists_orth (W : HSp D) : ∃ (x₀ : Matrix (Fin W.rank) (Fin W.rank) D
 
 theorem rows_li {K : Type} [Field K] (c : Matrix (Fin r) (Fin n) K) (h : r ≤ c.rank) :
     LinearIndependent K (fun i => c i) := by
-  rw [linearIndependent_iff_card_eq_finrank_span]
-  have h1 : c.rank ≤ r := by simpa using c.rank_le_card_height
-  have h2 := c.rank_eq_finrank_span_row
-  have h3 : Set.finrank K (Set.range fun i => c i) = c.rank := by
-    rw [h2]
-    rfl
-  rw [h3]
-  simp
-  omega
+  rw [linearIndependent_iff_card_eq_finrank_span,
+    show Set.finrank K (Set.range fun i => c i) = c.rank from c.finrank_span_range_row,
+    Fintype.card_fin]
+  exact le_antisymm h (by simpa using c.rank_le_card_height)
 
 theorem rep_of_cg (W : HSp D) (hn : r + t = n) (a : GL (Fin n) D.host.E) (β : HermE D n) (b₁ : HermE D r) (β' : HermE D t)
     (hβ' : β'.1 = 0) (hcg : cg a β = dsum hn b₁ β') (x₁ : Matrix (Fin W.rank) (Fin r) D.host.E) (hx₁ : gramQ W x₁ = b₁.1) :
@@ -402,10 +396,7 @@ theorem rank_cg (a : GL (Fin n) D.host.E) (β : HermE D n) : (cg a β).1.rank = 
   rw [Matrix.rank_mul_eq_left_of_isUnit_det _ _ ha, Matrix.rank_mul_eq_right_of_isUnit_det _ _ hs]
 
 theorem det_ne_of_gram (W : HSp D) (x₀ : Matrix (Fin W.rank) (Fin W.rank) D.host.E) (h : (gramQ W x₀).det ≠ 0) : x₀.det ≠ 0 := by
-  intro h0
-  apply h
-  rw [gramQ_eq, Matrix.det_mul, Matrix.det_mul, h0]
-  simp
+  exact fun h0 => h (by simp [gramQ_eq, h0])
 
 theorem exists_frame (W : HSp D) (hn : W.rank + t = n) (x₀ : Matrix (Fin W.rank) (Fin W.rank) D.host.E) (h0 : x₀.det ≠ 0)
     (x : Matrix (Fin W.rank) (Fin n) D.host.E) (hx : W.rank ≤ (gramQ W x).rank) :

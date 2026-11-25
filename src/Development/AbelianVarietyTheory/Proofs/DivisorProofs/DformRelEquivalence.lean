@@ -7,52 +7,8 @@ public import Mathlib.Data.Finset.Preimage
 public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.TraceDefinitePairsEqAutomorphicTrace
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelatedPairsOrbitalTermEq
 import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.TraceBlocks
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelatedPairsSamePolarization
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumOrbitFibreSwap, Development.AbelianVarietyTheory.Proofs.DivisorProofs.DformRelEquivalence
@@ -64,21 +20,6 @@ section -- clump:auto
 
 open scoped BigOperators
 
-namespace GlobalTheory
-namespace OrbitFibre
-
-open MulAction Function
-
-theorem finsum_sigma_iter {ι : Type} {κ : ι → Type} (f : (Σ i, κ i) → ℂ)
-    (hf : (support f).Finite) : ∑ᶠ p, f p = ∑ᶠ i, ∑ᶠ k, f ⟨i, k⟩ := by
-  apply UpperTheory.V.Z.Sym.Tf.finsum_sig <;> assumption
-
-variable {Γ A B J : Type} [Group Γ] [MulAction Γ A] [MulAction Γ B]
-
-
-end OrbitFibre
-
-end GlobalTheory
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumOrbitFibreSwap =====
@@ -258,7 +199,7 @@ theorem summand_toCls
     rw [← hpol]; exact h.2.2
   show _ = summand wt Kf f K' f' (Quot.mk _ M)
   unfold summand
-  rw [if_pos hirr, ← hpol, ← ht Kf f 1 K' f' one_pos hf hf', hterm M (Quotient.out x.2).2]
+  rw [ite_eq_left hirr, ← hpol, ← ht Kf f 1 K' f' one_pos hf hf', hterm M (Quotient.out x.2).2]
   rfl
 
 theorem regroup_of
@@ -299,20 +240,20 @@ theorem regroup_of
     intro q c
     by_cases h : RegAt G ⟨q, c⟩
     · have h' : RegIrr G (((Quotient.out c : GlobalTheory.LKCx.grp G (Quot.out q).β).1.1 : G.Cˣ) : G.C) := h
-      simp only [H, dif_pos h]
-      rw [if_pos h']
+      simp only [H, dite_eq_left h]
+      rw [ite_eq_left h']
       exact summand_toCls wt Kf f K' f' hterm hf hf' ⟨q, c⟩ h
     · have h' : ¬ RegIrr G (((Quotient.out c : GlobalTheory.LKCx.grp G (Quot.out q).β).1.1 : G.Cˣ) : G.C) := h
-      simp only [H, dif_neg h]
-      rw [if_neg h']
+      simp only [H, dite_eq_right h]
+      rw [ite_eq_right h']
   have hsuppH : (Function.support H).Finite := by
     apply ((hfinF.preimage (toCls_injective).injOn).image Subtype.val).subset
     intro x hx
     rw [Function.mem_support] at hx
     by_cases h : RegAt G x
-    · simp only [H, dif_pos h] at hx
+    · simp only [H, dite_eq_left h] at hx
       exact ⟨⟨x, h⟩, hx, rfl⟩
-    · simp only [H, dif_neg h] at hx
+    · simp only [H, dite_eq_right h] at hx
       exact absurd rfl hx
   have hRHS : (∑ᶠ q : DFCls G, ∑ᶠ c : ConjClasses (GlobalTheory.LKCx.grp G (Quot.out q).β),
       (if GlobalTheory.LKDef.RegIrr G (((Quotient.out c : GlobalTheory.LKCx.grp G (Quot.out q).β).1.1 : G.Cˣ) : G.C) then
@@ -322,18 +263,18 @@ theorem regroup_of
               (GlobalTheory.LKCx.toP1 G (Quot.out q).β) (MonoidHom.id (Gr G 1)) Kf K' 1 f f' (Quotient.out c)
         else 0)) = ∑ᶠ q : DFCls G, ∑ᶠ c : ConjClasses (GlobalTheory.LKCx.grp G (Quot.out q).β), H ⟨q, c⟩ :=
     finsum_congr fun q => finsum_congr fun c => hR q c
-  rw [hRHS, ← GlobalTheory.OrbitFibre.finsum_sigma_iter H hsuppH, hL]
+  rw [hRHS, ← UpperTheory.V.Z.Sym.Tf.finsum_sig H hsuppH, hL]
   have h1 : ∑ᶠ x, H x = ∑ᶠ x : {x // RegAt G x}, F (toCls G x) := by
     rw [← finsum_eq_mem_of_supp H (Set.range Subtype.val) ?_,
       finsum_mem_range Subtype.val_injective]
     · apply finsum_congr
       intro x
-      simp only [H, dif_pos x.2]
+      simp only [H, dite_eq_left x.2]
     · intro x hx
       rw [Function.mem_support] at hx
       by_cases h : RegAt G x
       · exact ⟨⟨x, h⟩, rfl⟩
-      · simp only [H, dif_neg h] at hx
+      · simp only [H, dite_eq_right h] at hx
         exact absurd rfl hx
   rw [h1, ← finsum_mem_range (toCls_injective (G := G)), finsum_eq_mem_of_supp F _ hrange]
 

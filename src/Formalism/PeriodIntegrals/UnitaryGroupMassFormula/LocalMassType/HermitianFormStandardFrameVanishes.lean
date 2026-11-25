@@ -4,45 +4,7 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.WP
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SaturatedSplitLattice
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.TransitiveOverLocalRings
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SplitDecomp
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.WField, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.HermitianFormStandardFrameVanishes
@@ -426,7 +388,7 @@ theorem gram_matrix_unitary_invariance : GramU := by
     by_cases hc : c = Fin.last r
     · subst hc; simp [uMat]
     · have hlt : c < Fin.last r := lt_of_le_of_ne (Fin.le_last c) hc
-      simp only [uMat, if_neg hc, if_neg (Ne.symm hc), dif_neg (not_lt_of_gt hlt)]
+      simp only [uMat, ite_eq_right hc, ite_eq_right (Ne.symm hc), dite_eq_right (not_lt_of_gt hlt)]
   show Formalism.UG.hform _ _ (∑ c, uMat v x c a • Y c) (∑ c, uMat v x c b • Y c) =
     Formalism.UG.hform _ _ (Y a) (Y b)
   rw [hform_sum_left]
@@ -447,8 +409,8 @@ theorem gram_matrix_unitary_invariance : GramU := by
     by_cases ha : a = Fin.last r
     · by_cases hb : b = Fin.last r
       · subst ha; subst hb; simp
-      · rw [if_neg hb, hG0 a b (fun h => hb h.2)]; simp
-    · rw [if_neg ha, hG0 a b (fun h => ha h.1)]; simp
+      · rw [ite_eq_right hb, hG0 a b (fun h => hb h.2)]; simp
+    · rw [ite_eq_right ha, hG0 a b (fun h => ha h.1)]; simp
   · intro c _ hc
     rw [hG0 c (Fin.last r) (fun h => hc h.1), mul_zero, mul_zero]
   · intro h; exact absurd (Finset.mem_univ _) h

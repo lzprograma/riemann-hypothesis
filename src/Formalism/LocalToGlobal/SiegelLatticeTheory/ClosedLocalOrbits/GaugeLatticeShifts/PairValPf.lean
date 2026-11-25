@@ -14,8 +14,6 @@ namespace Formalism.L2.SG.Pf
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef Formalism.L2.SG.PairVal
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def CellPointUniq : Prop :=
   ∀ (K : Type) [Field K] (N : ℕ) (p p' : Point K N) (L U L' U' : Matrix (Fin N) (Fin N) K),
     IsLoUni L → IsUpUni U → IsLoUni L' → IsUpUni U' → L * ptMat p * U = L' * ptMat p' * U' → p = p'
@@ -124,21 +122,21 @@ theorem ptEntry_eq_pv : ∀ (bs : List (K × ℕ)) (i j : ℕ), i < (bs.map Prod
       rw [e1, e2]
       simp only [ptEntry]
       by_cases hj : j < s
-      · rw [if_pos ⟨hi, hj⟩]
+      · rw [ite_eq_left ⟨hi, hj⟩]
         by_cases e : i + j + 1 = s
-        · rw [if_pos e, if_pos (by omega)]
-        · rw [if_neg e, if_neg (by omega)]
-      · rw [if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+        · rw [ite_eq_left e, ite_eq_left (by omega)]
+        · rw [ite_eq_right e, ite_eq_right (by omega)]
+      · rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
     · have e1 : pσ ((t, s) :: bs) i = s + pσ bs (i - s) := by simp [pσ, hi]
       have e2 : pv ((t, s) :: bs) i = pv bs (i - s) := by simp [pv, hi]
       rw [e1, e2]
       simp only [ptEntry]
       by_cases hj : j < s
-      · rw [if_neg (by omega), if_neg (by omega), if_neg (by omega)]
-      · rw [if_neg (by omega), if_pos (by omega), ptEntry_eq_pv bs (i - s) (j - s) (by omega)]
+      · rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
+      · rw [ite_eq_right (by omega), ite_eq_left (by omega), ptEntry_eq_pv bs (i - s) (j - s) (by omega)]
         by_cases e : j - s = pσ bs (i - s)
-        · rw [if_pos e, if_pos (by omega)]
-        · rw [if_neg e, if_neg (by omega)]
+        · rw [ite_eq_left e, ite_eq_left (by omega)]
+        · rw [ite_eq_right e, ite_eq_right (by omega)]
 
 theorem pσ_lt : ∀ (bs : List (K × ℕ)) (i : ℕ), i < (bs.map Prod.snd).sum → pσ bs i < (bs.map Prod.snd).sum
   | [], i, h => by simp at h
@@ -154,10 +152,10 @@ theorem pσ_inv : ∀ (bs : List (K × ℕ)) (i : ℕ), i < (bs.map Prod.snd).su
   | (t, s) :: bs, i, h => by
     simp only [List.map_cons, List.sum_cons] at h
     by_cases hi : i < s
-    · simp only [pσ, if_pos hi]
-      rw [if_pos (by omega)]; omega
-    · simp only [pσ, if_neg hi]
-      rw [if_neg (by omega), show s + pσ bs (i - s) - s = pσ bs (i - s) by omega, pσ_inv bs (i - s) (by omega)]
+    · simp only [pσ, ite_eq_left hi]
+      rw [ite_eq_left (by omega)]; omega
+    · simp only [pσ, ite_eq_right hi]
+      rw [ite_eq_right (by omega), show s + pσ bs (i - s) - s = pσ bs (i - s) by omega, pσ_inv bs (i - s) (by omega)]
       omega
 
 theorem pv_ne : ∀ (bs : List (K × ℕ)), (∀ b ∈ bs, b.1 ≠ 0 ∧ 1 ≤ b.2) → ∀ i, i < (bs.map Prod.snd).sum →
@@ -184,9 +182,9 @@ theorem pσ_nb : ∀ (bs : List (K × ℕ)), (∀ b ∈ bs, b.1 ≠ 0 ∧ 1 ≤ 
       rw [a1, a2, a3, a4]; exact ⟨by omega, rfl⟩
     · by_cases h2 : i < s
       · right
-        simp only [pσ, if_pos h2, if_neg h1]
+        simp only [pσ, ite_eq_left h2, ite_eq_right h1]
         omega
-      · simp only [pσ, pv, if_neg h1, if_neg h2]
+      · simp only [pσ, pv, ite_eq_right h1, ite_eq_right h2]
         have e : i + 1 - s = (i - s) + 1 := by omega
         rw [e]
         rcases pσ_nb bs (fun b hb => hv b (by simp [hb])) (i - s) (by omega) with ⟨a, b⟩ | c
@@ -288,9 +286,9 @@ theorem pts_inj : ∀ (bs bs' : List (K × ℕ)), (∀ b ∈ bs, b.1 ≠ 0 ∧ 1
       simp only [List.map_cons, List.sum_cons]
       omega
     have hsize : s - 1 = s' - 1 := by
-      simpa only [pσ, if_pos hs1, if_pos hs1', Nat.sub_zero] using (h 0 hzero).1
+      simpa only [pσ, ite_eq_left hs1, ite_eq_left hs1', Nat.sub_zero] using (h 0 hzero).1
     have hlabel : t = t' := by
-      simpa only [pv, if_pos hs1, if_pos hs1'] using (h 0 hzero).2
+      simpa only [pv, ite_eq_left hs1, ite_eq_left hs1'] using (h 0 hzero).2
     have hsEq : s = s' := by omega
     subst s'
     subst t'
@@ -303,8 +301,8 @@ theorem pts_inj : ∀ (bs bs' : List (K × ℕ)), (∀ b ∈ bs, b.1 ≠ 0 ∧ 1
     have hshift : ¬ s + i < s := by omega
     have hentries := h (s + i) hindex
     refine ⟨Nat.add_left_cancel (n := s) ?_, ?_⟩
-    · simpa only [pσ, if_neg hshift, Nat.add_sub_cancel_left] using hentries.1
-    · simpa only [pv, if_neg hshift, Nat.add_sub_cancel_left] using hentries.2
+    · simpa only [pσ, ite_eq_right hshift, Nat.add_sub_cancel_left] using hentries.1
+    · simpa only [pv, ite_eq_right hshift, Nat.add_sub_cancel_left] using hentries.2
 
 theorem pt_eq_of_struct (p p' : Point K N) (h : ∀ i, i < N → pσ p.1 i = pσ p'.1 i ∧ pv p.1 i = pv p'.1 i) :
     p = p' :=
@@ -323,17 +321,17 @@ theorem ptMat_fσ (p : Point K N) (a b : Fin N) : ptMat p a b = if b = fσ p a t
 theorem mul_ptMat (p : Point K N) (n : Matrix (Fin N) (Fin N) K) (i j : Fin N) :
     (n * ptMat p) i j = n i (fσ p j) * pv p.1 (fσ p j) := by
   rw [Matrix.mul_apply, Finset.sum_eq_single (fσ p j)]
-  · rw [ptMat_fσ, if_pos (fσ_fσ p j).symm]
+  · rw [ptMat_fσ, ite_eq_left (fσ_fσ p j).symm]
   · intro k _ hk
-    rw [ptMat_fσ, if_neg (fun hj => hk (by rw [hj, fσ_fσ])), mul_zero]
+    rw [ptMat_fσ, ite_eq_right (fun hj => hk (by rw [hj, fσ_fσ])), mul_zero]
   · simp
 
 theorem ptMat_mul (p : Point K N) (m : Matrix (Fin N) (Fin N) K) (i j : Fin N) :
     (ptMat p * m) i j = pv p.1 i * m (fσ p i) j := by
   rw [Matrix.mul_apply, Finset.sum_eq_single (fσ p i)]
-  · rw [ptMat_fσ, if_pos rfl]
+  · rw [ptMat_fσ, ite_eq_left rfl]
   · intro k _ hk
-    rw [ptMat_fσ, if_neg hk, zero_mul]
+    rw [ptMat_fσ, ite_eq_right hk, zero_mul]
   · simp
 
 theorem pv_ne' (p : Point K N) (a : Fin N) : pv p.1 a ≠ 0 :=
@@ -510,7 +508,7 @@ theorem nlam_frame (Λ : Submodule (𝓞 E) S.V) {T : E} (F : LFlag S r T) {s : 
   refine ⟨fun c b => if c = b then 1 else Fin.lastCases (0 : E) (fun k => col b k) c, ?_, ?_⟩
   · intro c b
     refine ⟨fun hbc => ?_, fun hcb => by simp [hcb]⟩
-    simp only [if_neg (ne_of_gt hbc)]
+    simp only [ite_eq_right (ne_of_gt hbc)]
     induction c using Fin.lastCases with
     | last => simp
     | cast k =>
@@ -523,11 +521,11 @@ theorem nlam_frame (Λ : Submodule (𝓞 E) S.V) {T : E} (F : LFlag S r T) {s : 
   · intro b
     induction b using Fin.lastCases with
     | last =>
-      simp only [frame, FlagG.fvec, Fin.snoc_last, Fin.sum_univ_castSucc, Fin.snoc_castSucc, col, Fin.lastCases_last, Fin.lastCases_castSucc, if_neg (Fin.castSucc_lt_last _).ne]
+      simp only [frame, FlagG.fvec, Fin.snoc_last, Fin.sum_univ_castSucc, Fin.snoc_castSucc, col, Fin.lastCases_last, Fin.lastCases_castSucc, ite_eq_right (Fin.castSucc_lt_last _).ne]
       rw [hcz, add_comm]; simp
     | cast i =>
       simp only [frame, FlagG.fvec, Fin.snoc_last, Fin.sum_univ_castSucc, Fin.snoc_castSucc,
-        if_neg (Fin.castSucc_lt_last i).ne', Fin.lastCases_last, zero_smul, add_zero, Fin.castSucc_inj, col,
+        ite_eq_right (Fin.castSucc_lt_last i).ne', Fin.lastCases_last, zero_smul, add_zero, Fin.castSucc_inj, col,
         Fin.lastCases_castSucc]
       rw [hce i]
       have : ∀ k : Fin r, (if k = i then (1 : E) else ce i k) = ce i k + if k = i then 1 else 0 := by
@@ -535,7 +533,7 @@ theorem nlam_frame (Λ : Submodule (𝓞 E) S.V) {T : E} (F : LFlag S r T) {s : 
         · subst hk; simp [hce0 k k le_rfl]
         · simp [hk]
       simp only [this, add_smul, Finset.sum_add_distrib, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq',
-        Finset.mem_univ, if_true]
+        Finset.mem_univ, ite_true]
       abel
 
 theorem zhat_move {T T' : E} (F : LFlag S r T) (F' : LFlag S r T') {s : S.V ≃ₗ[E] S.V}
@@ -569,7 +567,7 @@ theorem ptMat_sq (p : Point K N) :
   rw [ptMat_mul, ptMat_fσ, fσ_fσ, Matrix.diagonal_apply]
   by_cases h : j = i
   · subst h; simp
-  · rw [if_neg h, if_neg (Ne.symm h), mul_zero]
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h), mul_zero]
 
 theorem zhatOM_eq_pv {r : ℕ} (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) K) :
     ZhatOM Z = Z * Matrix.diagonal (fun b : Fin (r + 1) => (-1 : K) ^ (r - b.val)) := by

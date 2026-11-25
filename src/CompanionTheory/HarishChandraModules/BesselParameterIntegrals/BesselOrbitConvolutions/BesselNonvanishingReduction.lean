@@ -110,15 +110,6 @@ def ZeroCaseDD : Prop :=
     ∀ v ∈ DDsp σ w0, ∀ x ∈ PI.UpqRep.smoothVecs (k := k) (r := r) σ,
       be z c π σ μW μN x v = 0
 
-def DDFormOne : Prop :=
-  Inputs → ∀ (k r : ℕ) (ε : Fin (2 * r + k + 1) → Bool) (lam : Fin (2 * r + k + 1) → ℝ) (h : ℝ)
-    (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (σ : Mx k r → (H →L[ℂ] H)) (w0 : H)
-    (Wp : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [CompleteSpace Wp] [FiniteDimensional ℂ Wp]
-    (z : Fin (2 * r + k + 1) → ℂ) (u : Fin k → ℝ) (π : Mx k r → (Wp →L[ℂ] Wp))
-    (μW μN μG νq : Measure (Formalism.QuantumDeterminants.Mt k r)),
-    Side k r ε lam h σ w0 z Formalism.QuantumDeterminants.cStd u π μW μN μG νq →
-    DDForm z Formalism.QuantumDeterminants.cStd π μW μN μG νq σ w0
-
 def BesselNonvanishingL2 : Prop :=
   Inputs → SchurH → ∀ (k r : ℕ) (ε : Fin (2 * r + k + 1) → Bool) (lam : Fin (2 * r + k + 1) → ℝ) (h : ℝ)
     (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (σ : Mx k r → (H →L[ℂ] H)) (w0 : H)
@@ -133,9 +124,6 @@ def BesselNonvanishingL2 : Prop :=
         PI.BesselPeriodGGP.rconv μG (PI.BesselPeriodGGP.eFun μG σ w0) W x = W x) →
       0 < PI.BesselPeriodGGP.l2SG νq W → PI.BesselPeriodGGP.l2SG νq W < ⊤ →
       ∃ x ∈ DDsp σ w0, ∃ y ∈ DDsp σ w0, be z c π σ μW μN x y ≠ 0
-
-def DDFormOneOfSteps : Prop :=
-  PsiConst → SchurH → NormInv → GrowthS → GrowthG → DecDD → BeConv → NormIdSm → BeBessel → Shape → DDFormOne
 
 def PhiReg : Prop :=
   Inputs → ∀ (k r : ℕ) (ε : Fin (2 * r + k + 1) → Bool) (lam : Fin (2 * r + k + 1) → ℝ) (h : ℝ)

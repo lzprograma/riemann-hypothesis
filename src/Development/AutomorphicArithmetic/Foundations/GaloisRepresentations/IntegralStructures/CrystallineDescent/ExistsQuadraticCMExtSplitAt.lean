@@ -18,59 +18,14 @@ public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentation
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.SqrtFix
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.UnrLarge
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ValPrimeOfLt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
 import Std.Tactic.BVDecide.Normalize.Prop
 import GroundTheory.GlobalFields.ExistenceTheorem.ExistsIsAbelianGaloisRangeIdeleClassNormEqOfFini
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValSubOneLtOfRed
 import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
 import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.BrData
-import Mathlib.Algebra.AffineMonoid.Basic
 import PositivityTheory.AutomorphicForms.PublishedInputs.RealGaloisRepresentations.IwahoriSphericalTransfer.ExistsInfiniteQcmSplitRam
 import PositivityTheory.AutomorphicForms.PublishedInputs.RealGaloisRepresentations.IwahoriSphericalTransfer.InfinitePrimesNegIsSquare
 
@@ -103,8 +58,7 @@ private theorem valuation_apply_lt_one_of_mem_dec {F Ω : Type} [Field F] [Field
     rw [Valuation.one_lt_val_iff _ (inv_ne_zero hz0), inv_inv]
     exact hz
   have h1 : 1 < A.valuation (e z)⁻¹ := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have h4 := valuation_apply_le_one_of_mem_dec A e⁻¹ (inv_mem he) _ hc
     have h5 : e⁻¹ (e z)⁻¹ = z⁻¹ := by
       rw [map_inv₀, ← AlgEquiv.mul_apply, inv_mul_cancel, AlgEquiv.one_apply]
@@ -285,8 +239,7 @@ theorem UpperTheory.Gal.UnramifiedFromSplittingCriterion.inertSplit :
   obtain ⟨φ, hφ⟩ := exists_isFrob hv
   obtain ⟨e, he0, hce⟩ : ∃ e : Y, e ≠ 0 ∧ IsCMField.complexConj Y e = -e := by
     obtain ⟨y, hy⟩ : ∃ y : Y, IsCMField.complexConj Y y ≠ y := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       exact IsCMField.complexConj_ne_one Y (AlgEquiv.ext hc)
     refine ⟨y - IsCMField.complexConj Y y, sub_ne_zero.2 (Ne.symm hy), ?_⟩
     rw [map_sub, IsCMField.complexConj_apply_apply, neg_sub]
@@ -623,8 +576,7 @@ theorem UpperTheory.Gal.UnramifiedFromSplittingCriterion.realSpan :
     RealSpan := by
   intro E M Ω F _ _ _ _ _ _ _ _ _ _ _ _ _ g hE hR
   have hnot : ∃ e : E, algebraMap E M e ∉ maximalRealSubfield M := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     obtain ⟨φ⟩ : Nonempty (M →+* ℂ) := inferInstance
     apply IsTotallyComplex.complexEmbedding_not_isReal (φ.comp (algebraMap E M))
     show ComplexEmbedding.conjugate _ = _
@@ -1029,7 +981,7 @@ theorem UpperTheory.Gal.Int.Core.exists_quadratic_CM_ext_split_at : UpperTheory.
     obtain ⟨hvc, hv2, hg⟩ := haux w hw A hA
     exact ⟨hvc, fun τ hτ => ⟨hIneY _ A (hunderF _ A (hunderY w A hA)) hvc τ hτ, (hS F Ω A x a hx2).2 hv2 τ hτ⟩, hg⟩
   have hS1 : Step1 T Q := by
-   refine ⟨⟨⟨x, hxQ⟩, p, hp0, hX2⟩, GlobalTheory.CMFam.even_finrank Y Ω Q, ?_, ?_, u, hu_notT, A₀, hA₀, τ₀, hτ₀,
+   refine ⟨⟨⟨x, hxQ⟩, p, hp0, hX2⟩, GlobalTheory.RealGal.QCM.even_finrank_maximalRealSubfield Y Ω Q, ?_, ?_, u, hu_notT, A₀, hA₀, τ₀, hτ₀,
      fun h => hτ₀x (h ⟨x, hxQ⟩)⟩
    · intro t ht A hA g hg
      exact hfixQ Y g (fun y => g.commutes y)

@@ -7,6 +7,7 @@ import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FinTensMemLat
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsHeckeOpFullDualLab
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
 import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
+import Formalism.HermitianLattices.HermitianLatticesProofs.UnimodularSpan
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
@@ -65,7 +66,6 @@ open Formalism.UG (IsUnifV qV IsUnramInv GU KU IsInertAt Hecke dosetInd IsCommen
 open Formalism.MainNotions.SchurIrreducible (IsSplit)
 open GlobalTheory.LGrp (IsUnitarisable IsIrrSmooth bcParam)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -180,46 +180,18 @@ end GlobalTheory.InertHomLattice
 
 namespace GlobalTheory.InertHomLattice
 
-theorem mem_map_latF_iff : ∀ (D : D7) (S T : HSp D) (v : HeightOneSpectrum (𝓞 D.host.F)) (w : HeightOneSpectrum (𝓞 D.host.E)), w.under (𝓞 D.host.F) = v → IsInertAt D.host.F D.host.E v w → ∀ a : GL (Fin T.rank) (w.adicCompletion D.host.E), IsFrameAt w (frameLat T) a → ∃ (c₀ : w.adicCompletion D.host.E) (b : GL (Fin S.rank) (w.adicCompletion D.host.E)), c₀ ≠ 0 ∧ ∀ X : Matrix (Fin T.rank) (Fin S.rank) (w.adicCompletion D.host.E), X ∈ (GlobalTheory.FinWeilO.latF S T (frameLat S) (frameLat T)).toAddSubgroup.map (GlobalTheory.InertHomIdx.matW S T w) ↔ c₀ • ((a⁻¹ : GL (Fin T.rank) (w.adicCompletion D.host.E)).1 * X * b.1) ∈ GlobalTheory.InertHomIdx.intMat (w.adicCompletion D.host.E) T.rank S.rank := by
-  intro D S T v w hv hw a ha
-  obtain ⟨c, hc, -⟩ := InertChart.existsUnique_isConjAt D.sp.cm.sig hw hv
-  have hlat := GlobalTheory.HeckeDual.isLattice_frameLat S
-  have hspan : Submodule.span D.host.E (frameLat S : Set (Fin S.rank → D.host.E)) = ⊤ := by
-    have hfull : Submodule.span D.host.E (S.L0 : Set S.V) = ⊤ := by
-      let W := Submodule.span D.host.E (S.L0 : Set S.V)
-      change W = ⊤
-      by_contra h
-      let e : S.V ≃ₗ⋆[D.host.E] S.V :=
-        (S.frame.equivFun.trans (starLinearEquiv D.host.E)).trans S.frame.equivFun.symm
-      let g : S.V →ₗ[D.host.E] Module.Dual D.host.E W :=
-        (LinearMap.domRestrict' W).comp (S.hT.comp e.toLinearMap)
-      have hdim : Module.finrank D.host.E (Module.Dual D.host.E W) < Module.finrank D.host.E S.V := by
-        rw [Subspace.dual_finrank_eq]
-        exact Submodule.finrank_lt h
-      obtain ⟨x, hx, hx₀⟩ :=
-        Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
-      have hsmul (a : D.host.E) : a • e x ∈ S.L0 := by
-        rw [← S.baseLattice_isUnimodular]
-        rw [Formalism.HermitianLatticesTheory.dualBasic_mem_dual]
-        intro y hy
-        have hxy : S.hT (e x) y = 0 :=
-          congrArg (fun f : Module.Dual D.host.E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
-        have hyx : S.hT y (e x) = 0 := by
-          rw [(S.herm.eq (e x) y).symm, hxy, map_zero]
-        simp [hyx]
-      let i : D.host.E →ₗ[𝓞 D.host.E] S.L0 :=
-        ((LinearMap.toSpanSingleton D.host.E _ (e x)).restrictScalars (𝓞 D.host.E)).codRestrict S.L0 hsmul
-      let : Module.Finite (𝓞 D.host.E) S.L0 := Module.Finite.iff_fg.mpr S.standardTuple_isLattice.fg
-      let : Module.Finite (𝓞 D.host.E) D.host.E := Module.Finite.of_injective i fun a b hab =>
-        smul_left_injective D.host.E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
-      exact RingOfIntegers.not_isField D.host.E
-        (isField_of_isIntegral_of_isField (R := 𝓞 D.host.E) (S := D.host.E)
-          (FaithfulSMul.algebraMap_injective _ _) (Field.toIsField _))
-    have heq : (frameLat S : Set (Fin S.rank → D.host.E)) =
-        S.frame.equivFun.toLinearMap '' (S.L0 : Set S.V) :=
-      (S.frame.equivFun.toEquiv.image_eq_preimage_symm _).symm
-    rw [heq, ← Submodule.map_span, hfull, Submodule.map_top, LinearEquiv.range]
-  obtain ⟨aS, haS⟩ := InertChart.exists_isFrameAt (L := frameLat S) hw hlat.fg hspan
+theorem mem_map_latF_iff_of_frames (D : D7) (S T : HSp D) (v : HeightOneSpectrum (𝓞 D.host.F))
+    (w : HeightOneSpectrum (𝓞 D.host.E)) (hv : w.under (𝓞 D.host.F) = v) (hw : IsInertAt D.host.F D.host.E v w)
+    (c : w.adicCompletion D.host.E →+* w.adicCompletion D.host.E) (hc : IsConjAt D.sp.cm.sig hv c)
+    (a : GL (Fin T.rank) (w.adicCompletion D.host.E)) (ha : IsFrameAt w (frameLat T) a)
+    (aS : GL (Fin S.rank) (w.adicCompletion D.host.E)) (haS : IsFrameAt w (frameLat S) aS) :
+    ∃ (c₀ : w.adicCompletion D.host.E) (b : GL (Fin S.rank) (w.adicCompletion D.host.E)), c₀ ≠ 0 ∧
+      (b⁻¹ : GL (Fin S.rank) (w.adicCompletion D.host.E)).1 =
+        Formalism.UG.cT c aS.1 * S.gram.map (algebraMap D.host.E (w.adicCompletion D.host.E)) ∧
+      ∀ X : Matrix (Fin T.rank) (Fin S.rank) (w.adicCompletion D.host.E),
+        X ∈ (GlobalTheory.FinWeilO.latF S T (frameLat S) (frameLat T)).toAddSubgroup.map (GlobalTheory.InertHomIdx.matW S T w) ↔
+          c₀ • ((a⁻¹ : GL (Fin T.rank) (w.adicCompletion D.host.E)).1 * X * b.1) ∈
+            GlobalTheory.InertHomIdx.intMat (w.adicCompletion D.host.E) T.rank S.rank := by
   obtain ⟨a₀, ha₀, h0, hgen⟩ := exists_gen (D := D) w
   set π := algebraMap D.host.E (w.adicCompletion D.host.E) with hπ
   set G : Matrix (Fin S.rank) (Fin S.rank) (w.adicCompletion D.host.E) := S.gram.map π with hG
@@ -232,7 +204,7 @@ theorem mem_map_latF_iff : ∀ (D : D7) (S T : HSp D) (v : HeightOneSpectrum (�
         rw [← Units.val_mul, inv_mul_cancel, Units.val_one]))
     · rw [hG, show (S.gram.map π).det = π S.gram.det from (RingHom.map_det π S.gram).symm]
       exact ((GlobalTheory.LatVac.gram_det_isUnit S).map π).ne_zero
-  refine ⟨(π a₀)⁻¹, (Matrix.nonsingInvUnit B hBu)⁻¹, inv_ne_zero h0, fun X => ⟨fun h => ?_, fun h => ?_⟩⟩
+  refine ⟨(π a₀)⁻¹, (Matrix.nonsingInvUnit B hBu)⁻¹, inv_ne_zero h0, by rw [inv_inv]; rfl, fun X => ⟨fun h => ?_, fun h => ?_⟩⟩
   · obtain ⟨x, hx, rfl⟩ := AddSubgroup.mem_map.1 h
     rw [GlobalTheory.InertHomIdx.matW_apply]
     have hx' : (x : WO S T) ∈ latO S T (frameLat S) (frameLat T) fun _ => True := hx
@@ -321,5 +293,21 @@ theorem mem_map_latF_iff : ∀ (D : D7) (S T : HSp D) (v : HeightOneSpectrum (�
     refine AddSubgroup.mem_map.2 ⟨GlobalTheory.FinWeilO.XF.mk _ (GlobalTheory.SplitScalar.latO_fin hu), hu, ?_⟩
     rw [GlobalTheory.InertHomIdx.matW_apply, GlobalTheory.FinWeilO.XF.coe_mk]
     exact (map_compW_sum S T hv hc a₀ Y a.1 aS.1).trans hX.symm
+
+theorem mem_map_latF_iff : ∀ (D : D7) (S T : HSp D) (v : HeightOneSpectrum (𝓞 D.host.F)) (w : HeightOneSpectrum (𝓞 D.host.E)), w.under (𝓞 D.host.F) = v → IsInertAt D.host.F D.host.E v w → ∀ a : GL (Fin T.rank) (w.adicCompletion D.host.E), IsFrameAt w (frameLat T) a → ∃ (c₀ : w.adicCompletion D.host.E) (b : GL (Fin S.rank) (w.adicCompletion D.host.E)), c₀ ≠ 0 ∧ ∀ X : Matrix (Fin T.rank) (Fin S.rank) (w.adicCompletion D.host.E), X ∈ (GlobalTheory.FinWeilO.latF S T (frameLat S) (frameLat T)).toAddSubgroup.map (GlobalTheory.InertHomIdx.matW S T w) ↔ c₀ • ((a⁻¹ : GL (Fin T.rank) (w.adicCompletion D.host.E)).1 * X * b.1) ∈ GlobalTheory.InertHomIdx.intMat (w.adicCompletion D.host.E) T.rank S.rank := by
+  intro D S T v w hv hw a ha
+  obtain ⟨c, hc, -⟩ := InertChart.existsUnique_isConjAt D.sp.cm.sig hw hv
+  have hlat := GlobalTheory.HeckeDual.isLattice_frameLat S
+  have hspan : Submodule.span D.host.E (frameLat S : Set (Fin S.rank → D.host.E)) = ⊤ := by
+    have hfull : Submodule.span D.host.E (S.L0 : Set S.V) = ⊤ :=
+      Formalism.HermitianLatticesTheory.IsUnimodular.span_eq_top
+        S.baseLattice_isUnimodular S.herm S.standardTuple_isLattice.fg
+    have heq : (frameLat S : Set (Fin S.rank → D.host.E)) =
+        S.frame.equivFun.toLinearMap '' (S.L0 : Set S.V) :=
+      (S.frame.equivFun.toEquiv.image_eq_preimage_symm _).symm
+    rw [heq, ← Submodule.map_span, hfull, Submodule.map_top, LinearEquiv.range]
+  obtain ⟨aS, haS⟩ := InertChart.exists_isFrameAt (L := frameLat S) hw hlat.fg hspan
+  obtain ⟨c₀, b, hc₀, _, hiff⟩ := mem_map_latF_iff_of_frames D S T v w hv hw c hc a ha aS haS
+  exact ⟨c₀, b, hc₀, hiff⟩
 
 end GlobalTheory.InertHomLattice

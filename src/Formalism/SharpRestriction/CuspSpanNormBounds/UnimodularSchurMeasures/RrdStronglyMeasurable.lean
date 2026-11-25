@@ -4,57 +4,14 @@ public import Mathlib.Analysis.CStarAlgebra.Module.Constructions
 public import Mathlib.Analysis.InnerProductSpace.Orthonormal
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Aesop.Main
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.InnerProductSpace.l2Space
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.MeasureTheory.Function.AEEqOfIntegral
 public import Mathlib.MeasureTheory.Function.ContinuousMapDense
 public import Mathlib.MeasureTheory.Function.L2Space
-import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Analysis.InnerProductSpace.Orthogonal
 public import Mathlib.Analysis.InnerProductSpace.Projection.Submodule
 public import Mathlib.MeasureTheory.Group.Integral
@@ -127,20 +84,6 @@ section Trans
 variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [SecondCountableTopology G]
   [MeasurableSpace G] [BorelSpace G] {μ : Measure G} [μ.IsMulLeftInvariant]
 
-private theorem integrable_comp_mul_left' {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-    [SecondCountableTopology G] [MeasurableSpace G] [BorelSpace G] {μ : Measure G} [μ.IsMulLeftInvariant]
-    {E : Type*} [NormedAddCommGroup E] {f : G → E} (hf : Integrable f μ) (h : G) :
-    Integrable (fun g => f (h * g)) μ := by
-  first
-  | exact hf.comp_mul_left h
-
-private theorem integral_comp_mul_left_eq {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-    [SecondCountableTopology G] [MeasurableSpace G] [BorelSpace G] {μ : Measure G} [μ.IsMulLeftInvariant]
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] (f : G → E) (h : G) :
-    ∫ g, f (h * g) ∂μ = ∫ g, f g ∂μ := by
-  first
-  | exact integral_mul_left_eq_self f h
-
 private theorem abs_norm_sub_sub_norm_add_norm_le_two_mul (a b : ℂ) : |‖a - b‖ - ‖a‖ + ‖b‖| ≤ 2 * ‖b‖ := by
   have h1 := norm_sub_le a b
   have h2 : ‖a‖ ≤ ‖a - b‖ + ‖b‖ := by
@@ -153,9 +96,9 @@ theorem rrd_translate (f : G → ℂ) (hc : Continuous f) (hf : Integrable f μ)
   have key : ∀ h : G, ∫ g, ‖f (h⁻¹ * g) - f g‖ ∂μ =
       ∫ g, (‖f (h⁻¹ * g) - f g‖ - ‖f (h⁻¹ * g)‖ + ‖f g‖) ∂μ := by
     intro h
-    have i1 : Integrable (fun g => f (h⁻¹ * g)) μ := integrable_comp_mul_left' hf h⁻¹
+    have i1 : Integrable (fun g => f (h⁻¹ * g)) μ := hf.comp_mul_left h⁻¹
     have i2 : Integrable (fun g => ‖f (h⁻¹ * g) - f g‖) μ := (i1.sub hf).norm
-    have e : ∫ g, ‖f (h⁻¹ * g)‖ ∂μ = ∫ g, ‖f g‖ ∂μ := integral_comp_mul_left_eq (fun g => ‖f g‖) h⁻¹
+    have e : ∫ g, ‖f (h⁻¹ * g)‖ ∂μ = ∫ g, ‖f g‖ ∂μ := integral_mul_left_eq_self (fun g => ‖f g‖) h⁻¹
     have i3 : Integrable (fun g => ‖f (h⁻¹ * g) - f g‖ - ‖f (h⁻¹ * g)‖) μ := i2.sub i1.norm
     rw [integral_add i3 hf.norm, integral_sub i2 i1.norm, e]
     ring
@@ -177,14 +120,6 @@ theorem rrd_translate (f : G → ℂ) (hc : Continuous f) (hf : Integrable f μ)
   have := tendsto_integral_filter_of_dominated_convergence (fun g => 2 * ‖f g‖) hmeas hbound
     (hf.norm.const_mul 2) hlim
   simpa using this
-
-private theorem integrable_mul_of_norm_le_of_stronglyMeasurable {α : Type*} [MeasurableSpace α] {ν : Measure α} {f ψ : α → ℂ}
-    (hf : Integrable f ν) (hψ : StronglyMeasurable ψ) (M : ℝ) (hM : ∀ g, ‖ψ g‖ ≤ M) :
-    Integrable (fun g => f g * ψ g) ν := by
-  refine Integrable.mono' (hf.norm.mul_const M) (hf.aestronglyMeasurable.mul hψ.aestronglyMeasurable) ?_
-  refine Filter.Eventually.of_forall (fun g => ?_)
-  rw [norm_mul]
-  exact mul_le_mul_of_nonneg_left (hM g) (norm_nonneg _)
 
 theorem rrd_ae_zero [SigmaFinite μ] [IsLocallyFiniteMeasure μ] (ψ : G → ℂ) (hψ : StronglyMeasurable ψ) (M : ℝ)
     (hM : ∀ g, ‖ψ g‖ ≤ M) (h0 : ∀ f : G → ℂ, Continuous f → Integrable f μ → ∫ g, f g * ψ g ∂μ = 0) :
@@ -227,7 +162,9 @@ theorem rrd_ae_zero [SigmaFinite μ] [IsLocallyFiniteMeasure μ] (ψ : G → ℂ
         have hsplit : (fun x => (s.indicator (fun _ : G => (1 : ℂ)) x - φ x) * ψ x) =
             fun x => s.indicator (fun _ : G => (1 : ℂ)) x * ψ x - φ x * ψ x :=
           funext fun x => sub_mul _ _ _
-        rw [hsplit, integral_sub (integrable_mul_of_norm_le_of_stronglyMeasurable hk hψ M hM) (integrable_mul_of_norm_le_of_stronglyMeasurable hφi hψ M hM),
+        rw [hsplit,
+          integral_sub (hk.mul_bdd hψ.aestronglyMeasurable (Eventually.of_forall hM))
+            (hφi.mul_bdd hψ.aestronglyMeasurable (Eventually.of_forall hM)),
           h0 φ φ.continuous hφi, sub_zero]
       rw [e]
       calc ‖∫ x, (s.indicator (fun _ : G => (1 : ℂ)) x - φ x) * ψ x ∂μ‖
@@ -273,7 +210,7 @@ theorem rrd_act (hmul : ∀ g h, π (g * h) = π g ∘L π h) (hiso : ∀ g x, �
         congr 1
         funext g
         rw [inv_mul_cancel_left, hmul, ContinuousLinearMap.comp_apply, map_smul]
-    _ = ∫ g, f (h⁻¹ * g) • π g v ∂μ := integral_comp_mul_left_eq (fun g => f (h⁻¹ * g) • π g v) h
+    _ = ∫ g, f (h⁻¹ * g) • π g v ∂μ := integral_mul_left_eq_self (fun g => f (h⁻¹ * g) • π g v) h
 
 theorem rrd_vec_tendsto (hmul : ∀ g h, π (g * h) = π g ∘L π h) (hiso : ∀ g x, ‖π g x‖ = ‖x‖)
     (hmeas : ∀ x y, StronglyMeasurable fun g => ⟪x, π g y⟫_ℂ) {f : G → ℂ} (hc : Continuous f) (hf : Integrable f μ)
@@ -284,10 +221,10 @@ theorem rrd_vec_tendsto (hmul : ∀ g h, π (g * h) = π g ∘L π h) (hiso : �
   refine squeeze_zero (fun h => norm_nonneg _) (fun h => ?_) hT
   rw [rrd_act hmul hiso hmeas hf v h]
   have i1 : Integrable (fun g => f (h⁻¹ * g) • π g v) μ :=
-    rrd_int hiso hmeas (integrable_comp_mul_left' hf h⁻¹) v
+    rrd_int hiso hmeas (hf.comp_mul_left h⁻¹) v
   have i2 : Integrable (fun g => f g • π g v) μ := rrd_int hiso hmeas hf v
   have i3 : Integrable (fun g => ‖f (h⁻¹ * g) - f g‖ * ‖v‖) μ :=
-    ((integrable_comp_mul_left' hf h⁻¹).sub hf).norm.mul_const _
+    ((hf.comp_mul_left h⁻¹).sub hf).norm.mul_const _
   unfold rrd_vec
   rw [← integral_sub i1 i2, ← integral_mul_const]
   refine norm_integral_le_of_norm_le i3 (Filter.Eventually.of_forall fun g => le_of_eq ?_)

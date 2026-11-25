@@ -990,15 +990,12 @@ lemma wOld_mul_ulFam (N l : ℕ) (a b : ℤ) (h : (l : ℤ) * b - N * a = 1) (j 
   fin_cases i <;> fin_cases m <;>
     simp [wOld, gaOld, mat, Matrix.mul_apply, Fin.sum_univ_two] <;> ring
 
-lemma wOld_det (N l : ℕ) (a b : ℤ) (h : (l : ℤ) * b - N * a = 1) : (wOld N l a b).det = l := by
-  rw [wOld, Matrix.det_fin_two_of]; linear_combination (l : ℤ) * h
-
 lemma mat_det_pos (γ : SL(2, ℤ)) : 0 < (mat γ).det := by simp [mat]
 
 theorem trOld_eq : ∀ (N l : ℕ) (k : ℤ) (a b : ℤ) (h : (l : ℤ) * b - N * a = 1) (G : ℍ → ℂ), 0 < l →
     trOld k N l a b h G = G + ((l : ℂ) ^ (2 - k)) • UlF k l (G ∣[k] toGL (wOld N l a b)) := by
   intro N l k a b h G hl
-  have hW : 0 < (wOld N l a b).det := by rw [wOld_det N l a b h]; exact_mod_cast hl
+  have hW : 0 < (wOld N l a b).det := by rw [GlobalTheory.HeckeFamilyMatrices.oldformLevelRaisingMatrix_det_eq_level N l a b h]; exact_mod_cast hl
   have hl' : (l : ℂ) ≠ 0 := by exact_mod_cast hl.ne'
   unfold trOld
   congr 1
@@ -1131,13 +1128,6 @@ open scoped Manifold
 noncomputable section
 
 namespace GlobalTheory.HeckeFamilyMatrices.UlSemisimple
-
-theorem toGL_det (g : Matrix (Fin 2) (Fin 2) ℤ) (hg : g.det ≠ 0) :
-    (toGL g : Matrix (Fin 2) (Fin 2) ℝ).det = (g.det : ℝ) := by
-  unfold toGL
-  rw [dite_eq_right hg]
-  simp only [Matrix.GeneralLinearGroup.mkOfDetNeZero, Matrix.det_fin_two]
-  simp
 
 def ulLin (k : ℤ) (l : ℕ) (hl : 0 < l) : Module.End ℂ (ℍ → ℂ) where
   toFun := UlF k l

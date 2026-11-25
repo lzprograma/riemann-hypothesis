@@ -54,7 +54,6 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensor
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor
 open scoped TensorProduct ComplexOrder
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FockIsometry
 
@@ -93,10 +92,10 @@ theorem commScalar_unitMap {B : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.ran
     · have hne : ¬ ((τ, i, j) : FVar D W.rank V.rank) = (τ, i', j') := by
         intro h
         exact hij ⟨congrArg (fun x => x.2.1) h, congrArg (fun x => x.2.2) h⟩
-      rw [if_neg hij, if_neg hne]
+      rw [ite_eq_right hij, ite_eq_right hne]
       simp
   · have hne : ¬ ((τ, i, j) : FVar D W.rank V.rank) = (τ', i', j') := fun h => hτ (congrArg Prod.fst h)
-    simp only [commScalar, if_neg hτ, if_neg hne]
+    simp only [commScalar, ite_eq_right hτ, ite_eq_right hne]
 
 private theorem omDir_smul_unitMap_unitMap_eq_ite {S T : HSp D} {BS : D.what₂.Tau → Matrix (Fin S.rank) (Fin S.rank) ℂ}
     {BT : D.what₂.Tau → Matrix (Fin T.rank) (Fin T.rank) ℂ} {εS : D.what₂.Tau → Fin S.rank → ℝ}

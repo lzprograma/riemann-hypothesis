@@ -42,7 +42,6 @@ import Mathlib.Tactic.ReduceModChar
 @[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 namespace GlobalTheory.ConjReading
@@ -125,8 +124,8 @@ theorem parAt_conj {D : D7} (W : HSp D) (σ : D.what₂.LL →+* ℂ) :
   unfold Links.parAt
   rw [hk, lab_conj, labE_conj]
   rcases hs with h | h
-  · rw [h, if_neg (tauE_ne_conj D ρ).symm, if_pos rfl]
-  · rw [h, conj_conj, if_pos rfl, if_neg (tauE_ne_conj D ρ).symm, dualPar_dualPar]
+  · rw [h, ite_eq_right (tauE_ne_conj D ρ).symm, ite_eq_left rfl]
+  · rw [h, conj_conj, ite_eq_left rfl, ite_eq_right (tauE_ne_conj D ρ).symm, dualPar_dualPar]
 
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : FamIn D.what₂.LL G Pl0 T0 D.R.m}
 

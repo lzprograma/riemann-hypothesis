@@ -2,41 +2,6 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.NumBase
 public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FourDepthLtConductorOfBounds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -86,7 +51,6 @@ theorem La_round {K : Cst} (hK : K.Pos) {CH : ℝ} {X : Dat} (B : Base K CH X) :
       have a1 : Real.log X.a ≤ (1 + 1 / 200) * Real.log X.ar := by linarith
       have a0 : 0 ≤ Real.log X.a := by linarith
       have a2 := mul_le_mul a1 a1 a0 (by linarith)
-      have a3 : 0 ≤ Real.log X.ar * Real.log X.ar := by positivity
       nlinarith
     have := mul_le_mul_of_nonneg_left hsq hcn
     calc K.C₀ * (X.N₁ : ℝ) ^ 2 * Real.log X.a * Real.log X.a
@@ -112,7 +76,7 @@ theorem r15 (Yb N La La' k : ℝ) (hYb : 0 ≤ Yb) (hN : 0 ≤ N) (h2 : La' ≤ 
     _ = 2 * Yb * N * La := by ring
     _ < k := h
 
-theorem r16 (k Y Yb N La La' l l' ar a' b' : ℝ) (hk : 0 ≤ k) (hY : 0 ≤ Y) (hYb : 0 ≤ Yb) (hN : 0 ≤ N) (hb : 0 < b')
+theorem r16 (k Y Yb N La La' l l' ar a' b' : ℝ) (hk : 0 ≤ k) (hYb : 0 ≤ Yb) (hN : 0 ≤ N) (hb : 0 < b')
     (ha : ar ≤ a') (h2 : La' * l' ≤ 2 * (La * l)) (h : k * Y ^ 2 * Yb * N * La * l ≤ ar / b') :
     k * Y ^ 2 * (Yb / 2) * N * La' * l' ≤ a' / b' := by
   have hc : 0 ≤ k * Y ^ 2 * Yb * N / 2 := by positivity
@@ -196,7 +160,6 @@ theorem hyp_round {K : Cst} (hK : K.Pos) {CH : ℝ} (hCH : K.TM ≤ CH) {X : Dat
   have hLa1 : 1 ≤ LaI K.C₀ X.N₁ X.ar := B.hLa1
   have hLa'0 : 0 ≤ LaI K.C₀ X.N₁ X.a := by linarith
   have hN1r : (1 : ℝ) ≤ (X.N₁ : ℝ) := B.hN1
-  have hY0 : 0 ≤ X.Y := by linarith
   have hdd : deI K.CH K.C₀ X.m X.N₁ X.a X.b' X.bl X.bu + 1 / ((X.m : ℝ) + 1) ≤
       deI CH K.C₀ X.m X.N₁ X.ar X.b' X.bl X.bu := by
     unfold deI
@@ -215,7 +178,7 @@ theorem hyp_round {K : Cst} (hK : K.Pos) {CH : ℝ} (hCH : K.TM ≤ CH) {X : Dat
     ?_, ?_, ?_, hcs, ?_⟩
   · exact r12 _ _ _ _ _ _ _ hYb0 hN0 hb.le hk0 l2 hIb1
   · exact r15 _ _ _ _ _ hYb0 hN0 l2 hk2
-  · exact r16 _ _ _ _ _ _ _ _ _ _ _ hk0.le hY0 hYb0 hN0 hb B.haa l3 hab
+  · exact r16 _ _ _ _ _ _ _ _ _ _ _ hk0.le hYb0 hN0 hb B.haa l3 hab
   · exact lt_of_lt_of_le hpab (div_le_div_of_nonneg_right B.haa hb.le)
   · exact r19 CH _ _ _ _ _ hCH1.le (by linarith) hN0 hLa'0 l2 hkLa
   · intro d hd hc

@@ -19,8 +19,4 @@ def CurveCountLower.Statement : Prop :=
       (τ : ℝ) * II K ι (mCoordIdeal y) 1 (fun _ => A) - C ≤
         smallSectionCount (IsSmallH (mCoordIdeal y) y A) (chartLat y A.a) τ
 
-namespace CurveCountLower
-
-end CurveCountLower
-
 end GroundTheory.Heights₂.Heights.Targets

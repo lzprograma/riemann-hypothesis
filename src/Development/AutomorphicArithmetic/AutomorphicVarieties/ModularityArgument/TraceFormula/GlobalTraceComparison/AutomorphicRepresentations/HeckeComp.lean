@@ -144,8 +144,17 @@ private theorem core {G V : Type} [Group G] [TopologicalSpace G] [IsTopologicalG
     obtain ⟨-, e2, -, -⟩ := (Sh u hu h hh).2.2.2 y (hY y.2)
     rw [hact _ p1, hact _ hh, b1, e2]
 
-theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.toYd_pf :
-    SlotBasic → LevTop → TranslF → HeckeSum → LvShift → ToYd := by
+theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.toYd_pf_aux :
+    SlotBasic → LevTop → TranslF → HeckeSum → LvShift →
+    ForLev fun E _ _ _ n S _ N => ∀ (π : CuspSub E n) (u : GL (Fin n) E), IsTransl u →
+      (∀ k ∈ Lev S N, thetaF E n k ∈ Lev S N) ∧
+      ∀ (μf : Measure (GF E n)), μf.IsHaarMeasure → ∀ (Y : Submodule ℂ (Sm E n)) (ρ : (GF E n → ℂ) → Module.End ℂ Y) (A : Module.End ℂ Y),
+        Y ≤ π.V → FiniteDimensional ℂ Y → Y ≠ ⊥ → (∀ y ∈ Y, ∀ k ∈ Lev S N, finRep E n k y = y) → IsHeckeAct μf (Lev S N) Y ρ →
+        (∀ W : Submodule ℂ Y, (∀ h, IsHeckeF (Lev S N) h → ∀ y ∈ W, ρ h y ∈ W) → W = ⊥ ∨ W = ⊤) → A * A = 1 →
+        (∀ h, IsHeckeF (Lev S N) h → A * ρ h = ρ (fun g => h (thetaF E n g)) * A) →
+        ∃ (y : Yd π (Lev S N)) (v : ℂ), (v = (((μf (Lev S N : Set (GF E n))).toReal : ℝ) : ℂ) ∧ v ≠ 0) ∧
+          ∀ h, IsHecke (Lev S N) h → IsHeckeF (Lev S N) (fun g => h (g * (ratF E n u)⁻¹)) ∧
+            LinearMap.trace ℂ Y (ρ (fun g => h (g * (ratF E n u)⁻¹)) * A) = v * LinearMap.trace ℂ y.Y (y.r h * y.A) := by
   intro hSl hLT hTF hHS hLS E _ _ _ n S Z N hS hZ hG π u hu
   obtain ⟨hO, hC, -, hNm⟩ := hLT E n S Z N hS hZ hG
   obtain ⟨t1, t2, κ, hκ, t3⟩ := hTF E n u hu
@@ -212,7 +221,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.toYd_pf :
   obtain ⟨c1, c2, c3⟩ := core hLS (finRep E n) (Lev S N) hO hC (ratF E n u) hnorm (thetaF E n) hθc hθi hθm hθK hθu
     Y hY (fun h => v⁻¹ • ρ h) hact A hAA (fun h hh => by
       rw [mul_smul_comm, smul_mul_assoc, hAθ h (toF hh)])
-  refine ⟨⟨Y, fun h => v⁻¹ • ρ h, _, hYπ, hfd, hne, hY, hact, ?_, c1, ?_⟩, v, hv0, fun h hh =>
+  refine ⟨⟨Y, fun h => v⁻¹ • ρ h, _, hYπ, hfd, hne, hY, hact, ?_, c1, ?_⟩, v, ⟨hvdef, hv0⟩, fun h hh =>
     ⟨toF (c3 h hh).1, ?_⟩⟩
   · intro W hW
     refine hsim W fun h hh y hy => ?_
@@ -232,3 +241,11 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.toYd_pf :
         ((v⁻¹ • ρ (fun g => (Lev S N : Set (GF E n)).indicator 1 ((ratF E n u)⁻¹ * g))) * A)) := by
       rw [key, LinearMap.map_smul, smul_eq_mul]
     exact tr
+
+theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.toYd_pf :
+    SlotBasic → LevTop → TranslF → HeckeSum → LvShift → ToYd := by
+  intro hSl hLT hTF hHS hLS E _ _ _ n S Z N hS hZ hG π u hu
+  obtain ⟨h1, h2⟩ := UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.toYd_pf_aux hSl hLT hTF hHS hLS E n S Z N hS hZ hG π u hu
+  exact ⟨h1, fun μf hμ Y ρ A hYπ hfd hne hfix hAct hsim hAA hAθ =>
+    let ⟨y, v, hv, htr⟩ := h2 μf hμ Y ρ A hYπ hfd hne hfix hAct hsim hAA hAθ
+    ⟨y, v, hv.2, htr⟩⟩

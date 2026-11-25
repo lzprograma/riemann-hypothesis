@@ -5,51 +5,8 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeT
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.RingTheory.AdicCompletion.Noetherian
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.MvPowerSeries.Equiv
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 
@@ -87,8 +44,8 @@ theorem UpperTheory.Reformulated.B.MemSpanMonomial.mem_span_X :
     intro i m
     rw [MvPowerSeries.X_def, MvPowerSeries.coeff_monomial_mul]
     by_cases h : Finsupp.single i 1 ≤ m
-    · rw [if_pos h, one_mul, hg, tsub_add_cancel_of_le h]
-    · rw [if_neg h, if_neg]
+    · rw [ite_eq_left h, one_mul, hg, tsub_add_cancel_of_le h]
+    · rw [ite_eq_right h, ite_eq_right]
       rintro ⟨hm, hi⟩
       apply h
       rw [Finsupp.single_le_iff, ← hi]
@@ -103,9 +60,9 @@ theorem UpperTheory.Reformulated.B.MemSpanMonomial.mem_span_X :
     rw [MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hf]
     simp
   · rw [Finset.sum_eq_single (c m hm)]
-    · rw [if_pos ⟨hm, rfl⟩]
+    · rw [ite_eq_left ⟨hm, rfl⟩]
     · intro j _ hj
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨_, h⟩
       exact hj h.symm
     · intro h
@@ -133,10 +90,10 @@ private theorem lin_part {E : Type} [Field E] {n : ℕ} (f : MvPowerSeries (Fin 
     intro j
 
     rw [hg, map_sum, Finset.sum_eq_single j]
-    · rw [MvPowerSeries.X, coeff_monomial_mul, if_pos le_rfl, one_mul, tsub_self,
+    · rw [MvPowerSeries.X, coeff_monomial_mul, ite_eq_left le_rfl, one_mul, tsub_self,
         coeff_zero_eq_constantCoeff_apply]
     · intro i _ hij
-      rw [MvPowerSeries.X, coeff_monomial_mul, if_neg]
+      rw [MvPowerSeries.X, coeff_monomial_mul, ite_eq_right]
       intro h
       have := h i
       simp [hij.symm] at this
@@ -153,7 +110,7 @@ private theorem inj_of_surj {A : Type} [CommRing A] [IsNoetherianRing A] (s : A 
     rw [RingHom.mem_ker] at ha ⊢
     rw [pow_succ', RingHom.mul_def, RingHom.comp_apply, ha, map_zero]⟩
   obtain ⟨N, hN⟩ := monotone_stabilizes_iff_noetherian.2 (inferInstance : IsNoetherian A A) K
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro a ha
   have hsN : Function.Surjective (s ^ N) := by
     rw [RingHom.coe_pow]; exact hs.iterate N

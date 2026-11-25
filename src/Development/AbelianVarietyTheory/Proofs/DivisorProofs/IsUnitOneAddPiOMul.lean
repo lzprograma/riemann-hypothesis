@@ -104,7 +104,7 @@ theorem piPow_antitone {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ
   exact pow_dvd_pow _ hab
 
 theorem filt_antitone {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) (P : GlobalTheory.UTr.Csr (s := sigO σ h.2.1)) :
-    Antitone (filt h P) := fun a b hab _ hu => piPow_antitone h P hab hu
+    Antitone (filt h P) := fun _ _ hab _ hu => piPow_antitone h P hab hu
 
 theorem filt_zero {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) (P : GlobalTheory.UTr.Csr (s := sigO σ h.2.1)) :
     filt h P 0 = ⊤ := by

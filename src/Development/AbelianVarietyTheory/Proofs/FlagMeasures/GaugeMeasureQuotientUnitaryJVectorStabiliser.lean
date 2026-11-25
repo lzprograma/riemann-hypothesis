@@ -192,8 +192,8 @@ theorem herm_comp {n P Q : ℕ} {ε : Fin n → Bool} {f : Fin P ⊕ Fin Q ≃ F
     (x y : Fin n → ℂ) : herm (x ∘ f) (y ∘ f) = star y ⬝ᵥ (Formalism.REAL.Jm ε *ᵥ x) := by
   obtain ⟨h1, h2⟩ := hf
   rw [dotProduct, ← Equiv.sum_comp f, Fintype.sum_sum_type, herm]
-  simp only [Function.comp_apply, Pi.star_apply, Formalism.REAL.Jm, mulVec_diagonal, h1, h2, if_true,
-    Bool.false_eq_true, if_false, one_mul, neg_one_mul, mul_neg, Finset.sum_neg_distrib, ← sub_eq_add_neg]
+  simp only [Function.comp_apply, Pi.star_apply, Formalism.REAL.Jm, mulVec_diagonal, h1, h2, ite_true,
+    Bool.false_eq_true, ite_false, one_mul, neg_one_mul, mul_neg, Finset.sum_neg_distrib, ← sub_eq_add_neg]
   congr 1 <;> exact Finset.sum_congr rfl fun i _ => mul_comm _ _
 
 theorem form_self {n : ℕ} (ε : Fin n → Bool) (x : Fin n → ℂ) :
@@ -1117,7 +1117,7 @@ open scoped ENNReal NNReal Pointwise
 
 variable {P Q P' Q' : ℕ}
 
-theorem tanBall_mul (t r : ℝ) (ht : 0 < t) (_hr : 0 < r) :
+theorem tanBall_mul (t r : ℝ) (ht : 0 < t) :
     (volume : Measure (ℝ × Sp P Q)) {x | tanSq x < (t * r) ^ 2} =
       ENNReal.ofReal (t ^ Module.finrank ℝ (ℝ × Sp P Q)) *
         volume {x : ℝ × Sp P Q | tanSq x < r ^ 2} := by
@@ -1183,7 +1183,7 @@ theorem tendsto_fibSq (e : Option (Fin P' ⊕ Fin Q') ≃ (Fin P ⊕ Fin Q)) (he
     refine GlobalTheory.CompactDualQuot.tendsto_div_of_squeeze
       (F := fun r : ℝ => (volume : Measure (ℝ × Sp P' Q')) {x | tanSq x < r ^ 2})
       (V := fun r : ℝ => (volume : Measure (ℝ × Sp P' Q')) {x | tanSq x < r ^ 2})
-      ENNReal.one_ne_top (fun t r ht hr => tanBall_mul t r ht hr) hVV ?_
+      ENNReal.one_ne_top (fun t r ht _ => tanBall_mul t r ht) hVV ?_
     intro t ht
     have hti : t⁻¹ < 1 := inv_lt_one_of_one_lt₀ ht
     have htp : 0 < t⁻¹ := inv_pos.2 (by linarith)
@@ -1495,7 +1495,7 @@ theorem qf_comp {n : ℕ} {ε : Fin n → Bool} {f : Fin P ⊕ Fin Q ≃ Fin n} 
     (y : Fin n → ℂ) : qf (fun i => y (f i)) = qEps ε y := by
   unfold qf qEps
   rw [← f.sum_comp, Fintype.sum_sum_type]
-  simp only [hf.1, hf.2, if_true, Bool.false_eq_true, if_false, one_mul, neg_one_mul,
+  simp only [hf.1, hf.2, ite_true, Bool.false_eq_true, ite_false, one_mul, neg_one_mul,
     Finset.sum_neg_distrib, Complex.normSq_eq_norm_sq]
   ring
 

@@ -1,5 +1,6 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointOfIso
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarCompactLtTop
 public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SmoothVectorsDenseInvariant
@@ -348,7 +349,7 @@ theorem smooth_rdWord_functional : ∀ (k r : ℕ) {H : Type} [NormedAddCommGrou
       have e : (fun t : ℝ => rdWord w (fun g : Mat k r => Λ (σ g v)) (x * NormedSpace.exp ((t : ℂ) • X))) =
           (⇑((Λ.comp (σ x)).restrictScalars ℝ) ∘ fun t : ℝ => σ (NormedSpace.exp ((t : ℂ) • X)) (dsigW σ w v)) := by
         funext t
-        have ht := Formalism.MainNotions.LowestKTypeMultiplicity.exp_mem_UH hX t
+        have ht := PI.WUN.exp_mem_UH hX t
         rw [ih hw _ (GlobalTheory.SgInfDD.gg_mul hx ht)]
         simp only [Function.comp, ContinuousLinearMap.coe_restrictScalars', ContinuousLinearMap.comp_apply]
         rw [hσ.1.2 x hx _ ht]
@@ -418,16 +419,7 @@ theorem rdWord_translate {m : ℕ} {V : Type*} [NormedAddCommGroup V] [NormedSpa
 variable {k r : ℕ}
 
 theorem inv_of_mem {a : Mat k r} (ha : a ∈ GG k r) : a * a⁻¹ = 1 ∧ a⁻¹ * a = 1 := by
-  by_cases hdet : IsUnit a.det
-  · exact ⟨Matrix.mul_nonsing_inv a hdet, Matrix.nonsing_inv_mul a hdet⟩
-  · exfalso
-    have h0 : a⁻¹ ∈ GG k r := (gg_closedSub k r).2.2.2.2 a ha
-    rw [Matrix.nonsing_inv_apply_not_isUnit a hdet] at h0
-    have h1 : (0 : Mat k r)ᴴ * Hpk k r * 0 = Hpk k r := h0
-    let i : Fin (2 * r + k + 1) := ⟨r + k, by omega⟩
-    have h2 : Hpk k r i i = -1 := by simp [Hpk, i]
-    rw [← h1] at h2
-    simp at h2
+  apply _root_.Formalism.FourierDecayAlt.P.S3dx6.unit_of_uh <;> assumption
 
 theorem continuous_lmul (a : Mat k r) : Continuous (lmulM a : Mt k r → Mt k r) := by
   refine continuous_pi fun i => continuous_pi fun j => ?_
@@ -817,7 +809,7 @@ theorem sobolev_at_one_G : ∀ (k r : ℕ) (μG : Measure (Mt k r)), IsHaarOn (G
   have hfin : IsFiniteMeasureOnCompacts μG := by
     obtain ⟨hG, -⟩ := closedSub_groups k r (bvec (wI k r (Fin.last k))) (fun i hi => by
       simp only [bvec, wI]
-      rw [Pi.single_apply, if_neg]
+      rw [Pi.single_apply, ite_eq_right]
       intro h; rw [h] at hi; simp at hi) (by
       have h : herm (Hpk k r) (bvec (wI k r (Fin.last k))) (bvec (wI k r (Fin.last k))) =
           Hpk k r (wI k r (Fin.last k)) (wI k r (Fin.last k)) := by

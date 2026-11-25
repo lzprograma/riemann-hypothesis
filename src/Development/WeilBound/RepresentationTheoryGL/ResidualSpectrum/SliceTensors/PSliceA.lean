@@ -7,47 +7,6 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CapelliC
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsAddHaarMeasureUnipMeasure
 public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.NormalisedExistence.ExistsNormed
 public import GroundTheory.AutomorphicForms.Reduction
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -112,8 +71,8 @@ theorem A_aT_comm {N r : ℕ} (t : ℝ) (g : GA E N)
   refine A_diag_comm _ _ fun i j hij => ?_
   have e : (if (i : ℕ) < r then t else 0) = (if (j : ℕ) < r then t else 0) := by
     by_cases hi : (i : ℕ) < r
-    · rw [if_pos hi, if_pos ((h i j hij).1 hi)]
-    · rw [if_neg hi, if_neg (fun hj => hi ((h i j hij).2 hj))]
+    · rw [ite_eq_left hi, ite_eq_left ((h i j hij).1 hi)]
+    · rw [ite_eq_right hi, ite_eq_right (fun hj => hi ((h i j hij).2 hj))]
   exact congrArg (fun x : ℝ => ((posIdele (K := E) (Real.exp x) (Real.exp_pos _) : (Ad E)ˣ) : Ad E)) e
 
 theorem aT_add (N r : ℕ) (s t : ℝ) : aT E N r (s + t) = aT E N r s * aT E N r t := by
@@ -136,7 +95,7 @@ theorem splitCentre_eq_aT (N : ℕ) (t : ℝ) : splitCentre E N t = aT E N N t :
   rw [A_aT_tor, ← JDict.tor_const]
   congr 1
   funext i
-  rw [if_pos i.2]
+  rw [ite_eq_left i.2]
 
 theorem A_stdSum_inl {r s : ℕ} (a : Fin r) : ((GlobalTheory.SmGL.stdSum (rfl : r + s = r + s) (Sum.inl a) : Fin (r + s)) : ℕ) = a := by
   simp [GlobalTheory.SmGL.stdSum]
@@ -166,9 +125,9 @@ theorem A_lev_tor {r s : ℕ} (x : Fin r → ℝ) (y : Fin s → ℝ) :
     · subst h1
       have ha : ((GlobalTheory.SmGL.stdSum (rfl : r + s = r + s) (Sum.inl a) : Fin (r + s)) : ℕ) < r := by
         rw [A_stdSum_inl]; exact a.2
-      rw [if_pos rfl, if_pos rfl, dite_eq_left ha]
+      rw [ite_eq_left rfl, ite_eq_left rfl, dite_eq_left ha]
       congr 3
-    · rw [if_neg h1, if_neg h1]
+    · rw [ite_eq_right h1, ite_eq_right h1]
   · simp [A_coe_tor, hinj.eq_iff]
   · simp [A_coe_tor, hinj.eq_iff]
   · simp only [fromBlocks_apply₂₂, A_coe_tor, diagonal_apply, hinj.eq_iff, Sum.inr.injEq]
@@ -176,12 +135,12 @@ theorem A_lev_tor {r s : ℕ} (x : Fin r → ℝ) (y : Fin s → ℝ) :
     · subst h1
       have hb : ¬ ((GlobalTheory.SmGL.stdSum (rfl : r + s = r + s) (Sum.inr b) : Fin (r + s)) : ℕ) < r := by
         rw [A_stdSum_inr]; omega
-      rw [if_pos rfl, if_pos rfl, dite_eq_right hb]
+      rw [ite_eq_left rfl, ite_eq_left rfl, dite_eq_right hb]
       congr 3
       refine congrArg y (Fin.ext ?_)
       simp only [A_stdSum_inr]
       omega
-    · rw [if_neg h1, if_neg h1]
+    · rw [ite_eq_right h1, ite_eq_right h1]
 
 theorem aT_comm_lev (r s : ℕ) (t : ℝ) (m : GA E r × GA E s) :
     aT E (r + s) r t * lev (Ad E) r s m = lev (Ad E) r s m * aT E (r + s) r t := by
@@ -290,7 +249,7 @@ theorem lev_unipGL_left (r s r₁ : ℕ) (h : r₁ < r) (A : UPos r r₁ → Ad 
       · exact hb ⟨h1, h2⟩
       · omega
   · rw [fromBlocks_apply₁₂]
-    simp only [reduceCtorEq, if_false, Matrix.zero_apply, zero_add]
+    simp only [reduceCtorEq, ite_false, Matrix.zero_apply, zero_add]
     split_ifs with h'
     · rw [joinPos, dite_eq_left]
       · rfl
@@ -300,7 +259,7 @@ theorem lev_unipGL_left (r s r₁ : ℕ) (h : r₁ < r) (A : UPos r r₁ → Ad 
         omega
     · rfl
   · rw [fromBlocks_apply₂₁]
-    simp only [reduceCtorEq, if_false, Matrix.zero_apply, zero_add]
+    simp only [reduceCtorEq, ite_false, Matrix.zero_apply, zero_add]
     rw [dite_eq_right]
     rintro ⟨s', hs', h1, h2⟩
     rw [A_stdSum_inr, A_stdSum_inl] at *
@@ -350,7 +309,7 @@ theorem lev_unipGL_right (r s r₂ : ℕ) (h : 0 < r₂) (A : UPos s r₂ → Ad
     have := c.2
     omega
   · rw [fromBlocks_apply₁₂]
-    simp only [reduceCtorEq, if_false, Matrix.zero_apply, zero_add]
+    simp only [reduceCtorEq, ite_false, Matrix.zero_apply, zero_add]
     split_ifs with h'
     · rw [joinPos, dite_eq_left]
       · rfl
@@ -360,7 +319,7 @@ theorem lev_unipGL_right (r s r₂ : ℕ) (h : 0 < r₂) (A : UPos s r₂ → Ad
         omega
     · rfl
   · rw [fromBlocks_apply₂₁]
-    simp only [reduceCtorEq, if_false, Matrix.zero_apply, zero_add]
+    simp only [reduceCtorEq, ite_false, Matrix.zero_apply, zero_add]
     rw [dite_eq_right]
     rintro ⟨s', hs', h1, h2⟩
     simp only [A_stdSum_inr, A_stdSum_inl] at h1 h2

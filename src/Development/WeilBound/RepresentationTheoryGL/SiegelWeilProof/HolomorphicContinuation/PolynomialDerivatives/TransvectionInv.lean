@@ -1,53 +1,6 @@
 module
 
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.PairSym
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Bool
 import Std.Tactic.BVDecide.Normalize.Prop
 
@@ -193,26 +146,14 @@ theorem fix_of_exp (δ : Derivation ℂ (MvPolynomial (FinalTheorems m n) ℂ) (
       simp only [mul_add, map_add (f := _), map_mul, hΦδ, hX, hC, Polynomial.derivative_C,
         Polynomial.derivative_mul, Polynomial.derivative_X, zero_add, one_mul, mul_zero, add_zero]
       ring
-  have hev1 : ∀ q, Polynomial.eval 1 (Φ q) = φ q := by
-    intro q
-    refine MvPolynomial.induction_on (motive := fun q => Polynomial.eval 1 (Φ q) = φ q) q ?_ ?_ ?_
-    · intro a
-      simp [Φ, Polynomial.algebraMap_apply, MvPolynomial.algebraMap_eq]
-    · intro p q hp hq
-      simp only [map_add (f := _), Polynomial.eval_add, hp, hq]
-    · intro p v hp
-      rw [map_mul, map_mul, Polynomial.eval_mul, hp, hX, hφ]
-      simp
-  have hev0 : ∀ q, Polynomial.eval 0 (Φ q) = q := by
-    intro q
-    refine MvPolynomial.induction_on (motive := fun q => Polynomial.eval 0 (Φ q) = q) q ?_ ?_ ?_
-    · intro a
-      simp [Φ, Polynomial.algebraMap_apply, MvPolynomial.algebraMap_eq]
-    · intro p q hp hq
-      simp only [map_add (f := _), Polynomial.eval_add, hp, hq]
-    · intro p v hp
-      rw [map_mul, Polynomial.eval_mul, hp, hX]
-      simp
+  have hev1 : ∀ q, Polynomial.eval 1 (Φ q) = φ q := RingHom.congr_fun
+    (show (Polynomial.evalRingHom 1).comp Φ.toRingHom = φ.toRingHom from MvPolynomial.ringHom_ext
+      (fun a => by simp [Φ, Polynomial.algebraMap_apply, MvPolynomial.algebraMap_eq])
+      fun v => by simp [hX, hφ])
+  have hev0 : ∀ q, Polynomial.eval 0 (Φ q) = q := RingHom.congr_fun
+    (show (Polynomial.evalRingHom 0).comp Φ.toRingHom = RingHom.id _ from MvPolynomial.ringHom_ext
+      (fun a => by simp [Φ, Polynomial.algebraMap_apply, MvPolynomial.algebraMap_eq])
+      fun v => by simp [hX])
   have h0 : Polynomial.derivative (Φ p) = 0 := by rw [hder, hp, mul_zero, map_zero]
   have hdeg : (Φ p).natDegree = 0 := Polynomial.derivative_eq_zero.mp h0
   calc φ p = Polynomial.eval 1 (Φ p) := (hev1 p).symm
@@ -229,14 +170,14 @@ theorem sum_ite_l (g : Fin n → ℂ) (F : Fin n → MvPolynomial (FinalTheorems
     ∑ x, C (if j0 = x then g x else 0) * F x = C (g j0) * F j0 := by
   rw [Finset.sum_eq_single j0]
   · simp
-  · intro x _ hx; rw [if_neg (Ne.symm hx)]; simp
+  · intro x _ hx; rw [ite_eq_right (Ne.symm hx)]; simp
   · intro h; exact absurd (Finset.mem_univ _) h
 
 theorem sum_ite_r (g : Fin n → ℂ) (F : Fin n → MvPolynomial (FinalTheorems m n) ℂ) (j0 : Fin n) :
     ∑ x, C (if x = j0 then g x else 0) * F x = C (g j0) * F j0 := by
   rw [Finset.sum_eq_single j0]
   · simp
-  · intro x _ hx; rw [if_neg hx]; simp
+  · intro x _ hx; rw [ite_eq_right hx]; simp
   · intro h; exact absurd (Finset.mem_univ _) h
 
 theorem act_transvection (t : Matrix.TransvectionStruct (Fin n) ℂ) (p : MvPolynomial (FinalTheorems m n) ℂ)

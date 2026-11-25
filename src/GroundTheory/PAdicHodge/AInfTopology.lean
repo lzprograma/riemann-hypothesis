@@ -13,14 +13,6 @@ open WittVector Filter Topology
 
 namespace GroundTheory.PAdicHodge
 
-section Coordinates
-
-variable {p : ℕ} [hp : Fact p.Prime] {R : Type*} [CommRing R]
-
-variable [CharP R p]
-
-end Coordinates
-
 namespace AInf
 
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]

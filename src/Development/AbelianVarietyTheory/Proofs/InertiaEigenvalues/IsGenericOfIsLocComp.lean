@@ -82,8 +82,7 @@ theorem colT_ne_zero_of_good : ∀ (E : Type) [Field E] [NumberField E] (a : ℕ
     ∀ (m : ℕ) (f : GA E a → ℂ), m + 1 < a → Good ψ (m + 1) f → f ≠ 0 → colT ψ (m + 1) f ≠ 0 := by
   intro E _ _ a ψ hψ m f hma hG hf
   obtain ⟨g₀, hg₀⟩ : ∃ g₀, f g₀ ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hf (funext h)
   have hPer : Per (ratV E (UnipotentBlockColumnIndex a (m + 1) (m + 1))) (fun x => f (blkU x * g₀)) :=
     per_blk hG.cont (fun c g => hG.left _ (isMir_blkU c) g) g₀
@@ -96,8 +95,7 @@ theorem colT_ne_zero_of_good : ∀ (E : Type) [Field E] [NumberField E] (a : ℕ
     rw [e, one_mul] at h1
     exact h1
   obtain ⟨ξ, hξ⟩ : ∃ ξ : UnipotentBlockColumnIndex a (m + 1) (m + 1) → E, coefF ψ (m + 1) ξ f g₀ ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hΦ0 (GlobalTheory.T.periodic_eq_zero_of_fourier_coefficients_zero E _ ψ hψ _ hPer h)
   have hξ0 : ξ ≠ 0 := by
     rintro rfl
@@ -140,14 +138,14 @@ variable {E : Type} [Field E] [NumberField E] {a : ℕ} {ψ : AddChar (Ad E) ℂ
 
 theorem good_colT (hψ : StdPsi ψ) {m : ℕ} {f : GA E a → ℂ} (h : m + 1 < a) (hf : Good ψ (m + 1) f) :
     Good ψ m (colT ψ (m + 1) f) := by
-  refine ⟨GlobalTheory.T.continuous_unipotentColumnWhittakerTransform E a ψ hψ m f hf,
+  refine ⟨_root_.GlobalTheory.CuspGeneric.continuous_colT_good E a ψ hψ m f hf,
     GlobalTheory.T.unipotentColumnWhittakerTransform_mirabolic_invariant E a ψ hψ m f h hf,
-    ?_, GlobalTheory.T.quotientAverage_unipotentBlock_columnTransform_eq_zero E a ψ hψ m f h hf⟩
+    ?_, _root_.GlobalTheory.CuspGeneric.avg_colT_blk_eq_zero E a ψ hψ m f h hf⟩
   intro k hk y g
   rcases Nat.lt_or_ge (m + 1) k with h1 | h1
   · exact _root_.GlobalTheory.CuspGeneric.colT_law_of_good E a ψ m f hf k h1 y g
   · obtain rfl : k = m + 1 := by omega
-    exact GlobalTheory.T.unipotentColumnWhittakerTransform_column_law E a ψ hψ m f hf y g
+    exact _root_.GlobalTheory.CuspGeneric.colT_blkU_mul E a ψ hψ m f hf y g
 
 theorem hl_of_good {m : ℕ} {f : GA E a → ℂ} (hf : Good ψ m f) {k : ℕ} (hk : k ≤ m) (c : UnipotentBlockColumnIndex a k k → E) (g : GA E a) :
     f (ratGL E a (blkU c) * g) = f g := by

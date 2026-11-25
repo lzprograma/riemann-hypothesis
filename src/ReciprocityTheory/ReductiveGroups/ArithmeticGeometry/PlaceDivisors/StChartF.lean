@@ -12,7 +12,6 @@ public import Mathlib.RingTheory.MvPolynomial.Ideal
 
 @[expose] public section
 
-set_option autoImplicit false
 noncomputable section
 open MvPowerSeries
 
@@ -54,8 +53,6 @@ section Chart
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 variable {T : Type} [CommRing T] {d : ℕ}
 
 def psJet {n : ℕ} (m : ℕ) (f : PS T n d) : JetR T (Fin n × Fin d) m :=
@@ -68,8 +65,7 @@ theorem trunc_mem_span {n : ℕ} (m : ℕ) (f : PS T n d) (hf : constantCoeff f 
   intro a ha
   rw [MvPolynomial.mem_support_iff, MvPowerSeries.coeff_trunc] at ha
   split_ifs at ha with h
-  · by_contra hne
-    push_neg at hne
+  · by_contra! hne
     have h0 : a = 0 := by
       ext i
       simpa using hne i (Set.mem_univ i)
@@ -131,8 +127,6 @@ section Forms
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Pdiv.AvDefs IsLocalRing
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 def actMap {T O : Type} [CommRing T] [CommRing O] (iota : T →+* O) {d : ℕ} {F : FGLaw T d} {OE : Type}
     [CommRing OE] (act : OAct OE F) (a : OE) : Fin d → PS O 1 d :=

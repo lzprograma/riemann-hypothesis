@@ -203,7 +203,3 @@ def sumDatum (D D' : Datum H) : Datum H where
 end
 
 end GlobalTheory.DatumSum
-
-namespace GlobalTheory
-
-end GlobalTheory

@@ -42,56 +42,11 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbHeadTopOfM
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMkTop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSettingBis
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBTAsm
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Algebra.Order.Star.Real
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RoomOffGridSymmetric
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCutInside
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.InsertUnitMatrixZeroApply
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterlaceSignTwo
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RealWeightedForms
@@ -404,7 +359,7 @@ theorem germ_sum {E : Type} [Field E] [NumberField E] [IsCMField E] {Wp Wq : Inf
   · unfold mainD
     rw [one_mul, ← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun z hzm => ?_
-    simp only [btOf, if_neg (hz z hzm), coJ, ptJ, smul_smul, neg_smul, one_mul]
+    simp only [btOf, ite_eq_right (hz z hzm), coJ, ptJ, smul_smul, neg_smul, one_mul]
 
 end
 
@@ -758,12 +713,12 @@ theorem rhyp_nodes (hTR : TopRatio) (hB : KB.IsLeadingFormSetting Cb Cc S p f χ
           (false = true ∧ grid b₀ (n b₀) ∈ S.grid1 v ∧ ∀ x ∈ a, PBD.Sep (true, grid b₀ (n b₀)) x) :=
         Or.inl ⟨rfl, a.length + K - (b₀ : ℕ), by have := b₀.isLt; omega, by omega, hmem b₀ (n b₀)⟩
       obtain ⟨h1, h2⟩ := node_far hB v a ha (grid b₀ (n b₀)) false hy x hx
-      simp only [Bool.false_eq_true, if_false] at h1 h2
+      simp only [Bool.false_eq_true, ite_false] at h1 h2
       unfold PBD.nodeOf at h1 h2
       by_cases hx1 : x.1 = true
-      · rw [if_pos hx1] at h1
+      · rw [ite_eq_left hx1] at h1
         exact ⟨h1, fun h => absurd h (by simp [hx1])⟩
-      · rw [if_neg hx1] at h1 h2
+      · rw [ite_eq_right hx1] at h1 h2
         rw [sub_add_cancel] at h2
         exact ⟨h2, fun _ => h1⟩
   have := hTR Cb Cc E Wp Wq S p f χ A₀ hB hC v (KB.plusW ys₂ a) (grid b₀ (n b₀)) hc hgr hl hfar
@@ -1048,7 +1003,7 @@ theorem phiL_bound (b : Bool) (pt y D : ℝ) (hD : 2 ≤ D) (hd : D + 2 ≤ |y -
       (if b then (y + 1 - pt) / (y - pt) else (pt - y - 1) / (pt - y - 2)) ≤ 1 + 1 / D := by
   have hD0 : 0 < D := by linarith
   cases b
-  · simp only [Bool.false_eq_true, if_false]
+  · simp only [Bool.false_eq_true, ite_false]
     rcases le_or_gt 0 (y - pt) with h | h
     · rw [abs_of_nonneg h] at hd
       have h1 : pt - y - 2 < 0 := by linarith
@@ -1067,7 +1022,7 @@ theorem phiL_bound (b : Bool) (pt y D : ℝ) (hD : 2 ≤ D) (hd : D + 2 ≤ |y -
         rw [e1]
         have : 1 ≤ (pt - y - 2) / D := by rw [le_div_iff₀ hD0]; linarith
         linarith
-  · simp only [if_true]
+  · simp only [ite_true]
     rcases le_or_gt 0 (y - pt) with h | h
     · rw [abs_of_nonneg h] at hd
       have h1 : 0 < y - pt := by linarith
@@ -1163,8 +1118,8 @@ theorem topRatio : TopRatio := by
     have hz := hfar (w.get j) (List.get_mem _ _)
     simp only [Complex.ofReal_re]
     by_cases h1 : (w.get j).1 = true
-    · rw [if_pos h1]; exact hz.1
-    · rw [if_neg h1]; exact ⟨hz.1, hz.2 (by simpa using h1)⟩
+    · rw [ite_eq_left h1]; exact hz.1
+    · rw [ite_eq_right h1]; exact ⟨hz.1, hz.2 (by simpa using h1)⟩
   have hqw : 0 < Wd.qw q' wr y := by
     have := (le_div_iff₀ hqy).1 hLQ
     have : 0 < Real.exp (-(1 / 2)) * q' y := mul_pos (Real.exp_pos _) hqy
@@ -1183,12 +1138,12 @@ theorem topRatio : TopRatio := by
     refine Finset.prod_congr rfl fun j _ => ?_
     simp only [Function.comp_apply, hrf]
     by_cases he : e j = 0
-    · simp only [he, if_true]
+    · simp only [he, ite_true]
       unfold Fr.phiL
       by_cases hb : (w.get j).1 = true
-      · simp only [hb, if_true]; push_cast; ring
-      · simp only [hb, Bool.false_eq_true, if_false]; push_cast; ring
-    · simp only [he, if_false, Complex.ofReal_one]
+      · simp only [hb, ite_true]; push_cast; ring
+      · simp only [hb, Bool.false_eq_true, ite_false]; push_cast; ring
+    · simp only [he, ite_false, Complex.ofReal_one]
   set x0r : ℝ := (-1 : ℝ) ^ (S.G.k - (S.l + 1)) * I.xpoly S.G.k (M.rho (D.parOf S v) ρ) (y + 1) with hx0r
   have hx0 : M.sgn (D.parOf S v) (S.l + 1) * M.xC (D.parOf S v) ρ ((y : ℂ) + 1) = ((x0r : ℝ) : ℂ) := by
     simp only [hx0r, M.sgn, M.xC, I.xpoly, D.parOf]
@@ -1202,9 +1157,9 @@ theorem topRatio : TopRatio := by
     intro j
     simp only [hrf]
     by_cases he : e j = 0
-    · simp only [he, if_true]
+    · simp only [he, ite_true]
       exact phiL_bound (w.get j).1 (w.get j).2 y _ hD2 (by linarith [(hfar (w.get j) (List.get_mem _ _)).1])
-    · simp only [he, if_false]
+    · simp only [he, ite_false]
       exact ⟨one_pos, by have : (0 : ℝ) ≤ 1 / ((S.Ntop : ℝ) ^ 2 - 1) := by positivity
                          linarith⟩
   have hF0 : 0 < ∏ j, rf j := Finset.prod_pos fun j _ => (hrf j).1
@@ -1257,8 +1212,7 @@ theorem topRatio : TopRatio := by
     generalize I.xpoly S.G.k (M.rho (D.parOf S v) ρ) (y + 1) = X at hIR ⊢
     generalize |y + 1 / 2 + (D.parOf S v).u (S.l + 1)| * |y + 1 / 2 + (D.parOf S v).u' (S.l + 1)| = U at hIR hul
     have hAB : A * B < 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       have h3 := mul_nonneg hTT.le h
       have h4 : -(S.T * S.T') * (A * B) = -(S.T * S.T' * (A * B)) := by ring
       linarith
@@ -1275,8 +1229,7 @@ theorem topRatio : TopRatio := by
 
   have hroot : ∀ t ∈ Icc 1 (Cf.k + Cf.m - 1), -Cf.lam t < α ∨ β < -Cf.lam t := by
     intro t ht
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hmem : -Cf.lam t ∈ Cf.cutI S.l := by rw [hCf, cutI_eq]; exact ⟨hcon.1, hcon.2⟩
     have hfac := (Formalism.FourierDecayAlt.P.betaFactorisation Cf S.de S.de' S.G.ka S.T S.T' (-Cf.lam t) S.l (hOkp v)
       hw hw' hT hT' hl1 hlk hne hmem).2.1

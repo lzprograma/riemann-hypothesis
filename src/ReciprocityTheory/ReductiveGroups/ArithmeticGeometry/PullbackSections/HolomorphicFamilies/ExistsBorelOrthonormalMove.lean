@@ -9,8 +9,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.PullbackSections
@@ -56,11 +54,5 @@ theorem exists_borel_orthonormal_move {x : Frame X.Ψ r} (hx : x ∈ X.dom) :
     exact mul_self_pos.2 h
 
 end Frames
-
-section Act
-
-variable {dim : (E →+* ℂ) → ℕ}
-
-end Act
 
 end ReciprocityTheory.ChartRestriction.G.PullbackSections

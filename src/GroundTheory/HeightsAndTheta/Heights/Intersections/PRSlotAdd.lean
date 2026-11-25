@@ -93,12 +93,12 @@ theorem sheetDensity_snoc_tensor (P : Ideal (MRing ι)) {n : ℕ}
       sheetDensity P Ψ (pot (Fin.snoc L A)) g y w + sheetDensity P Ψ (pot (Fin.snoc L C)) g y w := by
   unfold sheetDensity
   by_cases h : ∃ γ, IsSheet P Ψ y w γ
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     have hγ : ∀ᶠ y' in 𝓝 y, DifferentiableAt ℂ h.choose y' ∧ ∀ k, ∃ i, h.choose y' ⟨k, i⟩ ≠ 0 := by
       filter_upwards [h.choose_spec.2] with y' hy'
       exact ⟨hy'.1, hy'.2.1.1⟩
     rw [maDensity_snoc_tensor L hA hC hγ, mul_add]
-  · simp only [dif_neg h, add_zero]
+  · simp only [dite_eq_right h, add_zero]
 
 theorem arInt_snoc_tensor (hFF : FibreFiniteStatement) (hInt : PtsIntegrableStatement)
     {P : Ideal (MRing ι)} {n : ℕ} (L : Fin n → HermLine ι) {A C B : HermLine ι} {s : MRing ι}
@@ -110,7 +110,7 @@ theorem arInt_snoc_tensor (hFF : FibreFiniteStatement) (hInt : PtsIntegrableStat
     ptsIntegral P (pot (Fin.snoc L A)) (logNorm B s) + ptsIntegral P (pot (Fin.snoc L C)) (logNorm B s)
   unfold ptsIntegral
   by_cases hΨ : ∃ Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (n + 1 + 1) → ℂ), IsGoodProj P Ψ
-  · rw [dif_pos hΨ, dif_pos hΨ, dif_pos hΨ]
+  · rw [dite_eq_left hΨ, dite_eq_left hΨ, dite_eq_left hΨ]
     have hsm : ∀ X : HermLine ι, IsSmoothHerm X →
         ∀ j, IsSmoothHerm ((Fin.snoc L X : Fin (n + 1) → HermLine ι) j) := by
       intro X hX j
@@ -125,7 +125,7 @@ theorem arInt_snoc_tensor (hFF : FibreFiniteStatement) (hInt : PtsIntegrableStat
     funext y
     rw [← finsum_mem_add_distrib (hFF K ι P (n + 1) hΨ.choose hP hΨ.choose_spec y)]
     exact finsum_mem_congr rfl fun w _ => sheetDensity_snoc_tensor P hΨ.choose L hA hC _ y w
-  · rw [dif_neg hΨ, dif_neg hΨ, dif_neg hΨ, add_zero]
+  · rw [dite_eq_right hΨ, dite_eq_right hΨ, dite_eq_right hΨ, add_zero]
 
 
 omit [∀ k, Fintype (ι k)] in

@@ -9,47 +9,6 @@ public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Charpol
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DenseFrobeniusSplitPlaces
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsSemisimplificationOf
 public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AbsPowOneNotIsAlgRat
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Charpoly.ToMatrix
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -114,57 +73,7 @@ end Residual
 
 variable (A)
 
-def FrobFam (i : N.Loc) (f : PlE H → ℂ[X]) : Prop :=
-  ∃ F : Qbar (N.l i) → G H.E N.Om → Qbar (N.l i), (∀ z, Continuous (F z)) ∧
-    ∀ᶠ w in cofinite, ∀ (B : ValuationSubring N.Om) (σ : G H.E N.Om), IsPlaceOver (F := H.E) B w →
-      IsFrob (F := H.E) B (normV w) σ → ∀ z, A.iotaQC i (F z σ) = (f w).eval (A.iotaQC i z)
-
 variable {A}
-
-theorem FrobFam.congr {i : N.Loc} {f f' : PlE H → ℂ[X]} (h : FrobFam A i f) (e : ∀ᶠ w in cofinite, f w = f' w) :
-    FrobFam A i f' := by
-  obtain ⟨F, h1, h2⟩ := h
-  exact ⟨F, h1, (h2.and e).mono fun w hw => hw.2 ▸ hw.1⟩
-
-theorem FrobFam.one (i : N.Loc) : FrobFam A i fun _ => 1 :=
-  ⟨fun _ _ => 1, fun _ => continuous_const, Eventually.of_forall fun _ _ _ _ _ _ => by simp⟩
-
-theorem FrobFam.mul {i : N.Loc} {f f' : PlE H → ℂ[X]} (h : FrobFam A i f) (h' : FrobFam A i f') :
-    FrobFam A i fun w => f w * f' w := by
-  obtain ⟨F, h1, h2⟩ := h
-  obtain ⟨F', h1', h2'⟩ := h'
-  refine ⟨fun z σ => F z σ * F' z σ, fun z => (h1 z).mul (h1' z), (h2.and h2').mono fun w hw B σ hB hσ z => ?_⟩
-  rw [map_mul, hw.1 B σ hB hσ, hw.2 B σ hB hσ, eval_mul]
-
-theorem FrobFam.eq_of_split (hC : GlobalTheory.Published.ChebotarevDegreeOne) {i : N.Loc} {f f' : PlE H → ℂ[X]}
-    (h : FrobFam A i f) (h' : FrobFam A i f') (e : ∀ᶠ w in cofinite, IsSplitPl H w → f w = f' w) :
-    ∀ᶠ w in cofinite, f w = f' w := by
-  obtain ⟨F, h1, h2⟩ := h
-  obtain ⟨F', h1', h2'⟩ := h'
-  have hF : ∀ z, F z = F' z := fun z => GlobalTheory.RowPar.eq_of_split hC (h1 z) (h1' z) <| by
-    filter_upwards [h2, h2', e] with w a a' b hw B σ hB hσ
-    apply (A.iotaQC i).injective
-    rw [a B σ hB hσ, a' B σ hB hσ, b hw]
-  filter_upwards [h2, h2'] with w a a'
-  obtain ⟨σ, hσ⟩ := exists_isFrob (N.plOm.2 w)
-  refine Polynomial.funext fun z => ?_
-  obtain ⟨z, rfl⟩ := (A.iotaQC i).surjective z
-  rw [← a _ σ (N.plOm.2 w) hσ, ← a' _ σ (N.plOm.2 w) hσ, hF]
-
-theorem frobFam_cusp (hG : GlobalTheory.GalOfCusp.Reading A) (i : N.Loc) {a : ℕ} (ha : 1 ≤ a) (π : A.CG a) (hπ : A.csd π)
-    (s : ℝ) (hs : GlobalTheory.GalOfCusp.RegAlgShift A π s) :
-    FrobFam A i fun w => galPol A (A.lpTw (A.locG π w) (s + (1 - (a : ℝ)) / 2)) := by
-  obtain ⟨r, hr⟩ := hG i a ha π hπ s hs
-  have hfin : (placesOver H.E (N.l i)).Finite := by
-    have h0 : Ideal.span {((N.l i : ℕ) : 𝓞 H.E)} ≠ 0 := by
-      simpa using (Fact.out : (N.l i).Prime).ne_zero
-    exact (Ideal.finite_factors h0).subset fun v hv => Ideal.dvd_span_singleton.2 hv
-  refine ⟨fun z σ => (r σ : Matrix (Fin a) (Fin a) (Qbar (N.l i))).charpoly.eval z, fun z => ?_, ?_⟩
-  · simp only [Matrix.eval_charpoly]
-    exact (continuous_const.sub hr.cont).matrix_det
-  · filter_upwards [hfin.eventually_cofinite_notMem, A.locG_unr_ae π] with w h1 h2 B σ hB hσ z
-    rw [← (hr.frob h1 h2).2 B σ hB hσ]
-    exact (eval_map_apply (A.iotaQC i).toRingHom _).symm
 
 open GlobalTheory.RowTie
 
@@ -183,22 +92,6 @@ theorem frobEig_twSum {L : List ((Σ a : ℕ, A.CG a) × ℝ)} {w : PlE H} (h : 
     exact ⟨(A.unr_sum _ _).2 ⟨h2, h1.1⟩, by
       rw [List.map_cons, List.sum_cons, ← h1.2]; exact A.frobEig_sum _ _ h2 h1.1⟩
 
-theorem frobFam_twSum (hG : GlobalTheory.GalOfCusp.Reading A) (i : N.Loc) (u : ℝ) (L : List ((Σ a : ℕ, A.CG a) × ℝ))
-    (hL : ∀ p ∈ L, 1 ≤ p.1.1 ∧ A.csd p.1.2 ∧ GlobalTheory.GalOfCusp.RegAlgShift A p.1.2 (p.2 + u - (1 - (p.1.1 : ℝ)) / 2)) :
-    FrobFam A i fun w => galPol A (A.lpTw (twSum N A L w) u) := by
-  induction L with
-  | nil =>
-    refine (FrobFam.one i).congr (Eventually.of_forall fun w => ?_)
-    simp [galPol, twSum, A.frobEig_tw _ u (A.lpZero_unr w), A.frobEig_zero]
-  | cons p L ih =>
-    obtain ⟨h1, h2, h3⟩ := hL p List.mem_cons_self
-    refine ((frobFam_cusp hG i h1 _ h2 _ h3).mul (ih fun q hq => hL q (List.mem_cons_of_mem _ hq))).congr ?_
-    filter_upwards [A.locG_unr_ae p.1.2, twSum_unr A L] with w a b
-    change _ = galPol A (A.lpTw (A.lpSum (A.lpTw (A.locG p.1.2 w) p.2) (twSum N A L w)) u)
-    rw [A.lpTw_sum, A.lpTw_add, sub_add_cancel, galPol, galPol, galPol,
-      A.frobEig_sum _ _ ((A.unr_tw _ _).2 a) ((A.unr_tw _ _).2 (frobEig_twSum b).1), Multiset.map_add,
-      Multiset.prod_add]
-
 theorem eq_of_galPol {w : PlE H} {a b : A.LP w} (ha : A.unr a) (hb : A.unr b) {u : ℝ}
     (h : galPol A (A.lpTw a u) = galPol A (A.lpTw b u)) : a = b := by
   have h1 := congrArg Polynomial.roots h
@@ -212,31 +105,6 @@ variable (A) in
 def IsCohSum (n : ℕ) (Sig : List (Formalism.BasicNotions.Part A.CG)) : Prop :=
   (∀ p ∈ Sig, A.csd p.π) ∧ ∀ p ∈ Sig, ∀ τ, (A.infG p.π τ).Nodup ∧
     ∀ z ∈ A.infG p.π τ, ∃ k : ℤ, z = (k : ℂ) + ((n : ℂ) - (p.d : ℂ)) / 2
-
-open GlobalTheory.SpehRigid in
-theorem frobFam_isoLoc (hG : GlobalTheory.GalOfCusp.Reading A) (i : N.Loc) {n : ℕ} {Sig : List (Formalism.BasicNotions.Part A.CG)}
-    (h0 : ∀ p ∈ Sig, 1 ≤ p.a ∧ 1 ≤ p.d) (h : IsCohSum A n Sig) :
-    FrobFam A i fun w => galPol A (A.lpTw (isoLoc N A Sig w) ((1 - (n : ℝ)) / 2)) := by
-  simp only [isoLoc_eq]
-  refine frobFam_twSum hG i _ _ fun q hq => ?_
-  obtain ⟨p, hp, hq⟩ := List.mem_flatMap.1 hq
-  obtain ⟨k, -, rfl⟩ := List.mem_map.1 hq
-  refine ⟨(h0 p hp).1, h.1 p hp, fun τ => ⟨(h.2 p hp τ).1, fun z hz => ?_⟩⟩
-  obtain ⟨m, rfl⟩ := (h.2 p hp τ).2 z hz
-  exact ⟨m - k, by push_cast; ring⟩
-
-theorem perm_of_split (hC : GlobalTheory.Published.ChebotarevDegreeOne) (hJ : IsobaricRigid N A) (hG : GlobalTheory.GalOfCusp.Reading A)
-    (i : N.Loc) {n : ℕ} {Sig Sig' : List (Formalism.BasicNotions.Part A.CG)} (h0 : ∀ p ∈ Sig, 1 ≤ p.a ∧ 1 ≤ p.d)
-    (h0' : ∀ p ∈ Sig', 1 ≤ p.a ∧ 1 ≤ p.d) (h : IsCohSum A n Sig) (h' : IsCohSum A n Sig')
-    (e : ∀ᶠ w in cofinite, IsSplitPl H w → isoLoc N A Sig w = isoLoc N A Sig' w) : Sig.Perm Sig' := by
-  refine GlobalTheory.SpehRigid.isobaricDiscreteSelfDualMultOne_of_isobaricSumMultOne R H what₂ N A hJ _ _
-    (fun p hp => ⟨(h0 p hp).1, (h0 p hp).2, h.1 p hp⟩) (fun p hp => ⟨(h0' p hp).1, (h0' p hp).2, h'.1 p hp⟩) ?_
-  filter_upwards [(frobFam_isoLoc hG i h0 h).eq_of_split hC (frobFam_isoLoc hG i h0' h')
-    (e.mono fun w hw hs => by rw [hw hs]), twSum_unr A (Sig.flatMap (GlobalTheory.SpehRigid.flat N A)),
-    twSum_unr A (Sig'.flatMap (GlobalTheory.SpehRigid.flat N A))] with w a b b'
-  refine eq_of_galPol ?_ ?_ a
-  · rw [GlobalTheory.SpehRigid.isoLoc_eq]; exact (frobEig_twSum b).1
-  · rw [GlobalTheory.SpehRigid.isoLoc_eq]; exact (frobEig_twSum b').1
 
 section Cusp
 
@@ -306,16 +174,6 @@ variable {A}
 
 variable (A)
 
-def IsPar (Sig : List (Formalism.BasicNotions.Part A.CG)) : Prop :=
-  (∀ p ∈ Sig, 1 ≤ p.a ∧ 1 ≤ p.d ∧ A.csd p.π) ∧
-  (Sig.map fun p => ((⟨p.a, p.π⟩ : Σ a, A.CG a), p.d)).Nodup ∧ rankIso N A Sig = R.r ∧
-  ∀ k v, (A.items₂ k (A.plGw k v) (isoLoc N A Sig (A.plGw k v))).Monic ∧
-    (A.items₂ k (A.plGw k v) (isoLoc N A Sig (A.plGw k v))).natDegree = R.r
-
-def Par : Type := {Sig // IsPar A Sig}
-
-def locPar (σ : Par A) (w : PlE H) : A.LP w := isoLoc N A σ.1 w
-
 theorem lpDim_twSum (L : List ((Σ a : ℕ, A.CG a) × ℝ)) (w : PlE H) :
     A.lpDim (twSum N A L w) = (L.map fun p => p.1.1).sum := by
   induction L with
@@ -331,34 +189,6 @@ theorem lpDim_isoLoc (Sig : List (Formalism.BasicNotions.Part A.CG)) (w : PlE H)
     refine (A.lpDim_sum _ _).trans (congrArg₂ (· + ·) ?_ ih)
     rw [GlobalTheory.SpehRigid.spehLoc_eq, lpDim_twSum, GlobalTheory.SpehRigid.flat, List.map_map]
     simp [Function.comp_def, mul_comm]
-
-
-structure Spec (M : Type) [AddCommGroup M] [Module ℂ M] where
-
-  I : Type
-
-  tp : I → Submodule ℂ M
-
-  loc : I → ∀ w, A.LP w
-
-  sat : I → PlE H → Multiset ℂ
-
-  inf : (H.E →+* ℂ) → Multiset ℂ
-
-namespace Spec
-
-variable {A} {M : Type} [AddCommGroup M] [Module ℂ M] (S S' : Spec A M)
-
-
-end Spec
-
-variable {A} (S : ∀ μ j, Spec A (what₂.Mt μ j)) (T : ∀ μ, Spec A (what₂.Amb μ)) (c : what₂.Tup → ℕ → A.CG 1)
-
-
-variable (B₀ : what₂.places.Pl → ValuationSubring ℂ)
-  (κ : ∀ w, B₀ w →+* Fb (what₂.places.resChar w) (what₂.places.resChar_prime w))
-
-variable {S c}
 
 end GlobalTheory.RowPar
 

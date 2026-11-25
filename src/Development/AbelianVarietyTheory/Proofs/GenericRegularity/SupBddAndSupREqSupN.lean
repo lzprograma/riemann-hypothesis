@@ -64,7 +64,7 @@ theorem supBdd_and_supR_eq_supN : ∀ (D : D7) (T : Top D) (h : LawsP T) (j : �
     refine ⟨h1, fun sg => (h2 sg).trans ?_⟩
     show _ = cutN T.C T.Ns j w sg F
     unfold cutN
-    rw [if_pos hj]
+    rw [ite_eq_left hj]
     rfl
   exact ⟨(GlobalTheory.FrameNorm.Comparison₂.ptNorm_eq_pnorm _ _ _ _ _ _ _ _ hU _ fn hx hfn).1, hmain,
     fun i η sg => ((hmain _ η).2 sg).le⟩

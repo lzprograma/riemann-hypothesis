@@ -121,8 +121,8 @@ theorem UpperTheory.V.Z.Sym.Loc.splitM : UpperTheory.V.Z.Sym.Loc.SplitM := by
   congr 1
   funext S
   by_cases h : IsFix O c d m S
-  · rw [if_pos ((key S).2 h), if_pos h]
-  · rw [if_neg (fun h' => h ((key S).1 h')), if_neg h]
+  · rw [ite_eq_left ((key S).2 h), ite_eq_left h]
+  · rw [ite_eq_right (fun h' => h ((key S).1 h')), ite_eq_right h]
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.SplitM =====

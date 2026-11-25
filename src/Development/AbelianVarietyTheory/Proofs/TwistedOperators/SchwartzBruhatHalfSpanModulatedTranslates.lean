@@ -54,7 +54,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor
 open scoped TensorProduct ComplexOrder
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.HalfWaves
 
@@ -68,7 +67,7 @@ theorem isSBHalf_trans {a : AE D} {Λ : AddSubgroup (WO S T)} {x : WO S T} (hx :
   refine ⟨fun t ht => ?_, k, hk, fun u hu hh t => ?_, fun t ht => ?_⟩
   · have h : t + x ∈ Λ ∧ IsHalf a (t + x) := by
       by_contra h
-      exact ht (if_neg h)
+      exact ht (ite_eq_right h)
     refine (isHalf_iff S T).2 ?_
     exact (add_mem_cancel_right hx').1 ((isHalf_iff S T).1 h.2)
   · have hm : k • u ∈ Λ ⊓ half S T a :=
@@ -79,7 +78,7 @@ theorem isSBHalf_trans {a : AE D} {Λ : AddSubgroup (WO S T)} {x : WO S T} (hx :
     exact ind_add _ _ hm
   · have h : t + x ∈ Λ ∧ IsHalf a (t + x) := by
       by_contra h
-      exact ht (if_neg h)
+      exact ht (ite_eq_right h)
     have e : k • t = k • (t + x) - k • x := by rw [nsmul_add, add_sub_cancel_right]
     rw [e]
     exact sub_mem (nsmul_mem h.1 k) hkx

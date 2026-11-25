@@ -17,8 +17,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNo
 
 namespace Formalism.L2.SG.Pf.StabIntLat
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (w : Point D.host.E (D.R.rS + 1))
 
 theorem upper_qbar {q : FreeE w} (hu : upperM w q) : ¬ selfP w (qbar w q) ∧ ¬ upperM w (qbar w q) := by

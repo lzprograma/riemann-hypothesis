@@ -53,8 +53,6 @@ open scoped TensorProduct ContDiff
 
 namespace GlobalTheory.DualPairCompare
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 section Gen

@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothBr
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothDefs
 public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
 public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexifiedDerivativeCommutator
@@ -52,19 +53,8 @@ theorem hasDerivAt_rdV_ext {f F : Matrix (Fin n) (Fin n) ℂ → E} {U : Set (Ma
     {g X : Matrix (Fin n) (Fin n) ℂ} (hU : IsOpen U) (hg : g ∈ U) (hgJ : inUJ ε g) (hF : ContDiffOn ℝ ∞ F U)
     (hfF : ∀ h ∈ U, inUJ ε h → f h = F h) (hX : inG ε X) :
     HasDerivAt (fun t : ℝ => f (g * NormedSpace.exp ((t : ℂ) • X))) (fderiv ℝ F g (g * X)) 0 := by
-  have hγ := Formalism.REAL.hasDerivAt_mul_exp_smul_zero g X
-  have hγ0 : g * NormedSpace.exp (((0 : ℝ) : ℂ) • X) = g := by
-    simp [NormedSpace.exp_zero]
-  have hFd : DifferentiableAt ℝ F g :=
-    (hF.differentiableOn (by simp)).differentiableAt (hU.mem_nhds hg)
-  have hcomp : HasDerivAt (fun t : ℝ => F (g * NormedSpace.exp ((t : ℂ) • X)))
-      (fderiv ℝ F g (g * X)) 0 :=
-    hFd.hasFDerivAt.comp_hasDerivAt_of_eq (0 : ℝ) hγ hγ0.symm
-  refine hcomp.congr_of_eventuallyEq ?_
-  have hmem : ∀ᶠ t : ℝ in 𝓝 0, g * NormedSpace.exp ((t : ℂ) • X) ∈ U :=
-    hγ.continuousAt.preimage_mem_nhds (by rw [hγ0]; exact hU.mem_nhds hg)
-  filter_upwards [hmem] with t ht
-  exact hfF _ ht (smd_inUJ_mul hgJ (exp_smul_mem_UJset hX t))
+  intros
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.smBr_hasDerivAt_ext <;> assumption
 
 theorem rdV_eq_fderiv {f F : Matrix (Fin n) (Fin n) ℂ → E} {U : Set (Matrix (Fin n) (Fin n) ℂ)}
     {g X : Matrix (Fin n) (Fin n) ℂ} (hU : IsOpen U) (hg : g ∈ U) (hgJ : inUJ ε g) (hF : ContDiffOn ℝ ∞ F U)
@@ -150,17 +140,8 @@ theorem dS_eq_rdV (X : Matrix (Fin n) (Fin n) ℂ) (v : H) : dS σ X v = S7.RdV 
 theorem orbit_dS (hσ : IsURepOn (UJset ε) σ) {X : Matrix (Fin n) (Fin n) ℂ} (hX : inG ε X) {v : H}
     (hv : IsSmoothVecU ε σ v) {g : Matrix (Fin n) (Fin n) ℂ} (hg : inUJ ε g) :
     σ g (dS σ X v) = S7.RdV X (fun h => σ h v) g := by
-  have h := hasDerivAt_dS hσ hX hv
-  have h2 : HasDerivAt (fun t : ℝ => σ g (σ (NormedSpace.exp ((t : ℂ) • X)) v)) (σ g (dS σ X v)) 0 :=
-    ((σ g).restrictScalars ℝ).hasFDerivAt.comp_hasDerivAt (0 : ℝ) h
-  have e : (fun t : ℝ => σ (g * NormedSpace.exp ((t : ℂ) • X)) v) =
-      fun t : ℝ => σ g (σ (NormedSpace.exp ((t : ℂ) • X)) v) := by
-    funext t
-    rw [hσ.1.2 g hg _ (exp_smul_mem_UJset hX t)]
-    rfl
-  show _ = deriv (fun t : ℝ => σ (g * NormedSpace.exp ((t : ℂ) • X)) v) 0
-  rw [e]
-  exact h2.deriv.symm
+  intros
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.smBr_orbit <;> assumption
 
 theorem orbit_ecV (hσ : IsURepOn (UJset ε) σ) (Z : Matrix (Fin n) (Fin n) ℂ) {v : H}
     (hv : IsSmoothVecU ε σ v) {g : Matrix (Fin n) (Fin n) ℂ} (hg : inUJ ε g) :

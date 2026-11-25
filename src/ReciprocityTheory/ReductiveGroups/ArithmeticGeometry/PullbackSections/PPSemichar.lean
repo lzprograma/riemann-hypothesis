@@ -3,6 +3,7 @@ module
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
 public import Formalism.LocalToGlobal.ProjectiveLattices.PetersonNormSubspace
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.NonemptyUnitAt
+import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertTrivialOfNowhereVanishing
 
 @[expose] public section
 
@@ -17,10 +18,6 @@ open scoped CategoryTheory.Obj
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
   {Xo : Moduli Dw l} {c : Coeff l} {σ : c.F →+* ℂ} {r : ℕ}
 
-theorem hermForm_zero_left {g : ℕ} (Hm : Matrix (Fin g) (Fin g) ℂ) (w : Fin g → ℂ) : hermForm Hm 0 w = 0 := by
-  unfold hermForm
-  simp
-
 theorem hermForm_add_left {g : ℕ} (Hm : Matrix (Fin g) (Fin g) ℂ) (z z' w : Fin g → ℂ) :
     hermForm Hm (z + z') w = hermForm Hm z w + hermForm Hm z' w := by
   unfold hermForm
@@ -33,15 +30,9 @@ theorem hermForm_add_right {g : ℕ} (Hm : Matrix (Fin g) (Fin g) ℂ) (z w w' :
 
 theorem hermForm_swap {g : ℕ} {Hm : Matrix (Fin g) (Fin g) ℂ} (hH : Hm.IsHermitian) (z w : Fin g → ℂ) :
     hermForm Hm w z = star (hermForm Hm z w) := by
-  unfold hermForm
-  simp only [dotProduct, Matrix.mulVec, star_sum, star_mul', Finset.mul_sum]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  have hji : star (Hm i j) = Hm j i := by
-    have := congrFun (congrFun hH j) i
-    rwa [Matrix.conjTranspose_apply] at this
-  simp only [Pi.star_apply, star_star, hji]
-  ring
+  first
+    | exact _root_.GlobalTheory.AppellHumbertTrivial.hermForm_swap
+    | apply _root_.GlobalTheory.AppellHumbertTrivial.hermForm_swap <;> first | assumption | rfl | infer_instance
 
 theorem hermForm_smul_left {g : ℕ} (Hm : Matrix (Fin g) (Fin g) ℂ) (t : ℂ) (z w : Fin g → ℂ) :
     hermForm Hm (t • z) w = t * hermForm Hm z w := by
@@ -55,11 +46,5 @@ theorem hermForm_real_smul_right {g : ℕ} (Hm : Matrix (Fin g) (Fin g) ℂ) (t 
     ext i
     simp [Complex.conj_ofReal]
   rw [h1, Matrix.mulVec_smul, dotProduct_smul, smul_eq_mul]
-
-section Prim
-
-variable {U : Unf Xo c σ r} {k : U.Comp} {x : (U.X k).dom} (W : UnfAt U k x)
-
-end Prim
 
 end ReciprocityTheory.ChartRestriction.G.PullbackSections

@@ -76,6 +76,6 @@ theorem UpperTheory.Reformulated.B.Qk18.polyIn_mul :
     rw [Finset.mem_range] at hi hj ⊢
     omega
   rw [Finset.sum_eq_single_of_mem (i + j) hmem]
-  · rw [if_pos rfl, smul_mul_smul_comm, pow_add]
+  · rw [ite_eq_left rfl, smul_mul_smul_comm, pow_add]
   · intro k _ hk
-    rw [if_neg (Ne.symm hk), smul_zero]
+    rw [ite_eq_right (Ne.symm hk), smul_zero]

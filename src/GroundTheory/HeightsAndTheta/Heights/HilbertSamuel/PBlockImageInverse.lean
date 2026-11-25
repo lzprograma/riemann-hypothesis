@@ -5,6 +5,7 @@ import Mathlib.Algebra.AffineMonoid.UniqueSums
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
 import Mathlib.Tactic.TypeStar
 
 @[expose] public section
@@ -25,91 +26,62 @@ set_option linter.unusedSectionVars false
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
-theorem isMultiHomog_zero (a : K → ℕ) : IsMultiHomog (0 : MRing ι) a := by
-  intro m hm
-  simp at hm
+private def wtBI (p : Σ k, ι k) : K → ℕ :=
+  letI := Classical.decEq K; fun k => if p.1 = k then 1 else 0
+
+private theorem weight_wtBI (m : (Σ k, ι k) →₀ ℕ) : Finsupp.weight (wtBI (ι := ι)) m = fun k => ∑ i, m ⟨k, i⟩ := by
+  classical
+  funext k
+  rw [Finsupp.weight_apply, Finsupp.sum_fintype m (fun i c => c • wtBI i) (fun _ => zero_smul _ _)]
+  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, wtBI]
+  rw [Fintype.sum_sigma, Finset.sum_eq_single k (fun b _ hb => by simp [hb]) (by simp)]; simp
+
+private theorem isMultiHomog_iff_weighted {f : MRing ι} {a : K → ℕ} :
+    IsMultiHomog f a ↔ IsWeightedHomogeneous (wtBI (ι := ι)) f a :=
+  ⟨fun h m hm => (weight_wtBI m).trans (funext (h m (mem_support_iff.mpr hm))),
+   fun h m hm k => congrFun ((weight_wtBI m).symm.trans (h (mem_support_iff.mp hm))) k⟩
+
+theorem isMultiHomog_zero (a : K → ℕ) : IsMultiHomog (0 : MRing ι) a :=
+  isMultiHomog_iff_weighted.mpr (isWeightedHomogeneous_zero ℤ _ a)
 
 theorem isMultiHomog_add {f g : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) (hg : IsMultiHomog g a) :
-    IsMultiHomog (f + g) a := by
-  classical
-  intro m hm
-  rcases Finset.mem_union.mp (support_add hm) with h | h
-  · exact hf m h
-  · exact hg m h
+    IsMultiHomog (f + g) a :=
+  isMultiHomog_iff_weighted.mpr ((isMultiHomog_iff_weighted.mp hf).add (isMultiHomog_iff_weighted.mp hg))
 
-theorem isMultiHomog_neg {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) : IsMultiHomog (-f) a := by
-  intro m hm
-  rw [support_neg] at hm
-  exact hf m hm
+theorem isMultiHomog_neg {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) : IsMultiHomog (-f) a :=
+  isMultiHomog_iff_weighted.mpr (isMultiHomog_iff_weighted.mp hf).neg
 
 theorem isMultiHomog_sub {f g : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) (hg : IsMultiHomog g a) :
-    IsMultiHomog (f - g) a := by
-  rw [sub_eq_add_neg]
-  exact isMultiHomog_add hf (isMultiHomog_neg hg)
+    IsMultiHomog (f - g) a :=
+  isMultiHomog_iff_weighted.mpr ((isMultiHomog_iff_weighted.mp hf).sub (isMultiHomog_iff_weighted.mp hg))
 
 theorem isMultiHomog_sum {α : Type*} (s : Finset α) {f : α → MRing ι} {a : K → ℕ}
-    (hf : ∀ t ∈ s, IsMultiHomog (f t) a) : IsMultiHomog (∑ t ∈ s, f t) a := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa using isMultiHomog_zero a
-  | insert t s ht ih =>
-    rw [Finset.sum_insert ht]
-    exact isMultiHomog_add (hf t (Finset.mem_insert_self _ _))
-      (ih fun t' h => hf t' (Finset.mem_insert_of_mem h))
+    (hf : ∀ t ∈ s, IsMultiHomog (f t) a) : IsMultiHomog (∑ t ∈ s, f t) a :=
+  isMultiHomog_iff_weighted.mpr (IsWeightedHomogeneous.sum s f a fun t ht => isMultiHomog_iff_weighted.mp (hf t ht))
 
 theorem isMultiHomog_mul {f g : MRing ι} {a b : K → ℕ} (hf : IsMultiHomog f a) (hg : IsMultiHomog g b) :
-    IsMultiHomog (f * g) (a + b) := by
-  classical
-  intro m hm k
-  obtain ⟨m₁, h₁, m₂, h₂, rfl⟩ := Finset.mem_add.mp (support_mul f g hm)
-  simp only [Finsupp.coe_add, Pi.add_apply, Finset.sum_add_distrib, hf m₁ h₁ k, hg m₂ h₂ k]
+    IsMultiHomog (f * g) (a + b) :=
+  isMultiHomog_iff_weighted.mpr ((isMultiHomog_iff_weighted.mp hf).mul (isMultiHomog_iff_weighted.mp hg))
 
-theorem isMultiHomog_one : IsMultiHomog (1 : MRing ι) 0 := by
-  intro m hm k
-  rw [support_one, Finset.mem_singleton] at hm
-  simp [hm]
+theorem isMultiHomog_one : IsMultiHomog (1 : MRing ι) 0 :=
+  isMultiHomog_iff_weighted.mpr (isWeightedHomogeneous_one ℤ _)
 
 theorem isMultiHomog_prod {α : Type*} (s : Finset α) {f : α → MRing ι} {a : α → K → ℕ}
-    (hf : ∀ t ∈ s, IsMultiHomog (f t) (a t)) : IsMultiHomog (∏ t ∈ s, f t) (∑ t ∈ s, a t) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa using isMultiHomog_one
-  | insert t s ht ih =>
-    rw [Finset.prod_insert ht, Finset.sum_insert ht]
-    exact isMultiHomog_mul (hf t (Finset.mem_insert_self _ _))
-      (ih fun t' h => hf t' (Finset.mem_insert_of_mem h))
+    (hf : ∀ t ∈ s, IsMultiHomog (f t) (a t)) : IsMultiHomog (∏ t ∈ s, f t) (∑ t ∈ s, a t) :=
+  isMultiHomog_iff_weighted.mpr (IsWeightedHomogeneous.prod s f a fun t ht => isMultiHomog_iff_weighted.mp (hf t ht))
 
 theorem isMultiHomog_pow {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) (n : ℕ) :
-    IsMultiHomog (f ^ n) (n • a) := by
-  have := isMultiHomog_prod (Finset.range n) (f := fun _ => f) (a := fun _ => a) (fun _ _ => hf)
-  simpa using this
+    IsMultiHomog (f ^ n) (n • a) :=
+  isMultiHomog_iff_weighted.mpr ((isMultiHomog_iff_weighted.mp hf).pow n)
 
 theorem isMultiHomog_C_mul {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) (c : ℤ) :
-    IsMultiHomog (C c * f) a := by
-  intro m hm
-  rw [C_mul'] at hm
-  exact hf m (support_smul hm)
+    IsMultiHomog (C c * f) a :=
+  isMultiHomog_iff_weighted.mpr ((isMultiHomog_iff_weighted.mp hf).C_mul c)
 
 theorem isMultiHomog_X' [DecidableEq K] (p : Σ k, ι k) : IsMultiHomog (X p : MRing ι) (blockDeg p.1 1) := by
-  classical
-  intro m hm k
-  rw [support_X, Finset.mem_singleton] at hm
-  subst hm
-  obtain ⟨k', i'⟩ := p
-  by_cases hk : k = k'
-  · subst hk
-    rw [Finset.sum_eq_single i']
-    · simp [blockDeg]
-    · intro b _ hb
-      rw [Finsupp.single_apply, if_neg]
-      intro h
-      exact hb (eq_of_heq (Sigma.mk.inj_iff.mp h).2).symm
-    · simp
-  · simp only [blockDeg, if_neg hk]
-    refine Finset.sum_eq_zero fun i _ => ?_
-    rw [Finsupp.single_apply, if_neg]
-    intro h
-    exact hk (congrArg Sigma.fst h).symm
+  have heq : wtBI (ι := ι) p = blockDeg p.1 1 := funext fun k => by
+    simp only [wtBI, blockDeg]; split_ifs <;> simp_all
+  exact isMultiHomog_iff_weighted.mpr (heq ▸ isWeightedHomogeneous_X ℤ (wtBI (ι := ι)) p)
 
 theorem isMultiHomog_bind₁ {K' : Type} [Fintype K'] {ι' : K' → Type} [∀ k, Fintype (ι' k)]
     {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) (τ : (Σ k, ι k) → MRing ι') (δ : K → K' → ℕ)
@@ -127,20 +99,12 @@ theorem isMultiHomog_bind₁ {K' : Type} [Fintype K'] {ι' : K' → Type} [∀ k
 theorem isMultiHomog_blockDeg_mul [DecidableEq K] {k₀ : K} {f g : MRing ι} {n m : ℕ}
     (hf : IsMultiHomog f (blockDeg k₀ n)) (hg : IsMultiHomog g (blockDeg k₀ m)) :
     IsMultiHomog (f * g) (blockDeg k₀ (n + m)) := by
-  have := isMultiHomog_mul hf hg
-  convert this using 1
-  ext k
-  simp only [blockDeg, Pi.add_apply]
-  split_ifs <;> simp
+  convert isMultiHomog_mul hf hg using 1; ext k; simp only [blockDeg, Pi.add_apply]; split_ifs <;> simp
 
 theorem isMultiHomog_blockDeg_prod [DecidableEq K] {k₀ : K} {α : Type*} (s : Finset α) {f : α → MRing ι}
     {n : α → ℕ} (hf : ∀ t ∈ s, IsMultiHomog (f t) (blockDeg k₀ (n t))) :
     IsMultiHomog (∏ t ∈ s, f t) (blockDeg k₀ (∑ t ∈ s, n t)) := by
-  have := isMultiHomog_prod s hf
-  convert this using 1
-  ext k
-  simp only [blockDeg, Finset.sum_apply]
-  split_ifs <;> simp
+  convert isMultiHomog_prod s hf using 1; ext k; simp only [blockDeg, Finset.sum_apply]; split_ifs <;> simp
 
 theorem aeval_smul {S : Type*} [CommRing S] [Algebra ℤ S] {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) (c : K → S)
     (v : (Σ k, ι k) → S) : aeval (fun p => c p.1 * v p) f = (∏ k, c k ^ a k) * aeval v f := by
@@ -167,7 +131,7 @@ theorem aeval_congr_block [DecidableEq K] {S : Type*} [CommRing S] [Algebra ℤ 
     rw [hvw]
   · have h0 : d ⟨k, i⟩ = 0 := by
       have := hh d hd k
-      simp only [blockDeg, if_neg hk] at this
+      simp only [blockDeg, ite_eq_right hk] at this
       exact (Finset.sum_eq_zero_iff.mp this) i (Finset.mem_univ _)
     rw [h0, pow_zero, pow_zero]
 
@@ -188,15 +152,8 @@ theorem mConeMap_of_isMultiHomog (y : (Σ k, ι k) → Ω) {f : MRing ι} {a : K
 
 theorem mem_mCoordIdeal_iff (y : (Σ k, ι k) → Ω) {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) :
     f ∈ mCoordIdeal y ↔ aeval y f = 0 := by
-  rw [mCoordIdeal, RingHom.mem_ker]
-  rw [mConeMap_of_isMultiHomog y hf]
-  constructor
-  · intro h
-    rcases mul_eq_zero.mp h with h | h
-    · exact absurd h (Finset.prod_ne_zero_iff.mpr fun k _ => pow_ne_zero _ (X_ne_zero k))
-    · exact (C_injective _ _) (h.trans C_0.symm)
-  · intro h
-    rw [h, C_0, mul_zero]
+  rw [mCoordIdeal, RingHom.mem_ker, mConeMap_of_isMultiHomog y hf, mul_eq_zero,
+    or_iff_right (Finset.prod_ne_zero_iff.mpr fun k _ => pow_ne_zero _ (X_ne_zero k)), C_eq_zero]
 
 theorem coneMap_of_isMultiHomog {r : ℕ} (x : Ix (Fin r) → Ω) {F : MRing (GlobalTheory (Fin r))} {e : ℕ}
     (hF : IsMultiHomog (ι := GlobalTheory (Fin r)) F (fun _ => e)) :
@@ -216,14 +173,8 @@ theorem mem_coordIdeal_iff {r : ℕ} (x : Ix (Fin r) → Ω) {F : MRing (GlobalT
     (hF : IsMultiHomog (ι := GlobalTheory (Fin r)) F (fun _ => e)) : F ∈ coordIdeal ℤ x ↔ aeval x F = 0 := by
   rw [coordIdeal, RingHom.mem_ker]
   change aeval (fun i => Polynomial.C (x i) * Polynomial.X) F = 0 ↔ _
-  rw [coneMap_of_isMultiHomog x hF]
-  constructor
-  · intro h
-    rcases mul_eq_zero.mp h with h | h
-    · exact absurd h (pow_ne_zero _ Polynomial.X_ne_zero)
-    · exact Polynomial.C_eq_zero.mp h
-  · intro h
-    rw [h, Polynomial.C_0, mul_zero]
+  rw [coneMap_of_isMultiHomog x hF, mul_eq_zero, or_iff_right (pow_ne_zero _ Polynomial.X_ne_zero),
+    Polynomial.C_eq_zero]
 
 theorem aeval_linear {σ α : Type*} [Fintype α] {S : Type*} [CommRing S] [Algebra ℤ S] (v : σ → S)
     (A : α → ℤ) (q : α → σ) : aeval v (∑ j, C (A j) * X (q j) : MvPolynomial σ ℤ) = ∑ j, (A j : S) * v (q j) := by
@@ -332,9 +283,9 @@ theorem BlockImageInverse.proof : BlockImageInverse.Statement := by
     by_cases hk : k = k₀
     · subst hk
       rw [hσ0]
-      simp only [if_true]
+      simp only [ite_true]
       exact isMultiHomog_sum _ fun j _ => isMultiHomog_C_mul (hXu j) _
-    · simp only [hσ, dif_neg hk, if_neg hk]
+    · simp only [hσ, dite_eq_right hk, ite_eq_right hk]
       exact isMultiHomog_zero _
   have hpull : ∀ {P : MRing ι} {n : ℕ}, IsMultiHomog P (blockDeg k₀ n) →
       IsMultiHomog (ι := GlobalTheory (Fin r)) (bind₁ σ P) (fun _ => n) := by
@@ -396,9 +347,9 @@ theorem BlockImageInverse.proof : BlockImageInverse.Statement := by
     rintro ⟨k, i⟩
     by_cases hk : k = k₀
     · subst hk
-      simp only [hτ, hDg, if_true]
+      simp only [hτ, hDg, ite_true]
       simpa using hσH ⟨k, i⟩
-    · simp only [hτ, hDg, if_neg hk]
+    · simp only [hτ, hDg, ite_eq_right hk]
       exact hpull (hQH k i)
   obtain ⟨lam, hlam⟩ : ∃ lam : K → Ω,
       lam = fun k => if k = k₀ then 1 else (∏ i, aeval y (hh k i)) / y ⟨k, c k⟩ := ⟨_, rfl⟩
@@ -406,11 +357,11 @@ theorem BlockImageInverse.proof : BlockImageInverse.Statement := by
     rintro ⟨k, i⟩
     by_cases hk : k = k₀
     · subst hk
-      simp only [hτ, hlam, if_true, one_mul, hσ0]
+      simp only [hτ, hlam, ite_true, one_mul, hσ0]
       rw [show aeval x (∑ j, C (N i j) * X j : MRing (GlobalTheory (Fin r))) = ∑ j, (N i j : Ω) * x j from
         aeval_linear _ _ _]
       exact (hI.2 i).symm
-    · simp only [hτ, hlam, if_neg hk]
+    · simp only [hτ, hlam, ite_eq_right hk]
       rw [heval (hQH k i) x y (fun i => hI.2 i), hQv, ← Finset.mul_prod_erase _ _ (Finset.mem_univ i),
         div_mul_eq_mul_div, eq_div_iff (hc k)]
       linear_combination (-(∏ i' ∈ Finset.univ.erase i, aeval y (hh k i'))) * hgh k i
@@ -520,7 +471,7 @@ theorem BlockImageInverse.proof : BlockImageInverse.Statement := by
         exact hfac.2.1
       · have : z ⟨k, c k⟩ = aeval u (bind₁ σ (Q k (c k))) := by
           rw [hz]
-          simp only [hτ, if_neg hk]
+          simp only [hτ, ite_eq_right hk]
         rw [this, heval (hQH k (c k)) u z hzk₀, hQv]
         exact mul_ne_zero (hfac.2.2.1 k) (Finset.prod_ne_zero_iff.mpr fun i _ => hfac.2.2.2 k i)
     have hzmem : z ∈ mcPts (mCoordIdeal y) := by
@@ -588,7 +539,7 @@ theorem BlockImageInverse.proof : BlockImageInverse.Statement := by
       by_cases hk : k = k₀
       · subst hk
         simp [hk₀]
-      · simp only [if_neg hk]
+      · simp only [ite_eq_right hk]
         have h1 := hRz z hz k i
         have h2 := hRz z' hz' k i
         rw [hscale (hhh k i), hscale (hgg k i)] at h1

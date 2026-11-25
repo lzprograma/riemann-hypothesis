@@ -40,19 +40,9 @@ theorem rowShift_X (σ : T) (i i' : Fin (r σ)) (t : C) (ℓ : Letter T r n) :
     · intro h
       exact ⟨ℓ.snd.2, keyL_inj (show keyL ℓ = keyL ⟨σ, (i, ℓ.snd.2)⟩ from h)⟩
   by_cases h : keyL ℓ = (σ, ↑i, ℓ.snd.2)
-  · rw [if_pos (key.mpr h), if_pos h]
-  · rw [if_neg (mt key.mp h), if_neg h]
+  · rw [ite_eq_left (key.mpr h), ite_eq_left h]
+  · rw [ite_eq_right (mt key.mp h), ite_eq_right h]
 
 end Atom
-
-section Fam
-
-variable {C : Type} [Field C] {V : VF C} {d : ℕ} [NeZero d] {T : Type} {r : T → ℕ} {cc : T → T} {a : T → ℕ → ℕ}
-  {Orb : Type} [Fintype Orb] {tau : Orb → Fin 2 → ZMod d → T} {J : Orb → Fin 2 → Type} [∀ o g, Fintype (J o g)]
-  {X : ∀ o, RowData C V d (IIof r tau o) (J o)} {F : ∀ o, Flag (X o)} {Z : Finset Orb}
-  {ga : Orb → Fin 2 → ZMod d → ℕ → ℕ} {n : ℕ} {L : Orb → List (GlobalTheory d × ℝ)}
-  {pl : (Σ o, Σ i : Fin (L o).length, Fin (rowsAt (X := X) L o i)) → Fin n}
-
-end Fam
 
 end Formalism.L2.FormalSeriesBounds.RF

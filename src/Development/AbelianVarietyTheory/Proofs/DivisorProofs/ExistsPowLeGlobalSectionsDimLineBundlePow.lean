@@ -52,8 +52,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory Limits AlgebraicGeometry TopologicalSpace Filter
@@ -291,7 +289,6 @@ theorem IsAmpleLB.isBig : ∀ (k : Type) [Field k] (X : Scheme.{0}) [IsIntegral 
     lift d to ℕ using ne_top_of_le_ne_top (ENat.coe_ne_top _) hd'
     exact ⟨d, rfl, by exact_mod_cast hd'⟩
   obtain ⟨M, hM1, hM⟩ := hM i₀
-  have hM' : (0 : ℝ) < M := Nat.cast_pos.2 hM1
   refine ⟨hA.isLB, hfin, D, hD, 1 / (M : ℝ) ^ D, by positivity, ?_⟩
   have ht : Tendsto (fun n : ℕ => M * n) atTop atTop :=
     tendsto_atTop_mono (fun n => Nat.le_mul_of_pos_left n hM1) tendsto_id

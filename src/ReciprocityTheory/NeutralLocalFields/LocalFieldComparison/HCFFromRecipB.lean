@@ -42,12 +42,12 @@ theorem infIdele_snd (w : InfinitePlace K) (x : (w.Completion)ˣ) (v : HeightOne
 def infPart : AdeleRing (𝓞 K) K →* AdeleRing (𝓞 K) K where
   toFun x := (x.1, 1)
   map_one' := rfl
-  map_mul' x y := Prod.ext rfl (mul_one 1).symm
+  map_mul' _ _ := Prod.ext rfl (mul_one 1).symm
 
 def finPart : AdeleRing (𝓞 K) K →* AdeleRing (𝓞 K) K where
   toFun x := (1, x.2)
   map_one' := rfl
-  map_mul' x y := Prod.ext (mul_one 1).symm rfl
+  map_mul' _ _ := Prod.ext (mul_one 1).symm rfl
 
 theorem inf_comp_ne_zero (a : Ideles K) (w : InfinitePlace K) : (a : AdeleRing (𝓞 K) K).1 w ≠ 0 := by
   have h := congrArg (fun z : AdeleRing (𝓞 K) K => z.1 w) a.mul_inv

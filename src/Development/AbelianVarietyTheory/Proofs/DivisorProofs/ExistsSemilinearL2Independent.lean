@@ -333,11 +333,11 @@ theorem hasGram_nrm_of_good (D : D7) (T : Core D) (j : ℕ) (Y : Deep T j) (e : 
   · left
     intro a x
     refine ((Classical.choose_spec hex).1 a x).trans ?_
-    exact congrArg (· • Classical.choose hex x) (congrArg (fun τ : Y.d.c₂.F →+* ℂ => τ a) (if_pos h))
+    exact congrArg (· • Classical.choose hex x) (congrArg (fun τ : Y.d.c₂.F →+* ℂ => τ a) (ite_eq_left h))
   · right
     intro a x
     refine ((Classical.choose_spec hex).1 a x).trans ?_
-    exact congrArg (· • Classical.choose hex x) (congrArg (fun τ : Y.d.c₂.F →+* ℂ => τ a) (if_neg h))
+    exact congrArg (· • Classical.choose hex x) (congrArg (fun τ : Y.d.c₂.F →+* ℂ => τ a) (ite_eq_right h))
 
 
 end RulCuspWInsts

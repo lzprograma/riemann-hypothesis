@@ -29,9 +29,4 @@ def ArithmeticIntersectionDivisorPushforward.Statement : Prop :=
         (multAt (P' ⊔ Ideal.span {rename v s}) W' : ℤ) * E W' =
       J (fibreIdeal κ G) 0 Fin.elim0 * multAt (imageZ v P' ⊔ Ideal.span {s}) W
 
-section Inhabitants
-
-
-end Inhabitants
-
 end GroundTheory.Heights₂.Heights.Inter

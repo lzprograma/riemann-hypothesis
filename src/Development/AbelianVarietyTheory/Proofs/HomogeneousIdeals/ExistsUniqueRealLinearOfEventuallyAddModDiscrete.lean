@@ -297,21 +297,6 @@ theorem existsUnique_linearEquiv_of_uniformisations [FiniteDimensional ℝ V]
 
 end LiftField
 
-section Kernel
-
-variable {M N : Type*} [AddCommGroup M] [AddCommGroup N] {Λ : Submodule ℤ M} {Λ' : Submodule ℤ N}
-
-variable {φ : M ⧸ Λ →+ N ⧸ Λ'} {h : M →+ N}
-
-end Kernel
-
-section Torsion
-
-variable (K : Type*) [DivisionRing K] [CharZero K] {M : Type*} [AddCommGroup M] [Module K M]
-  (Λ : Submodule ℤ M) (n : ℕ) [NeZero n]
-
-end Torsion
-
 section RealTorus
 
 variable {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [NormedAddCommGroup F]
@@ -326,31 +311,5 @@ theorem isDiscrete_ker_mkQ {M : Type*} [AddCommGroup M] [TopologicalSpace M] (Λ
   exact DiscreteTopology.isDiscrete
 
 end RealTorus
-
-section Isogeny
-
-variable {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [NormedAddCommGroup F]
-  [NormedSpace ℝ F] [FiniteDimensional ℝ E] [FiniteDimensional ℝ F]
-  {Λ : Submodule ℤ E} [DiscreteTopology Λ] [IsZLattice ℝ Λ]
-  {Λ' : Submodule ℤ F} [DiscreteTopology Λ'] [IsZLattice ℝ Λ']
-  {φ : E ⧸ Λ →+ F ⧸ Λ'} {h : E →ₗ[ℝ] F}
-
-end Isogeny
-
-section FieldTorus
-
-variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] [NormedAlgebra ℝ 𝕜]
-  {V W : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] [NormedSpace 𝕜 V] [IsScalarTower ℝ 𝕜 V]
-  [NormedAddCommGroup W] [NormedSpace ℝ W] [NormedSpace 𝕜 W] [IsScalarTower ℝ 𝕜 W]
-
-end FieldTorus
-
-section ComplexTorus
-
-variable {V W : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] [NormedSpace ℂ V]
-  [IsScalarTower ℝ ℂ V] [FiniteDimensional ℝ V] [NormedAddCommGroup W] [NormedSpace ℝ W]
-  [NormedSpace ℂ W] [IsScalarTower ℝ ℂ W] [FiniteDimensional ℝ W]
-
-end ComplexTorus
 
 end GlobalTheory

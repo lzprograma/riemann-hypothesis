@@ -42,8 +42,6 @@ import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Sheaves.Init
 
-set_option backward.isDefEq.respectTransparency false
-
 @[expose] public section
 
 noncomputable section
@@ -213,7 +211,7 @@ theorem prod_update (Xs : Fin k → Mx n) (t : Fin k → ℝ) (i : Fin k) (s : �
     split_ifs with h
     · subst j; rfl
     · rfl
-  rw [e, List.prod_set, if_pos (by simp [facs]), List.map_drop]
+  rw [e, List.prod_set, ite_eq_left (by simp [facs]), List.map_drop]
 
 theorem famSmooth : ∀ (n : ℕ) (ε : Fin n → Bool) (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     [CompleteSpace H] (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)), Formalism.MainNotions.S.IsURepOn (Formalism.MainNotions.S.UJset ε) σ →

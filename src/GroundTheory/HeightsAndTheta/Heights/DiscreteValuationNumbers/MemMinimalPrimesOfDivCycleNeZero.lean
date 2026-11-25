@@ -109,8 +109,8 @@ theorem UniformiserCase.proof (h1 : ConservationOfNumberLE.Statement.{u})
   congr 1
   dsimp only
   by_cases hϖW : (C ϖ : MRing ι O) ∈ W
-  · rw [if_pos hϖW, if_pos hϖW, vNum_cons_zero]
-  rw [if_neg hϖW, if_neg hϖW]
+  · rw [ite_eq_left hϖW, ite_eq_left hϖW, vNum_cons_zero]
+  rw [ite_eq_right hϖW, ite_eq_right hϖW]
   obtain ⟨hWmin, hWrel⟩ := mem_minimalPrimes_of_divCycle_ne_zero hW
   obtain ⟨hWprime, hPW, -⟩ := le_and_isRelevant_of_divCycle_ne_zero hW
   have := hWprime

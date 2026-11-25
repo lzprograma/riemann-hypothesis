@@ -77,13 +77,13 @@ theorem mass_eq_sumCls : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalS
   unfold Frames.sumCls Frames.nT Frames.wC
   refine tsum_congr fun c => ?_
   by_cases hc : S.IsIntCls c.out
-  · rw [if_pos hc]
+  · rw [ite_eq_left hc]
     have hs : {x | (S.IsTerm d x ∧ P x) ∧ S.Fr d x = c.out}
         = {Λ | S.IsTerm d Λ ∧ P Λ ∧ S.Fr d Λ = c.out} := by
       ext Λ
       simp only [Set.mem_ofPred_eq, and_assoc]
     rw [hs]
-  · rw [if_neg hc]
+  · rw [ite_eq_right hc]
     have hs : {x | (S.IsTerm d x ∧ P x) ∧ S.Fr d x = c.out} = (∅ : Set (Submodule L.O S.V)) := by
       ext Λ
       simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]

@@ -3,47 +3,7 @@ module
 public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.HighestDerivProd
 public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOpenFixedOfSubgroup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.LeibnizOrders.ProdGPn
 
 @[expose] public section
@@ -136,9 +96,9 @@ theorem exists_indicator (H : Subgroup G) (σ : Representation ℂ H W) {E : Set
     have e : f.1.1.1 ((h : G) * g) = σ h (f.1.1.1 g) := f.1.1.2 h g
     by_cases hg : g ∈ E
     · have hg' : (h : G) * g ∈ E := (h1 h h.2 g).2 hg
-      simp only [b, if_pos hg, if_pos hg', e]
+      simp only [b, ite_eq_left hg, ite_eq_left hg', e]
     · have hg' : (h : G) * g ∉ E := fun c => hg ((h1 h h.2 g).1 c)
-      simp only [b, if_neg hg, if_neg hg', map_zero]
+      simp only [b, ite_eq_right hg, ite_eq_right hg', map_zero]
   have hsm : (⟨b, hind⟩ : indSpace H σ) ∈ smoothPart (ind H σ) := by
     refine GlobalTheory.CompanionTheory.BZMirOnto.isOpen_fixed_of_subgroup (ind H σ) (K ⊓ L) (hK.inter hL) _ fun x hx => ?_
     apply Subtype.ext
@@ -146,9 +106,9 @@ theorem exists_indicator (H : Subgroup G) (σ : Representation ℂ H W) {E : Set
     show b (g * x) = b g
     by_cases hg : g ∈ E
     · have hg' : g * x ∈ E := (h2 g x hx.1).2 hg
-      simp only [b, if_pos hg, if_pos hg', hLi g x hx.2]
+      simp only [b, ite_eq_left hg, ite_eq_left hg', hLi g x hx.2]
     · have hg' : g * x ∉ E := fun c => hg ((h2 g x hx.1).1 c)
-      simp only [b, if_neg hg, if_neg hg']
+      simp only [b, ite_eq_right hg, ite_eq_right hg']
   have hc : (⟨⟨b, hind⟩, hsm⟩ : smoothPart (ind H σ)) ∈ cIndSpace H σ := by
     obtain ⟨C, hC, hf⟩ := f.2
     refine ⟨C, hC, fun g hg => hf g ?_⟩
@@ -156,9 +116,9 @@ theorem exists_indicator (H : Subgroup G) (σ : Representation ℂ H W) {E : Set
     apply hg
     show b g = 0
     by_cases hgE : g ∈ E
-    · simp only [b, if_pos hgE]; exact h0
-    · simp only [b, if_neg hgE]
-  exact ⟨⟨⟨⟨b, hind⟩, hsm⟩, hc⟩, fun g hg => if_pos hg, fun g hg => if_neg hg⟩
+    · simp only [b, ite_eq_left hgE]; exact h0
+    · simp only [b, ite_eq_right hgE]
+  exact ⟨⟨⟨⟨b, hind⟩, hsm⟩, hc⟩, fun g hg => ite_eq_left hg, fun g hg => ite_eq_right hg⟩
 
 theorem exists_cInd_value (H : Subgroup G) (σ : Representation ℂ H W) (hσ : IsSmooth σ)
     (hbase : ∀ O ∈ 𝓝 (1 : G), ∃ K : Subgroup G, IsOpen (K : Set G) ∧ IsCompact (K : Set G) ∧ (K : Set G) ⊆ O)

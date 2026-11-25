@@ -140,7 +140,6 @@ theorem cauchy_schwarz (I : V →ₗ⋆[ℂ] V →ₗ[ℂ] ℂ) (hI : ∀ x : V,
 
 end GlobalTheory.HermitianCauchySchwarz
 
-alias GlobalTheory.HermitianCauchySchwarz.main := _root_.GlobalTheory.HermitianCauchySchwarz.cauchy_schwarz
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.FlagMeasures.CauchySchwarz =====
@@ -297,7 +296,7 @@ theorem integral_prod_nonneg (ψ : ℝ → ℂ) (hc : Continuous ψ) (C : ℝ) (
         have e : ∀ l : Fin k, P.map (fun t => t l) = μ := fun l =>
           (measurePreserving_eval (fun _ : Fin k => μ) l).map_eq
         rw [e, e] at h2
-        rw [if_neg h, zero_add, hI, ← h2, integral_map (by fun_prop)]
+        rw [ite_eq_right h, zero_add, hI, ← h2, integral_map (by fun_prop)]
         exact (hc.comp (by fun_prop)).aestronglyMeasurable
     have h0 : 0 ≤ ∫ t, ∑ i, ∑ j, ψ (t j - t i) ∂P := integral_nonneg (fun t => hp k t)
     rw [MeasureTheory.integral_finsetSum _ (fun i _ => MeasureTheory.integrable_finsetSum _ (fun j _ => hint i j))] at h0
@@ -658,8 +657,7 @@ theorem linear_of_le (L : ℝ →+ ℝ) (A K : ℝ) (h : ∀ s, L s ≤ A + K * 
 
   have hup : ∀ s, L s ≤ K * |s| := by
     intro s
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have hpos : 0 < L s - K * |s| := by linarith
     obtain ⟨m, hm⟩ := exists_nat_gt (A / (L s - K * |s|))
     have hA : A < (m : ℝ) * (L s - K * |s|) := by rwa [div_lt_iff₀ hpos] at hm
@@ -805,8 +803,7 @@ theorem modulus (N : Subgroup G) (hN : IsClosed (N : Set G)) {ν : Measure G} (h
   choose T hT using fun s => exists_exp_smul N hN hν (hconj s)
 
   obtain ⟨r0, hr0⟩ : ∃ k : ℕ, ν {m | d m ≤ (k : ℝ)} ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hν.1
     rw [← Measure.measure_univ_eq_zero]
     have hU : (Set.univ : Set G) = ⋃ k : ℕ, {m | d m ≤ (k : ℝ)} := by
@@ -858,8 +855,7 @@ theorem modulus (N : Subgroup G) (hN : IsClosed (N : Set G)) {ν : Measure G} (h
       · exact h
       · linarith
     have hC : 0 < C := by
-      by_contra hC
-      push_neg at hC
+      by_contra! hC
       nlinarith [Real.exp_pos (c * ((r0 : ℝ) + 2 * |s|))]
     have hlog := Real.log_le_log hpos hle'
     rw [Real.log_mul (Real.exp_pos _).ne' hm0.ne', Real.log_mul hC.ne' (Real.exp_pos _).ne', Real.log_exp,

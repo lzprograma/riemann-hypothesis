@@ -48,8 +48,6 @@ open Matrix MeasureTheory GlobalTheory.Chain GlobalTheory.Chain.RealIt
 open scoped TensorProduct InnerProductSpace Classical
 open GlobalTheory.Chain.IoLift
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.Chain.CuspGrowSpace
 
 variable {D : D7} {θ : InfFam D} {V : HSp D} {φ ψ : GA D V → ℂ}

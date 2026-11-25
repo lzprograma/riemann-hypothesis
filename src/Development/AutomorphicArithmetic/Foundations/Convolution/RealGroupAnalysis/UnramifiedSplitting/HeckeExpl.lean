@@ -10,44 +10,6 @@ import GroundTheory.AutomorphicForms.MacdonaldHecke
 import GroundTheory.GlobalFields.CompletionAtPlace.Inertia
 import GroundTheory.GlobalFields.LocalAtPlace
 import GroundTheory.LocalFields.LocalFourierHaar
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Separation.Connected
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -156,35 +118,20 @@ private instance : IsEmpty (Pairs (Finset.univ : Finset (Fin 2))) where
 private theorem gMat_zero (v : P K) (c : Pairs ({0} : Finset (Fin 2)) → 𝓀[Kv v]) :
     gMat {0} c = nL (lf v (c default)) * dL (pi0 v) 1 := by
   refine Units.ext (Matrix.ext fun i j => ?_)
-  have hg (S : Finset (Fin 2)) (c : Pairs S → 𝓀[Kv v]) (i j : Fin 2) :
-      (gMat S c : GL (Fin 2) (Kv v)) i j = ((1 : Matrix (Fin 2) (Fin 2) (Kv v)) i j + cMat S c i j) *
-        GLnLocal.uniformizer (Kv v) ^ lamS S j := by
-    change (((unipC S c : GL (Fin 2) (Kv v)) * (torusPow (Kv v) 2 (lamS S) : GL (Fin 2) (Kv v))) : Matrix (Fin 2) (Fin 2) (Kv v)) i j = _
-    rw [coe_torusPow, mul_diagonal, coe_unipC, Matrix.add_apply]
-  rw [hg]
+  rw [Spherical.gMat_apply]
   fin_cases i <;> fin_cases j <;> simp [cMat, lamS, nL, dL, pi0, lf]
   rfl
 
 private theorem gMat_one (v : P K) (c : Pairs ({1} : Finset (Fin 2)) → 𝓀[Kv v]) :
     gMat {1} c = dL 1 (pi0 v) := by
   refine Units.ext (Matrix.ext fun i j => ?_)
-  have hg (S : Finset (Fin 2)) (c : Pairs S → 𝓀[Kv v]) (i j : Fin 2) :
-      (gMat S c : GL (Fin 2) (Kv v)) i j = ((1 : Matrix (Fin 2) (Fin 2) (Kv v)) i j + cMat S c i j) *
-        GLnLocal.uniformizer (Kv v) ^ lamS S j := by
-    change (((unipC S c : GL (Fin 2) (Kv v)) * (torusPow (Kv v) 2 (lamS S) : GL (Fin 2) (Kv v))) : Matrix (Fin 2) (Fin 2) (Kv v)) i j = _
-    rw [coe_torusPow, mul_diagonal, coe_unipC, Matrix.add_apply]
-  rw [hg]
+  rw [Spherical.gMat_apply]
   fin_cases i <;> fin_cases j <;> simp [cMat, lamS, dL, pi0]
 
 private theorem gMat_top (v : P K) (c : Pairs (Finset.univ : Finset (Fin 2)) → 𝓀[Kv v]) :
     gMat Finset.univ c = dL (pi0 v) (pi0 v) := by
   refine Units.ext (Matrix.ext fun i j => ?_)
-  have hg (S : Finset (Fin 2)) (c : Pairs S → 𝓀[Kv v]) (i j : Fin 2) :
-      (gMat S c : GL (Fin 2) (Kv v)) i j = ((1 : Matrix (Fin 2) (Fin 2) (Kv v)) i j + cMat S c i j) *
-        GLnLocal.uniformizer (Kv v) ^ lamS S j := by
-    change (((unipC S c : GL (Fin 2) (Kv v)) * (torusPow (Kv v) 2 (lamS S) : GL (Fin 2) (Kv v))) : Matrix (Fin 2) (Fin 2) (Kv v)) i j = _
-    rw [coe_torusPow, mul_diagonal, coe_unipC, Matrix.add_apply]
-  rw [hg]
+  rw [Spherical.gMat_apply]
   fin_cases i <;> fin_cases j <;> simp [cMat, lamS, dL, pi0]
 
 private theorem sum_one (v : P K) (f : GL (Fin 2) (Kv v) → ℂ) :

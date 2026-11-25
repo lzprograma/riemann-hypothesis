@@ -235,7 +235,7 @@ theorem tqFam_cosets_distinct : ∀ (q : ℕ) (σ g : SL(2, ℤ)) (i i' : Fin (q
   have hi := i.isLt
   have hi' := i'.isLt
   by_cases h1 : (i : ℕ) < q <;> by_cases h2 : (i' : ℕ) < q <;>
-    simp only [h1, h2, if_true, if_false, dg, Matrix.mul_apply, Fin.sum_univ_two,
+    simp only [h1, h2, ite_true, ite_false, dg, Matrix.mul_apply, Fin.sum_univ_two,
       Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one,
       Matrix.empty_val', Matrix.cons_val_fin_one] at e00 e01 e10 e11
   ·
@@ -419,24 +419,24 @@ theorem reps (N l q : ℕ) (σ γ : SL(2, ℤ)) (hq : q.Prime) (hqN : ¬ q ∣ N
     (hγ : γ ∈ GlobalTheory.Hk.lev N l) (i : Fin (q + 1)) :
     ∃ i' : Fin (q + 1), ∃ γ' ∈ GlobalTheory.Hk.lev N l, tqFam q σ i * mat γ = mat γ' * tqFam q σ i' := by
   by_cases hi : (i : ℕ) < q
-  · have e : tqFam q σ i = !![(1 : ℤ), ((i : ℕ) : ℤ); 0, (q : ℤ)] := by rw [tqFam, if_pos hi]
+  · have e : tqFam q σ i = !![(1 : ℤ), ((i : ℕ) : ℤ); 0, (q : ℤ)] := by rw [tqFam, ite_eq_left hi]
     rw [e]
     by_cases hd : (q : ℤ) ∣ mat γ 0 0 + ((i : ℕ) : ℤ) * mat γ 1 0
     · obtain ⟨γ', h1, h2⟩ := _root_.GlobalTheory.Hk.upper_mul_eq_mul_diamond_diag N l q i σ γ hq hqN hσ hi hγ hd
       refine ⟨Fin.last q, γ', h1, ?_⟩
-      rw [h2, tqFam, if_neg (by simp)]
+      rw [h2, tqFam, ite_eq_right (by simp)]
     · obtain ⟨j', hj', γ', h1, h2⟩ := _root_.GlobalTheory.Hk.tinv_fin_fin N l q i γ hq hqN hi hγ hd
       refine ⟨⟨j', by omega⟩, γ', h1, ?_⟩
-      rw [h2, tqFam, if_pos (by simpa using hj')]
-  · have e : tqFam q σ i = mat σ * dg q 1 := by rw [tqFam, if_neg hi]
+      rw [h2, tqFam, ite_eq_left (by simpa using hj')]
+  · have e : tqFam q σ i = mat σ * dg q 1 := by rw [tqFam, ite_eq_right hi]
     rw [e]
     by_cases hd : (q : ℤ) ∣ mat γ 1 0
     · obtain ⟨γ', h1, h2⟩ := _root_.GlobalTheory.Hk.dia_diag_mul_of_dvd_lowerLeft N l q σ γ hq hqN hσ hγ hd
       refine ⟨Fin.last q, γ', h1, ?_⟩
-      rw [h2, tqFam, if_neg (by simp)]
+      rw [h2, tqFam, ite_eq_right (by simp)]
     · obtain ⟨j', hj', γ', h1, h2⟩ := _root_.GlobalTheory.HkInvFin.sigma_dg_mul_eq N l q σ γ hq hqN hσ hγ hd
       refine ⟨⟨j', by omega⟩, γ', h1, ?_⟩
-      rw [h2, tqFam, if_pos (by simpa using hj')]
+      rw [h2, tqFam, ite_eq_left (by simpa using hj')]
 
 theorem perm (N l q : ℕ) (σ γ : SL(2, ℤ)) (hq : q.Prime) (hqN : ¬ q ∣ N * l) (hσ : GlobalTheory.Hk.IsDia N l q σ)
     (hγ : γ ∈ GlobalTheory.Hk.lev N l) :

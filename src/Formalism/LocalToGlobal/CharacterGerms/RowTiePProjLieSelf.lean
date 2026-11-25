@@ -37,23 +37,10 @@ section Val
 
 variable {C : Type} [Field C] {V : VF C}
 
-theorem mm_exists {a : C} (h : V.MM a) : ∃ r : ℝ, 0 < r ∧ V.Ge r a := by
-  unfold VF.MM at h
-  unfold VF.Ge
-  cases hva : V.v a with
-  | top => exact ⟨1, one_pos, le_top⟩
-  | coe x =>
-    rw [hva] at h
-    exact ⟨x, by exact_mod_cast h, le_rfl⟩
-
 theorem mm_of_ge {a : C} {r : ℝ} (hr : 0 < r) (h : V.Ge r a) : V.MM a := by
   unfold VF.MM
   unfold VF.Ge at h
   exact lt_of_lt_of_le (by exact_mod_cast hr) h
-
-theorem mm_add {a b : C} (ha : V.MM a) (hb : V.MM b) : V.MM (a + b) := by
-  unfold VF.MM at ha hb ⊢
-  exact lt_of_lt_of_le (lt_min ha hb) (AddValuation.map_add _ a b)
 
 theorem mm_neg {a : C} (ha : V.MM a) : V.MM (-a) := by
   unfold VF.MM at ha ⊢
@@ -164,7 +151,7 @@ private lemma mm_pow_l_pow_sub_of_mm_sub {C : Type} [Field C] {V : VF C} {s t : 
   rcases Nat.eq_zero_or_pos k with rfl | hk
   · simp only [pow_zero, pow_one]
     exact h
-  · obtain ⟨r, hr, hge⟩ := mm_exists h
+  · obtain ⟨r, hr, hge⟩ := Formalism.L2.FormalSeriesBounds.IndAr.exists_ge_of_mm h
     exact mm_of_ge (add_pos_of_pos_of_nonneg hr (le_min zero_le_one hr.le))
       (pow_lk_close hs ht hr.le hge k hk)
 
@@ -181,7 +168,7 @@ private lemma mm_em_add_sub_em_pow_l_pow {C : Type} [Field C] {V : VF C} {O : Ty
     have h1 := K.6 (a + k) y
     have h2 := mm_pow_l_pow_sub_of_mm_sub (K.5 (a + k) y) (ge_zero_pow_of_ge_zero (K.5 a y) _) ih 1
     simp only [pow_one] at h2
-    have h3 := mm_add h1 h2
+    have h3 := Formalism.L2.FormalSeriesBounds.IndAr.mm_add' h1 h2
     rw [sub_add_sub_cancel] at h3
     rw [Nat.cast_succ, ← add_assoc, pow_succ, pow_mul]
     exact h3
@@ -190,7 +177,7 @@ theorem keyDelta_holds : KeyDeltaSt := by
   intro C _ _ V O _ n d _ K χ c hχ hcong
   have hunit : V.v (χ K.7) = 0 := by
     apply v_unit
-    have h := mm_add (hcong K.7) (K.9 c)
+    have h := Formalism.L2.FormalSeriesBounds.IndAr.mm_add' (hcong K.7) (K.9 c)
     rwa [sub_add_sub_cancel] at h
   have hunit' : V.v ((K.em c) K.7) = 0 := v_unit (K.9 c)
   have hrad : ∀ x : O, (∀ a, V.MM ((K.em a) x)) → ∀ r : ℝ, (∀ w, V.Ge r (χ w - (K.em c) w)) →
@@ -358,7 +345,7 @@ theorem chi_kill (K : KeyData C V O n d) (w : Fin n → C) (hw : w ≠ 0) (hP : 
   have hint : ∀ y, V.Ge 0 (χ y) := fun y => eig_int (K.ρ y) (K.ρ_int y) w hw (χ y) (hχ y)
   refine ⟨hint, ?_⟩
   obtain ⟨i, hi⟩ : ∃ i, w i ≠ 0 := by
-    by_contra hc; push_neg at hc; exact hw (funext hc)
+    by_contra hc; push Not at hc; exact hw (funext hc)
 
   have hT : Tends V (fun m => χ K.ε ^ V.l ^ m * w i) (w i) := by
     have h1 : Tends V (fun m => Matrix.mulVec (K.ρ (K.ε ^ V.l ^ m)) w i) (Matrix.mulVec K.P w i) := by
@@ -380,7 +367,7 @@ theorem chi_kill (K : KeyData C V O n d) (w : Fin n → C) (hw : w ≠ 0) (hP : 
   have h1 := congrArg (fun t => V.v (χ t)) hy
   simp only [map_mul, map_natCast, AddValuation.map_mul, V.v_l] at h1
   unfold VF.MM at hunit ⊢
-  push_neg at hunit
+  push Not at hunit
   have he0 : V.v (χ K.ε) = 0 := le_antisymm hunit (hint K.ε)
   rw [he0, zero_add] at h1
   rw [h1]
@@ -411,7 +398,10 @@ theorem keyLA_of (hE : KeyEigSt) (hR : KeyResSt) (hD : KeyDeltaSt) (C : Type) [F
     obtain ⟨hint, hkill⟩ := chi_kill K (w j) h0 hPw (χ j) hχ
     obtain ⟨c, hc⟩ := hR C V O n d K (χ j) hint hkill
     have heq := hD C V O n d K (χ j) c hint hc
-    rw [_root_.Bl.PowMulVecEigen.goal1 _ _ _ (hχ x), Polynomial.eval_prod]
+    change Matrix.toLinAlgEquiv'
+      (Polynomial.aeval (K.ρ x) (∏ c' : ZMod d, (Polynomial.X - Polynomial.C (K.em c' x)))) (w j) = 0
+    rw [← Polynomial.aeval_algHom_apply, Module.End.aeval_apply_of_mem_apply_eq_smul (hχ x),
+      Polynomial.eval_prod]
     have : ∏ c' : ZMod d, Polynomial.eval (χ j x) (Polynomial.X - Polynomial.C (K.em c' x)) = 0 :=
       Finset.prod_eq_zero (Finset.mem_univ c) (by rw [Polynomial.eval_sub, Polynomial.eval_X, Polynomial.eval_C,
         heq, sub_self])
@@ -547,8 +537,7 @@ theorem fixed_nat (p : ℕ) [hp : Fact p.Prime] [CharP k p] (a : k) (ha : a ^ p 
     intro b hb
     rw [Multiset.mem_toFinset, Polynomial.mem_roots hP]
     simp [hb]
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   have hnotin : a ∉ Finset.univ.image φ := by
     intro h
     obtain ⟨i, -, hi⟩ := Finset.mem_image.1 h
@@ -841,7 +830,7 @@ theorem coeff_extract [CharZero K] {ι : Type} [Fintype ι] [DecidableEq ι] (B 
       exact hroot t
     have hc1 := congrArg (fun p : K[X] => p.coeff 1) hq0
     simp only [hq, finsetSum_coeff, coeff_monomial_apply, Finset.sum_ite_eq', Finset.mem_range, coeff_zero] at hc1
-    rw [if_pos (by omega)] at hc1
+    rw [ite_eq_left (by omega)] at hc1
     exact hc1
   have hR1 : R.coeff 1 = (X - Polynomial.C (μ c)) * Polynomial.C (∏ c' ∈ Finset.univ.erase c, a c') := by
     rw [hR, ← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ c), hac, map_zero, map_zero, zero_add, mul_assoc]
@@ -962,7 +951,6 @@ theorem keySelf (hE : KeyEigSt) {C : Type} [Field C] [CharZero C] {V : VF C} {O 
   exact keyLA_of hE RowTiePKeyRes.keyRes_holds keyDelta_holds C V Y.algClosed Y.cpl O dd d K x
 
 end ProjLieSelf
-
 
 open PartialDerivEval RowTiePE0 RowTiePProj RowTiePLSmall RowTiePLie RowTiePSplit RowTiePKey in
 theorem projLieSelf_of (hE : KeyEigSt) : ProjLieSelfSt := by

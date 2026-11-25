@@ -46,7 +46,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-attribute [local instance] Over.cartesianMonoidalCategory
 noncomputable section
 namespace GlobalTheory.ZH
 open ReciprocityTheory.ChartRestriction.G.Out Classical
@@ -62,14 +61,6 @@ def GenVal {S : ThetaSys o Ω} (ρ : S.Real) (M : RatModel o Ω) (U₀ : M.Z.Ope
     Set.range (g ≫ pullback.fst ρ.P.A.hom u₀) ⊆ ρ.P.L.U jP → Set.range (g ≫ φ) ⊆ L.U jL → Set.range (g ≫ φ) ⊆ V →
     ∑ i, β (c i) * valF r _ ((t i).f (fun _ => jP)) =
       valF g _ (w.s (fun _ => jP, fun _ => jL)).val ^ k * valF (g ≫ φ) _ (σ (fun _ => jL))
-
-def ImmersedBy {X Z : Scheme.{0}} (f : X ⟶ Z) (s : Z ⟶ Sp o) (B : LB X) (V : X.Opens) {J : Type}
-    (σ : J → ∀ j, Γ(X, V ⊓ B.U j)) : Prop :=
-  ∃ (m : ℕ) (e : Fin (m + 1) ≃ J) (π : V.toScheme ⟶ PSpace o m) (h : π ≫ PSpace.str o m = (V.ι ≫ f) ≫ s),
-    IsImmersion (pullback.lift π (V.ι ≫ f) h) ∧
-    ∀ (i : Fin (m + 1)) (j : B.ι) (T : V.toScheme.Opens) (hi : T ≤ π ⁻¹ᵁ ProjSpace.chart o m i)
-      (hj : T ≤ V.ι ⁻¹ᵁ (V ⊓ B.U j)), IsUnit ((V.ι.appLE _ T hj).hom (σ (e i) j)) ∧
-        ∀ k, (V.ι.appLE _ T hj).hom (σ (e k) j) = ProjSpace.pullRatio π T i hi k * (V.ι.appLE _ T hj).hom (σ (e i) j)
 
 structure ZHOut {S : ThetaSys o Ω} (ρ : S.Real) (M : RatModel o Ω) (U₀ : M.Z.Opens) (EE : M.Lat S.J) where
   u₀ : U₀.toScheme ⟶ Sp S.R
@@ -88,19 +79,8 @@ structure ZHOut {S : ThetaSys o Ω} (ρ : S.Real) (M : RatModel o Ω) (U₀ : M.
   w : LB.Iso (L.L.pull φ) (ρ.P.L.pull (pullback.fst ρ.P.A.hom u₀))
   w_gen : w.IsGen
 
-  w_rig : ∀ (K : Type) [Field K] (g : Sp K ⟶ pullback ρ.P.A.hom u₀) (x : Sp K ⟶ M.Z) (y : Sp K ⟶ Sp S.R)
-    (jP : ρ.P.L.ι) (jL : L.L.ι), g ≫ φ = x ≫ eSec G → g ≫ pullback.fst _ _ = y ≫ eSec ρ.P.A →
-    Set.range (g ≫ pullback.fst ρ.P.A.hom u₀) ⊆ ρ.P.L.U jP → Set.range (g ≫ φ) ⊆ L.L.U jL →
-    valF y _ (ρ.rig.s (fun _ => jP)).val =
-      valF g _ (w.s (fun _ => jP, fun _ => jL)).val * valF x _ (L.rig.s (fun _ => jL)).val
-  hypS : HypS G L.L
-
   endo : ∀ f : (Over.pullback M.pt).obj G ⟶ (Over.pullback M.pt).obj G, IsMonHom f →
     ∃! F : G ⟶ G, IsMonHom F ∧ (Over.pullback M.pt).map F = f
-  isoExt : ∀ (n : ℕ) (x x' : Fin n → (G ⊗ G ⟶ G)), (∀ i, IsMonHom (x i) ∧ IsMonHom (x' i)) → ∀ ε ε' : Fin n → ℤ, ∑ i, ε i = 0 → ∑ i, ε' i = 0 →
-    LBIso ((LB.LinComb L.L (fun i => (x i).left) ε).pull (pullback.fst (G ⊗ G).hom M.pt))
-      ((LB.LinComb L.L (fun i => (x' i).left) ε').pull (pullback.fst (G ⊗ G).hom M.pt)) →
-    LBIso (LB.LinComb L.L (fun i => (x i).left) ε) (LB.LinComb L.L (fun i => (x' i).left) ε')
   split : ∀ z : M.Z, ∃ E : SplitExt (Sp (M.Z.residueField z)),
     E.IsGt ((Over.pullback (M.Z.fromSpecResidueField z)).obj G)
   ab : abLocus G = {z | S.TT M z = ⊥}
@@ -126,10 +106,6 @@ structure ZHOut {S : ThetaSys o Ω} (ρ : S.Real) (M : RatModel o Ω) (U₀ : M.
       ∀ (K : Type) [Field K] [IsAlgClosed K] (x : Sp K ⟶ M.Z), Set.range x ⊆ W →
         ∃ (g : Sp K ⟶ G.left) (j : _), g ≫ G.hom = x ∧ valF g _ (σ j) ≠ 0
 
-  secOf : ∀ (W : M.Z.Opens) (x₀ : S.Gam) (v : S.J → Ω), (∀ z ∈ W, x₀ ∈ S.supI M z ∧ v ∈ EE.E z) →
-    ∃ σ ∈ secOn (LB.LinComb L.L (K := Fin 1) (fun _ => 𝟙 G.left) (fun _ => (S.N : ℤ))) (G.hom ⁻¹ᵁ W),
-      GenVal ρ M U₀ u₀ G φ L.L w S.N ρ.s (fun l => v l / S.th x₀) _ σ
-
   sections : ∀ (W : M.Z.Opens) (x₀ : S.Gam) (b : Matrix S.J S.J Ω),
     (∀ z ∈ W, x₀ ∈ S.supI M z ∧ EE.E z = Submodule.span (M.O z) (Set.range b)) →
     ∃ σ : S.J → ∀ j, Γ(G.left, G.hom ⁻¹ᵁ W ⊓ (LB.LinComb L.L (K := Fin 1) (fun _ => 𝟙 G.left) (fun _ => (S.N : ℤ))).U j),
@@ -138,13 +114,6 @@ structure ZHOut {S : ThetaSys o Ω} (ρ : S.Real) (M : RatModel o Ω) (U₀ : M.
       ∀ (K : Type) [Field K] [IsAlgClosed K] (x : Sp K ⟶ M.Z), Set.range x ⊆ W →
         (∀ g : Sp K ⟶ G.left, g ≫ G.hom = x → ∃ i j, valF g _ (σ i j) ≠ 0) ∧
         ∀ c : S.J → K, (∀ (g : Sp K ⟶ G.left) (j : _), g ≫ G.hom = x → ∑ i, c i * valF g _ (σ i j) = 0) → c = 0
-
-  imm : ∀ (W : M.Z.Opens) (x₀ : S.Gam) (b : Matrix S.J S.J Ω),
-    (∀ z ∈ W, x₀ ∈ S.supI M z ∧ EE.E z = Submodule.span (M.O z) (Set.range b)) →
-    ∀ σ : S.J → ∀ j, Γ(G.left, G.hom ⁻¹ᵁ W ⊓ (LB.LinComb L.L (K := Fin 1) (fun _ => 𝟙 G.left) (fun _ => (S.N : ℤ))).U j),
-      (∀ i, σ i ∈ secOn (LB.LinComb L.L (K := Fin 1) (fun _ => 𝟙 G.left) (fun _ => (S.N : ℤ))) (G.hom ⁻¹ᵁ W) ∧
-        GenVal ρ M U₀ u₀ G φ L.L w S.N ρ.s (fun l => b i l / S.th x₀) _ (σ i)) →
-      ImmersedBy G.hom M.s (LB.LinComb L.L (K := Fin 1) (fun _ => 𝟙 G.left) (fun _ => (S.N : ℤ))) (G.hom ⁻¹ᵁ W) σ
 attribute [instance] ZHOut.grp ZHOut.comm
 
 def ZHGeoSt : Prop :=

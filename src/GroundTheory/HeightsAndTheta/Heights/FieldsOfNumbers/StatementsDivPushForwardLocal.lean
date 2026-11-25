@@ -31,10 +31,6 @@ def DivPushForwardLocal.Statement : Prop :=
       cycEval M (divCycle P' (rename (blockIncl j ι') a)) =
         relDeg j P' * divCycle (contractPrime j P') a W
 
-section Example
-
-end Example
-
 end
 
 end GroundTheory.Heights₂.Heights.FieldNumbers

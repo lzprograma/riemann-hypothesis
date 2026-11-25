@@ -4,45 +4,6 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDAC
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RootVectorActionCutoff
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QminorZero
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -54,8 +15,6 @@ namespace Formalism.FourierDecayAlt.P.CutMP.TVG
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.P.Qx5 Formalism.FourierDecayAlt.P.Qx2 Formalism.FourierDecayAlt.P.PBN Formalism.FourierDecayAlt.P.PBN.MC
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 section loc
 
 variable {r : ℕ} {X : Type} [NormedAddCommGroup X] [NormedSpace ℂ X]
@@ -64,7 +23,7 @@ theorem pbOp_locO (l : Fin r) {f₁ f₂ : (Fin r → ℂ) → X} (h : ∀ c ∈
     (hc : c ∈ OmX r) : pbOp l f₁ c = pbOp l f₂ c := by
   have hev : f₁ =ᶠ[nhds c] f₂ := by
     filter_upwards [(Formalism.FourierDecayAlt.P.Qx3.isOpen_OmX r).mem_nhds hc] with c' hc' using h c' hc'
-  simp only [pbOp, wirtBar, if_pos hc, hev.fderiv_eq]
+  simp only [pbOp, wirtBar, ite_eq_left hc, hev.fderiv_eq]
 
 theorem pbN_locO (i : ℕ) {f₁ f₂ : (Fin r → ℂ) → X} (h : ∀ c ∈ OmX r, f₁ c = f₂ c) {c : Fin r → ℂ}
     (hc : c ∈ OmX r) : pbN r i f₁ c = pbN r i f₂ c := by
@@ -121,7 +80,7 @@ theorem comm_TorV (hD : IsOpen D) (j : ℕ) (p q : Fin (2 * r + k + 1))
   | mem y hy =>
     obtain ⟨l, hl, rfl⟩ := hy
     have h := EA_gl (E := E) hD p q (esI k r l) (esI k r l)
-    rw [if_neg (hq l hl), if_neg (fun e => hp l hl e.symm), sub_zero] at h
+    rw [ite_eq_right (hq l hl), ite_eq_right (fun e => hp l hl e.symm), sub_zero] at h
     exact sub_eq_zero.1 h
   | algebraMap c => exact Algebra.commute_algebraMap_right c _
   | add y₁ y₂ _ _ h₁ h₂ => exact h₁.add_right h₂
@@ -218,7 +177,7 @@ theorem claimV (hRR : RightRuleEv) (hLR : LeftRuleCellv) (hTC : TorusCellv) (hCh
       rw [hLaP_apply, mul_assoc, (comm_TorV hD (r - (m + 2)) _ _ (hnot a (by omega))
         (hnot ⟨r - m - 2, by omega⟩ le_rfl) P hP).eq, ← mul_assoc, La_apply, Subalgebra.coe_mul, Module.End.mul_apply]
       conv_lhs => rw [hv]
-      rw [root_action_on_truncated_vector hD z' hz' hRR hf hRf a ⟨r - m - 2, by omega⟩ (by simp only; omega), if_neg (by simp only; omega),
+      rw [root_action_on_truncated_vector hD z' hz' hRR hf hRf a ⟨r - m - 2, by omega⟩ (by simp only; omega), ite_eq_right (by simp only; omega),
         zero_smul, map_zero]
       rfl
     have hR1 : ∀ x : SA E hD,
@@ -229,7 +188,7 @@ theorem claimV (hRR : RightRuleEv) (hLR : LeftRuleCellv) (hTC : TorusCellv) (hCh
         Module.End.mul_apply]
       conv_lhs => rw [hv]
       rw [root_action_on_truncated_vector hD z' hz' hRR hf hRf ⟨r - m - 1, by omega⟩ ⟨r - m - 2, by omega⟩ (by simp only; omega),
-        if_pos (by simp only; omega), one_smul, ← hv]
+        ite_eq_left (by simp only; omega), one_smul, ← hv]
     have hL : ∀ (x : SA E hD) (b : Fin r), r - m - 2 < b.val →
         LaP (EA hD (esI k r ⟨r - m - 2, by omega⟩) (esI k r b) * x) =
           (if b.val = r - m - 1 then ρ else 0) • LaP x := by
@@ -242,15 +201,15 @@ theorem claimV (hRR : RightRuleEv) (hLR : LeftRuleCellv) (hTC : TorusCellv) (hCh
       congr 1
       by_cases hbm : b.val = r - m - 1
       · have hb' : b = ⟨r - m - 1, by omega⟩ := Fin.ext hbm
-        rw [if_pos (by simp only; omega), if_pos hbm, hρ, congrArg c hb']
-      · rw [if_neg (by simp only; omega), if_neg hbm]
+        rw [ite_eq_left (by simp only; omega), ite_eq_left hbm, hρ, congrArg c hb']
+      · rw [ite_eq_right (by simp only; omega), ite_eq_right hbm]
     have hX := hCh (SA E hD) E k r (EA (E := E) hD) LaP ρ (EA_gl (E := E) hD) m hm2 w hR0 hR1 hL
     set T := Tm (EA (E := E) hD) (w - ((m + 1 : ℕ) : ℂ)) (esI k r ⟨r - m - 2, by omega⟩)
       (esI k r ⟨r - m - 2, by omega⟩) with hT
     have hTmem : T ∈ TorV hD (r - (m + 1)) := by
       rw [hT]
       unfold Tm
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact Subalgebra.add_mem _ (Subalgebra.algebraMap_mem _ _) (EAs_mem_TorV hD ⟨r - m - 2, by omega⟩ (by simp only; omega))
     have hTP : T * P ∈ TorV hD (r - (m + 1)) := Subalgebra.mul_mem _ hTmem hP1
     have ih1 := ih (m + 1) (by omega) (by omega) (T * P) hTP c hc

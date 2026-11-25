@@ -7,47 +7,6 @@ public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsG
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrIsGenAt
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.WedgeEqSpanOfIsFrameAt
 public import Mathlib.LinearAlgebra.ExteriorPower.Basis
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -79,12 +38,12 @@ theorem alt_triangular {Ω E W : Type} [Field Ω] [AddCommGroup E] [Module Ω E]
             Function.update (fun k : Fin s => if (k : ℕ) < i then c k • w k else v k) i (c i • w i) := by
           funext k
           by_cases hk : k = i
-          · rw [hk, Function.update_self, if_pos (Nat.lt_succ_self _)]
+          · rw [hk, Function.update_self, ite_eq_left (Nat.lt_succ_self _)]
           · rw [Function.update_of_ne hk]
             have hk' : (k : ℕ) ≠ i := fun h => hk (Fin.ext h)
             by_cases hki : (k : ℕ) < i
-            · rw [if_pos hki, if_pos (show (k : ℕ) < i + 1 by omega)]
-            · rw [if_neg hki, if_neg (show ¬ ((k : ℕ) < i + 1) by omega)]
+            · rw [ite_eq_left hki, ite_eq_left (show (k : ℕ) < i + 1 by omega)]
+            · rw [ite_eq_right hki, ite_eq_right (show ¬ ((k : ℕ) < i + 1) by omega)]
         rw [hnew]
         generalize hm : (fun k : Fin s => if (k : ℕ) < i then c k • w k else v k) = m
         have hmi : m i = v i := by
@@ -120,7 +79,7 @@ theorem alt_triangular {Ω E W : Type} [Field Ω] [AddCommGroup E] [Module Ω E]
   rw [key s]
   have hfun : (fun i : Fin s => if (i : ℕ) < s then c i • w i else v i) = fun i => c i • w i := by
     funext i
-    rw [if_pos i.2]
+    rw [ite_eq_left i.2]
   rw [hfun]
   exact f.toMultilinearMap.map_smul_univ c w
 
@@ -263,20 +222,20 @@ theorem prod_root {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E
   congr 1
   · refine Finset.prod_congr rfl fun i _ => ?_
     have h : ((Fin.castAdd D.q i : Fin (D.p + D.q)) : ℕ) < D.p := i.2
-    have e : HodgeCpt.rootIdx D (τ, Fin.castAdd D.q i) = ⟨.inl τ, i⟩ := dif_pos h
-    have e' : HodgeCpt.rootSgn D (τ, Fin.castAdd D.q i) = 1 := if_pos h
+    have e : HodgeCpt.rootIdx D (τ, Fin.castAdd D.q i) = ⟨.inl τ, i⟩ := dite_eq_left h
+    have e' : HodgeCpt.rootSgn D (τ, Fin.castAdd D.q i) = 1 := ite_eq_left h
     rw [e, e', zpow_one]
   · rw [← Finset.prod_inv_distrib]
     refine Fintype.prod_equiv (Fin.revPerm (n := D.q)) _ _ fun j => ?_
     have h : ¬ ((Fin.natAdd D.p j : Fin (D.p + D.q)) : ℕ) < D.p := by simp
     have e : HodgeCpt.rootIdx D (τ, Fin.natAdd D.p j) = ⟨.inr τ, Fin.rev j⟩ := by
-      refine (dif_neg h).trans ?_
+      refine (dite_eq_right h).trans ?_
       congr 1
       apply Fin.ext
       have hj : (j : ℕ) < D.q := j.2
       show D.p + D.q - 1 - (D.p + (j : ℕ)) = D.q - ((j : ℕ) + 1)
       omega
-    have e' : HodgeCpt.rootSgn D (τ, Fin.natAdd D.p j) = -1 := if_neg h
+    have e' : HodgeCpt.rootSgn D (τ, Fin.natAdd D.p j) = -1 := ite_eq_right h
     rw [e, e', zpow_neg_one]
     rfl
 

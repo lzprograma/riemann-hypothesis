@@ -38,9 +38,9 @@ theorem fundCycle_apply_of_isRadical {R : Type*} [CommRing R] [IsNoetherianRing 
     by_contra h
     apply hval
     unfold fundCycle
-    rw [Finsupp.onFinset_apply, if_neg h]
+    rw [Finsupp.onFinset_apply, ite_eq_right h]
   unfold fundCycle
-  rw [Finsupp.onFinset_apply, if_pos hrel]
+  rw [Finsupp.onFinset_apply, ite_eq_left hrel]
   exact localMult_eq_one_of_isRadical hJ hrel.1
 
 end GroundTheory.Heights₂.Heights

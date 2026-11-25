@@ -164,7 +164,7 @@ theorem exists_fockInner_sub_eq_zero {σ : Type*} (W : Submodule ℂ (MvPolynomi
     rw [map_smul, fockInnerₛₗ_apply, fockInner_smul_right]
     exact mul_eq_zero_of_right _ (congrFun h i)
   have hinj : Function.Injective (L ∘ₗ W.subtype) := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     have := hL x hx x x.2
     rw [fockInner_self] at this
@@ -174,17 +174,5 @@ theorem exists_fockInner_sub_eq_zero {σ : Type*} (W : Submodule ℂ (MvPolynomi
   exact ⟨x, x.2, hL _ (by rw [map_sub, ← hx]; simp)⟩
 
 end Adjoint
-
-section Triangular
-
-variable {R : Type*} [CommRing R] {T : Type*} [Fintype T] {p q n : ℕ}
-
-end Triangular
-
-section Density
-
-variable {T κ : Type*} [Fintype κ] {p q n : ℕ}
-
-end Density
 
 end GlobalTheory.Harm

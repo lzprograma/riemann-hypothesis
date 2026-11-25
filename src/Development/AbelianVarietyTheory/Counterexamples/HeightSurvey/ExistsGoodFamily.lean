@@ -53,8 +53,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formali
 
 namespace GlobalTheory.DefiniteCheck
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem jm_const (n : ℕ) (s : Bool) :
     Formalism.REAL.Jm (fun _ : Fin n => s) = (if s then (1 : ℂ) else -1) • (1 : Matrix (Fin n) (Fin n) ℂ) := by
   ext i j

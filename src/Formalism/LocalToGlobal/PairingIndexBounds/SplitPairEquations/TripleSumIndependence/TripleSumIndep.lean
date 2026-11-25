@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.AlternatingFormStandardHermitian
 public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.GaussDegenerate
 public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.RepsProd
 public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.DifferentialRepresentation
@@ -21,26 +22,7 @@ variable {V : Type} [AddCommGroup V] [Module ℂ V]
 theorem sum_reps_eq {M Λ : AddSubgroup V} {S S' : Finset V} (hS : IsReps M Λ S) (hS' : IsReps M Λ S')
     (f : V → ℂ) (hf : ∀ x ∈ Λ, ∀ u ∈ Λ, u ∈ M → f (x + u) = f x) :
     ∑ x ∈ S, f x = ∑ x ∈ S', f x := by
-  obtain ⟨h1, h2, h3⟩ := hS
-  obtain ⟨h1', h2', h3'⟩ := hS'
-  have hg : ∀ x ∈ S, ∃ x' ∈ S', x - x' ∈ M := fun x hx => h3' x (h1 x hx)
-  choose! g hgS hgM using hg
-  refine Finset.sum_bij (fun x _ => g x) (fun x hx => hgS x hx) ?_ ?_ ?_
-  · intro a ha b hb hab
-    refine h2 a ha b hb ?_
-    have e : a - b = (a - g a) - (b - g b) := by rw [hab]; abel
-    rw [e]; exact M.sub_mem (hgM a ha) (hgM b hb)
-  · intro b hb
-    obtain ⟨a, ha, hba⟩ := h3 b (h1' b hb)
-    refine ⟨a, ha, h2' _ (hgS a ha) b hb ?_⟩
-    have e : g a - b = -(a - g a) - (b - a) := by abel
-    rw [e]; exact M.sub_mem (M.neg_mem (hgM a ha)) hba
-  · intro a ha
-    have hu : g a - a ∈ M := by
-      have := M.neg_mem (hgM a ha); rwa [neg_sub] at this
-    have := hf a (h1 a ha) (g a - a) (Λ.sub_mem (h1' _ (hgS a ha)) (h1 a ha)) hu
-    rw [show a + (g a - a) = g a by abel] at this
-    exact this.symm
+  apply _root_.Formalism.L2.Ker.sum_reps_eq <;> assumption
 
 def tf (H : Sesq V) (α : V → ℂ) (Λ₁ : AddSubgroup V) (z y : V) : ℂ :=
   if z + y ∈ Λ₁ then psiT H α z y else 0
@@ -59,23 +41,23 @@ theorem tripleSum_indep (hT : TripleData H α Λ₁ Λ₂ Λ₃)
     unfold tf
     by_cases hc : z + y ∈ Λ₁
     · have hc' : z + (y + u) ∈ Λ₁ := by rw [← add_assoc]; exact Λ₁.add_mem hc hu1
-      rw [if_pos hc', if_pos hc]
+      rw [ite_eq_left hc', ite_eq_left hc]
       have := hq z hz y hy hc 0 (AddSubgroup.zero_mem _) u (AddSubgroup.mem_inf.2 ⟨hu1, hu2⟩) 0
         (AddSubgroup.zero_mem _)
       simpa using this
     · have hc' : z + (y + u) ∉ Λ₁ := fun h => hc (by
         have := Λ₁.sub_mem h hu1; rwa [show z + (y + u) - u = z + y by abel] at this)
-      rw [if_neg hc', if_neg hc]
+      rw [ite_eq_right hc', ite_eq_right hc]
   have hzz : ∀ z ∈ Λ₃, ∀ t ∈ Λ₃, t ∈ Λ₂ → ∀ y ∈ Λ₂, tf H α Λ₁ (z + t) y = tf H α Λ₁ z (y + t) := by
     intro z hz t ht3 ht2 y hy
     unfold tf
     rw [show z + t + y = z + (y + t) by abel]
     by_cases hc : z + (y + t) ∈ Λ₁
-    · rw [if_pos hc, if_pos hc]
+    · rw [ite_eq_left hc, ite_eq_left hc]
       have := hq z hz (y + t) (Λ₂.add_mem hy ht2) hc 0 (AddSubgroup.zero_mem _) 0 (AddSubgroup.zero_mem _) t
         (AddSubgroup.mem_inf.2 ⟨ht2, ht3⟩)
       simpa using this
-    · rw [if_neg hc, if_neg hc]
+    · rw [ite_eq_right hc, ite_eq_right hc]
   rw [tripleSum_eq, tripleSum_eq]
   calc ∑ z ∈ S₃, ∑ y ∈ S₂, tf H α Λ₁ z y = ∑ z ∈ S₃, ∑ y ∈ S₂', tf H α Λ₁ z y :=
         Finset.sum_congr rfl fun z hz => sum_reps_eq h2 h2' _ (fun y hy u hu hu1 => hyy z (h3.1 z hz) y hy u hu hu1)
@@ -206,14 +188,14 @@ theorem tripleSum_prod (hT : TripleData H α Λ₁ Λ₂ Λ₃) (p : V →+ V) (
     have ex : a₃ + b₃ + (a₂ + b₂) = (a₃ + a₂) + (b₃ + b₂) := by abel
     by_cases c1 : a₃ + a₂ ∈ Λ₁
     · by_cases c2 : b₃ + b₂ ∈ Λ₁
-      · rw [if_pos (by rw [ex]; exact Λ₁.add_mem c1 c2), if_pos c1, if_pos c2]
+      · rw [ite_eq_left (by rw [ex]; exact Λ₁.add_mem c1 c2), ite_eq_left c1, ite_eq_left c2]
         exact psi_split hT p hporth (hA₂ _ ha₂) (hA₃ _ ha₃) (hB₂ _ hb₂) (hB₃ _ hb₃) c1 c2
-      · rw [if_neg c2, mul_zero, if_neg]
+      · rw [ite_eq_right c2, mul_zero, ite_eq_right]
         intro h; apply c2
         rw [ex] at h
         have := Λ₁.sub_mem h c1
         rwa [show a₃ + a₂ + (b₃ + b₂) - (a₃ + a₂) = b₃ + b₂ by abel] at this
-    · rw [if_neg c1, zero_mul, if_neg]
+    · rw [ite_eq_right c1, zero_mul, ite_eq_right]
       intro h; apply c1
       have := hp1 _ h
       simp only [map_add (f := _), (hA₃ _ ha₃).2, (hB₃ _ hb₃).2, (hA₂ _ ha₂).2, (hB₂ _ hb₂).2, add_zero] at this
@@ -240,10 +222,10 @@ theorem tripleSum_inv (σ : V →+ V) (hσσ : ∀ x, σ (σ x) = x) (hσH : ∀
     exact ⟨fun h => by have := hσ1 _ h; rwa [hσσ] at this, fun h => hσ1 _ h⟩
   unfold tf
   by_cases h : z + y ∈ Λ₁
-  · rw [if_pos (hc.2 h), if_pos h]
+  · rw [ite_eq_left (hc.2 h), ite_eq_left h]
     unfold psiT altE
     rw [← map_add (f := _), hσα, hσα, hσα, hσH]
-  · rw [if_neg (fun h' => h (hc.1 h')), if_neg h]
+  · rw [ite_eq_right (fun h' => h (hc.1 h')), ite_eq_right h]
 
 theorem tripleSum_conj (hT : TripleData H α Λ₁ Λ₂ Λ₃) (m m' r : V →+ V) (e : ℕ)
     (inv : ∀ x, m' (m x) = x + e • r x) (hm1 : ∀ x ∈ Λ₁, m x ∈ Λ₁) (hm'1 : ∀ x ∈ Λ₁, m' x ∈ Λ₁)
@@ -273,7 +255,7 @@ theorem tripleSum_conj (hT : TripleData H α Λ₁ Λ₂ Λ₃) (m m' r : V →+
     rwa [show z + y + (e • r z + e • r y) - (e • r z + e • r y) = z + y by abel] at this
   unfold tf
   by_cases h : z + y ∈ Λ₁
-  · rw [if_pos (hc.2 h), if_pos h]
+  · rw [ite_eq_left (hc.2 h), ite_eq_left h]
     obtain ⟨k, hk⟩ := hmH z hz3 y hy2
     unfold psiT
     rw [show m z + m y = m (z + y) from (map_add m z y).symm, hmα1 _ h, hmα2 _ hy2, hmα3 _ hz3, hk, map_mul, map_mul, map_mul,
@@ -282,7 +264,7 @@ theorem tripleSum_conj (hT : TripleData H α Λ₁ Λ₂ Λ₃) (m m' r : V →+
     refine Complex.exp_eq_exp_iff_exists_int.2 ⟨-k, ?_⟩
     simp only [map_mul, map_neg, Complex.conj_ofReal, Complex.conj_I]
     push_cast; ring
-  · rw [if_neg (fun h' => h (hc.1 h')), if_neg h, map_zero]
+  · rw [ite_eq_right (fun h' => h (hc.1 h')), ite_eq_right h, map_zero]
 
 structure SignData (H : Sesq V) (α : V → ℂ) (Λ₁ Λ₂ Λ₃ : AddSubgroup V) (p σ m m' r : V →+ V) (e : ℕ) : Prop where
   pp : ∀ x, p (p x) = p x

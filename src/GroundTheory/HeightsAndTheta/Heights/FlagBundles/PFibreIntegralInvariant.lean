@@ -23,19 +23,8 @@ noncomputable section
 namespace FibreIntegralInvariant
 
 theorem eval_smul_of_isHomogeneous {σ : Type*} {φ : MvPolynomial σ ℝ} {n : ℕ}
-    (h : φ.IsHomogeneous n) (s : ℝ) (x : σ → ℝ) : eval (s • x) φ = s ^ n * eval x φ := by
-  classical
-  conv_lhs => rw [φ.as_sum]
-  conv_rhs => rw [φ.as_sum]
-
-  simp only [map_sum, eval_monomial, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun d hd => ?_
-  have hdeg : ∑ i ∈ d.support, d i = n := by
-    have := h (mem_support_iff.mp hd)
-    simpa [Finsupp.weight_apply, Finsupp.sum] using this
-  simp only [Finsupp.prod, Pi.smul_apply, smul_eq_mul, mul_pow, Finset.prod_mul_distrib,
-    Finset.prod_pow_eq_pow_sum, hdeg]
-  ring
+    (h : φ.IsHomogeneous n) (s : ℝ) (x : σ → ℝ) : eval (s • x) φ = s ^ n * eval x φ :=
+  h.eval_smul s x
 
 theorem gKernel_isHomogeneous (k : ℕ) : (gKernel ℝ k).IsHomogeneous (2 * k) := by
   unfold gKernel

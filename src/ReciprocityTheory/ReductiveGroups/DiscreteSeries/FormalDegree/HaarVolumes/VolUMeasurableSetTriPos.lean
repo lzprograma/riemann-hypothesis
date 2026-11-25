@@ -41,11 +41,11 @@ theorem volU_continuous_skMat : Continuous (skMat (N := N)) := by
   refine continuous_pi fun a => continuous_pi fun b => ?_
   simp only [skMat]
   rcases lt_trichotomy a b with h | rfl | h
-  · simp only [h.ne, h, not_lt.2 h.le, if_false, dif_neg, dif_pos, not_false_eq_true]
+  · simp only [h.ne, h, not_lt.2 h.le, ite_false, dite_eq_right, dite_eq_left, not_false_eq_true]
     fun_prop
-  · simp only [if_true]
+  · simp only [ite_true]
     fun_prop
-  · simp only [h.ne', h, not_lt.2 h.le, if_false, dif_neg, dif_pos, not_false_eq_true]
+  · simp only [h.ne', h, not_lt.2 h.le, ite_false, dite_eq_right, dite_eq_left, not_false_eq_true]
     fun_prop
 
 theorem volU_skMat_injective : Function.Injective (skMat (N := N)) := by

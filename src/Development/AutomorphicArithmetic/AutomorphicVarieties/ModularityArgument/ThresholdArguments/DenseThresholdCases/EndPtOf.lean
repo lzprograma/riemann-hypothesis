@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FlagSpaceComponentCarriesEveryFrameFlag
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
 public import Mathlib.RingTheory.KrullDimension.NonZeroDivisors
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.RedDefs
@@ -263,8 +264,7 @@ private theorem stab (I : ℕ → Ideal B) (hI : Antitone I) (j : ℕ) :
 
 private theorem cofinal [IsAdicComplete (maximalIdeal B) B] (I : ℕ → Ideal B) (hI : Antitone I)
     (h0 : ⨅ N, I N = ⊥) (k : ℕ) : ∃ N, I N ≤ maximalIdeal B ^ k := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   choose e he using fun j => stab I hI (k + j)
 
   let E : ℕ → ℕ := fun j => (Finset.range (j + 1)).sup e + j
@@ -512,11 +512,11 @@ private theorem J_entry {R : Type} [CommRing R] {n : ℕ} (M : Matrix (Fin n) (F
   have hJ : ∀ a b : Fin n, Jmat R n a b = if b = a.rev then 1 else 0 := fun _ _ => rfl
   have h1 : ∀ b, (Jmat R n * Mᵀ) i b = M b i.rev := by
     intro b
-    rw [Matrix.mul_apply, Finset.sum_eq_single i.rev (fun c _ hc => by rw [hJ, if_neg hc, zero_mul])
-      (fun h => absurd (Finset.mem_univ _) h), hJ, if_pos rfl, one_mul, Matrix.transpose_apply]
+    rw [Matrix.mul_apply, Finset.sum_eq_single i.rev (fun c _ hc => by rw [hJ, ite_eq_right hc, zero_mul])
+      (fun h => absurd (Finset.mem_univ _) h), hJ, ite_eq_left rfl, one_mul, Matrix.transpose_apply]
   rw [Matrix.mul_apply, Finset.sum_eq_single j.rev (fun c _ hc => by
-      rw [hJ, if_neg (fun h => hc (by rw [h, Fin.rev_rev])), mul_zero])
-      (fun h => absurd (Finset.mem_univ _) h), hJ, if_pos (Fin.rev_rev j).symm, mul_one, h1]
+      rw [hJ, ite_eq_right (fun h => hc (by rw [h, Fin.rev_rev])), mul_zero])
+      (fun h => absurd (Finset.mem_univ _) h), hJ, ite_eq_left (Fin.rev_rev j).symm, mul_one, h1]
 
 private theorem free_etale_sheaf_zmod_exists_hom_sending_generator [CharZero K] {n : ℕ} (hn : n = 2 ∨ n = 3) (x : Fin n → K)
     (h : ∀ i j, x i + x i.rev = x j + x j.rev) :
@@ -1037,7 +1037,7 @@ theorem UpperTheory.V.J.fixLe :
   · have hbot : FixTan S ξ = ⊥ := eq_bot_iff.2 fun D hD => (Submodule.mem_bot _).2 (h0 D hD)
     rw [hbot]
     simp
-  push_neg at h0
+  push Not at h0
   obtain ⟨D1, hD1, hne⟩ := h0
   obtain ⟨t1, h1r, h1ψ⟩ := key D1 hD1
   have ht1 : t1 ≠ 0 := by
@@ -1082,7 +1082,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
 
 section
@@ -1116,18 +1115,8 @@ private theorem fx_alg {M : Type} [Ring M] (A0 Ai A1 B1 R Ri y : M) (h1 : A0 * A
 private theorem tri_mul {K : Type} [CommRing K] {n : ℕ} (M N : Matrix (Fin n) (Fin n) K)
     (hM : ∀ i j, j < i → M i j = 0) (hN : ∀ i j, j < i → N i j = 0) :
     (∀ i j, j < i → (M * N) i j = 0) ∧ ∀ i, (M * N) i i = M i i * N i i := by
-  refine ⟨fun i j hij => ?_, fun i => ?_⟩
-  · rw [Matrix.mul_apply]
-    refine Finset.sum_eq_zero fun k _ => ?_
-    rcases lt_or_ge k i with h | h
-    · rw [hM i k h, zero_mul]
-    · rw [hN k j (lt_of_lt_of_le hij h), mul_zero]
-  · rw [Matrix.mul_apply, Finset.sum_eq_single i]
-    · intro k _ hk
-      rcases lt_or_gt_of_ne hk with h | h
-      · rw [hM i k h, zero_mul]
-      · rw [hN k i h, mul_zero]
-    · exact fun h => absurd (Finset.mem_univ i) h
+  intros
+  apply _root_.GlobalTheory.UpperTriangularMul.upperTriangular_mul <;> assumption
 private theorem fx_ord {H K : Type} [Group H] [Field K] {n : ℕ} (I : Subgroup H) (ρ : H →* GL (Fin n) K)
     (y : H → Matrix (Fin n) (Fin n) K) (ρ' : H →* GL (Fin n) (DualNumber K)) (ht : IsTan ρ y ρ')
     (ψ' : Fin n → H →* (DualNumber K)ˣ) (hfl : W.HasFlag ρ' ψ')
@@ -1430,7 +1419,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
 
 section

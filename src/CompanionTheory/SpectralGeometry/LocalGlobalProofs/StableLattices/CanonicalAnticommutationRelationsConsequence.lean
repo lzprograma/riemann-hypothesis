@@ -144,10 +144,10 @@ theorem ad_triple (A : R)
     simp
   have s2 : ∑ a, ∑ b, ∑ e, (if p = e then d a q else 0) * c b e * c a b
       = ∑ a, ∑ b, d a q * c b p * c a b := by
-    simp only [ite_mul, zero_mul, sum_ite_eq, mem_univ, if_true]
+    simp only [ite_mul, zero_mul, sum_ite_eq, mem_univ, ite_true]
   have s3 : ∑ a, ∑ b, ∑ e, d a e * (if q = e then c b p else 0) * c a b
       = ∑ a, ∑ b, d a q * c b p * c a b := by
-    simp only [mul_ite, ite_mul, mul_zero, zero_mul, sum_ite_eq, mem_univ, if_true]
+    simp only [mul_ite, ite_mul, mul_zero, zero_mul, sum_ite_eq, mem_univ, ite_true]
   have s4 : ∑ a, ∑ b, ∑ e, d a e * (if p = b then c q e else 0) * c a b
       = ∑ a, ∑ e, d a e * c q e * c a p := by
     refine sum_congr rfl fun a _ => ?_
@@ -182,7 +182,7 @@ theorem ad_first (A : R) (hAL : ∀ a b, A * L a b = L a b * A)
   rw [hs]
   simp only [step, sum_sub_distrib]
   congr 1
-  · simp only [mul_ite, mul_zero, sum_ite_eq, mem_univ, if_true]
+  · simp only [mul_ite, mul_zero, sum_ite_eq, mem_univ, ite_true]
   · rw [Fintype.sum_eq_single p (fun a ha => by simp [Ne.symm ha])]
     simp
 
@@ -204,7 +204,7 @@ theorem ad_L_first
   congr 1
   · rw [Fintype.sum_eq_single q (fun a ha => by simp [Ne.symm ha])]
     simp
-  · simp only [ite_mul, zero_mul, sum_ite_eq', mem_univ, if_true]
+  · simp only [ite_mul, zero_mul, sum_ite_eq', mem_univ, ite_true]
 
 end SlopeTestRemainingChoices
 

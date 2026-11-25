@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ThetaCharEqSelfOfConjugateDual
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SignAgreement.ExistsCompositumWithPrimeDegreeGalois
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharpolyScaledInverse
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
@@ -94,12 +95,7 @@ private theorem isFrob_conjGal {K Ω : Type} [Field K] [NumberField K] [Field Ω
 private theorem isLift_conj {F Ω : Type} [Field F] [NumberField F] [IsCMField F] [Field Ω] [Algebra F Ω]
     {c : G (maximalRealSubfield F) Ω} (hc : IsConjEl c) :
     IsLift (IsCMField.complexConj F).toRingEquiv c.symm.toRingEquiv := by
-  obtain ⟨j, hj⟩ := hc
-  intro x
-  refine c.symm_apply_eq.2 (j.injective ?_)
-  rw [hj]
-  have h := IsCMField.complexEmbedding_complexConj F (j.comp (algebraMap F Ω)) x
-  exact (Complex.conj_conj _).symm.trans (congrArg (starRingEnd ℂ) h.symm)
+  apply _root_.isLift_conj <;> assumption
 
 private theorem frob_dual {F Ω : Type} [Field F] [NumberField F] [IsCMField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω]
     {l : ℕ} [Fact l.Prime] {ι : Qbar l ≃+* ℂ} {n : ℕ} {r : G F Ω →* GL (Fin n) (Qbar l)} {θ : G F Ω →* (Qbar l)ˣ}

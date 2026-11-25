@@ -3,52 +3,7 @@ module
 public import Mathlib.NumberTheory.Padics.PadicIntegers
 public import Mathlib.NumberTheory.Multiplicity
 public import Formalism.SharpRestriction.LevelLetterCocycles.FirstFrameStepImplication
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.SumIocPadicValNatAddFactorial, Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.KapPiPf
@@ -66,29 +21,20 @@ section SlopeTestRemainingChoices
 
 variable {p : ℕ} [hp : Fact p.Prime]
 
-private alias prime_prime_padicInt := _root_.PadicInt.prime_p
-
 private theorem not_prime_dvd_padicInt_unit (w : ℤ_[p]ˣ) : ¬ (p : ℤ_[p]) ∣ (w : ℤ_[p]) :=
-  fun h => prime_prime_padicInt.not_unit (isUnit_of_dvd_unit h (Units.isUnit _))
-
-lemma emult_eq_valuation {x : ℤ_[p]} (hx : x ≠ 0) :
-    emultiplicity (p : ℤ_[p]) x = x.valuation := by
-  have hP : Prime (p : ℤ_[p]) := prime_prime_padicInt
-  conv_lhs => rw [PadicInt.unitCoeff_spec hx]
-  rw [emultiplicity_mul hP, emultiplicity_eq_zero.mpr (not_prime_dvd_padicInt_unit _), zero_add,
-    emultiplicity_pow_self_of_prime hP]
+  fun h => PadicInt.prime_p.not_unit (isUnit_of_dvd_unit h (Units.isUnit _))
 
 lemma valuation_eq_of_emult {x : ℤ_[p]} {n : ℕ} (h : emultiplicity (p : ℤ_[p]) x = n) :
     x.valuation = n := by
   have hx : x ≠ 0 := by
     rintro rfl
     simp at h
-  rw [emult_eq_valuation hx] at h
+  rw [Formalism.WindowSums.zv_emult_eq_val hx] at h
   exact_mod_cast h
 
 lemma emult_of_valuation_one {x : ℤ_[p]} (hx : x ≠ 0) (h1 : x.valuation = 1) :
     emultiplicity (p : ℤ_[p]) x = 1 := by
-  rw [emult_eq_valuation hx, h1, Nat.cast_one]
+  rw [Formalism.WindowSums.zv_emult_eq_val hx, h1, Nat.cast_one]
 
 lemma p_dvd_of_valuation_one {x : ℤ_[p]} (hx : x ≠ 0) (h1 : x.valuation = 1) :
     (p : ℤ_[p]) ∣ x := by
@@ -96,11 +42,6 @@ lemma p_dvd_of_valuation_one {x : ℤ_[p]} (hx : x ≠ 0) (h1 : x.valuation = 1)
   by_contra hn
   rw [emultiplicity_eq_zero.mpr hn] at h
   exact zero_ne_one h
-
-lemma not_dvd_of_dvd_sub_one {u : ℤ_[p]} (h : (p : ℤ_[p]) ∣ u - 1) : ¬ (p : ℤ_[p]) ∣ u := by
-  intro hu
-  have h1 : (p : ℤ_[p]) ∣ 1 := by simpa using dvd_sub hu h
-  exact prime_prime_padicInt.not_unit (isUnit_of_dvd_one h1)
 
 lemma dvd_of_natCast_dvd_natCast {m : ℕ} (h : (p : ℤ_[p]) ∣ (m : ℤ_[p])) : p ∣ m := by
   have h1 := (PadicInt.norm_lt_one_iff_dvd _).mpr h
@@ -110,9 +51,9 @@ lemma dvd_of_natCast_dvd_natCast {m : ℕ} (h : (p : ℤ_[p]) ∣ (m : ℤ_[p]))
 lemma emult_pow_sub_one (hodd : p ≠ 2) {u : ℤ_[p]} (hdvd : (p : ℤ_[p]) ∣ u - 1)
     (he : emultiplicity (p : ℤ_[p]) (u - 1) = 1) {k : ℕ} (hk : k ≠ 0) :
     emultiplicity (p : ℤ_[p]) (u ^ k - 1) = ((1 + padicValNat p k : ℕ) : ℕ∞) := by
-  have hP : Prime (p : ℤ_[p]) := prime_prime_padicInt
+  have hP : Prime (p : ℤ_[p]) := PadicInt.prime_p
   have hp1 : Odd p := hp.out.odd_of_ne_two hodd
-  have hu : ¬ (p : ℤ_[p]) ∣ u := not_dvd_of_dvd_sub_one hdvd
+  have hu : ¬ (p : ℤ_[p]) ∣ u := Formalism.WindowSums.zv_not_dvd_of_dvd_sub_one hdvd
   obtain ⟨e, m, hm, rfl⟩ := Nat.exists_eq_pow_mul_and_not_dvd hk p hp.out.ne_one
   have hm0 : m ≠ 0 := by
     rintro rfl
@@ -140,7 +81,7 @@ lemma emult_zpow_sub_one (hodd : p ≠ 2) (u : ℤ_[p]ˣ) (hdvd : (p : ℤ_[p]) 
     (he : emultiplicity (p : ℤ_[p]) ((u : ℤ_[p]) - 1) = 1) {i : ℤ} (hi : i ≠ 0) :
     emultiplicity (p : ℤ_[p]) (((u ^ i : ℤ_[p]ˣ) : ℤ_[p]) - 1)
       = ((1 + padicValNat p i.natAbs : ℕ) : ℕ∞) := by
-  have hP : Prime (p : ℤ_[p]) := prime_prime_padicInt
+  have hP : Prime (p : ℤ_[p]) := PadicInt.prime_p
   obtain ⟨n, rfl | rfl⟩ := Int.eq_nat_or_neg i
   · have hn : n ≠ 0 := by
       rintro rfl
@@ -169,7 +110,7 @@ theorem val_prod_one_sub_zpow {p : ℕ} [Fact p.Prime] (hodd : p ≠ 2)
     (Ω : Finset ℤ) (h0 : (0 : ℤ) ∉ Ω) :
     (∏ i ∈ Ω, (1 - ((u ^ i : ℤ_[p]ˣ) : ℤ_[p]))).valuation
       = ∑ i ∈ Ω, (1 + padicValNat p i.natAbs) := by
-  have hP : Prime (p : ℤ_[p]) := prime_prime_padicInt
+  have hP : Prime (p : ℤ_[p]) := PadicInt.prime_p
   have hdvd := p_dvd_of_valuation_one hu0 hu1
   have he := emult_of_valuation_one hu0 hu1
   have key : ∀ i ∈ Ω, emultiplicity (p : ℤ_[p]) (1 - ((u ^ i : ℤ_[p]ˣ) : ℤ_[p]))

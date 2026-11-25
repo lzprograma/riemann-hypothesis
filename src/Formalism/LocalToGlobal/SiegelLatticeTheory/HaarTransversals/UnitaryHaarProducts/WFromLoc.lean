@@ -78,11 +78,11 @@ theorem fix_row {h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hU
     rw [← key, hU0]
   by_cases hj : j = GBasic.sig k r p
   · subst hj
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     have e1 : Hpk k r p (GBasic.sig k r p) * h (GBasic.sig k r p) (GBasic.sig k r p) =
         Hpk k r p (GBasic.sig k r p) * 1 := by rw [mul_one]; exact e
     exact mul_left_cancel₀ (Hpk_apply_sig_ne_zero p) e1
-  · rw [if_neg hj]
+  · rw [ite_eq_right hj]
     rw [Hpk_apply_eq_zero_of_ne_sig p j hj] at e
     exact (mul_eq_zero.mp e).resolve_left (Hpk_apply_sig_ne_zero p)
 
@@ -90,7 +90,7 @@ theorem wI_last_eq : wI k r (Fin.last k) = GBasic.sig k r (wI k r (Fin.last k)) 
   unfold GBasic.sig
   have hn : ¬ ((wI k r (Fin.last k)).val < r ∨ r + k < (wI k r (Fin.last k)).val) := by
     simp [wI]
-  rw [if_neg hn]
+  rw [ite_eq_right hn]
 
 theorem UW_colW {T : ℝ} (hT : 0 < T) {h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
     (hh : h ∈ UWset k r (zBv k r T)) (b : Fin k) (t : Fin (2 * r + k + 1))
@@ -122,7 +122,7 @@ theorem UW_colW {T : ℝ} (hT : 0 < T) {h : Matrix (Fin (2 * r + k + 1)) (Fin (2
         · rw [h3]
           exact wI_last_eq.symm
   obtain ⟨p, hp, rfl⟩ := key
-  rw [fix_row hU hp, if_neg (fun hq => ht b hq.symm)]
+  rw [fix_row hU hp, ite_eq_right (fun hq => ht b hq.symm)]
 
 end Unit
 
@@ -178,19 +178,19 @@ theorem piB_entry (hF : IsFrameJ ε e f wf z0) (h : Matrix (Fin (2 * r + k + 1))
   have v2 : Hpk k r *ᵥ bvec (wI k r ⟨b.val, by omega⟩) = bvec (wI k r ⟨b.val, by omega⟩) := by
     ext i
     simp only [Matrix.mulVec, dotProduct, bvec, Pi.single_apply, mul_ite, mul_one, mul_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     exact Hpk_apply_middle_right_eq_ite i _ (by simp only [wI]; omega) (by simp only [wI]; omega)
   have v3 : h *ᵥ bvec (wI k r ⟨b.val, by omega⟩) = fun t => h t (wI k r ⟨b.val, by omega⟩) := by
     ext i
     simp only [Matrix.mulVec, dotProduct, bvec, Pi.single_apply, mul_ite, mul_one, mul_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   unfold Qi
   simp only [← Matrix.mulVec_mulVec]
   rw [v1, v2, v3, hJ_Qm_mulVec_eq_sum]
   rw [Finset.sum_eq_single (wI k r ⟨a.val, by omega⟩)]
-  · rw [hJ_eq_star_hJ_swap, hcol, if_pos rfl, star_one, mul_one]
+  · rw [hJ_eq_star_hJ_swap, hcol, ite_eq_left rfl, star_one, mul_one]
   · intro t _ ht
-    rw [hJ_eq_star_hJ_swap, hcol, if_neg ht, star_zero, mul_zero]
+    rw [hJ_eq_star_hJ_swap, hcol, ite_eq_right ht, star_zero, mul_zero]
   · simp
 
 theorem Jm_allPos : Formalism.REAL.Jm (allPos k) = 1 := by
@@ -230,13 +230,13 @@ theorem piB_mat_unitary (hF : IsFrameJ ε e f wf z0) {T : ℝ} (hT : 0 < T)
     rw [Matrix.mul_apply, Finset.sum_eq_single t']
     · simp only [Matrix.conjTranspose_apply]
       by_cases hw : r ≤ t'.val ∧ t'.val < r + k
-      · rw [Hpk_apply_middle_left_eq_ite t' t' hw.1 hw.2, if_pos rfl, mul_one]
+      · rw [Hpk_apply_middle_left_eq_ite t' t' hw.1 hw.2, ite_eq_left rfl, mul_one]
       · rw [hz c t' hw]
         simp
     · intro t _ hne
       simp only [Matrix.conjTranspose_apply]
       by_cases hw : r ≤ t.val ∧ t.val < r + k
-      · rw [Hpk_apply_middle_left_eq_ite t t' hw.1 hw.2, if_neg (Ne.symm hne), mul_zero]
+      · rw [Hpk_apply_middle_left_eq_ite t t' hw.1 hw.2, ite_eq_right (Ne.symm hne), mul_zero]
       · rw [hz c t hw]
         simp
     · simp
@@ -303,7 +303,6 @@ end Inv
 
 section Assembly
 open Formalism.L2.SG.SplitPrimeNormLemmas Formalism.L2.SG.ConcreteSettingExists
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem lam_matchR (R : Ranks) (P : HCParam R) (i : Fin (2 * R.rS + R.k + 1)) (hr : 2 * R.rS + R.k + 1 = R.r) :
     lamS R P (Fin.cast hr i) =
@@ -374,7 +373,6 @@ namespace Formalism.L2.SG.Pf.WFL
 variable {k r : ℕ}
 
 section Main
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem split_S {ε : Fin (2 * r + k + 1) → Bool} {e f : Fin r → Fin (2 * r + k + 1) → ℂ}
     {wf : Fin k → Fin (2 * r + k + 1) → ℂ} {z0 : Fin (2 * r + k + 1) → ℂ} (hF : IsFrameJ ε e f wf z0)
@@ -628,16 +626,6 @@ theorem wblk_core (hQK : QuotProdK) (hHN : LocHNProps) (hNU : NUnimodLoc) (hTens
 end Main
 
 section Final
-
-theorem weighted_block_exists_of_local_data (hQK : QuotProdK) (hHN : LocHNProps) (hNU : NUnimodLoc) (D : D7)
-    (hB : BesselNVGap) (hCW : CoefWeightedLoc) (hWl : WlocExists) (hGB : GapBigOfGapHyp D) :
-    GapHyp D → ∀ (A : UnitaryGroupInstance D) (L : UnitaryLatticeData D) (Ps : AdditiveCharacterData A)
-      (Rf : ReferenceFrame A L) (Bu : AutomorphicBundle A Ps Rf) (Pi : RepresentationData A L)
-      (Mu : MuBlocks A L), Nonempty (WBlk A L Bu Pi Mu) := by
-  intro hG A L Ps Rf Bu Pi Mu
-  obtain ⟨I, ιE, ιE_conj, ιE_F, bas, J_eq, L_eq, pl, φ_eq, n_eq, eps_eq⟩ := A
-  exact wblk_core hQK hHN hNU Formalism.L2.SG.Pf.WuDec.integrable_and_integral_pi_apply hB hCW hWl hGB hG I ιE ιE_conj ιE_F bas J_eq L_eq pl
-    φ_eq n_eq eps_eq L Ps Rf Bu Pi Mu
 
 end Final
 

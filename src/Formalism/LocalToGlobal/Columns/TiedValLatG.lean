@@ -290,34 +290,6 @@ theorem vl_coord (J : Matrix (Fin n) (Fin n) E) (lam : ι → DomWeight n) (B : 
 
 include hval
 
-theorem vl_mem_delAtr_iff (hpw : Function.Surjective pw) (J : Matrix (Fin n) (Fin n) E) (lam lam' : ι → DomWeight n)
-    (hn : ∀ τ, (lam τ).natW = (lam' τ).natW) (M : Submodule (𝓞 E) (Fin n → E)) (hM : Submodule.IsFullLattice E M) (F : VV K lam) :
-    F ∈ delAtr emb lam M ↔ ∀ (w : Pl.Pl) (B : GL (Fin n) E), IsLocBasis (Pl.resChar w) (M : Set (Fin n → E)) B →
-      ∃ P ∈ vlIntSpan s Pl w lam', evV emb J lam s F =
-        fnOf _ (shiftOf lam) (atInf (embAt s emb) ((B⁻¹ : GL (Fin n) E) : Matrix (Fin n) (Fin n) E)) P := by
-  have hbas : ∀ (w : Pl.Pl) (B : GL (Fin n) E), IsLocBasis (Pl.resChar w) (M : Set (Fin n → E)) B →
-      ∀ τ, IsBasisAt (pw w) (dualFr (tauLat emb τ M)) (vlBd emb B τ) := fun w B hB τ =>
-    pb_isBasisAt_dualFr (pw w) _ (tauLatticeLattice_holds E K ι n emb τ M hM).fg _ (vl_isBasisAt_tauLat Pl pw hval emb τ w M B hB)
-  show F.1 ∈ transLat lam (delStd K lam) (fun τ => dualFr (tauLat emb τ M)) ↔ _
-  rw [nb_mem_transLat]
-  constructor
-  · intro h w B hB
-    exact ⟨_, vl_map_mem_intSpan Pl pw hval s w lam lam' hn (h (pw w) _ (hbas w B hB)), vl_coord emb s J lam B F⟩
-  · intro h w' Bd hBd
-    obtain ⟨w, rfl⟩ := hpw w'
-    have : Fact (Pl.resChar w).Prime := ⟨Pl.resChar_prime w⟩
-    letI : Submodule.IsFullLattice E M := hM
-    obtain ⟨B, hB⟩ := Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.LocB.exists_isLocBasis (Pl.resChar w) E M hM.fg Submodule.IsFullLattice.span_eq_top
-    obtain ⟨P, hP, hPe⟩ := h w B hB
-    obtain ⟨G, hG, rfl⟩ := vl_exists_of_mem_intSpan Pl pw hval s w lam lam' hn hP
-    rw [vl_coord emb s J lam B F] at hPe
-    have hinj := fnOf_injective (gramC J (embAt s emb)) (shiftOf lam)
-      (atInf (embAt s emb) ((B⁻¹ : GL (Fin n) E) : Matrix (Fin n) (Fin n) E))
-      (fun τ => Matrix.isUnits_det_units (Matrix.GeneralLinearGroup.map (embAt s emb τ) B⁻¹)) ⟨fun _ => 1, fun _ => by simp⟩ hPe
-    have hG' : actP lam (vlBd emb B)⁻¹ F.1 = G := MvPolynomial.map_injective s s.injective hinj
-    rw [deltaIndependence_holds K ι n lam (pw w) _ Bd (vlBd emb B) hBd (hbas w B hB) F.1, hG']
-    exact hG
-
 end Dict
 
 end Formalism.L2.Col

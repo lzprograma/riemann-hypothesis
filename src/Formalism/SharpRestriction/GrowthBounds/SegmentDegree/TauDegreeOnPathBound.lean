@@ -3,44 +3,6 @@ module
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.GoodPathWeight
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.OldestLetterInSegment
 public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.PsiCutSupported
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -108,7 +70,7 @@ theorem restr_setTau_low (j : ℤ) (b : ℤ → ℕ) (e : Fin r → ℕ) (x : �
     X.restr j b x = X.restr j (X.setTau j b e) x := by
   unfold Dat.restr Dat.setTau
   have : ¬ (X.F.fr j 0 ≤ x ∧ x ≤ X.F.fr j (r - 1)) := fun h => by omega
-  simp only [this, if_false]
+  simp only [this, ite_false]
 
 theorem restr_setTau_tau (hX : X.Hyp p K) (j : ℤ) (b : ℤ → ℕ) (e : Fin r → ℕ) (i' : Fin r) :
     X.restr j (X.setTau j b e) (X.F.fr j i'.val) = e i' := by
@@ -124,10 +86,10 @@ theorem restr_setTau_tau (hX : X.Hyp p K) (j : ℤ) (b : ℤ → ℕ) (e : Fin r
     unfold Frames.IsW
     omega
   unfold Dat.restr Dat.setTau
-  rw [if_pos hlate, if_pos ⟨a2, a3⟩, Finset.sum_eq_single i']
+  rw [ite_eq_left hlate, ite_eq_left ⟨a2, a3⟩, Finset.sum_eq_single i']
   · simp
   · intro i _ hne
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hne (fr_injective X.F hV j h).symm
   · intro h; exact absurd (Finset.mem_univ _) h
@@ -264,10 +226,8 @@ theorem restMon_of (C₀ : ℝ) (h61 : BetaRatioBound C₀) (h21 : TauDegreeOnPa
       rw [hcst]
       refine mul_le_mul_of_nonneg_left ?_ (by positivity)
       have hQr : (0 : ℝ) < (Q : ℝ) := by exact_mod_cast hQpos
-      have hYp : (0 : ℝ) < X.Y := by linarith
       have : 2 * (r : ℝ) * (be : ℝ) / Q ≤ (r : ℝ) / (2 * X.Y) := by
         rw [div_le_div_iff₀ hQr (by positivity)]
-        have hr0 : (0 : ℝ) ≤ (r : ℝ) := Nat.cast_nonneg _
         nlinarith
       linarith
     have h2 : (Fintype.piFinset fun i' : Fin r =>

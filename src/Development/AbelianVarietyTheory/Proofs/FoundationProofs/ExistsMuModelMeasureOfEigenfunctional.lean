@@ -10,55 +10,11 @@ public import Mathlib.RingTheory.SimpleRing.Principal
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EisensteinTameWeightSecondEqCharacterSum
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsModularFormCoeffSeqEisensteinProductParity
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IterULevelValStable
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Newform
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModularFormCoeffSeqLinearStructure
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MuModelProductIsModularFormCoeffSeqLocallyAlgebr
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -116,10 +72,6 @@ theorem zs_norm_hat_le_one {l : ℕ} [Fact l.Prime] (ι : PadicAlgCl l ≃+* ℂ
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun y _ => ?_
   rw [map_mul, norm_mul, zs_norm_exp ι hN, mul_one]
   exact zs_norm_char_le_one ι hN θ _
-
-end GlobalTheory
-
-namespace GlobalTheory
 
 end GlobalTheory
 
@@ -185,7 +137,7 @@ lemma measMu_zm_congr (k l : ℕ) (u v : ℤ → ℂ) (F G : ℕ → ℕ → ℂ
   refine Finset.sum_congr rfl fun p _ => Finset.sum_congr rfl fun x hx => Finset.sum_congr rfl fun y hy => ?_
   split_ifs with h1
   · rfl
-  · push_neg at h1
+  · push Not at h1
     have hx1 : x.1 ∣ p.1 := Dvd.intro _ (Nat.mem_divisorsAntidiagonal.mp hx).1
     have hy2 : y.2 ∣ p.2 := Dvd.intro_left _ (Nat.mem_divisorsAntidiagonal.mp hy).1
     rw [h x.1 y.2 (fun hd => h1.1 (hd.trans hx1)) (fun hd => h1.2 (hd.trans hy2))]
@@ -252,7 +204,7 @@ lemma measMu_zm_val_bound {l : ℕ} [Fact l.Prime] (ι : PadicAlgCl l ≃+* ℂ)
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hδ fun y hy => ?_
     split_ifs with h
     · rw [map_zero, norm_zero]; exact hδ
-    · push_neg at h
+    · push Not at h
       have hx1 : ¬ l ∣ x.1 := fun hd => h.1 (hd.trans (Dvd.intro _ (Nat.mem_divisorsAntidiagonal.1 hx).1))
       have hy2 : ¬ l ∣ y.2 := fun hd => h.2 (hd.trans (Dvd.intro_left _ (Nat.mem_divisorsAntidiagonal.1 hy).1))
       have h1 : ‖ι.symm ((x.1 : ℂ) ^ (k - 2))‖ ≤ 1 := by

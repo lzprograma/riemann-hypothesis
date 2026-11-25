@@ -6,6 +6,7 @@ public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstei
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
 import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
 import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
+import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.FinalH
 
 @[expose] public section
 
@@ -41,7 +42,7 @@ def qc (ω : HChar F) : QuasiCharacter F where
 theorem norm_qc (ω : HChar F) (h : IsOfFinOrder ω) (c : GroundTheory.Global.IdeleClassGroup F) :
     ‖((qc ω c : ℂˣ) : ℂ)‖ = 1 := by
   induction c using QuotientGroup.induction_on with
-  | H x => exact L2.norm_omega_eq_one h x
+  | H x => exact Esk.HyperbolicKernelContinuity.norm_omega h x
 
 def hc (ω : HChar F) (h : IsOfFinOrder ω) : HeckeCharacter F := QuasiCharacter.toUnitary (qc ω) (norm_qc ω h)
 

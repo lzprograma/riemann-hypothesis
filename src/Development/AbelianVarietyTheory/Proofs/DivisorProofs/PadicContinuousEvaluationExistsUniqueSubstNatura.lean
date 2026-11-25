@@ -1,53 +1,11 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.EpsilonPairingZeta
 import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -105,7 +63,7 @@ theorem ext_of_cont (p : ℕ) [IsHausdorff (Ideal.span {(p : A)}) A] (φ ψ : Mv
       have := Finsupp.le_degree i α
       show α i ≤ N₁ + N₂
       omega
-    rw [map_sub, hPdef, MvPolynomial.coeff_coe, coeff_trunc', if_pos hle, sub_self]
+    rw [map_sub, hPdef, MvPolynomial.coeff_coe, coeff_trunc', ite_eq_left hle, sub_self]
   have e : φ f - ψ f = φ (f - P) - ψ (f - P) := by
     rw [map_sub, map_sub, hP]; ring
   rw [e]
@@ -127,8 +85,7 @@ theorem dvd_aeval_of_coeff (p : ℕ) (x : σ → A) (S : ℕ) (hS : ∀ i, (p : 
   refine Finset.dvd_sum fun α hα => ?_
   rw [MvPolynomial.aeval_monomial]
   obtain ⟨i, hi⟩ : ∃ i, m * S < α i := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact (MvPolynomial.mem_support_iff.1 hα) (hP α h)
   refine Dvd.dvd.mul_left ?_ _
   have hmem : i ∈ α.support := Finsupp.mem_support_iff.2 (by omega)
@@ -155,7 +112,7 @@ theorem exists_isEval (p : ℕ) [IsAdicComplete (Ideal.span {(p : A)}) A] (x : �
     refine key m _ fun α hα => ?_
     have h1 : α ≤ bx (m * S) := (hbx _ _).2 hα
     have h2 : α ≤ bx (n * S) := (hbx _ _).2 fun i => (hα i).trans (Nat.mul_le_mul_right _ hmn)
-    rw [MvPolynomial.coeff_sub, coeff_trunc', coeff_trunc', if_pos h1, if_pos h2, sub_self]
+    rw [MvPolynomial.coeff_sub, coeff_trunc', coeff_trunc', ite_eq_left h1, ite_eq_left h2, sub_self]
   have hL : ∀ f, ∃ L : A, ∀ m, (p : A) ^ m ∣ s m f - L := by
     intro f
     obtain ⟨L, hL⟩ := IsPrecomplete.prec (inferInstance : IsPrecomplete (Ideal.span {(p : A)}) A)
@@ -171,7 +128,7 @@ theorem exists_isEval (p : ℕ) [IsAdicComplete (Ideal.span {(p : A)}) A] (x : �
     refine huniq _ _ fun m => ?_
     simp only [s, ← map_sub]
     refine key m _ fun α hα => ?_
-    rw [MvPolynomial.coeff_sub, coeff_trunc', if_pos ((hbx _ _).2 hα), MvPolynomial.coeff_coe,
+    rw [MvPolynomial.coeff_sub, coeff_trunc', ite_eq_left ((hbx _ _).2 hα), MvPolynomial.coeff_coe,
       sub_self]
   have hadd : ∀ f g, L (f + g) = L f + L g := by
     intro f g
@@ -189,7 +146,7 @@ theorem exists_isEval (p : ℕ) [IsAdicComplete (Ideal.span {(p : A)}) A] (x : �
       simp only [s, ← map_mul, ← map_sub]
       refine key m _ fun α hα => ?_
       have h1 : α ≤ bx (m * S) := (hbx _ _).2 hα
-      rw [MvPolynomial.coeff_sub, coeff_trunc', if_pos h1,
+      rw [MvPolynomial.coeff_sub, coeff_trunc', ite_eq_left h1,
         coeff_trunc'_mul_trunc'_eq_coeff_mul _ _ _ h1, sub_self]
     rw [e]
     exact dvd_add (dvd_add h1 (Dvd.dvd.mul_right (hL f m) _)) (Dvd.dvd.mul_left (hL g m) _)

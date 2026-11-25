@@ -290,10 +290,7 @@ theorem exists_isPlaceOver (v : HeightOneSpectrum (𝓞 F)) :
   · intro h
     by_contra hx
     have hx1 : v.valuation F (x : F) = 1 := le_antisymm (hle x) (not_lt.mp (mt (hlt x).mp hx))
-    have hx0 : (x : F) ≠ 0 := by
-      intro h0
-      rw [h0, map_zero] at hx1
-      exact zero_ne_one hx1
+    have hx0 : (x : F) ≠ 0 := (Valuation.ne_zero_iff _).1 (ne_of_eq_of_ne hx1 one_ne_zero)
     have hne : algebraMap F Ω (x : F) ≠ 0 := (map_ne_zero _).mpr hx0
     have hinv : v.valuation F ((x : F)⁻¹) ≤ 1 := by rw [map_inv₀, hx1, inv_one]
     have hmem : algebraMap F Ω ((x : F)⁻¹) ∈ B := hfx _ hinv

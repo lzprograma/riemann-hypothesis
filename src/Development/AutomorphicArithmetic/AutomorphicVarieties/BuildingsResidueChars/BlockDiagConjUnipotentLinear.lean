@@ -47,7 +47,6 @@ import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.F
 
 open NumberField NumberField.mixedEmbedding Matrix MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm UpperTheory.V.Af.Fin
 open scoped TensorProduct
-attribute [local instance 100] LieRing.ofAssociativeRing
 
 private def LowZ {n : ℕ} {R : Type} [CommRing R] (r : ℕ) (M : Matrix (Fin n) (Fin n) R) : Prop :=
   ∀ i j : Fin n, r ≤ (i : ℕ) → (j : ℕ) < r → M i j = 0
@@ -86,13 +85,13 @@ private theorem blockEntry_eq_sum {n r : ℕ} {S : Type} [CommRing S] (Y : UPos 
   · rw [Finset.sum_eq_single (⟨(i, j), h⟩ : UPos n r)]
     · simp
     · intro q _ hq
-      rw [Matrix.single_apply, if_neg]
+      rw [Matrix.single_apply, ite_eq_right]
       rintro ⟨rfl, rfl⟩
       exact hq rfl
     · simp
   · symm
     refine Finset.sum_eq_zero fun q _ => ?_
-    rw [Matrix.single_apply, if_neg]
+    rw [Matrix.single_apply, ite_eq_right]
     rintro ⟨rfl, rfl⟩
     exact h q.2
 
@@ -104,7 +103,7 @@ private theorem conj_blockEntry {n r : ℕ} {S : Type} [CommRing S] {M N : Matri
     rw [blockEntry_eq_sum, Matrix.mul_sum, Matrix.sum_mul, Matrix.sum_apply]
     refine Finset.sum_congr rfl fun q _ => ?_
     simp only [Matrix.mul_apply, Matrix.single_apply, mul_ite, mul_zero, ite_and, Finset.sum_ite_eq,
-      Finset.mem_univ, if_true, ite_mul, zero_mul]
+      Finset.mem_univ, ite_true, ite_mul, zero_mul]
     ring
   rw [h0, blockEntry_apply]
   split_ifs with h

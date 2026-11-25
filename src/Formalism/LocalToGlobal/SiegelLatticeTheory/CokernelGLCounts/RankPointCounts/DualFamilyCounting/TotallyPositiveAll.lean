@@ -15,8 +15,6 @@ open Classical
 
 namespace Formalism.L2.SG.Pf.Cnt.R1
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem emb_surj (D : Formalism.BasicNotions.D7) : Function.Surjective D.host.emb := by
   intro φ
   unfold Formalism.BasicNotions.Host.emb Formalism.BasicNotions.Host.sigmaOf

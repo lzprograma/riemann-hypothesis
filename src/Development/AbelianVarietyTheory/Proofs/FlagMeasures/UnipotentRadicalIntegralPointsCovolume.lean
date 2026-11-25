@@ -231,7 +231,7 @@ private lemma linearIndependent_map_ringHom_complex {E : Type} [Field E] {n : �
 
   rw [← h4, ← Matrix.mulVecLin_apply, map_sum, Finset.sum_apply]
   simp only [map_smul, Pi.smul_apply, Matrix.mulVecLin_apply, hcol, smul_eq_mul, mul_ite, mul_one,
-    mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 private lemma map_mem_span_image_of_mem_span {E : Type} [Field E] {n : ℕ} (φ : E →+* ℂ)
     (t : Set (Fin n → E)) {x : Fin n → E} (hx : x ∈ Submodule.span E t) :
@@ -345,8 +345,8 @@ theorem placeMatch : ∀ (I : AutInst) (xf : I.Gf), PlaceMatch I.φ I.P (frm I (
     unfold frm
     rw [comap_mk_phi, hu, Matrix.mul_one]
     by_cases h : (InfinitePlace.mk (I.φ v)).embedding = I.φ v
-    · exact Or.inl ⟨h, if_pos h⟩
-    · exact Or.inr ⟨he.resolve_left h, if_neg h⟩
+    · exact Or.inl ⟨h, ite_eq_left h⟩
+    · exact Or.inr ⟨he.resolve_left h, ite_eq_right h⟩
 
 end GlobalTheory.RadCov.Place
 end -- clump:auto
@@ -671,7 +671,6 @@ theorem exists_unitary_of_skew_layer (R K : Type) [CommRing R] [Field K] [StarRi
     (hw : algebraMap R K w + star (algebraMap R K w) = 1)
     (hA : ∀ c, A (c + 1) ≤ A c) (hm : A m = ⊥)
     (hmul : ∀ c, ∀ X ∈ A c, ∀ Y ∈ A 0, X * Y ∈ A (c + 1) ∧ Y * X ∈ A (c + 1))
-    (_hadj : ∀ c, ∀ X ∈ A c, J⁻¹ * Xᴴ * J ∈ A c)
     (c : ℕ) (X : Matrix (Fin n) (Fin n) K) (hX : X ∈ A c) (hskew : J⁻¹ * Xᴴ * J = -X) :
     ∃ Y ∈ A (c + 1), (1 + X + Y)ᴴ * J * (1 + X + Y) = J := by
   classical
@@ -1007,7 +1006,7 @@ theorem two_mul_pairs_add_sq {ι : Type} [LinearOrder ι] (s : Finset ι) (f : �
         = ∑ i ∈ s, ∑ k ∈ s.filter (fun k => i < k), f i * f k + (∑ i ∈ s, f i) * f a := by
       rw [Finset.sum_mul, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl (fun i hi => ?_)
-      rw [Finset.filter_insert, if_pos (ha i hi), Finset.sum_insert (by simp [hna])]
+      rw [Finset.filter_insert, ite_eq_left (ha i hi), Finset.sum_insert (by simp [hna])]
       ring
     simp only [Finset.sum_insert hna]
     rw [h2, Finset.sum_empty, h3,
@@ -1247,7 +1246,7 @@ theorem htProd : ∀ (n f a : ℕ) (j : Fin a → ℕ) (r : ℕ → ℕ) (τ : F
   have c7 : ∀ i k : Fin a, (2 * a - i < 2 * a - k) ↔ k < i := fun i k => by
     rw [Fin.lt_def]; omega
   have c8 : ∀ i k : Fin a, ((i : ℕ) < k) ↔ i < k := fun i k => Iff.rfl
-  simp only [c1, c2, c3, c4, c5, c6, c7, c8, lt_irrefl, if_true, if_false, ha,
+  simp only [c1, c2, c3, c4, c5, c6, c7, c8, lt_irrefl, ite_true, ite_false, ha,
     fun i => (hr i).1, fun i => (hr i).2, fun i => (hτ i).2.1, fun i => (hτ i).2.2,
     Finset.prod_const_one, one_mul, mul_one, one_pow, div_one, Finset.prod_mul_distrib,
     Finset.prod_filter]
@@ -1323,7 +1322,7 @@ theorem real_span (n d : ℕ) (ε : Fin n → Bool) (B : Fin d → Matrix (Fin n
     induction hX using Submodule.span_induction with
     | mem x hx =>
       obtain ⟨k, hk, rfl⟩ := hx
-      rw [hB, if_neg]
+      rw [hB, ite_eq_right]
       rintro rfl
       exact hi hk
     | zero => simp
@@ -1837,7 +1836,7 @@ theorem radicalCovolume : RadicalCovolume := by
       have hX' := sub_mem hY' (hadjF c _ hY')
       obtain ⟨Z, hZ, hU'⟩ := _root_.GlobalTheory.RadCov.exists_unitary_of_skew_layer (𝓞 I.E) I.E I.n m I.J (lowers F) w hJ I.J_det hw
         (lowers_succ_le hF.1) (lowers_eq_bot hF.2.1 hF.2.2.1 hsp)
-        (fun c X hX Y hY => lowers_mul_zero hX hY) hadjF c _ hX' (by
+        (fun c X hX Y hY => lowers_mul_zero hX hY) c _ hX' (by
           have hu := I.J_det.isUnit
           rw [Matrix.conjTranspose_sub, Matrix.conjTranspose_mul, Matrix.conjTranspose_mul,
             Matrix.conjTranspose_nonsing_inv, hJ, Matrix.conjTranspose_conjTranspose, Matrix.mul_sub,

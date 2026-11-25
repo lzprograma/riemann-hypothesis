@@ -10,55 +10,10 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeri
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Expand
 public import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
 public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.PsCoprimeDvdSub
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -75,39 +30,22 @@ namespace LevelStatements.Lv
 
 open PowerSeries IsLocalRing
 
-theorem algHom_powerSeries_coe_eq_aeval {O S : Type} [CommRing O] [CommRing S] [Algebra O S]
-    (ρ : PowerSeries O →ₐ[O] PowerSeries S) (r : Polynomial O) :
-    ρ (r : PowerSeries O) = Polynomial.aeval (ρ X) r := by
-  have h : ρ.comp (Polynomial.coeToPowerSeries.algHom O) = Polynomial.aeval (ρ X) := by
-    apply Polynomial.algHom_ext
-    simp [Polynomial.coeToPowerSeries.algHom_apply]
-  have h2 := congrArg (fun f => f r) h
-  simpa [Polynomial.coeToPowerSeries.algHom_apply] using h2
-
-theorem exists_pow_mul_add_polynomial {O : Type} [CommRing O] [IsLocalRing O] [IsAdicComplete (maximalIdeal O) O]
-    (P : Polynomial O) (hP : P.IsDistinguishedAt (maximalIdeal O)) (k : ℕ) (a : PowerSeries O) :
-    ∃ (q : PowerSeries O) (r : Polynomial O), a = (P : PowerSeries O) ^ k * q + (r : PowerSeries O) := by
-  have hm : (P ^ k).Monic := hP.monic.pow k
-  have hne : PowerSeries.map (residue O) ((P ^ k : Polynomial O) : PowerSeries O) ≠ 0 := by
-    rw [← Polynomial.polynomial_map_coe, Ne, Polynomial.coe_eq_zero_iff]
-    exact (hm.map (residue O)).ne_zero
-  obtain ⟨q, r, h⟩ := PowerSeries.exists_isWeierstrassDivision a hne
-  refine ⟨q, r, ?_⟩
-  rw [← Polynomial.coe_pow]
-  exact h.2
-
 theorem rhoUnique : RhoUniqueStatement := by
   intro O S _ _ _ _ _ P hP ρ ρ' hX h0
   have hpoly : ∀ r : Polynomial O, ρ (r : PowerSeries O) = ρ' (r : PowerSeries O) := by
     intro r
-    rw [algHom_powerSeries_coe_eq_aeval, algHom_powerSeries_coe_eq_aeval, hX]
+    rw [algHom_coe_eq_aeval, algHom_coe_eq_aeval, hX]
   have hdvd : X ∣ ρ (P : PowerSeries O) := by
-    rw [PowerSeries.X_dvd_iff, algHom_powerSeries_coe_eq_aeval]
+    rw [PowerSeries.X_dvd_iff, algHom_coe_eq_aeval]
     exact h0
   apply AlgHom.ext
   intro a
   ext n
-  obtain ⟨q, r, hqr⟩ := exists_pow_mul_add_polynomial P hP (n + 1) a
+  have hne : PowerSeries.map (residue O) ((P ^ (n + 1) : Polynomial O) : PowerSeries O) ≠ 0 := by
+    rw [← Polynomial.polynomial_map_coe, Ne, Polynomial.coe_eq_zero_iff]
+    exact ((hP.monic.pow _).map _).ne_zero
+  obtain ⟨q, r, _, hqr⟩ := exists_isWeierstrassDivision a hne
+  rw [Polynomial.coe_pow] at hqr
   have hd : ρ a - ρ' a = ρ (P : PowerSeries O) ^ (n + 1) * (ρ q - ρ' q) := by
     rw [hqr, map_add (f := _), map_add (f := _), map_mul, map_mul, map_pow, map_pow, hpoly r, ← hpoly P]
     ring
@@ -135,241 +73,48 @@ namespace LevelStatements.Lv
 
 open PowerSeries
 
-section Ln03DescendDvd
-
-variable {O : Type} [CommRing O]
-
-def powerSeriesBlockSum (ι : PowerSeries O →ₐ[O] PowerSeries O) (m : ℕ) (b : Fin m → PowerSeries O) :
-    PowerSeries O :=
-  ∑ i : Fin m, X ^ (i : ℕ) * ι (b i)
-
-def powerSeriesBlockSplit (m : ℕ) (g : ℕ → O) : Fin m → PowerSeries O :=
-  fun i => PowerSeries.mk fun j => g (m * j + i)
-
-theorem blockSum_add (ι : PowerSeries O →ₐ[O] PowerSeries O) (m : ℕ) (b b' : Fin m → PowerSeries O) :
-    powerSeriesBlockSum ι m (b + b') = powerSeriesBlockSum ι m b + powerSeriesBlockSum ι m b' := by
-  simp only [powerSeriesBlockSum, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
-
-theorem blockSum_sub (ι : PowerSeries O →ₐ[O] PowerSeries O) (m : ℕ) (b b' : Fin m → PowerSeries O) :
-    powerSeriesBlockSum ι m (b - b') = powerSeriesBlockSum ι m b - powerSeriesBlockSum ι m b' := by
-  simp only [powerSeriesBlockSum, Pi.sub_apply, map_sub, mul_sub, Finset.sum_sub_distrib]
-
-theorem blockSum_zero (ι : PowerSeries O →ₐ[O] PowerSeries O) (m : ℕ) :
-    powerSeriesBlockSum ι m 0 = 0 := by
-  simp [powerSeriesBlockSum]
-
-theorem blockSplit_add (m : ℕ) (g h : ℕ → O) :
-    powerSeriesBlockSplit m (g + h) = powerSeriesBlockSplit m g + powerSeriesBlockSplit m h := by
-  funext i
-  ext j
-  simp [powerSeriesBlockSplit]
-
-theorem blockSplit_zero (m : ℕ) : powerSeriesBlockSplit m (0 : ℕ → O) = 0 := by
-  funext i
-  ext j
-  simp [powerSeriesBlockSplit]
-
-theorem X_pow_mul_dvd_algHom_of_X_pow_dvd {ι : PowerSeries O →ₐ[O] PowerSeries O} {m : ℕ} {w : PowerSeries O}
-    (hX : ι X = w * X ^ m) (J : ℕ) (b : PowerSeries O) (hb : X ^ J ∣ b) : X ^ (m * J) ∣ ι b := by
-  obtain ⟨c, rfl⟩ := hb
-  refine ⟨w ^ J * ι c, ?_⟩
-  rw [map_mul, map_pow, hX, mul_pow, ← pow_mul]
-  ring
-
-theorem coeff_blockSum_eq_zero {ι : PowerSeries O →ₐ[O] PowerSeries O} {m : ℕ} {w : PowerSeries O}
-    (hX : ι X = w * X ^ m) (hm : 0 < m) (h : ℕ → O) (n : ℕ) (hh : ∀ n' ≤ n, h n' = 0) :
-    coeff n (powerSeriesBlockSum ι m (powerSeriesBlockSplit m h)) = 0 := by
-  unfold powerSeriesBlockSum
-
-  rw [map_sum]
-  refine Finset.sum_eq_zero fun i _ => ?_
-  rw [coeff_X_pow_mul']
-  split_ifs with hi
-  · have hdiv : X ^ ((n - i) / m + 1) ∣ powerSeriesBlockSplit m h i := by
-      rw [X_pow_dvd_iff]
-      intro j hj
-      simp only [powerSeriesBlockSplit, coeff_mk]
-      apply hh
-      have h1 : j ≤ (n - i) / m := by omega
-      have h2 := Nat.mul_le_mul (le_refl m) h1
-      have h3 := Nat.div_add_mod (n - i) m
-      omega
-    have hd := X_pow_mul_dvd_algHom_of_X_pow_dvd hX _ _ hdiv
-    rw [X_pow_dvd_iff] at hd
-    apply hd
-    rw [Nat.mul_add, Nat.mul_one]
-    have h3 := Nat.div_add_mod (n - i) m
-    have h4 := Nat.mod_lt (n - i) hm
-    omega
-  · rfl
-
-private theorem div_eq_and_mod_eq_of_mul_add_eq {m j r n : ℕ} (hm : 0 < m) (hr : r < m) (h : m * j + r = n) :
-    n / m = j ∧ n % m = r :=
-  (Nat.div_mod_unique hm).mpr ⟨by omega, hr⟩
-
-theorem coeff_blockSum_single {ι : PowerSeries O →ₐ[O] PowerSeries O} {m : ℕ} {w : PowerSeries O}
-    (hX : ι X = w * X ^ m) (hm : 0 < m) (n : ℕ) (x : O) :
-    coeff n (powerSeriesBlockSum ι m (powerSeriesBlockSplit m fun n' => if n' = n then x else 0)) =
-      x * constantCoeff w ^ (n / m) := by
-  obtain ⟨i0, hi0⟩ : ∃ i0 : Fin m, (i0 : ℕ) = n % m := ⟨⟨n % m, Nat.mod_lt _ hm⟩, rfl⟩
-  have key : ∀ (i : Fin m) (j : ℕ), m * j + (i : ℕ) = n ↔ (i = i0 ∧ j = n / m) := by
-    intro i j
-    constructor
-    · intro h
-      obtain ⟨h1, h2⟩ := div_eq_and_mod_eq_of_mul_add_eq hm i.isLt h
-      exact ⟨Fin.ext (by omega), by omega⟩
-    · rintro ⟨h1, h2⟩
-      have h3 := Nat.div_add_mod n m
-      have h4 : (i : ℕ) = n % m := by rw [h1, hi0]
-      rw [h2, h4]
-      exact h3
-  have hb : ∀ i : Fin m, powerSeriesBlockSplit m (fun n' => if n' = n then x else 0) i =
-      if i = i0 then x • (X : PowerSeries O) ^ (n / m) else 0 := by
-    intro i
-    ext j
-    simp only [powerSeriesBlockSplit, coeff_mk]
-    by_cases hi : i = i0
-    · rw [if_pos hi, map_smul, coeff_X_pow, smul_eq_mul]
-      by_cases hj : j = n / m
-      · rw [if_pos ((key i j).mpr ⟨hi, hj⟩), if_pos hj, mul_one]
-      · rw [if_neg (fun h => hj ((key i j).mp h).2), if_neg hj, mul_zero]
-    · rw [if_neg hi, map_zero, if_neg (fun h => hi ((key i j).mp h).1)]
-  unfold powerSeriesBlockSum
-  rw [Finset.sum_eq_single i0]
-  · rw [hb i0, if_pos rfl, map_smul, map_pow, hX]
-    have e : (X : PowerSeries O) ^ (i0 : ℕ) * x • (w * X ^ m) ^ (n / m) =
-        x • (w ^ (n / m) * X ^ n) := by
-      rw [mul_smul_comm, mul_pow, ← pow_mul, hi0]
-      congr 1
-      rw [show (X : PowerSeries O) ^ n = X ^ (n % m) * X ^ (m * (n / m)) by
-        rw [← pow_add, Nat.mod_add_div]]
-      ring
-    rw [e, map_smul, coeff_mul_X_pow', if_pos le_rfl, Nat.sub_self,
-      coeff_zero_eq_constantCoeff_apply, map_pow, smul_eq_mul]
-  · intro i _ hi
-    rw [hb i, if_neg hi, map_zero, mul_zero]
-  · intro h
-    exact absurd (Finset.mem_univ _) h
-
-theorem coeff_blockSum_triangular {ι : PowerSeries O →ₐ[O] PowerSeries O} {m : ℕ} {w : PowerSeries O}
-    (hX : ι X = w * X ^ m) (hm : 0 < m) (g : ℕ → O) (n : ℕ) :
-    coeff n (powerSeriesBlockSum ι m (powerSeriesBlockSplit m g)) =
-      coeff n (powerSeriesBlockSum ι m (powerSeriesBlockSplit m fun n' => if n' < n then g n' else 0)) +
-        g n * constantCoeff w ^ (n / m) := by
-  have hsplit : g = (fun n' => if n' < n then g n' else 0) + (fun n' => if n' = n then g n else 0)
-      + (fun n' => if n < n' then g n' else 0) := by
-    funext n'
-    simp only [Pi.add_apply]
-    rcases lt_trichotomy n' n with h | rfl | h
-    · rw [if_pos h, if_neg h.ne, if_neg (not_lt.mpr h.le), add_zero, add_zero]
-    · simp
-    · rw [if_neg (not_lt.mpr h.le), if_neg h.ne', if_pos h, zero_add, zero_add]
-  conv_lhs => rw [hsplit]
-  rw [blockSplit_add, blockSplit_add, blockSum_add, blockSum_add, map_add (f := _), map_add (f := _),
-    coeff_blockSum_single hX hm n (g n),
-    coeff_blockSum_eq_zero hX hm (fun n' => if n < n' then g n' else 0) n
-      (fun n' hn' => if_neg (not_lt.mpr hn')), add_zero]
-
-theorem eq_zero_of_blockSum_eq_zero {ι : PowerSeries O →ₐ[O] PowerSeries O} {m : ℕ} {w : PowerSeries O}
-    (hX : ι X = w * X ^ m) (hm : 0 < m) (hw0 : IsUnit (constantCoeff w)) (g : ℕ → O)
-    (h0 : powerSeriesBlockSum ι m (powerSeriesBlockSplit m g) = 0) (n : ℕ) : g n = 0 := by
-  suffices H : ∀ N, ∀ k < N, g k = 0 from H (n + 1) n (Nat.lt_succ_self n)
-  intro N
-  induction N with
-  | zero => intro k hk; exact absurd hk (Nat.not_lt_zero k)
-  | succ N ih =>
-    intro k hk
-    by_cases hkN : k < N
-    · exact ih k hkN
-    · have hk' : k = N := by omega
-      rw [hk']
-      have h1 : (fun n' => if n' < N then g n' else 0) = (0 : ℕ → O) := by
-        funext n'
-        split_ifs with h
-        · exact ih n' h
-        · rfl
-      have := coeff_blockSum_triangular hX hm g N
-      rw [h0, h1, blockSplit_zero, blockSum_zero] at this
-      simp only [map_zero, zero_add] at this
-      exact ((hw0.pow (N / m)).mul_left_eq_zero).mp this.symm
-
-def blockInverse (ι : PowerSeries O →ₐ[O] PowerSeries O) (m : ℕ) (wi : O) (f : PowerSeries O)
-    (n : ℕ) : O :=
-  wi ^ (n / m) * (coeff n f - coeff n (powerSeriesBlockSum ι m (powerSeriesBlockSplit m fun n' =>
-    if _h : n' < n then blockInverse ι m wi f n' else 0)))
-termination_by n
-
-theorem blockSum_blockInverse {ι : PowerSeries O →ₐ[O] PowerSeries O} {m : ℕ} {w : PowerSeries O}
-    (hX : ι X = w * X ^ m) (hm : 0 < m) (hw0 : IsUnit (constantCoeff w)) (f : PowerSeries O) :
-    powerSeriesBlockSum ι m (powerSeriesBlockSplit m (blockInverse ι m (↑hw0.unit⁻¹) f)) = f := by
-  ext n
-  have hu : ((hw0.unit⁻¹ : Oˣ) : O) ^ (n / m) * constantCoeff w ^ (n / m) = 1 := by
-    rw [← mul_pow, hw0.val_inv_mul, one_pow]
-  have hI : blockInverse ι m (↑hw0.unit⁻¹) f n = ((hw0.unit⁻¹ : Oˣ) : O) ^ (n / m) *
-      (coeff n f - coeff n (powerSeriesBlockSum ι m (powerSeriesBlockSplit m fun n' =>
-        if n' < n then blockInverse ι m (↑hw0.unit⁻¹) f n' else 0))) := by
-    rw [blockInverse]
-    try simp only [dite_eq_ite]
-  rw [coeff_blockSum_triangular hX hm _ n, hI, mul_right_comm, hu, one_mul]
-  ring
-
-theorem blockSplit_coeff {m : ℕ} (hm : 0 < m) (b : Fin m → PowerSeries O) :
-    powerSeriesBlockSplit m (fun n => coeff (n / m) (b ⟨n % m, Nat.mod_lt _ hm⟩)) = b := by
-  funext i
-  ext j
-  simp only [powerSeriesBlockSplit, coeff_mk]
-  obtain ⟨h1, h2⟩ := div_eq_and_mod_eq_of_mul_add_eq hm i.isLt (rfl : m * j + (i : ℕ) = m * j + i)
-  have hfin : (⟨(m * j + (i : ℕ)) % m, Nat.mod_lt _ hm⟩ : Fin m) = i := Fin.ext h2
-  rw [hfin, h1]
-
-end Ln03DescendDvd
-
-private theorem power_series_block_sum_injective {O : Type} [CommRing O] {ι : PowerSeries O →ₐ[O] PowerSeries O} {m : ℕ} {w : PowerSeries O}
-    (hX : ι X = w * X ^ m) (hm : 0 < m) (hw0 : IsUnit (constantCoeff w))
-    {b b' : Fin m → PowerSeries O} (h : powerSeriesBlockSum ι m b = powerSeriesBlockSum ι m b') : b = b' := by
-  have e := blockSplit_coeff hm (b - b')
-  have hd : powerSeriesBlockSum ι m (powerSeriesBlockSplit m fun n => coeff (n / m) ((b - b') ⟨n % m, Nat.mod_lt _ hm⟩)) = 0 := by
-    rw [e, blockSum_sub, h, sub_self]
-  have hz : (fun n => coeff (n / m) ((b - b') ⟨n % m, Nat.mod_lt _ hm⟩)) = (0 : ℕ → O) :=
-    funext fun n => eq_zero_of_blockSum_eq_zero hX hm hw0 _ hd n
-  rw [hz, blockSplit_zero] at e
-  exact sub_eq_zero.mp e.symm
-
 theorem descendDvd : DescendDvdStatement := by
-  unfold DescendDvdStatement
   intro O _ ι m hm hex
   obtain ⟨w, hw⟩ := hex
-  have hw0 : IsUnit (constantCoeff (w : PowerSeries O)) := (Units.isUnit w).map constantCoeff
-  have e0 : ∀ a : PowerSeries O, powerSeriesBlockSum ι m (fun i => if (i : ℕ) = 0 then a else 0) = ι a := by
-    intro a
-    unfold powerSeriesBlockSum
-    rw [Finset.sum_eq_single ⟨0, hm⟩]
-    · simp
-    · intro i _ hi
-      have : (i : ℕ) ≠ 0 := fun h => hi (Fin.ext h)
-      simp [this]
-    · intro h
-      exact absurd (Finset.mem_univ _) h
-  refine ⟨?_, ?_⟩
-  · intro p q hpq
-    have hb := power_series_block_sum_injective hw hm hw0 (b := fun i => if (i : ℕ) = 0 then p else 0)
-      (b' := fun i => if (i : ℕ) = 0 then q else 0) (by rw [e0, e0, hpq])
-    have := congrFun hb ⟨0, hm⟩
-    simpa using this
-  · rintro p a ⟨c, hc⟩
-    obtain ⟨d, hd⟩ : ∃ d : Fin m → PowerSeries O, powerSeriesBlockSum ι m d = c :=
-      ⟨_, blockSum_blockInverse hw hm hw0 c⟩
-    have key : powerSeriesBlockSum ι m (fun i => p * d i) =
-        powerSeriesBlockSum ι m (fun i => if (i : ℕ) = 0 then a else 0) := by
-      rw [e0, hc, ← hd]
-      unfold powerSeriesBlockSum
-      rw [Finset.mul_sum]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      rw [map_mul]
-      ring
-    have h0 : p * d ⟨0, hm⟩ = a := by
-      simpa using congrFun (power_series_block_sum_injective hw hm hw0 key) ⟨0, hm⟩
-    exact ⟨d ⟨0, hm⟩, h0.symm⟩
+  let s : Module.End O (PowerSeries O) :=
+    ⟨⟨(fun R => w.inv * mk (fun k => coeff (k + m) R)), fun _ _ => mul_add ..⟩,
+      fun r _ => mul_smul_comm r ..⟩
+  have hX (R : PowerSeries O) : s (ι X * R) = R := by
+    have hshift : mk (fun k => coeff (k + m) (ι X * R)) = w * R := by
+      ext k
+      simp [hw, mul_right_comm]
+    change w.inv * _ = R
+    rw [hshift]
+    exact w.inv_mul_cancel_left R
+  let π (Q : PowerSeries O) := mk (fun k => constantCoeff ((s ^ k) Q))
+  have hπm (f Q : PowerSeries O) : π (ι f * Q) = f * π Q := by
+    ext n
+    induction n generalizing f with
+    | zero =>
+      rw [eq_X_mul_shift_add_const f]
+      simp [π, hm.ne', hw, ← algebraMap_eq]
+    | succ n ih =>
+      rw [eq_X_mul_shift_add_const f]
+      simp_all [π, pow_succ, add_mul, mul_assoc,
+        ← algebraMap_eq, ← Algebra.smul_def]
+  have hπ1 : π 1 = 1 := by
+    ext n
+    cases n with
+    | zero => simp [π]
+    | succ n =>
+      have hs : s 1 = 0 := by
+        change w.inv * _ = 0
+        suffices mk (fun k => coeff (k + m) (1 : PowerSeries O)) = 0 by
+          rw [this, mul_zero]
+        ext k
+        simp [hm.ne']
+      simp [π, pow_succ, hs]
+  have hπι (f : PowerSeries O) : π (ι f) = f := by
+    simpa [hπ1] using hπm f 1
+  refine ⟨fun f g h => ?_, ?_⟩
+  · simpa only [hπι] using congrArg π h
+  · rintro p a ⟨Q, hQ⟩
+    exact ⟨π Q, by rw [← hπι a, hQ, hπm]⟩
 
 end LevelStatements.Lv
 end -- clump:auto
@@ -391,7 +136,7 @@ open PowerSeries IsLocalRing
 theorem cycloDist : CycloDistStatement := by
   unfold CycloDistStatement
   intro O _ _ l s hl hlm
-  haveI : Fact l.Prime := ⟨hl⟩
+  have : Fact l.Prime := ⟨hl⟩
   have hE := cyclotomic_prime_pow_comp_X_add_one_isEisensteinAt (p := l) s
   have hXmon : (Polynomial.X + 1 : Polynomial ℤ).Monic := by
     simpa using Polynomial.monic_X_add_C (1 : ℤ)
@@ -488,15 +233,6 @@ theorem cyclotomic_comp_dvd {LL : Type} [Field LL] (n : ℕ) (hn : 0 < n) (ζ₀
     simp
   rw [← hback, hc, Polynomial.mul_comp]
 
-private theorem derivative_exp_eq_exp' (A : Type) [Field A] [CharZero A] :
-    derivative (PowerSeries.exp A) = PowerSeries.exp A :=
-  PowerSeries.derivative_exp A
-
-private theorem constantCoeff_exp_eq_one (A : Type) [Field A] [CharZero A] :
-    constantCoeff (PowerSeries.exp A) = 1 := by
-  first
-    | simp
-
 private theorem cyclotomic_comp_pow_dvd_of_X_pow_dvd {O LL : Type} [CommRing O] [IsDomain O]
     [IsDiscreteValuationRing O] [IsAdicComplete (maximalIdeal O) O] [Field LL] [CharZero LL]
     [Algebra O LL] [IsFractionRing O LL] (n : ℕ) (hn : 0 < n) (ζ₀ : LL)
@@ -508,7 +244,7 @@ private theorem cyclotomic_comp_pow_dvd_of_X_pow_dvd {O LL : Type} [CommRing O] 
     (hk : ∀ ζ, IsPrimitiveRoot ζ n → (X : PowerSeries LL) ^ k ∣ ρ ζ a) :
     (((Polynomial.cyclotomic n O).comp (Polynomial.X + 1) : Polynomial O) : PowerSeries O) ^ k ∣ a := by
   classical
-  have hexp0 := constantCoeff_exp_eq_one LL
+  have hexp0 : constantCoeff (PowerSeries.exp LL) = 1 := PowerSeries.constantCoeff_exp
   have hcyc : ∀ z : PowerSeries LL, Polynomial.aeval z (Polynomial.cyclotomic n O) =
       Polynomial.aeval z (Polynomial.cyclotomic n LL) := by
     intro z
@@ -520,11 +256,11 @@ private theorem cyclotomic_comp_pow_dvd_of_X_pow_dvd {O LL : Type} [CommRing O] 
     intro ζ hζ
     have hroot : Polynomial.aeval ζ (Polynomial.cyclotomic n LL) = 0 := by
       rw [Polynomial.coe_aeval_eq_eval]
-      haveI : NeZero (n : LL) := ⟨by exact_mod_cast hn.ne'⟩
+      have : NeZero (n : LL) := ⟨by exact_mod_cast hn.ne'⟩
       first
         | exact Polynomial.isRoot_cyclotomic_iff.mpr hζ
     obtain ⟨w, hw⟩ := cycloSimple LL LL n hn ζ (PowerSeries.exp LL) hroot hexp0
-      (derivative_exp_eq_exp' LL)
+      (PowerSeries.derivative_exp LL)
     refine ⟨w, ?_⟩
     rw [algHom_coe_eq_aeval, Polynomial.aeval_comp]
     have h1 : Polynomial.aeval (ρ ζ X) (Polynomial.X + 1 : Polynomial O) =
@@ -613,17 +349,12 @@ theorem polynomial_coe_powerSeries_eq_aeval_X {O : Type*} [CommRing O] (P : Poly
   rw [Polynomial.aeval_def]
   exact Polynomial.eval₂_C_X_eq_coe.symm
 
-theorem psCyclo_algHom_coe {O : Type*} [CommRing O] (φ : PowerSeries O →ₐ[O] PowerSeries O)
-    (P : Polynomial O) : φ (P : PowerSeries O) = Polynomial.aeval (φ X) P := by
-  rw [polynomial_coe_powerSeries_eq_aeval_X P]
-  exact (Polynomial.aeval_algHom_apply φ X P).symm
-
 theorem psCyclo_step {O : Type*} [CommRing O] (l : ℕ) (hl : l.Prime)
     (φ : PowerSeries O →ₐ[O] PowerSeries O) (hφ : φ X = (1 + X) ^ l - 1) (m : ℕ) (hm : l ∣ m) :
     φ (((Polynomial.cyclotomic m O).comp (Polynomial.X + 1) : Polynomial O) : PowerSeries O) =
       (((Polynomial.cyclotomic (m * l) O).comp (Polynomial.X + 1) : Polynomial O) :
         PowerSeries O) := by
-  rw [psCyclo_algHom_coe, polynomial_coe_powerSeries_eq_aeval_X,
+  rw [algHom_coe_eq_aeval, polynomial_coe_powerSeries_eq_aeval_X,
     ← Polynomial.cyclotomic_expand_eq_cyclotomic hl hm]
   simp only [Polynomial.aeval_comp, Polynomial.expand_aeval, hφ, map_add (f := _), Polynomial.aeval_X,
     map_one]
@@ -640,7 +371,7 @@ theorem psCyclo : PsCycloStatement := by
     rw [Function.iterate_succ_apply', hw', map_mul,
       psCyclo_step l hl φ hφ (l ^ (s + 1)) (dvd_pow_self l (Nat.succ_ne_zero s)),
       ← pow_succ]
-    all_goals simp
+    simp
 
 end LevelStatements.Lv
 end -- clump:auto
@@ -659,29 +390,18 @@ namespace LevelStatements.Lv
 
 open PowerSeries IsLocalRing
 
-private theorem constantCoeff_algHom_C_eq_algebraMap {O S : Type} [CommRing O] [CommRing S] [Algebra O S]
-    (ρ : PowerSeries O →ₐ[O] PowerSeries S) (c : O) :
-    constantCoeff (ρ (C c)) = algebraMap O S c := by
-  first
-  | (have e : (C c : PowerSeries O) = c • (1 : PowerSeries O) := by
-       rw [PowerSeries.smul_eq_C_mul, mul_one]
-     rw [e, map_smul, map_one, ← algebraMap_smul S c (1 : PowerSeries S),
-       PowerSeries.smul_eq_C_mul, mul_one, PowerSeries.constantCoeff_C])
-
-private theorem isUnit_of_isUnit_constantCoeff {S : Type} [CommRing S] {f : PowerSeries S}
-    (h : IsUnit (constantCoeff f)) : IsUnit f := by
-  first
-  | exact PowerSeries.isUnit_iff_constantCoeff.mpr h
-
 theorem rhoUnit : RhoUnitStatement := by
   unfold RhoUnitStatement
   intro O S _ _ _ ρ p a c hp hc hmem
   obtain ⟨u, v, huv⟩ := Ideal.mem_span_pair.mp hmem
+  have hcc : constantCoeff (ρ (C c)) = algebraMap O S c := by
+    rw [PowerSeries.C_eq_algebraMap, AlgHom.commutes, PowerSeries.algebraMap_apply,
+      constantCoeff_C]
   have h2 : constantCoeff (ρ v) * constantCoeff (ρ a) = algebraMap O S c := by
-    rw [← constantCoeff_algHom_C_eq_algebraMap ρ c, ← huv]
+    rw [← hcc, ← huv]
     simp only [map_add (f := _), map_mul, hp, mul_zero, zero_add]
   rw [← h2] at hc
-  exact isUnit_of_isUnit_constantCoeff (IsUnit.mul_iff.mp hc).2
+  exact PowerSeries.isUnit_iff_constantCoeff.mpr (IsUnit.mul_iff.mp hc).2
 
 end LevelStatements.Lv
 end -- clump:auto

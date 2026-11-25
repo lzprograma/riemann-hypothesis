@@ -70,7 +70,7 @@ theorem subE_rat (Z : Submodule K (Fin n → K)) (h : SubHasRatBasis Z) (i : Fin
     (j : Fin (subDim Z)) : subE Z i j ∈ cmMax K := by
   have e : subBasis Z = h.choose := by
     first
-    | exact dif_pos h
+    | exact dite_eq_left h
   show ((subBasis Z j : Fin n → K) i) ∈ cmMax K
   rw [e]
   exact h.choose_spec j i
@@ -338,7 +338,7 @@ private theorem eq_sum_single_lemma {K G : Type} [Field K] [Fintype G] (a : Mono
   rw [coeff_sum_lemma, Finset.sum_eq_single u]
   · rw [MonoidAlgebra.coeff_single, Finsupp.single_eq_same]
   · intro t _ ht
-    rw [MonoidAlgebra.coeff_single, Finsupp.single_apply, if_neg ht]
+    rw [MonoidAlgebra.coeff_single, Finsupp.single_apply, ite_eq_right ht]
   · intro h
     exact absurd (Finset.mem_univ u) h
 
@@ -354,7 +354,7 @@ theorem coeff_mul_fin (a b : MonoidAlgebra K G) (u : G) :
   · rw [MonoidAlgebra.single_mul_single, mul_inv_cancel_left, MonoidAlgebra.coeff_single,
       Finsupp.single_eq_same]
   · intro t _ ht
-    rw [MonoidAlgebra.single_mul_single, MonoidAlgebra.coeff_single, Finsupp.single_apply, if_neg]
+    rw [MonoidAlgebra.single_mul_single, MonoidAlgebra.coeff_single, Finsupp.single_apply, ite_eq_right]
     intro h
     apply ht
     rw [← h, inv_mul_cancel_left]
@@ -380,7 +380,7 @@ theorem gaStar_single [StarRing K] (t : G) (x : K) :
   rw [Finset.sum_eq_single t]
   · rw [MonoidAlgebra.coeff_single, Finsupp.single_eq_same]
   · intro u _ hu
-    rw [MonoidAlgebra.coeff_single, Finsupp.single_apply, if_neg (Ne.symm hu), star_zero,
+    rw [MonoidAlgebra.coeff_single, Finsupp.single_apply, ite_eq_right (Ne.symm hu), star_zero,
       MonoidAlgebra.single_zero]
   · intro h
     exact absurd (Finset.mem_univ t) h
@@ -454,14 +454,14 @@ theorem coeff_lvlIdem (P : Subgroup G) (ψ : P →* Kˣ) (t : G) :
     rw [Finset.sum_eq_single ⟨t, ht⟩]
     · rw [MonoidAlgebra.coeff_single, Finsupp.single_eq_same]
     · intro k _ hk
-      rw [MonoidAlgebra.coeff_single, Finsupp.single_apply, if_neg]
+      rw [MonoidAlgebra.coeff_single, Finsupp.single_apply, ite_eq_right]
       intro h
       exact hk (Subtype.ext h)
     · intro h
       exact absurd (Finset.mem_univ _) h
   · right
     refine Finset.sum_eq_zero fun k _ => ?_
-    rw [MonoidAlgebra.coeff_single, Finsupp.single_apply, if_neg]
+    rw [MonoidAlgebra.coeff_single, Finsupp.single_apply, ite_eq_right]
     intro h
     exact ht (h ▸ k.2)
 
@@ -624,7 +624,7 @@ private theorem coeff_chiIdem_lemma {K : Type} [Field K] {G : Type} [Group G] [F
   rw [coeff_sum_lemma, Finset.sum_eq_single t]
   · rw [MonoidAlgebra.coeff_single, Finsupp.single_eq_same]
   · intro u _ hu
-    rw [MonoidAlgebra.coeff_single, Finsupp.single_apply, if_neg hu]
+    rw [MonoidAlgebra.coeff_single, Finsupp.single_apply, ite_eq_right hu]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -643,7 +643,7 @@ theorem chiIdem_comm_single {χ : G → K} (h : ∀ s t : G, χ (s * t * s⁻¹)
     rw [hc]
     ring
   · intro v _ hv
-    rw [MonoidAlgebra.coeff_single, Finsupp.single_apply, if_neg, mul_zero]
+    rw [MonoidAlgebra.coeff_single, Finsupp.single_apply, ite_eq_right, mul_zero]
     intro e
     apply hv
     rw [e]
@@ -651,7 +651,7 @@ theorem chiIdem_comm_single {χ : G → K} (h : ∀ s t : G, χ (s * t * s⁻¹)
   · intro hn
     exact absurd (Finset.mem_univ _) hn
   · intro v _ hv
-    rw [MonoidAlgebra.coeff_single, Finsupp.single_apply, if_neg (Ne.symm hv), zero_mul]
+    rw [MonoidAlgebra.coeff_single, Finsupp.single_apply, ite_eq_right (Ne.symm hv), zero_mul]
   · intro hn
     exact absurd (Finset.mem_univ _) hn
 
@@ -884,7 +884,7 @@ theorem conv_char {χ χ' : G → K} (h : IsAbsIrrChar χ) (h' : IsAbsIrrChar χ
         rw [← hρ, ← hρ', char_iso φ]
       · intro hc
         by_contra hne
-        rw [if_neg hne] at ho
+        rw [ite_eq_right hne] at ho
         have ho' := card_inv_mul_sum_char_mul_char_eq_finrank ρ ρ
         rw [IsIrreducible.finrank_intertwiningMap_self] at ho'
         have : ∀ g, ρ'.character g = ρ.character g := fun g => by rw [hρ, hρ', hc]
@@ -892,12 +892,12 @@ theorem conv_char {χ χ' : G → K} (h : IsAbsIrrChar χ) (h' : IsAbsIrrChar χ
         rw [ho] at ho'
         simp at ho'
     by_cases hc : χ = χ'
-    · rw [if_pos hc]
-      rw [if_pos (hiff.mpr hc)] at ho
+    · rw [ite_eq_left hc]
+      rw [ite_eq_left (hiff.mpr hc)] at ho
       field_simp at ho
       simpa using ho
-    · rw [if_neg hc]
-      rw [if_neg (fun hh => hc (hiff.mp hh))] at ho
+    · rw [ite_eq_right hc]
+      rw [ite_eq_right (fun hh => hc (hiff.mp hh))] at ho
       simpa using ho
   apply hj
   rw [hfin, hsum] at hA
@@ -942,7 +942,7 @@ theorem idemOf_mul_self (X : Finset (G → K)) (hX : ∀ χ ∈ X, IsAbsIrrChar 
   rw [Finset.sum_mul]
   refine Finset.sum_congr rfl fun χ hχ => ?_
   rw [Finset.mul_sum, Finset.sum_congr rfl fun χ' hχ' => chiIdem_mul (hX χ hχ) (hX χ' hχ'),
-    Finset.sum_ite_eq, if_pos hχ]
+    Finset.sum_ite_eq, ite_eq_left hχ]
 
 end Schur
 

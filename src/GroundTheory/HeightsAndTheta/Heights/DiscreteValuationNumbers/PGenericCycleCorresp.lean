@@ -213,15 +213,9 @@ theorem GenericCycleCorresp.proof : GenericCycleCorresp.Statement.{u} := by
     by_cases hr : IsRelevant W
     · rw [dite_eq_left ⟨hWm, hr⟩, dite_eq_left ⟨hmin W hWm hWϖ, hrel.mpr hr⟩, hl]
     · rw [dite_eq_right (fun h => hr h.2), dite_eq_right (fun h => hr (hrel.mp h.2))]
-  have hsupp : ∀ (Q : Ideal (MRing ι (FractionRing O))) (x) (W : Ideal (MRing ι (FractionRing O))),
+  have hsupp : ∀ {R : Type u} [CommRing R] (Q : Ideal (MRing ι R)) (x) (W : Ideal (MRing ι R)),
       divCycle Q x W ≠ 0 → W ∈ (Q ⊔ Ideal.span {x}).minimalPrimes := by
-    intro Q x W h
-    unfold divCycle at h
-    split_ifs at h with hh
-    · exact hh.1
-    · exact absurd rfl h
-  have hsupp0 : ∀ W : Ideal (MRing ι O), divCycle P s W ≠ 0 → W ∈ J.minimalPrimes := by
-    intro W h
+    intro R _ Q x W h
     unfold divCycle at h
     split_ifs at h with hh
     · exact hh.1
@@ -229,30 +223,23 @@ theorem GenericCycleCorresp.proof : GenericCycleCorresp.Statement.{u} := by
   unfold cycEval
   let A : Set (Ideal (MRing ι O)) := {W | W ∈ J.minimalPrimes ∧ (C ϖ : MRing ι O) ∉ W}
   let B : Set (Ideal (MRing ι (FractionRing O))) := (genFib P ⊔ Ideal.span {s'}).minimalPrimes
+  have hmem : ∀ {R : Type u} [CommRing R] (S : Set (Ideal (MRing ι R)))
+      (f : Ideal (MRing ι R) → ℤ) (hf : ∀ W ∉ S, f W = 0), ∑ᶠ W, f W = ∑ᶠ W ∈ S, f W := by
+    intro R _ S f hf
+    rw [finsum_mem_def]
+    congr 1
+    funext W
+    exact (Set.indicator_apply_eq_self.mpr (hf W)).symm
   have hA : (∑ᶠ W, divCycle P s W * (if (C ϖ : MRing ι O) ∈ W then 0 else n (genFib W))) =
       ∑ᶠ W ∈ A, divCycle P s W * (if (C ϖ : MRing ι O) ∈ W then 0 else n (genFib W)) := by
-    rw [finsum_mem_def]
-    congr 1
-    funext W
-    symm
-    rw [Set.indicator_apply_eq_self]
-    intro hW
+    refine hmem A _ fun W hW => ?_
     by_cases hϖW : (C ϖ : MRing ι O) ∈ W
-    · rw [if_pos hϖW, mul_zero]
-    · have : divCycle P s W = 0 := by
-        by_contra h
-        exact hW ⟨hsupp0 W h, hϖW⟩
+    · rw [ite_eq_left hϖW, mul_zero]
+    · have : divCycle P s W = 0 := by by_contra h; exact hW ⟨hsupp P s W h, hϖW⟩
       rw [this, zero_mul]
   have hB : (∑ᶠ W, divCycle (genFib P) s' W * n W) = ∑ᶠ W ∈ B, divCycle (genFib P) s' W * n W := by
-    rw [finsum_mem_def]
-    congr 1
-    funext W
-    symm
-    rw [Set.indicator_apply_eq_self]
-    intro hW
-    have : divCycle (genFib P) s' W = 0 := by
-      by_contra h
-      exact hW (hsupp _ _ W h)
+    refine hmem B _ fun W hW => ?_
+    have : divCycle (genFib P) s' W = 0 := by by_contra h; exact hW (hsupp _ _ W h)
     rw [this, zero_mul]
   rw [hA, hB]
   refine finsum_mem_eq_of_bijOn genFib ⟨?_, ?_, ?_⟩ ?_
@@ -273,7 +260,7 @@ theorem GenericCycleCorresp.proof : GenericCycleCorresp.Statement.{u} := by
         (IsLocalization.map_units (MRing ι (FractionRing O)) (⟨_, hϖM⟩ : M)))
     · exact IsLocalization.map_under M (MRing ι (FractionRing O)) W'
   · intro W hW
-    rw [if_neg hW.2, hkey W hW.1 hW.2]
+    rw [ite_eq_right hW.2, hkey W hW.1 hW.2]
 
 end
 

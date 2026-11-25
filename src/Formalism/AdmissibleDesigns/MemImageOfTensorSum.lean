@@ -4,46 +4,7 @@ public import Formalism.AdmissibleDesigns.FiniteClassesContinuousLattice
 public import Formalism.SharpRestriction.LevelLetterCocycles.GoodCongruenceDataOf
 public import Formalism.WachLatticeTwists.RamifiedBlockRings.DistinctEigenvalueCornerPerturbation
 public import Formalism.WachLatticeTwists.RealDisplaySplitting.RealDisplayProofs.SurjectionOfRankOneIdempotent
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -136,16 +97,16 @@ def kapG (j : ℕ) : Fin j → coZ1s ρL :=
 
 theorem kapG_fin (j : ℕ) (a : Fin j) : (fun g => iL ((kapG ρL iL Zf j a : Γ → L) g)) ∈ Zf := by
   by_cases h : LatBasisG ρL iL Zf j
-  · have e : kapG ρL iL Zf j = h.choose := dif_pos h
+  · have e : kapG ρL iL Zf j = h.choose := dite_eq_left h
     rw [e]
     exact h.choose_spec.1 a
-  · have e : kapG ρL iL Zf j = fun _ => 0 := dif_neg h
+  · have e : kapG ρL iL Zf j = fun _ => 0 := dite_eq_right h
     rw [e]
     convert Zf.zero_mem using 1
     ext g
     simp
 
-theorem kapG_eq {j : ℕ} (h : LatBasisG ρL iL Zf j) : kapG ρL iL Zf j = h.choose := dif_pos h
+theorem kapG_eq {j : ℕ} (h : LatBasisG ρL iL Zf j) : kapG ρL iL Zf j = h.choose := dite_eq_left h
 
 theorem kapG_basis {j : ℕ} (h : LatBasisG ρL iL Zf j) :
     (∀ z ∈ FfG ρL iL Zf, ∃ (b : Fin j → O) (c : O), c ≠ 0 ∧
@@ -341,7 +302,7 @@ theorem latBasis_of (l : K.Col i dc) (hf : FinFf i dc Dd l) (hr : RankFf i dc Dd
 theorem κ_mem (l : K.Col i dc) a (g : ↥(Γc i dc l)) :
     κ i dc Dd ρ π l a g = (κz i dc Dd ρ π l a : ↥(Γc i dc l) → Lr i Dd) g := by
   unfold κ
-  rw [dif_pos g.2]
+  rw [dite_eq_left g.2]
 
 theorem iL_equiv (l : K.Col i dc) (g : ↥(Γc i dc l)) (m : Lr i Dd) :
     iLr i Dd (ρL i dc Dd l g m) = ρV i dc Dd l g (iLr i Dd m) := iLM_smul (D.nd.O i) _ (Dd.ρk 0).toRingHom (Formalism.NG.uElt Dd.r Dd.χ (g : D.nd.Om ≃ₐ[D.host.E] D.nd.Om)) m
@@ -410,11 +371,11 @@ def uCol (l : K.Col i dc) : ↥(Γc i dc l) → D.nd.O i :=
 
 theorem uCol_add (l : K.Col i dc) (g h : ↥(Γc i dc l)) : uCol i dc l (g * h) = uCol i dc l g + uCol i dc l h := by
   by_cases hU : UnrHom i dc l
-  · have e : uCol i dc l = hU.choose := dif_pos hU
+  · have e : uCol i dc l = hU.choose := dite_eq_left hU
     rw [e]
     obtain ⟨⟨hadd, _, _⟩, _⟩ := hU.choose_spec
     exact hadd g h
-  · have e : uCol i dc l = 0 := dif_neg hU
+  · have e : uCol i dc l = 0 := dite_eq_right hU
     rw [e]
     simp
 
@@ -426,11 +387,11 @@ def uz (l : K.Col i dc) : Formalism.NG.coZ1s (Representation.trivial (D.nd.O i) 
 
 theorem u_mem (l : K.Col i dc) (g : ↥(Γc i dc l)) : u i dc l g = uCol i dc l g := by
   unfold u
-  rw [dif_pos g.2]
+  rw [dite_eq_left g.2]
 
 theorem uCol_spec (l : K.Col i dc) (hU : UnrHom i dc l) :
     UnrAdm i dc l (uCol i dc l) ∧ ∃ g, uCol i dc l g = 1 := by
-  have e : uCol i dc l = hU.choose := dif_pos hU
+  have e : uCol i dc l = hU.choose := dite_eq_left hU
   rw [e]
   exact hU.choose_spec
 

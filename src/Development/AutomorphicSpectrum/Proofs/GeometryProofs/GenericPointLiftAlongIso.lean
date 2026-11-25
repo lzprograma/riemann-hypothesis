@@ -3,46 +3,9 @@ module
 public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCptGen
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsCptGenResidueFieldGeneric
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsSncPatchRat
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
 
@@ -64,35 +27,6 @@ theorem eq_of_isIso_restrict {W X' : Scheme.{0}} (f : X' ⟶ W) (U : W.Opens) (h
     Subtype.ext (by rw [morphismRestrict_base_coe, morphismRestrict_base_coe]; exact e)
   exact congrArg Subtype.val ((f ∣_ U).isOpenEmbedding.injective h)
 
-private theorem eq_closedPoint_of_isField {R : Type} [CommRing R] [IsLocalRing R] (hR : IsField R)
-    (z : PrimeSpectrum R) : z = IsLocalRing.closedPoint R := by
-  apply PrimeSpectrum.ext
-  have h := (IsLocalRing.isField_iff_maximalIdeal_eq (R := R)).1 hR
-  have h1 : z.asIdeal ≤ IsLocalRing.maximalIdeal R := IsLocalRing.le_maximalIdeal z.isPrime.ne_top
-  show z.asIdeal = IsLocalRing.maximalIdeal R
-  rw [h] at h1 ⊢
-  exact le_bot_iff.1 h1
-
-private theorem eq_genPt_of_specializes_of_bijective {X : Scheme.{0}} {Ω : Type} [Field Ω] (ξ : Spec (CommRingCat.of Ω) ⟶ X)
-    (hb : Function.Bijective (Scheme.stalkClosedPointTo ξ).hom) (y : X) (hy : y ⤳ genPt ξ) :
-    y = genPt ξ := by
-  have hF : IsField (X.presheaf.stalk (genPt ξ)) :=
-    MulEquiv.isField (Field.toIsField Ω) (RingEquiv.ofBijective _ hb).toMulEquiv
-  have hy' : y ∈ Set.range (X.fromSpecStalk (genPt ξ)) := by
-    rw [Scheme.range_fromSpecStalk]; exact hy
-  obtain ⟨q, rfl⟩ := hy'
-  rw [eq_closedPoint_of_isField hF q, Scheme.fromSpecStalk_closedPoint]
-
-private theorem surjective_stalkClosedPointTo_of_comp {X Y : Scheme.{0}} {Ω : Type} [Field Ω]
-    (g : Spec (CommRingCat.of Ω) ⟶ X) (f : X ⟶ Y) (ξ : Spec (CommRingCat.of Ω) ⟶ Y) (h : g ≫ f = ξ)
-    (hξ : Function.Surjective (Scheme.stalkClosedPointTo ξ).hom) :
-    Function.Surjective (Scheme.stalkClosedPointTo g).hom := by
-  subst h
-  rw [Scheme.stalkClosedPointTo_comp] at hξ
-  intro z
-  obtain ⟨a, ha⟩ := hξ z
-  exact ⟨(Scheme.Hom.stalkMap f _).hom a, ha⟩
-
 theorem exists_lift_isCptGen : ∀ (W X' : Scheme.{0}) (f : X' ⟶ W) (U : W.Opens) (Ω : Type) [Field Ω] (ξ : Sp Ω ⟶ W),
     IsIso (f ∣_ U) → genPt ξ ∈ U → IsCptGen ξ → (∀ x : X', IsDomain (X'.presheaf.stalk x)) →
     ∃ ξ' : Sp Ω ⟶ X', ξ' ≫ f = ξ ∧ IsCptGen ξ' := by
@@ -101,7 +35,7 @@ theorem exists_lift_isCptGen : ∀ (W X' : Scheme.{0}) (f : X' ⟶ W) (U : W.Ope
   have hr : Set.range ξ ⊆ Set.range U.ι := by
     rw [Scheme.Opens.range_ι]
     rintro _ ⟨z, rfl⟩
-    rw [eq_closedPoint_of_isField (Field.toIsField Ω) z]
+    rw [Subsingleton.elim z (IsLocalRing.closedPoint Ω)]
     exact hU
   let ξ' : Sp Ω ⟶ X' := IsOpenImmersion.lift U.ι ξ hr ≫ inv (f ∣_ U) ≫ (f ⁻¹ᵁ U).ι
   have hfac : ξ' ≫ f = ξ := by
@@ -118,10 +52,15 @@ theorem exists_lift_isCptGen : ∀ (W X' : Scheme.{0}) (f : X' ⟶ W) (U : W.Ope
   refine isCptGen_of_maximal_of_surjective hdom ξ' ?_ ?_
   · intro y hy
     have hyU : y ∈ f ⁻¹ᵁ U := hy.mem_open (f ⁻¹ᵁ U).isOpen hmem
-    have h1 : f y ⤳ genPt ξ := by
-      have h2 := hy.map f.continuous
-      rwa [hfg] at h2
-    exact eq_of_isIso_restrict f U hiso hyU hmem ((eq_genPt_of_specializes_of_bijective ξ hb (f y) h1).trans hfg.symm)
-  · exact surjective_stalkClosedPointTo_of_comp ξ' f ξ hfac hb.2
+    have h1 : f y ⤳ genPt ξ := hfg ▸ hy.map f.continuous
+    obtain ⟨q, hq⟩ : f y ∈ Set.range (W.fromSpecStalk (genPt ξ)) := by
+      rw [Scheme.range_fromSpecStalk]; exact h1
+    have hq' : q = IsLocalRing.closedPoint _ :=
+      (PrimeSpectrum.comapEquiv (RingEquiv.ofBijective _ hb)).injective (Subsingleton.elim _ _)
+    rw [hq', Scheme.fromSpecStalk_closedPoint] at hq
+    exact eq_of_isIso_restrict f U hiso hyU hmem (hq.symm.trans hfg.symm)
+  · have hcomp := hb.2
+    rw [← hfac, Scheme.stalkClosedPointTo_comp] at hcomp
+    exact Function.Surjective.of_comp (g := (Scheme.Hom.stalkMap f _).hom) hcomp
 
 end GlobalTheory.CompanionTheory.Ar.SncBase

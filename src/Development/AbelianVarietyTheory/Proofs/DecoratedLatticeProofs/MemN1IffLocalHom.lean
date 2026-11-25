@@ -79,7 +79,7 @@ theorem eN_val (v : Fin (M + c)) : Loc.eN E (M + c) v.1 = Pi.single v 1 := by
   ext l; simp [Loc.eN, Pi.single_apply, Fin.ext_iff]
 
 theorem eN_out {j : ℕ} (h : ¬ j < M + c) : Loc.eN E (M + c) j = 0 := by
-  ext l; simp only [Loc.eN, Pi.zero_apply]; rw [if_neg]; omega
+  ext l; simp only [Loc.eN, Pi.zero_apply]; rw [ite_eq_right]; omega
 
 theorem inX_apply (y : Fin M → E) (l : Fin (M + c)) :
     Loc.inX E M c y l = if h : l.1 < M then y ⟨l.1, h⟩ else 0 := by
@@ -101,7 +101,7 @@ theorem r1cond_of_unip {x : (Fin (M + c) → E) ≃ₗ[E] (Fin (M + c) → E)} (
     refine Finset.sum_eq_zero fun v _ => ?_
     by_cases hv : v.1 < M + i
     · have hl' : ¬ l.1 < M + i := hl
-      rw [hU l v (by unfold lv; split_ifs <;> omega), if_neg (by intro h; subst h; exact hl' hv), mul_zero]
+      rw [hU l v (by unfold lv; split_ifs <;> omega), ite_eq_right (by intro h; subst h; exact hl' hv), mul_zero]
     · rw [hw v hv, zero_mul]
   · ext l
     exact col hU M l (by have := one_le_lv M l.1; unfold lv at this ⊢; simp; omega)
@@ -114,11 +114,11 @@ theorem fixX_of_unip {x : (Fin (M + c) → E) ≃ₗ[E] (Fin (M + c) → E)} (hU
   ext l
   rw [apply_eq_sum, Finset.sum_eq_single l]
   · by_cases hl : l.1 < M
-    · rw [hU l l (le_refl _), if_pos rfl, mul_one]
+    · rw [hU l l (le_refl _), ite_eq_left rfl, mul_one]
     · simp [inX_apply, hl]
   · intro v _ hvl
     by_cases hv : v.1 < M
-    · rw [hU l v (by have := one_le_lv M l.1; unfold lv; rw [if_pos hv]; exact this), if_neg (Ne.symm hvl), mul_zero]
+    · rw [hU l v (by have := one_le_lv M l.1; unfold lv; rw [ite_eq_left hv]; exact this), ite_eq_right (Ne.symm hvl), mul_zero]
     · rw [inX_apply, dite_eq_right hv, zero_mul]
   · intro h; exact absurd (Finset.mem_univ l) h
 

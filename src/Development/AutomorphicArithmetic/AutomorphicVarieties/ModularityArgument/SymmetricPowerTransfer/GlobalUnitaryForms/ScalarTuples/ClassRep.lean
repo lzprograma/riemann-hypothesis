@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.IntegralStabilizers.FinSUnit
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
 public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsCongrIffTraceFormsIsometricCm
 public import Development.AbelianVarietyTheory.PublishedTheorems.Landherr₂.ExistsNormTensor
@@ -447,7 +448,7 @@ theorem UpperTheory.V.Z.Sym.Glob.weakD :
   let gv : ∀ v : Pl F, DX (cv v Δ) := fun v => (g : ∀ v : Pl F, DX (cv v Δ)) v
   have hJ : ∀ v ∈ D.Sg, (D.J2v v).relIndex (KD (cv v Δ) (Ov v)) ≠ 0 := by
     intro v hv
-    rw [Dat.J2v, if_pos hv]
+    rw [Dat.J2v, ite_eq_left hv]
     exact (hD.sig v hv).levelTwoFiniteIndex
   obtain ⟨x, hx⟩ := approx D.Sg (fun v => qD (cv v Δ) (mt (gv v)⁻¹))
     (fun v y => ∃ j ∈ D.J2v v, mt j = pD (cv v Δ) y * mt (gv v))
@@ -485,7 +486,7 @@ theorem UpperTheory.V.Z.Sym.Glob.weakD :
     have hv2 : ¬ uf v ∈ KD (cv v Δ) (Ov v) := hv
     by_contra hv'
     apply hv2
-    have e : uf v = 1 := if_neg hv'
+    have e : uf v = 1 := ite_eq_right hv'
     rw [e]
     exact (KD (cv v Δ) (Ov v)).one_mem
   refine ⟨γ, ⟨uf, huf⟩, ?_, ?_⟩
@@ -494,15 +495,15 @@ theorem UpperTheory.V.Z.Sym.Glob.weakD :
     rw [Subgroup.mem_comap]
     change uf v ∈ D.J2v v
     by_cases hv : v ∈ D.Sg
-    · have e : uf v = ((ι γ : ∀ v : Pl F, DX (cv v Δ)) v * gv v)⁻¹ := if_pos hv
+    · have e : uf v = ((ι γ : ∀ v : Pl F, DX (cv v Δ)) v * gv v)⁻¹ := ite_eq_left hv
       rw [e]
       exact inv_mem (hmem v hv)
-    · have e : uf v = 1 := if_neg hv
+    · have e : uf v = 1 := ite_eq_right hv
       rw [e]
       exact (D.J2v v).one_mem
   · intro v hv
     change (ι γ : ∀ v : Pl F, DX (cv v Δ)) v * gv v * uf v = 1
-    have e : uf v = ((ι γ : ∀ v : Pl F, DX (cv v Δ)) v * gv v)⁻¹ := if_pos hv
+    have e : uf v = ((ι γ : ∀ v : Pl F, DX (cv v Δ)) v * gv v)⁻¹ := ite_eq_left hv
     rw [e]
     exact mul_inv_cancel _
 end -- clump:auto
@@ -618,17 +619,7 @@ section Loc
 variable {K : Type} [Field K] {Δ : K}
 
 private theorem det_eq [CharZero K] (g : DX Δ) : (mt g).det = algebraMap K _ (mt g).det.re := by
-  have h : GeneralLinearGroup.map (starRingEnd (Lsq K Δ)) g.1 = (wJ Δ)⁻¹ * g.1 * (wJ Δ)⁻¹⁻¹ := g.2
-  have h1 := congrArg (fun x => (GeneralLinearGroup.det x : Lsq K Δ)) h
-  simp only [map_mul, map_inv, mul_right_comm _ (GeneralLinearGroup.det g.1), mul_inv_cancel, one_mul] at h1
-  have h2 : star (mt g).det = (mt g).det := by
-    rw [← starRingEnd_apply, RingHom.map_det]
-    exact h1
-  have h3 := congrArg QuadraticAlgebra.im h2
-  rw [QuadraticAlgebra.im_star] at h3
-  ext
-  · simp
-  · simpa using (self_eq_neg.1 h3.symm)
+  apply _root_.UpperTheory.V.Z.Sym.Glob.det_im <;> assumption
 
 private theorem nrd_ex [CharZero K] (Δ : K) : ∃ N : DX Δ →* Kˣ, ∀ g : DX Δ, (Glob.mt g).det = algebraMap K _ (N g : K) := by
   let f : DX Δ →* K :=
@@ -750,8 +741,8 @@ theorem UpperTheory.V.Z.Sym.Glob.classRep :
     · exact split_ex (Ov v) ((map_ne_zero _).2 hΔ) (hD.split v hv) u
     · exact normEx _ _ _ (hD.off v hv) u
   have hidx : D.U2.relIndex (P.box fun v => KD (cv v Δ) (Ov v)) ≠ 0 :=
-    box_idx P D.J2v D.Sg (fun v hv => by rw [Dat.J2v, if_pos hv]; exact (hD.sig v hv).levelTwoFiniteIndex)
-      fun v hv => by rw [Dat.J2v, if_neg hv]
+    box_idx P D.J2v D.Sg (fun v hv => by rw [Dat.J2v, ite_eq_left hv]; exact (hD.sig v hv).levelTwoFiniteIndex)
+      fun v hv => by rw [Dat.J2v, ite_eq_right hv]
   obtain ⟨Y, hY, h⟩ := reps ι N D.U2 _ D.Off hidx (fun g => c fun v => WithZero.log (Valued.v (N g v : Kv v)))
     (fun g g' e => by
       obtain ⟨z, hz, hp, e⟩ := hc _ _ (hae g) (hae g') e

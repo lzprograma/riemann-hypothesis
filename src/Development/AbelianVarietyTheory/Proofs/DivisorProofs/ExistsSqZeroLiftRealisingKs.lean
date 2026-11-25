@@ -1,5 +1,7 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieConditionHodgeSubspaceLeHodgeFiltration
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorRhoPartLieDeRhamQuotient
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrysActApply
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsArtinianRingTsze
 public import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
@@ -102,7 +104,6 @@ section -- clump:auto
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.RealMult GlobalTheory.LatVal GlobalTheory.LatJet
-attribute [local instance] Over.cartesianMonoidalCategory
 open scoped CategoryTheory.Obj
 
 namespace GlobalTheory
@@ -138,8 +139,6 @@ section -- clump:auto
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.UPel.Sm GlobalTheory.Cris GlobalTheory.DeRham
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -287,7 +286,7 @@ end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLieConditionModHodgeFiltrationStatement =====
 
 -- ===== clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystalGluedHodgeGraphFiltrationLieCondition =====
--- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystalGluedHodgeGraphFiltrationLieCondition", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrysActApply\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsArtinianRingTsze\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLieConditionModHodgeFiltrationStatement\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Tactic.TypeStar\n\n"}
+-- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystalGluedHodgeGraphFiltrationLieCondition", "h": "module\n\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrysActApply\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsArtinianRingTsze\npublic import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv\npublic import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup\npublic import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLieConditionModHodgeFiltrationStatement\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Tactic.TypeStar\nimport Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorRhoPartLieDeRhamQuotient\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -334,43 +333,6 @@ theorem exists_combo {k F : Type} [Field k] [CommRing F] {a : ℕ} (χ : Fin a �
   rw [← this]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [Pi.smul_apply, ← hc l, smul_eq_mul]
-
-theorem injective_chars {p : ℕ} [Fact p.Prime] {D : GlobalTheory.UPel.HT.Datum p} {R : Type} [CommRing R]
-    (b : GlobalTheory.UPel.HT.Base D R) {k : Type} [Field k] (β : R →+* k) :
-    Function.Injective (fun i => β.comp (b.t i)) := by
-  intro i j h
-  by_contra hij
-  have h1 := b.comax i j hij
-  have h2 : Ideal.map β (Ideal.span (Set.range fun x => b.t i x - b.t j x)) = ⊥ := by
-    rw [Ideal.map_span, Ideal.span_eq_bot]
-    rintro _ ⟨_, ⟨x, rfl⟩, rfl⟩
-    have := RingHom.congr_fun h x
-    simp only [RingHom.comp_apply] at this
-    rw [map_sub, this, sub_self]
-  rw [h1, Ideal.map_top] at h2
-  exact (top_ne_bot : (⊤ : Ideal k) ≠ ⊥) h2
-
-theorem root_sub_ne_zero {p : ℕ} [Fact p.Prime] {D : GlobalTheory.UPel.HT.Datum p} {R : Type} [CommRing R]
-    (b : GlobalTheory.UPel.HT.Base D R) {k : Type} [Field k] (β : R →+* k) :
-    β b.ρ - ((D.tr : k) - β b.ρ) ≠ 0 := by
-  intro h0
-  set z : ℤ := D.tr ^ 2 - 4 * D.nm with hz
-  have hp : ¬ p ∣ z.natAbs := fun h => D.disc_p (Int.natCast_dvd.2 h)
-  have hcop : z.natAbs.Coprime p := ((Nat.Prime.coprime_iff_not_dvd (Fact.out)).2 hp).symm
-  have hu : IsUnit ((z.natAbs : ℕ) : k) := by simpa using (b.unit _ hcop).map β
-  have hroot : β b.ρ ^ 2 - (D.tr : k) * β b.ρ + (D.nm : k) = 0 := by
-    have := congrArg β b.ρ_root
-    simpa using this
-  have hzk : (z : k) = 0 := by
-    have e : (z : k) = (β b.ρ - ((D.tr : k) - β b.ρ)) ^ 2 -
-        4 * (β b.ρ ^ 2 - (D.tr : k) * β b.ρ + (D.nm : k)) := by
-      rw [hz]; push_cast; ring
-    rw [e, h0, hroot]; ring
-  have hsq : (((z.natAbs : ℤ) : k)) ^ 2 = 0 := by
-    rw [← Int.cast_pow, Int.natAbs_sq, Int.cast_pow, hzk]; ring
-  have := pow_eq_zero_iff (n := 2) (by norm_num) |>.1 hsq
-  rw [Int.cast_natCast] at this
-  exact hu.ne_zero this
 
 end GlobalTheory.HTGlueLie
 
@@ -548,44 +510,8 @@ theorem smul_mem_rhoPart (δ : k) (x : HdR o₀.A) :
   simp only [LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply, map_smul, smul_sub, smul_comm δ]
 
 theorem lieZ_le_fil (hs : t = spMap β) : lieZ o₀ β ≤ Fil o₀.A := by
-  have hF : ∀ (x : D.O) (v : HdR o₀.A), v ∈ Fil o₀.A → crysAct o₀ x v ∈ Fil o₀.A := fun x v hv => by
-    haveI := o₀.act.hom x
-    rw [crysAct_apply]
-    exact push_mem_Fil _ hv
-  refine Submodule.span_le.2 ?_
-  rintro z ⟨r, lam, c, y, ⟨h, rfl⟩, hsum, rfl⟩
-  set A := crysAct o₀ (algebraMap (𝓞 D.F) D.O D.ω)
-  have hq0 : D.ω * D.ω - (D.tr : 𝓞 D.F) * D.ω + (D.nm : 𝓞 D.F) = 0 := by
-    rw [← D.tr_eq, ← D.nm_eq]; ring
-  have hq := congrArg (fun x => crysAct o₀ (algebraMap (𝓞 D.F) D.O x) h) hq0
-  simp only [map_add (f := _), map_sub, map_mul, map_intCast, map_zero, LinearMap.add_apply, LinearMap.sub_apply,
-    Module.End.mul_apply, Module.End.intCast_apply, LinearMap.zero_apply] at hq
-  rw [← Int.cast_smul_eq_zsmul k, ← Int.cast_smul_eq_zsmul k] at hq
-  have hroot : β b.ρ * ((D.tr : k) - β b.ρ) = (D.nm : k) := by
-    have := congrArg β b.ρ_root
-    simp only [map_add (f := _), map_sub, map_mul, map_pow, map_intCast, map_zero] at this
-    linear_combination -this
-  have hy0 : crysAct o₀ (algebraMap (𝓞 D.F) D.O D.ω) ((A - ((D.tr : k) - β b.ρ) • 1) h) -
-      β b.ρ • ((A - ((D.tr : k) - β b.ρ) • 1) h) ∈ Fil o₀.A := by
-    have e : crysAct o₀ (algebraMap (𝓞 D.F) D.O D.ω) ((A - ((D.tr : k) - β b.ρ) • 1) h) -
-        β b.ρ • ((A - ((D.tr : k) - β b.ρ) • 1) h) = 0 := by
-      simp only [LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply, map_sub, map_smul]
-      linear_combination (norm := module) hq + hroot • h
-    rw [e]; exact zero_mem _
-  obtain ⟨w, hw, hws⟩ := _root_.GlobalTheory.HTSummand.lie_mod_fil p D R b N k β t hs o₀ _ hy0
-  set y := (A - ((D.tr : k) - β b.ρ) • 1) h
-  have e : ∑ l, lam l • crysAct o₀ (algebraMap (𝓞 D.F) D.O (c l)) y =
-      ∑ l, lam l • crysAct o₀ (algebraMap (𝓞 D.F) D.O (c l)) (y - ∑ i, w i) +
-        ∑ i, ∑ l, lam l • (crysAct o₀ (algebraMap (𝓞 D.F) D.O (c l)) (w i) - β (b.t i (c l)) • w i) := by
-    have h3 : ∀ i, ∑ l, lam l • β (b.t i (c l)) • w i = 0 := fun i => by
-      simp only [smul_smul, ← Finset.sum_smul, hsum i, zero_smul]
-
-    simp only [map_sub, map_sum, smul_sub, Finset.smul_sum, Finset.sum_sub_distrib, h3, sub_zero]
-    rw [Finset.sum_comm (f := fun i l => lam l • crysAct o₀ (algebraMap (𝓞 D.F) D.O (c l)) (w i))]
-    abel
-  rw [e]
-  refine add_mem (sum_mem fun l _ => Submodule.smul_mem _ _ (hF _ _ hws)) (sum_mem fun i _ => sum_mem fun l _ =>
-    Submodule.smul_mem _ _ (hw i (c l)))
+  intros
+  apply _root_.GlobalTheory.HTCount.lieZ_le_Fil <;> assumption
 
 end Lie
 
@@ -622,7 +548,7 @@ theorem glueFil_lie : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.Dat
     exact crd_push o₀.A π _ u
   have hZ := lieZ_le_fil o₀ β hs
   have hfZ : ∀ j, ∀ x ∈ lieZ o₀ β, f j x ∈ Fil o₀.A := fun j => (hf j).2.1
-  have hδ := root_sub_ne_zero b β
+  have hδ := _root_.GlobalTheory.HTLieRho.two_rho_sub_ne_zero b β
   have hex : ∃ e' : CrysC k d o₀.A, e' = algebraMap k (TrivSqZeroExt k (Fin d → k))
       (β b.ρ - ((D.tr : k) - β b.ρ))⁻¹ •
       ((haveI := o₀.act.hom (algebraMap (𝓞 D.F) D.O D.ω); push (divided₂ (GlobalTheory.FODef.sqZero k (Fin d → k)))
@@ -632,7 +558,7 @@ theorem glueFil_lie : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.Dat
   have hrho : ∀ π, crd o₀.A π e' ∈ rhoPart o₀ β := fun π => by
     rw [he', crd_smul, map_sub, hT, crd_smul]
     exact smul_mem_rhoPart o₀ β _ _
-  choose r lam c hc using fun i => exists_combo (fun j => β.comp (b.t j)) (injective_chars b β)
+  choose r lam c hc using fun i => exists_combo (fun j => β.comp (b.t j)) (b.injective_char_comp β)
     (fun j => if i = j then (1 : k) else 0)
   have hc' : ∀ i j, ∑ l, lam i l * β (b.t j (c i l)) = if i = j then 1 else 0 := hc
   refine ⟨fun i => ∑ l, algebraMap k (TrivSqZeroExt k (Fin d → k)) (lam i l) •

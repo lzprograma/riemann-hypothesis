@@ -1,53 +1,12 @@
 module
 
+import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FrMultVOfNotJump
 public import Formalism.WeaklyAdmissibleFiltrations.Statement
 public import Mathlib.Data.Int.Interval
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Sheaves.Presheaf
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -69,44 +28,17 @@ variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field 
     {V : Type} [AddCommGroup V] [Module LL V] [Module Qp V] [IsScalarTower Qp LL V]
 
 theorem rk_filV_succ (a : ℤ) : FilV PD (LL := LL) (V := V) (a + 1) ≤ FilV PD (LL := LL) (V := V) a := by
-  rintro x ⟨y, rfl⟩
-  induction y using TensorProduct.induction_on with
-  | zero => simp
-  | tmul v b => exact ⟨v ⊗ₜ ⟨b.1, PD.Fil_anti a b.2⟩, by simp [AlgebraTensorModule.map_tmul]⟩
-  | add y z hy hz =>
-    rw [map_add (f := _)]
-    exact Submodule.add_mem _ hy hz
+  apply +allowSynthFailures _root_.Formalism.MainNotions.N.Ln34.UniversalFiltration.fr_filV_succ <;> assumption
 
 theorem rk_filV_anti : Antitone (fun a : ℤ => FilV PD (LL := LL) (V := V) a) := by
   exact antitone_int_of_succ_le fun a => rk_filV_succ PD a
 
 theorem rk_filV_exh (x : V ⊗[Qp] BdR) : ∃ a : ℤ, x ∈ FilV PD (LL := LL) (V := V) a := by
-  induction x using TensorProduct.induction_on with
-  | zero => exact ⟨0, Submodule.zero_mem _⟩
-  | tmul v b =>
-    obtain ⟨a, ha⟩ := PD.Fil_exh b
-    exact ⟨a, v ⊗ₜ ⟨b, ha⟩, by simp [AlgebraTensorModule.map_tmul]⟩
-  | add x y hx hy =>
-    obtain ⟨a, ha⟩ := hx
-    obtain ⟨a', ha'⟩ := hy
-    exact ⟨min a a', Submodule.add_mem _ (rk_filV_anti PD (min_le_left a a') ha)
-      (rk_filV_anti PD (min_le_right a a') ha')⟩
+  apply +allowSynthFailures _root_.Formalism.MainNotions.N.Ln34.UniversalFiltration.fr_filV_exh <;> assumption
 
 theorem rk_filV_fd (U : Submodule LL (V ⊗[Qp] BdR)) [FiniteDimensional LL ↥U] :
     ∃ a : ℤ, U ≤ FilV PD (LL := LL) (V := V) a := by
-  classical
-  obtain ⟨s, hs⟩ : ∃ s : Finset (V ⊗[Qp] BdR), Submodule.span LL (s : Set (V ⊗[Qp] BdR)) = U :=
-    (Submodule.fg_iff_finiteDimensional U).2 inferInstance
-  have hex : ∀ x ∈ s, ∃ a : ℤ, x ∈ FilV PD (LL := LL) (V := V) a := fun x _ => rk_filV_exh PD x
-  choose! f hf using hex
-  by_cases hne : s.Nonempty
-  · refine ⟨s.inf' hne f, ?_⟩
-    rw [← hs, Submodule.span_le]
-    intro x hx
-    exact rk_filV_anti PD (Finset.inf'_le f hx) (hf x hx)
-  · refine ⟨0, ?_⟩
-    rw [← hs, Finset.not_nonempty_iff_eq_empty.1 hne]
-    simp
+  apply +allowSynthFailures _root_.Formalism.MainNotions.N.Ln34.UniversalFiltration.fr_filV_fd <;> assumption
 
 theorem rk_filV_sep (x : V ⊗[Qp] BdR) (hx : ∀ a, x ∈ FilV PD (LL := LL) (V := V) a) : x = 0 := by
   classical
@@ -172,23 +104,14 @@ theorem rk_fildR_hi (τ : K →ₐ[Qp] LL) [FiniteDimensional LL ↥(DdRE PD ρ 
 theorem rk_multV_of_not_jump (τ : K →ₐ[Qp] LL) (a : ℤ) (h : ¬ IsJumpV PD ρ τ a) :
     multV PD ρ τ a = 0 := by
   unfold IsJumpV at h
-  push_neg at h
+  push Not at h
   unfold multV
   rw [h, sub_self]
 
 theorem rk_sum_multV (τ : K →ₐ[Qp] LL) (m k : ℤ) (hmk : m ≤ k) :
     ∑ a ∈ Finset.Ico m k, multV PD ρ τ a =
       (finrank LL ↥(FildR PD ρ τ m) : ℤ) - finrank LL ↥(FildR PD ρ τ k) := by
-  induction k, hmk using Int.leInduction with
-  | base => simp
-  | succ n hn ih =>
-    have hI : Finset.Ico m (n + 1) = insert n (Finset.Ico m n) := by
-      ext x
-      simp only [Finset.mem_Ico, Finset.mem_insert]
-      omega
-    rw [hI, Finset.sum_insert (by simp), ih]
-    unfold multV
-    ring
+  apply +allowSynthFailures _root_.Formalism.MainNotions.N.Ln34.UniversalFiltration.fr_sum_multV <;> assumption
 
 end Fil
 

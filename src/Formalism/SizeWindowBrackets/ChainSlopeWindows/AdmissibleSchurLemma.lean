@@ -6,53 +6,7 @@ public import Formalism.SizeWindowBrackets.SecondKindBucket
 public import Formalism.LogFactorialBounds.LogFactorialProofs.PrimeSum
 public import Mathlib.Algebra.Order.Field.GeomSum
 public import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -373,7 +327,7 @@ lemma pm_y_sum (M N : ℕ) (hM : 2 ≤ M) (Y : ℝ) (hY : 1 ≤ Y) (hNY : (N : �
     apply sum_congr rfl
     intro l hl
     simp only [hfdef]
-    rw [if_pos (hsY l hl)]
+    rw [ite_eq_left (hsY l hl)]
   have hmain := pm_sum_cover f hf0 M N hM s hs
   have hterm : ∀ k m : ℕ, ((k : ℝ) + 1) * M / 2 ≤ m → 1 ≤ m →
       f m ≤ Real.log Y * (2 / M) * (1 / ((k : ℝ) + 1)) := by
@@ -594,7 +548,7 @@ theorem split_classes_count : SplitClasses := by
     have hl : 0 ≤ 2 * Real.log p := by have := Real.log_natCast_nonneg p; linarith
     cases hc : cl p with
     | served =>
-      simp only [if_true, if_false, reduceCtorEq, add_zero]
+      simp only [ite_true, ite_false, reduceCtorEq, add_zero]
       exact mul_le_mul_of_nonneg_left (deficit_le J TT TTp vonMangoldtClassSum gain tau lo fl p (hled p hp hc)) hl
     | first =>
       obtain ⟨hg, ht⟩ := hdrop p hp (by simp [hc])
@@ -919,7 +873,7 @@ theorem high_bucket_bound : HighBucket := by
       have hi1 := hI p hp i hiI
       by_cases h1 : i = 1
       · subst h1
-        rw [if_pos rfl, pow_one]
+        rw [ite_eq_left rfl, pow_one]
         apply max_le _ hbp0
         rw [hbp]
         split_ifs with hlt
@@ -932,7 +886,7 @@ theorem high_bucket_bound : HighBucket := by
             rw [div_le_iff₀ hp0]; rw [← ha] at hat
             nlinarith
           linarith [hw p hp 1 hiI]
-      · rw [if_neg h1, higher_power_vanishes i hiI (by omega)]
+      · rw [ite_eq_right h1, higher_power_vanishes i hiI (by omega)]
     have hinner : ∑ i ∈ I p, max (at_ / (p : ℝ) ^ i - w p i) 0 ≤ bp := by
       refine (Finset.sum_le_sum hi).trans ?_
       rw [Finset.sum_ite_eq']
@@ -1042,7 +996,7 @@ theorem or_bucket_bound : OrBucket := by
     have hp0 : (0 : ℝ) < p := by exact_mod_cast hpp.pos
     have hl : 0 ≤ Real.log p := Real.log_natCast_nonneg p
     by_cases hlt : p < p₀
-    · rw [if_pos hlt, if_pos hlt, if_neg (by omega)]
+    · rw [ite_eq_left hlt, ite_eq_left hlt, ite_eq_right (by omega)]
       have hK := hL p hp hlt
       rw [Real.rpow_sub_one hp0.ne'] at hK
       have hpL : 0 < (p : ℝ) ^ (L₁ p) := Real.rpow_pos_of_pos hp0 _
@@ -1059,7 +1013,7 @@ theorem or_bucket_bound : OrBucket := by
       refine h2.trans (le_of_eq ?_)
       field_simp
       ring
-    · rw [if_neg hlt, if_neg hlt, if_pos (by omega)]
+    · rw [ite_eq_right hlt, ite_eq_right hlt, ite_eq_left (by omega)]
       apply le_of_eq
       field_simp
       ring
@@ -1311,7 +1265,7 @@ theorem first_kind_bucket_bound : FirstKindBucket := by
       · exact hf0 p
       · exact le_rfl
     rcases (hs p hp).2.2 with h | ⟨i, hi, hb⟩
-    · rw [if_pos h]; linarith
+    · rw [ite_eq_left h]; linarith
     · have h1 := Finset.single_le_sum (f := fun i =>
           (if (p₀ ≤ p ∧ P i * (1 - c) ≤ p ∧ (p : ℝ) ≤ P i * (1 + c)) then
             Real.log p / (p : ℝ) else 0)) (s := Finset.range I) (by
@@ -1319,7 +1273,7 @@ theorem first_kind_bucket_bound : FirstKindBucket := by
           split_ifs
           · exact hf0 p
           · exact le_rfl) (Finset.mem_range.2 hi)
-      rw [if_pos hb] at h1
+      rw [ite_eq_left hb] at h1
       have : 0 ≤ (if ((p : ℝ) ≤ Y ∧ ∃ hl : Nat.Coprime p (4 * 2 ^ e),
           orderOf (Formalism.RankGapBounds.LocalQuadraticParts.hOf e p hl) ≤ J) then Real.log p / (p : ℝ) else 0) := by
         split_ifs

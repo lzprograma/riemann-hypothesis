@@ -8,25 +8,18 @@ import Mathlib.Tactic.Lemma
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Wlocal
 import Lemmata.GeneralBFactFurther.Imports
 import Mathlib.RingTheory.MvPolynomial.Localization
+import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DualWeylRowStable
+import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
 
 @[expose] public section
 
 namespace Bl.DualWeylPullback
 
-private lemma map_aeval_nat {O K σ τ : Type} [CommRing O] [CommRing K] (φ : O →+* K)
-    (h : σ → MvPolynomial τ O) (f : MvPolynomial σ O) :
-    MvPolynomial.map φ (MvPolynomial.aeval h f) =
-      MvPolynomial.aeval (fun v => MvPolynomial.map φ (h v)) (MvPolynomial.map φ f) := by
-  induction f using MvPolynomial.induction_on with
-  | C a => simp only [MvPolynomial.aeval_C, MvPolynomial.map_C, MvPolynomial.algebraMap_eq]
-  | add p q hp hq => simp only [map_add (f := _), hp, hq]
-  | mul_X p v hp => simp only [map_mul, MvPolynomial.map_X, MvPolynomial.aeval_X, hp]
-
 private lemma colAddGen_map {O K : Type} [CommRing O] [CommRing K] (φ : O →+* K) {k n : ℕ}
     (l j : Fin n) (f : MvPolynomial (Fin k × Fin n) O) :
     MvPolynomial.map φ (Formalism.GradedWeylDivisibility.colAddGen O l j f) = Formalism.GradedWeylDivisibility.colAddGen K l j (MvPolynomial.map φ f) := by
   unfold Formalism.GradedWeylDivisibility.colAddGen
-  rw [map_aeval_nat]
+  rw [MvPolynomial.map_aeval_eq_aeval_map φ (MvPolynomial.map φ) (by ext; simp)]
   congr 1
   congr 1
   funext v
@@ -49,27 +42,12 @@ private lemma dualWeyl_pull {O K : Type} [CommRing O] [CommRing K] (φ : O →+*
     rw [colAddGen_map, MvPolynomial.map_rename]
     exact hf.2 l j hlj
 
-private lemma span_mat {O K : Type} [CommRing O] [Field K] [Algebra O K] {k : ℕ}
-    (g g' : Matrix (Fin k) (Fin k) K) (h : Formalism.MainNotions.G.colSpan O g' ≤ Formalism.MainNotions.G.colSpan O g) :
-    ∃ A : Matrix (Fin k) (Fin k) O, g' = g * A.map (algebraMap O K) := by
-  have hc : ∀ c : Fin k, ∃ a : Fin k → O, ∑ i, a i • (fun r => g r i) = fun r => g' r c := by
-    intro c
-    have h1 : (fun r => g' r c) ∈ Formalism.MainNotions.G.colSpan O g' := Submodule.subset_span ⟨c, rfl⟩
-    exact (Submodule.mem_span_range_iff_exists_fun O).1 (h h1)
-  choose a ha using hc
-  refine ⟨Matrix.of fun i c => a c i, ?_⟩
-  ext r c
-  have h2 := congrFun (ha c) r
-  simp only [Finset.sum_apply, Pi.smul_apply] at h2
-  rw [← h2, Matrix.mul_apply]
-  exact Finset.sum_congr rfl fun i _ => by simp [Algebra.smul_def, mul_comm]
-
 private lemma span_unit {O K : Type} [CommRing O] [Field K] [Algebra O K]
     (hφ : Function.Injective (algebraMap O K)) {k : ℕ} (g g' : Matrix (Fin k) (Fin k) K)
     (hg : IsUnit g.det) (h : Formalism.MainNotions.G.colSpan O g = Formalism.MainNotions.G.colSpan O g') :
     ∃ A : Matrix (Fin k) (Fin k) O, IsUnit A.det ∧ g' = g * A.map (algebraMap O K) := by
-  obtain ⟨A, hA⟩ := span_mat g g' h.ge
-  obtain ⟨B, hB⟩ := span_mat g' g h.le
+  obtain ⟨A, hA⟩ := Formalism.MainNotions.G.LatticeSystems.la_factor g g' h.ge
+  obtain ⟨B, hB⟩ := Formalism.MainNotions.G.LatticeSystems.la_factor g' g h.le
   refine ⟨A, ?_, hA⟩
   have h1 : g * (A * B).map (algebraMap O K) = g * 1 := by
     rw [Matrix.map_mul, ← Matrix.mul_assoc, ← hA, ← hB, Matrix.mul_one]
@@ -114,20 +92,20 @@ theorem goal1 :
   have hinj : Function.Injective (algebraMap O K) := IsFractionRing.injective O K
   have hG : g.det ^ mu (Fin.last m) • Formalism.GradedWeylDivisibility.rowAct K g F ∈
       Formalism.GradedWeylDivisibility.dualWeyl K (m + 1) (m + 1) (Formalism.MainNotions.G.nuOf mu) :=
-    Submodule.smul_mem _ _ (Formalism.GradedWeylDivisibility.dualWeylRowStable K _ _ _ g F hF)
+    Submodule.smul_mem _ _ (Formalism.GradedWeylDivisibility.dualWeylModuleRowActionStable K _ _ _ g F hF)
   obtain ⟨n, G0, hG0⟩ := clear_den w hw (g.det ^ mu (Fin.last m) • Formalism.GradedWeylDivisibility.rowAct K g F)
   have hG0m : G0 ∈ Formalism.GradedWeylDivisibility.dualWeyl O (m + 1) (m + 1) (Formalism.MainNotions.G.nuOf mu) :=
     dualWeyl_pull _ hinj _ G0 (by rw [hG0]; exact Submodule.smul_mem _ _ hG)
   refine ⟨n, ?_⟩
   unfold Formalism.MainNotions.G.H0
-  rw [if_pos hmu]
+  rw [ite_eq_left hmu]
   simp only [Submodule.mem_iInf]
   rintro g' ⟨hg', hspan⟩
   obtain ⟨A, hA, rfl⟩ := span_unit hinj g g' hg hspan
-  rw [Formalism.GradedWeylDivisibility.nablaLTwMem O K m mu _ hg']
+  rw [Formalism.GradedWeylDivisibility.nabla_twist_mem O K m mu _ hg']
   obtain ⟨U, hU⟩ := hA
   refine ⟨(↑(U ^ mu (Fin.last m)) : O) • Formalism.GradedWeylDivisibility.rowAct O A G0,
-    Submodule.smul_mem _ _ (Formalism.GradedWeylDivisibility.dualWeylRowStable O _ _ _ A G0 hG0m), ?_⟩
+    Submodule.smul_mem _ _ (Formalism.GradedWeylDivisibility.dualWeylModuleRowActionStable O _ _ _ A G0 hG0m), ?_⟩
   change MvPolynomial.map (algebraMap O K) ((↑(U ^ mu (Fin.last m)) : O) • Formalism.GradedWeylDivisibility.rowAct O A G0) = _
   have hz : algebraMap O K ↑(U ^ mu (Fin.last m)) = (algebraMap O K ↑U) ^ mu (Fin.last m) := by
     have h5 : ((Units.map (algebraMap O K).toMonoidHom (U ^ mu (Fin.last m)) : Kˣ) : K) =
@@ -139,7 +117,7 @@ theorem goal1 :
     rfl
   rw [MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C, ← MvPolynomial.smul_eq_C_mul,
     _root_.Formalism.UG.P.wlocal_map_rowAct, hG0, Matrix.det_mul, hdet, ← hU, hz,
-    ← Formalism.GradedWeylDivisibility.rowActMul K (m + 1) (m + 1) (A.map (algebraMap O K)) g, AlgHom.comp_apply,
+    ← Formalism.GradedWeylDivisibility.row_action_mul K (m + 1) (m + 1) (A.map (algebraMap O K)) g, AlgHom.comp_apply,
     ← algebraMap_smul K (w ^ n) F]
   simp only [map_smul, smul_smul]
   congr 1

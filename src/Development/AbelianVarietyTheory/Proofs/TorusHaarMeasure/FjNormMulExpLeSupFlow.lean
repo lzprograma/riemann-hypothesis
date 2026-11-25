@@ -83,7 +83,7 @@ theorem fj_norm_mul_exp_le_sup_flow :
   swap
   · have h0 : X.fj la ξ ν P x = 0 := by
       unfold Data.fj
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hall
       exact hf fun j => hall _ (hωp j)
     rw [h0, norm_zero, zero_mul]

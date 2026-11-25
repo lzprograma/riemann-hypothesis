@@ -81,8 +81,7 @@ theorem place_le_one_const {k F : Type} [Field k] [Field F] [Algebra k F] (v : P
 theorem functionFieldPlace_exists_const_sub_lt_one {k F : Type} [Field k] [IsAlgClosed k] [Field F] [Algebra k F]
     (hF : IsFF k F) (v : Place k F) (x : F) (hx : v.1 x ≤ 1) :
     ∃ c : k, v.1 (x - algebraMap k F c) < 1 := by
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   have h1 : ∀ c : k, v.1 (x - algebraMap k F c) = 1 := fun c =>
     le_antisymm ((v.1.map_sub _ _).trans (max_le hx (place_le_one_const v c))) (hne c)
   have hq : ∀ q : k[X], q ≠ 0 → v.1 (Polynomial.aeval x q) = 1 := by

@@ -326,8 +326,7 @@ theorem exists_lat (L : IsLoc O Δ) (hc : c = (τ ^ 2 - 4) * algebraMap O K ε *
           rw [hinvE, one_smul]
       _ = κ • y := by rw [mul_smul, this, smul_smul, hκ, map_mul, map_ofNat]
   obtain ⟨w0, hw0⟩ : ∃ w0, psi s β e w0 ≠ 0 := by
-    by_contra H
-    push_neg at H
+    by_contra! H
     have := ef 1
     rw [H (psi s β f 1), H 1, map_zero, add_zero, eq_comm, smul_eq_zero] at this
     rcases this with h0 | h0
@@ -1177,7 +1176,7 @@ theorem UpperTheory.V.Z.Sym.Loc.caseP :
   · rw [H, hq] at hm
     obtain ⟨p, q, hpq⟩ : ∃ p q : K, p ^ 2 - (τ ^ 2 - 4) * q ^ 2 = -2 * c * t := by
       by_contra hn
-      rw [hs, if_neg hn] at hm
+      rw [hs, ite_eq_right hn] at hm
       norm_num at hm
     let ε : Oˣ := -ε₀
     let s : K := s₀ / (algebraMap O K r * (2 - τ))
@@ -1225,22 +1224,22 @@ theorem UpperTheory.V.Z.Sym.Loc.caseP :
       exact ⟨_, lat_mul hΛ w, (tor_up _ w _).trans (by rw [unimodular_image_mul_unit]; rfl), cls_mul w Λ⟩
     · rintro _ _ ⟨Λ, hΛ, rfl, rfl⟩
       exact if_congr ((kT Λ hΛ).trans (kX Λ hΛ).symm) rfl rfl
-    · obtain ⟨S, a1, -, rfl⟩ := fix_down L hσ h1 h1' hr (by by_contra h; exact hT (if_neg h))
+    · obtain ⟨S, a1, -, rfl⟩ := fix_down L hσ h1 h1' hr (by by_contra h; exact hT (ite_eq_right h))
       obtain ⟨Λ, hΛ, rfl⟩ := exists_lat L hc' hβ a1
       refine ⟨_, ⟨Λ, hΛ, rfl, rfl⟩, ?_⟩
       rintro _ ⟨Λ', hΛ', e, rfl⟩
       obtain ⟨k, rfl⟩ := lattice_homothety_of_eq_unimodular L hD hs' hu hΛ hΛ' (up_inj hσ0 e)
       exact cls_smul k Λ
-    · obtain ⟨Λ, hΛ, -, rfl⟩ : ∃ S, IsLat O τ S ∧ (∀ y ∈ S, ω * y ∈ S) ∧ X = cls τ S := by by_contra h; exact hX (if_neg h)
+    · obtain ⟨Λ, hΛ, -, rfl⟩ : ∃ S, IsLat O τ S ∧ (∀ y ∈ S, ω * y ∈ S) ∧ X = cls τ S := by by_contra h; exact hX (ite_eq_right h)
       refine ⟨_, ⟨Λ, hΛ, rfl, rfl⟩, ?_⟩
       rintro _ ⟨Λ', hΛ', rfl, e⟩
       obtain ⟨k, rfl⟩ := of_cls e
       rw [unimodular_image_smul_eq]
-  · refine finsum_eq_zero_of_forall_eq_zero fun o => mul_eq_zero_of_right _ (if_neg fun h => H ?_)
+  · refine finsum_eq_zero_of_forall_eq_zero fun o => mul_eq_zero_of_right _ (ite_eq_right fun h => H ?_)
     obtain ⟨S, a1, -, -⟩ := fix_down L hσ h1 h1' hr h
     rcases a1.iso L t.ne_zero with h3 | h3
     · rw [(hsLaw O K Δ L).2.2.2 _ _ hD h3, (hsLaw O K Δ L).2.2.2 _ _ hD h3]
-    · rw [hs, if_pos h3] at hm
+    · rw [hs, ite_eq_left h3] at hm
       linear_combination (-hs (τ ^ 2 - 4) (-2 * c)) * hm - hs (τ ^ 2 - 4) (t : K) * hq (-2 * c)
 end -- clump:auto
 end -- clump:auto

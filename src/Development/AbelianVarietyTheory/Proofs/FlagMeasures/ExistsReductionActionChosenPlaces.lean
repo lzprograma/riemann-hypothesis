@@ -827,15 +827,7 @@ theorem exists_prod_le_of_isRadical {R : Type*} [CommRing R] [IsDedekindDomain R
   exact (Ideal.prod_le_inf.trans (Finset.inf_le hv)) hx
 
 theorem extId_eq_image (I : AutInst) (𝔞 : Ideal (𝓞 I.E)) : extId I 𝔞 = 𝔞.map (Inhab.psi I.F I.E) := by
-  unfold extId
-  rw [Ideal.map]
-  congr 1
-  ext z
-  constructor
-  · rintro ⟨a, ha, hz⟩
-    exact ⟨a, ha, Subtype.ext hz.symm⟩
-  · rintro ⟨a, ha, rfl⟩
-    exact ⟨a, ha, rfl⟩
+  apply _root_.GlobalTheory.RowLev.PrimeIdem.extId_eq_map <;> assumption
 
 private theorem isCoprime_map_of_ne {R S : Type*} [CommRing R] [IsDedekindDomain R] [CommRing S]
     (f : R →+* S) {u v : HeightOneSpectrum R} (huv : u ≠ v) :
@@ -1004,8 +996,8 @@ theorem exists_idem_intAd (x : intAd F) : ∃ μ : intAd F, (μ * x) * (μ * x) 
       rwa [HeightOneSpectrum.mem_adicCompletionIntegers] at this
     show Valued.v ((1 - ((μ * x : intAd F) : Af F) v) * (x : Af F) v * (y : Af F) v + 1) = 1
     by_cases h : Valued.v ((x : Af F) v) = 1
-    · rw [hprod v, if_pos h, sub_self, zero_mul, zero_mul, zero_add, map_one]
-    · rw [hprod v, if_neg h, sub_zero, one_mul, add_comm]
+    · rw [hprod v, ite_eq_left h, sub_self, zero_mul, zero_mul, zero_add, map_one]
+    · rw [hprod v, ite_eq_right h, sub_zero, one_mul, add_comm]
       apply Valuation.map_one_add_of_lt
       rw [map_mul]
       calc Valued.v ((x : Af F) v) * Valued.v ((y : Af F) v) ≤ Valued.v ((x : Af F) v) * 1 :=
@@ -1127,14 +1119,7 @@ theorem psi_mem_map_iff (𝔞 : Ideal (𝓞 E)) (h : 𝔞 ≠ ⊥) (a : 𝓞 E) 
 end
 
 theorem extId_eq_map (I : AutInst) (𝔞 : Ideal (𝓞 I.E)) : extId I 𝔞 = 𝔞.map (psi I.F I.E) := by
-  unfold extId Ideal.map
-  congr 1
-  ext z
-  constructor
-  · rintro ⟨a, ha, hz⟩
-    exact ⟨a, ha, (Subtype.ext hz).symm⟩
-  · rintro ⟨a, ha, rfl⟩
-    exact ⟨a, ha, rfl⟩
+  apply _root_.GlobalTheory.RowLev.PrimeIdem.extId_eq_map <;> assumption
 
 theorem extId_principal_and_inter : ∀ (I : AutInst) (𝔞 : Ideal (𝓞 I.E)), 𝔞 ≠ ⊥ → (∃ t : IntAf I.F I.E, IsUnit (t : (I.E ⊗[I.F] Af I.F)) ∧ extId I 𝔞 = Ideal.span {t}) ∧ ∀ (a : 𝓞 I.E) (h : Formalism.UG.inclE (F := I.F) (Af I.F) (a : I.E) ∈ IntAf I.F I.E), (⟨_, h⟩ : IntAf I.F I.E) ∈ extId I 𝔞 ↔ a ∈ 𝔞 := by
   intro I 𝔞 h𝔞

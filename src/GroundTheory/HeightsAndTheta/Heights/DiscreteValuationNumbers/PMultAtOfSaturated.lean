@@ -24,7 +24,7 @@ theorem localizedQuot_map_bijective_of_saturated (J Q : Ideal A) [Q.IsPrime] (hJ
     (hsat : ∀ q ∈ Q, ∃ s ∉ Q, s * q ∈ J) :
     Function.Bijective (LocalizedModule.map Q.primeCompl
       (Submodule.mapQ J Q LinearMap.id (fun _ ha => hJQ ha) : (A ⧸ J) →ₗ[A] A ⧸ Q)) := by
-  refine ⟨?_, LocalizedModule.map_surjective _ _ ?_⟩
+  refine ⟨?_, LocalizedModule.map_surjective _ _ (Submodule.factor_surjective hJQ)⟩
   · rw [← LinearMap.ker_eq_bot, eq_bot_iff]
     intro x hx
     induction x using LocalizedModule.induction_on with | h m s => ?_
@@ -37,9 +37,6 @@ theorem localizedQuot_map_bijective_of_saturated (J Q : Ideal A) [Q.IsPrime] (hJ
     rw [smul_zero, smul_zero, one_smul, Submonoid.smul_def, Algebra.smul_def,
       Ideal.Quotient.algebraMap_eq, ← map_mul, Ideal.Quotient.eq_zero_iff_mem]
     exact hta
-  · intro z
-    obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective z
-    exact ⟨Ideal.Quotient.mk J a, rfl⟩
 
 end General
 

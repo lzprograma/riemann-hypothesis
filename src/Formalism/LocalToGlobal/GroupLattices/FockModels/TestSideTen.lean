@@ -25,7 +25,7 @@ theorem prodBasis (V : S → Submodule Kf (MvPolynomial (Fin k × Fin n) Kf)) {I
     ∃ x : Module.Basis (∀ s, I s) Kf (tensorLat Kf Kf V),
       ∀ i, ((x i : tensorLat Kf Kf V) : MvPolynomial (S × (Fin k × Fin n)) Kf) =
         ∏ s, blockEmb Kf s ((b s (i s) : V s) : MvPolynomial (Fin k × Fin n) Kf) := by
-  have hKK : IsFractionRing Kf Kf := jr_KK Kf
+  have hKK : IsFractionRing Kf Kf := instIsFractionRing (R := Kf)
   have hLI : ∀ s, LinearIndependent Kf (fun i => ((b s i : V s) : MvPolynomial (Fin k × Fin n) Kf)) :=
     fun s => (b s).linearIndependent.map' (V s).subtype (Submodule.ker_subtype _)
   have hsp : ∀ s, Submodule.span Kf

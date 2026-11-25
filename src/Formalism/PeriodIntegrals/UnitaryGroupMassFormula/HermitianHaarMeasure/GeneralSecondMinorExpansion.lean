@@ -2,54 +2,9 @@ module
 
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.SumFourCommVersion
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.Development
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -108,18 +63,6 @@ theorem chatAlina {A : Type*} [Ring A] [Algebra ℂ A] {m : ℕ} (E : Fin m → 
   congr 1
   ring
 
-theorem vecMulSingle {m : ℕ} (P : Matrix (Fin m) (Fin m) ℂ) (l l' : Fin m) :
-    (Pi.single l (1 : ℂ) ᵥ* P) l' = P l l' := by
-  first
-    | (show ∑ j, (Pi.single l (1 : ℂ) : Fin m → ℂ) j * P j l' = P l l'
-       simp [Pi.single_apply])
-
-theorem mulVecSingle {m : ℕ} (Q : Matrix (Fin m) (Fin m) ℂ) (p p' : Fin m) :
-    (Q *ᵥ Pi.single p (1 : ℂ)) p' = Q p' p := by
-  first
-    | (show ∑ j, Q p' j * (Pi.single p (1 : ℂ) : Fin m → ℂ) j = Q p' p
-       simp [Pi.single_apply])
-
 theorem pull1 {A : Type*} [AddCommMonoid A] {m : ℕ} (g : Fin m → Fin m → Fin m → A) :
     ∑ a, ∑ b, ∑ c, g a b c = ∑ c, ∑ a, ∑ b, g a b c := by
   calc ∑ a, ∑ b, ∑ c, g a b c = ∑ a, ∑ c, ∑ b, g a b c :=
@@ -164,7 +107,7 @@ theorem general_second_minor_expansion {A : Type*} [Ring A] [Algebra ℂ A] {m :
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun i' _ =>
     Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun j' _ => ?_
   by_cases h : i < i' ∧ j < j'
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     rw [sumSingle W β' i i', sumSingle V a' j j', sum_mul_sum_mul_eq_sum_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [Finset.smul_sum]
@@ -172,7 +115,7 @@ theorem general_second_minor_expansion {A : Type*} [Ring A] [Algebra ℂ A] {m :
     simp only [smul_mul_assoc, mul_smul_comm, smul_smul]
     congr 1
     ring
-  · simp only [if_neg h, Finset.sum_const_zero]
+  · simp only [ite_eq_right h, Finset.sum_const_zero]
 
 theorem transfer_entry_one_one {A : Type*} [Ring A] [Algebra ℂ A] {m : ℕ} (E : Fin m → Fin m → A) (Y Yb : Fin m → A)
     (x xb : Fin m → ℂ) (u : ℂ) :
@@ -198,12 +141,12 @@ theorem chat2Alin {A : Type*} [Ring A] [Algebra ℂ A] {m : ℕ} (E : Fin m → 
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun i' _ =>
     Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun j' _ => ?_
   by_cases h : i < i' ∧ j < j'
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     simp only [← Finset.sum_smul]
     congr 1
     rw [sub_mul_eq_sum_single_sub_mul β β' i i', sub_mul_eq_sum_single_sub_mul a a' j j', mul_sum_mul_sum_eq_sum_sum]
     exact Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun p _ => by ring
-  · simp only [if_neg h, Finset.sum_const_zero]
+  · simp only [ite_eq_right h, Finset.sum_const_zero]
 
 private alias measurePreserving_swap4 := _root_.PI.QnHermHaar.sum_four_comm_version
 
@@ -218,7 +161,7 @@ theorem tATrans (hCC : ContractionsCovariant) {A : Type} [Ring A] [Algebra ℂ A
         ∑ l, P l' l • chatA (Econj E P Q) (u - 1) (Q *ᵥ x) (Pi.single l 1) := by
       intro l'
       rw [← (hCC A m E P Q hGl hQP hPQ (u - 1) x x (Pi.single l' 1) (Pi.single l' 1)).2.1, chatAlinβ]
-      try simp only [vecMulSingle]
+      simp only [single_one_vecMul, row_apply]
     rw [transfer_entry_zero_one, transfer_entry_zero_one]
     congr 1
     simp only [key, covC, Finset.mul_sum, Finset.sum_mul, mul_smul_comm, smul_mul_assoc]
@@ -228,7 +171,7 @@ theorem tATrans (hCC : ContractionsCovariant) {A : Type} [Ring A] [Algebra ℂ A
         ∑ p, Q p p' • chatA (Econj E P Q) u (Pi.single p 1) (xb ᵥ* P) := by
       intro p'
       rw [← (hCC A m E P Q hGl hQP hPQ u (Pi.single p' 1) (Pi.single p' 1) xb xb).2.1, chatAlina]
-      try simp only [mulVecSingle]
+      simp only [mulVec_single_one, col_apply]
     rw [transfer_entry_one_zero, transfer_entry_one_zero]
     congr 1
     simp only [key, vecC, Finset.mul_sum, Finset.sum_mul, mul_smul_comm, smul_mul_assoc]
@@ -239,7 +182,7 @@ theorem tATrans (hCC : ContractionsCovariant) {A : Type} [Ring A] [Algebra ℂ A
           chat2A (Econj E P Q) (u - 1) (Pi.single p 1) (Q *ᵥ x) (Pi.single l 1) (xb ᵥ* P) := by
       intro l' p'
       rw [← (hCC A m E P Q hGl hQP hPQ (u - 1) (Pi.single p' 1) x (Pi.single l' 1) xb).2.2, chat2Alin]
-      try simp only [vecMulSingle, mulVecSingle]
+      simp only [single_one_vecMul, row_apply, mulVec_single_one, col_apply]
     rw [transfer_entry_one_one, transfer_entry_one_one]
     congr 1
     simp only [key, covC, vecC, Finset.mul_sum, Finset.sum_mul]

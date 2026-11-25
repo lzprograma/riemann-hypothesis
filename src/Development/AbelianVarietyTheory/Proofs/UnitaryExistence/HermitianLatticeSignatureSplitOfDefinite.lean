@@ -91,19 +91,6 @@ theorem _root_.GlobalTheory.PureTypeModel.exists_isTypeFn (H : _root_.Reciprocit
   · rw [hcard]
     simp [n, h]
 
-section Linear
-
-variable {D : Datum H} {g : ℕ} {ty : Fin g → (E →+* ℂ)} {Pe : D.La →+ (Fin g → ℂ)} (hP : IsPeriod D ty Pe)
-
-end Linear
-
-section Mixed
-
-open HostModel PeriodNonempty
-open scoped TensorProduct
-
-end Mixed
-
 end GlobalTheory.PureTypeModel
 end -- clump:auto
 end -- clump:auto

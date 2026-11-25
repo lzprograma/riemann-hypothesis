@@ -12,48 +12,7 @@ public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProo
 import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.SecondPropositionEveryLocalisation
 import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
 import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Monotonicity.Lemmas
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -72,30 +31,9 @@ variable {D : D7} {L : SizeData₂ D} (X : G.Inst D L) (K : G.Consts) (Cr C bo :
 open NumberField in
 theorem pa_int_dvd_of_mem_span {E : Type*} [Field E] [NumberField E] (N a : ℤ)
     (h : (a : 𝓞 E) ∈ Ideal.span {(N : 𝓞 E)}) : N ∣ a := by
-  obtain ⟨z, hz⟩ := Ideal.mem_span_singleton'.1 h
-  by_cases hN : N = 0
-  · subst hN
-    simp only [Int.cast_zero, mul_zero] at hz
-    have : a = 0 := by exact_mod_cast hz.symm
-    simp [this]
-  have hNE : (N : E) ≠ 0 := by exact_mod_cast hN
-  have hzE' : (z : E) * (N : E) = (a : E) := by
-    have := congrArg (fun t : 𝓞 E => (t : E)) hz
-    simpa using this
-  have hzE : (z : E) = algebraMap ℚ E ((a : ℚ) / N) := by
-    rw [map_div₀, eq_div_iff (by simpa using hNE)]
-    simpa using hzE'
-  have hint : IsIntegral ℤ ((a : ℚ) / N) := by
-    have : IsIntegral ℤ (z : E) := RingOfIntegers.isIntegral_coe z
-    rw [hzE] at this
-    exact (isIntegral_algebraMap_iff ).1 this
-  obtain ⟨m, hm⟩ := IsIntegrallyClosed.isIntegral_iff.1 hint
-  refine ⟨m, ?_⟩
-  have hNQ : (N : ℚ) ≠ 0 := by exact_mod_cast hN
-  have : (a : ℚ) = N * m := by
-    have h2 : (m : ℚ) = (a : ℚ) / N := by simpa using hm
-    rw [h2]; field_simp
-  exact_mod_cast this
+  rwa [← Ideal.mem_span_singleton,
+    ← Ideal.comap_map_eq_self_of_faithfullyFlat (B := 𝓞 E) (Ideal.span {N}),
+    Ideal.mem_comap, Ideal.map_span, Set.image_singleton]
 
 
 open NumberField in
@@ -166,8 +104,8 @@ theorem sum_places (S : Finset D.what₂.places.Pl) (Q : Finset ℕ) (h : ℕ �
     rw [Finset.sum_filter]
     refine Finset.sum_congr rfl fun w hw => ?_
     by_cases hq : D.what₂.places.resChar w ∈ Q
-    · rw [if_pos hq]
-    · rw [if_neg hq, hout w hw hq, mul_zero]
+    · rw [ite_eq_left hq]
+    · rw [ite_eq_right hq, hout w hw hq, mul_zero]
   rw [h1, ← Finset.sum_fiberwise_of_maps_to (g := D.what₂.places.resChar) (t := Q)
     (fun w hw => (Finset.mem_filter.1 hw).2)]
   refine Finset.sum_congr rfl fun p hp => ?_
@@ -197,11 +135,11 @@ theorem pa_Xp_le_Xpp (s : Scale) (n : ℕ) (hn : (1 : ℝ) ≤ n) : s.X' ≤ s.X
 
 theorem pa_VV_empty (a b : G.HH D → ℤ) (p : ℕ) (h : ¬ G.Cand D L K p) : G.VV X K a b p = ∅ := by
   unfold G.VV
-  rw [if_neg (fun hh => h hh.1)]
+  rw [ite_eq_right (fun hh => h hh.1)]
 
 theorem tauP_eq_zero_of_not_cand (a b : G.HH D → ℤ) (p : ℕ) (h : ¬ G.Cand D L K p) : G.tauP X K a b p = 0 := by
   unfold G.tauP
-  rw [if_pos (pa_VV_empty X K a b p h)]
+  rw [ite_eq_left (pa_VV_empty X K a b p h)]
 
 theorem ioP_eq_zero_of_not_cand₂ (a b : G.HH D → ℤ) (p : ℕ) (h : ¬ G.Cand D L K p) : G.ioP X K a b p = 0 := by
   unfold G.ioP
@@ -242,15 +180,15 @@ theorem pa_entry (H : PtH X K Cr) (w : D.what₂.places.Pl) (hw : w ∈ L.supp) 
           G.tauP X K (G.aL L) (G.bL L) (D.what₂.places.resChar w) else 0) := by
   obtain ⟨-, -, -, f4, f5, -, -⟩ := H.fills w
   by_cases hI : InertK D (D.what₂.places.resChar w)
-  · rw [if_pos hI, f5]
+  · rw [ite_eq_left hI, f5]
     congr 1
     refine Finset.sum_congr rfl fun j hj => ?_
     unfold SizeData₂.gainD gainQ
     by_cases hd : D.what₂.places.resChar w ∈ L.drop
-    · rw [if_pos hd, if_pos hd]
-    · rw [if_neg hd, if_neg hd]
+    · rw [ite_eq_left hd, ite_eq_left hd]
+    · rw [ite_eq_right hd, ite_eq_right hd]
       exact f4 hw (Or.symm hI) j hj
-  · rw [if_neg hI]
+  · rw [ite_eq_right hI]
     have hn := L.not_inert w (fun h => hI (Or.inl h)) (fun h => hI (Or.inr h))
     rw [hn.2.1, sub_zero]
     refine Finset.sum_eq_zero fun j _ => ?_
@@ -278,12 +216,12 @@ theorem Ga_at (H : PtH X K Cr) : (ldAt X K C bo).Ga (SizeData₂.lifts D) = L.Ga
     (fun p hp w hw => H.supp_sat w (by rw [hw]; exact (Finset.mem_filter.1 hp).2))
     (fun w _ hq => by
       by_cases hI : InertK D (D.what₂.places.resChar w)
-      · simp only [hh, if_pos hI]
+      · simp only [hh, ite_eq_left hI]
         apply habove
         by_contra hle
         rw [not_lt] at hle
         exact hq (Finset.mem_filter.2 ⟨pa_mem_PsAt.2 ⟨pa_lt_bndP hle, D.what₂.places.resChar_prime w, hI⟩, hle⟩)
-      · simp only [hh, if_neg hI])
+      · simp only [hh, ite_eq_right hI])
   rw [e1, e2]
   show GaW (PsAt L) (SizeData₂.lifts D) (fun p => Real.log p) (gainQ X K) (G.tauP X K (G.aL L) (G.bL L)) = _
   unfold GaW
@@ -292,9 +230,9 @@ theorem Ga_at (H : PtH X K Cr) : (ldAt X K C bo).Ga (SizeData₂.lifts D) = L.Ga
   refine Finset.sum_congr rfl fun p hp => ?_
   have hI := (pa_mem_PsAt.1 hp).2.2
   by_cases hle : (p : ℝ) ≤ L.sc.X'' D.R.n
-  · rw [if_pos hle]
-    simp only [hh, if_pos hI]
-  · rw [if_neg hle, habove p (not_le.1 hle), mul_zero]
+  · rw [ite_eq_left hle]
+    simp only [hh, ite_eq_left hI]
+  · rw [ite_eq_right hle, habove p (not_le.1 hle), mul_zero]
 
 theorem pa_mem_sAt {p : ℕ} : p ∈ sAt L K ↔ G.Cand D L K p := by
   classical
@@ -340,7 +278,7 @@ theorem pb_cast (t : D.host.TT) : D.R.ofNat (t : D.R.A).val = (t : D.R.A) :=
 
 theorem pb_aL (t : D.host.TT) : G.aL L (t : D.R.A) = L.aT t := by
   unfold G.aL
-  rw [dif_pos t.2]
+  rw [dite_eq_left t.2]
 
 theorem pb_sum_TTv (F : ℕ → ℝ) : ∑ n ∈ TTv D, F n = ∑ t : D.host.TT, F (t : D.R.A).val := by
   unfold TTv
@@ -358,20 +296,20 @@ theorem ask_at (H : PtH X K Cr) (j : ℕ) (_hj : j ∈ SizeData₂.lifts D) (t :
   rw [Finset.sum_filter]
   refine Finset.sum_congr rfl (fun i _ => ?_)
   by_cases hi : Odd i
-  · rw [if_pos hi, if_pos hi, f2 j t i, max_comm]
-  · rw [if_neg hi, if_neg hi]
+  · rw [ite_eq_left hi, ite_eq_left hi, f2 j t i, max_comm]
+  · rw [ite_eq_right hi, ite_eq_right hi]
 
 theorem pb_ask_zero (j : ℕ) (t : D.host.TT) (p : ℕ) (hp : (L.aT t).toNat < p) : L.vonMangoldtClassSum j t p = 0 := by
   unfold SizeData₂.vonMangoldtClassSum
   refine Finset.sum_eq_zero (fun i _ => ?_)
   by_cases hi : Odd i
-  · rw [if_pos hi]
+  · rw [ite_eq_left hi]
     have hlt : (L.aT t).toNat < p ^ i := lt_of_lt_of_le hp (Nat.le_self_pow (by have := hi.pos; omega) p)
     have := Lnk.term0 L t (L.wPart_ge j t p i) hlt
     rw [Nat.cast_pow] at this
     rw [max_comm]
     exact this
-  · rw [if_neg hi]
+  · rw [ite_eq_right hi]
 
 theorem pb_toNat_lt (t : D.host.TT) : (L.aT t).toNat < bndP L := by
   unfold bndP
@@ -420,10 +358,10 @@ theorem pb_atD (H : PtH X K Cr) (j : ℕ) (hj : j ∈ SizeData₂.lifts D) (t : 
   simp only [ldAt, pb_cast, pb_aL]
   rw [tsum_eq_sum (s := Finset.Icc 1 (Nat.log D.host.d (L.aT t).toNat + 1))]
   · refine Finset.sum_congr rfl (fun i hi => ?_)
-    rw [if_pos (Finset.mem_Icc.mp hi).1]
+    rw [ite_eq_left (Finset.mem_Icc.mp hi).1]
   · intro i hi
     by_cases hc : 1 ≤ i
-    · rw [if_pos hc]
+    · rw [ite_eq_left hc]
       have hi' : Nat.log D.host.d (L.aT t).toNat + 2 ≤ i := by
         by_contra hcon
         exact hi (Finset.mem_Icc.mpr ⟨hc, by omega⟩)
@@ -433,7 +371,7 @@ theorem pb_atD (H : PtH X K Cr) (j : ℕ) (hj : j ∈ SizeData₂.lifts D) (t : 
       have hg : gD D i ∉ D.R.Psi := fun h => (gD_spec D i).2 ((inPhi_iff D _).2 h)
       have := Lnk.term0 L t (Lnk.one_le_wAt L H.numN j hj'.1 hj'.2 _ (rho_mem D (t : D.R.A) hg)) hlt
       rwa [Nat.cast_pow] at this
-    · rw [if_neg hc]
+    · rw [ite_eq_right hc]
 
 theorem ASK_at (H : PtH X K Cr) :
     (ldAt X K C bo).ASK D.host.d (PsAt L) (SizeData₂.lifts D) (TTv D) = LocalQuadraticParts.ASK L := by
@@ -593,10 +531,10 @@ theorem pc_served_iff (p : ℕ) : clAt X K p = PClass.served ↔ p ∉ L.drop :=
   constructor
   · intro h
     by_contra hc
-    rw [if_neg (not_not.2 hc)] at h
+    rw [ite_eq_right (not_not.2 hc)] at h
     split_ifs at h
   · intro h
-    rw [if_pos h]
+    rw [ite_eq_left h]
 
 variable {X K Cr}
 
@@ -636,7 +574,7 @@ theorem pc_VV_empty (p : ℕ) (h : NoGain X K Cr p) :
     G.VV X K (G.aL L) (G.bL L) p = ∅ := by
   classical
   unfold G.VV
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro ⟨hc, hs⟩
   obtain ⟨hpp, hpX, hc0, hord, hband⟩ := hc
   rcases h with ⟨-, -, h | h | h⟩ | h | h | h
@@ -662,9 +600,9 @@ theorem nonserved_zero (H : PtH X K Cr) (hT : ∀ u, ¬ InertK D (D.mem u).A.T) 
     exact h ((pc_served_iff X K p).2 hc)
   refine ⟨fun j => ?_, ?_⟩
   · unfold gainQ
-    rw [if_pos hd]
+    rw [ite_eq_left hd]
   · unfold G.tauP
-    rw [if_pos (pc_VV_empty X K Cr p ((pc_drop_iff H hT hp).1 hd))]
+    rw [ite_eq_left (pc_VV_empty X K Cr p ((pc_drop_iff H hT hp).1 hd))]
 
 theorem pc_cand (hK : K.Nonneg) (hCr : 1 ≤ Cr) (p : ℕ) (hpp : p.Prime) (hc0 : G.IsResidueClassZero D p) (hpX : (p : ℝ) < L.sc.X')
     (h : ¬ NoGain X K Cr p) :
@@ -703,7 +641,7 @@ theorem unserved_bad (H : PtH X K Cr) (hT : ∀ u, ¬ InertK D (D.mem u).A.T) (p
     intro hh
     apply ht2
     unfold G.TTP
-    rw [if_pos hh]
+    rw [ite_eq_left hh]
     exact ht
   have hc0 : G.IsResidueClassZero D p := by
     rcases hI with hs | hc
@@ -713,12 +651,12 @@ theorem unserved_bad (H : PtH X K Cr) (hT : ∀ u, ¬ InertK D (D.mem u).A.T) (p
   obtain ⟨hc, hs⟩ := pc_cand X K Cr H.Knn H.Cr1 p hpp hc0 hpX hnd
   have hVV : G.VV X K (G.aL L) (G.bL L) p = G.goodReps X p := by
     unfold G.VV
-    rw [if_pos ⟨hc, hs⟩]
+    rw [ite_eq_left ⟨hc, hs⟩]
   have ht3 : X.bs (G.stepP D p) t ∉ G.goodReps X p := by
     intro hh
     apply ht2
     unfold G.TTP
-    rw [if_neg hcase, Finset.mem_filter, hVV]
+    rw [ite_eq_right hcase, Finset.mem_filter, hVV]
     exact ⟨ht, hh⟩
   refine ⟨?_, ?_⟩
   · unfold largeOrderResiduePrimes
@@ -774,7 +712,7 @@ theorem loss_bound_at (H : PtH X K Cr) (hT : ∀ u, ¬ InertK D (D.mem u).A.T)
       refine Finset.sum_congr rfl (fun j hj => ?_)
       show gainQ X K j p = _
       unfold gainQ
-      rw [if_neg hnd, fg hws hI' j hj]
+      rw [ite_eq_right hnd, fg hws hI' j hj]
     have e3 : ((SizeData₂.lifts D).card : ℝ) = (D.R.m : ℝ) := by
       unfold SizeData₂.lifts
       rw [Nat.card_Icc]
@@ -969,7 +907,7 @@ theorem pd_aL (t : G.HH D) (ht : t ∈ D.host.TT) : G.aL L (D.R.ofNat t.val) = L
   have : D.R.ofNat t.val = t := D.R.toFrame.ofNat_val t
   rw [this]
   unfold G.aL
-  rw [dif_pos ht]
+  rw [dite_eq_left ht]
 
 theorem pd_at (tie : ParTie P L K C bo Cr) :
     ∀ t ∈ TTv D, 0 ≤ (ldAt X K C bo).at_ t ∧ (ldAt X K C bo).at_ t ≤ P.a * (1 + P.th) := by
@@ -994,10 +932,10 @@ theorem pd_fill (X : G.Inst D L) (j : ℕ) (z : Bool × G.HH D) : L.sc.w'' D.R.n
   by_cases htop : G.IsTopPl D z
   · have h1 := (X.off_top j z htop).1
     have h2 := pd_wpp_le_bx L
-    rw [if_pos (show z.1 = false ∧ z.2 ∈ D.host.TT from htop)]
+    rw [ite_eq_left (show z.1 = false ∧ z.2 ∈ D.host.TT from htop)]
     have h3 := pd_bL_nonneg (L := L) z.2
     linarith
-  · rw [if_neg (show ¬ (z.1 = false ∧ z.2 ∈ D.host.TT) from htop), zero_add]
+  · rw [ite_eq_right (show ¬ (z.1 = false ∧ z.2 ∈ D.host.TT) from htop), zero_add]
     by_cases hth : G.IsThickPl D z
     · exact le_trans (pd_wpp_le_b L) (X.off_thick j z hth).1
     · exact (X.off_thin j z ⟨htop, hth⟩).1
@@ -1070,13 +1008,13 @@ theorem pd_key (c0 lt0 ltX : Prop) [Decidable c0] [Decidable lt0] [Decidable ltX
   by_cases hX : ltX
   · by_cases hc : c0
     · by_cases h0 : lt0
-      · simp only [hX, hc, h0, if_true, and_self]; linarith
-      · simp only [hX, hc, h0, if_true, if_false, and_self]; linarith
+      · simp only [hX, hc, h0, ite_true, and_self]; linarith
+      · simp only [hX, hc, h0, ite_true, ite_false, and_self]; linarith
     · by_cases h0 : lt0
-      · simp only [hX, hc, h0, if_true, if_false, false_and]; linarith
-      · simp only [hX, hc, h0, if_true, if_false, false_and]; linarith
+      · simp only [hX, hc, h0, ite_true, ite_false, false_and]; linarith
+      · simp only [hX, hc, h0, ite_true, ite_false, false_and]; linarith
   · have h0 : ¬ lt0 := fun h => hX (hlt h)
-    simp only [hX, h0, if_false, and_false, ite_self, add_zero, le_refl]
+    simp only [hX, h0, ite_false, and_false, ite_self, add_zero, le_refl]
 
 theorem pd_lo (tie : ParTie P L K C bo Cr) (hbo : 0 ≤ bo) (hLa : 0 ≤ L.LaG) (hp0 : L.sc.p0 D.R.k ≤ L.sc.X') :
     ∀ p ∈ PsAt L, (ldAt X K C bo).lo p ≤
@@ -1120,13 +1058,13 @@ theorem pd_lo (tie : ParTie P L K C bo Cr) (hbo : 0 ≤ bo) (hLa : 0 ≤ L.LaG) 
     rw [tie.C, pd_lx tie, tie.La, pd_a tie, tie.k, hB]
     congr 2
     by_cases h : (p : ℝ) < L.sc.p0 D.R.k
-    · rw [if_pos h, if_pos ((hlt p).2 h)]; rfl
-    · rw [if_neg h, if_neg (fun h' => h ((hlt p).1 h'))]
+    · rw [ite_eq_left h, ite_eq_left ((hlt p).2 h)]; rfl
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h ((hlt p).1 h'))]
   have hpr : prF P.p₀ P.Q₁ P.Q₂ p = if (p : ℝ) < L.sc.p0 D.R.k then max C 0 * A1 else max C 0 * A2 + bo := by
     unfold prF
     by_cases h : (p : ℝ) < L.sc.p0 D.R.k
-    · rw [if_pos h, if_pos ((hlt p).2 h), hQ1]
-    · rw [if_neg h, if_neg (fun h' => h ((hlt p).1 h')), hQ2]
+    · rw [ite_eq_left h, ite_eq_left ((hlt p).2 h), hQ1]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h ((hlt p).1 h')), hQ2]
   have hcp : C * (L.Sc + D.R.k + L.etaSz) * Real.logb p (2 * L.sc.a) ≤ cpF P.C P.Sk P.a p := by
     unfold cpF
     rw [tie.C, pd_Sk tie, pd_a tie]
@@ -1633,7 +1571,7 @@ theorem unitRule_at : UnitRule (ldAt X K C bo).W (ldAt X K C bo).below (ldAt X K
   classical
   refine ⟨fun p hp => ?_, fun w _ _ => ⟨fun _ _ => rfl, rfl⟩, fun w hw hn => absurd hw hn⟩
   show ∑ w ∈ (PsAt L).filter (fun w => w = p), Real.log (w : ℝ) = Real.log p
-  rw [Finset.filter_eq', if_pos hp, Finset.sum_singleton]
+  rw [Finset.filter_eq', ite_eq_left hp, Finset.sum_singleton]
 
 theorem lossHyp_at (H : PtH X K Cr) (hG : LinkG_at X K C bo) (P : Par) (tie : ParTie P L K C bo Cr) (hbo : 0 ≤ bo)
     (hLa : 0 ≤ L.LaG) (hp0 : L.sc.p0 D.R.k ≤ L.sc.X') :

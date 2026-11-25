@@ -3,49 +3,7 @@ module
 public import Formalism.UnipotentAdelicQuotients.SWXSDefs
 public import GroundTheory.GlobalFields.Adele.Discrete
 public import GroundTheory.GlobalFields.IdeleGroups.InfiniteProjInfiniteEmbeddingOfNe
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.GroupTheory.ArchimedeanDensely
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.MatrixTransvectionDiagonalDecomposition
 import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThPr
 import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BaseOneSide.PsiSide
@@ -144,9 +102,9 @@ theorem exists_bound {D : Set (AF F)ˣ} (hD : IsCompact D) (S : Finset (HeightOn
     · have a : Valued.v (algebraMap F (Fv F v) t * (u : AF F).2 v) ≤ 1 := h2 v hv
       exact a.trans (le_max_right _ _)
   by_cases hvT : v ∈ T₀ ∪ S
-  · rw [if_pos hvT, hval]
+  · rw [ite_eq_left hvT, hval]
     exact mul_le_mul' hfirst (hB v u hu)
-  · rw [if_neg hvT, hval]
+  · rw [ite_eq_right hvT, hval]
     have hvS : v ∉ S := fun h => hvT (Finset.mem_union_right _ h)
     have hvT₀ : v ∉ T₀ := fun h => hvT (Finset.mem_union_left _ h)
     have a1 : Valued.v (algebraMap F (Fv F v) t * (u : AF F).2 v) ≤ 1 := h2 v hvS
@@ -192,7 +150,7 @@ theorem common_denominator (F : Type) [Field F] [NumberField F] (D : Set (AF F)�
   rw [coe_mem_adicCompletionIntegers_iff, map_mul]
   have ht := hA u hu t h1 h2 v
   by_cases hv : v ∈ T
-  · rw [if_pos hv] at ht
+  · rw [ite_eq_left hv] at ht
     obtain ⟨m, hm⟩ := Finset.dvd_prod_of_mem n hv
     have hN : v.valuation F (((∏ v ∈ T, n v : ℕ)) : F) ≤ v.valuation F (n v : F) := by
       rw [hm]
@@ -200,7 +158,7 @@ theorem common_denominator (F : Type) [Field F] [NumberField F] (D : Set (AF F)�
       rw [map_mul]
       simpa using mul_le_mul' (le_refl (v.valuation F (n v : F))) (valuation_natCast_le_one v m)
     exact (mul_le_mul' hN ht).trans (hn v)
-  · rw [if_neg hv] at ht
+  · rw [ite_eq_right hv] at ht
     simpa using mul_le_mul' (valuation_natCast_le_one v (∏ v ∈ T, n v)) ht
 
 end GlobalTheory.CompanionTheory.BasePsi.Den

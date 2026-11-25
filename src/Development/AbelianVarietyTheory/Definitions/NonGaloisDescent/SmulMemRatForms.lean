@@ -42,8 +42,6 @@ import Mathlib.Tactic.NormNum.RealSqrt
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.FWT Formalism.L2.Pj
@@ -54,8 +52,6 @@ set_option synthInstance.maxHeartbeats 400000
 set_option maxHeartbeats 800000
 
 namespace GlobalTheory.GeoTie
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 I0 T1 : Type}
   {A3 : FamIn3 D.what₂.LL Γ Pl0 I0 (List ℕ) T1 D.R.m} {T0 : CoreJ D} [Algebra T0.Q.c.F D.what₂.LL]
@@ -132,8 +128,6 @@ variable {i : D.ntw.Tw} (iC : FractionRing (D.ntw.O i) →+* ℂ_[D.ntw.l i]) (b
 
 def embC : T0.Q.c.F →+* ℂ_[D.ntw.l i] := iC.comp (sideK YS i b)
 
-def placeC : HeightOneSpectrum (𝓞 T0.Q.c.F) := placeAt (embC YS iC b)
-
 abbrev FrC (j : ℕ) : Type := FrPt (T0.Q.Xo j) T0.Q.c (PAt (embC YS iC b))
 
 abbrev Pts (j : ℕ) : Type := PtC (T0.Q.Xo j) T0.Q.c (embC YS iC b)
@@ -177,22 +171,6 @@ theorem valAt_smul (j : Fin D.R.m) (z : FrC YS iC b ((j : ℕ) + 1)) (a : Fracti
 def wtChar (κj : (D.host.E →+* ℂ) × ℕ → ℕ) (n : ℕ) {j : ℕ} {φ : T0.Q.c.F →+* ℂ_[D.ntw.l i]} (t : Ix (T0.Q.Dw j) → (PAt φ)ˣ) :
     ℂ_[D.ntw.l i] := toCp φ (wchar (ex (T0.Q.Dw j) κj n) t)
 
-theorem valAt_frBor (j : Fin D.R.m) {z z' : FrC YS iC b ((j : ℕ) + 1)} {t : Ix (T0.Q.Dw ((j : ℕ) + 1)) → (PAt (embC YS iC b))ˣ}
-    (h : FrBor t z z') (x : NX.Fm S i ((j : ℕ) + 1) b) :
-    valAt YS fw j z' x = wtChar (wtA (κ j)) (κ j).n t * valAt YS fw j z x := by
-  have hL := (GlobalTheory.Reg.evLaws_genFr_nonempty_comp _ _ _ _ (T0.Q.Xo ((j : ℕ) + 1)) T0.Q.c).1
-  have key : ∀ x : NX.KB S i b ⊗[S.Ks] NX.FmK S ((j : ℕ) + 1),
-      valAt YS fw j z' x = wtChar (wtA (κ j)) (κ j).n t * valAt YS fw j z x := fun x => by
-    induction x using TensorProduct.induction_on with
-    | zero => exact (map_zero _).trans ((congrArg _ (map_zero _)).trans (mul_zero _)).symm
-    | add x y hx hy => exact (map_add _ _ _).trans (by rw [hx, hy, ← mul_add]; exact congrArg _ (map_add _ _ _).symm)
-    | tmul a f =>
-      rw [valAt_tmul, valAt_tmul, valC, hL.wt _ _ _ (cuspOf_mem_sec YS fw j f) _ t z z' (hL.test _ _) (hL.test _ _) h, map_mul,
-        mul_left_comm]
-      rfl
-  exact key x
-
-
 variable (S) in
 def ratForms (j : ℕ) (b : Bool) (L : Subfield (FractionRing (D.ntw.O i))) : AddSubgroup (NX.Fm S i j b) :=
   AddSubgroup.closure {x | ∃ a ∈ L, ∃ f : NX.FmK S j, x = (show NX.KB S i b from a) ⊗ₜ[S.Ks] f}
@@ -227,14 +205,6 @@ theorem span_ratForms (j : ℕ) (L : Subfield (FractionRing (D.ntw.O i))) :
   exact key x
 
 variable (iC b) (j : Fin D.R.m)
-
-def urBall (B : ℝ) : Set (NX.Fm S i ((j : ℕ) + 1) b) :=
-  {x | x ∈ ratForms S _ b (kurAt YS iC b) ∧ ∀ z : Pts YS iC b ((j : ℕ) + 1), ‖valAt YS fw j z.1 x‖ ≤ B}
-
-def Detects : Prop :=
-  ∀ x : NX.Fm S i ((j : ℕ) + 1) b, (∀ z : Pts YS iC b ((j : ℕ) + 1), valAt YS fw j z.1 x = 0) → x = 0
-
-def SupDescent : Prop := NX.Bsup S i ((j : ℕ) + 1) b = Submodule.span (D.ntw.O i) (urBall YS fw iC b j 1)
 
 def HeckeIs (k : ℕ) (P : PlE D.host) (u : ℂ_[D.ntw.l i]) : Prop :=
   ∀ (z : Pts YS iC b ((j : ℕ) + 1)) (quot : HkKer P.asIdeal (charAt P) k z.1 → FrC YS iC b ((j : ℕ) + 1)),

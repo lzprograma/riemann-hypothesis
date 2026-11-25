@@ -9,6 +9,7 @@ public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentat
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CARUnit
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CsqDdPt
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.LowFock
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.SignedActionTensor
 
 @[expose] public section
 
@@ -26,15 +27,9 @@ variable {M : Type*} [AddCommGroup M] [Module ℂ M]
 
 theorem sgE_tensor (ε : Fin n → Bool) (a b : Fin n) :
     sgE ε (cpT (N := M) (n := n)) cmT a b = LinearMap.lTensor M (sgE ε cpFock cmFock a b) := by
-  unfold sgE
-  split_ifs
-  · apply TensorProduct.ext'
-    intro m f
-    simp [cpT, cmT, LinearMap.sum_apply, TensorProduct.tmul_sum]
-  · apply TensorProduct.ext'
-    intro m f
-    simp [cpT, cmT, LinearMap.sum_apply, TensorProduct.tmul_sum]
-  · simp
+  first
+    | exact _root_.ReciprocityTheory.ChartRestriction.DS.TRGap.signedAction_tensor
+    | apply _root_.ReciprocityTheory.ChartRestriction.DS.TRGap.signedAction_tensor <;> first | assumption | rfl | infer_instance
 
 theorem diagE_eT (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ M) :
     diagE ε (eT (n := n) E) cpT cmT = fun a b => (TensorProduct.map (E a b) LinearMap.id +
@@ -45,9 +40,7 @@ theorem diagE_eT (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ M
 
 theorem casimir_eT (E : Fin n → Fin n → Module.End ℂ M) :
     casimir (eT (n := n) E) = TensorProduct.map (casimir E) LinearMap.id := by
-  apply TensorProduct.ext'
-  intro m f
-  simp [casimir, eT, LinearMap.sum_apply, TensorProduct.sum_tmul]
+  exact ReciprocityTheory.ChartRestriction.DS.ssh_casimir_eT E
 
 theorem cfp_map_sub_smul_one (T : Module.End ℂ M) (c : ℂ) :
     TensorProduct.map (T - c • 1) (LinearMap.id : Fock n →ₗ[ℂ] Fock n) =

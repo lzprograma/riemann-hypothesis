@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemCompletedHomLatticeIffFrameStabiliserAction
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmulMtCutPartCompl
 public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SumProdPartialEqZero
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemGLintOfEntries
@@ -50,7 +51,6 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance
-attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
 
 
@@ -72,8 +72,8 @@ theorem cpt_idemSum {e : AE D} {P : Finset (Pl D.host.E)} (he : IsIdemSum e P) (
   rw [map_sum, map_sum]
   have h : ∀ PP ∈ P, cpt Q (toEAf D (es PP)) = if Q = PP then 1 else 0 := fun PP hP => by
     by_cases hq : Q = PP
-    · subst hq; rw [if_pos rfl]; exact (cpt_of_isIdemAt (hes _ hP)).1
-    · rw [if_neg hq]; exact (cpt_of_isIdemAt (hes PP hP)).2 Q hq
+    · subst hq; rw [ite_eq_left rfl]; exact (cpt_of_isIdemAt (hes _ hP)).1
+    · rw [ite_eq_right hq]; exact (cpt_of_isIdemAt (hes PP hP)).2 Q hq
   rw [Finset.sum_congr rfl h, Finset.sum_ite_eq]
 
 
@@ -89,15 +89,15 @@ theorem cpt_cA_idemSum (V : HSp D) {e : AE D} {P : Finset (Pl D.host.E)} (he : I
     have hi := hc PP (GlobalTheory.IdemSupport.cP PP) (es PP) (hes PP hP) ((GlobalTheory.IdemSupport.isConjPl_iff PP _).2 rfl)
     by_cases hq : GlobalTheory.IdemSupport.cP Q = PP
     · subst hq
-      rw [if_pos rfl, cP_cP] at *
+      rw [ite_eq_left rfl, cP_cP] at *
       exact (cpt_of_isIdemAt hi).1
-    · rw [if_neg hq]
+    · rw [ite_eq_right hq]
       exact (cpt_of_isIdemAt hi).2 Q fun h' => hq (by rw [h', cP_cP])
   rw [Finset.sum_congr rfl h, Finset.sum_ite_eq]
 
 theorem cpt_pair_zero (V : HSp D) {e : AE D} {P : Finset (Pl D.host.E)} (he : IsIdemSum e P) (Q : Pl D.host.E)
     (hQ : ∀ w ∈ P, Q.under (𝓞 D.host.F) ≠ w.under (𝓞 D.host.F)) : cpt Q (toEAf D (e + cA D e)) = 0 := by
-  rw [map_add (f := _), map_add (f := _), cpt_idemSum he, cpt_cA_idemSum V he, if_neg, if_neg, add_zero]
+  rw [map_add (f := _), map_add (f := _), cpt_idemSum he, cpt_cA_idemSum V he, ite_eq_right, ite_eq_right, add_zero]
   · exact fun h => hQ _ h (GlobalTheory.IdemSupport.under_cP Q).symm
   · exact fun h => hQ Q h rfl
 
@@ -109,10 +109,10 @@ theorem cpt_pair_one (V : HSp D) {e : AE D} {P : Finset (Pl D.host.E)} (he : IsI
   rw [map_add (f := _), map_add (f := _), cpt_idemSum he, cpt_cA_idemSum V he]
   obtain ⟨w, hw, hu⟩ := hQ
   rcases GlobalTheory.IdemSupport.eq_or_eq_cP hu with rfl | rfl
-  · rw [if_pos hw, one_mul] at h0
-    rw [if_pos hw, h0, add_zero]
-  · rw [cP_cP, if_pos hw, mul_one] at h0
-    rw [cP_cP, if_pos hw, h0, zero_add]
+  · rw [ite_eq_left hw, one_mul] at h0
+    rw [ite_eq_left hw, h0, add_zero]
+  · rw [cP_cP, ite_eq_left hw, mul_one] at h0
+    rw [cP_cP, ite_eq_left hw, h0, zero_add]
 
 end GlobalTheory.OffPartLattice
 
@@ -164,18 +164,8 @@ theorem inBasis_mix {n : ℕ} (β X Y : GL (Fin n) (Lev.EAf D)) (c : Lev.EAf D)
 theorem mulVec_mem_hatL_of_St {n : ℕ} {β : GL (Fin n) (Lev.EAf D)} {Λ : Submodule (𝓞 D.host.E) (Fin n → D.host.E)}
     (hβ : IsFrame β Λ) {x : GL (Fin n) (Lev.EAf D)} (hx : x ∈ St β) (v : Fin n → Lev.EAf D)
     (hv : v ∈ Formalism.L2.Herm.hatL (F := D.host.F) Λ) : x.val *ᵥ v ∈ Formalism.L2.Herm.hatL (F := D.host.F) Λ := by
-  obtain ⟨y, rfl⟩ := hx
-  rw [hβ] at hv ⊢
-  intro i
-  have e0 : β⁻¹ * frGL β y = intGL D.host.F D.host.E n y * β⁻¹ := by
-    simp only [frGL, MonoidHom.coe_comp, MulEquiv.coe_toMonoidHom, Function.comp_apply, MulAut.conj_apply]
-    group
-  have e : ((β⁻¹ : GL (Fin n) (Lev.EAf D)) : Matrix (Fin n) (Fin n) (Lev.EAf D)) * (frGL β y).val =
-      (intGL D.host.F D.host.E n y).val * (β⁻¹ : GL (Fin n) (Lev.EAf D)).val := by
-    rw [← Units.val_mul, e0, Units.val_mul]
-  rw [Matrix.mulVec_mulVec, e, ← Matrix.mulVec_mulVec]
-  simp only [Matrix.mulVec, dotProduct]
-  exact Subring.sum_mem _ fun k _ => Subring.mul_mem _ (y.val i k).2 (hv k)
+  intros
+  apply _root_.GlobalTheory.LatStab.mulVec_mem_of_mem_St <;> assumption
 
 theorem actO_mem_latO_of (S T : HSp D) (g : GA D S) (h : GA D T)
     (ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)) (ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E))
@@ -227,7 +217,7 @@ theorem finE_cut_mem_St (V : HSp D) (β Uf K : GL (Fin V.rank) (Lev.EAf D)) (g :
   by_cases hQ : ∃ w ∈ P, Q.under (𝓞 D.host.F) = w.under (𝓞 D.host.F)
   · rw [hm.1 (by simp only [map_sub, map_one, cpt_pair_one V he Q hQ, sub_self])]
     exact one_mem _
-  · push_neg at hQ
+  · push Not at hQ
     rw [hm.2 (by simp only [map_sub, map_one, cpt_pair_zero V he Q hQ, sub_zero])]
     have e1 : (Uf⁻¹ * β)⁻¹ * (Uf⁻¹ * K * Uf) * (Uf⁻¹ * β) = β⁻¹ * K * β := by group
     have e2 : inBasis rfl (Uf⁻¹ * β) Q (Lev.finE V g) = inBasis rfl β Q K := by

@@ -6,46 +6,9 @@ public import Mathlib.RingTheory.AdicCompletion.Noetherian
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.DecZhat
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CupProductCoboundaryMod
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
 import Mathlib.FieldTheory.Galois.Profinite
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFrobeniusPowInvMulMemOpenSubgroup, Development.AbelianVarietyTheory.Proofs.FoundationProofs.OpenSubgroupCochainInvariance, Development.AbelianVarietyTheory.Proofs.FoundationProofs.TwoCocycleModPowCoboundaryOfFrobeniusSplit, Development.AbelianVarietyTheory.Proofs.FoundationProofs.CupProductUnramifiedClassesVanishes
@@ -298,9 +261,6 @@ theorem natMul_memJ (n q : ℕ) {y : Qbar l} (hy : ‖y‖ ≤ 1) : ((l ^ n * q 
   calc _ ≤ ‖((l : ℕ) : Qbar l) ^ n‖ * 1 * 1 := by gcongr
     _ = _ := by ring
 
-theorem eps_mul' (s t : G ℚ Ω) : eps l (s * t) = eps l s * eps l t := by
-  simp [eps, map_mul]
-
 theorem eps_pow' (s : G ℚ Ω) (i : ℕ) : eps l (s ^ i) = eps l s ^ i := by
   simp [eps, map_pow]
 
@@ -430,7 +390,7 @@ theorem twoCocycleModPow_coboundary_of_frobenius_split (l : ℕ) [Fact l.Prime] 
     set a := k s' with ha
     set b := k t' with hb
     have hst : s * t ∈ D := D.mul_mem hs ht
-    simp only [dif_pos hs, dif_pos ht, dif_pos hst]
+    simp only [dite_eq_left hs, dite_eq_left ht, dite_eq_left hst]
     have hk : k ⟨s * t, hst⟩ = (a + b) % (m * l ^ n) := by
       show (Multiplicative.toAdd (d (s' * t'))).val = _
       rw [map_mul, toAdd_mul, ZMod.val_add]
@@ -453,7 +413,7 @@ theorem twoCocycleModPow_coboundary_of_frobenius_split (l : ℕ) [Fact l.Prime] 
       exact mul_le_one₀ (pow_le_one₀ (norm_nonneg _) (CupCob.norm_le_one_of_mem c (CupCob.eps_mem c g)))
         (norm_nonneg _) (CupCob.norm_le_one_of_mem c (Tr_mem c ξ g hint b))
     have em := mul_memJ hn1 he
-    have eeps : eps l s = eps l g ^ a * eps l κ1 := by rw [← es, eps_mul', eps_pow']
+    have eeps : eps l s = eps l g ^ a * eps l κ1 := by rw [← es, GlobalTheory.Ord2.OpenInv.eps_mul, eps_pow']
     rw [eeps]
     have e : ξ s t - (eps l g ^ a * eps l κ1 * T b - T ((a + b) % (m * l ^ n)) + T a) =
         (ξ s t - ξ (g ^ a) t) + (ξ (g ^ a) t - ξ (g ^ a) (g ^ b)) +

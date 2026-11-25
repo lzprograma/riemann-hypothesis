@@ -151,8 +151,8 @@ theorem jetRel_equivariant : ∀ (V W : Type) [NormedAddCommGroup V] [InnerProdu
       ((sum_update_first_index_swap i c d (fun α β => B (List.ofFn α).reverse y (G β))).trans ?_)
     refine Finset.sum_congr rfl fun β _ => ?_
     by_cases h : (β i).1 = d
-    · rw [if_pos h, if_pos h.symm]
-    · rw [if_neg h, if_neg (Ne.symm h)]
+    · rw [ite_eq_left h, ite_eq_left h.symm]
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
   · exact ((Finset.sum_congr rfl fun α _ =>
       (apply_ite (B (List.ofFn α).reverse y) _ _ _).trans (by rw [map_zero]))).trans
       (sum_update_second_index_swap i c d (fun α β => B (List.ofFn α).reverse y (G β)))

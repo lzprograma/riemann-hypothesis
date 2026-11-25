@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.LevelLetterCocycles.NatCastEqZeroOfNotDvd
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import Mathlib.RingTheory.Valuation.Basic
 public import Mathlib.Algebra.Polynomial.AlgebraMap
@@ -12,56 +13,10 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifie
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.SaturationFractionModule
 public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TruncatedCoefficientPoly
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Algebra.Order.Star.Int
-import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LeValOneAddPowSub, Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.SmulEqZeroOfAevalProd, Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.StepIi, Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.CoefStepOf, Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.CoefStep, Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.StepOneGG, Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsLiftMapEqPrimePowSmul
@@ -84,11 +39,7 @@ theorem zero_lt_one' : (0 : WithTop ℚ) < 1 := by exact_mod_cast (zero_lt_one :
 theorem one_lt_two' : (1 : WithTop ℚ) < 1 + 1 := by exact_mod_cast (by norm_num : (1 : ℚ) < 1 + 1)
 
 theorem natCast_nonneg (n : ℕ) : 0 ≤ v (n : LL) := by
-  induction n with
-  | zero => rw [Nat.cast_zero, AddValuation.map_zero]; exact le_top
-  | succ n ih =>
-    rw [Nat.cast_succ]
-    exact AddValuation.map_le_add v ih (by rw [AddValuation.map_one])
+  apply _root_.Formalism.MainNotions.UnusedSlot80.LTE.natCast_nonneg <;> assumption
 
 theorem intCast_nonneg (z : ℤ) : 0 ≤ v (z : LL) := by
   obtain ⟨n, rfl | rfl⟩ := Int.eq_nat_or_neg z
@@ -354,28 +305,16 @@ open Polynomial
 private theorem prod_X_sub_C_dvd_of_eval_eq_zero_of_injOn {O : Type*} [CommRing O] [IsDomain O] (c : ℤ → O) :
     ∀ (s : Finset ℤ), Set.InjOn c (↑s : Set ℤ) → ∀ Q : O[X], (∀ k ∈ s, Q.eval (c k) = 0) →
       (∏ k ∈ s, (X - C (c k))) ∣ Q := by
-  intro s
-  induction s using Finset.induction_on with
-  | empty => intro _ Q _; simp
-  | @insert a s ha ih =>
-    intro hinj Q hQ
-    have hroot : Q.IsRoot (c a) := hQ a (Finset.mem_insert_self a s)
-    obtain ⟨Q', hQ'⟩ : (X - C (c a)) ∣ Q := by
-      first
-        | exact Polynomial.dvd_iff_isRoot.mpr hroot
-    have hinj' : Set.InjOn c (↑s : Set ℤ) :=
-      hinj.mono (Finset.coe_subset.mpr (Finset.subset_insert a s))
-    have hQ'0 : ∀ k ∈ s, Q'.eval (c k) = 0 := by
-      intro k hk
-      have h1 : Q.eval (c k) = 0 := hQ k (Finset.mem_insert_of_mem hk)
-      rw [hQ', eval_mul, eval_sub, eval_X, eval_C] at h1
-      have hne : c k - c a ≠ 0 := by
-        intro h
-        have hka : k = a := hinj (by simp [hk]) (by simp) (sub_eq_zero.mp h)
-        exact ha (hka ▸ hk)
-      exact (mul_eq_zero.mp h1).resolve_left hne
-    rw [Finset.prod_insert ha, hQ']
-    exact mul_dvd_mul_left _ (ih hinj' Q' hQ'0)
+  intro s hc Q hQ
+  obtain rfl | hne := eq_or_ne Q 0
+  · exact dvd_zero _
+  have hroots : s.val.map c ≤ Q.roots := by
+    refine (Multiset.le_iff_subset (s.nodup.map_on fun _ hx _ hy => hc hx hy)).2 ?_
+    intro x hx
+    obtain ⟨k, hk, rfl⟩ := Multiset.mem_map.mp hx
+    exact (Polynomial.mem_roots hne).2 (hQ k hk)
+  simpa only [Finset.prod, Multiset.map_map, Function.comp_def] using
+    (Multiset.prod_X_sub_C_dvd_iff_le_roots hne (s.val.map c)).2 hroots
 
 theorem smul_eq_zero_of_aeval_prod {O : Type*} [CommRing O] [IsDomain O] {V : Type*} [AddCommGroup V] [Module O V]
     (T : Module.End O V) (S₁ S₂ : Finset ℤ) (c : ℤ → O) (d : O) (x : V)
@@ -454,12 +393,10 @@ private theorem card_filter_dvd_sub_mul_le_Icc_length_add (q : ℤ) (hq : 0 < q)
     have hlt : q * (v - u) < q := by linarith
     have hgt : -q < q * (v - u) := by linarith
     have h1' : v - u < 1 := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       nlinarith
     have h2' : -1 < v - u := by
-      by_contra hc
-      push_neg at hc
+      by_contra! hc
       nlinarith
     have hvu : v = u := by omega
     subst hvu

@@ -144,7 +144,7 @@ theorem continuous_infGL : Continuous (infGL E n) := by
 theorem coord_embedding (w : InfinitePlace E) : coord w.embedding = Pi.evalRingHom (fun _ => ℂ) w := by
   have h := InfinitePlace.mk_embedding w
   unfold coord
-  rw [if_pos (by rw [h]), h]
+  rw [ite_eq_left (by rw [h]), h]
 
 theorem map_coord_of_evGL (τ : E →+* ℂ) {y : GL (Fin n) (Cinf E)} (h : evGL (InfinitePlace.mk τ) y = 1) :
     GeneralLinearGroup.map (coord τ) y = 1 := by

@@ -8,8 +8,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscrim
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
@@ -73,6 +71,52 @@ theorem germCompOne_identityPoint_left {n d : ℕ} (a : Pt k n d) (ha : ∀ i, c
   unfold comp1
   exact ev_X (![a] : Fin 1 → Pt k n d) (fun j i => by fin_cases j; exact ha i) 0 i
 
+theorem add_at {d : ℕ} (G : FGLaw k d) (ℓ : Pt k 1 d)
+    (hadd : comp1 ℓ (G.add (pt k (n := 2) d 0) (pt k (n := 2) d 1)) =
+      comp1 ℓ (pt k (n := 2) d 0) + comp1 ℓ (pt k (n := 2) d 1))
+    {n : ℕ} (u v : Pt k n d) (hu : ∀ i, constantCoeff (u i) = 0)
+    (hv : ∀ i, constantCoeff (v i) = 0) :
+    comp1 ℓ (addOf G.F u v) = comp1 ℓ u + comp1 ℓ v := by
+  funext i
+  have e : ev (n := 2) ![G.add (pt k d 0) (pt k d 1)] (ℓ i) =
+      ev (n := 2) ![pt k d 0] (ℓ i) + ev (n := 2) ![pt k d 1] (ℓ i) := congrFun hadd i
+  let b : Fin 2 → Pt k n d := ![u, v]
+  have hb : ∀ j i, constantCoeff (b j i) = 0 := by
+    intro j i
+    fin_cases j
+    · exact hu i
+    · exact hv i
+  have hadd0 : ∀ j i,
+      constantCoeff ((![G.add (pt k d 0) (pt k d 1)] : Fin 1 → Pt k 2 d) j i) = 0 := by
+    intro j i
+    fin_cases j
+    exact cc_ev _ (fun j i => by fin_cases j <;> exact cc_pt _ i) (G.const i)
+  have hp0 : ∀ (l : Fin 2) j i, constantCoeff ((![pt k d l] : Fin 1 → Pt k 2 d) j i) = 0 := by
+    intro l j i
+    fin_cases j
+    exact cc_pt l i
+  have e2 := congrArg (ev b) e
+  rw [ev_ev _ _ hadd0 hb, ev_add' _ hb, ev_ev _ _ (hp0 0) hb, ev_ev _ _ (hp0 1) hb] at e2
+  have L1 : (fun (j : Fin 1) (m : Fin d) =>
+      ev b ((![G.add (pt k d 0) (pt k d 1)] : Fin 1 → Pt k 2 d) j m)) = ![addOf G.F u v] := by
+    funext j m
+    fin_cases j
+    show ev b (ev ![pt k d 0, pt k d 1] (G.F m)) = ev b (G.F m)
+    rw [ev_ev _ _ (fun j i => by fin_cases j <;> exact cc_pt _ i) hb]
+    congr 1
+    funext j' m'
+    fin_cases j' <;> exact ev_X b hb _ m'
+  have L2 : (fun (j : Fin 1) (m : Fin d) => ev b ((![pt k d 0] : Fin 1 → Pt k 2 d) j m)) = ![u] := by
+    funext j m
+    fin_cases j
+    exact ev_X b hb 0 m
+  have L3 : (fun (j : Fin 1) (m : Fin d) => ev b ((![pt k d 1] : Fin 1 → Pt k 2 d) j m)) = ![v] := by
+    funext j m
+    fin_cases j
+    exact ev_X b hb 1 m
+  rw [L1, L2, L3] at e2
+  exact e2
+
 theorem formal_exp_law : ExpLawSt := by
   intro k _ _ d G ℓ h0 h1 hadd
   have hid := idMod2_of ℓ h0 h1
@@ -105,47 +149,13 @@ theorem formal_exp_law : ExpLawSt := by
     rw [subst_single_point_family]
     exact congrFun hinj (0, i)
   refine ⟨ε, ⟨hε0, h0, hεL, hLε⟩, ?_⟩
-  funext i
-  have e : ev (n := 2) ![G.add (pt k d 0) (pt k d 1)] (ℓ i) =
-      ev (n := 2) ![pt k d 0] (ℓ i) + ev (n := 2) ![pt k d 1] (ℓ i) := congrFun hadd i
-  let b : Fin 2 → Pt k 2 d := ![comp1 ε (pt k d 0), comp1 ε (pt k d 1)]
-  have hb : ∀ j i, constantCoeff (b j i) = 0 := by
-    intro j i
-    fin_cases j
-    · exact cc_comp1 ε _ hε0 (cc_pt 0) i
-    · exact cc_comp1 ε _ hε0 (cc_pt 1) i
-  have hadd0 : ∀ j i, constantCoeff ((![G.add (pt k d 0) (pt k d 1)] : Fin 1 → Pt k 2 d) j i) = 0 := by
-    intro j i
-    fin_cases j
-    exact cc_ev _ (fun j i => by fin_cases j <;> exact cc_pt _ i) (G.const i)
-  have hp0 : ∀ (l : Fin 2) j i, constantCoeff ((![pt k d l] : Fin 1 → Pt k 2 d) j i) = 0 := by
-    intro l j i
-    fin_cases j
-    exact cc_pt l i
-  have e2 := congrArg (ev b) e
-  rw [ev_ev _ _ hadd0 hb, ev_add' _ hb, ev_ev _ _ (hp0 0) hb, ev_ev _ _ (hp0 1) hb] at e2
-  have L1 : (fun (j : Fin 1) (m : Fin d) => ev b ((![G.add (pt k d 0) (pt k d 1)] : Fin 1 → Pt k 2 d) j m)) =
-      ![addOf G.F (comp1 ε (pt k d 0)) (comp1 ε (pt k d 1))] := by
-    funext j m
-    fin_cases j
-    show ev b (ev ![pt k d 0, pt k d 1] (G.F m)) = ev b (G.F m)
-    rw [ev_ev _ _ (fun j i => by fin_cases j <;> exact cc_pt _ i) hb]
-    congr 1
-    funext j' m'
-    fin_cases j' <;> exact ev_X b hb _ m'
-  have L2 : ∀ l : Fin 2, (fun (j : Fin 1) (m : Fin d) => ev b ((![pt k d l] : Fin 1 → Pt k 2 d) j m)) =
-      ![comp1 ε (pt k d l)] := by
-    intro l
-    funext j m
-    fin_cases j
-    fin_cases l <;> exact ev_X b hb _ m
-  have L3 : ∀ l : Fin 2, ev (n := 2) ![comp1 ε (pt k d l)] (ℓ i) = pt k d l i := by
-    intro l
-    have := congrFun (germComp1_germComp1_eq_substitute ℓ ε (pt k (n := 2) d l) hε0 (cc_pt l)) i
-    rw [hLε, germCompOne_identityPoint_left _ (cc_pt l)] at this
-    exact this
-  rw [L1, L2 0, L2 1, L3 0, L3 1] at e2
-  exact e2
+  have e := add_at G ℓ hadd (comp1 ε (pt k (n := 2) d 0)) (comp1 ε (pt k (n := 2) d 1))
+    (cc_comp1 ε _ hε0 (cc_pt 0)) (cc_comp1 ε _ hε0 (cc_pt 1))
+  rw [germComp1_germComp1_eq_substitute ℓ ε _ hε0 (cc_pt 0),
+    germComp1_germComp1_eq_substitute ℓ ε _ hε0 (cc_pt 1),
+    hLε, germCompOne_identityPoint_left _ (cc_pt 0),
+    germCompOne_identityPoint_left _ (cc_pt 1)] at e
+  exact e
 
 
 open Formalism.FG.SolveVAux in
@@ -179,7 +189,7 @@ theorem dLin_comp1 {d : ℕ} (φ ψ : Pt k 1 d) (hψ : ∀ i, constantCoeff (ψ 
         · have he0 : e = 0 := by
             have : e.degree = 0 := by omega
             exact (Finsupp.degree_eq_zero_iff e).1 this
-          rw [he0, Finsupp.prod_zero_index, coeff_one, if_neg]
+          rw [he0, Finsupp.prod_zero_index, coeff_one, ite_eq_right]
           exact Finsupp.single_ne_zero.2 one_ne_zero
         · obtain ⟨p, rfl⟩ := Formalism.FG.SolveVAux.degree_eq_one e (by omega)
           exact absurd (Finset.mem_coe.2 (Finset.mem_image_of_mem _ (Finset.mem_univ p))) hne
@@ -195,50 +205,5 @@ theorem composition_identity_point_right {d : ℕ} (φ : Pt k 1 d) : comp1 φ (p
   funext j
   fin_cases j
   rfl
-
-theorem add_at {d : ℕ} (G : FGLaw k d) (ℓ : Pt k 1 d)
-    (hadd : comp1 ℓ (G.add (pt k (n := 2) d 0) (pt k (n := 2) d 1)) =
-      comp1 ℓ (pt k (n := 2) d 0) + comp1 ℓ (pt k (n := 2) d 1))
-    {n : ℕ} (u v : Pt k n d) (hu : ∀ i, constantCoeff (u i) = 0) (hv : ∀ i, constantCoeff (v i) = 0) :
-    comp1 ℓ (addOf G.F u v) = comp1 ℓ u + comp1 ℓ v := by
-  funext i
-  have e : ev (n := 2) ![G.add (pt k d 0) (pt k d 1)] (ℓ i) =
-      ev (n := 2) ![pt k d 0] (ℓ i) + ev (n := 2) ![pt k d 1] (ℓ i) := congrFun hadd i
-  let b : Fin 2 → Pt k n d := ![u, v]
-  have hb : ∀ j i, constantCoeff (b j i) = 0 := by
-    intro j i
-    fin_cases j
-    · exact hu i
-    · exact hv i
-  have hadd0 : ∀ j i, constantCoeff ((![G.add (pt k d 0) (pt k d 1)] : Fin 1 → Pt k 2 d) j i) = 0 := by
-    intro j i
-    fin_cases j
-    exact cc_ev _ (fun j i => by fin_cases j <;> exact cc_pt _ i) (G.const i)
-  have hp0 : ∀ (l : Fin 2) j i, constantCoeff ((![pt k d l] : Fin 1 → Pt k 2 d) j i) = 0 := by
-    intro l j i
-    fin_cases j
-    exact cc_pt l i
-  have e2 := congrArg (ev b) e
-  rw [ev_ev _ _ hadd0 hb, ev_add' _ hb, ev_ev _ _ (hp0 0) hb, ev_ev _ _ (hp0 1) hb] at e2
-  have L1 : (fun (j : Fin 1) (m : Fin d) => ev b ((![G.add (pt k d 0) (pt k d 1)] : Fin 1 → Pt k 2 d) j m)) =
-      ![addOf G.F u v] := by
-    funext j m
-    fin_cases j
-    show ev b (ev ![pt k d 0, pt k d 1] (G.F m)) = ev b (G.F m)
-    rw [ev_ev _ _ (fun j i => by fin_cases j <;> exact cc_pt _ i) hb]
-    congr 1
-    funext j' m'
-    fin_cases j' <;> exact ev_X b hb _ m'
-  have L2 : (fun (j : Fin 1) (m : Fin d) => ev b ((![pt k d 0] : Fin 1 → Pt k 2 d) j m)) = ![u] := by
-    funext j m
-    fin_cases j
-    exact ev_X b hb 0 m
-  have L3 : (fun (j : Fin 1) (m : Fin d) => ev b ((![pt k d 1] : Fin 1 → Pt k 2 d) j m)) = ![v] := by
-    funext j m
-    fin_cases j
-    exact ev_X b hb 1 m
-  rw [L1, L2, L3] at e2
-  exact e2
-
 
 end ReciprocityTheory.ChartRestriction.G.TB.WickVanishing

@@ -135,7 +135,6 @@ def FormalDegreeFormula₂ : Prop :=
         fdegOf ((sc N ε : ENNReal) • Formalism.REAL.muG ε) σ w = Formalism.QuantumDeterminants.fdegHC lam
 
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar in
 theorem volTieG_iff (D : D7) : Formalism.L2.Theta.VolTieG D ↔
     ∀ W : HSpace D.host.E, W.SigOK → VolIs D.sp.cm (Formalism.BasicNotions.TH.tauE D) D.cd W (D.vol W) := Iff.rfl
 

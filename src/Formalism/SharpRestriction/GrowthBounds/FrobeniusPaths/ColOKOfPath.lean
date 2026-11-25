@@ -1,46 +1,7 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.ColStepFactor
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -109,9 +70,9 @@ lemma colOK_of_path [NeZero r] (LL : LiftLetters (Fin N)) (B : Fin N → ℕ) (h
     intro j h
     have hs := P.step ⟨j, h⟩
     by_cases hv : LL.vec ⟨j, h⟩ = true
-    · rw [if_pos hv] at hs
+    · rw [ite_eq_left hv] at hs
       exact Or.inl ⟨hv, colH_strip _ _ _ hs c⟩
-    · rw [if_neg hv] at hs
+    · rw [ite_eq_right hv] at hs
       exact Or.inr ⟨by simpa using hv, colH_strip _ _ _ hs c⟩
   have hz : P.mu ⟨0, by omega⟩ = 0 := P.zero
   refine ⟨fun j h hlt => ?_, fun j h hlt => ?_, fun hc => ?_, fun hc => ?_⟩
@@ -140,14 +101,7 @@ lemma colOK_of_path [NeZero r] (LL : LiftLetters (Fin N)) (B : Fin N → ℕ) (h
     omega
 
 lemma plane_card : (univ.filter fun a : Fin (r + K) => a.val < r).card = r := by
-  classical
-  rw [show (univ.filter fun a : Fin (r + K) => a.val < r) = (univ : Finset (Fin r)).image (Fin.castAdd K) from ?_,
-    Finset.card_image_of_injective _ (Fin.castAdd_injective r K), Finset.card_fin]
-  ext a
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_image]
-  constructor
-  · intro h; exact ⟨⟨a.val, h⟩, Fin.ext rfl⟩
-  · rintro ⟨b, rfl⟩; exact b.isLt
+  rw [Fin.card_filter_val_lt, min_eq_right (Nat.le_add_right r K)]
 
 lemma costly_iff (mu : Fin (N + 1) → Fin (r + K) → ℤ) (c : ℤ) (j : ℕ) (h : j < N) :
     IsCostly mu c ⟨j, h⟩ ↔
@@ -180,7 +134,7 @@ lemma SgW_supp {R : Type} [CommRing R] (LL : LiftLetters (Fin N)) (mu : Fin (N +
   | zero =>
     intro J hJ
     have : J = ∅ := by
-      by_contra hne; exact hJ (by simp only [SgW]; unfold extOne; rw [if_neg hne])
+      by_contra hne; exact hJ (by simp only [SgW]; unfold extOne; rw [ite_eq_right hne])
     subst this
     refine ⟨fun hc => ⟨by rw [H.start hc]; simp, fun hr a ha => ?_, by simp⟩, by simp⟩
     rw [H.start hc] at hr; omega
@@ -188,7 +142,7 @@ lemma SgW_supp {R : Type} [CommRing R] (LL : LiftLetters (Fin N)) (mu : Fin (N +
     intro J hJ
     have h : j < N := hj
     have ih' := ih (by omega)
-    simp only [SgW, dif_pos h] at hJ
+    simp only [SgW, dite_eq_left h] at hJ
     unfold colStep at hJ
     have hci := costly_iff mu c j h
     split_ifs at hJ with h1 h2 h3 h4

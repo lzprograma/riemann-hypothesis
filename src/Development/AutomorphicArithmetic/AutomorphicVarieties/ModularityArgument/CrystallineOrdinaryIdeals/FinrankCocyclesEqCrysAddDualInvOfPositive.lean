@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsNeOne
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
 import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PosBasic
@@ -60,23 +61,7 @@ theorem sandwich {E M : Type} [Field E] [AddCommGroup M] [Module E M] (B S Z : S
     (hQ : Module.Finite E ↥((S.comap Z.subtype).map (B.comap Z.subtype).mkQ)) :
     Module.Finite E S ∧
       finrank E S = finrank E ↥((S.comap Z.subtype).map (B.comap Z.subtype).mkQ) + finrank E B := by
-  let f : S →ₗ[E] (Z ⧸ B.comap Z.subtype) := (B.comap Z.subtype).mkQ ∘ₗ Submodule.inclusion hSZ
-  have hr : LinearMap.range f = (S.comap Z.subtype).map (B.comap Z.subtype).mkQ := by
-    rw [LinearMap.range_comp, Submodule.range_inclusion]
-  have hk : LinearMap.ker f = B.comap S.subtype := by
-    ext x
-    simp [f]
-  have eB := Submodule.comapSubtypeEquivOfLe hBS
-  have hkf : Module.Finite E ↥(LinearMap.ker f) := by
-    rw [hk]; exact Module.Finite.equiv eB.symm
-  have hrf : Module.Finite E ↥(LinearMap.range f) := by rw [hr]; exact hQ
-  have hS : Module.Finite E S := by
-    rw [Module.finite_def]
-    refine Submodule.fg_of_fg_map_of_fg_inf_ker f ?_ ?_
-    · rw [Submodule.map_top]; exact Module.Finite.iff_fg.1 hrf
-    · rw [top_inf_eq]; exact Module.Finite.iff_fg.1 hkf
-  refine ⟨hS, ?_⟩
-  rw [← LinearMap.finrank_range_add_finrank_ker f, hr, hk, eB.finrank_eq]
+  apply _root_.sandwich <;> assumption
 
 theorem top_image {E M : Type} [Field E] [AddCommGroup M] [Module E M] (B Z : Submodule E M) :
     (Z.comap Z.subtype).map (B.comap Z.subtype).mkQ = ⊤ := by
@@ -90,7 +75,7 @@ theorem GlobalTheory.cocycleDim_positive : LocalPublishedTheorems → ∀ {l : �
   haveI : FiniteDimensional E V := Module.Finite.of_restrictScalars_finite ℚ_[l] E V
   obtain ⟨hH0, -, hfinf, hdimf⟩ := posBasic hP φ hφ ρ hρ hpos
   obtain ⟨hf1, -, e1, e2⟩ := tateRat hP (v := l) (l := l) φ hφ ρ hρ
-  rw [if_pos rfl, hH0, finrank_bot, e2] at e1
+  rw [ite_eq_left rfl, hH0, finrank_bot, e2] at e1
   have hBf : Module.Finite E ↥(B1 ρ) := by
     unfold B1; infer_instance
   have hBS := (z1fMap (l := l) φ ρ ρ).1 hρ

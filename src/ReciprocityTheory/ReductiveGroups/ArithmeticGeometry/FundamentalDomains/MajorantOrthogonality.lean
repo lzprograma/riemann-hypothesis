@@ -104,7 +104,7 @@ lemma maj_ortho (X : Data E r) {x : Frame X.Ψ r} (hx : x ∈ X.dom) (ho : X.IsO
     unfold Data.posPart
     rw [hgp, inv_one]
     simp only [Matrix.one_apply, mul_ite, mul_one, mul_zero, ite_mul, zero_mul, Finset.sum_ite_eq,
-      Finset.mem_univ, if_true, Complex.re_sum]
+      Finset.mem_univ, ite_true, Complex.re_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [Complex.mul_conj, Complex.ofReal_re, Complex.normSq_eq_norm_sq, hpair]
     simp [ReciprocityTheory.MultiplicativeHeights.sgn]
@@ -123,7 +123,7 @@ lemma maj_ortho (X : Data E r) {x : Frame X.Ψ r} (hx : x ∈ X.dom) (ho : X.IsO
       ∑ k : Fin r, if (k : ℕ) < X.p0 then ‖c k‖ ^ 2 else 0 :=
     Fintype.sum_of_injective (Fin.castLE X.p0_le) (Fin.castLE_injective _) _ _
       (fun k hk => by
-        rw [if_neg]
+        rw [ite_eq_right]
         intro hlt
         exact hk ⟨⟨k, hlt⟩, Fin.ext rfl⟩)
       (fun a => by simp [a.isLt])

@@ -65,8 +65,6 @@ set_option linter.dupNamespace false
 
 namespace Formalism.L2.SG.RowsPos
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def TypeP : Prop :=
   ∀ Cg cb Cw cT CT C0 : ℝ, 0 < cb → 0 < cT → ∃ CH Ch Cp : ℝ, 0 ≤ CH ∧ 0 ≤ Ch ∧ 0 ≤ Cp ∧ ∀ Cs : ℝ, Cp + 4 ≤ Cs →
     ∃ C₀ : ℝ, ∀ C : ℝ, C₀ ≤ C → ∃ C'₀ Cl₀ : ℝ, ∀ C' Cl : ℝ, C'₀ ≤ C' → Cl₀ ≤ Cl →

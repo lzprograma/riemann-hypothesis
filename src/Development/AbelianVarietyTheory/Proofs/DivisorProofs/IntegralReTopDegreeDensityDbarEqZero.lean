@@ -42,8 +42,6 @@ public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.IntegralFderivA
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open Set MeasureTheory

@@ -52,8 +52,6 @@ public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeo
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -62,8 +60,6 @@ open scoped CategoryTheory.Obj
 namespace GlobalTheory.LieExt
 
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Chart
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 section Count
 

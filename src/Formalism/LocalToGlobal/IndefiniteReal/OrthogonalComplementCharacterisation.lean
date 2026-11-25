@@ -55,10 +55,6 @@ structure IsIo (ν : Measure H) (𝓕 : Set H) (th : G → H → S → ℂ) (pt 
   eq : ∀ F : CCs, ∀ φ v g,
     liftInt ν 𝓕 th (pt φ) ((F : Ds →ₗ[ℂ] (H → ℂ)) v) g = ((io F : CCt) : Dt →ₗ[ℂ] (G → ℂ)) (T φ v) g
 
-def IsTPlus (ipDs : Ds →ₗ[ℂ] Ds →ₗ⋆[ℂ] ℂ) (ipDt : Dt →ₗ[ℂ] Dt →ₗ⋆[ℂ] ℂ) (T : Sinf →ₗ[ℂ] Ds →ₗ[ℂ] Dt)
-    (Tp : Sinf →ₗ⋆[ℂ] Dt →ₗ[ℂ] Ds) : Prop :=
-  ∀ φ v' v, ipDt (T φ v') v = ipDs v' (Tp φ v)
-
 structure IsIoUp [MeasurableSpace G] (νG : Measure G) (𝓕G : Set G) (th : G → H → S → ℂ) (pt : Sinf → S)
     (Tp : Sinf →ₗ⋆[ℂ] Dt →ₗ[ℂ] Ds) (CCs : Submodule ℂ (Ds →ₗ[ℂ] (H → ℂ)))
     (CCt : Submodule ℂ (Dt →ₗ[ℂ] (G → ℂ))) (up : CCt →ₗ[ℂ] CCs) : Prop where
@@ -71,12 +67,6 @@ structure IsIoUp [MeasurableSpace G] (νG : Measure G) (𝓕G : Set G) (th : G �
       ((up u : CCs) : Ds →ₗ[ℂ] (H → ℂ)) (Tp φ v) h
 
 end Step
-
-section Adj
-
-variable {M N : Type*} [AddCommGroup M] [Module ℂ M] [AddCommGroup N] [Module ℂ N]
-
-end Adj
 
 section Chain
 
@@ -96,12 +86,6 @@ def IsChainIo {S Sinf : ℕ → Type*} [∀ j, MeasurableSpace (G j)] [∀ j, Ad
   ∀ k < m, IsIo (ν (k + 1)) (𝓕 (k + 1)) (th k) (pt k) (T k) (CC (k + 1)) (CC k) (io k)
 
 end Chain
-
-section Rows
-
-variable {M N : Type*} [AddCommGroup M] [Module ℂ M] [AddCommGroup N] [Module ℂ N]
-
-end Rows
 
 section ThetaP
 
@@ -152,12 +136,6 @@ theorem IsKap.unique {Tup Sig : Type*} {m : ℕ} {dnup : Tup → N →ₗ[ℂ] N
 
 end Kap
 
-section Bu
-
-variable {M N Mu : Type*} [AddCommGroup M] [Module ℂ M] [AddCommGroup N] [Module ℂ N]
-
-end Bu
-
 section Statements
 
 variable {M N Mu : Type*} [AddCommGroup M] [Module ℂ M] [AddCommGroup N] [Module ℂ N]
@@ -181,14 +159,7 @@ section Kernels
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta IsDedekindDomain NumberField
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
-
-def IsPairKernel (ψ : AddChar (AF D.host.F) ℂ) (χS χT : (AE D)ˣ →* Circle) (V W : HSp D)
-    (th : GA D V → GA D W → (Formalism.IndefR.Datum.WO V W → ℂ) → ℂ) : Prop :=
-  ∃ ω : GA D V × GA D W →* Module.End ℂ (Formalism.IndefR.Datum.WO V W → ℂ),
-    Formalism.IndefR.Datum.IsWeilDatumO ψ V W χS χT ω ∧ th = fun g h f => Formalism.IndefR.Datum.thetaKO ω g h f
 
 def CharsOK (μ : ℕ → (AE D)ˣ →* Circle) (η : (AE D)ˣ →* Circle) (m : ℕ) : Prop :=
   IsHeckeChar D η ∧ UnramEverywhere D η ∧ ResEta D η 1 ∧ (∀ τ, HasInfExp D η τ (1 / 2)) ∧

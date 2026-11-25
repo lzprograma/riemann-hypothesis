@@ -435,9 +435,6 @@ theorem main_matrix {n : ℕ} (G : Matrix (Fin n) (Fin n) ℤ) (hGs : Gᵀ = G)
       _ ≤ (⌈K / c⌉₊ : ℝ) * (L B : ℝ) := by gcongr; exact Nat.le_ceil _
   exact_mod_cast hfin
 
-private theorem coe_bar_eq_complexConj {E : Type} [Field E] [NumberField E] [IsCMField E] (H : Host E) (a : 𝓞 E) :
-    ((H.bar a : 𝓞 E) : E) = IsCMField.complexConj E (a : E) := H.bar_eq a
-
 theorem trace_mul_bar_pos {E : Type} [Field E] [NumberField E] [IsCMField E] (H : Host E) (z : 𝓞 E) (hz : z ≠ 0) :
     0 < Algebra.trace ℤ (𝓞 E) (z * H.bar z) := by
   classical
@@ -445,7 +442,7 @@ theorem trace_mul_bar_pos {E : Type} [Field E] [NumberField E] [IsCMField E] (H 
   have h1 : ((Algebra.trace ℤ (𝓞 E) (z * H.bar z) : ℤ) : ℚ) =
       Algebra.trace ℚ E ((z : E) * IsCMField.complexConj E (z : E)) := by
     rw [Algebra.coe_trace_int]
-    push_cast [coe_bar_eq_complexConj]
+    push_cast [ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host.bar_eq]
     rfl
   have h2 := _root_.trace_eq_sum_embeddings (K := ℚ) (L := E) (E := ℂ)
     (x := (z : E) * IsCMField.complexConj E (z : E))
@@ -681,8 +678,7 @@ theorem est_at {m : ℕ} {γ : Fin m → LinearMap.BilinForm ℤ X} {N : ℕ} {�
     have h2 : 0 ≤ ∑ i, (c i : ℤ) * h (γ i) := Finset.sum_nonneg fun i _ => mul_nonneg (Nat.cast_nonneg _) (hγ i)
     rw [← e3, map_nsmul, nsmul_eq_mul] at h2
     have h3 : 0 ≤ h u := by
-      by_contra hneg
-      push_neg at hneg
+      by_contra! hneg
       have : (k : ℤ) * h u < 0 := mul_neg_of_pos_of_neg (by exact_mod_cast hk) hneg
       linarith
     have h4 : (0 : ℝ) ≤ h u := by exact_mod_cast h3
@@ -1007,8 +1003,6 @@ open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Toroi
 
 namespace GlobalTheory.PolFan.LinOn
 
-alias finrank_int_eq' := _root_.GlobalTheory.ToricRank.finrank_int_eq
-
 variable {X : Type} [AddCommGroup X] {m : ℕ}
 
 section Pol
@@ -1190,7 +1184,7 @@ theorem GlobalTheory.PolFan.linearOn_and_isFine_of_linearOn_baseFun (E : Type) [
     exact Module.Projective.of_split (h.restrictScalars ℤ) (r.restrictScalars ℤ)
       (LinearMap.ext fun x => LinearMap.congr_fun hh x)
   have hrank : Module.finrank ℤ X ≤ g := by
-    rw [finrank_int_eq' E X]
+    rw [GlobalTheory.ToricRank.finrank_int_eq E X]
     exact (Nat.mul_le_mul_left _ hX).trans hq
   have hpol : IsPolFanOn (id : ℤ → ℤ) φs X := hφ X hrank
   have h1 : ∀ i, γ i ∈ balForms (id : ℤ → ℤ) X := fun i => mem_balForms_int.2 (hb i).1
@@ -1433,9 +1427,9 @@ def extFun (H : Host E) (q : ℕ) (φ : InvFun (𝓞 E)) : InvFun (𝓞 E) where
   toFun n B := if IsDomT H q n B then φ.toFun n B else (InvFun.minVal (𝓞 E)).toFun n B
   inv n m r hr B := by
     by_cases h : IsDomT H q m B
-    · rw [if_pos ((isDomT_comp_iff hr B).2 h), if_pos h]
+    · rw [ite_eq_left ((isDomT_comp_iff hr B).2 h), ite_eq_left h]
       exact φ.inv n m r hr B
-    · rw [if_neg (mt (isDomT_comp_iff hr B).1 h), if_neg h]
+    · rw [ite_eq_right (mt (isDomT_comp_iff hr B).1 h), ite_eq_right h]
       exact (InvFun.minVal _).inv n m r hr B
   zero B := by
     split_ifs
@@ -1445,10 +1439,10 @@ def extFun (H : Host E) (q : ℕ) (φ : InvFun (𝓞 E)) : InvFun (𝓞 E) where
 variable {φ : InvFun (𝓞 E)}
 
 theorem extFun_of {B : (Fin n → 𝓞 E) → (Fin n → 𝓞 E) → ℝ} (h : IsDomT H q n B) :
-    (extFun H q φ).toFun n B = φ.toFun n B := if_pos h
+    (extFun H q φ).toFun n B = φ.toFun n B := ite_eq_left h
 
 theorem extFun_of_not {B : (Fin n → 𝓞 E) → (Fin n → 𝓞 E) → ℝ} (h : ¬ IsDomT H q n B) :
-    (extFun H q φ).toFun n B = (InvFun.minVal (𝓞 E)).toFun n B := if_neg h
+    (extFun H q φ).toFun n B = (InvFun.minVal (𝓞 E)).toFun n B := ite_eq_right h
 
 end Dom
 

@@ -158,8 +158,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 open GlobalTheory.RealWeil GlobalTheory.Mem.Lift GlobalTheory.ChainFr GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators GlobalTheory.LieFock
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 namespace GlobalTheory.LieScalar
 
 theorem signBlockDeterminant_one {n : ℕ} (ε : Fin n → Bool) (e : Bool) : signBlockDeterminant ε e 1 = 1 := by
@@ -212,7 +210,7 @@ theorem cc_rai_low (i i' : Fin b) (j j' : Fin a) :
   by_cases h1 : ε' i' = ε j'
   · have e : lowO τ ε ε' i' j' (1 : PolF D b a) = 0 := by
       simp [lowO, h1]
-    rw [Module.End.mul_apply, e, map_zero, map_zero, if_neg]
+    rw [Module.End.mul_apply, e, map_zero, map_zero, ite_eq_right]
     rintro ⟨rfl, rfl, h⟩
     exact h h1
   · have e : lowO τ ε ε' i' j' (1 : PolF D b a) = sgn (ε j') • MvPolynomial.X (τ, i', j') := by
@@ -220,7 +218,7 @@ theorem cc_rai_low (i i' : Fin b) (j j' : Fin a) :
     rw [Module.End.mul_apply, e, LinearMap.map_smul]
     by_cases h2 : ε' i = ε j
     · have h3 : ¬ (i = i' ∧ j = j' ∧ ε' i ≠ ε j) := fun h => h.2.2 h2
-      rw [if_neg h3]
+      rw [ite_eq_right h3]
       simp [raiO, h2, MvPolynomial.smul_eq_C_mul]
     · by_cases h3 : i = i' ∧ j = j'
       · obtain ⟨rfl, rfl⟩ := h3
@@ -247,7 +245,7 @@ theorem cc_fockS (Y : Matrix (Fin a) (Fin a) ℂ) :
   rw [Finset.sum_eq_single j]
   · rw [MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.constantCoeff_C, ← sum_half]
 
-    simp only [map_sum, map_add (f := _), cc_rai_low, if_true]
+    simp only [map_sum, map_add (f := _), cc_rai_low, ite_true]
     congr 1
     refine Finset.sum_congr rfl fun i _ => ?_
     simp [MvPolynomial.smul_eq_C_mul]
@@ -268,7 +266,7 @@ theorem cc_fockT (Y : Matrix (Fin b) (Fin b) ℂ) :
   rw [Finset.sum_eq_single i]
   · rw [MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.constantCoeff_C, ← sum_half]
 
-    simp only [map_sum, map_add (f := _), cc_rai_low, if_true]
+    simp only [map_sum, map_add (f := _), cc_rai_low, ite_true]
     congr 1
     refine Finset.sum_congr rfl fun j _ => ?_
     simp [MvPolynomial.smul_eq_C_mul, eq_comm]
@@ -402,7 +400,7 @@ theorem partK_entry (hF : IsUnit F.det) (j k : Fin n) : (F * partK F ε X * F⁻
   ring
 
 theorem partK_block (hF : IsUnit F.det) {j k : Fin n} (h : ε j ≠ ε k) : (F * partK F ε X * F⁻¹) j k = 0 := by
-  rw [partK_entry hF, sgn_mul, if_neg h]
+  rw [partK_entry hF, sgn_mul, ite_eq_right h]
   simp
 
 theorem partK_diag (hF : IsUnit F.det) (j : Fin n) : (F * partK F ε X * F⁻¹) j j = (F * X * F⁻¹) j j := by
@@ -414,7 +412,7 @@ theorem partK_skew (hF : IsUnit F.det) (hG : Fᴴ * Formalism.REAL.Jm ε * F = G
   ext j k
   rw [conjTranspose_apply, Complex.star_def, lie_entry hF hG (partK_lie hF hG hX), Matrix.neg_apply]
   by_cases h : ε j = ε k
-  · rw [sgn_mul, if_pos h.symm]
+  · rw [sgn_mul, ite_eq_left h.symm]
     ring
   · rw [partK_block hF h]
     simp
@@ -739,7 +737,7 @@ theorem ptF_laws (hθ : IsInfFam θ) (hψ : IsStdChar D ψ (-1)) (A : Fr V) (B :
         ptF ψ θ A B f (lowO τ (A.ε τ) (B.ε τ) i j Q) = 0 := by
     intro τ i j Q hQ
     obtain ⟨R, L, w, hE, -⟩ := exists_raise_lower A B h hψ τ
-    obtain ⟨E, h1, h2, h3⟩ := hE f hf
+    obtain ⟨E, h1, h2, h3⟩ := hE f hf.1 (hf.2 τ)
     have hQ' : E Q = 0 := Subtype.ext (by rw [← h1, hQ]; rfl)
     refine ⟨?_, ?_⟩
     · rw [h1, h2, hQ', map_zero]; rfl
@@ -750,7 +748,7 @@ theorem ptF_laws (hθ : IsInfFam θ) (hψ : IsStdChar D ψ (-1)) (A : Fr V) (B :
     map_neg (pureTensorO ψ θ V W A.cart B.cart A.onb B.onb f) P
   refine ⟨fun τ P => ?_, ?_, ?_⟩
   · obtain ⟨R, L, w, hE, -⟩ := exists_raise_lower A B h hψ τ
-    obtain ⟨E, h1, -, -⟩ := hE f hf
+    obtain ⟨E, h1, -, -⟩ := hE f hf.1 (hf.2 τ)
     rw [h1]
     exact (E P).2
   · rintro ⟨τ, i, j⟩ Q hQ

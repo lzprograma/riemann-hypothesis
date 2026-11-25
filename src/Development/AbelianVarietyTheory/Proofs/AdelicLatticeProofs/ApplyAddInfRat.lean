@@ -65,7 +65,6 @@ import Formalism.LocalToGlobal.IndefiniteReal.SelfDualFullLattice
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.FockCompare
 
 noncomputable section
@@ -120,11 +119,6 @@ theorem infRat_injective (S T : HSp D) : Function.Injective (infRat S T) := by
   funext i j
   exact (tauE D τ).injective (congrFun (congrFun (congrFun e τ) i) j)
 
-private theorem selfDual_isFullLattice {D : D7} : ∀ (V : HSp D) (Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)),
-    IsSelfDualC V Λ → Submodule.IsFullLattice D.host.E Λ := by
-  intro V Λ hΛ
-  exact Formalism.IndefR.Datum.IsSelfDualC.isFullLattice V Λ hΛ
-
 
 theorem vacUniqueO : ∀ D : D7, VacUniqueO D := by
   classical
@@ -132,7 +126,7 @@ theorem vacUniqueO : ∀ D : D7, VacUniqueO D := by
   obtain ⟨σ, h⟩ := GlobalTheory.RealLineAt.exists_inverse_chart hθ
   obtain ⟨h1, h2, h3⟩ := GlobalTheory.T.self_dual_lattice_pairing_dual D ψ S T ΛS ΛT hψ hΛS hΛT
   have hden := GlobalTheory.T.scaled_finite_matrix_mem_lattice D S T ΛS ΛT
-    (selfDual_isFullLattice S ΛS hΛS) (selfDual_isFullLattice T ΛT hΛT)
+    (Formalism.IndefR.Datum.IsSelfDualC.isFullLattice S ΛS hΛS) (Formalism.IndefR.Datum.IsSelfDualC.isFullLattice T ΛT hΛT)
   have hlat := hf.2.lat
   have hlat' := hf'.2.lat
   have hinf := fun u => latO_inf (u := u) S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E))
@@ -178,7 +172,7 @@ theorem vacUniqueO : ∀ D : D7, VacUniqueO D := by
     intro g hg hl v hv z
     have hv' : finRat S T (-v) ∈ Λ := (Λ.comap (finRat S T)).neg_mem hv
     rw [apply_add_infRat h hψ hg v (hε2 _ hv' g hl) z, ← j2]
-    simp only [c, dif_pos hv']
+    simp only [c, dite_eq_left hv']
   have hli := _root_.GlobalTheory.VacuumLine.not_linearIndependent (RW T S) (jO S T sS sT) (omO S T) j1 j2 j3 j4 (Matrix (Fin T.rank) (Fin S.rank) D.host.E)
     (infRat S T) (infRat_injective S T) hsp (Λ.comap (finRat S T))
     (fun x => by
@@ -189,7 +183,7 @@ theorem vacUniqueO : ∀ D : D7, VacUniqueO D := by
     (fun k => by fin_cases k; exacts [a1.1, a2.1]) (fun k => by fin_cases k; exacts [a1.2, a2.2])
     (fun k => by fin_cases k; exacts [law f hf.2.theta hlat, law f' hf'.2.theta hlat'])
   rw [LinearIndependent.pair_iff' hne] at hli
-  push_neg at hli
+  push Not at hli
   obtain ⟨a, ha⟩ := hli
   have e := det f f' a hf.2.theta hf'.2.theta hlat hlat' fun z => (congrFun ha z).symm
   refine ⟨a, ?_, e⟩

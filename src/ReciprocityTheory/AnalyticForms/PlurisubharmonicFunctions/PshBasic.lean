@@ -136,7 +136,6 @@ end
 
 end ReciprocityTheory.AnForm.A.PshLap
 
-open MeasureTheory Metric Set Filter Topology Real
 
 namespace ReciprocityTheory.AnForm.A.PshLap
 
@@ -273,7 +272,6 @@ end
 
 end ReciprocityTheory.AnForm.A.PshLap
 
-open MeasureTheory Metric Set Filter Topology Real
 
 namespace ReciprocityTheory.AnForm.A.PshLap
 
@@ -369,8 +367,7 @@ theorem lap_nonneg_of_sub_mean (hg : ∀ x ∈ V, HasFDerivAt g (G x) x)
     (hR : closedBall (0:ℂ) R ⊆ V)
     (hsub : ∀ r ∈ Ioc (0:ℝ) R, g 0 ≤ Real.circleAverage g 0 r) :
     0 ≤ H 0 1 1 + H 0 Complex.I Complex.I := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   set c := H 0 1 1 + H 0 Complex.I Complex.I with hcdef
   have h0V : (0:ℂ) ∈ V := hR (mem_closedBall_self hR0.le)
   obtain ⟨δ, hδ, hball⟩ := Metric.continuousWithinAt_iff.mp (hHc 0 h0V) (-c/4) (by linarith)
@@ -584,7 +581,6 @@ end
 
 end ReciprocityTheory.AnForm.A.PshMean
 
-open MeasureTheory Metric Set Filter Topology Real
 open scoped ContDiff
 
 namespace ReciprocityTheory.AnForm.A.PshMol
@@ -771,7 +767,6 @@ end ReciprocityTheory.AnForm.A.PshLap
 
 namespace ReciprocityTheory.AnForm.A.PshInh
 
-open MeasureTheory Metric Set Filter Topology Real
 
 noncomputable section
 

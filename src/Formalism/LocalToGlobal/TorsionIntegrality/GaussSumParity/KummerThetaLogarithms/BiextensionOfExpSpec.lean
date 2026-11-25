@@ -43,7 +43,7 @@ theorem linSub_idM {K : Type} [Field K] {d N0 N1 : ℕ} [NeZero d] :
   rw [Finset.sum_eq_single x]
   · simp
   · intro y _ hy
-    rw [if_neg (Ne.symm hy)]
+    rw [ite_eq_right (Ne.symm hy)]
     simp
   · simp
 

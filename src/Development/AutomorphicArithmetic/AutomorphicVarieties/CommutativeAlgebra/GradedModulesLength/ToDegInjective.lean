@@ -121,7 +121,7 @@ def reesGr (d : Deg k) : Submodule B (rees N) where
 theorem mono_mem (m : Fin k →₀ ℕ) (f : A) (hf : f ∈ lat N m) : mono N m f hf ∈ reesGr N (toDeg m) := fun n hn => by
   classical
   show AddMonoidAlgebra.coeff (MvPolynomial.monomial m f) n = 0
-  rw [MvPolynomial.coeff_monomial, if_neg]
+  rw [MvPolynomial.coeff_monomial, ite_eq_right]
   rintro rfl
   exact hn rfl
 
@@ -134,7 +134,7 @@ instance : SetLike.GradedMonoid (reesGr N) where
   one_mem m hm := by
     classical
     show AddMonoidAlgebra.coeff 1 m = 0
-    rw [MvPolynomial.coeff_one, if_neg]
+    rw [MvPolynomial.coeff_one, ite_eq_right]
     rintro rfl
     exact hm rfl
   mul_mem d d' p q hp hq m hm := by

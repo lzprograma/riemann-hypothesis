@@ -2,44 +2,10 @@ module
 
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSectionOfChg
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DeterminantSectionRule
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
 import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -457,7 +423,7 @@ theorem exists_section : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
   let σ : Rule t π p q := fun R _ x v w =>
     if h : ∃ j, IsFrame t π s (Set.range io) (HermitianCompactForm.chi c τ) j x v w then f R ⟨x, v, w, h⟩ else 0
   have hσ : ∀ (R : Type) [CommRing R] j x v w (h : IsFrame t π s (Set.range io) (HermitianCompactForm.chi c τ) j x v w),
-      σ R x v w = f R ⟨x, v, w, j, h⟩ := fun R _ j x v w h => dif_pos ⟨j, h⟩
+      σ R x v w = f R ⟨x, v, w, j, h⟩ := fun R _ j x v w h => dite_eq_left ⟨j, h⟩
   refine ⟨σ, isSection_of_chg fun R R' _ _ g j j' x v w x' v' w' M N h h' hc => ?_, fun R _ j x v w h => ?_, ?_⟩
   · rw [hσ R j x v w h, hσ R' j' x' v' w' h', hf R R' g ⟨x, v, w, j, h⟩ ⟨x', v', w', j', h'⟩ hc.1,
       (factor_spec g ⟨x, v, w, j, h⟩ ⟨x', v', w', j', h'⟩ hc.1).2 M N hc]

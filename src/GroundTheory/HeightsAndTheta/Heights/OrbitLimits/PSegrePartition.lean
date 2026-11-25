@@ -119,7 +119,7 @@ theorem isDegZeroSmooth_rho (hN : 0 < numIdx ι) (i : (k : K) → ι k) :
       ContDiffOn.div (contDiffOn_bump i) (ContDiffOn.sum fun j _ => contDiffOn_bump j)
         fun z hz => (bump_sum_pos hN (segreSqSum_pos hz)).ne'
     refine hf.congr fun z hz => ?_
-    simp only [rho, if_pos (segreSqSum_pos hz)]
+    simp only [rho, ite_eq_left (segreSqSum_pos hz)]
   · have ha : 0 < ‖∏ k, c k‖ ^ 2 :=
       pow_pos (norm_pos_iff.mpr (Finset.prod_ne_zero_iff.mpr fun k _ => hc k)) 2
     have hS : 0 < segreSqSum (fun p => c p.1 * z p) ↔ 0 < segreSqSum z := by
@@ -128,9 +128,9 @@ theorem isDegZeroSmooth_rho (hN : 0 < numIdx ι) (i : (k : K) → ι k) :
 
 theorem sum_rho (hN : 0 < numIdx ι) (z : (Σ k, ι k) → ℂ) : ∑ i, rho (ι := ι) i z = 1 := by
   by_cases hS : 0 < segreSqSum z
-  · simp only [rho, if_pos hS]
+  · simp only [rho, ite_eq_left hS]
     rw [← Finset.sum_div, div_self (bump_sum_pos hN hS).ne']
-  · simp only [rho, if_neg hS, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+  · simp only [rho, ite_eq_right hS, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
     rw [numIdx] at hN ⊢
     field_simp
 
@@ -163,7 +163,7 @@ theorem rho_eq_zero (hN : 0 < numIdx ι) (i : (k : K) → ι k) (z : (Σ k, ι k
       rw [← mul_div_assoc, div_le_one hS]
       linarith
     linarith
-  simp only [rho, if_pos hS, hb, zero_div]
+  simp only [rho, ite_eq_left hS, hb, zero_div]
 
 end SegrePartition
 

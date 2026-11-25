@@ -159,7 +159,7 @@ theorem saturated_blocks_summand : ∀ (C : Type) [Field C] (v : AddValuation C 
       simp only [hca, one_smul, hw]
       simp
     · have h0 : c a b = 0 := hcS a b (by simp [hba])
-      rw [if_neg (fun h => hba (congrArg Sigma.fst h))]
+      rw [ite_eq_right (fun h => hba (congrArg Sigma.fst h))]
       simp [h0]
 
 end GlobalTheory.SatBlocks

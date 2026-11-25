@@ -21,7 +21,7 @@ universe u_1 u_2
 namespace Bl.general_b_fact'''''''
 
 theorem goal1 :
-  ∀ {O : Type u_1} [inst : CommRing.{u_1} O] [inst_1 : IsDomain.{u_1} O] [inst_2 : IsDiscreteValuationRing.{u_1} O]
+  ∀ {O : Type u_1} [CommRing.{u_1} O] [IsDomain.{u_1} O] [IsDiscreteValuationRing.{u_1} O]
   {ι : Type u_2} (s : Finset.{u_2} ι) (a : ι → O),
   Eq.{1}
     (DFunLike.coe.{u_1 + 1, u_1 + 1, 1} (IsDiscreteValuationRing.addVal.{u_1} O)

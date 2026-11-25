@@ -141,7 +141,7 @@ theorem nval_bounds {F : Type} [Field F] [NumberField F] {w : HeightOneSpectrum 
     omega
   have hD0 := pow_ne_zero 4 (left_ne_zero_of_mul hne)
   have he : (0 : ℝ) < e := by exact_mod_cast ho.1
-  rw [map_mul, map_pow, nval, if_neg (mul_ne_zero hD0 (hu u)), vV_mul hD0 (hu u), hu0, pw, add_zero]
+  rw [map_mul, map_pow, nval, ite_eq_right (mul_ne_zero hD0 (hu u)), vV_mul hD0 (hu u), hu0, pw, add_zero]
   have h2 : (0 : ℝ) ≤ vV T.V (algebraMap T.V T.Fr D) := by exact_mod_cast nn D
   have h3 : (vV T.V (algebraMap T.V T.Fr D) : ℝ) ≤ ∑ i, (n i : ℝ) * (e * (vLa w (x i) : ℝ)) := by
     have := nn q
@@ -186,15 +186,6 @@ theorem exists_lie_matrices {R O : Type} [CommRing R] [CommRing O] {G : Over (Sp
   · have hw' : w = fun k => (b k).hom := funext fun k => (Lie.hom_basis (a := act) hw k).symm
     rw [hw', Lie.isLieComb_iff, b.sum_equivFun]
     rfl
-
-theorem isTan_iff_isTangent {V : Type} [CommRing V] {G : Over (Sp V)} [GrpObj G] (w : epsR V ⟶ G) :
-    IsTan (V := V) (R := V) (G := G) w ↔ IsTangent w := by
-  have : (1 : ptOver V V ⟶ G).left = η[G].left := by
-    show spMap (algebraMap V V) ≫ _ = _
-    rw [show spMap (algebraMap V V) = 𝟙 _ from Spec.map_id _]
-    exact Category.id_comp _
-  unfold IsTan IsTangent
-  rw [this]
 
 end Lie
 

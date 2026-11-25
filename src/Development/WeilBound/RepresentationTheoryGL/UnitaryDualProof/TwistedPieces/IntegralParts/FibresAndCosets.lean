@@ -253,7 +253,7 @@ private theorem zpart_unique {Z : SubMat k n} (hZ : CR Z) {x c : Mat k n}
   have hcomm : Commute (x - c) (x - zpart Z x) :=
     ((Commute.refl x).sub_right hzx.symm).sub_left (hcx.sub_right hcz)
   have hd : IsNilpotent (zpart Z x - c) := by simpa [sub_sub_sub_cancel_left] using hcomm.isNilpotent_sub hn hn0
-  exact sub_eq_zero.1 (PositivityTheory.RgUd.T.Nil.Orb.Ozn.eq_zero_of_mem_of_isNilpotent hZ (Z.sub_mem h0 hc) hd)
+  exact sub_eq_zero.1 (PositivityTheory.RgUd.T.eq_zero_of_nilp_shared hZ (Z.sub_mem h0 hc) hd)
 
 private theorem cc_smul {Z : SubMat k n} (hZ : CR Z) (t : k) {x : Mat k n} (hx : x ∈ CC Z) :
     t • x ∈ CC Z ∧ zpart Z (t • x) = t • zpart Z x := by
@@ -275,17 +275,12 @@ private theorem cc_add {Z : SubMat k n} (hZ : CR Z) {c x : Mat k n} (hc : c ∈ 
   obtain ⟨h0, hn0⟩ := zpart_spec h
   exact zpart_unique hZ (hBz.2 h.2) (Z.add_mem h0 hc) (by simpa [add_sub_add_right_eq_sub] using hn0)
 
-private theorem inv_mem_Gz {Z : SubMat k n} {g : GL (Fin n) k} (hg : g ∈ Gz Z) : g⁻¹ ∈ Gz Z := fun a ha => by
-  calc a * ↑g⁻¹ = ↑g⁻¹ * (↑g * a) * ↑g⁻¹ := by simp [← mul_assoc]
-    _ = ↑g⁻¹ * (a * ↑g) * ↑g⁻¹ := by rw [hg a ha]
-    _ = ↑g⁻¹ * a := by simp [mul_assoc]
-
 private theorem cc_conj {Z : SubMat k n} (hZ : CR Z) {g : GL (Fin n) k} (hg : g ∈ Gz Z)
     {x : Mat k n} (hx : x ∈ CC Z) : g.val * x * g⁻¹.val ∈ CC Z ∧ zpart Z (g.val * x * g⁻¹.val) = zpart Z x := by
   obtain ⟨h0, ⟨m, hm⟩⟩ := zpart_spec hx
   have hB : g.val * x * g⁻¹.val ∈ Bz Z := fun a ha => by
-    rw [← mul_assoc, ← mul_assoc, hg a ha, mul_assoc g.val, hx.2 a ha, mul_assoc, mul_assoc, inv_mem_Gz hg a ha,
-      ← mul_assoc, ← mul_assoc]
+    rw [← mul_assoc, ← mul_assoc, hg a ha, mul_assoc g.val, hx.2 a ha, mul_assoc, mul_assoc,
+      Gz_inv_mem hg a ha, ← mul_assoc, ← mul_assoc]
   have hcz : g.val * zpart Z x * g⁻¹.val = zpart Z x := by rw [← hg _ h0, mul_assoc]; simp
   have hpow : ∀ j : ℕ, (g.val * (x - zpart Z x) * g⁻¹.val) ^ j = g.val * (x - zpart Z x) ^ j * g⁻¹.val := fun j => by
     induction j with
@@ -430,7 +425,7 @@ private theorem psi_act (hZ : CR Z) (A : Set (Mat k n)) (h : Sp k n → ℂ) {g 
       rw [mul_sub, sub_mul, ← hg _ (zpart_spec hp).1, mul_assoc (zpart Z p.1), Units.mul_inv, mul_one]
     rw [psi_of_mem h1.1, psi_of_mem hp]; simp only [act, h1.2, key]
   · rw [psi_of_not (fun h' => hp <| by
-      have h2 := (cc_conj hZ (inv_mem_Gz hg) h').1
+      have h2 := (cc_conj hZ (Gz_inv_mem hg) h').1
       simpa [act, mul_assoc] using h2), psi_of_not hp]
 
 private theorem psi_zero (hZ : CR Z) (A : Set (Mat k n)) {h : Sp k n → ℂ}

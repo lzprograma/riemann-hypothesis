@@ -40,15 +40,11 @@ theorem inner_sand (σ : G → (HH →L[ℂ] HH)) (Y : V →L[ℂ] HH) (Y' : V' 
     ⟪a, sand σ Y Y' γ b⟫_ℂ = ⟪Y a, σ γ (Y' b)⟫_ℂ := by
   exact ContinuousLinearMap.adjoint_inner_right Y a (σ γ (Y' b))
 
-private theorem norm_sq_eq_sum_norm_inner_stdBasis_sq {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
-    [FiniteDimensional ℂ E] (v : E) :
-    ‖v‖ ^ 2 = ∑ i, ‖⟪stdOrthonormalBasis ℂ E i, v⟫_ℂ‖ ^ 2 := by
-  exact ((stdOrthonormalBasis ℂ E).sum_sq_norm_inner_right v).symm
-
 theorem hsA_eq (A : V' →L[ℂ] V) :
     hsA A = ∑ j, ∑ i, ‖⟪stdOrthonormalBasis ℂ V i, A (stdOrthonormalBasis ℂ V' j)⟫_ℂ‖ ^ 2 := by
   show ∑ j, ‖A (stdOrthonormalBasis ℂ V' j)‖ ^ 2 = _
-  exact Finset.sum_congr rfl fun j _ => norm_sq_eq_sum_norm_inner_stdBasis_sq _
+  refine Finset.sum_congr rfl fun j _ => ?_
+  exact ((stdOrthonormalBasis ℂ V).sum_sq_norm_inner_right _).symm
 
 theorem hsA_sand (σ : G → (HH →L[ℂ] HH)) (Y : V →L[ℂ] HH) (Y' : V' →L[ℂ] HH) (γ : G) :
     hsA (sand σ Y Y' γ) = ∑ j, ∑ i,
@@ -232,21 +228,6 @@ private theorem inner_kG_apply_eq (σ : G → (HH →L[ℂ] HH)) (d : ℝ) (w : 
     map_smul, inner_conj_symm]
   ring
 
-private theorem integrable_apply_of_integrable_clm {α : Type*} [MeasurableSpace α] {m : Measure α} {F : α → (V' →L[ℂ] V)}
-    (hF : Integrable F m) (b : V') : Integrable (fun x => F x b) m := by
-  exact hF.apply_continuousLinearMap b
-
-private theorem integrable_inner_apply_of_integrable_clm {α : Type*} [MeasurableSpace α] {m : Measure α} {F : α → (V' →L[ℂ] V)}
-    (hF : Integrable F m) (a : V) (b : V') : Integrable (fun x => ⟪a, F x b⟫_ℂ) m := by
-  exact (integrable_apply_of_integrable_clm hF b).const_inner a
-
-private theorem inner_integral_clm_apply_eq_integral {α : Type*} [MeasurableSpace α] {m : Measure α} {F : α → (V' →L[ℂ] V)}
-    (hF : Integrable F m) (a : V) (b : V') : ⟪a, (∫ x, F x ∂m) b⟫_ℂ = ∫ x, ⟪a, F x b⟫_ℂ ∂m := by
-  have happ : (∫ x, F x ∂m) b = ∫ x, F x b ∂m := by
-    exact ContinuousLinearMap.integral_apply hF b
-  rw [happ]
-  exact (integral_inner (integrable_apply_of_integrable_clm hF b) a).symm
-
 theorem Xop_eq_integral {σ : G → (HH →L[ℂ] HH)} (hσ : IsUnitRep σ) {μ μS ν μS' ν' : Measure G} [SFinite ν]
     [SFinite μS] [SFinite ν'] [SFinite μS'] {d : ℝ} {w : HH} {S S' : Set G} {τ : G → (V →L[ℂ] V)}
     {τ' : G → (V' →L[ℂ] V')} {W : G → V} {W' : G → V'}
@@ -273,8 +254,10 @@ theorem Xop_eq_integral {σ : G → (HH →L[ℂ] HH)} (hσ : IsUnitRep σ) {μ 
     refine integral_congr_ae (ae_of_all _ fun p => ?_)
     try dsimp only
     rw [integral_const_mul, integral_inner ((σ γ).integrable_comp hf')]
-  rw [hL, inner_integral_clm_apply_eq_integral hK (stdOrthonormalBasis ℂ V i) (stdOrthonormalBasis ℂ V' j),
-    integral_prod _ (integrable_inner_apply_of_integrable_clm hK (stdOrthonormalBasis ℂ V i) (stdOrthonormalBasis ℂ V' j))]
+  have hb := hK.apply_continuousLinearMap (stdOrthonormalBasis ℂ V' j)
+  rw [hL, ContinuousLinearMap.integral_apply hK _,
+    ← integral_inner hb (stdOrthonormalBasis ℂ V i)]
+  conv_rhs => rw [integral_prod _ (hb.const_inner (stdOrthonormalBasis ℂ V i))]
   refine integral_congr_ae (ae_of_all _ fun p => ?_)
   try dsimp only
   refine integral_congr_ae (ae_of_all _ fun p' => ?_)

@@ -237,27 +237,6 @@ private theorem wt_iter (K : FinExt l) {d : ℕ} (M : Matrix (Fin d) (Fin d) (Bc
       ext i j
       exact wt_phi K _
 
-private theorem wt_spec {L : Type} [Field L] {d : ℕ} (G : Matrix (Fin d) (Fin d) L) (hG : IsUnit G.det) {a : L}
-    (ha : a ∈ spectrum L G) : a ≠ 0 ∧ a⁻¹ ∈ spectrum L (G⁻¹).transpose := by
-  rw [spectrum.mem_iff] at ha
-  have h0 : a ≠ 0 := by
-    rintro rfl
-    apply ha
-    rw [map_zero, zero_sub]
-    exact ((Matrix.isUnit_iff_isUnit_det _).2 hG).neg
-  refine ⟨h0, spectrum.mem_iff.2 fun hu => ha ?_⟩
-  have e : (algebraMap L (Matrix (Fin d) (Fin d) L) a⁻¹ - (G⁻¹).transpose).transpose * ((-a) • G) =
-      algebraMap L (Matrix (Fin d) (Fin d) L) a - G := by
-    rw [Algebra.algebraMap_eq_smul_one, Algebra.algebraMap_eq_smul_one, Matrix.transpose_sub,
-      Matrix.transpose_smul, Matrix.transpose_one, Matrix.transpose_transpose, Matrix.mul_smul, Matrix.sub_mul,
-      Matrix.smul_mul, Matrix.one_mul, Matrix.nonsing_inv_mul _ hG, smul_sub, smul_smul, neg_mul,
-      mul_inv_cancel₀ h0, neg_smul, neg_smul, one_smul]
-    abel
-  rw [← e]
-  refine ((Matrix.isUnit_transpose _).2 hu).mul ?_
-  rw [Matrix.isUnit_iff_isUnit_det, Matrix.det_smul]
-  exact ((IsUnit.mk0 _ (neg_ne_zero.2 h0)).pow _).mul hG
-
 private theorem wt_aeval (K : FinExt l) (ψ : Bcr l →ₐ[ℚ_[l]] Bcr l)
     (hψ : ∀ c : ↥(K0 K), ψ (algebraMap ↥(K0 K) (Bcr l) c) = algebraMap ↥(K0 K) (Bcr l) c) {d : ℕ}
     (M : Matrix (Fin d) (Fin d) (Bcr l)) (F : Matrix (Fin d) (Fin d) ↥(K0 K))
@@ -346,7 +325,11 @@ theorem inertia_fixes_crystalline_period_matrix (K : FinExt l) {d : ℕ} (M M' :
       have := (hF f).map (algebraMap ↥(K0 K) (Om l))
       rw [RingHom.map_det] at this
       exact this
-    obtain ⟨h0, ha'⟩ := wt_spec _ hu ha
+    let u := Matrix.nonsingInvUnit ((F f).map (algebraMap ↥(K0 K) (Om l))) hu
+    have h0 : a ≠ 0 := spectrum.ne_zero_of_mem_of_unit (a := u) ha
+    have ha' : a⁻¹ ∈ spectrum (Om l) (((F f).map (algebraMap ↥(K0 K) (Om l)))⁻¹).transpose := by
+      rw [Matrix.spectrum_transpose]
+      exact spectrum.inv₀_mem_inv (a := u) ha
     have e : ((F f).map (algebraMap ↥(K0 K) (Om l)))⁻¹ = ((F f)⁻¹).map (algebraMap ↥(K0 K) (Om l)) := by
       apply Matrix.inv_eq_right_inv
       rw [← Matrix.map_mul, Matrix.mul_nonsing_inv _ (hF f), Matrix.map_one _ (map_zero _) (map_one _)]
@@ -365,7 +348,7 @@ theorem inertia_fixes_crystalline_period_matrix (K : FinExt l) {d : ℕ} (M M' :
   rw [Polynomial.map_map, hPF, Matrix.map_zero _ (map_zero _), Matrix.mul_zero] at h4
   intro g hg
   ext i j
-  refine UpperTheory.inertia_fixes_of_frobenius_annihilated_mem_fil_zero (expand ℤ_[l] f P) (hP.expand hf) (by rwa [coeff_expand hf, if_pos (dvd_zero _), Nat.zero_div])
+  refine UpperTheory.inertia_fixes_of_frobenius_annihilated_mem_fil_zero (expand ℤ_[l] f P) (hP.expand hf) (by rwa [coeff_expand hf, ite_eq_left (dvd_zero _), Nat.zero_div])
     (M i j) ?_ (fun k => hS M (F k) k hM (hMF k) i j) g hg
   have e : ((PP l).φB.toLinearMap : Module.End ℚ_[l] (Bcr l)) ^ f = ((PP l).φB ^ f).toLinearMap := by
     ext x

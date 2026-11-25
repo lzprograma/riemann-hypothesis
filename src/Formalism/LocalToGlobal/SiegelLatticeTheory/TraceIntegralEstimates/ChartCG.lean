@@ -23,8 +23,6 @@ open MeasureTheory Finset NumberField Formalism.BasicNotions Formalism.MainNotio
 
 namespace Formalism.L2.S.Pv.Chart
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7}
 
 theorem isClosed_stV (X : HidaSetting D) (u u' : D.what₂.Word) (γ : X.B.I.Ginf) (v : InfinitePlace X.B.I.F) :

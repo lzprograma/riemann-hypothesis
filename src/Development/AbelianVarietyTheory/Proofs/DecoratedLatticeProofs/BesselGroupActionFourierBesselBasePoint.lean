@@ -61,7 +61,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf GlobalTheory.Unf.FB
 
 namespace GlobalTheory
@@ -145,7 +144,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf GlobalTheory.Unf.FB
 
 
@@ -161,7 +159,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf GlobalTheory.Unf.FB
 
 noncomputable section
@@ -170,69 +167,112 @@ namespace GlobalTheory.Unf.FB
 
 variable {D : D7} {σ : ℕ}
 
-def x0Mat (B : BesLev D σ) : Matrix (Fin B.V.rank) (Fin (σ + 1)) D.host.E :=
+structure BesCore (D : D7) (ρ : ℕ) where
+  V : HSp D
+  V₀ : HSp D
+  A : HSp D
+  L : HSp D
+  d : HypDec V V₀ ρ
+  o : OrthDec V₀ A L
+  ζ : Fin L.rank → D.host.E
+  line : IsLineVec L ζ
+
+def toCore (B : BesLev D σ) : BesCore D σ :=
+  ⟨B.V, B.V₀, B.A, B.L, B.d, B.o, B.ζ, B.line⟩
+
+def x0MatCore (B : BesCore D σ) : Matrix (Fin B.V.rank) (Fin (σ + 1)) D.host.E :=
   Matrix.of fun k => Fin.snoc (α := fun _ => D.host.E) (B.d.e k) ((B.d.i₀ *ᵥ vecB B.o B.ζ) k)
 
-theorem rat_x0Mat (B : BesLev D σ) : rat (x0Mat B) = x0 B := by
+theorem rat_x0MatCore (B : BesCore D σ) : rat (x0MatCore B) = xLast B.d (vecB B.o B.ζ) := by
   refine Matrix.ext fun k j => ?_
   refine Fin.lastCases ?_ (fun b => ?_) j
+  · simp [x0MatCore, xLast, rat, HypDec.j0, ratV, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  · simp [x0MatCore, xLast, rat, HypDec.jX]
 
-  · simp [x0Mat, x0, xLast, rat, HypDec.j0, ratV, Matrix.mulVec, dotProduct, map_sum, map_mul]
-  · simp [x0Mat, x0, xLast, rat, HypDec.jX]
+def normCore (B : BesCore D σ) : D.host.E := star (vecB B.o B.ζ) ⬝ᵥ B.V₀.gram *ᵥ vecB B.o B.ζ
 
-def besselBasePointLevelNorm (B : BesLev D σ) : D.host.E := star (vecB B.o B.ζ) ⬝ᵥ B.V₀.gram *ᵥ vecB B.o B.ζ
-
-theorem besselBasePointLevelNorm_eq_gram_form (B : BesLev D σ) : besselBasePointLevelNorm B = star B.ζ ⬝ᵥ B.L.gram *ᵥ B.ζ := by
-  rw [besselBasePointLevelNorm, vecB, Matrix.star_mulVec, ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec,
+theorem normCore_eq (B : BesCore D σ) : normCore B = star B.ζ ⬝ᵥ B.L.gram *ᵥ B.ζ := by
+  rw [normCore, vecB, Matrix.star_mulVec, ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec,
     B.o.isoB]
 
-theorem besselBasePointLevelNorm_ne_zero (B : BesLev D σ) : besselBasePointLevelNorm B ≠ 0 := by
-  rw [besselBasePointLevelNorm_eq_gram_form]; exact B.line.2
+theorem normCore_ne_zero (B : BesCore D σ) : normCore B ≠ 0 := by
+  rw [normCore_eq]; exact B.line.2
 
-def besselBasePointLeftInverse (B : BesLev D σ) : Matrix (Fin (σ + 1)) (Fin B.V.rank) D.host.E :=
+def leftInvCore (B : BesCore D σ) : Matrix (Fin (σ + 1)) (Fin B.V.rank) D.host.E :=
   Matrix.of (Fin.snoc (α := fun _ => Fin B.V.rank → D.host.E) (fun a => B.d.qX a)
-    ((besselBasePointLevelNorm B)⁻¹ • (star (vecB B.o B.ζ) ᵥ* (B.V₀.gram * B.d.q0))))
+    ((normCore B)⁻¹ • (star (vecB B.o B.ζ) ᵥ* (B.V₀.gram * B.d.q0))))
 
-theorem besselLevelDatum_qX_dot_e_eq_one (B : BesLev D σ) : B.d.qX * B.d.e = 1 :=
+theorem qX_e_core (B : BesCore D σ) : B.d.qX * B.d.e = 1 :=
   rat_injective (by rw [rat_mul, rat_one]; exact B.d.pX_jX)
 
-theorem wittDecomposition_projectionX_mul_anisotropicInclusion_eq_zero (B : BesLev D σ) : B.d.qX * B.d.i₀ = 0 :=
+theorem qX_i0_core (B : BesCore D σ) : B.d.qX * B.d.i₀ = 0 :=
   rat_injective (by rw [rat_mul, rat_zero]; exact B.d.pX_j0)
 
-theorem wittDecomposition_projectionZero_mul_e_eq_zero (B : BesLev D σ) : B.d.q0 * B.d.e = 0 :=
+theorem q0_e_core (B : BesCore D σ) : B.d.q0 * B.d.e = 0 :=
   rat_injective (by rw [rat_mul, rat_zero]; exact B.d.p0_jX)
 
-theorem wittDecomposition_projectionZero_mul_anisotropicInclusion_eq_one (B : BesLev D σ) : B.d.q0 * B.d.i₀ = 1 :=
+theorem q0_i0_core (B : BesCore D σ) : B.d.q0 * B.d.i₀ = 1 :=
   rat_injective (by rw [rat_mul, rat_one]; exact B.d.p0_j0)
 
-theorem besselBasePointLeftInverse_mul_snocMatrix (B : BesLev D σ) : besselBasePointLeftInverse B * x0Mat B = 1 := by
+theorem leftInvCore_mul (B : BesCore D σ) : leftInvCore B * x0MatCore B = 1 := by
   refine Matrix.ext fun i j => ?_
   refine Fin.lastCases ?_ (fun a => ?_) i <;> refine Fin.lastCases ?_ (fun b => ?_) j
-  · have h : ((besselBasePointLevelNorm B)⁻¹ • (star (vecB B.o B.ζ) ᵥ* (B.V₀.gram * B.d.q0))) ⬝ᵥ (B.d.i₀ *ᵥ vecB B.o B.ζ) = 1 := by
-      rw [smul_dotProduct, Matrix.dotProduct_mulVec, Matrix.vecMul_vecMul, Matrix.mul_assoc, wittDecomposition_projectionZero_mul_anisotropicInclusion_eq_one, Matrix.mul_one,
+  · have h : ((normCore B)⁻¹ • (star (vecB B.o B.ζ) ᵥ* (B.V₀.gram * B.d.q0))) ⬝ᵥ (B.d.i₀ *ᵥ vecB B.o B.ζ) = 1 := by
+      rw [smul_dotProduct, Matrix.dotProduct_mulVec, Matrix.vecMul_vecMul, Matrix.mul_assoc, q0_i0_core, Matrix.mul_one,
         ← Matrix.dotProduct_mulVec, smul_eq_mul]
-      exact inv_mul_cancel₀ (besselBasePointLevelNorm_ne_zero B)
+      exact inv_mul_cancel₀ (normCore_ne_zero B)
     rw [Matrix.mul_apply, Matrix.one_apply_eq]
-    simp only [besselBasePointLeftInverse, x0Mat, Matrix.of_apply, Fin.snoc_last]
+    simp only [leftInvCore, x0MatCore, Matrix.of_apply, Fin.snoc_last]
     exact h
-  · have h : ((besselBasePointLevelNorm B)⁻¹ • (star (vecB B.o B.ζ) ᵥ* (B.V₀.gram * B.d.q0))) ᵥ* B.d.e = 0 := by
-      rw [Matrix.smul_vecMul, Matrix.vecMul_vecMul, Matrix.mul_assoc, wittDecomposition_projectionZero_mul_e_eq_zero, Matrix.mul_zero, Matrix.vecMul_zero, smul_zero]
+  · have h : ((normCore B)⁻¹ • (star (vecB B.o B.ζ) ᵥ* (B.V₀.gram * B.d.q0))) ᵥ* B.d.e = 0 := by
+      rw [Matrix.smul_vecMul, Matrix.vecMul_vecMul, Matrix.mul_assoc, q0_e_core, Matrix.mul_zero, Matrix.vecMul_zero, smul_zero]
     rw [Matrix.mul_apply, Matrix.one_apply_ne (Fin.castSucc_ne_last b).symm]
-    simp only [besselBasePointLeftInverse, x0Mat, Matrix.of_apply, Fin.snoc_last, Fin.snoc_castSucc]
+    simp only [leftInvCore, x0MatCore, Matrix.of_apply, Fin.snoc_last, Fin.snoc_castSucc]
     exact congrFun h b
   · have h : B.d.qX *ᵥ (B.d.i₀ *ᵥ vecB B.o B.ζ) = 0 := by
-      rw [Matrix.mulVec_mulVec, wittDecomposition_projectionX_mul_anisotropicInclusion_eq_zero, Matrix.zero_mulVec]
+      rw [Matrix.mulVec_mulVec, qX_i0_core, Matrix.zero_mulVec]
     rw [Matrix.mul_apply, Matrix.one_apply_ne (Fin.castSucc_ne_last a)]
-    simp only [besselBasePointLeftInverse, x0Mat, Matrix.of_apply, Fin.snoc_last, Fin.snoc_castSucc]
+    simp only [leftInvCore, x0MatCore, Matrix.of_apply, Fin.snoc_last, Fin.snoc_castSucc]
     exact congrFun h a
   · rw [Matrix.mul_apply, Matrix.one_apply]
     simp only [Fin.castSucc_inj]
-    rw [← Matrix.one_apply (α := D.host.E) (i := a) (j := b), ← besselLevelDatum_qX_dot_e_eq_one B, Matrix.mul_apply]
-    simp only [besselBasePointLeftInverse, x0Mat, Matrix.of_apply, Fin.snoc_castSucc]
+    rw [← Matrix.one_apply (α := D.host.E) (i := a) (j := b), ← qX_e_core B, Matrix.mul_apply]
+    simp only [leftInvCore, x0MatCore, Matrix.of_apply, Fin.snoc_castSucc]
+
+theorem xLast_rat_leftInv_core (B : BesCore D σ) :
+    (∃ P ∈ ratMx D (σ + 1) B.V.rank, P ⬝ xLast B.d (vecB B.o B.ζ) = 1) ∧
+      xLast B.d (vecB B.o B.ζ) ∈ ratMx D B.V.rank (σ + 1) :=
+  ⟨⟨rat (leftInvCore B), rat_mem _, by rw [← rat_x0MatCore, ← rat_mul, leftInvCore_mul, rat_one]⟩,
+    rat_x0MatCore B ▸ rat_mem _⟩
+
+def x0Mat (B : BesLev D σ) : Matrix (Fin B.V.rank) (Fin (σ + 1)) D.host.E := x0MatCore (toCore B)
+
+theorem rat_x0Mat (B : BesLev D σ) : rat (x0Mat B) = x0 B := rat_x0MatCore (toCore B)
+
+def besselBasePointLevelNorm (B : BesLev D σ) : D.host.E := normCore (toCore B)
+
+theorem besselBasePointLevelNorm_eq_gram_form (B : BesLev D σ) : besselBasePointLevelNorm B = star B.ζ ⬝ᵥ B.L.gram *ᵥ B.ζ :=
+  normCore_eq (toCore B)
+
+theorem besselBasePointLevelNorm_ne_zero (B : BesLev D σ) : besselBasePointLevelNorm B ≠ 0 :=
+  normCore_ne_zero (toCore B)
+
+def besselBasePointLeftInverse (B : BesLev D σ) : Matrix (Fin (σ + 1)) (Fin B.V.rank) D.host.E := leftInvCore (toCore B)
+
+theorem besselLevelDatum_qX_dot_e_eq_one (B : BesLev D σ) : B.d.qX * B.d.e = 1 := qX_e_core (toCore B)
+
+theorem wittDecomposition_projectionX_mul_anisotropicInclusion_eq_zero (B : BesLev D σ) : B.d.qX * B.d.i₀ = 0 := qX_i0_core (toCore B)
+
+theorem wittDecomposition_projectionZero_mul_e_eq_zero (B : BesLev D σ) : B.d.q0 * B.d.e = 0 := q0_e_core (toCore B)
+
+theorem wittDecomposition_projectionZero_mul_anisotropicInclusion_eq_one (B : BesLev D σ) : B.d.q0 * B.d.i₀ = 1 := q0_i0_core (toCore B)
+
+theorem besselBasePointLeftInverse_mul_snocMatrix (B : BesLev D σ) : besselBasePointLeftInverse B * x0Mat B = 1 :=
+  leftInvCore_mul (toCore B)
 
 theorem fourierBesselBasePoint_rational_with_rational_leftInverse : ∀ (D : D7) (σ : ℕ) (B : BesLev D σ),
     (∃ P ∈ ratMx D (σ + 1) B.V.rank, P ⬝ x0 B = 1) ∧ x0 B ∈ ratMx D B.V.rank (σ + 1) := fun _ _ B =>
-  ⟨⟨rat (besselBasePointLeftInverse B), rat_mem _, by rw [← rat_x0Mat, ← rat_mul, besselBasePointLeftInverse_mul_snocMatrix, rat_one]⟩, rat_x0Mat B ▸ rat_mem _⟩
+  xLast_rat_leftInv_core (toCore B)
 
 end GlobalTheory.Unf.FB
 end -- clump:auto
@@ -248,7 +288,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf GlobalTheory.Unf.FB
 
 
@@ -266,7 +305,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf GlobalTheory.Unf.FB
 
 namespace GlobalTheory.BlockUni
@@ -359,7 +397,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf GlobalTheory.Unf.FB
 
 
@@ -377,7 +414,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf GlobalTheory.Unf.FB
 
 namespace GlobalTheory.Unf.FB
@@ -392,8 +428,8 @@ variable {D : D7} {σ : ℕ}
 
 alias ratV_mulVec_rat := _root_.GlobalTheory.MixPer.ratV_mulVec
 
-def actUni (B : BesLev D σ) : Subgroup (GA D B.V) where
-  carrier := {g | ∃ u ∈ UX D (σ + 1), mt B.V g ⬝ x0 B = x0 B ⬝ u.1}
+def actUniCore (B : BesCore D σ) : Subgroup (GA D B.V) where
+  carrier := {g | ∃ u ∈ UX D (σ + 1), mt B.V g ⬝ xLast B.d (vecB B.o B.ζ) = xLast B.d (vecB B.o B.ζ) ⬝ u.1}
   one_mem' := ⟨1, one_mem _, by rw [mt_one, Units.val_one, Matrix.one_mul, Matrix.mul_one]⟩
   mul_mem' := by
     rintro a b ⟨u, hu, ha⟩ ⟨u', hu', hb⟩
@@ -402,19 +438,19 @@ def actUni (B : BesLev D σ) : Subgroup (GA D B.V) where
   inv_mem' := by
     rintro a ⟨u, hu, ha⟩
     refine ⟨u⁻¹, inv_mem hu, ?_⟩
-    have h1 : mt B.V a⁻¹ ⬝ (x0 B ⬝ u.1) ⬝ (u⁻¹).1 = x0 B ⬝ (u⁻¹).1 := by
+    have h1 : mt B.V a⁻¹ ⬝ (xLast B.d (vecB B.o B.ζ) ⬝ u.1) ⬝ (u⁻¹).1 = xLast B.d (vecB B.o B.ζ) ⬝ (u⁻¹).1 := by
       rw [← ha, ← Matrix.mul_assoc, ← mt_mul, inv_mul_cancel, mt_one, Matrix.one_mul]
     rw [← h1, Matrix.mul_assoc, Matrix.mul_assoc, ← Units.val_mul, mul_inv_cancel, Units.val_one, Matrix.mul_one]
 
-theorem mem_actUni_iff (B : BesLev D σ) (g : GA D B.V) : g ∈ actUni B ↔ ∃ u ∈ UX D σ, ∃ v : Fin σ → AE D,
+theorem mem_actUniCore_iff (B : BesCore D σ) (g : GA D B.V) : g ∈ actUniCore B ↔ ∃ u ∈ UX D σ, ∃ v : Fin σ → AE D,
     mt B.V g ⬝ B.d.jX = B.d.jX ⬝ u.1 ∧
       mt B.V g *ᵥ (B.d.j0 *ᵥ ratV (vecB B.o B.ζ)) = B.d.j0 *ᵥ ratV (vecB B.o B.ζ) + B.d.jX *ᵥ v :=
   snocCols_uni_iff (AE D) B.V.rank σ B.d.jX _ (mt B.V g)
 
-theorem flagN_le_actUni (B : BesLev D σ) : flagN B.d ≤ actUni B := by
+theorem flagN_le_actUniCore (B : BesCore D σ) : flagN B.d ≤ actUniCore B := by
   intro n hn
   obtain ⟨u, hu, b, c, rfl⟩ := ((flag_jacobi_structure D B.V B.V₀ σ B.d).1 n).1 hn
-  rw [mem_actUni_iff]
+  rw [mem_actUniCore_iff]
   have hm : mt B.V (B.d.levi u * (B.d.nB b * B.d.nC c)) ⬝ B.d.j0 = B.d.j0 + B.d.jX ⬝ (u.1 ⬝ b) := by
     rw [mt_mul, mt_mul, Matrix.mul_assoc, Matrix.mul_assoc, B.d.nC_j0, B.d.nB_j0, Matrix.mul_add, B.d.wittDecomp_levi_inclAnisotropic,
       ← Matrix.mul_assoc, B.d.levi_jX, Matrix.mul_assoc]
@@ -422,8 +458,8 @@ theorem flagN_le_actUni (B : BesLev D σ) : flagN B.d ≤ actUni B := by
   · rw [mt_mul, mt_mul, Matrix.mul_assoc, Matrix.mul_assoc, B.d.nC_jX, B.d.nB_jX, B.d.levi_jX]
   · rw [Matrix.mulVec_mulVec, hm, Matrix.add_mulVec, Matrix.mulVec_mulVec]
 
-theorem embA_mem_actUni (B : BesLev D σ) (h : GA D B.A) : embA B.d B.o h ∈ actUni B := by
-  rw [mem_actUni_iff]
+theorem embA_mem_actUniCore (B : BesCore D σ) (h : GA D B.A) : embA B.d B.o h ∈ actUniCore B := by
+  rw [mem_actUniCore_iff]
   refine ⟨1, one_mem _, 0, ?_, ?_⟩
   · rw [embA_apply, B.d.wittDecomp_anisotropicEmbedding_inclX, Units.val_one, Matrix.mul_one]
   · rw [Matrix.mulVec_zero, add_zero, Matrix.mulVec_mulVec, embA_apply, B.d.wittDecomp_anisotropicEmbedding_inclAnisotropic, ← Matrix.mulVec_mulVec,
@@ -432,11 +468,11 @@ theorem embA_mem_actUni (B : BesLev D σ) (h : GA D B.A) : embA B.d B.o h ∈ ac
     congr 1
     rw [Matrix.mulVec_mulVec, B.o.emb_jB, mt_one, Matrix.mul_one]
 
-theorem besGrp_le_actUni (B : BesLev D σ) : besGrp B.d B.o ≤ actUni B :=
-  sup_le (flagN_le_actUni B) (by rintro _ ⟨h, rfl⟩; exact embA_mem_actUni B h)
+theorem besGrp_le_actUniCore (B : BesCore D σ) : besGrp B.d B.o ≤ actUniCore B :=
+  sup_le (flagN_le_actUniCore B) (by rintro _ ⟨h, rfl⟩; exact embA_mem_actUniCore B h)
 
-theorem mem_besGrp_of_actUni (B : BesLev D σ) (g : GA D B.V) (hg : g ∈ actUni B) : g ∈ besGrp B.d B.o := by
-  obtain ⟨u, hu, v, hX, h0⟩ := (mem_actUni_iff B g).1 hg
+theorem mem_besGrp_of_actUniCore (B : BesCore D σ) (g : GA D B.V) (hg : g ∈ actUniCore B) : g ∈ besGrp B.d B.o := by
+  obtain ⟨u, hu, v, hX, h0⟩ := (mem_actUniCore_iff B g).1 hg
   have hst : B.d.levi u⁻¹ * g ∈ stabX B.d := by
     show mt B.V (B.d.levi u⁻¹ * g) ⬝ B.d.jX = B.d.jX
     rw [mt_mul, Matrix.mul_assoc, hX, ← Matrix.mul_assoc, B.d.levi_jX, Matrix.mul_assoc, ← Units.val_mul,
@@ -463,24 +499,45 @@ theorem mem_besGrp_of_actUni (B : BesLev D σ) (g : GA D B.V) (hg : g ∈ actUni
   exact mul_mem (Subgroup.mem_sup_left (((flag_jacobi_structure D B.V B.V₀ σ B.d).1 _).2 ⟨u, hu, b, c, rfl⟩))
     (Subgroup.mem_sup_right ⟨h, rfl⟩)
 
-theorem besselGroup_action_fourierBesselBasePoint : ∀ (D : D7) (σ : ℕ) (B : BesLev D σ), (∀ g : GA D B.V, g ∈ besGrp B.d B.o ↔ ∃ u ∈ UX D (σ + 1), mt B.V g ⬝ x0 B = x0 B ⬝ u.1) ∧ (∀ a a' : Mx D (σ + 1) (σ + 1), x0 B ⬝ a = x0 B ⬝ a' → a = a') ∧ ∀ g ∈ GQ B.V, ∀ u : UX D (σ + 1), mt B.V g ⬝ x0 B = x0 B ⬝ u.1.1 → u ∈ UXQ D (σ + 1) := by
-  intro D σ B
-  obtain ⟨⟨P, hP, hPx⟩, hx⟩ := _root_.GlobalTheory.Unf.FB.fourierBesselBasePoint_rational_with_rational_leftInverse D σ B
-  refine ⟨fun g => ⟨fun hg => besGrp_le_actUni B hg, fun hg => mem_besGrp_of_actUni B g hg⟩, ?_, ?_⟩
+theorem besGrp_act_xLast_core (B : BesCore D σ) :
+    (∀ g : GA D B.V, g ∈ besGrp B.d B.o ↔ ∃ u ∈ UX D (σ + 1), mt B.V g ⬝ xLast B.d (vecB B.o B.ζ) = xLast B.d (vecB B.o B.ζ) ⬝ u.1) ∧
+    (∀ a a' : Mx D (σ + 1) (σ + 1), xLast B.d (vecB B.o B.ζ) ⬝ a = xLast B.d (vecB B.o B.ζ) ⬝ a' → a = a') ∧
+    ∀ g ∈ GQ B.V, ∀ u : UX D (σ + 1), mt B.V g ⬝ xLast B.d (vecB B.o B.ζ) = xLast B.d (vecB B.o B.ζ) ⬝ u.1.1 → u ∈ UXQ D (σ + 1) := by
+  obtain ⟨⟨P, hP, hPx⟩, hx⟩ := xLast_rat_leftInv_core B
+  refine ⟨fun g => ⟨fun hg => besGrp_le_actUniCore B hg, fun hg => mem_besGrp_of_actUniCore B g hg⟩, ?_, ?_⟩
   · intro a a' h
     rw [← Matrix.one_mul a, ← Matrix.one_mul a', ← hPx, Matrix.mul_assoc, Matrix.mul_assoc, h]
   · intro g hg u hgu
-    have hinv : mt B.V g⁻¹ ⬝ x0 B = x0 B ⬝ (u.1⁻¹).1 := by
-      have h1 : mt B.V g⁻¹ ⬝ (x0 B ⬝ u.1.1) ⬝ (u.1⁻¹).1 = x0 B ⬝ (u.1⁻¹).1 := by
+    have hinv : mt B.V g⁻¹ ⬝ xLast B.d (vecB B.o B.ζ) = xLast B.d (vecB B.o B.ζ) ⬝ (u.1⁻¹).1 := by
+      have h1 : mt B.V g⁻¹ ⬝ (xLast B.d (vecB B.o B.ζ) ⬝ u.1.1) ⬝ (u.1⁻¹).1 = xLast B.d (vecB B.o B.ζ) ⬝ (u.1⁻¹).1 := by
         rw [← hgu, ← Matrix.mul_assoc, ← mt_mul, inv_mul_cancel, mt_one, Matrix.one_mul]
       rw [← h1, Matrix.mul_assoc, Matrix.mul_assoc, ← Units.val_mul, mul_inv_cancel, Units.val_one, Matrix.mul_one]
     refine ⟨?_, ?_⟩
-    · have e : u.1.1 = P ⬝ mt B.V g ⬝ x0 B := by
+    · have e : u.1.1 = P ⬝ mt B.V g ⬝ xLast B.d (vecB B.o B.ζ) := by
         rw [Matrix.mul_assoc, hgu, ← Matrix.mul_assoc, hPx, Matrix.one_mul]
       rw [e]; exact ratMx_mul (ratMx_mul hP ((mem_GQ_iff _ _).1 hg)) hx
-    · have e : (u.1⁻¹).1 = P ⬝ mt B.V g⁻¹ ⬝ x0 B := by
+    · have e : (u.1⁻¹).1 = P ⬝ mt B.V g⁻¹ ⬝ xLast B.d (vecB B.o B.ζ) := by
         rw [Matrix.mul_assoc, hinv, ← Matrix.mul_assoc, hPx, Matrix.one_mul]
       rw [e]; exact ratMx_mul (ratMx_mul hP ((mem_GQ_iff _ _).1 (inv_mem hg))) hx
+
+def actUni (B : BesLev D σ) : Subgroup (GA D B.V) := actUniCore (toCore B)
+
+theorem mem_actUni_iff (B : BesLev D σ) (g : GA D B.V) : g ∈ actUni B ↔ ∃ u ∈ UX D σ, ∃ v : Fin σ → AE D,
+    mt B.V g ⬝ B.d.jX = B.d.jX ⬝ u.1 ∧
+      mt B.V g *ᵥ (B.d.j0 *ᵥ ratV (vecB B.o B.ζ)) = B.d.j0 *ᵥ ratV (vecB B.o B.ζ) + B.d.jX *ᵥ v :=
+  mem_actUniCore_iff (toCore B) g
+
+theorem flagN_le_actUni (B : BesLev D σ) : flagN B.d ≤ actUni B := flagN_le_actUniCore (toCore B)
+
+theorem embA_mem_actUni (B : BesLev D σ) (h : GA D B.A) : embA B.d B.o h ∈ actUni B := embA_mem_actUniCore (toCore B) h
+
+theorem besGrp_le_actUni (B : BesLev D σ) : besGrp B.d B.o ≤ actUni B := besGrp_le_actUniCore (toCore B)
+
+theorem mem_besGrp_of_actUni (B : BesLev D σ) (g : GA D B.V) (hg : g ∈ actUni B) : g ∈ besGrp B.d B.o :=
+  mem_besGrp_of_actUniCore (toCore B) g hg
+
+theorem besselGroup_action_fourierBesselBasePoint : ∀ (D : D7) (σ : ℕ) (B : BesLev D σ), (∀ g : GA D B.V, g ∈ besGrp B.d B.o ↔ ∃ u ∈ UX D (σ + 1), mt B.V g ⬝ x0 B = x0 B ⬝ u.1) ∧ (∀ a a' : Mx D (σ + 1) (σ + 1), x0 B ⬝ a = x0 B ⬝ a' → a = a') ∧ ∀ g ∈ GQ B.V, ∀ u : UX D (σ + 1), mt B.V g ⬝ x0 B = x0 B ⬝ u.1.1 → u ∈ UXQ D (σ + 1) :=
+  fun _ _ B => besGrp_act_xLast_core (toCore B)
 
 end GlobalTheory.Unf.FB
 

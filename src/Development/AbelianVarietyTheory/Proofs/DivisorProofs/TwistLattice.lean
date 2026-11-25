@@ -77,8 +77,6 @@ section -- clump:auto
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.RealMult GlobalTheory.CMVal GlobalTheory.LatVal GlobalTheory.LatJet
 open GlobalTheory.IndefiniteRowSideFullHecke.LatticeNormTransport (upIdele IsLatOf)
-attribute [local instance] Over.cartesianMonoidalCategory
-set_option autoImplicit false
 open GlobalTheory.WeierstrassCurve (scheme toSpec mapHom)
 
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHeckeCharacterIdele (finiteAdeleMap finiteCompletionMap finiteCompletionMap_coe finiteCompletionMap_mapsTo)
@@ -142,61 +140,6 @@ end GlobalTheory.LatDecomp
 
 namespace GlobalTheory.LatDecomp
 
-theorem exists_decomp : ∀ (K : Type) [Field K] [NumberField K] (E : Type) [Field E] [NumberField E] [IsCMField E] [Algebra K E]
-    (t : (Af K)ˣ) (c : Ideal (OF E)) (y : (Af E)ˣ), c ≠ ⊥ → ∀ x x' : E,
-    ((upIdele K E t : Af E) * algebraMap E (Af E) x' - algebraMap E (Af E) x) * ((y⁻¹ : (Af E)ˣ) : Af E) ∈ hatO c →
-    ∃ (m : ℕ) (b : Fin m → E) (a a' : Fin m → K), (∀ k (r : 𝓞 K), algebraMap K E (r : K) * b k ∈ lattice c y) ∧
-      x' = ∑ k, algebraMap K E (a' k) * b k ∧ x - ∑ k, algebraMap K E (a k) * b k ∈ lattice c y ∧
-      ∀ k (v : HeightOneSpectrum (𝓞 K)),
-        Valued.v (((t : Af K) * algebraMap K (Af K) (a' k) - algebraMap K (Af K) (a k)) v) ≤ 1 := by
-  intro K _ _ E _ _ _ _ t c y hc x x' hx
-  haveI : Module.Finite K E := Module.Finite.of_restrictScalars_finite ℚ K E
-  set B := Module.finBasis K E
-  set yi : Af E := ((y⁻¹ : (Af E)ˣ) : Af E)
-  choose N hN0 hN using fun k => exists_nat_mul_good hc y (B k)
-  set b : Fin (Module.finrank K E) → E := fun k => (N k : E) * B k with hb
-  set a' : Fin (Module.finrank K E) → K := fun k => B.repr x' k / (N k : K) with ha'
-  have hNK : ∀ k, (N k : K) ≠ 0 := fun k => Nat.cast_ne_zero.2 (hN0 k)
-
-  have happrox : ∀ z : Af K, ∃ a : K, ∀ v, Valued.v ((z - algebraMap K (Af K) a) v) ≤ 1 := fun z => by
-    obtain ⟨a, u, hu, e⟩ := (GlobalTheory.AdLat.strong_approximation_mod_nat K 1 one_pos).1 z
-    refine ⟨a, fun v => ?_⟩
-    rw [e, one_smul, add_sub_cancel_left]
-    exact (HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).1 (hu v)
-  choose a ha using fun k => happrox ((t : Af K) * algebraMap K (Af K) (a' k))
-  have hx' : x' = ∑ k, algebraMap K E (a' k) * b k := by
-    conv_lhs => rw [← B.sum_repr x']
-    refine Finset.sum_congr rfl fun k _ => ?_
-    rw [Algebra.smul_def, hb, ha']
-    simp only
-    rw [← _root_.mul_assoc, ← map_natCast (algebraMap K E), ← map_mul, div_mul_cancel₀ _ (hNK k)]
-  refine ⟨Module.finrank K E, b, a, a', fun k r => ?_, hx', ?_, ha⟩
-  ·
-    have hr : IsIntegral ℤ (algebraMap K E (r : K)) := (RingOfIntegers.isIntegral_coe r).algebraMap
-    have h := hN k (algebraMap E (Af E) ((⟨algebraMap K E (r : K), hr⟩ : 𝓞 E) : E))
-      (algebraMap_integral ⟨algebraMap K E (r : K), hr⟩)
-    rw [mem_lattice, map_mul]
-    exact h
-  ·
-    have hT : (upIdele K E t : Af E) = finiteAdeleMap K E (t : Af K) := rfl
-    have hkey : algebraMap E (Af E) (x - ∑ k, algebraMap K E (a k) * b k) * yi =
-        -(((upIdele K E t : Af E) * algebraMap E (Af E) x' - algebraMap E (Af E) x) * yi) +
-          ∑ k, finiteAdeleMap K E ((t : Af K) * algebraMap K (Af K) (a' k) - algebraMap K (Af K) (a k)) *
-            algebraMap E (Af E) (b k) * yi := by
-      have e2 : ∀ k, finiteAdeleMap K E ((t : Af K) * algebraMap K (Af K) (a' k) - algebraMap K (Af K) (a k)) *
-            algebraMap E (Af E) (b k) * yi =
-          finiteAdeleMap K E (t : Af K) * (algebraMap E (Af E) (algebraMap K E (a' k) * b k)) * yi -
-            algebraMap E (Af E) (algebraMap K E (a k) * b k) * yi := fun k => by
-        simp only [map_sub, map_mul, finiteAdeleMap_algebraMap]
-        ring
-
-      rw [Finset.sum_congr rfl fun k _ => e2 k, Finset.sum_sub_distrib, ← Finset.sum_mul, ← Finset.sum_mul,
-      ← Finset.mul_sum, ← map_sum, ← map_sum, ← hx', hT, map_sub]
-      ring
-    rw [mem_lattice, hkey]
-    refine add_mem (neg_mem hx) (Subring.sum_mem _ fun k _ => ?_)
-    exact hN k _ (finiteAdeleMap_integral (ha k))
-
 end GlobalTheory.LatDecomp
 end -- clump:auto
 end -- clump:auto
@@ -209,8 +152,6 @@ section -- clump:auto
 
 open NumberField IsDedekindDomain GlobalTheory.CMVal GlobalTheory.HilbFam GlobalTheory.WpFam GlobalTheory.QFam ReciprocityTheory.ChartRestriction.L1
 open scoped UpperHalfPlane nonZeroDivisors Matrix
-
-set_option autoImplicit false
 
 namespace GlobalTheory.RoadE.ConjLat
 

@@ -153,7 +153,6 @@ theorem isAlgebraic_adjoin (u : ∀ k, ι k) (hu : ∀ k, (X ⟨k, u k⟩ : MRin
     Algebra.IsAlgebraic (Algebra.adjoin (chartMap P u).range (Set.range fun k =>
       algebraMap (MRing ι F ⧸ P) (FractionRing (MRing ι F ⧸ P)) (Ideal.Quotient.mk P (X ⟨k, u k⟩))))
       (FractionRing (MRing ι F ⧸ P)) := by
-  set_option synthInstance.maxHeartbeats 200000 in
     set R := MRing ι F ⧸ P
     set L := FractionRing R
     set A₀ := (chartMap P u).range

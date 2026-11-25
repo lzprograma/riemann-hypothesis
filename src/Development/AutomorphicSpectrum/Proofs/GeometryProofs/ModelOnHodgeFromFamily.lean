@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemOfAevalEqZero
 public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
 public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.CoSeriesThreeStep
 public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BundleObjects
@@ -46,49 +47,7 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithVariety
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagPairChartBundleCompat
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ModelDescentIntegralClosure
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ModelDescentValuationFibre
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyCN
 import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
 import Mathlib.Tactic.Linter.Style
@@ -96,28 +55,17 @@ import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
-import Mathlib.Topology.Sheaves.Presheaf
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.LocalLengthAdditivityTorsionFree
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptInteriorGeneric
-import Mathlib.Algebra.AffineMonoid.Basic
 import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.MemSpanOverOfMem
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ModelOverDvrExtension
 import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ClassListMapDomainPerm
 
 -- This file was produced by scripts/clump.py from the modules listed below.
--- Members: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocalComparisonOfOrbitsHolds, Development.WeilBound.CoreStatements.IdealCycleValues.CycListAdditiveFirstClass, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.DivisorCycleListAdditive, Development.WeilBound.CoreStatements.IdealCycleValues.HomogeneousSumLinearChangeClasses, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HomogeneousClassSubstitution, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.DivisorCycleSubstitution, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.LocalPairSplitSum, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagM3FromLocal, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.LocalNumberPermutationInvariant, Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsDvrExtensionField, Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagBasisLinIndepSpan, Development.AutomorphicSpectrum.Proofs.GeometryProofs.FunctionFieldDvrExtension, Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeFlagCmTypeDegree, Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeFlagOutsidePrimeFibres, Development.WeilBound.CoreStatements.HodgeTatePoints.EqOfPowEqSelf, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TeichmullerLiftOfEmbedding, Development.AutomorphicSpectrum.Proofs.GeometryProofs.ModelDescentGenericFibre, Development.AutomorphicSpectrum.Proofs.GeometryProofs.ModelOnHodgeFromFamily
+-- Members: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocalComparisonOfOrbitsHolds, Development.WeilBound.CoreStatements.IdealCycleValues.CycListAdditiveFirstClass, Development.WeilBound.CoreStatements.IdealCycleValues.HomogeneousSumLinearChangeClasses, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.DivisorCycleSubstitution, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.LocalPairSplitSum, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagM3FromLocal, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.LocalNumberPermutationInvariant, Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsDvrExtensionField, Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagBasisLinIndepSpan, Development.AutomorphicSpectrum.Proofs.GeometryProofs.FunctionFieldDvrExtension, Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeFlagCmTypeDegree, Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeFlagOutsidePrimeFibres, Development.WeilBound.CoreStatements.HodgeTatePoints.EqOfPowEqSelf, Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TeichmullerLiftOfEmbedding, Development.AutomorphicSpectrum.Proofs.GeometryProofs.ModelDescentGenericFibre, Development.AutomorphicSpectrum.Proofs.GeometryProofs.ModelOnHodgeFromFamily
 
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocalComparisonOfOrbitsHolds =====
 -- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocalComparisonOfOrbitsHolds", "h": "module\n\npublic import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison\npublic import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.CoSeriesThreeStep\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Algebra.Order.Star.Real\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.ReduceModChar\nimport Mathlib.Topology.Sheaves.Init\n\n"}
@@ -260,23 +208,6 @@ end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.WeilBound.CoreStatements.IdealCycleValues.CycListAdditiveFirstClass =====
 
--- ===== clump member: Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.DivisorCycleListAdditive =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.DivisorCycleListAdditive", "h": "module\n\npublic import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison\npublic import Development.WeilBound.CoreStatements.IdealCycleValues.CycListAdditiveFirstClass\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num
-
-namespace GlobalTheory.CompanionTheory.Ar.Num
-
-theorem cycList_divCycle_add_first : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (ϖ : O), Irreducible ϖ → ∀ (K : Type) [Fintype K] [DecidableEq K] (ι : K → Type) [∀ k, Fintype (ι k)] (P : Ideal (MRing ι O)) (d : ℕ), IsModelOver P d → ∀ (a : K → ℕ) (f : MRing ι O), IsMultiHomog f a → f ∉ P → ∀ (b b' : K → ℤ) (l : List (K → ℤ)), l.length + 1 = d → cycList (divCycle P f) ((b + b') :: l) = cycList (divCycle P f) (b :: l) + cycList (divCycle P f) (b' :: l) := by
-  exact @BaseChangeColon.cycList_additive_first_class
-
-end GlobalTheory.CompanionTheory.Ar.Num
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.DivisorCycleListAdditive =====
-
 -- ===== clump member: Development.WeilBound.CoreStatements.IdealCycleValues.HomogeneousSumLinearChangeClasses =====
 -- clump-header: {"m": "Development.WeilBound.CoreStatements.IdealCycleValues.HomogeneousSumLinearChangeClasses", "h": "module\n\npublic import Mathlib.Basic.Real.Basic\npublic import Mathlib.RingTheory.MvPolynomial.Homogeneous\npublic import Development.WeilBound.CoreStatements.IdealCycleValues.ProdMapToMultiset\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison\nimport GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects\n\n"}
 section -- clump:auto
@@ -292,25 +223,8 @@ end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.WeilBound.CoreStatements.IdealCycleValues.HomogeneousSumLinearChangeClasses =====
 
--- ===== clump member: Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HomogeneousClassSubstitution =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HomogeneousClassSubstitution", "h": "module\n\npublic import Mathlib.Basic.Real.Basic\npublic import Mathlib.RingTheory.MvPolynomial.Homogeneous\npublic import Development.WeilBound.CoreStatements.IdealCycleValues.HomogeneousSumLinearChangeClasses\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\nimport Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison\nimport GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects\n\n"}
-section -- clump:auto
-@[expose] public section
-
-open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num
-
-namespace GlobalTheory.CompanionTheory.Ar.Num
-
-theorem subst_abs_list : ∀ (G : Type) [AddCommGroup G] (d : ℕ) (n : List G → ℝ), (∀ l l', l.Perm l' → n l = n l') → (∀ b b' l, l.length + 1 = d → n ((b + b') :: l) = n (b :: l) + n (b' :: l)) → ∀ (σ σ' : Type) [Fintype σ] (cls : σ → G) (M : σ' → σ → ℤ) (H : MvPolynomial σ' ℝ) (m : ℕ), H.IsHomogeneous m → ∀ Q : List G, m + Q.length = d → (∑ μ ∈ H.support, H.coeff μ * n ((μ.toMultiset.map fun t => ∑ i, M t i • cls i).toList ++ Q)) = ∑ μ ∈ (aeval (fun t => ∑ i, (C (M t i : ℝ) * X i : MvPolynomial σ ℝ)) H).support, (aeval (fun t => ∑ i, (C (M t i : ℝ) * X i : MvPolynomial σ ℝ)) H).coeff μ * n ((μ.toMultiset.map cls).toList ++ Q) := by
-  exact @BaseChangeColon.homogeneous_sum_linear_change_classes
-
-end GlobalTheory.CompanionTheory.Ar.Num
-end -- clump:auto
-end -- clump:auto
--- ===== end clump member: Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HomogeneousClassSubstitution =====
-
 -- ===== clump member: Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.DivisorCycleSubstitution =====
--- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.DivisorCycleSubstitution", "h": "module\n\npublic import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison\npublic import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.CycleListPermInvariant\npublic import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.DivisorCycleListAdditive\npublic import Mathlib.Basic.Real.Basic\npublic import Mathlib.RingTheory.MvPolynomial.Homogeneous\npublic import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HomogeneousClassSubstitution\npublic import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PPairNumSectionCut\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
+-- clump-header: {"m": "Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.DivisorCycleSubstitution", "h": "module\n\npublic import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison\npublic import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.CycleListPermInvariant\npublic import Development.WeilBound.CoreStatements.IdealCycleValues.CycListAdditiveFirstClass\npublic import Mathlib.Basic.Real.Basic\npublic import Mathlib.RingTheory.MvPolynomial.Homogeneous\npublic import Development.WeilBound.CoreStatements.IdealCycleValues.HomogeneousSumLinearChangeClasses\npublic import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PPairNumSectionCut\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
 
@@ -350,15 +264,15 @@ theorem cycNum_subst_of_add {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValu
     (hH : H.IsHomogeneous m) (Q : List (K → ℤ)) (hQ : m + Q.length = d) :
     cycNum Z (fun t => ∑ i, M t i • cls i) H Q =
       cycNum Z cls (aeval (fun t => ∑ i, (C (M t i : ℝ) * X i : MvPolynomial σ ℝ)) H) Q :=
-  _root_.GlobalTheory.CompanionTheory.Ar.Num.subst_abs_list (K → ℤ) d (fun l => (cycList Z l : ℝ))
+  _root_.BaseChangeColon.homogeneous_sum_linear_change_classes (K → ℤ) d (fun l => (cycList Z l : ℝ))
     (fun l l' h => by rw [_root_.GlobalTheory.CompanionTheory.Ar.Num.numbers_list_perm.2 O K ι Z l l' h])
     (fun b b' l h => by rw [hadd b b' l h]; push_cast; rfl)
     σ σ' cls M H m hH Q hQ
 
 theorem cycNum_linear_subst : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (ϖ : O), Irreducible ϖ → ∀ (K : Type) [Fintype K] [DecidableEq K] (ι : K → Type) [∀ k, Fintype (ι k)] (P : Ideal (MRing ι O)) (d : ℕ), IsModelOver P d → ∀ (a a' : K → ℕ) (f g : MRing ι O), IsMultiHomog f a → IsMultiHomog g a' → f ∉ P → g ∉ P → ∀ (σ σ' : Type) [Fintype σ] (cls : σ → K → ℤ) (M : σ' → σ → ℤ) (H : MvPolynomial σ' ℝ) (m : ℕ), H.IsHomogeneous m → ∀ Q : List (K → ℤ), m + Q.length = d → cycNum (ratDiv P f g) (fun t => ∑ i, M t i • cls i) H Q = cycNum (ratDiv P f g) cls (aeval (fun t => ∑ i, (C (M t i : ℝ) * X i : MvPolynomial σ ℝ)) H) Q ∧ cycNum (divCycle P f) (fun t => ∑ i, M t i • cls i) H Q = cycNum (divCycle P f) cls (aeval (fun t => ∑ i, (C (M t i : ℝ) * X i : MvPolynomial σ ℝ)) H) Q := by
   intro O _ _ _ ϖ hϖ K _ _ ι _ P d hP a a' f g hf hg hfP hgP σ σ' _ cls M H m hH Q hQ
-  have af := _root_.GlobalTheory.CompanionTheory.Ar.Num.cycList_divCycle_add_first O ϖ hϖ K ι P d hP a f hf hfP
-  have ag := _root_.GlobalTheory.CompanionTheory.Ar.Num.cycList_divCycle_add_first O ϖ hϖ K ι P d hP a' g hg hgP
+  have af := _root_.BaseChangeColon.cycList_additive_first_class O ϖ hϖ K ι P d hP a f hf hfP
+  have ag := _root_.BaseChangeColon.cycList_additive_first_class O ϖ hϖ K ι P d hP a' g hg hgP
   refine ⟨cycNum_subst_of_add _ d (fun b b' l h => ?_) cls M H m hH Q hQ,
     cycNum_subst_of_add _ d (af · · · ·) cls M H m hH Q hQ⟩
   rw [cycList_ratDiv, cycList_ratDiv, cycList_ratDiv, af b b' l h, ag b b' l h]
@@ -378,51 +292,13 @@ open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.Compan
 
 namespace GlobalTheory.CompanionTheory.Ar.Num.CkAppend
 
-theorem classList_mapDomain_eq {K σ τ : Type} (cls : τ → K → ℤ) (e : σ → τ) (μ : σ →₀ ℕ) :
-    classList cls (Finsupp.mapDomain e μ) = classList (cls ∘ e) μ := by
-  unfold classList
-  rw [← Finsupp.toMultiset_map, Multiset.map_map]
-
-theorem classNum_rename_eq {K : Type} [DecidableEq K] {ι : K → Type} {O : Type} [CommRing O] [IsDomain O]
-    [IsDiscreteValuationRing O] {σ τ : Type} (cls : τ → K → ℤ) (e : σ → τ) (he : Function.Injective e)
-    (H : MvPolynomial σ ℤ) (Q : List (K → ℤ)) (W : Ideal (MRing ι O)) :
-    classNum cls (rename e H) Q W = classNum (cls ∘ e) H Q W := by
-  classical
-  unfold classNum
-  rw [support_rename_of_injective he,
-    Finset.sum_image fun a _ b _ h => Finsupp.mapDomain_injective he h]
-  refine Finset.sum_congr rfl fun μ _ => ?_
-  rw [coeff_rename_mapDomain e he, classList_mapDomain_eq]
-
-theorem psumExpansion_rename (N k : ℕ) (i : Fin N) :
-    psumExpansion N k i =
-      rename (Sum.map (fun _ : Fin 1 => i) (fun _ : Fin 1 => i)) (psumExpansion 1 k 0) := by
-  simp [psumExpansion]
-
-theorem pairNum_psumExpansion {K : Type} [DecidableEq K] {ι : K → Type} {O : Type} [CommRing O] [IsDomain O]
-    [IsDiscreteValuationRing O] {N : ℕ} (P : Ideal (MRing ι O)) (x x' : Fin N → K → ℤ)
-    (f g : Fin N → MRing ι O) (k : ℕ) (Q : List (K → ℤ)) :
-    pairNum P x x' f g (psumExpansion N k) Q =
-      ∑ i, pairNum P (fun _ : Fin 1 => x i) (fun _ => x' i) (fun _ => f i) (fun _ => g i)
-        (psumExpansion 1 k) Q := by
-  unfold pairNum
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [Fin.sum_univ_one]
-  have he : Function.Injective (Sum.map (fun _ : Fin 1 => i) (fun _ : Fin 1 => i)) :=
-    Sum.map_injective.mpr ⟨fun _ _ _ => Subsingleton.elim _ _, fun _ _ _ => Subsingleton.elim _ _⟩
-  have hc : Sum.elim x x' ∘ Sum.map (fun _ : Fin 1 => i) (fun _ : Fin 1 => i) =
-      Sum.elim (fun _ : Fin 1 => x i) (fun _ : Fin 1 => x' i) := by
-    funext s
-    rcases s with s | s <;> rfl
-  simp only [psumExpansion_rename N k i, classNum_rename_eq _ _ he, hc]
-
 theorem ck_append : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (K : Type) [Fintype K]
     [DecidableEq K] (ι : K → Type) [∀ k, Fintype (ι k)] (j j' : ℕ) (T : LocPair ι O (Fin (j + j')))
     (P : Ideal (MRing ι O)) (k : ℕ) (Q : List (K → ℤ)),
     T.ck P k Q = (T.comp (Fin.castAdd j')).ck P k Q + (T.comp (Fin.natAdd j)).ck P k Q := by
   intro O _ _ _ K _ _ ι _ j j' T P k Q
   unfold LocPair.ck
-  rw [pairNum_psumExpansion, pairNum_psumExpansion, pairNum_psumExpansion, Fin.sum_univ_add]
+  rw [PositivityTheory.Xgn.A_ck_flag_sum.pairNum_psum, PositivityTheory.Xgn.A_ck_flag_sum.pairNum_psum, PositivityTheory.Xgn.A_ck_flag_sum.pairNum_psum, Fin.sum_univ_add]
   rfl
 
 end GlobalTheory.CompanionTheory.Ar.Num.CkAppend
@@ -522,7 +398,6 @@ end GlobalTheory.CompanionTheory.Ar.Num.FlagLocalM3
 
 namespace GlobalTheory.CompanionTheory.Ar.Num
 
-
 open GlobalTheory.CompanionTheory.Ar.Num.FlagLocalM3 in
 theorem flag_m3_of_local_m3 : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (ϖ : O), Irreducible ϖ → ∀ (K : Type) [Fintype K] [DecidableEq K] (ι : K → Type) [∀ k, Fintype (ι k)] (P : Ideal (MRing ι O)) (d : ℕ), IsModelOver P d → ∀ (p : ℕ), (p : O) ≠ 0 → ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (j j' : ℕ) (φ : Equiv.Perm (Ψ ⊕ Ψ)) (T : LocPair ι O (Ψ × Fin (j + j'))) (lie : ∀ σ, LocPair ι O (Fin ((Sum.elim (fun _ : Ψ => j) (fun _ : Ψ => j')) σ))) (om : ∀ σ, LocPair ι O (Fin ((Sum.elim (fun _ : Ψ => j') (fun _ : Ψ => j)) σ))), (∀ τ, lie (Sum.inl τ) = T.comp fun i : Fin j => (τ, Fin.castAdd j' i)) → (∀ τ, om (Sum.inl τ) = T.comp fun i : Fin j' => (τ, Fin.natAdd j i)) → (∀ τ k Q, Q.length + k = d + 1 → laNum P (p : O) (lie (Sum.inr τ)).x k Q = laNum P (p : O) (fun i : Fin j' => -T.x (τ, Fin.natAdd j i)) k Q) → LabelChernComparison P d p φ lie om → FlagChernComparison P d p j φ T := by
   intro O _ _ _ ϖ hϖ K _ _ ι _ P d hP p hp Ψ _ _ j j' φ T lie om hl ho hr hM τ k hk Q hQ
@@ -537,10 +412,10 @@ theorem flag_m3_of_local_m3 : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscre
       have e' : ((laNum P (p : O) (lie (Sum.inl t)).x k Q : ℤ) : ℝ) =
           ((laNum P (p : O) (fun i : Fin j => T.x (t, Fin.castAdd j' i)) k Q : ℤ) : ℝ) :=
         congrArg (fun y : Fin j → K → ℤ => ((laNum P (p : O) y k Q : ℤ) : ℝ)) e
-      rw [e', laNum_eq, liePs_inl, (_root_.GlobalTheory.CompanionTheory.Ar.Num.numbers_rename).1 O K ι _ _ _ Z T.x]
+      rw [e', laNum_eq, liePs_inl, (_root_.BaseChangeColon.cycNum_rename_variables).1 O K ι _ _ _ Z T.x]
       rfl
     · rw [hr t k Q hQ, laNum_eq, cycNum_neg hϖ hP hp _ _ Q hm, liePs_inr,
-        (_root_.GlobalTheory.CompanionTheory.Ar.Num.numbers_rename).1 O K ι _ _ _ Z T.x]
+        (_root_.BaseChangeColon.cycNum_rename_variables).1 O K ι _ _ _ Z T.x]
       rfl
   have hL := hM k hk Q hQ (Sum.inl τ)
   have e1 : (lie (Sum.inl τ)).ck P k Q = (T.comp fun i : Fin j => (τ, Fin.castAdd j' i)).ck P k Q :=
@@ -548,7 +423,7 @@ theorem flag_m3_of_local_m3 : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscre
   have e2 : (om (Sum.inl τ)).ck P k Q = (T.comp fun i : Fin j' => (τ, Fin.natAdd j i)).ck P k Q :=
     congrArg (fun L : LocPair ι O (Fin j') => L.ck P k Q) (ho τ)
   have hadd := _root_.GlobalTheory.CompanionTheory.Ar.Num.CkAppend.ck_append O K ι j j' (T.comp fun i : Fin (j + j') => (τ, i)) P k Q
-  have hlin := _root_.GlobalTheory.CompanionTheory.Ar.Num.cycNum_linear O K ι (Ψ × Fin (j + j')) Z T.x Q
+  have hlin := _root_.BaseChangeColon.cycNum_linear_in_polynomial O K ι (Ψ × Fin (j + j')) Z T.x Q
   rw [e1, e2] at hL
   have hleft : (((T.comp fun i : Fin (j + j') => (τ, i)).ck P k Q : ℤ) : ℝ) =
       (((T.comp fun i : Fin j => (τ, Fin.castAdd j' i)).ck P k Q : ℤ) : ℝ) +
@@ -578,22 +453,6 @@ open NumberField
 
 namespace GlobalTheory.CompanionTheory.Ar.Num.RootPerm
 
-theorem classList_mapDomain {K σ τ : Type} (cls : τ → K → ℤ) (e : σ → τ) (μ : σ →₀ ℕ) :
-    classList cls (Finsupp.mapDomain e μ) = classList (cls ∘ e) μ := by
-  unfold classList
-  rw [← Finsupp.toMultiset_map, Multiset.map_map]
-
-theorem classNum_rename {K : Type} [DecidableEq K] {ι : K → Type} {O : Type} [CommRing O] [IsDomain O]
-    [IsDiscreteValuationRing O] {σ τ : Type} (cls : τ → K → ℤ) (e : σ → τ) (he : Function.Injective e)
-    (H : MvPolynomial σ ℤ) (Q : List (K → ℤ)) (W : Ideal (MRing ι O)) :
-    classNum cls (rename e H) Q W = classNum (cls ∘ e) H Q W := by
-  classical
-  unfold classNum
-  rw [support_rename_of_injective he,
-    Finset.sum_image fun a _ b _ h => Finsupp.mapDomain_injective he h]
-  refine Finset.sum_congr rfl fun μ _ => ?_
-  rw [coeff_rename_mapDomain e he, classList_mapDomain]
-
 theorem rename_psumExpansion {r : ℕ} (e : Equiv.Perm (Fin r)) (k : ℕ) (i : Fin r) :
     rename (Sum.map e e) (psumExpansion r k i) = psumExpansion r k (e i) := by
 
@@ -604,7 +463,7 @@ theorem root_perm : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuatio
   refine ⟨fun a x => ?_, fun T => ?_⟩
   · have h : ∀ W : Ideal (MRing ι O), classNum (x ∘ e) (psum (Fin r) ℤ (k - 1)) Q W =
         classNum x (psum (Fin r) ℤ (k - 1)) Q W := fun W => by
-      rw [← classNum_rename x e e.injective, rename_psum]
+      rw [← PositivityTheory.Xgn.A_ck_flag_sum.classNum_rename x e e.injective, rename_psum]
     simp only [laNum, h]
   · have h : ∀ (i : Fin r) (W : Ideal (MRing ι O)),
         classNum (Sum.elim (T.x ∘ e) (T.x' ∘ e)) (psumExpansion r k i) Q W =
@@ -612,7 +471,7 @@ theorem root_perm : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuatio
       have hc : Sum.elim T.x T.x' ∘ Sum.map e e = Sum.elim (T.x ∘ e) (T.x' ∘ e) := by
         funext s
         rcases s with s | s <;> rfl
-      rw [← rename_psumExpansion, classNum_rename _ _ (Sum.map_injective.mpr ⟨e.injective, e.injective⟩), hc]
+      rw [← rename_psumExpansion, PositivityTheory.Xgn.A_ck_flag_sum.classNum_rename _ _ (Sum.map_injective.mpr ⟨e.injective, e.injective⟩), hc]
     simp only [LocPair.ck, pairNum, LocPair.comp, Function.comp_apply, h]
     exact Equiv.sum_comp e fun j => cycEval (fun W => classNum (Sum.elim T.x T.x') (psumExpansion r k j) Q W)
       (ratDiv P (T.f j) (T.g j))
@@ -630,9 +489,6 @@ section -- clump:auto
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
-
-set_option autoImplicit false
-
 
 noncomputable section
 
@@ -919,18 +775,7 @@ theorem isMultiHomog_blocks {f : MvPolynomial (Σ k, ι k) ℤ} {b : K → ℕ}
 
 theorem mConeMap_form (y : (Σ k, ι k) → Ω) {h : MRing ι} {d : K → ℕ} (hh : IsMultiHomog h d) :
     mConeMap y h = MvPolynomial.C (aeval y h) * ∏ k, (X k : MvPolynomial K Ω) ^ d k := by
-  classical
-  unfold mConeMap
-
-  rw [aeval_def, aeval_def, eval₂_eq', eval₂_eq', map_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun m hm => ?_
-  have hX : ∏ p : Σ k, ι k, (X p.1 : MvPolynomial K Ω) ^ m p = ∏ k, X k ^ d k := by
-    rw [Fintype.prod_sigma]
-    refine Finset.prod_congr rfl fun k _ => ?_
-    change ∏ i, (X k : MvPolynomial K Ω) ^ m ⟨k, i⟩ = _
-    rw [Finset.prod_pow_eq_pow_sum, hh m hm k]
-  simp only [mul_pow, Finset.prod_mul_distrib, hX, map_mul, map_prod, map_pow, eq_intCast, map_intCast]
-  simp [mul_assoc]
+  apply _root_.GlobalTheory.CompanionTheory.Ar.Flat.UnitChart.mConeMap_homog <;> assumption
 
 theorem aeval_ne_zero_of_notMem (y : (Σ k, ι k) → Ω) {f : MvPolynomial (Σ k, ι k) ℤ} {b : K → ℕ}
     (hf : GroundTheory.Heights₂.Heights.NumbersDVR.IsMultiHomog f b) (hP : f ∉ mCoordIdeal y) : aeval y f ≠ 0 := by
@@ -1109,7 +954,7 @@ theorem latFlagPair_of_twoLevels : ∀ (E : Type) [Field E] [NumberField E] [IsC
       exact Sigma.ext rfl (heq_of_eq (Fin.ext rfl))
     have hsgn : HodgeCpt.rootSgn D (τ, Fin.castAdd D.q i) = 1 := by
       unfold HodgeCpt.rootSgn
-      rw [if_pos hlt]
+      rw [ite_eq_left hlt]
     have h0 := hR₀' (τ, Fin.castAdd D.q i)
     have h1 := hR' (τ, Fin.castAdd D.q i)
     rw [hidx, hsgn] at h0 h1
@@ -1469,7 +1314,6 @@ theorem mseg_map (y : (Σ k, J k) → Ω) (c : ∀ k, J k) :
     mseg (fun v => algebraMap Ω Ω' (y v)) c = algebraMap Ω Ω' (mseg y c) := by
   simp [mseg, map_prod]
 
-
 omit [∀ k, Fintype (J k)] in
 theorem map_mem_chartRing (y : (Σ k, J k) → Ω) (c : ∀ k, J k) {a : Ω} (ha : a ∈ chartRing O (mseg y) c) :
     algebraMap Ω Ω' a ∈ chartRing O' (mseg (fun v => algebraMap Ω Ω' (y v))) c := by
@@ -1486,30 +1330,8 @@ theorem map_mem_chartRing (y : (Σ k, J k) → Ω) (c : ∀ k, J k) {a : Ω} (ha
 
 theorem chart_shift {ι : Type} (x : ι → Ω') {s t : ι} (hs : x s ≠ 0) (ht : x t ≠ 0) {a : Ω'}
     (ha : a ∈ chartRing O' x s) : ∃ m : ℕ, (x s / x t) ^ m * a ∈ chartRing O' x t := by
-  have hu : x s / x t ∈ chartRing O' x t := Algebra.subset_adjoin ⟨s, rfl⟩
-  induction ha using Algebra.adjoin_induction with
-  | mem b hb =>
-    obtain ⟨j, rfl⟩ := hb
-    refine ⟨1, ?_⟩
-    have : (x s / x t) ^ 1 * (x j / x s) = x j / x t := by field_simp
-    rw [this]
-    exact Algebra.subset_adjoin ⟨j, rfl⟩
-  | algebraMap o => exact ⟨0, by simpa using Subalgebra.algebraMap_mem _ o⟩
-  | add a b _ _ ha hb =>
-    obtain ⟨m, hm⟩ := ha
-    obtain ⟨l, hl⟩ := hb
-    refine ⟨m + l, ?_⟩
-    have : (x s / x t) ^ (m + l) * (a + b) =
-        (x s / x t) ^ l * ((x s / x t) ^ m * a) + (x s / x t) ^ m * ((x s / x t) ^ l * b) := by ring
-    rw [this]
-    exact add_mem (mul_mem (pow_mem hu _) hm) (mul_mem (pow_mem hu _) hl)
-  | mul a b _ _ ha hb =>
-    obtain ⟨m, hm⟩ := ha
-    obtain ⟨l, hl⟩ := hb
-    refine ⟨m + l, ?_⟩
-    have : (x s / x t) ^ (m + l) * (a * b) = ((x s / x t) ^ m * a) * ((x s / x t) ^ l * b) := by ring
-    rw [this]
-    exact mul_mem hm hl
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.Ar.Num.FlagPairExt.exists_ratio_pow_mul_mem <;> assumption
 
 theorem isLatFamily_span {V V' : Type} [AddCommGroup V] [Module Ω V] [AddCommGroup V'] [Module Ω' V']
     (y : (Σ k, J k) → Ω) (h : V → V') (hh : ∀ (a : Ω) (v : V), h (a • v) = algebraMap Ω Ω' a • h v)
@@ -1630,7 +1452,7 @@ theorem base_bc (D : LieLatticeData Ω F n Sg r s) (R : Subalgebra O Ω) (R' : S
       split_ifs
       · exact zero_mem _
       · exact one_mem _
-  have hb' := (_root_.GlobalTheory.CompanionTheory.Ar.Num.lattice_base_change_larger_ring D R p (algebraMap O Ω w) _ hchar hb Ω' (R'.restrictScalars O) hR).2
+  have hb' := (_root_.PositivityTheory.Xgn.character_data_base_change D R p (algebraMap O Ω w) _ hchar hb Ω' (R'.restrictScalars O) hR).2
   have hw : algebraMap Ω Ω' (algebraMap O Ω w) = algebraMap O' Ω' (algebraMap O O' w) := by
     rw [← IsScalarTower.algebraMap_apply O Ω Ω', ← IsScalarTower.algebraMap_apply O O' Ω']
   rw [hw] at hb'

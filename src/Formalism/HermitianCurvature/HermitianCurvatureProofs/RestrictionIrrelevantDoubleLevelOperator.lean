@@ -1,5 +1,8 @@
 module
 
+import Formalism.FormalDegreeBessel.FormalDegreeRatio.BesselUnipotentEquivHolds
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ConjugateTransposeLeibniz.YOperatorLeibnizRule
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormalFormFlagZeroMiddleInverseMinorOrthogonal
 public import Formalism.HermitianCurvature.StatementQ
 public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
 public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexifiedDerivativeCommutator
@@ -15,56 +18,10 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferRtt
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.FDeriv.Symmetric
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -78,7 +35,7 @@ namespace Formalism.FourierDecayAlt.P.Qx8
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 theorem herm_UH {ι : Type*} [Fintype ι] [DecidableEq ι] {H g : Matrix ι ι ℂ} (hg : g ∈ UH H) (x w : ι → ℂ) :
     herm H (g *ᵥ x) (g *ᵥ w) = herm H x w := by
@@ -134,25 +91,13 @@ theorem Nlev_last {k r : ℕ} {n : Mx k r} (hn : n ∈ Nlev k r (Fin.last r)) : 
     have sg : GBasic.sgn k r (esI k r ⟨i.val, hi'⟩) = 1 := by
       have hv : (esI k r ⟨i.val, hi'⟩).val = 2 * r + k - i.val := rfl
       unfold GBasic.sgn
-      rw [if_neg (by rw [hv]; omega)]
+      rw [ite_eq_right (by rw [hv]; omega)]
     rw [es, sg, one_mul, one_mul, mulVec_bvec] at h1
     rw [h1, Matrix.one_apply, bvec, Pi.single_apply]
 
 theorem psi_one {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (c : ℂ) : psi k r z c 1 = 1 := by
-  have : ell k r z 1 = 0 := by
-    unfold ell
-    apply Finset.sum_eq_zero
-    intro a _
-    split_ifs with h
-    · rw [Matrix.one_apply, if_neg]
-      intro e
-      have := congrArg Fin.val e
-      simp [eI] at this
-    · rw [Matrix.one_mulVec]
-      exact hz _ (Or.inl a.isLt)
-  unfold psi
-  rw [this]
-  simp
+  intros
+  apply _root_.Formalism.QuantumDeterminants.BesselUnipotentEquiv.psi_one <;> assumption
 
 theorem zetaL_equiv {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {h h' : Mx k r} (hh : h ∈ UWset k r z)
     (hh' : h' ∈ UWset k r z') (g : Mx k r) :
@@ -372,7 +317,7 @@ namespace Formalism.FourierDecayAlt.P
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.P.Qx8
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 theorem actual_start_from_level_starts : Formalism.FourierDecayAlt.Q.ActualStartFromLevels := by
   intro hR hDet hT Wp Wq _ _ _ _ _ _ P z z' π π' hP X
@@ -418,7 +363,7 @@ namespace Formalism.FourierDecayAlt.P.Qx8
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section Eigen
 
@@ -483,15 +428,11 @@ end Eigen
 
 end Formalism.FourierDecayAlt.P.Qx8
 
-namespace Formalism.FourierDecayAlt.P
-
-end Formalism.FourierDecayAlt.P
-
 namespace Formalism.FourierDecayAlt.P.Qx8
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section NF
 
@@ -513,7 +454,7 @@ theorem nf_low_sum (d : NFData P 𝒜) (hR : d.Rel) (Y : ℂ) (hY : ∀ π, xC P
     unfold xEx
     refine Finset.prod_congr rfl fun i hi => ?_
     rw [Finset.mem_sdiff, Finset.mem_singleton] at hi
-    rw [rho_raise P j π π' hU i hi.1, if_neg hi.2, add_zero]
+    rw [rho_raise P j π π' hU i hi.1, ite_eq_right hi.2, add_zero]
   show xC P π' Y * (Y + (rho P π' j : ℂ))⁻¹ = xEx P {j} π Y
   rw [h1, mul_assoc, mul_inv_cancel₀ h2, mul_one, h3]
 
@@ -597,7 +538,7 @@ namespace Formalism.FourierDecayAlt.P
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.P.Qx8
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 theorem level_start_from_normal_form : Formalism.FourierDecayAlt.Q.LevelStartFromNormalForm := by
   intro hNF hAS _ _ Wp Wq _ _ _ _ _ _ P z z' π π' hP X l
@@ -611,7 +552,7 @@ namespace Formalism.FourierDecayAlt.P.Qx8
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section Lie
 
@@ -705,7 +646,7 @@ theorem hpart_skew {n : ℕ} (H Z : Matrix (Fin n) (Fin n) ℂ) (hsq : H * H = 1
 theorem herm_sum {m : ℕ} (H : Matrix (Fin m) (Fin m) ℂ) (u v : Fin m → ℂ) :
     ∑ j, herm H (bvec j) v * u j = herm H u v := by
   simp only [herm, dotProduct, mulVec, bvec, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true, Finset.sum_mul, Finset.mul_sum]
+    Finset.mem_univ, ite_true, Finset.sum_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl; intro i _
   apply Finset.sum_congr rfl; intro j _
@@ -839,13 +780,13 @@ theorem sgn_eI (c : Fin r) : GBasic.sgn k r (eI k r c) = 1 := by
   have hv : (eI k r c).val = c.val := rfl
   have := c.isLt
   unfold GBasic.sgn
-  rw [if_neg (by rw [hv]; omega)]
+  rw [ite_eq_right (by rw [hv]; omega)]
 
 theorem sgn_esI (c : Fin r) : GBasic.sgn k r (esI k r c) = 1 := by
   have hv : (esI k r c).val = 2 * r + k - c.val := rfl
   have := c.isLt
   unfold GBasic.sgn
-  rw [if_neg (by rw [hv]; omega)]
+  rw [ite_eq_right (by rw [hv]; omega)]
 
 theorem coord_e (v : Fin (2 * r + k + 1) → ℂ) (c : Fin r) : herm (Hpk k r) v (bvec (esI k r c)) = v (eI k r c) := by
   rw [herm_bvec_right, Hpk_mulVec, sig_esI, sgn_esI, one_mul]
@@ -855,17 +796,7 @@ theorem coord_es (v : Fin (2 * r + k + 1) → ℂ) (c : Fin r) : herm (Hpk k r) 
 
 theorem inWb_iff (v : Fin (2 * r + k + 1) → ℂ) :
     inWb k r v ↔ ∀ c : Fin r, v (eI k r c) = 0 ∧ v (esI k r c) = 0 := by
-  constructor
-  · intro h c
-    exact ⟨h _ (Or.inl c.isLt), h _ (Or.inr (by have := c.isLt; simp only [esI]; omega))⟩
-  · intro h i hi
-    rcases hi with hi | hi
-    · have e : eI k r ⟨i.val, hi⟩ = i := Fin.ext rfl
-      rw [← e]; exact (h _).1
-    · have hl := i.isLt
-      have ha : 2 * r + k - i.val < r := by omega
-      have e : esI k r ⟨2 * r + k - i.val, ha⟩ = i := Fin.ext (by simp only [esI]; omega)
-      rw [← e]; exact (h _).2
+  apply _root_.GlobalTheory.Amp.NfMid.inWb_iff <;> assumption
 
 theorem inWb_mulVec {g : Mx k r} (hg : g ∈ Glev k r (Fin.last r)) {v : Fin (2 * r + k + 1) → ℂ} (hv : inWb k r v) :
     inWb k r (g *ᵥ v) := by
@@ -883,7 +814,7 @@ theorem inWb_mulVec {g : Mx k r} (hg : g ∈ Glev k r (Fin.last r)) {v : Fin (2 
 theorem inWb_bvec_wI (j : Fin (k + 1)) : inWb k r (bvec (wI k r j)) := by
   intro i hi
   have hj := j.isLt
-  rw [bvec, Pi.single_apply, if_neg]
+  rw [bvec, Pi.single_apply, ite_eq_right]
   intro e
   have := congrArg Fin.val e
   simp only [wI] at this
@@ -896,7 +827,7 @@ theorem herm_wI (a b : Fin (k + 1)) :
   rw [Matrix.diagonal_apply]
   by_cases h : a = b
   · subst h; simp
-  · rw [if_neg (fun e => h e.symm), if_neg h]
+  · rw [ite_eq_right (fun e => h e.symm), ite_eq_right h]
 
 theorem herm_smul_left' {m : ℕ} (H : Matrix (Fin m) (Fin m) ℂ) (c : ℂ) (x w : Fin m → ℂ) :
     herm H (c • x) w = c * herm H x w := by
@@ -918,7 +849,7 @@ theorem frame_exists {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0
     intro i hi
     rw [ha, Pi.smul_apply, inWb_bvec_wI _ i hi, smul_zero]
   have haa : herm (Hpk k r) a a = ((-(Tz k r z) : ℝ) : ℂ) := by
-    rw [ha, herm_smul_left', herm_smul_right', herm_wI, if_pos rfl, if_pos rfl]
+    rw [ha, herm_smul_left', herm_smul_right', herm_wI, ite_eq_left rfl, ite_eq_left rfl]
     have : star (s : ℂ) = s := Complex.conj_ofReal s
     rw [this]
     push_cast
@@ -940,10 +871,10 @@ theorem frame_exists {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0
     rw [herm_UH hgU, herm_wI]
     have h1 : (i.castSucc = j.castSucc) ↔ i = j := Fin.castSucc_inj
     have h2 : i.castSucc ≠ Fin.last k := Fin.castSucc_ne_last i
-    simp only [h1, if_neg h2]
+    simp only [h1, ite_eq_right h2]
   · intro j v hv
     rw [List.mem_singleton] at hv
-    rw [hv, ← hga, herm_UH hgU, ha, herm_smul_right', herm_wI, if_neg (Fin.castSucc_ne_last j), mul_zero]
+    rw [hv, ← hga, herm_UH hgU, ha, herm_smul_right', herm_wI, ite_eq_right (Fin.castSucc_ne_last j), mul_zero]
 
 end Frames
 
@@ -1153,7 +1084,7 @@ namespace Formalism.FourierDecayAlt.P
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.P.Qx8
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 theorem determinant_capelli_from_descent : Formalism.FourierDecayAlt.Q.DetCoreFromSteps := by
   intro hR hQ hDH hRT hLT hP hT Wp Wq _ _ _ _ _ _ P z z' π π' D hPl hD J hJ g hg Y c d
@@ -1252,7 +1183,7 @@ namespace Formalism.FourierDecayAlt.P.Qx8
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section CDsec
 
@@ -1488,30 +1419,7 @@ theorem posL_ne_e (i : Fin (r + 1)) (a : Fin (mdim k r i)) (b : Fin r) (hb : b.v
 theorem hpart_lie (i : Fin (r + 1)) (a b : Fin (mdim k r i)) :
     inLieLev k r i (hpart1 (Hpk k r) (Matrix.single (posL k r i a) (posL k r i b) 1)) ∧
     inLieLev k r i (hpart2 (Hpk k r) (Matrix.single (posL k r i a) (posL k r i b) 1)) := by
-  have hs := hpart_skew (Hpk k r) (Matrix.single (posL k r i a) (posL k r i b) 1) WeylGroupFacts.hpk_sq hpk_herm
-  have hZh : (Matrix.single (posL k r i a) (posL k r i b) (1 : ℂ))ᴴ =
-      Matrix.single (posL k r i b) (posL k r i a) 1 := by
-    rw [Matrix.conjTranspose_single, star_one]
-  have hkill : ∀ c : Fin r, c.val < i.val →
-      (Matrix.single (posL k r i a) (posL k r i b) (1 : ℂ)) *ᵥ bvec (eI k r c) = 0 ∧
-      (Matrix.single (posL k r i a) (posL k r i b) (1 : ℂ)) *ᵥ bvec (esI k r c) = 0 ∧
-      (Hpk k r * (Matrix.single (posL k r i a) (posL k r i b) (1 : ℂ))ᴴ * Hpk k r) *ᵥ bvec (eI k r c) = 0 ∧
-      (Hpk k r * (Matrix.single (posL k r i a) (posL k r i b) (1 : ℂ))ᴴ * Hpk k r) *ᵥ bvec (esI k r c) = 0 := by
-    intro c hc
-    refine ⟨single_bvec (posL_ne_e i b c hc).1, single_bvec (posL_ne_e i b c hc).2, ?_, ?_⟩
-    · rw [← Matrix.mulVec_mulVec, hpk_e, ← Matrix.mulVec_mulVec, hZh, single_bvec (posL_ne_e i a c hc).2,
-        Matrix.mulVec_zero]
-    · rw [← Matrix.mulVec_mulVec, hpk_es, ← Matrix.mulVec_mulVec, hZh, single_bvec (posL_ne_e i a c hc).1,
-        Matrix.mulVec_zero]
-  refine ⟨⟨hs.1, fun c hc => ?_⟩, ⟨hs.2, fun c hc => ?_⟩⟩
-  · obtain ⟨k1, k2, k3, k4⟩ := hkill c hc
-    unfold hpart1
-    rw [hpk_inv]
-    simp only [Matrix.smul_mulVec, Matrix.sub_mulVec, k1, k2, k3, k4, sub_zero, smul_zero, and_self]
-  · obtain ⟨k1, k2, k3, k4⟩ := hkill c hc
-    unfold hpart2
-    rw [hpk_inv]
-    simp only [Matrix.smul_mulVec, Matrix.add_mulVec, k1, k2, k3, k4, add_zero, smul_zero, and_self]
+  apply _root_.QnYLeibnizW.hpart_mem <;> assumption
 
 theorem sf_mul {a b : Fn k r ℂ} (h : SmoothFam k r i U₀ a) (h' : SmoothFam k r i U₀ b) :
     SmoothFam k r i U₀ (fun c g => a c g * b c g) := sf_smul h h'
@@ -1569,10 +1477,10 @@ theorem cd_Top (hU₀ : IsOpen U₀) (u : ℂ) (a b : Fin (mdim k r i)) :
   by_cases hab : posL k r i a = posL k r i b
   · have := (CD.id (E := E) (i := i) (U₀ := U₀)).csmul u |>.add (cd_EH hU₀ a b)
     unfold QuantumDeterminants.Top
-    simpa only [if_pos hab] using this
+    simpa only [ite_eq_left hab] using this
   · have := (CD.zero (E := E) (i := i) (U₀ := U₀)).add (cd_EH hU₀ a b)
     unfold QuantumDeterminants.Top
-    simpa only [if_neg hab] using this
+    simpa only [ite_eq_right hab] using this
 
 theorem cd_qminor (hU₀ : IsOpen U₀) {t : ℕ} (a b : Fin t → Fin (mdim k r i)) (u : ℂ) :
     CD (E := E) i U₀ (qminorOp (EH k r) (posL k r i ∘ a) (posL k r i ∘ b) u) := by
@@ -1603,11 +1511,11 @@ theorem cd_chat2L (hU₀ : IsOpen U₀) (u : ℂ) (a a' β β' : Mx k r → Fin 
   unfold chat2L
   refine CD.sum _ fun i₁ _ => CD.sum _ fun i₂ _ => CD.sum _ fun j₁ _ => CD.sum _ fun j₂ _ => ?_
   by_cases hc : i₁ < i₂ ∧ j₁ < j₂
-  · simp only [if_pos hc]
+  · simp only [ite_eq_left hc]
     exact (cd_qminor hU₀ _ _ _).coef _
       (sf_mul (sf_mul (sf_const _) (sf_sub' (sf_mul (hβ i₁) (hβ' i₂)) (sf_mul (hβ i₂) (hβ' i₁))))
       (sf_sub' (sf_mul (ha j₁) (ha' j₂)) (sf_mul (ha j₂) (ha' j₁))))
-  · simp only [if_neg hc]
+  · simp only [ite_eq_right hc]
     exact CD.zero
 
 theorem cd_tL (hU₀ : IsOpen U₀) (z z' : Fin (2 * r + k + 1) → ℂ) (Y : ℂ) (p q : Fin 2) :
@@ -1704,15 +1612,11 @@ end Final
 
 end Formalism.FourierDecayAlt.P.Qx8
 
-namespace Formalism.FourierDecayAlt.P
-
-end Formalism.FourierDecayAlt.P
-
 namespace Formalism.FourierDecayAlt.P.Qx8
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped Matrix.Norms.Elementwise
 
 section RepDer
 
@@ -2032,7 +1936,7 @@ theorem frame2_exists (hk : 1 ≤ k) {z e : Fin (2 * r + k + 1) → ℂ} (hz : i
   set a : Fin (2 * r + k + 1) → ℂ := (s : ℂ) • bvec (wI k r (Fin.last k)) with ha
   have haW : inWb k r a := inWb_smul (inWb_bvec_wI _) _
   have haa : herm (Hpk k r) a a = ((-(Tz k r z) : ℝ) : ℂ) := by
-    rw [ha, herm_smul_left', herm_smul_right', herm_wI, if_pos rfl, if_pos rfl]
+    rw [ha, herm_smul_left', herm_smul_right', herm_wI, ite_eq_left rfl, ite_eq_left rfl]
     have : star (s : ℂ) = s := Complex.conj_ofReal s
     rw [this]
     push_cast
@@ -2049,9 +1953,9 @@ theorem frame2_exists (hk : 1 ≤ k) {z e : Fin (2 * r + k + 1) → ℂ} (hz : i
   set b : Fin (2 * r + k + 1) → ℂ := g₁ *ᵥ bvec (wI k r p) with hb
   have hbW : inWb k r b := inWb_mulVec hg₁ (inWb_bvec_wI _)
   have hbb : herm (Hpk k r) b b = ((1 : ℝ) : ℂ) := by
-    rw [hb, herm_UH hg₁.1, herm_wI, if_pos rfl, if_neg hpl]; simp
+    rw [hb, herm_UH hg₁.1, herm_wI, ite_eq_left rfl, ite_eq_right hpl]; simp
   have hzb : herm (Hpk k r) z b = 0 := by
-    rw [← hg₁a, hb, herm_UH hg₁.1, ha, herm_smul_left', herm_wI, if_neg (Ne.symm hpl), mul_zero]
+    rw [← hg₁a, hb, herm_UH hg₁.1, ha, herm_smul_left', herm_wI, ite_eq_right (Ne.symm hpl), mul_zero]
   have hze : herm (Hpk k r) z e = 0 := by rw [← herm_conj, hez, star_zero]
   obtain ⟨g₂, hg₂, hg₂b, hfix⟩ := move hbW he 1 one_ne_zero hbb (by rw [hee]; simp)
   have hg₂z : g₂ *ᵥ z = z := hfix z hzb hze
@@ -2071,7 +1975,7 @@ theorem frame2_exists (hk : 1 ≤ k) {z e : Fin (2 * r + k + 1) → ℂ} (hz : i
   refine ⟨fun j => g₂ *ᵥ (g₁ *ᵥ bvec (wI k r (ι j))),
     fun j => inWb_mulVec hg₂ (inWb_mulVec hg₁ (inWb_bvec_wI _)), ?_, ?_⟩
   · intro i j
-    rw [herm_UH hg₂.1, herm_UH hg₁.1, herm_wI, if_neg (hι1 i)]
+    rw [herm_UH hg₂.1, herm_UH hg₁.1, herm_wI, ite_eq_right (hι1 i)]
     have : (ι i = ι j) ↔ i = j := by
       constructor
       · intro h; exact Fin.ext (by simpa [ι] using congrArg Fin.val h)
@@ -2081,8 +1985,8 @@ theorem frame2_exists (hk : 1 ≤ k) {z e : Fin (2 * r + k + 1) → ℂ} (hz : i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hv
     rcases hv with rfl | rfl
     · conv_lhs => rw [← hg₂z, ← hg₁a]
-      rw [herm_UH hg₂.1, herm_UH hg₁.1, ha, herm_smul_right', herm_wI, if_neg (hι1 j), mul_zero]
-    · rw [← hg₂b, hb, herm_UH hg₂.1, herm_UH hg₁.1, herm_wI, if_neg (hι2 j)]
+      rw [herm_UH hg₂.1, herm_UH hg₁.1, ha, herm_smul_right', herm_wI, ite_eq_right (hι1 j), mul_zero]
+    · rw [← hg₂b, hb, herm_UH hg₂.1, herm_UH hg₁.1, herm_wI, ite_eq_right (hι2 j)]
 
 theorem orth_unit {a b : Fin (2 * r + k + 1) → ℂ} (ha : inWb k r a) (hb : inWb k r b) {A B : ℝ} (hB : 0 < B)
     (haa : herm (Hpk k r) a a = -(A : ℂ)) (hbb : herm (Hpk k r) b b = -(B : ℂ))
@@ -2316,8 +2220,7 @@ theorem rho_int (h : P.OK) (π : Ty P) (i : ℕ) (hi : i ∈ Finset.Icc 1 (P.k -
     exact ⟨n₂ + ((π ⟨i - 1, by omega⟩ : Fin _) : ℕ), by push_cast; linarith⟩
 
 theorem xC_sep (h : P.OK) {σ σ₀ : Ty P} (hne : σ ≠ σ₀) : ∃ Y, xC P σ Y ≠ xC P σ₀ Y := by
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   exact hne ((types_complete P h).2 σ σ₀
     (prod_match _ _ _ (rho_anti h σ) (rho_anti h σ₀) hcon))
 
@@ -2334,7 +2237,3 @@ theorem frame_sub {k r m : ℕ} {vs vs' : List (Fin (2 * r + k + 1) → ℂ)} {B
 end Spectral
 
 end Formalism.FourierDecayAlt.P.Qx8
-
-namespace Formalism.FourierDecayAlt.P
-
-end Formalism.FourierDecayAlt.P

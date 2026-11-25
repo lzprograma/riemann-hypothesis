@@ -30,56 +30,11 @@ public import Development.WeilBound.ThetaLifts.FrameEstimates.IsCompactIntV
 public import Development.WeilBound.ThetaLifts.FrameEstimates.LatArch
 public import Development.WeilBound.ThetaLifts.FrameEstimates.LatMeas
 public import Development.WeilBound.ThetaLifts.FrameEstimates.SiegelAll
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.Polynomial.Basic
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
 import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Mathlib.Topology.Sheaves.Presheaf
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
 import Development.WeilBound.ThetaLifts.FrameEstimates.LatCpt
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -256,11 +211,11 @@ theorem sum_lam_le_psum {d y : ℕ} {lam : Fin d → (Fin y → ℝ) →ₗ[ℝ]
   · refine (key 0 le_rfl).trans (le_of_eq ?_)
     rw [mul_zero, add_zero, psum]
     refine Finset.sum_congr rfl fun j _ => ?_
-    rw [if_pos (by omega), sub_zero, max_eq_right (ht.2 j)]
+    rw [ite_eq_left (by omega), sub_zero, max_eq_right (ht.2 j)]
 
 theorem psum_eq {q i : ℕ} (hi : i ≤ q) (s : Fin q → ℝ) : psum s i = ∑ a : Fin i, s (Fin.castLE hi a) := by
   exact (Fintype.sum_of_injective _ (Fin.castLE_injective hi) _ (fun j : Fin q => if j.val < i then s j else 0)
-    (fun j hj => if_neg fun h => hj ⟨⟨j, h⟩, rfl⟩) fun a => (if_pos a.2).symm).symm
+    (fun j hj => ite_eq_right fun h => hj ⟨⟨j, h⟩, rfl⟩) fun a => (ite_eq_left a.2).symm).symm
 
 theorem minor_of : FrameBasis → Minor := by
   intro hB F E _ _ _ _ _ σ hσ τ n d J J' hJ hJ' fr fr' hfr hfr' C hC
@@ -375,10 +330,6 @@ open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.Inde
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
 
-theorem rId_zero : rId F 0 = 1 := by
-  rw [rId, Real.exp_zero, sub_self, realAd, map_zero, map_zero, map_zero]
-  exact add_zero (1 : AF F)
-
 def formL (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (y : Fin n → E) : (Fin n → E) →ₗ[E] E where
   toFun x := form σ J x y
   map_add' a b := by simp [form, add_dotProduct]
@@ -452,7 +403,7 @@ theorem frameBasis_of : FrameBasis := by
       · rw [← formL_apply]
 
         simp only [a, map_sub, map_add (f := _), map_sum, map_smul, formL_apply, hfr.xx, yx, smul_eq_mul, mul_zero,
-        Finset.sum_const_zero, mul_ite, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+        Finset.sum_const_zero, mul_ite, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
         linear_combination (-form σ J u (fr.x j)) * hε
       · rw [← formL_apply]
 
@@ -488,7 +439,7 @@ theorem frameBasis_of : FrameBasis := by
       · exact hfr.ax t j
       · exact hfr.ay t j
       · have := hfr.a0 t _ ((hK _).1 (bK j).2)
-        simpa [lam0, rId_zero, v] using this
+        simpa [lam0, PositivityTheory.ThKEst.Sieg.rId_zero', v] using this
     ext l k
     have := congrFun (key (e.symm k)) l
     rw [Matrix.mul_diagonal, mul_comm, ← Algebra.smul_def]
@@ -510,8 +461,6 @@ open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.MainNotions.Glo
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
 open GlobalTheory.EmbChart (atPlace atPlace_mul_right evFin_atPlace)
 open scoped TensorProduct
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 namespace PositivityTheory.ThKEst
@@ -1169,7 +1118,7 @@ theorem qht_le {n : ℕ} {J : Matrix (Fin n) (Fin n) E} (g : UA σ J) {γ : UA �
   ciInf_le (OrderBot.bddBelow _) (⟨γ, hγ⟩ : ratU σ J)
 
 theorem psum_self {r : ℕ} (t : Fin r → ℝ) : psum t r = ∑ i, t i :=
-  Finset.sum_congr rfl fun j _ => if_pos j.2
+  Finset.sum_congr rfl fun j _ => ite_eq_left j.2
 
 theorem psum_le {r : ℕ} {t : Fin r → ℝ} (h : t ∈ Cone r) (i : ℕ) : psum t i ≤ ∑ j, t j :=
   Finset.sum_le_sum fun j _ => by split_ifs; exacts [le_rfl, h.2 j]
@@ -1307,9 +1256,9 @@ theorem latSum_mono {τ : ∀ w : InfinitePlace F, EmbOver E w} {C C' : Set (Ten
   by_cases hx : ∃ c ∈ C, At (evI F) (mat g⁻¹ * incM F x.1 * (mat h⁻¹)ᵀ - c)
   · obtain ⟨c, h1, h2⟩ := hx
     unfold maj
-    rw [if_pos ⟨c, h1, h2⟩, if_pos ⟨c, hC h1, h2⟩]
+    rw [ite_eq_left ⟨c, h1, h2⟩, ite_eq_left ⟨c, hC h1, h2⟩]
   · conv_lhs => unfold maj
-    rw [if_neg hx]
+    rw [ite_eq_right hx]
     exact sq_maj_nonneg _ _ _ _
 
 

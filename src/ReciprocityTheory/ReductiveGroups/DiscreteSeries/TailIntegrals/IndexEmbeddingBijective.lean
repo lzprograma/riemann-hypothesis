@@ -1,53 +1,8 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.TransportGeo
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.HermMatrixMulVecFirst
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.InductiveHeisenbergInputs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Tactic.Lemma
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.HeisenbergDualBaseVectorFormula, ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.DelFormula, ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.IndexEmbeddingBijective
@@ -80,46 +35,33 @@ private theorem Hpk_mulVec_apply_eq_ite (k r : ℕ) (y : Fin (2 * r + k + 1) →
   have hv := v.isLt
   simp only [Matrix.mulVec, dotProduct]
   by_cases h1 : (v : ℕ) < r ∨ r + k < (v : ℕ)
-  · rw [if_pos h1, Finset.sum_eq_single ⟨2 * r + k - v, by omega⟩]
+  · rw [ite_eq_left h1, Finset.sum_eq_single ⟨2 * r + k - v, by omega⟩]
     · rcases h1 with h1 | h1
       · simp only [Hpk]
-        rw [if_pos ⟨h1, by omega⟩, one_mul]
+        rw [ite_eq_left ⟨h1, by omega⟩, one_mul]
       · simp only [Hpk]
-        rw [if_neg (by omega), if_pos ⟨by omega, by omega⟩, one_mul]
+        rw [ite_eq_right (by omega), ite_eq_left ⟨by omega, by omega⟩, one_mul]
     · intro j _ hj
       have hj' : (j : ℕ) ≠ 2 * r + k - v := fun e => hj (Fin.ext e)
       simp only [Hpk]
-      rw [if_neg (by omega), if_neg (by omega), if_neg (fun hc => by have := hc.1; have := hc.2.1; omega),
+      rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (fun hc => by have := hc.1; have := hc.2.1; omega),
         zero_mul]
     · simp
-  · rw [if_neg h1, Finset.sum_eq_single v]
+  · rw [ite_eq_right h1, Finset.sum_eq_single v]
     · simp only [Hpk]
-      rw [if_neg (by omega), if_neg (by omega), if_pos ⟨by omega, by omega, by trivial⟩]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left ⟨by omega, by omega, by trivial⟩]
       by_cases h2 : (v : ℕ) = r + k
-      · rw [if_pos h2, if_pos h2, neg_one_mul]
-      · rw [if_neg h2, if_neg h2, one_mul]
+      · rw [ite_eq_left h2, ite_eq_left h2, neg_one_mul]
+      · rw [ite_eq_right h2, ite_eq_right h2, one_mul]
     · intro j _ hj
       simp only [Hpk]
-      rw [if_neg (by omega), if_neg (fun hc => by have := hc.1; have := hc.2; omega),
-        if_neg (fun hc => hj hc.2.2.symm), zero_mul]
+      rw [ite_eq_right (by omega), ite_eq_right (fun hc => by have := hc.1; have := hc.2; omega),
+        ite_eq_right (fun hc => hj hc.2.2.symm), zero_mul]
     · simp
 
 theorem herm_symm (k r : ℕ) (u w : Fin (2 * r + k + 1) → ℂ) :
     herm (Hpk k r) u w = star (herm (Hpk k r) w u) := by
-  have hsym : ∀ i j, Hpk k r i j = Hpk k r j i := by
-    intro i j
-    simp only [Hpk, Fin.ext_iff]
-    split_ifs <;> first | rfl | (exfalso; omega)
-  have hstar : ∀ i j, star (Hpk k r i j) = Hpk k r i j := by
-    intro i j
-    simp only [Hpk]
-    split_ifs <;> simp
-  simp only [herm, dotProduct, Matrix.mulVec, Pi.star_apply, star_sum, star_mul', star_star, hstar,
-    Finset.mul_sum]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  rw [hsym]
-  ring
+  apply ReciprocityTheory.ChartRestriction.DS.Lap.TransportGeo.herm_symm <;> assumption
 
 theorem lift_kills_first_basis (k r' : ℕ) (w : Fin (2 * r' + k + 1) → ℂ) : liftVec k 1 r' w (eI k (1 + r') (a0 r')) = 0 := by
   unfold liftVec
@@ -165,7 +107,7 @@ theorem phiV_zero (k r' : ℕ) (h : 0 < 1 + r' + 1) : phiV k (1 + r') ⟨0, h⟩
 private theorem sum_herm_bvec_mul_eq_herm {n : ℕ} (H : Matrix (Fin n) (Fin n) ℂ) (u v : Fin n → ℂ) :
     ∑ j, herm H (bvec j) v * u j = herm H u v := by
   simp only [herm, bvec, dotProduct, Matrix.mulVec, Pi.single_apply, mul_ite, mul_one, mul_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true, Finset.sum_mul, Finset.mul_sum]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true, Finset.sum_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
@@ -236,13 +178,13 @@ private theorem star_bvec_dotProduct {m : ℕ} (i : Fin m) (v : Fin m → ℂ) :
 
 private theorem Hpk_mulVec_apply_wI_zero (k r' : ℕ) (hk : 1 ≤ k) (x : Fin (2 * r' + k + 1) → ℂ) :
     (Hpk k r' *ᵥ x) (wI k r' 0) = x (wI k r' 0) := by
-  rw [Hpk_mulVec_apply_eq_ite, if_neg (by simp only [wI, Fin.val_zero, Fin.val_mk]; omega),
-    if_neg (by simp only [wI, Fin.val_zero, Fin.val_mk]; omega)]
+  rw [Hpk_mulVec_apply_eq_ite, ite_eq_right (by simp only [wI, Fin.val_zero, Fin.val_mk]; omega),
+    ite_eq_right (by simp only [wI, Fin.val_zero, Fin.val_mk]; omega)]
 
 private theorem Hpk_mulVec_apply_wI_last (k r' : ℕ) (x : Fin (2 * r' + k + 1) → ℂ) :
     (Hpk k r' *ᵥ x) (wI k r' (Fin.last k)) = -x (wI k r' (Fin.last k)) := by
-  rw [Hpk_mulVec_apply_eq_ite, if_neg (by simp only [wI, Fin.val_last, Fin.val_mk]; omega),
-    if_pos (by simp only [wI, Fin.val_last, Fin.val_mk])]
+  rw [Hpk_mulVec_apply_eq_ite, ite_eq_right (by simp only [wI, Fin.val_last, Fin.val_mk]; omega),
+    ite_eq_left (by simp only [wI, Fin.val_last, Fin.val_mk])]
 
 private theorem star_phiV_dotProduct_Hpk_mulVec_eq_aF (k r' : ℕ) (hk : 1 ≤ k) (x : Fin (2 * r' + k + 1) → ℂ) (t : Fin (r' + 1)) :
     star (phiV k r' t) ⬝ᵥ (Hpk k r' *ᵥ x) = aF k r' x t := by
@@ -251,7 +193,7 @@ private theorem star_phiV_dotProduct_Hpk_mulVec_eq_aF (k r' : ℕ) (hk : 1 ≤ k
   by_cases ht : (t : ℕ) < r'
   · rw [dite_eq_left ht, dite_eq_left ht, star_bvec_dotProduct]
     show (Hpk k r' *ᵥ x) ⟨2 * r' + k - (t : ℕ), by omega⟩ = _
-    rw [Hpk_mulVec_apply_eq_ite, if_pos (by simp only [Fin.val_mk]; omega)]
+    rw [Hpk_mulVec_apply_eq_ite, ite_eq_left (by simp only [Fin.val_mk]; omega)]
     congr 1
     ext
     simp only [eI, Fin.val_mk]
@@ -471,16 +413,16 @@ theorem ortho (k r : ℕ) (hk : 1 ≤ k) (i j : Fin (r + 1)) :
     star (phiV k r i) ⬝ᵥ phiV k r j = if i = j then 1 else 0 := by
   unfold phiV
   by_cases hi : i.val < r <;> by_cases hj : j.val < r
-  · rw [dif_pos hi, dif_pos hj, star_bvec, dotProduct_bvec]
+  · rw [dite_eq_left hi, dite_eq_left hj, star_bvec, dotProduct_bvec]
     simp only [bvec_apply_eq_ite_val, esI, Fin.ext_iff]
     split_ifs <;> first | rfl | (exfalso; omega)
-  · rw [dif_pos hi, dite_eq_right hj, star_bvec, bvec_dotProduct, if_neg (fun (e : i = j) => hj (e ▸ hi))]
+  · rw [dite_eq_left hi, dite_eq_right hj, star_bvec, bvec_dotProduct, ite_eq_right (fun (e : i = j) => hj (e ▸ hi))]
     simp only [epsV_apply_eq, bvec_apply_eq_ite_val, wI, esI, Fin.val_zero, Fin.val_last]
     split_ifs <;> first | (exfalso; omega) | simp
-  · rw [dite_eq_right hi, dif_pos hj, dotProduct_bvec, if_neg (fun (e : i = j) => hi (e ▸ hj))]
+  · rw [dite_eq_right hi, dite_eq_left hj, dotProduct_bvec, ite_eq_right (fun (e : i = j) => hi (e ▸ hj))]
     simp only [Pi.star_apply, epsV_apply_eq, bvec_apply_eq_ite_val, wI, esI, Fin.val_zero, Fin.val_last]
     split_ifs <;> first | (exfalso; omega) | simp
-  · rw [dite_eq_right hi, dite_eq_right hj, if_pos (Fin.ext (by omega))]
+  · rw [dite_eq_right hi, dite_eq_right hj, ite_eq_left (Fin.ext (by omega))]
     have hv : (wI k r 0).val ≠ (wI k r (Fin.last k)).val := by
       simp only [wI, Fin.val_mk, Fin.val_zero, Fin.val_last]
       omega
@@ -488,7 +430,7 @@ theorem ortho (k r : ℕ) (hk : 1 ≤ k) (i j : Fin (r + 1)) :
     rw [star_smul, star_add, star_bvec, star_bvec, star_inv_sqrt_two', smul_dotProduct, dotProduct_smul, add_dotProduct,
       dotProduct_add, dotProduct_add]
     simp only [dotProduct_bvec, smul_eq_mul]
-    simp only [bvec_apply_eq_ite_val, if_neg hv, if_neg (Ne.symm hv), if_true]
+    simp only [bvec_apply_eq_ite_val, ite_eq_right hv, ite_eq_right (Ne.symm hv), ite_true]
     linear_combination inv_sqrt_two_mul_inv_sqrt_two_mul_two_eq_one
 
 theorem dot_swap {n : ℕ} (u v : Fin n → ℂ) : star u ⬝ᵥ v = star (star v ⬝ᵥ u) := by
@@ -523,7 +465,7 @@ theorem pars1' (k r' : ℕ) (hk : 1 ≤ k) (y : Fin (2 * r' + k + 1) → ℂ) :
     simp only [dotProduct]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp only [hf, Pi.star_apply]
-    rw [dif_pos i.isLt]
+    rw [dite_eq_left i.isLt]
   have h1 : ∑ x ∈ Finset.range r', f x = ∑ j ∈ Finset.range r', star (AN k r' y j) * AN k r' y j := by
     refine Finset.sum_congr rfl fun j hj => ?_
     rw [Finset.mem_range] at hj
@@ -542,7 +484,7 @@ theorem pars1' (k r' : ℕ) (hk : 1 ≤ k) (y : Fin (2 * r' + k + 1) → ℂ) :
     refine Finset.sum_congr rfl fun i _ => ?_
     have hi := i.isLt
     simp only [hf]
-    rw [dif_pos (by omega : r' + 1 + i.val < 2 * r' + k + 1)]
+    rw [dite_eq_left (by omega : r' + 1 + i.val < 2 * r' + k + 1)]
     exact key _ _ (by first | (simp only [ix, Fin.val_mk]; omega))
   have h4 : f r' + f (r' + 1 + (k - 1)) =
       star (AN k r' y r') * AN k r' y r' + star (AN' k r' y r') * AN' k r' y r' := by
@@ -577,8 +519,8 @@ theorem gram_Y (k r' : ℕ) (hk : 1 ≤ k) (x : HPar k r') (l : Fin (1 + r' + 1)
   have hYs : ∀ c : Fin (1 + r' + 1), ∀ j (hj : j < r' + 1), c.val = j + 1 →
       heis0 k r' x *ᵥ phiV k (1 + r') c = liftVec k 1 r' (phiV k r' ⟨j, hj⟩) - star (A j) • e0 k r' := by
     intro c j hj hc; have hc' : c = ⟨j + 1, by omega⟩ := Fin.ext hc
-    rw [hc', phiV_succ k r' j hj, heis_lift k r' hk]; simp only [A, AN, dif_pos hj]
-  have hA : ∀ j (hj : j < r' + 1), A' j = aF' k r' x.1 ⟨j, hj⟩ := fun j hj => by simp only [A', AN', dif_pos hj]
+    rw [hc', phiV_succ k r' j hj, heis_lift k r' hk]; simp only [A, AN, dite_eq_left hj]
+  have hA : ∀ j (hj : j < r' + 1), A' j = aF' k r' x.1 ⟨j, hj⟩ := fun j hj => by simp only [A', AN', dite_eq_left hj]
   have hml : l.val ≤ r' + 1 := by have := l.isLt; omega
   unfold Ga
   rw [gram_det l.val _ (star x.1 ⬝ᵥ x.1 + b * star b) (fun j => A' j - b * A j) A]
@@ -658,7 +600,7 @@ theorem hc1 (k r' : ℕ) (hk : 1 ≤ k) (x : HPar k r') (j : Fin (1 + r')) : (hc
   have hj : j.val < r' + 1 := by omega
   show herm (Hpk k r') x.1 (phiV k r' (Fin.cast (by omega) j)) = AN k r' x.1 j.val
   unfold AN herm
-  rw [dif_pos hj]
+  rw [dite_eq_left hj]
   unfold phiV aF
   try simp only [Fin.coe_cast]
   split_ifs with h
@@ -682,7 +624,7 @@ theorem hc2 (k r' : ℕ) (x : HPar k r') (j : Fin (1 + r')) : (hcoord k r' x).2.
   unfold herm phiV'
   rw [Matrix.star_mulVec, ← Matrix.dotProduct_mulVec, Hpk_conjTranspose_eq_self, Hpk_mulVec_Hpk_mulVec, phi_dot_y]
   unfold AN'
-  rw [dif_pos hj]
+  rw [dite_eq_left hj]
   rfl
 
 theorem Uu_real (k r' : ℕ) (x : HPar k r') :
@@ -757,7 +699,7 @@ theorem bco_eq (k r' : ℕ) (hk : 1 ≤ k) (x : HPar k r') (l : Fin (1 + r' + 1)
       simp only [herm, dotProduct]
       refine Finset.sum_congr rfl fun i _ => ?_
       simp only [hf, Pi.star_apply]
-      rw [dif_pos i.isLt]
+      rw [dite_eq_left i.isLt]
     have h1 : ∑ x ∈ Finset.range r', f x = ∑ j ∈ Finset.range r', AN' k r' y j * star (AN k r' y j) := by
       refine Finset.sum_congr rfl fun j hj => ?_
       rw [Finset.mem_range] at hj
@@ -780,7 +722,7 @@ theorem bco_eq (k r' : ℕ) (hk : 1 ≤ k) (x : HPar k r') (l : Fin (1 + r' + 1)
       refine Finset.sum_congr rfl fun i _ => ?_
       have hi := i.isLt
       simp only [hf]
-      rw [dif_pos (by omega : r' + 1 + i.val < 2 * r' + k + 1),
+      rw [dite_eq_left (by omega : r' + 1 + i.val < 2 * r' + k + 1),
         Hpk_mulVec_apply_of_mem_middle k r' y ⟨r' + 1 + i.val, by omega⟩ (by simp only [Fin.val_mk]; omega) (by simp only [Fin.val_mk]; omega)]
       exact key3 _ _ _ _ (by first | (simp only [ix, Fin.val_mk]; omega))
         (by first | (simp only [ix, Fin.val_mk]; omega))

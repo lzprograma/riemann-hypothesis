@@ -57,8 +57,6 @@ open scoped ComplexOrder
 
 namespace GlobalTheory.CompanionTheory.TestVal
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Lat
 
 variable {E K : Type} [Field E] [NumberField E] [Field K] [NumberField K] {ι : Type} [Fintype ι] {n : ℕ}

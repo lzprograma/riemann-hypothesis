@@ -2,53 +2,8 @@ module
 
 public import Development.AbelianVarietyTheory.Definitions.Divisors.FlatTensorVacuum
 import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.CategoryTheory.Countable
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.MeasureTheory.Integral.Pi
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -149,8 +104,8 @@ def stepVarEquiv : KeptVar n c n' ⊕ FreeVar n c n' ≃ StepVar n c n' where
   invFun rs := if h : Kept rs.1 then .inl ⟨rs.1, h⟩ else .inr ⟨rs.1, rs.2.resolve_right h⟩
   left_inv := by
     rintro (rs | rs)
-    · exact dif_pos rs.2
-    · exact dif_neg fun h => Kept.not_free h rs.2
+    · exact dite_eq_left rs.2
+    · exact dite_eq_right fun h => Kept.not_free h rs.2
   right_inv rs := by by_cases h : Kept rs.1 <;> simp [h]
 
 def joinVars (p : (KeptVar n c n' → k) × (FreeVar n c n' → k)) : StepVar n c n' → k :=
@@ -178,12 +133,12 @@ theorem ch_add_keptPt (z : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k) (w : Kep
 
 theorem stepPt_col (x₀ : Matrix n n' k) (e : StepVar n c n' → k) (r : n) {i : Fin (c + 1)} (hi : i.val = c / 2) :
     stepPt x₀ e (.inl r) (.inr i) = keptPt (keptPart e) (.inl r) (.inr i) := by
-  rw [stepPt_eq, Matrix.add_apply, affPt, Matrix.add_apply, of_apply, dif_neg (by simp [Free, hi])]
+  rw [stepPt_eq, Matrix.add_apply, affPt, Matrix.add_apply, of_apply, dite_eq_right (by simp [Free, hi])]
   simp [basePt]; rfl
 
 theorem stepPt_row (x₀ : Matrix n n' k) (e : StepVar n c n' → k) (s : n') {l : Fin c} (hl : l.val = c / 2) :
     stepPt x₀ e (.inr l) (.inl s) = keptPt (keptPart e) (.inr l) (.inl s) := by
-  rw [stepPt_eq, Matrix.add_apply, affPt, Matrix.add_apply, of_apply, dif_neg (by simp [Free, hl])]
+  rw [stepPt_eq, Matrix.add_apply, affPt, Matrix.add_apply, of_apply, dite_eq_right (by simp [Free, hl])]
   simp [basePt]; rfl
 
 variable [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
@@ -197,7 +152,7 @@ theorem isClosedEmbedding_stepPt (x₀ : Matrix n n' k) :
     (continuous_const.add (continuous_matrix fun r s => ?_))
   · funext rs
     simp only [stepPt, Matrix.add_apply, of_apply, add_sub_cancel_left]
-    exact dif_pos rs.2
+    exact dite_eq_left rs.2
   · simp only [of_apply]
     split_ifs
     · exact continuous_apply _
@@ -245,14 +200,14 @@ def pairPhase (x : ColArgs G) (w : KeptVars G) : k :=
   ∑ j : Fin (G.m - 1), if Even (G.m - 2 - j) then ∑ r, keptRow x w (j + 1) r * keptCol w j r else 0
 
 theorem keptCol_eq (w : KeptVars G) (j : Fin (G.m - 1)) (hj : Even (G.m - 2 - j)) (r : Fin (topRank G (j + 1))) :
-    keptCol w j r = w j ⟨(.inl r, .inr ⟨(G.m - 2 - j) / 2, by omega⟩), hj, rfl⟩ := dif_pos _
+    keptCol w j r = w j ⟨(.inl r, .inr ⟨(G.m - 2 - j) / 2, by omega⟩), hj, rfl⟩ := dite_eq_left _
 
 theorem keptRow_eq (x : ColArgs G) (w : KeptVars G) (j : Fin (G.m - 1)) (hj : Odd (G.m - 2 - j))
     (s : Fin (topRank G j)) : keptRow x w j s =
       w j ⟨(.inr ⟨(G.m - 2 - j) / 2, by have := hj.pos; omega⟩, .inl s), hj, rfl⟩ := by
-  rw [keptRow, dif_pos j.2, Finset.sum_eq_single ⟨(G.m - 2 - j) / 2, by have := hj.pos; omega⟩, if_pos rfl]
-  · exact dif_pos _
-  · exact fun l _ hl => if_neg fun h => hl (Fin.ext h)
+  rw [keptRow, dite_eq_left j.2, Finset.sum_eq_single ⟨(G.m - 2 - j) / 2, by have := hj.pos; omega⟩, ite_eq_left rfl]
+  · exact dite_eq_left _
+  · exact fun l _ hl => ite_eq_right fun h => hl (Fin.ext h)
   · simp
 
 theorem phase_eq (x : ColArgs G) (e : Vars G) :
@@ -282,7 +237,7 @@ def lastMap (hm : 0 < G.m) (x : ColArgs G) : Matrix (Fin (G.rank (G.m, G.m - 1 +
     (Fin.cast (by have := topRank_add hs (G.m - 1); omega))
 
 theorem downMap_last (hm : 0 < G.m) (x : ColArgs G) (e : Vars G) : downMap hs x e (G.m - 1) = lastMap hs hm x := by
-  rw [downMap, dif_neg (lt_irrefl _), dif_pos (by omega)]; rfl
+  rw [downMap, dite_eq_right (lt_irrefl _), dite_eq_left (by omega)]; rfl
 
 theorem pureTensor_fill (hm : 0 < G.m) (φ : ∀ b : Edge, Matrix (Fin (G.rank b.tgt)) (Fin (G.rank b.src)) k → ℂ)
     (x : ColArgs G) (y : RowArgs G) (e : Vars G) :
@@ -299,7 +254,7 @@ theorem pureTensor_fill (hm : 0 < G.m) (φ : ∀ b : Edge, Matrix (Fin (G.rank b
     simp only [Function.comp_apply, fill_theta, downMap_last hs hm]
     congr 1
     refine Finset.prod_congr rfl fun j _ => ?_
-    rw [downMap, dif_pos j.2]; rfl
+    rw [downMap, dite_eq_left j.2]; rfl
 
 variable [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 

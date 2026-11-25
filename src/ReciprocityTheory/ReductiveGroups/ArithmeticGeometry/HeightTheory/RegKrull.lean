@@ -113,8 +113,7 @@ theorem mem_of_mem_heightOne_localizations {R K : Type*} [CommRing R] [IsDomain 
     rwa [one_mul] at h1'
 
   have key : ∃ q0 ∈ colonI b c, ∃ u : R, u ∉ colonI b c ∧ u * b = q0 * c := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     apply hc
     have hint : IsIntegral R (algebraMap R K c / algebraMap R K b) := by
       refine isIntegral_of_smul_mem_submodule

@@ -38,26 +38,26 @@ theorem BlowUpVerticalPush.proof (hfib : BlowUpVerticalFibre.Statement.{u}) :
         divCycle P x W * (if (C ϖ : MRing ι O) ∈ W then vNum W a else 0) := by
     intro W
     by_cases hW : (C ϖ : MRing ι O) ∈ W
-    · rw [if_pos hW, ← hfib O ϖ hϖ K ι J P n hP N u hu hu' c x hx hxP a W hW,
+    · rw [ite_eq_left hW, ← hfib O ϖ hϖ K ι J P n hP N u hu hu' c x hx hxP a W hW,
         finsum_eq_sum_of_support_subset _ (s := hZ.toFinset), Finset.sum_filter]
       · refine Finset.sum_congr rfl fun W' _ => ?_
         by_cases h1 : W'.comap (liftForm (ι := ι) (J := J) (R := O)) = W
-        · rw [if_pos h1, if_pos h1, hg_def]
+        · rw [ite_eq_left h1, ite_eq_left h1, hg_def]
           dsimp only
-          rw [if_pos ((hC W').mpr (by rw [h1]; exact hW))]
-        · rw [if_neg h1, if_neg h1]
+          rw [ite_eq_left ((hC W').mpr (by rw [h1]; exact hW))]
+        · rw [ite_eq_right h1, ite_eq_right h1]
       · intro W' hW'
         refine hZ.mem_toFinset.mpr ?_
         rw [Function.mem_support] at hW' ⊢
         intro h0
         apply hW'
         simp [h0]
-    · rw [if_neg hW, mul_zero]
+    · rw [ite_eq_right hW, mul_zero]
       refine Finset.sum_eq_zero fun W' hW' => ?_
       have h1 := (Finset.mem_filter.mp hW').2
       rw [hg_def]
       dsimp only
-      rw [if_neg (fun h => hW (h1 ▸ (hC W').mp h)), mul_zero]
+      rw [ite_eq_right (fun h => hW (h1 ▸ (hC W').mp h)), mul_zero]
   unfold cycEval
   calc (∑ᶠ W', divCycle (blowUpOf P u) (liftForm x) W' *
           (if (C ϖ : MRing (extIdx ι J) O) ∈ W' then vNum W' (liftDegs a) else 0))

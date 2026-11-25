@@ -55,13 +55,10 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRin
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.H1
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory
 
@@ -69,14 +66,6 @@ namespace IntComb
 
 variable {V : Type} [CommRing V] [IsDomain V] [IsDiscreteValuationRing V] {ϖ : V}
   {D : DegData V (maximalIdeal V)}
-
-theorem exists_int_of_vge (hϖ : Irreducible ϖ) {k : ℕ} {α : D.toPre.X}
-    {s : LB.Sec (LB.LinComb D.toPre.P.L (DegPre.famφ D.toPre (FractionRing V) α) (DegPre.famε k))} {r : ℚ}
-    (hr : 0 ≤ r) (hs : VGe D (FractionRing V) (FamInt.ordVal hϖ) k α s r) :
-    ∃ f : D.toPre.SecB k α,
-      GeneratorPullback.SecScal D.toPre.P.L (DegPre.famφ D.toPre (FractionRing V) α) (DegPre.famε k) s
-        (D.toPre.famφB α) (DegPre.famε k) f (DegPre.prB D.toPre (FractionRing V)).left 1 := by
-  apply GlobalTheory.AdaptedBasis.exists_int_of_vge <;> assumption
 
 theorem integralFamily_of_min (hL : Laws) (hϖ : Irreducible ϖ) {Q : D.toPre.X → ℤ} (hQ : QForm.IsQ D.toPre ϖ Q)
     {q : ℕ} (hq : 1 ≤ q) (χ : D.toPre.X) (β : D.toPre.SecB q χ) (hmin : ∀ z, Q χ ≤ Q (χ + q • z)) :
@@ -109,7 +98,7 @@ theorem integralFamily_of_min (hL : Laws) (hϖ : Irreducible ϖ) {Q : D.toPre.X 
       rw [q_shift hϖ hQ, le_add_iff_nonneg_right] at hle
       have hpos : (0 : ℤ) ≤ q * Q z + QForm.bOf D.toPre Q z χ :=
         nonneg_of_mul_nonneg_right hle (by omega)
-      obtain ⟨f, h1⟩ := exists_int_of_vge hϖ (by rw [zero_add]; exact_mod_cast hpos) H
+      obtain ⟨f, h1⟩ := GlobalTheory.AdaptedBasis.exists_int_of_vge hϖ (by rw [zero_add]; exact_mod_cast hpos) H
       exact ⟨f, h1, fun h => absurd h hα, fun h => absurd rfl (h z)⟩
     · refine ⟨SecOps.secZero, SectionScalarValuation.secScal_of_sval D.toPre.P.isLB fun y J hJ => ?_, fun h => absurd h hα,
         fun _ _ => rfl⟩

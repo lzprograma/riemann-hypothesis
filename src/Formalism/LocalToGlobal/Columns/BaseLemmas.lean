@@ -1,52 +1,7 @@
 module
 
 public import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -207,7 +162,7 @@ theorem sgHC_b (S : RowPar R) (B : ℕ) : S.sgHC (R.k - 1 + B * (R.t + 1)) = sh 
   have e2 : B * (R.t + 1) % (R.t + 1) = 0 := by simp
   have e3 : B * (R.t + 1) / (R.t + 1) = B := Nat.mul_div_cancel B (Nat.succ_pos _)
   unfold RowPar.sgHC RowPar.sh
-  rw [dite_eq_right h1, e, if_pos e2, e3]
+  rw [dite_eq_right h1, e, ite_eq_left e2, e3]
   ring
 
 theorem sgHC_e (S : RowPar R) (B ρ : ℕ) (h1 : 1 ≤ ρ) (h2 : ρ ≤ R.t) :
@@ -217,7 +172,7 @@ theorem sgHC_e (S : RowPar R) (B ρ : ℕ) (h1 : 1 ≤ ρ) (h2 : ρ ≤ R.t) :
   have e : R.k - 1 + B * (R.t + 1) + ρ - (R.k - 1) = B * (R.t + 1) + ρ := by omega
   have hne : ¬ ((B * (R.t + 1) + ρ) % (R.t + 1) = 0) := by rw [hd.2]; omega
   unfold RowPar.sgHC RowPar.sh
-  rw [dite_eq_right h1', e, if_neg hne, hd.1, hd.2]
+  rw [dite_eq_right h1', e, ite_eq_right hne, hd.1, hd.2]
   ring
 
 theorem sgHC_step {n : ℕ} (hn : n + 1 < R.N R.m - 1) : (of P).sgHC (n + 1) + 1 ≤ (of P).sgHC n := by
@@ -388,30 +343,30 @@ theorem hcV_step {j : ℕ} (h1 : 1 ≤ j) (h2 : j ≤ R.m) {n : ℕ} (hn : n + 1
   rw [hnV] at hn
   unfold RowPar.hcV
   rcases lt_or_ge (n + 1) (pOf R j) with a1 | a1
-  · rw [if_pos a1, if_pos (by omega : n < pOf R j)]
+  · rw [ite_eq_left a1, ite_eq_left (by omega : n < pOf R j)]
     exact vb_step P (n := n) (by omega)
   · rcases lt_or_ge n (pOf R j) with a2 | a2
-    · rw [if_neg (by omega : ¬ n + 1 < pOf R j), if_pos (by omega : n + 1 < pOf R j + R.t), if_pos a2,
+    · rw [ite_eq_right (by omega : ¬ n + 1 < pOf R j), ite_eq_left (by omega : n + 1 < pOf R j + R.t), ite_eq_left a2,
         vb_hi P (n := n) (by omega), show n - (R.k - 1) = j - 1 by omega,
         show n + 1 - pOf R j = 0 by omega]
       have hg := gap_be P (c := j - 1) (by omega)
       push_cast
       linarith
     · rcases lt_or_ge (n + 1) (pOf R j + R.t) with a3 | a3
-      · rw [if_neg (by omega : ¬ n + 1 < pOf R j), if_pos a3, if_neg (by omega : ¬ n < pOf R j),
-          if_pos (by omega : n < pOf R j + R.t), show n + 1 - pOf R j = (n - pOf R j) + 1 by omega]
+      · rw [ite_eq_right (by omega : ¬ n + 1 < pOf R j), ite_eq_left a3, ite_eq_right (by omega : ¬ n < pOf R j),
+          ite_eq_left (by omega : n < pOf R j + R.t), show n + 1 - pOf R j = (n - pOf R j) + 1 by omega]
         push_cast
         linarith
       · rcases lt_or_ge n (pOf R j + R.t) with a4 | a4
-        · rw [if_neg (by omega : ¬ n + 1 < pOf R j), if_neg (by omega : ¬ n + 1 < pOf R j + R.t),
-            if_neg (by omega : ¬ n < pOf R j), if_pos a4,
+        · rw [ite_eq_right (by omega : ¬ n + 1 < pOf R j), ite_eq_right (by omega : ¬ n + 1 < pOf R j + R.t),
+            ite_eq_right (by omega : ¬ n < pOf R j), ite_eq_left a4,
             show j + (n + 1 - (pOf R j + R.t)) = (j - 1) + 1 by omega,
             show n - pOf R j = R.t - 1 by omega, Nat.cast_sub (by omega : 1 ≤ R.t)]
           have hg := gap_eb P (c := j - 1) (by omega)
           push_cast
           linarith
-        · rw [if_neg (by omega : ¬ n + 1 < pOf R j), if_neg (by omega : ¬ n + 1 < pOf R j + R.t),
-            if_neg (by omega : ¬ n < pOf R j), if_neg (by omega : ¬ n < pOf R j + R.t),
+        · rw [ite_eq_right (by omega : ¬ n + 1 < pOf R j), ite_eq_right (by omega : ¬ n + 1 < pOf R j + R.t),
+            ite_eq_right (by omega : ¬ n < pOf R j), ite_eq_right (by omega : ¬ n < pOf R j + R.t),
             show j + (n + 1 - (pOf R j + R.t)) = (j + (n - (pOf R j + R.t))) + 1 by omega]
           have hg := b_step P (c := j + (n - (pOf R j + R.t))) (by omega)
           linarith
@@ -609,12 +564,6 @@ theorem sgTrue_eq (i : Fin (R.N R.m - 1)) :
 
 end RowPar
 
-namespace Wts
-
-variable {X : Fields} {Word : Type} {R : Ranks} (W : Wts X Word R)
-
-end Wts
-
 namespace Fields
 
 variable (X : Fields)
@@ -693,9 +642,9 @@ theorem Ok.piT_notMem_sq (hX : X.Ok) (hPr : Pr.Ok) (u : Pr.Word) {P : HeightOneS
     intro Q hQ'
     show (if Q = P then P.asIdeal ^ 2 else Q.asIdeal) ∣ _
     by_cases h : Q = P
-    · rw [if_pos h, Ideal.dvd_span_singleton]
+    · rw [ite_eq_left h, Ideal.dvd_span_singleton]
       exact hmem
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       exact hQ Q hQ'
   have hcop : ((Pr.vT u : Finset (HeightOneSpectrum (𝓞 X.E))) : Set (HeightOneSpectrum (𝓞 X.E))).Pairwise
       (Function.onFun IsCoprime g) := by
@@ -703,12 +652,12 @@ theorem Ok.piT_notMem_sq (hX : X.Ok) (hPr : Pr.Ok) (u : Pr.Word) {P : HeightOneS
     show IsCoprime (if Q = P then P.asIdeal ^ 2 else Q.asIdeal) (if Q' = P then P.asIdeal ^ 2 else Q'.asIdeal)
     by_cases h1 : Q = P
     · have h2 : Q' ≠ P := fun h => hQQ' (h1.trans h.symm)
-      rw [if_pos h1, if_neg h2]
+      rw [ite_eq_left h1, ite_eq_right h2]
       exact (hmax P Q' (Ne.symm h2)).pow_left
     · by_cases h2 : Q' = P
-      · rw [if_neg h1, if_pos h2]
+      · rw [ite_eq_right h1, ite_eq_left h2]
         exact (hmax Q P h1).pow_right
-      · rw [if_neg h1, if_neg h2]
+      · rw [ite_eq_right h1, ite_eq_right h2]
         exact hmax Q Q' hQQ'
   have hdvd := Finset.prod_dvd_of_coprime hcop hg
   have hN := map_dvd Ideal.absNorm hdvd
@@ -716,11 +665,11 @@ theorem Ok.piT_notMem_sq (hX : X.Ok) (hPr : Pr.Ok) (u : Pr.Word) {P : HeightOneS
     intro Q hQ'
     show Ideal.absNorm (if Q = P then P.asIdeal ^ 2 else Q.asIdeal) = _
     by_cases h : Q = P
-    · rw [if_pos h, if_pos h, map_pow, hPr.vT_norm u P hP]
+    · rw [ite_eq_left h, ite_eq_left h, map_pow, hPr.vT_norm u P hP]
       ring
-    · rw [if_neg h, if_neg h, hPr.vT_norm u Q hQ', mul_one]
+    · rw [ite_eq_right h, ite_eq_right h, hPr.vT_norm u Q hQ', mul_one]
   rw [map_prod, hPr.absNorm_piT hX u, Finset.prod_congr rfl hprod] at hN
-  simp only [Finset.prod_mul_distrib, Finset.prod_const, Finset.prod_ite_eq', if_pos hP, hPr.vT_card u] at hN
+  simp only [Finset.prod_mul_distrib, Finset.prod_const, Finset.prod_ite_eq', ite_eq_left hP, hPr.vT_card u] at hN
   rw [← pow_succ] at hN
   have hle := (Nat.pow_dvd_pow_iff_le_right (by omega : 1 < Pr.T u)).1 hN
   omega

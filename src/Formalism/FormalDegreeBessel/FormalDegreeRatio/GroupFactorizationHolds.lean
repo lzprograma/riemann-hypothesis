@@ -1,52 +1,6 @@
 module
 
 public import Formalism.FormalDegreeBessel.StatementG
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -62,8 +16,7 @@ theorem sum_fin_castLE {m l : ℕ} (h : l ≤ m) (f : Fin m → ℂ)
   rw [show (∑ j : Fin l, f (Fin.castLE h j)) = ∑ j ∈ Finset.univ.map (Fin.castLEEmb h), f j from
     (Finset.sum_map Finset.univ (Fin.castLEEmb h) f).symm]
   refine (Finset.sum_subset (Finset.subset_univ _) fun j _ hj => hf j ?_).symm
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   exact hj (Finset.mem_map.mpr ⟨⟨j.val, hlt⟩, Finset.mem_univ _, Fin.ext rfl⟩)
 
 theorem minor_eq_of_mul {m : ℕ} (L U X Y : Matrix (Fin m) (Fin m) ℂ)
@@ -171,14 +124,14 @@ theorem N_F {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z)
       rw [fvec_apply_lt z hz c i hi]
       simp [Fin.ext_iff]
     simp only [hF, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
     simp [Uof, hi, eI]
   · have hF : ∀ c, Fm k r z i c = if c = Fin.last r then z i else 0 := fun c => by
       change fvec k r z c i = _
       rw [fvec_apply_ge z c i (by omega)]
       simp [Fin.ext_iff]
     simp only [hF, ite_mul, zero_mul, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true]
+      Finset.mem_univ, ite_true]
     have hU : Uof k r z m (Fin.last r) a = if Fin.last r = a then 1 else 0 := by simp [Uof]
     rw [hU]
     by_cases ha : a.val < r
@@ -196,7 +149,7 @@ theorem N_F {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z)
       simp [h1, h2]
     · have ha' : a = Fin.last r := Fin.ext (by have := a.isLt; simp; omega)
       subst ha'
-      simp only [if_true, mul_one]
+      simp only [ite_true, mul_one]
       change (m *ᵥ fvec k r z (Fin.last r)) i = z i
       have hf : fvec k r z (Fin.last r) = z := by simp [fvec]
       rw [hf]
@@ -205,10 +158,10 @@ theorem N_F {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z)
         by_cases hj : j.val < r ∨ r + k < j.val
         · rw [hz j hj]
           simp
-        · push_neg at hj
+        · push Not at hj
           rw [hm3 i j hj.1 hj.2 (by omega)]
           split_ifs <;> simp
-      simp only [Matrix.mulVec, dotProduct, hterm, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      simp only [Matrix.mulVec, dotProduct, hterm, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 theorem Uof_lower_zero {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ}
     {m : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hm : m ∈ Nset k r)
@@ -216,9 +169,9 @@ theorem Uof_lower_zero {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ}
   have hm2 := hm.2.1
   have hac' : a.val < c.val := hac
   by_cases hc : c.val < r
-  · simp only [Uof, hc, dif_pos]
+  · simp only [Uof, hc, dite_eq_left]
     rw [mF_col z m _ a (by omega), hm2 ⟨a.val, by omega⟩ _ (by show a.val ≤ c.val; omega)]
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     have := congrArg Fin.val h
     change c.val = a.val at this
@@ -231,8 +184,8 @@ theorem Uof_diag {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ}
     (c : Fin (r + 1)) : Uof k r z m c c = 1 := by
   have hm2 := hm.2.1
   by_cases hc : c.val < r
-  · simp only [Uof, hc, dif_pos]
-    rw [mF_col z m _ c hc, hm2 ⟨c.val, hc⟩ _ (le_refl _), if_pos rfl]
+  · simp only [Uof, hc, dite_eq_left]
+    rw [mF_col z m _ c hc, hm2 ⟨c.val, hc⟩ _ (le_refl _), ite_eq_left rfl]
   · simp [Uof, hc]
 
 theorem S_F {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z)

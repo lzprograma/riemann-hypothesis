@@ -174,67 +174,8 @@ theorem even_im_hermitian_sub (Λ : AddSubgroup ℂ) (w₁ w₂ : ℂ) (hi : Lin
     ∃ m n : ℤ, gl3FieldFirst Λ (θ * ω) ω = m ∧ gl3FieldFirst Λ ω (2 * t) = n ∧ (Even (m + n) ↔ ω / 2 ∈ Λ) := by
   apply GlobalTheory.HalfPeriodTheta.even_im_hermitian_sub <;> assumption
 
-theorem theta_signed_translation : ∀ (D : D7), admG1 D → ∀ (cc : Ideal (𝓞 D.host.K)) (δ : ℂ), Crv D cc δ → ∀ t0, GL3Theta.IsTwoTorsionPointUnkilled D (lamOf D cc δ) t0 → Differentiable ℂ (GL3Theta.th0 (lamOf D cc δ) t0) ∧ ∀ ω ∈ lamOf D cc δ, ∃ m : ℤ, q1 D (lamOf D cc δ) ω = (m : ℝ) ∧ ∀ z, (-1 : ℂ) ^ m * U1 (lamOf D cc δ) ω (GL3Theta.th0 (lamOf D cc δ) t0) z = GL3Theta.th0 (lamOf D cc δ) t0 z := by
-  intro D hG cc δ hC t0 ht
-  have hb : ∃ w₁ w₂ : ℂ, LinearIndependent ℝ ![w₁, w₂] ∧ lamOf D cc δ = AddSubgroup.closure {w₁, w₂} := by
-    obtain ⟨L, hL⟩ := _root_.GlobalTheory.CurveLattice.exists_periodPair_lamOf D cc δ hC
-    refine ⟨L.ω₁, L.ω₂, L.indep, ?_⟩
-    ext z
-    rw [hL, PeriodPair.mem_lattice, AddSubgroup.mem_closure_pair]
-    simp only [zsmul_eq_mul]
-  have hst : ∀ a : 𝓞 D.host.K, ∀ w ∈ lamOf D cc δ, D.host.φ₀ ((a : D.host.K) : D.host.E) * w ∈ lamOf D cc δ :=
-    fun a w hw => GlobalTheory.ThetaLine.lam_mul cc δ a hw
-  set Λ := lamOf D cc δ
-  obtain ⟨⟨hdiff, -, -, hlaw⟩, -⟩ := GlobalTheory.OddTheta.sgStar_laws Λ hb
-  obtain ⟨L, hL⟩ := GlobalTheory.OddTheta.exists_periodPair Λ hb
-  obtain ⟨-, hsd⟩ := GlobalTheory.PlaneLattice.area_pos_and_selfDual L Λ hL
-  obtain ⟨w₁, w₂, hi, hΛ⟩ := hb
-  obtain ⟨a, ha⟩ := GlobalTheory.NormSum.exists_integer_map_eq_w0 D
-  have hd : D.host.d % 16 = 7 := D.host.hyp.2.2.2.1
-  obtain ⟨k, hk⟩ : ∃ k : ℕ, D.host.d = 16 * k + 7 := ⟨D.host.d / 16, by omega⟩
-  have hsq : ((Real.sqrt D.host.d : ℝ) : ℂ) * (Real.sqrt D.host.d : ℝ) = 16 * (k : ℂ) + 7 := by
-    rw [← Complex.ofReal_mul, Real.mul_self_sqrt (Nat.cast_nonneg _), hk]
-    push_cast; ring
-  refine ⟨?_, fun ω hω => ?_⟩
-  · unfold GL3Theta.th0 U1
-    refine Differentiable.div_const (Differentiable.mul (hdiff.comp (differentiable_id.add_const _)) ?_) _
-    fun_prop
-  obtain ⟨m, n, hm, hn, hpar⟩ := even_im_hermitian_sub Λ w₁ w₂ hi hΛ hsd (w0 D) (4 * k + 2) ⟨2 * k + 1, by ring⟩
-    (by
-      unfold w0
-      push_cast
-      linear_combination (((Real.sqrt D.host.d : ℝ) : ℂ) ^ 2 / 4) * Complex.I_mul_I - (1 / 4) * hsq)
-    (fun w hw => ha ▸ hst a w hw) t0 ht.1 ht.2.1
-    (by
-      have := ht.2.2
-      convert this using 3
-      unfold w0; ring) ω hω
-  refine ⟨m, ?_, fun z => ?_⟩
-  · rw [← hm, q1, gl3FieldFirst, mul_assoc, Complex.mul_conj, Complex.normSq_eq_norm_sq, w0]
-    rw [mul_comm ((1 + _) / 2 : ℂ), Complex.im_ofReal_mul]
-    simp
-    ring
-  · have e1 : U1 Λ ω (GL3Theta.th0 Λ t0) z = U1 Λ ω (U1 Λ t0 (sgStar Λ)) z / U1 Λ t0 (sgStar Λ) 0 := by
-      conv_lhs => rw [U1]
-      conv_rhs => rw [U1]
-      simp only [GL3Theta.th0]
-      ring
-    have e2 : U1 Λ t0 (U1 Λ ω (sgStar Λ)) z = (if ω / 2 ∈ Λ then 1 else -1) * U1 Λ t0 (sgStar Λ) z := by
-      conv_lhs => rw [U1]
-      rw [hlaw ω hω, mul_assoc]
-      rfl
-    have e3 : Complex.exp (-(Real.pi : ℂ) * Complex.I * ((n : ℝ) : ℂ)) = (-1) ^ n := by
-      rw [show -(Real.pi : ℂ) * Complex.I * ((n : ℝ) : ℂ) = (n : ℂ) * (-(Real.pi * Complex.I)) by push_cast; ring,
-        Complex.exp_int_mul, Complex.exp_neg, Complex.exp_pi_mul_I]
-      norm_num
-    have e4 : (-1 : ℂ) ^ m * (-1) ^ n * (if ω / 2 ∈ Λ then 1 else -1) = 1 := by
-      rw [← zpow_add₀ (by norm_num)]
-      split_ifs with h
-      · rw [(hpar.2 h).neg_one_zpow]; simp
-      · rw [(Int.not_even_iff_odd.1 (mt hpar.1 h)).neg_one_zpow]; simp
-    rw [e1, exists_orthonormal_basis_family, hn, e2, e3]
-    simp only [GL3Theta.th0]
-    linear_combination (U1 Λ t0 (sgStar Λ) z / U1 Λ t0 (sgStar Λ) 0) * e4
+theorem theta_signed_translation : ∀ (D : D7), admG1 D → ∀ (cc : Ideal (𝓞 D.host.K)) (δ : ℂ), Crv D cc δ → ∀ t0, GL3Theta.IsTwoTorsionPointUnkilled D (lamOf D cc δ) t0 → Differentiable ℂ (GL3Theta.th0 (lamOf D cc δ) t0) ∧ ∀ ω ∈ lamOf D cc δ, ∃ m : ℤ, q1 D (lamOf D cc δ) ω = (m : ℝ) ∧ ∀ z, (-1 : ℂ) ^ m * U1 (lamOf D cc δ) ω (GL3Theta.th0 (lamOf D cc δ) t0) z = GL3Theta.th0 (lamOf D cc δ) t0 z :=
+  _root_.GlobalTheory.HalfPeriodTheta.theta_signed_translation
 
 theorem Iop_smul (T : Tor D) {N N' : ℕ} (A₁ A₂ : AddSubgroup (VC D N N')) (c : ℂ) (G : VC D N N' → ℂ) :
     Iop D T A₁ A₂ (fun z => c * G z) = fun z => c * Iop D T A₁ A₂ G z := by

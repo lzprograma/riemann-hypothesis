@@ -65,6 +65,7 @@ import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ThetaNormSqSu
 import Development.AbelianVarietyTheory.Proofs.HeightProofs.CocompactTensor
 import Mathlib.Topology.LocallyConstant.Algebra
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselCharacterLocalElementEqSimpleEntrySum
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ConjSplitLocalModelBySupportedPair, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsScalarPreservesIntegralMatricesSubst, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSplitLocalSupportedScalarComponent, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LinearLawLocalModelInv, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LinearLawLocalModelMulClosed, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IndexIntegralMatricesInSubstitutionImage, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilVacuumLocalModelIntegralMatrixPair, Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumLocalModelFormula
@@ -212,7 +213,7 @@ theorem exists_integral_multiplier {k : Type} [Field k] [ValuativeRel k] (a : k)
     refine ⟨a⁻¹, inv_ne_zero ha0, ?_, by simp [ha0]⟩
     rw [Valuation.mem_integer_iff] at ha ⊢
     rw [map_inv₀]
-    push_neg at ha
+    push Not at ha
     exact inv_le_one_of_one_le₀ ha.le
 
 theorem exists_common_integral_multiplier {k : Type} [Field k] [ValuativeRel k]
@@ -266,44 +267,12 @@ section -- clump:auto
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.LocMod GlobalTheory.LocOm
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LocScalar
 
-theorem place_ι_mul {D : D7} {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (p : Place D k) (x y : k) : p.ι (x * y) = p.ι x * p.ι y := by
-  have hx : p.e * p.ι x = p.ι x := by rw [← p.ι_π, p.π_ι]
-  have := p.ι_π (p.ι x * p.ι y)
-  rw [map_mul, p.π_ι, p.π_ι] at this
-  rw [this, ← mul_assoc, hx]
-
-theorem place_ι_one {D : D7} {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (p : Place D k) : p.ι 1 = p.e := by
-  have := p.ι_π 1
-  rwa [map_one, mul_one] at this
-
-theorem place_π_e {D : D7} {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (p : Place D k) : p.π p.e = 1 := by
-  rw [← place_ι_one, p.π_ι]
-
 theorem exists_isLoc_scalar : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (p : Place D k) (V : HSp D) (Z : Type) [Fintype Z] [DecidableEq Z] (F : Frame k V.rank Z) (c : kˣ) (zk : GL Z k), (zk : Matrix Z Z k) = (c : k) • (1 : Matrix Z Z k) → ∃ z : GA D V, p.IsLoc F z zk := by
-  intro D k _ _ _ _ p V Z _ _ F c zk hzk
-  have he := p.split
-  obtain ⟨g, h1, h2, h3⟩ := GlobalTheory.SplitOnto.exists_unitary (c := cA D) GlobalTheory.SplitOnto.cA_cA (GlobalTheory.SplitOnto.gram_mul_inv V)
-    (GlobalTheory.SplitOnto.gram_conj V) he.1 he.2.1 (p.ι (c : k) • (1 : Matrix (Fin V.rank) (Fin V.rank) (AE D)))
-    (p.ι ((c⁻¹ : kˣ) : k) • 1) (by
-      rw [Matrix.smul_mul, Matrix.one_mul, smul_smul (p.ι _), ← place_ι_mul, Units.inv_mul, place_ι_one, smul_smul, he.1])
-  let z : GA D V := ⟨g, h1⟩
-  refine ⟨z, fun i j => congrFun (congrFun h2 i) j, ?_⟩
-  rw [hzk, Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_one, F.βγ]
-  ext i j
-  have := congrFun (congrFun h3 i) j
-  simp only [Matrix.smul_apply, smul_eq_mul] at this
-  change p.π (g.1 i j) = _
-  rw [← one_mul (p.π (g.1 i j)), ← place_π_e p, ← map_mul, this, map_mul, place_π_e, one_mul]
-  by_cases hij : i = j
-  · subst hij; simp [p.π_ι]
-  · simp [hij]
+  intros
+  apply _root_.GlobalTheory.LocMod.Witness.exists_isLoc <;> assumption
 
 end GlobalTheory.LocScalar
 end -- clump:auto
@@ -659,16 +628,7 @@ theorem map_mt_inv_loc {D : D7} {k : Type} [Field k] [ValuativeRel k] [Topologic
     (p : Place D k) {V : HSp D} {Z : Type} [Fintype Z] [DecidableEq Z] (F : Frame k V.rank Z) (a : GA D V) (ak : GL Z k)
     (ha : (mt V a).map p.π = F.β * (ak : Matrix Z Z k) * F.γ) :
     (mt V a⁻¹).map p.π = F.β * ((ak⁻¹ : GL Z k) : Matrix Z Z k) * F.γ := by
-  have h1 : (mt V a⁻¹).map p.π * (mt V a).map p.π = 1 := by
-    rw [← Matrix.map_mul, ← mt_mul, inv_mul_cancel, mt_one, Matrix.map_one _ (map_zero _) (map_one _)]
-  have h2 : (F.β * (ak : Matrix Z Z k) * F.γ) * (F.β * ((ak⁻¹ : GL Z k) : Matrix Z Z k) * F.γ) = 1 := by
-    simp only [Matrix.mul_assoc]
-    rw [← Matrix.mul_assoc F.γ F.β, F.γβ, Matrix.one_mul, ← Matrix.mul_assoc (ak : Matrix Z Z k), ← Units.val_mul,
-      mul_inv_cancel, Units.val_one, Matrix.one_mul, F.βγ]
-  rw [ha] at h1
-  calc (mt V a⁻¹).map p.π = (mt V a⁻¹).map p.π * ((F.β * (ak : Matrix Z Z k) * F.γ) *
-        (F.β * ((ak⁻¹ : GL Z k) : Matrix Z Z k) * F.γ)) := by rw [h2, Matrix.mul_one]
-    _ = _ := by rw [← Matrix.mul_assoc, h1, Matrix.one_mul]
+  apply _root_.GlobalTheory.LocBesChar.map_mt_inv <;> assumption
 
 theorem actO_up_of_map {D : D7} {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     (p : Place D k) {S T : HSp D} {Y Y' : Type} [Fintype Y] [DecidableEq Y] [Fintype Y'] [DecidableEq Y']
@@ -756,7 +716,7 @@ theorem vacuum_move : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [Topolo
     refine (hTm.modul u huh _ _ fun t => ?_).symm
     by_cases ht : ∀ r q, t r q ∈ 𝒪[k]
     · rw [hchalf u hu huh t ht, one_mul]
-    · rw [hΦ₀, if_neg ht, mul_zero]
+    · rw [hΦ₀, ite_eq_right ht, mul_zero]
   have key := hom _ (hTm.theta _) hf1 hf2
   have hsum : ∑ u ∈ R₀.image (p.up FS FT), heisO ψ S T u (Tm (ind 1 1 0)) = Tm (ind gk hk⁻¹ 0) := by
     rw [Finset.sum_image fun a _ b _ hab => up_inj hab]
@@ -775,12 +735,12 @@ theorem vacuum_move : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [Topolo
       have iff1 : ∀ v', (∀ r q, (-t - v') r q ∈ 𝒪[k]) ↔ (∀ r q, (t + v') r q ∈ 𝒪[k]) := fun v' => by
         refine forall_congr' fun r => forall_congr' fun q => ?_
         rw [show -t - v' = -(t + v') by abel, Matrix.neg_apply, neg_mem_iff]
-      rw [Finset.sum_eq_single_of_mem v hv, if_pos ((iff1 v).1 hv2)]
+      rw [Finset.sum_eq_single_of_mem v hv, ite_eq_left ((iff1 v).1 hv2)]
       intro v' hv' hne
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h'
       exact hne (hvu v' ⟨hv', (iff1 v').2 h'⟩)
-    · refine Finset.sum_eq_zero fun v hv => if_neg fun h' => htB fun r q => ?_
+    · refine Finset.sum_eq_zero fun v hv => ite_eq_right fun h' => htB fun r q => ?_
       have h2 := he _ h' r q
       have h3 := hsub _ _ (he _ h') (hR₀ v hv) r q
       rwa [← Matrix.sub_mul, ← Matrix.mul_sub, add_sub_cancel_right] at h3

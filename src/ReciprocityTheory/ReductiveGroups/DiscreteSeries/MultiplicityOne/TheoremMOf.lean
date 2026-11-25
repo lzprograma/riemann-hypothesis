@@ -121,22 +121,7 @@ theorem sigmaFinite_of_haar_on {U : Set (Mat k r)} {μ : Measure (Mt k r)} (h : 
   infer_instance
 
 theorem ae_mem_big_cell (D : RealPlaceData k r Wp Wp) : ∀ᵐ p ∂D.μSS, D.inSS p := by
-  have := sigmaFinite_of_haar_on D.haarW
-  have := sigmaFinite_of_haar_on D.haarN
-  have := sigmaFinite_of_haar_on D.haarW'
-  have hW : ∀ᵐ x ∂D.μW, Matrix.of x ∈ UWset k r D.z := ae_iff.2 D.haarW.conc
-  have hN : ∀ᵐ x ∂D.μN, Matrix.of x ∈ Nset k r := ae_iff.2 D.haarN.conc
-  have hW' : ∀ᵐ x ∂D.μW', Matrix.of x ∈ UWset k r D.z' := ae_iff.2 D.haarW'.conc
-  have h1 : ∀ᵐ p ∂D.μSS, Matrix.of p.1.1 ∈ UWset k r D.z :=
-    Measure.quasiMeasurePreserving_fst.ae (Measure.quasiMeasurePreserving_fst.ae hW)
-  have h2 : ∀ᵐ p ∂D.μSS, Matrix.of p.1.2 ∈ Nset k r :=
-    Measure.quasiMeasurePreserving_fst.ae (Measure.quasiMeasurePreserving_snd.ae hN)
-  have h3 : ∀ᵐ p ∂D.μSS, Matrix.of p.2.1 ∈ UWset k r D.z' :=
-    Measure.quasiMeasurePreserving_snd.ae (Measure.quasiMeasurePreserving_fst.ae hW')
-  have h4 : ∀ᵐ p ∂D.μSS, Matrix.of p.2.2 ∈ Nset k r :=
-    Measure.quasiMeasurePreserving_snd.ae (Measure.quasiMeasurePreserving_snd.ae hN)
-  filter_upwards [h1, h2, h3, h4] with p a b c d
-  exact ⟨a, b, c, d⟩
+  apply ReciprocityTheory.ChartRestriction.DS.Mult1.TopH.ae_SS <;> assumption
 
 theorem linear_form_continuous (z : Fin (2 * r + k + 1) → ℂ) : Continuous (ell k r z) := by
   unfold ell
@@ -215,38 +200,12 @@ open Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.Fourier
 section hpk
 variable (k r : ℕ)
 
-theorem Hpk_out {i : Fin (2 * r + k + 1)} (h : i.val < r ∨ r + k < i.val) (j : Fin (2 * r + k + 1)) :
-    Hpk k r i j = if j.val = 2 * r + k - i.val then 1 else 0 :=
-  ReciprocityTheory.ChartRestriction.DS.Xi.StepA.Hpk_out k r h j
-
-theorem Hpk_mid {i : Fin (2 * r + k + 1)} (h : ¬(i.val < r ∨ r + k < i.val)) (j : Fin (2 * r + k + 1)) :
-    Hpk k r i j = if j.val = i.val then (if i.val = r + k then -1 else 1) else 0 :=
-  ReciprocityTheory.ChartRestriction.DS.Xi.StepA.Hpk_mid k r h j
-
-theorem Hpk_mulVec (v : Fin (2 * r + k + 1) → ℂ) (i : Fin (2 * r + k + 1)) :
-    (Hpk k r *ᵥ v) i = if i.val < r ∨ r + k < i.val then v ⟨2 * r + k - i.val, by omega⟩
-      else if i.val = r + k then -v i else v i :=
-  ReciprocityTheory.ChartRestriction.DS.Xi.StepA.Hpk_mulVec k r v i
-
-theorem Hpk_mulVec_mulVec (v : Fin (2 * r + k + 1) → ℂ) : Hpk k r *ᵥ (Hpk k r *ᵥ v) = v :=
-  ReciprocityTheory.ChartRestriction.DS.Xi.StepA.Hpk_mulVec_mulVec k r v
-
-theorem mat_eq_of_mulVec {A B : Mat k r} (h : ∀ v, A *ᵥ v = B *ᵥ v) : A = B := by
-  ext i j
-  simpa [Matrix.mulVec_single_one] using congrFun (h (Pi.single j 1)) i
-
 theorem Hpk_sq : Hpk k r * Hpk k r = 1 :=
   ReciprocityTheory.ChartRestriction.DS.Xi.StepA.Hpk_sq k r
-
-theorem UH_left_inv {g : Mat k r} (hg : g ∈ GV k r) : Hpk k r * gᴴ * Hpk k r * g = 1 :=
-  ReciprocityTheory.ChartRestriction.DS.Xi.StepA.UH_left_inv k r hg
 
 end hpk
 
 variable {k r : ℕ}
-
-theorem GV_inv_mul {g : Mat k r} (hg : g ∈ GV k r) : g⁻¹ * g = 1 :=
-  ReciprocityTheory.ChartRestriction.DS.Xi.StepA.UH_inv_mul k r hg
 
 theorem GV_mul_inv {g : Mat k r} (hg : g ∈ GV k r) : g * g⁻¹ = 1 :=
   ReciprocityTheory.ChartRestriction.DS.Xi.StepA.UH_mul_inv k r hg
@@ -962,8 +921,6 @@ end ReciprocityTheory.ChartRestriction.DS.Mult1.TopH
 
 noncomputable section
 
-open MeasureTheory Matrix
-open scoped InnerProductSpace ENNReal NNReal ComplexConjugate
 
 namespace ReciprocityTheory.ChartRestriction.DS.Mult1.TopH
 
@@ -1055,8 +1012,6 @@ end ReciprocityTheory.ChartRestriction.DS.Mult1.TopH
 
 noncomputable section
 
-open MeasureTheory Matrix
-open scoped InnerProductSpace ENNReal NNReal ComplexConjugate
 
 namespace ReciprocityTheory.ChartRestriction.DS.Mult1.TopH
 

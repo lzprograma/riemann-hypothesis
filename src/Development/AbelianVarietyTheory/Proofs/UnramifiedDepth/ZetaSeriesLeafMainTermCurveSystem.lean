@@ -275,7 +275,7 @@ theorem zetaSeries_main_term : (∀ (C : Type) [Field C] [CharZero C] (v : AddVa
             linarith
           push_cast
           linarith
-      · push_neg at hc
+      · push Not at hc
         refine le_trans ?_ (zetaSeries_coeff_mul_le v _ (hbe c n)
             (zetaSeries_ordGe_pow v _ (hc2 c hc) (l ^ n)) α)
         rw [WithTop.coe_le_coe]
@@ -317,7 +317,7 @@ theorem zetaSeries_main_term : (∀ (C : Type) [Field C] [CharZero C] (v : AddVa
     · rw [Finset.sum_eq_single 1]
       · simp only [true_and]
         rw [← Finset.sum_subset (Finset.subset_univ (Gs s₀))]
-        · exact Finset.sum_congr rfl fun c hc => by rw [if_pos hc]
+        · exact Finset.sum_congr rfl fun c hc => by rw [ite_eq_left hc]
         · intro c _ hc
           simp [hc]
       · intro n _ hn
@@ -467,7 +467,7 @@ theorem zeta_leaf_main_term : ∀ (C : Type) [Field C] [CharZero C] (V : VF C) (
       exact D.lam_int c e)
     (fun c j => by simpa [VF.Ge] using h.chainMat_int 0 c (em j))
     (fun c hc j => by
-      rw [chainMat_zero, if_neg]
+      rw [chainMat_zero, ite_eq_right]
       rintro rfl
       exact hc ((hGs _ _).2 ⟨hem j, by rw [hDi, hK]; omega⟩))
     (fun s e j => by

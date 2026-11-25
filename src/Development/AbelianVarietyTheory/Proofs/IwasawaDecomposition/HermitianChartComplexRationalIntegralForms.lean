@@ -1,5 +1,6 @@
 module
 
+public import Formalism.LocalToGlobal.Columns.TiedValRat
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExtUHInjective
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemClosureIff
@@ -57,6 +58,7 @@ import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EvalAtJetMap
 
 @[expose] public section
 
@@ -81,14 +83,7 @@ theorem mulFr_val {G : ι → Matrix (Fin n) (Fin n) ℂ} (g : ι → Matrix (Fi
     (y : Frames G) (τ : ι) : (mulFr g hg y).1 τ = g τ * y.1 τ := rfl
 
 theorem cspan_eq (lam : ι → DomWeight n) : CSpan lam = Formalism.L2.DIV.VV ℂ lam := by
-  refine le_antisymm ((Formalism.L2.Col.CSpan_le_span (RingHom.id ℂ) lam).trans ?_) fun F hF => ?_
-  · rw [Submodule.span_le]
-    rintro _ ⟨P, hP, rfl⟩
-    show MvPolynomial.map (RingHom.id ℂ) P ∈ _
-    rw [MvPolynomial.map_id]
-    exact hP
-  · have h := Formalism.L2.Col.map_mem_CSpan (RingHom.id ℂ) lam F hF
-    rwa [MvPolynomial.map_id] at h
+  apply _root_.GlobalTheory.KJInf.ClsVal.cSpan_eq_VV' <;> assumption
 
 theorem valC_tr (G : ι → Matrix (Fin n) (Fin n) ℂ) (lam : ι → DomWeight n) (g : ι → Matrix (Fin n) (Fin n) ℂ)
     (hg : ∀ τ, IsUnit (g τ).det) {v : Frames G → ℂ} (hv : v ∈ ValC G lam) :
@@ -118,113 +113,9 @@ theorem isUnit_atInf (emb : ι → E →+* ℂ) (γ : GL (Fin n) E) (τ : ι) : 
 
 end Frames
 
-section Pol
-
-open Formalism.L2.Col Formalism.L2.DIV
-open scoped Pointwise
-
-variable {K : Type} [Field K] (s : K →+* ℂ) {ι : Type} [Fintype ι] {n : ℕ}
-
-def RatPol (lam : ι → DomWeight n) : AddSubgroup (MvPolynomial (ι × Fin n × Fin n) ℂ) :=
-  AddSubgroup.closure {p | ∃ (r : K) (f : ι → MvPolynomial (Fin n × Fin n) ℤ),
-    (∀ τ, f τ ∈ delSq ℤ n (lam τ)) ∧
-    p = s r • Formalism.L2.Forms.ten (fun τ => MvPolynomial.map (Int.castRingHom ℂ) (f τ))}
-
-theorem smul_mem_RatPol (lam : ι → DomWeight n) (r : K) {p : MvPolynomial (ι × Fin n × Fin n) ℂ}
-    (hp : p ∈ RatPol s lam) : s r • p ∈ RatPol s lam := by
-  unfold RatPol at hp ⊢
-  induction hp using AddSubgroup.closure_induction with
-  | mem x hx =>
-    obtain ⟨r', f, hf, rfl⟩ := hx
-    refine AddSubgroup.subset_closure ⟨r * r', f, hf, ?_⟩
-    rw [smul_smul, map_mul]
-  | zero => rw [smul_zero]; exact AddSubgroup.zero_mem _
-  | add x y _ _ hx hy => rw [smul_add]; exact AddSubgroup.add_mem _ hx hy
-  | neg x _ hx => rw [smul_neg]; exact AddSubgroup.neg_mem _ hx
-
-theorem RatPol_shW (lam : ι → DomWeight n) (c : ι → ℤ) :
-    RatPol s (fun τ => Formalism.L2.Forms.shW (lam τ) (c τ)) = RatPol s lam := by
-  unfold RatPol
-  simp only [delSq_shW]
-
-theorem exists_VV_of_mem_RatPol (lam : ι → DomWeight n) {p : MvPolynomial (ι × Fin n × Fin n) ℂ}
-    (hp : p ∈ RatPol s lam) : ∃ F ∈ VV K lam, MvPolynomial.map s F = p := by
-  unfold RatPol at hp
-  induction hp using AddSubgroup.closure_induction with
-  | mem x hx =>
-    obtain ⟨r, f, hf, rfl⟩ := hx
-    refine ⟨r • ∏ τ, Formalism.GradedWeylDivisibility.blockEmb K τ (MvPolynomial.map (Int.castRingHom K) (f τ)), ?_, ?_⟩
-    · refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, fun τ => ?_, rfl⟩)
-      exact Formalism.GradedWeylDivisibility.weylLeDual K n n le_rfl _ (natW_anti (lam τ)) (map_mem_weyl le_rfl _ _ (hf τ))
-    · rw [MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C, ← MvPolynomial.smul_eq_C_mul, map_ten]
-      congr 2
-      funext τ
-      rw [MvPolynomial.map_map]
-      have e : s.comp (Int.castRingHom K) = Int.castRingHom ℂ := RingHom.ext_int _ _
-      rw [e]
-  | zero => exact ⟨0, Submodule.zero_mem _, map_zero _⟩
-  | add x y _ _ hx hy =>
-    obtain ⟨F, hF, rfl⟩ := hx
-    obtain ⟨F', hF', rfl⟩ := hy
-    exact ⟨F + F', Submodule.add_mem _ hF hF', map_add _ _ _⟩
-  | neg x _ hx =>
-    obtain ⟨F, hF, rfl⟩ := hx
-    exact ⟨-F, Submodule.neg_mem _ hF, map_neg _ _⟩
-
-variable [CharZero K]
-
-theorem map_mem_RatPol (lam : ι → DomWeight n) {F : MvPolynomial (ι × Fin n × Fin n) K} (hF : F ∈ VV K lam) :
-    MvPolynomial.map s F ∈ RatPol s lam := by
-  unfold VV Formalism.GradedWeylDivisibility.tensorLat at hF
-  induction hF using Submodule.span_induction with
-  | mem x hx =>
-    obtain ⟨f, hf, rfl⟩ := hx
-    let T : ι → Set (MvPolynomial (ι × Fin n × Fin n) K) := fun τ =>
-      Set.range fun w : List (Fin n × Fin n × ℕ) =>
-        Formalism.GradedWeylDivisibility.blockEmb K τ (Formalism.GradedWeylDivisibility.applyWord K w (Formalism.GradedWeylDivisibility.hw K le_rfl (lam τ).natW))
-    have h1 : ∀ τ, Formalism.GradedWeylDivisibility.blockEmb K τ (f τ) ∈ Submodule.span K (T τ) := by
-      intro τ
-      have h0 : f τ ∈ delSq K n (lam τ) := by rw [← nablaSq_eq_delSq]; exact hf τ
-      have h := Submodule.mem_map_of_mem (f := (Formalism.GradedWeylDivisibility.blockEmb K (k := n) (n := n) τ).toLinearMap) h0
-      unfold delSq Formalism.GradedWeylDivisibility.weyl at h
-      rw [Submodule.map_span, ← Set.range_comp] at h
-      exact h
-    have h2 : (∏ τ, Formalism.GradedWeylDivisibility.blockEmb K τ (f τ)) ∈ Submodule.span K (∏ τ, T τ) := by
-      rw [← Submodule.prod_span]
-      exact prod_mem_prod_sub _ _ _ fun τ _ => h1 τ
-    have key : ∀ y ∈ Submodule.span K (∏ τ, T τ), MvPolynomial.map s y ∈ RatPol s lam := by
-     intro y hy
-     induction hy using Submodule.span_induction with
-     | mem y hy =>
-      rw [Set.mem_finsetProd] at hy
-      obtain ⟨g, hg, rfl⟩ := hy
-      have hg' : ∀ τ, ∃ w : List (Fin n × Fin n × ℕ),
-          Formalism.GradedWeylDivisibility.blockEmb K τ (Formalism.GradedWeylDivisibility.applyWord K w (Formalism.GradedWeylDivisibility.hw K le_rfl (lam τ).natW)) = g τ :=
-        fun τ => hg (Finset.mem_univ τ)
-      choose w hw using hg'
-      refine AddSubgroup.subset_closure ⟨1, fun τ => Formalism.GradedWeylDivisibility.applyWord ℤ (w τ) (Formalism.GradedWeylDivisibility.hw ℤ le_rfl (lam τ).natW),
-        fun τ => Submodule.subset_span ⟨w τ, rfl⟩, ?_⟩
-      rw [map_one, one_smul]
-      have e : (∏ τ, g τ) = ∏ τ, Formalism.GradedWeylDivisibility.blockEmb K τ (Formalism.GradedWeylDivisibility.applyWord K (w τ) (Formalism.GradedWeylDivisibility.hw K le_rfl (lam τ).natW)) :=
-        Finset.prod_congr rfl fun τ _ => (hw τ).symm
-      rw [e, map_ten]
-      congr 1
-      funext τ
-      rw [← Formalism.GradedWeylDivisibility.lclosedeq_applyWord_map, Formalism.GradedWeylDivisibility.lclosedeq_hw_map, ← Formalism.GradedWeylDivisibility.lclosedeq_applyWord_map,
-        Formalism.GradedWeylDivisibility.lclosedeq_hw_map]
-     | zero => rw [map_zero]; exact AddSubgroup.zero_mem _
-     | add y z _ _ hy hz => rw [map_add (f := _)]; exact AddSubgroup.add_mem _ hy hz
-     | smul c y _ hy =>
-      rw [MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C, ← MvPolynomial.smul_eq_C_mul]
-      exact smul_mem_RatPol s lam c hy
-    exact key _ h2
-  | zero => rw [map_zero]; exact AddSubgroup.zero_mem _
-  | add x y _ _ hx hy => rw [map_add (f := _)]; exact AddSubgroup.add_mem _ hx hy
-  | smul c x _ hx =>
-    rw [MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C, ← MvPolynomial.smul_eq_C_mul]
-    exact smul_mem_RatPol s lam c hx
-
-end Pol
+def RatPol {K : Type} [Field K] (s : K →+* ℂ) {ι : Type} [Fintype ι] {n : ℕ}
+    (lam : ι → DomWeight n) : AddSubgroup (MvPolynomial (ι × Fin n × Fin n) ℂ) :=
+  Formalism.L2.Col.RatSpanG s lam
 
 section Adelic
 
@@ -343,11 +234,11 @@ theorem exists_embF_iff (h : (S.fam emb lam).Ok) (φ : S.Cl → GlobalTheory.Mem
     (∃ x, S.embF emb σ lam h x = φ) ↔ φ ∈ S.Fi emb σ lam ∧ ∀ c, ∃ P ∈ RatPol σ lam, φ c = fnOf _ (shiftOf lam) 1 P := by
   constructor
   · rintro ⟨x, rfl⟩
-    exact ⟨Law.embF_mem S emb σ lam h x, fun c => ⟨_, map_mem_RatPol σ lam (x.1 c).2, rfl⟩⟩
+    exact ⟨Law.embF_mem S emb σ lam h x, fun c => ⟨_, map_mem_RatSpanG σ lam (x.1 c).2, rfl⟩⟩
   · rintro ⟨hφ, hv⟩
     have hv' : ∀ c, ∃ v : VV K lam, φ c = evV emb 1 lam σ v := fun c => by
       obtain ⟨P, hP, e⟩ := hv c
-      obtain ⟨F, hF, rfl⟩ := exists_VV_of_mem_RatPol σ lam hP
+      obtain ⟨F, hF, rfl⟩ := exists_VV_of_mem_RatSpanG σ lam hP
       exact ⟨⟨F, hF⟩, e⟩
     choose v hv using hv'
     refine ⟨⟨v, fun c g => ?_⟩, funext fun c => (hv c).symm⟩
@@ -439,7 +330,6 @@ end GlobalTheory.Mem.Col2.ValTie
 namespace GlobalTheory.Mem.Col2.TC
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 open GlobalTheory.Mem.Col2.BwLat GlobalTheory.LvT.Built.ValLat Formalism.HermitianLatticesTheory GlobalTheory.Mem.Col2.ValTie
 
@@ -502,7 +392,7 @@ theorem val_tied : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.P
       exact (key c).2 ((mem_fiC_iff _ _ _ _ (K (chOf c)).y_bij _).1 (h (chOf c)) ⟨c, rfl⟩)
   · have hrat : RatPol B.embLL (GlobalTheory.Mem.Col2.lamT (B.hcW u) i) = RatSpan (I.rec7 l Z) ((I.fm l u a).lam i) := by
       rw [← hlam]
-      exact RatPol_shW B.embLL ((I.fm l u a).lam i) fun _ => ((i * (B.R.t + 1) / 2 : ℕ) : ℤ)
+      exact RatSpanG_shW B.embLL ((I.fm l u a).lam i) fun _ => ((i * (B.R.t + 1) / 2 : ℕ) : ℤ)
     refine (exists_embF_iff (I.stp u a i) B.fields.emb B.embLL (GlobalTheory.Mem.Col2.lamT (B.hcW u) i) ((l.fmL u a).fam i) φ).trans
       (and_congr_right fun _ => forall_congr' fun c => ?_)
     rw [hrat]

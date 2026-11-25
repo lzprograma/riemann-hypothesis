@@ -6,45 +6,6 @@ public import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
 public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.LatticeSumBounds
 public import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeGluingRadicals
 public import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Ideal.Norm.RelNorm
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -54,8 +15,6 @@ namespace Formalism.MainNotions.BridgeLemma
 
 open NumberField Module Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.MainNotions.S.Cnt
 open scoped ENNReal
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem word_theorem_a_admissible (D : D7) (u u' : D.what₂.Word) : VanishingOnXAndXPlus.adm14 D u u' := Formalism.MainNotions.LatticeGluingRadicals.theorem_A_section D u _
 
@@ -90,7 +49,6 @@ theorem massS_ratio (D : D7) (h1 : UnitaryVolumeMass.stMassRatio D) (j : ℕ) (h
   have hsym : ∀ n : ℕ, (Cnt.stdH D.host.E n).IsSymm := fun n => by
     first
       | exact ⟨fun x y => by
-          set_option synthInstance.maxHeartbeats 100000 in
             simp [Cnt.stdH, LinearMap.mk₂'ₛₗ_apply, starRingEnd_apply, map_sum, star_mul, star_star]⟩
   have hr := h1 j hj (Fin j → D.host.E) (Fin (j - 1) → D.host.E) (Cnt.stdH D.host.E j) (Cnt.stdH D.host.E (j - 1))
     (Cnt.stdLat D.host.E j) (Cnt.stdLat D.host.E (j - 1)) (hsym j) (hsym (j - 1))
@@ -127,7 +85,7 @@ theorem xi_explicit (D : D7) (u : D.what₂.Word) (h1 : UnitaryVolumeMass.stMass
       (Real.exp 1 * Real.pi / (D.R.k * D.host.v)) ^ (D.R.k * D.R.f) := by
   have hk : s + 2 ≤ D.R.k := by omega
   unfold XiS Xi
-  rw [if_pos ⟨hs, hsk⟩]
+  rw [ite_eq_left ⟨hs, hsk⟩]
   have hR : ∀ j, 3 ≤ j → 0 < Formalism.HermitianLatticesTheory.massRatioRightSide D.host.E j := by
     intro j hj
     have h := massS_ratio D h1 j hj
@@ -139,22 +97,22 @@ theorem xi_explicit (D : D7) (u : D.what₂.Word) (h1 : UnitaryVolumeMass.stMass
     (fun j => if 3 ≤ j then Formalism.HermitianLatticesTheory.massRatioRightSide D.host.E j else 1) D.R.k s
     (fun j => by
       by_cases hj : 3 ≤ j
-      · simp only [if_pos hj]; exact hR j hj
-      · simp only [if_neg hj]; exact one_pos)
+      · simp only [ite_eq_left hj]; exact hR j hj
+      · simp only [ite_eq_right hj]; exact one_pos)
     (massS_pos D 2)
-    (fun j hj => by simp only [if_pos hj]; exact massS_ratio D h1 j hj) hs hk
+    (fun j hj => by simp only [ite_eq_left hj]; exact massS_ratio D h1 j hj) hs hk
   rw [hid]
   have e1 : ∏ j ∈ Finset.Ioc 2 s, (if 3 ≤ j then Formalism.HermitianLatticesTheory.massRatioRightSide D.host.E j else 1) =
       ∏ j ∈ Finset.Ioc 2 s, Formalism.HermitianLatticeCounting.LatticeSumBounds.mJ D.R.f D.host.v (fun i => Formalism.HermitianLatticesTheory.lValEta D.host.E i) j :=
     Finset.prod_congr rfl fun j hj => by
       have : 3 ≤ j := (Finset.mem_Ioc.1 hj).1
-      rw [if_pos this, ratio_eq_mJ]
+      rw [ite_eq_left this, ratio_eq_mJ]
   have e2 : ∏ j ∈ Finset.Ioc (D.R.k - s) D.R.k, (if 3 ≤ j then Formalism.HermitianLatticesTheory.massRatioRightSide D.host.E j else 1) =
       ∏ j ∈ Finset.Ioc (D.R.k - s) D.R.k,
         Formalism.HermitianLatticeCounting.LatticeSumBounds.mJ D.R.f D.host.v (fun i => Formalism.HermitianLatticesTheory.lValEta D.host.E i) j :=
     Finset.prod_congr rfl fun j hj => by
       have : 3 ≤ j := by have := (Finset.mem_Ioc.1 hj).1; omega
-      rw [if_pos this, ratio_eq_mJ]
+      rw [ite_eq_left this, ratio_eq_mJ]
   rw [e1, e2]
   exact Formalism.HermitianLatticeCounting.P.massRatioBound D.R.f D.R.k s D.host.v (massS D 2) _ hv (massS_pos D 2).le hs hk
     (fun j hj => lVal_bounds D j hj)
@@ -280,20 +238,12 @@ theorem first_bound_of_mass_ratio (D : D7) (large₂ : SizeData₂ D) (u u' : D.
         apply mul_le_mul_of_nonneg_right _ hP
         exact mul_le_mul hA hfac (by positivity) (by unfold Hb; positivity)
 
-section FamL
-variable {eps : ℝ} (Fm : FamP eps)
-end FamL
-
 
 theorem mass_ratio_of_siegel_cm_unramified (h : Formalism.HermitianLatticesTheory.SiegelMassRatio) (D : D7) : UnitaryVolumeMass.stMassRatio D :=
   fun j hj V V' _ _ _ _ _ _ _ _ f f' L L' hs hs' ho ho' =>
     h D.host.E D.sp.cm.cmUnram j hj V V' f f' L L' hs hs' ho ho'
 
 theorem lattice_count_first_of_siegel (h : Formalism.HermitianLatticesTheory.SiegelMassRatio) (D : D7) : VanishingOnXAndXPlusMass.adm1 D := mass_ratio_of_siegel_cm_unramified h D
-
-section FamM
-variable {eps : ℝ} (Fm : FamP eps)
-end FamM
 
 theorem absNorm_ge_two {K : Type} [Field K] [NumberField K] (p : Ideal (𝓞 K)) (hp : p.IsMaximal) :
     2 ≤ Ideal.absNorm p := by

@@ -87,7 +87,7 @@ theorem exists_orthonormalBasis_singularValues {E F : Type*}
     have hi' : σ i ≠ 0 := hi
     have hk' : σ k ≠ 0 := hk
     have hkc : (σ k : ℂ) ≠ 0 := by exact_mod_cast hk'
-    simp only [Set.domRestrict_apply, w, dif_pos (hlt _ hi').2, dif_pos (hlt _ hk').2,
+    simp only [Set.domRestrict_apply, w, dite_eq_left (hlt _ hi').2, dite_eq_left (hlt _ hk').2,
       inner_smul_left, inner_smul_right, key, Subtype.mk.injEq, Fin.ext_iff]
     split_ifs with h
     · rw [h]
@@ -100,7 +100,7 @@ theorem exists_orthonormalBasis_singularValues {E F : Type*}
   by_cases hj : σ j = 0
   · have h0 : T (v j) = 0 := by
       have := key j j
-      rw [if_pos rfl, hj] at this
+      rw [ite_eq_left rfl, hj] at this
       simpa using this
     rw [h0, inner_zero_right]
     split_ifs with h
@@ -111,7 +111,7 @@ theorem exists_orthonormalBasis_singularValues {E F : Type*}
     have h1 := hu ⟨j, (hlt _ hj).1⟩ hj
     have h2 : T (v j) = (σ j : ℂ) • u ⟨j, (hlt _ hj).1⟩ := by
       rw [h1]
-      simp only [w, dif_pos j.isLt, Fin.eta, smul_smul, mul_inv_cancel₀ hjc, one_smul]
+      simp only [w, dite_eq_left j.isLt, Fin.eta, smul_smul, mul_inv_cancel₀ hjc, one_smul]
     rw [h2, inner_smul_right, orthonormal_iff_ite.mp u.orthonormal]
     simp only [Fin.ext_iff]
     split_ifs with h

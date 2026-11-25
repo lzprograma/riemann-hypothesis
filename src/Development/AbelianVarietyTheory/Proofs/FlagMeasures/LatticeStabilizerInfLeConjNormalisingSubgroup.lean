@@ -111,9 +111,7 @@ private lemma matrix_eq_of_linearIndependent_sum_smul_eq {n m : ℕ} {f : Fin m 
     (hf : LinearIndependent E f) {A B : Matrix (Fin m) (Fin m) E}
     (h : ∀ j, ∑ i, A i j • f i = ∑ i, B i j • f i) : A = B := by
   ext i j
-  have := Fintype.linearIndependent_iff.mp hf (fun l => A l j - B l j)
-    (by simp only [sub_smul, Finset.sum_sub_distrib, h j, sub_self])
-  exact sub_eq_zero.mp (this i)
+  exact Fintype.linearIndependent_iffₛ.1 hf (fun l => A l j) (fun l => B l j) (h j) i
 
 open ValuativeRel MeasureTheory in
 open scoped Pointwise ENNReal Classical in
@@ -183,7 +181,7 @@ theorem _root_.GlobalTheory.HL.StabConj.main : ∀ {F : Type} [Field F] [Valuati
       · exact hsU'.1 i j hji
       · rfl
     · rw [hsb]
-      simp only [_root_.GlobalTheory.HL.StabConj.bd, (hsame i i).2 rfl, if_true]
+      simp only [_root_.GlobalTheory.HL.StabConj.bd, (hsame i i).2 rfl, ite_true]
       exact hsU'.2 i
   have hsb0 : ∀ i j : Fin (r + 1),
       _root_.Formalism.MainNotions.S.Loc.sameBlock S.w.blocks i j = false → sb i j = 0 := by
@@ -206,7 +204,7 @@ theorem _root_.GlobalTheory.HL.StabConj.main : ∀ {F : Type} [Field F] [Valuati
     refine Finset.sum_congr rfl fun l _ => ?_
     by_cases hil : β i = β l
     · rw [hsb]
-      simp only [_root_.GlobalTheory.HL.StabConj.bd, (hsame l j).2 (hil.symm.trans hij), if_true]
+      simp only [_root_.GlobalTheory.HL.StabConj.bd, (hsame l j).2 (hil.symm.trans hij), ite_true]
     · rw [hBoff i l hil, zero_mul, zero_mul]
   have hnu : _root_.GlobalTheory.HL.StabConj.Rep S.f (h⁻¹ * n) (B * s) := by
     intro j

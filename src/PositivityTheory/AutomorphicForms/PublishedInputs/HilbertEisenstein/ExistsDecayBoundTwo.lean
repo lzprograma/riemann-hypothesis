@@ -139,7 +139,7 @@ theorem decay_one {C : Set (Ideles F)} (hC : IsCompact C) (d : 𝓞 F) (hd : d �
     rw [h1, homeomorphMixedSpace_mul, homeomorphMixedSpace_algebraMap]
   rw [hz_eq]
   dsimp only
-  rw [if_pos hξJ]
+  rw [ite_eq_left hξJ]
   set x := mixedEmbedding F ξ
   set z := c * x
   have hx : ‖x‖ ≤ B' * ‖z‖ := by
@@ -210,7 +210,7 @@ theorem exists_decay_bound_two (F : Type) [Field F] [NumberField F] [IsTotallyRe
   have hf0 : ∀ i, 0 ≤ f i := fun i => by simp only [hfdef]; positivity
   have hfT : ∀ i, ξ i ≠ 0 → f i ≤ ((T : ℝ) ^ r)⁻¹ * W (ξ i) := by
     intro i h
-    simp only [hfdef, hWdef, if_neg h]
+    simp only [hfdef, hWdef, ite_eq_right h]
     exact hb a ha T hT (ξ i) h (hds i)
   have hfW : ∀ i, f i ≤ W (ξ i) := by
     intro i
@@ -218,7 +218,7 @@ theorem exists_decay_bound_two (F : Type) [Field F] [NumberField F] [IsTotallyRe
     · have h0 : homeomorphMixedSpace F (((y : Ad F)) * algebraMap F (Ad F) (ξ i)).1 = 0 := by
         rw [h, map_zero, mul_zero, homeomorphMixedSpace_apply]
         exact map_zero _
-      simp only [hfdef, hWdef, if_pos h, h0, norm_zero, add_zero, one_pow, inv_one, le_refl]
+      simp only [hfdef, hWdef, ite_eq_left h, h0, norm_zero, add_zero, one_pow, inv_one, le_refl]
     · exact (hfT i h).trans (mul_le_of_le_one_left (hW0 _) hTr)
   have hvec : ∀ i, ‖homeomorphMixedSpace F (((y : Ad F)) * algebraMap F (Ad F) (ξ i)).1‖ ≤
       ‖fun i => UpperTheory.V.TR.pInf F ((y : Ad F) * algebraMap F (Ad F) (ξ i))‖ := fun i =>

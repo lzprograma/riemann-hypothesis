@@ -16,8 +16,6 @@ open NumberField IsDedekindDomain ValuativeRel Formalism.BasicNotions Formalism.
 
 namespace Formalism.L2.SG.Pf.PCountEx
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Helpers
 
 variable {K : Type*} [CommRing K] {n : ℕ}
@@ -153,9 +151,9 @@ theorem target_fact (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) :
   obtain ⟨L1, U1, hL1, hU1, h1⟩ := generic_comp (sgF w) (sgF_sgF _) (isLo_one' (K := (D.s.atP p).Fp))
     (isUp_one' (K := (D.s.atP p).Fp))
     (W := (ptMat w).map ((p1 sg.e).comp (D.s.atP p).ιE))
-    (fun a b hb => by simp only [Matrix.map_apply, ptMat_apply', if_neg hb, map_zero])
+    (fun a b hb => by simp only [Matrix.map_apply, ptMat_apply', ite_eq_right hb, map_zero])
     (fun a => by
-      simp only [Matrix.map_apply, ptMat_apply', if_true]
+      simp only [Matrix.map_apply, ptMat_apply', ite_true]
       exact (map_ne_zero _).2 (pTau_ne' _ a))
     (cf Zd p) (cfi Zd p) (cfi_cf Zd p) (sg.q : (D.s.atP p).Fp)⁻¹ (inv_ne_zero hq)
     (-(((D.mem u).A.T : ℕ) : (D.s.atP p).Fp) / (sg.q : (D.s.atP p).Fp))
@@ -163,10 +161,10 @@ theorem target_fact (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) :
     (isUp_one' (K := (D.s.atP p).Fp))
     (W := Sg (D.s.atP p).Fp D.R.rS * (ptMat w).map ((p2 sg.e).comp (D.s.atP p).ιE) * Sg (D.s.atP p).Fp D.R.rS)
     (fun a b hb => by
-      simp only [Sg, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', if_neg hb, map_zero,
+      simp only [Sg, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', ite_eq_right hb, map_zero,
         mul_zero, zero_mul])
     (fun a => by
-      simp only [Sg, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', if_true]
+      simp only [Sg, Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, ptMat_apply', ite_true]
       exact mul_ne_zero (mul_ne_zero (hs0 _) ((map_ne_zero _).2 (pTau_ne' _ a))) (hs0 _))
     (cf Zd p) (cfi Zd p) (cfi_cf Zd p) (-(sg.q : (D.s.atP p).Fp)⁻¹) (neg_ne_zero.2 (inv_ne_zero hq))
     ((((D.mem u').A.T : ℕ) : (D.s.atP p).Fp) / (sg.q : (D.s.atP p).Fp))

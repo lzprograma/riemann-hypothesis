@@ -209,8 +209,6 @@ namespace GlobalTheory.SgInf.AbsConv
 
 variable {k r : ℕ}
 
-alias measurable_lmul := _root_.GlobalTheory.SgInf.measurable_lmul_swap
-
 theorem lintegral_lt_top {μG μS ν : Measure (Mt k r)} [SFinite μG] [SFinite μS] [SFinite ν]
     {S : Set (Mat k r)} (hq : IsQuotMeas μG μS ν)
     (hmap : μG = (ν.prod μS).map (fun p : Mt k r × Mt k r => lmulM (Matrix.of p.2 : Mat k r) p.1))
@@ -223,7 +221,7 @@ theorem lintegral_lt_top {μG μS ν : Measure (Mt k r)} [SFinite μG] [SFinite 
     (hl2 : ∫⁻ x, Wn x ^ 2 ∂ν < ⊤) :
     ∫⁻ g, φ g * Wn g ∂μG < ⊤ := by
   have hmeas2 : Measurable (fun p : Mt k r × Mt k r => φ (lmulM (Matrix.of p.2 : Mat k r) p.1)) :=
-    hφ.comp GlobalTheory.SgInf.AbsConv.measurable_lmul
+    hφ.comp GlobalTheory.SgInf.measurable_lmul_swap
   have hsec : ∀ x : Mt k r, Measurable (fun t : Mt k r => φ (lmulM (Matrix.of t : Mat k r) x)) :=
     fun x => hmeas2.comp measurable_prodMk_left
   obtain ⟨Φ, hΦdef⟩ : ∃ Φ : Mt k r → ENNReal,
@@ -275,7 +273,7 @@ theorem lintegral_lt_top {μG μS ν : Measure (Mt k r)} [SFinite μG] [SFinite 
       ((ν.prod μS).map (fun p : Mt k r × Mt k r => lmulM (Matrix.of p.2 : Mat k r) p.1)) := by
     rw [← hmap]; exact hφ.aemeasurable.mul hWG
   have hmain : ∫⁻ g, φ g * Wn g ∂μG = ∫⁻ x, Φ x * hWν.mk Wn x ∂ν := by
-    rw [hmap, lintegral_map' hA GlobalTheory.SgInf.AbsConv.measurable_lmul.aemeasurable]
+    rw [hmap, lintegral_map' hA GlobalTheory.SgInf.measurable_lmul_swap.aemeasurable]
     rw [lintegral_congr_ae (g := fun p : Mt k r × Mt k r =>
       φ (lmulM (Matrix.of p.2 : Mat k r) p.1) * hWν.mk Wn p.1) ?_]
     · rw [lintegral_prod (fun p : Mt k r × Mt k r => φ (lmulM (Matrix.of p.2 : Mat k r) p.1) * hWν.mk Wn p.1)

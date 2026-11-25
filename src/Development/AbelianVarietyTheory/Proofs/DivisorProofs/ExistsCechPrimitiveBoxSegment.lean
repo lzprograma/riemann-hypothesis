@@ -118,7 +118,7 @@ theorem exists_analytic_param_of_primitives_on_box : ∀ {P : Type} [NormedAddCo
   have hFeq : ∀ k, ∀ p ∈ W k, p ∈ Z ×ˢ C → F p = G k p - G' k p := by
     intro k p hk hp
     have h : ∃ k, p ∈ W k := ⟨k, hk⟩
-    simp only [F, dif_pos h]
+    simp only [F, dite_eq_left h]
     exact hov _ _ p h.choose_spec hk hp
   have hFloc : ∀ k, ∀ p ∈ W k, p ∈ Z ×ˢ C → (fun q => G k q - G' k q) =ᶠ[nhds p] F := by
     intro k p hk hp
@@ -182,7 +182,7 @@ theorem _root_.GlobalTheory.exists_merge_fibre_primitives : ∀ {P : Type} [Norm
       fun k l p hk hl hp => hG'c k l p hk hl (hsubC' hp)⟩
   classical
   have hCeq : ∀ k, ∀ q ∈ W k ∩ Z ×ˢ C,
-      (if q.2 ∈ C then G k q else G' k q + h q.1) = G k q := fun k q hq => if_pos hq.2.2
+      (if q.2 ∈ C then G k q else G' k q + h q.1) = G k q := fun k q hq => ite_eq_left hq.2.2
   have hC'eq : ∀ k, ∀ q ∈ W k ∩ Z ×ˢ C',
       (if q.2 ∈ C then G k q else G' k q + h q.1) = G' k q + h q.1 := by
     intro k q hq
@@ -221,7 +221,7 @@ theorem _root_.GlobalTheory.exists_merge_fibre_primitives : ∀ {P : Type} [Norm
       simp
   · dsimp only
     rcases memcase p hp with h1 | h2
-    · rw [if_pos h1.2, if_pos h1.2]
+    · rw [ite_eq_left h1.2, ite_eq_left h1.2]
       exact hGc k l p hk hl h1
     · rw [hC'eq k p ⟨hk, h2⟩, hC'eq l p ⟨hl, h2⟩, add_sub_add_right_eq_sub]
       exact hG'c k l p hk hl h2
@@ -240,7 +240,6 @@ open Set
 
 namespace GlobalTheory
 
-set_option autoImplicit false in
 open Set Metric in
 private theorem hasFDerivAt_integral_unit_of_analytic {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] [FiniteDimensional ℂ E]
     (f : E × ℂ → ℂ) (O : Set (E × ℂ)) (hO : IsOpen O) (hf : AnalyticOnNhd ℂ f O) (S : Set E) (hS : IsOpen S)
@@ -293,7 +292,6 @@ private theorem hasFDerivAt_integral_unit_of_analytic {E : Type} [NormedAddCommG
     have hxS : x ∈ S := hsub (ball_subset_closedBall hx)
     exact (hdiffAt x hxS t (hIoc ht)).hasFDerivAt.comp x (hasFDerivAt_prodMk_left x (t:ℂ))
 
-set_option autoImplicit false in
 open Set Metric in
 private theorem integral_radial_derivative_eq {P : Type} [NormedAddCommGroup P] [NormedSpace ℂ P] {g : ℕ}
     (W : Set (P × (Fin g → ℂ))) (hW : IsOpen W) (ω : Fin g → P × (Fin g → ℂ) → ℂ) (hω : ∀ a, AnalyticOnNhd ℂ (ω a) W)
@@ -327,7 +325,6 @@ private theorem integral_radial_derivative_eq {P : Type} [NormedAddCommGroup P] 
   rw [intervalIntegral.integral_eq_sub_of_hasDerivAt hd (hcont.intervalIntegrable)]
   simp
 
-set_option autoImplicit false in
 open Set Metric in
 private theorem hasDerivAt_radial_integrand {P : Type} [NormedAddCommGroup P] [NormedSpace ℂ P] {g : ℕ}
     (W : Set (P × (Fin g → ℂ))) (ω : Fin g → P × (Fin g → ℂ) → ℂ) (hω : ∀ a, AnalyticOnNhd ℂ (ω a) W)
@@ -374,7 +371,6 @@ private theorem hasDerivAt_radial_integrand {P : Type} [NormedAddCommGroup P] [N
     · exact Finset.sum_congr rfl (fun c _ => by ring)
     · simp [Pi.single_apply, mul_ite, hp]
 
-set_option autoImplicit false in
 open Set Metric in
 private theorem exists_fibre_primitive_on_ball {P : Type} [NormedAddCommGroup P] [NormedSpace ℂ P] [FiniteDimensional ℂ P] {g : ℕ}
     (W : Set (P × (Fin g → ℂ))) (hW : IsOpen W) (ω : Fin g → P × (Fin g → ℂ) → ℂ) (hω : ∀ a, AnalyticOnNhd ℂ (ω a) W)
@@ -424,7 +420,6 @@ private theorem exists_fibre_primitive_on_ball {P : Type} [NormedAddCommGroup P]
     have hD := (hf _ hq).differentiableAt.hasFDerivAt.comp_hasDerivAt_of_eq (0:ℂ) hline (by simp)
     exact hD.unique hC
 
-set_option autoImplicit false in
 open Set Metric in
 private theorem cech_shift_lemma_2 {P : Type} [NormedAddCommGroup P] [NormedSpace ℂ P] [FiniteDimensional ℂ P] {g : ℕ} {K : Type} (W : K → Set (P × (Fin g → ℂ))) (c : K → K → P × (Fin g → ℂ) → ℂ) (ω : K → Fin g → P × (Fin g → ℂ) → ℂ) (S : Set (P × (Fin g → ℂ))) (j : K) (F : P × (Fin g → ℂ) → ℂ)
   (hW : ∀ k, IsOpen (W k)) (hS : IsOpen S) (hSj : S ⊆ W j)
@@ -446,7 +441,6 @@ private theorem cech_shift_lemma_2 {P : Type} [NormedAddCommGroup P] [NormedSpac
     simp only
     linear_combination this
 
-set_option autoImplicit false in
 open Set Metric in
 private theorem convex_iUnion_ball_smul_Icc {g : ℕ} (w₀ : Fin g → ℂ) (ρ a b : ℝ) :
     Convex ℝ (⋃ u ∈ Icc a b, ball (u • w₀) ρ) := by
@@ -463,7 +457,6 @@ private theorem convex_iUnion_ball_smul_Icc {g : ℕ} (w₀ : Fin g → ℂ) (ρ
   have e : s • x + t • y - (s * u + t * v) • w₀ = s • (x - u • w₀) + t • (y - v • w₀) := by module
   rw [e]; exact hc
 
-set_option autoImplicit false in
 open Set Metric in
 private theorem iUnion_ball_smul_Icc_union {g : ℕ} (w₀ : Fin g → ℂ) (ρ a m b : ℝ) (ham : a ≤ m) (hmb : m ≤ b) :
     (⋃ u ∈ Icc a m, ball (u • w₀) ρ) ∪ (⋃ u ∈ Icc m b, ball (u • w₀) ρ) = ⋃ u ∈ Icc a b, ball (u • w₀) ρ := by
@@ -479,7 +472,6 @@ private theorem iUnion_ball_smul_Icc_union {g : ℕ} (w₀ : Fin g → ℂ) (ρ 
     · exact Or.inr ⟨u, ⟨hum, h2⟩, h⟩
 
 
-set_option autoImplicit false in
 open Set Metric in
 theorem _root_.GlobalTheory.exists_cechPrimitive_box_segment : ∀ {P : Type} [NormedAddCommGroup P] [NormedSpace ℂ P] [FiniteDimensional ℂ P] {g : ℕ} {K : Type} (W : K → Set (P × (Fin g → ℂ))) (c : K → K → P × (Fin g → ℂ) → ℂ) (ω : K → Fin g → P × (Fin g → ℂ) → ℂ) (V : Set P), IsOpen V → (∀ k, IsOpen (W k)) → (∀ p : P × (Fin g → ℂ), p.1 ∈ V → ∃ k, p ∈ W k) → (∀ k l, AnalyticOnNhd ℂ (c k l) (W k ∩ W l)) → (∀ k l m, ∀ p ∈ W k, p ∈ W l → p ∈ W m → c k m p = c k l p + c l m p) → (∀ k a, AnalyticOnNhd ℂ (ω k a) (W k)) → (∀ k a b, ∀ p ∈ W k, fderiv ℂ (ω k b) p (0, Pi.single a 1) = fderiv ℂ (ω k a) p (0, Pi.single b 1)) → (∀ k l a, ∀ p ∈ W k, p ∈ W l → ω k a p - ω l a p = fderiv ℂ (c k l) p (0, Pi.single a 1)) → ∀ z₀ ∈ V, ∀ w₀ : Fin g → ℂ, ∃ (Z : Set P) (C : Set (Fin g → ℂ)) (G : K → P × (Fin g → ℂ) → ℂ), IsOpen Z ∧ z₀ ∈ Z ∧ Z ⊆ V ∧ IsOpen C ∧ Convex ℝ C ∧ 0 ∈ C ∧ w₀ ∈ C ∧ ((∀ k, AnalyticOnNhd ℂ (G k) (W k ∩ Z ×ˢ C)) ∧ (∀ k a, ∀ p ∈ W k, p ∈ Z ×ˢ C → fderiv ℂ (G k) p (0, Pi.single a 1) = ω k a p) ∧ ∀ k l, ∀ p ∈ W k, p ∈ W l → p ∈ Z ×ˢ C → G k p - G l p = c k l p) := by
   intro P _ _ _ g K W c ω V hV hW hcov hc hcoc hω hcl hdiff z₀ hz₀ w₀

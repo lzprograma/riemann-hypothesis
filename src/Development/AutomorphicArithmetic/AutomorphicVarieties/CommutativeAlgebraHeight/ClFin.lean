@@ -54,12 +54,6 @@ public import Formalism.SharedLemmas.PrecompleteFinite
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.CA ReciprocityTheory.CA
 
-private theorem isPrecomplete_finite {R M : Type} [CommRing R] [AddCommGroup M] [Module R M]
-    [Module.Finite R M] (I : Ideal R) [IsPrecomplete I R] : IsPrecomplete I M := by
-  first
-  | exact _root_.Formalism.SharedLemmas.isPrecomplete_of_moduleFinite
-  | (apply _root_.Formalism.SharedLemmas.isPrecomplete_of_moduleFinite <;> assumption)
-
 private theorem prec_cofinal {R : Type*} [CommRing R] {I J : Ideal R} (hJI : J ≤ I) {e : ℕ}
     (he : I ^ e ≤ J) (hJ : IsPrecomplete J R) : IsPrecomplete I R := ⟨fun f hf => by
   simp only [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top] at hf ⊢
@@ -103,7 +97,7 @@ theorem UpperTheory.V.CA.cl_fin :
     exact (eq_maximalIdeal h4).ge
   obtain ⟨e, he⟩ := Ideal.exists_pow_le_of_le_radical_of_fg hrad (IsNoetherian.noetherian _)
   have hP : IsPrecomplete (maximalIdeal R') R' :=
-    prec_cofinal hle he (IsPrecomplete.map_algebraMap_iff.2 (isPrecomplete_finite _))
+    prec_cofinal hle he (IsPrecomplete.map_algebraMap_iff.2 (Formalism.SharedLemmas.isPrecomplete_of_moduleFinite _))
   haveI hloc : IsLocalHom (algebraMap R R') := ⟨fun a ha => by
     by_contra hn
     have h1 : a ∈ maximalIdeal R := hn

@@ -1,45 +1,8 @@
 module
 
+import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvFil
 public import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
 public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfMapFl
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -63,38 +26,9 @@ section Letters
 
 variable {T : LocLat G Qp LL O}
 
-theorem galois_action_frobenius_comm (g : G) (z : T.V ⊗[Qp] B) :
-    actVB PD T.ρ g (φVB PD (LL := LL) (V := T.V) z) = φVB PD (LL := LL) (V := T.V) (actVB PD T.ρ g z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | tmul x b => simp [actVB, φVB, PD.φ_comm]
-  | add x y hx hy =>
-    simp only [map_add (f := _)]
-    rw [hx, hy]
-
-theorem scalar_mul_frobenius_comm (k : K₀) (z : T.V ⊗[Qp] B) :
-    mulVB (K₀ := K₀) (B := B) (V := T.V) (LL := LL) (PD.σ k) (φVB PD (LL := LL) (V := T.V) z) =
-      φVB PD (LL := LL) (V := T.V) (mulVB (K₀ := K₀) (B := B) (V := T.V) (LL := LL) k z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | tmul x b => simp [mulVB, φVB, map_mul, PD.φ_K₀]
-  | add x y hx hy =>
-    simp only [map_add (f := _)]
-    rw [hx, hy]
-
 theorem frobenius_maps_letter_succ (i : ZMod n) (z : T.V ⊗[Qp] B) (hz : z ∈ DcrisL PD T.ρ (W.emb i)) :
     φVB PD (LL := LL) (V := T.V) z ∈ DcrisL PD T.ρ (W.emb (i + 1)) := by
-  rw [DcrisL, Submodule.mem_inf] at hz ⊢
-  obtain ⟨hz1, hz2⟩ := hz
-  simp only [Dcris, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.smul_apply,
-    LinearMap.id_apply, sub_eq_zero] at hz1 hz2 ⊢
-  refine ⟨fun g => ?_, fun k => ?_⟩
-  · rw [galois_action_frobenius_comm, hz1 g]
-  · obtain ⟨k', rfl⟩ := PD.σ_bij.2 k
-    have he : W.emb (i + 1) (PD.σ k') = W.emb i k' := by
-      have := congrArg (fun f : K₀ →ₐ[Qp] LL => f k') (W.emb_σ i)
-      simpa only [AlgHom.comp_apply] using this
-    rw [scalar_mul_frobenius_comm, hz2 k', map_smul, he]
+  apply _root_.Formalism.MainNotions.N.Ln03.Pf.lvFil_φ_letter <;> assumption
 
 theorem frobenius_pow_maps_letter (m : ℕ) (i : ZMod n) (z : T.V ⊗[Qp] B) (hz : z ∈ DcrisL PD T.ρ (W.emb i)) :
     ((φVB PD (LL := LL) (V := T.V) : Module.End LL (T.V ⊗[Qp] B)) ^ m) z ∈

@@ -4,40 +4,6 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureR
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.L2InnerDerivativeTranslate
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFiniteMeasureQuotMeasure
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.OneParam
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfIsOpenStab
 import Mathlib.Analysis.InnerProductSpace.Calculus
 
@@ -80,24 +46,14 @@ open scoped TensorProduct
 
 private theorem continuous_lie_of_level {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
     (X : Lie E a) (φ : Sm E a) (h : IsOpen {k | act (.fin k) φ = φ}) : Continuous (lie E a X φ).1 := by
-  refine ContAut.continuous_of_isOpen_stab E a _ ?_
-  let S : Sm E a → Subgroup (GL (Fin a) (GlobalTheory.CuspRep.Af E)) := fun θ =>
-    { carrier := {k | finRep E a k θ = θ}
-      one_mem' := by simp
-      mul_mem' := fun {x y} hx hy => by
-        simp only [Set.mem_setOf_eq] at hx hy ⊢
-        rw [map_mul, Module.End.mul_apply, hy, hx]
-      inv_mem' := fun {x} hx => by
-        simp only [Set.mem_setOf_eq] at hx ⊢
-        conv_lhs => rw [← hx]
-        rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply] }
-  have hle : S φ ≤ S (lie E a X φ) := fun k hk => by
-    have e : lie E a X (finRep E a k φ) = finRep E a k (lie E a X φ) :=
-      LinearMap.congr_fun (lie_rt_fin X k) φ
-    have hk' : finRep E a k φ = φ := hk
-    change finRep E a k (lie E a X φ) = lie E a X φ
-    rw [← e, hk']
-  exact Subgroup.isOpen_mono hle h
+  refine ContAut.continuous_of_isOpen_stab E a _
+    (_root_.GlobalTheory.CuspRep.isOpen_stab_of_mem_nhds (finRep E a) (lie E a X φ)
+      (Filter.mem_of_superset (h.mem_nhds (by show finRep E a 1 φ = φ; simp)) fun k hk => ?_))
+  have e : lie E a X (finRep E a k φ) = finRep E a k (lie E a X φ) :=
+    LinearMap.congr_fun (lie_rt_fin X k) φ
+  have hk' : finRep E a k φ = φ := hk
+  change finRep E a k (lie E a X φ) = lie E a X φ
+  rw [← e, hk']
 
 open scoped GlobalTheory.CuspRep.CuspidalL2GL in
 theorem UpperTheory.V.Lit.Bor.skew_lie_action_L2 :

@@ -34,16 +34,11 @@ theorem primeTube_isClosed_zeroSetEuc {n : ℕ} (J : Ideal (MvPolynomial (Fin n)
 theorem primeTube_exists_dim {n k : ℕ} {J : Ideal (MvPolynomial (Fin n) ℂ)} (hJ : J.IsPrime)
     (hk : ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) ≤ (k : ℕ)) :
     ∃ d : ℕ, d ≤ k ∧ ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) = (d : ℕ) := by
-  have hnn : 0 ≤ ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) := ringKrullDim_nonneg_of_nontrivial
-  generalize ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) = x at hnn hk ⊢
-  induction x using WithBot.recBotCoe with
-  | bot => simp at hnn
-  | coe e =>
-    induction e using ENat.recTopCoe with
-    | top =>
-      rw [← WithBot.coe_natCast] at hk
-      exact absurd (WithBot.coe_le_coe.1 hk) (by simp)
-    | coe m => exact ⟨m, by exact_mod_cast hk, by norm_cast⟩
+  have hnn := ringKrullDim_nonneg_of_nontrivial (R := MvPolynomial (Fin n) ℂ ⧸ J)
+  obtain ⟨e, he⟩ := WithBot.ne_bot_iff_exists.mp (lt_of_lt_of_le (WithBot.bot_lt_coe 0) hnn).ne'
+  have hk' : e ≤ (k : ℕ∞) := by exact_mod_cast (he.symm ▸ hk)
+  obtain ⟨m, rfl⟩ := ENat.ne_top_iff_exists.mp (lt_of_le_of_lt hk' (ENat.natCast_lt_top k)).ne
+  exact ⟨m, by exact_mod_cast hk', by exact_mod_cast he.symm⟩
 
 theorem primeTube_exact (hL : VarietyMassLower.Statement) (hM : MassFinite.Statement) {n d : ℕ}
     {J : Ideal (MvPolynomial (Fin n) ℂ)} {K : Set (Fin n → ℂ)} (hJ : J.IsPrime)

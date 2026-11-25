@@ -1,43 +1,6 @@
 module
 
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -82,7 +45,7 @@ theorem sN_of : SN := by
       intro k
       have e1 : ψ (Matrix.single k k 1) = ψ (Matrix.single k i0 1) * ψ (Matrix.single i0 i0 1) *
           ψ (Matrix.single i0 k 1) := by
-        rw [hEE k i0 i0 i0, if_pos rfl, hEE k i0 i0 k, if_pos rfl]
+        rw [hEE k i0 i0 i0, ite_eq_left rfl, hEE k i0 i0 k, ite_eq_left rfl]
       rw [e1, h0, mul_zero, zero_mul]
     have h1 : ψ 1 = 0 := by
 
@@ -91,8 +54,7 @@ theorem sN_of : SN := by
     rw [map_one] at h1
     exact one_ne_zero h1
   obtain ⟨a, b, hab⟩ : ∃ a b, ψ (Matrix.single i0 i0 1) a b ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hP (Matrix.ext h)
   have hL : ∀ i k, ψ (Matrix.single i k 1) * (∑ j, ψ (Matrix.single j i0 1) * Matrix.single b j 1) =
       ψ (Matrix.single i i0 1) * Matrix.single b k 1 := by
@@ -106,7 +68,7 @@ theorem sN_of : SN := by
       · subst h
         rfl
       · rw [zero_mul]
-    simp only [l1, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [l1, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   have hR : ∀ i k, (∑ j, ψ (Matrix.single j i0 1) * Matrix.single b j 1) * Matrix.single i k 1 =
       ψ (Matrix.single i i0 1) * Matrix.single b k 1 := by
     intro i k
@@ -119,7 +81,7 @@ theorem sN_of : SN := by
       · subst h
         rw [Matrix.single_mul_single_same, one_mul]
       · rw [Matrix.single_mul_single_of_ne _ _ _ _ h _, mul_zero]
-    simp only [l2, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [l2, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   refine ⟨∑ j, ψ (Matrix.single j i0 1) * Matrix.single b j 1, ?_, ?_⟩
   · have hTS : (∑ k, Matrix.single k a (ψ (Matrix.single i0 i0 1) a b)⁻¹ * ψ (Matrix.single i0 k 1)) *
         (∑ j, ψ (Matrix.single j i0 1) * Matrix.single b j 1) = 1 := by

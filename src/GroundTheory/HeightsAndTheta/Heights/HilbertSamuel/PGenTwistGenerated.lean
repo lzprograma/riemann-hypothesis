@@ -3,6 +3,7 @@ module
 public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsAmpleOfGenTwist
 import Mathlib.Order.Interval.Finset.Box
 import Mathlib.Tactic.TypeStar
+import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
 
 @[expose] public section
 
@@ -22,22 +23,15 @@ variable {S : Type} [CommRing S] {K : Type} [Fintype K] [LinearOrder K] {ι : K 
   [∀ k, Fintype (ι k)] [∀ k, LinearOrder (ι k)]
 
 theorem isMultiHomog_mul {p q : MRingOver S ι} {a b : K → ℕ} (hp : IsMultiHomog p a)
-    (hq : IsMultiHomog q b) : IsMultiHomog (p * q) (a + b) := by
-  classical
-  intro m hm k
-  obtain ⟨m₁, h₁, m₂, h₂, rfl⟩ := Finset.mem_add.mp (MvPolynomial.support_mul p q hm)
-  simp only [Finsupp.add_apply, Finset.sum_add_distrib, Pi.add_apply, hp m₁ h₁ k, hq m₂ h₂ k]
+    (hq : IsMultiHomog q b) : IsMultiHomog (p * q) (a + b) :=
+  GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_mul hp hq
 
 theorem isMultiHomog_monomial (d : (Σ k, ι k) →₀ ℕ) (r : S) (a : K → ℕ)
-    (hd : ∀ k, ∑ i, d ⟨k, i⟩ = a k) : IsMultiHomog (monomial d r : MRingOver S ι) a := by
-  classical
-  intro m hm k
-  rw [Finset.mem_singleton.mp (MvPolynomial.support_monomial_subset hm)]
-  exact hd k
+    (hd : ∀ k, ∑ i, d ⟨k, i⟩ = a k) : IsMultiHomog (monomial d r : MRingOver S ι) a :=
+  funext hd ▸ GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_monomial d r
 
-theorem isMultiHomog_one (a : K → ℕ) (ha : ∀ k, a k = 0) : IsMultiHomog (1 : MRingOver S ι) a := by
-  rw [← MvPolynomial.C_1, MvPolynomial.C_apply]
-  exact isMultiHomog_monomial 0 1 a fun k => by simp [ha k]
+theorem isMultiHomog_one (a : K → ℕ) (ha : ∀ k, a k = 0) : IsMultiHomog (1 : MRingOver S ι) a :=
+  (funext ha).symm ▸ GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_one
 
 variable {V : Ideal (MRingOver S ι)}
 
@@ -121,7 +115,7 @@ theorem cellRes_mul {J I : ∀ k, Finset (ι k)} (x y : LocalizedModule (KH.cell
         rw [LocalizedModule.mk_mul_mk, cellRes_mk h, cellRes_mk h, cellRes_mk h, LocalizedModule.mk_mul_mk]
         rfl
   · unfold KH.cellRes
-    rw [dif_neg h]
+    rw [dite_eq_right h]
     exact (zero_mul (0 : LocalizedModule (KH.cellMon S I) (MRingOver S ι ⧸ V))).symm
 
 theorem cellMon_mono {J I : ∀ k, Finset (ι k)} (h : ∀ k, J k ⊆ I k) : KH.cellMon S J ≤ KH.cellMon S I := by
@@ -129,10 +123,11 @@ theorem cellMon_mono {J I : ∀ k, Finset (ι k)} (h : ∀ k, J k ⊆ I k) : KH.
   rintro f ⟨k, i, hi, rfl⟩
   exact ⟨k, i, h k hi, rfl⟩
 
-theorem cechD_zero_apply {M : Type*} [AddCommGroup M] [Module (MRingOver S ι) M] (I : KH.Cell K ι 1) :
+theorem cechD_zero_apply_uniform.{u} (I : KH.Cell K ι 1) :
     ∃ J₁ J₂ : KH.Cell K ι 0, (∀ k, J₁.1 k ⊆ I.1 k) ∧ (∀ k, J₂.1 k ⊆ I.1 k) ∧ ∃ σ : ℤ, (σ = 1 ∨ σ = -1) ∧
-      ∀ f : KH.CechC S ι M 0, KH.cechD S ι M 0 f I =
-        σ • (KH.cellRes S M J₁.1 I.1 (f J₁) - KH.cellRes S M J₂.1 I.1 (f J₂)) := by
+      ∀ (M : Type u) [AddCommGroup M] [Module (MRingOver S ι) M] (f : KH.CechC S ι M 0),
+        KH.cechD S ι M 0 f I =
+          σ • (KH.cellRes S M J₁.1 I.1 (f J₁) - KH.cellRes S M J₂.1 I.1 (f J₂)) := by
   classical
   have hne : ∀ k, (I.1 k).Nonempty := I.2.1
   have hsum : ∑ k, ((I.1 k).card - 1) = 1 := I.2.2
@@ -185,7 +180,7 @@ theorem cechD_zero_apply {M : Type*} [AddCommGroup M] [Module (MRingOver S ι) M
         rw [hI]; simp [Finset.filter_insert, Finset.filter_singleton, h.not_gt]
       rw [e₁, e₂, add_comm 1, pow_succ, zero_add]; ring
   refine ⟨⟨_, hface x hx⟩, ⟨_, hface y hy⟩, hsub x, hsub y, KH.faceSign I.1 k₀ x,
-    by unfold KH.faceSign; exact neg_one_pow_eq_or ℤ _, fun f => ?_⟩
+    by unfold KH.faceSign; exact neg_one_pow_eq_or ℤ _, fun M _ _ f => ?_⟩
   change (∑ k : K, ∑ i ∈ I.1 k, _ :
     KH.CechC S ι M 0 →ₗ[MRingOver S ι] LocalizedModule (KH.cellMon S I.1) M) f = _
   rw [Finset.sum_eq_single k₀, Finset.sum_eq_add_of_mem x y hx hy hxy, dite_eq_left (hface x hx),
@@ -199,11 +194,18 @@ theorem cechD_zero_apply {M : Type*} [AddCommGroup M] [Module (MRingOver S ι) M
     have : i = x ∨ i = y := by rw [hI] at hi; simpa using hi
     tauto
   · intro l _ hl
-    refine Finset.sum_eq_zero fun i hi => dif_neg fun h => ?_
+    refine Finset.sum_eq_zero fun i hi => dite_eq_right fun h => ?_
     have := (h.1 l)
     rw [Function.update_self, ← Finset.card_pos, Finset.card_erase_of_mem hi, hother l hl] at this
     omega
   · intro h; exact absurd (Finset.mem_univ k₀) h
+
+theorem cechD_zero_apply {M : Type*} [AddCommGroup M] [Module (MRingOver S ι) M] (I : KH.Cell K ι 1) :
+    ∃ J₁ J₂ : KH.Cell K ι 0, (∀ k, J₁.1 k ⊆ I.1 k) ∧ (∀ k, J₂.1 k ⊆ I.1 k) ∧ ∃ σ : ℤ, (σ = 1 ∨ σ = -1) ∧
+      ∀ f : KH.CechC S ι M 0, KH.cechD S ι M 0 f I =
+        σ • (KH.cellRes S M J₁.1 I.1 (f J₁) - KH.cellRes S M J₂.1 I.1 (f J₂)) := by
+  obtain ⟨J₁, J₂, h₁, h₂, σ, hσ, hd⟩ := cechD_zero_apply_uniform (S := S) I
+  exact ⟨J₁, J₂, h₁, h₂, σ, hσ, hd M⟩
 
 theorem mem_cechZc_zero {c : K → ℤ} {z : KH.CechC S ι (MRingOver S ι ⧸ V) 0}
     (hz : ∀ J, z J ∈ KH.locPart ι (KH.quotPart S V) (KH.cellMon S J.1) c)

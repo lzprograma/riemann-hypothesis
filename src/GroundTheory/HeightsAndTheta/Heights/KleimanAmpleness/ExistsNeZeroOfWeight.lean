@@ -240,7 +240,7 @@ theorem finrank_gradedPiece [Fintype K] (y : (Σ k, ι k) → Ω) (d : K → ℕ
 
 theorem hilbFn_eq [Fintype K] (y : (Σ k, ι k) → Ω) (m : K → ℤ) (hm : ∀ k, 0 ≤ m k) :
     NumbersDVR.hilbFn (mIdealOver F y) m = (Module.finrank F (vals F y fun k => (m k).toNat) : ℤ) := by
-  rw [NumbersDVR.hilbFn, if_pos hm, finrank_gradedPiece]
+  rw [NumbersDVR.hilbFn, ite_eq_left hm, finrank_gradedPiece]
 
 end Values
 

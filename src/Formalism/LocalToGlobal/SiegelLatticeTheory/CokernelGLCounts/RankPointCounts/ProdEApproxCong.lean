@@ -14,8 +14,6 @@ open IsDedekindDomain NumberField ValuativeRel Formalism.BasicNotions Formalism.
 
 namespace Formalism.L2.SG.Pf.ProdEApprox
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Cong
 
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)

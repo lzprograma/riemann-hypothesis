@@ -49,8 +49,6 @@ public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.LevelCoverCompare
@@ -59,8 +57,6 @@ open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalC
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open GlobalTheory.IndefiniteRowSideFullHecke.LevelSpanSeparation hiding zetaM
 open GlobalTheory.IndefiniteRowSideFullHecke.DeltaDatumCombinedCoefficient
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 section Calc
 

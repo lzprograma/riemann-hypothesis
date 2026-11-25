@@ -1,5 +1,6 @@
 module
 
+import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TprodComplementSplitFinset
 public import Mathlib.Probability.ProductMeasure
 public import Mathlib.Analysis.SpecialFunctions.Log.Summable
 public import Mathlib.MeasureTheory.Measure.WithDensityFinite
@@ -15,57 +16,10 @@ public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsSelf
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EventuallyLocalDensityStandardLatticeBound
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFibreFamilyHermitianLengthInfiniteAdeles
 public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RestrictedProductMeasureBasicProperties
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FibreFamilyHermitianQuadraticFormAtUnitProps
 import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNiceLocalFieldProductRingInfiniteAdelesComplet
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRestrictedProductMeasureCountable, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsRestrictedProductTupleMeasure, Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueStdHermitianFibreProductOfRankGeThre
@@ -93,26 +47,8 @@ theorem lintegral_prod_infinitePi {ι : Type} {V : ι → Type} [∀ i, Measurab
 theorem tail_split {ι : Type} [DecidableEq ι] (c : ι → ℝ) (hs : Summable fun i => |c i - 1|)
     {T S : Finset ι} (h : T ⊆ S) :
     ∏' i : {i : ι // i ∉ T}, c i.1 = (∏ i ∈ S \ T, c i) * ∏' i : {i : ι // i ∉ S}, c i.1 := by
-  have key : ∀ U : Finset ι, ∏' i : {i : ι // i ∉ U}, c i.1 = ∏' i, (if i ∈ U then 1 else c i) := by
-    intro U
-    have := tprod_subtype {i | i ∉ U} c
-    refine this.trans (tprod_congr fun i => ?_)
-    by_cases hi : i ∈ U <;> simp [Set.mulIndicator, hi]
-  have hm : Multipliable fun i => (if i ∈ S then 1 else c i) := by
-    have h1 : Summable fun i => (if i ∈ S then (0 : ℝ) else c i - 1) := by
-      refine Summable.of_norm_bounded hs fun i => ?_
-      by_cases hi : i ∈ S <;> simp [hi]
-    refine (Real.multipliable_one_add_of_summable h1).congr fun i => ?_
-    by_cases hi : i ∈ S <;> simp [hi]
-  have hf : HasProd (fun i => if i ∈ S \ T then c i else 1) (∏ i ∈ S \ T, c i) := by
-    have := hasProd_prod_of_ne_finset_one (f := fun i => if i ∈ S \ T then c i else 1)
-      (s := S \ T) (L := SummationFilter.unconditional ι) (fun b hb => if_neg hb)
-    rwa [Finset.prod_congr rfl (fun i hi => if_pos hi)] at this
-  rw [key, key, ← hf.tprod_eq, ← hf.multipliable.tprod_mul hm]
-  refine tprod_congr fun i => ?_
-  by_cases hT : i ∈ T
-  · simp [hT, h hT]
-  · by_cases hS : i ∈ S <;> simp [hT, hS]
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.SW.TailCut.tprod_tail_cut <;> assumption
 
 theorem exists_piece {ι : Type} {V : ι → Type} [∀ i, MeasurableSpace (V i)]
     (a : ∀ i, Measure (V i)) (hσ : ∀ i, SigmaFinite (a i)) (T : Finset ι) (c : ι → ℝ)
@@ -144,7 +80,7 @@ theorem exists_piece {ι : Type} {V : ι → Type} [∀ i, MeasurableSpace (V i)
     by_cases hi : i ∈ T
     · refine ⟨(a i).toFinite, (a i).rnDeriv (a i).toFinite, inferInstance,
         Measure.measurable_rnDeriv _ _, fun h => (h hi).elim, fun f hf => ?_⟩
-      rw [if_pos hi, one_mul]
+      rw [ite_eq_left hi, one_mul]
       conv_lhs => rw [← Measure.withDensity_rnDeriv_eq (a i) (a i).toFinite
         (absolutelyContinuous_toFinite _)]
       rw [lintegral_withDensity_eq_lintegral_mul _ (Measure.measurable_rnDeriv _ _) hf]
@@ -152,7 +88,7 @@ theorem exists_piece {ι : Type} {V : ι → Type} [∀ i, MeasurableSpace (V i)
     · haveI : IsFiniteMeasure (a i) := ⟨by rw [ha i hi]; exact ENNReal.ofReal_lt_top⟩
       refine ⟨(a i Set.univ)⁻¹ • a i, fun _ => 1, inferInstance, measurable_const,
         fun _ _ => rfl, fun f _ => ?_⟩
-      rw [if_neg hi, ← ha i hi, lintegral_smul_measure, smul_eq_mul, ← mul_assoc,
+      rw [ite_eq_right hi, ← ha i hi, lintegral_smul_measure, smul_eq_mul, ← mul_assoc,
         ENNReal.mul_inv_cancel (by simpa using h0 i) (measure_ne_top _ _)]
       simp
   choose P g hP hg hg1 hint using hP
@@ -181,8 +117,8 @@ theorem exists_piece {ι : Type} {V : ι → Type} [∀ i, MeasurableSpace (V i)
   have h2 : ∏ i ∈ S, (if i ∈ T then 1 else ENNReal.ofReal (c i)) =
       ∏ i ∈ S \ T, ENNReal.ofReal (c i) := by
     rw [← Finset.prod_subset (Finset.sdiff_subset (s := S) (t := T))
-      (fun i hi hi' => if_pos (by simpa [hi] using hi'))]
-    exact Finset.prod_congr rfl fun i hi => if_neg (Finset.mem_sdiff.1 hi).2
+      (fun i hi hi' => ite_eq_left (by simpa [hi] using hi'))]
+    exact Finset.prod_congr rfl fun i hi => ite_eq_right (Finset.mem_sdiff.1 hi).2
   rw [h2]
   ring
 

@@ -56,7 +56,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.S
 
 open AlgebraicGeometry CategoryTheory Limits NumberField IsDedekindDomain IsLocalRing ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj Formalism.MainNotions.DIV.Cons
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.SmallClosedField
 
@@ -73,10 +72,6 @@ theorem mk_le_of_denseRange {A C : Type} [MetricSpace C] (f : A → C) (hf : Den
   have hinj : Function.Injective s := fun x y hxy =>
     tendsto_nhds_unique (hs x) (hxy ▸ hs y)
   simpa using mk_le_of_injective hinj
-
-theorem mk_le_continuum_of_finite_residueField (V : Type) [CommRing V] [IsLocalRing V]
-    [IsNoetherianRing V] [Finite (ResidueField V)] : #V ≤ 𝔠 := by
-  apply _root_.GlobalTheory.ComplexEmbedding.mk_le_continuum_of_finite_residueField
 
 theorem exists_small_closed_subfield {K C : Type} [Field K] [NontriviallyNormedField C]
     [IsUltrametricDist C] [CompleteSpace C] [IsAlgClosed C] [Algebra K C] (hK : #K ≤ 𝔠)
@@ -189,7 +184,7 @@ theorem exists_embedding_and_extension :
     haveI : Finite (ResidueField T.V) := hfin
     have hK : #T.Fr ≤ 𝔠 :=
       (IsLocalization.cardinalMk_le (nonZeroDivisors T.V)).trans
-        (mk_le_continuum_of_finite_residueField T.V)
+        (GlobalTheory.ComplexEmbedding.mk_le_continuum_of_finite_residueField T.V)
     have hx : 1 < ‖algebraMap T.Fr C (algebraMap T.V T.Fr p)⁻¹‖ := by
       rw [map_inv₀, norm_inv, hCp, inv_inv]; exact h1
     obtain ⟨L, hKL, hcl, hac, hL⟩ := exists_small_closed_subfield hK hx

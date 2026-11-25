@@ -60,15 +60,15 @@ theorem UpperTheory.V.Z.Sym.Loc.hsLaw : UpperTheory.V.Z.Sym.Loc.HsLaw := by
   · intro x y hx hy
     unfold hs
     by_cases h1 : ∃ a b : K, a ^ 2 - x * b ^ 2 = y
-    · rw [if_pos h1, if_pos (nm_symm hx h2 h1 hy)]
+    · rw [ite_eq_left h1, ite_eq_left (nm_symm hx h2 h1 hy)]
     · have h1' : ¬ ∃ a b : K, a ^ 2 - y * b ^ 2 = x := fun h => h1 (nm_symm hy h2 h hx)
-      rw [if_neg h1, if_neg h1']
+      rw [ite_eq_right h1, ite_eq_right h1']
   · rintro x y ⟨U, s, hs0, rfl⟩ ⟨V, t, -, rfl⟩
     obtain ⟨a, b, hab⟩ := L.nm_unit U V
     have hK := congrArg (algebraMap O K) hab
     simp only [map_sub, map_mul, map_pow] at hK
     unfold hs
-    rw [if_pos]
+    rw [ite_eq_left]
     refine ⟨algebraMap O K a * t, algebraMap O K b * t / s, ?_⟩
     rw [← hK]
     field_simp
@@ -86,7 +86,7 @@ theorem UpperTheory.V.Z.Sym.Loc.hsLaw : UpperTheory.V.Z.Sym.Loc.HsLaw := by
         rw [h0, map_zero]
       refine ⟨algebraMap O K p, hp0, ?_⟩
       unfold hs
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨a, b, hab⟩
       have e : a ^ 2 - algebraMap O K ↑U * (s * b) ^ 2 = algebraMap O K p := by
         rw [← hab]; ring
@@ -98,14 +98,14 @@ theorem UpperTheory.V.Z.Sym.Loc.hsLaw : UpperTheory.V.Z.Sym.Loc.HsLaw := by
       intro h0
       rw [h0] at hε
       unfold hs at hε
-      rw [if_pos ⟨0, 0, by ring⟩] at hε
+      rw [ite_eq_left ⟨0, 0, by ring⟩] at hε
       norm_num at hε
   · rintro D x hD ⟨r, rfl⟩
     have hr : r ≠ 0 := by
       rintro rfl
       simp at hD
     unfold hs
-    rw [if_pos]
+    rw [ite_eq_left]
     refine ⟨(x + 1) / 2, (x - 1) / (2 * r), ?_⟩
     field_simp
     ring

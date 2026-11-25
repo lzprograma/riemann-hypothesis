@@ -185,8 +185,6 @@ namespace UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KF
 
 open UpperTheory.ConvolutionTheory.C UpperTheory.ConvolutionTheory.Dp UpperTheory.V GroundTheory.Automorphic.UnitaryAdmissible
 
-attribute [local instance 100] LieRing.ofAssociativeRing
-
 private theorem gen_orbit {Γ H : Type*} [Group Γ] [AddCommGroup H] [Module ℂ H] (ρ : Γ → H →ₗ[ℂ] H)
     (hm : ∀ a b x, ρ (a * b) x = ρ a (ρ b x)) (v : H) (k : Γ) :
     ∀ x ∈ Submodule.span ℂ (Set.range fun k => ρ k v), ρ k x ∈ Submodule.span ℂ (Set.range fun k => ρ k v) := by
@@ -273,7 +271,6 @@ private theorem loc_fin {V : Submodule ℂ (L2 μ)} (hV : IsSummand μ V) : ∀ 
     rintro _ ⟨k, rfl⟩
     exact ⟨_, Submodule.subset_span ⟨⟨_, k.2⟩, rfl⟩, rfl⟩
 
-set_option maxHeartbeats 2000000 in
 theorem kfin {V : Submodule ℂ (L2 μ)} (hV : IsSummand μ V) {v : L2 μ} (hv : v ∈ V)
     (hfd : FiniteDimensional ℂ (Submodule.span ℂ (Set.range fun k => rk μ k v))) : v ∈ (formsIn μ V).map (clsL μ) := by
   obtain ⟨hs, hne, hirr, hcl⟩ := formsIrr K n μ V hV
@@ -347,7 +344,6 @@ theorem kfin {V : Submodule ℂ (L2 μ)} (hV : IsSummand μ V) {v : L2 μ} (hv :
       rw [e2, Submodule.mem_orthogonal]
       intro f hf
       have h3 : ⟪f, r (clsL μ φ)⟫_ℂ = ⟪f, clsL μ φ⟫_ℂ := by
-        set_option synthInstance.maxHeartbeats 100000 in
         have h4 := (rightRegularRep (Gam K n) μ).inner_map_map (finOne K n u) f (clsL μ φ)
         rw [hfix u hu f hf] at h4
         exact h4

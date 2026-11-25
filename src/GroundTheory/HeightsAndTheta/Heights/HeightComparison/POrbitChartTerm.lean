@@ -5,6 +5,7 @@ import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.TypeStar
+import GroundTheory.HeightsAndTheta.Heights.BlockScaling
 
 @[expose] public section
 
@@ -19,19 +20,8 @@ variable {ι : Type} [Fintype ι] {n : ι → ℕ}
 theorem eval₂_mul_block_of_isMultiHomog {R : Type*} [CommRing R] (s : MvPolynomial (Coord n) ℤ)
     (a : ι → ℕ) (hs : Geo.IsMultiHomog (ι := blockIdx n) s a) (g : ℤ →+* R) (y : Coord n → R)
     (t : ι → R) :
-    eval₂ g (fun p ↦ y p * t p.1) s = eval₂ g y s * ∏ k, t k ^ a k := by
-  classical
-  simp only [eval₂_eq', Finset.sum_mul]
-  refine Finset.sum_congr rfl fun m hm ↦ ?_
-  rw [mul_assoc]
-  congr 1
-  simp_rw [mul_pow]
-  rw [Finset.prod_mul_distrib]
-  congr 1
-  rw [Fintype.prod_sigma]
-  refine Finset.prod_congr rfl fun k _ ↦ ?_
-  change ∏ i, t k ^ m ⟨k, i⟩ = t k ^ a k
-  rw [Finset.prod_pow_eq_pow_sum, hs m hm k]
+    eval₂ g (fun p ↦ y p * t p.1) s = eval₂ g y s * ∏ k, t k ^ a k :=
+  BlockScaling.eval₂_mul_block_right g y t hs
 
 
 omit [Fintype ι] in

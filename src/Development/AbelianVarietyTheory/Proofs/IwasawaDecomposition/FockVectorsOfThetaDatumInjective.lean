@@ -63,7 +63,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.Chain GlobalTheory.CompactHowe Matrix
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FockInj
 
@@ -159,8 +158,8 @@ theorem pure_injective (hadd : ∀ f f', P f → P f' → P (f + f')) (hsm : ∀
       congr 1
       by_cases h : i = j
       · subst h
-        rw [if_pos rfl, MvPolynomial.pderiv_X_self, one_mul]
-      · rw [if_neg h, MvPolynomial.pderiv_X_of_ne (Ne.symm h), zero_mul, map_zero, zero_smul, smul_zero]
+        rw [ite_eq_left rfl, MvPolynomial.pderiv_X_self, one_mul]
+      · rw [ite_eq_right h, MvPolynomial.pderiv_X_of_ne (Ne.symm h), zero_mul, map_zero, zero_smul, smul_zero]
   refine injective_of_pderiv _ (fun Q hQ i => ?_) fun a ha => ?_
   · have h := key i Q
     have h2 := Bsm i 0 f hf
@@ -209,7 +208,7 @@ theorem trace_single {m n : ℕ} (ε : Fin n → Bool) (ε' : Fin m → Bool) (i
   · obtain ⟨rfl, rfl⟩ := h
     unfold sg
     cases ε j <;> cases ε' i <;> simp [mul_comm]
-  · rw [if_neg h, if_neg (c := k = i ∧ l = j) (fun h' => h ⟨h'.1.symm, h'.2.symm⟩)]
+  · rw [ite_eq_right h, ite_eq_right (c := k = i ∧ l = j) (fun h' => h ⟨h'.1.symm, h'.2.symm⟩)]
     simp
 
 theorem Jm_single_Jm {m n : ℕ} (ε : Fin n → Bool) (ε' : Fin m → Bool) (i : Fin m) (j : Fin n) :
@@ -404,16 +403,16 @@ theorem op_comm (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (α β : ℂ) (p
   dsimp only
   by_cases h : τ = τ'
   · subst h
-    rw [if_pos rfl, formAt_uv, formAt_uv, formAt_uv, formAt_uv]
+    rw [ite_eq_left rfl, formAt_uv, formAt_uv, formAt_uv, formAt_uv]
     by_cases h' : i = k ∧ j = l
     · obtain ⟨rfl, rfl⟩ := h'
-      simp only [and_self, if_true]
+      simp only [and_self, ite_true]
       congr 1
       unfold sg
       cases M'.ε τ i <;> cases M.ε τ j <;> simp [xi_re] <;> ring
-    · rw [if_neg h', if_neg h', if_neg h', if_neg h', if_neg (fun e => h' (by simpa using e))]
+    · rw [ite_eq_right h', ite_eq_right h', ite_eq_right h', ite_eq_right h', ite_eq_right (fun e => h' (by simpa using e))]
       simp
-  · rw [if_neg h, if_neg (fun e => h (congrArg Prod.fst e))]
+  · rw [ite_eq_right h, ite_eq_right (fun e => h (congrArg Prod.fst e))]
 
 theorem aPlusAll_eq (p : FVar D T.rank S.rank) (f : WO S T → ℂ) :
     aPlusAll (heisO ψ S T) θ (fun τ => cplxO (cart M τ) (cart M' τ)) (onb M) (onb M') p f =

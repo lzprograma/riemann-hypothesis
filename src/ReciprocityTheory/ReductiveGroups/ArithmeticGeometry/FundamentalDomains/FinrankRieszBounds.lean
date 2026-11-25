@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HermFormRsmulRight
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.RealTangentSpace
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
 public import Mathlib.Analysis.InnerProductSpace.Dual
@@ -21,31 +22,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} {X : Data 
 
 theorem maj_csmul {z : Frame X.Ψ r} (hz : z ∈ X.dom) (τ : X.Ψ) (c : ℂ) (v : Fin r → ℂ) :
     X.maj z τ (c • v) = ‖c‖ ^ 2 * X.maj z τ v := by
-  have hl : ∀ w, hermC τ.1 X.Gm (c • v) w = c * hermC τ.1 X.Gm v w := by
-    intro w
-    simp only [hermC, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
-    ring
-  have hr : hermC τ.1 X.Gm v (c • v) = conj c * hermC τ.1 X.Gm v v := by
-    simp only [hermC, Pi.smul_apply, smul_eq_mul, map_mul, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
-    ring
-  have hcc : c * conj c = ((‖c‖ ^ 2 : ℝ) : ℂ) := by
-    rw [Complex.mul_conj, Complex.normSq_eq_norm_sq]
-  have hH : hermC τ.1 X.Gm (c • v) (c • v) = ((‖c‖ ^ 2 : ℝ) : ℂ) * hermC τ.1 X.Gm v v := by
-    rw [hl, hr, ← mul_assoc, hcc]
-  have hP : X.posPart z τ (c • v) = ‖c‖ ^ 2 * X.posPart z τ v := by
-    simp only [Data.posPart, hl, map_mul]
-    rw [← Complex.re_ofReal_mul]
-    congr 1
-    rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl fun a _ => ?_
-    rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl fun b _ => ?_
-    rw [← hcc]
-    ring
-  simp only [Data.maj, hP, hH, Complex.re_ofReal_mul]
-  ring
+  apply _root_.GlobalTheory.ArchLen.maj_smul <;> assumption
 
 variable (z : Frame X.Ψ r) (ξ : Fin r → E) [hz : Fact (z ∈ X.dom)]
 
@@ -80,7 +57,7 @@ theorem riesz (δ : X.Ψ → (Fin r → ℂ) →ₗ[ℂ] ℂ) :
       (fun h => absurd (Finset.mem_univ τ0) h),
       Finset.sum_eq_single τ0 (fun τ _ hτ => by simp [s, hτ]) (fun h => absurd (Finset.mem_univ τ0) h)]
       at h
-    simp only [s, if_true, one_smul] at h
+    simp only [s, ite_true, one_smul] at h
     rw [← h, ← UnipotentCoefficientShift.Hf_conj hz.out, Complex.conj_re]
   have h1 := key u hu
   have h2 := key _ (MajorantOperators.smul_fam_mem (fun _ => Complex.I) hu)

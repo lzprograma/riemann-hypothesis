@@ -103,15 +103,15 @@ theorem inv_mul_mix {r : ℕ} (q : ℕ) (X Y : Matrix (Fin r) (Fin r) ℂ) (hX :
     (X⁻¹ * mixCols q X (mixRows q Y X⁻¹)⁻¹) i j = (1 : Matrix (Fin r) (Fin r) ℂ) i j := by
   by_cases hj : (j : ℕ) < q
   · rw [← Matrix.nonsing_inv_mul X (isUnit_iff_ne_zero.2 hX)]
-    simp only [Matrix.mul_apply, mixCols, Matrix.of_apply, if_pos hj]
+    simp only [Matrix.mul_apply, mixCols, Matrix.of_apply, ite_eq_left hj]
   · have hi : ¬ (i : ℕ) < q := by
       have : (j : ℕ) ≤ i := hij
       omega
     rw [← Matrix.mul_nonsing_inv _ (isUnit_iff_ne_zero.2 hN)]
-    simp only [Matrix.mul_apply, mixCols, Matrix.of_apply, if_neg hj]
+    simp only [Matrix.mul_apply, mixCols, Matrix.of_apply, ite_eq_right hj]
     refine Finset.sum_congr rfl fun a _ => ?_
     congr 1
-    simp only [mixRows, Matrix.of_apply, if_neg hi]
+    simp only [mixRows, Matrix.of_apply, ite_eq_right hi]
 
 end Matrices
 
@@ -129,9 +129,9 @@ theorem exists_hol_frame (Ψ : Finset (E →+* ℂ)) (q : ℕ) {B : Set W} (hB :
   have hN : ∀ τ i a, DifferentiableOn ℂ (fun b => N b τ i a) B := by
     intro τ i a
     by_cases hi : (i : ℕ) < q
-    · simp only [N, mixRows, Matrix.of_apply, if_pos hi]
+    · simp only [N, mixRows, Matrix.of_apply, ite_eq_left hi]
       exact differentiableOn_const _
-    · simp only [N, mixRows, Matrix.of_apply, if_neg hi]
+    · simp only [N, mixRows, Matrix.of_apply, ite_eq_right hi]
       exact hrow τ i a hi
   have hD : DifferentiableOn ℂ (fun b => ∏ τ, (N b τ).det) B :=
     differentiableOn_finset_prod _ (fun τ b => (N b τ).det) B fun τ => differentiableOn_det _ B (hN τ)
@@ -146,9 +146,9 @@ theorem exists_hol_frame (Ψ : Finset (E →+* ℂ)) (q : ℕ) {B : Set W} (hB :
     exact (Matrix.isUnit_nonsing_inv_det _ (isUnit_iff_ne_zero.2 (hx b₀ hb₀ τ))).ne_zero
   · refine differentiableOn_pi.2 fun τ => differentiableOn_pi.2 fun a => differentiableOn_pi.2 fun j => ?_
     by_cases hj : (j : ℕ) < q
-    · simp only [mixCols, Matrix.of_apply, if_pos hj]
+    · simp only [mixCols, Matrix.of_apply, ite_eq_left hj]
       exact (hcol τ a j hj).mono Set.inter_subset_left
-    · simp only [mixCols, Matrix.of_apply, if_neg hj]
+    · simp only [mixCols, Matrix.of_apply, ite_eq_right hj]
       exact differentiableOn_matrix_inv (fun b => N b τ) _ (fun i a => (hN τ i a).mono Set.inter_subset_left)
         (fun b hb => hdet b hb τ) a j
   · have h := inv_mul_mix q (mat (x b) τ) (mat (x b₀) τ)⁻¹ (hx b hb.1 τ) (hdet b hb τ)
@@ -191,7 +191,7 @@ theorem exists_hol_chart (X : Data E r) {B : Set W} (hB : IsOpen B) (x : W → F
     change LUPf.nF X (x b₀) (x b₀) _ _ _ = 0
     simp only [LUPf.nF, hM, hL, inv_one]
     exact Matrix.one_apply_ne ((Fintype.equivFin (Ent X)).symm k).2.2.ne'
-  · have hb' := LUPf.bF_mem (hx b hb.1) hb.2
+  · have hb' := LUPf.bF_mem hb.2
     have hs : x b = rmul (cpt X (x b₀) (LUPf.zF X (x b₀) (x b))) (LUPf.bF X (x b₀) (x b)) := by
       funext τ
       change x b τ = (mat (x b₀) τ * mat (nmat X (LUPf.zF X (x b₀) (x b))) τ *
@@ -227,8 +227,8 @@ theorem exists_frames_of_holPeriods {H : ReciprocityTheory.ChartRestriction.G.Ge
   have hcc : ∀ τ : E →+* ℂ, ComplexEmbedding.conjugate (ComplexEmbedding.conjugate τ) = τ := fun τ =>
     ComplexEmbedding.involutive_conjugate E τ
   obtain ⟨f, hf⟩ := exists_letter_equiv X.Ψ X.cmType Dw.p Dw.q r hr (Formalism.L2.PjFree.relab c σ) hbij Dw.mult
-    (fun τ h => by unfold Datum.mult; rw [if_pos ((hrt τ).1 ((hty _).1 h))])
-    (fun τ h => by unfold Datum.mult; rw [if_neg (fun h' => h ((hty _).2 ((hrt τ).2 h')))])
+    (fun τ h => by unfold Datum.mult; rw [ite_eq_left ((hrt τ).1 ((hty _).1 h))])
+    (fun τ h => by unfold Datum.mult; rw [ite_eq_right (fun h' => h ((hty _).2 ((hrt τ).2 h')))])
   obtain ⟨idx, hi⟩ : ∃ idx : Fin g ≃ X.Ψ × Fin r, ∀ j,
       (Formalism.L2.PjFree.relab c σ (e j).1 ∈ X.Ψ ∧ (idx j).1.1 = Formalism.L2.PjFree.relab c σ (e j).1 ∧
         ((idx j).2 : ℕ) = Dw.q + (e j).2) ∨
@@ -256,8 +256,8 @@ theorem exists_frames_of_holPeriods {H : ReciprocityTheory.ChartRestriction.G.Ge
     intro j
     rw [hq]
     rcases hi j with ⟨a, b, c'⟩ | ⟨a, b, c', d⟩
-    · rw [if_neg (by omega), b]
-    · rw [if_pos (by omega), b, hcc]
+    · rw [ite_eq_right (by omega), b]
+    · rw [ite_eq_left (by omega), b, hcc]
   have hper : ∀ (x : Frame X.Ψ r) (v : Fin r → E) j,
       Formalism.L2.PjFree.perFr X x v (Formalism.L2.PjFree.relab c σ (e j).1) (e j).2 =
       if ((idx j).2 : ℕ) < D.q then
@@ -271,10 +271,10 @@ theorem exists_frames_of_holPeriods {H : ReciprocityTheory.ChartRestriction.G.Ge
     dsimp only at h ⊢
     rw [← hp0] at h ⊢
     rcases h with ⟨a, rfl, rfl⟩ | ⟨a, rfl, rfl, d⟩
-    · rw [if_neg (by omega)]
+    · rw [ite_eq_right (by omega)]
       unfold Formalism.L2.PjFree.perFr
       rw [dite_eq_left a, dite_eq_left hn]
-    · rw [if_pos (by omega)]
+    · rw [ite_eq_left (by omega)]
       unfold Formalism.L2.PjFree.perFr
       rw [dite_eq_right a, dite_eq_left (show conjEmb (Formalism.L2.PjFree.relab c σ (e j).1) ∈ X.Ψ from hτ), dite_eq_left hn]
       rfl
@@ -302,7 +302,7 @@ theorem exists_frames_of_holPeriods {H : ReciprocityTheory.ChartRestriction.G.Ge
         refine differentiableOn_coord_of_pairing_of_span_eq_top (ComplexEmbedding.conjugate τ.1) _ hφ'.2.1 B _ ?_
         rintro _ ⟨v, rfl⟩
         refine (hPd v (τ, j)).congr fun b hb => ?_
-        rw [hPx b hb, Equiv.apply_symm_apply, if_pos hj]
+        rw [hPx b hb, Equiv.apply_symm_apply, ite_eq_left hj]
         simp only [hermC, col, Data.emb, Finset.sum_mul, ComplexEmbedding.conjugate_coe_eq]
         exact Finset.sum_comm
       have hG : IsUnit (X.Gm.map τ.1).det := by
@@ -317,7 +317,7 @@ theorem exists_frames_of_holPeriods {H : ReciprocityTheory.ChartRestriction.G.Ge
       refine differentiableOn_coord_of_pairing_of_span_eq_top τ.1 _ hφ'.2.1 B (fun b => (mat (x b) τ)⁻¹ i) ?_ a
       rintro _ ⟨v, rfl⟩
       refine (hPd v (τ, i)).congr fun b hb => ?_
-      rw [hPx b hb, Equiv.apply_symm_apply, if_neg hi']
+      rw [hPx b hb, Equiv.apply_symm_apply, ite_eq_right hi']
       rfl) hb₀
   refine ⟨B₁, x', h1, h2, h3, h4, fun b hb => ⟨x b, ?_, fun a j => ?_, h5 b hb⟩⟩
   · have := hx b (h3 hb)

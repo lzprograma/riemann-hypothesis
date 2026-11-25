@@ -94,10 +94,10 @@ theorem chi_split (hε1 : ∀ kv, ε kv - 1 ∈ (wK X kv).asIdeal)
           · refine congW_mul (natCast_mem _ _) ?_ (congW_natCast _)
             by_cases hk : kv = kv0
             · subst hk
-              rw [if_pos rfl]
+              rw [ite_eq_left rfl]
               have := congW_iE (p := D.host.g kv.1) (m := 1) (by simpa using hε1 kv)
               simpa using this
-            · rw [if_neg hk]
+            · rw [ite_eq_right hk]
               have := congW_iE (p := D.host.g kv0.1) (m := 0)
                 (by simpa using hεP kv (wK X kv0) (hgP kv0) (wK_ne X (Ne.symm hk)))
               simpa using this
@@ -126,12 +126,12 @@ theorem chi_split (hε1 : ∀ kv, ε kv - 1 ∈ (wK X kv).asIdeal)
           · refine congW_mul (natCast_mem _ _) ?_ (congW_natCast _)
             by_cases hk : kv = kv0
             · subst hk
-              rw [if_pos rfl]
+              rw [ite_eq_left rfl]
               have hm : sigO X.B.I (ε kv) - 1 ∈ (wc X.B.I (wK X kv)).asIdeal := by
                 rw [mem_wc, map_sub, sigO_sigO, map_one]; exact hε1 kv
               have := congW_iE (p := D.host.g kv.1) (m := 1) (by simpa using hm)
               simpa using this
-            · rw [if_neg hk]
+            · rw [ite_eq_right hk]
               have hm : sigO X.B.I (ε kv) ∈ (wc X.B.I (wK X kv0)).asIdeal := by
                 rw [mem_wc, sigO_sigO]; exact hεP kv (wK X kv0) (hgP kv0) (wK_ne X (Ne.symm hk))
               have := congW_iE (p := D.host.g kv0.1) (m := 0) (by simpa using hm)
@@ -247,7 +247,7 @@ theorem congC (ob : Bool) (hew : X.ew - (if ob then 1 else 0) ∈ Wq X.B.I w) {x
       rw [hob] at this
       rwa [frd_wt, fr_wt] at this
     · refine congW_zero_of (hhat_Lq_right (X.vectorsInLattice.2.2 i).2 (stab_w X.B.I w hx (bw_Lq X ?_ _)))
-      simp only [hob, Bool.false_eq_true, if_false, sub_zero] at hew
+      simp only [hob, Bool.false_eq_true, ite_false, sub_zero] at hew
       exact hew
     · exact congW_zero_of (zero_mem _)
 
@@ -279,7 +279,7 @@ theorem congCc (ob : Bool) (hsew : sg X.B.I X.ew - (if ob then 0 else 1) ∈ Wq 
     · show CongW p (sg X.B.I (hhat X.B.I _ _)) _
       rw [sg_swap]
       refine congW_zero_of (hhat_Lq_right (X.vectorsInLattice.2.2 _).1 (stab_w X.B.I w (K_inv X.B.I hx) (bwd_Lq X ?_ i)))
-      simp only [hob, if_true, sub_zero] at hsew
+      simp only [hob, ite_true, sub_zero] at hsew
       exact hsew
     · show CongW p (sg X.B.I (hhat X.B.I _ _)) _
       rw [sg_swap]
@@ -462,13 +462,13 @@ theorem shape (ob : Bool) (hg : ((X.B.g : ℕ) : 𝓞 X.B.I.E) ∈ w.asIdeal)
     JPred D.R.k D.R.rS N := by
   refine jPred_of (hrD D) (fun a b hba => ?_) (fun a => ?_) (fun l => ?_)
   · have h := col (p := p) X ob hg hew hsew hx a b (Or.inl (le_of_lt hba))
-    rw [if_neg (fun h' => (ne_of_gt hba) h')] at h
+    rw [ite_eq_right (fun h' => (ne_of_gt hba) h')] at h
     exact congW_unique hp hcard hn (hN a b) h
   · have h := col (p := p) X ob hg hew hsew hx a a (Or.inl le_rfl)
-    rw [if_pos rfl] at h
+    rw [ite_eq_left rfl] at h
     exact congW_unique hp hcard hn (hN a a) h
   · have h := col (p := p) X ob hg hew hsew hx (wI (hrD D) l) (zI (hrD D)) (Or.inr ⟨⟨l, rfl⟩, rfl⟩)
-    rw [if_neg (_root_.Fin.ne_of_val_ne (by simp [xI, wI, yI, zI] <;> omega))] at h
+    rw [ite_eq_right (_root_.Fin.ne_of_val_ne (by simp [xI, wI, yI, zI] <;> omega))] at h
     exact congW_unique hp hcard hn (hN _ _) h
 
 end Formalism.L2.SG.Pf.KppLoc

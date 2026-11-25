@@ -5,8 +5,6 @@ public import Formalism.LocalToGlobal.CharacterGerms.FirstStepSecondHalfConditio
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open scoped BigOperators

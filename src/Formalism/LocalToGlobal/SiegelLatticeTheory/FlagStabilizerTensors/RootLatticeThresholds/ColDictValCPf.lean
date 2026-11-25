@@ -187,11 +187,11 @@ theorem density_holds : Dens := by
     rw [map_Lp]
     have hP0 : Matrix.of (fun i j => z0 (true, i, j) + Complex.I * z0 (false, i, j)) = Y := by
       ext i j
-      simp only [z0, of_apply, if_true, Bool.false_eq_true, if_false]
+      simp only [z0, of_apply, ite_true, Bool.false_eq_true, ite_false]
       linear_combination (-(Y i j) / 2) * Complex.I_sq
     have hQ0 : Matrix.of (fun i j => z0 (true, j, i) - Complex.I * z0 (false, j, i)) = 0 := by
       ext i j
-      simp only [z0, of_apply, if_true, Bool.false_eq_true, if_false, Matrix.zero_apply]
+      simp only [z0, of_apply, ite_true, Bool.false_eq_true, ite_false, Matrix.zero_apply]
       linear_combination (Y j i / 2) * Complex.I_sq
     rw [hP0, hQ0, Matrix.mul_zero, Matrix.zero_mul, sub_zero]
   have hd0 : det (1 + Y) ≠ 0 := hYu.ne_zero
@@ -235,9 +235,9 @@ lemma map_genAct_X (τ : ι) (g : Matrix (Fin n) (Fin n) ℂ) (v : ι × Fin n �
   by_cases hv : τ' = τ
   · subst hv
 
-    simp only [genAct, famAct, aeval_X, if_true, Function.update_self, map_sum, map_mul, map_C, map_X,
+    simp only [genAct, famAct, aeval_X, ite_true, Function.update_self, map_sum, map_mul, map_C, map_X,
     eval_X]
-  · simp only [genAct, famAct, aeval_X, if_neg hv, Function.update_of_ne hv, map_X]
+  · simp only [genAct, famAct, aeval_X, ite_eq_right hv, Function.update_of_ne hv, map_X]
     rw [Finset.sum_eq_single r (fun c _ hc => by rw [Matrix.one_apply_ne (Ne.symm hc), map_zero, zero_mul])
       (by simp), Matrix.one_apply_eq, map_one, one_mul]
 
@@ -280,16 +280,16 @@ lemma famAct_elem_X (τ : ι) (a b : Fin n) (t : ℂ) (v : ι × Fin n × Fin n)
   by_cases hv : τ' = τ
   · subst hv
     simp only [famAct, aeval_X, Function.update_self, elem_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
-    rw [Finset.sum_eq_single r (fun c _ hc => by rw [if_neg (Ne.symm hc), map_zero, zero_mul]) (by simp),
-      if_pos rfl, map_one, one_mul]
+    rw [Finset.sum_eq_single r (fun c _ hc => by rw [ite_eq_right (Ne.symm hc), map_zero, zero_mul]) (by simp),
+      ite_eq_left rfl, map_one, one_mul]
     simp only [bigGen, aeval_X, true_and, Polynomial.eval_add, Polynomial.eval_C]
     by_cases hb : r = b
     · subst hb
-      rw [Finset.sum_eq_single a (fun c _ hc => by rw [if_neg (by tauto), map_zero, zero_mul]) (by simp),
-        if_pos ⟨rfl, rfl⟩, if_pos rfl, Polynomial.eval_mul, Polynomial.eval_X, Polynomial.eval_C]
-    · rw [Finset.sum_eq_zero (fun c _ => by rw [if_neg (by tauto), map_zero, zero_mul]), if_neg hb,
+      rw [Finset.sum_eq_single a (fun c _ hc => by rw [ite_eq_right (by tauto), map_zero, zero_mul]) (by simp),
+        ite_eq_left ⟨rfl, rfl⟩, ite_eq_left rfl, Polynomial.eval_mul, Polynomial.eval_X, Polynomial.eval_C]
+    · rw [Finset.sum_eq_zero (fun c _ => by rw [ite_eq_right (by tauto), map_zero, zero_mul]), ite_eq_right hb,
         Polynomial.eval_zero]
-  · simp only [famAct, bigGen, aeval_X, Function.update_of_ne hv, hv, false_and, if_false, add_zero,
+  · simp only [famAct, bigGen, aeval_X, Function.update_of_ne hv, hv, false_and, ite_false, add_zero,
       Polynomial.eval_C]
     rw [Finset.sum_eq_single r (fun c _ hc => by rw [Matrix.one_apply_ne (Ne.symm hc), map_zero, zero_mul])
       (by simp), Matrix.one_apply_eq, map_one, one_mul]
@@ -376,9 +376,9 @@ theorem divisor_closed_holds : DivClosedOf := by
   have hcoeff : r.coeff k = φ (bigDiv τ a b k P) := by
     rw [hr, Polynomial.sum_def, Polynomial.finsetSum_coeff]
     simp only [Polynomial.coeff_monomial, Finsupp.single_apply]
-    rw [Finset.sum_eq_single k (fun j _ hj => if_neg hj) (fun hk => by
-      rw [if_pos rfl, Polynomial.notMem_support_iff.mp hk, map_zero])]
-    rw [if_pos rfl]
+    rw [Finset.sum_eq_single k (fun j _ hj => ite_eq_right hj) (fun hk => by
+      rw [ite_eq_left rfl, Polynomial.notMem_support_iff.mp hk, map_zero])]
+    rw [ite_eq_left rfl]
     rfl
   apply hφP
   rw [← hcoeff, hr0, Polynomial.coeff_zero]
@@ -415,11 +415,11 @@ theorem tgood_CC (w : σ → ℕ) (c : ℕ) (r : ℂ) : TGood w c 0 (Polynomial.
   rw [Polynomial.coeff_C] at h
   by_cases hj : j = 0
   · subst hj
-    rw [if_pos rfl, coeff_C] at h
+    rw [ite_eq_left rfl, coeff_C] at h
     by_cases hm : 0 = m
     · subst hm; simp
-    · rw [if_neg hm] at h; exact absurd rfl h
-  · rw [if_neg hj, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h; exact absurd rfl h
+    · rw [ite_eq_right hm] at h; exact absurd rfl h
+  · rw [ite_eq_right hj, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h; exact absurd rfl h
 
 theorem tgood_mul (w : σ → ℕ) (c : ℕ) {d₁ d₂ : ℕ} {F G : Polynomial (MvPolynomial σ ℂ)}
     (hF : TGood w c d₁ F) (hG : TGood w c d₂ G) : TGood w c (d₁ + d₂) (F * G) := by
@@ -494,13 +494,13 @@ theorem tgood_gen {ι : Type} [DecidableEq ι] {n : ℕ} (τ : ι) (a b : Fin n)
     rw [h0, add_zero, Polynomial.coeff_C_zero, coeff_X] at h
     by_cases hm : Finsupp.single v 1 = m
     · subst hm; simp [Finsupp.weight_single]
-    · rw [if_neg hm] at h; exact absurd rfl h
-  · rw [Polynomial.coeff_C, if_neg hj, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, zero_add] at h
+    · rw [ite_eq_right hm] at h; exact absurd rfl h
+  · rw [Polynomial.coeff_C, ite_eq_right hj, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, zero_add] at h
     by_cases hc : v.1 = τ ∧ v.2.1 = b
-    · rw [if_pos hc, Polynomial.X_mul_C, Polynomial.coeff_C_mul_X] at h
+    · rw [ite_eq_left hc, Polynomial.X_mul_C, Polynomial.coeff_C_mul_X] at h
       by_cases hj1 : j = 1
       · subst hj1
-        rw [if_pos rfl, coeff_X] at h
+        rw [ite_eq_left rfl, coeff_X] at h
         by_cases hm : Finsupp.single (τ, a, v.2.2) 1 = m
         · subst hm
           rw [Finsupp.weight_single, smul_eq_mul, one_mul, one_mul]
@@ -508,9 +508,9 @@ theorem tgood_gen {ι : Type} [DecidableEq ι] {n : ℕ} (τ : ι) (a b : Fin n)
           have hab' : (a : ℕ) < b := hab
           dsimp only
           omega
-        · rw [if_neg hm] at h; exact absurd rfl h
-      · rw [if_neg hj1, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h; exact absurd rfl h
-    · rw [if_neg hc, Polynomial.coeff_zero, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h; exact absurd rfl h
+        · rw [ite_eq_right hm] at h; exact absurd rfl h
+      · rw [ite_eq_right hj1, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h; exact absurd rfl h
+    · rw [ite_eq_right hc, Polynomial.coeff_zero, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h; exact absurd rfl h
 
 theorem bigDiv_support {ι : Type} [DecidableEq ι] {n : ℕ} (τ : ι) (a b : Fin n) (hab : a < b) (k : ℕ)
     (P : MvPolynomial (ι × Fin n × Fin n) ℂ) (m' : ι × Fin n × Fin n →₀ ℕ)
@@ -632,15 +632,12 @@ theorem sl_tenV (τ₀ : ι) (x : ι × Fin n × Fin n → ℂ) (f : ι → MvPo
 theorem sl_mem (lam : ι → DomWeight n) (τ₀ : ι) (x : ι × Fin n × Fin n → ℂ)
     {Q : MvPolynomial (ι × Fin n × Fin n) ℂ} (hQ : Q ∈ CSpanV lam) :
     sl τ₀ x Q ∈ delSq ℂ n (lam τ₀) := by
-  simp only [CSpanV, delSq] at hQ ⊢
-  induction hQ using Submodule.span_induction with
-  | mem P hP =>
-    obtain ⟨f, hf, rfl⟩ := hP
-    rw [sl_tenV, MvPolynomial.C_mul']
-    exact Submodule.smul_mem _ _ (hf τ₀)
-  | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add P R _ _ hP hR => rw [map_add (f := _)]; exact Submodule.add_mem _ hP hR
-  | smul c P _ hP => rw [map_smul]; exact Submodule.smul_mem _ c hP
+  simp only [CSpanV] at hQ
+  refine (Submodule.span_le (p := (delSq ℂ n (lam τ₀)).comap (sl τ₀ x).toLinearMap)).2 ?_ hQ
+  rintro _ ⟨f, hf, rfl⟩
+  rw [SetLike.mem_coe, Submodule.mem_comap, AlgHom.toLinearMap_apply,
+    sl_tenV, MvPolynomial.C_mul']
+  exact Submodule.smul_mem _ _ (hf τ₀)
 
 theorem rowGen_sl (τ₀ : ι) (x : ι × Fin n × Fin n → ℂ) (a b : Fin n) :
     (rowGen ℂ a b).comp (sl τ₀ x) = (Polynomial.mapAlgHom (sl τ₀ x)).comp (bigGen τ₀ a b) := by
@@ -715,7 +712,7 @@ theorem highest_weight_vector_unique : Uniq := by
   apply MvPolynomial.funext
   intro x
   rw [uniq_iter lam Q hQ hk Finset.univ x, MvPolynomial.smul_eval]
-  simp only [tenHW, eval_tenV, Finset.mem_univ, if_true]
+  simp only [tenHW, eval_tenV, Finset.mem_univ, ite_true]
   ring
 
 end UniqPf
@@ -799,22 +796,13 @@ theorem generation_holds : Gen := by
       have hspan : f τ₀ ∈ Submodule.span ℂ
           (Set.range fun wd : List (Fin n × Fin n × ℕ) => applyWord ℂ wd (hw ℂ le_rfl (lam τ₀).natW)) :=
         h1 τ₀ (Finset.mem_insert_self _ _)
-      have hmem : tenV (Function.update f τ₀ (f τ₀)) ∈ M := by
-        refine Submodule.span_induction (p := fun p _ => tenV (Function.update f τ₀ p) ∈ M)
-          ?_ ?_ ?_ ?_ hspan
-        · rintro _ ⟨wd, rfl⟩
-          exact hword wd
-        · rw [tenV_update, map_zero, zero_mul]
-          exact M.zero_mem
-        · intro p q _ _ hp hq
-          rw [tenV_update] at hp hq ⊢
-          rw [map_add (f := _), add_mul]
-          exact M.add_mem hp hq
-        · intro c p _ hp
-          rw [tenV_update] at hp ⊢
-          rw [map_smul, smul_mul_assoc]
-          exact M.smul_mem c hp
-      rwa [Function.update_eq_self] at hmem
+      let L := (LinearMap.mulRight ℂ
+        (∏ σ ∈ Finset.univ.erase τ₀, rename (Prod.mk σ) (f σ))).comp
+        (rename (R := ℂ) (Prod.mk τ₀)).toLinearMap
+      have hL : ∀ p, L p = tenV (Function.update f τ₀ p) := fun p => (tenV_update f τ₀ p).symm
+      have hm : L (f τ₀) ∈ M := (Submodule.span_le (p := M.comap L)).2
+        (by rintro _ ⟨wd, rfl⟩; show L _ ∈ M; rw [hL]; exact hword wd) hspan
+      rwa [hL, Function.update_eq_self] at hm
   exact key Finset.univ f (fun τ _ => hf τ) (fun τ h => absurd (Finset.mem_univ τ) h)
 
 end GenPf
@@ -891,7 +879,7 @@ lemma fnOfV_injective (G : ι → Matrix (Fin n) (Fin n) ℂ) (s : ι → ℤ)
       rcases mul_eq_zero.mp hy with h0 | h0
       · exact absurd h0 (Finset.prod_ne_zero_iff.mpr fun τ _ => zpow_ne_zero _ (hx τ))
       · exact mul_eq_zero_of_right _ h0
-    · push_neg at hx
+    · push Not at hx
       obtain ⟨τ, hτ⟩ := hx
       rw [Finset.prod_eq_zero (Finset.mem_univ τ) hτ, zero_mul]
   simpa [detBlocks_ne_zero] using hz

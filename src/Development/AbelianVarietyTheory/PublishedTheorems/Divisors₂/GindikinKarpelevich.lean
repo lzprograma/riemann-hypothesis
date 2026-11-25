@@ -109,7 +109,7 @@ theorem permRep_apply (w : Equiv.Perm (Fin n)) (i j : Fin n) :
   simp [Matrix.permMatrixHom, Equiv.Perm.permMatrix, PEquiv.toMatrix_apply, Equiv.Perm.inv_def, Equiv.symm_apply_eq]
 
 theorem isWeylRep_permRep (w : Equiv.Perm (Fin n)) : IsWeylRep w (permRep R w) := fun _ _ h => by
-  rw [permRep_apply, if_neg h]
+  rw [permRep_apply, ite_eq_right h]
 
 end Ring
 

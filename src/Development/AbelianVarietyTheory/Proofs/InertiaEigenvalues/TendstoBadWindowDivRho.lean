@@ -15,76 +15,9 @@ public import Mathlib.RingTheory.Ideal.Quotient.Index
 public import Mathlib.Data.Int.Interval
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardLatticesIdempotentPositionBounded
 public import Mathlib.Analysis.SpecificLimits.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUnitBasePointAdjoinTwistedSigma
-import Mathlib.Algebra.DualNumber
-import Mathlib.AlgebraicGeometry.Geometrically.Connected
-import Mathlib.AlgebraicGeometry.Geometrically.Integral
-import Mathlib.AlgebraicGeometry.Group.Affine
-import Mathlib.AlgebraicGeometry.Morphisms.Etale
-import Mathlib.AlgebraicGeometry.Morphisms.FlatRank
-import Mathlib.AlgebraicGeometry.ProjectiveSpectrum.Basic
-import Mathlib.AlgebraicGeometry.ValuativeCriterion
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.CategoryTheory.MorphismProperty.Descent
-import Mathlib.Combinatorics.Quiver.ReflQuiver
-import Mathlib.GroupTheory.FiniteAbelian.Basic
-import Mathlib.GroupTheory.IndexNSmul
-import Mathlib.LinearAlgebra.BilinearForm.TensorProduct
-import Mathlib.LinearAlgebra.Eigenspace.Charpoly
-import Mathlib.NumberTheory.NumberField.CMField
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.HopfAlgebra.MonoidAlgebra
-import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.Polynomial.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -317,7 +250,6 @@ theorem main {R F : Type} [CommRing R] [Field F] [Algebra R F] {n : Type} [Finty
     rw [Matrix.trace_eq_sum_roots_charpoly]
     exact IsIntegral.multiset_sum key
   have he : Matrix.trace (φ M) = f (Matrix.trace M) := by
-    set_option synthInstance.maxHeartbeats 100000 in
       simp [φ, Matrix.trace, map_sum, AlgHom.mapMatrix_apply]
   rw [he] at ht
   exact (isIntegral_algHom_iff f f.toRingHom.injective).mp ht
@@ -569,15 +501,15 @@ theorem card_badWinBox_le {ι : Type} (S I : Finset ι) (L k : ℕ) (i₀ i : ι
   unfold badWinBox
   by_cases hS : i ∈ S
   · have : i ∈ insert i₀ S := Finset.mem_insert_of_mem hS
-    rw [if_pos hS, if_pos this]
+    rw [ite_eq_left hS, ite_eq_left this]
     split_ifs <;> simp [Int.card_Icc] <;> omega
-  · rw [if_neg hS]
+  · rw [ite_eq_right hS]
     by_cases h0 : i = i₀
     · subst h0
-      rw [if_pos rfl, if_pos (Finset.mem_insert_self _ _)]
+      rw [ite_eq_left rfl, ite_eq_left (Finset.mem_insert_self _ _)]
       refine (Finset.card_union_le _ _).trans ?_
       simp [Int.card_Ico, Int.card_Ioc]; omega
-    · rw [if_neg h0, if_neg (by simp [h0, hS])]
+    · rw [ite_eq_right h0, ite_eq_right (by simp [h0, hS])]
       simp [Int.card_Icc]
       nlinarith
 
@@ -630,27 +562,27 @@ theorem tendsto_badWindow_div_rho : ∀ (K : UQ) (B : InvAlg K) (ι : Type) [Fin
       refine ⟨p, ?_, hp⟩
       simp only [W, Finset.mem_biUnion, Finset.mem_filter, Finset.mem_univ, true_and, Fintype.mem_piFinset]
       unfold Mid at hmid
-      push_neg at hmid
+      push Not at hmid
       obtain ⟨i₀, hi₀, h₀⟩ := hmid
       refine ⟨i₀, hi₀, fun i => ?_⟩
       obtain ⟨h1, h2, h3, h4⟩ := hw i
       unfold badWinBox
       by_cases hS : i ∈ S
-      · rw [if_pos hS]
+      · rw [ite_eq_left hS]
         by_cases hiI : i ∈ I
-        · rw [if_pos hiI]; simp only [Finset.mem_Icc]; exact ⟨h3 hiI, h2⟩
-        · rw [if_neg hiI]
+        · rw [ite_eq_left hiI]; simp only [Finset.mem_Icc]; exact ⟨h3 hiI, h2⟩
+        · rw [ite_eq_right hiI]
           have := (hI i hS).resolve_left hiI
           simp only [Finset.mem_Icc]; exact ⟨h1, h4 this⟩
-      · rw [if_neg hS]
+      · rw [ite_eq_right hS]
         by_cases h0 : i = i₀
         · subst h0
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl]
           simp only [Finset.mem_union, Finset.mem_Ico, Finset.mem_Ioc]
           by_cases hl : (L : ℤ) ≤ p i
           · exact Or.inr ⟨h₀ hl, h2⟩
           · exact Or.inl ⟨h1, lt_of_not_ge hl⟩
-        · rw [if_neg h0]; simp only [Finset.mem_Icc]; exact ⟨h1, h2⟩
+        · rw [ite_eq_right h0]; simp only [Finset.mem_Icc]; exact ⟨h1, h2⟩
     let T : Finset (Submodule K.O B.A) := W.biUnion fun p => (hC p).1.toFinset
     have hTcard : T.card ≤ W.card * C := by
       refine Finset.card_biUnion_le.trans ?_

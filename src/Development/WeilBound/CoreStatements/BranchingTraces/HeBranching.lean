@@ -2,41 +2,6 @@ module
 
 public import Formalism.PeriodIntegrals.DSInfCharCap
 public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedType
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -86,24 +51,6 @@ variable {H H' : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [NormedA
 def Intertw (ε' : Fin n → Bool) (e : Fin n ⊕ Unit ≃ Fin (n + 1)) (π : Matrix (Fin (n + 1)) (Fin (n + 1)) ℂ → (H →L[ℂ] H))
     (σ : Matrix (Fin n) (Fin n) ℂ → (H' →L[ℂ] H')) (P : H →L[ℂ] H') : Prop :=
   ‖P‖ ≤ 1 ∧ ∀ h : UJ ε', ∀ x, P (π (emb e (um h)) x) = σ (um h) (P x)
-
-def Out (ε : Fin (n + 1) → Bool) (ε' : Fin n → Bool) (e : Fin n ⊕ Unit ≃ Fin (n + 1)) (B : ℝ)
-    (π : Matrix (Fin (n + 1)) (Fin (n + 1)) ℂ → (H →L[ℂ] H)) (σ : Matrix (Fin n) (Fin n) ℂ → (H' →L[ℂ] H'))
-    (ν : Measure (UJ ε')) : Prop :=
-  ∃ (v : H) (P : H →L[ℂ] H') (w : H') (κ Y : ℝ), ‖v‖ = 1 ∧ Intertw ε' e π σ P ∧ P v ≠ 0 ∧ w = (‖P v‖⁻¹ : ℂ) • P v ∧
-    0 < κ ∧ 1 ≤ Y ∧ Real.log Y ≤ 100 * ((n : ℝ) + 1) ^ 2 * Real.log (8 * (n + 1) * B) ∧
-    Real.exp (-(1000 * ((n : ℝ) + 1) ^ 4 * Real.log (8 * (n + 1) * B))) ≤ ‖P v‖ ∧
-    (∀ g : UJ ε, ‖⟪v, π (um g) v⟫_ℂ‖ ≤
-      Real.exp (1000 * ((n : ℝ) + 1) ^ 4 * Real.log (8 * (n + 1) * B)) * hs (um g) ^ (-(3 * ((n : ℝ) + 1) ^ 2))) ∧
-    Integrable (fun g : UJ ε => ⟪v, π (um g) v⟫_ℂ) (muG ε) ∧
-    (∀ a b : H', Integrable (fun h : UJ ε' => conj ⟪v, π (emb e (um h)) v⟫_ℂ * ⟪b, σ (um h) a⟫_ℂ) ν ∧
-      ∫ h : UJ ε', conj ⟪v, π (emb e (um h)) v⟫_ℂ * ⟪b, σ (um h) a⟫_ℂ ∂ν = κ * (⟪b, w⟫_ℂ * ⟪w, a⟫_ℂ)) ∧
-    (∀ g : UJ ε, ∫⁻ h : UJ ε', ‖⟪v, π (um g * emb e (um h)) v⟫_ℂ‖ₑ ∂ν ≤
-      ENNReal.ofReal (κ * Real.exp (1000 * ((n : ℝ) + 1) ^ 4 * Real.log (8 * (n + 1) * B)) *
-        colSq (um g) (zi e) ^ (-((2 * ((n : ℝ) + 1) + 5) / 2)))) ∧
-    Formalism.L2.Theta.SmoothVec {X | inG ε' X} σ w ∧
-    ∀ (S : ℕ) (W : List (Matrix (Fin n) (Fin n) ℂ)), W.length ≤ S → (∀ X ∈ W, inG ε' X ∧ hs X ≤ 1) →
-      ‖W.foldr (Formalism.L2.Theta.dRep σ) w‖ ≤ (8 * Real.sqrt (n + 1) * (B + S) * Y) ^ W.length / ‖P v‖
 
 end
 

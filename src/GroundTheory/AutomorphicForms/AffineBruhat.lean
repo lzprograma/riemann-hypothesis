@@ -192,7 +192,7 @@ theorem permGL_mul_diagPow_mul_inv (σ : Equiv.Perm (Fin n)) (a : Fin n → Mult
   by_cases hij : i = j
   · subst hij
     simp
-  · rw [if_neg hij, if_neg]
+  · rw [ite_eq_right hij, ite_eq_right]
     intro h
     exact hij (σ⁻¹.injective h)
 
@@ -275,7 +275,7 @@ theorem rowsReducedOn_step (h : GL (Fin n) F) (R : Finset (Fin n)) (hR : R ≠ F
   let u : Fin n → F := fun i => if i = r then 0 else -(M i c₂ / M r c₂)
   have hu_val : ∀ i, i ≠ r → valuation F (u i) = valuation F (M i c₂) / valuation F (M r c₂) := by
     intro i hi
-    simp only [u, if_neg hi, Valuation.map_neg, map_div₀]
+    simp only [u, ite_eq_right hi, Valuation.map_neg, map_div₀]
   have hu_le : ∀ i, valuation F (u i) ≤ 1 := by
     intro i
     by_cases hi : i = r
@@ -310,8 +310,8 @@ theorem rowsReducedOn_step (h : GL (Fin n) F) (R : Finset (Fin n)) (hR : R ≠ F
       · subst hij
         rw [one_apply_eq]
         by_cases hir : i = r
-        · rw [if_pos hir, hir, hur, add_zero, map_one]
-        · rw [if_neg hir, add_zero, map_one]
+        · rw [ite_eq_left hir, hir, hur, add_zero, map_one]
+        · rw [ite_eq_right hir, add_zero, map_one]
       · rw [one_apply_ne hij, zero_add]
         split_ifs
         · exact hu_le i
@@ -326,13 +326,13 @@ theorem rowsReducedOn_step (h : GL (Fin n) F) (R : Finset (Fin n)) (hR : R ≠ F
     (fun i => by
       rw [hX, one_apply_eq]
       by_cases hir : i = r
-      · rw [if_pos hir, hir, hur, add_zero, map_one]
-      · rw [if_neg hir, add_zero, map_one])
+      · rw [ite_eq_left hir, hir, hur, add_zero, map_one]
+      · rw [ite_eq_right hir, add_zero, map_one])
 
   let t : Fin n → F := fun j => if j = c₂ then 0 else -(M r j / M r c₂)
   have ht_val : ∀ j, j ≠ c₂ → valuation F (t j) = valuation F (M r j) / valuation F (M r c₂) := by
     intro j hj
-    simp only [t, if_neg hj, Valuation.map_neg, map_div₀]
+    simp only [t, ite_eq_right hj, Valuation.map_neg, map_div₀]
   have htc : t c₂ = 0 := by simp [t]
   have ht_le : ∀ j, valuation F (t j) ≤ 1 := by
     intro j
@@ -356,8 +356,8 @@ theorem rowsReducedOn_step (h : GL (Fin n) F) (R : Finset (Fin n)) (hR : R ≠ F
       · subst hij
         rw [one_apply_eq]
         by_cases hic : i = c₂
-        · rw [if_pos hic, hic, htc, add_zero, map_one]
-        · rw [if_neg hic, add_zero, map_one]
+        · rw [ite_eq_left hic, hic, htc, add_zero, map_one]
+        · rw [ite_eq_right hic, add_zero, map_one]
       · rw [one_apply_ne hij, zero_add]
         split_ifs
         · exact ht_le j
@@ -372,8 +372,8 @@ theorem rowsReducedOn_step (h : GL (Fin n) F) (R : Finset (Fin n)) (hR : R ≠ F
     (fun i => by
       rw [hY, one_apply_eq]
       by_cases hic : i = c₂
-      · rw [if_pos hic, hic, htc, add_zero, map_one]
-      · rw [if_neg hic, add_zero, map_one])
+      · rw [ite_eq_left hic, hic, htc, add_zero, map_one]
+      · rw [ite_eq_right hic, add_zero, map_one])
 
   let M₁ : Matrix (Fin n) (Fin n) F := X * M
   have hM₁ : ∀ a b, M₁ a b = M a b + u a * M r b := fun a b =>
@@ -381,7 +381,7 @@ theorem rowsReducedOn_step (h : GL (Fin n) F) (R : Finset (Fin n)) (hR : R ≠ F
   have hM₁c : ∀ a, a ≠ r → M₁ a c₂ = 0 := by
     intro a ha
     rw [hM₁]
-    simp only [u, if_neg ha]
+    simp only [u, ite_eq_right ha]
     rw [neg_mul, div_mul_cancel₀ _ hP, add_neg_cancel]
   have hN : ∀ a b, ((x * h * y : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) a b =
       M₁ a b + M₁ a c₂ * t b := by
@@ -395,7 +395,7 @@ theorem rowsReducedOn_step (h : GL (Fin n) F) (R : Finset (Fin n)) (hR : R ≠ F
     · rw [hN, htc, mul_zero, add_zero, hM₁, hur, zero_mul, add_zero]
       exact hP
     · rw [hN, hM₁, hM₁, hur, zero_mul, zero_mul, add_zero, add_zero]
-      simp only [t, if_neg hb]
+      simp only [t, ite_eq_right hb]
       rw [mul_neg, mul_div_cancel₀ _ hP, add_neg_cancel]
     · rw [hN, hM₁c a ha, zero_mul, add_zero]
   · have hir : i ≠ r := fun e => hr (e ▸ hiR)
@@ -409,7 +409,7 @@ theorem rowsReducedOn_step (h : GL (Fin n) F) (R : Finset (Fin n)) (hR : R ≠ F
     by_cases har : a = r
     · subst har
       have htp : t (p i) = 0 := by
-        simp only [t, if_neg (hpc i hiR), hrp i hiR, zero_div, neg_zero]
+        simp only [t, ite_eq_right (hpc i hiR), hrp i hiR, zero_div, neg_zero]
       rw [htp, mul_zero, add_zero, hM₁, hrp i hiR, mul_zero, add_zero]
     · have h3' : M a (p i) = 0 := h3 a ha
       rw [hM₁c a har, zero_mul, add_zero, hM₁, h3', hrp i hiR, mul_zero, add_zero]
@@ -483,7 +483,7 @@ theorem exists_eq_mul_affineWeylGL_of_rowsReducedOn (g : GL (Fin n) F)
       · rw [map_zero]
         exact zero_le)
     (fun i j hji => by
-      rw [diagonal_apply, if_neg hji.ne', map_zero]
+      rw [diagonal_apply, ite_eq_right hji.ne', map_zero]
       exact zero_lt_one)
     (fun i => by rw [diagonal_apply_eq]; exact hm i)
   refine ⟨w, t, ht, Units.ext ?_⟩
@@ -492,10 +492,10 @@ theorem exists_eq_mul_affineWeylGL_of_rowsReducedOn (g : GL (Fin n) F)
   have hϖm : ϖ ^ m i ≠ 0 := zpow_ne_zero _ (uniformizer_ne_zero F)
   by_cases hj : j = p i
   · subst hj
-    rw [if_pos (by simp [w, ← hτ])]
+    rw [ite_eq_left (by simp [w, ← hτ])]
     simp only [d, w, toAdd_ofAdd]
     rw [div_mul_cancel₀ _ hϖm]
-  · rw [(hp' i).2.1 j hj, if_neg, mul_zero]
+  · rw [(hp' i).2.1 j hj, ite_eq_right, mul_zero]
     intro e
     apply hj
     simp only [w] at e
@@ -513,10 +513,6 @@ theorem exists_mem_doubleCoset_affineWeylGL (g : GL (Fin n) F) :
   group
 
 end Existence
-
-section Decomposition
-
-end Decomposition
 
 section Integral
 
@@ -546,12 +542,12 @@ theorem affineWeylGL_mem_integralGL_iff (w : ExtendedAffineWeyl n) :
     have hle : ∀ i, valuation F ϖ ^ (w.left i).toAdd ≤ 1 := by
       intro i
       have := h1 i (w.right⁻¹ i)
-      rw [affineWeylGL_apply, if_pos (by simp)] at this
+      rw [affineWeylGL_apply, ite_eq_left (by simp)] at this
       rwa [Valuation.mem_integer_iff, map_zpow₀] at this
     have hle' : ∀ i, valuation F ϖ ^ (-(w.left i).toAdd) ≤ 1 := by
       intro i
       have := h2 (w.right⁻¹ i) i
-      rw [← map_inv, affineWeylGL_apply, if_pos (by simp)] at this
+      rw [← map_inv, affineWeylGL_apply, ite_eq_left (by simp)] at this
       rw [Valuation.mem_integer_iff, map_zpow₀] at this
       simpa [permAct_symm_apply] using this
     funext i

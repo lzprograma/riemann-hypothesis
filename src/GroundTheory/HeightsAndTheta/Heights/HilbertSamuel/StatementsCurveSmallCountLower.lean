@@ -22,12 +22,6 @@ def CurveSmallCountLower.Statement : Prop :=
       (n : ℝ) * II K ι (mCoordIdeal y) 1 (fun _ => A) - C ≤
         smallSectionCount (IsSmallH (mCoordIdeal y) y A) (chartLat y A.a) n
 
-namespace CurveSmallCountLower
-
-open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.HeightsSet
-
-end CurveSmallCountLower
-
 end
 
 end GroundTheory.Heights₂.Heights.HilbertSamuel

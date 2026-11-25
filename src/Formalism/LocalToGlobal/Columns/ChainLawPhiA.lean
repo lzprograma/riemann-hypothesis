@@ -29,7 +29,7 @@ theorem clPf_beta_inj (hr : k₀ + rS < r) {p u : ℕ} (hp : p < r) (h : betaExp
 
 theorem clPf_beta_of_ge {p : ℕ} (hp : r ≤ p) : betaExponentOfRanks k₀ rS r t p = r + (p - r) / t := by
   unfold betaExponentOfRanks
-  rw [if_neg (show ¬ p < r by omega)]
+  rw [ite_eq_right (show ¬ p < r by omega)]
 
 theorem clPf_beta_A (hr : k₀ + rS < r) (ht : 0 < t) {A J : ℕ} (hA : A = r + J * t) {p p' : ℕ} (hp' : p' < A)
     (h : betaExponentOfRanks k₀ rS r t p ≤ betaExponentOfRanks k₀ rS r t p') : p < A := by
@@ -94,8 +94,7 @@ def clPfMul (N : ℕ) (X Y : ℕ → ℕ → k) : ℕ → ℕ → k := fun p p' 
 
 theorem clPf_exists_of_sum {N : ℕ} {X Y : ℕ → ℕ → k} {p p' : ℕ} (h : clPfMul N X Y p p' ≠ 0) :
     ∃ u, u < N ∧ X p u ≠ 0 ∧ Y u p' ≠ 0 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   apply h
   unfold clPfMul
   apply Finset.sum_eq_zero
@@ -288,7 +287,7 @@ theorem clPf_sum_blk {M : Type} [AddCommMonoid M] (b t : ℕ) (f : ℕ → M) :
 private theorem ob2Beta_block_eq (ht : 0 < t) {i s : ℕ} (hs : s < t) :
     betaExponentOfRanks k₀ rS r t (r + i * t + s) = r + i := by
   unfold betaExponentOfRanks
-  rw [if_neg (show ¬ (r + i * t + s < r) by omega),
+  rw [ite_eq_right (show ¬ (r + i * t + s < r) by omega),
     show r + i * t + s - r = s + t * i by rw [Nat.mul_comm]; omega,
     Nat.add_mul_div_left s i ht, Nat.div_eq_of_lt hs, Nat.zero_add]
 

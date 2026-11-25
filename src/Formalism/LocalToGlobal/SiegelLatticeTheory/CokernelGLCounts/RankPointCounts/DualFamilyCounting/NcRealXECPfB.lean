@@ -78,17 +78,17 @@ theorem mof_sub {g g' : Mx k r} (hg : g ∈ Nset k r) (hg' : g' ∈ Nset k r) (a
     · have hca : c.val < a.val := h
       have e1 := h1 (esI k r c) (esI k r a) (by rw [dg_esI, dg_esI]; omega)
       have e2 := h1' (esI k r c) (esI k r a) (by rw [dg_esI, dg_esI]; omega)
-      rw [Matrix.sub_apply, Matrix.one_apply, if_neg (fun e => (ne_of_lt h) (esI_inj.1 e)), sub_zero] at e1 e2
-      rw [e1, e2, if_neg (ne_of_lt h)]; simp
+      rw [Matrix.sub_apply, Matrix.one_apply, ite_eq_right (fun e => (ne_of_lt h) (esI_inj.1 e)), sub_zero] at e1 e2
+      rw [e1, e2, ite_eq_right (ne_of_lt h)]; simp
     · have e1 := h1 (esI k r c) (esI k r c) (by rw [dg_esI]; omega)
       have e2 := h1' (esI k r c) (esI k r c) (by rw [dg_esI]; omega)
-      rw [Matrix.sub_apply, Matrix.one_apply, if_pos rfl, sub_eq_zero] at e1 e2
-      rw [e1, e2, if_pos rfl]; simp
+      rw [Matrix.sub_apply, Matrix.one_apply, ite_eq_left rfl, sub_eq_zero] at e1 e2
+      rw [e1, e2, ite_eq_left rfl]; simp
     · have hac : a.val < c.val := h
       have e1 := hG (esI k r c) (esI k r a) (by rw [dg_esI, dg_esI]; omega)
       have e2 := hG (eI k r c) (esI k r b) (by rw [dg_esI, dg_eI]; omega)
       rw [Matrix.sub_apply, sub_eq_zero] at e1 e2
-      rw [e1, e2, if_neg (ne_of_gt h), sub_self]
+      rw [e1, e2, ite_eq_right (ne_of_gt h), sub_self]
   simp only [mof, Matrix.mul_apply, conjTranspose_apply, bF, bC]
   rw [← Finset.sum_sub_distrib, Finset.sum_congr rfl (fun c _ => key c)]
   simp

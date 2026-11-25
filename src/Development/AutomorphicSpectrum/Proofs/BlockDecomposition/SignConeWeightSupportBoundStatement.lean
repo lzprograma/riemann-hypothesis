@@ -1,47 +1,6 @@
 module
 
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.OnlyIsotropic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.WedgeSub
 
@@ -67,31 +26,31 @@ theorem sum_toggle_eq_zero {α : Type*} [DecidableEq α] (T : Finset (Finset α)
     by_cases h : t c ∈ c
     · have hpos : 0 < c.card := Finset.card_pos.mpr ⟨_, h⟩
       obtain ⟨n, hn⟩ : ∃ n, c.card = n + 1 := ⟨c.card - 1, by omega⟩
-      simp only [h, if_true]
+      simp only [h, ite_true]
       rw [Finset.card_erase_of_mem h, hn]
       simp [pow_succ]
-    · simp only [h, if_false]
+    · simp only [h, ite_false]
       rw [Finset.card_insert_of_notMem h]
       simp [pow_succ]
   · intro c hc _ heq
     by_cases h : t c ∈ c
-    · simp only [h, if_true] at heq
+    · simp only [h, ite_true] at heq
       have h' : t c ∈ c.erase (t c) := by rw [heq]; exact h
       exact Finset.notMem_erase (t c) c h'
-    · simp only [h, if_false] at heq
+    · simp only [h, ite_false] at heq
       have h' : t c ∈ insert (t c) c := Finset.mem_insert_self _ _
       rw [heq] at h'
       exact h h'
   · intro c hc
     by_cases h : t c ∈ c
-    · simp only [h, if_true]; exact h2 c hc
-    · simp only [h, if_false]; exact h1 c hc
+    · simp only [h, ite_true]; exact h2 c hc
+    · simp only [h, ite_false]; exact h1 c hc
   · intro c hc
     by_cases h : t c ∈ c
-    · simp only [h, if_true]
+    · simp only [h, ite_true]
       rw [h4 c hc]
       simp [Finset.insert_erase h]
-    · simp only [h, if_false]
+    · simp only [h, ite_false]
       rw [h3 c hc]
       simp [Finset.erase_insert h]
 
@@ -181,8 +140,8 @@ theorem tg_congr (ε : SignType) (i : Fin m) {c c' : Finset (Fin m → SignType)
       (c.filter fun e => e i = 0) = c'.filter fun e => e i = 0) : tg ε i c = tg ε i c' := by
   unfold tg
   by_cases h : (c.filter fun e => e i = -ε).Nonempty
-  · rw [if_pos h, if_pos (h1 ▸ h), h1]
-  · rw [if_neg h, if_neg (h1 ▸ h), h2 h]
+  · rw [ite_eq_left h, ite_eq_left (h1 ▸ h), h1]
+  · rw [ite_eq_right h, ite_eq_right (h1 ▸ h), h2 h]
 
 theorem neg_ne_self {ε : SignType} (h : ε ≠ 0) : ε ≠ -ε := by
   revert h; cases ε <;> decide
@@ -202,7 +161,7 @@ theorem tg_spec_neg {ε : SignType} (hε : ε ≠ 0) {i : Fin m} {c : Finset (Fi
   obtain ⟨hec, hei⟩ := Finset.mem_filter.mp (lo_mem hN)
   have hmin := fun x (hx : x ∈ c.filter fun e => e i = -ε) => lo_sle hN hcN hx
   set e := lo (c.filter fun e => e i = -ε) with he
-  have ht : tg ε i c = Function.update e i 0 := by rw [tg, if_pos hN]
+  have ht : tg ε i c = Function.update e i 0 := by rw [tg, ite_eq_left hN]
   refine ⟨e, hec, hei, ht, fun x hx => ?_⟩
   rw [ht]
   have hte : SLe (Function.update e i 0) e := by
@@ -236,7 +195,7 @@ theorem tg_spec_pos {ε : SignType} (hε : ε ≠ 0) {i : Fin m} {c : Finset (Fi
   have hmem := hi_mem hZ
   have hmax := fun x (hx : x ∈ insert 0 (c.filter fun e => e i = 0)) => sle_hi hZ hcZ hx
   set e := hi (insert 0 (c.filter fun e => e i = 0)) with he
-  have ht : tg ε i c = Function.update e i ε := by rw [tg, if_neg hN]
+  have ht : tg ε i c = Function.update e i ε := by rw [tg, ite_eq_right hN]
   have hor : e = 0 ∨ (e ∈ c ∧ e i = 0) := by
     rcases Finset.mem_insert.mp hmem with h | h
     · exact Or.inl h
@@ -371,10 +330,10 @@ theorem gam_eq_zero (y : (Fin m → SignType) → ℝ) (M : ℝ) (a : Fin m → 
   · intro c hc
     obtain ⟨-, -, hneg, hzero, -⟩ := key c hc
     refine (tg_congr ε i ?_ ?_).symm.symm
-    · rw [Finset.filter_insert, if_neg hneg]
+    · rw [Finset.filter_insert, ite_eq_right hneg]
     · intro hN
-      rw [Finset.filter_insert, if_neg hneg] at hN
-      rw [Finset.filter_insert, if_neg (hzero hN)]
+      rw [Finset.filter_insert, ite_eq_right hneg] at hN
+      rw [Finset.filter_insert, ite_eq_right (hzero hN)]
   · intro c hc
     obtain ⟨-, -, hneg, hzero, -⟩ := key c hc
     have hf : ∀ (p : (Fin m → SignType) → Prop) [DecidablePred p], ¬ p (tg ε i c) →

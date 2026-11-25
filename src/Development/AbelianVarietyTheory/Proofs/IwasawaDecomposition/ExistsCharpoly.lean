@@ -209,16 +209,16 @@ theorem exists_family {G S : Type} [Group G] [Finite G] (c : G → S) (hc : Func
   refine ⟨q, fun s => ?_, fun s a => ?_, fun s t hst => ?_, fun s h => ?_, ?_⟩
   · conv_lhs => enter [1]; simp only [q]
     rw [Finset.sum_mul]
-    exact Finset.sum_congr rfl fun i hi => by rw [hpq, if_pos (by simpa using hi)]
+    exact Finset.sum_congr rfl fun i hi => by rw [hpq, ite_eq_left (by simpa using hi)]
   · simp only [q, Finset.sum_mul, Finset.mul_sum, h2]
   · conv_lhs => enter [1]; simp only [q]
     rw [Finset.sum_mul]
     refine Finset.sum_eq_zero fun i hi => ?_
     have : π i = s := by simpa using hi
-    rw [hpq, if_neg (this ▸ hst)]
+    rw [hpq, ite_eq_right (this ▸ hst)]
   · obtain ⟨i, rfl⟩ := hπ s
     have := hpq i (π i)
-    rw [h, mul_zero, if_pos rfl] at this
+    rw [h, mul_zero, ite_eq_left rfl] at this
     exact h4 i this.symm
   · rw [← h5]; exact Finset.sum_fiberwise _ _ _
 
@@ -265,7 +265,7 @@ theorem exists_isSer : ∀ (r g N : ℕ), g.Prime → 0 < N → Nat.card (GL (Fi
     fun f x => coeff_mem hN hG _ (hi f) (hce f) x⟩
   · by_cases h : P f
     · by_cases h' : P f'
-      · simp only [e, dif_pos h, dif_pos h']
+      · simp only [e, dite_eq_left h, dite_eq_left h']
         exact h3 _ _ (fun hh => hf (congrArg Subtype.val hh))
       · simp [e, h']
     · simp [e, h]

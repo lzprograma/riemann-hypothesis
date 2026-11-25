@@ -6,52 +6,7 @@ public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Order.CompletePartialOrder
 public import Mathlib.Order.Filter.Germ.Basic
 public import Mathlib.RingTheory.LaurentSeries
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Analysis.Complex.TaylorSeries
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.Analysis.Analytic.IsolatedZeros
 public import Mathlib.Analysis.Calculus.Deriv.Polynomial
 import Mathlib.Topology.Sheaves.Presheaf
@@ -309,64 +264,6 @@ def evalZero : convSeries →ₐ[ℂ] ℂ where
 @[simp] theorem evalZero_apply (f : convSeries) :
     evalZero f = PowerSeries.constantCoeff (f : ℂ⟦X⟧) := rfl
 
-theorem eventually_sum_eval (P : Polynomial convSeries) (a : convSeries) :
-    ∀ᶠ v in 𝓝 (0 : ℂ), sum (P.eval a : convSeries) v =
-      ∑ i ∈ Finset.range (P.natDegree + 1), sum (P.coeff i : convSeries) v * sum a v ^ i := by
-  have h : germ (P.eval a) = ((fun v => ∑ i ∈ Finset.range (P.natDegree + 1),
-      sum (P.coeff i : convSeries) v * sum a v ^ i : ℂ → ℂ) : Germ (𝓝 (0 : ℂ)) ℂ) := by
-
-    rw [Polynomial.eval_eq_sum_range, map_sum]
-    simp only [map_mul, map_pow, germ_apply]
-    have := map_sum (Germ.coeRingHom (R := ℂ) (𝓝 (0 : ℂ)))
-      (fun i => sum (P.coeff i : convSeries) * sum a ^ i) (Finset.range (P.natDegree + 1))
-    simp only [map_mul, map_pow, Germ.coe_coeRingHom] at this
-    rw [← this]
-    apply Germ.coe_eq.2
-    filter_upwards [] with v
-    simp
-  exact Germ.coe_eq.1 h
-
-theorem exists_isRoot (P : Polynomial convSeries) (z₀ : ℂ)
-    (h₀ : (P.map (evalZero : convSeries →+* ℂ)).eval z₀ = 0)
-    (h₁ : (P.map (evalZero : convSeries →+* ℂ)).derivative.eval z₀ ≠ 0) :
-    ∃ a : convSeries, P.IsRoot a ∧ evalZero a = z₀ := by
-  set F : ℂ × ℂ → ℂ := fun p =>
-    ∑ i ∈ Finset.range (P.natDegree + 1), sum (P.coeff i : convSeries) p.1 * p.2 ^ i with hF
-  have hFa : AnalyticAt ℂ F (0, z₀) := by
-    refine Finset.analyticAt_fun_sum _ fun i _ => AnalyticAt.mul ?_ (analyticAt_snd.pow i)
-    exact AnalyticAt.comp (g := sum (P.coeff i : convSeries)) (f := Prod.fst)
-      (analyticAt_sum (P.coeff i).2) analyticAt_fst
-  have hF0 : ∀ z, F (0, z) = (P.map (evalZero : convSeries →+* ℂ)).eval z := by
-    intro z
-    rw [Polynomial.eval_map, Polynomial.eval₂_eq_sum_range]
-    simp [hF]
-  have hc : ContDiffAt ℂ ω F (0, z₀) := hFa.contDiffAt
-  have hinv : (fderiv ℂ F (0, z₀) ∘L .inr ℂ ℂ ℂ).IsInvertible := by
-    refine ⟨ContinuousLinearEquiv.unitsEquivAut ℂ (Units.mk0 _ h₁), ?_⟩
-    have h2 : HasFDerivAt (fun z : ℂ => F (0, z)) (fderiv ℂ F (0, z₀) ∘L .inr ℂ ℂ ℂ) z₀ :=
-      HasFDerivAt.comp (g := F) (f := fun z : ℂ => ((0 : ℂ), z)) z₀
-        hFa.differentiableAt.hasFDerivAt (hasFDerivAt_prodMk_right (0 : ℂ) z₀)
-    have h3 := ((P.map (evalZero : convSeries →+* ℂ)).hasDerivAt z₀).hasFDerivAt
-    simp only [hF0] at h2
-    rw [h2.unique h3]
-    ext
-    simp
-  have hω : (ω : WithTop ℕ∞) ≠ 0 := by simp
-  have hg : AnalyticAt ℂ (hc.implicitFunction hω hinv) 0 :=
-    (hc.contDiffAt_implicitFunction hω hinv).analyticAt
-  have hg0 : hc.implicitFunction hω hinv 0 = z₀ := hc.implicitFunction_apply_self hω hinv
-  have hge := hc.eventually_apply_implicitFunction hω hinv
-  obtain ⟨ha, hsum⟩ := taylor_spec hg
-  refine ⟨⟨_, ha⟩, germ_injective ?_, ?_⟩
-  · rw [map_zero, germ_apply, ← Germ.coe_zero, Germ.coe_eq]
-    filter_upwards [eventually_sum_eval P ⟨_, ha⟩, hsum, hge] with v h1 h2 h3
-    rw [h1]
-    simp only [h2]
-    rw [hF0, h₀] at h3
-    exact h3
-  · rw [evalZero_apply, ← sum_zero_right]
-    exact hsum.self_of_nhds.trans hg0
-
 def puncturedDisc (ε : ℝ) : Set ℂ := ball 0 ε \ {0}
 
 theorem mem_puncturedDisc {ε : ℝ} {v : ℂ} : v ∈ puncturedDisc ε ↔ v ≠ 0 ∧ ‖v‖ < ε := by
@@ -582,17 +479,5 @@ theorem eventually_lsum_ne_zero {f : ℂ⸨X⸩} (hf : f ∈ convLaurent) (h0 : 
     ∀ᶠ v in 𝓝[≠] (0 : ℂ), lsum f v ≠ 0 := by
   obtain ⟨ε, hε, hf⟩ := hf
   exact not_frequently.1 fun h => h0 (eq_zero_of_frequently_lsum_eq_zero hε hf h)
-
-section Expand
-
-variable (k : ℕ) (hk : k ≠ 0)
-
-end Expand
-
-section Scheme
-
-open CategoryTheory AlgebraicGeometry
-
-end Scheme
 
 end GlobalTheory.Conv

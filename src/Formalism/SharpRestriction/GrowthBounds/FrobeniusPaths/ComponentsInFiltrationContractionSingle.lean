@@ -2,49 +2,7 @@ module
 
 public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.DividedPowerZeroOfGlActionZero
 public import Formalism.SharpRestriction.GrowthBounds.RootWeights.DerivativeValuationBounds
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LatticeCountingFormula
 
@@ -560,7 +518,7 @@ theorem twist_matrix_apply (R : Type*) [CommRing R] (n : ℕ) (j : Fin n) (k : �
     · subst h; ring
     · ring
   simp only [h]
-  rw [Finset.sum_add_distrib, Finset.sum_ite_eq' , if_pos (Finset.mem_univ j), ← Matrix.mul_apply, flt_gL_mul_gLinv,
+  rw [Finset.sum_add_distrib, Finset.sum_ite_eq' , ite_eq_left (Finset.mem_univ j), ← Matrix.mul_apply, flt_gL_mul_gLinv,
     Matrix.one_apply]
 
 variable {N n : ℕ} (LL : Letters (Fin N)) (S : Set (Fin N)) (jj : Fin n)
@@ -593,7 +551,7 @@ theorem laurent_power_mul_neg (k : ℤ) : laurentPower N n k * laurentPower N n 
 theorem twist_substitution_X_vector {l : Fin N} (hl : l ∈ S) (hv : LL.vec l = true) (m : Fin n) :
     twistSub (R := ℤ) LL S jj (X (l, m)) =
       X (l, m) + (laurentPower N n 1 - 1) * twistRowVector N jj m * ∑ b, twistColumnVector N jj b * X (l, b) := by
-  rw [twist_substitution_eq_action, twisted_action_X, if_pos hl, if_pos hv]
+  rw [twist_substitution_eq_action, twisted_action_X, ite_eq_left hl, ite_eq_left hv]
   simp only [twist_matrix_apply, map_add (f := _), map_mul, map_sub, map_one, add_mul, Finset.sum_add_distrib]
   congr 1
   · simp [apply_ite C, Finset.sum_ite_eq']
@@ -605,7 +563,7 @@ theorem twist_substitution_X_vector {l : Fin N} (hl : l ∈ S) (hv : LL.vec l = 
 theorem twist_substitution_X_covector {l : Fin N} (hl : l ∈ S) (hv : ¬ LL.vec l = true) (m : Fin n) :
     twistSub (R := ℤ) LL S jj (X (l, m)) =
       X (l, m) + (laurentPower N n (-1) - 1) * twistColumnVector N jj m * ∑ b, twistRowVector N jj b * X (l, b) := by
-  rw [twist_substitution_eq_action, twisted_action_X, if_pos hl, if_neg hv]
+  rw [twist_substitution_eq_action, twisted_action_X, ite_eq_left hl, ite_eq_right hv]
   simp only [twist_matrix_apply, map_add (f := _), map_mul, map_sub, map_one, add_mul, Finset.sum_add_distrib]
   congr 1
   · simp [apply_ite C, Finset.sum_ite_eq]
@@ -631,7 +589,7 @@ theorem twist_covector_letters_fun {l : Fin N} (hl : l ∈ S) (hv : ¬ LL.vec l 
   exact twist_substitution_X_covector LL S jj hl hv m
 
 theorem twist_substitution_outside {l : Fin N} (hl : l ∉ S) (m : Fin n) : twistSub (R := ℤ) LL S jj (X (l, m)) = X (l, m) := by
-  rw [twist_substitution_eq_action, twisted_action_X, if_neg hl]
+  rw [twist_substitution_eq_action, twisted_action_X, ite_eq_right hl]
 
 def columnLambdaOperator (N : ℕ) {n : ℕ} (jj : Fin n) (c : ℤ) : Module.End (TwistedRing N n) (Finset (Fin n) → TwistedRing N n) :=
   if 1 ≤ c then lambdaOperator (twistColumnVector N jj) (twistRowVector N jj) (laurentPower N n 1) else lambdaOperator (twistRowVector N jj) (twistColumnVector N jj) (laurentPower N n (-1))
@@ -667,34 +625,34 @@ theorem twist_column_kernel_eq_lambda {B : Fin N → ℕ} (Pa : PPath n N LL B) 
           columnLambdaOperator N jj c (Kcol (GLLaurent ℤ n) Pa.mu c j) := funext ih'
       rw [hK]
       by_cases hv : LL.vec ⟨j, h⟩ = true
-      · rw [if_pos hv] at hst
+      · rw [ite_eq_left hv] at hst
         have hle : colH (Pa.mu ⟨j, by omega⟩) c ≤ colH (Pa.mu ⟨j + 1, by omega⟩) c := column_height_mono hst.1 c
         rw [twist_vector_letters_fun LL S jj hS hv]
         unfold colStep
         by_cases hlt : colH (Pa.mu ⟨j, by omega⟩) c < colH (Pa.mu ⟨j + 1, by omega⟩) c
-        · rw [if_pos hlt, if_pos hlt]
+        · rw [ite_eq_left hlt, ite_eq_left hlt]
           by_cases hc : 1 ≤ c
-          · have hL : columnLambdaOperator N jj c = lambdaOperator (twistColumnVector N jj) (twistRowVector N jj) (laurentPower N n 1) := if_pos hc
-            rw [if_pos hc, if_pos hc, hL, wedge_lambda_intertwine]
-          · have hL : columnLambdaOperator N jj c = lambdaOperator (twistRowVector N jj) (twistColumnVector N jj) (laurentPower N n (-1)) := if_neg hc
-            rw [if_neg hc, if_neg hc, hL, contraction_lambda_intertwine (twistRowVector N jj) (twistColumnVector N jj) (laurentPower N n (-1)) (laurentPower N n 1)
+          · have hL : columnLambdaOperator N jj c = lambdaOperator (twistColumnVector N jj) (twistRowVector N jj) (laurentPower N n 1) := ite_eq_left hc
+            rw [ite_eq_left hc, ite_eq_left hc, hL, wedge_lambda_intertwine]
+          · have hL : columnLambdaOperator N jj c = lambdaOperator (twistRowVector N jj) (twistColumnVector N jj) (laurentPower N n (-1)) := ite_eq_right hc
+            rw [ite_eq_right hc, ite_eq_right hc, hL, contraction_lambda_intertwine (twistRowVector N jj) (twistColumnVector N jj) (laurentPower N n (-1)) (laurentPower N n 1)
               (by rw [mul_comm]; exact laurent_power_mul_neg 1) (sum_V_mul_U_eq_one jj)]
-        · rw [if_neg hlt, if_neg hlt, if_neg (by omega), if_neg (by omega)]
-      · rw [if_neg hv] at hst
+        · rw [ite_eq_right hlt, ite_eq_right hlt, ite_eq_right (by omega), ite_eq_right (by omega)]
+      · rw [ite_eq_right hv] at hst
         have hle : colH (Pa.mu ⟨j + 1, by omega⟩) c ≤ colH (Pa.mu ⟨j, by omega⟩) c := column_height_mono hst.1 c
         rw [twist_covector_letters_fun LL S jj hS hv]
         unfold colStep
         have hnl : ¬ colH (Pa.mu ⟨j, by omega⟩) c < colH (Pa.mu ⟨j + 1, by omega⟩) c := by omega
-        simp only [if_neg hnl]
+        simp only [ite_eq_right hnl]
         by_cases hlt : colH (Pa.mu ⟨j + 1, by omega⟩) c < colH (Pa.mu ⟨j, by omega⟩) c
-        · simp only [if_pos hlt]
+        · simp only [ite_eq_left hlt]
           by_cases hc : 1 ≤ c
-          · have hL : columnLambdaOperator N jj c = lambdaOperator (twistColumnVector N jj) (twistRowVector N jj) (laurentPower N n 1) := if_pos hc
-            rw [if_pos hc, if_pos hc, hL, contraction_lambda_intertwine (twistColumnVector N jj) (twistRowVector N jj) (laurentPower N n 1) (laurentPower N n (-1))
+          · have hL : columnLambdaOperator N jj c = lambdaOperator (twistColumnVector N jj) (twistRowVector N jj) (laurentPower N n 1) := ite_eq_left hc
+            rw [ite_eq_left hc, ite_eq_left hc, hL, contraction_lambda_intertwine (twistColumnVector N jj) (twistRowVector N jj) (laurentPower N n 1) (laurentPower N n (-1))
               (laurent_power_mul_neg 1) (sum_U_mul_V_eq_one jj)]
-          · have hL : columnLambdaOperator N jj c = lambdaOperator (twistRowVector N jj) (twistColumnVector N jj) (laurentPower N n (-1)) := if_neg hc
-            rw [if_neg hc, if_neg hc, hL, wedge_lambda_intertwine]
-        · simp only [if_neg hlt]
+          · have hL : columnLambdaOperator N jj c = lambdaOperator (twistRowVector N jj) (twistColumnVector N jj) (laurentPower N n (-1)) := ite_eq_right hc
+            rw [ite_eq_right hc, ite_eq_right hc, hL, wedge_lambda_intertwine]
+        · simp only [ite_eq_right hlt]
     · exact ih' J
 
 end twist
@@ -741,65 +699,65 @@ theorem column_kernel_support_degree (R : Type*) [CommRing R] {N : ℕ} {LL : Le
     have hd : columnDegree (Pa.mu ⟨0, hj⟩) c = 0 := by
       rw [h0]; unfold columnDegree colH
       by_cases hc : 1 ≤ c
-      · rw [if_pos hc, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+      · rw [ite_eq_left hc, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
         intro m _; simp only [Pi.zero_apply]; omega
-      · rw [if_neg hc, Finset.filter_true_of_mem (fun m _ => by simp only [Pi.zero_apply]; omega)]
+      · rw [ite_eq_right hc, Finset.filter_true_of_mem (fun m _ => by simp only [Pi.zero_apply]; omega)]
         simp
     rw [hd]
     intro J hJ
     simp only [Kcol, extOne]
-    rw [if_neg (fun h => hJ (by rw [h]; rfl))]
+    rw [ite_eq_right (fun h => hJ (by rw [h]; rfl))]
   | succ j ih =>
     have h : j < N := by omega
     have ih' := ih (by omega)
     have hst := Pa.step ⟨j, h⟩
     have hnP := colH_le (Pa.mu ⟨j, by omega⟩) c
     have hnN := colH_le (Pa.mu ⟨j + 1, hj⟩) c
-    simp only [Kcol, dif_pos h]
+    simp only [Kcol, dite_eq_left h]
     unfold colStep
     unfold columnDegree at ih' ⊢
     by_cases hv : LL.vec ⟨j, h⟩ = true
-    · rw [if_pos hv] at hst
+    · rw [ite_eq_left hv] at hst
       have hle : colH (Pa.mu ⟨j, by omega⟩) c ≤ colH (Pa.mu ⟨j + 1, hj⟩) c := column_height_mono hst.1 c
       have hle2 : colH (Pa.mu ⟨j + 1, hj⟩) c ≤ colH (Pa.mu ⟨j, by omega⟩) c + 1 :=
         column_height_horizontal_strip (Pa.dom _) (Pa.dom _) hst c
       by_cases hlt : colH (Pa.mu ⟨j, by omega⟩) c < colH (Pa.mu ⟨j + 1, hj⟩) c
       · have e : colH (Pa.mu ⟨j + 1, hj⟩) c = colH (Pa.mu ⟨j, by omega⟩) c + 1 := by omega
-        rw [if_pos hlt]
+        rw [ite_eq_left hlt]
         by_cases hc : 1 ≤ c
-        · rw [if_pos hc] at ih' ⊢
-          rw [if_pos hc, e]
+        · rw [ite_eq_left hc] at ih' ⊢
+          rw [ite_eq_left hc, e]
           exact support_degree_wedge _ ih'
-        · rw [if_neg hc] at ih' ⊢
-          rw [if_neg hc]
+        · rw [ite_eq_right hc] at ih' ⊢
+          rw [ite_eq_right hc]
           refine support_degree_contraction _ ?_
           have e2 : n - colH (Pa.mu ⟨j + 1, hj⟩) c + 1 = n - colH (Pa.mu ⟨j, by omega⟩) c := by omega
           rw [e2]; exact ih'
       · have e : colH (Pa.mu ⟨j + 1, hj⟩) c = colH (Pa.mu ⟨j, by omega⟩) c := by omega
         have hnl' : ¬ colH (Pa.mu ⟨j + 1, hj⟩) c < colH (Pa.mu ⟨j, by omega⟩) c := by omega
-        rw [if_neg hlt, if_neg hnl', e]
+        rw [ite_eq_right hlt, ite_eq_right hnl', e]
         exact ih'
-    · rw [if_neg hv] at hst
+    · rw [ite_eq_right hv] at hst
       have hle : colH (Pa.mu ⟨j + 1, hj⟩) c ≤ colH (Pa.mu ⟨j, by omega⟩) c := column_height_mono hst.1 c
       have hle2 : colH (Pa.mu ⟨j, by omega⟩) c ≤ colH (Pa.mu ⟨j + 1, hj⟩) c + 1 :=
         column_height_horizontal_strip (Pa.dom _) (Pa.dom _) hst c
       have hnl : ¬ colH (Pa.mu ⟨j, by omega⟩) c < colH (Pa.mu ⟨j + 1, hj⟩) c := by omega
-      rw [if_neg hnl]
+      rw [ite_eq_right hnl]
       by_cases hlt : colH (Pa.mu ⟨j + 1, hj⟩) c < colH (Pa.mu ⟨j, by omega⟩) c
       · have e : colH (Pa.mu ⟨j, by omega⟩) c = colH (Pa.mu ⟨j + 1, hj⟩) c + 1 := by omega
-        rw [if_pos hlt]
+        rw [ite_eq_left hlt]
         by_cases hc : 1 ≤ c
-        · rw [if_pos hc] at ih' ⊢
-          rw [if_pos hc]
+        · rw [ite_eq_left hc] at ih' ⊢
+          rw [ite_eq_left hc]
           rw [e] at ih'
           exact support_degree_contraction _ ih'
-        · rw [if_neg hc] at ih' ⊢
-          rw [if_neg hc]
+        · rw [ite_eq_right hc] at ih' ⊢
+          rw [ite_eq_right hc]
           have e2 : n - colH (Pa.mu ⟨j + 1, hj⟩) c = n - colH (Pa.mu ⟨j, by omega⟩) c + 1 := by omega
           rw [e2]
           exact support_degree_wedge _ ih'
       · have e : colH (Pa.mu ⟨j + 1, hj⟩) c = colH (Pa.mu ⟨j, by omega⟩) c := by omega
-        rw [if_neg hlt, e]
+        rw [ite_eq_right hlt, e]
         exact ih'
 
 theorem total_contraction_zero_of_empty_support {P : Type*} [CommRing P] (u : Fin n → P) {K : Finset (Fin n) → P} (h : SupportDegree 0 K) :
@@ -978,25 +936,25 @@ theorem twisted_column_lower_filtration [NeZero n] {B : Fin N → ℕ} (Pa : PPa
   unfold columnLambdaOperator columnBoundEntry
   unfold columnDegree at hSu
   by_cases hc : 1 ≤ c
-  · rw [if_pos hc, if_pos hc]
-    rw [if_pos hc] at hSu
+  · rw [ite_eq_left hc, ite_eq_left hc]
+    rw [ite_eq_left hc] at hSu
     by_cases hx : c ≤ Pa.mu ⟨j0, hj0⟩ (lastIdx n)
-    · rw [if_pos hx]
+    · rw [ite_eq_left hx]
       have hn : colH (Pa.mu ⟨j0, hj0⟩) c = n := by have := hiff.2 hx; omega
       rw [hn] at hSu
       rw [lambda_eq_smul_of_total_wedge_zero _ _ _ (sum_U_mul_V_eq_one _) (total_wedge_zero_of_top_support _ hSu)]
       exact components_in_filtration_smul _ (by simpa using laurent_power_mem_filtration (N := N) (n := n) 1 1) hK0
-    · rw [if_neg hx]
+    · rw [ite_eq_right hx]
       exact components_in_filtration_lambda _ _ _ (twist_column_mem_filtration 1 _) (twist_row_mem_filtration 1 _) (laurent_power_mem_filtration (N := N) (n := n) 1 1) (by norm_num) le_rfl hK0
-  · rw [if_neg hc, if_neg hc]
-    rw [if_neg hc] at hSu
+  · rw [ite_eq_right hc, ite_eq_right hc]
+    rw [ite_eq_right hc] at hSu
     by_cases hx : c ≤ Pa.mu ⟨j0, hj0⟩ (lastIdx n)
-    · rw [if_neg (not_not.2 hx)]
+    · rw [ite_eq_right (not_not.2 hx)]
       have hn : n - colH (Pa.mu ⟨j0, hj0⟩) c = 0 := by have := hiff.2 hx; omega
       rw [hn] at hSu
       rw [lambda_eq_self_of_contraction_zero _ _ _ (total_contraction_zero_of_empty_support _ hSu)]
       exact hK0
-    · rw [if_pos hx]
+    · rw [ite_eq_left hx]
       exact components_in_filtration_lambda _ _ _ (twist_row_mem_filtration 1 _) (twist_column_mem_filtration 1 _) (laurent_power_mem_filtration (N := N) (n := n) 1 (-1)) (by norm_num)
         (by norm_num) hK0
 
@@ -1013,25 +971,25 @@ theorem twisted_column_upper_filtration [NeZero n] {B : Fin N → ℕ} (Pa : PPa
   unfold columnLambdaOperator columnBoundEntry
   unfold columnDegree at hSu
   by_cases hc : 1 ≤ c
-  · rw [if_pos hc, if_pos hc]
-    rw [if_pos hc] at hSu
+  · rw [ite_eq_left hc, ite_eq_left hc]
+    rw [ite_eq_left hc] at hSu
     by_cases hx : c ≤ Pa.mu ⟨j0, hj0⟩ 0
-    · rw [if_pos hx]
+    · rw [ite_eq_left hx]
       exact components_in_filtration_lambda _ _ _ (twist_column_mem_filtration (-1) _) (twist_row_mem_filtration (-1) _) (laurent_power_mem_filtration (N := N) (n := n) (-1) 1) (by norm_num)
         (by norm_num) hK0
-    · rw [if_neg hx, neg_zero]
+    · rw [ite_eq_right hx, neg_zero]
       have hn : colH (Pa.mu ⟨j0, hj0⟩) c = 0 := by
         by_contra h; exact hx (hiff.1 (Nat.pos_of_ne_zero h))
       rw [hn] at hSu
       rw [lambda_eq_self_of_contraction_zero _ _ _ (total_contraction_zero_of_empty_support _ hSu)]
       exact hK0
-  · rw [if_neg hc, if_neg hc]
-    rw [if_neg hc] at hSu
+  · rw [ite_eq_right hc, ite_eq_right hc]
+    rw [ite_eq_right hc] at hSu
     by_cases hx : c ≤ Pa.mu ⟨j0, hj0⟩ 0
-    · rw [if_neg (not_not.2 hx), neg_zero]
+    · rw [ite_eq_right (not_not.2 hx), neg_zero]
       exact components_in_filtration_lambda _ _ _ (twist_row_mem_filtration (-1) _) (twist_column_mem_filtration (-1) _) (laurent_power_mem_filtration (N := N) (n := n) (-1) (-1)) (by norm_num)
         le_rfl hK0
-    · rw [if_pos hx]
+    · rw [ite_eq_left hx]
       have hn : n - colH (Pa.mu ⟨j0, hj0⟩) c = n := by
         have : colH (Pa.mu ⟨j0, hj0⟩) c = 0 := by
           by_contra h; exact hx (hiff.1 (Nat.pos_of_ne_zero h))

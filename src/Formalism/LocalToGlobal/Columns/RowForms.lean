@@ -31,11 +31,11 @@ def LevFam.glue (A : LevFam E K n SG) (B : LevFam E K n Q) : LevFam E K n (uSG S
 
 open Classical in
 theorem LevFam.glue_of_mem (A : LevFam E K n SG) (B : LevFam E K n Q) (w : uSG SG Q) (h : w.1 ∈ SG) :
-    A.glue B w = A ⟨w.1, h⟩ := dif_pos h
+    A.glue B w = A ⟨w.1, h⟩ := dite_eq_left h
 
 open Classical in
 theorem LevFam.glue_of_not (A : LevFam E K n SG) (B : LevFam E K n Q) (w : uSG SG Q) (h : w.1 ∉ SG) :
-    A.glue B w = B ⟨w.1, (Finset.mem_union.mp w.2).resolve_left h⟩ := dif_neg h
+    A.glue B w = B ⟨w.1, (Finset.mem_union.mp w.2).resolve_left h⟩ := dite_eq_right h
 
 
 variable (Q) in
@@ -49,9 +49,9 @@ def extGLG : GLG (E := E) (n := n) (SG := SG) →* GLG (E := E) (n := n) (SG := 
     funext w
     by_cases h : w.1 ∈ SG <;> simp [h]
 
-theorem extGLG_of_mem (g : GLG (E := E) (n := n) (SG := SG)) (w : uSG SG Q) (h : w.1 ∈ SG) : extGLG Q g w = g ⟨w.1, h⟩ := dif_pos h
+theorem extGLG_of_mem (g : GLG (E := E) (n := n) (SG := SG)) (w : uSG SG Q) (h : w.1 ∈ SG) : extGLG Q g w = g ⟨w.1, h⟩ := dite_eq_left h
 
-theorem extGLG_of_not (g : GLG (E := E) (n := n) (SG := SG)) (w : uSG SG Q) (h : w.1 ∉ SG) : extGLG Q g w = 1 := dif_neg h
+theorem extGLG_of_not (g : GLG (E := E) (n := n) (SG := SG)) (w : uSG SG Q) (h : w.1 ∉ SG) : extGLG Q g w = 1 := dite_eq_right h
 
 end Glue
 
@@ -203,9 +203,6 @@ def rPsharp : LevFam X.E X.K R.r Pr.vGs := fun w =>
     (psiU (Ch.psi0 w) R.r).comp (Subgroup.inclusion inf_le_left)⟩
 
 
-variable (X Pr R) in
-def rKg : LevFam X.E X.K R.r Pr.vGs := fun _ => ⟨⊥, 1⟩
-
 end RBlock
 
 section Types
@@ -356,20 +353,12 @@ structure InvariantSubspaceData (K : Type) [Field K] [NumberField K] where
   n : ℕ
   d : ℕ
   E : Matrix (Fin n) (Fin d) K
-  Pr : Matrix (Fin d) (Fin n) K
-  H : Matrix (Fin d) (Fin d) K
-  L : Submodule (𝓞 K) (Fin d → K)
-  Ldel : Submodule (𝓞 K) (Fin d → K)
 
 def InvariantSubspaceData.of {K : Type} [Field K] [NumberField K] [StarRing K] (S : CSD K) {G : Type} [Group G] [Fintype G]
     (r : Representation K G S.Forms) (Xg : Finset (G → K)) (P : Subgroup G) (ψ : P →* Kˣ) : InvariantSubspaceData K where
   n := S.dim
   d := S.BaseDimension r Xg P ψ
   E := S.V0E r Xg P ψ
-  Pr := S.goodPartProjection r Xg P ψ
-  H := S.goodPartHermitianForm r Xg P ψ
-  L := S.Mt r Xg P ψ
-  Ldel := S.MtDel r Xg P ψ
 
 section V0C
 

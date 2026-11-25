@@ -34,57 +34,11 @@ public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentation
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PTanChart
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PTanExists
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PTorusCount
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Lemma
-import Mathlib.Algebra.Module.StablyFree.Basic
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
 import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CoeEqAlgebraMapZeroEquiv
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.HolPairA
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.ExpImm0Of, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PConjCharpoly, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PCorrChart, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PDetOfCharpoly, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PDetReal, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PExpImm, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PExtendEmb, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PFibDet, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PFlatAffine, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PFlatComp, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PFlatPre, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PHolPi, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PKillsMat, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PLocSum, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PMarkDiag, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PNewtonPoly, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PPerLin, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PPerNear, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PPiLattice, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PPtHol, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PPtImm, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PRootsFull, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PSimDiag, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PTanDeriv, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PTraceDual, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PTraceLat, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PTriCharpoly, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PTspDiag, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PTypeCount, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.ProdTy, Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.DetOfCharpolyHolds
@@ -1359,7 +1313,7 @@ theorem tanDeriv_of : TanDeriv := by
   have hval : ∀ v (hv : v ∈ {v | v ∈ B ∧ ⊤ ≤ s v ⁻¹ᵁ W}) (b : Sec s' W),
       valAt' (s v) W b = CxPts.ev s' (RingHom.id ℂ) W b ⟨s v, hss v hv.1⟩ := by
     intro v hv b
-    simp only [valAt', CxPts.ev, valR, dif_pos hv.2]
+    simp only [valAt', CxPts.ev, valR, dite_eq_left hv.2]
     rfl
   let g : Sec s' W → V → ℂ := fun b v => valAt' (s v) W b
   have hd : ∀ b, DifferentiableAt ℂ (g b) v₀ := fun b =>
@@ -1641,28 +1595,28 @@ theorem UpperTheory.Gal.W2.tspDiag_of :
         show T j i = T i j
         by_cases h1 : i = i₀ ∧ ty j = ComplexEmbedding.conjugate t₀
         · have h2 : ¬ (j = i₀ ∧ ty i = ComplexEmbedding.conjugate t₀) := fun h => hnot j h1.2 h.1
-          simp only [T, dif_pos h1, dif_neg h2]
+          simp only [T, dite_eq_left h1, dite_eq_right h2]
         · by_cases h2 : j = i₀ ∧ ty i = ComplexEmbedding.conjugate t₀
-          · simp only [T, dif_pos h2, dif_neg h1]
-          · simp only [T, dif_neg h1, dif_neg h2]
+          · simp only [T, dite_eq_left h2, dite_eq_right h1]
+          · simp only [T, dite_eq_right h1, dite_eq_right h2]
       · intro c i j
         by_cases h1 : i = i₀ ∧ ty j = ComplexEmbedding.conjugate t₀
-        · simp only [T, dif_pos h1]
+        · simp only [T, dite_eq_left h1]
           have e : ty j (c : F) = (starRingEnd ℂ) (ty i (c : F)) := by
             rw [h1.2, h1.1, hi₀, ComplexEmbedding.conjugate_coe_eq]
           rw [e, mul_comm]
         · by_cases h2 : j = i₀ ∧ ty i = ComplexEmbedding.conjugate t₀
-          · simp only [T, dif_neg h1, dif_pos h2]
+          · simp only [T, dite_eq_right h1, dite_eq_left h2]
             have e : ty j (c : F) = (starRingEnd ℂ) (ty i (c : F)) := by
               rw [h2.2, h2.1, hi₀, ComplexEmbedding.conjugate_coe_eq, Complex.conj_conj]
             rw [e, mul_comm]
-          · simp only [T, dif_neg h1, dif_neg h2]
+          · simp only [T, dite_eq_right h1, dite_eq_right h2]
             simp
     refine ⟨⟨T, hT⟩, ?_⟩
     funext j
     show T i₀ j.1 = v j
     have h1 : i₀ = i₀ ∧ ty j.1 = ComplexEmbedding.conjugate t₀ := ⟨rfl, j.2⟩
-    simp only [T, dif_pos h1]
+    simp only [T, dite_eq_left h1]
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PTspDiag =====
@@ -1733,18 +1687,18 @@ theorem typeCount_of : TypeCount := by
   by_cases h0 : τ = t₀
   · subst h0
     have hne : ComplexEmbedding.conjugate τ ≠ τ := hS.cx τ
-    simp only [typeMult, if_true, if_neg hne]
+    simp only [typeMult, ite_true, ite_eq_right hne]
     omega
   · by_cases h1 : τ = ComplexEmbedding.conjugate t₀
     · subst h1
       rw [hconj]
-      simp only [typeMult, if_neg h0, if_true]
+      simp only [typeMult, ite_eq_right h0, ite_true]
       omega
     · have h2 : ComplexEmbedding.conjugate τ ≠ t₀ := by
         intro e; apply h1; rw [← e, hconj]
       have h3 : ComplexEmbedding.conjugate τ ≠ ComplexEmbedding.conjugate t₀ := by
         intro e; apply h0; rw [← hconj τ, e, hconj]
-      simp only [typeMult, if_neg h0, if_neg h1, if_neg h2, if_neg h3]
+      simp only [typeMult, ite_eq_right h0, ite_eq_right h1, ite_eq_right h2, ite_eq_right h3]
       rw [← Nat.mul_add, hS.eps τ h0 h1, Nat.mul_one]
 
 end UpperTheory.Gal.W2

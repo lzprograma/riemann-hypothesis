@@ -5,58 +5,8 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureR
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.HeckeDoubleCosets.PermMatrixMulApply
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.HeckeDoubleCosets.EvFinsetSum
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.SBridgeAlt
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -591,24 +541,16 @@ section Affine
 
 variable {L : Type} [Field L] [NumberField L]
 
-theorem aff_alg_inj : Function.Injective (algebraMap (𝓞 L) L) :=
-  FaithfulSMul.algebraMap_injective (𝓞 L) L
-
-theorem aff_toK_val (N : ℕ) (g : Gm L N) (a b : Fin N) :
-    (toK L N g : Matrix (Fin N) (Fin N) L) a b =
-      algebraMap (𝓞 L) L ((g : Matrix (Fin N) (Fin N) (𝓞 L)) a b) :=
-  rfl
-
 theorem aff_toK_inj (N : ℕ) : Function.Injective (toK L N) := by
   intro a b hab
-  refine Matrix.GeneralLinearGroup.ext fun x y => aff_alg_inj ?_
-  rw [← aff_toK_val, ← aff_toK_val, hab]
+  refine Matrix.GeneralLinearGroup.ext fun x y => PositivityTheory.KB.AffineStabilizerVanishing.algebraMap_inj ?_
+  rw [← PositivityTheory.KB.AffineStabilizerVanishing.toK_coe, ← PositivityTheory.KB.AffineStabilizerVanishing.toK_coe, hab]
 
 theorem aff_toK_stab (n N : ℕ) (h : n ≤ N) (c : Gm L n) :
     toK L N (stab (𝓞 L) n N h c) = stab L n N h (toK L n c) := by
   refine Matrix.GeneralLinearGroup.ext fun a b => ?_
-  rw [aff_toK_val, stab_apply, stab_apply]
-  split_ifs <;> simp [aff_toK_val]
+  rw [PositivityTheory.KB.AffineStabilizerVanishing.toK_coe, stab_apply, stab_apply]
+  split_ifs <;> simp [PositivityTheory.KB.AffineStabilizerVanishing.toK_coe]
 
 end Affine
 
@@ -657,7 +599,7 @@ theorem aff_conj {K : Type} [Field K] (n r : ℕ) (i : Fin r) (h : GL (Fin n) K)
     simp only [vecMul, dotProduct, vecMulVec_apply, Pi.zero_apply]
     rw [Finset.sum_eq_single (Fin.natAdd n i)]
     · rw [h2]; ring
-    · intro c _ hc; rw [he, Pi.single_apply, if_neg hc]; ring
+    · intro c _ hc; rw [he, Pi.single_apply, ite_eq_right hc]; ring
     · simp
   have h4 : S *ᵥ e = e := by
     funext a
@@ -693,7 +635,7 @@ theorem aff_gamma (π : 𝓞 L) (hπ : Prime π) (n r : ℕ) (hn : 1 ≤ n) (c :
   rw [← ho, ← hp] at hu
   rw [← hp]
   set alg := algebraMap (𝓞 L) L with halg
-  have hπL : alg π ≠ 0 := (map_ne_zero_iff _ aff_alg_inj).mpr hπ.ne_zero
+  have hπL : alg π ≠ 0 := (map_ne_zero_iff _ PositivityTheory.KB.AffineStabilizerVanishing.algebraMap_inj).mpr hπ.ne_zero
   set cL : Matrix (Fin (n + r)) (Fin (n + r)) L := (toK L (n + r) c : Matrix (Fin (n + r)) (Fin (n + r)) L) with hcL
   set ciL : Matrix (Fin (n + r)) (Fin (n + r)) L := (toK L (n + r) c⁻¹ : Matrix (Fin (n + r)) (Fin (n + r)) L) with hciL
   set e : Fin (n + r) → L := Pi.single p 1 with he
@@ -783,11 +725,11 @@ theorem aff_gamma (π : 𝓞 L) (hπ : Prime π) (n r : ℕ) (hn : 1 ≤ n) (c :
         have : (b : ℕ) ≠ 0 := fun h => hb (Fin.ext (by rw [h, ho]))
         simp [this]
       · simp
-    rw [aff_alg_inj h7]
+    rw [PositivityTheory.KB.AffineStabilizerVanishing.algebraMap_inj h7]
     exact (Matrix.isUnits_det_units c)
   refine ⟨GeneralLinearGroup.mk'' γM hγdet, rfl, ?_⟩
   refine Matrix.GeneralLinearGroup.ext fun a b => ?_
-  rw [aff_toK_val]
+  rw [PositivityTheory.KB.AffineStabilizerVanishing.toK_coe]
   have h6 : γM.map alg = ((qel L (n + r) π hπ.ne_zero : GK L (n + r)) : Matrix (Fin (n + r)) (Fin (n + r)) L) * cL *
       (1 + vecMulVec (y - e) e) := by
     rw [Matrix.mul_add, Matrix.mul_one, Matrix.mul_vecMulVec, h4, hγM, Matrix.map_add _ (map_add alg), hQ]
@@ -811,7 +753,7 @@ theorem aff_blk_top {K : Type} [Field K] (n r : ℕ) (i : Fin r) (h : GL (Fin n)
     have := congrArg Fin.val hh
     simp only [Fin.val_castAdd, Fin.val_natAdd] at this
     omega
-  rw [Matrix.add_apply, vecMulVec_apply, Pi.single_apply, if_neg hne, mul_zero, add_zero, aff_stab_top]
+  rw [Matrix.add_apply, vecMulVec_apply, Pi.single_apply, ite_eq_right hne, mul_zero, add_zero, aff_stab_top]
 
 theorem aff_blk_low {K : Type} [Field K] (n r : ℕ) (i : Fin r) (h : GL (Fin n) K) (y : Fin (n + r) → K)
     (a : Fin r) (b : Fin (n + r)) :
@@ -862,8 +804,8 @@ theorem pStabVan : PStabVan := by
     obtain ⟨b, rfl⟩ := finSumFinEquiv.surjective b
     rcases a with a | a <;> rcases b with b | b
     · simp only [Matrix.reindex_apply, Matrix.submatrix_apply, finSumFinEquiv_apply_left, finSumFinEquiv_symm_apply_castAdd]
-      apply aff_alg_inj
-      rw [← aff_toK_val, hM, aff_blk_top]
+      apply PositivityTheory.KB.AffineStabilizerVanishing.algebraMap_inj
+      rw [← PositivityTheory.KB.AffineStabilizerVanishing.toK_coe, hM, aff_blk_top]
       rfl
     · simp only [Matrix.reindex_apply, Matrix.submatrix_apply, finSumFinEquiv_apply_left, finSumFinEquiv_apply_right,
         finSumFinEquiv_symm_apply_castAdd, finSumFinEquiv_symm_apply_natAdd]
@@ -871,8 +813,8 @@ theorem pStabVan : PStabVan := by
     · simp only [Matrix.reindex_apply, Matrix.submatrix_apply, finSumFinEquiv_apply_left, finSumFinEquiv_apply_right,
         finSumFinEquiv_symm_apply_castAdd, finSumFinEquiv_symm_apply_natAdd]
       show (f x : Matrix (Fin (n + r)) (Fin (n + r)) (𝓞 L)) (Fin.natAdd n a) (Fin.castAdd r b) = 0
-      apply aff_alg_inj
-      rw [map_zero, ← aff_toK_val, hM, aff_blk_low, Matrix.one_apply, if_neg]
+      apply PositivityTheory.KB.AffineStabilizerVanishing.algebraMap_inj
+      rw [map_zero, ← PositivityTheory.KB.AffineStabilizerVanishing.toK_coe, hM, aff_blk_low, Matrix.one_apply, ite_eq_right]
       intro hh
       have := congrArg Fin.val hh
       simp only [Fin.val_castAdd, Fin.val_natAdd] at this
@@ -881,11 +823,11 @@ theorem pStabVan : PStabVan := by
         finSumFinEquiv_symm_apply_natAdd]
       show (f x : Matrix (Fin (n + r)) (Fin (n + r)) (𝓞 L)) (Fin.natAdd n a) (Fin.natAdd n b) =
         (1 : Matrix (Fin r) (Fin r) (𝓞 L)) a b
-      apply aff_alg_inj
-      rw [← aff_toK_val, hM, aff_blk_low, Matrix.one_apply, Matrix.one_apply]
+      apply PositivityTheory.KB.AffineStabilizerVanishing.algebraMap_inj
+      rw [← PositivityTheory.KB.AffineStabilizerVanishing.toK_coe, hM, aff_blk_low, Matrix.one_apply, Matrix.one_apply]
       by_cases hab : a = b
       · subst hab; simp
-      · rw [if_neg hab, if_neg (fun hh => hab (Fin.ext (by
+      · rw [ite_eq_right hab, ite_eq_right (fun hh => hab (Fin.ext (by
         have := congrArg Fin.val hh; simp only [Fin.val_natAdd] at this; omega))), map_zero]
   have key : ∀ h : H, q * toK L (n + r) (c * stab (𝓞 L) n (n + r) (Nat.le_add_right n r) ((h : Gm L n) * 1)) =
       toK L (n + r) γ • ((toK L (n + r)).comp f h • G⁻¹) := by
@@ -1208,8 +1150,7 @@ theorem pKey (hT : PTransfer) : PKey := by
   intro c hc H hH w hw
   have hlow : ∃ i : Fin r, ((c⁻¹ : Gm L (n + r)) : Matrix (Fin (n + r)) (Fin (n + r)) (𝓞 L))
       (Fin.natAdd n i) ⟨0, by omega⟩ ∉ Ideal.span {π} := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     obtain ⟨c', hc'⟩ := pLow L π hπ n r hn1 c hne
     exact hc c' hc'
   have h := pStabVan hCh hEv hAff L hC k hk π hπ n r hn1 hr1 c hlow F hFinv hFcoc H hH w hw

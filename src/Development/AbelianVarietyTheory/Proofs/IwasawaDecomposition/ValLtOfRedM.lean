@@ -66,7 +66,7 @@ variable {F : Type} [Field F] [NumberField F] {n : ℕ} (v : HeightOneSpectrum (
 theorem redM_map (X : Matrix (Fin n) (Fin n) (v.adicCompletionIntegers F)) :
     redM F v (X.map (v.adicCompletionIntegers F).subtype) = X.map (IsLocalRing.residue _) := by
   ext a b
-  exact dif_pos (X a b).2
+  exact dite_eq_left (X a b).2
 
 theorem exists_map {X : Matrix (Fin n) (Fin n) (v.adicCompletion F)} (h : ∀ a b, X a b ∈ v.adicCompletionIntegers F) :
     ∃ X' : Matrix (Fin n) (Fin n) (v.adicCompletionIntegers F), X'.map (v.adicCompletionIntegers F).subtype = X :=
@@ -469,7 +469,6 @@ end Small
 
 open Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2.TC
 
-attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
 
 
@@ -525,7 +524,7 @@ theorem chart_gLevH {B : Base} {X : PreX B.toPre} (I : TC B X) (hI : I.Ok) (hP :
     (Ch : Type) (chOf : (I.stp u I.mu0 i).Cl → Ch)
     (K : ∀ β : Ch, LevelChart (I.rec7 l Z) (B.T u) (badG (I.rec7 l Z)) i hi
       (fun c : {c // chOf c = β} => (I.chain l u I.mu0).stab i c.1) (fun c => latCrd (I.rec7 l Z) i hi (I.latAt u I.mu0 i c.1)))
-    (_hG : I.IdG l Z G) (hR : I.ReadsK l Z u I.mu0 i hi chOf K) (β : Ch) :
+    (hR : I.ReadsK l Z u I.mu0 i hi chOf K) (β : Ch) :
     ∃ (H : ∀ (j : Fin 2) (v : HeightOneSpectrum (𝓞 (I.rec7 l Z).host.F)), ((I.rec7 l Z).host.g j : 𝓞 (I.rec7 l Z).host.F) ∈ v.asIdeal →
       Subgroup (GL (Fin (B.R.N i)) (kv (I.rec7 l Z).host.F v))) (lam : ∀ j v h, H j v h →* ℂˣ), Nonempty (GLevH (K β).lev G H lam) := by
   obtain ⟨k, hR⟩ := hR

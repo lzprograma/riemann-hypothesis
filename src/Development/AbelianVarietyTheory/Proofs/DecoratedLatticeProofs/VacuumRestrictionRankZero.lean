@@ -46,7 +46,6 @@ import Development.AbelianVarietyTheory.Definitions.LatticeFrames.JointSmooth
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.SeeSaw ValuativeRel IsLocalRing GlobalTheory.ChainOnto
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 
 
@@ -117,17 +116,6 @@ theorem wittDecomposition_gram_projection_identity (s : Fin W₀.rank → D.host
       Matrix.one_mul, ← Matrix.vecMul_vecMul, Matrix.star_mulVec]
   have hj := congrFun h j
   simpa only [Matrix.vecMul, dotProduct, Pi.star_apply] using hj
-
-end
-
-end GlobalTheory.RankZeroVac
-
-namespace GlobalTheory.RankZeroVac
-
-variable {D : D7}
-
-section
-variable {W W₀ : HSp D} {ρ : ℕ} (d : HypDec W W₀ ρ) (T : HSp D)
 
 end
 

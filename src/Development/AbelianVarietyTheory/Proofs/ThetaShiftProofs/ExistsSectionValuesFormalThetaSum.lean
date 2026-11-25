@@ -128,7 +128,7 @@ theorem exists_vals_fsum : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [
       rw [map_add (f := _), map_add (f := _), map_nsmul, map_nsmul, Λ.ε.apply_symm_apply, W.e.apply_symm_apply])
     have e₂ : famVal (Ξ.g v) (f x) (jf x) = 0 := by
       rw [e₁]
-      exact (dif_pos (hc x).1).trans ((congrArg _ (map_zero _)).trans (map_zero _))
+      exact (dite_eq_left (hc x).1).trans ((congrArg _ (map_zero _)).trans (map_zero _))
     show _ * (_ * _) = _
     rw [e₂, zero_mul, mul_zero]
   beta_reduce

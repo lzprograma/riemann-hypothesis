@@ -71,13 +71,13 @@ lemma same_tri {a b : Ix p q} (h : sameBlock a b) : a = b ∨ posC a b ∨ posC 
 
 lemma isKC_Eab {a b : Ix p q} (h : sameBlock a b) : IsKC (Eab a b) := by
   intro c d hcd
-  rw [Eab, Matrix.single_apply, if_neg]
+  rw [Eab, Matrix.single_apply, ite_eq_right]
   rintro ⟨rfl, rfl⟩
   exact hcd h
 
 lemma isKC_diag (c : Ix p q → ℂ) : IsKC (Matrix.diagonal c : Mat p q) := by
   intro a b hab
-  rw [Matrix.diagonal_apply, if_neg]
+  rw [Matrix.diagonal_apply, ite_eq_right]
   rintro rfl
   exact hab (same_refl a)
 

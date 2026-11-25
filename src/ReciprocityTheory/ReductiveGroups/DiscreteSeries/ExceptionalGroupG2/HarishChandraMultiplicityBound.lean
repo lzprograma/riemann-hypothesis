@@ -32,7 +32,7 @@ theorem discrete_series_exists_large_gap :
   · obtain ⟨σ, hDS, -⟩ := isDS_compact hpq hlam T
     exact ⟨T.V, inferInstance, inferInstance, σ, hDS⟩
   · have hmax' := hmax.resolve_left hpq
-    push_neg at hpq
+    push Not at hpq
     have hq : 1 ≤ S7.q0 ε := by
       show 1 ≤ min (pOf ε) (qOf ε)
       omega

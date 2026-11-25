@@ -52,26 +52,6 @@ namespace GlobalTheory.AdelicLatticeSwap
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E))
 
-private lemma mem_intAf_of_mem_intAd {a : Af F} (ha : a ∈ Formalism.UG.intAd F) : a ∈ Formalism.MainNotions.StandardLattice.intAf F := by
-  intro v
-  exact ha v
-
-private lemma mem_intAd_of_mem_intAf {a : Af F} (ha : a ∈ Formalism.MainNotions.StandardLattice.intAf F) : a ∈ Formalism.UG.intAd F := by
-  intro v
-  exact ha v
-
-private lemma intAf_mul_mem {a b : Af F} (ha : a ∈ Formalism.MainNotions.StandardLattice.intAf F) (hb : b ∈ Formalism.MainNotions.StandardLattice.intAf F) :
-    a * b ∈ Formalism.MainNotions.StandardLattice.intAf F := by
-  intro v
-  rw [map_mul]
-  exact mul_mem (ha v) (hb v)
-
-private lemma one_mem_intAf_flag_measures : (1 : Af F) ∈ Formalism.MainNotions.StandardLattice.intAf F := by
-  intro v
-  rw [map_one]
-  exact one_mem _
-
-
 omit [NumberField E] in
 theorem gen_smul_mem (a : Af F) (ha : a ∈ Formalism.UG.intAd F) (c : 𝓞 E)
     (y : Fin n → Af F ⊗[F] E) (hy : y ∈ Formalism.MainNotions.StandardLattice.latHat F E (L : Set (Fin n → E))) :
@@ -81,7 +61,7 @@ theorem gen_smul_mem (a : Af F) (ha : a ∈ Formalism.UG.intAd F) (c : 𝓞 E)
   | mem w hw =>
     obtain ⟨b, hb, x, hx, rfl⟩ := hw
     apply AddSubgroup.subset_closure
-    refine ⟨a * b, intAf_mul_mem (mem_intAf_of_mem_intAd ha) hb, c • x, L.smul_mem c hx, ?_⟩
+    refine ⟨a * b, (Formalism.UG.intAd F).mul_mem ha hb, c • x, L.smul_mem c hx, ?_⟩
     funext i
     simp only [Pi.smul_apply, smul_eq_mul, Algebra.TensorProduct.tmul_mul_tmul]
     rfl
@@ -118,7 +98,7 @@ theorem symm_mem_of_mem (z : Fin n → E ⊗[F] Af F) (hz : z ∈ Formalism.Main
     obtain ⟨⟨x, hx⟩, rfl⟩ := hw
     unfold Formalism.MainNotions.StandardLattice.latHat
     apply AddSubgroup.subset_closure
-    refine ⟨1, one_mem_intAf_flag_measures, x, hx, ?_⟩
+    refine ⟨1, (Formalism.UG.intAd F).one_mem, x, hx, ?_⟩
     funext i
     show (Algebra.TensorProduct.comm F (Af F) E).symm ((x i) ⊗ₜ[F] (1 : Af F)) = (1 : Af F) ⊗ₜ[F] x i
     simp
@@ -159,7 +139,7 @@ theorem mem_latHat_iff_comm_mem_lamAf (F E : Type) [Field F] [NumberField F] [Fi
       have hg : (fun i => Formalism.UG.inclE (F := F) (Af F) (x i)) ∈ Formalism.MainNotions.S.lamAf (F := F) L :=
         Submodule.subset_span ⟨⟨x, hx⟩, rfl⟩
       have hs : ((1 : E) ⊗ₜ[F] a : E ⊗[F] Af F) ∈ Formalism.MainNotions.S.IntAf F E :=
-        Subring.subset_closure (Or.inr ⟨⟨a, mem_intAd_of_mem_intAf ha⟩, rfl⟩)
+        Subring.subset_closure (Or.inr ⟨⟨a, ha⟩, rfl⟩)
       convert Submodule.smul_mem _ (⟨_, hs⟩ : Formalism.MainNotions.S.IntAf F E) hg using 1
       funext i
       simp [Subring.smul_def, Formalism.UG.inclE, Algebra.TensorProduct.tmul_mul_tmul]

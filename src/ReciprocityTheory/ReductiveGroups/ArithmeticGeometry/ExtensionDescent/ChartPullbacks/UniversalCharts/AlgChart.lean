@@ -7,8 +7,6 @@ public import Mathlib.RingTheory.Unramified.LocalStructure
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace ReciprocityTheory.ChartRestriction.G.Chart

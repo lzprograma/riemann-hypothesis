@@ -96,57 +96,10 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverDegre
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GeometricAbelianConnected
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverRealisationPullback
 public import Development.WeilBound.CoreStatements.FlagImmersions.SumFundOnRoot
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieOmegaLatticeVectorBundle
 import Formalism.LocalToGlobal.ProjectiveLattices.EmbKCoe
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SncModelReindexedCoords
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsArithVarOfBlockAlgebraic
@@ -528,7 +481,7 @@ theorem flat_dual (hφ : φ.Flat) (hφi : ∀ a, (φ a : Ω') = i a) (hj : IsExt
         exact Submodule.subset_span ⟨_, hm, rfl⟩)
       rw [hev] at h2
       simp only [LinearMap.smul_apply, hBb, smul_eq_mul, mul_ite, mul_zero, apply_ite i, map_zero,
-        Finset.sum_ite_eq', Finset.mem_univ, if_true] at h2
+        Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h2
       rw [_root_.mul_one, map_natCast] at h2
       rw [mul_comm]
       exact h2
@@ -1007,8 +960,7 @@ theorem exists_unitAt_of_sum (hg : IsCptGen ξ) (p : Cpt ξ) {ι : Type} (s : Fi
   have hs : ∑ i ∈ s, g i = 1 := hg.inj p (by
 
     rw [map_sum, map_one, Finset.sum_congr rfl (fun i hi => hgf i hi), h1])
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hnu : ∀ i ∈ s, g i ∈ IsLocalRing.maximalIdeal (X.presheaf.stalk p.1) := by
     intro i hi
     rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
@@ -1156,18 +1108,18 @@ theorem exists_blkF_of_not_full (K₀ : Type) (t : StepIx Ψ p q) (ht : (t.2 : �
     refine ⟨(τ, ⟨j, by omega⟩), ?_⟩
     have hP : IsProperStep (p + q) p (⟨j, by omega⟩ : Fin (p + q)) := ⟨ht, by simp only; omega⟩
     unfold blkF
-    rw [if_pos hP]
+    rw [ite_eq_left hP]
     unfold stepOf
-    simp only [dif_pos hj]
+    simp only [dite_eq_left hj]
   · simp only [Sum.elim_inr] at ht hj
     refine ⟨(τ, ⟨p + j, by omega⟩), ?_⟩
     have hP : IsProperStep (p + q) p (⟨p + j, by omega⟩ : Fin (p + q)) :=
       ⟨by simp only; omega, by simp only; omega⟩
     unfold blkF
-    rw [if_pos hP]
+    rw [ite_eq_left hP]
     unfold stepOf
     have hn : ¬ (p + (j : ℕ) < p) := by omega
-    simp only [dif_neg hn]
+    simp only [dite_eq_right hn]
     congr 2
     exact congrArg (fun z => (⟨.inr τ, z⟩ : StepIx Ψ p q)) (Fin.ext (by simp))
 
@@ -1717,7 +1669,7 @@ theorem tie_of (hX : StX) (hAlg : StAlg) (hHt : StHt) (hSing : StSing) (hBase : 
   have hU := _root_.GlobalTheory.CompanionTheory.Relay.flag_analytic_data_uniformised K ι Φ y (CMType H) (D.p + D.q) D.p M _ d BM FA (by rw [hsub]) hd
   obtain ⟨Cv, CR, hCv, -, hCRl⟩ := _root_.GlobalTheory.CompanionTheory.Ar.PB.identity_cover K ι Φ y (CMType H) (D.p + D.q) D.p M _ d BM FA
   have FS : Nonempty (PB.FlagSys CR.Re D.p) := ⟨⟨M.j_le, hd, hU, fun τ a b hab hb =>
-    (_root_.GlobalTheory.CompanionTheory.Relay.flag_cover_realisation_pullback hIn K ι Φ y (CMType H) (D.p + D.q) D.p M _ d BM FA K ι Φ y M Cv CR hv' τ a b hab hb).some⟩⟩
+    (_root_.PositivityTheory.Xgp.t_c_sqsys hIn K ι Φ y (CMType H) (D.p + D.q) D.p M _ d BM FA K ι Φ y M Cv CR hv' τ a b hab hb).some⟩⟩
   obtain ⟨⟨pr, j', hov', hR', -⟩, hroots, hdy, -⟩ := id htot
   choose sing hsd hho hsc using _root_.GlobalTheory.CompanionTheory.Ar.HodgeLine.exists_hodgeLine E H D l Xo c _ _ Y S Φ K ι y 𝔐' Fl xdeg e hβ hroots
   have hrd : ∀ a, ((FA.Re.comap some).ref a).a = (Top.combLine sing (Cmp.fundOnRoot a)).a := fun a => by

@@ -102,8 +102,6 @@ open GlobalTheory.GalLift
 
 namespace GlobalTheory.ConjThetaIntegral
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem conjVal_one {D : D7} {σ : D.what₂.LL →+* ℂ} {a b : ℂ} (h : ConjVal σ a b) (ha : a = 1) : b = 1 := by
   obtain ⟨y, h1, h2⟩ := h
   have : y = 1 := D.what₂.embLL.injective (by rw [h1, ha, map_one])

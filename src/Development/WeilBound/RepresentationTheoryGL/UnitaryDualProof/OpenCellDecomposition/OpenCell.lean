@@ -207,13 +207,13 @@ theorem openJ (ψ : AddChar k Circle) (hψ : Continuous ψ) (h N : ℕ) (d : Fin
   let e := stdBlocks d hd; let B := unipB k (Fin N); let U := unipU k d hd
   let χ := whitChar ψ N; let w := pm k (wOpen d hd)
   obtain ⟨J, vol, hU, hL, hV⟩ := GlobalTheory.T.open_cell_jacquet_integral_volume k ψ hψ h N d hd ρ hρ
-  obtain ⟨hfac, -⟩ := GlobalTheory.T.unipotent_radical_decomposition_normal k h N d hd
+  obtain ⟨hfac, -⟩ := GlobalTheory.CompanionTheory.Rodier.unipB_eq_levi_mul_rad k h N d hd
   obtain ⟨hl1, hl2⟩ := GlobalTheory.T.open_cell_levi_unipotent_conjugation k ψ h N d hd
-  obtain ⟨-, huniq, -⟩ := GlobalTheory.T.open_cell_unipotent_uniqueness_closed k h N d hd
+  obtain ⟨-, huniq, -⟩ := GlobalTheory.CompanionTheory.Rodier.unipU_open_cell k h N d hd
   have hUB : U ≤ B := inf_le_left; have hLB : unipL k d hd ≤ B := inf_le_left
   have surj : Function.Surjective J := fun v => by
     obtain ⟨L₀, hL₀U, hc, hO, hθ, f, hf, h1, h2⟩ :=
-      GlobalTheory.T.exists_bump_section_on_compact_unipotent k ψ hψ h N d hd ρ hρ v
+      GlobalTheory.CompanionTheory.Rodier.OpenBump.exists_openFns_bump k ψ hψ h N d hd ρ hρ v
     obtain ⟨hpos, hJ⟩ := hV L₀ hL₀U hc hO
     have he := hJ ⟨f, hf⟩ v (fun u hb hu => by show f.1.1 (w * u) = _; rw [h1 u hu, hθ u hb hu]; simp) h2
     refine ⟨((vol L₀ : ℂ))⁻¹ • ⟨f, hf⟩, ?_⟩
@@ -245,11 +245,11 @@ theorem openJ (ψ : AddChar k Circle) (hψ : Continuous ψ) (h N : ℕ) (d : Fin
   have bwd : ∀ f : openFns d hd ρ, f.1 ∈ twKer (parInd e ρ) B χ → J f ∈ twKer ρ (unipM k d) (whitM d ψ) :=
     fun f hf =>
       (span_mem d hd ρ J (twKer ρ (unipM k d) (whitM d ψ)) _ (by rintro _ ⟨q, g, hg, rfl⟩; exact gen q.1 q.2 ⟨g, hg⟩)
-        (GlobalTheory.T.compact_unipotent_subgroup_finite_generation k ψ hψ h N d hd ρ B le_rfl
+        (GlobalTheory.CompanionTheory.Rodier.OpenExact.mem_span_openFns_of_mem_twKer k ψ hψ h N d hd ρ B le_rfl
           (exists_compact_subgroup_of_finset k N) χ (fun _ _ => rfl) f.1 f.2 hf)).2
   have key : ∀ f : openFns d hd ρ, J f = 0 → f.1 ∈ twKer (parInd e ρ) B χ := fun f hf => by
     obtain ⟨L, hLU, hLc, hLO, hsupp⟩ :=
-      GlobalTheory.T.open_cell_function_compact_support_unipotent k h N d hd ρ hρ f.1 f.2
+      GlobalTheory.CompanionTheory.Rodier.exists_compact_open_support k h N d hd ρ hρ f.1 f.2
     have hLB' : L ≤ B := hLU.trans hUB
     let θL : L →* ℂˣ := χ.comp (Subgroup.inclusion hLB')
     have hopen : IsOpen (θL.ker : Set L) :=
@@ -261,7 +261,7 @@ theorem openJ (ψ : AddChar k Circle) (hψ : Continuous ψ) (h N : ℕ) (d : Fin
       exact ⟨p, hp, u * l⁻¹, mul_mem hu (inv_mem hl), by rw [← mul_assoc, ← he]; group⟩
     have hf'o : f' ∈ openFns d hd ρ := fun g hg =>
       let ⟨p, hp, u, hu, he⟩ := hsupp' g hg; ⟨p, hp, u, hLB' hu, he⟩
-    have hdiff := GlobalTheory.T.compact_unipotent_subgroup_finite_generation k ψ hψ h N d hd ρ L hLB'
+    have hdiff := GlobalTheory.CompanionTheory.Rodier.OpenExact.mem_span_openFns_of_mem_twKer k ψ hψ h N d hd ρ L hLB'
       (fun _ hs => ⟨L, le_rfl, hs, hLc⟩) θL (fun _ _ => rfl) (f.1 - f') (sub_mem f.2 hf'o) hd1
     obtain ⟨hx, hJ0⟩ := span_mem d hd ρ J ⊥ _ (by
       rintro _ ⟨q, g, hg, rfl⟩
@@ -560,7 +560,7 @@ theorem exists_not_mem_twKer {r m : ℕ} {V W : Type} [AddCommGroup V] [Module �
     (ψ : AddChar k Circle) (A : Representation ℂ (GL (Fin r) k) V) (x : Representation ℂ (GL (Fin m) k) W)
     (hA : IsGenericFor ψ A) (hx : IsGenericFor ψ x) :
     ∃ v, v ∉ twKer (piTensor (piPair A x)) (unipM k (dd r m)) (whitM (dd r m) ψ) := by
-  obtain ⟨e⟩ := GlobalTheory.T.twisted_jacquet_tensor_product_equiv (piPair A x)
+  obtain ⟨e⟩ := GlobalTheory.CompanionTheory.Rodier.PiCoinv.twJacquet_piTensor_equiv (piPair A x)
     (fun a => unipB k (Fin (dd r m a))) (fun a => whitChar ψ (dd r m a))
   have := nontrivial_piTensor (fun a => by fin_cases a <;> [exact hA; exact hx] :
     ∀ a, Nontrivial (TwJacquet (piPair A x a) (unipB k (Fin (dd r m a))) (whitChar ψ (dd r m a))))
@@ -576,7 +576,7 @@ theorem isGenericFor_factors {r m : ℕ} {V W : Type} [AddCommGroup V] [Module �
   have hs : ∀ a, IsSmooth (piPair A x a) := fun a => by fin_cases a <;> [exact hA; exact hx]
   obtain ⟨E⟩ := equiv_prod₂_piPair A x
   have h' : IsGenericFor ψ (multiProd (stdBlocks (dd r m) (hdd r m)) (piPair A x)) := h.of_equiv E
-  obtain ⟨L⟩ := GlobalTheory.T.whittaker_heredity k ψ hc h1 2 (r + m) (dd r m) (hdd r m) (XX V W) (piPair A x) hs
+  obtain ⟨L⟩ := GlobalTheory.CompanionTheory.Rodier.whitHeredity k ψ hc h1 2 (r + m) (dd r m) (hdd r m) (XX V W) (piPair A x) hs
   have hT : Nontrivial (⨂[ℂ] a, TwJacquet (piPair A x a) (unipB k (Fin (dd r m a))) (whitChar ψ (dd r m a))) :=
     have : Nontrivial (TwJacquet (multiProd (stdBlocks (dd r m) (hdd r m)) (piPair A x))
       (unipB k (Fin (r + m))) (whitChar ψ (r + m))) := h'

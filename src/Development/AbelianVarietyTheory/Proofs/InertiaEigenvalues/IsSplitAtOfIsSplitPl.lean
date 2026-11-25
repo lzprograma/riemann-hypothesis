@@ -63,7 +63,7 @@ theorem exists_equiv_dual {m : ℕ} (lam : DomWeight (m + 1)) :
   have h0 : lam.dual.detShift = -(lam.detShift + lam.natW 0 + 0) := by
     have := hs 0
     have e : lam.dual.detShift = -lam.w 0 := by
-      simp only [DomWeight.detShift, Nat.succ_pos, dif_pos, DomWeight.dual]
+      simp only [DomWeight.detShift, Nat.succ_pos, dite_eq_left, DomWeight.dual]
       congr 2
       ext
       simp [Fin.val_rev]
@@ -147,9 +147,9 @@ theorem coord_conjugate (τ : E →+* ℂ) (z : Cinf E) :
   unfold coord
   simp only [InfinitePlace.mk_conjugate_eq]
   rcases InfinitePlace.embedding_mk_eq τ with h | h
-  · rw [if_pos h, if_neg (by rw [InfinitePlace.mk_conjugate_eq, h]; exact hne.symm)]
+  · rw [ite_eq_left h, ite_eq_right (by rw [InfinitePlace.mk_conjugate_eq, h]; exact hne.symm)]
     rfl
-  · rw [if_pos (by rw [InfinitePlace.mk_conjugate_eq, h]), if_neg (by rw [h]; exact hne)]
+  · rw [ite_eq_left (by rw [InfinitePlace.mk_conjugate_eq, h]), ite_eq_right (by rw [h]; exact hne)]
     simp
 
 theorem coord_conjAd (τ : E →+* ℂ) (x : Ad E) :
@@ -192,8 +192,6 @@ theorem hasWeightAt_conjugate (hn : 1 ≤ n) {π : Submodule ℂ (UA E n → ℂ
 end Weight
 
 section Discrete
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 variable {E : Type} [Field E] [NumberField E]
 

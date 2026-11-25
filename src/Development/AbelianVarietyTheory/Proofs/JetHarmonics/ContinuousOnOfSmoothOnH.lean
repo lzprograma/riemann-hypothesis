@@ -155,16 +155,6 @@ structure IsFormRep (k r : ℕ) (ρ : Mx k r → Matrix ι ι ℂ) (A : Matrix �
 
 end Tensor
 
-section Checks
-
-variable {ι : Type} [Fintype ι]
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-end Checks
-
 end GlobalTheory.IndefiniteRowSideFullHecke.SmoothDecompositionForms
 
 end
@@ -208,22 +198,6 @@ theorem isURepOn_of_isDS {R : BranchingSupport.Rep k r} {ε : Ix k r → Bool} {
       (continuous_const.matrix_mul continuous_id).matrix_mul continuous_const
     have := (hc v).comp h3.continuousOn hmaps
     simpa only [Function.comp_def, e] using this
-
-section Smooth
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-end Smooth
-
-section Tensor
-
-variable {ι κ : Type} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
-
-variable {ρ : Mx k r → Matrix ι ι ℂ} {Γ : Matrix ι ι ℂ} {R : HRep k r} {Rs : κ → HRep k r}
-  {io : ∀ I, (Rs I).H → ι → R.H} {pr : ∀ I, ι → R.H → (Rs I).H} {p : ∀ I, (ι → R.H) → (Rs I).H} {ep : κ → ℝ}
-
-
-end Tensor
 
 end GlobalTheory.TensCompare
 

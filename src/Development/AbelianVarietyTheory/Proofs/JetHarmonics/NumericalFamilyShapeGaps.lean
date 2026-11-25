@@ -56,7 +56,7 @@ theorem eps_adj (k r : ℕ) (a c : Fin (2 * r + k + 1)) (ha : k ≤ a.val + 1) (
   have h1 : ¬ a.val < k - 1 := by omega
   have h2 : ¬ c.val < k - 1 := by omega
   simp only [PI.BesselPeriodGGP.eps48]
-  rw [if_neg h1, if_neg h2, hc]
+  rw [ite_eq_right h1, ite_eq_right h2, hc]
   rcases Nat.mod_two_eq_zero_or_one (a.val - (k - 1)) with h3 | h3
   · have h4 : (a.val + 1 - (k - 1)) % 2 = 1 := by omega
     simp [h3, h4]

@@ -131,7 +131,7 @@ theorem thetaCharOff_eq {g n : ℕ} (S : Finset (Fin g)) (e : Fin n ≃ {k // k 
   classical
   let ε : {m : Fin g → ℤ // ∀ k ∈ S, m k = 0} ≃ (Fin n → ℤ) :=
     { toFun := fun m i => m.1 (e i).1
-      invFun := fun m => ⟨fun k => if h : k ∈ S then 0 else m (e.symm ⟨k, h⟩), fun k hk => dif_pos hk⟩
+      invFun := fun m => ⟨fun k => if h : k ∈ S then 0 else m (e.symm ⟨k, h⟩), fun k hk => dite_eq_left hk⟩
       left_inv := fun m => Subtype.ext (funext fun k => by
         by_cases h : k ∈ S
         · simp [h, m.2 k h]
@@ -351,7 +351,7 @@ theorem mean_eq {n g : ℕ} {τ : Matrix (Fin n) (Fin n) ℂ} {c₁ c₂ : Fin n
       ‖κ‖ ^ 2 * (Real.sqrt (2 ^ n * (τ.map Complex.im).det))⁻¹ := by
   obtain ⟨k1, k2⟩ := form_eq hs hp h₁ h₂ hκ hH hχ hθ F hF hρ hρn hρ0 e
   have hFi : Function.Injective F := by
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     by_contra h0
     have h1 := (GlobalTheory.ThetaSquareIntegrable.posDef_form (h := 1) hp (by simp)).2 x h0

@@ -177,16 +177,8 @@ private def rw0 (M : ℕ) (v : Fin 2 → ℤ) : Row M := fun i => (v i : ZMod M)
 private theorem val_cast {M D : ℕ} [NeZero M] (h : D ∣ M) (a : ℤ) : (((a : ZMod M).val : ℕ) : ZMod D) = (a : ZMod D) := by
   rw [ZMod.natCast_val, ZMod.cast_intCast h]
 
-private theorem exists_int_div_eq_toQ_rw0_add (M : ℕ) [NeZero M] (v : Fin 2 → ℤ) (i : Fin 2) : ∃ j : ℤ, (v i : ℚ) / (M : ℚ) = toQ M (rw0 M v) i + j := by
-  refine ⟨v i / (M : ℤ), ?_⟩
-  have hM : (M : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (NeZero.ne M)
-  have h1 : (((v i : ZMod M).val : ℕ) : ℤ) = v i % (M : ℤ) := ZMod.val_intCast (v i)
-  have h2 : v i % (M : ℤ) + (M : ℤ) * (v i / (M : ℤ)) = v i := Int.emod_add_mul_ediv _ _
-  rw [← h1] at h2
-  have h3 := congrArg (fun z : ℤ => (z : ℚ)) h2
-  push_cast at h3
-  simp only [toQ, rw0]
-  rw [← h3, add_div, mul_div_cancel_left₀ _ hM]
+private theorem exists_int_div_eq_toQ_rw0_add (M : ℕ) [NeZero M] (v : Fin 2 → ℤ) (i : Fin 2) : ∃ j : ℤ, (v i : ℚ) / (M : ℚ) = toQ M (rw0 M v) i + j :=
+  rz_toQ M v i
 
 private theorem dn_rw0_mul_eq_rw0 (k M : ℕ) (v : Fin 2 → ℤ) : dn k M (rw0 (k * M) v) = rw0 M v := by
   funext i
@@ -591,7 +583,7 @@ private theorem main (hA : SApi) (hC : SCohApi) (hM : SXiMul) (hX : SXiCoh) (hD 
   simp only [rdH_comp] at TC
   have hlu : IsUnit (l : ZMod p) := (ZMod.isUnit_iff_coprime l p).mpr hpl.symm
   have hinv : ((inv1 p l : (ZMod p)ˣ) : ZMod p) * l = 1 := by
-    simp only [inv1, dif_pos hlu]
+    simp only [inv1, dite_eq_left hlu]
     exact hlu.val_inv_mul
   have hν1 : (((rdH l n r N p (ZMod.unitOfCoprime k kcM)).1 : (ZMod p)ˣ) : ZMod p) = l := by
     show ZMod.castHom (Dvd.intro_left _ rfl : p ∣ lvT l n r N p) (ZMod p) (k : ZMod (lvT l n r N p)) = _
@@ -647,9 +639,6 @@ namespace UpperTheory.V.Z.Kato.Nb.NormOneTrace
 
 private def rw0 (M : ℕ) (v : Fin 2 → ℤ) : Row M := fun i => (v i : ZMod M)
 
-private theorem val_cast {M D : ℕ} [NeZero M] (h : D ∣ M) (a : ℤ) : (((a : ZMod M).val : ℕ) : ZMod D) = (a : ZMod D) := by
-  rw [ZMod.natCast_val, ZMod.cast_intCast h]
-
 private theorem exists_int_div_eq_toQ_rw0_add (M : ℕ) [NeZero M] (v : Fin 2 → ℤ) (i : Fin 2) : ∃ j : ℤ, (v i : ℚ) / (M : ℚ) = toQ M (rw0 M v) i + j := by
   refine ⟨v i / (M : ℤ), ?_⟩
   have hM : (M : ℚ) ≠ 0 := by exact_mod_cast NeZero.ne M
@@ -694,19 +683,10 @@ private theorem ixUT_eq (l L N p : ℕ) (x : ZMod N) (i : Fin 2) :
 private theorem ixVT_eq (l L N p : ℕ) (i : Fin 2) : ixVT l L N p i = (rV l L N p i : ℚ) / ((N * l ^ L * p : ℕ) : ℚ) := by
   fin_cases i <;> rfl
 
-private theorem bar_mul {l L N p D : ℕ} [NeZero (N * l ^ L)] (hp : Nat.Coprime p (N * l ^ L)) (h : D ∣ N * l ^ L) :
-    (bar l L N p : ZMod D) * p = 1 := by
-  have h1 : ((p : ZMod (N * l ^ L)) * (p : ZMod (N * l ^ L))⁻¹) = 1 := ZMod.coe_mul_inv_eq_one p hp
-  have h2 := congrArg (ZMod.castHom h (ZMod D)) h1
-  simp only [map_mul, map_natCast, map_one, ZMod.castHom_apply] at h2
-  simp only [bar]
-  rw [Int.cast_natCast, ZMod.natCast_val, mul_comm]
-  exact h2
-
 private theorem rows_l {l L N p : ℕ} [Fact l.Prime] [NeZero N] (x : ZMod N) (hL : 1 ≤ L) (hp : Nat.Coprime p (N * l ^ L)) :
     (rU l L N p x 0 : ZMod l) = N ∧ (rV l L N p 1 : ZMod l) = N ∧ rU l L N p x 1 = 0 := by
   haveI : NeZero (N * l ^ L) := ⟨Nat.mul_ne_zero (NeZero.ne N) (pow_ne_zero _ (Fact.out : l.Prime).ne_zero)⟩
-  have hb : (bar l L N p : ZMod l) * p = 1 := bar_mul hp (Dvd.dvd.mul_left (dvd_pow_self l (by omega)) N)
+  have hb : (bar l L N p : ZMod l) * p = 1 := UpperTheory.V.Z.Kato.Nb.NormOneTraceTorsion.bar_mul hp (Dvd.dvd.mul_left (dvd_pow_self l (by omega)) N)
   have h0 : (l : ZMod l) ^ L = 0 := by rw [ZMod.natCast_self, zero_pow (by omega)]
   refine ⟨?_, ?_, rfl⟩
   · simp only [rU, Matrix.cons_val_zero]
@@ -718,29 +698,6 @@ private theorem rows_l {l L N p : ℕ} [Fact l.Prime] [NeZero N] (x : ZMod N) (h
     rw [h0]
     linear_combination (N : ZMod l) * hb
 
-private theorem crt {m n : ℕ} (h : Nat.Coprime m n) {a b : ℤ} (h1 : (a : ZMod m) = b) (h2 : (a : ZMod n) = b) :
-    (a : ZMod (m * n)) = b := by
-  rw [ZMod.intCast_eq_intCast_iff_dvd_sub] at h1 h2 ⊢
-  push_cast
-  exact (Nat.isCoprime_iff_coprime.2 h).mul_dvd h1 h2
-
-private theorem topT_succ {l L N : ℕ} [NeZero N] (h : Nat.Coprime l N) :
-    (topT l (L + 1) N : ZMod (N * l ^ L)) * (l : ZMod (N * l ^ L)) ^ (L + 1) = (topT l L N : ZMod (N * l ^ L)) * (l : ZMod (N * l ^ L)) ^ L := by
-  have hc : Nat.Coprime N (l ^ L) := Nat.Coprime.pow_right L h.symm
-  have hu : IsUnit (l : ZMod N) := (ZMod.unitOfCoprime l h).isUnit
-  have key : (((topT l (L + 1) N * l ^ (L + 1) : ℕ) : ℤ) : ZMod (N * l ^ L)) =
-      (((topT l L N * l ^ L : ℕ) : ℤ) : ZMod (N * l ^ L)) := by
-    apply crt hc
-    · push_cast
-      simp only [topT, ZMod.natCast_val, ZMod.cast_id', id]
-      rw [ZMod.inv_mul_of_unit _ (hu.pow _), ZMod.inv_mul_of_unit _ (hu.pow _)]
-    · push_cast
-      have h0 : ((l : ZMod (l ^ L))) ^ L = 0 := by rw [← Nat.cast_pow, ZMod.natCast_self]
-      rw [pow_succ, h0]
-      simp
-  push_cast at key
-  exact key
-
 private theorem rows_succ {l L N p k : ℕ} [Fact l.Prime] [NeZero N] (x : ZMod N) (h : Nat.Coprime l N)
     (hp : Nat.Coprime p (N * l ^ (L + 1))) (k1 : (k : ZMod (N * l ^ L)) = 1) (k2 : (k : ZMod p) = l) :
     rw0 (N * l ^ L * p) (rU l (L + 1) N p x) = (k : ZMod (N * l ^ L * p)) • rw0 (N * l ^ L * p) (rU l L N p x) ∧
@@ -751,16 +708,16 @@ private theorem rows_succ {l L N p k : ℕ} [Fact l.Prime] [NeZero N] (x : ZMod 
   have hc : Nat.Coprime (N * l ^ L) p := hp'.symm
   haveI : NeZero (N * l ^ L) := ⟨mul_ne_zero (NeZero.ne N) (pow_ne_zero _ hpr.ne_zero)⟩
   haveI : NeZero (N * l ^ (L + 1)) := ⟨mul_ne_zero (NeZero.ne N) (pow_ne_zero _ hpr.ne_zero)⟩
-  have e1 := bar_mul (l := l) (L := L + 1) (N := N) (p := p) (D := N * l ^ L) hp hdv
-  have e2 := bar_mul (l := l) (L := L) (N := N) (p := p) (D := N * l ^ L) hp' dvd_rfl
-  have e3 := topT_succ (l := l) (L := L) (N := N) h
+  have e1 := UpperTheory.V.Z.Kato.Nb.NormOneTraceTorsion.bar_mul (l := l) (L := L + 1) (N := N) (p := p) (D := N * l ^ L) hp hdv
+  have e2 := UpperTheory.V.Z.Kato.Nb.NormOneTraceTorsion.bar_mul (l := l) (L := L) (N := N) (p := p) (D := N * l ^ L) hp' dvd_rfl
+  have e3 := UpperTheory.V.Z.Kato.Nb.NormOneTraceTorsion.topT_succ (l := l) (L := L) (N := N) h
   have e4 : (N : ZMod (N * l ^ L)) * (l : ZMod (N * l ^ L)) ^ L = 0 := by
     rw [← Nat.cast_pow, ← Nat.cast_mul, ZMod.natCast_self]
   have f0 : (p : ZMod p) = 0 := ZMod.natCast_self p
   have lift : ∀ a b : ℤ, (a : ZMod (N * l ^ L)) = (k : ZMod (N * l ^ L)) * b → (a : ZMod p) = (k : ZMod p) * b →
       (a : ZMod (N * l ^ L * p)) = (k : ZMod (N * l ^ L * p)) * b := by
     intro a b h1 h2
-    have h3 := crt hc (a := a) (b := (k : ℤ) * b) (by push_cast; exact h1) (by push_cast; exact h2)
+    have h3 := UpperTheory.V.Z.Kato.Nb.NormOneTraceTorsion.crt hc (a := a) (b := (k : ℤ) * b) (by push_cast; exact h1) (by push_cast; exact h2)
     push_cast at h3
     exact h3
   refine ⟨?_, ?_⟩
@@ -868,15 +825,8 @@ private theorem topXi (hT : STopRel) (hB : SBridge)
     (hx : ∀ i, x' i = (U i : ℚ) / (M₀ : ℚ)) (hy : ∀ i, y' i = (V i : ℚ) / (M₀ : ℚ))
     (A : Type) [Group A] [DecidableEq A] (π : (ZMod M)ˣ →* A) :
     CohB X l N w n (fun s => (π (cycM M s))⁻¹) (GlobalTheory.KA.push π (shB X l M (clsG X l n N M w c d g x' y')))
-      fun s t => Xi X l n N M₀ M w g (rw0 M₀ U) (rw0 M₀ V) (fun z => π z = t) (ws n M₀ s) := by
-  have hx' : ∀ i, ∃ j : ℤ, x' i = toQ M₀ (rw0 M₀ U) i + j := fun i => by
-    rw [hx i]
-    exact exists_int_div_eq_toQ_rw0_add M₀ U i
-  have hy' : ∀ i, ∃ j : ℤ, y' i = toQ M₀ (rw0 M₀ V) i + j := fun i => by
-    rw [hy i]
-    exact exists_int_div_eq_toQ_rw0_add M₀ V i
-  obtain ⟨β, hβ, hc⟩ := hT Ω ε X l n N M₀ M w g lev hL c d ws law lv (rw0 M₀ U) (rw0 M₀ V) ok x' y' hx' hy'
-  exact hB Ω ε X l n N M₀ M w g lev hL (rw0 M₀ U) (rw0 M₀ V) ok (ws n M₀) (law.coc n M₀ lv) _ β hβ hc A π
+      fun s t => Xi X l n N M₀ M w g (rw0 M₀ U) (rw0 M₀ V) (fun z => π z = t) (ws n M₀ s) :=
+  NormOneTraceTorsion.topXi hT hB X l n N M₀ M w c d g lev hL ws law lv U V ok x' y' hx hy A π
 
 private def rdH (l n r N p : ℕ) : (ZMod (lvT l n r N p))ˣ →* (ZMod p)ˣ × (ZMod (l ^ r))ˣ :=
   (Units.map (ZMod.castHom (Dvd.intro_left _ rfl : p ∣ lvT l n r N p) (ZMod p)).toMonoidHom).prod
@@ -1048,7 +998,7 @@ private theorem main (hA : SApi) (hC : SCohApi) (hX : SXiCoh) (hD : SXiDist) (hS
       simp
     rw [b1, ZMod.val_zero]
     simp only [Nat.cast_zero, zero_mul, sub_zero, rw0]
-    rw [val_cast (dvd_mul_right l _), val_cast (dvd_mul_right l _), rl1.1, rl1.2.1]
+    rw [UpperTheory.V.Z.Kato.Nb.NormOneTraceTorsion.val_cast (dvd_mul_right l _), UpperTheory.V.Z.Kato.Nb.NormOneTraceTorsion.val_cast (dvd_mul_right l _), rl1.1, rl1.2.1]
     exact mul_ne_zero hNl hNl
   have hcyc := (hG Ω ε X 1 one_pos).2.2.2.2.2.2.2
   have Cr := topXi hT hB X l n N (N * l ^ (r + n) * p) (lvT l n r N p) w c d g lev0 hL ws law lv0
@@ -1404,15 +1354,6 @@ private theorem UpperTheory.Kd.K4.mlT_cpt {l : ℕ} [Fact l.Prime] (c : Coef l) 
   have hfg : (Subalgebra.toSubmodule c.O).FG := Module.Finite.iff_fg.1 c.fin
   exact Submodule.isCompact_of_fg hfg
 
-private theorem UpperTheory.Kd.K4.mlT_le {l : ℕ} [Fact l.Prime] (c : Coef l) {a : Qbar l} (ha : a ∈ c.O) : ‖a‖ ≤ 1 := by
-  by_contra h
-  push Not at h
-  obtain ⟨M, hM⟩ := (UpperTheory.Kd.K4.mlT_cpt c).isBounded.exists_norm_le
-  obtain ⟨n, hn⟩ := pow_unbounded_of_one_lt M h
-  have := hM _ (c.O.pow_mem ha n)
-  rw [norm_pow] at this
-  linarith
-
 private theorem UpperTheory.Kd.K4.mlT_lt (l : ℕ) [Fact l.Prime] : ‖((l : ℕ) : Qbar l)‖ < 1 := by
   have h : ((l : ℕ) : Qbar l) = algebraMap ℚ_[l] (PadicAlgCl l) (l : ℚ_[l]) := by simp
   rw [h, PadicAlgCl.norm_extends]
@@ -1488,8 +1429,6 @@ private def UpperTheory.Kd.K4.mlT_red (l n r N p : ℕ) :
   MonoidHom.prod (Units.map (ZMod.castHom (Dvd.intro_left _ rfl : p ∣ lvT l n r N p) (ZMod p)).toMonoidHom)
     (Units.map (ZMod.castHom ((Dvd.dvd.mul_right (pow_dvd_pow l (Nat.le_add_right r n)) (N * N)).mul_right p)
      (ZMod (l ^ r))).toMonoidHom)
-
-attribute [-instance] GlobalTheory.KZ.ClsMod.neZero_pow
 
 theorem UpperTheory.Kd.K4.mlTOf :
     SymEx → SApi → SInvApi → SBStab → SSlD → SCohApi → SCycZ → STopT → KatoTwistedClassNormCompatibleCyclotomic → KatoTwistedClassCompatibleModPowers → ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (ε : Ω →+* ℂ) (X : Tower Ω ε) (N : ℕ) [NeZero N] (e : ℕ),
@@ -1571,7 +1510,7 @@ theorem UpperTheory.Kd.K4.mlTOf :
     intro n d hd i
     have e1 : algebraMap ℚ_[l] (Qbar l) (((l : ℤ_[l]) ^ n : ℤ_[l]) : ℚ_[l]) = ((l : ℕ) : Qbar l) ^ n := by simp
     rw [hsm, e1, Pi.smul_apply, smul_eq_mul, norm_mul]
-    exact mul_le_of_le_one_right (norm_nonneg _) (mlT_le cf (hint d hd i))
+    exact mul_le_of_le_one_right (norm_nonneg _) (nle cf (hint d hd i))
   have hfix : ∀ (M : ℕ) [NeZero M] (s : Ω ≃ₐ[ℚ] Ω) (y : (ZMod M)ˣ),
       (repM M y : Ω ≃ₐ[ℚ] Ω)⁻¹ * s * repM M (y * (cycM M s)⁻¹) ∈ fixMu Ω M := by
     intro M _ s y

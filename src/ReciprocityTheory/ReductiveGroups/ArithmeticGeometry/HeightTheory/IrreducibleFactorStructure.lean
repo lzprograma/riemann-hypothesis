@@ -427,28 +427,28 @@ theorem relation_map_comm_transvection (c : ι) (i k : Fin (d.D + 1)) (hik : i �
       · have e1 : ∀ r', φ r' = -∑ l ∈ Finset.univ.erase (d.jc c),
             X (r', l) * C (ratio (Ω := Ω c) (d.w l c) (d.w (d.jc c) c)) := by
           intro r'
-          simp only [hφ, Data.relationEliminateColumn, MvPolynomial.aeval_X, h2, if_true]
+          simp only [hφ, Data.relationEliminateColumn, MvPolynomial.aeval_X, h2, ite_true]
 
         rw [e1 r, e1 k, map_neg, map_sum]
         by_cases h1 : r = i
 
-        · simp only [h1, if_true, map_mul, hX, hC, map_neg, map_sum, add_mul,
+        · simp only [h1, ite_true, map_mul, hX, hC, map_neg, map_sum, add_mul,
           Finset.sum_add_distrib, mul_neg, Finset.mul_sum, mul_assoc, neg_add]
 
-        · simp only [h1, if_false, add_zero, map_mul, hX, hC, map_neg, map_sum]
+        · simp only [h1, ite_false, add_zero, map_mul, hX, hC, map_neg, map_sum]
       · have e1 : ∀ r', φ r' = X (r', b) := by
           intro r'
-          simp only [hφ, Data.relationEliminateColumn, MvPolynomial.aeval_X, h2, if_false]
+          simp only [hφ, Data.relationEliminateColumn, MvPolynomial.aeval_X, h2, ite_false]
         rw [e1 r, e1 k, hX]
     simp only [RingHom.comp_apply, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom, Polynomial.coe_mapRingHom]
     rw [hXK a b]
     change _ = trv (R := Ω c) (D := d.D) (N := d.N) i k Polynomial.X (φ a)
     rw [hφtrv a]
     by_cases h1 : a = i
-    · simp only [h1, if_true, Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_C,
+    · simp only [h1, ite_true, Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_C,
         Polynomial.map_X]
       rfl
-    · simp only [h1, if_false, add_zero, Polynomial.map_C]
+    · simp only [h1, ite_false, add_zero, Polynomial.map_C]
       rfl
 
 theorem transvection_fix_generator (c : ι) (F0 : KTp K d.D d.N) (hF0 : F0 ≠ 0)
@@ -761,7 +761,7 @@ theorem eq_monomial_of_dehomog_const (A : MvPolynomial (V D N) K) (m : ℕ) (hA 
     congr 1
     apply Finsupp.prod_congr
     intro v hv
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro rfl
     simp at hv
   have hcoeff : ∀ u, AddMonoidAlgebra.coeff (ev1 A) u =
@@ -776,7 +776,7 @@ theorem eq_monomial_of_dehomog_const (A : MvPolynomial (V D N) K) (m : ℕ) (hA 
       WH.wt isX s = WH.wt isX (s.erase (Sum.inr 0)) + s (Sum.inr 0) := by
     intro s
     conv_lhs => rw [← Finsupp.erase_add_single (Sum.inr 0) s]
-    rw [WH.wt_add, WH.wt_single, if_pos (show isX (Sum.inr 0 : V D N) from rfl)]
+    rw [WH.wt_add, WH.wt_single, ite_eq_left (show isX (Sum.inr 0 : V D N) from rfl)]
   have hwt0 : WH.wt isX (0 : V D N →₀ ℕ) = 0 := by simp [WH.wt]
   have hinj : ∀ s ∈ A.support, ∀ s' ∈ A.support,
       s.erase (Sum.inr 0) = s'.erase (Sum.inr 0) → s = s' := by
@@ -796,32 +796,32 @@ theorem eq_monomial_of_dehomog_const (A : MvPolynomial (V D N) K) (m : ℕ) (hA 
   rw [coeff_C_mul, coeff_X_pow]
   by_cases hu : u ∈ A.support
   · have e := hcoeff (u.erase (Sum.inr 0))
-    rw [Finset.sum_eq_single u (fun s hs hne => if_neg (fun h => hne (hinj s hs u hu h)))
-      (fun h => absurd hu h), if_pos rfl, h1, coeff_C] at e
+    rw [Finset.sum_eq_single u (fun s hs hne => ite_eq_right (fun h => hne (hinj s hs u hu h)))
+      (fun h => absurd hu h), ite_eq_left rfl, h1, coeff_C] at e
     rw [← e]
     by_cases h : Finsupp.single (Sum.inr 0) m = u
     · have h0 : 0 = u.erase (Sum.inr 0) := by
         rw [← h]
         simp
-      rw [if_pos h0, if_pos h, mul_one]
+      rw [ite_eq_left h0, ite_eq_left h, mul_one]
     · have h0 : ¬ 0 = u.erase (Sum.inr 0) := fun h0 => h (hsingle u hu h0.symm).symm
-      rw [if_neg h0, if_neg h, mul_zero]
+      rw [ite_eq_right h0, ite_eq_right h, mul_zero]
   · have hu0 : AddMonoidAlgebra.coeff A u = 0 := by simpa using hu
     rw [hu0]
     by_cases h : Finsupp.single (Sum.inr 0) m = u
-    · rw [if_pos h, mul_one]
+    · rw [ite_eq_left h, mul_one]
       have e := hcoeff 0
-      rw [h1, coeff_C, if_pos rfl] at e
+      rw [h1, coeff_C, ite_eq_left rfl] at e
       rw [e]
       symm
       apply Finset.sum_eq_zero
       intro s hs
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hs0
       apply hu
       rw [← h, ← hsingle s hs hs0]
       exact hs
-    · rw [if_neg h, mul_zero]
+    · rw [ite_eq_right h, mul_zero]
 
 end LinearSubstitution
 
@@ -912,13 +912,13 @@ theorem substitution_split_irreducible_of (c : ι) (F0 : KTp K d.D d.N) (hirr : 
   · obtain ⟨s, hs⟩ := MvPolynomial.ne_zero_iff.1 hF10
     have hs' : s ∈ F1.support := mem_support_iff.2 hs
     have h := hX _ (hshift s hs')
-    rw [WH.wt_add, WH.wt_single, if_pos (show LinearSubstitution.isX (Sum.inr 0 : LinearSubstitution.V d.D d.N) from rfl),
+    rw [WH.wt_add, WH.wt_single, ite_eq_left (show LinearSubstitution.isX (Sum.inr 0 : LinearSubstitution.V d.D d.N) from rfl),
       hdeF s hs'] at h
     have h2 : (d.D + 1) * d0 = d.D * d0 + d0 := by ring
     linarith
   · intro s hs
     have h := hU _ (hshift s hs)
-    rw [WH.wt_add, WH.wt_single, if_neg (by simp [LinearSubstitution.isU]), add_zero] at h
+    rw [WH.wt_add, WH.wt_single, ite_eq_right (by simp [LinearSubstitution.isU]), add_zero] at h
     rw [← LinearSubstitution.wt_isU]
     exact h.le
 
@@ -980,8 +980,7 @@ theorem substitution_comp_relation (hd : d.AxH 𝒜) (c : ι) :
     AlgHom.restrictScalars_apply]
   simp only [Data.relationEliminateColumn, aeval_X]
   split_ifs with ht
-  · set_option synthInstance.maxHeartbeats 100000 in
-      rw [map_neg, map_sum]
+  · rw [map_neg, map_sum]
     simp only [map_mul, hrho]
 
     have htot : ∑ k, (d.affineRowCombination c 0 * X (t.1.succ, k) - d.affineRowCombination c t.1.succ * X (0, k)) *

@@ -179,7 +179,7 @@ omit [∀ k, Fintype (ι k)] in
 theorem cellD_apply (y : (Σ k, ι k) → Ω) (m : ℕ) (t : Cell K ι m → Ω) (J : Cell K ι (m + 1))
     (hJ : CellMeets y J.1) :
     cellD S y m t J = ∑ k, ∑ i ∈ J.1 k, faceSign J.1 k i • ext m t (rem J.1 ⟨k, i⟩) := by
-  simp only [cellD, LinearMap.pi_apply, if_pos hJ, LinearMap.sum_apply]
+  simp only [cellD, LinearMap.pi_apply, ite_eq_left hJ, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun i _ => ?_
   unfold ext rem
   by_cases h : (∀ l, (Function.update J.1 k ((J.1 k).erase i) l).Nonempty) ∧
@@ -190,7 +190,7 @@ theorem cellD_apply (y : (Σ k, ι k) → Ω) (m : ℕ) (t : Cell K ι m → Ω)
 omit [∀ k, Fintype (ι k)] in
 theorem cellD_apply_not (y : (Σ k, ι k) → Ω) (m : ℕ) (t : Cell K ι m → Ω) (J : Cell K ι (m + 1))
     (hJ : ¬ CellMeets y J.1) : cellD S y m t J = 0 := by
-  simp only [cellD, LinearMap.pi_apply, if_neg hJ, LinearMap.zero_apply]
+  simp only [cellD, LinearMap.pi_apply, ite_eq_right hJ, LinearMap.zero_apply]
 
 
 omit [∀ k, Fintype (ι k)] [Fintype K] [Algebra S Ω] in

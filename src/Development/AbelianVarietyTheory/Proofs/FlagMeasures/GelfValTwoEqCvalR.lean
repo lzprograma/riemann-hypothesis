@@ -69,7 +69,7 @@ theorem gelfVal_two_eq (χ : Fin n → ℂ) :
     by_cases h1 : a = b
     · subst h1; simp
     · by_cases h2 : a < b <;> simp [h1, h2]
-  simp only [Amat, Matrix.of_apply, e, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true,
+  simp only [Amat, Matrix.of_apply, e, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true,
     Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_const, nsmul_eq_mul, Fin.card_Iio, Formalism.QuantumDeterminants.rhoStd]
   push_cast
   ring

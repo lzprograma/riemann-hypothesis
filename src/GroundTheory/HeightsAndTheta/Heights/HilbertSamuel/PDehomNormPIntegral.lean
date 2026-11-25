@@ -32,7 +32,7 @@ theorem padicValRat_nonneg_of_mem {p : ℕ} [Fact p.Prime] {q : ℚ}
 theorem inv_natCast_mem {p : ℕ} [Fact p.Prime] {M : ℕ} (hM : ¬ p ∣ M) :
     ((M : ℚ)⁻¹) ∈ (Rat.padicValuation p).valuationSubring := by
   have hM0 : M ≠ 0 := fun h => hM (h ▸ dvd_zero p)
-  rw [Valuation.mem_valuationSubring_iff, Rat.padicValuation_le_one_iff, Rat.inv_natCast_den, if_neg hM0]
+  rw [Valuation.mem_valuationSubring_iff, Rat.padicValuation_le_one_iff, Rat.inv_natCast_den, ite_eq_right hM0]
   exact hM
 
 theorem mem_range_map_iff {τ : Type*} (V : Subring ℚ) (F : MvPolynomial τ ℚ) :
@@ -126,7 +126,7 @@ theorem DehomNormPIntegral.proof : DehomNormPIntegral.Statement := by
     · simp
     · intro b hb hbn
       have : b < n := lt_of_le_of_ne (Nat.lt_succ_iff.mp (Finset.mem_range.mp hb)) hbn
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
     · intro h
       simp at h
 

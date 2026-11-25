@@ -1,51 +1,10 @@
 module
 
 public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LamIdealOfNotPrimePow
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
 public import Mathlib.MeasureTheory.Function.Floor
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -175,18 +134,24 @@ lemma integral_integral_exp_kernel (A : ℝ → ℂ) (hA : Measurable A) (K : �
     Complex.ofReal_cpow hx0.le]
   norm_num
 
-lemma LFam.a_le_mul (𝓕 : LFam) (g : 𝓕.G) (n : ℕ) : 𝓕.a g n ≤ 14 * n := by
+/-- The counting estimate bounds the full partial sum, and hence each coefficient. -/
+lemma LFam.sum_a_le_mul (𝓕 : LFam) (g : 𝓕.G) (n : ℕ) :
+    ∑ m ∈ Finset.Icc 1 n, 𝓕.a g m ≤ 14 * n := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp [𝓕.a_zero]
+  · simp
   have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast hn
   have h := (abs_le.1 (𝓕.count g n hn1)).2
   rw [Nat.floor_natCast] at h
-  have h2 : 𝓕.a g n ≤ ∑ m ∈ Finset.Icc 1 n, 𝓕.a g m :=
-    Finset.single_le_sum (f := 𝓕.a g) (fun m _ => 𝓕.a_nonneg g m) (Finset.mem_Icc.2 ⟨hn, le_rfl⟩)
-  have h3 : Real.sqrt n ≤ n := by
+  have hs : Real.sqrt n ≤ n := by
     rw [Real.sqrt_le_left (by positivity)]; nlinarith
-  have h4 : 𝓕.κ * n ≤ 4 * n := by gcongr; exact 𝓕.κ_le
+  have hκ : 𝓕.κ * n ≤ 4 * n := by gcongr; exact 𝓕.κ_le
   linarith
+
+lemma LFam.a_le_mul (𝓕 : LFam) (g : 𝓕.G) (n : ℕ) : 𝓕.a g n ≤ 14 * n := by
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simp [𝓕.a_zero]
+  · exact (Finset.single_le_sum (f := 𝓕.a g) (fun m _ => 𝓕.a_nonneg g m)
+      (Finset.mem_Icc.2 ⟨hn, le_rfl⟩)).trans (𝓕.sum_a_le_mul g n)
 
 lemma summable_nat_mul_exp_neg {t : ℝ} (ht : 0 < t) :
     Summable (fun n : ℕ => (n : ℝ) * Real.exp (-(t * n))) := by
@@ -210,8 +175,8 @@ lemma LFam.res_eq_sum (𝓕 : LFam) (χ : AddChar 𝓕.G ℂ) : 𝓕.res χ = �
   rw [← Finset.sum_mul, AddChar.sum_eq_ite]
   unfold LFam.res
   by_cases h : χ = 1
-  · rw [if_pos h, if_pos (show χ = 0 from h)]; push_cast; ring
-  · rw [if_neg h, if_neg (show ¬ χ = 0 from h)]; simp
+  · rw [ite_eq_left h, ite_eq_left (show χ = 0 from h)]; push_cast; ring
+  · rw [ite_eq_right h, ite_eq_right (show ¬ χ = 0 from h)]; simp
 
 lemma LFam.summable_norm_aChi_exp (𝓕 : LFam) (χ : AddChar 𝓕.G ℂ) {t : ℝ} (ht : 0 < t) :
     Summable (fun n : ℕ => ‖𝓕.aChi χ n‖ * Real.exp (-(t * n))) := by
@@ -286,7 +251,7 @@ lemma LFam.norm_sum_aChi_sub_le (𝓕 : LFam) (χ : AddChar 𝓕.G ℂ) {x : ℝ
 
 lemma LFam.integral_theta (𝓕 : LFam) (χ : AddChar 𝓕.G ℂ) (hχ : χ ≠ 1) :
     ∫ t in Set.Ioi (0 : ℝ), ∑' n : ℕ, 𝓕.aChi χ n * (Real.exp (-(t * n)) : ℂ) = 𝓕.F χ 1 := by
-  have hr : 𝓕.res χ = 0 := by unfold LFam.res; rw [if_neg hχ]
+  have hr : 𝓕.res χ = 0 := by unfold LFam.res; rw [ite_eq_right hχ]
   have h0 : 𝓕.aChi χ 0 = 0 := by simp [LFam.aChi, 𝓕.a_zero]
   have hm : Measurable fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, 𝓕.aChi χ n :=
     (measurable_from_top (f := fun k : ℕ => ∑ n ∈ Finset.Icc 1 k, 𝓕.aChi χ n)).comp Nat.measurable_floor
@@ -294,7 +259,7 @@ lemma LFam.integral_theta (𝓕 : LFam) (χ : AddChar 𝓕.G ℂ) (hχ : χ ≠ 
     have := 𝓕.norm_sum_aChi_sub_le χ hx.le
     rwa [hr, zero_mul, sub_zero] at this)
   unfold LFam.F LFam.mel
-  rw [if_neg hχ, one_mul]
+  rw [ite_eq_right hχ, one_mul]
   simp only [hr, zero_mul, sub_zero]
   rw [← h]
   apply setIntegral_congr_fun measurableSet_Ioi

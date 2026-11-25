@@ -74,8 +74,6 @@ import Mathlib.RingTheory.TotallySplit
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open CategoryTheory CategoryTheory.Limits DirectSum MvPolynomial
 
 noncomputable section
@@ -300,8 +298,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Opposite Filter DirectSum
@@ -391,8 +387,6 @@ end General
 section Proj
 
 open GlobalTheory.ProjSpace
-
-attribute [local instance] MvPolynomial.gradedAlgebra
 
 variable (R : Type) [CommRing R] (N : ℕ)
 
@@ -629,21 +623,6 @@ theorem chi_sheafO (n : ℤ) : chi k (sheafO k N n) = Ring.choose (n + N) N := b
     · have := subsingleton_coh k (N + 1) n (p := p + 1) (by omega)
         (by have := Finset.mem_range.1 hp; omega)
       simp [hdim_eq_zero_of_subsingleton]
-
-theorem chi_sheafO_eq_eval (n : ℤ) :
-    (chi k (sheafO k N n) : ℚ) = (Polynomial.preHilbertPoly ℚ N 0).eval (n : ℚ) := by
-  have e := congrArg (Int.cast : ℤ → ℚ) (Ring.factorial_nsmul_multichoose_eq_ascPochhammer (n + 1) N)
-  rw [Polynomial.ascPochhammer_smeval_eq_eval, nsmul_eq_mul] at e
-  have e' : (((ascPochhammer ℤ N).eval (n + 1) : ℤ) : ℚ) = (ascPochhammer ℚ N).eval ((n : ℚ) + 1) := by
-    rw [← ascPochhammer_map (Int.castRingHom ℚ), show (n : ℚ) + 1 = ((n + 1 : ℤ) : ℚ) by simp]
-    exact (Polynomial.eval_map_apply (Int.castRingHom ℚ) _).symm
-  rw [chi_sheafO, Ring.choose, add_sub_cancel_right, Polynomial.preHilbertPoly,
-    Polynomial.eval_smul, Polynomial.eval_comp]
-  have h : (N.factorial : ℚ) ≠ 0 := Nat.cast_ne_zero.2 N.factorial_ne_zero
-  simp only [Nat.cast_zero, map_zero, sub_zero, Polynomial.eval_add, Polynomial.eval_X,
-    Polynomial.eval_one, smul_eq_mul, ← e', ← e]
-  push_cast
-  field_simp
 
 end Field
 

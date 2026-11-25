@@ -49,8 +49,6 @@ public import Mathlib.Order.Filter.Finite
 
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 open CategoryTheory Filter
@@ -141,7 +139,7 @@ theorem pull_restrict_small_injective (P : ObjectProperty C) (hP : ∀ S S', (S 
     (sep : ∀ T, Sep F fun S (_ : T ⟶ S) ↦ P S) (glue : ∀ T, Glue F fun S (_ : T ⟶ S) ↦ P S)
     (van : ∀ T, Van1 F fun S (_ : T ⟶ S) ↦ P S) :
     Function.Injective (CoefMap.restrict F P.ι).pull2 := by
-  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+  rw [injective_iff_map_eq_zero]
   intro c hc
   obtain ⟨z, rfl⟩ := H2.mk_surjective F c
   rw [CoefMap.pullCohomologyTwo_class, H2.mk_eq_zero] at hc
@@ -152,7 +150,7 @@ theorem pull_restrict_small_injective (P : ObjectProperty C) (hP : ∀ S S', (S 
     (fun _ _ _ _ _ ψ χ ω _ ↦ z.2 ψ χ ω)
     (fun S S' _ ψ ↦ if h : P S then f ⟨S, h⟩ ⟨S', hP _ _ ψ h⟩ (ObjectProperty.homMk ψ) else 0)
     fun S S' S'' _ ψ χ hp ↦ by
-      simp only [dif_pos hp, dif_pos (hP _ _ ψ hp)]
+      simp only [dite_eq_left hp, dite_eq_left (hP _ _ ψ hp)]
       exact congrFun (congrFun (congrFun (congrFun (congrFun hf ⟨S, hp⟩) ⟨S', hP _ _ ψ hp⟩)
         ⟨S'', hP _ _ χ (hP _ _ ψ hp)⟩) (ObjectProperty.homMk ψ)) (ObjectProperty.homMk χ)
   refine H2.mk_eq_zero.2 ⟨fun S S' ψ ↦ h S S' PUnit.unit ψ, ?_⟩
@@ -173,11 +171,11 @@ theorem descent_H2_surjective (P : ObjectProperty C) (hP : ∀ S S', (S ⟶ S') 
     refine ⟨fun S S' S'' ψ χ ↦ if h : P S then y.1 ⟨S, h⟩ ⟨S', hP _ _ ψ h⟩ ⟨S'', hP _ _ χ (hP _ _ ψ h)⟩
       (ObjectProperty.homMk ψ) (ObjectProperty.homMk χ) else 0, fun S S' S'' S''' ψ χ ω hp ↦ ?_,
       fun S S' S'' ψ χ ↦ ?_⟩
-    · simp only [dif_pos hp, dif_pos (hP _ _ ψ hp)]
+    · simp only [dite_eq_left hp, dite_eq_left (hP _ _ ψ hp)]
       exact y.2 (T := ⟨S, hp⟩) (T' := ⟨S', hP _ _ ψ hp⟩) (T'' := ⟨S'', hP _ _ χ (hP _ _ ψ hp)⟩)
         (T''' := ⟨S''', hP _ _ ω (hP _ _ χ (hP _ _ ψ hp))⟩) (ObjectProperty.homMk ψ)
         (ObjectProperty.homMk χ) (ObjectProperty.homMk ω)
-    · simp only [dif_pos S.property]
+    · simp only [dite_eq_left S.property]
       rfl
   have h1 : ∀ T, ∃ a : ∀ S S', (T ⟶ S) → (S ⟶ S') → F.obj S', (∀ S S' S'' u ψ χ, P S →
       mp F χ (a S S' u ψ) - a S S'' u (ψ ≫ χ) + a S' S'' (u ≫ ψ) χ = z S S' S'' ψ χ) ∧
@@ -319,7 +317,7 @@ theorem vanishing_H1_inverting_morphisms : Van1 F P := by
   intro a ha
   refine ⟨fun S u ↦ if h : P S u then a T' S l (p S u h) else 0, fun S S' u ψ h ↦ ?_⟩
   obtain ⟨h', e⟩ := h2 S S' u ψ h
-  simp only [dif_pos h, dif_pos h', e]
+  simp only [dite_eq_left h, dite_eq_left h', e]
   rw [ha _ _ _ _ _ _ hl, h1, add_sub_cancel_left]
 
 
@@ -331,7 +329,7 @@ theorem vanishing_H2_inverting_morphisms : Van2 F P := by
   refine ⟨fun S S' u ψ ↦ if h : P S u then z T' S S' l (p S u h) ψ else 0,
     fun S S' S'' u ψ χ h ↦ ?_⟩
   obtain ⟨h', e⟩ := h2 S S' u ψ h
-  simp only [dif_pos h, dif_pos h', e]
+  simp only [dite_eq_left h, dite_eq_left h', e]
   have := hz _ _ _ _ l (p S u h) ψ χ hl
   rw [h1] at this
   linear_combination this
@@ -527,7 +525,7 @@ theorem vanishing_H1_standard_cover : Van1 F fun S (u : T ⟶ S) ↦ ∃ i, IsUn
     refine ⟨fun S u ↦ if h : ∃ i, IsUnit (mp F u (b i)) then β h.choose S u - e h.choose S u else 0,
       fun i S u hi ↦ ?_⟩
     have h : ∃ i, IsUnit (mp F u (b i)) := ⟨i, hi⟩
-    simp only [dif_pos h]
+    simp only [dite_eq_left h]
     linear_combination he' i _ S u hi h.choose_spec
   refine ⟨γ, fun S S' u ψ ⟨i, hi⟩ ↦ ?_⟩
   rw [hγ i _ _ hi, hγ i _ _ (isUnit_comp ψ hi), he i _ _ _ _ hi, map_sub]
@@ -557,7 +555,7 @@ theorem vanishing_H2_standard_cover : Van2 F fun S (u : T ⟶ S) ↦ ∃ i, IsUn
     refine ⟨fun i S u ↦ if h : ∃ i, IsUnit (mp F u (b i)) then
       β h.choose i S u - e h.choose i S u else 0, fun i j S u hi hj ↦ ?_⟩
     have h : ∃ i, IsUnit (mp F u (b i)) := ⟨i, hi⟩
-    simp only [dif_pos h]
+    simp only [dite_eq_left h]
     linear_combination -he' _ i j S u h.choose_spec hi hj
   obtain ⟨α, hα⟩ : ∃ α : ∀ S S', (T ⟶ S) → (S ⟶ S') → F.obj S', ∀ i S S' u ψ, IsUnit (mp F u (b i)) →
       α S S' u ψ = a i S S' u ψ - (γ i S' (u ≫ ψ) - mp F ψ (γ i S u)) := by
@@ -565,7 +563,7 @@ theorem vanishing_H2_standard_cover : Van2 F fun S (u : T ⟶ S) ↦ ∃ i, IsUn
       a h.choose S S' u ψ - (γ h.choose S' (u ≫ ψ) - mp F ψ (γ h.choose S u)) else 0,
       fun i S S' u ψ hi ↦ ?_⟩
     have h : ∃ i, IsUnit (mp F u (b i)) := ⟨i, hi⟩
-    simp only [dif_pos h]
+    simp only [dite_eq_left h]
     have k1 := congrArg (mp F ψ) (hγ i _ S u hi h.choose_spec)
     have k2 := hγ i _ S' (u ≫ ψ) (isUnit_comp ψ hi) (isUnit_comp ψ h.choose_spec)
     have k3 := he i _ S S' u ψ ⟨hi, h.choose_spec⟩

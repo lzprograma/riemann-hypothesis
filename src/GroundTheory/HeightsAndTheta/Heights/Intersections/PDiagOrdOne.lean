@@ -78,12 +78,6 @@ theorem length_eq_one_of_sat (J W : Ideal A) [W.IsPrime] (hJ : J ≤ W) (hs : �
 
 end Length
 
-section Graded
-
-variable {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} [∀ k, Fintype (ι k)] {Φ : Type} [Field Φ]
-
-end Graded
-
 end DiagonalOrderOne
 
 

@@ -119,17 +119,17 @@ theorem TransUnit_of (hR : IntRules) (hA : UnitAtRules) (hN : RootInt) (hF : Fac
     rw [map_mul]; ring
   rw [e1, e2] at key
   have hcm := congrArg (coeff m) key
-  rw [coeff_C_mul, coeff_X_pow, coeff_mul_X_pow', if_pos le_rfl, Nat.sub_self,
+  rw [coeff_C_mul, coeff_X_pow, coeff_mul_X_pow', ite_eq_left le_rfl, Nat.sub_self,
     coeff_zero_eq_constantCoeff_apply, map_mul, map_mul, map_pow, hc, constantCoeff_C, hV.1,
     mul_one] at hcm
   have hne : c ^ (k + 1) * (c ^ r * a) ≠ 0 :=
     mul_ne_zero (pow_ne_zero _ hc0) (mul_ne_zero (pow_ne_zero _ hc0) ha0)
   have hm : m = k + 1 := by
     by_contra hm
-    rw [if_neg hm, mul_zero] at hcm
+    rw [ite_eq_right hm, mul_zero] at hcm
     exact hne hcm.symm
   subst hm
-  rw [if_pos rfl, mul_one] at hcm
+  rw [ite_eq_left rfl, mul_one] at hcm
   have hcn : ‖c‖ = 1 := by
     have h1 := congrArg norm hcm
     rw [norm_mul, norm_mul, norm_mul, norm_pow, norm_pow, norm_pow, hε, hε', ha, one_pow, mul_one,

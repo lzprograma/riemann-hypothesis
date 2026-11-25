@@ -54,7 +54,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Unf
 open scoped ComplexOrder ENNReal NNReal ContDiff
 
@@ -147,8 +146,8 @@ theorem continuous_upSum : Continuous fun u : UX D ρ => upSum (u.1.1 : Mx D ρ 
   unfold upSum
   refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
   by_cases h : j.1 = i.1 + 1
-  · simp only [h, if_true]; exact (continuous_apply j).comp ((continuous_apply i).comp hval)
-  · simp only [h, if_false]; exact continuous_const
+  · simp only [h, ite_true]; exact (continuous_apply j).comp ((continuous_apply i).comp hval)
+  · simp only [h, ite_false]; exact continuous_const
 
 theorem continuous_flatFun (hψ : IsStdChar D ψ (-1)) (f : WO V W → ℂ) (x : Mx D W.rank ρ) (y : Mx D V₀.rank σ)
     (w : WO V₀ W₀) (hc : Continuous fun x' => evalAt ψ dV dW μS 𝓕S μT 𝓕T f x' y w) :

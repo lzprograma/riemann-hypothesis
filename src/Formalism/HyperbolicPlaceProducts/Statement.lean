@@ -4,45 +4,7 @@ public import Mathlib.Analysis.CStarAlgebra.Module.Constructions
 public import Mathlib.Analysis.InnerProductSpace.GramMatrix
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.NumberTheory.NumberField.Basic
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -81,14 +43,6 @@ def bb (D₁ D₂ : Submodule 𝕜 W) (φ₁ : D₁ →ₗᵢ[𝕜] W') (φ₂ :
   herm (x₁ : W) (x₂ : W) - herm (φ₁ x₁) (φ₂ x₂)
 
 end Place
-
-def BBBound : Prop :=
-  ∀ (𝕜 : Type) [RCLike 𝕜] (W W' : Type) [NormedAddCommGroup W] [InnerProductSpace 𝕜 W]
-    [FiniteDimensional 𝕜 W] [NormedAddCommGroup W'] [InnerProductSpace 𝕜 W']
-    (D₁ D₂ : Submodule 𝕜 W) (φ₁ : D₁ →ₗᵢ[𝕜] W') (φ₂ : D₂ →ₗᵢ[𝕜] W') (x₁ : D₁) (x₂ : D₂),
-    ‖bb D₁ D₂ φ₁ φ₂ x₁ x₂‖ ≤
-      2 * ‖(Ph D₁ D₂ φ₁ φ₂)ᗮ.starProjection (x₁ : W)‖ *
-        ‖(Ph D₁ D₂ φ₁ φ₂)ᗮ.starProjection (x₂ : W)‖
 
 def SesqDet : Prop :=
   ∀ (V₁ V₂ : Type) [NormedAddCommGroup V₁] [InnerProductSpace ℂ V₁]

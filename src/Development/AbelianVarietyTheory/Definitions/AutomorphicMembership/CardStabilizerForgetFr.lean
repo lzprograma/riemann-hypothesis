@@ -109,7 +109,7 @@ theorem exists_deco_of_frames : ∀ (E : Type) [Field E] [NumberField E] [StarRi
       f := d.1.f
       be := fun w y => if y ∈ d.1.at w.1 then redV w.1 ((f w).symm y) else 0 }
   have hbe : ∀ (w : SG) (y : Sp E n), y ∈ d.1.at w.1 → D.be w y = redV w.1 ((f w).symm y) :=
-    fun w y hy => if_pos hy
+    fun w y hy => ite_eq_left hy
   have hsm : ∀ (w : SG) (a : 𝓞 E), ∀ x ∈ d.1.at w.1,
       D.be w (a • x) = Ideal.Quotient.mk w.1.asIdeal a • D.be w x := by
     intro w a x hx
@@ -128,7 +128,7 @@ theorem exists_deco_of_frames : ∀ (E : Type) [Field E] [NumberField E] [StarRi
         rw [hbe w _ (Submodule.add_mem _ hx hy), hbe w _ hx, hbe w _ hy, map_add (f := _),
           redV_add _ (hf' w x hx) (hf' w y hy)]
       be_smul := hsm
-      be_off := fun w x hx => if_neg hx
+      be_off := fun w x hx => ite_eq_right hx
       be_surj := by
         intro w c
         choose r hr using fun i => Ideal.Quotient.mk_surjective (c i)
@@ -255,17 +255,17 @@ def frBe (P : HeightOneSpectrum (𝓞 E)) (f : Sp E n ≃ₗ[E] Sp E n) (x : Sp 
 
 theorem frBe_apply {P : HeightOneSpectrum (𝓞 E)} (f : Sp E n ≃ₗ[E] Sp E n) {x : Sp E n} (hx : x ∈ stdAt E n P) :
     frBe P f (f x) = redV P x := by
-  rw [frBe, LinearEquiv.symm_apply_apply, if_pos hx]
+  rw [frBe, LinearEquiv.symm_apply_apply, ite_eq_left hx]
 
 theorem frBe_off {P : HeightOneSpectrum (𝓞 E)} (f : Sp E n ≃ₗ[E] Sp E n) {x : Sp E n} (hx : f.symm x ∉ stdAt E n P) :
-    frBe P f x = 0 := if_neg hx
+    frBe P f x = 0 := ite_eq_right hx
 
 theorem be_eq_frBe {d : Deco E n ST SG} (hd : d.Ok) {w : SG} {f : Sp E n ≃ₗ[E] Sp E n} (hf : IsLiftFr d w f) :
     d.be w = frBe w.1 f := by
   funext x
   by_cases hx : f.symm x ∈ stdAt E n w.1
   · conv_lhs => rw [← f.apply_symm_apply x, hf.2 _ hx]
-    exact (if_pos hx).symm
+    exact (ite_eq_left hx).symm
   · rw [frBe_off f hx]
     refine hd.be_off w x fun h => hx ((hf.1 _).1 ?_)
     rwa [LinearEquiv.apply_symm_apply]
@@ -274,7 +274,7 @@ theorem frBe_move {P : HeightOneSpectrum (𝓞 E)} (γ f : Sp E n ≃ₗ[E] Sp E
     frBe P (γ * f * (c⁻¹).1) x = (redGL n P c).1.mulVec (frBe P f (γ.symm x)) := by
   have e : (γ * f * (c⁻¹).1).symm x = c.1 (f.symm (γ.symm x)) := rfl
   by_cases hx : f.symm (γ.symm x) ∈ stdAt E n P
-  · rw [frBe, frBe, e, if_pos hx, if_pos (glint_mem c hx), redV_redGL c hx]
+  · rw [frBe, frBe, e, ite_eq_left hx, ite_eq_left (glint_mem c hx), redV_redGL c hx]
   · rw [frBe_off f hx, frBe_off, Matrix.mulVec_zero]
     rw [e, c.2]
     exact hx
@@ -293,10 +293,10 @@ def forgetDeco (p : DecoF E n ST SG Q) : Deco E n ST (uSG SG Q) where
   be w := if h : w.1 ∈ SG then p.deco.1.be ⟨w.1, h⟩ else frBe w.1 (p.fr (rightOf w h))
 
 theorem forgetDeco_be_of_mem (p : DecoF E n ST SG Q) (w : uSG SG Q) (h : w.1 ∈ SG) :
-    (forgetDeco p).be w = p.deco.1.be ⟨w.1, h⟩ := dif_pos h
+    (forgetDeco p).be w = p.deco.1.be ⟨w.1, h⟩ := dite_eq_left h
 
 theorem forgetDeco_be_of_not (p : DecoF E n ST SG Q) (w : uSG SG Q) (h : w.1 ∉ SG) :
-    (forgetDeco p).be w = frBe w.1 (p.fr (rightOf w h)) := dif_neg h
+    (forgetDeco p).be w = frBe w.1 (p.fr (rightOf w h)) := dite_eq_right h
 
 theorem forgetDeco_ok (p : DecoF E n ST SG Q) : (forgetDeco p).Ok := by
   obtain ⟨⟨⟨N, f, be⟩, hd⟩, hN, -, hbe⟩ := GlobalTheory.FrameDeco.exists_deco_of_frames E n ST Q
@@ -365,10 +365,10 @@ def redGQ : GLG (E := E) (n := n) (SG := SG) × GLQ E n Q →* GLG (E := E) (n :
     by_cases h : w.1 ∈ SG <;> simp [h]
 
 theorem redGQ_of_mem (a : GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) (w : uSG SG Q) (h : w.1 ∈ SG) :
-    redGQ E n SG Q a w = a.1 ⟨w.1, h⟩ := dif_pos h
+    redGQ E n SG Q a w = a.1 ⟨w.1, h⟩ := dite_eq_left h
 
 theorem redGQ_of_not (a : GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) (w : uSG SG Q) (h : w.1 ∉ SG) :
-    redGQ E n SG Q a w = redGL n w.1 (a.2 (rightOf w h)) := dif_neg h
+    redGQ E n SG Q a w = redGL n w.1 (a.2 (rightOf w h)) := dite_eq_right h
 
 theorem forgetFr_smul (a : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) (p : DecoF E n ST SG Q) :
     forgetFr (a • p) = (a.1, redGQ E n SG Q a.2) • forgetFr p := by
@@ -558,7 +558,7 @@ theorem unitOf_val {pi : 𝓞 E} {P : HeightOneSpectrum (𝓞 E)} (h : pi ∉ P.
   have h0 : (pi : E) ≠ 0 := fun h0 => h (by
     rw [RingOfIntegers.coe_eq_zero_iff.1 h0]
     exact zero_mem _)
-  rw [unitOf, dif_neg h0]
+  rw [unitOf, dite_eq_right h0]
   rfl
 
 
@@ -612,7 +612,7 @@ theorem tilFr_fits (p : DecoF E n ∅ SG Q) (P : Q) (x : Sp E N) :
 
 theorem tilFr_eq (p : DecoF E n ∅ SG Q) : tilFr (ST := ST) hN pi p =
     (⟨(DecoSet.tilH hN pi p.deco, fun P => sumE hN (p.fr P) (unitOf pi)), tilFr_fits hN hT hG hQ p⟩ : DecoF E N ST SG Q) :=
-  dif_pos (tilFr_fits hN hT hG hQ p)
+  dite_eq_left (tilFr_fits hN hT hG hQ p)
 
 theorem tilFr_deco (p : DecoF E n ∅ SG Q) : (tilFr (ST := ST) hN pi p).deco = DecoSet.tilH hN pi p.deco := by
   exact congrArg DecoF.deco (tilFr_eq hN hT hG hQ p)

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCompactPseudoUnitaryOffDiagNormSublevel
 public import Mathlib.Analysis.Normed.Module.Basic
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FiniteInterClosedBallOfSeparated
@@ -124,19 +125,7 @@ namespace GlobalTheory
 theorem uJ_col_sum {n : ℕ} (ε : Fin n → Bool) (h : Matrix (Fin n) (Fin n) ℂ) (hh : inUJ ε h)
     (j : Fin n) :
     ∑ i, (if ε i then (1 : ℝ) else -1) * ‖h i j‖ ^ 2 = if ε j then (1 : ℝ) else -1 := by
-  have h1 := congrFun (congrFun hh j) j
-  rw [Matrix.mul_apply] at h1
-  simp only [Jm, Matrix.mul_diagonal, Matrix.conjTranspose_apply, Matrix.diagonal_apply_eq] at h1
-  apply Complex.ofReal_injective
-  push_cast
-  have : ((if ε j then (1 : ℝ) else -1 : ℝ) : ℂ) = if ε j then (1 : ℂ) else -1 := by
-    split_ifs <;> simp
-  rw [this, ← h1]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  have h2 : ((‖h i j‖ : ℝ) : ℂ) ^ 2 = star (h i j) * h i j := by
-    rw [Complex.star_def, Complex.conj_mul']
-  rw [h2]
-  split_ifs <;> simp
+  apply _root_.GlobalTheory.UJOffDiag.col_id <;> assumption
 
 theorem uJ_conjTranspose {n : ℕ} (ε : Fin n → Bool) (h : Matrix (Fin n) (Fin n) ℂ)
     (hh : inUJ ε h) : inUJ ε hᴴ := by

@@ -88,20 +88,8 @@ def GFf (I : Formalism.MainNotions.S.AutInst) : Set I.Gf :=
   {x | ∃ γ : GL (Fin I.n) I.E, γ ∈ Formalism.UG.UJ (starRingEnd I.E) I.J ∧
     I.fmat x = (γ : Matrix (Fin I.n) (Fin I.n) I.E).map (Formalism.UG.inclE (F := I.F) (Formalism.MainNotions.S.Af I.F))}
 
-section Herm
-
-variable {F E : Type} [Field F] [Field E] [Algebra F E]
-
-end Herm
-
 
 end GlobalHyps
-
-section FiniteGroups
-
-open Finset Matrix MeasureTheory
-
-end FiniteGroups
 
 section TextTau
 
@@ -155,37 +143,10 @@ section GapStatementAlt
 
 open Formalism.MainNotions.S Formalism.MainNotions.CayleySignature
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-def GapStatementAt (C : ℝ) : Prop :=
-  ∀ (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (c : Fin r → ℂ) (u : Fin k → ℝ) (v : Fin (k - 1) → ℝ)
-    (b : Fin (2 * r + 2) → ℝ), RealPlaceNumericalSetting k r z c u v b → GapC C k r b →
-  ∀ (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (σ : Mat k r → (H →L[ℂ] H)),
-    IsDSHpk k r (eps48 k r) (lam48 k r v b) σ →
-  ∀ (Vp : Type) [NormedAddCommGroup Vp] [InnerProductSpace ℂ Vp] [FiniteDimensional ℂ Vp]
-    (π : Mat k r → (Vp →L[ℂ] Vp)), IsHCTypeW k r z u π →
-  ∀ w : H, IsLowUnitH k r (eps48 k r) (lam48 k r v b) σ w →
-  ∀ μG μS ν : Measure (Formalism.QuantumDeterminants.Mt k r),
-    IsHaarOn (Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r)) μG → IsHaarOn (Formalism.QuantumDeterminants.Sset k r z) μS →
-    IsQuotMeas μG μS ν →
-  ∃ W : Mat k r → Vp,
-    AEStronglyMeasurable (fun x => W (Matrix.of x)) μG ∧ AEStronglyMeasurable (fun x => W (Matrix.of x)) ν ∧
-    IsSPsiEquiv z (psiGen k r z c) π W ∧ l2SG ν W < ⊤ ∧ l2SG ν W ≠ 0 ∧
-    ∀ x ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r), rconv μG (eFun μG σ w) W x = W x
-
-def GapStatementAlt : Prop := GapStatementAt 0
+open scoped Matrix.Norms.Elementwise
 
 end GapStatementAlt
 
 end SpectralGap₂
-
-section BesselNVPart
-
-open Formalism.MainNotions.S Formalism.MainNotions.CayleySignature MeasureTheory
-open scoped InnerProductSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-end BesselNVPart
 
 end Formalism.L2.SG.LitS

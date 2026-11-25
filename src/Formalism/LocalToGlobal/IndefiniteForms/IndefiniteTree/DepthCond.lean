@@ -176,7 +176,7 @@ theorem leafDepthLevel_of (N : IndefNum Bs) (O : OnObj S P c) (Nd : NumDatum) (�
     intro v hv he2 hσ hν hq
     obtain ⟨he1, he2', hram, hE⟩ := hq
     have hE' := hE j
-    rw [if_pos (by rw [hv]; exact hbad)] at hE'
+    rw [ite_eq_left (by rw [hv]; exact hbad)] at hE'
     have hTν : O.T * ν v j < 1 / 2 := by
       have hDk := iP j
       rcases hpl with h | h
@@ -235,7 +235,7 @@ theorem leafDepthRam_of (N : IndefNum Bs) (O : OnObj S P c) (Nd : NumDatum) (ι 
     intro v hv hν hs1 hS hσ hq
     obtain ⟨he1, he2, hram, hE⟩ := hq
     have hE' := hE j
-    rw [if_pos (by rw [hv]; exact hbad)] at hE'
+    rw [ite_eq_left (by rw [hv]; exact hbad)] at hE'
     exact ram_at O e₁ e₂ ν νW sW s1 cR cM v j (plc w) (DL j) (Dk j) C₀ he1 he2 hram hE' hS hσ hl1 hT0
       hν hs1 (iD j) (iW j) hPl hB
   have hν := iν w hw hpl j

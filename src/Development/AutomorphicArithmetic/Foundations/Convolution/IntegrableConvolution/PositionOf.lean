@@ -4,46 +4,7 @@ public import Development.AutomorphicArithmetic.Foundations.Convolution.Integrab
 public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableCartan
 public import GroundTheory.AutomorphicForms.L2LocalComponents.ArchBump
 public import GroundTheory.AutomorphicForms.L2LocalComponents.ArchPolar
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -132,9 +93,9 @@ private theorem cc_alg (τ : K →+* ℂ) (w : InfinitePlace K) (h : mk τ = w) 
     rw [Completion.algebraMap_apply]
     exact Completion.extensionEmbedding_coe _ _
   by_cases h1 : (mk τ).embedding = τ
-  · rw [cc, if_pos h1, e, h1]
+  · rw [cc, ite_eq_left h1, e, h1]
   · have h := (embedding_mk_eq τ).resolve_left h1
-    rw [cc, if_neg h1, RingHom.comp_apply, e, h]
+    rw [cc, ite_eq_right h1, RingHom.comp_apply, e, h]
     simp [ComplexEmbedding.conjugate_coe_eq]
 
 private theorem co_psi (τ : K →+* ℂ) (y : InfiniteAdeleRing K) :
@@ -152,15 +113,8 @@ private theorem cc_unique (w : InfinitePlace K) (f g : w.Completion →+* ℂ) (
   exact DFunLike.coe_injective (hd.equalizer hf hg (funext h))
 
 private theorem conj_unitary {n : ℕ} {M : Matrix (Fin n) (Fin n) ℂ} (h : M ∈ unitaryGroup (Fin n) ℂ) :
-    M.map (starRingEnd ℂ) ∈ unitaryGroup (Fin n) ℂ := by
-  rw [mem_unitaryGroup_iff] at h ⊢
-  have h2 := congrArg (RingHom.mapMatrix (starRingEnd ℂ)) h
-  rw [map_mul, map_one] at h2
-  have e : star (M.map (starRingEnd ℂ)) = RingHom.mapMatrix (starRingEnd ℂ) (star M) := by
-    ext i j
-    simp [Matrix.star_apply]
-  rw [e]
-  exact h2
+    M.map (starRingEnd ℂ) ∈ unitaryGroup (Fin n) ℂ :=
+  Matrix.map_star_mem_unitaryGroup_iff.mpr h
 
 private theorem co_unitary {n : ℕ} (τ : K →+* ℂ) (M : Matrix (Fin n) (Fin n) (mixedSpace K)) :
     M.map (co τ) ∈ unitaryGroup (Fin n) ℂ ↔ M.map (complexComp ⟨mk τ, cpx _⟩) ∈ unitaryGroup (Fin n) ℂ := by
@@ -194,15 +148,6 @@ end co
 
 section ext
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [_root_.NumberField.IsTotallyComplex F]
-
-private theorem totC (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [_root_.NumberField.IsTotallyComplex F] :
-    IsTotallyComplex E := ⟨fun w => by
-  rw [← not_isReal_iff_isComplex]
-  intro h
-  have h1 := isReal_iff.1 h
-  have h2 := ComplexEmbedding.IsReal.comp (algebraMap F E) h1
-  exact not_isReal_iff_isComplex.2 (IsTotallyComplex.isComplex (mk (w.embedding.comp (algebraMap F E))))
-    (isReal_mk_iff.2 h2)⟩
 
 variable [_root_.NumberField.IsTotallyComplex E]
 
@@ -374,7 +319,7 @@ end main
 theorem _root_.UpperTheory.ConvolutionTheory.L1.positionOf :
     UpperTheory.ConvolutionTheory.L1.PositionOf := by
   intro F E _ _ _ _ _ _ σ m D
-  have : IsTotallyComplex E := totC F E
+  have : IsTotallyComplex E := _root_.NumberField.isTotallyComplex_of_algebra F E
   have entry : ∀ (n : ℕ) (g : archGroup E n) (i : Fin (m + 1)) (τ : E →+* ℂ),
       D.e (P τ 1) = Pi.single i (P (τ.comp (algebraMap F E)) 1) →
       (mat (((compA D n i g : archGroup F n) : (ArchMatrix F n)ˣ) : ArchMatrix F n)).map (co (τ.comp (algebraMap F E))) =

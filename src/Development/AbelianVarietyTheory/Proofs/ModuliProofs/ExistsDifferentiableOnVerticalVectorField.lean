@@ -89,14 +89,7 @@ theorem differentiableAt_of_mulVec {E : Type} [NormedAddCommGroup E] [NormedSpac
 
 theorem valAt'_comp {X Y : Scheme.{0}} (x : Sp ℂ ⟶ X) (φ : X ⟶ Y) (U : Y.Opens) (f : Γ(Y, U)) :
     valAt' (x ≫ φ) U f = valAt' x (φ ⁻¹ᵁ U) ((φ.app U).hom f) := by
-  have hpre : (x ≫ φ) ⁻¹ᵁ U = x ⁻¹ᵁ φ ⁻¹ᵁ U := by simp
-  unfold valAt'
-  by_cases h : ⊤ ≤ x ⁻¹ᵁ φ ⁻¹ᵁ U
-  · rw [dite_eq_left (by rwa [hpre]), dite_eq_left h]
-    unfold valAt
-    rw [Scheme.Hom.comp_appLE]
-    rfl
-  · rw [dite_eq_right (by rwa [hpre]), dite_eq_right h]
+  exact (GlobalTheory.valAt'_comp x φ U f).symm
 
 theorem isOpen_dom_and_differentiableOn_fn {g : ℕ} {A₀ : Over (Sp ℂ)} [GrpObj A₀] {L₀ : LB A₀.left}
     (u : HolUnif A₀ L₀ g) {X : Scheme.{0}} (m : A₀.left ⟶ X) (W : X.Opens) (f : Γ(X, W)) :

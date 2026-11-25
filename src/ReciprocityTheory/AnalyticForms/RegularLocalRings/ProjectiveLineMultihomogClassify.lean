@@ -11,9 +11,6 @@ open MvPolynomial OnePoint Filter Topology
 
 noncomputable section
 
-theorem ptIdeal_isMaximal {n : ℕ} (p : Fin n → ℂ) : (ptIdeal p).IsMaximal :=
-  RingHom.ker_isMaximal_of_surjective _ fun c => ⟨C c, eval_C c⟩
-
 theorem ptIdeal_eq_span {n : ℕ} (p : Fin n → ℂ) :
     ptIdeal p = Ideal.span (Set.range fun i => X i - C (p i)) := by
   apply le_antisymm

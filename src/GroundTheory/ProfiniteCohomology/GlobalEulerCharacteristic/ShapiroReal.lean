@@ -1,49 +1,10 @@
 module
 
-import Mathlib.Tactic
 public import GroundTheory.ProfiniteCohomology.RealPlaces.VanishingMackey
 public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ShapiroCoind
 import GroundTheory.ProfiniteCohomology.MackeyFormula
 import GroundTheory.ProfiniteCohomology.RealPlaces.LocalDualityPlace
 public import GroundTheory.ProfiniteCohomology.RealPlaces.VanishingMackeyPlaces
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 
 @[expose] public section
 
@@ -160,7 +121,7 @@ theorem sum_index_eq_card_top_add :
         (gsRealFamily S ιr p.1).toMonoidHom p.2.out = ⊤},
       (mackeySubgroup (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S))
         (gsRealFamily S ιr p.1.1).toMonoidHom p.1.2.out).index = 1 := fun p =>
-    (index_mackeySubgroup_realFamily S hL ιr p.1.1 p.1.2).trans (if_pos p.2)
+    (index_mackeySubgroup_realFamily S hL ιr p.1.1 p.1.2).trans (ite_eq_left p.2)
   have hlow : ∀ p : {p : Σ v : {v : InfinitePlace K.1 // v.IsReal},
         MackeyDoubleCoset (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S))
           (gsRealFamily S ιr v).toMonoidHom //
@@ -168,7 +129,7 @@ theorem sum_index_eq_card_top_add :
         (gsRealFamily S ιr p.1).toMonoidHom p.2.out = ⊤},
       (mackeySubgroup (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S))
         (gsRealFamily S ιr p.1.1).toMonoidHom p.1.2.out).index = 2 := fun p =>
-    (index_mackeySubgroup_realFamily S hL ιr p.1.1 p.1.2).trans (if_neg p.2)
+    (index_mackeySubgroup_realFamily S hL ιr p.1.1 p.1.2).trans (ite_eq_right p.2)
   have h := Fintype.sum_subtype_add_sum_subtype (fun p : Σ v : {v : InfinitePlace K.1 // v.IsReal},
     MackeyDoubleCoset (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S))
       (gsRealFamily S ιr v).toMonoidHom =>
@@ -214,7 +175,6 @@ theorem card_infinitePlace_add_card :
     Nat.card_eq_of_bijective (realMemberPlace S ιr hL)
       ⟨realMemberPlace_injective S ιr hL, realMemberPlace_surjective S ιr hL⟩
   have hsum := (finrank_mul_card_real_eq_sum_index S hL ιr).trans (sum_index_eq_card_top_add S hL ιr)
-  set_option synthInstance.maxHeartbeats 200000 in
   exact count_places_arith (card_infinitePlace_eq_real_add_complex K).1
     (card_infinitePlace_eq_real_add_complex L).1 htop hsum (card_infinitePlace_eq_real_add_complex K).2
     (card_infinitePlace_eq_real_add_complex L).2 (Module.finrank_mul_finrank ℚ K.1 L.1)

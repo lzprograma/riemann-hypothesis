@@ -15,44 +15,6 @@ namespace Formalism.L2.Col
 
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Host
 
-section TBig
-
-variable {X : Fields} {Pr : Primes X}
-
-end TBig
-
-section Gen
-
-open GSD
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] {S : GSD K}
-
-end Gen
-
-section ColsRam
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-
-end ColsRam
-
-section Delta
-
-variable {K : Type} [Field K] [NumberField K] [StarRing K] (S : GSD K)
-
-end Delta
-
-section ColsUD
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-
-end ColsUD
-
-section SeenEx
-
-variable {X : Fields} {Pr : Primes X}
-
-end SeenEx
-
 section Pos
 
 open ComplexOrder
@@ -91,56 +53,5 @@ theorem GSD.map_ip (h : S.Ok) (σ : K →+* ℂ) (hσ : ∀ a : K, σ (star a) =
   exact S.map_pair σ hσ _ _
 
 end Pos
-
-section ColPos
-
-open ComplexOrder
-
-variable {X : Fields}
-
-variable {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-
-end ColPos
-
-section LatGen
-
-variable {K : Type} [Field K] [NumberField K] {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V]
-  [IsScalarTower (𝓞 K) K V]
-
-end LatGen
-
-section ColLat
-
-variable {X : Fields}
-
-variable {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-
-end ColLat
-
-section Cert
-
-end Cert
-
-section GaussInst
-
-variable (ι : Qb →+* ℂ) (LL : Fld) [FiniteDimensional ℚ LL] [Normal ℚ LL] (hE : KQ 1 ≤ LL)
-
-end GaussInst
-
-def ndIota : Qb →+* ℂ :=
-  haveI : Algebra.IsAlgebraic ℚ Qb := AlgebraicClosure.isAlgebraic ℚ
-  (IsAlgClosed.lift (R := ℚ) (M := ℂ) (S := Qb)).toRingHom
-
-section OfSizes
-
-variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
-
-end OfSizes
-
-section InstThms
-
-open ComplexOrder
-
-end InstThms
 
 end Formalism.L2.Col

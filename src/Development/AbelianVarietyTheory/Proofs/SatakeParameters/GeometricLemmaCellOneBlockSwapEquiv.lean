@@ -55,7 +55,6 @@ import ReciprocityTheory.Automorphisms.PlaceA
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil
 
 
@@ -160,20 +159,18 @@ theorem reindex_piTensor {d : Fin 2 → ℕ} (σ : ∀ i, Irr k (d i)) (γ : ∀
   show (σ (Equiv.swap 0 1 j)).π (γ (Equiv.swap 0 1 j)) (z (Equiv.swap 0 1 j)) = _
   rw [h j]
 
-theorem cellFunctor_swap_equiv : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (d : Fin 2 → ℕ) (σ : ∀ i, Irr k (d i)), d 1 = 1 →
-    ∀ (b : SizeMatrix (fun i : Fin 2 => Fin (d i)) (fun j : Fin 2 => Fin (d (Equiv.swap 0 1 j)))), b.1 1 0 = 1 →
+theorem cellFunctor_swap_equiv_of_antidiag (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
+    (d : Fin 2 → ℕ) (σ : ∀ i, Irr k (d i))
+    (b : SizeMatrix (fun i : Fin 2 => Fin (d i)) (fun j : Fin 2 => Fin (d (Equiv.swap 0 1 j))))
+    (h00 : b.1 0 0 = 0) (h11 : b.1 1 1 = 0) :
     ∃ (f : ∀ i, (Σ j, Fin (b.1 i j)) ≃ Fin (d i)) (g : ∀ j, (Σ i, Fin (b.1 i j)) ≃ Fin (d (Equiv.swap 0 1 j))),
       Nonempty ((cellFunctor f g (piTensor fun i => (σ i).π)).Equiv
         (piTensor fun j => (σ (Equiv.swap 0 1 j)).π)) := by
-  intro k _ _ _ _ d σ hd b hb
   have r0 := b.2.1 0
   have r1 := b.2.1 1
   have c0 := b.2.2 0
   have c1 := b.2.2 1
   simp only [Fin.sum_univ_two, Fintype.card_fin, Equiv.swap_apply_left, Equiv.swap_apply_right] at r0 r1 c0 c1
-  have h00 : b.1 0 0 = 0 := by omega
-  have h11 : b.1 1 1 = 0 := by omega
   have hrz : ∀ i j, j ≠ Equiv.swap 0 1 i → b.1 i j = 0 := by
     intro i j hj
     fin_cases i <;> fin_cases j <;> simp_all
@@ -280,5 +277,17 @@ theorem cellFunctor_swap_equiv : ∀ (k : Type) [Field k] [ValuativeRel k] [Topo
     refine (congrArg (τ ⟨x, hP x⟩) (Ψ.apply_symm_apply (φ.1.1 1))).trans ?_
     refine (φ.1.2 ⟨x, hP x⟩ 1).symm.trans ?_
     exact congrArg φ.1.1 (mul_one x)
+
+theorem cellFunctor_swap_equiv : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
+    (d : Fin 2 → ℕ) (σ : ∀ i, Irr k (d i)), d 1 = 1 →
+    ∀ (b : SizeMatrix (fun i : Fin 2 => Fin (d i)) (fun j : Fin 2 => Fin (d (Equiv.swap 0 1 j)))), b.1 1 0 = 1 →
+    ∃ (f : ∀ i, (Σ j, Fin (b.1 i j)) ≃ Fin (d i)) (g : ∀ j, (Σ i, Fin (b.1 i j)) ≃ Fin (d (Equiv.swap 0 1 j))),
+      Nonempty ((cellFunctor f g (piTensor fun i => (σ i).π)).Equiv
+        (piTensor fun j => (σ (Equiv.swap 0 1 j)).π)) := by
+  intro k _ _ _ _ d σ hd b hb
+  have r1 := b.2.1 1
+  have c0 := b.2.2 0
+  simp only [Fin.sum_univ_two, Fintype.card_fin, Equiv.swap_apply_left, Equiv.swap_apply_right] at r1 c0
+  exact cellFunctor_swap_equiv_of_antidiag k d σ b (by omega) (by omega)
 
 end GlobalTheory.OneBlockCell

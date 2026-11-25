@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.DiffIdealNeBot
 public import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEnds
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfLocGlob
 
@@ -11,8 +12,6 @@ namespace Formalism.L2.SG.Pf.ZsVolLat
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Matrix IsDedekindDomain
 open Classical
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Formalism.BasicNotions.D7}
 
@@ -51,13 +50,7 @@ theorem mem_of_loc (I : Submodule (𝓞 D.host.E) D.host.E) (x : D.host.E)
   exact htP (hJM ht)
 
 theorem one_mem_ddPow (k : ℕ) : (1 : D.host.E) ∈ ddS D ^ (-(k : ℤ)) := by
-  have hne := Formalism.L2.SG.Pf.StabIntSh.lg_ddS_ne (D := D)
-  have h1 : ddS D ^ k ≤ 1 := pow_le_one' FractionalIdeal.coeIdeal_le_one k
-  have h2 : (1 : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E)⁻¹ ≤ (ddS D ^ k)⁻¹ :=
-    FractionalIdeal.inv_anti_mono (pow_ne_zero k hne) h1
-  rw [inv_one] at h2
-  rw [_root_.zpow_neg, zpow_natCast]
-  exact h2 (FractionalIdeal.mem_one_iff _ |>.2 ⟨1, map_one _⟩)
+  apply _root_.PI.NRL.one_mem_ddS_neg <;> assumption
 
 theorem coef_spanO {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) {v : (VS D).V}
     (hv : v ∈ Submodule.span (𝓞 D.host.E) (Set.range F0.e))

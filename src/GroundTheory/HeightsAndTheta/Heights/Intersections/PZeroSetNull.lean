@@ -21,9 +21,6 @@ open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.Cha
 
 noncomputable section
 
-abbrev ProjectiveLineBundle.Diag {D : ℕ} (S : ProjectiveLineBundle D) : Ideal (MRing S.WIdx) :=
-  T.wwIdeal S.x S.δ S.e S.φ (S.a 0) (S.a 0)
-
 section Statements
 
 def ZeroSetNull.Statement : Prop :=
@@ -34,10 +31,6 @@ def ZeroSetNull.Statement : Prop :=
     ptsIntegral P φ g₁ = ptsIntegral P φ g₂
 
 end Statements
-
-section Inhabit
-
-end Inhabit
 
 end
 

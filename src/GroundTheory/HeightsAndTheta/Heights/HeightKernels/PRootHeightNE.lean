@@ -31,7 +31,7 @@ theorem anchor_homog (f j m : ℕ) : IsMultiHomog (rootAnchorSection f j m) (fun
   · intro τ _ hτ
     apply Finset.sum_eq_zero
     intro i _
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hτ (congrArg Sigma.fst h)
   · simp

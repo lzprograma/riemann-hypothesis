@@ -70,20 +70,8 @@ theorem aeval_mem (F : IntermediateField ℚ Ω) (w : (Σ k, ι k) → Ω) (hw :
 
 omit [Fintype K] [CharZero Ω] in
 theorem isMultiHomog_X_single [DecidableEq K] (p : Σ k, ι k) :
-    IsMultiHomog (X p : MRing ι) (fun k ↦ if k = p.1 then 1 else 0) := by
-  intro m hm k
-  rw [support_X, Finset.mem_singleton] at hm
-  subst hm
-  obtain ⟨k', i'⟩ := p
-  by_cases h : k = k'
-  · subst h
-    rw [Finset.sum_eq_single i']
-    · simp
-    · intro b _ hb
-      simp [Ne.symm hb]
-    · intro h
-      exact absurd (Finset.mem_univ _) h
-  · simp [h]
+    IsMultiHomog (X p : MRing ι) (fun k ↦ if k = p.1 then 1 else 0) :=
+  GroundTheory.Heights₂.Heights.Bridge.isMultiHomog_X_ite p
 
 
 omit [CharZero Ω] in
@@ -193,15 +181,13 @@ theorem BlockImageArith.proof : BlockImageArith.Statement := by
   rw [ringKrullDim_eq x c' hc']
   rw [← hFy, hLeq] at hdy
   generalize (Algebra.trdeg ℤ Fx).toENat = t at hdy ⊢
-  have h1 : ((D + 1 + Fintype.card K : ℕ) : ℕ∞) = t + Fintype.card K + 1 := by exact_mod_cast hdy
-  induction t using ENat.recTopCoe with
-  | top => simp at h1
-  | coe t =>
-    have h2 : D + 1 + Fintype.card K = t + Fintype.card K + 1 := by exact_mod_cast h1
-    have h3 : t = D := by omega
-    subst h3
-    rw [Fintype.card_unit]
-    norm_cast
+  have h1 : ((D + 1 + Fintype.card K : ℕ) : ℕ∞) = t + Fintype.card K + 1 := by
+    exact_mod_cast hdy
+  rw [Nat.cast_add, Nat.cast_add, Nat.cast_one, add_right_comm t] at h1
+  have h2 : (D : ℕ∞) + 1 = t + 1 := le_antisymm
+    ((ENat.add_le_add_iff_right (ENat.natCast_ne_top _)).mp h1.le)
+    ((ENat.add_le_add_iff_right (ENat.natCast_ne_top _)).mp h1.ge)
+  rw [Fintype.card_unit, Nat.cast_one, ← h2]; push_cast; rfl
 
 end
 

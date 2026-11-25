@@ -114,7 +114,7 @@ theorem FundCycleBaseChange.proof (h : MinimalPrimeComap.Statement) : FundCycleB
   have hsupp : ∀ W ∈ (fundCycle J).support, W ∈ relComps J := by
     intro W hW
     by_contra hn
-    exact Finsupp.mem_support_iff.mp hW (by rw [fundCycle_apply, if_neg hn])
+    exact Finsupp.mem_support_iff.mp hW (by rw [fundCycle_apply, ite_eq_right hn])
   have hone : ∀ W : Ideal (MvPolynomial (Fin n) K), W.IsPrime → ∀ P,
       P ∈ relComps (W.map (MvPolynomial.map σ)) → localMult (W.map (MvPolynomial.map σ)) P = 1 :=
     fun W hW P hP => localMult_eq_one_of_isRadical (hrad K L σ (Fin n) W hW.isRadical) hP.1
@@ -133,17 +133,17 @@ theorem FundCycleBaseChange.proof (h : MinimalPrimeComap.Statement) : FundCycleB
       localMult_map_of_flat J _ P (map_eq_maximalIdeal_of_isRadical
         (hrad K L σ (Fin n) _ hWp.isRadical) hPW)
     rw [hmult, Finset.sum_eq_single (P.comap (MvPolynomial.map σ))]
-    · rw [fundCycle_apply J, if_pos hWrel,
+    · rw [fundCycle_apply J, ite_eq_left hWrel,
         fundCycle_apply (Ideal.map (MvPolynomial.map σ) (P.comap (MvPolynomial.map σ))) P,
-        if_pos ⟨hPW, hP.2⟩, hone _ hWp P ⟨hPW, hP.2⟩, mul_one]
+        ite_eq_left ⟨hPW, hP.2⟩, hone _ hWp P ⟨hPW, hP.2⟩, mul_one]
     · intro W₀ hW₀ hne
-      rw [fundCycle_apply (Ideal.map (MvPolynomial.map σ) W₀) P, if_neg, mul_zero]
+      rw [fundCycle_apply (Ideal.map (MvPolynomial.map σ) W₀) P, ite_eq_right, mul_zero]
       intro hPW₀
       exact hne (hc W₀ (hsupp W₀ hW₀).1.1.1 P hPW₀.1).symm
     · intro hW
       rw [Finsupp.notMem_support_iff.mp hW, zero_mul]
   · refine (Finset.sum_eq_zero fun W hW => ?_).symm
-    rw [fundCycle_apply (Ideal.map (MvPolynomial.map σ) W) P, if_neg, mul_zero]
+    rw [fundCycle_apply (Ideal.map (MvPolynomial.map σ) W) P, ite_eq_right, mul_zero]
     intro hPW
     exact hP ⟨mem_minimalPrimes_map _ hc (hsupp W hW).1 hPW.1, hPW.2⟩
 

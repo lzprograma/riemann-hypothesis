@@ -167,13 +167,7 @@ theorem cyclicHerbrand_trivial_int (σ : G) :
         mul_eq_zero, hn, false_or] at ha hb
       subst ha hb
       rfl
-    have : Subsingleton (KerModRange (normHom ρ) (cycSub ρ σ)) := by
-      constructor
-      intro a b
-      induction a using QuotientAddGroup.induction_on
-      induction b using QuotientAddGroup.induction_on
-      congr 1
-      exact Subsingleton.elim _ _
+    have : Subsingleton (KerModRange (normHom ρ) (cycSub ρ σ)) := Quot.Subsingleton
     exact Nat.card_of_subsingleton 0
   rw [cyclicHerbrand, herbrandQuotient, h1, h2, Nat.cast_one, div_one]
 

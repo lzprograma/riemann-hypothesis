@@ -50,7 +50,6 @@ import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.C
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.MatrixAction
 
@@ -82,10 +81,5 @@ theorem _root_.GlobalTheory.MatrixAction.isMonHom_of_points {G H : Over S} [GrpO
     simpa [Hom.one_def] using this
   · have := hm (G ⊗ G) (fst G G) (snd G G)
     simpa [Hom.mul_def] using this
-
-section
-variable {G : Over S} [GrpObj G] {O : Type} [Ring O] (ρ : RingAct G O)
-
-end
 
 end GlobalTheory.MatrixAction

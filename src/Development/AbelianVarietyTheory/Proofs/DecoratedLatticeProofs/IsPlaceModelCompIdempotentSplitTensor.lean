@@ -49,7 +49,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open NumberField IsDedekindDomain Matrix MeasureTheory GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.SeeSaw GlobalTheory.LatPair GlobalTheory.SplitWeil
 open GlobalTheory.Unf GlobalTheory.Grow GlobalTheory.FinPl ValuativeRel IsLocalRing GlobalTheory.AdForm
 open scoped TensorProduct Pointwise
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.FinPl.PutIn.HalfOff
 
@@ -75,7 +74,7 @@ theorem tens_modul (ψ : AddChar (AF D.host.F) ℂ) {a b : AE D} (hab : a * b = 
   funext t
   have hba : b * a = 0 := by rw [mul_comm, hab]
   have e1 : symplO S T t y = symplO S T (t - b • t) y + symplO S T (b • t) y := by
-    rw [← GlobalTheory.LocMod.TensorModel.symplO_add_left', sub_add_cancel]
+    rw [← GlobalTheory.LatVac.symplO_add_left, sub_add_cancel]
   rw [tens_apply, tens_apply, e1, GlobalTheory.LocMod.TensorModel.symplO_half_zero hba (_root_.GlobalTheory.SplitLinear.isHalf_smul' hb t) hy, add_zero, mul_assoc]
 
 theorem tens_vac {a b : AE D} (hab : a * b = 0) (hb : b * b = b) (Λ : AddSubgroup (WO S T))
@@ -101,12 +100,12 @@ theorem tens_vac {a b : AE D} (hab : a * b = 0) (hb : b * b = b) (Λ : AddSubgro
   unfold halfInd
   by_cases hR : t ∈ Λ ∧ IsHalf (a + b) t
   · obtain ⟨⟨h1, h2⟩, h3⟩ := key.2 hR
-    rw [if_pos hR, if_pos ⟨h1, h2⟩, if_pos ⟨h3, hM⟩, mul_one]
-  · rw [if_neg hR]
+    rw [ite_eq_left hR, ite_eq_left ⟨h1, h2⟩, ite_eq_left ⟨h3, hM⟩, mul_one]
+  · rw [ite_eq_right hR]
     by_cases h3 : M ∈ Λ
-    · rw [if_pos (show M ∈ Λ ∧ IsHalf b M from ⟨h3, hM⟩), mul_one,
-        if_neg (show ¬(t - M ∈ Λ ∧ IsHalf a (t - M)) from fun h => hR (key.1 ⟨h, h3⟩))]
-    · rw [if_neg (show ¬(M ∈ Λ ∧ IsHalf b M) from fun h => h3 h.1), mul_zero]
+    · rw [ite_eq_left (show M ∈ Λ ∧ IsHalf b M from ⟨h3, hM⟩), mul_one,
+        ite_eq_right (show ¬(t - M ∈ Λ ∧ IsHalf a (t - M)) from fun h => hR (key.1 ⟨h, h3⟩))]
+    · rw [ite_eq_right (show ¬(M ∈ Λ ∧ IsHalf b M) from fun h => h3 h.1), mul_zero]
 
 end GlobalTheory.FinPl.PutIn.HalfOff
 

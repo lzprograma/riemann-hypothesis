@@ -109,8 +109,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace GlobalTheory.CoverDescSpan
@@ -120,8 +118,6 @@ open GlobalTheory.LevelCusp (IsMatch)
 open GlobalTheory.Dict (castFr)
 open GlobalTheory.DictMove (Carries)
 open scoped TensorProduct Matrix
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
@@ -453,7 +449,7 @@ theorem descent_comp (hT : LawsJ T) (hj : InR D j) (hσ : GoodEmb T.Q.c σ) (hr 
     C.cc₂ (C.dict₂ h₀).1 * Φ₂ (C.dict₂ h₀).1 (lact γ⁻¹ (castFr hm'.psi x))
   let P : Frame ((T.U j σ).X (T.dict j σ h₀).1).Ψ D.R.r → ℂ := fun x =>
     if x ∈ ((T.U j σ).X (T.dict j σ h₀).1).dom then Q x else 0
-  have hPQ : ∀ x ∈ ((T.U j σ).X (T.dict j σ h₀).1).dom, P x = Q x := fun x hx => if_pos hx
+  have hPQ : ∀ x ∈ ((T.U j σ).X (T.dict j σ h₀).1).dom, P x = Q x := fun x hx => ite_eq_left hx
   have hval : ∀ y, IsOrthFr ((T.U j σ).X (T.dict j σ h₀).1) y → ∀ h γ', γ' ∈ ((T.U j σ).X (T.dict j σ h₀).1).Γ →
       T.dict j σ h = ⟨(T.dict j σ h₀).1, lact γ' y⟩ → Q y = G h := fun y hy h γ' hγ' hh => by
     obtain ⟨u, hu, e⟩ := (base_orth hT hj hσ hr hθ h₀).2 y hy
@@ -498,7 +494,7 @@ theorem descent_comp (hT : LawsJ T) (hj : InR D j) (hσ : GoodEmb T.Q.c σ) (hr 
     · rw [hPQ _ (OrthogonalFrameDomain.rmul_mem_dom _ hx hb), hPQ _ hx, hQb x hx b hb]
     · rw [hPQ _ (hQγ γ' hγ' x hx).1, hPQ _ hx, (hQγ γ' hγ' x hx).2, hT.chiTriv j hj σ hσ a n hDom _ γ' hγ', one_mul]
   refine ⟨P, GlobalTheory.LevelCusp.mem_SS_of_isMatch _ _ _ _ γ⁻¹ hm' _ _ hla P _ _ hsec (hSS _) hPQ,
-    fun x hx => if_neg hx, fun h x hh => ?_⟩
+    fun x hx => ite_eq_right hx, fun h x hh => ?_⟩
   have hx : IsOrthFr ((T.U j σ).X (T.dict j σ h₀).1) x := by
     have := (base_orth hT hj hσ hr hθ h).1
     rw [hh] at this

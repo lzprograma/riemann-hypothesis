@@ -3,55 +3,7 @@ module
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.FixedUnitaryApplyFixedIndexRight
 public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.IntegrableUnitIndicator
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.HalfLeNormOneSub
-import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
@@ -145,17 +97,11 @@ lemma lint_lmul {ν : Measure (Mt k 0)} (hν : IsHaarOn (U0 k) ν) {a : Mat k 0}
     exact hc.measurable
   rw [← lintegral_map hF hm, hν.left a ha]
 
-private lemma iW_ne_iK' (hk : 1 ≤ k) : iW k ≠ iK k := by
-  intro h
-  have h' := congrArg Fin.val h
-  simp [iW, iK, wI] at h'
-  omega
-
 lemma rot (hk : 1 ≤ k) {ν : Measure (Mt k 0)} (hν : IsHaarOn (U0 k) ν) {φ : ℂ → ℝ≥0∞}
     (hφ : Measurable φ) (v : Fin (2 * 0 + k + 1) → ℂ) (c : ℂ) (hc : c ≠ 0)
     (hvc : tW (iK k) v ^ 2 = Complex.normSq c) :
     ∫⁻ x, φ (((Matrix.of x)ᴴ *ᵥ v) (iW k)) ∂ν = ∫⁻ x, φ (star c * star (x (iW k) (iW k))) ∂ν := by
-  have hWK := iW_ne_iK' hk
+  have hWK := iW_ne_iK hk
   have hcs : star c ≠ 0 := by
     intro h; apply hc; rw [← star_star c, h, star_zero]
   have hc2 : Complex.normSq c ≠ 0 := (Complex.normSq_pos.mpr hc).ne'
@@ -174,7 +120,7 @@ lemma rot (hk : 1 ≤ k) {ν : Measure (Mt k 0)} (hν : IsHaarOn (U0 k) ν) {φ 
     congr 1
     by_cases h : i = iK k
     · simp [hudef, h]
-    · simp only [hudef, h, if_false]
+    · simp only [hudef, h, ite_false]
       rw [Complex.normSq_mul, Complex.normSq_inv,
         show Complex.normSq (star c) = Complex.normSq c from Complex.normSq_conj c]
       ring
@@ -189,7 +135,7 @@ lemma rot (hk : 1 ≤ k) {ν : Measure (Mt k 0)} (hν : IsHaarOn (U0 k) ν) {φ 
       by_cases h : i = iK k
       · subst h; simp [hudef, bvec]
       · rw [hudef]
-        simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, if_neg h, bvec, Pi.single_apply,
+        simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, ite_eq_right h, bvec, Pi.single_apply,
           mul_zero, add_zero]
         rw [mul_inv_cancel_left₀ hcs]
     have h1 : Rᴴ *ᵥ u = bvec (iW k) := by
@@ -206,7 +152,7 @@ lemma rot (hk : 1 ≤ k) {ν : Measure (Mt k 0)} (hν : IsHaarOn (U0 k) ν) {φ 
     intro x hx
     have hx0 : x (iK k) (iW k) = 0 := by
       have h := fixedUnitary_apply_fixedIndex_left hx (iW k)
-      rw [if_neg hWK] at h
+      rw [ite_eq_right hWK] at h
       exact h
     show ((R * Matrix.of x)ᴴ *ᵥ v) (iW k) = _
     rw [Matrix.conjTranspose_mul, ← Matrix.mulVec_mulVec, hRv, Matrix.mulVec_add,
@@ -271,7 +217,7 @@ lemma bnd (hk : 1 ≤ k) {ν : Measure (Mt k 0)} (hν : IsHaarOn (U0 k) ν) {s :
     (hvb : tW (iK k) v ^ 2 ≤ Complex.normSq b) :
     ∫⁻ x, ENNReal.ofReal (lam * ‖((Matrix.of x)ᴴ *ᵥ v) (iW k) + b‖) ^ (-s) ∂ν ≤
       ENNReal.ofReal (lam * ‖b‖ / 2) ^ (-s) * (C0 k s ν + ν Set.univ) := by
-  have hWK := iW_ne_iK' hk
+  have hWK := iW_ne_iK hk
   have hb0 : 0 < ‖b‖ := norm_pos_iff.mpr hb
   have hA : 0 ≤ lam * ‖b‖ / 2 := div_nonneg (mul_nonneg hlam.le hb0.le) (by norm_num)
   obtain ⟨t, ht⟩ : ∃ t, t = tW (iK k) v := ⟨_, rfl⟩
@@ -291,7 +237,7 @@ lemma bnd (hk : 1 ≤ k) {ν : Measure (Mt k 0)} (hν : IsHaarOn (U0 k) ν) {s :
     have hv0 : ∀ i, i ≠ iK k → v i = 0 := by
       intro i hi
       have h3 := (Finset.sum_eq_zero_iff_of_nonneg hnn).mp hS i (Finset.mem_univ i)
-      rw [if_neg hi] at h3
+      rw [ite_eq_right hi] at h3
       exact Complex.normSq_eq_zero.mp h3
     calc ∫⁻ x, ENNReal.ofReal (lam * ‖((Matrix.of x)ᴴ *ᵥ v) (iW k) + b‖) ^ (-s) ∂ν
         = ∫⁻ _x, ENNReal.ofReal (lam * ‖b‖) ^ (-s) ∂ν := by
@@ -299,7 +245,7 @@ lemma bnd (hk : 1 ≤ k) {ν : Measure (Mt k 0)} (hν : IsHaarOn (U0 k) ν) {s :
           filter_upwards [ae_mem_fixedUnitary hν] with x hx
           have hx0 : x (iK k) (iW k) = 0 := by
             have h := fixedUnitary_apply_fixedIndex_left hx (iW k)
-            rw [if_neg hWK] at h
+            rw [ite_eq_right hWK] at h
             exact h
           have hz : ((Matrix.of x)ᴴ *ᵥ v) (iW k) = 0 := by
             first
@@ -377,7 +323,7 @@ lemma haarIntegralConstant_lt_top (hk : 1 ≤ k) {ν : Measure (Mt k 0)} (hν : 
     {s : ℝ} (hs : 0 ≤ s) (hsk : s < k) : C0 k s ν < ∞ := by
   classical
   have : IsFiniteMeasure ν := ⟨hνf⟩
-  have hpq : iW k ≠ iK k := iW_ne_iK' hk
+  have hpq : iW k ≠ iK k := iW_ne_iK hk
   have hcard : Fintype.card (Fin (2 * 0 + k + 1)) = k + 1 := by simp
   have hL := lint_Bset_lt_top hpq hcard hk hs hsk
   have hB0 := volume_Bset_ne_zero hpq hcard

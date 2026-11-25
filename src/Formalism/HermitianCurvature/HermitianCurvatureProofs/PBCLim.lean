@@ -2,48 +2,6 @@ module
 
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCGlob
 public import Mathlib.Analysis.Matrix.Order
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -76,7 +34,7 @@ theorem phiG_split (Y : Finset H) (κ : H → H → ℂ) (U P Q : Fin f → H ×
   unfold phiG phiRG phiR
   by_cases hx : Good x
   · by_cases hx' : Good x'
-    · simp only [hx, hx', and_self, if_true]
+    · simp only [hx, hx', and_self, ite_true]
       ring
     · simp [hx, hx']
   · simp [hx]
@@ -110,7 +68,7 @@ theorem phiRG_psd (Y : Finset H) (κ : H → H → ℂ) (hκ : TB.PSDOn Y κ) (U
     have hm : (i.1.2.1, i.1.1.1 v) ∈ Y ×ˢ T'.image (fun x => x v) :=
       Finset.mem_product.mpr ⟨i.1.2.2, Finset.mem_image_of_mem _ i.1.1.2⟩
     by_cases hs : i.2
-    · simp only [pt, hs, if_true]; exact Finset.inl_mem_disjSum.mpr hm
+    · simp only [pt, hs, ite_true]; exact Finset.inl_mem_disjSum.mpr hm
     · simp only [pt, hs]; exact Finset.inr_mem_disjSum.mpr hm
   let L : Matrix ((T' × Y) × Bool) ((T' × Y) × Bool) ℂ := fun i j =>
     κ i.1.2.1 j.1.2.1 * ∏ v, kv v (pt v i) (pt v j)
@@ -189,12 +147,12 @@ theorem phiRG_psd (Y : Finset H) (κ : H → H → ℂ) (hκ : TB.PSDOn Y κ) (U
   · by_cases hy : Good y.1
     · rw [hcol x hx]
       simp only [mul_comm (L _ _) (R _ y), hcol y hy]
-      simp only [phiRG, phiR, hx, hy, and_self, if_true, hconjP]
+      simp only [phiRG, phiR, hx, hy, and_self, ite_true, hconjP]
       unfold phi
       simp only [← Finset.sum_coe_sort Y]
       simp only [← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun h _ => Finset.sum_congr rfl fun h' _ => ?_
-      simp only [L, pt, kv, if_true, Bool.false_eq_true, if_false]
+      simp only [L, pt, kv, ite_true, Bool.false_eq_true, ite_false]
       ring
     · have : ∀ j, R j y = 0 := hR0 y hy
       simp [this, phiRG, hy]
@@ -273,7 +231,7 @@ theorem phiG_tendsto (Y : Finset H) (κ : H → H → ℂ) (K : Fin f → H × �
     Tendsto (fun x => phiG Y κ K x (x + σ)) (crystallineComparison.atInfAll f) (𝓝 (Hh Y κ hat σ)) := by
   refine Tendsto.congr' ?_ (?_ : Tendsto (fun x => phi Y κ K x (x + σ)) (crystallineComparison.atInfAll f) (𝓝 (Hh Y κ hat σ)))
   · filter_upwards [eventually_good σ] with x hx
-    rw [phiG, if_pos hx]
+    rw [phiG, ite_eq_left hx]
   · unfold phi Hh
     refine tendsto_finsetSum _ (fun h hh => tendsto_finsetSum _ (fun h' hh' => ?_))
     refine Tendsto.const_mul _ ?_
@@ -294,7 +252,7 @@ theorem phiG_conj_tendsto (Y : Finset H) (κ : H → H → ℂ) (hκ : TB.PSDOn 
     (crystallineComparison.atInfAll f) (𝓝 (Hh Y κ hat σ)))
   · filter_upwards [eventually_good σ] with x hx
     symm
-    rw [phiG, if_pos ⟨hx.2, hx.1⟩, phi]
+    rw [phiG, ite_eq_left ⟨hx.2, hx.1⟩, phi]
 
     simp only [map_sum, map_mul, map_prod]
     rw [Finset.sum_comm]
@@ -306,12 +264,6 @@ theorem phiG_conj_tendsto (Y : Finset H) (κ : H → H → ℂ) (hκ : TB.PSDOn 
     refine Tendsto.const_mul _ ?_
     refine tendsto_finsetProd _ (fun v _ => ?_)
     exact (hlim v h hh h' hh' (σ v)).comp (tendsto_coord v)
-
-section mean
-
-variable (Λ : AddSubgroup (crystallineComparison.V f)) (LIM : (Λ → ℂ) → ℂ)
-
-end mean
 
 end
 

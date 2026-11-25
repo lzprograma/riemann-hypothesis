@@ -143,20 +143,26 @@ theorem isIntegral_star {a : E} (ha : IsIntegral ℤ a) : IsIntegral ℤ (star a
 theorem trace_star (a : E) : Algebra.trace ℚ E (star a) = Algebra.trace ℚ E a :=
   Algebra.trace_eq_of_algEquiv ((IsCMField.complexConj E).restrictScalars ℚ) a
 
-theorem exists_bound_short (n : ℕ) (hn : n ≠ 0) {N : ℤ} (hN : N ≠ 0) :
-    ∃ C : ℝ, ∀ (V : Type) [AddCommGroup V] [Module E V] [FiniteDimensional E V]
-      (h : V →ₗ[E] V →ₗ⋆[E] E) (Λ : Submodule ℤ V), finrank E V = n →
-      (∀ x y, h y x = star (h x y)) → Λ.FG → span E (Λ : Set V) = ⊤ →
-      (∀ a : E, IsIntegral ℤ a → ∀ x ∈ Λ, a • x ∈ Λ) →
-      (∀ y, (∀ x ∈ Λ, IsIntegral ℤ (h y x)) → (N : E) • y ∈ Λ) →
-      ∃ v ∈ Λ, v ≠ 0 ∧ ∀ φ : E →+* ℂ, ‖φ (h v v)‖ ≤ C := by
+theorem exists_trace_det_basis {n : ℕ} (hn : n ≠ 0) {N D : ℤ} (hN : N ≠ 0) (hD : D ≠ 0)
+    (hDa : ∀ a : E, (∀ t : E, IsIntegral ℤ t → ∃ m : ℤ, Algebra.trace ℚ E (a * t) = m) →
+      IsIntegral ℤ ((D : E) * a))
+    {V : Type} [AddCommGroup V] [Module E V] [FiniteDimensional E V]
+    (h : V →ₗ[E] V →ₗ⋆[E] E) (Λ : Submodule ℤ V) (hV : finrank E V = n)
+    (hs : ∀ x y, h y x = star (h x y)) (hfg : Λ.FG) (hsp : span E (Λ : Set V) = ⊤)
+    (hO : ∀ a : E, IsIntegral ℤ a → ∀ x ∈ Λ, a • x ∈ Λ)
+    (hdual : ∀ y, (∀ x ∈ Λ, IsIntegral ℤ (h y x)) → (N : E) • y ∈ Λ) :
+    ∃ (κ : Type) (_ : Fintype κ) (_ : DecidableEq κ) (b : κ → V)
+      (q : LinearMap.BilinForm (maximalRealSubfield E) V),
+      (∀ i, b i ∈ Λ) ∧ LinearIndependent ℤ b ∧
+      (∀ x y, (q x y : E) = h x y + h y x) ∧ LinearMap.IsSymm q ∧
+      Fintype.card κ = finrank ℚ (maximalRealSubfield E) * (2 * n) ∧
+      (Matrix.of fun i j => Algebra.trace ℚ (maximalRealSubfield E) (q (b i) (b j))).det ≠ 0 ∧
+      |(((Matrix.of fun i j => Algebra.trace ℚ (maximalRealSubfield E) (q (b i) (b j))).det : ℚ) : ℝ)| <
+        ((|((N * D * 2 : ℤ) : ℝ)| + 1) ^ Fintype.card κ) ^ 2 := by
   classical
-  obtain ⟨D, hD, hDa⟩ := exists_int_mul_isIntegral_of_trace E
   set F := maximalRealSubfield E with hF
   have hM0 : N * D * 2 ≠ 0 := by positivity
-  refine ⟨(2 * n : ℕ) * (|((N * D * 2 : ℤ) : ℝ)| + 1) ^ 2, ?_⟩
-  intro V _ _ _ h Λ hV hs hfg hsp hO hdual
-  letI : Module ℚ V := Module.compHom V (algebraMap ℚ E)
+  let : Module ℚ V := Module.compHom V (algebraMap ℚ E)
   have : IsScalarTower ℚ E V := IsScalarTower.of_compHom ℚ E V
   have : Module.Finite ℤ Λ := Module.Finite.iff_fg.2 hfg
   have : HasUniqueDiv V := .of_module_rat V
@@ -169,7 +175,6 @@ theorem exists_bound_short (n : ℕ) (hn : n ≠ 0) {N : ℤ} (hN : N ≠ 0) :
   have hbΛ : ∀ x ∈ Λ, ∃ c : κ → ℤ, x = ∑ i, c i • b i := fun x hx =>
     ⟨β.repr ⟨x, hx⟩, by
       have := congrArg Λ.subtype (β.sum_repr ⟨x, hx⟩)
-
       rw [map_sum] at this
       exact this.symm⟩
   have hbs : ⊤ ≤ span ℚ (Set.range b) := by
@@ -194,8 +199,8 @@ theorem exists_bound_short (n : ℕ) (hn : n ≠ 0) {N : ℤ} (hN : N ≠ 0) :
   have hFV : finrank F V = 2 * n := by
     rw [← finrank_mul_finrank F E V, hV, Algebra.IsQuadraticExtension.finrank_eq_two]
   have : FiniteDimensional F V := Module.Finite.trans E V
-  have hκ : Fintype.card κ = finrank ℚ F * finrank F V := by
-    rw [← finrank_eq_card_basis (Basis.mk hbQ hbs), ← finrank_mul_finrank ℚ E V,
+  have hκ : Fintype.card κ = finrank ℚ F * (2 * n) := by
+    rw [← hFV, ← finrank_eq_card_basis (Basis.mk hbQ hbs), ← finrank_mul_finrank ℚ E V,
       ← finrank_mul_finrank F E V, ← finrank_mul_finrank ℚ F E, mul_assoc]
   have hreal : ∀ x y, h x y + h y x ∈ F := fun x y => by
     rw [← IsCMField.complexConj_eq_self_iff]
@@ -222,7 +227,6 @@ theorem exists_bound_short (n : ℕ) (hn : n ≠ 0) {N : ℤ} (hN : N ≠ 0) :
     have h1 : ∀ j, ∃ m : ℤ, Algebra.trace ℚ E (h y (b j)) = m := fun j => by
       obtain ⟨m, hm⟩ := hx j
       refine ⟨m, ?_⟩
-
       rw [← hm, hy, map_sum, LinearMap.sum_apply, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [← algebraMap_smul E, map_smul, LinearMap.smul_apply, algebraMap_smul, map_smul, ← htr]
@@ -231,7 +235,6 @@ theorem exists_bound_short (n : ℕ) (hn : n ≠ 0) {N : ℤ} (hN : N ≠ 0) :
       obtain ⟨c, rfl⟩ := hbΛ w hw
       choose m hm using h1
       refine ⟨∑ j, c j * m j, ?_⟩
-
       rw [map_sum, map_sum, Int.cast_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_zsmul, map_zsmul, hm, zsmul_eq_mul, Int.cast_mul]
@@ -247,23 +250,45 @@ theorem exists_bound_short (n : ℕ) (hn : n ≠ 0) {N : ℤ} (hN : N ≠ 0) :
     have h5 := Fintype.linearIndependent_iff.1 hbQ _ h4 i
     exact ⟨2 * c i, by push_cast; linarith⟩)
   have hcard : Fintype.card κ ≠ 0 := by
-    rw [hκ, hFV]; exact mul_ne_zero finrank_pos.ne' (by omega)
+    rw [hκ]; exact mul_ne_zero finrank_pos.ne' (by lia)
   set M : ℝ := |((N * D * 2 : ℤ) : ℝ)| with hM
   have hM' : 0 ≤ M := abs_nonneg _
-  obtain ⟨z, hz0, hz⟩ := exists_short_of_trace_det q hqs b hκ (t := M + 1) (by positivity) hT0 (by
-    have h1 : |((T.det : ℚ) : ℝ)| ≤ M ^ Fintype.card κ := by rw [hM]; exact_mod_cast hT1
-    have h2 : M ^ Fintype.card κ < (M + 1) ^ Fintype.card κ :=
-      pow_lt_pow_left₀ (by linarith) hM' hcard
-    have h3 : 1 ≤ (M + 1) ^ Fintype.card κ := one_le_pow₀ (by linarith)
-    refine h1.trans_lt (h2.trans_le ?_)
-    nlinarith)
-  refine ⟨∑ i, z i • b i, sum_mem fun i _ => Λ.smul_mem _ (β i).2, fun h0 => hz0 ?_, fun φ => ?_⟩
+  refine ⟨κ, inferInstance, inferInstance, b, q, fun i => (β i).2, hbZ, hq, hqs, hκ, hT0, ?_⟩
+  have h1 : |((T.det : ℚ) : ℝ)| ≤ M ^ Fintype.card κ := by rw [hM]; exact_mod_cast hT1
+  have h2 : M ^ Fintype.card κ < (M + 1) ^ Fintype.card κ :=
+    pow_lt_pow_left₀ (by linarith) hM' hcard
+  have h3 : 1 ≤ (M + 1) ^ Fintype.card κ := one_le_pow₀ (by linarith)
+  refine h1.trans_lt (h2.trans_le ?_)
+  nlinarith
+
+theorem exists_bound_short (n : ℕ) (hn : n ≠ 0) {N : ℤ} (hN : N ≠ 0) :
+    ∃ C : ℝ, ∀ (V : Type) [AddCommGroup V] [Module E V] [FiniteDimensional E V]
+      (h : V →ₗ[E] V →ₗ⋆[E] E) (Λ : Submodule ℤ V), finrank E V = n →
+      (∀ x y, h y x = star (h x y)) → Λ.FG → span E (Λ : Set V) = ⊤ →
+      (∀ a : E, IsIntegral ℤ a → ∀ x ∈ Λ, a • x ∈ Λ) →
+      (∀ y, (∀ x ∈ Λ, IsIntegral ℤ (h y x)) → (N : E) • y ∈ Λ) →
+      ∃ v ∈ Λ, v ≠ 0 ∧ ∀ φ : E →+* ℂ, ‖φ (h v v)‖ ≤ C := by
+  classical
+  obtain ⟨D, hD, hDa⟩ := exists_int_mul_isIntegral_of_trace E
+  set F := maximalRealSubfield E with hF
+  refine ⟨(2 * n : ℕ) * (|((N * D * 2 : ℤ) : ℝ)| + 1) ^ 2, ?_⟩
+  intro V _ _ _ h Λ hV hs hfg hsp hO hdual
+  obtain ⟨κ, _, _, b, q, hbΛ, hbZ, hq, hqs, hκ, hT0, hT1⟩ :=
+    exists_trace_det_basis hn hN hD hDa h Λ hV hs hfg hsp hO hdual
+  have : FiniteDimensional F V := Module.Finite.trans E V
+  have hFV : finrank F V = 2 * n := by
+    rw [← finrank_mul_finrank F E V, hV, Algebra.IsQuadraticExtension.finrank_eq_two]
+  have : Invertible (2 : F) := invertibleOfNonzero two_ne_zero
+  obtain ⟨e, he⟩ := LinearMap.BilinForm.exists_orthogonal_basis hqs
+  obtain ⟨z, hz0, hz⟩ := exists_short_coord e q (fun _ _ hl => he hl) b
+    (by rw [hκ, Fintype.card_fin, hFV]) (t := |((N * D * 2 : ℤ) : ℝ)| + 1) (by positivity) hT0 hT1
+  refine ⟨∑ i, z i • b i, sum_mem fun i _ => Λ.smul_mem _ (hbΛ i), fun h0 => hz0 ?_, fun φ => ?_⟩
   · exact funext (Fintype.linearIndependent_iff.1 hbZ z h0)
-  · have h1 := hz (φ.comp (algebraMap F E))
-    rw [hFV] at h1
+  · have h1 := (hz (φ.comp (algebraMap F E))).1
+    rw [Fintype.card_fin, hFV] at h1
     refine le_trans ?_ h1
-    change _ ≤ ‖φ (h _ _ + h _ _)‖
-    rw [← two_mul, map_mul, norm_mul, map_ofNat, Complex.norm_ofNat]
+    change _ ≤ ‖φ (q _ _ : E)‖
+    rw [hq, ← two_mul, map_mul, norm_mul, map_ofNat, Complex.norm_ofNat]
     linarith [norm_nonneg (φ (h (∑ i, z i • b i) (∑ i, z i • b i)))]
 
 end GlobalTheory.HermClass

@@ -1,52 +1,8 @@
 module
 
+import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContinuousInvUpper
 public import Formalism.HermitianCurvature.StatementG
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
 public import Mathlib.RingTheory.Complex
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Analysis.Calculus.Deriv.Inv
 public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 
@@ -57,32 +13,18 @@ open Formalism.FourierDecayAlt.G Matrix MeasureTheory Finset
 namespace Formalism.FourierDecayAlt.P.StandardCharacterExists
 
 theorem blk_cc {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) (b a : Fin n → ℂ) (e : ℂ) (i j : Fin n) :
-    blk A b a e i.castSucc j.castSucc = A i j := by
-  have h : ∀ i : Fin n, finSumFinEquiv.symm (i.castSucc : Fin (n+1)) = Sum.inl i := fun i =>
-    finSumFinEquiv_symm_apply_castAdd (n := 1) i
-  simp [blk, h]
+    blk A b a e i.castSucc j.castSucc = A i j := Formalism.FourierDecayAlt.P.G5.blk_cc A b a e i j
 
 theorem blk_cl {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) (b a : Fin n → ℂ) (e : ℂ) (i : Fin n) :
     blk A b a e i.castSucc (Fin.last n) = b i := by
-  have h : ∀ i : Fin n, finSumFinEquiv.symm (i.castSucc : Fin (n+1)) = Sum.inl i := fun i =>
-    finSumFinEquiv_symm_apply_castAdd (n := 1) i
-  have h2 : finSumFinEquiv.symm (Fin.last n : Fin (n+1)) = Sum.inr (0 : Fin 1) :=
-    finSumFinEquiv_symm_apply_natAdd (m := n) (0 : Fin 1)
-  simp [blk, h, h2]
+  apply _root_.Formalism.FourierDecayAlt.P.G5.blk_cl <;> assumption
 
 theorem blk_lc {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) (b a : Fin n → ℂ) (e : ℂ) (j : Fin n) :
     blk A b a e (Fin.last n) j.castSucc = a j := by
-  have h : ∀ i : Fin n, finSumFinEquiv.symm (i.castSucc : Fin (n+1)) = Sum.inl i := fun i =>
-    finSumFinEquiv_symm_apply_castAdd (n := 1) i
-  have h2 : finSumFinEquiv.symm (Fin.last n : Fin (n+1)) = Sum.inr (0 : Fin 1) :=
-    finSumFinEquiv_symm_apply_natAdd (m := n) (0 : Fin 1)
-  simp [blk, h, h2]
+  apply _root_.Formalism.FourierDecayAlt.P.G5.blk_lc <;> assumption
 
 theorem blk_ll {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) (b a : Fin n → ℂ) (e : ℂ) :
-    blk A b a e (Fin.last n) (Fin.last n) = e := by
-  have h2 : finSumFinEquiv.symm (Fin.last n : Fin (n+1)) = Sum.inr (0 : Fin 1) :=
-    finSumFinEquiv_symm_apply_natAdd (m := n) (0 : Fin 1)
-  simp [blk, h2]
+    blk A b a e (Fin.last n) (Fin.last n) = e := Formalism.FourierDecayAlt.P.G5.blk_ll A b a e
 
 theorem wMat_mul_apply {d : ℕ} (M : Matrix (Fin d) (Fin d) ℂ) (i j : Fin d) :
     (wMat d * M) i j = M i.rev j := by
@@ -275,14 +217,7 @@ theorem scalePi (β z : ℂ) (ι : Type) [Fintype ι] (hz : z ≠ 0) :
     Finset.prod_const, Finset.card_univ, ENNReal.coe_pow]
 
 theorem card_UT (n : ℕ) : Fintype.card (UT n) = ∑ i ∈ range n, i := by
-  rw [Fintype.card_subtype, Finset.card_filter, Fintype.sum_prod_type_right]
-  simp_rw [← Finset.card_filter]
-  have : ∀ y : Fin n, (univ.filter (fun x : Fin n => x < y)).card = (y : ℕ) := by
-    intro y
-    rw [show univ.filter (fun x : Fin n => x < y) = Finset.Iio y by ext; simp]
-    exact Fin.card_Iio y
-  simp_rw [this]
-  exact Fin.sum_univ_eq_sum_range (fun i => i) n
+  apply _root_.Formalism.FourierDecayAlt.P.G5.card_UT <;> assumption
 
 theorem strictUpper_smul {d : ℕ} (a : ℂ) (y : UT d → ℂ) : strictUpper (a • y) = a • strictUpper y := by
   ext i j

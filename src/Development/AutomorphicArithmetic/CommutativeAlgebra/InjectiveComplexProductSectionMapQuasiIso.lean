@@ -19,49 +19,8 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigEtaleModu
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafSectionsExtAndGlue
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChainsBasicStatement
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HypercohomologyMappingConeSecondVariableExactStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.TypeStar
 import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -74,7 +33,6 @@ section -- clump:auto
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Bc
 
-set_option backward.isDefEq.respectTransparency false in
 theorem UpperTheory.acy_mappingCone_semiMap_of_injective :
     ∀ (R : Type) [CommRing R] (L B : Cx R), (∀ s, Injective (L.X s)) → (∀ s, Injective (B.X s)) → ∀ (ρ : SemiMap L B) (Q : Scheme.{0} → Prop) (s : ℤ), Acy Q ((mappingCone ρ.toZ).X s) := by
   intro R _ L B hL hB ρ Q s
@@ -127,15 +85,6 @@ private theorem sm_sub {F G : Shv R} (φ ψ : F ⟶ G) {U : Scheme.{0}} (a : Sec
 private theorem sm_neg {F G : Shv R} (φ : F ⟶ G) {U : Scheme.{0}} (a : Sec F U) :
     Sec.map (-φ) a = - Sec.map φ a := rfl
 
-private theorem sm_res {F G : Shv R} (φ : F ⟶ G) {V U : Scheme.{0}} (g : V ⟶ U) (a : Sec F U) :
-    Sec.res g (Sec.map φ a) = Sec.map φ (Sec.res g a) := by
-  have hn := φ.hom.naturality g.op
-  simp only [Sec.res, Sec.map]
-  rw [← ModuleCat.comp_apply, ← ModuleCat.comp_apply, hn]
-
-private theorem ms_zero {F G : Shv R} (φ : F ⟶ G) {U : Scheme.{0}} : Sec.map φ (0 : Sec F U) = 0 :=
-  map_zero (φ.hom.app (op U)).hom
-
 private theorem ms_add {F G : Shv R} (φ : F ⟶ G) {U : Scheme.{0}} (a b : Sec F U) :
     Sec.map φ (a + b) = Sec.map φ a + Sec.map φ b := map_add _ a b
 
@@ -149,13 +98,6 @@ private theorem ms_neg {F G : Shv R} (φ : F ⟶ G) {U : Scheme.{0}} (a : Sec F 
 
 private theorem res_add {F : Shv R} {V U : Scheme.{0}} (g : V ⟶ U) (a b : Sec F U) :
     Sec.res g (a + b) = Sec.res g a + Sec.res g b := map_add _ a b
-
-private theorem res_zero {F : Shv R} {V U : Scheme.{0}} (g : V ⟶ U) : Sec.res g (0 : Sec F U) = 0 :=
-  map_zero (F.obj.map g.op).hom
-
-private theorem res_comp {F : Shv R} {W V U : Scheme.{0}} (h : W ⟶ V) (g : V ⟶ U) (a : Sec F U) :
-    Sec.res (h ≫ g) a = Sec.res h (Sec.res g a) := by
-  simp [Sec.res]
 
 end
 
@@ -181,7 +123,7 @@ private theorem decomp (i j : ℤ) (hij : i + 1 = j) {T : Scheme.{0}} (s : Sec (
 private theorem d_inl (n : ℤ) {T : Scheme.{0}} (a : Sec (K.X n) T) (ha : Sec.map (K.d n (n + 1)) a = 0) :
     Sec.map ((mappingCone φ).d (n - 1) n) (Sec.map ((inl φ).v n (n - 1) (by omega)) a) =
       Sec.map ((inr φ).f n) (Sec.map (φ.f n) a) := by
-  rw [← sm_comp, inl_v_d φ n (n - 1) (n + 1) (by omega) (by omega), sm_sub, sm_comp, sm_comp, ha, ms_zero, sub_zero]
+  rw [← sm_comp, inl_v_d φ n (n - 1) (n + 1) (by omega) (by omega), sm_sub, sm_comp, sm_comp, ha, GlobalTheory.EtC.SuppAcyc.map_zero', sub_zero]
 
 private theorem d_inr (i j : ℤ) {T : Scheme.{0}} (c : Sec (M.X i) T) :
     Sec.map ((mappingCone φ).d i j) (Sec.map ((inr φ).f i) c) = Sec.map ((inr φ).f j) (Sec.map (M.d i j) c) := by
@@ -204,10 +146,10 @@ private theorem core (Q : Scheme.{0} → Prop) (hQ : ∀ {V U : Scheme.{0}}, (V 
   set x := Sec.map ((fst φ).1.v n (n + 1) rfl) b with hx
   set y := Sec.map ((snd φ).v n n (add_zero n)) b with hy
   have hxd : Sec.map (K.d (n + 1) (n + 1 + 1)) x = 0 := by
-    rw [hb, ms_zero] at hfd
+    rw [hb, GlobalTheory.EtC.SuppAcyc.map_zero'] at hfd
     exact neg_eq_zero.mp hfd.symm
   have hxy : Sec.map (φ.f (n + 1)) x + Sec.map (M.d n (n + 1)) y = 0 := by
-    rw [hb, ms_zero] at hsd
+    rw [hb, GlobalTheory.EtC.SuppAcyc.map_zero'] at hsd
     exact hsd.symm
   have hyx : Sec.map (M.d n (n + 1)) y + Sec.map (φ.f (n + 1)) x = 0 := (add_comm _ _).trans hxy
   have hcob : ∃ c : Sec (M.X (n + 1 - 1)) U,
@@ -224,8 +166,8 @@ private theorem core (Q : Scheme.{0} → Prop) (hQ : ∀ {V U : Scheme.{0}}, (V 
       HomologicalComplex.XIsoOfEq_hom_comp_d, ha']
   set y' := Sec.res g y + Sec.map (φ.f n) a with hy'
   have hy'd : Sec.map (M.d n (n + 1)) y' = 0 := by
-    rw [hy', ms_add, ← sm_res, ← sm_comp (φ.f n) (M.d n (n + 1)), φ.comm n (n + 1), sm_comp, had,
-      ← sm_res, ← res_add, hyx, res_zero]
+    rw [hy', ms_add, ← GlobalTheory.EtC.SuppSub.res_map, ← sm_comp (φ.f n) (M.d n (n + 1)), φ.comm n (n + 1), sm_comp, had,
+      ← GlobalTheory.EtC.SuppSub.res_map, ← res_add, hyx, GlobalTheory.EtC.SuppAcyc.res_zero']
   have hdc1 : Sec.map ((mappingCone φ).d (n - 1) n) (Sec.map ((inl φ).v n (n - 1) (by omega)) a) =
       Sec.map ((inr φ).f n) (Sec.map (φ.f n) a) - Sec.map ((inl φ).v (n + 1) n (by omega)) (Sec.res g x) := by
     rw [← sm_comp ((inl φ).v n (n - 1) (by omega)) ((mappingCone φ).d (n - 1) n),
@@ -234,8 +176,8 @@ private theorem core (Q : Scheme.{0} → Prop) (hQ : ∀ {V U : Scheme.{0}}, (V 
   rintro W t ⟨a₂, c₂, ha₂, hφ⟩
   refine ⟨Sec.map ((inl φ).v n (n - 1) (by omega)) a₂ - Sec.map ((inr φ).f (n - 1)) c₂ -
     Sec.res t (Sec.map ((inl φ).v n (n - 1) (by omega)) a), ?_⟩
-  rw [res_comp, hdec, ms_sub, ms_sub, d_inl φ n a₂ ha₂, d_inr, ← sm_res, hdc1, hφ, hy']
-  simp only [sm_res, map_sub, map_add (f := _)]
+  rw [GlobalTheory.EtC.SuppSub.res_comp, hdec, ms_sub, ms_sub, d_inl φ n a₂ ha₂, d_inr, ← GlobalTheory.EtC.SuppSub.res_map, hdc1, hφ, hy']
+  simp only [GlobalTheory.EtC.SuppSub.res_map, map_sub, map_add (f := _)]
   abel
 
 end UpperTheory.ConeLoc
@@ -751,7 +693,6 @@ private instance (W : C) : (lamF (S := S) W).PreservesMonomorphisms where
 
 variable [HasBinaryProducts C]
 
-
 set_option backward.isDefEq.respectTransparency false in
 private noncomputable def adjTo (W : C) {P Q : Cᵒᵖ ⥤ ModuleCat.{1} S} (α : lam W P ⟶ Q) :
     P ⟶ (prod.functor.obj W).op ⋙ Q where
@@ -795,7 +736,6 @@ private lemma invApp_single (W : C) {P Q : Cᵒᵖ ⥤ ModuleCat.{1} S}
   simp only [invApp, Finsupp.lsum_single, LinearMap.comp_apply]
   try rfl
 
-
 set_option backward.isDefEq.respectTransparency false in
 private noncomputable def adjInv (W : C) {P Q : Cᵒᵖ ⥤ ModuleCat.{1} S}
     (u : P ⟶ (prod.functor.obj W).op ⋙ Q) : lam W P ⟶ Q where
@@ -813,7 +753,6 @@ private noncomputable def adjInv (W : C) {P Q : Cᵒᵖ ⥤ ModuleCat.{1} S}
     rw [e]
     exact pmap_op Q ((prod.functor.obj W).map h.unop) (prod.lift (h.unop ≫ g) (𝟙 T'.unop))
       (prod.lift g (𝟙 T.unop)) h.unop (by apply Limits.prod.hom_ext <;> simp) _
-
 
 set_option backward.isDefEq.respectTransparency false in
 private noncomputable def lamAdj (W : C) :
@@ -865,7 +804,6 @@ private noncomputable def lamAdj (W : C) :
       homEquiv_naturality_right := fun {P Q Q'} f g => rfl }
 
 end UpperTheory.PwInj
-
 
 open UpperTheory.PwInj in
 private noncomputable def UpperTheory.PwInj.sheafAdj (R : Type) [CommRing R] (W : Scheme.{0}) :
@@ -937,7 +875,6 @@ section -- clump:auto
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Bc
 
-set_option backward.isDefEq.respectTransparency false in
 theorem UpperTheory.hypercohomology_post_cl_eq_cl_comp :
     ∀ {M F G : Shv ℤ} (f : M ⟶ F) (g : F ⟶ G), HK.post ℤ (sgl M) g 0 (cl f) = cl (f ≫ g) := by
   intro M F G f g
@@ -1161,7 +1098,6 @@ open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComp
 
 namespace UpperTheory
 
-set_option backward.isDefEq.respectTransparency false in
 private theorem hb_step {C : Type*} [Category C] [Preadditive C] (K D : CochainComplex C ℤ)
     (H : ∀ (p j : ℤ) (f : K.X p ⟶ D.X j), f ≫ D.d j (j + 1) = 0 →
       ∃ g : K.X p ⟶ D.X (j - 1), g ≫ D.d (j - 1) j = f)
@@ -1304,7 +1240,7 @@ private theorem semi_bij (R : Type) [CommRing R] (L B : Cx R) [L.IsStrictlyGE 0]
   obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by ring⟩
   constructor
   · have ex := (_root_.GlobalTheory.EtC.coneSeqTgt_exact ℤ ((chains ℤ).obj E) ρ.toZ m).2.2
-    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+    rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨y, rfl⟩ := (ex x).1 hx
     rw [Subsingleton.elim y 0, map_zero]

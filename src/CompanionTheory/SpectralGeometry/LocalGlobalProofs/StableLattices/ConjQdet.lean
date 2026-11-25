@@ -21,7 +21,7 @@ theorem conjQdet : CompanionTheory.RgExh.Dec.J.ConjQdet := by
     intro x p q
     have hd : ∑ c, ∑ d, (U c p * Ui q d) • (if c = d then algebraMap ℂ (Module.End ℂ X.V) x else 0)
         = if p = q then algebraMap ℂ (Module.End ℂ X.V) x else 0 := by
-      simp only [smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      simp only [smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
       rw [← Finset.sum_smul]
       have hc : ∑ c, U c p * Ui q c = (Ui * U) q p := by
         rw [Matrix.mul_apply]
@@ -30,7 +30,7 @@ theorem conjQdet : CompanionTheory.RgExh.Dec.J.ConjQdet := by
       by_cases hpq : p = q
       · subst hpq
         simp
-      · rw [if_neg (Ne.symm hpq), if_neg hpq, zero_smul]
+      · rw [ite_eq_right (Ne.symm hpq), ite_eq_right hpq, zero_smul]
     simp only [Formalism.REAL.Tm, ReciprocityTheory.ChartRestriction.DS.actM, conj_single_apply, Matrix.transpose_apply,
       Finset.smul_sum, smul_smul, smul_add, Finset.sum_add_distrib]
     rw [hd]

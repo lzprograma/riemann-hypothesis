@@ -316,7 +316,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.IndefR Formalism.IndefR.Links Formalism.L2.DIV GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.RowChainDown
 
@@ -418,7 +417,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.RowVal
 
@@ -459,7 +457,6 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.IndefR Formalism.IndefR.Links Formalism.L2.DIV GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.ChainHyp
 
@@ -577,12 +574,6 @@ theorem chain_props (hP : GlobalTheory.Published.CuspRapidDecay) (G : GridData L
 
 end GlobalTheory.ChainHyp
 
-namespace GlobalTheory.ChainHyp
-
-open GlobalTheory.FunObj GlobalTheory.RowChain GlobalTheory.FlipRun GlobalTheory.Grow
-
-end GlobalTheory.ChainHyp
-
 end
 end -- clump:auto
 end -- clump:auto
@@ -597,19 +588,12 @@ noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField
 open Formalism.IndefR Formalism.IndefR.Links Formalism.L2.DIV GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.RowChain
 
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 
 variable {D : D7}
-
-section Lin
-
-variable {ψ : AddChar (AF D.host.F) ℂ} {T₀ : HSp D}
-
-end Lin
 
 theorem unitN_unique {S : HSp D} {ρ : ℕ} {e : Matrix (Fin S.rank) (Fin ρ) D.host.E} (he : IsIsoSub S e)
     {ν ν' : Measure (NFlag S e)} {𝓝 𝓝' : Set (NFlag S e)} (h : GlobalTheory.Per.IsUnitN S e ν 𝓝) (h' : GlobalTheory.Per.IsUnitN S e ν' 𝓝') :
@@ -815,12 +799,6 @@ end GlobalTheory.RowChain
 
 namespace GlobalTheory.RowChain
 
-open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.FlipRun
-
-end GlobalTheory.RowChain
-
-namespace GlobalTheory.RowChain
-
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.FlipRun GlobalTheory.RowUnf GlobalTheory.RowVal
 
 theorem nIter_meas_congr {ι : Type} [DecidableEq ι] {H : ι → Type} [∀ i, Group (H i)] [∀ i, MeasurableSpace (H i)]
@@ -858,7 +836,7 @@ theorem exists_rowMeas (j : ℕ) : ∃ ρ : Measure (rowGrp G j), (j < D.R.m →
   · let J : GlobalTheory.Unf.JacLev D ((D.R.m - 1 - j) / 2) :=
       ⟨G.V (.grid D.R.m j), G.V (.top j), rowJac G j (by omega) _ (by omega), cocpt_top G (by omega), v,
         (GlobalTheory.Unf.Inhab.nonempty_volN _).some⟩
-    have e : rowGrp G j = jacGrp J.d := dif_pos h
+    have e : rowGrp G j = jacGrp J.d := dite_eq_left h
     obtain ⟨ρ, h1, h2⟩ := exists_haar_heq e J.μR (GlobalTheory.QuotZero.jac_haar_inv J).2.1
     refine ⟨ρ, fun _ => h1, fun t M hM => ⟨fun σ hj => ?_, fun σ hj => by omega⟩⟩
     obtain rfl : σ = (D.R.m - 1 - j) / 2 := by omega
@@ -873,7 +851,7 @@ theorem exists_rowMeas (j : ℕ) : ∃ ρ : Measure (rowGrp G j), (j < D.R.m →
         GlobalTheory.SeeSaw.Model.isLineVec_nLine (pow_ne_zero _ (GlobalTheory.Unf.Inhab.cmHost_imaginaryGenerator_ne_zero D)), cocpt_top G (by omega), v,
         (GlobalTheory.Unf.Inhab.nonempty_volN _).some⟩
     have e : rowGrp G j = besGrp B.d B.o := by
-      simp only [rowGrp, dif_neg h, dif_pos h']
+      simp only [rowGrp, dite_eq_right h, dite_eq_left h']
       rfl
     obtain ⟨ρ, h1, h2⟩ := exists_haar_heq e B.μR (GlobalTheory.QuotZero.bes_haar_inv B).2.1
     refine ⟨ρ, fun _ => h1, fun t M hM => ⟨fun σ hj => by omega, fun σ hj => ?_⟩⟩
@@ -904,13 +882,8 @@ section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 noncomputable section
 namespace GlobalTheory.RowVal
-section Lin
-variable {T : Type} {D : D7} {L : LevCh D T} {sc : Consts} {G : GridData L sc} {W : G.Weil} {M : Vol G}
-  {ρ : RealMatch W} {t : T}
-end Lin
 theorem placeValuation_linAt_large : _root_.GlobalTheory.FunPr.ThetaLocalInputs → GlobalTheory.IndefiniteRowSideFullHecke.CuspAlongSmoothLifts.LiftsCuspidal → Big fun ch => LinAt ch := by
   intro hP hL
   obtain ⟨a0, ha⟩ := Big.and (Big.and (_root_.GlobalTheory.FlipRun.cuspStep_of_large_flipRun hL hP) (_root_.GlobalTheory.EndCusp.leadingForm_mem_cuspList hP)) colFn_cont_left
@@ -948,24 +921,6 @@ section
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField
 open Formalism.IndefR Formalism.IndefR.Links Formalism.L2.DIV GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-namespace GlobalTheory.RowChain
-open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
-variable {D : D7}
-section Lin
-variable {ψ : AddChar (AF D.host.F) ℂ} {T₀ : HSp D}
-end Lin
-variable {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc}
-end GlobalTheory.RowChain
-namespace GlobalTheory.RowChain
-open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.FlipRun
-variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc}
-variable (W : G.Weil) (M : Vol G) (t : T)
-variable {W M t}
-end GlobalTheory.RowChain
-namespace GlobalTheory.RowChain
-open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.FlipRun
-end GlobalTheory.RowChain
 namespace GlobalTheory.RowChain
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.FlipRun GlobalTheory.RowUnf GlobalTheory.RowVal
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} (G : GridData L sc)
@@ -1008,16 +963,6 @@ theorem twisted_iterate_eq_linear : _root_.GlobalTheory.FunPr.ThetaLocalInputs �
   fun hP hL => Big.and (_root_.GlobalTheory.RowChain.twisted_iterate_eventually_large hP hL) (_root_.GlobalTheory.RowVal.placeValuation_linAt_large hP hL)
 end GlobalTheory.RowChain
 end
-end
-
-section
-open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
-open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
-open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-theorem _root_.GlobalTheory.T.twisted_iterate_chain : _root_.GlobalTheory.FunPr.ThetaLocalInputs → GlobalTheory.IndefiniteRowSideFullHecke.CuspAlongSmoothLifts.LiftsCuspidal → Big fun ch => IterAt ch ∧ LinAt ch := by
-  first | exact @_root_.GlobalTheory.RowChain.twisted_iterate_eq_linear
 end
 end -- clump:auto
 end -- clump:auto

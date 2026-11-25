@@ -127,7 +127,7 @@ theorem exists_coeffs (Λ : Submodule (𝓞 E) (Fin n → E))
         if i = x then algebraMap (𝓞 E) E (b x) * algebraMap (𝓞 E) E D else 0 := by
       intro x
       split_ifs <;> simp
-    simp only [h4, Finset.sum_ite_eq, Finset.mem_univ, if_true, map_mul]
+    simp only [h4, Finset.sum_ite_eq, Finset.mem_univ, ite_true, map_mul]
     rw [hb'' i]
     ring
   have h2 := congrArg φ h1

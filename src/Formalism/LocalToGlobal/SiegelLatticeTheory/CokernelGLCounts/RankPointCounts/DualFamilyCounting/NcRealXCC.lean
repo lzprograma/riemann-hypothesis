@@ -16,8 +16,6 @@ namespace Formalism.L2.SG.Pf.NcReal.JX
 
 open Formalism.L2.SG.HidaSetting Formalism.L2.SG.RealObj Formalism.L2.SG.RealObj.InfCut Formalism.MainNotions.S
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 abbrev CBlk (r : ℕ) : Type := (LsNc5.LtPair r ⊕ Fin r) ⊕ (LsNc5.LtPair r ⊕ Fin r)
 
 def CSpc (ι : Type) (k : ℕ) {r : ℕ} : CBlk r → Type

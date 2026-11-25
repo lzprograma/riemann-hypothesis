@@ -260,18 +260,8 @@ end Ext
 
 section Tied
 
-open Formalism.BasicNotions Formalism.L2.Forms
 
 variable {D : D7} {u : D.what₂.Word}
-
-def LocalDiamondElementsExist (Tf : FormsTied D u) : Prop :=
-  ∀ i (hi : i ≤ D.R.m) (v : (D.mem u).A.vT) (a : ((D.mem u).A.Fv v)ˣ), ∃ k : ℤ, (k : (D.mem u).A.Fv v) = a ∧
-    IsLocalDiamond (Tf.cls i hi).lev (Tf.atT.eV v).1 (Tf.atT.eV v).2 k
-
-theorem diamond_elements_of_local (Tf : FormsTied D u) (h : LocalDiamondElementsExist Tf) : DiamondElementsExist Tf := by
-  intro i hi v a
-  obtain ⟨k, hk, hl⟩ := h i hi v a
-  exact ⟨k, hk, is_diamond_of_local_diamond _ _ _ k hl⟩
 
 end Tied
 

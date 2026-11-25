@@ -1,45 +1,6 @@
 module
 
 public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.LowerSetTypesSpan
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -161,7 +122,7 @@ def lowerLabels (lam : ∀ i, Λ i) (i : κ) : Set (Λ i) := {a | J.dom i a ∧ 
 def strictLowerLabels (lam : ∀ i, Λ i) (i : κ) : Set (Λ i) := {a | J.dom i a ∧ J.le i a (lam i) ∧ a ≠ lam i}
 
 theorem lower_part_eq_span (lam : ∀ i, Λ i) (i : κ) :
-    J.Pl ⊓ componentSum J i (lowerLabels J lam i) = Submodule.span K (J.b '' {x | J.P x i ∈ lowerLabels J lam i}) := J.low i (lowerLabels J lam i) (fun a ha => ha.1) (fun a ha c hc hca => ⟨hc, J.le_trans i c a (lam i) hca ha.2⟩)
+    J.Pl ⊓ componentSum J i (lowerLabels J lam i) = Submodule.span K (J.b '' {x | J.P x i ∈ lowerLabels J lam i}) := J.low i (lowerLabels J lam i) (fun _ ha => ha.1) (fun a ha c hc hca => ⟨hc, J.le_trans i c a (lam i) hca ha.2⟩)
 
 theorem strict_lower_part_eq_span (lam : ∀ i, Λ i) (i : κ) :
     J.Pl ⊓ componentSum J i (strictLowerLabels J lam i) = Submodule.span K (J.b '' {x | J.P x i ∈ strictLowerLabels J lam i}) := by
@@ -179,7 +140,7 @@ theorem joint_lower_part_stable (lam : ∀ i, Λ i) (i : κ) (a : Λ i) (x : V) 
   simp only [jointLowerPart, Submodule.mem_inf, Submodule.mem_iInf] at hx ⊢
   exact ⟨J.stab i a x hx.1, fun k => component_sum_stable J k _ i a x (hx.2 k)⟩
 
-theorem strict_joint_lower_le (lam : ∀ i, Λ i) : strictJointLower J lam ≤ jointLowerPart J lam := iSup_le fun j => inf_le_left
+theorem strict_joint_lower_le (lam : ∀ i, Λ i) : strictJointLower J lam ≤ jointLowerPart J lam := iSup_le fun _ => inf_le_left
 
 theorem sub_projector_mem_strict (lam : ∀ i, Λ i) (k : κ) (x : V) (hx : x ∈ jointLowerPart J lam) :
     x - J.e k (lam k) x ∈ strictLowerPart J lam k := by
@@ -271,8 +232,7 @@ theorem strict_joint_lower_eq_span [Nonempty κ] (lam : ∀ i, Λ i) :
   · rw [Submodule.span_le]
     rintro _ ⟨y, ⟨hy1, hy2⟩, rfl⟩
     obtain ⟨j, hj⟩ : ∃ j, J.P y j ≠ lam j := by
-      by_contra hcon
-      push_neg at hcon
+      by_contra! hcon
       exact hy2 (funext hcon)
     refine Submodule.mem_iSup_of_mem j ?_
     simp only [strictLowerPart, Submodule.mem_inf]

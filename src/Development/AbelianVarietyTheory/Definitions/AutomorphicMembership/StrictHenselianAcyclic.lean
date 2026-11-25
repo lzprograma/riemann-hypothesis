@@ -45,8 +45,6 @@ namespace GlobalTheory.HeightCounting.Up
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting
   GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 
 set_option genInjectivity false
 set_option genSizeOfSpec false
@@ -72,9 +70,6 @@ structure LI (hL : GlobalTheory.Published.LocalLanglandsGL) (x : St P) : Type 1 
   mt : InMt x.r.Y (cfOf x) w.I.xi (QOf P)
   rat : InRat x.r.Y x.m.z.cG
   cusp : RowCusp (Dof x) a.A.row
-
-structure SeriesLevel (hL : GlobalTheory.Published.LocalLanglandsGL) (x : St P) : Type 1 extends LI hL x where
-  b : SeriesState x.m.z.geo a rat mt.ad.PV Pq
 
 structure StrictHenselianAcyclic (hL : GlobalTheory.Published.LocalLanglandsGL) (x : St P) : Type 1 extends LI hL x where
   b : ModuliPointsState x.m.z.geo a rat mt.ad.PV Pq

@@ -1,57 +1,15 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicFlagLeviConjHaarModulus
 import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.AdmissibleCasimirScalars.SmoothGeneratorAverages.HasDerivAtDS
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.AdmissibleCasimirScalars.CompactDerivativesBounded
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
 
 open Matrix Finset
 open scoped InnerProductSpace
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -73,13 +31,13 @@ lemma gen_apply (ε : Fin n → Bool) (p : Fin n × Fin n) (x y : Fin n) :
       else Complex.I * ((if p.2 = x ∧ p.1 = y then 1 else 0) + (sg ε p : ℂ) * (if p.1 = x ∧ p.2 = y then 1 else 0)) := by
   unfold gen
   by_cases h1 : p.1 = p.2
-  · rw [if_pos h1, if_pos h1]
+  · rw [ite_eq_left h1, ite_eq_left h1]
     simp [Matrix.single_apply, Matrix.smul_apply]
-  · rw [if_neg h1, if_neg h1]
+  · rw [ite_eq_right h1, ite_eq_right h1]
     by_cases h2 : p.1 < p.2
-    · rw [if_pos h2, if_pos h2]
+    · rw [ite_eq_left h2, ite_eq_left h2]
       simp [Matrix.single_apply, Matrix.sub_apply, mul_ite]
-    · rw [if_neg h2, if_neg h2]
+    · rw [ite_eq_right h2, ite_eq_right h2]
       simp [Matrix.single_apply, Matrix.add_apply, Matrix.smul_apply, mul_ite]
 
 lemma gen_apply_eq_zero (ε : Fin n → Bool) (p : Fin n × Fin n) (x y : Fin n)
@@ -99,17 +57,17 @@ lemma tens (ε : Fin n → Bool) (i j k l : Fin n) :
   by_cases hij : i = j
   · subst hij
     rw [Fintype.sum_eq_single (i, i) (fun p hp => by rw [gen_apply_eq_zero ε p i i ⟨hp, hp⟩]; simp)]
-    simp only [cf, wt, sg, gen_apply, if_true, and_self]
+    simp only [cf, wt, sg, gen_apply, ite_true, and_self]
     by_cases hk : i = k <;> by_cases hl : i = l <;> simp [hk, hl] <;> split_ifs <;> simp
   · rw [Fintype.sum_eq_add (j, i) (i, j) (by simp [Ne.symm hij])
       (fun p hp => by rw [gen_apply_eq_zero ε p j i ⟨hp.1, hp.2⟩]; simp)]
     rcases lt_or_gt_of_ne hij with h | h
     · have h' : ¬ j < i := not_lt_of_gt h
-      simp only [cf, wt, sg, gen_apply, hij, Ne.symm hij, h, h', if_false, if_true, true_and, and_true]
+      simp only [cf, wt, sg, gen_apply, hij, Ne.symm hij, h, h', ite_false, ite_true, true_and, and_true]
       by_cases hk : i = k <;> by_cases hl : j = l <;> by_cases hk' : j = k <;> by_cases hl' : i = l <;>
         simp_all <;> cases ε k <;> cases ε l <;> simp_all <;> ring_nf <;> simp [Complex.I_sq] <;> ring
     · have h' : ¬ i < j := not_lt_of_gt h
-      simp only [cf, wt, sg, gen_apply, hij, Ne.symm hij, h, h', if_false, if_true, true_and, and_true]
+      simp only [cf, wt, sg, gen_apply, hij, Ne.symm hij, h, h', ite_false, ite_true, true_and, and_true]
       by_cases hk : i = k <;> by_cases hl : j = l <;> by_cases hk' : j = k <;> by_cases hl' : i = l <;>
         simp_all <;> cases ε k <;> cases ε l <;> simp_all <;> ring_nf <;> simp [Complex.I_sq] <;> ring
 
@@ -164,26 +122,7 @@ lemma umat_inUJ {ε : Fin n → Bool} (g : UJ ε) : (umat g)ᴴ * Jm ε * umat g
 
 lemma conj_inG {ε : Fin n → Bool} (g : UJ ε) {X : Matrix (Fin n) (Fin n) ℂ} (hX : inG ε X) :
     inG ε (umat g * X * umat g⁻¹) := by
-  have hhJ : (umat g)ᴴ * Jm ε = Jm ε * umat g⁻¹ := by
-    calc (umat g)ᴴ * Jm ε = (umat g)ᴴ * Jm ε * (umat g * umat g⁻¹) := by
-          rw [umat_mul_inv, Matrix.mul_one]
-      _ = ((umat g)ᴴ * Jm ε * umat g) * umat g⁻¹ := by simp only [Matrix.mul_assoc]
-      _ = Jm ε * umat g⁻¹ := by rw [umat_inUJ]
-  have hkJ : (umat g⁻¹)ᴴ * Jm ε = Jm ε * umat g := by
-    calc (umat g⁻¹)ᴴ * Jm ε = (umat g⁻¹)ᴴ * Jm ε * (umat g⁻¹ * umat g) := by
-          rw [umat_inv_mul, Matrix.mul_one]
-      _ = ((umat g⁻¹)ᴴ * Jm ε * umat g⁻¹) * umat g := by simp only [Matrix.mul_assoc]
-      _ = Jm ε * umat g := by rw [umat_inUJ]
-  have hX' : Xᴴ * Jm ε = -(Jm ε * X) := eq_neg_of_add_eq_zero_left hX
-  unfold inG
-  have e : (umat g * X * umat g⁻¹)ᴴ * Jm ε = -(Jm ε * (umat g * X * umat g⁻¹)) := by
-    calc (umat g * X * umat g⁻¹)ᴴ * Jm ε = (umat g⁻¹)ᴴ * (Xᴴ * ((umat g)ᴴ * Jm ε)) := by
-          simp only [conjTranspose_mul, Matrix.mul_assoc]
-      _ = (umat g⁻¹)ᴴ * ((Xᴴ * Jm ε) * umat g⁻¹) := by rw [hhJ, Matrix.mul_assoc]
-      _ = -(((umat g⁻¹)ᴴ * Jm ε) * X * umat g⁻¹) := by
-          rw [hX', Matrix.neg_mul, Matrix.mul_neg]; simp only [Matrix.mul_assoc]
-      _ = -(Jm ε * (umat g * X * umat g⁻¹)) := by rw [hkJ]; simp only [Matrix.mul_assoc]
-  rw [e, neg_add_cancel]
+  apply _root_.GlobalTheory.FlagModulus.inG_conj <;> assumption
 
 lemma trace_swap (h k P Q : Matrix (Fin n) (Fin n) ℂ) :
     trace (h * P * k * Q) = trace (k * Q * h * P) := by

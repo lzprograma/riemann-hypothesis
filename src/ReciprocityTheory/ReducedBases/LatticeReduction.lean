@@ -93,7 +93,7 @@ lemma babai (b : Fin d → E) (hb : LinearIndependent ℝ b) (c : Fin d → ℝ)
           rw [hnu, nu_sub, nu_eq_zero_of b (fun l => ((w l : ℤ) : ℝ)) ⟨t, htd⟩
             (fun l hl => by simp [hw0 l hl]), mul_zero, sub_zero, nu_sub,
             nu_top b hb (fun l => if l = ⟨t, htd⟩ then (k : ℝ) else 0) ⟨t, htd⟩
-              (fun l hl => if_neg (ne_of_gt hl))]
+              (fun l hl => ite_eq_right (ne_of_gt hl))]
           simp
         have hN0 : N ≠ 0 := hN.ne'
         have hr := abs_sub_round (nu b c ⟨t, htd⟩ / N)

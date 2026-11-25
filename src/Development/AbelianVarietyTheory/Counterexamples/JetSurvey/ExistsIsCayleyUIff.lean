@@ -155,7 +155,7 @@ lemma trace_Hpk (k r : ℕ) : (Hpk k r).trace = (k : ℂ) - 1 := by
     (if m = r + k then 1 else 0)), Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.sum_boole]
   have : (range (2 * r + k + 1)).filter (fun m => r ≤ m ∧ m < r + k) = Finset.Ico r (r + k) := by
     ext m; simp only [mem_filter, mem_range, Finset.mem_Ico]; omega
-  rw [this, if_pos (by simp only [mem_range]; omega)]
+  rw [this, ite_eq_left (by simp only [mem_range]; omega)]
   simp
 
 theorem exists_isCayleyU_iff (k r : ℕ) (ε : Fin (2 * r + k + 1) → Bool) :

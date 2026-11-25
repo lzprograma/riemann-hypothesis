@@ -51,8 +51,6 @@ noncomputable section
 open NumberField IsDedekindDomain
 open scoped Classical
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace GlobalTheory.CompanionTheory.MuLocal
 
 open Formalism.L2.Host GlobalTheory.CuspRep

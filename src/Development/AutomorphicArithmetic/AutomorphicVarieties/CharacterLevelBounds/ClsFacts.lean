@@ -57,21 +57,6 @@ private theorem exists_primitiveRoot_of_isAlgClosure' (k Ω : Type) [Field k] [N
   haveI : CharZero Ω := charZero_of_injective_algebraMap (algebraMap k Ω).injective
   exact HasEnoughRootsOfUnity.exists_primitiveRoot Ω N
 
-private theorem cls_apply_root_of_unity_eq_pow (k Ω : Type) [Field k] [NumberField k] [Field Ω] [Algebra k Ω]
-    [IsAlgClosure k Ω] (N : ℕ) [NeZero N] (σ : G k Ω) (ζ : Ω) (hζ : ζ ^ N = 1) :
-    σ ζ = ζ ^ ((cls k Ω N σ : (ZMod N)ˣ) : ZMod N).val := by
-  have h0 : ζ ≠ 0 := by
-    rintro rfl
-    simp [NeZero.ne N] at hζ
-  have ht : Units.mk0 ζ h0 ∈ rootsOfUnity N Ω := by
-    rw [mem_rootsOfUnity]
-    ext
-    simpa using hζ
-  obtain ⟨ξ, hξ⟩ := exists_primitiveRoot_of_isAlgClosure' k Ω N
-  have := modularCyclotomicCharacter.spec Ω hξ.card_rootsOfUnity
-    (MulSemiringAction.toRingAut (G k Ω) Ω σ) ht
-  exact this
-
 private theorem cls_eq_of_forall_root_of_unity_apply_eq_pow (k Ω : Type) [Field k] [NumberField k] [Field Ω] [Algebra k Ω]
     [IsAlgClosure k Ω] (N : ℕ) [NeZero N] (σ : G k Ω) (u : (ZMod N)ˣ)
     (h : ∀ ζ : Ω, ζ ^ N = 1 → σ ζ = ζ ^ (u : ZMod N).val) : cls k Ω N σ = u := by
@@ -125,7 +110,7 @@ theorem UpperTheory.V.Chr.clsFacts :
     intro ζ hζ
     rw [MonoidHom.comp_apply, ZMod.unitsMap_val, ZMod.cast_eq_val, root_of_unity_pow_natCast_zmod_val M ζ hζ]
     obtain ⟨d, hd⟩ := hMN
-    exact cls_apply_root_of_unity_eq_pow k Ω N σ ζ (by rw [hd, pow_mul, hζ, one_pow])
+    exact UpperTheory.V.Chr.cls_spec N σ ζ (by rw [hd, pow_mul, hζ, one_pow])
   · intro σ hσ
     obtain ⟨j, hj⟩ := hσ
     apply cls_eq_of_forall_root_of_unity_apply_eq_pow
